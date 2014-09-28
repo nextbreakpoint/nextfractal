@@ -1,0 +1,13 @@
+/*
+ * $Id:$
+ *
+ */
+package com.nextbreakpoint.nextfractal.contextfree.extensions.action;
+
+import com.nextbreakpoint.nextfractal.contextfree.pathAdjustment.extension.PathAdjustmentExtensionConfig;
+import com.nextbreakpoint.nextfractal.core.util.AbstractConfigurableExtensionReferenceElementNodeActionXMLExporterRuntime;
+/**
+ * @author Andrea Medeghini
+ */
+public class PathAdjustmentReferenceNodeActionXMLExporterRuntime extends AbstractConfigurableExtensionReferenceElementNodeActionXMLExporterRuntime<PathAdjustmentExtensionConfig> {
+}

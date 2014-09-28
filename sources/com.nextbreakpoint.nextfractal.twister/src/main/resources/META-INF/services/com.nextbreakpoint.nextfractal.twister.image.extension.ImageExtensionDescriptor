@@ -1,0 +1,4 @@
+com.nextbreakpoint.nextfractal.twister.extensions.image.TextDescriptor
+com.nextbreakpoint.nextfractal.twister.extensions.image.ColorDescriptor
+com.nextbreakpoint.nextfractal.twister.extensions.image.BorderDescriptor
+com.nextbreakpoint.nextfractal.twister.extensions.image.BlackDescriptor

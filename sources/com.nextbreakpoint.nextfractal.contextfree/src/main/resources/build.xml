@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ====================================================================== 
+     22/ago/2009 20.42.34                                                        
+     Script for parser generation
+     ====================================================================== -->
+<project name="ContextFree" default="generate">
+    <description>Script for parser generation</description>
+	<property environment="env"/>
+    <target name="generate" description="Generate the parser for cfdg files">
+        <java dir="src-sablecc" classname="org.sablecc.sablecc.SableCC">
+        	<classpath path="${env.SABLECC_HOME}/lib/sablecc.jar"/>
+        	<arg value="ContextFree32.sablecc"/>
+    	</java>
+    </target>
+</project>

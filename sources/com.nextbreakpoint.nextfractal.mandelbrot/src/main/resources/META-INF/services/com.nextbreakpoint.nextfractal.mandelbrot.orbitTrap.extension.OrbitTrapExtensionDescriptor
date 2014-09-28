@@ -1,0 +1,6 @@
+com.nextbreakpoint.nextfractal.mandelbrot.extensions.orbitTrap.TriangleTrapDescriptor
+com.nextbreakpoint.nextfractal.mandelbrot.extensions.orbitTrap.PointTrapDescriptor
+com.nextbreakpoint.nextfractal.mandelbrot.extensions.orbitTrap.LineTrapDescriptor
+com.nextbreakpoint.nextfractal.mandelbrot.extensions.orbitTrap.RectangleTrapDescriptor
+com.nextbreakpoint.nextfractal.mandelbrot.extensions.orbitTrap.DeltaTrapDescriptor
+com.nextbreakpoint.nextfractal.mandelbrot.extensions.orbitTrap.CircleTrapDescriptor

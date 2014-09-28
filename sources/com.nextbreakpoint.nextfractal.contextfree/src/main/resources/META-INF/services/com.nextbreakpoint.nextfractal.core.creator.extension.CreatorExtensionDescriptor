@@ -1,0 +1,6 @@
+com.nextbreakpoint.nextfractal.contextfree.extensions.creator.ShapeReplacementCreatorDescriptor
+com.nextbreakpoint.nextfractal.contextfree.extensions.creator.CFDGCreatorDescriptor
+com.nextbreakpoint.nextfractal.contextfree.extensions.creator.FigureCreatorDescriptor
+com.nextbreakpoint.nextfractal.contextfree.extensions.creator.ShapeAdjustmentCreatorDescriptor
+com.nextbreakpoint.nextfractal.contextfree.extensions.creator.PathReplacementCreatorDescriptor
+com.nextbreakpoint.nextfractal.contextfree.extensions.creator.PathAdjustmentCreatorDescriptor

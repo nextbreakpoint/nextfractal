@@ -1,0 +1,12 @@
+com.nextbreakpoint.nextfractal.core.extensions.creator.ComplexCreatorDescriptor
+com.nextbreakpoint.nextfractal.core.extensions.creator.LongCreatorDescriptor
+com.nextbreakpoint.nextfractal.core.extensions.creator.RectangleCreatorDescriptor
+com.nextbreakpoint.nextfractal.core.extensions.creator.FloatCreatorDescriptor
+com.nextbreakpoint.nextfractal.core.extensions.creator.BooleanCreatorDescriptor
+com.nextbreakpoint.nextfractal.core.extensions.creator.ShortCreatorDescriptor
+com.nextbreakpoint.nextfractal.core.extensions.creator.ColorCreatorDescriptor
+com.nextbreakpoint.nextfractal.core.extensions.creator.StringCreatorDescriptor
+com.nextbreakpoint.nextfractal.core.extensions.creator.FontCreatorDescriptor
+com.nextbreakpoint.nextfractal.core.extensions.creator.DoubleCreatorDescriptor
+com.nextbreakpoint.nextfractal.core.extensions.creator.IntegerCreatorDescriptor
+com.nextbreakpoint.nextfractal.core.extensions.creator.ReferenceCreatorDescriptor

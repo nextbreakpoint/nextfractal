@@ -1,0 +1,10 @@
+com.nextbreakpoint.nextfractal.devtools.core.extensions.RectangleDescriptorDescriptor
+com.nextbreakpoint.nextfractal.devtools.core.extensions.IntegerDescriptorDescriptor
+com.nextbreakpoint.nextfractal.devtools.core.extensions.ShortDescriptorDescriptor
+com.nextbreakpoint.nextfractal.devtools.core.extensions.ComplexDescriptorDescriptor
+com.nextbreakpoint.nextfractal.devtools.core.extensions.BooleanDescriptorDescriptor
+com.nextbreakpoint.nextfractal.devtools.core.extensions.StringDescriptorDescriptor
+com.nextbreakpoint.nextfractal.devtools.core.extensions.LongDescriptorDescriptor
+com.nextbreakpoint.nextfractal.devtools.core.extensions.DoubleDescriptorDescriptor
+com.nextbreakpoint.nextfractal.devtools.core.extensions.ColorDescriptorDescriptor
+com.nextbreakpoint.nextfractal.devtools.core.extensions.FloatDescriptorDescriptor

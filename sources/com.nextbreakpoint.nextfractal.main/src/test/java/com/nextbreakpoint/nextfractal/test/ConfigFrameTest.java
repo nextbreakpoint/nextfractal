@@ -1,0 +1,315 @@
+/*
+ * NextFractal 6.1 
+ * http://nextfractal.sourceforge.net
+ *
+ * Copyright 2001, 2010 Andrea Medeghini
+ * http://andreamedeghini.users.sourceforge.net
+ *
+ * This file is part of NextFractal.
+ *
+ * NextFractal is an application for creating fractals and other graphics artifacts.
+ *
+ * NextFractal is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * NextFractal is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+package com.nextbreakpoint.nextfractal.test;
+
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.File;
+import java.util.List;
+
+import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+
+import com.nextbreakpoint.nextfractal.twister.TwisterConfig;
+import com.nextbreakpoint.nextfractal.twister.TwisterConfigBuilder;
+import com.nextbreakpoint.nextfractal.twister.TwisterConfigNodeBuilder;
+import com.nextbreakpoint.nextfractal.twister.swing.ConfigFrame;
+import com.nextbreakpoint.nextfractal.twister.swing.TwisterConfigContext;
+import com.nextbreakpoint.nextfractal.twister.swing.TwisterContext;
+
+import org.junit.Test;
+
+import com.nextbreakpoint.nextfractal.core.DefaultTree;
+import com.nextbreakpoint.nextfractal.core.config.DefaultConfigContext;
+import com.nextbreakpoint.nextfractal.core.launcher.Launcher;
+import com.nextbreakpoint.nextfractal.core.launcher.LauncherContextListener;
+import com.nextbreakpoint.nextfractal.core.launcher.LauncherThreadFactory;
+import com.nextbreakpoint.nextfractal.core.scripting.DefaultJSContext;
+import com.nextbreakpoint.nextfractal.core.scripting.JSException;
+import com.nextbreakpoint.nextfractal.core.scripting.JSManager;
+import com.nextbreakpoint.nextfractal.core.tree.NodeAction;
+import com.nextbreakpoint.nextfractal.core.tree.NodeSession;
+import com.nextbreakpoint.nextfractal.core.tree.NodeSessionListener;
+import com.nextbreakpoint.nextfractal.core.util.IntegerVector2D;
+import com.nextbreakpoint.nextfractal.core.util.RenderContext;
+import com.nextbreakpoint.nextfractal.core.util.RenderContextListener;
+
+/**
+ * @author Andrea Medeghini
+ */
+public class ConfigFrameTest {
+	private final Launcher<TwisterContext> launcher = new Launcher<TwisterContext>(new TestTwisterContext(), new TestThreadFactory());
+	private DefaultTree twisterTree;
+	private TwisterConfig config;
+
+	@Test
+	public void testConfigPanel() {
+		try {
+			launcher.init();
+			launcher.start();
+			launcher.dispatch();
+			launcher.dispose();
+		}
+		catch (final Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	private class TestThreadFactory implements LauncherThreadFactory<TwisterContext> {
+		public Thread createThread(final TwisterContext context) {
+			final Thread thread = new Thread(new Runnable() {
+				public void run() {
+					try {
+						try {
+							UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
+						}
+						catch (Exception x) {
+							x.printStackTrace();
+						}
+						final TestRenderContext renderContext = new TestRenderContext();
+						final NodeSession session = new TestNodeSesion();
+						twisterTree = new DefaultTree();
+						TwisterConfigBuilder builder = new TwisterConfigBuilder();
+						config = builder.createDefaultConfig();
+						config.setContext(new DefaultConfigContext());
+						final TwisterConfigNodeBuilder nodeBuilder = new TwisterConfigNodeBuilder(config);
+						twisterTree.getRootNode().setContext(config.getContext());
+						twisterTree.getRootNode().setSession(session);
+						nodeBuilder.createNodes(twisterTree.getRootNode());
+						final ConfigFrame frame = new ConfigFrame(new TestTwisterConfigContext(renderContext), config, renderContext, session);
+						frame.addWindowListener(new WindowAdapter() {
+							@Override
+							public void windowClosing(final WindowEvent e) {
+								context.exit();
+							}
+						});
+						SwingUtilities.invokeLater(new Runnable() {
+							public void run() {
+								frame.setVisible(true);
+							}
+						});
+						SwingUtilities.invokeLater(new Runnable() {
+							public void run() {
+								frame.setup();
+							}
+						});
+					}
+					catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			});
+			return thread;
+		}
+	}
+
+	private class TestTwisterConfigContext implements TwisterConfigContext {
+		private RenderContext renderContext;
+
+		public TestTwisterConfigContext(TestRenderContext renderContext) {
+			this.renderContext = renderContext;
+		}
+
+		/**
+		 * @see com.nextbreakpoint.nextfractal.twister.swing.TwisterConfigContext#openAdvancedConfigWindow()
+		 */
+		public void openAdvancedConfigWindow() {
+		}
+
+		/**
+		 * @see com.nextbreakpoint.nextfractal.twister.swing.TwisterConfigContext#executeScript(java.io.File)
+		 */
+		public void executeScript(File scriptFile) throws JSException {
+			JSManager.execute(renderContext, new TestJSContext(), twisterTree.getRootNode(), scriptFile.getParentFile(), scriptFile);
+		}
+	}
+
+	private class TestJSContext extends DefaultJSContext {
+		/**
+		 * @see com.nextbreakpoint.nextfractal.core.scripting.JSContext#loadDefaultConfig()
+		 */
+		public void loadDefaultConfig() {
+		}
+	}
+
+	private class TestTwisterContext implements TwisterContext {
+		/**
+		 * @see com.nextbreakpoint.nextfractal.twister.swing.TwisterContext#addFrame(javax.swing.JFrame)
+		 */
+		public void addFrame(final JFrame frame) {
+		}
+
+		/**
+		 * @see com.nextbreakpoint.nextfractal.twister.swing.TwisterContext#exit()
+		 */
+		public void exit() {
+			launcher.stop();
+		}
+
+		/**
+		 * @see com.nextbreakpoint.nextfractal.twister.swing.TwisterContext#getFrameCount()
+		 */
+		public int getFrameCount() {
+			return 0;
+		}
+
+		/**
+		 * @see com.nextbreakpoint.nextfractal.twister.swing.TwisterContext#removeFrame(javax.swing.JFrame)
+		 */
+		public void removeFrame(final JFrame frame) {
+		}
+
+		/**
+		 * @see com.nextbreakpoint.nextfractal.twister.swing.TwisterContext#restart()
+		 */
+		public void restart() {
+			launcher.stop();
+		}
+
+		/**
+		 * @see com.nextbreakpoint.nextfractal.launcher.LauncherContext#setContextListener(com.nextbreakpoint.nextfractal.launcher.LauncherContextListener)
+		 */
+		public void setContextListener(final LauncherContextListener listener) {
+		}
+	}
+
+	private class TestRenderContext implements RenderContext {
+		/**
+		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#startRenderers()
+		 */
+		public void startRenderers() {
+		}
+
+		/**
+		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#stopRenderers()
+		 */
+		public void stopRenderers() {
+		}
+
+		/**
+		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#getImageSize()
+		 */
+		public IntegerVector2D getImageSize() {
+			return new IntegerVector2D(100, 100);
+		}
+
+		/**
+		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#refresh()
+		 */
+		public void refresh() {
+		}
+
+		/**
+		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#acquire()
+		 */
+		public void acquire() throws InterruptedException {
+		}
+
+		/**
+		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#release()
+		 */
+		public void release() {
+		}
+
+		/**
+		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#addRenderContextListener(com.nextbreakpoint.nextfractal.core.util.RenderContextListener)
+		 */
+		public void addRenderContextListener(RenderContextListener listener) {
+		}
+
+		/**
+		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#removeRenderContextListener(com.nextbreakpoint.nextfractal.core.util.RenderContextListener)
+		 */
+		public void removeRenderContextListener(RenderContextListener listener) {
+		}
+	}
+
+	private class TestNodeSesion implements NodeSession {
+		/**
+		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeSession#appendAction(com.nextbreakpoint.nextfractal.core.tree.NodeAction)
+		 */
+		public void appendAction(final NodeAction action) {
+			System.out.println(action);
+		}
+
+		/**
+		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeSession#getActions()
+		 */
+		public List<NodeAction> getActions() {
+			return null;
+		}
+
+		/**
+		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeSession#getSessionName()
+		 */
+		public String getSessionName() {
+			return "Test";
+		}
+
+		/**
+		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeSession#getTimestamp()
+		 */
+		public long getTimestamp() {
+			return 0;
+		}
+
+		/**
+		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeSession#isAcceptImmediatly()
+		 */
+		public boolean isAcceptImmediatly() {
+			return true;
+		}
+
+		/**
+		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeSession#setAcceptImmediatly(boolean)
+		 */
+		public void setAcceptImmediatly(final boolean isApplyImmediatly) {
+		}
+
+		/**
+		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeSession#setTimestamp(long)
+		 */
+		public void setTimestamp(final long timestamp) {
+			System.out.println("Timestamp = " + timestamp);
+		}
+
+		public void fireSessionAccepted() {
+		}
+
+		public void fireSessionCancelled() {
+		}
+
+		public void fireSessionChanged() {
+		}
+
+		public void addSessionListener(NodeSessionListener listener) {
+		}
+
+		public void removeSessionListener(NodeSessionListener listener) {
+		}
+	}
+}

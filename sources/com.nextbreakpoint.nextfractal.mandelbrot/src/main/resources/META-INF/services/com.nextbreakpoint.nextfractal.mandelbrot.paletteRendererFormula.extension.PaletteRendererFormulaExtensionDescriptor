@@ -1,0 +1,7 @@
+com.nextbreakpoint.nextfractal.mandelbrot.extensions.paletteRendererFormula.BINDescriptor
+com.nextbreakpoint.nextfractal.mandelbrot.extensions.paletteRendererFormula.SQRTDescriptor
+com.nextbreakpoint.nextfractal.mandelbrot.extensions.paletteRendererFormula.SINDescriptor
+com.nextbreakpoint.nextfractal.mandelbrot.extensions.paletteRendererFormula.COSDescriptor
+com.nextbreakpoint.nextfractal.mandelbrot.extensions.paletteRendererFormula.SQRDescriptor
+com.nextbreakpoint.nextfractal.mandelbrot.extensions.paletteRendererFormula.LINDescriptor
+com.nextbreakpoint.nextfractal.mandelbrot.extensions.paletteRendererFormula.LOGDescriptor

@@ -1,0 +1,3 @@
+com.nextbreakpoint.nextfractal.mandelbrot.extensions.colorRenderer.COSDescriptor
+com.nextbreakpoint.nextfractal.mandelbrot.extensions.colorRenderer.SINDescriptor
+com.nextbreakpoint.nextfractal.mandelbrot.extensions.colorRenderer.ConstantDescriptor

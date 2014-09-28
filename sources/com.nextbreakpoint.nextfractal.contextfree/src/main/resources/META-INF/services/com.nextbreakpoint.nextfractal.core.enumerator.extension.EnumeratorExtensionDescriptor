@@ -1,0 +1,5 @@
+com.nextbreakpoint.nextfractal.contextfree.extensions.enumerator.PathReplacementEnumeratorDescriptor
+com.nextbreakpoint.nextfractal.contextfree.extensions.enumerator.PathAdjustmentEnumeratorDescriptor
+com.nextbreakpoint.nextfractal.contextfree.extensions.enumerator.ShapeAdjustmentEnumeratorDescriptor
+com.nextbreakpoint.nextfractal.contextfree.extensions.enumerator.FigureEnumeratorDescriptor
+com.nextbreakpoint.nextfractal.contextfree.extensions.enumerator.ShapeReplacementEnumeratorDescriptor

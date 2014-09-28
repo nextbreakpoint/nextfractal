@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="NextFractal" default="build">
+	<property environment="env" />
+	<property name="maven.home" value="${env.M2_HOME}" />
+	<property name="nextfractal.version" value="6.2.0" />
+	<property name="ffmpeg4java.version" value="0.1.2" />
+	<property name="freeimage4java.version" value="0.1.1" />
+	<macrodef name="maven">
+		<attribute name="options" default="" />
+		<attribute name="goal" />
+		<attribute name="basedir" />
+		<attribute name="resultproperty" default="maven.result" />
+		<element name="args" implicit="true" optional="true" />
+		<sequential>
+			<java classname="org.codehaus.classworlds.Launcher" fork="true" dir="@{basedir}" resultproperty="@{resultproperty}">
+				<jvmarg value="-Xmx512m" />
+				<classpath>
+					<fileset dir="${maven.home}/boot">
+						<include name="*.jar" />
+					</fileset>
+					<fileset dir="${maven.home}/lib">
+						<include name="*.jar" />
+					</fileset>
+				</classpath>
+				<sysproperty key="classworlds.conf" value="${maven.home}/bin/m2.conf" />
+				<sysproperty key="maven.home" value="${maven.home}" />
+				<arg line="--batch-mode @{options} @{goal}" />
+			</java>
+		</sequential>
+	</macrodef>
+	<macrodef name="build">
+		<attribute name="os" />
+		<attribute name="arch" />
+		<attribute name="version" />
+		<attribute name="basedir" />
+		<attribute name="resultproperty" default="build.result" />
+		<element name="args" implicit="true" optional="true" />
+		<sequential>
+			<maven basedir="${basedir}" options="-P @{os}_@{arch}" goal="install" resultproperty="maven.build.result" />
+			<delete dir="${basedir}/dist/@{os}_@{arch}" />
+			<mkdir dir="${basedir}/dist/@{os}_@{arch}/plugins" />
+			<mkdir dir="${basedir}/dist/@{os}_@{arch}/jars" />
+			<mkdir dir="${basedir}/dist/@{os}_@{arch}/lib" />
+			<copy failonerror="true" todir="${basedir}/dist/@{os}_@{arch}/lib" overwrite="true">
+				<fileset dir="${basedir}/target/lib/@{os}/@{arch}">
+					<include name="*" />
+				</fileset>
+			</copy>
+			<copy failonerror="true" todir="${basedir}/dist/@{os}_@{arch}" overwrite="true">
+				<fileset dir="${basedir}/target">
+					<include name="jars/*" />
+				</fileset>
+				<fileset dir="${basedir}/resources/exe/@{os}">
+					<include name="**/*" />
+				</fileset>
+				<fileset dir="${basedir}/resources">
+					<include name="examples/*" />
+				</fileset>
+				<fileset dir="${basedir}/resources">
+					<include name="scripts/*" />
+				</fileset>
+				<fileset dir="${basedir}/resources">
+					<include name="thirdparties/**/*" />
+				</fileset>
+				<fileset dir="${basedir}/resources">
+					<include name="*.html" />
+				</fileset>
+				<fileset dir="${basedir}/resources">
+					<include name="*.txt" />
+				</fileset>
+			</copy>
+		</sequential>
+	</macrodef>
+	<macrodef name="makedmg">
+		<attribute name="os" />
+		<attribute name="arch" />
+		<attribute name="version" />
+		<attribute name="basedir" />
+		<attribute name="resultproperty" default="makedmg.result" />
+		<element name="args" implicit="true" optional="true" />
+		<sequential>
+			<chmod failonerror="true" perm="aug+x" file="${basedir}/dist/@{os}_@{arch}/NextFractal.app/Contents/MacOS/Application Stub" />
+			<exec executable="find">
+				<arg value="${basedir}/dist/@{os}_@{arch}" />
+				<arg value="-name" />
+				<arg value=".DS_Store" />
+				<arg value='-delete' />
+			</exec>
+			<delete file="${basedir}/dist/nextfractal_@{os}_@{arch}_@{version}.dmg" />
+			<exec executable="hdiutil">
+				<arg value="create" />
+				<arg value="${basedir}/dist/nextfractal_@{os}_@{arch}_@{version}.dmg" />
+				<arg value="-volname" />
+				<arg value="NextFractal @{version}" />
+				<arg value="-fs" />
+				<arg value="HFS+" />
+				<arg value="-srcfolder" />
+				<arg value="${basedir}/dist/@{os}_@{arch}" />
+			</exec>
+		</sequential>
+	</macrodef>
+	<macrodef name="makezip">
+		<attribute name="os" />
+		<attribute name="arch" />
+		<attribute name="version" />
+		<attribute name="basedir" />
+		<attribute name="resultproperty" default="makezip.result" />
+		<element name="args" implicit="true" optional="true" />
+		<sequential>
+			<zip destfile="${basedir}/dist/nextfractal_@{os}_@{arch}_@{version}.zip">
+				<fileset dir="${basedir}/dist/@{os}_@{arch}">
+					<include name="**/*" />
+					<exclude name="**/.DS_store" />
+				</fileset>
+			</zip>
+		</sequential>
+	</macrodef>
+	<macrodef name="makelibjar">
+		<attribute name="name" />
+		<attribute name="os" />
+		<attribute name="arch" />
+		<attribute name="version" />
+		<attribute name="basedir" />
+		<attribute name="resultproperty" default="makelibjar.result" />
+		<element name="args" implicit="true" optional="true" />
+		<sequential>
+			<zip destfile="${basedir}/dist/@{name}.native-@{version}-@{os}_@{arch}.jar">
+				<fileset dir="${basedir}/resources/lib/@{name}/@{os}/@{arch}">
+					<include name="**/*" />
+					<exclude name="**/.DS_store" />
+				</fileset>
+			</zip>
+		</sequential>
+	</macrodef>
+	<macrodef name="installjar">
+		<attribute name="name" />
+		<attribute name="version" />
+		<attribute name="basedir" />
+		<attribute name="resultproperty" default="installjar.result" />
+		<element name="args" implicit="true" optional="true" />
+		<sequential>
+			<maven basedir="${basedir}" options="-Dpackaging=jar -DgroupId=@{name} -DartifactId=@{name} -Dversion=@{version} -Dfile=${basedir}/dist/@{name}-@{version}.jar" goal="install:install-file" resultproperty="maven.installjar.result" />
+		</sequential>
+	</macrodef>
+	<macrodef name="installlibjar">
+		<attribute name="name" />
+		<attribute name="os" />
+		<attribute name="arch" />
+		<attribute name="version" />
+		<attribute name="basedir" />
+		<attribute name="resultproperty" default="installlibjar.result" />
+		<element name="args" implicit="true" optional="true" />
+		<sequential>
+			<maven basedir="${basedir}" options="-Dpackaging=jar -DgroupId=@{name} -DartifactId=@{name}.native -Dversion=@{version} -Dclassifier=@{os}_@{arch} -Dfile=${basedir}/dist/@{name}.native-@{version}-@{os}_@{arch}.jar" goal="install:install-file" resultproperty="maven.installlibjar.result" />
+		</sequential>
+	</macrodef>
+	<condition property="is_macosx">
+		<os family="mac" />
+	</condition>
+	<target name="build-macosx-32bit" if="is_macosx">
+		<!-- osx 32bit -->
+		<build basedir="${basedir}" os="macosx" arch="x86" version="${nextfractal.version}" resultproperty="ant.build.result" />
+		<makedmg basedir="${basedir}" os="macosx" arch="x86" version="${nextfractal.version}" resultproperty="ant.makedmg.result" />
+	</target>
+	<target name="build-win32-32bit">
+		<!-- win32 32bit -->
+		<build basedir="${basedir}" os="win32" arch="x86" version="${nextfractal.version}" resultproperty="ant.build.result" />
+		<makezip basedir="${basedir}" os="win32" arch="x86" version="${nextfractal.version}" resultproperty="ant.makezip.result" />
+	</target>
+	<target name="build-linux-32bit">
+		<!-- linux 32bit -->
+		<build basedir="${basedir}" os="linux" arch="x86" version="${nextfractal.version}" resultproperty="ant.build.result" />
+		<makezip basedir="${basedir}" os="linux" arch="x86" version="${nextfractal.version}" resultproperty="ant.makezip.result" />
+	</target>
+	<target name="build-macosx-64bit" if="is_macosx">
+		<!-- osx 64bit -->
+		<build basedir="${basedir}" os="macosx" arch="x86_64" version="${nextfractal.version}" resultproperty="ant.build.result" />
+		<makedmg basedir="${basedir}" os="macosx" arch="x86_64" version="${nextfractal.version}" resultproperty="ant.makedmg.result" />
+	</target>
+	<target name="build-win32-64bit">
+		<!-- win32 64bit -->
+		<build basedir="${basedir}" os="win32" arch="x86_64" version="${nextfractal.version}" resultproperty="ant.build.result" />
+		<makezip basedir="${basedir}" os="win32" arch="x86_64" version="${nextfractal.version}" resultproperty="ant.makezip.result" />
+	</target>
+	<target name="build-linux-64bit">
+		<!-- linux 64bit -->
+		<build basedir="${basedir}" os="linux" arch="x86_64" version="${nextfractal.version}" resultproperty="ant.build.result" />
+		<makezip basedir="${basedir}" os="linux" arch="x86_64" version="${nextfractal.version}" resultproperty="ant.makezip.result" />
+	</target>
+	<target name="-clear">
+		<delete dir="${basedir}/dist" />
+		<mkdir dir="${basedir}/dist" />
+	</target>
+	<target name="-ffmpeg4java">
+		<makelibjar basedir="${basedir}" name="net.sf.ffmpeg4java" os="macosx" arch="x86" version="${ffmpeg4java.version}" resultproperty="ant.makelibjar.result" />
+		<makelibjar basedir="${basedir}" name="net.sf.ffmpeg4java" os="macosx" arch="x86_64" version="${ffmpeg4java.version}" resultproperty="ant.makelibjar.result" />
+		<makelibjar basedir="${basedir}" name="net.sf.ffmpeg4java" os="win32" arch="x86" version="${ffmpeg4java.version}" resultproperty="ant.makelibjar.result" />
+		<makelibjar basedir="${basedir}" name="net.sf.ffmpeg4java" os="win32" arch="x86_64" version="${ffmpeg4java.version}" resultproperty="ant.makelibjar.result" />
+		<makelibjar basedir="${basedir}" name="net.sf.ffmpeg4java" os="linux" arch="x86" version="${ffmpeg4java.version}" resultproperty="ant.makelibjar.result" />
+		<makelibjar basedir="${basedir}" name="net.sf.ffmpeg4java" os="linux" arch="x86_64" version="${ffmpeg4java.version}" resultproperty="ant.makelibjar.result" />
+		<copy tofile="${basedir}/dist/net.sf.ffmpeg4java-${ffmpeg4java.version}.jar">
+			<fileset file="${basedir}/resources/lib/net.sf.ffmpeg4java/ffmpeg4java.jar" />
+		</copy>
+		<installjar basedir="${basedir}" name="net.sf.ffmpeg4java" version="${ffmpeg4java.version}" resultproperty="ant.installjar.result" />
+		<installlibjar basedir="${basedir}" name="net.sf.ffmpeg4java" os="macosx" arch="x86" version="${ffmpeg4java.version}" resultproperty="ant.installlibjar.result" />
+		<installlibjar basedir="${basedir}" name="net.sf.ffmpeg4java" os="macosx" arch="x86_64" version="${ffmpeg4java.version}" resultproperty="ant.installlibjar.result" />
+		<installlibjar basedir="${basedir}" name="net.sf.ffmpeg4java" os="win32" arch="x86" version="${ffmpeg4java.version}" resultproperty="ant.installlibjar.result" />
+		<installlibjar basedir="${basedir}" name="net.sf.ffmpeg4java" os="win32" arch="x86_64" version="${ffmpeg4java.version}" resultproperty="ant.installlibjar.result" />
+		<installlibjar basedir="${basedir}" name="net.sf.ffmpeg4java" os="linux" arch="x86" version="${ffmpeg4java.version}" resultproperty="ant.installlibjar.result" />
+		<installlibjar basedir="${basedir}" name="net.sf.ffmpeg4java" os="linux" arch="x86_64" version="${ffmpeg4java.version}" resultproperty="ant.installlibjar.result" />
+	</target>
+	<target name="-freeimage4java">
+		<makelibjar basedir="${basedir}" name="net.sf.freeimage4java" os="macosx" arch="x86" version="${freeimage4java.version}" resultproperty="ant.makelibjar.result" />
+		<makelibjar basedir="${basedir}" name="net.sf.freeimage4java" os="macosx" arch="x86_64" version="${freeimage4java.version}" resultproperty="ant.makelibjar.result" />
+		<makelibjar basedir="${basedir}" name="net.sf.freeimage4java" os="win32" arch="x86" version="${freeimage4java.version}" resultproperty="ant.makelibjar.result" />
+		<makelibjar basedir="${basedir}" name="net.sf.freeimage4java" os="win32" arch="x86_64" version="${freeimage4java.version}" resultproperty="ant.makelibjar.result" />
+		<makelibjar basedir="${basedir}" name="net.sf.freeimage4java" os="linux" arch="x86" version="${freeimage4java.version}" resultproperty="ant.makelibjar.result" />
+		<makelibjar basedir="${basedir}" name="net.sf.freeimage4java" os="linux" arch="x86_64" version="${freeimage4java.version}" resultproperty="ant.makelibjar.result" />
+		<copy tofile="${basedir}/dist/net.sf.freeimage4java-${freeimage4java.version}.jar">
+			<fileset file="${basedir}/resources/lib/net.sf.freeimage4java/freeimage4java.jar" />
+		</copy>
+		<installjar basedir="${basedir}" name="net.sf.freeimage4java" version="${freeimage4java.version}" resultproperty="ant.installjar.result" />
+		<installlibjar basedir="${basedir}" name="net.sf.freeimage4java" os="macosx" arch="x86" version="${freeimage4java.version}" resultproperty="ant.installlibjar.result" />
+		<installlibjar basedir="${basedir}" name="net.sf.freeimage4java" os="macosx" arch="x86_64" version="${freeimage4java.version}" resultproperty="ant.installlibjar.result" />
+		<installlibjar basedir="${basedir}" name="net.sf.freeimage4java" os="win32" arch="x86" version="${freeimage4java.version}" resultproperty="ant.installlibjar.result" />
+		<installlibjar basedir="${basedir}" name="net.sf.freeimage4java" os="win32" arch="x86_64" version="${freeimage4java.version}" resultproperty="ant.installlibjar.result" />
+		<installlibjar basedir="${basedir}" name="net.sf.freeimage4java" os="linux" arch="x86" version="${freeimage4java.version}" resultproperty="ant.installlibjar.result" />
+		<installlibjar basedir="${basedir}" name="net.sf.freeimage4java" os="linux" arch="x86_64" version="${freeimage4java.version}" resultproperty="ant.installlibjar.result" />
+	</target>
+	<target name="build-macosx" depends="build-macosx-32bit, build-macosx-64bit" if="is_macosx" />
+	<target name="build-win32" depends="build-win32-32bit, build-win32-64bit" />
+	<target name="build-linux" depends="build-linux-32bit, build-linux-64bit" />
+	<target name="build" depends="build-macosx, build-win32, build-linux" />
+	<target name="setup" depends="-clear, -ffmpeg4java, -freeimage4java" />
+	<target name="all" depends="setup, build" />
+</project>

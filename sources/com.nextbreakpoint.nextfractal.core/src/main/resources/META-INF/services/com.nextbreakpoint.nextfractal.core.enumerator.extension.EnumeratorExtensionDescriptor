@@ -1,0 +1,3 @@
+com.nextbreakpoint.nextfractal.core.extensions.enumerator.CreatorEnumeratorDescriptor
+com.nextbreakpoint.nextfractal.core.extensions.enumerator.ConstructorEnumeratorDescriptor
+com.nextbreakpoint.nextfractal.core.extensions.enumerator.EnumeratorEnumeratorDescriptor
