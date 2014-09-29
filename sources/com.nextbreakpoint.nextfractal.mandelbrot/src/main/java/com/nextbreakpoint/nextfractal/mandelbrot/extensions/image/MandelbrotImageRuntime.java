@@ -294,28 +294,28 @@ public class MandelbrotImageRuntime extends ImageExtensionRuntime<MandelbrotImag
 		 * @param tile
 		 */
 		public DefaultRendererStrategy(final Tile tile) {
-//XXX			if (hints.get(TwisterRenderingHints.KEY_QUALITY) == TwisterRenderingHints.QUALITY_REALTIME) {
-//				if (hints.get(TwisterRenderingHints.KEY_TYPE) == TwisterRenderingHints.TYPE_PREVIEW) {
-//					if (hints.get(TwisterRenderingHints.KEY_MEMORY) == TwisterRenderingHints.MEMORY_LOW) {
-//						manager = new MandelbrotManager(new FastXaosMandelbrotRenderer(Thread.MIN_PRIORITY));
-//					}
-//					else {
-//						manager = new MandelbrotManager(new BestXaosMandelbrotRenderer(Thread.MIN_PRIORITY));
-//					}
-//				}
-//				else {
-//					if (hints.get(TwisterRenderingHints.KEY_MEMORY) == TwisterRenderingHints.MEMORY_LOW) {
-//						manager = new MandelbrotManager(new FastXaosMandelbrotRenderer(Thread.MIN_PRIORITY + 2));
-//					}
-//					else {
-//						manager = new MandelbrotManager(new BestXaosMandelbrotRenderer(Thread.MIN_PRIORITY + 2));
-//					}
-//				}
-//			}
-//			else {
-//				manager = new MandelbrotManager(new SimpleMandelbrotRenderer(Thread.MIN_PRIORITY + 1));
-//			}
-			manager = new MandelbrotManager(new SimpleMandelbrotRenderer(Thread.MIN_PRIORITY + 1));
+			if (hints.get(TwisterRenderingHints.KEY_QUALITY) == TwisterRenderingHints.QUALITY_REALTIME) {
+				if (hints.get(TwisterRenderingHints.KEY_TYPE) == TwisterRenderingHints.TYPE_PREVIEW) {
+					if (hints.get(TwisterRenderingHints.KEY_MEMORY) == TwisterRenderingHints.MEMORY_LOW) {
+						manager = new MandelbrotManager(new FastXaosMandelbrotRenderer(Thread.MIN_PRIORITY));
+					}
+					else {
+						manager = new MandelbrotManager(new BestXaosMandelbrotRenderer(Thread.MIN_PRIORITY));
+					}
+				}
+				else {
+					if (hints.get(TwisterRenderingHints.KEY_MEMORY) == TwisterRenderingHints.MEMORY_LOW) {
+						manager = new MandelbrotManager(new FastXaosMandelbrotRenderer(Thread.MIN_PRIORITY + 2));
+					}
+					else {
+						manager = new MandelbrotManager(new BestXaosMandelbrotRenderer(Thread.MIN_PRIORITY + 2));
+					}
+				}
+			}
+			else {
+				manager = new MandelbrotManager(new SimpleMandelbrotRenderer(Thread.MIN_PRIORITY + 1));
+			}
+//			manager = new MandelbrotManager(new SimpleMandelbrotRenderer(Thread.MIN_PRIORITY + 1));
 			manager.setRenderingHints(hints);
 			manager.setRuntime(mandelbrotRuntime);
 			loadConfig();
@@ -468,28 +468,28 @@ public class MandelbrotImageRuntime extends ImageExtensionRuntime<MandelbrotImag
 		 * @param tile
 		 */
 		public OverlayRendererStrategy(final Tile tile) {
-//XXX			if (hints.get(TwisterRenderingHints.KEY_QUALITY) == TwisterRenderingHints.QUALITY_REALTIME) {
-//				if (hints.get(TwisterRenderingHints.KEY_TYPE) == TwisterRenderingHints.TYPE_PREVIEW) {
-//					if (hints.get(TwisterRenderingHints.KEY_MEMORY) == TwisterRenderingHints.MEMORY_LOW) {
-//						manager = new MandelbrotManager(new FastXaosMandelbrotRenderer(Thread.MIN_PRIORITY));
-//					}
-//					else {
-//						manager = new MandelbrotManager(new BestXaosMandelbrotRenderer(Thread.MIN_PRIORITY));
-//					}
-//				}
-//				else {
-//					if (hints.get(TwisterRenderingHints.KEY_MEMORY) == TwisterRenderingHints.MEMORY_LOW) {
-//						manager = new MandelbrotManager(new FastXaosMandelbrotRenderer(Thread.MIN_PRIORITY + 2));
-//					}
-//					else {
-//						manager = new MandelbrotManager(new BestXaosMandelbrotRenderer(Thread.MIN_PRIORITY + 2));
-//					}
-//				}
-//			}
-//			else {
-//				manager = new MandelbrotManager(new SimpleMandelbrotRenderer(Thread.MIN_PRIORITY + 1));
-//			}
-			manager = new MandelbrotManager(new SimpleMandelbrotRenderer(Thread.MIN_PRIORITY + 1));
+			if (hints.get(TwisterRenderingHints.KEY_QUALITY) == TwisterRenderingHints.QUALITY_REALTIME) {
+				if (hints.get(TwisterRenderingHints.KEY_TYPE) == TwisterRenderingHints.TYPE_PREVIEW) {
+					if (hints.get(TwisterRenderingHints.KEY_MEMORY) == TwisterRenderingHints.MEMORY_LOW) {
+						manager = new MandelbrotManager(new FastXaosMandelbrotRenderer(Thread.MIN_PRIORITY));
+					}
+					else {
+						manager = new MandelbrotManager(new BestXaosMandelbrotRenderer(Thread.MIN_PRIORITY));
+					}
+				}
+				else {
+					if (hints.get(TwisterRenderingHints.KEY_MEMORY) == TwisterRenderingHints.MEMORY_LOW) {
+						manager = new MandelbrotManager(new FastXaosMandelbrotRenderer(Thread.MIN_PRIORITY + 2));
+					}
+					else {
+						manager = new MandelbrotManager(new BestXaosMandelbrotRenderer(Thread.MIN_PRIORITY + 2));
+					}
+				}
+			}
+			else {
+				manager = new MandelbrotManager(new SimpleMandelbrotRenderer(Thread.MIN_PRIORITY + 1));
+			}
+//			manager = new MandelbrotManager(new SimpleMandelbrotRenderer(Thread.MIN_PRIORITY + 1));
 			manager.setRenderingHints(hints);
 			manager.setRuntime(mandelbrotRuntime);
 			loadConfig();

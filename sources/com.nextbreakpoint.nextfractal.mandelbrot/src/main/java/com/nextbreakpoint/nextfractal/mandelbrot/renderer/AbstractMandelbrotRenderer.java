@@ -379,7 +379,7 @@ public abstract class AbstractMandelbrotRenderer implements MandelbrotRenderer {
 		}
 		percent = 0;
 		status = TwisterRenderer.STATUS_RENDERING;
-		//XXX doRender(dynamicZoom);
+		doRender(dynamicZoom);
 		if (percent == 100) {
 			status = TwisterRenderer.STATUS_TERMINATED;
 		}

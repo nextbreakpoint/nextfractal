@@ -711,10 +711,10 @@ public class TwisterCanvas extends Canvas implements RenderContext {
 							surface = null;
 						}
 						for (final TwisterRenderer renderer : renderers) {
-							//XXX renderer.drawImage(g);
+							renderer.drawImage(g);
 						}
 					}
-					//XXX overlayRenderer.drawImage(g);
+					overlayRenderer.drawImage(g);
 					for (RenderContextListener listener : contextListeners) {
 						listener.drawImage();
 					}
@@ -992,11 +992,11 @@ public class TwisterCanvas extends Canvas implements RenderContext {
 		synchronized (contextListeners) {
 			if (renderers != null) {
 				for (final TwisterRenderer renderer : renderers) {
-					//XXX renderer.startRenderer();
+					renderer.startRenderer();
 				}
 			}
 			if (overlayRenderer != null) {
-				//XXX overlayRenderer.startRenderer();
+				overlayRenderer.startRenderer();
 			}
 			for (RenderContextListener listener : contextListeners) {
 				listener.startRenderer();
