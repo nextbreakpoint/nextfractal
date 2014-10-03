@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -118,6 +118,7 @@ public abstract class AbstractLayerRuntimeElement extends RuntimeElement impleme
 	 * 
 	 * @return the layer opacity.
 	 */
+	@Override
 	public float getOpacity() {
 		return opacity;
 	}
@@ -131,6 +132,7 @@ public abstract class AbstractLayerRuntimeElement extends RuntimeElement impleme
 	 * 
 	 * @return true if the layer is locked.
 	 */
+	@Override
 	public boolean isLocked() {
 		return locked;
 	}
@@ -144,6 +146,7 @@ public abstract class AbstractLayerRuntimeElement extends RuntimeElement impleme
 	 * 
 	 * @return true if the layer is visible.
 	 */
+	@Override
 	public boolean isVisible() {
 		return visible;
 	}
@@ -158,6 +161,7 @@ public abstract class AbstractLayerRuntimeElement extends RuntimeElement impleme
 	 * @param index the filter index.
 	 * @return the filter.
 	 */
+	@Override
 	public LayerFilterRuntimeElement getFilter(final int index) {
 		return filterListElement.getElement(index);
 	}
@@ -168,6 +172,7 @@ public abstract class AbstractLayerRuntimeElement extends RuntimeElement impleme
 	 * @param filter the filter.
 	 * @return the index.
 	 */
+	@Override
 	public int indexOfFilter(final LayerFilterRuntimeElement filter) {
 		return filterListElement.indexOfElement(filter);
 	}
@@ -177,6 +182,7 @@ public abstract class AbstractLayerRuntimeElement extends RuntimeElement impleme
 	 * 
 	 * @return the number of filters.
 	 */
+	@Override
 	public int getFilterCount() {
 		return filterListElement.getElementCount();
 	}
@@ -223,6 +229,7 @@ public abstract class AbstractLayerRuntimeElement extends RuntimeElement impleme
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
 		 */
+		@Override
 		public void valueChanged(final ValueChangeEvent e) {
 			switch (e.getEventType()) {
 				case ListConfigElement.ELEMENT_ADDED: {
@@ -271,6 +278,7 @@ public abstract class AbstractLayerRuntimeElement extends RuntimeElement impleme
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
 		 */
+		@Override
 		public void valueChanged(final ValueChangeEvent e) {
 			switch (e.getEventType()) {
 				case ValueConfigElement.VALUE_CHANGED: {
@@ -289,6 +297,7 @@ public abstract class AbstractLayerRuntimeElement extends RuntimeElement impleme
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
 		 */
+		@Override
 		public void valueChanged(final ValueChangeEvent e) {
 			switch (e.getEventType()) {
 				case ValueConfigElement.VALUE_CHANGED: {
@@ -307,6 +316,7 @@ public abstract class AbstractLayerRuntimeElement extends RuntimeElement impleme
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
 		 */
+		@Override
 		public void valueChanged(final ValueChangeEvent e) {
 			switch (e.getEventType()) {
 				case ValueConfigElement.VALUE_CHANGED: {

@@ -32,6 +32,7 @@ public class StrokeCapElement extends ValueConfigElement<String> {
 	/**
 	 *
 	 */
+	@Override
 	public void copyFrom(ConfigElement source) {
 		StrokeCapElement element = (StrokeCapElement) source;
 		setValue(element.getValue());

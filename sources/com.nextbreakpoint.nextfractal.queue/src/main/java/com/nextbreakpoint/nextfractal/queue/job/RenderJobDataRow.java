@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -51,6 +51,7 @@ public final class RenderJobDataRow implements Serializable, JobData {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobData#getJobId()
 	 */
+	@Override
 	public int getJobId() {
 		return jobId;
 	}
@@ -65,6 +66,7 @@ public final class RenderJobDataRow implements Serializable, JobData {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobData#getProfileId()
 	 */
+	@Override
 	public int getProfileId() {
 		return profileId;
 	}
@@ -79,6 +81,7 @@ public final class RenderJobDataRow implements Serializable, JobData {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobData#getClipId()
 	 */
+	@Override
 	public int getClipId() {
 		return clipId;
 	}
@@ -176,6 +179,7 @@ public final class RenderJobDataRow implements Serializable, JobData {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobData#getBorderHeight()
 	 */
+	@Override
 	public int getBorderHeight() {
 		return job.getBorderHeight();
 	}
@@ -183,6 +187,7 @@ public final class RenderJobDataRow implements Serializable, JobData {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobData#getBorderWidth()
 	 */
+	@Override
 	public int getBorderWidth() {
 		return job.getBorderWidth();
 	}
@@ -198,6 +203,7 @@ public final class RenderJobDataRow implements Serializable, JobData {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobData#getFrameNumber()
 	 */
+	@Override
 	public int getFrameNumber() {
 		return job.getFrameNumber();
 	}
@@ -205,6 +211,7 @@ public final class RenderJobDataRow implements Serializable, JobData {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobData#getFrameRate()
 	 */
+	@Override
 	public int getFrameRate() {
 		return job.getFrameRate();
 	}
@@ -212,6 +219,7 @@ public final class RenderJobDataRow implements Serializable, JobData {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobData#getImageHeight()
 	 */
+	@Override
 	public int getImageHeight() {
 		return job.getImageHeight();
 	}
@@ -219,6 +227,7 @@ public final class RenderJobDataRow implements Serializable, JobData {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobData#getImageWidth()
 	 */
+	@Override
 	public int getImageWidth() {
 		return job.getImageWidth();
 	}
@@ -234,6 +243,7 @@ public final class RenderJobDataRow implements Serializable, JobData {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobData#getQuality()
 	 */
+	@Override
 	public int getQuality() {
 		return job.getQuality();
 	}
@@ -241,6 +251,7 @@ public final class RenderJobDataRow implements Serializable, JobData {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobData#getStartTime()
 	 */
+	@Override
 	public int getStartTime() {
 		return job.getStartTime();
 	}
@@ -248,6 +259,7 @@ public final class RenderJobDataRow implements Serializable, JobData {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobData#getStopTime()
 	 */
+	@Override
 	public int getStopTime() {
 		return job.getStopTime();
 	}
@@ -255,6 +267,7 @@ public final class RenderJobDataRow implements Serializable, JobData {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobData#getTileHeight()
 	 */
+	@Override
 	public int getTileHeight() {
 		return job.getTileHeight();
 	}
@@ -262,6 +275,7 @@ public final class RenderJobDataRow implements Serializable, JobData {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobData#getTileOffsetX()
 	 */
+	@Override
 	public int getTileOffsetX() {
 		return job.getTileOffsetX();
 	}
@@ -269,6 +283,7 @@ public final class RenderJobDataRow implements Serializable, JobData {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobData#getTileOffsetY()
 	 */
+	@Override
 	public int getTileOffsetY() {
 		return job.getTileOffsetY();
 	}
@@ -276,6 +291,7 @@ public final class RenderJobDataRow implements Serializable, JobData {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobData#getTileWidth()
 	 */
+	@Override
 	public int getTileWidth() {
 		return job.getTileWidth();
 	}
@@ -307,6 +323,7 @@ public final class RenderJobDataRow implements Serializable, JobData {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobData#setFrameNumber(int)
 	 */
+	@Override
 	public void setFrameNumber(final int frame) {
 		job.setFrameNumber(frame);
 	}
@@ -423,6 +440,7 @@ public final class RenderJobDataRow implements Serializable, JobData {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobData#getJobType()
 	 */
+	@Override
 	public int getJobType() {
 		return type;
 	}

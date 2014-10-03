@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -26,7 +26,6 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.extensions.incolouringFormula;
 
 import com.nextbreakpoint.nextfractal.core.nodeBuilder.extension.NodeBuilderExtensionDescriptor;
-import com.nextbreakpoint.nextfractal.mandelbrot.extensions.incolouringFormula.BinaryConfigNodeBuilderRuntime;
 
 /**
  * @author Andrea Medeghini
@@ -37,6 +36,7 @@ public class BinaryConfigNodeBuilderDescriptor extends NodeBuilderExtensionDescr
 	 * 
 	 * @return the extensionId.
 	 */
+	@Override
 	public String getExtensionId() {
 		return "twister.mandelbrot.fractal.incolouring.formula.binary";
 	}
@@ -46,6 +46,7 @@ public class BinaryConfigNodeBuilderDescriptor extends NodeBuilderExtensionDescr
 	 * 
 	 * @return the extensionName.
 	 */
+	@Override
 	public String getExtensionName() {
 		return "Z Binary";
 	}
@@ -55,6 +56,7 @@ public class BinaryConfigNodeBuilderDescriptor extends NodeBuilderExtensionDescr
 	 * 
 	 * @return the extensionRuntimeClass.
 	 */
+	@Override
 	public BinaryConfigNodeBuilderRuntime getExtensionRuntime() {
 		return new BinaryConfigNodeBuilderRuntime();
 	}

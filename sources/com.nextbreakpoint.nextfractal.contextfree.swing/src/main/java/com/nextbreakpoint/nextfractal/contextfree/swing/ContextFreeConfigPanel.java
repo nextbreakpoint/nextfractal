@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -32,6 +32,7 @@ import java.awt.Dimension;
 import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.BufferedReader;
@@ -60,6 +61,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
 import javax.swing.undo.UndoManager;
@@ -82,7 +84,6 @@ import com.nextbreakpoint.nextfractal.core.util.DefaultThreadFactory;
 import com.nextbreakpoint.nextfractal.core.util.DoubleVector4D;
 import com.nextbreakpoint.nextfractal.core.util.RenderContext;
 import com.nextbreakpoint.nextfractal.core.util.Worker;
-
 import com.nextbreakpoint.nextfractal.twister.swing.TwisterConfigPanel;
 import com.nextbreakpoint.nextfractal.twister.swing.TwisterSwingResources;
 import com.nextbreakpoint.nextfractal.twister.swing.ViewPanel;
@@ -123,19 +124,23 @@ public class ContextFreeConfigPanel extends ViewPanel {
 		add(imagePanel);
 		setBorder(BorderFactory.createMatteBorder(1, 0, 1, 0, Color.DARK_GRAY));
 		sessionListener = new NodeSessionListener() {
+			@Override
 			public void fireSessionChanged() {
 			}
 			
+			@Override
 			public void fireSessionCancelled() {
 				imagePanel.refreshCFDG();
 			}
 			
+			@Override
 			public void fireSessionAccepted() {
 				imagePanel.refreshCFDG();
 			}
 		};
 		session.addSessionListener(sessionListener);
 		configListener = new ValueChangeListener() {
+			@Override
 			public void valueChanged(final ValueChangeEvent e) {
 				switch (e.getEventType()) {
 					case ValueConfigElement.VALUE_CHANGED: {
@@ -342,7 +347,7 @@ public class ContextFreeConfigPanel extends ViewPanel {
 
 		public ContextFreeImagePanel(final ContextFreeConfig config) {
 			this.config = config;
-			final JLabel editLabel = createTextLabel("drawing", JLabel.LEFT, 200, GUIFactory.DEFAULT_HEIGHT);
+			final JLabel editLabel = createTextLabel("drawing", SwingConstants.LEFT, 200, GUIFactory.DEFAULT_HEIGHT);
 			final JLabel zoomSpeedLabel = createTextLabel("zoomSpeed", SwingConstants.LEFT, 200, GUIFactory.DEFAULT_HEIGHT);
 			final JLabel shiftSpeedLabel = createTextLabel("shiftSpeed", SwingConstants.LEFT, 200, GUIFactory.DEFAULT_HEIGHT);
 			final JLabel rotationSpeedLabel = createTextLabel("rotationSpeed", SwingConstants.LEFT, 200, GUIFactory.DEFAULT_HEIGHT);
@@ -373,8 +378,8 @@ public class ContextFreeConfigPanel extends ViewPanel {
 			editorPane.setText("");
 			editorPane.getDocument().addUndoableEditListener(undoManager);
 			JScrollPane scrollPane = new JScrollPane(editorPane);
-			scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-			scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+			scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+			scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 			JPanel editorPanel = new JPanel(new BorderLayout());
 			editorPanel.setBorder(BorderFactory.createEmptyBorder(0, 4, 0, 4));
 			editorPanel.add(scrollPane, BorderLayout.CENTER);
@@ -438,6 +443,7 @@ public class ContextFreeConfigPanel extends ViewPanel {
 			setBorder(BorderFactory.createEmptyBorder(0, 4, 0, 4));
 			setOpaque(false);
 			final ActionListener zoomSpeedActionListener = new ActionListener() {
+				@Override
 				public void actionPerformed(final ActionEvent e) {
 					try {
 						context.acquire();
@@ -455,6 +461,7 @@ public class ContextFreeConfigPanel extends ViewPanel {
 			};
 			zoomSpeedTextfield.addActionListener(zoomSpeedActionListener);
 			final ActionListener shiftSpeedActionListener = new ActionListener() {
+				@Override
 				public void actionPerformed(final ActionEvent e) {
 					try {
 						context.acquire();
@@ -472,6 +479,7 @@ public class ContextFreeConfigPanel extends ViewPanel {
 			};
 			shiftSpeedTextfield.addActionListener(shiftSpeedActionListener);
 			final ActionListener rotationSpeedActionListener = new ActionListener() {
+				@Override
 				public void actionPerformed(final ActionEvent e) {
 					try {
 						context.acquire();
@@ -489,6 +497,7 @@ public class ContextFreeConfigPanel extends ViewPanel {
 			};
 			rotationSpeedTextfield.addActionListener(rotationSpeedActionListener);
 			final ActionListener variationActionListener = new ActionListener() {
+				@Override
 				public void actionPerformed(final ActionEvent e) {
 					try {
 						context.acquire();
@@ -504,6 +513,7 @@ public class ContextFreeConfigPanel extends ViewPanel {
 			};
 			variationTextField.addActionListener(variationActionListener);
 			final ActionListener baseDirActionListener = new ActionListener() {
+				@Override
 				public void actionPerformed(final ActionEvent e) {
 					try {
 						context.acquire();
@@ -514,6 +524,7 @@ public class ContextFreeConfigPanel extends ViewPanel {
 						} catch (final ContextFreeParserException x) {
 							logger.log(Level.WARNING, ContextFreeSwingResources.getInstance().getString("message.parserError"), x);
 							GUIUtil.executeTask(new Runnable() {
+								@Override
 								public void run() {
 									JTextArea textArea = new JTextArea();
 									textArea.setText(x.getMessage());
@@ -531,6 +542,7 @@ public class ContextFreeConfigPanel extends ViewPanel {
 			};
 			baseDirTextField.addActionListener(baseDirActionListener);
 			final ActionListener loadActionListener = new ActionListener() {
+				@Override
 				public void actionPerformed(final ActionEvent e) {
 					if (chooser == null) {
 						chooser = new JFileChooser();
@@ -547,6 +559,7 @@ public class ContextFreeConfigPanel extends ViewPanel {
 			};
 			loadButton.addActionListener(loadActionListener);
 			final ActionListener saveActionListener = new ActionListener() {
+				@Override
 				public void actionPerformed(final ActionEvent e) {
 					if (chooser == null) {
 						chooser = new JFileChooser();
@@ -563,26 +576,31 @@ public class ContextFreeConfigPanel extends ViewPanel {
 			};
 			saveButton.addActionListener(saveActionListener);
 			final ActionListener renderActionListener = new ActionListener() {
+				@Override
 				public void actionPerformed(final ActionEvent e) {
 					renderConfig(config, editorPane.getText());
 				}
 			};
 			renderButton.addActionListener(renderActionListener);
 			final ActionListener stopActionListener = new ActionListener() {
+				@Override
 				public void actionPerformed(final ActionEvent e) {
 					stopRender();
 				}
 			};
 			stopButton.addActionListener(stopActionListener);
 			final KeyListener keyListener = new KeyListener() {
+				@Override
 				public void keyTyped(KeyEvent e) {
 				}
 				
+				@Override
 				public void keyPressed(KeyEvent e) {
 				}
 				
+				@Override
 				public void keyReleased(KeyEvent e) {
-					if ((e.getModifiersEx() & KeyEvent.CTRL_DOWN_MASK) != 0 || (e.getModifiersEx() & KeyEvent.META_DOWN_MASK) != 0) {
+					if ((e.getModifiersEx() & InputEvent.CTRL_DOWN_MASK) != 0 || (e.getModifiersEx() & InputEvent.META_DOWN_MASK) != 0) {
 						if (e.getKeyCode() == KeyEvent.VK_Z) {
 							if (undoManager.canUndo()) {
 								undoManager.undo();
@@ -597,6 +615,7 @@ public class ContextFreeConfigPanel extends ViewPanel {
 			};
 			editorPane.addKeyListener(keyListener);
 			speedListener = new ValueChangeListener() {
+				@Override
 				public void valueChanged(final ValueChangeEvent e) {
 					zoomSpeedTextfield.removeActionListener(zoomSpeedActionListener);
 					shiftSpeedTextfield.removeActionListener(shiftSpeedActionListener);
@@ -611,6 +630,7 @@ public class ContextFreeConfigPanel extends ViewPanel {
 			};
 			config.getSpeedElement().addChangeListener(speedListener);
 			GUIUtil.executeTask(new Runnable() {
+				@Override
 				public void run() {
 					refreshCFDG();
 					revalidate();
@@ -638,11 +658,13 @@ public class ContextFreeConfigPanel extends ViewPanel {
 
 		public void refreshCFDG() {
 			GUIUtil.executeTask(new Runnable() {
+				@Override
 				public void run() {
 					disableButtons();
 				}
 			}, false);
 			worker.addTask(new Runnable() {
+				@Override
 				public void run() {
 					final CFDGBuilder builder = new CFDGBuilder();
 					try {
@@ -654,6 +676,7 @@ public class ContextFreeConfigPanel extends ViewPanel {
 						Thread.currentThread().interrupt();
 					} finally {
 						GUIUtil.executeTask(new Runnable() {
+							@Override
 							public void run() {
 								editorPane.setText(builder.toString());
 								variationTextField.setText(config.getCFDG().getVariation());
@@ -668,12 +691,14 @@ public class ContextFreeConfigPanel extends ViewPanel {
 		private void renderConfig(final ContextFreeConfig config, final String text) {
 			final String[] variation = new String[1];
 			GUIUtil.executeTask(new Runnable() {
+				@Override
 				public void run() {
 					variation[0] = variationTextField.getText();
 					disableButtons();
 				}
 			}, false);
 			worker.addTask(new Runnable() {
+				@Override
 				public void run() {
 					try {
 						context.acquire();
@@ -684,6 +709,7 @@ public class ContextFreeConfigPanel extends ViewPanel {
 						} catch (final Exception e) {
 							logger.log(Level.WARNING, ContextFreeSwingResources.getInstance().getString("message.parserError"), e);
 							GUIUtil.executeTask(new Runnable() {
+								@Override
 								public void run() {
 									JTextArea textArea = new JTextArea();
 									textArea.setText(e.getMessage());
@@ -699,6 +725,7 @@ public class ContextFreeConfigPanel extends ViewPanel {
 						Thread.currentThread().interrupt();
 					} finally {
 						GUIUtil.executeTask(new Runnable() {
+							@Override
 							public void run() {
 								enableButtons();
 							}
@@ -710,11 +737,13 @@ public class ContextFreeConfigPanel extends ViewPanel {
 
 		private void stopRender() {
 			GUIUtil.executeTask(new Runnable() {
+				@Override
 				public void run() {
 					disableButtons();
 				}
 			}, false);
 			worker.addTask(new Runnable() {
+				@Override
 				public void run() {
 					try {
 						context.acquire();
@@ -725,6 +754,7 @@ public class ContextFreeConfigPanel extends ViewPanel {
 						Thread.currentThread().interrupt();
 					} finally {
 						GUIUtil.executeTask(new Runnable() {
+							@Override
 							public void run() {
 								enableButtons();
 							}
@@ -737,12 +767,14 @@ public class ContextFreeConfigPanel extends ViewPanel {
 		private void loadConfig(final ContextFreeConfig config, final File file) {
 			final String[] variation = new String[1];
 			GUIUtil.executeTask(new Runnable() {
+				@Override
 				public void run() {
 					variation[0] = variationTextField.getText();
 					disableButtons();
 				}
 			}, false);
 			worker.addTask(new Runnable() {
+				@Override
 				public void run() {
 					final StringBuilder builder = new StringBuilder();
 					BufferedReader reader = null;
@@ -761,6 +793,7 @@ public class ContextFreeConfigPanel extends ViewPanel {
 						try {
 							loadConfig(config, builder.toString(), variation[0]);
 							GUIUtil.executeTask(new Runnable() {
+								@Override
 								public void run() {
 									editorPane.setText(builder.toString());
 									variationTextField.setText(config.getCFDG().getVariation());
@@ -770,6 +803,7 @@ public class ContextFreeConfigPanel extends ViewPanel {
 						} catch (final ContextFreeParserException e) {
 							logger.log(Level.WARNING, ContextFreeSwingResources.getInstance().getString("message.parserError"), e);
 							GUIUtil.executeTask(new Runnable() {
+								@Override
 								public void run() {
 									JTextArea textArea = new JTextArea();
 									textArea.setText(e.getMessage());
@@ -786,6 +820,7 @@ public class ContextFreeConfigPanel extends ViewPanel {
 					} 
 					catch (final IOException x) {
 						GUIUtil.executeTask(new Runnable() {
+							@Override
 							public void run() {
 								JOptionPane.showMessageDialog(ContextFreeImagePanel.this, x.getMessage(), ContextFreeSwingResources.getInstance().getString("message.readerError"), JOptionPane.ERROR_MESSAGE);
 							}
@@ -799,6 +834,7 @@ public class ContextFreeConfigPanel extends ViewPanel {
 							}
 						}
 						GUIUtil.executeTask(new Runnable() {
+							@Override
 							public void run() {
 								enableButtons();
 							}
@@ -810,11 +846,13 @@ public class ContextFreeConfigPanel extends ViewPanel {
 
 		private void saveConfig(final ContextFreeConfig config, final File file) {
 			GUIUtil.executeTask(new Runnable() {
+				@Override
 				public void run() {
 					disableButtons();
 				}
 			}, false);
 			worker.addTask(new Runnable() {
+				@Override
 				public void run() {
 					PrintWriter writer = null;
 					try {
@@ -822,6 +860,7 @@ public class ContextFreeConfigPanel extends ViewPanel {
 						writer.print(editorPane.getText());
 					} catch (final IOException x) {
 						GUIUtil.executeTask(new Runnable() {
+							@Override
 							public void run() {
 								JOptionPane.showMessageDialog(ContextFreeImagePanel.this, x.getMessage(), ContextFreeSwingResources.getInstance().getString("message.writerError"), JOptionPane.ERROR_MESSAGE);
 							}
@@ -832,6 +871,7 @@ public class ContextFreeConfigPanel extends ViewPanel {
 							writer.close();
 						}
 						GUIUtil.executeTask(new Runnable() {
+							@Override
 							public void run() {
 								enableButtons();
 							}

@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -79,6 +79,7 @@ public class StrokeJoinElementEditorRuntime extends EditorExtensionRuntime {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.swing.NodeEditorComponent#getComponent()
 		 */
+		@Override
 		public JComponent getComponent() {
 			return this;
 		}
@@ -86,6 +87,7 @@ public class StrokeJoinElementEditorRuntime extends EditorExtensionRuntime {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.swing.NodeEditorComponent#reloadValue()
 		 */
+		@Override
 		public void reloadValue() {
 			if (nodeEditor.getNodeValue() != null) {
 				joinComboBox.setSelectedItem((((StrokeJoinElementNodeValue) nodeEditor.getNodeValue()).getValue()));
@@ -95,6 +97,7 @@ public class StrokeJoinElementEditorRuntime extends EditorExtensionRuntime {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.swing.NodeEditorComponent#dispose()
 		 */
+		@Override
 		public void dispose() {
 		}
 	}
@@ -112,6 +115,7 @@ public class StrokeJoinElementEditorRuntime extends EditorExtensionRuntime {
 		/**
 		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 		 */
+		@Override
 		public void actionPerformed(final ActionEvent e) {
 			final String rule = (String) ((JComboBox) e.getSource()).getSelectedItem();
 			if (!rule.equals(nodeEditor.getNodeValue().getValue())) {

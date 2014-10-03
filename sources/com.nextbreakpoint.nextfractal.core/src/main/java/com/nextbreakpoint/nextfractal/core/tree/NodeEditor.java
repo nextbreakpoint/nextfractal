@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -442,6 +442,7 @@ public abstract class NodeEditor {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeCommand#consume()
 		 */
+		@Override
 		public void consume() {
 			consumed = true;
 		}
@@ -449,6 +450,7 @@ public abstract class NodeEditor {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeCommand#isConsumed()
 		 */
+		@Override
 		public boolean isConsumed() {
 			return consumed;
 		}
@@ -472,6 +474,7 @@ public abstract class NodeEditor {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeCommand#accept(com.nextbreakpoint.nextfractal.core.tree.NodeSession, long)
 		 */
+		@Override
 		public void accept(final NodeSession session, final long timestamp) {
 			doSetValue(value);
 			if (isRefreshRequired()) {
@@ -485,6 +488,7 @@ public abstract class NodeEditor {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeCommand#accept()
 		 */
+		@Override
 		public void cancel() {
 			node.setNodeValue(prevValue);
 		}
@@ -509,6 +513,7 @@ public abstract class NodeEditor {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeCommand#accept(com.nextbreakpoint.nextfractal.core.tree.NodeSession, long)
 		 */
+		@Override
 		public void accept(final NodeSession session, final long timestamp) {
 			doAppendNode(node);
 			session.appendAction(new NodeAction(getNodeClass(), NodeAction.ACTION_APPEND_NODE, timestamp, target, index, value.getValueClone()));
@@ -517,6 +522,7 @@ public abstract class NodeEditor {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeCommand#accept()
 		 */
+		@Override
 		public void cancel() {
 			NodeEditor.this.node.removeChildNode(index);
 		}
@@ -542,6 +548,7 @@ public abstract class NodeEditor {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeCommand#accept(com.nextbreakpoint.nextfractal.core.tree.NodeSession, long)
 		 */
+		@Override
 		public void accept(final NodeSession session, final long timestamp) {
 			doInsertNodeBefore(index, node);
 			session.appendAction(new NodeAction(getNodeClass(), NodeAction.ACTION_INSERT_NODE_BEFORE, timestamp, target, index, value.getValueClone()));
@@ -550,6 +557,7 @@ public abstract class NodeEditor {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeCommand#accept()
 		 */
+		@Override
 		public void cancel() {
 			NodeEditor.this.node.removeChildNode(index);
 		}
@@ -575,6 +583,7 @@ public abstract class NodeEditor {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeCommand#accept(com.nextbreakpoint.nextfractal.core.tree.NodeSession, long)
 		 */
+		@Override
 		public void accept(final NodeSession session, final long timestamp) {
 			doInsertNodeAfter(index, node);
 			session.appendAction(new NodeAction(getNodeClass(), NodeAction.ACTION_INSERT_NODE_AFTER, timestamp, target, index, value.getValueClone()));
@@ -583,6 +592,7 @@ public abstract class NodeEditor {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeCommand#accept()
 		 */
+		@Override
 		public void cancel() {
 			NodeEditor.this.node.removeChildNode(index + 1);
 		}
@@ -608,6 +618,7 @@ public abstract class NodeEditor {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeCommand#accept(com.nextbreakpoint.nextfractal.core.tree.NodeSession, long)
 		 */
+		@Override
 		public void accept(final NodeSession session, final long timestamp) {
 			doRemoveNode(index);
 			session.appendAction(new NodeAction(getNodeClass(), NodeAction.ACTION_REMOVE_NODE, timestamp, target, index, value.getValueClone()));
@@ -616,6 +627,7 @@ public abstract class NodeEditor {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeCommand#accept()
 		 */
+		@Override
 		public void cancel() {
 			NodeEditor.this.node.insertChildNodeAt(index, node);
 		}
@@ -636,6 +648,7 @@ public abstract class NodeEditor {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeCommand#accept(com.nextbreakpoint.nextfractal.core.tree.NodeSession, long)
 		 */
+		@Override
 		public void accept(final NodeSession session, final long timestamp) {
 			doMoveUpNode(index);
 			session.appendAction(new NodeAction(getNodeClass(), NodeAction.ACTION_MOVE_UP_NODE, timestamp, target, index));
@@ -644,6 +657,7 @@ public abstract class NodeEditor {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeCommand#accept()
 		 */
+		@Override
 		public void cancel() {
 			node.moveDownChildNode(index);
 		}
@@ -664,6 +678,7 @@ public abstract class NodeEditor {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeCommand#accept(com.nextbreakpoint.nextfractal.core.tree.NodeSession, long)
 		 */
+		@Override
 		public void accept(final NodeSession session, final long timestamp) {
 			doMoveDownNode(index);
 			session.appendAction(new NodeAction(getNodeClass(), NodeAction.ACTION_MOVE_DOWN_NODE, timestamp, target, index));
@@ -672,6 +687,7 @@ public abstract class NodeEditor {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeCommand#accept()
 		 */
+		@Override
 		public void cancel() {
 			node.moveUpChildNode(index);
 		}
@@ -698,6 +714,7 @@ public abstract class NodeEditor {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeCommand#accept(com.nextbreakpoint.nextfractal.core.tree.NodeSession, long)
 		 */
+		@Override
 		public void accept(final NodeSession session, final long timestamp) {
 			if (command != null) {
 				command.accept(session, timestamp);
@@ -707,6 +724,7 @@ public abstract class NodeEditor {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeCommand#cancel()
 		 */
+		@Override
 		public void cancel() {
 			if (command != null) {
 				command.cancel();
@@ -716,6 +734,7 @@ public abstract class NodeEditor {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeCommand#consume()
 		 */
+		@Override
 		public void consume() {
 			if (command != null) {
 				command.consume();
@@ -725,6 +744,7 @@ public abstract class NodeEditor {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeCommand#isConsumed()
 		 */
+		@Override
 		public boolean isConsumed() {
 			if (command != null) {
 				return command.isConsumed();

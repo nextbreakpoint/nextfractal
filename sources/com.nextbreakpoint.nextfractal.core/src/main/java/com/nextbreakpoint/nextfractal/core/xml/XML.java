@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -553,6 +553,7 @@ public class XML {
 		/**
 		 * @see org.w3c.dom.NodeList#getLength()
 		 */
+		@Override
 		public int getLength() {
 			return list.size();
 		}
@@ -560,6 +561,7 @@ public class XML {
 		/**
 		 * @see org.w3c.dom.NodeList#item(int)
 		 */
+		@Override
 		public Node item(final int i) {
 			return list.get(i);
 		}
@@ -575,6 +577,7 @@ public class XML {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.xml.XMLNodeBuilder#createElement(java.lang.String)
 		 */
+		@Override
 		public Element createElement(final String tagName) {
 			return doc.createElement(tagName);
 		}
@@ -582,6 +585,7 @@ public class XML {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.xml.XMLNodeBuilder#createTextNode(java.lang.String)
 		 */
+		@Override
 		public Text createTextNode(final String nodeValue) {
 			return doc.createTextNode(nodeValue);
 		}

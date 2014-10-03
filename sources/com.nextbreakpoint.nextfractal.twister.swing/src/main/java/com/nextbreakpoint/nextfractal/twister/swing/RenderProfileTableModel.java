@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -36,7 +36,6 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 
 import com.nextbreakpoint.nextfractal.core.swing.util.GUIUtil;
-
 import com.nextbreakpoint.nextfractal.queue.LibraryService;
 import com.nextbreakpoint.nextfractal.queue.RenderService;
 import com.nextbreakpoint.nextfractal.queue.RenderService.ServiceCallback;
@@ -77,6 +76,7 @@ public class RenderProfileTableModel extends ServiceAdapter implements TableMode
 	/**
 	 * @see javax.swing.table.TableModel#addTableModelListener(javax.swing.event.TableModelListener)
 	 */
+	@Override
 	public void addTableModelListener(final TableModelListener listener) {
 		listeners.add(listener);
 	}
@@ -84,6 +84,7 @@ public class RenderProfileTableModel extends ServiceAdapter implements TableMode
 	/**
 	 * @see javax.swing.table.TableModel#removeTableModelListener(javax.swing.event.TableModelListener)
 	 */
+	@Override
 	public void removeTableModelListener(final TableModelListener listener) {
 		listeners.remove(listener);
 	}
@@ -100,6 +101,7 @@ public class RenderProfileTableModel extends ServiceAdapter implements TableMode
 	/**
 	 * @see javax.swing.table.TableModel#getColumnClass(int)
 	 */
+	@Override
 	public Class<?> getColumnClass(final int columnIndex) {
 		switch (columnIndex) {
 			case PROFILEID: {
@@ -148,6 +150,7 @@ public class RenderProfileTableModel extends ServiceAdapter implements TableMode
 	/**
 	 * @see javax.swing.table.TableModel#getColumnCount()
 	 */
+	@Override
 	public int getColumnCount() {
 		return 11;
 	}
@@ -155,6 +158,7 @@ public class RenderProfileTableModel extends ServiceAdapter implements TableMode
 	/**
 	 * @see javax.swing.table.TableModel#getColumnName(int)
 	 */
+	@Override
 	public String getColumnName(final int columnIndex) {
 		switch (columnIndex) {
 			case PROFILEID: {
@@ -203,6 +207,7 @@ public class RenderProfileTableModel extends ServiceAdapter implements TableMode
 	/**
 	 * @see javax.swing.table.TableModel#getRowCount()
 	 */
+	@Override
 	public int getRowCount() {
 		return model.size();
 	}
@@ -210,6 +215,7 @@ public class RenderProfileTableModel extends ServiceAdapter implements TableMode
 	/**
 	 * @see javax.swing.table.TableModel#getValueAt(int, int)
 	 */
+	@Override
 	public Object getValueAt(final int rowIndex, final int columnIndex) {
 		final RenderProfileDataRow dataRow = model.get(rowIndex);
 		switch (columnIndex) {
@@ -272,6 +278,7 @@ public class RenderProfileTableModel extends ServiceAdapter implements TableMode
 	/**
 	 * @see javax.swing.table.TableModel#isCellEditable(int, int)
 	 */
+	@Override
 	public boolean isCellEditable(final int rowIndex, final int columnIndex) {
 		// if (model.get(rowIndex).getStatus() != 0) {
 		// return false;
@@ -314,6 +321,7 @@ public class RenderProfileTableModel extends ServiceAdapter implements TableMode
 	/**
 	 * @see javax.swing.table.TableModel#setValueAt(java.lang.Object, int, int)
 	 */
+	@Override
 	public void setValueAt(final Object aValue, final int rowIndex, final int columnIndex) {
 		// final RenderProfileDataRow dataRow = model.get(rowIndex);
 		// if (aValue != null) {
@@ -414,12 +422,14 @@ public class RenderProfileTableModel extends ServiceAdapter implements TableMode
 			/**
 			 * @param value
 			 */
+			@Override
 			public void executed(final List<RenderProfileDataRow> profiles) {
 				try {
 					if (RenderProfileTableModel.logger.isLoggable(Level.INFO)) {
 						RenderProfileTableModel.logger.info("Reload executed");
 					}
 					GUIUtil.executeTask(new Runnable() {
+							@Override
 							public void run() {
 							RenderProfileTableModel.this.reload(profiles);
 							}
@@ -433,10 +443,12 @@ public class RenderProfileTableModel extends ServiceAdapter implements TableMode
 			/**
 			 * @see com.nextbreakpoint.nextfractal.service.RenderService.ServiceCallback#failed(java.lang.Throwable)
 			 */
+			@Override
 			public void failed(final Throwable throwable) {
 				try {
 					RenderProfileTableModel.logger.log(Level.WARNING, "Reload failed", throwable);
 					GUIUtil.executeTask(new Runnable() {
+							@Override
 							public void run() {
 							RenderProfileTableModel.this.reload(new LinkedList<RenderProfileDataRow>());
 							}
@@ -450,6 +462,7 @@ public class RenderProfileTableModel extends ServiceAdapter implements TableMode
 			/**
 			 * @see com.nextbreakpoint.nextfractal.service.RenderService.ServiceCallback#execute(com.nextbreakpoint.nextfractal.service.LibraryService)
 			 */
+			@Override
 			public List<RenderProfileDataRow> execute(final LibraryService service) throws Exception {
 				return service.loadProfiles(clipId);
 			}
@@ -575,6 +588,7 @@ public class RenderProfileTableModel extends ServiceAdapter implements TableMode
 			this.tableModel = tableModel;
 		}
 
+		@Override
 		public void run() {
 		}
 	}

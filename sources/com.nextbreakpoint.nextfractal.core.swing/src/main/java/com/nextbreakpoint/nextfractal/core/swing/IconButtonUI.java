@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -166,12 +166,15 @@ public class IconButtonUI extends BasicButtonUI {
 			this.button = button;
 		}
 
+		@Override
 		public void stateChanged(final ChangeEvent e) {
 		}
 
+		@Override
 		public void mouseClicked(final MouseEvent e) {
 		}
 
+		@Override
 		public void mouseEntered(final MouseEvent e) {
 			button.getModel().setRollover(true);
 			if (button.getModel().isPressed()) {
@@ -180,6 +183,7 @@ public class IconButtonUI extends BasicButtonUI {
 			button.repaint();
 		}
 
+		@Override
 		public void mouseExited(final MouseEvent e) {
 			if (thread != null) {
 				running = false;
@@ -196,6 +200,7 @@ public class IconButtonUI extends BasicButtonUI {
 			button.repaint();
 		}
 
+		@Override
 		public void mousePressed(final MouseEvent e) {
 			button.getModel().setSelected(true);
 			button.getModel().setPressed(true);
@@ -217,6 +222,7 @@ public class IconButtonUI extends BasicButtonUI {
 			}
 		}
 
+		@Override
 		public void mouseReleased(final MouseEvent e) {
 			if (thread != null) {
 				running = false;
@@ -234,10 +240,12 @@ public class IconButtonUI extends BasicButtonUI {
 			button.repaint();
 		}
 
+		@Override
 		public void focusGained(final FocusEvent e) {
 			button.repaint();
 		}
 
+		@Override
 		public void focusLost(final FocusEvent e) {
 			button.repaint();
 		}
@@ -246,11 +254,13 @@ public class IconButtonUI extends BasicButtonUI {
 			/**
 			 * @see java.lang.Runnable#run()
 			 */
+			@Override
 			public void run() {
 				try {
 					Thread.sleep(500);
 					while (running) {
 						GUIUtil.executeTask(new Runnable() {
+							@Override
 							public void run() {
 								button.getModel().setSelected(false);
 								button.getModel().setPressed(false);

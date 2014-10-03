@@ -2,13 +2,18 @@
 
 package com.nextbreakpoint.nextfractal.cfdg.parser;
 
-import java.util.*;
-import java.io.DataInputStream;
 import java.io.BufferedInputStream;
+import java.io.DataInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.ListIterator;
 
-import com.nextbreakpoint.nextfractal.cfdg.analysis.*;
-import com.nextbreakpoint.nextfractal.cfdg.lexer.*;
+import com.nextbreakpoint.nextfractal.cfdg.analysis.Analysis;
+import com.nextbreakpoint.nextfractal.cfdg.analysis.AnalysisAdapter;
+import com.nextbreakpoint.nextfractal.cfdg.lexer.Lexer;
+import com.nextbreakpoint.nextfractal.cfdg.lexer.LexerException;
 import com.nextbreakpoint.nextfractal.cfdg.node.*;
 
 @SuppressWarnings("nls")

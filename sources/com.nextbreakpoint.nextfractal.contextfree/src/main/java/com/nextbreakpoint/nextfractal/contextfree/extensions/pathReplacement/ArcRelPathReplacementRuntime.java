@@ -105,6 +105,7 @@ public class ArcRelPathReplacementRuntime extends PathReplacementExtensionRuntim
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
 		 */
+		@Override
 		public void valueChanged(final ValueChangeEvent e) {
 			switch (e.getEventType()) {
 				case ValueConfigElement.VALUE_CHANGED: {
@@ -133,6 +134,7 @@ public class ArcRelPathReplacementRuntime extends PathReplacementExtensionRuntim
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
 		 */
+		@Override
 		public void valueChanged(final ValueChangeEvent e) {
 			switch (e.getEventType()) {
 				case ValueConfigElement.VALUE_CHANGED: {
@@ -161,6 +163,7 @@ public class ArcRelPathReplacementRuntime extends PathReplacementExtensionRuntim
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
 		 */
+		@Override
 		public void valueChanged(final ValueChangeEvent e) {
 			switch (e.getEventType()) {
 				case ValueConfigElement.VALUE_CHANGED: {
@@ -189,6 +192,7 @@ public class ArcRelPathReplacementRuntime extends PathReplacementExtensionRuntim
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
 		 */
+		@Override
 		public void valueChanged(final ValueChangeEvent e) {
 			switch (e.getEventType()) {
 				case ValueConfigElement.VALUE_CHANGED: {
@@ -217,6 +221,7 @@ public class ArcRelPathReplacementRuntime extends PathReplacementExtensionRuntim
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
 		 */
+		@Override
 		public void valueChanged(final ValueChangeEvent e) {
 			switch (e.getEventType()) {
 				case ValueConfigElement.VALUE_CHANGED: {
@@ -245,6 +250,7 @@ public class ArcRelPathReplacementRuntime extends PathReplacementExtensionRuntim
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
 		 */
+		@Override
 		public void valueChanged(final ValueChangeEvent e) {
 			switch (e.getEventType()) {
 				case ValueConfigElement.VALUE_CHANGED: {
@@ -273,6 +279,7 @@ public class ArcRelPathReplacementRuntime extends PathReplacementExtensionRuntim
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
 		 */
+		@Override
 		public void valueChanged(final ValueChangeEvent e) {
 			switch (e.getEventType()) {
 				case ValueConfigElement.VALUE_CHANGED: {
@@ -287,6 +294,7 @@ public class ArcRelPathReplacementRuntime extends PathReplacementExtensionRuntim
 		}
 	}
 
+	@Override
 	public void process(CFRule rule) {
 		rule.getPath().arcRel(x, y, rx, ry, r, large, sweep);
 	}

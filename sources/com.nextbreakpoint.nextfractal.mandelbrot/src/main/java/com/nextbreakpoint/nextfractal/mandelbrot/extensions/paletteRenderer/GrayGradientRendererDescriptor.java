@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -25,8 +25,6 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.extensions.paletteRenderer;
 
-import com.nextbreakpoint.nextfractal.mandelbrot.extensions.paletteRenderer.GrayGradientRendererConfig;
-import com.nextbreakpoint.nextfractal.mandelbrot.extensions.paletteRenderer.GrayGradientRendererRuntime;
 import com.nextbreakpoint.nextfractal.mandelbrot.paletteRenderer.extension.PaletteRendererExtensionDescriptor;
 
 /**
@@ -38,6 +36,7 @@ public class GrayGradientRendererDescriptor extends PaletteRendererExtensionDesc
 	 * 
 	 * @return the extensionId.
 	 */
+	@Override
 	public String getExtensionId() {
 		return "twister.mandelbrot.palette.renderer.grayGradient";
 	}
@@ -47,6 +46,7 @@ public class GrayGradientRendererDescriptor extends PaletteRendererExtensionDesc
 	 * 
 	 * @return the extensionName.
 	 */
+	@Override
 	public String getExtensionName() {
 		return "Gray Gradient";
 	}
@@ -56,6 +56,7 @@ public class GrayGradientRendererDescriptor extends PaletteRendererExtensionDesc
 	 * 
 	 * @return the extensionRuntimeClass.
 	 */
+	@Override
 	public GrayGradientRendererRuntime getExtensionRuntime() {
 		return new GrayGradientRendererRuntime();
 	}
@@ -65,6 +66,7 @@ public class GrayGradientRendererDescriptor extends PaletteRendererExtensionDesc
 	 * 
 	 * @return the extensionConfigClass.
 	 */
+	@Override
 	public GrayGradientRendererConfig getExtensionConfig() {
 		return new GrayGradientRendererConfig();
 	}

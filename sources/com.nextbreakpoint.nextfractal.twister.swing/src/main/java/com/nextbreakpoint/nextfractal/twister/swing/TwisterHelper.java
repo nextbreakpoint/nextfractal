@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -40,7 +40,6 @@ import javax.swing.JOptionPane;
 import com.nextbreakpoint.nextfractal.core.config.DefaultConfigContext;
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionException;
 import com.nextbreakpoint.nextfractal.core.util.ConnectionFactory;
-
 import com.nextbreakpoint.nextfractal.queue.DefaultConnectionFactory;
 import com.nextbreakpoint.nextfractal.queue.LibraryService;
 import com.nextbreakpoint.nextfractal.queue.RenderService;

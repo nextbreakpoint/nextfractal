@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -25,7 +25,6 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.extensions.shapeReplacement;
 
-import com.nextbreakpoint.nextfractal.contextfree.extensions.shapeReplacement.MultiShapeReplacementConfigNodeBuilderRuntime;
 import com.nextbreakpoint.nextfractal.core.nodeBuilder.extension.NodeBuilderExtensionDescriptor;
 
 /**
@@ -37,6 +36,7 @@ public class MultiShapeReplacementConfigNodeBuilderDescriptor extends NodeBuilde
 	 * 
 	 * @return the extensionId.
 	 */
+	@Override
 	public String getExtensionId() {
 		return "contextfree.shape.replacement.multi";
 	}
@@ -46,6 +46,7 @@ public class MultiShapeReplacementConfigNodeBuilderDescriptor extends NodeBuilde
 	 * 
 	 * @return the extensionName.
 	 */
+	@Override
 	public String getExtensionName() {
 		return "Multi Replacement";
 	}
@@ -55,6 +56,7 @@ public class MultiShapeReplacementConfigNodeBuilderDescriptor extends NodeBuilde
 	 * 
 	 * @return the extensionRuntimeClass.
 	 */
+	@Override
 	public MultiShapeReplacementConfigNodeBuilderRuntime getExtensionRuntime() {
 		return new MultiShapeReplacementConfigNodeBuilderRuntime();
 	}

@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -81,6 +81,7 @@ public class SLExtensionRegistry<T extends ExtensionRuntime> implements Extensio
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.extension.ExtensionRegistry#getExtensionList()
 	 */
+	@Override
 	public List<Extension<T>> getExtensionList() {
 		final Enumeration<Extension<T>> elements = this.extensionMap.elements();
 		final List<Extension<T>> list = new LinkedList<Extension<T>>();
@@ -94,6 +95,7 @@ public class SLExtensionRegistry<T extends ExtensionRuntime> implements Extensio
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.extension.ExtensionRegistry#getExtension(java.lang.String)
 	 */
+	@Override
 	public Extension<T> getExtension(final String extensionId) throws ExtensionNotFoundException {
 		final Extension<T> extension = this.extensionMap.get(extensionId);
 		if (extension == null) {

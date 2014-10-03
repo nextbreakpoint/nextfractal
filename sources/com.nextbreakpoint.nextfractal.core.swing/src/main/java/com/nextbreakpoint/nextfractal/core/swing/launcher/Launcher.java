@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -67,6 +67,7 @@ public class Launcher<T extends LauncherContext> {
 		final String version = ManagementFactory.getRuntimeMXBean().getVmVersion();
 		if ((version.length() > 2) && ("1.7".compareTo(version.substring(0, 3)) > 0)) {
 			SwingUtilities.invokeLater(new Runnable() {
+				@Override
 				public void run() {
 					JOptionPane.showMessageDialog(new Frame(), "Could not launch the application because\nit requires Java 1.7 or later!", "Error", JOptionPane.ERROR_MESSAGE);
 					stop();

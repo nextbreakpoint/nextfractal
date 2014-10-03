@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -70,6 +70,7 @@ import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTree;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 import javax.swing.border.EtchedBorder;
@@ -81,24 +82,6 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.tree.DefaultMutableTreeNode;
-
-import com.nextbreakpoint.nextfractal.queue.LibraryService;
-import com.nextbreakpoint.nextfractal.queue.PreviewListener;
-import com.nextbreakpoint.nextfractal.queue.RenderService;
-import com.nextbreakpoint.nextfractal.queue.RenderService.ServiceCallback;
-import com.nextbreakpoint.nextfractal.queue.RenderServiceRegistry;
-import com.nextbreakpoint.nextfractal.queue.clip.RenderClip;
-import com.nextbreakpoint.nextfractal.queue.clip.RenderClipDataRow;
-import com.nextbreakpoint.nextfractal.queue.profile.RenderProfile;
-import com.nextbreakpoint.nextfractal.queue.profile.RenderProfileDataRow;
-import com.nextbreakpoint.nextfractal.queue.spool.JobServiceListener;
-import com.nextbreakpoint.nextfractal.queue.spool.extension.SpoolExtensionConfig;
-import com.nextbreakpoint.nextfractal.queue.spool.extension.SpoolExtensionRuntime;
-import com.nextbreakpoint.nextfractal.twister.TwisterClip;
-import com.nextbreakpoint.nextfractal.twister.TwisterClipXMLImporter;
-import com.nextbreakpoint.nextfractal.twister.TwisterConfig;
-import com.nextbreakpoint.nextfractal.twister.TwisterConfigBuilder;
-import com.nextbreakpoint.nextfractal.twister.TwisterSequence;
 
 import org.w3c.dom.Document;
 
@@ -116,6 +99,23 @@ import com.nextbreakpoint.nextfractal.core.swing.util.WorkerProgressDialog;
 import com.nextbreakpoint.nextfractal.core.swing.util.ZIPFileFilter;
 import com.nextbreakpoint.nextfractal.core.util.Rectangle;
 import com.nextbreakpoint.nextfractal.core.xml.XML;
+import com.nextbreakpoint.nextfractal.queue.LibraryService;
+import com.nextbreakpoint.nextfractal.queue.PreviewListener;
+import com.nextbreakpoint.nextfractal.queue.RenderService;
+import com.nextbreakpoint.nextfractal.queue.RenderService.ServiceCallback;
+import com.nextbreakpoint.nextfractal.queue.RenderServiceRegistry;
+import com.nextbreakpoint.nextfractal.queue.clip.RenderClip;
+import com.nextbreakpoint.nextfractal.queue.clip.RenderClipDataRow;
+import com.nextbreakpoint.nextfractal.queue.profile.RenderProfile;
+import com.nextbreakpoint.nextfractal.queue.profile.RenderProfileDataRow;
+import com.nextbreakpoint.nextfractal.queue.spool.JobServiceListener;
+import com.nextbreakpoint.nextfractal.queue.spool.extension.SpoolExtensionConfig;
+import com.nextbreakpoint.nextfractal.queue.spool.extension.SpoolExtensionRuntime;
+import com.nextbreakpoint.nextfractal.twister.TwisterClip;
+import com.nextbreakpoint.nextfractal.twister.TwisterClipXMLImporter;
+import com.nextbreakpoint.nextfractal.twister.TwisterConfig;
+import com.nextbreakpoint.nextfractal.twister.TwisterConfigBuilder;
+import com.nextbreakpoint.nextfractal.twister.TwisterSequence;
 import com.nextbreakpoint.nextfractal.twister.swing.encoder.EncoderDialog;
 
 public class ServiceFrame extends JFrame {
@@ -183,6 +183,7 @@ public class ServiceFrame extends JFrame {
 		@Override
 		public void windowOpened(final WindowEvent e) {
 			GUIUtil.executeTask(new Runnable() {
+				@Override
 				public void run() {
 					if (servicePanel != null) {
 						try {
@@ -216,6 +217,7 @@ public class ServiceFrame extends JFrame {
 		@Override
 		public void windowDeiconified(final WindowEvent e) {
 			GUIUtil.executeTask(new Runnable() {
+				@Override
 				public void run() {
 					if (servicePanel != null) {
 						try {
@@ -381,13 +383,15 @@ public class ServiceFrame extends JFrame {
 			final JPanel jobTablePanel = new JPanel(new BorderLayout());
 			final Box jobButtonPanel = Box.createHorizontalBox();
 			final ConfigurableExtensionComboBoxModel model = new ConfigurableExtensionComboBoxModel(RenderServiceRegistry.getInstance().getSpoolRegistry(), false);
-			spoolStatusLabel = GUIFactory.createLabel("", JLabel.LEFT);
+			spoolStatusLabel = GUIFactory.createLabel("", SwingConstants.LEFT);
 			spoolStatusLabel.setPreferredSize(new Dimension(300, GUIFactory.DEFAULT_HEIGHT));
 			model.setSelectedItemByExtensionId(service.getJobServiceReference().getExtensionId());
 			extensionComboBox = GUIFactory.createSmallComboBox(model, TwisterSwingResources.getInstance().getString("tooltip.spool"));
 			listener = new JobServiceListener() {
+				@Override
 				public void stateChanged(final int serviceId, final int status, final String message) {
 					GUIUtil.executeTask(new Runnable() {
+						@Override
 						public void run() {
 							switch (serviceId) {
 								case RenderService.SERVICE_COPY_PROCESS: {
@@ -506,6 +510,7 @@ public class ServiceFrame extends JFrame {
 			tabbedPane.addTab(TwisterSwingResources.getInstance().getString(ServicePanel.STRING_FRAME_TAB_EXTENSIONPOINTS), extensionPointPanel);
 			panel.add(tabbedPane);
 			tabbedPane.addChangeListener(new ChangeListener() {
+				@Override
 				public void stateChanged(final ChangeEvent e) {
 					if (tabbedPane.getSelectedIndex() == 0) {
 						if (clipTable.getSelectedRowCount() == 1) {
@@ -513,6 +518,7 @@ public class ServiceFrame extends JFrame {
 							updateButtons();
 							final int clipId = clipModel.getClip(clipTable.convertRowIndexToModel(clipTable.getSelectedRow())).getClipId();
 							service.execute(new ServiceCallback<RenderClipDataRow>() {
+								@Override
 								public void executed(final RenderClipDataRow profile) {
 									profileModel.reload(clipId);
 									try {
@@ -542,11 +548,13 @@ public class ServiceFrame extends JFrame {
 									}
 								}
 
+								@Override
 								public void failed(final Throwable throwable) {
 									ServicePanel.logger.log(Level.WARNING, "Can't get the clip " + clipId);
 									throwable.printStackTrace();
 								}
 
+								@Override
 								public RenderClipDataRow execute(final LibraryService service) throws Exception {
 									return service.getClip(clipId);
 								}
@@ -579,12 +587,14 @@ public class ServiceFrame extends JFrame {
 			this.jobModel = jobModel;
 			this.service = service;
 			previewListener = new PreviewListener() {
+				@Override
 				public void updated(final int clipId) {
 					clipTable.repaint();
 				}
 			};
 			service.addPreviewListener(previewListener);
 			extensionComboBox.addActionListener(new ActionListener() {
+				@Override
 				public void actionPerformed(final ActionEvent e) {
 					service.setJobServiceReference(((ConfigurableExtension<SpoolExtensionRuntime<?>, SpoolExtensionConfig>) ((ConfigurableExtensionComboBoxModel) extensionComboBox.getModel()).getSelectedItem()).getExtensionReference());
 					resumeSpool();
@@ -601,13 +611,16 @@ public class ServiceFrame extends JFrame {
 
 		private void resumeSpool() {
 			service.execute(new ServiceCallback<Object>() {
+				@Override
 				public void executed(final Object value) {
 					jobModel.reload();
 				}
 
+				@Override
 				public void failed(final Throwable throwable) {
 				}
 
+				@Override
 				public Object execute(final LibraryService service) throws Exception {
 					service.resumeJobs();
 					return null;
@@ -781,6 +794,7 @@ public class ServiceFrame extends JFrame {
 			/**
 			 * @see java.lang.Runnable#run()
 			 */
+			@Override
 			public void run() {
 				try {
 					for (;;) {
@@ -795,11 +809,13 @@ public class ServiceFrame extends JFrame {
 						}
 						Thread.sleep(500);
 						GUIUtil.executeTask(new Runnable() {
+							@Override
 							public void run() {
 								int[] selectedRows = clipTable.getSelectedRows();
 								if ((selectedRows != null) && (selectedRows.length > 0)) {
 									final int clipId = clipModel.getClip(clipTable.convertRowIndexToModel(selectedRows[selectedRows.length - 1])).getClipId();
 									service.execute(new ServiceCallback<RenderClipDataRow>() {
+										@Override
 										public void executed(final RenderClipDataRow profile) {
 											profileModel.reload(clipId);
 											try {
@@ -828,11 +844,13 @@ public class ServiceFrame extends JFrame {
 											}
 										}
 
+										@Override
 										public void failed(final Throwable throwable) {
 											ServicePanel.logger.log(Level.WARNING, "Can't get the clip " + clipId);
 											JOptionPane.showMessageDialog(ServicePanel.this, TwisterSwingResources.getInstance().getString("error.loadClip"), TwisterSwingResources.getInstance().getString("label.loadClip"), JOptionPane.ERROR_MESSAGE);
 										}
 
+										@Override
 										public RenderClipDataRow execute(final LibraryService service) throws Exception {
 											return service.getClip(clipId);
 										}
@@ -893,6 +911,7 @@ public class ServiceFrame extends JFrame {
 		}
 
 		private class ClipListSelectionListener implements ListSelectionListener {
+			@Override
 			public void valueChanged(final ListSelectionEvent e) {
 				if (!e.getValueIsAdjusting()) {
 					refreshTask.wakeup();
@@ -901,20 +920,24 @@ public class ServiceFrame extends JFrame {
 		}
 
 		private class ProfileListSelectionListener implements ListSelectionListener {
+			@Override
 			public void valueChanged(final ListSelectionEvent e) {
 				if (!e.getValueIsAdjusting()) {
 					if (profileTable.getSelectedRowCount() > 0) {
 						final int profileId = profileModel.getProfile(profileTable.convertRowIndexToModel(profileTable.getSelectedRow())).getProfileId();
 						service.execute(new ServiceCallback<RenderProfileDataRow>() {
+							@Override
 							public void executed(final RenderProfileDataRow profile) {
 								preview.setArea(new Rectangle(profile.getOffsetX(), profile.getOffsetY(), profile.getImageWidth(), profile.getImageHeight()));
 							}
 
+							@Override
 							public void failed(final Throwable throwable) {
 								ServicePanel.logger.log(Level.WARNING, "Can't load the profile " + profileId);
 								JOptionPane.showMessageDialog(ServicePanel.this, TwisterSwingResources.getInstance().getString("error.loadProfile"), TwisterSwingResources.getInstance().getString("label.loadProfile"), JOptionPane.ERROR_MESSAGE);
 							}
 
+							@Override
 							public RenderProfileDataRow execute(final LibraryService service) throws Exception {
 								return service.getProfile(profileId);
 							}
@@ -938,11 +961,13 @@ public class ServiceFrame extends JFrame {
 			/**
 			 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 			 */
+			@Override
 			public void actionPerformed(final ActionEvent e) {
 				if (clipTable.getSelectedRowCount() == 1) {
 					final int row = clipTable.getSelectedRow();
 					final RenderClipDataRow clip = clipModel.getClip(clipTable.convertRowIndexToModel(row));
 					service.execute(new ServiceCallback<RenderClipDataRow>() {
+						@Override
 						public void executed(final RenderClipDataRow value) {
 							try {
 								final InputStream is = service.getLibraryService().getClipInputStream(clip.getClipId());
@@ -960,12 +985,14 @@ public class ServiceFrame extends JFrame {
 							}
 						}
 
+						@Override
 						public void failed(final Throwable throwable) {
 							ServicePanel.logger.log(Level.WARNING, "Can't open the clip", throwable);
 							semaphore.release();
 							JOptionPane.showMessageDialog(ServicePanel.this, TwisterSwingResources.getInstance().getString("error.openClip"), TwisterSwingResources.getInstance().getString("label.openClip"), JOptionPane.ERROR_MESSAGE);
 						}
 
+						@Override
 						public RenderClipDataRow execute(final LibraryService service) throws Exception {
 							return service.getClip(clip.getClipId());
 						}
@@ -993,19 +1020,23 @@ public class ServiceFrame extends JFrame {
 			/**
 			 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 			 */
+			@Override
 			public void actionPerformed(final ActionEvent e) {
 				final RenderClipDataRow dataRow = createDefaultRenderClip();
 				service.execute(new ServiceCallback<Object>() {
+					@Override
 					public void executed(final Object value) {
 						semaphore.release();
 					}
 
+					@Override
 					public void failed(final Throwable throwable) {
 						ServicePanel.logger.log(Level.WARNING, "Can't create the clip", throwable);
 						semaphore.release();
 						JOptionPane.showMessageDialog(ServicePanel.this, TwisterSwingResources.getInstance().getString("error.createClip"), TwisterSwingResources.getInstance().getString("label.createClip"), JOptionPane.ERROR_MESSAGE);
 					}
 
+					@Override
 					public Object execute(final LibraryService service) throws Exception {
 						final TwisterConfigBuilder configBuilder = new TwisterConfigBuilder();
 						final TwisterClip clip = new TwisterClip();
@@ -1039,6 +1070,7 @@ public class ServiceFrame extends JFrame {
 			/**
 			 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 			 */
+			@Override
 			public void actionPerformed(final ActionEvent e) {
 				if (clipTable.getSelectedRowCount() > 0) {
 					if (JOptionPane.showConfirmDialog(ServicePanel.this, TwisterSwingResources.getInstance().getString("message.confirmDeleteClips"), TwisterSwingResources.getInstance().getString("label.deleteClips"), JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {
@@ -1066,10 +1098,12 @@ public class ServiceFrame extends JFrame {
 						final int percentage = (int) Math.rint((((float) i) / (rows.length - 1)) * 100f);
 						final RenderClipDataRow clip = clips[i];
 						service.execute(new ServiceCallback<Object>() {
+							@Override
 							public void executed(final Object value) {
 								semaphore.release();
 							}
 
+							@Override
 							public void failed(final Throwable throwable) {
 								ServicePanel.logger.log(Level.WARNING, "Can't delete the clip", throwable);
 								error[0] = true;
@@ -1078,6 +1112,7 @@ public class ServiceFrame extends JFrame {
 								JOptionPane.showMessageDialog(ServicePanel.this, TwisterSwingResources.getInstance().getString("error.deleteClip"), TwisterSwingResources.getInstance().getString("label.deleteClip"), JOptionPane.ERROR_MESSAGE);
 							}
 
+							@Override
 							public Object execute(final LibraryService service) throws Exception {
 								stateChanged(TwisterSwingResources.getInstance().getString("message.deletingClip") + " " + clip.getClipId() + "...", percentage);
 								service.deleteClip(clip);
@@ -1113,13 +1148,16 @@ public class ServiceFrame extends JFrame {
 			/**
 			 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 			 */
+			@Override
 			public void actionPerformed(final ActionEvent e) {
 				if (clipTable.getSelectedRowCount() == 1) {
 					final int row = clipTable.getSelectedRow();
 					final RenderClipDataRow clip = clipModel.getClip(clipTable.convertRowIndexToModel(row));
 					service.execute(new ServiceCallback<RenderClipDataRow>() {
+						@Override
 						public void executed(final RenderClipDataRow clip) {
 							GUIUtil.executeTask(new Runnable() {
+								@Override
 								public void run() {
 									showEditClipWindow(clip);
 								}
@@ -1127,11 +1165,13 @@ public class ServiceFrame extends JFrame {
 							semaphore.release();
 						}
 
+						@Override
 						public void failed(final Throwable throwable) {
 							ServicePanel.logger.log(Level.WARNING, "Can't get the clip " + clip.getClipId(), throwable);
 							semaphore.release();
 						}
 
+						@Override
 						public RenderClipDataRow execute(final LibraryService service) throws Exception {
 							return service.getClip(clip.getClipId());
 						}
@@ -1159,6 +1199,7 @@ public class ServiceFrame extends JFrame {
 			/**
 			 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 			 */
+			@Override
 			public void actionPerformed(final ActionEvent e) {
 				if (clipTable.getSelectedRowCount() > 0) {
 					if (JOptionPane.showConfirmDialog(ServicePanel.this, TwisterSwingResources.getInstance().getString("message.confirmImportClips"), TwisterSwingResources.getInstance().getString("label.importClips"), JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {
@@ -1171,10 +1212,12 @@ public class ServiceFrame extends JFrame {
 							if (returnVal == JFileChooser.APPROVE_OPTION) {
 								final File file = clipChooser.getSelectedFile();
 								service.execute(new ServiceCallback<Object>() {
+									@Override
 									public void executed(final Object value) {
 										semaphore.release();
 									}
 
+									@Override
 									public void failed(final Throwable throwable) {
 										ServicePanel.logger.log(Level.WARNING, "Can't import the clip", throwable);
 										error[0] = true;
@@ -1182,6 +1225,7 @@ public class ServiceFrame extends JFrame {
 										JOptionPane.showMessageDialog(ServicePanel.this, TwisterSwingResources.getInstance().getString("error.importClip"), TwisterSwingResources.getInstance().getString("label.importClip"), JOptionPane.ERROR_MESSAGE);
 									}
 
+									@Override
 									public Object execute(final LibraryService service) throws Exception {
 										service.importClip(clip, file);
 										service.resetProfiles(clip.getClipId());
@@ -1206,6 +1250,7 @@ public class ServiceFrame extends JFrame {
 					updateButtons();
 					final int clipId = clipModel.getClip(clipTable.convertRowIndexToModel(clipTable.getSelectedRow())).getClipId();
 					service.execute(new ServiceCallback<RenderClipDataRow>() {
+						@Override
 						public void executed(final RenderClipDataRow profile) {
 							profileModel.reload(clipId);
 							try {
@@ -1235,11 +1280,13 @@ public class ServiceFrame extends JFrame {
 							}
 						}
 
+						@Override
 						public void failed(final Throwable throwable) {
 							ServicePanel.logger.log(Level.WARNING, "Can't get the clip " + clipId);
 							throwable.printStackTrace();
 						}
 
+						@Override
 						public RenderClipDataRow execute(final LibraryService service) throws Exception {
 							return service.getClip(clipId);
 						}
@@ -1265,6 +1312,7 @@ public class ServiceFrame extends JFrame {
 			/**
 			 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 			 */
+			@Override
 			public void actionPerformed(final ActionEvent e) {
 				if (clipTable.getSelectedRowCount() > 0) {
 					final int[] rows = clipTable.getSelectedRows();
@@ -1277,10 +1325,12 @@ public class ServiceFrame extends JFrame {
 							if (file.exists()) {
 								if (JOptionPane.showConfirmDialog(ServicePanel.this, TwisterSwingResources.getInstance().getString("message.confirmOverwrite"), TwisterSwingResources.getInstance().getString("label.exportClips"), JOptionPane.WARNING_MESSAGE) == JOptionPane.OK_OPTION) {
 									service.execute(new ServiceCallback<Object>() {
+										@Override
 										public void executed(final Object value) {
 											semaphore.release();
 										}
 
+										@Override
 										public void failed(final Throwable throwable) {
 											ServicePanel.logger.log(Level.WARNING, "Can't export the clip", throwable);
 											error[0] = true;
@@ -1288,6 +1338,7 @@ public class ServiceFrame extends JFrame {
 											JOptionPane.showMessageDialog(ServicePanel.this, TwisterSwingResources.getInstance().getString("error.exportClip"), TwisterSwingResources.getInstance().getString("label.exportClip"), JOptionPane.ERROR_MESSAGE);
 										}
 
+										@Override
 										public Object execute(final LibraryService service) throws Exception {
 											service.exportClip(clipModel.getClip(clipTable.convertRowIndexToModel(row)), file);
 											return null;
@@ -1303,10 +1354,12 @@ public class ServiceFrame extends JFrame {
 							}
 							else {
 								service.execute(new ServiceCallback<Object>() {
+									@Override
 									public void executed(final Object value) {
 										semaphore.release();
 									}
 
+									@Override
 									public void failed(final Throwable throwable) {
 										ServicePanel.logger.log(Level.WARNING, "Can't export the clip", throwable);
 										error[0] = true;
@@ -1314,6 +1367,7 @@ public class ServiceFrame extends JFrame {
 										JOptionPane.showMessageDialog(ServicePanel.this, TwisterSwingResources.getInstance().getString("error.exportClip"), TwisterSwingResources.getInstance().getString("label.exportClip"), JOptionPane.ERROR_MESSAGE);
 									}
 
+									@Override
 									public Object execute(final LibraryService service) throws Exception {
 										service.exportClip(clipModel.getClip(clipTable.convertRowIndexToModel(row)), file);
 										return null;
@@ -1348,20 +1402,24 @@ public class ServiceFrame extends JFrame {
 			/**
 			 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 			 */
+			@Override
 			public void actionPerformed(final ActionEvent e) {
 				if (clipTable.getSelectedRowCount() == 1) {
 					final int clipId = clipModel.getClip(clipTable.convertRowIndexToModel(clipTable.getSelectedRow())).getClipId();
 					service.execute(new ServiceCallback<Object>() {
+						@Override
 						public void executed(final Object value) {
 							semaphore.release();
 						}
 
+						@Override
 						public void failed(final Throwable throwable) {
 							ServicePanel.logger.log(Level.WARNING, "Can't create the profile", throwable);
 							semaphore.release();
 							JOptionPane.showMessageDialog(ServicePanel.this, TwisterSwingResources.getInstance().getString("error.createProfile"), TwisterSwingResources.getInstance().getString("label.createProfile"), JOptionPane.ERROR_MESSAGE);
 						}
 
+						@Override
 						public Object execute(final LibraryService service) throws Exception {
 							service.createProfile(createDefaultRenderProfile(clipId));
 							return null;
@@ -1390,6 +1448,7 @@ public class ServiceFrame extends JFrame {
 			/**
 			 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 			 */
+			@Override
 			public void actionPerformed(final ActionEvent e) {
 				if (profileTable.getSelectedRowCount() > 0) {
 					if (JOptionPane.showConfirmDialog(ServicePanel.this, TwisterSwingResources.getInstance().getString("message.confirmDeleteProfiles"), TwisterSwingResources.getInstance().getString("label.deleteProfiles"), JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {
@@ -1417,10 +1476,12 @@ public class ServiceFrame extends JFrame {
 						final int percentage = (int) Math.rint((((float) i) / (rows.length - 1)) * 100f);
 						final RenderProfileDataRow profile = profiles[i];
 						service.execute(new ServiceCallback<Object>() {
+							@Override
 							public void executed(final Object value) {
 								semaphore.release();
 							}
 
+							@Override
 							public void failed(final Throwable throwable) {
 								ServicePanel.logger.log(Level.WARNING, "Can't delete the profile", throwable);
 								error[0] = true;
@@ -1429,6 +1490,7 @@ public class ServiceFrame extends JFrame {
 								JOptionPane.showMessageDialog(ServicePanel.this, TwisterSwingResources.getInstance().getString("error.deleteProfile"), TwisterSwingResources.getInstance().getString("label.deleteProfile"), JOptionPane.ERROR_MESSAGE);
 							}
 
+							@Override
 							public Object execute(final LibraryService service) throws Exception {
 								stateChanged(TwisterSwingResources.getInstance().getString("message.deletingProfile") + " " + profile.getProfileId() + "...", percentage);
 								service.deleteProfile(profile);
@@ -1464,26 +1526,32 @@ public class ServiceFrame extends JFrame {
 			/**
 			 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 			 */
+			@Override
 			public void actionPerformed(final ActionEvent e) {
 				if (profileTable.getSelectedRowCount() == 1) {
 					final int row = profileTable.getSelectedRow();
 					final RenderProfileDataRow profile = profileModel.getProfile(profileTable.convertRowIndexToModel(row));
 					service.execute(new ServiceCallback<RenderProfileDataRow>() {
+						@Override
 						public void executed(final RenderProfileDataRow profile) {
 							GUIUtil.executeTask(new Runnable() {
+								@Override
 								public void run() {
 									showEditProfileWindow(profile);
 									updateButtons();
 									service.execute(new ServiceCallback<RenderProfileDataRow>() {
+										@Override
 										public RenderProfileDataRow execute(final LibraryService service) throws Exception {
 											RenderProfileDataRow profileDataRow = service.getProfile(profile.getProfileId());
 											preview.setArea(new Rectangle(profileDataRow.getOffsetX(), profileDataRow.getOffsetY(), profileDataRow.getImageWidth(), profileDataRow.getImageHeight()));
 											return null;
 										}
 
+										@Override
 										public void executed(final RenderProfileDataRow value) {
 										}
 
+										@Override
 										public void failed(final Throwable throwable) {
 										}
 									});
@@ -1492,11 +1560,13 @@ public class ServiceFrame extends JFrame {
 							semaphore.release();
 						}
 
+						@Override
 						public void failed(final Throwable throwable) {
 							ServicePanel.logger.log(Level.WARNING, "Can't get the profile " + profile.getProfileId(), throwable);
 							semaphore.release();
 						}
 
+						@Override
 						public RenderProfileDataRow execute(final LibraryService service) throws Exception {
 							return service.getProfile(profile.getProfileId());
 						}
@@ -1524,6 +1594,7 @@ public class ServiceFrame extends JFrame {
 			/**
 			 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 			 */
+			@Override
 			public void actionPerformed(final ActionEvent e) {
 				if (profileTable.getSelectedRowCount() > 0) {
 					if (JOptionPane.showConfirmDialog(ServicePanel.this, TwisterSwingResources.getInstance().getString("message.confirmRenderProfiles"), TwisterSwingResources.getInstance().getString("label.renderProfiles"), JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {
@@ -1547,10 +1618,12 @@ public class ServiceFrame extends JFrame {
 						final int percentage = (int) Math.rint((((float) i) / (rows.length - 1)) * 100f);
 						final RenderProfileDataRow profile = profileModel.getProfile(profileTable.convertRowIndexToModel(rows[i]));
 						service.execute(new ServiceCallback<Object>() {
+							@Override
 							public void executed(final Object value) {
 								semaphore.release();
 							}
 
+							@Override
 							public void failed(final Throwable throwable) {
 								ServicePanel.logger.log(Level.WARNING, "Can't render the profile", throwable);
 								error[0] = true;
@@ -1559,6 +1632,7 @@ public class ServiceFrame extends JFrame {
 								JOptionPane.showMessageDialog(ServicePanel.this, TwisterSwingResources.getInstance().getString("error.deleteJobs"), TwisterSwingResources.getInstance().getString("label.renderProfile"), JOptionPane.ERROR_MESSAGE);
 							}
 
+							@Override
 							public Object execute(final LibraryService service) throws Exception {
 								service.deleteJobs(profile.getProfileId(), ProfileRenderWorker.this, TwisterSwingResources.getInstance().getString("message.deletingJobs") + " " + profile.getProfileId() + "...", percentage / 3f);
 								service.createJobs(profile.getProfileId(), ProfileRenderWorker.this, TwisterSwingResources.getInstance().getString("message.creatingJobs") + " " + profile.getProfileId() + "...", percentage / 3f);
@@ -1594,6 +1668,7 @@ public class ServiceFrame extends JFrame {
 			/**
 			 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 			 */
+			@Override
 			public void actionPerformed(final ActionEvent e) {
 				if (profileTable.getSelectedRowCount() > 0) {
 					if (JOptionPane.showConfirmDialog(ServicePanel.this, TwisterSwingResources.getInstance().getString("message.confirmAbortProfiles"), TwisterSwingResources.getInstance().getString("label.abortProfiles"), JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {
@@ -1617,10 +1692,12 @@ public class ServiceFrame extends JFrame {
 						final int percentage = (int) Math.rint((((float) i) / (rows.length - 1)) * 100f);
 						final RenderProfileDataRow profile = profileModel.getProfile(profileTable.convertRowIndexToModel(rows[i]));
 						service.execute(new ServiceCallback<Object>() {
+							@Override
 							public void executed(final Object value) {
 								semaphore.release();
 							}
 
+							@Override
 							public void failed(final Throwable throwable) {
 								ServicePanel.logger.log(Level.WARNING, "Can't abort the profile", throwable);
 								error[0] = true;
@@ -1629,6 +1706,7 @@ public class ServiceFrame extends JFrame {
 								JOptionPane.showMessageDialog(ServicePanel.this, TwisterSwingResources.getInstance().getString("error.deleteJobs"), TwisterSwingResources.getInstance().getString("label.abortProfile"), JOptionPane.ERROR_MESSAGE);
 							}
 
+							@Override
 							public Object execute(final LibraryService service) throws Exception {
 								service.deleteJobs(profile.getProfileId(), ProfileAbortWorker.this, TwisterSwingResources.getInstance().getString("message.deletingJobs") + " " + profile.getProfileId() + "...", percentage);
 								return null;
@@ -1662,6 +1740,7 @@ public class ServiceFrame extends JFrame {
 			/**
 			 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 			 */
+			@Override
 			public void actionPerformed(final ActionEvent e) {
 				if (profileTable.getSelectedRowCount() > 0) {
 					if (JOptionPane.showConfirmDialog(ServicePanel.this, TwisterSwingResources.getInstance().getString("message.confirmCleanProfiles"), TwisterSwingResources.getInstance().getString("label.cleanProfiles"), JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {
@@ -1685,10 +1764,12 @@ public class ServiceFrame extends JFrame {
 						final int percentage = (int) Math.rint((((float) i) / (rows.length - 1)) * 100f);
 						final RenderProfileDataRow profile = profileModel.getProfile(profileTable.convertRowIndexToModel(rows[i]));
 						service.execute(new ServiceCallback<Object>() {
+							@Override
 							public void executed(final Object value) {
 								semaphore.release();
 							}
 
+							@Override
 							public void failed(final Throwable throwable) {
 								ServicePanel.logger.log(Level.WARNING, "Can't clean the profile", throwable);
 								error[0] = true;
@@ -1697,6 +1778,7 @@ public class ServiceFrame extends JFrame {
 								JOptionPane.showMessageDialog(ServicePanel.this, TwisterSwingResources.getInstance().getString("error.cleanProfile"), TwisterSwingResources.getInstance().getString("label.cleanProfile"), JOptionPane.ERROR_MESSAGE);
 							}
 
+							@Override
 							public Object execute(final LibraryService service) throws Exception {
 								stateChanged(TwisterSwingResources.getInstance().getString("message.cleaningProfile") + " " + profile.getProfileId() + "...", percentage);
 								service.cleanProfile(profile);
@@ -1731,6 +1813,7 @@ public class ServiceFrame extends JFrame {
 			/**
 			 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 			 */
+			@Override
 			public void actionPerformed(final ActionEvent e) {
 				if (profileTable.getSelectedRowCount() > 0) {
 					final WorkerProgressDialog dialog = new WorkerProgressDialog(new ProfileStartWorker(), false);
@@ -1753,10 +1836,12 @@ public class ServiceFrame extends JFrame {
 					final int percentage = (int) Math.rint((((float) i) / (rows.length - 1)) * 100f);
 					final RenderProfileDataRow profile = profileModel.getProfile(profileTable.convertRowIndexToModel(rows[i]));
 					service.execute(new ServiceCallback<Object>() {
+						@Override
 						public void executed(final Object value) {
 							semaphore.release();
 						}
 
+						@Override
 						public void failed(final Throwable throwable) {
 							ServicePanel.logger.log(Level.WARNING, "Can't start the profile", throwable);
 							error[0] = true;
@@ -1765,6 +1850,7 @@ public class ServiceFrame extends JFrame {
 							JOptionPane.showMessageDialog(ServicePanel.this, TwisterSwingResources.getInstance().getString("error.startJobs"), TwisterSwingResources.getInstance().getString("label.startProfile"), JOptionPane.ERROR_MESSAGE);
 						}
 
+						@Override
 						public Object execute(final LibraryService service) throws Exception {
 							service.startJobs(profile.getProfileId(), ProfileStartWorker.this, TwisterSwingResources.getInstance().getString("message.startingJobs") + " " + profile.getProfileId() + "...", percentage);
 							return null;
@@ -1797,6 +1883,7 @@ public class ServiceFrame extends JFrame {
 			/**
 			 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 			 */
+			@Override
 			public void actionPerformed(final ActionEvent e) {
 				if (profileTable.getSelectedRowCount() > 0) {
 					if (JOptionPane.showConfirmDialog(ServicePanel.this, TwisterSwingResources.getInstance().getString("message.confirmStopProfiles"), TwisterSwingResources.getInstance().getString("label.stopProfiles"), JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {
@@ -1820,10 +1907,12 @@ public class ServiceFrame extends JFrame {
 						final int percentage = (int) Math.rint((((float) i) / (rows.length - 1)) * 100f);
 						final RenderProfileDataRow profile = profileModel.getProfile(profileTable.convertRowIndexToModel(rows[i]));
 						service.execute(new ServiceCallback<Object>() {
+							@Override
 							public void executed(final Object value) {
 								semaphore.release();
 							}
 
+							@Override
 							public void failed(final Throwable throwable) {
 								ServicePanel.logger.log(Level.WARNING, "Can't stop the profile", throwable);
 								error[0] = true;
@@ -1832,6 +1921,7 @@ public class ServiceFrame extends JFrame {
 								JOptionPane.showMessageDialog(ServicePanel.this, TwisterSwingResources.getInstance().getString("error.stopJobs"), TwisterSwingResources.getInstance().getString("label.stopProfile"), JOptionPane.ERROR_MESSAGE);
 							}
 
+							@Override
 							public Object execute(final LibraryService service) throws Exception {
 								service.stopJobs(profile.getProfileId(), ProfileStopWorker.this, TwisterSwingResources.getInstance().getString("message.stoppingJobs") + " " + profile.getProfileId() + "...", percentage);
 								return null;
@@ -1865,6 +1955,7 @@ public class ServiceFrame extends JFrame {
 			/**
 			 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 			 */
+			@Override
 			public void actionPerformed(final ActionEvent e) {
 				if (profileTable.getSelectedRowCount() > 0) {
 					final int[] rows = profileTable.getSelectedRows();
@@ -1893,6 +1984,7 @@ public class ServiceFrame extends JFrame {
 			/**
 			 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 			 */
+			@Override
 			public void actionPerformed(final ActionEvent e) {
 				final WorkerProgressDialog dialog = new WorkerProgressDialog(TwisterSwingResources.getInstance().getString("action.checkUpdate"), new CheckUpdateWorker(), true);
 				GUIUtil.centerWindow(dialog, getLocationOnScreen(), ServicePanel.this.getBounds());
@@ -1936,6 +2028,7 @@ public class ServiceFrame extends JFrame {
 						}
 						if (newRelease != null) {
 							GUIUtil.executeTask(new Runnable() {
+								@Override
 								public void run() {
 									try {
 										JOptionPane.showMessageDialog(ServicePanel.this, TwisterSwingResources.getInstance().getString("message.newReleaseAvailable"), TwisterSwingResources.getInstance().getString("action.checkUpdate"), JOptionPane.PLAIN_MESSAGE);
@@ -1949,6 +2042,7 @@ public class ServiceFrame extends JFrame {
 						}
 						else {
 							GUIUtil.executeTask(new Runnable() {
+								@Override
 								public void run() {
 									JOptionPane.showMessageDialog(ServicePanel.this, TwisterSwingResources.getInstance().getString("message.newReleaseNotAvailable"), TwisterSwingResources.getInstance().getString("action.checkUpdate"), JOptionPane.PLAIN_MESSAGE);
 								}
@@ -1957,6 +2051,7 @@ public class ServiceFrame extends JFrame {
 					}
 					catch (final Exception x) {
 						GUIUtil.executeTask(new Runnable() {
+							@Override
 							public void run() {
 								JOptionPane.showMessageDialog(ServicePanel.this, TwisterSwingResources.getInstance().getString("error.checkUpdate"), TwisterSwingResources.getInstance().getString("action.checkUpdate"), JOptionPane.WARNING_MESSAGE);
 							}
@@ -1989,6 +2084,7 @@ public class ServiceFrame extends JFrame {
 			/**
 			 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 			 */
+			@Override
 			public void actionPerformed(final ActionEvent e) {
 				BufferedReader reader = null;
 				try {
@@ -2050,6 +2146,7 @@ public class ServiceFrame extends JFrame {
 			/**
 			 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 			 */
+			@Override
 			public void actionPerformed(final ActionEvent e) {
 				final Properties properties = new Properties();
 				File workspace = null;
@@ -2135,6 +2232,7 @@ public class ServiceFrame extends JFrame {
 			/**
 			 * @see javax.swing.event.TableModelListener#tableChanged(javax.swing.event.TableModelEvent)
 			 */
+			@Override
 			public void tableChanged(final TableModelEvent e) {
 				jobLabel.setText(jobLabelText + " (" + jobTable.getRowCount() + " " + (jobTable.getRowCount() == 1 ? elementText : elementsText) + ")");
 				clipLabel.setText(clipLabelText + " (" + clipTable.getRowCount() + " " + (clipTable.getRowCount() == 1 ? elementText : elementsText) + ")");
@@ -2159,6 +2257,7 @@ public class ServiceFrame extends JFrame {
 			/**
 			 * @see javax.swing.table.DefaultTableCellRenderer#getTableCellRendererComponent(javax.swing.JTable, java.lang.Object, boolean, boolean, int, int)
 			 */
+			@Override
 			public Component getTableCellRendererComponent(final JTable table, final Object value, final boolean isSelected, final boolean hasFocus, final int row, final int column) {
 				// if (row % 2 == 0) {
 				// if (isSelected) {

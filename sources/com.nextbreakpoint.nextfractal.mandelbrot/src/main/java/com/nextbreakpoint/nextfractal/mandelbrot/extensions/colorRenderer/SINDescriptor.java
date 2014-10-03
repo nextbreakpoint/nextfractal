@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -26,8 +26,6 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.extensions.colorRenderer;
 
 import com.nextbreakpoint.nextfractal.mandelbrot.colorRenderer.extension.ColorRendererExtensionDescriptor;
-import com.nextbreakpoint.nextfractal.mandelbrot.extensions.colorRenderer.SINConfig;
-import com.nextbreakpoint.nextfractal.mandelbrot.extensions.colorRenderer.SINRuntime;
 
 /**
  * @author Andrea Medeghini
@@ -38,6 +36,7 @@ public class SINDescriptor extends ColorRendererExtensionDescriptor {
 	 * 
 	 * @return the extensionId.
 	 */
+	@Override
 	public String getExtensionId() {
 		return "twister.mandelbrot.color.renderer.sin";
 	}
@@ -47,6 +46,7 @@ public class SINDescriptor extends ColorRendererExtensionDescriptor {
 	 * 
 	 * @return the extensionName.
 	 */
+	@Override
 	public String getExtensionName() {
 		return "SIN";
 	}
@@ -56,6 +56,7 @@ public class SINDescriptor extends ColorRendererExtensionDescriptor {
 	 * 
 	 * @return the extensionRuntimeClass.
 	 */
+	@Override
 	public SINRuntime getExtensionRuntime() {
 		return new SINRuntime();
 	}
@@ -65,6 +66,7 @@ public class SINDescriptor extends ColorRendererExtensionDescriptor {
 	 * 
 	 * @return the extensionConfigClass.
 	 */
+	@Override
 	public SINConfig getExtensionConfig() {
 		return new SINConfig();
 	}

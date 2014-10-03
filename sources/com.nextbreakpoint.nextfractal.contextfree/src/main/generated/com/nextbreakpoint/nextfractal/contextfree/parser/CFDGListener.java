@@ -1,9 +1,7 @@
 // Generated from CFDG.g4 by ANTLR 4.2.2
 package com.nextbreakpoint.nextfractal.contextfree.parser;
 
-	import java.util.Map;
-
-import org.antlr.v4.runtime.misc.NotNull;
+	import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
 /**

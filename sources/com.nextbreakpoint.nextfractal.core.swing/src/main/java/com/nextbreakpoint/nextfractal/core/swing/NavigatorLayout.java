@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -52,6 +52,7 @@ public class NavigatorLayout implements LayoutManager2 {
 	/**
 	 * @see java.awt.LayoutManager2#getLayoutAlignmentX(java.awt.Container)
 	 */
+	@Override
 	public float getLayoutAlignmentX(final Container target) {
 		return 0;
 	}
@@ -59,6 +60,7 @@ public class NavigatorLayout implements LayoutManager2 {
 	/**
 	 * @see java.awt.LayoutManager2#getLayoutAlignmentY(java.awt.Container)
 	 */
+	@Override
 	public float getLayoutAlignmentY(final Container target) {
 		return 0;
 	}
@@ -66,30 +68,35 @@ public class NavigatorLayout implements LayoutManager2 {
 	/**
 	 * @see java.awt.LayoutManager2#invalidateLayout(java.awt.Container)
 	 */
+	@Override
 	public void invalidateLayout(final Container target) {
 	}
 
 	/**
 	 * @see java.awt.LayoutManager2#addLayoutComponent(java.awt.Component, java.lang.Object)
 	 */
+	@Override
 	public void addLayoutComponent(final Component comp, final Object constraints) {
 	}
 
 	/**
 	 * @see java.awt.LayoutManager#addLayoutComponent(java.lang.String, java.awt.Component)
 	 */
+	@Override
 	public void addLayoutComponent(final String name, final Component comp) {
 	}
 
 	/**
 	 * @see java.awt.LayoutManager#removeLayoutComponent(java.awt.Component)
 	 */
+	@Override
 	public void removeLayoutComponent(final Component comp) {
 	}
 
 	/**
 	 * @see java.awt.LayoutManager#layoutContainer(java.awt.Container)
 	 */
+	@Override
 	public void layoutContainer(final Container parent) {
 		final Insets insets = parent.getInsets();
 		final int width = gridW * (parent.getComponentCount() > 4 ? 4 : parent.getComponentCount());
@@ -109,6 +116,7 @@ public class NavigatorLayout implements LayoutManager2 {
 	/**
 	 * @see java.awt.LayoutManager2#maximumLayoutSize(java.awt.Container)
 	 */
+	@Override
 	public Dimension maximumLayoutSize(final Container parent) {
 		return preferredLayoutSize(parent);
 	}
@@ -116,6 +124,7 @@ public class NavigatorLayout implements LayoutManager2 {
 	/**
 	 * @see java.awt.LayoutManager#minimumLayoutSize(java.awt.Container)
 	 */
+	@Override
 	public Dimension minimumLayoutSize(final Container parent) {
 		return preferredLayoutSize(parent);
 	}
@@ -123,6 +132,7 @@ public class NavigatorLayout implements LayoutManager2 {
 	/**
 	 * @see java.awt.LayoutManager#preferredLayoutSize(java.awt.Container)
 	 */
+	@Override
 	public Dimension preferredLayoutSize(final Container parent) {
 		final Dimension size = new Dimension();
 		final Insets insets = parent.getInsets();

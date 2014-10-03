@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -83,6 +83,7 @@ public class DefaultConfigConverter implements ConfigConverter {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.twister.converter.extension.ConverterExtensionRuntime#convert(java.io.File)
 	 */
+	@Override
 	public TwisterConfig convert(final File file) {
 		TwisterConfig config = null;
 		MandelbrotConverter5 mconverter5 = new MandelbrotConverter5();
@@ -466,6 +467,7 @@ public class DefaultConfigConverter implements ConfigConverter {
 		/**
 		 * Returns a String object representing this fractalData object.
 		 */
+		@Override
 		public String toString() {
 			String string = "fractal type " + getType();
 			string += " " + formulamodule;
@@ -805,8 +807,8 @@ public class DefaultConfigConverter implements ConfigConverter {
 		public TwisterConfig convert(final Element element) {
 			if (isValidPhoto(element)) {
 				try {
-					String plane = ((Element) XML.getElementsByName(element, "plane").get(0)).getAttribute("class");
-					String formula = ((Element) XML.getElementsByName(element, "formula").get(0)).getAttribute("class");
+					String plane = XML.getElementsByName(element, "plane").get(0).getAttribute("class");
+					String formula = XML.getElementsByName(element, "formula").get(0).getAttribute("class");
 					// String externalFilter = ((Element) XML.getElementsByName(element, "external-filter").get(0)).getAttribute("class");
 					// String internalFilter = ((Element) XML.getElementsByName(element, "internal-filter").get(0)).getAttribute("class");
 					// String imageFilter = ((Element) XML.getElementsByName(element, "image-filter").get(0)).getAttribute("class");
@@ -861,7 +863,7 @@ public class DefaultConfigConverter implements ConfigConverter {
 					else {
 						throw new Exception("Invalid formula");
 					}
-					Element formulaElement = (Element) XML.getElementsByName(element, "formula").get(0);
+					Element formulaElement = XML.getElementsByName(element, "formula").get(0);
 					int iterations = XML.getIntegerElementValue(formulaElement, "iterations");
 					double threshold = XML.getDoubleElementValue(formulaElement, "threshold");
 					double s = XML.getDoubleElementValue(formulaElement, "scale");
@@ -918,10 +920,10 @@ public class DefaultConfigConverter implements ConfigConverter {
 					frameElement.appendLayerConfigElement(groupLayerElement);
 					config.setFrameConfigElement(frameElement);
 					config.setEffectConfigElement(effectElement);
-					((RenderingFormulaExtensionConfig) renderingFormulaElement.getReference().getExtensionConfig()).setCenter(center);
-					((RenderingFormulaExtensionConfig) renderingFormulaElement.getReference().getExtensionConfig()).setScale(scale);
-					((RenderingFormulaExtensionConfig) renderingFormulaElement.getReference().getExtensionConfig()).setIterations(iterations);
-					((RenderingFormulaExtensionConfig) renderingFormulaElement.getReference().getExtensionConfig()).setThreshold(threshold);
+					renderingFormulaElement.getReference().getExtensionConfig().setCenter(center);
+					renderingFormulaElement.getReference().getExtensionConfig().setScale(scale);
+					renderingFormulaElement.getReference().getExtensionConfig().setIterations(iterations);
+					renderingFormulaElement.getReference().getExtensionConfig().setThreshold(threshold);
 					return config;
 				}
 				catch (Exception e) {
@@ -960,8 +962,8 @@ public class DefaultConfigConverter implements ConfigConverter {
 		public TwisterConfig convert(final Element element) {
 			if (isValidPhoto(element)) {
 				try {
-					String plane = ((Element) XML.getElementsByName(element, "plane").get(0)).getAttribute("class");
-					String formula = ((Element) XML.getElementsByName(element, "formula").get(0)).getAttribute("class");
+					String plane = XML.getElementsByName(element, "plane").get(0).getAttribute("class");
+					String formula = XML.getElementsByName(element, "formula").get(0).getAttribute("class");
 					// String externalFilter = ((Element) XML.getElementsByName(element, "external-filter").get(0)).getAttribute("class");
 					// String internalFilter = ((Element) XML.getElementsByName(element, "internal-filter").get(0)).getAttribute("class");
 					// String imageFilter = ((Element) XML.getElementsByName(element, "image-filter").get(0)).getAttribute("class");
@@ -1016,7 +1018,7 @@ public class DefaultConfigConverter implements ConfigConverter {
 					else {
 						throw new Exception("Invalid formula");
 					}
-					Element formulaElement = (Element) XML.getElementsByName(element, "formula").get(0);
+					Element formulaElement = XML.getElementsByName(element, "formula").get(0);
 					int iterations = XML.getIntegerElementValue(formulaElement, "iterations");
 					double threshold = XML.getDoubleElementValue(formulaElement, "threshold");
 					double s = XML.getDoubleElementValue(formulaElement, "scale");
@@ -1075,10 +1077,10 @@ public class DefaultConfigConverter implements ConfigConverter {
 					frameElement.appendLayerConfigElement(groupLayerElement);
 					config.setFrameConfigElement(frameElement);
 					config.setEffectConfigElement(effectElement);
-					((RenderingFormulaExtensionConfig) renderingFormulaElement.getReference().getExtensionConfig()).setCenter(center);
-					((RenderingFormulaExtensionConfig) renderingFormulaElement.getReference().getExtensionConfig()).setScale(scale);
-					((RenderingFormulaExtensionConfig) renderingFormulaElement.getReference().getExtensionConfig()).setIterations(iterations);
-					((RenderingFormulaExtensionConfig) renderingFormulaElement.getReference().getExtensionConfig()).setThreshold(threshold);
+					renderingFormulaElement.getReference().getExtensionConfig().setCenter(center);
+					renderingFormulaElement.getReference().getExtensionConfig().setScale(scale);
+					renderingFormulaElement.getReference().getExtensionConfig().setIterations(iterations);
+					renderingFormulaElement.getReference().getExtensionConfig().setThreshold(threshold);
 					return config;
 				}
 				catch (Exception e) {

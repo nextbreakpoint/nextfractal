@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -58,7 +58,6 @@ import javax.swing.event.ChangeListener;
 
 import com.nextbreakpoint.nextfractal.core.swing.util.GUIFactory;
 import com.nextbreakpoint.nextfractal.core.swing.util.GUIUtil;
-
 import com.nextbreakpoint.nextfractal.queue.LibraryService;
 import com.nextbreakpoint.nextfractal.queue.RenderService;
 import com.nextbreakpoint.nextfractal.queue.RenderService.ServiceCallback;
@@ -122,6 +121,7 @@ public class EditProfileDialog extends JDialog {
 		nameTextField = GUIFactory.createTextField(profile.getProfileName(), null, 20);
 		dpiSpinner = GUIFactory.createSpinner(new SpinnerNumberModel(72, 10, 2000, 1), null);
 		dpiSpinner.addChangeListener(new ChangeListener() {
+			@Override
 			public void stateChanged(final ChangeEvent e) {
 				updateSize();
 				updateOffset();
@@ -129,24 +129,28 @@ public class EditProfileDialog extends JDialog {
 		});
 		widthTextField = GUIFactory.createTextField(String.valueOf(profile.getImageWidth()), null, 6);
 		widthTextField.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(final ActionEvent e) {
 				updateSize();
 			}
 		});
 		heightTextField = GUIFactory.createTextField(String.valueOf(profile.getImageHeight()), null, 6);
 		heightTextField.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(final ActionEvent e) {
 				updateSize();
 			}
 		});
 		offsetXTextField = GUIFactory.createTextField(String.valueOf(profile.getOffsetX()), null, 6);
 		offsetXTextField.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(final ActionEvent e) {
 				updateOffset();
 			}
 		});
 		offsetYTextField = GUIFactory.createTextField(String.valueOf(profile.getOffsetX()), null, 6);
 		offsetYTextField.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(final ActionEvent e) {
 				updateOffset();
 			}
@@ -159,6 +163,7 @@ public class EditProfileDialog extends JDialog {
 		sizeUnitComboBox.setRenderer(new UnitListCellRenderer());
 		sizeUnitComboBox.setSelectedIndex(0);
 		sizeUnitComboBox.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(final ActionEvent e) {
 				updateSize();
 			}
@@ -167,6 +172,7 @@ public class EditProfileDialog extends JDialog {
 		sizeUnitComboBox2.setRenderer(new UnitListCellRenderer());
 		sizeUnitComboBox2.setSelectedIndex(0);
 		sizeUnitComboBox2.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(final ActionEvent e) {
 				updateSize();
 			}
@@ -179,6 +185,7 @@ public class EditProfileDialog extends JDialog {
 		offsetUnitComboBox.setRenderer(new UnitListCellRenderer());
 		offsetUnitComboBox.setSelectedIndex(0);
 		offsetUnitComboBox.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(final ActionEvent e) {
 				updateOffset();
 			}
@@ -187,6 +194,7 @@ public class EditProfileDialog extends JDialog {
 		offsetUnitComboBox2.setRenderer(new UnitListCellRenderer());
 		offsetUnitComboBox2.setSelectedIndex(0);
 		offsetUnitComboBox2.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(final ActionEvent e) {
 				updateOffset();
 			}
@@ -402,70 +410,85 @@ public class EditProfileDialog extends JDialog {
 	}
 
 	private class UnitPX implements Unit {
+		@Override
 		public String getName() {
 			return "px";
 		}
 
+		@Override
 		public double getValue(final double value, final double dpi, final Unit u) {
 			return u.getValueInPixels(value, dpi);
 		}
 
+		@Override
 		public int getValueInPixels(final double value, final double dpi) {
 			return (int) Math.rint(value);
 		}
 	}
 
 	private class UnitCM implements Unit {
+		@Override
 		public String getName() {
 			return "cm";
 		}
 
+		@Override
 		public double getValue(final double value, final double dpi, final Unit u) {
 			return (u.getValueInPixels(value, dpi) * 2.54d) / dpi;
 		}
 
+		@Override
 		public int getValueInPixels(final double value, final double dpi) {
 			return (int) Math.rint((value * dpi) / 2.54d);
 		}
 	}
 
 	private class UnitMM implements Unit {
+		@Override
 		public String getName() {
 			return "mm";
 		}
 
+		@Override
 		public double getValue(final double value, final double dpi, final Unit u) {
 			return (u.getValueInPixels(value, dpi) * 25.4d) / dpi;
 		}
 
+		@Override
 		public int getValueInPixels(final double value, final double dpi) {
 			return (int) Math.rint((value * dpi) / 25.4d);
 		}
 	}
 
 	private class UnitPT implements Unit {
+		@Override
 		public String getName() {
 			return "pt";
 		}
 
+		@Override
 		public double getValue(final double value, final double dpi, final Unit u) {
 			return (u.getValueInPixels(value, dpi) * 72d) / dpi;
 		}
 
+		@Override
 		public int getValueInPixels(final double value, final double dpi) {
 			return (int) Math.rint((value * dpi) / 72d);
 		}
 	}
 
 	private class UnitINCH implements Unit {
+		@Override
 		public String getName() {
 			return "''";
 		}
 
+		@Override
 		public double getValue(final double value, final double dpi, final Unit u) {
 			return u.getValueInPixels(value, dpi) / dpi;
 		}
 
+		@Override
 		public int getValueInPixels(final double value, final double dpi) {
 			return (int) Math.rint(value * dpi);
 		}
@@ -554,6 +577,7 @@ public class EditProfileDialog extends JDialog {
 		/**
 		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 		 */
+		@Override
 		public void actionPerformed(final ActionEvent e) {
 			try {
 				boolean error = false;
@@ -632,14 +656,17 @@ public class EditProfileDialog extends JDialog {
 					profile.setStartTime(startTimeSelector.getTimeInSeconds());
 					profile.setStopTime(stopTimeSelector.getTimeInSeconds());
 					service.execute(new ServiceCallback<Object>() {
+						@Override
 						public void executed(final Object value) {
 							GUIUtil.executeTask(new CloseRunnable(), true);
 						}
 
+						@Override
 						public void failed(final Throwable throwable) {
 							JOptionPane.showMessageDialog(EditProfileDialog.this, TwisterSwingResources.getInstance().getString("error.saveProfile"), TwisterSwingResources.getInstance().getString("label.saveProfile"), JOptionPane.ERROR_MESSAGE);
 						}
 
+						@Override
 						public Object execute(final LibraryService service) throws Exception {
 							service.saveProfile(profile);
 							service.cleanProfile(profile);
@@ -670,6 +697,7 @@ public class EditProfileDialog extends JDialog {
 		/**
 		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 		 */
+		@Override
 		public void actionPerformed(final ActionEvent e) {
 			GUIUtil.executeTask(new CloseRunnable(), true);
 		}
@@ -689,6 +717,7 @@ public class EditProfileDialog extends JDialog {
 		/**
 		 * @see java.lang.Runnable#run()
 		 */
+		@Override
 		public void run() {
 			setVisible(false);
 		}

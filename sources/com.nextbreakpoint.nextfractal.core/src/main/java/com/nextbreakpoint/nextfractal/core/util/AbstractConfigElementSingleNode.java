@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -29,6 +29,7 @@ import com.nextbreakpoint.nextfractal.core.config.ConfigElement;
 import com.nextbreakpoint.nextfractal.core.config.SingleConfigElement;
 import com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent;
 import com.nextbreakpoint.nextfractal.core.config.ValueChangeListener;
+import com.nextbreakpoint.nextfractal.core.config.ValueConfigElement;
 import com.nextbreakpoint.nextfractal.core.tree.DefaultNode;
 import com.nextbreakpoint.nextfractal.core.tree.Node;
 import com.nextbreakpoint.nextfractal.core.tree.NodeAction;
@@ -183,11 +184,12 @@ public abstract class AbstractConfigElementSingleNode<T extends ConfigElement> e
 	}
 
 	protected class ConfigElementListener implements ValueChangeListener {
+		@Override
 		@SuppressWarnings("unchecked")
 		public void valueChanged(final ValueChangeEvent e) {
 			cancel();
 			switch (e.getEventType()) {
-				case SingleConfigElement.VALUE_CHANGED: {
+				case ValueConfigElement.VALUE_CHANGED: {
 					setNodeValue(createNodeValue(createChildNode((T) e.getParams()[0])));
 					getSession().appendAction(new NodeAction(getNodeClass(), NodeAction.ACTION_SET_VALUE, e.getTimestamp(), getNodePath(), e.getParams()[0], e.getParams()[1]));
 					break;

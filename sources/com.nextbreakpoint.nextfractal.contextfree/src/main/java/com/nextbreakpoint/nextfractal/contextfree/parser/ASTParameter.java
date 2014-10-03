@@ -209,6 +209,7 @@ class ASTParameter extends ASTExpression {
 			return isLoopIndex;
 		}
 
+		@Override
 		public boolean isNatural() {
 			return isNatural;
 		}
@@ -237,6 +238,7 @@ class ASTParameter extends ASTExpression {
 			this.stackIndex = stackIndex;
 		}
 
+		@Override
 		public ELocality getLocality() {
 			return locality;
 		}

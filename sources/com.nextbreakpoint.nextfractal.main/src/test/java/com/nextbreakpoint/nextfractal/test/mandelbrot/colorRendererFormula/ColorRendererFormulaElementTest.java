@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -25,9 +25,6 @@
  */
 package com.nextbreakpoint.nextfractal.test.mandelbrot.colorRendererFormula;
 
-import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotRegistry;
-import com.nextbreakpoint.nextfractal.mandelbrot.colorRendererFormula.ColorRendererFormulaExtensionReferenceNodeValue;
-
 import org.junit.Test;
 
 import com.nextbreakpoint.nextfractal.core.common.ExtensionReferenceElement;
@@ -38,6 +35,8 @@ import com.nextbreakpoint.nextfractal.core.extension.ExtensionReference;
 import com.nextbreakpoint.nextfractal.core.test.AbstractExtensionConfigElementTest;
 import com.nextbreakpoint.nextfractal.core.tree.Node;
 import com.nextbreakpoint.nextfractal.core.tree.NodeValue;
+import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotRegistry;
+import com.nextbreakpoint.nextfractal.mandelbrot.colorRendererFormula.ColorRendererFormulaExtensionReferenceNodeValue;
 
 /**
  * @author Andrea Medeghini

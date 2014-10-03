@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -63,6 +63,7 @@ public class DefaultRenderedPaletteModel implements RenderedPaletteModel {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.swing.palette.PaletteFieldModel#addPaletteChangeListener(com.nextbreakpoint.nextfractal.core.swing.palette.PaletteChangeListener)
 	 */
+	@Override
 	public void addPaletteChangeListener(final PaletteChangeListener listener) {
 		listeners.add(listener);
 	}
@@ -70,6 +71,7 @@ public class DefaultRenderedPaletteModel implements RenderedPaletteModel {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.swing.palette.PaletteFieldModel#removePaletteChangeListener(com.nextbreakpoint.nextfractal.core.swing.palette.PaletteChangeListener)
 	 */
+	@Override
 	public void removePaletteChangeListener(final PaletteChangeListener listener) {
 		listeners.remove(listener);
 	}
@@ -86,6 +88,7 @@ public class DefaultRenderedPaletteModel implements RenderedPaletteModel {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.swing.palette.PaletteFieldModel#setPalette(com.nextbreakpoint.nextfractal.core.util.Palette, boolean)
 	 */
+	@Override
 	public void setPalette(final Palette palette, final boolean isAdjusting) {
 		if (palette instanceof RenderedPalette) {
 			setRenderedPalette((RenderedPalette) palette, isAdjusting);
@@ -95,6 +98,7 @@ public class DefaultRenderedPaletteModel implements RenderedPaletteModel {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.swing.palette.PaletteFieldModel#getPalette()
 	 */
+	@Override
 	public Palette getPalette() {
 		return palette;
 	}
@@ -102,6 +106,7 @@ public class DefaultRenderedPaletteModel implements RenderedPaletteModel {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.mandelbrot.swing.palette.RenderedPaletteModel#setRenderedPalette(com.nextbreakpoint.nextfractal.mandelbrot.colorRenderer.RenderedPalette, boolean)
 	 */
+	@Override
 	public void setRenderedPalette(final RenderedPalette palette, final boolean isAdjusting) {
 		if (palette == null) {
 			throw new NullPointerException("palette == null");
@@ -113,6 +118,7 @@ public class DefaultRenderedPaletteModel implements RenderedPaletteModel {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.mandelbrot.swing.palette.RenderedPaletteModel#getRenderedPalette()
 	 */
+	@Override
 	public RenderedPalette getRenderedPalette() {
 		return palette;
 	}

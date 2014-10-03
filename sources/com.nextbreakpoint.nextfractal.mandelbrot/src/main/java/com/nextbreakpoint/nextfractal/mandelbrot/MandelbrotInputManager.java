@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -137,6 +137,7 @@ public class MandelbrotInputManager {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotInputHandler#setLastMousePosition(double, double)
 		 */
+		@Override
 		public void setLastMousePosition(final int x, final int y) {
 			oldZoomData.lastMousePosX = (x - zoomHandler.getWidth() / 2d) / zoomHandler.getWidth();
 			oldZoomData.lastMousePosY = (y - zoomHandler.getHeight() / 2d) / zoomHandler.getWidth();
@@ -145,6 +146,7 @@ public class MandelbrotInputManager {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotInputHandler#setStartMousePosition(double, double)
 		 */
+		@Override
 		public void setStartMousePosition(final int x, final int y) {
 			oldZoomData.startMousePosX = (x - zoomHandler.getWidth() / 2d) / zoomHandler.getWidth();
 			oldZoomData.startMousePosY = (y - zoomHandler.getHeight() / 2d) / zoomHandler.getWidth();
@@ -153,6 +155,7 @@ public class MandelbrotInputManager {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotInputHandler#setZoomMode(int)
 		 */
+		@Override
 		public void setZoomMode(final int mode) {
 			switch (mode) {
 				case MODE_MANUAL: {
@@ -168,6 +171,7 @@ public class MandelbrotInputManager {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotInputHandler#setShiftMode(int)
 		 */
+		@Override
 		public void setShiftMode(final int mode) {
 			switch (mode) {
 				case MODE_MANUAL: {
@@ -183,6 +187,7 @@ public class MandelbrotInputManager {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotInputHandler#setRotationMode(int)
 		 */
+		@Override
 		public void setRotationMode(final int mode) {
 			switch (mode) {
 				case MODE_MANUAL: {
@@ -198,6 +203,7 @@ public class MandelbrotInputManager {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotInputHandler#setZoomDirection(int)
 		 */
+		@Override
 		public void setZoomDirection(final int direction) {
 			oldZoomData.autoZoomEnabled = true;
 			switch (direction) {
@@ -221,6 +227,7 @@ public class MandelbrotInputManager {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotInputHandler#setShiftDirection(int)
 		 */
+		@Override
 		public void setShiftDirection(final int direction) {
 			oldZoomData.autoShiftEnabled = true;
 			switch (direction) {
@@ -244,6 +251,7 @@ public class MandelbrotInputManager {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotInputHandler#setRotationDirection(int)
 		 */
+		@Override
 		public void setRotationDirection(final int direction) {
 			oldZoomData.autoRotationEnabled = true;
 			switch (direction) {
@@ -267,6 +275,7 @@ public class MandelbrotInputManager {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotInputHandler#setZoomEnabled(boolean)
 		 */
+		@Override
 		public void setZoomEnabled(final boolean value) {
 			oldZoomData.zoomEnabled = value;
 			// dirty = true;
@@ -275,6 +284,7 @@ public class MandelbrotInputManager {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotInputHandler#setShiftEnabled(boolean)
 		 */
+		@Override
 		public void setShiftEnabled(final boolean value) {
 			oldZoomData.shiftEnabled = value;
 			// dirty = true;
@@ -283,6 +293,7 @@ public class MandelbrotInputManager {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotInputHandler#setRotationEnabled(boolean)
 		 */
+		@Override
 		public void setRotationEnabled(final boolean value) {
 			oldZoomData.rotationEnabled = value;
 			// dirty = true;
@@ -291,6 +302,7 @@ public class MandelbrotInputManager {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotInputHandler#getNormalizedLastMousePositionX()
 		 */
+		@Override
 		public double getNormalizedLastMousePositionX() {
 			return oldZoomData.lastMousePosX;
 		}
@@ -298,6 +310,7 @@ public class MandelbrotInputManager {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotInputHandler#getNormalizedLastMousePositionY()
 		 */
+		@Override
 		public double getNormalizedLastMousePositionY() {
 			return oldZoomData.lastMousePosY;
 		}
@@ -305,6 +318,7 @@ public class MandelbrotInputManager {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotInputHandler#getNormalizedStartMousePositionX()
 		 */
+		@Override
 		public double getNormalizedStartMousePositionX() {
 			return oldZoomData.startMousePosX;
 		}
@@ -312,6 +326,7 @@ public class MandelbrotInputManager {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotInputHandler#getNormalizedStartMousePositionY()
 		 */
+		@Override
 		public double getNormalizedStartMousePositionY() {
 			return oldZoomData.startMousePosY;
 		}

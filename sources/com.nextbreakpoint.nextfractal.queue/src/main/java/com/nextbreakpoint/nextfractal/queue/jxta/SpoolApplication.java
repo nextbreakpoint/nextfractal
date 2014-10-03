@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -41,6 +41,7 @@ public class SpoolApplication implements Application {
 	private final Launcher<DefaultLauncherContext> launcher = new Launcher<DefaultLauncherContext>(new DefaultLauncherContext(), new DefaultLauncherThreadFactory());
 	private LauncherContextListener listener;
 
+	@Override
 	public Object start(final ApplicationContext context) throws Exception {
 //		Properties log4jProperties = new Properties();
 //		log4jProperties.put("log4j.rootLogger", "INFO, console");
@@ -73,6 +74,7 @@ public class SpoolApplication implements Application {
 		return Application.EXIT_OK;
 	}
 
+	@Override
 	public void stop() {
 		launcher.stop();
 	}
@@ -81,6 +83,7 @@ public class SpoolApplication implements Application {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.launcher.LauncherContext#exit()
 		 */
+		@Override
 		public void exit() {
 			launcher.stop();
 		}
@@ -88,6 +91,7 @@ public class SpoolApplication implements Application {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.launcher.LauncherContext#restart()
 		 */
+		@Override
 		public void restart() {
 			launcher.restart();
 		}
@@ -95,6 +99,7 @@ public class SpoolApplication implements Application {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.launcher.LauncherContext#setContextListener(com.nextbreakpoint.nextfractal.launcher.LauncherContextListener)
 		 */
+		@Override
 		public void setContextListener(final LauncherContextListener listener) {
 			SpoolApplication.this.listener = listener;
 		}
@@ -104,6 +109,7 @@ public class SpoolApplication implements Application {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.networking.jxta.spool.LauncherThreadFactory#createThread(com.nextbreakpoint.nextfractal.launcher.LauncherContext)
 		 */
+		@Override
 		public Thread createThread(final DefaultLauncherContext context) {
 			return new SpoolLauncherThread(context);
 		}

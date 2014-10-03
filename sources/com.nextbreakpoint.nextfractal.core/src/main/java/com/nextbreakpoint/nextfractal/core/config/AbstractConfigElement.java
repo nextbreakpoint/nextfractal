@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -62,6 +62,7 @@ public abstract class AbstractConfigElement implements ConfigElement {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.config.ConfigElement#dispose()
 	 */
+	@Override
 	public void dispose() {
 		userData = null;
 		classId = null;
@@ -105,6 +106,7 @@ public abstract class AbstractConfigElement implements ConfigElement {
 	 * 
 	 * @param context the configuration context to set.
 	 */
+	@Override
 	public void setContext(final ConfigContext context) {
 		if ((this.context != null) && (this.context != context)) {
 			throw new IllegalStateException("Context already defined");
@@ -117,6 +119,7 @@ public abstract class AbstractConfigElement implements ConfigElement {
 	 * 
 	 * @return the classId.
 	 */
+	@Override
 	public String getClassId() {
 		return classId;
 	}
@@ -130,6 +133,7 @@ public abstract class AbstractConfigElement implements ConfigElement {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.config.ConfigElement#addChangeListener(com.nextbreakpoint.nextfractal.core.config.ValueChangeListener)
 	 */
+	@Override
 	public void addChangeListener(final ValueChangeListener listener) {
 		getListenerList().add(listener);
 	}
@@ -137,6 +141,7 @@ public abstract class AbstractConfigElement implements ConfigElement {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.config.ConfigElement#removeChangeListener(com.nextbreakpoint.nextfractal.core.config.ValueChangeListener)
 	 */
+	@Override
 	public void removeChangeListener(final ValueChangeListener listener) {
 		getListenerList().remove(listener);
 	}
@@ -156,6 +161,7 @@ public abstract class AbstractConfigElement implements ConfigElement {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.config.ConfigElement#getUserData()
 	 */
+	@Override
 	public Object getUserData() {
 		return userData;
 	}
@@ -163,6 +169,7 @@ public abstract class AbstractConfigElement implements ConfigElement {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.config.ConfigElement#setUserData(java.lang.Object)
 	 */
+	@Override
 	public void setUserData(final Object userData) {
 		this.userData = userData;
 	}

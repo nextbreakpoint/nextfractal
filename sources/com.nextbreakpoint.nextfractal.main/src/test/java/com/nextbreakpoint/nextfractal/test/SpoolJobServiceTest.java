@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -30,6 +30,17 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.logging.Logger;
 
+import org.junit.Test;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+import com.nextbreakpoint.nextfractal.core.util.ConnectionFactory;
+import com.nextbreakpoint.nextfractal.core.util.DefaultThreadFactory;
+import com.nextbreakpoint.nextfractal.core.util.ProgressListener;
+import com.nextbreakpoint.nextfractal.core.util.Surface;
+import com.nextbreakpoint.nextfractal.core.util.Worker;
+import com.nextbreakpoint.nextfractal.core.xml.XML;
+import com.nextbreakpoint.nextfractal.core.xml.XMLNodeBuilder;
 import com.nextbreakpoint.nextfractal.queue.DefaultConnectionFactory;
 import com.nextbreakpoint.nextfractal.queue.LibraryService;
 import com.nextbreakpoint.nextfractal.queue.LibraryServiceListener;
@@ -60,18 +71,6 @@ import com.nextbreakpoint.nextfractal.twister.TwisterClipXMLExporter;
 import com.nextbreakpoint.nextfractal.twister.TwisterConfig;
 import com.nextbreakpoint.nextfractal.twister.TwisterConfigBuilder;
 import com.nextbreakpoint.nextfractal.twister.TwisterSequence;
-
-import org.junit.Test;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
-import com.nextbreakpoint.nextfractal.core.util.ConnectionFactory;
-import com.nextbreakpoint.nextfractal.core.util.DefaultThreadFactory;
-import com.nextbreakpoint.nextfractal.core.util.ProgressListener;
-import com.nextbreakpoint.nextfractal.core.util.Surface;
-import com.nextbreakpoint.nextfractal.core.util.Worker;
-import com.nextbreakpoint.nextfractal.core.xml.XML;
-import com.nextbreakpoint.nextfractal.core.xml.XMLNodeBuilder;
 
 /**
  * @author Andrea Medeghini
@@ -138,18 +137,23 @@ public class SpoolJobServiceTest {
 		worker.start();
 		final HashMap<Integer, String> jobs = new HashMap<Integer, String>();
 		service.addServiceListener(new LibraryServiceListener() {
+			@Override
 			public void clipCreated(final RenderClipDataRow clip) {
 			}
 
+			@Override
 			public void clipDeleted(final RenderClipDataRow clip) {
 			}
 
+			@Override
 			public void clipUpdated(final RenderClipDataRow clip) {
 			}
 
+			@Override
 			public void clipLoaded(final RenderClipDataRow clip) {
 			}
 
+			@Override
 			public void jobCreated(final RenderJobDataRow job) {
 				final String jobId = jobService.createJob(new TestListener());
 				jobService.setJobData(jobId, job, job.getFrameNumber());
@@ -157,55 +161,69 @@ public class SpoolJobServiceTest {
 				logger.info("Job " + jobId + " created");
 			}
 
+			@Override
 			public void jobDeleted(final RenderJobDataRow job) {
 				final String jobId = jobs.get(job.getJobId());
 				jobService.deleteJob(jobId);
 				logger.info("Job " + jobId + " deleted");
 			}
 
+			@Override
 			public void jobStarted(final RenderJobDataRow job) {
 				final String jobId = jobs.get(job.getJobId());
 				jobService.runJob(jobId);
 				logger.info("Job " + jobId + " started");
 			}
 
+			@Override
 			public void jobStopped(final RenderJobDataRow job) {
 				final String jobId = jobs.get(job.getJobId());
 				jobService.stopJob(jobId);
 				logger.info("Job " + jobId + " stopped");
 			}
 
+			@Override
 			public void jobAborted(final RenderJobDataRow job) {
 			}
 
+			@Override
 			public void jobUpdated(final RenderJobDataRow job) {
 			}
 
+			@Override
 			public void jobResumed(final RenderJobDataRow job) {
 			}
 
+			@Override
 			public void profileCreated(final RenderProfileDataRow profile) {
 			}
 
+			@Override
 			public void profileDeleted(final RenderProfileDataRow profile) {
 			}
 
+			@Override
 			public void profileUpdated(final RenderProfileDataRow profile) {
 			}
 
+			@Override
 			public void profileLoaded(final RenderProfileDataRow profile) {
 			}
 		});
 		ProgressListener listener = new ProgressListener() {
+			@Override
 			public void done() {
 			}
 
+			@Override
 			public void failed(final Throwable e) {
 			}
 
+			@Override
 			public void stateChanged(final String message, final int percentage) {
 			}
 
+			@Override
 			public void stateChanged(final String message) {
 			}
 		};
@@ -246,6 +264,7 @@ public class SpoolJobServiceTest {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.spool.JobListener#updated(String, JobData)
 		 */
+		@Override
 		public void updated(final String jobId, final JobData job) {
 			logger.info("Job state changed " + job);
 		}
@@ -253,6 +272,7 @@ public class SpoolJobServiceTest {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.spool.JobListener#started(String, JobData)
 		 */
+		@Override
 		public void started(final String jobId, final JobData job) {
 			logger.info("Job started " + job);
 		}
@@ -260,6 +280,7 @@ public class SpoolJobServiceTest {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.spool.JobListener#stopped(String, JobData)
 		 */
+		@Override
 		public void stopped(final String jobId, final JobData job) {
 			logger.info("Job stopped " + job);
 		}
@@ -267,6 +288,7 @@ public class SpoolJobServiceTest {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.spool.JobListener#terminated(String, JobData)
 		 */
+		@Override
 		public void terminated(final String jobId, final JobData job) {
 			logger.info("Job terminated " + job);
 		}
@@ -274,6 +296,7 @@ public class SpoolJobServiceTest {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.spool.JobListener#disposed(String, JobData)
 		 */
+		@Override
 		public void disposed(final String jobId, final JobData job) {
 			logger.info("Job disposed " + job);
 		}

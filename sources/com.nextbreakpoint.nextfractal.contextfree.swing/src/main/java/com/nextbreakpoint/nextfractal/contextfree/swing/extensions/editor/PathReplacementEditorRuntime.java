@@ -37,6 +37,7 @@ public class PathReplacementEditorRuntime extends EditorExtensionRuntime {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.swing.NodeEditorComponent#getComponent()
 		 */
+		@Override
 		public JComponent getComponent() {
 			return this;
 		}
@@ -44,12 +45,14 @@ public class PathReplacementEditorRuntime extends EditorExtensionRuntime {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.swing.NodeEditorComponent#reloadValue()
 		 */
+		@Override
 		public void reloadValue() {
 		}
 
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.swing.NodeEditorComponent#dispose()
 		 */
+		@Override
 		public void dispose() {
 		}
 	}

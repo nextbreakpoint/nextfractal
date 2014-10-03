@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -25,7 +25,6 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.extensions.image;
 
-import com.nextbreakpoint.nextfractal.contextfree.extensions.image.ContextFreeImageConfigNodeBuilderRuntime;
 import com.nextbreakpoint.nextfractal.core.nodeBuilder.extension.NodeBuilderExtensionDescriptor;
 
 /**
@@ -37,6 +36,7 @@ public class ContextFreeImageConfigNodeBuilderDescriptor extends NodeBuilderExte
 	 * 
 	 * @return the extensionId.
 	 */
+	@Override
 	public String getExtensionId() {
 		return "twister.frame.layer.image.contextfree";
 	}
@@ -46,6 +46,7 @@ public class ContextFreeImageConfigNodeBuilderDescriptor extends NodeBuilderExte
 	 * 
 	 * @return the extensionName.
 	 */
+	@Override
 	public String getExtensionName() {
 		return "ContextFree Fractal";
 	}
@@ -55,6 +56,7 @@ public class ContextFreeImageConfigNodeBuilderDescriptor extends NodeBuilderExte
 	 * 
 	 * @return the extensionRuntimeClass.
 	 */
+	@Override
 	public ContextFreeImageConfigNodeBuilderRuntime getExtensionRuntime() {
 		return new ContextFreeImageConfigNodeBuilderRuntime();
 	}

@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -54,6 +54,7 @@ public abstract class AbstractLayerConfigElement extends AbstractConfigElement i
 	 * 
 	 * @return the layer opacity.
 	 */
+	@Override
 	public Integer getOpacity() {
 		return opacityElement.getValue();
 	}
@@ -63,6 +64,7 @@ public abstract class AbstractLayerConfigElement extends AbstractConfigElement i
 	 * 
 	 * @param opacity the layer opacity to set.
 	 */
+	@Override
 	public void setOpacity(final Integer opacity) {
 		opacityElement.setValue(opacity);
 	}
@@ -70,6 +72,7 @@ public abstract class AbstractLayerConfigElement extends AbstractConfigElement i
 	/**
 	 * @param locked
 	 */
+	@Override
 	public void setLocked(final Boolean locked) {
 		lockedElement.setValue(locked);
 	}
@@ -77,6 +80,7 @@ public abstract class AbstractLayerConfigElement extends AbstractConfigElement i
 	/**
 	 * @return true if locked.
 	 */
+	@Override
 	public Boolean isLocked() {
 		return lockedElement.getValue();
 	}
@@ -84,6 +88,7 @@ public abstract class AbstractLayerConfigElement extends AbstractConfigElement i
 	/**
 	 * @param visible
 	 */
+	@Override
 	public void setVisible(final Boolean visible) {
 		visibleElement.setValue(visible);
 	}
@@ -91,6 +96,7 @@ public abstract class AbstractLayerConfigElement extends AbstractConfigElement i
 	/**
 	 * @return true if visible.
 	 */
+	@Override
 	public Boolean isVisible() {
 		return visibleElement.getValue();
 	}
@@ -101,6 +107,7 @@ public abstract class AbstractLayerConfigElement extends AbstractConfigElement i
 	 * @param index the filter index.
 	 * @return the filter.
 	 */
+	@Override
 	public LayerFilterConfigElement getFilterConfigElement(final int index) {
 		return filterListElement.getElement(index);
 	}
@@ -111,6 +118,7 @@ public abstract class AbstractLayerConfigElement extends AbstractConfigElement i
 	 * @param filterElement the filter element.
 	 * @return the filter index.
 	 */
+	@Override
 	public int indexOfFilterConfigElement(final LayerFilterConfigElement filterElement) {
 		return filterListElement.indexOfElement(filterElement);
 	}
@@ -120,6 +128,7 @@ public abstract class AbstractLayerConfigElement extends AbstractConfigElement i
 	 * 
 	 * @return the number of filter elements.
 	 */
+	@Override
 	public int getFilterConfigElementCount() {
 		return filterListElement.getElementCount();
 	}
@@ -129,6 +138,7 @@ public abstract class AbstractLayerConfigElement extends AbstractConfigElement i
 	 * 
 	 * @param filterElement the layer to add.
 	 */
+	@Override
 	public void appendFilterConfigElement(final LayerFilterConfigElement filterElement) {
 		filterListElement.appendElement(filterElement);
 	}
@@ -139,6 +149,7 @@ public abstract class AbstractLayerConfigElement extends AbstractConfigElement i
 	 * @param index the index.
 	 * @param filterElement the filter to add.
 	 */
+	@Override
 	public void insertFilterConfigElementAfter(final int index, final LayerFilterConfigElement filterElement) {
 		filterListElement.insertElementAfter(index, filterElement);
 	}
@@ -149,6 +160,7 @@ public abstract class AbstractLayerConfigElement extends AbstractConfigElement i
 	 * @param index the index.
 	 * @param filterElement the filter to add.
 	 */
+	@Override
 	public void insertFilterConfigElementBefore(final int index, final LayerFilterConfigElement filterElement) {
 		filterListElement.insertElementBefore(index, filterElement);
 	}
@@ -159,6 +171,7 @@ public abstract class AbstractLayerConfigElement extends AbstractConfigElement i
 	 * @param index the index to remove.
 	 * @return the filter element.
 	 */
+	@Override
 	public void removeFilterConfigElement(final int index) {
 		filterListElement.removeElement(index);
 	}
@@ -168,6 +181,7 @@ public abstract class AbstractLayerConfigElement extends AbstractConfigElement i
 	 * 
 	 * @param filterElement the filter to remove.
 	 */
+	@Override
 	public void removeFilterConfigElement(final LayerFilterConfigElement filterElement) {
 		filterListElement.removeElement(filterElement);
 	}
@@ -201,6 +215,7 @@ public abstract class AbstractLayerConfigElement extends AbstractConfigElement i
 	/**
 	 * @see com.nextbreakpoint.nextfractal.twister.layer.LayerConfigElement#getOpacityElement()
 	 */
+	@Override
 	public PercentageElement getOpacityElement() {
 		return opacityElement;
 	}
@@ -208,6 +223,7 @@ public abstract class AbstractLayerConfigElement extends AbstractConfigElement i
 	/**
 	 * @see com.nextbreakpoint.nextfractal.twister.layer.LayerConfigElement#getLockedElement()
 	 */
+	@Override
 	public BooleanElement getLockedElement() {
 		return lockedElement;
 	}
@@ -215,6 +231,7 @@ public abstract class AbstractLayerConfigElement extends AbstractConfigElement i
 	/**
 	 * @see com.nextbreakpoint.nextfractal.twister.layer.LayerConfigElement#getVisibleElement()
 	 */
+	@Override
 	public BooleanElement getVisibleElement() {
 		return visibleElement;
 	}
@@ -222,6 +239,7 @@ public abstract class AbstractLayerConfigElement extends AbstractConfigElement i
 	/**
 	 * @return the filterListElement
 	 */
+	@Override
 	public ListConfigElement<LayerFilterConfigElement> getFilterListElement() {
 		return filterListElement;
 	}

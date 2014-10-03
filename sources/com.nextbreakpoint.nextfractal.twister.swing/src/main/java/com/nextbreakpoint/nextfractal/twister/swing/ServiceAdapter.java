@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -37,90 +37,105 @@ public class ServiceAdapter implements LibraryServiceListener {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.service.LibraryServiceListener#clipCreated(com.nextbreakpoint.nextfractal.service.clip.RenderClipDataRow)
 	 */
+	@Override
 	public void clipCreated(final RenderClipDataRow clip) {
 	}
 
 	/**
 	 * @see com.nextbreakpoint.nextfractal.service.LibraryServiceListener#clipDeleted(com.nextbreakpoint.nextfractal.service.clip.RenderClipDataRow)
 	 */
+	@Override
 	public void clipDeleted(final RenderClipDataRow clip) {
 	}
 
 	/**
 	 * @see com.nextbreakpoint.nextfractal.service.LibraryServiceListener#clipUpdated(com.nextbreakpoint.nextfractal.service.clip.RenderClipDataRow)
 	 */
+	@Override
 	public void clipUpdated(final RenderClipDataRow clip) {
 	}
 
 	/**
 	 * @see com.nextbreakpoint.nextfractal.service.LibraryServiceListener#clipLoaded(com.nextbreakpoint.nextfractal.service.clip.RenderClipDataRow)
 	 */
+	@Override
 	public void clipLoaded(final RenderClipDataRow clip) {
 	}
 
 	/**
 	 * @see com.nextbreakpoint.nextfractal.service.LibraryServiceListener#profileCreated(com.nextbreakpoint.nextfractal.service.profile.RenderProfileDataRow)
 	 */
+	@Override
 	public void profileCreated(final RenderProfileDataRow profile) {
 	}
 
 	/**
 	 * @see com.nextbreakpoint.nextfractal.service.LibraryServiceListener#profileDeleted(com.nextbreakpoint.nextfractal.service.profile.RenderProfileDataRow)
 	 */
+	@Override
 	public void profileDeleted(final RenderProfileDataRow profile) {
 	}
 
 	/**
 	 * @see com.nextbreakpoint.nextfractal.service.LibraryServiceListener#profileUpdated(com.nextbreakpoint.nextfractal.service.profile.RenderProfileDataRow)
 	 */
+	@Override
 	public void profileUpdated(final RenderProfileDataRow profile) {
 	}
 
 	/**
 	 * @see com.nextbreakpoint.nextfractal.service.LibraryServiceListener#profileLoaded(com.nextbreakpoint.nextfractal.service.profile.RenderProfileDataRow)
 	 */
+	@Override
 	public void profileLoaded(final RenderProfileDataRow profile) {
 	}
 
 	/**
 	 * @see com.nextbreakpoint.nextfractal.service.LibraryServiceListener#jobCreated(com.nextbreakpoint.nextfractal.service.job.RenderJobDataRow)
 	 */
+	@Override
 	public void jobCreated(final RenderJobDataRow job) {
 	}
 
 	/**
 	 * @see com.nextbreakpoint.nextfractal.service.LibraryServiceListener#jobDeleted(com.nextbreakpoint.nextfractal.service.job.RenderJobDataRow)
 	 */
+	@Override
 	public void jobDeleted(final RenderJobDataRow job) {
 	}
 
 	/**
 	 * @see com.nextbreakpoint.nextfractal.service.LibraryServiceListener#jobStarted(com.nextbreakpoint.nextfractal.service.job.RenderJobDataRow)
 	 */
+	@Override
 	public void jobStarted(final RenderJobDataRow job) {
 	}
 
 	/**
 	 * @see com.nextbreakpoint.nextfractal.service.LibraryServiceListener#jobAborted(com.nextbreakpoint.nextfractal.service.job.RenderJobDataRow)
 	 */
+	@Override
 	public void jobAborted(final RenderJobDataRow job) {
 	}
 
 	/**
 	 * @see com.nextbreakpoint.nextfractal.service.LibraryServiceListener#jobStopped(com.nextbreakpoint.nextfractal.service.job.RenderJobDataRow)
 	 */
+	@Override
 	public void jobStopped(final RenderJobDataRow job) {
 	}
 
 	/**
 	 * @see com.nextbreakpoint.nextfractal.service.LibraryServiceListener#jobUpdated(com.nextbreakpoint.nextfractal.service.job.RenderJobDataRow)
 	 */
+	@Override
 	public void jobUpdated(final RenderJobDataRow job) {
 	}
 
 	/**
 	 * @see com.nextbreakpoint.nextfractal.service.LibraryServiceListener#jobResumed(com.nextbreakpoint.nextfractal.service.job.RenderJobDataRow)
 	 */
+	@Override
 	public void jobResumed(final RenderJobDataRow job) {
 	}
 }

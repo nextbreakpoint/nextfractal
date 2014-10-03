@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -79,6 +79,7 @@ public class DummySpoolJobService {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.spool.JobListener#updated(String, JobData)
 		 */
+		@Override
 		public void updated(final String jobId, final JobData job) {
 			logger.fine("Job state changed " + job);
 		}
@@ -86,6 +87,7 @@ public class DummySpoolJobService {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.spool.JobListener#started(String, JobData)
 		 */
+		@Override
 		public void started(final String jobId, final JobData job) {
 			logger.fine("Job started " + job);
 		}
@@ -93,6 +95,7 @@ public class DummySpoolJobService {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.spool.JobListener#stopped(String, JobData)
 		 */
+		@Override
 		public void stopped(final String jobId, final JobData job) {
 			logger.fine("Job stopped " + job);
 		}
@@ -100,6 +103,7 @@ public class DummySpoolJobService {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.spool.JobListener#terminated(String, JobData)
 		 */
+		@Override
 		public void terminated(final String jobId, final JobData job) {
 			logger.fine("Job terminated " + job);
 		}
@@ -107,6 +111,7 @@ public class DummySpoolJobService {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.spool.JobListener#disposed(String, JobData)
 		 */
+		@Override
 		public void disposed(final String jobId, final JobData job) {
 			logger.fine("Job disposed " + job);
 		}
@@ -116,6 +121,7 @@ public class DummySpoolJobService {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.spool.JobFactory#createJob(java.lang.String, com.nextbreakpoint.nextfractal.queue.spool.JobListener)
 		 */
+		@Override
 		public DummyJob createJob(final String jobId, final JobListener listener) {
 			final byte[] dataIn = new byte[128];
 			final byte[] dataOut = new byte[128];
@@ -129,6 +135,7 @@ public class DummySpoolJobService {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.spool.RemoteJobFactory#createJob(java.lang.String, com.nextbreakpoint.nextfractal.queue.spool.JobListener)
 		 */
+		@Override
 		public DummyRemoteJob createJob(final String jobId, final JobListener listener) {
 			final byte[] dataIn = new byte[128];
 			final byte[] dataOut = new byte[128];

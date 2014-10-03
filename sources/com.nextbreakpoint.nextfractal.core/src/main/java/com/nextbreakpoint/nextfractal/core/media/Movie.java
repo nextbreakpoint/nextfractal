@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -130,24 +130,29 @@ public class Movie extends AbstractGraphics implements Animate {
 		timeline.reset();
 	}
 
+	@Override
 	public int getFrames() {
 		return timeline.getFrames();
 	}
 
+	@Override
 	public int getFrame() {
 		return timeline.getFrame();
 	}
 
+	@Override
 	public final void setFrame(final int frame) {
 		timeline.setFrame(frame);
 		fireFrameChanged(frame);
 	}
 
+	@Override
 	public final void nextFrame() {
 		timeline.nextFrame();
 		fireFrameChanged(getFrame());
 	}
 
+	@Override
 	public final void prevFrame() {
 		timeline.prevFrame();
 		fireFrameChanged(getFrame());
@@ -172,10 +177,12 @@ public class Movie extends AbstractGraphics implements Animate {
 	public void flush() {
 	}
 
+	@Override
 	public void addAnimationListener(AnimationListener listener) {
 		listeners.add(listener);
 	}
 
+	@Override
 	public void removeAnimationListener(AnimationListener listener) {
 		listeners.remove(listener);
 	}

@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -74,6 +74,7 @@ public class LocalServiceProcessor implements ServiceProcessor {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.network.ServiceProcessor#start()
 	 */
+	@Override
 	public void start() {
 		jobService.start();
 		if (thread == null) {
@@ -87,6 +88,7 @@ public class LocalServiceProcessor implements ServiceProcessor {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.network.ServiceProcessor#stop()
 	 */
+	@Override
 	public void stop() {
 		jobService.stop();
 		if (thread != null) {
@@ -104,6 +106,7 @@ public class LocalServiceProcessor implements ServiceProcessor {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.network.ServiceProcessor#createSessionHandler()
 	 */
+	@Override
 	public SessionHandler createSessionHandler() {
 		return new SpoolSessionHandler();
 	}
@@ -112,6 +115,7 @@ public class LocalServiceProcessor implements ServiceProcessor {
 		/**
 		 * @see java.lang.Runnable#run()
 		 */
+		@Override
 		public void run() {
 			final long pollingTime = 60 * 1000L;
 			final List<ExecutorTask> tasksToRun = new LinkedList<ExecutorTask>();
@@ -161,6 +165,7 @@ public class LocalServiceProcessor implements ServiceProcessor {
 		/**
 		 * @see java.lang.Runnable#run()
 		 */
+		@Override
 		public void run() {
 			try {
 				logger.fine("Ready to send message " + message + " on session " + session.getSessionId());
@@ -188,6 +193,7 @@ public class LocalServiceProcessor implements ServiceProcessor {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.network.SessionHandler#dispose()
 		 */
+		@Override
 		public void dispose() {
 			if (session != null) {
 				session.dispose();
@@ -198,6 +204,7 @@ public class LocalServiceProcessor implements ServiceProcessor {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.network.SessionHandler#setSession(com.nextbreakpoint.nextfractal.queue.network.ServiceSession)
 		 */
+		@Override
 		public void setSession(final ServiceSession session) {
 			if (session == null) {
 				throw new IllegalArgumentException("session == null");
@@ -208,6 +215,7 @@ public class LocalServiceProcessor implements ServiceProcessor {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.network.SessionHandler#getSession()
 		 */
+		@Override
 		public ServiceSession getSession() {
 			return session;
 		}
@@ -215,6 +223,7 @@ public class LocalServiceProcessor implements ServiceProcessor {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.network.SessionHandler#isExpired()
 		 */
+		@Override
 		public boolean isExpired() {
 			return (session == null) || session.isExpired();
 		}
@@ -222,6 +231,7 @@ public class LocalServiceProcessor implements ServiceProcessor {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.network.SessionHandler#onMessage(com.nextbreakpoint.nextfractal.queue.network.ServiceMessage)
 		 */
+		@Override
 		public void onMessage(final ServiceMessage message) throws ServiceException {
 			if (isExpired()) {
 				return;
@@ -424,6 +434,7 @@ public class LocalServiceProcessor implements ServiceProcessor {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.spool.JobListener#stateChanged(String, JobData)
 		 */
+		@Override
 		public void updated(final String jobId, final JobData job) {
 			if (session.isExpired()) {
 				return;
@@ -434,6 +445,7 @@ public class LocalServiceProcessor implements ServiceProcessor {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.spool.JobListener#started(String, JobData)
 		 */
+		@Override
 		public void started(final String jobId, final JobData job) {
 			if (session.isExpired()) {
 				return;
@@ -444,6 +456,7 @@ public class LocalServiceProcessor implements ServiceProcessor {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.spool.JobListener#stopped(String, JobData)
 		 */
+		@Override
 		public void stopped(final String jobId, final JobData job) {
 			if (session.isExpired()) {
 				return;
@@ -454,6 +467,7 @@ public class LocalServiceProcessor implements ServiceProcessor {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.spool.JobListener#terminated(String, JobData)
 		 */
+		@Override
 		public void terminated(final String jobId, final JobData job) {
 			if (session.isExpired()) {
 				return;
@@ -464,6 +478,7 @@ public class LocalServiceProcessor implements ServiceProcessor {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.spool.JobListener#disposed(String, JobData)
 		 */
+		@Override
 		public void disposed(final String jobId, final JobData job) {
 			if (session.isExpired()) {
 				return;

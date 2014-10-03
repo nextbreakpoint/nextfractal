@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -46,12 +46,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 
-import com.nextbreakpoint.nextfractal.twister.TwisterConfig;
-import com.nextbreakpoint.nextfractal.twister.TwisterConfigNodeBuilder;
-import com.nextbreakpoint.nextfractal.twister.TwisterConfigXMLExporter;
-import com.nextbreakpoint.nextfractal.twister.TwisterConfigXMLImporter;
-import com.nextbreakpoint.nextfractal.twister.TwisterSessionController;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -64,6 +58,11 @@ import com.nextbreakpoint.nextfractal.core.util.RenderContext;
 import com.nextbreakpoint.nextfractal.core.util.RenderContextListener;
 import com.nextbreakpoint.nextfractal.core.xml.XML;
 import com.nextbreakpoint.nextfractal.core.xml.XMLNodeBuilder;
+import com.nextbreakpoint.nextfractal.twister.TwisterConfig;
+import com.nextbreakpoint.nextfractal.twister.TwisterConfigNodeBuilder;
+import com.nextbreakpoint.nextfractal.twister.TwisterConfigXMLExporter;
+import com.nextbreakpoint.nextfractal.twister.TwisterConfigXMLImporter;
+import com.nextbreakpoint.nextfractal.twister.TwisterSessionController;
 
 /**
  * @author Andrea Medeghini
@@ -109,6 +108,7 @@ public class ConfiguratorFrame extends JFrame {
 
 	private void openAdvancedConfigWindow(final TwisterConfig config) {
 		GUIUtil.executeTask(new Runnable() {
+				@Override
 				public void run() {
 				if (advancedConfigFrame == null) {
 					advancedConfigFrame = new NavigatorFrame(configuratorTree, renderContext, sessionController);
@@ -133,6 +133,7 @@ public class ConfiguratorFrame extends JFrame {
 
 	private void openPlatformWindow() {
 		GUIUtil.executeTask(new Runnable() {
+				@Override
 				public void run() {
 				if (platformFrame == null) {
 					platformFrame = new PlatformFrame();
@@ -250,6 +251,7 @@ public class ConfiguratorFrame extends JFrame {
 			/**
 			 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 			 */
+			@Override
 			public void actionPerformed(final ActionEvent e) {
 				openAdvancedConfigWindow(config);
 			}
@@ -265,6 +267,7 @@ public class ConfiguratorFrame extends JFrame {
 			/**
 			 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 			 */
+			@Override
 			public void actionPerformed(final ActionEvent e) {
 				fileChooser.setDialogTitle(TwisterSwingResources.getInstance().getString("label.importConfig"));
 				final int returnVal = fileChooser.showOpenDialog(ConfiguratorPanel.this);
@@ -299,6 +302,7 @@ public class ConfiguratorFrame extends JFrame {
 			/**
 			 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 			 */
+			@Override
 			public void actionPerformed(final ActionEvent e) {
 				fileChooser.setDialogTitle(TwisterSwingResources.getInstance().getString("label.exportConfig"));
 				final int returnVal = fileChooser.showSaveDialog(ConfiguratorPanel.this);
@@ -350,6 +354,7 @@ public class ConfiguratorFrame extends JFrame {
 			/**
 			 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 			 */
+			@Override
 			public void actionPerformed(final ActionEvent e) {
 				removeWindowListener(listener);
 				dispose();
@@ -378,6 +383,7 @@ public class ConfiguratorFrame extends JFrame {
 			/**
 			 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 			 */
+			@Override
 			public void actionPerformed(final ActionEvent e) {
 				openPlatformWindow();
 			}
@@ -385,28 +391,36 @@ public class ConfiguratorFrame extends JFrame {
 	}
 
 	private class DefaultRenderContrext implements RenderContext {
+		@Override
 		public void acquire() throws InterruptedException {
 		}
 
+		@Override
 		public void addRenderContextListener(RenderContextListener listener) {
 		}
 
+		@Override
 		public void removeRenderContextListener(RenderContextListener listener) {
 		}
 
+		@Override
 		public IntegerVector2D getImageSize() {
 			return null;
 		}
 
+		@Override
 		public void refresh() {
 		}
 
+		@Override
 		public void release() {
 		}
 
+		@Override
 		public void startRenderers() {
 		}
 
+		@Override
 		public void stopRenderers() {
 		}
 	}

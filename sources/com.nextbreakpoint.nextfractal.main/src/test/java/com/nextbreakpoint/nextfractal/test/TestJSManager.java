@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -28,9 +28,6 @@ package com.nextbreakpoint.nextfractal.test;
 import java.io.File;
 
 import junit.framework.Assert;
-import com.nextbreakpoint.nextfractal.twister.TwisterConfig;
-import com.nextbreakpoint.nextfractal.twister.TwisterConfigBuilder;
-import com.nextbreakpoint.nextfractal.twister.TwisterConfigNode;
 
 import org.junit.Test;
 
@@ -42,6 +39,9 @@ import com.nextbreakpoint.nextfractal.core.tree.DefaultNodeSession;
 import com.nextbreakpoint.nextfractal.core.util.IntegerVector2D;
 import com.nextbreakpoint.nextfractal.core.util.RenderContext;
 import com.nextbreakpoint.nextfractal.core.util.RenderContextListener;
+import com.nextbreakpoint.nextfractal.twister.TwisterConfig;
+import com.nextbreakpoint.nextfractal.twister.TwisterConfigBuilder;
+import com.nextbreakpoint.nextfractal.twister.TwisterConfigNode;
 
 /**
  * @author Andrea Medeghini
@@ -70,6 +70,7 @@ public class TestJSManager {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.scripting.JSContext#loadDefaultConfig()
 		 */
+		@Override
 		public void loadDefaultConfig() {
 		}
 	}
@@ -78,18 +79,21 @@ public class TestJSManager {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#startRenderers()
 		 */
+		@Override
 		public void startRenderers() {
 		}
 
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#stopRenderers()
 		 */
+		@Override
 		public void stopRenderers() {
 		}
 
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#getImageSize()
 		 */
+		@Override
 		public IntegerVector2D getImageSize() {
 			return new IntegerVector2D(100, 100);
 		}
@@ -97,30 +101,35 @@ public class TestJSManager {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#refresh()
 		 */
+		@Override
 		public void refresh() {
 		}
 
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#acquire()
 		 */
+		@Override
 		public void acquire() throws InterruptedException {
 		}
 
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#release()
 		 */
+		@Override
 		public void release() {
 		}
 
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#addRenderContextListener(com.nextbreakpoint.nextfractal.core.util.RenderContextListener)
 		 */
+		@Override
 		public void addRenderContextListener(RenderContextListener listener) {
 		}
 
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#removeRenderContextListener(com.nextbreakpoint.nextfractal.core.util.RenderContextListener)
 		 */
+		@Override
 		public void removeRenderContextListener(RenderContextListener listener) {
 		}
 	}

@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -44,9 +44,8 @@ import com.nextbreakpoint.nextfractal.core.swing.editor.extension.EditorExtensio
 import com.nextbreakpoint.nextfractal.core.swing.util.GUIFactory;
 import com.nextbreakpoint.nextfractal.core.tree.NodeEditor;
 import com.nextbreakpoint.nextfractal.core.util.DoubleVector4D;
-import com.nextbreakpoint.nextfractal.twister.swing.extensions.TwisterSwingExtensionResources;
-
 import com.nextbreakpoint.nextfractal.twister.common.SpeedElementNodeValue;
+import com.nextbreakpoint.nextfractal.twister.swing.extensions.TwisterSwingExtensionResources;
 import com.nextbreakpoint.nextfractal.twister.util.Speed;
 
 /**
@@ -84,6 +83,7 @@ public class SpeedElementEditorRuntime extends EditorExtensionRuntime {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.swing.NodeEditorComponent#getComponent()
 		 */
+		@Override
 		public JComponent getComponent() {
 			return this;
 		}
@@ -91,6 +91,7 @@ public class SpeedElementEditorRuntime extends EditorExtensionRuntime {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.swing.NodeEditorComponent#reloadValue()
 		 */
+		@Override
 		public void reloadValue() {
 			final Speed speed = ((SpeedElementNodeValue) nodeEditor.getNodeValue()).getValue();
 			panels[0].textFields[0].setText(String.valueOf(speed.getPosition().getX()));
@@ -114,6 +115,7 @@ public class SpeedElementEditorRuntime extends EditorExtensionRuntime {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.swing.NodeEditorComponent#dispose()
 		 */
+		@Override
 		public void dispose() {
 		}
 
@@ -194,6 +196,7 @@ public class SpeedElementEditorRuntime extends EditorExtensionRuntime {
 				this.nodeEditor = nodeEditor;
 			}
 
+			@Override
 			public void actionPerformed(final ActionEvent e) {
 				Speed speed = ((SpeedElementNodeValue) nodeEditor.getNodeValue()).getValue();
 				double x = speed.getPosition().getX();
@@ -267,12 +270,14 @@ public class SpeedElementEditorRuntime extends EditorExtensionRuntime {
 			/**
 			 * @see java.awt.event.FocusListener#focusGained(java.awt.event.FocusEvent)
 			 */
+			@Override
 			public void focusGained(final FocusEvent e) {
 			}
 
 			/**
 			 * @see java.awt.event.FocusListener#focusLost(java.awt.event.FocusEvent)
 			 */
+			@Override
 			public void focusLost(final FocusEvent e) {
 				Speed speed = ((SpeedElementNodeValue) nodeEditor.getNodeValue()).getValue();
 				double x = speed.getPosition().getX();

@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -44,6 +44,7 @@ public class DefaultConfigContext implements ConfigContext {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.config.ConfigContext#getTimestamp()
 	 */
+	@Override
 	public long getTimestamp() {
 		return timestamp;
 	}
@@ -51,6 +52,7 @@ public class DefaultConfigContext implements ConfigContext {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.config.ConfigContext#updateTimestamp()
 	 */
+	@Override
 	public void updateTimestamp() {
 		timestamp = System.currentTimeMillis();
 		if (context != null) {
@@ -61,6 +63,7 @@ public class DefaultConfigContext implements ConfigContext {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.config.ConfigContext#setParentConfigContext(com.nextbreakpoint.nextfractal.core.config.ConfigContext)
 	 */
+	@Override
 	public void setParentConfigContext(final ConfigContext context) {
 		this.context = context;
 	}

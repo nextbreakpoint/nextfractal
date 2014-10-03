@@ -51,6 +51,7 @@ public class ClosePolyPathReplacementRuntime extends PathReplacementExtensionRun
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
 		 */
+		@Override
 		public void valueChanged(final ValueChangeEvent e) {
 			switch (e.getEventType()) {
 				case ValueConfigElement.VALUE_CHANGED: {
@@ -65,6 +66,7 @@ public class ClosePolyPathReplacementRuntime extends PathReplacementExtensionRun
 		}
 	}
 
+	@Override
 	public void process(CFRule rule) {
 		rule.getPath().closePath(align);
 	}

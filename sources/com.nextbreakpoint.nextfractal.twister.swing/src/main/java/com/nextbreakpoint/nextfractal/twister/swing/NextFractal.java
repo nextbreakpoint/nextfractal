@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -50,6 +50,7 @@ public class NextFractal implements Application {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.Application#start(com.nextbreakpoint.nextfractal.core.ApplicationContext)
 	 */
+	@Override
 	public Object start(final ApplicationContext context) throws Exception {
 		boolean restart = false;
 		Integer exit = Application.EXIT_OK; 
@@ -78,6 +79,7 @@ public class NextFractal implements Application {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.Application#stop()
 	 */
+	@Override
 	public void stop() {
 		launcher.stop();
 	}
@@ -86,6 +88,7 @@ public class NextFractal implements Application {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.SwingContext.swing.TwisterContext#addFrame(javax.swing.JFrame)
 		 */
+		@Override
 		public void addFrame(final JFrame frame) {
 			NextFractal.frames.add(frame);
 		}
@@ -93,6 +96,7 @@ public class NextFractal implements Application {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.SwingContext.swing.TwisterContext#removeFrame(javax.swing.JFrame)
 		 */
+		@Override
 		public void removeFrame(final JFrame frame) {
 			NextFractal.frames.remove(frame);
 		}
@@ -100,6 +104,7 @@ public class NextFractal implements Application {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.SwingContext.swing.TwisterContext#getFrameCount()
 		 */
+		@Override
 		public int getFrameCount() {
 			return NextFractal.frames.size();
 		}
@@ -107,6 +112,7 @@ public class NextFractal implements Application {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.launcher.LauncherContext#exit()
 		 */
+		@Override
 		public void exit() {
 			launcher.stop();
 		}
@@ -114,6 +120,7 @@ public class NextFractal implements Application {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.launcher.LauncherContext#restart()
 		 */
+		@Override
 		public void restart() {
 			launcher.restart();
 		}
@@ -121,6 +128,7 @@ public class NextFractal implements Application {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.launcher.LauncherContext#setContextListener(com.nextbreakpoint.nextfractal.launcher.LauncherContextListener)
 		 */
+		@Override
 		public void setContextListener(final LauncherContextListener listener) {
 			NextFractal.this.listener = listener;
 		}
@@ -130,6 +138,7 @@ public class NextFractal implements Application {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.launcher.LauncherThreadFactory#createThread(com.nextbreakpoint.nextfractal.launcher.LauncherContext)
 		 */
+		@Override
 		public Thread createThread(final DefaultTwisterContext context) {
 			return new TwisterLauncherThread(context);
 		}

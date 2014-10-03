@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -45,7 +45,6 @@ import javax.swing.WindowConstants;
 
 import com.nextbreakpoint.nextfractal.core.swing.util.GUIFactory;
 import com.nextbreakpoint.nextfractal.core.swing.util.GUIUtil;
-
 import com.nextbreakpoint.nextfractal.queue.LibraryService;
 import com.nextbreakpoint.nextfractal.queue.RenderService;
 import com.nextbreakpoint.nextfractal.queue.RenderService.ServiceCallback;
@@ -130,6 +129,7 @@ public class EditClipDialog extends JDialog {
 		/**
 		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 		 */
+		@Override
 		public void actionPerformed(final ActionEvent e) {
 			boolean error = false;
 			if (nameTextField.getText().trim().length() == 0) {
@@ -140,14 +140,17 @@ public class EditClipDialog extends JDialog {
 				clip.setClipName(nameTextField.getText());
 				clip.setDescription(descriptionTextField.getText());
 				service.execute(new ServiceCallback<Object>() {
+					@Override
 					public void executed(final Object value) {
 						GUIUtil.executeTask(new CloseRunnable(), true);
 					}
 
+					@Override
 					public void failed(final Throwable throwable) {
 						JOptionPane.showMessageDialog(EditClipDialog.this, TwisterSwingResources.getInstance().getString("error.saveClip"), TwisterSwingResources.getInstance().getString("label.saveClip"), JOptionPane.ERROR_MESSAGE);
 					}
 
+					@Override
 					public Object execute(final LibraryService service) throws Exception {
 						service.saveClip(clip);
 						return null;
@@ -173,6 +176,7 @@ public class EditClipDialog extends JDialog {
 		/**
 		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 		 */
+		@Override
 		public void actionPerformed(final ActionEvent e) {
 			GUIUtil.executeTask(new CloseRunnable(), true);
 		}
@@ -192,6 +196,7 @@ public class EditClipDialog extends JDialog {
 		/**
 		 * @see java.lang.Runnable#run()
 		 */
+		@Override
 		public void run() {
 			setVisible(false);
 		}

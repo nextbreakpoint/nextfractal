@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -25,11 +25,15 @@
  */
 package com.nextbreakpoint.nextfractal.twister.extensions.image;
 
-import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.util.Map;
+
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
+import javafx.scene.transform.Affine;
+import javafx.scene.transform.Transform;
 
 import com.nextbreakpoint.nextfractal.core.util.IntegerVector2D;
 import com.nextbreakpoint.nextfractal.core.util.Tile;
@@ -42,8 +46,9 @@ import com.nextbreakpoint.nextfractal.twister.renderer.TwisterRenderingHints;
  */
 public class TextRuntime extends ImageExtensionRuntime<TextConfig> {
 	private boolean isOverlay;
-	private Tile tile;
+	private java.awt.Color awtColor;
 	private Color color;
+	private Tile tile;
 	private Font font;
 	private float fontSize;
 	private int left;
@@ -99,7 +104,7 @@ public class TextRuntime extends ImageExtensionRuntime<TextConfig> {
 			if (fontSize > 0) {
 				int tx = tile.getTileBorder().getX() - tile.getTileOffset().getX() + left;
 				int ty = tile.getTileBorder().getY() - tile.getTileOffset().getY() + top;
-				g2d.setColor(color);
+				g2d.setColor(awtColor);
 				g2d.setFont(font);
 				AffineTransform newTransform = AffineTransform.getTranslateInstance(tx, ty);
 				AffineTransform oldTransform = g2d.getTransform();
@@ -120,7 +125,7 @@ public class TextRuntime extends ImageExtensionRuntime<TextConfig> {
 			if (fontSize > 0) {
 				int tx = tile.getTileBorder().getX() - tile.getTileOffset().getX() + left + x;
 				int ty = tile.getTileBorder().getY() - tile.getTileOffset().getY() + top + y;
-				g2d.setColor(color);
+				g2d.setColor(awtColor);
 				g2d.setFont(font);
 				AffineTransform newTransform = AffineTransform.getTranslateInstance(tx, ty);
 				AffineTransform oldTransform = g2d.getTransform();
@@ -141,7 +146,7 @@ public class TextRuntime extends ImageExtensionRuntime<TextConfig> {
 			fontSize = (float) ((getConfig().getSize().doubleValue() * h) / 100f);
 			if (fontSize > 0) {
 				font = getConfig().getFont().deriveFont((fontSize * 96f) / 72f);
-				g2d.setColor(color);
+				g2d.setColor(awtColor);
 				g2d.setFont(font);
 				AffineTransform newTransform = AffineTransform.getTranslateInstance(x, y);
 				AffineTransform oldTransform = g2d.getTransform();
@@ -149,6 +154,72 @@ public class TextRuntime extends ImageExtensionRuntime<TextConfig> {
 				g2d.setTransform(newTransform);
 				g2d.drawString(getConfig().getText(), 0, 0);
 				g2d.setTransform(oldTransform);
+			}
+		}
+	}
+
+	/**
+	 * @see com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionRuntime#drawImage(javafx.scene.canvas.GraphicsContext)
+	 */
+	@Override
+	public void drawImage(GraphicsContext gc) {
+		if (!isOverlay && (tile != null)) {
+			if (fontSize > 0) {
+				int tx = tile.getTileBorder().getX() - tile.getTileOffset().getX() + left;
+				int ty = tile.getTileBorder().getY() - tile.getTileOffset().getY() + top;
+				font = getConfig().getFont().deriveFont((fontSize * 96f) / 72f);
+				gc.setFill(color);
+//TODO				gc.setFont(font);
+				Affine newTransform = new Affine();
+				newTransform.append(Transform.translate(tx, ty));
+				Affine oldTransform = gc.getTransform();
+				newTransform.append(Transform.rotate(a, 0, 0));
+				gc.setTransform(newTransform);
+				gc.fillText(getConfig().getText(), 0, 0);
+				gc.setTransform(oldTransform);
+			}
+		}
+	}
+	
+	/**
+	 * @see com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionRuntime#drawImage(javafx.scene.canvas.GraphicsContext, int, int)
+	 */
+	@Override
+	public void drawImage(final GraphicsContext gc, final int x, final int y) {
+		if (!isOverlay && (tile != null)) {
+			if (fontSize > 0) {
+				font = getConfig().getFont().deriveFont((fontSize * 96f) / 72f);
+				gc.setFill(color);
+//TODO				gc.setFont(font);
+				Affine newTransform = new Affine();
+				newTransform.append(Transform.translate(x, y));
+				Affine oldTransform = gc.getTransform();
+				newTransform.append(Transform.rotate(a, 0, 0));
+				gc.setTransform(newTransform);
+				gc.fillText(getConfig().getText(), 0, 0);
+				gc.setTransform(oldTransform);
+			}
+		}
+	}
+
+	/**
+	 * @see com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionRuntime#drawImage(javafx.scene.canvas.GraphicsContext, int, int, int, int)
+	 */
+	@Override
+	public void drawImage(final GraphicsContext gc, final int x, final int y, final int w, final int h) {
+		if (!isOverlay && (tile != null)) {
+			fontSize = (float) ((getConfig().getSize().doubleValue() * h) / 100f);
+			if (fontSize > 0) {
+				font = getConfig().getFont().deriveFont((fontSize * 96f) / 72f);
+				gc.setFill(color);
+//TODO				gc.setFont(font);
+				Affine newTransform = new Affine();
+				newTransform.append(Transform.translate(x, y));
+				Affine oldTransform = gc.getTransform();
+				newTransform.append(Transform.rotate(a, 0, 0));
+				gc.setTransform(newTransform);
+				gc.fillText(getConfig().getText(), 0, 0);
+				gc.setTransform(oldTransform);
 			}
 		}
 	}
@@ -187,7 +258,8 @@ public class TextRuntime extends ImageExtensionRuntime<TextConfig> {
 		a = (getConfig().getRotation() * Math.PI) / 180d;
 		if (fontSize > 0) {
 			font = getConfig().getFont().deriveFont((fontSize * 96f) / 72f);
-			color = new Color(getConfig().getColor().getARGB(), true);
+			awtColor = new java.awt.Color(getConfig().getColor().getARGB(), true);
+			color = new Color(getConfig().getColor().getRed(), getConfig().getColor().getGreen(), getConfig().getColor().getBlue(), getConfig().getColor().getAlpha());
 		}
 	}
 

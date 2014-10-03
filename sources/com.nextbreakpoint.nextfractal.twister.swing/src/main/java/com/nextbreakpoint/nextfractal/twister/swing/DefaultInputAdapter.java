@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -32,9 +32,6 @@ import com.nextbreakpoint.nextfractal.core.extension.Extension;
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionConfig;
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionException;
 import com.nextbreakpoint.nextfractal.core.util.RenderContext;
-import com.nextbreakpoint.nextfractal.twister.swing.inputAdapter.DefaultInputAdapterRuntime;
-import com.nextbreakpoint.nextfractal.twister.swing.inputAdapter.extension.InputAdapterExtensionRuntime;
-
 import com.nextbreakpoint.nextfractal.twister.TwisterConfig;
 import com.nextbreakpoint.nextfractal.twister.effect.EffectConfigElement;
 import com.nextbreakpoint.nextfractal.twister.effect.extension.EffectExtensionConfig;
@@ -47,6 +44,8 @@ import com.nextbreakpoint.nextfractal.twister.layer.GroupLayerConfigElement;
 import com.nextbreakpoint.nextfractal.twister.layer.ImageLayerConfigElement;
 import com.nextbreakpoint.nextfractal.twister.layerFilter.LayerFilterConfigElement;
 import com.nextbreakpoint.nextfractal.twister.layerFilter.extension.LayerFilterExtensionConfig;
+import com.nextbreakpoint.nextfractal.twister.swing.inputAdapter.DefaultInputAdapterRuntime;
+import com.nextbreakpoint.nextfractal.twister.swing.inputAdapter.extension.InputAdapterExtensionRuntime;
 import com.nextbreakpoint.nextfractal.twister.util.AdapterContext;
 
 /**
@@ -71,6 +70,7 @@ public class DefaultInputAdapter extends InputAdapter {
 	@Override
 	public void keyPressed(final KeyEvent e) {
 		processEvent(e, new EventProcessor<KeyEvent>() {
+			@Override
 			public void process(final InputAdapterExtensionRuntime adapterRuntime, final KeyEvent e) {
 				adapterRuntime.processKeyPressed(e);
 			}
@@ -83,6 +83,7 @@ public class DefaultInputAdapter extends InputAdapter {
 	@Override
 	public void keyReleased(final KeyEvent e) {
 		processEvent(e, new EventProcessor<KeyEvent>() {
+			@Override
 			public void process(final InputAdapterExtensionRuntime adapterRuntime, final KeyEvent e) {
 				adapterRuntime.processKeyReleased(e);
 			}
@@ -95,6 +96,7 @@ public class DefaultInputAdapter extends InputAdapter {
 	@Override
 	public void keyTyped(final KeyEvent e) {
 		processEvent(e, new EventProcessor<KeyEvent>() {
+			@Override
 			public void process(final InputAdapterExtensionRuntime adapterRuntime, final KeyEvent e) {
 				adapterRuntime.processKeyTyped(e);
 			}
@@ -107,6 +109,7 @@ public class DefaultInputAdapter extends InputAdapter {
 	@Override
 	public void mouseClicked(final MouseEvent e) {
 		processEvent(e, new EventProcessor<MouseEvent>() {
+			@Override
 			public void process(final InputAdapterExtensionRuntime adapterRuntime, final MouseEvent e) {
 				adapterRuntime.processMouseClicked(e);
 			}
@@ -119,6 +122,7 @@ public class DefaultInputAdapter extends InputAdapter {
 	@Override
 	public void mouseDragged(final MouseEvent e) {
 		processEvent(e, new EventProcessor<MouseEvent>() {
+			@Override
 			public void process(final InputAdapterExtensionRuntime adapterRuntime, final MouseEvent e) {
 				adapterRuntime.processMouseDragged(e);
 			}
@@ -131,6 +135,7 @@ public class DefaultInputAdapter extends InputAdapter {
 	@Override
 	public void mouseEntered(final MouseEvent e) {
 		processEvent(e, new EventProcessor<MouseEvent>() {
+			@Override
 			public void process(final InputAdapterExtensionRuntime adapterRuntime, final MouseEvent e) {
 				adapterRuntime.processMouseExited(e);
 			}
@@ -143,6 +148,7 @@ public class DefaultInputAdapter extends InputAdapter {
 	@Override
 	public void mouseExited(final MouseEvent e) {
 		processEvent(e, new EventProcessor<MouseEvent>() {
+			@Override
 			public void process(final InputAdapterExtensionRuntime adapterRuntime, final MouseEvent e) {
 				adapterRuntime.processMouseEntered(e);
 			}
@@ -155,6 +161,7 @@ public class DefaultInputAdapter extends InputAdapter {
 	@Override
 	public void mouseMoved(final MouseEvent e) {
 		processEvent(e, new EventProcessor<MouseEvent>() {
+			@Override
 			public void process(final InputAdapterExtensionRuntime adapterRuntime, final MouseEvent e) {
 				adapterRuntime.processMouseMoved(e);
 			}
@@ -167,6 +174,7 @@ public class DefaultInputAdapter extends InputAdapter {
 	@Override
 	public void mousePressed(final MouseEvent e) {
 		processEvent(e, new EventProcessor<MouseEvent>() {
+			@Override
 			public void process(final InputAdapterExtensionRuntime adapterRuntime, final MouseEvent e) {
 				adapterRuntime.processMousePressed(e);
 			}
@@ -179,6 +187,7 @@ public class DefaultInputAdapter extends InputAdapter {
 	@Override
 	public void mouseReleased(final MouseEvent e) {
 		processEvent(e, new EventProcessor<MouseEvent>() {
+			@Override
 			public void process(final InputAdapterExtensionRuntime adapterRuntime, final MouseEvent e) {
 				adapterRuntime.processMouseReleased(e);
 			}

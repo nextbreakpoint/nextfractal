@@ -12,6 +12,7 @@ public class SimpleShapeRenderer implements CFShapeRenderer {
 		this.g2d = g2d;
 	}
 
+	@Override
 	public void render(CFPath path, CFPathAttribute attribute) {
 		AffineTransform tmpTransform = g2d.getTransform();
 		Composite tmpComposite = g2d.getComposite();

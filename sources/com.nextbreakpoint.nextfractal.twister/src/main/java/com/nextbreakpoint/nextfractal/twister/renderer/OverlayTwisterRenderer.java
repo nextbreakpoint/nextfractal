@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -64,6 +64,7 @@ public class OverlayTwisterRenderer implements TwisterRenderer {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.twister.renderer.TwisterRenderer#drawImage(java.awt.Graphics2D)
 	 */
+	@Override
 	public void drawImage(final Graphics2D g) {
 		if (runtime.getFrameElement() != null) {
 			g.setClip(tile.getTileOffset().getX(), tile.getTileOffset().getY(), tile.getTileSize().getX() + 1, tile.getTileSize().getY() + 1);
@@ -95,6 +96,7 @@ public class OverlayTwisterRenderer implements TwisterRenderer {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.twister.renderer.TwisterRenderer#drawImage(java.awt.Graphics2D, int, int)
 	 */
+	@Override
 	public void drawImage(final Graphics2D g, final int x, final int y) {
 		if (runtime.getFrameElement() != null) {
 			g.setClip(x + tile.getTileOffset().getX(), y + tile.getTileOffset().getY(), tile.getTileSize().getX() + 1, tile.getTileSize().getY() + 1);
@@ -126,6 +128,7 @@ public class OverlayTwisterRenderer implements TwisterRenderer {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.twister.renderer.TwisterRenderer#drawImage(java.awt.Graphics2D, int, int, int, int)
 	 */
+	@Override
 	public void drawImage(final Graphics2D g, final int x, final int y, final int w, final int h) {
 		if (runtime.getFrameElement() != null) {
 			g.setClip(x, y, w, h);
@@ -157,6 +160,7 @@ public class OverlayTwisterRenderer implements TwisterRenderer {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.twister.renderer.TwisterRenderer#drawImage(java.awt.Graphics2D, int, int, int, int, int, int)
 	 */
+	@Override
 	public void drawImage(final Graphics2D g, final int x, final int y, final int w, final int h, final int bx, final int by) {
 		if (runtime.getFrameElement() != null) {
 			g.setClip(x + bx, y + by, w - 2 * bx, h - 2 * by);
@@ -188,6 +192,7 @@ public class OverlayTwisterRenderer implements TwisterRenderer {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.twister.renderer.TwisterRenderer#startRenderer()
 	 */
+	@Override
 	public void startRenderer() {
 		startLayers(runtime.getFrameElement());
 	}
@@ -195,6 +200,7 @@ public class OverlayTwisterRenderer implements TwisterRenderer {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.twister.renderer.TwisterRenderer#stopRenderer()
 	 */
+	@Override
 	public void stopRenderer() {
 		try {
 			abortLayers(runtime.getFrameElement());
@@ -208,6 +214,7 @@ public class OverlayTwisterRenderer implements TwisterRenderer {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.twister.renderer.TwisterRenderer#abortRenderer()
 	 */
+	@Override
 	public void abortRenderer() {
 		abortLayers(runtime.getFrameElement());
 	}
@@ -215,6 +222,7 @@ public class OverlayTwisterRenderer implements TwisterRenderer {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.twister.renderer.TwisterRenderer#joinRenderer()
 	 */
+	@Override
 	public void joinRenderer() {
 		try {
 			joinLayers(runtime.getFrameElement());
@@ -316,6 +324,7 @@ public class OverlayTwisterRenderer implements TwisterRenderer {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.twister.renderer.TwisterRenderer#getRuntime()
 	 */
+	@Override
 	public TwisterRuntime getRuntime() {
 		return runtime;
 	}
@@ -323,6 +332,7 @@ public class OverlayTwisterRenderer implements TwisterRenderer {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.twister.renderer.TwisterRenderer#setRenderingHints(java.util.Map)
 	 */
+	@Override
 	public void setRenderingHints(final Map<Object, Object> hints) {
 		this.hints = hints;
 	}
@@ -330,6 +340,7 @@ public class OverlayTwisterRenderer implements TwisterRenderer {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.twister.renderer.TwisterRenderer#getTile()
 	 */
+	@Override
 	public Tile getTile() {
 		return tile;
 	}
@@ -337,6 +348,7 @@ public class OverlayTwisterRenderer implements TwisterRenderer {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.twister.renderer.TwisterRenderer#setTile(com.nextbreakpoint.nextfractal.core.util.Tile)
 	 */
+	@Override
 	public void setTile(final Tile tile) {
 		this.tile = tile;
 	}
@@ -344,6 +356,7 @@ public class OverlayTwisterRenderer implements TwisterRenderer {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.twister.renderer.TwisterRenderer#render()
 	 */
+	@Override
 	public void render() throws InterruptedException {
 		if (runtime.getFrameElement() != null) {
 			// abortLayers(runtime.getFrameElement());
@@ -356,6 +369,7 @@ public class OverlayTwisterRenderer implements TwisterRenderer {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.twister.renderer.TwisterRenderer#prepareImage(boolean)
 	 */
+	@Override
 	public void prepareImage(final boolean isDynamicRequired) {
 		if (runtime.getFrameElement() != null) {
 			prepareLayers(runtime.getFrameElement(), isDynamicRequired);
@@ -365,6 +379,7 @@ public class OverlayTwisterRenderer implements TwisterRenderer {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.twister.renderer.TwisterRenderer#dispose()
 	 */
+	@Override
 	public void dispose() {
 		stopRenderer();
 		runtime.dispose();
@@ -377,6 +392,7 @@ public class OverlayTwisterRenderer implements TwisterRenderer {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.twister.renderer.TwisterRenderer#drawSurface(java.awt.Graphics2D)
 	 */
+	@Override
 	public void drawSurface(final Graphics2D g) {
 		drawSurface(g, 0, 0);
 	}
@@ -384,6 +400,7 @@ public class OverlayTwisterRenderer implements TwisterRenderer {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.twister.renderer.TwisterRenderer#drawSurface(java.awt.Graphics2D, int, int)
 	 */
+	@Override
 	public void drawSurface(Graphics2D g, int x, int y) {
 		drawImage(g, x, y, getTile().getTileSize().getX() + getTile().getTileBorder().getX() * 2, getTile().getTileSize().getY() + getTile().getTileBorder().getY() * 2);
 	}
@@ -391,6 +408,7 @@ public class OverlayTwisterRenderer implements TwisterRenderer {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.twister.renderer.TwisterRenderer#loadSurface(com.nextbreakpoint.nextfractal.core.util.Surface)
 	 */
+	@Override
 	public void loadSurface(final Surface surface) {
 	}
 }

@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -31,6 +31,12 @@ import java.io.File;
 
 import javax.swing.JFrame;
 
+import org.junit.Assert;
+import org.junit.Test;
+
+import com.nextbreakpoint.nextfractal.core.extension.ExtensionReference;
+import com.nextbreakpoint.nextfractal.core.swing.util.GUIUtil;
+import com.nextbreakpoint.nextfractal.core.util.ConnectionFactory;
 import com.nextbreakpoint.nextfractal.queue.DefaultConnectionFactory;
 import com.nextbreakpoint.nextfractal.queue.LibraryService;
 import com.nextbreakpoint.nextfractal.queue.RenderService;
@@ -41,13 +47,6 @@ import com.nextbreakpoint.nextfractal.twister.swing.RenderJobTableModel;
 import com.nextbreakpoint.nextfractal.twister.swing.RenderProfileTableModel;
 import com.nextbreakpoint.nextfractal.twister.swing.ServiceContext;
 import com.nextbreakpoint.nextfractal.twister.swing.ServiceFrame;
-
-import org.junit.Assert;
-import org.junit.Test;
-
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionReference;
-import com.nextbreakpoint.nextfractal.core.swing.util.GUIUtil;
-import com.nextbreakpoint.nextfractal.core.util.ConnectionFactory;
 
 /**
  * @author Andrea Medeghini
@@ -60,6 +59,7 @@ public class ServiceFrameTest {
 			final File workspace = new File("workdir");
 			synchronized (context) {
 				GUIUtil.executeTask(new Runnable() {
+						@Override
 						public void run() {
 							try {
 								final ConnectionFactory factory = new DefaultConnectionFactory(workspace);
@@ -94,19 +94,24 @@ public class ServiceFrameTest {
 	}
 
 	private class TestServiceContext implements ServiceContext {
+		@Override
 		public void addFrame(final JFrame frame) {
 		}
 
+		@Override
 		public void removeFrame(final JFrame frame) {
 		}
 
+		@Override
 		public int getFrameCount() {
 			return 0;
 		}
 
+		@Override
 		public void openClip(final TwisterClip clip) {
 		}
 
+		@Override
 		public void exit() {
 			synchronized (this) {
 				notify();
@@ -114,6 +119,7 @@ public class ServiceFrameTest {
 			System.exit(0);
 		}
 
+		@Override
 		public void restart() {
 			exit();
 		}

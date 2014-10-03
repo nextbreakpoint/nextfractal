@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -25,7 +25,6 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.extensions.processingFormula;
 
-import com.nextbreakpoint.nextfractal.mandelbrot.extensions.processingFormula.CurvatureFormulaRuntime;
 import com.nextbreakpoint.nextfractal.mandelbrot.processingFormula.extension.ProcessingFormulaExtensionDescriptor;
 
 /**
@@ -37,6 +36,7 @@ public class CurvatureFormulaDescriptor extends ProcessingFormulaExtensionDescri
 	 * 
 	 * @return the extensionId.
 	 */
+	@Override
 	public String getExtensionId() {
 		return "twister.mandelbrot.fractal.processing.formula.curvature";
 	}
@@ -46,6 +46,7 @@ public class CurvatureFormulaDescriptor extends ProcessingFormulaExtensionDescri
 	 * 
 	 * @return the extensionName.
 	 */
+	@Override
 	public String getExtensionName() {
 		return "Z Curvature";
 	}
@@ -55,6 +56,7 @@ public class CurvatureFormulaDescriptor extends ProcessingFormulaExtensionDescri
 	 * 
 	 * @return the extensionRuntimeClass.
 	 */
+	@Override
 	public CurvatureFormulaRuntime getExtensionRuntime() {
 		return new CurvatureFormulaRuntime();
 	}

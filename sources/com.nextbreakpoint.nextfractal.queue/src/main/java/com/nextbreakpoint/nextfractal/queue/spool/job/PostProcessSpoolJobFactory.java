@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -48,6 +48,7 @@ public class PostProcessSpoolJobFactory implements JobFactory<PostProcessSpoolJo
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobFactory#createJob(java.lang.String, com.nextbreakpoint.nextfractal.queue.spool.JobListener)
 	 */
+	@Override
 	public PostProcessSpoolJob createJob(final String jobId, final JobListener listener) {
 		return new PostProcessSpoolJob(service, worker, jobId, listener);
 	}

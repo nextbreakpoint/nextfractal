@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -25,7 +25,6 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.swing.extensions.editor;
 
-import com.nextbreakpoint.nextfractal.contextfree.swing.extensions.editor.StrokeWidthElementEditorRuntime;
 import com.nextbreakpoint.nextfractal.core.swing.editor.extension.EditorExtensionDescriptor;
 
 /**
@@ -37,6 +36,7 @@ public class StrokeWidthElementEditorDescriptor extends EditorExtensionDescripto
 	 * 
 	 * @return the extensionId.
 	 */
+	@Override
 	public String getExtensionId() {
 		return "node.class.StrokeWidthElement";
 	}
@@ -46,6 +46,7 @@ public class StrokeWidthElementEditorDescriptor extends EditorExtensionDescripto
 	 * 
 	 * @return the extensionName.
 	 */
+	@Override
 	public String getExtensionName() {
 		return "StrokeWidthElement";
 	}
@@ -55,6 +56,7 @@ public class StrokeWidthElementEditorDescriptor extends EditorExtensionDescripto
 	 * 
 	 * @return the extensionRuntimeClass.
 	 */
+	@Override
 	public StrokeWidthElementEditorRuntime getExtensionRuntime() {
 		return new StrokeWidthElementEditorRuntime();
 	}

@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -202,6 +202,7 @@ public class LocalService {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.network.ServiceProducer#dispose()
 		 */
+		@Override
 		public void dispose() {
 			listener = null;
 		}
@@ -209,6 +210,7 @@ public class LocalService {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.network.ServiceProducer#sendMessage(com.nextbreakpoint.nextfractal.queue.network.ServiceMessage)
 		 */
+		@Override
 		public void sendMessage(final ServiceMessage message) throws ServiceException {
 			listener.onMessage(message);
 		}
@@ -216,6 +218,7 @@ public class LocalService {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.network.ServiceProducer#sendKeepAliveMessage()
 		 */
+		@Override
 		public void sendKeepAliveMessage() throws ServiceException {
 			((LocalServiceConsumer) listener).lastMessageTime = System.currentTimeMillis();
 		}
@@ -223,6 +226,7 @@ public class LocalService {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.network.ServiceProducer#sendAckMessage()
 		 */
+		@Override
 		public void sendAckMessage() throws ServiceException {
 		}
 	}
@@ -241,12 +245,14 @@ public class LocalService {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.network.ServiceConsumer#consumeMessages()
 		 */
+		@Override
 		public void consumeMessages() throws ServiceException {
 		}
 
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.network.ServiceConsumer#dispose()
 		 */
+		@Override
 		public void dispose() {
 			listener = null;
 		}
@@ -254,6 +260,7 @@ public class LocalService {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.network.ServiceConsumer#isTimeout()
 		 */
+		@Override
 		public boolean isTimeout() {
 			return (System.currentTimeMillis() - lastMessageTime) > 120 * 1000L;
 		}
@@ -261,6 +268,7 @@ public class LocalService {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.network.ServiceListener#onMessage(com.nextbreakpoint.nextfractal.queue.network.ServiceMessage)
 		 */
+		@Override
 		public void onMessage(final ServiceMessage message) throws ServiceException {
 			if (listener != null) {
 				lastMessageTime = System.currentTimeMillis();
@@ -271,6 +279,7 @@ public class LocalService {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.network.ServiceConsumer#consumeMessage(com.nextbreakpoint.nextfractal.queue.network.ServiceMessage)
 		 */
+		@Override
 		public void consumeMessage(final ServiceMessage message) throws ServiceException {
 			if (listener != null) {
 				lastMessageTime = System.currentTimeMillis();
@@ -283,6 +292,7 @@ public class LocalService {
 		/**
 		 * @see java.lang.Runnable#run()
 		 */
+		@Override
 		public void run() {
 			final long pollingTime = 30 * 1000L;
 			try {

@@ -51,6 +51,7 @@ public class PathAdjustmentConfigElement extends AbstractConfigElement {
 	/**
 	 *
 	 */
+	@Override
 	public void copyFrom(ConfigElement source) {
 		PathAdjustmentConfigElement pathAdjustmentElement = (PathAdjustmentConfigElement) source;
 		if (pathAdjustmentElement.getExtensionReference() != null) {

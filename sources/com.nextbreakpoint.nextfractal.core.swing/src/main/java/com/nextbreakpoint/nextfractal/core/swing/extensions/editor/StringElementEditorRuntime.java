@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -78,6 +78,7 @@ public class StringElementEditorRuntime extends EditorExtensionRuntime {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.swing.NodeEditorComponent#getComponent()
 		 */
+		@Override
 		public JComponent getComponent() {
 			return this;
 		}
@@ -85,6 +86,7 @@ public class StringElementEditorRuntime extends EditorExtensionRuntime {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.swing.NodeEditorComponent#reloadValue()
 		 */
+		@Override
 		public void reloadValue() {
 			if (nodeEditor.getNodeValue() != null) {
 				textField.setText(((StringElementNodeValue) nodeEditor.getNodeValue()).getValue());
@@ -95,6 +97,7 @@ public class StringElementEditorRuntime extends EditorExtensionRuntime {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.swing.NodeEditorComponent#dispose()
 		 */
+		@Override
 		public void dispose() {
 		}
 	}
@@ -112,6 +115,7 @@ public class StringElementEditorRuntime extends EditorExtensionRuntime {
 		/**
 		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 		 */
+		@Override
 		public void actionPerformed(final ActionEvent e) {
 			String value = ((JTextField) e.getSource()).getText();
 			if (!nodeEditor.getNodeValue().getValue().equals(value)) {
@@ -122,12 +126,14 @@ public class StringElementEditorRuntime extends EditorExtensionRuntime {
 		/**
 		 * @see java.awt.event.FocusListener#focusGained(java.awt.event.FocusEvent)
 		 */
+		@Override
 		public void focusGained(final FocusEvent e) {
 		}
 
 		/**
 		 * @see java.awt.event.FocusListener#focusLost(java.awt.event.FocusEvent)
 		 */
+		@Override
 		public void focusLost(final FocusEvent e) {
 			String value = ((JTextField) e.getSource()).getText();
 			if (!nodeEditor.getNodeValue().getValue().equals(value)) {

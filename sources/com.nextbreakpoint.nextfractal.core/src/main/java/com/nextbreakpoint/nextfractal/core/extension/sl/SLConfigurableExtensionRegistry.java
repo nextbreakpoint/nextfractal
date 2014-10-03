@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -84,6 +84,7 @@ public class SLConfigurableExtensionRegistry<T extends ConfigurableExtensionRunt
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionRegistry#getConfigurableExtensionList()
 	 */
+	@Override
 	public List<ConfigurableExtension<T, V>> getConfigurableExtensionList() {
 		final Collection<ConfigurableExtension<T, V>> extensions = this.extensionMap.values();
 		final List<ConfigurableExtension<T, V>> list = new LinkedList<ConfigurableExtension<T, V>>();
@@ -97,6 +98,7 @@ public class SLConfigurableExtensionRegistry<T extends ConfigurableExtensionRunt
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionRegistry#getConfigurableExtension(java.lang.String)
 	 */
+	@Override
 	public ConfigurableExtension<T, V> getConfigurableExtension(final String extensionId) throws ExtensionNotFoundException {
 		final ConfigurableExtension<T, V> extension = this.extensionMap.get(extensionId);
 		if (extension == null) {
@@ -108,6 +110,7 @@ public class SLConfigurableExtensionRegistry<T extends ConfigurableExtensionRunt
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.extension.ExtensionRegistry#getExtensionList()
 	 */
+	@Override
 	public List<Extension<T>> getExtensionList() {
 		final Collection<ConfigurableExtension<T, V>> extensions = this.extensionMap.values();
 		final List<Extension<T>> list = new LinkedList<Extension<T>>();
@@ -121,6 +124,7 @@ public class SLConfigurableExtensionRegistry<T extends ConfigurableExtensionRunt
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.extension.ExtensionRegistry#getExtension(java.lang.String)
 	 */
+	@Override
 	public Extension<T> getExtension(final String extensionId) throws ExtensionNotFoundException {
 		return this.getConfigurableExtension(extensionId);
 	}

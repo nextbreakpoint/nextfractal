@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -90,26 +90,32 @@ public class DefaultMovieContext implements MovieContext {
 		this.color = color;
 	}
 
+	@Override
 	public Color getColor() {
 		return color;
 	}
 
+	@Override
 	public boolean debug() {
 		return debug;
 	}
 
+	@Override
 	public boolean loop() {
 		return loop;
 	}
 
+	@Override
 	public void println(final String s) {
 		System.out.println(s);
 	}
 
+	@Override
 	public void print(final String s) {
 		System.out.print(s);
 	}
 
+	@Override
 	public void exit(final int code) {
 		System.exit(0);
 	}
@@ -118,14 +124,17 @@ public class DefaultMovieContext implements MovieContext {
 		canvas.repaint();
 	}
 
+	@Override
 	public boolean isStopped() {
 		return stopped;
 	}
 
+	@Override
 	public void setStopped(boolean stopped) {
 		this.stopped = stopped;
 	}
 
+	@Override
 	public int getFrameRate() {
 		return frameRate;
 	}

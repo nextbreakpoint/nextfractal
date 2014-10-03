@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -25,9 +25,11 @@
  */
 package com.nextbreakpoint.nextfractal.twister.extensions.image;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.Map;
+
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
 
 import com.nextbreakpoint.nextfractal.core.util.IntegerVector2D;
 import com.nextbreakpoint.nextfractal.core.util.Tile;
@@ -87,7 +89,7 @@ public class BlackRuntime extends ImageExtensionRuntime<BlackConfig> {
 		if (!isOverlay && (tile != null)) {
 			final int w = tile.getTileSize().getX() + tile.getTileBorder().getX();
 			final int h = tile.getTileSize().getY() + tile.getTileBorder().getY();
-			g2d.setColor(Color.BLACK);
+			g2d.setColor(java.awt.Color.BLACK);
 			g2d.fillRect(0, 0, w, h);
 		}
 	}
@@ -100,7 +102,7 @@ public class BlackRuntime extends ImageExtensionRuntime<BlackConfig> {
 		if (!isOverlay && (tile != null)) {
 			final int w = tile.getTileSize().getX() + tile.getTileBorder().getX();
 			final int h = tile.getTileSize().getY() + tile.getTileBorder().getY();
-			g2d.setColor(Color.BLACK);
+			g2d.setColor(java.awt.Color.BLACK);
 			g2d.fillRect(x, y, w, h);
 		}
 	}
@@ -111,8 +113,45 @@ public class BlackRuntime extends ImageExtensionRuntime<BlackConfig> {
 	@Override
 	public void drawImage(final Graphics2D g2d, final int x, final int y, final int w, final int h) {
 		if (!isOverlay && (tile != null)) {
-			g2d.setColor(Color.BLACK);
+			g2d.setColor(java.awt.Color.BLACK);
 			g2d.fillRect(x, y, w, h);
+		}
+	}
+
+	/**
+	 * @see com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionRuntime#drawImage(javafx.scene.canvas.GraphicsContext)
+	 */
+	@Override
+	public void drawImage(GraphicsContext gc) {
+		if (!isOverlay && (tile != null)) {
+			final int w = tile.getTileSize().getX() + tile.getTileBorder().getX();
+			final int h = tile.getTileSize().getY() + tile.getTileBorder().getY();
+			gc.setFill(Color.BLACK);
+			gc.fillRect(0, 0, w, h);
+		}
+	}
+	
+	/**
+	 * @see com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionRuntime#drawImage(javafx.scene.canvas.GraphicsContext, int, int)
+	 */
+	@Override
+	public void drawImage(final GraphicsContext gc, final int x, final int y) {
+		if (!isOverlay && (tile != null)) {
+			final int w = tile.getTileSize().getX() + tile.getTileBorder().getX();
+			final int h = tile.getTileSize().getY() + tile.getTileBorder().getY();
+			gc.setFill(Color.BLACK);
+			gc.fillRect(x, y, w, h);
+		}
+	}
+
+	/**
+	 * @see com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionRuntime#drawImage(javafx.scene.canvas.GraphicsContext, int, int, int, int)
+	 */
+	@Override
+	public void drawImage(final GraphicsContext gc, final int x, final int y, final int w, final int h) {
+		if (!isOverlay && (tile != null)) {
+			gc.setFill(Color.BLACK);
+			gc.fillRect(x, y, w, h);
 		}
 	}
 

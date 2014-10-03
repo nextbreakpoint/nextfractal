@@ -514,77 +514,88 @@ public class ExtendedGeneralPath implements ExtendedShape, Cloneable {
     /**
      * Delegates to the enclosed <code>GeneralPath</code>.
      */
-    public synchronized Rectangle getBounds() {
+    @Override
+	public synchronized Rectangle getBounds() {
         return path.getBounds();
     }
 
     /**
      * Delegates to the enclosed <code>GeneralPath</code>.
      */
-    public synchronized Rectangle2D getBounds2D() {
+    @Override
+	public synchronized Rectangle2D getBounds2D() {
         return path.getBounds2D();
     }
 
     /**
      * Delegates to the enclosed <code>GeneralPath</code>.
      */
-    public boolean contains(double x, double y) {
+    @Override
+	public boolean contains(double x, double y) {
         return path.contains(x, y);
     }
 
     /**
      * Delegates to the enclosed <code>GeneralPath</code>.
      */
-    public boolean contains(Point2D p) {
+    @Override
+	public boolean contains(Point2D p) {
         return path.contains(p);
     }
 
     /**
      * Delegates to the enclosed <code>GeneralPath</code>.
      */
-    public boolean contains(double x, double y, double w, double h) {
+    @Override
+	public boolean contains(double x, double y, double w, double h) {
         return path.contains(x, y, w, h);
     }
 
     /**
      * Delegates to the enclosed <code>GeneralPath</code>.
      */
-    public boolean contains(Rectangle2D r) {
+    @Override
+	public boolean contains(Rectangle2D r) {
         return path.contains(r);
     }
 
     /**
      * Delegates to the enclosed <code>GeneralPath</code>.
      */
-    public boolean intersects(double x, double y, double w, double h) {
+    @Override
+	public boolean intersects(double x, double y, double w, double h) {
         return path.intersects(x, y, w, h);
     }
 
     /**
      * Delegates to the enclosed <code>GeneralPath</code>.
      */
-    public boolean intersects(Rectangle2D r) {
+    @Override
+	public boolean intersects(Rectangle2D r) {
         return path.intersects(r);
     }
 
     /**
      * Delegates to the enclosed <code>GeneralPath</code>.
      */
-    public PathIterator getPathIterator(AffineTransform at) {
+    @Override
+	public PathIterator getPathIterator(AffineTransform at) {
         return path.getPathIterator(at);
     }
 
     /**
      * Delegates to the enclosed <code>GeneralPath</code>.
      */
-    public PathIterator getPathIterator(AffineTransform at, double flatness) {
+    @Override
+	public PathIterator getPathIterator(AffineTransform at, double flatness) {
         return path.getPathIterator(at, flatness);
     }
 
     /**
      * Delegates to the enclosed <code>GeneralPath</code>.
      */
-    public ExtendedPathIterator getExtendedPathIterator() {
+    @Override
+	public ExtendedPathIterator getExtendedPathIterator() {
         return new EPI();
     }
 
@@ -592,11 +603,13 @@ public class ExtendedGeneralPath implements ExtendedShape, Cloneable {
         int segNum = 0;
         int valsIdx = 0;
 
-        public int currentSegment() {
+        @Override
+		public int currentSegment() {
             return types[segNum];
         }
 
-        public int currentSegment(double[] coords) {
+        @Override
+		public int currentSegment(double[] coords) {
             int ret = types[segNum];
             switch (ret) {
             case SEG_CLOSE: break;
@@ -635,7 +648,8 @@ public class ExtendedGeneralPath implements ExtendedShape, Cloneable {
             return ret;
         }
 
-        public int currentSegment(float[] coords) {
+        @Override
+		public int currentSegment(float[] coords) {
             int ret = types[segNum];
             switch (ret) {
             case SEG_CLOSE: break;
@@ -657,13 +671,16 @@ public class ExtendedGeneralPath implements ExtendedShape, Cloneable {
             return ret;
         }
 
-        public int getWindingRule() {
+        @Override
+		public int getWindingRule() {
             return path.getWindingRule();
         }
-        public boolean isDone() {
+        @Override
+		public boolean isDone() {
             return segNum == numSeg;
         }
-        public void next() {
+        @Override
+		public void next() {
             int type = types[segNum++];
             switch (type) {
             case SEG_CLOSE: break;
@@ -679,7 +696,8 @@ public class ExtendedGeneralPath implements ExtendedShape, Cloneable {
     /**
      * Delegates to the enclosed <code>GeneralPath</code>.
      */
-    public Object clone() {
+    @Override
+	public Object clone() {
         try {
             ExtendedGeneralPath result = (ExtendedGeneralPath) super.clone();
             result.path = (GeneralPath) path.clone();

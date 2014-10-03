@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -25,8 +25,6 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.extensions.incolouringFormula;
 
-import com.nextbreakpoint.nextfractal.mandelbrot.extensions.incolouringFormula.ColorConfig;
-import com.nextbreakpoint.nextfractal.mandelbrot.extensions.incolouringFormula.ColorRuntime;
 import com.nextbreakpoint.nextfractal.mandelbrot.incolouringFormula.extension.IncolouringFormulaExtensionDescriptor;
 
 /**
@@ -38,6 +36,7 @@ public class ColorDescriptor extends IncolouringFormulaExtensionDescriptor {
 	 * 
 	 * @return the extensionId.
 	 */
+	@Override
 	public String getExtensionId() {
 		return "twister.mandelbrot.fractal.incolouring.formula.color";
 	}
@@ -47,6 +46,7 @@ public class ColorDescriptor extends IncolouringFormulaExtensionDescriptor {
 	 * 
 	 * @return the extensionName.
 	 */
+	@Override
 	public String getExtensionName() {
 		return "Color";
 	}
@@ -56,6 +56,7 @@ public class ColorDescriptor extends IncolouringFormulaExtensionDescriptor {
 	 * 
 	 * @return the extensionRuntimeClass.
 	 */
+	@Override
 	public ColorRuntime getExtensionRuntime() {
 		return new ColorRuntime();
 	}
@@ -65,6 +66,7 @@ public class ColorDescriptor extends IncolouringFormulaExtensionDescriptor {
 	 * 
 	 * @return the extensionConfigClass.
 	 */
+	@Override
 	public ColorConfig getExtensionConfig() {
 		return new ColorConfig();
 	}

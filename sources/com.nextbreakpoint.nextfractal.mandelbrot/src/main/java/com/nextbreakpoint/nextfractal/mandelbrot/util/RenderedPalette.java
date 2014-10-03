@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -87,6 +87,7 @@ public class RenderedPalette implements Palette {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.util.Palette#renderTable(int)
 	 */
+	@Override
 	public int[] renderTable(final int size) {
 		try {
 			return RenderedPalette.rebuild(params, size);
@@ -139,6 +140,7 @@ public class RenderedPalette implements Palette {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.util.Palette#getName()
 	 */
+	@Override
 	public String getName() {
 		final StringBuilder builder = new StringBuilder();
 		builder.append("[");

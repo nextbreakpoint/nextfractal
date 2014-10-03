@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -25,8 +25,6 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.extensions.orbitTrap;
 
-import com.nextbreakpoint.nextfractal.mandelbrot.extensions.orbitTrap.LineTrapConfig;
-import com.nextbreakpoint.nextfractal.mandelbrot.extensions.orbitTrap.LineTrapRuntime;
 import com.nextbreakpoint.nextfractal.mandelbrot.orbitTrap.extension.OrbitTrapExtensionDescriptor;
 
 /**
@@ -38,6 +36,7 @@ public class LineTrapDescriptor extends OrbitTrapExtensionDescriptor {
 	 * 
 	 * @return the extensionId.
 	 */
+	@Override
 	public String getExtensionId() {
 		return "twister.mandelbrot.fractal.orbittrap.line";
 	}
@@ -47,6 +46,7 @@ public class LineTrapDescriptor extends OrbitTrapExtensionDescriptor {
 	 * 
 	 * @return the extensionName.
 	 */
+	@Override
 	public String getExtensionName() {
 		return "Line Trap";
 	}
@@ -56,6 +56,7 @@ public class LineTrapDescriptor extends OrbitTrapExtensionDescriptor {
 	 * 
 	 * @return the extensionRuntimeClass.
 	 */
+	@Override
 	public LineTrapRuntime getExtensionRuntime() {
 		return new LineTrapRuntime();
 	}
@@ -65,6 +66,7 @@ public class LineTrapDescriptor extends OrbitTrapExtensionDescriptor {
 	 * 
 	 * @return the extensionConfigClass.
 	 */
+	@Override
 	public LineTrapConfig getExtensionConfig() {
 		return new LineTrapConfig();
 	}

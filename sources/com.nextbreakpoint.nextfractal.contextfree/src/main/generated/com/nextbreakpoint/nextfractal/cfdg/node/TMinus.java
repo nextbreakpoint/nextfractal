@@ -2,7 +2,7 @@
 
 package com.nextbreakpoint.nextfractal.cfdg.node;
 
-import com.nextbreakpoint.nextfractal.cfdg.analysis.*;
+import com.nextbreakpoint.nextfractal.cfdg.analysis.Analysis;
 
 @SuppressWarnings("nls")
 public final class TMinus extends Token
@@ -25,7 +25,8 @@ public final class TMinus extends Token
       return new TMinus(getLine(), getPos());
     }
 
-    public void apply(Switch sw)
+    @Override
+	public void apply(Switch sw)
     {
         ((Analysis) sw).caseTMinus(this);
     }

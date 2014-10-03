@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -186,6 +186,7 @@ public class ColorFieldUI extends ComponentUI {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.swing.color.ColorChangeListener#colorChanged(com.nextbreakpoint.nextfractal.core.swing.color.ColorChangeEvent)
 		 */
+		@Override
 		public void colorChanged(final ColorChangeEvent e) {
 			field.setToolTipText(createColorFieldTooltip(field.getModel()));
 			field.repaint();
@@ -194,6 +195,7 @@ public class ColorFieldUI extends ComponentUI {
 		/**
 		 * @see java.awt.dnd.DropTargetListener#dragEnter(java.awt.dnd.DropTargetDragEvent)
 		 */
+		@Override
 		public void dragEnter(final DropTargetDragEvent e) {
 			if (!field.isDropEnabled()) {
 				e.rejectDrag();
@@ -221,12 +223,14 @@ public class ColorFieldUI extends ComponentUI {
 		/**
 		 * @see java.awt.dnd.DropTargetListener#dragOver(java.awt.dnd.DropTargetDragEvent)
 		 */
+		@Override
 		public void dragOver(final DropTargetDragEvent e) {
 		}
 
 		/**
 		 * @see java.awt.dnd.DropTargetListener#dragExit(java.awt.dnd.DropTargetEvent)
 		 */
+		@Override
 		public void dragExit(final DropTargetEvent e) {
 			if (isTarget) {
 				paintBorder = false;
@@ -237,12 +241,14 @@ public class ColorFieldUI extends ComponentUI {
 		/**
 		 * @see java.awt.dnd.DropTargetListener#dropActionChanged(java.awt.dnd.DropTargetDragEvent)
 		 */
+		@Override
 		public void dropActionChanged(final DropTargetDragEvent e) {
 		}
 
 		/**
 		 * @see java.awt.dnd.DropTargetListener#drop(java.awt.dnd.DropTargetDropEvent)
 		 */
+		@Override
 		public void drop(final DropTargetDropEvent e) {
 			if (isTarget) {
 				final DataFlavor[] flavors = e.getCurrentDataFlavors();
@@ -277,6 +283,7 @@ public class ColorFieldUI extends ComponentUI {
 		/**
 		 * @see java.awt.dnd.DragGestureListener#dragGestureRecognized(java.awt.dnd.DragGestureEvent)
 		 */
+		@Override
 		public void dragGestureRecognized(final DragGestureEvent e) {
 			if (field.isDragEnabled()) {
 				try {
@@ -294,30 +301,35 @@ public class ColorFieldUI extends ComponentUI {
 		/**
 		 * @see java.awt.dnd.DragSourceListener#dragEnter(java.awt.dnd.DragSourceDragEvent)
 		 */
+		@Override
 		public void dragEnter(final DragSourceDragEvent e) {
 		}
 
 		/**
 		 * @see java.awt.dnd.DragSourceListener#dragOver(java.awt.dnd.DragSourceDragEvent)
 		 */
+		@Override
 		public void dragOver(final DragSourceDragEvent e) {
 		}
 
 		/**
 		 * @see java.awt.dnd.DragSourceListener#dragExit(java.awt.dnd.DragSourceEvent)
 		 */
+		@Override
 		public void dragExit(final DragSourceEvent e) {
 		}
 
 		/**
 		 * @see java.awt.dnd.DragSourceListener#dropActionChanged(java.awt.dnd.DragSourceDragEvent)
 		 */
+		@Override
 		public void dropActionChanged(final DragSourceDragEvent e) {
 		}
 
 		/**
 		 * @see java.awt.dnd.DragSourceListener#dragDropEnd(java.awt.dnd.DragSourceDropEvent)
 		 */
+		@Override
 		public void dragDropEnd(final DragSourceDropEvent e) {
 			paintBorder = false;
 			isTarget = true;

@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -25,7 +25,6 @@
  */
 package com.nextbreakpoint.nextfractal.devtools.extensions.processor;
 
-import com.nextbreakpoint.nextfractal.devtools.extensions.processor.NodeActionXMLImporterProcessorRuntime;
 import com.nextbreakpoint.nextfractal.devtools.processor.extension.ProcessorExtensionDescriptor;
 
 /**
@@ -37,6 +36,7 @@ public class NodeActionXMLImporterProcessorDescriptor extends ProcessorExtension
 	 * 
 	 * @return the extensionId.
 	 */
+	@Override
 	public String getExtensionId() {
 		return "devtools.processor.nodeactionxmlimporterruntime";
 	}
@@ -46,6 +46,7 @@ public class NodeActionXMLImporterProcessorDescriptor extends ProcessorExtension
 	 * 
 	 * @return the extensionName.
 	 */
+	@Override
 	public String getExtensionName() {
 		return "NodeActionXMLImporterRuntime Processor";
 	}
@@ -55,6 +56,7 @@ public class NodeActionXMLImporterProcessorDescriptor extends ProcessorExtension
 	 * 
 	 * @return the extensionRuntimeClass.
 	 */
+	@Override
 	public NodeActionXMLImporterProcessorRuntime getExtensionRuntime() {
 		return new NodeActionXMLImporterProcessorRuntime();
 	}

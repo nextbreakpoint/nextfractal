@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -47,7 +47,6 @@ import com.nextbreakpoint.nextfractal.core.swing.ViewContext;
 import com.nextbreakpoint.nextfractal.core.swing.util.Buttons;
 import com.nextbreakpoint.nextfractal.core.tree.NodeSession;
 import com.nextbreakpoint.nextfractal.core.util.RenderContext;
-
 import com.nextbreakpoint.nextfractal.twister.TwisterConfig;
 
 /**
@@ -133,6 +132,7 @@ public class ConfigFrame extends JFrame {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.twister.swing.NavigationContainer#loadComponent(java.awt.Component, int)
 		 */
+		@Override
 		public void loadComponent(final Component c, final int amount) {
 			final int defaultWidth = Integer.parseInt(TwisterSwingResources.getInstance().getString(ConfigFrame.CONFIG_FRAME_WIDTH));
 			final int defaultMinHeight = Integer.parseInt(TwisterSwingResources.getInstance().getString(ConfigFrame.CONFIG_FRAME_MIN_HEIGHT));
@@ -162,6 +162,7 @@ public class ConfigFrame extends JFrame {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.swing.ViewContext#setComponent(java.awt.Component)
 		 */
+		@Override
 		public void setComponent(final Component c) {
 			model.setComponent(c);
 		}
@@ -169,6 +170,7 @@ public class ConfigFrame extends JFrame {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.swing.ViewContext#removeComponent(java.awt.Component)
 		 */
+		@Override
 		public void removeComponent(final Component c) {
 			model.removeComponent(c);
 		}
@@ -176,6 +178,7 @@ public class ConfigFrame extends JFrame {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.swing.ViewContext#resize()
 		 */
+		@Override
 		public void resize() {
 			model.resize(0);
 		}
@@ -183,6 +186,7 @@ public class ConfigFrame extends JFrame {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.swing.ViewContext#resize(int)
 		 */
+		@Override
 		public void resize(final int amount) {
 			model.resize(amount + 20);
 		}
@@ -190,6 +194,7 @@ public class ConfigFrame extends JFrame {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.swing.ViewContext#restoreComponent(java.awt.Component)
 		 */
+		@Override
 		public void restoreComponent(final Component c) {
 			model.restoreComponent(c);
 		}
@@ -208,6 +213,7 @@ public class ConfigFrame extends JFrame {
 		/**
 		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 		 */
+		@Override
 		public void actionPerformed(final ActionEvent e) {
 			configContext.openAdvancedConfigWindow();
 		}

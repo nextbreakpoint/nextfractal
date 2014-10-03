@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -163,6 +163,7 @@ public class PlatformFrame extends JFrame {
 			/**
 			 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 			 */
+			@Override
 			public void actionPerformed(final ActionEvent e) {
 				JOptionPane.showMessageDialog(ServicePanel.this, "Version " + TwisterSwingResources.getInstance().getString("release"), TwisterSwingResources.getInstance().getString("label.version"), JOptionPane.PLAIN_MESSAGE);
 			}
@@ -181,6 +182,7 @@ public class PlatformFrame extends JFrame {
 			/**
 			 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 			 */
+			@Override
 			public void actionPerformed(final ActionEvent e) {
 				final StringBuilder builder = new StringBuilder();
 				builder.append("JRE VER ");
@@ -221,6 +223,7 @@ public class PlatformFrame extends JFrame {
 			/**
 			 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 			 */
+			@Override
 			public void actionPerformed(final ActionEvent e) {
 				BufferedReader reader = null;
 				try {

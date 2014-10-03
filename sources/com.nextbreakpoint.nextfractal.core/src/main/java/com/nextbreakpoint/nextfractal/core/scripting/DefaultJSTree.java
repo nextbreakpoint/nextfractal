@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -50,6 +50,7 @@ public class DefaultJSTree implements JSTree {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.scripting.JSTree#accept()
 	 */
+	@Override
 	public void accept() {
 		try {
 			renderContext.acquire();
@@ -66,6 +67,7 @@ public class DefaultJSTree implements JSTree {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.scripting.JSTree#cancel()
 	 */
+	@Override
 	public void cancel() {
 		rootNode.cancel();
 	}
@@ -73,6 +75,7 @@ public class DefaultJSTree implements JSTree {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.scripting.JSTree#refresh()
 	 */
+	@Override
 	public void refresh() {
 		renderContext.refresh();
 	}
@@ -80,6 +83,7 @@ public class DefaultJSTree implements JSTree {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.scripting.JSTree#redraw()
 	 */
+	@Override
 	public void redraw() {
 		try {
 			renderContext.acquire();
@@ -96,6 +100,7 @@ public class DefaultJSTree implements JSTree {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.scripting.JSTree#getRootNode()
 	 */
+	@Override
 	public JSNode getRootNode() {
 		return jsRootNode;
 	}
@@ -103,6 +108,7 @@ public class DefaultJSTree implements JSTree {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.scripting.JSTree#dump()
 	 */
+	@Override
 	public String dump() {
 		return rootNode.dump();
 	}

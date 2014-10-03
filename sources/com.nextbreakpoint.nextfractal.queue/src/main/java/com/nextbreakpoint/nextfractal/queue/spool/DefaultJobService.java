@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -80,6 +80,7 @@ public class DefaultJobService<T extends JobInterface> implements JobService<T> 
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobService#getName()
 	 */
+	@Override
 	public String getName() {
 		return serviceName;
 	}
@@ -87,6 +88,7 @@ public class DefaultJobService<T extends JobInterface> implements JobService<T> 
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobService#start()
 	 */
+	@Override
 	public void start() {
 		if (thread == null) {
 			thread = factory.newThread(new ServiceHandler());
@@ -99,6 +101,7 @@ public class DefaultJobService<T extends JobInterface> implements JobService<T> 
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobService#stop()
 	 */
+	@Override
 	public void stop() {
 		if (thread != null) {
 			running = false;
@@ -127,6 +130,7 @@ public class DefaultJobService<T extends JobInterface> implements JobService<T> 
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobService#getJobCount()
 	 */
+	@Override
 	public int getJobCount() {
 		synchronized (spooledJobs) {
 			return spooledJobs.size();
@@ -140,6 +144,7 @@ public class DefaultJobService<T extends JobInterface> implements JobService<T> 
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobService#deleteJob(java.lang.String)
 	 */
+	@Override
 	public void deleteJob(final String jobId) {
 		if (jobId == null) {
 			throw new NullPointerException("jobId == null");
@@ -164,6 +169,7 @@ public class DefaultJobService<T extends JobInterface> implements JobService<T> 
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobService#stopJob(java.lang.String)
 	 */
+	@Override
 	public void stopJob(final String jobId) {
 		if (jobId == null) {
 			throw new NullPointerException("jobId == null");
@@ -184,6 +190,7 @@ public class DefaultJobService<T extends JobInterface> implements JobService<T> 
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobService#abortJob(java.lang.String)
 	 */
+	@Override
 	public void abortJob(final String jobId) {
 		if (jobId == null) {
 			throw new NullPointerException("jobId == null");
@@ -203,6 +210,7 @@ public class DefaultJobService<T extends JobInterface> implements JobService<T> 
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobService#createJob(com.nextbreakpoint.nextfractal.queue.spool.JobListener)
 	 */
+	@Override
 	public String createJob(final JobListener listener) {
 		if (listener == null) {
 			throw new NullPointerException("listener == null");
@@ -217,6 +225,7 @@ public class DefaultJobService<T extends JobInterface> implements JobService<T> 
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobService#setJobData(java.lang.String, JobData, int)
 	 */
+	@Override
 	public void setJobData(final String jobId, final JobData jobData, final int frameNumber) {
 		if (jobId == null) {
 			throw new NullPointerException("jobId == null");
@@ -236,6 +245,7 @@ public class DefaultJobService<T extends JobInterface> implements JobService<T> 
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobService#runJob(java.lang.String)
 	 */
+	@Override
 	public void runJob(final String jobId) {
 		if (jobId == null) {
 			throw new NullPointerException("jobId == null");
@@ -274,6 +284,7 @@ public class DefaultJobService<T extends JobInterface> implements JobService<T> 
 		/**
 		 * @see java.lang.Runnable#run()
 		 */
+		@Override
 		public void run() {
 			boolean interrupted = false;
 			fireStateChanged(JobServiceListener.STATUS_BORN, serviceName + " started");
@@ -357,6 +368,7 @@ public class DefaultJobService<T extends JobInterface> implements JobService<T> 
 		/**
 		 * @see java.lang.Runnable#run()
 		 */
+		@Override
 		public void run() {
 			try {
 				while (running) {
@@ -417,6 +429,7 @@ public class DefaultJobService<T extends JobInterface> implements JobService<T> 
 		/**
 		 * @see java.lang.Runnable#run()
 		 */
+		@Override
 		public void run() {
 			job.dispose();
 			logger.info(serviceName + ": Job deleted " + job.getJob() + " (jobs = " + jobCount + ")");
@@ -436,6 +449,7 @@ public class DefaultJobService<T extends JobInterface> implements JobService<T> 
 		/**
 		 * @see java.lang.Runnable#run()
 		 */
+		@Override
 		public void run() {
 			job.start();
 			jobCount += 1;
@@ -456,6 +470,7 @@ public class DefaultJobService<T extends JobInterface> implements JobService<T> 
 		/**
 		 * @see java.lang.Runnable#run()
 		 */
+		@Override
 		public void run() {
 			job.stop();
 			if (jobCount > 0) {
@@ -478,6 +493,7 @@ public class DefaultJobService<T extends JobInterface> implements JobService<T> 
 		/**
 		 * @see java.lang.Runnable#run()
 		 */
+		@Override
 		public void run() {
 			job.abort();
 			logger.info(serviceName + ": Job aborted " + job.getJob() + " (jobs = " + jobCount + ")");
@@ -497,6 +513,7 @@ public class DefaultJobService<T extends JobInterface> implements JobService<T> 
 		/**
 		 * @see java.lang.Runnable#run()
 		 */
+		@Override
 		public void run() {
 			job.reset();
 			if (jobCount > 0) {
@@ -519,6 +536,7 @@ public class DefaultJobService<T extends JobInterface> implements JobService<T> 
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.spool.JobListener#updated(java.lang.String, com.nextbreakpoint.nextfractal.queue.spool.JobData)
 		 */
+		@Override
 		public void updated(final String jobId, final JobData job) {
 			listener.updated(jobId, new DefaultJobData(job));
 		}
@@ -526,6 +544,7 @@ public class DefaultJobService<T extends JobInterface> implements JobService<T> 
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.spool.JobListener#started(java.lang.String, com.nextbreakpoint.nextfractal.queue.spool.JobData)
 		 */
+		@Override
 		public void started(final String jobId, final JobData job) {
 			listener.started(jobId, new DefaultJobData(job));
 		}
@@ -533,6 +552,7 @@ public class DefaultJobService<T extends JobInterface> implements JobService<T> 
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.spool.JobListener#stopped(java.lang.String, com.nextbreakpoint.nextfractal.queue.spool.JobData)
 		 */
+		@Override
 		public void stopped(final String jobId, final JobData job) {
 			listener.stopped(jobId, new DefaultJobData(job));
 			synchronized (dispatchMonitor) {
@@ -544,6 +564,7 @@ public class DefaultJobService<T extends JobInterface> implements JobService<T> 
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.spool.JobListener#terminated(java.lang.String, com.nextbreakpoint.nextfractal.queue.spool.JobData)
 		 */
+		@Override
 		public void terminated(final String jobId, final JobData job) {
 			listener.terminated(jobId, new DefaultJobData(job));
 			synchronized (serviceMonitor) {
@@ -555,6 +576,7 @@ public class DefaultJobService<T extends JobInterface> implements JobService<T> 
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.spool.JobListener#disposed(java.lang.String, com.nextbreakpoint.nextfractal.queue.spool.JobData)
 		 */
+		@Override
 		public void disposed(final String jobId, final JobData job) {
 			listener.disposed(jobId, new DefaultJobData(job));
 		}
@@ -637,6 +659,7 @@ public class DefaultJobService<T extends JobInterface> implements JobService<T> 
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobService#addServiceListener(com.nextbreakpoint.nextfractal.queue.spool.JobServiceListener)
 	 */
+	@Override
 	public void addServiceListener(final JobServiceListener listener) {
 		listeners.add(listener);
 	}
@@ -644,6 +667,7 @@ public class DefaultJobService<T extends JobInterface> implements JobService<T> 
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobService#removeServiceListener(com.nextbreakpoint.nextfractal.queue.spool.JobServiceListener)
 	 */
+	@Override
 	public void removeServiceListener(final JobServiceListener listener) {
 		listeners.remove(listener);
 	}

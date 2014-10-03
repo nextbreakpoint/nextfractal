@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -102,6 +102,7 @@ public class RenderedPaletteElementEditorRuntime extends EditorExtensionRuntime 
 			/**
 			 * @see com.nextbreakpoint.nextfractal.core.swing.palette.PaletteChangeListener#paletteChanged(com.nextbreakpoint.nextfractal.core.swing.palette.PaletteChangeEvent)
 			 */
+			@Override
 			public void paletteChanged(final PaletteChangeEvent e) {
 				nodeEditor.setNodeValue(new RenderedPaletteElementNodeValue((RenderedPalette) ((RenderedPaletteModel) e.getSource()).getPalette()));
 			}
@@ -131,6 +132,7 @@ public class RenderedPaletteElementEditorRuntime extends EditorExtensionRuntime 
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.swing.NodeEditorComponent#getComponent()
 		 */
+		@Override
 		public JComponent getComponent() {
 			return this;
 		}
@@ -138,6 +140,7 @@ public class RenderedPaletteElementEditorRuntime extends EditorExtensionRuntime 
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.swing.NodeEditorComponent#reloadValue()
 		 */
+		@Override
 		public void reloadValue() {
 			if (nodeEditor.getNodeValue() != null) {
 				field.getModel().removePaletteChangeListener(listener);
@@ -149,6 +152,7 @@ public class RenderedPaletteElementEditorRuntime extends EditorExtensionRuntime 
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.swing.NodeEditorComponent#dispose()
 		 */
+		@Override
 		public void dispose() {
 		}
 
@@ -167,6 +171,7 @@ public class RenderedPaletteElementEditorRuntime extends EditorExtensionRuntime 
 				this.nodeEditor = nodeEditor;
 			}
 
+			@Override
 			public void actionPerformed(final ActionEvent e) {
 				final Palette palette = RenderedPaletteEditor.showRenderedPaletteEditor(field, nodeEditor.getNodeLabel(), (RenderedPalette) field.getPalette());
 				if (palette != null) {

@@ -51,6 +51,7 @@ public class PathReplacementConfigElement extends AbstractConfigElement {
 	/**
 	 *
 	 */
+	@Override
 	public void copyFrom(ConfigElement source) {
 		PathReplacementConfigElement pathReplacementElement = (PathReplacementConfigElement) source;
 		if (pathReplacementElement.getExtensionReference() != null) {

@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -33,18 +33,22 @@ import java.io.Reader;
 import freemarker.cache.TemplateLoader;
 
 public class ProcessorTemplateLoader implements TemplateLoader {
+	@Override
 	public void closeTemplateSource(Object source) throws IOException {
 		((InputStream) source).close();
 	}
 
+	@Override
 	public Object findTemplateSource(String name) throws IOException {
 		return getClass().getResourceAsStream("/" + name.substring(0, name.indexOf("_")) + ".ftl");
 	}
 
+	@Override
 	public long getLastModified(Object source) {
 		return 0;
 	}
 
+	@Override
 	public Reader getReader(Object source, String encoding) throws IOException {
 		return new InputStreamReader((InputStream) source, encoding);
 	}

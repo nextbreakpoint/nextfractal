@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -27,6 +27,8 @@ package com.nextbreakpoint.nextfractal.twister.image.extension;
 
 import java.awt.Graphics2D;
 import java.util.Map;
+
+import javafx.scene.canvas.GraphicsContext;
 
 import com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionRuntime;
 import com.nextbreakpoint.nextfractal.core.util.IntegerVector2D;
@@ -70,6 +72,27 @@ public abstract class ImageExtensionRuntime<T extends ImageExtensionConfig> exte
 	 * @param isDynamicRequired
 	 */
 	public abstract void prepareImage(boolean isDynamicRequired);
+
+	/**
+	 * @param gc
+	 */
+	public abstract void drawImage(GraphicsContext gc);
+
+	/**
+	 * @param gc
+	 * @param x
+	 * @param y
+	 */
+	public abstract void drawImage(GraphicsContext gc, int x, int y);
+
+	/**
+	 * @param gc
+	 * @param x
+	 * @param y
+	 * @param w
+	 * @param h
+	 */
+	public abstract void drawImage(GraphicsContext gc, int x, int y, int w, int h);
 
 	/**
 	 * @param g2d

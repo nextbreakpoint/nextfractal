@@ -108,6 +108,7 @@ import com.nextbreakpoint.nextfractal.core.extension.ExtensionNotFoundException;
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
 		 */
+		@Override
 		@SuppressWarnings("unchecked")
 		public void valueChanged(final ValueChangeEvent e) {
 			switch (e.getEventType()) {

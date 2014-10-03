@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -62,6 +62,7 @@ public class TransferableTwisterConfig implements Transferable {
 	/**
 	 * @see java.awt.datatransfer.Transferable#getTransferDataFlavors()
 	 */
+	@Override
 	public DataFlavor[] getTransferDataFlavors() {
 		return TransferableTwisterConfig.flavors;
 	}
@@ -69,6 +70,7 @@ public class TransferableTwisterConfig implements Transferable {
 	/**
 	 * @see java.awt.datatransfer.Transferable#isDataFlavorSupported(java.awt.datatransfer.DataFlavor)
 	 */
+	@Override
 	public boolean isDataFlavorSupported(final DataFlavor flavor) {
 		for (final DataFlavor validFlavor : getTransferDataFlavors()) {
 			if (validFlavor.equals(flavor)) {
@@ -81,6 +83,7 @@ public class TransferableTwisterConfig implements Transferable {
 	/**
 	 * @see java.awt.datatransfer.Transferable#getTransferData(java.awt.datatransfer.DataFlavor)
 	 */
+	@Override
 	public Object getTransferData(final DataFlavor flavor) throws UnsupportedFlavorException, IOException {
 		if (isDataFlavorSupported(flavor)) {
 			return config;

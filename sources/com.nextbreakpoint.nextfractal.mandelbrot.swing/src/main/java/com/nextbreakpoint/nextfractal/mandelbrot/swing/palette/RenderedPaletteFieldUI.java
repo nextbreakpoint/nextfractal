@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -466,6 +466,7 @@ public class RenderedPaletteFieldUI extends ComponentUI {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.platform.ui.swing.color.PaletteChangeListener#paletteChanged(com.nextbreakpoint.nextfractal.platform.ui.swing.color.PaletteChangeEvent)
 		 */
+		@Override
 		public void paletteChanged(final PaletteChangeEvent e) {
 			final RenderedPalette palette = ((RenderedPaletteModel) e.getSource()).getRenderedPalette();
 			field.setToolTipText(createPaletteFieldTooltip((RenderedPaletteModel) e.getSource()));
@@ -477,6 +478,7 @@ public class RenderedPaletteFieldUI extends ComponentUI {
 		/**
 		 * @see java.awt.dnd.DropTargetListener#dragEnter(java.awt.dnd.DropTargetDragEvent)
 		 */
+		@Override
 		public void dragEnter(final DropTargetDragEvent e) {
 			if (!field.isDropEnabled() || (resizeIndex != -1) || (moveIndex != -1)) {
 				e.rejectDrag();
@@ -504,12 +506,14 @@ public class RenderedPaletteFieldUI extends ComponentUI {
 		/**
 		 * @see java.awt.dnd.DropTargetListener#dragOver(java.awt.dnd.DropTargetDragEvent)
 		 */
+		@Override
 		public void dragOver(final DropTargetDragEvent e) {
 		}
 
 		/**
 		 * @see java.awt.dnd.DropTargetListener#dragExit(java.awt.dnd.DropTargetEvent)
 		 */
+		@Override
 		public void dragExit(final DropTargetEvent e) {
 			if (isTarget) {
 				paintBorder = false;
@@ -520,12 +524,14 @@ public class RenderedPaletteFieldUI extends ComponentUI {
 		/**
 		 * @see java.awt.dnd.DropTargetListener#dropActionChanged(java.awt.dnd.DropTargetDragEvent)
 		 */
+		@Override
 		public void dropActionChanged(final DropTargetDragEvent e) {
 		}
 
 		/**
 		 * @see java.awt.dnd.DropTargetListener#drop(java.awt.dnd.DropTargetDropEvent)
 		 */
+		@Override
 		public void drop(final DropTargetDropEvent e) {
 			if (isTarget) {
 				final DataFlavor[] flavors = e.getCurrentDataFlavors();
@@ -645,6 +651,7 @@ public class RenderedPaletteFieldUI extends ComponentUI {
 		/**
 		 * @see java.awt.dnd.DragGestureListener#dragGestureRecognized(java.awt.dnd.DragGestureEvent)
 		 */
+		@Override
 		public void dragGestureRecognized(final DragGestureEvent e) {
 			if (field.isDragEnabled() && (resizeIndex == -1) && (moveIndex == -1)) {
 				source.startDrag(e, DragSource.DefaultCopyDrop, new TransferablePalette(field.getModel().getRenderedPalette()), this);
@@ -657,30 +664,35 @@ public class RenderedPaletteFieldUI extends ComponentUI {
 		/**
 		 * @see java.awt.dnd.DragSourceListener#dragEnter(java.awt.dnd.DragSourceDragEvent)
 		 */
+		@Override
 		public void dragEnter(final DragSourceDragEvent e) {
 		}
 
 		/**
 		 * @see java.awt.dnd.DragSourceListener#dragOver(java.awt.dnd.DragSourceDragEvent)
 		 */
+		@Override
 		public void dragOver(final DragSourceDragEvent e) {
 		}
 
 		/**
 		 * @see java.awt.dnd.DragSourceListener#dragExit(java.awt.dnd.DragSourceEvent)
 		 */
+		@Override
 		public void dragExit(final DragSourceEvent e) {
 		}
 
 		/**
 		 * @see java.awt.dnd.DragSourceListener#dropActionChanged(java.awt.dnd.DragSourceDragEvent)
 		 */
+		@Override
 		public void dropActionChanged(final DragSourceDragEvent e) {
 		}
 
 		/**
 		 * @see java.awt.dnd.DragSourceListener#dragDropEnd(java.awt.dnd.DragSourceDropEvent)
 		 */
+		@Override
 		public void dragDropEnd(final DragSourceDropEvent e) {
 			paintBorder = false;
 			isTarget = true;
@@ -690,6 +702,7 @@ public class RenderedPaletteFieldUI extends ComponentUI {
 		/**
 		 * @see java.awt.event.MouseMotionListener#mouseDragged(java.awt.event.MouseEvent)
 		 */
+		@Override
 		public void mouseDragged(final MouseEvent e) {
 			if ((resizeIndex != -1) && ((e.getModifiers() & InputEvent.SHIFT_MASK) == 0)) {
 				final Insets insets = field.getInsets();
@@ -896,6 +909,7 @@ public class RenderedPaletteFieldUI extends ComponentUI {
 		/**
 		 * @see java.awt.event.MouseMotionListener#mouseMoved(java.awt.event.MouseEvent)
 		 */
+		@Override
 		public void mouseMoved(final MouseEvent e) {
 			final RenderedPalette palette = field.getModel().getRenderedPalette();
 			final Insets insets = field.getInsets();
@@ -928,6 +942,7 @@ public class RenderedPaletteFieldUI extends ComponentUI {
 		/**
 		 * @see java.awt.event.MouseListener#mouseClicked(java.awt.event.MouseEvent)
 		 */
+		@Override
 		public void mouseClicked(final MouseEvent e) {
 			if (e.getClickCount() == 2) {
 				final RenderedPaletteParam[] newParams = new RenderedPaletteParam[oldPalette.getParamCount()];
@@ -960,12 +975,14 @@ public class RenderedPaletteFieldUI extends ComponentUI {
 		/**
 		 * @see java.awt.event.MouseListener#mouseEntered(java.awt.event.MouseEvent)
 		 */
+		@Override
 		public void mouseEntered(final MouseEvent e) {
 		}
 
 		/**
 		 * @see java.awt.event.MouseListener#mouseExited(java.awt.event.MouseEvent)
 		 */
+		@Override
 		public void mouseExited(final MouseEvent e) {
 			if ((resizeIndex == -1) && (moveIndex == -1)) {
 				overIndex = -1;
@@ -976,6 +993,7 @@ public class RenderedPaletteFieldUI extends ComponentUI {
 		/**
 		 * @see java.awt.event.MouseListener#mousePressed(java.awt.event.MouseEvent)
 		 */
+		@Override
 		public void mousePressed(final MouseEvent e) {
 			final RenderedPalette palette = field.getModel().getRenderedPalette();
 			oldPalette = palette;
@@ -1062,6 +1080,7 @@ public class RenderedPaletteFieldUI extends ComponentUI {
 		/**
 		 * @see java.awt.event.MouseListener#mouseReleased(java.awt.event.MouseEvent)
 		 */
+		@Override
 		public void mouseReleased(final MouseEvent e) {
 			resizeIndex = -1;
 			if (moveIndex != -1) {
@@ -1116,6 +1135,7 @@ public class RenderedPaletteFieldUI extends ComponentUI {
 		/**
 		 * @see javax.swing.event.ChangeListener#stateChanged(javax.swing.event.ChangeEvent)
 		 */
+		@Override
 		public void stateChanged(final ChangeEvent e) {
 			selectedIndex = ((SingleSelectionModel) e.getSource()).getSelectedIndex();
 			field.repaint();

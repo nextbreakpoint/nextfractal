@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -25,7 +25,6 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.swing.extensions.editor;
 
-import com.nextbreakpoint.nextfractal.contextfree.swing.extensions.editor.PathAdjustmentReferenceEditorRuntime;
 import com.nextbreakpoint.nextfractal.core.swing.editor.extension.EditorExtensionDescriptor;
 
 /**
@@ -37,6 +36,7 @@ public class PathAdjustmentReferenceEditorDescriptor extends EditorExtensionDesc
 	 * 
 	 * @return the extensionId.
 	 */
+	@Override
 	public String getExtensionId() {
 		return "node.class.PathAdjustmentReference";
 	}
@@ -46,6 +46,7 @@ public class PathAdjustmentReferenceEditorDescriptor extends EditorExtensionDesc
 	 * 
 	 * @return the extensionName.
 	 */
+	@Override
 	public String getExtensionName() {
 		return "PathAdjustmentReference";
 	}
@@ -55,6 +56,7 @@ public class PathAdjustmentReferenceEditorDescriptor extends EditorExtensionDesc
 	 * 
 	 * @return the extensionRuntimeClass.
 	 */
+	@Override
 	public PathAdjustmentReferenceEditorRuntime getExtensionRuntime() {
 		return new PathAdjustmentReferenceEditorRuntime();
 	}

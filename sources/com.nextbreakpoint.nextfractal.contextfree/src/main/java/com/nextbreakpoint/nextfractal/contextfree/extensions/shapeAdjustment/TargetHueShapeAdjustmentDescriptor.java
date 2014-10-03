@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -25,8 +25,6 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.extensions.shapeAdjustment;
 
-import com.nextbreakpoint.nextfractal.contextfree.extensions.shapeAdjustment.TargetHueShapeAdjustmentConfig;
-import com.nextbreakpoint.nextfractal.contextfree.extensions.shapeAdjustment.TargetHueShapeAdjustmentRuntime;
 import com.nextbreakpoint.nextfractal.contextfree.shapeAdjustment.extension.ShapeAdjustmentExtensionDescriptor;
 
 /**
@@ -38,6 +36,7 @@ public class TargetHueShapeAdjustmentDescriptor extends ShapeAdjustmentExtension
 	 * 
 	 * @return the extensionId.
 	 */
+	@Override
 	public String getExtensionId() {
 		return "contextfree.shape.adjustment.color.targetHue";
 	}
@@ -47,6 +46,7 @@ public class TargetHueShapeAdjustmentDescriptor extends ShapeAdjustmentExtension
 	 * 
 	 * @return the extensionName.
 	 */
+	@Override
 	public String getExtensionName() {
 		return "TargetHue Adjustment";
 	}
@@ -56,6 +56,7 @@ public class TargetHueShapeAdjustmentDescriptor extends ShapeAdjustmentExtension
 	 * 
 	 * @return the extensionRuntimeClass.
 	 */
+	@Override
 	public TargetHueShapeAdjustmentRuntime getExtensionRuntime() {
 		return new TargetHueShapeAdjustmentRuntime();
 	}
@@ -65,6 +66,7 @@ public class TargetHueShapeAdjustmentDescriptor extends ShapeAdjustmentExtension
 	 * 
 	 * @return the extensionConfigClass.
 	 */
+	@Override
 	public TargetHueShapeAdjustmentConfig getExtensionConfig() {
 		return new TargetHueShapeAdjustmentConfig();
 	}

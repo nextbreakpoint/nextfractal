@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -259,6 +259,7 @@ public class TwisterCanvas extends Canvas implements RenderContext {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#acquire()
 	 */
+	@Override
 	public void acquire() throws InterruptedException {
 		semaphore.acquire();
 	}
@@ -266,6 +267,7 @@ public class TwisterCanvas extends Canvas implements RenderContext {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#release()
 	 */
+	@Override
 	public void release() {
 		semaphore.release();
 	}
@@ -273,6 +275,7 @@ public class TwisterCanvas extends Canvas implements RenderContext {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#addRenderContextListener(com.nextbreakpoint.nextfractal.core.util.RenderContextListener)
 	 */
+	@Override
 	public void addRenderContextListener(RenderContextListener listener) {
 		synchronized (contextListeners) {
 			contextListeners.add(listener);
@@ -282,6 +285,7 @@ public class TwisterCanvas extends Canvas implements RenderContext {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#removeRenderContextListener(com.nextbreakpoint.nextfractal.core.util.RenderContextListener)
 	 */
+	@Override
 	public void removeRenderContextListener(RenderContextListener listener) {
 		synchronized (contextListeners) {
 			contextListeners.remove(listener);
@@ -291,6 +295,7 @@ public class TwisterCanvas extends Canvas implements RenderContext {
 	/**
 	 * 
 	 */
+	@Override
 	public void refresh() {
 		if (refreshCanvas != null) {
 			refreshCanvas.refresh();
@@ -366,12 +371,15 @@ public class TwisterCanvas extends Canvas implements RenderContext {
 		clipController = new TwisterClipController(clip);
 		clipController.setRenderContext(TwisterCanvas.this);
 		clipController.addControllerListener(new ControllerListener() {
+			@Override
 			public void actionRedone(final NodeAction action) {
 			}
 
+			@Override
 			public void actionUndone(final NodeAction action) {
 			}
 
+			@Override
 			public void configChanged() {
 			}
 		});
@@ -380,6 +388,7 @@ public class TwisterCanvas extends Canvas implements RenderContext {
 		if (clipController.getDuration() > 0) {
 			this.clip = clip;
 			setListener(new RenderListener() {
+				@Override
 				public void frameRendered() {
 					if (clipController != null) {
 						if (!clipController.redoAction(1000 / getFrameRate(), true)) {
@@ -482,6 +491,7 @@ public class TwisterCanvas extends Canvas implements RenderContext {
 	 */
 	public void resume() {
 		setListener(new RenderListener() {
+			@Override
 			public void frameRendered() {
 				if (clipController != null) {
 					if (!clipController.redoAction(1000 / getFrameRate(), true)) {
@@ -502,6 +512,7 @@ public class TwisterCanvas extends Canvas implements RenderContext {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#getImageSize()
 	 */
+	@Override
 	public IntegerVector2D getImageSize() {
 		return size;
 	}
@@ -906,6 +917,7 @@ public class TwisterCanvas extends Canvas implements RenderContext {
 		/**
 		 * @see java.lang.Runnable#run()
 		 */
+		@Override
 		public void run() {
 			try {
 				long startTime = 0;
@@ -988,6 +1000,7 @@ public class TwisterCanvas extends Canvas implements RenderContext {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#startRenderers()
 	 */
+	@Override
 	public void startRenderers() {
 		synchronized (contextListeners) {
 			if (renderers != null) {
@@ -1007,6 +1020,7 @@ public class TwisterCanvas extends Canvas implements RenderContext {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#stopRenderers()
 	 */
+	@Override
 	public void stopRenderers() {
 		synchronized (contextListeners) {
 			if (renderers != null) {
@@ -1147,6 +1161,7 @@ public class TwisterCanvas extends Canvas implements RenderContext {
 	 */
 	public void addBookmark(final TwisterBookmark bookmark) {
 		GUIUtil.executeTask(new Runnable() {
+			@Override
 			public void run() {
 				final int width = TwisterCanvas.this.getMaxWidth();
 				final int height = TwisterCanvas.this.getMaxHeight();
@@ -1166,6 +1181,7 @@ public class TwisterCanvas extends Canvas implements RenderContext {
 	public void removeBookmark() {
 		if (selectedIndex != -1) {
 			GUIUtil.executeTask(new Runnable() {
+				@Override
 				public void run() {
 					bookmarkIcons.remove(selectedIndex);
 					TwisterCanvas.this.resizeIcons(TwisterCanvas.this.getMaxWidth(), TwisterCanvas.this.getMaxHeight());
@@ -1270,22 +1286,26 @@ public class TwisterCanvas extends Canvas implements RenderContext {
 		/**
 		 * @see java.awt.event.ComponentListener#componentHidden(java.awt.event.ComponentEvent)
 		 */
+		@Override
 		public void componentHidden(final ComponentEvent e) {
 		}
 
 		/**
 		 * @see java.awt.event.ComponentListener#componentMoved(java.awt.event.ComponentEvent)
 		 */
+		@Override
 		public void componentMoved(final ComponentEvent e) {
 		}
 
 		/**
 		 * @see java.awt.event.ComponentListener#componentResized(java.awt.event.ComponentEvent)
 		 */
+		@Override
 		public void componentResized(final ComponentEvent e) {
 			if ((e.getComponent().getWidth() > 0) && (e.getComponent().getHeight() > 0)) {
 				if (resizeThread == null) {
 					resizeThread = new Thread(new Runnable() {
+						@Override
 						public void run() {
 							try {
 								Thread.sleep(1000);
@@ -1293,6 +1313,7 @@ public class TwisterCanvas extends Canvas implements RenderContext {
 							catch (InterruptedException e) {
 							}
 							GUIUtil.executeTask(new Runnable() {
+								@Override
 								public void run() {
 									resize();
 								}
@@ -1309,12 +1330,14 @@ public class TwisterCanvas extends Canvas implements RenderContext {
 		/**
 		 * @see java.awt.event.ComponentListener#componentShown(java.awt.event.ComponentEvent)
 		 */
+		@Override
 		public void componentShown(final ComponentEvent e) {
 		}
 
 		/**
 		 * @see java.awt.event.MouseListener#mouseClicked(java.awt.event.MouseEvent)
 		 */
+		@Override
 		public void mouseClicked(final MouseEvent e) {
 			refresh();
 			if (state == TwisterCanvas.STATE_EDIT) {
@@ -1357,6 +1380,7 @@ public class TwisterCanvas extends Canvas implements RenderContext {
 		/**
 		 * @see java.awt.event.MouseListener#mouseEntered(java.awt.event.MouseEvent)
 		 */
+		@Override
 		public void mouseEntered(final MouseEvent e) {
 			refresh();
 			if (state == TwisterCanvas.STATE_EDIT) {
@@ -1377,6 +1401,7 @@ public class TwisterCanvas extends Canvas implements RenderContext {
 		/**
 		 * @see java.awt.event.MouseListener#mouseExited(java.awt.event.MouseEvent)
 		 */
+		@Override
 		public void mouseExited(final MouseEvent e) {
 			refresh();
 			if (state == TwisterCanvas.STATE_EDIT) {
@@ -1395,6 +1420,7 @@ public class TwisterCanvas extends Canvas implements RenderContext {
 		/**
 		 * @see java.awt.event.MouseListener#mousePressed(java.awt.event.MouseEvent)
 		 */
+		@Override
 		public void mousePressed(final MouseEvent e) {
 			refresh();
 			if (state == TwisterCanvas.STATE_EDIT) {
@@ -1414,6 +1440,7 @@ public class TwisterCanvas extends Canvas implements RenderContext {
 		/**
 		 * @see java.awt.event.MouseListener#mouseReleased(java.awt.event.MouseEvent)
 		 */
+		@Override
 		public void mouseReleased(final MouseEvent e) {
 			refresh();
 			if (state == TwisterCanvas.STATE_EDIT) {
@@ -1431,6 +1458,7 @@ public class TwisterCanvas extends Canvas implements RenderContext {
 		/**
 		 * @see java.awt.event.MouseMotionListener#mouseDragged(java.awt.event.MouseEvent)
 		 */
+		@Override
 		public void mouseDragged(final MouseEvent e) {
 			refresh();
 			if (state == TwisterCanvas.STATE_EDIT) {
@@ -1448,6 +1476,7 @@ public class TwisterCanvas extends Canvas implements RenderContext {
 		/**
 		 * @see java.awt.event.MouseMotionListener#mouseMoved(java.awt.event.MouseEvent)
 		 */
+		@Override
 		public void mouseMoved(final MouseEvent e) {
 			refresh();
 			if (state == TwisterCanvas.STATE_EDIT) {
@@ -1471,6 +1500,7 @@ public class TwisterCanvas extends Canvas implements RenderContext {
 		/**
 		 * @see java.awt.event.KeyListener#keyTyped(java.awt.event.KeyEvent)
 		 */
+		@Override
 		public void keyTyped(final KeyEvent e) {
 			refresh();
 			if (state == TwisterCanvas.STATE_EDIT) {
@@ -1488,6 +1518,7 @@ public class TwisterCanvas extends Canvas implements RenderContext {
 		/**
 		 * @see java.awt.event.KeyListener#keyPressed(java.awt.event.KeyEvent)
 		 */
+		@Override
 		public void keyPressed(final KeyEvent e) {
 			refresh();
 			if (state == TwisterCanvas.STATE_EDIT) {
@@ -1505,6 +1536,7 @@ public class TwisterCanvas extends Canvas implements RenderContext {
 		/**
 		 * @see java.awt.event.KeyListener#keyReleased(java.awt.event.KeyEvent)
 		 */
+		@Override
 		public void keyReleased(final KeyEvent e) {
 			refresh();
 			if (state == TwisterCanvas.STATE_EDIT) {
@@ -1525,6 +1557,7 @@ public class TwisterCanvas extends Canvas implements RenderContext {
 		/**
 		 * @see java.awt.event.FocusListener#focusGained(java.awt.event.FocusEvent)
 		 */
+		@Override
 		public void focusGained(final FocusEvent e) {
 			refresh();
 		}
@@ -1532,6 +1565,7 @@ public class TwisterCanvas extends Canvas implements RenderContext {
 		/**
 		 * @see java.awt.event.FocusListener#focusLost(java.awt.event.FocusEvent)
 		 */
+		@Override
 		public void focusLost(final FocusEvent e) {
 			refresh();
 		}
@@ -1539,6 +1573,7 @@ public class TwisterCanvas extends Canvas implements RenderContext {
 		/**
 		 * @see java.awt.dnd.DropTargetListener#dragEnter(java.awt.dnd.DropTargetDragEvent)
 		 */
+		@Override
 		public void dragEnter(final DropTargetDragEvent e) {
 			if (!isDropEnabled()) {
 				e.rejectDrag();
@@ -1576,12 +1611,14 @@ public class TwisterCanvas extends Canvas implements RenderContext {
 		/**
 		 * @see java.awt.dnd.DropTargetListener#dragOver(java.awt.dnd.DropTargetDragEvent)
 		 */
+		@Override
 		public void dragOver(final DropTargetDragEvent e) {
 		}
 
 		/**
 		 * @see java.awt.dnd.DropTargetListener#dragExit(java.awt.dnd.DropTargetEvent)
 		 */
+		@Override
 		public void dragExit(final DropTargetEvent e) {
 			if (isTarget) {
 				paintBorder = false;
@@ -1592,12 +1629,14 @@ public class TwisterCanvas extends Canvas implements RenderContext {
 		/**
 		 * @see java.awt.dnd.DropTargetListener#dropActionChanged(java.awt.dnd.DropTargetDragEvent)
 		 */
+		@Override
 		public void dropActionChanged(final DropTargetDragEvent e) {
 		}
 
 		/**
 		 * @see java.awt.dnd.DropTargetListener#drop(java.awt.dnd.DropTargetDropEvent)
 		 */
+		@Override
 		public void drop(final DropTargetDropEvent e) {
 			if (isTarget) {
 				if (state == TwisterCanvas.STATE_EDIT) {
@@ -1760,6 +1799,7 @@ public class TwisterCanvas extends Canvas implements RenderContext {
 		/**
 		 * @see java.awt.dnd.DragGestureListener#dragGestureRecognized(java.awt.dnd.DragGestureEvent)
 		 */
+		@Override
 		public void dragGestureRecognized(final DragGestureEvent e) {
 			if (isDragEnabled()) {
 				try {
@@ -1777,30 +1817,35 @@ public class TwisterCanvas extends Canvas implements RenderContext {
 		/**
 		 * @see java.awt.dnd.DragSourceListener#dragEnter(java.awt.dnd.DragSourceDragEvent)
 		 */
+		@Override
 		public void dragEnter(final DragSourceDragEvent e) {
 		}
 
 		/**
 		 * @see java.awt.dnd.DragSourceListener#dragOver(java.awt.dnd.DragSourceDragEvent)
 		 */
+		@Override
 		public void dragOver(final DragSourceDragEvent e) {
 		}
 
 		/**
 		 * @see java.awt.dnd.DragSourceListener#dragExit(java.awt.dnd.DragSourceEvent)
 		 */
+		@Override
 		public void dragExit(final DragSourceEvent e) {
 		}
 
 		/**
 		 * @see java.awt.dnd.DragSourceListener#dropActionChanged(java.awt.dnd.DragSourceDragEvent)
 		 */
+		@Override
 		public void dropActionChanged(final DragSourceDragEvent e) {
 		}
 
 		/**
 		 * @see java.awt.dnd.DragSourceListener#dragDropEnd(java.awt.dnd.DragSourceDropEvent)
 		 */
+		@Override
 		public void dragDropEnd(final DragSourceDropEvent e) {
 			paintBorder = false;
 			isTarget = true;
@@ -1854,6 +1899,7 @@ public class TwisterCanvas extends Canvas implements RenderContext {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#startRenderers()
 		 */
+		@Override
 		public void startRenderers() {
 			TwisterCanvas.this.startRenderers();
 		}
@@ -1861,6 +1907,7 @@ public class TwisterCanvas extends Canvas implements RenderContext {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#stopRenderers()
 		 */
+		@Override
 		public void stopRenderers() {
 			TwisterCanvas.this.stopRenderers();
 		}
@@ -1868,6 +1915,7 @@ public class TwisterCanvas extends Canvas implements RenderContext {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#getImageSize()
 		 */
+		@Override
 		public IntegerVector2D getImageSize() {
 			return size;
 		}
@@ -1875,6 +1923,7 @@ public class TwisterCanvas extends Canvas implements RenderContext {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#refresh()
 		 */
+		@Override
 		public void refresh() {
 			TwisterCanvas.this.refresh();
 		}
@@ -1882,6 +1931,7 @@ public class TwisterCanvas extends Canvas implements RenderContext {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#acquire()
 		 */
+		@Override
 		public void acquire() throws InterruptedException {
 			TwisterCanvas.this.acquire();
 		}
@@ -1889,6 +1939,7 @@ public class TwisterCanvas extends Canvas implements RenderContext {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#release()
 		 */
+		@Override
 		public void release() {
 			TwisterCanvas.this.release();
 		}
@@ -1896,6 +1947,7 @@ public class TwisterCanvas extends Canvas implements RenderContext {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#addRenderContextListener(com.nextbreakpoint.nextfractal.core.util.RenderContextListener)
 		 */
+		@Override
 		public void addRenderContextListener(RenderContextListener listener) {
 			TwisterCanvas.this.addRenderContextListener(listener);
 		}
@@ -1903,6 +1955,7 @@ public class TwisterCanvas extends Canvas implements RenderContext {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#removeRenderContextListener(com.nextbreakpoint.nextfractal.core.util.RenderContextListener)
 		 */
+		@Override
 		public void removeRenderContextListener(RenderContextListener listener) {
 			TwisterCanvas.this.removeRenderContextListener(listener);
 		}

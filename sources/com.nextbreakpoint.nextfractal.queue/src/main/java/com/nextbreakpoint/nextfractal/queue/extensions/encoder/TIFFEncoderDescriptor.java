@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -26,8 +26,6 @@
 package com.nextbreakpoint.nextfractal.queue.extensions.encoder;
 
 import com.nextbreakpoint.nextfractal.queue.encoder.extension.EncoderExtensionDescriptor;
-import com.nextbreakpoint.nextfractal.queue.extensions.encoder.TIFFEncoderConfig;
-import com.nextbreakpoint.nextfractal.queue.extensions.encoder.TIFFEncoderRuntime;
 
 /**
  * @author Andrea Medeghini
@@ -38,6 +36,7 @@ public class TIFFEncoderDescriptor extends EncoderExtensionDescriptor {
 	 * 
 	 * @return the extensionId.
 	 */
+	@Override
 	public String getExtensionId() {
 		return "service.encoder.tiff";
 	}
@@ -47,6 +46,7 @@ public class TIFFEncoderDescriptor extends EncoderExtensionDescriptor {
 	 * 
 	 * @return the extensionName.
 	 */
+	@Override
 	public String getExtensionName() {
 		return "TIFF";
 	}
@@ -56,6 +56,7 @@ public class TIFFEncoderDescriptor extends EncoderExtensionDescriptor {
 	 * 
 	 * @return the extensionRuntimeClass.
 	 */
+	@Override
 	public TIFFEncoderRuntime getExtensionRuntime() {
 		return new TIFFEncoderRuntime();
 	}
@@ -65,6 +66,7 @@ public class TIFFEncoderDescriptor extends EncoderExtensionDescriptor {
 	 * 
 	 * @return the extensionConfigClass.
 	 */
+	@Override
 	public TIFFEncoderConfig getExtensionConfig() {
 		return new TIFFEncoderConfig();
 	}

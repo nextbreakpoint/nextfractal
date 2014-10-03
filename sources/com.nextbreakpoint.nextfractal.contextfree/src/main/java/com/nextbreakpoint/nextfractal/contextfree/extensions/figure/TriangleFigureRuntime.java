@@ -17,6 +17,7 @@ public class TriangleFigureRuntime extends FigureExtensionRuntime<TriangleFigure
 		return "TRIANGLE";
 	}
 
+	@Override
 	public void process(CFBuilder builder) {
 		int shapeType = builder.encodeShapeName(getName());
 		CFRule rule = new CFRule(shapeType, 1);

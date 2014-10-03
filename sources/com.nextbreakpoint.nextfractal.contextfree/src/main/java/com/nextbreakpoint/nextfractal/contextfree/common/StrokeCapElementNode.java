@@ -149,6 +149,7 @@ public abstract class StrokeCapElementNode extends AttributeNode {
 	}
 
 	protected class ConfigElementListener implements ValueChangeListener {
+		@Override
 		public void valueChanged(final ValueChangeEvent e) {
 			cancel();
 			switch (e.getEventType()) {

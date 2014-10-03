@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is based on code written by Jan Hubicka and Thomas Marsh (http://xaos.sf.net).
  *
@@ -128,6 +128,7 @@ public final class BestXaosMandelbrotRenderer extends AbstractMandelbrotRenderer
 	/**
 	 * @see com.nextbreakpoint.nextfractal.AbstractMandelbrotRenderer.core.fractal.renderer.AbstractFractalRenderer#free()
 	 */
+	@Override
 	protected void free() {
 		super.free();
 		if (renderedData != null) {
@@ -138,6 +139,7 @@ public final class BestXaosMandelbrotRenderer extends AbstractMandelbrotRenderer
 	/**
 	 * @see com.nextbreakpoint.nextfractal.AbstractMandelbrotRenderer.core.fractal.renderer.AbstractFractalRenderer#init()
 	 */
+	@Override
 	protected void init() {
 		super.init();
 		renderedData = new RendererData();
@@ -157,6 +159,7 @@ public final class BestXaosMandelbrotRenderer extends AbstractMandelbrotRenderer
 	/**
 	 * @see com.nextbreakpoint.nextfractal.AbstractMandelbrotRenderer.core.fractal.renderer.AbstractFractalRenderer#doRender(boolean)
 	 */
+	@Override
 	protected void doRender(final boolean dynamic) {
 		isAborted = false;
 		updateShift();
@@ -1917,6 +1920,7 @@ public final class BestXaosMandelbrotRenderer extends AbstractMandelbrotRenderer
 		/**
 		 * @see java.lang.Object#finalize()
 		 */
+		@Override
 		public void finalize() throws Throwable {
 			data = null;
 			super.finalize();
@@ -1933,6 +1937,7 @@ public final class BestXaosMandelbrotRenderer extends AbstractMandelbrotRenderer
 			/**
 			 * @see java.lang.Object#toString()
 			 */
+			@Override
 			public String toString() {
 				return "<from = " + from + ", to = " + to + ", length = " + length + ">";
 			}
@@ -1961,6 +1966,7 @@ public final class BestXaosMandelbrotRenderer extends AbstractMandelbrotRenderer
 		/**
 		 * @see java.lang.Object#finalize()
 		 */
+		@Override
 		public void finalize() throws Throwable {
 			data = null;
 			super.finalize();
@@ -1977,6 +1983,7 @@ public final class BestXaosMandelbrotRenderer extends AbstractMandelbrotRenderer
 			/**
 			 * @see java.lang.Object#toString()
 			 */
+			@Override
 			public String toString() {
 				return "<from = " + from + ", to = " + to + ", length = " + length + ">";
 			}
@@ -2028,6 +2035,7 @@ public final class BestXaosMandelbrotRenderer extends AbstractMandelbrotRenderer
 		/**
 		 * @see java.lang.Object#finalize()
 		 */
+		@Override
 		public void finalize() throws Throwable {
 			oldBest = null;
 			newBest = null;
@@ -2056,6 +2064,7 @@ public final class BestXaosMandelbrotRenderer extends AbstractMandelbrotRenderer
 			/**
 			 * @see java.lang.Object#toString()
 			 */
+			@Override
 			public String toString() {
 				return "<price = " + price + ", pos = " + pos + ">";
 			}
@@ -2129,6 +2138,7 @@ public final class BestXaosMandelbrotRenderer extends AbstractMandelbrotRenderer
 		/**
 		 * @see java.lang.Object#toString()
 		 */
+		@Override
 		public String toString() {
 			return "<pos = " + pos + ", symref = " + symRef + ", symto = " + symTo + ", plus = " + plus + ", dirty = " + dirty + ", recalculate = " + recalculate + ", line = " + line + ", priority = " + priority + ", position = " + position + ", iscached = " + isCached + ">";
 		}
@@ -2258,6 +2268,7 @@ public final class BestXaosMandelbrotRenderer extends AbstractMandelbrotRenderer
 		/**
 		 * @see java.lang.Object#finalize()
 		 */
+		@Override
 		public void finalize() throws Throwable {
 			free();
 			super.finalize();
@@ -2370,6 +2381,7 @@ public final class BestXaosMandelbrotRenderer extends AbstractMandelbrotRenderer
 		/**
 		 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderer.AbstractMandelbrotRenderer.RenderingStrategy#isVerticalSymetrySupported()
 		 */
+		@Override
 		public boolean isVerticalSymetrySupported() {
 			for (int i = 0; i < fractalRuntime.getOutcolouringFormulaCount(); i++) {
 				final OutcolouringFormulaRuntimeElement outcolouringFormula = fractalRuntime.getOutcolouringFormula(i);
@@ -2389,6 +2401,7 @@ public final class BestXaosMandelbrotRenderer extends AbstractMandelbrotRenderer
 		/**
 		 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderer.AbstractMandelbrotRenderer.RenderingStrategy#isHorizontalSymetrySupported()
 		 */
+		@Override
 		public boolean isHorizontalSymetrySupported() {
 			for (int i = 0; i < fractalRuntime.getOutcolouringFormulaCount(); i++) {
 				final OutcolouringFormulaRuntimeElement outcolouringFormula = fractalRuntime.getOutcolouringFormula(i);
@@ -2408,6 +2421,7 @@ public final class BestXaosMandelbrotRenderer extends AbstractMandelbrotRenderer
 		/**
 		 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderer.AbstractMandelbrotRenderer.RenderingStrategy#renderPoint(com.nextbreakpoint.nextfractal.mandelbrot.renderer.RenderedPoint)
 		 */
+		@Override
 		public int renderPoint(final RenderedPoint p, final Complex px, final Complex pw) {
 			if ((fractalRuntime.getRenderingFormula().getFormulaRuntime() != null) && (fractalRuntime.getTransformingFormula().getFormulaRuntime() != null)) {
 				fractalRuntime.getTransformingFormula().getFormulaRuntime().renderPoint(pw);
@@ -2427,6 +2441,7 @@ public final class BestXaosMandelbrotRenderer extends AbstractMandelbrotRenderer
 		/**
 		 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderer.AbstractMandelbrotRenderer.RenderingStrategy#updateParameters()
 		 */
+		@Override
 		public void updateParameters() {
 			if (fractalRuntime.getRenderingFormula().getFormulaRuntime() != null) {
 				renderedData.x0 = fractalRuntime.getRenderingFormula().getFormulaRuntime().getInitialPoint().r;
@@ -2443,6 +2458,7 @@ public final class BestXaosMandelbrotRenderer extends AbstractMandelbrotRenderer
 		/**
 		 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderer.AbstractMandelbrotRenderer.RenderingStrategy#isHorizontalSymetrySupported()
 		 */
+		@Override
 		public boolean isHorizontalSymetrySupported() {
 			return false;
 		}
@@ -2450,6 +2466,7 @@ public final class BestXaosMandelbrotRenderer extends AbstractMandelbrotRenderer
 		/**
 		 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderer.AbstractMandelbrotRenderer.RenderingStrategy#isVerticalSymetrySupported()
 		 */
+		@Override
 		public boolean isVerticalSymetrySupported() {
 			return false;
 		}
@@ -2457,6 +2474,7 @@ public final class BestXaosMandelbrotRenderer extends AbstractMandelbrotRenderer
 		/**
 		 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderer.AbstractMandelbrotRenderer.RenderingStrategy#renderPoint(com.nextbreakpoint.nextfractal.mandelbrot.renderer.RenderedPoint)
 		 */
+		@Override
 		public int renderPoint(final RenderedPoint p, final Complex px, final Complex pw) {
 			if ((fractalRuntime.getRenderingFormula().getFormulaRuntime() != null) && (fractalRuntime.getTransformingFormula().getFormulaRuntime() != null)) {
 				fractalRuntime.getTransformingFormula().getFormulaRuntime().renderPoint(px);
@@ -2476,6 +2494,7 @@ public final class BestXaosMandelbrotRenderer extends AbstractMandelbrotRenderer
 		/**
 		 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderer.AbstractMandelbrotRenderer.RenderingStrategy#updateParameters()
 		 */
+		@Override
 		public void updateParameters() {
 			renderedData.x0 = oldConstant.getX();
 			renderedData.y0 = oldConstant.getY();

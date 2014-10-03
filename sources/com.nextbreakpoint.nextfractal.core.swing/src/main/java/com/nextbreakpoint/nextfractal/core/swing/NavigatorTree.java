@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -119,8 +119,10 @@ public class NavigatorTree extends JTree implements NodeListener, DropTargetList
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeListener#nodeChanged(com.nextbreakpoint.nextfractal.core.tree.NodeEvent)
 	 */
+	@Override
 	public void nodeChanged(final NodeEvent e) {
 		GUIUtil.executeTask(new Runnable() {
+				@Override
 				public void run() {
 				final TreePath path = creareTreePath(e.getPath());
 				getModel().valueForPathChanged(path, e.getNode());
@@ -131,8 +133,10 @@ public class NavigatorTree extends JTree implements NodeListener, DropTargetList
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeListener#nodeAdded(com.nextbreakpoint.nextfractal.core.tree.NodeEvent)
 	 */
+	@Override
 	public void nodeAdded(final NodeEvent e) {
 		GUIUtil.executeTask(new Runnable() {
+				@Override
 				public void run() {
 				final Integer[] nodePath = e.getPath().getPathElements();
 				final Integer[] parentPath = new Integer[nodePath.length - 1];
@@ -148,8 +152,10 @@ public class NavigatorTree extends JTree implements NodeListener, DropTargetList
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeListener#nodeRemoved(com.nextbreakpoint.nextfractal.core.tree.NodeEvent)
 	 */
+	@Override
 	public void nodeRemoved(final NodeEvent e) {
 		GUIUtil.executeTask(new Runnable() {
+				@Override
 				public void run() {
 				final TreePath path = creareTreePath(e.getPath());
 				((DefaultTreeModel) getModel()).removeNodeFromParent((DefaultMutableTreeNode) path.getLastPathComponent());
@@ -160,36 +166,42 @@ public class NavigatorTree extends JTree implements NodeListener, DropTargetList
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeListener#nodeAccepted(com.nextbreakpoint.nextfractal.core.tree.NodeEvent)
 	 */
+	@Override
 	public void nodeAccepted(final NodeEvent e) {
 	}
 
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeListener#nodeCancelled(com.nextbreakpoint.nextfractal.core.tree.NodeEvent)
 	 */
+	@Override
 	public void nodeCancelled(final NodeEvent e) {
 	}
 
 	/**
 	 * @see java.awt.dnd.DropTargetListener#dragEnter(java.awt.dnd.DropTargetDragEvent)
 	 */
+	@Override
 	public void dragEnter(final DropTargetDragEvent dtde) {
 	}
 
 	/**
 	 * @see java.awt.dnd.DropTargetListener#dragExit(java.awt.dnd.DropTargetEvent)
 	 */
+	@Override
 	public void dragExit(final DropTargetEvent dte) {
 	}
 
 	/**
 	 * @see java.awt.dnd.DropTargetListener#dragOver(java.awt.dnd.DropTargetDragEvent)
 	 */
+	@Override
 	public void dragOver(final DropTargetDragEvent dtde) {
 	}
 
 	/**
 	 * @see java.awt.dnd.DropTargetListener#drop(java.awt.dnd.DropTargetDropEvent)
 	 */
+	@Override
 	public void drop(final DropTargetDropEvent dtde) {
 		if (dtde.getDropAction() == DnDConstants.ACTION_MOVE) {
 			if (dtde.isDataFlavorSupported(TransferableNodeValueAdapter.NODE_VALUE_FLAVOR)) {
@@ -269,12 +281,14 @@ public class NavigatorTree extends JTree implements NodeListener, DropTargetList
 	/**
 	 * @see java.awt.dnd.DropTargetListener#dropActionChanged(java.awt.dnd.DropTargetDragEvent)
 	 */
+	@Override
 	public void dropActionChanged(final DropTargetDragEvent dtde) {
 	}
 
 	/**
 	 * @see java.awt.dnd.DragGestureListener#dragGestureRecognized(java.awt.dnd.DragGestureEvent)
 	 */
+	@Override
 	public void dragGestureRecognized(final DragGestureEvent dge) {
 		if (getSelectionPath() != null) {
 			final NodeEditor nodeEditor = ((Node) ((DefaultMutableTreeNode) getSelectionPath().getLastPathComponent()).getUserObject()).getNodeEditor();
@@ -288,30 +302,35 @@ public class NavigatorTree extends JTree implements NodeListener, DropTargetList
 	/**
 	 * @see java.awt.dnd.DragSourceListener#dragDropEnd(java.awt.dnd.DragSourceDropEvent)
 	 */
+	@Override
 	public void dragDropEnd(final DragSourceDropEvent dsde) {
 	}
 
 	/**
 	 * @see java.awt.dnd.DragSourceListener#dragEnter(java.awt.dnd.DragSourceDragEvent)
 	 */
+	@Override
 	public void dragEnter(final DragSourceDragEvent dsde) {
 	}
 
 	/**
 	 * @see java.awt.dnd.DragSourceListener#dragExit(java.awt.dnd.DragSourceEvent)
 	 */
+	@Override
 	public void dragExit(final DragSourceEvent dse) {
 	}
 
 	/**
 	 * @see java.awt.dnd.DragSourceListener#dragOver(java.awt.dnd.DragSourceDragEvent)
 	 */
+	@Override
 	public void dragOver(final DragSourceDragEvent dsde) {
 	}
 
 	/**
 	 * @see java.awt.dnd.DragSourceListener#dropActionChanged(java.awt.dnd.DragSourceDragEvent)
 	 */
+	@Override
 	public void dropActionChanged(final DragSourceDragEvent dsde) {
 	}
 
@@ -320,6 +339,7 @@ public class NavigatorTree extends JTree implements NodeListener, DropTargetList
 	 */
 	public void expandAll() {
 		GUIUtil.executeTask(new Runnable() {
+				@Override
 				public void run() {
 				expandNode((DefaultMutableTreeNode) getModel().getRoot());
 				}

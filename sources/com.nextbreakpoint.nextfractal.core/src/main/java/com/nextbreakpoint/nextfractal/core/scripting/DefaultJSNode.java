@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -62,6 +62,7 @@ public class DefaultJSNode implements JSNode {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.scripting.JSNode#getChildNode(int)
 	 */
+	@Override
 	public JSNode getChildNode(final int index) {
 		Node childNode = node.getChildNode(index);
 		if (childNode != null) {
@@ -80,6 +81,7 @@ public class DefaultJSNode implements JSNode {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.scripting.JSNode#getChildNodeCount()
 	 */
+	@Override
 	public int getChildNodeCount() {
 		return node.getChildNodeCount();
 	}
@@ -87,6 +89,7 @@ public class DefaultJSNode implements JSNode {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.scripting.JSNode#getIndex()
 	 */
+	@Override
 	public int getIndex() {
 		return node.getParentNode().indexOf(node);
 	}
@@ -94,6 +97,7 @@ public class DefaultJSNode implements JSNode {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.scripting.JSNode#getClassId()
 	 */
+	@Override
 	public String getClassId() {
 		return node.getNodeClass();
 	}
@@ -101,6 +105,7 @@ public class DefaultJSNode implements JSNode {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.scripting.JSNode#getId()
 	 */
+	@Override
 	public String getId() {
 		return node.getNodeId();
 	}
@@ -108,6 +113,7 @@ public class DefaultJSNode implements JSNode {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.scripting.JSNode#getPath()
 	 */
+	@Override
 	public String getPath() {
 		return node.getNodePath().toString();
 	}
@@ -115,6 +121,7 @@ public class DefaultJSNode implements JSNode {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.scripting.JSNode#getLabel()
 	 */
+	@Override
 	public String getLabel() {
 		return node.getNodeLabel();
 	}
@@ -122,6 +129,7 @@ public class DefaultJSNode implements JSNode {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.scripting.JSNode#getValue()
 	 */
+	@Override
 	public JSNodeValue getValue() {
 		return new JSNodeValue(node.getNodeValue());
 	}
@@ -129,6 +137,7 @@ public class DefaultJSNode implements JSNode {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.scripting.JSNode#getPreviousValue()
 	 */
+	@Override
 	public JSNodeValue getPreviousValue() {
 		return new JSNodeValue(node.getPreviousNodeValue());
 	}
@@ -136,6 +145,7 @@ public class DefaultJSNode implements JSNode {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.scripting.JSNode#hasValue()
 	 */
+	@Override
 	public boolean hasValue() {
 		return node.getNodeValue() != null;
 	}
@@ -143,6 +153,7 @@ public class DefaultJSNode implements JSNode {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.scripting.JSNode#isAttribute()
 	 */
+	@Override
 	public boolean isAttribute() {
 		return node.isAttribute();
 	}
@@ -150,6 +161,7 @@ public class DefaultJSNode implements JSNode {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.scripting.JSNode#isEditable()
 	 */
+	@Override
 	public boolean isEditable() {
 		return node.isEditable();
 	}
@@ -157,6 +169,7 @@ public class DefaultJSNode implements JSNode {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.scripting.JSNode#isMutable()
 	 */
+	@Override
 	public boolean isMutable() {
 		return node.isMutable();
 	}
@@ -171,6 +184,7 @@ public class DefaultJSNode implements JSNode {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.scripting.JSNode#createValueByArgs(java.lang.Object[])
 	 */
+	@Override
 	public JSNodeValue createValueByArgs(final Object... args) throws JSException {
 		if (node.getNodeEditor() == null) {
 			throw new JSException("Editor not defined");
@@ -181,6 +195,7 @@ public class DefaultJSNode implements JSNode {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.scripting.JSNode#appendChildNode(com.nextbreakpoint.nextfractal.core.tree.NodeValue)
 	 */
+	@Override
 	public void appendChildNode(final JSNodeValue value) throws JSException {
 		if (node.getNodeEditor() == null) {
 			throw new JSException("Editor not defined");
@@ -191,6 +206,7 @@ public class DefaultJSNode implements JSNode {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.scripting.JSNode#insertChildNodeAfter(int, com.nextbreakpoint.nextfractal.core.tree.NodeValue)
 	 */
+	@Override
 	public void insertChildNodeAfter(final int index, final JSNodeValue value) throws JSException {
 		if (node.getNodeEditor() == null) {
 			throw new JSException("Editor not defined");
@@ -201,6 +217,7 @@ public class DefaultJSNode implements JSNode {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.scripting.JSNode#insertChildNodeAt(java.lang.Integer, com.nextbreakpoint.nextfractal.core.tree.NodeValue)
 	 */
+	@Override
 	public void insertChildNodeAt(final Integer index, final JSNodeValue value) throws JSException {
 		if (node.getNodeEditor() == null) {
 			throw new JSException("Editor not defined");
@@ -211,6 +228,7 @@ public class DefaultJSNode implements JSNode {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.scripting.JSNode#insertChildNodeBefore(int, com.nextbreakpoint.nextfractal.core.tree.NodeValue)
 	 */
+	@Override
 	public void insertChildNodeBefore(final int index, final JSNodeValue value) throws JSException {
 		if (node.getNodeEditor() == null) {
 			throw new JSException("Editor not defined");
@@ -221,6 +239,7 @@ public class DefaultJSNode implements JSNode {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.scripting.JSNode#moveDownChildNode(int)
 	 */
+	@Override
 	public void moveDownChildNode(final int index) throws JSException {
 		if (node.getNodeEditor() == null) {
 			throw new JSException("Editor not defined");
@@ -231,6 +250,7 @@ public class DefaultJSNode implements JSNode {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.scripting.JSNode#moveUpChildNode(int)
 	 */
+	@Override
 	public void moveUpChildNode(final int index) throws JSException {
 		if (node.getNodeEditor() == null) {
 			throw new JSException("Editor not defined");
@@ -241,6 +261,7 @@ public class DefaultJSNode implements JSNode {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.scripting.JSNode#removeAllChildNodes()
 	 */
+	@Override
 	public void removeAllChildNodes() throws JSException {
 		if (node.getNodeEditor() == null) {
 			throw new JSException("Editor not defined");
@@ -251,6 +272,7 @@ public class DefaultJSNode implements JSNode {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.scripting.JSNode#removeChildNode(int)
 	 */
+	@Override
 	public void removeChildNode(final int index) throws JSException {
 		if (node.getNodeEditor() == null) {
 			throw new JSException("Editor not defined");
@@ -261,6 +283,7 @@ public class DefaultJSNode implements JSNode {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.scripting.JSNode#setValue(com.nextbreakpoint.nextfractal.core.tree.NodeValue)
 	 */
+	@Override
 	public void setValue(final JSNodeValue value) throws JSException {
 		if (node.getNodeEditor() == null) {
 			throw new JSException("Editor not defined");
@@ -271,6 +294,7 @@ public class DefaultJSNode implements JSNode {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.scripting.JSNode#setValueByArgs(java.lang.Object[])
 	 */
+	@Override
 	public void setValueByArgs(final Object... args) throws JSException {
 		if (node.getNodeEditor() == null) {
 			throw new JSException("Editor not defined");
@@ -289,6 +313,7 @@ public class DefaultJSNode implements JSNode {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.scripting.JSNode#getParentNode()
 	 */
+	@Override
 	public JSNode getParentNode() {
 		Node tmpNode = node.getParentNode();
 		if (tmpNode != null) {
@@ -305,6 +330,7 @@ public class DefaultJSNode implements JSNode {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.scripting.JSNode#dump()
 	 */
+	@Override
 	public String dump() {
 		return node.dump();
 	}
@@ -312,6 +338,7 @@ public class DefaultJSNode implements JSNode {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.scripting.JSNode#getNodeByPath(java.lang.String)
 	 */
+	@Override
 	public JSNode getNodeByPath(final String path) {
 		Node tmpNode = node.getNodeByPath(path);
 		if (tmpNode != null) {

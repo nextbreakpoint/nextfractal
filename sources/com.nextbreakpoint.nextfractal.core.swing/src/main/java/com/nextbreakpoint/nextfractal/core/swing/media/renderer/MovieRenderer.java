@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -128,18 +128,21 @@ public final class MovieRenderer {
 	}
 
 	private class RendererController implements Controller {
+		@Override
 		public void play() {
 			synchronized (MovieRenderer.this) {
 				movieContext.setStopped(false);
 			}
 		}
 
+		@Override
 		public void stop() {
 			synchronized (MovieRenderer.this) {
 				movieContext.setStopped(true);
 			}
 		}
 
+		@Override
 		public void gotoAndPlay(final int frame) {
 			synchronized (MovieRenderer.this) {
 				movie.setFrame(frame % movie.getFrames());
@@ -147,6 +150,7 @@ public final class MovieRenderer {
 			}
 		}
 
+		@Override
 		public void gotoAndStop(final int frame) {
 			synchronized (MovieRenderer.this) {
 				movie.setFrame(frame % movie.getFrames());

@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -582,6 +582,7 @@ public class ColorChooser extends JPanel {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.swing.color.ColorChangeListener#colorChanged(com.nextbreakpoint.nextfractal.core.swing.color.ColorChangeEvent)
 		 */
+		@Override
 		public void colorChanged(final ColorChangeEvent e) {
 			removeRGBSpinnerListener();
 			removeHSBSpinnerListener();
@@ -597,6 +598,7 @@ public class ColorChooser extends JPanel {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.swing.color.ColorChangeListener#colorChanged(com.nextbreakpoint.nextfractal.core.swing.color.ColorChangeEvent)
 		 */
+		@Override
 		public void colorChanged(final ColorChangeEvent e) {
 			final Color color = ((ColorTableModel) e.getSource()).getColor();
 			setColor(color);
@@ -607,6 +609,7 @@ public class ColorChooser extends JPanel {
 		/**
 		 * @see javax.swing.event.ChangeListener#stateChanged(javax.swing.event.ChangeEvent)
 		 */
+		@Override
 		public void stateChanged(final ChangeEvent e) {
 			removeColorFieldListener();
 			removeHSBSpinnerListener();
@@ -621,6 +624,7 @@ public class ColorChooser extends JPanel {
 		/**
 		 * @see javax.swing.event.ChangeListener#stateChanged(javax.swing.event.ChangeEvent)
 		 */
+		@Override
 		public void stateChanged(final ChangeEvent e) {
 			removeColorFieldListener();
 			removeRGBSpinnerListener();
@@ -647,6 +651,7 @@ public class ColorChooser extends JPanel {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.swing.color.ColorChangeListener#colorChanged(com.nextbreakpoint.nextfractal.core.swing.color.ColorChangeEvent)
 		 */
+		@Override
 		public void colorChanged(final ColorChangeEvent e) {
 			final Color color = ((ColorFieldModel) e.getSource()).getColor();
 			ColorChooser.colors[x][y] = color;

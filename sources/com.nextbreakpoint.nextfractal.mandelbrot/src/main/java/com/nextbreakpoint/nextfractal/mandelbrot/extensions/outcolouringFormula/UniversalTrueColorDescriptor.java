@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -25,8 +25,6 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.extensions.outcolouringFormula;
 
-import com.nextbreakpoint.nextfractal.mandelbrot.extensions.outcolouringFormula.UniversalTrueColorConfig;
-import com.nextbreakpoint.nextfractal.mandelbrot.extensions.outcolouringFormula.UniversalTrueColorRuntime;
 import com.nextbreakpoint.nextfractal.mandelbrot.outcolouringFormula.extension.OutcolouringFormulaExtensionDescriptor;
 
 /**
@@ -38,6 +36,7 @@ public class UniversalTrueColorDescriptor extends OutcolouringFormulaExtensionDe
 	 * 
 	 * @return the extensionId.
 	 */
+	@Override
 	public String getExtensionId() {
 		return "twister.mandelbrot.fractal.outcolouring.formula.universalTrueColor";
 	}
@@ -47,6 +46,7 @@ public class UniversalTrueColorDescriptor extends OutcolouringFormulaExtensionDe
 	 * 
 	 * @return the extensionName.
 	 */
+	@Override
 	public String getExtensionName() {
 		return "Universal TrueColor";
 	}
@@ -56,6 +56,7 @@ public class UniversalTrueColorDescriptor extends OutcolouringFormulaExtensionDe
 	 * 
 	 * @return the extensionRuntimeClass.
 	 */
+	@Override
 	public UniversalTrueColorRuntime getExtensionRuntime() {
 		return new UniversalTrueColorRuntime();
 	}
@@ -65,6 +66,7 @@ public class UniversalTrueColorDescriptor extends OutcolouringFormulaExtensionDe
 	 * 
 	 * @return the extensionConfigClass.
 	 */
+	@Override
 	public UniversalTrueColorConfig getExtensionConfig() {
 		return new UniversalTrueColorConfig();
 	}

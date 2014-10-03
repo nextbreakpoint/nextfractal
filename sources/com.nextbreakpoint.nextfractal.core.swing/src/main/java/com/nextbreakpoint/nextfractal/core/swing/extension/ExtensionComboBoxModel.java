@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -114,6 +114,7 @@ public class ExtensionComboBoxModel implements ComboBoxModel {
 	/**
 	 * @see javax.swing.ComboBoxModel#setSelectedItem(java.lang.Object)
 	 */
+	@Override
 	public void setSelectedItem(final Object item) {
 		model.setSelectedItem(item);
 	}
@@ -121,6 +122,7 @@ public class ExtensionComboBoxModel implements ComboBoxModel {
 	/**
 	 * @see javax.swing.ComboBoxModel#getSelectedItem()
 	 */
+	@Override
 	public Object getSelectedItem() {
 		return model.getSelectedItem();
 	}
@@ -128,6 +130,7 @@ public class ExtensionComboBoxModel implements ComboBoxModel {
 	/**
 	 * @see javax.swing.ListModel#getSize()
 	 */
+	@Override
 	public int getSize() {
 		return model.getSize();
 	}
@@ -135,6 +138,7 @@ public class ExtensionComboBoxModel implements ComboBoxModel {
 	/**
 	 * @see javax.swing.ListModel#getElementAt(int)
 	 */
+	@Override
 	public Object getElementAt(final int index) {
 		return model.getElementAt(index);
 	}
@@ -142,6 +146,7 @@ public class ExtensionComboBoxModel implements ComboBoxModel {
 	/**
 	 * @see javax.swing.ListModel#addListDataListener(javax.swing.event.ListDataListener)
 	 */
+	@Override
 	public void addListDataListener(final ListDataListener listener) {
 		model.addListDataListener(listener);
 	}
@@ -149,6 +154,7 @@ public class ExtensionComboBoxModel implements ComboBoxModel {
 	/**
 	 * @see javax.swing.ListModel#removeListDataListener(javax.swing.event.ListDataListener)
 	 */
+	@Override
 	public void removeListDataListener(final ListDataListener listener) {
 		model.removeListDataListener(listener);
 	}

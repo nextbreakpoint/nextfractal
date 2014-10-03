@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -39,10 +39,9 @@ import com.nextbreakpoint.nextfractal.core.swing.util.GUIFactory;
 import com.nextbreakpoint.nextfractal.core.swing.util.StackLayout;
 import com.nextbreakpoint.nextfractal.core.tree.NodeEditor;
 import com.nextbreakpoint.nextfractal.core.tree.NodeValue;
-import com.nextbreakpoint.nextfractal.twister.swing.extensions.TwisterSwingExtensionResources;
-
 import com.nextbreakpoint.nextfractal.twister.layer.GroupLayerConfigElement;
 import com.nextbreakpoint.nextfractal.twister.layer.GroupLayerConfigElementNodeValue;
+import com.nextbreakpoint.nextfractal.twister.swing.extensions.TwisterSwingExtensionResources;
 
 /**
  * @author Andrea Medeghini
@@ -92,6 +91,7 @@ public class GroupLayerElementEditorRuntime extends EditorExtensionRuntime {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.swing.NodeEditorComponent#getComponent()
 		 */
+		@Override
 		public JComponent getComponent() {
 			return this;
 		}
@@ -99,12 +99,14 @@ public class GroupLayerElementEditorRuntime extends EditorExtensionRuntime {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.swing.NodeEditorComponent#reloadValue()
 		 */
+		@Override
 		public void reloadValue() {
 		}
 
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.swing.NodeEditorComponent#dispose()
 		 */
+		@Override
 		public void dispose() {
 		}
 	}
@@ -124,6 +126,7 @@ public class GroupLayerElementEditorRuntime extends EditorExtensionRuntime {
 		/**
 		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 		 */
+		@Override
 		public void actionPerformed(final ActionEvent e) {
 			final GroupLayerConfigElement element = new GroupLayerConfigElement();
 			nodeEditor.getParentNodeEditor().insertChildNodeAfter(nodeEditor.getIndex(), new GroupLayerConfigElementNodeValue(element.clone()));
@@ -145,6 +148,7 @@ public class GroupLayerElementEditorRuntime extends EditorExtensionRuntime {
 		/**
 		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 		 */
+		@Override
 		public void actionPerformed(final ActionEvent e) {
 			final GroupLayerConfigElement element = new GroupLayerConfigElement();
 			nodeEditor.getParentNodeEditor().insertChildNodeBefore(nodeEditor.getIndex(), new GroupLayerConfigElementNodeValue(element.clone()));
@@ -166,6 +170,7 @@ public class GroupLayerElementEditorRuntime extends EditorExtensionRuntime {
 		/**
 		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 		 */
+		@Override
 		public void actionPerformed(final ActionEvent e) {
 			nodeEditor.getParentNodeEditor().removeChildNode(nodeEditor.getIndex());
 		}
@@ -186,6 +191,7 @@ public class GroupLayerElementEditorRuntime extends EditorExtensionRuntime {
 		/**
 		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 		 */
+		@Override
 		public void actionPerformed(final ActionEvent e) {
 			nodeEditor.getParentNodeEditor().moveUpChildNode(nodeEditor.getIndex());
 		}
@@ -206,6 +212,7 @@ public class GroupLayerElementEditorRuntime extends EditorExtensionRuntime {
 		/**
 		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 		 */
+		@Override
 		public void actionPerformed(final ActionEvent e) {
 			nodeEditor.getParentNodeEditor().moveDownChildNode(nodeEditor.getIndex());
 		}

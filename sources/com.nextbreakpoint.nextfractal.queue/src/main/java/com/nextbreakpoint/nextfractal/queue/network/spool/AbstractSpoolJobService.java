@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -123,6 +123,7 @@ public abstract class AbstractSpoolJobService implements JobService<SpoolJobInte
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobService#getName()
 	 */
+	@Override
 	public String getName() {
 		return serviceName;
 	}
@@ -130,6 +131,7 @@ public abstract class AbstractSpoolJobService implements JobService<SpoolJobInte
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobService#start()
 	 */
+	@Override
 	public void start() {
 		if (thread == null) {
 			thread = factory.newThread(new ServiceHandler());
@@ -142,6 +144,7 @@ public abstract class AbstractSpoolJobService implements JobService<SpoolJobInte
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobService#stop()
 	 */
+	@Override
 	public void stop() {
 		if (thread != null) {
 			running = false;
@@ -170,6 +173,7 @@ public abstract class AbstractSpoolJobService implements JobService<SpoolJobInte
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobService#getJobCount()
 	 */
+	@Override
 	public int getJobCount() {
 		synchronized (spooledJobs) {
 			return spooledJobs.size();
@@ -183,6 +187,7 @@ public abstract class AbstractSpoolJobService implements JobService<SpoolJobInte
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobService#deleteJob(java.lang.String)
 	 */
+	@Override
 	public void deleteJob(final String jobId) {
 		if (jobId == null) {
 			throw new NullPointerException("jobId == null");
@@ -205,6 +210,7 @@ public abstract class AbstractSpoolJobService implements JobService<SpoolJobInte
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobService#stopJob(java.lang.String)
 	 */
+	@Override
 	public void stopJob(final String jobId) {
 		if (jobId == null) {
 			throw new NullPointerException("jobId == null");
@@ -225,6 +231,7 @@ public abstract class AbstractSpoolJobService implements JobService<SpoolJobInte
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobService#abortJob(java.lang.String)
 	 */
+	@Override
 	public void abortJob(final String jobId) {
 		if (jobId == null) {
 			throw new NullPointerException("jobId == null");
@@ -244,6 +251,7 @@ public abstract class AbstractSpoolJobService implements JobService<SpoolJobInte
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobService#createJob(com.nextbreakpoint.nextfractal.queue.spool.JobListener)
 	 */
+	@Override
 	public String createJob(final JobListener listener) {
 		if (listener == null) {
 			throw new NullPointerException("listener == null");
@@ -258,6 +266,7 @@ public abstract class AbstractSpoolJobService implements JobService<SpoolJobInte
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobService#setJobData(java.lang.String, JobData, int)
 	 */
+	@Override
 	public void setJobData(final String jobId, final JobData jobData, final int frameNumber) {
 		if (jobId == null) {
 			throw new NullPointerException("jobId == null");
@@ -277,6 +286,7 @@ public abstract class AbstractSpoolJobService implements JobService<SpoolJobInte
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobService#runJob(java.lang.String)
 	 */
+	@Override
 	public void runJob(final String jobId) {
 		if (jobId == null) {
 			throw new NullPointerException("jobId == null");
@@ -315,6 +325,7 @@ public abstract class AbstractSpoolJobService implements JobService<SpoolJobInte
 		/**
 		 * @see java.lang.Runnable#run()
 		 */
+		@Override
 		public void run() {
 			boolean interrupted = false;
 			fireStateChanged(JobServiceListener.STATUS_BORN, serviceName + " service started");
@@ -430,6 +441,7 @@ public abstract class AbstractSpoolJobService implements JobService<SpoolJobInte
 		/**
 		 * @see java.lang.Runnable#run()
 		 */
+		@Override
 		public void run() {
 			try {
 				while (running) {
@@ -554,6 +566,7 @@ public abstract class AbstractSpoolJobService implements JobService<SpoolJobInte
 		/**
 		 * @see java.lang.Runnable#run()
 		 */
+		@Override
 		public void run() {
 			try {
 				while (running) {
@@ -596,6 +609,7 @@ public abstract class AbstractSpoolJobService implements JobService<SpoolJobInte
 		/**
 		 * @see java.lang.Runnable#run()
 		 */
+		@Override
 		public void run() {
 			List<JobSession> tmpSessionHandlers = new LinkedList<JobSession>();
 			try {
@@ -634,6 +648,7 @@ public abstract class AbstractSpoolJobService implements JobService<SpoolJobInte
 		/**
 		 * @see java.lang.Runnable#run()
 		 */
+		@Override
 		public void run() {
 			final List<ExecutorTask> tasksToRun = new LinkedList<ExecutorTask>();
 			try {
@@ -682,6 +697,7 @@ public abstract class AbstractSpoolJobService implements JobService<SpoolJobInte
 		/**
 		 * @see java.lang.Runnable#run()
 		 */
+		@Override
 		public void run() {
 			if (session == null) {
 				logger.warning("Failed to send message " + message + ", session is null");
@@ -720,6 +736,7 @@ public abstract class AbstractSpoolJobService implements JobService<SpoolJobInte
 		/**
 		 * @see java.lang.Runnable#run()
 		 */
+		@Override
 		public void run() {
 			job.dispose();
 			logger.info(serviceName + ": Job deleted " + job.getJob() + " (jobs = " + jobCount + ")");
@@ -739,6 +756,7 @@ public abstract class AbstractSpoolJobService implements JobService<SpoolJobInte
 		/**
 		 * @see java.lang.Runnable#run()
 		 */
+		@Override
 		public void run() {
 			job.start();
 			jobCount += 1;
@@ -759,6 +777,7 @@ public abstract class AbstractSpoolJobService implements JobService<SpoolJobInte
 		/**
 		 * @see java.lang.Runnable#run()
 		 */
+		@Override
 		public void run() {
 			job.stop();
 			if (jobCount > 0) {
@@ -781,6 +800,7 @@ public abstract class AbstractSpoolJobService implements JobService<SpoolJobInte
 		/**
 		 * @see java.lang.Runnable#run()
 		 */
+		@Override
 		public void run() {
 			job.abort();
 			logger.info(serviceName + ": Job aborted " + job.getJob() + " (jobs = " + jobCount + ")");
@@ -800,6 +820,7 @@ public abstract class AbstractSpoolJobService implements JobService<SpoolJobInte
 		/**
 		 * @see java.lang.Runnable#run()
 		 */
+		@Override
 		public void run() {
 			job.reset();
 			if (jobCount > 0) {
@@ -913,6 +934,7 @@ public abstract class AbstractSpoolJobService implements JobService<SpoolJobInte
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.network.ServiceListener#onMessage(com.nextbreakpoint.nextfractal.queue.network.ServiceMessage)
 		 */
+		@Override
 		public void onMessage(final ServiceMessage message) throws ServiceException {
 			jobSession.onMessage(message);
 		}
@@ -977,6 +999,7 @@ public abstract class AbstractSpoolJobService implements JobService<SpoolJobInte
 		/**
 		 * @param message
 		 */
+		@Override
 		public synchronized void onMessage(final ServiceMessage message) {
 			messages.add(message);
 			synchronized (messageMonitor) {
@@ -1064,6 +1087,7 @@ public abstract class AbstractSpoolJobService implements JobService<SpoolJobInte
 		/**
 		 * 
 		 */
+		@Override
 		public synchronized void dispose() {
 			status.dispose();
 		}
@@ -1071,6 +1095,7 @@ public abstract class AbstractSpoolJobService implements JobService<SpoolJobInte
 		/**
 		 * @return
 		 */
+		@Override
 		public synchronized boolean isExpired() {
 			return (session != null) && session.isExpired();
 		}
@@ -1085,6 +1110,7 @@ public abstract class AbstractSpoolJobService implements JobService<SpoolJobInte
 		/**
 		 * @return the session
 		 */
+		@Override
 		public synchronized ServiceSession getSession() {
 			return session;
 		}
@@ -1092,6 +1118,7 @@ public abstract class AbstractSpoolJobService implements JobService<SpoolJobInte
 		/**
 		 * @param session the session to set
 		 */
+		@Override
 		public synchronized void setSession(final ServiceSession session) {
 			if (session == null) {
 				throw new IllegalArgumentException("session == null");
@@ -2165,6 +2192,7 @@ public abstract class AbstractSpoolJobService implements JobService<SpoolJobInte
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobService#addServiceListener(com.nextbreakpoint.nextfractal.queue.spool.JobServiceListener)
 	 */
+	@Override
 	public void addServiceListener(final JobServiceListener listener) {
 		listeners.add(listener);
 	}
@@ -2172,6 +2200,7 @@ public abstract class AbstractSpoolJobService implements JobService<SpoolJobInte
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobService#removeServiceListener(com.nextbreakpoint.nextfractal.queue.spool.JobServiceListener)
 	 */
+	@Override
 	public void removeServiceListener(final JobServiceListener listener) {
 		listeners.remove(listener);
 	}

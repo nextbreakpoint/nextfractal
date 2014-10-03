@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -37,6 +37,7 @@ public abstract class ExtendedGUIWorker extends DefaultGUIWorker implements Prog
 	/**
 	 * @see it.trend.lit.studio.workbench.ProgressListener#failed(java.lang.Exception)
 	 */
+	@Override
 	public void failed(final Throwable e) {
 		for (ProgressListener progressListener : progressListenerList) {
 			progressListener.failed(e);
@@ -46,6 +47,7 @@ public abstract class ExtendedGUIWorker extends DefaultGUIWorker implements Prog
 	/**
 	 * @see it.trend.lit.studio.workbench.ProgressListener#stateChanged(java.lang.String, float)
 	 */
+	@Override
 	public void stateChanged(final String message, final int percentage) {
 		List<ProgressListener> tmpProgressListenerList = new LinkedList<ProgressListener>(progressListenerList);
 		for (ProgressListener progressListener : tmpProgressListenerList) {
@@ -56,6 +58,7 @@ public abstract class ExtendedGUIWorker extends DefaultGUIWorker implements Prog
 	/**
 	 * @see it.trend.lit.studio.workbench.ProgressListener#stateChanged(java.lang.String)
 	 */
+	@Override
 	public void stateChanged(final String message) {
 		List<ProgressListener> tmpProgressListenerList = new LinkedList<ProgressListener>(progressListenerList);
 		for (ProgressListener progressListener : tmpProgressListenerList) {

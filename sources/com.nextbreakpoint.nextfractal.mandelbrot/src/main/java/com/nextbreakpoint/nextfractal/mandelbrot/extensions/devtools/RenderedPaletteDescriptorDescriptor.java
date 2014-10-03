@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -26,7 +26,6 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.extensions.devtools;
 
 import com.nextbreakpoint.nextfractal.devtools.descriptor.extension.DescriptorExtensionDescriptor;
-import com.nextbreakpoint.nextfractal.mandelbrot.extensions.devtools.RenderedPaletteDescriptorRuntime;
 
 /**
  * @author Andrea Medeghini
@@ -37,6 +36,7 @@ public class RenderedPaletteDescriptorDescriptor extends DescriptorExtensionDesc
 	 * 
 	 * @return the extensionId.
 	 */
+	@Override
 	public String getExtensionId() {
 		return "devtools.descriptor.renderedpalette";
 	}
@@ -46,6 +46,7 @@ public class RenderedPaletteDescriptorDescriptor extends DescriptorExtensionDesc
 	 * 
 	 * @return the extensionName.
 	 */
+	@Override
 	public String getExtensionName() {
 		return "RenderedPalette Descriptor";
 	}
@@ -55,6 +56,7 @@ public class RenderedPaletteDescriptorDescriptor extends DescriptorExtensionDesc
 	 * 
 	 * @return the extensionRuntimeClass.
 	 */
+	@Override
 	public RenderedPaletteDescriptorRuntime getExtensionRuntime() {
 		return new RenderedPaletteDescriptorRuntime();
 	}

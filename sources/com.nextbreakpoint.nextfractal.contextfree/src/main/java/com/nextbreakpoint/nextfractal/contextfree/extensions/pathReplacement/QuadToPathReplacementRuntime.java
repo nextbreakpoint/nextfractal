@@ -78,6 +78,7 @@ public class QuadToPathReplacementRuntime extends PathReplacementExtensionRuntim
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
 		 */
+		@Override
 		public void valueChanged(final ValueChangeEvent e) {
 			switch (e.getEventType()) {
 				case ValueConfigElement.VALUE_CHANGED: {
@@ -106,6 +107,7 @@ public class QuadToPathReplacementRuntime extends PathReplacementExtensionRuntim
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
 		 */
+		@Override
 		public void valueChanged(final ValueChangeEvent e) {
 			switch (e.getEventType()) {
 				case ValueConfigElement.VALUE_CHANGED: {
@@ -134,6 +136,7 @@ public class QuadToPathReplacementRuntime extends PathReplacementExtensionRuntim
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
 		 */
+		@Override
 		public void valueChanged(final ValueChangeEvent e) {
 			switch (e.getEventType()) {
 				case ValueConfigElement.VALUE_CHANGED: {
@@ -162,6 +165,7 @@ public class QuadToPathReplacementRuntime extends PathReplacementExtensionRuntim
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
 		 */
+		@Override
 		public void valueChanged(final ValueChangeEvent e) {
 			switch (e.getEventType()) {
 				case ValueConfigElement.VALUE_CHANGED: {
@@ -176,6 +180,7 @@ public class QuadToPathReplacementRuntime extends PathReplacementExtensionRuntim
 		}
 	}
 
+	@Override
 	public void process(CFRule rule) {
 		rule.getPath().quadTo(x, y, x1, y1);
 	}

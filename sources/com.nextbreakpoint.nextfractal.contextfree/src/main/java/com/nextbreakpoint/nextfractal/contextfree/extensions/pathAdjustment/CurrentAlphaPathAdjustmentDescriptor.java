@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -25,8 +25,6 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.extensions.pathAdjustment;
 
-import com.nextbreakpoint.nextfractal.contextfree.extensions.pathAdjustment.CurrentAlphaPathAdjustmentConfig;
-import com.nextbreakpoint.nextfractal.contextfree.extensions.pathAdjustment.CurrentAlphaPathAdjustmentRuntime;
 import com.nextbreakpoint.nextfractal.contextfree.pathAdjustment.extension.PathAdjustmentExtensionDescriptor;
 
 /**
@@ -38,6 +36,7 @@ public class CurrentAlphaPathAdjustmentDescriptor extends PathAdjustmentExtensio
 	 * 
 	 * @return the extensionId.
 	 */
+	@Override
 	public String getExtensionId() {
 		return "contextfree.path.adjustment.color.currentAlpha";
 	}
@@ -47,6 +46,7 @@ public class CurrentAlphaPathAdjustmentDescriptor extends PathAdjustmentExtensio
 	 * 
 	 * @return the extensionName.
 	 */
+	@Override
 	public String getExtensionName() {
 		return "CurrentAlpha Adjustment";
 	}
@@ -56,6 +56,7 @@ public class CurrentAlphaPathAdjustmentDescriptor extends PathAdjustmentExtensio
 	 * 
 	 * @return the extensionRuntimeClass.
 	 */
+	@Override
 	public CurrentAlphaPathAdjustmentRuntime getExtensionRuntime() {
 		return new CurrentAlphaPathAdjustmentRuntime();
 	}
@@ -65,6 +66,7 @@ public class CurrentAlphaPathAdjustmentDescriptor extends PathAdjustmentExtensio
 	 * 
 	 * @return the extensionConfigClass.
 	 */
+	@Override
 	public CurrentAlphaPathAdjustmentConfig getExtensionConfig() {
 		return new CurrentAlphaPathAdjustmentConfig();
 	}

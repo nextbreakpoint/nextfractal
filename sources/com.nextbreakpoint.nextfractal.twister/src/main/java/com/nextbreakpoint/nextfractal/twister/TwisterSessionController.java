@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -57,6 +57,7 @@ public class TwisterSessionController extends AbstractTwisterController implemen
 	/**
 	 * @see com.nextbreakpoint.nextfractal.twister.TwisterController#init()
 	 */
+	@Override
 	public void init() {
 		commands.clear();
 		clipTimestamp = 0;
@@ -71,6 +72,7 @@ public class TwisterSessionController extends AbstractTwisterController implemen
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.tree.DefaultNodeSession#appendAction(com.nextbreakpoint.nextfractal.core.tree.NodeAction)
 	 */
+	@Override
 	public void appendAction(NodeAction action) {
 		// if (logger.isDebugEnabled()) {
 		// logger.debug("Session " + getSessionName()+ " - " + action);
@@ -101,6 +103,7 @@ public class TwisterSessionController extends AbstractTwisterController implemen
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.tree.DefaultNodeSession#getActions()
 	 */
+	@Override
 	public List<NodeAction> getActions() {
 		removeDeadCommands();
 		final List<NodeAction> actions = new ArrayList<NodeAction>(commands.size());
@@ -151,6 +154,7 @@ public class TwisterSessionController extends AbstractTwisterController implemen
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeSession#getSessionName()
 	 */
+	@Override
 	public String getSessionName() {
 		return sessionName;
 	}
@@ -158,6 +162,7 @@ public class TwisterSessionController extends AbstractTwisterController implemen
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeSession#getTimestamp()
 	 */
+	@Override
 	public long getTimestamp() {
 		return timestamp;
 	}
@@ -165,6 +170,7 @@ public class TwisterSessionController extends AbstractTwisterController implemen
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeSession#setTimestamp(long)
 	 */
+	@Override
 	public void setTimestamp(final long timestamp) {
 		this.timestamp = timestamp;
 	}
@@ -172,6 +178,7 @@ public class TwisterSessionController extends AbstractTwisterController implemen
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeSession#isAcceptImmediatly()
 	 */
+	@Override
 	public boolean isAcceptImmediatly() {
 		return isAcceptImmediatly;
 	}
@@ -179,32 +186,38 @@ public class TwisterSessionController extends AbstractTwisterController implemen
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeSession#setAcceptImmediatly(boolean)
 	 */
+	@Override
 	public void setAcceptImmediatly(final boolean isAcceptImmediatly) {
 		this.isAcceptImmediatly = isAcceptImmediatly;
 	}
 	
+	@Override
 	public void fireSessionChanged() {
 		for (NodeSessionListener listener : listeners) {
 			listener.fireSessionChanged();
 		}
 	}
 
+	@Override
 	public void fireSessionAccepted() {
 		for (NodeSessionListener listener : listeners) {
 			listener.fireSessionAccepted();
 		}
 	}
 
+	@Override
 	public void fireSessionCancelled() {
 		for (NodeSessionListener listener : listeners) {
 			listener.fireSessionCancelled();
 		}
 	}
 	
+	@Override
 	public void addSessionListener(NodeSessionListener listener) {
 		listeners.add(listener);
 	}
 	
+	@Override
 	public void removeSessionListener(NodeSessionListener listener) {
 		listeners.remove(listener);
 	}

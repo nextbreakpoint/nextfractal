@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -25,7 +25,6 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.extensions.enumerator;
 
-import com.nextbreakpoint.nextfractal.contextfree.extensions.enumerator.FigureEnumeratorRuntime;
 import com.nextbreakpoint.nextfractal.core.enumerator.extension.EnumeratorExtensionDescriptor;
 
 /**
@@ -37,6 +36,7 @@ public class FigureEnumeratorDescriptor extends EnumeratorExtensionDescriptor {
 	 * 
 	 * @return the extensionId.
 	 */
+	@Override
 	public String getExtensionId() {
 		return "node.class.FigureReference";
 	}
@@ -46,6 +46,7 @@ public class FigureEnumeratorDescriptor extends EnumeratorExtensionDescriptor {
 	 * 
 	 * @return the extensionName.
 	 */
+	@Override
 	public String getExtensionName() {
 		return "FigureEnumerator";
 	}
@@ -55,6 +56,7 @@ public class FigureEnumeratorDescriptor extends EnumeratorExtensionDescriptor {
 	 * 
 	 * @return the extensionRuntimeClass.
 	 */
+	@Override
 	public FigureEnumeratorRuntime getExtensionRuntime() {
 		return new FigureEnumeratorRuntime();
 	}

@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -37,33 +37,40 @@ abstract class AbstractRenderedImage extends AbstractImage implements Animate {
 		this.frames = frames;
 	}
 
+	@Override
 	public final void setFrame(int frame) {
 		this.frame = frame;
 		fireFrameChanged(frame);
 	}
 
+	@Override
 	public final void nextFrame() {
 		frame = (frame + 1) % frames;
 		fireFrameChanged(frame);
 	}
 
+	@Override
 	public final void prevFrame() {
 		frame = (frame - 1) % frames;
 		fireFrameChanged(frame);
 	}
 
+	@Override
 	public final int getFrame() {
 		return frame;
 	}
 
+	@Override
 	public final int getFrames() {
 		return frames;
 	}
 
+	@Override
 	public final void addAnimationListener(AnimationListener listener) {
 		listeners.add(listener);
 	}
 
+	@Override
 	public final void removeAnimationListener(AnimationListener listener) {
 		listeners.remove(listener);
 	}

@@ -51,6 +51,7 @@ public class FigureConfigElement extends AbstractConfigElement {
 	/**
 	 *
 	 */
+	@Override
 	public void copyFrom(ConfigElement source) {
 		FigureConfigElement figureElement = (FigureConfigElement) source;
 		if (figureElement.getExtensionReference() != null) {

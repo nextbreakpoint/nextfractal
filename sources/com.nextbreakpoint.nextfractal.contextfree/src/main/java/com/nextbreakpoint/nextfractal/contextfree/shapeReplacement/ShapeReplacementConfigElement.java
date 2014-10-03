@@ -51,6 +51,7 @@ public class ShapeReplacementConfigElement extends AbstractConfigElement {
 	/**
 	 *
 	 */
+	@Override
 	public void copyFrom(ConfigElement source) {
 		ShapeReplacementConfigElement shapeReplacementElement = (ShapeReplacementConfigElement) source;
 		if (shapeReplacementElement.getExtensionReference() != null) {

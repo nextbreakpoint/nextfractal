@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -31,7 +31,6 @@ import com.nextbreakpoint.nextfractal.core.tree.NodeSession;
 import com.nextbreakpoint.nextfractal.core.util.RenderContext;
 import com.nextbreakpoint.nextfractal.mandelbrot.extensions.image.MandelbrotImageConfig;
 import com.nextbreakpoint.nextfractal.mandelbrot.swing.MandelbrotConfigPanel;
-
 import com.nextbreakpoint.nextfractal.twister.swing.ViewPanel;
 import com.nextbreakpoint.nextfractal.twister.swing.view.extension.ViewExtensionRuntime;
 

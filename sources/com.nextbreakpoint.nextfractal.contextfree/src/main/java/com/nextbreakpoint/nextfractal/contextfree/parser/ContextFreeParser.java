@@ -10,16 +10,13 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import com.nextbreakpoint.nextfractal.cfdg.analysis.DepthFirstAdapter;
-import com.nextbreakpoint.nextfractal.cfdg.node.*;
-import com.nextbreakpoint.nextfractal.contextfree.parser.CFDGLexer;
-import com.nextbreakpoint.nextfractal.contextfree.parser.CFDGParser;
-
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.TokenStream;
 
+import com.nextbreakpoint.nextfractal.cfdg.analysis.DepthFirstAdapter;
+import com.nextbreakpoint.nextfractal.cfdg.node.*;
 import com.nextbreakpoint.nextfractal.contextfree.ContextFreeConfig;
 import com.nextbreakpoint.nextfractal.contextfree.ContextFreeRegistry;
 import com.nextbreakpoint.nextfractal.contextfree.cfdg.CFDGConfigElement;
@@ -481,7 +478,7 @@ public class ContextFreeParser {
 				} else if ("atan".equals(functionName)) {
 					return (float) Math.atan(value);
 				} else if ("abs".equals(functionName)) {
-					return (float) Math.abs(value);
+					return Math.abs(value);
 				} else if ("exp".equals(functionName)) {
 					return (float) Math.exp(value);
 				} else if ("log".equals(functionName)) {
@@ -501,9 +498,9 @@ public class ContextFreeParser {
 				float value2 = evaluateExpression(((ASecondExpression) secondExpression).getExtendedExpression());
 				String functionName = function.getFunctionArg2().getText();
 				if ("min".equals(functionName)) {
-					return (float) Math.min(value1, value2);
+					return Math.min(value1, value2);
 				} else if ("max".equals(functionName)) {
-					return (float) Math.max(value1, value2);
+					return Math.max(value1, value2);
 				} else if ("pow".equals(functionName)) {
 					return (float) Math.pow(value1, value2);
 				} else if ("hypot".equals(functionName)) {
@@ -1419,7 +1416,7 @@ public class ContextFreeParser {
 
 		private ConfigurableExtensionReference<ShapeReplacementExtensionConfig> createShapeReplacementExtensionReference(AUnorderedShapeReplacement shapeReplacement)	throws ExtensionNotFoundException {
 			SingleShapeReplacementConfig config = new SingleShapeReplacementConfig();
-			config.setShape(((AUnorderedShapeReplacement) shapeReplacement).getString().getText());
+			config.setShape(shapeReplacement.getString().getText());
 			for (PShapeAdjustment shapeAdjustment : shapeReplacement.getShapeAdjustment()) {
 				ShapeAdjustmentConfigElement shapeAdjustmentElement = createShapeAdjustmentElement(shapeAdjustment);
 				config.appendShapeAdjustmentConfigElement(shapeAdjustmentElement);
@@ -1548,7 +1545,7 @@ public class ContextFreeParser {
 			SingleShapeReplacementConfig config = new SingleShapeReplacementConfig();
 			dropSameShapeAdjustments(shapeReplacement.getShapeAdjustment());
 			Collections.sort(shapeReplacement.getShapeAdjustment(), new PShapeAdjustmentComparator());
-			config.setShape(((AOrderedShapeReplacement) shapeReplacement).getString().getText());
+			config.setShape(shapeReplacement.getString().getText());
 			for (PShapeAdjustment shapeAdjustment : shapeReplacement.getShapeAdjustment()) {
 				ShapeAdjustmentConfigElement shapeAdjustmentElement = createShapeAdjustmentElement(shapeAdjustment);
 				config.appendShapeAdjustmentConfigElement(shapeAdjustmentElement);
@@ -1781,6 +1778,7 @@ public class ContextFreeParser {
 		}
 		
 		private class PCommandParameterComparator implements Comparator<PCommandParameter> {
+			@Override
 			public int compare(PCommandParameter o1, PCommandParameter o2) {
 				int op1 = 0;
 				int op2 = 0;
@@ -1907,6 +1905,7 @@ public class ContextFreeParser {
 		}
 	
 		private class PShapeAdjustmentComparator implements Comparator<PShapeAdjustment> {
+			@Override
 			public int compare(PShapeAdjustment o1, PShapeAdjustment o2) {
 				int op1 = 0;
 				int op2 = 0;
@@ -2034,6 +2033,7 @@ public class ContextFreeParser {
 	}
 	
 	private class PPathAdjustmentComparator implements Comparator<PPathAdjustment> {
+		@Override
 		public int compare(PPathAdjustment ga1, PPathAdjustment ga2) {
 			int gap1 = 0;
 			int gap2 = 0;

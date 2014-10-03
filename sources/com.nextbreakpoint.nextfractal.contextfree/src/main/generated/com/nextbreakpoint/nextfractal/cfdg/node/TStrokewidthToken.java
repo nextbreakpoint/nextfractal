@@ -2,7 +2,7 @@
 
 package com.nextbreakpoint.nextfractal.cfdg.node;
 
-import com.nextbreakpoint.nextfractal.cfdg.analysis.*;
+import com.nextbreakpoint.nextfractal.cfdg.analysis.Analysis;
 
 @SuppressWarnings("nls")
 public final class TStrokewidthToken extends Token
@@ -25,7 +25,8 @@ public final class TStrokewidthToken extends Token
       return new TStrokewidthToken(getLine(), getPos());
     }
 
-    public void apply(Switch sw)
+    @Override
+	public void apply(Switch sw)
     {
         ((Analysis) sw).caseTStrokewidthToken(this);
     }

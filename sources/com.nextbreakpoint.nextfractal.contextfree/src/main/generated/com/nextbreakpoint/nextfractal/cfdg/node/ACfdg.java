@@ -2,9 +2,11 @@
 
 package com.nextbreakpoint.nextfractal.cfdg.node;
 
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.ListIterator;
 
-import com.nextbreakpoint.nextfractal.cfdg.analysis.*;
+import com.nextbreakpoint.nextfractal.cfdg.analysis.Analysis;
 
 @SuppressWarnings("nls")
 public final class ACfdg extends PCfdg
@@ -31,7 +33,8 @@ public final class ACfdg extends PCfdg
             cloneList(this._cfdgDeclaration_));
     }
 
-    public void apply(Switch sw)
+    @Override
+	public void apply(Switch sw)
     {
         ((Analysis) sw).caseACfdg(this);
     }

@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -72,6 +72,7 @@ public class DummyJobService<T extends DummyJob> implements DistributedJobServic
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobService#getName()
 	 */
+	@Override
 	public String getName() {
 		return serviceName;
 	}
@@ -79,6 +80,7 @@ public class DummyJobService<T extends DummyJob> implements DistributedJobServic
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobService#start()
 	 */
+	@Override
 	public void start() {
 		if (thread == null) {
 			thread = new Thread(new ServiceHandler(), "DummyJobService Thread");
@@ -91,6 +93,7 @@ public class DummyJobService<T extends DummyJob> implements DistributedJobServic
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobService#stop()
 	 */
+	@Override
 	public void stop() {
 		if (thread != null) {
 			running = false;
@@ -107,6 +110,7 @@ public class DummyJobService<T extends DummyJob> implements DistributedJobServic
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobService#getJobCount()
 	 */
+	@Override
 	public int getJobCount() {
 		synchronized (spooledJobs) {
 			return spooledJobs.size();
@@ -116,6 +120,7 @@ public class DummyJobService<T extends DummyJob> implements DistributedJobServic
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobService#deleteJob(java.lang.String)
 	 */
+	@Override
 	public void deleteJob(final String jobId) {
 		synchronized (spooledJobs) {
 			synchronized (scheduledJobs) {
@@ -135,6 +140,7 @@ public class DummyJobService<T extends DummyJob> implements DistributedJobServic
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobService#stopJob(java.lang.String)
 	 */
+	@Override
 	public void stopJob(final String jobId) {
 		synchronized (spooledJobs) {
 			synchronized (scheduledJobs) {
@@ -152,6 +158,7 @@ public class DummyJobService<T extends DummyJob> implements DistributedJobServic
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobService#abortJob(java.lang.String)
 	 */
+	@Override
 	public void abortJob(final String jobId) {
 		synchronized (spooledJobs) {
 			synchronized (scheduledJobs) {
@@ -168,6 +175,7 @@ public class DummyJobService<T extends DummyJob> implements DistributedJobServic
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobService#createJob(com.nextbreakpoint.nextfractal.queue.spool.JobListener)
 	 */
+	@Override
 	public String createJob(final JobListener listener) {
 		synchronized (spooledJobs) {
 			final T job = jobFactory.createJob(JobIDFactory.newJobId(), listener);
@@ -179,6 +187,7 @@ public class DummyJobService<T extends DummyJob> implements DistributedJobServic
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobService#setJobData(java.lang.String, JobData, int)
 	 */
+	@Override
 	public void setJobData(final String jobId, final JobData jobData, final int frameNumber) {
 		synchronized (spooledJobs) {
 			ScheduledJob job = spooledJobs.get(jobId);
@@ -192,6 +201,7 @@ public class DummyJobService<T extends DummyJob> implements DistributedJobServic
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobService#runJob(java.lang.String)
 	 */
+	@Override
 	public void runJob(final String jobId) {
 		synchronized (spooledJobs) {
 			synchronized (scheduledJobs) {
@@ -225,6 +235,7 @@ public class DummyJobService<T extends DummyJob> implements DistributedJobServic
 		/**
 		 * @see java.lang.Runnable#run()
 		 */
+		@Override
 		public void run() {
 			try {
 				Iterator<ScheduledJob> jobIterator = null;
@@ -298,6 +309,7 @@ public class DummyJobService<T extends DummyJob> implements DistributedJobServic
 		/**
 		 * @see java.lang.Runnable#run()
 		 */
+		@Override
 		public void run() {
 			job.dispose();
 			logger.info(serviceName + ": Job deleted " + job.getJob() + " (jobs = " + jobCount + ")");
@@ -317,6 +329,7 @@ public class DummyJobService<T extends DummyJob> implements DistributedJobServic
 		/**
 		 * @see java.lang.Runnable#run()
 		 */
+		@Override
 		public void run() {
 			job.start();
 			jobCount += 1;
@@ -337,6 +350,7 @@ public class DummyJobService<T extends DummyJob> implements DistributedJobServic
 		/**
 		 * @see java.lang.Runnable#run()
 		 */
+		@Override
 		public void run() {
 			job.stop();
 			if (jobCount > 0) {
@@ -362,6 +376,7 @@ public class DummyJobService<T extends DummyJob> implements DistributedJobServic
 		/**
 		 * @see java.lang.Runnable#run()
 		 */
+		@Override
 		public void run() {
 			job.abort();
 			logger.info(serviceName + ": Job aborted " + job.getJob() + " (jobs = " + jobCount + ")");
@@ -381,6 +396,7 @@ public class DummyJobService<T extends DummyJob> implements DistributedJobServic
 		/**
 		 * @see java.lang.Runnable#run()
 		 */
+		@Override
 		public void run() {
 			job.setFrameNumber(0);
 			logger.info(serviceName + ": Job updated " + job.getJob() + " (jobs = " + jobCount + ")");
@@ -400,6 +416,7 @@ public class DummyJobService<T extends DummyJob> implements DistributedJobServic
 		/**
 		 * @see java.lang.Runnable#run()
 		 */
+		@Override
 		public void run() {
 			job.reset();
 			if (jobCount > 0) {
@@ -498,16 +515,20 @@ public class DummyJobService<T extends DummyJob> implements DistributedJobServic
 		}
 	}
 
+	@Override
 	public void addServiceListener(final JobServiceListener listener) {
 	}
 
+	@Override
 	public void removeServiceListener(final JobServiceListener listener) {
 	}
 
+	@Override
 	public byte[] getJobFrame(final String jobId, final int frameNumber) throws IOException {
 		return null;
 	}
 
+	@Override
 	public void setJobFrame(final String jobId, final TwisterClip clip, final byte[] data) throws IOException {
 	}
 }

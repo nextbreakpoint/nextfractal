@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -108,22 +108,27 @@ final class EngineRenderedImage implements EngineImage {
 		super.finalize();
 	}
 
+	@Override
 	public void applyEffect(Effect effect) {
 		renderer.applyEffect(effect);
 	}
 
+	@Override
 	public void drawImage(Graphics2D g2d) {
 		renderer.drawImage(g2d);
 	}
 
+	@Override
 	public int getWidth() {
 		return renderer.getWidth();
 	}
 
+	@Override
 	public int getHeight() {
 		return renderer.getHeight();
 	}
 
+	@Override
 	public void update() {
 	}
 }

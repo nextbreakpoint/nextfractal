@@ -2,7 +2,7 @@
 
 package com.nextbreakpoint.nextfractal.cfdg.parser;
 
-import com.nextbreakpoint.nextfractal.cfdg.node.*;
+import com.nextbreakpoint.nextfractal.cfdg.node.Token;
 
 @SuppressWarnings("serial")
 public class ParserException extends Exception

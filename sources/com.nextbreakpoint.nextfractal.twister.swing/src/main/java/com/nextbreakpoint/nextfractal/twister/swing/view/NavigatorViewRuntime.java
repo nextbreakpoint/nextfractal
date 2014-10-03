@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -137,26 +137,31 @@ public class NavigatorViewRuntime extends ViewExtensionRuntime {
 			/**
 			 * @see com.nextbreakpoint.nextfractal.core.tree.NodeListener#nodeChanged(com.nextbreakpoint.nextfractal.core.tree.NodeEvent)
 			 */
+			@Override
 			public void nodeChanged(final NodeEvent e) {
 			}
 
 			/**
 			 * @see com.nextbreakpoint.nextfractal.core.tree.NodeListener#nodeAdded(com.nextbreakpoint.nextfractal.core.tree.NodeEvent)
 			 */
+			@Override
 			public void nodeAdded(final NodeEvent e) {
 			}
 
 			/**
 			 * @see com.nextbreakpoint.nextfractal.core.tree.NodeListener#nodeRemoved(com.nextbreakpoint.nextfractal.core.tree.NodeEvent)
 			 */
+			@Override
 			public void nodeRemoved(final NodeEvent e) {
 			}
 
 			/**
 			 * @see com.nextbreakpoint.nextfractal.core.tree.NodeListener#nodeAccepted(com.nextbreakpoint.nextfractal.core.tree.NodeEvent)
 			 */
+			@Override
 			public void nodeAccepted(final NodeEvent e) {
 				GUIUtil.executeTask(new Runnable() {
+					@Override
 					public void run() {
 						context.refresh();
 					}
@@ -166,6 +171,7 @@ public class NavigatorViewRuntime extends ViewExtensionRuntime {
 			/**
 			 * @see com.nextbreakpoint.nextfractal.core.tree.NodeListener#nodeCancelled(com.nextbreakpoint.nextfractal.core.tree.NodeEvent)
 			 */
+			@Override
 			public void nodeCancelled(final NodeEvent e) {
 			}
 		}
@@ -174,8 +180,10 @@ public class NavigatorViewRuntime extends ViewExtensionRuntime {
 			/**
 			 * @see javax.swing.event.ChangeListener#stateChanged(javax.swing.event.ChangeEvent)
 			 */
+			@Override
 			public void stateChanged(final ChangeEvent e) {
 				GUIUtil.executeTask(new Runnable() {
+					@Override
 					public void run() {
 						if (navigatorPanel.getEditorNode() != null) {
 							navigatorTree.getSelectionModel().removeTreeSelectionListener(treeSelectionListener);
@@ -193,8 +201,10 @@ public class NavigatorViewRuntime extends ViewExtensionRuntime {
 			/**
 			 * @see javax.swing.event.TreeSelectionListener#valueChanged(javax.swing.event.TreeSelectionEvent)
 			 */
+			@Override
 			public void valueChanged(final TreeSelectionEvent e) {
 				GUIUtil.executeTask(new Runnable() {
+					@Override
 					public void run() {
 						navigatorPanel.removeChangeListener(panelSelectionListener);
 						if (navigatorTree.getSelectionPath() != null) {
@@ -214,8 +224,10 @@ public class NavigatorViewRuntime extends ViewExtensionRuntime {
 			/**
 			 * @see javax.swing.event.TreeModelListener#treeNodesChanged(javax.swing.event.TreeModelEvent)
 			 */
+			@Override
 			public void treeNodesChanged(final TreeModelEvent e) {
 				GUIUtil.executeTask(new Runnable() {
+					@Override
 					public void run() {
 						navigatorTree.expandPath(e.getTreePath());
 					}
@@ -225,8 +237,10 @@ public class NavigatorViewRuntime extends ViewExtensionRuntime {
 			/**
 			 * @see javax.swing.event.TreeModelListener#treeNodesInserted(javax.swing.event.TreeModelEvent)
 			 */
+			@Override
 			public void treeNodesInserted(final TreeModelEvent e) {
 				GUIUtil.executeTask(new Runnable() {
+					@Override
 					public void run() {
 						navigatorTree.expandPath(e.getTreePath());
 					}
@@ -236,12 +250,14 @@ public class NavigatorViewRuntime extends ViewExtensionRuntime {
 			/**
 			 * @see javax.swing.event.TreeModelListener#treeNodesRemoved(javax.swing.event.TreeModelEvent)
 			 */
+			@Override
 			public void treeNodesRemoved(final TreeModelEvent e) {
 			}
 
 			/**
 			 * @see javax.swing.event.TreeModelListener#treeStructureChanged(javax.swing.event.TreeModelEvent)
 			 */
+			@Override
 			public void treeStructureChanged(final TreeModelEvent e) {
 			}
 		}
@@ -271,12 +287,14 @@ public class NavigatorViewRuntime extends ViewExtensionRuntime {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeSession#appendAction(com.nextbreakpoint.nextfractal.core.tree.NodeAction)
 		 */
+		@Override
 		public void appendAction(final NodeAction action) {
 		}
 
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeSession#getActions()
 		 */
+		@Override
 		public List<NodeAction> getActions() {
 			return null;
 		}
@@ -284,6 +302,7 @@ public class NavigatorViewRuntime extends ViewExtensionRuntime {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeSession#getSessionName()
 		 */
+		@Override
 		public String getSessionName() {
 			return "Navigator";
 		}
@@ -291,6 +310,7 @@ public class NavigatorViewRuntime extends ViewExtensionRuntime {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeSession#getTimestamp()
 		 */
+		@Override
 		public long getTimestamp() {
 			return 0;
 		}
@@ -298,6 +318,7 @@ public class NavigatorViewRuntime extends ViewExtensionRuntime {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeSession#isAcceptImmediatly()
 		 */
+		@Override
 		public boolean isAcceptImmediatly() {
 			return true;
 		}
@@ -305,27 +326,34 @@ public class NavigatorViewRuntime extends ViewExtensionRuntime {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeSession#setAcceptImmediatly(boolean)
 		 */
+		@Override
 		public void setAcceptImmediatly(final boolean isApplyImmediatly) {
 		}
 
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeSession#setTimestamp(long)
 		 */
+		@Override
 		public void setTimestamp(final long timestamp) {
 		}
 
+		@Override
 		public void fireSessionAccepted() {
 		}
 
+		@Override
 		public void fireSessionCancelled() {
 		}
 
+		@Override
 		public void fireSessionChanged() {
 		}
 
+		@Override
 		public void addSessionListener(NodeSessionListener listener) {
 		}
 
+		@Override
 		public void removeSessionListener(NodeSessionListener listener) {
 		}
 	}

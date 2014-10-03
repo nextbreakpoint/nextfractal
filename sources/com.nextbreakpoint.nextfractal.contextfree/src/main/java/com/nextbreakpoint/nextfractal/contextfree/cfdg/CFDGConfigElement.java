@@ -90,6 +90,7 @@ public class CFDGConfigElement extends AbstractConfigElement {
 	/**
 	 *
 	 */
+	@Override
 	public void copyFrom(ConfigElement source) {
 		CFDGConfigElement cfdgElement = (CFDGConfigElement) source;
 		setStartshape(cfdgElement.getStartshape());

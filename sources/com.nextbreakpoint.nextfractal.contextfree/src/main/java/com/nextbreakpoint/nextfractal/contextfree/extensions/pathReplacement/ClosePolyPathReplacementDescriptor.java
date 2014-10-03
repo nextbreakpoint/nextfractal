@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -25,8 +25,6 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.extensions.pathReplacement;
 
-import com.nextbreakpoint.nextfractal.contextfree.extensions.pathReplacement.ClosePolyPathReplacementConfig;
-import com.nextbreakpoint.nextfractal.contextfree.extensions.pathReplacement.ClosePolyPathReplacementRuntime;
 import com.nextbreakpoint.nextfractal.contextfree.pathReplacement.extension.PathReplacementExtensionDescriptor;
 
 /**
@@ -38,6 +36,7 @@ public class ClosePolyPathReplacementDescriptor extends PathReplacementExtension
 	 * 
 	 * @return the extensionId.
 	 */
+	@Override
 	public String getExtensionId() {
 		return "contextfree.path.replacement.operation.closepoly";
 	}
@@ -47,6 +46,7 @@ public class ClosePolyPathReplacementDescriptor extends PathReplacementExtension
 	 * 
 	 * @return the extensionName.
 	 */
+	@Override
 	public String getExtensionName() {
 		return "ClosePoly Replacement";
 	}
@@ -56,6 +56,7 @@ public class ClosePolyPathReplacementDescriptor extends PathReplacementExtension
 	 * 
 	 * @return the extensionRuntimeClass.
 	 */
+	@Override
 	public ClosePolyPathReplacementRuntime getExtensionRuntime() {
 		return new ClosePolyPathReplacementRuntime();
 	}
@@ -65,6 +66,7 @@ public class ClosePolyPathReplacementDescriptor extends PathReplacementExtension
 	 * 
 	 * @return the extensionConfigClass.
 	 */
+	@Override
 	public ClosePolyPathReplacementConfig getExtensionConfig() {
 		return new ClosePolyPathReplacementConfig();
 	}

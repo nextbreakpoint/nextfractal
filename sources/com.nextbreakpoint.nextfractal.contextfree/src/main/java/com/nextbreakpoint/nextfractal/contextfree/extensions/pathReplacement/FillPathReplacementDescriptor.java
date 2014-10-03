@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -25,8 +25,6 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.extensions.pathReplacement;
 
-import com.nextbreakpoint.nextfractal.contextfree.extensions.pathReplacement.FillPathReplacementConfig;
-import com.nextbreakpoint.nextfractal.contextfree.extensions.pathReplacement.FillPathReplacementRuntime;
 import com.nextbreakpoint.nextfractal.contextfree.pathReplacement.extension.PathReplacementExtensionDescriptor;
 
 /**
@@ -38,6 +36,7 @@ public class FillPathReplacementDescriptor extends PathReplacementExtensionDescr
 	 * 
 	 * @return the extensionId.
 	 */
+	@Override
 	public String getExtensionId() {
 		return "contextfree.path.replacement.command.fill";
 	}
@@ -47,6 +46,7 @@ public class FillPathReplacementDescriptor extends PathReplacementExtensionDescr
 	 * 
 	 * @return the extensionName.
 	 */
+	@Override
 	public String getExtensionName() {
 		return "Fill Replacement";
 	}
@@ -56,6 +56,7 @@ public class FillPathReplacementDescriptor extends PathReplacementExtensionDescr
 	 * 
 	 * @return the extensionRuntimeClass.
 	 */
+	@Override
 	public FillPathReplacementRuntime getExtensionRuntime() {
 		return new FillPathReplacementRuntime();
 	}
@@ -65,6 +66,7 @@ public class FillPathReplacementDescriptor extends PathReplacementExtensionDescr
 	 * 
 	 * @return the extensionConfigClass.
 	 */
+	@Override
 	public FillPathReplacementConfig getExtensionConfig() {
 		return new FillPathReplacementConfig();
 	}

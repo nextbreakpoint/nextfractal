@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -304,6 +304,7 @@ public class RenderedPalettePanel extends JPanel {
 		/**
 		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 		 */
+		@Override
 		public void actionPerformed(final ActionEvent e) {
 			final RenderedPaletteParamModel paramModel = getRenderedPaletteParamModel(RenderedPalettePanel.PALETTE_PARAM_MODEL);
 			final SingleSelectionModel selectionModel = getSingleSelectionModel(RenderedPalettePanel.PARAM_SELECTION_MODEL);
@@ -323,6 +324,7 @@ public class RenderedPalettePanel extends JPanel {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.platform.ui.swing.color.PaletteChangeListener#paletteChanged(com.nextbreakpoint.nextfractal.platform.ui.swing.color.PaletteChangeEvent)
 		 */
+		@Override
 		public void paletteChanged(final PaletteChangeEvent e) {
 			final JComboBox comboBox = getComboBox(RenderedPalettePanel.COMBOBOX);
 			final RenderedPaletteParamModel paramModel = (RenderedPaletteParamModel) e.getSource();
@@ -347,6 +349,7 @@ public class RenderedPalettePanel extends JPanel {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.platform.ui.swing.color.PaletteChangeListener#paletteChanged(com.nextbreakpoint.nextfractal.platform.ui.swing.color.PaletteChangeEvent)
 		 */
+		@Override
 		public void paletteChanged(final PaletteChangeEvent e) {
 			final JComboBox comboBox = getComboBox(RenderedPalettePanel.COMBOBOX);
 			int index = comboBox.getSelectedIndex();
@@ -361,6 +364,7 @@ public class RenderedPalettePanel extends JPanel {
 		/**
 		 * @see javax.swing.event.ChangeListener#stateChanged(javax.swing.event.ChangeEvent)
 		 */
+		@Override
 		public void stateChanged(final ChangeEvent e) {
 			final JComboBox comboBox = getComboBox(RenderedPalettePanel.COMBOBOX);
 			final SingleSelectionModel selectionModel = (SingleSelectionModel) e.getSource();
@@ -386,6 +390,7 @@ public class RenderedPalettePanel extends JPanel {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.platform.ui.swing.color.PaletteChangeListener#paletteChanged(com.nextbreakpoint.nextfractal.platform.ui.swing.color.PaletteChangeEvent)
 		 */
+		@Override
 		public void paletteChanged(final PaletteChangeEvent e) {
 			final RenderedPaletteModel model = (RenderedPaletteModel) e.getSource();
 			RenderedPalettePanel.palettes[x][y] = model.getRenderedPalette();
@@ -407,6 +412,7 @@ public class RenderedPalettePanel extends JPanel {
 		/**
 		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 		 */
+		@Override
 		public void actionPerformed(final ActionEvent e) {
 			final JComboBox comboBox = getComboBox(RenderedPalettePanel.COMBOBOX);
 			if (comboBox != null) {
@@ -447,6 +453,7 @@ public class RenderedPalettePanel extends JPanel {
 		/**
 		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 		 */
+		@Override
 		public void actionPerformed(final ActionEvent e) {
 			if (model.getRenderedPalette().getParamCount() == 1) {
 				return;
@@ -507,6 +514,7 @@ public class RenderedPalettePanel extends JPanel {
 		/**
 		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 		 */
+		@Override
 		public void actionPerformed(final ActionEvent e) {
 			final JComboBox comboBox = getComboBox(RenderedPalettePanel.COMBOBOX);
 			if (comboBox != null) {
@@ -559,6 +567,7 @@ public class RenderedPalettePanel extends JPanel {
 		/**
 		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 		 */
+		@Override
 		public void actionPerformed(final ActionEvent e) {
 			final JComboBox comboBox = getComboBox(RenderedPalettePanel.COMBOBOX);
 			if (comboBox != null) {

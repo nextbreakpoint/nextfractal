@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -38,30 +38,37 @@ public class NullConfigurableExtension implements ConfigurableExtension {
 	private NullConfigurableExtension() {
 	}
 
+	@Override
 	public ConfigurableExtensionRuntime<ExtensionConfig> createExtensionRuntime() throws ExtensionException {
 		return null;
 	}
 
+	@Override
 	public String getExtensionId() {
 		return "null";
 	}
 
+	@Override
 	public String getExtensionName() {
 		return "-";
 	}
 
+	@Override
 	public ExtensionReference getExtensionReference() {
 		return null;
 	}
 
+	@Override
 	public ConfigurableExtensionReference<ExtensionConfig> createConfigurableExtensionReference(final ExtensionConfig extensionConfig) {
 		return null;
 	}
 
+	@Override
 	public ConfigurableExtensionReference<ExtensionConfig> createConfigurableExtensionReference() throws ExtensionException {
 		return null;
 	}
 
+	@Override
 	public ExtensionConfig createDefaultExtensionConfig() throws ExtensionException {
 		return null;
 	}

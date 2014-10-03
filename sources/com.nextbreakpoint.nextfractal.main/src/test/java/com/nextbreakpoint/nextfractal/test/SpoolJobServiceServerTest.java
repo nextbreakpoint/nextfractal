@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -28,17 +28,16 @@ package com.nextbreakpoint.nextfractal.test;
 import java.io.File;
 import java.util.logging.Logger;
 
-import com.nextbreakpoint.nextfractal.queue.jxta.JXTANetworkService;
-import com.nextbreakpoint.nextfractal.queue.network.spool.DistributedServiceProcessor;
-import com.nextbreakpoint.nextfractal.queue.spool.DefaultDistributedJobService;
-import com.nextbreakpoint.nextfractal.queue.spool.job.DistributedJob;
-import com.nextbreakpoint.nextfractal.queue.spool.job.DistributedJobFactory;
-
 import org.junit.Test;
 
 import com.nextbreakpoint.nextfractal.core.util.DefaultThreadFactory;
 import com.nextbreakpoint.nextfractal.core.util.Surface;
 import com.nextbreakpoint.nextfractal.core.util.Worker;
+import com.nextbreakpoint.nextfractal.queue.jxta.JXTANetworkService;
+import com.nextbreakpoint.nextfractal.queue.network.spool.DistributedServiceProcessor;
+import com.nextbreakpoint.nextfractal.queue.spool.DefaultDistributedJobService;
+import com.nextbreakpoint.nextfractal.queue.spool.job.DistributedJob;
+import com.nextbreakpoint.nextfractal.queue.spool.job.DistributedJobFactory;
 
 /**
  * @author Andrea Medeghini

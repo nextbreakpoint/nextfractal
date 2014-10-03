@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -131,6 +131,7 @@ public abstract class ReferenceEditorRuntime extends EditorExtensionRuntime {
 			/**
 			 * @param e
 			 */
+			@Override
 			public void actionPerformed(final ActionEvent e) {
 				final Extension<?> extension = (Extension<?>) ((JComboBox) e.getSource()).getSelectedItem();
 				if (extension instanceof NullExtension) {
@@ -161,6 +162,7 @@ public abstract class ReferenceEditorRuntime extends EditorExtensionRuntime {
 			/**
 			 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 			 */
+			@Override
 			public void actionPerformed(final ActionEvent e) {
 				combo.setSelectedIndex(0);
 			}
@@ -169,6 +171,7 @@ public abstract class ReferenceEditorRuntime extends EditorExtensionRuntime {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.twister.swing.NodeEditorComponent#getComponent()
 		 */
+		@Override
 		public JComponent getComponent() {
 			return this;
 		}
@@ -179,6 +182,7 @@ public abstract class ReferenceEditorRuntime extends EditorExtensionRuntime {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.twister.swing.NodeEditorComponent#reloadValue()
 		 */
+		@Override
 		@SuppressWarnings("unchecked")
 		public void reloadValue() {
 			combo.removeActionListener(referenceSelectionListener);
@@ -197,6 +201,7 @@ public abstract class ReferenceEditorRuntime extends EditorExtensionRuntime {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.twister.swing.NodeEditorComponent#dispose()
 		 */
+		@Override
 		public void dispose() {
 		}
 	}

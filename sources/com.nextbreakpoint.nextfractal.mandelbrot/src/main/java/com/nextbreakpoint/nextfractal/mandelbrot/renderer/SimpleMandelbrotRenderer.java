@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -252,6 +252,7 @@ public final class SimpleMandelbrotRenderer extends AbstractMandelbrotRenderer {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderer.AbstractMandelbrotRenderer.RenderingStrategy#isVerticalSymetrySupported()
 		 */
+		@Override
 		public boolean isVerticalSymetrySupported() {
 			for (int i = 0; i < fractalRuntime.getOutcolouringFormulaCount(); i++) {
 				final OutcolouringFormulaRuntimeElement outcolouringFormula = fractalRuntime.getOutcolouringFormula(i);
@@ -271,6 +272,7 @@ public final class SimpleMandelbrotRenderer extends AbstractMandelbrotRenderer {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderer.AbstractMandelbrotRenderer.RenderingStrategy#isHorizontalSymetrySupported()
 		 */
+		@Override
 		public boolean isHorizontalSymetrySupported() {
 			for (int i = 0; i < fractalRuntime.getOutcolouringFormulaCount(); i++) {
 				final OutcolouringFormulaRuntimeElement outcolouringFormula = fractalRuntime.getOutcolouringFormula(i);
@@ -290,6 +292,7 @@ public final class SimpleMandelbrotRenderer extends AbstractMandelbrotRenderer {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderer.AbstractMandelbrotRenderer.RenderingStrategy#renderPoint(com.nextbreakpoint.nextfractal.mandelbrot.renderer.RenderedPoint)
 		 */
+		@Override
 		public int renderPoint(final RenderedPoint p, final Complex px, final Complex pw) {
 			if ((fractalRuntime.getRenderingFormula().getFormulaRuntime() != null) && (fractalRuntime.getTransformingFormula().getFormulaRuntime() != null)) {
 				fractalRuntime.getTransformingFormula().getFormulaRuntime().renderPoint(pw);
@@ -309,6 +312,7 @@ public final class SimpleMandelbrotRenderer extends AbstractMandelbrotRenderer {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderer.AbstractMandelbrotRenderer.RenderingStrategy#updateParameters()
 		 */
+		@Override
 		public void updateParameters() {
 			if (fractalRuntime.getRenderingFormula().getFormulaRuntime() != null) {
 				renderedData.x0 = fractalRuntime.getRenderingFormula().getFormulaRuntime().getInitialPoint().r;
@@ -325,6 +329,7 @@ public final class SimpleMandelbrotRenderer extends AbstractMandelbrotRenderer {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderer.AbstractMandelbrotRenderer.RenderingStrategy#isHorizontalSymetrySupported()
 		 */
+		@Override
 		public boolean isHorizontalSymetrySupported() {
 			return false;
 		}
@@ -332,6 +337,7 @@ public final class SimpleMandelbrotRenderer extends AbstractMandelbrotRenderer {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderer.AbstractMandelbrotRenderer.RenderingStrategy#isVerticalSymetrySupported()
 		 */
+		@Override
 		public boolean isVerticalSymetrySupported() {
 			return false;
 		}
@@ -339,6 +345,7 @@ public final class SimpleMandelbrotRenderer extends AbstractMandelbrotRenderer {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderer.AbstractMandelbrotRenderer.RenderingStrategy#renderPoint(com.nextbreakpoint.nextfractal.mandelbrot.renderer.RenderedPoint)
 		 */
+		@Override
 		public int renderPoint(final RenderedPoint p, final Complex px, final Complex pw) {
 			if ((fractalRuntime.getRenderingFormula().getFormulaRuntime() != null) && (fractalRuntime.getTransformingFormula().getFormulaRuntime() != null)) {
 				fractalRuntime.getTransformingFormula().getFormulaRuntime().renderPoint(px);
@@ -358,6 +365,7 @@ public final class SimpleMandelbrotRenderer extends AbstractMandelbrotRenderer {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderer.AbstractMandelbrotRenderer.RenderingStrategy#updateParameters()
 		 */
+		@Override
 		public void updateParameters() {
 			renderedData.x0 = oldConstant.getX();
 			renderedData.y0 = oldConstant.getY();

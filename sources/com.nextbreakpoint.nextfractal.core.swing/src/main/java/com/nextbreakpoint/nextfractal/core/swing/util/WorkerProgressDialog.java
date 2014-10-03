@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -110,6 +110,7 @@ public class WorkerProgressDialog extends JDialog implements ProgressListener {
 	 */
 	public void setMessage(final String message) {
 		GUIUtil.executeTask(new Runnable() {
+				@Override
 				public void run() {
 				messageLabel.setText(message);
 				}
@@ -121,6 +122,7 @@ public class WorkerProgressDialog extends JDialog implements ProgressListener {
 	 */
 	public void start() {
 		GUIUtil.executeTask(new Runnable() {
+				@Override
 				public void run() {
 				worker.addProgressListener(WorkerProgressDialog.this);
 				worker.execute();
@@ -132,8 +134,10 @@ public class WorkerProgressDialog extends JDialog implements ProgressListener {
 	/**
 	 * @see it.trend.lit.studio.workbench.ProgressListener#done()
 	 */
+	@Override
 	public void done() {
 		GUIUtil.executeTask(new Runnable() {
+				@Override
 				public void run() {
 				worker.removeProgressListener(WorkerProgressDialog.this);
 				setVisible(false);
@@ -145,8 +149,10 @@ public class WorkerProgressDialog extends JDialog implements ProgressListener {
 	/**
 	 * @see it.trend.lit.studio.workbench.ProgressListener#failed(java.lang.Exception)
 	 */
+	@Override
 	public void failed(final Throwable e) {
 		GUIUtil.executeTask(new Runnable() {
+				@Override
 				public void run() {
 				worker.removeProgressListener(WorkerProgressDialog.this);
 				setVisible(false);
@@ -158,8 +164,10 @@ public class WorkerProgressDialog extends JDialog implements ProgressListener {
 	/**
 	 * @see it.trend.lit.studio.workbench.ProgressListener#stateChanged(java.lang.String, float)
 	 */
+	@Override
 	public void stateChanged(final String message, final int percentage) {
 		GUIUtil.executeTask(new Runnable() {
+				@Override
 				public void run() {
 				messageLabel.setText(message);
 				progressBar.getModel().setValue(percentage);
@@ -170,8 +178,10 @@ public class WorkerProgressDialog extends JDialog implements ProgressListener {
 	/**
 	 * @see it.trend.lit.studio.workbench.ProgressListener#stateChanged(java.lang.String)
 	 */
+	@Override
 	public void stateChanged(final String message) {
 		GUIUtil.executeTask(new Runnable() {
+				@Override
 				public void run() {
 				messageLabel.setText(message);
 				}

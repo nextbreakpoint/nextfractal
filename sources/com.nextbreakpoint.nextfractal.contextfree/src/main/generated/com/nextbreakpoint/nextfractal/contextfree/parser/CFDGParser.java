@@ -1,16 +1,25 @@
 // Generated from CFDG.g4 by ANTLR 4.2.2
 package com.nextbreakpoint.nextfractal.contextfree.parser;
 
-	import java.util.Map;
+	import java.util.List;
+import java.util.Map;
 
-import org.antlr.v4.runtime.atn.*;
+import org.antlr.v4.runtime.FailedPredicateException;
+import org.antlr.v4.runtime.NoViableAltException;
+import org.antlr.v4.runtime.Parser;
+import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.RecognitionException;
+import org.antlr.v4.runtime.Recognizer;
+import org.antlr.v4.runtime.RuleContext;
+import org.antlr.v4.runtime.Token;
+import org.antlr.v4.runtime.TokenStream;
+import org.antlr.v4.runtime.atn.ATN;
+import org.antlr.v4.runtime.atn.ATNDeserializer;
+import org.antlr.v4.runtime.atn.ParserATNSimulator;
+import org.antlr.v4.runtime.atn.PredictionContextCache;
 import org.antlr.v4.runtime.dfa.DFA;
-import org.antlr.v4.runtime.*;
-import org.antlr.v4.runtime.misc.*;
-import org.antlr.v4.runtime.tree.*;
-import java.util.List;
-import java.util.Iterator;
-import java.util.ArrayList;
+import org.antlr.v4.runtime.tree.ParseTreeListener;
+import org.antlr.v4.runtime.tree.TerminalNode;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
 public class CFDGParser extends Parser {
@@ -199,11 +208,11 @@ public class CFDGParser extends Parser {
 			case 1:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(160); ((Cfdg2Context)_localctx).r = statement_v2();
+				setState(160); _localctx.r = statement_v2();
 				setState(161); cfdg2();
 
-					        if (((Cfdg2Context)_localctx).r.result != null) {
-					          	driver.pushRep(((Cfdg2Context)_localctx).r.result, true);
+					        if (_localctx.r.result != null) {
+					          	driver.pushRep(_localctx.r.result, true);
 					        }
 				        
 				}
@@ -212,10 +221,10 @@ public class CFDGParser extends Parser {
 			case 2:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(164); ((Cfdg2Context)_localctx).r = statement_v2();
+				setState(164); _localctx.r = statement_v2();
 
-					        if (((Cfdg2Context)_localctx).r.result != null) {
-					          	driver.pushRep(((Cfdg2Context)_localctx).r.result, true);
+					        if (_localctx.r.result != null) {
+					          	driver.pushRep(_localctx.r.result, true);
 					        }
 				        
 				}
@@ -264,11 +273,11 @@ public class CFDGParser extends Parser {
 			case 1:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(169); ((Cfdg3Context)_localctx).r = statement_v3();
+				setState(169); _localctx.r = statement_v3();
 				setState(170); cfdg3();
 
-					        if (((Cfdg3Context)_localctx).r.result != null) {
-					          	driver.pushRep(((Cfdg3Context)_localctx).r.result, true);
+					        if (_localctx.r.result != null) {
+					          	driver.pushRep(_localctx.r.result, true);
 					        }
 				        
 				}
@@ -277,10 +286,10 @@ public class CFDGParser extends Parser {
 			case 2:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(173); ((Cfdg3Context)_localctx).r = statement_v3();
+				setState(173); _localctx.r = statement_v3();
 
-					        if (((Cfdg3Context)_localctx).r.result != null) {
-					          	driver.pushRep(((Cfdg3Context)_localctx).r.result, true);
+					        if (_localctx.r.result != null) {
+					          	driver.pushRep(_localctx.r.result, true);
 					        }
 				        
 				}
@@ -361,7 +370,7 @@ public class CFDGParser extends Parser {
 				{
 				setState(180); inclusion_v2();
 				 
-				        	((Statement_v2Context)_localctx).result =  null;
+				        	_localctx.result =  null;
 				        
 				}
 				break;
@@ -371,7 +380,7 @@ public class CFDGParser extends Parser {
 				{
 				setState(183); eof();
 
-				        	((Statement_v2Context)_localctx).result =  null;        	
+				        	_localctx.result =  null;        	
 				        
 				}
 				break;
@@ -393,14 +402,14 @@ public class CFDGParser extends Parser {
 			case 7:
 				enterOuterAlt(_localctx, 7);
 				{
-				setState(188); ((Statement_v2Context)_localctx).v3clues = v3clues();
+				setState(188); _localctx.v3clues = v3clues();
 				 
 				        	if (driver.getMaybeVersion().equals("CFDG2")) {
-				        		driver.error("Illegal mixture of old and new elements", (((Statement_v2Context)_localctx).v3clues!=null?(((Statement_v2Context)_localctx).v3clues.start):null));	        		
+				        		driver.error("Illegal mixture of old and new elements", (_localctx.v3clues!=null?(_localctx.v3clues.start):null));	        		
 				        	} else {
 				        		driver.setMaybeVersion("CFDG3");
 				        	}
-				        	((Statement_v2Context)_localctx).result =  null;
+				        	_localctx.result =  null;
 				        
 				}
 				break;
@@ -481,7 +490,7 @@ public class CFDGParser extends Parser {
 				{
 				setState(194); import_v3();
 				 
-				        	((Statement_v3Context)_localctx).result =  null;
+				        	_localctx.result =  null;
 				        
 				}
 				break;
@@ -491,7 +500,7 @@ public class CFDGParser extends Parser {
 				{
 				setState(197); eof();
 
-				        	((Statement_v3Context)_localctx).result =  null;        	
+				        	_localctx.result =  null;        	
 				        
 				}
 				break;
@@ -513,9 +522,9 @@ public class CFDGParser extends Parser {
 			case 6:
 				enterOuterAlt(_localctx, 6);
 				{
-				setState(202); ((Statement_v3Context)_localctx).r = shape();
+				setState(202); _localctx.r = shape();
 				 
-				        	((Statement_v3Context)_localctx).result =  null;
+				        	_localctx.result =  null;
 				        
 				}
 				break;
@@ -530,9 +539,9 @@ public class CFDGParser extends Parser {
 			case 8:
 				enterOuterAlt(_localctx, 8);
 				{
-				setState(206); ((Statement_v3Context)_localctx).d = global_definition();
+				setState(206); _localctx.d = global_definition();
 				 
-				        	((Statement_v3Context)_localctx).result =  ((Statement_v3Context)_localctx).d.result;
+				        	_localctx.result =  _localctx.d.result;
 				        
 				}
 				break;
@@ -540,10 +549,10 @@ public class CFDGParser extends Parser {
 			case 9:
 				enterOuterAlt(_localctx, 9);
 				{
-				setState(209); ((Statement_v3Context)_localctx).v2stuff = v2stuff();
+				setState(209); _localctx.v2stuff = v2stuff();
 
-				        	driver.error("Illegal mixture of old and new elements", (((Statement_v3Context)_localctx).v2stuff!=null?(((Statement_v3Context)_localctx).v2stuff.start):null));	
-				        	((Statement_v3Context)_localctx).result =  null;
+				        	driver.error("Illegal mixture of old and new elements", (_localctx.v2stuff!=null?(_localctx.v2stuff.start):null));	
+				        	_localctx.result =  null;
 				        
 				}
 				break;
@@ -808,11 +817,11 @@ public class CFDGParser extends Parser {
 			case 1:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(252); ((Inclusion_v2Context)_localctx).INCLUDE = match(INCLUDE);
-				setState(253); ((Inclusion_v2Context)_localctx).f = match(USER_QSTRING);
+				setState(252); _localctx.INCLUDE = match(INCLUDE);
+				setState(253); _localctx.f = match(USER_QSTRING);
 
-				        	driver.setShape(null, ((Inclusion_v2Context)_localctx).INCLUDE);
-				        	driver.includeFile(((Inclusion_v2Context)_localctx).f.getText(), ((Inclusion_v2Context)_localctx).INCLUDE);
+				        	driver.setShape(null, _localctx.INCLUDE);
+				        	driver.includeFile(_localctx.f.getText(), _localctx.INCLUDE);
 				        
 				}
 				break;
@@ -820,11 +829,11 @@ public class CFDGParser extends Parser {
 			case 2:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(255); ((Inclusion_v2Context)_localctx).INCLUDE = match(INCLUDE);
-				setState(256); ((Inclusion_v2Context)_localctx).f = match(USER_FILENAME);
+				setState(255); _localctx.INCLUDE = match(INCLUDE);
+				setState(256); _localctx.f = match(USER_FILENAME);
 
-				        	driver.setShape(null, ((Inclusion_v2Context)_localctx).INCLUDE);
-				        	driver.includeFile(((Inclusion_v2Context)_localctx).f.getText(), ((Inclusion_v2Context)_localctx).INCLUDE);
+				        	driver.setShape(null, _localctx.INCLUDE);
+				        	driver.includeFile(_localctx.f.getText(), _localctx.INCLUDE);
 				        
 				}
 				break;
@@ -872,14 +881,14 @@ public class CFDGParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(260); ((Import_v3Context)_localctx).IMPORT = match(IMPORT);
-			setState(261); ((Import_v3Context)_localctx).n = fileNameSpace();
-			setState(262); ((Import_v3Context)_localctx).f = fileString();
+			setState(260); _localctx.IMPORT = match(IMPORT);
+			setState(261); _localctx.n = fileNameSpace();
+			setState(262); _localctx.f = fileString();
 
-			            driver.setShape(null, ((Import_v3Context)_localctx).IMPORT);
-			            driver.includeFile(((Import_v3Context)_localctx).f.result, ((Import_v3Context)_localctx).IMPORT);
-			            if (((Import_v3Context)_localctx).n.result != null) {
-			                driver.pushNameSpace(((Import_v3Context)_localctx).n.result, ((Import_v3Context)_localctx).IMPORT);
+			            driver.setShape(null, _localctx.IMPORT);
+			            driver.includeFile(_localctx.f.result, _localctx.IMPORT);
+			            if (_localctx.n.result != null) {
+			                driver.pushNameSpace(_localctx.n.result, _localctx.IMPORT);
 			            }
 			        
 			}
@@ -897,7 +906,7 @@ public class CFDGParser extends Parser {
 
 	public static class EofContext extends ParserRuleContext {
 		public Token t;
-		public TerminalNode EOF() { return getToken(CFDGParser.EOF, 0); }
+		public TerminalNode EOF() { return getToken(Recognizer.EOF, 0); }
 		public EofContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -918,9 +927,9 @@ public class CFDGParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(265); ((EofContext)_localctx).t = match(EOF);
+			setState(265); _localctx.t = match(EOF);
 
-						if (driver.endInclude(((EofContext)_localctx).t)) {
+						if (driver.endInclude(_localctx.t)) {
 						}
 					
 			}
@@ -964,18 +973,18 @@ public class CFDGParser extends Parser {
 			case USER_FILENAME:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(268); ((FileStringContext)_localctx).f = match(USER_FILENAME);
+				setState(268); _localctx.f = match(USER_FILENAME);
 
-				        	((FileStringContext)_localctx).result =  ((FileStringContext)_localctx).f.getText();
+				        	_localctx.result =  _localctx.f.getText();
 				        
 				}
 				break;
 			case USER_QSTRING:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(270); ((FileStringContext)_localctx).f = match(USER_QSTRING);
+				setState(270); _localctx.f = match(USER_QSTRING);
 
-				        	((FileStringContext)_localctx).result =  ((FileStringContext)_localctx).f.getText();
+				        	_localctx.result =  _localctx.f.getText();
 				        
 				}
 				break;
@@ -1022,9 +1031,9 @@ public class CFDGParser extends Parser {
 				enterOuterAlt(_localctx, 1);
 				{
 				setState(274); match(11);
-				setState(275); ((FileNameSpaceContext)_localctx).r = match(USER_STRING);
+				setState(275); _localctx.r = match(USER_STRING);
 				 
-				        	((FileNameSpaceContext)_localctx).result =  ((FileNameSpaceContext)_localctx).r.getText();
+				        	_localctx.result =  _localctx.r.getText();
 				        
 				}
 				break;
@@ -1033,7 +1042,7 @@ public class CFDGParser extends Parser {
 				enterOuterAlt(_localctx, 2);
 				{
 				 
-				        	((FileNameSpaceContext)_localctx).result =  null;
+				        	_localctx.result =  null;
 				        
 				}
 				break;
@@ -1090,20 +1099,20 @@ public class CFDGParser extends Parser {
 			case 1:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(280); ((Initialization_v3Context)_localctx).STARTSHAPE = match(STARTSHAPE);
-				setState(281); ((Initialization_v3Context)_localctx).s = match(USER_STRING);
-				setState(282); ((Initialization_v3Context)_localctx).p = parameter_spec();
-				setState(283); ((Initialization_v3Context)_localctx).m = modification();
+				setState(280); _localctx.STARTSHAPE = match(STARTSHAPE);
+				setState(281); _localctx.s = match(USER_STRING);
+				setState(282); _localctx.p = parameter_spec();
+				setState(283); _localctx.m = modification();
 
-				        	String name = ((Initialization_v3Context)_localctx).s.getText();
-				        	ASTExpression p = ((Initialization_v3Context)_localctx).p.result;
-				        	ASTModification mod = ((Initialization_v3Context)_localctx).m.result;
-				        	driver.setShape(null, ((Initialization_v3Context)_localctx).STARTSHAPE);
-				        	ASTDefine cfg = driver.makeDefinition(ECFGParam.StartShape.getName(), false, ((Initialization_v3Context)_localctx).STARTSHAPE);
+				        	String name = _localctx.s.getText();
+				        	ASTExpression p = _localctx.p.result;
+				        	ASTModification mod = _localctx.m.result;
+				        	driver.setShape(null, _localctx.STARTSHAPE);
+				        	ASTDefine cfg = driver.makeDefinition(ECFGParam.StartShape.getName(), false, _localctx.STARTSHAPE);
 				        	if (cfg != null) {
-				        		cfg.setExp(driver.makeRuleSpec(name, p, mod, true, ((Initialization_v3Context)_localctx).s));
+				        		cfg.setExp(driver.makeRuleSpec(name, p, mod, true, _localctx.s));
 				        	}
-				        	((Initialization_v3Context)_localctx).result =  cfg;
+				        	_localctx.result =  cfg;
 				        
 				}
 				break;
@@ -1111,18 +1120,18 @@ public class CFDGParser extends Parser {
 			case 2:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(286); ((Initialization_v3Context)_localctx).STARTSHAPE = match(STARTSHAPE);
-				setState(287); ((Initialization_v3Context)_localctx).s = match(USER_ARRAYNAME);
-				setState(288); ((Initialization_v3Context)_localctx).m = modification();
+				setState(286); _localctx.STARTSHAPE = match(STARTSHAPE);
+				setState(287); _localctx.s = match(USER_ARRAYNAME);
+				setState(288); _localctx.m = modification();
 
-				        	String name = ((Initialization_v3Context)_localctx).s.getText();
-				        	ASTModification mod = ((Initialization_v3Context)_localctx).m.result;
-				        	driver.setShape(null, ((Initialization_v3Context)_localctx).STARTSHAPE);
-				        	ASTDefine cfg = driver.makeDefinition(ECFGParam.StartShape.getName(), false, ((Initialization_v3Context)_localctx).STARTSHAPE);
+				        	String name = _localctx.s.getText();
+				        	ASTModification mod = _localctx.m.result;
+				        	driver.setShape(null, _localctx.STARTSHAPE);
+				        	ASTDefine cfg = driver.makeDefinition(ECFGParam.StartShape.getName(), false, _localctx.STARTSHAPE);
 				        	if (cfg != null) {
-				        		cfg.setExp(driver.makeRuleSpec(name, null, mod, true, ((Initialization_v3Context)_localctx).s));
+				        		cfg.setExp(driver.makeRuleSpec(name, null, mod, true, _localctx.s));
 				        	}
-				        	((Initialization_v3Context)_localctx).result =  cfg;
+				        	_localctx.result =  cfg;
 				        
 				}
 				break;
@@ -1130,18 +1139,18 @@ public class CFDGParser extends Parser {
 			case 3:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(291); ((Initialization_v3Context)_localctx).STARTSHAPE = match(STARTSHAPE);
-				setState(292); ((Initialization_v3Context)_localctx).s = match(USER_STRING);
-				setState(293); ((Initialization_v3Context)_localctx).p = parameter_spec();
+				setState(291); _localctx.STARTSHAPE = match(STARTSHAPE);
+				setState(292); _localctx.s = match(USER_STRING);
+				setState(293); _localctx.p = parameter_spec();
 
-				        	String name = ((Initialization_v3Context)_localctx).s.getText();
-				        	ASTExpression p = ((Initialization_v3Context)_localctx).p.result;
-				        	driver.setShape(null, ((Initialization_v3Context)_localctx).STARTSHAPE);
-				        	ASTDefine cfg = driver.makeDefinition(ECFGParam.StartShape.getName(), false, ((Initialization_v3Context)_localctx).STARTSHAPE);
+				        	String name = _localctx.s.getText();
+				        	ASTExpression p = _localctx.p.result;
+				        	driver.setShape(null, _localctx.STARTSHAPE);
+				        	ASTDefine cfg = driver.makeDefinition(ECFGParam.StartShape.getName(), false, _localctx.STARTSHAPE);
 				        	if (cfg != null) {
-				        		cfg.setExp(driver.makeRuleSpec(name, p, null, true, ((Initialization_v3Context)_localctx).s));
+				        		cfg.setExp(driver.makeRuleSpec(name, p, null, true, _localctx.s));
 				        	}
-				        	((Initialization_v3Context)_localctx).result =  cfg;
+				        	_localctx.result =  cfg;
 				        
 				}
 				break;
@@ -1184,16 +1193,16 @@ public class CFDGParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(298); ((Initialization_v2Context)_localctx).STARTSHAPE = match(STARTSHAPE);
-			setState(299); ((Initialization_v2Context)_localctx).s = match(USER_STRING);
+			setState(298); _localctx.STARTSHAPE = match(STARTSHAPE);
+			setState(299); _localctx.s = match(USER_STRING);
 
-			        	String name = ((Initialization_v2Context)_localctx).s.getText();
-			        	driver.setShape(null, ((Initialization_v2Context)_localctx).STARTSHAPE);
-			        	ASTDefine cfg = driver.makeDefinition(ECFGParam.StartShape.getName(), false, ((Initialization_v2Context)_localctx).STARTSHAPE);
+			        	String name = _localctx.s.getText();
+			        	driver.setShape(null, _localctx.STARTSHAPE);
+			        	ASTDefine cfg = driver.makeDefinition(ECFGParam.StartShape.getName(), false, _localctx.STARTSHAPE);
 			        	if (cfg != null) {
-			        		cfg.setExp(driver.makeRuleSpec(name, null, null, true, ((Initialization_v2Context)_localctx).s));
+			        		cfg.setExp(driver.makeRuleSpec(name, null, null, true, _localctx.s));
 			        	}
-			        	((Initialization_v2Context)_localctx).result =  cfg;
+			        	_localctx.result =  cfg;
 			        
 			}
 		}
@@ -1238,16 +1247,16 @@ public class CFDGParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(302); ((Directive_v2Context)_localctx).s = directive_string();
-			setState(303); ((Directive_v2Context)_localctx).m = modification_v2();
+			setState(302); _localctx.s = directive_string();
+			setState(303); _localctx.m = modification_v2();
 
-			        	ASTModification mod = ((Directive_v2Context)_localctx).m.result; 
-			            ASTDefine cfg = driver.makeDefinition(((Directive_v2Context)_localctx).s.result, false, (((Directive_v2Context)_localctx).s!=null?(((Directive_v2Context)_localctx).s.start):null));
+			        	ASTModification mod = _localctx.m.result; 
+			            ASTDefine cfg = driver.makeDefinition(_localctx.s.result, false, (_localctx.s!=null?(_localctx.s.start):null));
 			            if (cfg != null) {
 			                cfg.setExp(mod);
 			            }
 			            driver.setMaybeVersion("CFDG2");
-			        	((Directive_v2Context)_localctx).result =  cfg;
+			        	_localctx.result =  cfg;
 			        
 			}
 		}
@@ -1293,7 +1302,7 @@ public class CFDGParser extends Parser {
 				{
 				setState(306); match(BACKGROUND);
 				 
-				        	((Directive_stringContext)_localctx).result =  ECFGParam.Background.getName();
+				        	_localctx.result =  ECFGParam.Background.getName();
 				        
 				}
 				break;
@@ -1302,22 +1311,22 @@ public class CFDGParser extends Parser {
 				{
 				setState(308); match(TILE);
 				 
-				        	((Directive_stringContext)_localctx).result =  ECFGParam.Tile.getName();
+				        	_localctx.result =  ECFGParam.Tile.getName();
 				        
 				}
 				break;
 			case MODTYPE:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(310); ((Directive_stringContext)_localctx).t = match(MODTYPE);
+				setState(310); _localctx.t = match(MODTYPE);
 
-				        	if (EModType.size.name().equals(((Directive_stringContext)_localctx).t.getText())) {
-				                ((Directive_stringContext)_localctx).result =  ECFGParam.Size.getName();
-				        	} else if (EModType.time.name().equals(((Directive_stringContext)_localctx).t.getText())) {
-				                ((Directive_stringContext)_localctx).result =  ECFGParam.Time.getName();
+				        	if (EModType.size.name().equals(_localctx.t.getText())) {
+				                _localctx.result =  ECFGParam.Size.getName();
+				        	} else if (EModType.time.name().equals(_localctx.t.getText())) {
+				                _localctx.result =  ECFGParam.Time.getName();
 				        	} else {
-				                ((Directive_stringContext)_localctx).result =  ECFGParam.Size.getName();
-				                driver.error("Syntax error", ((Directive_stringContext)_localctx).t);
+				                _localctx.result =  ECFGParam.Size.getName();
+				                driver.error("Syntax error", _localctx.t);
 				        	} 
 				        
 				}
@@ -1365,12 +1374,12 @@ public class CFDGParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(314); ((ShapeContext)_localctx).SHAPE = match(SHAPE);
-			setState(315); ((ShapeContext)_localctx).s = match(USER_STRING);
+			setState(314); _localctx.SHAPE = match(SHAPE);
+			setState(315); _localctx.s = match(USER_STRING);
 			setState(316); parameter_list();
 
-			        	String name = ((ShapeContext)_localctx).s.getText(); 
-						driver.setShape(name, ((ShapeContext)_localctx).SHAPE);
+			        	String name = _localctx.s.getText(); 
+						driver.setShape(name, _localctx.SHAPE);
 			        
 			}
 		}
@@ -1412,11 +1421,11 @@ public class CFDGParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(319); ((Shape_singleton_headerContext)_localctx).s = shape();
-			setState(320); ((Shape_singleton_headerContext)_localctx).t = match(14);
+			setState(319); _localctx.s = shape();
+			setState(320); _localctx.t = match(14);
 
 			        	driver.setInPathContainer(false);
-			        	((Shape_singleton_headerContext)_localctx).result =  new ASTRule(-1, (((Shape_singleton_headerContext)_localctx).s!=null?(((Shape_singleton_headerContext)_localctx).s.start):null));
+			        	_localctx.result =  new ASTRule(-1, (_localctx.s!=null?(_localctx.s.start):null));
 			        	driver.addRule(_localctx.result);
 			        	driver.pushRepContainer(_localctx.result.getRuleBody());
 			        
@@ -1462,11 +1471,11 @@ public class CFDGParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(323); ((Shape_singletonContext)_localctx).s = shape_singleton_header();
+			setState(323); _localctx.s = shape_singleton_header();
 			setState(324); buncha_elements(0);
 			setState(325); match(16);
 
-			        	((Shape_singletonContext)_localctx).result =  ((Shape_singletonContext)_localctx).s.result;
+			        	_localctx.result =  _localctx.s.result;
 			        	driver.popRepContainer(_localctx.result);
 			        
 			}
@@ -1513,12 +1522,12 @@ public class CFDGParser extends Parser {
 			case 1:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(328); ((Rule_header_v2Context)_localctx).RULE = match(RULE);
-				setState(329); ((Rule_header_v2Context)_localctx).s = match(USER_STRING);
+				setState(328); _localctx.RULE = match(RULE);
+				setState(329); _localctx.s = match(USER_STRING);
 
-				        	String name = ((Rule_header_v2Context)_localctx).s.getText();
-				        	driver.setShape(null, ((Rule_header_v2Context)_localctx).RULE);
-				        	((Rule_header_v2Context)_localctx).result =  new ASTRule(driver.stringToShape(name, false, ((Rule_header_v2Context)_localctx).RULE), ((Rule_header_v2Context)_localctx).RULE);
+				        	String name = _localctx.s.getText();
+				        	driver.setShape(null, _localctx.RULE);
+				        	_localctx.result =  new ASTRule(driver.stringToShape(name, false, _localctx.RULE), _localctx.RULE);
 				        	driver.addRule(_localctx.result);
 				        	driver.pushRepContainer(_localctx.result.getRuleBody());
 				        
@@ -1528,14 +1537,14 @@ public class CFDGParser extends Parser {
 			case 2:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(331); ((Rule_header_v2Context)_localctx).RULE = match(RULE);
-				setState(332); ((Rule_header_v2Context)_localctx).s = match(USER_STRING);
-				setState(333); ((Rule_header_v2Context)_localctx).w = match(USER_RATIONAL);
+				setState(331); _localctx.RULE = match(RULE);
+				setState(332); _localctx.s = match(USER_STRING);
+				setState(333); _localctx.w = match(USER_RATIONAL);
 
-				        	String name = ((Rule_header_v2Context)_localctx).s.getText();
-				        	String weight = ((Rule_header_v2Context)_localctx).w.getText();
-				        	driver.setShape(null, ((Rule_header_v2Context)_localctx).RULE);
-				        	((Rule_header_v2Context)_localctx).result =  new ASTRule(driver.stringToShape(name, false, ((Rule_header_v2Context)_localctx).RULE), Float.parseFloat(weight), weight.indexOf("\u0025") != -1, ((Rule_header_v2Context)_localctx).RULE);
+				        	String name = _localctx.s.getText();
+				        	String weight = _localctx.w.getText();
+				        	driver.setShape(null, _localctx.RULE);
+				        	_localctx.result =  new ASTRule(driver.stringToShape(name, false, _localctx.RULE), Float.parseFloat(weight), weight.indexOf("\u0025") != -1, _localctx.RULE);
 				        	driver.addRule(_localctx.result);
 				        	driver.pushRepContainer(_localctx.result.getRuleBody());
 				        
@@ -1583,14 +1592,14 @@ public class CFDGParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(337); ((Rule_v2Context)_localctx).h = rule_header_v2();
+			setState(337); _localctx.h = rule_header_v2();
 			setState(338); match(14);
 			setState(339); buncha_replacements_v2();
 			setState(340); match(16);
 
 			            driver.setMaybeVersion("CFDG2");
-			        	((Rule_v2Context)_localctx).result =  ((Rule_v2Context)_localctx).h.result;
-			        	driver.popRepContainer(((Rule_v2Context)_localctx).h.result);
+			        	_localctx.result =  _localctx.h.result;
+			        	driver.popRepContainer(_localctx.h.result);
 			        
 			}
 		}
@@ -1634,10 +1643,10 @@ public class CFDGParser extends Parser {
 			case 1:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(343); ((Rule_headerContext)_localctx).RULE = match(RULE);
+				setState(343); _localctx.RULE = match(RULE);
 
 				        	driver.setInPathContainer(false);
-				        	((Rule_headerContext)_localctx).result =  new ASTRule(-1, ((Rule_headerContext)_localctx).RULE);
+				        	_localctx.result =  new ASTRule(-1, _localctx.RULE);
 				        	driver.addRule(_localctx.result);
 				        	driver.pushRepContainer(_localctx.result.getRuleBody());
 				        
@@ -1647,12 +1656,12 @@ public class CFDGParser extends Parser {
 			case 2:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(345); ((Rule_headerContext)_localctx).RULE = match(RULE);
-				setState(346); ((Rule_headerContext)_localctx).w = match(USER_RATIONAL);
+				setState(345); _localctx.RULE = match(RULE);
+				setState(346); _localctx.w = match(USER_RATIONAL);
 
 				        	driver.setInPathContainer(false);
-				        	String weight = ((Rule_headerContext)_localctx).w.getText();
-				        	((Rule_headerContext)_localctx).result =  new ASTRule(-1, Float.parseFloat(weight), weight.indexOf("\u0025") != -1, ((Rule_headerContext)_localctx).RULE);
+				        	String weight = _localctx.w.getText();
+				        	_localctx.result =  new ASTRule(-1, Float.parseFloat(weight), weight.indexOf("\u0025") != -1, _localctx.RULE);
 				        	driver.addRule(_localctx.result);
 				        	driver.pushRepContainer(_localctx.result.getRuleBody());
 				        
@@ -1700,14 +1709,14 @@ public class CFDGParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(350); ((Path_headerContext)_localctx).PATH = match(PATH);
-			setState(351); ((Path_headerContext)_localctx).s = match(USER_STRING);
+			setState(350); _localctx.PATH = match(PATH);
+			setState(351); _localctx.s = match(USER_STRING);
 			setState(352); parameter_list();
 
-			        	String name = ((Path_headerContext)_localctx).s.getText();
-			        	driver.setShape(null, ((Path_headerContext)_localctx).PATH);
+			        	String name = _localctx.s.getText();
+			        	driver.setShape(null, _localctx.PATH);
 			        	driver.setInPathContainer(true);
-			        	((Path_headerContext)_localctx).result =  new ASTRule(-1, ((Path_headerContext)_localctx).PATH);
+			        	_localctx.result =  new ASTRule(-1, _localctx.PATH);
 			        	_localctx.result.setPath(true);
 			        	driver.addRule(_localctx.result);
 			        	driver.pushRepContainer(_localctx.result.getRuleBody());
@@ -1754,12 +1763,12 @@ public class CFDGParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(355); ((Rule_v3Context)_localctx).h = rule_header();
+			setState(355); _localctx.h = rule_header();
 			setState(356); match(14);
 			setState(357); buncha_elements(0);
 			setState(358); match(16);
 
-			        	((Rule_v3Context)_localctx).result =  ((Rule_v3Context)_localctx).h.result;
+			        	_localctx.result =  _localctx.h.result;
 			        	driver.popRepContainer(_localctx.result);
 			        	driver.setInPathContainer(false);
 			        
@@ -1805,15 +1814,15 @@ public class CFDGParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(361); ((PathContext)_localctx).h = path_header();
+			setState(361); _localctx.h = path_header();
 			setState(362); match(14);
 			setState(363); buncha_elements(0);
 			setState(364); match(16);
 
-			        	((PathContext)_localctx).result =  ((PathContext)_localctx).h.result;
+			        	_localctx.result =  _localctx.h.result;
 			        	driver.popRepContainer(_localctx.result);
 			        	driver.setInPathContainer(false);
-			        	driver.setShape(null, (((PathContext)_localctx).h!=null?(((PathContext)_localctx).h.start):null));
+			        	driver.setShape(null, (_localctx.h!=null?(_localctx.h.start):null));
 			        
 			}
 		}
@@ -1854,12 +1863,12 @@ public class CFDGParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(367); ((Path_header_v2Context)_localctx).PATH = match(PATH);
-			setState(368); ((Path_header_v2Context)_localctx).s = match(USER_STRING);
+			setState(367); _localctx.PATH = match(PATH);
+			setState(368); _localctx.s = match(USER_STRING);
 
-			        	String name = ((Path_header_v2Context)_localctx).s.getText();
-			        	driver.setShape(null, ((Path_header_v2Context)_localctx).PATH);
-			        	((Path_header_v2Context)_localctx).result =  new ASTRule(driver.stringToShape(name, false, ((Path_header_v2Context)_localctx).PATH), ((Path_header_v2Context)_localctx).PATH);
+			        	String name = _localctx.s.getText();
+			        	driver.setShape(null, _localctx.PATH);
+			        	_localctx.result =  new ASTRule(driver.stringToShape(name, false, _localctx.PATH), _localctx.PATH);
 			        	_localctx.result.setPath(true);
 			        	driver.addRule(_localctx.result);
 			        	driver.pushRepContainer(_localctx.result.getRuleBody());
@@ -1907,12 +1916,12 @@ public class CFDGParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(371); ((Path_v2Context)_localctx).r = path_header_v2();
+			setState(371); _localctx.r = path_header_v2();
 			setState(372); match(14);
 			setState(373); buncha_pathOps_v2(0);
 			setState(374); match(16);
 
-			            ((Path_v2Context)_localctx).result =  ((Path_v2Context)_localctx).r.result;
+			            _localctx.result =  _localctx.r.result;
 			            driver.popRepContainer(_localctx.result);
 			        
 			}
@@ -1962,12 +1971,12 @@ public class CFDGParser extends Parser {
 			case 1:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(377); ((ParameterContext)_localctx).t = match(USER_STRING);
-				setState(378); ((ParameterContext)_localctx).v = match(USER_STRING);
+				setState(377); _localctx.t = match(USER_STRING);
+				setState(378); _localctx.v = match(USER_STRING);
 
-							String type = ((ParameterContext)_localctx).t.getText();
-							String var = ((ParameterContext)_localctx).v.getText();
-							driver.nextParameterDecl(type, var, ((ParameterContext)_localctx).t);
+							String type = _localctx.t.getText();
+							String var = _localctx.v.getText();
+							driver.nextParameterDecl(type, var, _localctx.t);
 				        
 				}
 				break;
@@ -1975,11 +1984,11 @@ public class CFDGParser extends Parser {
 			case 2:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(380); ((ParameterContext)_localctx).SHAPE = match(SHAPE);
-				setState(381); ((ParameterContext)_localctx).v = match(USER_STRING);
+				setState(380); _localctx.SHAPE = match(SHAPE);
+				setState(381); _localctx.v = match(USER_STRING);
 
-							String var = ((ParameterContext)_localctx).v.getText();
-							driver.nextParameterDecl("shape", var, ((ParameterContext)_localctx).SHAPE);
+							String var = _localctx.v.getText();
+							driver.nextParameterDecl("shape", var, _localctx.SHAPE);
 				        
 				}
 				break;
@@ -1987,10 +1996,10 @@ public class CFDGParser extends Parser {
 			case 3:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(383); ((ParameterContext)_localctx).v = match(USER_STRING);
+				setState(383); _localctx.v = match(USER_STRING);
 				setState(384); match(MODTYPE);
 
-				        	driver.error("Reserved keyword: adjustment", ((ParameterContext)_localctx).v);
+				        	driver.error("Reserved keyword: adjustment", _localctx.v);
 				        
 				}
 				break;
@@ -1998,10 +2007,10 @@ public class CFDGParser extends Parser {
 			case 4:
 				enterOuterAlt(_localctx, 4);
 				{
-				setState(386); ((ParameterContext)_localctx).SHAPE = match(SHAPE);
+				setState(386); _localctx.SHAPE = match(SHAPE);
 				setState(387); match(MODTYPE);
 
-				        	driver.error("Reserved keyword: adjustment", ((ParameterContext)_localctx).SHAPE);
+				        	driver.error("Reserved keyword: adjustment", _localctx.SHAPE);
 				        
 				}
 				break;
@@ -2009,10 +2018,10 @@ public class CFDGParser extends Parser {
 			case 5:
 				enterOuterAlt(_localctx, 5);
 				{
-				setState(389); ((ParameterContext)_localctx).v = match(USER_STRING);
+				setState(389); _localctx.v = match(USER_STRING);
 
-							String var = ((ParameterContext)_localctx).v.getText();
-							driver.nextParameterDecl("number", var, ((ParameterContext)_localctx).v);
+							String var = _localctx.v.getText();
+							driver.nextParameterDecl("number", var, _localctx.v);
 				        
 				}
 				break;
@@ -2020,9 +2029,9 @@ public class CFDGParser extends Parser {
 			case 6:
 				enterOuterAlt(_localctx, 6);
 				{
-				setState(391); ((ParameterContext)_localctx).MODTYPE = match(MODTYPE);
+				setState(391); _localctx.MODTYPE = match(MODTYPE);
 
-				        	driver.error("Reserved keyword: adjustment", ((ParameterContext)_localctx).MODTYPE);
+				        	driver.error("Reserved keyword: adjustment", _localctx.MODTYPE);
 				        
 				}
 				break;
@@ -2264,10 +2273,10 @@ public class CFDGParser extends Parser {
 				enterOuterAlt(_localctx, 1);
 				{
 				setState(422); match(12);
-				setState(423); ((Parameter_specContext)_localctx).a = arglist();
+				setState(423); _localctx.a = arglist();
 				setState(424); match(3);
 				 
-				        	((Parameter_specContext)_localctx).result =  ((Parameter_specContext)_localctx).a.result;
+				        	_localctx.result =  _localctx.a.result;
 				        
 				}
 				break;
@@ -2275,11 +2284,11 @@ public class CFDGParser extends Parser {
 			case 2:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(427); ((Parameter_specContext)_localctx).t = match(12);
+				setState(427); _localctx.t = match(12);
 				setState(428); match(BECOMES);
 				setState(429); match(3);
 				 
-				        	((Parameter_specContext)_localctx).result =  new ASTExpression(false, false, EExpType.ReuseType, ((Parameter_specContext)_localctx).t);
+				        	_localctx.result =  new ASTExpression(false, false, EExpType.ReuseType, _localctx.t);
 				        
 				}
 				break;
@@ -2290,7 +2299,7 @@ public class CFDGParser extends Parser {
 				setState(431); match(12);
 				setState(432); match(3);
 				 
-				        	((Parameter_specContext)_localctx).result =  null; 
+				        	_localctx.result =  null; 
 				        
 				}
 				break;
@@ -2299,7 +2308,7 @@ public class CFDGParser extends Parser {
 				enterOuterAlt(_localctx, 4);
 				{
 
-				        	((Parameter_specContext)_localctx).result =  null;
+				        	_localctx.result =  null;
 				        
 				}
 				break;
@@ -2369,9 +2378,9 @@ public class CFDGParser extends Parser {
 					pushNewRecursionContext(_localctx, _startState, RULE_buncha_elements);
 					setState(438);
 					if (!(precpred(_ctx, 2))) throw new FailedPredicateException(this, "precpred(_ctx, 2)");
-					setState(439); ((Buncha_elementsContext)_localctx).r = element();
+					setState(439); _localctx.r = element();
 
-					                  	driver.pushRep(((Buncha_elementsContext)_localctx).r.result, false);
+					                  	driver.pushRep(_localctx.r.result, false);
 					                  
 					}
 					} 
@@ -2446,9 +2455,9 @@ public class CFDGParser extends Parser {
 					pushNewRecursionContext(_localctx, _startState, RULE_buncha_pathOps_v2);
 					setState(448);
 					if (!(precpred(_ctx, 2))) throw new FailedPredicateException(this, "precpred(_ctx, 2)");
-					setState(449); ((Buncha_pathOps_v2Context)_localctx).r = pathOp_v2();
+					setState(449); _localctx.r = pathOp_v2();
 
-					                  	driver.pushRep(((Buncha_pathOps_v2Context)_localctx).r.result, false);
+					                  	driver.pushRep(_localctx.r.result, false);
 					                  
 					}
 					} 
@@ -2509,15 +2518,15 @@ public class CFDGParser extends Parser {
 			case USER_PATHOP:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(457); ((PathOp_simple_v2Context)_localctx).o = match(USER_PATHOP);
+				setState(457); _localctx.o = match(USER_PATHOP);
 				setState(458); match(14);
-				setState(459); ((PathOp_simple_v2Context)_localctx).a = buncha_adjustments(0);
+				setState(459); _localctx.a = buncha_adjustments(0);
 				setState(460); match(16);
 
-				        	String pop = ((PathOp_simple_v2Context)_localctx).o.getText();
-				        	ASTModification mod = ((PathOp_simple_v2Context)_localctx).a.result;
+				        	String pop = _localctx.o.getText();
+				        	ASTModification mod = _localctx.a.result;
 				            driver.setMaybeVersion("CFDG2");
-				        	((PathOp_simple_v2Context)_localctx).result =  new ASTPathOp(pop, mod, ((PathOp_simple_v2Context)_localctx).o);
+				        	_localctx.result =  new ASTPathOp(pop, mod, _localctx.o);
 				        
 				}
 				break;
@@ -2525,13 +2534,13 @@ public class CFDGParser extends Parser {
 			case USER_ARRAYNAME:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(463); ((PathOp_simple_v2Context)_localctx).s = shapeName();
-				setState(464); ((PathOp_simple_v2Context)_localctx).m = modification_v2();
+				setState(463); _localctx.s = shapeName();
+				setState(464); _localctx.m = modification_v2();
 
-				        	String cmd = ((PathOp_simple_v2Context)_localctx).s.result;
-				        	ASTModification mod = ((PathOp_simple_v2Context)_localctx).m.result;
+				        	String cmd = _localctx.s.result;
+				        	ASTModification mod = _localctx.m.result;
 				            driver.setMaybeVersion("CFDG2");
-				        	((PathOp_simple_v2Context)_localctx).result =  new ASTPathCommand(cmd, mod, null, (((PathOp_simple_v2Context)_localctx).s!=null?(((PathOp_simple_v2Context)_localctx).s.start):null));
+				        	_localctx.result =  new ASTPathCommand(cmd, mod, null, (_localctx.s!=null?(_localctx.s.start):null));
 				        
 				}
 				break;
@@ -2607,14 +2616,14 @@ public class CFDGParser extends Parser {
 			case 1:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(469); ((Element_simpleContext)_localctx).o = match(USER_PATHOP);
+				setState(469); _localctx.o = match(USER_PATHOP);
 				setState(470); match(12);
-				setState(471); ((Element_simpleContext)_localctx).e = exp2();
+				setState(471); _localctx.e = exp2();
 				setState(472); match(3);
 
-				        	String pop = ((Element_simpleContext)_localctx).o.getText();
-				        	ASTExpression exp = ((Element_simpleContext)_localctx).e.result;
-				        	((Element_simpleContext)_localctx).result =  new ASTPathOp(pop, exp, ((Element_simpleContext)_localctx).o);
+				        	String pop = _localctx.o.getText();
+				        	ASTExpression exp = _localctx.e.result;
+				        	_localctx.result =  new ASTPathOp(pop, exp, _localctx.o);
 				        
 				}
 				break;
@@ -2622,12 +2631,12 @@ public class CFDGParser extends Parser {
 			case 2:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(475); ((Element_simpleContext)_localctx).o = match(USER_PATHOP);
+				setState(475); _localctx.o = match(USER_PATHOP);
 				setState(476); match(12);
 				setState(477); match(3);
 
-				        	String operator = ((Element_simpleContext)_localctx).o.getText();
-				        	((Element_simpleContext)_localctx).result =  new ASTPathOp(operator, null, ((Element_simpleContext)_localctx).o);
+				        	String operator = _localctx.o.getText();
+				        	_localctx.result =  new ASTPathOp(operator, null, _localctx.o);
 				        
 				}
 				break;
@@ -2635,14 +2644,14 @@ public class CFDGParser extends Parser {
 			case 3:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(479); ((Element_simpleContext)_localctx).s = shapeName();
-				setState(480); ((Element_simpleContext)_localctx).p = parameter_spec();
-				setState(481); ((Element_simpleContext)_localctx).m = modification();
+				setState(479); _localctx.s = shapeName();
+				setState(480); _localctx.p = parameter_spec();
+				setState(481); _localctx.m = modification();
 
-				        	String cmd = ((Element_simpleContext)_localctx).s.result;
-				        	ASTExpression p = ((Element_simpleContext)_localctx).p.result;
-				        	ASTModification mod = ((Element_simpleContext)_localctx).m.result;
-				        	((Element_simpleContext)_localctx).result =  driver.makeElement(cmd, mod, p, false, (((Element_simpleContext)_localctx).s!=null?(((Element_simpleContext)_localctx).s.start):null));
+				        	String cmd = _localctx.s.result;
+				        	ASTExpression p = _localctx.p.result;
+				        	ASTModification mod = _localctx.m.result;
+				        	_localctx.result =  driver.makeElement(cmd, mod, p, false, (_localctx.s!=null?(_localctx.s.start):null));
 				        
 				}
 				break;
@@ -2650,16 +2659,16 @@ public class CFDGParser extends Parser {
 			case 4:
 				enterOuterAlt(_localctx, 4);
 				{
-				setState(484); ((Element_simpleContext)_localctx).IF = match(IF);
+				setState(484); _localctx.IF = match(IF);
 				setState(485); match(12);
-				setState(486); ((Element_simpleContext)_localctx).e = exp2();
+				setState(486); _localctx.e = exp2();
 				setState(487); match(3);
-				setState(488); ((Element_simpleContext)_localctx).m = modification();
+				setState(488); _localctx.m = modification();
 
-				        	ASTExpression args = ((Element_simpleContext)_localctx).e.result;
-				        	ASTModification mod = ((Element_simpleContext)_localctx).m.result;
-				        	args = driver.makeFunction("if", args, false, ((Element_simpleContext)_localctx).IF);
-				        	((Element_simpleContext)_localctx).result =  driver.makeElement("if", mod, args, false, ((Element_simpleContext)_localctx).IF);
+				        	ASTExpression args = _localctx.e.result;
+				        	ASTModification mod = _localctx.m.result;
+				        	args = driver.makeFunction("if", args, false, _localctx.IF);
+				        	_localctx.result =  driver.makeElement("if", mod, args, false, _localctx.IF);
 				        
 				}
 				break;
@@ -2667,15 +2676,15 @@ public class CFDGParser extends Parser {
 			case 5:
 				enterOuterAlt(_localctx, 5);
 				{
-				setState(491); ((Element_simpleContext)_localctx).h = letHeader();
-				setState(492); ((Element_simpleContext)_localctx).b = letBody();
-				setState(493); ((Element_simpleContext)_localctx).m = modification();
+				setState(491); _localctx.h = letHeader();
+				setState(492); _localctx.b = letBody();
+				setState(493); _localctx.m = modification();
 
-				        	ASTRepContainer vars = ((Element_simpleContext)_localctx).h.result;
-				        	ASTExpression exp = ((Element_simpleContext)_localctx).b.result;
-				        	ASTModification mod = ((Element_simpleContext)_localctx).m.result;
-				        	exp = driver.makeLet(vars, exp, (((Element_simpleContext)_localctx).h!=null?(((Element_simpleContext)_localctx).h.start):null));
-				        	((Element_simpleContext)_localctx).result =  driver.makeElement("let", mod, exp, false, (((Element_simpleContext)_localctx).m!=null?(((Element_simpleContext)_localctx).m.start):null));
+				        	ASTRepContainer vars = _localctx.h.result;
+				        	ASTExpression exp = _localctx.b.result;
+				        	ASTModification mod = _localctx.m.result;
+				        	exp = driver.makeLet(vars, exp, (_localctx.h!=null?(_localctx.h.start):null));
+				        	_localctx.result =  driver.makeElement("let", mod, exp, false, (_localctx.m!=null?(_localctx.m.start):null));
 				        
 				}
 				break;
@@ -2683,15 +2692,15 @@ public class CFDGParser extends Parser {
 			case 6:
 				enterOuterAlt(_localctx, 6);
 				{
-				setState(496); ((Element_simpleContext)_localctx).PATH = match(PATH);
-				setState(497); ((Element_simpleContext)_localctx).n = match(USER_STRING);
-				setState(498); ((Element_simpleContext)_localctx).p = parameter_spec();
-				setState(499); ((Element_simpleContext)_localctx).m = modification();
+				setState(496); _localctx.PATH = match(PATH);
+				setState(497); _localctx.n = match(USER_STRING);
+				setState(498); _localctx.p = parameter_spec();
+				setState(499); _localctx.m = modification();
 
-				        	String cmd = ((Element_simpleContext)_localctx).n.getText();
-				        	ASTExpression p = ((Element_simpleContext)_localctx).p.result;
-				        	ASTModification mod = ((Element_simpleContext)_localctx).m.result;
-				        	((Element_simpleContext)_localctx).result =  driver.makeElement(cmd, mod, p, true, ((Element_simpleContext)_localctx).PATH);
+				        	String cmd = _localctx.n.getText();
+				        	ASTExpression p = _localctx.p.result;
+				        	ASTModification mod = _localctx.m.result;
+				        	_localctx.result =  driver.makeElement(cmd, mod, p, true, _localctx.PATH);
 				        
 				}
 				break;
@@ -2753,9 +2762,9 @@ public class CFDGParser extends Parser {
 			case USER_ARRAYNAME:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(509); ((One_or_more_elementsContext)_localctx).r = element_simple();
+				setState(509); _localctx.r = element_simple();
 
-				        	driver.pushRep(((One_or_more_elementsContext)_localctx).r.result, false);
+				        	driver.pushRep(_localctx.r.result, false);
 				        
 				}
 				break;
@@ -2816,9 +2825,9 @@ public class CFDGParser extends Parser {
 			case USER_ARRAYNAME:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(519); ((One_or_more_pathOp_v2Context)_localctx).r = pathOp_simple_v2();
+				setState(519); _localctx.r = pathOp_simple_v2();
 
-				        	driver.pushRep(((One_or_more_pathOp_v2Context)_localctx).r.result, false);
+				        	driver.pushRep(_localctx.r.result, false);
 				        
 				}
 				break;
@@ -2920,7 +2929,7 @@ public class CFDGParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(530); ((CaseBody_elementContext)_localctx).h = caseHeader();
+			setState(530); _localctx.h = caseHeader();
 			setState(531); one_or_more_elements();
 
 			        	driver.popRepContainer(driver.getSwitchStack().lastElement());
@@ -3001,9 +3010,9 @@ public class CFDGParser extends Parser {
 			case 1:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(534); ((ElementContext)_localctx).r = element_simple();
+				setState(534); _localctx.r = element_simple();
 				 
-				        	((ElementContext)_localctx).result =  ((ElementContext)_localctx).r.result; 
+				        	_localctx.result =  _localctx.r.result; 
 				        
 				}
 				break;
@@ -3013,7 +3022,7 @@ public class CFDGParser extends Parser {
 				{
 				setState(537); definition();
 				 
-				        	((ElementContext)_localctx).result =  null;
+				        	_localctx.result =  null;
 				        
 				}
 				break;
@@ -3021,12 +3030,12 @@ public class CFDGParser extends Parser {
 			case 3:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(540); ((ElementContext)_localctx).rl = element_loop();
+				setState(540); _localctx.rl = element_loop();
 				 
-				        	((ElementContext)_localctx).result =  ((ElementContext)_localctx).rl.result; 
+				        	_localctx.result =  _localctx.rl.result; 
 				        	driver.popRepContainer(_localctx.result);
 				        	if (_localctx.result.getRepType().getType() == 0) {
-					        	((ElementContext)_localctx).result =  null; 
+					        	_localctx.result =  null; 
 				        	}
 				        
 				}
@@ -3035,18 +3044,18 @@ public class CFDGParser extends Parser {
 			case 4:
 				enterOuterAlt(_localctx, 4);
 				{
-				setState(543); ((ElementContext)_localctx).rl = element_loop();
+				setState(543); _localctx.rl = element_loop();
 				setState(544); match(FINALLY);
 
-				        	driver.popRepContainer(((ElementContext)_localctx).rl.result);
-				        	driver.pushRepContainer(((ASTLoop) ((ElementContext)_localctx).rl.result).getFinallyBody());
+				        	driver.popRepContainer(_localctx.rl.result);
+				        	driver.pushRepContainer(_localctx.rl.result.getFinallyBody());
 				        
 				setState(546); one_or_more_elements();
 
 				        	driver.popRepContainer(_localctx.result);
-				        	((ElementContext)_localctx).result =  ((ElementContext)_localctx).rl.result; 
+				        	_localctx.result =  _localctx.rl.result; 
 				        	if (_localctx.result.getRepType().getType() == 0) {
-					        	((ElementContext)_localctx).result =  null; 
+					        	_localctx.result =  null; 
 				        	}
 				        
 				}
@@ -3055,13 +3064,13 @@ public class CFDGParser extends Parser {
 			case 5:
 				enterOuterAlt(_localctx, 5);
 				{
-				setState(549); ((ElementContext)_localctx).ri = ifHeader();
+				setState(549); _localctx.ri = ifHeader();
 				setState(550); one_or_more_elements();
 
-				        	((ElementContext)_localctx).result =  ((ElementContext)_localctx).ri.result; 
+				        	_localctx.result =  _localctx.ri.result; 
 				        	driver.popRepContainer(_localctx.result);
 				        	if (_localctx.result.getRepType().getType() == 0) {
-					        	((ElementContext)_localctx).result =  null; 
+					        	_localctx.result =  null; 
 				        	}
 				        
 				}
@@ -3070,13 +3079,13 @@ public class CFDGParser extends Parser {
 			case 6:
 				enterOuterAlt(_localctx, 6);
 				{
-				setState(553); ((ElementContext)_localctx).rei = ifElseHeader();
+				setState(553); _localctx.rei = ifElseHeader();
 				setState(554); one_or_more_elements();
 
-				        	((ElementContext)_localctx).result =  ((ElementContext)_localctx).rei.result; 
+				        	_localctx.result =  _localctx.rei.result; 
 				        	driver.popRepContainer(_localctx.result);
 				        	if (_localctx.result.getRepType().getType() == 0) {
-					        	((ElementContext)_localctx).result =  null; 
+					        	_localctx.result =  null; 
 				        	}
 				        
 				}
@@ -3085,13 +3094,13 @@ public class CFDGParser extends Parser {
 			case 7:
 				enterOuterAlt(_localctx, 7);
 				{
-				setState(557); ((ElementContext)_localctx).rt = transHeader();
+				setState(557); _localctx.rt = transHeader();
 				setState(558); one_or_more_elements();
 
-				        	((ElementContext)_localctx).result =  ((ElementContext)_localctx).rt.result; 
+				        	_localctx.result =  _localctx.rt.result; 
 				        	driver.popRepContainer(_localctx.result);
 				        	if (_localctx.result.getRepType().getType() == 0) {
-					        	((ElementContext)_localctx).result =  null; 
+					        	_localctx.result =  null; 
 				        	}
 				        
 				}
@@ -3100,13 +3109,13 @@ public class CFDGParser extends Parser {
 			case 8:
 				enterOuterAlt(_localctx, 8);
 				{
-				setState(561); ((ElementContext)_localctx).rs = switchHeader();
+				setState(561); _localctx.rs = switchHeader();
 				setState(562); match(14);
 				setState(563); caseBody();
 				setState(564); match(16);
 
-				        	((ElementContext)_localctx).result =  ((ElementContext)_localctx).rs.result; 
-							((ElementContext)_localctx).rs.result.unify();
+				        	_localctx.result =  _localctx.rs.result; 
+							_localctx.rs.result.unify();
 				        	driver.getSwitchStack().pop();
 				        
 				}
@@ -3115,10 +3124,10 @@ public class CFDGParser extends Parser {
 			case 9:
 				enterOuterAlt(_localctx, 9);
 				{
-				setState(567); ((ElementContext)_localctx).element_v2clue = element_v2clue();
+				setState(567); _localctx.element_v2clue = element_v2clue();
 
-				            driver.error("Illegal mixture of old and new elements", (((ElementContext)_localctx).element_v2clue!=null?(((ElementContext)_localctx).element_v2clue.start):null));
-				            ((ElementContext)_localctx).result =  null;
+				            driver.error("Illegal mixture of old and new elements", (_localctx.element_v2clue!=null?(_localctx.element_v2clue.start):null));
+				            _localctx.result =  null;
 				        
 				}
 				break;
@@ -3235,9 +3244,9 @@ public class CFDGParser extends Parser {
 			case 1:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(580); ((PathOp_v2Context)_localctx).rp = pathOp_simple_v2();
+				setState(580); _localctx.rp = pathOp_simple_v2();
 				 
-				        	((PathOp_v2Context)_localctx).result =  ((PathOp_v2Context)_localctx).rp.result;
+				        	_localctx.result =  _localctx.rp.result;
 				        
 				}
 				break;
@@ -3245,13 +3254,13 @@ public class CFDGParser extends Parser {
 			case 2:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(583); ((PathOp_v2Context)_localctx).rl = loopHeader_v2();
+				setState(583); _localctx.rl = loopHeader_v2();
 				setState(584); one_or_more_pathOp_v2();
 				 
-				        	((PathOp_v2Context)_localctx).result =  ((PathOp_v2Context)_localctx).rl.result;
+				        	_localctx.result =  _localctx.rl.result;
 							driver.popRepContainer(_localctx.result);
 							if (_localctx.result.getRepType().getType() == 0) {
-								((PathOp_v2Context)_localctx).result =  null;			
+								_localctx.result =  null;			
 							}
 				        
 				}
@@ -3260,14 +3269,14 @@ public class CFDGParser extends Parser {
 			case 3:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(587); ((PathOp_v2Context)_localctx).pathOp_v3clues = pathOp_v3clues();
+				setState(587); _localctx.pathOp_v3clues = pathOp_v3clues();
 
 				            if (driver.getMaybeVersion().equals("CFDG2")) {
-				                driver.error("Illegal mixture of old and new elements", (((PathOp_v2Context)_localctx).pathOp_v3clues!=null?(((PathOp_v2Context)_localctx).pathOp_v3clues.start):null));
+				                driver.error("Illegal mixture of old and new elements", (_localctx.pathOp_v3clues!=null?(_localctx.pathOp_v3clues.start):null));
 				            } else {
 				                driver.setMaybeVersion("CFDG3");
 				            }
-				            ((PathOp_v2Context)_localctx).result =  null;
+				            _localctx.result =  null;
 				        
 				}
 				break;
@@ -3425,12 +3434,12 @@ public class CFDGParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(607); ((Element_loopContext)_localctx).h = loopHeader();
-			setState(608); ((Element_loopContext)_localctx).m = modification();
+			setState(607); _localctx.h = loopHeader();
+			setState(608); _localctx.m = modification();
 			setState(609); one_or_more_elements();
 
-			        	((Element_loopContext)_localctx).result =  ((Element_loopContext)_localctx).h.result;
-			        	_localctx.result.setLoopHolder(((Element_loopContext)_localctx).m.result);
+			        	_localctx.result =  _localctx.h.result;
+			        	_localctx.result.setLoopHolder(_localctx.m.result);
 			        
 			}
 		}
@@ -3478,10 +3487,10 @@ public class CFDGParser extends Parser {
 			case USER_ARRAYNAME:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(612); ((Buncha_replacements_v2Context)_localctx).r = replacement_v2();
+				setState(612); _localctx.r = replacement_v2();
 				setState(613); buncha_replacements_v2();
 
-				        	driver.pushRep(((Buncha_replacements_v2Context)_localctx).r.result, false);
+				        	driver.pushRep(_localctx.r.result, false);
 				        
 				}
 				break;
@@ -3547,9 +3556,9 @@ public class CFDGParser extends Parser {
 			case USER_ARRAYNAME:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(624); ((One_or_more_replacements_v2Context)_localctx).r = replacement_simple_v2();
+				setState(624); _localctx.r = replacement_simple_v2();
 
-				        	driver.pushRep(((One_or_more_replacements_v2Context)_localctx).r.result, false);
+				        	driver.pushRep(_localctx.r.result, false);
 				        
 				}
 				break;
@@ -3598,13 +3607,13 @@ public class CFDGParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(629); ((Replacement_simple_v2Context)_localctx).s = shapeName();
-			setState(630); ((Replacement_simple_v2Context)_localctx).m = modification_v2();
+			setState(629); _localctx.s = shapeName();
+			setState(630); _localctx.m = modification_v2();
 
-			        	String name = ((Replacement_simple_v2Context)_localctx).s.result;
-			        	ASTModification mod = ((Replacement_simple_v2Context)_localctx).m.result;
-			        	ASTRuleSpecifier r = driver.makeRuleSpec(name, null, (((Replacement_simple_v2Context)_localctx).s!=null?(((Replacement_simple_v2Context)_localctx).s.start):null));
-			        	((Replacement_simple_v2Context)_localctx).result =  new ASTReplacement(r, mod, (((Replacement_simple_v2Context)_localctx).s!=null?(((Replacement_simple_v2Context)_localctx).s.start):null));
+			        	String name = _localctx.s.result;
+			        	ASTModification mod = _localctx.m.result;
+			        	ASTRuleSpecifier r = driver.makeRuleSpec(name, null, (_localctx.s!=null?(_localctx.s.start):null));
+			        	_localctx.result =  new ASTReplacement(r, mod, (_localctx.s!=null?(_localctx.s.start):null));
 			        
 			}
 		}
@@ -3656,22 +3665,22 @@ public class CFDGParser extends Parser {
 			case USER_ARRAYNAME:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(633); ((Replacement_v2Context)_localctx).r = replacement_simple_v2();
+				setState(633); _localctx.r = replacement_simple_v2();
 				 
-				        	((Replacement_v2Context)_localctx).result =  ((Replacement_v2Context)_localctx).r.result;
+				        	_localctx.result =  _localctx.r.result;
 				        
 				}
 				break;
 			case USER_RATIONAL:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(636); ((Replacement_v2Context)_localctx).rl = loopHeader_v2();
+				setState(636); _localctx.rl = loopHeader_v2();
 				setState(637); one_or_more_replacements_v2();
 
-				        	((Replacement_v2Context)_localctx).result =  ((Replacement_v2Context)_localctx).rl.result;
+				        	_localctx.result =  _localctx.rl.result;
 							driver.popRepContainer(_localctx.result);
 							if (_localctx.result.getRepType().getType() == 0) {
-					        	((Replacement_v2Context)_localctx).result =  null;			
+					        	_localctx.result =  null;			
 							}
 				        
 				}
@@ -3719,19 +3728,19 @@ public class CFDGParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(642); ((LoopHeader_v2Context)_localctx).r = match(USER_RATIONAL);
+			setState(642); _localctx.r = match(USER_RATIONAL);
 			setState(643); match(7);
 			 
 			        	driver.incSwitchStack();
 			        
-			setState(645); ((LoopHeader_v2Context)_localctx).m = modification_v2();
+			setState(645); _localctx.m = modification_v2();
 
-			        	ASTExpression count = new ASTReal(Float.parseFloat(((LoopHeader_v2Context)_localctx).r.getText()), ((LoopHeader_v2Context)_localctx).r);
-			        	ASTModification mod = ((LoopHeader_v2Context)_localctx).m.result;
+			        	ASTExpression count = new ASTReal(Float.parseFloat(_localctx.r.getText()), _localctx.r);
+			        	ASTModification mod = _localctx.m.result;
 			        	driver.decSwitchStack();
 			            driver.setMaybeVersion("CFDG2");
 			            String dummyvar = "~~inaccessiblevar~~";
-			        	((LoopHeader_v2Context)_localctx).result =  new ASTLoop(driver.stringToShape(dummyvar, false, (((LoopHeader_v2Context)_localctx).m!=null?(((LoopHeader_v2Context)_localctx).m.start):null)), dummyvar, count, mod, (((LoopHeader_v2Context)_localctx).m!=null?(((LoopHeader_v2Context)_localctx).m.start):null));
+			        	_localctx.result =  new ASTLoop(driver.stringToShape(dummyvar, false, (_localctx.m!=null?(_localctx.m.start):null)), dummyvar, count, mod, (_localctx.m!=null?(_localctx.m.start):null));
 			        	driver.pushRepContainer(_localctx.result.getLoopBody());
 			        
 			}
@@ -3783,14 +3792,14 @@ public class CFDGParser extends Parser {
 			case 1:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(648); ((LoopHeaderContext)_localctx).LOOP = match(LOOP);
-				setState(649); ((LoopHeaderContext)_localctx).v = match(USER_STRING);
+				setState(648); _localctx.LOOP = match(LOOP);
+				setState(649); _localctx.v = match(USER_STRING);
 				setState(650); match(BECOMES);
-				setState(651); ((LoopHeaderContext)_localctx).i = exp2();
+				setState(651); _localctx.i = exp2();
 
-				        	String var = ((LoopHeaderContext)_localctx).v.getText();
-				        	ASTExpression index = ((LoopHeaderContext)_localctx).i.result;
-				        	((LoopHeaderContext)_localctx).result =  new ASTLoop(driver.stringToShape(var, false, ((LoopHeaderContext)_localctx).LOOP), var, index, null, ((LoopHeaderContext)_localctx).LOOP);
+				        	String var = _localctx.v.getText();
+				        	ASTExpression index = _localctx.i.result;
+				        	_localctx.result =  new ASTLoop(driver.stringToShape(var, false, _localctx.LOOP), var, index, null, _localctx.LOOP);
 				        	driver.pushRepContainer(_localctx.result.getLoopBody());
 				        
 				}
@@ -3799,14 +3808,14 @@ public class CFDGParser extends Parser {
 			case 2:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(654); ((LoopHeaderContext)_localctx).LOOP = match(LOOP);
+				setState(654); _localctx.LOOP = match(LOOP);
 				setState(655); match(MODTYPE);
 				setState(656); match(BECOMES);
-				setState(657); ((LoopHeaderContext)_localctx).c = exp2();
+				setState(657); _localctx.c = exp2();
 
-				        	ASTExpression index = ((LoopHeaderContext)_localctx).c.result;
+				        	ASTExpression index = _localctx.c.result;
 				            String dummyvar = "~~inaccessiblevar~~";
-				        	((LoopHeaderContext)_localctx).result =  new ASTLoop(driver.stringToShape(dummyvar, false, ((LoopHeaderContext)_localctx).LOOP), dummyvar, index, null, ((LoopHeaderContext)_localctx).LOOP);
+				        	_localctx.result =  new ASTLoop(driver.stringToShape(dummyvar, false, _localctx.LOOP), dummyvar, index, null, _localctx.LOOP);
 				        	driver.pushRepContainer(_localctx.result.getLoopBody());
 				        
 				}
@@ -3815,12 +3824,12 @@ public class CFDGParser extends Parser {
 			case 3:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(660); ((LoopHeaderContext)_localctx).LOOP = match(LOOP);
-				setState(661); ((LoopHeaderContext)_localctx).c = exp2();
+				setState(660); _localctx.LOOP = match(LOOP);
+				setState(661); _localctx.c = exp2();
 
-				        	ASTExpression count = ((LoopHeaderContext)_localctx).c.result;
+				        	ASTExpression count = _localctx.c.result;
 				            String dummyvar = "~~inaccessiblevar~~";
-				        	((LoopHeaderContext)_localctx).result =  new ASTLoop(driver.stringToShape(dummyvar, false, ((LoopHeaderContext)_localctx).LOOP), dummyvar, count, null, ((LoopHeaderContext)_localctx).LOOP);
+				        	_localctx.result =  new ASTLoop(driver.stringToShape(dummyvar, false, _localctx.LOOP), dummyvar, count, null, _localctx.LOOP);
 				        	driver.pushRepContainer(_localctx.result.getLoopBody());
 				        
 				}
@@ -3866,13 +3875,13 @@ public class CFDGParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(666); ((IfHeaderContext)_localctx).IF = match(IF);
+			setState(666); _localctx.IF = match(IF);
 			setState(667); match(12);
-			setState(668); ((IfHeaderContext)_localctx).e = exp2();
+			setState(668); _localctx.e = exp2();
 			setState(669); match(3);
 
-			        	ASTExpression cond = ((IfHeaderContext)_localctx).e.result;
-			        	((IfHeaderContext)_localctx).result =  new ASTIf(cond, ((IfHeaderContext)_localctx).IF);
+			        	ASTExpression cond = _localctx.e.result;
+			        	_localctx.result =  new ASTIf(cond, _localctx.IF);
 			        	driver.pushRepContainer(_localctx.result.getThenBody());
 			        
 			}
@@ -3918,11 +3927,11 @@ public class CFDGParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(672); ((IfElseHeaderContext)_localctx).h = ifHeader();
+			setState(672); _localctx.h = ifHeader();
 			setState(673); one_or_more_elements();
 			setState(674); match(ELSE);
 
-			        	((IfElseHeaderContext)_localctx).result =  ((IfElseHeaderContext)_localctx).h.result;
+			        	_localctx.result =  _localctx.h.result;
 			        	driver.popRepContainer(_localctx.result);
 			        	driver.pushRepContainer(_localctx.result.getElseBody());
 			        
@@ -3972,14 +3981,14 @@ public class CFDGParser extends Parser {
 			case MODTYPE:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(677); ((TransHeaderContext)_localctx).t = match(MODTYPE);
-				setState(678); ((TransHeaderContext)_localctx).e = exp2();
+				setState(677); _localctx.t = match(MODTYPE);
+				setState(678); _localctx.e = exp2();
 
-				        	ASTExpression exp = ((TransHeaderContext)_localctx).e.result;
-				        	if (!((TransHeaderContext)_localctx).t.getText().equals(EModType.transform.name())) {
-				        		driver.error("Syntax error", ((TransHeaderContext)_localctx).t);
+				        	ASTExpression exp = _localctx.e.result;
+				        	if (!_localctx.t.getText().equals(EModType.transform.name())) {
+				        		driver.error("Syntax error", _localctx.t);
 				        	} 
-				        	((TransHeaderContext)_localctx).result =  new ASTTransform(exp, ((TransHeaderContext)_localctx).t);
+				        	_localctx.result =  new ASTTransform(exp, _localctx.t);
 				        	driver.pushRepContainer(_localctx.result.getBody());
 				        
 				}
@@ -3987,11 +3996,11 @@ public class CFDGParser extends Parser {
 			case CLONE:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(681); ((TransHeaderContext)_localctx).CLONE = match(CLONE);
-				setState(682); ((TransHeaderContext)_localctx).e = exp2();
+				setState(681); _localctx.CLONE = match(CLONE);
+				setState(682); _localctx.e = exp2();
 
-				        	ASTExpression exp = ((TransHeaderContext)_localctx).e.result;
-				        	((TransHeaderContext)_localctx).result =  new ASTTransform(exp, ((TransHeaderContext)_localctx).CLONE);
+				        	ASTExpression exp = _localctx.e.result;
+				        	_localctx.result =  new ASTTransform(exp, _localctx.CLONE);
 				        	driver.pushRepContainer(_localctx.result.getBody());
 				        	_localctx.result.setClone(true);
 				        
@@ -4040,13 +4049,13 @@ public class CFDGParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(687); ((SwitchHeaderContext)_localctx).SWITCH = match(SWITCH);
+			setState(687); _localctx.SWITCH = match(SWITCH);
 			setState(688); match(12);
-			setState(689); ((SwitchHeaderContext)_localctx).e = exp2();
+			setState(689); _localctx.e = exp2();
 			setState(690); match(3);
 
-			        	ASTExpression caseVal = ((SwitchHeaderContext)_localctx).e.result;
-			            ((SwitchHeaderContext)_localctx).result =  new ASTSwitch(caseVal, ((SwitchHeaderContext)_localctx).SWITCH);
+			        	ASTExpression caseVal = _localctx.e.result;
+			            _localctx.result =  new ASTSwitch(caseVal, _localctx.SWITCH);
 			            driver.getSwitchStack().push(_localctx.result);
 			        
 			}
@@ -4095,20 +4104,20 @@ public class CFDGParser extends Parser {
 			case CASE:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(693); ((CaseHeaderContext)_localctx).CASE = match(CASE);
-				setState(694); ((CaseHeaderContext)_localctx).e = exp2();
+				setState(693); _localctx.CASE = match(CASE);
+				setState(694); _localctx.e = exp2();
 				setState(695); match(10);
 
-				        	ASTExpression valExp = ((CaseHeaderContext)_localctx).e.result;
+				        	ASTExpression valExp = _localctx.e.result;
 				            double[] val = new double[] { 0.0 };
 				            try {
 				                if (valExp.evaluate(val, 1) != 1) {
-				                    driver.error("Case expression is not a single, numeric expression", ((CaseHeaderContext)_localctx).CASE);
+				                    driver.error("Case expression is not a single, numeric expression", _localctx.CASE);
 				                } else {
 				                	int intval = (int) Math.floor(val[0]);
 				                	Map<Integer, ASTRepContainer> caseMap = driver.getSwitchStack().peek().getCaseStatements();
 				                	if (caseMap.get(intval) != null) {
-				                		driver.error("Case value already in use", ((CaseHeaderContext)_localctx).CASE);
+				                		driver.error("Case value already in use", _localctx.CASE);
 				                		driver.pushRepContainer(caseMap.get(intval));
 				                	} else {
 				                		ASTRepContainer caseBody = new ASTRepContainer();
@@ -4118,24 +4127,24 @@ public class CFDGParser extends Parser {
 				                }
 				            }
 				            catch (DeferUntilRuntimeException e) {
-				                driver.error("Case expression is not constant", ((CaseHeaderContext)_localctx).CASE);
+				                driver.error("Case expression is not constant", _localctx.CASE);
 				            }
-				            ((CaseHeaderContext)_localctx).result =  0;
+				            _localctx.result =  0;
 				        
 				}
 				break;
 			case ELSE:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(698); ((CaseHeaderContext)_localctx).ELSE = match(ELSE);
+				setState(698); _localctx.ELSE = match(ELSE);
 				setState(699); match(10);
 
 				            if (!driver.getSwitchStack().peek().getElseBody().getBody().isEmpty()) {
-				                driver.error("There can only be one 'else:' clause", ((CaseHeaderContext)_localctx).ELSE);
+				                driver.error("There can only be one 'else:' clause", _localctx.ELSE);
 				            } else {
 				                driver.pushRepContainer(driver.getSwitchStack().peek().getElseBody());
 				            }
-				            ((CaseHeaderContext)_localctx).result =  0;
+				            _localctx.result =  0;
 				        
 				}
 				break;
@@ -4184,22 +4193,22 @@ public class CFDGParser extends Parser {
 			case 14:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(703); ((Modification_v2Context)_localctx).t = match(14);
-				setState(704); ((Modification_v2Context)_localctx).m = buncha_adjustments(0);
+				setState(703); _localctx.t = match(14);
+				setState(704); _localctx.m = buncha_adjustments(0);
 				setState(705); match(16);
 
-				        	((Modification_v2Context)_localctx).result =  driver.makeModification(((Modification_v2Context)_localctx).m.result, true, ((Modification_v2Context)_localctx).t);
+				        	_localctx.result =  driver.makeModification(_localctx.m.result, true, _localctx.t);
 				        
 				}
 				break;
 			case 8:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(708); ((Modification_v2Context)_localctx).t = match(8);
-				setState(709); ((Modification_v2Context)_localctx).m = buncha_adjustments(0);
+				setState(708); _localctx.t = match(8);
+				setState(709); _localctx.m = buncha_adjustments(0);
 				setState(710); match(1);
 
-				        	((Modification_v2Context)_localctx).result =  driver.makeModification(((Modification_v2Context)_localctx).m.result, false, ((Modification_v2Context)_localctx).t);
+				        	_localctx.result =  driver.makeModification(_localctx.m.result, false, _localctx.t);
 				        
 				}
 				break;
@@ -4248,11 +4257,11 @@ public class CFDGParser extends Parser {
 			case 1:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(715); ((ModificationContext)_localctx).t = match(8);
-				setState(716); ((ModificationContext)_localctx).m = buncha_adjustments(0);
+				setState(715); _localctx.t = match(8);
+				setState(716); _localctx.m = buncha_adjustments(0);
 				setState(717); match(1);
 
-				        	((ModificationContext)_localctx).result =  driver.makeModification(((ModificationContext)_localctx).m.result, true, ((ModificationContext)_localctx).t);
+				        	_localctx.result =  driver.makeModification(_localctx.m.result, true, _localctx.t);
 				        
 				}
 				break;
@@ -4260,13 +4269,13 @@ public class CFDGParser extends Parser {
 			case 2:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(720); ((ModificationContext)_localctx).t = match(8);
+				setState(720); _localctx.t = match(8);
 				setState(721); match(8);
-				setState(722); ((ModificationContext)_localctx).m = buncha_adjustments(0);
+				setState(722); _localctx.m = buncha_adjustments(0);
 				setState(723); match(1);
 				setState(724); match(1);
 
-				        	((ModificationContext)_localctx).result =  driver.makeModification(((ModificationContext)_localctx).m.result, false, ((ModificationContext)_localctx).t);
+				        	_localctx.result =  driver.makeModification(_localctx.m.result, false, _localctx.t);
 				        
 				}
 				break;
@@ -4324,7 +4333,7 @@ public class CFDGParser extends Parser {
 			{
 			{
 
-						((Buncha_adjustmentsContext)_localctx).result =  new ASTModification((Token)null);
+						_localctx.result =  new ASTModification((Token)null);
 			        
 			}
 			_ctx.stop = _input.LT(-1);
@@ -4342,10 +4351,10 @@ public class CFDGParser extends Parser {
 					pushNewRecursionContext(_localctx, _startState, RULE_buncha_adjustments);
 					setState(732);
 					if (!(precpred(_ctx, 2))) throw new FailedPredicateException(this, "precpred(_ctx, 2)");
-					setState(733); ((Buncha_adjustmentsContext)_localctx).a1 = adjustment();
+					setState(733); _localctx.a1 = adjustment();
 
-					                  	driver.makeModTerm(((Buncha_adjustmentsContext)_localctx).a2.result, ((Buncha_adjustmentsContext)_localctx).a1.result, (((Buncha_adjustmentsContext)_localctx).a1!=null?(((Buncha_adjustmentsContext)_localctx).a1.start):null));
-					                  	((Buncha_adjustmentsContext)_localctx).result =  ((Buncha_adjustmentsContext)_localctx).a2.result;
+					                  	driver.makeModTerm(_localctx.a2.result, _localctx.a1.result, (_localctx.a1!=null?(_localctx.a1.start):null));
+					                  	_localctx.result =  _localctx.a2.result;
 					                  
 					}
 					} 
@@ -4407,10 +4416,10 @@ public class CFDGParser extends Parser {
 			case 1:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(741); ((AdjustmentContext)_localctx).t = match(MODTYPE);
-				setState(742); ((AdjustmentContext)_localctx).el = explist(0);
+				setState(741); _localctx.t = match(MODTYPE);
+				setState(742); _localctx.el = explist(0);
 
-				        	((AdjustmentContext)_localctx).result =  new ASTModTerm(EModType.modTypeByName(((AdjustmentContext)_localctx).t.getText()), ((AdjustmentContext)_localctx).el.result, ((AdjustmentContext)_localctx).t);
+				        	_localctx.result =  new ASTModTerm(EModType.modTypeByName(_localctx.t.getText()), _localctx.el.result, _localctx.t);
 				        
 				}
 				break;
@@ -4418,16 +4427,16 @@ public class CFDGParser extends Parser {
 			case 2:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(745); ((AdjustmentContext)_localctx).t = match(MODTYPE);
-				setState(746); ((AdjustmentContext)_localctx).e = exp();
+				setState(745); _localctx.t = match(MODTYPE);
+				setState(746); _localctx.e = exp();
 				setState(747); match(17);
 
-				        	EModType type = EModType.modTypeByName(((AdjustmentContext)_localctx).t.getText());
+				        	EModType type = EModType.modTypeByName(_localctx.t.getText());
 				        	if (type.ordinal() < EModType.hue.ordinal() || type.ordinal() > EModType.alpha.ordinal()) {
-				        		driver.error("The target operator can only be applied to color adjustments", ((AdjustmentContext)_localctx).t);
-				        		((AdjustmentContext)_localctx).result =  null;
+				        		driver.error("The target operator can only be applied to color adjustments", _localctx.t);
+				        		_localctx.result =  null;
 				        	} else {
-					        	((AdjustmentContext)_localctx).result =  new ASTModTerm(EModType.modTypeByOrdinal(type.ordinal() + 4), ((AdjustmentContext)_localctx).e.result, ((AdjustmentContext)_localctx).t);
+					        	_localctx.result =  new ASTModTerm(EModType.modTypeByOrdinal(type.ordinal() + 4), _localctx.e.result, _localctx.t);
 				        	}
 				        
 				}
@@ -4436,10 +4445,10 @@ public class CFDGParser extends Parser {
 			case 3:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(750); ((AdjustmentContext)_localctx).PARAM = match(PARAM);
-				setState(751); ((AdjustmentContext)_localctx).p = match(USER_STRING);
+				setState(750); _localctx.PARAM = match(PARAM);
+				setState(751); _localctx.p = match(USER_STRING);
 
-				        	((AdjustmentContext)_localctx).result =  new ASTModTerm(EModType.param, ((AdjustmentContext)_localctx).p.getText(), ((AdjustmentContext)_localctx).PARAM);
+				        	_localctx.result =  new ASTModTerm(EModType.param, _localctx.p.getText(), _localctx.PARAM);
 				        
 				}
 				break;
@@ -4447,10 +4456,10 @@ public class CFDGParser extends Parser {
 			case 4:
 				enterOuterAlt(_localctx, 4);
 				{
-				setState(753); ((AdjustmentContext)_localctx).PARAM = match(PARAM);
-				setState(754); ((AdjustmentContext)_localctx).p = match(USER_QSTRING);
+				setState(753); _localctx.PARAM = match(PARAM);
+				setState(754); _localctx.p = match(USER_QSTRING);
 
-				        	((AdjustmentContext)_localctx).result =  new ASTModTerm(EModType.param, ((AdjustmentContext)_localctx).p.getText(), ((AdjustmentContext)_localctx).PARAM);
+				        	_localctx.result =  new ASTModTerm(EModType.param, _localctx.p.getText(), _localctx.PARAM);
 				        
 				}
 				break;
@@ -4492,7 +4501,7 @@ public class CFDGParser extends Parser {
 			{
 			setState(758); match(LET);
 
-			            ((LetHeaderContext)_localctx).result =  new ASTRepContainer();
+			            _localctx.result =  new ASTRepContainer();
 			            driver.pushRepContainer(_localctx.result);
 			        
 			}
@@ -4540,10 +4549,10 @@ public class CFDGParser extends Parser {
 			setState(761); match(12);
 			setState(762); letVariables(0);
 			setState(763); match(13);
-			setState(764); ((LetBodyContext)_localctx).e = exp2();
+			setState(764); _localctx.e = exp2();
 			setState(765); match(3);
 
-			            ((LetBodyContext)_localctx).result =  ((LetBodyContext)_localctx).e.result;
+			            _localctx.result =  _localctx.e.result;
 			        
 			}
 		}
@@ -4659,9 +4668,9 @@ public class CFDGParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(779); ((LetVariableContext)_localctx).r = definition();
+			setState(779); _localctx.r = definition();
 
-			            driver.pushRep(((LetVariableContext)_localctx).r.result, false);
+			            driver.pushRep(_localctx.r.result, false);
 			        
 			}
 		}
@@ -4717,9 +4726,9 @@ public class CFDGParser extends Parser {
 			enterOuterAlt(_localctx, 1);
 			{
 			{
-			setState(783); ((ExplistContext)_localctx).e = exp();
+			setState(783); _localctx.e = exp();
 			 
-			        	((ExplistContext)_localctx).result =  ((ExplistContext)_localctx).e.result;
+			        	_localctx.result =  _localctx.e.result;
 			        
 			}
 			_ctx.stop = _input.LT(-1);
@@ -4737,9 +4746,9 @@ public class CFDGParser extends Parser {
 					pushNewRecursionContext(_localctx, _startState, RULE_explist);
 					setState(786);
 					if (!(precpred(_ctx, 2))) throw new FailedPredicateException(this, "precpred(_ctx, 2)");
-					setState(787); ((ExplistContext)_localctx).e1 = exp();
+					setState(787); _localctx.e1 = exp();
 
-					                  	((ExplistContext)_localctx).result =  ((ExplistContext)_localctx).e2.result.append(((ExplistContext)_localctx).e1.result);
+					                  	_localctx.result =  _localctx.e2.result.append(_localctx.e1.result);
 					                  
 					}
 					} 
@@ -4795,10 +4804,10 @@ public class CFDGParser extends Parser {
 			case 1:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(795); ((ArglistContext)_localctx).e2 = explist(0);
-				setState(796); ((ArglistContext)_localctx).e1 = exp3();
+				setState(795); _localctx.e2 = explist(0);
+				setState(796); _localctx.e1 = exp3();
 
-				        	((ArglistContext)_localctx).result =  ((ArglistContext)_localctx).e2.result.append(((ArglistContext)_localctx).e1.result);
+				        	_localctx.result =  _localctx.e2.result.append(_localctx.e1.result);
 				        
 				}
 				break;
@@ -4806,9 +4815,9 @@ public class CFDGParser extends Parser {
 			case 2:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(799); ((ArglistContext)_localctx).e = exp3();
+				setState(799); _localctx.e = exp3();
 				 
-				        	((ArglistContext)_localctx).result =  new ASTCons((((ArglistContext)_localctx).e!=null?(((ArglistContext)_localctx).e.start):null), new ASTParen(((ArglistContext)_localctx).e.result, (((ArglistContext)_localctx).e!=null?(((ArglistContext)_localctx).e.start):null)));
+				        	_localctx.result =  new ASTCons((_localctx.e!=null?(_localctx.e.start):null), new ASTParen(_localctx.e.result, (_localctx.e!=null?(_localctx.e.start):null)));
 				        
 				}
 				break;
@@ -4874,27 +4883,27 @@ public class CFDGParser extends Parser {
 			switch (_input.LA(1)) {
 			case USER_RATIONAL:
 				{
-				setState(804); ((ExpContext)_localctx).n = match(USER_RATIONAL);
+				setState(804); _localctx.n = match(USER_RATIONAL);
 				 
-							((ExpContext)_localctx).result =  new ASTReal(Float.parseFloat(((ExpContext)_localctx).n.getText()), ((ExpContext)_localctx).n); 
+							_localctx.result =  new ASTReal(Float.parseFloat(_localctx.n.getText()), _localctx.n); 
 				        
 				}
 				break;
 			case CF_INFINITY:
 				{
-				setState(806); ((ExpContext)_localctx).CF_INFINITY = match(CF_INFINITY);
+				setState(806); _localctx.CF_INFINITY = match(CF_INFINITY);
 				 
-							((ExpContext)_localctx).result =  new ASTReal(Float.MAX_VALUE, ((ExpContext)_localctx).CF_INFINITY); 
+							_localctx.result =  new ASTReal(Float.MAX_VALUE, _localctx.CF_INFINITY); 
 				        
 				}
 				break;
 			case 12:
 				{
-				setState(808); ((ExpContext)_localctx).t = match(12);
-				setState(809); ((ExpContext)_localctx).x = exp2();
+				setState(808); _localctx.t = match(12);
+				setState(809); _localctx.x = exp2();
 				setState(810); match(3);
 				 
-							((ExpContext)_localctx).result =  new ASTParen(((ExpContext)_localctx).x.result, ((ExpContext)_localctx).t); 
+							_localctx.result =  new ASTParen(_localctx.x.result, _localctx.t); 
 				        
 				}
 				break;
@@ -4903,27 +4912,27 @@ public class CFDGParser extends Parser {
 			case USER_STRING:
 			case USER_ARRAYNAME:
 				{
-				setState(813); ((ExpContext)_localctx).f = expfunc();
+				setState(813); _localctx.f = expfunc();
 				 
-							((ExpContext)_localctx).result =  ((ExpContext)_localctx).f.result; 
+							_localctx.result =  _localctx.f.result; 
 				        
 				}
 				break;
 			case 9:
 				{
-				setState(816); ((ExpContext)_localctx).t = match(9);
-				setState(817); ((ExpContext)_localctx).e = exp();
+				setState(816); _localctx.t = match(9);
+				setState(817); _localctx.e = exp();
 				 
-							((ExpContext)_localctx).result =  new ASTOperator('N', ((ExpContext)_localctx).e.result, ((ExpContext)_localctx).t); 
+							_localctx.result =  new ASTOperator('N', _localctx.e.result, _localctx.t); 
 				        
 				}
 				break;
 			case 6:
 				{
-				setState(820); ((ExpContext)_localctx).t = match(6);
-				setState(821); ((ExpContext)_localctx).e = exp();
+				setState(820); _localctx.t = match(6);
+				setState(821); _localctx.e = exp();
 				 
-							((ExpContext)_localctx).result =  new ASTOperator('P', ((ExpContext)_localctx).e.result, ((ExpContext)_localctx).t); 
+							_localctx.result =  new ASTOperator('P', _localctx.e.result, _localctx.t); 
 				        
 				}
 				break;
@@ -4935,10 +4944,10 @@ public class CFDGParser extends Parser {
 			case 1:
 				{
 				setState(826); match(RANGE);
-				setState(827); ((ExpContext)_localctx).r = exp();
+				setState(827); _localctx.r = exp();
 
-				        	ASTExpression pair = _localctx.result.append(((ExpContext)_localctx).r.result);
-				        	((ExpContext)_localctx).result =  new ASTFunction("rand", pair, driver.getSeed(), _localctx.result.getLocation());
+				        	ASTExpression pair = _localctx.result.append(_localctx.r.result);
+				        	_localctx.result =  new ASTFunction("rand", pair, driver.getSeed(), _localctx.result.getLocation());
 				        
 				}
 				break;
@@ -4946,10 +4955,10 @@ public class CFDGParser extends Parser {
 			case 2:
 				{
 				setState(830); match(PLUSMINUS);
-				setState(831); ((ExpContext)_localctx).r = exp();
+				setState(831); _localctx.r = exp();
 
-				        	ASTExpression pair = _localctx.result.append(((ExpContext)_localctx).r.result);
-				        	((ExpContext)_localctx).result =  new ASTFunction("rand+/-", pair, driver.getSeed(), _localctx.result.getLocation());
+				        	ASTExpression pair = _localctx.result.append(_localctx.r.result);
+				        	_localctx.result =  new ASTFunction("rand+/-", pair, driver.getSeed(), _localctx.result.getLocation());
 				        
 				}
 				break;
@@ -5026,17 +5035,17 @@ public class CFDGParser extends Parser {
 			switch (_input.LA(1)) {
 			case USER_RATIONAL:
 				{
-				setState(836); ((Exp2Context)_localctx).n = match(USER_RATIONAL);
+				setState(836); _localctx.n = match(USER_RATIONAL);
 				 
-				        	((Exp2Context)_localctx).result =  new ASTReal(Float.parseFloat(((Exp2Context)_localctx).n.getText()), ((Exp2Context)_localctx).n); 
+				        	_localctx.result =  new ASTReal(Float.parseFloat(_localctx.n.getText()), _localctx.n); 
 				        
 				}
 				break;
 			case CF_INFINITY:
 				{
-				setState(838); ((Exp2Context)_localctx).CF_INFINITY = match(CF_INFINITY);
+				setState(838); _localctx.CF_INFINITY = match(CF_INFINITY);
 				 
-							((Exp2Context)_localctx).result =  new ASTReal(Float.MAX_VALUE, ((Exp2Context)_localctx).CF_INFINITY); 
+							_localctx.result =  new ASTReal(Float.MAX_VALUE, _localctx.CF_INFINITY); 
 				        
 				}
 				break;
@@ -5045,54 +5054,54 @@ public class CFDGParser extends Parser {
 			case USER_STRING:
 			case USER_ARRAYNAME:
 				{
-				setState(840); ((Exp2Context)_localctx).f = exp2func();
+				setState(840); _localctx.f = exp2func();
 				 
-				        	((Exp2Context)_localctx).result =  ((Exp2Context)_localctx).f.result; 
+				        	_localctx.result =  _localctx.f.result; 
 				        
 				}
 				break;
 			case 9:
 				{
-				setState(843); ((Exp2Context)_localctx).t = match(9);
-				setState(844); ((Exp2Context)_localctx).e = exp2();
+				setState(843); _localctx.t = match(9);
+				setState(844); _localctx.e = exp2();
 				 
-							((Exp2Context)_localctx).result =  new ASTOperator('N', ((Exp2Context)_localctx).e.result, ((Exp2Context)_localctx).t); 
+							_localctx.result =  new ASTOperator('N', _localctx.e.result, _localctx.t); 
 				        
 				}
 				break;
 			case 6:
 				{
-				setState(847); ((Exp2Context)_localctx).t = match(6);
-				setState(848); ((Exp2Context)_localctx).e = exp2();
+				setState(847); _localctx.t = match(6);
+				setState(848); _localctx.e = exp2();
 				 
-							((Exp2Context)_localctx).result =  new ASTOperator('P', ((Exp2Context)_localctx).e.result, ((Exp2Context)_localctx).t); 
+							_localctx.result =  new ASTOperator('P', _localctx.e.result, _localctx.t); 
 				        
 				}
 				break;
 			case NOT:
 				{
-				setState(851); ((Exp2Context)_localctx).t = match(NOT);
-				setState(852); ((Exp2Context)_localctx).e = exp2();
+				setState(851); _localctx.t = match(NOT);
+				setState(852); _localctx.e = exp2();
 				 
-							((Exp2Context)_localctx).result =  new ASTOperator('!', ((Exp2Context)_localctx).e.result, ((Exp2Context)_localctx).t); 
+							_localctx.result =  new ASTOperator('!', _localctx.e.result, _localctx.t); 
 				        
 				}
 				break;
 			case 12:
 				{
-				setState(855); ((Exp2Context)_localctx).t = match(12);
-				setState(856); ((Exp2Context)_localctx).e = exp2();
+				setState(855); _localctx.t = match(12);
+				setState(856); _localctx.e = exp2();
 				setState(857); match(3);
 				 
-							((Exp2Context)_localctx).result =  new ASTParen(((Exp2Context)_localctx).e.result, ((Exp2Context)_localctx).t); 
+							_localctx.result =  new ASTParen(_localctx.e.result, _localctx.t); 
 				        
 				}
 				break;
 			case 8:
 				{
-				setState(860); ((Exp2Context)_localctx).m = modification();
+				setState(860); _localctx.m = modification();
 
-				        	((Exp2Context)_localctx).result =  ((Exp2Context)_localctx).m.result;
+				        	_localctx.result =  _localctx.m.result;
 				        
 				}
 				break;
@@ -5104,9 +5113,9 @@ public class CFDGParser extends Parser {
 			case 1:
 				{
 				setState(865); match(4);
-				setState(866); ((Exp2Context)_localctx).r = exp2();
+				setState(866); _localctx.r = exp2();
 
-				        	((Exp2Context)_localctx).result =  new ASTCons(_localctx.result.getLocation(), _localctx.result, ((Exp2Context)_localctx).r.result);
+				        	_localctx.result =  new ASTCons(_localctx.result.getLocation(), _localctx.result, _localctx.r.result);
 				        
 				}
 				break;
@@ -5114,9 +5123,9 @@ public class CFDGParser extends Parser {
 			case 2:
 				{
 				setState(869); match(6);
-				setState(870); ((Exp2Context)_localctx).r = exp2();
+				setState(870); _localctx.r = exp2();
 
-				        	((Exp2Context)_localctx).result =  new ASTOperator('+', _localctx.result, ((Exp2Context)_localctx).r.result, _localctx.result.getLocation());
+				        	_localctx.result =  new ASTOperator('+', _localctx.result, _localctx.r.result, _localctx.result.getLocation());
 				        
 				}
 				break;
@@ -5124,9 +5133,9 @@ public class CFDGParser extends Parser {
 			case 3:
 				{
 				setState(873); match(9);
-				setState(874); ((Exp2Context)_localctx).r = exp2();
+				setState(874); _localctx.r = exp2();
 
-				        	((Exp2Context)_localctx).result =  new ASTOperator('-', _localctx.result, ((Exp2Context)_localctx).r.result, _localctx.result.getLocation());
+				        	_localctx.result =  new ASTOperator('-', _localctx.result, _localctx.r.result, _localctx.result.getLocation());
 				        
 				}
 				break;
@@ -5134,9 +5143,9 @@ public class CFDGParser extends Parser {
 			case 4:
 				{
 				setState(877); match(5);
-				setState(878); ((Exp2Context)_localctx).r = exp2();
+				setState(878); _localctx.r = exp2();
 
-				        	((Exp2Context)_localctx).result =  new ASTOperator('_', _localctx.result, ((Exp2Context)_localctx).r.result, _localctx.result.getLocation());
+				        	_localctx.result =  new ASTOperator('_', _localctx.result, _localctx.r.result, _localctx.result.getLocation());
 				        
 				}
 				break;
@@ -5144,9 +5153,9 @@ public class CFDGParser extends Parser {
 			case 5:
 				{
 				setState(881); match(7);
-				setState(882); ((Exp2Context)_localctx).r = exp2();
+				setState(882); _localctx.r = exp2();
 
-				        	((Exp2Context)_localctx).result =  new ASTOperator('*', _localctx.result, ((Exp2Context)_localctx).r.result, _localctx.result.getLocation());
+				        	_localctx.result =  new ASTOperator('*', _localctx.result, _localctx.r.result, _localctx.result.getLocation());
 				        
 				}
 				break;
@@ -5154,9 +5163,9 @@ public class CFDGParser extends Parser {
 			case 6:
 				{
 				setState(885); match(15);
-				setState(886); ((Exp2Context)_localctx).r = exp2();
+				setState(886); _localctx.r = exp2();
 
-				        	((Exp2Context)_localctx).result =  new ASTOperator('/', _localctx.result, ((Exp2Context)_localctx).r.result, _localctx.result.getLocation());
+				        	_localctx.result =  new ASTOperator('/', _localctx.result, _localctx.r.result, _localctx.result.getLocation());
 				        
 				}
 				break;
@@ -5164,9 +5173,9 @@ public class CFDGParser extends Parser {
 			case 7:
 				{
 				setState(889); match(2);
-				setState(890); ((Exp2Context)_localctx).r = exp2();
+				setState(890); _localctx.r = exp2();
 
-				        	((Exp2Context)_localctx).result =  new ASTOperator('^', _localctx.result, ((Exp2Context)_localctx).r.result, _localctx.result.getLocation());
+				        	_localctx.result =  new ASTOperator('^', _localctx.result, _localctx.r.result, _localctx.result.getLocation());
 				        
 				}
 				break;
@@ -5174,9 +5183,9 @@ public class CFDGParser extends Parser {
 			case 8:
 				{
 				setState(893); match(LT);
-				setState(894); ((Exp2Context)_localctx).r = exp2();
+				setState(894); _localctx.r = exp2();
 
-				        	((Exp2Context)_localctx).result =  new ASTOperator('<', _localctx.result, ((Exp2Context)_localctx).r.result, _localctx.result.getLocation());
+				        	_localctx.result =  new ASTOperator('<', _localctx.result, _localctx.r.result, _localctx.result.getLocation());
 				        
 				}
 				break;
@@ -5184,9 +5193,9 @@ public class CFDGParser extends Parser {
 			case 9:
 				{
 				setState(897); match(GT);
-				setState(898); ((Exp2Context)_localctx).r = exp2();
+				setState(898); _localctx.r = exp2();
 
-				        	((Exp2Context)_localctx).result =  new ASTOperator('>', _localctx.result, ((Exp2Context)_localctx).r.result, _localctx.result.getLocation());
+				        	_localctx.result =  new ASTOperator('>', _localctx.result, _localctx.r.result, _localctx.result.getLocation());
 				        
 				}
 				break;
@@ -5194,9 +5203,9 @@ public class CFDGParser extends Parser {
 			case 10:
 				{
 				setState(901); match(LE);
-				setState(902); ((Exp2Context)_localctx).r = exp2();
+				setState(902); _localctx.r = exp2();
 
-				        	((Exp2Context)_localctx).result =  new ASTOperator('L', _localctx.result, ((Exp2Context)_localctx).r.result, _localctx.result.getLocation());
+				        	_localctx.result =  new ASTOperator('L', _localctx.result, _localctx.r.result, _localctx.result.getLocation());
 				        
 				}
 				break;
@@ -5204,9 +5213,9 @@ public class CFDGParser extends Parser {
 			case 11:
 				{
 				setState(905); match(GE);
-				setState(906); ((Exp2Context)_localctx).r = exp2();
+				setState(906); _localctx.r = exp2();
 
-				        	((Exp2Context)_localctx).result =  new ASTOperator('G', _localctx.result, ((Exp2Context)_localctx).r.result, _localctx.result.getLocation());
+				        	_localctx.result =  new ASTOperator('G', _localctx.result, _localctx.r.result, _localctx.result.getLocation());
 				        
 				}
 				break;
@@ -5214,9 +5223,9 @@ public class CFDGParser extends Parser {
 			case 12:
 				{
 				setState(909); match(EQ);
-				setState(910); ((Exp2Context)_localctx).r = exp2();
+				setState(910); _localctx.r = exp2();
 
-				        	((Exp2Context)_localctx).result =  new ASTOperator('=', _localctx.result, ((Exp2Context)_localctx).r.result, _localctx.result.getLocation());
+				        	_localctx.result =  new ASTOperator('=', _localctx.result, _localctx.r.result, _localctx.result.getLocation());
 				        
 				}
 				break;
@@ -5224,9 +5233,9 @@ public class CFDGParser extends Parser {
 			case 13:
 				{
 				setState(913); match(NEQ);
-				setState(914); ((Exp2Context)_localctx).r = exp2();
+				setState(914); _localctx.r = exp2();
 
-				        	((Exp2Context)_localctx).result =  new ASTOperator('n', _localctx.result, ((Exp2Context)_localctx).r.result, _localctx.result.getLocation());
+				        	_localctx.result =  new ASTOperator('n', _localctx.result, _localctx.r.result, _localctx.result.getLocation());
 				        
 				}
 				break;
@@ -5234,9 +5243,9 @@ public class CFDGParser extends Parser {
 			case 14:
 				{
 				setState(917); match(AND);
-				setState(918); ((Exp2Context)_localctx).r = exp2();
+				setState(918); _localctx.r = exp2();
 
-				        	((Exp2Context)_localctx).result =  new ASTOperator('&', _localctx.result, ((Exp2Context)_localctx).r.result, _localctx.result.getLocation());
+				        	_localctx.result =  new ASTOperator('&', _localctx.result, _localctx.r.result, _localctx.result.getLocation());
 				        
 				}
 				break;
@@ -5244,9 +5253,9 @@ public class CFDGParser extends Parser {
 			case 15:
 				{
 				setState(921); match(OR);
-				setState(922); ((Exp2Context)_localctx).r = exp2();
+				setState(922); _localctx.r = exp2();
 
-				        	((Exp2Context)_localctx).result =  new ASTOperator('|', _localctx.result, ((Exp2Context)_localctx).r.result, _localctx.result.getLocation());
+				        	_localctx.result =  new ASTOperator('|', _localctx.result, _localctx.r.result, _localctx.result.getLocation());
 				        
 				}
 				break;
@@ -5254,9 +5263,9 @@ public class CFDGParser extends Parser {
 			case 16:
 				{
 				setState(925); match(XOR);
-				setState(926); ((Exp2Context)_localctx).r = exp2();
+				setState(926); _localctx.r = exp2();
 
-				        	((Exp2Context)_localctx).result =  new ASTOperator('X', _localctx.result, ((Exp2Context)_localctx).r.result, _localctx.result.getLocation());
+				        	_localctx.result =  new ASTOperator('X', _localctx.result, _localctx.r.result, _localctx.result.getLocation());
 				        
 				}
 				break;
@@ -5264,10 +5273,10 @@ public class CFDGParser extends Parser {
 			case 17:
 				{
 				setState(929); match(RANGE);
-				setState(930); ((Exp2Context)_localctx).r = exp2();
+				setState(930); _localctx.r = exp2();
 
-				        	ASTExpression pair = _localctx.result.append(((Exp2Context)_localctx).r.result);
-				        	((Exp2Context)_localctx).result =  new ASTFunction("rand", pair, driver.getSeed(), _localctx.result.getLocation());
+				        	ASTExpression pair = _localctx.result.append(_localctx.r.result);
+				        	_localctx.result =  new ASTFunction("rand", pair, driver.getSeed(), _localctx.result.getLocation());
 				        
 				}
 				break;
@@ -5275,10 +5284,10 @@ public class CFDGParser extends Parser {
 			case 18:
 				{
 				setState(933); match(PLUSMINUS);
-				setState(934); ((Exp2Context)_localctx).r = exp2();
+				setState(934); _localctx.r = exp2();
 
-				        	ASTExpression pair = _localctx.result.append(((Exp2Context)_localctx).r.result);
-				        	((Exp2Context)_localctx).result =  new ASTFunction("rand+/-", pair, driver.getSeed(), _localctx.result.getLocation());
+				        	ASTExpression pair = _localctx.result.append(_localctx.r.result);
+				        	_localctx.result =  new ASTFunction("rand+/-", pair, driver.getSeed(), _localctx.result.getLocation());
 				        
 				}
 				break;
@@ -5359,17 +5368,17 @@ public class CFDGParser extends Parser {
 			switch (_input.LA(1)) {
 			case USER_RATIONAL:
 				{
-				setState(939); ((Exp3Context)_localctx).n = match(USER_RATIONAL);
+				setState(939); _localctx.n = match(USER_RATIONAL);
 				 
-				        	((Exp3Context)_localctx).result =  new ASTReal(Float.parseFloat(((Exp3Context)_localctx).n.getText()), ((Exp3Context)_localctx).n); 
+				        	_localctx.result =  new ASTReal(Float.parseFloat(_localctx.n.getText()), _localctx.n); 
 				        
 				}
 				break;
 			case CF_INFINITY:
 				{
-				setState(941); ((Exp3Context)_localctx).CF_INFINITY = match(CF_INFINITY);
+				setState(941); _localctx.CF_INFINITY = match(CF_INFINITY);
 				 
-							((Exp3Context)_localctx).result =  new ASTReal(Float.MAX_VALUE, ((Exp3Context)_localctx).CF_INFINITY); 
+							_localctx.result =  new ASTReal(Float.MAX_VALUE, _localctx.CF_INFINITY); 
 				        
 				}
 				break;
@@ -5378,54 +5387,54 @@ public class CFDGParser extends Parser {
 			case USER_STRING:
 			case USER_ARRAYNAME:
 				{
-				setState(943); ((Exp3Context)_localctx).f = exp2func();
+				setState(943); _localctx.f = exp2func();
 				 
-				        	((Exp3Context)_localctx).result =  ((Exp3Context)_localctx).f.result;
+				        	_localctx.result =  _localctx.f.result;
 				        
 				}
 				break;
 			case 9:
 				{
-				setState(946); ((Exp3Context)_localctx).t = match(9);
-				setState(947); ((Exp3Context)_localctx).e = exp3();
+				setState(946); _localctx.t = match(9);
+				setState(947); _localctx.e = exp3();
 				 
-							((Exp3Context)_localctx).result =  new ASTOperator('N', ((Exp3Context)_localctx).e.result, ((Exp3Context)_localctx).t); 
+							_localctx.result =  new ASTOperator('N', _localctx.e.result, _localctx.t); 
 				        
 				}
 				break;
 			case 6:
 				{
-				setState(950); ((Exp3Context)_localctx).t = match(6);
-				setState(951); ((Exp3Context)_localctx).e = exp3();
+				setState(950); _localctx.t = match(6);
+				setState(951); _localctx.e = exp3();
 				 
-							((Exp3Context)_localctx).result =  new ASTOperator('P', ((Exp3Context)_localctx).e.result, ((Exp3Context)_localctx).t); 
+							_localctx.result =  new ASTOperator('P', _localctx.e.result, _localctx.t); 
 				        
 				}
 				break;
 			case NOT:
 				{
-				setState(954); ((Exp3Context)_localctx).t = match(NOT);
-				setState(955); ((Exp3Context)_localctx).e = exp3();
+				setState(954); _localctx.t = match(NOT);
+				setState(955); _localctx.e = exp3();
 				 
-							((Exp3Context)_localctx).result =  new ASTOperator('!', ((Exp3Context)_localctx).e.result, ((Exp3Context)_localctx).t); 
+							_localctx.result =  new ASTOperator('!', _localctx.e.result, _localctx.t); 
 				        
 				}
 				break;
 			case 12:
 				{
-				setState(958); ((Exp3Context)_localctx).t = match(12);
-				setState(959); ((Exp3Context)_localctx).x = exp2();
+				setState(958); _localctx.t = match(12);
+				setState(959); _localctx.x = exp2();
 				setState(960); match(3);
 				 
-							((Exp3Context)_localctx).result =  new ASTParen(((Exp3Context)_localctx).x.result, ((Exp3Context)_localctx).t); 
+							_localctx.result =  new ASTParen(_localctx.x.result, _localctx.t); 
 				        
 				}
 				break;
 			case 8:
 				{
-				setState(963); ((Exp3Context)_localctx).m = modification();
+				setState(963); _localctx.m = modification();
 
-				        	((Exp3Context)_localctx).result =  ((Exp3Context)_localctx).m.result;
+				        	_localctx.result =  _localctx.m.result;
 				        
 				}
 				break;
@@ -5437,9 +5446,9 @@ public class CFDGParser extends Parser {
 			case 1:
 				{
 				setState(968); match(6);
-				setState(969); ((Exp3Context)_localctx).r = exp3();
+				setState(969); _localctx.r = exp3();
 
-				        	((Exp3Context)_localctx).result =  new ASTOperator('+', _localctx.result, ((Exp3Context)_localctx).r.result, _localctx.result.getLocation());
+				        	_localctx.result =  new ASTOperator('+', _localctx.result, _localctx.r.result, _localctx.result.getLocation());
 				        
 				}
 				break;
@@ -5447,9 +5456,9 @@ public class CFDGParser extends Parser {
 			case 2:
 				{
 				setState(972); match(9);
-				setState(973); ((Exp3Context)_localctx).r = exp3();
+				setState(973); _localctx.r = exp3();
 
-				        	((Exp3Context)_localctx).result =  new ASTOperator('-', _localctx.result, ((Exp3Context)_localctx).r.result, _localctx.result.getLocation());
+				        	_localctx.result =  new ASTOperator('-', _localctx.result, _localctx.r.result, _localctx.result.getLocation());
 				        
 				}
 				break;
@@ -5457,9 +5466,9 @@ public class CFDGParser extends Parser {
 			case 3:
 				{
 				setState(976); match(5);
-				setState(977); ((Exp3Context)_localctx).r = exp3();
+				setState(977); _localctx.r = exp3();
 
-				        	((Exp3Context)_localctx).result =  new ASTOperator('_', _localctx.result, ((Exp3Context)_localctx).r.result, _localctx.result.getLocation());
+				        	_localctx.result =  new ASTOperator('_', _localctx.result, _localctx.r.result, _localctx.result.getLocation());
 				        
 				}
 				break;
@@ -5467,9 +5476,9 @@ public class CFDGParser extends Parser {
 			case 4:
 				{
 				setState(980); match(7);
-				setState(981); ((Exp3Context)_localctx).r = exp3();
+				setState(981); _localctx.r = exp3();
 
-				        	((Exp3Context)_localctx).result =  new ASTOperator('*', _localctx.result, ((Exp3Context)_localctx).r.result, _localctx.result.getLocation());
+				        	_localctx.result =  new ASTOperator('*', _localctx.result, _localctx.r.result, _localctx.result.getLocation());
 				        
 				}
 				break;
@@ -5477,9 +5486,9 @@ public class CFDGParser extends Parser {
 			case 5:
 				{
 				setState(984); match(15);
-				setState(985); ((Exp3Context)_localctx).r = exp3();
+				setState(985); _localctx.r = exp3();
 
-				        	((Exp3Context)_localctx).result =  new ASTOperator('/', _localctx.result, ((Exp3Context)_localctx).r.result, _localctx.result.getLocation());
+				        	_localctx.result =  new ASTOperator('/', _localctx.result, _localctx.r.result, _localctx.result.getLocation());
 				        
 				}
 				break;
@@ -5487,9 +5496,9 @@ public class CFDGParser extends Parser {
 			case 6:
 				{
 				setState(988); match(2);
-				setState(989); ((Exp3Context)_localctx).r = exp3();
+				setState(989); _localctx.r = exp3();
 
-				        	((Exp3Context)_localctx).result =  new ASTOperator('^', _localctx.result, ((Exp3Context)_localctx).r.result, _localctx.result.getLocation());
+				        	_localctx.result =  new ASTOperator('^', _localctx.result, _localctx.r.result, _localctx.result.getLocation());
 				        
 				}
 				break;
@@ -5497,9 +5506,9 @@ public class CFDGParser extends Parser {
 			case 7:
 				{
 				setState(992); match(LT);
-				setState(993); ((Exp3Context)_localctx).r = exp3();
+				setState(993); _localctx.r = exp3();
 
-				        	((Exp3Context)_localctx).result =  new ASTOperator('<', _localctx.result, ((Exp3Context)_localctx).r.result, _localctx.result.getLocation());
+				        	_localctx.result =  new ASTOperator('<', _localctx.result, _localctx.r.result, _localctx.result.getLocation());
 				        
 				}
 				break;
@@ -5507,9 +5516,9 @@ public class CFDGParser extends Parser {
 			case 8:
 				{
 				setState(996); match(GT);
-				setState(997); ((Exp3Context)_localctx).r = exp3();
+				setState(997); _localctx.r = exp3();
 
-				        	((Exp3Context)_localctx).result =  new ASTOperator('>', _localctx.result, ((Exp3Context)_localctx).r.result, _localctx.result.getLocation());
+				        	_localctx.result =  new ASTOperator('>', _localctx.result, _localctx.r.result, _localctx.result.getLocation());
 				        
 				}
 				break;
@@ -5517,9 +5526,9 @@ public class CFDGParser extends Parser {
 			case 9:
 				{
 				setState(1000); match(LE);
-				setState(1001); ((Exp3Context)_localctx).r = exp3();
+				setState(1001); _localctx.r = exp3();
 
-				        	((Exp3Context)_localctx).result =  new ASTOperator('L', _localctx.result, ((Exp3Context)_localctx).r.result, _localctx.result.getLocation());
+				        	_localctx.result =  new ASTOperator('L', _localctx.result, _localctx.r.result, _localctx.result.getLocation());
 				        
 				}
 				break;
@@ -5527,9 +5536,9 @@ public class CFDGParser extends Parser {
 			case 10:
 				{
 				setState(1004); match(GE);
-				setState(1005); ((Exp3Context)_localctx).r = exp3();
+				setState(1005); _localctx.r = exp3();
 
-				        	((Exp3Context)_localctx).result =  new ASTOperator('G', _localctx.result, ((Exp3Context)_localctx).r.result, _localctx.result.getLocation());
+				        	_localctx.result =  new ASTOperator('G', _localctx.result, _localctx.r.result, _localctx.result.getLocation());
 				        
 				}
 				break;
@@ -5537,9 +5546,9 @@ public class CFDGParser extends Parser {
 			case 11:
 				{
 				setState(1008); match(EQ);
-				setState(1009); ((Exp3Context)_localctx).r = exp3();
+				setState(1009); _localctx.r = exp3();
 
-				        	((Exp3Context)_localctx).result =  new ASTOperator('=', _localctx.result, ((Exp3Context)_localctx).r.result, _localctx.result.getLocation());
+				        	_localctx.result =  new ASTOperator('=', _localctx.result, _localctx.r.result, _localctx.result.getLocation());
 				        
 				}
 				break;
@@ -5547,9 +5556,9 @@ public class CFDGParser extends Parser {
 			case 12:
 				{
 				setState(1012); match(NEQ);
-				setState(1013); ((Exp3Context)_localctx).r = exp3();
+				setState(1013); _localctx.r = exp3();
 
-				        	((Exp3Context)_localctx).result =  new ASTOperator('n', _localctx.result, ((Exp3Context)_localctx).r.result, _localctx.result.getLocation());
+				        	_localctx.result =  new ASTOperator('n', _localctx.result, _localctx.r.result, _localctx.result.getLocation());
 				        
 				}
 				break;
@@ -5557,9 +5566,9 @@ public class CFDGParser extends Parser {
 			case 13:
 				{
 				setState(1016); match(AND);
-				setState(1017); ((Exp3Context)_localctx).r = exp3();
+				setState(1017); _localctx.r = exp3();
 
-				        	((Exp3Context)_localctx).result =  new ASTOperator('&', _localctx.result, ((Exp3Context)_localctx).r.result, _localctx.result.getLocation());
+				        	_localctx.result =  new ASTOperator('&', _localctx.result, _localctx.r.result, _localctx.result.getLocation());
 				        
 				}
 				break;
@@ -5567,9 +5576,9 @@ public class CFDGParser extends Parser {
 			case 14:
 				{
 				setState(1020); match(OR);
-				setState(1021); ((Exp3Context)_localctx).r = exp3();
+				setState(1021); _localctx.r = exp3();
 
-				        	((Exp3Context)_localctx).result =  new ASTOperator('|', _localctx.result, ((Exp3Context)_localctx).r.result, _localctx.result.getLocation());
+				        	_localctx.result =  new ASTOperator('|', _localctx.result, _localctx.r.result, _localctx.result.getLocation());
 				        
 				}
 				break;
@@ -5577,9 +5586,9 @@ public class CFDGParser extends Parser {
 			case 15:
 				{
 				setState(1024); match(XOR);
-				setState(1025); ((Exp3Context)_localctx).r = exp3();
+				setState(1025); _localctx.r = exp3();
 
-				        	((Exp3Context)_localctx).result =  new ASTOperator('X', _localctx.result, ((Exp3Context)_localctx).r.result, _localctx.result.getLocation());
+				        	_localctx.result =  new ASTOperator('X', _localctx.result, _localctx.r.result, _localctx.result.getLocation());
 				        
 				}
 				break;
@@ -5587,10 +5596,10 @@ public class CFDGParser extends Parser {
 			case 16:
 				{
 				setState(1028); match(RANGE);
-				setState(1029); ((Exp3Context)_localctx).r = exp3();
+				setState(1029); _localctx.r = exp3();
 
-				        	ASTExpression pair = _localctx.result.append(((Exp3Context)_localctx).r.result);
-				        	((Exp3Context)_localctx).result =  new ASTFunction("rand", pair, driver.getSeed(), _localctx.result.getLocation());
+				        	ASTExpression pair = _localctx.result.append(_localctx.r.result);
+				        	_localctx.result =  new ASTFunction("rand", pair, driver.getSeed(), _localctx.result.getLocation());
 				        
 				}
 				break;
@@ -5598,10 +5607,10 @@ public class CFDGParser extends Parser {
 			case 17:
 				{
 				setState(1032); match(PLUSMINUS);
-				setState(1033); ((Exp3Context)_localctx).r = exp3();
+				setState(1033); _localctx.r = exp3();
 
-				        	ASTExpression pair = _localctx.result.append(((Exp3Context)_localctx).r.result);
-				        	((Exp3Context)_localctx).result =  new ASTFunction("rand+/-", pair, driver.getSeed(), _localctx.result.getLocation());
+				        	ASTExpression pair = _localctx.result.append(_localctx.r.result);
+				        	_localctx.result =  new ASTFunction("rand+/-", pair, driver.getSeed(), _localctx.result.getLocation());
 				        
 				}
 				break;
@@ -5666,12 +5675,12 @@ public class CFDGParser extends Parser {
 			case 1:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(1038); ((ExpfuncContext)_localctx).f = match(USER_STRING);
+				setState(1038); _localctx.f = match(USER_STRING);
 				setState(1039); match(12);
 				setState(1040); match(3);
 				 
-				        	String func = ((ExpfuncContext)_localctx).f.getText();
-				        	((ExpfuncContext)_localctx).result =  driver.makeFunction(func, null, ((ExpfuncContext)_localctx).f);
+				        	String func = _localctx.f.getText();
+				        	_localctx.result =  driver.makeFunction(func, null, _localctx.f);
 				        
 				}
 				break;
@@ -5679,14 +5688,14 @@ public class CFDGParser extends Parser {
 			case 2:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(1042); ((ExpfuncContext)_localctx).f = match(USER_STRING);
+				setState(1042); _localctx.f = match(USER_STRING);
 				setState(1043); match(12);
-				setState(1044); ((ExpfuncContext)_localctx).a = arglist();
+				setState(1044); _localctx.a = arglist();
 				setState(1045); match(3);
 				 
-				        	String func = ((ExpfuncContext)_localctx).f.getText();
-				        	ASTExpression args = ((ExpfuncContext)_localctx).a.result;
-				        	((ExpfuncContext)_localctx).result =  driver.makeFunction(func, args, ((ExpfuncContext)_localctx).f);
+				        	String func = _localctx.f.getText();
+				        	ASTExpression args = _localctx.a.result;
+				        	_localctx.result =  driver.makeFunction(func, args, _localctx.f);
 				        
 				}
 				break;
@@ -5694,14 +5703,14 @@ public class CFDGParser extends Parser {
 			case 3:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(1048); ((ExpfuncContext)_localctx).f = match(USER_ARRAYNAME);
+				setState(1048); _localctx.f = match(USER_ARRAYNAME);
 				setState(1049); match(12);
-				setState(1050); ((ExpfuncContext)_localctx).e = exp2();
+				setState(1050); _localctx.e = exp2();
 				setState(1051); match(3);
 				 
-				        	String func = ((ExpfuncContext)_localctx).f.getText();
-				        	ASTExpression args = ((ExpfuncContext)_localctx).e.result;
-				        	((ExpfuncContext)_localctx).result =  driver.makeArray(func, args, ((ExpfuncContext)_localctx).f);
+				        	String func = _localctx.f.getText();
+				        	ASTExpression args = _localctx.e.result;
+				        	_localctx.result =  driver.makeArray(func, args, _localctx.f);
 				        
 				}
 				break;
@@ -5709,13 +5718,13 @@ public class CFDGParser extends Parser {
 			case 4:
 				enterOuterAlt(_localctx, 4);
 				{
-				setState(1054); ((ExpfuncContext)_localctx).IF = match(IF);
+				setState(1054); _localctx.IF = match(IF);
 				setState(1055); match(12);
-				setState(1056); ((ExpfuncContext)_localctx).e = exp2();
+				setState(1056); _localctx.e = exp2();
 				setState(1057); match(3);
 				 
-				        	ASTExpression args = ((ExpfuncContext)_localctx).e.result;
-				        	((ExpfuncContext)_localctx).result =  driver.makeFunction("if", args, ((ExpfuncContext)_localctx).IF);
+				        	ASTExpression args = _localctx.e.result;
+				        	_localctx.result =  driver.makeFunction("if", args, _localctx.IF);
 				        
 				}
 				break;
@@ -5723,11 +5732,11 @@ public class CFDGParser extends Parser {
 			case 5:
 				enterOuterAlt(_localctx, 5);
 				{
-				setState(1060); ((ExpfuncContext)_localctx).h = letHeader();
-				setState(1061); ((ExpfuncContext)_localctx).b = letBody();
+				setState(1060); _localctx.h = letHeader();
+				setState(1061); _localctx.b = letBody();
 
 				        	driver.popRepContainer(null);
-				        	((ExpfuncContext)_localctx).result =  driver.makeLet(((ExpfuncContext)_localctx).h.result, ((ExpfuncContext)_localctx).b.result, (((ExpfuncContext)_localctx).h!=null?(((ExpfuncContext)_localctx).h.start):null));
+				        	_localctx.result =  driver.makeLet(_localctx.h.result, _localctx.b.result, (_localctx.h!=null?(_localctx.h.start):null));
 				        
 				}
 				break;
@@ -5735,10 +5744,10 @@ public class CFDGParser extends Parser {
 			case 6:
 				enterOuterAlt(_localctx, 6);
 				{
-				setState(1064); ((ExpfuncContext)_localctx).v = match(USER_STRING);
+				setState(1064); _localctx.v = match(USER_STRING);
 				 
-				        	String var = ((ExpfuncContext)_localctx).v.getText();
-				        	((ExpfuncContext)_localctx).result =  driver.makeVariable(var, ((ExpfuncContext)_localctx).v);
+				        	String var = _localctx.v.getText();
+				        	_localctx.result =  driver.makeVariable(var, _localctx.v);
 				        
 				}
 				break;
@@ -5803,12 +5812,12 @@ public class CFDGParser extends Parser {
 			case 1:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(1068); ((Exp2funcContext)_localctx).f = match(USER_STRING);
+				setState(1068); _localctx.f = match(USER_STRING);
 				setState(1069); match(12);
 				setState(1070); match(3);
 				 
-				        	String func = ((Exp2funcContext)_localctx).f.getText();
-				        	((Exp2funcContext)_localctx).result =  driver.makeFunction(func, null, ((Exp2funcContext)_localctx).f);
+				        	String func = _localctx.f.getText();
+				        	_localctx.result =  driver.makeFunction(func, null, _localctx.f);
 				        
 				}
 				break;
@@ -5816,14 +5825,14 @@ public class CFDGParser extends Parser {
 			case 2:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(1072); ((Exp2funcContext)_localctx).f = match(USER_STRING);
+				setState(1072); _localctx.f = match(USER_STRING);
 				setState(1073); match(12);
-				setState(1074); ((Exp2funcContext)_localctx).a = arglist();
+				setState(1074); _localctx.a = arglist();
 				setState(1075); match(3);
 				 
-				        	String func = ((Exp2funcContext)_localctx).f.getText();
-				        	ASTExpression args = ((Exp2funcContext)_localctx).a.result;
-				        	((Exp2funcContext)_localctx).result =  driver.makeFunction(func, args, ((Exp2funcContext)_localctx).f);
+				        	String func = _localctx.f.getText();
+				        	ASTExpression args = _localctx.a.result;
+				        	_localctx.result =  driver.makeFunction(func, args, _localctx.f);
 				        
 				}
 				break;
@@ -5831,14 +5840,14 @@ public class CFDGParser extends Parser {
 			case 3:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(1078); ((Exp2funcContext)_localctx).f = match(USER_ARRAYNAME);
+				setState(1078); _localctx.f = match(USER_ARRAYNAME);
 				setState(1079); match(12);
-				setState(1080); ((Exp2funcContext)_localctx).e = exp2();
+				setState(1080); _localctx.e = exp2();
 				setState(1081); match(3);
 				 
-				        	String func = ((Exp2funcContext)_localctx).f.getText();
-				        	ASTExpression args = ((Exp2funcContext)_localctx).e.result;
-				        	((Exp2funcContext)_localctx).result =  driver.makeArray(func, args, ((Exp2funcContext)_localctx).f);
+				        	String func = _localctx.f.getText();
+				        	ASTExpression args = _localctx.e.result;
+				        	_localctx.result =  driver.makeArray(func, args, _localctx.f);
 				        
 				}
 				break;
@@ -5846,13 +5855,13 @@ public class CFDGParser extends Parser {
 			case 4:
 				enterOuterAlt(_localctx, 4);
 				{
-				setState(1084); ((Exp2funcContext)_localctx).IF = match(IF);
+				setState(1084); _localctx.IF = match(IF);
 				setState(1085); match(12);
-				setState(1086); ((Exp2funcContext)_localctx).e = exp2();
+				setState(1086); _localctx.e = exp2();
 				setState(1087); match(3);
 				 
-				        	ASTExpression args = ((Exp2funcContext)_localctx).e.result;
-				        	((Exp2funcContext)_localctx).result =  driver.makeFunction("if", args, ((Exp2funcContext)_localctx).IF);
+				        	ASTExpression args = _localctx.e.result;
+				        	_localctx.result =  driver.makeFunction("if", args, _localctx.IF);
 				        
 				}
 				break;
@@ -5860,14 +5869,14 @@ public class CFDGParser extends Parser {
 			case 5:
 				enterOuterAlt(_localctx, 5);
 				{
-				setState(1090); ((Exp2funcContext)_localctx).f = match(USER_STRING);
+				setState(1090); _localctx.f = match(USER_STRING);
 				setState(1091); match(12);
 				setState(1092); match(BECOMES);
 				setState(1093); match(3);
 				 
-				        	String func = ((Exp2funcContext)_localctx).f.getText();
-				        	ASTExpression args = new ASTExpression(false, false, EExpType.ReuseType, ((Exp2funcContext)_localctx).f);
-				        	((Exp2funcContext)_localctx).result =  driver.makeArray(func, args, ((Exp2funcContext)_localctx).f);
+				        	String func = _localctx.f.getText();
+				        	ASTExpression args = new ASTExpression(false, false, EExpType.ReuseType, _localctx.f);
+				        	_localctx.result =  driver.makeArray(func, args, _localctx.f);
 				        
 				}
 				break;
@@ -5875,11 +5884,11 @@ public class CFDGParser extends Parser {
 			case 6:
 				enterOuterAlt(_localctx, 6);
 				{
-				setState(1095); ((Exp2funcContext)_localctx).h = letHeader();
-				setState(1096); ((Exp2funcContext)_localctx).b = letBody();
+				setState(1095); _localctx.h = letHeader();
+				setState(1096); _localctx.b = letBody();
 
 				        	driver.popRepContainer(null);
-				        	((Exp2funcContext)_localctx).result =  driver.makeLet(((Exp2funcContext)_localctx).h.result, ((Exp2funcContext)_localctx).b.result, (((Exp2funcContext)_localctx).h!=null?(((Exp2funcContext)_localctx).h.start):null));
+				        	_localctx.result =  driver.makeLet(_localctx.h.result, _localctx.b.result, (_localctx.h!=null?(_localctx.h.start):null));
 				        
 				}
 				break;
@@ -5887,10 +5896,10 @@ public class CFDGParser extends Parser {
 			case 7:
 				enterOuterAlt(_localctx, 7);
 				{
-				setState(1099); ((Exp2funcContext)_localctx).v = match(USER_STRING);
+				setState(1099); _localctx.v = match(USER_STRING);
 				 
-				        	String var = ((Exp2funcContext)_localctx).v.getText();
-				        	((Exp2funcContext)_localctx).result =  driver.makeVariable(var, ((Exp2funcContext)_localctx).v);
+				        	String var = _localctx.v.getText();
+				        	_localctx.result =  driver.makeVariable(var, _localctx.v);
 				        
 				}
 				break;
@@ -5935,18 +5944,18 @@ public class CFDGParser extends Parser {
 			case USER_STRING:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(1103); ((ShapeNameContext)_localctx).r = match(USER_STRING);
+				setState(1103); _localctx.r = match(USER_STRING);
 				 
-				        	((ShapeNameContext)_localctx).result =  ((ShapeNameContext)_localctx).r.getText();
+				        	_localctx.result =  _localctx.r.getText();
 				        
 				}
 				break;
 			case USER_ARRAYNAME:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(1105); ((ShapeNameContext)_localctx).r = match(USER_ARRAYNAME);
+				setState(1105); _localctx.r = match(USER_ARRAYNAME);
 				 
-				        	((ShapeNameContext)_localctx).result =  ((ShapeNameContext)_localctx).r.getText();
+				        	_localctx.result =  _localctx.r.getText();
 				        
 				}
 				break;
@@ -5995,11 +6004,11 @@ public class CFDGParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(1109); ((Global_definitionContext)_localctx).r = global_definition_header();
-			setState(1110); ((Global_definitionContext)_localctx).e = exp2();
+			setState(1109); _localctx.r = global_definition_header();
+			setState(1110); _localctx.e = exp2();
 
-			            ASTDefine var = ((Global_definitionContext)_localctx).r.result;
-			            ASTExpression exp = ((Global_definitionContext)_localctx).e.result;
+			            ASTDefine var = _localctx.r.result;
+			            ASTExpression exp = _localctx.e.result;
 			            if (var != null) {
 			                switch (var.getDefineType()) {
 			                    case StackDefine:
@@ -6022,9 +6031,9 @@ public class CFDGParser extends Parser {
 			                        var.setExp(exp);
 			                        break;
 			                }
-			                ((Global_definitionContext)_localctx).result =  var;
+			                _localctx.result =  var;
 			            } else {
-			                ((Global_definitionContext)_localctx).result =  null;
+			                _localctx.result =  null;
 			            }
 			        
 			}
@@ -6080,13 +6089,13 @@ public class CFDGParser extends Parser {
 			case 1:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(1113); ((Function_definition_headerContext)_localctx).SHAPE = match(SHAPE);
-				setState(1114); ((Function_definition_headerContext)_localctx).f = match(USER_STRING);
-				setState(1115); ((Function_definition_headerContext)_localctx).p = function_parameter_list();
+				setState(1113); _localctx.SHAPE = match(SHAPE);
+				setState(1114); _localctx.f = match(USER_STRING);
+				setState(1115); _localctx.p = function_parameter_list();
 				setState(1116); match(BECOMES);
 
-				        	String name = ((Function_definition_headerContext)_localctx).f.getText();
-				            ((Function_definition_headerContext)_localctx).result =  driver.makeDefinition(name, true, ((Function_definition_headerContext)_localctx).SHAPE);
+				        	String name = _localctx.f.getText();
+				            _localctx.result =  driver.makeDefinition(name, true, _localctx.SHAPE);
 				            if (_localctx.result != null) {
 				                _localctx.result.setExpType(EExpType.RuleType);
 				                _localctx.result.setTupleSize(1);
@@ -6098,12 +6107,12 @@ public class CFDGParser extends Parser {
 			case 2:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(1119); ((Function_definition_headerContext)_localctx).f = match(USER_STRING);
-				setState(1120); ((Function_definition_headerContext)_localctx).p = function_parameter_list();
+				setState(1119); _localctx.f = match(USER_STRING);
+				setState(1120); _localctx.p = function_parameter_list();
 				setState(1121); match(BECOMES);
 
-				        	String name = ((Function_definition_headerContext)_localctx).f.getText();
-				            ((Function_definition_headerContext)_localctx).result =  driver.makeDefinition(name, true, ((Function_definition_headerContext)_localctx).f);
+				        	String name = _localctx.f.getText();
+				            _localctx.result =  driver.makeDefinition(name, true, _localctx.f);
 				            if (_localctx.result != null) {
 				                _localctx.result.setExpType(EExpType.NumericType);
 				                _localctx.result.setTupleSize(1);
@@ -6115,18 +6124,18 @@ public class CFDGParser extends Parser {
 			case 3:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(1124); ((Function_definition_headerContext)_localctx).t = match(USER_STRING);
-				setState(1125); ((Function_definition_headerContext)_localctx).f = match(USER_STRING);
-				setState(1126); ((Function_definition_headerContext)_localctx).p = function_parameter_list();
+				setState(1124); _localctx.t = match(USER_STRING);
+				setState(1125); _localctx.f = match(USER_STRING);
+				setState(1126); _localctx.p = function_parameter_list();
 				setState(1127); match(BECOMES);
 
-				        	String name = ((Function_definition_headerContext)_localctx).t.getText();
-				        	String type = ((Function_definition_headerContext)_localctx).f.getText();
-				            ((Function_definition_headerContext)_localctx).result =  driver.makeDefinition(name, true, ((Function_definition_headerContext)_localctx).t);
+				        	String name = _localctx.t.getText();
+				        	String type = _localctx.f.getText();
+				            _localctx.result =  driver.makeDefinition(name, true, _localctx.t);
 				            if (_localctx.result != null) {
 				            	int[] tupleSize = new int[1];
 				            	boolean[] isNatural = new boolean[1];
-				                _localctx.result.setExpType(driver.decodeType(type, tupleSize, isNatural, ((Function_definition_headerContext)_localctx).t));
+				                _localctx.result.setExpType(driver.decodeType(type, tupleSize, isNatural, _localctx.t));
 				                _localctx.result.setTupleSize(tupleSize[0]);
 				                _localctx.result.setIsNatural(isNatural[0]); 
 				            }
@@ -6137,13 +6146,13 @@ public class CFDGParser extends Parser {
 			case 4:
 				enterOuterAlt(_localctx, 4);
 				{
-				setState(1130); ((Function_definition_headerContext)_localctx).SHAPE = match(SHAPE);
+				setState(1130); _localctx.SHAPE = match(SHAPE);
 				setState(1131); match(MODTYPE);
-				setState(1132); ((Function_definition_headerContext)_localctx).p = function_parameter_list();
+				setState(1132); _localctx.p = function_parameter_list();
 				setState(1133); match(BECOMES);
 
-				            driver.error("Reserved keyword: adjustment", ((Function_definition_headerContext)_localctx).SHAPE);
-				            ((Function_definition_headerContext)_localctx).result =  null;
+				            driver.error("Reserved keyword: adjustment", _localctx.SHAPE);
+				            _localctx.result =  null;
 				        
 				}
 				break;
@@ -6151,12 +6160,12 @@ public class CFDGParser extends Parser {
 			case 5:
 				enterOuterAlt(_localctx, 5);
 				{
-				setState(1136); ((Function_definition_headerContext)_localctx).MODTYPE = match(MODTYPE);
-				setState(1137); ((Function_definition_headerContext)_localctx).p = function_parameter_list();
+				setState(1136); _localctx.MODTYPE = match(MODTYPE);
+				setState(1137); _localctx.p = function_parameter_list();
 				setState(1138); match(BECOMES);
 
-				            driver.error("Reserved keyword: adjustment", ((Function_definition_headerContext)_localctx).MODTYPE);
-				            ((Function_definition_headerContext)_localctx).result =  null;
+				            driver.error("Reserved keyword: adjustment", _localctx.MODTYPE);
+				            _localctx.result =  null;
 				        
 				}
 				break;
@@ -6164,13 +6173,13 @@ public class CFDGParser extends Parser {
 			case 6:
 				enterOuterAlt(_localctx, 6);
 				{
-				setState(1141); ((Function_definition_headerContext)_localctx).t = match(USER_STRING);
+				setState(1141); _localctx.t = match(USER_STRING);
 				setState(1142); match(MODTYPE);
-				setState(1143); ((Function_definition_headerContext)_localctx).p = function_parameter_list();
+				setState(1143); _localctx.p = function_parameter_list();
 				setState(1144); match(BECOMES);
 
-				            driver.error("Reserved keyword: adjustment", ((Function_definition_headerContext)_localctx).t);
-				            ((Function_definition_headerContext)_localctx).result =  null;
+				            driver.error("Reserved keyword: adjustment", _localctx.t);
+				            _localctx.result =  null;
 				        
 				}
 				break;
@@ -6220,17 +6229,17 @@ public class CFDGParser extends Parser {
 			case 1:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(1149); ((Global_definition_headerContext)_localctx).fd = function_definition_header();
+				setState(1149); _localctx.fd = function_definition_header();
 
-				            if (((Global_definition_headerContext)_localctx).fd.result != null) {
-				                assert(((Global_definition_headerContext)_localctx).fd.result.getDefineType() == EDefineType.FunctionDefine);
+				            if (_localctx.fd.result != null) {
+				                assert(_localctx.fd.result.getDefineType() == EDefineType.FunctionDefine);
 				                driver.pushRepContainer(driver.getParamDecls());
 				            } else {
 				                // An error occurred
 				                driver.getParamDecls().getParameters().clear();
 				                driver.getParamDecls().setStackCount(0);
 				            }
-				            ((Global_definition_headerContext)_localctx).result =  ((Global_definition_headerContext)_localctx).fd.result;
+				            _localctx.result =  _localctx.fd.result;
 				        
 				}
 				break;
@@ -6238,9 +6247,9 @@ public class CFDGParser extends Parser {
 			case 2:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(1152); ((Global_definition_headerContext)_localctx).d = definition_header();
+				setState(1152); _localctx.d = definition_header();
 
-				            ((Global_definition_headerContext)_localctx).result =  ((Global_definition_headerContext)_localctx).d.result;
+				            _localctx.result =  _localctx.d.result;
 				        
 				}
 				break;
@@ -6287,22 +6296,22 @@ public class CFDGParser extends Parser {
 			case USER_STRING:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(1157); ((Definition_headerContext)_localctx).n = match(USER_STRING);
+				setState(1157); _localctx.n = match(USER_STRING);
 				setState(1158); match(BECOMES);
 
-				        	String name = ((Definition_headerContext)_localctx).n.getText();
-				            ((Definition_headerContext)_localctx).result =  driver.makeDefinition(name, false, ((Definition_headerContext)_localctx).n);
+				        	String name = _localctx.n.getText();
+				            _localctx.result =  driver.makeDefinition(name, false, _localctx.n);
 				        
 				}
 				break;
 			case MODTYPE:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(1160); ((Definition_headerContext)_localctx).MODTYPE = match(MODTYPE);
+				setState(1160); _localctx.MODTYPE = match(MODTYPE);
 				setState(1161); match(BECOMES);
 
-				            driver.error("Reserved keyword: adjustment", ((Definition_headerContext)_localctx).MODTYPE);
-				            ((Definition_headerContext)_localctx).result =  null;
+				            driver.error("Reserved keyword: adjustment", _localctx.MODTYPE);
+				            _localctx.result =  null;
 				        
 				}
 				break;
@@ -6351,11 +6360,11 @@ public class CFDGParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(1165); ((DefinitionContext)_localctx).d = definition_header();
-			setState(1166); ((DefinitionContext)_localctx).e = exp2();
+			setState(1165); _localctx.d = definition_header();
+			setState(1166); _localctx.e = exp2();
 			 
-			        	ASTDefine var = ((DefinitionContext)_localctx).d.result;
-			        	ASTExpression exp = ((DefinitionContext)_localctx).e.result;
+			        	ASTDefine var = _localctx.d.result;
+			        	ASTExpression exp = _localctx.e.result;
 			        	if (var != null) {
 			        		if (exp instanceof ASTModification) {
 			        			ASTModification mod = (ASTModification)exp;
@@ -6364,9 +6373,9 @@ public class CFDGParser extends Parser {
 			        		} else {
 			        			var.setExp(exp);
 			        		}
-			        		((DefinitionContext)_localctx).result =  var;
+			        		_localctx.result =  var;
 			        	} else {
-			        		((DefinitionContext)_localctx).result =  null;        		
+			        		_localctx.result =  null;        		
 			        	}
 			        
 			}
@@ -6382,6 +6391,7 @@ public class CFDGParser extends Parser {
 		return _localctx;
 	}
 
+	@Override
 	public boolean sempred(RuleContext _localctx, int ruleIndex, int predIndex) {
 		switch (ruleIndex) {
 		case 28: return buncha_parameters_sempred((Buncha_parametersContext)_localctx, predIndex);

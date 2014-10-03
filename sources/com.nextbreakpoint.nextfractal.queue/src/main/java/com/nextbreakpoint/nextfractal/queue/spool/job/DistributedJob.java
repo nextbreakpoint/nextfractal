@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -92,6 +92,7 @@ public class DistributedJob implements DistributedJobInterface {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobInterface#getJobId()
 	 */
+	@Override
 	public String getJobId() {
 		return jobId;
 	}
@@ -99,6 +100,7 @@ public class DistributedJob implements DistributedJobInterface {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobInterface#getFrameNumber()
 	 */
+	@Override
 	public synchronized int getFrameNumber() {
 		if (jobDataRow == null) {
 			throw new IllegalStateException();
@@ -117,6 +119,7 @@ public class DistributedJob implements DistributedJobInterface {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.DistributedJobInterface#setFirstFrameNumber(int)
 	 */
+	@Override
 	public synchronized void setFirstFrameNumber(final int frameNumber) {
 		if (jobDataRow == null) {
 			throw new IllegalStateException();
@@ -131,6 +134,7 @@ public class DistributedJob implements DistributedJobInterface {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.DistributedJobInterface#getFirstFrameNumber()
 	 */
+	@Override
 	public synchronized int getFirstFrameNumber() {
 		return firstFrameNumber;
 	}
@@ -138,6 +142,7 @@ public class DistributedJob implements DistributedJobInterface {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.DistributedJobInterface#getClip()
 	 */
+	@Override
 	public synchronized TwisterClip getClip() {
 		return clip;
 	}
@@ -145,6 +150,7 @@ public class DistributedJob implements DistributedJobInterface {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.DistributedJobInterface#getJobDataRow()
 	 */
+	@Override
 	public synchronized JobData getJobDataRow() {
 		return jobDataRow;
 	}
@@ -152,6 +158,7 @@ public class DistributedJob implements DistributedJobInterface {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.DistributedJobInterface#getJobData()
 	 */
+	@Override
 	public synchronized byte[] getJobData() {
 		return jobData;
 	}
@@ -159,6 +166,7 @@ public class DistributedJob implements DistributedJobInterface {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.DistributedJobInterface#setClip(com.nextbreakpoint.nextfractal.twister.TwisterClip)
 	 */
+	@Override
 	public synchronized void setClip(final TwisterClip clip) {
 		if (thread != null) {
 			throw new IllegalStateException();
@@ -169,6 +177,7 @@ public class DistributedJob implements DistributedJobInterface {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.DistributedJobInterface#setJobDataRow(JobData)
 	 */
+	@Override
 	public synchronized void setJobDataRow(final JobData jobDataRow) {
 		if (thread != null) {
 			throw new IllegalStateException();
@@ -182,6 +191,7 @@ public class DistributedJob implements DistributedJobInterface {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.DistributedJobInterface#setJobData(byte[])
 	 */
+	@Override
 	public synchronized void setJobData(final byte[] jobData) {
 		if (thread != null) {
 			throw new IllegalStateException();
@@ -192,6 +202,7 @@ public class DistributedJob implements DistributedJobInterface {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.DistributedJobInterface#getRAF()
 	 */
+	@Override
 	public synchronized ChunkedRandomAccessFile getRAF() throws IOException {
 		return new ChunkedRandomAccessFile(tmpPath, "", ".bin", CHUNK_LENGTH);
 	}
@@ -212,6 +223,7 @@ public class DistributedJob implements DistributedJobInterface {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobInterface#getLastUpdate()
 	 */
+	@Override
 	public synchronized long getLastUpdate() {
 		return lastUpdate;
 	}
@@ -219,6 +231,7 @@ public class DistributedJob implements DistributedJobInterface {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobInterface#reset()
 	 */
+	@Override
 	public void reset() {
 		Thread tmpThread = thread;
 		if (tmpThread != null) {
@@ -240,6 +253,7 @@ public class DistributedJob implements DistributedJobInterface {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobInterface#start()
 	 */
+	@Override
 	public void start() {
 		synchronized (this) {
 			if (jobDataRow == null) {
@@ -260,6 +274,7 @@ public class DistributedJob implements DistributedJobInterface {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobInterface#stop()
 	 */
+	@Override
 	public void stop() {
 		Thread tmpThread = thread;
 		if (tmpThread != null) {
@@ -283,6 +298,7 @@ public class DistributedJob implements DistributedJobInterface {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobInterface#abort()
 	 */
+	@Override
 	public synchronized void abort() {
 		aborted = true;
 	}
@@ -290,6 +306,7 @@ public class DistributedJob implements DistributedJobInterface {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobInterface#dispose()
 	 */
+	@Override
 	public synchronized void dispose() {
 		if (tmpPath != null) {
 			Files.deleteFiles(tmpPath);
@@ -304,6 +321,7 @@ public class DistributedJob implements DistributedJobInterface {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobInterface#isStarted()
 	 */
+	@Override
 	public synchronized boolean isStarted() {
 		return started;
 	}
@@ -311,6 +329,7 @@ public class DistributedJob implements DistributedJobInterface {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobInterface#isAborted()
 	 */
+	@Override
 	public synchronized boolean isAborted() {
 		return aborted;
 	}
@@ -318,6 +337,7 @@ public class DistributedJob implements DistributedJobInterface {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobInterface#isTerminated()
 	 */
+	@Override
 	public synchronized boolean isTerminated() {
 		return terminated;
 	}
@@ -326,6 +346,7 @@ public class DistributedJob implements DistributedJobInterface {
 		/**
 		 * @see java.lang.Runnable#run()
 		 */
+		@Override
 		public void run() {
 			Surface surface = null;
 			TwisterRuntime runtime = null;
@@ -519,6 +540,7 @@ public class DistributedJob implements DistributedJobInterface {
 		/**
 		 * @see java.lang.Runnable#run()
 		 */
+		@Override
 		public void run() {
 			listener.updated(jobId, jobData);
 		}
@@ -537,6 +559,7 @@ public class DistributedJob implements DistributedJobInterface {
 		/**
 		 * @see java.lang.Runnable#run()
 		 */
+		@Override
 		public void run() {
 			listener.started(jobId, jobData);
 		}
@@ -555,6 +578,7 @@ public class DistributedJob implements DistributedJobInterface {
 		/**
 		 * @see java.lang.Runnable#run()
 		 */
+		@Override
 		public void run() {
 			listener.stopped(jobId, jobData);
 		}
@@ -573,6 +597,7 @@ public class DistributedJob implements DistributedJobInterface {
 		/**
 		 * @see java.lang.Runnable#run()
 		 */
+		@Override
 		public void run() {
 			listener.terminated(jobId, jobData);
 		}
@@ -591,6 +616,7 @@ public class DistributedJob implements DistributedJobInterface {
 		/**
 		 * @see java.lang.Runnable#run()
 		 */
+		@Override
 		public void run() {
 			listener.disposed(jobId, jobData);
 		}

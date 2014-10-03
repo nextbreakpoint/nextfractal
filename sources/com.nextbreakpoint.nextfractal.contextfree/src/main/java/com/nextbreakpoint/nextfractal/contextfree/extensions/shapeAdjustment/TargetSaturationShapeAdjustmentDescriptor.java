@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -25,8 +25,6 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.extensions.shapeAdjustment;
 
-import com.nextbreakpoint.nextfractal.contextfree.extensions.shapeAdjustment.TargetSaturationShapeAdjustmentConfig;
-import com.nextbreakpoint.nextfractal.contextfree.extensions.shapeAdjustment.TargetSaturationShapeAdjustmentRuntime;
 import com.nextbreakpoint.nextfractal.contextfree.shapeAdjustment.extension.ShapeAdjustmentExtensionDescriptor;
 
 /**
@@ -38,6 +36,7 @@ public class TargetSaturationShapeAdjustmentDescriptor extends ShapeAdjustmentEx
 	 * 
 	 * @return the extensionId.
 	 */
+	@Override
 	public String getExtensionId() {
 		return "contextfree.shape.adjustment.color.targetSaturation";
 	}
@@ -47,6 +46,7 @@ public class TargetSaturationShapeAdjustmentDescriptor extends ShapeAdjustmentEx
 	 * 
 	 * @return the extensionName.
 	 */
+	@Override
 	public String getExtensionName() {
 		return "TargetSaturation Adjustment";
 	}
@@ -56,6 +56,7 @@ public class TargetSaturationShapeAdjustmentDescriptor extends ShapeAdjustmentEx
 	 * 
 	 * @return the extensionRuntimeClass.
 	 */
+	@Override
 	public TargetSaturationShapeAdjustmentRuntime getExtensionRuntime() {
 		return new TargetSaturationShapeAdjustmentRuntime();
 	}
@@ -65,6 +66,7 @@ public class TargetSaturationShapeAdjustmentDescriptor extends ShapeAdjustmentEx
 	 * 
 	 * @return the extensionConfigClass.
 	 */
+	@Override
 	public TargetSaturationShapeAdjustmentConfig getExtensionConfig() {
 		return new TargetSaturationShapeAdjustmentConfig();
 	}

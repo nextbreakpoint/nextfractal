@@ -60,6 +60,7 @@ public class LineRelPathReplacementRuntime extends PathReplacementExtensionRunti
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
 		 */
+		@Override
 		public void valueChanged(final ValueChangeEvent e) {
 			switch (e.getEventType()) {
 				case ValueConfigElement.VALUE_CHANGED: {
@@ -88,6 +89,7 @@ public class LineRelPathReplacementRuntime extends PathReplacementExtensionRunti
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
 		 */
+		@Override
 		public void valueChanged(final ValueChangeEvent e) {
 			switch (e.getEventType()) {
 				case ValueConfigElement.VALUE_CHANGED: {
@@ -102,6 +104,7 @@ public class LineRelPathReplacementRuntime extends PathReplacementExtensionRunti
 		}
 	}
 
+	@Override
 	public void process(CFRule rule) {
 		rule.getPath().lineRel(x, y);
 	}

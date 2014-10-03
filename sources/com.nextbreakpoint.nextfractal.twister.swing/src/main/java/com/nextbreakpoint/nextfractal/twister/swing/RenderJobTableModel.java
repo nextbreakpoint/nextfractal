@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -36,7 +36,6 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 
 import com.nextbreakpoint.nextfractal.core.swing.util.GUIUtil;
-
 import com.nextbreakpoint.nextfractal.queue.LibraryService;
 import com.nextbreakpoint.nextfractal.queue.RenderService;
 import com.nextbreakpoint.nextfractal.queue.RenderService.ServiceCallback;
@@ -75,6 +74,7 @@ public class RenderJobTableModel extends ServiceAdapter implements TableModel {
 	/**
 	 * @see javax.swing.table.TableModel#addTableModelListener(javax.swing.event.TableModelListener)
 	 */
+	@Override
 	public void addTableModelListener(final TableModelListener listener) {
 		listeners.add(listener);
 	}
@@ -82,6 +82,7 @@ public class RenderJobTableModel extends ServiceAdapter implements TableModel {
 	/**
 	 * @see javax.swing.table.TableModel#removeTableModelListener(javax.swing.event.TableModelListener)
 	 */
+	@Override
 	public void removeTableModelListener(final TableModelListener listener) {
 		listeners.remove(listener);
 	}
@@ -98,6 +99,7 @@ public class RenderJobTableModel extends ServiceAdapter implements TableModel {
 	/**
 	 * @see javax.swing.table.TableModel#getColumnClass(int)
 	 */
+	@Override
 	public Class<?> getColumnClass(final int columnIndex) {
 		switch (columnIndex) {
 			case JOBID: {
@@ -137,6 +139,7 @@ public class RenderJobTableModel extends ServiceAdapter implements TableModel {
 	/**
 	 * @see javax.swing.table.TableModel#getColumnCount()
 	 */
+	@Override
 	public int getColumnCount() {
 		return 8;
 	}
@@ -144,6 +147,7 @@ public class RenderJobTableModel extends ServiceAdapter implements TableModel {
 	/**
 	 * @see javax.swing.table.TableModel#getColumnName(int)
 	 */
+	@Override
 	public String getColumnName(final int columnIndex) {
 		switch (columnIndex) {
 			case JOBID: {
@@ -183,6 +187,7 @@ public class RenderJobTableModel extends ServiceAdapter implements TableModel {
 	/**
 	 * @see javax.swing.table.TableModel#getRowCount()
 	 */
+	@Override
 	public int getRowCount() {
 		return model.size();
 	}
@@ -190,6 +195,7 @@ public class RenderJobTableModel extends ServiceAdapter implements TableModel {
 	/**
 	 * @see javax.swing.table.TableModel#getValueAt(int, int)
 	 */
+	@Override
 	public Object getValueAt(final int rowIndex, final int columnIndex) {
 		final RenderJobDataRow dataRow = model.get(rowIndex);
 		switch (columnIndex) {
@@ -243,6 +249,7 @@ public class RenderJobTableModel extends ServiceAdapter implements TableModel {
 	/**
 	 * @see javax.swing.table.TableModel#isCellEditable(int, int)
 	 */
+	@Override
 	public boolean isCellEditable(final int rowIndex, final int columnIndex) {
 		// switch (columnIndex)
 		// {
@@ -297,6 +304,7 @@ public class RenderJobTableModel extends ServiceAdapter implements TableModel {
 	/**
 	 * @see javax.swing.table.TableModel#setValueAt(java.lang.Object, int, int)
 	 */
+	@Override
 	public void setValueAt(final Object aValue, final int rowIndex, final int columnIndex) {
 		// RenderJobDataRow dataRow = model.get(rowIndex);
 		//		
@@ -467,12 +475,14 @@ public class RenderJobTableModel extends ServiceAdapter implements TableModel {
 			/**
 			 * @param value
 			 */
+			@Override
 			public void executed(final List<RenderJobDataRow> jobs) {
 				try {
 					if (RenderJobTableModel.logger.isLoggable(Level.INFO)) {
 						RenderJobTableModel.logger.info("Reload executed");
 					}
 					GUIUtil.executeTask(new Runnable() {
+							@Override
 							public void run() {
 							RenderJobTableModel.this.reload(jobs);
 							}
@@ -486,10 +496,12 @@ public class RenderJobTableModel extends ServiceAdapter implements TableModel {
 			/**
 			 * @see com.nextbreakpoint.nextfractal.service.RenderService.ServiceCallback#failed(java.lang.Throwable)
 			 */
+			@Override
 			public void failed(final Throwable throwable) {
 				try {
 					RenderJobTableModel.logger.log(Level.WARNING, "Reload failed", throwable);
 					GUIUtil.executeTask(new Runnable() {
+							@Override
 							public void run() {
 							RenderJobTableModel.this.reload(new LinkedList<RenderJobDataRow>());
 							}
@@ -505,6 +517,7 @@ public class RenderJobTableModel extends ServiceAdapter implements TableModel {
 			 * @return
 			 * @throws Exception
 			 */
+			@Override
 			public List<RenderJobDataRow> execute(final LibraryService service) throws Exception {
 				return service.loadJobs();
 			}
@@ -702,6 +715,7 @@ public class RenderJobTableModel extends ServiceAdapter implements TableModel {
 			this.tableModel = tableModel;
 		}
 
+		@Override
 		public void run() {
 		}
 	}

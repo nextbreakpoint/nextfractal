@@ -2,7 +2,7 @@
 
 package com.nextbreakpoint.nextfractal.cfdg.node;
 
-import com.nextbreakpoint.nextfractal.cfdg.analysis.*;
+import com.nextbreakpoint.nextfractal.cfdg.analysis.Analysis;
 
 @SuppressWarnings("nls")
 public final class ASaturationCurrentColorAdjustment extends PCurrentColorAdjustment
@@ -39,7 +39,8 @@ public final class ASaturationCurrentColorAdjustment extends PCurrentColorAdjust
             cloneNode(this._bar_));
     }
 
-    public void apply(Switch sw)
+    @Override
+	public void apply(Switch sw)
     {
         ((Analysis) sw).caseASaturationCurrentColorAdjustment(this);
     }

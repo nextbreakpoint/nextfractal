@@ -206,6 +206,7 @@ public class CFPath implements Cloneable {
 		return shape.getBounds2D();
 	}
 	
+	@Override
 	public String toString() {
 		ExtendedGeneralPath path = generalPath();
 		return "CFPath [bounds=" + path.getBounds2D().toString() + "]";

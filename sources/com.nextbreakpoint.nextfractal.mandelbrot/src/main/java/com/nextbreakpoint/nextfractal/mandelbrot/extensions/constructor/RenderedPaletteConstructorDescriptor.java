@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -26,7 +26,6 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.extensions.constructor;
 
 import com.nextbreakpoint.nextfractal.core.constructor.extension.ConstructorExtensionDescriptor;
-import com.nextbreakpoint.nextfractal.mandelbrot.extensions.constructor.RenderedPaletteConstructorRuntime;
 
 /**
  * @author Andrea Medeghini
@@ -37,6 +36,7 @@ public class RenderedPaletteConstructorDescriptor extends ConstructorExtensionDe
 	 * 
 	 * @return the extensionId.
 	 */
+	@Override
 	public String getExtensionId() {
 		return "type.class.RenderedPalette";
 	}
@@ -46,6 +46,7 @@ public class RenderedPaletteConstructorDescriptor extends ConstructorExtensionDe
 	 * 
 	 * @return the extensionName.
 	 */
+	@Override
 	public String getExtensionName() {
 		return "RenderedPaletteConstructor";
 	}
@@ -55,6 +56,7 @@ public class RenderedPaletteConstructorDescriptor extends ConstructorExtensionDe
 	 * 
 	 * @return the extensionRuntimeClass.
 	 */
+	@Override
 	public RenderedPaletteConstructorRuntime getExtensionRuntime() {
 		return new RenderedPaletteConstructorRuntime();
 	}

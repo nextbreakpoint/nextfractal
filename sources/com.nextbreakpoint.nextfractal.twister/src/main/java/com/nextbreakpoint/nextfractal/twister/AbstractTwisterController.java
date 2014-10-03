@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -65,6 +65,7 @@ public abstract class AbstractTwisterController implements TwisterController {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.twister.TwisterController#setRenderContext(com.nextbreakpoint.nextfractal.core.util.RenderContext)
 	 */
+	@Override
 	public void setRenderContext(final RenderContext context) {
 		this.context = context;
 	}
@@ -228,6 +229,7 @@ public abstract class AbstractTwisterController implements TwisterController {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.twister.TwisterController#addControllerListener(com.nextbreakpoint.nextfractal.twister.ControllerListener)
 	 */
+	@Override
 	public void addControllerListener(final ControllerListener listener) {
 		listeners.add(listener);
 	}
@@ -235,6 +237,7 @@ public abstract class AbstractTwisterController implements TwisterController {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.twister.TwisterController#removeControllerListener(com.nextbreakpoint.nextfractal.twister.ControllerListener)
 	 */
+	@Override
 	public void removeControllerListener(final ControllerListener listener) {
 		listeners.remove(listener);
 	}
@@ -283,6 +286,7 @@ public abstract class AbstractTwisterController implements TwisterController {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.twister.TwisterController#redoAction(boolean)
 	 */
+	@Override
 	public boolean redoAction(final boolean sameTimestamp) {
 		if (redo(sameTimestamp)) {
 			execute();
@@ -344,6 +348,7 @@ public abstract class AbstractTwisterController implements TwisterController {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.twister.TwisterController#undoAction(boolean)
 	 */
+	@Override
 	public boolean undoAction(final boolean sameTimestamp) {
 		if (undo(sameTimestamp)) {
 			execute();
@@ -405,6 +410,7 @@ public abstract class AbstractTwisterController implements TwisterController {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.twister.TwisterController#redoAction(long, boolean)
 	 */
+	@Override
 	public boolean redoAction(final long timestamp, final boolean relative) {
 		// if (logger.isDebugEnabled()) {
 		// logger.debug(getStatus());
@@ -510,6 +516,7 @@ public abstract class AbstractTwisterController implements TwisterController {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.twister.TwisterController#undoAction(long, boolean)
 	 */
+	@Override
 	public boolean undoAction(final long timestamp, final boolean relative) {
 		// if (logger.isDebugEnabled()) {
 		// logger.debug(getStatus());
@@ -615,6 +622,7 @@ public abstract class AbstractTwisterController implements TwisterController {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.twister.TwisterController#redoActionAndSleep()
 	 */
+	@Override
 	public boolean redoActionAndSleep() {
 		// if (logger.isDebugEnabled()) {
 		// logger.debug(getStatus());
@@ -704,6 +712,7 @@ public abstract class AbstractTwisterController implements TwisterController {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.twister.TwisterController#undoActionAndSleep()
 	 */
+	@Override
 	public boolean undoActionAndSleep() {
 		// if (logger.isDebugEnabled()) {
 		// logger.debug(getStatus());
@@ -793,6 +802,7 @@ public abstract class AbstractTwisterController implements TwisterController {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.twister.TwisterController#undoAll()
 	 */
+	@Override
 	public boolean undoAll() {
 		while (undo(false)) {
 		}
@@ -804,6 +814,7 @@ public abstract class AbstractTwisterController implements TwisterController {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.twister.TwisterController#redoAll()
 	 */
+	@Override
 	public boolean redoAll() {
 		while (redo(false)) {
 		}
@@ -822,6 +833,7 @@ public abstract class AbstractTwisterController implements TwisterController {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.twister.TwisterController#getDuration()
 	 */
+	@Override
 	public long getDuration() {
 		return clipDuration;
 	}
@@ -829,6 +841,7 @@ public abstract class AbstractTwisterController implements TwisterController {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.twister.TwisterController#getTime()
 	 */
+	@Override
 	public long getTime() {
 		return clipTimestamp;
 	}
@@ -848,16 +861,19 @@ public abstract class AbstractTwisterController implements TwisterController {
 			this.action = action;
 		}
 
+		@Override
 		public void undo() {
 			undoAction(action);
 			fireActionUndone(action);
 		}
 
+		@Override
 		public void redo() {
 			redoAction(action);
 			fireActionRedone(action);
 		}
 
+		@Override
 		public long getTimestamp() {
 			return action.getTimestamp();
 		}
@@ -876,12 +892,15 @@ public abstract class AbstractTwisterController implements TwisterController {
 			this.timestamp = timestamp;
 		}
 
+		@Override
 		public void undo() {
 		}
 
+		@Override
 		public void redo() {
 		}
 
+		@Override
 		public long getTimestamp() {
 			return timestamp;
 		}
@@ -894,12 +913,15 @@ public abstract class AbstractTwisterController implements TwisterController {
 			this.timestamp = timestamp;
 		}
 
+		@Override
 		public void undo() {
 		}
 
+		@Override
 		public void redo() {
 		}
 
+		@Override
 		public long getTimestamp() {
 			return timestamp;
 		}

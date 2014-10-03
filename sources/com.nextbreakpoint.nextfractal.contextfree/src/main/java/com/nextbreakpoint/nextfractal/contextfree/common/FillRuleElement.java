@@ -32,6 +32,7 @@ public class FillRuleElement extends ValueConfigElement<String> {
 	/**
 	 *
 	 */
+	@Override
 	public void copyFrom(ConfigElement source) {
 		FillRuleElement element = (FillRuleElement) source;
 		setValue(element.getValue());

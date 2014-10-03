@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -25,12 +25,12 @@
  */
 package com.nextbreakpoint.nextfractal.queue.jxta;
 
+import net.jxta.protocol.PipeAdvertisement;
+
 import com.nextbreakpoint.nextfractal.queue.network.ServiceEndpoint;
 import com.nextbreakpoint.nextfractal.queue.network.ServiceException;
 import com.nextbreakpoint.nextfractal.queue.network.ServiceListener;
 import com.nextbreakpoint.nextfractal.queue.network.ServiceSession;
-
-import net.jxta.protocol.PipeAdvertisement;
 
 /**
  * @author Andrea Medeghini
@@ -73,6 +73,7 @@ public class JXTAServiceEndpoint implements ServiceEndpoint {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.network.ServiceEndpoint#createSession(com.nextbreakpoint.nextfractal.queue.network.ServiceListener)
 	 */
+	@Override
 	public ServiceSession createSession(final ServiceListener listener) throws ServiceException {
 		ServiceSession session = networkService.createSession(pipeadv, listener);
 		session.setEndpoint(this);
@@ -82,6 +83,7 @@ public class JXTAServiceEndpoint implements ServiceEndpoint {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.network.ServiceEndpoint#invalidate()
 	 */
+	@Override
 	public void invalidate() {
 		networkService.invalidate(pipeadv);
 	}
@@ -89,6 +91,7 @@ public class JXTAServiceEndpoint implements ServiceEndpoint {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.network.ServiceEndpoint#isInvalidated()
 	 */
+	@Override
 	public boolean isInvalidated() {
 		return networkService.isInvalidated(pipeadv);
 	}
@@ -96,6 +99,7 @@ public class JXTAServiceEndpoint implements ServiceEndpoint {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.network.ServiceEndpoint#setJobCount(int)
 	 */
+	@Override
 	public void setJobCount(final int jobCount) {
 		this.jobCount = jobCount;
 		lastUpdate = System.currentTimeMillis();
@@ -104,6 +108,7 @@ public class JXTAServiceEndpoint implements ServiceEndpoint {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.network.ServiceEndpoint#getJobCount()
 	 */
+	@Override
 	public int getJobCount() {
 		return jobCount;
 	}
@@ -111,6 +116,7 @@ public class JXTAServiceEndpoint implements ServiceEndpoint {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.network.ServiceEndpoint#getJobCountLastUpdate()
 	 */
+	@Override
 	public long getJobCountLastUpdate() {
 		return lastUpdate;
 	}

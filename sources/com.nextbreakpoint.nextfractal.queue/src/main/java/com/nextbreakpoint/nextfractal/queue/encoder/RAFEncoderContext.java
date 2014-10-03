@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -50,6 +50,7 @@ public class RAFEncoderContext implements EncoderContext {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.encoder.EncoderContext#getTileAsByteArray(int, int, int, int, int, int)
 	 */
+	@Override
 	public byte[] getTileAsByteArray(final int n, final int x, final int y, final int w, final int h, final int s) throws IOException {
 		final byte[] data = new byte[w * h * s];
 		final byte[] row = new byte[w * 4];
@@ -80,6 +81,7 @@ public class RAFEncoderContext implements EncoderContext {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.encoder.EncoderContext#getTileAsByteArray(int, int, int, int, int, int)
 	 */
+	@Override
 	public int[] getTileAsIntArray(final int n, final int x, final int y, final int w, final int h, final int s) throws IOException {
 		final int[] data = new int[w * h * s];
 		final byte[] row = new byte[w * 4];
@@ -107,18 +109,22 @@ public class RAFEncoderContext implements EncoderContext {
 		return data;
 	}
 
+	@Override
 	public int getImageWidth() {
 		return imageWidth;
 	}
 
+	@Override
 	public int getImageHeight() {
 		return imageHeight;
 	}
 
+	@Override
 	public int getFrameRate() {
 		return frameRate;
 	}
 
+	@Override
 	public int getFrameCount() {
 		return frameCount;
 	}

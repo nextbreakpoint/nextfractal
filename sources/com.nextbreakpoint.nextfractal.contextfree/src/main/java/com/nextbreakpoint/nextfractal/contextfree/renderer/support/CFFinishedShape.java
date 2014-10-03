@@ -25,6 +25,7 @@ public class CFFinishedShape implements Cloneable, Comparable<CFFinishedShape> {
 		return new CFFinishedShape(path.clone(), attribute.clone(), cumulativeArea);
 	}
 
+	@Override
 	public int compareTo(CFFinishedShape s) {
 		if (attribute.getModification().getZ() == s.attribute.getModification().getZ()) {
 			return (cumulativeArea - s.cumulativeArea) < 0 ? -1 : 1;

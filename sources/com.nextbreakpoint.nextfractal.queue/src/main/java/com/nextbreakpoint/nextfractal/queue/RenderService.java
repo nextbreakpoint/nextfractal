@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -113,6 +113,7 @@ public class RenderService {
 	public synchronized void setJobServiceReference(final ExtensionReference serviceReference) {
 		this.serviceReference = serviceReference;
 		serviceWorker.addTask(new ServiceTask<Object>(new ServiceCallback<Object>() {
+				@Override
 				public LibraryService execute(final LibraryService service) throws Exception {
 				if (processService != null) {
 					processService.stop();
@@ -125,9 +126,11 @@ public class RenderService {
 				return null;
 				}
 
+			@Override
 			public void executed(final Object value) {
 				}
 
+			@Override
 			public void failed(final Throwable throwable) {
 				}
 						}));
@@ -261,6 +264,7 @@ public class RenderService {
 			this.callback = callback;
 		}
 
+		@Override
 		public final void run() {
 			try {
 				callback.executed(callback.execute(service));
@@ -295,6 +299,7 @@ public class RenderService {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.LibraryServiceListener#clipCreated(com.nextbreakpoint.nextfractal.queue.clip.RenderClipDataRow)
 		 */
+		@Override
 		public void clipCreated(final RenderClipDataRow clip) {
 			ClipPreview preview = previews.get(clip.getClipId());
 			if (preview == null) {
@@ -307,6 +312,7 @@ public class RenderService {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.LibraryServiceListener#clipDeleted(com.nextbreakpoint.nextfractal.queue.clip.RenderClipDataRow)
 		 */
+		@Override
 		public void clipDeleted(final RenderClipDataRow clip) {
 			ClipPreview preview = previews.remove(clip.getClipId());
 			if (preview != null) {
@@ -317,12 +323,14 @@ public class RenderService {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.LibraryServiceListener#clipUpdated(com.nextbreakpoint.nextfractal.queue.clip.RenderClipDataRow)
 		 */
+		@Override
 		public void clipUpdated(final RenderClipDataRow clip) {
 		}
 
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.LibraryServiceListener#clipUpdated(com.nextbreakpoint.nextfractal.queue.clip.RenderClipDataRow)
 		 */
+		@Override
 		public void clipLoaded(final RenderClipDataRow clip) {
 			ClipPreview preview = previews.get(clip.getClipId());
 			if (preview == null) {
@@ -335,12 +343,14 @@ public class RenderService {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.LibraryServiceListener#jobCreated(com.nextbreakpoint.nextfractal.queue.job.RenderJobDataRow)
 		 */
+		@Override
 		public void jobCreated(final RenderJobDataRow job) {
 		}
 
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.LibraryServiceListener#jobDeleted(com.nextbreakpoint.nextfractal.queue.job.RenderJobDataRow)
 		 */
+		@Override
 		public void jobDeleted(final RenderJobDataRow job) {
 			if (job.isPostProcess()) {
 				final String jobId = postProcessJobs.remove(job.getJobId());
@@ -365,6 +375,7 @@ public class RenderService {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.LibraryServiceListener#jobStarted(com.nextbreakpoint.nextfractal.queue.job.RenderJobDataRow)
 		 */
+		@Override
 		public void jobStarted(final RenderJobDataRow job) {
 			if (job.isPostProcess()) {
 				if (!postProcessJobs.containsKey(job.getJobId())) {
@@ -419,6 +430,7 @@ public class RenderService {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.LibraryServiceListener#jobAborted(com.nextbreakpoint.nextfractal.queue.job.RenderJobDataRow)
 		 */
+		@Override
 		public void jobAborted(final RenderJobDataRow job) {
 			if (job.isPostProcess()) {
 				final String jobId = postProcessJobs.get(job.getJobId());
@@ -443,6 +455,7 @@ public class RenderService {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.LibraryServiceListener#jobStopped(com.nextbreakpoint.nextfractal.queue.job.RenderJobDataRow)
 		 */
+		@Override
 		public void jobStopped(final RenderJobDataRow job) {
 			if (job.isPostProcess()) {
 				final String jobId = postProcessJobs.get(job.getJobId());
@@ -467,12 +480,14 @@ public class RenderService {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.LibraryServiceListener#jobUpdated(com.nextbreakpoint.nextfractal.queue.job.RenderJobDataRow)
 		 */
+		@Override
 		public void jobUpdated(final RenderJobDataRow job) {
 		}
 
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.LibraryServiceListener#jobResumed(com.nextbreakpoint.nextfractal.queue.job.RenderJobDataRow)
 		 */
+		@Override
 		public void jobResumed(final RenderJobDataRow job) {
 			if (job.isPostProcess()) {
 				if (!postProcessJobs.containsKey(job.getJobId())) {
@@ -500,24 +515,28 @@ public class RenderService {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.LibraryServiceListener#profileCreated(com.nextbreakpoint.nextfractal.queue.profile.RenderProfileDataRow)
 		 */
+		@Override
 		public void profileCreated(final RenderProfileDataRow profile) {
 		}
 
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.LibraryServiceListener#profileDeleted(com.nextbreakpoint.nextfractal.queue.profile.RenderProfileDataRow)
 		 */
+		@Override
 		public void profileDeleted(final RenderProfileDataRow profile) {
 		}
 
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.LibraryServiceListener#profileUpdated(com.nextbreakpoint.nextfractal.queue.profile.RenderProfileDataRow)
 		 */
+		@Override
 		public void profileUpdated(final RenderProfileDataRow profile) {
 		}
 
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.LibraryServiceListener#profileLoaded(com.nextbreakpoint.nextfractal.queue.profile.RenderProfileDataRow)
 		 */
+		@Override
 		public void profileLoaded(final RenderProfileDataRow profile) {
 		}
 	}
@@ -526,8 +545,10 @@ public class RenderService {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.spool.JobListener#updated(String, JobData)
 		 */
+		@Override
 		public void updated(final String jobId, final JobData jobData) {
 			execute(new ServiceCallback<Object>() {
+				@Override
 				public Object execute(final LibraryService service) throws Exception {
 					try {
 						service.processUpdated(jobData);
@@ -537,9 +558,11 @@ public class RenderService {
 					return null;
 				}
 
+				@Override
 				public void executed(final Object value) {
 				}
 
+				@Override
 				public void failed(final Throwable throwable) {
 				}
 			});
@@ -548,8 +571,10 @@ public class RenderService {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.spool.JobListener#started(String, JobData)
 		 */
+		@Override
 		public void started(final String jobId, final JobData jobData) {
 			execute(new ServiceCallback<Object>() {
+				@Override
 				public Object execute(final LibraryService service) throws Exception {
 					try {
 						service.processStarted(jobData);
@@ -559,9 +584,11 @@ public class RenderService {
 					return null;
 				}
 
+				@Override
 				public void executed(final Object value) {
 				}
 
+				@Override
 				public void failed(final Throwable throwable) {
 				}
 			});
@@ -570,8 +597,10 @@ public class RenderService {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.spool.JobListener#stopped(String, JobData)
 		 */
+		@Override
 		public void stopped(final String jobId, final JobData jobData) {
 			execute(new ServiceCallback<Object>() {
+				@Override
 				public Object execute(final LibraryService service) throws Exception {
 					try {
 						service.processStopped(jobData);
@@ -581,9 +610,11 @@ public class RenderService {
 					return null;
 				}
 
+				@Override
 				public void executed(final Object value) {
 				}
 
+				@Override
 				public void failed(final Throwable throwable) {
 				}
 			});
@@ -592,8 +623,10 @@ public class RenderService {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.spool.JobListener#terminated(String, JobData)
 		 */
+		@Override
 		public void terminated(final String jobId, final JobData jobData) {
 			execute(new ServiceCallback<Object>() {
+				@Override
 				public Object execute(final LibraryService service) throws Exception {
 					try {
 						service.processTerminated(jobData);
@@ -603,9 +636,11 @@ public class RenderService {
 					return null;
 				}
 
+				@Override
 				public void executed(final Object value) {
 				}
 
+				@Override
 				public void failed(final Throwable throwable) {
 				}
 			});
@@ -614,8 +649,10 @@ public class RenderService {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.spool.JobListener#terminated(String, JobData)
 		 */
+		@Override
 		public void disposed(final String jobId, final JobData jobData) {
 			execute(new ServiceCallback<Object>() {
+				@Override
 				public Object execute(final LibraryService service) throws Exception {
 					try {
 						service.processDeleted(jobData);
@@ -625,9 +662,11 @@ public class RenderService {
 					return null;
 				}
 
+				@Override
 				public void executed(final Object value) {
 				}
 
+				@Override
 				public void failed(final Throwable throwable) {
 				}
 			});
@@ -644,6 +683,7 @@ public class RenderService {
 			this.serviceId = serviceId;
 		}
 
+		@Override
 		public void stateChanged(final int serviceId, final int status, final String message) {
 			synchronized (listeners) {
 				for (JobServiceListener listener : listeners) {
@@ -667,6 +707,7 @@ public class RenderService {
 
 		private void render(final int clipId) {
 			previewWorker.addTask(new Runnable() {
+				@Override
 				public void run() {
 					try {
 						RenderClipDataRow dataRow = service.getClip(clipId);
@@ -693,6 +734,7 @@ public class RenderService {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.clip.ClipPreview#getImage()
 		 */
+		@Override
 		public Image getImage() {
 			return surface.getImage();
 		}
@@ -700,6 +742,7 @@ public class RenderService {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.clip.ClipPreview#dispose()
 		 */
+		@Override
 		public void dispose() {
 			if (surface != null) {
 				surface.dispose();
@@ -710,6 +753,7 @@ public class RenderService {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.clip.ClipPreview#update()
 		 */
+		@Override
 		public void update() {
 			render(clipId);
 		}

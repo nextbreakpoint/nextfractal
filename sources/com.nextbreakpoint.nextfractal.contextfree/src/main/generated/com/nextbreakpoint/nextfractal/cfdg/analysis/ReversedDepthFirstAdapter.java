@@ -2,7 +2,9 @@
 
 package com.nextbreakpoint.nextfractal.cfdg.analysis;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import com.nextbreakpoint.nextfractal.cfdg.node.*;
 

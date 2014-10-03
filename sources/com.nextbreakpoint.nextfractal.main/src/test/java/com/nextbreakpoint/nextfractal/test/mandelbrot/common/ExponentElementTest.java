@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -25,15 +25,14 @@
  */
 package com.nextbreakpoint.nextfractal.test.mandelbrot.common;
 
-import com.nextbreakpoint.nextfractal.mandelbrot.common.ExponentElement;
-import com.nextbreakpoint.nextfractal.mandelbrot.common.ExponentElementNode;
-import com.nextbreakpoint.nextfractal.mandelbrot.common.ExponentElementXMLExporter;
-import com.nextbreakpoint.nextfractal.mandelbrot.common.ExponentElementXMLImporter;
-
 import org.junit.Test;
 
 import com.nextbreakpoint.nextfractal.core.test.AbsractValueElementTest;
 import com.nextbreakpoint.nextfractal.core.tree.Node;
+import com.nextbreakpoint.nextfractal.mandelbrot.common.ExponentElement;
+import com.nextbreakpoint.nextfractal.mandelbrot.common.ExponentElementNode;
+import com.nextbreakpoint.nextfractal.mandelbrot.common.ExponentElementXMLExporter;
+import com.nextbreakpoint.nextfractal.mandelbrot.common.ExponentElementXMLImporter;
 
 /**
  * @author Andrea Medeghini

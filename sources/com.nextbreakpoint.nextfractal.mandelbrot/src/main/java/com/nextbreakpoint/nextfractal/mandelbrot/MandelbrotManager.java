@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -28,6 +28,8 @@ package com.nextbreakpoint.nextfractal.mandelbrot;
 import java.awt.Graphics2D;
 import java.util.Map;
 import java.util.logging.Logger;
+
+import javafx.scene.canvas.GraphicsContext;
 
 import com.nextbreakpoint.nextfractal.core.util.DoubleVector2D;
 import com.nextbreakpoint.nextfractal.core.util.Tile;
@@ -137,6 +139,33 @@ public class MandelbrotManager {
 	 */
 	public void setMode(final int mode) {
 		renderer.setMode(mode);
+	}
+
+	/**
+	 * @param gc
+	 */
+	public void drawImage(final GraphicsContext gc) {
+		renderer.drawImage(gc);
+	}
+
+	/**
+	 * @param gc
+	 * @param x
+	 * @param y
+	 */
+	public void drawImage(final GraphicsContext gc, final int x, final int y) {
+		renderer.drawImage(gc, x, y);
+	}
+
+	/**
+	 * @param gc
+	 * @param x
+	 * @param y
+	 * @param ow
+	 * @param oh
+	 */
+	public void drawImage(final GraphicsContext gc, final int x, final int y, final int w, final int h) {
+		renderer.drawImage(gc, x, y, w, h);
 	}
 
 	/**

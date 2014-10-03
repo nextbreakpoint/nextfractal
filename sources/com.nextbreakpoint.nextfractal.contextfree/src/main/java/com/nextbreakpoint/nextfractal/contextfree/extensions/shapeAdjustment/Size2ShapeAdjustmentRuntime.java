@@ -60,6 +60,7 @@ public class Size2ShapeAdjustmentRuntime extends ShapeAdjustmentExtensionRuntime
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
 		 */
+		@Override
 		public void valueChanged(final ValueChangeEvent e) {
 			switch (e.getEventType()) {
 				case ValueConfigElement.VALUE_CHANGED: {
@@ -88,6 +89,7 @@ public class Size2ShapeAdjustmentRuntime extends ShapeAdjustmentExtensionRuntime
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
 		 */
+		@Override
 		public void valueChanged(final ValueChangeEvent e) {
 			switch (e.getEventType()) {
 				case ValueConfigElement.VALUE_CHANGED: {
@@ -107,10 +109,12 @@ public class Size2ShapeAdjustmentRuntime extends ShapeAdjustmentExtensionRuntime
 		mod.scale(scaleX, scaleY, 1);
 	}
 
+	@Override
 	public boolean isSizeChange() {
 		return true;
 	}
 
+	@Override
 	public float getSize() {
 		return Math.max(scaleX, scaleY);
 	}

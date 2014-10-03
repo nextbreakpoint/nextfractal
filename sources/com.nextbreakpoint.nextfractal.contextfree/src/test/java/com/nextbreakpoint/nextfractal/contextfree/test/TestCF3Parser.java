@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -27,9 +27,6 @@ package com.nextbreakpoint.nextfractal.contextfree.test;
 
 import java.io.FileReader;
 
-import com.nextbreakpoint.nextfractal.contextfree.parser.CFDGLexer;
-import com.nextbreakpoint.nextfractal.contextfree.parser.CFDGParser;
-
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -39,6 +36,9 @@ import org.antlr.v4.runtime.tree.ParseTreeListener;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.junit.Test;
+
+import com.nextbreakpoint.nextfractal.contextfree.parser.CFDGLexer;
+import com.nextbreakpoint.nextfractal.contextfree.parser.CFDGParser;
 
 public class TestCF3Parser {
 	@Test

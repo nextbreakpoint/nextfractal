@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -30,13 +30,13 @@ import java.net.URI;
 import java.util.concurrent.ThreadFactory;
 import java.util.logging.Logger;
 
-import com.nextbreakpoint.nextfractal.core.util.DefaultThreadFactory;
-
 import net.jxta.id.IDFactory;
 import net.jxta.peer.PeerID;
 import net.jxta.peergroup.PeerGroupID;
 import net.jxta.platform.NetworkConfigurator;
 import net.jxta.platform.NetworkManager;
+
+import com.nextbreakpoint.nextfractal.core.util.DefaultThreadFactory;
 
 /**
  * @author Andrea Medeghini
@@ -93,6 +93,7 @@ public class JXTARelayService {
 		/**
 		 * @see java.lang.Runnable#run()
 		 */
+		@Override
 		public void run() {
 			boolean interrupted = false;
 			try {

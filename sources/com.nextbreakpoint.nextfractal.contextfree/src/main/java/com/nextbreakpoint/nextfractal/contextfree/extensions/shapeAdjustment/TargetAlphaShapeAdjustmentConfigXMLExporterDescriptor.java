@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -25,7 +25,6 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.extensions.shapeAdjustment;
 
-import com.nextbreakpoint.nextfractal.contextfree.extensions.shapeAdjustment.TargetAlphaShapeAdjustmentConfigXMLExporterRuntime;
 import com.nextbreakpoint.nextfractal.core.extensionConfigXMLExporter.extension.ExtensionConfigXMLExporterExtensionDescriptor;
 
 /**
@@ -37,6 +36,7 @@ public class TargetAlphaShapeAdjustmentConfigXMLExporterDescriptor extends Exten
 	 * 
 	 * @return the extensionId.
 	 */
+	@Override
 	public String getExtensionId() {
 		return "contextfree.shape.adjustment.color.targetAlpha";
 	}
@@ -46,6 +46,7 @@ public class TargetAlphaShapeAdjustmentConfigXMLExporterDescriptor extends Exten
 	 * 
 	 * @return the extensionName.
 	 */
+	@Override
 	public String getExtensionName() {
 		return "TargetAlpha ShapeAdjustment";
 	}
@@ -55,6 +56,7 @@ public class TargetAlphaShapeAdjustmentConfigXMLExporterDescriptor extends Exten
 	 * 
 	 * @return the extensionRuntimeClass.
 	 */
+	@Override
 	public TargetAlphaShapeAdjustmentConfigXMLExporterRuntime getExtensionRuntime() {
 		return new TargetAlphaShapeAdjustmentConfigXMLExporterRuntime();
 	}

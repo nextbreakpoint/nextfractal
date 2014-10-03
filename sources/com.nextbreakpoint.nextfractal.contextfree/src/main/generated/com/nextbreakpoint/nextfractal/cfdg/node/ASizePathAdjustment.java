@@ -2,7 +2,7 @@
 
 package com.nextbreakpoint.nextfractal.cfdg.node;
 
-import com.nextbreakpoint.nextfractal.cfdg.analysis.*;
+import com.nextbreakpoint.nextfractal.cfdg.analysis.Analysis;
 
 @SuppressWarnings("nls")
 public final class ASizePathAdjustment extends PPathAdjustment
@@ -34,7 +34,8 @@ public final class ASizePathAdjustment extends PPathAdjustment
             cloneNode(this._expression_));
     }
 
-    public void apply(Switch sw)
+    @Override
+	public void apply(Switch sw)
     {
         ((Analysis) sw).caseASizePathAdjustment(this);
     }

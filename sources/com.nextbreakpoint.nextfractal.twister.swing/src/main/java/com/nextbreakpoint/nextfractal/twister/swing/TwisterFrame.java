@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -76,7 +76,6 @@ import com.nextbreakpoint.nextfractal.core.swing.util.JSFileFilter;
 import com.nextbreakpoint.nextfractal.core.tree.DefaultNodeSession;
 import com.nextbreakpoint.nextfractal.core.tree.NodeAction;
 import com.nextbreakpoint.nextfractal.core.tree.NodeActionValue;
-
 import com.nextbreakpoint.nextfractal.queue.LibraryService;
 import com.nextbreakpoint.nextfractal.queue.RenderService;
 import com.nextbreakpoint.nextfractal.queue.RenderService.ServiceCallback;
@@ -176,6 +175,7 @@ public class TwisterFrame extends JFrame {
 		setBackground(new Color(0x2f2f2f));
 		canvas.setShowBookmarkIcons(true);
 		canvas.addChangeListener(new ChangeListener() {
+			@Override
 			public void stateChanged(final ChangeEvent e) {
 				if (panel.isScriptState()) {
 					if (scriptThread != null) {
@@ -262,6 +262,7 @@ public class TwisterFrame extends JFrame {
 
 	private void openLogWindow() {
 		GUIUtil.executeTask(new Runnable() {
+				@Override
 				public void run() {
 				if (outputFrame == null) {
 					outputFrame = new OutputFrame();
@@ -284,6 +285,7 @@ public class TwisterFrame extends JFrame {
 	private void showLogWindow() {
 		openLogWindow();
 		GUIUtil.executeTask(new Runnable() {
+				@Override
 				public void run() {
 				outputFrame.setVisible(true);
 								// outputFrame.toFront();
@@ -293,6 +295,7 @@ public class TwisterFrame extends JFrame {
 
 	private void openConfigWindow(final TwisterConfig config, final TwisterCanvas canvas) {
 		GUIUtil.executeTask(new Runnable() {
+				@Override
 				public void run() {
 				if (configFrame == null) {
 					configFrame = new ConfigFrame(new DefaultTwisterConfigContext(), config, canvas, sessionController);
@@ -314,6 +317,7 @@ public class TwisterFrame extends JFrame {
 				}
 						}, true);
 		GUIUtil.executeTask(new Runnable() {
+				@Override
 				public void run() {
 				configFrame.setup();
 				}
@@ -322,6 +326,7 @@ public class TwisterFrame extends JFrame {
 
 	private void openAdvancedConfigWindow(final TwisterConfig config, final TwisterCanvas canvas) {
 		GUIUtil.executeTask(new Runnable() {
+				@Override
 				public void run() {
 				if (advancedConfigFrame == null) {
 					advancedConfigFrame = new NavigatorFrame(twisterTree, canvas, sessionController);
@@ -346,6 +351,7 @@ public class TwisterFrame extends JFrame {
 
 	private void openServiceWindow() {
 		GUIUtil.executeTask(new Runnable() {
+				@Override
 				public void run() {
 				if (TwisterFrame.serviceFrame == null) {
 					TwisterFrame.serviceFrame = new ServiceFrame(serviceContext, service, renderClipTableModel, renderProfileTableModel, renderJobTableModel);
@@ -414,6 +420,7 @@ public class TwisterFrame extends JFrame {
 		@Override
 		public void windowOpened(final WindowEvent e) {
 			GUIUtil.executeTask(new Runnable() {
+				@Override
 				public void run() {
 					if (canvas != null) {
 						if (!canvas.isStarted()) {
@@ -480,6 +487,7 @@ public class TwisterFrame extends JFrame {
 		@Override
 		public void windowDeiconified(final WindowEvent e) {
 			GUIUtil.executeTask(new Runnable() {
+				@Override
 				public void run() {
 					if (canvas != null) {
 						if (!canvas.isStarted()) {
@@ -874,6 +882,7 @@ public class TwisterFrame extends JFrame {
 			/**
 			 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 			 */
+			@Override
 			public void actionPerformed(final ActionEvent e) {
 				openConfigWindow(config, canvas);
 			}
@@ -889,6 +898,7 @@ public class TwisterFrame extends JFrame {
 			/**
 			 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 			 */
+			@Override
 			public void actionPerformed(final ActionEvent e) {
 				openServiceWindow();
 			}
@@ -904,6 +914,7 @@ public class TwisterFrame extends JFrame {
 			/**
 			 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 			 */
+			@Override
 			public void actionPerformed(final ActionEvent e) {
 				if (canStartSession()) {
 					tree = new DefaultTree();
@@ -932,6 +943,7 @@ public class TwisterFrame extends JFrame {
 			/**
 			 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 			 */
+			@Override
 			public void actionPerformed(final ActionEvent e) {
 				if (isPlayState()) {
 					try {
@@ -990,6 +1002,7 @@ public class TwisterFrame extends JFrame {
 			/**
 			 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 			 */
+			@Override
 			public void actionPerformed(final ActionEvent e) {
 				if (canSuspendSession()) {
 					if (isEditState()) {
@@ -1028,6 +1041,7 @@ public class TwisterFrame extends JFrame {
 			/**
 			 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 			 */
+			@Override
 			public void actionPerformed(final ActionEvent e) {
 				if (canResumeSession()) {
 					sequence = new TwisterSequence();
@@ -1054,6 +1068,7 @@ public class TwisterFrame extends JFrame {
 			/**
 			 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 			 */
+			@Override
 			public void actionPerformed(final ActionEvent e) {
 				if (canPlaySession()) {
 					if (configFrame != null) {
@@ -1099,21 +1114,25 @@ public class TwisterFrame extends JFrame {
 			/**
 			 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 			 */
+			@Override
 			public void actionPerformed(final ActionEvent e) {
 				if (canStorePhoto()) {
 					if (isEditState()) {
 						if (JOptionPane.showConfirmDialog(TwisterPanel.this, TwisterSwingResources.getInstance().getString("message.confirmSavePhoto"), TwisterSwingResources.getInstance().getString("label.savePhoto"), JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {
 							final RenderClipDataRow clip = createDefaultRenderClip(0);
 							service.execute(new ServiceCallback<Object>() {
+								@Override
 								public void executed(final Object value) {
 									semaphore.release();
 								}
 
+								@Override
 								public void failed(final Throwable throwable) {
 									TwisterFrame.logger.log(Level.WARNING, "Can't create the clip", throwable);
 									semaphore.release();
 								}
 
+								@Override
 								public Object execute(final LibraryService service) throws Exception {
 									final TwisterSequence sequence = new TwisterSequence();
 									sequence.setInitialConfig(config.clone());
@@ -1135,15 +1154,18 @@ public class TwisterFrame extends JFrame {
 					else if (isPlayState() || isScriptState()) {
 						final RenderClipDataRow clip = createDefaultRenderClip(0);
 						service.execute(new ServiceCallback<Object>() {
+							@Override
 							public void executed(final Object value) {
 								semaphore.release();
 							}
 
+							@Override
 							public void failed(final Throwable throwable) {
 								TwisterFrame.logger.log(Level.WARNING, "Can't create the clip", throwable);
 								semaphore.release();
 							}
 
+							@Override
 							public Object execute(final LibraryService service) throws Exception {
 								final TwisterSequence sequence = new TwisterSequence();
 								canvas.acquire();
@@ -1178,6 +1200,7 @@ public class TwisterFrame extends JFrame {
 			/**
 			 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 			 */
+			@Override
 			public void actionPerformed(final ActionEvent e) {
 				if (canStoreMovie()) {
 					if (JOptionPane.showConfirmDialog(TwisterPanel.this, TwisterSwingResources.getInstance().getString("message.confirmSaveMovie"), TwisterSwingResources.getInstance().getString("label.saveMovie"), JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {
@@ -1186,15 +1209,18 @@ public class TwisterFrame extends JFrame {
 						logger.fine("Clip duration = " + clipDuration + ", controller duration = " + controller.getDuration());
 						final RenderClipDataRow clip = createDefaultRenderClip(controller.getDuration());
 						service.execute(new ServiceCallback<Object>() {
+							@Override
 							public void executed(final Object value) {
 								semaphore.release();
 							}
 
+							@Override
 							public void failed(final Throwable throwable) {
 								TwisterFrame.logger.log(Level.WARNING, "Can't create the clip", throwable);
 								semaphore.release();
 							}
 
+							@Override
 							public Object execute(final LibraryService service) throws Exception {
 								service.createClip(clip, tmpClip);
 								return null;
@@ -1221,11 +1247,13 @@ public class TwisterFrame extends JFrame {
 			/**
 			 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 			 */
+			@Override
 			public void actionPerformed(final ActionEvent e) {
 				canvas.submitCommand(new Runnable() {
 					/**
 					 * @see java.lang.Runnable#run()
 					 */
+					@Override
 					public void run() {
 						if (sessionController != null) {
 							sessionController.undoAction(true);
@@ -1245,11 +1273,13 @@ public class TwisterFrame extends JFrame {
 			/**
 			 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 			 */
+			@Override
 			public void actionPerformed(final ActionEvent e) {
 				canvas.submitCommand(new Runnable() {
 					/**
 					 * @see java.lang.Runnable#run()
 					 */
+					@Override
 					public void run() {
 						if (sessionController != null) {
 							sessionController.redoAction(true);
@@ -1269,6 +1299,7 @@ public class TwisterFrame extends JFrame {
 			/**
 			 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 			 */
+			@Override
 			public void actionPerformed(final ActionEvent e) {
 				try {
 					canvas.addBookmark(createBookmark());
@@ -1290,6 +1321,7 @@ public class TwisterFrame extends JFrame {
 			/**
 			 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 			 */
+			@Override
 			public void actionPerformed(final ActionEvent e) {
 				final GraphicsEnvironment environment = GraphicsEnvironment.getLocalGraphicsEnvironment();
 				if (!GraphicsEnvironment.isHeadless()) {
@@ -1339,6 +1371,7 @@ public class TwisterFrame extends JFrame {
 			/**
 			 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 			 */
+			@Override
 			public void actionPerformed(final ActionEvent e) {
 				if (scriptThread == null) {
 					File file = selectFile();
@@ -1373,8 +1406,10 @@ public class TwisterFrame extends JFrame {
 					this.file = file;
 				}
 
+				@Override
 				public void run() {
 					GUIUtil.executeTask(new Runnable() {
+						@Override
 						public void run() {
 							try {
 								if (configFrame != null) {
@@ -1411,6 +1446,7 @@ public class TwisterFrame extends JFrame {
 						x.printStackTrace(ps);
 						ps.close();
 						GUIUtil.executeTask(new Runnable() {
+							@Override
 							public void run() {
 								showLogWindow();
 								outputFrame.append(baos.toString());
@@ -1420,6 +1456,7 @@ public class TwisterFrame extends JFrame {
 					}
 					finally {
 						GUIUtil.executeTask(new Runnable() {
+							@Override
 							public void run() {
 								try {
 									canvas.acquire();
@@ -1447,6 +1484,7 @@ public class TwisterFrame extends JFrame {
 				@Override
 				public void println(final String s) {
 					GUIUtil.executeTask(new Runnable() {
+						@Override
 						public void run() {
 							showLogWindow();
 							outputFrame.append(s);
@@ -1461,6 +1499,7 @@ public class TwisterFrame extends JFrame {
 				@Override
 				public void showMessage(final String message, final float size, final float x, final float y, final long time, final boolean hasBackground) {
 					GUIUtil.executeTask(new Runnable() {
+						@Override
 						public void run() {
 							// TwisterFrame.this.toFront();
 							canvas.showMessage(message, size, x, y, time, hasBackground);
@@ -1471,6 +1510,7 @@ public class TwisterFrame extends JFrame {
 				/**
 				 * @see com.nextbreakpoint.nextfractal.core.scripting.JSContext#loadDefaultConfig()
 				 */
+				@Override
 				public void loadDefaultConfig() {
 					try {
 						final TwisterConfigBuilder configBuilder = new TwisterConfigBuilder();
@@ -1496,6 +1536,7 @@ public class TwisterFrame extends JFrame {
 			/**
 			 * @see javax.swing.event.ChangeListener#stateChanged(javax.swing.event.ChangeEvent)
 			 */
+			@Override
 			public void stateChanged(final ChangeEvent e) {
 				try {
 					final TwisterBookmark bookmark = canvas.getSelectedBookmark();
@@ -1540,6 +1581,7 @@ public class TwisterFrame extends JFrame {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.service.swing.ServiceContext#openClip(com.nextbreakpoint.nextfractal.twister.TwisterClip)
 		 */
+		@Override
 		public void openClip(final TwisterClip clip) {
 			if (clip != null) {
 				try {
@@ -1549,6 +1591,7 @@ public class TwisterFrame extends JFrame {
 					final TwisterFrame frame = new TwisterFrame(context, service, config, hcells, vcells);
 					frame.setVisible(true);
 					GUIUtil.executeTask(new Runnable() {
+						@Override
 						public void run() {
 							frame.loadClip(clip);
 						}
@@ -1563,6 +1606,7 @@ public class TwisterFrame extends JFrame {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.service.swing.ServiceContext#removeFrame(javax.swing.JFrame)
 		 */
+		@Override
 		public void removeFrame(final JFrame frame) {
 			context.removeFrame(frame);
 		}
@@ -1570,6 +1614,7 @@ public class TwisterFrame extends JFrame {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.service.swing.ServiceContext#addFrame(javax.swing.JFrame)
 		 */
+		@Override
 		public void addFrame(final JFrame frame) {
 			context.addFrame(frame);
 		}
@@ -1577,6 +1622,7 @@ public class TwisterFrame extends JFrame {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.service.swing.ServiceContext#getFrameCount()
 		 */
+		@Override
 		public int getFrameCount() {
 			return context.getFrameCount();
 		}
@@ -1584,6 +1630,7 @@ public class TwisterFrame extends JFrame {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.service.swing.ServiceContext#exit()
 		 */
+		@Override
 		public void exit() {
 			context.exit();
 		}
@@ -1591,6 +1638,7 @@ public class TwisterFrame extends JFrame {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.service.swing.ServiceContext#restart()
 		 */
+		@Override
 		public void restart() {
 			context.restart();
 		}
@@ -1600,6 +1648,7 @@ public class TwisterFrame extends JFrame {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.twister.swing.TwisterConfigContext#openAdvancedConfigWindow()
 		 */
+		@Override
 		public void openAdvancedConfigWindow() {
 			TwisterFrame.this.openAdvancedConfigWindow(config, canvas);
 		}

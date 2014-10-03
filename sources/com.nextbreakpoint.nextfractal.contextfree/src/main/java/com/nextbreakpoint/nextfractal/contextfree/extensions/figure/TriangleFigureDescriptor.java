@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -25,8 +25,6 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.extensions.figure;
 
-import com.nextbreakpoint.nextfractal.contextfree.extensions.figure.TriangleFigureConfig;
-import com.nextbreakpoint.nextfractal.contextfree.extensions.figure.TriangleFigureRuntime;
 import com.nextbreakpoint.nextfractal.contextfree.figure.extension.FigureExtensionDescriptor;
 
 /**
@@ -38,6 +36,7 @@ public class TriangleFigureDescriptor extends FigureExtensionDescriptor {
 	 * 
 	 * @return the extensionId.
 	 */
+	@Override
 	public String getExtensionId() {
 		return "contextfree.figure.triangle";
 	}
@@ -47,6 +46,7 @@ public class TriangleFigureDescriptor extends FigureExtensionDescriptor {
 	 * 
 	 * @return the extensionName.
 	 */
+	@Override
 	public String getExtensionName() {
 		return "Triangle Figure";
 	}
@@ -56,6 +56,7 @@ public class TriangleFigureDescriptor extends FigureExtensionDescriptor {
 	 * 
 	 * @return the extensionRuntimeClass.
 	 */
+	@Override
 	public TriangleFigureRuntime getExtensionRuntime() {
 		return new TriangleFigureRuntime();
 	}
@@ -65,6 +66,7 @@ public class TriangleFigureDescriptor extends FigureExtensionDescriptor {
 	 * 
 	 * @return the extensionConfigClass.
 	 */
+	@Override
 	public TriangleFigureConfig getExtensionConfig() {
 		return new TriangleFigureConfig();
 	}

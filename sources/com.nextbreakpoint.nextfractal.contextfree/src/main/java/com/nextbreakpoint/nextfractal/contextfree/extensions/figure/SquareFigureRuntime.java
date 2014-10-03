@@ -17,6 +17,7 @@ public class SquareFigureRuntime extends FigureExtensionRuntime<SquareFigureConf
 		return "SQUARE";
 	}
 
+	@Override
 	public void process(CFBuilder builder) {
 		int shapeType = builder.encodeShapeName(getName());
 		CFRule rule = new CFRule(shapeType, 1);

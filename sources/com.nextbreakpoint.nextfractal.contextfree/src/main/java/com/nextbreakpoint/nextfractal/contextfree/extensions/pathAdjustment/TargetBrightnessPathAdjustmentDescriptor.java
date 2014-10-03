@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -25,8 +25,6 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.extensions.pathAdjustment;
 
-import com.nextbreakpoint.nextfractal.contextfree.extensions.pathAdjustment.TargetBrightnessPathAdjustmentConfig;
-import com.nextbreakpoint.nextfractal.contextfree.extensions.pathAdjustment.TargetBrightnessPathAdjustmentRuntime;
 import com.nextbreakpoint.nextfractal.contextfree.pathAdjustment.extension.PathAdjustmentExtensionDescriptor;
 
 /**
@@ -38,6 +36,7 @@ public class TargetBrightnessPathAdjustmentDescriptor extends PathAdjustmentExte
 	 * 
 	 * @return the extensionId.
 	 */
+	@Override
 	public String getExtensionId() {
 		return "contextfree.path.adjustment.color.targetBrightness";
 	}
@@ -47,6 +46,7 @@ public class TargetBrightnessPathAdjustmentDescriptor extends PathAdjustmentExte
 	 * 
 	 * @return the extensionName.
 	 */
+	@Override
 	public String getExtensionName() {
 		return "TargetBrightness Adjustment";
 	}
@@ -56,6 +56,7 @@ public class TargetBrightnessPathAdjustmentDescriptor extends PathAdjustmentExte
 	 * 
 	 * @return the extensionRuntimeClass.
 	 */
+	@Override
 	public TargetBrightnessPathAdjustmentRuntime getExtensionRuntime() {
 		return new TargetBrightnessPathAdjustmentRuntime();
 	}
@@ -65,6 +66,7 @@ public class TargetBrightnessPathAdjustmentDescriptor extends PathAdjustmentExte
 	 * 
 	 * @return the extensionConfigClass.
 	 */
+	@Override
 	public TargetBrightnessPathAdjustmentConfig getExtensionConfig() {
 		return new TargetBrightnessPathAdjustmentConfig();
 	}

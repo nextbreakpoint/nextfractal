@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -144,6 +144,7 @@ public class RenderingCanvas extends Canvas implements MovieAnimatorContext {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.swing.media.animator.MovieAnimatorContext#draw()
 	 */
+	@Override
 	public void draw() {
 		final Graphics2D g2d = getOffscreenGraphics();
 		if (g2d != null) {

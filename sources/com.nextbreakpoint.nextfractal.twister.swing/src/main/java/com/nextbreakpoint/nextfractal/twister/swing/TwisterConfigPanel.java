@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -91,9 +91,6 @@ import com.nextbreakpoint.nextfractal.core.util.IntegerVector2D;
 import com.nextbreakpoint.nextfractal.core.util.RenderContext;
 import com.nextbreakpoint.nextfractal.core.util.RenderContextListener;
 import com.nextbreakpoint.nextfractal.core.util.Tile;
-import com.nextbreakpoint.nextfractal.twister.swing.view.NavigatorViewRuntime;
-import com.nextbreakpoint.nextfractal.twister.swing.view.extension.ViewExtensionRuntime;
-
 import com.nextbreakpoint.nextfractal.twister.TwisterConfig;
 import com.nextbreakpoint.nextfractal.twister.TwisterRegistry;
 import com.nextbreakpoint.nextfractal.twister.TwisterRuntime;
@@ -116,6 +113,8 @@ import com.nextbreakpoint.nextfractal.twister.layerFilter.extension.LayerFilterE
 import com.nextbreakpoint.nextfractal.twister.renderer.DefaultTwisterRenderer;
 import com.nextbreakpoint.nextfractal.twister.renderer.TwisterRenderer;
 import com.nextbreakpoint.nextfractal.twister.renderer.TwisterRenderingHints;
+import com.nextbreakpoint.nextfractal.twister.swing.view.NavigatorViewRuntime;
+import com.nextbreakpoint.nextfractal.twister.swing.view.extension.ViewExtensionRuntime;
 
 /**
  * @author Andrea Medeghini
@@ -152,6 +151,7 @@ public class TwisterConfigPanel extends ViewPanel {
 		refreshPreview.start();
 	}
 
+	@Override
 	public void dispose() {
 		config.getContext().setParentConfigContext(null);
 		if (refreshPreview != null) {
@@ -541,6 +541,7 @@ public class TwisterConfigPanel extends ViewPanel {
 				filtersPanel.getComponent(i).setBackground((i % 2 == 0) ? evenColor : oddColor);
 			}
 			appendGroupButton.addActionListener(new ActionListener() {
+				@Override
 				public void actionPerformed(final ActionEvent e) {
 					try {
 						context.acquire();
@@ -562,6 +563,7 @@ public class TwisterConfigPanel extends ViewPanel {
 				}
 			});
 			removeGroupButton.addActionListener(new ActionListener() {
+				@Override
 				public void actionPerformed(final ActionEvent e) {
 					try {
 						context.acquire();
@@ -601,6 +603,7 @@ public class TwisterConfigPanel extends ViewPanel {
 			// }
 			// });
 			appendFilterButton.addActionListener(new ActionListener() {
+				@Override
 				public void actionPerformed(final ActionEvent e) {
 					try {
 						context.acquire();
@@ -622,6 +625,7 @@ public class TwisterConfigPanel extends ViewPanel {
 				}
 			});
 			removeFilterButton.addActionListener(new ActionListener() {
+				@Override
 				public void actionPerformed(final ActionEvent e) {
 					try {
 						context.acquire();
@@ -661,6 +665,7 @@ public class TwisterConfigPanel extends ViewPanel {
 			// }
 			// });
 			selectFilterButton.addActionListener(new ActionListener() {
+				@Override
 				public void actionPerformed(final ActionEvent e) {
 					boolean allSelected = true;
 					for (int i = 0; i < filtersPanel.getComponentCount(); i++) {
@@ -681,6 +686,7 @@ public class TwisterConfigPanel extends ViewPanel {
 				}
 			});
 			selectGroupButton.addActionListener(new ActionListener() {
+				@Override
 				public void actionPerformed(final ActionEvent e) {
 					boolean allSelected = true;
 					for (int i = 0; i < layersPanel.getComponentCount(); i++) {
@@ -701,6 +707,7 @@ public class TwisterConfigPanel extends ViewPanel {
 				}
 			});
 			moveUpGroupButton.addActionListener(new ActionListener() {
+				@Override
 				public void actionPerformed(final ActionEvent e) {
 					try {
 						context.acquire();
@@ -720,6 +727,7 @@ public class TwisterConfigPanel extends ViewPanel {
 				}
 			});
 			moveDownGroupButton.addActionListener(new ActionListener() {
+				@Override
 				public void actionPerformed(final ActionEvent e) {
 					try {
 						context.acquire();
@@ -739,6 +747,7 @@ public class TwisterConfigPanel extends ViewPanel {
 				}
 			});
 			cloneGroupButton.addActionListener(new ActionListener() {
+				@Override
 				public void actionPerformed(final ActionEvent e) {
 					try {
 						context.acquire();
@@ -758,6 +767,7 @@ public class TwisterConfigPanel extends ViewPanel {
 				}
 			});
 			moveUpFilterButton.addActionListener(new ActionListener() {
+				@Override
 				public void actionPerformed(final ActionEvent e) {
 					try {
 						context.acquire();
@@ -777,6 +787,7 @@ public class TwisterConfigPanel extends ViewPanel {
 				}
 			});
 			moveDownFilterButton.addActionListener(new ActionListener() {
+				@Override
 				public void actionPerformed(final ActionEvent e) {
 					try {
 						context.acquire();
@@ -796,6 +807,7 @@ public class TwisterConfigPanel extends ViewPanel {
 				}
 			});
 			cloneFilterButton.addActionListener(new ActionListener() {
+				@Override
 				public void actionPerformed(final ActionEvent e) {
 					try {
 						context.acquire();
@@ -815,16 +827,19 @@ public class TwisterConfigPanel extends ViewPanel {
 				}
 			});
 			editEffectsButton.addActionListener(new ActionListener() {
+				@Override
 				public void actionPerformed(final ActionEvent e) {
 					viewContext.setComponent(effectPanel);
 				}
 			});
 			editBackgroundButton.addActionListener(new ActionListener() {
+				@Override
 				public void actionPerformed(final ActionEvent e) {
 					viewContext.setComponent(colorPanel);
 				}
 			});
 			colorChooseButton.addActionListener(new ActionListener() {
+				@Override
 				public void actionPerformed(final ActionEvent e) {
 					final Color color = ColorChooser.showColorChooser(colorField, TwisterSwingResources.getInstance().getString("label.background"), colorField.getColor());
 					if (color != null) {
@@ -842,6 +857,7 @@ public class TwisterConfigPanel extends ViewPanel {
 				}
 			});
 			final ColorChangeListener colorChangeListener = new ColorChangeListener() {
+				@Override
 				public void colorChanged(final ColorChangeEvent e) {
 					try {
 						context.acquire();
@@ -857,16 +873,19 @@ public class TwisterConfigPanel extends ViewPanel {
 			};
 			colorField.addColorChangeListener(colorChangeListener);
 			editLayersButton.addActionListener(new ActionListener() {
+				@Override
 				public void actionPerformed(final ActionEvent e) {
 					viewContext.setComponent(layersPanel2);
 				}
 			});
 			editFiltersButton.addActionListener(new ActionListener() {
+				@Override
 				public void actionPerformed(final ActionEvent e) {
 					viewContext.setComponent(filtersPanel2);
 				}
 			});
 			backgroundListener = new ValueChangeListener() {
+				@Override
 				public void valueChanged(final ValueChangeEvent e) {
 					colorField.removeColorChangeListener(colorChangeListener);
 					colorField.setColor(new Color(config.getBackground().getARGB(), true));
@@ -874,6 +893,7 @@ public class TwisterConfigPanel extends ViewPanel {
 				}
 			};
 			filtersListener = new ValueChangeListener() {
+				@Override
 				public void valueChanged(final ValueChangeEvent e) {
 					switch (e.getEventType()) {
 						case ListConfigElement.ELEMENT_ADDED: {
@@ -932,6 +952,7 @@ public class TwisterConfigPanel extends ViewPanel {
 				}
 			};
 			layersListener = new ValueChangeListener() {
+				@Override
 				public void valueChanged(final ValueChangeEvent e) {
 					switch (e.getEventType()) {
 						case ListConfigElement.ELEMENT_ADDED: {
@@ -989,6 +1010,7 @@ public class TwisterConfigPanel extends ViewPanel {
 				}
 			};
 			frameListener = new ValueChangeListener() {
+				@Override
 				public void valueChanged(final ValueChangeEvent e) {
 					switch (e.getEventType()) {
 						case ValueConfigElement.VALUE_CHANGED: {
@@ -1029,6 +1051,7 @@ public class TwisterConfigPanel extends ViewPanel {
 				}
 			};
 			effectListener = new ValueChangeListener() {
+				@Override
 				public void valueChanged(final ValueChangeEvent e) {
 					switch (e.getEventType()) {
 						case ValueConfigElement.VALUE_CHANGED: {
@@ -1352,6 +1375,7 @@ public class TwisterConfigPanel extends ViewPanel {
 					filtersPanel.getComponent(i).setBackground((i % 2 == 0) ? evenColor : oddColor);
 				}
 				appendLayerButton.addActionListener(new ActionListener() {
+					@Override
 					public void actionPerformed(final ActionEvent e) {
 						try {
 							context.acquire();
@@ -1377,6 +1401,7 @@ public class TwisterConfigPanel extends ViewPanel {
 					}
 				});
 				removeLayerButton.addActionListener(new ActionListener() {
+					@Override
 					public void actionPerformed(final ActionEvent e) {
 						try {
 							context.acquire();
@@ -1416,6 +1441,7 @@ public class TwisterConfigPanel extends ViewPanel {
 				// }
 				// });
 				appendFilterButton.addActionListener(new ActionListener() {
+					@Override
 					public void actionPerformed(final ActionEvent e) {
 						try {
 							context.acquire();
@@ -1437,6 +1463,7 @@ public class TwisterConfigPanel extends ViewPanel {
 					}
 				});
 				removeFilterButton.addActionListener(new ActionListener() {
+					@Override
 					public void actionPerformed(final ActionEvent e) {
 						try {
 							context.acquire();
@@ -1476,6 +1503,7 @@ public class TwisterConfigPanel extends ViewPanel {
 				// }
 				// });
 				selectLayerButton.addActionListener(new ActionListener() {
+					@Override
 					public void actionPerformed(final ActionEvent e) {
 						boolean allSelected = true;
 						for (int i = 0; i < layersPanel.getComponentCount(); i++) {
@@ -1496,6 +1524,7 @@ public class TwisterConfigPanel extends ViewPanel {
 					}
 				});
 				selectFilterButton.addActionListener(new ActionListener() {
+					@Override
 					public void actionPerformed(final ActionEvent e) {
 						boolean allSelected = true;
 						for (int i = 0; i < filtersPanel.getComponentCount(); i++) {
@@ -1516,6 +1545,7 @@ public class TwisterConfigPanel extends ViewPanel {
 					}
 				});
 				moveUpLayerButton.addActionListener(new ActionListener() {
+					@Override
 					public void actionPerformed(final ActionEvent e) {
 						try {
 							context.acquire();
@@ -1535,6 +1565,7 @@ public class TwisterConfigPanel extends ViewPanel {
 					}
 				});
 				moveDownLayerButton.addActionListener(new ActionListener() {
+					@Override
 					public void actionPerformed(final ActionEvent e) {
 						try {
 							context.acquire();
@@ -1554,6 +1585,7 @@ public class TwisterConfigPanel extends ViewPanel {
 					}
 				});
 				cloneLayerButton.addActionListener(new ActionListener() {
+					@Override
 					public void actionPerformed(final ActionEvent e) {
 						try {
 							context.acquire();
@@ -1573,6 +1605,7 @@ public class TwisterConfigPanel extends ViewPanel {
 					}
 				});
 				moveUpFilterButton.addActionListener(new ActionListener() {
+					@Override
 					public void actionPerformed(final ActionEvent e) {
 						try {
 							context.acquire();
@@ -1592,6 +1625,7 @@ public class TwisterConfigPanel extends ViewPanel {
 					}
 				});
 				moveDownFilterButton.addActionListener(new ActionListener() {
+					@Override
 					public void actionPerformed(final ActionEvent e) {
 						try {
 							context.acquire();
@@ -1611,6 +1645,7 @@ public class TwisterConfigPanel extends ViewPanel {
 					}
 				});
 				cloneFilterButton.addActionListener(new ActionListener() {
+					@Override
 					public void actionPerformed(final ActionEvent e) {
 						try {
 							context.acquire();
@@ -1630,6 +1665,7 @@ public class TwisterConfigPanel extends ViewPanel {
 					}
 				});
 				selectedCheckBox.addItemListener(new ItemListener() {
+					@Override
 					public void itemStateChanged(final ItemEvent e) {
 						if (selectedCheckBox.isSelected()) {
 							groupLayerElement.setUserData(Boolean.TRUE);
@@ -1640,6 +1676,7 @@ public class TwisterConfigPanel extends ViewPanel {
 					}
 				});
 				final ActionListener lockedActionListener = new ActionListener() {
+					@Override
 					public void actionPerformed(final ActionEvent e) {
 						groupLayerElement.getContext().updateTimestamp();
 						groupLayerElement.setLocked(lockedCheckBox.isSelected());
@@ -1647,6 +1684,7 @@ public class TwisterConfigPanel extends ViewPanel {
 				};
 				lockedCheckBox.addActionListener(lockedActionListener);
 				final ActionListener visibleActionListener = new ActionListener() {
+					@Override
 					public void actionPerformed(final ActionEvent e) {
 						try {
 							context.acquire();
@@ -1662,6 +1700,7 @@ public class TwisterConfigPanel extends ViewPanel {
 				};
 				visibleCheckBox.addActionListener(visibleActionListener);
 				final ChangeListener opacityChangeListener = new ChangeListener() {
+					@Override
 					public void stateChanged(final ChangeEvent e) {
 						try {
 							context.acquire();
@@ -1678,6 +1717,7 @@ public class TwisterConfigPanel extends ViewPanel {
 				};
 				opacitySpinner.addChangeListener(opacityChangeListener);
 				label.addActionListener(new ActionListener() {
+					@Override
 					public void actionPerformed(final ActionEvent e) {
 						// groupLayerElement.getLabelElement().removeChangeListener(labelListener);
 						groupLayerElement.getContext().updateTimestamp();
@@ -1688,17 +1728,20 @@ public class TwisterConfigPanel extends ViewPanel {
 					}
 				});
 				showLayersButton.addActionListener(new ActionListener() {
+					@Override
 					public void actionPerformed(final ActionEvent e) {
 						layersPanel2.setVisible(showLayersButton.isSelected());
 						viewContext.resize();
 					}
 				});
 				editFiltersButton.addActionListener(new ActionListener() {
+					@Override
 					public void actionPerformed(final ActionEvent e) {
 						viewContext.setComponent(filtersPanel2);
 					}
 				});
 				lockedListener = new ValueChangeListener() {
+					@Override
 					public void valueChanged(final ValueChangeEvent e) {
 						lockedCheckBox.removeActionListener(lockedActionListener);
 						lockedCheckBox.setSelected(groupLayerElement.isLocked());
@@ -1706,6 +1749,7 @@ public class TwisterConfigPanel extends ViewPanel {
 					}
 				};
 				visibleListener = new ValueChangeListener() {
+					@Override
 					public void valueChanged(final ValueChangeEvent e) {
 						visibleCheckBox.removeActionListener(visibleActionListener);
 						visibleCheckBox.setSelected(groupLayerElement.isVisible());
@@ -1713,6 +1757,7 @@ public class TwisterConfigPanel extends ViewPanel {
 					}
 				};
 				opacityListener = new ValueChangeListener() {
+					@Override
 					public void valueChanged(final ValueChangeEvent e) {
 						opacitySpinner.removeChangeListener(opacityChangeListener);
 						opacitySpinner.setValue(groupLayerElement.getOpacity().intValue());
@@ -1721,6 +1766,7 @@ public class TwisterConfigPanel extends ViewPanel {
 					}
 				};
 				labelListener = new ValueChangeListener() {
+					@Override
 					public void valueChanged(final ValueChangeEvent e) {
 						label.setText(groupLayerElement.getLabel());
 						layersPanel2.setName(createLayersPanelName(groupLayerElement));
@@ -1728,6 +1774,7 @@ public class TwisterConfigPanel extends ViewPanel {
 					}
 				};
 				filtersListener = new ValueChangeListener() {
+					@Override
 					public void valueChanged(final ValueChangeEvent e) {
 						switch (e.getEventType()) {
 							case ListConfigElement.ELEMENT_ADDED: {
@@ -1789,6 +1836,7 @@ public class TwisterConfigPanel extends ViewPanel {
 					}
 				};
 				layersListener = new ValueChangeListener() {
+					@Override
 					public void valueChanged(final ValueChangeEvent e) {
 						switch (e.getEventType()) {
 							case ListConfigElement.ELEMENT_ADDED: {
@@ -2038,6 +2086,7 @@ public class TwisterConfigPanel extends ViewPanel {
 					filtersPanel.getComponent(i).setBackground((i % 2 == 0) ? evenColor : oddColor);
 				}
 				appendFilterButton.addActionListener(new ActionListener() {
+					@Override
 					public void actionPerformed(final ActionEvent e) {
 						try {
 							context.acquire();
@@ -2059,6 +2108,7 @@ public class TwisterConfigPanel extends ViewPanel {
 					}
 				});
 				removeFilterButton.addActionListener(new ActionListener() {
+					@Override
 					public void actionPerformed(final ActionEvent e) {
 						try {
 							context.acquire();
@@ -2098,6 +2148,7 @@ public class TwisterConfigPanel extends ViewPanel {
 				// }
 				// });
 				selectFilterButton.addActionListener(new ActionListener() {
+					@Override
 					public void actionPerformed(final ActionEvent e) {
 						boolean allSelected = true;
 						for (int i = 0; i < filtersPanel.getComponentCount(); i++) {
@@ -2118,6 +2169,7 @@ public class TwisterConfigPanel extends ViewPanel {
 					}
 				});
 				moveUpFilterButton.addActionListener(new ActionListener() {
+					@Override
 					public void actionPerformed(final ActionEvent e) {
 						try {
 							context.acquire();
@@ -2137,6 +2189,7 @@ public class TwisterConfigPanel extends ViewPanel {
 					}
 				});
 				moveDownFilterButton.addActionListener(new ActionListener() {
+					@Override
 					public void actionPerformed(final ActionEvent e) {
 						try {
 							context.acquire();
@@ -2156,6 +2209,7 @@ public class TwisterConfigPanel extends ViewPanel {
 					}
 				});
 				cloneFilterButton.addActionListener(new ActionListener() {
+					@Override
 					public void actionPerformed(final ActionEvent e) {
 						try {
 							context.acquire();
@@ -2175,6 +2229,7 @@ public class TwisterConfigPanel extends ViewPanel {
 					}
 				});
 				selectedCheckBox.addItemListener(new ItemListener() {
+					@Override
 					public void itemStateChanged(final ItemEvent e) {
 						if (selectedCheckBox.isSelected()) {
 							imageLayerElement.setUserData(Boolean.TRUE);
@@ -2185,6 +2240,7 @@ public class TwisterConfigPanel extends ViewPanel {
 					}
 				});
 				final ActionListener lockedActionListener = new ActionListener() {
+					@Override
 					public void actionPerformed(final ActionEvent e) {
 						try {
 							context.acquire();
@@ -2199,6 +2255,7 @@ public class TwisterConfigPanel extends ViewPanel {
 				};
 				lockedCheckBox.addActionListener(lockedActionListener);
 				final ActionListener visibleActionListener = new ActionListener() {
+					@Override
 					public void actionPerformed(final ActionEvent e) {
 						try {
 							context.acquire();
@@ -2214,6 +2271,7 @@ public class TwisterConfigPanel extends ViewPanel {
 				};
 				visibleCheckBox.addActionListener(visibleActionListener);
 				final ChangeListener opacityChangeListener = new ChangeListener() {
+					@Override
 					public void stateChanged(final ChangeEvent e) {
 						try {
 							context.acquire();
@@ -2230,6 +2288,7 @@ public class TwisterConfigPanel extends ViewPanel {
 				};
 				opacitySpinner.addChangeListener(opacityChangeListener);
 				label.addActionListener(new ActionListener() {
+					@Override
 					public void actionPerformed(final ActionEvent e) {
 						// imageLayerElement.getLabelElement().removeChangeListener(labelListener);
 						imageLayerElement.getContext().updateTimestamp();
@@ -2239,11 +2298,13 @@ public class TwisterConfigPanel extends ViewPanel {
 					}
 				});
 				showFiltersButton.addActionListener(new ActionListener() {
+					@Override
 					public void actionPerformed(final ActionEvent e) {
 						viewContext.setComponent(filtersPanel2);
 					}
 				});
 				lockedListener = new ValueChangeListener() {
+					@Override
 					public void valueChanged(final ValueChangeEvent e) {
 						lockedCheckBox.removeActionListener(lockedActionListener);
 						lockedCheckBox.setSelected(imageLayerElement.isLocked());
@@ -2251,6 +2312,7 @@ public class TwisterConfigPanel extends ViewPanel {
 					}
 				};
 				visibleListener = new ValueChangeListener() {
+					@Override
 					public void valueChanged(final ValueChangeEvent e) {
 						visibleCheckBox.removeActionListener(visibleActionListener);
 						visibleCheckBox.setSelected(imageLayerElement.isVisible());
@@ -2258,6 +2320,7 @@ public class TwisterConfigPanel extends ViewPanel {
 					}
 				};
 				opacityListener = new ValueChangeListener() {
+					@Override
 					public void valueChanged(final ValueChangeEvent e) {
 						opacitySpinner.removeChangeListener(opacityChangeListener);
 						opacitySpinner.setValue(imageLayerElement.getOpacity().intValue());
@@ -2266,6 +2329,7 @@ public class TwisterConfigPanel extends ViewPanel {
 					}
 				};
 				filtersListener = new ValueChangeListener() {
+					@Override
 					public void valueChanged(final ValueChangeEvent e) {
 						switch (e.getEventType()) {
 							case ListConfigElement.ELEMENT_ADDED: {
@@ -2327,6 +2391,7 @@ public class TwisterConfigPanel extends ViewPanel {
 					}
 				};
 				labelListener = new ValueChangeListener() {
+					@Override
 					public void valueChanged(final ValueChangeEvent e) {
 						label.setText(imageLayerElement.getLabel());
 						filtersPanel2.setName(createFiltersPanelName(imageLayerElement));
@@ -2443,6 +2508,7 @@ public class TwisterConfigPanel extends ViewPanel {
 					model.setSelectedItemByExtensionId(imageFilterElement.getReference().getExtensionId());
 				}
 				final ActionListener comboListener = new ActionListener() {
+					@Override
 					@SuppressWarnings("unchecked")
 					public void actionPerformed(final ActionEvent e) {
 						try {
@@ -2474,6 +2540,7 @@ public class TwisterConfigPanel extends ViewPanel {
 				};
 				extensionComboBox.addActionListener(comboListener);
 				editOptionsButton.addActionListener(new ActionListener() {
+					@Override
 					public void actionPerformed(final ActionEvent e) {
 						if (imageFilterElement.getReference() != null) {
 							if (configView == null) {
@@ -2493,6 +2560,7 @@ public class TwisterConfigPanel extends ViewPanel {
 					}
 				});
 				selectedCheckBox.addItemListener(new ItemListener() {
+					@Override
 					public void itemStateChanged(final ItemEvent e) {
 						if (selectedCheckBox.isSelected()) {
 							imageFilterElement.setUserData(Boolean.TRUE);
@@ -2503,6 +2571,7 @@ public class TwisterConfigPanel extends ViewPanel {
 					}
 				});
 				label.addActionListener(new ActionListener() {
+					@Override
 					public void actionPerformed(final ActionEvent e) {
 						// imageFilterElement.getLabelElement().removeChangeListener(labelListener);
 						imageFilterElement.getContext().updateTimestamp();
@@ -2514,6 +2583,7 @@ public class TwisterConfigPanel extends ViewPanel {
 					}
 				});
 				final ActionListener lockedActionListener = new ActionListener() {
+					@Override
 					public void actionPerformed(final ActionEvent e) {
 						try {
 							context.acquire();
@@ -2528,6 +2598,7 @@ public class TwisterConfigPanel extends ViewPanel {
 				};
 				lockedCheckBox.addActionListener(lockedActionListener);
 				final ActionListener enabledActionListener = new ActionListener() {
+					@Override
 					public void actionPerformed(final ActionEvent e) {
 						try {
 							context.acquire();
@@ -2543,6 +2614,7 @@ public class TwisterConfigPanel extends ViewPanel {
 				};
 				enabledCheckBox.addActionListener(enabledActionListener);
 				filterListener = new ValueChangeListener() {
+					@Override
 					public void valueChanged(final ValueChangeEvent e) {
 						switch (e.getEventType()) {
 							case ExtensionReferenceElement.EXTENSION_REFERENCE_CHANGED: {
@@ -2568,6 +2640,7 @@ public class TwisterConfigPanel extends ViewPanel {
 					}
 				};
 				lockedListener = new ValueChangeListener() {
+					@Override
 					public void valueChanged(final ValueChangeEvent e) {
 						lockedCheckBox.removeActionListener(lockedActionListener);
 						lockedCheckBox.setSelected(imageFilterElement.isLocked());
@@ -2575,6 +2648,7 @@ public class TwisterConfigPanel extends ViewPanel {
 					}
 				};
 				enabledListener = new ValueChangeListener() {
+					@Override
 					public void valueChanged(final ValueChangeEvent e) {
 						enabledCheckBox.removeActionListener(enabledActionListener);
 						enabledCheckBox.setSelected(imageFilterElement.isEnabled());
@@ -2582,6 +2656,7 @@ public class TwisterConfigPanel extends ViewPanel {
 					}
 				};
 				labelListener = new ValueChangeListener() {
+					@Override
 					public void valueChanged(final ValueChangeEvent e) {
 						label.setText(imageFilterElement.getLabel());
 						if (configView != null) {
@@ -2672,6 +2747,7 @@ public class TwisterConfigPanel extends ViewPanel {
 					model.setSelectedItemByExtensionId(frameFilterElement.getReference().getExtensionId());
 				}
 				final ActionListener comboListener = new ActionListener() {
+					@Override
 					@SuppressWarnings("unchecked")
 					public void actionPerformed(final ActionEvent e) {
 						try {
@@ -2703,6 +2779,7 @@ public class TwisterConfigPanel extends ViewPanel {
 				};
 				extensionComboBox.addActionListener(comboListener);
 				editOptionsButton.addActionListener(new ActionListener() {
+					@Override
 					public void actionPerformed(final ActionEvent e) {
 						if (frameFilterElement.getReference() != null) {
 							if (configView == null) {
@@ -2722,6 +2799,7 @@ public class TwisterConfigPanel extends ViewPanel {
 					}
 				});
 				label.addActionListener(new ActionListener() {
+					@Override
 					public void actionPerformed(final ActionEvent e) {
 						// frameFilterElement.getLabelElement().removeChangeListener(labelListener);
 						frameFilterElement.getContext().updateTimestamp();
@@ -2733,6 +2811,7 @@ public class TwisterConfigPanel extends ViewPanel {
 					}
 				});
 				selectedCheckBox.addItemListener(new ItemListener() {
+					@Override
 					public void itemStateChanged(final ItemEvent e) {
 						if (selectedCheckBox.isSelected()) {
 							frameFilterElement.setUserData(Boolean.TRUE);
@@ -2743,6 +2822,7 @@ public class TwisterConfigPanel extends ViewPanel {
 					}
 				});
 				final ActionListener lockedActionListener = new ActionListener() {
+					@Override
 					public void actionPerformed(final ActionEvent e) {
 						frameFilterElement.getContext().updateTimestamp();
 						frameFilterElement.setLocked(lockedCheckBox.isSelected());
@@ -2750,6 +2830,7 @@ public class TwisterConfigPanel extends ViewPanel {
 				};
 				lockedCheckBox.addActionListener(lockedActionListener);
 				final ActionListener enabledActionListener = new ActionListener() {
+					@Override
 					public void actionPerformed(final ActionEvent e) {
 						try {
 							context.acquire();
@@ -2765,6 +2846,7 @@ public class TwisterConfigPanel extends ViewPanel {
 				};
 				enabledCheckBox.addActionListener(enabledActionListener);
 				filterListener = new ValueChangeListener() {
+					@Override
 					public void valueChanged(final ValueChangeEvent e) {
 						switch (e.getEventType()) {
 							case ExtensionReferenceElement.EXTENSION_REFERENCE_CHANGED: {
@@ -2790,6 +2872,7 @@ public class TwisterConfigPanel extends ViewPanel {
 					}
 				};
 				lockedListener = new ValueChangeListener() {
+					@Override
 					public void valueChanged(final ValueChangeEvent e) {
 						lockedCheckBox.removeActionListener(lockedActionListener);
 						lockedCheckBox.setSelected(frameFilterElement.isLocked());
@@ -2797,6 +2880,7 @@ public class TwisterConfigPanel extends ViewPanel {
 					}
 				};
 				enabledListener = new ValueChangeListener() {
+					@Override
 					public void valueChanged(final ValueChangeEvent e) {
 						enabledCheckBox.removeActionListener(enabledActionListener);
 						enabledCheckBox.setSelected(frameFilterElement.isEnabled());
@@ -2804,6 +2888,7 @@ public class TwisterConfigPanel extends ViewPanel {
 					}
 				};
 				labelListener = new ValueChangeListener() {
+					@Override
 					public void valueChanged(final ValueChangeEvent e) {
 						label.setText(frameFilterElement.getLabel());
 						if (configView != null) {
@@ -2876,6 +2961,7 @@ public class TwisterConfigPanel extends ViewPanel {
 					model.setSelectedItemByExtensionId(imageElement.getReference().getExtensionId());
 				}
 				final ActionListener comboListener = new ActionListener() {
+					@Override
 					@SuppressWarnings("unchecked")
 					public void actionPerformed(final ActionEvent e) {
 						try {
@@ -2907,6 +2993,7 @@ public class TwisterConfigPanel extends ViewPanel {
 				};
 				extensionComboBox.addActionListener(comboListener);
 				editOptionsButton.addActionListener(new ActionListener() {
+					@Override
 					public void actionPerformed(final ActionEvent e) {
 						if (imageElement.getReference() != null) {
 							if (navigationFrame == null) {
@@ -2939,6 +3026,7 @@ public class TwisterConfigPanel extends ViewPanel {
 							navigationFrame.setVisible(true);
 							navigationFrame.toFront();
 							GUIUtil.executeTask(new Runnable() {
+								@Override
 								public void run() {
 									navigationFrame.setup();
 								}
@@ -2948,6 +3036,7 @@ public class TwisterConfigPanel extends ViewPanel {
 					}
 				});
 				imageListener = new ValueChangeListener() {
+					@Override
 					public void valueChanged(final ValueChangeEvent e) {
 						switch (e.getEventType()) {
 							case ExtensionReferenceElement.EXTENSION_REFERENCE_CHANGED: {
@@ -3036,6 +3125,7 @@ public class TwisterConfigPanel extends ViewPanel {
 				lockedCheckBox.setSelected(effectElement.isLocked());
 				enabledCheckBox.setSelected(effectElement.isEnabled());
 				final ActionListener comboListener = new ActionListener() {
+					@Override
 					@SuppressWarnings("unchecked")
 					public void actionPerformed(final ActionEvent e) {
 						try {
@@ -3067,6 +3157,7 @@ public class TwisterConfigPanel extends ViewPanel {
 				};
 				extensionComboBox.addActionListener(comboListener);
 				editOptionsButton.addActionListener(new ActionListener() {
+					@Override
 					public void actionPerformed(final ActionEvent e) {
 						if (effectElement.getReference() != null) {
 							if (configView == null) {
@@ -3086,6 +3177,7 @@ public class TwisterConfigPanel extends ViewPanel {
 					}
 				});
 				final ActionListener lockedActionListener = new ActionListener() {
+					@Override
 					public void actionPerformed(final ActionEvent e) {
 						effectElement.getContext().updateTimestamp();
 						effectElement.setLocked(lockedCheckBox.isSelected());
@@ -3093,6 +3185,7 @@ public class TwisterConfigPanel extends ViewPanel {
 				};
 				lockedCheckBox.addActionListener(lockedActionListener);
 				final ActionListener enabledActionListener = new ActionListener() {
+					@Override
 					public void actionPerformed(final ActionEvent e) {
 						try {
 							context.acquire();
@@ -3108,6 +3201,7 @@ public class TwisterConfigPanel extends ViewPanel {
 				};
 				enabledCheckBox.addActionListener(enabledActionListener);
 				effectListener = new ValueChangeListener() {
+					@Override
 					public void valueChanged(final ValueChangeEvent e) {
 						switch (e.getEventType()) {
 							case ExtensionReferenceElement.EXTENSION_REFERENCE_CHANGED: {
@@ -3133,6 +3227,7 @@ public class TwisterConfigPanel extends ViewPanel {
 					}
 				};
 				lockedListener = new ValueChangeListener() {
+					@Override
 					public void valueChanged(final ValueChangeEvent e) {
 						lockedCheckBox.removeActionListener(lockedActionListener);
 						lockedCheckBox.setSelected(effectElement.isLocked());
@@ -3140,6 +3235,7 @@ public class TwisterConfigPanel extends ViewPanel {
 					}
 				};
 				enabledListener = new ValueChangeListener() {
+					@Override
 					public void valueChanged(final ValueChangeEvent e) {
 						enabledCheckBox.removeActionListener(enabledActionListener);
 						enabledCheckBox.setSelected(effectElement.isEnabled());
@@ -3297,6 +3393,7 @@ public class TwisterConfigPanel extends ViewPanel {
 		/**
 		 * @see java.lang.Runnable#run()
 		 */
+		@Override
 		public void run() {
 			try {
 				long idleTime = 0;
@@ -3363,6 +3460,7 @@ public class TwisterConfigPanel extends ViewPanel {
 		/**
 		 * 
 		 */
+		@Override
 		public void drawImage() {
 			preview.draw(renderer);
 		}
@@ -3370,6 +3468,7 @@ public class TwisterConfigPanel extends ViewPanel {
 		/**
 		 * @param isDynamic
 		 */
+		@Override
 		public void prepareImage(boolean isDynamic) {
 			renderer.prepareImage(isDynamic);
 		}
@@ -3377,6 +3476,7 @@ public class TwisterConfigPanel extends ViewPanel {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContextListener#startRenderer()
 		 */
+		@Override
 		public void startRenderer() {
 			renderer.startRenderer();
 		}
@@ -3384,6 +3484,7 @@ public class TwisterConfigPanel extends ViewPanel {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContextListener#stopRenderer()
 		 */
+		@Override
 		public void stopRenderer() {
 			renderer.stopRenderer();
 		}
@@ -3391,6 +3492,7 @@ public class TwisterConfigPanel extends ViewPanel {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContextListener#joinRenderer()
 		 */
+		@Override
 		public void joinRenderer() {
 			renderer.joinRenderer();
 		}
@@ -3398,6 +3500,7 @@ public class TwisterConfigPanel extends ViewPanel {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContextListener#abortRenderer()
 		 */
+		@Override
 		public void abortRenderer() {
 			renderer.abortRenderer();
 		}
@@ -3405,6 +3508,7 @@ public class TwisterConfigPanel extends ViewPanel {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContextListener#refresh()
 		 */
+		@Override
 		public void refresh() {
 			refreshPreview.refresh();
 		}

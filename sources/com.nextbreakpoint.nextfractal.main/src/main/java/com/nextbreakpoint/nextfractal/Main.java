@@ -1,7 +1,6 @@
 package com.nextbreakpoint.nextfractal;
 
 import com.nextbreakpoint.nextfractal.core.ApplicationContext;
-
 import com.nextbreakpoint.nextfractal.twister.swing.NextFractal;
 
 public class Main implements ApplicationContext {

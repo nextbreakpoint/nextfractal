@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -27,14 +27,6 @@ package com.nextbreakpoint.nextfractal.test;
 
 import java.util.List;
 
-import com.nextbreakpoint.nextfractal.twister.ControllerListener;
-import com.nextbreakpoint.nextfractal.twister.TwisterClip;
-import com.nextbreakpoint.nextfractal.twister.TwisterClipController;
-import com.nextbreakpoint.nextfractal.twister.TwisterConfig;
-import com.nextbreakpoint.nextfractal.twister.TwisterConfigBuilder;
-import com.nextbreakpoint.nextfractal.twister.TwisterConfigNodeBuilder;
-import com.nextbreakpoint.nextfractal.twister.TwisterSequence;
-
 import org.junit.Test;
 
 import com.nextbreakpoint.nextfractal.core.DefaultTree;
@@ -43,6 +35,13 @@ import com.nextbreakpoint.nextfractal.core.config.DefaultConfigContext;
 import com.nextbreakpoint.nextfractal.core.tree.DefaultNodeSession;
 import com.nextbreakpoint.nextfractal.core.tree.NodeAction;
 import com.nextbreakpoint.nextfractal.core.tree.NodeActionValue;
+import com.nextbreakpoint.nextfractal.twister.ControllerListener;
+import com.nextbreakpoint.nextfractal.twister.TwisterClip;
+import com.nextbreakpoint.nextfractal.twister.TwisterClipController;
+import com.nextbreakpoint.nextfractal.twister.TwisterConfig;
+import com.nextbreakpoint.nextfractal.twister.TwisterConfigBuilder;
+import com.nextbreakpoint.nextfractal.twister.TwisterConfigNodeBuilder;
+import com.nextbreakpoint.nextfractal.twister.TwisterSequence;
 
 /**
  * @author Andrea Medeghini
@@ -240,14 +239,17 @@ public class TestClipController {
 		public DebugClipConroller(final TwisterClip clip) {
 			super(clip);
 			addControllerListener(new ControllerListener() {
+				@Override
 				public void actionRedone(final NodeAction action) {
 					System.out.println("Redo: " + action);
 				}
 
+				@Override
 				public void actionUndone(final NodeAction action) {
 					System.out.println("Undo: " + action);
 				}
 
+				@Override
 				public void configChanged() {
 					System.out.println("Config changed");
 				}

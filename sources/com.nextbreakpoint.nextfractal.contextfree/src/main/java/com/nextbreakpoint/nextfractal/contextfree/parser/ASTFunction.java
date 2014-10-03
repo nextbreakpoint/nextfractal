@@ -172,38 +172,38 @@ class ASTFunction extends ASTExpression {
 	                result[0] = evalIsNatural(rti, a[0]) ? 1 : 0;
 	                break;
 	            case BitNot:
-	                result[0] = (double)((~((long)a[0])) & 0xFFFFFFFF);
+	                result[0] = (~((long)a[0])) & 0xFFFFFFFF;
 	                break;
 	            case BitOr:
-	                result[0] = (double)((((long)a[0]) | ((long)a[1])) & 0xFFFFFFFF);
+	                result[0] = (((long)a[0]) | ((long)a[1])) & 0xFFFFFFFF;
 	                break;
 	            case BitAnd:
-	                result[0] = (double)((((long)a[0]) & ((long)a[1])) & 0xFFFFFFFF);
+	                result[0] = (((long)a[0]) & ((long)a[1])) & 0xFFFFFFFF;
 	                break;
 	            case BitXOR:
-	                result[0] = (double)((((long)a[0]) ^ ((long)a[1])) & 0xFFFFFFFF);
+	                result[0] = (((long)a[0]) ^ ((long)a[1])) & 0xFFFFFFFF;
 	                break;
 	            case BitLeft:
-	                result[0] = (double)((((long)a[0]) << ((long)a[1])) & 0xFFFFFFFF);
+	                result[0] = (((long)a[0]) << ((long)a[1])) & 0xFFFFFFFF;
 	                break;
 	            case BitRight:
-	                result[0] = (double)((((long)a[0]) >> ((long)a[1])) & 0xFFFFFFFF);
+	                result[0] = (((long)a[0]) >> ((long)a[1])) & 0xFFFFFFFF;
 	                break;
 	            case Atan2: 
 	                result[0] = Math.atan2(a[0], a[1]) * 57.29577951308;
 	                break;
 	            case Mod:
 	            	if (arguments.isNatural()) {
-	            		result[0] = (double)(((long)a[0]) % ((long)a[1]));
+	            		result[0] = ((long)a[0]) % ((long)a[1]);
 	            	} else {
 	            		result[0] = Math.IEEEremainder(a[0], a[1]);
 	            	}
 	                break;
 	            case Divides:
-            		result[0] = (double)((((long)a[0]) % ((long)a[1])) == 0 ? 1.0 : 0.0);
+            		result[0] = (((long)a[0]) % ((long)a[1])) == 0 ? 1.0 : 0.0;
 	                break;
 	            case Div:
-            		result[0] = (double)(((long)a[0]) / ((long)a[1]));
+            		result[0] = ((long)a[0]) / ((long)a[1]);
 	                break;
 	            case Floor:
 	            	if (rti == null) throw new DeferUntilRuntimeException(); 

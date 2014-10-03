@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -67,6 +67,7 @@ public class SLExtension<T extends ExtensionRuntime> implements Extension<T> {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.extension.Extension#createExtensionRuntime()
 	 */
+	@Override
 	public final T createExtensionRuntime() throws ExtensionException {
 		return this.extensionDescriptor.getExtensionRuntime();
 	}
@@ -74,6 +75,7 @@ public class SLExtension<T extends ExtensionRuntime> implements Extension<T> {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.extension.Extension#getExtensionReference()
 	 */
+	@Override
 	public ExtensionReference getExtensionReference() {
 		return this.reference;
 	}
@@ -81,6 +83,7 @@ public class SLExtension<T extends ExtensionRuntime> implements Extension<T> {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.extension.Extension#getExtensionId()
 	 */
+	@Override
 	public String getExtensionId() {
 		return this.reference.getExtensionId();
 	}
@@ -88,6 +91,7 @@ public class SLExtension<T extends ExtensionRuntime> implements Extension<T> {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.extension.Extension#getExtensionName()
 	 */
+	@Override
 	public String getExtensionName() {
 		return this.reference.getExtensionName();
 	}

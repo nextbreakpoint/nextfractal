@@ -51,6 +51,7 @@ public class ShapeAdjustmentConfigElement extends AbstractConfigElement {
 	/**
 	 *
 	 */
+	@Override
 	public void copyFrom(ConfigElement source) {
 		ShapeAdjustmentConfigElement shapeAdjustmentElement = (ShapeAdjustmentConfigElement) source;
 		if (shapeAdjustmentElement.getExtensionReference() != null) {

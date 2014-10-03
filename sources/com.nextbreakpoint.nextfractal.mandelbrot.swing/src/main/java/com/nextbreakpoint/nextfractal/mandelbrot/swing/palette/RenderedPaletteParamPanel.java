@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -415,6 +415,7 @@ public class RenderedPaletteParamPanel extends JPanel {
 		/**
 		 * @see java.lang.Runnable#run()
 		 */
+		@Override
 		public void run() {
 			final Color color = ColorChooser.showColorChooser(RenderedPaletteParamPanel.this, MandelbrotSwingResources.getInstance().getString("palette.chooseColor"), new Color(getParam().getColor(index), true));
 			if (color != null) {
@@ -427,6 +428,7 @@ public class RenderedPaletteParamPanel extends JPanel {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.platform.ui.swing.color.PaletteChangeListener#paletteChanged(com.nextbreakpoint.nextfractal.platform.ui.swing.color.PaletteChangeEvent)
 		 */
+		@Override
 		public void paletteChanged(final PaletteChangeEvent e) {
 			removeColorFieldListeners();
 			removeFormulaSelectionListeners();
@@ -449,6 +451,7 @@ public class RenderedPaletteParamPanel extends JPanel {
 		/**
 		 * @see java.awt.event.MouseListener#mouseClicked(java.awt.event.MouseEvent)
 		 */
+		@Override
 		public void mouseClicked(final MouseEvent e) {
 			popupColorChooser(index, ((ColorField) e.getSource()).getModel());
 		}
@@ -456,30 +459,35 @@ public class RenderedPaletteParamPanel extends JPanel {
 		/**
 		 * @see java.awt.event.MouseListener#mousePressed(java.awt.event.MouseEvent)
 		 */
+		@Override
 		public void mousePressed(final MouseEvent e) {
 		}
 
 		/**
 		 * @see java.awt.event.MouseListener#mouseReleased(java.awt.event.MouseEvent)
 		 */
+		@Override
 		public void mouseReleased(final MouseEvent e) {
 		}
 
 		/**
 		 * @see java.awt.event.MouseListener#mouseEntered(java.awt.event.MouseEvent)
 		 */
+		@Override
 		public void mouseEntered(final MouseEvent e) {
 		}
 
 		/**
 		 * @see java.awt.event.MouseListener#mouseExited(java.awt.event.MouseEvent)
 		 */
+		@Override
 		public void mouseExited(final MouseEvent e) {
 		}
 
 		/**
 		 * @see com.nextbreakpoint.nextfractal.platform.ui.swing.color.ColorChangeListener#colorChanged(com.nextbreakpoint.nextfractal.platform.ui.swing.color.ColorChangeEvent)
 		 */
+		@Override
 		public void colorChanged(final ColorChangeEvent e) {
 			final Color color = ((ColorFieldModel) e.getSource()).getColor();
 			removeParamListener();
@@ -502,6 +510,7 @@ public class RenderedPaletteParamPanel extends JPanel {
 		/**
 		 * @param e
 		 */
+		@Override
 		@SuppressWarnings("unchecked")
 		public void stateChanged(final ChangeEvent e) {
 			removeParamListener();
@@ -544,6 +553,7 @@ public class RenderedPaletteParamPanel extends JPanel {
 		/**
 		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 		 */
+		@Override
 		public void actionPerformed(final ActionEvent e) {
 			final JComboBox comboBox = (JComboBox) e.getSource();
 			setSelectedIndex(comboBox.getSelectedIndex());
@@ -572,6 +582,7 @@ public class RenderedPaletteParamPanel extends JPanel {
 		/**
 		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 		 */
+		@Override
 		public void actionPerformed(final ActionEvent e) {
 			popupColorChooser(0, model);
 		}
@@ -592,6 +603,7 @@ public class RenderedPaletteParamPanel extends JPanel {
 		/**
 		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 		 */
+		@Override
 		public void actionPerformed(final ActionEvent e) {
 			popupColorChooser(1, model);
 		}

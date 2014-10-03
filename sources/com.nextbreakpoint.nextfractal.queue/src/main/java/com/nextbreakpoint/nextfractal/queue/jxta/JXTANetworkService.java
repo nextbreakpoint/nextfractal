@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -49,18 +49,6 @@ import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-import com.nextbreakpoint.nextfractal.core.util.DefaultThreadFactory;
-import com.nextbreakpoint.nextfractal.queue.network.ServiceConsumer;
-import com.nextbreakpoint.nextfractal.queue.network.ServiceEndpoint;
-import com.nextbreakpoint.nextfractal.queue.network.ServiceException;
-import com.nextbreakpoint.nextfractal.queue.network.ServiceListener;
-import com.nextbreakpoint.nextfractal.queue.network.ServiceMessage;
-import com.nextbreakpoint.nextfractal.queue.network.ServiceProcessor;
-import com.nextbreakpoint.nextfractal.queue.network.ServiceProducer;
-import com.nextbreakpoint.nextfractal.queue.network.ServiceSession;
-import com.nextbreakpoint.nextfractal.queue.network.SessionHandler;
-import com.nextbreakpoint.nextfractal.queue.network.SessionIDFactory;
-
 import net.jxta.discovery.DiscoveryEvent;
 import net.jxta.discovery.DiscoveryListener;
 import net.jxta.discovery.DiscoveryService;
@@ -90,6 +78,18 @@ import net.jxta.util.JxtaBiDiPipe;
 import net.jxta.util.JxtaServerPipe;
 import net.jxta.util.PipeEventListener;
 import net.jxta.util.PipeStateListener;
+
+import com.nextbreakpoint.nextfractal.core.util.DefaultThreadFactory;
+import com.nextbreakpoint.nextfractal.queue.network.ServiceConsumer;
+import com.nextbreakpoint.nextfractal.queue.network.ServiceEndpoint;
+import com.nextbreakpoint.nextfractal.queue.network.ServiceException;
+import com.nextbreakpoint.nextfractal.queue.network.ServiceListener;
+import com.nextbreakpoint.nextfractal.queue.network.ServiceMessage;
+import com.nextbreakpoint.nextfractal.queue.network.ServiceProcessor;
+import com.nextbreakpoint.nextfractal.queue.network.ServiceProducer;
+import com.nextbreakpoint.nextfractal.queue.network.ServiceSession;
+import com.nextbreakpoint.nextfractal.queue.network.SessionHandler;
+import com.nextbreakpoint.nextfractal.queue.network.SessionIDFactory;
 
 /**
  * @author Andrea Medeghini
@@ -275,6 +275,7 @@ public class JXTANetworkService {
 		/**
 		 * @see java.lang.Runnable#run()
 		 */
+		@Override
 		public void run() {
 			boolean interrupted = false;
 			final Thread discoveryThread = factory.newThread(new DiscoveryHandler());
@@ -468,6 +469,7 @@ public class JXTANetworkService {
 		/**
 		 * @see java.lang.Runnable#run()
 		 */
+		@Override
 		public void run() {
 			try {
 				while (running) {
@@ -580,6 +582,7 @@ public class JXTANetworkService {
 		/**
 		 * @see java.lang.Runnable#run()
 		 */
+		@Override
 		public void run() {
 			final ModuleClassAdvertisement mcadv = (ModuleClassAdvertisement) AdvertisementFactory.newAdvertisement(ModuleClassAdvertisement.getAdvertisementType());
 			mcadv.setName("JXTAMOD:" + serviceName);
@@ -625,6 +628,7 @@ public class JXTANetworkService {
 		/**
 		 * @see java.lang.Runnable#run()
 		 */
+		@Override
 		public void run() {
 			try {
 				while (running) {
@@ -654,6 +658,7 @@ public class JXTANetworkService {
 		/**
 		 * @see java.lang.Runnable#run()
 		 */
+		@Override
 		public void run() {
 			discovery.addDiscoveryListener(this);
 			try {
@@ -676,6 +681,7 @@ public class JXTANetworkService {
 		/**
 		 * @see net.jxta.discovery.DiscoveryListener#discoveryEvent(net.jxta.discovery.DiscoveryEvent)
 		 */
+		@Override
 		public void discoveryEvent(final DiscoveryEvent e) {
 			final DiscoveryResponseMsg response = e.getResponse();
 			logger.fine("Got a discovery response [" + response.getResponseCount() + " elements] from peer " + e.getSource());
@@ -704,6 +710,7 @@ public class JXTANetworkService {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.network.ServiceListener#onMessage(com.nextbreakpoint.nextfractal.queue.network.ServiceMessage)
 		 */
+		@Override
 		public void onMessage(final ServiceMessage message) throws ServiceException {
 		}
 	}
@@ -723,6 +730,7 @@ public class JXTANetworkService {
 		/**
 		 * @see java.lang.Runnable#run()
 		 */
+		@Override
 		public void run() {
 			try {
 				JXTAServiceSession session = (JXTAServiceSession) createSession(msadv.getPipeAdvertisement(), listener);
@@ -742,6 +750,7 @@ public class JXTANetworkService {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.network.ServiceListener#onMessage(com.nextbreakpoint.nextfractal.queue.network.ServiceMessage)
 		 */
+		@Override
 		public void onMessage(final ServiceMessage message) throws ServiceException {
 		}
 	}
@@ -1089,6 +1098,7 @@ public class JXTANetworkService {
 		/**
 		 * @see net.jxta.pipe.PipeMsgListener#pipeMsgEvent(net.jxta.pipe.PipeMsgEvent)
 		 */
+		@Override
 		public synchronized void pipeMsgEvent(final PipeMsgEvent e) {
 			try {
 				synchronized (messages) {
@@ -1113,12 +1123,14 @@ public class JXTANetworkService {
 		/**
 		 * @see net.jxta.util.PipeStateListener#stateEvent(java.lang.Object, int)
 		 */
+		@Override
 		public void stateEvent(final Object source, final int event) {
 		}
 
 		/**
 		 * @see net.jxta.util.PipeEventListener#pipeEvent(int)
 		 */
+		@Override
 		public void pipeEvent(final int event) {
 		}
 
@@ -1146,6 +1158,7 @@ public class JXTANetworkService {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.network.ServiceProducer#sendMessage(com.nextbreakpoint.nextfractal.queue.network.ServiceMessage)
 		 */
+		@Override
 		public void sendMessage(final ServiceMessage message) throws ServiceException {
 			if (handler != null) {
 				handler.sendMessage(message);
@@ -1155,6 +1168,7 @@ public class JXTANetworkService {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.network.ServiceProducer#dispose()
 		 */
+		@Override
 		public void dispose() {
 			if (handler != null) {
 				handler.dispose();
@@ -1165,6 +1179,7 @@ public class JXTANetworkService {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.network.ServiceProducer#sendKeepAliveMessage()
 		 */
+		@Override
 		public void sendKeepAliveMessage() throws ServiceException {
 			if (handler != null) {
 				handler.sendKeepAliveMessage();
@@ -1174,6 +1189,7 @@ public class JXTANetworkService {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.network.ServiceProducer#sendAckMessage()
 		 */
+		@Override
 		public void sendAckMessage() throws ServiceException {
 			if (handler != null) {
 				handler.sendAckMessage();
@@ -1194,6 +1210,7 @@ public class JXTANetworkService {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.network.ServiceProducer#sendMessage(com.nextbreakpoint.nextfractal.queue.network.ServiceMessage)
 		 */
+		@Override
 		public void sendMessage(final ServiceMessage message) throws ServiceException {
 			if (handler != null) {
 				handler.sendMessage(message);
@@ -1203,6 +1220,7 @@ public class JXTANetworkService {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.network.ServiceProducer#dispose()
 		 */
+		@Override
 		public void dispose() {
 			if (handler != null) {
 				handler.dispose();
@@ -1213,6 +1231,7 @@ public class JXTANetworkService {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.network.ServiceProducer#sendKeepAliveMessage()
 		 */
+		@Override
 		public void sendKeepAliveMessage() throws ServiceException {
 			if (handler != null) {
 				handler.sendKeepAliveMessage();
@@ -1222,6 +1241,7 @@ public class JXTANetworkService {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.network.ServiceProducer#sendAckMessage()
 		 */
+		@Override
 		public void sendAckMessage() throws ServiceException {
 			if (handler != null) {
 				handler.sendAckMessage();
@@ -1246,6 +1266,7 @@ public class JXTANetworkService {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.network.ServiceConsumer#onMessage(com.nextbreakpoint.nextfractal.queue.network.ServiceMessage)
 		 */
+		@Override
 		public void onMessage(final ServiceMessage message) throws ServiceException {
 			if (listener != null) {
 				listener.onMessage(message);
@@ -1255,6 +1276,7 @@ public class JXTANetworkService {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.network.ServiceConsumer#consumeMessages()
 		 */
+		@Override
 		public void consumeMessages() throws ServiceException {
 			if (handler != null) {
 				handler.consumeMessages();
@@ -1264,6 +1286,7 @@ public class JXTANetworkService {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.network.ServiceConsumer#isTimeout()
 		 */
+		@Override
 		public boolean isTimeout() {
 			if (handler != null) {
 				return handler.isTimeout();
@@ -1274,6 +1297,7 @@ public class JXTANetworkService {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.network.ServiceConsumer#dispose()
 		 */
+		@Override
 		public void dispose() {
 			if (handler != null) {
 				handler.dispose();
@@ -1285,6 +1309,7 @@ public class JXTANetworkService {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.network.ServiceConsumer#consumeMessage(com.nextbreakpoint.nextfractal.queue.network.ServiceMessage)
 		 */
+		@Override
 		public void consumeMessage(final ServiceMessage message) throws ServiceException {
 			if (handler != null) {
 				handler.consumeMessage(message);
@@ -1309,6 +1334,7 @@ public class JXTANetworkService {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.network.ServiceListener#onMessage(com.nextbreakpoint.nextfractal.queue.network.ServiceMessage)
 		 */
+		@Override
 		public void onMessage(final ServiceMessage message) throws ServiceException {
 			if (listener != null) {
 				listener.onMessage(message);
@@ -1318,6 +1344,7 @@ public class JXTANetworkService {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.network.ServiceConsumer#consumeMessages()
 		 */
+		@Override
 		public void consumeMessages() throws ServiceException {
 			if (handler != null) {
 				handler.consumeMessages();
@@ -1327,6 +1354,7 @@ public class JXTANetworkService {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.network.ServiceConsumer#isTimeout()
 		 */
+		@Override
 		public boolean isTimeout() {
 			if (handler != null) {
 				return handler.isTimeout();
@@ -1337,6 +1365,7 @@ public class JXTANetworkService {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.network.ServiceConsumer#dispose()
 		 */
+		@Override
 		public void dispose() {
 			if (handler != null) {
 				handler.dispose();
@@ -1348,6 +1377,7 @@ public class JXTANetworkService {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.queue.network.ServiceConsumer#consumeMessage(com.nextbreakpoint.nextfractal.queue.network.ServiceMessage)
 		 */
+		@Override
 		public void consumeMessage(final ServiceMessage message) throws ServiceException {
 			if (handler != null) {
 				handler.consumeMessage(message);

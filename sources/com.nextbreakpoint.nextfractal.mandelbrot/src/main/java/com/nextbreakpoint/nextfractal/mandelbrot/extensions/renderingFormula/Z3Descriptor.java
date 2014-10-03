@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -25,8 +25,6 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.extensions.renderingFormula;
 
-import com.nextbreakpoint.nextfractal.mandelbrot.extensions.renderingFormula.Z3Config;
-import com.nextbreakpoint.nextfractal.mandelbrot.extensions.renderingFormula.Z3Runtime;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderingFormula.extension.RenderingFormulaExtensionDescriptor;
 
 /**
@@ -38,6 +36,7 @@ public class Z3Descriptor extends RenderingFormulaExtensionDescriptor {
 	 * 
 	 * @return the extensionId.
 	 */
+	@Override
 	public String getExtensionId() {
 		return "twister.mandelbrot.fractal.rendering.formula.z3";
 	}
@@ -47,6 +46,7 @@ public class Z3Descriptor extends RenderingFormulaExtensionDescriptor {
 	 * 
 	 * @return the extensionName.
 	 */
+	@Override
 	public String getExtensionName() {
 		return "Z3";
 	}
@@ -56,6 +56,7 @@ public class Z3Descriptor extends RenderingFormulaExtensionDescriptor {
 	 * 
 	 * @return the extensionRuntimeClass.
 	 */
+	@Override
 	public Z3Runtime getExtensionRuntime() {
 		return new Z3Runtime();
 	}
@@ -65,6 +66,7 @@ public class Z3Descriptor extends RenderingFormulaExtensionDescriptor {
 	 * 
 	 * @return the extensionConfigClass.
 	 */
+	@Override
 	public Z3Config getExtensionConfig() {
 		return new Z3Config();
 	}

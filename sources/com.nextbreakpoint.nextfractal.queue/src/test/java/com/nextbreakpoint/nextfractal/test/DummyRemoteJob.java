@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -72,6 +72,7 @@ public class DummyRemoteJob implements DistributedSpoolJobInterface {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobInterface#getJobId()
 	 */
+	@Override
 	public String getJobId() {
 		return jobId;
 	}
@@ -79,6 +80,7 @@ public class DummyRemoteJob implements DistributedSpoolJobInterface {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobInterface#getFrameNumber()
 	 */
+	@Override
 	public synchronized int getFrameNumber() {
 		return frameNumber;
 	}
@@ -86,6 +88,7 @@ public class DummyRemoteJob implements DistributedSpoolJobInterface {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobInterface#setFrameNumber(int)
 	 */
+	@Override
 	public void setFrameNumber(final int frameNumber) {
 		synchronized (this) {
 			this.frameNumber = frameNumber;
@@ -97,6 +100,7 @@ public class DummyRemoteJob implements DistributedSpoolJobInterface {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobInterface#setFirstFrameNumber(int)
 	 */
+	@Override
 	public synchronized void setFirstFrameNumber(final int frameNumber) {
 		firstFrameNumber = frameNumber;
 		this.frameNumber = frameNumber;
@@ -105,6 +109,7 @@ public class DummyRemoteJob implements DistributedSpoolJobInterface {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobInterface#getFirstFrameNumber()
 	 */
+	@Override
 	public synchronized int getFirstFrameNumber() {
 		return firstFrameNumber;
 	}
@@ -142,6 +147,7 @@ public class DummyRemoteJob implements DistributedSpoolJobInterface {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobInterface#getLastUpdate()
 	 */
+	@Override
 	public synchronized long getLastUpdate() {
 		return lastUpdate;
 	}
@@ -149,6 +155,7 @@ public class DummyRemoteJob implements DistributedSpoolJobInterface {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobInterface#reset()
 	 */
+	@Override
 	public synchronized void reset() {
 		started = false;
 		aborted = false;
@@ -158,6 +165,7 @@ public class DummyRemoteJob implements DistributedSpoolJobInterface {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobInterface#start()
 	 */
+	@Override
 	public void start() {
 		synchronized (this) {
 			lastUpdate = System.currentTimeMillis();
@@ -171,6 +179,7 @@ public class DummyRemoteJob implements DistributedSpoolJobInterface {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobInterface#stop()
 	 */
+	@Override
 	public void stop() {
 		synchronized (this) {
 			started = false;
@@ -182,6 +191,7 @@ public class DummyRemoteJob implements DistributedSpoolJobInterface {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobInterface#abort()
 	 */
+	@Override
 	public void abort() {
 		synchronized (this) {
 			started = false;
@@ -194,12 +204,14 @@ public class DummyRemoteJob implements DistributedSpoolJobInterface {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobInterface#dispose()
 	 */
+	@Override
 	public synchronized void dispose() {
 	}
 
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobInterface#isStarted()
 	 */
+	@Override
 	public synchronized boolean isStarted() {
 		return started;
 	}
@@ -207,6 +219,7 @@ public class DummyRemoteJob implements DistributedSpoolJobInterface {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobInterface#isAborted()
 	 */
+	@Override
 	public synchronized boolean isAborted() {
 		return aborted;
 	}
@@ -214,6 +227,7 @@ public class DummyRemoteJob implements DistributedSpoolJobInterface {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobInterface#isTerminated()
 	 */
+	@Override
 	public synchronized boolean isTerminated() {
 		return terminated;
 	}
@@ -221,6 +235,7 @@ public class DummyRemoteJob implements DistributedSpoolJobInterface {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.DistributedSpoolJobInterface#getRemoteJobId()
 	 */
+	@Override
 	public synchronized String getRemoteJobId() {
 		return remoteJobId;
 	}
@@ -228,6 +243,7 @@ public class DummyRemoteJob implements DistributedSpoolJobInterface {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.DistributedSpoolJobInterface#setRemoteJobId(java.lang.String)
 	 */
+	@Override
 	public synchronized void setRemoteJobId(final String remoteJobId) {
 		this.remoteJobId = remoteJobId;
 	}
@@ -235,6 +251,7 @@ public class DummyRemoteJob implements DistributedSpoolJobInterface {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.SpoolJobInterface#getJobDataRow()
 	 */
+	@Override
 	public JobData getJobDataRow() {
 		return null;
 	}
@@ -242,12 +259,14 @@ public class DummyRemoteJob implements DistributedSpoolJobInterface {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.SpoolJobInterface#setJobDataRow(JobData)
 	 */
+	@Override
 	public void setJobDataRow(final JobData job) {
 	}
 
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.SpoolJobInterface#getClip()
 	 */
+	@Override
 	public TwisterClip getClip() throws IOException {
 		return null;
 	}
@@ -255,6 +274,7 @@ public class DummyRemoteJob implements DistributedSpoolJobInterface {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.DistributedSpoolJobInterface#getRAF()
 	 */
+	@Override
 	public ChunkedRandomAccessFile getRAF() throws IOException {
 		return null;
 	}
@@ -262,6 +282,7 @@ public class DummyRemoteJob implements DistributedSpoolJobInterface {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.DistributedSpoolJobInterface#getTotalFrames()
 	 */
+	@Override
 	public int getTotalFrames() {
 		return 1;
 	}
@@ -269,6 +290,7 @@ public class DummyRemoteJob implements DistributedSpoolJobInterface {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.DistributedSpoolJobInterface#setTerminated(boolean)
 	 */
+	@Override
 	public synchronized void terminate() {
 		terminated = true;
 	}

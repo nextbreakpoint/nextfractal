@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -238,6 +238,7 @@ public class NavigatorPanel extends JPanel {
 			for (int i = 0; i < node.getChildNodeCount(); i++) {
 				final NavigatorIcon icon = new NavigatorIcon(node.getChildNode(i));
 				icon.addIconListener(new NavigatorIconListener() {
+					@Override
 					public void actionPerformed(final NavigatorIconEvent e) {
 						if (e.getEventId() == NavigatorIconEvent.OPEN_EVENT) {
 							final Node childNode = ((NavigatorIcon) e.getSource()).getNode();
@@ -326,6 +327,7 @@ public class NavigatorPanel extends JPanel {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeListener#nodeChanged(com.nextbreakpoint.nextfractal.core.tree.NodeEvent)
 		 */
+		@Override
 		public void nodeChanged(final NodeEvent e) {
 			if ((e.getNode() == viewNode) || ((viewNode != null) && viewNode.isChildNode(e.getNode())) || ((viewNode != null) && (e.getNode() == viewNode.getParentNode()))) {
 				if (!e.getNode().isHighFrequency()) {
@@ -341,6 +343,7 @@ public class NavigatorPanel extends JPanel {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeListener#nodeAdded(com.nextbreakpoint.nextfractal.core.tree.NodeEvent)
 		 */
+		@Override
 		public void nodeAdded(final NodeEvent e) {
 			if (((viewNode != null) && viewNode.isChildNode(e.getNode())) || ((viewNode != null) && (e.getNode() == viewNode.getParentNode()))) {
 				reloadNode(viewNode);
@@ -354,6 +357,7 @@ public class NavigatorPanel extends JPanel {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeListener#nodeRemoved(com.nextbreakpoint.nextfractal.core.tree.NodeEvent)
 		 */
+		@Override
 		public void nodeRemoved(final NodeEvent e) {
 			if (e.getNode() == viewNode) {
 				reloadNode(null);
@@ -371,12 +375,14 @@ public class NavigatorPanel extends JPanel {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeListener#nodeAccepted(com.nextbreakpoint.nextfractal.core.tree.NodeEvent)
 		 */
+		@Override
 		public void nodeAccepted(final NodeEvent e) {
 		}
 
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeListener#nodeCancelled(com.nextbreakpoint.nextfractal.core.tree.NodeEvent)
 		 */
+		@Override
 		public void nodeCancelled(final NodeEvent e) {
 		}
 	}

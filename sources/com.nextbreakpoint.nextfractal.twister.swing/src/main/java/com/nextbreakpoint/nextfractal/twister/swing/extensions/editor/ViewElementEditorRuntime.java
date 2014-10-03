@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -45,9 +45,8 @@ import com.nextbreakpoint.nextfractal.core.swing.util.GUIFactory;
 import com.nextbreakpoint.nextfractal.core.tree.NodeEditor;
 import com.nextbreakpoint.nextfractal.core.util.DoubleVector4D;
 import com.nextbreakpoint.nextfractal.core.util.IntegerVector4D;
-import com.nextbreakpoint.nextfractal.twister.swing.extensions.TwisterSwingExtensionResources;
-
 import com.nextbreakpoint.nextfractal.twister.common.ViewElementNodeValue;
+import com.nextbreakpoint.nextfractal.twister.swing.extensions.TwisterSwingExtensionResources;
 import com.nextbreakpoint.nextfractal.twister.util.View;
 
 /**
@@ -91,6 +90,7 @@ public class ViewElementEditorRuntime extends EditorExtensionRuntime {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.swing.NodeEditorComponent#getComponent()
 		 */
+		@Override
 		public JComponent getComponent() {
 			return this;
 		}
@@ -98,6 +98,7 @@ public class ViewElementEditorRuntime extends EditorExtensionRuntime {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.swing.NodeEditorComponent#reloadValue()
 		 */
+		@Override
 		public void reloadValue() {
 			final View view = ((ViewElementNodeValue) nodeEditor.getNodeValue()).getValue();
 			panels[0].textFields[0].setText(String.valueOf(view.getPosition().getX()));
@@ -121,6 +122,7 @@ public class ViewElementEditorRuntime extends EditorExtensionRuntime {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.swing.NodeEditorComponent#dispose()
 		 */
+		@Override
 		public void dispose() {
 		}
 
@@ -197,6 +199,7 @@ public class ViewElementEditorRuntime extends EditorExtensionRuntime {
 				this.nodeEditor = nodeEditor;
 			}
 
+			@Override
 			public void actionPerformed(final ActionEvent e) {
 				View view = ((ViewElementNodeValue) nodeEditor.getNodeValue()).getValue();
 				double x = view.getPosition().getX();
@@ -279,6 +282,7 @@ public class ViewElementEditorRuntime extends EditorExtensionRuntime {
 				// this.nodeEditor = nodeEditor;
 			}
 
+			@Override
 			public void actionPerformed(final ActionEvent e) {
 				reloadValue();
 			}

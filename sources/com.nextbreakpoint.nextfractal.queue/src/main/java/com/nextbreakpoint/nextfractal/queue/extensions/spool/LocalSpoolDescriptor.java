@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -25,8 +25,6 @@
  */
 package com.nextbreakpoint.nextfractal.queue.extensions.spool;
 
-import com.nextbreakpoint.nextfractal.queue.extensions.spool.LocalSpoolConfig;
-import com.nextbreakpoint.nextfractal.queue.extensions.spool.LocalSpoolRuntime;
 import com.nextbreakpoint.nextfractal.queue.spool.extension.SpoolExtensionDescriptor;
 
 /**
@@ -38,6 +36,7 @@ public class LocalSpoolDescriptor extends SpoolExtensionDescriptor {
 	 * 
 	 * @return the extensionId.
 	 */
+	@Override
 	public String getExtensionId() {
 		return "service.spool.local";
 	}
@@ -47,6 +46,7 @@ public class LocalSpoolDescriptor extends SpoolExtensionDescriptor {
 	 * 
 	 * @return the extensionName.
 	 */
+	@Override
 	public String getExtensionName() {
 		return "Local";
 	}
@@ -56,6 +56,7 @@ public class LocalSpoolDescriptor extends SpoolExtensionDescriptor {
 	 * 
 	 * @return the extensionRuntimeClass.
 	 */
+	@Override
 	public LocalSpoolRuntime getExtensionRuntime() {
 		return new LocalSpoolRuntime();
 	}
@@ -65,6 +66,7 @@ public class LocalSpoolDescriptor extends SpoolExtensionDescriptor {
 	 * 
 	 * @return the extensionConfigClass.
 	 */
+	@Override
 	public LocalSpoolConfig getExtensionConfig() {
 		return new LocalSpoolConfig();
 	}

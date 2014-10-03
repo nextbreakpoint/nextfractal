@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -48,6 +48,7 @@ public class DefaultDistributedJobService<T extends DistributedJobInterface> ext
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.DistributedJobService#setJobFrame(java.lang.String, com.nextbreakpoint.nextfractal.twister.TwisterClip, byte[])
 	 */
+	@Override
 	public void setJobFrame(final String jobId, final TwisterClip clip, final byte[] data) throws IOException {
 		synchronized (spooledJobs) {
 			ScheduledJob job = spooledJobs.get(jobId);
@@ -61,6 +62,7 @@ public class DefaultDistributedJobService<T extends DistributedJobInterface> ext
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.DistributedJobService#getJobFrame(java.lang.String, int)
 	 */
+	@Override
 	public byte[] getJobFrame(final String jobId, final int frameNumber) throws IOException {
 		synchronized (spooledJobs) {
 			ScheduledJob job = spooledJobs.get(jobId);

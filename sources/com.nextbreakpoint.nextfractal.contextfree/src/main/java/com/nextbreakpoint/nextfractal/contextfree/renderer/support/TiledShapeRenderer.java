@@ -57,6 +57,7 @@ public class TiledShapeRenderer implements CFShapeRenderer {
         }
 	}
 
+	@Override
 	public void render(CFPath path, CFPathAttribute attribute) {
 		AffineTransform tmpTransform = g2d.getTransform();
 		Composite tmpComposite = g2d.getComposite();

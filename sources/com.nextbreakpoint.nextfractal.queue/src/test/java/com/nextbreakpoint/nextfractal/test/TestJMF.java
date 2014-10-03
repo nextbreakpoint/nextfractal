@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -50,16 +50,20 @@ public class TestJMF {
 			final EncoderContext context = new TestEncoderContext(w, h, 10, 100);
 			final MOVEncoderRuntime encoder = new MOVEncoderRuntime();
 			encoder.addProgressListener(new ProgressListener() {
+				@Override
 				public void done() {
 				}
 
+				@Override
 				public void failed(final Throwable e) {
 				}
 
+				@Override
 				public void stateChanged(final String message, final int percentage) {
 					TestJMF.logger.info(percentage + "%");
 				}
 
+				@Override
 				public void stateChanged(final String message) {
 				}
 			});
@@ -81,16 +85,20 @@ public class TestJMF {
 			final EncoderContext context = new RAFEncoderContext(raf, w, h, 10, 100);
 			final MOVEncoderRuntime encoder = new MOVEncoderRuntime();
 			encoder.addProgressListener(new ProgressListener() {
+				@Override
 				public void done() {
 				}
 
+				@Override
 				public void failed(final Throwable e) {
 				}
 
+				@Override
 				public void stateChanged(final String message, final int percentage) {
 					TestJMF.logger.info(percentage + "%");
 				}
 
+				@Override
 				public void stateChanged(final String message) {
 				}
 			});

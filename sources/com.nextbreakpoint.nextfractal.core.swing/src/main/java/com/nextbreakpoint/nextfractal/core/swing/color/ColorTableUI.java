@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -180,30 +180,35 @@ public class ColorTableUI extends ComponentUI {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.swing.color.ColorChangeListener#colorChanged(com.nextbreakpoint.nextfractal.core.swing.color.ColorChangeEvent)
 		 */
+		@Override
 		public void colorChanged(final ColorChangeEvent e) {
 		}
 
 		/**
 		 * @see java.awt.event.MouseListener#mouseClicked(java.awt.event.MouseEvent)
 		 */
+		@Override
 		public void mouseClicked(final MouseEvent e) {
 		}
 
 		/**
 		 * @see java.awt.event.MouseListener#mouseEntered(java.awt.event.MouseEvent)
 		 */
+		@Override
 		public void mouseEntered(final MouseEvent e) {
 		}
 
 		/**
 		 * @see java.awt.event.MouseListener#mouseExited(java.awt.event.MouseEvent)
 		 */
+		@Override
 		public void mouseExited(final MouseEvent e) {
 		}
 
 		/**
 		 * @see java.awt.event.MouseListener#mousePressed(java.awt.event.MouseEvent)
 		 */
+		@Override
 		public void mousePressed(final MouseEvent e) {
 			paintCross = true;
 			table.repaint();
@@ -212,6 +217,7 @@ public class ColorTableUI extends ComponentUI {
 		/**
 		 * @see java.awt.event.MouseListener#mouseReleased(java.awt.event.MouseEvent)
 		 */
+		@Override
 		public void mouseReleased(final MouseEvent e) {
 			paintCross = false;
 			final Insets insets = table.getInsets();
@@ -224,6 +230,7 @@ public class ColorTableUI extends ComponentUI {
 		/**
 		 * @see java.awt.event.MouseMotionListener#mouseDragged(java.awt.event.MouseEvent)
 		 */
+		@Override
 		public void mouseDragged(final MouseEvent e) {
 			mouse_x = e.getX();
 			mouse_y = e.getY();
@@ -235,6 +242,7 @@ public class ColorTableUI extends ComponentUI {
 		/**
 		 * @see java.awt.event.MouseMotionListener#mouseMoved(java.awt.event.MouseEvent)
 		 */
+		@Override
 		public void mouseMoved(final MouseEvent e) {
 			mouse_x = e.getX();
 			mouse_y = e.getY();

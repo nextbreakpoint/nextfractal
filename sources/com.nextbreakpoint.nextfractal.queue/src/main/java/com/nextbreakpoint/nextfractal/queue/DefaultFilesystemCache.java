@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -77,6 +77,7 @@ public abstract class DefaultFilesystemCache implements FilesystemCache {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.FilesystemCache#list()
 	 */
+	@Override
 	public File[] list() {
 		return workdir.listFiles(createFilenameFilter());
 	}
@@ -84,6 +85,7 @@ public abstract class DefaultFilesystemCache implements FilesystemCache {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.FilesystemCache#create(int)
 	 */
+	@Override
 	public void create(final int id) throws IOException {
 		final File dir = getDirectory(id);
 		if (!dir.exists()) {
@@ -97,6 +99,7 @@ public abstract class DefaultFilesystemCache implements FilesystemCache {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.FilesystemCache#delete(int)
 	 */
+	@Override
 	public void delete(final int id) throws IOException {
 		final File dir = getDirectory(id);
 		if (dir.exists()) {
@@ -110,6 +113,7 @@ public abstract class DefaultFilesystemCache implements FilesystemCache {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.FilesystemCache#deleteAll()
 	 */
+	@Override
 	public void deleteAll() {
 		final File[] files = workdir.listFiles();
 		if (files != null) {
@@ -127,6 +131,7 @@ public abstract class DefaultFilesystemCache implements FilesystemCache {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.FilesystemCache#exists(int)
 	 */
+	@Override
 	public boolean exists(final int id) {
 		final File dir = getDirectory(id);
 		return dir.exists();
@@ -154,15 +159,18 @@ public abstract class DefaultFilesystemCache implements FilesystemCache {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.FilesystemCache#getInputStream(int)
 	 */
+	@Override
 	public abstract InputStream getInputStream(final int id) throws IOException;
 
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.FilesystemCache#getOutputStream(int)
 	 */
+	@Override
 	public abstract OutputStream getOutputStream(final int id) throws IOException;
 
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.FilesystemCache#getRandomAccessFile(int)
 	 */
+	@Override
 	public abstract ChunkedRandomAccessFile getRandomAccessFile(final int id) throws IOException;
 }

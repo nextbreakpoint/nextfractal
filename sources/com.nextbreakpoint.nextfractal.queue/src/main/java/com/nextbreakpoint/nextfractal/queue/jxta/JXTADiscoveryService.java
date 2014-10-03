@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -56,6 +56,7 @@ public class JXTADiscoveryService implements DiscoveryService {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.network.DiscoveryService#getEndpoints()
 	 */
+	@Override
 	public List<ServiceEndpoint> getEndpoints() {
 		endpoints.clear();
 		for (ServiceEndpoint endpoint : networkService.getEndpoints()) {
@@ -72,6 +73,7 @@ public class JXTADiscoveryService implements DiscoveryService {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.network.DiscoveryService#start()
 	 */
+	@Override
 	public void start() {
 		localService.start();
 		networkService.start();
@@ -80,6 +82,7 @@ public class JXTADiscoveryService implements DiscoveryService {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.network.DiscoveryService#stop()
 	 */
+	@Override
 	public void stop() {
 		localService.stop();
 		networkService.stop();

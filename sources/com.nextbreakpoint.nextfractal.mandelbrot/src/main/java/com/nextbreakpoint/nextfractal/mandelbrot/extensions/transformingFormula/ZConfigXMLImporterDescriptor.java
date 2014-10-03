@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -26,7 +26,6 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.extensions.transformingFormula;
 
 import com.nextbreakpoint.nextfractal.core.extensionConfigXMLImporter.extension.ExtensionConfigXMLImporterExtensionDescriptor;
-import com.nextbreakpoint.nextfractal.mandelbrot.extensions.transformingFormula.ZConfigXMLImporterRuntime;
 
 /**
  * @author Andrea Medeghini
@@ -37,6 +36,7 @@ public class ZConfigXMLImporterDescriptor extends ExtensionConfigXMLImporterExte
 	 * 
 	 * @return the extensionId.
 	 */
+	@Override
 	public String getExtensionId() {
 		return "twister.mandelbrot.fractal.transforming.formula.z";
 	}
@@ -46,6 +46,7 @@ public class ZConfigXMLImporterDescriptor extends ExtensionConfigXMLImporterExte
 	 * 
 	 * @return the extensionName.
 	 */
+	@Override
 	public String getExtensionName() {
 		return "Z";
 	}
@@ -55,6 +56,7 @@ public class ZConfigXMLImporterDescriptor extends ExtensionConfigXMLImporterExte
 	 * 
 	 * @return the extensionRuntimeClass.
 	 */
+	@Override
 	public ZConfigXMLImporterRuntime getExtensionRuntime() {
 		return new ZConfigXMLImporterRuntime();
 	}

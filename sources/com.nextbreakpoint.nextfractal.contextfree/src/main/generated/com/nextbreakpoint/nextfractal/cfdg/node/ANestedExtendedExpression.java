@@ -2,7 +2,7 @@
 
 package com.nextbreakpoint.nextfractal.cfdg.node;
 
-import com.nextbreakpoint.nextfractal.cfdg.analysis.*;
+import com.nextbreakpoint.nextfractal.cfdg.analysis.Analysis;
 
 @SuppressWarnings("nls")
 public final class ANestedExtendedExpression extends PExtendedExpression
@@ -39,7 +39,8 @@ public final class ANestedExtendedExpression extends PExtendedExpression
             cloneNode(this._rRbkt_));
     }
 
-    public void apply(Switch sw)
+    @Override
+	public void apply(Switch sw)
     {
         ((Analysis) sw).caseANestedExtendedExpression(this);
     }

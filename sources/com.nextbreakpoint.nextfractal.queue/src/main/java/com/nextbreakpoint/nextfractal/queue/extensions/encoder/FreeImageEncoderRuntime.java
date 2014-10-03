@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -29,16 +29,17 @@ import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import net.sf.freeimage4java.FIBITMAP;
+import net.sf.freeimage4java.FREE_IMAGE_FORMAT;
+import net.sf.freeimage4java.FreeImage4Java;
+import net.sf.freeimage4java.FreeImage4JavaConstants;
+import net.sf.freeimage4java.RGBQUAD;
+
 import com.nextbreakpoint.nextfractal.queue.encoder.EncoderContext;
 import com.nextbreakpoint.nextfractal.queue.encoder.EncoderException;
 import com.nextbreakpoint.nextfractal.queue.encoder.EncoderHook;
 import com.nextbreakpoint.nextfractal.queue.encoder.extension.AbstractEncoderExtensionRuntime;
 import com.nextbreakpoint.nextfractal.queue.encoder.extension.EncoderExtensionConfig;
-
-import net.sf.freeimage4java.FIBITMAP;
-import net.sf.freeimage4java.FREE_IMAGE_FORMAT;
-import net.sf.freeimage4java.FreeImage4Java;
-import net.sf.freeimage4java.RGBQUAD;
 
 /**
  * @author Andrea Medeghini
@@ -47,7 +48,7 @@ public abstract class FreeImageEncoderRuntime<T extends EncoderExtensionConfig> 
 	private static final Logger logger = Logger.getLogger(FreeImageEncoderRuntime.class.getName());
 	private EncoderHook hook;
 	static {
-		FreeImage4Java.FreeImage_Initialise(FreeImage4Java.TRUE);
+		FreeImage4Java.FreeImage_Initialise(FreeImage4JavaConstants.TRUE);
 	}
 
 	/**

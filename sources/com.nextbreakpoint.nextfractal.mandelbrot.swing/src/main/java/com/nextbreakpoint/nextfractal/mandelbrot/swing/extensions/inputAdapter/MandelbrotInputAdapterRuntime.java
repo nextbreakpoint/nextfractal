@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -45,10 +45,9 @@ import com.nextbreakpoint.nextfractal.mandelbrot.renderingFormula.RenderingFormu
 import com.nextbreakpoint.nextfractal.mandelbrot.renderingFormula.extension.RenderingFormulaExtensionConfig;
 import com.nextbreakpoint.nextfractal.twister.common.SpeedElement;
 import com.nextbreakpoint.nextfractal.twister.common.ViewElement;
+import com.nextbreakpoint.nextfractal.twister.swing.inputAdapter.DefaultInputAdapterRuntime;
 import com.nextbreakpoint.nextfractal.twister.util.Speed;
 import com.nextbreakpoint.nextfractal.twister.util.View;
-
-import com.nextbreakpoint.nextfractal.twister.swing.inputAdapter.DefaultInputAdapterRuntime;
 
 /**
  * @author Andrea Medeghini
@@ -739,6 +738,7 @@ public class MandelbrotInputAdapterRuntime extends DefaultInputAdapterRuntime {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotZoomHandler#doZoom(com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotZoom)
 		 */
+		@Override
 		public void doZoom(final MandelbrotZoom zoom) {
 			double zoomSpeed = 1.0;
 			double shiftSpeed = 1.0;
@@ -811,6 +811,7 @@ public class MandelbrotInputAdapterRuntime extends DefaultInputAdapterRuntime {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotZoomHandler#getWidth()
 		 */
+		@Override
 		public int getWidth() {
 			return getSizeX();
 		}
@@ -818,6 +819,7 @@ public class MandelbrotInputAdapterRuntime extends DefaultInputAdapterRuntime {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotZoomHandler#getHeight()
 		 */
+		@Override
 		public int getHeight() {
 			return getSizeY();
 		}

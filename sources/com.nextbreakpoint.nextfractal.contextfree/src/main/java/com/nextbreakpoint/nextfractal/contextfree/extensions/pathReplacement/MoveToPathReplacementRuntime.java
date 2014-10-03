@@ -60,6 +60,7 @@ public class MoveToPathReplacementRuntime extends PathReplacementExtensionRuntim
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
 		 */
+		@Override
 		public void valueChanged(final ValueChangeEvent e) {
 			switch (e.getEventType()) {
 				case ValueConfigElement.VALUE_CHANGED: {
@@ -88,6 +89,7 @@ public class MoveToPathReplacementRuntime extends PathReplacementExtensionRuntim
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
 		 */
+		@Override
 		public void valueChanged(final ValueChangeEvent e) {
 			switch (e.getEventType()) {
 				case ValueConfigElement.VALUE_CHANGED: {
@@ -102,6 +104,7 @@ public class MoveToPathReplacementRuntime extends PathReplacementExtensionRuntim
 		}
 	}
 
+	@Override
 	public void process(CFRule rule) {
 		rule.getPath().moveTo(x, y);
 	}

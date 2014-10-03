@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -58,6 +58,7 @@ public class SLConfigurableExtension<T extends ConfigurableExtensionRuntime<? ex
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtension#createDefaultExtensionConfig()
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public final V createDefaultExtensionConfig() throws ExtensionException {
 		return ((ConfigurableExtensionDescriptor<T, V>) getExtensionDescriptor()).getExtensionConfig();
@@ -66,6 +67,7 @@ public class SLConfigurableExtension<T extends ConfigurableExtensionRuntime<? ex
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtension#createConfigurableExtensionReference(com.nextbreakpoint.nextfractal.core.extension.ExtensionConfig)
 	 */
+	@Override
 	public ConfigurableExtensionReference<V> createConfigurableExtensionReference(final V extensionConfig) {
 		return new ConfigurableExtensionReference<V>(getExtensionId(), getExtensionName(), extensionConfig);
 	}
@@ -73,6 +75,7 @@ public class SLConfigurableExtension<T extends ConfigurableExtensionRuntime<? ex
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtension#createConfigurableExtensionReference()
 	 */
+	@Override
 	public ConfigurableExtensionReference<V> createConfigurableExtensionReference() throws ExtensionException {
 		return new ConfigurableExtensionReference<V>(getExtensionId(), getExtensionName(), this.createDefaultExtensionConfig());
 	}

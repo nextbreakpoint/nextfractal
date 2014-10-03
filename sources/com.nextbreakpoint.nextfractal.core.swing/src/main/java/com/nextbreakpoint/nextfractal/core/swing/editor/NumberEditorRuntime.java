@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -82,6 +82,7 @@ public abstract class NumberEditorRuntime extends EditorExtensionRuntime {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.twister.swing.NodeEditorComponent#getComponent()
 		 */
+		@Override
 		public JComponent getComponent() {
 			return this;
 		}
@@ -89,6 +90,7 @@ public abstract class NumberEditorRuntime extends EditorExtensionRuntime {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.twister.swing.NodeEditorComponent#reloadValue()
 		 */
+		@Override
 		public void reloadValue() {
 			if (nodeEditor.getNodeValue() != null) {
 				textfield.setText(nodeEditor.getNodeValueAsString());
@@ -98,6 +100,7 @@ public abstract class NumberEditorRuntime extends EditorExtensionRuntime {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.twister.swing.NodeEditorComponent#dispose()
 		 */
+		@Override
 		public void dispose() {
 		}
 	}
@@ -115,6 +118,7 @@ public abstract class NumberEditorRuntime extends EditorExtensionRuntime {
 			this.textfield = textfield;
 		}
 
+		@Override
 		public void actionPerformed(final ActionEvent e) {
 			Number value = parseValue(textfield.getText());
 			if ((value.doubleValue() >= nodeEditor.getMinimum().doubleValue()) && (value.doubleValue() <= nodeEditor.getMaximum().doubleValue())) {
@@ -127,9 +131,11 @@ public abstract class NumberEditorRuntime extends EditorExtensionRuntime {
 			}
 		}
 
+		@Override
 		public void focusGained(final FocusEvent e) {
 		}
 
+		@Override
 		public void focusLost(final FocusEvent e) {
 			Number value = parseValue(textfield.getText());
 			if ((value.doubleValue() >= nodeEditor.getMinimum().doubleValue()) && (value.doubleValue() <= nodeEditor.getMaximum().doubleValue())) {

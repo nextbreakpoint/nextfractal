@@ -17,6 +17,7 @@ public class CircleFigureRuntime extends FigureExtensionRuntime<CircleFigureConf
 		return "CIRCLE";
 	}
 
+	@Override
 	public void process(CFBuilder builder) {
 		int shapeType = builder.encodeShapeName(getName());
 		CFRule rule = new CFRule(shapeType, 1);

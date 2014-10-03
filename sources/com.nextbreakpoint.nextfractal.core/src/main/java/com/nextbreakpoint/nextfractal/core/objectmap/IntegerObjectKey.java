@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -107,6 +107,7 @@ public class IntegerObjectKey implements ObjectKey, Comparable<IntegerObjectKey>
 	/**
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
+	@Override
 	public int compareTo(final IntegerObjectKey key) {
 		for (int i = 0; i < keyFields.length; i++) {
 			if (keyFields[i].intValue() != key.keyFields[i].intValue()) {

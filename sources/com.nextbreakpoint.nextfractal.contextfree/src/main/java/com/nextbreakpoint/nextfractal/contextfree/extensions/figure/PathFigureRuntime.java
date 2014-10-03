@@ -69,6 +69,7 @@ public class PathFigureRuntime extends FigureExtensionRuntime<PathFigureConfig> 
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
 		 */
+		@Override
 		public void valueChanged(final ValueChangeEvent e) {
 			switch (e.getEventType()) {
 				case ValueConfigElement.VALUE_CHANGED: {
@@ -143,6 +144,7 @@ public class PathFigureRuntime extends FigureExtensionRuntime<PathFigureConfig> 
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
 		 */
+		@Override
 		public void valueChanged(final ValueChangeEvent e) {
 			switch (e.getEventType()) {
 				case ListConfigElement.ELEMENT_ADDED: {
@@ -187,6 +189,7 @@ public class PathFigureRuntime extends FigureExtensionRuntime<PathFigureConfig> 
 		}
 	}
 
+	@Override
 	public void process(CFBuilder builder) {
 		int shapeType = builder.encodeShapeName(name);
 		CFRule rule = new CFRule(shapeType, 1);

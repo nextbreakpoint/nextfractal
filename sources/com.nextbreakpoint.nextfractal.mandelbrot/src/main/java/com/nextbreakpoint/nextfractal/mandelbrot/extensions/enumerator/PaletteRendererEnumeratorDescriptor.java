@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -26,7 +26,6 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.extensions.enumerator;
 
 import com.nextbreakpoint.nextfractal.core.enumerator.extension.EnumeratorExtensionDescriptor;
-import com.nextbreakpoint.nextfractal.mandelbrot.extensions.enumerator.PaletteRendererEnumeratorRuntime;
 
 /**
  * @author Andrea Medeghini
@@ -37,6 +36,7 @@ public class PaletteRendererEnumeratorDescriptor extends EnumeratorExtensionDesc
 	 * 
 	 * @return the extensionId.
 	 */
+	@Override
 	public String getExtensionId() {
 		return "node.class.PaletteRendererReference";
 	}
@@ -46,6 +46,7 @@ public class PaletteRendererEnumeratorDescriptor extends EnumeratorExtensionDesc
 	 * 
 	 * @return the extensionName.
 	 */
+	@Override
 	public String getExtensionName() {
 		return "PaletteRendererEnumerator";
 	}
@@ -55,6 +56,7 @@ public class PaletteRendererEnumeratorDescriptor extends EnumeratorExtensionDesc
 	 * 
 	 * @return the extensionRuntimeClass.
 	 */
+	@Override
 	public PaletteRendererEnumeratorRuntime getExtensionRuntime() {
 		return new PaletteRendererEnumeratorRuntime();
 	}

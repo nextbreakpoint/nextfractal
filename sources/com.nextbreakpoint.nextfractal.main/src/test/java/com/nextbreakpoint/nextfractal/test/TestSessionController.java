@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -25,19 +25,18 @@
  */
 package com.nextbreakpoint.nextfractal.test;
 
-import com.nextbreakpoint.nextfractal.twister.ControllerListener;
-import com.nextbreakpoint.nextfractal.twister.TwisterConfig;
-import com.nextbreakpoint.nextfractal.twister.TwisterConfigBuilder;
-import com.nextbreakpoint.nextfractal.twister.TwisterConfigNodeBuilder;
-import com.nextbreakpoint.nextfractal.twister.TwisterController;
-import com.nextbreakpoint.nextfractal.twister.TwisterSessionController;
-
 import org.junit.Test;
 
 import com.nextbreakpoint.nextfractal.core.DefaultTree;
 import com.nextbreakpoint.nextfractal.core.config.ConfigContext;
 import com.nextbreakpoint.nextfractal.core.config.DefaultConfigContext;
 import com.nextbreakpoint.nextfractal.core.tree.NodeAction;
+import com.nextbreakpoint.nextfractal.twister.ControllerListener;
+import com.nextbreakpoint.nextfractal.twister.TwisterConfig;
+import com.nextbreakpoint.nextfractal.twister.TwisterConfigBuilder;
+import com.nextbreakpoint.nextfractal.twister.TwisterConfigNodeBuilder;
+import com.nextbreakpoint.nextfractal.twister.TwisterController;
+import com.nextbreakpoint.nextfractal.twister.TwisterSessionController;
 
 /**
  * @author Andrea Medeghini
@@ -165,14 +164,17 @@ public class TestSessionController {
 		public DebugSessionController(final TwisterConfig config) {
 			super("controller", config);
 			addControllerListener(new ControllerListener() {
+				@Override
 				public void actionRedone(final NodeAction action) {
 					System.out.println("Redo: " + action);
 				}
 
+				@Override
 				public void actionUndone(final NodeAction action) {
 					System.out.println("Undo: " + action);
 				}
 
+				@Override
 				public void configChanged() {
 					System.out.println("Config changed");
 				}

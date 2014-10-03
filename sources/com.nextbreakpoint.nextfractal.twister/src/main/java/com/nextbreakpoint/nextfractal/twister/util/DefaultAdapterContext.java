@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -48,6 +48,7 @@ public class DefaultAdapterContext implements AdapterContext {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.twister.util.AdapterContext.InputAdapterContext#getFinalConfig()
 	 */
+	@Override
 	public ExtensionConfig getConfig() {
 		return config;
 	}
@@ -55,6 +56,7 @@ public class DefaultAdapterContext implements AdapterContext {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.twister.util.AdapterContext.InputAdapterContext#setAttribute(java.lang.String, java.lang.Object)
 	 */
+	@Override
 	public void setAttribute(final String name, final Object value) {
 		attributes.put(name, value);
 	}
@@ -62,6 +64,7 @@ public class DefaultAdapterContext implements AdapterContext {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.twister.util.AdapterContext.InputAdapterContext#getAttribute(java.lang.String)
 	 */
+	@Override
 	public Object getAttribute(final String name) {
 		return attributes.get(name);
 	}
@@ -69,6 +72,7 @@ public class DefaultAdapterContext implements AdapterContext {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.twister.util.AdapterContext#removeAttribute(java.lang.String)
 	 */
+	@Override
 	public void removeAttribute(final String name) {
 		attributes.remove(name);
 	}

@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -25,12 +25,6 @@
  */
 package com.nextbreakpoint.nextfractal.test.mandelbrot.outcolouringFormula;
 
-import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotRegistry;
-import com.nextbreakpoint.nextfractal.mandelbrot.extensions.outcolouringFormula.ModulusConfig;
-import com.nextbreakpoint.nextfractal.mandelbrot.extensions.outcolouringFormula.PhaseConfig;
-import com.nextbreakpoint.nextfractal.mandelbrot.outcolouringFormula.OutcolouringFormulaExtensionReferenceNodeValue;
-import com.nextbreakpoint.nextfractal.mandelbrot.outcolouringFormula.extension.OutcolouringFormulaExtensionConfig;
-
 import org.junit.Test;
 
 import com.nextbreakpoint.nextfractal.core.common.ConfigurableExtensionReferenceElement;
@@ -41,6 +35,11 @@ import com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionRefere
 import com.nextbreakpoint.nextfractal.core.test.AbstractConfigurableExtensionConfigElementTest;
 import com.nextbreakpoint.nextfractal.core.tree.Node;
 import com.nextbreakpoint.nextfractal.core.tree.NodeValue;
+import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotRegistry;
+import com.nextbreakpoint.nextfractal.mandelbrot.extensions.outcolouringFormula.ModulusConfig;
+import com.nextbreakpoint.nextfractal.mandelbrot.extensions.outcolouringFormula.PhaseConfig;
+import com.nextbreakpoint.nextfractal.mandelbrot.outcolouringFormula.OutcolouringFormulaExtensionReferenceNodeValue;
+import com.nextbreakpoint.nextfractal.mandelbrot.outcolouringFormula.extension.OutcolouringFormulaExtensionConfig;
 
 /**
  * @author Andrea Medeghini

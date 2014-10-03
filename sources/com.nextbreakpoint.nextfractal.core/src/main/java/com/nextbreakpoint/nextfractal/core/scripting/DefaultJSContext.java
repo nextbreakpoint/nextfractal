@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -38,6 +38,7 @@ public abstract class DefaultJSContext implements JSContext {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.scripting.JSContext#getConstructor(java.lang.String)
 	 */
+	@Override
 	public ConstructorExtensionRuntime getConstructor(final String elementClassId) throws JSException {
 		try {
 			return CoreRegistry.getInstance().getConstructorExtension(elementClassId).createExtensionRuntime();
@@ -53,6 +54,7 @@ public abstract class DefaultJSContext implements JSContext {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.scripting.JSContext#getEnumerator(java.lang.String)
 	 */
+	@Override
 	public EnumeratorExtensionRuntime getEnumerator(final String elementClassId) throws JSException {
 		try {
 			return CoreRegistry.getInstance().getEnumeratorExtension(elementClassId).createExtensionRuntime();
@@ -68,6 +70,7 @@ public abstract class DefaultJSContext implements JSContext {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.scripting.JSContext#println(java.lang.String)
 	 */
+	@Override
 	public void println(final String s) {
 		System.out.println(s);
 	}
@@ -75,6 +78,7 @@ public abstract class DefaultJSContext implements JSContext {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.scripting.JSContext#sleep(long)
 	 */
+	@Override
 	public boolean sleep(long time) {
 		try {
 			if (Thread.interrupted()) {
@@ -91,6 +95,7 @@ public abstract class DefaultJSContext implements JSContext {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.scripting.JSContext#showMessage(java.lang.String, float, float, float, long, boolean)
 	 */
+	@Override
 	public void showMessage(String message, float size, float x, float y, long tim, boolean hasBackground) {
 	}
 }

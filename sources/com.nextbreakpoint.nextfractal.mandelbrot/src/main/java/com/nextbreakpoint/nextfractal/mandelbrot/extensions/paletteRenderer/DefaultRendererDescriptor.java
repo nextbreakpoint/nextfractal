@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -25,8 +25,6 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.extensions.paletteRenderer;
 
-import com.nextbreakpoint.nextfractal.mandelbrot.extensions.paletteRenderer.DefaultRendererConfig;
-import com.nextbreakpoint.nextfractal.mandelbrot.extensions.paletteRenderer.DefaultRendererRuntime;
 import com.nextbreakpoint.nextfractal.mandelbrot.paletteRenderer.extension.PaletteRendererExtensionDescriptor;
 
 /**
@@ -38,6 +36,7 @@ public class DefaultRendererDescriptor extends PaletteRendererExtensionDescripto
 	 * 
 	 * @return the extensionId.
 	 */
+	@Override
 	public String getExtensionId() {
 		return "twister.mandelbrot.palette.renderer.default";
 	}
@@ -47,6 +46,7 @@ public class DefaultRendererDescriptor extends PaletteRendererExtensionDescripto
 	 * 
 	 * @return the extensionName.
 	 */
+	@Override
 	public String getExtensionName() {
 		return "Default";
 	}
@@ -56,6 +56,7 @@ public class DefaultRendererDescriptor extends PaletteRendererExtensionDescripto
 	 * 
 	 * @return the extensionRuntimeClass.
 	 */
+	@Override
 	public DefaultRendererRuntime getExtensionRuntime() {
 		return new DefaultRendererRuntime();
 	}
@@ -65,6 +66,7 @@ public class DefaultRendererDescriptor extends PaletteRendererExtensionDescripto
 	 * 
 	 * @return the extensionConfigClass.
 	 */
+	@Override
 	public DefaultRendererConfig getExtensionConfig() {
 		return new DefaultRendererConfig();
 	}

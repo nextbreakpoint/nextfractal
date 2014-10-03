@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -25,7 +25,6 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.extensions.shapeAdjustment;
 
-import com.nextbreakpoint.nextfractal.contextfree.extensions.shapeAdjustment.Size2ShapeAdjustmentConfigXMLImporterRuntime;
 import com.nextbreakpoint.nextfractal.core.extensionConfigXMLImporter.extension.ExtensionConfigXMLImporterExtensionDescriptor;
 
 /**
@@ -37,6 +36,7 @@ public class Size2ShapeAdjustmentConfigXMLImporterDescriptor extends ExtensionCo
 	 * 
 	 * @return the extensionId.
 	 */
+	@Override
 	public String getExtensionId() {
 		return "contextfree.shape.adjustment.geometry.size2";
 	}
@@ -46,6 +46,7 @@ public class Size2ShapeAdjustmentConfigXMLImporterDescriptor extends ExtensionCo
 	 * 
 	 * @return the extensionName.
 	 */
+	@Override
 	public String getExtensionName() {
 		return "Size2 ShapeAdjustment";
 	}
@@ -55,6 +56,7 @@ public class Size2ShapeAdjustmentConfigXMLImporterDescriptor extends ExtensionCo
 	 * 
 	 * @return the extensionRuntimeClass.
 	 */
+	@Override
 	public Size2ShapeAdjustmentConfigXMLImporterRuntime getExtensionRuntime() {
 		return new Size2ShapeAdjustmentConfigXMLImporterRuntime();
 	}

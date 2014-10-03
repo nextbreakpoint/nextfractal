@@ -2,7 +2,7 @@
 
 package com.nextbreakpoint.nextfractal.cfdg.node;
 
-import com.nextbreakpoint.nextfractal.cfdg.analysis.*;
+import com.nextbreakpoint.nextfractal.cfdg.analysis.Analysis;
 
 @SuppressWarnings("nls")
 public final class ACommandPathReplacement extends PPathReplacement
@@ -29,7 +29,8 @@ public final class ACommandPathReplacement extends PPathReplacement
             cloneNode(this._pathCommand_));
     }
 
-    public void apply(Switch sw)
+    @Override
+	public void apply(Switch sw)
     {
         ((Analysis) sw).caseACommandPathReplacement(this);
     }

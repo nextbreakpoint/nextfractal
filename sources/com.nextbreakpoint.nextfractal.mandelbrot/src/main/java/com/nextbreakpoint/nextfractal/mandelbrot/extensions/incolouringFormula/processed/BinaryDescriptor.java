@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -25,8 +25,6 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.extensions.incolouringFormula.processed;
 
-import com.nextbreakpoint.nextfractal.mandelbrot.extensions.incolouringFormula.processed.BinaryConfig;
-import com.nextbreakpoint.nextfractal.mandelbrot.extensions.incolouringFormula.processed.BinaryRuntime;
 import com.nextbreakpoint.nextfractal.mandelbrot.incolouringFormula.extension.IncolouringFormulaExtensionDescriptor;
 
 /**
@@ -38,6 +36,7 @@ public class BinaryDescriptor extends IncolouringFormulaExtensionDescriptor {
 	 * 
 	 * @return the extensionId.
 	 */
+	@Override
 	public String getExtensionId() {
 		return "twister.mandelbrot.fractal.incolouring.formula.processed.binary";
 	}
@@ -47,6 +46,7 @@ public class BinaryDescriptor extends IncolouringFormulaExtensionDescriptor {
 	 * 
 	 * @return the extensionName.
 	 */
+	@Override
 	public String getExtensionName() {
 		return "T Binary";
 	}
@@ -56,6 +56,7 @@ public class BinaryDescriptor extends IncolouringFormulaExtensionDescriptor {
 	 * 
 	 * @return the extensionRuntimeClass.
 	 */
+	@Override
 	public BinaryRuntime getExtensionRuntime() {
 		return new BinaryRuntime();
 	}
@@ -65,6 +66,7 @@ public class BinaryDescriptor extends IncolouringFormulaExtensionDescriptor {
 	 * 
 	 * @return the extensionConfigClass.
 	 */
+	@Override
 	public BinaryConfig getExtensionConfig() {
 		return new BinaryConfig();
 	}

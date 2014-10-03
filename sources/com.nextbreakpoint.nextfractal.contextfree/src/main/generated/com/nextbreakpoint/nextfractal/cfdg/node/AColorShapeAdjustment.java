@@ -2,7 +2,7 @@
 
 package com.nextbreakpoint.nextfractal.cfdg.node;
 
-import com.nextbreakpoint.nextfractal.cfdg.analysis.*;
+import com.nextbreakpoint.nextfractal.cfdg.analysis.Analysis;
 
 @SuppressWarnings("nls")
 public final class AColorShapeAdjustment extends PShapeAdjustment
@@ -29,7 +29,8 @@ public final class AColorShapeAdjustment extends PShapeAdjustment
             cloneNode(this._colorAdjustment_));
     }
 
-    public void apply(Switch sw)
+    @Override
+	public void apply(Switch sw)
     {
         ((Analysis) sw).caseAColorShapeAdjustment(this);
     }

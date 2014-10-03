@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -34,13 +34,6 @@ import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
-import com.nextbreakpoint.nextfractal.twister.TwisterConfig;
-import com.nextbreakpoint.nextfractal.twister.TwisterConfigBuilder;
-import com.nextbreakpoint.nextfractal.twister.TwisterConfigNodeBuilder;
-import com.nextbreakpoint.nextfractal.twister.swing.ConfigFrame;
-import com.nextbreakpoint.nextfractal.twister.swing.TwisterConfigContext;
-import com.nextbreakpoint.nextfractal.twister.swing.TwisterContext;
-
 import org.junit.Test;
 
 import com.nextbreakpoint.nextfractal.core.DefaultTree;
@@ -57,6 +50,12 @@ import com.nextbreakpoint.nextfractal.core.tree.NodeSessionListener;
 import com.nextbreakpoint.nextfractal.core.util.IntegerVector2D;
 import com.nextbreakpoint.nextfractal.core.util.RenderContext;
 import com.nextbreakpoint.nextfractal.core.util.RenderContextListener;
+import com.nextbreakpoint.nextfractal.twister.TwisterConfig;
+import com.nextbreakpoint.nextfractal.twister.TwisterConfigBuilder;
+import com.nextbreakpoint.nextfractal.twister.TwisterConfigNodeBuilder;
+import com.nextbreakpoint.nextfractal.twister.swing.ConfigFrame;
+import com.nextbreakpoint.nextfractal.twister.swing.TwisterConfigContext;
+import com.nextbreakpoint.nextfractal.twister.swing.TwisterContext;
 
 /**
  * @author Andrea Medeghini
@@ -80,8 +79,10 @@ public class ConfigFrameTest {
 	}
 
 	private class TestThreadFactory implements LauncherThreadFactory<TwisterContext> {
+		@Override
 		public Thread createThread(final TwisterContext context) {
 			final Thread thread = new Thread(new Runnable() {
+				@Override
 				public void run() {
 					try {
 						try {
@@ -108,11 +109,13 @@ public class ConfigFrameTest {
 							}
 						});
 						SwingUtilities.invokeLater(new Runnable() {
+							@Override
 							public void run() {
 								frame.setVisible(true);
 							}
 						});
 						SwingUtilities.invokeLater(new Runnable() {
+							@Override
 							public void run() {
 								frame.setup();
 							}
@@ -137,6 +140,7 @@ public class ConfigFrameTest {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.twister.swing.TwisterConfigContext#openAdvancedConfigWindow()
 		 */
+		@Override
 		public void openAdvancedConfigWindow() {
 		}
 
@@ -152,6 +156,7 @@ public class ConfigFrameTest {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.scripting.JSContext#loadDefaultConfig()
 		 */
+		@Override
 		public void loadDefaultConfig() {
 		}
 	}
@@ -160,12 +165,14 @@ public class ConfigFrameTest {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.twister.swing.TwisterContext#addFrame(javax.swing.JFrame)
 		 */
+		@Override
 		public void addFrame(final JFrame frame) {
 		}
 
 		/**
 		 * @see com.nextbreakpoint.nextfractal.twister.swing.TwisterContext#exit()
 		 */
+		@Override
 		public void exit() {
 			launcher.stop();
 		}
@@ -173,6 +180,7 @@ public class ConfigFrameTest {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.twister.swing.TwisterContext#getFrameCount()
 		 */
+		@Override
 		public int getFrameCount() {
 			return 0;
 		}
@@ -180,12 +188,14 @@ public class ConfigFrameTest {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.twister.swing.TwisterContext#removeFrame(javax.swing.JFrame)
 		 */
+		@Override
 		public void removeFrame(final JFrame frame) {
 		}
 
 		/**
 		 * @see com.nextbreakpoint.nextfractal.twister.swing.TwisterContext#restart()
 		 */
+		@Override
 		public void restart() {
 			launcher.stop();
 		}
@@ -193,6 +203,7 @@ public class ConfigFrameTest {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.launcher.LauncherContext#setContextListener(com.nextbreakpoint.nextfractal.launcher.LauncherContextListener)
 		 */
+		@Override
 		public void setContextListener(final LauncherContextListener listener) {
 		}
 	}
@@ -201,18 +212,21 @@ public class ConfigFrameTest {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#startRenderers()
 		 */
+		@Override
 		public void startRenderers() {
 		}
 
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#stopRenderers()
 		 */
+		@Override
 		public void stopRenderers() {
 		}
 
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#getImageSize()
 		 */
+		@Override
 		public IntegerVector2D getImageSize() {
 			return new IntegerVector2D(100, 100);
 		}
@@ -220,30 +234,35 @@ public class ConfigFrameTest {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#refresh()
 		 */
+		@Override
 		public void refresh() {
 		}
 
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#acquire()
 		 */
+		@Override
 		public void acquire() throws InterruptedException {
 		}
 
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#release()
 		 */
+		@Override
 		public void release() {
 		}
 
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#addRenderContextListener(com.nextbreakpoint.nextfractal.core.util.RenderContextListener)
 		 */
+		@Override
 		public void addRenderContextListener(RenderContextListener listener) {
 		}
 
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#removeRenderContextListener(com.nextbreakpoint.nextfractal.core.util.RenderContextListener)
 		 */
+		@Override
 		public void removeRenderContextListener(RenderContextListener listener) {
 		}
 	}
@@ -252,6 +271,7 @@ public class ConfigFrameTest {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeSession#appendAction(com.nextbreakpoint.nextfractal.core.tree.NodeAction)
 		 */
+		@Override
 		public void appendAction(final NodeAction action) {
 			System.out.println(action);
 		}
@@ -259,6 +279,7 @@ public class ConfigFrameTest {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeSession#getActions()
 		 */
+		@Override
 		public List<NodeAction> getActions() {
 			return null;
 		}
@@ -266,6 +287,7 @@ public class ConfigFrameTest {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeSession#getSessionName()
 		 */
+		@Override
 		public String getSessionName() {
 			return "Test";
 		}
@@ -273,6 +295,7 @@ public class ConfigFrameTest {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeSession#getTimestamp()
 		 */
+		@Override
 		public long getTimestamp() {
 			return 0;
 		}
@@ -280,6 +303,7 @@ public class ConfigFrameTest {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeSession#isAcceptImmediatly()
 		 */
+		@Override
 		public boolean isAcceptImmediatly() {
 			return true;
 		}
@@ -287,28 +311,35 @@ public class ConfigFrameTest {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeSession#setAcceptImmediatly(boolean)
 		 */
+		@Override
 		public void setAcceptImmediatly(final boolean isApplyImmediatly) {
 		}
 
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeSession#setTimestamp(long)
 		 */
+		@Override
 		public void setTimestamp(final long timestamp) {
 			System.out.println("Timestamp = " + timestamp);
 		}
 
+		@Override
 		public void fireSessionAccepted() {
 		}
 
+		@Override
 		public void fireSessionCancelled() {
 		}
 
+		@Override
 		public void fireSessionChanged() {
 		}
 
+		@Override
 		public void addSessionListener(NodeSessionListener listener) {
 		}
 
+		@Override
 		public void removeSessionListener(NodeSessionListener listener) {
 		}
 	}

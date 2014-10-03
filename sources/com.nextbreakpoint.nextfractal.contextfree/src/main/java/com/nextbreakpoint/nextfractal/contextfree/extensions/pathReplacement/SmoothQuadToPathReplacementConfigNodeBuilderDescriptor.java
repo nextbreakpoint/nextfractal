@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -25,7 +25,6 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.extensions.pathReplacement;
 
-import com.nextbreakpoint.nextfractal.contextfree.extensions.pathReplacement.SmoothQuadToPathReplacementConfigNodeBuilderRuntime;
 import com.nextbreakpoint.nextfractal.core.nodeBuilder.extension.NodeBuilderExtensionDescriptor;
 
 /**
@@ -37,6 +36,7 @@ public class SmoothQuadToPathReplacementConfigNodeBuilderDescriptor extends Node
 	 * 
 	 * @return the extensionId.
 	 */
+	@Override
 	public String getExtensionId() {
 		return "contextfree.path.replacement.operation.smoothquadto";
 	}
@@ -46,6 +46,7 @@ public class SmoothQuadToPathReplacementConfigNodeBuilderDescriptor extends Node
 	 * 
 	 * @return the extensionName.
 	 */
+	@Override
 	public String getExtensionName() {
 		return "SmoothQuadTo PathReplacement";
 	}
@@ -55,6 +56,7 @@ public class SmoothQuadToPathReplacementConfigNodeBuilderDescriptor extends Node
 	 * 
 	 * @return the extensionRuntimeClass.
 	 */
+	@Override
 	public SmoothQuadToPathReplacementConfigNodeBuilderRuntime getExtensionRuntime() {
 		return new SmoothQuadToPathReplacementConfigNodeBuilderRuntime();
 	}

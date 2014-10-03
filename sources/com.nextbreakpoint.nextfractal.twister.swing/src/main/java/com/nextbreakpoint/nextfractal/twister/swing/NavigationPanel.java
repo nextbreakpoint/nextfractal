@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -68,6 +68,7 @@ public class NavigationPanel extends JPanel {
 	public NavigationPanel(final NavigationModel model) {
 		this.model = model;
 		model.addChangeListener(new ChangeListener() {
+			@Override
 			public void stateChanged(final ChangeEvent e) {
 				historyLabel.setText(NavigationPanel.this.model.getHistory());
 			}
@@ -105,6 +106,7 @@ public class NavigationPanel extends JPanel {
 		add(buttonsPanel, BorderLayout.NORTH);
 		add(historyPanel, BorderLayout.CENTER);
 		model.addChangeListener(new ChangeListener() {
+			@Override
 			public void stateChanged(final ChangeEvent e) {
 				prevButton.setEnabled(!model.isFirstComponent());
 				topButton.setEnabled(!model.isTopComponent());
@@ -130,6 +132,7 @@ public class NavigationPanel extends JPanel {
 		/**
 		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 		 */
+		@Override
 		public void actionPerformed(final ActionEvent e) {
 			model.nextComponent();
 		}
@@ -148,6 +151,7 @@ public class NavigationPanel extends JPanel {
 		/**
 		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 		 */
+		@Override
 		public void actionPerformed(final ActionEvent e) {
 			model.topComponent();
 		}
@@ -166,6 +170,7 @@ public class NavigationPanel extends JPanel {
 		/**
 		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 		 */
+		@Override
 		public void actionPerformed(final ActionEvent e) {
 			model.prevComponent();
 		}

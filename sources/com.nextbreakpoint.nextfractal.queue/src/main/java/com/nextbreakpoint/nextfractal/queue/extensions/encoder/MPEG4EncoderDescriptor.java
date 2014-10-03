@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -26,8 +26,6 @@
 package com.nextbreakpoint.nextfractal.queue.extensions.encoder;
 
 import com.nextbreakpoint.nextfractal.queue.encoder.extension.EncoderExtensionDescriptor;
-import com.nextbreakpoint.nextfractal.queue.extensions.encoder.MPEG4EncoderConfig;
-import com.nextbreakpoint.nextfractal.queue.extensions.encoder.MPEG4EncoderRuntime;
 
 /**
  * @author Andrea Medeghini
@@ -38,6 +36,7 @@ public class MPEG4EncoderDescriptor extends EncoderExtensionDescriptor {
 	 * 
 	 * @return the extensionId.
 	 */
+	@Override
 	public String getExtensionId() {
 		return "service.encoder.mpeg4";
 	}
@@ -47,6 +46,7 @@ public class MPEG4EncoderDescriptor extends EncoderExtensionDescriptor {
 	 * 
 	 * @return the extensionName.
 	 */
+	@Override
 	public String getExtensionName() {
 		return "MPEG4";
 	}
@@ -56,6 +56,7 @@ public class MPEG4EncoderDescriptor extends EncoderExtensionDescriptor {
 	 * 
 	 * @return the extensionRuntimeClass.
 	 */
+	@Override
 	public MPEG4EncoderRuntime getExtensionRuntime() {
 		return new MPEG4EncoderRuntime();
 	}
@@ -65,6 +66,7 @@ public class MPEG4EncoderDescriptor extends EncoderExtensionDescriptor {
 	 * 
 	 * @return the extensionConfigClass.
 	 */
+	@Override
 	public MPEG4EncoderConfig getExtensionConfig() {
 		return new MPEG4EncoderConfig();
 	}

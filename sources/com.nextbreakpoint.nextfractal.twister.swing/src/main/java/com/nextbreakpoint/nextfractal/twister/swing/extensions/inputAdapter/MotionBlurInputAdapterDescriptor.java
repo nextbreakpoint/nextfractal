@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -25,7 +25,6 @@
  */
 package com.nextbreakpoint.nextfractal.twister.swing.extensions.inputAdapter;
 
-import com.nextbreakpoint.nextfractal.twister.swing.extensions.inputAdapter.MotionBlurInputAdapterRuntime;
 import com.nextbreakpoint.nextfractal.twister.swing.inputAdapter.extension.InputAdapterExtensionDescriptor;
 
 /**
@@ -37,6 +36,7 @@ public class MotionBlurInputAdapterDescriptor extends InputAdapterExtensionDescr
 	 * 
 	 * @return the extensionId.
 	 */
+	@Override
 	public String getExtensionId() {
 		return "twister.frame.filter.motionBlur";
 	}
@@ -46,6 +46,7 @@ public class MotionBlurInputAdapterDescriptor extends InputAdapterExtensionDescr
 	 * 
 	 * @return the extensionName.
 	 */
+	@Override
 	public String getExtensionName() {
 		return "MotionBlurInputAdapter";
 	}
@@ -55,6 +56,7 @@ public class MotionBlurInputAdapterDescriptor extends InputAdapterExtensionDescr
 	 * 
 	 * @return the extensionRuntimeClass.
 	 */
+	@Override
 	public MotionBlurInputAdapterRuntime getExtensionRuntime() {
 		return new MotionBlurInputAdapterRuntime();
 	}

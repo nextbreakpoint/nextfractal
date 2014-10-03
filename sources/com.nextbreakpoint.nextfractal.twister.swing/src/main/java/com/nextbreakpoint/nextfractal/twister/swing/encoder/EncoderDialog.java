@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -63,8 +63,6 @@ import com.nextbreakpoint.nextfractal.core.swing.extension.ExtensionListCellRend
 import com.nextbreakpoint.nextfractal.core.swing.util.GUIFactory;
 import com.nextbreakpoint.nextfractal.core.swing.util.GUIUtil;
 import com.nextbreakpoint.nextfractal.core.util.ProgressListener;
-import com.nextbreakpoint.nextfractal.twister.swing.TwisterSwingResources;
-
 import com.nextbreakpoint.nextfractal.queue.LibraryService;
 import com.nextbreakpoint.nextfractal.queue.RenderService;
 import com.nextbreakpoint.nextfractal.queue.RenderService.ServiceCallback;
@@ -73,6 +71,7 @@ import com.nextbreakpoint.nextfractal.queue.encoder.EncoderHook;
 import com.nextbreakpoint.nextfractal.queue.encoder.extension.EncoderExtensionConfig;
 import com.nextbreakpoint.nextfractal.queue.encoder.extension.EncoderExtensionRuntime;
 import com.nextbreakpoint.nextfractal.queue.profile.RenderProfileDataRow;
+import com.nextbreakpoint.nextfractal.twister.swing.TwisterSwingResources;
 
 /**
  * @author Andrea Medeghini
@@ -153,6 +152,7 @@ public class EncoderDialog extends JDialog {
 			/**
 			 * @see com.nextbreakpoint.nextfractal.core.swing.extension.ExtensionFilter#accept(com.nextbreakpoint.nextfractal.core.extension.Extension)
 			 */
+			@Override
 			public boolean accept(final Extension<?> extension) {
 				try {
 					if ((profile.getTotalFrames() > 0) && ((EncoderExtensionRuntime<?>) extension.createExtensionRuntime()).isMovieSupported()) {
@@ -205,6 +205,7 @@ public class EncoderDialog extends JDialog {
 		/**
 		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 		 */
+		@Override
 		public void actionPerformed(final ActionEvent e) {
 			if ((pathTextField.getText() != null) && (pathTextField.getText().trim().length() == 0)) {
 				JOptionPane.showMessageDialog(EncoderDialog.this, TwisterSwingResources.getInstance().getString("message.missingFile"), TwisterSwingResources.getInstance().getString("label.exportProfile"), JOptionPane.WARNING_MESSAGE);
@@ -240,6 +241,7 @@ public class EncoderDialog extends JDialog {
 		/**
 		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 		 */
+		@Override
 		@SuppressWarnings("unchecked")
 		public void actionPerformed(final ActionEvent e) {
 			profileChooser.setDialogTitle(TwisterSwingResources.getInstance().getString("label.exportProfile"));
@@ -275,6 +277,7 @@ public class EncoderDialog extends JDialog {
 		/**
 		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 		 */
+		@Override
 		public void actionPerformed(final ActionEvent e) {
 			isInterrupted = true;
 		}
@@ -293,6 +296,7 @@ public class EncoderDialog extends JDialog {
 		/**
 		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 		 */
+		@Override
 		public void actionPerformed(final ActionEvent e) {
 			setVisible(false);
 		}
@@ -334,6 +338,7 @@ public class EncoderDialog extends JDialog {
 						/**
 						 * @see com.nextbreakpoint.nextfractal.service.encoder.EncoderHook#isInterrupted()
 						 */
+						@Override
 						public boolean isInterrupted() {
 							return isInterrupted;
 						}
@@ -341,14 +346,17 @@ public class EncoderDialog extends JDialog {
 					final EncoderProgressListener listener = new EncoderProgressListener();
 					if (encoder != null) {
 						service.execute(new ServiceCallback<Object>() {
+							@Override
 							public void executed(final Object value) {
 								listener.done();
 							}
 
+							@Override
 							public void failed(final Throwable throwable) {
 								listener.failed(throwable);
 							}
 
+							@Override
 							public Object execute(final LibraryService service) throws Exception {
 								service.exportProfile(profile, encoder, listener, new File(pathTextField.getText()));
 								return null;
@@ -368,8 +376,10 @@ public class EncoderDialog extends JDialog {
 			}
 
 			private class EncoderProgressListener implements ProgressListener {
+				@Override
 				public void done() {
 					GUIUtil.executeTask(new Runnable() {
+						@Override
 						public void run() {
 							setVisible(false);
 							dispose();
@@ -377,8 +387,10 @@ public class EncoderDialog extends JDialog {
 					}, true);
 				}
 
+				@Override
 				public void failed(final Throwable e) {
 					GUIUtil.executeTask(new Runnable() {
+						@Override
 						public void run() {
 							JOptionPane.showMessageDialog(EncoderDialog.this, TwisterSwingResources.getInstance().getString("message.exportFailed"), TwisterSwingResources.getInstance().getString("label.exportProfile"), JOptionPane.ERROR_MESSAGE);
 							EncoderDialog.logger.log(Level.WARNING, "Can't export the profile", e);
@@ -388,14 +400,17 @@ public class EncoderDialog extends JDialog {
 					}, true);
 				}
 
+				@Override
 				public void stateChanged(final String message, final int percentage) {
 					GUIUtil.executeTask(new Runnable() {
+						@Override
 						public void run() {
 							progressBar.setValue(percentage);
 						}
 					}, true);
 				}
 
+				@Override
 				public void stateChanged(final String message) {
 				}
 			}

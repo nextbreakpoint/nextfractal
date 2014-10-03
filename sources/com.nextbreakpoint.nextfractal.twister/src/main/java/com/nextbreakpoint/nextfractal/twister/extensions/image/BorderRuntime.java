@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -25,9 +25,11 @@
  */
 package com.nextbreakpoint.nextfractal.twister.extensions.image;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.Map;
+
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
 
 import com.nextbreakpoint.nextfractal.core.util.IntegerVector2D;
 import com.nextbreakpoint.nextfractal.core.util.Tile;
@@ -40,8 +42,9 @@ import com.nextbreakpoint.nextfractal.twister.renderer.TwisterRenderingHints;
  */
 public class BorderRuntime extends ImageExtensionRuntime<BorderConfig> {
 	private boolean isOverlay;
-	private Tile tile;
+	private java.awt.Color awtColor;
 	private Color color;
+	private Tile tile;
 
 	public BorderRuntime() {
 	}
@@ -96,7 +99,7 @@ public class BorderRuntime extends ImageExtensionRuntime<BorderConfig> {
 			int d = w - tile.getTileBorder().getX() * 2;
 			int sw = (int) Math.rint((getConfig().getSize().doubleValue() * d) / 100d);
 			int sh = (int) Math.rint((getConfig().getSize().doubleValue() * d) / 100d);
-			g2d.setColor(color);
+			g2d.setColor(awtColor);
 			g2d.fillRect(tx, ty, w, sh);
 			g2d.fillRect(tx, h - sh + ty, w, sh);
 			g2d.fillRect(tx, ty, sw, h);
@@ -117,7 +120,7 @@ public class BorderRuntime extends ImageExtensionRuntime<BorderConfig> {
 			int d = w - tile.getTileBorder().getX() * 2;
 			int sw = (int) Math.rint((getConfig().getSize().doubleValue() * d) / 100d);
 			int sh = (int) Math.rint((getConfig().getSize().doubleValue() * d) / 100d);
-			g2d.setColor(color);
+			g2d.setColor(awtColor);
 			g2d.fillRect(tx, ty, w, sh);
 			g2d.fillRect(tx, h - sh + ty, w, sh);
 			g2d.fillRect(tx, ty, sw, h);
@@ -133,11 +136,69 @@ public class BorderRuntime extends ImageExtensionRuntime<BorderConfig> {
 		if (!isOverlay && (tile != null)) {
 			int sw = (int) Math.rint((getConfig().getSize().doubleValue() * w) / 100d);
 			int sh = (int) Math.rint((getConfig().getSize().doubleValue() * w) / 100d);
-			g2d.setColor(color);
+			g2d.setColor(awtColor);
 			g2d.fillRect(x, y, w, sh);
 			g2d.fillRect(x, h - sh + y, w, sh);
 			g2d.fillRect(x, y, sw, h);
 			g2d.fillRect(w - sw + x, y, sw, h);
+		}
+	}
+
+	/**
+	 * @see com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionRuntime#drawImage(javafx.scene.canvas.GraphicsContext)
+	 */
+	@Override
+	public void drawImage(GraphicsContext gc) {
+		if (!isOverlay && (tile != null)) {
+			int w = getImageSize().getX();
+			int h = getImageSize().getY();
+			int tx = tile.getTileBorder().getX() - tile.getTileOffset().getX();
+			int ty = tile.getTileBorder().getY() - tile.getTileOffset().getY();
+			int d = w - tile.getTileBorder().getX() * 2;
+			int sw = (int) Math.rint((getConfig().getSize().doubleValue() * d) / 100d);
+			int sh = (int) Math.rint((getConfig().getSize().doubleValue() * d) / 100d);
+			gc.setFill(color);
+			gc.fillRect(tx, ty, w, sh);
+			gc.fillRect(tx, h - sh + ty, w, sh);
+			gc.fillRect(tx, ty, sw, h);
+			gc.fillRect(w - sw + tx, ty, sw, h);
+		}
+	}
+
+	/**
+	 * @see com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionRuntime#drawImage(javafx.scene.canvas.GraphicsContext, int, int)
+	 */
+	@Override
+	public void drawImage(final GraphicsContext gc, final int x, final int y) {
+		if (!isOverlay && (tile != null)) {
+			int w = getImageSize().getX();
+			int h = getImageSize().getY();
+			int tx = tile.getTileBorder().getX() - tile.getTileOffset().getX() + x;
+			int ty = tile.getTileBorder().getY() - tile.getTileOffset().getY() + y;
+			int d = w - tile.getTileBorder().getX() * 2;
+			int sw = (int) Math.rint((getConfig().getSize().doubleValue() * d) / 100d);
+			int sh = (int) Math.rint((getConfig().getSize().doubleValue() * d) / 100d);
+			gc.setFill(color);
+			gc.fillRect(tx, ty, w, sh);
+			gc.fillRect(tx, h - sh + ty, w, sh);
+			gc.fillRect(tx, ty, sw, h);
+			gc.fillRect(w - sw + tx, ty, sw, h);
+		}
+	}
+
+	/**
+	 * @see com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionRuntime#drawImage(javafx.scene.canvas.GraphicsContext, int, int, int, int)
+	 */
+	@Override
+	public void drawImage(final GraphicsContext gc, final int x, final int y, final int w, final int h) {
+		if (!isOverlay && (tile != null)) {
+			int sw = (int) Math.rint((getConfig().getSize().doubleValue() * w) / 100d);
+			int sh = (int) Math.rint((getConfig().getSize().doubleValue() * w) / 100d);
+			gc.setFill(color);
+			gc.fillRect(x, y, w, sh);
+			gc.fillRect(x, h - sh + y, w, sh);
+			gc.fillRect(x, y, sw, h);
+			gc.fillRect(w - sw + x, y, sw, h);
 		}
 	}
 
@@ -167,7 +228,8 @@ public class BorderRuntime extends ImageExtensionRuntime<BorderConfig> {
 	 */
 	@Override
 	public void prepareImage(final boolean isDynamicRequired) {
-		color = new Color(getConfig().getColor().getARGB(), true);
+		awtColor = new java.awt.Color(getConfig().getColor().getARGB(), true);
+		color = new Color(getConfig().getColor().getRed(), getConfig().getColor().getGreen(), getConfig().getColor().getBlue(), getConfig().getColor().getAlpha());
 	}
 
 	/**

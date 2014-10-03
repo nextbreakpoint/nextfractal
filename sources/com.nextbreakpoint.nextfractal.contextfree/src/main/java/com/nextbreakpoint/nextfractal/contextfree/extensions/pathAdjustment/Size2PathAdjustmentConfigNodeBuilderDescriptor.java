@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -25,7 +25,6 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.extensions.pathAdjustment;
 
-import com.nextbreakpoint.nextfractal.contextfree.extensions.pathAdjustment.Size2PathAdjustmentConfigNodeBuilderRuntime;
 import com.nextbreakpoint.nextfractal.core.nodeBuilder.extension.NodeBuilderExtensionDescriptor;
 
 /**
@@ -37,6 +36,7 @@ public class Size2PathAdjustmentConfigNodeBuilderDescriptor extends NodeBuilderE
 	 * 
 	 * @return the extensionId.
 	 */
+	@Override
 	public String getExtensionId() {
 		return "contextfree.path.adjustment.geometry.size2";
 	}
@@ -46,6 +46,7 @@ public class Size2PathAdjustmentConfigNodeBuilderDescriptor extends NodeBuilderE
 	 * 
 	 * @return the extensionName.
 	 */
+	@Override
 	public String getExtensionName() {
 		return "Size2 PathAdjustment";
 	}
@@ -55,6 +56,7 @@ public class Size2PathAdjustmentConfigNodeBuilderDescriptor extends NodeBuilderE
 	 * 
 	 * @return the extensionRuntimeClass.
 	 */
+	@Override
 	public Size2PathAdjustmentConfigNodeBuilderRuntime getExtensionRuntime() {
 		return new Size2PathAdjustmentConfigNodeBuilderRuntime();
 	}

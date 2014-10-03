@@ -39,6 +39,7 @@ public class StrokeWidthElement extends ValueConfigElement<Float> {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.config.ConfigElement#copyFrom(com.nextbreakpoint.nextfractal.core.config.ConfigElement)
 	 */
+	@Override
 	public void copyFrom(ConfigElement source) {
 		final StrokeWidthElement element = (StrokeWidthElement) source;
 		setMaximum(element.getMaximum());

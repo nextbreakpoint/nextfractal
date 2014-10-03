@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -197,8 +197,10 @@ public class NavigatorFrame extends JFrame {
 				this.session = session;
 			}
 
+			@Override
 			public void stateChanged(final ChangeEvent e) {
 				GUIUtil.executeTask(new Runnable() {
+					@Override
 					public void run() {
 						final boolean isAcceptImmediatly = acceptImmediatlyCheckBox.isSelected();
 						acceptButton.setEnabled(!isAcceptImmediatly);
@@ -224,6 +226,7 @@ public class NavigatorFrame extends JFrame {
 			/**
 			 * @see com.nextbreakpoint.nextfractal.core.tree.NodeListener#nodeChanged(com.nextbreakpoint.nextfractal.core.tree.NodeEvent)
 			 */
+			@Override
 			public void nodeChanged(final NodeEvent e) {
 				twisterTree.getRootNode().getSession().fireSessionChanged();
 			}
@@ -231,6 +234,7 @@ public class NavigatorFrame extends JFrame {
 			/**
 			 * @see com.nextbreakpoint.nextfractal.core.tree.NodeListener#nodeAdded(com.nextbreakpoint.nextfractal.core.tree.NodeEvent)
 			 */
+			@Override
 			public void nodeAdded(final NodeEvent e) {
 				twisterTree.getRootNode().getSession().fireSessionChanged();
 			}
@@ -238,6 +242,7 @@ public class NavigatorFrame extends JFrame {
 			/**
 			 * @see com.nextbreakpoint.nextfractal.core.tree.NodeListener#nodeRemoved(com.nextbreakpoint.nextfractal.core.tree.NodeEvent)
 			 */
+			@Override
 			public void nodeRemoved(final NodeEvent e) {
 				twisterTree.getRootNode().getSession().fireSessionChanged();
 			}
@@ -245,8 +250,10 @@ public class NavigatorFrame extends JFrame {
 			/**
 			 * @see com.nextbreakpoint.nextfractal.core.tree.NodeListener#nodeAccepted(com.nextbreakpoint.nextfractal.core.tree.NodeEvent)
 			 */
+			@Override
 			public void nodeAccepted(final NodeEvent e) {
 				GUIUtil.executeTask(new Runnable() {
+					@Override
 					public void run() {
 						if (session.isAcceptImmediatly()) {
 							context.refresh();
@@ -258,6 +265,7 @@ public class NavigatorFrame extends JFrame {
 			/**
 			 * @see com.nextbreakpoint.nextfractal.core.tree.NodeListener#nodeCancelled(com.nextbreakpoint.nextfractal.core.tree.NodeEvent)
 			 */
+			@Override
 			public void nodeCancelled(final NodeEvent e) {
 			}
 		}
@@ -266,8 +274,10 @@ public class NavigatorFrame extends JFrame {
 			/**
 			 * @see javax.swing.event.ChangeListener#stateChanged(javax.swing.event.ChangeEvent)
 			 */
+			@Override
 			public void stateChanged(final ChangeEvent e) {
 				GUIUtil.executeTask(new Runnable() {
+					@Override
 					public void run() {
 						if (navigatorPanel.getEditorNode() != null) {
 							navigatorTree.getSelectionModel().removeTreeSelectionListener(treeSelectionListener);
@@ -285,8 +295,10 @@ public class NavigatorFrame extends JFrame {
 			/**
 			 * @see javax.swing.event.TreeSelectionListener#valueChanged(javax.swing.event.TreeSelectionEvent)
 			 */
+			@Override
 			public void valueChanged(final TreeSelectionEvent e) {
 				GUIUtil.executeTask(new Runnable() {
+					@Override
 					public void run() {
 						navigatorPanel.removeChangeListener(panelSelectionListener);
 						if (navigatorTree.getSelectionPath() != null) {
@@ -306,8 +318,10 @@ public class NavigatorFrame extends JFrame {
 			/**
 			 * @see javax.swing.event.TreeModelListener#treeNodesChanged(javax.swing.event.TreeModelEvent)
 			 */
+			@Override
 			public void treeNodesChanged(final TreeModelEvent e) {
 				GUIUtil.executeTask(new Runnable() {
+					@Override
 					public void run() {
 						navigatorTree.expandPath(e.getTreePath());
 					}
@@ -317,8 +331,10 @@ public class NavigatorFrame extends JFrame {
 			/**
 			 * @see javax.swing.event.TreeModelListener#treeNodesInserted(javax.swing.event.TreeModelEvent)
 			 */
+			@Override
 			public void treeNodesInserted(final TreeModelEvent e) {
 				GUIUtil.executeTask(new Runnable() {
+					@Override
 					public void run() {
 						navigatorTree.expandPath(e.getTreePath());
 					}
@@ -328,12 +344,14 @@ public class NavigatorFrame extends JFrame {
 			/**
 			 * @see javax.swing.event.TreeModelListener#treeNodesRemoved(javax.swing.event.TreeModelEvent)
 			 */
+			@Override
 			public void treeNodesRemoved(final TreeModelEvent e) {
 			}
 
 			/**
 			 * @see javax.swing.event.TreeModelListener#treeStructureChanged(javax.swing.event.TreeModelEvent)
 			 */
+			@Override
 			public void treeStructureChanged(final TreeModelEvent e) {
 			}
 		}
@@ -351,8 +369,10 @@ public class NavigatorFrame extends JFrame {
 			/**
 			 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 			 */
+			@Override
 			public void actionPerformed(final ActionEvent e) {
 				GUIUtil.executeTask(new Runnable() {
+					@Override
 					public void run() {
 						doAccept();
 					}
@@ -373,8 +393,10 @@ public class NavigatorFrame extends JFrame {
 			/**
 			 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 			 */
+			@Override
 			public void actionPerformed(final ActionEvent e) {
 				GUIUtil.executeTask(new Runnable() {
+					@Override
 					public void run() {
 						doCancel();
 					}
@@ -418,24 +440,29 @@ public class NavigatorFrame extends JFrame {
 	}
 
 	private class NavigatorViewContext implements ViewContext {
+		@Override
 		public void removeComponent(final Component c) {
 		}
 
+		@Override
 		public void resize() {
 			validate();
 			NavigatorFrame.this.repaint();
 		}
 
+		@Override
 		public void resize(final int amount) {
 			validate();
 			NavigatorFrame.this.repaint();
 		}
 
+		@Override
 		public void setComponent(final Component c) {
 			validate();
 			NavigatorFrame.this.repaint();
 		}
 
+		@Override
 		public void restoreComponent(final Component c) {
 			validate();
 			NavigatorFrame.this.repaint();

@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -29,11 +29,10 @@ import com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionRefere
 import com.nextbreakpoint.nextfractal.core.swing.editor.ConfigurableReferenceElementListEditorRuntime;
 import com.nextbreakpoint.nextfractal.core.swing.extension.ConfigurableExtensionComboBoxModel;
 import com.nextbreakpoint.nextfractal.core.tree.NodeValue;
-import com.nextbreakpoint.nextfractal.twister.swing.extensions.TwisterSwingExtensionResources;
-
 import com.nextbreakpoint.nextfractal.twister.TwisterRegistry;
 import com.nextbreakpoint.nextfractal.twister.frameFilter.FrameFilterConfigElement;
 import com.nextbreakpoint.nextfractal.twister.frameFilter.FrameFilterConfigElementNodeValue;
+import com.nextbreakpoint.nextfractal.twister.swing.extensions.TwisterSwingExtensionResources;
 
 /**
  * @author Andrea Medeghini

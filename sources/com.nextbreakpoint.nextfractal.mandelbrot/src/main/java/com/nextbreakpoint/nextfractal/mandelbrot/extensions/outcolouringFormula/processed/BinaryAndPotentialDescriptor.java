@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -25,8 +25,6 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.extensions.outcolouringFormula.processed;
 
-import com.nextbreakpoint.nextfractal.mandelbrot.extensions.outcolouringFormula.processed.BinaryAndPotentialConfig;
-import com.nextbreakpoint.nextfractal.mandelbrot.extensions.outcolouringFormula.processed.BinaryAndPotentialRuntime;
 import com.nextbreakpoint.nextfractal.mandelbrot.outcolouringFormula.extension.OutcolouringFormulaExtensionDescriptor;
 
 /**
@@ -38,6 +36,7 @@ public class BinaryAndPotentialDescriptor extends OutcolouringFormulaExtensionDe
 	 * 
 	 * @return the extensionId.
 	 */
+	@Override
 	public String getExtensionId() {
 		return "twister.mandelbrot.fractal.outcolouring.formula.processed.binaryAndPotential";
 	}
@@ -47,6 +46,7 @@ public class BinaryAndPotentialDescriptor extends OutcolouringFormulaExtensionDe
 	 * 
 	 * @return the extensionName.
 	 */
+	@Override
 	public String getExtensionName() {
 		return "T Binary And Potential";
 	}
@@ -56,6 +56,7 @@ public class BinaryAndPotentialDescriptor extends OutcolouringFormulaExtensionDe
 	 * 
 	 * @return the extensionRuntimeClass.
 	 */
+	@Override
 	public BinaryAndPotentialRuntime getExtensionRuntime() {
 		return new BinaryAndPotentialRuntime();
 	}
@@ -65,6 +66,7 @@ public class BinaryAndPotentialDescriptor extends OutcolouringFormulaExtensionDe
 	 * 
 	 * @return the extensionConfigClass.
 	 */
+	@Override
 	public BinaryAndPotentialConfig getExtensionConfig() {
 		return new BinaryAndPotentialConfig();
 	}

@@ -17,6 +17,7 @@ public class CFRuleSpecifier implements Comparable<CFRuleSpecifier> {
 		return weight;
 	}
 
+	@Override
 	public int compareTo(CFRuleSpecifier s) {
 		if (initialShapeType == s.initialShapeType) {
 			return (weight - s.weight) < 0 ? -1 : +1;

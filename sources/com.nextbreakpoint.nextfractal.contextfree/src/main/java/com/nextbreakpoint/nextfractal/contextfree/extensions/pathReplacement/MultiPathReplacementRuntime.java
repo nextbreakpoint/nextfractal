@@ -85,6 +85,7 @@ public class MultiPathReplacementRuntime<T extends MultiPathReplacementConfig> e
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
 		 */
+		@Override
 		public void valueChanged(final ValueChangeEvent e) {
 			switch (e.getEventType()) {
 				case ValueConfigElement.VALUE_CHANGED: {
@@ -159,6 +160,7 @@ public class MultiPathReplacementRuntime<T extends MultiPathReplacementConfig> e
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
 		 */
+		@Override
 		public void valueChanged(final ValueChangeEvent e) {
 			switch (e.getEventType()) {
 				case ListConfigElement.ELEMENT_ADDED: {
@@ -263,6 +265,7 @@ public class MultiPathReplacementRuntime<T extends MultiPathReplacementConfig> e
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
 		 */
+		@Override
 		public void valueChanged(final ValueChangeEvent e) {
 			switch (e.getEventType()) {
 				case ListConfigElement.ELEMENT_ADDED: {
@@ -307,6 +310,7 @@ public class MultiPathReplacementRuntime<T extends MultiPathReplacementConfig> e
 		}
 	}
 	
+	@Override
 	public void process(CFRule rule) {
 		if (stateChange == null) {
 			stateChange = new CFModification();

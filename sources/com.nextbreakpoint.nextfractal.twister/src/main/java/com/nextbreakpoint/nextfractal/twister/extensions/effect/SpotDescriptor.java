@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -36,6 +36,7 @@ public class SpotDescriptor extends EffectExtensionDescriptor {
 	 * 
 	 * @return the extensionId.
 	 */
+	@Override
 	public String getExtensionId() {
 		return "twister.effect.spot";
 	}
@@ -45,6 +46,7 @@ public class SpotDescriptor extends EffectExtensionDescriptor {
 	 * 
 	 * @return the extensionName.
 	 */
+	@Override
 	public String getExtensionName() {
 		return "Spot";
 	}
@@ -54,6 +56,7 @@ public class SpotDescriptor extends EffectExtensionDescriptor {
 	 * 
 	 * @return the extensionRuntimeClass.
 	 */
+	@Override
 	public SpotRuntime getExtensionRuntime() {
 		return new SpotRuntime();
 	}
@@ -63,6 +66,7 @@ public class SpotDescriptor extends EffectExtensionDescriptor {
 	 * 
 	 * @return the extensionConfigClass.
 	 */
+	@Override
 	public SpotConfig getExtensionConfig() {
 		return new SpotConfig();
 	}

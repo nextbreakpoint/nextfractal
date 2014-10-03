@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -106,6 +106,7 @@ public class DefaultColorTableModel implements ColorTableModel {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.swing.color.ColorTableModel#addColorChangeListener(com.nextbreakpoint.nextfractal.core.swing.color.ColorChangeListener)
 	 */
+	@Override
 	public void addColorChangeListener(final ColorChangeListener listener) {
 		listeners.add(listener);
 	}
@@ -113,6 +114,7 @@ public class DefaultColorTableModel implements ColorTableModel {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.swing.color.ColorTableModel#removeColorChangeListener(com.nextbreakpoint.nextfractal.core.swing.color.ColorChangeListener)
 	 */
+	@Override
 	public void removeColorChangeListener(final ColorChangeListener listener) {
 		listeners.remove(listener);
 	}
@@ -129,6 +131,7 @@ public class DefaultColorTableModel implements ColorTableModel {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.swing.color.ColorTableModel#setColor(int, int, boolean)
 	 */
+	@Override
 	public void setColor(final int x, final int y, final boolean isAdjusting) {
 		if ((x >= 0) && (x < image.getWidth())) {
 			if ((y >= 0) && (y < image.getHeight())) {
@@ -142,6 +145,7 @@ public class DefaultColorTableModel implements ColorTableModel {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.swing.color.ColorTableModel#getColor()
 	 */
+	@Override
 	public Color getColor() {
 		return new Color(image.getRGB(x, y));
 	}
@@ -149,6 +153,7 @@ public class DefaultColorTableModel implements ColorTableModel {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.swing.color.ColorTableModel#getImage()
 	 */
+	@Override
 	public BufferedImage getImage() {
 		return image;
 	}
@@ -156,6 +161,7 @@ public class DefaultColorTableModel implements ColorTableModel {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.swing.color.ColorTableModel#getImageSize()
 	 */
+	@Override
 	public Dimension getImageSize() {
 		return new Dimension(image.getWidth(), image.getHeight());
 	}
@@ -163,6 +169,7 @@ public class DefaultColorTableModel implements ColorTableModel {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.swing.color.ColorTableModel#getImageWidth()
 	 */
+	@Override
 	public int getImageWidth() {
 		return image.getWidth();
 	}
@@ -170,6 +177,7 @@ public class DefaultColorTableModel implements ColorTableModel {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.swing.color.ColorTableModel#getImageHeight()
 	 */
+	@Override
 	public int getImageHeight() {
 		return image.getHeight();
 	}
@@ -177,6 +185,7 @@ public class DefaultColorTableModel implements ColorTableModel {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.swing.color.ColorTableModel#getX()
 	 */
+	@Override
 	public int getX() {
 		return x;
 	}
@@ -184,6 +193,7 @@ public class DefaultColorTableModel implements ColorTableModel {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.swing.color.ColorTableModel#getY()
 	 */
+	@Override
 	public int getY() {
 		return y;
 	}

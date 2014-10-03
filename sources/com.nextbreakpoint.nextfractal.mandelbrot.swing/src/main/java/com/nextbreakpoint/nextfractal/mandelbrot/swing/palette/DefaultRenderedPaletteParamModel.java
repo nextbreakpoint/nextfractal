@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -70,6 +70,7 @@ public class DefaultRenderedPaletteParamModel implements RenderedPaletteParamMod
 	/**
 	 * @see com.nextbreakpoint.nextfractal.mandelbrot.swing.palette.RenderedPaletteParamModel#addPaletteChangeListener(com.nextbreakpoint.nextfractal.core.swing.palette.PaletteChangeListener)
 	 */
+	@Override
 	public void addPaletteChangeListener(final PaletteChangeListener listener) {
 		listeners.add(listener);
 	}
@@ -77,6 +78,7 @@ public class DefaultRenderedPaletteParamModel implements RenderedPaletteParamMod
 	/**
 	 * @see com.nextbreakpoint.nextfractal.mandelbrot.swing.palette.RenderedPaletteParamModel#removePaletteChangeListener(com.nextbreakpoint.nextfractal.core.swing.palette.PaletteChangeListener)
 	 */
+	@Override
 	public void removePaletteChangeListener(final PaletteChangeListener listener) {
 		listeners.remove(listener);
 	}
@@ -93,6 +95,7 @@ public class DefaultRenderedPaletteParamModel implements RenderedPaletteParamMod
 	/**
 	 * @see com.nextbreakpoint.nextfractal.mandelbrot.swing.palette.RenderedPaletteParamModel#setPaletteParam(com.nextbreakpoint.nextfractal.mandelbrot.colorRenderer.RenderedPaletteParam, boolean)
 	 */
+	@Override
 	public void setPaletteParam(final RenderedPaletteParam paletteParam, final boolean isAdjusting) {
 		if (paletteParam == null) {
 			throw new NullPointerException("paletteParam == null");
@@ -104,6 +107,7 @@ public class DefaultRenderedPaletteParamModel implements RenderedPaletteParamMod
 	/**
 	 * @see com.nextbreakpoint.nextfractal.mandelbrot.swing.palette.RenderedPaletteParamModel#getPaletteParam()
 	 */
+	@Override
 	public RenderedPaletteParam getPaletteParam() {
 		return paletteParam;
 	}

@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -90,6 +90,7 @@ public class PostProcessSpoolJob implements SpoolJobInterface {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobInterface#getJobId()
 	 */
+	@Override
 	public String getJobId() {
 		return jobId;
 	}
@@ -97,6 +98,7 @@ public class PostProcessSpoolJob implements SpoolJobInterface {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobInterface#getFrameNumber()
 	 */
+	@Override
 	public synchronized int getFrameNumber() {
 		if (jobDataRow == null) {
 			throw new IllegalStateException();
@@ -115,6 +117,7 @@ public class PostProcessSpoolJob implements SpoolJobInterface {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.SpoolJobInterface#setFirstFrameNumber(int)
 	 */
+	@Override
 	public synchronized void setFirstFrameNumber(final int frameNumber) {
 		if (jobDataRow == null) {
 			throw new IllegalStateException();
@@ -129,6 +132,7 @@ public class PostProcessSpoolJob implements SpoolJobInterface {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobInterface#getFirstFrameNumber()
 	 */
+	@Override
 	public synchronized int getFirstFrameNumber() {
 		return firstFrameNumber;
 	}
@@ -136,6 +140,7 @@ public class PostProcessSpoolJob implements SpoolJobInterface {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobInterface#getJobDataRow()
 	 */
+	@Override
 	public synchronized JobData getJobDataRow() {
 		return jobDataRow;
 	}
@@ -143,6 +148,7 @@ public class PostProcessSpoolJob implements SpoolJobInterface {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobInterface#setJobDataRow(JobData)
 	 */
+	@Override
 	public synchronized void setJobDataRow(final JobData jobDataRow) {
 		if (thread != null) {
 			throw new IllegalStateException();
@@ -156,6 +162,7 @@ public class PostProcessSpoolJob implements SpoolJobInterface {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.SpoolJobInterface#getClip()
 	 */
+	@Override
 	public synchronized TwisterClip getClip() throws IOException {
 		if (jobDataRow == null) {
 			throw new IllegalStateException();
@@ -187,6 +194,7 @@ public class PostProcessSpoolJob implements SpoolJobInterface {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobInterface#getLastUpdate()
 	 */
+	@Override
 	public synchronized long getLastUpdate() {
 		return lastUpdate;
 	}
@@ -194,6 +202,7 @@ public class PostProcessSpoolJob implements SpoolJobInterface {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobInterface#reset()
 	 */
+	@Override
 	public void reset() {
 		Thread tmpThread = thread;
 		if (tmpThread != null) {
@@ -215,6 +224,7 @@ public class PostProcessSpoolJob implements SpoolJobInterface {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobInterface#start()
 	 */
+	@Override
 	public void start() {
 		synchronized (this) {
 			if (jobDataRow == null) {
@@ -235,6 +245,7 @@ public class PostProcessSpoolJob implements SpoolJobInterface {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobInterface#stop()
 	 */
+	@Override
 	public void stop() {
 		Thread tmpThread = thread;
 		if (tmpThread != null) {
@@ -258,6 +269,7 @@ public class PostProcessSpoolJob implements SpoolJobInterface {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobInterface#abort()
 	 */
+	@Override
 	public synchronized void abort() {
 		aborted = true;
 	}
@@ -265,6 +277,7 @@ public class PostProcessSpoolJob implements SpoolJobInterface {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobInterface#dispose()
 	 */
+	@Override
 	public synchronized void dispose() {
 		if (jobDataRow != null) {
 			worker.addTask(new DisposedTask(new DefaultJobData(jobDataRow)));
@@ -274,6 +287,7 @@ public class PostProcessSpoolJob implements SpoolJobInterface {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobInterface#isStarted()
 	 */
+	@Override
 	public synchronized boolean isStarted() {
 		return started;
 	}
@@ -281,6 +295,7 @@ public class PostProcessSpoolJob implements SpoolJobInterface {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobInterface#isAborted()
 	 */
+	@Override
 	public synchronized boolean isAborted() {
 		return aborted;
 	}
@@ -288,6 +303,7 @@ public class PostProcessSpoolJob implements SpoolJobInterface {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobInterface#isTerminated()
 	 */
+	@Override
 	public synchronized boolean isTerminated() {
 		return terminated;
 	}
@@ -296,6 +312,7 @@ public class PostProcessSpoolJob implements SpoolJobInterface {
 		/**
 		 * @see java.lang.Runnable#run()
 		 */
+		@Override
 		public void run() {
 			Surface surface = null;
 			TwisterRuntime overlayRuntime = null;
@@ -450,6 +467,7 @@ public class PostProcessSpoolJob implements SpoolJobInterface {
 		/**
 		 * @see java.lang.Runnable#run()
 		 */
+		@Override
 		public void run() {
 			listener.updated(jobId, jobData);
 		}
@@ -468,6 +486,7 @@ public class PostProcessSpoolJob implements SpoolJobInterface {
 		/**
 		 * @see java.lang.Runnable#run()
 		 */
+		@Override
 		public void run() {
 			listener.started(jobId, jobData);
 		}
@@ -486,6 +505,7 @@ public class PostProcessSpoolJob implements SpoolJobInterface {
 		/**
 		 * @see java.lang.Runnable#run()
 		 */
+		@Override
 		public void run() {
 			listener.stopped(jobId, jobData);
 		}
@@ -504,6 +524,7 @@ public class PostProcessSpoolJob implements SpoolJobInterface {
 		/**
 		 * @see java.lang.Runnable#run()
 		 */
+		@Override
 		public void run() {
 			listener.terminated(jobId, jobData);
 		}
@@ -522,6 +543,7 @@ public class PostProcessSpoolJob implements SpoolJobInterface {
 		/**
 		 * @see java.lang.Runnable#run()
 		 */
+		@Override
 		public void run() {
 			listener.disposed(jobId, jobData);
 		}

@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -108,6 +108,7 @@ public class ConfigurableExtensionReferenceElement<T extends ExtensionConfig> ex
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.config.ConfigElement#copyFrom(com.nextbreakpoint.nextfractal.core.config.ConfigElement)
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public void copyFrom(ConfigElement source) {
 		final ConfigurableExtensionReferenceElement<T> element = (ConfigurableExtensionReferenceElement<T>) source;

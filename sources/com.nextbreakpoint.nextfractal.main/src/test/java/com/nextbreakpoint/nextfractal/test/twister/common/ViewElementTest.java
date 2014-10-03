@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -25,18 +25,17 @@
  */
 package com.nextbreakpoint.nextfractal.test.twister.common;
 
-import com.nextbreakpoint.nextfractal.twister.common.ViewElement;
-import com.nextbreakpoint.nextfractal.twister.common.ViewElementNode;
-import com.nextbreakpoint.nextfractal.twister.common.ViewElementXMLExporter;
-import com.nextbreakpoint.nextfractal.twister.common.ViewElementXMLImporter;
-import com.nextbreakpoint.nextfractal.twister.util.View;
-
 import org.junit.Test;
 
 import com.nextbreakpoint.nextfractal.core.test.AbsractValueElementTest;
 import com.nextbreakpoint.nextfractal.core.tree.Node;
 import com.nextbreakpoint.nextfractal.core.util.DoubleVector4D;
 import com.nextbreakpoint.nextfractal.core.util.IntegerVector4D;
+import com.nextbreakpoint.nextfractal.twister.common.ViewElement;
+import com.nextbreakpoint.nextfractal.twister.common.ViewElementNode;
+import com.nextbreakpoint.nextfractal.twister.common.ViewElementXMLExporter;
+import com.nextbreakpoint.nextfractal.twister.common.ViewElementXMLImporter;
+import com.nextbreakpoint.nextfractal.twister.util.View;
 
 /**
  * @author Andrea Medeghini

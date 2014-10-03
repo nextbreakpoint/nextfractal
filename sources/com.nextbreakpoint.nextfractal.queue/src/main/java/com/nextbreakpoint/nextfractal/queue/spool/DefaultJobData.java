@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -74,6 +74,7 @@ public class DefaultJobData implements JobData {
 	/**
 	 * @return the jobId
 	 */
+	@Override
 	public int getJobId() {
 		return jobId;
 	}
@@ -81,6 +82,7 @@ public class DefaultJobData implements JobData {
 	/**
 	 * @return the profileId
 	 */
+	@Override
 	public int getProfileId() {
 		return profileId;
 	}
@@ -88,6 +90,7 @@ public class DefaultJobData implements JobData {
 	/**
 	 * @return the clipId
 	 */
+	@Override
 	public int getClipId() {
 		return clipId;
 	}
@@ -95,6 +98,7 @@ public class DefaultJobData implements JobData {
 	/**
 	 * @return the imageWidth
 	 */
+	@Override
 	public int getImageWidth() {
 		return imageWidth;
 	}
@@ -102,6 +106,7 @@ public class DefaultJobData implements JobData {
 	/**
 	 * @return the imageHeight
 	 */
+	@Override
 	public int getImageHeight() {
 		return imageHeight;
 	}
@@ -109,6 +114,7 @@ public class DefaultJobData implements JobData {
 	/**
 	 * @return the frameRate
 	 */
+	@Override
 	public int getFrameRate() {
 		return frameRate;
 	}
@@ -116,6 +122,7 @@ public class DefaultJobData implements JobData {
 	/**
 	 * @return the startTime
 	 */
+	@Override
 	public int getStartTime() {
 		return startTime;
 	}
@@ -123,6 +130,7 @@ public class DefaultJobData implements JobData {
 	/**
 	 * @return the stopTime
 	 */
+	@Override
 	public int getStopTime() {
 		return stopTime;
 	}
@@ -130,6 +138,7 @@ public class DefaultJobData implements JobData {
 	/**
 	 * @return the quality
 	 */
+	@Override
 	public int getQuality() {
 		return quality;
 	}
@@ -137,6 +146,7 @@ public class DefaultJobData implements JobData {
 	/**
 	 * @return the frameNumber
 	 */
+	@Override
 	public int getFrameNumber() {
 		return frameNumber;
 	}
@@ -144,6 +154,7 @@ public class DefaultJobData implements JobData {
 	/**
 	 * @return the tileWidth
 	 */
+	@Override
 	public int getTileWidth() {
 		return tileWidth;
 	}
@@ -151,6 +162,7 @@ public class DefaultJobData implements JobData {
 	/**
 	 * @return the tileHeight
 	 */
+	@Override
 	public int getTileHeight() {
 		return tileHeight;
 	}
@@ -158,6 +170,7 @@ public class DefaultJobData implements JobData {
 	/**
 	 * @return the borderWidth
 	 */
+	@Override
 	public int getBorderWidth() {
 		return borderWidth;
 	}
@@ -165,6 +178,7 @@ public class DefaultJobData implements JobData {
 	/**
 	 * @return the borderHeight
 	 */
+	@Override
 	public int getBorderHeight() {
 		return borderHeight;
 	}
@@ -172,6 +186,7 @@ public class DefaultJobData implements JobData {
 	/**
 	 * @return the tileOffsetX
 	 */
+	@Override
 	public int getTileOffsetX() {
 		return tileOffsetX;
 	}
@@ -179,6 +194,7 @@ public class DefaultJobData implements JobData {
 	/**
 	 * @return the tileOffsetY
 	 */
+	@Override
 	public int getTileOffsetY() {
 		return tileOffsetY;
 	}
@@ -186,6 +202,7 @@ public class DefaultJobData implements JobData {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobData#setFrameNumber(int)
 	 */
+	@Override
 	public void setFrameNumber(final int frame) {
 	}
 
@@ -204,6 +221,7 @@ public class DefaultJobData implements JobData {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobData#getJobType()
 	 */
+	@Override
 	public int getJobType() {
 		return jobType;
 	}

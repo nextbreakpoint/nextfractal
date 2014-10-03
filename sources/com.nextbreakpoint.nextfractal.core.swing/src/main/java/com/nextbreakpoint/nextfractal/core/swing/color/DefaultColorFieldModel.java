@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -66,6 +66,7 @@ public class DefaultColorFieldModel implements ColorFieldModel {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.swing.color.ColorFieldModel#addColorChangeListener(com.nextbreakpoint.nextfractal.core.swing.color.ColorChangeListener)
 	 */
+	@Override
 	public void addColorChangeListener(final ColorChangeListener listener) {
 		listeners.add(listener);
 	}
@@ -73,6 +74,7 @@ public class DefaultColorFieldModel implements ColorFieldModel {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.swing.color.ColorFieldModel#removeColorChangeListener(com.nextbreakpoint.nextfractal.core.swing.color.ColorChangeListener)
 	 */
+	@Override
 	public void removeColorChangeListener(final ColorChangeListener listener) {
 		listeners.remove(listener);
 	}
@@ -89,6 +91,7 @@ public class DefaultColorFieldModel implements ColorFieldModel {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.swing.color.ColorFieldModel#setColor(java.awt.Color, boolean)
 	 */
+	@Override
 	public void setColor(final Color color, final boolean isAdjusting) {
 		if (color == null) {
 			throw new NullPointerException("color == null");
@@ -102,6 +105,7 @@ public class DefaultColorFieldModel implements ColorFieldModel {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.swing.color.ColorFieldModel#getColor()
 	 */
+	@Override
 	public Color getColor() {
 		return color;
 	}

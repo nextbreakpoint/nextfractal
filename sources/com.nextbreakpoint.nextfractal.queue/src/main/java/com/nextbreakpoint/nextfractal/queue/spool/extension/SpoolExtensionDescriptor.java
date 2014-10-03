@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -26,8 +26,6 @@
 package com.nextbreakpoint.nextfractal.queue.spool.extension;
 
 import com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionDescriptor;
-import com.nextbreakpoint.nextfractal.queue.spool.extension.SpoolExtensionConfig;
-import com.nextbreakpoint.nextfractal.queue.spool.extension.SpoolExtensionRuntime;
 
 /**
  * @author Andrea Medeghini

@@ -2,8 +2,59 @@
 
 package com.nextbreakpoint.nextfractal.cfdg.parser;
 
-import com.nextbreakpoint.nextfractal.cfdg.analysis.*;
-import com.nextbreakpoint.nextfractal.cfdg.node.*;
+import com.nextbreakpoint.nextfractal.cfdg.analysis.AnalysisAdapter;
+import com.nextbreakpoint.nextfractal.cfdg.node.EOF;
+import com.nextbreakpoint.nextfractal.cfdg.node.TAlphaToken;
+import com.nextbreakpoint.nextfractal.cfdg.node.TArrow;
+import com.nextbreakpoint.nextfractal.cfdg.node.TBackground;
+import com.nextbreakpoint.nextfractal.cfdg.node.TBar;
+import com.nextbreakpoint.nextfractal.cfdg.node.TBrightnessToken;
+import com.nextbreakpoint.nextfractal.cfdg.node.TComma;
+import com.nextbreakpoint.nextfractal.cfdg.node.TCommand;
+import com.nextbreakpoint.nextfractal.cfdg.node.TFilename;
+import com.nextbreakpoint.nextfractal.cfdg.node.TFlipToken;
+import com.nextbreakpoint.nextfractal.cfdg.node.TFunctionArg0;
+import com.nextbreakpoint.nextfractal.cfdg.node.TFunctionArg1;
+import com.nextbreakpoint.nextfractal.cfdg.node.TFunctionArg2;
+import com.nextbreakpoint.nextfractal.cfdg.node.THueToken;
+import com.nextbreakpoint.nextfractal.cfdg.node.TInclude;
+import com.nextbreakpoint.nextfractal.cfdg.node.TLCbkt;
+import com.nextbreakpoint.nextfractal.cfdg.node.TLRbkt;
+import com.nextbreakpoint.nextfractal.cfdg.node.TLSbkt;
+import com.nextbreakpoint.nextfractal.cfdg.node.TMinus;
+import com.nextbreakpoint.nextfractal.cfdg.node.TNumber;
+import com.nextbreakpoint.nextfractal.cfdg.node.TOperation;
+import com.nextbreakpoint.nextfractal.cfdg.node.TParametersToken;
+import com.nextbreakpoint.nextfractal.cfdg.node.TPath;
+import com.nextbreakpoint.nextfractal.cfdg.node.TPlus;
+import com.nextbreakpoint.nextfractal.cfdg.node.TRCbkt;
+import com.nextbreakpoint.nextfractal.cfdg.node.TRRbkt;
+import com.nextbreakpoint.nextfractal.cfdg.node.TRSbkt;
+import com.nextbreakpoint.nextfractal.cfdg.node.TRotateToken;
+import com.nextbreakpoint.nextfractal.cfdg.node.TRule;
+import com.nextbreakpoint.nextfractal.cfdg.node.TRxToken;
+import com.nextbreakpoint.nextfractal.cfdg.node.TRyToken;
+import com.nextbreakpoint.nextfractal.cfdg.node.TSaturationToken;
+import com.nextbreakpoint.nextfractal.cfdg.node.TSize;
+import com.nextbreakpoint.nextfractal.cfdg.node.TSizeToken;
+import com.nextbreakpoint.nextfractal.cfdg.node.TSkewToken;
+import com.nextbreakpoint.nextfractal.cfdg.node.TSlash;
+import com.nextbreakpoint.nextfractal.cfdg.node.TStar;
+import com.nextbreakpoint.nextfractal.cfdg.node.TStartshape;
+import com.nextbreakpoint.nextfractal.cfdg.node.TString;
+import com.nextbreakpoint.nextfractal.cfdg.node.TStrokewidthToken;
+import com.nextbreakpoint.nextfractal.cfdg.node.TTargetAlphaToken;
+import com.nextbreakpoint.nextfractal.cfdg.node.TTargetBrightnessToken;
+import com.nextbreakpoint.nextfractal.cfdg.node.TTargetHueToken;
+import com.nextbreakpoint.nextfractal.cfdg.node.TTargetSaturationToken;
+import com.nextbreakpoint.nextfractal.cfdg.node.TTile;
+import com.nextbreakpoint.nextfractal.cfdg.node.TX1Token;
+import com.nextbreakpoint.nextfractal.cfdg.node.TX2Token;
+import com.nextbreakpoint.nextfractal.cfdg.node.TXToken;
+import com.nextbreakpoint.nextfractal.cfdg.node.TY1Token;
+import com.nextbreakpoint.nextfractal.cfdg.node.TY2Token;
+import com.nextbreakpoint.nextfractal.cfdg.node.TYToken;
+import com.nextbreakpoint.nextfractal.cfdg.node.TZToken;
 
 class TokenIndex extends AnalysisAdapter
 {

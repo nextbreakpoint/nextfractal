@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -28,6 +28,8 @@ package com.nextbreakpoint.nextfractal.contextfree.extensions.image;
 import java.awt.Graphics2D;
 import java.util.HashMap;
 import java.util.Map;
+
+import javafx.scene.canvas.GraphicsContext;
 
 import com.nextbreakpoint.nextfractal.contextfree.ContextFreeManager;
 import com.nextbreakpoint.nextfractal.contextfree.ContextFreeRuntime;
@@ -121,6 +123,36 @@ public class ContextFreeImageRuntime extends ImageExtensionRuntime<ContextFreeIm
 	public void prepareImage(final boolean isDynamicRequired) {
 		if (rendererStrategy != null) {
 			rendererStrategy.prepareImage(isDynamicRequired);
+		}
+	}
+
+	/**
+	 * @see com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionRuntime#drawImage(javafx.scene.canvas.GraphicsContext)
+	 */
+	@Override
+	public void drawImage(final GraphicsContext gc) {
+		if (rendererStrategy != null) {
+			rendererStrategy.drawImage(gc);
+		}
+	}
+
+	/**
+	 * @see com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionRuntime#drawImage(javafx.scene.canvas.GraphicsContext, int, int)
+	 */
+	@Override
+	public void drawImage(final GraphicsContext gc, final int x, final int y) {
+		if (rendererStrategy != null) {
+			rendererStrategy.drawImage(gc, x, y);
+		}
+	}
+
+	/**
+	 * @see com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionRuntime#drawImage(javafx.scene.canvas.GraphicsContext, int, int, int, int)
+	 */
+	@Override
+	public void drawImage(final GraphicsContext gc, final int x, final int y, final int w, final int h) {
+		if (rendererStrategy != null) {
+			rendererStrategy.drawImage(gc, x, y, w, h);
 		}
 	}
 
@@ -227,6 +259,27 @@ public class ContextFreeImageRuntime extends ImageExtensionRuntime<ContextFreeIm
 		public void prepareImage(boolean isDynamicRequired);
 
 		/**
+		 * @param gc
+		 */
+		public void drawImage(GraphicsContext gc);
+
+		/**
+		 * @param gc
+		 * @param x
+		 * @param y
+		 */
+		public void drawImage(GraphicsContext gc, int x, int y);
+
+		/**
+		 * @param gc
+		 * @param x
+		 * @param y
+		 * @param w
+		 * @param h
+		 */
+		public void drawImage(GraphicsContext gc, int x, int y, int w, int h);
+
+		/**
 		 * @param g2d
 		 */
 		public void drawImage(final Graphics2D g2d);
@@ -303,6 +356,7 @@ public class ContextFreeImageRuntime extends ImageExtensionRuntime<ContextFreeIm
 		/**
 		 * @see com.nextbreakpoint.nextfractal.ContextFreeImageRuntime.extensions.image.ContextFreeImageRuntime.RendererStrategy#startRenderer()
 		 */
+		@Override
 		public void startRenderer() {
 			manager.startRenderer();
 		}
@@ -310,6 +364,7 @@ public class ContextFreeImageRuntime extends ImageExtensionRuntime<ContextFreeIm
 		/**
 		 * @see com.nextbreakpoint.nextfractal.ContextFreeImageRuntime.extensions.image.ContextFreeImageRuntime.RendererStrategy#abortRenderer()
 		 */
+		@Override
 		public void abortRenderer() {
 			manager.abortRenderer();
 		}
@@ -317,6 +372,7 @@ public class ContextFreeImageRuntime extends ImageExtensionRuntime<ContextFreeIm
 		/**
 		 * @see com.nextbreakpoint.nextfractal.ContextFreeImageRuntime.extensions.image.ContextFreeImageRuntime.RendererStrategy#joinRenderer()
 		 */
+		@Override
 		public void joinRenderer() throws InterruptedException {
 			manager.joinRenderer();
 		}
@@ -324,13 +380,72 @@ public class ContextFreeImageRuntime extends ImageExtensionRuntime<ContextFreeIm
 		/**
 		 * @see com.nextbreakpoint.nextfractal.ContextFreeImageRuntime.extensions.image.ContextFreeImageRuntime.RendererStrategy#getRenderingStatus()
 		 */
+		@Override
 		public int getRenderingStatus() {
 			return manager.getRenderingStatus();
 		}
 
 		/**
+		 * @see com.nextbreakpoint.nextfractal.contextfree.extensions.image.ContextFreeImageRuntime.RendererStrategy#drawImage(javafx.scene.canvas.GraphicsContext)
+		 */
+		@Override
+		public void drawImage(GraphicsContext gc) {
+			if (tile != null) {
+				manager.drawImage(gc);
+				if (dirty) {
+					dirty = false;
+					try {
+						manager.joinRenderer();
+						manager.startRenderer();
+					}
+					catch (final InterruptedException e) {
+						Thread.currentThread().interrupt();
+					}
+				}
+			}
+		}
+
+		@Override
+		public void drawImage(GraphicsContext gc, int x, int y) {
+			if (tile != null) {
+				manager.drawImage(gc, x, y);
+				if (dirty) {
+					dirty = false;
+					try {
+						manager.joinRenderer();
+						manager.startRenderer();
+					}
+					catch (final InterruptedException e) {
+						Thread.currentThread().interrupt();
+					}
+				}
+			}
+		}
+
+		/**
+		 * @see com.nextbreakpoint.nextfractal.contextfree.extensions.image.ContextFreeImageRuntime.RendererStrategy#drawImage(javafx.scene.canvas.GraphicsContext)
+		 */
+		@Override
+		public void drawImage(GraphicsContext gc, int x, int y, int w, int h) {
+			if (tile != null) {
+				manager.drawImage(gc, x, y, w, h);
+				if (dirty) {
+					dirty = false;
+					try {
+						manager.joinRenderer();
+						manager.startRenderer();
+					}
+					catch (final InterruptedException e) {
+						Thread.currentThread().interrupt();
+					}
+				}
+			}
+		}
+
+		/**
 		 * @see com.nextbreakpoint.nextfractal.ContextFreeImageRuntime.extensions.image.ContextFreeImageRuntime.RendererStrategy#drawImage(java.awt.Graphics2D)
 		 */
+		@Override
 		public void drawImage(final Graphics2D g2d) {
 			if (tile != null) {
 				manager.drawImage(g2d);
@@ -350,6 +465,7 @@ public class ContextFreeImageRuntime extends ImageExtensionRuntime<ContextFreeIm
 		/**
 		 * @see com.nextbreakpoint.nextfractal.ContextFreeImageRuntime.extensions.image.ContextFreeImageRuntime.RendererStrategy#drawImage(java.awt.Graphics2D, int, int)
 		 */
+		@Override
 		public void drawImage(final Graphics2D g2d, final int x, final int y) {
 			if (tile != null) {
 				manager.drawImage(g2d, x, y);
@@ -369,6 +485,7 @@ public class ContextFreeImageRuntime extends ImageExtensionRuntime<ContextFreeIm
 		/**
 		 * @see com.nextbreakpoint.nextfractal.ContextFreeImageRuntime.extensions.image.ContextFreeImageRuntime.RendererStrategy#drawImage(java.awt.Graphics2D, int, int, int, int)
 		 */
+		@Override
 		public void drawImage(final Graphics2D g2d, final int x, final int y, final int w, final int h) {
 			if (tile != null) {
 				manager.drawImage(g2d, x, y, w, h);
@@ -388,6 +505,7 @@ public class ContextFreeImageRuntime extends ImageExtensionRuntime<ContextFreeIm
 		/**
 		 * @see com.nextbreakpoint.nextfractal.ContextFreeImageRuntime.extensions.image.ContextFreeImageRuntime.RendererStrategy#prepareImage(boolean)
 		 */
+		@Override
 		public void prepareImage(final boolean isDynamicRequired) {
 			if (isDynamicRequired) {
 				boolean isChanged = contextFreeRuntime.isChanged();
@@ -422,6 +540,7 @@ public class ContextFreeImageRuntime extends ImageExtensionRuntime<ContextFreeIm
 		/**
 		 * @see com.nextbreakpoint.nextfractal.ContextFreeImageRuntime.extensions.image.ContextFreeImageRuntime.RendererStrategy#dispose()
 		 */
+		@Override
 		public void dispose() {
 			if (manager != null) {
 				manager.stop();
@@ -433,6 +552,7 @@ public class ContextFreeImageRuntime extends ImageExtensionRuntime<ContextFreeIm
 		/**
 		 * @see com.nextbreakpoint.nextfractal.ContextFreeImageRuntime.extensions.image.ContextFreeImageRuntime.RendererStrategy#isDynamic()
 		 */
+		@Override
 		public boolean isDynamic() {
 			return dynamicCount > 0;
 		}
@@ -448,49 +568,78 @@ public class ContextFreeImageRuntime extends ImageExtensionRuntime<ContextFreeIm
 		/**
 		 * @see com.nextbreakpoint.nextfractal.ContextFreeImageRuntime.extensions.image.ContextFreeImageRuntime.RendererStrategy#startRenderer()
 		 */
+		@Override
 		public void startRenderer() {
 		}
 
 		/**
 		 * @see com.nextbreakpoint.nextfractal.ContextFreeImageRuntime.extensions.image.ContextFreeImageRuntime.RendererStrategy#abortRenderer()
 		 */
+		@Override
 		public void abortRenderer() {
 		}
 
 		/**
 		 * @see com.nextbreakpoint.nextfractal.ContextFreeImageRuntime.extensions.image.ContextFreeImageRuntime.RendererStrategy#joinRenderer()
 		 */
+		@Override
 		public void joinRenderer() throws InterruptedException {
 		}
 
 		/**
 		 * @see com.nextbreakpoint.nextfractal.ContextFreeImageRuntime.extensions.image.ContextFreeImageRuntime.RendererStrategy#getRenderingStatus()
 		 */
+		@Override
 		public int getRenderingStatus() {
 			return -1;
 		}
 
 		/**
+		 * @see com.nextbreakpoint.nextfractal.contextfree.extensions.image.ContextFreeImageRuntime.RendererStrategy#drawImage(javafx.scene.canvas.GraphicsContext)
+		 */
+		@Override
+		public void drawImage(GraphicsContext gc) {
+		}
+
+		/**
+		 * @see com.nextbreakpoint.nextfractal.contextfree.extensions.image.ContextFreeImageRuntime.RendererStrategy#drawImage(javafx.scene.canvas.GraphicsContext, int, int)
+		 */
+		@Override
+		public void drawImage(GraphicsContext gc, int x, int y) {
+		}
+
+		/**
+		 * @see com.nextbreakpoint.nextfractal.contextfree.extensions.image.ContextFreeImageRuntime.RendererStrategy#drawImage(javafx.scene.canvas.GraphicsContext)
+		 */
+		@Override
+		public void drawImage(GraphicsContext gc, int x, int y, int w, int h) {
+		}
+
+		/**
 		 * @see com.nextbreakpoint.nextfractal.ContextFreeImageRuntime.extensions.image.ContextFreeImageRuntime.RendererStrategy#drawImage(java.awt.Graphics2D)
 		 */
+		@Override
 		public void drawImage(final Graphics2D g2d) {
 		}
 
 		/**
 		 * @see com.nextbreakpoint.nextfractal.ContextFreeImageRuntime.extensions.image.ContextFreeImageRuntime.RendererStrategy#drawImage(java.awt.Graphics2D, int, int)
 		 */
+		@Override
 		public void drawImage(final Graphics2D g2d, final int x, final int y) {
 		}
 
 		/**
 		 * @see com.nextbreakpoint.nextfractal.ContextFreeImageRuntime.extensions.image.ContextFreeImageRuntime.RendererStrategy#drawImage(java.awt.Graphics2D, int, int, int, int)
 		 */
+		@Override
 		public void drawImage(final Graphics2D g2d, final int x, final int y, final int w, final int h) {
 		}
 
 		/**
 		 * @see com.nextbreakpoint.nextfractal.ContextFreeImageRuntime.extensions.image.ContextFreeImageRuntime.RendererStrategy#prepareImage(boolean)
 		 */
+		@Override
 		public void prepareImage(final boolean isDynamicRequired) {
 			contextFreeRuntime.isChanged();
 		}
@@ -498,12 +647,14 @@ public class ContextFreeImageRuntime extends ImageExtensionRuntime<ContextFreeIm
 		/**
 		 * @see com.nextbreakpoint.nextfractal.ContextFreeImageRuntime.extensions.image.ContextFreeImageRuntime.RendererStrategy#dispose()
 		 */
+		@Override
 		public void dispose() {
 		}
 
 		/**
 		 * @see com.nextbreakpoint.nextfractal.ContextFreeImageRuntime.extensions.image.ContextFreeImageRuntime.RendererStrategy#isDynamic()
 		 */
+		@Override
 		public boolean isDynamic() {
 			return false;
 		}

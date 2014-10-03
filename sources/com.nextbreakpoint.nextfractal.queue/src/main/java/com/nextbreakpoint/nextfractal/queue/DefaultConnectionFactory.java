@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -58,6 +58,7 @@ public class DefaultConnectionFactory implements ConnectionFactory {
 			logger.log(Level.SEVERE, "Faild to load database driver", e);
 		}
 		Runtime.getRuntime().addShutdownHook(new Thread() {
+			@Override
 			public void run() {
 				try {
 					DriverManager.getConnection(shutdownUrl);
@@ -71,6 +72,7 @@ public class DefaultConnectionFactory implements ConnectionFactory {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.util.ConnectionFactory#createConnection()
 	 */
+	@Override
 	public Connection createConnection() throws SQLException {
 		if (DefaultConnectionFactory.logger.isLoggable(Level.FINE)) {
 			DefaultConnectionFactory.logger.fine("Create a connection");

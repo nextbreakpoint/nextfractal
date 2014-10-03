@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -81,6 +81,7 @@ class EngineBufferedImage implements EngineImage {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.media.EngineImage#applyEffect(com.nextbreakpoint.nextfractal.core.media.Effect)
 	 */
+	@Override
 	public void applyEffect(final Effect effect) {
 		effect.filterImage(copy, image);
 	}
@@ -88,6 +89,7 @@ class EngineBufferedImage implements EngineImage {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.media.EngineImage#drawImage(java.awt.Graphics2D)
 	 */
+	@Override
 	public void drawImage(Graphics2D g2d) {
 		g2d.drawImage(image, 0, 0, null);
 	}
@@ -95,6 +97,7 @@ class EngineBufferedImage implements EngineImage {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.media.EngineImage#getWidth()
 	 */
+	@Override
 	public int getWidth() {
 		return image.getWidth();
 	}
@@ -102,6 +105,7 @@ class EngineBufferedImage implements EngineImage {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.media.EngineImage#getHeight()
 	 */
+	@Override
 	public int getHeight() {
 		return image.getHeight();
 	}
@@ -109,6 +113,7 @@ class EngineBufferedImage implements EngineImage {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.media.EngineImage#update()
 	 */
+	@Override
 	public void update() {
 		// int[] src = ((DataBufferInt) copy.getRaster().getDataBuffer()).getData();
 		// int[] dst = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();

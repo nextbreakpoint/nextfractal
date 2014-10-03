@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -92,6 +92,7 @@ public class ComplexElementEditorRuntime extends EditorExtensionRuntime {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.swing.NodeEditorComponent#getComponent()
 		 */
+		@Override
 		public JComponent getComponent() {
 			return this;
 		}
@@ -99,6 +100,7 @@ public class ComplexElementEditorRuntime extends EditorExtensionRuntime {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.swing.NodeEditorComponent#reloadValue()
 		 */
+		@Override
 		public void reloadValue() {
 			final DoubleVector2D c = ((ComplexElementNodeValue) nodeEditor.getNodeValue()).getValue();
 			textFields[0].setText(String.valueOf(c.getX()));
@@ -133,6 +135,7 @@ public class ComplexElementEditorRuntime extends EditorExtensionRuntime {
 			/**
 			 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 			 */
+			@Override
 			public void actionPerformed(final ActionEvent e) {
 				final DoubleVector2D c = ((ComplexElementNodeValue) nodeEditor.getNodeValue()).getValue();
 				double r = c.getX();
@@ -162,12 +165,14 @@ public class ComplexElementEditorRuntime extends EditorExtensionRuntime {
 			/**
 			 * @see java.awt.event.FocusListener#focusGained(java.awt.event.FocusEvent)
 			 */
+			@Override
 			public void focusGained(final FocusEvent e) {
 			}
 
 			/**
 			 * @see java.awt.event.FocusListener#focusLost(java.awt.event.FocusEvent)
 			 */
+			@Override
 			public void focusLost(final FocusEvent e) {
 				final DoubleVector2D c = ((ComplexElementNodeValue) nodeEditor.getNodeValue()).getValue();
 				double r = c.getX();
@@ -198,6 +203,7 @@ public class ComplexElementEditorRuntime extends EditorExtensionRuntime {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.swing.NodeEditorComponent#dispose()
 		 */
+		@Override
 		public void dispose() {
 		}
 	}

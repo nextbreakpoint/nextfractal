@@ -32,6 +32,7 @@ public class StrokeJoinElement extends ValueConfigElement<String> {
 	/**
 	 *
 	 */
+	@Override
 	public void copyFrom(ConfigElement source) {
 		StrokeJoinElement element = (StrokeJoinElement) source;
 		setValue(element.getValue());

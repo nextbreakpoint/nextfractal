@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -59,6 +59,7 @@ public class DefaultNodeSession implements NodeSession {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeSession#appendAction(com.nextbreakpoint.nextfractal.core.tree.NodeAction)
 	 */
+	@Override
 	public void appendAction(final NodeAction action) {
 		actions.add(action);
 	}
@@ -66,6 +67,7 @@ public class DefaultNodeSession implements NodeSession {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeSession#getSessionName()
 	 */
+	@Override
 	public String getSessionName() {
 		return sessionName;
 	}
@@ -73,6 +75,7 @@ public class DefaultNodeSession implements NodeSession {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeSession#getActions()
 	 */
+	@Override
 	public List<NodeAction> getActions() {
 		return Collections.unmodifiableList(actions);
 	}
@@ -80,6 +83,7 @@ public class DefaultNodeSession implements NodeSession {
 	/**
 	 * @return the timestamp
 	 */
+	@Override
 	public long getTimestamp() {
 		return timestamp;
 	}
@@ -87,6 +91,7 @@ public class DefaultNodeSession implements NodeSession {
 	/**
 	 * @param timestamp the timestamp to set
 	 */
+	@Override
 	public void setTimestamp(final long timestamp) {
 		this.timestamp = timestamp;
 	}
@@ -109,6 +114,7 @@ public class DefaultNodeSession implements NodeSession {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeSession#isAcceptImmediatly()
 	 */
+	@Override
 	public boolean isAcceptImmediatly() {
 		return isAcceptImmediatly;
 	}
@@ -116,32 +122,38 @@ public class DefaultNodeSession implements NodeSession {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeSession#setAcceptImmediatly(boolean)
 	 */
+	@Override
 	public void setAcceptImmediatly(final boolean isAcceptImmediatly) {
 		this.isAcceptImmediatly = isAcceptImmediatly;
 	}
 	
+	@Override
 	public void fireSessionChanged() {
 		for (NodeSessionListener listener : listeners) {
 			listener.fireSessionChanged();
 		}
 	}
 
+	@Override
 	public void fireSessionAccepted() {
 		for (NodeSessionListener listener : listeners) {
 			listener.fireSessionAccepted();
 		}
 	}
 
+	@Override
 	public void fireSessionCancelled() {
 		for (NodeSessionListener listener : listeners) {
 			listener.fireSessionCancelled();
 		}
 	}
 	
+	@Override
 	public void addSessionListener(NodeSessionListener listener) {
 		listeners.add(listener);
 	}
 	
+	@Override
 	public void removeSessionListener(NodeSessionListener listener) {
 		listeners.remove(listener);
 	}

@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -25,8 +25,6 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.extensions.image;
 
-import com.nextbreakpoint.nextfractal.mandelbrot.extensions.image.MandelbrotImageConfig;
-import com.nextbreakpoint.nextfractal.mandelbrot.extensions.image.MandelbrotImageRuntime;
 import com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionDescriptor;
 
 /**
@@ -38,6 +36,7 @@ public class MandelbrotImageDescriptor extends ImageExtensionDescriptor {
 	 * 
 	 * @return the extensionId.
 	 */
+	@Override
 	public String getExtensionId() {
 		return "twister.frame.layer.image.mandelbrot";
 	}
@@ -47,6 +46,7 @@ public class MandelbrotImageDescriptor extends ImageExtensionDescriptor {
 	 * 
 	 * @return the extensionName.
 	 */
+	@Override
 	public String getExtensionName() {
 		return "Mandelbrot Fractal";
 	}
@@ -56,6 +56,7 @@ public class MandelbrotImageDescriptor extends ImageExtensionDescriptor {
 	 * 
 	 * @return the extensionRuntimeClass.
 	 */
+	@Override
 	public MandelbrotImageRuntime getExtensionRuntime() {
 		return new MandelbrotImageRuntime();
 	}
@@ -65,6 +66,7 @@ public class MandelbrotImageDescriptor extends ImageExtensionDescriptor {
 	 * 
 	 * @return the extensionConfigClass.
 	 */
+	@Override
 	public MandelbrotImageConfig getExtensionConfig() {
 		return new MandelbrotImageConfig();
 	}

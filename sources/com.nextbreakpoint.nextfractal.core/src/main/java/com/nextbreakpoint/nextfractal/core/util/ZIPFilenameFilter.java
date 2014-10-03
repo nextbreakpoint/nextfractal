@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -35,6 +35,7 @@ public class ZIPFilenameFilter implements FilenameFilter {
 	/**
 	 * @see java.io.FilenameFilter#accept(java.io.File, java.lang.String)
 	 */
+	@Override
 	public boolean accept(final File dir, final String name) {
 		return name.toLowerCase().endsWith(ZIPFilenameFilter.getSuffix());
 	}

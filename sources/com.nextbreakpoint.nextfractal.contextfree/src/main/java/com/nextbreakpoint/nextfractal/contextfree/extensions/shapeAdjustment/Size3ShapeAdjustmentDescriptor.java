@@ -1,9 +1,9 @@
 /*
- * NextFractal 6.1 
- * http://nextfractal.sourceforge.net
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
  *
- * Copyright 2001, 2010 Andrea Medeghini
- * http://andreamedeghini.users.sourceforge.net
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
  *
  * This file is part of NextFractal.
  *
@@ -25,8 +25,6 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.extensions.shapeAdjustment;
 
-import com.nextbreakpoint.nextfractal.contextfree.extensions.shapeAdjustment.Size3ShapeAdjustmentConfig;
-import com.nextbreakpoint.nextfractal.contextfree.extensions.shapeAdjustment.Size3ShapeAdjustmentRuntime;
 import com.nextbreakpoint.nextfractal.contextfree.shapeAdjustment.extension.ShapeAdjustmentExtensionDescriptor;
 
 /**
@@ -38,6 +36,7 @@ public class Size3ShapeAdjustmentDescriptor extends ShapeAdjustmentExtensionDesc
 	 * 
 	 * @return the extensionId.
 	 */
+	@Override
 	public String getExtensionId() {
 		return "contextfree.shape.adjustment.geometry.size3";
 	}
@@ -47,6 +46,7 @@ public class Size3ShapeAdjustmentDescriptor extends ShapeAdjustmentExtensionDesc
 	 * 
 	 * @return the extensionName.
 	 */
+	@Override
 	public String getExtensionName() {
 		return "Size3 Adjustment";
 	}
@@ -56,6 +56,7 @@ public class Size3ShapeAdjustmentDescriptor extends ShapeAdjustmentExtensionDesc
 	 * 
 	 * @return the extensionRuntimeClass.
 	 */
+	@Override
 	public Size3ShapeAdjustmentRuntime getExtensionRuntime() {
 		return new Size3ShapeAdjustmentRuntime();
 	}
@@ -65,6 +66,7 @@ public class Size3ShapeAdjustmentDescriptor extends ShapeAdjustmentExtensionDesc
 	 * 
 	 * @return the extensionConfigClass.
 	 */
+	@Override
 	public Size3ShapeAdjustmentConfig getExtensionConfig() {
 		return new Size3ShapeAdjustmentConfig();
 	}
