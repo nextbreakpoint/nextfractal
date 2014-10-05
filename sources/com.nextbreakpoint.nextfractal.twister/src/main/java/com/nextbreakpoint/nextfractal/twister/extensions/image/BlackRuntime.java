@@ -34,6 +34,7 @@ import javafx.scene.paint.Color;
 import com.nextbreakpoint.nextfractal.core.util.IntegerVector2D;
 import com.nextbreakpoint.nextfractal.core.util.Tile;
 import com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionRuntime;
+import com.nextbreakpoint.nextfractal.twister.renderer.RenderFactory;
 import com.nextbreakpoint.nextfractal.twister.renderer.TwisterRenderer;
 import com.nextbreakpoint.nextfractal.twister.renderer.TwisterRenderingHints;
 
@@ -41,6 +42,7 @@ import com.nextbreakpoint.nextfractal.twister.renderer.TwisterRenderingHints;
  * @author Andrea Medeghini
  */
 public class BlackRuntime extends ImageExtensionRuntime<BlackConfig> {
+	private RenderFactory renderFactory;
 	private boolean isOverlay;
 	private Tile tile;
 
@@ -189,5 +191,21 @@ public class BlackRuntime extends ImageExtensionRuntime<BlackConfig> {
 	@Override
 	public boolean isDynamic() {
 		return false;
+	}
+
+	/**
+	 * @see com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionRuntime#getRenderFactory()
+	 */
+	@Override
+	public RenderFactory getRenderFactory() {
+		return renderFactory;
+	}
+
+	/**
+	 * @see com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionRuntime#setRenderFactory(com.nextbreakpoint.nextfractal.twister.renderer.RenderFactory)
+	 */
+	@Override
+	public void setRenderFactory(RenderFactory renderFactory) {
+		this.renderFactory = renderFactory;
 	}
 }

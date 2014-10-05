@@ -111,6 +111,7 @@ import com.nextbreakpoint.nextfractal.twister.layerFilter.LayerFilterConfigEleme
 import com.nextbreakpoint.nextfractal.twister.layerFilter.extension.LayerFilterExtensionConfig;
 import com.nextbreakpoint.nextfractal.twister.layerFilter.extension.LayerFilterExtensionRuntime;
 import com.nextbreakpoint.nextfractal.twister.renderer.DefaultTwisterRenderer;
+import com.nextbreakpoint.nextfractal.twister.renderer.Java2DRenderFactory;
 import com.nextbreakpoint.nextfractal.twister.renderer.TwisterRenderer;
 import com.nextbreakpoint.nextfractal.twister.renderer.TwisterRenderingHints;
 import com.nextbreakpoint.nextfractal.twister.swing.view.NavigatorViewRuntime;
@@ -1321,6 +1322,7 @@ public class TwisterConfigPanel extends ViewPanel {
 				final Map<Object, Object> hints = new HashMap<Object, Object>();
 				hints.put(TwisterRenderingHints.KEY_TYPE, TwisterRenderingHints.TYPE_PREVIEW);
 				DefaultTwisterRenderer renderer = new DefaultTwisterRenderer(runtime);
+				renderer.setRenderFactory(new Java2DRenderFactory());
 				renderer.setRenderingHints(hints);
 				renderer.setTile(new Tile(new IntegerVector2D(GUIFactory.DEFAULT_HEIGHT - 4, GUIFactory.DEFAULT_HEIGHT - 4), new IntegerVector2D(GUIFactory.DEFAULT_HEIGHT - 4, GUIFactory.DEFAULT_HEIGHT - 4), new IntegerVector2D(0, 0), new IntegerVector2D(0, 0)));
 				renderTask = new RenderTask(renderer, preview);
@@ -2047,6 +2049,7 @@ public class TwisterConfigPanel extends ViewPanel {
 				hints.put(TwisterRenderingHints.KEY_MEMORY, TwisterRenderingHints.MEMORY_LOW);
 				hints.put(TwisterRenderingHints.KEY_TYPE, TwisterRenderingHints.TYPE_PREVIEW);
 				DefaultTwisterRenderer renderer = new DefaultTwisterRenderer(runtime);
+				renderer.setRenderFactory(new Java2DRenderFactory());
 				renderer.setRenderingHints(hints);
 				renderer.setTile(new Tile(new IntegerVector2D(GUIFactory.DEFAULT_HEIGHT - 4, GUIFactory.DEFAULT_HEIGHT - 4), new IntegerVector2D(GUIFactory.DEFAULT_HEIGHT - 4, GUIFactory.DEFAULT_HEIGHT - 4), new IntegerVector2D(0, 0), new IntegerVector2D(0, 0)));
 				renderTask = new RenderTask(renderer, preview);

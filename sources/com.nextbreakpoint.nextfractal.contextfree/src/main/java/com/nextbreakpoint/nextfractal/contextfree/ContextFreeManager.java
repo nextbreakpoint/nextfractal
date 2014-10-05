@@ -33,6 +33,7 @@ import javafx.scene.canvas.GraphicsContext;
 
 import com.nextbreakpoint.nextfractal.contextfree.renderer.ContextFreeRenderer;
 import com.nextbreakpoint.nextfractal.core.util.Tile;
+import com.nextbreakpoint.nextfractal.twister.renderer.RenderFactory;
 import com.nextbreakpoint.nextfractal.twister.util.View;
 
 /**
@@ -125,6 +126,20 @@ public class ContextFreeManager {
 	 */
 	public Tile getTile() {
 		return renderer.getTile();
+	}
+	
+	/**
+	 * @return
+	 */
+	public RenderFactory getRenderFactory() {
+		return renderer.getRenderFactory();
+	}
+	
+	/**
+	 * @param renderFactory
+	 */
+	public void setRenderFactory(RenderFactory renderFactory) {
+		renderer.setRenderFactory(renderFactory);
 	}
 
 	/**

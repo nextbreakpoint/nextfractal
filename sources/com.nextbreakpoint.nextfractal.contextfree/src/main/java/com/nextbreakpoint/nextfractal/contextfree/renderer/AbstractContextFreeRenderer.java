@@ -43,6 +43,7 @@ import com.nextbreakpoint.nextfractal.core.util.IntegerVector4D;
 import com.nextbreakpoint.nextfractal.core.util.RenderWorker;
 import com.nextbreakpoint.nextfractal.core.util.Surface;
 import com.nextbreakpoint.nextfractal.core.util.Tile;
+import com.nextbreakpoint.nextfractal.twister.renderer.RenderFactory;
 import com.nextbreakpoint.nextfractal.twister.renderer.TwisterRenderer;
 import com.nextbreakpoint.nextfractal.twister.util.View;
 
@@ -73,6 +74,7 @@ public abstract class AbstractContextFreeRenderer implements ContextFreeRenderer
 	protected CFDGRuntimeElement cfdgRuntime;
 	protected int status = TwisterRenderer.STATUS_TERMINATED;
 	private final ContextFreeWorker renderWorker;
+	private RenderFactory renderFactory;
 	protected final ThreadFactory factory;
 	private boolean viewChanged;
 	private boolean invalidated;
@@ -198,6 +200,22 @@ public abstract class AbstractContextFreeRenderer implements ContextFreeRenderer
 	@Override
 	public Tile getTile() {
 		return oldTile;
+	}
+
+	/**
+	 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderer.MandelbrotRenderer#getRenderFactory()
+	 */
+	@Override
+	public RenderFactory getRenderFactory() {
+		return renderFactory;
+	}
+
+	/**
+	 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderer.MandelbrotRenderer#setRenderFactory(com.nextbreakpoint.nextfractal.twister.renderer.RenderFactory)
+	 */
+	@Override
+	public void setRenderFactory(RenderFactory renderFactory) {
+		this.renderFactory = renderFactory;
 	}
 
 	/**

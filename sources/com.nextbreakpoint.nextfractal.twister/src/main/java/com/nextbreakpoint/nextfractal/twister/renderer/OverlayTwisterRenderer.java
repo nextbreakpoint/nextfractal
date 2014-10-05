@@ -43,6 +43,7 @@ import com.nextbreakpoint.nextfractal.twister.layer.ImageLayerRuntimeElement;
 public class OverlayTwisterRenderer implements TwisterRenderer {
 	private Map<Object, Object> hints = new HashMap<Object, Object>();
 	private TwisterRuntime runtime;
+	private RenderFactory renderFactory;
 	private Tile tile;
 
 	/**
@@ -410,5 +411,21 @@ public class OverlayTwisterRenderer implements TwisterRenderer {
 	 */
 	@Override
 	public void loadSurface(final Surface surface) {
+	}
+
+	/**
+	 * @see com.nextbreakpoint.nextfractal.twister.renderer.TwisterRenderer#getRenderFactory()
+	 */
+	@Override
+	public RenderFactory getRenderFactory() {
+		return renderFactory;
+	}
+
+	/**
+	 * @see com.nextbreakpoint.nextfractal.twister.renderer.TwisterRenderer#setRenderFactory(com.nextbreakpoint.nextfractal.twister.renderer.RenderFactory)
+	 */
+	@Override
+	public void setRenderFactory(RenderFactory renderFactory) {
+		this.renderFactory = renderFactory;
 	}
 }

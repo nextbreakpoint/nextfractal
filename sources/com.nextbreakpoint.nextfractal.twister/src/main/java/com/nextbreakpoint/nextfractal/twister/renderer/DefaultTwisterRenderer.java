@@ -55,6 +55,7 @@ public class DefaultTwisterRenderer implements TwisterRenderer {
 	private Surface currentSurface;
 	private Surface previousSurface;
 	private IntegerVector2D bufferSize;
+	private RenderFactory renderFactory;
 	private Tile tile;
 	private Color color;
 	private boolean isDynamic;
@@ -249,6 +250,7 @@ public class DefaultTwisterRenderer implements TwisterRenderer {
 
 	private void startLayer(final ImageLayerRuntimeElement layer) {
 		if ((layer.getImage() != null) && (layer.getImage().getImageRuntime() != null)) {
+			layer.getImage().getImageRuntime().setRenderFactory(renderFactory);
 			layer.getImage().getImageRuntime().setRenderingHints(hints);
 			layer.getImage().getImageRuntime().setTile(tile);
 			try {
@@ -325,6 +327,7 @@ public class DefaultTwisterRenderer implements TwisterRenderer {
 
 	private void prepareLayer(final ImageLayerRuntimeElement layer, final boolean isDynamicRequired) {
 		if ((layer.getImage() != null) && (layer.getImage().getImageRuntime() != null)) {
+			layer.getImage().getImageRuntime().setRenderFactory(renderFactory);
 			layer.getImage().getImageRuntime().setRenderingHints(hints);
 			layer.getImage().getImageRuntime().setTile(tile);
 			layer.getImage().getImageRuntime().prepareImage(isDynamicRequired);
@@ -563,6 +566,7 @@ public class DefaultTwisterRenderer implements TwisterRenderer {
 			hints.clear();
 			hints = null;
 		}
+		renderFactory = null;
 		bufferSize = null;
 		currentSurface = null;
 		previousSurface = null;
@@ -613,5 +617,21 @@ public class DefaultTwisterRenderer implements TwisterRenderer {
 		// System.arraycopy(data, 0, previousData, 0, data.length);
 		previousSurface.getGraphics2D().setComposite(AlphaComposite.SrcOver);
 		previousSurface.getGraphics2D().drawImage(surface.getImage(), 0, 0, null);
+	}
+
+	/**
+	 * @see com.nextbreakpoint.nextfractal.twister.renderer.TwisterRenderer#getRenderFactory()
+	 */
+	@Override
+	public RenderFactory getRenderFactory() {
+		return renderFactory;
+	}
+
+	/**
+	 * @see com.nextbreakpoint.nextfractal.twister.renderer.TwisterRenderer#setRenderFactory(com.nextbreakpoint.nextfractal.twister.renderer.RenderFactory)
+	 */
+	@Override
+	public void setRenderFactory(RenderFactory renderFactory) {
+		this.renderFactory = renderFactory;
 	}
 }

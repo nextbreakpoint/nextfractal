@@ -38,6 +38,7 @@ import javafx.scene.transform.Transform;
 import com.nextbreakpoint.nextfractal.core.util.IntegerVector2D;
 import com.nextbreakpoint.nextfractal.core.util.Tile;
 import com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionRuntime;
+import com.nextbreakpoint.nextfractal.twister.renderer.RenderFactory;
 import com.nextbreakpoint.nextfractal.twister.renderer.TwisterRenderer;
 import com.nextbreakpoint.nextfractal.twister.renderer.TwisterRenderingHints;
 
@@ -45,6 +46,7 @@ import com.nextbreakpoint.nextfractal.twister.renderer.TwisterRenderingHints;
  * @author Andrea Medeghini
  */
 public class TextRuntime extends ImageExtensionRuntime<TextConfig> {
+	private RenderFactory renderFactory;
 	private boolean isOverlay;
 	private java.awt.Color awtColor;
 	private Color color;
@@ -269,5 +271,21 @@ public class TextRuntime extends ImageExtensionRuntime<TextConfig> {
 	@Override
 	public boolean isDynamic() {
 		return false;
+	}
+
+	/**
+	 * @see com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionRuntime#getRenderFactory()
+	 */
+	@Override
+	public RenderFactory getRenderFactory() {
+		return renderFactory;
+	}
+
+	/**
+	 * @see com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionRuntime#setRenderFactory(com.nextbreakpoint.nextfractal.twister.renderer.RenderFactory)
+	 */
+	@Override
+	public void setRenderFactory(RenderFactory renderFactory) {
+		this.renderFactory = renderFactory;
 	}
 }

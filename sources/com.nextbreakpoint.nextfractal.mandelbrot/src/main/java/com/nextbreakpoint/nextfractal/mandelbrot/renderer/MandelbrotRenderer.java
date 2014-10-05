@@ -33,6 +33,7 @@ import javafx.scene.canvas.GraphicsContext;
 import com.nextbreakpoint.nextfractal.core.util.DoubleVector2D;
 import com.nextbreakpoint.nextfractal.core.util.Tile;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotRuntime;
+import com.nextbreakpoint.nextfractal.twister.renderer.RenderFactory;
 import com.nextbreakpoint.nextfractal.twister.util.View;
 
 /**
@@ -70,7 +71,7 @@ public interface MandelbrotRenderer {
 	public void drawImage(GraphicsContext gc, int x, int y, int w, int h);
 
 	/**
-	 * @param g the destination.
+	 * @param g
 	 */
 	public void drawImage(Graphics2D g);
 
@@ -161,6 +162,16 @@ public interface MandelbrotRenderer {
 	 * @return
 	 */
 	public Tile getTile();
+
+	/**
+	 * @return
+	 */
+	public abstract RenderFactory getRenderFactory();
+	
+	/**
+	 * @param renderFactory
+	 */
+	public abstract void setRenderFactory(RenderFactory renderFactory);
 
 	/**
 	 * @param mode

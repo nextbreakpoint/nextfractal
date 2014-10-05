@@ -91,6 +91,7 @@ import com.nextbreakpoint.nextfractal.twister.TwisterRuntime;
 import com.nextbreakpoint.nextfractal.twister.TwisterSequence;
 import com.nextbreakpoint.nextfractal.twister.TwisterSessionController;
 import com.nextbreakpoint.nextfractal.twister.renderer.DefaultTwisterRenderer;
+import com.nextbreakpoint.nextfractal.twister.renderer.Java2DRenderFactory;
 import com.nextbreakpoint.nextfractal.twister.renderer.TwisterRenderingHints;
 
 /**
@@ -391,6 +392,7 @@ public class TwisterFrame extends JFrame {
 		final DefaultTwisterRenderer renderer = new DefaultTwisterRenderer(runtime);
 		final Map<Object, Object> hints = new HashMap<Object, Object>();
 		hints.put(TwisterRenderingHints.KEY_MEMORY, TwisterRenderingHints.MEMORY_LOW);
+		renderer.setRenderFactory(new Java2DRenderFactory());
 		renderer.setRenderingHints(hints);
 		bookmark.setRenderer(renderer);
 		return bookmark;

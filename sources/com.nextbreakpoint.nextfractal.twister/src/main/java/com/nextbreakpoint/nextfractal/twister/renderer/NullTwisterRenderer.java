@@ -172,4 +172,19 @@ public class NullTwisterRenderer implements TwisterRenderer {
 	@Override
 	public void loadSurface(final Surface surface) {
 	}
+
+	/**
+	 * @see com.nextbreakpoint.nextfractal.twister.renderer.TwisterRenderer#getRenderFactory()
+	 */
+	@Override
+	public RenderFactory getRenderFactory() {
+		return null;
+	}
+
+	/**
+	 * @see com.nextbreakpoint.nextfractal.twister.renderer.TwisterRenderer#setRenderFactory(com.nextbreakpoint.nextfractal.twister.renderer.RenderFactory)
+	 */
+	@Override
+	public void setRenderFactory(RenderFactory renderFactory) {
+	}
 }

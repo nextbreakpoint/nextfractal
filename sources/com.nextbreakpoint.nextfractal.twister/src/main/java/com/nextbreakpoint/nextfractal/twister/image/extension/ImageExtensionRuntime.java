@@ -33,6 +33,7 @@ import javafx.scene.canvas.GraphicsContext;
 import com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionRuntime;
 import com.nextbreakpoint.nextfractal.core.util.IntegerVector2D;
 import com.nextbreakpoint.nextfractal.core.util.Tile;
+import com.nextbreakpoint.nextfractal.twister.renderer.RenderFactory;
 
 /**
  * @author Andrea Medeghini
@@ -131,4 +132,14 @@ public abstract class ImageExtensionRuntime<T extends ImageExtensionConfig> exte
 	@Override
 	public void dispose() {
 	}
+
+	/**
+	 * @return
+	 */
+	public abstract RenderFactory getRenderFactory();
+	
+	/**
+	 * @param renderFactory
+	 */
+	public abstract void setRenderFactory(RenderFactory renderFactory);
 }

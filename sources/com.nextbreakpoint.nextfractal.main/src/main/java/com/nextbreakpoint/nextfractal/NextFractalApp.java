@@ -26,6 +26,7 @@ import com.nextbreakpoint.nextfractal.twister.TwisterConfig;
 import com.nextbreakpoint.nextfractal.twister.TwisterConfigBuilder;
 import com.nextbreakpoint.nextfractal.twister.TwisterRuntime;
 import com.nextbreakpoint.nextfractal.twister.renderer.DefaultTwisterRenderer;
+import com.nextbreakpoint.nextfractal.twister.renderer.JavaFXRenderFactory;
 import com.nextbreakpoint.nextfractal.twister.renderer.TwisterRenderer;
 import com.nextbreakpoint.nextfractal.twister.renderer.TwisterRenderingHints;
 import com.nextbreakpoint.nextfractal.twister.swing.DefaultInputAdapter;
@@ -192,6 +193,7 @@ public class NextFractalApp extends Application implements NextFractalAppContext
 		}
 		runtime = new TwisterRuntime(config);
 		renderer = new DefaultTwisterRenderer(runtime);
+		renderer.setRenderFactory(new JavaFXRenderFactory());
 		renderer.setRenderingHints(hints);
 		int i = 0;
 		int j = 0;

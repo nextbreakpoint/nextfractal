@@ -54,6 +54,7 @@ import com.nextbreakpoint.nextfractal.twister.TwisterClipXMLImporter;
 import com.nextbreakpoint.nextfractal.twister.TwisterConfig;
 import com.nextbreakpoint.nextfractal.twister.TwisterRuntime;
 import com.nextbreakpoint.nextfractal.twister.renderer.DefaultTwisterRenderer;
+import com.nextbreakpoint.nextfractal.twister.renderer.Java2DRenderFactory;
 import com.nextbreakpoint.nextfractal.twister.renderer.OverlayTwisterRenderer;
 import com.nextbreakpoint.nextfractal.twister.renderer.TwisterRenderer;
 import com.nextbreakpoint.nextfractal.twister.renderer.TwisterRenderingHints;
@@ -356,6 +357,7 @@ public class LocalSpoolJob implements SpoolJobInterface {
 							renderer = new DefaultTwisterRenderer(runtime);
 							final Map<Object, Object> hints = new HashMap<Object, Object>();
 							hints.put(TwisterRenderingHints.KEY_MEMORY, TwisterRenderingHints.MEMORY_LOW);
+							renderer.setRenderFactory(new Java2DRenderFactory());
 							renderer.setRenderingHints(hints);
 							renderer.setTile(new Tile(new IntegerVector2D(iw, ih), new IntegerVector2D(tw, th), new IntegerVector2D(tx, ty), new IntegerVector2D(bw, bh)));
 							overlayRuntime = new TwisterRuntime(config);

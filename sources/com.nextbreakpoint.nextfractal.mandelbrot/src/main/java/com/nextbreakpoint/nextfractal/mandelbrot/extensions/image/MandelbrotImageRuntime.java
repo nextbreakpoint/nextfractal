@@ -49,6 +49,7 @@ import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RenderedPoint;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.SimpleMandelbrotRenderer;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderingFormula.RenderingFormulaRuntimeElement;
 import com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionRuntime;
+import com.nextbreakpoint.nextfractal.twister.renderer.RenderFactory;
 import com.nextbreakpoint.nextfractal.twister.renderer.TwisterRenderer;
 import com.nextbreakpoint.nextfractal.twister.renderer.TwisterRenderingHints;
 import com.nextbreakpoint.nextfractal.twister.util.View;
@@ -61,6 +62,7 @@ public class MandelbrotImageRuntime extends ImageExtensionRuntime<MandelbrotImag
 	private Map<Object, Object> hints = new HashMap<Object, Object>();
 	private MandelbrotRuntime mandelbrotRuntime;
 	private RendererStrategy rendererStrategy;
+	private RenderFactory renderFactory;
 	private int lastStatus;
 	private Tile tile;
 
@@ -258,6 +260,22 @@ public class MandelbrotImageRuntime extends ImageExtensionRuntime<MandelbrotImag
 		return super.isChanged() || isChanged;
 	}
 
+	/**
+	 * @see com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionRuntime#getRenderFactory()
+	 */
+	@Override
+	public RenderFactory getRenderFactory() {
+		return renderFactory;
+	}
+
+	/**
+	 * @see com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionRuntime#setRenderFactory(com.nextbreakpoint.nextfractal.twister.renderer.RenderFactory)
+	 */
+	@Override
+	public void setRenderFactory(RenderFactory renderFactory) {
+		this.renderFactory = renderFactory;
+	}
+
 	private interface RendererStrategy {
 		/**
 		 * 
@@ -368,6 +386,7 @@ public class MandelbrotImageRuntime extends ImageExtensionRuntime<MandelbrotImag
 				manager = new MandelbrotManager(new SimpleMandelbrotRenderer(Thread.MIN_PRIORITY + 1));
 			}
 //			manager = new MandelbrotManager(new SimpleMandelbrotRenderer(Thread.MIN_PRIORITY + 1));
+			manager.setRenderFactory(renderFactory);
 			manager.setRenderingHints(hints);
 			manager.setRuntime(mandelbrotRuntime);
 			loadConfig();
@@ -615,6 +634,7 @@ public class MandelbrotImageRuntime extends ImageExtensionRuntime<MandelbrotImag
 				manager = new MandelbrotManager(new SimpleMandelbrotRenderer(Thread.MIN_PRIORITY + 1));
 			}
 //			manager = new MandelbrotManager(new SimpleMandelbrotRenderer(Thread.MIN_PRIORITY + 1));
+			manager.setRenderFactory(renderFactory);
 			manager.setRenderingHints(hints);
 			manager.setRuntime(mandelbrotRuntime);
 			loadConfig();

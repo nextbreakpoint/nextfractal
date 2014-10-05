@@ -52,6 +52,7 @@ import com.nextbreakpoint.nextfractal.twister.TwisterClipController;
 import com.nextbreakpoint.nextfractal.twister.TwisterClipXMLImporter;
 import com.nextbreakpoint.nextfractal.twister.TwisterConfig;
 import com.nextbreakpoint.nextfractal.twister.TwisterRuntime;
+import com.nextbreakpoint.nextfractal.twister.renderer.Java2DRenderFactory;
 import com.nextbreakpoint.nextfractal.twister.renderer.OverlayTwisterRenderer;
 import com.nextbreakpoint.nextfractal.twister.renderer.TwisterRenderer;
 import com.nextbreakpoint.nextfractal.twister.renderer.TwisterRenderingHints;
@@ -343,6 +344,7 @@ public class PostProcessSpoolJob implements SpoolJobInterface {
 					final Map<Object, Object> overlayHints = new HashMap<Object, Object>();
 					overlayHints.put(TwisterRenderingHints.KEY_MEMORY, TwisterRenderingHints.MEMORY_LOW);
 					overlayHints.put(TwisterRenderingHints.KEY_TYPE, TwisterRenderingHints.TYPE_OVERLAY);
+					overlayRenderer.setRenderFactory(new Java2DRenderFactory());
 					overlayRenderer.setRenderingHints(overlayHints);
 					final IntegerVector2D size = new IntegerVector2D(iw, ih);
 					overlayRenderer.setTile(new Tile(size, size, new IntegerVector2D(0, 0), new IntegerVector2D(0, 0)));

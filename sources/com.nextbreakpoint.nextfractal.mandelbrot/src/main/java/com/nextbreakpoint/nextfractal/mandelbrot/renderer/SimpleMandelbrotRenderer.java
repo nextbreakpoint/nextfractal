@@ -157,6 +157,7 @@ public final class SimpleMandelbrotRenderer extends AbstractMandelbrotRenderer {
 	}
 
 	private void copy() {
+		//TODO copy
 		final Graphics2D g2d = getGraphics();
 		g2d.setComposite(AlphaComposite.Src);
 		g2d.drawImage(renderedData.newBuffer, 0, 0, null);

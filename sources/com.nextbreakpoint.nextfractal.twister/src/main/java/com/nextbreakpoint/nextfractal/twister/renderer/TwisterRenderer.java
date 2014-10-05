@@ -154,4 +154,14 @@ public interface TwisterRenderer {
 	 * @param surface
 	 */
 	public void loadSurface(Surface surface);
+
+	/**
+	 * @return
+	 */
+	public RenderFactory getRenderFactory();
+	
+	/**
+	 * @param renderFactory
+	 */
+	public void setRenderFactory(RenderFactory renderFactory);
 }
