@@ -26,9 +26,10 @@ import com.nextbreakpoint.nextfractal.twister.TwisterConfig;
 import com.nextbreakpoint.nextfractal.twister.TwisterConfigBuilder;
 import com.nextbreakpoint.nextfractal.twister.TwisterRuntime;
 import com.nextbreakpoint.nextfractal.twister.renderer.DefaultTwisterRenderer;
-import com.nextbreakpoint.nextfractal.twister.renderer.JavaFXRenderFactory;
+import com.nextbreakpoint.nextfractal.twister.renderer.RenderGraphicsContext;
 import com.nextbreakpoint.nextfractal.twister.renderer.TwisterRenderer;
 import com.nextbreakpoint.nextfractal.twister.renderer.TwisterRenderingHints;
+import com.nextbreakpoint.nextfractal.twister.renderer.javaFX.JavaFXRenderFactory;
 import com.nextbreakpoint.nextfractal.twister.swing.DefaultInputAdapter;
 import com.nextbreakpoint.nextfractal.twister.swing.InputAdapter;
 
@@ -44,6 +45,7 @@ public class NextFractalApp extends Application implements NextFractalAppContext
 	private final Semaphore semaphore = new Semaphore(1, true);
 	private final List<Runnable>[] commands = new LinkedList[2];
 	private final List<RenderContextListener> contextListeners = new LinkedList<RenderContextListener>();
+	private final JavaFXRenderFactory renderFactory = new JavaFXRenderFactory();
 
 	public static void main(String[] args) {
         launch(args);
@@ -85,6 +87,8 @@ public class NextFractalApp extends Application implements NextFractalAppContext
 			e.printStackTrace();
 		}
 
+		RenderGraphicsContext gc = renderFactory.createGraphicsContext(canvas.getGraphicsContext2D());
+		
 		AnimationTimer timer = new AnimationTimer() {
 			private long last;
 			
@@ -100,7 +104,7 @@ public class NextFractalApp extends Application implements NextFractalAppContext
 //				}
 				long time = now / 1000000;
 				if ((time - last) > 20 && runtime != null && runtime.isChanged()) {
-					runtime.getFrameElement().getLayer(0).getLayer(0).getImage().getImageRuntime().drawImage(canvas.getGraphicsContext2D());
+					runtime.getFrameElement().getLayer(0).getLayer(0).getImage().getImageRuntime().drawImage(gc);
 //					canvas.getGraphicsContext2D().getPixelWriter().setPixels(0, 0, width, height, PixelFormat.getIntArgbInstance(), ((DataBufferInt)surface.getImage().getRaster().getDataBuffer()).getData(), 0, width);
 					last = time;
 				}
@@ -193,7 +197,7 @@ public class NextFractalApp extends Application implements NextFractalAppContext
 		}
 		runtime = new TwisterRuntime(config);
 		renderer = new DefaultTwisterRenderer(runtime);
-		renderer.setRenderFactory(new JavaFXRenderFactory());
+		renderer.setRenderFactory(renderFactory);
 		renderer.setRenderingHints(hints);
 		int i = 0;
 		int j = 0;

@@ -27,8 +27,6 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.renderer;
 
-import java.awt.AlphaComposite;
-import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 
@@ -38,6 +36,7 @@ import com.nextbreakpoint.nextfractal.core.util.RenderWorker;
 import com.nextbreakpoint.nextfractal.core.util.Surface;
 import com.nextbreakpoint.nextfractal.mandelbrot.incolouringFormula.IncolouringFormulaRuntimeElement;
 import com.nextbreakpoint.nextfractal.mandelbrot.outcolouringFormula.OutcolouringFormulaRuntimeElement;
+import com.nextbreakpoint.nextfractal.twister.renderer.RenderBuffer;
 
 /**
  * @author Andrea Medeghini
@@ -1099,10 +1098,8 @@ public final class FastXaosMandelbrotRenderer extends AbstractMandelbrotRenderer
 	}
 
 	private void copy() {
-		//TODO copy
-		final Graphics2D g2d = getGraphics();
-		g2d.setComposite(AlphaComposite.Src);
-		g2d.drawImage(renderedData.newBuffer, 0, 0, null);
+		final RenderBuffer buffer = getRenderBuffer();
+		buffer.update(renderedData.newRGB);
 	}
 
 	private static int initPrices(final Realloc[] queue, int total, final Realloc[] realloc) {

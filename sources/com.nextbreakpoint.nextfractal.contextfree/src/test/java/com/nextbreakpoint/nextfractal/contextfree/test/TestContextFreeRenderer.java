@@ -49,6 +49,8 @@ import com.nextbreakpoint.nextfractal.core.tree.Tree;
 import com.nextbreakpoint.nextfractal.core.util.IntegerVector2D;
 import com.nextbreakpoint.nextfractal.core.util.Surface;
 import com.nextbreakpoint.nextfractal.core.util.Tile;
+import com.nextbreakpoint.nextfractal.twister.renderer.RenderGraphicsContext;
+import com.nextbreakpoint.nextfractal.twister.renderer.java2D.Java2DRenderFactory;
 
 public class TestContextFreeRenderer {
 	private static final int IMAGE_HEIGHT = 500;
@@ -77,10 +79,12 @@ public class TestContextFreeRenderer {
 			config.getCFDG().toCFDG(cfdgBuilder);
 			System.out.println(cfdgBuilder.toString());
 			ContextFreeRuntime runtime = new ContextFreeRuntime(config);
+			Java2DRenderFactory renderFactory = new Java2DRenderFactory();
 			ContextFreeRenderer renderer = new DefaultContextFreeRenderer(Thread.MIN_PRIORITY);
 			IntegerVector2D imageSize = new IntegerVector2D(IMAGE_WIDTH, IMAGE_HEIGHT);
 			IntegerVector2D nullSize = new IntegerVector2D(0, 0);
 			Tile tile = new Tile(imageSize, imageSize, nullSize, nullSize);
+			renderer.setRenderFactory(renderFactory);
 			renderer.setTile(tile);
 			IntegerVector2D bufferSize = new IntegerVector2D(tile.getTileSize().getX() + tile.getTileBorder().getX() * 2, tile.getTileSize().getY() + tile.getTileBorder().getY() * 2);
 			Surface surface = new Surface(bufferSize.getX(), bufferSize.getY());
@@ -94,7 +98,8 @@ public class TestContextFreeRenderer {
 				e.printStackTrace();
 			}
 			Graphics2D g2d = surface.getGraphics2D();
-			renderer.drawImage(g2d);
+			RenderGraphicsContext gc = renderFactory.createGraphicsContext(g2d);
+			renderer.drawImage(gc);
 			g2d.setColor(Color.WHITE);
 			g2d.drawRect(0, 0, surface.getWidth() - 1, surface.getHeight() - 1);
 			ImageIO.write(surface.getImage(), "png", new File(System.getProperty("cfdgFile").replace(".cfdg", ".png")));

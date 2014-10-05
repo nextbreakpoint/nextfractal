@@ -25,15 +25,13 @@
  */
 package com.nextbreakpoint.nextfractal.twister.image.extension;
 
-import java.awt.Graphics2D;
 import java.util.Map;
-
-import javafx.scene.canvas.GraphicsContext;
 
 import com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionRuntime;
 import com.nextbreakpoint.nextfractal.core.util.IntegerVector2D;
 import com.nextbreakpoint.nextfractal.core.util.Tile;
 import com.nextbreakpoint.nextfractal.twister.renderer.RenderFactory;
+import com.nextbreakpoint.nextfractal.twister.renderer.RenderGraphicsContext;
 
 /**
  * @author Andrea Medeghini
@@ -77,14 +75,14 @@ public abstract class ImageExtensionRuntime<T extends ImageExtensionConfig> exte
 	/**
 	 * @param gc
 	 */
-	public abstract void drawImage(GraphicsContext gc);
+	public abstract void drawImage(RenderGraphicsContext gc);
 
 	/**
 	 * @param gc
 	 * @param x
 	 * @param y
 	 */
-	public abstract void drawImage(GraphicsContext gc, int x, int y);
+	public abstract void drawImage(RenderGraphicsContext gc, int x, int y);
 
 	/**
 	 * @param gc
@@ -93,28 +91,7 @@ public abstract class ImageExtensionRuntime<T extends ImageExtensionConfig> exte
 	 * @param w
 	 * @param h
 	 */
-	public abstract void drawImage(GraphicsContext gc, int x, int y, int w, int h);
-
-	/**
-	 * @param g2d
-	 */
-	public abstract void drawImage(Graphics2D g2d);
-
-	/**
-	 * @param g2d
-	 * @param x
-	 * @param y
-	 */
-	public abstract void drawImage(Graphics2D g2d, int x, int y);
-
-	/**
-	 * @param g2d
-	 * @param x
-	 * @param y
-	 * @param w
-	 * @param h
-	 */
-	public abstract void drawImage(Graphics2D g2d, int x, int y, int w, int h);
+	public abstract void drawImage(RenderGraphicsContext gc, int x, int y, int w, int h);
 
 	/**
 	 * @return

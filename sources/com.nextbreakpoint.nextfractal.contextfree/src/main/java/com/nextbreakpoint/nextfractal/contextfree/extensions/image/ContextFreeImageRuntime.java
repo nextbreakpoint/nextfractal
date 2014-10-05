@@ -25,11 +25,8 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.extensions.image;
 
-import java.awt.Graphics2D;
 import java.util.HashMap;
 import java.util.Map;
-
-import javafx.scene.canvas.GraphicsContext;
 
 import com.nextbreakpoint.nextfractal.contextfree.ContextFreeManager;
 import com.nextbreakpoint.nextfractal.contextfree.ContextFreeRuntime;
@@ -39,6 +36,7 @@ import com.nextbreakpoint.nextfractal.core.util.IntegerVector2D;
 import com.nextbreakpoint.nextfractal.core.util.Tile;
 import com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionRuntime;
 import com.nextbreakpoint.nextfractal.twister.renderer.RenderFactory;
+import com.nextbreakpoint.nextfractal.twister.renderer.RenderGraphicsContext;
 import com.nextbreakpoint.nextfractal.twister.renderer.TwisterRenderer;
 import com.nextbreakpoint.nextfractal.twister.renderer.TwisterRenderingHints;
 
@@ -132,7 +130,7 @@ public class ContextFreeImageRuntime extends ImageExtensionRuntime<ContextFreeIm
 	 * @see com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionRuntime#drawImage(javafx.scene.canvas.GraphicsContext)
 	 */
 	@Override
-	public void drawImage(final GraphicsContext gc) {
+	public void drawImage(final RenderGraphicsContext gc) {
 		if (rendererStrategy != null) {
 			rendererStrategy.drawImage(gc);
 		}
@@ -142,7 +140,7 @@ public class ContextFreeImageRuntime extends ImageExtensionRuntime<ContextFreeIm
 	 * @see com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionRuntime#drawImage(javafx.scene.canvas.GraphicsContext, int, int)
 	 */
 	@Override
-	public void drawImage(final GraphicsContext gc, final int x, final int y) {
+	public void drawImage(final RenderGraphicsContext gc, final int x, final int y) {
 		if (rendererStrategy != null) {
 			rendererStrategy.drawImage(gc, x, y);
 		}
@@ -152,39 +150,9 @@ public class ContextFreeImageRuntime extends ImageExtensionRuntime<ContextFreeIm
 	 * @see com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionRuntime#drawImage(javafx.scene.canvas.GraphicsContext, int, int, int, int)
 	 */
 	@Override
-	public void drawImage(final GraphicsContext gc, final int x, final int y, final int w, final int h) {
+	public void drawImage(final RenderGraphicsContext gc, final int x, final int y, final int w, final int h) {
 		if (rendererStrategy != null) {
 			rendererStrategy.drawImage(gc, x, y, w, h);
-		}
-	}
-
-	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionRuntime#drawImage(java.awt.Graphics2D)
-	 */
-	@Override
-	public void drawImage(final Graphics2D g2d) {
-		if (rendererStrategy != null) {
-			rendererStrategy.drawImage(g2d);
-		}
-	}
-
-	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionRuntime#drawImage(java.awt.Graphics2D, int, int)
-	 */
-	@Override
-	public void drawImage(final Graphics2D g2d, final int x, final int y) {
-		if (rendererStrategy != null) {
-			rendererStrategy.drawImage(g2d, x, y);
-		}
-	}
-
-	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionRuntime#drawImage(java.awt.Graphics2D, int, int, int, int)
-	 */
-	@Override
-	public void drawImage(final Graphics2D g2d, final int x, final int y, final int w, final int h) {
-		if (rendererStrategy != null) {
-			rendererStrategy.drawImage(g2d, x, y, w, h);
 		}
 	}
 
@@ -279,14 +247,14 @@ public class ContextFreeImageRuntime extends ImageExtensionRuntime<ContextFreeIm
 		/**
 		 * @param gc
 		 */
-		public void drawImage(GraphicsContext gc);
+		public void drawImage(RenderGraphicsContext gc);
 
 		/**
 		 * @param gc
 		 * @param x
 		 * @param y
 		 */
-		public void drawImage(GraphicsContext gc, int x, int y);
+		public void drawImage(RenderGraphicsContext gc, int x, int y);
 
 		/**
 		 * @param gc
@@ -295,28 +263,7 @@ public class ContextFreeImageRuntime extends ImageExtensionRuntime<ContextFreeIm
 		 * @param w
 		 * @param h
 		 */
-		public void drawImage(GraphicsContext gc, int x, int y, int w, int h);
-
-		/**
-		 * @param g2d
-		 */
-		public void drawImage(final Graphics2D g2d);
-
-		/**
-		 * @param g2d
-		 * @param x
-		 * @param y
-		 */
-		public void drawImage(Graphics2D g2d, int x, int y);
-
-		/**
-		 * @param g2d
-		 * @param x
-		 * @param y
-		 * @param w
-		 * @param h
-		 */
-		public void drawImage(Graphics2D g2d, int x, int y, int w, int h);
+		public void drawImage(RenderGraphicsContext gc, int x, int y, int w, int h);
 
 		/**
 		 * @return
@@ -408,7 +355,7 @@ public class ContextFreeImageRuntime extends ImageExtensionRuntime<ContextFreeIm
 		 * @see com.nextbreakpoint.nextfractal.contextfree.extensions.image.ContextFreeImageRuntime.RendererStrategy#drawImage(javafx.scene.canvas.GraphicsContext)
 		 */
 		@Override
-		public void drawImage(GraphicsContext gc) {
+		public void drawImage(final RenderGraphicsContext gc) {
 			if (tile != null) {
 				manager.drawImage(gc);
 				if (dirty) {
@@ -425,7 +372,7 @@ public class ContextFreeImageRuntime extends ImageExtensionRuntime<ContextFreeIm
 		}
 
 		@Override
-		public void drawImage(GraphicsContext gc, int x, int y) {
+		public void drawImage(final RenderGraphicsContext gc, int x, int y) {
 			if (tile != null) {
 				manager.drawImage(gc, x, y);
 				if (dirty) {
@@ -445,69 +392,9 @@ public class ContextFreeImageRuntime extends ImageExtensionRuntime<ContextFreeIm
 		 * @see com.nextbreakpoint.nextfractal.contextfree.extensions.image.ContextFreeImageRuntime.RendererStrategy#drawImage(javafx.scene.canvas.GraphicsContext)
 		 */
 		@Override
-		public void drawImage(GraphicsContext gc, int x, int y, int w, int h) {
+		public void drawImage(final RenderGraphicsContext gc, int x, int y, int w, int h) {
 			if (tile != null) {
 				manager.drawImage(gc, x, y, w, h);
-				if (dirty) {
-					dirty = false;
-					try {
-						manager.joinRenderer();
-						manager.startRenderer();
-					}
-					catch (final InterruptedException e) {
-						Thread.currentThread().interrupt();
-					}
-				}
-			}
-		}
-
-		/**
-		 * @see com.nextbreakpoint.nextfractal.ContextFreeImageRuntime.extensions.image.ContextFreeImageRuntime.RendererStrategy#drawImage(java.awt.Graphics2D)
-		 */
-		@Override
-		public void drawImage(final Graphics2D g2d) {
-			if (tile != null) {
-				manager.drawImage(g2d);
-				if (dirty) {
-					dirty = false;
-					try {
-						manager.joinRenderer();
-						manager.startRenderer();
-					}
-					catch (final InterruptedException e) {
-						Thread.currentThread().interrupt();
-					}
-				}
-			}
-		}
-
-		/**
-		 * @see com.nextbreakpoint.nextfractal.ContextFreeImageRuntime.extensions.image.ContextFreeImageRuntime.RendererStrategy#drawImage(java.awt.Graphics2D, int, int)
-		 */
-		@Override
-		public void drawImage(final Graphics2D g2d, final int x, final int y) {
-			if (tile != null) {
-				manager.drawImage(g2d, x, y);
-				if (dirty) {
-					dirty = false;
-					try {
-						manager.joinRenderer();
-						manager.startRenderer();
-					}
-					catch (final InterruptedException e) {
-						Thread.currentThread().interrupt();
-					}
-				}
-			}
-		}
-
-		/**
-		 * @see com.nextbreakpoint.nextfractal.ContextFreeImageRuntime.extensions.image.ContextFreeImageRuntime.RendererStrategy#drawImage(java.awt.Graphics2D, int, int, int, int)
-		 */
-		@Override
-		public void drawImage(final Graphics2D g2d, final int x, final int y, final int w, final int h) {
-			if (tile != null) {
-				manager.drawImage(g2d, x, y, w, h);
 				if (dirty) {
 					dirty = false;
 					try {
@@ -617,42 +504,21 @@ public class ContextFreeImageRuntime extends ImageExtensionRuntime<ContextFreeIm
 		 * @see com.nextbreakpoint.nextfractal.contextfree.extensions.image.ContextFreeImageRuntime.RendererStrategy#drawImage(javafx.scene.canvas.GraphicsContext)
 		 */
 		@Override
-		public void drawImage(GraphicsContext gc) {
+		public void drawImage(final RenderGraphicsContext gc) {
 		}
 
 		/**
 		 * @see com.nextbreakpoint.nextfractal.contextfree.extensions.image.ContextFreeImageRuntime.RendererStrategy#drawImage(javafx.scene.canvas.GraphicsContext, int, int)
 		 */
 		@Override
-		public void drawImage(GraphicsContext gc, int x, int y) {
+		public void drawImage(final RenderGraphicsContext gc, int x, int y) {
 		}
 
 		/**
 		 * @see com.nextbreakpoint.nextfractal.contextfree.extensions.image.ContextFreeImageRuntime.RendererStrategy#drawImage(javafx.scene.canvas.GraphicsContext)
 		 */
 		@Override
-		public void drawImage(GraphicsContext gc, int x, int y, int w, int h) {
-		}
-
-		/**
-		 * @see com.nextbreakpoint.nextfractal.ContextFreeImageRuntime.extensions.image.ContextFreeImageRuntime.RendererStrategy#drawImage(java.awt.Graphics2D)
-		 */
-		@Override
-		public void drawImage(final Graphics2D g2d) {
-		}
-
-		/**
-		 * @see com.nextbreakpoint.nextfractal.ContextFreeImageRuntime.extensions.image.ContextFreeImageRuntime.RendererStrategy#drawImage(java.awt.Graphics2D, int, int)
-		 */
-		@Override
-		public void drawImage(final Graphics2D g2d, final int x, final int y) {
-		}
-
-		/**
-		 * @see com.nextbreakpoint.nextfractal.ContextFreeImageRuntime.extensions.image.ContextFreeImageRuntime.RendererStrategy#drawImage(java.awt.Graphics2D, int, int, int, int)
-		 */
-		@Override
-		public void drawImage(final Graphics2D g2d, final int x, final int y, final int w, final int h) {
+		public void drawImage(final RenderGraphicsContext gc, int x, int y, int w, int h) {
 		}
 
 		/**

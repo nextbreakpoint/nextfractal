@@ -25,16 +25,14 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot;
 
-import java.awt.Graphics2D;
 import java.util.Map;
 import java.util.logging.Logger;
-
-import javafx.scene.canvas.GraphicsContext;
 
 import com.nextbreakpoint.nextfractal.core.util.DoubleVector2D;
 import com.nextbreakpoint.nextfractal.core.util.Tile;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.MandelbrotRenderer;
 import com.nextbreakpoint.nextfractal.twister.renderer.RenderFactory;
+import com.nextbreakpoint.nextfractal.twister.renderer.RenderGraphicsContext;
 import com.nextbreakpoint.nextfractal.twister.util.View;
 
 /**
@@ -129,13 +127,6 @@ public class MandelbrotManager {
 	}
 
 	/**
-	 * @return
-	 */
-	public RenderFactory getRenderFactory() {
-		return renderer.getRenderFactory();
-	}
-	
-	/**
 	 * @param renderFactory
 	 */
 	public void setRenderFactory(RenderFactory renderFactory) {
@@ -159,7 +150,7 @@ public class MandelbrotManager {
 	/**
 	 * @param gc
 	 */
-	public void drawImage(final GraphicsContext gc) {
+	public void drawImage(final RenderGraphicsContext gc) {
 		renderer.drawImage(gc);
 	}
 
@@ -168,7 +159,7 @@ public class MandelbrotManager {
 	 * @param x
 	 * @param y
 	 */
-	public void drawImage(final GraphicsContext gc, final int x, final int y) {
+	public void drawImage(final RenderGraphicsContext gc, final int x, final int y) {
 		renderer.drawImage(gc, x, y);
 	}
 
@@ -179,35 +170,8 @@ public class MandelbrotManager {
 	 * @param ow
 	 * @param oh
 	 */
-	public void drawImage(final GraphicsContext gc, final int x, final int y, final int w, final int h) {
+	public void drawImage(final RenderGraphicsContext gc, final int x, final int y, final int w, final int h) {
 		renderer.drawImage(gc, x, y, w, h);
-	}
-
-	/**
-	 * @param g
-	 */
-	public void drawImage(final Graphics2D g) {
-		renderer.drawImage(g);
-	}
-
-	/**
-	 * @param g
-	 * @param x
-	 * @param y
-	 */
-	public void drawImage(final Graphics2D g, final int x, final int y) {
-		renderer.drawImage(g, x, y);
-	}
-
-	/**
-	 * @param g
-	 * @param x
-	 * @param y
-	 * @param w
-	 * @param h
-	 */
-	public void drawImage(final Graphics2D g, final int x, final int y, final int w, final int h) {
-		renderer.drawImage(g, x, y, w, h);
 	}
 
 	/**

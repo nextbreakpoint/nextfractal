@@ -111,9 +111,9 @@ import com.nextbreakpoint.nextfractal.twister.layerFilter.LayerFilterConfigEleme
 import com.nextbreakpoint.nextfractal.twister.layerFilter.extension.LayerFilterExtensionConfig;
 import com.nextbreakpoint.nextfractal.twister.layerFilter.extension.LayerFilterExtensionRuntime;
 import com.nextbreakpoint.nextfractal.twister.renderer.DefaultTwisterRenderer;
-import com.nextbreakpoint.nextfractal.twister.renderer.Java2DRenderFactory;
 import com.nextbreakpoint.nextfractal.twister.renderer.TwisterRenderer;
 import com.nextbreakpoint.nextfractal.twister.renderer.TwisterRenderingHints;
+import com.nextbreakpoint.nextfractal.twister.renderer.java2D.Java2DRenderFactory;
 import com.nextbreakpoint.nextfractal.twister.swing.view.NavigatorViewRuntime;
 import com.nextbreakpoint.nextfractal.twister.swing.view.extension.ViewExtensionRuntime;
 

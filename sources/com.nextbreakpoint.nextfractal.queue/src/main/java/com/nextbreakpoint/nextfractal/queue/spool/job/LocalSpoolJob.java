@@ -54,10 +54,10 @@ import com.nextbreakpoint.nextfractal.twister.TwisterClipXMLImporter;
 import com.nextbreakpoint.nextfractal.twister.TwisterConfig;
 import com.nextbreakpoint.nextfractal.twister.TwisterRuntime;
 import com.nextbreakpoint.nextfractal.twister.renderer.DefaultTwisterRenderer;
-import com.nextbreakpoint.nextfractal.twister.renderer.Java2DRenderFactory;
 import com.nextbreakpoint.nextfractal.twister.renderer.OverlayTwisterRenderer;
 import com.nextbreakpoint.nextfractal.twister.renderer.TwisterRenderer;
 import com.nextbreakpoint.nextfractal.twister.renderer.TwisterRenderingHints;
+import com.nextbreakpoint.nextfractal.twister.renderer.java2D.Java2DRenderFactory;
 
 /**
  * @author Andrea Medeghini
@@ -365,6 +365,7 @@ public class LocalSpoolJob implements SpoolJobInterface {
 							final Map<Object, Object> overlayHints = new HashMap<Object, Object>();
 							overlayHints.put(TwisterRenderingHints.KEY_MEMORY, TwisterRenderingHints.MEMORY_LOW);
 							overlayHints.put(TwisterRenderingHints.KEY_TYPE, TwisterRenderingHints.TYPE_OVERLAY);
+							overlayRenderer.setRenderFactory(new Java2DRenderFactory());
 							overlayRenderer.setRenderingHints(overlayHints);
 							overlayRenderer.setTile(new Tile(new IntegerVector2D(iw, ih), new IntegerVector2D(tw, th), new IntegerVector2D(tx, ty), new IntegerVector2D(bw, bh)));
 							renderer.prepareImage(false);
@@ -407,6 +408,7 @@ public class LocalSpoolJob implements SpoolJobInterface {
 						renderer = new DefaultTwisterRenderer(runtime);
 						final Map<Object, Object> hints = new HashMap<Object, Object>();
 						hints.put(TwisterRenderingHints.KEY_MEMORY, TwisterRenderingHints.MEMORY_LOW);
+						renderer.setRenderFactory(new Java2DRenderFactory());
 						renderer.setRenderingHints(hints);
 						renderer.setTile(new Tile(new IntegerVector2D(iw, ih), new IntegerVector2D(tw, th), new IntegerVector2D(tx, ty), new IntegerVector2D(bw, bh)));
 						jobRaf = service.getJobRandomAccessFile(jobDataRow.getJobId());

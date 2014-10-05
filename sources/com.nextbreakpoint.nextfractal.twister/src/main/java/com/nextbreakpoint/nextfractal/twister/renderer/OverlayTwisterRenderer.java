@@ -80,10 +80,12 @@ public class OverlayTwisterRenderer implements TwisterRenderer {
 						if (sublayer.isVisible()) {
 							final ImageRuntimeElement image = sublayer.getImage();
 							if ((image != null) && (image.getImageRuntime() != null)) {
+								image.getImageRuntime().setRenderFactory(renderFactory);
 								image.getImageRuntime().setRenderingHints(hints);
 								image.getImageRuntime().setTile(tile);
 								if (tile != null) {
-									image.getImageRuntime().drawImage(g);
+									RenderGraphicsContext gc = renderFactory.createGraphicsContext(g);
+									image.getImageRuntime().drawImage(gc);
 								}
 							}
 						}
@@ -115,7 +117,8 @@ public class OverlayTwisterRenderer implements TwisterRenderer {
 								image.getImageRuntime().setRenderingHints(hints);
 								image.getImageRuntime().setTile(tile);
 								if (tile != null) {
-									image.getImageRuntime().drawImage(g, x, y);
+									RenderGraphicsContext gc = renderFactory.createGraphicsContext(g);
+									image.getImageRuntime().drawImage(gc, x, y);
 								}
 							}
 						}
@@ -147,7 +150,8 @@ public class OverlayTwisterRenderer implements TwisterRenderer {
 								image.getImageRuntime().setRenderingHints(hints);
 								image.getImageRuntime().setTile(tile);
 								if (tile != null) {
-									image.getImageRuntime().drawImage(g, x, y, w, h);
+									RenderGraphicsContext gc = renderFactory.createGraphicsContext(g);
+									image.getImageRuntime().drawImage(gc, x, y, w, h);
 								}
 							}
 						}
@@ -179,7 +183,8 @@ public class OverlayTwisterRenderer implements TwisterRenderer {
 								image.getImageRuntime().setRenderingHints(hints);
 								image.getImageRuntime().setTile(tile);
 								if (tile != null) {
-									image.getImageRuntime().drawImage(g, x, y, w, h);
+									RenderGraphicsContext gc = renderFactory.createGraphicsContext(g);
+									image.getImageRuntime().drawImage(gc, x, y, w, h);
 								}
 							}
 						}
@@ -242,6 +247,7 @@ public class OverlayTwisterRenderer implements TwisterRenderer {
 
 	private void startLayer(final ImageLayerRuntimeElement layer) {
 		if ((layer.getImage() != null) && (layer.getImage().getImageRuntime() != null)) {
+			layer.getImage().getImageRuntime().setRenderFactory(renderFactory);
 			layer.getImage().getImageRuntime().setRenderingHints(hints);
 			layer.getImage().getImageRuntime().setTile(tile);
 			try {

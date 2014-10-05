@@ -25,14 +25,8 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.renderer;
 
-import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
 import java.util.Map;
 import java.util.concurrent.ThreadFactory;
-
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.transform.Affine;
 
 import com.nextbreakpoint.nextfractal.contextfree.ContextFreeRuntime;
 import com.nextbreakpoint.nextfractal.contextfree.cfdg.CFDGRuntimeElement;
@@ -41,9 +35,11 @@ import com.nextbreakpoint.nextfractal.core.util.DoubleVector4D;
 import com.nextbreakpoint.nextfractal.core.util.IntegerVector2D;
 import com.nextbreakpoint.nextfractal.core.util.IntegerVector4D;
 import com.nextbreakpoint.nextfractal.core.util.RenderWorker;
-import com.nextbreakpoint.nextfractal.core.util.Surface;
 import com.nextbreakpoint.nextfractal.core.util.Tile;
+import com.nextbreakpoint.nextfractal.twister.renderer.RenderAffine;
+import com.nextbreakpoint.nextfractal.twister.renderer.RenderBuffer;
 import com.nextbreakpoint.nextfractal.twister.renderer.RenderFactory;
+import com.nextbreakpoint.nextfractal.twister.renderer.RenderGraphicsContext;
 import com.nextbreakpoint.nextfractal.twister.renderer.TwisterRenderer;
 import com.nextbreakpoint.nextfractal.twister.util.View;
 
@@ -51,10 +47,8 @@ import com.nextbreakpoint.nextfractal.twister.util.View;
  * @author Andrea Medeghini
  */
 public abstract class AbstractContextFreeRenderer implements ContextFreeRenderer {
-	private Graphics2D newBuffer;
-	private Graphics2D oldBuffer;
-	private BufferedImage newImage;
-	private BufferedImage oldImage;
+	private RenderBuffer newBuffer;
+	private RenderBuffer oldBuffer;
 	private IntegerVector2D bufferSize;
 	private Tile newTile;
 	private Tile oldTile;
@@ -66,7 +60,7 @@ public abstract class AbstractContextFreeRenderer implements ContextFreeRenderer
 	protected int oldImageMode = 0;
 	private boolean dynamic = false;
 	private boolean dynamicZoom = false;
-	private final AffineTransform transform = new AffineTransform();
+	private RenderAffine affine;
 	protected ContextFreeRuntime runtime;
 	protected View newView = new View(new IntegerVector4D(0, 0, 0, 0), new DoubleVector4D(0, 0, 1, 0), new DoubleVector4D(0, 0, 0, 0));
 	protected View oldView = new View(new IntegerVector4D(0, 0, 0, 0), new DoubleVector4D(0, 0, 1, 0), new DoubleVector4D(0, 0, 0, 0));
@@ -110,18 +104,10 @@ public abstract class AbstractContextFreeRenderer implements ContextFreeRenderer
 		if (newBuffer != null) {
 			newBuffer.dispose();
 		}
-		if (newImage != null) {
-			newImage.flush();
-		}
-		newImage = null;
 		newBuffer = null;
 		if (oldBuffer != null) {
 			oldBuffer.dispose();
 		}
-		if (oldImage != null) {
-			oldImage.flush();
-		}
-		oldImage = null;
 		oldBuffer = null;
 	}
 
@@ -132,10 +118,8 @@ public abstract class AbstractContextFreeRenderer implements ContextFreeRenderer
 		imageDim = (int) Math.sqrt(((oldTile.getImageSize().getX() + oldTile.getTileBorder().getX() * 2) * (oldTile.getImageSize().getX() + oldTile.getTileBorder().getX() * 2)) + ((oldTile.getImageSize().getY() + oldTile.getTileBorder().getY() * 2) * (oldTile.getImageSize().getY() + oldTile.getTileBorder().getY() * 2)));
 		tileDim = (int) Math.sqrt(((oldTile.getTileSize().getX() + oldTile.getTileBorder().getX() * 2) * (oldTile.getTileSize().getX() + oldTile.getTileBorder().getX() * 2)) + ((oldTile.getTileSize().getY() + oldTile.getTileBorder().getY() * 2) * (oldTile.getTileSize().getY() + oldTile.getTileBorder().getY() * 2)));
 		bufferSize = new IntegerVector2D(tileDim, tileDim);
-		newImage = new BufferedImage(bufferSize.getX(), bufferSize.getY(), Surface.DEFAULT_TYPE);
-		oldImage = newImage;//new BufferedImage(bufferSize.getX(), bufferSize.getY(), Surface.DEFAULT_TYPE);
-		newBuffer = newImage.createGraphics();
-		oldBuffer = newBuffer;//oldImage.createGraphics();
+		newBuffer = renderFactory.createBuffer(bufferSize.getX(), bufferSize.getY());
+		oldBuffer = newBuffer;
 	}
 
 	/**
@@ -143,24 +127,21 @@ public abstract class AbstractContextFreeRenderer implements ContextFreeRenderer
 	 */
 	protected final void swapImages() {
 		synchronized (lock) {
-			final BufferedImage tmpImage = oldImage;
-			oldImage = newImage;
-			newImage = tmpImage;
-			final Graphics2D tmpBuffer = oldBuffer;
+			final RenderBuffer tmpBuffer = oldBuffer;
 			oldBuffer = newBuffer;
 			newBuffer = tmpBuffer;
 		}
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderer.MandelbrotFractalRenderer#setRenderingHints(java.util.Map)
+	 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderer.ContextFreeFractalRenderer#setRenderingHints(java.util.Map)
 	 */
 	@Override
 	public void setRenderingHints(final Map<Object, Object> hints) {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderer.MandelbrotFractalRenderer#getRenderingStatus()
+	 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderer.ContextFreeFractalRenderer#getRenderingStatus()
 	 */
 	@Override
 	public int getRenderingStatus() {
@@ -168,7 +149,7 @@ public abstract class AbstractContextFreeRenderer implements ContextFreeRenderer
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderer.MandelbrotFractalRenderer#setMode(int)
+	 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderer.ContextFreeFractalRenderer#setMode(int)
 	 */
 	@Override
 	public void setMode(final int renderMode) {
@@ -176,7 +157,7 @@ public abstract class AbstractContextFreeRenderer implements ContextFreeRenderer
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderer.MandelbrotFractalRenderer#getMode()
+	 * @see com.nextbreakpoint.nextfractal.contextfree.renderer.ContextFreeRenderer#getMode()
 	 */
 	@Override
 	public int getMode() {
@@ -184,7 +165,7 @@ public abstract class AbstractContextFreeRenderer implements ContextFreeRenderer
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderer.MandelbrotFractalRenderer#setTile(com.nextbreakpoint.nextfractal.core.util.Tile)
+	 * @see com.nextbreakpoint.nextfractal.contextfree.renderer.ContextFreeRenderer#setTile(com.nextbreakpoint.nextfractal.core.util.Tile)
 	 */
 	@Override
 	public void setTile(final Tile tile) {
@@ -195,7 +176,7 @@ public abstract class AbstractContextFreeRenderer implements ContextFreeRenderer
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderer.MandelbrotFractalRenderer#getTile()
+	 * @see com.nextbreakpoint.nextfractal.contextfree.renderer.ContextFreeRenderer#getTile()
 	 */
 	@Override
 	public Tile getTile() {
@@ -203,7 +184,7 @@ public abstract class AbstractContextFreeRenderer implements ContextFreeRenderer
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderer.MandelbrotRenderer#getRenderFactory()
+	 * @see com.nextbreakpoint.nextfractal.contextfree.renderer.ContextFreeRenderer#getRenderFactory()
 	 */
 	@Override
 	public RenderFactory getRenderFactory() {
@@ -254,7 +235,7 @@ public abstract class AbstractContextFreeRenderer implements ContextFreeRenderer
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderer.MandelbrotFractalRenderer#setView(com.nextbreakpoint.nextfractal.twister.util.View)
+	 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderer.ContextFreeFractalRenderer#setView(com.nextbreakpoint.nextfractal.twister.util.View)
 	 */
 	@Override
 	public void setView(final View view) {
@@ -278,14 +259,14 @@ public abstract class AbstractContextFreeRenderer implements ContextFreeRenderer
 	protected void updateTransform() {
 		final int offsetX = (getBufferWidth() - oldTile.getTileSize().getX() - oldTile.getTileBorder().getX() * 2) / 2;
 		final int offsetY = (getBufferHeight() - oldTile.getTileSize().getY() - oldTile.getTileBorder().getY() * 2) / 2;
-		transform.setToTranslation(-offsetX, -offsetY);
 		final int centerX = getBufferWidth() / 2;
 		final int centerY = getBufferHeight() / 2;
-		transform.rotate(rotationValue, centerX, centerY);
+		affine = renderFactory.createTranslateAffine(-offsetX, -offsetY);
+		affine.append(renderFactory.createRotateAffine(rotationValue, centerX, centerY));
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderer.MandelbrotFractalRenderer#startRenderer()
+	 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderer.ContextFreeFractalRenderer#startRenderer()
 	 */
 	@Override
 	public void startRenderer() {
@@ -293,7 +274,7 @@ public abstract class AbstractContextFreeRenderer implements ContextFreeRenderer
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderer.MandelbrotFractalRenderer#abortRenderer()
+	 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderer.ContextFreeFractalRenderer#abortRenderer()
 	 */
 	@Override
 	public void abortRenderer() {
@@ -301,7 +282,7 @@ public abstract class AbstractContextFreeRenderer implements ContextFreeRenderer
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderer.MandelbrotFractalRenderer#joinRenderer()
+	 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderer.ContextFreeFractalRenderer#joinRenderer()
 	 */
 	@Override
 	public void joinRenderer() throws InterruptedException {
@@ -337,7 +318,7 @@ public abstract class AbstractContextFreeRenderer implements ContextFreeRenderer
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderer.MandelbrotFractalRenderer#asyncStop()
+	 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderer.ContextFreeFractalRenderer#asyncStop()
 	 */
 	@Override
 	public final void asyncStop() {
@@ -346,7 +327,7 @@ public abstract class AbstractContextFreeRenderer implements ContextFreeRenderer
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderer.MandelbrotFractalRenderer#asyncStart()
+	 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderer.ContextFreeFractalRenderer#asyncStart()
 	 */
 	@Override
 	public final void asyncStart() {
@@ -364,130 +345,70 @@ public abstract class AbstractContextFreeRenderer implements ContextFreeRenderer
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.contextfree.renderer.ContextFreeRenderer#drawImage(javafx.scene.canvas.GraphicsContext)
+	 * @see com.nextbreakpoint.nextfractal.contextfree.renderer.ContextFreeRenderer#drawImage(com.nextbreakpoint.nextfractal.twister.renderer.RenderGraphicsContext)
 	 */
 	@Override
-	public void drawImage(final GraphicsContext gc) {
+	public void drawImage(final RenderGraphicsContext gc) {
 		synchronized (lock) {
-			final Affine t = gc.getTransform();
 			if (oldTile != null) {
+				gc.saveTransform();
 				// g.setClip(oldTile.getTileBorder().getX(), oldTile.getTileBorder().getY(), oldTile.getTileSize().getX(), oldTile.getTileSize().getY());
 				// g.setClip(0, 0, oldTile.getTileSize().getX() + oldTile.getTileBorder().getX() + 2, oldTile.getTileSize().getY() + oldTile.getTileBorder().getY() + 2);
-//				gc.setTransform(transform);
-//				gc.drawImage(newImage, 0, 0, null);
-//				gc.setTransform(t);
-//				gc.setClip(null);
+				gc.setAffine(affine);
+				gc.drawImage(newBuffer.getImage(), 0, 0);
+				//gc.setClip(null);
 				// g.dispose();
+				gc.restoreTransform();
 			}
 		}
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.contextfree.renderer.ContextFreeRenderer#drawImage(javafx.scene.canvas.GraphicsContext, int, int)
+	 * @see com.nextbreakpoint.nextfractal.contextfree.renderer.ContextFreeRenderer#drawImage(com.nextbreakpoint.nextfractal.twister.renderer.RenderGraphicsContext, int, int)
 	 */
 	@Override
-	public void drawImage(final GraphicsContext gc, final int x, final int y) {
+	public void drawImage(final RenderGraphicsContext gc, final int x, final int y) {
 		synchronized (lock) {
-			final Affine t = gc.getTransform();
 			if (oldTile != null) {
+				gc.saveTransform();
 				// g.setClip(oldTile.getTileBorder().getX(), oldTile.getTileBorder().getY(), oldTile.getTileSize().getX(), oldTile.getTileSize().getY());
 				// g.setClip(0, 0, oldTile.getTileSize().getX() + oldTile.getTileBorder().getX() + 2, oldTile.getTileSize().getY() + oldTile.getTileBorder().getY() + 2);
-//				gc.setTransform(transform);
-//				gc.drawImage(newImage, x, y, null);
-//				gc.setTransform(t);
-//				gc.setClip(null);
+				gc.setAffine(affine);
+				gc.drawImage(newBuffer.getImage(), x, y);
+				//gc.setClip(null);
 				// g.dispose();
+				gc.restoreTransform();
 			}
 		}
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.contextfree.renderer.ContextFreeRenderer#drawImage(javafx.scene.canvas.GraphicsContext, int, int, int, int)
+	 * @see com.nextbreakpoint.nextfractal.contextfree.renderer.ContextFreeRenderer#drawImage(com.nextbreakpoint.nextfractal.twister.renderer.RenderGraphicsContext, int, int, int, int)
 	 */
 	@Override
-	public void drawImage(final GraphicsContext gc, final int x, final int y, final int w, final int h) {
+	public void drawImage(final RenderGraphicsContext gc, final int x, final int y, final int w, final int h) {
 		synchronized (lock) {
-			final Affine t = gc.getTransform();
 			if (oldTile != null) {
-//				gc.setClip(x, y, w, h);
-//				gc.setTransform(transform);
-//				final double sx = w / (double) getTile().getTileSize().getX();
-//				final double sy = h / (double) getTile().getTileSize().getY();
-//				final int dw = (int) Math.rint(bufferSize.getX() * sx);
-//				final int dh = (int) Math.rint(bufferSize.getY() * sy);
-//				gc.drawImage(newImage, x, y, dw, dh, null);
-//				gc.setTransform(t);
-//				gc.setClip(null);
-				// g.dispose();
-			}
-		}
-	}
-
-	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderer.MandelbrotFractalRenderer#drawImage(java.awt.Graphics2D)
-	 */
-	@Override
-	public void drawImage(final Graphics2D g) {
-		synchronized (lock) {
-			final AffineTransform t = g.getTransform();
-			if (oldTile != null) {
-				// g.setClip(oldTile.getTileBorder().getX(), oldTile.getTileBorder().getY(), oldTile.getTileSize().getX(), oldTile.getTileSize().getY());
-				// g.setClip(0, 0, oldTile.getTileSize().getX() + oldTile.getTileBorder().getX() + 2, oldTile.getTileSize().getY() + oldTile.getTileBorder().getY() + 2);
-				g.setTransform(transform);
-				g.drawImage(newImage, 0, 0, null);
-				g.setTransform(t);
-				g.setClip(null);
-				// g.dispose();
-			}
-		}
-	}
-
-	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderer.MandelbrotFractalRenderer#drawImage(java.awt.Graphics2D, int, int)
-	 */
-	@Override
-	public void drawImage(final Graphics2D g, final int x, final int y) {
-		synchronized (lock) {
-			final AffineTransform t = g.getTransform();
-			if (oldTile != null) {
-				// g.setClip(oldTile.getTileBorder().getX(), oldTile.getTileBorder().getY(), oldTile.getTileSize().getX(), oldTile.getTileSize().getY());
-				// g.setClip(0, 0, oldTile.getTileSize().getX() + oldTile.getTileBorder().getX() + 2, oldTile.getTileSize().getY() + oldTile.getTileBorder().getY() + 2);
-				g.setTransform(transform);
-				g.drawImage(newImage, x, y, null);
-				g.setTransform(t);
-				g.setClip(null);
-				// g.dispose();
-			}
-		}
-	}
-
-	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderer.MandelbrotFractalRenderer#drawImage(java.awt.Graphics2D, int, int, int, int)
-	 */
-	@Override
-	public void drawImage(final Graphics2D g, final int x, final int y, final int w, final int h) {
-		synchronized (lock) {
-			final AffineTransform t = g.getTransform();
-			if (oldTile != null) {
-				g.setClip(x, y, w, h);
-				g.setTransform(transform);
+				gc.saveTransform();
+				//TODO gc.setClip(x, y, w, h);
+				gc.setAffine(affine);
 				final double sx = w / (double) getTile().getTileSize().getX();
 				final double sy = h / (double) getTile().getTileSize().getY();
 				final int dw = (int) Math.rint(bufferSize.getX() * sx);
 				final int dh = (int) Math.rint(bufferSize.getY() * sy);
-				g.drawImage(newImage, x, y, dw, dh, null);
-				g.setTransform(t);
-				g.setClip(null);
+				gc.drawImage(newBuffer.getImage(), x, y, dw, dh);
+				//TODO gc.setClip(null);
 				// g.dispose();
+				gc.restoreTransform();
 			}
 		}
 	}
-
+	
 	/**
 	 * @return
 	 */
-	protected Graphics2D getGraphics() {
-		return oldBuffer;
+	protected RenderBuffer getRenderBuffer() {
+		return newBuffer;
 	}
 	
 	/**
@@ -500,7 +421,7 @@ public abstract class AbstractContextFreeRenderer implements ContextFreeRenderer
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderer.MandelbrotFractalRenderer#isInterrupted()
+	 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderer.ContextFreeFractalRenderer#isInterrupted()
 	 */
 	@Override
 	public boolean isInterrupted() {

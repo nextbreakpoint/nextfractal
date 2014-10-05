@@ -76,10 +76,10 @@ import com.nextbreakpoint.nextfractal.twister.TwisterConfig;
 import com.nextbreakpoint.nextfractal.twister.TwisterRuntime;
 import com.nextbreakpoint.nextfractal.twister.effect.extension.EffectExtensionRuntime;
 import com.nextbreakpoint.nextfractal.twister.renderer.DefaultTwisterRenderer;
-import com.nextbreakpoint.nextfractal.twister.renderer.Java2DRenderFactory;
 import com.nextbreakpoint.nextfractal.twister.renderer.OverlayTwisterRenderer;
 import com.nextbreakpoint.nextfractal.twister.renderer.TwisterRenderer;
 import com.nextbreakpoint.nextfractal.twister.renderer.TwisterRenderingHints;
+import com.nextbreakpoint.nextfractal.twister.renderer.java2D.Java2DRenderFactory;
 
 /**
  * @author Andrea Medeghini
@@ -401,6 +401,7 @@ public class TwisterPreviewCanvas extends Canvas implements RenderContext {
 		overlayHints.put(TwisterRenderingHints.KEY_TYPE, TwisterRenderingHints.TYPE_OVERLAY);
 		overlayRuntime = new TwisterRuntime(config);
 		overlayRenderer = new OverlayTwisterRenderer(overlayRuntime);
+		overlayRenderer.setRenderFactory(new Java2DRenderFactory());
 		overlayRenderer.setRenderingHints(overlayHints);
 		overlayRenderer.setTile(new Tile(new IntegerVector2D(size.getX(), size.getY()), new IntegerVector2D(size.getX(), size.getY()), new IntegerVector2D(0, 0), new IntegerVector2D(0, 0)));
 		this.config = config;

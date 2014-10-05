@@ -25,18 +25,11 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.renderer;
 
-import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
-import java.awt.image.BufferedImage;
 import java.util.Map;
 import java.util.concurrent.ThreadFactory;
 import java.util.logging.Logger;
-
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.PixelWriter;
-import javafx.scene.image.WritableImage;
-import javafx.scene.transform.Affine;
 
 import com.nextbreakpoint.nextfractal.core.math.Complex;
 import com.nextbreakpoint.nextfractal.core.util.Colors;
@@ -46,13 +39,15 @@ import com.nextbreakpoint.nextfractal.core.util.DoubleVector4D;
 import com.nextbreakpoint.nextfractal.core.util.IntegerVector2D;
 import com.nextbreakpoint.nextfractal.core.util.IntegerVector4D;
 import com.nextbreakpoint.nextfractal.core.util.RenderWorker;
-import com.nextbreakpoint.nextfractal.core.util.Surface;
 import com.nextbreakpoint.nextfractal.core.util.Tile;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotRuntime;
 import com.nextbreakpoint.nextfractal.mandelbrot.fractal.MandelbrotFractalRuntimeElement;
 import com.nextbreakpoint.nextfractal.mandelbrot.incolouringFormula.IncolouringFormulaRuntimeElement;
 import com.nextbreakpoint.nextfractal.mandelbrot.outcolouringFormula.OutcolouringFormulaRuntimeElement;
+import com.nextbreakpoint.nextfractal.twister.renderer.RenderAffine;
+import com.nextbreakpoint.nextfractal.twister.renderer.RenderBuffer;
 import com.nextbreakpoint.nextfractal.twister.renderer.RenderFactory;
+import com.nextbreakpoint.nextfractal.twister.renderer.RenderGraphicsContext;
 import com.nextbreakpoint.nextfractal.twister.renderer.TwisterRenderer;
 import com.nextbreakpoint.nextfractal.twister.util.View;
 
@@ -61,14 +56,8 @@ import com.nextbreakpoint.nextfractal.twister.util.View;
  */
 public abstract class AbstractMandelbrotRenderer implements MandelbrotRenderer {
 	protected static final Logger logger = Logger.getLogger(AbstractMandelbrotRenderer.class.getName());
-	private Graphics2D newBuffer;
-	private Graphics2D oldBuffer;
-	private BufferedImage newImage;
-	private BufferedImage oldImage;
-	private PixelWriter newRenderBuffer;
-	private PixelWriter oldRenderBuffer;
-	private WritableImage newRenderImage;
-	private WritableImage oldRenderImage;
+	private RenderBuffer newBuffer;
+	private RenderBuffer oldBuffer;
 	private IntegerVector2D bufferSize;
 	private Tile newTile;
 	private Tile oldTile;
@@ -84,8 +73,7 @@ public abstract class AbstractMandelbrotRenderer implements MandelbrotRenderer {
 	protected int oldImageMode = 0;
 	private boolean dynamic = false;
 	private boolean dynamicZoom = false;
-	private AffineTransform transform = new AffineTransform();
-	private Affine affine = new Affine();
+	private RenderAffine affine;
 	protected RenderedArea area = new RenderedArea();
 	protected RenderingStrategy renderingStrategy;
 	protected MandelbrotRuntime runtime;
@@ -173,7 +161,6 @@ public abstract class AbstractMandelbrotRenderer implements MandelbrotRenderer {
 		dispose();
 		area = null;
 		affine = null;
-		transform = null;
 		renderingStrategy = null;
 		super.finalize();
 	}
@@ -267,23 +254,11 @@ public abstract class AbstractMandelbrotRenderer implements MandelbrotRenderer {
 		if (newBuffer != null) {
 			newBuffer.dispose();
 		}
-		if (newImage != null) {
-			newImage.flush();
-		}
-		newImage = null;
 		newBuffer = null;
 		if (oldBuffer != null) {
 			oldBuffer.dispose();
 		}
-		if (oldImage != null) {
-			oldImage.flush();
-		}
-		oldImage = null;
 		oldBuffer = null;
-		newRenderImage = null;
-		newRenderBuffer = null;
-		oldRenderImage = null;
-		oldRenderBuffer = null;
 	}
 
 	/**
@@ -293,14 +268,9 @@ public abstract class AbstractMandelbrotRenderer implements MandelbrotRenderer {
 		imageDim = (int) Math.sqrt(((oldTile.getImageSize().getX() + oldTile.getTileBorder().getX() * 2) * (oldTile.getImageSize().getX() + oldTile.getTileBorder().getX() * 2)) + ((oldTile.getImageSize().getY() + oldTile.getTileBorder().getY() * 2) * (oldTile.getImageSize().getY() + oldTile.getTileBorder().getY() * 2)));
 		tileDim = (int) Math.sqrt(((oldTile.getTileSize().getX() + oldTile.getTileBorder().getX() * 2) * (oldTile.getTileSize().getX() + oldTile.getTileBorder().getX() * 2)) + ((oldTile.getTileSize().getY() + oldTile.getTileBorder().getY() * 2) * (oldTile.getTileSize().getY() + oldTile.getTileBorder().getY() * 2)));
 		bufferSize = new IntegerVector2D(tileDim, tileDim);
-		newImage = new BufferedImage(bufferSize.getX(), bufferSize.getY(), Surface.DEFAULT_TYPE);
-		oldImage = new BufferedImage(bufferSize.getX(), bufferSize.getY(), Surface.DEFAULT_TYPE);
-		newBuffer = newImage.createGraphics();
-		oldBuffer = oldImage.createGraphics();
-		newRenderImage = new WritableImage(bufferSize.getX(), bufferSize.getY());
-		oldRenderImage = new WritableImage(bufferSize.getX(), bufferSize.getY());
-		newRenderBuffer = newRenderImage.getPixelWriter();
-		oldRenderBuffer = oldRenderImage.getPixelWriter();
+		newBuffer = renderFactory.createBuffer(bufferSize.getX(), bufferSize.getY());
+		oldBuffer = renderFactory.createBuffer(bufferSize.getX(), bufferSize.getY());
+		affine = renderFactory.createAffine();
 	}
 
 	/**
@@ -308,26 +278,9 @@ public abstract class AbstractMandelbrotRenderer implements MandelbrotRenderer {
 	 */
 	protected final void swapImages() {
 		synchronized (lock) {
-			final BufferedImage tmpImage = oldImage;
-			oldImage = newImage;
-			newImage = tmpImage;
-			final Graphics2D tmpBuffer = oldBuffer;
+			final RenderBuffer tmpBuffer = oldBuffer;
 			oldBuffer = newBuffer;
 			newBuffer = tmpBuffer;
-		}
-	}
-
-	/**
-	 * 
-	 */
-	protected final void swapRenderImages() {
-		synchronized (lock) {
-			final WritableImage tmpRenderImage = oldRenderImage;
-			oldRenderImage = newRenderImage;
-			newRenderImage = tmpRenderImage;
-			final PixelWriter tmpRenderBuffer = oldRenderBuffer;
-			oldRenderBuffer = newRenderBuffer;
-			newRenderBuffer = tmpRenderBuffer;
 		}
 	}
 
@@ -430,7 +383,7 @@ public abstract class AbstractMandelbrotRenderer implements MandelbrotRenderer {
 			renderingStrategy = getMandelbrotRenderingStrategy();
 			if ((fractalRuntime.getRenderingFormula() != null) && (fractalRuntime.getRenderingFormula().getFormulaRuntime() != null) && !fractalRuntime.getRenderingFormula().getFormulaRuntime().isMandelbrotModeAllowed()) {
 				status = TwisterRenderer.STATUS_TERMINATED;
-				newBuffer.clearRect(0, 0, newImage.getWidth(), newImage.getHeight());
+				newBuffer.clear();
 				dynamicZoom = false;
 				return;
 			}
@@ -593,12 +546,14 @@ public abstract class AbstractMandelbrotRenderer implements MandelbrotRenderer {
 	protected void updateTransform() {
 		final int offsetX = (getBufferWidth() - oldTile.getTileSize().getX() - oldTile.getTileBorder().getX() * 2) / 2;
 		final int offsetY = (getBufferHeight() - oldTile.getTileSize().getY() - oldTile.getTileBorder().getY() * 2) / 2;
-		transform.setToTranslation(-offsetX, -offsetY);
-		affine.setToTransform(Affine.translate(-offsetX, -offsetY));
 		final int centerX = getBufferWidth() / 2;
 		final int centerY = getBufferHeight() / 2;
-		transform.rotate(rotationValue, centerX, centerY);
-		affine.append(Affine.rotate(rotationValue, centerX, centerY));
+//TODO cleanup		transform.setToTranslation(-offsetX, -offsetY);
+//		affine.setToTransform(Affine.translate(-offsetX, -offsetY));
+//		transform.rotate(rotationValue, centerX, centerY);
+//		affine.append(Affine.rotate(rotationValue, centerX, centerY));
+		affine = renderFactory.createTranslateAffine(-offsetX, -offsetY);
+		affine.append(renderFactory.createRotateAffine(rotationValue, centerX, centerY));
 	}
 
 	/**
@@ -714,121 +669,61 @@ public abstract class AbstractMandelbrotRenderer implements MandelbrotRenderer {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderer.MandelbrotRenderer#drawImage(javafx.scene.canvas.GraphicsContext)
+	 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderer.MandelbrotRenderer#drawImage(com.nextbreakpoint.nextfractal.twister.renderer.RenderGraphicsContext)
 	 */
 	@Override
-	public void drawImage(final GraphicsContext gc) {
+	public void drawImage(final RenderGraphicsContext gc) {
 		synchronized (lock) {
-			final Affine t = gc.getTransform();
 			if (oldTile != null) {
+				gc.saveTransform();
 				// g.setClip(oldTile.getTileBorder().getX(), oldTile.getTileBorder().getY(), oldTile.getTileSize().getX(), oldTile.getTileSize().getY());
 				// g.setClip(0, 0, oldTile.getTileSize().getX() + oldTile.getTileBorder().getX() + 2, oldTile.getTileSize().getY() + oldTile.getTileBorder().getY() + 2);
-				gc.setTransform(affine);
-				gc.drawImage(newRenderImage, 0, 0);
-				gc.setTransform(t);
+				gc.setAffine(affine);
+				gc.drawImage(newBuffer.getImage(), 0, 0);
 				//gc.setClip(null);
 				// g.dispose();
+				gc.restoreTransform();
 			}
 		}
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderer.MandelbrotRenderer#drawImage(javafx.scene.canvas.GraphicsContext, int, int)
+	 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderer.MandelbrotRenderer#drawImage(com.nextbreakpoint.nextfractal.twister.renderer.RenderGraphicsContext, int, int)
 	 */
 	@Override
-	public void drawImage(final GraphicsContext gc, final int x, final int y) {
+	public void drawImage(final RenderGraphicsContext gc, final int x, final int y) {
 		synchronized (lock) {
-			final Affine t = gc.getTransform();
 			if (oldTile != null) {
+				gc.saveTransform();
 				// g.setClip(oldTile.getTileBorder().getX(), oldTile.getTileBorder().getY(), oldTile.getTileSize().getX(), oldTile.getTileSize().getY());
 				// g.setClip(0, 0, oldTile.getTileSize().getX() + oldTile.getTileBorder().getX() + 2, oldTile.getTileSize().getY() + oldTile.getTileBorder().getY() + 2);
-				gc.setTransform(affine);
-				gc.drawImage(newRenderImage, x, y);
-				gc.setTransform(t);
+				gc.setAffine(affine);
+				gc.drawImage(newBuffer.getImage(), x, y);
 				//gc.setClip(null);
 				// g.dispose();
+				gc.restoreTransform();
 			}
 		}
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderer.MandelbrotRenderer#drawImage(javafx.scene.canvas.GraphicsContext, int, int, int, int)
+	 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderer.MandelbrotRenderer#drawImage(com.nextbreakpoint.nextfractal.twister.renderer.RenderGraphicsContext, int, int, int, int)
 	 */
 	@Override
-	public void drawImage(final GraphicsContext gc, final int x, final int y, final int w, final int h) {
+	public void drawImage(final RenderGraphicsContext gc, final int x, final int y, final int w, final int h) {
 		synchronized (lock) {
-			final Affine t = gc.getTransform();
 			if (oldTile != null) {
+				gc.saveTransform();
 				//TODO gc.setClip(x, y, w, h);
-				gc.setTransform(affine);
+				gc.setAffine(affine);
 				final double sx = w / (double) getTile().getTileSize().getX();
 				final double sy = h / (double) getTile().getTileSize().getY();
 				final int dw = (int) Math.rint(bufferSize.getX() * sx);
 				final int dh = (int) Math.rint(bufferSize.getY() * sy);
-				gc.drawImage(newRenderImage, x, y, dw, dh);
-				gc.setTransform(t);
+				gc.drawImage(newBuffer.getImage(), x, y, dw, dh);
 				//TODO gc.setClip(null);
 				// g.dispose();
-			}
-		}
-	}
-
-	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderer.MandelbrotRenderer#drawImage(java.awt.Graphics2D)
-	 */
-	@Override
-	public void drawImage(final Graphics2D g) {
-		synchronized (lock) {
-			final AffineTransform t = g.getTransform();
-			if (oldTile != null) {
-				// g.setClip(oldTile.getTileBorder().getX(), oldTile.getTileBorder().getY(), oldTile.getTileSize().getX(), oldTile.getTileSize().getY());
-				// g.setClip(0, 0, oldTile.getTileSize().getX() + oldTile.getTileBorder().getX() + 2, oldTile.getTileSize().getY() + oldTile.getTileBorder().getY() + 2);
-				g.setTransform(transform);
-				g.drawImage(newImage, 0, 0, null);
-				g.setTransform(t);
-				g.setClip(null);
-				// g.dispose();
-			}
-		}
-	}
-
-	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderer.MandelbrotRenderer#drawImage(java.awt.Graphics2D, int, int)
-	 */
-	@Override
-	public void drawImage(final Graphics2D g, final int x, final int y) {
-		synchronized (lock) {
-			final AffineTransform t = g.getTransform();
-			if (oldTile != null) {
-				// g.setClip(oldTile.getTileBorder().getX(), oldTile.getTileBorder().getY(), oldTile.getTileSize().getX(), oldTile.getTileSize().getY());
-				// g.setClip(0, 0, oldTile.getTileSize().getX() + oldTile.getTileBorder().getX() + 2, oldTile.getTileSize().getY() + oldTile.getTileBorder().getY() + 2);
-				g.setTransform(transform);
-				g.drawImage(newImage, x, y, null);
-				g.setTransform(t);
-				g.setClip(null);
-				// g.dispose();
-			}
-		}
-	}
-
-	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderer.MandelbrotRenderer#drawImage(java.awt.Graphics2D, int, int, int, int)
-	 */
-	@Override
-	public void drawImage(final Graphics2D g, final int x, final int y, final int w, final int h) {
-		synchronized (lock) {
-			final AffineTransform t = g.getTransform();
-			if (oldTile != null) {
-				g.setClip(x, y, w, h);
-				g.setTransform(transform);
-				final double sx = w / (double) getTile().getTileSize().getX();
-				final double sy = h / (double) getTile().getTileSize().getY();
-				final int dw = (int) Math.rint(bufferSize.getX() * sx);
-				final int dh = (int) Math.rint(bufferSize.getY() * sy);
-				g.drawImage(newImage, x, y, dw, dh, null);
-				g.setTransform(t);
-				g.setClip(null);
-				// g.dispose();
+				gc.restoreTransform();
 			}
 		}
 	}
@@ -836,17 +731,9 @@ public abstract class AbstractMandelbrotRenderer implements MandelbrotRenderer {
 	/**
 	 * @return
 	 */
-	protected Graphics2D getGraphics() {
+	protected RenderBuffer getRenderBuffer() {
 		swapImages();
 		return newBuffer;
-	}
-
-	/**
-	 * @return
-	 */
-	protected PixelWriter getPixelWriter() {
-		swapRenderImages();
-		return newRenderBuffer;
 	}
 
 	/**

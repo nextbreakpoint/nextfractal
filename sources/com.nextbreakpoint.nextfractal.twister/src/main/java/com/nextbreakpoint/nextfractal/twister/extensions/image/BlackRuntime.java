@@ -25,16 +25,14 @@
  */
 package com.nextbreakpoint.nextfractal.twister.extensions.image;
 
-import java.awt.Graphics2D;
 import java.util.Map;
-
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
 
 import com.nextbreakpoint.nextfractal.core.util.IntegerVector2D;
 import com.nextbreakpoint.nextfractal.core.util.Tile;
 import com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionRuntime;
+import com.nextbreakpoint.nextfractal.twister.renderer.RenderColor;
 import com.nextbreakpoint.nextfractal.twister.renderer.RenderFactory;
+import com.nextbreakpoint.nextfractal.twister.renderer.RenderGraphicsContext;
 import com.nextbreakpoint.nextfractal.twister.renderer.TwisterRenderer;
 import com.nextbreakpoint.nextfractal.twister.renderer.TwisterRenderingHints;
 
@@ -45,6 +43,7 @@ public class BlackRuntime extends ImageExtensionRuntime<BlackConfig> {
 	private RenderFactory renderFactory;
 	private boolean isOverlay;
 	private Tile tile;
+	private RenderColor color;
 
 	/**
 	 * @see com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionRuntime#setTile(com.nextbreakpoint.nextfractal.core.util.Tile)
@@ -84,51 +83,14 @@ public class BlackRuntime extends ImageExtensionRuntime<BlackConfig> {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionRuntime#drawImage(java.awt.Graphics2D)
-	 */
-	@Override
-	public void drawImage(final Graphics2D g2d) {
-		if (!isOverlay && (tile != null)) {
-			final int w = tile.getTileSize().getX() + tile.getTileBorder().getX();
-			final int h = tile.getTileSize().getY() + tile.getTileBorder().getY();
-			g2d.setColor(java.awt.Color.BLACK);
-			g2d.fillRect(0, 0, w, h);
-		}
-	}
-
-	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionRuntime#drawImage(java.awt.Graphics2D, int, int)
-	 */
-	@Override
-	public void drawImage(final Graphics2D g2d, final int x, final int y) {
-		if (!isOverlay && (tile != null)) {
-			final int w = tile.getTileSize().getX() + tile.getTileBorder().getX();
-			final int h = tile.getTileSize().getY() + tile.getTileBorder().getY();
-			g2d.setColor(java.awt.Color.BLACK);
-			g2d.fillRect(x, y, w, h);
-		}
-	}
-
-	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionRuntime#drawImage(java.awt.Graphics2D, int, int, int, int)
-	 */
-	@Override
-	public void drawImage(final Graphics2D g2d, final int x, final int y, final int w, final int h) {
-		if (!isOverlay && (tile != null)) {
-			g2d.setColor(java.awt.Color.BLACK);
-			g2d.fillRect(x, y, w, h);
-		}
-	}
-
-	/**
 	 * @see com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionRuntime#drawImage(javafx.scene.canvas.GraphicsContext)
 	 */
 	@Override
-	public void drawImage(GraphicsContext gc) {
+	public void drawImage(final RenderGraphicsContext gc) {
 		if (!isOverlay && (tile != null)) {
 			final int w = tile.getTileSize().getX() + tile.getTileBorder().getX();
 			final int h = tile.getTileSize().getY() + tile.getTileBorder().getY();
-			gc.setFill(Color.BLACK);
+			gc.setFill(color);
 			gc.fillRect(0, 0, w, h);
 		}
 	}
@@ -137,11 +99,11 @@ public class BlackRuntime extends ImageExtensionRuntime<BlackConfig> {
 	 * @see com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionRuntime#drawImage(javafx.scene.canvas.GraphicsContext, int, int)
 	 */
 	@Override
-	public void drawImage(final GraphicsContext gc, final int x, final int y) {
+	public void drawImage(final RenderGraphicsContext gc, final int x, final int y) {
 		if (!isOverlay && (tile != null)) {
 			final int w = tile.getTileSize().getX() + tile.getTileBorder().getX();
 			final int h = tile.getTileSize().getY() + tile.getTileBorder().getY();
-			gc.setFill(Color.BLACK);
+			gc.setFill(color);
 			gc.fillRect(x, y, w, h);
 		}
 	}
@@ -150,9 +112,9 @@ public class BlackRuntime extends ImageExtensionRuntime<BlackConfig> {
 	 * @see com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionRuntime#drawImage(javafx.scene.canvas.GraphicsContext, int, int, int, int)
 	 */
 	@Override
-	public void drawImage(final GraphicsContext gc, final int x, final int y, final int w, final int h) {
+	public void drawImage(final RenderGraphicsContext gc, final int x, final int y, final int w, final int h) {
 		if (!isOverlay && (tile != null)) {
-			gc.setFill(Color.BLACK);
+			gc.setFill(color);
 			gc.fillRect(x, y, w, h);
 		}
 	}
@@ -183,6 +145,7 @@ public class BlackRuntime extends ImageExtensionRuntime<BlackConfig> {
 	 */
 	@Override
 	public void prepareImage(final boolean isDynamicRequired) {
+		color = renderFactory.createColor(0, 0, 0, 255);
 	}
 
 	/**

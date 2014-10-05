@@ -25,14 +25,12 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.renderer;
 
-import java.awt.Graphics2D;
 import java.util.Map;
-
-import javafx.scene.canvas.GraphicsContext;
 
 import com.nextbreakpoint.nextfractal.contextfree.ContextFreeRuntime;
 import com.nextbreakpoint.nextfractal.core.util.Tile;
 import com.nextbreakpoint.nextfractal.twister.renderer.RenderFactory;
+import com.nextbreakpoint.nextfractal.twister.renderer.RenderGraphicsContext;
 import com.nextbreakpoint.nextfractal.twister.util.View;
 
 /**
@@ -51,14 +49,14 @@ public interface ContextFreeRenderer {
 	/**
 	 * @param gc
 	 */
-	public void drawImage(GraphicsContext gc);
+	public void drawImage(RenderGraphicsContext gc);
 
 	/**
 	 * @param gc
 	 * @param x
 	 * @param y
 	 */
-	public void drawImage(GraphicsContext gc, int x, int y);
+	public void drawImage(RenderGraphicsContext gc, int x, int y);
 
 	/**
 	 * @param gc
@@ -67,28 +65,7 @@ public interface ContextFreeRenderer {
 	 * @param w
 	 * @param h
 	 */
-	public void drawImage(GraphicsContext gc, int x, int y, int w, int h);
-
-	/**
-	 * @param g
-	 */
-	public void drawImage(Graphics2D g);
-
-	/**
-	 * @param g
-	 * @param x
-	 * @param y
-	 */
-	public void drawImage(Graphics2D g, int x, int y);
-
-	/**
-	 * @param g
-	 * @param x
-	 * @param y
-	 * @param w
-	 * @param h
-	 */
-	public void drawImage(Graphics2D g, int x, int y, int w, int h);
+	public void drawImage(RenderGraphicsContext gc, int x, int y, int w, int h);
 
 	/**
 	 * 

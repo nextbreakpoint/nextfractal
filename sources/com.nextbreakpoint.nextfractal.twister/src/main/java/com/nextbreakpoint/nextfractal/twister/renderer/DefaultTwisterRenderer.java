@@ -378,7 +378,8 @@ public class DefaultTwisterRenderer implements TwisterRenderer {
 		final Graphics2D g2d = tmpSurface0.getGraphics2D();
 		g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
 		if ((image != null) && (image.getImageRuntime() != null)) {
-			image.getImageRuntime().drawImage(g2d);
+			RenderGraphicsContext gc = renderFactory.createGraphicsContext(g2d);
+			image.getImageRuntime().drawImage(gc);
 		}
 		else {
 			// g2d.setColor(Color.BLACK);

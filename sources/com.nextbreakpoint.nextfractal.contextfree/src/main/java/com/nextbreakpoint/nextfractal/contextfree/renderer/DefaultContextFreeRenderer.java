@@ -39,6 +39,7 @@ import com.nextbreakpoint.nextfractal.contextfree.renderer.support.CFModificatio
 import com.nextbreakpoint.nextfractal.contextfree.renderer.support.CFRenderer;
 import com.nextbreakpoint.nextfractal.contextfree.renderer.support.CFShape;
 import com.nextbreakpoint.nextfractal.core.util.Color32bit;
+import com.nextbreakpoint.nextfractal.twister.renderer.RenderFactory;
 
 /**
  * @author Andrea Medeghini
@@ -47,7 +48,7 @@ public class DefaultContextFreeRenderer extends AbstractContextFreeRenderer {
 	private static final Logger logger = Logger.getLogger(DefaultContextFreeRenderer.class.getName());
 	
 	/**
-	 * 
+	 * @param threadPriority
 	 */
 	public DefaultContextFreeRenderer(final int threadPriority) {
 		super(threadPriority);
@@ -131,13 +132,13 @@ public class DefaultContextFreeRenderer extends AbstractContextFreeRenderer {
 	}
 
 	private void render(CFRenderer renderer, float offsetX, float offsetY, boolean partial) {
-		Graphics2D g2d = getGraphics();
-		configure(g2d);
-		AffineTransform tmpTransform = g2d.getTransform();
-		g2d.translate(offsetX, offsetY);
-		renderer.render(g2d, partial);
-		g2d.setTransform(tmpTransform);
-		swapImages();
+//TODO restore		Graphics2D g2d = getGraphics();
+//		configure(g2d);
+//		AffineTransform tmpTransform = g2d.getTransform();
+//		g2d.translate(offsetX, offsetY);
+//		renderer.render(g2d, partial);
+//		g2d.setTransform(tmpTransform);
+//		swapImages();
 	}
 
 	protected void configure(Graphics2D g2d) {
