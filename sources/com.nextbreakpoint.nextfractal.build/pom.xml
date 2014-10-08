@@ -10,13 +10,13 @@
 		<module>../com.nextbreakpoint.nextfractal.core</module>
 		<module>../com.nextbreakpoint.nextfractal.queue</module>
 		<module>../com.nextbreakpoint.nextfractal.devtools</module>
-		<module>../com.nextbreakpoint.nextfractal.core.swing</module>
+		<module>../com.nextbreakpoint.nextfractal.core.ui</module>
 		<module>../com.nextbreakpoint.nextfractal.twister</module>
-		<module>../com.nextbreakpoint.nextfractal.twister.swing</module>
+		<module>../com.nextbreakpoint.nextfractal.twister.ui</module>
 		<module>../com.nextbreakpoint.nextfractal.mandelbrot</module>
-		<module>../com.nextbreakpoint.nextfractal.mandelbrot.swing</module>
+		<module>../com.nextbreakpoint.nextfractal.mandelbrot.ui</module>
 		<module>../com.nextbreakpoint.nextfractal.contextfree</module>
-		<module>../com.nextbreakpoint.nextfractal.contextfree.swing</module>
+		<module>../com.nextbreakpoint.nextfractal.contextfree.ui</module>
 		<module>../com.nextbreakpoint.nextfractal.main</module>
 	</modules>
 	<build>
@@ -142,22 +142,22 @@
 		</dependency>
 		<dependency>
 			<groupId>com.nextbreakpoint</groupId>
-			<artifactId>com.nextbreakpoint.nextfractal.core.swing</artifactId>
+			<artifactId>com.nextbreakpoint.nextfractal.core.ui</artifactId>
 			<version>2.0.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.nextbreakpoint</groupId>
-			<artifactId>com.nextbreakpoint.nextfractal.twister.swing</artifactId>
+			<artifactId>com.nextbreakpoint.nextfractal.twister.ui</artifactId>
 			<version>2.0.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.nextbreakpoint</groupId>
-			<artifactId>com.nextbreakpoint.nextfractal.mandelbrot.swing</artifactId>
+			<artifactId>com.nextbreakpoint.nextfractal.mandelbrot.ui</artifactId>
 			<version>2.0.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.nextbreakpoint</groupId>
-			<artifactId>com.nextbreakpoint.nextfractal.contextfree.swing</artifactId>
+			<artifactId>com.nextbreakpoint.nextfractal.contextfree.ui</artifactId>
 			<version>1.0.0</version>
 		</dependency>
 		<dependency>
