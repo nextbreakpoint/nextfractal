@@ -23,42 +23,16 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.twister.ui.swing.extensions.devtools;
+package com.nextbreakpoint.nextfractal.twister.ui.javafx;
 
-import com.nextbreakpoint.nextfractal.devtools.descriptor.extension.DescriptorExtensionDescriptor;
-import com.nextbreakpoint.nextfractal.twister.extensions.devtools.SpeedDescriptorRuntime;
+import javafx.scene.layout.Pane;
 
 /**
  * @author Andrea Medeghini
  */
-public class SpeedDescriptorDescriptor extends DescriptorExtensionDescriptor {
+public abstract class View extends Pane {
 	/**
-	 * Returns the extensionId.
 	 * 
-	 * @return the extensionId.
 	 */
-	@Override
-	public String getExtensionId() {
-		return "devtools.descriptor.speed";
-	}
-
-	/**
-	 * Returns the extensionName.
-	 * 
-	 * @return the extensionName.
-	 */
-	@Override
-	public String getExtensionName() {
-		return "Speed Descriptor";
-	}
-
-	/**
-	 * Returns the extensionRuntimeClass.
-	 * 
-	 * @return the extensionRuntimeClass.
-	 */
-	@Override
-	public SpeedDescriptorRuntime getExtensionRuntime() {
-		return new SpeedDescriptorRuntime();
-	}
+	public abstract void dispose();
 }

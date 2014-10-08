@@ -23,42 +23,28 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.twister.ui.swing.extensions.devtools;
+package com.nextbreakpoint.nextfractal.twister.ui.swing.extensions;
 
-import com.nextbreakpoint.nextfractal.devtools.descriptor.extension.DescriptorExtensionDescriptor;
-import com.nextbreakpoint.nextfractal.twister.extensions.devtools.EffectDescriptorRuntime;
+import java.util.ResourceBundle;
+
+import com.nextbreakpoint.nextfractal.core.util.Resources;
 
 /**
  * @author Andrea Medeghini
  */
-public class EffectDescriptorDescriptor extends DescriptorExtensionDescriptor {
-	/**
-	 * Returns the extensionId.
-	 * 
-	 * @return the extensionId.
-	 */
-	@Override
-	public String getExtensionId() {
-		return "devtools.descriptor.effect";
+public class TwisterSwingExtensionResources extends Resources {
+	private static final TwisterSwingExtensionResources instance = new TwisterSwingExtensionResources();
+
+	private TwisterSwingExtensionResources() {
+		super(ResourceBundle.getBundle("twister_swing_extension_resources"));
 	}
 
 	/**
-	 * Returns the extensionName.
+	 * Returns the instance.
 	 * 
-	 * @return the extensionName.
+	 * @return the instance.
 	 */
-	@Override
-	public String getExtensionName() {
-		return "Effect Descriptor";
-	}
-
-	/**
-	 * Returns the extensionRuntimeClass.
-	 * 
-	 * @return the extensionRuntimeClass.
-	 */
-	@Override
-	public EffectDescriptorRuntime getExtensionRuntime() {
-		return new EffectDescriptorRuntime();
+	public static TwisterSwingExtensionResources getInstance() {
+		return TwisterSwingExtensionResources.instance;
 	}
 }

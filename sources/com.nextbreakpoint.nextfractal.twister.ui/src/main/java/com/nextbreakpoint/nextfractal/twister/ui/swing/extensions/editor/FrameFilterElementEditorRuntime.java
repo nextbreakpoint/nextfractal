@@ -32,7 +32,7 @@ import com.nextbreakpoint.nextfractal.core.ui.swing.extension.ConfigurableExtens
 import com.nextbreakpoint.nextfractal.twister.TwisterRegistry;
 import com.nextbreakpoint.nextfractal.twister.frameFilter.FrameFilterConfigElement;
 import com.nextbreakpoint.nextfractal.twister.frameFilter.FrameFilterConfigElementNodeValue;
-import com.nextbreakpoint.nextfractal.twister.ui.TwisterUIExtensionResources;
+import com.nextbreakpoint.nextfractal.twister.ui.swing.extensions.TwisterSwingExtensionResources;
 
 /**
  * @author Andrea Medeghini
@@ -70,7 +70,7 @@ public class FrameFilterElementEditorRuntime extends ConfigurableReferenceElemen
 	 */
 	@Override
 	protected String getInsertBeforeLabel() {
-		return TwisterUIExtensionResources.getInstance().getString("action.insertFrameFilterBefore");
+		return TwisterSwingExtensionResources.getInstance().getString("action.insertFrameFilterBefore");
 	}
 
 	/**
@@ -78,7 +78,7 @@ public class FrameFilterElementEditorRuntime extends ConfigurableReferenceElemen
 	 */
 	@Override
 	protected String getInsertAfterLabel() {
-		return TwisterUIExtensionResources.getInstance().getString("action.insertFrameFilterAfter");
+		return TwisterSwingExtensionResources.getInstance().getString("action.insertFrameFilterAfter");
 	}
 
 	/**
@@ -86,7 +86,7 @@ public class FrameFilterElementEditorRuntime extends ConfigurableReferenceElemen
 	 */
 	@Override
 	protected String getRemoveLabel() {
-		return TwisterUIExtensionResources.getInstance().getString("action.removeFrameFilter");
+		return TwisterSwingExtensionResources.getInstance().getString("action.removeFrameFilter");
 	}
 
 	/**
@@ -94,7 +94,7 @@ public class FrameFilterElementEditorRuntime extends ConfigurableReferenceElemen
 	 */
 	@Override
 	protected String getInsertAfterTooltip() {
-		return TwisterUIExtensionResources.getInstance().getString("tooltip.insertFrameFilterAfter");
+		return TwisterSwingExtensionResources.getInstance().getString("tooltip.insertFrameFilterAfter");
 	}
 
 	/**
@@ -102,7 +102,7 @@ public class FrameFilterElementEditorRuntime extends ConfigurableReferenceElemen
 	 */
 	@Override
 	protected String getInsertBeforeTooltip() {
-		return TwisterUIExtensionResources.getInstance().getString("tooltip.insertFrameFilterBefore");
+		return TwisterSwingExtensionResources.getInstance().getString("tooltip.insertFrameFilterBefore");
 	}
 
 	/**
@@ -110,7 +110,7 @@ public class FrameFilterElementEditorRuntime extends ConfigurableReferenceElemen
 	 */
 	@Override
 	protected String getRemoveTooltip() {
-		return TwisterUIExtensionResources.getInstance().getString("tooltip.removeFrameFilter");
+		return TwisterSwingExtensionResources.getInstance().getString("tooltip.removeFrameFilter");
 	}
 
 	/**
@@ -118,7 +118,7 @@ public class FrameFilterElementEditorRuntime extends ConfigurableReferenceElemen
 	 */
 	@Override
 	protected String getMoveDownLabel() {
-		return TwisterUIExtensionResources.getInstance().getString("action.moveDownFrameFilter");
+		return TwisterSwingExtensionResources.getInstance().getString("action.moveDownFrameFilter");
 	}
 
 	/**
@@ -126,7 +126,7 @@ public class FrameFilterElementEditorRuntime extends ConfigurableReferenceElemen
 	 */
 	@Override
 	protected String getMoveDownTooltip() {
-		return TwisterUIExtensionResources.getInstance().getString("tooltip.moveDownFrameFilter");
+		return TwisterSwingExtensionResources.getInstance().getString("tooltip.moveDownFrameFilter");
 	}
 
 	/**
@@ -134,7 +134,7 @@ public class FrameFilterElementEditorRuntime extends ConfigurableReferenceElemen
 	 */
 	@Override
 	protected String getMoveUpLabel() {
-		return TwisterUIExtensionResources.getInstance().getString("action.moveUpFrameFilter");
+		return TwisterSwingExtensionResources.getInstance().getString("action.moveUpFrameFilter");
 	}
 
 	/**
@@ -142,6 +142,6 @@ public class FrameFilterElementEditorRuntime extends ConfigurableReferenceElemen
 	 */
 	@Override
 	protected String getMoveUpTooltip() {
-		return TwisterUIExtensionResources.getInstance().getString("tooltip.moveUpFrameFilter");
+		return TwisterSwingExtensionResources.getInstance().getString("tooltip.moveUpFrameFilter");
 	}
 }

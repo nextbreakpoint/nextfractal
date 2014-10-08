@@ -23,42 +23,28 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.twister.ui.swing.extensions.devtools;
+package com.nextbreakpoint.nextfractal.twister.ui.javafx.extensions;
 
-import com.nextbreakpoint.nextfractal.devtools.descriptor.extension.DescriptorExtensionDescriptor;
-import com.nextbreakpoint.nextfractal.twister.extensions.devtools.ViewDescriptorRuntime;
+import java.util.ResourceBundle;
+
+import com.nextbreakpoint.nextfractal.core.util.Resources;
 
 /**
  * @author Andrea Medeghini
  */
-public class ViewDescriptorDescriptor extends DescriptorExtensionDescriptor {
-	/**
-	 * Returns the extensionId.
-	 * 
-	 * @return the extensionId.
-	 */
-	@Override
-	public String getExtensionId() {
-		return "devtools.descriptor.view";
+public class TwisterUIExtensionResources extends Resources {
+	private static final TwisterUIExtensionResources instance = new TwisterUIExtensionResources();
+
+	private TwisterUIExtensionResources() {
+		super(ResourceBundle.getBundle("twister_extension_resources"));
 	}
 
 	/**
-	 * Returns the extensionName.
+	 * Returns the instance.
 	 * 
-	 * @return the extensionName.
+	 * @return the instance.
 	 */
-	@Override
-	public String getExtensionName() {
-		return "View Descriptor";
-	}
-
-	/**
-	 * Returns the extensionRuntimeClass.
-	 * 
-	 * @return the extensionRuntimeClass.
-	 */
-	@Override
-	public ViewDescriptorRuntime getExtensionRuntime() {
-		return new ViewDescriptorRuntime();
+	public static TwisterUIExtensionResources getInstance() {
+		return TwisterUIExtensionResources.instance;
 	}
 }

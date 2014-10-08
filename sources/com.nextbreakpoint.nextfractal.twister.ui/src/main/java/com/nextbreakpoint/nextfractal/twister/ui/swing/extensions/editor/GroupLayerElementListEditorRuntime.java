@@ -40,7 +40,7 @@ import com.nextbreakpoint.nextfractal.core.ui.swing.util.GUIFactory;
 import com.nextbreakpoint.nextfractal.core.ui.swing.util.StackLayout;
 import com.nextbreakpoint.nextfractal.twister.layer.GroupLayerConfigElement;
 import com.nextbreakpoint.nextfractal.twister.layer.GroupLayerConfigElementNodeValue;
-import com.nextbreakpoint.nextfractal.twister.ui.TwisterUIExtensionResources;
+import com.nextbreakpoint.nextfractal.twister.ui.swing.extensions.TwisterSwingExtensionResources;
 
 /**
  * @author Andrea Medeghini
@@ -68,7 +68,7 @@ public class GroupLayerElementListEditorRuntime extends EditorExtensionRuntime {
 		 * @param nodeEditor
 		 */
 		public AppendAction(final NodeEditor nodeEditor) {
-			super(TwisterUIExtensionResources.getInstance().getString("action.appendGroupLayer"));
+			super(TwisterSwingExtensionResources.getInstance().getString("action.appendGroupLayer"));
 			this.nodeEditor = nodeEditor;
 		}
 
@@ -90,7 +90,7 @@ public class GroupLayerElementListEditorRuntime extends EditorExtensionRuntime {
 		 * @param nodeEditor
 		 */
 		public RemoveAllAction(final NodeEditor nodeEditor) {
-			super(TwisterUIExtensionResources.getInstance().getString("action.removeAllGroupLayers"));
+			super(TwisterSwingExtensionResources.getInstance().getString("action.removeAllGroupLayers"));
 			this.nodeEditor = nodeEditor;
 		}
 
@@ -111,8 +111,8 @@ public class GroupLayerElementListEditorRuntime extends EditorExtensionRuntime {
 		 */
 		public EditorComponent(final NodeEditor nodeEditor) {
 			setLayout(new StackLayout());
-			final JButton appendButton = GUIFactory.createButton(new AppendAction(nodeEditor), TwisterUIExtensionResources.getInstance().getString("tooltip.appendGroupLayer"));
-			final JButton removeButton = GUIFactory.createButton(new RemoveAllAction(nodeEditor), TwisterUIExtensionResources.getInstance().getString("tooltip.removeAllGroupLayers"));
+			final JButton appendButton = GUIFactory.createButton(new AppendAction(nodeEditor), TwisterSwingExtensionResources.getInstance().getString("tooltip.appendGroupLayer"));
+			final JButton removeButton = GUIFactory.createButton(new RemoveAllAction(nodeEditor), TwisterSwingExtensionResources.getInstance().getString("tooltip.removeAllGroupLayers"));
 			this.add(appendButton);
 			this.add(Box.createVerticalStrut(8));
 			this.add(removeButton);

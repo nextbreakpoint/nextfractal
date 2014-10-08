@@ -41,7 +41,7 @@ import com.nextbreakpoint.nextfractal.core.ui.swing.util.StackLayout;
 import com.nextbreakpoint.nextfractal.twister.image.ImageConfigElement;
 import com.nextbreakpoint.nextfractal.twister.layer.ImageLayerConfigElement;
 import com.nextbreakpoint.nextfractal.twister.layer.ImageLayerConfigElementNodeValue;
-import com.nextbreakpoint.nextfractal.twister.ui.TwisterUIExtensionResources;
+import com.nextbreakpoint.nextfractal.twister.ui.swing.extensions.TwisterSwingExtensionResources;
 
 /**
  * @author Andrea Medeghini
@@ -69,7 +69,7 @@ public class ImageLayerElementListEditorRuntime extends EditorExtensionRuntime {
 		 * @param nodeEditor
 		 */
 		public AppendAction(final NodeEditor nodeEditor) {
-			super(TwisterUIExtensionResources.getInstance().getString("action.appendImageLayer"));
+			super(TwisterSwingExtensionResources.getInstance().getString("action.appendImageLayer"));
 			this.nodeEditor = nodeEditor;
 		}
 
@@ -92,7 +92,7 @@ public class ImageLayerElementListEditorRuntime extends EditorExtensionRuntime {
 		 * @param nodeEditor
 		 */
 		public RemoveAllAction(final NodeEditor nodeEditor) {
-			super(TwisterUIExtensionResources.getInstance().getString("action.removeAllImageLayers"));
+			super(TwisterSwingExtensionResources.getInstance().getString("action.removeAllImageLayers"));
 			this.nodeEditor = nodeEditor;
 		}
 
@@ -113,8 +113,8 @@ public class ImageLayerElementListEditorRuntime extends EditorExtensionRuntime {
 		 */
 		public EditorComponent(final NodeEditor nodeEditor) {
 			setLayout(new StackLayout());
-			final JButton appendButton = GUIFactory.createButton(new AppendAction(nodeEditor), TwisterUIExtensionResources.getInstance().getString("tooltip.appendImageLayer"));
-			final JButton removeButton = GUIFactory.createButton(new RemoveAllAction(nodeEditor), TwisterUIExtensionResources.getInstance().getString("tooltip.removeAllImageLayers"));
+			final JButton appendButton = GUIFactory.createButton(new AppendAction(nodeEditor), TwisterSwingExtensionResources.getInstance().getString("tooltip.appendImageLayer"));
+			final JButton removeButton = GUIFactory.createButton(new RemoveAllAction(nodeEditor), TwisterSwingExtensionResources.getInstance().getString("tooltip.removeAllImageLayers"));
 			this.add(appendButton);
 			this.add(Box.createVerticalStrut(8));
 			this.add(removeButton);

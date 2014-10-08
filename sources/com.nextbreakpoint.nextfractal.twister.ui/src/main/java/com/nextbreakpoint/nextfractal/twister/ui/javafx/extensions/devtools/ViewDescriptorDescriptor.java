@@ -23,14 +23,42 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.twister.ui.swing;
+package com.nextbreakpoint.nextfractal.twister.ui.javafx.extensions.devtools;
+
+import com.nextbreakpoint.nextfractal.devtools.descriptor.extension.DescriptorExtensionDescriptor;
+import com.nextbreakpoint.nextfractal.twister.extensions.devtools.ViewDescriptorRuntime;
 
 /**
  * @author Andrea Medeghini
  */
-public interface RenderListener {
+public class ViewDescriptorDescriptor extends DescriptorExtensionDescriptor {
 	/**
+	 * Returns the extensionId.
 	 * 
+	 * @return the extensionId.
 	 */
-	public void frameRendered();
+	@Override
+	public String getExtensionId() {
+		return "devtools.descriptor.view";
+	}
+
+	/**
+	 * Returns the extensionName.
+	 * 
+	 * @return the extensionName.
+	 */
+	@Override
+	public String getExtensionName() {
+		return "View Descriptor";
+	}
+
+	/**
+	 * Returns the extensionRuntimeClass.
+	 * 
+	 * @return the extensionRuntimeClass.
+	 */
+	@Override
+	public ViewDescriptorRuntime getExtensionRuntime() {
+		return new ViewDescriptorRuntime();
+	}
 }

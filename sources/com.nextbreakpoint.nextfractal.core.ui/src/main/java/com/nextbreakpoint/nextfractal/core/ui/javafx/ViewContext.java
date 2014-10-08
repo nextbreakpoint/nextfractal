@@ -23,16 +23,36 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.twister.ui.javafx;
+package com.nextbreakpoint.nextfractal.core.ui.javafx;
 
-import javafx.scene.layout.Pane;
+import javafx.scene.Node;
 
 /**
  * @author Andrea Medeghini
  */
-public abstract class ViewPanel extends Pane {
+public interface ViewContext {
+	/**
+	 * @param c
+	 */
+	public void setComponent(Node c);
+
+	/**
+	 * @param c
+	 */
+	public void removeComponent(Node c);
+
 	/**
 	 * 
 	 */
-	public abstract void dispose();
+	public void resize();
+
+	/**
+	 * 
+	 */
+	public void resize(int amount);
+
+	/**
+	 * @param c
+	 */
+	public void restoreComponent(Node c);
 }

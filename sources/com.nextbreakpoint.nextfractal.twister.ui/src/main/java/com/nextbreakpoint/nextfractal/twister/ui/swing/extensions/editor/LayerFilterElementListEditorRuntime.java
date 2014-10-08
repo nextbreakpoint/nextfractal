@@ -32,7 +32,7 @@ import com.nextbreakpoint.nextfractal.core.ui.swing.extension.ConfigurableExtens
 import com.nextbreakpoint.nextfractal.twister.TwisterRegistry;
 import com.nextbreakpoint.nextfractal.twister.layerFilter.LayerFilterConfigElement;
 import com.nextbreakpoint.nextfractal.twister.layerFilter.LayerFilterConfigElementNodeValue;
-import com.nextbreakpoint.nextfractal.twister.ui.TwisterUIExtensionResources;
+import com.nextbreakpoint.nextfractal.twister.ui.swing.extensions.TwisterSwingExtensionResources;
 
 /**
  * @author Andrea Medeghini
@@ -62,7 +62,7 @@ public class LayerFilterElementListEditorRuntime extends ConfigurableReferenceEl
 	 */
 	@Override
 	protected String getAppendLabel() {
-		return TwisterUIExtensionResources.getInstance().getString("action.appendLayerFilter");
+		return TwisterSwingExtensionResources.getInstance().getString("action.appendLayerFilter");
 	}
 
 	/**
@@ -70,7 +70,7 @@ public class LayerFilterElementListEditorRuntime extends ConfigurableReferenceEl
 	 */
 	@Override
 	protected String getRemoveAllLabel() {
-		return TwisterUIExtensionResources.getInstance().getString("action.removeAllLayerFilters");
+		return TwisterSwingExtensionResources.getInstance().getString("action.removeAllLayerFilters");
 	}
 
 	/**
@@ -78,7 +78,7 @@ public class LayerFilterElementListEditorRuntime extends ConfigurableReferenceEl
 	 */
 	@Override
 	protected String getAppendTooltip() {
-		return TwisterUIExtensionResources.getInstance().getString("tooltip.appendLayerFilter");
+		return TwisterSwingExtensionResources.getInstance().getString("tooltip.appendLayerFilter");
 	}
 
 	/**
@@ -86,6 +86,6 @@ public class LayerFilterElementListEditorRuntime extends ConfigurableReferenceEl
 	 */
 	@Override
 	protected String getRemoveAllTooltip() {
-		return TwisterUIExtensionResources.getInstance().getString("tooltip.removeAllLayerFilters");
+		return TwisterSwingExtensionResources.getInstance().getString("tooltip.removeAllLayerFilters");
 	}
 }

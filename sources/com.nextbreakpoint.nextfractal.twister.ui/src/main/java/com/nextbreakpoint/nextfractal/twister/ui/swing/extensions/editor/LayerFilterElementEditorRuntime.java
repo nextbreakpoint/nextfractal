@@ -32,7 +32,7 @@ import com.nextbreakpoint.nextfractal.core.ui.swing.extension.ConfigurableExtens
 import com.nextbreakpoint.nextfractal.twister.TwisterRegistry;
 import com.nextbreakpoint.nextfractal.twister.layerFilter.LayerFilterConfigElement;
 import com.nextbreakpoint.nextfractal.twister.layerFilter.LayerFilterConfigElementNodeValue;
-import com.nextbreakpoint.nextfractal.twister.ui.TwisterUIExtensionResources;
+import com.nextbreakpoint.nextfractal.twister.ui.swing.extensions.TwisterSwingExtensionResources;
 
 /**
  * @author Andrea Medeghini
@@ -70,7 +70,7 @@ public class LayerFilterElementEditorRuntime extends ConfigurableReferenceElemen
 	 */
 	@Override
 	protected String getInsertBeforeLabel() {
-		return TwisterUIExtensionResources.getInstance().getString("action.insertLayerFilterBefore");
+		return TwisterSwingExtensionResources.getInstance().getString("action.insertLayerFilterBefore");
 	}
 
 	/**
@@ -78,7 +78,7 @@ public class LayerFilterElementEditorRuntime extends ConfigurableReferenceElemen
 	 */
 	@Override
 	protected String getInsertAfterLabel() {
-		return TwisterUIExtensionResources.getInstance().getString("action.insertLayerFilterAfter");
+		return TwisterSwingExtensionResources.getInstance().getString("action.insertLayerFilterAfter");
 	}
 
 	/**
@@ -86,7 +86,7 @@ public class LayerFilterElementEditorRuntime extends ConfigurableReferenceElemen
 	 */
 	@Override
 	protected String getRemoveLabel() {
-		return TwisterUIExtensionResources.getInstance().getString("action.removeLayerFilter");
+		return TwisterSwingExtensionResources.getInstance().getString("action.removeLayerFilter");
 	}
 
 	/**
@@ -94,7 +94,7 @@ public class LayerFilterElementEditorRuntime extends ConfigurableReferenceElemen
 	 */
 	@Override
 	protected String getInsertAfterTooltip() {
-		return TwisterUIExtensionResources.getInstance().getString("tooltip.insertLayerFilterAfter");
+		return TwisterSwingExtensionResources.getInstance().getString("tooltip.insertLayerFilterAfter");
 	}
 
 	/**
@@ -102,7 +102,7 @@ public class LayerFilterElementEditorRuntime extends ConfigurableReferenceElemen
 	 */
 	@Override
 	protected String getInsertBeforeTooltip() {
-		return TwisterUIExtensionResources.getInstance().getString("tooltip.insertLayerFilterBefore");
+		return TwisterSwingExtensionResources.getInstance().getString("tooltip.insertLayerFilterBefore");
 	}
 
 	/**
@@ -110,7 +110,7 @@ public class LayerFilterElementEditorRuntime extends ConfigurableReferenceElemen
 	 */
 	@Override
 	protected String getRemoveTooltip() {
-		return TwisterUIExtensionResources.getInstance().getString("tooltip.removeLayerFilter");
+		return TwisterSwingExtensionResources.getInstance().getString("tooltip.removeLayerFilter");
 	}
 
 	/**
@@ -118,7 +118,7 @@ public class LayerFilterElementEditorRuntime extends ConfigurableReferenceElemen
 	 */
 	@Override
 	protected String getMoveDownLabel() {
-		return TwisterUIExtensionResources.getInstance().getString("action.moveDownLayerFilter");
+		return TwisterSwingExtensionResources.getInstance().getString("action.moveDownLayerFilter");
 	}
 
 	/**
@@ -126,7 +126,7 @@ public class LayerFilterElementEditorRuntime extends ConfigurableReferenceElemen
 	 */
 	@Override
 	protected String getMoveDownTooltip() {
-		return TwisterUIExtensionResources.getInstance().getString("tooltip.moveDownLayerFilter");
+		return TwisterSwingExtensionResources.getInstance().getString("tooltip.moveDownLayerFilter");
 	}
 
 	/**
@@ -134,7 +134,7 @@ public class LayerFilterElementEditorRuntime extends ConfigurableReferenceElemen
 	 */
 	@Override
 	protected String getMoveUpLabel() {
-		return TwisterUIExtensionResources.getInstance().getString("action.moveUpLayerFilter");
+		return TwisterSwingExtensionResources.getInstance().getString("action.moveUpLayerFilter");
 	}
 
 	/**
@@ -142,6 +142,6 @@ public class LayerFilterElementEditorRuntime extends ConfigurableReferenceElemen
 	 */
 	@Override
 	protected String getMoveUpTooltip() {
-		return TwisterUIExtensionResources.getInstance().getString("tooltip.moveUpLayerFilter");
+		return TwisterSwingExtensionResources.getInstance().getString("tooltip.moveUpLayerFilter");
 	}
 }

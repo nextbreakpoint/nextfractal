@@ -23,7 +23,7 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.twister.ui;
+package com.nextbreakpoint.nextfractal.twister.ui.javafx;
 
 import java.util.ResourceBundle;
 
@@ -32,11 +32,11 @@ import com.nextbreakpoint.nextfractal.core.util.Resources;
 /**
  * @author Andrea Medeghini
  */
-public class TwisterUIExtensionResources extends Resources {
-	private static final TwisterUIExtensionResources instance = new TwisterUIExtensionResources();
+public class TwisterUIResources extends Resources {
+	private static final TwisterUIResources instance = new TwisterUIResources();
 
-	private TwisterUIExtensionResources() {
-		super(ResourceBundle.getBundle("twister_swing_extension_resources"));
+	private TwisterUIResources() {
+		super(ResourceBundle.getBundle("twister_ui_resources"));
 	}
 
 	/**
@@ -44,7 +44,7 @@ public class TwisterUIExtensionResources extends Resources {
 	 * 
 	 * @return the instance.
 	 */
-	public static TwisterUIExtensionResources getInstance() {
-		return TwisterUIExtensionResources.instance;
+	public static TwisterUIResources getInstance() {
+		return TwisterUIResources.instance;
 	}
 }

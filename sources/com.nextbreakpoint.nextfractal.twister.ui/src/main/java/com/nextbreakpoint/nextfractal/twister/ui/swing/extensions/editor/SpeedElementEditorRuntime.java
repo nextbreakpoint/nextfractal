@@ -45,7 +45,7 @@ import com.nextbreakpoint.nextfractal.core.ui.swing.editor.extension.EditorExten
 import com.nextbreakpoint.nextfractal.core.ui.swing.util.GUIFactory;
 import com.nextbreakpoint.nextfractal.core.util.DoubleVector4D;
 import com.nextbreakpoint.nextfractal.twister.common.SpeedElementNodeValue;
-import com.nextbreakpoint.nextfractal.twister.ui.TwisterUIExtensionResources;
+import com.nextbreakpoint.nextfractal.twister.ui.swing.extensions.TwisterSwingExtensionResources;
 import com.nextbreakpoint.nextfractal.twister.util.Speed;
 
 /**
@@ -73,9 +73,9 @@ public class SpeedElementEditorRuntime extends EditorExtensionRuntime {
 			setLayout(new BorderLayout());
 			final Speed speed = ((SpeedElementNodeValue) nodeEditor.getNodeValue()).getValue();
 			final JPanel panel = new JPanel(new GridLayout(1, 2, 4, 4));
-			panels[0] = new VectorPanel(TwisterUIExtensionResources.getInstance().getString("label.position"), speed.getPosition());
+			panels[0] = new VectorPanel(TwisterSwingExtensionResources.getInstance().getString("label.position"), speed.getPosition());
 			panel.add(panels[0]);
-			panels[1] = new VectorPanel(TwisterUIExtensionResources.getInstance().getString("label.rotation"), speed.getRotation());
+			panels[1] = new VectorPanel(TwisterSwingExtensionResources.getInstance().getString("label.rotation"), speed.getRotation());
 			panel.add(panels[1]);
 			this.add(panel, BorderLayout.CENTER);
 		}
@@ -131,28 +131,28 @@ public class SpeedElementEditorRuntime extends EditorExtensionRuntime {
 				textFields[0].addFocusListener(new FieldListener(nodeEditor));
 				textFields[0].setColumns(10);
 				textFields[0].setCaretPosition(0);
-				textFields[0].setToolTipText(TwisterUIExtensionResources.getInstance().getString("tooltip.vectorX"));
+				textFields[0].setToolTipText(TwisterSwingExtensionResources.getInstance().getString("tooltip.vectorX"));
 				textFields[1] = new VectorField();
 				textFields[1].setText(String.valueOf(vector.getY()));
 				textFields[1].addActionListener(new FieldListener(nodeEditor));
 				textFields[1].addFocusListener(new FieldListener(nodeEditor));
 				textFields[1].setColumns(10);
 				textFields[1].setCaretPosition(0);
-				textFields[1].setToolTipText(TwisterUIExtensionResources.getInstance().getString("tooltip.vectorY"));
+				textFields[1].setToolTipText(TwisterSwingExtensionResources.getInstance().getString("tooltip.vectorY"));
 				textFields[2] = new VectorField();
 				textFields[2].setText(String.valueOf(vector.getZ()));
 				textFields[2].addActionListener(new FieldListener(nodeEditor));
 				textFields[2].addFocusListener(new FieldListener(nodeEditor));
 				textFields[2].setColumns(10);
 				textFields[2].setCaretPosition(0);
-				textFields[2].setToolTipText(TwisterUIExtensionResources.getInstance().getString("tooltip.vectorZ"));
+				textFields[2].setToolTipText(TwisterSwingExtensionResources.getInstance().getString("tooltip.vectorZ"));
 				textFields[3] = new VectorField();
 				textFields[3].setText(String.valueOf(vector.getW()));
 				textFields[3].addActionListener(new FieldListener(nodeEditor));
 				textFields[3].addFocusListener(new FieldListener(nodeEditor));
 				textFields[3].setColumns(10);
 				textFields[3].setCaretPosition(0);
-				textFields[3].setToolTipText(TwisterUIExtensionResources.getInstance().getString("tooltip.vectorW"));
+				textFields[3].setToolTipText(TwisterSwingExtensionResources.getInstance().getString("tooltip.vectorW"));
 				this.add(GUIFactory.createLabel(label, SwingConstants.CENTER));
 				this.add(createTextFieldPanel("X", textFields[0]));
 				this.add(createTextFieldPanel("Y", textFields[1]));

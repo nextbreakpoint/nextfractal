@@ -41,7 +41,7 @@ import com.nextbreakpoint.nextfractal.core.ui.swing.util.GUIFactory;
 import com.nextbreakpoint.nextfractal.core.ui.swing.util.StackLayout;
 import com.nextbreakpoint.nextfractal.twister.layer.GroupLayerConfigElement;
 import com.nextbreakpoint.nextfractal.twister.layer.GroupLayerConfigElementNodeValue;
-import com.nextbreakpoint.nextfractal.twister.ui.TwisterUIExtensionResources;
+import com.nextbreakpoint.nextfractal.twister.ui.swing.extensions.TwisterSwingExtensionResources;
 
 /**
  * @author Andrea Medeghini
@@ -71,11 +71,11 @@ public class GroupLayerElementEditorRuntime extends EditorExtensionRuntime {
 		public EditorComponent(final NodeEditor nodeEditor) {
 			setLayout(new StackLayout());
 			if (nodeEditor.isParentMutable()) {
-				final JButton insertBeforeButton = GUIFactory.createButton(new InsertBeforeAction(nodeEditor), TwisterUIExtensionResources.getInstance().getString("tooltip.insertGroupLayerBefore"));
-				final JButton insertAfterButton = GUIFactory.createButton(new InsertAfterAction(nodeEditor), TwisterUIExtensionResources.getInstance().getString("tooltip.insertGroupLayerAfter"));
-				final JButton removeButton = GUIFactory.createButton(new RemoveAction(nodeEditor), TwisterUIExtensionResources.getInstance().getString("tooltip.removeGroupLayer"));
-				final JButton moveUpButton = GUIFactory.createButton(new MoveUpAction(nodeEditor), TwisterUIExtensionResources.getInstance().getString("tooltip.moveUpGroupLayer"));
-				final JButton moveDownButton = GUIFactory.createButton(new MoveDownAction(nodeEditor), TwisterUIExtensionResources.getInstance().getString("tooltip.moveDownGroupLayer"));
+				final JButton insertBeforeButton = GUIFactory.createButton(new InsertBeforeAction(nodeEditor), TwisterSwingExtensionResources.getInstance().getString("tooltip.insertGroupLayerBefore"));
+				final JButton insertAfterButton = GUIFactory.createButton(new InsertAfterAction(nodeEditor), TwisterSwingExtensionResources.getInstance().getString("tooltip.insertGroupLayerAfter"));
+				final JButton removeButton = GUIFactory.createButton(new RemoveAction(nodeEditor), TwisterSwingExtensionResources.getInstance().getString("tooltip.removeGroupLayer"));
+				final JButton moveUpButton = GUIFactory.createButton(new MoveUpAction(nodeEditor), TwisterSwingExtensionResources.getInstance().getString("tooltip.moveUpGroupLayer"));
+				final JButton moveDownButton = GUIFactory.createButton(new MoveDownAction(nodeEditor), TwisterSwingExtensionResources.getInstance().getString("tooltip.moveDownGroupLayer"));
 				this.add(insertBeforeButton);
 				this.add(Box.createVerticalStrut(8));
 				this.add(insertAfterButton);
@@ -119,7 +119,7 @@ public class GroupLayerElementEditorRuntime extends EditorExtensionRuntime {
 		 * @param nodeEditor
 		 */
 		public InsertAfterAction(final NodeEditor nodeEditor) {
-			super(TwisterUIExtensionResources.getInstance().getString("action.insertGroupLayerAfter"));
+			super(TwisterSwingExtensionResources.getInstance().getString("action.insertGroupLayerAfter"));
 			this.nodeEditor = nodeEditor;
 		}
 
@@ -141,7 +141,7 @@ public class GroupLayerElementEditorRuntime extends EditorExtensionRuntime {
 		 * @param nodeEditor
 		 */
 		public InsertBeforeAction(final NodeEditor nodeEditor) {
-			super(TwisterUIExtensionResources.getInstance().getString("action.insertGroupLayerBefore"));
+			super(TwisterSwingExtensionResources.getInstance().getString("action.insertGroupLayerBefore"));
 			this.nodeEditor = nodeEditor;
 		}
 
@@ -163,7 +163,7 @@ public class GroupLayerElementEditorRuntime extends EditorExtensionRuntime {
 		 * @param nodeEditor
 		 */
 		public RemoveAction(final NodeEditor nodeEditor) {
-			super(TwisterUIExtensionResources.getInstance().getString("action.removeGroupLayer"));
+			super(TwisterSwingExtensionResources.getInstance().getString("action.removeGroupLayer"));
 			this.nodeEditor = nodeEditor;
 		}
 
@@ -184,7 +184,7 @@ public class GroupLayerElementEditorRuntime extends EditorExtensionRuntime {
 		 * @param nodeEditor
 		 */
 		public MoveUpAction(final NodeEditor nodeEditor) {
-			super(TwisterUIExtensionResources.getInstance().getString("action.moveUpGroupLayer"));
+			super(TwisterSwingExtensionResources.getInstance().getString("action.moveUpGroupLayer"));
 			this.nodeEditor = nodeEditor;
 		}
 
@@ -205,7 +205,7 @@ public class GroupLayerElementEditorRuntime extends EditorExtensionRuntime {
 		 * @param nodeEditor
 		 */
 		public MoveDownAction(final NodeEditor nodeEditor) {
-			super(TwisterUIExtensionResources.getInstance().getString("action.moveDownGroupLayer"));
+			super(TwisterSwingExtensionResources.getInstance().getString("action.moveDownGroupLayer"));
 			this.nodeEditor = nodeEditor;
 		}
 

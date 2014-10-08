@@ -46,7 +46,7 @@ import com.nextbreakpoint.nextfractal.core.ui.swing.util.GUIFactory;
 import com.nextbreakpoint.nextfractal.core.util.DoubleVector4D;
 import com.nextbreakpoint.nextfractal.core.util.IntegerVector4D;
 import com.nextbreakpoint.nextfractal.twister.common.ViewElementNodeValue;
-import com.nextbreakpoint.nextfractal.twister.ui.TwisterUIExtensionResources;
+import com.nextbreakpoint.nextfractal.twister.ui.swing.extensions.TwisterSwingExtensionResources;
 import com.nextbreakpoint.nextfractal.twister.util.View;
 
 /**
@@ -73,15 +73,15 @@ public class ViewElementEditorRuntime extends EditorExtensionRuntime {
 			this.nodeEditor = nodeEditor;
 			setLayout(new BorderLayout());
 			final JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-			final JButton applyButton = GUIFactory.createButton(new ApplyAction(nodeEditor, panels), TwisterUIExtensionResources.getInstance().getString("tooltip.applyView"));
-			final JButton reloadButton = GUIFactory.createButton(new ReloadAction(nodeEditor, panels), TwisterUIExtensionResources.getInstance().getString("tooltip.reloadView"));
+			final JButton applyButton = GUIFactory.createButton(new ApplyAction(nodeEditor, panels), TwisterSwingExtensionResources.getInstance().getString("tooltip.applyView"));
+			final JButton reloadButton = GUIFactory.createButton(new ReloadAction(nodeEditor, panels), TwisterSwingExtensionResources.getInstance().getString("tooltip.reloadView"));
 			buttonsPanel.add(applyButton);
 			buttonsPanel.add(reloadButton);
 			final View view = ((ViewElementNodeValue) nodeEditor.getNodeValue()).getValue();
 			final JPanel panel = new JPanel(new GridLayout(1, 2, 4, 4));
-			panels[0] = new VectorPanel(TwisterUIExtensionResources.getInstance().getString("label.position"), view.getPosition());
+			panels[0] = new VectorPanel(TwisterSwingExtensionResources.getInstance().getString("label.position"), view.getPosition());
 			panel.add(panels[0]);
-			panels[1] = new VectorPanel(TwisterUIExtensionResources.getInstance().getString("label.rotation"), view.getRotation());
+			panels[1] = new VectorPanel(TwisterSwingExtensionResources.getInstance().getString("label.rotation"), view.getRotation());
 			panel.add(panels[1]);
 			this.add(panel, BorderLayout.CENTER);
 			this.add(buttonsPanel, BorderLayout.SOUTH);
@@ -136,22 +136,22 @@ public class ViewElementEditorRuntime extends EditorExtensionRuntime {
 				textFields[0].setText(String.valueOf(vector.getX()));
 				textFields[0].setColumns(10);
 				textFields[0].setCaretPosition(0);
-				textFields[0].setToolTipText(TwisterUIExtensionResources.getInstance().getString("tooltip.vectorX"));
+				textFields[0].setToolTipText(TwisterSwingExtensionResources.getInstance().getString("tooltip.vectorX"));
 				textFields[1] = new VectorField();
 				textFields[1].setText(String.valueOf(vector.getY()));
 				textFields[1].setColumns(10);
 				textFields[1].setCaretPosition(0);
-				textFields[1].setToolTipText(TwisterUIExtensionResources.getInstance().getString("tooltip.vectorY"));
+				textFields[1].setToolTipText(TwisterSwingExtensionResources.getInstance().getString("tooltip.vectorY"));
 				textFields[2] = new VectorField();
 				textFields[2].setText(String.valueOf(vector.getZ()));
 				textFields[2].setColumns(10);
 				textFields[2].setCaretPosition(0);
-				textFields[2].setToolTipText(TwisterUIExtensionResources.getInstance().getString("tooltip.vectorZ"));
+				textFields[2].setToolTipText(TwisterSwingExtensionResources.getInstance().getString("tooltip.vectorZ"));
 				textFields[3] = new VectorField();
 				textFields[3].setText(String.valueOf(vector.getW()));
 				textFields[3].setColumns(10);
 				textFields[3].setCaretPosition(0);
-				textFields[3].setToolTipText(TwisterUIExtensionResources.getInstance().getString("tooltip.vectorW"));
+				textFields[3].setToolTipText(TwisterSwingExtensionResources.getInstance().getString("tooltip.vectorW"));
 				this.add(GUIFactory.createLabel(label, SwingConstants.CENTER));
 				this.add(createTextFieldPanel("X", textFields[0]));
 				this.add(createTextFieldPanel("Y", textFields[1]));
@@ -194,7 +194,7 @@ public class ViewElementEditorRuntime extends EditorExtensionRuntime {
 			private final NodeEditor nodeEditor;
 
 			public ApplyAction(final NodeEditor nodeEditor, final VectorPanel[] panels) {
-				super(TwisterUIExtensionResources.getInstance().getString("action.applyView"));
+				super(TwisterSwingExtensionResources.getInstance().getString("action.applyView"));
 				this.panels = panels;
 				this.nodeEditor = nodeEditor;
 			}
@@ -277,7 +277,7 @@ public class ViewElementEditorRuntime extends EditorExtensionRuntime {
 			// private VectorPanel[] panels;
 			// private NodeEditor nodeEditor;
 			public ReloadAction(final NodeEditor nodeEditor, final VectorPanel[] panels) {
-				super(TwisterUIExtensionResources.getInstance().getString("action.reloadView"));
+				super(TwisterSwingExtensionResources.getInstance().getString("action.reloadView"));
 				// this.panels = panels;
 				// this.nodeEditor = nodeEditor;
 			}

@@ -42,7 +42,7 @@ import com.nextbreakpoint.nextfractal.core.ui.swing.util.StackLayout;
 import com.nextbreakpoint.nextfractal.twister.image.ImageConfigElement;
 import com.nextbreakpoint.nextfractal.twister.layer.ImageLayerConfigElement;
 import com.nextbreakpoint.nextfractal.twister.layer.ImageLayerConfigElementNodeValue;
-import com.nextbreakpoint.nextfractal.twister.ui.TwisterUIExtensionResources;
+import com.nextbreakpoint.nextfractal.twister.ui.swing.extensions.TwisterSwingExtensionResources;
 
 /**
  * @author Andrea Medeghini
@@ -72,11 +72,11 @@ public class ImageLayerElementEditorRuntime extends EditorExtensionRuntime {
 		public EditorComponent(final NodeEditor nodeEditor) {
 			setLayout(new StackLayout());
 			if (nodeEditor.isParentMutable()) {
-				final JButton insertBeforeButton = GUIFactory.createButton(new InsertBeforeAction(nodeEditor), TwisterUIExtensionResources.getInstance().getString("tooltip.insertImageLayerBefore"));
-				final JButton insertAfterButton = GUIFactory.createButton(new InsertAfterAction(nodeEditor), TwisterUIExtensionResources.getInstance().getString("tooltip.insertImageLayerAfter"));
-				final JButton removeButton = GUIFactory.createButton(new RemoveAction(nodeEditor), TwisterUIExtensionResources.getInstance().getString("tooltip.removeImageLayer"));
-				final JButton moveUpButton = GUIFactory.createButton(new MoveUpAction(nodeEditor), TwisterUIExtensionResources.getInstance().getString("tooltip.moveUpImageLayer"));
-				final JButton moveDownButton = GUIFactory.createButton(new MoveDownAction(nodeEditor), TwisterUIExtensionResources.getInstance().getString("tooltip.moveDownImageLayer"));
+				final JButton insertBeforeButton = GUIFactory.createButton(new InsertBeforeAction(nodeEditor), TwisterSwingExtensionResources.getInstance().getString("tooltip.insertImageLayerBefore"));
+				final JButton insertAfterButton = GUIFactory.createButton(new InsertAfterAction(nodeEditor), TwisterSwingExtensionResources.getInstance().getString("tooltip.insertImageLayerAfter"));
+				final JButton removeButton = GUIFactory.createButton(new RemoveAction(nodeEditor), TwisterSwingExtensionResources.getInstance().getString("tooltip.removeImageLayer"));
+				final JButton moveUpButton = GUIFactory.createButton(new MoveUpAction(nodeEditor), TwisterSwingExtensionResources.getInstance().getString("tooltip.moveUpImageLayer"));
+				final JButton moveDownButton = GUIFactory.createButton(new MoveDownAction(nodeEditor), TwisterSwingExtensionResources.getInstance().getString("tooltip.moveDownImageLayer"));
 				add(insertBeforeButton);
 				this.add(Box.createVerticalStrut(8));
 				add(insertAfterButton);
@@ -120,7 +120,7 @@ public class ImageLayerElementEditorRuntime extends EditorExtensionRuntime {
 		 * @param nodeEditor
 		 */
 		public InsertAfterAction(final NodeEditor nodeEditor) {
-			super(TwisterUIExtensionResources.getInstance().getString("action.insertImageLayerAfter"));
+			super(TwisterSwingExtensionResources.getInstance().getString("action.insertImageLayerAfter"));
 			this.nodeEditor = nodeEditor;
 		}
 
@@ -143,7 +143,7 @@ public class ImageLayerElementEditorRuntime extends EditorExtensionRuntime {
 		 * @param nodeEditor
 		 */
 		public InsertBeforeAction(final NodeEditor nodeEditor) {
-			super(TwisterUIExtensionResources.getInstance().getString("action.insertImageLayerBefore"));
+			super(TwisterSwingExtensionResources.getInstance().getString("action.insertImageLayerBefore"));
 			this.nodeEditor = nodeEditor;
 		}
 
@@ -166,7 +166,7 @@ public class ImageLayerElementEditorRuntime extends EditorExtensionRuntime {
 		 * @param nodeEditor
 		 */
 		public RemoveAction(final NodeEditor nodeEditor) {
-			super(TwisterUIExtensionResources.getInstance().getString("action.removeImageLayer"));
+			super(TwisterSwingExtensionResources.getInstance().getString("action.removeImageLayer"));
 			this.nodeEditor = nodeEditor;
 		}
 
@@ -187,7 +187,7 @@ public class ImageLayerElementEditorRuntime extends EditorExtensionRuntime {
 		 * @param nodeEditor
 		 */
 		public MoveUpAction(final NodeEditor nodeEditor) {
-			super(TwisterUIExtensionResources.getInstance().getString("action.moveUpImageLayer"));
+			super(TwisterSwingExtensionResources.getInstance().getString("action.moveUpImageLayer"));
 			this.nodeEditor = nodeEditor;
 		}
 
@@ -208,7 +208,7 @@ public class ImageLayerElementEditorRuntime extends EditorExtensionRuntime {
 		 * @param nodeEditor
 		 */
 		public MoveDownAction(final NodeEditor nodeEditor) {
-			super(TwisterUIExtensionResources.getInstance().getString("action.moveDownImageLayer"));
+			super(TwisterSwingExtensionResources.getInstance().getString("action.moveDownImageLayer"));
 			this.nodeEditor = nodeEditor;
 		}
 

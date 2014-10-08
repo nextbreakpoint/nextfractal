@@ -32,7 +32,7 @@ import com.nextbreakpoint.nextfractal.core.ui.swing.extension.ConfigurableExtens
 import com.nextbreakpoint.nextfractal.twister.TwisterRegistry;
 import com.nextbreakpoint.nextfractal.twister.frameFilter.FrameFilterConfigElement;
 import com.nextbreakpoint.nextfractal.twister.frameFilter.FrameFilterConfigElementNodeValue;
-import com.nextbreakpoint.nextfractal.twister.ui.TwisterUIExtensionResources;
+import com.nextbreakpoint.nextfractal.twister.ui.swing.extensions.TwisterSwingExtensionResources;
 
 /**
  * @author Andrea Medeghini
@@ -62,7 +62,7 @@ public class FrameFilterElementListEditorRuntime extends ConfigurableReferenceEl
 	 */
 	@Override
 	protected String getAppendLabel() {
-		return TwisterUIExtensionResources.getInstance().getString("action.appendFrameFilter");
+		return TwisterSwingExtensionResources.getInstance().getString("action.appendFrameFilter");
 	}
 
 	/**
@@ -70,7 +70,7 @@ public class FrameFilterElementListEditorRuntime extends ConfigurableReferenceEl
 	 */
 	@Override
 	protected String getRemoveAllLabel() {
-		return TwisterUIExtensionResources.getInstance().getString("action.removeAllFrameFilters");
+		return TwisterSwingExtensionResources.getInstance().getString("action.removeAllFrameFilters");
 	}
 
 	/**
@@ -78,7 +78,7 @@ public class FrameFilterElementListEditorRuntime extends ConfigurableReferenceEl
 	 */
 	@Override
 	protected String getAppendTooltip() {
-		return TwisterUIExtensionResources.getInstance().getString("tooltip.appendFrameFilter");
+		return TwisterSwingExtensionResources.getInstance().getString("tooltip.appendFrameFilter");
 	}
 
 	/**
@@ -86,6 +86,6 @@ public class FrameFilterElementListEditorRuntime extends ConfigurableReferenceEl
 	 */
 	@Override
 	protected String getRemoveAllTooltip() {
-		return TwisterUIExtensionResources.getInstance().getString("tooltip.removeAllFrameFilters");
+		return TwisterSwingExtensionResources.getInstance().getString("tooltip.removeAllFrameFilters");
 	}
 }

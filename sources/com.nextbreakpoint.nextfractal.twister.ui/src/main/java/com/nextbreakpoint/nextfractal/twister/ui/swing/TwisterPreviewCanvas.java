@@ -80,6 +80,7 @@ import com.nextbreakpoint.nextfractal.twister.renderer.OverlayTwisterRenderer;
 import com.nextbreakpoint.nextfractal.twister.renderer.TwisterRenderer;
 import com.nextbreakpoint.nextfractal.twister.renderer.TwisterRenderingHints;
 import com.nextbreakpoint.nextfractal.twister.renderer.java2D.Java2DRenderFactory;
+import com.nextbreakpoint.nextfractal.twister.ui.RenderListener;
 
 /**
  * @author Andrea Medeghini

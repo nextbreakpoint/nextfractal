@@ -23,42 +23,14 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.twister.ui.swing.extensions.devtools;
-
-import com.nextbreakpoint.nextfractal.devtools.descriptor.extension.DescriptorExtensionDescriptor;
-import com.nextbreakpoint.nextfractal.twister.extensions.devtools.PercentageDescriptorRuntime;
+package com.nextbreakpoint.nextfractal.twister.ui;
 
 /**
  * @author Andrea Medeghini
  */
-public class PercentageDescriptorDescriptor extends DescriptorExtensionDescriptor {
+public interface RenderListener {
 	/**
-	 * Returns the extensionId.
 	 * 
-	 * @return the extensionId.
 	 */
-	@Override
-	public String getExtensionId() {
-		return "devtools.descriptor.percentage";
-	}
-
-	/**
-	 * Returns the extensionName.
-	 * 
-	 * @return the extensionName.
-	 */
-	@Override
-	public String getExtensionName() {
-		return "Percentage Descriptor";
-	}
-
-	/**
-	 * Returns the extensionRuntimeClass.
-	 * 
-	 * @return the extensionRuntimeClass.
-	 */
-	@Override
-	public PercentageDescriptorRuntime getExtensionRuntime() {
-		return new PercentageDescriptorRuntime();
-	}
+	public void frameRendered();
 }
