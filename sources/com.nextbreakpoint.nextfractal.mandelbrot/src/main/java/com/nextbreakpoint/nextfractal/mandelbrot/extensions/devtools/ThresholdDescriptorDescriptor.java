@@ -25,7 +25,7 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.extensions.devtools;
 
-import com.nextbreakpoint.nextfractal.devtools.extensionPoints.descriptor.DescriptorExtensionDescriptor;
+import com.nextbreakpoint.nextfractal.core.extensionPoints.descriptor.DescriptorExtensionDescriptor;
 
 /**
  * @author Andrea Medeghini

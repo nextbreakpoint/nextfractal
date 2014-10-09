@@ -1,0 +1,5 @@
+com.nextbreakpoint.nextfractal.mandelbrot.extensions.devtools.RenderedPaletteDescriptorDescriptor
+com.nextbreakpoint.nextfractal.mandelbrot.extensions.devtools.ThresholdDescriptorDescriptor
+com.nextbreakpoint.nextfractal.mandelbrot.extensions.devtools.CriteriaDescriptorDescriptor
+com.nextbreakpoint.nextfractal.mandelbrot.extensions.devtools.IterationsDescriptorDescriptor
+com.nextbreakpoint.nextfractal.mandelbrot.extensions.devtools.ExponentDescriptorDescriptor

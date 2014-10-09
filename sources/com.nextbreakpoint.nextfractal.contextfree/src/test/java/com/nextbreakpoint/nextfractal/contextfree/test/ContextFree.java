@@ -33,14 +33,14 @@ import java.util.Map;
 
 import org.junit.Test;
 
+import com.nextbreakpoint.nextfractal.core.devtools.DevToolsRegistry;
+import com.nextbreakpoint.nextfractal.core.devtools.ProcessorCardinality;
+import com.nextbreakpoint.nextfractal.core.devtools.ProcessorDescriptor;
+import com.nextbreakpoint.nextfractal.core.devtools.ProcessorParameters;
 import com.nextbreakpoint.nextfractal.core.extension.Extension;
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionException;
-import com.nextbreakpoint.nextfractal.devtools.DevToolsRegistry;
-import com.nextbreakpoint.nextfractal.devtools.ProcessorCardinality;
-import com.nextbreakpoint.nextfractal.devtools.ProcessorDescriptor;
-import com.nextbreakpoint.nextfractal.devtools.ProcessorParameters;
-import com.nextbreakpoint.nextfractal.devtools.extensionPoints.descriptor.DescriptorExtensionRuntime;
-import com.nextbreakpoint.nextfractal.devtools.extensionPoints.processor.ProcessorExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.extensionPoints.descriptor.DescriptorExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.extensionPoints.processor.ProcessorExtensionRuntime;
 
 public class ContextFree {
 	private ProcessorParameters createCFDGParameters(Map<String, DescriptorExtensionRuntime> descriptorExtensionMap) {
