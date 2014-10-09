@@ -1,4 +1,4 @@
-package com.nextbreakpoint.nextfractal.javafx;
+package com.nextbreakpoint.nextfractal.twister.ui.javafx;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -26,8 +26,11 @@ import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 
 import com.nextbreakpoint.nextfractal.core.config.DefaultConfigContext;
+import com.nextbreakpoint.nextfractal.core.extension.Extension;
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionException;
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionNotFoundException;
+import com.nextbreakpoint.nextfractal.core.tree.NodeSession;
+import com.nextbreakpoint.nextfractal.core.ui.javafx.ViewContext;
 import com.nextbreakpoint.nextfractal.core.util.IntegerVector2D;
 import com.nextbreakpoint.nextfractal.core.util.RenderContext;
 import com.nextbreakpoint.nextfractal.core.util.RenderContextListener;
@@ -35,11 +38,15 @@ import com.nextbreakpoint.nextfractal.core.util.Tile;
 import com.nextbreakpoint.nextfractal.twister.TwisterConfig;
 import com.nextbreakpoint.nextfractal.twister.TwisterConfigBuilder;
 import com.nextbreakpoint.nextfractal.twister.TwisterRuntime;
+import com.nextbreakpoint.nextfractal.twister.TwisterSessionController;
+import com.nextbreakpoint.nextfractal.twister.image.ImageConfigElement;
 import com.nextbreakpoint.nextfractal.twister.renderer.DefaultTwisterRenderer;
 import com.nextbreakpoint.nextfractal.twister.renderer.RenderGraphicsContext;
 import com.nextbreakpoint.nextfractal.twister.renderer.TwisterRenderer;
 import com.nextbreakpoint.nextfractal.twister.renderer.TwisterRenderingHints;
 import com.nextbreakpoint.nextfractal.twister.renderer.javaFX.JavaFXRenderFactory;
+import com.nextbreakpoint.nextfractal.twister.ui.javafx.view.DefaultViewRuntime;
+import com.nextbreakpoint.nextfractal.twister.ui.javafx.view.extension.ViewExtensionRuntime;
 
 public class NextFractalApp extends Application {
 	private TwisterRenderer renderer;
@@ -54,10 +61,6 @@ public class NextFractalApp extends Application {
 	private final JavaFXRenderFactory renderFactory = new JavaFXRenderFactory();
 	private final NextFractalAppContext appContext = new DefaultNextFractalAppContext();
 	private final Pane configPane = new Pane();
-
-	public static void main(String[] args) {
-        launch(args);
-    }
 
     @Override
     public void start(Stage primaryStage) {
@@ -134,14 +137,24 @@ public class NextFractalApp extends Application {
 				appContext.discardConfigNode();
 			}
 		});
-//		try {
-//			final Extension<ViewExtensionRuntime> extension = TwisterSwingRegistry.getInstance().getViewExtension(imageFilterElement.getReference().getExtensionId());
-//			configView = extension.createExtensionRuntime().createView(imageFilterElement.getReference().getExtensionConfig(), viewContext, context, session);
-//		}
-//		catch (final ExtensionException x) {
-//			configView = new NavigatorViewRuntime().createView(imageFilterElement.getReference().getExtensionConfig(), viewContext, context, session);
-//		}
-
+		RenderContext renderContext = new DefaultRenderContext();
+		ViewContext viewContext = new DefaultViewContext(appContext);
+		TwisterSessionController sessionController = new TwisterSessionController("JavaFX", config);
+		sessionController.init();
+		sessionController.setRenderContext(renderContext);
+		Node configView;
+		try {
+			ImageConfigElement imageElement = config.getFrameConfigElement().getLayerConfigElement(0).getLayerConfigElement(0).getImageConfigElement();
+			final Extension<ViewExtensionRuntime> extension = TwisterUIRegistry.getInstance().getViewExtension(imageElement.getReference().getExtensionId());
+			configView = extension.createExtensionRuntime().createView(imageElement.getReference().getExtensionConfig(), viewContext, renderContext, sessionController);
+		}
+		catch (final ExtensionException x) {
+			ImageConfigElement imageElement = config.getFrameConfigElement().getLayerConfigElement(0).getLayerConfigElement(0).getImageConfigElement();
+			configView = new DefaultViewRuntime().createView(imageElement.getReference().getExtensionConfig(), viewContext, renderContext, sessionController);
+		}
+		if (configView != null) {
+			configNode.getChildren().add(configView);
+		}
 		return configNode;
 	}
 
@@ -273,6 +286,41 @@ public class NextFractalApp extends Application {
 		size = null;
 	}
 
+	private class DefaultViewContext implements ViewContext {
+		private final NextFractalAppContext context;
+
+		/**
+		 * @param context
+		 */
+		public DefaultViewContext(final NextFractalAppContext context) {
+			this.context = context;
+		}
+
+		@Override
+		public void showConfigView(Node c) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void discardConfigView() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void showEditorView(Node c) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void discardEditorView() {
+			// TODO Auto-generated method stub
+			
+		}
+	}
+	
 	private class DefaultRenderContext implements RenderContext {
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#startRenderers()

@@ -26,19 +26,28 @@
 package com.nextbreakpoint.nextfractal.twister.ui.javafx.view;
 
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javafx.scene.layout.VBox;
 
 import com.nextbreakpoint.nextfractal.core.CoreRegistry;
 import com.nextbreakpoint.nextfractal.core.extension.Extension;
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionConfig;
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionException;
+import com.nextbreakpoint.nextfractal.core.extension.ExtensionNotFoundException;
 import com.nextbreakpoint.nextfractal.core.nodeBuilder.extension.NodeBuilderExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.tree.Node;
 import com.nextbreakpoint.nextfractal.core.tree.NodeAction;
 import com.nextbreakpoint.nextfractal.core.tree.NodeBuilder;
 import com.nextbreakpoint.nextfractal.core.tree.NodeSession;
 import com.nextbreakpoint.nextfractal.core.tree.NodeSessionListener;
 import com.nextbreakpoint.nextfractal.core.tree.RootNode;
 import com.nextbreakpoint.nextfractal.core.tree.Tree;
+import com.nextbreakpoint.nextfractal.core.ui.javafx.CoreUIRegistry;
+import com.nextbreakpoint.nextfractal.core.ui.javafx.NodeEditorComponent;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.ViewContext;
+import com.nextbreakpoint.nextfractal.core.ui.javafx.editor.extensioin.EditorExtensionRuntime;
 import com.nextbreakpoint.nextfractal.core.util.RenderContext;
 import com.nextbreakpoint.nextfractal.twister.ui.javafx.View;
 import com.nextbreakpoint.nextfractal.twister.ui.javafx.view.extension.ViewExtensionRuntime;
@@ -47,6 +56,8 @@ import com.nextbreakpoint.nextfractal.twister.ui.javafx.view.extension.ViewExten
  * @author Andrea Medeghini
  */
 public class DefaultViewRuntime extends ViewExtensionRuntime {
+	private static final Logger logger = Logger.getLogger(DefaultViewRuntime.class.getName());
+	
 	/**
 	 * @see com.nextbreakpoint.nextfractal.twister.ui.swing.view.extension.ViewExtensionRuntime#createView(com.nextbreakpoint.nextfractal.core.extension.ExtensionConfig, com.nextbreakpoint.nextfractal.core.ui.swing.ViewContext, com.nextbreakpoint.nextfractal.core.util.RenderContext)
 	 */
@@ -84,6 +95,57 @@ public class DefaultViewRuntime extends ViewExtensionRuntime {
 		 */
 		public NavigatorView(ViewContext viewContext, RenderContext context, Tree tree) {
 			// TODO Auto-generated constructor stub
+			VBox panel = new VBox(10);
+			for (int i = 0; i < tree.getRootNode().getChildNodeCount(); i++) {
+				NodeEditorComponent editor = createEditor(tree.getRootNode().getChildNode(i));
+				if (editor != null) {
+					panel.getChildren().add(editor.getComponent());
+				}
+			}
+			setStyle("-fx-padding:10px");
+			getChildren().add(panel);
+		}
+		
+		protected NodeEditorComponent createEditor(Node node) {
+			NodeEditorComponent editor = null;
+			if (node.getNodeEditor() != null) {
+				try {
+					final Extension<EditorExtensionRuntime> extension = CoreUIRegistry.getInstance().getEditorExtension(node.getNodeId());
+					final EditorExtensionRuntime runtime = extension.createExtensionRuntime();
+					if (DefaultViewRuntime.logger.isLoggable(Level.INFO)) {
+						DefaultViewRuntime.logger.info("Found editor for node = " + node.getNodeId());
+					}
+					editor = runtime.createEditor(node.getNodeEditor());
+				}
+				catch (final ExtensionNotFoundException x) {
+					if (DefaultViewRuntime.logger.isLoggable(Level.INFO)) {
+						DefaultViewRuntime.logger.info("Can't find editor for node = " + node.getNodeId());
+					}
+				}
+				catch (final Exception x) {
+					x.printStackTrace();
+				}
+				if (editor == null) {
+					try {
+						final Extension<EditorExtensionRuntime> extension = CoreUIRegistry.getInstance().getEditorExtension(node.getNodeClass());
+						final EditorExtensionRuntime runtime = extension.createExtensionRuntime();
+						DefaultViewRuntime.logger.info("Found editor for node class = " + node.getNodeClass());
+						editor = runtime.createEditor(node.getNodeEditor());
+					}
+					catch (final ExtensionNotFoundException x) {
+						DefaultViewRuntime.logger.info("Can't find editor for node class = " + node.getNodeClass());
+					}
+					catch (final Exception x) {
+						x.printStackTrace();
+					}
+				}
+			}
+			else {
+				if (DefaultViewRuntime.logger.isLoggable(Level.INFO)) {
+					DefaultViewRuntime.logger.info("Undefined editor for node = " + node.getNodeId());
+				}
+			}
+			return editor;
 		}
 
 		/**

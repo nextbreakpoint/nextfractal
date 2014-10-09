@@ -1,4 +1,4 @@
-package com.nextbreakpoint.nextfractal.javafx;
+package com.nextbreakpoint.nextfractal.twister.ui.javafx;
 
 import javafx.scene.layout.Pane;
 

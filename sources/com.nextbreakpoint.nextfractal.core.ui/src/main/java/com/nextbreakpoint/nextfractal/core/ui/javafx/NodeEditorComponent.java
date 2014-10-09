@@ -30,24 +30,19 @@ import javafx.scene.Node;
 /**
  * @author Andrea Medeghini
  */
-public interface ViewContext {
+public interface NodeEditorComponent {
 	/**
-	 * @param c
+	 * 
 	 */
-	public void showConfigView(Node c);
+	public void reloadValue();
 
 	/**
 	 * 
 	 */
-	public void discardConfigView();
+	public void dispose();
 
 	/**
-	 * @param c
+	 * @return
 	 */
-	public void showEditorView(Node c);
-
-	/**
-	 * 
-	 */
-	public void discardEditorView();
+	public Node getComponent();
 }

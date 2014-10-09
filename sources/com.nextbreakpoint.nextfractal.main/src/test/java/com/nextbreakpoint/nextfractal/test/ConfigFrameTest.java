@@ -53,9 +53,9 @@ import com.nextbreakpoint.nextfractal.core.util.RenderContextListener;
 import com.nextbreakpoint.nextfractal.twister.TwisterConfig;
 import com.nextbreakpoint.nextfractal.twister.TwisterConfigBuilder;
 import com.nextbreakpoint.nextfractal.twister.TwisterConfigNodeBuilder;
-import com.nextbreakpoint.nextfractal.twister.swing.ConfigFrame;
-import com.nextbreakpoint.nextfractal.twister.swing.TwisterConfigContext;
-import com.nextbreakpoint.nextfractal.twister.swing.TwisterContext;
+import com.nextbreakpoint.nextfractal.twister.ui.swing.ConfigFrame;
+import com.nextbreakpoint.nextfractal.twister.ui.swing.TwisterConfigContext;
+import com.nextbreakpoint.nextfractal.twister.ui.swing.TwisterContext;
 
 /**
  * @author Andrea Medeghini

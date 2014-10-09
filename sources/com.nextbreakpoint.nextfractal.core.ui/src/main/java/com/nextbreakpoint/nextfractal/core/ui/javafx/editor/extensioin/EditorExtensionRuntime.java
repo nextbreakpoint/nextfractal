@@ -23,31 +23,26 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.core.ui.javafx;
+package com.nextbreakpoint.nextfractal.core.ui.javafx.editor.extensioin;
 
-import javafx.scene.Node;
+import com.nextbreakpoint.nextfractal.core.extension.ExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.tree.NodeEditor;
+import com.nextbreakpoint.nextfractal.core.ui.javafx.NodeEditorComponent;
 
 /**
  * @author Andrea Medeghini
  */
-public interface ViewContext {
+public abstract class EditorExtensionRuntime extends ExtensionRuntime {
 	/**
-	 * @param c
+	 * @param nodeEditor
+	 * @return the component.
 	 */
-	public void showConfigView(Node c);
+	public abstract NodeEditorComponent createEditor(NodeEditor nodeEditor);
 
 	/**
-	 * 
+	 * @see com.nextbreakpoint.nextfractal.core.extension.ExtensionRuntime#dispose()
 	 */
-	public void discardConfigView();
-
-	/**
-	 * @param c
-	 */
-	public void showEditorView(Node c);
-
-	/**
-	 * 
-	 */
-	public void discardEditorView();
+	@Override
+	public void dispose() {
+	}
 }

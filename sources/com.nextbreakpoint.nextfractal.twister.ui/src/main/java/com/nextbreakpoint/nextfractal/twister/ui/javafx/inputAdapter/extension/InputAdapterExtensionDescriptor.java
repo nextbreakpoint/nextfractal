@@ -23,31 +23,12 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.core.ui.javafx;
+package com.nextbreakpoint.nextfractal.twister.ui.javafx.inputAdapter.extension;
 
-import javafx.scene.Node;
+import com.nextbreakpoint.nextfractal.core.extension.ExtensionDescriptor;
 
 /**
  * @author Andrea Medeghini
  */
-public interface ViewContext {
-	/**
-	 * @param c
-	 */
-	public void showConfigView(Node c);
-
-	/**
-	 * 
-	 */
-	public void discardConfigView();
-
-	/**
-	 * @param c
-	 */
-	public void showEditorView(Node c);
-
-	/**
-	 * 
-	 */
-	public void discardEditorView();
+public abstract class InputAdapterExtensionDescriptor extends ExtensionDescriptor<InputAdapterExtensionRuntime> {
 }

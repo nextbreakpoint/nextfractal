@@ -35,18 +35,18 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionReference;
-import com.nextbreakpoint.nextfractal.core.swing.util.GUIUtil;
+import com.nextbreakpoint.nextfractal.core.ui.swing.util.GUIUtil;
 import com.nextbreakpoint.nextfractal.core.util.ConnectionFactory;
 import com.nextbreakpoint.nextfractal.queue.DefaultConnectionFactory;
 import com.nextbreakpoint.nextfractal.queue.LibraryService;
 import com.nextbreakpoint.nextfractal.queue.RenderService;
 import com.nextbreakpoint.nextfractal.queue.Session;
 import com.nextbreakpoint.nextfractal.twister.TwisterClip;
-import com.nextbreakpoint.nextfractal.twister.swing.RenderClipTableModel;
-import com.nextbreakpoint.nextfractal.twister.swing.RenderJobTableModel;
-import com.nextbreakpoint.nextfractal.twister.swing.RenderProfileTableModel;
-import com.nextbreakpoint.nextfractal.twister.swing.ServiceContext;
-import com.nextbreakpoint.nextfractal.twister.swing.ServiceFrame;
+import com.nextbreakpoint.nextfractal.twister.ui.swing.RenderClipTableModel;
+import com.nextbreakpoint.nextfractal.twister.ui.swing.RenderJobTableModel;
+import com.nextbreakpoint.nextfractal.twister.ui.swing.RenderProfileTableModel;
+import com.nextbreakpoint.nextfractal.twister.ui.swing.ServiceContext;
+import com.nextbreakpoint.nextfractal.twister.ui.swing.ServiceFrame;
 
 /**
  * @author Andrea Medeghini
