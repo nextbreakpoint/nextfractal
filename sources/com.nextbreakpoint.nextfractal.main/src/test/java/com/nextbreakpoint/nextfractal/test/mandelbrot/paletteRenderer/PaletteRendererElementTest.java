@@ -36,10 +36,10 @@ import com.nextbreakpoint.nextfractal.core.test.AbstractConfigurableExtensionCon
 import com.nextbreakpoint.nextfractal.core.tree.Node;
 import com.nextbreakpoint.nextfractal.core.tree.NodeValue;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotRegistry;
+import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.paletteRenderer.PaletteRendererExtensionConfig;
 import com.nextbreakpoint.nextfractal.mandelbrot.extensions.paletteRenderer.DefaultRendererConfig;
 import com.nextbreakpoint.nextfractal.mandelbrot.extensions.paletteRenderer.GrayGradientRendererConfig;
 import com.nextbreakpoint.nextfractal.mandelbrot.paletteRenderer.PaletteRendererExtensionReferenceNodeValue;
-import com.nextbreakpoint.nextfractal.mandelbrot.paletteRenderer.extension.PaletteRendererExtensionConfig;
 
 /**
  * @author Andrea Medeghini

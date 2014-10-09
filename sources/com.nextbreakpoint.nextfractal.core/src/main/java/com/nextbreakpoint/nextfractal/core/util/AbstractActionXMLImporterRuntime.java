@@ -29,7 +29,7 @@ import java.util.List;
 
 import org.w3c.dom.Element;
 
-import com.nextbreakpoint.nextfractal.core.actionXMLImporter.extension.ActionXMLImporterExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.extensionPoints.actionXMLImporter.ActionXMLImporterExtensionRuntime;
 import com.nextbreakpoint.nextfractal.core.tree.NodeActionValue;
 import com.nextbreakpoint.nextfractal.core.tree.NodePath;
 import com.nextbreakpoint.nextfractal.core.xml.XML;
@@ -41,7 +41,7 @@ import com.nextbreakpoint.nextfractal.core.xml.XMLImporter;
  */
 public abstract class AbstractActionXMLImporterRuntime extends ActionXMLImporterExtensionRuntime {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.actionXMLExporter.extension.ActionXMLExporterExtensionRuntime#createXMLExporter()
+	 * @see com.nextbreakpoint.nextfractal.core.extensionPoints.actionXMLExporter.ActionXMLExporterExtensionRuntime#createXMLExporter()
 	 */
 	@Override
 	public XMLImporter<NodeActionValue> createXMLImporter() {

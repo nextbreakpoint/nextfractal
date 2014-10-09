@@ -25,7 +25,7 @@
  */
 package com.nextbreakpoint.nextfractal.twister.extensions.creator;
 
-import com.nextbreakpoint.nextfractal.core.creator.extension.CreatorExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.extensionPoints.creator.CreatorExtensionRuntime;
 import com.nextbreakpoint.nextfractal.core.scripting.JSException;
 import com.nextbreakpoint.nextfractal.twister.image.ImageConfigElement;
 import com.nextbreakpoint.nextfractal.twister.layer.ImageLayerConfigElement;
@@ -35,7 +35,7 @@ import com.nextbreakpoint.nextfractal.twister.layer.ImageLayerConfigElement;
  */
 public class ImageLayerCreatorRuntime extends CreatorExtensionRuntime {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.creator.extension.CreatorExtensionRuntime#create(java.lang.Object[])
+	 * @see com.nextbreakpoint.nextfractal.core.extensionPoints.creator.CreatorExtensionRuntime#create(java.lang.Object[])
 	 */
 	@Override
 	public Object create(final Object... args) throws JSException {

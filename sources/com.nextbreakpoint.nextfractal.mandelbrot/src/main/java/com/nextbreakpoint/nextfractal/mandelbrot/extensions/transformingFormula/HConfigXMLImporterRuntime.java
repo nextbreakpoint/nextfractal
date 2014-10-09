@@ -29,7 +29,7 @@ import java.util.List;
 
 import org.w3c.dom.Element;
 
-import com.nextbreakpoint.nextfractal.core.extensionConfigXMLImporter.extension.ExtensionConfigXMLImporterExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.extensionPoints.extensionConfigXMLImporter.ExtensionConfigXMLImporterExtensionRuntime;
 import com.nextbreakpoint.nextfractal.core.xml.XMLImportException;
 import com.nextbreakpoint.nextfractal.core.xml.XMLImporter;
 
@@ -38,7 +38,7 @@ import com.nextbreakpoint.nextfractal.core.xml.XMLImporter;
  */
 public class HConfigXMLImporterRuntime extends ExtensionConfigXMLImporterExtensionRuntime {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.extensionConfigXMLImporter.extension.ExtensionConfigXMLImporterExtensionRuntime#createXMLImporter()
+	 * @see com.nextbreakpoint.nextfractal.core.extensionPoints.extensionConfigXMLImporter.ExtensionConfigXMLImporterExtensionRuntime#createXMLImporter()
 	 */
 	@Override
 	public XMLImporter<HConfig> createXMLImporter() {
@@ -71,7 +71,7 @@ public class HConfigXMLImporterRuntime extends ExtensionConfigXMLImporterExtensi
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensions.transformingFormula.AbstractTransformingFormulaConfigXMLImporter#importProperties(com.nextbreakpoint.nextfractal.mandelbrot.transformingFormula.extension.TransformingFormulaExtensionConfig, java.util.List)
+		 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensions.transformingFormula.AbstractTransformingFormulaConfigXMLImporter#importProperties(com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.transformingFormula.TransformingFormulaExtensionConfig, java.util.List)
 		 */
 		@Override
 		protected void importProperties(final HConfig config, final List<Element> propertyElements) throws XMLImportException {

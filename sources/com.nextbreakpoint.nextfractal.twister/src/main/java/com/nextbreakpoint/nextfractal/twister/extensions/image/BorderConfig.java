@@ -34,7 +34,7 @@ import com.nextbreakpoint.nextfractal.core.config.ConfigElement;
 import com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent;
 import com.nextbreakpoint.nextfractal.core.config.ValueChangeListener;
 import com.nextbreakpoint.nextfractal.core.util.Color32bit;
-import com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionConfig;
+import com.nextbreakpoint.nextfractal.twister.extensionPoints.image.ImageExtensionConfig;
 
 /**
  * @author Andrea Medeghini

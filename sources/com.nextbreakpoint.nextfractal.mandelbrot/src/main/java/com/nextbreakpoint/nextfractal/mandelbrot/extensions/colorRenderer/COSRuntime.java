@@ -32,7 +32,7 @@ import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RenderedPoint;
  */
 public class COSRuntime extends AbstractPeriodicRuntime<COSConfig> {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.colorRenderer.extension.ColorRendererExtensionRuntime#renderColor(com.nextbreakpoint.nextfractal.mandelbrot.renderer.RenderedPoint)
+	 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.colorRenderer.ColorRendererExtensionRuntime#renderColor(com.nextbreakpoint.nextfractal.mandelbrot.renderer.RenderedPoint)
 	 */
 	@Override
 	public double renderColor(final RenderedPoint cp) {

@@ -25,9 +25,9 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.extensions.incolouringFormula.processed;
 
+import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.renderingFormula.RenderingFormulaExtensionRuntime;
 import com.nextbreakpoint.nextfractal.mandelbrot.extensions.incolouringFormula.AbstractIncolouringFormulaRuntime;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RenderedPoint;
-import com.nextbreakpoint.nextfractal.mandelbrot.renderingFormula.extension.RenderingFormulaExtensionRuntime;
 
 /**
  * @author Andrea Medeghini
@@ -46,7 +46,7 @@ public class BinaryRuntime extends AbstractIncolouringFormulaRuntime<BinaryConfi
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.incolouringFormula.extension.IncolouringFormulaExtensionRuntime#renderColor(com.nextbreakpoint.nextfractal.mandelbrot.renderer.RenderedPoint)
+	 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.incolouringFormula.IncolouringFormulaExtensionRuntime#renderColor(com.nextbreakpoint.nextfractal.mandelbrot.renderer.RenderedPoint)
 	 */
 	@Override
 	public int renderColor(final RenderedPoint cp) {
@@ -54,7 +54,7 @@ public class BinaryRuntime extends AbstractIncolouringFormulaRuntime<BinaryConfi
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.incolouringFormula.extension.IncolouringFormulaExtensionRuntime#renderColor(com.nextbreakpoint.nextfractal.mandelbrot.renderer.RenderedPoint, int)
+	 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.incolouringFormula.IncolouringFormulaExtensionRuntime#renderColor(com.nextbreakpoint.nextfractal.mandelbrot.renderer.RenderedPoint, int)
 	 */
 	@Override
 	public int renderColor(final RenderedPoint cp, final int shift) {

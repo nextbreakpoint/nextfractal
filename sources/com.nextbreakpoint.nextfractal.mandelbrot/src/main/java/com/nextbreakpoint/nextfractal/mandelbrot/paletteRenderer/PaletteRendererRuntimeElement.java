@@ -33,8 +33,8 @@ import com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionRefere
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionException;
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionNotFoundException;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotRegistry;
-import com.nextbreakpoint.nextfractal.mandelbrot.paletteRenderer.extension.PaletteRendererExtensionConfig;
-import com.nextbreakpoint.nextfractal.mandelbrot.paletteRenderer.extension.PaletteRendererExtensionRuntime;
+import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.paletteRenderer.PaletteRendererExtensionConfig;
+import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.paletteRenderer.PaletteRendererExtensionRuntime;
 
 /**
  * @author Andrea Medeghini

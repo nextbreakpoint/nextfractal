@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.nextbreakpoint.nextfractal.contextfree.CFDGBuilder;
-import com.nextbreakpoint.nextfractal.contextfree.shapeAdjustment.extension.ShapeAdjustmentExtensionConfig;
+import com.nextbreakpoint.nextfractal.contextfree.extensionPoints.shapeAdjustment.ShapeAdjustmentExtensionConfig;
 import com.nextbreakpoint.nextfractal.core.common.FloatElement;
 import com.nextbreakpoint.nextfractal.core.config.ConfigElement;
 

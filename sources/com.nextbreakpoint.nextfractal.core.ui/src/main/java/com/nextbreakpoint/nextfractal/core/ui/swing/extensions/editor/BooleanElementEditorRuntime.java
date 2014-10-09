@@ -36,7 +36,7 @@ import javax.swing.JPanel;
 import com.nextbreakpoint.nextfractal.core.common.BooleanElementNodeValue;
 import com.nextbreakpoint.nextfractal.core.tree.NodeEditor;
 import com.nextbreakpoint.nextfractal.core.ui.swing.NodeEditorComponent;
-import com.nextbreakpoint.nextfractal.core.ui.swing.editor.extension.EditorExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.ui.swing.extensionPoints.editor.EditorExtensionRuntime;
 import com.nextbreakpoint.nextfractal.core.ui.swing.util.GUIFactory;
 
 /**
@@ -44,7 +44,7 @@ import com.nextbreakpoint.nextfractal.core.ui.swing.util.GUIFactory;
  */
 public class BooleanElementEditorRuntime extends EditorExtensionRuntime {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.ui.swing.editor.extension.EditorExtensionRuntime#createEditor(com.nextbreakpoint.nextfractal.core.tree.NodeEditor)
+	 * @see com.nextbreakpoint.nextfractal.core.ui.swing.extensionPoints.editor.EditorExtensionRuntime#createEditor(com.nextbreakpoint.nextfractal.core.tree.NodeEditor)
 	 */
 	@Override
 	public NodeEditorComponent createEditor(final NodeEditor nodeEditor) {

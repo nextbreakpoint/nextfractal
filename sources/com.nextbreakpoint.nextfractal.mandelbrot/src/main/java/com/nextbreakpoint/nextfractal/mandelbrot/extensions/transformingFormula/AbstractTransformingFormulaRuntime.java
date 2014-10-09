@@ -25,15 +25,15 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.extensions.transformingFormula;
 
-import com.nextbreakpoint.nextfractal.mandelbrot.transformingFormula.extension.TransformingFormulaExtensionConfig;
-import com.nextbreakpoint.nextfractal.mandelbrot.transformingFormula.extension.TransformingFormulaExtensionRuntime;
+import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.transformingFormula.TransformingFormulaExtensionConfig;
+import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.transformingFormula.TransformingFormulaExtensionRuntime;
 
 /**
  * @author Andrea Medeghini
  */
 public abstract class AbstractTransformingFormulaRuntime<T extends TransformingFormulaExtensionConfig> extends TransformingFormulaExtensionRuntime<T> {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.transformingFormula.extension.TransformingFormulaExtensionRuntime#isHorizontalSymetryAllowed()
+	 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.transformingFormula.TransformingFormulaExtensionRuntime#isHorizontalSymetryAllowed()
 	 */
 	@Override
 	public boolean isHorizontalSymetryAllowed() {
@@ -41,7 +41,7 @@ public abstract class AbstractTransformingFormulaRuntime<T extends TransformingF
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.transformingFormula.extension.TransformingFormulaExtensionRuntime#isVerticalSymetryAllowed()
+	 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.transformingFormula.TransformingFormulaExtensionRuntime#isVerticalSymetryAllowed()
 	 */
 	@Override
 	public boolean isVerticalSymetryAllowed() {

@@ -33,7 +33,7 @@ import com.nextbreakpoint.nextfractal.core.config.ConfigElement;
 import com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent;
 import com.nextbreakpoint.nextfractal.core.config.ValueChangeListener;
 import com.nextbreakpoint.nextfractal.core.util.Color32bit;
-import com.nextbreakpoint.nextfractal.twister.layerFilter.extension.LayerFilterExtensionConfig;
+import com.nextbreakpoint.nextfractal.twister.extensionPoints.layerFilter.LayerFilterExtensionConfig;
 
 /**
  * @author Andrea Medeghini

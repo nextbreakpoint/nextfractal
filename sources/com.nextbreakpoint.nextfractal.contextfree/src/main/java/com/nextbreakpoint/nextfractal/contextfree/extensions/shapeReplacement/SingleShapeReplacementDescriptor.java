@@ -25,7 +25,7 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.extensions.shapeReplacement;
 
-import com.nextbreakpoint.nextfractal.contextfree.shapeReplacement.extension.ShapeReplacementExtensionDescriptor;
+import com.nextbreakpoint.nextfractal.contextfree.extensionPoints.shapeReplacement.ShapeReplacementExtensionDescriptor;
 
 /**
  * @author Andrea Medeghini

@@ -25,7 +25,7 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.extensions.creator;
 
-import com.nextbreakpoint.nextfractal.core.creator.extension.CreatorExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.extensionPoints.creator.CreatorExtensionRuntime;
 import com.nextbreakpoint.nextfractal.core.scripting.JSException;
 import com.nextbreakpoint.nextfractal.mandelbrot.colorRenderer.ColorRendererConfigElement;
 
@@ -34,7 +34,7 @@ import com.nextbreakpoint.nextfractal.mandelbrot.colorRenderer.ColorRendererConf
  */
 public class ColorRendererCreatorRuntime extends CreatorExtensionRuntime {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.creator.extension.CreatorExtensionRuntime#create(java.lang.Object[])
+	 * @see com.nextbreakpoint.nextfractal.core.extensionPoints.creator.CreatorExtensionRuntime#create(java.lang.Object[])
 	 */
 	@Override
 	public Object create(final Object... args) throws JSException {

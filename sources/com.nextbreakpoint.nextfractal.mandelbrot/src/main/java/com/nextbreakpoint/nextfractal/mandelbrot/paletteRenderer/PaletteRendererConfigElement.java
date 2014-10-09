@@ -30,7 +30,7 @@ import com.nextbreakpoint.nextfractal.core.config.AbstractConfigElement;
 import com.nextbreakpoint.nextfractal.core.config.ConfigContext;
 import com.nextbreakpoint.nextfractal.core.config.ConfigElement;
 import com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionReference;
-import com.nextbreakpoint.nextfractal.mandelbrot.paletteRenderer.extension.PaletteRendererExtensionConfig;
+import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.paletteRenderer.PaletteRendererExtensionConfig;
 
 /**
  * @author Andrea Medeghini

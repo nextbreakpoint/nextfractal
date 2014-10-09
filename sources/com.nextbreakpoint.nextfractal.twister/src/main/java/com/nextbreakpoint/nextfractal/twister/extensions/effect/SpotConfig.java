@@ -34,7 +34,7 @@ import com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent;
 import com.nextbreakpoint.nextfractal.core.config.ValueChangeListener;
 import com.nextbreakpoint.nextfractal.core.util.DoubleVector2D;
 import com.nextbreakpoint.nextfractal.twister.common.PercentageElement;
-import com.nextbreakpoint.nextfractal.twister.effect.extension.EffectExtensionConfig;
+import com.nextbreakpoint.nextfractal.twister.extensionPoints.effect.EffectExtensionConfig;
 
 /**
  * @author Andrea Medeghini

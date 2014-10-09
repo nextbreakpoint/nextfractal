@@ -52,7 +52,7 @@ public abstract class AbstractPeriodicConfigXMLImporter<T extends AbstractPeriod
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensions.colorRenderer.AbstractColorRendererConfigXMLImporter#importProperties(org.w3c.dom.Element, com.nextbreakpoint.nextfractal.mandelbrot.colorRenderer.extension.ColorRendererExtensionConfig, java.util.List)
+	 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensions.colorRenderer.AbstractColorRendererConfigXMLImporter#importProperties(org.w3c.dom.Element, com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.colorRenderer.ColorRendererExtensionConfig, java.util.List)
 	 */
 	@Override
 	protected void importProperties(final Element element, final T config, final List<Element> propertyElements) throws XMLImportException {

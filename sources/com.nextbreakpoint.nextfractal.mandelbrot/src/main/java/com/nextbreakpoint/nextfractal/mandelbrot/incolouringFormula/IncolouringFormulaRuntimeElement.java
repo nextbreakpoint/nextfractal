@@ -34,8 +34,8 @@ import com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionRefere
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionException;
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionNotFoundException;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotRegistry;
-import com.nextbreakpoint.nextfractal.mandelbrot.incolouringFormula.extension.IncolouringFormulaExtensionConfig;
-import com.nextbreakpoint.nextfractal.mandelbrot.incolouringFormula.extension.IncolouringFormulaExtensionRuntime;
+import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.incolouringFormula.IncolouringFormulaExtensionConfig;
+import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.incolouringFormula.IncolouringFormulaExtensionRuntime;
 
 /**
  * @author Andrea Medeghini

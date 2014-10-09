@@ -29,7 +29,7 @@ import org.w3c.dom.Element;
 
 import com.nextbreakpoint.nextfractal.core.xml.XMLImportException;
 import com.nextbreakpoint.nextfractal.core.xml.XMLImporter;
-import com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionConfig;
+import com.nextbreakpoint.nextfractal.twister.extensionPoints.image.ImageExtensionConfig;
 
 /**
  * @author Andrea Medeghini

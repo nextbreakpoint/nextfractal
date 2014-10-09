@@ -9,7 +9,7 @@ import java.util.List;
 import org.w3c.dom.Element;
 
 import com.nextbreakpoint.nextfractal.contextfree.ContextFreeRegistry;
-import com.nextbreakpoint.nextfractal.contextfree.shapeReplacement.extension.ShapeReplacementExtensionConfig;
+import com.nextbreakpoint.nextfractal.contextfree.extensionPoints.shapeReplacement.ShapeReplacementExtensionConfig;
 import com.nextbreakpoint.nextfractal.core.common.ConfigurableExtensionReferenceElement;
 import com.nextbreakpoint.nextfractal.core.common.ConfigurableExtensionReferenceElementXMLImporter;
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionException;

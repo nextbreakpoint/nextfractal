@@ -30,7 +30,7 @@ import java.util.List;
 import org.w3c.dom.Element;
 
 import com.nextbreakpoint.nextfractal.core.CoreRegistry;
-import com.nextbreakpoint.nextfractal.core.extensionConfigXMLImporter.extension.ExtensionConfigXMLImporterExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.extensionPoints.extensionConfigXMLImporter.ExtensionConfigXMLImporterExtensionRuntime;
 import com.nextbreakpoint.nextfractal.core.xml.XML;
 import com.nextbreakpoint.nextfractal.core.xml.XMLExporter;
 import com.nextbreakpoint.nextfractal.core.xml.XMLImportException;

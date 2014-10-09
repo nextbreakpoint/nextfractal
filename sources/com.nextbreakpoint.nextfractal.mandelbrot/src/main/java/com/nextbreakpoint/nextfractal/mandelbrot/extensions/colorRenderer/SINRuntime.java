@@ -32,7 +32,7 @@ import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RenderedPoint;
  */
 public class SINRuntime extends AbstractPeriodicRuntime<SINConfig> {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.colorRenderer.extension.ColorRendererExtensionRuntime#renderColor(com.nextbreakpoint.nextfractal.mandelbrot.renderer.RenderedPoint)
+	 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.colorRenderer.ColorRendererExtensionRuntime#renderColor(com.nextbreakpoint.nextfractal.mandelbrot.renderer.RenderedPoint)
 	 */
 	@Override
 	public double renderColor(final RenderedPoint cp) {

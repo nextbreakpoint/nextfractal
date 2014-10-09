@@ -27,7 +27,7 @@ package com.nextbreakpoint.nextfractal.twister.image;
 
 import com.nextbreakpoint.nextfractal.core.common.ExtensionReferenceElementNodeValue;
 import com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionReference;
-import com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionConfig;
+import com.nextbreakpoint.nextfractal.twister.extensionPoints.image.ImageExtensionConfig;
 
 /**
  * @author Andrea Medeghini

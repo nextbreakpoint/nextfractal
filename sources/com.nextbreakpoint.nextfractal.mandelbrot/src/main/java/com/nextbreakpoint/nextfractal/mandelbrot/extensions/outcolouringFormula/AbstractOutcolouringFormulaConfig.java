@@ -25,7 +25,7 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.extensions.outcolouringFormula;
 
-import com.nextbreakpoint.nextfractal.mandelbrot.outcolouringFormula.extension.OutcolouringFormulaExtensionConfig;
+import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.outcolouringFormula.OutcolouringFormulaExtensionConfig;
 
 /**
  * @author Andrea Medeghini

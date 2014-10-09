@@ -41,7 +41,7 @@ import com.nextbreakpoint.nextfractal.core.tree.NodeEditor;
 import com.nextbreakpoint.nextfractal.core.tree.NodeValue;
 import com.nextbreakpoint.nextfractal.core.tree.NumberNodeEditor;
 import com.nextbreakpoint.nextfractal.core.ui.swing.NodeEditorComponent;
-import com.nextbreakpoint.nextfractal.core.ui.swing.editor.extension.EditorExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.ui.swing.extensionPoints.editor.EditorExtensionRuntime;
 import com.nextbreakpoint.nextfractal.core.ui.swing.util.GUIFactory;
 
 /**

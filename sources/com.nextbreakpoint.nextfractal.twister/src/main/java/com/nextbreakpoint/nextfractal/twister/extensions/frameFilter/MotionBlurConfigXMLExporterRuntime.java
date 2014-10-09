@@ -27,7 +27,7 @@ package com.nextbreakpoint.nextfractal.twister.extensions.frameFilter;
 
 import org.w3c.dom.Element;
 
-import com.nextbreakpoint.nextfractal.core.extensionConfigXMLExporter.extension.ExtensionConfigXMLExporterExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.extensionPoints.extensionConfigXMLExporter.ExtensionConfigXMLExporterExtensionRuntime;
 import com.nextbreakpoint.nextfractal.core.xml.XMLExportException;
 import com.nextbreakpoint.nextfractal.core.xml.XMLExporter;
 import com.nextbreakpoint.nextfractal.core.xml.XMLNodeBuilder;
@@ -38,7 +38,7 @@ import com.nextbreakpoint.nextfractal.twister.common.PercentageElementXMLExporte
  */
 public class MotionBlurConfigXMLExporterRuntime extends ExtensionConfigXMLExporterExtensionRuntime {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.extensionConfigXMLExporter.extension.ExtensionConfigXMLExporterExtensionRuntime#createXMLExporter()
+	 * @see com.nextbreakpoint.nextfractal.core.extensionPoints.extensionConfigXMLExporter.ExtensionConfigXMLExporterExtensionRuntime#createXMLExporter()
 	 */
 	@Override
 	public XMLExporter<MotionBlurConfig> createXMLExporter() {
@@ -55,7 +55,7 @@ public class MotionBlurConfigXMLExporterRuntime extends ExtensionConfigXMLExport
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.twister.extensions.frameFilter.AbstractFrameFilterConfigXMLExporter#exportToElement(com.nextbreakpoint.nextfractal.twister.frameFilter.extension.FrameFilterExtensionConfig, com.nextbreakpoint.nextfractal.core.xml.XMLNodeBuilder)
+		 * @see com.nextbreakpoint.nextfractal.twister.extensions.frameFilter.AbstractFrameFilterConfigXMLExporter#exportToElement(com.nextbreakpoint.nextfractal.twister.extensionPoints.frameFilter.FrameFilterExtensionConfig, com.nextbreakpoint.nextfractal.core.xml.XMLNodeBuilder)
 		 */
 		@Override
 		public Element exportToElement(final MotionBlurConfig config, final XMLNodeBuilder builder) throws XMLExportException {

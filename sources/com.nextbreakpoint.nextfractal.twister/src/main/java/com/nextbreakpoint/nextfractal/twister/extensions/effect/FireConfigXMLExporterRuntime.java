@@ -27,7 +27,7 @@ package com.nextbreakpoint.nextfractal.twister.extensions.effect;
 
 import org.w3c.dom.Element;
 
-import com.nextbreakpoint.nextfractal.core.extensionConfigXMLExporter.extension.ExtensionConfigXMLExporterExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.extensionPoints.extensionConfigXMLExporter.ExtensionConfigXMLExporterExtensionRuntime;
 import com.nextbreakpoint.nextfractal.core.xml.XMLExportException;
 import com.nextbreakpoint.nextfractal.core.xml.XMLExporter;
 import com.nextbreakpoint.nextfractal.core.xml.XMLNodeBuilder;
@@ -38,7 +38,7 @@ import com.nextbreakpoint.nextfractal.twister.common.PercentageElementXMLExporte
  */
 public class FireConfigXMLExporterRuntime extends ExtensionConfigXMLExporterExtensionRuntime {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.extensionConfigXMLExporter.extension.ExtensionConfigXMLExporterExtensionRuntime#createXMLExporter()
+	 * @see com.nextbreakpoint.nextfractal.core.extensionPoints.extensionConfigXMLExporter.ExtensionConfigXMLExporterExtensionRuntime#createXMLExporter()
 	 */
 	@Override
 	public XMLExporter<FireConfig> createXMLExporter() {
@@ -55,7 +55,7 @@ public class FireConfigXMLExporterRuntime extends ExtensionConfigXMLExporterExte
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.twister.extensions.layerFilter.AbstractEffectConfigXMLExporter#exportToElement(com.nextbreakpoint.nextfractal.twister.layerFilter.extension.EffectExtensionConfig, com.nextbreakpoint.nextfractal.core.xml.XMLNodeBuilder)
+		 * @see com.nextbreakpoint.nextfractal.twister.extensions.layerFilter.AbstractEffectConfigXMLExporter#exportToElement(com.nextbreakpoint.nextfractal.twister.extensionPoints.layerFilter.EffectExtensionConfig, com.nextbreakpoint.nextfractal.core.xml.XMLNodeBuilder)
 		 */
 		@Override
 		public Element exportToElement(final FireConfig config, final XMLNodeBuilder builder) throws XMLExportException {

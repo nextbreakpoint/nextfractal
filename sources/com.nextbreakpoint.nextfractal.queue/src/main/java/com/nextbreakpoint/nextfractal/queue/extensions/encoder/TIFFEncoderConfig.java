@@ -26,7 +26,7 @@
 package com.nextbreakpoint.nextfractal.queue.extensions.encoder;
 
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionConfig;
-import com.nextbreakpoint.nextfractal.queue.encoder.extension.EncoderExtensionConfig;
+import com.nextbreakpoint.nextfractal.queue.extensionPoints.encoder.EncoderExtensionConfig;
 
 /**
  * @author Andrea Medeghini

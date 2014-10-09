@@ -11,7 +11,7 @@ import com.nextbreakpoint.nextfractal.contextfree.shapeReplacement.ShapeReplacem
 import com.nextbreakpoint.nextfractal.contextfree.shapeReplacement.ShapeReplacementConfigElementNode;
 import com.nextbreakpoint.nextfractal.core.common.IntegerElementNode;
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionConfig;
-import com.nextbreakpoint.nextfractal.core.nodeBuilder.extension.NodeBuilderExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.extensionPoints.nodeBuilder.NodeBuilderExtensionRuntime;
 import com.nextbreakpoint.nextfractal.core.tree.Node;
 import com.nextbreakpoint.nextfractal.core.tree.NodeBuilder;
 import com.nextbreakpoint.nextfractal.core.tree.NodeValue;
@@ -25,7 +25,7 @@ import com.nextbreakpoint.nextfractal.core.util.ConfigElementListNodeValue;
  */
 public class MultiShapeReplacementConfigNodeBuilderRuntime extends NodeBuilderExtensionRuntime {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.nodeBuilder.extension.NodeBuilderExtensionRuntime#createNodeBuilder(com.nextbreakpoint.nextfractal.core.extension.ExtensionConfig)
+	 * @see com.nextbreakpoint.nextfractal.core.extensionPoints.nodeBuilder.NodeBuilderExtensionRuntime#createNodeBuilder(com.nextbreakpoint.nextfractal.core.extension.ExtensionConfig)
 	 */
 	@Override
 	public NodeBuilder createNodeBuilder(final ExtensionConfig config) {

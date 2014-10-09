@@ -13,7 +13,7 @@ import com.nextbreakpoint.nextfractal.contextfree.pathReplacement.PathReplacemen
 import com.nextbreakpoint.nextfractal.core.common.StringElement;
 import com.nextbreakpoint.nextfractal.core.common.StringElementXMLImporter;
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionException;
-import com.nextbreakpoint.nextfractal.core.extensionConfigXMLImporter.extension.ExtensionConfigXMLImporterExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.extensionPoints.extensionConfigXMLImporter.ExtensionConfigXMLImporterExtensionRuntime;
 import com.nextbreakpoint.nextfractal.core.xml.XMLImportException;
 import com.nextbreakpoint.nextfractal.core.xml.XMLImporter;
 
@@ -22,7 +22,7 @@ import com.nextbreakpoint.nextfractal.core.xml.XMLImporter;
  */
 public class PathFigureConfigXMLImporterRuntime extends ExtensionConfigXMLImporterExtensionRuntime {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.extensionConfigXMLImporter.extension.ExtensionConfigXMLImporterExtensionRuntime#createXMLImporter()
+	 * @see com.nextbreakpoint.nextfractal.core.extensionPoints.extensionConfigXMLImporter.ExtensionConfigXMLImporterExtensionRuntime#createXMLImporter()
 	 */
 	@Override
 	public XMLImporter<PathFigureConfig> createXMLImporter() {

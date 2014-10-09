@@ -25,7 +25,7 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.extensions.paletteRenderer;
 
-import com.nextbreakpoint.nextfractal.mandelbrot.paletteRenderer.extension.PaletteRendererExtensionConfig;
+import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.paletteRenderer.PaletteRendererExtensionConfig;
 
 /**
  * @author Andrea Medeghini

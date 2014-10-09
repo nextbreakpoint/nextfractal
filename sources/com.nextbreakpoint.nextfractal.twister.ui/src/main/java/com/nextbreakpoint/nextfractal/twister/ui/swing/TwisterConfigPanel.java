@@ -95,27 +95,27 @@ import com.nextbreakpoint.nextfractal.twister.TwisterConfig;
 import com.nextbreakpoint.nextfractal.twister.TwisterRegistry;
 import com.nextbreakpoint.nextfractal.twister.TwisterRuntime;
 import com.nextbreakpoint.nextfractal.twister.effect.EffectConfigElement;
-import com.nextbreakpoint.nextfractal.twister.effect.extension.EffectExtensionConfig;
-import com.nextbreakpoint.nextfractal.twister.effect.extension.EffectExtensionRuntime;
+import com.nextbreakpoint.nextfractal.twister.extensionPoints.effect.EffectExtensionConfig;
+import com.nextbreakpoint.nextfractal.twister.extensionPoints.effect.EffectExtensionRuntime;
+import com.nextbreakpoint.nextfractal.twister.extensionPoints.frameFilter.FrameFilterExtensionConfig;
+import com.nextbreakpoint.nextfractal.twister.extensionPoints.frameFilter.FrameFilterExtensionRuntime;
+import com.nextbreakpoint.nextfractal.twister.extensionPoints.image.ImageExtensionConfig;
+import com.nextbreakpoint.nextfractal.twister.extensionPoints.image.ImageExtensionRuntime;
+import com.nextbreakpoint.nextfractal.twister.extensionPoints.layerFilter.LayerFilterExtensionConfig;
+import com.nextbreakpoint.nextfractal.twister.extensionPoints.layerFilter.LayerFilterExtensionRuntime;
 import com.nextbreakpoint.nextfractal.twister.frame.FrameConfigElement;
 import com.nextbreakpoint.nextfractal.twister.frameFilter.FrameFilterConfigElement;
-import com.nextbreakpoint.nextfractal.twister.frameFilter.extension.FrameFilterExtensionConfig;
-import com.nextbreakpoint.nextfractal.twister.frameFilter.extension.FrameFilterExtensionRuntime;
 import com.nextbreakpoint.nextfractal.twister.image.ImageConfigElement;
-import com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionConfig;
-import com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionRuntime;
 import com.nextbreakpoint.nextfractal.twister.layer.GroupLayerConfigElement;
 import com.nextbreakpoint.nextfractal.twister.layer.ImageLayerConfigElement;
 import com.nextbreakpoint.nextfractal.twister.layer.LayerConfigElement;
 import com.nextbreakpoint.nextfractal.twister.layerFilter.LayerFilterConfigElement;
-import com.nextbreakpoint.nextfractal.twister.layerFilter.extension.LayerFilterExtensionConfig;
-import com.nextbreakpoint.nextfractal.twister.layerFilter.extension.LayerFilterExtensionRuntime;
 import com.nextbreakpoint.nextfractal.twister.renderer.DefaultTwisterRenderer;
 import com.nextbreakpoint.nextfractal.twister.renderer.TwisterRenderer;
 import com.nextbreakpoint.nextfractal.twister.renderer.TwisterRenderingHints;
 import com.nextbreakpoint.nextfractal.twister.renderer.java2D.Java2DRenderFactory;
-import com.nextbreakpoint.nextfractal.twister.ui.swing.view.NavigatorViewRuntime;
-import com.nextbreakpoint.nextfractal.twister.ui.swing.view.extension.ViewExtensionRuntime;
+import com.nextbreakpoint.nextfractal.twister.ui.swing.extensionPoints.view.DefaultViewRuntime;
+import com.nextbreakpoint.nextfractal.twister.ui.swing.extensionPoints.view.ViewExtensionRuntime;
 
 /**
  * @author Andrea Medeghini
@@ -2552,7 +2552,7 @@ public class TwisterConfigPanel extends ViewPanel {
 									configView = extension.createExtensionRuntime().createView(imageFilterElement.getReference().getExtensionConfig(), viewContext, context, session);
 								}
 								catch (final ExtensionException x) {
-									configView = new NavigatorViewRuntime().createView(imageFilterElement.getReference().getExtensionConfig(), viewContext, context, session);
+									configView = new DefaultViewRuntime().createView(imageFilterElement.getReference().getExtensionConfig(), viewContext, context, session);
 								}
 							}
 							if (configView != null) {
@@ -2791,7 +2791,7 @@ public class TwisterConfigPanel extends ViewPanel {
 									configView = extension.createExtensionRuntime().createView(frameFilterElement.getReference().getExtensionConfig(), viewContext, context, session);
 								}
 								catch (final ExtensionException x) {
-									configView = new NavigatorViewRuntime().createView(frameFilterElement.getReference().getExtensionConfig(), viewContext, context, session);
+									configView = new DefaultViewRuntime().createView(frameFilterElement.getReference().getExtensionConfig(), viewContext, context, session);
 								}
 							}
 							if (configView != null) {
@@ -3020,7 +3020,7 @@ public class TwisterConfigPanel extends ViewPanel {
 							// configView = extension.createExtensionRuntime().createView(imageElement.getReference().getExtensionConfig(), viewContext, context, session);
 							// }
 							// catch (final ExtensionException x) {
-							// configView = new NavigatorViewRuntime().createView(imageElement.getReference().getExtensionConfig(), viewContext, context, session);
+							// configView = new DefaultViewRuntime().createView(imageElement.getReference().getExtensionConfig(), viewContext, context, session);
 							// }
 							// }
 							// if (configView != null) {
@@ -3169,7 +3169,7 @@ public class TwisterConfigPanel extends ViewPanel {
 									configView = extension.createExtensionRuntime().createView(effectElement.getReference().getExtensionConfig(), viewContext, context, session);
 								}
 								catch (final ExtensionException x) {
-									configView = new NavigatorViewRuntime().createView(effectElement.getReference().getExtensionConfig(), viewContext, context, session);
+									configView = new DefaultViewRuntime().createView(effectElement.getReference().getExtensionConfig(), viewContext, context, session);
 								}
 							}
 							if (configView != null) {

@@ -25,8 +25,8 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.extensions.constructor;
 
-import com.nextbreakpoint.nextfractal.core.constructor.extension.ConstructorExtensionRuntime;
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionReference;
+import com.nextbreakpoint.nextfractal.core.extensionPoints.constructor.ConstructorExtensionRuntime;
 import com.nextbreakpoint.nextfractal.core.scripting.JSException;
 import com.nextbreakpoint.nextfractal.core.util.Color32bit;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotRegistry;
@@ -37,7 +37,7 @@ import com.nextbreakpoint.nextfractal.mandelbrot.util.RenderedPaletteParam;
  */
 public class RenderedPaletteParamConstructorRuntime extends ConstructorExtensionRuntime {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.constructor.extension.ConstructorExtensionRuntime#create(java.lang.Object[])
+	 * @see com.nextbreakpoint.nextfractal.core.extensionPoints.constructor.ConstructorExtensionRuntime#create(java.lang.Object[])
 	 */
 	@Override
 	public Object create(final Object... args) throws JSException {

@@ -35,7 +35,7 @@ import com.nextbreakpoint.nextfractal.core.extension.ExtensionException;
 import com.nextbreakpoint.nextfractal.core.xml.XMLImportException;
 import com.nextbreakpoint.nextfractal.core.xml.XMLImporter;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotRegistry;
-import com.nextbreakpoint.nextfractal.mandelbrot.colorRenderer.extension.ColorRendererExtensionConfig;
+import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.colorRenderer.ColorRendererExtensionConfig;
 
 /**
  * @author Andrea Medeghini

@@ -26,9 +26,9 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.extensions.incolouringFormula;
 
 import com.nextbreakpoint.nextfractal.core.util.Palette;
+import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.renderingFormula.RenderingFormulaExtensionRuntime;
 import com.nextbreakpoint.nextfractal.mandelbrot.paletteRenderer.PaletteRendererRuntimeElement;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RenderedPoint;
-import com.nextbreakpoint.nextfractal.mandelbrot.renderingFormula.extension.RenderingFormulaExtensionRuntime;
 
 /**
  * @author Andrea Medeghini
@@ -41,7 +41,7 @@ public abstract class AbstractIncolouringPaletteRuntime<T extends AbstractIncolo
 	protected int maxColors;
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensions.incolouringFormula.AbstractIncolouringFormulaRuntime#prepareForRendering(com.nextbreakpoint.nextfractal.mandelbrot.renderingFormula.extension.RenderingFormulaExtensionRuntime, int)
+	 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensions.incolouringFormula.AbstractIncolouringFormulaRuntime#prepareForRendering(com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.renderingFormula.RenderingFormulaExtensionRuntime, int)
 	 */
 	@Override
 	public void prepareForRendering(final RenderingFormulaExtensionRuntime<?> formulaRuntime, final int maxColors) {

@@ -37,7 +37,7 @@ import com.nextbreakpoint.nextfractal.core.tree.Node;
 import com.nextbreakpoint.nextfractal.core.tree.NodeValue;
 import com.nextbreakpoint.nextfractal.twister.TwisterRegistry;
 import com.nextbreakpoint.nextfractal.twister.effect.EffectExtensionReferenceNodeValue;
-import com.nextbreakpoint.nextfractal.twister.effect.extension.EffectExtensionConfig;
+import com.nextbreakpoint.nextfractal.twister.extensionPoints.effect.EffectExtensionConfig;
 import com.nextbreakpoint.nextfractal.twister.extensions.effect.FireConfig;
 import com.nextbreakpoint.nextfractal.twister.extensions.effect.WaterConfig;
 

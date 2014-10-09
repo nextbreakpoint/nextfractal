@@ -25,14 +25,14 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.extensions.paletteRendererFormula;
 
-import com.nextbreakpoint.nextfractal.mandelbrot.paletteRendererFormula.extension.PaletteRendererFormulaExtensionRuntime;
+import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.paletteRendererFormula.PaletteRendererFormulaExtensionRuntime;
 
 /**
  * @author Andrea Medeghini
  */
 public class SQRTRuntime extends PaletteRendererFormulaExtensionRuntime {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.paletteRendererFormula.extension.PaletteRendererFormulaExtensionRuntime#renderPalette(int)
+	 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.paletteRendererFormula.PaletteRendererFormulaExtensionRuntime#renderPalette(int)
 	 */
 	@Override
 	public double[] renderPalette(final int size) {

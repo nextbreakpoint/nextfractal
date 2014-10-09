@@ -35,7 +35,7 @@ public class DefaultRendererRuntime extends AbstractPaletteRendererRuntime<Defau
 	private RenderedPalette palette;
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.paletteRenderer.extension.PaletteRendererExtensionRuntime#prepareForRendering()
+	 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.paletteRenderer.PaletteRendererExtensionRuntime#prepareForRendering()
 	 */
 	@Override
 	public void prepareForRendering() {
@@ -44,7 +44,7 @@ public class DefaultRendererRuntime extends AbstractPaletteRendererRuntime<Defau
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.paletteRenderer.extension.PaletteRendererExtensionRuntime#renderPalette()
+	 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.paletteRenderer.PaletteRendererExtensionRuntime#renderPalette()
 	 */
 	@Override
 	public Palette renderPalette() {

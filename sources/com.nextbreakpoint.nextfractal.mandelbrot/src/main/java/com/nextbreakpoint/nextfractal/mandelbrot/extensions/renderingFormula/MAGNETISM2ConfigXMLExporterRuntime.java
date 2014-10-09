@@ -25,7 +25,7 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.extensions.renderingFormula;
 
-import com.nextbreakpoint.nextfractal.core.extensionConfigXMLExporter.extension.ExtensionConfigXMLExporterExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.extensionPoints.extensionConfigXMLExporter.ExtensionConfigXMLExporterExtensionRuntime;
 import com.nextbreakpoint.nextfractal.core.xml.XMLExporter;
 
 /**
@@ -33,7 +33,7 @@ import com.nextbreakpoint.nextfractal.core.xml.XMLExporter;
  */
 public class MAGNETISM2ConfigXMLExporterRuntime extends ExtensionConfigXMLExporterExtensionRuntime {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.extensionConfigXMLExporter.extension.ExtensionConfigXMLExporterExtensionRuntime#createXMLExporter()
+	 * @see com.nextbreakpoint.nextfractal.core.extensionPoints.extensionConfigXMLExporter.ExtensionConfigXMLExporterExtensionRuntime#createXMLExporter()
 	 */
 	@Override
 	public XMLExporter<MAGNETISM2Config> createXMLExporter() {

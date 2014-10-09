@@ -32,7 +32,7 @@ import com.nextbreakpoint.nextfractal.core.config.AbstractConfigElement;
 import com.nextbreakpoint.nextfractal.core.config.ConfigContext;
 import com.nextbreakpoint.nextfractal.core.config.ConfigElement;
 import com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionReference;
-import com.nextbreakpoint.nextfractal.twister.frameFilter.extension.FrameFilterExtensionConfig;
+import com.nextbreakpoint.nextfractal.twister.extensionPoints.frameFilter.FrameFilterExtensionConfig;
 
 /**
  * @author Andrea Medeghini

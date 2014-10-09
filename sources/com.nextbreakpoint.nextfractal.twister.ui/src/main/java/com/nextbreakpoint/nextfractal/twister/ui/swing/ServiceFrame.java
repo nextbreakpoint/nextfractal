@@ -81,7 +81,6 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableCellRenderer;
-import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.w3c.dom.Document;
 
@@ -89,8 +88,6 @@ import com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtension;
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionException;
 import com.nextbreakpoint.nextfractal.core.ui.swing.extension.ConfigurableExtensionComboBoxModel;
 import com.nextbreakpoint.nextfractal.core.ui.swing.extension.ExtensionListCellRenderer;
-import com.nextbreakpoint.nextfractal.core.ui.swing.osgi.IExtensionPointTreeCellRenderer;
-import com.nextbreakpoint.nextfractal.core.ui.swing.osgi.IExtensionPointTreeModel;
 import com.nextbreakpoint.nextfractal.core.ui.swing.util.AlternateTableCellRenderer;
 import com.nextbreakpoint.nextfractal.core.ui.swing.util.ExtendedGUIWorker;
 import com.nextbreakpoint.nextfractal.core.ui.swing.util.GUIFactory;
@@ -106,17 +103,16 @@ import com.nextbreakpoint.nextfractal.queue.RenderService.ServiceCallback;
 import com.nextbreakpoint.nextfractal.queue.RenderServiceRegistry;
 import com.nextbreakpoint.nextfractal.queue.clip.RenderClip;
 import com.nextbreakpoint.nextfractal.queue.clip.RenderClipDataRow;
+import com.nextbreakpoint.nextfractal.queue.extensionPoints.spool.SpoolExtensionConfig;
+import com.nextbreakpoint.nextfractal.queue.extensionPoints.spool.SpoolExtensionRuntime;
 import com.nextbreakpoint.nextfractal.queue.profile.RenderProfile;
 import com.nextbreakpoint.nextfractal.queue.profile.RenderProfileDataRow;
 import com.nextbreakpoint.nextfractal.queue.spool.JobServiceListener;
-import com.nextbreakpoint.nextfractal.queue.spool.extension.SpoolExtensionConfig;
-import com.nextbreakpoint.nextfractal.queue.spool.extension.SpoolExtensionRuntime;
 import com.nextbreakpoint.nextfractal.twister.TwisterClip;
 import com.nextbreakpoint.nextfractal.twister.TwisterClipXMLImporter;
 import com.nextbreakpoint.nextfractal.twister.TwisterConfig;
 import com.nextbreakpoint.nextfractal.twister.TwisterConfigBuilder;
 import com.nextbreakpoint.nextfractal.twister.TwisterSequence;
-import com.nextbreakpoint.nextfractal.twister.ui.swing.encoder.EncoderDialog;
 
 public class ServiceFrame extends JFrame {
 	private static final long serialVersionUID = 1L;
@@ -481,7 +477,7 @@ public class ServiceFrame extends JFrame {
 			clipsPanel.add(clipsSplitPane);
 			jobsPanel.add(jobTablePanel, BorderLayout.CENTER);
 			final JTree bundleTree = createBundleTree();
-			final JTree extensionPointTree = createExtensionPointTree();
+//			final JTree extensionPointTree = createExtensionPointTree();
 			final JTabbedPane tabbedPane = new JTabbedPane();
 			final JPanel bundlePanel = new JPanel(new BorderLayout());
 			final Box bundleButtons = Box.createHorizontalBox();
@@ -498,7 +494,7 @@ public class ServiceFrame extends JFrame {
 			bundlePanel.setOpaque(false);
 			bundlePanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4), BorderFactory.createEtchedBorder(EtchedBorder.LOWERED)));
 			final JPanel extensionPointTreePanel = new JPanel(new BorderLayout());
-			extensionPointTreePanel.add(new JScrollPane(extensionPointTree), BorderLayout.CENTER);
+//			extensionPointTreePanel.add(new JScrollPane(extensionPointTree), BorderLayout.CENTER);
 			extensionPointTreePanel.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
 			final JPanel extensionPointPanel = new JPanel(new BorderLayout());
 			extensionPointPanel.add(extensionPointTreePanel);
@@ -776,14 +772,14 @@ public class ServiceFrame extends JFrame {
 			return tree;
 		}
 
-		private JTree createExtensionPointTree() {
-			final IExtensionPointTreeModel treeModel = new IExtensionPointTreeModel(new DefaultMutableTreeNode(TwisterSwingResources.getInstance().getString(ServicePanel.STRING_FRAME_TREE_EXTENSIONPOINTS)));
-			final JTree tree = new JTree(treeModel);
-			tree.setFont(GUIFactory.NORMAL_FONT);
-			tree.setShowsRootHandles(true);
-			tree.setCellRenderer(new IExtensionPointTreeCellRenderer());
-			return tree;
-		}
+//		private JTree createExtensionPointTree() {
+//			final IExtensionPointTreeModel treeModel = new IExtensionPointTreeModel(new DefaultMutableTreeNode(TwisterSwingResources.getInstance().getString(ServicePanel.STRING_FRAME_TREE_EXTENSIONPOINTS)));
+//			final JTree tree = new JTree(treeModel);
+//			tree.setFont(GUIFactory.NORMAL_FONT);
+//			tree.setShowsRootHandles(true);
+//			tree.setCellRenderer(new IExtensionPointTreeCellRenderer());
+//			return tree;
+//		}
 
 		private class RefreshTask implements Runnable {
 			private final Object lock = new Object();

@@ -27,7 +27,7 @@ package com.nextbreakpoint.nextfractal.contextfree.extensions.image;
 
 import com.nextbreakpoint.nextfractal.contextfree.ContextFreeConfigNodeBuilder;
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionConfig;
-import com.nextbreakpoint.nextfractal.core.nodeBuilder.extension.NodeBuilderExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.extensionPoints.nodeBuilder.NodeBuilderExtensionRuntime;
 import com.nextbreakpoint.nextfractal.core.tree.Node;
 import com.nextbreakpoint.nextfractal.core.tree.NodeBuilder;
 

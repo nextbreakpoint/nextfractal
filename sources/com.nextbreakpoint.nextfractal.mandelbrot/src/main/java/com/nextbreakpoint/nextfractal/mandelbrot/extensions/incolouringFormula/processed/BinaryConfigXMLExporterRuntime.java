@@ -28,7 +28,7 @@ package com.nextbreakpoint.nextfractal.mandelbrot.extensions.incolouringFormula.
 import org.w3c.dom.Element;
 
 import com.nextbreakpoint.nextfractal.core.common.ColorElementXMLExporter;
-import com.nextbreakpoint.nextfractal.core.extensionConfigXMLExporter.extension.ExtensionConfigXMLExporterExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.extensionPoints.extensionConfigXMLExporter.ExtensionConfigXMLExporterExtensionRuntime;
 import com.nextbreakpoint.nextfractal.core.xml.XMLExportException;
 import com.nextbreakpoint.nextfractal.core.xml.XMLExporter;
 import com.nextbreakpoint.nextfractal.core.xml.XMLNodeBuilder;
@@ -39,7 +39,7 @@ import com.nextbreakpoint.nextfractal.mandelbrot.extensions.incolouringFormula.A
  */
 public class BinaryConfigXMLExporterRuntime extends ExtensionConfigXMLExporterExtensionRuntime {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.extensionConfigXMLExporter.extension.ExtensionConfigXMLExporterExtensionRuntime#createXMLExporter()
+	 * @see com.nextbreakpoint.nextfractal.core.extensionPoints.extensionConfigXMLExporter.ExtensionConfigXMLExporterExtensionRuntime#createXMLExporter()
 	 */
 	@Override
 	public XMLExporter<BinaryConfig> createXMLExporter() {
@@ -56,7 +56,7 @@ public class BinaryConfigXMLExporterRuntime extends ExtensionConfigXMLExporterEx
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensions.incolouringFormula.AbstractIncolouringFormulaConfigXMLExporter#exportProperties(com.nextbreakpoint.nextfractal.mandelbrot.incolouringFormula.extension.IncolouringFormulaExtensionConfig, org.w3c.dom.Element, com.nextbreakpoint.nextfractal.core.xml.XMLNodeBuilder)
+		 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensions.incolouringFormula.AbstractIncolouringFormulaConfigXMLExporter#exportProperties(com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.incolouringFormula.IncolouringFormulaExtensionConfig, org.w3c.dom.Element, com.nextbreakpoint.nextfractal.core.xml.XMLNodeBuilder)
 		 */
 		@Override
 		protected void exportProperties(final BinaryConfig config, final Element element, final XMLNodeBuilder builder) throws XMLExportException {

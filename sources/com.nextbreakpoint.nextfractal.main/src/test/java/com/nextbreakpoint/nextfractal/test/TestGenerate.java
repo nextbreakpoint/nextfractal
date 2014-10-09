@@ -39,8 +39,8 @@ import com.nextbreakpoint.nextfractal.devtools.DevToolsRegistry;
 import com.nextbreakpoint.nextfractal.devtools.ProcessorCardinality;
 import com.nextbreakpoint.nextfractal.devtools.ProcessorDescriptor;
 import com.nextbreakpoint.nextfractal.devtools.ProcessorParameters;
-import com.nextbreakpoint.nextfractal.devtools.descriptor.extension.DescriptorExtensionRuntime;
-import com.nextbreakpoint.nextfractal.devtools.processor.extension.ProcessorExtensionRuntime;
+import com.nextbreakpoint.nextfractal.devtools.extensionPoints.descriptor.DescriptorExtensionRuntime;
+import com.nextbreakpoint.nextfractal.devtools.extensionPoints.processor.ProcessorExtensionRuntime;
 
 public class TestGenerate {
 	private ProcessorParameters createComplexParameters(Map<String, DescriptorExtensionRuntime> descriptorExtensionMap) {

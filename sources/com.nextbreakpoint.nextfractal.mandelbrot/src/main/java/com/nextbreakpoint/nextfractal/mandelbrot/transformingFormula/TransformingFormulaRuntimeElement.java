@@ -33,8 +33,8 @@ import com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionRefere
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionException;
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionNotFoundException;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotRegistry;
-import com.nextbreakpoint.nextfractal.mandelbrot.transformingFormula.extension.TransformingFormulaExtensionConfig;
-import com.nextbreakpoint.nextfractal.mandelbrot.transformingFormula.extension.TransformingFormulaExtensionRuntime;
+import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.transformingFormula.TransformingFormulaExtensionConfig;
+import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.transformingFormula.TransformingFormulaExtensionRuntime;
 
 /**
  * @author Andrea Medeghini

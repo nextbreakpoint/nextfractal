@@ -32,7 +32,7 @@ import com.nextbreakpoint.nextfractal.core.tree.NodeEditor;
 import com.nextbreakpoint.nextfractal.core.tree.NodeValue;
 import com.nextbreakpoint.nextfractal.core.util.AbstractConfigElementNode;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotResources;
-import com.nextbreakpoint.nextfractal.mandelbrot.transformingFormula.extension.TransformingFormulaExtensionConfig;
+import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.transformingFormula.TransformingFormulaExtensionConfig;
 
 /**
  * @author Andrea Medeghini

@@ -11,8 +11,8 @@ import com.nextbreakpoint.nextfractal.contextfree.CFDGBuilder;
 import com.nextbreakpoint.nextfractal.contextfree.common.StrokeCapElement;
 import com.nextbreakpoint.nextfractal.contextfree.common.StrokeJoinElement;
 import com.nextbreakpoint.nextfractal.contextfree.common.StrokeWidthElement;
+import com.nextbreakpoint.nextfractal.contextfree.extensionPoints.pathReplacement.PathReplacementExtensionConfig;
 import com.nextbreakpoint.nextfractal.contextfree.pathAdjustment.PathAdjustmentConfigElement;
-import com.nextbreakpoint.nextfractal.contextfree.pathReplacement.extension.PathReplacementExtensionConfig;
 import com.nextbreakpoint.nextfractal.core.config.ConfigElement;
 import com.nextbreakpoint.nextfractal.core.config.ListConfigElement;
 

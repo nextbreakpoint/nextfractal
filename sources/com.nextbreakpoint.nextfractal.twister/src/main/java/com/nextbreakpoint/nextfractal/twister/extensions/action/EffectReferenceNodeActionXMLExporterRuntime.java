@@ -26,7 +26,7 @@
 package com.nextbreakpoint.nextfractal.twister.extensions.action;
 
 import com.nextbreakpoint.nextfractal.core.util.AbstractConfigurableExtensionReferenceElementNodeActionXMLExporterRuntime;
-import com.nextbreakpoint.nextfractal.twister.effect.extension.EffectExtensionConfig;
+import com.nextbreakpoint.nextfractal.twister.extensionPoints.effect.EffectExtensionConfig;
 
 /**
  * @author Andrea Medeghini

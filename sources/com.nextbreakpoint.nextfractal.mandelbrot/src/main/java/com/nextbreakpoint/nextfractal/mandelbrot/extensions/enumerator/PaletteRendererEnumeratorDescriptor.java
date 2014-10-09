@@ -25,7 +25,7 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.extensions.enumerator;
 
-import com.nextbreakpoint.nextfractal.core.enumerator.extension.EnumeratorExtensionDescriptor;
+import com.nextbreakpoint.nextfractal.core.extensionPoints.enumerator.EnumeratorExtensionDescriptor;
 
 /**
  * @author Andrea Medeghini

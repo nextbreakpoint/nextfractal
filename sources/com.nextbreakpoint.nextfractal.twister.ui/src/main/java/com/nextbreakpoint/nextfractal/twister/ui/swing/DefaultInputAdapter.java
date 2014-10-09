@@ -34,18 +34,18 @@ import com.nextbreakpoint.nextfractal.core.extension.ExtensionException;
 import com.nextbreakpoint.nextfractal.core.util.RenderContext;
 import com.nextbreakpoint.nextfractal.twister.TwisterConfig;
 import com.nextbreakpoint.nextfractal.twister.effect.EffectConfigElement;
-import com.nextbreakpoint.nextfractal.twister.effect.extension.EffectExtensionConfig;
+import com.nextbreakpoint.nextfractal.twister.extensionPoints.effect.EffectExtensionConfig;
+import com.nextbreakpoint.nextfractal.twister.extensionPoints.frameFilter.FrameFilterExtensionConfig;
+import com.nextbreakpoint.nextfractal.twister.extensionPoints.image.ImageExtensionConfig;
+import com.nextbreakpoint.nextfractal.twister.extensionPoints.layerFilter.LayerFilterExtensionConfig;
 import com.nextbreakpoint.nextfractal.twister.frame.FrameConfigElement;
 import com.nextbreakpoint.nextfractal.twister.frameFilter.FrameFilterConfigElement;
-import com.nextbreakpoint.nextfractal.twister.frameFilter.extension.FrameFilterExtensionConfig;
 import com.nextbreakpoint.nextfractal.twister.image.ImageConfigElement;
-import com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionConfig;
 import com.nextbreakpoint.nextfractal.twister.layer.GroupLayerConfigElement;
 import com.nextbreakpoint.nextfractal.twister.layer.ImageLayerConfigElement;
 import com.nextbreakpoint.nextfractal.twister.layerFilter.LayerFilterConfigElement;
-import com.nextbreakpoint.nextfractal.twister.layerFilter.extension.LayerFilterExtensionConfig;
-import com.nextbreakpoint.nextfractal.twister.ui.swing.inputAdapter.DefaultInputAdapterRuntime;
-import com.nextbreakpoint.nextfractal.twister.ui.swing.inputAdapter.extension.InputAdapterExtensionRuntime;
+import com.nextbreakpoint.nextfractal.twister.ui.swing.extensionPoints.inputAdapter.DefaultInputAdapterRuntime;
+import com.nextbreakpoint.nextfractal.twister.ui.swing.extensionPoints.inputAdapter.InputAdapterExtensionRuntime;
 import com.nextbreakpoint.nextfractal.twister.util.AdapterContext;
 
 /**

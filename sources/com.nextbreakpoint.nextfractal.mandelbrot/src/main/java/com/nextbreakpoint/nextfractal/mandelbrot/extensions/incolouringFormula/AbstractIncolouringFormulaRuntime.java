@@ -25,16 +25,16 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.extensions.incolouringFormula;
 
-import com.nextbreakpoint.nextfractal.mandelbrot.incolouringFormula.extension.IncolouringFormulaExtensionConfig;
-import com.nextbreakpoint.nextfractal.mandelbrot.incolouringFormula.extension.IncolouringFormulaExtensionRuntime;
-import com.nextbreakpoint.nextfractal.mandelbrot.renderingFormula.extension.RenderingFormulaExtensionRuntime;
+import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.incolouringFormula.IncolouringFormulaExtensionConfig;
+import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.incolouringFormula.IncolouringFormulaExtensionRuntime;
+import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.renderingFormula.RenderingFormulaExtensionRuntime;
 
 /**
  * @author Andrea Medeghini
  */
 public abstract class AbstractIncolouringFormulaRuntime<T extends IncolouringFormulaExtensionConfig> extends IncolouringFormulaExtensionRuntime<T> {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.incolouringFormula.extension.IncolouringFormulaExtensionRuntime#isHorizontalSymetryAllowed()
+	 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.incolouringFormula.IncolouringFormulaExtensionRuntime#isHorizontalSymetryAllowed()
 	 */
 	@Override
 	public boolean isHorizontalSymetryAllowed() {
@@ -42,7 +42,7 @@ public abstract class AbstractIncolouringFormulaRuntime<T extends IncolouringFor
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.incolouringFormula.extension.IncolouringFormulaExtensionRuntime#isVerticalSymetryAllowed()
+	 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.incolouringFormula.IncolouringFormulaExtensionRuntime#isVerticalSymetryAllowed()
 	 */
 	@Override
 	public boolean isVerticalSymetryAllowed() {
@@ -50,7 +50,7 @@ public abstract class AbstractIncolouringFormulaRuntime<T extends IncolouringFor
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.incolouringFormula.extension.IncolouringFormulaExtensionRuntime#isSolidGuessAllowed()
+	 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.incolouringFormula.IncolouringFormulaExtensionRuntime#isSolidGuessAllowed()
 	 */
 	@Override
 	public boolean isSolidGuessAllowed() {
@@ -58,7 +58,7 @@ public abstract class AbstractIncolouringFormulaRuntime<T extends IncolouringFor
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.incolouringFormula.extension.IncolouringFormulaExtensionRuntime#prepareForRendering(int)
+	 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.incolouringFormula.IncolouringFormulaExtensionRuntime#prepareForRendering(int)
 	 */
 	@Override
 	public void prepareForRendering(final RenderingFormulaExtensionRuntime<?> formulaRuntime, final int maxColors) {

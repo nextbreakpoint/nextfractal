@@ -26,7 +26,7 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.extensions.action;
 
 import com.nextbreakpoint.nextfractal.core.util.AbstractConfigurableExtensionReferenceElementNodeActionXMLExporterRuntime;
-import com.nextbreakpoint.nextfractal.mandelbrot.renderingFormula.extension.RenderingFormulaExtensionConfig;
+import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.renderingFormula.RenderingFormulaExtensionConfig;
 
 /**
  * @author Andrea Medeghini

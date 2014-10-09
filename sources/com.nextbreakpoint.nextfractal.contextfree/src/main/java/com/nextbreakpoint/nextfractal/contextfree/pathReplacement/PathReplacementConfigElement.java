@@ -5,7 +5,7 @@
 package com.nextbreakpoint.nextfractal.contextfree.pathReplacement;
 
 import com.nextbreakpoint.nextfractal.contextfree.CFDGBuilder;
-import com.nextbreakpoint.nextfractal.contextfree.pathReplacement.extension.PathReplacementExtensionConfig;
+import com.nextbreakpoint.nextfractal.contextfree.extensionPoints.pathReplacement.PathReplacementExtensionConfig;
 import com.nextbreakpoint.nextfractal.core.common.ConfigurableExtensionReferenceElement;
 import com.nextbreakpoint.nextfractal.core.config.AbstractConfigElement;
 import com.nextbreakpoint.nextfractal.core.config.ConfigContext;

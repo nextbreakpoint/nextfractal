@@ -34,7 +34,7 @@ public class ConstantRuntime extends AbstractColorRendererRuntime<ConstantConfig
 	private double value;
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.colorRenderer.extension.ColorRendererExtensionRuntime#prepareForRendering()
+	 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.colorRenderer.ColorRendererExtensionRuntime#prepareForRendering()
 	 */
 	@Override
 	public void prepareForRendering() {
@@ -48,7 +48,7 @@ public class ConstantRuntime extends AbstractColorRendererRuntime<ConstantConfig
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.colorRenderer.extension.ColorRendererExtensionRuntime#renderColor(com.nextbreakpoint.nextfractal.mandelbrot.renderer.RenderedPoint)
+	 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.colorRenderer.ColorRendererExtensionRuntime#renderColor(com.nextbreakpoint.nextfractal.mandelbrot.renderer.RenderedPoint)
 	 */
 	@Override
 	public double renderColor(final RenderedPoint cp) {

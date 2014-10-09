@@ -1581,7 +1581,7 @@ public class TwisterFrame extends JFrame {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.service.swing.ServiceContext#openClip(com.nextbreakpoint.nextfractal.twister.TwisterClip)
+		 * @see com.nextbreakpoint.nextfractal.twister.ui.swing.service.swing.ServiceContext#openClip(com.nextbreakpoint.nextfractal.twister.TwisterClip)
 		 */
 		@Override
 		public void openClip(final TwisterClip clip) {
@@ -1606,7 +1606,7 @@ public class TwisterFrame extends JFrame {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.service.swing.ServiceContext#removeFrame(javax.swing.JFrame)
+		 * @see com.nextbreakpoint.nextfractal.twister.ui.swing.service.swing.ServiceContext#removeFrame(javax.swing.JFrame)
 		 */
 		@Override
 		public void removeFrame(final JFrame frame) {
@@ -1614,7 +1614,7 @@ public class TwisterFrame extends JFrame {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.service.swing.ServiceContext#addFrame(javax.swing.JFrame)
+		 * @see com.nextbreakpoint.nextfractal.twister.ui.swing.service.swing.ServiceContext#addFrame(javax.swing.JFrame)
 		 */
 		@Override
 		public void addFrame(final JFrame frame) {
@@ -1622,7 +1622,7 @@ public class TwisterFrame extends JFrame {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.service.swing.ServiceContext#getFrameCount()
+		 * @see com.nextbreakpoint.nextfractal.twister.ui.swing.service.swing.ServiceContext#getFrameCount()
 		 */
 		@Override
 		public int getFrameCount() {
@@ -1630,7 +1630,7 @@ public class TwisterFrame extends JFrame {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.service.swing.ServiceContext#exit()
+		 * @see com.nextbreakpoint.nextfractal.twister.ui.swing.service.swing.ServiceContext#exit()
 		 */
 		@Override
 		public void exit() {
@@ -1638,7 +1638,7 @@ public class TwisterFrame extends JFrame {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.service.swing.ServiceContext#restart()
+		 * @see com.nextbreakpoint.nextfractal.twister.ui.swing.service.swing.ServiceContext#restart()
 		 */
 		@Override
 		public void restart() {

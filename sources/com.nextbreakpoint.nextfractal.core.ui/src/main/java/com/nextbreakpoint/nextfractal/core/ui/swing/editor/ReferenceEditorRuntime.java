@@ -45,9 +45,9 @@ import com.nextbreakpoint.nextfractal.core.tree.NodeEditor;
 import com.nextbreakpoint.nextfractal.core.tree.NodeValue;
 import com.nextbreakpoint.nextfractal.core.ui.swing.CoreSwingResources;
 import com.nextbreakpoint.nextfractal.core.ui.swing.NodeEditorComponent;
-import com.nextbreakpoint.nextfractal.core.ui.swing.editor.extension.EditorExtensionRuntime;
 import com.nextbreakpoint.nextfractal.core.ui.swing.extension.ExtensionComboBoxModel;
 import com.nextbreakpoint.nextfractal.core.ui.swing.extension.ExtensionListCellRenderer;
+import com.nextbreakpoint.nextfractal.core.ui.swing.extensionPoints.editor.EditorExtensionRuntime;
 import com.nextbreakpoint.nextfractal.core.ui.swing.util.GUIFactory;
 import com.nextbreakpoint.nextfractal.core.ui.swing.util.StackLayout;
 

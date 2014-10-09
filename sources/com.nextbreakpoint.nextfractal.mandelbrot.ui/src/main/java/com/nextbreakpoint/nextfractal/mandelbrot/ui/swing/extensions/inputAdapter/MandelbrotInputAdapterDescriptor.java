@@ -25,7 +25,7 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.ui.swing.extensions.inputAdapter;
 
-import com.nextbreakpoint.nextfractal.twister.ui.swing.inputAdapter.extension.InputAdapterExtensionDescriptor;
+import com.nextbreakpoint.nextfractal.twister.ui.swing.extensionPoints.inputAdapter.InputAdapterExtensionDescriptor;
 
 /**
  * @author Andrea Medeghini

@@ -25,7 +25,7 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.extensions.converter;
 
-import com.nextbreakpoint.nextfractal.twister.converter.extension.ConverterExtensionDescriptor;
+import com.nextbreakpoint.nextfractal.twister.extensionPoints.converter.ConverterExtensionDescriptor;
 
 /**
  * @author Andrea Medeghini

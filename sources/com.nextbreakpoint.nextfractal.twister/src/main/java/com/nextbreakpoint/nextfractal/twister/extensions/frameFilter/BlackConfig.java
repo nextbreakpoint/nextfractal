@@ -29,7 +29,7 @@ import com.nextbreakpoint.nextfractal.core.common.ColorElement;
 import com.nextbreakpoint.nextfractal.core.config.ConfigElement;
 import com.nextbreakpoint.nextfractal.core.config.ValueConfigElement;
 import com.nextbreakpoint.nextfractal.core.util.Color32bit;
-import com.nextbreakpoint.nextfractal.twister.frameFilter.extension.FrameFilterExtensionConfig;
+import com.nextbreakpoint.nextfractal.twister.extensionPoints.frameFilter.FrameFilterExtensionConfig;
 
 /**
  * @author Andrea Medeghini

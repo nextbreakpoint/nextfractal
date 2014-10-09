@@ -34,8 +34,8 @@ import com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionRefere
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionException;
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionNotFoundException;
 import com.nextbreakpoint.nextfractal.twister.TwisterRegistry;
-import com.nextbreakpoint.nextfractal.twister.frameFilter.extension.FrameFilterExtensionConfig;
-import com.nextbreakpoint.nextfractal.twister.frameFilter.extension.FrameFilterExtensionRuntime;
+import com.nextbreakpoint.nextfractal.twister.extensionPoints.frameFilter.FrameFilterExtensionConfig;
+import com.nextbreakpoint.nextfractal.twister.extensionPoints.frameFilter.FrameFilterExtensionRuntime;
 
 /**
  * @author Andrea Medeghini

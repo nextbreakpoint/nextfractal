@@ -25,7 +25,7 @@
  */
 package com.nextbreakpoint.nextfractal.twister.extensions.creator;
 
-import com.nextbreakpoint.nextfractal.core.creator.extension.CreatorExtensionDescriptor;
+import com.nextbreakpoint.nextfractal.core.extensionPoints.creator.CreatorExtensionDescriptor;
 
 /**
  * @author Andrea Medeghini

@@ -25,7 +25,7 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.extensions.outcolouringFormula.processed;
 
-import com.nextbreakpoint.nextfractal.core.extensionConfigXMLExporter.extension.ExtensionConfigXMLExporterExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.extensionPoints.extensionConfigXMLExporter.ExtensionConfigXMLExporterExtensionRuntime;
 import com.nextbreakpoint.nextfractal.core.xml.XMLExporter;
 import com.nextbreakpoint.nextfractal.mandelbrot.extensions.outcolouringFormula.AbstractOutcolouringPaletteConfigXMLExporter;
 
@@ -34,7 +34,7 @@ import com.nextbreakpoint.nextfractal.mandelbrot.extensions.outcolouringFormula.
  */
 public class ModulusAndPotentialConfigXMLExporterRuntime extends ExtensionConfigXMLExporterExtensionRuntime {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.extensionConfigXMLExporter.extension.ExtensionConfigXMLExporterExtensionRuntime#createXMLExporter()
+	 * @see com.nextbreakpoint.nextfractal.core.extensionPoints.extensionConfigXMLExporter.ExtensionConfigXMLExporterExtensionRuntime#createXMLExporter()
 	 */
 	@Override
 	public XMLExporter<ModulusAndPotentialConfig> createXMLExporter() {

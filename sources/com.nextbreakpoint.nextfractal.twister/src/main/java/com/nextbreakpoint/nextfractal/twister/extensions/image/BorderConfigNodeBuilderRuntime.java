@@ -28,7 +28,7 @@ package com.nextbreakpoint.nextfractal.twister.extensions.image;
 import com.nextbreakpoint.nextfractal.core.common.ColorElementNode;
 import com.nextbreakpoint.nextfractal.core.common.DoubleElementNode;
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionConfig;
-import com.nextbreakpoint.nextfractal.core.nodeBuilder.extension.NodeBuilderExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.extensionPoints.nodeBuilder.NodeBuilderExtensionRuntime;
 import com.nextbreakpoint.nextfractal.core.tree.Node;
 import com.nextbreakpoint.nextfractal.core.tree.NodeBuilder;
 import com.nextbreakpoint.nextfractal.core.util.AbstractExtensionConfigNodeBuilder;
@@ -39,7 +39,7 @@ import com.nextbreakpoint.nextfractal.twister.extensions.TwisterExtensionResourc
  */
 public class BorderConfigNodeBuilderRuntime extends NodeBuilderExtensionRuntime {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.nodeBuilder.extension.NodeBuilderExtensionRuntime#createNodeBuilder(com.nextbreakpoint.nextfractal.core.extension.ExtensionConfig)
+	 * @see com.nextbreakpoint.nextfractal.core.extensionPoints.nodeBuilder.NodeBuilderExtensionRuntime#createNodeBuilder(com.nextbreakpoint.nextfractal.core.extension.ExtensionConfig)
 	 */
 	@Override
 	public NodeBuilder createNodeBuilder(final ExtensionConfig config) {

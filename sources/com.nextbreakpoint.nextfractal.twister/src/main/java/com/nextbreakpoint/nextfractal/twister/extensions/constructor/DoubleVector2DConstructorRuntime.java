@@ -25,7 +25,7 @@
  */
 package com.nextbreakpoint.nextfractal.twister.extensions.constructor;
 
-import com.nextbreakpoint.nextfractal.core.constructor.extension.ConstructorExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.extensionPoints.constructor.ConstructorExtensionRuntime;
 import com.nextbreakpoint.nextfractal.core.scripting.JSException;
 import com.nextbreakpoint.nextfractal.core.util.DoubleVector2D;
 
@@ -34,7 +34,7 @@ import com.nextbreakpoint.nextfractal.core.util.DoubleVector2D;
  */
 public class DoubleVector2DConstructorRuntime extends ConstructorExtensionRuntime {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.constructor.extension.ConstructorExtensionRuntime#create(java.lang.Object[])
+	 * @see com.nextbreakpoint.nextfractal.core.extensionPoints.constructor.ConstructorExtensionRuntime#create(java.lang.Object[])
 	 */
 	@Override
 	public Object create(final Object... args) throws JSException {

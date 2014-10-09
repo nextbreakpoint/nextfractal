@@ -47,10 +47,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTree;
 import javax.swing.WindowConstants;
 import javax.swing.border.EtchedBorder;
-import javax.swing.tree.DefaultMutableTreeNode;
 
-import com.nextbreakpoint.nextfractal.core.ui.swing.osgi.IExtensionPointTreeCellRenderer;
-import com.nextbreakpoint.nextfractal.core.ui.swing.osgi.IExtensionPointTreeModel;
 import com.nextbreakpoint.nextfractal.core.ui.swing.util.GUIFactory;
 
 public class PlatformFrame extends JFrame {
@@ -100,7 +97,7 @@ public class PlatformFrame extends JFrame {
 		public ServicePanel() {
 			setLayout(new BorderLayout());
 			final JTree bundleTree = createBundleTree();
-			final JTree extensionPointTree = createExtensionPointTree();
+//			final JTree extensionPointTree = createExtensionPointTree();
 			final JTabbedPane tabbedPane = new JTabbedPane();
 			final JPanel bundlePanel = new JPanel(new BorderLayout());
 			final Box bundleButtons = Box.createHorizontalBox();
@@ -118,7 +115,7 @@ public class PlatformFrame extends JFrame {
 			bundlePanel.setOpaque(false);
 			bundlePanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4), BorderFactory.createEtchedBorder(EtchedBorder.LOWERED)));
 			final JPanel extensionPointTreePanel = new JPanel(new BorderLayout());
-			extensionPointTreePanel.add(new JScrollPane(extensionPointTree), BorderLayout.CENTER);
+//			extensionPointTreePanel.add(new JScrollPane(extensionPointTree), BorderLayout.CENTER);
 			extensionPointTreePanel.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
 			final JPanel extensionPointPanel = new JPanel(new BorderLayout());
 			extensionPointPanel.add(extensionPointTreePanel);
@@ -141,14 +138,14 @@ public class PlatformFrame extends JFrame {
 			return tree;
 		}
 
-		private JTree createExtensionPointTree() {
-			final IExtensionPointTreeModel treeModel = new IExtensionPointTreeModel(new DefaultMutableTreeNode(TwisterSwingResources.getInstance().getString(ServicePanel.STRING_FRAME_TREE_EXTENSIONPOINTS)));
-			final JTree tree = new JTree(treeModel);
-			tree.setFont(GUIFactory.NORMAL_FONT);
-			tree.setShowsRootHandles(true);
-			tree.setCellRenderer(new IExtensionPointTreeCellRenderer());
-			return tree;
-		}
+//		private JTree createExtensionPointTree() {
+//			final IExtensionPointTreeModel treeModel = new IExtensionPointTreeModel(new DefaultMutableTreeNode(TwisterSwingResources.getInstance().getString(ServicePanel.STRING_FRAME_TREE_EXTENSIONPOINTS)));
+//			final JTree tree = new JTree(treeModel);
+//			tree.setFont(GUIFactory.NORMAL_FONT);
+//			tree.setShowsRootHandles(true);
+//			tree.setCellRenderer(new IExtensionPointTreeCellRenderer());
+//			return tree;
+//		}
 
 		private class ShowVersionAction extends AbstractAction {
 			private static final long serialVersionUID = 1L;

@@ -4,9 +4,9 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.extensions.shapeAdjustment;
 
+import com.nextbreakpoint.nextfractal.contextfree.extensionPoints.shapeAdjustment.ShapeAdjustmentExtensionRuntime;
 import com.nextbreakpoint.nextfractal.contextfree.renderer.support.CFColor;
 import com.nextbreakpoint.nextfractal.contextfree.renderer.support.CFModification;
-import com.nextbreakpoint.nextfractal.contextfree.shapeAdjustment.extension.ShapeAdjustmentExtensionRuntime;
 import com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent;
 import com.nextbreakpoint.nextfractal.core.config.ValueChangeListener;
 import com.nextbreakpoint.nextfractal.core.config.ValueConfigElement;

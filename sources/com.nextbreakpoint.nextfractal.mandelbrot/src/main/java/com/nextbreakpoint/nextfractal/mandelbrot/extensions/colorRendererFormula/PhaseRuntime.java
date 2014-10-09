@@ -25,7 +25,7 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.extensions.colorRendererFormula;
 
-import com.nextbreakpoint.nextfractal.mandelbrot.colorRendererFormula.extension.ColorRendererFormulaExtensionRuntime;
+import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.colorRendererFormula.ColorRendererFormulaExtensionRuntime;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RenderedPoint;
 
 /**
@@ -33,7 +33,7 @@ import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RenderedPoint;
  */
 public class PhaseRuntime extends ColorRendererFormulaExtensionRuntime {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.colorRendererFormula.extension.ColorRendererFormulaExtensionRuntime#renderColor(com.nextbreakpoint.nextfractal.mandelbrot.renderer.RenderedPoint)
+	 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.colorRendererFormula.ColorRendererFormulaExtensionRuntime#renderColor(com.nextbreakpoint.nextfractal.mandelbrot.renderer.RenderedPoint)
 	 */
 	@Override
 	public double renderColor(final RenderedPoint cp) {

@@ -26,8 +26,8 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.extensions.outcolouringFormula;
 
 import com.nextbreakpoint.nextfractal.mandelbrot.colorRenderer.ColorRendererRuntimeElement;
+import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.renderingFormula.RenderingFormulaExtensionRuntime;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RenderedPoint;
-import com.nextbreakpoint.nextfractal.mandelbrot.renderingFormula.extension.RenderingFormulaExtensionRuntime;
 
 /**
  * @author Andrea Medeghini

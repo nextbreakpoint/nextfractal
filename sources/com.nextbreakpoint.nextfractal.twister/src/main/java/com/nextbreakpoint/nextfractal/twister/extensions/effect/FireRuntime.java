@@ -34,7 +34,7 @@ import com.nextbreakpoint.nextfractal.core.media.gfx.FireData;
 import com.nextbreakpoint.nextfractal.core.media.gfx.Lowlevel;
 import com.nextbreakpoint.nextfractal.core.util.IntegerVector2D;
 import com.nextbreakpoint.nextfractal.core.util.Surface;
-import com.nextbreakpoint.nextfractal.twister.effect.extension.EffectExtensionRuntime;
+import com.nextbreakpoint.nextfractal.twister.extensionPoints.effect.EffectExtensionRuntime;
 
 /**
  * @author Andrea Medeghini
@@ -48,7 +48,7 @@ public class FireRuntime extends EffectExtensionRuntime<FireConfig> {
 	private int intensity = 0;
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.effect.extension.EffectExtensionRuntime#renderImage(com.nextbreakpoint.nextfractal.core.util.Surface)
+	 * @see com.nextbreakpoint.nextfractal.twister.extensionPoints.effect.EffectExtensionRuntime#renderImage(com.nextbreakpoint.nextfractal.core.util.Surface)
 	 */
 	@Override
 	public void renderImage(final Surface dst) {
@@ -59,7 +59,7 @@ public class FireRuntime extends EffectExtensionRuntime<FireConfig> {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.effect.extension.EffectExtensionRuntime#prepareEffect()
+	 * @see com.nextbreakpoint.nextfractal.twister.extensionPoints.effect.EffectExtensionRuntime#prepareEffect()
 	 */
 	@Override
 	public void prepareEffect() {
@@ -75,7 +75,7 @@ public class FireRuntime extends EffectExtensionRuntime<FireConfig> {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.effect.extension.EffectExtensionRuntime#setSize(com.nextbreakpoint.nextfractal.core.util.IntegerVector2D)
+	 * @see com.nextbreakpoint.nextfractal.twister.extensionPoints.effect.EffectExtensionRuntime#setSize(com.nextbreakpoint.nextfractal.core.util.IntegerVector2D)
 	 */
 	@Override
 	public void setSize(final IntegerVector2D size) {
@@ -91,7 +91,7 @@ public class FireRuntime extends EffectExtensionRuntime<FireConfig> {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.effect.extension.EffectExtensionRuntime#reset()
+	 * @see com.nextbreakpoint.nextfractal.twister.extensionPoints.effect.EffectExtensionRuntime#reset()
 	 */
 	@Override
 	public void reset() {

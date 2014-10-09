@@ -32,7 +32,7 @@ import com.nextbreakpoint.nextfractal.core.tree.NodeEditor;
 import com.nextbreakpoint.nextfractal.core.tree.NodeValue;
 import com.nextbreakpoint.nextfractal.core.util.AbstractConfigElementNode;
 import com.nextbreakpoint.nextfractal.twister.TwisterResources;
-import com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionConfig;
+import com.nextbreakpoint.nextfractal.twister.extensionPoints.image.ImageExtensionConfig;
 
 /**
  * @author Andrea Medeghini

@@ -39,7 +39,7 @@ public class MPEG4EncoderRuntime extends FFmpegEncoderRuntime<MOVEncoderConfig> 
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.queue.encoder.extension.EncoderExtensionRuntime#getImageSuffix()
+	 * @see com.nextbreakpoint.nextfractal.queue.extensionPoints.encoder.EncoderExtensionRuntime#getImageSuffix()
 	 */
 	@Override
 	public String getImageSuffix() {
@@ -47,7 +47,7 @@ public class MPEG4EncoderRuntime extends FFmpegEncoderRuntime<MOVEncoderConfig> 
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.queue.encoder.extension.EncoderExtensionRuntime#getMovieSuffix()
+	 * @see com.nextbreakpoint.nextfractal.queue.extensionPoints.encoder.EncoderExtensionRuntime#getMovieSuffix()
 	 */
 	@Override
 	public String getMovieSuffix() {
@@ -55,7 +55,7 @@ public class MPEG4EncoderRuntime extends FFmpegEncoderRuntime<MOVEncoderConfig> 
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.queue.encoder.extension.EncoderExtensionRuntime#isAlphaSupported()
+	 * @see com.nextbreakpoint.nextfractal.queue.extensionPoints.encoder.EncoderExtensionRuntime#isAlphaSupported()
 	 */
 	@Override
 	public boolean isAlphaSupported() {
@@ -63,7 +63,7 @@ public class MPEG4EncoderRuntime extends FFmpegEncoderRuntime<MOVEncoderConfig> 
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.queue.encoder.extension.EncoderExtensionRuntime#isImageSupported()
+	 * @see com.nextbreakpoint.nextfractal.queue.extensionPoints.encoder.EncoderExtensionRuntime#isImageSupported()
 	 */
 	@Override
 	public boolean isImageSupported() {
@@ -71,7 +71,7 @@ public class MPEG4EncoderRuntime extends FFmpegEncoderRuntime<MOVEncoderConfig> 
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.queue.encoder.extension.EncoderExtensionRuntime#isMovieSupported()
+	 * @see com.nextbreakpoint.nextfractal.queue.extensionPoints.encoder.EncoderExtensionRuntime#isMovieSupported()
 	 */
 	@Override
 	public boolean isMovieSupported() {

@@ -41,6 +41,7 @@ import com.nextbreakpoint.nextfractal.queue.RenderService;
 import com.nextbreakpoint.nextfractal.queue.RenderService.ServiceCallback;
 import com.nextbreakpoint.nextfractal.queue.job.RenderJobDataRow;
 import com.nextbreakpoint.nextfractal.queue.spool.JobData;
+import com.nextbreakpoint.nextfractal.twister.ui.ServiceAdapter;
 
 /**
  * @author Andrea Medeghini
@@ -574,7 +575,7 @@ public class RenderJobTableModel extends ServiceAdapter implements TableModel {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.ui.swing.ServiceAdapter#jobCreated(com.nextbreakpoint.nextfractal.service.job.RenderJobDataRow)
+	 * @see com.nextbreakpoint.nextfractal.twister.ui.ServiceAdapter#jobCreated(com.nextbreakpoint.nextfractal.service.job.RenderJobDataRow)
 	 */
 	@Override
 	public void jobCreated(final RenderJobDataRow job) {
@@ -599,7 +600,7 @@ public class RenderJobTableModel extends ServiceAdapter implements TableModel {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.ui.swing.ServiceAdapter#jobDeleted(com.nextbreakpoint.nextfractal.service.job.RenderJobDataRow)
+	 * @see com.nextbreakpoint.nextfractal.twister.ui.ServiceAdapter#jobDeleted(com.nextbreakpoint.nextfractal.service.job.RenderJobDataRow)
 	 */
 	@Override
 	public void jobDeleted(final RenderJobDataRow job) {
@@ -621,7 +622,7 @@ public class RenderJobTableModel extends ServiceAdapter implements TableModel {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.ui.swing.ServiceAdapter#jobUpdated(com.nextbreakpoint.nextfractal.service.job.RenderJobDataRow)
+	 * @see com.nextbreakpoint.nextfractal.twister.ui.ServiceAdapter#jobUpdated(com.nextbreakpoint.nextfractal.service.job.RenderJobDataRow)
 	 */
 	@Override
 	public void jobUpdated(final RenderJobDataRow job) {
@@ -643,7 +644,7 @@ public class RenderJobTableModel extends ServiceAdapter implements TableModel {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.ui.swing.ServiceAdapter#jobResumed(com.nextbreakpoint.nextfractal.service.job.RenderJobDataRow)
+	 * @see com.nextbreakpoint.nextfractal.twister.ui.ServiceAdapter#jobResumed(com.nextbreakpoint.nextfractal.service.job.RenderJobDataRow)
 	 */
 	@Override
 	public void jobResumed(final RenderJobDataRow job) {
@@ -665,7 +666,7 @@ public class RenderJobTableModel extends ServiceAdapter implements TableModel {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.ui.swing.ServiceAdapter#jobStarted(com.nextbreakpoint.nextfractal.service.job.RenderJobDataRow)
+	 * @see com.nextbreakpoint.nextfractal.twister.ui.ServiceAdapter#jobStarted(com.nextbreakpoint.nextfractal.service.job.RenderJobDataRow)
 	 */
 	@Override
 	public void jobStarted(final RenderJobDataRow job) {
@@ -687,7 +688,7 @@ public class RenderJobTableModel extends ServiceAdapter implements TableModel {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.ui.swing.ServiceAdapter#jobStopped(com.nextbreakpoint.nextfractal.service.job.RenderJobDataRow)
+	 * @see com.nextbreakpoint.nextfractal.twister.ui.ServiceAdapter#jobStopped(com.nextbreakpoint.nextfractal.service.job.RenderJobDataRow)
 	 */
 	@Override
 	public void jobStopped(final RenderJobDataRow job) {

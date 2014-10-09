@@ -25,9 +25,9 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.extensions.outcolouringFormula.processed;
 
+import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.renderingFormula.RenderingFormulaExtensionRuntime;
 import com.nextbreakpoint.nextfractal.mandelbrot.extensions.outcolouringFormula.AbstractOutcolouringPaletteRuntime;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RenderedPoint;
-import com.nextbreakpoint.nextfractal.mandelbrot.renderingFormula.extension.RenderingFormulaExtensionRuntime;
 
 /**
  * @author Andrea Medeghini
@@ -36,7 +36,7 @@ public class SmoothModulusRuntime extends AbstractOutcolouringPaletteRuntime<Smo
 	private double ratio;
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensions.incolouringFormula.AbstractIncolouringPaletteRuntime#prepareForRendering(com.nextbreakpoint.nextfractal.mandelbrot.renderingFormula.extension.RenderingFormulaExtensionRuntime, int)
+	 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensions.incolouringFormula.AbstractIncolouringPaletteRuntime#prepareForRendering(com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.renderingFormula.RenderingFormulaExtensionRuntime, int)
 	 */
 	@Override
 	public void prepareForRendering(final RenderingFormulaExtensionRuntime<?> formulaRuntime, final int maxColors) {

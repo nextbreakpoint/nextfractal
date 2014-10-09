@@ -28,12 +28,12 @@ package com.nextbreakpoint.nextfractal.queue;
 import com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtension;
 import com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionRegistry;
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionNotFoundException;
-import com.nextbreakpoint.nextfractal.queue.encoder.extension.EncoderExtensionConfig;
-import com.nextbreakpoint.nextfractal.queue.encoder.extension.EncoderExtensionRegistry;
-import com.nextbreakpoint.nextfractal.queue.encoder.extension.EncoderExtensionRuntime;
-import com.nextbreakpoint.nextfractal.queue.spool.extension.SpoolExtensionConfig;
-import com.nextbreakpoint.nextfractal.queue.spool.extension.SpoolExtensionRegistry;
-import com.nextbreakpoint.nextfractal.queue.spool.extension.SpoolExtensionRuntime;
+import com.nextbreakpoint.nextfractal.queue.extensionPoints.encoder.EncoderExtensionConfig;
+import com.nextbreakpoint.nextfractal.queue.extensionPoints.encoder.EncoderExtensionRegistry;
+import com.nextbreakpoint.nextfractal.queue.extensionPoints.encoder.EncoderExtensionRuntime;
+import com.nextbreakpoint.nextfractal.queue.extensionPoints.spool.SpoolExtensionConfig;
+import com.nextbreakpoint.nextfractal.queue.extensionPoints.spool.SpoolExtensionRegistry;
+import com.nextbreakpoint.nextfractal.queue.extensionPoints.spool.SpoolExtensionRuntime;
 
 /**
  * The service registry.

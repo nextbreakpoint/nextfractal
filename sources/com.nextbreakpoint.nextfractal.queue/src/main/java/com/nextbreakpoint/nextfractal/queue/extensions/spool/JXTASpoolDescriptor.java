@@ -25,7 +25,7 @@
  */
 package com.nextbreakpoint.nextfractal.queue.extensions.spool;
 
-import com.nextbreakpoint.nextfractal.queue.spool.extension.SpoolExtensionDescriptor;
+import com.nextbreakpoint.nextfractal.queue.extensionPoints.spool.SpoolExtensionDescriptor;
 
 /**
  * @author Andrea Medeghini

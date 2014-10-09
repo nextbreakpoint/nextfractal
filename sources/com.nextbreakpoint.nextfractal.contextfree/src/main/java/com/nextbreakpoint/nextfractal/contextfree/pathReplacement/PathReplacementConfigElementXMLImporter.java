@@ -9,7 +9,7 @@ import java.util.List;
 import org.w3c.dom.Element;
 
 import com.nextbreakpoint.nextfractal.contextfree.ContextFreeRegistry;
-import com.nextbreakpoint.nextfractal.contextfree.pathReplacement.extension.PathReplacementExtensionConfig;
+import com.nextbreakpoint.nextfractal.contextfree.extensionPoints.pathReplacement.PathReplacementExtensionConfig;
 import com.nextbreakpoint.nextfractal.core.common.ConfigurableExtensionReferenceElement;
 import com.nextbreakpoint.nextfractal.core.common.ConfigurableExtensionReferenceElementXMLImporter;
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionException;

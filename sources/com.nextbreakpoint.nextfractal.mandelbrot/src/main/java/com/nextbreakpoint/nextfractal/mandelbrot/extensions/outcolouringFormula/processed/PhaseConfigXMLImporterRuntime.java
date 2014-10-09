@@ -25,7 +25,7 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.extensions.outcolouringFormula.processed;
 
-import com.nextbreakpoint.nextfractal.core.extensionConfigXMLImporter.extension.ExtensionConfigXMLImporterExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.extensionPoints.extensionConfigXMLImporter.ExtensionConfigXMLImporterExtensionRuntime;
 import com.nextbreakpoint.nextfractal.core.xml.XMLImporter;
 import com.nextbreakpoint.nextfractal.mandelbrot.extensions.outcolouringFormula.AbstractOutcolouringPaletteConfigXMLImporter;
 
@@ -34,7 +34,7 @@ import com.nextbreakpoint.nextfractal.mandelbrot.extensions.outcolouringFormula.
  */
 public class PhaseConfigXMLImporterRuntime extends ExtensionConfigXMLImporterExtensionRuntime {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.extensionConfigXMLImporter.extension.ExtensionConfigXMLImporterExtensionRuntime#createXMLImporter()
+	 * @see com.nextbreakpoint.nextfractal.core.extensionPoints.extensionConfigXMLImporter.ExtensionConfigXMLImporterExtensionRuntime#createXMLImporter()
 	 */
 	@Override
 	public XMLImporter<PhaseConfig> createXMLImporter() {

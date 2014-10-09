@@ -25,7 +25,7 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.extensions.colorRendererFormula;
 
-import com.nextbreakpoint.nextfractal.mandelbrot.colorRendererFormula.extension.ColorRendererFormulaExtensionDescriptor;
+import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.colorRendererFormula.ColorRendererFormulaExtensionDescriptor;
 
 /**
  * @author Andrea Medeghini

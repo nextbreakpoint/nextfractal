@@ -28,9 +28,9 @@ package com.nextbreakpoint.nextfractal.core.xml;
 import org.w3c.dom.Element;
 
 import com.nextbreakpoint.nextfractal.core.CoreRegistry;
-import com.nextbreakpoint.nextfractal.core.actionXMLImporter.extension.ActionXMLImporterExtensionRuntime;
 import com.nextbreakpoint.nextfractal.core.extension.Extension;
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionException;
+import com.nextbreakpoint.nextfractal.core.extensionPoints.actionXMLImporter.ActionXMLImporterExtensionRuntime;
 import com.nextbreakpoint.nextfractal.core.tree.NodeActionValue;
 
 /**

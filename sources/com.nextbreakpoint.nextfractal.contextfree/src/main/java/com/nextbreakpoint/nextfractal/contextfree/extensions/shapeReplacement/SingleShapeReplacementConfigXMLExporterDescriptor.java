@@ -25,7 +25,7 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.extensions.shapeReplacement;
 
-import com.nextbreakpoint.nextfractal.core.extensionConfigXMLExporter.extension.ExtensionConfigXMLExporterExtensionDescriptor;
+import com.nextbreakpoint.nextfractal.core.extensionPoints.extensionConfigXMLExporter.ExtensionConfigXMLExporterExtensionDescriptor;
 
 /**
  * @author Andrea Medeghini

@@ -25,7 +25,7 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.extensions.pathAdjustment;
 
-import com.nextbreakpoint.nextfractal.contextfree.pathAdjustment.extension.PathAdjustmentExtensionDescriptor;
+import com.nextbreakpoint.nextfractal.contextfree.extensionPoints.pathAdjustment.PathAdjustmentExtensionDescriptor;
 
 /**
  * @author Andrea Medeghini

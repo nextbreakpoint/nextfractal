@@ -26,7 +26,7 @@
 package com.nextbreakpoint.nextfractal.queue.extensions.spool;
 
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionConfig;
-import com.nextbreakpoint.nextfractal.queue.spool.extension.SpoolExtensionConfig;
+import com.nextbreakpoint.nextfractal.queue.extensionPoints.spool.SpoolExtensionConfig;
 
 /**
  * @author Andrea Medeghini

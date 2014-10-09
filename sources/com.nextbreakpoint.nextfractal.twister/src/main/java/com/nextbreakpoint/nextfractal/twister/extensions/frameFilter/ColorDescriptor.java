@@ -25,7 +25,7 @@
  */
 package com.nextbreakpoint.nextfractal.twister.extensions.frameFilter;
 
-import com.nextbreakpoint.nextfractal.twister.frameFilter.extension.FrameFilterExtensionDescriptor;
+import com.nextbreakpoint.nextfractal.twister.extensionPoints.frameFilter.FrameFilterExtensionDescriptor;
 
 /**
  * @author Andrea Medeghini

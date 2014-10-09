@@ -5,7 +5,7 @@
 package com.nextbreakpoint.nextfractal.contextfree.extensions.creator;
 
 import com.nextbreakpoint.nextfractal.contextfree.pathAdjustment.PathAdjustmentConfigElement;
-import com.nextbreakpoint.nextfractal.core.creator.extension.CreatorExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.extensionPoints.creator.CreatorExtensionRuntime;
 import com.nextbreakpoint.nextfractal.core.scripting.JSException;
 
 /**
@@ -13,7 +13,7 @@ import com.nextbreakpoint.nextfractal.core.scripting.JSException;
  */
 public class PathAdjustmentCreatorRuntime extends CreatorExtensionRuntime {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.creator.extension.element.CreatorExtensionRuntime#create(java.lang.Object[])
+	 * @see com.nextbreakpoint.nextfractal.core.extensionPoints.creator.element.CreatorExtensionRuntime#create(java.lang.Object[])
 	 */
 	@Override
 	public Object create(final Object... args) throws JSException {

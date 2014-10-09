@@ -34,8 +34,8 @@ import com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionRefere
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionException;
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionNotFoundException;
 import com.nextbreakpoint.nextfractal.twister.TwisterRegistry;
-import com.nextbreakpoint.nextfractal.twister.effect.extension.EffectExtensionConfig;
-import com.nextbreakpoint.nextfractal.twister.effect.extension.EffectExtensionRuntime;
+import com.nextbreakpoint.nextfractal.twister.extensionPoints.effect.EffectExtensionConfig;
+import com.nextbreakpoint.nextfractal.twister.extensionPoints.effect.EffectExtensionRuntime;
 
 /**
  * @author Andrea Medeghini

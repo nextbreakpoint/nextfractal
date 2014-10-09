@@ -26,7 +26,7 @@
 package com.nextbreakpoint.nextfractal.twister.extensions.action;
 
 import com.nextbreakpoint.nextfractal.core.util.AbstractConfigurableExtensionReferenceElementNodeActionXMLExporterRuntime;
-import com.nextbreakpoint.nextfractal.twister.layerFilter.extension.LayerFilterExtensionConfig;
+import com.nextbreakpoint.nextfractal.twister.extensionPoints.layerFilter.LayerFilterExtensionConfig;
 
 /**
  * @author Andrea Medeghini

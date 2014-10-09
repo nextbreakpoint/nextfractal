@@ -27,7 +27,7 @@ package com.nextbreakpoint.nextfractal.mandelbrot.colorRenderer;
 
 import com.nextbreakpoint.nextfractal.core.common.ExtensionReferenceElementNodeValue;
 import com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionReference;
-import com.nextbreakpoint.nextfractal.mandelbrot.colorRenderer.extension.ColorRendererExtensionConfig;
+import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.colorRenderer.ColorRendererExtensionConfig;
 
 /**
  * @author Andrea Medeghini

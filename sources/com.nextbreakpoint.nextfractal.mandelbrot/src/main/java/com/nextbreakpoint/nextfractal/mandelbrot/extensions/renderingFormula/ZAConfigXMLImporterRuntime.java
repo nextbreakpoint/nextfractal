@@ -31,7 +31,7 @@ import org.w3c.dom.Element;
 
 import com.nextbreakpoint.nextfractal.core.common.DoubleElement;
 import com.nextbreakpoint.nextfractal.core.common.DoubleElementXMLImporter;
-import com.nextbreakpoint.nextfractal.core.extensionConfigXMLImporter.extension.ExtensionConfigXMLImporterExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.extensionPoints.extensionConfigXMLImporter.ExtensionConfigXMLImporterExtensionRuntime;
 import com.nextbreakpoint.nextfractal.core.xml.XMLImportException;
 import com.nextbreakpoint.nextfractal.core.xml.XMLImporter;
 
@@ -40,7 +40,7 @@ import com.nextbreakpoint.nextfractal.core.xml.XMLImporter;
  */
 public class ZAConfigXMLImporterRuntime extends ExtensionConfigXMLImporterExtensionRuntime {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.extensionConfigXMLImporter.extension.ExtensionConfigXMLImporterExtensionRuntime#createXMLImporter()
+	 * @see com.nextbreakpoint.nextfractal.core.extensionPoints.extensionConfigXMLImporter.ExtensionConfigXMLImporterExtensionRuntime#createXMLImporter()
 	 */
 	@Override
 	public XMLImporter<ZAConfig> createXMLImporter() {
@@ -57,7 +57,7 @@ public class ZAConfigXMLImporterRuntime extends ExtensionConfigXMLImporterExtens
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensions.renderingFormula.AbstractRenderingFormulaConfigXMLImporter#importProperties(com.nextbreakpoint.nextfractal.mandelbrot.renderingFormula.extension.RenderingFormulaExtensionConfig, java.util.List)
+		 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensions.renderingFormula.AbstractRenderingFormulaConfigXMLImporter#importProperties(com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.renderingFormula.RenderingFormulaExtensionConfig, java.util.List)
 		 */
 		@Override
 		protected void importProperties(final ZAConfig config, final List<Element> propertyElements) throws XMLImportException {

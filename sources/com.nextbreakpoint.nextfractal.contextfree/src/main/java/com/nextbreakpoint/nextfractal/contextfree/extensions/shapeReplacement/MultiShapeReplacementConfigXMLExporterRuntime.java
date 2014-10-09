@@ -10,7 +10,7 @@ import com.nextbreakpoint.nextfractal.contextfree.shapeAdjustment.ShapeAdjustmen
 import com.nextbreakpoint.nextfractal.contextfree.shapeReplacement.ShapeReplacementConfigElementXMLExporter;
 import com.nextbreakpoint.nextfractal.core.common.IntegerElementXMLExporter;
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionException;
-import com.nextbreakpoint.nextfractal.core.extensionConfigXMLExporter.extension.ExtensionConfigXMLExporterExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.extensionPoints.extensionConfigXMLExporter.ExtensionConfigXMLExporterExtensionRuntime;
 import com.nextbreakpoint.nextfractal.core.xml.XMLExportException;
 import com.nextbreakpoint.nextfractal.core.xml.XMLExporter;
 import com.nextbreakpoint.nextfractal.core.xml.XMLNodeBuilder;
@@ -20,7 +20,7 @@ import com.nextbreakpoint.nextfractal.core.xml.XMLNodeBuilder;
  */
 public class MultiShapeReplacementConfigXMLExporterRuntime extends ExtensionConfigXMLExporterExtensionRuntime {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.extensionConfigXMLExporter.extension.ExtensionConfigXMLExporterExtensionRuntime#createXMLExporter()
+	 * @see com.nextbreakpoint.nextfractal.core.extensionPoints.extensionConfigXMLExporter.ExtensionConfigXMLExporterExtensionRuntime#createXMLExporter()
 	 */
 	@Override
 	public XMLExporter<MultiShapeReplacementConfig> createXMLExporter() {

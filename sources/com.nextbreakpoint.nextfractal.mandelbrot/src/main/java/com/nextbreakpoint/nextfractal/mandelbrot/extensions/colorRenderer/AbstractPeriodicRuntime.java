@@ -43,7 +43,7 @@ public abstract class AbstractPeriodicRuntime<T extends AbstractPeriodicConfig> 
 	protected double t;
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.colorRenderer.extension.ColorRendererExtensionRuntime#prepareForRendering()
+	 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.colorRenderer.ColorRendererExtensionRuntime#prepareForRendering()
 	 */
 	@Override
 	public void prepareForRendering() {

@@ -28,8 +28,8 @@ package com.nextbreakpoint.nextfractal.core.ui.swing;
 import com.nextbreakpoint.nextfractal.core.extension.Extension;
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionNotFoundException;
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionRegistry;
-import com.nextbreakpoint.nextfractal.core.ui.swing.editor.extension.EditorExtensionRegistry;
-import com.nextbreakpoint.nextfractal.core.ui.swing.editor.extension.EditorExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.ui.swing.extensionPoints.editor.EditorExtensionRegistry;
+import com.nextbreakpoint.nextfractal.core.ui.swing.extensionPoints.editor.EditorExtensionRuntime;
 
 /**
  * The twister registry.

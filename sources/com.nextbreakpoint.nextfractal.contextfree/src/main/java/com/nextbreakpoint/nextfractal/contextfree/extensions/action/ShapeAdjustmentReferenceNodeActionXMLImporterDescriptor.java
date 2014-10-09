@@ -25,7 +25,7 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.extensions.action;
 
-import com.nextbreakpoint.nextfractal.core.actionXMLImporter.extension.ActionXMLImporterExtensionDescriptor;
+import com.nextbreakpoint.nextfractal.core.extensionPoints.actionXMLImporter.ActionXMLImporterExtensionDescriptor;
 
 /**
  * @author Andrea Medeghini

@@ -27,7 +27,7 @@ package com.nextbreakpoint.nextfractal.mandelbrot.transformingFormula;
 
 import com.nextbreakpoint.nextfractal.core.common.ExtensionReferenceElementNodeValue;
 import com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionReference;
-import com.nextbreakpoint.nextfractal.mandelbrot.transformingFormula.extension.TransformingFormulaExtensionConfig;
+import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.transformingFormula.TransformingFormulaExtensionConfig;
 
 /**
  * @author Andrea Medeghini

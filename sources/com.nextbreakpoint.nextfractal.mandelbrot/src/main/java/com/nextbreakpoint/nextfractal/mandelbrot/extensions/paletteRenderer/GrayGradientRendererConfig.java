@@ -53,7 +53,7 @@ public final class GrayGradientRendererConfig extends AbstractPaletteRendererCon
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.paletteRenderer.extension.PaletteRendererExtensionConfig#getPaletteElement()
+	 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.paletteRenderer.PaletteRendererExtensionConfig#getPaletteElement()
 	 */
 	@Override
 	public PaletteElement<?> getPaletteElement() {

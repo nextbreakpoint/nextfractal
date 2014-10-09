@@ -36,10 +36,10 @@ import com.nextbreakpoint.nextfractal.core.test.AbstractConfigurableExtensionCon
 import com.nextbreakpoint.nextfractal.core.tree.Node;
 import com.nextbreakpoint.nextfractal.core.tree.NodeValue;
 import com.nextbreakpoint.nextfractal.twister.TwisterRegistry;
+import com.nextbreakpoint.nextfractal.twister.extensionPoints.layerFilter.LayerFilterExtensionConfig;
 import com.nextbreakpoint.nextfractal.twister.extensions.layerFilter.BlackConfig;
 import com.nextbreakpoint.nextfractal.twister.extensions.layerFilter.ColorConfig;
 import com.nextbreakpoint.nextfractal.twister.layerFilter.LayerFilterExtensionReferenceNodeValue;
-import com.nextbreakpoint.nextfractal.twister.layerFilter.extension.LayerFilterExtensionConfig;
 
 /**
  * @author Andrea Medeghini

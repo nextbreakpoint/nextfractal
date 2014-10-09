@@ -11,7 +11,7 @@ import javax.swing.JPanel;
 
 import com.nextbreakpoint.nextfractal.core.tree.NodeEditor;
 import com.nextbreakpoint.nextfractal.core.ui.swing.NodeEditorComponent;
-import com.nextbreakpoint.nextfractal.core.ui.swing.editor.extension.EditorExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.ui.swing.extensionPoints.editor.EditorExtensionRuntime;
 /**
  * @author Andrea Medeghini
  */

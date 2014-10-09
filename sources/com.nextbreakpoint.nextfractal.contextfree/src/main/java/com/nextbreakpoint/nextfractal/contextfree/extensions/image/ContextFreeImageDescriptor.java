@@ -25,7 +25,7 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.extensions.image;
 
-import com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionDescriptor;
+import com.nextbreakpoint.nextfractal.twister.extensionPoints.image.ImageExtensionDescriptor;
 
 /**
  * @author Andrea Medeghini

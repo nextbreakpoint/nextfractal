@@ -39,14 +39,14 @@ import com.nextbreakpoint.nextfractal.devtools.DevToolsException;
 import com.nextbreakpoint.nextfractal.devtools.ProcessorDescriptor;
 import com.nextbreakpoint.nextfractal.devtools.ProcessorParameters;
 import com.nextbreakpoint.nextfractal.devtools.ProcessorTemplateLoader;
-import com.nextbreakpoint.nextfractal.devtools.processor.extension.ProcessorExtensionRuntime;
+import com.nextbreakpoint.nextfractal.devtools.extensionPoints.processor.ProcessorExtensionRuntime;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 
 public class ConfigElementNodeValueProcessorRuntime extends ProcessorExtensionRuntime {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.devtools.processor.extension.ProcessorExtensionRuntime#process(java.io.File, com.nextbreakpoint.nextfractal.devtools.ProcessorDescriptor, java.util.List, java.util.Map)
+	 * @see com.nextbreakpoint.nextfractal.devtools.extensionPoints.processor.ProcessorExtensionRuntime#process(java.io.File, com.nextbreakpoint.nextfractal.devtools.ProcessorDescriptor, java.util.List, java.util.Map)
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
@@ -113,7 +113,7 @@ public class ConfigElementNodeValueProcessorRuntime extends ProcessorExtensionRu
     }
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.devtools.processor.extension.ProcessorExtensionRuntime#getName()
+	 * @see com.nextbreakpoint.nextfractal.devtools.extensionPoints.processor.ProcessorExtensionRuntime#getName()
 	 */
 	@Override
 	public String getName() {

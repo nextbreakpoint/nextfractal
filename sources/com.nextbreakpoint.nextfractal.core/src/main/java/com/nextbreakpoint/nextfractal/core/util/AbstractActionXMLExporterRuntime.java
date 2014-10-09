@@ -27,7 +27,7 @@ package com.nextbreakpoint.nextfractal.core.util;
 
 import org.w3c.dom.Element;
 
-import com.nextbreakpoint.nextfractal.core.actionXMLExporter.extension.ActionXMLExporterExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.extensionPoints.actionXMLExporter.ActionXMLExporterExtensionRuntime;
 import com.nextbreakpoint.nextfractal.core.tree.NodeActionValue;
 import com.nextbreakpoint.nextfractal.core.xml.XML;
 import com.nextbreakpoint.nextfractal.core.xml.XMLExportException;
@@ -39,7 +39,7 @@ import com.nextbreakpoint.nextfractal.core.xml.XMLNodeBuilder;
  */
 public abstract class AbstractActionXMLExporterRuntime extends ActionXMLExporterExtensionRuntime {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.actionXMLExporter.extension.ActionXMLExporterExtensionRuntime#createXMLExporter()
+	 * @see com.nextbreakpoint.nextfractal.core.extensionPoints.actionXMLExporter.ActionXMLExporterExtensionRuntime#createXMLExporter()
 	 */
 	@Override
 	public XMLExporter<NodeActionValue> createXMLExporter() {

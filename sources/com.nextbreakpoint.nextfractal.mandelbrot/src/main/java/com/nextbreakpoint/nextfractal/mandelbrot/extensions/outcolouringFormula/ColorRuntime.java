@@ -25,8 +25,8 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.extensions.outcolouringFormula;
 
+import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.renderingFormula.RenderingFormulaExtensionRuntime;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RenderedPoint;
-import com.nextbreakpoint.nextfractal.mandelbrot.renderingFormula.extension.RenderingFormulaExtensionRuntime;
 
 /**
  * @author Andrea Medeghini
@@ -59,7 +59,7 @@ public class ColorRuntime extends AbstractOutcolouringFormulaRuntime<ColorConfig
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.outcolouringFormula.extension.OutcolouringFormulaExtensionRuntime#prepareForRendering(int)
+	 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.outcolouringFormula.OutcolouringFormulaExtensionRuntime#prepareForRendering(int)
 	 */
 	@Override
 	public void prepareForRendering(final RenderingFormulaExtensionRuntime<?> formulaRuntime, final int maxColors) {
@@ -68,7 +68,7 @@ public class ColorRuntime extends AbstractOutcolouringFormulaRuntime<ColorConfig
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.outcolouringFormula.extension.OutcolouringFormulaExtensionRuntime#renderColor(com.nextbreakpoint.nextfractal.mandelbrot.renderer.RenderedPoint)
+	 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.outcolouringFormula.OutcolouringFormulaExtensionRuntime#renderColor(com.nextbreakpoint.nextfractal.mandelbrot.renderer.RenderedPoint)
 	 */
 	@Override
 	public int renderColor(final RenderedPoint cp) {
@@ -76,7 +76,7 @@ public class ColorRuntime extends AbstractOutcolouringFormulaRuntime<ColorConfig
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.outcolouringFormula.extension.OutcolouringFormulaExtensionRuntime#renderColor(double, double, double, double, int, int)
+	 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.outcolouringFormula.OutcolouringFormulaExtensionRuntime#renderColor(double, double, double, double, int, int)
 	 */
 	@Override
 	public int renderColor(final RenderedPoint cp, final int shift) {

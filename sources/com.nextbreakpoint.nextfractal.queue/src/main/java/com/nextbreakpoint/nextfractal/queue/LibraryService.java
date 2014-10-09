@@ -48,7 +48,7 @@ import com.nextbreakpoint.nextfractal.queue.clip.RenderClipService;
 import com.nextbreakpoint.nextfractal.queue.encoder.EncoderContext;
 import com.nextbreakpoint.nextfractal.queue.encoder.EncoderException;
 import com.nextbreakpoint.nextfractal.queue.encoder.RAFEncoderContext;
-import com.nextbreakpoint.nextfractal.queue.encoder.extension.EncoderExtensionRuntime;
+import com.nextbreakpoint.nextfractal.queue.extensionPoints.encoder.EncoderExtensionRuntime;
 import com.nextbreakpoint.nextfractal.queue.io.ChunkedRandomAccessFile;
 import com.nextbreakpoint.nextfractal.queue.job.RenderJob;
 import com.nextbreakpoint.nextfractal.queue.job.RenderJobDataRow;
@@ -63,7 +63,7 @@ import com.nextbreakpoint.nextfractal.twister.TwisterClipXMLImporter;
 import com.nextbreakpoint.nextfractal.twister.TwisterConfig;
 import com.nextbreakpoint.nextfractal.twister.TwisterRegistry;
 import com.nextbreakpoint.nextfractal.twister.TwisterSequence;
-import com.nextbreakpoint.nextfractal.twister.converter.extension.ConverterExtensionRuntime;
+import com.nextbreakpoint.nextfractal.twister.extensionPoints.converter.ConverterExtensionRuntime;
 
 /**
  * @author Andrea Medeghini

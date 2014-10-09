@@ -15,7 +15,7 @@ import com.nextbreakpoint.nextfractal.contextfree.shapeReplacement.ShapeReplacem
 import com.nextbreakpoint.nextfractal.core.common.IntegerElement;
 import com.nextbreakpoint.nextfractal.core.common.IntegerElementXMLImporter;
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionException;
-import com.nextbreakpoint.nextfractal.core.extensionConfigXMLImporter.extension.ExtensionConfigXMLImporterExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.extensionPoints.extensionConfigXMLImporter.ExtensionConfigXMLImporterExtensionRuntime;
 import com.nextbreakpoint.nextfractal.core.xml.XMLImportException;
 import com.nextbreakpoint.nextfractal.core.xml.XMLImporter;
 
@@ -24,7 +24,7 @@ import com.nextbreakpoint.nextfractal.core.xml.XMLImporter;
  */
 public class MultiShapeReplacementConfigXMLImporterRuntime extends ExtensionConfigXMLImporterExtensionRuntime {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.extensionConfigXMLImporter.extension.ExtensionConfigXMLImporterExtensionRuntime#createXMLImporter()
+	 * @see com.nextbreakpoint.nextfractal.core.extensionPoints.extensionConfigXMLImporter.ExtensionConfigXMLImporterExtensionRuntime#createXMLImporter()
 	 */
 	@Override
 	public XMLImporter<MultiShapeReplacementConfig> createXMLImporter() {

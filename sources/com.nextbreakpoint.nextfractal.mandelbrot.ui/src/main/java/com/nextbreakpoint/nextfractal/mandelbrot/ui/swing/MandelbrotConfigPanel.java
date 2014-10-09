@@ -75,31 +75,31 @@ import com.nextbreakpoint.nextfractal.core.util.DoubleVector4D;
 import com.nextbreakpoint.nextfractal.core.util.RenderContext;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotConfig;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotRegistry;
+import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.incolouringFormula.IncolouringFormulaExtensionConfig;
+import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.incolouringFormula.IncolouringFormulaExtensionRuntime;
+import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.outcolouringFormula.OutcolouringFormulaExtensionConfig;
+import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.outcolouringFormula.OutcolouringFormulaExtensionRuntime;
+import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.processingFormula.ProcessingFormulaExtensionRuntime;
+import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.renderingFormula.RenderingFormulaExtensionConfig;
+import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.renderingFormula.RenderingFormulaExtensionRuntime;
+import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.transformingFormula.TransformingFormulaExtensionConfig;
+import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.transformingFormula.TransformingFormulaExtensionRuntime;
 import com.nextbreakpoint.nextfractal.mandelbrot.extensions.image.MandelbrotImageConfig;
 import com.nextbreakpoint.nextfractal.mandelbrot.fractal.MandelbrotFractalConfigElement;
 import com.nextbreakpoint.nextfractal.mandelbrot.incolouringFormula.IncolouringFormulaConfigElement;
-import com.nextbreakpoint.nextfractal.mandelbrot.incolouringFormula.extension.IncolouringFormulaExtensionConfig;
-import com.nextbreakpoint.nextfractal.mandelbrot.incolouringFormula.extension.IncolouringFormulaExtensionRuntime;
 import com.nextbreakpoint.nextfractal.mandelbrot.orbitTrap.OrbitTrapConfigElement;
 import com.nextbreakpoint.nextfractal.mandelbrot.orbitTrap.extension.OrbitTrapExtensionConfig;
 import com.nextbreakpoint.nextfractal.mandelbrot.orbitTrap.extension.OrbitTrapExtensionRuntime;
 import com.nextbreakpoint.nextfractal.mandelbrot.outcolouringFormula.OutcolouringFormulaConfigElement;
-import com.nextbreakpoint.nextfractal.mandelbrot.outcolouringFormula.extension.OutcolouringFormulaExtensionConfig;
-import com.nextbreakpoint.nextfractal.mandelbrot.outcolouringFormula.extension.OutcolouringFormulaExtensionRuntime;
 import com.nextbreakpoint.nextfractal.mandelbrot.processingFormula.ProcessingFormulaConfigElement;
-import com.nextbreakpoint.nextfractal.mandelbrot.processingFormula.extension.ProcessingFormulaExtensionRuntime;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderingFormula.RenderingFormulaConfigElement;
-import com.nextbreakpoint.nextfractal.mandelbrot.renderingFormula.extension.RenderingFormulaExtensionConfig;
-import com.nextbreakpoint.nextfractal.mandelbrot.renderingFormula.extension.RenderingFormulaExtensionRuntime;
 import com.nextbreakpoint.nextfractal.mandelbrot.transformingFormula.TransformingFormulaConfigElement;
-import com.nextbreakpoint.nextfractal.mandelbrot.transformingFormula.extension.TransformingFormulaExtensionConfig;
-import com.nextbreakpoint.nextfractal.mandelbrot.transformingFormula.extension.TransformingFormulaExtensionRuntime;
 import com.nextbreakpoint.nextfractal.twister.ui.swing.TwisterConfigPanel;
 import com.nextbreakpoint.nextfractal.twister.ui.swing.TwisterSwingRegistry;
 import com.nextbreakpoint.nextfractal.twister.ui.swing.TwisterSwingResources;
 import com.nextbreakpoint.nextfractal.twister.ui.swing.ViewPanel;
-import com.nextbreakpoint.nextfractal.twister.ui.swing.view.NavigatorViewRuntime;
-import com.nextbreakpoint.nextfractal.twister.ui.swing.view.extension.ViewExtensionRuntime;
+import com.nextbreakpoint.nextfractal.twister.ui.swing.extensionPoints.view.DefaultViewRuntime;
+import com.nextbreakpoint.nextfractal.twister.ui.swing.extensionPoints.view.ViewExtensionRuntime;
 import com.nextbreakpoint.nextfractal.twister.util.Speed;
 
 /**
@@ -1629,7 +1629,7 @@ public class MandelbrotConfigPanel extends ViewPanel {
 								configView = extension.createExtensionRuntime().createView(formulaElement.getReference().getExtensionConfig(), viewContext, context, session);
 							}
 							catch (final ExtensionException x) {
-								configView = new NavigatorViewRuntime().createView(formulaElement.getReference().getExtensionConfig(), viewContext, context, session);
+								configView = new DefaultViewRuntime().createView(formulaElement.getReference().getExtensionConfig(), viewContext, context, session);
 							}
 						}
 						configView.setName(createRenderingFormulaPanelName());
@@ -1754,7 +1754,7 @@ public class MandelbrotConfigPanel extends ViewPanel {
 								configView = extension.createExtensionRuntime().createView(formulaElement.getReference().getExtensionConfig(), viewContext, context, session);
 							}
 							catch (final ExtensionException x) {
-								configView = new NavigatorViewRuntime().createView(formulaElement.getReference().getExtensionConfig(), viewContext, context, session);
+								configView = new DefaultViewRuntime().createView(formulaElement.getReference().getExtensionConfig(), viewContext, context, session);
 							}
 						}
 						configView.setName(createTransformingFormulaPanelName());
@@ -1961,7 +1961,7 @@ public class MandelbrotConfigPanel extends ViewPanel {
 								configView = extension.createExtensionRuntime().createView(orbitTrapElement.getReference().getExtensionConfig(), viewContext, context, session);
 							}
 							catch (final ExtensionException x) {
-								configView = new NavigatorViewRuntime().createView(orbitTrapElement.getReference().getExtensionConfig(), viewContext, context, session);
+								configView = new DefaultViewRuntime().createView(orbitTrapElement.getReference().getExtensionConfig(), viewContext, context, session);
 							}
 						}
 						configView.setName(createOrbitTrapPanelName());
@@ -2090,7 +2090,7 @@ public class MandelbrotConfigPanel extends ViewPanel {
 								configView = extension.createExtensionRuntime().createView(formulaElement.getReference().getExtensionConfig(), viewContext, context, session);
 							}
 							catch (final ExtensionException x) {
-								configView = new NavigatorViewRuntime().createView(formulaElement.getReference().getExtensionConfig(), viewContext, context, session);
+								configView = new DefaultViewRuntime().createView(formulaElement.getReference().getExtensionConfig(), viewContext, context, session);
 							}
 						}
 						if (configView != null) {
@@ -2465,7 +2465,7 @@ public class MandelbrotConfigPanel extends ViewPanel {
 								configView = extension.createExtensionRuntime().createView(formulaElement.getReference().getExtensionConfig(), viewContext, context, session);
 							}
 							catch (final ExtensionException x) {
-								configView = new NavigatorViewRuntime().createView(formulaElement.getReference().getExtensionConfig(), viewContext, context, session);
+								configView = new DefaultViewRuntime().createView(formulaElement.getReference().getExtensionConfig(), viewContext, context, session);
 							}
 						}
 						if (configView != null) {

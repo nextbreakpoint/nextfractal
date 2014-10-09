@@ -42,7 +42,7 @@ import javax.swing.SwingConstants;
 import com.nextbreakpoint.nextfractal.core.common.RectangleElementNodeValue;
 import com.nextbreakpoint.nextfractal.core.tree.NodeEditor;
 import com.nextbreakpoint.nextfractal.core.ui.swing.NodeEditorComponent;
-import com.nextbreakpoint.nextfractal.core.ui.swing.editor.extension.EditorExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.ui.swing.extensionPoints.editor.EditorExtensionRuntime;
 import com.nextbreakpoint.nextfractal.core.ui.swing.extensions.CoreSwingExtensionResources;
 import com.nextbreakpoint.nextfractal.core.ui.swing.util.GUIFactory;
 import com.nextbreakpoint.nextfractal.core.util.Rectangle;
@@ -52,7 +52,7 @@ import com.nextbreakpoint.nextfractal.core.util.Rectangle;
  */
 public class RectangleElementEditorRuntime extends EditorExtensionRuntime {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.ui.swing.editor.extension.EditorExtensionRuntime#createEditor(com.nextbreakpoint.nextfractal.core.tree.NodeEditor)
+	 * @see com.nextbreakpoint.nextfractal.core.ui.swing.extensionPoints.editor.EditorExtensionRuntime#createEditor(com.nextbreakpoint.nextfractal.core.tree.NodeEditor)
 	 */
 	@Override
 	public NodeEditorComponent createEditor(final NodeEditor nodeEditor) {

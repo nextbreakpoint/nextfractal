@@ -27,14 +27,14 @@ package com.nextbreakpoint.nextfractal.mandelbrot.extensions.renderingFormula;
 
 import com.nextbreakpoint.nextfractal.core.tree.Node;
 import com.nextbreakpoint.nextfractal.mandelbrot.common.ExponentElementNode;
-import com.nextbreakpoint.nextfractal.mandelbrot.renderingFormula.extension.RenderingFormulaExtensionConfig;
+import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.renderingFormula.RenderingFormulaExtensionConfig;
 
 /**
  * @author Andrea Medeghini
  */
 public class ZNConfigNodeBuilderRuntime extends AbstractRenderingFormulaConfigNodeBuilderRuntime {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensions.renderingFormula.AbstractRenderingFormulaConfigNodeBuilderRuntime#createNodes(com.nextbreakpoint.nextfractal.core.tree.Node, com.nextbreakpoint.nextfractal.mandelbrot.renderingFormula.extension.RenderingFormulaExtensionConfig)
+	 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensions.renderingFormula.AbstractRenderingFormulaConfigNodeBuilderRuntime#createNodes(com.nextbreakpoint.nextfractal.core.tree.Node, com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.renderingFormula.RenderingFormulaExtensionConfig)
 	 */
 	@Override
 	public void createNodes(final Node parentNode, final RenderingFormulaExtensionConfig config) {

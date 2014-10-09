@@ -46,7 +46,7 @@ public abstract class AbstractIncolouringPaletteConfigXMLImporter<T extends Abst
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensions.incolouringFormula.AbstractIncolouringFormulaConfigXMLImporter#importProperties(com.nextbreakpoint.nextfractal.mandelbrot.incolouringFormula.extension.IncolouringFormulaExtensionConfig, java.util.List)
+	 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensions.incolouringFormula.AbstractIncolouringFormulaConfigXMLImporter#importProperties(com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.incolouringFormula.IncolouringFormulaExtensionConfig, java.util.List)
 	 */
 	@Override
 	protected void importProperties(final T config, final List<Element> propertyElements) throws XMLImportException {

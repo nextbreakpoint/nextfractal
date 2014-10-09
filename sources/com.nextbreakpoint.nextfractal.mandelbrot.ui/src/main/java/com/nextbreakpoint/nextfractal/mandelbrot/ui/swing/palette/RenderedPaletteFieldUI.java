@@ -72,7 +72,7 @@ import com.nextbreakpoint.nextfractal.core.ui.swing.palette.TransferablePalette;
 import com.nextbreakpoint.nextfractal.core.util.Colors;
 import com.nextbreakpoint.nextfractal.core.util.Palette;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotRegistry;
-import com.nextbreakpoint.nextfractal.mandelbrot.paletteRendererFormula.extension.PaletteRendererFormulaExtensionRuntime;
+import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.paletteRendererFormula.PaletteRendererFormulaExtensionRuntime;
 import com.nextbreakpoint.nextfractal.mandelbrot.util.RenderedPalette;
 import com.nextbreakpoint.nextfractal.mandelbrot.util.RenderedPaletteParam;
 

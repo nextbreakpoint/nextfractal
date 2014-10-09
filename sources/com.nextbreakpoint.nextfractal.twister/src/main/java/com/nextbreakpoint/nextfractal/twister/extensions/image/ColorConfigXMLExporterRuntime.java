@@ -28,7 +28,7 @@ package com.nextbreakpoint.nextfractal.twister.extensions.image;
 import org.w3c.dom.Element;
 
 import com.nextbreakpoint.nextfractal.core.common.ColorElementXMLExporter;
-import com.nextbreakpoint.nextfractal.core.extensionConfigXMLExporter.extension.ExtensionConfigXMLExporterExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.extensionPoints.extensionConfigXMLExporter.ExtensionConfigXMLExporterExtensionRuntime;
 import com.nextbreakpoint.nextfractal.core.xml.XMLExportException;
 import com.nextbreakpoint.nextfractal.core.xml.XMLExporter;
 import com.nextbreakpoint.nextfractal.core.xml.XMLNodeBuilder;
@@ -38,7 +38,7 @@ import com.nextbreakpoint.nextfractal.core.xml.XMLNodeBuilder;
  */
 public class ColorConfigXMLExporterRuntime extends ExtensionConfigXMLExporterExtensionRuntime {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.extensionConfigXMLExporter.extension.ExtensionConfigXMLExporterExtensionRuntime#createXMLExporter()
+	 * @see com.nextbreakpoint.nextfractal.core.extensionPoints.extensionConfigXMLExporter.ExtensionConfigXMLExporterExtensionRuntime#createXMLExporter()
 	 */
 	@Override
 	public XMLExporter<ColorConfig> createXMLExporter() {
@@ -55,7 +55,7 @@ public class ColorConfigXMLExporterRuntime extends ExtensionConfigXMLExporterExt
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.twister.extensions.image.AbstractImageConfigXMLExporter#exportToElement(com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionConfig, com.nextbreakpoint.nextfractal.core.xml.XMLNodeBuilder)
+		 * @see com.nextbreakpoint.nextfractal.twister.extensions.image.AbstractImageConfigXMLExporter#exportToElement(com.nextbreakpoint.nextfractal.twister.extensionPoints.image.ImageExtensionConfig, com.nextbreakpoint.nextfractal.core.xml.XMLNodeBuilder)
 		 */
 		@Override
 		public Element exportToElement(final ColorConfig config, final XMLNodeBuilder builder) throws XMLExportException {

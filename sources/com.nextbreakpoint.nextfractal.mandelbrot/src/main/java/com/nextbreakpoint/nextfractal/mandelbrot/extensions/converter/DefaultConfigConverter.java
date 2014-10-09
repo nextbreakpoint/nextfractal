@@ -55,6 +55,7 @@ import com.nextbreakpoint.nextfractal.core.util.DoubleVector2D;
 import com.nextbreakpoint.nextfractal.core.xml.XML;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotConfigBuilder;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotRegistry;
+import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.renderingFormula.RenderingFormulaExtensionConfig;
 import com.nextbreakpoint.nextfractal.mandelbrot.extensions.image.MandelbrotImageConfig;
 import com.nextbreakpoint.nextfractal.mandelbrot.fractal.MandelbrotFractalConfigElement;
 import com.nextbreakpoint.nextfractal.mandelbrot.incolouringFormula.IncolouringFormulaConfigElement;
@@ -62,15 +63,14 @@ import com.nextbreakpoint.nextfractal.mandelbrot.orbitTrap.OrbitTrapConfigElemen
 import com.nextbreakpoint.nextfractal.mandelbrot.outcolouringFormula.OutcolouringFormulaConfigElement;
 import com.nextbreakpoint.nextfractal.mandelbrot.processingFormula.ProcessingFormulaConfigElement;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderingFormula.RenderingFormulaConfigElement;
-import com.nextbreakpoint.nextfractal.mandelbrot.renderingFormula.extension.RenderingFormulaExtensionConfig;
 import com.nextbreakpoint.nextfractal.mandelbrot.transformingFormula.TransformingFormulaConfigElement;
 import com.nextbreakpoint.nextfractal.twister.TwisterConfig;
 import com.nextbreakpoint.nextfractal.twister.TwisterRegistry;
 import com.nextbreakpoint.nextfractal.twister.converter.ConfigConverter;
 import com.nextbreakpoint.nextfractal.twister.effect.EffectConfigElement;
+import com.nextbreakpoint.nextfractal.twister.extensionPoints.image.ImageExtensionConfig;
 import com.nextbreakpoint.nextfractal.twister.frame.FrameConfigElement;
 import com.nextbreakpoint.nextfractal.twister.image.ImageConfigElement;
-import com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionConfig;
 import com.nextbreakpoint.nextfractal.twister.layer.GroupLayerConfigElement;
 import com.nextbreakpoint.nextfractal.twister.layer.ImageLayerConfigElement;
 
@@ -81,7 +81,7 @@ public class DefaultConfigConverter implements ConfigConverter {
 	private static final Logger logger = Logger.getLogger(DefaultConfigConverter.class.getName());
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.converter.extension.ConverterExtensionRuntime#convert(java.io.File)
+	 * @see com.nextbreakpoint.nextfractal.twister.extensionPoints.converter.ConverterExtensionRuntime#convert(java.io.File)
 	 */
 	@Override
 	public TwisterConfig convert(final File file) {

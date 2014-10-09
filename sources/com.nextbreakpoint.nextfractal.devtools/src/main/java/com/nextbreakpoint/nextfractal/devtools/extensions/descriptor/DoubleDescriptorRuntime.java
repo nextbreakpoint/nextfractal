@@ -28,11 +28,11 @@ package com.nextbreakpoint.nextfractal.devtools.extensions.descriptor;
 import com.nextbreakpoint.nextfractal.core.common.DoubleElement;
 import com.nextbreakpoint.nextfractal.devtools.ProcessorCardinality;
 import com.nextbreakpoint.nextfractal.devtools.ProcessorDescriptor;
-import com.nextbreakpoint.nextfractal.devtools.descriptor.extension.DescriptorExtensionRuntime;
+import com.nextbreakpoint.nextfractal.devtools.extensionPoints.descriptor.DescriptorExtensionRuntime;
 
 public class DoubleDescriptorRuntime extends DescriptorExtensionRuntime {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.devtools.descriptor.extension.DescriptorExtensionRuntime#createDescriptor()
+	 * @see com.nextbreakpoint.nextfractal.devtools.extensionPoints.descriptor.DescriptorExtensionRuntime#createDescriptor()
 	 */
 	@Override
 	public ProcessorDescriptor createDescriptor(String elementName, String defaultValue, ProcessorCardinality cardinality) {
@@ -40,7 +40,7 @@ public class DoubleDescriptorRuntime extends DescriptorExtensionRuntime {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.devtools.descriptor.extension.DescriptorExtensionRuntime#getClassId()
+	 * @see com.nextbreakpoint.nextfractal.devtools.extensionPoints.descriptor.DescriptorExtensionRuntime#getClassId()
 	 */
 	@Override
 	public String getClassId() {

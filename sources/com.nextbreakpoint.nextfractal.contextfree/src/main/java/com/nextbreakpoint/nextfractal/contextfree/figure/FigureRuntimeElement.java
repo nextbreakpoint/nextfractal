@@ -5,8 +5,8 @@
 package com.nextbreakpoint.nextfractal.contextfree.figure;
 
 import com.nextbreakpoint.nextfractal.contextfree.ContextFreeRegistry;
-import com.nextbreakpoint.nextfractal.contextfree.figure.extension.FigureExtensionConfig;
-import com.nextbreakpoint.nextfractal.contextfree.figure.extension.FigureExtensionRuntime;
+import com.nextbreakpoint.nextfractal.contextfree.extensionPoints.figure.FigureExtensionConfig;
+import com.nextbreakpoint.nextfractal.contextfree.extensionPoints.figure.FigureExtensionRuntime;
 import com.nextbreakpoint.nextfractal.contextfree.renderer.support.CFBuilder;
 import com.nextbreakpoint.nextfractal.core.common.ExtensionReferenceElement;
 import com.nextbreakpoint.nextfractal.core.config.RuntimeElement;

@@ -35,7 +35,7 @@ import com.nextbreakpoint.nextfractal.core.xml.XMLExportException;
 import com.nextbreakpoint.nextfractal.core.xml.XMLExporter;
 import com.nextbreakpoint.nextfractal.core.xml.XMLNodeBuilder;
 import com.nextbreakpoint.nextfractal.mandelbrot.common.IterationsElementXMLExporter;
-import com.nextbreakpoint.nextfractal.mandelbrot.outcolouringFormula.extension.OutcolouringFormulaExtensionConfig;
+import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.outcolouringFormula.OutcolouringFormulaExtensionConfig;
 import com.nextbreakpoint.nextfractal.twister.common.PercentageElementXMLExporter;
 
 /**

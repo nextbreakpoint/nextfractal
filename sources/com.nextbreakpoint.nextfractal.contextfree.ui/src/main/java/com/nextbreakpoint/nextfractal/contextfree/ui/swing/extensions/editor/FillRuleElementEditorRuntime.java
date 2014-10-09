@@ -42,7 +42,7 @@ import com.nextbreakpoint.nextfractal.contextfree.common.FillRuleElementNodeValu
 import com.nextbreakpoint.nextfractal.contextfree.ui.swing.extensions.ContextFreeSwingExtensionResources;
 import com.nextbreakpoint.nextfractal.core.tree.NodeEditor;
 import com.nextbreakpoint.nextfractal.core.ui.swing.NodeEditorComponent;
-import com.nextbreakpoint.nextfractal.core.ui.swing.editor.extension.EditorExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.ui.swing.extensionPoints.editor.EditorExtensionRuntime;
 import com.nextbreakpoint.nextfractal.core.ui.swing.util.GUIFactory;
 
 /**
@@ -50,7 +50,7 @@ import com.nextbreakpoint.nextfractal.core.ui.swing.util.GUIFactory;
  */
 public class FillRuleElementEditorRuntime extends EditorExtensionRuntime {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.ui.swing.editor.extension.EditorExtensionRuntime#createEditor(com.nextbreakpoint.nextfractal.core.tree.NodeEditor)
+	 * @see com.nextbreakpoint.nextfractal.core.ui.swing.extensionPoints.editor.EditorExtensionRuntime#createEditor(com.nextbreakpoint.nextfractal.core.tree.NodeEditor)
 	 */
 	@Override
 	public NodeEditorComponent createEditor(final NodeEditor nodeEditor) {

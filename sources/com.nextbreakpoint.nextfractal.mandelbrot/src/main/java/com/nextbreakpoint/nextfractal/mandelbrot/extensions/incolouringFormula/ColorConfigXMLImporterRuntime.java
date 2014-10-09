@@ -31,7 +31,7 @@ import org.w3c.dom.Element;
 
 import com.nextbreakpoint.nextfractal.core.common.ColorElement;
 import com.nextbreakpoint.nextfractal.core.common.ColorElementXMLImporter;
-import com.nextbreakpoint.nextfractal.core.extensionConfigXMLImporter.extension.ExtensionConfigXMLImporterExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.extensionPoints.extensionConfigXMLImporter.ExtensionConfigXMLImporterExtensionRuntime;
 import com.nextbreakpoint.nextfractal.core.xml.XMLImportException;
 import com.nextbreakpoint.nextfractal.core.xml.XMLImporter;
 
@@ -40,7 +40,7 @@ import com.nextbreakpoint.nextfractal.core.xml.XMLImporter;
  */
 public class ColorConfigXMLImporterRuntime extends ExtensionConfigXMLImporterExtensionRuntime {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.extensionConfigXMLImporter.extension.ExtensionConfigXMLImporterExtensionRuntime#createXMLImporter()
+	 * @see com.nextbreakpoint.nextfractal.core.extensionPoints.extensionConfigXMLImporter.ExtensionConfigXMLImporterExtensionRuntime#createXMLImporter()
 	 */
 	@Override
 	public XMLImporter<ColorConfig> createXMLImporter() {
@@ -73,7 +73,7 @@ public class ColorConfigXMLImporterRuntime extends ExtensionConfigXMLImporterExt
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensions.incolouringFormula.AbstractIncolouringFormulaConfigXMLImporter#importProperties(com.nextbreakpoint.nextfractal.mandelbrot.incolouringFormula.extension.IncolouringFormulaExtensionConfig, java.util.List)
+		 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensions.incolouringFormula.AbstractIncolouringFormulaConfigXMLImporter#importProperties(com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.incolouringFormula.IncolouringFormulaExtensionConfig, java.util.List)
 		 */
 		@Override
 		protected void importProperties(final ColorConfig config, final List<Element> propertyElements) throws XMLImportException {

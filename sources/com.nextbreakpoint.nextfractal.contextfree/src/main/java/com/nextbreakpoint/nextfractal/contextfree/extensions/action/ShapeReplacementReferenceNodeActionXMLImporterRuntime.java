@@ -5,7 +5,7 @@
 package com.nextbreakpoint.nextfractal.contextfree.extensions.action;
 
 import com.nextbreakpoint.nextfractal.contextfree.ContextFreeRegistry;
-import com.nextbreakpoint.nextfractal.contextfree.shapeReplacement.extension.ShapeReplacementExtensionConfig;
+import com.nextbreakpoint.nextfractal.contextfree.extensionPoints.shapeReplacement.ShapeReplacementExtensionConfig;
 import com.nextbreakpoint.nextfractal.core.util.AbstractConfigurableExtensionReferenceElementNodeActionXMLImporterRuntime;
 /**
  * @author Andrea Medeghini

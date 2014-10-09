@@ -4,7 +4,7 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.extensions.figure;
 
-import com.nextbreakpoint.nextfractal.contextfree.figure.extension.FigureExtensionRuntime;
+import com.nextbreakpoint.nextfractal.contextfree.extensionPoints.figure.FigureExtensionRuntime;
 import com.nextbreakpoint.nextfractal.contextfree.renderer.support.CFBuilder;
 import com.nextbreakpoint.nextfractal.contextfree.renderer.support.CFRule;
 import com.nextbreakpoint.nextfractal.contextfree.shapeReplacement.ShapeReplacementConfigElement;

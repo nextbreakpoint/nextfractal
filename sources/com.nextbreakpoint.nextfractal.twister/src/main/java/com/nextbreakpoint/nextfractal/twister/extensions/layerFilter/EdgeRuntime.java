@@ -30,7 +30,7 @@ import java.awt.image.Kernel;
 
 import com.nextbreakpoint.nextfractal.core.util.Surface;
 import com.nextbreakpoint.nextfractal.core.util.Tile;
-import com.nextbreakpoint.nextfractal.twister.layerFilter.extension.LayerFilterExtensionRuntime;
+import com.nextbreakpoint.nextfractal.twister.extensionPoints.layerFilter.LayerFilterExtensionRuntime;
 import com.nextbreakpoint.nextfractal.twister.util.Padding;
 
 /**
@@ -42,7 +42,7 @@ public class EdgeRuntime extends LayerFilterExtensionRuntime<EdgeConfig> {
 	private final Padding padding = new Padding(0, 0, 0, 0);
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.layerFilter.extension.LayerFilterExtensionRuntime#getPadding()
+	 * @see com.nextbreakpoint.nextfractal.twister.extensionPoints.layerFilter.LayerFilterExtensionRuntime#getPadding()
 	 */
 	@Override
 	public Padding getPadding() {
@@ -50,7 +50,7 @@ public class EdgeRuntime extends LayerFilterExtensionRuntime<EdgeConfig> {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.layerFilter.extension.LayerFilterExtensionRuntime#renderImage(com.nextbreakpoint.nextfractal.core.util.Surface, com.nextbreakpoint.nextfractal.core.util.Surface)
+	 * @see com.nextbreakpoint.nextfractal.twister.extensionPoints.layerFilter.LayerFilterExtensionRuntime#renderImage(com.nextbreakpoint.nextfractal.core.util.Surface, com.nextbreakpoint.nextfractal.core.util.Surface)
 	 */
 	@Override
 	public void renderImage(final Surface src, final Surface dst) {
@@ -58,14 +58,14 @@ public class EdgeRuntime extends LayerFilterExtensionRuntime<EdgeConfig> {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.layerFilter.extension.LayerFilterExtensionRuntime#setTile(com.nextbreakpoint.nextfractal.core.util.Tile)
+	 * @see com.nextbreakpoint.nextfractal.twister.extensionPoints.layerFilter.LayerFilterExtensionRuntime#setTile(com.nextbreakpoint.nextfractal.core.util.Tile)
 	 */
 	@Override
 	public void setTile(final Tile tile) {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.layerFilter.extension.LayerFilterExtensionRuntime#prepareFilter()
+	 * @see com.nextbreakpoint.nextfractal.twister.extensionPoints.layerFilter.LayerFilterExtensionRuntime#prepareFilter()
 	 */
 	@Override
 	public void prepareFilter() {

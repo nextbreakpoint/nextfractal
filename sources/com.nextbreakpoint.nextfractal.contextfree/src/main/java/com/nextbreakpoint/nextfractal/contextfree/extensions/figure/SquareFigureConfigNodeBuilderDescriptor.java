@@ -25,7 +25,7 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.extensions.figure;
 
-import com.nextbreakpoint.nextfractal.core.nodeBuilder.extension.NodeBuilderExtensionDescriptor;
+import com.nextbreakpoint.nextfractal.core.extensionPoints.nodeBuilder.NodeBuilderExtensionDescriptor;
 
 /**
  * @author Andrea Medeghini

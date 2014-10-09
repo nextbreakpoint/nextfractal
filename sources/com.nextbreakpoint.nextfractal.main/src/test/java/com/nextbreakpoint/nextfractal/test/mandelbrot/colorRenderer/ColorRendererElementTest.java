@@ -37,7 +37,7 @@ import com.nextbreakpoint.nextfractal.core.tree.Node;
 import com.nextbreakpoint.nextfractal.core.tree.NodeValue;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotRegistry;
 import com.nextbreakpoint.nextfractal.mandelbrot.colorRenderer.ColorRendererExtensionReferenceNodeValue;
-import com.nextbreakpoint.nextfractal.mandelbrot.colorRenderer.extension.ColorRendererExtensionConfig;
+import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.colorRenderer.ColorRendererExtensionConfig;
 import com.nextbreakpoint.nextfractal.mandelbrot.extensions.colorRenderer.COSConfig;
 import com.nextbreakpoint.nextfractal.mandelbrot.extensions.colorRenderer.SINConfig;
 

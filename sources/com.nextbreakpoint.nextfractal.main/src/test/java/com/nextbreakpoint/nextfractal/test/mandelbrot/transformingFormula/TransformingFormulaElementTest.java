@@ -36,10 +36,10 @@ import com.nextbreakpoint.nextfractal.core.test.AbstractConfigurableExtensionCon
 import com.nextbreakpoint.nextfractal.core.tree.Node;
 import com.nextbreakpoint.nextfractal.core.tree.NodeValue;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotRegistry;
+import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.transformingFormula.TransformingFormulaExtensionConfig;
 import com.nextbreakpoint.nextfractal.mandelbrot.extensions.transformingFormula.YConfig;
 import com.nextbreakpoint.nextfractal.mandelbrot.extensions.transformingFormula.ZConfig;
 import com.nextbreakpoint.nextfractal.mandelbrot.transformingFormula.TransformingFormulaExtensionReferenceNodeValue;
-import com.nextbreakpoint.nextfractal.mandelbrot.transformingFormula.extension.TransformingFormulaExtensionConfig;
 
 /**
  * @author Andrea Medeghini

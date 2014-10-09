@@ -48,8 +48,8 @@ import com.nextbreakpoint.nextfractal.core.extension.ExtensionException;
 import com.nextbreakpoint.nextfractal.core.tree.NodeSession;
 import com.nextbreakpoint.nextfractal.core.ui.swing.ViewContext;
 import com.nextbreakpoint.nextfractal.core.util.RenderContext;
-import com.nextbreakpoint.nextfractal.twister.ui.swing.view.NavigatorViewRuntime;
-import com.nextbreakpoint.nextfractal.twister.ui.swing.view.extension.ViewExtensionRuntime;
+import com.nextbreakpoint.nextfractal.twister.ui.swing.extensionPoints.view.DefaultViewRuntime;
+import com.nextbreakpoint.nextfractal.twister.ui.swing.extensionPoints.view.ViewExtensionRuntime;
 
 /**
  * @author Andrea Medeghini
@@ -136,7 +136,7 @@ public class NavigationFrame extends JFrame {
 				viewPanel = extension.createExtensionRuntime().createView(configElement.getReference().getExtensionConfig(), viewContext, renderContext, session);
 			}
 			catch (final ExtensionException x) {
-				viewPanel = new NavigatorViewRuntime().createView(configElement.getReference().getExtensionConfig(), viewContext, renderContext, session);
+				viewPanel = new DefaultViewRuntime().createView(configElement.getReference().getExtensionConfig(), viewContext, renderContext, session);
 			}
 		}
 		else {

@@ -26,14 +26,14 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.extensions.converter;
 
 import com.nextbreakpoint.nextfractal.twister.converter.ConfigConverter;
-import com.nextbreakpoint.nextfractal.twister.converter.extension.ConverterExtensionRuntime;
+import com.nextbreakpoint.nextfractal.twister.extensionPoints.converter.ConverterExtensionRuntime;
 
 /**
  * @author Andrea Medeghini
  */
 public class DefaultConverterRuntime extends ConverterExtensionRuntime {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.converter.extension.ConverterExtensionRuntime#createConverter()
+	 * @see com.nextbreakpoint.nextfractal.twister.extensionPoints.converter.ConverterExtensionRuntime#createConverter()
 	 */
 	@Override
 	public ConfigConverter createConverter() {

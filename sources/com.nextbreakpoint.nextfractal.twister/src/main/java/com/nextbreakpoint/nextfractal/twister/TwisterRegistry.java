@@ -30,20 +30,20 @@ import com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionRegist
 import com.nextbreakpoint.nextfractal.core.extension.Extension;
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionNotFoundException;
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionRegistry;
-import com.nextbreakpoint.nextfractal.twister.converter.extension.ConverterExtensionRegistry;
-import com.nextbreakpoint.nextfractal.twister.converter.extension.ConverterExtensionRuntime;
-import com.nextbreakpoint.nextfractal.twister.effect.extension.EffectExtensionConfig;
-import com.nextbreakpoint.nextfractal.twister.effect.extension.EffectExtensionRegistry;
-import com.nextbreakpoint.nextfractal.twister.effect.extension.EffectExtensionRuntime;
-import com.nextbreakpoint.nextfractal.twister.frameFilter.extension.FrameFilterExtensionConfig;
-import com.nextbreakpoint.nextfractal.twister.frameFilter.extension.FrameFilterExtensionRegistry;
-import com.nextbreakpoint.nextfractal.twister.frameFilter.extension.FrameFilterExtensionRuntime;
-import com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionConfig;
-import com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionRegistry;
-import com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionRuntime;
-import com.nextbreakpoint.nextfractal.twister.layerFilter.extension.LayerFilterExtensionConfig;
-import com.nextbreakpoint.nextfractal.twister.layerFilter.extension.LayerFilterExtensionRegistry;
-import com.nextbreakpoint.nextfractal.twister.layerFilter.extension.LayerFilterExtensionRuntime;
+import com.nextbreakpoint.nextfractal.twister.extensionPoints.converter.ConverterExtensionRegistry;
+import com.nextbreakpoint.nextfractal.twister.extensionPoints.converter.ConverterExtensionRuntime;
+import com.nextbreakpoint.nextfractal.twister.extensionPoints.effect.EffectExtensionConfig;
+import com.nextbreakpoint.nextfractal.twister.extensionPoints.effect.EffectExtensionRegistry;
+import com.nextbreakpoint.nextfractal.twister.extensionPoints.effect.EffectExtensionRuntime;
+import com.nextbreakpoint.nextfractal.twister.extensionPoints.frameFilter.FrameFilterExtensionConfig;
+import com.nextbreakpoint.nextfractal.twister.extensionPoints.frameFilter.FrameFilterExtensionRegistry;
+import com.nextbreakpoint.nextfractal.twister.extensionPoints.frameFilter.FrameFilterExtensionRuntime;
+import com.nextbreakpoint.nextfractal.twister.extensionPoints.image.ImageExtensionConfig;
+import com.nextbreakpoint.nextfractal.twister.extensionPoints.image.ImageExtensionRegistry;
+import com.nextbreakpoint.nextfractal.twister.extensionPoints.image.ImageExtensionRuntime;
+import com.nextbreakpoint.nextfractal.twister.extensionPoints.layerFilter.LayerFilterExtensionConfig;
+import com.nextbreakpoint.nextfractal.twister.extensionPoints.layerFilter.LayerFilterExtensionRegistry;
+import com.nextbreakpoint.nextfractal.twister.extensionPoints.layerFilter.LayerFilterExtensionRuntime;
 
 /**
  * The twister registry.

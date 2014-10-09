@@ -25,7 +25,7 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.extensions.paletteRendererFormula;
 
-import com.nextbreakpoint.nextfractal.mandelbrot.paletteRendererFormula.extension.PaletteRendererFormulaExtensionRuntime;
+import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.paletteRendererFormula.PaletteRendererFormulaExtensionRuntime;
 
 /**
  * @author Andrea Medeghini
@@ -34,7 +34,7 @@ public class COSRuntime extends PaletteRendererFormulaExtensionRuntime {
 	private static final double CONSTANT_PI2 = 0.5d * Math.PI;
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.paletteRendererFormula.extension.PaletteRendererFormulaExtensionRuntime#renderPalette(int)
+	 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.paletteRendererFormula.PaletteRendererFormulaExtensionRuntime#renderPalette(int)
 	 */
 	@Override
 	public double[] renderPalette(final int size) {

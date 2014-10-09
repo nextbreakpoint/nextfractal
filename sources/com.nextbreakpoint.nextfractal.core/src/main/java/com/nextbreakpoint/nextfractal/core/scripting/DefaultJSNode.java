@@ -26,9 +26,9 @@
 package com.nextbreakpoint.nextfractal.core.scripting;
 
 import com.nextbreakpoint.nextfractal.core.CoreRegistry;
-import com.nextbreakpoint.nextfractal.core.creator.extension.CreatorExtensionRuntime;
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionException;
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionNotFoundException;
+import com.nextbreakpoint.nextfractal.core.extensionPoints.creator.CreatorExtensionRuntime;
 import com.nextbreakpoint.nextfractal.core.tree.Node;
 
 /**

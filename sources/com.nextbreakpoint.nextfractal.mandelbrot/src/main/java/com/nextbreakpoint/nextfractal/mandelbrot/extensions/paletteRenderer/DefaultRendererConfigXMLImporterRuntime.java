@@ -29,7 +29,7 @@ import java.util.List;
 
 import org.w3c.dom.Element;
 
-import com.nextbreakpoint.nextfractal.core.extensionConfigXMLImporter.extension.ExtensionConfigXMLImporterExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.extensionPoints.extensionConfigXMLImporter.ExtensionConfigXMLImporterExtensionRuntime;
 import com.nextbreakpoint.nextfractal.core.xml.XMLImportException;
 import com.nextbreakpoint.nextfractal.core.xml.XMLImporter;
 import com.nextbreakpoint.nextfractal.mandelbrot.common.RenderedPaletteElement;
@@ -40,7 +40,7 @@ import com.nextbreakpoint.nextfractal.mandelbrot.common.RenderedPaletteElementXM
  */
 public class DefaultRendererConfigXMLImporterRuntime extends ExtensionConfigXMLImporterExtensionRuntime {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.extensionConfigXMLImporter.extension.ExtensionConfigXMLImporterExtensionRuntime#createXMLImporter()
+	 * @see com.nextbreakpoint.nextfractal.core.extensionPoints.extensionConfigXMLImporter.ExtensionConfigXMLImporterExtensionRuntime#createXMLImporter()
 	 */
 	@Override
 	public XMLImporter<DefaultRendererConfig> createXMLImporter() {
@@ -73,7 +73,7 @@ public class DefaultRendererConfigXMLImporterRuntime extends ExtensionConfigXMLI
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensions.paletteRenderer.AbstractPaletteRendererConfigXMLImporter#importProperties(com.nextbreakpoint.nextfractal.mandelbrot.paletteRenderer.extension.PaletteRendererExtensionConfig, java.util.List)
+		 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensions.paletteRenderer.AbstractPaletteRendererConfigXMLImporter#importProperties(com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.paletteRenderer.PaletteRendererExtensionConfig, java.util.List)
 		 */
 		@Override
 		protected void importProperties(final DefaultRendererConfig config, final List<Element> propertyElements) throws XMLImportException {

@@ -74,7 +74,7 @@ import com.nextbreakpoint.nextfractal.twister.TwisterClip;
 import com.nextbreakpoint.nextfractal.twister.TwisterClipController;
 import com.nextbreakpoint.nextfractal.twister.TwisterConfig;
 import com.nextbreakpoint.nextfractal.twister.TwisterRuntime;
-import com.nextbreakpoint.nextfractal.twister.effect.extension.EffectExtensionRuntime;
+import com.nextbreakpoint.nextfractal.twister.extensionPoints.effect.EffectExtensionRuntime;
 import com.nextbreakpoint.nextfractal.twister.renderer.DefaultTwisterRenderer;
 import com.nextbreakpoint.nextfractal.twister.renderer.OverlayTwisterRenderer;
 import com.nextbreakpoint.nextfractal.twister.renderer.TwisterRenderer;

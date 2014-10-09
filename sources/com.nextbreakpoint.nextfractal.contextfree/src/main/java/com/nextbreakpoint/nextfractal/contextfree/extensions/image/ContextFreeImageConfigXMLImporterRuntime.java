@@ -31,7 +31,7 @@ import org.w3c.dom.Element;
 
 import com.nextbreakpoint.nextfractal.contextfree.ContextFreeConfig;
 import com.nextbreakpoint.nextfractal.contextfree.ContextFreeConfigXMLImporter;
-import com.nextbreakpoint.nextfractal.core.extensionConfigXMLImporter.extension.ExtensionConfigXMLImporterExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.extensionPoints.extensionConfigXMLImporter.ExtensionConfigXMLImporterExtensionRuntime;
 import com.nextbreakpoint.nextfractal.core.xml.XMLImportException;
 import com.nextbreakpoint.nextfractal.core.xml.XMLImporter;
 
@@ -40,7 +40,7 @@ import com.nextbreakpoint.nextfractal.core.xml.XMLImporter;
  */
 public class ContextFreeImageConfigXMLImporterRuntime extends ExtensionConfigXMLImporterExtensionRuntime {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.extensionConfigXMLImporter.extension.ExtensionConfigXMLImporterExtensionRuntime#createXMLImporter()
+	 * @see com.nextbreakpoint.nextfractal.core.extensionPoints.extensionConfigXMLImporter.ExtensionConfigXMLImporterExtensionRuntime#createXMLImporter()
 	 */
 	@Override
 	public XMLImporter<ContextFreeImageConfig> createXMLImporter() {

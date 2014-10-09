@@ -33,7 +33,7 @@ import com.nextbreakpoint.nextfractal.core.config.ConfigElement;
 import com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionReference;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotRegistry;
 import com.nextbreakpoint.nextfractal.mandelbrot.colorRenderer.ColorRendererConfigElement;
-import com.nextbreakpoint.nextfractal.mandelbrot.colorRenderer.extension.ColorRendererExtensionConfig;
+import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.colorRenderer.ColorRendererExtensionConfig;
 
 /**
  * @author Andrea Medeghini

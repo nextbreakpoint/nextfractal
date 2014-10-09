@@ -32,7 +32,7 @@ import java.awt.Graphics2D;
 import com.nextbreakpoint.nextfractal.core.util.Color32bit;
 import com.nextbreakpoint.nextfractal.core.util.Surface;
 import com.nextbreakpoint.nextfractal.core.util.Tile;
-import com.nextbreakpoint.nextfractal.twister.frameFilter.extension.FrameFilterExtensionRuntime;
+import com.nextbreakpoint.nextfractal.twister.extensionPoints.frameFilter.FrameFilterExtensionRuntime;
 import com.nextbreakpoint.nextfractal.twister.util.Padding;
 
 /**
@@ -52,7 +52,7 @@ public class ColorRuntime extends FrameFilterExtensionRuntime<ColorConfig> {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.frameFilter.extension.FrameFilterExtensionRuntime#getPadding()
+	 * @see com.nextbreakpoint.nextfractal.twister.extensionPoints.frameFilter.FrameFilterExtensionRuntime#getPadding()
 	 */
 	@Override
 	public Padding getPadding() {
@@ -60,7 +60,7 @@ public class ColorRuntime extends FrameFilterExtensionRuntime<ColorConfig> {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.frameFilter.extension.FrameFilterExtensionRuntime#renderImage(com.nextbreakpoint.nextfractal.core.util.Surface, com.nextbreakpoint.nextfractal.core.util.Surface, com.nextbreakpoint.nextfractal.core.util.Surface)
+	 * @see com.nextbreakpoint.nextfractal.twister.extensionPoints.frameFilter.FrameFilterExtensionRuntime#renderImage(com.nextbreakpoint.nextfractal.core.util.Surface, com.nextbreakpoint.nextfractal.core.util.Surface, com.nextbreakpoint.nextfractal.core.util.Surface)
 	 */
 	@Override
 	public void renderImage(final Surface src, final Surface dst, final Surface prev) {
@@ -73,14 +73,14 @@ public class ColorRuntime extends FrameFilterExtensionRuntime<ColorConfig> {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.layerFilter.extension.LayerFilterExtensionRuntime#setTile(com.nextbreakpoint.nextfractal.core.util.Tile)
+	 * @see com.nextbreakpoint.nextfractal.twister.extensionPoints.layerFilter.LayerFilterExtensionRuntime#setTile(com.nextbreakpoint.nextfractal.core.util.Tile)
 	 */
 	@Override
 	public void setTile(final Tile tile) {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.frameFilter.extension.FrameFilterExtensionRuntime#prepareFilter(boolean)
+	 * @see com.nextbreakpoint.nextfractal.twister.extensionPoints.frameFilter.FrameFilterExtensionRuntime#prepareFilter(boolean)
 	 */
 	@Override
 	public void prepareFilter(final boolean isDynamic) {

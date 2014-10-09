@@ -35,7 +35,7 @@ import com.nextbreakpoint.nextfractal.core.extension.Extension;
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionReference;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotRegistry;
 import com.nextbreakpoint.nextfractal.mandelbrot.colorRendererFormula.ColorRendererFormulaConfigElement;
-import com.nextbreakpoint.nextfractal.mandelbrot.colorRendererFormula.extension.ColorRendererFormulaExtensionRuntime;
+import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.colorRendererFormula.ColorRendererFormulaExtensionRuntime;
 import com.nextbreakpoint.nextfractal.twister.common.PercentageElement;
 
 /**

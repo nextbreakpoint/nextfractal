@@ -36,7 +36,7 @@ import com.nextbreakpoint.nextfractal.mandelbrot.paletteRenderer.PaletteRenderer
  */
 public abstract class AbstractIncolouringPaletteConfigXMLExporter<T extends AbstractIncolouringPaletteConfig> extends AbstractIncolouringFormulaConfigXMLExporter<T> {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensions.incolouringFormula.AbstractIncolouringFormulaConfigXMLExporter#exportProperties(com.nextbreakpoint.nextfractal.mandelbrot.incolouringFormula.extension.IncolouringFormulaExtensionConfig, org.w3c.dom.Element, com.nextbreakpoint.nextfractal.core.xml.XMLNodeBuilder)
+	 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensions.incolouringFormula.AbstractIncolouringFormulaConfigXMLExporter#exportProperties(com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.incolouringFormula.IncolouringFormulaExtensionConfig, org.w3c.dom.Element, com.nextbreakpoint.nextfractal.core.xml.XMLNodeBuilder)
 	 */
 	@Override
 	protected void exportProperties(final T config, final Element element, final XMLNodeBuilder builder) throws XMLExportException {

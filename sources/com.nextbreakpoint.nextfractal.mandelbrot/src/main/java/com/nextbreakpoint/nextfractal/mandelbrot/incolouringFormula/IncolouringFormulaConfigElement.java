@@ -33,7 +33,7 @@ import com.nextbreakpoint.nextfractal.core.config.ConfigContext;
 import com.nextbreakpoint.nextfractal.core.config.ConfigElement;
 import com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionReference;
 import com.nextbreakpoint.nextfractal.mandelbrot.common.IterationsElement;
-import com.nextbreakpoint.nextfractal.mandelbrot.incolouringFormula.extension.IncolouringFormulaExtensionConfig;
+import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.incolouringFormula.IncolouringFormulaExtensionConfig;
 import com.nextbreakpoint.nextfractal.twister.common.PercentageElement;
 
 /**

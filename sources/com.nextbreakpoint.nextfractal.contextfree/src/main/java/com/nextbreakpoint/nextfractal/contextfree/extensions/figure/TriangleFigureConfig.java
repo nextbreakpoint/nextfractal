@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.nextbreakpoint.nextfractal.contextfree.CFDGBuilder;
-import com.nextbreakpoint.nextfractal.contextfree.figure.extension.FigureExtensionConfig;
+import com.nextbreakpoint.nextfractal.contextfree.extensionPoints.figure.FigureExtensionConfig;
 import com.nextbreakpoint.nextfractal.core.config.ConfigElement;
 
 /**

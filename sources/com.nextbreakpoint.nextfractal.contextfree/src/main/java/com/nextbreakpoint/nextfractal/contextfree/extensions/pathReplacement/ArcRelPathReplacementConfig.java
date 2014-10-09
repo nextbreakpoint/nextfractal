@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.nextbreakpoint.nextfractal.contextfree.CFDGBuilder;
-import com.nextbreakpoint.nextfractal.contextfree.pathReplacement.extension.PathReplacementExtensionConfig;
+import com.nextbreakpoint.nextfractal.contextfree.extensionPoints.pathReplacement.PathReplacementExtensionConfig;
 import com.nextbreakpoint.nextfractal.core.common.BooleanElement;
 import com.nextbreakpoint.nextfractal.core.common.FloatElement;
 import com.nextbreakpoint.nextfractal.core.config.ConfigElement;

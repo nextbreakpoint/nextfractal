@@ -5,7 +5,7 @@
 package com.nextbreakpoint.nextfractal.contextfree.shapeAdjustment;
 
 import com.nextbreakpoint.nextfractal.contextfree.ContextFreeResources;
-import com.nextbreakpoint.nextfractal.contextfree.shapeAdjustment.extension.ShapeAdjustmentExtensionConfig;
+import com.nextbreakpoint.nextfractal.contextfree.extensionPoints.shapeAdjustment.ShapeAdjustmentExtensionConfig;
 import com.nextbreakpoint.nextfractal.core.common.ConfigurableExtensionReferenceElementNode;
 import com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionReference;
 import com.nextbreakpoint.nextfractal.core.tree.Node;

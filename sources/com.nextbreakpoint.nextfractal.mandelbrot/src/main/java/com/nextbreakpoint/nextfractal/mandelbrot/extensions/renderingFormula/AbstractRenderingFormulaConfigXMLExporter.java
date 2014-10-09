@@ -33,7 +33,7 @@ import com.nextbreakpoint.nextfractal.core.xml.XMLExporter;
 import com.nextbreakpoint.nextfractal.core.xml.XMLNodeBuilder;
 import com.nextbreakpoint.nextfractal.mandelbrot.common.IterationsElementXMLExporter;
 import com.nextbreakpoint.nextfractal.mandelbrot.common.ThresholdElementXMLExporter;
-import com.nextbreakpoint.nextfractal.mandelbrot.renderingFormula.extension.RenderingFormulaExtensionConfig;
+import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.renderingFormula.RenderingFormulaExtensionConfig;
 
 /**
  * @author Andrea Medeghini

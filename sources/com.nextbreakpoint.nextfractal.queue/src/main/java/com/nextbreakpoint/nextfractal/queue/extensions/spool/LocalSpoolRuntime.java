@@ -27,9 +27,9 @@ package com.nextbreakpoint.nextfractal.queue.extensions.spool;
 
 import com.nextbreakpoint.nextfractal.core.util.Worker;
 import com.nextbreakpoint.nextfractal.queue.LibraryService;
+import com.nextbreakpoint.nextfractal.queue.extensionPoints.spool.AbstractSpoolExtensionRuntime;
 import com.nextbreakpoint.nextfractal.queue.spool.DefaultJobService;
 import com.nextbreakpoint.nextfractal.queue.spool.JobService;
-import com.nextbreakpoint.nextfractal.queue.spool.extension.AbstractSpoolExtensionRuntime;
 import com.nextbreakpoint.nextfractal.queue.spool.job.LocalSpoolJob;
 import com.nextbreakpoint.nextfractal.queue.spool.job.LocalSpoolJobFactory;
 
@@ -38,7 +38,7 @@ import com.nextbreakpoint.nextfractal.queue.spool.job.LocalSpoolJobFactory;
  */
 public class LocalSpoolRuntime extends AbstractSpoolExtensionRuntime<LocalSpoolConfig> {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.queue.spool.extension.SpoolExtensionRuntime#getJobService(com.nextbreakpoint.nextfractal.queue.LibraryService)
+	 * @see com.nextbreakpoint.nextfractal.queue.extensionPoints.spool.SpoolExtensionRuntime#getJobService(com.nextbreakpoint.nextfractal.queue.LibraryService)
 	 */
 	@Override
 	public JobService<LocalSpoolJob> getJobService(final int serviceId, final LibraryService service, final Worker worker) {

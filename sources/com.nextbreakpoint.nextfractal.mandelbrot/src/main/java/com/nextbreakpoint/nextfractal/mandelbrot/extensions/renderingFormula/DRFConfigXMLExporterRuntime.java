@@ -28,7 +28,7 @@ package com.nextbreakpoint.nextfractal.mandelbrot.extensions.renderingFormula;
 import org.w3c.dom.Element;
 
 import com.nextbreakpoint.nextfractal.core.common.DoubleElementXMLExporter;
-import com.nextbreakpoint.nextfractal.core.extensionConfigXMLExporter.extension.ExtensionConfigXMLExporterExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.extensionPoints.extensionConfigXMLExporter.ExtensionConfigXMLExporterExtensionRuntime;
 import com.nextbreakpoint.nextfractal.core.xml.XMLExportException;
 import com.nextbreakpoint.nextfractal.core.xml.XMLExporter;
 import com.nextbreakpoint.nextfractal.core.xml.XMLNodeBuilder;
@@ -38,7 +38,7 @@ import com.nextbreakpoint.nextfractal.core.xml.XMLNodeBuilder;
  */
 public class DRFConfigXMLExporterRuntime extends ExtensionConfigXMLExporterExtensionRuntime {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.extensionConfigXMLExporter.extension.ExtensionConfigXMLExporterExtensionRuntime#createXMLExporter()
+	 * @see com.nextbreakpoint.nextfractal.core.extensionPoints.extensionConfigXMLExporter.ExtensionConfigXMLExporterExtensionRuntime#createXMLExporter()
 	 */
 	@Override
 	public XMLExporter<DRFConfig> createXMLExporter() {
@@ -47,7 +47,7 @@ public class DRFConfigXMLExporterRuntime extends ExtensionConfigXMLExporterExten
 
 	private class DRMConfigXMLExporter extends AbstractRenderingFormulaConfigXMLExporter<DRFConfig> {
 		/**
-		 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensions.renderingFormula.AbstractRenderingFormulaConfigXMLExporter#exportProperties(com.nextbreakpoint.nextfractal.mandelbrot.renderingFormula.extension.RenderingFormulaExtensionConfig, org.w3c.dom.Element, com.nextbreakpoint.nextfractal.core.xml.XMLNodeBuilder)
+		 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensions.renderingFormula.AbstractRenderingFormulaConfigXMLExporter#exportProperties(com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.renderingFormula.RenderingFormulaExtensionConfig, org.w3c.dom.Element, com.nextbreakpoint.nextfractal.core.xml.XMLNodeBuilder)
 		 */
 		@Override
 		protected void exportProperties(final DRFConfig config, final Element element, final XMLNodeBuilder builder) throws XMLExportException {

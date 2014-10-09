@@ -25,25 +25,25 @@
  */
 package com.nextbreakpoint.nextfractal.core;
 
-import com.nextbreakpoint.nextfractal.core.actionXMLExporter.extension.ActionXMLExporterExtensionRegistry;
-import com.nextbreakpoint.nextfractal.core.actionXMLExporter.extension.ActionXMLExporterExtensionRuntime;
-import com.nextbreakpoint.nextfractal.core.actionXMLImporter.extension.ActionXMLImporterExtensionRegistry;
-import com.nextbreakpoint.nextfractal.core.actionXMLImporter.extension.ActionXMLImporterExtensionRuntime;
-import com.nextbreakpoint.nextfractal.core.constructor.extension.ConstructorExtensionRegistry;
-import com.nextbreakpoint.nextfractal.core.constructor.extension.ConstructorExtensionRuntime;
-import com.nextbreakpoint.nextfractal.core.creator.extension.CreatorExtensionRegistry;
-import com.nextbreakpoint.nextfractal.core.creator.extension.CreatorExtensionRuntime;
-import com.nextbreakpoint.nextfractal.core.enumerator.extension.EnumeratorExtensionRegistry;
-import com.nextbreakpoint.nextfractal.core.enumerator.extension.EnumeratorExtensionRuntime;
 import com.nextbreakpoint.nextfractal.core.extension.Extension;
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionNotFoundException;
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionRegistry;
-import com.nextbreakpoint.nextfractal.core.extensionConfigXMLExporter.extension.ExtensionConfigXMLExporterExtensionRegistry;
-import com.nextbreakpoint.nextfractal.core.extensionConfigXMLExporter.extension.ExtensionConfigXMLExporterExtensionRuntime;
-import com.nextbreakpoint.nextfractal.core.extensionConfigXMLImporter.extension.ExtensionConfigXMLImporterExtensionRegistry;
-import com.nextbreakpoint.nextfractal.core.extensionConfigXMLImporter.extension.ExtensionConfigXMLImporterExtensionRuntime;
-import com.nextbreakpoint.nextfractal.core.nodeBuilder.extension.NodeBuilderExtensionRegistry;
-import com.nextbreakpoint.nextfractal.core.nodeBuilder.extension.NodeBuilderExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.extensionPoints.actionXMLExporter.ActionXMLExporterExtensionRegistry;
+import com.nextbreakpoint.nextfractal.core.extensionPoints.actionXMLExporter.ActionXMLExporterExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.extensionPoints.actionXMLImporter.ActionXMLImporterExtensionRegistry;
+import com.nextbreakpoint.nextfractal.core.extensionPoints.actionXMLImporter.ActionXMLImporterExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.extensionPoints.constructor.ConstructorExtensionRegistry;
+import com.nextbreakpoint.nextfractal.core.extensionPoints.constructor.ConstructorExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.extensionPoints.creator.CreatorExtensionRegistry;
+import com.nextbreakpoint.nextfractal.core.extensionPoints.creator.CreatorExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.extensionPoints.enumerator.EnumeratorExtensionRegistry;
+import com.nextbreakpoint.nextfractal.core.extensionPoints.enumerator.EnumeratorExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.extensionPoints.extensionConfigXMLExporter.ExtensionConfigXMLExporterExtensionRegistry;
+import com.nextbreakpoint.nextfractal.core.extensionPoints.extensionConfigXMLExporter.ExtensionConfigXMLExporterExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.extensionPoints.extensionConfigXMLImporter.ExtensionConfigXMLImporterExtensionRegistry;
+import com.nextbreakpoint.nextfractal.core.extensionPoints.extensionConfigXMLImporter.ExtensionConfigXMLImporterExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.extensionPoints.nodeBuilder.NodeBuilderExtensionRegistry;
+import com.nextbreakpoint.nextfractal.core.extensionPoints.nodeBuilder.NodeBuilderExtensionRuntime;
 
 /**
  * The core registry.

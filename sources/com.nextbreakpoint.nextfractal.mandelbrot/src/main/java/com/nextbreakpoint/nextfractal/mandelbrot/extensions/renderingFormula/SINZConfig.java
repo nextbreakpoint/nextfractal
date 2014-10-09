@@ -35,7 +35,7 @@ public class SINZConfig extends AbstractRenderingFormulaConfig {
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderingFormula.extension.RenderingFormulaExtensionConfig#getDefaultThreshold()
+	 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.renderingFormula.RenderingFormulaExtensionConfig#getDefaultThreshold()
 	 */
 	@Override
 	public Double getDefaultThreshold() {
@@ -43,7 +43,7 @@ public class SINZConfig extends AbstractRenderingFormulaConfig {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderingFormula.extension.RenderingFormulaExtensionConfig#getDefaultIterations()
+	 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.renderingFormula.RenderingFormulaExtensionConfig#getDefaultIterations()
 	 */
 	@Override
 	public Integer getDefaultIterations() {
@@ -51,7 +51,7 @@ public class SINZConfig extends AbstractRenderingFormulaConfig {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderingFormula.extension.RenderingFormulaExtensionConfig#getDefaultCenter()
+	 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.renderingFormula.RenderingFormulaExtensionConfig#getDefaultCenter()
 	 */
 	@Override
 	public DoubleVector2D getDefaultCenter() {
@@ -59,7 +59,7 @@ public class SINZConfig extends AbstractRenderingFormulaConfig {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderingFormula.extension.RenderingFormulaExtensionConfig#getDefaultScale()
+	 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.renderingFormula.RenderingFormulaExtensionConfig#getDefaultScale()
 	 */
 	@Override
 	public DoubleVector2D getDefaultScale() {
@@ -67,7 +67,7 @@ public class SINZConfig extends AbstractRenderingFormulaConfig {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderingFormula.extension.RenderingFormulaExtensionConfig#getDefaultConstant()
+	 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.renderingFormula.RenderingFormulaExtensionConfig#getDefaultConstant()
 	 */
 	@Override
 	public Complex getDefaultConstant() {
@@ -75,7 +75,7 @@ public class SINZConfig extends AbstractRenderingFormulaConfig {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderingFormula.extension.RenderingFormulaExtensionConfig#getThresholdMin()
+	 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.renderingFormula.RenderingFormulaExtensionConfig#getThresholdMin()
 	 */
 	@Override
 	public Double getThresholdMin() {
@@ -83,7 +83,7 @@ public class SINZConfig extends AbstractRenderingFormulaConfig {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderingFormula.extension.RenderingFormulaExtensionConfig#getThresholdMax()
+	 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.renderingFormula.RenderingFormulaExtensionConfig#getThresholdMax()
 	 */
 	@Override
 	public Double getThresholdMax() {
@@ -91,7 +91,7 @@ public class SINZConfig extends AbstractRenderingFormulaConfig {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderingFormula.extension.RenderingFormulaExtensionConfig#getThresholdStep()
+	 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.renderingFormula.RenderingFormulaExtensionConfig#getThresholdStep()
 	 */
 	@Override
 	public Double getThresholdStep() {
@@ -99,7 +99,7 @@ public class SINZConfig extends AbstractRenderingFormulaConfig {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderingFormula.extension.RenderingFormulaExtensionConfig#getIterationsMin()
+	 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.renderingFormula.RenderingFormulaExtensionConfig#getIterationsMin()
 	 */
 	@Override
 	public Integer getIterationsMin() {
@@ -107,7 +107,7 @@ public class SINZConfig extends AbstractRenderingFormulaConfig {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderingFormula.extension.RenderingFormulaExtensionConfig#getIterationsMax()
+	 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.renderingFormula.RenderingFormulaExtensionConfig#getIterationsMax()
 	 */
 	@Override
 	public Integer getIterationsMax() {
@@ -115,7 +115,7 @@ public class SINZConfig extends AbstractRenderingFormulaConfig {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderingFormula.extension.RenderingFormulaExtensionConfig#getIterationsStep()
+	 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.renderingFormula.RenderingFormulaExtensionConfig#getIterationsStep()
 	 */
 	@Override
 	public Integer getIterationsStep() {

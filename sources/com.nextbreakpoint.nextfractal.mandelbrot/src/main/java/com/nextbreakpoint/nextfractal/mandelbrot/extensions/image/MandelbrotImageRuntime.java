@@ -36,7 +36,7 @@ import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotRuntime;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.BestXaosMandelbrotRenderer;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.FastXaosMandelbrotRenderer;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.SimpleMandelbrotRenderer;
-import com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionRuntime;
+import com.nextbreakpoint.nextfractal.twister.extensionPoints.image.ImageExtensionRuntime;
 import com.nextbreakpoint.nextfractal.twister.renderer.RenderFactory;
 import com.nextbreakpoint.nextfractal.twister.renderer.RenderGraphicsContext;
 import com.nextbreakpoint.nextfractal.twister.renderer.TwisterRenderer;
@@ -67,7 +67,7 @@ public class MandelbrotImageRuntime extends ImageExtensionRuntime<MandelbrotImag
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionRuntime#startRenderer()
+	 * @see com.nextbreakpoint.nextfractal.twister.extensionPoints.image.ImageExtensionRuntime#startRenderer()
 	 */
 	@Override
 	public void startRenderer() {
@@ -77,7 +77,7 @@ public class MandelbrotImageRuntime extends ImageExtensionRuntime<MandelbrotImag
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionRuntime#abortRenderer()
+	 * @see com.nextbreakpoint.nextfractal.twister.extensionPoints.image.ImageExtensionRuntime#abortRenderer()
 	 */
 	@Override
 	public void abortRenderer() {
@@ -87,7 +87,7 @@ public class MandelbrotImageRuntime extends ImageExtensionRuntime<MandelbrotImag
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionRuntime#joinRenderer()
+	 * @see com.nextbreakpoint.nextfractal.twister.extensionPoints.image.ImageExtensionRuntime#joinRenderer()
 	 */
 	@Override
 	public void joinRenderer() throws InterruptedException {
@@ -97,7 +97,7 @@ public class MandelbrotImageRuntime extends ImageExtensionRuntime<MandelbrotImag
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionRuntime#getRenderingStatus()
+	 * @see com.nextbreakpoint.nextfractal.twister.extensionPoints.image.ImageExtensionRuntime#getRenderingStatus()
 	 */
 	@Override
 	public int getRenderingStatus() {
@@ -108,7 +108,7 @@ public class MandelbrotImageRuntime extends ImageExtensionRuntime<MandelbrotImag
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionRuntime#isDynamic()
+	 * @see com.nextbreakpoint.nextfractal.twister.extensionPoints.image.ImageExtensionRuntime#isDynamic()
 	 */
 	@Override
 	public boolean isDynamic() {
@@ -119,7 +119,7 @@ public class MandelbrotImageRuntime extends ImageExtensionRuntime<MandelbrotImag
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionRuntime#prepareImage(boolean)
+	 * @see com.nextbreakpoint.nextfractal.twister.extensionPoints.image.ImageExtensionRuntime#prepareImage(boolean)
 	 */
 	@Override
 	public void prepareImage(final boolean isDynamicRequired) {
@@ -129,7 +129,7 @@ public class MandelbrotImageRuntime extends ImageExtensionRuntime<MandelbrotImag
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionRuntime#drawImage(javafx.scene.canvas.GraphicsContext)
+	 * @see com.nextbreakpoint.nextfractal.twister.extensionPoints.image.ImageExtensionRuntime#drawImage(javafx.scene.canvas.GraphicsContext)
 	 */
 	@Override
 	public void drawImage(final RenderGraphicsContext gc) {
@@ -139,7 +139,7 @@ public class MandelbrotImageRuntime extends ImageExtensionRuntime<MandelbrotImag
 	}
 	
 	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionRuntime#drawImage(javafx.scene.canvas.GraphicsContext, int, int)
+	 * @see com.nextbreakpoint.nextfractal.twister.extensionPoints.image.ImageExtensionRuntime#drawImage(javafx.scene.canvas.GraphicsContext, int, int)
 	 */
 	@Override
 	public void drawImage(final RenderGraphicsContext gc, final int x, final int y) {
@@ -149,7 +149,7 @@ public class MandelbrotImageRuntime extends ImageExtensionRuntime<MandelbrotImag
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionRuntime#drawImage(javafx.scene.canvas.GraphicsContext, int, int, int, int)
+	 * @see com.nextbreakpoint.nextfractal.twister.extensionPoints.image.ImageExtensionRuntime#drawImage(javafx.scene.canvas.GraphicsContext, int, int, int, int)
 	 */
 	@Override
 	public void drawImage(final RenderGraphicsContext gc, final int x, final int y, final int w, final int h) {
@@ -159,7 +159,7 @@ public class MandelbrotImageRuntime extends ImageExtensionRuntime<MandelbrotImag
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionRuntime#getImageSize()
+	 * @see com.nextbreakpoint.nextfractal.twister.extensionPoints.image.ImageExtensionRuntime#getImageSize()
 	 */
 	@Override
 	public IntegerVector2D getImageSize() {
@@ -167,7 +167,7 @@ public class MandelbrotImageRuntime extends ImageExtensionRuntime<MandelbrotImag
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionRuntime#setTile(com.nextbreakpoint.nextfractal.core.util.Tile)
+	 * @see com.nextbreakpoint.nextfractal.twister.extensionPoints.image.ImageExtensionRuntime#setTile(com.nextbreakpoint.nextfractal.core.util.Tile)
 	 */
 	@Override
 	public void setTile(final Tile tile) {
@@ -183,7 +183,7 @@ public class MandelbrotImageRuntime extends ImageExtensionRuntime<MandelbrotImag
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionRuntime#setRenderingHints(java.util.Map)
+	 * @see com.nextbreakpoint.nextfractal.twister.extensionPoints.image.ImageExtensionRuntime#setRenderingHints(java.util.Map)
 	 */
 	@Override
 	public void setRenderingHints(final Map<Object, Object> hints) {
@@ -219,7 +219,7 @@ public class MandelbrotImageRuntime extends ImageExtensionRuntime<MandelbrotImag
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionRuntime#getRenderFactory()
+	 * @see com.nextbreakpoint.nextfractal.twister.extensionPoints.image.ImageExtensionRuntime#getRenderFactory()
 	 */
 	@Override
 	public RenderFactory getRenderFactory() {
@@ -227,7 +227,7 @@ public class MandelbrotImageRuntime extends ImageExtensionRuntime<MandelbrotImag
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionRuntime#setRenderFactory(com.nextbreakpoint.nextfractal.twister.renderer.RenderFactory)
+	 * @see com.nextbreakpoint.nextfractal.twister.extensionPoints.image.ImageExtensionRuntime#setRenderFactory(com.nextbreakpoint.nextfractal.twister.renderer.RenderFactory)
 	 */
 	@Override
 	public void setRenderFactory(RenderFactory renderFactory) {

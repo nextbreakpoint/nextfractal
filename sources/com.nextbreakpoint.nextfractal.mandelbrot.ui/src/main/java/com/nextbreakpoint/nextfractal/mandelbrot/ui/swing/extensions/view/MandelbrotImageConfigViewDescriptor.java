@@ -25,7 +25,7 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.ui.swing.extensions.view;
 
-import com.nextbreakpoint.nextfractal.twister.ui.swing.view.extension.ViewExtensionDescriptor;
+import com.nextbreakpoint.nextfractal.twister.ui.swing.extensionPoints.view.ViewExtensionDescriptor;
 
 /**
  * @author Andrea Medeghini

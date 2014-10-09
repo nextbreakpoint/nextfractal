@@ -28,10 +28,10 @@ package com.nextbreakpoint.nextfractal.devtools;
 import com.nextbreakpoint.nextfractal.core.extension.Extension;
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionNotFoundException;
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionRegistry;
-import com.nextbreakpoint.nextfractal.devtools.descriptor.extension.DescriptorExtensionRegistry;
-import com.nextbreakpoint.nextfractal.devtools.descriptor.extension.DescriptorExtensionRuntime;
-import com.nextbreakpoint.nextfractal.devtools.processor.extension.ProcessorExtensionRegistry;
-import com.nextbreakpoint.nextfractal.devtools.processor.extension.ProcessorExtensionRuntime;
+import com.nextbreakpoint.nextfractal.devtools.extensionPoints.descriptor.DescriptorExtensionRegistry;
+import com.nextbreakpoint.nextfractal.devtools.extensionPoints.descriptor.DescriptorExtensionRuntime;
+import com.nextbreakpoint.nextfractal.devtools.extensionPoints.processor.ProcessorExtensionRegistry;
+import com.nextbreakpoint.nextfractal.devtools.extensionPoints.processor.ProcessorExtensionRuntime;
 
 /**
  * The twister registry.

@@ -66,7 +66,7 @@ import com.nextbreakpoint.nextfractal.core.ui.swing.util.GUIFactory;
 import com.nextbreakpoint.nextfractal.core.ui.swing.util.GUIUtil;
 import com.nextbreakpoint.nextfractal.core.util.Registry;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotRegistry;
-import com.nextbreakpoint.nextfractal.mandelbrot.paletteRendererFormula.extension.PaletteRendererFormulaExtensionRuntime;
+import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.paletteRendererFormula.PaletteRendererFormulaExtensionRuntime;
 import com.nextbreakpoint.nextfractal.mandelbrot.ui.swing.MandelbrotSwingResources;
 import com.nextbreakpoint.nextfractal.mandelbrot.util.RenderedPaletteParam;
 

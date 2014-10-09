@@ -40,6 +40,7 @@ import com.nextbreakpoint.nextfractal.queue.LibraryService;
 import com.nextbreakpoint.nextfractal.queue.RenderService;
 import com.nextbreakpoint.nextfractal.queue.RenderService.ServiceCallback;
 import com.nextbreakpoint.nextfractal.queue.profile.RenderProfileDataRow;
+import com.nextbreakpoint.nextfractal.twister.ui.ServiceAdapter;
 
 /**
  * @author Andrea Medeghini
@@ -513,7 +514,7 @@ public class RenderProfileTableModel extends ServiceAdapter implements TableMode
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.ui.swing.ServiceAdapter#profileCreated(com.nextbreakpoint.nextfractal.service.profile.RenderProfileDataRow)
+	 * @see com.nextbreakpoint.nextfractal.twister.ui.ServiceAdapter#profileCreated(com.nextbreakpoint.nextfractal.service.profile.RenderProfileDataRow)
 	 */
 	@Override
 	public void profileCreated(final RenderProfileDataRow profile) {
@@ -538,7 +539,7 @@ public class RenderProfileTableModel extends ServiceAdapter implements TableMode
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.ui.swing.ServiceAdapter#profileDeleted(com.nextbreakpoint.nextfractal.service.profile.RenderProfileDataRow)
+	 * @see com.nextbreakpoint.nextfractal.twister.ui.ServiceAdapter#profileDeleted(com.nextbreakpoint.nextfractal.service.profile.RenderProfileDataRow)
 	 */
 	@Override
 	public void profileDeleted(final RenderProfileDataRow profile) {
@@ -560,7 +561,7 @@ public class RenderProfileTableModel extends ServiceAdapter implements TableMode
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.ui.swing.ServiceAdapter#profileUpdated(com.nextbreakpoint.nextfractal.service.profile.RenderProfileDataRow)
+	 * @see com.nextbreakpoint.nextfractal.twister.ui.ServiceAdapter#profileUpdated(com.nextbreakpoint.nextfractal.service.profile.RenderProfileDataRow)
 	 */
 	@Override
 	public void profileUpdated(final RenderProfileDataRow profile) {

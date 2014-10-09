@@ -26,13 +26,13 @@
 package com.nextbreakpoint.nextfractal.contextfree;
 
 import com.nextbreakpoint.nextfractal.contextfree.cfdg.CFDGConfigElement;
+import com.nextbreakpoint.nextfractal.contextfree.extensionPoints.figure.FigureExtensionConfig;
+import com.nextbreakpoint.nextfractal.contextfree.extensionPoints.shapeReplacement.ShapeReplacementExtensionConfig;
 import com.nextbreakpoint.nextfractal.contextfree.extensions.figure.RuleFigureConfig;
 import com.nextbreakpoint.nextfractal.contextfree.extensions.image.ContextFreeImageConfig;
 import com.nextbreakpoint.nextfractal.contextfree.extensions.shapeReplacement.SingleShapeReplacementConfig;
 import com.nextbreakpoint.nextfractal.contextfree.figure.FigureConfigElement;
-import com.nextbreakpoint.nextfractal.contextfree.figure.extension.FigureExtensionConfig;
 import com.nextbreakpoint.nextfractal.contextfree.shapeReplacement.ShapeReplacementConfigElement;
-import com.nextbreakpoint.nextfractal.contextfree.shapeReplacement.extension.ShapeReplacementExtensionConfig;
 import com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionReference;
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionException;
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionNotFoundException;

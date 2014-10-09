@@ -29,7 +29,7 @@ import java.util.Map;
 
 import com.nextbreakpoint.nextfractal.core.util.IntegerVector2D;
 import com.nextbreakpoint.nextfractal.core.util.Tile;
-import com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionRuntime;
+import com.nextbreakpoint.nextfractal.twister.extensionPoints.image.ImageExtensionRuntime;
 import com.nextbreakpoint.nextfractal.twister.renderer.RenderAffine;
 import com.nextbreakpoint.nextfractal.twister.renderer.RenderColor;
 import com.nextbreakpoint.nextfractal.twister.renderer.RenderFactory;
@@ -53,7 +53,7 @@ public class TextRuntime extends ImageExtensionRuntime<TextConfig> {
 	private double a;
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionRuntime#setTile(com.nextbreakpoint.nextfractal.core.util.Tile)
+	 * @see com.nextbreakpoint.nextfractal.twister.extensionPoints.image.ImageExtensionRuntime#setTile(com.nextbreakpoint.nextfractal.core.util.Tile)
 	 */
 	@Override
 	public void setTile(final Tile tile) {
@@ -61,28 +61,28 @@ public class TextRuntime extends ImageExtensionRuntime<TextConfig> {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionRuntime#startRenderer()
+	 * @see com.nextbreakpoint.nextfractal.twister.extensionPoints.image.ImageExtensionRuntime#startRenderer()
 	 */
 	@Override
 	public void startRenderer() {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionRuntime#abortRenderer()
+	 * @see com.nextbreakpoint.nextfractal.twister.extensionPoints.image.ImageExtensionRuntime#abortRenderer()
 	 */
 	@Override
 	public void abortRenderer() {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionRuntime#joinRenderer()
+	 * @see com.nextbreakpoint.nextfractal.twister.extensionPoints.image.ImageExtensionRuntime#joinRenderer()
 	 */
 	@Override
 	public void joinRenderer() {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionRuntime#getRenderingStatus()
+	 * @see com.nextbreakpoint.nextfractal.twister.extensionPoints.image.ImageExtensionRuntime#getRenderingStatus()
 	 */
 	@Override
 	public int getRenderingStatus() {
@@ -90,7 +90,7 @@ public class TextRuntime extends ImageExtensionRuntime<TextConfig> {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionRuntime#drawImage(javafx.scene.canvas.GraphicsContext)
+	 * @see com.nextbreakpoint.nextfractal.twister.extensionPoints.image.ImageExtensionRuntime#drawImage(javafx.scene.canvas.GraphicsContext)
 	 */
 	@Override
 	public void drawImage(final RenderGraphicsContext gc) {
@@ -112,7 +112,7 @@ public class TextRuntime extends ImageExtensionRuntime<TextConfig> {
 	}
 	
 	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionRuntime#drawImage(javafx.scene.canvas.GraphicsContext, int, int)
+	 * @see com.nextbreakpoint.nextfractal.twister.extensionPoints.image.ImageExtensionRuntime#drawImage(javafx.scene.canvas.GraphicsContext, int, int)
 	 */
 	@Override
 	public void drawImage(final RenderGraphicsContext gc, final int x, final int y) {
@@ -132,7 +132,7 @@ public class TextRuntime extends ImageExtensionRuntime<TextConfig> {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionRuntime#drawImage(javafx.scene.canvas.GraphicsContext, int, int, int, int)
+	 * @see com.nextbreakpoint.nextfractal.twister.extensionPoints.image.ImageExtensionRuntime#drawImage(javafx.scene.canvas.GraphicsContext, int, int, int, int)
 	 */
 	@Override
 	public void drawImage(final RenderGraphicsContext gc, final int x, final int y, final int w, final int h) {
@@ -153,7 +153,7 @@ public class TextRuntime extends ImageExtensionRuntime<TextConfig> {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionRuntime#getImageSize()
+	 * @see com.nextbreakpoint.nextfractal.twister.extensionPoints.image.ImageExtensionRuntime#getImageSize()
 	 */
 	@Override
 	public IntegerVector2D getImageSize() {
@@ -161,7 +161,7 @@ public class TextRuntime extends ImageExtensionRuntime<TextConfig> {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionRuntime#setRenderingHints(java.util.Map)
+	 * @see com.nextbreakpoint.nextfractal.twister.extensionPoints.image.ImageExtensionRuntime#setRenderingHints(java.util.Map)
 	 */
 	@Override
 	public void setRenderingHints(final Map<Object, Object> hints) {
@@ -174,7 +174,7 @@ public class TextRuntime extends ImageExtensionRuntime<TextConfig> {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionRuntime#prepareImage(boolean)
+	 * @see com.nextbreakpoint.nextfractal.twister.extensionPoints.image.ImageExtensionRuntime#prepareImage(boolean)
 	 */
 	@Override
 	public void prepareImage(final boolean isDynamicRequired) {
@@ -191,7 +191,7 @@ public class TextRuntime extends ImageExtensionRuntime<TextConfig> {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionRuntime#isDynamic()
+	 * @see com.nextbreakpoint.nextfractal.twister.extensionPoints.image.ImageExtensionRuntime#isDynamic()
 	 */
 	@Override
 	public boolean isDynamic() {
@@ -199,7 +199,7 @@ public class TextRuntime extends ImageExtensionRuntime<TextConfig> {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionRuntime#getRenderFactory()
+	 * @see com.nextbreakpoint.nextfractal.twister.extensionPoints.image.ImageExtensionRuntime#getRenderFactory()
 	 */
 	@Override
 	public RenderFactory getRenderFactory() {
@@ -207,7 +207,7 @@ public class TextRuntime extends ImageExtensionRuntime<TextConfig> {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionRuntime#setRenderFactory(com.nextbreakpoint.nextfractal.twister.renderer.RenderFactory)
+	 * @see com.nextbreakpoint.nextfractal.twister.extensionPoints.image.ImageExtensionRuntime#setRenderFactory(com.nextbreakpoint.nextfractal.twister.renderer.RenderFactory)
 	 */
 	@Override
 	public void setRenderFactory(RenderFactory renderFactory) {

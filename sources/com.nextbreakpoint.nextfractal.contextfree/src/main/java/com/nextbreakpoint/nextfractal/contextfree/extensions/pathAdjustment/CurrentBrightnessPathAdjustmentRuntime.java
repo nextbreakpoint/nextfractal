@@ -4,7 +4,7 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.extensions.pathAdjustment;
 
-import com.nextbreakpoint.nextfractal.contextfree.pathAdjustment.extension.PathAdjustmentExtensionRuntime;
+import com.nextbreakpoint.nextfractal.contextfree.extensionPoints.pathAdjustment.PathAdjustmentExtensionRuntime;
 import com.nextbreakpoint.nextfractal.contextfree.renderer.support.CFColor;
 import com.nextbreakpoint.nextfractal.contextfree.renderer.support.CFModification;
 import com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent;

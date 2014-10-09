@@ -27,10 +27,10 @@ package com.nextbreakpoint.nextfractal.mandelbrot.extensions.renderingFormula;
 
 import com.nextbreakpoint.nextfractal.core.math.Complex;
 import com.nextbreakpoint.nextfractal.core.util.DoubleVector2D;
+import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.processingFormula.ProcessingFormulaExtensionRuntime;
+import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.renderingFormula.RenderingFormulaExtensionConfig;
+import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.renderingFormula.RenderingFormulaExtensionRuntime;
 import com.nextbreakpoint.nextfractal.mandelbrot.orbitTrap.extension.OrbitTrapExtensionRuntime;
-import com.nextbreakpoint.nextfractal.mandelbrot.processingFormula.extension.ProcessingFormulaExtensionRuntime;
-import com.nextbreakpoint.nextfractal.mandelbrot.renderingFormula.extension.RenderingFormulaExtensionConfig;
-import com.nextbreakpoint.nextfractal.mandelbrot.renderingFormula.extension.RenderingFormulaExtensionRuntime;
 
 /**
  * @author Andrea Medeghini
@@ -42,7 +42,7 @@ public abstract class AbstractRenderingFormulaRuntime<T extends RenderingFormula
 	protected int iterations;
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderingFormula.extension.RenderingFormulaExtensionRuntime#prepareForRendering(com.nextbreakpoint.nextfractal.mandelbrot.processingFormula.extension.ProcessingFormulaExtensionRuntime, com.nextbreakpoint.nextfractal.mandelbrot.orbitTrap.extension.OrbitTrapExtensionRuntime)
+	 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.renderingFormula.RenderingFormulaExtensionRuntime#prepareForRendering(com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.processingFormula.ProcessingFormulaExtensionRuntime, com.nextbreakpoint.nextfractal.mandelbrot.orbitTrap.extension.OrbitTrapExtensionRuntime)
 	 */
 	@Override
 	public void prepareForRendering(final ProcessingFormulaExtensionRuntime formulaRuntime, final OrbitTrapExtensionRuntime<?> orbitTrapRuntime) {
@@ -53,7 +53,7 @@ public abstract class AbstractRenderingFormulaRuntime<T extends RenderingFormula
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderingFormula.extension.RenderingFormulaExtensionRuntime#isMandelbrotModeAllowed()
+	 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.renderingFormula.RenderingFormulaExtensionRuntime#isMandelbrotModeAllowed()
 	 */
 	@Override
 	public boolean isMandelbrotModeAllowed() {
@@ -61,7 +61,7 @@ public abstract class AbstractRenderingFormulaRuntime<T extends RenderingFormula
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderingFormula.extension.RenderingFormulaExtensionRuntime#getThreshold()
+	 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.renderingFormula.RenderingFormulaExtensionRuntime#getThreshold()
 	 */
 	@Override
 	public double getThreshold() {
@@ -69,7 +69,7 @@ public abstract class AbstractRenderingFormulaRuntime<T extends RenderingFormula
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderingFormula.extension.RenderingFormulaExtensionRuntime#getIterations()
+	 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.renderingFormula.RenderingFormulaExtensionRuntime#getIterations()
 	 */
 	@Override
 	public int getIterations() {
@@ -77,7 +77,7 @@ public abstract class AbstractRenderingFormulaRuntime<T extends RenderingFormula
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderingFormula.extension.RenderingFormulaExtensionRuntime#getDefaultCenter()
+	 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.renderingFormula.RenderingFormulaExtensionRuntime#getDefaultCenter()
 	 */
 	@Override
 	public DoubleVector2D getDefaultCenter() {
@@ -85,7 +85,7 @@ public abstract class AbstractRenderingFormulaRuntime<T extends RenderingFormula
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderingFormula.extension.RenderingFormulaExtensionRuntime#getDefaultScale()
+	 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.renderingFormula.RenderingFormulaExtensionRuntime#getDefaultScale()
 	 */
 	@Override
 	public DoubleVector2D getDefaultScale() {
@@ -93,7 +93,7 @@ public abstract class AbstractRenderingFormulaRuntime<T extends RenderingFormula
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderingFormula.extension.RenderingFormulaExtensionRuntime#getCenter()
+	 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.renderingFormula.RenderingFormulaExtensionRuntime#getCenter()
 	 */
 	@Override
 	public DoubleVector2D getCenter() {
@@ -101,7 +101,7 @@ public abstract class AbstractRenderingFormulaRuntime<T extends RenderingFormula
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderingFormula.extension.RenderingFormulaExtensionRuntime#getScale()
+	 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.renderingFormula.RenderingFormulaExtensionRuntime#getScale()
 	 */
 	@Override
 	public DoubleVector2D getScale() {
@@ -109,7 +109,7 @@ public abstract class AbstractRenderingFormulaRuntime<T extends RenderingFormula
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderingFormula.extension.RenderingFormulaExtensionRuntime#getInitialPoint()
+	 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.renderingFormula.RenderingFormulaExtensionRuntime#getInitialPoint()
 	 */
 	@Override
 	public Complex getInitialPoint() {
@@ -117,7 +117,7 @@ public abstract class AbstractRenderingFormulaRuntime<T extends RenderingFormula
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderingFormula.extension.RenderingFormulaExtensionRuntime#isHorizontalSymetryAllowed()
+	 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.renderingFormula.RenderingFormulaExtensionRuntime#isHorizontalSymetryAllowed()
 	 */
 	@Override
 	public boolean isHorizontalSymetryAllowed() {
@@ -125,7 +125,7 @@ public abstract class AbstractRenderingFormulaRuntime<T extends RenderingFormula
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderingFormula.extension.RenderingFormulaExtensionRuntime#isVerticalSymetryAllowed()
+	 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.renderingFormula.RenderingFormulaExtensionRuntime#isVerticalSymetryAllowed()
 	 */
 	@Override
 	public boolean isVerticalSymetryAllowed() {
@@ -133,7 +133,7 @@ public abstract class AbstractRenderingFormulaRuntime<T extends RenderingFormula
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderingFormula.extension.RenderingFormulaExtensionRuntime#getHorizontalSymetryPoint()
+	 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.renderingFormula.RenderingFormulaExtensionRuntime#getHorizontalSymetryPoint()
 	 */
 	@Override
 	public double getHorizontalSymetryPoint() {
@@ -141,7 +141,7 @@ public abstract class AbstractRenderingFormulaRuntime<T extends RenderingFormula
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderingFormula.extension.RenderingFormulaExtensionRuntime#getVerticalSymetryPoint()
+	 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.renderingFormula.RenderingFormulaExtensionRuntime#getVerticalSymetryPoint()
 	 */
 	@Override
 	public double getVerticalSymetryPoint() {

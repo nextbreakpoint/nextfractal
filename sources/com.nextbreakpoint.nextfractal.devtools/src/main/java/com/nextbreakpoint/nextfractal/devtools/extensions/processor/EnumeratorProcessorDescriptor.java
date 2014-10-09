@@ -25,7 +25,7 @@
  */
 package com.nextbreakpoint.nextfractal.devtools.extensions.processor;
 
-import com.nextbreakpoint.nextfractal.devtools.processor.extension.ProcessorExtensionDescriptor;
+import com.nextbreakpoint.nextfractal.devtools.extensionPoints.processor.ProcessorExtensionDescriptor;
 
 /**
  * @author Andrea Medeghini

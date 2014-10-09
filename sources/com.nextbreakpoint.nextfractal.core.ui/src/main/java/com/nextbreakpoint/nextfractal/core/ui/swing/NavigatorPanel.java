@@ -60,7 +60,7 @@ import com.nextbreakpoint.nextfractal.core.tree.Node;
 import com.nextbreakpoint.nextfractal.core.tree.NodeEvent;
 import com.nextbreakpoint.nextfractal.core.tree.NodeListener;
 import com.nextbreakpoint.nextfractal.core.tree.RootNode;
-import com.nextbreakpoint.nextfractal.core.ui.swing.editor.extension.EditorExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.ui.swing.extensionPoints.editor.EditorExtensionRuntime;
 
 /**
  * @author Andrea Medeghini

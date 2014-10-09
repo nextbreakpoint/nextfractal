@@ -25,7 +25,7 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.extensions.outcolouringFormula.processed;
 
-import com.nextbreakpoint.nextfractal.core.nodeBuilder.extension.NodeBuilderExtensionDescriptor;
+import com.nextbreakpoint.nextfractal.core.extensionPoints.nodeBuilder.NodeBuilderExtensionDescriptor;
 
 /**
  * @author Andrea Medeghini

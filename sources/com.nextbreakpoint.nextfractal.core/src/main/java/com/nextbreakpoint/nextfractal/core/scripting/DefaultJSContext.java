@@ -26,10 +26,10 @@
 package com.nextbreakpoint.nextfractal.core.scripting;
 
 import com.nextbreakpoint.nextfractal.core.CoreRegistry;
-import com.nextbreakpoint.nextfractal.core.constructor.extension.ConstructorExtensionRuntime;
-import com.nextbreakpoint.nextfractal.core.enumerator.extension.EnumeratorExtensionRuntime;
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionException;
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionNotFoundException;
+import com.nextbreakpoint.nextfractal.core.extensionPoints.constructor.ConstructorExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.extensionPoints.enumerator.EnumeratorExtensionRuntime;
 
 /**
  * @author Andrea Medeghini

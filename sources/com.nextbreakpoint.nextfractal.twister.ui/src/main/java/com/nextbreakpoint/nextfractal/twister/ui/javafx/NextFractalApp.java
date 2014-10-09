@@ -45,8 +45,8 @@ import com.nextbreakpoint.nextfractal.twister.renderer.RenderGraphicsContext;
 import com.nextbreakpoint.nextfractal.twister.renderer.TwisterRenderer;
 import com.nextbreakpoint.nextfractal.twister.renderer.TwisterRenderingHints;
 import com.nextbreakpoint.nextfractal.twister.renderer.javaFX.JavaFXRenderFactory;
-import com.nextbreakpoint.nextfractal.twister.ui.javafx.view.DefaultViewRuntime;
-import com.nextbreakpoint.nextfractal.twister.ui.javafx.view.extension.ViewExtensionRuntime;
+import com.nextbreakpoint.nextfractal.twister.ui.javafx.extensionPoints.view.DefaultViewRuntime;
+import com.nextbreakpoint.nextfractal.twister.ui.javafx.extensionPoints.view.ViewExtensionRuntime;
 
 public class NextFractalApp extends Application {
 	private TwisterRenderer renderer;

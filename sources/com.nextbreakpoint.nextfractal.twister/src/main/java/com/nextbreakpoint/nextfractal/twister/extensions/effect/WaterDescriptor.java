@@ -25,7 +25,7 @@
  */
 package com.nextbreakpoint.nextfractal.twister.extensions.effect;
 
-import com.nextbreakpoint.nextfractal.twister.effect.extension.EffectExtensionDescriptor;
+import com.nextbreakpoint.nextfractal.twister.extensionPoints.effect.EffectExtensionDescriptor;
 
 /**
  * @author Andrea Medeghini

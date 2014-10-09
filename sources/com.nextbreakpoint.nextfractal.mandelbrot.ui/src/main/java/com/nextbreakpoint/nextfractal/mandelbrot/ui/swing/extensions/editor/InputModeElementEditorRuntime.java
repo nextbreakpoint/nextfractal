@@ -41,7 +41,7 @@ import javax.swing.SwingConstants;
 import com.nextbreakpoint.nextfractal.core.common.IntegerElementNodeValue;
 import com.nextbreakpoint.nextfractal.core.tree.NodeEditor;
 import com.nextbreakpoint.nextfractal.core.ui.swing.NodeEditorComponent;
-import com.nextbreakpoint.nextfractal.core.ui.swing.editor.extension.EditorExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.ui.swing.extensionPoints.editor.EditorExtensionRuntime;
 import com.nextbreakpoint.nextfractal.core.ui.swing.util.GUIFactory;
 import com.nextbreakpoint.nextfractal.mandelbrot.ui.swing.extensions.MandelbrotSwingExtensionResources;
 
@@ -50,7 +50,7 @@ import com.nextbreakpoint.nextfractal.mandelbrot.ui.swing.extensions.MandelbrotS
  */
 public class InputModeElementEditorRuntime extends EditorExtensionRuntime {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.ui.swing.editor.extension.EditorExtensionRuntime#createEditor(com.nextbreakpoint.nextfractal.core.tree.NodeEditor)
+	 * @see com.nextbreakpoint.nextfractal.core.ui.swing.extensionPoints.editor.EditorExtensionRuntime#createEditor(com.nextbreakpoint.nextfractal.core.tree.NodeEditor)
 	 */
 	@Override
 	public NodeEditorComponent createEditor(final NodeEditor nodeEditor) {

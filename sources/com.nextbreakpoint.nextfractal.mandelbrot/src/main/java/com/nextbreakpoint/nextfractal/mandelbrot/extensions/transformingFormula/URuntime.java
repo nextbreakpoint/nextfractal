@@ -32,7 +32,7 @@ import com.nextbreakpoint.nextfractal.core.math.Complex;
  */
 public class URuntime extends AbstractTransformingFormulaRuntime<UConfig> {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.transformingFormula.extension.TransformingFormulaExtensionRuntime#isHorizontalSymetryAllowed()
+	 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.transformingFormula.TransformingFormulaExtensionRuntime#isHorizontalSymetryAllowed()
 	 */
 	@Override
 	public boolean isHorizontalSymetryAllowed() {
@@ -40,7 +40,7 @@ public class URuntime extends AbstractTransformingFormulaRuntime<UConfig> {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.transformingFormula.extension.TransformingFormulaExtensionRuntime#isVerticalSymetryAllowed()
+	 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.transformingFormula.TransformingFormulaExtensionRuntime#isVerticalSymetryAllowed()
 	 */
 	@Override
 	public boolean isVerticalSymetryAllowed() {
@@ -48,7 +48,7 @@ public class URuntime extends AbstractTransformingFormulaRuntime<UConfig> {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.transformingFormula.extension.TransformingFormulaExtensionRuntime#renderPoint(com.nextbreakpoint.nextfractal.core.math.Complex)
+	 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.transformingFormula.TransformingFormulaExtensionRuntime#renderPoint(com.nextbreakpoint.nextfractal.core.math.Complex)
 	 */
 	@Override
 	public Complex renderPoint(final Complex w) {

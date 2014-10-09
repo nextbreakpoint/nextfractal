@@ -48,8 +48,8 @@ import net.sf.ffmpeg4java.SWIGTYPE_p_uint8_t;
 import com.nextbreakpoint.nextfractal.queue.encoder.EncoderContext;
 import com.nextbreakpoint.nextfractal.queue.encoder.EncoderException;
 import com.nextbreakpoint.nextfractal.queue.encoder.EncoderHook;
-import com.nextbreakpoint.nextfractal.queue.encoder.extension.AbstractEncoderExtensionRuntime;
-import com.nextbreakpoint.nextfractal.queue.encoder.extension.EncoderExtensionConfig;
+import com.nextbreakpoint.nextfractal.queue.extensionPoints.encoder.AbstractEncoderExtensionRuntime;
+import com.nextbreakpoint.nextfractal.queue.extensionPoints.encoder.EncoderExtensionConfig;
 
 /**
  * @author Andrea Medeghini
@@ -64,7 +64,7 @@ public abstract class FFmpegEncoderRuntime<T extends EncoderExtensionConfig> ext
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.queue.encoder.extension.EncoderExtensionRuntime#setInterruptHook(com.nextbreakpoint.nextfractal.queue.encoder.EncoderHook)
+	 * @see com.nextbreakpoint.nextfractal.queue.extensionPoints.encoder.EncoderExtensionRuntime#setInterruptHook(com.nextbreakpoint.nextfractal.queue.encoder.EncoderHook)
 	 */
 	@Override
 	public void setInterruptHook(final EncoderHook hook) {
@@ -72,7 +72,7 @@ public abstract class FFmpegEncoderRuntime<T extends EncoderExtensionConfig> ext
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.queue.encoder.extension.EncoderExtensionRuntime#encode(com.nextbreakpoint.nextfractal.queue.encoder.EncoderContext, java.io.File)
+	 * @see com.nextbreakpoint.nextfractal.queue.extensionPoints.encoder.EncoderExtensionRuntime#encode(com.nextbreakpoint.nextfractal.queue.encoder.EncoderContext, java.io.File)
 	 */
 	@Override
 	public void encode(final EncoderContext context, final File path) throws EncoderException {

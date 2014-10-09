@@ -5,8 +5,8 @@
 package com.nextbreakpoint.nextfractal.contextfree.pathAdjustment;
 
 import com.nextbreakpoint.nextfractal.contextfree.ContextFreeRegistry;
-import com.nextbreakpoint.nextfractal.contextfree.pathAdjustment.extension.PathAdjustmentExtensionConfig;
-import com.nextbreakpoint.nextfractal.contextfree.pathAdjustment.extension.PathAdjustmentExtensionRuntime;
+import com.nextbreakpoint.nextfractal.contextfree.extensionPoints.pathAdjustment.PathAdjustmentExtensionConfig;
+import com.nextbreakpoint.nextfractal.contextfree.extensionPoints.pathAdjustment.PathAdjustmentExtensionRuntime;
 import com.nextbreakpoint.nextfractal.contextfree.renderer.support.CFModification;
 import com.nextbreakpoint.nextfractal.core.common.ExtensionReferenceElement;
 import com.nextbreakpoint.nextfractal.core.config.RuntimeElement;

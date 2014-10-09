@@ -4,13 +4,13 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.extensions.shapeReplacement;
 
+import com.nextbreakpoint.nextfractal.contextfree.extensionPoints.shapeReplacement.ShapeReplacementExtensionRuntime;
 import com.nextbreakpoint.nextfractal.contextfree.renderer.support.CFBuilder;
 import com.nextbreakpoint.nextfractal.contextfree.renderer.support.CFModification;
 import com.nextbreakpoint.nextfractal.contextfree.renderer.support.CFReplacement;
 import com.nextbreakpoint.nextfractal.contextfree.renderer.support.CFRule;
 import com.nextbreakpoint.nextfractal.contextfree.shapeAdjustment.ShapeAdjustmentConfigElement;
 import com.nextbreakpoint.nextfractal.contextfree.shapeAdjustment.ShapeAdjustmentRuntimeElement;
-import com.nextbreakpoint.nextfractal.contextfree.shapeReplacement.extension.ShapeReplacementExtensionRuntime;
 import com.nextbreakpoint.nextfractal.core.config.ListConfigElement;
 import com.nextbreakpoint.nextfractal.core.config.ListRuntimeElement;
 import com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent;

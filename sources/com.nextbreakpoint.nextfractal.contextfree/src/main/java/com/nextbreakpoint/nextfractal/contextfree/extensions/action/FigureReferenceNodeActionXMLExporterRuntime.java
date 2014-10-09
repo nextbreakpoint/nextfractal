@@ -4,7 +4,7 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.extensions.action;
 
-import com.nextbreakpoint.nextfractal.contextfree.figure.extension.FigureExtensionConfig;
+import com.nextbreakpoint.nextfractal.contextfree.extensionPoints.figure.FigureExtensionConfig;
 import com.nextbreakpoint.nextfractal.core.util.AbstractConfigurableExtensionReferenceElementNodeActionXMLExporterRuntime;
 /**
  * @author Andrea Medeghini

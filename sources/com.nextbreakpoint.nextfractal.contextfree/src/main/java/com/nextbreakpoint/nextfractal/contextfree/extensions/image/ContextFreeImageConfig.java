@@ -29,7 +29,7 @@ import com.nextbreakpoint.nextfractal.contextfree.ContextFreeConfig;
 import com.nextbreakpoint.nextfractal.contextfree.ContextFreeConfigBuilder;
 import com.nextbreakpoint.nextfractal.core.config.ConfigContext;
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionException;
-import com.nextbreakpoint.nextfractal.twister.image.extension.ImageExtensionConfig;
+import com.nextbreakpoint.nextfractal.twister.extensionPoints.image.ImageExtensionConfig;
 
 /**
  * @author Andrea Medeghini

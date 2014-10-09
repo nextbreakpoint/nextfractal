@@ -26,7 +26,7 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.extensions.processingFormula.distance;
 
 import com.nextbreakpoint.nextfractal.core.math.Complex;
-import com.nextbreakpoint.nextfractal.mandelbrot.processingFormula.extension.ProcessingFormulaExtensionRuntime;
+import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.processingFormula.ProcessingFormulaExtensionRuntime;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RenderedPoint;
 
 /**
@@ -43,7 +43,7 @@ public class AverageFormulaRuntime extends ProcessingFormulaExtensionRuntime {
 	private double c;
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.processingFormula.extension.ProcessingFormulaExtensionRuntime#prepareForProcessing()
+	 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.processingFormula.ProcessingFormulaExtensionRuntime#prepareForProcessing()
 	 */
 	@Override
 	public void prepareForProcessing() {
@@ -57,7 +57,7 @@ public class AverageFormulaRuntime extends ProcessingFormulaExtensionRuntime {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.processingFormula.extension.ProcessingFormulaExtensionRuntime#processPoint(com.nextbreakpoint.nextfractal.mandelbrot.renderer.RenderedPoint)
+	 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.processingFormula.ProcessingFormulaExtensionRuntime#processPoint(com.nextbreakpoint.nextfractal.mandelbrot.renderer.RenderedPoint)
 	 */
 	@Override
 	public void processPoint(final RenderedPoint cp) {
@@ -71,7 +71,7 @@ public class AverageFormulaRuntime extends ProcessingFormulaExtensionRuntime {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.processingFormula.extension.ProcessingFormulaExtensionRuntime#renderPoint(com.nextbreakpoint.nextfractal.mandelbrot.renderer.RenderedPoint)
+	 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.processingFormula.ProcessingFormulaExtensionRuntime#renderPoint(com.nextbreakpoint.nextfractal.mandelbrot.renderer.RenderedPoint)
 	 */
 	@Override
 	public void renderPoint(final RenderedPoint cp) {

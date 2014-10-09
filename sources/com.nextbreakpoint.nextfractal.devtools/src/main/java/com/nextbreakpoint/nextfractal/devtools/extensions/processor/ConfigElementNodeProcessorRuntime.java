@@ -40,14 +40,14 @@ import com.nextbreakpoint.nextfractal.devtools.ProcessorCardinality;
 import com.nextbreakpoint.nextfractal.devtools.ProcessorDescriptor;
 import com.nextbreakpoint.nextfractal.devtools.ProcessorParameters;
 import com.nextbreakpoint.nextfractal.devtools.ProcessorTemplateLoader;
-import com.nextbreakpoint.nextfractal.devtools.processor.extension.ProcessorExtensionRuntime;
+import com.nextbreakpoint.nextfractal.devtools.extensionPoints.processor.ProcessorExtensionRuntime;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 
 public class ConfigElementNodeProcessorRuntime extends ProcessorExtensionRuntime {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.devtools.processor.extension.ProcessorExtensionRuntime#process(java.io.File, com.nextbreakpoint.nextfractal.devtools.ProcessorDescriptor, java.util.List, java.util.Map)
+	 * @see com.nextbreakpoint.nextfractal.devtools.extensionPoints.processor.ProcessorExtensionRuntime#process(java.io.File, com.nextbreakpoint.nextfractal.devtools.ProcessorDescriptor, java.util.List, java.util.Map)
 	 */
 	@Override
 	public void process(File path, ProcessorParameters parameters, Map<String, String> variables) throws DevToolsException {
@@ -79,7 +79,7 @@ public class ConfigElementNodeProcessorRuntime extends ProcessorExtensionRuntime
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.devtools.processor.extension.ProcessorExtensionRuntime#getName()
+	 * @see com.nextbreakpoint.nextfractal.devtools.extensionPoints.processor.ProcessorExtensionRuntime#getName()
 	 */
 	@Override
 	public String getName() {

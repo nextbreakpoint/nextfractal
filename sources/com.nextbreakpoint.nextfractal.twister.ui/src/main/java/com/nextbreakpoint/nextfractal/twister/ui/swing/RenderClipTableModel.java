@@ -42,6 +42,7 @@ import com.nextbreakpoint.nextfractal.queue.RenderService;
 import com.nextbreakpoint.nextfractal.queue.RenderService.ServiceCallback;
 import com.nextbreakpoint.nextfractal.queue.clip.ClipPreview;
 import com.nextbreakpoint.nextfractal.queue.clip.RenderClipDataRow;
+import com.nextbreakpoint.nextfractal.twister.ui.ServiceAdapter;
 
 /**
  * @author Andrea Medeghini
@@ -373,7 +374,7 @@ public class RenderClipTableModel extends ServiceAdapter implements TableModel {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.ui.swing.ServiceAdapter#clipCreated(com.nextbreakpoint.nextfractal.service.clip.RenderClipDataRow)
+	 * @see com.nextbreakpoint.nextfractal.twister.ui.ServiceAdapter#clipCreated(com.nextbreakpoint.nextfractal.service.clip.RenderClipDataRow)
 	 */
 	@Override
 	public void clipCreated(final RenderClipDataRow clip) {
@@ -398,7 +399,7 @@ public class RenderClipTableModel extends ServiceAdapter implements TableModel {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.ui.swing.ServiceAdapter#clipDeleted(com.nextbreakpoint.nextfractal.service.clip.RenderClipDataRow)
+	 * @see com.nextbreakpoint.nextfractal.twister.ui.ServiceAdapter#clipDeleted(com.nextbreakpoint.nextfractal.service.clip.RenderClipDataRow)
 	 */
 	@Override
 	public void clipDeleted(final RenderClipDataRow clip) {
@@ -420,7 +421,7 @@ public class RenderClipTableModel extends ServiceAdapter implements TableModel {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.ui.swing.ServiceAdapter#clipUpdated(com.nextbreakpoint.nextfractal.service.clip.RenderClipDataRow)
+	 * @see com.nextbreakpoint.nextfractal.twister.ui.ServiceAdapter#clipUpdated(com.nextbreakpoint.nextfractal.service.clip.RenderClipDataRow)
 	 */
 	@Override
 	public void clipUpdated(final RenderClipDataRow clip) {

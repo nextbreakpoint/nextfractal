@@ -37,7 +37,7 @@ import com.nextbreakpoint.nextfractal.core.common.FontElement;
 import com.nextbreakpoint.nextfractal.core.common.FontElementXMLImporter;
 import com.nextbreakpoint.nextfractal.core.common.StringElement;
 import com.nextbreakpoint.nextfractal.core.common.StringElementXMLImporter;
-import com.nextbreakpoint.nextfractal.core.extensionConfigXMLImporter.extension.ExtensionConfigXMLImporterExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.extensionPoints.extensionConfigXMLImporter.ExtensionConfigXMLImporterExtensionRuntime;
 import com.nextbreakpoint.nextfractal.core.xml.XMLImportException;
 import com.nextbreakpoint.nextfractal.core.xml.XMLImporter;
 
@@ -46,7 +46,7 @@ import com.nextbreakpoint.nextfractal.core.xml.XMLImporter;
  */
 public class TextConfigXMLImporterRuntime extends ExtensionConfigXMLImporterExtensionRuntime {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.extensionConfigXMLImporter.extension.ExtensionConfigXMLImporterExtensionRuntime#createXMLImporter()
+	 * @see com.nextbreakpoint.nextfractal.core.extensionPoints.extensionConfigXMLImporter.ExtensionConfigXMLImporterExtensionRuntime#createXMLImporter()
 	 */
 	@Override
 	public XMLImporter<TextConfig> createXMLImporter() {

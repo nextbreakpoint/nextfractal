@@ -25,7 +25,7 @@
  */
 package com.nextbreakpoint.nextfractal.devtools.extensions.descriptor;
 
-import com.nextbreakpoint.nextfractal.devtools.descriptor.extension.DescriptorExtensionDescriptor;
+import com.nextbreakpoint.nextfractal.devtools.extensionPoints.descriptor.DescriptorExtensionDescriptor;
 
 /**
  * @author Andrea Medeghini

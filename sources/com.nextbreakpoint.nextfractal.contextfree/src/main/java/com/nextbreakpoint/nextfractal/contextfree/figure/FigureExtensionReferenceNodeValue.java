@@ -4,7 +4,7 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.figure;
 
-import com.nextbreakpoint.nextfractal.contextfree.figure.extension.FigureExtensionConfig;
+import com.nextbreakpoint.nextfractal.contextfree.extensionPoints.figure.FigureExtensionConfig;
 import com.nextbreakpoint.nextfractal.core.common.ExtensionReferenceElementNodeValue;
 import com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionReference;
 

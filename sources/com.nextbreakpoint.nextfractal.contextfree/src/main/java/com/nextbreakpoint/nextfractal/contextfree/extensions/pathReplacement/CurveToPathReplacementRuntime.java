@@ -4,7 +4,7 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.extensions.pathReplacement;
 
-import com.nextbreakpoint.nextfractal.contextfree.pathReplacement.extension.PathReplacementExtensionRuntime;
+import com.nextbreakpoint.nextfractal.contextfree.extensionPoints.pathReplacement.PathReplacementExtensionRuntime;
 import com.nextbreakpoint.nextfractal.contextfree.renderer.support.CFRule;
 import com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent;
 import com.nextbreakpoint.nextfractal.core.config.ValueChangeListener;

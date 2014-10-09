@@ -25,7 +25,7 @@
  */
 package com.nextbreakpoint.nextfractal.twister.extensions.layerFilter;
 
-import com.nextbreakpoint.nextfractal.twister.layerFilter.extension.LayerFilterExtensionDescriptor;
+import com.nextbreakpoint.nextfractal.twister.extensionPoints.layerFilter.LayerFilterExtensionDescriptor;
 
 /**
  * @author Andrea Medeghini

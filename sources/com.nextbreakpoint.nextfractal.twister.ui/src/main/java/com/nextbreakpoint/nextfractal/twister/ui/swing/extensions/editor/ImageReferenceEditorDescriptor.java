@@ -25,7 +25,7 @@
  */
 package com.nextbreakpoint.nextfractal.twister.ui.swing.extensions.editor;
 
-import com.nextbreakpoint.nextfractal.core.ui.swing.editor.extension.EditorExtensionDescriptor;
+import com.nextbreakpoint.nextfractal.core.ui.swing.extensionPoints.editor.EditorExtensionDescriptor;
 
 /**
  * @author Andrea Medeghini
