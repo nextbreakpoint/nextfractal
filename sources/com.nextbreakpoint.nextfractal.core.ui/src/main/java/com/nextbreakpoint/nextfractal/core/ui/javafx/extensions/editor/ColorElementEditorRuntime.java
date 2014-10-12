@@ -66,7 +66,7 @@ public class ColorElementEditorRuntime extends EditorExtensionRuntime {
 //			add(GUIFactory.createLabel(nodeEditor.getNodeLabel(), SwingConstants.CENTER));
 //			this.add(field);
 //			if (nodeEditor.isNodeEditable()) {
-//				final JButton button = GUIFactory.createButton(new EditActon(field, nodeEditor), CoreSwingExtensionResources.getInstance().getString("tooltip.editColor"));
+//				final JButton button = GUIFactory.createButton(new EditActon(field, nodeEditor), CoreUIExtensionResources.getInstance().getString("tooltip.editColor"));
 //				this.add(button);
 //			}
 		}
@@ -104,7 +104,7 @@ public class ColorElementEditorRuntime extends EditorExtensionRuntime {
 //			 * @param nodeEditor
 //			 */
 //			public EditActon(final ColorField field, final NodeEditor nodeEditor) {
-//				super(CoreSwingExtensionResources.getInstance().getString("action.edit"));
+//				super(CoreUIExtensionResources.getInstance().getString("action.edit"));
 //				this.field = field;
 //				this.nodeEditor = nodeEditor;
 //			}

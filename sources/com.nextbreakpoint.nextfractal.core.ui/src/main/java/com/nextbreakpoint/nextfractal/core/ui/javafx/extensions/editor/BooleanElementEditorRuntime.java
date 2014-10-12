@@ -25,9 +25,14 @@
  */
 package com.nextbreakpoint.nextfractal.core.ui.javafx.extensions.editor;
 
+import javafx.event.ActionEvent;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.layout.Pane;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Tooltip;
+import javafx.scene.layout.HBox;
 
+import com.nextbreakpoint.nextfractal.core.common.BooleanElementNodeValue;
 import com.nextbreakpoint.nextfractal.core.tree.NodeEditor;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.NodeEditorComponent;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.extensionPoints.editor.EditorExtensionRuntime;
@@ -44,20 +49,22 @@ public class BooleanElementEditorRuntime extends EditorExtensionRuntime {
 		return new EditorComponent(nodeEditor);
 	}
 
-	private class EditorComponent extends Pane implements NodeEditorComponent {
+	private class EditorComponent extends HBox implements NodeEditorComponent {
 		private final NodeEditor nodeEditor;
-//		private final JCheckBox checkbox;
+		private final CheckBox checkbox;
 
 		/**
 		 * @param nodeEditor
 		 */
 		public EditorComponent(final NodeEditor nodeEditor) {
 			this.nodeEditor = nodeEditor;
-//			setLayout(new FlowLayout(FlowLayout.CENTER));
-//			checkbox = GUIFactory.createCheckBox(nodeEditor.getNodeLabel(), null);
-//			checkbox.setSelected((((BooleanElementNodeValue) nodeEditor.getNodeValue()).getValue()).booleanValue());
-//			checkbox.addActionListener(new NodeEditorActionListener(nodeEditor));
-//			this.add(checkbox);
+			checkbox = new CheckBox();
+			checkbox.setText(nodeEditor.getNodeLabel());
+			checkbox.setTooltip(new Tooltip(nodeEditor.getNodeLabel()));
+			checkbox.setSelected((((BooleanElementNodeValue) nodeEditor.getNodeValue()).getValue()).booleanValue());
+			checkbox.setOnAction(e -> { updateValue(e); });
+			setAlignment(Pos.CENTER_LEFT);
+			getChildren().add(checkbox);
 		}
 
 		/**
@@ -74,7 +81,7 @@ public class BooleanElementEditorRuntime extends EditorExtensionRuntime {
 		@Override
 		public void reloadValue() {
 			if (nodeEditor.getNodeValue() != null) {
-//				checkbox.getModel().setSelected((((BooleanElementNodeValue) nodeEditor.getNodeValue()).getValue()).booleanValue());
+				checkbox.setSelected((((BooleanElementNodeValue) nodeEditor.getNodeValue()).getValue()).booleanValue());
 			}
 		}
 
@@ -84,24 +91,9 @@ public class BooleanElementEditorRuntime extends EditorExtensionRuntime {
 		@Override
 		public void dispose() {
 		}
+		
+		private void updateValue(ActionEvent e) {
+			nodeEditor.setNodeValue(new BooleanElementNodeValue(new Boolean(((CheckBox) e.getSource()).isSelected())));
+		}
 	}
-//
-//	private class NodeEditorActionListener implements ActionListener {
-//		private final NodeEditor nodeEditor;
-//
-//		/**
-//		 * @param nodeEditor
-//		 */
-//		public NodeEditorActionListener(final NodeEditor nodeEditor) {
-//			this.nodeEditor = nodeEditor;
-//		}
-//
-//		/**
-//		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-//		 */
-//		@Override
-//		public void actionPerformed(final ActionEvent e) {
-//			nodeEditor.setNodeValue(new BooleanElementNodeValue(new Boolean(((JCheckBox) e.getSource()).isSelected())));
-//		}
-//	}
 }

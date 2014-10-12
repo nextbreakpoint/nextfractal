@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javafx.geometry.Pos;
 import javafx.scene.layout.VBox;
 
 import com.nextbreakpoint.nextfractal.core.CoreRegistry;
@@ -95,6 +96,7 @@ public class DefaultViewRuntime extends ViewExtensionRuntime {
 		public NavigatorView(ViewContext viewContext, RenderContext context, Tree tree) {
 			// TODO Auto-generated constructor stub
 			VBox panel = new VBox(10);
+			panel.setAlignment(Pos.CENTER_LEFT);
 			for (int i = 0; i < tree.getRootNode().getChildNodeCount(); i++) {
 				NodeEditorComponent editor = createEditor(tree.getRootNode().getChildNode(i));
 				if (editor != null) {

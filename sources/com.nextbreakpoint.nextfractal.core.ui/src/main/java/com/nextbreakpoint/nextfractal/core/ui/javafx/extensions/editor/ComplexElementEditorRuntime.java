@@ -25,12 +25,20 @@
  */
 package com.nextbreakpoint.nextfractal.core.ui.javafx.extensions.editor;
 
+import javafx.event.ActionEvent;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.layout.Pane;
+import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
+import javafx.scene.layout.VBox;
 
+import com.nextbreakpoint.nextfractal.core.common.ComplexElementNodeValue;
 import com.nextbreakpoint.nextfractal.core.tree.NodeEditor;
+import com.nextbreakpoint.nextfractal.core.ui.javafx.AdvancedTextField;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.NodeEditorComponent;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.extensionPoints.editor.EditorExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.ui.javafx.extensions.CoreUIExtensionResources;
+import com.nextbreakpoint.nextfractal.core.util.DoubleVector2D;
 
 /**
  * @author Andrea Medeghini
@@ -44,33 +52,34 @@ public class ComplexElementEditorRuntime extends EditorExtensionRuntime {
 		return new EditorComponent(nodeEditor);
 	}
 
-	private class EditorComponent extends Pane implements NodeEditorComponent {
+	private class EditorComponent extends VBox implements NodeEditorComponent {
 		private final NodeEditor nodeEditor;
-//		private final JTextField[] textFields = new JTextField[2];
+		private final AdvancedTextField[] textFields = new AdvancedTextField[2];
 
 		/**
 		 * @param nodeEditor
 		 */
 		public EditorComponent(final NodeEditor nodeEditor) {
 			this.nodeEditor = nodeEditor;
-//			setLayout(new GridLayout(3, 1, 4, 4));
-//			final DoubleVector2D c = ((ComplexElementNodeValue) nodeEditor.getNodeValue()).getValue();
-//			final JLabel complexLabel = GUIFactory.createLabel(nodeEditor.getNodeLabel(), SwingConstants.CENTER);
-//			textFields[0] = GUIFactory.createTextField(String.valueOf(c.getX()), null);
-//			textFields[0].addActionListener(new FieldListener(nodeEditor, textFields));
-//			textFields[0].addFocusListener(new FieldListener(nodeEditor, textFields));
-//			textFields[0].setColumns(20);
-//			textFields[0].setCaretPosition(0);
-//			textFields[0].setToolTipText(CoreSwingExtensionResources.getInstance().getString("tooltip.complexRe"));
-//			textFields[1] = GUIFactory.createTextField(String.valueOf(c.getY()), null);
-//			textFields[1].addActionListener(new FieldListener(nodeEditor, textFields));
-//			textFields[1].addFocusListener(new FieldListener(nodeEditor, textFields));
-//			textFields[1].setColumns(20);
-//			textFields[1].setCaretPosition(0);
-//			textFields[1].setToolTipText(CoreSwingExtensionResources.getInstance().getString("tooltip.complexIm"));
-//			this.add(complexLabel);
-//			this.add(createTextFieldPanel("Re", textFields[0]));
-//			this.add(createTextFieldPanel("Im", textFields[1]));
+			final DoubleVector2D c = ((ComplexElementNodeValue) nodeEditor.getNodeValue()).getValue();
+			Label label = new Label(nodeEditor.getNodeLabel());
+			textFields[0] = new AdvancedTextField();
+			textFields[0].setRestrict("-?\\d*\\.?\\d*");
+			textFields[0].setText(String.valueOf(c.getX()));
+			textFields[0].setTooltip(new Tooltip(CoreUIExtensionResources.getInstance().getString("tooltip.complexRe")));
+			textFields[0].setOnAction(e -> { updateValue(e); });
+			textFields[0].focusedProperty().addListener((observable, oldValue, newValue) -> { if (!newValue) { updateValue(null); } });
+			textFields[1] = new AdvancedTextField();
+			textFields[1].setRestrict("-?\\d*\\.?\\d*");
+			textFields[1].setText(String.valueOf(c.getY()));
+			textFields[1].setTooltip(new Tooltip(CoreUIExtensionResources.getInstance().getString("tooltip.complexIm")));
+			textFields[1].setOnAction(e -> { updateValue(e); });
+			textFields[1].focusedProperty().addListener((observable, oldValue, newValue) -> { if (!newValue) { updateValue(null); } });
+			setAlignment(Pos.CENTER_LEFT);
+			setSpacing(10);
+			getChildren().add(label);
+			getChildren().add(textFields[0]);
+			getChildren().add(textFields[1]);
 		}
 
 		/**
@@ -80,115 +89,46 @@ public class ComplexElementEditorRuntime extends EditorExtensionRuntime {
 		public Node getComponent() {
 			return this;
 		}
-
+		
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.ui.javafx.NodeEditorComponent#reloadValue()
 		 */
 		@Override
 		public void reloadValue() {
-//			final DoubleVector2D c = ((ComplexElementNodeValue) nodeEditor.getNodeValue()).getValue();
-//			textFields[0].setText(String.valueOf(c.getX()));
-//			textFields[0].setCaretPosition(0);
-//			textFields[1].setText(String.valueOf(c.getY()));
-//			textFields[1].setCaretPosition(0);
+			final DoubleVector2D c = ((ComplexElementNodeValue) nodeEditor.getNodeValue()).getValue();
+			textFields[0].setText(String.valueOf(c.getX()));
+			textFields[1].setText(String.valueOf(c.getY()));
 		}
-
-//		/**
-//		 * @param label
-//		 * @param textField
-//		 * @return
-//		 */
-//		protected JPanel createTextFieldPanel(final String text, final JTextField textField) {
-//			final JPanel panel = new JPanel(new BorderLayout(4, 4));
-//			final JLabel label = GUIFactory.createLabel(text, SwingConstants.CENTER);
-//			label.setPreferredSize(new Dimension(20, 20));
-//			panel.add(label, BorderLayout.WEST);
-//			panel.add(textField, BorderLayout.CENTER);
-//			return panel;
-//		}
-//
-//		private class FieldListener implements ActionListener, FocusListener {
-//			private final NodeEditor nodeEditor;
-//			private final JTextField[] textFields;
-//
-//			public FieldListener(final NodeEditor nodeEditor, final JTextField[] textFields) {
-//				this.nodeEditor = nodeEditor;
-//				this.textFields = textFields;
-//			}
-//
-//			/**
-//			 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-//			 */
-//			@Override
-//			public void actionPerformed(final ActionEvent e) {
-//				final DoubleVector2D c = ((ComplexElementNodeValue) nodeEditor.getNodeValue()).getValue();
-//				double r = c.getX();
-//				double i = c.getY();
-//				try {
-//					final String text = textFields[0].getText();
-//					r = Double.parseDouble(text);
-//				}
-//				catch (final NumberFormatException nfe) {
-//					textFields[0].setText(String.valueOf(c.getX()));
-//					textFields[0].setCaretPosition(0);
-//				}
-//				try {
-//					final String text = textFields[1].getText();
-//					i = Double.parseDouble(text);
-//				}
-//				catch (final NumberFormatException nfe) {
-//					textFields[1].setText(String.valueOf(c.getY()));
-//					textFields[1].setCaretPosition(0);
-//				}
-//				final DoubleVector2D value = new DoubleVector2D(r, i);
-//				if (!nodeEditor.getNodeValue().getValue().equals(value)) {
-//					nodeEditor.setNodeValue(new ComplexElementNodeValue(value));
-//				}
-//			}
-//
-//			/**
-//			 * @see java.awt.event.FocusListener#focusGained(java.awt.event.FocusEvent)
-//			 */
-//			@Override
-//			public void focusGained(final FocusEvent e) {
-//			}
-//
-//			/**
-//			 * @see java.awt.event.FocusListener#focusLost(java.awt.event.FocusEvent)
-//			 */
-//			@Override
-//			public void focusLost(final FocusEvent e) {
-//				final DoubleVector2D c = ((ComplexElementNodeValue) nodeEditor.getNodeValue()).getValue();
-//				double r = c.getX();
-//				double i = c.getY();
-//				try {
-//					final String text = textFields[0].getText();
-//					r = Double.parseDouble(text);
-//				}
-//				catch (final NumberFormatException nfe) {
-//					textFields[0].setText(String.valueOf(c.getX()));
-//					textFields[0].setCaretPosition(0);
-//				}
-//				try {
-//					final String text = textFields[1].getText();
-//					i = Double.parseDouble(text);
-//				}
-//				catch (final NumberFormatException nfe) {
-//					textFields[1].setText(String.valueOf(c.getY()));
-//					textFields[1].setCaretPosition(0);
-//				}
-//				final DoubleVector2D value = new DoubleVector2D(r, i);
-//				if (!nodeEditor.getNodeValue().getValue().equals(value)) {
-//					nodeEditor.setNodeValue(new ComplexElementNodeValue(value));
-//				}
-//			}
-//		}
 
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.ui.javafx.NodeEditorComponent#dispose()
 		 */
 		@Override
 		public void dispose() {
+		}
+
+		private void updateValue(ActionEvent e) {
+			final DoubleVector2D c = ((ComplexElementNodeValue) nodeEditor.getNodeValue()).getValue();
+			double r = c.getX();
+			double i = c.getY();
+			try {
+				final String text = textFields[0].getText();
+				r = Double.parseDouble(text);
+			}
+			catch (final NumberFormatException nfe) {
+				textFields[0].setText(String.valueOf(c.getX()));
+			}
+			try {
+				final String text = textFields[1].getText();
+				i = Double.parseDouble(text);
+			}
+			catch (final NumberFormatException nfe) {
+				textFields[1].setText(String.valueOf(c.getY()));
+			}
+			final DoubleVector2D value = new DoubleVector2D(r, i);
+			if (!nodeEditor.getNodeValue().getValue().equals(value)) {
+				nodeEditor.setNodeValue(new ComplexElementNodeValue(value));
+			}
 		}
 	}
 }
