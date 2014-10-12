@@ -25,14 +25,21 @@
  */
 package com.nextbreakpoint.nextfractal.core.ui.javafx.editor;
 
+import javafx.event.ActionEvent;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.VBox;
 
+import com.nextbreakpoint.nextfractal.core.common.DoubleElementNodeValue;
 import com.nextbreakpoint.nextfractal.core.tree.NodeEditor;
 import com.nextbreakpoint.nextfractal.core.tree.NodeValue;
 import com.nextbreakpoint.nextfractal.core.tree.NumberNodeEditor;
+import com.nextbreakpoint.nextfractal.core.ui.javafx.AdvancedTextField;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.NodeEditorComponent;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.extensionPoints.editor.EditorExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.ui.javafx.extensions.CoreUIExtensionResources;
 
 /**
  * @author Andrea Medeghini
@@ -48,23 +55,25 @@ public abstract class NumberEditorRuntime extends EditorExtensionRuntime {
 
 	private class EditorComponent extends VBox implements NodeEditorComponent {
 		private final NumberNodeEditor nodeEditor;
-//		private final JTextField textfield;
+		private final AdvancedTextField textField;
 
 		/**
 		 * @param nodeEditor
 		 */
 		public EditorComponent(final NumberNodeEditor nodeEditor) {
 			this.nodeEditor = nodeEditor;
-//			textfield = GUIFactory.createTextField(nodeEditor.getNodeValueAsString(), null);
-//			textfield.setMinimumSize(new Dimension(80, GUIFactory.DEFAULT_HEIGHT));
-//			textfield.setMaximumSize(new Dimension(80, GUIFactory.DEFAULT_HEIGHT));
-//			textfield.setPreferredSize(new Dimension(80, GUIFactory.DEFAULT_HEIGHT));
-//			this.add(GUIFactory.createLabel(nodeEditor.getNodeLabel(), SwingConstants.CENTER));
-//			this.add(textfield);
-//			this.add(GUIFactory.createLabel("[" + nodeEditor.getMinimum() + ", " + nodeEditor.getMaximum() + "]", SwingConstants.CENTER));
-//			NodeEditorChangeListener listener = new NodeEditorChangeListener(textfield, nodeEditor);
-//			textfield.addActionListener(listener);
-//			textfield.addFocusListener(listener);
+			Label label = new Label(nodeEditor.getNodeLabel());
+			final Double value = ((DoubleElementNodeValue) nodeEditor.getNodeValue()).getValue();
+			textField = new AdvancedTextField();
+			textField.setRestrict(getRestriction());
+			textField.setText(String.valueOf(value));
+			textField.setTooltip(new Tooltip(CoreUIExtensionResources.getInstance().getString("tooltip." + nodeEditor.getNodeId())));
+			textField.setOnAction(e -> { updateValue(e); });
+			textField.focusedProperty().addListener((observable, oldValue, newValue) -> { if (!newValue) { updateValue(null); } });
+			setAlignment(Pos.CENTER_LEFT);
+			setSpacing(10);
+			getChildren().add(label);
+			getChildren().add(textField);
 		}
 
 		/**
@@ -80,9 +89,9 @@ public abstract class NumberEditorRuntime extends EditorExtensionRuntime {
 		 */
 		@Override
 		public void reloadValue() {
-//			if (nodeEditor.getNodeValue() != null) {
-//				textfield.setText(nodeEditor.getNodeValueAsString());
-//			}
+			if (nodeEditor.getNodeValue() != null) {
+				textField.setText(nodeEditor.getNodeValueAsString());
+			}
 		}
 
 		/**
@@ -91,51 +100,22 @@ public abstract class NumberEditorRuntime extends EditorExtensionRuntime {
 		@Override
 		public void dispose() {
 		}
+
+		private void updateValue(ActionEvent e) {
+			Number value = parseValue(textField.getText());
+			if ((value.doubleValue() >= nodeEditor.getMinimum().doubleValue()) && (value.doubleValue() <= nodeEditor.getMaximum().doubleValue())) {
+				if (!nodeEditor.getNodeValue().getValue().equals(value)) {
+					nodeEditor.setNodeValue(createNodeValue(value));
+				}
+			} else {
+				textField.setText(nodeEditor.getNodeValueAsString());
+			}
+		}
 	}
 
-//	private class NodeEditorChangeListener implements ActionListener, FocusListener {
-//		private final NumberNodeEditor nodeEditor;
-//		private final JTextField textfield;
-//
-//		/**
-//		 * @param textfield
-//		 * @param nodeEditor
-//		 */
-//		public NodeEditorChangeListener(final JTextField textfield, final NumberNodeEditor nodeEditor) {
-//			this.nodeEditor = nodeEditor;
-//			this.textfield = textfield;
-//		}
-//
-//		@Override
-//		public void actionPerformed(final ActionEvent e) {
-//			Number value = parseValue(textfield.getText());
-//			if ((value.doubleValue() >= nodeEditor.getMinimum().doubleValue()) && (value.doubleValue() <= nodeEditor.getMaximum().doubleValue())) {
-//				if (!nodeEditor.getNodeValue().getValue().equals(value)) {
-//					nodeEditor.setNodeValue(createNodeValue(value));
-//				}
-//			}
-//			else {
-//				textfield.setText(nodeEditor.getNodeValueAsString());
-//			}
-//		}
-//
-//		@Override
-//		public void focusGained(final FocusEvent e) {
-//		}
-//
-//		@Override
-//		public void focusLost(final FocusEvent e) {
-//			Number value = parseValue(textfield.getText());
-//			if ((value.doubleValue() >= nodeEditor.getMinimum().doubleValue()) && (value.doubleValue() <= nodeEditor.getMaximum().doubleValue())) {
-//				if (!nodeEditor.getNodeValue().getValue().equals(value)) {
-//					nodeEditor.setNodeValue(createNodeValue(value));
-//				}
-//			}
-//			else {
-//				textfield.setText(nodeEditor.getNodeValueAsString());
-//			}
-//		}
-//	}
+	protected String getRestriction() {
+		return "-?\\d*\\.?\\d*";
+	}
 
 	protected abstract Number parseValue(String text);
 

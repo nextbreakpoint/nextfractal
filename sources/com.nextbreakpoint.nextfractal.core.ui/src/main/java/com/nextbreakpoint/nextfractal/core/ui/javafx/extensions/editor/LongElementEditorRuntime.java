@@ -63,7 +63,7 @@ public class LongElementEditorRuntime extends EditorExtensionRuntime {
 			Label label = new Label(nodeEditor.getNodeLabel());
 			final Long value = ((LongElementNodeValue) nodeEditor.getNodeValue()).getValue();
 			textFields[0] = new AdvancedTextField();
-			textFields[0].setRestrict("-?\\d*\\.?\\d*");
+			textFields[0].setRestrict("-?\\d+");
 			textFields[0].setText(String.valueOf(value));
 			textFields[0].setTooltip(new Tooltip(CoreUIExtensionResources.getInstance().getString("tooltip." + nodeEditor.getNodeId())));
 			textFields[0].setOnAction(e -> { updateValue(e); });

@@ -1,5 +1,5 @@
-com.nextbreakpoint.nextfractal.mandelbrot.ui.ui.swing.extensions.editor.RenderedPaletteElementEditorDescriptor
-com.nextbreakpoint.nextfractal.mandelbrot.ui.swing.extensions.editor.ModeElementEditorDescriptor
+com.nextbreakpoint.nextfractal.mandelbrot.ui.swing.extensions.editor.RenderedPaletteElementEditorDescriptor
+com.nextbreakpoint.nextfractal.mandelbrot.ui.swing.extensions.editor.ImageModeElementEditorDescriptor
 com.nextbreakpoint.nextfractal.mandelbrot.ui.swing.extensions.editor.PaletteRendererReferenceEditorDescriptor
 com.nextbreakpoint.nextfractal.mandelbrot.ui.swing.extensions.editor.OutcolouringFormulaElementEditorDescriptor
 com.nextbreakpoint.nextfractal.mandelbrot.ui.swing.extensions.editor.ColorRendererFormulaReferenceEditorDescriptor

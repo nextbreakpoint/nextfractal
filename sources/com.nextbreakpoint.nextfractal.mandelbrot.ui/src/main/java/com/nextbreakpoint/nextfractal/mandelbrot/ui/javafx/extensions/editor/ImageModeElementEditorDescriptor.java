@@ -30,7 +30,7 @@ import com.nextbreakpoint.nextfractal.core.ui.javafx.extensionPoints.editor.Edit
 /**
  * @author Andrea Medeghini
  */
-public class ModeElementEditorDescriptor extends EditorExtensionDescriptor {
+public class ImageModeElementEditorDescriptor extends EditorExtensionDescriptor {
 	/**
 	 * Returns the extensionId.
 	 * 
@@ -38,7 +38,7 @@ public class ModeElementEditorDescriptor extends EditorExtensionDescriptor {
 	 */
 	@Override
 	public String getExtensionId() {
-		return "node.class.ModeElement";
+		return "node.class.ImageModeElement";
 	}
 
 	/**
@@ -57,7 +57,7 @@ public class ModeElementEditorDescriptor extends EditorExtensionDescriptor {
 	 * @return the extensionRuntimeClass.
 	 */
 	@Override
-	public ModeElementEditorRuntime getExtensionRuntime() {
-		return new ModeElementEditorRuntime();
+	public ImageModeElementEditorRuntime getExtensionRuntime() {
+		return new ImageModeElementEditorRuntime();
 	}
 }

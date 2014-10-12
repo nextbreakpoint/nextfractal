@@ -1,4 +1,4 @@
-com.nextbreakpoint.nextfractal.mandelbrot.ui.javafx.extensions.editor.ModeElementEditorDescriptor
+com.nextbreakpoint.nextfractal.mandelbrot.ui.javafx.extensions.editor.ImageModeElementEditorDescriptor
 com.nextbreakpoint.nextfractal.mandelbrot.ui.javafx.extensions.editor.InputModeElementEditorDescriptor
 com.nextbreakpoint.nextfractal.mandelbrot.ui.javafx.extensions.editor.IterationsElementEditorDescriptor
 com.nextbreakpoint.nextfractal.mandelbrot.ui.javafx.extensions.editor.ThresholdElementEditorDescriptor

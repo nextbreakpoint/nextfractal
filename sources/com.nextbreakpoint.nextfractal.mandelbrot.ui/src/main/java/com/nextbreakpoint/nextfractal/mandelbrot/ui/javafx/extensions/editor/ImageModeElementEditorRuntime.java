@@ -25,9 +25,14 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.ui.javafx.extensions.editor;
 
+import javafx.event.ActionEvent;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 
+import com.nextbreakpoint.nextfractal.core.common.IntegerElementNodeValue;
 import com.nextbreakpoint.nextfractal.core.tree.NodeEditor;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.NodeEditorComponent;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.extensionPoints.editor.EditorExtensionRuntime;
@@ -35,7 +40,7 @@ import com.nextbreakpoint.nextfractal.core.ui.javafx.extensionPoints.editor.Edit
 /**
  * @author Andrea Medeghini
  */
-public class ModeElementEditorRuntime extends EditorExtensionRuntime {
+public class ImageModeElementEditorRuntime extends EditorExtensionRuntime {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.ui.javafx.extensionPoints.editor.EditorExtensionRuntime#createEditor(com.nextbreakpoint.nextfractal.core.tree.NodeEditor)
 	 */
@@ -46,20 +51,24 @@ public class ModeElementEditorRuntime extends EditorExtensionRuntime {
 
 	private class EditorComponent extends VBox implements NodeEditorComponent {
 		private final NodeEditor nodeEditor;
-//		private final JComboBox modeComboBox;
+		private final ComboBox<Mode> modeComboBox;
 
 		/**
 		 * @param nodeEditor
 		 */
 		public EditorComponent(final NodeEditor nodeEditor) {
 			this.nodeEditor = nodeEditor;
-//			setLayout(new FlowLayout(FlowLayout.CENTER));
-//			modeComboBox = GUIFactory.createComboBox(new ModeComboBoxModel(), MandelbrotSwingExtensionResources.getInstance().getString("tooltip.fractalMode"));
-//			modeComboBox.setRenderer(new ModeListCellRenderer());
-//			modeComboBox.setSelectedIndex((((IntegerElementNodeValue) nodeEditor.getNodeValue()).getValue().intValue()));
-//			modeComboBox.addActionListener(new NodeEditorActionListener(nodeEditor));
-//			this.add(GUIFactory.createLabel(nodeEditor.getNodeLabel(), SwingConstants.CENTER));
-//			this.add(modeComboBox);
+			Label label = new Label(nodeEditor.getNodeLabel());
+			Mode mode = Mode.getByValue(((IntegerElementNodeValue) nodeEditor.getNodeValue()).getValue().intValue());
+			modeComboBox = new ComboBox<Mode>();
+			modeComboBox.getItems().add(Mode.MANDELBROT);
+			modeComboBox.getItems().add(Mode.JULIA);
+			modeComboBox.getSelectionModel().select(mode);
+			modeComboBox.setOnAction(e -> { updateValue(e); });
+			setAlignment(Pos.CENTER_LEFT);
+			setSpacing(10);
+			getChildren().add(label);
+			getChildren().add(modeComboBox);
 		}
 
 		/**
@@ -76,7 +85,8 @@ public class ModeElementEditorRuntime extends EditorExtensionRuntime {
 		@Override
 		public void reloadValue() {
 			if (nodeEditor.getNodeValue() != null) {
-//				modeComboBox.setSelectedIndex((((IntegerElementNodeValue) nodeEditor.getNodeValue()).getValue().intValue()));
+				Mode mode = Mode.getByValue(((IntegerElementNodeValue) nodeEditor.getNodeValue()).getValue().intValue());
+				modeComboBox.getSelectionModel().select(mode);
 			}
 		}
 
@@ -86,48 +96,44 @@ public class ModeElementEditorRuntime extends EditorExtensionRuntime {
 		@Override
 		public void dispose() {
 		}
+		
+		@SuppressWarnings("unchecked")
+		private void updateValue(ActionEvent e) {
+			final Mode mode = ((ComboBox<Mode>) e.getSource()).getSelectionModel().getSelectedItem();
+			if (!mode.getValue().equals(nodeEditor.getNodeValue().getValue())) {
+				nodeEditor.setNodeValue(new IntegerElementNodeValue(mode.getValue()));
+			}
+		}
 	}
+	
+	private enum Mode {
+		MANDELBROT("Mandelbrot", 0), JULIA("Julia", 1);
+		
+		private String label;
+		private Integer value;
+		
+		private Mode(String label, Integer value) {
+			this.label = label;
+			this.value = value;
+		}
 
-//	private class NodeEditorActionListener implements ActionListener {
-//		private final NodeEditor nodeEditor;
-//
-//		/**
-//		 * @param nodeEditor
-//		 */
-//		public NodeEditorActionListener(final NodeEditor nodeEditor) {
-//			this.nodeEditor = nodeEditor;
-//		}
-//
-//		/**
-//		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-//		 */
-//		@Override
-//		public void actionPerformed(final ActionEvent e) {
-//			final Integer mode = (Integer) ((Object[]) ((JComboBox) e.getSource()).getSelectedItem())[1];
-//			if (!mode.equals(nodeEditor.getNodeValue().getValue())) {
-//				nodeEditor.setNodeValue(new IntegerElementNodeValue(mode));
-//			}
-//		}
-//	}
-//
-//	private class ModeComboBoxModel extends DefaultComboBoxModel {
-//		private static final long serialVersionUID = 1L;
-//
-//		public ModeComboBoxModel() {
-//			addElement(new Object[] { "Mandelbrot set", new Integer(0) });
-//			addElement(new Object[] { "Julia/Fatou set", new Integer(1) });
-//		}
-//	}
-//
-//	private class ModeListCellRenderer extends DefaultListCellRenderer {
-//		private static final long serialVersionUID = 1L;
-//
-//		/**
-//		 * @see javax.DefaultListCellRenderer#getListCellRendererComponent(javax.JList, java.lang.Object, int, boolean, boolean)
-//		 */
-//		@Override
-//		public Component getListCellRendererComponent(final JList list, final Object value, final int index, final boolean isSelected, final boolean cellHasFocus) {
-//			return super.getListCellRendererComponent(list, ((Object[]) value)[0], index, isSelected, cellHasFocus);
-//		}
-//	}
+		public String getLabel() {
+			return label;
+		}
+
+		public Integer getValue() {
+			return value;
+		}
+		
+		public static Mode getByValue(Integer value) {
+			switch (value) {
+				case 0:
+					return MANDELBROT;
+	
+				case 1:
+					return JULIA;
+			}
+			return null;
+		}
+	}
 }

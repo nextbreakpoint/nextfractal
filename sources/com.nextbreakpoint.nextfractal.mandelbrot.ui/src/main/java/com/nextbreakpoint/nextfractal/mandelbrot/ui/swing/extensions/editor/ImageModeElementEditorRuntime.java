@@ -48,7 +48,7 @@ import com.nextbreakpoint.nextfractal.mandelbrot.ui.swing.extensions.MandelbrotS
 /**
  * @author Andrea Medeghini
  */
-public class ModeElementEditorRuntime extends EditorExtensionRuntime {
+public class ImageModeElementEditorRuntime extends EditorExtensionRuntime {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.ui.swing.extensionPoints.editor.EditorExtensionRuntime#createEditor(com.nextbreakpoint.nextfractal.core.tree.NodeEditor)
 	 */
