@@ -1,0 +1,11 @@
+com.nextbreakpoint.nextfractal.core.ui.swing.extensions.editor.ColorElementEditorDescriptor
+com.nextbreakpoint.nextfractal.core.ui.swing.extensions.editor.FloatElementEditorDescriptor
+com.nextbreakpoint.nextfractal.core.ui.swing.extensions.editor.DoubleElementEditorDescriptor
+com.nextbreakpoint.nextfractal.core.ui.swing.extensions.editor.ComplexElementEditorDescriptor
+com.nextbreakpoint.nextfractal.core.ui.swing.extensions.editor.BooleanElementEditorDescriptor
+com.nextbreakpoint.nextfractal.core.ui.swing.extensions.editor.LongElementEditorDescriptor
+com.nextbreakpoint.nextfractal.core.ui.swing.extensions.editor.IntegerElementEditorDescriptor
+com.nextbreakpoint.nextfractal.core.ui.swing.extensions.editor.RectangleElementEditorDescriptor
+com.nextbreakpoint.nextfractal.core.ui.swing.extensions.editor.ShortElementEditorDescriptor
+com.nextbreakpoint.nextfractal.core.ui.swing.extensions.editor.FontElementEditorDescriptor
+com.nextbreakpoint.nextfractal.core.ui.swing.extensions.editor.StringElementEditorDescriptor

@@ -101,7 +101,7 @@ public class DefaultViewRuntime extends ViewExtensionRuntime {
 					panel.getChildren().add(editor.getComponent());
 				}
 			}
-			setStyle("-fx-padding:10px");
+			setStyle("-fx-padding:10px;-fx-background-color:#FF0000");
 			getChildren().add(panel);
 		}
 		

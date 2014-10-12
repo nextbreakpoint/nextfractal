@@ -1,0 +1,11 @@
+com.nextbreakpoint.nextfractal.core.ui.javafx.extensions.editor.ColorElementEditorDescriptor
+com.nextbreakpoint.nextfractal.core.ui.javafx.extensions.editor.FloatElementEditorDescriptor
+com.nextbreakpoint.nextfractal.core.ui.javafx.extensions.editor.DoubleElementEditorDescriptor
+com.nextbreakpoint.nextfractal.core.ui.javafx.extensions.editor.ComplexElementEditorDescriptor
+com.nextbreakpoint.nextfractal.core.ui.javafx.extensions.editor.BooleanElementEditorDescriptor
+com.nextbreakpoint.nextfractal.core.ui.javafx.extensions.editor.LongElementEditorDescriptor
+com.nextbreakpoint.nextfractal.core.ui.javafx.extensions.editor.IntegerElementEditorDescriptor
+com.nextbreakpoint.nextfractal.core.ui.javafx.extensions.editor.RectangleElementEditorDescriptor
+com.nextbreakpoint.nextfractal.core.ui.javafx.extensions.editor.ShortElementEditorDescriptor
+com.nextbreakpoint.nextfractal.core.ui.javafx.extensions.editor.FontElementEditorDescriptor
+com.nextbreakpoint.nextfractal.core.ui.javafx.extensions.editor.StringElementEditorDescriptor
