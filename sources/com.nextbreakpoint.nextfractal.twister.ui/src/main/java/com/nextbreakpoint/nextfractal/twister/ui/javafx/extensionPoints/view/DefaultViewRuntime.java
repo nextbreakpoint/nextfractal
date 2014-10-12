@@ -70,7 +70,7 @@ public class DefaultViewRuntime extends ViewExtensionRuntime {
 			nodeBuilder.createNodes(tree.getRootNode());
 			tree.getRootNode().setContext(config.getContext());
 			tree.getRootNode().setSession(new NavigatorNodeSession());
-			return new NavigatorView(viewContext, context, tree);
+			return new DefaultView(viewContext, context, tree);
 		}
 		catch (final ExtensionException e) {
 			e.printStackTrace();
@@ -87,13 +87,13 @@ public class DefaultViewRuntime extends ViewExtensionRuntime {
 		}
 	}
 
-	private class NavigatorView extends View {
+	private class DefaultView extends View {
 		/**
 		 * @param viewContext
 		 * @param context
 		 * @param tree
 		 */
-		public NavigatorView(ViewContext viewContext, RenderContext context, Tree tree) {
+		public DefaultView(ViewContext viewContext, RenderContext context, Tree tree) {
 			// TODO Auto-generated constructor stub
 			VBox panel = new VBox(10);
 			panel.setAlignment(Pos.CENTER_LEFT);
@@ -113,31 +113,38 @@ public class DefaultViewRuntime extends ViewExtensionRuntime {
 				try {
 					final Extension<EditorExtensionRuntime> extension = CoreUIRegistry.getInstance().getEditorExtension(node.getNodeId());
 					final EditorExtensionRuntime runtime = extension.createExtensionRuntime();
-					if (DefaultViewRuntime.logger.isLoggable(Level.INFO)) {
-						DefaultViewRuntime.logger.info("Found editor for node = " + node.getNodeId());
+					if (DefaultViewRuntime.logger.isLoggable(Level.FINE)) {	
+						DefaultViewRuntime.logger.fine("Editor found for node = " + node.getNodeId());
 					}
 					editor = runtime.createEditor(node.getNodeEditor());
 				}
 				catch (final ExtensionNotFoundException x) {
-					if (DefaultViewRuntime.logger.isLoggable(Level.INFO)) {
-						DefaultViewRuntime.logger.info("Can't find editor for node = " + node.getNodeId());
-					}
 				}
 				catch (final Exception x) {
-					x.printStackTrace();
+					if (DefaultViewRuntime.logger.isLoggable(Level.INFO)) {
+						DefaultViewRuntime.logger.log(Level.WARNING, "Can't create editor for node = " + node.getNodeId(), x);
+					}
 				}
 				if (editor == null) {
 					try {
 						final Extension<EditorExtensionRuntime> extension = CoreUIRegistry.getInstance().getEditorExtension(node.getNodeClass());
 						final EditorExtensionRuntime runtime = extension.createExtensionRuntime();
-						DefaultViewRuntime.logger.info("Found editor for node class = " + node.getNodeClass());
+						if (DefaultViewRuntime.logger.isLoggable(Level.FINE)) {	
+							DefaultViewRuntime.logger.fine("Editor found for node class = " + node.getNodeClass());
+						}
 						editor = runtime.createEditor(node.getNodeEditor());
 					}
 					catch (final ExtensionNotFoundException x) {
-						DefaultViewRuntime.logger.info("Can't find editor for node class = " + node.getNodeClass());
 					}
 					catch (final Exception x) {
-						x.printStackTrace();
+						if (DefaultViewRuntime.logger.isLoggable(Level.INFO)) {
+							DefaultViewRuntime.logger.log(Level.WARNING, "Can't create editor for node class = " + node.getNodeClass(), x);
+						}
+					}
+				}
+				if (editor == null) {
+					if (DefaultViewRuntime.logger.isLoggable(Level.INFO)) {
+						DefaultViewRuntime.logger.info("Can't find editor for node = " + node.getNodeId() + " (" + node.getNodeClass() + ")");
 					}
 				}
 			}

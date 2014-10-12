@@ -276,31 +276,38 @@ public class NavigatorPanel extends JPanel {
 				try {
 					final Extension<EditorExtensionRuntime> extension = CoreSwingRegistry.getInstance().getEditorExtension(node.getNodeId());
 					final EditorExtensionRuntime runtime = extension.createExtensionRuntime();
-					if (NavigatorPanel.logger.isLoggable(Level.INFO)) {
-						NavigatorPanel.logger.info("Found editor for node = " + node.getNodeId());
+					if (NavigatorPanel.logger.isLoggable(Level.FINE)) {	
+						NavigatorPanel.logger.fine("Editor found for node = " + node.getNodeId());
 					}
 					editor = runtime.createEditor(node.getNodeEditor());
 				}
 				catch (final ExtensionNotFoundException x) {
-					if (NavigatorPanel.logger.isLoggable(Level.INFO)) {
-						NavigatorPanel.logger.info("Can't find editor for node = " + node.getNodeId());
-					}
 				}
 				catch (final Exception x) {
-					x.printStackTrace();
+					if (NavigatorPanel.logger.isLoggable(Level.INFO)) {
+						NavigatorPanel.logger.log(Level.WARNING, "Can't create editor for node = " + node.getNodeId(), x);
+					}
 				}
 				if (editor == null) {
 					try {
 						final Extension<EditorExtensionRuntime> extension = CoreSwingRegistry.getInstance().getEditorExtension(node.getNodeClass());
 						final EditorExtensionRuntime runtime = extension.createExtensionRuntime();
-						NavigatorPanel.logger.info("Found editor for node class = " + node.getNodeClass());
+						if (NavigatorPanel.logger.isLoggable(Level.FINE)) {	
+							NavigatorPanel.logger.fine("Editor found for node class = " + node.getNodeClass());
+						}
 						editor = runtime.createEditor(node.getNodeEditor());
 					}
 					catch (final ExtensionNotFoundException x) {
-						NavigatorPanel.logger.info("Can't find editor for node class = " + node.getNodeClass());
 					}
 					catch (final Exception x) {
-						x.printStackTrace();
+						if (NavigatorPanel.logger.isLoggable(Level.INFO)) {
+							NavigatorPanel.logger.log(Level.WARNING, "Can't create editor for node class = " + node.getNodeClass(), x);
+						}
+					}
+				}
+				if (editor == null) {
+					if (NavigatorPanel.logger.isLoggable(Level.INFO)) {
+						NavigatorPanel.logger.info("Can't find editor for node = " + node.getNodeId() + " (" + node.getNodeClass() + ")");
 					}
 				}
 			}

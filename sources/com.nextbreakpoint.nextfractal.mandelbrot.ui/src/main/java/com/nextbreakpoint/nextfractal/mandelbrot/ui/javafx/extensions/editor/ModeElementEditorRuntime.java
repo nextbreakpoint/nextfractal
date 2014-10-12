@@ -1,0 +1,133 @@
+/*
+ * NextFractal 7.0 
+ * http://www.nextbreakpoint.com
+ *
+ * Copyright 2001, 2015 Andrea Medeghini
+ * andrea@nextbreakpoint.com
+ *
+ * This file is part of NextFractal.
+ *
+ * NextFractal is an application for creating fractals and other graphics artifacts.
+ *
+ * NextFractal is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * NextFractal is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+package com.nextbreakpoint.nextfractal.mandelbrot.ui.javafx.extensions.editor;
+
+import javafx.scene.Node;
+import javafx.scene.layout.VBox;
+
+import com.nextbreakpoint.nextfractal.core.tree.NodeEditor;
+import com.nextbreakpoint.nextfractal.core.ui.javafx.NodeEditorComponent;
+import com.nextbreakpoint.nextfractal.core.ui.javafx.extensionPoints.editor.EditorExtensionRuntime;
+
+/**
+ * @author Andrea Medeghini
+ */
+public class ModeElementEditorRuntime extends EditorExtensionRuntime {
+	/**
+	 * @see com.nextbreakpoint.nextfractal.core.ui.javafx.extensionPoints.editor.EditorExtensionRuntime#createEditor(com.nextbreakpoint.nextfractal.core.tree.NodeEditor)
+	 */
+	@Override
+	public NodeEditorComponent createEditor(final NodeEditor nodeEditor) {
+		return new EditorComponent(nodeEditor);
+	}
+
+	private class EditorComponent extends VBox implements NodeEditorComponent {
+		private final NodeEditor nodeEditor;
+//		private final JComboBox modeComboBox;
+
+		/**
+		 * @param nodeEditor
+		 */
+		public EditorComponent(final NodeEditor nodeEditor) {
+			this.nodeEditor = nodeEditor;
+//			setLayout(new FlowLayout(FlowLayout.CENTER));
+//			modeComboBox = GUIFactory.createComboBox(new ModeComboBoxModel(), MandelbrotSwingExtensionResources.getInstance().getString("tooltip.fractalMode"));
+//			modeComboBox.setRenderer(new ModeListCellRenderer());
+//			modeComboBox.setSelectedIndex((((IntegerElementNodeValue) nodeEditor.getNodeValue()).getValue().intValue()));
+//			modeComboBox.addActionListener(new NodeEditorActionListener(nodeEditor));
+//			this.add(GUIFactory.createLabel(nodeEditor.getNodeLabel(), SwingConstants.CENTER));
+//			this.add(modeComboBox);
+		}
+
+		/**
+		 * @see com.nextbreakpoint.nextfractal.core.ui.javafx.NodeEditorComponent#getComponent()
+		 */
+		@Override
+		public Node getComponent() {
+			return this;
+		}
+
+		/**
+		 * @see com.nextbreakpoint.nextfractal.core.ui.javafx.NodeEditorComponent#reloadValue()
+		 */
+		@Override
+		public void reloadValue() {
+			if (nodeEditor.getNodeValue() != null) {
+//				modeComboBox.setSelectedIndex((((IntegerElementNodeValue) nodeEditor.getNodeValue()).getValue().intValue()));
+			}
+		}
+
+		/**
+		 * @see com.nextbreakpoint.nextfractal.core.ui.javafx.NodeEditorComponent#dispose()
+		 */
+		@Override
+		public void dispose() {
+		}
+	}
+
+//	private class NodeEditorActionListener implements ActionListener {
+//		private final NodeEditor nodeEditor;
+//
+//		/**
+//		 * @param nodeEditor
+//		 */
+//		public NodeEditorActionListener(final NodeEditor nodeEditor) {
+//			this.nodeEditor = nodeEditor;
+//		}
+//
+//		/**
+//		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+//		 */
+//		@Override
+//		public void actionPerformed(final ActionEvent e) {
+//			final Integer mode = (Integer) ((Object[]) ((JComboBox) e.getSource()).getSelectedItem())[1];
+//			if (!mode.equals(nodeEditor.getNodeValue().getValue())) {
+//				nodeEditor.setNodeValue(new IntegerElementNodeValue(mode));
+//			}
+//		}
+//	}
+//
+//	private class ModeComboBoxModel extends DefaultComboBoxModel {
+//		private static final long serialVersionUID = 1L;
+//
+//		public ModeComboBoxModel() {
+//			addElement(new Object[] { "Mandelbrot set", new Integer(0) });
+//			addElement(new Object[] { "Julia/Fatou set", new Integer(1) });
+//		}
+//	}
+//
+//	private class ModeListCellRenderer extends DefaultListCellRenderer {
+//		private static final long serialVersionUID = 1L;
+//
+//		/**
+//		 * @see javax.DefaultListCellRenderer#getListCellRendererComponent(javax.JList, java.lang.Object, int, boolean, boolean)
+//		 */
+//		@Override
+//		public Component getListCellRendererComponent(final JList list, final Object value, final int index, final boolean isSelected, final boolean cellHasFocus) {
+//			return super.getListCellRendererComponent(list, ((Object[]) value)[0], index, isSelected, cellHasFocus);
+//		}
+//	}
+}

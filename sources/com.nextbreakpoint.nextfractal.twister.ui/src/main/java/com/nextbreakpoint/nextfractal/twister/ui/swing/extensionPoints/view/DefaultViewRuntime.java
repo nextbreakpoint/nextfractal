@@ -76,7 +76,7 @@ public class DefaultViewRuntime extends ViewExtensionRuntime {
 			nodeBuilder.createNodes(tree.getRootNode());
 			tree.getRootNode().setContext(config.getContext());
 			tree.getRootNode().setSession(new NavigatorNodeSession());
-			return new NavigatorViewPanel(viewContext, context, tree);
+			return new DefaultViewPanel(viewContext, context, tree);
 		}
 		catch (final ExtensionException e) {
 			e.printStackTrace();
@@ -95,7 +95,7 @@ public class DefaultViewRuntime extends ViewExtensionRuntime {
 		}
 	}
 
-	private class NavigatorViewPanel extends ViewPanel {
+	private class DefaultViewPanel extends ViewPanel {
 		private static final long serialVersionUID = 1L;
 		private final NavigatorPanelSelectionListener panelSelectionListener;
 		private final NavigatorTreeSelectionListener treeSelectionListener;
@@ -111,7 +111,7 @@ public class DefaultViewRuntime extends ViewExtensionRuntime {
 		 * @param context
 		 * @param tree
 		 */
-		public NavigatorViewPanel(final ViewContext viewContext, final RenderContext context, final Tree tree) {
+		public DefaultViewPanel(final ViewContext viewContext, final RenderContext context, final Tree tree) {
 			this.tree = tree;
 			this.context = context;
 			setLayout(new BorderLayout());

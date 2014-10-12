@@ -25,12 +25,19 @@
  */
 package com.nextbreakpoint.nextfractal.core.ui.javafx.extensions.editor;
 
+import javafx.event.ActionEvent;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.layout.Pane;
+import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
+import javafx.scene.layout.VBox;
 
+import com.nextbreakpoint.nextfractal.core.common.LongElementNodeValue;
 import com.nextbreakpoint.nextfractal.core.tree.NodeEditor;
+import com.nextbreakpoint.nextfractal.core.ui.javafx.AdvancedTextField;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.NodeEditorComponent;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.extensionPoints.editor.EditorExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.ui.javafx.extensions.CoreUIExtensionResources;
 
 /**
  * @author Andrea Medeghini
@@ -44,26 +51,27 @@ public class LongElementEditorRuntime extends EditorExtensionRuntime {
 		return new EditorComponent(nodeEditor);
 	}
 
-	private class EditorComponent extends Pane implements NodeEditorComponent {
+	private class EditorComponent extends VBox implements NodeEditorComponent {
 		private final NodeEditor nodeEditor;
-//		private final JTextField[] textFields = new JTextField[1];
+		private final AdvancedTextField[] textFields = new AdvancedTextField[1];
 
 		/**
 		 * @param nodeEditor
 		 */
 		public EditorComponent(final NodeEditor nodeEditor) {
 			this.nodeEditor = nodeEditor;
-//			setLayout(new GridLayout(2, 1, 4, 4));
-//			final Long value = ((LongElementNodeValue) nodeEditor.getNodeValue()).getValue();
-//			final JLabel label = GUIFactory.createLabel(nodeEditor.getNodeLabel(), SwingConstants.CENTER);
-//			textFields[0] = GUIFactory.createTextField(String.valueOf(value), null);
-//			textFields[0].addActionListener(new FieldListener(nodeEditor, textFields));
-//			textFields[0].addFocusListener(new FieldListener(nodeEditor, textFields));
-//			textFields[0].setColumns(20);
-//			textFields[0].setCaretPosition(0);
-//			// textFields[0].setToolTipText(TwisterSwingExtensionResources.getInstance().getString("tooltip." + nodeEditor.getNodeId()));
-//			this.add(label);
-//			this.add(createTextFieldPanel(nodeEditor.getNodeLabel(), textFields[0]));
+			Label label = new Label(nodeEditor.getNodeLabel());
+			final Long value = ((LongElementNodeValue) nodeEditor.getNodeValue()).getValue();
+			textFields[0] = new AdvancedTextField();
+			textFields[0].setRestrict("-?\\d*\\.?\\d*");
+			textFields[0].setText(String.valueOf(value));
+			textFields[0].setTooltip(new Tooltip(CoreUIExtensionResources.getInstance().getString("tooltip." + nodeEditor.getNodeId())));
+			textFields[0].setOnAction(e -> { updateValue(e); });
+			textFields[0].focusedProperty().addListener((observable, oldValue, newValue) -> { if (!newValue) { updateValue(null); } });
+			setAlignment(Pos.CENTER_LEFT);
+			setSpacing(10);
+			getChildren().add(label);
+			getChildren().add(textFields[0]);
 		}
 
 		/**
@@ -79,9 +87,8 @@ public class LongElementEditorRuntime extends EditorExtensionRuntime {
 		 */
 		@Override
 		public void reloadValue() {
-//			final Long value = ((LongElementNodeValue) nodeEditor.getNodeValue()).getValue();
-//			textFields[0].setText(String.valueOf(value));
-//			textFields[0].setCaretPosition(0);
+			final Long value = ((LongElementNodeValue) nodeEditor.getNodeValue()).getValue();
+			textFields[0].setText(String.valueOf(value));
 		}
 
 		/**
@@ -91,70 +98,18 @@ public class LongElementEditorRuntime extends EditorExtensionRuntime {
 		public void dispose() {
 		}
 
-		/**
-		 * @param label
-		 * @param textField
-		 * @return
-		 */
-//		protected JPanel createTextFieldPanel(final String text, final JTextField textField) {
-//			final JPanel panel = new JPanel(new BorderLayout(4, 4));
-//			panel.add(textField, BorderLayout.CENTER);
-//			return panel;
-//		}
-//
-//		private class FieldListener implements ActionListener, FocusListener {
-//			private final NodeEditor nodeEditor;
-//			private final JTextField[] textFields;
-//
-//			public FieldListener(final NodeEditor nodeEditor, final JTextField[] textFields) {
-//				this.nodeEditor = nodeEditor;
-//				this.textFields = textFields;
-//			}
-//
-//			/**
-//			 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-//			 */
-//			@Override
-//			public void actionPerformed(final ActionEvent e) {
-//				Long value = ((LongElementNodeValue) nodeEditor.getNodeValue()).getValue();
-//				try {
-//					final String text = textFields[0].getText();
-//					value = Long.parseLong(text);
-//				}
-//				catch (final NumberFormatException nfe) {
-//					textFields[0].setText(String.valueOf(value));
-//					textFields[0].setCaretPosition(0);
-//				}
-//				if (!nodeEditor.getNodeValue().getValue().equals(value)) {
-//					nodeEditor.setNodeValue(new LongElementNodeValue(value));
-//				}
-//			}
-//
-//			/**
-//			 * @see java.awt.event.FocusListener#focusGained(java.awt.event.FocusEvent)
-//			 */
-//			@Override
-//			public void focusGained(final FocusEvent e) {
-//			}
-//
-//			/**
-//			 * @see java.awt.event.FocusListener#focusLost(java.awt.event.FocusEvent)
-//			 */
-//			@Override
-//			public void focusLost(final FocusEvent e) {
-//				Long value = ((LongElementNodeValue) nodeEditor.getNodeValue()).getValue();
-//				try {
-//					final String text = textFields[0].getText();
-//					value = Long.parseLong(text);
-//				}
-//				catch (final NumberFormatException nfe) {
-//					textFields[0].setText(String.valueOf(value));
-//					textFields[0].setCaretPosition(0);
-//				}
-//				if (!nodeEditor.getNodeValue().getValue().equals(value)) {
-//					nodeEditor.setNodeValue(new LongElementNodeValue(value));
-//				}
-//			}
-//		}
+		private void updateValue(ActionEvent e) {
+			Long value = ((LongElementNodeValue) nodeEditor.getNodeValue()).getValue();
+			try {
+				final String text = textFields[0].getText();
+				value = Long.parseLong(text);
+			}
+			catch (final NumberFormatException nfe) {
+				textFields[0].setText(String.valueOf(value));
+			}
+			if (!nodeEditor.getNodeValue().getValue().equals(value)) {
+				nodeEditor.setNodeValue(new LongElementNodeValue(value));
+			}
+		}
 	}
 }

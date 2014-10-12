@@ -23,26 +23,19 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.core.ui.javafx.extensions.editor;
+package com.nextbreakpoint.nextfractal.twister.ui.javafx.extensions.editor;
 
-import javafx.event.ActionEvent;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.Label;
-import javafx.scene.control.Tooltip;
 import javafx.scene.layout.VBox;
 
-import com.nextbreakpoint.nextfractal.core.common.StringElementNodeValue;
 import com.nextbreakpoint.nextfractal.core.tree.NodeEditor;
-import com.nextbreakpoint.nextfractal.core.ui.javafx.AdvancedTextField;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.NodeEditorComponent;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.extensionPoints.editor.EditorExtensionRuntime;
-import com.nextbreakpoint.nextfractal.core.ui.javafx.extensions.CoreUIExtensionResources;
 
 /**
  * @author Andrea Medeghini
  */
-public class StringElementEditorRuntime extends EditorExtensionRuntime {
+public class ImageElementEditorRuntime extends EditorExtensionRuntime {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.ui.javafx.extensionPoints.editor.EditorExtensionRuntime#createEditor(com.nextbreakpoint.nextfractal.core.tree.NodeEditor)
 	 */
@@ -52,25 +45,10 @@ public class StringElementEditorRuntime extends EditorExtensionRuntime {
 	}
 
 	private class EditorComponent extends VBox implements NodeEditorComponent {
-		private final NodeEditor nodeEditor;
-		private final AdvancedTextField[] textFields = new AdvancedTextField[1];
-
 		/**
 		 * @param nodeEditor
 		 */
 		public EditorComponent(final NodeEditor nodeEditor) {
-			this.nodeEditor = nodeEditor;
-			Label label = new Label(nodeEditor.getNodeLabel());
-			final String value = ((StringElementNodeValue) nodeEditor.getNodeValue()).getValue();
-			textFields[0] = new AdvancedTextField();
-			textFields[0].setText(String.valueOf(value));
-			textFields[0].setTooltip(new Tooltip(CoreUIExtensionResources.getInstance().getString("tooltip." + nodeEditor.getNodeId())));
-			textFields[0].setOnAction(e -> { updateValue(e); });
-			textFields[0].focusedProperty().addListener((observable, oldValue, newValue) -> { if (!newValue) { updateValue(null); } });
-			setAlignment(Pos.CENTER_LEFT);
-			setSpacing(10);
-			getChildren().add(label);
-			getChildren().add(textFields[0]);
 		}
 
 		/**
@@ -86,8 +64,6 @@ public class StringElementEditorRuntime extends EditorExtensionRuntime {
 		 */
 		@Override
 		public void reloadValue() {
-			final String value = ((StringElementNodeValue) nodeEditor.getNodeValue()).getValue();
-			textFields[0].setText(String.valueOf(value));
 		}
 
 		/**
@@ -95,13 +71,6 @@ public class StringElementEditorRuntime extends EditorExtensionRuntime {
 		 */
 		@Override
 		public void dispose() {
-		}
-
-		private void updateValue(ActionEvent e) {
-			String value = ((StringElementNodeValue) nodeEditor.getNodeValue()).getValue();
-			if (!nodeEditor.getNodeValue().getValue().equals(value)) {
-				nodeEditor.setNodeValue(new StringElementNodeValue(value));
-			}
 		}
 	}
 }

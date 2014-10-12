@@ -1,0 +1,6 @@
+com.nextbreakpoint.nextfractal.twister.ui.javafx.extensions.editor.PaletteElementEditorDescriptor
+com.nextbreakpoint.nextfractal.twister.ui.javafx.extensions.editor.SpeedElementEditorDescriptor
+com.nextbreakpoint.nextfractal.twister.ui.javafx.extensions.editor.PercentageElementEditorDescriptor
+com.nextbreakpoint.nextfractal.twister.ui.javafx.extensions.editor.ViewElementEditorDescriptor
+com.nextbreakpoint.nextfractal.twister.ui.javafx.extensions.editor.ImageReferenceEditorDescriptor
+com.nextbreakpoint.nextfractal.twister.ui.javafx.extensions.editor.ImageElementEditorDescriptor
