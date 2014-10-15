@@ -38,7 +38,8 @@ public class DefaultView extends View {
 				}
 			}
 		}
-		setStyle("-fx-padding:10px;-fx-background-color:#FF0000");
+		panel.setStyle("-fx-padding:10px");
+		setStyle("-fx-background-color:#777777");
 		getChildren().add(panel);
 	}
 	

@@ -25,8 +25,6 @@
  */
 package com.nextbreakpoint.nextfractal.core.ui.javafx;
 
-import javafx.scene.layout.Pane;
-
 /**
  * @author Andrea Medeghini
  */
@@ -34,7 +32,7 @@ public interface ViewContext {
 	/**
 	 * @param c
 	 */
-	public void showConfigView(Pane node);
+	public void showConfigView(View node);
 
 	/**
 	 * 
@@ -44,7 +42,7 @@ public interface ViewContext {
 	/**
 	 * @param c
 	 */
-	public void showEditorView(Pane node);
+	public void showEditorView(View node);
 
 	/**
 	 * 

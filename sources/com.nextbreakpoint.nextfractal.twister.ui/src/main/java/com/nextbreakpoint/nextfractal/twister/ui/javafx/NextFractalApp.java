@@ -14,13 +14,9 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.util.Duration;
@@ -29,7 +25,7 @@ import com.nextbreakpoint.nextfractal.core.config.DefaultConfigContext;
 import com.nextbreakpoint.nextfractal.core.extension.Extension;
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionException;
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionNotFoundException;
-import com.nextbreakpoint.nextfractal.core.tree.NodeSession;
+import com.nextbreakpoint.nextfractal.core.ui.javafx.View;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.ViewContext;
 import com.nextbreakpoint.nextfractal.core.util.IntegerVector2D;
 import com.nextbreakpoint.nextfractal.core.util.RenderContext;
@@ -60,7 +56,7 @@ public class NextFractalApp extends Application {
 	private final List<RenderContextListener> contextListeners = new LinkedList<RenderContextListener>();
 	private final JavaFXRenderFactory renderFactory = new JavaFXRenderFactory();
 	private final NextFractalAppContext appContext = new DefaultNextFractalAppContext();
-	private final Pane configPane = new Pane();
+	private final Pane viewPane = new Pane();
 
     @Override
     public void start(Stage primaryStage) {
@@ -78,12 +74,19 @@ public class NextFractalApp extends Application {
         mainPane.setPrefHeight(height);
         mainPane.setMinWidth(width);
         mainPane.setMinHeight(height);
+        VBox configPane = new VBox(10);
 		configPane.setPrefWidth(configPaneWidth);
         configPane.setPrefHeight(height);
         configPane.setOpacity(0.7);
         configPane.setLayoutX(width - configPaneWidth);
-        configPane.setStyle("-fx-background-color:#777777");
+        configPane.setStyle("-fx-background-color:#777777;-fx-padding:5px");
+        viewPane.setPrefWidth(configPaneWidth);
+        viewPane.setPrefHeight(height - 40);
+        Button close = new Button("close");
+        close.setOnAction(e -> { appContext.discardConfigNode(); });
         Canvas canvas = new Canvas(width - configPaneWidth, height);
+        configPane.getChildren().add(close);
+        configPane.getChildren().add(viewPane);
         mainPane.getChildren().add(canvas);
         mainPane.getChildren().add(configPane);
         root.getChildren().add(mainPane);
@@ -116,34 +119,20 @@ public class NextFractalApp extends Application {
 	}
 
 	private Pane createConfigPanel(NextFractalAppContext appContext, TwisterConfig config) {
-		VBox configNode = new VBox(10);
-		configNode.setStyle("-fx-background-color:#aaaaaa;-fx-padding:10px");
-		Button back = new Button("<");
-		back.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent event) {
-				appContext.discardConfigNode();
-			}
-		});
 		RenderContext renderContext = new DefaultRenderContext();
 		ViewContext viewContext = new DefaultViewContext(appContext);
 		TwisterSessionController sessionController = new TwisterSessionController("JavaFX", config);
 		sessionController.init();
 		sessionController.setRenderContext(renderContext);
-		Node configView;
 		try {
 			ImageConfigElement imageElement = config.getFrameConfigElement().getLayerConfigElement(0).getLayerConfigElement(0).getImageConfigElement();
 			final Extension<ViewExtensionRuntime> extension = TwisterUIRegistry.getInstance().getViewExtension(imageElement.getReference().getExtensionId());
-			configView = extension.createExtensionRuntime().createView(imageElement.getReference().getExtensionConfig(), viewContext, renderContext, sessionController);
+			return extension.createExtensionRuntime().createView(imageElement.getReference().getExtensionConfig(), viewContext, renderContext, sessionController);
 		}
 		catch (final ExtensionException x) {
 			ImageConfigElement imageElement = config.getFrameConfigElement().getLayerConfigElement(0).getLayerConfigElement(0).getImageConfigElement();
-			configView = new DefaultViewRuntime().createView(imageElement.getReference().getExtensionConfig(), viewContext, renderContext, sessionController);
+			return new DefaultViewRuntime().createView(imageElement.getReference().getExtensionConfig(), viewContext, renderContext, sessionController);
 		}
-		if (configView != null) {
-			configNode.getChildren().add(configView);
-		}
-		return configNode;
 	}
 
 	private void runTimer(Canvas canvas) {
@@ -285,7 +274,7 @@ public class NextFractalApp extends Application {
 		}
 
 		@Override
-		public void showConfigView(Pane node) {
+		public void showConfigView(View node) {
 			context.showConfigNode(node);
 		}
 
@@ -295,7 +284,7 @@ public class NextFractalApp extends Application {
 		}
 
 		@Override
-		public void showEditorView(Pane node) {
+		public void showEditorView(View node) {
 			context.showEditorNode(node);
 		}
 
@@ -374,31 +363,34 @@ public class NextFractalApp extends Application {
 	private class DefaultNextFractalAppContext implements NextFractalAppContext {
 		@Override
 		public void showConfigNode(Pane node) {
-			node.setLayoutX(configPane.getWidth());
-			node.setPrefWidth(configPane.getWidth());
-			node.setPrefHeight(configPane.getHeight());
-			configPane.getChildren().add(node);
+			node.setLayoutX(viewPane.getWidth());
+			node.setPrefWidth(viewPane.getWidth());
+			node.setPrefHeight(viewPane.getHeight());
+			viewPane.getChildren().add(node);
 			TranslateTransition tt = new TranslateTransition(Duration.seconds(0.4));
 			tt.setFromX(0);
-			tt.setToX(-configPane.getWidth());
+			tt.setToX(-viewPane.getWidth());
 			tt.setNode(node);
 			tt.play();
 		}
 
 		@Override
 		public void discardConfigNode() {
-			Node node = configPane.getChildren().get(configPane.getChildren().size() - 1);
-			TranslateTransition tt = new TranslateTransition(Duration.seconds(0.4));
-			tt.setFromX(-configPane.getWidth());
-			tt.setToX(0);
-			tt.setNode(node);
-			tt.setOnFinished(new EventHandler<ActionEvent>() {
-				@Override
-				public void handle(ActionEvent event) {
-					configPane.getChildren().remove(node);
-				}
-			});
-			tt.play();
+			if (viewPane.getChildren().size() > 1) {
+				Node node = viewPane.getChildren().get(viewPane.getChildren().size() - 1);
+				TranslateTransition tt = new TranslateTransition(Duration.seconds(0.4));
+				tt.setFromX(-viewPane.getWidth());
+				tt.setToX(0);
+				tt.setNode(node);
+				tt.setOnFinished(new EventHandler<ActionEvent>() {
+					@Override
+					public void handle(ActionEvent event) {
+						viewPane.getChildren().remove(node);
+						((View)node).dispose();
+					}
+				});
+				tt.play();
+			}
 		}
 
 		@Override
