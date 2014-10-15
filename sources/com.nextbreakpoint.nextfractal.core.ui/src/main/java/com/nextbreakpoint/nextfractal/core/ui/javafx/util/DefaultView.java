@@ -57,7 +57,7 @@ public class DefaultView extends View {
 			catch (final ExtensionNotFoundException x) {
 			}
 			catch (final Exception x) {
-				if (DefaultView.logger.isLoggable(Level.INFO)) {
+				if (DefaultView.logger.isLoggable(Level.WARNING)) {
 					DefaultView.logger.log(Level.WARNING, "Can't create editor for node = " + node.getNodeId(), x);
 				}
 			}
@@ -73,20 +73,20 @@ public class DefaultView extends View {
 				catch (final ExtensionNotFoundException x) {
 				}
 				catch (final Exception x) {
-					if (DefaultView.logger.isLoggable(Level.INFO)) {
+					if (DefaultView.logger.isLoggable(Level.WARNING)) {
 						DefaultView.logger.log(Level.WARNING, "Can't create editor for node class = " + node.getNodeClass(), x);
 					}
 				}
 			}
 			if (editor == null) {
-				if (DefaultView.logger.isLoggable(Level.INFO)) {
-					DefaultView.logger.info("Can't find editor for node = " + node.getNodeId() + " (" + node.getNodeClass() + ")");
+				if (DefaultView.logger.isLoggable(Level.FINE)) {	
+					DefaultView.logger.fine("Can't find editor for node = " + node.getNodeId() + " (" + node.getNodeClass() + ")");
 				}
 			}
 		}
 		else {
-			if (DefaultView.logger.isLoggable(Level.INFO)) {
-				DefaultView.logger.info("Undefined editor for node = " + node.getNodeId());
+			if (DefaultView.logger.isLoggable(Level.FINE)) {	
+				DefaultView.logger.fine("Undefined editor for node = " + node.getNodeId());
 			}
 		}
 		return editor;
@@ -98,185 +98,12 @@ public class DefaultView extends View {
 	@Override
 	public void dispose() {
 		// TODO Auto-generated method stub
-		
+//		tree.getRootNode().removeTreeListener(navigatorTreeListener);
+//		navigatorPanel.removeChangeListener(panelSelectionListener);
+//		navigatorTree.getModel().removeTreeModelListener(treeModelListener);
+//		navigatorTree.getSelectionModel().removeTreeSelectionListener(treeSelectionListener);
+//		tree.getRootNode().setContext(null);
+//		tree.getRootNode().setSession(null);
+//		tree.getRootNode().dispose();
 	}
-		
-//		private static final long serialVersionUID = 1L;
-//		private final NavigatorPanelSelectionListener panelSelectionListener;
-//		private final NavigatorTreeSelectionListener treeSelectionListener;
-//		private final NavigatorTreeModelListener treeModelListener;
-//		private final NavigatorTreeListener navigatorTreeListener;
-//		private final NavigatorPanel navigatorPanel;
-//		private final NavigatorTree navigatorTree;
-//		private final RenderContext context;
-//		private final Tree tree;
-//
-//		/**
-//		 * @param viewContext
-//		 * @param context
-//		 * @param tree
-//		 */
-//		public NavigatorViewPanel(final ViewContext viewContext, final RenderContext context, final Tree tree) {
-//			this.tree = tree;
-//			this.context = context;
-//			setLayout(new BorderLayout());
-//			setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20), BorderFactory.createLineBorder(Color.DARK_GRAY)));
-//			navigatorTree = new NavigatorTree(tree.getRootNode());
-//			navigatorPanel = new NavigatorPanel(viewContext, tree.getRootNode());
-//			navigatorTree.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, Color.DARK_GRAY), BorderFactory.createEmptyBorder(2, 2, 2, 2)));
-//			add(navigatorTree, BorderLayout.WEST);
-//			add(navigatorPanel, BorderLayout.CENTER);
-//			panelSelectionListener = new NavigatorPanelSelectionListener();
-//			treeSelectionListener = new NavigatorTreeSelectionListener();
-//			treeModelListener = new NavigatorTreeModelListener();
-//			navigatorTreeListener = new NavigatorTreeListener();
-//			tree.getRootNode().addNodeListener(navigatorTreeListener);
-//			navigatorPanel.addChangeListener(panelSelectionListener);
-//			navigatorTree.getModel().addTreeModelListener(treeModelListener);
-//			navigatorTree.getSelectionModel().addTreeSelectionListener(treeSelectionListener);
-//			navigatorTree.expandAll();
-//		}
-//
-//		private class NavigatorTreeListener implements NodeListener {
-//			/**
-//			 * @see com.nextbreakpoint.nextfractal.core.tree.NodeListener#nodeChanged(com.nextbreakpoint.nextfractal.core.tree.NodeEvent)
-//			 */
-//			@Override
-//			public void nodeChanged(final NodeEvent e) {
-//			}
-//
-//			/**
-//			 * @see com.nextbreakpoint.nextfractal.core.tree.NodeListener#nodeAdded(com.nextbreakpoint.nextfractal.core.tree.NodeEvent)
-//			 */
-//			@Override
-//			public void nodeAdded(final NodeEvent e) {
-//			}
-//
-//			/**
-//			 * @see com.nextbreakpoint.nextfractal.core.tree.NodeListener#nodeRemoved(com.nextbreakpoint.nextfractal.core.tree.NodeEvent)
-//			 */
-//			@Override
-//			public void nodeRemoved(final NodeEvent e) {
-//			}
-//
-//			/**
-//			 * @see com.nextbreakpoint.nextfractal.core.tree.NodeListener#nodeAccepted(com.nextbreakpoint.nextfractal.core.tree.NodeEvent)
-//			 */
-//			@Override
-//			public void nodeAccepted(final NodeEvent e) {
-//				GUIUtil.executeTask(new Runnable() {
-//					@Override
-//					public void run() {
-//						context.refresh();
-//					}
-//				}, true);
-//			}
-//
-//			/**
-//			 * @see com.nextbreakpoint.nextfractal.core.tree.NodeListener#nodeCancelled(com.nextbreakpoint.nextfractal.core.tree.NodeEvent)
-//			 */
-//			@Override
-//			public void nodeCancelled(final NodeEvent e) {
-//			}
-//		}
-//
-//		private class NavigatorPanelSelectionListener implements ChangeListener {
-//			/**
-//			 * @see javax.swing.event.ChangeListener#stateChanged(javax.swing.event.ChangeEvent)
-//			 */
-//			@Override
-//			public void stateChanged(final ChangeEvent e) {
-//				GUIUtil.executeTask(new Runnable() {
-//					@Override
-//					public void run() {
-//						if (navigatorPanel.getEditorNode() != null) {
-//							navigatorTree.getSelectionModel().removeTreeSelectionListener(treeSelectionListener);
-//							final TreePath path = navigatorTree.creareTreePath(navigatorPanel.getEditorNode().getNodePath());
-//							navigatorTree.expandPath(path.getParentPath());
-//							navigatorTree.setSelectionPath(path);
-//							navigatorTree.getSelectionModel().addTreeSelectionListener(treeSelectionListener);
-//						}
-//					}
-//				}, true);
-//			}
-//		}
-//
-//		private class NavigatorTreeSelectionListener implements TreeSelectionListener {
-//			/**
-//			 * @see javax.swing.event.TreeSelectionListener#valueChanged(javax.swing.event.TreeSelectionEvent)
-//			 */
-//			@Override
-//			public void valueChanged(final TreeSelectionEvent e) {
-//				GUIUtil.executeTask(new Runnable() {
-//					@Override
-//					public void run() {
-//						navigatorPanel.removeChangeListener(panelSelectionListener);
-//						if (navigatorTree.getSelectionPath() != null) {
-//							final Node node = (Node) ((DefaultMutableTreeNode) navigatorTree.getSelectionPath().getLastPathComponent()).getUserObject();
-//							navigatorPanel.loadNode(node);
-//						}
-//						else {
-//							navigatorPanel.loadNode(null);
-//						}
-//						navigatorPanel.addChangeListener(panelSelectionListener);
-//					}
-//				}, true);
-//			}
-//		}
-//
-//		private class NavigatorTreeModelListener implements TreeModelListener {
-//			/**
-//			 * @see javax.swing.event.TreeModelListener#treeNodesChanged(javax.swing.event.TreeModelEvent)
-//			 */
-//			@Override
-//			public void treeNodesChanged(final TreeModelEvent e) {
-//				GUIUtil.executeTask(new Runnable() {
-//					@Override
-//					public void run() {
-//						navigatorTree.expandPath(e.getTreePath());
-//					}
-//				}, true);
-//			}
-//
-//			/**
-//			 * @see javax.swing.event.TreeModelListener#treeNodesInserted(javax.swing.event.TreeModelEvent)
-//			 */
-//			@Override
-//			public void treeNodesInserted(final TreeModelEvent e) {
-//				GUIUtil.executeTask(new Runnable() {
-//					@Override
-//					public void run() {
-//						navigatorTree.expandPath(e.getTreePath());
-//					}
-//				}, true);
-//			}
-//
-//			/**
-//			 * @see javax.swing.event.TreeModelListener#treeNodesRemoved(javax.swing.event.TreeModelEvent)
-//			 */
-//			@Override
-//			public void treeNodesRemoved(final TreeModelEvent e) {
-//			}
-//
-//			/**
-//			 * @see javax.swing.event.TreeModelListener#treeStructureChanged(javax.swing.event.TreeModelEvent)
-//			 */
-//			@Override
-//			public void treeStructureChanged(final TreeModelEvent e) {
-//			}
-//		}
-//
-//		/**
-//		 * @see com.nextbreakpoint.nextfractal.twister.ui.swing.ViewPanel#dispose()
-//		 */
-//		@Override
-//		public void dispose() {
-//			tree.getRootNode().removeTreeListener(navigatorTreeListener);
-//			navigatorPanel.removeChangeListener(panelSelectionListener);
-//			navigatorTree.getModel().removeTreeModelListener(treeModelListener);
-//			navigatorTree.getSelectionModel().removeTreeSelectionListener(treeSelectionListener);
-//			tree.getRootNode().setContext(null);
-//			tree.getRootNode().setSession(null);
-//			tree.getRootNode().dispose();
-//		}
-	}
+}
