@@ -118,20 +118,8 @@ public class NextFractalApp extends Application {
 	private Pane createConfigPanel(NextFractalAppContext appContext, TwisterConfig config) {
 		VBox configNode = new VBox(10);
 		configNode.setStyle("-fx-background-color:#aaaaaa;-fx-padding:10px");
-		Text textNode = new Text("Configuration");
-		Button buttonNode = new Button("Edit");
-		ComboBox<String> comboboxNode = new ComboBox<>();
-		comboboxNode.getItems().add("A");
-		comboboxNode.getItems().add("B");
-		comboboxNode.getItems().add("C");
-		CheckBox checkboxNode = new CheckBox();
-		TextField textFieldNode = new TextField();
-		configNode.getChildren().add(textNode);
-		configNode.getChildren().add(buttonNode);
-		configNode.getChildren().add(comboboxNode);
-		configNode.getChildren().add(checkboxNode);
-		configNode.getChildren().add(textFieldNode);
-		buttonNode.setOnAction(new EventHandler<ActionEvent>() {
+		Button back = new Button("<");
+		back.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
 				appContext.discardConfigNode();
@@ -167,7 +155,7 @@ public class NextFractalApp extends Application {
 				long time = now / 1000000;
 				if ((time - last) > 20 && runtime != null && runtime.isChanged()) {
 					RenderGraphicsContext gc = renderFactory.createGraphicsContext(canvas.getGraphicsContext2D());
-					runtime.getFrameElement().getLayer(0).getLayer(0).getImage().getImageRuntime().drawImage(gc);
+					//runtime.getFrameElement().getLayer(0).getLayer(0).getImage().getImageRuntime().drawImage(gc);
 					last = time;
 				}
 			}
@@ -297,27 +285,23 @@ public class NextFractalApp extends Application {
 		}
 
 		@Override
-		public void showConfigView(Node c) {
-			// TODO Auto-generated method stub
-			
+		public void showConfigView(Pane node) {
+			context.showConfigNode(node);
 		}
 
 		@Override
 		public void discardConfigView() {
-			// TODO Auto-generated method stub
-			
+			context.discardConfigNode();
 		}
 
 		@Override
-		public void showEditorView(Node c) {
-			// TODO Auto-generated method stub
-			
+		public void showEditorView(Pane node) {
+			context.showEditorNode(node);
 		}
 
 		@Override
 		public void discardEditorView() {
-			// TODO Auto-generated method stub
-			
+			context.discardEditorNode();
 		}
 	}
 	

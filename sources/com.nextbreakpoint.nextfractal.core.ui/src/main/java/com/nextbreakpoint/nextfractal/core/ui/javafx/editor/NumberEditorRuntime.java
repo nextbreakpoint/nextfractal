@@ -63,10 +63,8 @@ public abstract class NumberEditorRuntime extends EditorExtensionRuntime {
 		public EditorComponent(final NumberNodeEditor nodeEditor) {
 			this.nodeEditor = nodeEditor;
 			Label label = new Label(nodeEditor.getNodeLabel());
-			final Double value = ((DoubleElementNodeValue) nodeEditor.getNodeValue()).getValue();
 			textField = new AdvancedTextField();
 			textField.setRestrict(getRestriction());
-			textField.setText(String.valueOf(value));
 			textField.setTooltip(new Tooltip(CoreUIExtensionResources.getInstance().getString("tooltip." + nodeEditor.getNodeId())));
 			textField.setOnAction(e -> { updateValue(e); });
 			textField.focusedProperty().addListener((observable, oldValue, newValue) -> { if (!newValue) { updateValue(null); } });
@@ -74,6 +72,7 @@ public abstract class NumberEditorRuntime extends EditorExtensionRuntime {
 			setSpacing(10);
 			getChildren().add(label);
 			getChildren().add(textField);
+			textField.setText(nodeEditor.getNodeValueAsString());
 		}
 
 		/**

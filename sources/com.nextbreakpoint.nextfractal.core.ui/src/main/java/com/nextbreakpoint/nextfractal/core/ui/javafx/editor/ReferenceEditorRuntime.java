@@ -25,10 +25,18 @@
  */
 package com.nextbreakpoint.nextfractal.core.ui.javafx.editor;
 
+import java.util.List;
+
+import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 
+import com.nextbreakpoint.nextfractal.core.common.ExtensionReferenceElementNodeValue;
+import com.nextbreakpoint.nextfractal.core.extension.Extension;
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionReference;
+import com.nextbreakpoint.nextfractal.core.extension.NullExtension;
 import com.nextbreakpoint.nextfractal.core.tree.NodeEditor;
 import com.nextbreakpoint.nextfractal.core.tree.NodeValue;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.NodeEditorComponent;
@@ -57,16 +65,14 @@ public abstract class ReferenceEditorRuntime extends EditorExtensionRuntime {
 	 */
 	protected abstract NodeValue<?> createNodeValue(ExtensionReference reference);
 
-//	/**
-//	 * @return the model.
-//	 */
-//	protected abstract ExtensionComboBoxModel createModel();
+	/**
+	 * @return
+	 */
+	protected abstract List<Extension<?>> getExtensionList();
 
 	private class EditorComponent extends VBox implements NodeEditorComponent {
+		private final ComboBox<Extension<?>> extensionComboBox;
 		private final NodeEditor nodeEditor;
-//		private final JComboBox combo = GUIFactory.createComboBox(createModel(), CoreSwingResources.getInstance().getString("tooltip.extension"));
-//		private final JButton clearButton = GUIFactory.createButton(new ClearAction(), CoreSwingResources.getInstance().getString("tooltip.clearReference"));
-//		private final ReferenceSelectionListener referenceSelectionListener;
 
 		/**
 		 * @param nodeEditor
@@ -74,21 +80,27 @@ public abstract class ReferenceEditorRuntime extends EditorExtensionRuntime {
 		@SuppressWarnings("unchecked")
 		public EditorComponent(final NodeEditor nodeEditor) {
 			this.nodeEditor = nodeEditor;
-//			if (nodeEditor.getNodeValue() != null) {
-//				final ExtensionReference value = ((ExtensionReferenceElementNodeValue<ExtensionReference>) nodeEditor.getNodeValue()).getValue();
-//				if (value != null) {
-//					((ExtensionComboBoxModel) combo.getModel()).setSelectedItemByExtensionId(value.getExtensionId());
-//				}
-//			}
-//			combo.setRenderer(new ExtensionListCellRenderer());
-//			referenceSelectionListener = new ReferenceSelectionListener(nodeEditor);
-//			combo.addActionListener(referenceSelectionListener);
-//			this.add(GUIFactory.createLabel(CoreSwingResources.getInstance().getString("label.extension"), SwingConstants.CENTER));
-//			this.add(Box.createVerticalStrut(8));
-//			this.add(combo);
-//			this.add(Box.createVerticalStrut(8));
-//			this.add(clearButton);
-//			updateButtons();
+			Label label = new Label(nodeEditor.getNodeLabel());
+			extensionComboBox = new ComboBox<>();
+			List<Extension<?>> extensions = getExtensionList();
+			extensionComboBox.getItems().add(NullExtension.getInstance());
+			extensionComboBox.getItems().addAll(extensions);
+			if (nodeEditor.getNodeValue() != null) {
+				final ExtensionReference value = ((ExtensionReferenceElementNodeValue<ExtensionReference>) nodeEditor.getNodeValue()).getValue();
+				if (value != null) {
+					for (Extension<?> item : extensionComboBox.getItems()) {
+						if (item.getExtensionId().equals(value.getExtensionId())) {
+							extensionComboBox.getSelectionModel().select(item);
+							break;
+						}
+					}
+				}
+			}
+			updateButtons();
+			setAlignment(Pos.CENTER_LEFT);
+			setSpacing(10);
+			getChildren().add(label);
+			getChildren().add(extensionComboBox);
 		}
 
 		private void updateButtons() {
@@ -137,7 +149,7 @@ public abstract class ReferenceEditorRuntime extends EditorExtensionRuntime {
 //			 * 
 //			 */
 //			public ClearAction() {
-//				super(CoreSwingResources.getInstance().getString("action.clearReference"));
+//				super(CoreUIResources.getInstance().getString("action.clearReference"));
 //			}
 //
 //			/**

@@ -23,32 +23,30 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.twister.ui.javafx.extensionPoints.view;
+package com.nextbreakpoint.nextfractal.core.ui.javafx;
 
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionConfig;
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionRuntime;
-import com.nextbreakpoint.nextfractal.core.tree.NodeSession;
-import com.nextbreakpoint.nextfractal.core.ui.javafx.View;
-import com.nextbreakpoint.nextfractal.core.ui.javafx.ViewContext;
-import com.nextbreakpoint.nextfractal.core.util.RenderContext;
+import java.util.ResourceBundle;
+
+import com.nextbreakpoint.nextfractal.core.util.Resources;
 
 /**
+ * Components resources.
+ * 
  * @author Andrea Medeghini
  */
-public abstract class ViewExtensionRuntime extends ExtensionRuntime {
-	/**
-	 * @param config
-	 * @param viewContext
-	 * @param context
-	 * @param session
-	 * @return
-	 */
-	public abstract View createView(final ExtensionConfig config, final ViewContext viewContext, final RenderContext context, final NodeSession session);
+public class CoreUIResources extends Resources {
+	private static final CoreUIResources instance = new CoreUIResources();
+
+	private CoreUIResources() {
+		super(ResourceBundle.getBundle("core_ui_resources"));
+	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.extension.ExtensionRuntime#dispose()
+	 * Returns the instance.
+	 * 
+	 * @return the instance.
 	 */
-	@Override
-	public void dispose() {
+	public static CoreUIResources getInstance() {
+		return CoreUIResources.instance;
 	}
 }

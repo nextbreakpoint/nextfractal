@@ -25,23 +25,20 @@
  */
 package com.nextbreakpoint.nextfractal.twister.ui.javafx.extensions.editor;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtension;
 import com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionReference;
 import com.nextbreakpoint.nextfractal.core.tree.NodeValue;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.editor.ConfigurableReferenceEditorRuntime;
+import com.nextbreakpoint.nextfractal.twister.TwisterRegistry;
 import com.nextbreakpoint.nextfractal.twister.image.ImageExtensionReferenceNodeValue;
 
 /**
  * @author Andrea Medeghini
  */
 public class ImageReferenceEditorRuntime extends ConfigurableReferenceEditorRuntime {
-//	/**
-//	 * @see com.nextbreakpoint.nextfractal.core.ui.javafx.editor.ConfigurableReferenceEditorRuntime#createModel()
-//	 */
-//	@Override
-//	protected ConfigurableExtensionComboBoxModel createModel() {
-//		return new ConfigurableExtensionComboBoxModel(TwisterRegistry.getInstance().getImageRegistry(), true);
-//	}
-
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.ui.javafx.editor.ConfigurableReferenceEditorRuntime#createChildValue()
 	 */
@@ -58,5 +55,17 @@ public class ImageReferenceEditorRuntime extends ConfigurableReferenceEditorRunt
 	protected NodeValue createNodeValue(final ConfigurableExtensionReference reference) {
 		// return new ImageExtensionReferenceNodeValue(reference != null ? reference.clone() : null);
 		return new ImageExtensionReferenceNodeValue(reference);
+	}
+
+	/**
+	 * @see com.nextbreakpoint.nextfractal.core.ui.javafx.editor.ConfigurableReferenceEditorRuntime#getExtensionList()
+	 */
+	@Override
+	protected List<ConfigurableExtension<?, ?>> getExtensionList() {
+		List<ConfigurableExtension<?, ?>> result = new ArrayList<ConfigurableExtension<?,?>>();
+		for (ConfigurableExtension<?, ?> extension : TwisterRegistry.getInstance().getImageRegistry().getConfigurableExtensionList()) {
+			result.add(extension);
+		}
+		return result;
 	}
 }

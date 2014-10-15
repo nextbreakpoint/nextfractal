@@ -25,10 +25,18 @@
  */
 package com.nextbreakpoint.nextfractal.core.ui.javafx.editor;
 
+import java.util.List;
+
+import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 
+import com.nextbreakpoint.nextfractal.core.common.ExtensionReferenceElementNodeValue;
+import com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtension;
 import com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionReference;
+import com.nextbreakpoint.nextfractal.core.extension.NullConfigurableExtension;
 import com.nextbreakpoint.nextfractal.core.tree.NodeEditor;
 import com.nextbreakpoint.nextfractal.core.tree.NodeValue;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.NodeEditorComponent;
@@ -57,20 +65,15 @@ public abstract class ConfigurableReferenceEditorRuntime extends EditorExtension
 	 */
 	protected abstract NodeValue<?> createNodeValue(ConfigurableExtensionReference<?> reference);
 
-//	/**
-//	 * @return the model.
-//	 */
-//	protected abstract ConfigurableExtensionComboBoxModel createModel();
+	/**
+	 * @return
+	 */
+	protected abstract List<ConfigurableExtension<?, ?>> getExtensionList();
 
 	private class EditorComponent extends VBox implements NodeEditorComponent {
-//		private final Logger logger = Logger.getLogger(EditorComponent.class.getName());
 //		private final JFileChooser clipChooser = new JFileChooser(System.getProperty("user.home"));
-//		private final JComboBox combo;
+		private final ComboBox<ConfigurableExtension<?, ?>> extensionComboBox;
 		private final NodeEditor nodeEditor;
-//		private final JButton clearButton = GUIFactory.createButton(new ClearAction(), CoreSwingResources.getInstance().getString("tooltip.clearReference"));
-//		private final JButton importButton = GUIFactory.createButton(new ImportAction(), CoreSwingResources.getInstance().getString("tooltip.importExtensionConfig"));
-//		private final JButton exportButton = GUIFactory.createButton(new ExportAction(), CoreSwingResources.getInstance().getString("tooltip.exportExtensionConfig"));
-//		private final ReferenceSelectionListener referenceSelectionListener;
 
 		/**
 		 * @param nodeEditor
@@ -78,29 +81,27 @@ public abstract class ConfigurableReferenceEditorRuntime extends EditorExtension
 		@SuppressWarnings("unchecked")
 		public EditorComponent(final NodeEditor nodeEditor) {
 			this.nodeEditor = nodeEditor;
-//			setLayout(new StackLayout());
-//			combo = GUIFactory.createComboBox(createModel(), CoreSwingResources.getInstance().getString("tooltip.extension"));
-//			if (nodeEditor.getNodeValue() != null) {
-//				final ExtensionReference value = ((ExtensionReferenceElementNodeValue<ExtensionReference>) nodeEditor.getNodeValue()).getValue();
-//				if (value != null) {
-//					((ConfigurableExtensionComboBoxModel) combo.getModel()).setSelectedItemByExtensionId(value.getExtensionId());
-//				}
-//			}
-//			combo.setRenderer(new ExtensionListCellRenderer());
-//			referenceSelectionListener = new ReferenceSelectionListener(nodeEditor);
-//			combo.addActionListener(referenceSelectionListener);
-//			add(GUIFactory.createLabel(CoreSwingResources.getInstance().getString("label.extension"), SwingConstants.CENTER));
-//			this.add(Box.createVerticalStrut(8));
-//			this.add(combo);
-//			this.add(Box.createVerticalStrut(8));
-//			this.add(clearButton);
-//			this.add(Box.createVerticalStrut(8));
-//			this.add(importButton);
-//			this.add(Box.createVerticalStrut(8));
-//			this.add(exportButton);
-//			// clipChooser.setFileFilter(new ZIPFileFilter());
-//			clipChooser.setMultiSelectionEnabled(false);
-//			updateButtons();
+			Label label = new Label(nodeEditor.getNodeLabel());
+			extensionComboBox = new ComboBox<>();
+			List<ConfigurableExtension<?, ?>> extensions = getExtensionList();
+			extensionComboBox.getItems().add(NullConfigurableExtension.getInstance());
+			extensionComboBox.getItems().addAll(extensions);
+			if (nodeEditor.getNodeValue() != null) {
+				final ConfigurableExtensionReference<?> value = ((ExtensionReferenceElementNodeValue<ConfigurableExtensionReference<?>>) nodeEditor.getNodeValue()).getValue();
+				if (value != null) {
+					for (ConfigurableExtension<?, ?> item : extensionComboBox.getItems()) {
+						if (item.getExtensionId().equals(value.getExtensionId())) {
+							extensionComboBox.getSelectionModel().select(item);
+							break;
+						}
+					}
+				}
+			}
+			updateButtons();
+			setAlignment(Pos.CENTER_LEFT);
+			setSpacing(10);
+			getChildren().add(label);
+			getChildren().add(extensionComboBox);
 		}
 
 		private void updateButtons() {
@@ -120,7 +121,7 @@ public abstract class ConfigurableReferenceEditorRuntime extends EditorExtension
 //			 * 
 //			 */
 //			public ClearAction() {
-//				super(CoreSwingResources.getInstance().getString("action.clearReference"));
+//				super(CoreUIResources.getInstance().getString("action.clearReference"));
 //			}
 //
 //			/**
@@ -139,7 +140,7 @@ public abstract class ConfigurableReferenceEditorRuntime extends EditorExtension
 //			 * 
 //			 */
 //			public ImportAction() {
-//				super(CoreSwingResources.getInstance().getString("action.importConfig"));
+//				super(CoreUIResources.getInstance().getString("action.importConfig"));
 //			}
 //
 //			/**
@@ -148,7 +149,7 @@ public abstract class ConfigurableReferenceEditorRuntime extends EditorExtension
 //			@Override
 //			@SuppressWarnings("unchecked")
 //			public void actionPerformed(final ActionEvent e) {
-//				clipChooser.setDialogTitle(CoreSwingResources.getInstance().getString("label.importConfig"));
+//				clipChooser.setDialogTitle(CoreUIResources.getInstance().getString("label.importConfig"));
 //				final int returnVal = clipChooser.showOpenDialog(EditorComponent.this);
 //				if (returnVal == JFileChooser.APPROVE_OPTION) {
 //					final File file = clipChooser.getSelectedFile();
@@ -167,7 +168,7 @@ public abstract class ConfigurableReferenceEditorRuntime extends EditorExtension
 //					catch (final Exception x) {
 //						logger.log(Level.WARNING, "Can't import the config", x);
 //						x.printStackTrace();
-//						JOptionPane.showMessageDialog(EditorComponent.this, CoreSwingResources.getInstance().getString("error.importConfig"), CoreSwingResources.getInstance().getString("label.importConfig"), JOptionPane.ERROR_MESSAGE);
+//						JOptionPane.showMessageDialog(EditorComponent.this, CoreUIResources.getInstance().getString("error.importConfig"), CoreUIResources.getInstance().getString("label.importConfig"), JOptionPane.ERROR_MESSAGE);
 //					}
 //				}
 //			}
@@ -180,7 +181,7 @@ public abstract class ConfigurableReferenceEditorRuntime extends EditorExtension
 //			 * 
 //			 */
 //			public ExportAction() {
-//				super(CoreSwingResources.getInstance().getString("action.exportConfig"));
+//				super(CoreUIResources.getInstance().getString("action.exportConfig"));
 //			}
 //
 //			/**
@@ -189,12 +190,12 @@ public abstract class ConfigurableReferenceEditorRuntime extends EditorExtension
 //			@Override
 //			@SuppressWarnings("unchecked")
 //			public void actionPerformed(final ActionEvent e) {
-//				clipChooser.setDialogTitle(CoreSwingResources.getInstance().getString("label.exportConfig"));
+//				clipChooser.setDialogTitle(CoreUIResources.getInstance().getString("label.exportConfig"));
 //				final int returnVal = clipChooser.showSaveDialog(EditorComponent.this);
 //				if (returnVal == JFileChooser.APPROVE_OPTION) {
 //					final File file = clipChooser.getSelectedFile();
 //					if (file.exists()) {
-//						if (JOptionPane.showConfirmDialog(EditorComponent.this, CoreSwingResources.getInstance().getString("message.confirmOverwrite"), CoreSwingResources.getInstance().getString("label.exportConfig"), JOptionPane.WARNING_MESSAGE) == JOptionPane.OK_OPTION) {
+//						if (JOptionPane.showConfirmDialog(EditorComponent.this, CoreUIResources.getInstance().getString("message.confirmOverwrite"), CoreUIResources.getInstance().getString("label.exportConfig"), JOptionPane.WARNING_MESSAGE) == JOptionPane.OK_OPTION) {
 //							try {
 //								final ExtensionConfigXMLExporter exporter = new ExtensionConfigXMLExporter();
 //								final Document doc = XML.createDocument();
@@ -211,7 +212,7 @@ public abstract class ConfigurableReferenceEditorRuntime extends EditorExtension
 //							catch (final Exception x) {
 //								logger.log(Level.WARNING, "Can't export the config", x);
 //								x.printStackTrace();
-//								JOptionPane.showMessageDialog(EditorComponent.this, CoreSwingResources.getInstance().getString("error.exportConfig"), CoreSwingResources.getInstance().getString("label.exportConfig"), JOptionPane.ERROR_MESSAGE);
+//								JOptionPane.showMessageDialog(EditorComponent.this, CoreUIResources.getInstance().getString("error.exportConfig"), CoreUIResources.getInstance().getString("label.exportConfig"), JOptionPane.ERROR_MESSAGE);
 //							}
 //						}
 //					}
@@ -232,7 +233,7 @@ public abstract class ConfigurableReferenceEditorRuntime extends EditorExtension
 //						catch (final Exception x) {
 //							logger.log(Level.WARNING, "Can't export the config", x);
 //							x.printStackTrace();
-//							JOptionPane.showMessageDialog(EditorComponent.this, CoreSwingResources.getInstance().getString("error.exportConfig"), CoreSwingResources.getInstance().getString("label.exportConfig"), JOptionPane.ERROR_MESSAGE);
+//							JOptionPane.showMessageDialog(EditorComponent.this, CoreUIResources.getInstance().getString("error.exportConfig"), CoreUIResources.getInstance().getString("label.exportConfig"), JOptionPane.ERROR_MESSAGE);
 //						}
 //					}
 //				}

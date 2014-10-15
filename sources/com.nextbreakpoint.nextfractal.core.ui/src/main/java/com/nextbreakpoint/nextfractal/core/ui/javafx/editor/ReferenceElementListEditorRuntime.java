@@ -25,12 +25,20 @@
  */
 package com.nextbreakpoint.nextfractal.core.ui.javafx.editor;
 
+import java.util.List;
+
+import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 
+import com.nextbreakpoint.nextfractal.core.extension.Extension;
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionReference;
+import com.nextbreakpoint.nextfractal.core.extension.NullExtension;
 import com.nextbreakpoint.nextfractal.core.tree.NodeEditor;
 import com.nextbreakpoint.nextfractal.core.tree.NodeValue;
+import com.nextbreakpoint.nextfractal.core.ui.javafx.CoreUIResources;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.NodeEditorComponent;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.extensionPoints.editor.EditorExtensionRuntime;
 
@@ -52,10 +60,10 @@ public abstract class ReferenceElementListEditorRuntime extends EditorExtensionR
 	 */
 	protected abstract NodeValue<?> createNodeValue(ExtensionReference reference);
 
-//	/**
-//	 * @return the model.
-//	 */
-//	protected abstract ExtensionComboBoxModel createModel();
+	/**
+	 * @return
+	 */
+	protected abstract List<Extension<?>> getExtensionList();
 
 	/**
 	 * @return
@@ -78,12 +86,23 @@ public abstract class ReferenceElementListEditorRuntime extends EditorExtensionR
 	protected abstract String getRemoveAllTooltip();
 
 	private class EditorComponent extends VBox implements NodeEditorComponent {
-//		private final JComboBox combo = GUIFactory.createComboBox(createModel(), CoreSwingResources.getInstance().getString("tooltip.selectExtension"));
+		private final ComboBox<Extension<?>> extensionComboBox;
 
 		/**
 		 * @param nodeEditor
 		 */
 		public EditorComponent(final NodeEditor nodeEditor) {
+			Label label = new Label(CoreUIResources.getInstance().getString("label.extension"));
+			extensionComboBox = new ComboBox<>();
+			List<Extension<?>> extensions = getExtensionList();
+			extensionComboBox.getItems().add(NullExtension.getInstance());
+			extensionComboBox.getItems().addAll(extensions);
+			setAlignment(Pos.CENTER_LEFT);
+			setSpacing(10);
+			if (nodeEditor.isParentMutable()) {
+				getChildren().add(label);
+				getChildren().add(extensionComboBox);
+			}
 //			combo.setRenderer(new ExtensionListCellRenderer());
 //			final JButton appendButton = GUIFactory.createButton(new AppendAction(combo, nodeEditor), getAppendTooltip());
 //			final JButton removeButton = GUIFactory.createButton(new RemoveAllAction(nodeEditor), getRemoveAllTooltip());

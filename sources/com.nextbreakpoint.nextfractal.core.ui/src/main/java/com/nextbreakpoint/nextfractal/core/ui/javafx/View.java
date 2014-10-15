@@ -23,7 +23,7 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.twister.ui.javafx;
+package com.nextbreakpoint.nextfractal.core.ui.javafx;
 
 import javafx.scene.layout.Pane;
 

@@ -23,32 +23,36 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.twister.ui.javafx.extensionPoints.view;
+package com.nextbreakpoint.nextfractal.core.ui.javafx.util;
 
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionConfig;
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionRuntime;
-import com.nextbreakpoint.nextfractal.core.tree.NodeSession;
-import com.nextbreakpoint.nextfractal.core.ui.javafx.View;
+import javafx.geometry.Pos;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
+
+import com.nextbreakpoint.nextfractal.core.tree.Node;
+import com.nextbreakpoint.nextfractal.core.ui.javafx.CoreUIResources;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.ViewContext;
 import com.nextbreakpoint.nextfractal.core.util.RenderContext;
 
 /**
  * @author Andrea Medeghini
  */
-public abstract class ViewExtensionRuntime extends ExtensionRuntime {
+public class DefaultNodeEditorComponent extends HBox {
 	/**
-	 * @param config
-	 * @param viewContext
-	 * @param context
-	 * @param session
-	 * @return
+	 * @param viewContext 
+	 * @param nodeEditor
 	 */
-	public abstract View createView(final ExtensionConfig config, final ViewContext viewContext, final RenderContext context, final NodeSession session);
-
-	/**
-	 * @see com.nextbreakpoint.nextfractal.core.extension.ExtensionRuntime#dispose()
-	 */
-	@Override
-	public void dispose() {
+	public DefaultNodeEditorComponent(ViewContext viewContext, RenderContext context, Node node) {
+		Label label = new Label(node.getNodeLabel());
+		Button edit = new Button(CoreUIResources.getInstance().getString("action.edit"));
+		edit.setOnAction(e -> { 
+			DefaultView view = new DefaultView(viewContext, context, node);
+			viewContext.showConfigView(view); 
+		});
+		setAlignment(Pos.CENTER_LEFT);
+		setSpacing(10);
+		getChildren().add(label);
+		getChildren().add(edit);
 	}
 }
