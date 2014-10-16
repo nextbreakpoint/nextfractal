@@ -25,6 +25,8 @@
  */
 package com.nextbreakpoint.nextfractal.core.ui.javafx;
 
+import javafx.geometry.Dimension2D;
+
 /**
  * @author Andrea Medeghini
  */
@@ -48,4 +50,14 @@ public interface ViewContext {
 	 * 
 	 */
 	public void discardEditorView();
+	
+	/**
+	 * @return
+	 */
+	public Dimension2D getConfigViewSize();
+	
+	/**
+	 * @return
+	 */
+	public Dimension2D getEditorViewSize();
 }

@@ -25,10 +25,9 @@
  */
 package com.nextbreakpoint.nextfractal.core.ui.javafx.util;
 
-import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.AnchorPane;
 
 import com.nextbreakpoint.nextfractal.core.tree.Node;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.CoreUIResources;
@@ -38,7 +37,7 @@ import com.nextbreakpoint.nextfractal.core.util.RenderContext;
 /**
  * @author Andrea Medeghini
  */
-public class DefaultNodeEditorComponent extends HBox {
+public class DefaultNodeEditorComponent extends AnchorPane {
 	/**
 	 * @param viewContext 
 	 * @param nodeEditor
@@ -50,9 +49,10 @@ public class DefaultNodeEditorComponent extends HBox {
 			DefaultView view = new DefaultView(viewContext, context, node);
 			viewContext.showConfigView(view); 
 		});
-		setAlignment(Pos.CENTER_LEFT);
-		setSpacing(10);
+		AnchorPane.setLeftAnchor(label, 0.0);
+		AnchorPane.setRightAnchor(edit, 0.0);
 		getChildren().add(label);
 		getChildren().add(edit);
+		setPrefWidth(viewContext.getConfigViewSize().getWidth());
 	}
 }
