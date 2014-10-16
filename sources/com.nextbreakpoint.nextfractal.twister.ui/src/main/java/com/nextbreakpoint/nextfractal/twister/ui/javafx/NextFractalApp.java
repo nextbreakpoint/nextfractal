@@ -81,7 +81,7 @@ public class NextFractalApp extends Application {
         configPane.setPrefHeight(height);
         configPane.setOpacity(0.7);
         configPane.setLayoutX(width - configPaneWidth);
-        configPane.setStyle("-fx-background-color:#777777;-fx-padding:5px");
+        configPane.setStyle("-fx-background-color:#777777;-fx-padding:10px");
         viewPane.setPrefWidth(configPaneWidth);
         viewPane.setPrefHeight(height - 40);
         close.setVisible(false);
@@ -434,7 +434,7 @@ public class NextFractalApp extends Application {
 
 		@Override
 		public Dimension2D getConfigViewSize() {
-			return new Dimension2D(viewPane.getWidth() - 20, viewPane.getHeight() - 20);
+			return new Dimension2D(viewPane.getWidth(), viewPane.getHeight());
 		}
 
 		@Override

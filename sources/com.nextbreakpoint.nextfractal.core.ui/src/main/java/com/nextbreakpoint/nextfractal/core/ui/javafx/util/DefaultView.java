@@ -27,6 +27,7 @@ public class DefaultView extends View {
 	public DefaultView(ViewContext viewContext, RenderContext context, Node rootNode) {
 		VBox panel = new VBox(10);
 		panel.setAlignment(Pos.CENTER_LEFT);
+		panel.setMaxWidth(viewContext.getConfigViewSize().getWidth());
 		for (int i = 0; i < rootNode.getChildNodeCount(); i++) {
 			Node node = rootNode.getChildNode(i);
 			NodeEditorComponent editor = createEditor(node);
@@ -38,7 +39,6 @@ public class DefaultView extends View {
 				}
 			}
 		}
-		panel.setStyle("-fx-padding:10px");
 		setStyle("-fx-background-color:#777777");
 		getChildren().add(panel);
 	}

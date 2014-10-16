@@ -25,14 +25,9 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.ui.javafx.extensions.editor;
 
-import javafx.event.ActionEvent;
-import javafx.geometry.Pos;
-import javafx.scene.Node;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
-import com.nextbreakpoint.nextfractal.core.common.IntegerElementNodeValue;
 import com.nextbreakpoint.nextfractal.core.tree.NodeEditor;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.NodeEditorComponent;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.extensionPoints.editor.EditorExtensionRuntime;
@@ -40,7 +35,7 @@ import com.nextbreakpoint.nextfractal.core.ui.javafx.extensionPoints.editor.Edit
 /**
  * @author Andrea Medeghini
  */
-public class InputModeElementEditorRuntime extends EditorExtensionRuntime {
+public class RenderingFormulaElementEditorRuntime extends EditorExtensionRuntime {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.ui.javafx.extensionPoints.editor.EditorExtensionRuntime#createEditor(com.nextbreakpoint.nextfractal.core.tree.NodeEditor)
 	 */
@@ -50,32 +45,17 @@ public class InputModeElementEditorRuntime extends EditorExtensionRuntime {
 	}
 
 	private class EditorComponent extends VBox implements NodeEditorComponent {
-		private final NodeEditor nodeEditor;
-		private final ComboBox<Mode> modeComboBox;
-
 		/**
 		 * @param nodeEditor
 		 */
 		public EditorComponent(final NodeEditor nodeEditor) {
-			this.nodeEditor = nodeEditor;
-			Label label = new Label(nodeEditor.getNodeLabel());
-			Mode mode = Mode.getByValue(((IntegerElementNodeValue) nodeEditor.getNodeValue()).getValue().intValue());
-			modeComboBox = new ComboBox<Mode>();
-			modeComboBox.getItems().add(Mode.ZOOM);
-			modeComboBox.getItems().add(Mode.INSPECT);
-			modeComboBox.getSelectionModel().select(mode);
-			modeComboBox.setOnAction(e -> { updateValue(e); });
-			setAlignment(Pos.CENTER_LEFT);
-			setSpacing(10);
-			getChildren().add(label);
-			getChildren().add(modeComboBox);
 		}
 
 		/**
 		 * @see com.nextbreakpoint.nextfractal.core.ui.javafx.NodeEditorComponent#getComponent()
 		 */
 		@Override
-		public Node getComponent() {
+		public Pane getComponent() {
 			return this;
 		}
 
@@ -84,10 +64,6 @@ public class InputModeElementEditorRuntime extends EditorExtensionRuntime {
 		 */
 		@Override
 		public void reloadValue() {
-			if (nodeEditor.getNodeValue() != null) {
-				Mode mode = Mode.getByValue(((IntegerElementNodeValue) nodeEditor.getNodeValue()).getValue().intValue());
-				modeComboBox.getSelectionModel().select(mode);
-			}
 		}
 
 		/**
@@ -95,49 +71,6 @@ public class InputModeElementEditorRuntime extends EditorExtensionRuntime {
 		 */
 		@Override
 		public void dispose() {
-		}
-		
-		@SuppressWarnings("unchecked")
-		private void updateValue(ActionEvent e) {
-			final Mode mode = ((ComboBox<Mode>) e.getSource()).getSelectionModel().getSelectedItem();
-			if (!mode.getValue().equals(nodeEditor.getNodeValue().getValue())) {
-				nodeEditor.setNodeValue(new IntegerElementNodeValue(mode.getValue()));
-			}
-		}
-	}
-	
-	private enum Mode {
-		ZOOM("Zoom", 0), INSPECT("Inspect", 1);
-		
-		private String label;
-		private Integer value;
-		
-		private Mode(String label, Integer value) {
-			this.label = label;
-			this.value = value;
-		}
-
-		public String getLabel() {
-			return label;
-		}
-
-		public Integer getValue() {
-			return value;
-		}
-
-		public static Mode getByValue(Integer value) {
-			switch (value) {
-				case 0:
-					return ZOOM;
-	
-				case 1:
-					return INSPECT;
-			}
-			return null;
-		}
-		
-		public String toString() {
-			return getLabel();
 		}
 	}
 }

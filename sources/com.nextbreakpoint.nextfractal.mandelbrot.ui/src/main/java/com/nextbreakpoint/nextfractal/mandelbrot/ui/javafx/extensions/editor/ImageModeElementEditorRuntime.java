@@ -135,5 +135,9 @@ public class ImageModeElementEditorRuntime extends EditorExtensionRuntime {
 			}
 			return null;
 		}
+		
+		public String toString() {
+			return getLabel();
+		}
 	}
 }

@@ -29,16 +29,20 @@ import java.util.List;
 
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.VBox;
 
 import com.nextbreakpoint.nextfractal.core.common.ExtensionReferenceElementNodeValue;
 import com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtension;
 import com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionReference;
+import com.nextbreakpoint.nextfractal.core.extension.ExtensionException;
 import com.nextbreakpoint.nextfractal.core.extension.NullConfigurableExtension;
 import com.nextbreakpoint.nextfractal.core.tree.NodeEditor;
 import com.nextbreakpoint.nextfractal.core.tree.NodeValue;
+import com.nextbreakpoint.nextfractal.core.ui.javafx.CoreUIResources;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.NodeEditorComponent;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.extensionPoints.editor.EditorExtensionRuntime;
 
@@ -71,7 +75,6 @@ public abstract class ConfigurableReferenceEditorRuntime extends EditorExtension
 	protected abstract List<ConfigurableExtension<?, ?>> getExtensionList();
 
 	private class EditorComponent extends VBox implements NodeEditorComponent {
-//		private final JFileChooser clipChooser = new JFileChooser(System.getProperty("user.home"));
 		private final ComboBox<ConfigurableExtension<?, ?>> extensionComboBox;
 		private final NodeEditor nodeEditor;
 
@@ -97,99 +100,20 @@ public abstract class ConfigurableReferenceEditorRuntime extends EditorExtension
 					}
 				}
 			}
-			updateButtons();
 			setAlignment(Pos.CENTER_LEFT);
 			setSpacing(10);
 			getChildren().add(label);
 			getChildren().add(extensionComboBox);
-		}
-
-		private void updateButtons() {
-//			clearButton.setEnabled(!isNullExtension());
-//			importButton.setEnabled(!isNullExtension());
-//			exportButton.setEnabled(!isNullExtension());
-		}
-
-//		private boolean isNullExtension() {
-//			return combo.getSelectedItem() instanceof NullConfigurableExtension;
-//		}
-
-//		private class ClearAction extends AbstractAction {
-//			private static final long serialVersionUID = 1L;
-//
-//			/**
-//			 * 
-//			 */
-//			public ClearAction() {
-//				super(CoreUIResources.getInstance().getString("action.clearReference"));
-//			}
-//
-//			/**
-//			 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-//			 */
-//			@Override
-//			public void actionPerformed(final ActionEvent e) {
-//				combo.setSelectedIndex(0);
-//			}
-//		}
-//
-//		private class ImportAction extends AbstractAction {
-//			private static final long serialVersionUID = 1L;
-//
-//			/**
-//			 * 
-//			 */
-//			public ImportAction() {
-//				super(CoreUIResources.getInstance().getString("action.importConfig"));
-//			}
-//
-//			/**
-//			 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-//			 */
-//			@Override
-//			@SuppressWarnings("unchecked")
-//			public void actionPerformed(final ActionEvent e) {
-//				clipChooser.setDialogTitle(CoreUIResources.getInstance().getString("label.importConfig"));
-//				final int returnVal = clipChooser.showOpenDialog(EditorComponent.this);
-//				if (returnVal == JFileChooser.APPROVE_OPTION) {
-//					final File file = clipChooser.getSelectedFile();
-//					try {
-//						final ExtensionConfigXMLImporter importer = new ExtensionConfigXMLImporter();
-//						final InputStream is = new FileInputStream(file);
-//						final Document doc = XML.loadDocument(is, "extension-config.xml");
-//						final ExtensionConfig config = importer.importFromElement(doc.getDocumentElement());
-//						is.close();
-//						final ConfigurableExtension extension = (ConfigurableExtension) combo.getSelectedItem();
-//						if (!(extension instanceof NullConfigurableExtension)) {
-//							final ConfigurableExtensionReference reference = extension.createConfigurableExtensionReference(config);
-//							nodeEditor.setNodeValue(createNodeValue(reference));
-//						}
-//					}
-//					catch (final Exception x) {
-//						logger.log(Level.WARNING, "Can't import the config", x);
-//						x.printStackTrace();
-//						JOptionPane.showMessageDialog(EditorComponent.this, CoreUIResources.getInstance().getString("error.importConfig"), CoreUIResources.getInstance().getString("label.importConfig"), JOptionPane.ERROR_MESSAGE);
-//					}
-//				}
-//			}
-//		}
-//
-//		private class ExportAction extends AbstractAction {
-//			private static final long serialVersionUID = 1L;
-//
-//			/**
-//			 * 
-//			 */
-//			public ExportAction() {
-//				super(CoreUIResources.getInstance().getString("action.exportConfig"));
-//			}
-//
-//			/**
-//			 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-//			 */
-//			@Override
-//			@SuppressWarnings("unchecked")
-//			public void actionPerformed(final ActionEvent e) {
+			Button clear = new Button(CoreUIResources.getInstance().getString("action.clearReference"));
+			clear.setTooltip(new Tooltip(CoreUIResources.getInstance().getString("action.clearReference")));
+			getChildren().add(clear);
+			clear.setOnAction(e -> {
+				extensionComboBox.getSelectionModel().selectFirst();
+			});
+			Button exportConfig = new Button(CoreUIResources.getInstance().getString("action.exportConfig"));
+			exportConfig.setTooltip(new Tooltip(CoreUIResources.getInstance().getString("action.exportConfig")));
+			getChildren().add(exportConfig);
+			exportConfig.setOnAction(e -> {
 //				clipChooser.setDialogTitle(CoreUIResources.getInstance().getString("label.exportConfig"));
 //				final int returnVal = clipChooser.showSaveDialog(EditorComponent.this);
 //				if (returnVal == JFileChooser.APPROVE_OPTION) {
@@ -237,44 +161,65 @@ public abstract class ConfigurableReferenceEditorRuntime extends EditorExtension
 //						}
 //					}
 //				}
-//			}
-//		}
-//
-//		private class ReferenceSelectionListener implements ActionListener {
-//			private final NodeEditor nodeEditor;
-//
-//			/**
-//			 * @param nodeEditor
-//			 */
-//			public ReferenceSelectionListener(final NodeEditor nodeEditor) {
-//				this.nodeEditor = nodeEditor;
-//			}
-//
-//			/**
-//			 * @param e
-//			 */
-//			@Override
-//			public void actionPerformed(final ActionEvent e) {
-//				try {
-//					final ConfigurableExtension<?, ?> extension = (ConfigurableExtension<?, ?>) ((JComboBox) e.getSource()).getSelectedItem();
-//					if (extension instanceof NullConfigurableExtension) {
-//						if (nodeEditor.getNodeValue().getValue() != null) {
-//							nodeEditor.setNodeValue(createNodeValue(null));
-//						}
-//					}
-//					else {
-//						final ConfigurableExtensionReference<?> reference = extension.createConfigurableExtensionReference();
-//						if (!extension.equals(nodeEditor.getNodeValue().getValue())) {
+			});
+			Button importConfig = new Button(CoreUIResources.getInstance().getString("action.importConfig"));
+			importConfig.setTooltip(new Tooltip(CoreUIResources.getInstance().getString("action.importConfig")));
+			getChildren().add(importConfig);
+			importConfig.setOnAction(e -> {
+//				clipChooser.setDialogTitle(CoreUIResources.getInstance().getString("label.importConfig"));
+//				final int returnVal = clipChooser.showOpenDialog(EditorComponent.this);
+//				if (returnVal == JFileChooser.APPROVE_OPTION) {
+//					final File file = clipChooser.getSelectedFile();
+//					try {
+//						final ExtensionConfigXMLImporter importer = new ExtensionConfigXMLImporter();
+//						final InputStream is = new FileInputStream(file);
+//						final Document doc = XML.loadDocument(is, "extension-config.xml");
+//						final ExtensionConfig config = importer.importFromElement(doc.getDocumentElement());
+//						is.close();
+//						final ConfigurableExtension extension = (ConfigurableExtension) combo.getSelectedItem();
+//						if (!(extension instanceof NullConfigurableExtension)) {
+//							final ConfigurableExtensionReference reference = extension.createConfigurableExtensionReference(config);
 //							nodeEditor.setNodeValue(createNodeValue(reference));
 //						}
 //					}
-//					updateButtons();
+//					catch (final Exception x) {
+//						logger.log(Level.WARNING, "Can't import the config", x);
+//						x.printStackTrace();
+//						JOptionPane.showMessageDialog(EditorComponent.this, CoreUIResources.getInstance().getString("error.importConfig"), CoreUIResources.getInstance().getString("label.importConfig"), JOptionPane.ERROR_MESSAGE);
+//					}
 //				}
-//				catch (final ExtensionException x) {
-//					x.printStackTrace();
-//				}
-//			}
-//		}
+			});
+			UpdateButtons updateButtons = () -> {
+				clear.setDisable(isNullExtension());
+				importConfig.setDisable(isNullExtension());
+				exportConfig.setDisable(isNullExtension());
+			};
+			extensionComboBox.setOnAction(e -> {
+				try {
+					final ConfigurableExtension<?, ?> extension = extensionComboBox.getSelectionModel().getSelectedItem();
+					if (extension instanceof NullConfigurableExtension) {
+						if (nodeEditor.getNodeValue().getValue() != null) {
+							nodeEditor.setNodeValue(createNodeValue(null));
+						}
+					}
+					else {
+						final ConfigurableExtensionReference<?> reference = extension.createConfigurableExtensionReference();
+						if (!extension.equals(nodeEditor.getNodeValue().getValue())) {
+							nodeEditor.setNodeValue(createNodeValue(reference));
+						}
+					}
+					updateButtons.update();
+				}
+				catch (final ExtensionException x) {
+					x.printStackTrace();
+				}
+			});
+			updateButtons.update();
+		}
+
+		private boolean isNullExtension() {
+			return extensionComboBox.getSelectionModel().getSelectedItem() instanceof NullConfigurableExtension;
+		}
 
 		/**
 		 * @see com.nextbreakpoint.nextfractal.twister.javafx.NodeEditorComponent#getComponent()
@@ -309,5 +254,10 @@ public abstract class ConfigurableReferenceEditorRuntime extends EditorExtension
 		@Override
 		public void dispose() {
 		}
+	}
+
+	@FunctionalInterface
+	public interface UpdateButtons {
+		public void update();
 	}
 }

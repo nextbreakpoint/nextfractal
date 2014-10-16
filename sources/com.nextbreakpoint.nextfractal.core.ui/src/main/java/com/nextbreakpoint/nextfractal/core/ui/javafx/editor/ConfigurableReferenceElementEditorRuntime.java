@@ -29,12 +29,15 @@ import java.util.List;
 
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.VBox;
 
 import com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtension;
 import com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionReference;
+import com.nextbreakpoint.nextfractal.core.extension.ExtensionException;
 import com.nextbreakpoint.nextfractal.core.extension.NullConfigurableExtension;
 import com.nextbreakpoint.nextfractal.core.tree.NodeEditor;
 import com.nextbreakpoint.nextfractal.core.tree.NodeValue;
@@ -137,27 +140,59 @@ public abstract class ConfigurableReferenceElementEditorRuntime extends EditorEx
 			if (nodeEditor.isParentMutable()) {
 				getChildren().add(label);
 				getChildren().add(extensionComboBox);
+				Button insertBefore = new Button(getInsertBeforeLabel());
+				Button insertAfter = new Button(getInsertAfterLabel());
+				Button remove = new Button(getRemoveLabel());
+				Button moveUp = new Button(getMoveUpLabel());
+				Button moveDown = new Button(getMoveDownLabel());
+				insertBefore.setTooltip(new Tooltip(getInsertBeforeTooltip()));
+				insertAfter.setTooltip(new Tooltip(getInsertAfterTooltip()));
+				remove.setTooltip(new Tooltip(getRemoveTooltip()));
+				moveUp.setTooltip(new Tooltip(getMoveUpTooltip()));
+				moveDown.setTooltip(new Tooltip(getMoveDownTooltip()));
+				getChildren().add(insertBefore);
+				getChildren().add(insertAfter);
+				getChildren().add(remove);
+				getChildren().add(moveUp);
+				getChildren().add(moveDown);
+				insertBefore.setOnAction(e -> {
+					try {
+						final ConfigurableExtension<?, ?> extension = extensionComboBox.getSelectionModel().getSelectedItem();
+						if (extension instanceof NullConfigurableExtension) {
+							nodeEditor.getParentNodeEditor().insertChildNodeBefore(nodeEditor.getIndex(), createNodeValue(null));
+						}
+						else {
+							final ConfigurableExtensionReference<?> reference = extension.createConfigurableExtensionReference();
+							nodeEditor.getParentNodeEditor().insertChildNodeBefore(nodeEditor.getIndex(), createNodeValue(reference));
+						}
+					} catch (final ExtensionException x) {
+						x.printStackTrace();
+					}
+				});
+				insertAfter.setOnAction(e -> {
+					try {
+						final ConfigurableExtension<?, ?> extension = extensionComboBox.getSelectionModel().getSelectedItem();
+						if (extension instanceof NullConfigurableExtension) {
+							nodeEditor.getParentNodeEditor().insertChildNodeAfter(nodeEditor.getIndex(), createNodeValue(null));
+						}
+						else {
+							final ConfigurableExtensionReference<?> reference = extension.createConfigurableExtensionReference();
+							nodeEditor.getParentNodeEditor().insertChildNodeAfter(nodeEditor.getIndex(), createNodeValue(reference));
+						}
+					} catch (final ExtensionException x) {
+						x.printStackTrace();
+					}
+				});
+				remove.setOnAction(e -> {
+					nodeEditor.getParentNodeEditor().removeChildNode(nodeEditor.getIndex());
+				});
+				moveUp.setOnAction(e -> {
+					nodeEditor.getParentNodeEditor().moveUpChildNode(nodeEditor.getIndex());
+				});
+				moveDown.setOnAction(e -> {
+					nodeEditor.getParentNodeEditor().moveDownChildNode(nodeEditor.getIndex());
+				});
 			}
-//			if (nodeEditor.isParentMutable()) {
-//				final JButton insertBeforeButton = GUIFactory.createButton(new InsertBeforeAction(combo, nodeEditor), getInsertBeforeTooltip());
-//				final JButton insertAfterButton = GUIFactory.createButton(new InsertAfterAction(combo, nodeEditor), getInsertAfterTooltip());
-//				final JButton removeButton = GUIFactory.createButton(new RemoveAction(nodeEditor), getRemoveTooltip());
-//				final JButton moveUpButton = GUIFactory.createButton(new MoveUpAction(nodeEditor), getMoveUpTooltip());
-//				final JButton moveDownButton = GUIFactory.createButton(new MoveDownAction(nodeEditor), getMoveDownTooltip());
-//				this.add(GUIFactory.createLabel(CoreUIResources.getInstance().getString("label.extension"), SwingConstants.CENTER));
-//				this.add(Box.createVerticalStrut(8));
-//				this.add(combo);
-//				this.add(Box.createVerticalStrut(8));
-//				this.add(insertBeforeButton);
-//				this.add(Box.createVerticalStrut(8));
-//				this.add(insertAfterButton);
-//				this.add(Box.createVerticalStrut(8));
-//				this.add(removeButton);
-//				this.add(Box.createVerticalStrut(8));
-//				this.add(moveUpButton);
-//				this.add(Box.createVerticalStrut(8));
-//				this.add(moveDownButton);
-//			}
 		}
 
 		/**
@@ -182,139 +217,4 @@ public abstract class ConfigurableReferenceElementEditorRuntime extends EditorEx
 		public void dispose() {
 		}
 	}
-
-//	private class InsertAfterAction extends AbstractAction {
-//		private static final long serialVersionUID = 1L;
-//		private final NodeEditor nodeEditor;
-//		private final JComboBox combo;
-//
-//		/**
-//		 * @param combo
-//		 * @param nodeEditor
-//		 */
-//		public InsertAfterAction(final JComboBox combo, final NodeEditor nodeEditor) {
-//			super(getInsertAfterLabel());
-//			this.nodeEditor = nodeEditor;
-//			this.combo = combo;
-//		}
-//
-//		/**
-//		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-//		 */
-//		@Override
-//		public void actionPerformed(final ActionEvent e) {
-//			try {
-//				final ConfigurableExtension<?, ?> extension = (ConfigurableExtension<?, ?>) combo.getSelectedItem();
-//				if (extension instanceof NullConfigurableExtension) {
-//					nodeEditor.getParentNodeEditor().insertChildNodeAfter(nodeEditor.getIndex(), createNodeValue(null));
-//				}
-//				else {
-//					final ConfigurableExtensionReference<?> reference = extension.createConfigurableExtensionReference();
-//					nodeEditor.getParentNodeEditor().insertChildNodeAfter(nodeEditor.getIndex(), createNodeValue(reference));
-//				}
-//			}
-//			catch (final ExtensionException x) {
-//				x.printStackTrace();
-//			}
-//		}
-//	}
-//
-//	private class InsertBeforeAction extends AbstractAction {
-//		private static final long serialVersionUID = 1L;
-//		private final NodeEditor nodeEditor;
-//		private final JComboBox combo;
-//
-//		/**
-//		 * @param combo
-//		 * @param nodeEditor
-//		 */
-//		public InsertBeforeAction(final JComboBox combo, final NodeEditor nodeEditor) {
-//			super(getInsertBeforeLabel());
-//			this.nodeEditor = nodeEditor;
-//			this.combo = combo;
-//		}
-//
-//		/**
-//		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-//		 */
-//		@Override
-//		public void actionPerformed(final ActionEvent e) {
-//			try {
-//				final ConfigurableExtension<?, ?> extension = (ConfigurableExtension<?, ?>) combo.getSelectedItem();
-//				if (extension instanceof NullConfigurableExtension) {
-//					nodeEditor.getParentNodeEditor().insertChildNodeBefore(nodeEditor.getIndex(), createNodeValue(null));
-//				}
-//				else {
-//					final ConfigurableExtensionReference<?> reference = extension.createConfigurableExtensionReference();
-//					nodeEditor.getParentNodeEditor().insertChildNodeBefore(nodeEditor.getIndex(), createNodeValue(reference));
-//				}
-//			}
-//			catch (final ExtensionException x) {
-//				x.printStackTrace();
-//			}
-//		}
-//	}
-//
-//	private class RemoveAction extends AbstractAction {
-//		private static final long serialVersionUID = 1L;
-//		private final NodeEditor nodeEditor;
-//
-//		/**
-//		 * @param nodeEditor
-//		 */
-//		public RemoveAction(final NodeEditor nodeEditor) {
-//			super(getRemoveLabel());
-//			this.nodeEditor = nodeEditor;
-//		}
-//
-//		/**
-//		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-//		 */
-//		@Override
-//		public void actionPerformed(final ActionEvent e) {
-//			nodeEditor.getParentNodeEditor().removeChildNode(nodeEditor.getIndex());
-//		}
-//	}
-//
-//	private class MoveUpAction extends AbstractAction {
-//		private static final long serialVersionUID = 1L;
-//		private final NodeEditor nodeEditor;
-//
-//		/**
-//		 * @param nodeEditor
-//		 */
-//		public MoveUpAction(final NodeEditor nodeEditor) {
-//			super(getMoveUpLabel());
-//			this.nodeEditor = nodeEditor;
-//		}
-//
-//		/**
-//		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-//		 */
-//		@Override
-//		public void actionPerformed(final ActionEvent e) {
-//			nodeEditor.getParentNodeEditor().moveUpChildNode(nodeEditor.getIndex());
-//		}
-//	}
-//
-//	private class MoveDownAction extends AbstractAction {
-//		private static final long serialVersionUID = 1L;
-//		private final NodeEditor nodeEditor;
-//
-//		/**
-//		 * @param nodeEditor
-//		 */
-//		public MoveDownAction(final NodeEditor nodeEditor) {
-//			super(getMoveDownLabel());
-//			this.nodeEditor = nodeEditor;
-//		}
-//
-//		/**
-//		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-//		 */
-//		@Override
-//		public void actionPerformed(final ActionEvent e) {
-//			nodeEditor.getParentNodeEditor().moveDownChildNode(nodeEditor.getIndex());
-//		}
-//	}
 }
