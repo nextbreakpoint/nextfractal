@@ -43,7 +43,16 @@ public abstract class ViewExtensionRuntime extends ExtensionRuntime {
 	 * @param session
 	 * @return
 	 */
-	public abstract View createView(final ExtensionConfig config, final ViewContext viewContext, final RenderContext context, final NodeSession session);
+	public abstract View createConfigView(final ExtensionConfig config, final ViewContext viewContext, final RenderContext context, final NodeSession session);
+	
+	/**
+	 * @param config
+	 * @param viewContext
+	 * @param context
+	 * @param session
+	 * @return
+	 */
+	public abstract View createEditorView(final ExtensionConfig config, final ViewContext viewContext, final RenderContext context, final NodeSession session);
 
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.extension.ExtensionRuntime#dispose()
