@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.concurrent.Semaphore;
 
 import javafx.animation.AnimationTimer;
+import javafx.animation.FadeTransition;
 import javafx.animation.TranslateTransition;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
@@ -348,6 +349,14 @@ public class NextFractalApp extends Application {
 		 */
 		@Override
 		public void showEditorView(View node) {
+			node.setPrefWidth(editorViewPane.getWidth());
+			node.setPrefHeight(editorViewPane.getHeight());
+			editorViewPane.getChildren().add(node);
+			FadeTransition ft = new FadeTransition(Duration.seconds(0.4));
+			ft.setFromValue(0);
+			ft.setToValue(1);
+			ft.setNode(node);
+			ft.play();
 		}
 
 		/**
@@ -355,6 +364,21 @@ public class NextFractalApp extends Application {
 		 */
 		@Override
 		public void discardEditorView() {
+			if (editorViewPane.getChildren().size() > 1) {
+				Node node = editorViewPane.getChildren().get(editorViewPane.getChildren().size() - 1);
+				FadeTransition ft = new FadeTransition(Duration.seconds(0.4));
+				ft.setFromValue(1);
+				ft.setToValue(0);
+				ft.setNode(node);
+				ft.setOnFinished(new EventHandler<ActionEvent>() {
+					@Override
+					public void handle(ActionEvent event) {
+						editorViewPane.getChildren().remove(node);
+						((View)node).dispose();
+					}
+				});
+				ft.play();
+			}
 		}
 
 		/**

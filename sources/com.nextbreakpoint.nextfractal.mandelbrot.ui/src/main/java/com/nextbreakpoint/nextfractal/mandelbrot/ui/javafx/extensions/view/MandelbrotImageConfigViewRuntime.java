@@ -30,6 +30,9 @@ import com.nextbreakpoint.nextfractal.core.tree.NodeSession;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.View;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.ViewContext;
 import com.nextbreakpoint.nextfractal.core.util.RenderContext;
+import com.nextbreakpoint.nextfractal.mandelbrot.extensions.image.MandelbrotImageConfig;
+import com.nextbreakpoint.nextfractal.mandelbrot.ui.javafx.MandelbrotConfigView;
+import com.nextbreakpoint.nextfractal.mandelbrot.ui.javafx.MandelbrotEditorView;
 import com.nextbreakpoint.nextfractal.twister.ui.javafx.extensionPoints.view.ViewExtensionRuntime;
 
 /**
@@ -41,7 +44,7 @@ public class MandelbrotImageConfigViewRuntime extends ViewExtensionRuntime {
 	 */
 	@Override
 	public View createConfigView(final ExtensionConfig config, final ViewContext viewContext, final RenderContext context, final NodeSession session) {
-		return null;//new MandelbrotConfigPanel(((MandelbrotImageConfig) config).getMandelbrotConfig(), viewContext, context, session);
+		return new MandelbrotConfigView(((MandelbrotImageConfig) config).getMandelbrotConfig(), viewContext, context, session);
 	}
 	
 	/**
@@ -49,6 +52,6 @@ public class MandelbrotImageConfigViewRuntime extends ViewExtensionRuntime {
 	 */
 	@Override
 	public View createEditorView(final ExtensionConfig config, final ViewContext viewContext, final RenderContext context, final NodeSession session) {
-		return null;//new MandelbrotEditorPanel(((MandelbrotImageConfig) config).getMandelbrotConfig(), viewContext, context, session);
+		return new MandelbrotEditorView(((MandelbrotImageConfig) config).getMandelbrotConfig(), viewContext, context, session);
 	}
 }
