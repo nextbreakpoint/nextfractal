@@ -110,6 +110,7 @@ import com.nextbreakpoint.nextfractal.twister.renderer.TwisterRenderer;
 import com.nextbreakpoint.nextfractal.twister.renderer.TwisterRenderingHints;
 import com.nextbreakpoint.nextfractal.twister.renderer.java2D.Java2DRenderFactory;
 import com.nextbreakpoint.nextfractal.twister.ui.RenderListener;
+import com.nextbreakpoint.nextfractal.twister.ui.javafx.NextFractalApp;
 
 /**
  * @author Andrea Medeghini
@@ -306,6 +307,24 @@ public class TwisterCanvas extends Canvas implements RenderContext {
 			for (RenderContextListener listener : contextListeners) {
 				listener.refresh();
 			}
+		}
+	}
+
+	/**
+	 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#execute(java.lang.Runnable)
+	 */
+	@Override
+	public void execute(Runnable task) {
+		try {			
+			acquire();
+			if (config != null) {
+				config.getContext().updateTimestamp();
+			}
+			task.run();
+			release();
+		}
+		catch (InterruptedException x) {
+			Thread.currentThread().interrupt();
 		}
 	}
 
@@ -1962,6 +1981,24 @@ public class TwisterCanvas extends Canvas implements RenderContext {
 		@Override
 		public void removeRenderContextListener(RenderContextListener listener) {
 			TwisterCanvas.this.removeRenderContextListener(listener);
+		}
+
+		/**
+		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#execute(java.lang.Runnable)
+		 */
+		@Override
+		public void execute(Runnable task) {
+			try {
+				TwisterCanvas.this.acquire();
+				if (config != null) {
+					config.getContext().updateTimestamp();
+				}
+				task.run();
+				TwisterCanvas.this.release();
+			}
+			catch (InterruptedException x) {
+				Thread.currentThread().interrupt();
+			}
 		}
 	}
 

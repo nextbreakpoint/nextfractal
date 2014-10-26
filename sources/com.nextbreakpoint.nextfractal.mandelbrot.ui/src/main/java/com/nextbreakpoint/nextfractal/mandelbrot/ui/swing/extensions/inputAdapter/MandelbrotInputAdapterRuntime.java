@@ -173,7 +173,7 @@ public class MandelbrotInputAdapterRuntime extends DefaultInputAdapterRuntime {
 			case KeyEvent.VK_S: {
 				final MandelbrotImageConfig config = (MandelbrotImageConfig) getAdapterContext().getConfig();
 				if (config.getMandelbrotConfig() != null) {
-					if (config.getMandelbrotConfig().getInputMode() != MandelbrotImageConfig.INPUT_MODE_SELECT) {
+					if (config.getMandelbrotConfig().getInputMode() != MandelbrotImageConfig.INPUT_MODE_INFO) {
 						final MandelbrotInputHandler mandelbrotHandler = inputManager.getInputHandler();
 						mandelbrotHandler.setZoomDirection(MandelbrotInputHandler.DIRECTION_UNDEFINED);
 						mandelbrotHandler.setShiftDirection(MandelbrotInputHandler.DIRECTION_UNDEFINED);
@@ -182,7 +182,7 @@ public class MandelbrotInputAdapterRuntime extends DefaultInputAdapterRuntime {
 						mandelbrotHandler.setShiftEnabled(false);
 						mandelbrotHandler.setRotationEnabled(false);
 						config.getContext().updateTimestamp();
-						config.getMandelbrotConfig().getInputModeElement().setValue(new Integer(MandelbrotImageConfig.INPUT_MODE_SELECT));
+						config.getMandelbrotConfig().getInputModeElement().setValue(new Integer(MandelbrotImageConfig.INPUT_MODE_INFO));
 					}
 				}
 				break;
@@ -408,7 +408,7 @@ public class MandelbrotInputAdapterRuntime extends DefaultInputAdapterRuntime {
 					}
 				}
 			}
-			if ((config.getMandelbrotConfig().getInputMode() == MandelbrotImageConfig.INPUT_MODE_SELECT) && !e.isControlDown()) {
+			if ((config.getMandelbrotConfig().getInputMode() == MandelbrotImageConfig.INPUT_MODE_INFO) && !e.isControlDown()) {
 				final MandelbrotInputHandler mandelbrotHandler = inputManager.getInputHandler();
 				mandelbrotHandler.setLastMousePosition(e.getX(), e.getY());
 				final ViewElement viewElement = getViewElement();
@@ -440,7 +440,7 @@ public class MandelbrotInputAdapterRuntime extends DefaultInputAdapterRuntime {
 					}
 				}
 			}
-			if ((config.getMandelbrotConfig().getInputMode() == MandelbrotImageConfig.INPUT_MODE_SELECT) && e.isShiftDown()) {
+			if ((config.getMandelbrotConfig().getInputMode() == MandelbrotImageConfig.INPUT_MODE_INFO) && e.isShiftDown()) {
 				final MandelbrotInputHandler mandelbrotHandler = inputManager.getInputHandler();
 				mandelbrotHandler.setLastMousePosition(e.getX(), e.getY());
 				final ViewElement viewElement = getViewElement();
@@ -488,7 +488,7 @@ public class MandelbrotInputAdapterRuntime extends DefaultInputAdapterRuntime {
 				final MandelbrotInputHandler mandelbrotHandler = inputManager.getInputHandler();
 				mandelbrotHandler.setLastMousePosition(e.getX(), e.getY());
 			}
-			if ((config.getMandelbrotConfig().getInputMode() == MandelbrotImageConfig.INPUT_MODE_SELECT) && e.isShiftDown()) {
+			if ((config.getMandelbrotConfig().getInputMode() == MandelbrotImageConfig.INPUT_MODE_INFO) && e.isShiftDown()) {
 				final MandelbrotInputHandler mandelbrotHandler = inputManager.getInputHandler();
 				mandelbrotHandler.setLastMousePosition(e.getX(), e.getY());
 				final ViewElement viewElement = getViewElement();

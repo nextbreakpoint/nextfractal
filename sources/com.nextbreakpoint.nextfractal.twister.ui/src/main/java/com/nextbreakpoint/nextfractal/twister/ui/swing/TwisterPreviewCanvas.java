@@ -195,6 +195,24 @@ public class TwisterPreviewCanvas extends Canvas implements RenderContext {
 	}
 
 	/**
+	 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#execute(java.lang.Runnable)
+	 */
+	@Override
+	public void execute(Runnable task) {
+		try {			
+			acquire();
+			if (config != null) {
+				config.getContext().updateTimestamp();
+			}
+			task.run();
+			release();
+		}
+		catch (InterruptedException x) {
+			Thread.currentThread().interrupt();
+		}
+	}
+
+	/**
 	 * @return the dragEnabled
 	 */
 	public boolean isDragEnabled() {

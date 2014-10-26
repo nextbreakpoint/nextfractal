@@ -1,0 +1,19 @@
+.root {
+	-fx-background-color:#444444;
+}
+
+.scroll-pane {
+	-fx-background-color:transparent;
+}
+
+.scroll-pane > .viewport {
+	-fx-background-color:transparent;
+}
+
+#config-panel {
+	-fx-background-color:#777777;
+	-fx-padding:10px;
+}
+
+#editor-panel {
+}

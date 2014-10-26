@@ -423,5 +423,9 @@ public class ConfiguratorFrame extends JFrame {
 		@Override
 		public void stopRenderers() {
 		}
+
+		@Override
+		public void execute(Runnable task) {
+		}
 	}
 }

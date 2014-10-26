@@ -378,7 +378,7 @@ public class MandelbrotConfigPanel extends ViewPanel {
 			inputModeComboBox.setMaximumSize(new Dimension(200, GUIFactory.DEFAULT_HEIGHT));
 			inputModeComboBox.setMinimumSize(new Dimension(200, GUIFactory.DEFAULT_HEIGHT));
 			inputModeComboBox.addItem(new Object[] { TwisterSwingResources.getInstance().getString("label.zoom"), MandelbrotImageConfig.INPUT_MODE_ZOOM });
-			inputModeComboBox.addItem(new Object[] { TwisterSwingResources.getInstance().getString("label.select"), MandelbrotImageConfig.INPUT_MODE_SELECT });
+			inputModeComboBox.addItem(new Object[] { TwisterSwingResources.getInstance().getString("label.select"), MandelbrotImageConfig.INPUT_MODE_INFO });
 			inputModeComboBox.setRenderer(new DefaultListCellRenderer() {
 				private static final long serialVersionUID = 1L;
 
@@ -680,7 +680,7 @@ public class MandelbrotConfigPanel extends ViewPanel {
 					inputModeComboBox.setSelectedIndex(0);
 					break;
 				}
-				case MandelbrotImageConfig.INPUT_MODE_SELECT: {
+				case MandelbrotImageConfig.INPUT_MODE_INFO: {
 					inputModeComboBox.setSelectedIndex(1);
 					break;
 				}

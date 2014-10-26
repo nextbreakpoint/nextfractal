@@ -9,11 +9,11 @@ import com.nextbreakpoint.nextfractal.core.ui.javafx.View;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.ViewContext;
 import com.nextbreakpoint.nextfractal.core.util.RenderContext;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotConfig;
+import com.nextbreakpoint.nextfractal.mandelbrot.extensions.image.MandelbrotImageConfig;
 
 public class MandelbrotEditorView extends View {
 
 	public MandelbrotEditorView(MandelbrotConfig config, ViewContext viewContext, RenderContext context, NodeSession session) {
-		// TODO Auto-generated constructor stub
 		AnchorPane pane = new AnchorPane();
 		getChildren().add(pane);
 		pane.setPrefWidth(viewContext.getEditorViewSize().getWidth());
@@ -34,12 +34,55 @@ public class MandelbrotEditorView extends View {
 		pane.getChildren().add(rightBottomButtons);
 		AnchorPane.setRightAnchor(rightBottomButtons, 10.0);
 		AnchorPane.setBottomAnchor(rightBottomButtons, 10.0);
+		switch (config.getInputMode()) {
+			case MandelbrotImageConfig.INPUT_MODE_ZOOM:
+				zoomButton.setDisable(true);
+				break;
+	
+			case MandelbrotImageConfig.INPUT_MODE_INFO:
+				infoButton.setDisable(true);
+				break;
+		}
+		switch (config.getImageMode()) {
+			case MandelbrotImageConfig.IMAGE_MODE_MANDELBROT:
+				mandelbrotModeButton.setDisable(true);
+				break;
+	
+			case MandelbrotImageConfig.IMAGE_MODE_JULIA:
+				juliaModeButton.setDisable(true);
+				break;
+		}
+		zoomButton.setOnAction(e -> {
+			context.execute(() -> {
+				config.setInputMode(MandelbrotImageConfig.INPUT_MODE_ZOOM);
+			});
+			zoomButton.setDisable(true);
+			infoButton.setDisable(false);
+		});
+		infoButton.setOnAction(e -> {
+			context.execute(() -> {
+				config.setInputMode(MandelbrotImageConfig.INPUT_MODE_INFO);
+			});
+			zoomButton.setDisable(false);
+			infoButton.setDisable(true);
+		});
+		mandelbrotModeButton.setOnAction(e -> {
+			context.execute(() -> {
+				config.setImageMode(MandelbrotImageConfig.IMAGE_MODE_MANDELBROT);
+			});
+			mandelbrotModeButton.setDisable(true);
+			juliaModeButton.setDisable(false);
+		});
+		juliaModeButton.setOnAction(e -> {
+			context.execute(() -> {
+				config.setImageMode(MandelbrotImageConfig.IMAGE_MODE_JULIA);
+			});
+			mandelbrotModeButton.setDisable(false);
+			juliaModeButton.setDisable(true);
+		});
 	}
 
 	@Override
 	public void dispose() {
-		// TODO Auto-generated method stub
-
 	}
-
 }

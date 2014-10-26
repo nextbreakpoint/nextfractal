@@ -39,7 +39,7 @@ public class MandelbrotImageConfig extends ImageExtensionConfig {
 	public static final int IMAGE_MODE_MANDELBROT = 0;
 	public static final int IMAGE_MODE_JULIA = 1;
 	public static final int INPUT_MODE_ZOOM = 0;
-	public static final int INPUT_MODE_SELECT = 1;
+	public static final int INPUT_MODE_INFO = 1;
 	private static final long serialVersionUID = 1L;
 	private MandelbrotConfig config;
 

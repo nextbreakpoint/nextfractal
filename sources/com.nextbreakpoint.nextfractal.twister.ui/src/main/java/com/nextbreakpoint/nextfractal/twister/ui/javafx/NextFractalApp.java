@@ -23,6 +23,7 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 
+import com.aquafx_project.AquaFx;
 import com.nextbreakpoint.nextfractal.core.config.DefaultConfigContext;
 import com.nextbreakpoint.nextfractal.core.extension.Extension;
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionException;
@@ -71,7 +72,6 @@ public class NextFractalApp extends Application {
         primaryStage.setTitle("NextFractal");
         primaryStage.setResizable(false);
         StackPane root = new StackPane();
-        root.setStyle("-fx-background-color:#444444");
         Pane mainPane = new Pane();
         mainPane.setPrefWidth(width);
         mainPane.setPrefHeight(height);
@@ -82,7 +82,7 @@ public class NextFractalApp extends Application {
         configPane.setPrefHeight(height);
         configPane.setOpacity(0.7);
         configPane.setLayoutX(width - configPaneWidth);
-        configPane.setStyle("-fx-background-color:#777777;-fx-padding:10px");
+        configPane.setId("config-panel");
         StackPane editorPane = new StackPane();
         editorPane.setPrefWidth(width - configPaneWidth);
         editorPane.setPrefHeight(height);
@@ -96,10 +96,14 @@ public class NextFractalApp extends Application {
         configPane.getChildren().add(configViewPane);
         editorPane.getChildren().add(canvas);
         editorPane.getChildren().add(editorViewPane);
+        editorPane.setId("editor-panel");
         mainPane.getChildren().add(editorPane);
         mainPane.getChildren().add(configPane);
         root.getChildren().add(mainPane);
-        primaryStage.setScene(new Scene(root));
+        Scene scene = new Scene(root);
+        AquaFx.style();
+        scene.getStylesheets().add(getClass().getResource("/theme.css").toExternalForm());
+		primaryStage.setScene(scene);
         primaryStage.show();
 		execute(width - configPaneWidth, height, canvas);
 		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
@@ -461,6 +465,24 @@ public class NextFractalApp extends Application {
 		@Override
 		public void removeRenderContextListener(RenderContextListener listener) {
 			NextFractalApp.this.removeRenderContextListener(listener);
+		}
+
+		/**
+		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#execute(java.lang.Runnable)
+		 */
+		@Override
+		public void execute(Runnable task) {
+			try {
+				NextFractalApp.this.acquire();
+				if (config != null) {
+					config.getContext().updateTimestamp();
+				}
+				task.run();
+				NextFractalApp.this.release();
+			}
+			catch (InterruptedException x) {
+				Thread.currentThread().interrupt();
+			}
 		}
 	}
 }
