@@ -1,9 +1,12 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.ui.javafx;
 
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
-import javafx.scene.layout.GridPane;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
@@ -23,12 +26,12 @@ public class MandelbrotConfigView extends View {
 		getChildren().add(pane);
 		pane.setPrefWidth(viewContext.getConfigViewSize().getWidth());
 		pane.setPrefHeight(viewContext.getConfigViewSize().getHeight());
-		GridPane incolouringFormulaPane = new IncolouringFormulaGridItems(viewContext, config);
+		Pane incolouringFormulaPane = new IncolouringFormulaGridItems(viewContext, config);
 		ScrollPane incolouringScrollPane = new ScrollPane(incolouringFormulaPane);
 		incolouringScrollPane.setHbarPolicy(ScrollBarPolicy.NEVER);
 		incolouringScrollPane.setVbarPolicy(ScrollBarPolicy.NEVER);
 		pane.getChildren().add(incolouringScrollPane);
-		GridPane outcolouringFormulaPane = new OutcolouringFormulaGridItems(viewContext, config);
+		Pane outcolouringFormulaPane = new OutcolouringFormulaGridItems(viewContext, config);
 		ScrollPane outcolouringScrollPane = new ScrollPane(outcolouringFormulaPane);
 		outcolouringScrollPane.setHbarPolicy(ScrollBarPolicy.NEVER);
 		outcolouringScrollPane.setVbarPolicy(ScrollBarPolicy.NEVER);
@@ -69,39 +72,132 @@ public class MandelbrotConfigView extends View {
 		}
 	}
 	
-	public abstract class GridItems<T extends ConfigElement> extends GridPane {
+	public abstract class GridItems<T extends ConfigElement> extends Pane {
 		private MandelbrotConfig config;
 
 		public GridItems(ViewContext viewContext, MandelbrotConfig config) {
 			setPrefWidth(viewContext.getConfigViewSize().getWidth());
-			setMinHeight(70);
-			setPadding(new Insets(10));
-			setHgap(10);
-			setVgap(10);
+			setMinHeight(50);
 			for (int i = 0; i < getElementCount(config); i++) {
 				T element = getElement(config, i);
 				String name = getElementName(element);
 				GridItem item = new GridItem(new GridItemModel() {
 				});
-				getChildren().add(item);
-				GridPane.setConstraints(item, i % 4, i / 4);
+				Node node = makeDraggable(item);
+				getChildren().add(node);
+				node.setLayoutX((i % 4) * 60);
+				node.setLayoutY((i / 4) * 60);
 			}
 			{
 				GridItemAdd item = new GridItemAdd();
 				getChildren().add(item);
-				GridPane.setConstraints(item, getElementCount(config) % 4, getElementCount(config) / 4);
+				item.setLayoutX((getElementCount(config) % 4) * 60);
+				item.setLayoutY((getElementCount(config) / 4) * 60);
 				item.setOnMouseClicked(e -> {
 					T element = createElement();
 					appendElement(config, element);
-					GridPane.setConstraints(item, getElementCount(config) % 4, getElementCount(config) / 4);
 					GridItem newItem = new GridItem(new GridItemModel() {
 					});
-					getChildren().add(newItem);
-					GridPane.setConstraints(newItem, (getElementCount(config) - 1) % 4, (getElementCount(config) - 1) / 4);
+					getChildren().remove(item);
+					Node node = makeDraggable(newItem);
+					getChildren().add(node);
+					getChildren().add(item);
+					for (int i = 0; i < getChildren().size(); i++) {
+						Node child = getChildren().get(i);
+						child.setLayoutX((i % 4) * 60);
+						child.setLayoutY((i / 4) * 60);
+						if (child instanceof Group) {
+							((Group) child).getChildren().get(0).setTranslateX(0);
+							((Group) child).getChildren().get(0).setTranslateY(0);
+						}
+					}
 				});
 			}
 		}
 
+		private Node makeDraggable(final Node node) {
+			final DragContext dragContext = new DragContext();
+			final Group wrapGroup = new Group(node);
+
+			wrapGroup.addEventFilter(MouseEvent.ANY,
+				new EventHandler<MouseEvent>() {
+					public void handle(final MouseEvent mouseEvent) {
+						mouseEvent.consume();
+					}
+				});
+
+			wrapGroup.addEventFilter(MouseEvent.MOUSE_PRESSED,
+				new EventHandler<MouseEvent>() {
+					public void handle(final MouseEvent mouseEvent) {
+						dragContext.mouseAnchorX = mouseEvent.getX();
+						dragContext.mouseAnchorY = mouseEvent.getY();
+						dragContext.initialTranslateX = node.getTranslateX();
+						dragContext.initialTranslateY = node.getTranslateY();
+					}
+				});
+
+			wrapGroup.addEventFilter(MouseEvent.MOUSE_DRAGGED,
+				new EventHandler<MouseEvent>() {
+					public void handle(final MouseEvent mouseEvent) {
+						double x = dragContext.initialTranslateX + mouseEvent.getX() - dragContext.mouseAnchorX;
+						double y = dragContext.initialTranslateY + mouseEvent.getY() - dragContext.mouseAnchorY;
+						if (x < -wrapGroup.getLayoutX()) {
+							x = -wrapGroup.getLayoutX();
+						}
+						if (x >= getWidth() - wrapGroup.getLayoutX() - node.getBoundsInLocal().getWidth()) {
+							x = getWidth() - wrapGroup.getLayoutX() - node.getBoundsInLocal().getWidth();
+						}
+						if (y < -wrapGroup.getLayoutY()) {
+							y = -wrapGroup.getLayoutY();
+						}
+						if (y >= getHeight() - wrapGroup.getLayoutY() - node.getBoundsInLocal().getHeight()) {
+							y = getHeight() - wrapGroup.getLayoutY() - node.getBoundsInLocal().getHeight();
+						}
+						node.setTranslateX(x);
+						node.setTranslateY(y);
+					}
+				});
+
+
+			wrapGroup.addEventFilter(MouseEvent.MOUSE_RELEASED,
+				new EventHandler<MouseEvent>() {
+					public void handle(final MouseEvent mouseEvent) {
+						double x = dragContext.initialTranslateX + mouseEvent.getX() - dragContext.mouseAnchorX;
+						double y = dragContext.initialTranslateY + mouseEvent.getY() - dragContext.mouseAnchorY;
+						if (x < -wrapGroup.getLayoutX()) {
+							x = -wrapGroup.getLayoutX();
+						}
+						if (x >= getWidth() - wrapGroup.getLayoutX() - node.getBoundsInLocal().getWidth()) {
+							x = getWidth() - wrapGroup.getLayoutX() - node.getBoundsInLocal().getWidth();
+						}
+						if (y < -wrapGroup.getLayoutY()) {
+							y = -wrapGroup.getLayoutY();
+						}
+						if (y >= getHeight() - wrapGroup.getLayoutY() - node.getBoundsInLocal().getHeight()) {
+							y = getHeight() - wrapGroup.getLayoutY() - node.getBoundsInLocal().getHeight();
+						}
+						double nx = wrapGroup.getLayoutX() + x;
+						double ny = wrapGroup.getLayoutY() + y;
+//						System.out.println("A " + nx + "," + ny);
+						for (Node child : getChildren()) {
+							if (child instanceof Group && child != wrapGroup) {
+								double tx = nx - child.getLayoutX();
+								double ty = ny - child.getLayoutY();
+//								System.out.println("B " + tx + "," + ty);
+								if (child.contains(tx + node.getBoundsInLocal().getWidth() / 2, ty + node.getBoundsInLocal().getHeight() / 2)) {
+									((Group)child).getChildren().get(0).setStyle("-fx-background-color:#ffff00");
+									break;
+								}
+							}
+						}
+						node.setTranslateX(0);
+						node.setTranslateY(0);
+					}
+				});
+			
+			return wrapGroup;
+		}
+		
 		protected MandelbrotConfig getConfig() {
 			return config;
 		}
@@ -167,5 +263,12 @@ public class MandelbrotConfigView extends View {
 		protected String getElementName(OutcolouringFormulaConfigElement element) {
 			return element.getExtensionElement().getReference().getExtensionName();
 		}
+	}
+	
+	private class DragContext {
+		private double mouseAnchorX;
+		private double mouseAnchorY;
+		private double initialTranslateX;
+		private double initialTranslateY;
 	}
 }
