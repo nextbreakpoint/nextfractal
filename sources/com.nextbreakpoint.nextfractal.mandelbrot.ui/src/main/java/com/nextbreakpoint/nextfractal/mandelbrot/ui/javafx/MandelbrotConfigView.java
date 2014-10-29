@@ -3,13 +3,11 @@ package com.nextbreakpoint.nextfractal.mandelbrot.ui.javafx;
 import javafx.geometry.Insets;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
-import javafx.scene.effect.BlendMode;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.Border;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
+import com.nextbreakpoint.nextfractal.core.config.ConfigElement;
 import com.nextbreakpoint.nextfractal.core.tree.NodeSession;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.View;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.ViewContext;
@@ -25,57 +23,16 @@ public class MandelbrotConfigView extends View {
 		getChildren().add(pane);
 		pane.setPrefWidth(viewContext.getConfigViewSize().getWidth());
 		pane.setPrefHeight(viewContext.getConfigViewSize().getHeight());
-		GridPane incolouringFormulaPane = new GridPane();
-		incolouringFormulaPane.setPrefWidth(viewContext.getConfigViewSize().getWidth());
-		incolouringFormulaPane.setMinHeight(70);
-		incolouringFormulaPane.setPadding(new Insets(10));
-		incolouringFormulaPane.setHgap(10);
-		incolouringFormulaPane.setVgap(10);
+		GridPane incolouringFormulaPane = new IncolouringFormulaGridItems(viewContext, config);
 		ScrollPane incolouringScrollPane = new ScrollPane(incolouringFormulaPane);
 		incolouringScrollPane.setHbarPolicy(ScrollBarPolicy.NEVER);
 		incolouringScrollPane.setVbarPolicy(ScrollBarPolicy.NEVER);
 		pane.getChildren().add(incolouringScrollPane);
-		GridPane outcolouringFormulaPane = new GridPane();
-		outcolouringFormulaPane.setPrefWidth(viewContext.getConfigViewSize().getWidth());
-		outcolouringFormulaPane.setMinHeight(70);
-		outcolouringFormulaPane.setPadding(new Insets(10));
-		outcolouringFormulaPane.setHgap(10);
-		outcolouringFormulaPane.setVgap(10);
+		GridPane outcolouringFormulaPane = new OutcolouringFormulaGridItems(viewContext, config);
 		ScrollPane outcolouringScrollPane = new ScrollPane(outcolouringFormulaPane);
 		outcolouringScrollPane.setHbarPolicy(ScrollBarPolicy.NEVER);
 		outcolouringScrollPane.setVbarPolicy(ScrollBarPolicy.NEVER);
 		pane.getChildren().add(outcolouringScrollPane);
-		for (int i = 0; i < config.getMandelbrotFractal().getIncolouringFormulaConfigElementCount(); i++) {
-			IncolouringFormulaConfigElement element = config.getMandelbrotFractal().getIncolouringFormulaConfigElement(i);
-			String name = element.getExtensionElement().getReference().getExtensionName();
-			GridItem item = new GridItem(new GridItemModel() {
-			});
-			incolouringFormulaPane.getChildren().add(item);
-			GridPane.setConstraints(item, i, 0);
-			item = new GridItem(new GridItemModel() {
-			});
-			incolouringFormulaPane.getChildren().add(item);
-			GridPane.setConstraints(item, i + 1, 0);
-			item = new GridItem(new GridItemModel() {
-			});
-			incolouringFormulaPane.getChildren().add(item);
-			GridPane.setConstraints(item, i + 2, 0);
-			item = new GridItem(new GridItemModel() {
-			});
-			incolouringFormulaPane.getChildren().add(item);
-			GridPane.setConstraints(item, i + 3, 0);
-			item = new GridItem(new GridItemModel() {
-			});
-			incolouringFormulaPane.getChildren().add(item);
-			GridPane.setConstraints(item, i + 4, 0);
-		}
-		for (int i = 0; i < config.getMandelbrotFractal().getOutcolouringFormulaConfigElementCount(); i++) {
-			OutcolouringFormulaConfigElement element = config.getMandelbrotFractal().getOutcolouringFormulaConfigElement(i);
-			String name = element.getExtensionElement().getReference().getExtensionName();
-			GridItem item = new GridItem(new GridItemModel() {
-			});
-			outcolouringFormulaPane.getChildren().add(item);
-		}
 	}
 
 	@Override
@@ -100,18 +57,115 @@ public class MandelbrotConfigView extends View {
 		}
 	}
 	
-	public class GridItem2 extends Pane {
-		private GridItemModel model;
-		
-		public GridItem2(GridItemModel model) {
-			this.model = model;
+	public class GridItemAdd extends Pane {
+		public GridItemAdd() {
 			setPrefWidth(50);
 			setPrefHeight(50);
 			setMinWidth(50);
 			setMinHeight(50);
 			setMaxWidth(50);
 			setMaxHeight(50);
-			setStyle("-fx-background-color:#ff00ff");
+			setStyle("-fx-background-color:#ff0000");
+		}
+	}
+	
+	public abstract class GridItems<T extends ConfigElement> extends GridPane {
+		private MandelbrotConfig config;
+
+		public GridItems(ViewContext viewContext, MandelbrotConfig config) {
+			setPrefWidth(viewContext.getConfigViewSize().getWidth());
+			setMinHeight(70);
+			setPadding(new Insets(10));
+			setHgap(10);
+			setVgap(10);
+			for (int i = 0; i < getElementCount(config); i++) {
+				T element = getElement(config, i);
+				String name = getElementName(element);
+				GridItem item = new GridItem(new GridItemModel() {
+				});
+				getChildren().add(item);
+				GridPane.setConstraints(item, i % 4, i / 4);
+			}
+			{
+				GridItemAdd item = new GridItemAdd();
+				getChildren().add(item);
+				GridPane.setConstraints(item, getElementCount(config) % 4, getElementCount(config) / 4);
+				item.setOnMouseClicked(e -> {
+					T element = createElement();
+					appendElement(config, element);
+					GridPane.setConstraints(item, getElementCount(config) % 4, getElementCount(config) / 4);
+					GridItem newItem = new GridItem(new GridItemModel() {
+					});
+					getChildren().add(newItem);
+					GridPane.setConstraints(newItem, (getElementCount(config) - 1) % 4, (getElementCount(config) - 1) / 4);
+				});
+			}
+		}
+
+		protected MandelbrotConfig getConfig() {
+			return config;
+		}
+		
+		protected abstract void appendElement(MandelbrotConfig config, T element);
+
+		protected abstract T createElement();
+
+		protected abstract T getElement(MandelbrotConfig config, int index);
+
+		protected abstract int getElementCount(MandelbrotConfig config);
+
+		protected abstract String getElementName(T element);
+	}
+
+	public class IncolouringFormulaGridItems extends GridItems<IncolouringFormulaConfigElement> {
+		public IncolouringFormulaGridItems(ViewContext viewContext, MandelbrotConfig config) {
+			super(viewContext, config);
+		}
+
+		protected void appendElement(MandelbrotConfig config, IncolouringFormulaConfigElement element) {
+			config.getMandelbrotFractal().appendIncolouringFormulaConfigElement(element);
+		}
+
+		protected IncolouringFormulaConfigElement createElement() {
+			return new IncolouringFormulaConfigElement();
+		}
+
+		protected IncolouringFormulaConfigElement getElement(MandelbrotConfig config, int index) {
+			return config.getMandelbrotFractal().getIncolouringFormulaConfigElement(index);
+		}
+
+		protected int getElementCount(MandelbrotConfig config) {
+			return config.getMandelbrotFractal().getIncolouringFormulaConfigElementCount();
+		}
+
+		protected String getElementName(IncolouringFormulaConfigElement element) {
+			return element.getExtensionElement().getReference().getExtensionName();
+		}
+	}
+
+	public class OutcolouringFormulaGridItems extends GridItems<OutcolouringFormulaConfigElement> {
+		public OutcolouringFormulaGridItems(ViewContext viewContext, MandelbrotConfig config) {
+			super(viewContext, config);
+		}
+
+		protected void appendElement(MandelbrotConfig config, OutcolouringFormulaConfigElement element) {
+			config.getMandelbrotFractal().appendOutcolouringFormulaConfigElement(element);
+		}
+
+		protected OutcolouringFormulaConfigElement createElement() {
+			return new OutcolouringFormulaConfigElement();
+		}
+
+		protected OutcolouringFormulaConfigElement getElement(MandelbrotConfig config, int index) {
+			return config.getMandelbrotFractal().getOutcolouringFormulaConfigElement(index);
+		}
+
+		protected int getElementCount(MandelbrotConfig config) {
+			return config.getMandelbrotFractal().getOutcolouringFormulaConfigElementCount();
+		}
+
+		protected String getElementName(OutcolouringFormulaConfigElement element) {
+			return element.getExtensionElement().getReference().getExtensionName();
 		}
 	}
 }
