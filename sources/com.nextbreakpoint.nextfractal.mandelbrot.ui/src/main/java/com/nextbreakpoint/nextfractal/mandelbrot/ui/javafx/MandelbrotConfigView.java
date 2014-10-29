@@ -1,7 +1,6 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.ui.javafx;
 
 import javafx.event.EventHandler;
-import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
@@ -100,18 +99,27 @@ public class MandelbrotConfigView extends View {
 					});
 					getChildren().remove(item);
 					Node node = makeDraggable(newItem);
+					if (getChildren().size() % 2 == 0) {
+						newItem.setStyle("-fx-background-color:#ffff00");
+					} else {
+						newItem.setStyle("-fx-background-color:#00ff00");
+					}
 					getChildren().add(node);
 					getChildren().add(item);
-					for (int i = 0; i < getChildren().size(); i++) {
-						Node child = getChildren().get(i);
-						child.setLayoutX((i % 4) * 60);
-						child.setLayoutY((i / 4) * 60);
-						if (child instanceof Group) {
-							((Group) child).getChildren().get(0).setTranslateX(0);
-							((Group) child).getChildren().get(0).setTranslateY(0);
-						}
-					}
+					doLayout();
 				});
+			}
+		}
+
+		private void doLayout() {
+			for (int i = 0; i < getChildren().size(); i++) {
+				Node child = getChildren().get(i);
+				child.setLayoutX((i % 4) * 60);
+				child.setLayoutY((i / 4) * 60);
+				if (child instanceof Group) {
+					((Group) child).getChildren().get(0).setTranslateX(0);
+					((Group) child).getChildren().get(0).setTranslateY(0);
+				}
 			}
 		}
 
@@ -179,13 +187,23 @@ public class MandelbrotConfigView extends View {
 						double nx = wrapGroup.getLayoutX() + x;
 						double ny = wrapGroup.getLayoutY() + y;
 //						System.out.println("A " + nx + "," + ny);
-						for (Node child : getChildren()) {
+						for (int i = 0; i < getChildren().size(); i++) {
+							Node child = getChildren().get(i);
 							if (child instanceof Group && child != wrapGroup) {
 								double tx = nx - child.getLayoutX();
 								double ty = ny - child.getLayoutY();
 //								System.out.println("B " + tx + "," + ty);
 								if (child.contains(tx + node.getBoundsInLocal().getWidth() / 2, ty + node.getBoundsInLocal().getHeight() / 2)) {
-									((Group)child).getChildren().get(0).setStyle("-fx-background-color:#ffff00");
+									int j = getChildren().indexOf(wrapGroup);
+									getChildren().remove(j);
+									if (tx + node.getBoundsInLocal().getWidth() / 2 <= child.getBoundsInParent().getWidth() / 2) {
+										System.out.println("1");
+										getChildren().add(i - ((j < i) ? 1 : 0), wrapGroup);
+									} else {
+										System.out.println("2");
+										getChildren().add(i - ((j < i) ? 1 : 0) + 1, wrapGroup);
+									}
+									doLayout();
 									break;
 								}
 							}
