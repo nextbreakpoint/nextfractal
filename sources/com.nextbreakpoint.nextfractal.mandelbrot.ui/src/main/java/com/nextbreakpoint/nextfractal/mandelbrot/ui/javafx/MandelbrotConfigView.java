@@ -82,33 +82,16 @@ public class MandelbrotConfigView extends View {
 				String name = getElementName(element);
 				GridItem item = new GridItem(new GridItemModel() {
 				});
-				Node node = makeDraggable(item);
+				Node node = makeDraggable(item, new Integer(1));
 				getChildren().add(node);
 				node.setLayoutX((i % 4) * 60);
 				node.setLayoutY((i / 4) * 60);
 			}
-			{
-				GridItemAdd item = new GridItemAdd();
-				getChildren().add(item);
-				item.setLayoutX((getElementCount(config) % 4) * 60);
-				item.setLayoutY((getElementCount(config) / 4) * 60);
-				item.setOnMouseClicked(e -> {
-					T element = createElement();
-					appendElement(config, element);
-					GridItem newItem = new GridItem(new GridItemModel() {
-					});
-					getChildren().remove(item);
-					Node node = makeDraggable(newItem);
-					if (getChildren().size() % 2 == 0) {
-						newItem.setStyle("-fx-background-color:#ffff00");
-					} else {
-						newItem.setStyle("-fx-background-color:#00ff00");
-					}
-					getChildren().add(node);
-					getChildren().add(item);
-					doLayout();
-				});
-			}
+			GridItemAdd item = new GridItemAdd();
+			Node addNode = makeDraggable(item, new Integer(2));
+			getChildren().add(addNode);
+			addNode.setLayoutX((getElementCount(config) % 4) * 60);
+			addNode.setLayoutY((getElementCount(config) / 4) * 60);
 		}
 
 		private void doLayout() {
@@ -123,9 +106,10 @@ public class MandelbrotConfigView extends View {
 			}
 		}
 
-		private Node makeDraggable(final Node node) {
+		private Node makeDraggable(final Node node, final Integer type) {
 			final DragContext dragContext = new DragContext();
 			final Group wrapGroup = new Group(node);
+			wrapGroup.setUserData(type);
 
 			wrapGroup.addEventFilter(MouseEvent.ANY,
 				new EventHandler<MouseEvent>() {
@@ -141,6 +125,11 @@ public class MandelbrotConfigView extends View {
 						dragContext.mouseAnchorY = mouseEvent.getY();
 						dragContext.initialTranslateX = node.getTranslateX();
 						dragContext.initialTranslateY = node.getTranslateY();
+						if (wrapGroup.getUserData().equals(new Integer(1))) {
+							((Group)getChildren().get(getChildren().size() - 1)).getChildren().get(0).setStyle("-fx-background-color:#444444");
+						} else if (wrapGroup.getUserData().equals(new Integer(2))) {
+							((Group)getChildren().get(getChildren().size() - 1)).getChildren().get(0).setStyle("-fx-background-color:#FFFFFF");
+						}
 					}
 				});
 
@@ -186,28 +175,63 @@ public class MandelbrotConfigView extends View {
 						}
 						double nx = wrapGroup.getLayoutX() + x;
 						double ny = wrapGroup.getLayoutY() + y;
-//						System.out.println("A " + nx + "," + ny);
+						int j = getChildren().indexOf(wrapGroup);
 						for (int i = 0; i < getChildren().size(); i++) {
 							Node child = getChildren().get(i);
-							if (child instanceof Group && child != wrapGroup) {
-								double tx = nx - child.getLayoutX();
-								double ty = ny - child.getLayoutY();
-//								System.out.println("B " + tx + "," + ty);
-								if (child.contains(tx + node.getBoundsInLocal().getWidth() / 2, ty + node.getBoundsInLocal().getHeight() / 2)) {
-									int j = getChildren().indexOf(wrapGroup);
-									getChildren().remove(j);
-									if (tx + node.getBoundsInLocal().getWidth() / 2 <= child.getBoundsInParent().getWidth() / 2) {
-										System.out.println("1");
-										getChildren().add(i - ((j < i) ? 1 : 0), wrapGroup);
-									} else {
-										System.out.println("2");
-										getChildren().add(i - ((j < i) ? 1 : 0) + 1, wrapGroup);
+							double tx = nx - child.getLayoutX();
+							double ty = ny - child.getLayoutY();
+							if (child.contains(tx + node.getBoundsInLocal().getWidth() / 2, ty + node.getBoundsInLocal().getHeight() / 2)) {
+								if (wrapGroup.getUserData().equals(new Integer(1))) {
+									if (child != wrapGroup && child.getUserData().equals(new Integer(1))) {
+										getChildren().remove(j);
+										if (tx + node.getBoundsInLocal().getWidth() / 2 <= child.getBoundsInParent().getWidth() / 2) {
+											getChildren().add(i - ((j < i) ? 1 : 0), wrapGroup);
+										} else {
+											getChildren().add(i - ((j < i) ? 1 : 0) + 1, wrapGroup);
+										}
+										doLayout();
+										break;
+									} else if (child.getUserData().equals(new Integer(2))) {
+										getChildren().remove(j);
+										doLayout();
 									}
-									doLayout();
-									break;
+								} else if (wrapGroup.getUserData().equals(new Integer(2))) {
+									if (child.getUserData().equals(new Integer(1))) {
+										getChildren().remove(j);
+										GridItem newItem = new GridItem(new GridItemModel() {
+										});
+										Node newNode = makeDraggable(newItem, new Integer(1));
+										if (getChildren().size() % 2 == 0) {
+											newItem.setStyle("-fx-background-color:#ffff00");
+										} else {
+											newItem.setStyle("-fx-background-color:#00ff00");
+										}
+										if (tx + node.getBoundsInLocal().getWidth() / 2 <= child.getBoundsInParent().getWidth() / 2) {
+											getChildren().add(i - ((j < i) ? 1 : 0), newNode);
+										} else {
+											getChildren().add(i - ((j < i) ? 1 : 0) + 1, newNode);
+										}
+										getChildren().add(wrapGroup);
+										doLayout();
+										break;
+									} else {
+										getChildren().remove(j);
+										GridItem newItem = new GridItem(new GridItemModel() {
+										});
+										Node newNode = makeDraggable(newItem, new Integer(1));
+										if (getChildren().size() % 2 == 0) {
+											newItem.setStyle("-fx-background-color:#ffff00");
+										} else {
+											newItem.setStyle("-fx-background-color:#00ff00");
+										}
+										getChildren().add(newNode);
+										getChildren().add(wrapGroup);
+										doLayout();
+									}
 								}
 							}
 						}
+						((Group)getChildren().get(getChildren().size() - 1)).getChildren().get(0).setStyle("-fx-background-color:#FF0000");
 						node.setTranslateX(0);
 						node.setTranslateY(0);
 					}
