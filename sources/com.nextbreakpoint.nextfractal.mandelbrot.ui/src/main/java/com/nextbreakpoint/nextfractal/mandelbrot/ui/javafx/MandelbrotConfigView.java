@@ -1,15 +1,10 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.ui.javafx;
 
-import javafx.event.EventHandler;
-import javafx.scene.Group;
-import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
-import com.nextbreakpoint.nextfractal.core.config.ConfigElement;
 import com.nextbreakpoint.nextfractal.core.tree.NodeSession;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.View;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.ViewContext;
@@ -17,6 +12,7 @@ import com.nextbreakpoint.nextfractal.core.util.RenderContext;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotConfig;
 import com.nextbreakpoint.nextfractal.mandelbrot.incolouringFormula.IncolouringFormulaConfigElement;
 import com.nextbreakpoint.nextfractal.mandelbrot.outcolouringFormula.OutcolouringFormulaConfigElement;
+import com.nextbreakpoint.nextfractal.twister.ui.javafx.ElementGridPane;
 
 public class MandelbrotConfigView extends View {
 
@@ -41,276 +37,87 @@ public class MandelbrotConfigView extends View {
 	public void dispose() {
 	}
 
-	public interface GridItemModel {
-	}
-	
-	public class GridItem extends Pane {
-		private GridItemModel model;
-		
-		public GridItem(GridItemModel model) {
-			this.model = model;
-			setPrefWidth(50);
-			setPrefHeight(50);
-			setMinWidth(50);
-			setMinHeight(50);
-			setMaxWidth(50);
-			setMaxHeight(50);
-			setStyle("-fx-background-color:#0000ff");
-		}
-	}
-	
-	public class GridItemAdd extends Pane {
-		public GridItemAdd() {
-			setPrefWidth(50);
-			setPrefHeight(50);
-			setMinWidth(50);
-			setMinHeight(50);
-			setMaxWidth(50);
-			setMaxHeight(50);
-			setStyle("-fx-background-color:#ff0000");
-		}
-	}
-	
-	public abstract class GridItems<T extends ConfigElement> extends Pane {
-		private MandelbrotConfig config;
-
-		public GridItems(ViewContext viewContext, MandelbrotConfig config) {
-			setPrefWidth(viewContext.getConfigViewSize().getWidth());
-			setMinHeight(50);
-			for (int i = 0; i < getElementCount(config); i++) {
-				T element = getElement(config, i);
-				String name = getElementName(element);
-				GridItem item = new GridItem(new GridItemModel() {
-				});
-				Node node = makeDraggable(item, new Integer(1));
-				getChildren().add(node);
-				node.setLayoutX((i % 4) * 60);
-				node.setLayoutY((i / 4) * 60);
-			}
-			GridItemAdd item = new GridItemAdd();
-			Node addNode = makeDraggable(item, new Integer(2));
-			getChildren().add(addNode);
-			addNode.setLayoutX((getElementCount(config) % 4) * 60);
-			addNode.setLayoutY((getElementCount(config) / 4) * 60);
-		}
-
-		private void doLayout() {
-			for (int i = 0; i < getChildren().size(); i++) {
-				Node child = getChildren().get(i);
-				child.setLayoutX((i % 4) * 60);
-				child.setLayoutY((i / 4) * 60);
-				if (child instanceof Group) {
-					((Group) child).getChildren().get(0).setTranslateX(0);
-					((Group) child).getChildren().get(0).setTranslateY(0);
-				}
-			}
-		}
-
-		private Node makeDraggable(final Node node, final Integer type) {
-			final DragContext dragContext = new DragContext();
-			final Group wrapGroup = new Group(node);
-			wrapGroup.setUserData(type);
-
-			wrapGroup.addEventFilter(MouseEvent.ANY,
-				new EventHandler<MouseEvent>() {
-					public void handle(final MouseEvent mouseEvent) {
-						mouseEvent.consume();
-					}
-				});
-
-			wrapGroup.addEventFilter(MouseEvent.MOUSE_PRESSED,
-				new EventHandler<MouseEvent>() {
-					public void handle(final MouseEvent mouseEvent) {
-						dragContext.mouseAnchorX = mouseEvent.getX();
-						dragContext.mouseAnchorY = mouseEvent.getY();
-						dragContext.initialTranslateX = node.getTranslateX();
-						dragContext.initialTranslateY = node.getTranslateY();
-						if (wrapGroup.getUserData().equals(new Integer(1))) {
-							((Group)getChildren().get(getChildren().size() - 1)).getChildren().get(0).setStyle("-fx-background-color:#444444");
-						} else if (wrapGroup.getUserData().equals(new Integer(2))) {
-							((Group)getChildren().get(getChildren().size() - 1)).getChildren().get(0).setStyle("-fx-background-color:#FFFFFF");
-						}
-					}
-				});
-
-			wrapGroup.addEventFilter(MouseEvent.MOUSE_DRAGGED,
-				new EventHandler<MouseEvent>() {
-					public void handle(final MouseEvent mouseEvent) {
-						double x = dragContext.initialTranslateX + mouseEvent.getX() - dragContext.mouseAnchorX;
-						double y = dragContext.initialTranslateY + mouseEvent.getY() - dragContext.mouseAnchorY;
-						if (x < -wrapGroup.getLayoutX()) {
-							x = -wrapGroup.getLayoutX();
-						}
-						if (x >= getWidth() - wrapGroup.getLayoutX() - node.getBoundsInLocal().getWidth()) {
-							x = getWidth() - wrapGroup.getLayoutX() - node.getBoundsInLocal().getWidth();
-						}
-						if (y < -wrapGroup.getLayoutY()) {
-							y = -wrapGroup.getLayoutY();
-						}
-						if (y >= getHeight() - wrapGroup.getLayoutY() - node.getBoundsInLocal().getHeight()) {
-							y = getHeight() - wrapGroup.getLayoutY() - node.getBoundsInLocal().getHeight();
-						}
-						node.setTranslateX(x);
-						node.setTranslateY(y);
-					}
-				});
-
-
-			wrapGroup.addEventFilter(MouseEvent.MOUSE_RELEASED,
-				new EventHandler<MouseEvent>() {
-					public void handle(final MouseEvent mouseEvent) {
-						double x = dragContext.initialTranslateX + mouseEvent.getX() - dragContext.mouseAnchorX;
-						double y = dragContext.initialTranslateY + mouseEvent.getY() - dragContext.mouseAnchorY;
-						if (x < -wrapGroup.getLayoutX()) {
-							x = -wrapGroup.getLayoutX();
-						}
-						if (x >= getWidth() - wrapGroup.getLayoutX() - node.getBoundsInLocal().getWidth()) {
-							x = getWidth() - wrapGroup.getLayoutX() - node.getBoundsInLocal().getWidth();
-						}
-						if (y < -wrapGroup.getLayoutY()) {
-							y = -wrapGroup.getLayoutY();
-						}
-						if (y >= getHeight() - wrapGroup.getLayoutY() - node.getBoundsInLocal().getHeight()) {
-							y = getHeight() - wrapGroup.getLayoutY() - node.getBoundsInLocal().getHeight();
-						}
-						double nx = wrapGroup.getLayoutX() + x;
-						double ny = wrapGroup.getLayoutY() + y;
-						int j = getChildren().indexOf(wrapGroup);
-						for (int i = 0; i < getChildren().size(); i++) {
-							Node child = getChildren().get(i);
-							double tx = nx - child.getLayoutX();
-							double ty = ny - child.getLayoutY();
-							if (child.contains(tx + node.getBoundsInLocal().getWidth() / 2, ty + node.getBoundsInLocal().getHeight() / 2)) {
-								if (wrapGroup.getUserData().equals(new Integer(1))) {
-									if (child != wrapGroup && child.getUserData().equals(new Integer(1))) {
-										getChildren().remove(j);
-										if (tx + node.getBoundsInLocal().getWidth() / 2 <= child.getBoundsInParent().getWidth() / 2) {
-											getChildren().add(i - ((j < i) ? 1 : 0), wrapGroup);
-										} else {
-											getChildren().add(i - ((j < i) ? 1 : 0) + 1, wrapGroup);
-										}
-										doLayout();
-										break;
-									} else if (child.getUserData().equals(new Integer(2))) {
-										getChildren().remove(j);
-										doLayout();
-									}
-								} else if (wrapGroup.getUserData().equals(new Integer(2))) {
-									if (child.getUserData().equals(new Integer(1))) {
-										getChildren().remove(j);
-										GridItem newItem = new GridItem(new GridItemModel() {
-										});
-										Node newNode = makeDraggable(newItem, new Integer(1));
-										if (getChildren().size() % 2 == 0) {
-											newItem.setStyle("-fx-background-color:#ffff00");
-										} else {
-											newItem.setStyle("-fx-background-color:#00ff00");
-										}
-										if (tx + node.getBoundsInLocal().getWidth() / 2 <= child.getBoundsInParent().getWidth() / 2) {
-											getChildren().add(i - ((j < i) ? 1 : 0), newNode);
-										} else {
-											getChildren().add(i - ((j < i) ? 1 : 0) + 1, newNode);
-										}
-										getChildren().add(wrapGroup);
-										doLayout();
-										break;
-									} else {
-										getChildren().remove(j);
-										GridItem newItem = new GridItem(new GridItemModel() {
-										});
-										Node newNode = makeDraggable(newItem, new Integer(1));
-										if (getChildren().size() % 2 == 0) {
-											newItem.setStyle("-fx-background-color:#ffff00");
-										} else {
-											newItem.setStyle("-fx-background-color:#00ff00");
-										}
-										getChildren().add(newNode);
-										getChildren().add(wrapGroup);
-										doLayout();
-									}
-								}
-							}
-						}
-						((Group)getChildren().get(getChildren().size() - 1)).getChildren().get(0).setStyle("-fx-background-color:#FF0000");
-						node.setTranslateX(0);
-						node.setTranslateY(0);
-					}
-				});
-			
-			return wrapGroup;
-		}
-		
-		protected MandelbrotConfig getConfig() {
-			return config;
-		}
-		
-		protected abstract void appendElement(MandelbrotConfig config, T element);
-
-		protected abstract T createElement();
-
-		protected abstract T getElement(MandelbrotConfig config, int index);
-
-		protected abstract int getElementCount(MandelbrotConfig config);
-
-		protected abstract String getElementName(T element);
-	}
-
-	public class IncolouringFormulaGridItems extends GridItems<IncolouringFormulaConfigElement> {
+	public class IncolouringFormulaGridItems extends ElementGridPane<MandelbrotConfig, IncolouringFormulaConfigElement> {
 		public IncolouringFormulaGridItems(ViewContext viewContext, MandelbrotConfig config) {
 			super(viewContext, config);
 		}
 
-		protected void appendElement(MandelbrotConfig config, IncolouringFormulaConfigElement element) {
-			config.getMandelbrotFractal().appendIncolouringFormulaConfigElement(element);
+		protected void appendElement(IncolouringFormulaConfigElement element) {
+			getConfig().getMandelbrotFractal().appendIncolouringFormulaConfigElement(element);
+		}
+
+		protected void insertElementAfter(int index, IncolouringFormulaConfigElement element) {
+			getConfig().getMandelbrotFractal().insertIncolouringFormulaConfigElementAfter(index, element);
+		}
+
+		protected void insertElementBefore(int index, IncolouringFormulaConfigElement element) {
+			getConfig().getMandelbrotFractal().insertIncolouringFormulaConfigElementBefore(index, element);
+		}
+
+		protected void removeElement(int index) {
+			getConfig().getMandelbrotFractal().removeIncolouringFormulaConfigElement(index);
 		}
 
 		protected IncolouringFormulaConfigElement createElement() {
 			return new IncolouringFormulaConfigElement();
 		}
 
-		protected IncolouringFormulaConfigElement getElement(MandelbrotConfig config, int index) {
-			return config.getMandelbrotFractal().getIncolouringFormulaConfigElement(index);
+		protected IncolouringFormulaConfigElement getElement(int index) {
+			return getConfig().getMandelbrotFractal().getIncolouringFormulaConfigElement(index);
 		}
 
-		protected int getElementCount(MandelbrotConfig config) {
-			return config.getMandelbrotFractal().getIncolouringFormulaConfigElementCount();
+		protected int getElementCount() {
+			return getConfig().getMandelbrotFractal().getIncolouringFormulaConfigElementCount();
 		}
 
 		protected String getElementName(IncolouringFormulaConfigElement element) {
 			return element.getExtensionElement().getReference().getExtensionName();
 		}
+
+		protected IncolouringFormulaConfigElement makeElement() {
+			return new IncolouringFormulaConfigElement();
+		}
 	}
 
-	public class OutcolouringFormulaGridItems extends GridItems<OutcolouringFormulaConfigElement> {
+	public class OutcolouringFormulaGridItems extends ElementGridPane<MandelbrotConfig, OutcolouringFormulaConfigElement> {
 		public OutcolouringFormulaGridItems(ViewContext viewContext, MandelbrotConfig config) {
 			super(viewContext, config);
 		}
 
-		protected void appendElement(MandelbrotConfig config, OutcolouringFormulaConfigElement element) {
-			config.getMandelbrotFractal().appendOutcolouringFormulaConfigElement(element);
+		protected void appendElement(OutcolouringFormulaConfigElement element) {
+			getConfig().getMandelbrotFractal().appendOutcolouringFormulaConfigElement(element);
+		}
+
+		protected void insertElementAfter(int index, OutcolouringFormulaConfigElement element) {
+			getConfig().getMandelbrotFractal().insertOutcolouringFormulaConfigElementAfter(index, element);
+		}
+
+		protected void insertElementBefore(int index, OutcolouringFormulaConfigElement element) {
+			getConfig().getMandelbrotFractal().insertOutcolouringFormulaConfigElementBefore(index, element);
+		}
+
+		protected void removeElement(int index) {
+			getConfig().getMandelbrotFractal().removeOutcolouringFormulaConfigElement(index);
 		}
 
 		protected OutcolouringFormulaConfigElement createElement() {
 			return new OutcolouringFormulaConfigElement();
 		}
 
-		protected OutcolouringFormulaConfigElement getElement(MandelbrotConfig config, int index) {
-			return config.getMandelbrotFractal().getOutcolouringFormulaConfigElement(index);
+		protected OutcolouringFormulaConfigElement getElement(int index) {
+			return getConfig().getMandelbrotFractal().getOutcolouringFormulaConfigElement(index);
 		}
 
-		protected int getElementCount(MandelbrotConfig config) {
-			return config.getMandelbrotFractal().getOutcolouringFormulaConfigElementCount();
+		protected int getElementCount() {
+			return getConfig().getMandelbrotFractal().getOutcolouringFormulaConfigElementCount();
 		}
 
 		protected String getElementName(OutcolouringFormulaConfigElement element) {
 			return element.getExtensionElement().getReference().getExtensionName();
 		}
-	}
-	
-	private class DragContext {
-		private double mouseAnchorX;
-		private double mouseAnchorY;
-		private double initialTranslateX;
-		private double initialTranslateY;
+
+		protected OutcolouringFormulaConfigElement makeElement() {
+			return new OutcolouringFormulaConfigElement();
+		}
 	}
 }
