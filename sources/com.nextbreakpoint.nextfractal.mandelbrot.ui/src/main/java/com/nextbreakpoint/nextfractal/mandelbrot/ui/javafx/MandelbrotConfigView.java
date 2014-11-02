@@ -37,9 +37,17 @@ public class MandelbrotConfigView extends View {
 	public void dispose() {
 	}
 
-	public class IncolouringFormulaGridItems extends ElementGridPane<MandelbrotConfig, IncolouringFormulaConfigElement> {
+	public class IncolouringFormulaGridItems extends ElementGridPane<IncolouringFormulaConfigElement> {
+		private MandelbrotConfig config;
+
 		public IncolouringFormulaGridItems(ViewContext viewContext, MandelbrotConfig config) {
-			super(viewContext, config);
+			super(viewContext, 50);
+			this.config = config;
+			init();
+		}
+
+		protected MandelbrotConfig getConfig() {
+			return config;
 		}
 
 		protected void appendElement(IncolouringFormulaConfigElement element) {
@@ -79,9 +87,17 @@ public class MandelbrotConfigView extends View {
 		}
 	}
 
-	public class OutcolouringFormulaGridItems extends ElementGridPane<MandelbrotConfig, OutcolouringFormulaConfigElement> {
+	public class OutcolouringFormulaGridItems extends ElementGridPane<OutcolouringFormulaConfigElement> {
+		private MandelbrotConfig config;
+
 		public OutcolouringFormulaGridItems(ViewContext viewContext, MandelbrotConfig config) {
-			super(viewContext, config);
+			super(viewContext, 50);
+			this.config = config;
+			init();
+		}
+
+		protected MandelbrotConfig getConfig() {
+			return config;
 		}
 
 		protected void appendElement(OutcolouringFormulaConfigElement element) {

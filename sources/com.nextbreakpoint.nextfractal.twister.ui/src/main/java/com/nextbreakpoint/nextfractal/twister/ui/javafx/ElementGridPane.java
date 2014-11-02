@@ -9,15 +9,22 @@ import javafx.scene.layout.Pane;
 import com.nextbreakpoint.nextfractal.core.config.ConfigElement;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.ViewContext;
 
-public abstract class ElementGridPane<V extends ConfigElement, T extends ConfigElement> extends Pane {
+public abstract class ElementGridPane<T extends ConfigElement> extends Pane {
 	private static final Integer TYPE_ITEM = new Integer(1);
 	private static final Integer TYPE_SENTINEL = new Integer(2);
-	private V config;
 	
-	public ElementGridPane(ViewContext viewContext, V config) {
-		this.config = config;
+	public ElementGridPane(ViewContext viewContext, int size) {
 		setPrefWidth(viewContext.getConfigViewSize().getWidth());
-		setMinHeight(50);
+		int cells = getCellCount(viewContext.getConfigViewSize().getWidth(), size);
+		setMinWidth(cells * size);
+		setMinHeight(size);
+	}
+
+	private int getCellCount(double width, double size) {
+		return (int)Math.floor(width / (size + 10));
+	}
+
+	protected void init() {
 		for (int i = 0; i < getElementCount(); i++) {
 			Node node = createItem(getElement(i));
 			getChildren().add(node);
@@ -46,10 +53,11 @@ public abstract class ElementGridPane<V extends ConfigElement, T extends ConfigE
 	}
 
 	private void doLayout() {
+		int cells = getCellCount(getPrefWidth(), getMinHeight());
 		for (int i = 0; i < getChildren().size(); i++) {
 			Node child = getChildren().get(i);
-			child.setLayoutX((i % 4) * 60);
-			child.setLayoutY((i / 4) * 60);
+			child.setLayoutX((i % cells) * (getMinHeight() + 10));
+			child.setLayoutY((i / cells) * (getMinHeight() + 10));
 			((Group) child).getChildren().get(0).setTranslateX(0);
 			((Group) child).getChildren().get(0).setTranslateY(0);
 		}
@@ -199,10 +207,6 @@ public abstract class ElementGridPane<V extends ConfigElement, T extends ConfigE
 		return sourceNode;
 	}
 	
-	protected V getConfig() {
-		return config;
-	}
-	
 	protected abstract void appendElement(T element);
 
 	protected abstract void insertElementAfter(int index, T element);
@@ -221,7 +225,7 @@ public abstract class ElementGridPane<V extends ConfigElement, T extends ConfigE
 
 	protected abstract T makeElement();
 
-	public class GridItem extends Pane {
+	private class GridItem extends Pane {
 		private T element;
 		
 		public GridItem(T element) {
@@ -239,7 +243,7 @@ public abstract class ElementGridPane<V extends ConfigElement, T extends ConfigE
 		}
 	}
 	
-	public class GridSentinel extends Pane {
+	private class GridSentinel extends Pane {
 		public GridSentinel() {
 			setPrefWidth(50);
 			setPrefHeight(50);
