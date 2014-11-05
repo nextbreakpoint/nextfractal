@@ -10,8 +10,7 @@ import com.nextbreakpoint.nextfractal.core.config.ConfigElement;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.ViewContext;
 
 public abstract class ElementGridPane<T extends ConfigElement> extends Pane {
-	private static final Integer TYPE_ITEM = new Integer(1);
-	private static final Integer TYPE_SENTINEL = new Integer(2);
+	private GridGroup sentinelGroup;
 	
 	public ElementGridPane(ViewContext viewContext, int size) {
 		setPrefWidth(viewContext.getConfigViewSize().getWidth());
@@ -22,11 +21,10 @@ public abstract class ElementGridPane<T extends ConfigElement> extends Pane {
 
 	protected void init() {
 		for (int i = 0; i < getElementCount(); i++) {
-			Node node = createItem(getElement(i));
-			getChildren().add(node);
+			getChildren().add(createItem(getElement(i)));
 		}
-		Node node = createSentinel();
-		getChildren().add(node);
+		sentinelGroup = createSentinel();
+		getChildren().add(sentinelGroup);
 		doLayout();
 	}
 
@@ -52,18 +50,6 @@ public abstract class ElementGridPane<T extends ConfigElement> extends Pane {
 		return (int)Math.floor(width / (size + 10));
 	}
 	
-	private Node createSentinel() {
-		GridSentinel sentinel = new GridSentinel();
-		Node node = makeDraggable(sentinel, TYPE_SENTINEL);
-		return node;
-	}
-
-	private Node createItem(T element) {
-		GridItem item = new GridItem(element);
-		Node node = makeDraggable(item, TYPE_ITEM);
-		return node;
-	}
-
 	private void doLayout() {
 		int cells = getCellCount(getPrefWidth(), getMinHeight());
 		for (int i = 0; i < getChildren().size(); i++) {
@@ -75,19 +61,37 @@ public abstract class ElementGridPane<T extends ConfigElement> extends Pane {
 		}
 	}
 
-	private Node unwrapNode(int index) {
-		return ((Group)getChildren().get(index)).getChildren().get(0);
-	}
-	
 	private Node unwrapNode(Group group) {
 		return group.getChildren().get(0);
 	}
 	
-	private Node makeDraggable(final Node node, final Integer type) {
-		final DragContext dragContext = new DragContext();
-		final Group sourceGroup = new Group(node);
-		sourceGroup.setUserData(type);
+	private GridGroup createSentinel() {
+		GridSentinel sentinel = new GridSentinel();
+		GridGroup node = createGroup(sentinel);
+		return node;
+	}
 
+	private GridGroup createItem(T element) {
+		GridItem item = new GridItem(element);
+		GridGroup node = createGroup(item);
+		return node;
+	}
+
+	private GridGroup createGroup(final GridItem node) {
+		final GroupItem group = new GroupItem(node);
+		makeDraggable(group);
+		return group;
+	}
+
+	private GridGroup createGroup(final GridSentinel node) {
+		final GroupSentinel group = new GroupSentinel(node);
+		makeDraggable(group);
+		return group;
+	}
+
+	private void makeDraggable(final GridGroup sourceGroup) {
+		final DragContext dragContext = new DragContext();
+		
 		sourceGroup.addEventFilter(MouseEvent.ANY,
 			new EventHandler<MouseEvent>() {
 				public void handle(final MouseEvent mouseEvent) {
@@ -98,14 +102,17 @@ public abstract class ElementGridPane<T extends ConfigElement> extends Pane {
 		sourceGroup.addEventFilter(MouseEvent.MOUSE_PRESSED,
 			new EventHandler<MouseEvent>() {
 				public void handle(final MouseEvent mouseEvent) {
+					Node node = unwrapNode(sourceGroup);
 					dragContext.mouseAnchorX = mouseEvent.getX();
 					dragContext.mouseAnchorY = mouseEvent.getY();
 					dragContext.initialTranslateX = node.getTranslateX();
 					dragContext.initialTranslateY = node.getTranslateY();
-					if (sourceGroup.getUserData().equals(TYPE_ITEM)) {
-						unwrapNode(getChildren().size() - 1).setStyle("-fx-border-color:#333333;-fx-background-color:#555555;-fx-opacity:1.0");
+					sourceGroup.setSource(true);
+					sourceGroup.beginDrag();
+					if (sourceGroup != sentinelGroup) {
+						sentinelGroup.setSource(false);
+						sentinelGroup.beginDrag();
 					}
-					unwrapNode(sourceGroup).setStyle("-fx-border-color:#004400;-fx-background-color:#00FF00;-fx-opacity:0.5");
 					dragContext.index = getChildren().indexOf(sourceGroup);
 					getChildren().remove(dragContext.index);
 					getChildren().add(sourceGroup);
@@ -116,6 +123,7 @@ public abstract class ElementGridPane<T extends ConfigElement> extends Pane {
 		sourceGroup.addEventFilter(MouseEvent.MOUSE_DRAGGED,
 			new EventHandler<MouseEvent>() {
 				public void handle(final MouseEvent mouseEvent) {
+					Node node = unwrapNode(sourceGroup);
 					double x = dragContext.initialTranslateX + mouseEvent.getX() - dragContext.mouseAnchorX;
 					double y = dragContext.initialTranslateY + mouseEvent.getY() - dragContext.mouseAnchorY;
 					if (x < -sourceGroup.getLayoutX()) {
@@ -134,27 +142,27 @@ public abstract class ElementGridPane<T extends ConfigElement> extends Pane {
 					node.setTranslateY(y);
 					double nx = sourceGroup.getLayoutX() + x;
 					double ny = sourceGroup.getLayoutY() + y;
-					if (dragContext.selectedIndex != -1) {
-						Group group = (Group)getChildren().get(dragContext.selectedIndex);
-						if (group.getUserData().equals(TYPE_ITEM)) {
-							unwrapNode(group).setStyle("-fx-border-color:#444444;-fx-background-color:#666666;-fx-opacity:1.0");
-						} else {
-							unwrapNode(group).setStyle("-fx-border-color:#333333;-fx-background-color:#555555;-fx-opacity:1.0");	
-						}
-						dragContext.selectedIndex = -1;
-					}
+					int selectedIndex = -1;
 					for (int i = 0; i < getChildren().size(); i++) {
-						Group group = (Group)getChildren().get(i);
+						GridGroup group = (GridGroup)getChildren().get(i);
 						double tx = nx - group.getLayoutX();
 						double ty = ny - group.getLayoutY();
 						if (group != sourceGroup && group.contains(tx + node.getBoundsInLocal().getWidth() / 2, ty + node.getBoundsInLocal().getHeight() / 2)) {
-							if (group.getUserData().equals(TYPE_ITEM)) {
-								unwrapNode(group).setStyle("-fx-border-color:#440000;-fx-background-color:#FF0000;-fx-opacity:1.0");
-							} else {
-								unwrapNode(group).setStyle("-fx-border-color:#222222;-fx-background-color:#444444;-fx-opacity:1.0");
-							}
-							dragContext.selectedIndex = i;
+							selectedIndex = i;
 							break;
+						}
+					}
+					if (dragContext.selectedIndex != selectedIndex) {
+						if (dragContext.selectedIndex != -1) {
+							GridGroup group = (GridGroup)getChildren().get(dragContext.selectedIndex);
+							group.setSelected(false);
+							group.updateDrag();
+						}
+						dragContext.selectedIndex = selectedIndex;
+						if (selectedIndex != -1) {
+							GridGroup group = (GridGroup)getChildren().get(dragContext.selectedIndex);
+							group.setSelected(true);
+							group.updateDrag();
 						}
 					}
 				}
@@ -163,6 +171,7 @@ public abstract class ElementGridPane<T extends ConfigElement> extends Pane {
 		sourceGroup.addEventFilter(MouseEvent.MOUSE_RELEASED,
 			new EventHandler<MouseEvent>() {
 				public void handle(final MouseEvent mouseEvent) {
+					Node node = unwrapNode(sourceGroup);
 					double x = dragContext.initialTranslateX + mouseEvent.getX() - dragContext.mouseAnchorX;
 					double y = dragContext.initialTranslateY + mouseEvent.getY() - dragContext.mouseAnchorY;
 					if (x < -sourceGroup.getLayoutX()) {
@@ -180,23 +189,23 @@ public abstract class ElementGridPane<T extends ConfigElement> extends Pane {
 					double nx = sourceGroup.getLayoutX() + x;
 					double ny = sourceGroup.getLayoutY() + y;
 					int sourceIndex = dragContext.index;
-					Group targetGroup = null;
+					GridGroup targetGroup = null;
 					int targetIndex = 0;
+					getChildren().remove(sourceGroup);
 					for (int i = 0; i < getChildren().size(); i++) {
 						Node group = getChildren().get(i);
 						double tx = nx - group.getLayoutX();
 						double ty = ny - group.getLayoutY();
-						if (group != sourceGroup && group.contains(tx + node.getBoundsInLocal().getWidth() / 2, ty + node.getBoundsInLocal().getHeight() / 2)) {
-							targetGroup = (Group)group;
-							targetIndex = i;// - (sourceIndex < i ? 1 : 0);
+						if (group.contains(tx + node.getBoundsInLocal().getWidth() / 2, ty + node.getBoundsInLocal().getHeight() / 2)) {
+							targetGroup = (GridGroup)group;
+							targetIndex = i;
 							break;
 						}
 					}
-					getChildren().remove(sourceGroup);
 					if (targetGroup != null) {
 						double tx = nx - targetGroup.getLayoutX();
-						if (sourceGroup.getUserData().equals(TYPE_ITEM)) {
-							if (targetGroup.getUserData().equals(TYPE_ITEM)) {
+						if (sourceGroup instanceof ElementGridPane<?>.GroupItem) {
+							if (targetGroup instanceof ElementGridPane<?>.GroupItem) {
 								T element = getElement(sourceIndex);
 								removeElement(sourceIndex);
 								if (tx + node.getBoundsInLocal().getWidth() / 2 <= targetGroup.getBoundsInParent().getWidth() / 2) {
@@ -206,19 +215,14 @@ public abstract class ElementGridPane<T extends ConfigElement> extends Pane {
 									insertElementAfter(targetIndex, element);
 									getChildren().add(targetIndex + 1, sourceGroup);
 								}
-								unwrapNode(getChildren().size() - 1).setStyle("-fx-border-color:#444400;-fx-background-color:#ffff00;-fx-opacity:1.0");
-								unwrapNode(targetGroup).setStyle("-fx-border-color:#444444;-fx-background-color:#666666;-fx-opacity:1.0");
-								unwrapNode(sourceGroup).setStyle("-fx-border-color:#444444;-fx-background-color:#666666;-fx-opacity:1.0");
-							} else if (targetGroup.getUserData().equals(TYPE_SENTINEL)) {
+							} else if (targetGroup instanceof ElementGridPane<?>.GroupSentinel) {
 								removeElement(sourceIndex);
-								unwrapNode(targetGroup).setStyle("-fx-border-color:#444400;-fx-background-color:#ffff00;-fx-opacity:1.0");
-								unwrapNode(sourceGroup).setStyle("-fx-border-color:#444444;-fx-background-color:#666666;-fx-opacity:1.0");
 							}
 							doLayout();
-						} else if (sourceGroup.getUserData().equals(TYPE_SENTINEL)) {
-							T element = makeElement();
-							Node newNode = createItem(element);
-							if (targetGroup.getUserData().equals(TYPE_ITEM)) {
+						} else if (sourceGroup instanceof ElementGridPane<?>.GroupSentinel) {
+							if (targetGroup instanceof ElementGridPane<?>.GroupItem) {
+								T element = makeElement();
+								Node newNode = createItem(element);
 								if (tx + node.getBoundsInLocal().getWidth() / 2 <= targetGroup.getBoundsInParent().getWidth() / 2) {
 									insertElementBefore(targetIndex, element);
 									getChildren().add(targetIndex, newNode);
@@ -226,34 +230,31 @@ public abstract class ElementGridPane<T extends ConfigElement> extends Pane {
 									insertElementAfter(targetIndex, element);
 									getChildren().add(targetIndex + 1, newNode);
 								}
-							} else {
-								appendElement(element);
-								getChildren().add(newNode);
 							}
 							getChildren().add(sourceGroup);
 							doLayout();
-							unwrapNode(targetGroup).setStyle("-fx-border-color:#444444;-fx-background-color:#666666;-fx-opacity:1.0");
-							unwrapNode(sourceGroup).setStyle("-fx-border-color:#444400;-fx-background-color:#ffff00;-fx-opacity:1.0");
 						}
-					} else if (sourceGroup.getUserData().equals(TYPE_SENTINEL)) {
+					} else if (sourceGroup instanceof ElementGridPane<?>.GroupSentinel) {
 						T element = makeElement();
 						Node newNode = createItem(element);
 						appendElement(element);
 						getChildren().add(newNode);
 						getChildren().add(sourceGroup);
 						doLayout();
-						unwrapNode(sourceGroup).setStyle("-fx-border-color:#444400;-fx-background-color:#ffff00;-fx-opacity:1.0");
 					} else {
 						getChildren().add(dragContext.index, sourceGroup);
-						unwrapNode(getChildren().size() - 1).setStyle("-fx-border-color:#444400;-fx-background-color:#ffff00;-fx-opacity:1.0");
-						unwrapNode(sourceGroup).setStyle("-fx-border-color:#444444;-fx-background-color:#666666;-fx-opacity:1.0");
 					}
 					node.setTranslateX(0);
 					node.setTranslateY(0);
+					if (targetGroup != null) {
+						targetGroup.endDrag();
+					}
+					sourceGroup.endDrag();
+					if (sourceGroup != sentinelGroup) {
+						sentinelGroup.endDrag();
+					}
 				}
 			});
-		
-		return sourceGroup;
 	}
 	
 	private class DragContext {
@@ -293,6 +294,100 @@ public abstract class ElementGridPane<T extends ConfigElement> extends Pane {
 			setMaxWidth(50);
 			setMaxHeight(50);
 			setId("grid-sentinel");
+		}
+	}
+	
+	private class GridGroup extends Group {
+		private boolean selected = false;
+		private boolean source = false;
+		
+		public GridGroup(Node node) {
+			super(node);
+		}
+
+		public boolean isSelected() {
+			return selected;
+		}
+
+		public boolean isSource() {
+			return source;
+		}
+
+		public void setSelected(boolean selected) {
+			this.selected = selected;
+		}
+
+		public void setSource(boolean source) {
+			this.source = source;
+		}
+
+		public void beginDrag() {
+		}
+		
+		public void updateDrag() {
+		}
+
+		public void endDrag() {
+		}
+	}
+	
+	private class GroupItem extends GridGroup {
+		public GroupItem(ElementGridPane<T>.GridItem node) {
+			super(node);
+		}
+
+		public void beginDrag() {
+			if (isSource()) {
+				unwrapNode(this).setStyle("-fx-border-color:#004400;-fx-background-color:#00FF00;-fx-opacity:0.5");
+			} else {
+				unwrapNode(this).setStyle("-fx-border-color:#444444;-fx-background-color:#666666;-fx-opacity:1.0");
+			}
+		}
+
+		public void updateDrag() {
+			if (isSelected()) {
+				unwrapNode(this).setStyle("-fx-border-color:#440000;-fx-background-color:#FF0000;-fx-opacity:1.0");
+			} else {
+				if (isSource()) {
+					unwrapNode(this).setStyle("-fx-border-color:#004400;-fx-background-color:#00FF00;-fx-opacity:0.5");
+				} else {
+					unwrapNode(this).setStyle("-fx-border-color:#444444;-fx-background-color:#666666;-fx-opacity:1.0");
+				}
+			}
+		}
+
+		public void endDrag() {
+			unwrapNode(this).setStyle("-fx-border-color:#444444;-fx-background-color:#666666;-fx-opacity:1.0");
+		}
+	}
+	
+	private class GroupSentinel extends GridGroup {
+		public GroupSentinel(ElementGridPane<T>.GridSentinel node) {
+			super(node);
+		}
+
+		public void beginDrag() {
+			if (isSource()) {
+				unwrapNode(this).setStyle("-fx-border-color:#004400;-fx-background-color:#00FF00;-fx-opacity:0.5");
+			} else {
+				unwrapNode(this).setStyle("-fx-border-color:#333333;-fx-background-color:#555555;-fx-opacity:1.0");
+			}
+		}
+
+		public void updateDrag() {
+			if (isSelected()) {
+				unwrapNode(this).setStyle("-fx-border-color:#222222;-fx-background-color:#444444;-fx-opacity:1.0");
+			} else {
+				if (isSource()) {
+					unwrapNode(this).setStyle("-fx-border-color:#004400;-fx-background-color:#00FF00;-fx-opacity:0.5");
+				} else {
+					unwrapNode(this).setStyle("-fx-border-color:#333333;-fx-background-color:#555555;-fx-opacity:1.0");
+				}
+			}
+		}
+
+		public void endDrag() {
+			unwrapNode(this).setStyle("-fx-border-color:#444400;-fx-background-color:#ffff00;-fx-opacity:1.0");
 		}
 	}
 }
