@@ -20,10 +20,6 @@ public abstract class ElementGridPane<T extends ConfigElement> extends Pane {
 		setMinHeight(size);
 	}
 
-	private int getCellCount(double width, double size) {
-		return (int)Math.floor(width / (size + 10));
-	}
-
 	protected void init() {
 		for (int i = 0; i < getElementCount(); i++) {
 			Node node = createItem(getElement(i));
@@ -34,179 +30,6 @@ public abstract class ElementGridPane<T extends ConfigElement> extends Pane {
 		doLayout();
 	}
 
-	private Node createSentinel() {
-		GridSentinel sentinel = new GridSentinel();
-		sentinel.setStyle("-fx-background-color:#ff0000");
-		Node node = makeDraggable(sentinel, TYPE_SENTINEL);
-		return node;
-	}
-
-	private Node createItem(T element) {
-		GridItem item = new GridItem(element);
-		if (getElementCount() % 2 == 0) {
-			item.setStyle("-fx-background-color:#ffff00");
-		} else {
-			item.setStyle("-fx-background-color:#00ff00");
-		}
-		Node node = makeDraggable(item, TYPE_ITEM);
-		return node;
-	}
-
-	private void doLayout() {
-		int cells = getCellCount(getPrefWidth(), getMinHeight());
-		for (int i = 0; i < getChildren().size(); i++) {
-			Node child = getChildren().get(i);
-			child.setLayoutX((i % cells) * (getMinHeight() + 10));
-			child.setLayoutY((i / cells) * (getMinHeight() + 10));
-			((Group) child).getChildren().get(0).setTranslateX(0);
-			((Group) child).getChildren().get(0).setTranslateY(0);
-		}
-	}
-
-	private class DragContext {
-		private double mouseAnchorX;
-		private double mouseAnchorY;
-		private double initialTranslateX;
-		private double initialTranslateY;
-	}
-	
-	private Node unwrapNode(int index) {
-		return ((Group)getChildren().get(index)).getChildren().get(0);
-	}
-	
-	private Node makeDraggable(final Node node, final Integer type) {
-		final DragContext dragContext = new DragContext();
-		final Group sourceNode = new Group(node);
-		sourceNode.setUserData(type);
-
-		sourceNode.addEventFilter(MouseEvent.ANY,
-			new EventHandler<MouseEvent>() {
-				public void handle(final MouseEvent mouseEvent) {
-					mouseEvent.consume();
-				}
-			});
-
-		sourceNode.addEventFilter(MouseEvent.MOUSE_PRESSED,
-			new EventHandler<MouseEvent>() {
-				public void handle(final MouseEvent mouseEvent) {
-					dragContext.mouseAnchorX = mouseEvent.getX();
-					dragContext.mouseAnchorY = mouseEvent.getY();
-					dragContext.initialTranslateX = node.getTranslateX();
-					dragContext.initialTranslateY = node.getTranslateY();
-					if (sourceNode.getUserData().equals(TYPE_ITEM)) {
-						unwrapNode(getChildren().size() - 1).setStyle("-fx-background-color:#444444");
-					} else if (sourceNode.getUserData().equals(TYPE_SENTINEL)) {
-						unwrapNode(getChildren().size() - 1).setStyle("-fx-background-color:#FFFFFF");
-					}
-				}
-			});
-
-		sourceNode.addEventFilter(MouseEvent.MOUSE_DRAGGED,
-			new EventHandler<MouseEvent>() {
-				public void handle(final MouseEvent mouseEvent) {
-					double x = dragContext.initialTranslateX + mouseEvent.getX() - dragContext.mouseAnchorX;
-					double y = dragContext.initialTranslateY + mouseEvent.getY() - dragContext.mouseAnchorY;
-					if (x < -sourceNode.getLayoutX()) {
-						x = -sourceNode.getLayoutX();
-					}
-					if (x >= getWidth() - sourceNode.getLayoutX() - node.getBoundsInLocal().getWidth()) {
-						x = getWidth() - sourceNode.getLayoutX() - node.getBoundsInLocal().getWidth();
-					}
-					if (y < -sourceNode.getLayoutY()) {
-						y = -sourceNode.getLayoutY();
-					}
-					if (y >= getHeight() - sourceNode.getLayoutY() - node.getBoundsInLocal().getHeight()) {
-						y = getHeight() - sourceNode.getLayoutY() - node.getBoundsInLocal().getHeight();
-					}
-					node.setTranslateX(x);
-					node.setTranslateY(y);
-				}
-			});
-
-
-		sourceNode.addEventFilter(MouseEvent.MOUSE_RELEASED,
-			new EventHandler<MouseEvent>() {
-				public void handle(final MouseEvent mouseEvent) {
-					double x = dragContext.initialTranslateX + mouseEvent.getX() - dragContext.mouseAnchorX;
-					double y = dragContext.initialTranslateY + mouseEvent.getY() - dragContext.mouseAnchorY;
-					if (x < -sourceNode.getLayoutX()) {
-						x = -sourceNode.getLayoutX();
-					}
-					if (x >= getWidth() - sourceNode.getLayoutX() - node.getBoundsInLocal().getWidth()) {
-						x = getWidth() - sourceNode.getLayoutX() - node.getBoundsInLocal().getWidth();
-					}
-					if (y < -sourceNode.getLayoutY()) {
-						y = -sourceNode.getLayoutY();
-					}
-					if (y >= getHeight() - sourceNode.getLayoutY() - node.getBoundsInLocal().getHeight()) {
-						y = getHeight() - sourceNode.getLayoutY() - node.getBoundsInLocal().getHeight();
-					}
-					double nx = sourceNode.getLayoutX() + x;
-					double ny = sourceNode.getLayoutY() + y;
-					int sourceIndex = getChildren().indexOf(sourceNode);
-					Node targetGroup = null;
-					int targetIndex = 0;
-					for (int i = 0; i < getChildren().size(); i++) {
-						Node group = getChildren().get(i);
-						double tx = nx - group.getLayoutX();
-						double ty = ny - group.getLayoutY();
-						if (group != sourceNode && group.contains(tx + node.getBoundsInLocal().getWidth() / 2, ty + node.getBoundsInLocal().getHeight() / 2)) {
-							targetGroup = group;
-							targetIndex = i;
-							break;
-						}
-					}
-					if (targetGroup != null) {
-						double tx = nx - targetGroup.getLayoutX();
-						if (sourceNode.getUserData().equals(TYPE_ITEM)) {
-							if (targetGroup.getUserData().equals(TYPE_ITEM)) {
-								getChildren().remove(sourceIndex);
-								T element = getElement(sourceIndex);
-								removeElement(sourceIndex);
-								if (tx + node.getBoundsInLocal().getWidth() / 2 <= targetGroup.getBoundsInParent().getWidth() / 2) {
-									insertElementBefore(targetIndex - ((sourceIndex < targetIndex) ? 1 : 0), element);
-									getChildren().add(targetIndex - ((sourceIndex < targetIndex) ? 1 : 0), sourceNode);
-								} else {
-									insertElementAfter(targetIndex - ((sourceIndex < targetIndex) ? 1 : 0), element);
-									getChildren().add(targetIndex - ((sourceIndex < targetIndex) ? 1 : 0) + 1, sourceNode);
-								}
-								doLayout();
-							} else if (targetGroup.getUserData().equals(TYPE_SENTINEL)) {
-								getChildren().remove(sourceIndex);
-								removeElement(sourceIndex);
-								doLayout();
-							}
-						} else if (sourceNode.getUserData().equals(TYPE_SENTINEL)) {
-							if (targetGroup.getUserData().equals(TYPE_ITEM)) {
-								T element = makeElement();
-								if (tx + node.getBoundsInLocal().getWidth() / 2 <= targetGroup.getBoundsInParent().getWidth() / 2) {
-									insertElementBefore(targetIndex - ((sourceIndex < targetIndex) ? 1 : 0), element);
-									Node newNode = createItem(element);
-									getChildren().add(targetIndex - ((sourceIndex < targetIndex) ? 1 : 0), newNode);
-								} else {
-									insertElementAfter(targetIndex - ((sourceIndex < targetIndex) ? 1 : 0), element);
-									Node newNode = createItem(element);
-									getChildren().add(targetIndex - ((sourceIndex < targetIndex) ? 1 : 0) + 1, newNode);
-								}
-								doLayout();
-							}
-						}
-					} else if (sourceNode.getUserData().equals(TYPE_SENTINEL)) {
-						T element = makeElement();
-						appendElement(element);
-						Node newNode = createItem(element);
-						getChildren().add(sourceIndex, newNode);
-						doLayout();
-					}
-					unwrapNode(getChildren().size() - 1).setStyle("-fx-background-color:#FF0000");
-					node.setTranslateX(0);
-					node.setTranslateY(0);
-				}
-			});
-		
-		return sourceNode;
-	}
-	
 	protected abstract void appendElement(T element);
 
 	protected abstract void insertElementAfter(int index, T element);
@@ -225,6 +48,223 @@ public abstract class ElementGridPane<T extends ConfigElement> extends Pane {
 
 	protected abstract T makeElement();
 
+	private int getCellCount(double width, double size) {
+		return (int)Math.floor(width / (size + 10));
+	}
+	
+	private Node createSentinel() {
+		GridSentinel sentinel = new GridSentinel();
+		Node node = makeDraggable(sentinel, TYPE_SENTINEL);
+		return node;
+	}
+
+	private Node createItem(T element) {
+		GridItem item = new GridItem(element);
+		Node node = makeDraggable(item, TYPE_ITEM);
+		return node;
+	}
+
+	private void doLayout() {
+		int cells = getCellCount(getPrefWidth(), getMinHeight());
+		for (int i = 0; i < getChildren().size(); i++) {
+			Node child = getChildren().get(i);
+			child.setLayoutX((i % cells) * (getMinHeight() + 10));
+			child.setLayoutY((i / cells) * (getMinHeight() + 10));
+			((Group) child).getChildren().get(0).setTranslateX(0);
+			((Group) child).getChildren().get(0).setTranslateY(0);
+		}
+	}
+
+	private Node unwrapNode(int index) {
+		return ((Group)getChildren().get(index)).getChildren().get(0);
+	}
+	
+	private Node unwrapNode(Group group) {
+		return group.getChildren().get(0);
+	}
+	
+	private Node makeDraggable(final Node node, final Integer type) {
+		final DragContext dragContext = new DragContext();
+		final Group sourceGroup = new Group(node);
+		sourceGroup.setUserData(type);
+
+		sourceGroup.addEventFilter(MouseEvent.ANY,
+			new EventHandler<MouseEvent>() {
+				public void handle(final MouseEvent mouseEvent) {
+					mouseEvent.consume();
+				}
+			});
+
+		sourceGroup.addEventFilter(MouseEvent.MOUSE_PRESSED,
+			new EventHandler<MouseEvent>() {
+				public void handle(final MouseEvent mouseEvent) {
+					dragContext.mouseAnchorX = mouseEvent.getX();
+					dragContext.mouseAnchorY = mouseEvent.getY();
+					dragContext.initialTranslateX = node.getTranslateX();
+					dragContext.initialTranslateY = node.getTranslateY();
+					if (sourceGroup.getUserData().equals(TYPE_ITEM)) {
+						unwrapNode(getChildren().size() - 1).setStyle("-fx-border-color:#333333;-fx-background-color:#555555;-fx-opacity:1.0");
+					}
+					unwrapNode(sourceGroup).setStyle("-fx-border-color:#004400;-fx-background-color:#00FF00;-fx-opacity:0.5");
+					dragContext.index = getChildren().indexOf(sourceGroup);
+					getChildren().remove(dragContext.index);
+					getChildren().add(sourceGroup);
+					dragContext.selectedIndex = -1;
+				}
+			});
+
+		sourceGroup.addEventFilter(MouseEvent.MOUSE_DRAGGED,
+			new EventHandler<MouseEvent>() {
+				public void handle(final MouseEvent mouseEvent) {
+					double x = dragContext.initialTranslateX + mouseEvent.getX() - dragContext.mouseAnchorX;
+					double y = dragContext.initialTranslateY + mouseEvent.getY() - dragContext.mouseAnchorY;
+					if (x < -sourceGroup.getLayoutX()) {
+						x = -sourceGroup.getLayoutX();
+					}
+					if (x >= getWidth() - sourceGroup.getLayoutX() - node.getBoundsInLocal().getWidth()) {
+						x = getWidth() - sourceGroup.getLayoutX() - node.getBoundsInLocal().getWidth();
+					}
+					if (y < -sourceGroup.getLayoutY()) {
+						y = -sourceGroup.getLayoutY();
+					}
+					if (y >= getHeight() - sourceGroup.getLayoutY() - node.getBoundsInLocal().getHeight()) {
+						y = getHeight() - sourceGroup.getLayoutY() - node.getBoundsInLocal().getHeight();
+					}
+					node.setTranslateX(x);
+					node.setTranslateY(y);
+					double nx = sourceGroup.getLayoutX() + x;
+					double ny = sourceGroup.getLayoutY() + y;
+					if (dragContext.selectedIndex != -1) {
+						Group group = (Group)getChildren().get(dragContext.selectedIndex);
+						if (group.getUserData().equals(TYPE_ITEM)) {
+							unwrapNode(group).setStyle("-fx-border-color:#444444;-fx-background-color:#666666;-fx-opacity:1.0");
+						} else {
+							unwrapNode(group).setStyle("-fx-border-color:#333333;-fx-background-color:#555555;-fx-opacity:1.0");	
+						}
+						dragContext.selectedIndex = -1;
+					}
+					for (int i = 0; i < getChildren().size(); i++) {
+						Group group = (Group)getChildren().get(i);
+						double tx = nx - group.getLayoutX();
+						double ty = ny - group.getLayoutY();
+						if (group != sourceGroup && group.contains(tx + node.getBoundsInLocal().getWidth() / 2, ty + node.getBoundsInLocal().getHeight() / 2)) {
+							if (group.getUserData().equals(TYPE_ITEM)) {
+								unwrapNode(group).setStyle("-fx-border-color:#440000;-fx-background-color:#FF0000;-fx-opacity:1.0");
+							} else {
+								unwrapNode(group).setStyle("-fx-border-color:#222222;-fx-background-color:#444444;-fx-opacity:1.0");
+							}
+							dragContext.selectedIndex = i;
+							break;
+						}
+					}
+				}
+			});
+
+		sourceGroup.addEventFilter(MouseEvent.MOUSE_RELEASED,
+			new EventHandler<MouseEvent>() {
+				public void handle(final MouseEvent mouseEvent) {
+					double x = dragContext.initialTranslateX + mouseEvent.getX() - dragContext.mouseAnchorX;
+					double y = dragContext.initialTranslateY + mouseEvent.getY() - dragContext.mouseAnchorY;
+					if (x < -sourceGroup.getLayoutX()) {
+						x = -sourceGroup.getLayoutX();
+					}
+					if (x >= getWidth() - sourceGroup.getLayoutX() - node.getBoundsInLocal().getWidth()) {
+						x = getWidth() - sourceGroup.getLayoutX() - node.getBoundsInLocal().getWidth();
+					}
+					if (y < -sourceGroup.getLayoutY()) {
+						y = -sourceGroup.getLayoutY();
+					}
+					if (y >= getHeight() - sourceGroup.getLayoutY() - node.getBoundsInLocal().getHeight()) {
+						y = getHeight() - sourceGroup.getLayoutY() - node.getBoundsInLocal().getHeight();
+					}
+					double nx = sourceGroup.getLayoutX() + x;
+					double ny = sourceGroup.getLayoutY() + y;
+					int sourceIndex = dragContext.index;
+					Group targetGroup = null;
+					int targetIndex = 0;
+					for (int i = 0; i < getChildren().size(); i++) {
+						Node group = getChildren().get(i);
+						double tx = nx - group.getLayoutX();
+						double ty = ny - group.getLayoutY();
+						if (group != sourceGroup && group.contains(tx + node.getBoundsInLocal().getWidth() / 2, ty + node.getBoundsInLocal().getHeight() / 2)) {
+							targetGroup = (Group)group;
+							targetIndex = i;// - (sourceIndex < i ? 1 : 0);
+							break;
+						}
+					}
+					getChildren().remove(sourceGroup);
+					if (targetGroup != null) {
+						double tx = nx - targetGroup.getLayoutX();
+						if (sourceGroup.getUserData().equals(TYPE_ITEM)) {
+							if (targetGroup.getUserData().equals(TYPE_ITEM)) {
+								T element = getElement(sourceIndex);
+								removeElement(sourceIndex);
+								if (tx + node.getBoundsInLocal().getWidth() / 2 <= targetGroup.getBoundsInParent().getWidth() / 2) {
+									insertElementBefore(targetIndex, element);
+									getChildren().add(targetIndex, sourceGroup);
+								} else {
+									insertElementAfter(targetIndex, element);
+									getChildren().add(targetIndex + 1, sourceGroup);
+								}
+								unwrapNode(getChildren().size() - 1).setStyle("-fx-border-color:#444400;-fx-background-color:#ffff00;-fx-opacity:1.0");
+								unwrapNode(targetGroup).setStyle("-fx-border-color:#444444;-fx-background-color:#666666;-fx-opacity:1.0");
+								unwrapNode(sourceGroup).setStyle("-fx-border-color:#444444;-fx-background-color:#666666;-fx-opacity:1.0");
+							} else if (targetGroup.getUserData().equals(TYPE_SENTINEL)) {
+								removeElement(sourceIndex);
+								unwrapNode(targetGroup).setStyle("-fx-border-color:#444400;-fx-background-color:#ffff00;-fx-opacity:1.0");
+								unwrapNode(sourceGroup).setStyle("-fx-border-color:#444444;-fx-background-color:#666666;-fx-opacity:1.0");
+							}
+							doLayout();
+						} else if (sourceGroup.getUserData().equals(TYPE_SENTINEL)) {
+							T element = makeElement();
+							Node newNode = createItem(element);
+							if (targetGroup.getUserData().equals(TYPE_ITEM)) {
+								if (tx + node.getBoundsInLocal().getWidth() / 2 <= targetGroup.getBoundsInParent().getWidth() / 2) {
+									insertElementBefore(targetIndex, element);
+									getChildren().add(targetIndex, newNode);
+								} else {
+									insertElementAfter(targetIndex, element);
+									getChildren().add(targetIndex + 1, newNode);
+								}
+							} else {
+								appendElement(element);
+								getChildren().add(newNode);
+							}
+							getChildren().add(sourceGroup);
+							doLayout();
+							unwrapNode(targetGroup).setStyle("-fx-border-color:#444444;-fx-background-color:#666666;-fx-opacity:1.0");
+							unwrapNode(sourceGroup).setStyle("-fx-border-color:#444400;-fx-background-color:#ffff00;-fx-opacity:1.0");
+						}
+					} else if (sourceGroup.getUserData().equals(TYPE_SENTINEL)) {
+						T element = makeElement();
+						Node newNode = createItem(element);
+						appendElement(element);
+						getChildren().add(newNode);
+						getChildren().add(sourceGroup);
+						doLayout();
+						unwrapNode(sourceGroup).setStyle("-fx-border-color:#444400;-fx-background-color:#ffff00;-fx-opacity:1.0");
+					} else {
+						getChildren().add(dragContext.index, sourceGroup);
+						unwrapNode(getChildren().size() - 1).setStyle("-fx-border-color:#444400;-fx-background-color:#ffff00;-fx-opacity:1.0");
+						unwrapNode(sourceGroup).setStyle("-fx-border-color:#444444;-fx-background-color:#666666;-fx-opacity:1.0");
+					}
+					node.setTranslateX(0);
+					node.setTranslateY(0);
+				}
+			});
+		
+		return sourceGroup;
+	}
+	
+	private class DragContext {
+		private double mouseAnchorX;
+		private double mouseAnchorY;
+		private double initialTranslateX;
+		private double initialTranslateY;
+		private int selectedIndex;
+		private int index;
+	}
+	
 	private class GridItem extends Pane {
 		private T element;
 		
@@ -236,6 +276,7 @@ public abstract class ElementGridPane<T extends ConfigElement> extends Pane {
 			setMinHeight(50);
 			setMaxWidth(50);
 			setMaxHeight(50);
+			setId("grid-item");
 		}
 
 		public String getName() {
@@ -251,6 +292,7 @@ public abstract class ElementGridPane<T extends ConfigElement> extends Pane {
 			setMinHeight(50);
 			setMaxWidth(50);
 			setMaxHeight(50);
+			setId("grid-sentinel");
 		}
 	}
 }
