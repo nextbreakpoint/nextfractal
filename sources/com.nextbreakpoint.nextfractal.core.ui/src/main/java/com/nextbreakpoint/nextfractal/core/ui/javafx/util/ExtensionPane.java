@@ -1,4 +1,4 @@
-package com.nextbreakpoint.nextfractal.twister.ui.javafx;
+package com.nextbreakpoint.nextfractal.core.ui.javafx.util;
 
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;

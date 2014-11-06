@@ -4,19 +4,20 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javafx.geometry.Pos;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
 import com.nextbreakpoint.nextfractal.core.extension.Extension;
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionNotFoundException;
 import com.nextbreakpoint.nextfractal.core.tree.Node;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.CoreUIRegistry;
+import com.nextbreakpoint.nextfractal.core.ui.javafx.Disposable;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.NodeEditorComponent;
-import com.nextbreakpoint.nextfractal.core.ui.javafx.View;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.ViewContext;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.extensionPoints.editor.EditorExtensionRuntime;
 import com.nextbreakpoint.nextfractal.core.util.RenderContext;
 
-public class DefaultView extends View {
+public class DefaultView extends Pane implements Disposable {
 	private static final Logger logger = Logger.getLogger(DefaultView.class.getName());
 	
 	/**

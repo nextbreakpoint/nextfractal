@@ -69,16 +69,16 @@ public class MandelbrotConfigBuilder {
 		final OutcolouringFormulaConfigElement outcolouringFormulaElement = new OutcolouringFormulaConfigElement();
 		final OrbitTrapConfigElement orbitTrapElement = new OrbitTrapConfigElement();
 		config.setMandelbrotFractal(fractalElement);
-		fractalElement.setRenderingFormulaConfigElement(renderingFormulaElement);
 		renderingFormulaElement.setReference(MandelbrotRegistry.getInstance().getRenderingFormulaExtension(MandelbrotConfigBuilder.DEFAULT_RENDERING_FORMULA_EXTENSION_ID).createConfigurableExtensionReference());
-		fractalElement.setTransformingFormulaConfigElement(transformingFormulaElement);
+		fractalElement.setRenderingFormulaConfigElement(renderingFormulaElement);
 		transformingFormulaElement.setReference(MandelbrotRegistry.getInstance().getTransformingFormulaExtension(MandelbrotConfigBuilder.DEFAULT_TRANSFORMING_FORMULA_EXTENSION_ID).createConfigurableExtensionReference());
+		fractalElement.setTransformingFormulaConfigElement(transformingFormulaElement);
 		fractalElement.setProcessingFormulaConfigElement(processingFormulaElement);
 		fractalElement.setOrbitTrapConfigElement(orbitTrapElement);
-		fractalElement.appendIncolouringFormulaConfigElement(incolouringFormulaElement);
 		incolouringFormulaElement.setReference(MandelbrotRegistry.getInstance().getIncolouringFormulaExtension(MandelbrotConfigBuilder.DEFAULT_INCOLOURING_FORMULA_EXTENSION_ID).createConfigurableExtensionReference());
-		fractalElement.appendOutcolouringFormulaConfigElement(outcolouringFormulaElement);
+		fractalElement.appendIncolouringFormulaConfigElement(incolouringFormulaElement);
 		outcolouringFormulaElement.setReference(MandelbrotRegistry.getInstance().getOutcolouringFormulaExtension(MandelbrotConfigBuilder.DEFAULT_OUTCOLOURING_FORMULA_EXTENSION_ID).createConfigurableExtensionReference());
+		fractalElement.appendOutcolouringFormulaConfigElement(outcolouringFormulaElement);
 		return config;
 	}
 }

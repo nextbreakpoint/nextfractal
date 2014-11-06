@@ -28,6 +28,8 @@ package com.nextbreakpoint.nextfractal.twister.ui.javafx.extensionPoints.view;
 import java.util.List;
 import java.util.logging.Logger;
 
+import javafx.scene.layout.Pane;
+
 import com.nextbreakpoint.nextfractal.core.CoreRegistry;
 import com.nextbreakpoint.nextfractal.core.extension.Extension;
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionConfig;
@@ -39,7 +41,6 @@ import com.nextbreakpoint.nextfractal.core.tree.NodeSession;
 import com.nextbreakpoint.nextfractal.core.tree.NodeSessionListener;
 import com.nextbreakpoint.nextfractal.core.tree.RootNode;
 import com.nextbreakpoint.nextfractal.core.tree.Tree;
-import com.nextbreakpoint.nextfractal.core.ui.javafx.View;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.ViewContext;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.util.DefaultView;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.util.EmptyView;
@@ -55,7 +56,7 @@ public class DefaultViewRuntime extends ViewExtensionRuntime {
 	 * @see com.nextbreakpoint.nextfractal.twister.ui.swing.extensionPoints.view.ViewExtensionRuntime#createView(com.nextbreakpoint.nextfractal.core.extension.ExtensionConfig, com.nextbreakpoint.nextfractal.core.ui.swing.ViewContext, com.nextbreakpoint.nextfractal.core.util.RenderContext)
 	 */
 	@Override
-	public View createConfigView(final ExtensionConfig config, final ViewContext viewContext, final RenderContext context, final NodeSession session) {
+	public Pane createConfigView(final ExtensionConfig config, final ViewContext viewContext, final RenderContext context, final NodeSession session) {
 		try {
 			final Extension<NodeBuilderExtensionRuntime> extension = CoreRegistry.getInstance().getNodeBuilderExtension(config.getExtensionId());
 			final NodeBuilder nodeBuilder = extension.createExtensionRuntime().createNodeBuilder(config);
@@ -75,7 +76,7 @@ public class DefaultViewRuntime extends ViewExtensionRuntime {
 	 * @see com.nextbreakpoint.nextfractal.twister.ui.javafx.extensionPoints.view.ViewExtensionRuntime#createEditorView(com.nextbreakpoint.nextfractal.core.extension.ExtensionConfig, com.nextbreakpoint.nextfractal.core.ui.javafx.ViewContext, com.nextbreakpoint.nextfractal.core.util.RenderContext, com.nextbreakpoint.nextfractal.core.tree.NodeSession)
 	 */
 	@Override
-	public View createEditorView(ExtensionConfig config, ViewContext viewContext, RenderContext context, NodeSession session) {
+	public Pane createEditorView(ExtensionConfig config, ViewContext viewContext, RenderContext context, NodeSession session) {
 		// TODO Auto-generated method stub
 		return null;
 	}

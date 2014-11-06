@@ -1,4 +1,4 @@
-package com.nextbreakpoint.nextfractal.twister.ui.javafx;
+package com.nextbreakpoint.nextfractal.core.ui.javafx.util;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -154,6 +154,11 @@ public abstract class ElementGridPane<T extends ConfigElement> extends Pane {
 		return (GridGroup)getChildren().get(i);
 	}
 
+	@SuppressWarnings("unchecked")
+	private T getElement(final GridGroup sourceGroup) {
+		return ((GridItem)unwrapNode(sourceGroup)).getElement();
+	}
+
 	private double computeX(final DragContext dragContext, final GridGroup sourceGroup, final MouseEvent mouseEvent) {
 		Node node = unwrapNode(sourceGroup);
 		double x = dragContext.initialTranslateX + mouseEvent.getX() - dragContext.mouseAnchorX;
@@ -281,6 +286,7 @@ public abstract class ElementGridPane<T extends ConfigElement> extends Pane {
 			doLayout();
 		} else {
 			getChildren().add(dragContext.index, sourceGroup);
+			selectElement(getElement(sourceGroup));
 		}
 		node.setTranslateX(0);
 		node.setTranslateY(0);
@@ -398,14 +404,8 @@ public abstract class ElementGridPane<T extends ConfigElement> extends Pane {
 			super(node);
 		}
 
-		@SuppressWarnings("unchecked")
-		private T getElement() {
-			return ((GridItem)unwrapNode(this)).getElement();
-		}
-		
 		public void beginDrag() {
 			setChanged(true);
-			selectElement(getElement());
 		}
 
 		public void updateDrag() {

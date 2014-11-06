@@ -3,15 +3,16 @@ package com.nextbreakpoint.nextfractal.mandelbrot.ui.javafx;
 import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 
 import com.nextbreakpoint.nextfractal.core.tree.NodeSession;
-import com.nextbreakpoint.nextfractal.core.ui.javafx.View;
+import com.nextbreakpoint.nextfractal.core.ui.javafx.Disposable;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.ViewContext;
 import com.nextbreakpoint.nextfractal.core.util.RenderContext;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotConfig;
 import com.nextbreakpoint.nextfractal.mandelbrot.extensions.image.MandelbrotImageConfig;
 
-public class MandelbrotEditorView extends View {
+public class MandelbrotEditorView extends Pane implements Disposable {
 
 	public MandelbrotEditorView(MandelbrotConfig config, ViewContext viewContext, RenderContext context, NodeSession session) {
 		AnchorPane pane = new AnchorPane();

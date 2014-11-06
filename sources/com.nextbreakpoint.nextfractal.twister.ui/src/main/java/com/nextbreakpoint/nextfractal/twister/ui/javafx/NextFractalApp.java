@@ -28,7 +28,7 @@ import com.nextbreakpoint.nextfractal.core.config.DefaultConfigContext;
 import com.nextbreakpoint.nextfractal.core.extension.Extension;
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionException;
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionNotFoundException;
-import com.nextbreakpoint.nextfractal.core.ui.javafx.View;
+import com.nextbreakpoint.nextfractal.core.ui.javafx.Disposable;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.ViewContext;
 import com.nextbreakpoint.nextfractal.core.util.IntegerVector2D;
 import com.nextbreakpoint.nextfractal.core.util.RenderContext;
@@ -125,11 +125,11 @@ public class NextFractalApp extends Application {
 			sessionController = new TwisterSessionController("JavaFX", config);
 			sessionController.init();
 			sessionController.setRenderContext(renderContext);
-			View configView = createConfigView(viewContext, renderContext, config);
+			Pane configView = createConfigView(viewContext, renderContext, config);
 			if (configView != null) {
 				viewContext.showConfigView(configView);
 			}
-			View editorView = createEditorView(viewContext, renderContext, config);
+			Pane editorView = createEditorView(viewContext, renderContext, config);
 			if (editorView != null) {
 				viewContext.showEditorView(editorView);
 			}
@@ -189,7 +189,7 @@ public class NextFractalApp extends Application {
 		return configBuilder.createDefaultConfig();
 	}
 
-	private View createConfigView(ViewContext viewContext, RenderContext renderContext, TwisterConfig config) {
+	private Pane createConfigView(ViewContext viewContext, RenderContext renderContext, TwisterConfig config) {
 		try {
 			ImageConfigElement imageElement = config.getFrameConfigElement().getLayerConfigElement(0).getLayerConfigElement(0).getImageConfigElement();
 			final Extension<ViewExtensionRuntime> extension = TwisterUIRegistry.getInstance().getViewExtension(imageElement.getReference().getExtensionId());
@@ -200,7 +200,7 @@ public class NextFractalApp extends Application {
 		return null;
 	}
 
-	private View createEditorView(ViewContext viewContext, RenderContext renderContext, TwisterConfig config) {
+	private Pane createEditorView(ViewContext viewContext, RenderContext renderContext, TwisterConfig config) {
 		try {
 			ImageConfigElement imageElement = config.getFrameConfigElement().getLayerConfigElement(0).getLayerConfigElement(0).getImageConfigElement();
 			final Extension<ViewExtensionRuntime> extension = TwisterUIRegistry.getInstance().getViewExtension(imageElement.getReference().getExtensionId());
@@ -299,7 +299,7 @@ public class NextFractalApp extends Application {
 		 * @see com.nextbreakpoint.nextfractal.core.ui.javafx.ViewContext#showConfigView(com.nextbreakpoint.nextfractal.core.ui.javafx.View)
 		 */
 		@Override
-		public void showConfigView(View node) {
+		public void showConfigView(Pane node) {
 			close.setDisable(true);
 			node.setLayoutY(configViewPane.getHeight());
 			node.setPrefWidth(configViewPane.getWidth());
@@ -337,7 +337,9 @@ public class NextFractalApp extends Application {
 					@Override
 					public void handle(ActionEvent event) {
 						configViewPane.getChildren().remove(node);
-						((View)node).dispose();
+						if (node instanceof Disposable) {
+							((Disposable)node).dispose();
+						}
 						if (configViewPane.getChildren().size() <= 1) {
 							close.setVisible(false);
 						}
@@ -352,7 +354,7 @@ public class NextFractalApp extends Application {
 		 * @see com.nextbreakpoint.nextfractal.core.ui.javafx.ViewContext#showEditorView(com.nextbreakpoint.nextfractal.core.ui.javafx.View)
 		 */
 		@Override
-		public void showEditorView(View node) {
+		public void showEditorView(Pane node) {
 			node.setPrefWidth(editorViewPane.getWidth());
 			node.setPrefHeight(editorViewPane.getHeight());
 			editorViewPane.getChildren().add(node);
@@ -378,7 +380,9 @@ public class NextFractalApp extends Application {
 					@Override
 					public void handle(ActionEvent event) {
 						editorViewPane.getChildren().remove(node);
-						((View)node).dispose();
+						if (node instanceof Disposable) {
+							((Disposable)node).dispose();
+						}
 					}
 				});
 				ft.play();

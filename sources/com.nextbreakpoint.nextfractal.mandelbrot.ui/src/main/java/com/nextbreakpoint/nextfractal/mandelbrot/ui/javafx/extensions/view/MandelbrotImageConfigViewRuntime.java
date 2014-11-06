@@ -25,9 +25,10 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.ui.javafx.extensions.view;
 
+import javafx.scene.layout.Pane;
+
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionConfig;
 import com.nextbreakpoint.nextfractal.core.tree.NodeSession;
-import com.nextbreakpoint.nextfractal.core.ui.javafx.View;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.ViewContext;
 import com.nextbreakpoint.nextfractal.core.util.RenderContext;
 import com.nextbreakpoint.nextfractal.mandelbrot.extensions.image.MandelbrotImageConfig;
@@ -43,7 +44,7 @@ public class MandelbrotImageConfigViewRuntime extends ViewExtensionRuntime {
 	 * @see com.nextbreakpoint.nextfractal.twister.ui.javafx.extensionPoints.view.ViewExtensionRuntime#createView(com.nextbreakpoint.nextfractal.core.extension.ExtensionConfig, com.nextbreakpoint.nextfractal.core.ui.javafx.ViewContext, com.nextbreakpoint.nextfractal.core.util.RenderContext, com.nextbreakpoint.nextfractal.core.tree.NodeSession)
 	 */
 	@Override
-	public View createConfigView(final ExtensionConfig config, final ViewContext viewContext, final RenderContext context, final NodeSession session) {
+	public Pane createConfigView(final ExtensionConfig config, final ViewContext viewContext, final RenderContext context, final NodeSession session) {
 		return new MandelbrotConfigView(((MandelbrotImageConfig) config).getMandelbrotConfig(), viewContext, context, session);
 	}
 	
@@ -51,7 +52,7 @@ public class MandelbrotImageConfigViewRuntime extends ViewExtensionRuntime {
 	 * @see com.nextbreakpoint.nextfractal.twister.ui.javafx.extensionPoints.view.ViewExtensionRuntime#createView(com.nextbreakpoint.nextfractal.core.extension.ExtensionConfig, com.nextbreakpoint.nextfractal.core.ui.javafx.ViewContext, com.nextbreakpoint.nextfractal.core.util.RenderContext, com.nextbreakpoint.nextfractal.core.tree.NodeSession)
 	 */
 	@Override
-	public View createEditorView(final ExtensionConfig config, final ViewContext viewContext, final RenderContext context, final NodeSession session) {
+	public Pane createEditorView(final ExtensionConfig config, final ViewContext viewContext, final RenderContext context, final NodeSession session) {
 		return new MandelbrotEditorView(((MandelbrotImageConfig) config).getMandelbrotConfig(), viewContext, context, session);
 	}
 }

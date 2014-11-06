@@ -6,6 +6,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.geometry.Pos;
 import javafx.scene.control.TextField;
 
 public class AdvancedTextField extends TextField {
@@ -37,6 +38,7 @@ public class AdvancedTextField extends TextField {
 	}
 
 	public AdvancedTextField() {
+		setAlignment(Pos.CENTER_RIGHT);
 		textProperty().addListener(new ChangeListener<String>() {
 			private boolean ignore;
 

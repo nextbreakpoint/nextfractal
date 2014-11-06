@@ -25,14 +25,12 @@
  */
 package com.nextbreakpoint.nextfractal.core.ui.javafx;
 
-import javafx.scene.layout.Pane;
-
 /**
  * @author Andrea Medeghini
  */
-public abstract class View extends Pane {
+public interface Disposable {
 	/**
 	 * 
 	 */
-	public abstract void dispose();
+	public void dispose();
 }

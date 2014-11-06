@@ -25,10 +25,11 @@
  */
 package com.nextbreakpoint.nextfractal.twister.ui.javafx.extensionPoints.view;
 
+import javafx.scene.layout.Pane;
+
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionConfig;
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionRuntime;
 import com.nextbreakpoint.nextfractal.core.tree.NodeSession;
-import com.nextbreakpoint.nextfractal.core.ui.javafx.View;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.ViewContext;
 import com.nextbreakpoint.nextfractal.core.util.RenderContext;
 
@@ -43,7 +44,7 @@ public abstract class ViewExtensionRuntime extends ExtensionRuntime {
 	 * @param session
 	 * @return
 	 */
-	public abstract View createConfigView(final ExtensionConfig config, final ViewContext viewContext, final RenderContext context, final NodeSession session);
+	public abstract Pane createConfigView(final ExtensionConfig config, final ViewContext viewContext, final RenderContext context, final NodeSession session);
 	
 	/**
 	 * @param config
@@ -52,7 +53,7 @@ public abstract class ViewExtensionRuntime extends ExtensionRuntime {
 	 * @param session
 	 * @return
 	 */
-	public abstract View createEditorView(final ExtensionConfig config, final ViewContext viewContext, final RenderContext context, final NodeSession session);
+	public abstract Pane createEditorView(final ExtensionConfig config, final ViewContext viewContext, final RenderContext context, final NodeSession session);
 
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.extension.ExtensionRuntime#dispose()

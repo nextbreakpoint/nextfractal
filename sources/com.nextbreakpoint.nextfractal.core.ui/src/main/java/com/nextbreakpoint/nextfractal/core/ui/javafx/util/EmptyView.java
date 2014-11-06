@@ -1,8 +1,10 @@
 package com.nextbreakpoint.nextfractal.core.ui.javafx.util;
 
-import com.nextbreakpoint.nextfractal.core.ui.javafx.View;
+import javafx.scene.layout.Pane;
 
-public class EmptyView extends View {
+import com.nextbreakpoint.nextfractal.core.ui.javafx.Disposable;
+
+public class EmptyView extends Pane implements Disposable {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.twister.ui.swing.ViewPanel#dispose()
 	 */

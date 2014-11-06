@@ -18,6 +18,10 @@
 #editor-panel {
 }
 
+#config-view {
+	-fx-background-color:#777777;
+}
+
 #grid-item  {
 	-fx-border-radius: 5px;
 	-fx-border-width: 1px;
@@ -46,6 +50,105 @@
 }
 
 #boolean-pane {
+	-fx-border-radius: 5px;
+	-fx-border-width: 1px;
+	-fx-border-color: #444444;
+	-fx-background-radius: 5px;
+	-fx-background-color: #666666;
+	-fx-padding: 10px;
+}
+
+#integer-pane {
+	-fx-border-radius: 5px;
+	-fx-border-width: 1px;
+	-fx-border-color: #444444;
+	-fx-background-radius: 5px;
+	-fx-background-color: #666666;
+	-fx-padding: 10px;
+}
+
+#long-pane {
+	-fx-border-radius: 5px;
+	-fx-border-width: 1px;
+	-fx-border-color: #444444;
+	-fx-background-radius: 5px;
+	-fx-background-color: #666666;
+	-fx-padding: 10px;
+}
+
+#short-pane {
+	-fx-border-radius: 5px;
+	-fx-border-width: 1px;
+	-fx-border-color: #444444;
+	-fx-background-radius: 5px;
+	-fx-background-color: #666666;
+	-fx-padding: 10px;
+}
+
+#float-pane {
+	-fx-border-radius: 5px;
+	-fx-border-width: 1px;
+	-fx-border-color: #444444;
+	-fx-background-radius: 5px;
+	-fx-background-color: #666666;
+	-fx-padding: 10px;
+}
+
+#double-pane {
+	-fx-border-radius: 5px;
+	-fx-border-width: 1px;
+	-fx-border-color: #444444;
+	-fx-background-radius: 5px;
+	-fx-background-color: #666666;
+	-fx-padding: 10px;
+}
+
+#string-pane {
+	-fx-border-radius: 5px;
+	-fx-border-width: 1px;
+	-fx-border-color: #444444;
+	-fx-background-radius: 5px;
+	-fx-background-color: #666666;
+	-fx-padding: 10px;
+}
+
+#iterations-pane {
+	-fx-border-radius: 5px;
+	-fx-border-width: 1px;
+	-fx-border-color: #444444;
+	-fx-background-radius: 5px;
+	-fx-background-color: #666666;
+	-fx-padding: 10px;
+}
+
+#threshold-pane {
+	-fx-border-radius: 5px;
+	-fx-border-width: 1px;
+	-fx-border-color: #444444;
+	-fx-background-radius: 5px;
+	-fx-background-color: #666666;
+	-fx-padding: 10px;
+}
+
+#percentage-pane {
+	-fx-border-radius: 5px;
+	-fx-border-width: 1px;
+	-fx-border-color: #444444;
+	-fx-background-radius: 5px;
+	-fx-background-color: #666666;
+	-fx-padding: 10px;
+}
+
+#exponent-pane {
+	-fx-border-radius: 5px;
+	-fx-border-width: 1px;
+	-fx-border-color: #444444;
+	-fx-background-radius: 5px;
+	-fx-background-color: #666666;
+	-fx-padding: 10px;
+}
+
+#criteria-pane {
 	-fx-border-radius: 5px;
 	-fx-border-width: 1px;
 	-fx-border-color: #444444;
