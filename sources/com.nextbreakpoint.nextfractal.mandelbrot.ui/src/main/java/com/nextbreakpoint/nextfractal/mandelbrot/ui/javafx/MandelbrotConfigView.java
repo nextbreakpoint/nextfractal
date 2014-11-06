@@ -79,7 +79,10 @@ public class MandelbrotConfigView extends View {
 		}
 
 		protected String getElementName(IncolouringFormulaConfigElement element) {
-			return element.getExtensionElement().getReference().getExtensionName();
+			if (element.getExtensionElement().getReference() != null) {
+				return element.getExtensionElement().getReference().getExtensionName();
+			}
+			return null;
 		}
 
 		protected IncolouringFormulaConfigElement makeElement() {
@@ -129,7 +132,10 @@ public class MandelbrotConfigView extends View {
 		}
 
 		protected String getElementName(OutcolouringFormulaConfigElement element) {
-			return element.getExtensionElement().getReference().getExtensionName();
+			if (element.getExtensionElement().getReference() != null) {
+				return element.getExtensionElement().getReference().getExtensionName();
+			}
+			return null;
 		}
 
 		protected OutcolouringFormulaConfigElement makeElement() {

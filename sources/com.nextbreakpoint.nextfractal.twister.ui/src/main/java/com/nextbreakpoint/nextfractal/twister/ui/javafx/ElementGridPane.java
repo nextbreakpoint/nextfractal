@@ -1,9 +1,15 @@
 package com.nextbreakpoint.nextfractal.twister.ui.javafx;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 
 import com.nextbreakpoint.nextfractal.core.config.ConfigElement;
@@ -61,7 +67,7 @@ public abstract class ElementGridPane<T extends ConfigElement> extends Pane {
 		}
 	}
 
-	private Node unwrapNode(Group group) {
+	private Node unwrapNode(GridGroup group) {
 		return group.getChildren().get(0);
 	}
 	
@@ -107,156 +113,172 @@ public abstract class ElementGridPane<T extends ConfigElement> extends Pane {
 					dragContext.mouseAnchorY = mouseEvent.getY();
 					dragContext.initialTranslateX = node.getTranslateX();
 					dragContext.initialTranslateY = node.getTranslateY();
-					sourceGroup.setSource(true);
-					sourceGroup.beginDrag();
-					if (sourceGroup != sentinelGroup) {
-						sentinelGroup.setSource(false);
-						sentinelGroup.beginDrag();
-					}
-					dragContext.index = getChildren().indexOf(sourceGroup);
-					getChildren().remove(dragContext.index);
-					getChildren().add(sourceGroup);
-					dragContext.selectedIndex = -1;
+					beginDrag(dragContext, sourceGroup);
 				}
 			});
 
 		sourceGroup.addEventFilter(MouseEvent.MOUSE_DRAGGED,
 			new EventHandler<MouseEvent>() {
 				public void handle(final MouseEvent mouseEvent) {
-					Node node = unwrapNode(sourceGroup);
-					double x = dragContext.initialTranslateX + mouseEvent.getX() - dragContext.mouseAnchorX;
-					double y = dragContext.initialTranslateY + mouseEvent.getY() - dragContext.mouseAnchorY;
-					if (x < -sourceGroup.getLayoutX()) {
-						x = -sourceGroup.getLayoutX();
-					}
-					if (x >= getWidth() - sourceGroup.getLayoutX() - node.getBoundsInLocal().getWidth()) {
-						x = getWidth() - sourceGroup.getLayoutX() - node.getBoundsInLocal().getWidth();
-					}
-					if (y < -sourceGroup.getLayoutY()) {
-						y = -sourceGroup.getLayoutY();
-					}
-					if (y >= getHeight() - sourceGroup.getLayoutY() - node.getBoundsInLocal().getHeight()) {
-						y = getHeight() - sourceGroup.getLayoutY() - node.getBoundsInLocal().getHeight();
-					}
-					node.setTranslateX(x);
-					node.setTranslateY(y);
-					double nx = sourceGroup.getLayoutX() + x;
-					double ny = sourceGroup.getLayoutY() + y;
-					int selectedIndex = -1;
-					for (int i = 0; i < getChildren().size(); i++) {
-						GridGroup group = (GridGroup)getChildren().get(i);
-						double tx = nx - group.getLayoutX();
-						double ty = ny - group.getLayoutY();
-						if (group != sourceGroup && group.contains(tx + node.getBoundsInLocal().getWidth() / 2, ty + node.getBoundsInLocal().getHeight() / 2)) {
-							selectedIndex = i;
-							break;
-						}
-					}
-					if (dragContext.selectedIndex != selectedIndex) {
-						if (dragContext.selectedIndex != -1) {
-							GridGroup group = (GridGroup)getChildren().get(dragContext.selectedIndex);
-							group.setSelected(false);
-							group.updateDrag();
-						}
-						dragContext.selectedIndex = selectedIndex;
-						if (selectedIndex != -1) {
-							GridGroup group = (GridGroup)getChildren().get(dragContext.selectedIndex);
-							group.setSelected(true);
-							group.updateDrag();
-						}
-					}
+					double x = computeX(dragContext, sourceGroup, mouseEvent);
+					double y = computeY(dragContext, sourceGroup, mouseEvent);
+					updateDrag(dragContext, sourceGroup, x, y);
 				}
 			});
 
 		sourceGroup.addEventFilter(MouseEvent.MOUSE_RELEASED,
 			new EventHandler<MouseEvent>() {
 				public void handle(final MouseEvent mouseEvent) {
-					Node node = unwrapNode(sourceGroup);
-					double x = dragContext.initialTranslateX + mouseEvent.getX() - dragContext.mouseAnchorX;
-					double y = dragContext.initialTranslateY + mouseEvent.getY() - dragContext.mouseAnchorY;
-					if (x < -sourceGroup.getLayoutX()) {
-						x = -sourceGroup.getLayoutX();
-					}
-					if (x >= getWidth() - sourceGroup.getLayoutX() - node.getBoundsInLocal().getWidth()) {
-						x = getWidth() - sourceGroup.getLayoutX() - node.getBoundsInLocal().getWidth();
-					}
-					if (y < -sourceGroup.getLayoutY()) {
-						y = -sourceGroup.getLayoutY();
-					}
-					if (y >= getHeight() - sourceGroup.getLayoutY() - node.getBoundsInLocal().getHeight()) {
-						y = getHeight() - sourceGroup.getLayoutY() - node.getBoundsInLocal().getHeight();
-					}
-					double nx = sourceGroup.getLayoutX() + x;
-					double ny = sourceGroup.getLayoutY() + y;
-					int sourceIndex = dragContext.index;
-					GridGroup targetGroup = null;
-					int targetIndex = 0;
-					getChildren().remove(sourceGroup);
-					for (int i = 0; i < getChildren().size(); i++) {
-						Node group = getChildren().get(i);
-						double tx = nx - group.getLayoutX();
-						double ty = ny - group.getLayoutY();
-						if (group.contains(tx + node.getBoundsInLocal().getWidth() / 2, ty + node.getBoundsInLocal().getHeight() / 2)) {
-							targetGroup = (GridGroup)group;
-							targetIndex = i;
-							break;
-						}
-					}
-					if (targetGroup != null) {
-						double tx = nx - targetGroup.getLayoutX();
-						if (sourceGroup instanceof ElementGridPane<?>.GroupItem) {
-							if (targetGroup instanceof ElementGridPane<?>.GroupItem) {
-								T element = getElement(sourceIndex);
-								removeElement(sourceIndex);
-								if (tx + node.getBoundsInLocal().getWidth() / 2 <= targetGroup.getBoundsInParent().getWidth() / 2) {
-									insertElementBefore(targetIndex, element);
-									getChildren().add(targetIndex, sourceGroup);
-								} else {
-									insertElementAfter(targetIndex, element);
-									getChildren().add(targetIndex + 1, sourceGroup);
-								}
-							} else if (targetGroup instanceof ElementGridPane<?>.GroupSentinel) {
-								removeElement(sourceIndex);
-							}
-							doLayout();
-						} else if (sourceGroup instanceof ElementGridPane<?>.GroupSentinel) {
-							if (targetGroup instanceof ElementGridPane<?>.GroupItem) {
-								T element = makeElement();
-								Node newNode = createItem(element);
-								if (tx + node.getBoundsInLocal().getWidth() / 2 <= targetGroup.getBoundsInParent().getWidth() / 2) {
-									insertElementBefore(targetIndex, element);
-									getChildren().add(targetIndex, newNode);
-								} else {
-									insertElementAfter(targetIndex, element);
-									getChildren().add(targetIndex + 1, newNode);
-								}
-							}
-							getChildren().add(sourceGroup);
-							doLayout();
-						}
-					} else if (sourceGroup instanceof ElementGridPane<?>.GroupSentinel) {
-						T element = makeElement();
-						Node newNode = createItem(element);
-						appendElement(element);
-						getChildren().add(newNode);
-						getChildren().add(sourceGroup);
-						doLayout();
-					} else {
-						getChildren().add(dragContext.index, sourceGroup);
-					}
-					node.setTranslateX(0);
-					node.setTranslateY(0);
-					if (targetGroup != null) {
-						targetGroup.endDrag();
-					}
-					sourceGroup.endDrag();
-					if (sourceGroup != sentinelGroup) {
-						sentinelGroup.endDrag();
-					}
+					double x = computeX(dragContext, sourceGroup, mouseEvent);
+					double y = computeY(dragContext, sourceGroup, mouseEvent);
+					endDrag(dragContext, sourceGroup, x, y);
 				}
 			});
 	}
-	
+
+	@SuppressWarnings("unchecked")
+	private ElementGridPane<T>.GridGroup getGroup(int i) {
+		return (GridGroup)getChildren().get(i);
+	}
+
+	private double computeX(final DragContext dragContext, final GridGroup sourceGroup, final MouseEvent mouseEvent) {
+		Node node = unwrapNode(sourceGroup);
+		double x = dragContext.initialTranslateX + mouseEvent.getX() - dragContext.mouseAnchorX;
+		if (x < -sourceGroup.getLayoutX()) {
+			x = -sourceGroup.getLayoutX();
+		}
+		if (x >= getWidth() - sourceGroup.getLayoutX() - node.getBoundsInLocal().getWidth()) {
+			x = getWidth() - sourceGroup.getLayoutX() - node.getBoundsInLocal().getWidth();
+		}
+		return x;
+	}
+
+	private double computeY(final DragContext dragContext, final GridGroup sourceGroup, final MouseEvent mouseEvent) {
+		Node node = unwrapNode(sourceGroup);
+		double y = dragContext.initialTranslateY + mouseEvent.getY() - dragContext.mouseAnchorY;
+		if (y < -sourceGroup.getLayoutY()) {
+			y = -sourceGroup.getLayoutY();
+		}
+		if (y >= getHeight() - sourceGroup.getLayoutY() - node.getBoundsInLocal().getHeight()) {
+			y = getHeight() - sourceGroup.getLayoutY() - node.getBoundsInLocal().getHeight();
+		}
+		return y;
+	}
+
+	private int findGroup(final GridGroup sourceGroup, double x, double y) {
+		int selectedIndex = -1;
+		double nx = sourceGroup.getLayoutX() + x;
+		double ny = sourceGroup.getLayoutY() + y;
+		Node node1 = unwrapNode(sourceGroup);
+		for (int i = 0; i < getChildren().size(); i++) {
+			GridGroup group = getGroup(i);
+			double tx = nx - group.getLayoutX();
+			double ty = ny - group.getLayoutY();
+			if (group != sourceGroup && group.contains(tx + node1.getBoundsInLocal().getWidth() / 2, ty + node1.getBoundsInLocal().getHeight() / 2)) {
+				selectedIndex = i;
+				break;
+			}
+		}
+		return selectedIndex;
+	}
+
+	private void beginDrag(final DragContext dragContext, final GridGroup sourceGroup) {
+		sourceGroup.setSource(true);
+		sourceGroup.beginDrag();
+		if (sourceGroup != sentinelGroup) {
+			sentinelGroup.beginDrag();
+		}
+		dragContext.index = getChildren().indexOf(sourceGroup);
+		getChildren().remove(dragContext.index);
+		getChildren().add(sourceGroup);
+		dragContext.selectedIndex = -1;
+	}
+
+	private void updateDrag(final DragContext dragContext, final GridGroup sourceGroup, double x, double y) {
+		Node node = unwrapNode(sourceGroup);
+		node.setTranslateX(x);
+		node.setTranslateY(y);
+		int selectedIndex = findGroup(sourceGroup, x, y);
+		if (dragContext.selectedIndex != selectedIndex) {
+			if (dragContext.selectedIndex != -1) {
+				GridGroup group = getGroup(dragContext.selectedIndex);
+				group.setSelected(false);
+				group.updateDrag();
+			}
+			dragContext.selectedIndex = selectedIndex;
+			if (selectedIndex != -1) {
+				GridGroup group = getGroup(dragContext.selectedIndex);
+				group.setSelected(true);
+				group.updateDrag();
+			}
+		}
+	}
+
+	private void endDrag(final DragContext dragContext,	final GridGroup sourceGroup, double x, double y) {
+		int sourceIndex = dragContext.index;
+		Node node = unwrapNode(sourceGroup);
+		getChildren().remove(sourceGroup);
+		int targetIndex = findGroup(sourceGroup, x, y);
+		GridGroup targetGroup = null;
+		if (targetIndex != -1) {
+			targetGroup = getGroup(targetIndex);
+		}
+		if (targetGroup != null) {
+			double tx = sourceGroup.getLayoutX() + x - targetGroup.getLayoutX();
+			if (sourceGroup instanceof ElementGridPane<?>.GroupItem) {
+				if (targetGroup instanceof ElementGridPane<?>.GroupItem) {
+					T element = getElement(sourceIndex);
+					removeElement(sourceIndex);
+					if (tx + node.getBoundsInLocal().getWidth() / 2 <= targetGroup.getBoundsInParent().getWidth() / 2) {
+						insertElementBefore(targetIndex, element);
+						getChildren().add(targetIndex, sourceGroup);
+					} else {
+						insertElementAfter(targetIndex, element);
+						getChildren().add(targetIndex + 1, sourceGroup);
+					}
+				} else if (targetGroup instanceof ElementGridPane<?>.GroupSentinel) {
+					removeElement(sourceIndex);
+				}
+				doLayout();
+			} else if (sourceGroup instanceof ElementGridPane<?>.GroupSentinel) {
+				if (targetGroup instanceof ElementGridPane<?>.GroupItem) {
+					T element = makeElement();
+					Node newNode = createItem(element);
+					if (tx + node.getBoundsInLocal().getWidth() / 2 <= targetGroup.getBoundsInParent().getWidth() / 2) {
+						insertElementBefore(targetIndex, element);
+						getChildren().add(targetIndex, newNode);
+					} else {
+						insertElementAfter(targetIndex, element);
+						getChildren().add(targetIndex + 1, newNode);
+					}
+				}
+				getChildren().add(sourceGroup);
+				doLayout();
+			}
+		} else if (sourceGroup instanceof ElementGridPane<?>.GroupSentinel) {
+			T element = makeElement();
+			Node newNode = createItem(element);
+			appendElement(element);
+			getChildren().add(newNode);
+			getChildren().add(sourceGroup);
+			doLayout();
+		} else {
+			getChildren().add(dragContext.index, sourceGroup);
+		}
+		node.setTranslateX(0);
+		node.setTranslateY(0);
+		if (targetGroup != null && targetGroup != sentinelGroup) {
+			targetGroup.setSelected(false);
+			targetGroup.endDrag();
+		}
+		sourceGroup.setSource(false);
+		sourceGroup.endDrag();
+		if (sourceGroup != sentinelGroup) {
+			sentinelGroup.setSelected(false);
+			sentinelGroup.endDrag();
+		}
+	}
+
 	private class DragContext {
 		private double mouseAnchorX;
 		private double mouseAnchorY;
@@ -266,7 +288,7 @@ public abstract class ElementGridPane<T extends ConfigElement> extends Pane {
 		private int index;
 	}
 	
-	private class GridItem extends Pane {
+	private class GridItem extends BorderPane {
 		private T element;
 		
 		public GridItem(T element) {
@@ -278,14 +300,27 @@ public abstract class ElementGridPane<T extends ConfigElement> extends Pane {
 			setMaxWidth(50);
 			setMaxHeight(50);
 			setId("grid-item");
+			Label label = new Label(getName());
+			label.setAlignment(Pos.CENTER);
+			setCenter(label);
 		}
 
 		public String getName() {
-			return getElementName(element);
+			String name = getElementName(element);
+			if (name != null) {
+				Pattern pattern = Pattern.compile("([A-Z])[a-z]*", 0);
+				Matcher matcher = pattern.matcher(name);
+				StringBuilder builder = new StringBuilder();
+				while (matcher.find()) {
+					builder.append(matcher.group(1));
+				}
+				return builder.toString();
+			}
+			return "?";
 		}
 	}
 	
-	private class GridSentinel extends Pane {
+	private class GridSentinel extends BorderPane {
 		public GridSentinel() {
 			setPrefWidth(50);
 			setPrefHeight(50);
@@ -294,6 +329,9 @@ public abstract class ElementGridPane<T extends ConfigElement> extends Pane {
 			setMaxWidth(50);
 			setMaxHeight(50);
 			setId("grid-sentinel");
+			Label label = new Label("");
+			label.setAlignment(Pos.CENTER);
+			setCenter(label);
 		}
 	}
 	
