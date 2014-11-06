@@ -35,3 +35,21 @@
 	-fx-background-color: #ffff00;
 	-fx-font-size: 20px;
 }
+
+#extension-pane {
+	-fx-border-radius: 5px;
+	-fx-border-width: 1px;
+	-fx-border-color: #444444;
+	-fx-background-radius: 5px;
+	-fx-background-color: #666666;
+	-fx-padding: 10px;
+}
+
+#boolean-pane {
+	-fx-border-radius: 5px;
+	-fx-border-width: 1px;
+	-fx-border-color: #444444;
+	-fx-background-radius: 5px;
+	-fx-background-color: #666666;
+	-fx-padding: 10px;
+}

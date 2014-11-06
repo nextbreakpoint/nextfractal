@@ -13,8 +13,11 @@ import com.nextbreakpoint.nextfractal.core.util.RenderContext;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotConfig;
 import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.incolouringFormula.IncolouringFormulaExtensionConfig;
 import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.outcolouringFormula.OutcolouringFormulaExtensionConfig;
+import com.nextbreakpoint.nextfractal.mandelbrot.extensions.MandelbrotExtensionResources;
 import com.nextbreakpoint.nextfractal.mandelbrot.incolouringFormula.IncolouringFormulaConfigElement;
 import com.nextbreakpoint.nextfractal.mandelbrot.outcolouringFormula.OutcolouringFormulaConfigElement;
+import com.nextbreakpoint.nextfractal.mandelbrot.ui.javafx.extensions.MandelbrotUIExtensionResources;
+import com.nextbreakpoint.nextfractal.twister.ui.javafx.BooleanPane;
 import com.nextbreakpoint.nextfractal.twister.ui.javafx.ElementGridPane;
 import com.nextbreakpoint.nextfractal.twister.ui.javafx.ExtensionPane;
 
@@ -197,6 +200,8 @@ public class MandelbrotConfigView extends View {
 			VBox pane = new VBox(10);
 			ExtensionPane<IncolouringFormulaExtensionConfig> extPane = new ExtensionPane<IncolouringFormulaExtensionConfig>(element.getExtensionElement());
 			pane.getChildren().add(extPane);
+			BooleanPane autoIterationsPane = new BooleanPane(MandelbrotUIExtensionResources.getInstance().getString("label.autoIterations"), element.getAutoIterationsElement());
+			pane.getChildren().add(autoIterationsPane);
 			setCenter(pane);
 		}
 	}
@@ -206,6 +211,8 @@ public class MandelbrotConfigView extends View {
 			VBox pane = new VBox(10);
 			ExtensionPane<OutcolouringFormulaExtensionConfig> extPane = new ExtensionPane<OutcolouringFormulaExtensionConfig>(element.getExtensionElement());
 			pane.getChildren().add(extPane);
+			BooleanPane autoIterationsPane = new BooleanPane(MandelbrotUIExtensionResources.getInstance().getString("label.autoIterations"), element.getAutoIterationsElement());
+			pane.getChildren().add(autoIterationsPane);
 			setCenter(pane);
 		}
 	}

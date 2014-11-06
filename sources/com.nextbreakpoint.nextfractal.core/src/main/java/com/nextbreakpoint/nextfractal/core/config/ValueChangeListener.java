@@ -32,6 +32,7 @@ import java.util.EventListener;
  * 
  * @author Andrea Medeghini
  */
+@FunctionalInterface
 public interface ValueChangeListener extends EventListener {
 	/**
 	 * Called to process a new event.

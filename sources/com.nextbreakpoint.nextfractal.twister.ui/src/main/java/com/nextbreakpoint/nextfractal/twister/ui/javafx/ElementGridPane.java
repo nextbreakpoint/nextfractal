@@ -225,6 +225,10 @@ public abstract class ElementGridPane<T extends ConfigElement> extends Pane {
 				group.updateDrag();
 			}
 		}
+		sourceGroup.updateDrag();
+		if (sourceGroup != sentinelGroup) {
+			sentinelGroup.updateDrag();
+		}
 	}
 
 	private void endDrag(final DragContext dragContext,	final GridGroup sourceGroup, double x, double y) {
@@ -347,6 +351,7 @@ public abstract class ElementGridPane<T extends ConfigElement> extends Pane {
 	private class GridGroup extends Group {
 		private boolean selected = false;
 		private boolean source = false;
+		private boolean changed = false;
 		
 		public GridGroup(Node node) {
 			super(node);
@@ -360,12 +365,22 @@ public abstract class ElementGridPane<T extends ConfigElement> extends Pane {
 			return source;
 		}
 
+		public boolean isChanged() {
+			return changed;
+		}
+
 		public void setSelected(boolean selected) {
 			this.selected = selected;
+			setChanged(true);
 		}
 
 		public void setSource(boolean source) {
 			this.source = source;
+			setChanged(true);
+		}
+
+		protected void setChanged(boolean source) {
+			this.changed = true;
 		}
 
 		public void beginDrag() {
@@ -389,23 +404,22 @@ public abstract class ElementGridPane<T extends ConfigElement> extends Pane {
 		}
 		
 		public void beginDrag() {
-			if (isSource()) {
-				unwrapNode(this).setStyle("-fx-border-color:#004400;-fx-background-color:#00FF00;-fx-opacity:0.5");
-			} else {
-				unwrapNode(this).setStyle("-fx-border-color:#444444;-fx-background-color:#666666;-fx-opacity:1.0");
-			}
+			setChanged(true);
 			selectElement(getElement());
 		}
 
 		public void updateDrag() {
-			if (isSelected()) {
-				unwrapNode(this).setStyle("-fx-border-color:#440000;-fx-background-color:#FF0000;-fx-opacity:1.0");
-			} else {
-				if (isSource()) {
-					unwrapNode(this).setStyle("-fx-border-color:#004400;-fx-background-color:#00FF00;-fx-opacity:0.5");
+			if (isChanged()) {
+				if (isSelected()) {
+					unwrapNode(this).setStyle("-fx-border-color:#440000;-fx-background-color:#FF0000;-fx-opacity:1.0");
 				} else {
-					unwrapNode(this).setStyle("-fx-border-color:#444444;-fx-background-color:#666666;-fx-opacity:1.0");
+					if (isSource()) {
+						unwrapNode(this).setStyle("-fx-border-color:#004400;-fx-background-color:#00FF00;-fx-opacity:0.5");
+					} else {
+						unwrapNode(this).setStyle("-fx-border-color:#444444;-fx-background-color:#666666;-fx-opacity:1.0");
+					}
 				}
+				setChanged(false);
 			}
 		}
 
@@ -419,36 +433,36 @@ public abstract class ElementGridPane<T extends ConfigElement> extends Pane {
 			super(node);
 		}
 
+		@SuppressWarnings("unchecked")
+		private void setLabel(String text) {
+			((GridSentinel)unwrapNode(this)).setLabel(text);
+			setChanged(true);
+		}
+
 		public void beginDrag() {
-			if (isSource()) {
-				setLabel("?");
-				unwrapNode(this).setStyle("-fx-border-color:#004400;-fx-background-color:#00FF00;-fx-opacity:0.5");
-			} else {
-				setLabel("-");
-				unwrapNode(this).setStyle("-fx-border-color:#333333;-fx-background-color:#555555;-fx-opacity:1.0");
-			}
+			setChanged(true);
 		}
 
 		public void updateDrag() {
-			if (isSelected()) {
-				unwrapNode(this).setStyle("-fx-border-color:#222222;-fx-background-color:#444444;-fx-opacity:1.0");
-			} else {
-				if (isSource()) {
-					unwrapNode(this).setStyle("-fx-border-color:#004400;-fx-background-color:#00FF00;-fx-opacity:0.5");
+			if (isChanged()) {
+				if (isSelected()) {
+					unwrapNode(this).setStyle("-fx-border-color:#222222;-fx-background-color:#444444;-fx-opacity:1.0");
 				} else {
-					unwrapNode(this).setStyle("-fx-border-color:#333333;-fx-background-color:#555555;-fx-opacity:1.0");
+					if (isSource()) {
+						setLabel("?");
+						unwrapNode(this).setStyle("-fx-border-color:#004400;-fx-background-color:#00FF00;-fx-opacity:0.5");
+					} else {
+						setLabel("-");
+						unwrapNode(this).setStyle("-fx-border-color:#333333;-fx-background-color:#555555;-fx-opacity:1.0");
+					}
 				}
+				setChanged(false);
 			}
 		}
 
 		public void endDrag() {
 			setLabel("+");
 			unwrapNode(this).setStyle("-fx-border-color:#444400;-fx-background-color:#ffff00;-fx-opacity:1.0");
-		}
-
-		@SuppressWarnings("unchecked")
-		private void setLabel(String text) {
-			((GridSentinel)unwrapNode(this)).setLabel(text);
 		}
 	}
 }
