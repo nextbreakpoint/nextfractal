@@ -52,6 +52,8 @@ public abstract class ElementGridPane<T extends ConfigElement> extends Pane {
 
 	protected abstract T makeElement();
 
+	protected abstract void selectElement(T element);
+
 	private int getCellCount(double width, double size) {
 		return (int)Math.floor(width / (size + 10));
 	}
@@ -71,14 +73,25 @@ public abstract class ElementGridPane<T extends ConfigElement> extends Pane {
 		return group.getChildren().get(0);
 	}
 	
+	private void setCellSize(Pane node) {
+		node.setPrefWidth(getMinHeight());
+		node.setPrefHeight(getMinHeight());
+		node.setMinWidth(getMinHeight());
+		node.setMinHeight(getMinHeight());
+		node.setMaxWidth(getMinHeight());
+		node.setMaxHeight(getMinHeight());
+	}
+
 	private GridGroup createSentinel() {
 		GridSentinel sentinel = new GridSentinel();
+		setCellSize(sentinel);
 		GridGroup node = createGroup(sentinel);
 		return node;
 	}
 
 	private GridGroup createItem(T element) {
 		GridItem item = new GridItem(element);
+		setCellSize(item);
 		GridGroup node = createGroup(item);
 		return node;
 	}
@@ -293,12 +306,6 @@ public abstract class ElementGridPane<T extends ConfigElement> extends Pane {
 		
 		public GridItem(T element) {
 			this.element = element;
-			setPrefWidth(50);
-			setPrefHeight(50);
-			setMinWidth(50);
-			setMinHeight(50);
-			setMaxWidth(50);
-			setMaxHeight(50);
 			setId("grid-item");
 			Label label = new Label(getName());
 			label.setAlignment(Pos.CENTER);
@@ -318,20 +325,22 @@ public abstract class ElementGridPane<T extends ConfigElement> extends Pane {
 			}
 			return "?";
 		}
+
+		public T getElement() {
+			return element;
+		}
 	}
 	
 	private class GridSentinel extends BorderPane {
 		public GridSentinel() {
-			setPrefWidth(50);
-			setPrefHeight(50);
-			setMinWidth(50);
-			setMinHeight(50);
-			setMaxWidth(50);
-			setMaxHeight(50);
 			setId("grid-sentinel");
-			Label label = new Label("");
+			Label label = new Label("+");
 			label.setAlignment(Pos.CENTER);
 			setCenter(label);
+		}
+		
+		public void setLabel(String text) {
+			((Label)getCenter()).setText(text);
 		}
 	}
 	
@@ -374,12 +383,18 @@ public abstract class ElementGridPane<T extends ConfigElement> extends Pane {
 			super(node);
 		}
 
+		@SuppressWarnings("unchecked")
+		private T getElement() {
+			return ((GridItem)unwrapNode(this)).getElement();
+		}
+		
 		public void beginDrag() {
 			if (isSource()) {
 				unwrapNode(this).setStyle("-fx-border-color:#004400;-fx-background-color:#00FF00;-fx-opacity:0.5");
 			} else {
 				unwrapNode(this).setStyle("-fx-border-color:#444444;-fx-background-color:#666666;-fx-opacity:1.0");
 			}
+			selectElement(getElement());
 		}
 
 		public void updateDrag() {
@@ -406,8 +421,10 @@ public abstract class ElementGridPane<T extends ConfigElement> extends Pane {
 
 		public void beginDrag() {
 			if (isSource()) {
+				setLabel("?");
 				unwrapNode(this).setStyle("-fx-border-color:#004400;-fx-background-color:#00FF00;-fx-opacity:0.5");
 			} else {
+				setLabel("-");
 				unwrapNode(this).setStyle("-fx-border-color:#333333;-fx-background-color:#555555;-fx-opacity:1.0");
 			}
 		}
@@ -425,7 +442,13 @@ public abstract class ElementGridPane<T extends ConfigElement> extends Pane {
 		}
 
 		public void endDrag() {
+			setLabel("+");
 			unwrapNode(this).setStyle("-fx-border-color:#444400;-fx-background-color:#ffff00;-fx-opacity:1.0");
+		}
+
+		@SuppressWarnings("unchecked")
+		private void setLabel(String text) {
+			((GridSentinel)unwrapNode(this)).setLabel(text);
 		}
 	}
 }

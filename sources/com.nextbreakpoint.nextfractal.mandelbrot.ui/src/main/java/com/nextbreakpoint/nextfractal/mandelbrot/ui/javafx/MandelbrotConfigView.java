@@ -2,17 +2,21 @@ package com.nextbreakpoint.nextfractal.mandelbrot.ui.javafx;
 
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 
+import com.nextbreakpoint.nextfractal.core.config.ConfigElement;
 import com.nextbreakpoint.nextfractal.core.tree.NodeSession;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.View;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.ViewContext;
 import com.nextbreakpoint.nextfractal.core.util.RenderContext;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotConfig;
+import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.incolouringFormula.IncolouringFormulaExtensionConfig;
+import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.outcolouringFormula.OutcolouringFormulaExtensionConfig;
 import com.nextbreakpoint.nextfractal.mandelbrot.incolouringFormula.IncolouringFormulaConfigElement;
 import com.nextbreakpoint.nextfractal.mandelbrot.outcolouringFormula.OutcolouringFormulaConfigElement;
 import com.nextbreakpoint.nextfractal.twister.ui.javafx.ElementGridPane;
+import com.nextbreakpoint.nextfractal.twister.ui.javafx.ExtensionPane;
 
 public class MandelbrotConfigView extends View {
 
@@ -21,29 +25,53 @@ public class MandelbrotConfigView extends View {
 		getChildren().add(pane);
 		pane.setPrefWidth(viewContext.getConfigViewSize().getWidth());
 		pane.setPrefHeight(viewContext.getConfigViewSize().getHeight());
-		Pane incolouringFormulaPane = new IncolouringFormulaGridItems(viewContext, config);
-		ScrollPane incolouringScrollPane = new ScrollPane(incolouringFormulaPane);
+		IncolouringFormulaGridItems incolouringFormulaGridPane = new IncolouringFormulaGridItems(viewContext, config);
+		ScrollPane incolouringScrollPane = new ScrollPane(incolouringFormulaGridPane);
 		incolouringScrollPane.setHbarPolicy(ScrollBarPolicy.NEVER);
 		incolouringScrollPane.setVbarPolicy(ScrollBarPolicy.NEVER);
 		pane.getChildren().add(incolouringScrollPane);
-		Pane outcolouringFormulaPane = new OutcolouringFormulaGridItems(viewContext, config);
-		ScrollPane outcolouringScrollPane = new ScrollPane(outcolouringFormulaPane);
+		IncolouringFormulaPane incolouringFormulaPane = new IncolouringFormulaPane();
+		pane.getChildren().add(incolouringFormulaPane);
+		OutcolouringFormulaGridItems outcolouringFormulaGridPane = new OutcolouringFormulaGridItems(viewContext, config);
+		ScrollPane outcolouringScrollPane = new ScrollPane(outcolouringFormulaGridPane);
 		outcolouringScrollPane.setHbarPolicy(ScrollBarPolicy.NEVER);
 		outcolouringScrollPane.setVbarPolicy(ScrollBarPolicy.NEVER);
 		pane.getChildren().add(outcolouringScrollPane);
+		OutcolouringFormulaPane outcolouringFormulaPane = new OutcolouringFormulaPane();
+		pane.getChildren().add(outcolouringFormulaPane);
+		incolouringFormulaGridPane.setDelegate(element -> {
+			incolouringFormulaPane.setElement(element);
+		});
+		outcolouringFormulaGridPane.setDelegate(element -> {
+			outcolouringFormulaPane.setElement(element);
+		});
 	}
 
 	@Override
 	public void dispose() {
 	}
 
+	@FunctionalInterface
+	public interface GridSelectionDelegate<T extends ConfigElement> {
+		public void selectElement(T element);
+	}
+	
 	public class IncolouringFormulaGridItems extends ElementGridPane<IncolouringFormulaConfigElement> {
+		private GridSelectionDelegate<IncolouringFormulaConfigElement> delegate;
 		private MandelbrotConfig config;
 
 		public IncolouringFormulaGridItems(ViewContext viewContext, MandelbrotConfig config) {
 			super(viewContext, 50);
 			this.config = config;
 			init();
+		}
+
+		public GridSelectionDelegate<IncolouringFormulaConfigElement> getDelegate() {
+			return delegate;
+		}
+
+		public void setDelegate(GridSelectionDelegate<IncolouringFormulaConfigElement> delegate) {
+			this.delegate = delegate;
 		}
 
 		protected MandelbrotConfig getConfig() {
@@ -88,15 +116,30 @@ public class MandelbrotConfigView extends View {
 		protected IncolouringFormulaConfigElement makeElement() {
 			return new IncolouringFormulaConfigElement();
 		}
+
+		protected void selectElement(IncolouringFormulaConfigElement element) {
+			if (delegate != null) {
+				delegate.selectElement(element);
+			}
+		}
 	}
 
 	public class OutcolouringFormulaGridItems extends ElementGridPane<OutcolouringFormulaConfigElement> {
+		private GridSelectionDelegate<OutcolouringFormulaConfigElement> delegate;
 		private MandelbrotConfig config;
 
 		public OutcolouringFormulaGridItems(ViewContext viewContext, MandelbrotConfig config) {
 			super(viewContext, 50);
 			this.config = config;
 			init();
+		}
+
+		public GridSelectionDelegate<OutcolouringFormulaConfigElement> getDelegate() {
+			return delegate;
+		}
+
+		public void setDelegate(GridSelectionDelegate<OutcolouringFormulaConfigElement> delegate) {
+			this.delegate = delegate;
 		}
 
 		protected MandelbrotConfig getConfig() {
@@ -140,6 +183,30 @@ public class MandelbrotConfigView extends View {
 
 		protected OutcolouringFormulaConfigElement makeElement() {
 			return new OutcolouringFormulaConfigElement();
+		}
+
+		protected void selectElement(OutcolouringFormulaConfigElement element) {
+			if (delegate != null) {
+				delegate.selectElement(element);
+			}
+		}
+	}
+
+	public class IncolouringFormulaPane extends BorderPane {
+		public void setElement(IncolouringFormulaConfigElement element) {
+			VBox pane = new VBox(10);
+			ExtensionPane<IncolouringFormulaExtensionConfig> extPane = new ExtensionPane<IncolouringFormulaExtensionConfig>(element.getExtensionElement());
+			pane.getChildren().add(extPane);
+			setCenter(pane);
+		}
+	}
+
+	public class OutcolouringFormulaPane extends BorderPane {
+		public void setElement(OutcolouringFormulaConfigElement element) {
+			VBox pane = new VBox(10);
+			ExtensionPane<OutcolouringFormulaExtensionConfig> extPane = new ExtensionPane<OutcolouringFormulaExtensionConfig>(element.getExtensionElement());
+			pane.getChildren().add(extPane);
+			setCenter(pane);
 		}
 	}
 }

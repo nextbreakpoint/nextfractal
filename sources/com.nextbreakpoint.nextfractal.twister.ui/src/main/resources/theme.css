@@ -24,6 +24,7 @@
 	-fx-border-color: #444444;
 	-fx-background-radius: 5px;
 	-fx-background-color: #666666;
+	-fx-font-size: 20px;
 }
 
 #grid-sentinel {
@@ -32,4 +33,5 @@
 	-fx-border-color: #444400;
 	-fx-background-radius: 5px;
 	-fx-background-color: #ffff00;
+	-fx-font-size: 20px;
 }
