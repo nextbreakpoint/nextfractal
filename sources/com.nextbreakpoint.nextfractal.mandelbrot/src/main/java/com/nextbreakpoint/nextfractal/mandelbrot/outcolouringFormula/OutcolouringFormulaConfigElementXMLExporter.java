@@ -29,12 +29,12 @@ import org.w3c.dom.Element;
 
 import com.nextbreakpoint.nextfractal.core.common.BooleanElementXMLExporter;
 import com.nextbreakpoint.nextfractal.core.common.ConfigurableExtensionReferenceElementXMLExporter;
+import com.nextbreakpoint.nextfractal.core.common.IntegerElementXMLExporter;
 import com.nextbreakpoint.nextfractal.core.common.StringElementXMLExporter;
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionException;
 import com.nextbreakpoint.nextfractal.core.xml.XMLExportException;
 import com.nextbreakpoint.nextfractal.core.xml.XMLExporter;
 import com.nextbreakpoint.nextfractal.core.xml.XMLNodeBuilder;
-import com.nextbreakpoint.nextfractal.mandelbrot.common.IterationsElementXMLExporter;
 import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.outcolouringFormula.OutcolouringFormulaExtensionConfig;
 import com.nextbreakpoint.nextfractal.twister.common.PercentageElementXMLExporter;
 
@@ -79,7 +79,7 @@ public class OutcolouringFormulaConfigElementXMLExporter extends XMLExporter<Out
 	}
 
 	private void exportIterations(final OutcolouringFormulaConfigElement configElement, final Element element, final XMLNodeBuilder builder) throws XMLExportException {
-		element.appendChild(new IterationsElementXMLExporter().exportToElement(configElement.getIterationsElement(), builder));
+		element.appendChild(new IntegerElementXMLExporter().exportToElement(configElement.getIterationsElement(), builder));
 	}
 
 	private void exportEnabled(final OutcolouringFormulaConfigElement configElement, final Element element, final XMLNodeBuilder builder) throws XMLExportException {

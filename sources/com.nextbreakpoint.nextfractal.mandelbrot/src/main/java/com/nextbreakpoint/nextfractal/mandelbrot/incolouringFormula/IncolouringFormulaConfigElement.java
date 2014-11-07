@@ -27,12 +27,12 @@ package com.nextbreakpoint.nextfractal.mandelbrot.incolouringFormula;
 
 import com.nextbreakpoint.nextfractal.core.common.BooleanElement;
 import com.nextbreakpoint.nextfractal.core.common.ConfigurableExtensionReferenceElement;
+import com.nextbreakpoint.nextfractal.core.common.IntegerElement;
 import com.nextbreakpoint.nextfractal.core.common.StringElement;
 import com.nextbreakpoint.nextfractal.core.config.AbstractConfigElement;
 import com.nextbreakpoint.nextfractal.core.config.ConfigContext;
 import com.nextbreakpoint.nextfractal.core.config.ConfigElement;
 import com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionReference;
-import com.nextbreakpoint.nextfractal.mandelbrot.common.IterationsElement;
 import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.incolouringFormula.IncolouringFormulaExtensionConfig;
 import com.nextbreakpoint.nextfractal.twister.common.PercentageElement;
 
@@ -47,7 +47,7 @@ public class IncolouringFormulaConfigElement extends AbstractConfigElement {
 	private final BooleanElement enabledElement = new BooleanElement(true);
 	private final PercentageElement opacityElement = new PercentageElement(100);
 	private final BooleanElement autoIterationsElement = new BooleanElement(true);
-	private final IterationsElement iterationsElement = new IterationsElement(200);
+	private final IntegerElement iterationsElement = new IntegerElement(200);
 	private final StringElement labelElement = new StringElement("New Incolouring Formula");
 
 	/**
@@ -180,7 +180,7 @@ public class IncolouringFormulaConfigElement extends AbstractConfigElement {
 	/**
 	 * @return
 	 */
-	public IterationsElement getIterationsElement() {
+	public IntegerElement getIterationsElement() {
 		return iterationsElement;
 	}
 

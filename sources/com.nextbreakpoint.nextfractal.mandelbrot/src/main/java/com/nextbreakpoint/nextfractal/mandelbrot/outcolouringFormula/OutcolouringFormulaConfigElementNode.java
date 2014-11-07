@@ -27,6 +27,7 @@ package com.nextbreakpoint.nextfractal.mandelbrot.outcolouringFormula;
 
 import com.nextbreakpoint.nextfractal.core.common.BooleanElementNode;
 import com.nextbreakpoint.nextfractal.core.common.ConfigurableExtensionReferenceElementNode;
+import com.nextbreakpoint.nextfractal.core.common.IntegerElementNode;
 import com.nextbreakpoint.nextfractal.core.common.StringElementNode;
 import com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionReference;
 import com.nextbreakpoint.nextfractal.core.tree.Node;
@@ -34,7 +35,6 @@ import com.nextbreakpoint.nextfractal.core.tree.NodeEditor;
 import com.nextbreakpoint.nextfractal.core.tree.NodeValue;
 import com.nextbreakpoint.nextfractal.core.util.AbstractConfigElementNode;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotResources;
-import com.nextbreakpoint.nextfractal.mandelbrot.common.IterationsElementNode;
 import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.outcolouringFormula.OutcolouringFormulaExtensionConfig;
 import com.nextbreakpoint.nextfractal.twister.TwisterResources;
 import com.nextbreakpoint.nextfractal.twister.util.OpacityElementNode;
@@ -190,7 +190,7 @@ public class OutcolouringFormulaConfigElementNode extends AbstractConfigElementN
 		}
 	}
 
-	private static class OutcolouringFormulaIterationsNode extends IterationsElementNode {
+	private static class OutcolouringFormulaIterationsNode extends IntegerElementNode {
 		/**
 		 * @param nodeId
 		 * @param formulaElement

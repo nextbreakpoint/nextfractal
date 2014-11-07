@@ -27,12 +27,12 @@ package com.nextbreakpoint.nextfractal.mandelbrot.outcolouringFormula;
 
 import com.nextbreakpoint.nextfractal.core.common.BooleanElement;
 import com.nextbreakpoint.nextfractal.core.common.ConfigurableExtensionReferenceElement;
+import com.nextbreakpoint.nextfractal.core.common.IntegerElement;
 import com.nextbreakpoint.nextfractal.core.common.StringElement;
 import com.nextbreakpoint.nextfractal.core.config.AbstractConfigElement;
 import com.nextbreakpoint.nextfractal.core.config.ConfigContext;
 import com.nextbreakpoint.nextfractal.core.config.ConfigElement;
 import com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionReference;
-import com.nextbreakpoint.nextfractal.mandelbrot.common.IterationsElement;
 import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.outcolouringFormula.OutcolouringFormulaExtensionConfig;
 import com.nextbreakpoint.nextfractal.twister.common.PercentageElement;
 
@@ -47,7 +47,7 @@ public class OutcolouringFormulaConfigElement extends AbstractConfigElement {
 	private final BooleanElement enabledElement = new BooleanElement(true);
 	private final PercentageElement opacityElement = new PercentageElement(100);
 	private final BooleanElement autoIterationsElement = new BooleanElement(false);
-	private final IterationsElement iterationsElement = new IterationsElement(400);
+	private final IntegerElement iterationsElement = new IntegerElement(400);
 	private final StringElement labelElement = new StringElement("New Outcolouring Formula");
 
 	/**
@@ -180,7 +180,7 @@ public class OutcolouringFormulaConfigElement extends AbstractConfigElement {
 	/**
 	 * @return
 	 */
-	public IterationsElement getIterationsElement() {
+	public IntegerElement getIterationsElement() {
 		return iterationsElement;
 	}
 
