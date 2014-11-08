@@ -156,3 +156,16 @@
 	-fx-background-color: #666666;
 	-fx-padding: 10px;
 }
+
+.extension-grid-pane .grid-item-wrapper-pane {
+	-fx-padding: 10px;
+}
+
+.extension-grid-pane .grid-item-pane  {
+	-fx-border-radius: 5px;
+	-fx-border-width: 1px;
+	-fx-border-color: #333333;
+	-fx-background-radius: 5px;
+	-fx-background-color: #555555;
+	-fx-font-size: 20px;
+}

@@ -11,6 +11,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 
@@ -26,17 +27,24 @@ public class ConfigurableExtensionGridPane<T extends ConfigurableExtensionRuntim
 	private static final Logger logger = Logger.getLogger(ConfigurableExtensionGridPane.class.getName());
 	private EventHandler<ActionEvent> onAction;
 	private Pane container = new Pane();
+	private int cellsPerRow = 3;
+	private double cellSize = 0;
 
 	public ConfigurableExtensionGridPane(ConfigurableExtensionReferenceElement<? extends V> extensionElement, ConfigurableExtensionRegistry<T, V> registry, Dimension2D size) {
 		// TODO Auto-generated constructor stub
+		getStyleClass().add("extension-grid-pane");
 		setWidth(size.getWidth());
 		setHeight(size.getHeight());
-		setCenter(new ScrollPane(container));
+		ScrollPane scrollPane = new ScrollPane(container);
+		scrollPane.setHbarPolicy(ScrollBarPolicy.NEVER);
+		scrollPane.setVbarPolicy(ScrollBarPolicy.NEVER);
+		setCenter(scrollPane);
+		cellSize = Math.floor(getWidth() / cellsPerRow);
 		for (ConfigurableExtension<T, V> extension : registry.getConfigurableExtensionList()) {
 			try {
-				GridItem item = createItem(extension.createConfigurableExtensionReference(extension.createDefaultExtensionConfig()));
+				Pane item = createItem(extension.createConfigurableExtensionReference(extension.createDefaultExtensionConfig()));
 				container.getChildren().add(item);
-				logger.info("Created extension reference: " + item.getReference().getExtensionId());
+				logger.info("Created extension reference: " + extension.getExtensionId());
 			} catch (ExtensionException e) {
 				logger.warning("Cannot create extension reference: " + e.getMessage());
 			}
@@ -52,32 +60,29 @@ public class ConfigurableExtensionGridPane<T extends ConfigurableExtensionRuntim
 		this.onAction = onAction;
 	}
 
-	private int getCellCount(double width, double size) {
-		return (int)Math.floor(width / (size + 10));
-	}
-	
 	private void doLayout() {
-		int cells = getCellCount(getWidth(), 200);
 		for (int i = 0; i < container.getChildren().size(); i++) {
 			Node child = container.getChildren().get(i);
-			child.setLayoutX((i % cells) * (200 + 10));
-			child.setLayoutY((i / cells) * (200 + 10));
+			child.setLayoutX((i % cellsPerRow) * cellSize);
+			child.setLayoutY((i / cellsPerRow) * cellSize);
 		}
 	}
 	
 	private void setCellSize(Pane node) {
-		node.setPrefWidth(getMinHeight());
-		node.setPrefHeight(getMinHeight());
-		node.setMinWidth(getMinHeight());
-		node.setMinHeight(getMinHeight());
-		node.setMaxWidth(getMinHeight());
-		node.setMaxHeight(getMinHeight());
+		node.setPrefWidth(cellSize);
+		node.setPrefHeight(cellSize);
+		node.setMinWidth(cellSize);
+		node.setMinHeight(cellSize);
+		node.setMaxWidth(cellSize);
+		node.setMaxHeight(cellSize);
 	}
 
-	private GridItem createItem(ConfigurableExtensionReference<V> reference) {
+	private Pane createItem(ConfigurableExtensionReference<V> reference) {
 		GridItem item = new GridItem(reference);
-		setCellSize(item);
-		return item;
+		BorderPane wrapper = new BorderPane(item);
+		setCellSize(wrapper);
+		wrapper.getStyleClass().add("grid-item-wrapper-pane");
+		return wrapper;
 	}
 
 	private class GridItem extends BorderPane {
@@ -85,7 +90,7 @@ public class ConfigurableExtensionGridPane<T extends ConfigurableExtensionRuntim
 		
 		public GridItem(ConfigurableExtensionReference<V> reference) {
 			this.reference = reference;
-			setId("grid-item");
+			getStyleClass().add("grid-item-pane");
 			Label label = new Label(getName());
 			label.setAlignment(Pos.CENTER);
 			setCenter(label);
