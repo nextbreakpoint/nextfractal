@@ -300,6 +300,9 @@ public class NextFractalApp extends Application {
 		 */
 		@Override
 		public void showConfigView(Pane node) {
+			if (configViewPane.getChildren().size() > 0) {
+				configViewPane.getChildren().get(configViewPane.getChildren().size() - 1).setDisable(true);
+			}
 			close.setDisable(true);
 			node.setLayoutY(configViewPane.getHeight());
 			node.setPrefWidth(configViewPane.getWidth());
@@ -342,6 +345,9 @@ public class NextFractalApp extends Application {
 						}
 						if (configViewPane.getChildren().size() <= 1) {
 							close.setVisible(false);
+						}
+						if (configViewPane.getChildren().size() > 0) {
+							configViewPane.getChildren().get(configViewPane.getChildren().size() - 1).setDisable(false);
 						}
 						close.setDisable(false);
 					}

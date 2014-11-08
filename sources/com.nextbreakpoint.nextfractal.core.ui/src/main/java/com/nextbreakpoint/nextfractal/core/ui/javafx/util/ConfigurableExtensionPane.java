@@ -6,18 +6,18 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 
-import com.nextbreakpoint.nextfractal.core.common.ExtensionReferenceElement;
+import com.nextbreakpoint.nextfractal.core.common.ConfigurableExtensionReferenceElement;
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionConfig;
 
-public class ExtensionPane<T extends ExtensionConfig> extends BorderPane {
+public class ConfigurableExtensionPane<T extends ExtensionConfig> extends BorderPane {
 	private EventHandler<ActionEvent> onAction;
 	
-	public ExtensionPane(ExtensionReferenceElement element) {
+	public ConfigurableExtensionPane(ConfigurableExtensionReferenceElement<T> element) {
 		Label label = new Label(getExtensionName(element));
 		Button button = new Button("?");
 		button.setOnAction(e -> {
 			if (onAction != null) {
-				onAction.handle(new ActionEvent(ExtensionPane.this, null));
+				onAction.handle(new ActionEvent(ConfigurableExtensionPane.this, null));
 			}
 		});
 		setLeft(label);
@@ -28,7 +28,7 @@ public class ExtensionPane<T extends ExtensionConfig> extends BorderPane {
 		});
 	}
 
-	protected String getExtensionName(ExtensionReferenceElement element) {
+	protected String getExtensionName(ConfigurableExtensionReferenceElement<T> element) {
 		if (element.getReference() != null) {
 			return element.getReference().getExtensionName();
 		}
