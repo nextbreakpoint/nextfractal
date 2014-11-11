@@ -27,9 +27,9 @@ package com.nextbreakpoint.nextfractal.mandelbrot.fractal;
 
 import org.w3c.dom.Element;
 
-import com.nextbreakpoint.nextfractal.core.xml.XMLExportException;
-import com.nextbreakpoint.nextfractal.core.xml.XMLExporter;
-import com.nextbreakpoint.nextfractal.core.xml.XMLNodeBuilder;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLExportException;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLExporter;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLNodeBuilder;
 import com.nextbreakpoint.nextfractal.mandelbrot.incolouringFormula.IncolouringFormulaConfigElementXMLExporter;
 import com.nextbreakpoint.nextfractal.mandelbrot.orbitTrap.OrbitTrapConfigElementXMLExporter;
 import com.nextbreakpoint.nextfractal.mandelbrot.outcolouringFormula.OutcolouringFormulaConfigElementXMLExporter;
@@ -42,7 +42,7 @@ import com.nextbreakpoint.nextfractal.mandelbrot.transformingFormula.Transformin
  */
 public class MandelbrotFractalConfigElementXMLExporter extends XMLExporter<MandelbrotFractalConfigElement> {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.xml.XMLExporter#exportToElement(java.lang.Object, com.nextbreakpoint.nextfractal.core.xml.XMLNodeBuilder)
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.xml.XMLExporter#exportToElement(java.lang.Object, com.nextbreakpoint.nextfractal.core.runtime.xml.XMLNodeBuilder)
 	 */
 	@Override
 	public Element exportToElement(final MandelbrotFractalConfigElement configElement, final XMLNodeBuilder builder) throws XMLExportException {

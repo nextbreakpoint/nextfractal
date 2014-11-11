@@ -6,11 +6,11 @@ package com.nextbreakpoint.nextfractal.contextfree.figure;
 
 import com.nextbreakpoint.nextfractal.contextfree.CFDGBuilder;
 import com.nextbreakpoint.nextfractal.contextfree.extensionPoints.figure.FigureExtensionConfig;
-import com.nextbreakpoint.nextfractal.core.common.ConfigurableExtensionReferenceElement;
-import com.nextbreakpoint.nextfractal.core.config.AbstractConfigElement;
-import com.nextbreakpoint.nextfractal.core.config.ConfigContext;
-import com.nextbreakpoint.nextfractal.core.config.ConfigElement;
-import com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionReference;
+import com.nextbreakpoint.nextfractal.core.elements.ConfigurableExtensionReferenceElement;
+import com.nextbreakpoint.nextfractal.core.runtime.AbstractConfigElement;
+import com.nextbreakpoint.nextfractal.core.runtime.ConfigContext;
+import com.nextbreakpoint.nextfractal.core.runtime.ConfigElement;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtensionReference;
 
 /**
  * @author Andrea Medeghini
@@ -28,7 +28,7 @@ public class FigureConfigElement extends AbstractConfigElement {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.config.AbstractConfigElement#setContext(com.nextbreakpoint.nextfractal.core.config.ConfigContext)
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.AbstractConfigElement#setContext(com.nextbreakpoint.nextfractal.core.runtime.ConfigContext)
 	 */
 	@Override
 	public void setContext(final ConfigContext context) {
@@ -104,7 +104,7 @@ public class FigureConfigElement extends AbstractConfigElement {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.config.AbstractConfigElement#dispose()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.AbstractConfigElement#dispose()
 	 */
 	@Override
 	public void dispose() {

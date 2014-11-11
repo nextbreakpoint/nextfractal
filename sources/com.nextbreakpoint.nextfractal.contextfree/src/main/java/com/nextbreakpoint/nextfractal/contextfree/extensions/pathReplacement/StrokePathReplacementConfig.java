@@ -8,13 +8,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.nextbreakpoint.nextfractal.contextfree.CFDGBuilder;
-import com.nextbreakpoint.nextfractal.contextfree.common.StrokeCapElement;
-import com.nextbreakpoint.nextfractal.contextfree.common.StrokeJoinElement;
-import com.nextbreakpoint.nextfractal.contextfree.common.StrokeWidthElement;
+import com.nextbreakpoint.nextfractal.contextfree.elements.StrokeCapElement;
+import com.nextbreakpoint.nextfractal.contextfree.elements.StrokeJoinElement;
+import com.nextbreakpoint.nextfractal.contextfree.elements.StrokeWidthElement;
 import com.nextbreakpoint.nextfractal.contextfree.extensionPoints.pathReplacement.PathReplacementExtensionConfig;
 import com.nextbreakpoint.nextfractal.contextfree.pathAdjustment.PathAdjustmentConfigElement;
-import com.nextbreakpoint.nextfractal.core.config.ConfigElement;
-import com.nextbreakpoint.nextfractal.core.config.ListConfigElement;
+import com.nextbreakpoint.nextfractal.core.runtime.ConfigElement;
+import com.nextbreakpoint.nextfractal.core.runtime.ListConfigElement;
 
 /**
  * @author Andrea Medeghini
@@ -41,7 +41,7 @@ public class StrokePathReplacementConfig extends PathReplacementExtensionConfig 
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.extension.ExtensionConfig#getConfigElements()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionConfig#getConfigElements()
 	 */
 	@Override
 	public List<ConfigElement> getConfigElements() {

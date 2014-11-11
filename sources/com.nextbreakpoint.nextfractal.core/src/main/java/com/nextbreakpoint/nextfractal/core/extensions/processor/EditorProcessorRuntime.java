@@ -145,37 +145,37 @@ public class EditorProcessorRuntime extends ProcessorExtensionRuntime {
 		imports.add("javax.swing.JComponent");
 		imports.add("javax.swing.JPanel");
 		imports.add("java.awt.FlowLayout");
-		imports.add("com.nextbreakpoint.nextfractal.core.tree.NodeEditor");
+		imports.add("com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor");
 		imports.add("com.nextbreakpoint.nextfractal.core.swing.NodeEditorComponent");
 		imports.add("com.nextbreakpoint.nextfractal.core.swing.editor.extension.EditorExtensionRuntime");
 	}
 
 	private void prepareReferenceEditor(Set<String> imports, ProcessorDescriptor descriptor, Map<String, String> variables) {
 		if (descriptor.isExtension()) {
-			imports.add("com.nextbreakpoint.nextfractal.core.extension.ExtensionReference");
+			imports.add("com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionReference");
 			imports.add("com.nextbreakpoint.nextfractal.core.swing.editor.ReferenceEditorRuntime");
 			imports.add("com.nextbreakpoint.nextfractal.core.swing.extension.ExtensionComboBoxModel");
 		} else {
-			imports.add("com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionReference");
+			imports.add("com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtensionReference");
 			imports.add("com.nextbreakpoint.nextfractal.core.swing.editor.ConfigurableReferenceEditorRuntime");
 			imports.add("com.nextbreakpoint.nextfractal.core.swing.extension.ConfigurableExtensionComboBoxModel");
 		}
-		imports.add("com.nextbreakpoint.nextfractal.core.tree.NodeValue");
+		imports.add("com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue");
 		imports.add(descriptor.getRegistryPackageName() + "." + descriptor.getRegistryClassName());
 		imports.add(variables.get("configElementPackageName") + "." + capitalize(descriptor.getElementName()) + "ExtensionReferenceNodeValue");
 	}
 
 	private void prepareReferenceElementEditor(Set<String> imports, ProcessorDescriptor descriptor, Map<String, String> variables) {
 		if (descriptor.isExtension()) {
-			imports.add("com.nextbreakpoint.nextfractal.core.extension.ExtensionReference");
+			imports.add("com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionReference");
 			imports.add("com.nextbreakpoint.nextfractal.core.swing.editor.ReferenceElementEditorRuntime");
 			imports.add("com.nextbreakpoint.nextfractal.core.swing.extension.ExtensionComboBoxModel");
 		} else {
-			imports.add("com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionReference");
+			imports.add("com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtensionReference");
 			imports.add("com.nextbreakpoint.nextfractal.core.swing.editor.ConfigurableReferenceElementEditorRuntime");
 			imports.add("com.nextbreakpoint.nextfractal.core.swing.extension.ConfigurableExtensionComboBoxModel");
 		}
-		imports.add("com.nextbreakpoint.nextfractal.core.tree.NodeValue");
+		imports.add("com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue");
 		imports.add(descriptor.getRegistryPackageName() + "." + descriptor.getRegistryClassName());
 		imports.add(variables.get("resourcesPackageName") + "." + variables.get("resourcesClassName"));
 		imports.add(variables.get("configElementPackageName") + "." + variables.get("configElementClassName"));
@@ -184,15 +184,15 @@ public class EditorProcessorRuntime extends ProcessorExtensionRuntime {
 
 	private void prepareReferenceElementListEditor(Set<String> imports, ProcessorDescriptor descriptor, Map<String, String> variables) {
 		if (descriptor.isExtension()) {
-			imports.add("com.nextbreakpoint.nextfractal.core.extension.ExtensionReference");
+			imports.add("com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionReference");
 			imports.add("com.nextbreakpoint.nextfractal.core.swing.editor.ReferenceElementListEditorRuntime");
 			imports.add("com.nextbreakpoint.nextfractal.core.swing.extension.ExtensionComboBoxModel");
 		} else {
-			imports.add("com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionReference");
+			imports.add("com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtensionReference");
 			imports.add("com.nextbreakpoint.nextfractal.core.swing.editor.ConfigurableReferenceElementListEditorRuntime");
 			imports.add("com.nextbreakpoint.nextfractal.core.swing.extension.ConfigurableExtensionComboBoxModel");
 		}
-		imports.add("com.nextbreakpoint.nextfractal.core.tree.NodeValue");
+		imports.add("com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue");
 		imports.add(descriptor.getRegistryPackageName() + "." + descriptor.getRegistryClassName());
 		imports.add(variables.get("resourcesPackageName") + "." + variables.get("resourcesClassName"));
 		imports.add(variables.get("configElementPackageName") + "." + variables.get("configElementClassName"));

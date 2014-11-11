@@ -25,7 +25,7 @@
  */
 package com.nextbreakpoint.nextfractal.core.extensionPoints.constructor;
 
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionDescriptor;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionDescriptor;
 
 /**
  * @author Andrea Medeghini

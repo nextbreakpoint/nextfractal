@@ -30,10 +30,10 @@ import java.util.List;
 import org.w3c.dom.Element;
 
 import com.nextbreakpoint.nextfractal.core.extensionPoints.extensionConfigXMLImporter.ExtensionConfigXMLImporterExtensionRuntime;
-import com.nextbreakpoint.nextfractal.core.xml.XMLImportException;
-import com.nextbreakpoint.nextfractal.core.xml.XMLImporter;
-import com.nextbreakpoint.nextfractal.mandelbrot.common.ExponentElement;
-import com.nextbreakpoint.nextfractal.mandelbrot.common.ExponentElementXMLImporter;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLImportException;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLImporter;
+import com.nextbreakpoint.nextfractal.mandelbrot.elements.ExponentElement;
+import com.nextbreakpoint.nextfractal.mandelbrot.elements.ExponentElementXMLImporter;
 
 /**
  * @author Andrea Medeghini

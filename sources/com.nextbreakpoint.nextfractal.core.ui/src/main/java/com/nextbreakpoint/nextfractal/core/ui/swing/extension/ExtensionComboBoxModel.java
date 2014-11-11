@@ -32,11 +32,11 @@ import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.event.ListDataListener;
 
-import com.nextbreakpoint.nextfractal.core.extension.Extension;
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionComparator;
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionNotFoundException;
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionRegistry;
-import com.nextbreakpoint.nextfractal.core.extension.NullExtension;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.Extension;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionComparator;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionNotFoundException;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionRegistry;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.NullExtension;
 
 /**
  * A model for extensions lists.

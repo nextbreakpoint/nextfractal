@@ -34,7 +34,7 @@ import javax.swing.JFrame;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionReference;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionReference;
 import com.nextbreakpoint.nextfractal.core.ui.swing.util.GUIUtil;
 import com.nextbreakpoint.nextfractal.core.util.ConnectionFactory;
 import com.nextbreakpoint.nextfractal.queue.DefaultConnectionFactory;

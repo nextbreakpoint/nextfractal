@@ -39,10 +39,10 @@ import java.util.logging.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.nextbreakpoint.nextfractal.core.extension.Extension;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.Extension;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XML;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLNodeBuilder;
 import com.nextbreakpoint.nextfractal.core.util.ProgressListener;
-import com.nextbreakpoint.nextfractal.core.xml.XML;
-import com.nextbreakpoint.nextfractal.core.xml.XMLNodeBuilder;
 import com.nextbreakpoint.nextfractal.queue.clip.RenderClipDataRow;
 import com.nextbreakpoint.nextfractal.queue.clip.RenderClipService;
 import com.nextbreakpoint.nextfractal.queue.encoder.EncoderContext;

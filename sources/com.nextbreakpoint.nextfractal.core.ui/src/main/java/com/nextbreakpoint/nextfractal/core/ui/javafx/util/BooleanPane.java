@@ -4,7 +4,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 
-import com.nextbreakpoint.nextfractal.core.common.BooleanElement;
+import com.nextbreakpoint.nextfractal.core.elements.BooleanElement;
 
 public class BooleanPane extends BorderPane {
 

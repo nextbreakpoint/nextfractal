@@ -28,7 +28,7 @@ package com.nextbreakpoint.nextfractal.twister.extensions.devtools;
 import com.nextbreakpoint.nextfractal.core.devtools.ProcessorCardinality;
 import com.nextbreakpoint.nextfractal.core.devtools.ProcessorDescriptor;
 import com.nextbreakpoint.nextfractal.core.extensionPoints.descriptor.DescriptorExtensionRuntime;
-import com.nextbreakpoint.nextfractal.twister.common.SpeedElement;
+import com.nextbreakpoint.nextfractal.twister.elements.SpeedElement;
 
 public class SpeedDescriptorRuntime extends DescriptorExtensionRuntime {
 	/**
@@ -36,7 +36,7 @@ public class SpeedDescriptorRuntime extends DescriptorExtensionRuntime {
 	 */
 	@Override
 	public ProcessorDescriptor createDescriptor(String elementName, String defaultValue, ProcessorCardinality cardinality) {
-		return new ProcessorDescriptor(elementName, "Speed", SpeedElement.CLASS_ID, "com.nextbreakpoint.nextfractal.twister.common", "SpeedElement", null, null, null, null, null, null, null, null, null, null, null, null, "com.nextbreakpoint.nextfractal.twister.util", "Speed", defaultValue, "get", "set", cardinality);
+		return new ProcessorDescriptor(elementName, "Speed", SpeedElement.CLASS_ID, "com.nextbreakpoint.nextfractal.twister.elements", "SpeedElement", null, null, null, null, null, null, null, null, null, null, null, null, "com.nextbreakpoint.nextfractal.twister.util", "Speed", defaultValue, "get", "set", cardinality);
 	}
 
 	/**

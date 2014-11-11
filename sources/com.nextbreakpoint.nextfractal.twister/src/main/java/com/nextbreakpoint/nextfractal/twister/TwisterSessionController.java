@@ -28,10 +28,10 @@ package com.nextbreakpoint.nextfractal.twister;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.nextbreakpoint.nextfractal.core.tree.NodeAction;
-import com.nextbreakpoint.nextfractal.core.tree.NodeActionValue;
-import com.nextbreakpoint.nextfractal.core.tree.NodeSession;
-import com.nextbreakpoint.nextfractal.core.tree.NodeSessionListener;
+import com.nextbreakpoint.nextfractal.core.runtime.model.NodeAction;
+import com.nextbreakpoint.nextfractal.core.runtime.model.NodeActionValue;
+import com.nextbreakpoint.nextfractal.core.runtime.model.NodeSession;
+import com.nextbreakpoint.nextfractal.core.runtime.model.NodeSessionListener;
 
 /**
  * @author Andrea Medeghini
@@ -70,7 +70,7 @@ public class TwisterSessionController extends AbstractTwisterController implemen
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.DefaultNodeSession#appendAction(com.nextbreakpoint.nextfractal.core.tree.NodeAction)
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.DefaultNodeSession#appendAction(com.nextbreakpoint.nextfractal.core.runtime.model.NodeAction)
 	 */
 	@Override
 	public void appendAction(NodeAction action) {
@@ -101,7 +101,7 @@ public class TwisterSessionController extends AbstractTwisterController implemen
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.DefaultNodeSession#getActions()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.DefaultNodeSession#getActions()
 	 */
 	@Override
 	public List<NodeAction> getActions() {
@@ -152,7 +152,7 @@ public class TwisterSessionController extends AbstractTwisterController implemen
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeSession#getSessionName()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeSession#getSessionName()
 	 */
 	@Override
 	public String getSessionName() {
@@ -160,7 +160,7 @@ public class TwisterSessionController extends AbstractTwisterController implemen
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeSession#getTimestamp()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeSession#getTimestamp()
 	 */
 	@Override
 	public long getTimestamp() {
@@ -168,7 +168,7 @@ public class TwisterSessionController extends AbstractTwisterController implemen
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeSession#setTimestamp(long)
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeSession#setTimestamp(long)
 	 */
 	@Override
 	public void setTimestamp(final long timestamp) {
@@ -176,7 +176,7 @@ public class TwisterSessionController extends AbstractTwisterController implemen
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeSession#isAcceptImmediatly()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeSession#isAcceptImmediatly()
 	 */
 	@Override
 	public boolean isAcceptImmediatly() {
@@ -184,7 +184,7 @@ public class TwisterSessionController extends AbstractTwisterController implemen
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeSession#setAcceptImmediatly(boolean)
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeSession#setAcceptImmediatly(boolean)
 	 */
 	@Override
 	public void setAcceptImmediatly(final boolean isAcceptImmediatly) {

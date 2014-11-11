@@ -25,12 +25,12 @@
  */
 package com.nextbreakpoint.nextfractal.twister.layer;
 
-import com.nextbreakpoint.nextfractal.core.config.ListConfigElement;
-import com.nextbreakpoint.nextfractal.core.config.ListRuntimeElement;
-import com.nextbreakpoint.nextfractal.core.config.RuntimeElement;
-import com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent;
-import com.nextbreakpoint.nextfractal.core.config.ValueChangeListener;
-import com.nextbreakpoint.nextfractal.core.config.ValueConfigElement;
+import com.nextbreakpoint.nextfractal.core.runtime.ElementChangeEvent;
+import com.nextbreakpoint.nextfractal.core.runtime.ElementChangeListener;
+import com.nextbreakpoint.nextfractal.core.runtime.ListConfigElement;
+import com.nextbreakpoint.nextfractal.core.runtime.ListRuntimeElement;
+import com.nextbreakpoint.nextfractal.core.runtime.RuntimeElement;
+import com.nextbreakpoint.nextfractal.core.runtime.ValueConfigElement;
 import com.nextbreakpoint.nextfractal.twister.layerFilter.LayerFilterConfigElement;
 import com.nextbreakpoint.nextfractal.twister.layerFilter.LayerFilterRuntimeElement;
 
@@ -80,7 +80,7 @@ public abstract class AbstractLayerRuntimeElement extends RuntimeElement impleme
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.config.RuntimeElement#dispose()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.RuntimeElement#dispose()
 	 */
 	@Override
 	public void dispose() {
@@ -217,7 +217,7 @@ public abstract class AbstractLayerRuntimeElement extends RuntimeElement impleme
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.config.RuntimeElement#isChanged()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.RuntimeElement#isChanged()
 	 */
 	@Override
 	public boolean isChanged() {
@@ -225,12 +225,12 @@ public abstract class AbstractLayerRuntimeElement extends RuntimeElement impleme
 		return super.isChanged() || filterChanged;
 	}
 
-	protected class FilterListElementListener implements ValueChangeListener {
+	protected class FilterListElementListener implements ElementChangeListener {
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.ElementChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.runtime.ElementChangeEvent)
 		 */
 		@Override
-		public void valueChanged(final ValueChangeEvent e) {
+		public void valueChanged(final ElementChangeEvent e) {
 			switch (e.getEventType()) {
 				case ListConfigElement.ELEMENT_ADDED: {
 					appendFilter(new LayerFilterRuntimeElement((LayerFilterConfigElement) e.getParams()[0]));
@@ -274,12 +274,12 @@ public abstract class AbstractLayerRuntimeElement extends RuntimeElement impleme
 		}
 	}
 
-	private class LockedElementListener implements ValueChangeListener {
+	private class LockedElementListener implements ElementChangeListener {
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.ElementChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.runtime.ElementChangeEvent)
 		 */
 		@Override
-		public void valueChanged(final ValueChangeEvent e) {
+		public void valueChanged(final ElementChangeEvent e) {
 			switch (e.getEventType()) {
 				case ValueConfigElement.VALUE_CHANGED: {
 					setLocked((Boolean) e.getParams()[0]);
@@ -293,12 +293,12 @@ public abstract class AbstractLayerRuntimeElement extends RuntimeElement impleme
 		}
 	}
 
-	private class VisibleElementListener implements ValueChangeListener {
+	private class VisibleElementListener implements ElementChangeListener {
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.ElementChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.runtime.ElementChangeEvent)
 		 */
 		@Override
-		public void valueChanged(final ValueChangeEvent e) {
+		public void valueChanged(final ElementChangeEvent e) {
 			switch (e.getEventType()) {
 				case ValueConfigElement.VALUE_CHANGED: {
 					setVisible((Boolean) e.getParams()[0]);
@@ -312,12 +312,12 @@ public abstract class AbstractLayerRuntimeElement extends RuntimeElement impleme
 		}
 	}
 
-	private class OpacityElementListener implements ValueChangeListener {
+	private class OpacityElementListener implements ElementChangeListener {
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.ElementChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.runtime.ElementChangeEvent)
 		 */
 		@Override
-		public void valueChanged(final ValueChangeEvent e) {
+		public void valueChanged(final ElementChangeEvent e) {
 			switch (e.getEventType()) {
 				case ValueConfigElement.VALUE_CHANGED: {
 					setOpacity(((Integer) e.getParams()[0]) / 100f);

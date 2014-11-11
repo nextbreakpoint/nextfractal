@@ -33,7 +33,7 @@ import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.colorRenderer.C
  */
 public abstract class AbstractColorRendererRuntime<T extends ColorRendererExtensionConfig> extends ColorRendererExtensionRuntime<T> {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.extension.ExtensionRuntime#dispose()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionRuntime#dispose()
 	 */
 	@Override
 	public void dispose() {

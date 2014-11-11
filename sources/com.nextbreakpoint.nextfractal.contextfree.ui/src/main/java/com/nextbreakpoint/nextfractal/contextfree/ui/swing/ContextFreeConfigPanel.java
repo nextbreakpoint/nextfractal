@@ -70,11 +70,12 @@ import com.nextbreakpoint.nextfractal.contextfree.CFDGBuilder;
 import com.nextbreakpoint.nextfractal.contextfree.ContextFreeConfig;
 import com.nextbreakpoint.nextfractal.contextfree.parser.ContextFreeParser;
 import com.nextbreakpoint.nextfractal.contextfree.parser.ContextFreeParserException;
-import com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent;
-import com.nextbreakpoint.nextfractal.core.config.ValueChangeListener;
-import com.nextbreakpoint.nextfractal.core.config.ValueConfigElement;
-import com.nextbreakpoint.nextfractal.core.tree.NodeSession;
-import com.nextbreakpoint.nextfractal.core.tree.NodeSessionListener;
+import com.nextbreakpoint.nextfractal.core.RenderContext;
+import com.nextbreakpoint.nextfractal.core.runtime.ElementChangeEvent;
+import com.nextbreakpoint.nextfractal.core.runtime.ElementChangeListener;
+import com.nextbreakpoint.nextfractal.core.runtime.ValueConfigElement;
+import com.nextbreakpoint.nextfractal.core.runtime.model.NodeSession;
+import com.nextbreakpoint.nextfractal.core.runtime.model.NodeSessionListener;
 import com.nextbreakpoint.nextfractal.core.ui.swing.ViewContext;
 import com.nextbreakpoint.nextfractal.core.ui.swing.extension.ExtensionListCellRenderer;
 import com.nextbreakpoint.nextfractal.core.ui.swing.util.GUIFactory;
@@ -82,7 +83,6 @@ import com.nextbreakpoint.nextfractal.core.ui.swing.util.GUIUtil;
 import com.nextbreakpoint.nextfractal.core.ui.swing.util.StackLayout;
 import com.nextbreakpoint.nextfractal.core.util.DefaultThreadFactory;
 import com.nextbreakpoint.nextfractal.core.util.DoubleVector4D;
-import com.nextbreakpoint.nextfractal.core.util.RenderContext;
 import com.nextbreakpoint.nextfractal.core.util.Worker;
 import com.nextbreakpoint.nextfractal.twister.ui.swing.TwisterConfigPanel;
 import com.nextbreakpoint.nextfractal.twister.ui.swing.TwisterSwingResources;
@@ -99,7 +99,7 @@ public class ContextFreeConfigPanel extends ViewPanel {
 	private final ViewContext viewContext;
 	private final RenderContext context;
 	private final NodeSession session;
-	private final ValueChangeListener configListener;
+	private final ElementChangeListener configListener;
 	private final ContextFreeConfig config;
 	private final Color oddColor;
 	private final Color evenColor;
@@ -139,9 +139,9 @@ public class ContextFreeConfigPanel extends ViewPanel {
 			}
 		};
 		session.addSessionListener(sessionListener);
-		configListener = new ValueChangeListener() {
+		configListener = new ElementChangeListener() {
 			@Override
-			public void valueChanged(final ValueChangeEvent e) {
+			public void valueChanged(final ElementChangeEvent e) {
 				switch (e.getEventType()) {
 					case ValueConfigElement.VALUE_CHANGED: {
 						viewContext.setComponent(ContextFreeConfigPanel.this);
@@ -333,7 +333,7 @@ public class ContextFreeConfigPanel extends ViewPanel {
 
 	private class ContextFreeImagePanel extends JPanel {
 		private static final long serialVersionUID = 1L;
-		private final ValueChangeListener speedListener;
+		private final ElementChangeListener speedListener;
 		private final ContextFreeConfig config;
 		private UndoManager undoManager = new UndoManager();
 		private JTextField variationTextField;
@@ -614,9 +614,9 @@ public class ContextFreeConfigPanel extends ViewPanel {
 				}
 			};
 			editorPane.addKeyListener(keyListener);
-			speedListener = new ValueChangeListener() {
+			speedListener = new ElementChangeListener() {
 				@Override
-				public void valueChanged(final ValueChangeEvent e) {
+				public void valueChanged(final ElementChangeEvent e) {
 					zoomSpeedTextfield.removeActionListener(zoomSpeedActionListener);
 					shiftSpeedTextfield.removeActionListener(shiftSpeedActionListener);
 					rotationSpeedTextfield.removeActionListener(rotationSpeedActionListener);

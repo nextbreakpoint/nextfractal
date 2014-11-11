@@ -25,7 +25,7 @@
  */
 package com.nextbreakpoint.nextfractal.queue.extensions.encoder;
 
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionConfig;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionConfig;
 import com.nextbreakpoint.nextfractal.queue.extensionPoints.encoder.EncoderExtensionConfig;
 
 /**
@@ -35,7 +35,7 @@ public class MPEGEncoderConfig extends EncoderExtensionConfig {
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.extension.ExtensionConfig#clone()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionConfig#clone()
 	 */
 	@Override
 	public ExtensionConfig clone() {

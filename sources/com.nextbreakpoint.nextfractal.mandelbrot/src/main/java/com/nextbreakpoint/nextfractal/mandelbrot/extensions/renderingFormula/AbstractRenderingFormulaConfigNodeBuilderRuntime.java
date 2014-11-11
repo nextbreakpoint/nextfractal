@@ -25,14 +25,14 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.extensions.renderingFormula;
 
-import com.nextbreakpoint.nextfractal.core.common.ComplexElementNode;
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionConfig;
+import com.nextbreakpoint.nextfractal.core.elements.ComplexElementNode;
 import com.nextbreakpoint.nextfractal.core.extensionPoints.nodeBuilder.NodeBuilderExtensionRuntime;
-import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
-import com.nextbreakpoint.nextfractal.core.tree.NodeBuilder;
-import com.nextbreakpoint.nextfractal.core.util.AbstractExtensionConfigNodeBuilder;
-import com.nextbreakpoint.nextfractal.mandelbrot.common.IterationsElementNode;
-import com.nextbreakpoint.nextfractal.mandelbrot.common.ThresholdElementNode;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionConfig;
+import com.nextbreakpoint.nextfractal.core.runtime.model.NodeBuilder;
+import com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject;
+import com.nextbreakpoint.nextfractal.core.runtime.util.AbstractExtensionConfigNodeBuilder;
+import com.nextbreakpoint.nextfractal.mandelbrot.elements.IterationsElementNode;
+import com.nextbreakpoint.nextfractal.mandelbrot.elements.ThresholdElementNode;
 import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.renderingFormula.RenderingFormulaExtensionConfig;
 import com.nextbreakpoint.nextfractal.mandelbrot.extensions.MandelbrotExtensionResources;
 
@@ -41,7 +41,7 @@ import com.nextbreakpoint.nextfractal.mandelbrot.extensions.MandelbrotExtensionR
  */
 public abstract class AbstractRenderingFormulaConfigNodeBuilderRuntime extends NodeBuilderExtensionRuntime {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.extensionPoints.nodeBuilder.NodeBuilderExtensionRuntime#createNodeBuilder(com.nextbreakpoint.nextfractal.core.extension.ExtensionConfig)
+	 * @see com.nextbreakpoint.nextfractal.core.extensionPoints.nodeBuilder.NodeBuilderExtensionRuntime#createNodeBuilder(com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionConfig)
 	 */
 	@Override
 	public NodeBuilder createNodeBuilder(final ExtensionConfig config) {
@@ -63,7 +63,7 @@ public abstract class AbstractRenderingFormulaConfigNodeBuilderRuntime extends N
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeBuilder#createNodes(NodeObject)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeBuilder#createNodes(NodeObject)
 		 */
 		@Override
 		public void createNodes(final NodeObject parentNode) {

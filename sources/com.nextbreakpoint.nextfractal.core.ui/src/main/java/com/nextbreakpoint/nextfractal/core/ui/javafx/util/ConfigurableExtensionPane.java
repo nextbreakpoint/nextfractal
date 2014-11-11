@@ -6,8 +6,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 
-import com.nextbreakpoint.nextfractal.core.common.ConfigurableExtensionReferenceElement;
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionConfig;
+import com.nextbreakpoint.nextfractal.core.elements.ConfigurableExtensionReferenceElement;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionConfig;
 
 public class ConfigurableExtensionPane<T extends ExtensionConfig> extends BorderPane {
 	private EventHandler<ActionEvent> onAction;

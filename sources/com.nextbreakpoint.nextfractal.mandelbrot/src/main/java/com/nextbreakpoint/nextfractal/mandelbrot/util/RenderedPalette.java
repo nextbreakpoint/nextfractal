@@ -27,7 +27,7 @@ package com.nextbreakpoint.nextfractal.mandelbrot.util;
 
 import java.util.Arrays;
 
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionException;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionException;
 import com.nextbreakpoint.nextfractal.core.util.Colors;
 import com.nextbreakpoint.nextfractal.core.util.Palette;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotRegistry;

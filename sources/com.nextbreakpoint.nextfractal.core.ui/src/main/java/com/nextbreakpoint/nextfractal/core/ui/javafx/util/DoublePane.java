@@ -3,7 +3,7 @@ package com.nextbreakpoint.nextfractal.core.ui.javafx.util;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 
-import com.nextbreakpoint.nextfractal.core.common.DoubleElement;
+import com.nextbreakpoint.nextfractal.core.elements.DoubleElement;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.AdvancedTextField;
 
 public class DoublePane extends BorderPane {

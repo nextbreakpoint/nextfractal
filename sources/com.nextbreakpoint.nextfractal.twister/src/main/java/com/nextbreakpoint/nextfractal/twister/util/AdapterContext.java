@@ -27,7 +27,7 @@ package com.nextbreakpoint.nextfractal.twister.util;
 
 import java.io.Serializable;
 
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionConfig;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionConfig;
 
 /**
  * @author Andrea Medeghini

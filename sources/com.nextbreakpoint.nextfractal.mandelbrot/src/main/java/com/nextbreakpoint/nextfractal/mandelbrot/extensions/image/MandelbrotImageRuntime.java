@@ -55,7 +55,7 @@ public class MandelbrotImageRuntime extends ImageExtensionRuntime<MandelbrotImag
 	private Tile tile;
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionRuntime#configReloaded()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtensionRuntime#configReloaded()
 	 */
 	@Override
 	public void configReloaded() {
@@ -191,7 +191,7 @@ public class MandelbrotImageRuntime extends ImageExtensionRuntime<MandelbrotImag
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.extension.ExtensionRuntime#dispose()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionRuntime#dispose()
 	 */
 	@Override
 	public void dispose() {
@@ -207,7 +207,7 @@ public class MandelbrotImageRuntime extends ImageExtensionRuntime<MandelbrotImag
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.config.RuntimeElement#isChanged()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.RuntimeElement#isChanged()
 	 */
 	@Override
 	public boolean isChanged() {

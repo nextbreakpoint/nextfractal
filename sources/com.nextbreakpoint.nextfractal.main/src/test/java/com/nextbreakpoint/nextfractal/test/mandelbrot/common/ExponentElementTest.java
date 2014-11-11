@@ -27,12 +27,12 @@ package com.nextbreakpoint.nextfractal.test.mandelbrot.common;
 
 import org.junit.Test;
 
+import com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject;
 import com.nextbreakpoint.nextfractal.core.test.AbsractValueElementTest;
-import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
-import com.nextbreakpoint.nextfractal.mandelbrot.common.ExponentElement;
-import com.nextbreakpoint.nextfractal.mandelbrot.common.ExponentElementNode;
-import com.nextbreakpoint.nextfractal.mandelbrot.common.ExponentElementXMLExporter;
-import com.nextbreakpoint.nextfractal.mandelbrot.common.ExponentElementXMLImporter;
+import com.nextbreakpoint.nextfractal.mandelbrot.elements.ExponentElement;
+import com.nextbreakpoint.nextfractal.mandelbrot.elements.ExponentElementNode;
+import com.nextbreakpoint.nextfractal.mandelbrot.elements.ExponentElementXMLExporter;
+import com.nextbreakpoint.nextfractal.mandelbrot.elements.ExponentElementXMLImporter;
 
 /**
  * @author Andrea Medeghini

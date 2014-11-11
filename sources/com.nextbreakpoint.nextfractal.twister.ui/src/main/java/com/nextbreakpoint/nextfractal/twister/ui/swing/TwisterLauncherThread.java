@@ -34,9 +34,9 @@ import javax.swing.JOptionPane;
 
 import org.w3c.dom.Document;
 
-import com.nextbreakpoint.nextfractal.core.config.DefaultConfigContext;
+import com.nextbreakpoint.nextfractal.core.runtime.DefaultConfigContext;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XML;
 import com.nextbreakpoint.nextfractal.core.ui.swing.util.GUIUtil;
-import com.nextbreakpoint.nextfractal.core.xml.XML;
 import com.nextbreakpoint.nextfractal.twister.TwisterConfig;
 import com.nextbreakpoint.nextfractal.twister.TwisterConfigBuilder;
 import com.nextbreakpoint.nextfractal.twister.TwisterConfigXMLImporter;

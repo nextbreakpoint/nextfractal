@@ -14,7 +14,7 @@ import ${import};
  */
 public class ${extension.extensionConfigClassName}XMLExporterRuntime extends ExtensionConfigXMLExporterExtensionRuntime {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.xml.extension.ExtensionConfigXMLExporterExtensionRuntime#createXMLExporter()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.xml.extension.ExtensionConfigXMLExporterExtensionRuntime#createXMLExporter()
 	 */
 	@Override
 	public XMLExporter<${extension.extensionConfigClassName}> createXMLExporter() {
@@ -27,7 +27,7 @@ public class ${extension.extensionConfigClassName}XMLExporterRuntime extends Ext
 		}
 		
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.xml.XMLExporter#exportToElement(java.lang.Object, com.nextbreakpoint.nextfractal.core.xml.XMLNodeBuilder)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.xml.XMLExporter#exportToElement(java.lang.Object, com.nextbreakpoint.nextfractal.core.runtime.xml.XMLNodeBuilder)
 		 */
 		@Override
 		public Element exportToElement(final ${extension.extensionConfigClassName} extensionConfig, final XMLNodeBuilder builder) throws XMLExportException {
@@ -42,7 +42,7 @@ public class ${extension.extensionConfigClassName}XMLExporterRuntime extends Ext
 		}
 	
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.common.ConfigurableExtensionReferenceElementXMLExporter#exportProperties(com.nextbreakpoint.nextfractal.twister.util.ConfigurableExtensionConfigElement, org.w3c.dom.Element, com.nextbreakpoint.nextfractal.core.xml.XMLNodeBuilder, java.lang.String)
+		 * @see com.nextbreakpoint.nextfractal.core.elements.ConfigurableExtensionReferenceElementXMLExporter#exportProperties(com.nextbreakpoint.nextfractal.twister.util.ConfigurableExtensionConfigElement, org.w3c.dom.Element, com.nextbreakpoint.nextfractal.core.runtime.xml.XMLNodeBuilder, java.lang.String)
 		 */
 		protected void exportProperties(final ${extension.extensionConfigClassName} extensionConfig, final Element element, final XMLNodeBuilder builder) throws ExtensionException, XMLExportException {
 			<#list subelements as subelement>

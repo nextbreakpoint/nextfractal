@@ -27,20 +27,20 @@ package com.nextbreakpoint.nextfractal.twister;
 
 import org.w3c.dom.Element;
 
-import com.nextbreakpoint.nextfractal.core.common.LongElement;
-import com.nextbreakpoint.nextfractal.core.common.LongElementXMLExporter;
-import com.nextbreakpoint.nextfractal.core.tree.NodeAction;
-import com.nextbreakpoint.nextfractal.core.xml.ActionXMLExporter;
-import com.nextbreakpoint.nextfractal.core.xml.XMLExportException;
-import com.nextbreakpoint.nextfractal.core.xml.XMLExporter;
-import com.nextbreakpoint.nextfractal.core.xml.XMLNodeBuilder;
+import com.nextbreakpoint.nextfractal.core.elements.LongElement;
+import com.nextbreakpoint.nextfractal.core.elements.LongElementXMLExporter;
+import com.nextbreakpoint.nextfractal.core.runtime.model.NodeAction;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.ActionXMLExporter;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLExportException;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLExporter;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLNodeBuilder;
 
 /**
  * @author Andrea Medeghini
  */
 public class TwisterSequenceXMLExporter extends XMLExporter<TwisterSequence> {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.xml.XMLExporter#exportToElement(java.lang.Object, com.nextbreakpoint.nextfractal.core.xml.XMLNodeBuilder)
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.xml.XMLExporter#exportToElement(java.lang.Object, com.nextbreakpoint.nextfractal.core.runtime.xml.XMLNodeBuilder)
 	 */
 	@Override
 	public Element exportToElement(final TwisterSequence sequence, final XMLNodeBuilder builder) throws XMLExportException {

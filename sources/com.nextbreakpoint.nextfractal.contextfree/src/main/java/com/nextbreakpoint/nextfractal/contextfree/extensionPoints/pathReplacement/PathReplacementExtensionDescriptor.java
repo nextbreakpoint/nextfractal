@@ -25,7 +25,7 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.extensionPoints.pathReplacement;
 
-import com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionDescriptor;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtensionDescriptor;
 
 /**
  * @author Andrea Medeghini

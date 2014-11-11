@@ -25,9 +25,9 @@
  */
 package com.nextbreakpoint.nextfractal.core.extensionPoints.extensionConfigXMLImporter;
 
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionConfig;
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionRuntime;
-import com.nextbreakpoint.nextfractal.core.xml.XMLImporter;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionConfig;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLImporter;
 
 /**
  * @author Andrea Medeghini

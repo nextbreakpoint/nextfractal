@@ -25,10 +25,10 @@
  */
 package com.nextbreakpoint.nextfractal.twister.layer;
 
-import com.nextbreakpoint.nextfractal.core.common.StringElement;
-import com.nextbreakpoint.nextfractal.core.config.ConfigContext;
-import com.nextbreakpoint.nextfractal.core.config.ConfigElement;
-import com.nextbreakpoint.nextfractal.core.config.ListConfigElement;
+import com.nextbreakpoint.nextfractal.core.elements.StringElement;
+import com.nextbreakpoint.nextfractal.core.runtime.ConfigContext;
+import com.nextbreakpoint.nextfractal.core.runtime.ConfigElement;
+import com.nextbreakpoint.nextfractal.core.runtime.ListConfigElement;
 
 /**
  * @author Andrea Medeghini
@@ -156,7 +156,7 @@ public class GroupLayerConfigElement extends AbstractLayerConfigElement {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.config.ConfigElement#copyFrom(com.nextbreakpoint.nextfractal.core.config.ConfigElement)
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.ConfigElement#copyFrom(com.nextbreakpoint.nextfractal.core.runtime.ConfigElement)
 	 */
 	@Override
 	public void copyFrom(ConfigElement source) {
@@ -184,7 +184,7 @@ public class GroupLayerConfigElement extends AbstractLayerConfigElement {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.config.AbstractConfigElement#setContext(com.nextbreakpoint.nextfractal.core.config.ConfigContext)
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.AbstractConfigElement#setContext(com.nextbreakpoint.nextfractal.core.runtime.ConfigContext)
 	 */
 	@Override
 	public void setContext(final ConfigContext context) {
@@ -224,7 +224,7 @@ public class GroupLayerConfigElement extends AbstractLayerConfigElement {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.config.AbstractConfigElement#dispose()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.AbstractConfigElement#dispose()
 	 */
 	@Override
 	public void dispose() {

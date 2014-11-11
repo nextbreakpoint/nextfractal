@@ -30,10 +30,10 @@ import java.awt.Component;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JList;
 
-import com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtension;
-import com.nextbreakpoint.nextfractal.core.extension.Extension;
-import com.nextbreakpoint.nextfractal.core.extension.NullConfigurableExtension;
-import com.nextbreakpoint.nextfractal.core.extension.NullExtension;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtension;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.Extension;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.NullConfigurableExtension;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.NullExtension;
 
 /**
  * A cell renderer for extensions lists.

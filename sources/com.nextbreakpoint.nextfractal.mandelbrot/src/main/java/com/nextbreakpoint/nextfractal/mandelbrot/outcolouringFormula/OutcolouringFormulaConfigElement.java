@@ -25,16 +25,16 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.outcolouringFormula;
 
-import com.nextbreakpoint.nextfractal.core.common.BooleanElement;
-import com.nextbreakpoint.nextfractal.core.common.ConfigurableExtensionReferenceElement;
-import com.nextbreakpoint.nextfractal.core.common.IntegerElement;
-import com.nextbreakpoint.nextfractal.core.common.StringElement;
-import com.nextbreakpoint.nextfractal.core.config.AbstractConfigElement;
-import com.nextbreakpoint.nextfractal.core.config.ConfigContext;
-import com.nextbreakpoint.nextfractal.core.config.ConfigElement;
-import com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionReference;
+import com.nextbreakpoint.nextfractal.core.elements.BooleanElement;
+import com.nextbreakpoint.nextfractal.core.elements.ConfigurableExtensionReferenceElement;
+import com.nextbreakpoint.nextfractal.core.elements.IntegerElement;
+import com.nextbreakpoint.nextfractal.core.elements.StringElement;
+import com.nextbreakpoint.nextfractal.core.runtime.AbstractConfigElement;
+import com.nextbreakpoint.nextfractal.core.runtime.ConfigContext;
+import com.nextbreakpoint.nextfractal.core.runtime.ConfigElement;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtensionReference;
 import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.outcolouringFormula.OutcolouringFormulaExtensionConfig;
-import com.nextbreakpoint.nextfractal.twister.common.PercentageElement;
+import com.nextbreakpoint.nextfractal.twister.elements.PercentageElement;
 
 /**
  * @author Andrea Medeghini
@@ -76,7 +76,7 @@ public class OutcolouringFormulaConfigElement extends AbstractConfigElement {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.config.ConfigElement#copyFrom(com.nextbreakpoint.nextfractal.core.config.ConfigElement)
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.ConfigElement#copyFrom(com.nextbreakpoint.nextfractal.core.runtime.ConfigElement)
 	 */
 	@Override
 	public void copyFrom(ConfigElement source) {
@@ -93,7 +93,7 @@ public class OutcolouringFormulaConfigElement extends AbstractConfigElement {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.common.ConfigurableExtensionReferenceElement#setContext(com.nextbreakpoint.nextfractal.core.config.ConfigContext)
+	 * @see com.nextbreakpoint.nextfractal.core.elements.ConfigurableExtensionReferenceElement#setContext(com.nextbreakpoint.nextfractal.core.runtime.ConfigContext)
 	 */
 	@Override
 	public void setContext(final ConfigContext context) {
@@ -311,7 +311,7 @@ public class OutcolouringFormulaConfigElement extends AbstractConfigElement {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.config.AbstractConfigElement#dispose()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.AbstractConfigElement#dispose()
 	 */
 	@Override
 	public void dispose() {

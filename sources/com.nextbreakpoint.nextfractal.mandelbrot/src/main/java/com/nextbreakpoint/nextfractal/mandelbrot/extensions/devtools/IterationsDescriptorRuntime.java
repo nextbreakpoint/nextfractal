@@ -28,7 +28,7 @@ package com.nextbreakpoint.nextfractal.mandelbrot.extensions.devtools;
 import com.nextbreakpoint.nextfractal.core.devtools.ProcessorCardinality;
 import com.nextbreakpoint.nextfractal.core.devtools.ProcessorDescriptor;
 import com.nextbreakpoint.nextfractal.core.extensionPoints.descriptor.DescriptorExtensionRuntime;
-import com.nextbreakpoint.nextfractal.mandelbrot.common.IterationsElement;
+import com.nextbreakpoint.nextfractal.mandelbrot.elements.IterationsElement;
 
 public class IterationsDescriptorRuntime extends DescriptorExtensionRuntime {
 	/**
@@ -36,7 +36,7 @@ public class IterationsDescriptorRuntime extends DescriptorExtensionRuntime {
 	 */
 	@Override
 	public ProcessorDescriptor createDescriptor(String elementName, String defaultValue, ProcessorCardinality cardinality) {
-		return new ProcessorDescriptor(elementName, "Iterations", IterationsElement.CLASS_ID, "com.nextbreakpoint.nextfractal.mandelbrot.common", "IterationsElement", null, null, null, null, null, null, null, null, null, null, null, null, "java.lang", "Integer", defaultValue, "get", "set", cardinality);
+		return new ProcessorDescriptor(elementName, "Iterations", IterationsElement.CLASS_ID, "com.nextbreakpoint.nextfractal.mandelbrot.elements", "IterationsElement", null, null, null, null, null, null, null, null, null, null, null, null, "java.lang", "Integer", defaultValue, "get", "set", cardinality);
 	}
 
 	/**

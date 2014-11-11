@@ -6,9 +6,9 @@ package com.nextbreakpoint.nextfractal.contextfree.extensions.pathReplacement;
 
 import com.nextbreakpoint.nextfractal.contextfree.extensionPoints.pathReplacement.PathReplacementExtensionRuntime;
 import com.nextbreakpoint.nextfractal.contextfree.renderer.support.CFRule;
-import com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent;
-import com.nextbreakpoint.nextfractal.core.config.ValueChangeListener;
-import com.nextbreakpoint.nextfractal.core.config.ValueConfigElement;
+import com.nextbreakpoint.nextfractal.core.runtime.ElementChangeEvent;
+import com.nextbreakpoint.nextfractal.core.runtime.ElementChangeListener;
+import com.nextbreakpoint.nextfractal.core.runtime.ValueConfigElement;
 
 /**
  * @author Andrea Medeghini
@@ -18,7 +18,7 @@ public class ClosePolyPathReplacementRuntime extends PathReplacementExtensionRun
 	private AlignListener alignListener;
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionRuntime#configReloaded()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtensionRuntime#configReloaded()
 	 */
 	@Override
 	public void configReloaded() {
@@ -47,12 +47,12 @@ public class ClosePolyPathReplacementRuntime extends PathReplacementExtensionRun
 		this.align = align;
 	}
 	
-	private class AlignListener implements ValueChangeListener {
+	private class AlignListener implements ElementChangeListener {
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.ElementChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.runtime.ElementChangeEvent)
 		 */
 		@Override
-		public void valueChanged(final ValueChangeEvent e) {
+		public void valueChanged(final ElementChangeEvent e) {
 			switch (e.getEventType()) {
 				case ValueConfigElement.VALUE_CHANGED: {
 					setAlign((Boolean) e.getParams()[0]);

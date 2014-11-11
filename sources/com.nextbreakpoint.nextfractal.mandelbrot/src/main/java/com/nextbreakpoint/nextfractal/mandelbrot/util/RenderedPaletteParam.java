@@ -28,7 +28,7 @@ package com.nextbreakpoint.nextfractal.mandelbrot.util;
 import java.io.Serializable;
 import java.util.Arrays;
 
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionReference;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionReference;
 
 /**
  * @author Andrea Medeghini

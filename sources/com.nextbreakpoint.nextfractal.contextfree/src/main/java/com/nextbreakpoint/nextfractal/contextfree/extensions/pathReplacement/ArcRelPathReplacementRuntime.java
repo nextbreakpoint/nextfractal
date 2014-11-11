@@ -6,9 +6,9 @@ package com.nextbreakpoint.nextfractal.contextfree.extensions.pathReplacement;
 
 import com.nextbreakpoint.nextfractal.contextfree.extensionPoints.pathReplacement.PathReplacementExtensionRuntime;
 import com.nextbreakpoint.nextfractal.contextfree.renderer.support.CFRule;
-import com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent;
-import com.nextbreakpoint.nextfractal.core.config.ValueChangeListener;
-import com.nextbreakpoint.nextfractal.core.config.ValueConfigElement;
+import com.nextbreakpoint.nextfractal.core.runtime.ElementChangeEvent;
+import com.nextbreakpoint.nextfractal.core.runtime.ElementChangeListener;
+import com.nextbreakpoint.nextfractal.core.runtime.ValueConfigElement;
 
 /**
  * @author Andrea Medeghini
@@ -30,7 +30,7 @@ public class ArcRelPathReplacementRuntime extends PathReplacementExtensionRuntim
 	private LargeListener largeListener;
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionRuntime#configReloaded()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtensionRuntime#configReloaded()
 	 */
 	@Override
 	public void configReloaded() {
@@ -101,12 +101,12 @@ public class ArcRelPathReplacementRuntime extends PathReplacementExtensionRuntim
 		this.x = x;
 	}
 	
-	private class XListener implements ValueChangeListener {
+	private class XListener implements ElementChangeListener {
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.ElementChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.runtime.ElementChangeEvent)
 		 */
 		@Override
-		public void valueChanged(final ValueChangeEvent e) {
+		public void valueChanged(final ElementChangeEvent e) {
 			switch (e.getEventType()) {
 				case ValueConfigElement.VALUE_CHANGED: {
 					setX((Float) e.getParams()[0]);
@@ -130,12 +130,12 @@ public class ArcRelPathReplacementRuntime extends PathReplacementExtensionRuntim
 		this.y = y;
 	}
 	
-	private class YListener implements ValueChangeListener {
+	private class YListener implements ElementChangeListener {
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.ElementChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.runtime.ElementChangeEvent)
 		 */
 		@Override
-		public void valueChanged(final ValueChangeEvent e) {
+		public void valueChanged(final ElementChangeEvent e) {
 			switch (e.getEventType()) {
 				case ValueConfigElement.VALUE_CHANGED: {
 					setY((Float) e.getParams()[0]);
@@ -159,12 +159,12 @@ public class ArcRelPathReplacementRuntime extends PathReplacementExtensionRuntim
 		this.rx = rx;
 	}
 	
-	private class RxListener implements ValueChangeListener {
+	private class RxListener implements ElementChangeListener {
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.ElementChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.runtime.ElementChangeEvent)
 		 */
 		@Override
-		public void valueChanged(final ValueChangeEvent e) {
+		public void valueChanged(final ElementChangeEvent e) {
 			switch (e.getEventType()) {
 				case ValueConfigElement.VALUE_CHANGED: {
 					setRx((Float) e.getParams()[0]);
@@ -188,12 +188,12 @@ public class ArcRelPathReplacementRuntime extends PathReplacementExtensionRuntim
 		this.ry = ry;
 	}
 	
-	private class RyListener implements ValueChangeListener {
+	private class RyListener implements ElementChangeListener {
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.ElementChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.runtime.ElementChangeEvent)
 		 */
 		@Override
-		public void valueChanged(final ValueChangeEvent e) {
+		public void valueChanged(final ElementChangeEvent e) {
 			switch (e.getEventType()) {
 				case ValueConfigElement.VALUE_CHANGED: {
 					setRy((Float) e.getParams()[0]);
@@ -217,12 +217,12 @@ public class ArcRelPathReplacementRuntime extends PathReplacementExtensionRuntim
 		this.r = r;
 	}
 	
-	private class RListener implements ValueChangeListener {
+	private class RListener implements ElementChangeListener {
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.ElementChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.runtime.ElementChangeEvent)
 		 */
 		@Override
-		public void valueChanged(final ValueChangeEvent e) {
+		public void valueChanged(final ElementChangeEvent e) {
 			switch (e.getEventType()) {
 				case ValueConfigElement.VALUE_CHANGED: {
 					setR((Float) e.getParams()[0]);
@@ -246,12 +246,12 @@ public class ArcRelPathReplacementRuntime extends PathReplacementExtensionRuntim
 		this.sweep = sweep;
 	}
 	
-	private class SweepListener implements ValueChangeListener {
+	private class SweepListener implements ElementChangeListener {
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.ElementChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.runtime.ElementChangeEvent)
 		 */
 		@Override
-		public void valueChanged(final ValueChangeEvent e) {
+		public void valueChanged(final ElementChangeEvent e) {
 			switch (e.getEventType()) {
 				case ValueConfigElement.VALUE_CHANGED: {
 					setSweep((Boolean) e.getParams()[0]);
@@ -275,12 +275,12 @@ public class ArcRelPathReplacementRuntime extends PathReplacementExtensionRuntim
 		this.large = large;
 	}
 	
-	private class LargeListener implements ValueChangeListener {
+	private class LargeListener implements ElementChangeListener {
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.ElementChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.runtime.ElementChangeEvent)
 		 */
 		@Override
-		public void valueChanged(final ValueChangeEvent e) {
+		public void valueChanged(final ElementChangeEvent e) {
 			switch (e.getEventType()) {
 				case ValueConfigElement.VALUE_CHANGED: {
 					setLarge((Boolean) e.getParams()[0]);

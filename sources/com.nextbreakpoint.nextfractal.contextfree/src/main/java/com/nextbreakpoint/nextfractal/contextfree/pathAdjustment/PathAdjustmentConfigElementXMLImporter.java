@@ -10,18 +10,18 @@ import org.w3c.dom.Element;
 
 import com.nextbreakpoint.nextfractal.contextfree.ContextFreeRegistry;
 import com.nextbreakpoint.nextfractal.contextfree.extensionPoints.pathAdjustment.PathAdjustmentExtensionConfig;
-import com.nextbreakpoint.nextfractal.core.common.ConfigurableExtensionReferenceElement;
-import com.nextbreakpoint.nextfractal.core.common.ConfigurableExtensionReferenceElementXMLImporter;
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionException;
-import com.nextbreakpoint.nextfractal.core.xml.XMLImportException;
-import com.nextbreakpoint.nextfractal.core.xml.XMLImporter;
+import com.nextbreakpoint.nextfractal.core.elements.ConfigurableExtensionReferenceElement;
+import com.nextbreakpoint.nextfractal.core.elements.ConfigurableExtensionReferenceElementXMLImporter;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionException;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLImportException;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLImporter;
 
 /**
  * @author Andrea Medeghini
  */
 public class PathAdjustmentConfigElementXMLImporter extends XMLImporter<PathAdjustmentConfigElement> {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.xml.XMLImporter#importFromElement(org.w3c.dom.Element)
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.xml.XMLImporter#importFromElement(org.w3c.dom.Element)
 	 */
 	@Override
 	public PathAdjustmentConfigElement importFromElement(final Element element) throws XMLImportException {

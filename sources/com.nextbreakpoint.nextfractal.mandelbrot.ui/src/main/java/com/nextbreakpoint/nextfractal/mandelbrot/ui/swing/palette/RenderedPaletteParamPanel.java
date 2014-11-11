@@ -49,9 +49,9 @@ import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import com.nextbreakpoint.nextfractal.core.extension.Extension;
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionNotFoundException;
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionReference;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.Extension;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionNotFoundException;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionReference;
 import com.nextbreakpoint.nextfractal.core.ui.swing.color.ColorChangeEvent;
 import com.nextbreakpoint.nextfractal.core.ui.swing.color.ColorChangeListener;
 import com.nextbreakpoint.nextfractal.core.ui.swing.color.ColorChooser;

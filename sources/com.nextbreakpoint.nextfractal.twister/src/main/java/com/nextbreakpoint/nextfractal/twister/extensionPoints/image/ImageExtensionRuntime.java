@@ -27,7 +27,7 @@ package com.nextbreakpoint.nextfractal.twister.extensionPoints.image;
 
 import java.util.Map;
 
-import com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtensionRuntime;
 import com.nextbreakpoint.nextfractal.core.util.IntegerVector2D;
 import com.nextbreakpoint.nextfractal.core.util.Tile;
 import com.nextbreakpoint.nextfractal.twister.renderer.RenderFactory;
@@ -104,7 +104,7 @@ public abstract class ImageExtensionRuntime<T extends ImageExtensionConfig> exte
 	public abstract void setRenderingHints(Map<Object, Object> hints);
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.extension.ExtensionRuntime#dispose()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionRuntime#dispose()
 	 */
 	@Override
 	public void dispose() {

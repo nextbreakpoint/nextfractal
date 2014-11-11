@@ -14,7 +14,7 @@ import ${import};
  */
 public class ${extension.extensionConfigClassName}XMLImporterRuntime extends ExtensionConfigXMLImporterExtensionRuntime {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.xml.extension.ExtensionConfigXMLImporterExtensionRuntime#createXMLImporter()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.xml.extension.ExtensionConfigXMLImporterExtensionRuntime#createXMLImporter()
 	 */
 	@Override
 	public XMLImporter<${extension.extensionConfigClassName}> createXMLImporter() {
@@ -31,7 +31,7 @@ public class ${extension.extensionConfigClassName}XMLImporterRuntime extends Ext
 		}
 		
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.xml.XMLImporter#importFromElement(org.w3c.dom.Element)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.xml.XMLImporter#importFromElement(org.w3c.dom.Element)
 		 */
 		@Override
 		public ${extension.extensionConfigClassName} importFromElement(final Element element) throws XMLImportException {

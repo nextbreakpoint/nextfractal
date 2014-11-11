@@ -25,7 +25,7 @@
  */
 package com.nextbreakpoint.nextfractal.queue.extensionPoints.spool;
 
-import com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtensionRuntime;
 import com.nextbreakpoint.nextfractal.core.util.Worker;
 import com.nextbreakpoint.nextfractal.queue.LibraryService;
 import com.nextbreakpoint.nextfractal.queue.spool.JobService;

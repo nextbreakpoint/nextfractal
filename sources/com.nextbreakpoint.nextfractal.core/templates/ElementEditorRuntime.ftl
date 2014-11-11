@@ -13,7 +13,7 @@ import ${import};
  */
 public class <#if parentRuntimeClass?exists>${element.elementName?cap_first}EditorRuntime extends ${parentRuntimeClass}<#else>${element.elementName?cap_first}EditorRuntime extends EditorExtensionRuntime</#if> {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.swing.editor.element.EditorExtensionRuntime#createEditor(com.nextbreakpoint.nextfractal.core.tree.NodeEditor)
+	 * @see com.nextbreakpoint.nextfractal.core.swing.editor.element.EditorExtensionRuntime#createEditor(com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor)
 	 */
 	@Override
 	public NodeEditorComponent createEditor(final NodeEditor nodeEditor) {
@@ -56,7 +56,7 @@ public class <#if parentRuntimeClass?exists>${element.elementName?cap_first}Edit
  */
 public class <#if parentRuntimeClass?exists>${element.elementName?cap_first}EditorRuntime extends ${parentRuntimeClass}<#else>${element.elementName?cap_first}EditorRuntime extends EditorExtensionRuntime</#if> {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.swing.editor.element.EditorExtensionRuntime#createEditor(com.nextbreakpoint.nextfractal.core.tree.NodeEditor)
+	 * @see com.nextbreakpoint.nextfractal.core.swing.editor.element.EditorExtensionRuntime#createEditor(com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor)
 	 */
 	@Override
 	public NodeEditorComponent createEditor(final NodeEditor nodeEditor) {

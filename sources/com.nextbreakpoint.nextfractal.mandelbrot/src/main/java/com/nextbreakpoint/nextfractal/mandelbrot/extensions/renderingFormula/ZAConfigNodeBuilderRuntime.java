@@ -25,8 +25,8 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.extensions.renderingFormula;
 
-import com.nextbreakpoint.nextfractal.core.common.DoubleElementNode;
-import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
+import com.nextbreakpoint.nextfractal.core.elements.DoubleElementNode;
+import com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject;
 import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.renderingFormula.RenderingFormulaExtensionConfig;
 import com.nextbreakpoint.nextfractal.mandelbrot.extensions.MandelbrotExtensionResources;
 
@@ -35,7 +35,7 @@ import com.nextbreakpoint.nextfractal.mandelbrot.extensions.MandelbrotExtensionR
  */
 public class ZAConfigNodeBuilderRuntime extends AbstractRenderingFormulaConfigNodeBuilderRuntime {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensions.renderingFormula.AbstractRenderingFormulaConfigNodeBuilderRuntime#createNodes(com.nextbreakpoint.nextfractal.core.tree.NodeObject, com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.renderingFormula.RenderingFormulaExtensionConfig)
+	 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensions.renderingFormula.AbstractRenderingFormulaConfigNodeBuilderRuntime#createNodes(com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject, com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.renderingFormula.RenderingFormulaExtensionConfig)
 	 */
 	@Override
 	public void createNodes(final NodeObject parentNode, final RenderingFormulaExtensionConfig config) {

@@ -27,9 +27,9 @@ package com.nextbreakpoint.nextfractal.twister.extensions.action;
 
 import org.w3c.dom.Element;
 
-import com.nextbreakpoint.nextfractal.core.tree.NodeActionValue;
-import com.nextbreakpoint.nextfractal.core.util.AbstractActionXMLImporterRuntime;
-import com.nextbreakpoint.nextfractal.core.xml.XMLImportException;
+import com.nextbreakpoint.nextfractal.core.runtime.model.NodeActionValue;
+import com.nextbreakpoint.nextfractal.core.runtime.util.AbstractActionXMLImporterRuntime;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLImportException;
 
 /**
  * @author Andrea Medeghini

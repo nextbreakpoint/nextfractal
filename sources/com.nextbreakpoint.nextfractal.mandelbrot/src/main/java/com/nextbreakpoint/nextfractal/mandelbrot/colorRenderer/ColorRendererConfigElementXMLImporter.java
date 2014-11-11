@@ -29,11 +29,11 @@ import java.util.List;
 
 import org.w3c.dom.Element;
 
-import com.nextbreakpoint.nextfractal.core.common.ConfigurableExtensionReferenceElement;
-import com.nextbreakpoint.nextfractal.core.common.ConfigurableExtensionReferenceElementXMLImporter;
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionException;
-import com.nextbreakpoint.nextfractal.core.xml.XMLImportException;
-import com.nextbreakpoint.nextfractal.core.xml.XMLImporter;
+import com.nextbreakpoint.nextfractal.core.elements.ConfigurableExtensionReferenceElement;
+import com.nextbreakpoint.nextfractal.core.elements.ConfigurableExtensionReferenceElementXMLImporter;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionException;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLImportException;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLImporter;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotRegistry;
 import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.colorRenderer.ColorRendererExtensionConfig;
 
@@ -42,7 +42,7 @@ import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.colorRenderer.C
  */
 public class ColorRendererConfigElementXMLImporter extends XMLImporter<ColorRendererConfigElement> {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.xml.XMLImporter#importFromElement(org.w3c.dom.Element)
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.xml.XMLImporter#importFromElement(org.w3c.dom.Element)
 	 */
 	@Override
 	public ColorRendererConfigElement importFromElement(final Element element) throws XMLImportException {

@@ -28,9 +28,9 @@ package com.nextbreakpoint.nextfractal.mandelbrot.extensions.image;
 import org.w3c.dom.Element;
 
 import com.nextbreakpoint.nextfractal.core.extensionPoints.extensionConfigXMLExporter.ExtensionConfigXMLExporterExtensionRuntime;
-import com.nextbreakpoint.nextfractal.core.xml.XMLExportException;
-import com.nextbreakpoint.nextfractal.core.xml.XMLExporter;
-import com.nextbreakpoint.nextfractal.core.xml.XMLNodeBuilder;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLExportException;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLExporter;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLNodeBuilder;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotConfigXMLExporter;
 
 /**
@@ -47,7 +47,7 @@ public class MandelbrotImageConfigXMLExporterRuntime extends ExtensionConfigXMLE
 
 	public class MandelbrotImageConfigXMLExporter extends XMLExporter<MandelbrotImageConfig> {
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.xml.XMLExporter#exportToElement(java.lang.Object, com.nextbreakpoint.nextfractal.core.xml.XMLNodeBuilder)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.xml.XMLExporter#exportToElement(java.lang.Object, com.nextbreakpoint.nextfractal.core.runtime.xml.XMLNodeBuilder)
 		 */
 		@Override
 		public Element exportToElement(final MandelbrotImageConfig config, final XMLNodeBuilder builder) throws XMLExportException {

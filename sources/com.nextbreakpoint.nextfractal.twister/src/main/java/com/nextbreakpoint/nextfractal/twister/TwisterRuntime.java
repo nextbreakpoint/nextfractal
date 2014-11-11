@@ -25,10 +25,10 @@
  */
 package com.nextbreakpoint.nextfractal.twister;
 
-import com.nextbreakpoint.nextfractal.core.config.RuntimeElement;
-import com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent;
-import com.nextbreakpoint.nextfractal.core.config.ValueChangeListener;
-import com.nextbreakpoint.nextfractal.core.config.ValueConfigElement;
+import com.nextbreakpoint.nextfractal.core.runtime.ElementChangeEvent;
+import com.nextbreakpoint.nextfractal.core.runtime.ElementChangeListener;
+import com.nextbreakpoint.nextfractal.core.runtime.RuntimeElement;
+import com.nextbreakpoint.nextfractal.core.runtime.ValueConfigElement;
 import com.nextbreakpoint.nextfractal.core.util.Color32bit;
 import com.nextbreakpoint.nextfractal.twister.effect.EffectConfigElement;
 import com.nextbreakpoint.nextfractal.twister.effect.EffectRuntimeElement;
@@ -73,7 +73,7 @@ public class TwisterRuntime extends RuntimeElement {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.config.RuntimeElement#dispose()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.RuntimeElement#dispose()
 	 */
 	@Override
 	public void dispose() {
@@ -146,12 +146,12 @@ public class TwisterRuntime extends RuntimeElement {
 		this.effectElement = effectElement;
 	}
 
-	private class FrameElementListener implements ValueChangeListener {
+	private class FrameElementListener implements ElementChangeListener {
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.ElementChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.runtime.ElementChangeEvent)
 		 */
 		@Override
-		public void valueChanged(final ValueChangeEvent e) {
+		public void valueChanged(final ElementChangeEvent e) {
 			if (e.getEventType() == ValueConfigElement.VALUE_CHANGED) {
 				setFrameElement(new FrameRuntimeElement((FrameConfigElement) e.getParams()[0]));
 				fireChanged();
@@ -159,12 +159,12 @@ public class TwisterRuntime extends RuntimeElement {
 		}
 	}
 
-	private class EffectElementListener implements ValueChangeListener {
+	private class EffectElementListener implements ElementChangeListener {
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.ElementChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.runtime.ElementChangeEvent)
 		 */
 		@Override
-		public void valueChanged(final ValueChangeEvent e) {
+		public void valueChanged(final ElementChangeEvent e) {
 			if (e.getEventType() == ValueConfigElement.VALUE_CHANGED) {
 				setEffectElement(new EffectRuntimeElement((EffectConfigElement) e.getParams()[0]));
 				fireChanged();
@@ -172,12 +172,12 @@ public class TwisterRuntime extends RuntimeElement {
 		}
 	}
 
-	private class BackgroundElementListener implements ValueChangeListener {
+	private class BackgroundElementListener implements ElementChangeListener {
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.ElementChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.runtime.ElementChangeEvent)
 		 */
 		@Override
-		public void valueChanged(final ValueChangeEvent e) {
+		public void valueChanged(final ElementChangeEvent e) {
 			switch (e.getEventType()) {
 				case ValueConfigElement.VALUE_CHANGED: {
 					setBackground((Color32bit) e.getParams()[0]);
@@ -192,7 +192,7 @@ public class TwisterRuntime extends RuntimeElement {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.config.RuntimeElement#isChanged()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.RuntimeElement#isChanged()
 	 */
 	@Override
 	public boolean isChanged() {

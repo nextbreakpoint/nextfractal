@@ -26,7 +26,7 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.extensions.creator;
 
 import com.nextbreakpoint.nextfractal.core.extensionPoints.creator.CreatorExtensionRuntime;
-import com.nextbreakpoint.nextfractal.core.scripting.JSException;
+import com.nextbreakpoint.nextfractal.core.runtime.scripting.JSException;
 
 /**
  * @author Andrea Medeghini

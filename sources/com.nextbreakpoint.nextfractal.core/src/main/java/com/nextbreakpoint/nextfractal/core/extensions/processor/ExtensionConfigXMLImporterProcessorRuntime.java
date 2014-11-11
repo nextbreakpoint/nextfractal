@@ -87,10 +87,10 @@ public class ExtensionConfigXMLImporterProcessorRuntime extends ProcessorExtensi
 	
 	private void prepare(Set<String> imports, ProcessorDescriptor descriptor) {
 		imports.add("java.util.List");
-		imports.add("com.nextbreakpoint.nextfractal.core.xml.extension.ExtensionConfigXMLImporterExtensionRuntime");
-		imports.add("com.nextbreakpoint.nextfractal.core.extension.ExtensionException");
-		imports.add("com.nextbreakpoint.nextfractal.core.xml.XMLImportException");
-		imports.add("com.nextbreakpoint.nextfractal.core.xml.XMLImporter");
+		imports.add("com.nextbreakpoint.nextfractal.core.runtime.xml.extension.ExtensionConfigXMLImporterExtensionRuntime");
+		imports.add("com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionException");
+		imports.add("com.nextbreakpoint.nextfractal.core.runtime.xml.XMLImportException");
+		imports.add("com.nextbreakpoint.nextfractal.core.runtime.xml.XMLImporter");
 		imports.add("org.w3c.dom.Element");
 	}
 

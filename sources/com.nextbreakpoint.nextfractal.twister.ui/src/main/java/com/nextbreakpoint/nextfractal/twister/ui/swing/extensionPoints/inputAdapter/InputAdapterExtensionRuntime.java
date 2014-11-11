@@ -28,9 +28,9 @@ package com.nextbreakpoint.nextfractal.twister.ui.swing.extensionPoints.inputAda
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionConfig;
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionRuntime;
-import com.nextbreakpoint.nextfractal.core.util.RenderContext;
+import com.nextbreakpoint.nextfractal.core.RenderContext;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionConfig;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionRuntime;
 import com.nextbreakpoint.nextfractal.twister.util.AdapterContext;
 
 /**
@@ -113,7 +113,7 @@ public abstract class InputAdapterExtensionRuntime extends ExtensionRuntime {
 	public abstract void refresh();
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.extension.ExtensionRuntime#dispose()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionRuntime#dispose()
 	 */
 	@Override
 	public void dispose() {

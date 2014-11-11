@@ -34,13 +34,13 @@ import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XML;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLNodeBuilder;
 import com.nextbreakpoint.nextfractal.core.util.ConnectionFactory;
 import com.nextbreakpoint.nextfractal.core.util.DefaultThreadFactory;
 import com.nextbreakpoint.nextfractal.core.util.ProgressListener;
 import com.nextbreakpoint.nextfractal.core.util.Surface;
 import com.nextbreakpoint.nextfractal.core.util.Worker;
-import com.nextbreakpoint.nextfractal.core.xml.XML;
-import com.nextbreakpoint.nextfractal.core.xml.XMLNodeBuilder;
 import com.nextbreakpoint.nextfractal.queue.DefaultConnectionFactory;
 import com.nextbreakpoint.nextfractal.queue.LibraryService;
 import com.nextbreakpoint.nextfractal.queue.LibraryServiceListener;

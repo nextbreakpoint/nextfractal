@@ -25,10 +25,10 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot;
 
-import com.nextbreakpoint.nextfractal.core.config.RuntimeElement;
-import com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent;
-import com.nextbreakpoint.nextfractal.core.config.ValueChangeListener;
-import com.nextbreakpoint.nextfractal.core.config.ValueConfigElement;
+import com.nextbreakpoint.nextfractal.core.runtime.ElementChangeEvent;
+import com.nextbreakpoint.nextfractal.core.runtime.ElementChangeListener;
+import com.nextbreakpoint.nextfractal.core.runtime.RuntimeElement;
+import com.nextbreakpoint.nextfractal.core.runtime.ValueConfigElement;
 import com.nextbreakpoint.nextfractal.core.util.DoubleVector2D;
 import com.nextbreakpoint.nextfractal.mandelbrot.fractal.MandelbrotFractalRuntimeElement;
 
@@ -63,7 +63,7 @@ public class MandelbrotRuntime extends RuntimeElement {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.config.RuntimeElement#dispose()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.RuntimeElement#dispose()
 	 */
 	@Override
 	public void dispose() {
@@ -149,7 +149,7 @@ public class MandelbrotRuntime extends RuntimeElement {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.config.RuntimeElement#isChanged()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.RuntimeElement#isChanged()
 	 */
 	@Override
 	public boolean isChanged() {
@@ -157,12 +157,12 @@ public class MandelbrotRuntime extends RuntimeElement {
 		return super.isChanged() || fractalChanged;
 	}
 
-	private class FractalElementListener implements ValueChangeListener {
+	private class FractalElementListener implements ElementChangeListener {
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.ElementChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.runtime.ElementChangeEvent)
 		 */
 		@Override
-		public void valueChanged(final ValueChangeEvent e) {
+		public void valueChanged(final ElementChangeEvent e) {
 			switch (e.getEventType()) {
 				case ValueConfigElement.VALUE_CHANGED: {
 					setMandelbrotFractal(new MandelbrotFractalRuntimeElement(config.getMandelbrotFractal()));
@@ -176,12 +176,12 @@ public class MandelbrotRuntime extends RuntimeElement {
 		}
 	}
 
-	private class ViewElementListener implements ValueChangeListener {
+	private class ViewElementListener implements ElementChangeListener {
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.ElementChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.runtime.ElementChangeEvent)
 		 */
 		@Override
-		public void valueChanged(final ValueChangeEvent e) {
+		public void valueChanged(final ElementChangeEvent e) {
 			switch (e.getEventType()) {
 				case ValueConfigElement.VALUE_CHANGED: {
 					viewChanged = true;
@@ -194,12 +194,12 @@ public class MandelbrotRuntime extends RuntimeElement {
 		}
 	}
 
-	private class ElementListener implements ValueChangeListener {
+	private class ElementListener implements ElementChangeListener {
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.ElementChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.runtime.ElementChangeEvent)
 		 */
 		@Override
-		public void valueChanged(final ValueChangeEvent e) {
+		public void valueChanged(final ElementChangeEvent e) {
 			switch (e.getEventType()) {
 				case ValueConfigElement.VALUE_CHANGED: {
 					fireChanged();

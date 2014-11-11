@@ -28,7 +28,7 @@ package com.nextbreakpoint.nextfractal.mandelbrot.ui.swing.extensions.inputAdapt
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
-import com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionReference;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtensionReference;
 import com.nextbreakpoint.nextfractal.core.util.DoubleVector2D;
 import com.nextbreakpoint.nextfractal.core.util.DoubleVector4D;
 import com.nextbreakpoint.nextfractal.core.util.IntegerVector2D;
@@ -43,8 +43,8 @@ import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.renderingFormul
 import com.nextbreakpoint.nextfractal.mandelbrot.extensions.image.MandelbrotImageConfig;
 import com.nextbreakpoint.nextfractal.mandelbrot.fractal.MandelbrotFractalConfigElement;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderingFormula.RenderingFormulaConfigElement;
-import com.nextbreakpoint.nextfractal.twister.common.SpeedElement;
-import com.nextbreakpoint.nextfractal.twister.common.ViewElement;
+import com.nextbreakpoint.nextfractal.twister.elements.SpeedElement;
+import com.nextbreakpoint.nextfractal.twister.elements.ViewElement;
 import com.nextbreakpoint.nextfractal.twister.ui.swing.extensionPoints.inputAdapter.DefaultInputAdapterRuntime;
 import com.nextbreakpoint.nextfractal.twister.util.Speed;
 import com.nextbreakpoint.nextfractal.twister.util.View;

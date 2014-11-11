@@ -27,9 +27,9 @@ package com.nextbreakpoint.nextfractal.twister.frame;
 
 import org.w3c.dom.Element;
 
-import com.nextbreakpoint.nextfractal.core.xml.XMLExportException;
-import com.nextbreakpoint.nextfractal.core.xml.XMLExporter;
-import com.nextbreakpoint.nextfractal.core.xml.XMLNodeBuilder;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLExportException;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLExporter;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLNodeBuilder;
 import com.nextbreakpoint.nextfractal.twister.frameFilter.FrameFilterConfigElementXMLExporter;
 import com.nextbreakpoint.nextfractal.twister.layer.GroupLayerConfigElementXMLExporter;
 
@@ -38,7 +38,7 @@ import com.nextbreakpoint.nextfractal.twister.layer.GroupLayerConfigElementXMLEx
  */
 public class FrameConfigElementXMLExporter extends XMLExporter<FrameConfigElement> {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.xml.XMLExporter#exportToElement(java.lang.Object, com.nextbreakpoint.nextfractal.core.xml.XMLNodeBuilder)
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.xml.XMLExporter#exportToElement(java.lang.Object, com.nextbreakpoint.nextfractal.core.runtime.xml.XMLNodeBuilder)
 	 */
 	@Override
 	public Element exportToElement(final FrameConfigElement configElement, final XMLNodeBuilder builder) throws XMLExportException {

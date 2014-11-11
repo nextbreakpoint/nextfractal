@@ -27,14 +27,14 @@ package com.nextbreakpoint.nextfractal.test.mandelbrot.colorRendererFormula;
 
 import org.junit.Test;
 
-import com.nextbreakpoint.nextfractal.core.common.ExtensionReferenceElement;
-import com.nextbreakpoint.nextfractal.core.common.ExtensionReferenceElementNode;
-import com.nextbreakpoint.nextfractal.core.common.ExtensionReferenceElementXMLExporter;
-import com.nextbreakpoint.nextfractal.core.common.ExtensionReferenceElementXMLImporter;
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionReference;
+import com.nextbreakpoint.nextfractal.core.elements.ExtensionReferenceElement;
+import com.nextbreakpoint.nextfractal.core.elements.ExtensionReferenceElementNode;
+import com.nextbreakpoint.nextfractal.core.elements.ExtensionReferenceElementXMLExporter;
+import com.nextbreakpoint.nextfractal.core.elements.ExtensionReferenceElementXMLImporter;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionReference;
+import com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject;
+import com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue;
 import com.nextbreakpoint.nextfractal.core.test.AbstractExtensionConfigElementTest;
-import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
-import com.nextbreakpoint.nextfractal.core.tree.NodeValue;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotRegistry;
 import com.nextbreakpoint.nextfractal.mandelbrot.colorRendererFormula.ColorRendererFormulaExtensionReferenceNodeValue;
 

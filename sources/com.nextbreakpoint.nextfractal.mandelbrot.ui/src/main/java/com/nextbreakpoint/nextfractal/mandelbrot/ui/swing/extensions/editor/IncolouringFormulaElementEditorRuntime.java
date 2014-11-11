@@ -25,8 +25,8 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.ui.swing.extensions.editor;
 
-import com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionReference;
-import com.nextbreakpoint.nextfractal.core.tree.NodeValue;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtensionReference;
+import com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue;
 import com.nextbreakpoint.nextfractal.core.ui.swing.editor.ConfigurableReferenceElementEditorRuntime;
 import com.nextbreakpoint.nextfractal.core.ui.swing.extension.ConfigurableExtensionComboBoxModel;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotRegistry;
@@ -47,7 +47,7 @@ public class IncolouringFormulaElementEditorRuntime extends ConfigurableReferenc
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.ui.swing.editor.ConfigurableReferenceElementEditorRuntime#createNodeValue(com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionReference)
+	 * @see com.nextbreakpoint.nextfractal.core.ui.swing.editor.ConfigurableReferenceElementEditorRuntime#createNodeValue(com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtensionReference)
 	 */
 	@SuppressWarnings("unchecked")
 	@Override

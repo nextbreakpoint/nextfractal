@@ -27,11 +27,11 @@ package com.nextbreakpoint.nextfractal.mandelbrot.extensions.renderingFormula;
 
 import org.w3c.dom.Element;
 
-import com.nextbreakpoint.nextfractal.core.common.DoubleElementXMLExporter;
+import com.nextbreakpoint.nextfractal.core.elements.DoubleElementXMLExporter;
 import com.nextbreakpoint.nextfractal.core.extensionPoints.extensionConfigXMLExporter.ExtensionConfigXMLExporterExtensionRuntime;
-import com.nextbreakpoint.nextfractal.core.xml.XMLExportException;
-import com.nextbreakpoint.nextfractal.core.xml.XMLExporter;
-import com.nextbreakpoint.nextfractal.core.xml.XMLNodeBuilder;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLExportException;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLExporter;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLNodeBuilder;
 
 /**
  * @author Andrea Medeghini
@@ -47,7 +47,7 @@ public class ZAConfigXMLExporterRuntime extends ExtensionConfigXMLExporterExtens
 
 	private class ZAConfigXMLExporter extends AbstractRenderingFormulaConfigXMLExporter<ZAConfig> {
 		/**
-		 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensions.renderingFormula.AbstractRenderingFormulaConfigXMLExporter#exportProperties(com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.renderingFormula.RenderingFormulaExtensionConfig, org.w3c.dom.Element, com.nextbreakpoint.nextfractal.core.xml.XMLNodeBuilder)
+		 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensions.renderingFormula.AbstractRenderingFormulaConfigXMLExporter#exportProperties(com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.renderingFormula.RenderingFormulaExtensionConfig, org.w3c.dom.Element, com.nextbreakpoint.nextfractal.core.runtime.xml.XMLNodeBuilder)
 		 */
 		@Override
 		protected void exportProperties(final ZAConfig config, final Element element, final XMLNodeBuilder builder) throws XMLExportException {

@@ -29,13 +29,13 @@ import java.awt.Font;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.nextbreakpoint.nextfractal.core.common.ColorElement;
-import com.nextbreakpoint.nextfractal.core.common.DoubleElement;
-import com.nextbreakpoint.nextfractal.core.common.FontElement;
-import com.nextbreakpoint.nextfractal.core.common.StringElement;
-import com.nextbreakpoint.nextfractal.core.config.ConfigElement;
-import com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent;
-import com.nextbreakpoint.nextfractal.core.config.ValueChangeListener;
+import com.nextbreakpoint.nextfractal.core.elements.ColorElement;
+import com.nextbreakpoint.nextfractal.core.elements.DoubleElement;
+import com.nextbreakpoint.nextfractal.core.elements.FontElement;
+import com.nextbreakpoint.nextfractal.core.elements.StringElement;
+import com.nextbreakpoint.nextfractal.core.runtime.ConfigElement;
+import com.nextbreakpoint.nextfractal.core.runtime.ElementChangeEvent;
+import com.nextbreakpoint.nextfractal.core.runtime.ElementChangeListener;
 import com.nextbreakpoint.nextfractal.core.util.Color32bit;
 import com.nextbreakpoint.nextfractal.twister.extensionPoints.image.ImageExtensionConfig;
 
@@ -81,7 +81,7 @@ public class TextConfig extends ImageExtensionConfig {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.extension.ExtensionConfig#getConfigElements()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionConfig#getConfigElements()
 	 */
 	@Override
 	public List<ConfigElement> getConfigElements() {
@@ -379,12 +379,12 @@ public class TextConfig extends ImageExtensionConfig {
 		return true;
 	}
 
-	private class ValueChangeEventDispatcher implements ValueChangeListener {
+	private class ValueChangeEventDispatcher implements ElementChangeListener {
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.ElementChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.runtime.ElementChangeEvent)
 		 */
 		@Override
-		public void valueChanged(final ValueChangeEvent e) {
+		public void valueChanged(final ElementChangeEvent e) {
 			fireValueChanged(e);
 		}
 	}

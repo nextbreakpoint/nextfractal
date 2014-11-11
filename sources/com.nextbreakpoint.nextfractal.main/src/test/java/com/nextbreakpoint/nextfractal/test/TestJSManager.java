@@ -31,14 +31,14 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
-import com.nextbreakpoint.nextfractal.core.config.DefaultConfigContext;
-import com.nextbreakpoint.nextfractal.core.scripting.DefaultJSContext;
-import com.nextbreakpoint.nextfractal.core.scripting.JSManager;
-import com.nextbreakpoint.nextfractal.core.tree.DefaultNodeSession;
-import com.nextbreakpoint.nextfractal.core.tree.DefaultRootNode;
+import com.nextbreakpoint.nextfractal.core.RenderContext;
+import com.nextbreakpoint.nextfractal.core.RenderContextListener;
+import com.nextbreakpoint.nextfractal.core.runtime.DefaultConfigContext;
+import com.nextbreakpoint.nextfractal.core.runtime.model.DefaultNodeSession;
+import com.nextbreakpoint.nextfractal.core.runtime.model.DefaultRootNode;
+import com.nextbreakpoint.nextfractal.core.runtime.scripting.DefaultJSContext;
+import com.nextbreakpoint.nextfractal.core.runtime.scripting.JSManager;
 import com.nextbreakpoint.nextfractal.core.util.IntegerVector2D;
-import com.nextbreakpoint.nextfractal.core.util.RenderContext;
-import com.nextbreakpoint.nextfractal.core.util.RenderContextListener;
 import com.nextbreakpoint.nextfractal.twister.TwisterConfig;
 import com.nextbreakpoint.nextfractal.twister.TwisterConfigBuilder;
 import com.nextbreakpoint.nextfractal.twister.TwisterConfigNode;
@@ -68,7 +68,7 @@ public class TestJSManager {
 
 	private class TestJSContext extends DefaultJSContext {
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.scripting.JSContext#loadDefaultConfig()
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.scripting.JSContext#loadDefaultConfig()
 		 */
 		@Override
 		public void loadDefaultConfig() {
@@ -77,21 +77,21 @@ public class TestJSManager {
 
 	private class TestRenderContext implements RenderContext {
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#startRenderers()
+		 * @see com.nextbreakpoint.nextfractal.core.RenderContext#startRenderers()
 		 */
 		@Override
 		public void startRenderers() {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#stopRenderers()
+		 * @see com.nextbreakpoint.nextfractal.core.RenderContext#stopRenderers()
 		 */
 		@Override
 		public void stopRenderers() {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#getImageSize()
+		 * @see com.nextbreakpoint.nextfractal.core.RenderContext#getImageSize()
 		 */
 		@Override
 		public IntegerVector2D getImageSize() {
@@ -99,42 +99,42 @@ public class TestJSManager {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#refresh()
+		 * @see com.nextbreakpoint.nextfractal.core.RenderContext#refresh()
 		 */
 		@Override
 		public void refresh() {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#acquire()
+		 * @see com.nextbreakpoint.nextfractal.core.RenderContext#acquire()
 		 */
 		@Override
 		public void acquire() throws InterruptedException {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#release()
+		 * @see com.nextbreakpoint.nextfractal.core.RenderContext#release()
 		 */
 		@Override
 		public void release() {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#addRenderContextListener(com.nextbreakpoint.nextfractal.core.util.RenderContextListener)
+		 * @see com.nextbreakpoint.nextfractal.core.RenderContext#addRenderContextListener(com.nextbreakpoint.nextfractal.core.RenderContextListener)
 		 */
 		@Override
 		public void addRenderContextListener(RenderContextListener listener) {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#removeRenderContextListener(com.nextbreakpoint.nextfractal.core.util.RenderContextListener)
+		 * @see com.nextbreakpoint.nextfractal.core.RenderContext#removeRenderContextListener(com.nextbreakpoint.nextfractal.core.RenderContextListener)
 		 */
 		@Override
 		public void removeRenderContextListener(RenderContextListener listener) {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#execute(java.lang.Runnable)
+		 * @see com.nextbreakpoint.nextfractal.core.RenderContext#execute(java.lang.Runnable)
 		 */
 		@Override
 		public void execute(Runnable task) {

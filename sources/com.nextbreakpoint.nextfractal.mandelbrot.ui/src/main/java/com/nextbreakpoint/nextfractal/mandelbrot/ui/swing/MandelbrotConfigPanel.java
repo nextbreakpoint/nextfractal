@@ -55,16 +55,17 @@ import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import com.nextbreakpoint.nextfractal.core.common.ExtensionReferenceElement;
-import com.nextbreakpoint.nextfractal.core.config.ListConfigElement;
-import com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent;
-import com.nextbreakpoint.nextfractal.core.config.ValueChangeListener;
-import com.nextbreakpoint.nextfractal.core.config.ValueConfigElement;
-import com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtension;
-import com.nextbreakpoint.nextfractal.core.extension.Extension;
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionException;
-import com.nextbreakpoint.nextfractal.core.extension.NullConfigurableExtension;
-import com.nextbreakpoint.nextfractal.core.tree.NodeSession;
+import com.nextbreakpoint.nextfractal.core.RenderContext;
+import com.nextbreakpoint.nextfractal.core.elements.ExtensionReferenceElement;
+import com.nextbreakpoint.nextfractal.core.runtime.ElementChangeEvent;
+import com.nextbreakpoint.nextfractal.core.runtime.ElementChangeListener;
+import com.nextbreakpoint.nextfractal.core.runtime.ListConfigElement;
+import com.nextbreakpoint.nextfractal.core.runtime.ValueConfigElement;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtension;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.Extension;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionException;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.NullConfigurableExtension;
+import com.nextbreakpoint.nextfractal.core.runtime.model.NodeSession;
 import com.nextbreakpoint.nextfractal.core.ui.swing.ViewContext;
 import com.nextbreakpoint.nextfractal.core.ui.swing.extension.ConfigurableExtensionComboBoxModel;
 import com.nextbreakpoint.nextfractal.core.ui.swing.extension.ExtensionComboBoxModel;
@@ -72,7 +73,6 @@ import com.nextbreakpoint.nextfractal.core.ui.swing.extension.ExtensionListCellR
 import com.nextbreakpoint.nextfractal.core.ui.swing.util.GUIFactory;
 import com.nextbreakpoint.nextfractal.core.ui.swing.util.StackLayout;
 import com.nextbreakpoint.nextfractal.core.util.DoubleVector4D;
-import com.nextbreakpoint.nextfractal.core.util.RenderContext;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotConfig;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotRegistry;
 import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.incolouringFormula.IncolouringFormulaExtensionConfig;
@@ -113,7 +113,7 @@ public class MandelbrotConfigPanel extends ViewPanel {
 	private final ViewContext viewContext;
 	private final RenderContext context;
 	private final NodeSession session;
-	private final ValueChangeListener configListener;
+	private final ElementChangeListener configListener;
 	private final MandelbrotConfig config;
 	private final Color oddColor;
 	private final Color evenColor;
@@ -137,9 +137,9 @@ public class MandelbrotConfigPanel extends ViewPanel {
 		add(fractalPanel);
 		add(imagePanel);
 		setBorder(BorderFactory.createMatteBorder(1, 0, 1, 0, Color.DARK_GRAY));
-		configListener = new ValueChangeListener() {
+		configListener = new ElementChangeListener() {
 			@Override
-			public void valueChanged(final ValueChangeEvent e) {
+			public void valueChanged(final ElementChangeEvent e) {
 				switch (e.getEventType()) {
 					case ValueConfigElement.VALUE_CHANGED: {
 						remove(fractalPanel);
@@ -333,12 +333,12 @@ public class MandelbrotConfigPanel extends ViewPanel {
 
 	private class MandelbrotImagePanel extends JPanel {
 		private static final long serialVersionUID = 1L;
-		private final ValueChangeListener showPreviewListener;
-		private final ValueChangeListener showOrbitListener;
-		private final ValueChangeListener showOrbitTrapListener;
-		private final ValueChangeListener imageModeListener;
-		private final ValueChangeListener inputModeListener;
-		private final ValueChangeListener speedListener;
+		private final ElementChangeListener showPreviewListener;
+		private final ElementChangeListener showOrbitListener;
+		private final ElementChangeListener showOrbitTrapListener;
+		private final ElementChangeListener imageModeListener;
+		private final ElementChangeListener inputModeListener;
+		private final ElementChangeListener speedListener;
 		private final MandelbrotConfig config;
 
 		public MandelbrotImagePanel(final MandelbrotConfig config) {
@@ -587,49 +587,49 @@ public class MandelbrotConfigPanel extends ViewPanel {
 				}
 			};
 			rotationSpeedTextfield.addActionListener(rotationSpeedActionListener);
-			showPreviewListener = new ValueChangeListener() {
+			showPreviewListener = new ElementChangeListener() {
 				@Override
-				public void valueChanged(final ValueChangeEvent e) {
+				public void valueChanged(final ElementChangeEvent e) {
 					showPreviewCheckBox.removeActionListener(showPreviewActionListener);
 					showPreviewCheckBox.setSelected(config.getShowPreview());
 					showPreviewCheckBox.addActionListener(showPreviewActionListener);
 				}
 			};
-			showOrbitListener = new ValueChangeListener() {
+			showOrbitListener = new ElementChangeListener() {
 				@Override
-				public void valueChanged(final ValueChangeEvent e) {
+				public void valueChanged(final ElementChangeEvent e) {
 					showOrbitCheckBox.removeActionListener(showOrbitActionListener);
 					showOrbitCheckBox.setSelected(config.getShowOrbit());
 					showOrbitCheckBox.addActionListener(showOrbitActionListener);
 				}
 			};
-			showOrbitTrapListener = new ValueChangeListener() {
+			showOrbitTrapListener = new ElementChangeListener() {
 				@Override
-				public void valueChanged(final ValueChangeEvent e) {
+				public void valueChanged(final ElementChangeEvent e) {
 					showOrbitTrapCheckBox.removeActionListener(showOrbitTrapActionListener);
 					showOrbitTrapCheckBox.setSelected(config.getShowOrbitTrap());
 					showOrbitTrapCheckBox.addActionListener(showOrbitTrapActionListener);
 				}
 			};
-			imageModeListener = new ValueChangeListener() {
+			imageModeListener = new ElementChangeListener() {
 				@Override
-				public void valueChanged(final ValueChangeEvent e) {
+				public void valueChanged(final ElementChangeEvent e) {
 					imageModeComboBox.removeActionListener(imageModeActionListener);
 					updateImageMode(config, imageModeComboBox);
 					imageModeComboBox.addActionListener(imageModeActionListener);
 				}
 			};
-			inputModeListener = new ValueChangeListener() {
+			inputModeListener = new ElementChangeListener() {
 				@Override
-				public void valueChanged(final ValueChangeEvent e) {
+				public void valueChanged(final ElementChangeEvent e) {
 					inputModeComboBox.removeActionListener(inputModeActionListener);
 					updateInputMode(config, inputModeComboBox);
 					inputModeComboBox.addActionListener(inputModeActionListener);
 				}
 			};
-			speedListener = new ValueChangeListener() {
+			speedListener = new ElementChangeListener() {
 				@Override
-				public void valueChanged(final ValueChangeEvent e) {
+				public void valueChanged(final ElementChangeEvent e) {
 					zoomSpeedTextfield.removeActionListener(zoomSpeedActionListener);
 					shiftSpeedTextfield.removeActionListener(shiftSpeedActionListener);
 					rotationSpeedTextfield.removeActionListener(rotationSpeedActionListener);
@@ -699,15 +699,15 @@ public class MandelbrotConfigPanel extends ViewPanel {
 		private TransformingFormulaPanel transformingFormulaPanel;
 		private ProcessingFormulaPanel processingFormulaPanel;
 		private OrbitTrapPanel orbitTrapPanel;
-		private final ValueChangeListener incolouringFormulasListener;
-		private final ValueChangeListener outcolouringFormulasListener;
-		private final ValueChangeListener renderingFormulaListener;
-		private final ValueChangeListener transformingFormulaListener;
-		private final ValueChangeListener processingFormulaListener;
-		private final ValueChangeListener orbitTrapListener;
+		private final ElementChangeListener incolouringFormulasListener;
+		private final ElementChangeListener outcolouringFormulasListener;
+		private final ElementChangeListener renderingFormulaListener;
+		private final ElementChangeListener transformingFormulaListener;
+		private final ElementChangeListener processingFormulaListener;
+		private final ElementChangeListener orbitTrapListener;
 		private final MandelbrotFractalConfigElement fractalElement;
 
-		// private ValueChangeListener centerListener;
+		// private ElementChangeListener centerListener;
 		// private CenterListener centerFieldListener;
 		// private JTextField[] textFields;
 		/**
@@ -874,9 +874,9 @@ public class MandelbrotConfigPanel extends ViewPanel {
 				outcolouringFormulasPanel.getComponent(i).setBackground((i % 2 == 0) ? evenColor : oddColor);
 				// ((JComponent) outcolouringFormulasPanel.getComponent(i)).setOpaque(i % 2 == 0);
 			}
-			incolouringFormulasListener = new ValueChangeListener() {
+			incolouringFormulasListener = new ElementChangeListener() {
 				@Override
-				public void valueChanged(final ValueChangeEvent e) {
+				public void valueChanged(final ElementChangeEvent e) {
 					switch (e.getEventType()) {
 						case ListConfigElement.ELEMENT_ADDED: {
 							viewContext.resize(GUIFactory.DEFAULT_HEIGHT);
@@ -935,9 +935,9 @@ public class MandelbrotConfigPanel extends ViewPanel {
 					editIncolouringFormulasButton.setText(createEditIncolouringFormulasText(fractalElement));
 				}
 			};
-			outcolouringFormulasListener = new ValueChangeListener() {
+			outcolouringFormulasListener = new ElementChangeListener() {
 				@Override
-				public void valueChanged(final ValueChangeEvent e) {
+				public void valueChanged(final ElementChangeEvent e) {
 					switch (e.getEventType()) {
 						case ListConfigElement.ELEMENT_ADDED: {
 							viewContext.resize(GUIFactory.DEFAULT_HEIGHT);
@@ -996,9 +996,9 @@ public class MandelbrotConfigPanel extends ViewPanel {
 					editOutcolouringFormulasButton.setText(createEditOutcolouringFormulasText(fractalElement));
 				}
 			};
-			renderingFormulaListener = new ValueChangeListener() {
+			renderingFormulaListener = new ElementChangeListener() {
 				@Override
-				public void valueChanged(final ValueChangeEvent e) {
+				public void valueChanged(final ElementChangeEvent e) {
 					switch (e.getEventType()) {
 						case ValueConfigElement.VALUE_CHANGED: {
 							subpanelContainer.remove(renderingFormulaPanel);
@@ -1012,9 +1012,9 @@ public class MandelbrotConfigPanel extends ViewPanel {
 					}
 				}
 			};
-			transformingFormulaListener = new ValueChangeListener() {
+			transformingFormulaListener = new ElementChangeListener() {
 				@Override
-				public void valueChanged(final ValueChangeEvent e) {
+				public void valueChanged(final ElementChangeEvent e) {
 					switch (e.getEventType()) {
 						case ValueConfigElement.VALUE_CHANGED: {
 							subpanelContainer.remove(transformingFormulaPanel);
@@ -1028,9 +1028,9 @@ public class MandelbrotConfigPanel extends ViewPanel {
 					}
 				}
 			};
-			processingFormulaListener = new ValueChangeListener() {
+			processingFormulaListener = new ElementChangeListener() {
 				@Override
-				public void valueChanged(final ValueChangeEvent e) {
+				public void valueChanged(final ElementChangeEvent e) {
 					switch (e.getEventType()) {
 						case ValueConfigElement.VALUE_CHANGED: {
 							subpanelContainer.remove(processingFormulaPanel);
@@ -1044,9 +1044,9 @@ public class MandelbrotConfigPanel extends ViewPanel {
 					}
 				}
 			};
-			orbitTrapListener = new ValueChangeListener() {
+			orbitTrapListener = new ElementChangeListener() {
 				@Override
-				public void valueChanged(final ValueChangeEvent e) {
+				public void valueChanged(final ElementChangeEvent e) {
 					switch (e.getEventType()) {
 						case ValueConfigElement.VALUE_CHANGED: {
 							// textFields[0].removeActionListener(centerFieldListener);
@@ -1073,8 +1073,8 @@ public class MandelbrotConfigPanel extends ViewPanel {
 					}
 				}
 			};
-			// centerListener = new ValueChangeListener() {
-			// public void valueChanged(ValueChangeEvent e) {
+			// centerListener = new ElementChangeListener() {
+			// public void valueChanged(ElementChangeEvent e) {
 			// switch (e.getEventType()) {
 			// case ValueConfigElementEvents.VALUE_CHANGED: {
 			// textFields[0].removeActionListener(centerFieldListener);
@@ -1531,7 +1531,7 @@ public class MandelbrotConfigPanel extends ViewPanel {
 	private class RenderingFormulaPanel extends JPanel {
 		private static final long serialVersionUID = 1L;
 		private ViewPanel configView;
-		private final ValueChangeListener formulaListener;
+		private final ElementChangeListener formulaListener;
 		private final RenderingFormulaConfigElement formulaElement;
 
 		/**
@@ -1591,9 +1591,9 @@ public class MandelbrotConfigPanel extends ViewPanel {
 					}
 				}
 			};
-			formulaListener = new ValueChangeListener() {
+			formulaListener = new ElementChangeListener() {
 				@Override
-				public void valueChanged(final ValueChangeEvent e) {
+				public void valueChanged(final ElementChangeEvent e) {
 					switch (e.getEventType()) {
 						case ExtensionReferenceElement.EXTENSION_REFERENCE_CHANGED: {
 							editOptionsButton.setEnabled(formulaElement.getReference() != null);
@@ -1657,7 +1657,7 @@ public class MandelbrotConfigPanel extends ViewPanel {
 		private static final long serialVersionUID = 1L;
 		private ViewPanel configView;
 		private final TransformingFormulaConfigElement formulaElement;
-		private final ValueChangeListener formulaListener;
+		private final ElementChangeListener formulaListener;
 
 		/**
 		 * @param fractalElement
@@ -1716,9 +1716,9 @@ public class MandelbrotConfigPanel extends ViewPanel {
 					}
 				}
 			};
-			formulaListener = new ValueChangeListener() {
+			formulaListener = new ElementChangeListener() {
 				@Override
-				public void valueChanged(final ValueChangeEvent e) {
+				public void valueChanged(final ElementChangeEvent e) {
 					switch (e.getEventType()) {
 						case ExtensionReferenceElement.EXTENSION_REFERENCE_CHANGED: {
 							editOptionsButton.setEnabled(formulaElement.getReference() != null);
@@ -1781,7 +1781,7 @@ public class MandelbrotConfigPanel extends ViewPanel {
 	private class ProcessingFormulaPanel extends JPanel {
 		private static final long serialVersionUID = 1L;
 		private final ProcessingFormulaConfigElement formulaElement;
-		private final ValueChangeListener formulaListener;
+		private final ElementChangeListener formulaListener;
 
 		/**
 		 * @param fractalElement
@@ -1830,9 +1830,9 @@ public class MandelbrotConfigPanel extends ViewPanel {
 					}
 				}
 			};
-			formulaListener = new ValueChangeListener() {
+			formulaListener = new ElementChangeListener() {
 				@Override
-				public void valueChanged(final ValueChangeEvent e) {
+				public void valueChanged(final ElementChangeEvent e) {
 					switch (e.getEventType()) {
 						case ExtensionReferenceElement.EXTENSION_REFERENCE_CHANGED: {
 							extensionComboBox.removeActionListener(comboListener);
@@ -1864,7 +1864,7 @@ public class MandelbrotConfigPanel extends ViewPanel {
 		private static final long serialVersionUID = 1L;
 		private ViewPanel configView;
 		private final OrbitTrapConfigElement orbitTrapElement;
-		private final ValueChangeListener orbitTrapListener;
+		private final ElementChangeListener orbitTrapListener;
 
 		/**
 		 * @param fractalElement
@@ -1923,9 +1923,9 @@ public class MandelbrotConfigPanel extends ViewPanel {
 					}
 				}
 			};
-			orbitTrapListener = new ValueChangeListener() {
+			orbitTrapListener = new ElementChangeListener() {
 				@Override
-				public void valueChanged(final ValueChangeEvent e) {
+				public void valueChanged(final ElementChangeEvent e) {
 					switch (e.getEventType()) {
 						case ExtensionReferenceElement.EXTENSION_REFERENCE_CHANGED: {
 							editOptionsButton.setEnabled(orbitTrapElement.getReference() != null);
@@ -1990,13 +1990,13 @@ public class MandelbrotConfigPanel extends ViewPanel {
 		private final JCheckBox selectedCheckBox = createCheckBox();
 		private ViewPanel configView;
 		private final IncolouringFormulaConfigElement formulaElement;
-		private final ValueChangeListener formulaListener;
-		private final ValueChangeListener lockedListener;
-		private final ValueChangeListener enabledListener;
-		private final ValueChangeListener labelListener;
-		private final ValueChangeListener autoIterationsListener;
-		private final ValueChangeListener iterationsListener;
-		private final ValueChangeListener opacityListener;
+		private final ElementChangeListener formulaListener;
+		private final ElementChangeListener lockedListener;
+		private final ElementChangeListener enabledListener;
+		private final ElementChangeListener labelListener;
+		private final ElementChangeListener autoIterationsListener;
+		private final ElementChangeListener iterationsListener;
+		private final ElementChangeListener opacityListener;
 
 		/**
 		 * @param fractalElement
@@ -2205,9 +2205,9 @@ public class MandelbrotConfigPanel extends ViewPanel {
 				}
 			};
 			enabledCheckBox.addActionListener(enabledActionListener);
-			formulaListener = new ValueChangeListener() {
+			formulaListener = new ElementChangeListener() {
 				@Override
-				public void valueChanged(final ValueChangeEvent e) {
+				public void valueChanged(final ElementChangeEvent e) {
 					switch (e.getEventType()) {
 						case ExtensionReferenceElement.EXTENSION_REFERENCE_CHANGED: {
 							editOptionsButton.setEnabled(formulaElement.getReference() != null);
@@ -2231,34 +2231,34 @@ public class MandelbrotConfigPanel extends ViewPanel {
 					}
 				}
 			};
-			lockedListener = new ValueChangeListener() {
+			lockedListener = new ElementChangeListener() {
 				@Override
-				public void valueChanged(final ValueChangeEvent e) {
+				public void valueChanged(final ElementChangeEvent e) {
 					lockedCheckBox.removeActionListener(lockedActionListener);
 					lockedCheckBox.setSelected(formulaElement.isLocked());
 					lockedCheckBox.addActionListener(lockedActionListener);
 				}
 			};
-			enabledListener = new ValueChangeListener() {
+			enabledListener = new ElementChangeListener() {
 				@Override
-				public void valueChanged(final ValueChangeEvent e) {
+				public void valueChanged(final ElementChangeEvent e) {
 					enabledCheckBox.removeActionListener(enabledActionListener);
 					enabledCheckBox.setSelected(formulaElement.isEnabled());
 					enabledCheckBox.addActionListener(enabledActionListener);
 				}
 			};
-			labelListener = new ValueChangeListener() {
+			labelListener = new ElementChangeListener() {
 				@Override
-				public void valueChanged(final ValueChangeEvent e) {
+				public void valueChanged(final ElementChangeEvent e) {
 					label.setText(formulaElement.getLabel());
 					if (configView != null) {
 						configView.setName(createIncolouringFormulaPanelName(formulaElement));
 					}
 				}
 			};
-			autoIterationsListener = new ValueChangeListener() {
+			autoIterationsListener = new ElementChangeListener() {
 				@Override
-				public void valueChanged(final ValueChangeEvent e) {
+				public void valueChanged(final ElementChangeEvent e) {
 					autoIterationsCheckBox.removeActionListener(autoIterationsActionListener);
 					iterationsSpinner.removeChangeListener(iterationsChangeListener);
 					autoIterationsCheckBox.setSelected(formulaElement.getAutoIterations());
@@ -2267,17 +2267,17 @@ public class MandelbrotConfigPanel extends ViewPanel {
 					iterationsSpinner.addChangeListener(iterationsChangeListener);
 				}
 			};
-			iterationsListener = new ValueChangeListener() {
+			iterationsListener = new ElementChangeListener() {
 				@Override
-				public void valueChanged(final ValueChangeEvent e) {
+				public void valueChanged(final ElementChangeEvent e) {
 					iterationsSpinner.removeChangeListener(iterationsChangeListener);
 					iterationsSpinner.setValue(formulaElement.getIterations());
 					iterationsSpinner.addChangeListener(iterationsChangeListener);
 				}
 			};
-			opacityListener = new ValueChangeListener() {
+			opacityListener = new ElementChangeListener() {
 				@Override
-				public void valueChanged(final ValueChangeEvent e) {
+				public void valueChanged(final ElementChangeEvent e) {
 					opacitySpinner.removeChangeListener(opacityChangeListener);
 					opacitySpinner.setValue(formulaElement.getOpacity().intValue());
 					opacitySpinner.addChangeListener(opacityChangeListener);
@@ -2339,13 +2339,13 @@ public class MandelbrotConfigPanel extends ViewPanel {
 		private final JCheckBox selectedCheckBox = createCheckBox();
 		private ViewPanel configView;
 		private final OutcolouringFormulaConfigElement formulaElement;
-		private ValueChangeListener formulaListener;
-		private final ValueChangeListener lockedListener;
-		private final ValueChangeListener enabledListener;
-		private final ValueChangeListener labelListener;
-		private final ValueChangeListener autoIterationsListener;
-		private final ValueChangeListener iterationsListener;
-		private final ValueChangeListener opacityListener;
+		private ElementChangeListener formulaListener;
+		private final ElementChangeListener lockedListener;
+		private final ElementChangeListener enabledListener;
+		private final ElementChangeListener labelListener;
+		private final ElementChangeListener autoIterationsListener;
+		private final ElementChangeListener iterationsListener;
+		private final ElementChangeListener opacityListener;
 
 		/**
 		 * @param fractalElement
@@ -2428,9 +2428,9 @@ public class MandelbrotConfigPanel extends ViewPanel {
 					}
 				}
 			};
-			formulaListener = new ValueChangeListener() {
+			formulaListener = new ElementChangeListener() {
 				@Override
-				public void valueChanged(final ValueChangeEvent e) {
+				public void valueChanged(final ElementChangeEvent e) {
 					switch (e.getEventType()) {
 						case ExtensionReferenceElement.EXTENSION_REFERENCE_CHANGED: {
 							editOptionsButton.setEnabled(formulaElement.getReference() != null);
@@ -2580,9 +2580,9 @@ public class MandelbrotConfigPanel extends ViewPanel {
 				}
 			};
 			enabledCheckBox.addActionListener(enabledActionListener);
-			formulaListener = new ValueChangeListener() {
+			formulaListener = new ElementChangeListener() {
 				@Override
-				public void valueChanged(final ValueChangeEvent e) {
+				public void valueChanged(final ElementChangeEvent e) {
 					switch (e.getEventType()) {
 						case ExtensionReferenceElement.EXTENSION_REFERENCE_CHANGED: {
 							editOptionsButton.setEnabled(formulaElement.getReference() != null);
@@ -2606,34 +2606,34 @@ public class MandelbrotConfigPanel extends ViewPanel {
 					}
 				}
 			};
-			lockedListener = new ValueChangeListener() {
+			lockedListener = new ElementChangeListener() {
 				@Override
-				public void valueChanged(final ValueChangeEvent e) {
+				public void valueChanged(final ElementChangeEvent e) {
 					lockedCheckBox.removeActionListener(lockedActionListener);
 					lockedCheckBox.setSelected(formulaElement.isLocked());
 					lockedCheckBox.addActionListener(lockedActionListener);
 				}
 			};
-			enabledListener = new ValueChangeListener() {
+			enabledListener = new ElementChangeListener() {
 				@Override
-				public void valueChanged(final ValueChangeEvent e) {
+				public void valueChanged(final ElementChangeEvent e) {
 					enabledCheckBox.removeActionListener(enabledActionListener);
 					enabledCheckBox.setSelected(formulaElement.isEnabled());
 					enabledCheckBox.addActionListener(enabledActionListener);
 				}
 			};
-			labelListener = new ValueChangeListener() {
+			labelListener = new ElementChangeListener() {
 				@Override
-				public void valueChanged(final ValueChangeEvent e) {
+				public void valueChanged(final ElementChangeEvent e) {
 					label.setText(formulaElement.getLabel());
 					if (configView != null) {
 						configView.setName(createOutcolouringFormulaPanelName(formulaElement));
 					}
 				}
 			};
-			autoIterationsListener = new ValueChangeListener() {
+			autoIterationsListener = new ElementChangeListener() {
 				@Override
-				public void valueChanged(final ValueChangeEvent e) {
+				public void valueChanged(final ElementChangeEvent e) {
 					autoIterationsCheckBox.removeActionListener(autoIterationsActionListener);
 					iterationsSpinner.removeChangeListener(iterationsChangeListener);
 					autoIterationsCheckBox.setSelected(formulaElement.getAutoIterations());
@@ -2642,17 +2642,17 @@ public class MandelbrotConfigPanel extends ViewPanel {
 					iterationsSpinner.addChangeListener(iterationsChangeListener);
 				}
 			};
-			iterationsListener = new ValueChangeListener() {
+			iterationsListener = new ElementChangeListener() {
 				@Override
-				public void valueChanged(final ValueChangeEvent e) {
+				public void valueChanged(final ElementChangeEvent e) {
 					iterationsSpinner.removeChangeListener(iterationsChangeListener);
 					iterationsSpinner.setValue(formulaElement.getIterations());
 					iterationsSpinner.addChangeListener(iterationsChangeListener);
 				}
 			};
-			opacityListener = new ValueChangeListener() {
+			opacityListener = new ElementChangeListener() {
 				@Override
-				public void valueChanged(final ValueChangeEvent e) {
+				public void valueChanged(final ElementChangeEvent e) {
 					opacitySpinner.removeChangeListener(opacityChangeListener);
 					opacitySpinner.setValue(formulaElement.getOpacity().intValue());
 					opacitySpinner.addChangeListener(opacityChangeListener);

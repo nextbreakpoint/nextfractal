@@ -25,7 +25,7 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.transformingFormula;
 
-import com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionDescriptor;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtensionDescriptor;
 
 /**
  * @author Andrea Medeghini

@@ -13,7 +13,7 @@ import ${import};
  */
 public class ${element.elementName?cap_first}CreatorRuntime extends CreatorExtensionRuntime {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.scripting.element.CreatorExtensionRuntime#create(java.lang.Object[])
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.scripting.element.CreatorExtensionRuntime#create(java.lang.Object[])
 	 */
 	@Override
 	public Object create(final Object... args) throws JSException {

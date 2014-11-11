@@ -27,14 +27,14 @@ package com.nextbreakpoint.nextfractal.twister.extensions.image;
 
 import org.w3c.dom.Element;
 
-import com.nextbreakpoint.nextfractal.core.common.ColorElementXMLExporter;
-import com.nextbreakpoint.nextfractal.core.common.DoubleElementXMLExporter;
-import com.nextbreakpoint.nextfractal.core.common.FontElementXMLExporter;
-import com.nextbreakpoint.nextfractal.core.common.StringElementXMLExporter;
+import com.nextbreakpoint.nextfractal.core.elements.ColorElementXMLExporter;
+import com.nextbreakpoint.nextfractal.core.elements.DoubleElementXMLExporter;
+import com.nextbreakpoint.nextfractal.core.elements.FontElementXMLExporter;
+import com.nextbreakpoint.nextfractal.core.elements.StringElementXMLExporter;
 import com.nextbreakpoint.nextfractal.core.extensionPoints.extensionConfigXMLExporter.ExtensionConfigXMLExporterExtensionRuntime;
-import com.nextbreakpoint.nextfractal.core.xml.XMLExportException;
-import com.nextbreakpoint.nextfractal.core.xml.XMLExporter;
-import com.nextbreakpoint.nextfractal.core.xml.XMLNodeBuilder;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLExportException;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLExporter;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLNodeBuilder;
 
 /**
  * @author Andrea Medeghini
@@ -58,7 +58,7 @@ public class TextConfigXMLExporterRuntime extends ExtensionConfigXMLExporterExte
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.twister.extensions.image.AbstractImageConfigXMLExporter#exportToElement(com.nextbreakpoint.nextfractal.twister.extensionPoints.image.ImageExtensionConfig, com.nextbreakpoint.nextfractal.core.xml.XMLNodeBuilder)
+		 * @see com.nextbreakpoint.nextfractal.twister.extensions.image.AbstractImageConfigXMLExporter#exportToElement(com.nextbreakpoint.nextfractal.twister.extensionPoints.image.ImageExtensionConfig, com.nextbreakpoint.nextfractal.core.runtime.xml.XMLNodeBuilder)
 		 */
 		@Override
 		public Element exportToElement(final TextConfig config, final XMLNodeBuilder builder) throws XMLExportException {

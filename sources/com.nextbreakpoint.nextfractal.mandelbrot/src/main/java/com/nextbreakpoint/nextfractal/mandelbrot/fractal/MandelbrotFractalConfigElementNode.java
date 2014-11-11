@@ -25,17 +25,17 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.fractal;
 
-import com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent;
-import com.nextbreakpoint.nextfractal.core.config.ValueChangeListener;
-import com.nextbreakpoint.nextfractal.core.config.ValueConfigElement;
-import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
-import com.nextbreakpoint.nextfractal.core.tree.NodeAction;
-import com.nextbreakpoint.nextfractal.core.tree.NodeEditor;
-import com.nextbreakpoint.nextfractal.core.tree.NodeValue;
-import com.nextbreakpoint.nextfractal.core.util.AbstractConfigElementListNode;
-import com.nextbreakpoint.nextfractal.core.util.AbstractConfigElementNode;
-import com.nextbreakpoint.nextfractal.core.util.ConfigElementListNodeValue;
-import com.nextbreakpoint.nextfractal.core.util.DefaultNodeEditor;
+import com.nextbreakpoint.nextfractal.core.runtime.ElementChangeEvent;
+import com.nextbreakpoint.nextfractal.core.runtime.ElementChangeListener;
+import com.nextbreakpoint.nextfractal.core.runtime.ValueConfigElement;
+import com.nextbreakpoint.nextfractal.core.runtime.model.DefaultNodeEditor;
+import com.nextbreakpoint.nextfractal.core.runtime.model.NodeAction;
+import com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor;
+import com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject;
+import com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue;
+import com.nextbreakpoint.nextfractal.core.runtime.util.AbstractConfigElementListNode;
+import com.nextbreakpoint.nextfractal.core.runtime.util.AbstractConfigElementNode;
+import com.nextbreakpoint.nextfractal.core.runtime.util.ConfigElementListNodeValue;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotResources;
 import com.nextbreakpoint.nextfractal.mandelbrot.incolouringFormula.IncolouringFormulaConfigElement;
 import com.nextbreakpoint.nextfractal.mandelbrot.incolouringFormula.IncolouringFormulaConfigElementNode;
@@ -121,7 +121,7 @@ public class MandelbrotFractalConfigElementNode extends AbstractConfigElementNod
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#isEditable()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject#isEditable()
 	 */
 	@Override
 	public boolean isEditable() {
@@ -137,7 +137,7 @@ public class MandelbrotFractalConfigElementNode extends AbstractConfigElementNod
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.DefaultNode#createNodeEditor()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.DefaultNode#createNodeEditor()
 	 */
 	@Override
 	protected NodeEditor createNodeEditor() {
@@ -158,7 +158,7 @@ public class MandelbrotFractalConfigElementNode extends AbstractConfigElementNod
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.util.AbstractConfigElementListNode#createChildNode(com.nextbreakpoint.nextfractal.core.config.ConfigElement)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.util.AbstractConfigElementListNode#createChildNode(com.nextbreakpoint.nextfractal.core.runtime.ConfigElement)
 		 */
 		@Override
 		protected AbstractConfigElementNode<IncolouringFormulaConfigElement> createChildNode(final IncolouringFormulaConfigElement value) {
@@ -166,7 +166,7 @@ public class MandelbrotFractalConfigElementNode extends AbstractConfigElementNod
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.util.AbstractConfigElementListNode#getChildValueType()
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.util.AbstractConfigElementListNode#getChildValueType()
 		 */
 		@Override
 		public Class<?> getChildValueType() {
@@ -174,7 +174,7 @@ public class MandelbrotFractalConfigElementNode extends AbstractConfigElementNod
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.util.AbstractConfigElementListNode#createNodeValue(Object)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.util.AbstractConfigElementListNode#createNodeValue(Object)
 		 */
 		@Override
 		public NodeValue<IncolouringFormulaConfigElement> createNodeValue(final Object value) {
@@ -208,7 +208,7 @@ public class MandelbrotFractalConfigElementNode extends AbstractConfigElementNod
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.util.AbstractConfigElementListNode#createChildNode(com.nextbreakpoint.nextfractal.core.config.ConfigElement)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.util.AbstractConfigElementListNode#createChildNode(com.nextbreakpoint.nextfractal.core.runtime.ConfigElement)
 		 */
 		@Override
 		protected AbstractConfigElementNode<OutcolouringFormulaConfigElement> createChildNode(final OutcolouringFormulaConfigElement value) {
@@ -216,7 +216,7 @@ public class MandelbrotFractalConfigElementNode extends AbstractConfigElementNod
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.util.AbstractConfigElementListNode#getChildValueType()
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.util.AbstractConfigElementListNode#getChildValueType()
 		 */
 		@Override
 		public Class<?> getChildValueType() {
@@ -224,7 +224,7 @@ public class MandelbrotFractalConfigElementNode extends AbstractConfigElementNod
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.util.AbstractConfigElementListNode#createNodeValue(Object)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.util.AbstractConfigElementListNode#createNodeValue(Object)
 		 */
 		@Override
 		public NodeValue<OutcolouringFormulaConfigElement> createNodeValue(final Object value) {
@@ -256,7 +256,7 @@ public class MandelbrotFractalConfigElementNode extends AbstractConfigElementNod
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#isEditable()
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject#isEditable()
 		 */
 		@Override
 		public boolean isEditable() {
@@ -264,7 +264,7 @@ public class MandelbrotFractalConfigElementNode extends AbstractConfigElementNod
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#dispose()
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject#dispose()
 		 */
 		@Override
 		public void dispose() {
@@ -275,7 +275,7 @@ public class MandelbrotFractalConfigElementNode extends AbstractConfigElementNod
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#nodeAdded()
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject#nodeAdded()
 		 */
 		@Override
 		protected void nodeAdded() {
@@ -284,7 +284,7 @@ public class MandelbrotFractalConfigElementNode extends AbstractConfigElementNod
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#nodeRemoved()
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject#nodeRemoved()
 		 */
 		@Override
 		protected void nodeRemoved() {
@@ -292,7 +292,7 @@ public class MandelbrotFractalConfigElementNode extends AbstractConfigElementNod
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.tree.DefaultNode#createNodeEditor()
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.DefaultNode#createNodeEditor()
 		 */
 		@Override
 		protected NodeEditor createNodeEditor() {
@@ -308,7 +308,7 @@ public class MandelbrotFractalConfigElementNode extends AbstractConfigElementNod
 			}
 
 			/**
-			 * @see com.nextbreakpoint.nextfractal.core.tree.NodeEditor#doSetValue(java.lang.NodeValue)
+			 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor#doSetValue(java.lang.NodeValue)
 			 */
 			@Override
 			protected void doSetValue(final NodeValue<?> value) {
@@ -318,7 +318,7 @@ public class MandelbrotFractalConfigElementNode extends AbstractConfigElementNod
 			}
 
 			/**
-			 * @see com.nextbreakpoint.nextfractal.core.tree.NodeEditor#createChildNode(com.nextbreakpoint.nextfractal.core.tree.NodeValue)
+			 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor#createChildNode(com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue)
 			 */
 			@Override
 			protected NodeObject createChildNode(final NodeValue<?> value) {
@@ -326,7 +326,7 @@ public class MandelbrotFractalConfigElementNode extends AbstractConfigElementNod
 			}
 
 			/**
-			 * @see com.nextbreakpoint.nextfractal.core.tree.NodeEditor#getNodeValueType()
+			 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor#getNodeValueType()
 			 */
 			@Override
 			public Class<?> getNodeValueType() {
@@ -334,7 +334,7 @@ public class MandelbrotFractalConfigElementNode extends AbstractConfigElementNod
 			}
 
 			/**
-			 * @see com.nextbreakpoint.nextfractal.core.tree.NodeEditor#createNodeValue(Object)
+			 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor#createNodeValue(Object)
 			 */
 			@Override
 			public NodeValue<?> createNodeValue(final Object value) {
@@ -343,9 +343,9 @@ public class MandelbrotFractalConfigElementNode extends AbstractConfigElementNod
 			}
 		}
 
-		protected class ConfigListener implements ValueChangeListener {
+		protected class ConfigListener implements ElementChangeListener {
 			@Override
-			public void valueChanged(final ValueChangeEvent e) {
+			public void valueChanged(final ElementChangeEvent e) {
 				cancel();
 				switch (e.getEventType()) {
 					case ValueConfigElement.VALUE_CHANGED: {
@@ -373,7 +373,7 @@ public class MandelbrotFractalConfigElementNode extends AbstractConfigElementNod
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#isEditable()
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject#isEditable()
 		 */
 		@Override
 		public boolean isEditable() {
@@ -381,7 +381,7 @@ public class MandelbrotFractalConfigElementNode extends AbstractConfigElementNod
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#dispose()
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject#dispose()
 		 */
 		@Override
 		public void dispose() {
@@ -392,7 +392,7 @@ public class MandelbrotFractalConfigElementNode extends AbstractConfigElementNod
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#nodeAdded()
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject#nodeAdded()
 		 */
 		@Override
 		protected void nodeAdded() {
@@ -401,7 +401,7 @@ public class MandelbrotFractalConfigElementNode extends AbstractConfigElementNod
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#nodeRemoved()
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject#nodeRemoved()
 		 */
 		@Override
 		protected void nodeRemoved() {
@@ -409,7 +409,7 @@ public class MandelbrotFractalConfigElementNode extends AbstractConfigElementNod
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.tree.DefaultNode#createNodeEditor()
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.DefaultNode#createNodeEditor()
 		 */
 		@Override
 		protected NodeEditor createNodeEditor() {
@@ -425,7 +425,7 @@ public class MandelbrotFractalConfigElementNode extends AbstractConfigElementNod
 			}
 
 			/**
-			 * @see com.nextbreakpoint.nextfractal.core.tree.NodeEditor#doSetValue(java.lang.NodeValue)
+			 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor#doSetValue(java.lang.NodeValue)
 			 */
 			@Override
 			protected void doSetValue(final NodeValue<?> value) {
@@ -435,7 +435,7 @@ public class MandelbrotFractalConfigElementNode extends AbstractConfigElementNod
 			}
 
 			/**
-			 * @see com.nextbreakpoint.nextfractal.core.tree.NodeEditor#createChildNode(com.nextbreakpoint.nextfractal.core.tree.NodeValue)
+			 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor#createChildNode(com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue)
 			 */
 			@Override
 			protected NodeObject createChildNode(final NodeValue<?> value) {
@@ -443,7 +443,7 @@ public class MandelbrotFractalConfigElementNode extends AbstractConfigElementNod
 			}
 
 			/**
-			 * @see com.nextbreakpoint.nextfractal.core.tree.NodeEditor#getNodeValueType()
+			 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor#getNodeValueType()
 			 */
 			@Override
 			public Class<?> getNodeValueType() {
@@ -451,7 +451,7 @@ public class MandelbrotFractalConfigElementNode extends AbstractConfigElementNod
 			}
 
 			/**
-			 * @see com.nextbreakpoint.nextfractal.core.tree.NodeEditor#createNodeValue(Object)
+			 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor#createNodeValue(Object)
 			 */
 			@Override
 			public NodeValue<?> createNodeValue(final Object value) {
@@ -460,9 +460,9 @@ public class MandelbrotFractalConfigElementNode extends AbstractConfigElementNod
 			}
 		}
 
-		protected class ConfigListener implements ValueChangeListener {
+		protected class ConfigListener implements ElementChangeListener {
 			@Override
-			public void valueChanged(final ValueChangeEvent e) {
+			public void valueChanged(final ElementChangeEvent e) {
 				cancel();
 				switch (e.getEventType()) {
 					case ValueConfigElement.VALUE_CHANGED: {
@@ -490,7 +490,7 @@ public class MandelbrotFractalConfigElementNode extends AbstractConfigElementNod
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#isEditable()
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject#isEditable()
 		 */
 		@Override
 		public boolean isEditable() {
@@ -498,7 +498,7 @@ public class MandelbrotFractalConfigElementNode extends AbstractConfigElementNod
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#dispose()
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject#dispose()
 		 */
 		@Override
 		public void dispose() {
@@ -509,7 +509,7 @@ public class MandelbrotFractalConfigElementNode extends AbstractConfigElementNod
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#nodeAdded()
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject#nodeAdded()
 		 */
 		@Override
 		protected void nodeAdded() {
@@ -518,7 +518,7 @@ public class MandelbrotFractalConfigElementNode extends AbstractConfigElementNod
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#nodeRemoved()
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject#nodeRemoved()
 		 */
 		@Override
 		protected void nodeRemoved() {
@@ -526,7 +526,7 @@ public class MandelbrotFractalConfigElementNode extends AbstractConfigElementNod
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.tree.DefaultNode#createNodeEditor()
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.DefaultNode#createNodeEditor()
 		 */
 		@Override
 		protected NodeEditor createNodeEditor() {
@@ -542,7 +542,7 @@ public class MandelbrotFractalConfigElementNode extends AbstractConfigElementNod
 			}
 
 			/**
-			 * @see com.nextbreakpoint.nextfractal.core.tree.NodeEditor#doSetValue(java.lang.NodeValue)
+			 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor#doSetValue(java.lang.NodeValue)
 			 */
 			@Override
 			protected void doSetValue(final NodeValue<?> value) {
@@ -552,7 +552,7 @@ public class MandelbrotFractalConfigElementNode extends AbstractConfigElementNod
 			}
 
 			/**
-			 * @see com.nextbreakpoint.nextfractal.core.tree.NodeEditor#createChildNode(com.nextbreakpoint.nextfractal.core.tree.NodeValue)
+			 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor#createChildNode(com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue)
 			 */
 			@Override
 			protected NodeObject createChildNode(final NodeValue<?> value) {
@@ -560,7 +560,7 @@ public class MandelbrotFractalConfigElementNode extends AbstractConfigElementNod
 			}
 
 			/**
-			 * @see com.nextbreakpoint.nextfractal.core.tree.NodeEditor#getNodeValueType()
+			 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor#getNodeValueType()
 			 */
 			@Override
 			public Class<?> getNodeValueType() {
@@ -568,7 +568,7 @@ public class MandelbrotFractalConfigElementNode extends AbstractConfigElementNod
 			}
 
 			/**
-			 * @see com.nextbreakpoint.nextfractal.core.tree.NodeEditor#createNodeValue(Object)
+			 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor#createNodeValue(Object)
 			 */
 			@Override
 			public NodeValue<?> createNodeValue(final Object value) {
@@ -577,9 +577,9 @@ public class MandelbrotFractalConfigElementNode extends AbstractConfigElementNod
 			}
 		}
 
-		protected class ConfigListener implements ValueChangeListener {
+		protected class ConfigListener implements ElementChangeListener {
 			@Override
-			public void valueChanged(final ValueChangeEvent e) {
+			public void valueChanged(final ElementChangeEvent e) {
 				cancel();
 				switch (e.getEventType()) {
 					case ValueConfigElement.VALUE_CHANGED: {
@@ -607,7 +607,7 @@ public class MandelbrotFractalConfigElementNode extends AbstractConfigElementNod
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#isEditable()
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject#isEditable()
 		 */
 		@Override
 		public boolean isEditable() {
@@ -615,7 +615,7 @@ public class MandelbrotFractalConfigElementNode extends AbstractConfigElementNod
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#dispose()
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject#dispose()
 		 */
 		@Override
 		public void dispose() {
@@ -626,7 +626,7 @@ public class MandelbrotFractalConfigElementNode extends AbstractConfigElementNod
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#nodeAdded()
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject#nodeAdded()
 		 */
 		@Override
 		protected void nodeAdded() {
@@ -635,7 +635,7 @@ public class MandelbrotFractalConfigElementNode extends AbstractConfigElementNod
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#nodeRemoved()
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject#nodeRemoved()
 		 */
 		@Override
 		protected void nodeRemoved() {
@@ -643,7 +643,7 @@ public class MandelbrotFractalConfigElementNode extends AbstractConfigElementNod
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.tree.DefaultNode#createNodeEditor()
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.DefaultNode#createNodeEditor()
 		 */
 		@Override
 		protected NodeEditor createNodeEditor() {
@@ -659,7 +659,7 @@ public class MandelbrotFractalConfigElementNode extends AbstractConfigElementNod
 			}
 
 			/**
-			 * @see com.nextbreakpoint.nextfractal.core.tree.NodeEditor#doSetValue(java.lang.NodeValue)
+			 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor#doSetValue(java.lang.NodeValue)
 			 */
 			@Override
 			protected void doSetValue(final NodeValue<?> value) {
@@ -669,7 +669,7 @@ public class MandelbrotFractalConfigElementNode extends AbstractConfigElementNod
 			}
 
 			/**
-			 * @see com.nextbreakpoint.nextfractal.core.tree.NodeEditor#createChildNode(com.nextbreakpoint.nextfractal.core.tree.NodeValue)
+			 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor#createChildNode(com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue)
 			 */
 			@Override
 			protected NodeObject createChildNode(final NodeValue<?> value) {
@@ -677,7 +677,7 @@ public class MandelbrotFractalConfigElementNode extends AbstractConfigElementNod
 			}
 
 			/**
-			 * @see com.nextbreakpoint.nextfractal.core.tree.NodeEditor#getNodeValueType()
+			 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor#getNodeValueType()
 			 */
 			@Override
 			public Class<?> getNodeValueType() {
@@ -685,7 +685,7 @@ public class MandelbrotFractalConfigElementNode extends AbstractConfigElementNod
 			}
 
 			/**
-			 * @see com.nextbreakpoint.nextfractal.core.tree.NodeEditor#createNodeValue(Object)
+			 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor#createNodeValue(Object)
 			 */
 			@Override
 			public NodeValue<?> createNodeValue(final Object value) {
@@ -694,9 +694,9 @@ public class MandelbrotFractalConfigElementNode extends AbstractConfigElementNod
 			}
 		}
 
-		protected class ConfigListener implements ValueChangeListener {
+		protected class ConfigListener implements ElementChangeListener {
 			@Override
-			public void valueChanged(final ValueChangeEvent e) {
+			public void valueChanged(final ElementChangeEvent e) {
 				cancel();
 				switch (e.getEventType()) {
 					case ValueConfigElement.VALUE_CHANGED: {

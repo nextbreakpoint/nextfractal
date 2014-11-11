@@ -9,23 +9,23 @@ import com.nextbreakpoint.nextfractal.contextfree.shapeAdjustment.ShapeAdjustmen
 import com.nextbreakpoint.nextfractal.contextfree.shapeAdjustment.ShapeAdjustmentConfigElementNode;
 import com.nextbreakpoint.nextfractal.contextfree.shapeReplacement.ShapeReplacementConfigElement;
 import com.nextbreakpoint.nextfractal.contextfree.shapeReplacement.ShapeReplacementConfigElementNode;
-import com.nextbreakpoint.nextfractal.core.common.IntegerElementNode;
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionConfig;
+import com.nextbreakpoint.nextfractal.core.elements.IntegerElementNode;
 import com.nextbreakpoint.nextfractal.core.extensionPoints.nodeBuilder.NodeBuilderExtensionRuntime;
-import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
-import com.nextbreakpoint.nextfractal.core.tree.NodeBuilder;
-import com.nextbreakpoint.nextfractal.core.tree.NodeValue;
-import com.nextbreakpoint.nextfractal.core.util.AbstractConfigElementListNode;
-import com.nextbreakpoint.nextfractal.core.util.AbstractConfigElementNode;
-import com.nextbreakpoint.nextfractal.core.util.AbstractExtensionConfigNodeBuilder;
-import com.nextbreakpoint.nextfractal.core.util.ConfigElementListNodeValue;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionConfig;
+import com.nextbreakpoint.nextfractal.core.runtime.model.NodeBuilder;
+import com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject;
+import com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue;
+import com.nextbreakpoint.nextfractal.core.runtime.util.AbstractConfigElementListNode;
+import com.nextbreakpoint.nextfractal.core.runtime.util.AbstractConfigElementNode;
+import com.nextbreakpoint.nextfractal.core.runtime.util.AbstractExtensionConfigNodeBuilder;
+import com.nextbreakpoint.nextfractal.core.runtime.util.ConfigElementListNodeValue;
 
 /**
  * @author Andrea Medeghini
  */
 public class MultiShapeReplacementConfigNodeBuilderRuntime extends NodeBuilderExtensionRuntime {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.extensionPoints.nodeBuilder.NodeBuilderExtensionRuntime#createNodeBuilder(com.nextbreakpoint.nextfractal.core.extension.ExtensionConfig)
+	 * @see com.nextbreakpoint.nextfractal.core.extensionPoints.nodeBuilder.NodeBuilderExtensionRuntime#createNodeBuilder(com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionConfig)
 	 */
 	@Override
 	public NodeBuilder createNodeBuilder(final ExtensionConfig config) {
@@ -41,7 +41,7 @@ public class MultiShapeReplacementConfigNodeBuilderRuntime extends NodeBuilderEx
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.util.AbstractExtensionConfigNodeBuilder#createNodes(com.nextbreakpoint.nextfractal.core.tree.NodeObject)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.util.AbstractExtensionConfigNodeBuilder#createNodes(com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject)
 		 */
 		@Override
 		public void createNodes(final NodeObject parentNode) {
@@ -72,7 +72,7 @@ public class MultiShapeReplacementConfigNodeBuilderRuntime extends NodeBuilderEx
 			}
 
 			/**
-			 * @see com.nextbreakpoint.nextfractal.core.util.AbstractConfigElementListNode#createChildNode(com.nextbreakpoint.nextfractal.core.config.ConfigElement)
+			 * @see com.nextbreakpoint.nextfractal.core.runtime.util.AbstractConfigElementListNode#createChildNode(com.nextbreakpoint.nextfractal.core.runtime.ConfigElement)
 			 */
 			@Override
 			protected AbstractConfigElementNode<ShapeReplacementConfigElement> createChildNode(final ShapeReplacementConfigElement value) {
@@ -80,7 +80,7 @@ public class MultiShapeReplacementConfigNodeBuilderRuntime extends NodeBuilderEx
 			}
 	
 			/**
-			 * @see com.nextbreakpoint.nextfractal.core.util.AbstractConfigElementListNode#getChildValueType()
+			 * @see com.nextbreakpoint.nextfractal.core.runtime.util.AbstractConfigElementListNode#getChildValueType()
 			 */
 			@Override
 			public Class<?> getChildValueType() {
@@ -88,7 +88,7 @@ public class MultiShapeReplacementConfigNodeBuilderRuntime extends NodeBuilderEx
 			}
 	
 			/**
-			 * @see com.nextbreakpoint.nextfractal.core.util.AbstractConfigElementListNode#createNodeValue(Object)
+			 * @see com.nextbreakpoint.nextfractal.core.runtime.util.AbstractConfigElementListNode#createNodeValue(Object)
 			 */
 			@Override
 			public NodeValue<ShapeReplacementConfigElement> createNodeValue(final Object value) {
@@ -119,7 +119,7 @@ public class MultiShapeReplacementConfigNodeBuilderRuntime extends NodeBuilderEx
 			}
 
 			/**
-			 * @see com.nextbreakpoint.nextfractal.core.util.AbstractConfigElementListNode#createChildNode(com.nextbreakpoint.nextfractal.core.config.ConfigElement)
+			 * @see com.nextbreakpoint.nextfractal.core.runtime.util.AbstractConfigElementListNode#createChildNode(com.nextbreakpoint.nextfractal.core.runtime.ConfigElement)
 			 */
 			@Override
 			protected AbstractConfigElementNode<ShapeAdjustmentConfigElement> createChildNode(final ShapeAdjustmentConfigElement value) {
@@ -127,7 +127,7 @@ public class MultiShapeReplacementConfigNodeBuilderRuntime extends NodeBuilderEx
 			}
 	
 			/**
-			 * @see com.nextbreakpoint.nextfractal.core.util.AbstractConfigElementListNode#getChildValueType()
+			 * @see com.nextbreakpoint.nextfractal.core.runtime.util.AbstractConfigElementListNode#getChildValueType()
 			 */
 			@Override
 			public Class<?> getChildValueType() {
@@ -135,7 +135,7 @@ public class MultiShapeReplacementConfigNodeBuilderRuntime extends NodeBuilderEx
 			}
 	
 			/**
-			 * @see com.nextbreakpoint.nextfractal.core.util.AbstractConfigElementListNode#createNodeValue(Object)
+			 * @see com.nextbreakpoint.nextfractal.core.runtime.util.AbstractConfigElementListNode#createNodeValue(Object)
 			 */
 			@Override
 			public NodeValue<ShapeAdjustmentConfigElement> createNodeValue(final Object value) {

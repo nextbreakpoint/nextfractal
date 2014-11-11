@@ -4,7 +4,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 
 import com.nextbreakpoint.nextfractal.core.ui.javafx.AdvancedTextField;
-import com.nextbreakpoint.nextfractal.twister.common.PercentageElement;
+import com.nextbreakpoint.nextfractal.twister.elements.PercentageElement;
 
 public class PercentagePane extends BorderPane {
 

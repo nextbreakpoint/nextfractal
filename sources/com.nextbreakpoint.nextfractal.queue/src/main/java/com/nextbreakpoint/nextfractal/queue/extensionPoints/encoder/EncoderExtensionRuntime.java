@@ -27,7 +27,7 @@ package com.nextbreakpoint.nextfractal.queue.extensionPoints.encoder;
 
 import java.io.File;
 
-import com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtensionRuntime;
 import com.nextbreakpoint.nextfractal.core.util.ProgressListener;
 import com.nextbreakpoint.nextfractal.queue.encoder.EncoderContext;
 import com.nextbreakpoint.nextfractal.queue.encoder.EncoderException;

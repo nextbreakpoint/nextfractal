@@ -28,7 +28,7 @@ package com.nextbreakpoint.nextfractal.mandelbrot.extensions.devtools;
 import com.nextbreakpoint.nextfractal.core.devtools.ProcessorCardinality;
 import com.nextbreakpoint.nextfractal.core.devtools.ProcessorDescriptor;
 import com.nextbreakpoint.nextfractal.core.extensionPoints.descriptor.DescriptorExtensionRuntime;
-import com.nextbreakpoint.nextfractal.mandelbrot.common.ExponentElement;
+import com.nextbreakpoint.nextfractal.mandelbrot.elements.ExponentElement;
 
 public class ExponentDescriptorRuntime extends DescriptorExtensionRuntime {
 	/**
@@ -36,7 +36,7 @@ public class ExponentDescriptorRuntime extends DescriptorExtensionRuntime {
 	 */
 	@Override
 	public ProcessorDescriptor createDescriptor(String elementName, String defaultValue, ProcessorCardinality cardinality) {
-		return new ProcessorDescriptor(elementName, "Exponent", ExponentElement.CLASS_ID, "com.nextbreakpoint.nextfractal.mandelbrot.common", "ExponentElement", null, null, null, null, null, null, null, null, null, null, null, null, "java.lang", "Integer", defaultValue, "get", "set", cardinality);
+		return new ProcessorDescriptor(elementName, "Exponent", ExponentElement.CLASS_ID, "com.nextbreakpoint.nextfractal.mandelbrot.elements", "ExponentElement", null, null, null, null, null, null, null, null, null, null, null, null, "java.lang", "Integer", defaultValue, "get", "set", cardinality);
 	}
 
 	/**

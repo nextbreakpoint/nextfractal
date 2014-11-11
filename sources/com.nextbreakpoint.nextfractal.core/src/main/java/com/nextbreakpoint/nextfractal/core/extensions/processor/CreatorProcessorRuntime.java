@@ -108,8 +108,8 @@ public class CreatorProcessorRuntime extends ProcessorExtensionRuntime {
 	}
 
 	private void prepareCreator(Set<String> imports, ProcessorDescriptor descriptor, Map<String, String> variables) {
-		imports.add("com.nextbreakpoint.nextfractal.core.scripting.JSException");
-		imports.add("com.nextbreakpoint.nextfractal.core.scripting.extension.CreatorExtensionRuntime");
+		imports.add("com.nextbreakpoint.nextfractal.core.runtime.scripting.JSException");
+		imports.add("com.nextbreakpoint.nextfractal.core.runtime.scripting.extension.CreatorExtensionRuntime");
 		imports.add(descriptor.getConfigElementPackageName() + "." + descriptor.getConfigElementClassName());
 	}
 

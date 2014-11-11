@@ -25,7 +25,7 @@
  */
 package com.nextbreakpoint.nextfractal.twister.extensions.action;
 
-import com.nextbreakpoint.nextfractal.core.util.AbstractConfigElementListNodeActionXMLExporterRuntime;
+import com.nextbreakpoint.nextfractal.core.runtime.util.AbstractConfigElementListNodeActionXMLExporterRuntime;
 import com.nextbreakpoint.nextfractal.twister.frameFilter.FrameFilterConfigElement;
 import com.nextbreakpoint.nextfractal.twister.frameFilter.FrameFilterConfigElementXMLExporter;
 
@@ -34,7 +34,7 @@ import com.nextbreakpoint.nextfractal.twister.frameFilter.FrameFilterConfigEleme
  */
 public class FrameFilterListNodeActionXMLExporterRuntime extends AbstractConfigElementListNodeActionXMLExporterRuntime<FrameFilterConfigElement> {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.util.AbstractConfigElementListNodeActionXMLExporterRuntime#createExporter()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.util.AbstractConfigElementListNodeActionXMLExporterRuntime#createExporter()
 	 */
 	@Override
 	protected FrameFilterConfigElementXMLExporter createExporter() {

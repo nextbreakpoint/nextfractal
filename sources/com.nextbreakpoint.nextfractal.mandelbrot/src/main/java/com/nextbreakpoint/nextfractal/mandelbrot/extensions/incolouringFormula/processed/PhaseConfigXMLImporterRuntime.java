@@ -26,7 +26,7 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.extensions.incolouringFormula.processed;
 
 import com.nextbreakpoint.nextfractal.core.extensionPoints.extensionConfigXMLImporter.ExtensionConfigXMLImporterExtensionRuntime;
-import com.nextbreakpoint.nextfractal.core.xml.XMLImporter;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLImporter;
 import com.nextbreakpoint.nextfractal.mandelbrot.extensions.incolouringFormula.AbstractIncolouringPaletteConfigXMLImporter;
 
 /**

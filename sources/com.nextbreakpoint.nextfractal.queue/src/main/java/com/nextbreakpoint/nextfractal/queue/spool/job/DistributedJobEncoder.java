@@ -33,8 +33,8 @@ import java.io.OutputStream;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.nextbreakpoint.nextfractal.core.xml.XML;
-import com.nextbreakpoint.nextfractal.core.xml.XMLNodeBuilder;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XML;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLNodeBuilder;
 import com.nextbreakpoint.nextfractal.queue.spool.JobData;
 import com.nextbreakpoint.nextfractal.twister.TwisterClip;
 import com.nextbreakpoint.nextfractal.twister.TwisterClipXMLExporter;

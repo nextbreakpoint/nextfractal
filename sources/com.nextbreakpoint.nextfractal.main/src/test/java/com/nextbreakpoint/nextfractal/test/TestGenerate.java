@@ -37,15 +37,15 @@ import com.nextbreakpoint.nextfractal.core.devtools.DevToolsRegistry;
 import com.nextbreakpoint.nextfractal.core.devtools.ProcessorCardinality;
 import com.nextbreakpoint.nextfractal.core.devtools.ProcessorDescriptor;
 import com.nextbreakpoint.nextfractal.core.devtools.ProcessorParameters;
-import com.nextbreakpoint.nextfractal.core.extension.Extension;
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionException;
 import com.nextbreakpoint.nextfractal.core.extensionPoints.descriptor.DescriptorExtensionRuntime;
 import com.nextbreakpoint.nextfractal.core.extensionPoints.processor.ProcessorExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.Extension;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionException;
 
 public class TestGenerate {
 	private ProcessorParameters createComplexParameters(Map<String, DescriptorExtensionRuntime> descriptorExtensionMap) {
 		List<ProcessorDescriptor> descriptors = new LinkedList<ProcessorDescriptor>();
-		descriptors.add(new ProcessorDescriptor("extension", "Test", "Test", "com.nextbreakpoint.nextfractal.core.common", "ConfigurableExtensionReferenceElement", null, null, "com.nextbreakpoint.nextfractal.test", "TestExtensionConfig", "com.nextbreakpoint.nextfractal.test", "TestExtensionRuntime", null, null, "com.nextbreakpoint.nextfractal.test", "TestRegistry", "com.nextbreakpoint.nextfractal.core", "CoreResources", null, null, null, "get", "set", ProcessorCardinality.NONE));
+		descriptors.add(new ProcessorDescriptor("extension", "Test", "Test", "com.nextbreakpoint.nextfractal.core.elements", "ConfigurableExtensionReferenceElement", null, null, "com.nextbreakpoint.nextfractal.test", "TestExtensionConfig", "com.nextbreakpoint.nextfractal.test", "TestExtensionRuntime", null, null, "com.nextbreakpoint.nextfractal.test", "TestRegistry", "com.nextbreakpoint.nextfractal.core", "CoreResources", null, null, null, "get", "set", ProcessorCardinality.NONE));
 		descriptors.add(descriptorExtensionMap.get("Boolean").createDescriptor("enabled", "Boolean.TRUE", ProcessorCardinality.NONE));
 		descriptors.add(descriptorExtensionMap.get("Effect").createDescriptor("effect", null, ProcessorCardinality.NONE));
 		descriptors.add(descriptorExtensionMap.get("Effect").createDescriptor("effect", null, ProcessorCardinality.ONE));
@@ -59,7 +59,7 @@ public class TestGenerate {
 	
 	private ProcessorParameters createExtensionParameters(Map<String, DescriptorExtensionRuntime> descriptorExtensionMap) {
 		List<ProcessorDescriptor> descriptors = new LinkedList<ProcessorDescriptor>();
-		descriptors.add(new ProcessorDescriptor("extension", "Test", "Test", "com.nextbreakpoint.nextfractal.core.common", "ConfigurableExtensionReferenceElement", null, null, "com.nextbreakpoint.nextfractal.test", "TestExtensionConfig", "com.nextbreakpoint.nextfractal.test", "TestExtensionRuntime", null, null, "com.nextbreakpoint.nextfractal.test", "TestRegistry", "com.nextbreakpoint.nextfractal.core", "CoreResources", null, null, null, "get", "set", ProcessorCardinality.NONE));
+		descriptors.add(new ProcessorDescriptor("extension", "Test", "Test", "com.nextbreakpoint.nextfractal.core.elements", "ConfigurableExtensionReferenceElement", null, null, "com.nextbreakpoint.nextfractal.test", "TestExtensionConfig", "com.nextbreakpoint.nextfractal.test", "TestExtensionRuntime", null, null, "com.nextbreakpoint.nextfractal.test", "TestRegistry", "com.nextbreakpoint.nextfractal.core", "CoreResources", null, null, null, "get", "set", ProcessorCardinality.NONE));
 		descriptors.add(descriptorExtensionMap.get("Integer").createDescriptor("size", "new Integer(10)", ProcessorCardinality.NONE));
 		descriptors.add(descriptorExtensionMap.get("Effect").createDescriptor("effect", null, ProcessorCardinality.NONE));
 		descriptors.add(descriptorExtensionMap.get("Effect").createDescriptor("effect", null, ProcessorCardinality.ONE));

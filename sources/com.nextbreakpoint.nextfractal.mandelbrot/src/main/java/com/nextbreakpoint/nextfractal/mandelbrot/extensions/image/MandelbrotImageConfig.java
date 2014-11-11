@@ -25,8 +25,8 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.extensions.image;
 
-import com.nextbreakpoint.nextfractal.core.config.ConfigContext;
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionException;
+import com.nextbreakpoint.nextfractal.core.runtime.ConfigContext;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionException;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotConfig;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotConfigBuilder;
 import com.nextbreakpoint.nextfractal.twister.extensionPoints.image.ImageExtensionConfig;
@@ -82,7 +82,7 @@ public class MandelbrotImageConfig extends ImageExtensionConfig {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.extension.ExtensionConfig#setContext(com.nextbreakpoint.nextfractal.core.config.ConfigContext)
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionConfig#setContext(com.nextbreakpoint.nextfractal.core.runtime.ConfigContext)
 	 */
 	@Override
 	public void setContext(final ConfigContext context) {

@@ -29,12 +29,12 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.nextbreakpoint.nextfractal.core.config.ConfigContext;
-import com.nextbreakpoint.nextfractal.core.config.DefaultConfigContext;
-import com.nextbreakpoint.nextfractal.core.tree.DefaultNodeSession;
-import com.nextbreakpoint.nextfractal.core.tree.DefaultRootNode;
-import com.nextbreakpoint.nextfractal.core.tree.NodeAction;
-import com.nextbreakpoint.nextfractal.core.tree.NodeActionValue;
+import com.nextbreakpoint.nextfractal.core.runtime.ConfigContext;
+import com.nextbreakpoint.nextfractal.core.runtime.DefaultConfigContext;
+import com.nextbreakpoint.nextfractal.core.runtime.model.DefaultNodeSession;
+import com.nextbreakpoint.nextfractal.core.runtime.model.DefaultRootNode;
+import com.nextbreakpoint.nextfractal.core.runtime.model.NodeAction;
+import com.nextbreakpoint.nextfractal.core.runtime.model.NodeActionValue;
 import com.nextbreakpoint.nextfractal.twister.ControllerListener;
 import com.nextbreakpoint.nextfractal.twister.TwisterClip;
 import com.nextbreakpoint.nextfractal.twister.TwisterClipController;

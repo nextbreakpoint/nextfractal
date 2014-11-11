@@ -25,7 +25,7 @@
  */
 package com.nextbreakpoint.nextfractal.twister.extensionPoints.image;
 
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionConfig;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionConfig;
 import com.nextbreakpoint.nextfractal.twister.util.AdapterContext;
 import com.nextbreakpoint.nextfractal.twister.util.DefaultAdapterContext;
 

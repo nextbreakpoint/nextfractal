@@ -13,7 +13,7 @@ import ${import};
  */
 public class ${extension.elementName?cap_first}EnumeratorRuntime extends EnumeratorExtensionRuntime {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.scripting.extension.EnumeratorExtensionRuntime#listExtensions()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.scripting.extension.EnumeratorExtensionRuntime#listExtensions()
 	 */
 	@Override
 	public List<String> listExtensions() throws JSException {
@@ -26,7 +26,7 @@ public class ${extension.elementName?cap_first}EnumeratorRuntime extends Enumera
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.scripting.extension.EnumeratorExtensionRuntime#getExtension(java.lang.String)
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.scripting.extension.EnumeratorExtensionRuntime#getExtension(java.lang.String)
 	 */
 	@Override
 	public JSExtension getExtension(final String extensionId) throws JSException {

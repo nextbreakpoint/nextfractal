@@ -25,9 +25,9 @@
  */
 package com.nextbreakpoint.nextfractal.twister.extensions.frameFilter;
 
-import com.nextbreakpoint.nextfractal.core.common.ColorElement;
-import com.nextbreakpoint.nextfractal.core.config.ConfigElement;
-import com.nextbreakpoint.nextfractal.core.config.ValueConfigElement;
+import com.nextbreakpoint.nextfractal.core.elements.ColorElement;
+import com.nextbreakpoint.nextfractal.core.runtime.ConfigElement;
+import com.nextbreakpoint.nextfractal.core.runtime.ValueConfigElement;
 import com.nextbreakpoint.nextfractal.core.util.Color32bit;
 import com.nextbreakpoint.nextfractal.twister.extensionPoints.frameFilter.FrameFilterExtensionConfig;
 
@@ -96,14 +96,14 @@ public class BlackConfig extends FrameFilterExtensionConfig {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.config.ValueConfigElement#setValue(java.io.Serializable)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.ValueConfigElement#setValue(java.io.Serializable)
 		 */
 		@Override
 		public void setValue(final Color32bit value) {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.common.ColorElement#copyFrom(com.nextbreakpoint.nextfractal.core.config.ConfigElement)
+		 * @see com.nextbreakpoint.nextfractal.core.elements.ColorElement#copyFrom(com.nextbreakpoint.nextfractal.core.runtime.ConfigElement)
 		 */
 		@Override
 		public void copyFrom(ConfigElement source) {

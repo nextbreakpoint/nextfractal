@@ -6,9 +6,9 @@ package com.nextbreakpoint.nextfractal.contextfree.extensions.pathAdjustment;
 
 import com.nextbreakpoint.nextfractal.contextfree.extensionPoints.pathAdjustment.PathAdjustmentExtensionRuntime;
 import com.nextbreakpoint.nextfractal.contextfree.renderer.support.CFModification;
-import com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent;
-import com.nextbreakpoint.nextfractal.core.config.ValueChangeListener;
-import com.nextbreakpoint.nextfractal.core.config.ValueConfigElement;
+import com.nextbreakpoint.nextfractal.core.runtime.ElementChangeEvent;
+import com.nextbreakpoint.nextfractal.core.runtime.ElementChangeListener;
+import com.nextbreakpoint.nextfractal.core.runtime.ValueConfigElement;
 
 /**
  * @author Andrea Medeghini
@@ -20,7 +20,7 @@ public class Size2PathAdjustmentRuntime extends PathAdjustmentExtensionRuntime<S
 	private ScaleYListener scaleYListener;
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionRuntime#configReloaded()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtensionRuntime#configReloaded()
 	 */
 	@Override
 	public void configReloaded() {
@@ -56,12 +56,12 @@ public class Size2PathAdjustmentRuntime extends PathAdjustmentExtensionRuntime<S
 		this.scaleX = scaleX;
 	}
 	
-	private class ScaleXListener implements ValueChangeListener {
+	private class ScaleXListener implements ElementChangeListener {
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.ElementChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.runtime.ElementChangeEvent)
 		 */
 		@Override
-		public void valueChanged(final ValueChangeEvent e) {
+		public void valueChanged(final ElementChangeEvent e) {
 			switch (e.getEventType()) {
 				case ValueConfigElement.VALUE_CHANGED: {
 					setScaleX((Float) e.getParams()[0]);
@@ -85,12 +85,12 @@ public class Size2PathAdjustmentRuntime extends PathAdjustmentExtensionRuntime<S
 		this.scaleY = scaleY;
 	}
 	
-	private class ScaleYListener implements ValueChangeListener {
+	private class ScaleYListener implements ElementChangeListener {
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.ElementChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.runtime.ElementChangeEvent)
 		 */
 		@Override
-		public void valueChanged(final ValueChangeEvent e) {
+		public void valueChanged(final ElementChangeEvent e) {
 			switch (e.getEventType()) {
 				case ValueConfigElement.VALUE_CHANGED: {
 					setScaleY((Float) e.getParams()[0]);

@@ -27,9 +27,9 @@ package com.nextbreakpoint.nextfractal.mandelbrot.extensions.outcolouringFormula
 
 import org.w3c.dom.Element;
 
-import com.nextbreakpoint.nextfractal.core.xml.XMLExportException;
-import com.nextbreakpoint.nextfractal.core.xml.XMLExporter;
-import com.nextbreakpoint.nextfractal.core.xml.XMLNodeBuilder;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLExportException;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLExporter;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLNodeBuilder;
 import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.outcolouringFormula.OutcolouringFormulaExtensionConfig;
 
 /**
@@ -50,7 +50,7 @@ public abstract class AbstractOutcolouringFormulaConfigXMLExporter<T extends Out
 	protected abstract void exportProperties(T config, Element element, XMLNodeBuilder builder) throws XMLExportException;
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.xml.XMLExporter#exportToElement(java.lang.Object, com.nextbreakpoint.nextfractal.core.xml.XMLNodeBuilder)
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.xml.XMLExporter#exportToElement(java.lang.Object, com.nextbreakpoint.nextfractal.core.runtime.xml.XMLNodeBuilder)
 	 */
 	@Override
 	public Element exportToElement(final T config, final XMLNodeBuilder builder) throws XMLExportException {

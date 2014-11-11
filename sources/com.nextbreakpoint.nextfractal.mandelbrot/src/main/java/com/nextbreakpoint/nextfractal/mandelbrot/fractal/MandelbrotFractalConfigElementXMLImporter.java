@@ -29,8 +29,8 @@ import java.util.List;
 
 import org.w3c.dom.Element;
 
-import com.nextbreakpoint.nextfractal.core.xml.XMLImportException;
-import com.nextbreakpoint.nextfractal.core.xml.XMLImporter;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLImportException;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLImporter;
 import com.nextbreakpoint.nextfractal.mandelbrot.incolouringFormula.IncolouringFormulaConfigElement;
 import com.nextbreakpoint.nextfractal.mandelbrot.incolouringFormula.IncolouringFormulaConfigElementXMLImporter;
 import com.nextbreakpoint.nextfractal.mandelbrot.orbitTrap.OrbitTrapConfigElement;
@@ -49,7 +49,7 @@ import com.nextbreakpoint.nextfractal.mandelbrot.transformingFormula.Transformin
  */
 public class MandelbrotFractalConfigElementXMLImporter extends XMLImporter<MandelbrotFractalConfigElement> {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.xml.XMLImporter#importFromElement(org.w3c.dom.Element)
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.xml.XMLImporter#importFromElement(org.w3c.dom.Element)
 	 */
 	@Override
 	public MandelbrotFractalConfigElement importFromElement(final Element element) throws XMLImportException {

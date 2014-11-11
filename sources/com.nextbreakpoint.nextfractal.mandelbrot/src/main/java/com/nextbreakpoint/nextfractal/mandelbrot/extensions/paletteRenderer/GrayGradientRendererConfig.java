@@ -27,7 +27,7 @@ package com.nextbreakpoint.nextfractal.mandelbrot.extensions.paletteRenderer;
 
 import com.nextbreakpoint.nextfractal.core.util.Palette;
 import com.nextbreakpoint.nextfractal.mandelbrot.util.DefaultRenderedPalette;
-import com.nextbreakpoint.nextfractal.twister.common.PaletteElement;
+import com.nextbreakpoint.nextfractal.twister.elements.PaletteElement;
 
 /**
  * @author Andrea Medeghini

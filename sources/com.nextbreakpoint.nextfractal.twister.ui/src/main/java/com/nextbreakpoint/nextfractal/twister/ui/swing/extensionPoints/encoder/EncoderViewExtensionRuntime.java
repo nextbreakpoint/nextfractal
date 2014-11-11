@@ -27,7 +27,7 @@ package com.nextbreakpoint.nextfractal.twister.ui.swing.extensionPoints.encoder;
 
 import javax.swing.JComponent;
 
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionRuntime;
 import com.nextbreakpoint.nextfractal.queue.encoder.EncoderContext;
 
 /**

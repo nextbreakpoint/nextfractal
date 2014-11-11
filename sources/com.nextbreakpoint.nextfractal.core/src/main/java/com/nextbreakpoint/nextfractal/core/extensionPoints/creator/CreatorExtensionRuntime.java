@@ -25,8 +25,8 @@
  */
 package com.nextbreakpoint.nextfractal.core.extensionPoints.creator;
 
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionRuntime;
-import com.nextbreakpoint.nextfractal.core.scripting.JSException;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.runtime.scripting.JSException;
 
 /**
  * @author Andrea Medeghini

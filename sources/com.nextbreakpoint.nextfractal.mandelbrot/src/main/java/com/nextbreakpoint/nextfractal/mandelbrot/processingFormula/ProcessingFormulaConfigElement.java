@@ -25,12 +25,12 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.processingFormula;
 
-import com.nextbreakpoint.nextfractal.core.common.ExtensionReferenceElement;
-import com.nextbreakpoint.nextfractal.core.config.AbstractConfigElement;
-import com.nextbreakpoint.nextfractal.core.config.ConfigContext;
-import com.nextbreakpoint.nextfractal.core.config.ConfigElement;
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionReference;
-import com.nextbreakpoint.nextfractal.core.extension.ReferenceElement;
+import com.nextbreakpoint.nextfractal.core.elements.ExtensionReferenceElement;
+import com.nextbreakpoint.nextfractal.core.runtime.AbstractConfigElement;
+import com.nextbreakpoint.nextfractal.core.runtime.ConfigContext;
+import com.nextbreakpoint.nextfractal.core.runtime.ConfigElement;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionReference;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ReferenceElement;
 
 /**
  * @author Andrea Medeghini
@@ -60,7 +60,7 @@ public class ProcessingFormulaConfigElement extends AbstractConfigElement implem
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.config.ConfigElement#copyFrom(com.nextbreakpoint.nextfractal.core.config.ConfigElement)
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.ConfigElement#copyFrom(com.nextbreakpoint.nextfractal.core.runtime.ConfigElement)
 	 */
 	@Override
 	public void copyFrom(ConfigElement source) {
@@ -71,7 +71,7 @@ public class ProcessingFormulaConfigElement extends AbstractConfigElement implem
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.common.ConfigurableExtensionReferenceElement#setContext(com.nextbreakpoint.nextfractal.core.config.ConfigContext)
+	 * @see com.nextbreakpoint.nextfractal.core.elements.ConfigurableExtensionReferenceElement#setContext(com.nextbreakpoint.nextfractal.core.runtime.ConfigContext)
 	 */
 	@Override
 	public void setContext(final ConfigContext context) {
@@ -126,7 +126,7 @@ public class ProcessingFormulaConfigElement extends AbstractConfigElement implem
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.config.AbstractConfigElement#dispose()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.AbstractConfigElement#dispose()
 	 */
 	@Override
 	public void dispose() {

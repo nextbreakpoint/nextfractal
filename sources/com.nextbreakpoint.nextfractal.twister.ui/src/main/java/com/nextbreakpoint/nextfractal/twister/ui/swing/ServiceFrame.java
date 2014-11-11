@@ -84,8 +84,9 @@ import javax.swing.table.TableCellRenderer;
 
 import org.w3c.dom.Document;
 
-import com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtension;
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionException;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtension;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionException;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XML;
 import com.nextbreakpoint.nextfractal.core.ui.swing.extension.ConfigurableExtensionComboBoxModel;
 import com.nextbreakpoint.nextfractal.core.ui.swing.extension.ExtensionListCellRenderer;
 import com.nextbreakpoint.nextfractal.core.ui.swing.util.AlternateTableCellRenderer;
@@ -95,7 +96,6 @@ import com.nextbreakpoint.nextfractal.core.ui.swing.util.GUIUtil;
 import com.nextbreakpoint.nextfractal.core.ui.swing.util.WorkerProgressDialog;
 import com.nextbreakpoint.nextfractal.core.ui.swing.util.ZIPFileFilter;
 import com.nextbreakpoint.nextfractal.core.util.Rectangle;
-import com.nextbreakpoint.nextfractal.core.xml.XML;
 import com.nextbreakpoint.nextfractal.queue.LibraryService;
 import com.nextbreakpoint.nextfractal.queue.PreviewListener;
 import com.nextbreakpoint.nextfractal.queue.RenderService;

@@ -28,10 +28,10 @@ package com.nextbreakpoint.nextfractal.twister.ui.swing;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
-import com.nextbreakpoint.nextfractal.core.extension.Extension;
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionConfig;
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionException;
-import com.nextbreakpoint.nextfractal.core.util.RenderContext;
+import com.nextbreakpoint.nextfractal.core.RenderContext;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.Extension;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionConfig;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionException;
 import com.nextbreakpoint.nextfractal.twister.TwisterConfig;
 import com.nextbreakpoint.nextfractal.twister.effect.EffectConfigElement;
 import com.nextbreakpoint.nextfractal.twister.extensionPoints.effect.EffectExtensionConfig;

@@ -28,7 +28,7 @@ package com.nextbreakpoint.nextfractal.twister.extensions.devtools;
 import com.nextbreakpoint.nextfractal.core.devtools.ProcessorCardinality;
 import com.nextbreakpoint.nextfractal.core.devtools.ProcessorDescriptor;
 import com.nextbreakpoint.nextfractal.core.extensionPoints.descriptor.DescriptorExtensionRuntime;
-import com.nextbreakpoint.nextfractal.twister.common.ViewElement;
+import com.nextbreakpoint.nextfractal.twister.elements.ViewElement;
 
 public class ViewDescriptorRuntime extends DescriptorExtensionRuntime {
 	/**
@@ -36,7 +36,7 @@ public class ViewDescriptorRuntime extends DescriptorExtensionRuntime {
 	 */
 	@Override
 	public ProcessorDescriptor createDescriptor(String elementName, String defaultValue, ProcessorCardinality cardinality) {
-		return new ProcessorDescriptor(elementName, "View", ViewElement.CLASS_ID, "com.nextbreakpoint.nextfractal.twister.common", "ViewElement", null, null, null, null, null, null, null, null, null, null, null, null, "com.nextbreakpoint.nextfractal.twister.util", "View", defaultValue, "get", "set", cardinality);
+		return new ProcessorDescriptor(elementName, "View", ViewElement.CLASS_ID, "com.nextbreakpoint.nextfractal.twister.elements", "ViewElement", null, null, null, null, null, null, null, null, null, null, null, null, "com.nextbreakpoint.nextfractal.twister.util", "View", defaultValue, "get", "set", cardinality);
 	}
 
 	/**

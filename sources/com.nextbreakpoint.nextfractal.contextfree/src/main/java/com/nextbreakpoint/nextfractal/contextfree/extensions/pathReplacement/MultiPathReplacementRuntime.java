@@ -13,11 +13,11 @@ import com.nextbreakpoint.nextfractal.contextfree.renderer.support.CFModificatio
 import com.nextbreakpoint.nextfractal.contextfree.renderer.support.CFPathAttribute;
 import com.nextbreakpoint.nextfractal.contextfree.renderer.support.CFPathCommand;
 import com.nextbreakpoint.nextfractal.contextfree.renderer.support.CFRule;
-import com.nextbreakpoint.nextfractal.core.config.ListConfigElement;
-import com.nextbreakpoint.nextfractal.core.config.ListRuntimeElement;
-import com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent;
-import com.nextbreakpoint.nextfractal.core.config.ValueChangeListener;
-import com.nextbreakpoint.nextfractal.core.config.ValueConfigElement;
+import com.nextbreakpoint.nextfractal.core.runtime.ElementChangeEvent;
+import com.nextbreakpoint.nextfractal.core.runtime.ElementChangeListener;
+import com.nextbreakpoint.nextfractal.core.runtime.ListConfigElement;
+import com.nextbreakpoint.nextfractal.core.runtime.ListRuntimeElement;
+import com.nextbreakpoint.nextfractal.core.runtime.ValueConfigElement;
 
 /**
  * @author Andrea Medeghini
@@ -32,7 +32,7 @@ public class MultiPathReplacementRuntime<T extends MultiPathReplacementConfig> e
 	private PathAdjustmentListElementListener pathAdjustmentListElementListener;
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionRuntime#configReloaded()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtensionRuntime#configReloaded()
 	 */
 	@Override
 	public void configReloaded() {
@@ -81,12 +81,12 @@ public class MultiPathReplacementRuntime<T extends MultiPathReplacementConfig> e
 		this.times = times;
 	}
 	
-	private class TimesListener implements ValueChangeListener {
+	private class TimesListener implements ElementChangeListener {
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.ElementChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.runtime.ElementChangeEvent)
 		 */
 		@Override
-		public void valueChanged(final ValueChangeEvent e) {
+		public void valueChanged(final ElementChangeEvent e) {
 			switch (e.getEventType()) {
 				case ValueConfigElement.VALUE_CHANGED: {
 					setTimes((Integer) e.getParams()[0]);
@@ -156,12 +156,12 @@ public class MultiPathReplacementRuntime<T extends MultiPathReplacementConfig> e
 		pathReplacementListElement.moveElementDown(index);
 	}
 	
-	private class PathReplacementListElementListener implements ValueChangeListener {
+	private class PathReplacementListElementListener implements ElementChangeListener {
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.ElementChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.runtime.ElementChangeEvent)
 		 */
 		@Override
-		public void valueChanged(final ValueChangeEvent e) {
+		public void valueChanged(final ElementChangeEvent e) {
 			switch (e.getEventType()) {
 				case ListConfigElement.ELEMENT_ADDED: {
 					appendPathReplacementElement(new PathReplacementRuntimeElement ((PathReplacementConfigElement) e.getParams()[0]));
@@ -261,12 +261,12 @@ public class MultiPathReplacementRuntime<T extends MultiPathReplacementConfig> e
 		pathAdjustmentListElement.moveElementDown(index);
 	}
 	
-	private class PathAdjustmentListElementListener implements ValueChangeListener {
+	private class PathAdjustmentListElementListener implements ElementChangeListener {
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.ElementChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.runtime.ElementChangeEvent)
 		 */
 		@Override
-		public void valueChanged(final ValueChangeEvent e) {
+		public void valueChanged(final ElementChangeEvent e) {
 			switch (e.getEventType()) {
 				case ListConfigElement.ELEMENT_ADDED: {
 					appendPathAdjustmentElement(new PathAdjustmentRuntimeElement ((PathAdjustmentConfigElement) e.getParams()[0]));

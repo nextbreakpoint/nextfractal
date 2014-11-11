@@ -25,7 +25,7 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.paletteRenderer;
 
-import com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtensionRuntime;
 import com.nextbreakpoint.nextfractal.core.util.Palette;
 
 /**

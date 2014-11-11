@@ -48,17 +48,19 @@ import javax.swing.SwingConstants;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.nextbreakpoint.nextfractal.core.common.ExtensionReferenceElementNodeValue;
-import com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtension;
-import com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionReference;
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionConfig;
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionConfigXMLExporter;
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionConfigXMLImporter;
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionException;
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionReference;
-import com.nextbreakpoint.nextfractal.core.extension.NullConfigurableExtension;
-import com.nextbreakpoint.nextfractal.core.tree.NodeEditor;
-import com.nextbreakpoint.nextfractal.core.tree.NodeValue;
+import com.nextbreakpoint.nextfractal.core.elements.ExtensionReferenceElementNodeValue;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtension;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtensionReference;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionConfig;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionConfigXMLExporter;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionConfigXMLImporter;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionException;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionReference;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.NullConfigurableExtension;
+import com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor;
+import com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XML;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLNodeBuilder;
 import com.nextbreakpoint.nextfractal.core.ui.swing.CoreSwingResources;
 import com.nextbreakpoint.nextfractal.core.ui.swing.NodeEditorComponent;
 import com.nextbreakpoint.nextfractal.core.ui.swing.extension.ConfigurableExtensionComboBoxModel;
@@ -66,15 +68,13 @@ import com.nextbreakpoint.nextfractal.core.ui.swing.extension.ExtensionListCellR
 import com.nextbreakpoint.nextfractal.core.ui.swing.extensionPoints.editor.EditorExtensionRuntime;
 import com.nextbreakpoint.nextfractal.core.ui.swing.util.GUIFactory;
 import com.nextbreakpoint.nextfractal.core.ui.swing.util.StackLayout;
-import com.nextbreakpoint.nextfractal.core.xml.XML;
-import com.nextbreakpoint.nextfractal.core.xml.XMLNodeBuilder;
 
 /**
  * @author Andrea Medeghini
  */
 public abstract class ConfigurableReferenceEditorRuntime extends EditorExtensionRuntime {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.swing.editor.extension.EditorExtensionRuntime#createEditor(com.nextbreakpoint.nextfractal.core.tree.NodeEditor)
+	 * @see com.nextbreakpoint.nextfractal.twister.swing.editor.extension.EditorExtensionRuntime#createEditor(com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor)
 	 */
 	@Override
 	public NodeEditorComponent createEditor(final NodeEditor nodeEditor) {

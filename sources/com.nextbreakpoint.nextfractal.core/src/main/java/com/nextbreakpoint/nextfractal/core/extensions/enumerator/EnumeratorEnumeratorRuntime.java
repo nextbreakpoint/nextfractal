@@ -29,11 +29,11 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.nextbreakpoint.nextfractal.core.CoreRegistry;
-import com.nextbreakpoint.nextfractal.core.extension.Extension;
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionNotFoundException;
 import com.nextbreakpoint.nextfractal.core.extensionPoints.enumerator.EnumeratorExtensionRuntime;
-import com.nextbreakpoint.nextfractal.core.scripting.JSException;
-import com.nextbreakpoint.nextfractal.core.scripting.JSExtension;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.Extension;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionNotFoundException;
+import com.nextbreakpoint.nextfractal.core.runtime.scripting.JSException;
+import com.nextbreakpoint.nextfractal.core.runtime.scripting.JSExtension;
 
 /**
  * @author Andrea Medeghini

@@ -27,23 +27,23 @@ package com.nextbreakpoint.nextfractal.mandelbrot.incolouringFormula;
 
 import org.w3c.dom.Element;
 
-import com.nextbreakpoint.nextfractal.core.common.BooleanElementXMLExporter;
-import com.nextbreakpoint.nextfractal.core.common.ConfigurableExtensionReferenceElementXMLExporter;
-import com.nextbreakpoint.nextfractal.core.common.IntegerElementXMLExporter;
-import com.nextbreakpoint.nextfractal.core.common.StringElementXMLExporter;
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionException;
-import com.nextbreakpoint.nextfractal.core.xml.XMLExportException;
-import com.nextbreakpoint.nextfractal.core.xml.XMLExporter;
-import com.nextbreakpoint.nextfractal.core.xml.XMLNodeBuilder;
+import com.nextbreakpoint.nextfractal.core.elements.BooleanElementXMLExporter;
+import com.nextbreakpoint.nextfractal.core.elements.ConfigurableExtensionReferenceElementXMLExporter;
+import com.nextbreakpoint.nextfractal.core.elements.IntegerElementXMLExporter;
+import com.nextbreakpoint.nextfractal.core.elements.StringElementXMLExporter;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionException;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLExportException;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLExporter;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLNodeBuilder;
 import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.incolouringFormula.IncolouringFormulaExtensionConfig;
-import com.nextbreakpoint.nextfractal.twister.common.PercentageElementXMLExporter;
+import com.nextbreakpoint.nextfractal.twister.elements.PercentageElementXMLExporter;
 
 /**
  * @author Andrea Medeghini
  */
 public class IncolouringFormulaConfigElementXMLExporter extends XMLExporter<IncolouringFormulaConfigElement> {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.xml.XMLExporter#exportToElement(java.lang.Object, com.nextbreakpoint.nextfractal.core.xml.XMLNodeBuilder)
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.xml.XMLExporter#exportToElement(java.lang.Object, com.nextbreakpoint.nextfractal.core.runtime.xml.XMLNodeBuilder)
 	 */
 	@Override
 	public Element exportToElement(final IncolouringFormulaConfigElement configElement, final XMLNodeBuilder builder) throws XMLExportException {
@@ -58,7 +58,7 @@ public class IncolouringFormulaConfigElementXMLExporter extends XMLExporter<Inco
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.common.ConfigurableExtensionReferenceElementXMLExporter#exportProperties(com.nextbreakpoint.nextfractal.twister.util.ConfigurableExtensionConfigElement, org.w3c.dom.Element, com.nextbreakpoint.nextfractal.core.xml.XMLNodeBuilder, java.lang.String)
+	 * @see com.nextbreakpoint.nextfractal.core.elements.ConfigurableExtensionReferenceElementXMLExporter#exportProperties(com.nextbreakpoint.nextfractal.twister.util.ConfigurableExtensionConfigElement, org.w3c.dom.Element, com.nextbreakpoint.nextfractal.core.runtime.xml.XMLNodeBuilder, java.lang.String)
 	 */
 	protected void exportProperties(final IncolouringFormulaConfigElement configElement, final Element element, final XMLNodeBuilder builder) throws ExtensionException, XMLExportException {
 		exportExtension(configElement, createProperty(builder, element, "extension"), builder);

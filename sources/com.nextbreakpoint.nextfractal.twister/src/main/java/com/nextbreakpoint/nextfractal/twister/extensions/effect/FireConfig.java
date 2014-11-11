@@ -28,10 +28,10 @@ package com.nextbreakpoint.nextfractal.twister.extensions.effect;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.nextbreakpoint.nextfractal.core.config.ConfigElement;
-import com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent;
-import com.nextbreakpoint.nextfractal.core.config.ValueChangeListener;
-import com.nextbreakpoint.nextfractal.twister.common.PercentageElement;
+import com.nextbreakpoint.nextfractal.core.runtime.ConfigElement;
+import com.nextbreakpoint.nextfractal.core.runtime.ElementChangeEvent;
+import com.nextbreakpoint.nextfractal.core.runtime.ElementChangeListener;
+import com.nextbreakpoint.nextfractal.twister.elements.PercentageElement;
 import com.nextbreakpoint.nextfractal.twister.extensionPoints.effect.EffectExtensionConfig;
 
 /**
@@ -51,7 +51,7 @@ public class FireConfig extends EffectExtensionConfig {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.extension.ExtensionConfig#getConfigElements()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionConfig#getConfigElements()
 	 */
 	@Override
 	public List<ConfigElement> getConfigElements() {
@@ -114,12 +114,12 @@ public class FireConfig extends EffectExtensionConfig {
 		return true;
 	}
 
-	private class ValueChangeEventDispatcher implements ValueChangeListener {
+	private class ValueChangeEventDispatcher implements ElementChangeListener {
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.ElementChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.runtime.ElementChangeEvent)
 		 */
 		@Override
-		public void valueChanged(final ValueChangeEvent e) {
+		public void valueChanged(final ElementChangeEvent e) {
 			fireValueChanged(e);
 		}
 	}

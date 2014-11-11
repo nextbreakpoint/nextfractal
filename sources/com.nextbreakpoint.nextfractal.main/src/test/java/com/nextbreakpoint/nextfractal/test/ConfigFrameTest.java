@@ -36,20 +36,20 @@ import javax.swing.UIManager;
 
 import org.junit.Test;
 
-import com.nextbreakpoint.nextfractal.core.config.DefaultConfigContext;
+import com.nextbreakpoint.nextfractal.core.RenderContext;
+import com.nextbreakpoint.nextfractal.core.RenderContextListener;
 import com.nextbreakpoint.nextfractal.core.launcher.Launcher;
 import com.nextbreakpoint.nextfractal.core.launcher.LauncherContextListener;
 import com.nextbreakpoint.nextfractal.core.launcher.LauncherThreadFactory;
-import com.nextbreakpoint.nextfractal.core.scripting.DefaultJSContext;
-import com.nextbreakpoint.nextfractal.core.scripting.JSException;
-import com.nextbreakpoint.nextfractal.core.scripting.JSManager;
-import com.nextbreakpoint.nextfractal.core.tree.DefaultRootNode;
-import com.nextbreakpoint.nextfractal.core.tree.NodeAction;
-import com.nextbreakpoint.nextfractal.core.tree.NodeSession;
-import com.nextbreakpoint.nextfractal.core.tree.NodeSessionListener;
+import com.nextbreakpoint.nextfractal.core.runtime.DefaultConfigContext;
+import com.nextbreakpoint.nextfractal.core.runtime.model.DefaultRootNode;
+import com.nextbreakpoint.nextfractal.core.runtime.model.NodeAction;
+import com.nextbreakpoint.nextfractal.core.runtime.model.NodeSession;
+import com.nextbreakpoint.nextfractal.core.runtime.model.NodeSessionListener;
+import com.nextbreakpoint.nextfractal.core.runtime.scripting.DefaultJSContext;
+import com.nextbreakpoint.nextfractal.core.runtime.scripting.JSException;
+import com.nextbreakpoint.nextfractal.core.runtime.scripting.JSManager;
 import com.nextbreakpoint.nextfractal.core.util.IntegerVector2D;
-import com.nextbreakpoint.nextfractal.core.util.RenderContext;
-import com.nextbreakpoint.nextfractal.core.util.RenderContextListener;
 import com.nextbreakpoint.nextfractal.twister.TwisterConfig;
 import com.nextbreakpoint.nextfractal.twister.TwisterConfigBuilder;
 import com.nextbreakpoint.nextfractal.twister.TwisterConfigNodeBuilder;
@@ -154,7 +154,7 @@ public class ConfigFrameTest {
 
 	private class TestJSContext extends DefaultJSContext {
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.scripting.JSContext#loadDefaultConfig()
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.scripting.JSContext#loadDefaultConfig()
 		 */
 		@Override
 		public void loadDefaultConfig() {
@@ -210,21 +210,21 @@ public class ConfigFrameTest {
 
 	private class TestRenderContext implements RenderContext {
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#startRenderers()
+		 * @see com.nextbreakpoint.nextfractal.core.RenderContext#startRenderers()
 		 */
 		@Override
 		public void startRenderers() {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#stopRenderers()
+		 * @see com.nextbreakpoint.nextfractal.core.RenderContext#stopRenderers()
 		 */
 		@Override
 		public void stopRenderers() {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#getImageSize()
+		 * @see com.nextbreakpoint.nextfractal.core.RenderContext#getImageSize()
 		 */
 		@Override
 		public IntegerVector2D getImageSize() {
@@ -232,42 +232,42 @@ public class ConfigFrameTest {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#refresh()
+		 * @see com.nextbreakpoint.nextfractal.core.RenderContext#refresh()
 		 */
 		@Override
 		public void refresh() {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#acquire()
+		 * @see com.nextbreakpoint.nextfractal.core.RenderContext#acquire()
 		 */
 		@Override
 		public void acquire() throws InterruptedException {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#release()
+		 * @see com.nextbreakpoint.nextfractal.core.RenderContext#release()
 		 */
 		@Override
 		public void release() {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#addRenderContextListener(com.nextbreakpoint.nextfractal.core.util.RenderContextListener)
+		 * @see com.nextbreakpoint.nextfractal.core.RenderContext#addRenderContextListener(com.nextbreakpoint.nextfractal.core.RenderContextListener)
 		 */
 		@Override
 		public void addRenderContextListener(RenderContextListener listener) {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#removeRenderContextListener(com.nextbreakpoint.nextfractal.core.util.RenderContextListener)
+		 * @see com.nextbreakpoint.nextfractal.core.RenderContext#removeRenderContextListener(com.nextbreakpoint.nextfractal.core.RenderContextListener)
 		 */
 		@Override
 		public void removeRenderContextListener(RenderContextListener listener) {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#execute(java.lang.Runnable)
+		 * @see com.nextbreakpoint.nextfractal.core.RenderContext#execute(java.lang.Runnable)
 		 */
 		@Override
 		public void execute(Runnable task) {
@@ -276,7 +276,7 @@ public class ConfigFrameTest {
 
 	private class TestNodeSesion implements NodeSession {
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeSession#appendAction(com.nextbreakpoint.nextfractal.core.tree.NodeAction)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeSession#appendAction(com.nextbreakpoint.nextfractal.core.runtime.model.NodeAction)
 		 */
 		@Override
 		public void appendAction(final NodeAction action) {
@@ -284,7 +284,7 @@ public class ConfigFrameTest {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeSession#getActions()
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeSession#getActions()
 		 */
 		@Override
 		public List<NodeAction> getActions() {
@@ -292,7 +292,7 @@ public class ConfigFrameTest {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeSession#getSessionName()
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeSession#getSessionName()
 		 */
 		@Override
 		public String getSessionName() {
@@ -300,7 +300,7 @@ public class ConfigFrameTest {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeSession#getTimestamp()
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeSession#getTimestamp()
 		 */
 		@Override
 		public long getTimestamp() {
@@ -308,7 +308,7 @@ public class ConfigFrameTest {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeSession#isAcceptImmediatly()
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeSession#isAcceptImmediatly()
 		 */
 		@Override
 		public boolean isAcceptImmediatly() {
@@ -316,14 +316,14 @@ public class ConfigFrameTest {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeSession#setAcceptImmediatly(boolean)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeSession#setAcceptImmediatly(boolean)
 		 */
 		@Override
 		public void setAcceptImmediatly(final boolean isApplyImmediatly) {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeSession#setTimestamp(long)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeSession#setTimestamp(long)
 		 */
 		@Override
 		public void setTimestamp(final long timestamp) {

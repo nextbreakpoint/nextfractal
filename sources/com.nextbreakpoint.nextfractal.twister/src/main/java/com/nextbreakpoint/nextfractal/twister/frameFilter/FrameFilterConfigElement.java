@@ -25,13 +25,13 @@
  */
 package com.nextbreakpoint.nextfractal.twister.frameFilter;
 
-import com.nextbreakpoint.nextfractal.core.common.BooleanElement;
-import com.nextbreakpoint.nextfractal.core.common.ConfigurableExtensionReferenceElement;
-import com.nextbreakpoint.nextfractal.core.common.StringElement;
-import com.nextbreakpoint.nextfractal.core.config.AbstractConfigElement;
-import com.nextbreakpoint.nextfractal.core.config.ConfigContext;
-import com.nextbreakpoint.nextfractal.core.config.ConfigElement;
-import com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionReference;
+import com.nextbreakpoint.nextfractal.core.elements.BooleanElement;
+import com.nextbreakpoint.nextfractal.core.elements.ConfigurableExtensionReferenceElement;
+import com.nextbreakpoint.nextfractal.core.elements.StringElement;
+import com.nextbreakpoint.nextfractal.core.runtime.AbstractConfigElement;
+import com.nextbreakpoint.nextfractal.core.runtime.ConfigContext;
+import com.nextbreakpoint.nextfractal.core.runtime.ConfigElement;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtensionReference;
 import com.nextbreakpoint.nextfractal.twister.extensionPoints.frameFilter.FrameFilterExtensionConfig;
 
 /**
@@ -53,7 +53,7 @@ public class FrameFilterConfigElement extends AbstractConfigElement {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.common.ConfigurableExtensionReferenceElement#setContext(com.nextbreakpoint.nextfractal.core.config.ConfigContext)
+	 * @see com.nextbreakpoint.nextfractal.core.elements.ConfigurableExtensionReferenceElement#setContext(com.nextbreakpoint.nextfractal.core.runtime.ConfigContext)
 	 */
 	@Override
 	public void setContext(final ConfigContext context) {
@@ -80,7 +80,7 @@ public class FrameFilterConfigElement extends AbstractConfigElement {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.config.ConfigElement#copyFrom(com.nextbreakpoint.nextfractal.core.config.ConfigElement)
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.ConfigElement#copyFrom(com.nextbreakpoint.nextfractal.core.runtime.ConfigElement)
 	 */
 	@Override
 	public void copyFrom(ConfigElement source) {
@@ -210,7 +210,7 @@ public class FrameFilterConfigElement extends AbstractConfigElement {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.config.AbstractConfigElement#dispose()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.AbstractConfigElement#dispose()
 	 */
 	@Override
 	public void dispose() {

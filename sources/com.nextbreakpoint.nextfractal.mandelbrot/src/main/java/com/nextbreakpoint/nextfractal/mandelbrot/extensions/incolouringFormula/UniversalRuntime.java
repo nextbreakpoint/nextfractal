@@ -68,7 +68,7 @@ public class UniversalRuntime extends AbstractIncolouringPaletteRuntime<Universa
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionRuntime#isChanged()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtensionRuntime#isChanged()
 	 */
 	@Override
 	public boolean isChanged() {

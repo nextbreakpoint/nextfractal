@@ -6,12 +6,12 @@ package com.nextbreakpoint.nextfractal.contextfree.cfdg;
 
 import com.nextbreakpoint.nextfractal.contextfree.figure.FigureConfigElement;
 import com.nextbreakpoint.nextfractal.contextfree.figure.FigureRuntimeElement;
-import com.nextbreakpoint.nextfractal.core.config.ListConfigElement;
-import com.nextbreakpoint.nextfractal.core.config.ListRuntimeElement;
-import com.nextbreakpoint.nextfractal.core.config.RuntimeElement;
-import com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent;
-import com.nextbreakpoint.nextfractal.core.config.ValueChangeListener;
-import com.nextbreakpoint.nextfractal.core.config.ValueConfigElement;
+import com.nextbreakpoint.nextfractal.core.runtime.ElementChangeEvent;
+import com.nextbreakpoint.nextfractal.core.runtime.ElementChangeListener;
+import com.nextbreakpoint.nextfractal.core.runtime.ListConfigElement;
+import com.nextbreakpoint.nextfractal.core.runtime.ListRuntimeElement;
+import com.nextbreakpoint.nextfractal.core.runtime.RuntimeElement;
+import com.nextbreakpoint.nextfractal.core.runtime.ValueConfigElement;
 import com.nextbreakpoint.nextfractal.core.util.Color32bit;
 
 /**
@@ -102,7 +102,7 @@ import com.nextbreakpoint.nextfractal.core.util.Color32bit;
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.config.RuntimeElement#dispose()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.RuntimeElement#dispose()
 	 */
 	@Override
 	public void dispose() {
@@ -164,7 +164,7 @@ import com.nextbreakpoint.nextfractal.core.util.Color32bit;
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.config.RuntimeElement#isChanged()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.RuntimeElement#isChanged()
 	 */
 	@Override
 	public boolean isChanged() {
@@ -183,12 +183,12 @@ import com.nextbreakpoint.nextfractal.core.util.Color32bit;
 		this.startshape = startshape;
 	}
 	
-	private class StartshapeListener implements ValueChangeListener {
+	private class StartshapeListener implements ElementChangeListener {
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.ElementChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.runtime.ElementChangeEvent)
 		 */
 		@Override
-		public void valueChanged(final ValueChangeEvent e) {
+		public void valueChanged(final ElementChangeEvent e) {
 			switch (e.getEventType()) {
 				case ValueConfigElement.VALUE_CHANGED: {
 					setStartshape((String) e.getParams()[0]);
@@ -212,12 +212,12 @@ import com.nextbreakpoint.nextfractal.core.util.Color32bit;
 		this.variation = variation;
 	}
 	
-	private class VariationListener implements ValueChangeListener {
+	private class VariationListener implements ElementChangeListener {
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.ElementChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.runtime.ElementChangeEvent)
 		 */
 		@Override
-		public void valueChanged(final ValueChangeEvent e) {
+		public void valueChanged(final ElementChangeEvent e) {
 			switch (e.getEventType()) {
 				case ValueConfigElement.VALUE_CHANGED: {
 					setVariation((String) e.getParams()[0]);
@@ -241,12 +241,12 @@ import com.nextbreakpoint.nextfractal.core.util.Color32bit;
 		this.baseDir = baseDir;
 	}
 	
-	private class BaseDirListener implements ValueChangeListener {
+	private class BaseDirListener implements ElementChangeListener {
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.ElementChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.runtime.ElementChangeEvent)
 		 */
 		@Override
-		public void valueChanged(final ValueChangeEvent e) {
+		public void valueChanged(final ElementChangeEvent e) {
 			switch (e.getEventType()) {
 				case ValueConfigElement.VALUE_CHANGED: {
 					setBaseDir((String) e.getParams()[0]);
@@ -270,12 +270,12 @@ import com.nextbreakpoint.nextfractal.core.util.Color32bit;
 		this.useSize = useSize;
 	}
 	
-	private class UseSizeListener implements ValueChangeListener {
+	private class UseSizeListener implements ElementChangeListener {
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.ElementChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.runtime.ElementChangeEvent)
 		 */
 		@Override
-		public void valueChanged(final ValueChangeEvent e) {
+		public void valueChanged(final ElementChangeEvent e) {
 			switch (e.getEventType()) {
 				case ValueConfigElement.VALUE_CHANGED: {
 					setUseSize((Boolean) e.getParams()[0]);
@@ -299,12 +299,12 @@ import com.nextbreakpoint.nextfractal.core.util.Color32bit;
 		this.useTile = useTile;
 	}
 	
-	private class UseTileListener implements ValueChangeListener {
+	private class UseTileListener implements ElementChangeListener {
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.ElementChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.runtime.ElementChangeEvent)
 		 */
 		@Override
-		public void valueChanged(final ValueChangeEvent e) {
+		public void valueChanged(final ElementChangeEvent e) {
 			switch (e.getEventType()) {
 				case ValueConfigElement.VALUE_CHANGED: {
 					setUseTile((Boolean) e.getParams()[0]);
@@ -328,12 +328,12 @@ import com.nextbreakpoint.nextfractal.core.util.Color32bit;
 		this.x = x;
 	}
 	
-	private class XListener implements ValueChangeListener {
+	private class XListener implements ElementChangeListener {
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.ElementChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.runtime.ElementChangeEvent)
 		 */
 		@Override
-		public void valueChanged(final ValueChangeEvent e) {
+		public void valueChanged(final ElementChangeEvent e) {
 			switch (e.getEventType()) {
 				case ValueConfigElement.VALUE_CHANGED: {
 					setX((Float) e.getParams()[0]);
@@ -357,12 +357,12 @@ import com.nextbreakpoint.nextfractal.core.util.Color32bit;
 		this.y = y;
 	}
 	
-	private class YListener implements ValueChangeListener {
+	private class YListener implements ElementChangeListener {
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.ElementChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.runtime.ElementChangeEvent)
 		 */
 		@Override
-		public void valueChanged(final ValueChangeEvent e) {
+		public void valueChanged(final ElementChangeEvent e) {
 			switch (e.getEventType()) {
 				case ValueConfigElement.VALUE_CHANGED: {
 					setY((Float) e.getParams()[0]);
@@ -386,12 +386,12 @@ import com.nextbreakpoint.nextfractal.core.util.Color32bit;
 		this.width = width;
 	}
 	
-	private class WidthListener implements ValueChangeListener {
+	private class WidthListener implements ElementChangeListener {
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.ElementChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.runtime.ElementChangeEvent)
 		 */
 		@Override
-		public void valueChanged(final ValueChangeEvent e) {
+		public void valueChanged(final ElementChangeEvent e) {
 			switch (e.getEventType()) {
 				case ValueConfigElement.VALUE_CHANGED: {
 					setWidth((Float) e.getParams()[0]);
@@ -415,12 +415,12 @@ import com.nextbreakpoint.nextfractal.core.util.Color32bit;
 		this.height = height;
 	}
 	
-	private class HeightListener implements ValueChangeListener {
+	private class HeightListener implements ElementChangeListener {
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.ElementChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.runtime.ElementChangeEvent)
 		 */
 		@Override
-		public void valueChanged(final ValueChangeEvent e) {
+		public void valueChanged(final ElementChangeEvent e) {
 			switch (e.getEventType()) {
 				case ValueConfigElement.VALUE_CHANGED: {
 					setHeight((Float) e.getParams()[0]);
@@ -444,12 +444,12 @@ import com.nextbreakpoint.nextfractal.core.util.Color32bit;
 		this.tileWidth = tileWidth;
 	}
 	
-	private class TileWidthListener implements ValueChangeListener {
+	private class TileWidthListener implements ElementChangeListener {
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.ElementChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.runtime.ElementChangeEvent)
 		 */
 		@Override
-		public void valueChanged(final ValueChangeEvent e) {
+		public void valueChanged(final ElementChangeEvent e) {
 			switch (e.getEventType()) {
 				case ValueConfigElement.VALUE_CHANGED: {
 					setTileWidth((Float) e.getParams()[0]);
@@ -473,12 +473,12 @@ import com.nextbreakpoint.nextfractal.core.util.Color32bit;
 		this.tileHeight = tileHeight;
 	}
 	
-	private class TileHeightListener implements ValueChangeListener {
+	private class TileHeightListener implements ElementChangeListener {
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.ElementChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.runtime.ElementChangeEvent)
 		 */
 		@Override
-		public void valueChanged(final ValueChangeEvent e) {
+		public void valueChanged(final ElementChangeEvent e) {
 			switch (e.getEventType()) {
 				case ValueConfigElement.VALUE_CHANGED: {
 					setTileHeight((Float) e.getParams()[0]);
@@ -502,12 +502,12 @@ import com.nextbreakpoint.nextfractal.core.util.Color32bit;
 		this.background = background;
 	}
 	
-	private class BackgroundListener implements ValueChangeListener {
+	private class BackgroundListener implements ElementChangeListener {
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.ElementChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.runtime.ElementChangeEvent)
 		 */
 		@Override
-		public void valueChanged(final ValueChangeEvent e) {
+		public void valueChanged(final ElementChangeEvent e) {
 			switch (e.getEventType()) {
 				case ValueConfigElement.VALUE_CHANGED: {
 					setBackground((Color32bit) e.getParams()[0]);
@@ -577,12 +577,12 @@ import com.nextbreakpoint.nextfractal.core.util.Color32bit;
 		figureListElement.moveElementDown(index);
 	}
 	
-	private class FigureListElementListener implements ValueChangeListener {
+	private class FigureListElementListener implements ElementChangeListener {
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.ElementChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.runtime.ElementChangeEvent)
 		 */
 		@Override
-		public void valueChanged(final ValueChangeEvent e) {
+		public void valueChanged(final ElementChangeEvent e) {
 			switch (e.getEventType()) {
 				case ListConfigElement.ELEMENT_ADDED: {
 					appendFigureElement(new FigureRuntimeElement ((FigureConfigElement) e.getParams()[0]));

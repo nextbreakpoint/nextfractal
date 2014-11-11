@@ -96,7 +96,7 @@ public class UniversalTrueColorRuntime extends AbstractOutcolouringFormulaRuntim
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionRuntime#isChanged()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtensionRuntime#isChanged()
 	 */
 	@Override
 	public boolean isChanged() {
@@ -117,7 +117,7 @@ public class UniversalTrueColorRuntime extends AbstractOutcolouringFormulaRuntim
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionRuntime#configReloaded()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtensionRuntime#configReloaded()
 	 */
 	@Override
 	public void configReloaded() {

@@ -29,11 +29,11 @@ import java.util.List;
 
 import org.w3c.dom.Element;
 
-import com.nextbreakpoint.nextfractal.core.common.ExtensionReferenceElement;
-import com.nextbreakpoint.nextfractal.core.common.ExtensionReferenceElementXMLImporter;
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionException;
-import com.nextbreakpoint.nextfractal.core.xml.XMLImportException;
-import com.nextbreakpoint.nextfractal.core.xml.XMLImporter;
+import com.nextbreakpoint.nextfractal.core.elements.ExtensionReferenceElement;
+import com.nextbreakpoint.nextfractal.core.elements.ExtensionReferenceElementXMLImporter;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionException;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLImportException;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLImporter;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotRegistry;
 
 /**
@@ -41,7 +41,7 @@ import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotRegistry;
  */
 public class ColorRendererFormulaConfigElementXMLImporter extends XMLImporter<ColorRendererFormulaConfigElement> {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.xml.XMLImporter#importFromElement(org.w3c.dom.Element)
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.xml.XMLImporter#importFromElement(org.w3c.dom.Element)
 	 */
 	@Override
 	public ColorRendererFormulaConfigElement importFromElement(final Element element) throws XMLImportException {

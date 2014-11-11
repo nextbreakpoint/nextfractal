@@ -26,14 +26,14 @@
 package com.nextbreakpoint.nextfractal.contextfree;
 
 import com.nextbreakpoint.nextfractal.contextfree.cfdg.CFDGConfigElement;
-import com.nextbreakpoint.nextfractal.core.config.AbstractConfigElement;
-import com.nextbreakpoint.nextfractal.core.config.ConfigContext;
-import com.nextbreakpoint.nextfractal.core.config.ConfigElement;
-import com.nextbreakpoint.nextfractal.core.config.SingleConfigElement;
+import com.nextbreakpoint.nextfractal.core.runtime.AbstractConfigElement;
+import com.nextbreakpoint.nextfractal.core.runtime.ConfigContext;
+import com.nextbreakpoint.nextfractal.core.runtime.ConfigElement;
+import com.nextbreakpoint.nextfractal.core.runtime.SingleConfigElement;
 import com.nextbreakpoint.nextfractal.core.util.DoubleVector4D;
 import com.nextbreakpoint.nextfractal.core.util.IntegerVector4D;
-import com.nextbreakpoint.nextfractal.twister.common.SpeedElement;
-import com.nextbreakpoint.nextfractal.twister.common.ViewElement;
+import com.nextbreakpoint.nextfractal.twister.elements.SpeedElement;
+import com.nextbreakpoint.nextfractal.twister.elements.ViewElement;
 import com.nextbreakpoint.nextfractal.twister.util.Speed;
 import com.nextbreakpoint.nextfractal.twister.util.View;
 
@@ -95,7 +95,7 @@ public class ContextFreeConfig extends AbstractConfigElement {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.config.ConfigElement#copyFrom(com.nextbreakpoint.nextfractal.core.config.ConfigElement)
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.ConfigElement#copyFrom(com.nextbreakpoint.nextfractal.core.runtime.ConfigElement)
 	 */
 	@Override
 	public void copyFrom(ConfigElement source) {
@@ -106,7 +106,7 @@ public class ContextFreeConfig extends AbstractConfigElement {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.config.AbstractConfigElement#setContext(com.nextbreakpoint.nextfractal.core.config.ConfigContext)
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.AbstractConfigElement#setContext(com.nextbreakpoint.nextfractal.core.runtime.ConfigContext)
 	 */
 	@Override
 	public void setContext(final ConfigContext context) {
@@ -191,7 +191,7 @@ public class ContextFreeConfig extends AbstractConfigElement {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.config.AbstractConfigElement#dispose()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.AbstractConfigElement#dispose()
 	 */
 	@Override
 	public void dispose() {

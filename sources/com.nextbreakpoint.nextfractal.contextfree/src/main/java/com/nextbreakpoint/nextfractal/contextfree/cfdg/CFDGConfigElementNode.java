@@ -7,16 +7,16 @@ package com.nextbreakpoint.nextfractal.contextfree.cfdg;
 import com.nextbreakpoint.nextfractal.contextfree.ContextFreeResources;
 import com.nextbreakpoint.nextfractal.contextfree.figure.FigureConfigElement;
 import com.nextbreakpoint.nextfractal.contextfree.figure.FigureConfigElementNode;
-import com.nextbreakpoint.nextfractal.core.common.BooleanElementNode;
-import com.nextbreakpoint.nextfractal.core.common.ColorElementNode;
-import com.nextbreakpoint.nextfractal.core.common.FloatElementNode;
-import com.nextbreakpoint.nextfractal.core.common.StringElementNode;
-import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
-import com.nextbreakpoint.nextfractal.core.tree.NodeEditor;
-import com.nextbreakpoint.nextfractal.core.tree.NodeValue;
-import com.nextbreakpoint.nextfractal.core.util.AbstractConfigElementListNode;
-import com.nextbreakpoint.nextfractal.core.util.AbstractConfigElementNode;
-import com.nextbreakpoint.nextfractal.core.util.ConfigElementListNodeValue;
+import com.nextbreakpoint.nextfractal.core.elements.BooleanElementNode;
+import com.nextbreakpoint.nextfractal.core.elements.ColorElementNode;
+import com.nextbreakpoint.nextfractal.core.elements.FloatElementNode;
+import com.nextbreakpoint.nextfractal.core.elements.StringElementNode;
+import com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor;
+import com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject;
+import com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue;
+import com.nextbreakpoint.nextfractal.core.runtime.util.AbstractConfigElementListNode;
+import com.nextbreakpoint.nextfractal.core.runtime.util.AbstractConfigElementNode;
+import com.nextbreakpoint.nextfractal.core.runtime.util.ConfigElementListNodeValue;
 
 /**
  * @author Andrea Medeghini
@@ -55,7 +55,7 @@ public class CFDGConfigElementNode extends AbstractConfigElementNode<CFDGConfigE
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.util.AbstractConfigElementNode#getConfigElement()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.util.AbstractConfigElementNode#getConfigElement()
 	 */
 	@Override
 	public CFDGConfigElement getConfigElement() {
@@ -63,7 +63,7 @@ public class CFDGConfigElementNode extends AbstractConfigElementNode<CFDGConfigE
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#addDescription(java.lang.StringBuilder)
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject#addDescription(java.lang.StringBuilder)
 	 */
 	@Override
 	protected void addDescription(final StringBuilder builder) {
@@ -76,7 +76,7 @@ public class CFDGConfigElementNode extends AbstractConfigElementNode<CFDGConfigE
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#updateNode()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject#updateNode()
 	 */
 	@Override
 	protected void updateChildNodes() {
@@ -84,7 +84,7 @@ public class CFDGConfigElementNode extends AbstractConfigElementNode<CFDGConfigE
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.DefaultNode#createNodeEditor()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.DefaultNode#createNodeEditor()
 	 */
 	@Override
 	protected NodeEditor createNodeEditor() {
@@ -120,7 +120,7 @@ public class CFDGConfigElementNode extends AbstractConfigElementNode<CFDGConfigE
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeEditor#createChildNode(com.nextbreakpoint.nextfractal.core.tree.NodeValue)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor#createChildNode(com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue)
 		 */
 		@Override
 		protected NodeObject createChildNode(final NodeValue<?> value) {
@@ -128,7 +128,7 @@ public class CFDGConfigElementNode extends AbstractConfigElementNode<CFDGConfigE
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeEditor#createNodeValue(Object)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor#createNodeValue(Object)
 		 */
 		@Override
 		public NodeValue<?> createNodeValue(final Object value) {
@@ -136,7 +136,7 @@ public class CFDGConfigElementNode extends AbstractConfigElementNode<CFDGConfigE
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeEditor#getNodeValueType()
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor#getNodeValueType()
 		 */
 		@Override
 		public Class<?> getNodeValueType() {
@@ -302,7 +302,7 @@ public class CFDGConfigElementNode extends AbstractConfigElementNode<CFDGConfigE
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.util.AbstractConfigElementListNode#createChildNode(com.nextbreakpoint.nextfractal.core.config.ConfigElement)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.util.AbstractConfigElementListNode#createChildNode(com.nextbreakpoint.nextfractal.core.runtime.ConfigElement)
 		 */
 		@Override
 		protected AbstractConfigElementNode<FigureConfigElement> createChildNode(final FigureConfigElement value) {
@@ -310,7 +310,7 @@ public class CFDGConfigElementNode extends AbstractConfigElementNode<CFDGConfigE
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.util.AbstractConfigElementListNode#getChildValueType()
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.util.AbstractConfigElementListNode#getChildValueType()
 		 */
 		@Override
 		public Class<?> getChildValueType() {
@@ -318,7 +318,7 @@ public class CFDGConfigElementNode extends AbstractConfigElementNode<CFDGConfigE
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.util.AbstractConfigElementListNode#createNodeValue(Object)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.util.AbstractConfigElementListNode#createNodeValue(Object)
 		 */
 		@Override
 		public NodeValue<FigureConfigElement> createNodeValue(final Object value) {

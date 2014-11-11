@@ -6,8 +6,8 @@ package com.nextbreakpoint.nextfractal.contextfree.ui.swing.extensions.editor;
 
 import com.nextbreakpoint.nextfractal.contextfree.ContextFreeRegistry;
 import com.nextbreakpoint.nextfractal.contextfree.shapeReplacement.ShapeReplacementExtensionReferenceNodeValue;
-import com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionReference;
-import com.nextbreakpoint.nextfractal.core.tree.NodeValue;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtensionReference;
+import com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue;
 import com.nextbreakpoint.nextfractal.core.ui.swing.editor.ConfigurableReferenceEditorRuntime;
 import com.nextbreakpoint.nextfractal.core.ui.swing.extension.ConfigurableExtensionComboBoxModel;
 /**
@@ -31,7 +31,7 @@ public class ShapeReplacementReferenceEditorRuntime extends ConfigurableReferenc
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.ui.swing.editor.ConfigurableReferenceEditorRuntime#createNodeValue(com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionReference)
+	 * @see com.nextbreakpoint.nextfractal.core.ui.swing.editor.ConfigurableReferenceEditorRuntime#createNodeValue(com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtensionReference)
 	 */
 	@SuppressWarnings("unchecked")
 	@Override

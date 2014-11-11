@@ -25,12 +25,12 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.extensions.paletteRenderer;
 
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionConfig;
 import com.nextbreakpoint.nextfractal.core.extensionPoints.nodeBuilder.NodeBuilderExtensionRuntime;
-import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
-import com.nextbreakpoint.nextfractal.core.tree.NodeBuilder;
-import com.nextbreakpoint.nextfractal.core.util.AbstractExtensionConfigNodeBuilder;
-import com.nextbreakpoint.nextfractal.mandelbrot.common.RenderedPaletteElementNode;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionConfig;
+import com.nextbreakpoint.nextfractal.core.runtime.model.NodeBuilder;
+import com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject;
+import com.nextbreakpoint.nextfractal.core.runtime.util.AbstractExtensionConfigNodeBuilder;
+import com.nextbreakpoint.nextfractal.mandelbrot.elements.RenderedPaletteElementNode;
 
 /**
  * @author Andrea Medeghini
@@ -39,7 +39,7 @@ public class DefaultRendererConfigNodeBuilderRuntime extends NodeBuilderExtensio
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.extensionPoints.nodeBuilder.NodeBuilderExtensionRuntime#createNodeBuilder(com.nextbreakpoint.nextfractal.core.extension.ExtensionConfig)
+	 * @see com.nextbreakpoint.nextfractal.core.extensionPoints.nodeBuilder.NodeBuilderExtensionRuntime#createNodeBuilder(com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionConfig)
 	 */
 	@Override
 	public NodeBuilder createNodeBuilder(final ExtensionConfig config) {
@@ -55,7 +55,7 @@ public class DefaultRendererConfigNodeBuilderRuntime extends NodeBuilderExtensio
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.util.AbstractExtensionConfigNodeBuilder#createNodes(com.nextbreakpoint.nextfractal.core.tree.NodeObject)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.util.AbstractExtensionConfigNodeBuilder#createNodes(com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject)
 		 */
 		@Override
 		public void createNodes(final NodeObject parentNode) {

@@ -14,7 +14,7 @@ import ${import};
  */
 public class ${extension.extensionConfigClassName}NodeBuilderRuntime extends NodeBuilderExtensionRuntime {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.extension.NodeBuilderExtensionRuntime#createNodeBuilder(com.nextbreakpoint.nextfractal.core.extension.ExtensionConfig)
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.extension.NodeBuilderExtensionRuntime#createNodeBuilder(com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionConfig)
 	 */
 	@Override
 	public NodeBuilder createNodeBuilder(final ExtensionConfig config) {
@@ -30,7 +30,7 @@ public class ${extension.extensionConfigClassName}NodeBuilderRuntime extends Nod
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.util.AbstractExtensionConfigNodeBuilder#createNodes(com.nextbreakpoint.nextfractal.core.tree.NodeObject)
+		 * @see com.nextbreakpoint.nextfractal.core.util.AbstractExtensionConfigNodeBuilder#createNodes(com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject)
 		 */
 		@Override
 		public void createNodes(final Node parentNode) {
@@ -128,7 +128,7 @@ public class ${extension.extensionConfigClassName}NodeBuilderRuntime extends Nod
 			}
 
 			/**
-			 * @see com.nextbreakpoint.nextfractal.core.util.AbstractConfigElementListNode#createChildNode(com.nextbreakpoint.nextfractal.core.config.ConfigElement)
+			 * @see com.nextbreakpoint.nextfractal.core.util.AbstractConfigElementListNode#createChildNode(com.nextbreakpoint.nextfractal.core.runtime.ConfigElement)
 			 */
 			@Override
 			protected AbstractConfigElementNode<${subelement.configElementClassName}> createChildNode(final ${subelement.configElementClassName} value) {
@@ -168,7 +168,7 @@ public class ${extension.extensionConfigClassName}NodeBuilderRuntime extends Nod
 			}
 
 			/**
-			 * @see com.nextbreakpoint.nextfractal.core.util.AbstractConfigElementListNode#createChildNode(com.nextbreakpoint.nextfractal.core.config.ConfigElement)
+			 * @see com.nextbreakpoint.nextfractal.core.util.AbstractConfigElementListNode#createChildNode(com.nextbreakpoint.nextfractal.core.runtime.ConfigElement)
 			 */
 			@Override
 			protected AbstractConfigElementNode<${subelement.configElementClassName}> createChildNode(final ${subelement.configElementClassName} value) {

@@ -12,11 +12,11 @@ import com.nextbreakpoint.nextfractal.contextfree.renderer.support.CFModificatio
 import com.nextbreakpoint.nextfractal.contextfree.renderer.support.CFPathAttribute;
 import com.nextbreakpoint.nextfractal.contextfree.renderer.support.CFPathCommand;
 import com.nextbreakpoint.nextfractal.contextfree.renderer.support.CFRule;
-import com.nextbreakpoint.nextfractal.core.config.ListConfigElement;
-import com.nextbreakpoint.nextfractal.core.config.ListRuntimeElement;
-import com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent;
-import com.nextbreakpoint.nextfractal.core.config.ValueChangeListener;
-import com.nextbreakpoint.nextfractal.core.config.ValueConfigElement;
+import com.nextbreakpoint.nextfractal.core.runtime.ElementChangeEvent;
+import com.nextbreakpoint.nextfractal.core.runtime.ElementChangeListener;
+import com.nextbreakpoint.nextfractal.core.runtime.ListConfigElement;
+import com.nextbreakpoint.nextfractal.core.runtime.ListRuntimeElement;
+import com.nextbreakpoint.nextfractal.core.runtime.ValueConfigElement;
 
 /**
  * @author Andrea Medeghini
@@ -29,7 +29,7 @@ public class FillPathReplacementRuntime extends PathReplacementExtensionRuntime<
 	private PathAdjustmentListElementListener pathAdjustmentListElementListener;
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionRuntime#configReloaded()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtensionRuntime#configReloaded()
 	 */
 	@Override
 	public void configReloaded() {
@@ -68,12 +68,12 @@ public class FillPathReplacementRuntime extends PathReplacementExtensionRuntime<
 		this.windRule = rule;
 	}
 	
-	private class RuleListener implements ValueChangeListener {
+	private class RuleListener implements ElementChangeListener {
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.ElementChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.runtime.ElementChangeEvent)
 		 */
 		@Override
-		public void valueChanged(final ValueChangeEvent e) {
+		public void valueChanged(final ElementChangeEvent e) {
 			switch (e.getEventType()) {
 				case ValueConfigElement.VALUE_CHANGED: {
 					setRule((String) e.getParams()[0]);
@@ -143,12 +143,12 @@ public class FillPathReplacementRuntime extends PathReplacementExtensionRuntime<
 		pathAdjustmentListElement.moveElementDown(index);
 	}
 	
-	private class PathAdjustmentListElementListener implements ValueChangeListener {
+	private class PathAdjustmentListElementListener implements ElementChangeListener {
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.ElementChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.runtime.ElementChangeEvent)
 		 */
 		@Override
-		public void valueChanged(final ValueChangeEvent e) {
+		public void valueChanged(final ElementChangeEvent e) {
 			switch (e.getEventType()) {
 				case ListConfigElement.ELEMENT_ADDED: {
 					appendPathAdjustmentElement(new PathAdjustmentRuntimeElement ((PathAdjustmentConfigElement) e.getParams()[0]));

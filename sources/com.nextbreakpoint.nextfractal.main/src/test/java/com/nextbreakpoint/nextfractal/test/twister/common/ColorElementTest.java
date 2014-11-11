@@ -27,12 +27,12 @@ package com.nextbreakpoint.nextfractal.test.twister.common;
 
 import org.junit.Test;
 
-import com.nextbreakpoint.nextfractal.core.common.ColorElement;
-import com.nextbreakpoint.nextfractal.core.common.ColorElementNode;
-import com.nextbreakpoint.nextfractal.core.common.ColorElementXMLExporter;
-import com.nextbreakpoint.nextfractal.core.common.ColorElementXMLImporter;
+import com.nextbreakpoint.nextfractal.core.elements.ColorElement;
+import com.nextbreakpoint.nextfractal.core.elements.ColorElementNode;
+import com.nextbreakpoint.nextfractal.core.elements.ColorElementXMLExporter;
+import com.nextbreakpoint.nextfractal.core.elements.ColorElementXMLImporter;
+import com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject;
 import com.nextbreakpoint.nextfractal.core.test.AbsractValueElementTest;
-import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
 import com.nextbreakpoint.nextfractal.core.util.Color32bit;
 
 /**

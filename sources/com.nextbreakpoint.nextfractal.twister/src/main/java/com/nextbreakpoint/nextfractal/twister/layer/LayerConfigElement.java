@@ -25,11 +25,11 @@
  */
 package com.nextbreakpoint.nextfractal.twister.layer;
 
-import com.nextbreakpoint.nextfractal.core.common.BooleanElement;
-import com.nextbreakpoint.nextfractal.core.common.StringElement;
-import com.nextbreakpoint.nextfractal.core.config.ConfigElement;
-import com.nextbreakpoint.nextfractal.core.config.ListConfigElement;
-import com.nextbreakpoint.nextfractal.twister.common.PercentageElement;
+import com.nextbreakpoint.nextfractal.core.elements.BooleanElement;
+import com.nextbreakpoint.nextfractal.core.elements.StringElement;
+import com.nextbreakpoint.nextfractal.core.runtime.ConfigElement;
+import com.nextbreakpoint.nextfractal.core.runtime.ListConfigElement;
+import com.nextbreakpoint.nextfractal.twister.elements.PercentageElement;
 import com.nextbreakpoint.nextfractal.twister.layerFilter.LayerFilterConfigElement;
 
 /**

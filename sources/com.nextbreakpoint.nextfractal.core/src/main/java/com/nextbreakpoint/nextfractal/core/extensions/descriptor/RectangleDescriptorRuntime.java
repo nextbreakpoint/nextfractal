@@ -25,9 +25,9 @@
  */
 package com.nextbreakpoint.nextfractal.core.extensions.descriptor;
 
-import com.nextbreakpoint.nextfractal.core.common.RectangleElement;
 import com.nextbreakpoint.nextfractal.core.devtools.ProcessorCardinality;
 import com.nextbreakpoint.nextfractal.core.devtools.ProcessorDescriptor;
+import com.nextbreakpoint.nextfractal.core.elements.RectangleElement;
 import com.nextbreakpoint.nextfractal.core.extensionPoints.descriptor.DescriptorExtensionRuntime;
 
 public class RectangleDescriptorRuntime extends DescriptorExtensionRuntime {
@@ -36,7 +36,7 @@ public class RectangleDescriptorRuntime extends DescriptorExtensionRuntime {
 	 */
 	@Override
 	public ProcessorDescriptor createDescriptor(String elementName, String defaultValue, ProcessorCardinality cardinality) {
-		return new ProcessorDescriptor(elementName, "Rectangle", RectangleElement.CLASS_ID, "com.nextbreakpoint.nextfractal.core.common", "RectangleElement", null, null, null, null, null, null, null, null, null, null, null, null, "com.nextbreakpoint.nextfractal.core.util", "Rectangle", defaultValue, "get", "set", cardinality);
+		return new ProcessorDescriptor(elementName, "Rectangle", RectangleElement.CLASS_ID, "com.nextbreakpoint.nextfractal.core.elements", "RectangleElement", null, null, null, null, null, null, null, null, null, null, null, null, "com.nextbreakpoint.nextfractal.core.util", "Rectangle", defaultValue, "get", "set", cardinality);
 	}
 
 	/**

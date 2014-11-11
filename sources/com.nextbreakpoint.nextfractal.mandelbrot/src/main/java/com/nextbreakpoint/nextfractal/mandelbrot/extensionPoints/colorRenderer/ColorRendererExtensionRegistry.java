@@ -25,8 +25,8 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.colorRenderer;
 
-import com.nextbreakpoint.nextfractal.core.extension.sl.SLConfigurableExtensionBuilder;
-import com.nextbreakpoint.nextfractal.core.extension.sl.SLConfigurableExtensionRegistry;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.sl.SLConfigurableExtensionBuilder;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.sl.SLConfigurableExtensionRegistry;
 
 /**
  * @author Andrea Medeghini

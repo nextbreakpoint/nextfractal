@@ -88,13 +88,13 @@ public class ConfigElementProcessorRuntime extends ProcessorExtensionRuntime {
 
 	private void prepare(Set<String> imports, ProcessorDescriptor descriptor) {
 		if (descriptor.isComplexElement()) {
-			imports.add("com.nextbreakpoint.nextfractal.core.config.AbstractConfigElement");
-			imports.add("com.nextbreakpoint.nextfractal.core.config.ConfigContext");
-			imports.add("com.nextbreakpoint.nextfractal.core.config.ConfigElement");
+			imports.add("com.nextbreakpoint.nextfractal.core.runtime.AbstractConfigElement");
+			imports.add("com.nextbreakpoint.nextfractal.core.runtime.ConfigContext");
+			imports.add("com.nextbreakpoint.nextfractal.core.runtime.ConfigElement");
 		}
 		else if (descriptor.isSimpleElement()) {
-			imports.add("com.nextbreakpoint.nextfractal.core.config.ConfigElement");
-			imports.add("com.nextbreakpoint.nextfractal.core.config.ValueConfigElement");
+			imports.add("com.nextbreakpoint.nextfractal.core.runtime.ConfigElement");
+			imports.add("com.nextbreakpoint.nextfractal.core.runtime.ValueConfigElement");
 			imports.add(descriptor.getValuePackageName() + "." + descriptor.getValueClassName());
 		}
 	}
@@ -103,20 +103,20 @@ public class ConfigElementProcessorRuntime extends ProcessorExtensionRuntime {
 		for (ProcessorDescriptor descriptor : descriptors) {
 			if (descriptor.isExtensionElement()) {
 				imports.add(descriptor.getConfigElementPackageName() + "." + descriptor.getConfigElementClassName());
-				imports.add("com.nextbreakpoint.nextfractal.core.extension.ExtensionReference");
+				imports.add("com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionReference");
 			}
 			else if (descriptor.isConfigurableExtensionElement()) {
 				imports.add(descriptor.getConfigElementPackageName() + "." + descriptor.getConfigElementClassName());
-				imports.add("com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionReference");
+				imports.add("com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtensionReference");
 				imports.add(descriptor.getExtensionConfigPackageName() + "." + descriptor.getExtensionConfigClassName());
 			}
 			else if (descriptor.isComplexElement()) {
 				imports.add(descriptor.getConfigElementPackageName() + "." + descriptor.getConfigElementClassName());
 				if (descriptor.getCardinality() == ProcessorCardinality.ONE) {
-					imports.add("com.nextbreakpoint.nextfractal.core.config.SingleConfigElement");
+					imports.add("com.nextbreakpoint.nextfractal.core.runtime.SingleConfigElement");
 				}
 				else if (descriptor.getCardinality() == ProcessorCardinality.MANY) {
-					imports.add("com.nextbreakpoint.nextfractal.core.config.ListConfigElement");
+					imports.add("com.nextbreakpoint.nextfractal.core.runtime.ListConfigElement");
 				}
 			}
 			else if (descriptor.isSimpleElement()) {

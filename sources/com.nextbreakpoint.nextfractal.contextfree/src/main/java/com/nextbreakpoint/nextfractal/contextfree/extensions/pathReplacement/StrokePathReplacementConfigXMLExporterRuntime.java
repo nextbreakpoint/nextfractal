@@ -6,15 +6,15 @@ package com.nextbreakpoint.nextfractal.contextfree.extensions.pathReplacement;
 
 import org.w3c.dom.Element;
 
-import com.nextbreakpoint.nextfractal.contextfree.common.StrokeCapElementXMLExporter;
-import com.nextbreakpoint.nextfractal.contextfree.common.StrokeJoinElementXMLExporter;
-import com.nextbreakpoint.nextfractal.contextfree.common.StrokeWidthElementXMLExporter;
+import com.nextbreakpoint.nextfractal.contextfree.elements.StrokeCapElementXMLExporter;
+import com.nextbreakpoint.nextfractal.contextfree.elements.StrokeJoinElementXMLExporter;
+import com.nextbreakpoint.nextfractal.contextfree.elements.StrokeWidthElementXMLExporter;
 import com.nextbreakpoint.nextfractal.contextfree.pathAdjustment.PathAdjustmentConfigElementXMLExporter;
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionException;
 import com.nextbreakpoint.nextfractal.core.extensionPoints.extensionConfigXMLExporter.ExtensionConfigXMLExporterExtensionRuntime;
-import com.nextbreakpoint.nextfractal.core.xml.XMLExportException;
-import com.nextbreakpoint.nextfractal.core.xml.XMLExporter;
-import com.nextbreakpoint.nextfractal.core.xml.XMLNodeBuilder;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionException;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLExportException;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLExporter;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLNodeBuilder;
 
 /**
  * @author Andrea Medeghini
@@ -34,7 +34,7 @@ public class StrokePathReplacementConfigXMLExporterRuntime extends ExtensionConf
 		}
 		
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.xml.XMLExporter#exportToElement(java.lang.Object, com.nextbreakpoint.nextfractal.core.xml.XMLNodeBuilder)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.xml.XMLExporter#exportToElement(java.lang.Object, com.nextbreakpoint.nextfractal.core.runtime.xml.XMLNodeBuilder)
 		 */
 		@Override
 		public Element exportToElement(final StrokePathReplacementConfig extensionConfig, final XMLNodeBuilder builder) throws XMLExportException {
@@ -49,7 +49,7 @@ public class StrokePathReplacementConfigXMLExporterRuntime extends ExtensionConf
 		}
 	
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.common.ConfigurableExtensionReferenceElementXMLExporter#exportProperties(com.nextbreakpoint.nextfractal.twister.util.ConfigurableExtensionConfigElement, org.w3c.dom.Element, com.nextbreakpoint.nextfractal.core.xml.XMLNodeBuilder, java.lang.String)
+		 * @see com.nextbreakpoint.nextfractal.core.elements.ConfigurableExtensionReferenceElementXMLExporter#exportProperties(com.nextbreakpoint.nextfractal.twister.util.ConfigurableExtensionConfigElement, org.w3c.dom.Element, com.nextbreakpoint.nextfractal.core.runtime.xml.XMLNodeBuilder, java.lang.String)
 		 */
 		protected void exportProperties(final StrokePathReplacementConfig extensionConfig, final Element element, final XMLNodeBuilder builder) throws ExtensionException, XMLExportException {
 			exportWidth(extensionConfig, createProperty(builder, element, "width"), builder);

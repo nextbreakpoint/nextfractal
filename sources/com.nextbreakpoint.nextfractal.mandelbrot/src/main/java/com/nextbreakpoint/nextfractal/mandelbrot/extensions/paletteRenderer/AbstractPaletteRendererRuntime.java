@@ -33,7 +33,7 @@ import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.paletteRenderer
  */
 public abstract class AbstractPaletteRendererRuntime<T extends PaletteRendererExtensionConfig> extends PaletteRendererExtensionRuntime<T> {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.extension.ExtensionRuntime#dispose()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionRuntime#dispose()
 	 */
 	@Override
 	public void dispose() {

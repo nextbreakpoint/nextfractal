@@ -27,11 +27,11 @@ package com.nextbreakpoint.nextfractal.twister.ui.javafx.extensionPoints.view;
 
 import javafx.scene.layout.Pane;
 
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionConfig;
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionRuntime;
-import com.nextbreakpoint.nextfractal.core.tree.NodeSession;
+import com.nextbreakpoint.nextfractal.core.RenderContext;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionConfig;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.runtime.model.NodeSession;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.ViewContext;
-import com.nextbreakpoint.nextfractal.core.util.RenderContext;
 
 /**
  * @author Andrea Medeghini
@@ -56,7 +56,7 @@ public abstract class ViewExtensionRuntime extends ExtensionRuntime {
 	public abstract Pane createEditorView(final ExtensionConfig config, final ViewContext viewContext, final RenderContext context, final NodeSession session);
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.extension.ExtensionRuntime#dispose()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionRuntime#dispose()
 	 */
 	@Override
 	public void dispose() {

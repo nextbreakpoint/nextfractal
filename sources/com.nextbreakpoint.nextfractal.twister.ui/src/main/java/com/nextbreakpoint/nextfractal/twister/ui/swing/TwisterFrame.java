@@ -63,14 +63,14 @@ import javax.swing.border.LineBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import com.nextbreakpoint.nextfractal.core.config.DefaultConfigContext;
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionException;
-import com.nextbreakpoint.nextfractal.core.scripting.DefaultJSContext;
-import com.nextbreakpoint.nextfractal.core.scripting.JSManager;
-import com.nextbreakpoint.nextfractal.core.tree.DefaultNodeSession;
-import com.nextbreakpoint.nextfractal.core.tree.DefaultRootNode;
-import com.nextbreakpoint.nextfractal.core.tree.NodeAction;
-import com.nextbreakpoint.nextfractal.core.tree.NodeActionValue;
+import com.nextbreakpoint.nextfractal.core.runtime.DefaultConfigContext;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionException;
+import com.nextbreakpoint.nextfractal.core.runtime.model.DefaultNodeSession;
+import com.nextbreakpoint.nextfractal.core.runtime.model.DefaultRootNode;
+import com.nextbreakpoint.nextfractal.core.runtime.model.NodeAction;
+import com.nextbreakpoint.nextfractal.core.runtime.model.NodeActionValue;
+import com.nextbreakpoint.nextfractal.core.runtime.scripting.DefaultJSContext;
+import com.nextbreakpoint.nextfractal.core.runtime.scripting.JSManager;
 import com.nextbreakpoint.nextfractal.core.ui.swing.IconButton;
 import com.nextbreakpoint.nextfractal.core.ui.swing.NavigatorFrame;
 import com.nextbreakpoint.nextfractal.core.ui.swing.util.GUIFactory;
@@ -1481,7 +1481,7 @@ public class TwisterFrame extends JFrame {
 
 			private class TwisterJSContext extends DefaultJSContext {
 				/**
-				 * @see com.nextbreakpoint.nextfractal.core.scripting.DefaultJSContext#println(java.lang.String)
+				 * @see com.nextbreakpoint.nextfractal.core.runtime.scripting.DefaultJSContext#println(java.lang.String)
 				 */
 				@Override
 				public void println(final String s) {
@@ -1496,7 +1496,7 @@ public class TwisterFrame extends JFrame {
 				}
 
 				/**
-				 * @see com.nextbreakpoint.nextfractal.core.scripting.DefaultJSContext#showMessage(java.lang.String, float, float, float, long, boolean)
+				 * @see com.nextbreakpoint.nextfractal.core.runtime.scripting.DefaultJSContext#showMessage(java.lang.String, float, float, float, long, boolean)
 				 */
 				@Override
 				public void showMessage(final String message, final float size, final float x, final float y, final long time, final boolean hasBackground) {
@@ -1510,7 +1510,7 @@ public class TwisterFrame extends JFrame {
 				}
 
 				/**
-				 * @see com.nextbreakpoint.nextfractal.core.scripting.JSContext#loadDefaultConfig()
+				 * @see com.nextbreakpoint.nextfractal.core.runtime.scripting.JSContext#loadDefaultConfig()
 				 */
 				@Override
 				public void loadDefaultConfig() {

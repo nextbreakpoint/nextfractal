@@ -25,7 +25,7 @@
  */
 package com.nextbreakpoint.nextfractal.twister.extensionPoints.converter;
 
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionRuntime;
 import com.nextbreakpoint.nextfractal.twister.converter.ConfigConverter;
 
 /**

@@ -25,9 +25,9 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.extensions.constructor;
 
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionReference;
 import com.nextbreakpoint.nextfractal.core.extensionPoints.constructor.ConstructorExtensionRuntime;
-import com.nextbreakpoint.nextfractal.core.scripting.JSException;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionReference;
+import com.nextbreakpoint.nextfractal.core.runtime.scripting.JSException;
 import com.nextbreakpoint.nextfractal.core.util.Color32bit;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotRegistry;
 import com.nextbreakpoint.nextfractal.mandelbrot.util.RenderedPaletteParam;

@@ -10,10 +10,10 @@ import java.util.List;
 import com.nextbreakpoint.nextfractal.contextfree.CFDGBuilder;
 import com.nextbreakpoint.nextfractal.contextfree.extensionPoints.figure.FigureExtensionConfig;
 import com.nextbreakpoint.nextfractal.contextfree.shapeReplacement.ShapeReplacementConfigElement;
-import com.nextbreakpoint.nextfractal.core.common.FloatElement;
-import com.nextbreakpoint.nextfractal.core.common.StringElement;
-import com.nextbreakpoint.nextfractal.core.config.ConfigElement;
-import com.nextbreakpoint.nextfractal.core.config.ListConfigElement;
+import com.nextbreakpoint.nextfractal.core.elements.FloatElement;
+import com.nextbreakpoint.nextfractal.core.elements.StringElement;
+import com.nextbreakpoint.nextfractal.core.runtime.ConfigElement;
+import com.nextbreakpoint.nextfractal.core.runtime.ListConfigElement;
 
 /**
  * @author Andrea Medeghini
@@ -35,7 +35,7 @@ public class RuleFigureConfig extends FigureExtensionConfig {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.extension.ExtensionConfig#getConfigElements()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionConfig#getConfigElements()
 	 */
 	@Override
 	public List<ConfigElement> getConfigElements() {

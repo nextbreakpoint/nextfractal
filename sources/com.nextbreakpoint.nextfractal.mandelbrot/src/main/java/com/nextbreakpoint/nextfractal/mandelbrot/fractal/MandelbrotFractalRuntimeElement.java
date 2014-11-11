@@ -25,12 +25,12 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.fractal;
 
-import com.nextbreakpoint.nextfractal.core.config.ListConfigElement;
-import com.nextbreakpoint.nextfractal.core.config.ListRuntimeElement;
-import com.nextbreakpoint.nextfractal.core.config.RuntimeElement;
-import com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent;
-import com.nextbreakpoint.nextfractal.core.config.ValueChangeListener;
-import com.nextbreakpoint.nextfractal.core.config.ValueConfigElement;
+import com.nextbreakpoint.nextfractal.core.runtime.ElementChangeEvent;
+import com.nextbreakpoint.nextfractal.core.runtime.ElementChangeListener;
+import com.nextbreakpoint.nextfractal.core.runtime.ListConfigElement;
+import com.nextbreakpoint.nextfractal.core.runtime.ListRuntimeElement;
+import com.nextbreakpoint.nextfractal.core.runtime.RuntimeElement;
+import com.nextbreakpoint.nextfractal.core.runtime.ValueConfigElement;
 import com.nextbreakpoint.nextfractal.mandelbrot.incolouringFormula.IncolouringFormulaConfigElement;
 import com.nextbreakpoint.nextfractal.mandelbrot.incolouringFormula.IncolouringFormulaRuntimeElement;
 import com.nextbreakpoint.nextfractal.mandelbrot.orbitTrap.OrbitTrapConfigElement;
@@ -97,7 +97,7 @@ public class MandelbrotFractalRuntimeElement extends RuntimeElement {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.config.RuntimeElement#dispose()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.RuntimeElement#dispose()
 	 */
 	@Override
 	public void dispose() {
@@ -384,7 +384,7 @@ public class MandelbrotFractalRuntimeElement extends RuntimeElement {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.config.RuntimeElement#isChanged()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.RuntimeElement#isChanged()
 	 */
 	@Override
 	public boolean isChanged() {
@@ -470,12 +470,12 @@ public class MandelbrotFractalRuntimeElement extends RuntimeElement {
 		return value;
 	}
 
-	private class IncolouringFormulaListElementListener implements ValueChangeListener {
+	private class IncolouringFormulaListElementListener implements ElementChangeListener {
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.ElementChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.runtime.ElementChangeEvent)
 		 */
 		@Override
-		public void valueChanged(final ValueChangeEvent e) {
+		public void valueChanged(final ElementChangeEvent e) {
 			switch (e.getEventType()) {
 				case ListConfigElement.ELEMENT_ADDED: {
 					appendIncolouringFormula(new IncolouringFormulaRuntimeElement((IncolouringFormulaConfigElement) e.getParams()[0]));
@@ -526,12 +526,12 @@ public class MandelbrotFractalRuntimeElement extends RuntimeElement {
 		}
 	}
 
-	private class OutcolouringFormulaListElementListener implements ValueChangeListener {
+	private class OutcolouringFormulaListElementListener implements ElementChangeListener {
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.ElementChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.runtime.ElementChangeEvent)
 		 */
 		@Override
-		public void valueChanged(final ValueChangeEvent e) {
+		public void valueChanged(final ElementChangeEvent e) {
 			switch (e.getEventType()) {
 				case ListConfigElement.ELEMENT_ADDED: {
 					appendOutcolouringFormula(new OutcolouringFormulaRuntimeElement((OutcolouringFormulaConfigElement) e.getParams()[0]));
@@ -582,12 +582,12 @@ public class MandelbrotFractalRuntimeElement extends RuntimeElement {
 		}
 	}
 
-	private class RenderingFormulaElementListener implements ValueChangeListener {
+	private class RenderingFormulaElementListener implements ElementChangeListener {
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.ElementChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.runtime.ElementChangeEvent)
 		 */
 		@Override
-		public void valueChanged(final ValueChangeEvent e) {
+		public void valueChanged(final ElementChangeEvent e) {
 			switch (e.getEventType()) {
 				case ValueConfigElement.VALUE_CHANGED: {
 					setRenderingFormula(new RenderingFormulaRuntimeElement((RenderingFormulaConfigElement) e.getParams()[0]));
@@ -602,12 +602,12 @@ public class MandelbrotFractalRuntimeElement extends RuntimeElement {
 		}
 	}
 
-	private class TransformingFormulaElementListener implements ValueChangeListener {
+	private class TransformingFormulaElementListener implements ElementChangeListener {
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.ElementChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.runtime.ElementChangeEvent)
 		 */
 		@Override
-		public void valueChanged(final ValueChangeEvent e) {
+		public void valueChanged(final ElementChangeEvent e) {
 			switch (e.getEventType()) {
 				case ValueConfigElement.VALUE_CHANGED: {
 					setTransformingFormula(new TransformingFormulaRuntimeElement((TransformingFormulaConfigElement) e.getParams()[0]));
@@ -622,12 +622,12 @@ public class MandelbrotFractalRuntimeElement extends RuntimeElement {
 		}
 	}
 
-	private class ProcessingFormulaElementListener implements ValueChangeListener {
+	private class ProcessingFormulaElementListener implements ElementChangeListener {
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.ElementChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.runtime.ElementChangeEvent)
 		 */
 		@Override
-		public void valueChanged(final ValueChangeEvent e) {
+		public void valueChanged(final ElementChangeEvent e) {
 			switch (e.getEventType()) {
 				case ValueConfigElement.VALUE_CHANGED: {
 					setProcessingFormula(new ProcessingFormulaRuntimeElement((ProcessingFormulaConfigElement) e.getParams()[0]));
@@ -642,12 +642,12 @@ public class MandelbrotFractalRuntimeElement extends RuntimeElement {
 		}
 	}
 
-	private class OrbitTrapElementListener implements ValueChangeListener {
+	private class OrbitTrapElementListener implements ElementChangeListener {
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.ElementChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.runtime.ElementChangeEvent)
 		 */
 		@Override
-		public void valueChanged(final ValueChangeEvent e) {
+		public void valueChanged(final ElementChangeEvent e) {
 			switch (e.getEventType()) {
 				case ValueConfigElement.VALUE_CHANGED: {
 					setOrbitTrap(new OrbitTrapRuntimeElement((OrbitTrapConfigElement) e.getParams()[0]));

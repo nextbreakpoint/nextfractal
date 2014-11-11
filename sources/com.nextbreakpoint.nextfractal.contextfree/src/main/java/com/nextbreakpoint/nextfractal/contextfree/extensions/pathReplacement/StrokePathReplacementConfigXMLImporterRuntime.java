@@ -8,18 +8,18 @@ import java.util.List;
 
 import org.w3c.dom.Element;
 
-import com.nextbreakpoint.nextfractal.contextfree.common.StrokeCapElement;
-import com.nextbreakpoint.nextfractal.contextfree.common.StrokeCapElementXMLImporter;
-import com.nextbreakpoint.nextfractal.contextfree.common.StrokeJoinElement;
-import com.nextbreakpoint.nextfractal.contextfree.common.StrokeJoinElementXMLImporter;
-import com.nextbreakpoint.nextfractal.contextfree.common.StrokeWidthElement;
-import com.nextbreakpoint.nextfractal.contextfree.common.StrokeWidthElementXMLImporter;
+import com.nextbreakpoint.nextfractal.contextfree.elements.StrokeCapElement;
+import com.nextbreakpoint.nextfractal.contextfree.elements.StrokeCapElementXMLImporter;
+import com.nextbreakpoint.nextfractal.contextfree.elements.StrokeJoinElement;
+import com.nextbreakpoint.nextfractal.contextfree.elements.StrokeJoinElementXMLImporter;
+import com.nextbreakpoint.nextfractal.contextfree.elements.StrokeWidthElement;
+import com.nextbreakpoint.nextfractal.contextfree.elements.StrokeWidthElementXMLImporter;
 import com.nextbreakpoint.nextfractal.contextfree.pathAdjustment.PathAdjustmentConfigElement;
 import com.nextbreakpoint.nextfractal.contextfree.pathAdjustment.PathAdjustmentConfigElementXMLImporter;
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionException;
 import com.nextbreakpoint.nextfractal.core.extensionPoints.extensionConfigXMLImporter.ExtensionConfigXMLImporterExtensionRuntime;
-import com.nextbreakpoint.nextfractal.core.xml.XMLImportException;
-import com.nextbreakpoint.nextfractal.core.xml.XMLImporter;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionException;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLImportException;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLImporter;
 
 /**
  * @author Andrea Medeghini
@@ -43,7 +43,7 @@ public class StrokePathReplacementConfigXMLImporterRuntime extends ExtensionConf
 		}
 		
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.xml.XMLImporter#importFromElement(org.w3c.dom.Element)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.xml.XMLImporter#importFromElement(org.w3c.dom.Element)
 		 */
 		@Override
 		public StrokePathReplacementConfig importFromElement(final Element element) throws XMLImportException {

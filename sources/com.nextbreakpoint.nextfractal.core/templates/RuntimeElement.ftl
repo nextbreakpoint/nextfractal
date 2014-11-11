@@ -74,7 +74,7 @@ import ${import};
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.config.RuntimeElement#dispose()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.RuntimeElement#dispose()
 	 */
 	@Override
 	public void dispose() {
@@ -110,7 +110,7 @@ import ${import};
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.config.RuntimeElement#isChanged()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.RuntimeElement#isChanged()
 	 */
 	@Override
 	public boolean isChanged() {
@@ -161,7 +161,7 @@ import ${import};
 	
 	private class ${subelement.elementName?cap_first}Listener implements ValueChangeListener {
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.ElementChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.runtime.ElementChangeEvent)
 		 */
 		@SuppressWarnings("unchecked")
 		public void valueChanged(final ValueChangeEvent e) {
@@ -215,7 +215,7 @@ import ${import};
 	
 	private class ${subelement.elementName?cap_first}Listener implements ValueChangeListener {
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.ElementChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.runtime.ElementChangeEvent)
 		 */
 		@SuppressWarnings("unchecked")
 		public void valueChanged(final ValueChangeEvent e) {
@@ -236,7 +236,7 @@ import ${import};
 	<#if subelement.cardinality == "NONE">
 	private class ${subelement.elementName?cap_first}${subelement.fieldNameSuffix}Listener implements ValueChangeListener {
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.ElementChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.runtime.ElementChangeEvent)
 		 */
 		public void valueChanged(final ValueChangeEvent e) {
 			fireChanged();
@@ -256,7 +256,7 @@ import ${import};
 	
 	private class ${subelement.elementName?cap_first}${subelement.fieldNameSuffix}Listener implements ValueChangeListener {
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.ElementChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.runtime.ElementChangeEvent)
 		 */
 		public void valueChanged(final ValueChangeEvent e) {
 			switch (e.getEventType()) {
@@ -331,7 +331,7 @@ import ${import};
 	
 	private class ${subelement.elementName?cap_first}${subelement.fieldNameSuffix}Listener implements ValueChangeListener {
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.ElementChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.runtime.ElementChangeEvent)
 		 */
 		public void valueChanged(final ValueChangeEvent e) {
 			switch (e.getEventType()) {
@@ -391,7 +391,7 @@ import ${import};
 	
 	private class ${subelement.elementName?cap_first}Listener implements ValueChangeListener {
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.config.ValueChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.ElementChangeListener#valueChanged(com.nextbreakpoint.nextfractal.core.runtime.ElementChangeEvent)
 		 */
 		public void valueChanged(final ValueChangeEvent e) {
 			switch (e.getEventType()) {

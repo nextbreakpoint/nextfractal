@@ -28,10 +28,10 @@ package com.nextbreakpoint.nextfractal.twister.extensions.effect;
 import org.w3c.dom.Element;
 
 import com.nextbreakpoint.nextfractal.core.extensionPoints.extensionConfigXMLExporter.ExtensionConfigXMLExporterExtensionRuntime;
-import com.nextbreakpoint.nextfractal.core.xml.XMLExportException;
-import com.nextbreakpoint.nextfractal.core.xml.XMLExporter;
-import com.nextbreakpoint.nextfractal.core.xml.XMLNodeBuilder;
-import com.nextbreakpoint.nextfractal.twister.common.PercentageElementXMLExporter;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLExportException;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLExporter;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLNodeBuilder;
+import com.nextbreakpoint.nextfractal.twister.elements.PercentageElementXMLExporter;
 
 /**
  * @author Andrea Medeghini
@@ -55,7 +55,7 @@ public class WaterConfigXMLExporterRuntime extends ExtensionConfigXMLExporterExt
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.twister.extensions.layerFilter.AbstractEffectConfigXMLExporter#exportToElement(com.nextbreakpoint.nextfractal.twister.extensionPoints.layerFilter.EffectExtensionConfig, com.nextbreakpoint.nextfractal.core.xml.XMLNodeBuilder)
+		 * @see com.nextbreakpoint.nextfractal.twister.extensions.layerFilter.AbstractEffectConfigXMLExporter#exportToElement(com.nextbreakpoint.nextfractal.twister.extensionPoints.layerFilter.EffectExtensionConfig, com.nextbreakpoint.nextfractal.core.runtime.xml.XMLNodeBuilder)
 		 */
 		@Override
 		public Element exportToElement(final WaterConfig config, final XMLNodeBuilder builder) throws XMLExportException {

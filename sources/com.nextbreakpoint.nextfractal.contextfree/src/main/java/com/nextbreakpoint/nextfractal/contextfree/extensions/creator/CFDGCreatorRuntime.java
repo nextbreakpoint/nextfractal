@@ -6,7 +6,7 @@ package com.nextbreakpoint.nextfractal.contextfree.extensions.creator;
 
 import com.nextbreakpoint.nextfractal.contextfree.cfdg.CFDGConfigElement;
 import com.nextbreakpoint.nextfractal.core.extensionPoints.creator.CreatorExtensionRuntime;
-import com.nextbreakpoint.nextfractal.core.scripting.JSException;
+import com.nextbreakpoint.nextfractal.core.runtime.scripting.JSException;
 
 /**
  * @author Andrea Medeghini

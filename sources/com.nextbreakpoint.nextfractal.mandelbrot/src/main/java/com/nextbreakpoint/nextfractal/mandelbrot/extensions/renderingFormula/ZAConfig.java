@@ -27,9 +27,9 @@ package com.nextbreakpoint.nextfractal.mandelbrot.extensions.renderingFormula;
 
 import java.util.List;
 
-import com.nextbreakpoint.nextfractal.core.common.DoubleElement;
-import com.nextbreakpoint.nextfractal.core.config.ConfigElement;
+import com.nextbreakpoint.nextfractal.core.elements.DoubleElement;
 import com.nextbreakpoint.nextfractal.core.math.Complex;
+import com.nextbreakpoint.nextfractal.core.runtime.ConfigElement;
 import com.nextbreakpoint.nextfractal.core.util.DoubleVector2D;
 
 /**
@@ -49,7 +49,7 @@ public class ZAConfig extends AbstractRenderingFormulaConfig {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.extension.ExtensionConfig#getConfigElements()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionConfig#getConfigElements()
 	 */
 	@Override
 	public List<ConfigElement> getConfigElements() {

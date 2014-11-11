@@ -25,7 +25,7 @@
  */
 package com.nextbreakpoint.nextfractal.twister;
 
-import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
+import com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject;
 
 /**
  * @author Andrea Medeghini

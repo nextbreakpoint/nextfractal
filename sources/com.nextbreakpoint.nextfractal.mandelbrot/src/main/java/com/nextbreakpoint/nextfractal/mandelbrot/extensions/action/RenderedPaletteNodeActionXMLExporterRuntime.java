@@ -27,11 +27,11 @@ package com.nextbreakpoint.nextfractal.mandelbrot.extensions.action;
 
 import org.w3c.dom.Element;
 
-import com.nextbreakpoint.nextfractal.core.tree.NodeActionValue;
-import com.nextbreakpoint.nextfractal.core.xml.XMLExportException;
-import com.nextbreakpoint.nextfractal.core.xml.XMLNodeBuilder;
-import com.nextbreakpoint.nextfractal.mandelbrot.common.RenderedPaletteElement;
-import com.nextbreakpoint.nextfractal.mandelbrot.common.RenderedPaletteElementXMLExporter;
+import com.nextbreakpoint.nextfractal.core.runtime.model.NodeActionValue;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLExportException;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLNodeBuilder;
+import com.nextbreakpoint.nextfractal.mandelbrot.elements.RenderedPaletteElement;
+import com.nextbreakpoint.nextfractal.mandelbrot.elements.RenderedPaletteElementXMLExporter;
 import com.nextbreakpoint.nextfractal.mandelbrot.util.RenderedPalette;
 import com.nextbreakpoint.nextfractal.twister.extensions.action.PaletteNodeActionXMLExporterRuntime;
 
@@ -40,7 +40,7 @@ import com.nextbreakpoint.nextfractal.twister.extensions.action.PaletteNodeActio
  */
 public class RenderedPaletteNodeActionXMLExporterRuntime extends PaletteNodeActionXMLExporterRuntime {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.util.AbstractActionXMLExporterRuntime#exportParams(com.nextbreakpoint.nextfractal.core.tree.NodeActionValue, org.w3c.dom.Element, com.nextbreakpoint.nextfractal.core.xml.XMLNodeBuilder)
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.util.AbstractActionXMLExporterRuntime#exportParams(com.nextbreakpoint.nextfractal.core.runtime.model.NodeActionValue, org.w3c.dom.Element, com.nextbreakpoint.nextfractal.core.runtime.xml.XMLNodeBuilder)
 	 */
 	@Override
 	protected void exportParams(final NodeActionValue action, final Element element, final XMLNodeBuilder builder) throws XMLExportException {

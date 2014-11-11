@@ -25,7 +25,7 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.paletteRendererFormula;
 
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionRuntime;
 
 /**
  * @author Andrea Medeghini
@@ -38,7 +38,7 @@ public abstract class PaletteRendererFormulaExtensionRuntime extends ExtensionRu
 	public abstract double[] renderPalette(int size);
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.extension.ExtensionRuntime#dispose()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionRuntime#dispose()
 	 */
 	@Override
 	public void dispose() {

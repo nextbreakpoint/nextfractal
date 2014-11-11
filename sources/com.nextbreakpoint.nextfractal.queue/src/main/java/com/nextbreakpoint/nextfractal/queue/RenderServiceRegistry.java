@@ -25,9 +25,9 @@
  */
 package com.nextbreakpoint.nextfractal.queue;
 
-import com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtension;
-import com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionRegistry;
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionNotFoundException;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtension;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtensionRegistry;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionNotFoundException;
 import com.nextbreakpoint.nextfractal.queue.extensionPoints.encoder.EncoderExtensionConfig;
 import com.nextbreakpoint.nextfractal.queue.extensionPoints.encoder.EncoderExtensionRegistry;
 import com.nextbreakpoint.nextfractal.queue.extensionPoints.encoder.EncoderExtensionRuntime;

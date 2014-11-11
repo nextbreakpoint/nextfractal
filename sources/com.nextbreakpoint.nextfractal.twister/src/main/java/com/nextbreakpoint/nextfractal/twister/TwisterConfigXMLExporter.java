@@ -27,10 +27,10 @@ package com.nextbreakpoint.nextfractal.twister;
 
 import org.w3c.dom.Element;
 
-import com.nextbreakpoint.nextfractal.core.common.ColorElementXMLExporter;
-import com.nextbreakpoint.nextfractal.core.xml.XMLExportException;
-import com.nextbreakpoint.nextfractal.core.xml.XMLExporter;
-import com.nextbreakpoint.nextfractal.core.xml.XMLNodeBuilder;
+import com.nextbreakpoint.nextfractal.core.elements.ColorElementXMLExporter;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLExportException;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLExporter;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLNodeBuilder;
 import com.nextbreakpoint.nextfractal.twister.effect.EffectConfigElement;
 import com.nextbreakpoint.nextfractal.twister.effect.EffectConfigElementXMLExporter;
 import com.nextbreakpoint.nextfractal.twister.frame.FrameConfigElement;
@@ -41,7 +41,7 @@ import com.nextbreakpoint.nextfractal.twister.frame.FrameConfigElementXMLExporte
  */
 public class TwisterConfigXMLExporter extends XMLExporter<TwisterConfig> {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.xml.XMLExporter#exportToElement(java.lang.Object, com.nextbreakpoint.nextfractal.core.xml.XMLNodeBuilder)
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.xml.XMLExporter#exportToElement(java.lang.Object, com.nextbreakpoint.nextfractal.core.runtime.xml.XMLNodeBuilder)
 	 */
 	@Override
 	public Element exportToElement(final TwisterConfig config, final XMLNodeBuilder builder) throws XMLExportException {

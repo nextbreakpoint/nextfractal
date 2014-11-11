@@ -82,17 +82,17 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
-import com.nextbreakpoint.nextfractal.core.extension.Extension;
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionException;
-import com.nextbreakpoint.nextfractal.core.tree.NodeAction;
+import com.nextbreakpoint.nextfractal.core.RenderContext;
+import com.nextbreakpoint.nextfractal.core.RenderContextListener;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.Extension;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionException;
+import com.nextbreakpoint.nextfractal.core.runtime.model.NodeAction;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XML;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLImportException;
 import com.nextbreakpoint.nextfractal.core.ui.swing.util.GUIUtil;
 import com.nextbreakpoint.nextfractal.core.util.IntegerVector2D;
-import com.nextbreakpoint.nextfractal.core.util.RenderContext;
-import com.nextbreakpoint.nextfractal.core.util.RenderContextListener;
 import com.nextbreakpoint.nextfractal.core.util.Surface;
 import com.nextbreakpoint.nextfractal.core.util.Tile;
-import com.nextbreakpoint.nextfractal.core.xml.XML;
-import com.nextbreakpoint.nextfractal.core.xml.XMLImportException;
 import com.nextbreakpoint.nextfractal.twister.ControllerListener;
 import com.nextbreakpoint.nextfractal.twister.TwisterBookmark;
 import com.nextbreakpoint.nextfractal.twister.TwisterClip;
@@ -260,7 +260,7 @@ public class TwisterCanvas extends Canvas implements RenderContext {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#acquire()
+	 * @see com.nextbreakpoint.nextfractal.core.RenderContext#acquire()
 	 */
 	@Override
 	public void acquire() throws InterruptedException {
@@ -268,7 +268,7 @@ public class TwisterCanvas extends Canvas implements RenderContext {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#release()
+	 * @see com.nextbreakpoint.nextfractal.core.RenderContext#release()
 	 */
 	@Override
 	public void release() {
@@ -276,7 +276,7 @@ public class TwisterCanvas extends Canvas implements RenderContext {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#addRenderContextListener(com.nextbreakpoint.nextfractal.core.util.RenderContextListener)
+	 * @see com.nextbreakpoint.nextfractal.core.RenderContext#addRenderContextListener(com.nextbreakpoint.nextfractal.core.RenderContextListener)
 	 */
 	@Override
 	public void addRenderContextListener(RenderContextListener listener) {
@@ -286,7 +286,7 @@ public class TwisterCanvas extends Canvas implements RenderContext {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#removeRenderContextListener(com.nextbreakpoint.nextfractal.core.util.RenderContextListener)
+	 * @see com.nextbreakpoint.nextfractal.core.RenderContext#removeRenderContextListener(com.nextbreakpoint.nextfractal.core.RenderContextListener)
 	 */
 	@Override
 	public void removeRenderContextListener(RenderContextListener listener) {
@@ -311,7 +311,7 @@ public class TwisterCanvas extends Canvas implements RenderContext {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#execute(java.lang.Runnable)
+	 * @see com.nextbreakpoint.nextfractal.core.RenderContext#execute(java.lang.Runnable)
 	 */
 	@Override
 	public void execute(Runnable task) {
@@ -531,7 +531,7 @@ public class TwisterCanvas extends Canvas implements RenderContext {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#getImageSize()
+	 * @see com.nextbreakpoint.nextfractal.core.RenderContext#getImageSize()
 	 */
 	@Override
 	public IntegerVector2D getImageSize() {
@@ -1021,7 +1021,7 @@ public class TwisterCanvas extends Canvas implements RenderContext {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#startRenderers()
+	 * @see com.nextbreakpoint.nextfractal.core.RenderContext#startRenderers()
 	 */
 	@Override
 	public void startRenderers() {
@@ -1041,7 +1041,7 @@ public class TwisterCanvas extends Canvas implements RenderContext {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#stopRenderers()
+	 * @see com.nextbreakpoint.nextfractal.core.RenderContext#stopRenderers()
 	 */
 	@Override
 	public void stopRenderers() {
@@ -1920,7 +1920,7 @@ public class TwisterCanvas extends Canvas implements RenderContext {
 
 	private class DefaultRenderContext implements RenderContext {
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#startRenderers()
+		 * @see com.nextbreakpoint.nextfractal.core.RenderContext#startRenderers()
 		 */
 		@Override
 		public void startRenderers() {
@@ -1928,7 +1928,7 @@ public class TwisterCanvas extends Canvas implements RenderContext {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#stopRenderers()
+		 * @see com.nextbreakpoint.nextfractal.core.RenderContext#stopRenderers()
 		 */
 		@Override
 		public void stopRenderers() {
@@ -1936,7 +1936,7 @@ public class TwisterCanvas extends Canvas implements RenderContext {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#getImageSize()
+		 * @see com.nextbreakpoint.nextfractal.core.RenderContext#getImageSize()
 		 */
 		@Override
 		public IntegerVector2D getImageSize() {
@@ -1944,7 +1944,7 @@ public class TwisterCanvas extends Canvas implements RenderContext {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#refresh()
+		 * @see com.nextbreakpoint.nextfractal.core.RenderContext#refresh()
 		 */
 		@Override
 		public void refresh() {
@@ -1952,7 +1952,7 @@ public class TwisterCanvas extends Canvas implements RenderContext {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#acquire()
+		 * @see com.nextbreakpoint.nextfractal.core.RenderContext#acquire()
 		 */
 		@Override
 		public void acquire() throws InterruptedException {
@@ -1960,7 +1960,7 @@ public class TwisterCanvas extends Canvas implements RenderContext {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#release()
+		 * @see com.nextbreakpoint.nextfractal.core.RenderContext#release()
 		 */
 		@Override
 		public void release() {
@@ -1968,7 +1968,7 @@ public class TwisterCanvas extends Canvas implements RenderContext {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#addRenderContextListener(com.nextbreakpoint.nextfractal.core.util.RenderContextListener)
+		 * @see com.nextbreakpoint.nextfractal.core.RenderContext#addRenderContextListener(com.nextbreakpoint.nextfractal.core.RenderContextListener)
 		 */
 		@Override
 		public void addRenderContextListener(RenderContextListener listener) {
@@ -1976,7 +1976,7 @@ public class TwisterCanvas extends Canvas implements RenderContext {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#removeRenderContextListener(com.nextbreakpoint.nextfractal.core.util.RenderContextListener)
+		 * @see com.nextbreakpoint.nextfractal.core.RenderContext#removeRenderContextListener(com.nextbreakpoint.nextfractal.core.RenderContextListener)
 		 */
 		@Override
 		public void removeRenderContextListener(RenderContextListener listener) {
@@ -1984,7 +1984,7 @@ public class TwisterCanvas extends Canvas implements RenderContext {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#execute(java.lang.Runnable)
+		 * @see com.nextbreakpoint.nextfractal.core.RenderContext#execute(java.lang.Runnable)
 		 */
 		@Override
 		public void execute(Runnable task) {

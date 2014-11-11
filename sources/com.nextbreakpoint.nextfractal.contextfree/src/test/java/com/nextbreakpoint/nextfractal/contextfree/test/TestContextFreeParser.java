@@ -32,7 +32,7 @@ import org.junit.Test;
 import com.nextbreakpoint.nextfractal.contextfree.ContextFreeConfig;
 import com.nextbreakpoint.nextfractal.contextfree.ContextFreeConfigNodeBuilder;
 import com.nextbreakpoint.nextfractal.contextfree.parser.ContextFreeParser;
-import com.nextbreakpoint.nextfractal.core.tree.RootNode;
+import com.nextbreakpoint.nextfractal.core.runtime.model.RootNode;
 
 public class TestContextFreeParser {
 	@Test

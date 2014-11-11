@@ -25,9 +25,9 @@
  */
 package com.nextbreakpoint.nextfractal.core.extensions.descriptor;
 
-import com.nextbreakpoint.nextfractal.core.common.ColorElement;
 import com.nextbreakpoint.nextfractal.core.devtools.ProcessorCardinality;
 import com.nextbreakpoint.nextfractal.core.devtools.ProcessorDescriptor;
+import com.nextbreakpoint.nextfractal.core.elements.ColorElement;
 import com.nextbreakpoint.nextfractal.core.extensionPoints.descriptor.DescriptorExtensionRuntime;
 
 public class ColorDescriptorRuntime extends DescriptorExtensionRuntime {
@@ -36,7 +36,7 @@ public class ColorDescriptorRuntime extends DescriptorExtensionRuntime {
 	 */
 	@Override
 	public ProcessorDescriptor createDescriptor(String elementName, String defaultValue, ProcessorCardinality cardinality) {
-		return new ProcessorDescriptor(elementName, "Color", ColorElement.CLASS_ID, "com.nextbreakpoint.nextfractal.core.common", "ColorElement", null, null, null, null, null, null, null, null, null, null, null, null, "com.nextbreakpoint.nextfractal.core.util", "Color32bit", defaultValue, "get", "set", cardinality);
+		return new ProcessorDescriptor(elementName, "Color", ColorElement.CLASS_ID, "com.nextbreakpoint.nextfractal.core.elements", "ColorElement", null, null, null, null, null, null, null, null, null, null, null, null, "com.nextbreakpoint.nextfractal.core.util", "Color32bit", defaultValue, "get", "set", cardinality);
 	}
 
 	/**

@@ -29,13 +29,13 @@ import java.util.List;
 
 import org.w3c.dom.Element;
 
-import com.nextbreakpoint.nextfractal.core.common.ComplexElement;
-import com.nextbreakpoint.nextfractal.core.common.ComplexElementXMLImporter;
+import com.nextbreakpoint.nextfractal.core.elements.ComplexElement;
+import com.nextbreakpoint.nextfractal.core.elements.ComplexElementXMLImporter;
 import com.nextbreakpoint.nextfractal.core.extensionPoints.extensionConfigXMLImporter.ExtensionConfigXMLImporterExtensionRuntime;
-import com.nextbreakpoint.nextfractal.core.xml.XMLImportException;
-import com.nextbreakpoint.nextfractal.core.xml.XMLImporter;
-import com.nextbreakpoint.nextfractal.twister.common.PercentageElement;
-import com.nextbreakpoint.nextfractal.twister.common.PercentageElementXMLImporter;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLImportException;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLImporter;
+import com.nextbreakpoint.nextfractal.twister.elements.PercentageElement;
+import com.nextbreakpoint.nextfractal.twister.elements.PercentageElementXMLImporter;
 
 /**
  * @author Andrea Medeghini

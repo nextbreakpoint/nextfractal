@@ -29,28 +29,28 @@ import java.util.List;
 
 import org.w3c.dom.Element;
 
-import com.nextbreakpoint.nextfractal.core.common.BooleanElement;
-import com.nextbreakpoint.nextfractal.core.common.BooleanElementXMLImporter;
-import com.nextbreakpoint.nextfractal.core.common.ConfigurableExtensionReferenceElement;
-import com.nextbreakpoint.nextfractal.core.common.ConfigurableExtensionReferenceElementXMLImporter;
-import com.nextbreakpoint.nextfractal.core.common.StringElement;
-import com.nextbreakpoint.nextfractal.core.common.StringElementXMLImporter;
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionException;
-import com.nextbreakpoint.nextfractal.core.xml.XMLImportException;
-import com.nextbreakpoint.nextfractal.core.xml.XMLImporter;
+import com.nextbreakpoint.nextfractal.core.elements.BooleanElement;
+import com.nextbreakpoint.nextfractal.core.elements.BooleanElementXMLImporter;
+import com.nextbreakpoint.nextfractal.core.elements.ConfigurableExtensionReferenceElement;
+import com.nextbreakpoint.nextfractal.core.elements.ConfigurableExtensionReferenceElementXMLImporter;
+import com.nextbreakpoint.nextfractal.core.elements.StringElement;
+import com.nextbreakpoint.nextfractal.core.elements.StringElementXMLImporter;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionException;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLImportException;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLImporter;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotRegistry;
-import com.nextbreakpoint.nextfractal.mandelbrot.common.IterationsElement;
-import com.nextbreakpoint.nextfractal.mandelbrot.common.IterationsElementXMLImporter;
+import com.nextbreakpoint.nextfractal.mandelbrot.elements.IterationsElement;
+import com.nextbreakpoint.nextfractal.mandelbrot.elements.IterationsElementXMLImporter;
 import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.incolouringFormula.IncolouringFormulaExtensionConfig;
-import com.nextbreakpoint.nextfractal.twister.common.PercentageElement;
-import com.nextbreakpoint.nextfractal.twister.common.PercentageElementXMLImporter;
+import com.nextbreakpoint.nextfractal.twister.elements.PercentageElement;
+import com.nextbreakpoint.nextfractal.twister.elements.PercentageElementXMLImporter;
 
 /**
  * @author Andrea Medeghini
  */
 public class IncolouringFormulaConfigElementXMLImporter extends XMLImporter<IncolouringFormulaConfigElement> {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.xml.XMLImporter#importFromElement(org.w3c.dom.Element)
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.xml.XMLImporter#importFromElement(org.w3c.dom.Element)
 	 */
 	@Override
 	public IncolouringFormulaConfigElement importFromElement(final Element element) throws XMLImportException {

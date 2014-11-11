@@ -25,7 +25,7 @@
  */
 package ${packageName};
 
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionDescriptor;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionDescriptor;
 import ${runtimePackage}.${runtimeType};
 
 /**

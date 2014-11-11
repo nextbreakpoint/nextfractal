@@ -30,11 +30,11 @@ import java.util.List;
 import org.w3c.dom.Element;
 
 import com.nextbreakpoint.nextfractal.core.extensionPoints.extensionConfigXMLImporter.ExtensionConfigXMLImporterExtensionRuntime;
-import com.nextbreakpoint.nextfractal.core.xml.XMLImportException;
-import com.nextbreakpoint.nextfractal.core.xml.XMLImporter;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLImportException;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLImporter;
 import com.nextbreakpoint.nextfractal.mandelbrot.extensions.outcolouringFormula.AbstractOutcolouringPaletteConfigXMLImporter;
-import com.nextbreakpoint.nextfractal.twister.common.PercentageElement;
-import com.nextbreakpoint.nextfractal.twister.common.PercentageElementXMLImporter;
+import com.nextbreakpoint.nextfractal.twister.elements.PercentageElement;
+import com.nextbreakpoint.nextfractal.twister.elements.PercentageElementXMLImporter;
 
 /**
  * @author Andrea Medeghini

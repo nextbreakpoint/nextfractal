@@ -25,8 +25,8 @@
  */
 package com.nextbreakpoint.nextfractal.twister.frameFilter;
 
-import com.nextbreakpoint.nextfractal.core.common.ExtensionReferenceElementNodeValue;
-import com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionReference;
+import com.nextbreakpoint.nextfractal.core.elements.ExtensionReferenceElementNodeValue;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtensionReference;
 import com.nextbreakpoint.nextfractal.twister.extensionPoints.frameFilter.FrameFilterExtensionConfig;
 
 /**

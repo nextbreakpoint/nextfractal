@@ -26,7 +26,7 @@
 package com.nextbreakpoint.nextfractal.twister.extensions.image;
 
 import com.nextbreakpoint.nextfractal.core.extensionPoints.extensionConfigXMLExporter.ExtensionConfigXMLExporterExtensionRuntime;
-import com.nextbreakpoint.nextfractal.core.xml.XMLExporter;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLExporter;
 
 /**
  * @author Andrea Medeghini

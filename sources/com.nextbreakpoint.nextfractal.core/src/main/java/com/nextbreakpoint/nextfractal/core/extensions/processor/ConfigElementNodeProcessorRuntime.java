@@ -89,23 +89,23 @@ public class ConfigElementNodeProcessorRuntime extends ProcessorExtensionRuntime
 	private void prepare(Set<String> imports, ProcessorDescriptor descriptor) {
 		if (descriptor.isComplexElement()) {
 			imports.add("com.nextbreakpoint.nextfractal.core.util.AbstractConfigElementNode");
-			imports.add("com.nextbreakpoint.nextfractal.core.tree.NodeObject");
-			imports.add("com.nextbreakpoint.nextfractal.core.tree.NodeEditor");
-			imports.add("com.nextbreakpoint.nextfractal.core.tree.NodeValue");
+			imports.add("com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject");
+			imports.add("com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor");
+			imports.add("com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue");
 			if (descriptor.getResourcesPackageName() != null && descriptor.getResourcesClassName() != null) {
 				imports.add(descriptor.getResourcesPackageName() + "." + descriptor.getResourcesClassName());
 			}
 		}
 		else if (descriptor.isSimpleElement()) {
-			imports.add("com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent");
-			imports.add("com.nextbreakpoint.nextfractal.core.config.ValueChangeListener");
-			imports.add("com.nextbreakpoint.nextfractal.core.config.ValueConfigElement");
-			imports.add("com.nextbreakpoint.nextfractal.core.tree.AttributeNode");
-			imports.add("com.nextbreakpoint.nextfractal.core.tree.NodeObject");
-			imports.add("com.nextbreakpoint.nextfractal.core.tree.NodeAction");
-			imports.add("com.nextbreakpoint.nextfractal.core.tree.NodeEditor");
-			imports.add("com.nextbreakpoint.nextfractal.core.tree.NodeSession");
-			imports.add("com.nextbreakpoint.nextfractal.core.tree.NodeValue");
+			imports.add("com.nextbreakpoint.nextfractal.core.runtime.ElementChangeEvent");
+			imports.add("com.nextbreakpoint.nextfractal.core.runtime.ElementChangeListener");
+			imports.add("com.nextbreakpoint.nextfractal.core.runtime.ValueConfigElement");
+			imports.add("com.nextbreakpoint.nextfractal.core.runtime.model.AttributeNode");
+			imports.add("com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject");
+			imports.add("com.nextbreakpoint.nextfractal.core.runtime.model.NodeAction");
+			imports.add("com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor");
+			imports.add("com.nextbreakpoint.nextfractal.core.runtime.model.NodeSession");
+			imports.add("com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue");
 			imports.add(descriptor.getValuePackageName() + "." + descriptor.getValueClassName());
 			if (descriptor.getResourcesPackageName() != null && descriptor.getResourcesClassName() != null) {
 				imports.add(descriptor.getResourcesPackageName() + "." + descriptor.getResourcesClassName());
@@ -121,10 +121,10 @@ public class ConfigElementNodeProcessorRuntime extends ProcessorExtensionRuntime
 					imports.add(descriptor.getResourcesPackageName() + "." + descriptor.getResourcesClassName());
 				}
 				if (descriptor.isExtensionElement()) {
-					imports.add("com.nextbreakpoint.nextfractal.core.extension.ExtensionReference");
+					imports.add("com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionReference");
 				}
 				else if (descriptor.isConfigurableExtensionElement()) {
-					imports.add("com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionReference");
+					imports.add("com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtensionReference");
 					imports.add(descriptor.getExtensionConfigPackageName() + "." + descriptor.getExtensionConfigClassName());
 				}
 			}

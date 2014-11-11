@@ -53,10 +53,10 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
-import com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtension;
-import com.nextbreakpoint.nextfractal.core.extension.Extension;
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionException;
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionNotFoundException;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtension;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.Extension;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionException;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionNotFoundException;
 import com.nextbreakpoint.nextfractal.core.ui.swing.extension.ExtensionComboBoxModel;
 import com.nextbreakpoint.nextfractal.core.ui.swing.extension.ExtensionFilter;
 import com.nextbreakpoint.nextfractal.core.ui.swing.extension.ExtensionListCellRenderer;
@@ -149,7 +149,7 @@ public class EncoderDialog extends JDialog {
 		this.profile = profile;
 		model.reload(RenderServiceRegistry.getInstance().getEncoderRegistry(), new ExtensionFilter() {
 			/**
-			 * @see com.nextbreakpoint.nextfractal.core.ui.swing.extension.ExtensionFilter#accept(com.nextbreakpoint.nextfractal.core.extension.Extension)
+			 * @see com.nextbreakpoint.nextfractal.core.ui.swing.extension.ExtensionFilter#accept(com.nextbreakpoint.nextfractal.core.runtime.extension.Extension)
 			 */
 			@Override
 			public boolean accept(final Extension<?> extension) {

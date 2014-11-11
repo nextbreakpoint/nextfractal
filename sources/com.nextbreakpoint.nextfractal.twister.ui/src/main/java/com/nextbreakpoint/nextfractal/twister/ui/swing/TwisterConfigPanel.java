@@ -66,16 +66,18 @@ import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import com.nextbreakpoint.nextfractal.core.common.ExtensionReferenceElement;
-import com.nextbreakpoint.nextfractal.core.config.ListConfigElement;
-import com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent;
-import com.nextbreakpoint.nextfractal.core.config.ValueChangeListener;
-import com.nextbreakpoint.nextfractal.core.config.ValueConfigElement;
-import com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtension;
-import com.nextbreakpoint.nextfractal.core.extension.Extension;
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionException;
-import com.nextbreakpoint.nextfractal.core.extension.NullConfigurableExtension;
-import com.nextbreakpoint.nextfractal.core.tree.NodeSession;
+import com.nextbreakpoint.nextfractal.core.RenderContext;
+import com.nextbreakpoint.nextfractal.core.RenderContextListener;
+import com.nextbreakpoint.nextfractal.core.elements.ExtensionReferenceElement;
+import com.nextbreakpoint.nextfractal.core.runtime.ElementChangeEvent;
+import com.nextbreakpoint.nextfractal.core.runtime.ElementChangeListener;
+import com.nextbreakpoint.nextfractal.core.runtime.ListConfigElement;
+import com.nextbreakpoint.nextfractal.core.runtime.ValueConfigElement;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtension;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.Extension;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionException;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.NullConfigurableExtension;
+import com.nextbreakpoint.nextfractal.core.runtime.model.NodeSession;
 import com.nextbreakpoint.nextfractal.core.ui.swing.ViewContext;
 import com.nextbreakpoint.nextfractal.core.ui.swing.color.ColorChangeEvent;
 import com.nextbreakpoint.nextfractal.core.ui.swing.color.ColorChangeListener;
@@ -88,8 +90,6 @@ import com.nextbreakpoint.nextfractal.core.ui.swing.util.GUIUtil;
 import com.nextbreakpoint.nextfractal.core.ui.swing.util.StackLayout;
 import com.nextbreakpoint.nextfractal.core.util.Color32bit;
 import com.nextbreakpoint.nextfractal.core.util.IntegerVector2D;
-import com.nextbreakpoint.nextfractal.core.util.RenderContext;
-import com.nextbreakpoint.nextfractal.core.util.RenderContextListener;
 import com.nextbreakpoint.nextfractal.core.util.Tile;
 import com.nextbreakpoint.nextfractal.twister.TwisterConfig;
 import com.nextbreakpoint.nextfractal.twister.TwisterRegistry;
@@ -349,11 +349,11 @@ public class TwisterConfigPanel extends ViewPanel {
 		private static final long serialVersionUID = 1L;
 		private final TwisterConfig config;
 		private EffectPanel effectPanel;
-		private final ValueChangeListener filtersListener;
-		private final ValueChangeListener layersListener;
-		private final ValueChangeListener frameListener;
-		private final ValueChangeListener effectListener;
-		private final ValueChangeListener backgroundListener;
+		private final ElementChangeListener filtersListener;
+		private final ElementChangeListener layersListener;
+		private final ElementChangeListener frameListener;
+		private final ElementChangeListener effectListener;
+		private final ElementChangeListener backgroundListener;
 		private final JPanel filtersPanel;
 		private final JPanel layersPanel;
 		private final JPanel layersPanel2;
@@ -885,17 +885,17 @@ public class TwisterConfigPanel extends ViewPanel {
 					viewContext.setComponent(filtersPanel2);
 				}
 			});
-			backgroundListener = new ValueChangeListener() {
+			backgroundListener = new ElementChangeListener() {
 				@Override
-				public void valueChanged(final ValueChangeEvent e) {
+				public void valueChanged(final ElementChangeEvent e) {
 					colorField.removeColorChangeListener(colorChangeListener);
 					colorField.setColor(new Color(config.getBackground().getARGB(), true));
 					colorField.addColorChangeListener(colorChangeListener);
 				}
 			};
-			filtersListener = new ValueChangeListener() {
+			filtersListener = new ElementChangeListener() {
 				@Override
-				public void valueChanged(final ValueChangeEvent e) {
+				public void valueChanged(final ElementChangeEvent e) {
 					switch (e.getEventType()) {
 						case ListConfigElement.ELEMENT_ADDED: {
 							viewContext.resize(GUIFactory.DEFAULT_HEIGHT);
@@ -952,9 +952,9 @@ public class TwisterConfigPanel extends ViewPanel {
 					}
 				}
 			};
-			layersListener = new ValueChangeListener() {
+			layersListener = new ElementChangeListener() {
 				@Override
-				public void valueChanged(final ValueChangeEvent e) {
+				public void valueChanged(final ElementChangeEvent e) {
 					switch (e.getEventType()) {
 						case ListConfigElement.ELEMENT_ADDED: {
 							viewContext.resize(GUIFactory.DEFAULT_HEIGHT * 2 + 8);
@@ -1010,9 +1010,9 @@ public class TwisterConfigPanel extends ViewPanel {
 					}
 				}
 			};
-			frameListener = new ValueChangeListener() {
+			frameListener = new ElementChangeListener() {
 				@Override
-				public void valueChanged(final ValueChangeEvent e) {
+				public void valueChanged(final ElementChangeEvent e) {
 					switch (e.getEventType()) {
 						case ValueConfigElement.VALUE_CHANGED: {
 							viewContext.setComponent(TwisterConfigPanel.this);
@@ -1051,9 +1051,9 @@ public class TwisterConfigPanel extends ViewPanel {
 					}
 				}
 			};
-			effectListener = new ValueChangeListener() {
+			effectListener = new ElementChangeListener() {
 				@Override
-				public void valueChanged(final ValueChangeEvent e) {
+				public void valueChanged(final ElementChangeEvent e) {
 					switch (e.getEventType()) {
 						case ValueConfigElement.VALUE_CHANGED: {
 							viewContext.setComponent(TwisterConfigPanel.this);
@@ -1215,12 +1215,12 @@ public class TwisterConfigPanel extends ViewPanel {
 			private final LayerPreviewCanvas preview;
 			private final JPanel layersPanel;
 			private final GroupLayerConfigElement groupLayerElement;
-			private final ValueChangeListener lockedListener;
-			private final ValueChangeListener visibleListener;
-			private final ValueChangeListener opacityListener;
-			private final ValueChangeListener labelListener;
-			private final ValueChangeListener filtersListener;
-			private final ValueChangeListener layersListener;
+			private final ElementChangeListener lockedListener;
+			private final ElementChangeListener visibleListener;
+			private final ElementChangeListener opacityListener;
+			private final ElementChangeListener labelListener;
+			private final ElementChangeListener filtersListener;
+			private final ElementChangeListener layersListener;
 			private final JPanel filtersPanel;
 			private final JPanel layersPanel2;
 			private final JPanel filtersPanel2;
@@ -1742,42 +1742,42 @@ public class TwisterConfigPanel extends ViewPanel {
 						viewContext.setComponent(filtersPanel2);
 					}
 				});
-				lockedListener = new ValueChangeListener() {
+				lockedListener = new ElementChangeListener() {
 					@Override
-					public void valueChanged(final ValueChangeEvent e) {
+					public void valueChanged(final ElementChangeEvent e) {
 						lockedCheckBox.removeActionListener(lockedActionListener);
 						lockedCheckBox.setSelected(groupLayerElement.isLocked());
 						lockedCheckBox.addActionListener(lockedActionListener);
 					}
 				};
-				visibleListener = new ValueChangeListener() {
+				visibleListener = new ElementChangeListener() {
 					@Override
-					public void valueChanged(final ValueChangeEvent e) {
+					public void valueChanged(final ElementChangeEvent e) {
 						visibleCheckBox.removeActionListener(visibleActionListener);
 						visibleCheckBox.setSelected(groupLayerElement.isVisible());
 						visibleCheckBox.addActionListener(visibleActionListener);
 					}
 				};
-				opacityListener = new ValueChangeListener() {
+				opacityListener = new ElementChangeListener() {
 					@Override
-					public void valueChanged(final ValueChangeEvent e) {
+					public void valueChanged(final ElementChangeEvent e) {
 						opacitySpinner.removeChangeListener(opacityChangeListener);
 						opacitySpinner.setValue(groupLayerElement.getOpacity().intValue());
 						opacitySpinner.setToolTipText(createOpacityTooltip(opacitySpinner));
 						opacitySpinner.addChangeListener(opacityChangeListener);
 					}
 				};
-				labelListener = new ValueChangeListener() {
+				labelListener = new ElementChangeListener() {
 					@Override
-					public void valueChanged(final ValueChangeEvent e) {
+					public void valueChanged(final ElementChangeEvent e) {
 						label.setText(groupLayerElement.getLabel());
 						layersPanel2.setName(createLayersPanelName(groupLayerElement));
 						filtersPanel2.setName(createFiltersPanelName(groupLayerElement));
 					}
 				};
-				filtersListener = new ValueChangeListener() {
+				filtersListener = new ElementChangeListener() {
 					@Override
-					public void valueChanged(final ValueChangeEvent e) {
+					public void valueChanged(final ElementChangeEvent e) {
 						switch (e.getEventType()) {
 							case ListConfigElement.ELEMENT_ADDED: {
 								viewContext.resize(GUIFactory.DEFAULT_HEIGHT);
@@ -1837,9 +1837,9 @@ public class TwisterConfigPanel extends ViewPanel {
 						editFiltersButton.setText(createEditFiltersText(groupLayerElement));
 					}
 				};
-				layersListener = new ValueChangeListener() {
+				layersListener = new ElementChangeListener() {
 					@Override
-					public void valueChanged(final ValueChangeEvent e) {
+					public void valueChanged(final ElementChangeEvent e) {
 						switch (e.getEventType()) {
 							case ListConfigElement.ELEMENT_ADDED: {
 								if (groupLayerElement.getLayerConfigElementCount() > 1) {
@@ -1977,11 +1977,11 @@ public class TwisterConfigPanel extends ViewPanel {
 			private final JCheckBox selectedCheckBox = createCheckBox();
 			private final LayerPreviewCanvas preview;
 			private final ImageLayerConfigElement imageLayerElement;
-			private final ValueChangeListener lockedListener;
-			private final ValueChangeListener visibleListener;
-			private final ValueChangeListener opacityListener;
-			private final ValueChangeListener filtersListener;
-			private final ValueChangeListener labelListener;
+			private final ElementChangeListener lockedListener;
+			private final ElementChangeListener visibleListener;
+			private final ElementChangeListener opacityListener;
+			private final ElementChangeListener filtersListener;
+			private final ElementChangeListener labelListener;
 			private final JPanel filtersPanel;
 			private final ImagePanel imagePanel;
 			private RenderTask renderTask;
@@ -2306,34 +2306,34 @@ public class TwisterConfigPanel extends ViewPanel {
 						viewContext.setComponent(filtersPanel2);
 					}
 				});
-				lockedListener = new ValueChangeListener() {
+				lockedListener = new ElementChangeListener() {
 					@Override
-					public void valueChanged(final ValueChangeEvent e) {
+					public void valueChanged(final ElementChangeEvent e) {
 						lockedCheckBox.removeActionListener(lockedActionListener);
 						lockedCheckBox.setSelected(imageLayerElement.isLocked());
 						lockedCheckBox.addActionListener(lockedActionListener);
 					}
 				};
-				visibleListener = new ValueChangeListener() {
+				visibleListener = new ElementChangeListener() {
 					@Override
-					public void valueChanged(final ValueChangeEvent e) {
+					public void valueChanged(final ElementChangeEvent e) {
 						visibleCheckBox.removeActionListener(visibleActionListener);
 						visibleCheckBox.setSelected(imageLayerElement.isVisible());
 						visibleCheckBox.addActionListener(visibleActionListener);
 					}
 				};
-				opacityListener = new ValueChangeListener() {
+				opacityListener = new ElementChangeListener() {
 					@Override
-					public void valueChanged(final ValueChangeEvent e) {
+					public void valueChanged(final ElementChangeEvent e) {
 						opacitySpinner.removeChangeListener(opacityChangeListener);
 						opacitySpinner.setValue(imageLayerElement.getOpacity().intValue());
 						opacitySpinner.setToolTipText(createOpacityTooltip(opacitySpinner));
 						opacitySpinner.addChangeListener(opacityChangeListener);
 					}
 				};
-				filtersListener = new ValueChangeListener() {
+				filtersListener = new ElementChangeListener() {
 					@Override
-					public void valueChanged(final ValueChangeEvent e) {
+					public void valueChanged(final ElementChangeEvent e) {
 						switch (e.getEventType()) {
 							case ListConfigElement.ELEMENT_ADDED: {
 								viewContext.resize(GUIFactory.DEFAULT_HEIGHT);
@@ -2393,9 +2393,9 @@ public class TwisterConfigPanel extends ViewPanel {
 						showFiltersButton.setText(createEditFiltersText(imageLayerElement));
 					}
 				};
-				labelListener = new ValueChangeListener() {
+				labelListener = new ElementChangeListener() {
 					@Override
-					public void valueChanged(final ValueChangeEvent e) {
+					public void valueChanged(final ElementChangeEvent e) {
 						label.setText(imageLayerElement.getLabel());
 						filtersPanel2.setName(createFiltersPanelName(imageLayerElement));
 					}
@@ -2470,10 +2470,10 @@ public class TwisterConfigPanel extends ViewPanel {
 			private final JCheckBox selectedCheckBox = createCheckBox();
 			private ViewPanel configView;
 			private final LayerFilterConfigElement imageFilterElement;
-			private final ValueChangeListener lockedListener;
-			private final ValueChangeListener enabledListener;
-			private final ValueChangeListener labelListener;
-			private final ValueChangeListener filterListener;
+			private final ElementChangeListener lockedListener;
+			private final ElementChangeListener enabledListener;
+			private final ElementChangeListener labelListener;
+			private final ElementChangeListener filterListener;
 
 			/**
 			 * @param layerElement
@@ -2616,9 +2616,9 @@ public class TwisterConfigPanel extends ViewPanel {
 					}
 				};
 				enabledCheckBox.addActionListener(enabledActionListener);
-				filterListener = new ValueChangeListener() {
+				filterListener = new ElementChangeListener() {
 					@Override
-					public void valueChanged(final ValueChangeEvent e) {
+					public void valueChanged(final ElementChangeEvent e) {
 						switch (e.getEventType()) {
 							case ExtensionReferenceElement.EXTENSION_REFERENCE_CHANGED: {
 								editOptionsButton.setEnabled(imageFilterElement.getReference() != null);
@@ -2642,25 +2642,25 @@ public class TwisterConfigPanel extends ViewPanel {
 						}
 					}
 				};
-				lockedListener = new ValueChangeListener() {
+				lockedListener = new ElementChangeListener() {
 					@Override
-					public void valueChanged(final ValueChangeEvent e) {
+					public void valueChanged(final ElementChangeEvent e) {
 						lockedCheckBox.removeActionListener(lockedActionListener);
 						lockedCheckBox.setSelected(imageFilterElement.isLocked());
 						lockedCheckBox.addActionListener(lockedActionListener);
 					}
 				};
-				enabledListener = new ValueChangeListener() {
+				enabledListener = new ElementChangeListener() {
 					@Override
-					public void valueChanged(final ValueChangeEvent e) {
+					public void valueChanged(final ElementChangeEvent e) {
 						enabledCheckBox.removeActionListener(enabledActionListener);
 						enabledCheckBox.setSelected(imageFilterElement.isEnabled());
 						enabledCheckBox.addActionListener(enabledActionListener);
 					}
 				};
-				labelListener = new ValueChangeListener() {
+				labelListener = new ElementChangeListener() {
 					@Override
-					public void valueChanged(final ValueChangeEvent e) {
+					public void valueChanged(final ElementChangeEvent e) {
 						label.setText(imageFilterElement.getLabel());
 						if (configView != null) {
 							configView.setName(createFiltersPanelName(imageFilterElement));
@@ -2709,10 +2709,10 @@ public class TwisterConfigPanel extends ViewPanel {
 			private final JCheckBox selectedCheckBox = createCheckBox();
 			private ViewPanel configView;
 			private final FrameFilterConfigElement frameFilterElement;
-			private final ValueChangeListener lockedListener;
-			private final ValueChangeListener enabledListener;
-			private final ValueChangeListener labelListener;
-			private final ValueChangeListener filterListener;
+			private final ElementChangeListener lockedListener;
+			private final ElementChangeListener enabledListener;
+			private final ElementChangeListener labelListener;
+			private final ElementChangeListener filterListener;
 
 			/**
 			 * @param frameElement
@@ -2848,9 +2848,9 @@ public class TwisterConfigPanel extends ViewPanel {
 					}
 				};
 				enabledCheckBox.addActionListener(enabledActionListener);
-				filterListener = new ValueChangeListener() {
+				filterListener = new ElementChangeListener() {
 					@Override
-					public void valueChanged(final ValueChangeEvent e) {
+					public void valueChanged(final ElementChangeEvent e) {
 						switch (e.getEventType()) {
 							case ExtensionReferenceElement.EXTENSION_REFERENCE_CHANGED: {
 								editOptionsButton.setEnabled(frameFilterElement.getReference() != null);
@@ -2874,25 +2874,25 @@ public class TwisterConfigPanel extends ViewPanel {
 						}
 					}
 				};
-				lockedListener = new ValueChangeListener() {
+				lockedListener = new ElementChangeListener() {
 					@Override
-					public void valueChanged(final ValueChangeEvent e) {
+					public void valueChanged(final ElementChangeEvent e) {
 						lockedCheckBox.removeActionListener(lockedActionListener);
 						lockedCheckBox.setSelected(frameFilterElement.isLocked());
 						lockedCheckBox.addActionListener(lockedActionListener);
 					}
 				};
-				enabledListener = new ValueChangeListener() {
+				enabledListener = new ElementChangeListener() {
 					@Override
-					public void valueChanged(final ValueChangeEvent e) {
+					public void valueChanged(final ElementChangeEvent e) {
 						enabledCheckBox.removeActionListener(enabledActionListener);
 						enabledCheckBox.setSelected(frameFilterElement.isEnabled());
 						enabledCheckBox.addActionListener(enabledActionListener);
 					}
 				};
-				labelListener = new ValueChangeListener() {
+				labelListener = new ElementChangeListener() {
 					@Override
-					public void valueChanged(final ValueChangeEvent e) {
+					public void valueChanged(final ElementChangeEvent e) {
 						label.setText(frameFilterElement.getLabel());
 						if (configView != null) {
 							configView.setName(createFiltersPanelName(frameFilterElement));
@@ -2940,7 +2940,7 @@ public class TwisterConfigPanel extends ViewPanel {
 			private static final long serialVersionUID = 1L;
 			// private ViewPanel configView;
 			private final ImageConfigElement imageElement;
-			private final ValueChangeListener imageListener;
+			private final ElementChangeListener imageListener;
 			private NavigationFrame navigationFrame;
 
 			/**
@@ -3038,9 +3038,9 @@ public class TwisterConfigPanel extends ViewPanel {
 						}
 					}
 				});
-				imageListener = new ValueChangeListener() {
+				imageListener = new ElementChangeListener() {
 					@Override
-					public void valueChanged(final ValueChangeEvent e) {
+					public void valueChanged(final ElementChangeEvent e) {
 						switch (e.getEventType()) {
 							case ExtensionReferenceElement.EXTENSION_REFERENCE_CHANGED: {
 								editOptionsButton.setEnabled(imageElement.getReference() != null);
@@ -3089,9 +3089,9 @@ public class TwisterConfigPanel extends ViewPanel {
 			private static final long serialVersionUID = 1L;
 			private ViewPanel configView;
 			private final EffectConfigElement effectElement;
-			private final ValueChangeListener lockedListener;
-			private final ValueChangeListener enabledListener;
-			private final ValueChangeListener effectListener;
+			private final ElementChangeListener lockedListener;
+			private final ElementChangeListener enabledListener;
+			private final ElementChangeListener effectListener;
 
 			/**
 			 * @param config
@@ -3203,9 +3203,9 @@ public class TwisterConfigPanel extends ViewPanel {
 					}
 				};
 				enabledCheckBox.addActionListener(enabledActionListener);
-				effectListener = new ValueChangeListener() {
+				effectListener = new ElementChangeListener() {
 					@Override
-					public void valueChanged(final ValueChangeEvent e) {
+					public void valueChanged(final ElementChangeEvent e) {
 						switch (e.getEventType()) {
 							case ExtensionReferenceElement.EXTENSION_REFERENCE_CHANGED: {
 								editOptionsButton.setEnabled(effectElement.getReference() != null);
@@ -3229,17 +3229,17 @@ public class TwisterConfigPanel extends ViewPanel {
 						}
 					}
 				};
-				lockedListener = new ValueChangeListener() {
+				lockedListener = new ElementChangeListener() {
 					@Override
-					public void valueChanged(final ValueChangeEvent e) {
+					public void valueChanged(final ElementChangeEvent e) {
 						lockedCheckBox.removeActionListener(lockedActionListener);
 						lockedCheckBox.setSelected(effectElement.isLocked());
 						lockedCheckBox.addActionListener(lockedActionListener);
 					}
 				};
-				enabledListener = new ValueChangeListener() {
+				enabledListener = new ElementChangeListener() {
 					@Override
-					public void valueChanged(final ValueChangeEvent e) {
+					public void valueChanged(final ElementChangeEvent e) {
 						enabledCheckBox.removeActionListener(enabledActionListener);
 						enabledCheckBox.setSelected(effectElement.isEnabled());
 						enabledCheckBox.addActionListener(enabledActionListener);
@@ -3477,7 +3477,7 @@ public class TwisterConfigPanel extends ViewPanel {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContextListener#startRenderer()
+		 * @see com.nextbreakpoint.nextfractal.core.RenderContextListener#startRenderer()
 		 */
 		@Override
 		public void startRenderer() {
@@ -3485,7 +3485,7 @@ public class TwisterConfigPanel extends ViewPanel {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContextListener#stopRenderer()
+		 * @see com.nextbreakpoint.nextfractal.core.RenderContextListener#stopRenderer()
 		 */
 		@Override
 		public void stopRenderer() {
@@ -3493,7 +3493,7 @@ public class TwisterConfigPanel extends ViewPanel {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContextListener#joinRenderer()
+		 * @see com.nextbreakpoint.nextfractal.core.RenderContextListener#joinRenderer()
 		 */
 		@Override
 		public void joinRenderer() {
@@ -3501,7 +3501,7 @@ public class TwisterConfigPanel extends ViewPanel {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContextListener#abortRenderer()
+		 * @see com.nextbreakpoint.nextfractal.core.RenderContextListener#abortRenderer()
 		 */
 		@Override
 		public void abortRenderer() {
@@ -3509,7 +3509,7 @@ public class TwisterConfigPanel extends ViewPanel {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContextListener#refresh()
+		 * @see com.nextbreakpoint.nextfractal.core.RenderContextListener#refresh()
 		 */
 		@Override
 		public void refresh() {

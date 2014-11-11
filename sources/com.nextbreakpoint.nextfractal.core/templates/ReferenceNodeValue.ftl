@@ -5,8 +5,8 @@
 package ${packageName};
 
 <#if configPackageName?exists && configClassName?exists>
-import com.nextbreakpoint.nextfractal.core.common.ExtensionReferenceElementNodeValue;
-import com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionReference;
+import com.nextbreakpoint.nextfractal.core.elements.ExtensionReferenceElementNodeValue;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtensionReference;
 import ${configPackageName}.${configClassName};
 
 /**
@@ -23,8 +23,8 @@ public class ${elementName?cap_first}${subElementName?cap_first}ReferenceNodeVal
 	}
 }
 <#else>
-import com.nextbreakpoint.nextfractal.core.common.ExtensionReferenceElementNodeValue;
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionReference;
+import com.nextbreakpoint.nextfractal.core.elements.ExtensionReferenceElementNodeValue;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionReference;
 
 /**
  * @author ${author}

@@ -25,7 +25,7 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.colorRendererFormula;
 
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionRuntime;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RenderedPoint;
 
 /**
@@ -39,7 +39,7 @@ public abstract class ColorRendererFormulaExtensionRuntime extends ExtensionRunt
 	public abstract double renderColor(RenderedPoint cp);
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.extension.ExtensionRuntime#dispose()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionRuntime#dispose()
 	 */
 	@Override
 	public void dispose() {

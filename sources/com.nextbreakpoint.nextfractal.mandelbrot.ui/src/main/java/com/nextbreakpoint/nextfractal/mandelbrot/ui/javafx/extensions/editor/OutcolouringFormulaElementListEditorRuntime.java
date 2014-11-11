@@ -28,9 +28,9 @@ package com.nextbreakpoint.nextfractal.mandelbrot.ui.javafx.extensions.editor;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtension;
-import com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionReference;
-import com.nextbreakpoint.nextfractal.core.tree.NodeValue;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtension;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtensionReference;
+import com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.editor.ConfigurableReferenceElementListEditorRuntime;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotRegistry;
 import com.nextbreakpoint.nextfractal.mandelbrot.outcolouringFormula.OutcolouringFormulaConfigElement;
@@ -54,7 +54,7 @@ public class OutcolouringFormulaElementListEditorRuntime extends ConfigurableRef
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.ui.javafx.editor.ConfigurableReferenceElementListEditorRuntime#createNodeValue(com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionReference)
+	 * @see com.nextbreakpoint.nextfractal.core.ui.javafx.editor.ConfigurableReferenceElementListEditorRuntime#createNodeValue(com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtensionReference)
 	 */
 	@SuppressWarnings("unchecked")
 	@Override

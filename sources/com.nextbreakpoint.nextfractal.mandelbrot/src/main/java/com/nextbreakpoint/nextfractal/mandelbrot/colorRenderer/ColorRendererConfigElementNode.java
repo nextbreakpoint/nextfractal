@@ -25,12 +25,12 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.colorRenderer;
 
-import com.nextbreakpoint.nextfractal.core.common.ConfigurableExtensionReferenceElementNode;
-import com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionReference;
-import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
-import com.nextbreakpoint.nextfractal.core.tree.NodeEditor;
-import com.nextbreakpoint.nextfractal.core.tree.NodeValue;
-import com.nextbreakpoint.nextfractal.core.util.AbstractConfigElementNode;
+import com.nextbreakpoint.nextfractal.core.elements.ConfigurableExtensionReferenceElementNode;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtensionReference;
+import com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor;
+import com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject;
+import com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue;
+import com.nextbreakpoint.nextfractal.core.runtime.util.AbstractConfigElementNode;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotResources;
 import com.nextbreakpoint.nextfractal.mandelbrot.colorRendererFormula.ColorRendererFormulaConfigElement;
 import com.nextbreakpoint.nextfractal.mandelbrot.colorRendererFormula.ColorRendererFormulaConfigElementNodeValue;
@@ -60,7 +60,7 @@ public class ColorRendererConfigElementNode extends AbstractConfigElementNode<Co
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.util.AbstractConfigElementNode#getConfigElement()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.util.AbstractConfigElementNode#getConfigElement()
 	 */
 	@Override
 	public ColorRendererConfigElement getConfigElement() {
@@ -85,7 +85,7 @@ public class ColorRendererConfigElementNode extends AbstractConfigElementNode<Co
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.common.ConfigurableExtensionReferenceElementNode#createNodeValue(com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionReference)
+		 * @see com.nextbreakpoint.nextfractal.core.elements.ConfigurableExtensionReferenceElementNode#createNodeValue(com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtensionReference)
 		 */
 		@Override
 		protected NodeValue<?> createNodeValue(final ConfigurableExtensionReference<ColorRendererExtensionConfig> value) {
@@ -101,7 +101,7 @@ public class ColorRendererConfigElementNode extends AbstractConfigElementNode<Co
 	// return null;
 	// }
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.DefaultNode#isEditable()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.DefaultNode#isEditable()
 	 */
 	@Override
 	public boolean isEditable() {
@@ -116,7 +116,7 @@ public class ColorRendererConfigElementNode extends AbstractConfigElementNode<Co
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#updateChildNodes()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject#updateChildNodes()
 	 */
 	@Override
 	protected void updateChildNodes() {
@@ -124,7 +124,7 @@ public class ColorRendererConfigElementNode extends AbstractConfigElementNode<Co
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.DefaultNode#createNodeEditor()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.DefaultNode#createNodeEditor()
 	 */
 	@Override
 	protected NodeEditor createNodeEditor() {
@@ -140,7 +140,7 @@ public class ColorRendererConfigElementNode extends AbstractConfigElementNode<Co
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeEditor#createChildNode(com.nextbreakpoint.nextfractal.core.tree.NodeValue)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor#createChildNode(com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue)
 		 */
 		@Override
 		protected NodeObject createChildNode(final NodeValue<?> value) {
@@ -148,7 +148,7 @@ public class ColorRendererConfigElementNode extends AbstractConfigElementNode<Co
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeEditor#createNodeValue(Object)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor#createNodeValue(Object)
 		 */
 		@Override
 		public NodeValue<?> createNodeValue(final Object value) {
@@ -157,7 +157,7 @@ public class ColorRendererConfigElementNode extends AbstractConfigElementNode<Co
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeEditor#getNodeValueType()
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor#getNodeValueType()
 		 */
 		@Override
 		public Class<?> getNodeValueType() {

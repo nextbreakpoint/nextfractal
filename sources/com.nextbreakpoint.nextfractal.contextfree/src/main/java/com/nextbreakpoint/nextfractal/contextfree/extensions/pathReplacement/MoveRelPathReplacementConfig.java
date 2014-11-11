@@ -9,8 +9,8 @@ import java.util.List;
 
 import com.nextbreakpoint.nextfractal.contextfree.CFDGBuilder;
 import com.nextbreakpoint.nextfractal.contextfree.extensionPoints.pathReplacement.PathReplacementExtensionConfig;
-import com.nextbreakpoint.nextfractal.core.common.FloatElement;
-import com.nextbreakpoint.nextfractal.core.config.ConfigElement;
+import com.nextbreakpoint.nextfractal.core.elements.FloatElement;
+import com.nextbreakpoint.nextfractal.core.runtime.ConfigElement;
 
 /**
  * @author Andrea Medeghini
@@ -30,7 +30,7 @@ public class MoveRelPathReplacementConfig extends PathReplacementExtensionConfig
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.extension.ExtensionConfig#getConfigElements()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionConfig#getConfigElements()
 	 */
 	@Override
 	public List<ConfigElement> getConfigElements() {

@@ -25,9 +25,9 @@
  */
 package com.nextbreakpoint.nextfractal.twister.ui.swing.extensions.editor;
 
-import com.nextbreakpoint.nextfractal.core.tree.NodeValue;
+import com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue;
 import com.nextbreakpoint.nextfractal.core.ui.swing.editor.NumberEditorRuntime;
-import com.nextbreakpoint.nextfractal.twister.common.PercentageElementNodeValue;
+import com.nextbreakpoint.nextfractal.twister.elements.PercentageElementNodeValue;
 
 /**
  * @author Andrea Medeghini

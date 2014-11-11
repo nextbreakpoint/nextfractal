@@ -4,7 +4,7 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.pathReplacement;
 
-import com.nextbreakpoint.nextfractal.core.tree.NodeValue;
+import com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue;
 
 public class PathReplacementConfigElementNodeValue extends NodeValue<PathReplacementConfigElement> {
 	private static final long serialVersionUID = 1L;
@@ -17,7 +17,7 @@ public class PathReplacementConfigElementNodeValue extends NodeValue<PathReplace
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeValue#getValueClone()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue#getValueClone()
 	 */
 	@Override
 	public PathReplacementConfigElement getValueClone() {
@@ -28,7 +28,7 @@ public class PathReplacementConfigElementNodeValue extends NodeValue<PathReplace
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeValue#clone()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue#clone()
 	 */
 	@Override
 	public PathReplacementConfigElementNodeValue clone() {

@@ -27,9 +27,9 @@ package com.nextbreakpoint.nextfractal.core.extensionPoints.enumerator;
 
 import java.util.List;
 
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionRuntime;
-import com.nextbreakpoint.nextfractal.core.scripting.JSException;
-import com.nextbreakpoint.nextfractal.core.scripting.JSExtension;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.runtime.scripting.JSException;
+import com.nextbreakpoint.nextfractal.core.runtime.scripting.JSExtension;
 
 /**
  * @author Andrea Medeghini

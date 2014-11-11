@@ -28,9 +28,9 @@ package com.nextbreakpoint.nextfractal.mandelbrot.ui.javafx.extensions.editor;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.nextbreakpoint.nextfractal.core.extension.Extension;
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionReference;
-import com.nextbreakpoint.nextfractal.core.tree.NodeValue;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.Extension;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionReference;
+import com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.editor.ReferenceEditorRuntime;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotRegistry;
 import com.nextbreakpoint.nextfractal.mandelbrot.paletteRendererFormula.PaletteRendererFormulaExtensionReferenceNodeValue;
@@ -60,7 +60,7 @@ public class PaletteRendererFormulaReferenceEditorRuntime extends ReferenceEdito
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.ui.javafx.editor.ReferenceEditorRuntime#createNodeValue(com.nextbreakpoint.nextfractal.core.extension.ExtensionReference)
+	 * @see com.nextbreakpoint.nextfractal.core.ui.javafx.editor.ReferenceEditorRuntime#createNodeValue(com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionReference)
 	 */
 	@Override
 	protected NodeValue<?> createNodeValue(final ExtensionReference reference) {

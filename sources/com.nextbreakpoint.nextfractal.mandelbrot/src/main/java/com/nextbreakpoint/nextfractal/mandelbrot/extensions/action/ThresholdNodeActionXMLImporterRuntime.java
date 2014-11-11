@@ -30,19 +30,19 @@ import java.util.List;
 
 import org.w3c.dom.Element;
 
-import com.nextbreakpoint.nextfractal.core.tree.NodeActionValue;
-import com.nextbreakpoint.nextfractal.core.util.AbstractActionXMLImporterRuntime;
-import com.nextbreakpoint.nextfractal.core.xml.XML;
-import com.nextbreakpoint.nextfractal.core.xml.XMLImportException;
-import com.nextbreakpoint.nextfractal.mandelbrot.common.ThresholdElement;
-import com.nextbreakpoint.nextfractal.mandelbrot.common.ThresholdElementXMLImporter;
+import com.nextbreakpoint.nextfractal.core.runtime.model.NodeActionValue;
+import com.nextbreakpoint.nextfractal.core.runtime.util.AbstractActionXMLImporterRuntime;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XML;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLImportException;
+import com.nextbreakpoint.nextfractal.mandelbrot.elements.ThresholdElement;
+import com.nextbreakpoint.nextfractal.mandelbrot.elements.ThresholdElementXMLImporter;
 
 /**
  * @author Andrea Medeghini
  */
 public class ThresholdNodeActionXMLImporterRuntime extends AbstractActionXMLImporterRuntime {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.util.AbstractActionXMLImporterRuntime#importParams(com.nextbreakpoint.nextfractal.core.tree.NodeActionValue, org.w3c.dom.Element)
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.util.AbstractActionXMLImporterRuntime#importParams(com.nextbreakpoint.nextfractal.core.runtime.model.NodeActionValue, org.w3c.dom.Element)
 	 */
 	@Override
 	protected void importParams(final NodeActionValue action, final Element element) throws XMLImportException {

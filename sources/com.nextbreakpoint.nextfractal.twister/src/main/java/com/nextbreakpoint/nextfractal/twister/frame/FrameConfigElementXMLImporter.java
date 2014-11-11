@@ -29,8 +29,8 @@ import java.util.List;
 
 import org.w3c.dom.Element;
 
-import com.nextbreakpoint.nextfractal.core.xml.XMLImportException;
-import com.nextbreakpoint.nextfractal.core.xml.XMLImporter;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLImportException;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLImporter;
 import com.nextbreakpoint.nextfractal.twister.frameFilter.FrameFilterConfigElement;
 import com.nextbreakpoint.nextfractal.twister.frameFilter.FrameFilterConfigElementXMLImporter;
 import com.nextbreakpoint.nextfractal.twister.layer.GroupLayerConfigElement;
@@ -41,7 +41,7 @@ import com.nextbreakpoint.nextfractal.twister.layer.GroupLayerConfigElementXMLIm
  */
 public class FrameConfigElementXMLImporter extends XMLImporter<FrameConfigElement> {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.xml.XMLImporter#importFromElement(org.w3c.dom.Element)
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.xml.XMLImporter#importFromElement(org.w3c.dom.Element)
 	 */
 	@Override
 	public FrameConfigElement importFromElement(final Element element) throws XMLImportException {

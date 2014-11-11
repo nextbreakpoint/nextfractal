@@ -25,9 +25,9 @@
  */
 package com.nextbreakpoint.nextfractal.twister.ui.javafx;
 
-import com.nextbreakpoint.nextfractal.core.extension.Extension;
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionNotFoundException;
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionRegistry;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.Extension;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionNotFoundException;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionRegistry;
 import com.nextbreakpoint.nextfractal.twister.ui.javafx.extensionPoints.inputAdapter.InputAdapterExtensionRegistry;
 import com.nextbreakpoint.nextfractal.twister.ui.javafx.extensionPoints.inputAdapter.InputAdapterExtensionRuntime;
 import com.nextbreakpoint.nextfractal.twister.ui.javafx.extensionPoints.view.ViewExtensionRegistry;

@@ -4,7 +4,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 
 import com.nextbreakpoint.nextfractal.core.ui.javafx.AdvancedTextField;
-import com.nextbreakpoint.nextfractal.mandelbrot.common.IterationsElement;
+import com.nextbreakpoint.nextfractal.mandelbrot.elements.IterationsElement;
 
 public class IterationsPane extends BorderPane {
 

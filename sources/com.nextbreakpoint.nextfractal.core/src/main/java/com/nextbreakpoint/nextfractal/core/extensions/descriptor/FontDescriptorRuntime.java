@@ -25,9 +25,9 @@
  */
 package com.nextbreakpoint.nextfractal.core.extensions.descriptor;
 
-import com.nextbreakpoint.nextfractal.core.common.FontElement;
 import com.nextbreakpoint.nextfractal.core.devtools.ProcessorCardinality;
 import com.nextbreakpoint.nextfractal.core.devtools.ProcessorDescriptor;
+import com.nextbreakpoint.nextfractal.core.elements.FontElement;
 import com.nextbreakpoint.nextfractal.core.extensionPoints.descriptor.DescriptorExtensionRuntime;
 
 public class FontDescriptorRuntime extends DescriptorExtensionRuntime {
@@ -36,7 +36,7 @@ public class FontDescriptorRuntime extends DescriptorExtensionRuntime {
 	 */
 	@Override
 	public ProcessorDescriptor createDescriptor(String elementName, String defaultValue, ProcessorCardinality cardinality) {
-		return new ProcessorDescriptor(elementName, "Font", FontElement.CLASS_ID, "com.nextbreakpoint.nextfractal.core.common", "FontElement", null, null, null, null, null, null, null, null, null, null, null, null, "java.awt", "Font", defaultValue, "get", "set", cardinality);
+		return new ProcessorDescriptor(elementName, "Font", FontElement.CLASS_ID, "com.nextbreakpoint.nextfractal.core.elements", "FontElement", null, null, null, null, null, null, null, null, null, null, null, null, "java.awt", "Font", defaultValue, "get", "set", cardinality);
 	}
 
 	/**

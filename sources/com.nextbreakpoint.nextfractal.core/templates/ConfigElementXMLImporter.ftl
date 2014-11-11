@@ -14,7 +14,7 @@ import ${import};
  */
 public class ${element.configElementClassName}XMLImporter extends ValueConfigElementXMLImporter<${element.valueClassName}, ${element.configElementClassName}> {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.config.ValueConfigElementXMLImporter#parseValue(java.lang.String)
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.ValueConfigElementXMLImporter#parseValue(java.lang.String)
 	 */
 	@Override
 	protected ${element.valueClassName} parseValue(final String value) {
@@ -22,7 +22,7 @@ public class ${element.configElementClassName}XMLImporter extends ValueConfigEle
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.config.ValueConfigElementXMLImporter#createDefaultConfigElement()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.ValueConfigElementXMLImporter#createDefaultConfigElement()
 	 */
 	@Override
 	protected ${element.configElementClassName} createDefaultConfigElement() {
@@ -39,7 +39,7 @@ import ${import};
  */
 public class ${element.configElementClassName}XMLImporter extends XMLImporter<${element.configElementClassName}> {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.xml.XMLImporter#importFromElement(org.w3c.dom.Element)
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.xml.XMLImporter#importFromElement(org.w3c.dom.Element)
 	 */
 	@Override
 	public ${element.configElementClassName} importFromElement(final Element element) throws XMLImportException {

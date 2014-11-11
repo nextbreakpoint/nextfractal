@@ -30,11 +30,11 @@ import java.util.List;
 
 import org.w3c.dom.Element;
 
-import com.nextbreakpoint.nextfractal.core.tree.NodeActionValue;
-import com.nextbreakpoint.nextfractal.core.xml.XML;
-import com.nextbreakpoint.nextfractal.core.xml.XMLImportException;
-import com.nextbreakpoint.nextfractal.mandelbrot.common.RenderedPaletteElement;
-import com.nextbreakpoint.nextfractal.mandelbrot.common.RenderedPaletteElementXMLImporter;
+import com.nextbreakpoint.nextfractal.core.runtime.model.NodeActionValue;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XML;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLImportException;
+import com.nextbreakpoint.nextfractal.mandelbrot.elements.RenderedPaletteElement;
+import com.nextbreakpoint.nextfractal.mandelbrot.elements.RenderedPaletteElementXMLImporter;
 import com.nextbreakpoint.nextfractal.twister.extensions.action.PaletteNodeActionXMLImporterRuntime;
 
 /**
@@ -42,7 +42,7 @@ import com.nextbreakpoint.nextfractal.twister.extensions.action.PaletteNodeActio
  */
 public class RenderedPaletteNodeActionXMLImporterRuntime extends PaletteNodeActionXMLImporterRuntime {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.util.AbstractActionXMLImporterRuntime#importParams(com.nextbreakpoint.nextfractal.core.tree.NodeActionValue, org.w3c.dom.Element)
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.util.AbstractActionXMLImporterRuntime#importParams(com.nextbreakpoint.nextfractal.core.runtime.model.NodeActionValue, org.w3c.dom.Element)
 	 */
 	@Override
 	protected void importParams(final NodeActionValue action, final Element element) throws XMLImportException {

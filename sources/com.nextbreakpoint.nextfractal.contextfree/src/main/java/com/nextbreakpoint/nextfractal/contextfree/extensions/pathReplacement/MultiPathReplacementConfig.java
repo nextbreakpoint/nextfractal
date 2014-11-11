@@ -11,9 +11,9 @@ import com.nextbreakpoint.nextfractal.contextfree.CFDGBuilder;
 import com.nextbreakpoint.nextfractal.contextfree.extensionPoints.pathReplacement.PathReplacementExtensionConfig;
 import com.nextbreakpoint.nextfractal.contextfree.pathAdjustment.PathAdjustmentConfigElement;
 import com.nextbreakpoint.nextfractal.contextfree.pathReplacement.PathReplacementConfigElement;
-import com.nextbreakpoint.nextfractal.core.common.IntegerElement;
-import com.nextbreakpoint.nextfractal.core.config.ConfigElement;
-import com.nextbreakpoint.nextfractal.core.config.ListConfigElement;
+import com.nextbreakpoint.nextfractal.core.elements.IntegerElement;
+import com.nextbreakpoint.nextfractal.core.runtime.ConfigElement;
+import com.nextbreakpoint.nextfractal.core.runtime.ListConfigElement;
 
 /**
  * @author Andrea Medeghini
@@ -35,7 +35,7 @@ public class MultiPathReplacementConfig extends PathReplacementExtensionConfig {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.extension.ExtensionConfig#getConfigElements()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionConfig#getConfigElements()
 	 */
 	@Override
 	public List<ConfigElement> getConfigElements() {

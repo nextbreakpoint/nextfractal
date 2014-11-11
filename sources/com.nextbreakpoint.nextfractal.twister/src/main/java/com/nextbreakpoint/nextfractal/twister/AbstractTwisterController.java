@@ -30,12 +30,12 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.nextbreakpoint.nextfractal.core.tree.DefaultNodeSession;
-import com.nextbreakpoint.nextfractal.core.tree.DefaultRootNode;
-import com.nextbreakpoint.nextfractal.core.tree.NodeAction;
-import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
-import com.nextbreakpoint.nextfractal.core.tree.NodePath;
-import com.nextbreakpoint.nextfractal.core.util.RenderContext;
+import com.nextbreakpoint.nextfractal.core.RenderContext;
+import com.nextbreakpoint.nextfractal.core.runtime.model.DefaultNodeSession;
+import com.nextbreakpoint.nextfractal.core.runtime.model.DefaultRootNode;
+import com.nextbreakpoint.nextfractal.core.runtime.model.NodeAction;
+import com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject;
+import com.nextbreakpoint.nextfractal.core.runtime.model.NodePath;
 
 /**
  * @author Andrea Medeghini
@@ -62,7 +62,7 @@ public abstract class AbstractTwisterController implements TwisterController {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.TwisterController#setRenderContext(com.nextbreakpoint.nextfractal.core.util.RenderContext)
+	 * @see com.nextbreakpoint.nextfractal.twister.TwisterController#setRenderContext(com.nextbreakpoint.nextfractal.core.RenderContext)
 	 */
 	@Override
 	public void setRenderContext(final RenderContext context) {

@@ -25,7 +25,7 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.extensions.devtools;
 
-import com.nextbreakpoint.nextfractal.contextfree.common.StrokeCapElement;
+import com.nextbreakpoint.nextfractal.contextfree.elements.StrokeCapElement;
 import com.nextbreakpoint.nextfractal.core.devtools.ProcessorCardinality;
 import com.nextbreakpoint.nextfractal.core.devtools.ProcessorDescriptor;
 import com.nextbreakpoint.nextfractal.core.extensionPoints.descriptor.DescriptorExtensionRuntime;
@@ -36,7 +36,7 @@ public class StrokeCapDescriptorRuntime extends DescriptorExtensionRuntime {
 	 */
 	@Override
 	public ProcessorDescriptor createDescriptor(String elementName, String defaultValue, ProcessorCardinality cardinality) {
-		return new ProcessorDescriptor(elementName, "StrokeCap", StrokeCapElement.CLASS_ID, "com.nextbreakpoint.nextfractal.contextfree.common", "StrokeCapElement", null, null, null, null, null, null, null, null, null, null, null, null, "java.lang", "String", defaultValue, "get", "set", cardinality);
+		return new ProcessorDescriptor(elementName, "StrokeCap", StrokeCapElement.CLASS_ID, "com.nextbreakpoint.nextfractal.contextfree.elements", "StrokeCapElement", null, null, null, null, null, null, null, null, null, null, null, null, "java.lang", "String", defaultValue, "get", "set", cardinality);
 	}
 
 	/**

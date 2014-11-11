@@ -28,7 +28,7 @@ package com.nextbreakpoint.nextfractal.twister.extensions.devtools;
 import com.nextbreakpoint.nextfractal.core.devtools.ProcessorCardinality;
 import com.nextbreakpoint.nextfractal.core.devtools.ProcessorDescriptor;
 import com.nextbreakpoint.nextfractal.core.extensionPoints.descriptor.DescriptorExtensionRuntime;
-import com.nextbreakpoint.nextfractal.twister.common.PercentageElement;
+import com.nextbreakpoint.nextfractal.twister.elements.PercentageElement;
 
 public class PercentageDescriptorRuntime extends DescriptorExtensionRuntime {
 	/**
@@ -36,7 +36,7 @@ public class PercentageDescriptorRuntime extends DescriptorExtensionRuntime {
 	 */
 	@Override
 	public ProcessorDescriptor createDescriptor(String elementName, String defaultValue, ProcessorCardinality cardinality) {
-		return new ProcessorDescriptor(elementName, "Percentage", PercentageElement.CLASS_ID, "com.nextbreakpoint.nextfractal.twister.common", "PercentageElement", null, null, null, null, null, null, null, null, null, null, null, null, "com.nextbreakpoint.nextfractal.twister.util", "Percentage", defaultValue, "get", "set", cardinality);
+		return new ProcessorDescriptor(elementName, "Percentage", PercentageElement.CLASS_ID, "com.nextbreakpoint.nextfractal.twister.elements", "PercentageElement", null, null, null, null, null, null, null, null, null, null, null, null, "com.nextbreakpoint.nextfractal.twister.util", "Percentage", defaultValue, "get", "set", cardinality);
 	}
 
 	/**

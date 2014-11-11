@@ -25,12 +25,12 @@
  */
 package com.nextbreakpoint.nextfractal.twister.frame;
 
-import com.nextbreakpoint.nextfractal.core.tree.NodeEditor;
-import com.nextbreakpoint.nextfractal.core.tree.NodeValue;
-import com.nextbreakpoint.nextfractal.core.util.AbstractConfigElementListNode;
-import com.nextbreakpoint.nextfractal.core.util.AbstractConfigElementNode;
-import com.nextbreakpoint.nextfractal.core.util.ConfigElementListNodeValue;
-import com.nextbreakpoint.nextfractal.core.util.DefaultNodeEditor;
+import com.nextbreakpoint.nextfractal.core.runtime.model.DefaultNodeEditor;
+import com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor;
+import com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue;
+import com.nextbreakpoint.nextfractal.core.runtime.util.AbstractConfigElementListNode;
+import com.nextbreakpoint.nextfractal.core.runtime.util.AbstractConfigElementNode;
+import com.nextbreakpoint.nextfractal.core.runtime.util.ConfigElementListNodeValue;
 import com.nextbreakpoint.nextfractal.twister.TwisterResources;
 import com.nextbreakpoint.nextfractal.twister.frameFilter.FrameFilterConfigElement;
 import com.nextbreakpoint.nextfractal.twister.frameFilter.FrameFilterConfigElementNode;
@@ -63,7 +63,7 @@ public class FrameConfigElementNode extends AbstractConfigElementNode<FrameConfi
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.util.AbstractConfigElementNode#getConfigElement()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.util.AbstractConfigElementNode#getConfigElement()
 	 */
 	@Override
 	public FrameConfigElement getConfigElement() {
@@ -71,7 +71,7 @@ public class FrameConfigElementNode extends AbstractConfigElementNode<FrameConfi
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#updateNode()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject#updateNode()
 	 */
 	@Override
 	protected void updateChildNodes() {
@@ -126,7 +126,7 @@ public class FrameConfigElementNode extends AbstractConfigElementNode<FrameConfi
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#isEditable()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject#isEditable()
 	 */
 	@Override
 	public boolean isEditable() {
@@ -134,7 +134,7 @@ public class FrameConfigElementNode extends AbstractConfigElementNode<FrameConfi
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.DefaultNode#createNodeEditor()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.DefaultNode#createNodeEditor()
 	 */
 	@Override
 	protected NodeEditor createNodeEditor() {
@@ -155,7 +155,7 @@ public class FrameConfigElementNode extends AbstractConfigElementNode<FrameConfi
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.util.AbstractConfigElementListNode#createChildNode(com.nextbreakpoint.nextfractal.core.config.ConfigElement)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.util.AbstractConfigElementListNode#createChildNode(com.nextbreakpoint.nextfractal.core.runtime.ConfigElement)
 		 */
 		@Override
 		protected AbstractConfigElementNode<FrameFilterConfigElement> createChildNode(final FrameFilterConfigElement value) {
@@ -163,7 +163,7 @@ public class FrameConfigElementNode extends AbstractConfigElementNode<FrameConfi
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.util.AbstractConfigElementListNode#getChildValueType()
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.util.AbstractConfigElementListNode#getChildValueType()
 		 */
 		@Override
 		public Class<?> getChildValueType() {
@@ -171,7 +171,7 @@ public class FrameConfigElementNode extends AbstractConfigElementNode<FrameConfi
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.util.AbstractConfigElementListNode#createNodeValue(Object)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.util.AbstractConfigElementListNode#createNodeValue(Object)
 		 */
 		@Override
 		public NodeValue<FrameFilterConfigElement> createNodeValue(final Object value) {
@@ -205,7 +205,7 @@ public class FrameConfigElementNode extends AbstractConfigElementNode<FrameConfi
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.util.AbstractConfigElementListNode#createChildNode(com.nextbreakpoint.nextfractal.core.config.ConfigElement)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.util.AbstractConfigElementListNode#createChildNode(com.nextbreakpoint.nextfractal.core.runtime.ConfigElement)
 		 */
 		@Override
 		protected AbstractConfigElementNode<GroupLayerConfigElement> createChildNode(final GroupLayerConfigElement value) {
@@ -213,7 +213,7 @@ public class FrameConfigElementNode extends AbstractConfigElementNode<FrameConfi
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.util.AbstractConfigElementListNode#getChildValueType()
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.util.AbstractConfigElementListNode#getChildValueType()
 		 */
 		@Override
 		public Class<?> getChildValueType() {
@@ -221,7 +221,7 @@ public class FrameConfigElementNode extends AbstractConfigElementNode<FrameConfi
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.util.AbstractConfigElementListNode#createNodeValue(Object)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.util.AbstractConfigElementListNode#createNodeValue(Object)
 		 */
 		@Override
 		public NodeValue<GroupLayerConfigElement> createNodeValue(final Object value) {

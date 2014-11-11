@@ -27,12 +27,12 @@ package com.nextbreakpoint.nextfractal.mandelbrot.extensions.renderingFormula;
 
 import org.w3c.dom.Element;
 
-import com.nextbreakpoint.nextfractal.core.common.ComplexElementXMLExporter;
-import com.nextbreakpoint.nextfractal.core.xml.XMLExportException;
-import com.nextbreakpoint.nextfractal.core.xml.XMLExporter;
-import com.nextbreakpoint.nextfractal.core.xml.XMLNodeBuilder;
-import com.nextbreakpoint.nextfractal.mandelbrot.common.IterationsElementXMLExporter;
-import com.nextbreakpoint.nextfractal.mandelbrot.common.ThresholdElementXMLExporter;
+import com.nextbreakpoint.nextfractal.core.elements.ComplexElementXMLExporter;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLExportException;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLExporter;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLNodeBuilder;
+import com.nextbreakpoint.nextfractal.mandelbrot.elements.IterationsElementXMLExporter;
+import com.nextbreakpoint.nextfractal.mandelbrot.elements.ThresholdElementXMLExporter;
 import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.renderingFormula.RenderingFormulaExtensionConfig;
 
 /**
@@ -45,7 +45,7 @@ public abstract class AbstractRenderingFormulaConfigXMLExporter<T extends Render
 	protected abstract String getConfigElementClassId();
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.xml.XMLExporter#exportToElement(java.lang.Object, com.nextbreakpoint.nextfractal.core.xml.XMLNodeBuilder)
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.xml.XMLExporter#exportToElement(java.lang.Object, com.nextbreakpoint.nextfractal.core.runtime.xml.XMLNodeBuilder)
 	 */
 	@Override
 	public Element exportToElement(final T config, final XMLNodeBuilder builder) throws XMLExportException {

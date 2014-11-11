@@ -31,9 +31,9 @@ import java.util.concurrent.ThreadFactory;
 
 import org.w3c.dom.Document;
 
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XML;
 import com.nextbreakpoint.nextfractal.core.util.DefaultThreadFactory;
 import com.nextbreakpoint.nextfractal.core.util.Worker;
-import com.nextbreakpoint.nextfractal.core.xml.XML;
 import com.nextbreakpoint.nextfractal.queue.LibraryService;
 import com.nextbreakpoint.nextfractal.queue.io.ChunkedRandomAccessFile;
 import com.nextbreakpoint.nextfractal.queue.spool.DefaultJobData;

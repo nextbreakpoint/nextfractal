@@ -25,9 +25,9 @@
  */
 package com.nextbreakpoint.nextfractal.core.extensions.descriptor;
 
-import com.nextbreakpoint.nextfractal.core.common.FloatElement;
 import com.nextbreakpoint.nextfractal.core.devtools.ProcessorCardinality;
 import com.nextbreakpoint.nextfractal.core.devtools.ProcessorDescriptor;
+import com.nextbreakpoint.nextfractal.core.elements.FloatElement;
 import com.nextbreakpoint.nextfractal.core.extensionPoints.descriptor.DescriptorExtensionRuntime;
 
 public class FloatDescriptorRuntime extends DescriptorExtensionRuntime {
@@ -36,7 +36,7 @@ public class FloatDescriptorRuntime extends DescriptorExtensionRuntime {
 	 */
 	@Override
 	public ProcessorDescriptor createDescriptor(String elementName, String defaultValue, ProcessorCardinality cardinality) {
-		return new ProcessorDescriptor(elementName, "Float", FloatElement.CLASS_ID, "com.nextbreakpoint.nextfractal.core.common", "FloatElement", null, null, null, null, null, null, null, null, null, null, null, null, "java.lang", "Float", defaultValue, "get", "set", cardinality);
+		return new ProcessorDescriptor(elementName, "Float", FloatElement.CLASS_ID, "com.nextbreakpoint.nextfractal.core.elements", "FloatElement", null, null, null, null, null, null, null, null, null, null, null, null, "java.lang", "Float", defaultValue, "get", "set", cardinality);
 	}
 
 	/**

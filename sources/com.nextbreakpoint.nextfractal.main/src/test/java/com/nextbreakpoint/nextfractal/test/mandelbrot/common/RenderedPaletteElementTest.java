@@ -27,12 +27,12 @@ package com.nextbreakpoint.nextfractal.test.mandelbrot.common;
 
 import org.junit.Test;
 
+import com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject;
 import com.nextbreakpoint.nextfractal.core.test.AbsractValueElementTest;
-import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
-import com.nextbreakpoint.nextfractal.mandelbrot.common.RenderedPaletteElement;
-import com.nextbreakpoint.nextfractal.mandelbrot.common.RenderedPaletteElementNode;
-import com.nextbreakpoint.nextfractal.mandelbrot.common.RenderedPaletteElementXMLExporter;
-import com.nextbreakpoint.nextfractal.mandelbrot.common.RenderedPaletteElementXMLImporter;
+import com.nextbreakpoint.nextfractal.mandelbrot.elements.RenderedPaletteElement;
+import com.nextbreakpoint.nextfractal.mandelbrot.elements.RenderedPaletteElementNode;
+import com.nextbreakpoint.nextfractal.mandelbrot.elements.RenderedPaletteElementXMLExporter;
+import com.nextbreakpoint.nextfractal.mandelbrot.elements.RenderedPaletteElementXMLImporter;
 import com.nextbreakpoint.nextfractal.mandelbrot.util.DefaultRenderedPaletteParam;
 import com.nextbreakpoint.nextfractal.mandelbrot.util.RenderedPalette;
 import com.nextbreakpoint.nextfractal.mandelbrot.util.RenderedPaletteParam;

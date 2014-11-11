@@ -39,15 +39,15 @@ import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.WindowConstants;
 
-import com.nextbreakpoint.nextfractal.core.common.ConfigurableExtensionReferenceElement;
-import com.nextbreakpoint.nextfractal.core.common.ExtensionReferenceElement;
-import com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent;
-import com.nextbreakpoint.nextfractal.core.config.ValueChangeListener;
-import com.nextbreakpoint.nextfractal.core.extension.Extension;
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionException;
-import com.nextbreakpoint.nextfractal.core.tree.NodeSession;
+import com.nextbreakpoint.nextfractal.core.RenderContext;
+import com.nextbreakpoint.nextfractal.core.elements.ConfigurableExtensionReferenceElement;
+import com.nextbreakpoint.nextfractal.core.elements.ExtensionReferenceElement;
+import com.nextbreakpoint.nextfractal.core.runtime.ElementChangeEvent;
+import com.nextbreakpoint.nextfractal.core.runtime.ElementChangeListener;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.Extension;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionException;
+import com.nextbreakpoint.nextfractal.core.runtime.model.NodeSession;
 import com.nextbreakpoint.nextfractal.core.ui.swing.ViewContext;
-import com.nextbreakpoint.nextfractal.core.util.RenderContext;
 import com.nextbreakpoint.nextfractal.twister.ui.swing.extensionPoints.view.DefaultViewRuntime;
 import com.nextbreakpoint.nextfractal.twister.ui.swing.extensionPoints.view.ViewExtensionRuntime;
 
@@ -65,7 +65,7 @@ public class NavigationFrame extends JFrame {
 	private final NavigationModel model;
 	private ViewPanel viewPanel;
 	private final ConfigurableExtensionReferenceElement<?> configElement;
-	private final ValueChangeListener elementListener;
+	private final ElementChangeListener elementListener;
 	private final ViewContext viewContext;
 	private final String viewName;
 
@@ -95,9 +95,9 @@ public class NavigationFrame extends JFrame {
 		if (resource != null) {
 			setIconImage(getToolkit().createImage(resource));
 		}
-		elementListener = new ValueChangeListener() {
+		elementListener = new ElementChangeListener() {
 			@Override
-			public void valueChanged(final ValueChangeEvent e) {
+			public void valueChanged(final ElementChangeEvent e) {
 				switch (e.getEventType()) {
 					case ExtensionReferenceElement.EXTENSION_REFERENCE_CHANGED: {
 						if (viewPanel != null) {

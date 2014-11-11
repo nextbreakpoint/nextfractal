@@ -25,9 +25,9 @@
  */
 package com.nextbreakpoint.nextfractal.core.extensionPoints.actionXMLExporter;
 
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionRuntime;
-import com.nextbreakpoint.nextfractal.core.tree.NodeActionValue;
-import com.nextbreakpoint.nextfractal.core.xml.XMLExporter;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.runtime.model.NodeActionValue;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLExporter;
 
 /**
  * @author Andrea Medeghini

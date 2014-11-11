@@ -39,8 +39,8 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
-import com.nextbreakpoint.nextfractal.core.common.ColorElementNodeValue;
-import com.nextbreakpoint.nextfractal.core.tree.NodeEditor;
+import com.nextbreakpoint.nextfractal.core.elements.ColorElementNodeValue;
+import com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor;
 import com.nextbreakpoint.nextfractal.core.ui.swing.NodeEditorComponent;
 import com.nextbreakpoint.nextfractal.core.ui.swing.color.ColorChooser;
 import com.nextbreakpoint.nextfractal.core.ui.swing.color.ColorField;
@@ -54,7 +54,7 @@ import com.nextbreakpoint.nextfractal.core.util.Color32bit;
  */
 public class ColorElementEditorRuntime extends EditorExtensionRuntime {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.ui.swing.extensionPoints.editor.EditorExtensionRuntime#createEditor(com.nextbreakpoint.nextfractal.core.tree.NodeEditor)
+	 * @see com.nextbreakpoint.nextfractal.core.ui.swing.extensionPoints.editor.EditorExtensionRuntime#createEditor(com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor)
 	 */
 	@Override
 	public NodeEditorComponent createEditor(final NodeEditor nodeEditor) {

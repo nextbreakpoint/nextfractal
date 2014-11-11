@@ -29,9 +29,9 @@ import java.util.List;
 
 import org.w3c.dom.Element;
 
-import com.nextbreakpoint.nextfractal.core.common.StringElement;
-import com.nextbreakpoint.nextfractal.core.common.StringElementXMLImporter;
-import com.nextbreakpoint.nextfractal.core.xml.XMLImportException;
+import com.nextbreakpoint.nextfractal.core.elements.StringElement;
+import com.nextbreakpoint.nextfractal.core.elements.StringElementXMLImporter;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLImportException;
 import com.nextbreakpoint.nextfractal.twister.image.ImageConfigElement;
 import com.nextbreakpoint.nextfractal.twister.image.ImageConfigElementXMLImporter;
 import com.nextbreakpoint.nextfractal.twister.layerFilter.LayerFilterConfigElement;
@@ -58,7 +58,7 @@ public class ImageLayerConfigElementXMLImporter extends AbstractLayerConfigEleme
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.xml.XMLImporter#importFromElement(org.w3c.dom.Element)
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.xml.XMLImporter#importFromElement(org.w3c.dom.Element)
 	 */
 	@Override
 	public ImageLayerConfigElement importFromElement(final Element element) throws XMLImportException {

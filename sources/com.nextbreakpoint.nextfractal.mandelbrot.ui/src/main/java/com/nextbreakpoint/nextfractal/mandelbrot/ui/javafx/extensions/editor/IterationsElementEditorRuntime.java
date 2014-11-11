@@ -25,9 +25,9 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.ui.javafx.extensions.editor;
 
-import com.nextbreakpoint.nextfractal.core.tree.NodeValue;
+import com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.editor.NumberEditorRuntime;
-import com.nextbreakpoint.nextfractal.mandelbrot.common.IterationsElementNodeValue;
+import com.nextbreakpoint.nextfractal.mandelbrot.elements.IterationsElementNodeValue;
 
 /**
  * @author Andrea Medeghini

@@ -27,12 +27,12 @@ package com.nextbreakpoint.nextfractal.test.twister.common;
 
 import org.junit.Test;
 
-import com.nextbreakpoint.nextfractal.core.common.DoubleElement;
-import com.nextbreakpoint.nextfractal.core.common.DoubleElementNode;
-import com.nextbreakpoint.nextfractal.core.common.DoubleElementXMLExporter;
-import com.nextbreakpoint.nextfractal.core.common.DoubleElementXMLImporter;
+import com.nextbreakpoint.nextfractal.core.elements.DoubleElement;
+import com.nextbreakpoint.nextfractal.core.elements.DoubleElementNode;
+import com.nextbreakpoint.nextfractal.core.elements.DoubleElementXMLExporter;
+import com.nextbreakpoint.nextfractal.core.elements.DoubleElementXMLImporter;
+import com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject;
 import com.nextbreakpoint.nextfractal.core.test.AbsractValueElementTest;
-import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
 
 /**
  * @author Andrea Medeghini

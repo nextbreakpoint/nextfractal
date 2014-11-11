@@ -93,16 +93,16 @@ public class RegistryProcessorRuntime extends ProcessorExtensionRuntime {
 	private void prepare(Set<String> imports, List<ProcessorDescriptor> descriptors) {
 		for (ProcessorDescriptor descriptor : descriptors) {
 			if (descriptor.isExtension()) {
-				imports.add("com.nextbreakpoint.nextfractal.core.extension.Extension");
-				imports.add("com.nextbreakpoint.nextfractal.core.extension.ExtensionRegistry");
-				imports.add("com.nextbreakpoint.nextfractal.core.extension.ExtensionNotFoundException");
+				imports.add("com.nextbreakpoint.nextfractal.core.runtime.extension.Extension");
+				imports.add("com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionRegistry");
+				imports.add("com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionNotFoundException");
 				imports.add(descriptor.getExtensionRuntimePackageName() + "." + descriptor.getExtensionRuntimeClassName());  
 				imports.add(descriptor.getExtensionRegistryPackageName() + "." + descriptor.getExtensionRegistryClassName());  
 			}
 			else if (descriptor.isConfigurableExtension()) {
-				imports.add("com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtension");
-				imports.add("com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionRegistry");
-				imports.add("com.nextbreakpoint.nextfractal.core.extension.ExtensionNotFoundException");
+				imports.add("com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtension");
+				imports.add("com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtensionRegistry");
+				imports.add("com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionNotFoundException");
 				imports.add(descriptor.getExtensionConfigPackageName() + "." + descriptor.getExtensionConfigClassName());  
 				imports.add(descriptor.getExtensionRuntimePackageName() + "." + descriptor.getExtensionRuntimeClassName());  
 				imports.add(descriptor.getExtensionRegistryPackageName() + "." + descriptor.getExtensionRegistryClassName());  

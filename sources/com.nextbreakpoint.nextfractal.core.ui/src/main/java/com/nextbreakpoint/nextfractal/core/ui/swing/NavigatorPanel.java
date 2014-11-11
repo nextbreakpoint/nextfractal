@@ -54,12 +54,12 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import com.nextbreakpoint.nextfractal.core.extension.Extension;
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionNotFoundException;
-import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
-import com.nextbreakpoint.nextfractal.core.tree.NodeEvent;
-import com.nextbreakpoint.nextfractal.core.tree.NodeListener;
-import com.nextbreakpoint.nextfractal.core.tree.RootNode;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.Extension;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionNotFoundException;
+import com.nextbreakpoint.nextfractal.core.runtime.model.NodeEvent;
+import com.nextbreakpoint.nextfractal.core.runtime.model.NodeListener;
+import com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject;
+import com.nextbreakpoint.nextfractal.core.runtime.model.RootNode;
 import com.nextbreakpoint.nextfractal.core.ui.swing.extensionPoints.editor.EditorExtensionRuntime;
 
 /**
@@ -332,7 +332,7 @@ public class NavigatorPanel extends JPanel {
 
 	private final class NavigatorTreeListener implements NodeListener {
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeListener#nodeChanged(com.nextbreakpoint.nextfractal.core.tree.NodeEvent)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeListener#nodeChanged(com.nextbreakpoint.nextfractal.core.runtime.model.NodeEvent)
 		 */
 		@Override
 		public void nodeChanged(final NodeEvent e) {
@@ -348,7 +348,7 @@ public class NavigatorPanel extends JPanel {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeListener#nodeAdded(com.nextbreakpoint.nextfractal.core.tree.NodeEvent)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeListener#nodeAdded(com.nextbreakpoint.nextfractal.core.runtime.model.NodeEvent)
 		 */
 		@Override
 		public void nodeAdded(final NodeEvent e) {
@@ -362,7 +362,7 @@ public class NavigatorPanel extends JPanel {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeListener#nodeRemoved(com.nextbreakpoint.nextfractal.core.tree.NodeEvent)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeListener#nodeRemoved(com.nextbreakpoint.nextfractal.core.runtime.model.NodeEvent)
 		 */
 		@Override
 		public void nodeRemoved(final NodeEvent e) {
@@ -380,14 +380,14 @@ public class NavigatorPanel extends JPanel {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeListener#nodeAccepted(com.nextbreakpoint.nextfractal.core.tree.NodeEvent)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeListener#nodeAccepted(com.nextbreakpoint.nextfractal.core.runtime.model.NodeEvent)
 		 */
 		@Override
 		public void nodeAccepted(final NodeEvent e) {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeListener#nodeCancelled(com.nextbreakpoint.nextfractal.core.tree.NodeEvent)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeListener#nodeCancelled(com.nextbreakpoint.nextfractal.core.runtime.model.NodeEvent)
 		 */
 		@Override
 		public void nodeCancelled(final NodeEvent e) {

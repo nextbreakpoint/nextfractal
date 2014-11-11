@@ -5,7 +5,7 @@
 package com.nextbreakpoint.nextfractal.contextfree.extensionPoints.pathAdjustment;
 
 import com.nextbreakpoint.nextfractal.contextfree.renderer.support.CFModification;
-import com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtensionRuntime;
 
 /**
  * @author Andrea Medeghini

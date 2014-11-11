@@ -4,7 +4,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 
 import com.nextbreakpoint.nextfractal.core.ui.javafx.AdvancedTextField;
-import com.nextbreakpoint.nextfractal.mandelbrot.common.ThresholdElement;
+import com.nextbreakpoint.nextfractal.mandelbrot.elements.ThresholdElement;
 
 public class ThresholdPane extends BorderPane {
 

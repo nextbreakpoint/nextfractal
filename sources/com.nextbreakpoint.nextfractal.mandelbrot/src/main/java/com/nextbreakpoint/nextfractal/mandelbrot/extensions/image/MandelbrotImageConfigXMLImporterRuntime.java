@@ -30,8 +30,8 @@ import java.util.List;
 import org.w3c.dom.Element;
 
 import com.nextbreakpoint.nextfractal.core.extensionPoints.extensionConfigXMLImporter.ExtensionConfigXMLImporterExtensionRuntime;
-import com.nextbreakpoint.nextfractal.core.xml.XMLImportException;
-import com.nextbreakpoint.nextfractal.core.xml.XMLImporter;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLImportException;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLImporter;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotConfig;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotConfigXMLImporter;
 
@@ -49,7 +49,7 @@ public class MandelbrotImageConfigXMLImporterRuntime extends ExtensionConfigXMLI
 
 	public class MandelbrotImageConfigXMLImporter extends XMLImporter<MandelbrotImageConfig> {
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.xml.XMLImporter#importFromElement(org.w3c.dom.Element)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.xml.XMLImporter#importFromElement(org.w3c.dom.Element)
 		 */
 		@Override
 		public MandelbrotImageConfig importFromElement(final Element element) throws XMLImportException {

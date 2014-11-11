@@ -32,8 +32,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.VBox;
 
-import com.nextbreakpoint.nextfractal.core.common.DoubleElementNodeValue;
-import com.nextbreakpoint.nextfractal.core.tree.NodeEditor;
+import com.nextbreakpoint.nextfractal.core.elements.DoubleElementNodeValue;
+import com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.AdvancedTextField;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.NodeEditorComponent;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.extensionPoints.editor.EditorExtensionRuntime;
@@ -44,7 +44,7 @@ import com.nextbreakpoint.nextfractal.core.ui.javafx.extensions.CoreUIExtensionR
  */
 public class DoubleElementEditorRuntime extends EditorExtensionRuntime {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.ui.javafx.extensionPoints.editor.EditorExtensionRuntime#createEditor(com.nextbreakpoint.nextfractal.core.tree.NodeEditor)
+	 * @see com.nextbreakpoint.nextfractal.core.ui.javafx.extensionPoints.editor.EditorExtensionRuntime#createEditor(com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor)
 	 */
 	@Override
 	public NodeEditorComponent createEditor(final NodeEditor nodeEditor) {

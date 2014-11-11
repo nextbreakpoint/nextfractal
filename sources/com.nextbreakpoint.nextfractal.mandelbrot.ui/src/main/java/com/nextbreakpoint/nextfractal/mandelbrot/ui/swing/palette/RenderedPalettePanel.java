@@ -44,7 +44,7 @@ import javax.swing.SingleSelectionModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionReference;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionReference;
 import com.nextbreakpoint.nextfractal.core.ui.swing.palette.PaletteChangeEvent;
 import com.nextbreakpoint.nextfractal.core.ui.swing.palette.PaletteChangeListener;
 import com.nextbreakpoint.nextfractal.core.ui.swing.palette.PaletteField;

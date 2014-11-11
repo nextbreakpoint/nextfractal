@@ -25,7 +25,7 @@
  */
 package com.nextbreakpoint.nextfractal.core.ui.swing.extension;
 
-import com.nextbreakpoint.nextfractal.core.extension.Extension;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.Extension;
 
 /**
  * @author Andrea Medeghini

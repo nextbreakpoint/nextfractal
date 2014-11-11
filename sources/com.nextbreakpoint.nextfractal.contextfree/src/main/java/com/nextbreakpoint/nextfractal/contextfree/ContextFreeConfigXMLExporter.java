@@ -28,18 +28,18 @@ package com.nextbreakpoint.nextfractal.contextfree;
 import org.w3c.dom.Element;
 
 import com.nextbreakpoint.nextfractal.contextfree.cfdg.CFDGConfigElementXMLExporter;
-import com.nextbreakpoint.nextfractal.core.xml.XMLExportException;
-import com.nextbreakpoint.nextfractal.core.xml.XMLExporter;
-import com.nextbreakpoint.nextfractal.core.xml.XMLNodeBuilder;
-import com.nextbreakpoint.nextfractal.twister.common.SpeedElementXMLExporter;
-import com.nextbreakpoint.nextfractal.twister.common.ViewElementXMLExporter;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLExportException;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLExporter;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLNodeBuilder;
+import com.nextbreakpoint.nextfractal.twister.elements.SpeedElementXMLExporter;
+import com.nextbreakpoint.nextfractal.twister.elements.ViewElementXMLExporter;
 
 /**
  * @author Andrea Medeghini
  */
 public class ContextFreeConfigXMLExporter extends XMLExporter<ContextFreeConfig> {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.xml.XMLExporter#exportToElement(java.lang.Object, com.nextbreakpoint.nextfractal.core.xml.XMLNodeBuilder)
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.xml.XMLExporter#exportToElement(java.lang.Object, com.nextbreakpoint.nextfractal.core.runtime.xml.XMLNodeBuilder)
 	 */
 	@Override
 	public Element exportToElement(final ContextFreeConfig config, final XMLNodeBuilder builder) throws XMLExportException {

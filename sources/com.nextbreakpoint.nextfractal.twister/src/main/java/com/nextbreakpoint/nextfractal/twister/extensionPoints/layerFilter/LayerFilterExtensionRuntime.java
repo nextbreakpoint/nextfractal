@@ -25,7 +25,7 @@
  */
 package com.nextbreakpoint.nextfractal.twister.extensionPoints.layerFilter;
 
-import com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtensionRuntime;
 import com.nextbreakpoint.nextfractal.core.util.Surface;
 import com.nextbreakpoint.nextfractal.core.util.Tile;
 import com.nextbreakpoint.nextfractal.twister.util.Padding;
@@ -51,7 +51,7 @@ public abstract class LayerFilterExtensionRuntime<T extends LayerFilterExtension
 	public abstract Padding getPadding();
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.extension.ExtensionRuntime#dispose()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionRuntime#dispose()
 	 */
 	@Override
 	public void dispose() {

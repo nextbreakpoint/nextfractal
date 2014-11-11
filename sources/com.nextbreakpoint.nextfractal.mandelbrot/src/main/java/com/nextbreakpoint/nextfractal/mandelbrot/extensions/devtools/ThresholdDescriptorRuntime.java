@@ -28,7 +28,7 @@ package com.nextbreakpoint.nextfractal.mandelbrot.extensions.devtools;
 import com.nextbreakpoint.nextfractal.core.devtools.ProcessorCardinality;
 import com.nextbreakpoint.nextfractal.core.devtools.ProcessorDescriptor;
 import com.nextbreakpoint.nextfractal.core.extensionPoints.descriptor.DescriptorExtensionRuntime;
-import com.nextbreakpoint.nextfractal.mandelbrot.common.ThresholdElement;
+import com.nextbreakpoint.nextfractal.mandelbrot.elements.ThresholdElement;
 
 public class ThresholdDescriptorRuntime extends DescriptorExtensionRuntime {
 	/**
@@ -36,7 +36,7 @@ public class ThresholdDescriptorRuntime extends DescriptorExtensionRuntime {
 	 */
 	@Override
 	public ProcessorDescriptor createDescriptor(String elementName, String defaultValue, ProcessorCardinality cardinality) {
-		return new ProcessorDescriptor(elementName, "Threshold", ThresholdElement.CLASS_ID, "com.nextbreakpoint.nextfractal.mandelbrot.common", "ThresholdElement", null, null, null, null, null, null, null, null, null, null, null, null, "java.lang", "Double", defaultValue, "get", "set", cardinality);
+		return new ProcessorDescriptor(elementName, "Threshold", ThresholdElement.CLASS_ID, "com.nextbreakpoint.nextfractal.mandelbrot.elements", "ThresholdElement", null, null, null, null, null, null, null, null, null, null, null, null, "java.lang", "Double", defaultValue, "get", "set", cardinality);
 	}
 
 	/**

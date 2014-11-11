@@ -27,19 +27,19 @@ package com.nextbreakpoint.nextfractal.mandelbrot.extensions.colorRenderer;
 
 import org.w3c.dom.Element;
 
-import com.nextbreakpoint.nextfractal.core.common.BooleanElementXMLExporter;
-import com.nextbreakpoint.nextfractal.core.common.DoubleElementXMLExporter;
-import com.nextbreakpoint.nextfractal.core.xml.XMLExportException;
-import com.nextbreakpoint.nextfractal.core.xml.XMLNodeBuilder;
+import com.nextbreakpoint.nextfractal.core.elements.BooleanElementXMLExporter;
+import com.nextbreakpoint.nextfractal.core.elements.DoubleElementXMLExporter;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLExportException;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLNodeBuilder;
 import com.nextbreakpoint.nextfractal.mandelbrot.colorRendererFormula.ColorRendererFormulaConfigElementXMLExporter;
-import com.nextbreakpoint.nextfractal.twister.common.PercentageElementXMLExporter;
+import com.nextbreakpoint.nextfractal.twister.elements.PercentageElementXMLExporter;
 
 /**
  * @author Andrea Medeghini
  */
 public abstract class AbstractPeriodicConfigXMLExporter<T extends AbstractPeriodicConfig> extends AbstractColorRendererConfigXMLExporter<T> {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.xml.XMLExporter#exportToElement(java.lang.Object, com.nextbreakpoint.nextfractal.core.xml.XMLNodeBuilder)
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.xml.XMLExporter#exportToElement(java.lang.Object, com.nextbreakpoint.nextfractal.core.runtime.xml.XMLNodeBuilder)
 	 */
 	@Override
 	public Element exportToElement(final T config, final XMLNodeBuilder builder) throws XMLExportException {

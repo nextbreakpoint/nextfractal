@@ -4,15 +4,15 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.extensions.action;
 
-import com.nextbreakpoint.nextfractal.contextfree.common.StrokeCapElement;
-import com.nextbreakpoint.nextfractal.contextfree.common.StrokeCapElementXMLExporter;
-import com.nextbreakpoint.nextfractal.core.util.AbstractConfigElementNodeActionXMLExporterRuntime;
+import com.nextbreakpoint.nextfractal.contextfree.elements.StrokeCapElement;
+import com.nextbreakpoint.nextfractal.contextfree.elements.StrokeCapElementXMLExporter;
+import com.nextbreakpoint.nextfractal.core.runtime.util.AbstractConfigElementNodeActionXMLExporterRuntime;
 /**
  * @author Andrea Medeghini
  */
 public class StrokeCapElementNodeActionXMLExporterRuntime extends AbstractConfigElementNodeActionXMLExporterRuntime<StrokeCapElement> {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.util.AbstractConfigElementNodeActionXMLExporterRuntime#createExporter()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.util.AbstractConfigElementNodeActionXMLExporterRuntime#createExporter()
 	 */
 	@Override
 	protected StrokeCapElementXMLExporter createExporter() {

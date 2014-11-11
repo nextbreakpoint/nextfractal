@@ -4,9 +4,9 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.layout.Pane;
 
-import com.nextbreakpoint.nextfractal.core.common.ExtensionReferenceElement;
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionRegistry;
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.elements.ExtensionReferenceElement;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionRegistry;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionRuntime;
 
 public class ExtensionGridPane<T extends ExtensionRuntime> extends Pane {
 	private EventHandler<ActionEvent> onAction;

@@ -31,19 +31,19 @@ import org.w3c.dom.Element;
 
 import com.nextbreakpoint.nextfractal.contextfree.cfdg.CFDGConfigElement;
 import com.nextbreakpoint.nextfractal.contextfree.cfdg.CFDGConfigElementXMLImporter;
-import com.nextbreakpoint.nextfractal.core.xml.XMLImportException;
-import com.nextbreakpoint.nextfractal.core.xml.XMLImporter;
-import com.nextbreakpoint.nextfractal.twister.common.SpeedElement;
-import com.nextbreakpoint.nextfractal.twister.common.SpeedElementXMLImporter;
-import com.nextbreakpoint.nextfractal.twister.common.ViewElement;
-import com.nextbreakpoint.nextfractal.twister.common.ViewElementXMLImporter;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLImportException;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLImporter;
+import com.nextbreakpoint.nextfractal.twister.elements.SpeedElement;
+import com.nextbreakpoint.nextfractal.twister.elements.SpeedElementXMLImporter;
+import com.nextbreakpoint.nextfractal.twister.elements.ViewElement;
+import com.nextbreakpoint.nextfractal.twister.elements.ViewElementXMLImporter;
 
 /**
  * @author Andrea Medeghini
  */
 public class ContextFreeConfigXMLImporter extends XMLImporter<ContextFreeConfig> {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.xml.XMLImporter#importFromElement(org.w3c.dom.Element)
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.xml.XMLImporter#importFromElement(org.w3c.dom.Element)
 	 */
 	@Override
 	public ContextFreeConfig importFromElement(final Element element) throws XMLImportException {

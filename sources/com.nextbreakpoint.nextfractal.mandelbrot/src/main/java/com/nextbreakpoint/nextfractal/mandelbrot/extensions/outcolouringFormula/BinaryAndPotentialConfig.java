@@ -27,8 +27,8 @@ package com.nextbreakpoint.nextfractal.mandelbrot.extensions.outcolouringFormula
 
 import java.util.List;
 
-import com.nextbreakpoint.nextfractal.core.config.ConfigElement;
-import com.nextbreakpoint.nextfractal.twister.common.PercentageElement;
+import com.nextbreakpoint.nextfractal.core.runtime.ConfigElement;
+import com.nextbreakpoint.nextfractal.twister.elements.PercentageElement;
 
 /**
  * @author Andrea Medeghini
@@ -39,7 +39,7 @@ public class BinaryAndPotentialConfig extends AbstractOutcolouringPaletteConfig 
 	private PercentageElement offsetElement;
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.extension.ExtensionConfig#getConfigElements()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionConfig#getConfigElements()
 	 */
 	@Override
 	public List<ConfigElement> getConfigElements() {

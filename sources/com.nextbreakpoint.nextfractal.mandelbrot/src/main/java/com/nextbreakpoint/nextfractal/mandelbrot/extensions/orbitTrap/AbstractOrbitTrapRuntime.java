@@ -44,7 +44,7 @@ public abstract class AbstractOrbitTrapRuntime<T extends OrbitTrapExtensionConfi
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.extension.ExtensionRuntime#dispose()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionRuntime#dispose()
 	 */
 	@Override
 	public void dispose() {

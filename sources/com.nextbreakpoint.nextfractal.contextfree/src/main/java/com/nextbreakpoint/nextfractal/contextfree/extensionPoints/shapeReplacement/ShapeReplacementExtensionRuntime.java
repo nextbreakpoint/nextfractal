@@ -6,7 +6,7 @@ package com.nextbreakpoint.nextfractal.contextfree.extensionPoints.shapeReplacem
 
 import com.nextbreakpoint.nextfractal.contextfree.renderer.support.CFBuilder;
 import com.nextbreakpoint.nextfractal.contextfree.renderer.support.CFRule;
-import com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtensionRuntime;
 
 /**
  * @author Andrea Medeghini

@@ -25,9 +25,9 @@
  */
 package com.nextbreakpoint.nextfractal.twister.util;
 
-import com.nextbreakpoint.nextfractal.core.config.ValueConfigElement;
+import com.nextbreakpoint.nextfractal.core.runtime.ValueConfigElement;
 import com.nextbreakpoint.nextfractal.twister.TwisterResources;
-import com.nextbreakpoint.nextfractal.twister.common.PercentageElementNode;
+import com.nextbreakpoint.nextfractal.twister.elements.PercentageElementNode;
 
 /**
  * @author Andrea Medeghini

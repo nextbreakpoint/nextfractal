@@ -25,8 +25,8 @@
  */
 package com.nextbreakpoint.nextfractal.twister.util;
 
-import com.nextbreakpoint.nextfractal.core.common.BooleanElementNode;
-import com.nextbreakpoint.nextfractal.core.config.ValueConfigElement;
+import com.nextbreakpoint.nextfractal.core.elements.BooleanElementNode;
+import com.nextbreakpoint.nextfractal.core.runtime.ValueConfigElement;
 import com.nextbreakpoint.nextfractal.twister.TwisterResources;
 
 /**

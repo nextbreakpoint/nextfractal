@@ -4,7 +4,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 
-import com.nextbreakpoint.nextfractal.core.common.StringElement;
+import com.nextbreakpoint.nextfractal.core.elements.StringElement;
 
 public class StringPane extends BorderPane {
 

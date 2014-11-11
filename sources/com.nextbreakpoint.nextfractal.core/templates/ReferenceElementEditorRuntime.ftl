@@ -21,7 +21,7 @@ public class <#if parentRuntimeClass?exists>${extension.elementName?cap_first}Re
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.swing.editor.ReferenceElementEditorRuntime#createNodeValue(com.nextbreakpoint.nextfractal.core.extension.ExtensionReference)
+	 * @see com.nextbreakpoint.nextfractal.core.swing.editor.ReferenceElementEditorRuntime#createNodeValue(com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionReference)
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
@@ -133,7 +133,7 @@ public class <#if parentRuntimeClass?exists>${extension.elementName?cap_first}Re
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.swing.editor.ConfigurableReferenceElementEditorRuntime#createNodeValue(com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionReference)
+	 * @see com.nextbreakpoint.nextfractal.core.swing.editor.ConfigurableReferenceElementEditorRuntime#createNodeValue(com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtensionReference)
 	 */
 	@SuppressWarnings("unchecked")
 	@Override

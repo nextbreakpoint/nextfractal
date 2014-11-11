@@ -29,7 +29,7 @@ import java.util.List;
 
 import org.w3c.dom.Element;
 
-import com.nextbreakpoint.nextfractal.core.xml.XMLImportException;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLImportException;
 import com.nextbreakpoint.nextfractal.mandelbrot.paletteRenderer.PaletteRendererConfigElement;
 import com.nextbreakpoint.nextfractal.mandelbrot.paletteRenderer.PaletteRendererConfigElementXMLImporter;
 

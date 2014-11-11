@@ -107,7 +107,7 @@ public abstract class AbstractIncolouringPaletteRuntime<T extends AbstractIncolo
 	protected abstract int renderIndex(RenderedPoint cp);
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionRuntime#isChanged()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtensionRuntime#isChanged()
 	 */
 	@Override
 	public boolean isChanged() {
@@ -116,7 +116,7 @@ public abstract class AbstractIncolouringPaletteRuntime<T extends AbstractIncolo
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionRuntime#configReloaded()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtensionRuntime#configReloaded()
 	 */
 	@Override
 	public void configReloaded() {

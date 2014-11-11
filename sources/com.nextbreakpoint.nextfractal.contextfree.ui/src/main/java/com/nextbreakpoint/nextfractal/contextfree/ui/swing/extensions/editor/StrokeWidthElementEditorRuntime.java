@@ -25,8 +25,8 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.ui.swing.extensions.editor;
 
-import com.nextbreakpoint.nextfractal.contextfree.common.StrokeWidthElementNodeValue;
-import com.nextbreakpoint.nextfractal.core.tree.NodeValue;
+import com.nextbreakpoint.nextfractal.contextfree.elements.StrokeWidthElementNodeValue;
+import com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue;
 import com.nextbreakpoint.nextfractal.core.ui.swing.editor.NumberEditorRuntime;
 
 /**

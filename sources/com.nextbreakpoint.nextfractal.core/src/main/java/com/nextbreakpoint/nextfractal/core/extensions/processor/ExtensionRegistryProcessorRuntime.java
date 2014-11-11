@@ -84,12 +84,12 @@ public class ExtensionRegistryProcessorRuntime extends ProcessorExtensionRuntime
 
 	private void prepare(Set<String> imports, ProcessorDescriptor descriptor) {
 		if (descriptor.isExtension()) {
-			imports.add("com.nextbreakpoint.nextfractal.core.extension.osgi.OSGiExtensionBuilder");
-			imports.add("com.nextbreakpoint.nextfractal.core.extension.osgi.OSGiExtensionRegistry");
+			imports.add("com.nextbreakpoint.nextfractal.core.runtime.extension.osgi.OSGiExtensionBuilder");
+			imports.add("com.nextbreakpoint.nextfractal.core.runtime.extension.osgi.OSGiExtensionRegistry");
 		}
 		else if (descriptor.isConfigurableExtension()) {
-			imports.add("com.nextbreakpoint.nextfractal.core.extension.osgi.OSGiConfigurableExtensionBuilder");
-			imports.add("com.nextbreakpoint.nextfractal.core.extension.osgi.OSGiConfigurableExtensionRegistry");
+			imports.add("com.nextbreakpoint.nextfractal.core.runtime.extension.osgi.OSGiConfigurableExtensionBuilder");
+			imports.add("com.nextbreakpoint.nextfractal.core.runtime.extension.osgi.OSGiConfigurableExtensionRegistry");
 		}
 	}
 }

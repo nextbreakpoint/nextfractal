@@ -25,8 +25,8 @@
  */
 package com.nextbreakpoint.nextfractal.core.ui.javafx.extensionPoints.editor;
 
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionRuntime;
-import com.nextbreakpoint.nextfractal.core.tree.NodeEditor;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.NodeEditorComponent;
 
 /**
@@ -40,7 +40,7 @@ public abstract class EditorExtensionRuntime extends ExtensionRuntime {
 	public abstract NodeEditorComponent createEditor(NodeEditor nodeEditor);
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.extension.ExtensionRuntime#dispose()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionRuntime#dispose()
 	 */
 	@Override
 	public void dispose() {

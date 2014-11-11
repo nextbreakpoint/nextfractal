@@ -93,11 +93,11 @@ public class EnumeratorProcessorRuntime extends ProcessorExtensionRuntime {
 	private void prepareEnumerator(Set<String> imports, ProcessorDescriptor descriptor, Map<String, String> variables) {
 		imports.add("java.util.LinkedList");
 		imports.add("java.util.List");
-		imports.add("com.nextbreakpoint.nextfractal.core.extension.Extension");
-		imports.add("com.nextbreakpoint.nextfractal.core.extension.ExtensionNotFoundException");
-		imports.add("com.nextbreakpoint.nextfractal.core.scripting.JSException");
-		imports.add("com.nextbreakpoint.nextfractal.core.scripting.JSExtension");
-		imports.add("com.nextbreakpoint.nextfractal.core.scripting.extension.EnumeratorExtensionRuntime");
+		imports.add("com.nextbreakpoint.nextfractal.core.runtime.extension.Extension");
+		imports.add("com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionNotFoundException");
+		imports.add("com.nextbreakpoint.nextfractal.core.runtime.scripting.JSException");
+		imports.add("com.nextbreakpoint.nextfractal.core.runtime.scripting.JSExtension");
+		imports.add("com.nextbreakpoint.nextfractal.core.runtime.scripting.extension.EnumeratorExtensionRuntime");
 		imports.add(descriptor.getRegistryPackageName() + "." + descriptor.getRegistryClassName());
 		imports.add(descriptor.getExtensionRuntimePackageName() + "." + descriptor.getExtensionRuntimeClassName());
 	}

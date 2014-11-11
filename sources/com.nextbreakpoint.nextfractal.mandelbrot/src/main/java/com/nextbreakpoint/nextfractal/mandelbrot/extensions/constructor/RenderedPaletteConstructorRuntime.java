@@ -26,7 +26,7 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.extensions.constructor;
 
 import com.nextbreakpoint.nextfractal.core.extensionPoints.constructor.ConstructorExtensionRuntime;
-import com.nextbreakpoint.nextfractal.core.scripting.JSException;
+import com.nextbreakpoint.nextfractal.core.runtime.scripting.JSException;
 import com.nextbreakpoint.nextfractal.mandelbrot.util.RenderedPalette;
 import com.nextbreakpoint.nextfractal.mandelbrot.util.RenderedPaletteParam;
 

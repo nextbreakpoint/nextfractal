@@ -25,7 +25,7 @@
  */
 package com.nextbreakpoint.nextfractal.twister.extensionPoints.effect;
 
-import com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtensionRuntime;
 import com.nextbreakpoint.nextfractal.core.util.IntegerVector2D;
 import com.nextbreakpoint.nextfractal.core.util.Surface;
 
@@ -45,7 +45,7 @@ public abstract class EffectExtensionRuntime<T extends EffectExtensionConfig> ex
 	public abstract void renderImage(Surface dst);
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.extension.ExtensionRuntime#dispose()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionRuntime#dispose()
 	 */
 	@Override
 	public void dispose() {

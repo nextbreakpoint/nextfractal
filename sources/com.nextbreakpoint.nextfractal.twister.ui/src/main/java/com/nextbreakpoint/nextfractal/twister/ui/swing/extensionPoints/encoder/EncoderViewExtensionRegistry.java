@@ -25,8 +25,8 @@
  */
 package com.nextbreakpoint.nextfractal.twister.ui.swing.extensionPoints.encoder;
 
-import com.nextbreakpoint.nextfractal.core.extension.sl.SLExtensionBuilder;
-import com.nextbreakpoint.nextfractal.core.extension.sl.SLExtensionRegistry;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.sl.SLExtensionBuilder;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.sl.SLExtensionRegistry;
 
 /**
  * @author Andrea Medeghini

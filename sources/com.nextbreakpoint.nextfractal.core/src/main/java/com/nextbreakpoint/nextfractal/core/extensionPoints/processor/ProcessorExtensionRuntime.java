@@ -30,7 +30,7 @@ import java.util.Map;
 
 import com.nextbreakpoint.nextfractal.core.devtools.DevToolsException;
 import com.nextbreakpoint.nextfractal.core.devtools.ProcessorParameters;
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionRuntime;
 
 /**
  * @author Andrea Medeghini

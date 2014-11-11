@@ -30,7 +30,7 @@ import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
 
 import com.nextbreakpoint.nextfractal.core.util.DoubleVector2D;
-import com.nextbreakpoint.nextfractal.mandelbrot.common.CriteriaElement;
+import com.nextbreakpoint.nextfractal.mandelbrot.elements.CriteriaElement;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RenderedPoint;
 
 /**

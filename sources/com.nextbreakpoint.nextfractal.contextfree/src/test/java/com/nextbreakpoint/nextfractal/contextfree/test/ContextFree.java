@@ -37,10 +37,10 @@ import com.nextbreakpoint.nextfractal.core.devtools.DevToolsRegistry;
 import com.nextbreakpoint.nextfractal.core.devtools.ProcessorCardinality;
 import com.nextbreakpoint.nextfractal.core.devtools.ProcessorDescriptor;
 import com.nextbreakpoint.nextfractal.core.devtools.ProcessorParameters;
-import com.nextbreakpoint.nextfractal.core.extension.Extension;
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionException;
 import com.nextbreakpoint.nextfractal.core.extensionPoints.descriptor.DescriptorExtensionRuntime;
 import com.nextbreakpoint.nextfractal.core.extensionPoints.processor.ProcessorExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.Extension;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionException;
 
 public class ContextFree {
 	private ProcessorParameters createCFDGParameters(Map<String, DescriptorExtensionRuntime> descriptorExtensionMap) {
@@ -63,31 +63,31 @@ public class ContextFree {
 
 	private ProcessorParameters createFigureParameters(Map<String, DescriptorExtensionRuntime> descriptorExtensionMap) {
 		List<ProcessorDescriptor> descriptors = new LinkedList<ProcessorDescriptor>();
-		descriptors.add(new ProcessorDescriptor("extension", "Figure", "Figure", "com.nextbreakpoint.nextfractal.core.common", "ConfigurableExtensionReferenceElement", null, null, "com.nextbreakpoint.nextfractal.contextfree.cfdg.figure.extension", "FigureExtensionConfig", "com.nextbreakpoint.nextfractal.contextfree.cfdg.figure.extension", "FigureExtensionRuntime", null, null, "com.nextbreakpoint.nextfractal.contextfree", "ContextFreeRegistry", null, null, null, null, null, "get", "set", ProcessorCardinality.NONE));
+		descriptors.add(new ProcessorDescriptor("extension", "Figure", "Figure", "com.nextbreakpoint.nextfractal.core.elements", "ConfigurableExtensionReferenceElement", null, null, "com.nextbreakpoint.nextfractal.contextfree.cfdg.figure.extension", "FigureExtensionConfig", "com.nextbreakpoint.nextfractal.contextfree.cfdg.figure.extension", "FigureExtensionRuntime", null, null, "com.nextbreakpoint.nextfractal.contextfree", "ContextFreeRegistry", null, null, null, null, null, "get", "set", ProcessorCardinality.NONE));
 		return new ProcessorParameters(new ProcessorDescriptor("figure", "Figure", "Figure", "com.nextbreakpoint.nextfractal.contextfree.cfdg.figure", "FigureConfigElement", "com.nextbreakpoint.nextfractal.contextfree.cfdg.figure", "FigureRuntimeElement", null, null, null, null, null, null, null, null, "com.nextbreakpoint.nextfractal.contextfree", "ContextFreeResources", null, null, null, "get", "set", ProcessorCardinality.NONE), descriptors);
 	}
 	
 	private ProcessorParameters createShapeAdjustmentParameters(Map<String, DescriptorExtensionRuntime> descriptorExtensionMap) {
 		List<ProcessorDescriptor> descriptors = new LinkedList<ProcessorDescriptor>();
-		descriptors.add(new ProcessorDescriptor("extension", "ShapeAdjustment", "ShapeAdjustment", "com.nextbreakpoint.nextfractal.core.common", "ConfigurableExtensionReferenceElement", null, null, "com.nextbreakpoint.nextfractal.contextfree.cfdg.shapeAdjustment.extension", "ShapeAdjustmentExtensionConfig", "com.nextbreakpoint.nextfractal.contextfree.cfdg.shapeAdjustment.extension", "ShapeAdjustmentExtensionRuntime", null, null, "com.nextbreakpoint.nextfractal.contextfree", "ContextFreeRegistry", null, null, null, null, null, "get", "set", ProcessorCardinality.NONE));
+		descriptors.add(new ProcessorDescriptor("extension", "ShapeAdjustment", "ShapeAdjustment", "com.nextbreakpoint.nextfractal.core.elements", "ConfigurableExtensionReferenceElement", null, null, "com.nextbreakpoint.nextfractal.contextfree.cfdg.shapeAdjustment.extension", "ShapeAdjustmentExtensionConfig", "com.nextbreakpoint.nextfractal.contextfree.cfdg.shapeAdjustment.extension", "ShapeAdjustmentExtensionRuntime", null, null, "com.nextbreakpoint.nextfractal.contextfree", "ContextFreeRegistry", null, null, null, null, null, "get", "set", ProcessorCardinality.NONE));
 		return new ProcessorParameters(new ProcessorDescriptor("shapeAdjustment", "ShapeAdjustment", "ShapeAdjustment", "com.nextbreakpoint.nextfractal.contextfree.cfdg.shapeAdjustment", "ShapeAdjustmentConfigElement", "com.nextbreakpoint.nextfractal.contextfree.cfdg.shapeAdjustment", "ShapeAdjustmentRuntimeElement", null, null, null, null, null, null, null, null, "com.nextbreakpoint.nextfractal.contextfree", "ContextFreeResources", null, null, null, "get", "set", ProcessorCardinality.NONE), descriptors);
 	}
 
 	private ProcessorParameters createShapeReplacementParameters(Map<String, DescriptorExtensionRuntime> descriptorExtensionMap) {
 		List<ProcessorDescriptor> descriptors = new LinkedList<ProcessorDescriptor>();
-		descriptors.add(new ProcessorDescriptor("extension", "ShapeReplacement", "ShapeReplacement", "com.nextbreakpoint.nextfractal.core.common", "ConfigurableExtensionReferenceElement", null, null, "com.nextbreakpoint.nextfractal.contextfree.cfdg.shapeReplacement.extension", "ShapeReplacementExtensionConfig", "com.nextbreakpoint.nextfractal.contextfree.cfdg.shapeReplacement.extension", "ShapeReplacementExtensionRuntime", null, null, "com.nextbreakpoint.nextfractal.contextfree", "ContextFreeRegistry", null, null, null, null, null, "get", "set", ProcessorCardinality.NONE));
+		descriptors.add(new ProcessorDescriptor("extension", "ShapeReplacement", "ShapeReplacement", "com.nextbreakpoint.nextfractal.core.elements", "ConfigurableExtensionReferenceElement", null, null, "com.nextbreakpoint.nextfractal.contextfree.cfdg.shapeReplacement.extension", "ShapeReplacementExtensionConfig", "com.nextbreakpoint.nextfractal.contextfree.cfdg.shapeReplacement.extension", "ShapeReplacementExtensionRuntime", null, null, "com.nextbreakpoint.nextfractal.contextfree", "ContextFreeRegistry", null, null, null, null, null, "get", "set", ProcessorCardinality.NONE));
 		return new ProcessorParameters(new ProcessorDescriptor("shapeReplacement", "ShapeReplacement", "ShapeReplacement", "com.nextbreakpoint.nextfractal.contextfree.cfdg.shapeReplacement", "ShapeReplacementConfigElement", "com.nextbreakpoint.nextfractal.contextfree.cfdg.shapeReplacement", "ShapeReplacementRuntimeElement", null, null, null, null, null, null, null, null, "com.nextbreakpoint.nextfractal.contextfree", "ContextFreeResources", null, null, null, "get", "set", ProcessorCardinality.NONE), descriptors);
 	}
 
 	private ProcessorParameters createPathAdjustmentParameters(Map<String, DescriptorExtensionRuntime> descriptorExtensionMap) {
 		List<ProcessorDescriptor> descriptors = new LinkedList<ProcessorDescriptor>();
-		descriptors.add(new ProcessorDescriptor("extension", "PathAdjustment", "PathAdjustment", "com.nextbreakpoint.nextfractal.core.common", "ConfigurableExtensionReferenceElement", null, null, "com.nextbreakpoint.nextfractal.contextfree.cfdg.pathAdjustment.extension", "PathAdjustmentExtensionConfig", "com.nextbreakpoint.nextfractal.contextfree.cfdg.pathAdjustment.extension", "PathAdjustmentExtensionRuntime", null, null, "com.nextbreakpoint.nextfractal.contextfree", "ContextFreeRegistry", null, null, null, null, null, "get", "set", ProcessorCardinality.NONE));
+		descriptors.add(new ProcessorDescriptor("extension", "PathAdjustment", "PathAdjustment", "com.nextbreakpoint.nextfractal.core.elements", "ConfigurableExtensionReferenceElement", null, null, "com.nextbreakpoint.nextfractal.contextfree.cfdg.pathAdjustment.extension", "PathAdjustmentExtensionConfig", "com.nextbreakpoint.nextfractal.contextfree.cfdg.pathAdjustment.extension", "PathAdjustmentExtensionRuntime", null, null, "com.nextbreakpoint.nextfractal.contextfree", "ContextFreeRegistry", null, null, null, null, null, "get", "set", ProcessorCardinality.NONE));
 		return new ProcessorParameters(new ProcessorDescriptor("pathAdjustment", "PathAdjustment", "PathAdjustment", "com.nextbreakpoint.nextfractal.contextfree.cfdg.pathAdjustment", "PathAdjustmentConfigElement", "com.nextbreakpoint.nextfractal.contextfree.cfdg.pathAdjustment", "PathAdjustmentRuntimeElement", null, null, null, null, null, null, null, null, "com.nextbreakpoint.nextfractal.contextfree", "ContextFreeResources", null, null, null, "get", "set", ProcessorCardinality.NONE), descriptors);
 	}
 	
 	private ProcessorParameters createPathReplacementParameters(Map<String, DescriptorExtensionRuntime> descriptorExtensionMap) {
 		List<ProcessorDescriptor> descriptors = new LinkedList<ProcessorDescriptor>();
-		descriptors.add(new ProcessorDescriptor("extension", "PathReplacement", "PathReplacement", "com.nextbreakpoint.nextfractal.core.common", "ConfigurableExtensionReferenceElement", null, null, "com.nextbreakpoint.nextfractal.contextfree.cfdg.pathReplacement.extension", "PathReplacementExtensionConfig", "com.nextbreakpoint.nextfractal.contextfree.cfdg.pathReplacement.extension", "PathReplacementExtensionRuntime", null, null, "com.nextbreakpoint.nextfractal.contextfree", "ContextFreeRegistry", null, null, null, null, null, "get", "set", ProcessorCardinality.NONE));
+		descriptors.add(new ProcessorDescriptor("extension", "PathReplacement", "PathReplacement", "com.nextbreakpoint.nextfractal.core.elements", "ConfigurableExtensionReferenceElement", null, null, "com.nextbreakpoint.nextfractal.contextfree.cfdg.pathReplacement.extension", "PathReplacementExtensionConfig", "com.nextbreakpoint.nextfractal.contextfree.cfdg.pathReplacement.extension", "PathReplacementExtensionRuntime", null, null, "com.nextbreakpoint.nextfractal.contextfree", "ContextFreeRegistry", null, null, null, null, null, "get", "set", ProcessorCardinality.NONE));
 		return new ProcessorParameters(new ProcessorDescriptor("pathReplacement", "PathReplacement", "PathReplacement", "com.nextbreakpoint.nextfractal.contextfree.cfdg.pathReplacement", "PathReplacementConfigElement", "com.nextbreakpoint.nextfractal.contextfree.cfdg.pathReplacement", "PathReplacementRuntimeElement", null, null, null, null, null, null, null, null, "com.nextbreakpoint.nextfractal.contextfree", "ContextFreeResources", null, null, null, "get", "set", ProcessorCardinality.NONE), descriptors);
 	}
 
@@ -552,19 +552,19 @@ public class ContextFree {
 	}
 
 	private ProcessorParameters createFillRuleElementParameters(Map<String, DescriptorExtensionRuntime> descriptorExtensionMap) {
-		return new ProcessorParameters(new ProcessorDescriptor("fillRule", "FillRule", "FillRule", "com.nextbreakpoint.nextfractal.contextfree.common", "FillRuleElement", null, null, null, null, null, null, null, null, null, null, "com.nextbreakpoint.nextfractal.contextfree", "ContextFreeResources", "java.lang", "String", "\"non-zero\"", "get", "set", ProcessorCardinality.NONE), new LinkedList<ProcessorDescriptor>());
+		return new ProcessorParameters(new ProcessorDescriptor("fillRule", "FillRule", "FillRule", "com.nextbreakpoint.nextfractal.contextfree.elements", "FillRuleElement", null, null, null, null, null, null, null, null, null, null, "com.nextbreakpoint.nextfractal.contextfree", "ContextFreeResources", "java.lang", "String", "\"non-zero\"", "get", "set", ProcessorCardinality.NONE), new LinkedList<ProcessorDescriptor>());
 	}
 
 	private ProcessorParameters createStrokeJoinElementParameters(Map<String, DescriptorExtensionRuntime> descriptorExtensionMap) {
-		return new ProcessorParameters(new ProcessorDescriptor("strokeJoin", "StrokeJoin", "StrokeJoin", "com.nextbreakpoint.nextfractal.contextfree.common", "StrokeJoinElement", null, null, null, null, null, null, null, null, null, null, "com.nextbreakpoint.nextfractal.contextfree", "ContextFreeResources", "java.lang", "String", "\"butt\"", "get", "set", ProcessorCardinality.NONE), new LinkedList<ProcessorDescriptor>());
+		return new ProcessorParameters(new ProcessorDescriptor("strokeJoin", "StrokeJoin", "StrokeJoin", "com.nextbreakpoint.nextfractal.contextfree.elements", "StrokeJoinElement", null, null, null, null, null, null, null, null, null, null, "com.nextbreakpoint.nextfractal.contextfree", "ContextFreeResources", "java.lang", "String", "\"butt\"", "get", "set", ProcessorCardinality.NONE), new LinkedList<ProcessorDescriptor>());
 	}
 
 	private ProcessorParameters createStrokeCapElementParameters(Map<String, DescriptorExtensionRuntime> descriptorExtensionMap) {
-		return new ProcessorParameters(new ProcessorDescriptor("strokeCap", "StrokeCap", "StrokeCap", "com.nextbreakpoint.nextfractal.contextfree.common", "StrokeCapElement", null, null, null, null, null, null, null, null, null, null, "com.nextbreakpoint.nextfractal.contextfree", "ContextFreeResources", "java.lang", "String", "\"miter\"", "get", "set", ProcessorCardinality.NONE), new LinkedList<ProcessorDescriptor>());
+		return new ProcessorParameters(new ProcessorDescriptor("strokeCap", "StrokeCap", "StrokeCap", "com.nextbreakpoint.nextfractal.contextfree.elements", "StrokeCapElement", null, null, null, null, null, null, null, null, null, null, "com.nextbreakpoint.nextfractal.contextfree", "ContextFreeResources", "java.lang", "String", "\"miter\"", "get", "set", ProcessorCardinality.NONE), new LinkedList<ProcessorDescriptor>());
 	}
 
 	private ProcessorParameters createStrokeWidthElementParameters(Map<String, DescriptorExtensionRuntime> descriptorExtensionMap) {
-		return new ProcessorParameters(new ProcessorDescriptor("strokeWidth", "StrokeWidth", "StrokeWidth", "com.nextbreakpoint.nextfractal.contextfree.common", "StrokeWidthElement", null, null, null, null, null, null, null, null, null, null, "com.nextbreakpoint.nextfractal.contextfree", "ContextFreeResources", "java.lang", "Float", "1f", "get", "set", ProcessorCardinality.NONE), new LinkedList<ProcessorDescriptor>());
+		return new ProcessorParameters(new ProcessorDescriptor("strokeWidth", "StrokeWidth", "StrokeWidth", "com.nextbreakpoint.nextfractal.contextfree.elements", "StrokeWidthElement", null, null, null, null, null, null, null, null, null, null, "com.nextbreakpoint.nextfractal.contextfree", "ContextFreeResources", "java.lang", "Float", "1f", "get", "set", ProcessorCardinality.NONE), new LinkedList<ProcessorDescriptor>());
 	}
 
 	private void populateProcessorExtensionMap(Map<String, ProcessorExtensionRuntime> map) {

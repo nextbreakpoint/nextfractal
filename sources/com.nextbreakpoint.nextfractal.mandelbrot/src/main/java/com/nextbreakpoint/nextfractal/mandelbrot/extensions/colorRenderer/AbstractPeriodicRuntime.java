@@ -58,7 +58,7 @@ public abstract class AbstractPeriodicRuntime<T extends AbstractPeriodicConfig> 
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionRuntime#isChanged()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtensionRuntime#isChanged()
 	 */
 	@Override
 	public boolean isChanged() {
@@ -67,7 +67,7 @@ public abstract class AbstractPeriodicRuntime<T extends AbstractPeriodicConfig> 
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionRuntime#configReloaded()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtensionRuntime#configReloaded()
 	 */
 	@Override
 	public void configReloaded() {

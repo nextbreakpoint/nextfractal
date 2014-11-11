@@ -39,7 +39,7 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
-import com.nextbreakpoint.nextfractal.core.tree.NodeEditor;
+import com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor;
 import com.nextbreakpoint.nextfractal.core.ui.swing.NodeEditorComponent;
 import com.nextbreakpoint.nextfractal.core.ui.swing.extensionPoints.editor.EditorExtensionRuntime;
 import com.nextbreakpoint.nextfractal.core.ui.swing.palette.PaletteChangeEvent;
@@ -48,7 +48,7 @@ import com.nextbreakpoint.nextfractal.core.ui.swing.palette.PaletteField;
 import com.nextbreakpoint.nextfractal.core.ui.swing.palette.PaletteFieldModel;
 import com.nextbreakpoint.nextfractal.core.ui.swing.util.GUIFactory;
 import com.nextbreakpoint.nextfractal.core.util.Palette;
-import com.nextbreakpoint.nextfractal.mandelbrot.common.RenderedPaletteElementNodeValue;
+import com.nextbreakpoint.nextfractal.mandelbrot.elements.RenderedPaletteElementNodeValue;
 import com.nextbreakpoint.nextfractal.mandelbrot.ui.swing.extensions.MandelbrotSwingExtensionResources;
 import com.nextbreakpoint.nextfractal.mandelbrot.ui.swing.palette.DefaultRenderedPaletteModel;
 import com.nextbreakpoint.nextfractal.mandelbrot.ui.swing.palette.RenderedPaletteEditor;
@@ -60,7 +60,7 @@ import com.nextbreakpoint.nextfractal.mandelbrot.util.RenderedPalette;
  */
 public class RenderedPaletteElementEditorRuntime extends EditorExtensionRuntime {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.ui.swing.extensionPoints.editor.EditorExtensionRuntime#createEditor(com.nextbreakpoint.nextfractal.core.tree.NodeEditor)
+	 * @see com.nextbreakpoint.nextfractal.core.ui.swing.extensionPoints.editor.EditorExtensionRuntime#createEditor(com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor)
 	 */
 	@Override
 	public NodeEditorComponent createEditor(final NodeEditor nodeEditor) {

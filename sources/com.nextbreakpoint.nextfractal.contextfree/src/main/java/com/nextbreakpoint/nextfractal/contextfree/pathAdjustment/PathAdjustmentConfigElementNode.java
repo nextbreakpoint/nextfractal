@@ -6,12 +6,12 @@ package com.nextbreakpoint.nextfractal.contextfree.pathAdjustment;
 
 import com.nextbreakpoint.nextfractal.contextfree.ContextFreeResources;
 import com.nextbreakpoint.nextfractal.contextfree.extensionPoints.pathAdjustment.PathAdjustmentExtensionConfig;
-import com.nextbreakpoint.nextfractal.core.common.ConfigurableExtensionReferenceElementNode;
-import com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionReference;
-import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
-import com.nextbreakpoint.nextfractal.core.tree.NodeEditor;
-import com.nextbreakpoint.nextfractal.core.tree.NodeValue;
-import com.nextbreakpoint.nextfractal.core.util.AbstractConfigElementNode;
+import com.nextbreakpoint.nextfractal.core.elements.ConfigurableExtensionReferenceElementNode;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtensionReference;
+import com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor;
+import com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject;
+import com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue;
+import com.nextbreakpoint.nextfractal.core.runtime.util.AbstractConfigElementNode;
 
 /**
  * @author Andrea Medeghini
@@ -50,7 +50,7 @@ public class PathAdjustmentConfigElementNode extends AbstractConfigElementNode<P
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.util.AbstractConfigElementNode#getConfigElement()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.util.AbstractConfigElementNode#getConfigElement()
 	 */
 	@Override
 	public PathAdjustmentConfigElement getConfigElement() {
@@ -58,7 +58,7 @@ public class PathAdjustmentConfigElementNode extends AbstractConfigElementNode<P
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#addDescription(java.lang.StringBuilder)
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject#addDescription(java.lang.StringBuilder)
 	 */
 	@Override
 	protected void addDescription(final StringBuilder builder) {
@@ -71,7 +71,7 @@ public class PathAdjustmentConfigElementNode extends AbstractConfigElementNode<P
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#updateNode()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject#updateNode()
 	 */
 	@Override
 	protected void updateChildNodes() {
@@ -79,7 +79,7 @@ public class PathAdjustmentConfigElementNode extends AbstractConfigElementNode<P
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.DefaultNode#createNodeEditor()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.DefaultNode#createNodeEditor()
 	 */
 	@Override
 	protected NodeEditor createNodeEditor() {
@@ -103,7 +103,7 @@ public class PathAdjustmentConfigElementNode extends AbstractConfigElementNode<P
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeEditor#createChildNode(com.nextbreakpoint.nextfractal.core.tree.NodeValue)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor#createChildNode(com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue)
 		 */
 		@Override
 		protected NodeObject createChildNode(final NodeValue<?> value) {
@@ -111,7 +111,7 @@ public class PathAdjustmentConfigElementNode extends AbstractConfigElementNode<P
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeEditor#createNodeValue(Object)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor#createNodeValue(Object)
 		 */
 		@Override
 		public NodeValue<?> createNodeValue(final Object value) {
@@ -119,7 +119,7 @@ public class PathAdjustmentConfigElementNode extends AbstractConfigElementNode<P
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeEditor#getNodeValueType()
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor#getNodeValueType()
 		 */
 		@Override
 		public Class<?> getNodeValueType() {
@@ -140,7 +140,7 @@ public class PathAdjustmentConfigElementNode extends AbstractConfigElementNode<P
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.common.ConfigurableExtensionReferenceElementNode#createNodeValue(com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionReference)
+		 * @see com.nextbreakpoint.nextfractal.core.elements.ConfigurableExtensionReferenceElementNode#createNodeValue(com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtensionReference)
 		 */
 		@Override
 		protected NodeValue<?> createNodeValue(final ConfigurableExtensionReference<PathAdjustmentExtensionConfig> value) {

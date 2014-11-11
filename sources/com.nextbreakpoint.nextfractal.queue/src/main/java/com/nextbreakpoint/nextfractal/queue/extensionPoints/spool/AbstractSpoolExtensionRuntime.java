@@ -31,7 +31,7 @@ package com.nextbreakpoint.nextfractal.queue.extensionPoints.spool;
  */
 public abstract class AbstractSpoolExtensionRuntime<T extends SpoolExtensionConfig> extends SpoolExtensionRuntime<T> {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.extension.ExtensionRuntime#dispose()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionRuntime#dispose()
 	 */
 	@Override
 	public void dispose() {

@@ -27,9 +27,9 @@ package com.nextbreakpoint.nextfractal.twister.layer;
 
 import org.w3c.dom.Element;
 
-import com.nextbreakpoint.nextfractal.core.common.StringElementXMLExporter;
-import com.nextbreakpoint.nextfractal.core.xml.XMLExportException;
-import com.nextbreakpoint.nextfractal.core.xml.XMLNodeBuilder;
+import com.nextbreakpoint.nextfractal.core.elements.StringElementXMLExporter;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLExportException;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLNodeBuilder;
 import com.nextbreakpoint.nextfractal.twister.layerFilter.LayerFilterConfigElementXMLExporter;
 
 /**
@@ -37,7 +37,7 @@ import com.nextbreakpoint.nextfractal.twister.layerFilter.LayerFilterConfigEleme
  */
 public class GroupLayerConfigElementXMLExporter extends AbstractLayerConfigElementXMLExporter<GroupLayerConfigElement> {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.layer.AbstractLayerConfigElementXMLExporter#exportProperties(com.nextbreakpoint.nextfractal.twister.layer.LayerConfigElement, org.w3c.dom.Element, com.nextbreakpoint.nextfractal.core.xml.XMLNodeBuilder)
+	 * @see com.nextbreakpoint.nextfractal.twister.layer.AbstractLayerConfigElementXMLExporter#exportProperties(com.nextbreakpoint.nextfractal.twister.layer.LayerConfigElement, org.w3c.dom.Element, com.nextbreakpoint.nextfractal.core.runtime.xml.XMLNodeBuilder)
 	 */
 	@Override
 	protected void exportProperties(final GroupLayerConfigElement configElement, final Element element, final XMLNodeBuilder builder) throws XMLExportException {

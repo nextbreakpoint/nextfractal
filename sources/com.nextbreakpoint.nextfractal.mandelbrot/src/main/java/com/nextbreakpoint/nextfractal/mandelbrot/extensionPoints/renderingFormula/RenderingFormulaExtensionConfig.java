@@ -28,13 +28,13 @@ package com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.renderingFormu
 import java.util.ArrayList;
 import java.util.List;
 
-import com.nextbreakpoint.nextfractal.core.common.ComplexElement;
-import com.nextbreakpoint.nextfractal.core.config.ConfigElement;
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionConfig;
+import com.nextbreakpoint.nextfractal.core.elements.ComplexElement;
 import com.nextbreakpoint.nextfractal.core.math.Complex;
+import com.nextbreakpoint.nextfractal.core.runtime.ConfigElement;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionConfig;
 import com.nextbreakpoint.nextfractal.core.util.DoubleVector2D;
-import com.nextbreakpoint.nextfractal.mandelbrot.common.IterationsElement;
-import com.nextbreakpoint.nextfractal.mandelbrot.common.ThresholdElement;
+import com.nextbreakpoint.nextfractal.mandelbrot.elements.IterationsElement;
+import com.nextbreakpoint.nextfractal.mandelbrot.elements.ThresholdElement;
 
 /**
  * @author Andrea Medeghini
@@ -67,7 +67,7 @@ public abstract class RenderingFormulaExtensionConfig extends ExtensionConfig {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.extension.ExtensionConfig#getConfigElements()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionConfig#getConfigElements()
 	 */
 	@Override
 	public List<ConfigElement> getConfigElements() {

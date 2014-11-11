@@ -25,7 +25,7 @@
  */
 package com.nextbreakpoint.nextfractal.twister.ui.javafx.extensionPoints.inputAdapter;
 
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionDescriptor;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionDescriptor;
 
 /**
  * @author Andrea Medeghini

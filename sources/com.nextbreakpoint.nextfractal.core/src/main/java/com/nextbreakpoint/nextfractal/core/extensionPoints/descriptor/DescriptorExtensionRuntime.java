@@ -27,7 +27,7 @@ package com.nextbreakpoint.nextfractal.core.extensionPoints.descriptor;
 
 import com.nextbreakpoint.nextfractal.core.devtools.ProcessorCardinality;
 import com.nextbreakpoint.nextfractal.core.devtools.ProcessorDescriptor;
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionRuntime;
 
 /**
  * @author Andrea Medeghini

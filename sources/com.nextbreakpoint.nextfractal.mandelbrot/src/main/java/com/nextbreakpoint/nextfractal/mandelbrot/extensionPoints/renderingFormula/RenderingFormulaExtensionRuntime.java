@@ -27,8 +27,8 @@ package com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.renderingFormu
 
 import java.util.List;
 
-import com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionRuntime;
 import com.nextbreakpoint.nextfractal.core.math.Complex;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtensionRuntime;
 import com.nextbreakpoint.nextfractal.core.util.DoubleVector2D;
 import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.processingFormula.ProcessingFormulaExtensionRuntime;
 import com.nextbreakpoint.nextfractal.mandelbrot.orbitTrap.extension.OrbitTrapExtensionRuntime;

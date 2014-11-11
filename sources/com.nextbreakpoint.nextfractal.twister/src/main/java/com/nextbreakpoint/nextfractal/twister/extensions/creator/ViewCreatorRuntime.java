@@ -26,7 +26,7 @@
 package com.nextbreakpoint.nextfractal.twister.extensions.creator;
 
 import com.nextbreakpoint.nextfractal.core.extensionPoints.creator.CreatorExtensionRuntime;
-import com.nextbreakpoint.nextfractal.core.scripting.JSException;
+import com.nextbreakpoint.nextfractal.core.runtime.scripting.JSException;
 import com.nextbreakpoint.nextfractal.core.util.DoubleVector4D;
 import com.nextbreakpoint.nextfractal.core.util.IntegerVector4D;
 import com.nextbreakpoint.nextfractal.twister.util.View;

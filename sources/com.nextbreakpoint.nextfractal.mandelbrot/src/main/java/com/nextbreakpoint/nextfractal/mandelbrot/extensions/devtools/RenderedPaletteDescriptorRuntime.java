@@ -28,7 +28,7 @@ package com.nextbreakpoint.nextfractal.mandelbrot.extensions.devtools;
 import com.nextbreakpoint.nextfractal.core.devtools.ProcessorCardinality;
 import com.nextbreakpoint.nextfractal.core.devtools.ProcessorDescriptor;
 import com.nextbreakpoint.nextfractal.core.extensionPoints.descriptor.DescriptorExtensionRuntime;
-import com.nextbreakpoint.nextfractal.mandelbrot.common.RenderedPaletteElement;
+import com.nextbreakpoint.nextfractal.mandelbrot.elements.RenderedPaletteElement;
 
 public class RenderedPaletteDescriptorRuntime extends DescriptorExtensionRuntime {
 	/**
@@ -36,7 +36,7 @@ public class RenderedPaletteDescriptorRuntime extends DescriptorExtensionRuntime
 	 */
 	@Override
 	public ProcessorDescriptor createDescriptor(String elementName, String defaultValue, ProcessorCardinality cardinality) {
-		return new ProcessorDescriptor(elementName, "RenderedPalette", RenderedPaletteElement.CLASS_ID, "com.nextbreakpoint.nextfractal.mandelbrot.common", "RenderedPaletteElement", null, null, null, null, null, null, null, null, null, null, null, null, "com.nextbreakpoint.nextfractal.mandelbrot.util", "RenderedPalette", defaultValue, "get", "set", cardinality);
+		return new ProcessorDescriptor(elementName, "RenderedPalette", RenderedPaletteElement.CLASS_ID, "com.nextbreakpoint.nextfractal.mandelbrot.elements", "RenderedPaletteElement", null, null, null, null, null, null, null, null, null, null, null, null, "com.nextbreakpoint.nextfractal.mandelbrot.util", "RenderedPalette", defaultValue, "get", "set", cardinality);
 	}
 
 	/**

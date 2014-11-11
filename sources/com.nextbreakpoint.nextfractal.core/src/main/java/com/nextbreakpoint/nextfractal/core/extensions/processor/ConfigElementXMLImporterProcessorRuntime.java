@@ -88,14 +88,14 @@ public class ConfigElementXMLImporterProcessorRuntime extends ProcessorExtension
 	private void prepare(Set<String> imports, ProcessorDescriptor descriptor) {
 		if (descriptor.isComplexElement()) {
 			imports.add("java.util.List");
-			imports.add("com.nextbreakpoint.nextfractal.core.extension.ExtensionException");
-			imports.add("com.nextbreakpoint.nextfractal.core.xml.XMLImportException");
-			imports.add("com.nextbreakpoint.nextfractal.core.xml.XMLImporter");
+			imports.add("com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionException");
+			imports.add("com.nextbreakpoint.nextfractal.core.runtime.xml.XMLImportException");
+			imports.add("com.nextbreakpoint.nextfractal.core.runtime.xml.XMLImporter");
 			imports.add("org.w3c.dom.Element");
 			imports.add(descriptor.getConfigElementPackageName() + "." + descriptor.getConfigElementClassName());
 		}
 		else if (descriptor.isSimpleElement()) {
-			imports.add("com.nextbreakpoint.nextfractal.core.config.ValueConfigElementXMLImporter");
+			imports.add("com.nextbreakpoint.nextfractal.core.runtime.ValueConfigElementXMLImporter");
 			imports.add(descriptor.getValuePackageName() + "." + descriptor.getValueClassName());
 		}
 	}

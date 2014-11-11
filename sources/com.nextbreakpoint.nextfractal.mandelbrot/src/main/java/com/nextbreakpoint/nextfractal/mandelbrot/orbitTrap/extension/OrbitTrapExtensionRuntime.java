@@ -27,7 +27,7 @@ package com.nextbreakpoint.nextfractal.mandelbrot.orbitTrap.extension;
 
 import java.awt.Shape;
 
-import com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtensionRuntime;
 import com.nextbreakpoint.nextfractal.core.util.DoubleVector2D;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RenderedPoint;
 

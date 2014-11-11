@@ -122,7 +122,7 @@ public class ConfigElementNodeValueProcessorRuntime extends ProcessorExtensionRu
 
 	private void prepare(Set<String> imports, ProcessorDescriptor descriptor) {
 		if (descriptor.isSimpleElement() || descriptor.isComplexElement()) {
-			imports.add("com.nextbreakpoint.nextfractal.core.tree.NodeValue");
+			imports.add("com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue");
 		}
 	}
 

@@ -29,14 +29,14 @@ import java.util.List;
 
 import org.w3c.dom.Element;
 
-import com.nextbreakpoint.nextfractal.core.common.ComplexElement;
-import com.nextbreakpoint.nextfractal.core.common.ComplexElementXMLImporter;
-import com.nextbreakpoint.nextfractal.core.xml.XMLImportException;
-import com.nextbreakpoint.nextfractal.core.xml.XMLImporter;
-import com.nextbreakpoint.nextfractal.mandelbrot.common.IterationsElement;
-import com.nextbreakpoint.nextfractal.mandelbrot.common.IterationsElementXMLImporter;
-import com.nextbreakpoint.nextfractal.mandelbrot.common.ThresholdElement;
-import com.nextbreakpoint.nextfractal.mandelbrot.common.ThresholdElementXMLImporter;
+import com.nextbreakpoint.nextfractal.core.elements.ComplexElement;
+import com.nextbreakpoint.nextfractal.core.elements.ComplexElementXMLImporter;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLImportException;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLImporter;
+import com.nextbreakpoint.nextfractal.mandelbrot.elements.IterationsElement;
+import com.nextbreakpoint.nextfractal.mandelbrot.elements.IterationsElementXMLImporter;
+import com.nextbreakpoint.nextfractal.mandelbrot.elements.ThresholdElement;
+import com.nextbreakpoint.nextfractal.mandelbrot.elements.ThresholdElementXMLImporter;
 import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.renderingFormula.RenderingFormulaExtensionConfig;
 
 /**
@@ -54,7 +54,7 @@ public abstract class AbstractRenderingFormulaConfigXMLImporter<T extends Render
 	protected abstract T createExtensionConfig();
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.xml.XMLImporter#importFromElement(org.w3c.dom.Element)
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.xml.XMLImporter#importFromElement(org.w3c.dom.Element)
 	 */
 	@Override
 	public T importFromElement(final Element element) throws XMLImportException {
@@ -73,7 +73,7 @@ public abstract class AbstractRenderingFormulaConfigXMLImporter<T extends Render
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.xml.XMLImporter#importFromElement(org.w3c.dom.Element)
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.xml.XMLImporter#importFromElement(org.w3c.dom.Element)
 	 */
 	protected void importProperties(final T config, final List<Element> propertyElements) throws XMLImportException {
 		this.importIterations(config, propertyElements.get(0));

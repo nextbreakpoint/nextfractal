@@ -25,9 +25,9 @@
  */
 package com.nextbreakpoint.nextfractal.core.extensions.descriptor;
 
-import com.nextbreakpoint.nextfractal.core.common.ComplexElement;
 import com.nextbreakpoint.nextfractal.core.devtools.ProcessorCardinality;
 import com.nextbreakpoint.nextfractal.core.devtools.ProcessorDescriptor;
+import com.nextbreakpoint.nextfractal.core.elements.ComplexElement;
 import com.nextbreakpoint.nextfractal.core.extensionPoints.descriptor.DescriptorExtensionRuntime;
 
 public class ComplexDescriptorRuntime extends DescriptorExtensionRuntime {
@@ -36,7 +36,7 @@ public class ComplexDescriptorRuntime extends DescriptorExtensionRuntime {
 	 */
 	@Override
 	public ProcessorDescriptor createDescriptor(String elementName, String defaultValue, ProcessorCardinality cardinality) {
-		return new ProcessorDescriptor(elementName, "Complex", ComplexElement.CLASS_ID, "com.nextbreakpoint.nextfractal.core.common", "ComplexElement", null, null, null, null, null, null, null, null, null, null, null, null, "com.nextbreakpoint.nextfractal.core.math", "Complex", defaultValue, "get", "set", cardinality);
+		return new ProcessorDescriptor(elementName, "Complex", ComplexElement.CLASS_ID, "com.nextbreakpoint.nextfractal.core.elements", "ComplexElement", null, null, null, null, null, null, null, null, null, null, null, null, "com.nextbreakpoint.nextfractal.core.math", "Complex", defaultValue, "get", "set", cardinality);
 	}
 
 	/**

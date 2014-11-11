@@ -25,8 +25,8 @@
  */
 package com.nextbreakpoint.nextfractal.twister.extensionPoints.layerFilter;
 
-import com.nextbreakpoint.nextfractal.core.extension.sl.SLConfigurableExtensionBuilder;
-import com.nextbreakpoint.nextfractal.core.extension.sl.SLConfigurableExtensionRegistry;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.sl.SLConfigurableExtensionBuilder;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.sl.SLConfigurableExtensionRegistry;
 
 /**
  * @author Andrea Medeghini

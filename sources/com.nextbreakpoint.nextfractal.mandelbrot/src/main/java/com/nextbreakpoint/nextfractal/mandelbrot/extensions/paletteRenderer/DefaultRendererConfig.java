@@ -28,12 +28,12 @@ package com.nextbreakpoint.nextfractal.mandelbrot.extensions.paletteRenderer;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.nextbreakpoint.nextfractal.core.config.ConfigElement;
+import com.nextbreakpoint.nextfractal.core.runtime.ConfigElement;
 import com.nextbreakpoint.nextfractal.core.util.Palette;
-import com.nextbreakpoint.nextfractal.mandelbrot.common.RenderedPaletteElement;
+import com.nextbreakpoint.nextfractal.mandelbrot.elements.RenderedPaletteElement;
 import com.nextbreakpoint.nextfractal.mandelbrot.util.DefaultRenderedPalette;
 import com.nextbreakpoint.nextfractal.mandelbrot.util.RenderedPalette;
-import com.nextbreakpoint.nextfractal.twister.common.PaletteElement;
+import com.nextbreakpoint.nextfractal.twister.elements.PaletteElement;
 
 /**
  * @author Andrea Medeghini
@@ -51,7 +51,7 @@ public class DefaultRendererConfig extends AbstractPaletteRendererConfig {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.extension.ExtensionConfig#getConfigElements()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionConfig#getConfigElements()
 	 */
 	@Override
 	public List<ConfigElement> getConfigElements() {

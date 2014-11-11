@@ -29,29 +29,29 @@ import java.util.List;
 
 import org.w3c.dom.Element;
 
-import com.nextbreakpoint.nextfractal.core.common.BooleanElement;
-import com.nextbreakpoint.nextfractal.core.common.BooleanElementXMLImporter;
-import com.nextbreakpoint.nextfractal.core.common.ComplexElement;
-import com.nextbreakpoint.nextfractal.core.common.ComplexElementXMLImporter;
-import com.nextbreakpoint.nextfractal.core.common.IntegerElement;
-import com.nextbreakpoint.nextfractal.core.common.IntegerElementXMLImporter;
-import com.nextbreakpoint.nextfractal.core.common.RectangleElement;
-import com.nextbreakpoint.nextfractal.core.common.RectangleElementXMLImporter;
-import com.nextbreakpoint.nextfractal.core.xml.XMLImportException;
-import com.nextbreakpoint.nextfractal.core.xml.XMLImporter;
+import com.nextbreakpoint.nextfractal.core.elements.BooleanElement;
+import com.nextbreakpoint.nextfractal.core.elements.BooleanElementXMLImporter;
+import com.nextbreakpoint.nextfractal.core.elements.ComplexElement;
+import com.nextbreakpoint.nextfractal.core.elements.ComplexElementXMLImporter;
+import com.nextbreakpoint.nextfractal.core.elements.IntegerElement;
+import com.nextbreakpoint.nextfractal.core.elements.IntegerElementXMLImporter;
+import com.nextbreakpoint.nextfractal.core.elements.RectangleElement;
+import com.nextbreakpoint.nextfractal.core.elements.RectangleElementXMLImporter;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLImportException;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLImporter;
 import com.nextbreakpoint.nextfractal.mandelbrot.fractal.MandelbrotFractalConfigElement;
 import com.nextbreakpoint.nextfractal.mandelbrot.fractal.MandelbrotFractalConfigElementXMLImporter;
-import com.nextbreakpoint.nextfractal.twister.common.SpeedElement;
-import com.nextbreakpoint.nextfractal.twister.common.SpeedElementXMLImporter;
-import com.nextbreakpoint.nextfractal.twister.common.ViewElement;
-import com.nextbreakpoint.nextfractal.twister.common.ViewElementXMLImporter;
+import com.nextbreakpoint.nextfractal.twister.elements.SpeedElement;
+import com.nextbreakpoint.nextfractal.twister.elements.SpeedElementXMLImporter;
+import com.nextbreakpoint.nextfractal.twister.elements.ViewElement;
+import com.nextbreakpoint.nextfractal.twister.elements.ViewElementXMLImporter;
 
 /**
  * @author Andrea Medeghini
  */
 public class MandelbrotConfigXMLImporter extends XMLImporter<MandelbrotConfig> {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.xml.XMLImporter#importFromElement(org.w3c.dom.Element)
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.xml.XMLImporter#importFromElement(org.w3c.dom.Element)
 	 */
 	@Override
 	public MandelbrotConfig importFromElement(final Element element) throws XMLImportException {

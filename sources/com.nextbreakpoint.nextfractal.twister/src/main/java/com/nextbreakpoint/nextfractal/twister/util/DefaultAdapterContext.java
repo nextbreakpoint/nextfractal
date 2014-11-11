@@ -28,7 +28,7 @@ package com.nextbreakpoint.nextfractal.twister.util;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.nextbreakpoint.nextfractal.core.extension.ExtensionConfig;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionConfig;
 
 /**
  * @author Andrea Medeghini

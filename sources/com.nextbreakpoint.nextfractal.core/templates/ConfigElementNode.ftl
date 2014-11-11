@@ -31,7 +31,7 @@ public abstract class ${element.configElementClassName}Node extends AttributeNod
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#dispose()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject#dispose()
 	 */
 	@Override
 	public void dispose() {
@@ -42,7 +42,7 @@ public abstract class ${element.configElementClassName}Node extends AttributeNod
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#setSession(com.nextbreakpoint.nextfractal.core.tree.NodeSession)
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject#setSession(com.nextbreakpoint.nextfractal.core.runtime.model.NodeSession)
 	 */
 	@Override
 	public void setSession(final NodeSession session) {
@@ -56,7 +56,7 @@ public abstract class ${element.configElementClassName}Node extends AttributeNod
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#nodeAdded()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject#nodeAdded()
 	 */
 	@Override
 	protected void nodeAdded() {
@@ -64,14 +64,14 @@ public abstract class ${element.configElementClassName}Node extends AttributeNod
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#nodeRemoved()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject#nodeRemoved()
 	 */
 	@Override
 	protected void nodeRemoved() {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#isEditable()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject#isEditable()
 	 */
 	@Override
 	public boolean isEditable() {
@@ -79,7 +79,7 @@ public abstract class ${element.configElementClassName}Node extends AttributeNod
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.DefaultNode#getValueAsString()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.DefaultNode#getValueAsString()
 	 */
 	@Override
 	public String getValueAsString() {
@@ -92,7 +92,7 @@ public abstract class ${element.configElementClassName}Node extends AttributeNod
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.DefaultNode#createNodeEditor()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.DefaultNode#createNodeEditor()
 	 */
 	@Override
 	protected NodeEditor createNodeEditor() {
@@ -108,7 +108,7 @@ public abstract class ${element.configElementClassName}Node extends AttributeNod
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeEditor#doSetValue(java.lang.NodeValue)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor#doSetValue(java.lang.NodeValue)
 		 */
 		@Override
 		protected void doSetValue(final NodeValue<?> value) {
@@ -118,7 +118,7 @@ public abstract class ${element.configElementClassName}Node extends AttributeNod
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeEditor#createChildNode(com.nextbreakpoint.nextfractal.core.tree.NodeValue)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor#createChildNode(com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue)
 		 */
 		@Override
 		protected Node createChildNode(final NodeValue<?> value) {
@@ -126,7 +126,7 @@ public abstract class ${element.configElementClassName}Node extends AttributeNod
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeEditor#getNodeValueType()
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor#getNodeValueType()
 		 */
 		@Override
 		public Class<?> getNodeValueType() {
@@ -134,7 +134,7 @@ public abstract class ${element.configElementClassName}Node extends AttributeNod
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeEditor#createNodeValue(Object)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor#createNodeValue(Object)
 		 */
 		@Override
 		public NodeValue<?> createNodeValue(final Object value) {
@@ -208,7 +208,7 @@ public class ${element.configElementClassName}Node extends AbstractConfigElement
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#addDescription(java.lang.StringBuilder)
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject#addDescription(java.lang.StringBuilder)
 	 */
 	@Override
 	protected void addDescription(final StringBuilder builder) {
@@ -221,7 +221,7 @@ public class ${element.configElementClassName}Node extends AbstractConfigElement
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#updateNode()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject#updateNode()
 	 */
 	@Override
 	protected void updateChildNodes() {
@@ -229,7 +229,7 @@ public class ${element.configElementClassName}Node extends AbstractConfigElement
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.DefaultNode#createNodeEditor()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.DefaultNode#createNodeEditor()
 	 */
 	@Override
 	protected NodeEditor createNodeEditor() {
@@ -267,7 +267,7 @@ public class ${element.configElementClassName}Node extends AbstractConfigElement
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeEditor#createChildNode(com.nextbreakpoint.nextfractal.core.tree.NodeValue)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor#createChildNode(com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue)
 		 */
 		@Override
 		protected Node createChildNode(final NodeValue<?> value) {
@@ -275,7 +275,7 @@ public class ${element.configElementClassName}Node extends AbstractConfigElement
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeEditor#createNodeValue(Object)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor#createNodeValue(Object)
 		 */
 		@Override
 		public NodeValue<?> createNodeValue(final Object value) {
@@ -283,7 +283,7 @@ public class ${element.configElementClassName}Node extends AbstractConfigElement
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeEditor#getNodeValueType()
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor#getNodeValueType()
 		 */
 		@Override
 		public Class<?> getNodeValueType() {
@@ -306,7 +306,7 @@ public class ${element.configElementClassName}Node extends AbstractConfigElement
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.common.${subelement.configElementClassName}Node#createNodeValue(com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionReference)
+		 * @see com.nextbreakpoint.nextfractal.core.elements.${subelement.configElementClassName}Node#createNodeValue(com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtensionReference)
 		 */
 		@Override
 		protected NodeValue<?> createNodeValue(final ConfigurableExtensionReference<${subelement.extensionConfigClassName}> value) {
@@ -327,7 +327,7 @@ public class ${element.configElementClassName}Node extends AbstractConfigElement
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.common.${subelement.configElementClassName}Node#createNodeValue(com.nextbreakpoint.nextfractal.core.extension.ExtensionReference)
+		 * @see com.nextbreakpoint.nextfractal.core.elements.${subelement.configElementClassName}Node#createNodeValue(com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionReference)
 		 */
 		@Override
 		protected NodeValue<?> createNodeValue(final ExtensionReference value) {
@@ -359,7 +359,7 @@ public class ${element.configElementClassName}Node extends AbstractConfigElement
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.util.AbstractConfigElementListNode#createChildNode(com.nextbreakpoint.nextfractal.core.config.ConfigElement)
+		 * @see com.nextbreakpoint.nextfractal.core.util.AbstractConfigElementListNode#createChildNode(com.nextbreakpoint.nextfractal.core.runtime.ConfigElement)
 		 */
 		@Override
 		protected AbstractConfigElementNode<${subelement.configElementClassName}> createChildNode(final ${subelement.configElementClassName} value) {
@@ -399,7 +399,7 @@ public class ${element.configElementClassName}Node extends AbstractConfigElement
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.util.AbstractConfigElementListNode#createChildNode(com.nextbreakpoint.nextfractal.core.config.ConfigElement)
+		 * @see com.nextbreakpoint.nextfractal.core.util.AbstractConfigElementListNode#createChildNode(com.nextbreakpoint.nextfractal.core.runtime.ConfigElement)
 		 */
 		@Override
 		protected AbstractConfigElementNode<${subelement.configElementClassName}> createChildNode(final ${subelement.configElementClassName} value) {

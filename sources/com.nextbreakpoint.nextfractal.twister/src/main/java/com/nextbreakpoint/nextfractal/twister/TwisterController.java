@@ -25,7 +25,7 @@
  */
 package com.nextbreakpoint.nextfractal.twister;
 
-import com.nextbreakpoint.nextfractal.core.util.RenderContext;
+import com.nextbreakpoint.nextfractal.core.RenderContext;
 
 public interface TwisterController {
 	/**

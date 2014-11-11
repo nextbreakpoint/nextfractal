@@ -25,10 +25,10 @@
  */
 package com.nextbreakpoint.nextfractal.core.extensions.creator;
 
-import com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtension;
 import com.nextbreakpoint.nextfractal.core.extensionPoints.creator.CreatorExtensionRuntime;
-import com.nextbreakpoint.nextfractal.core.scripting.JSException;
-import com.nextbreakpoint.nextfractal.core.scripting.JSExtension;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtension;
+import com.nextbreakpoint.nextfractal.core.runtime.scripting.JSException;
+import com.nextbreakpoint.nextfractal.core.runtime.scripting.JSExtension;
 
 /**
  * @author Andrea Medeghini
