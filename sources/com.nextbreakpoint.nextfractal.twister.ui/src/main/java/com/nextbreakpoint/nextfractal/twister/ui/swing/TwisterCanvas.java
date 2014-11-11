@@ -311,24 +311,6 @@ public class TwisterCanvas extends Canvas implements RenderContext {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.RenderContext#execute(java.lang.Runnable)
-	 */
-	@Override
-	public void execute(Runnable task) {
-		try {			
-			acquire();
-			if (config != null) {
-				config.getContext().updateTimestamp();
-			}
-			task.run();
-			release();
-		}
-		catch (InterruptedException x) {
-			Thread.currentThread().interrupt();
-		}
-	}
-
-	/**
 	 * @return
 	 */
 	public TwisterConfig getConfig() {
@@ -1981,24 +1963,6 @@ public class TwisterCanvas extends Canvas implements RenderContext {
 		@Override
 		public void removeRenderContextListener(RenderContextListener listener) {
 			TwisterCanvas.this.removeRenderContextListener(listener);
-		}
-
-		/**
-		 * @see com.nextbreakpoint.nextfractal.core.RenderContext#execute(java.lang.Runnable)
-		 */
-		@Override
-		public void execute(Runnable task) {
-			try {
-				TwisterCanvas.this.acquire();
-				if (config != null) {
-					config.getContext().updateTimestamp();
-				}
-				task.run();
-				TwisterCanvas.this.release();
-			}
-			catch (InterruptedException x) {
-				Thread.currentThread().interrupt();
-			}
 		}
 	}
 

@@ -476,23 +476,5 @@ public class NextFractalApp extends Application {
 		public void removeRenderContextListener(RenderContextListener listener) {
 			NextFractalApp.this.removeRenderContextListener(listener);
 		}
-
-		/**
-		 * @see com.nextbreakpoint.nextfractal.core.RenderContext#execute(java.lang.Runnable)
-		 */
-		@Override
-		public void execute(Runnable task) {
-			try {
-				NextFractalApp.this.acquire();
-				if (config != null) {
-					config.getContext().updateTimestamp();
-				}
-				task.run();
-				NextFractalApp.this.release();
-			}
-			catch (InterruptedException x) {
-				Thread.currentThread().interrupt();
-			}
-		}
 	}
 }

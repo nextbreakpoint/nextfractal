@@ -132,12 +132,5 @@ public class TestJSManager {
 		@Override
 		public void removeRenderContextListener(RenderContextListener listener) {
 		}
-
-		/**
-		 * @see com.nextbreakpoint.nextfractal.core.RenderContext#execute(java.lang.Runnable)
-		 */
-		@Override
-		public void execute(Runnable task) {
-		}
 	}
 }

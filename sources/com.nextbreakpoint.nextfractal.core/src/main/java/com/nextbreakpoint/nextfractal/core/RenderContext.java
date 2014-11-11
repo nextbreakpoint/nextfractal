@@ -70,9 +70,4 @@ public interface RenderContext {
 	 * @param listener
 	 */
 	public void removeRenderContextListener(RenderContextListener listener);
-
-	/**
-	 * 
-	 */
-	public void execute(Runnable task);
 }

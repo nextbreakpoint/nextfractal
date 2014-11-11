@@ -11,10 +11,11 @@ import com.nextbreakpoint.nextfractal.core.ui.javafx.Disposable;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.ViewContext;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotConfig;
 import com.nextbreakpoint.nextfractal.mandelbrot.extensions.image.MandelbrotImageConfig;
+import com.nextbreakpoint.nextfractal.twister.ui.javafx.NextFractalApp;
 
 public class MandelbrotEditorView extends Pane implements Disposable {
 
-	public MandelbrotEditorView(MandelbrotConfig config, ViewContext viewContext, RenderContext context, NodeSession session) {
+	public MandelbrotEditorView(MandelbrotConfig config, ViewContext viewContext, RenderContext renderContext, NodeSession session) {
 		AnchorPane pane = new AnchorPane();
 		getChildren().add(pane);
 		pane.setPrefWidth(viewContext.getEditorViewSize().getWidth());
@@ -54,33 +55,47 @@ public class MandelbrotEditorView extends Pane implements Disposable {
 				break;
 		}
 		zoomButton.setOnAction(e -> {
-			context.execute(() -> {
+			execute(renderContext, config, () -> {
 				config.setInputMode(MandelbrotImageConfig.INPUT_MODE_ZOOM);
 			});
 			zoomButton.setDisable(true);
 			infoButton.setDisable(false);
 		});
 		infoButton.setOnAction(e -> {
-			context.execute(() -> {
+			execute(renderContext, config, () -> {
 				config.setInputMode(MandelbrotImageConfig.INPUT_MODE_INFO);
 			});
 			zoomButton.setDisable(false);
 			infoButton.setDisable(true);
 		});
 		mandelbrotModeButton.setOnAction(e -> {
-			context.execute(() -> {
+			execute(renderContext, config, () -> {
 				config.setImageMode(MandelbrotImageConfig.IMAGE_MODE_MANDELBROT);
 			});
 			mandelbrotModeButton.setDisable(true);
 			juliaModeButton.setDisable(false);
 		});
 		juliaModeButton.setOnAction(e -> {
-			context.execute(() -> {
+			execute(renderContext, config, () -> {
 				config.setImageMode(MandelbrotImageConfig.IMAGE_MODE_JULIA);
 			});
 			mandelbrotModeButton.setDisable(false);
 			juliaModeButton.setDisable(true);
 		});
+	}
+
+	private void execute(RenderContext context, MandelbrotConfig config, Runnable task) {
+		try {
+			context.acquire();
+			if (config != null) {
+				config.getContext().updateTimestamp();
+			}
+			task.run();
+			context.release();
+		}
+		catch (InterruptedException x) {
+			Thread.currentThread().interrupt();
+		}
 	}
 
 	@Override
