@@ -39,7 +39,7 @@ public abstract class AttributeNode extends DefaultNode {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.Node#isAttribute()
+	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#isAttribute()
 	 */
 	@Override
 	public final boolean isAttribute() {
@@ -47,7 +47,7 @@ public abstract class AttributeNode extends DefaultNode {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.Node#isEditable()
+	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#isEditable()
 	 */
 	@Override
 	public boolean isEditable() {
@@ -55,7 +55,7 @@ public abstract class AttributeNode extends DefaultNode {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.Node#addLabel(java.lang.StringBuilder)
+	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#addLabel(java.lang.StringBuilder)
 	 */
 	@Override
 	protected void addLabel(final StringBuilder builder) {

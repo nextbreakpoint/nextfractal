@@ -12,7 +12,7 @@ import com.nextbreakpoint.nextfractal.contextfree.pathReplacement.PathReplacemen
 import com.nextbreakpoint.nextfractal.core.common.IntegerElementNode;
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionConfig;
 import com.nextbreakpoint.nextfractal.core.extensionPoints.nodeBuilder.NodeBuilderExtensionRuntime;
-import com.nextbreakpoint.nextfractal.core.tree.Node;
+import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
 import com.nextbreakpoint.nextfractal.core.tree.NodeBuilder;
 import com.nextbreakpoint.nextfractal.core.tree.NodeValue;
 import com.nextbreakpoint.nextfractal.core.util.AbstractConfigElementListNode;
@@ -41,10 +41,10 @@ public class MultiPathReplacementConfigNodeBuilderRuntime extends NodeBuilderExt
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.util.AbstractExtensionConfigNodeBuilder#createNodes(com.nextbreakpoint.nextfractal.core.tree.Node)
+		 * @see com.nextbreakpoint.nextfractal.core.util.AbstractExtensionConfigNodeBuilder#createNodes(com.nextbreakpoint.nextfractal.core.tree.NodeObject)
 		 */
 		@Override
-		public void createNodes(final Node parentNode) {
+		public void createNodes(final NodeObject parentNode) {
 			parentNode.appendChildNode(new TimesElementNode(getConfig()));
 			parentNode.appendChildNode(new PathReplacementListElementNode(getConfig()));
 			parentNode.appendChildNode(new PathAdjustmentListElementNode(getConfig()));

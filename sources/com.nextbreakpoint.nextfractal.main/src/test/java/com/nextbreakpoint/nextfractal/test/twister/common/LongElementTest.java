@@ -32,7 +32,7 @@ import com.nextbreakpoint.nextfractal.core.common.LongElementNode;
 import com.nextbreakpoint.nextfractal.core.common.LongElementXMLExporter;
 import com.nextbreakpoint.nextfractal.core.common.LongElementXMLImporter;
 import com.nextbreakpoint.nextfractal.core.test.AbsractValueElementTest;
-import com.nextbreakpoint.nextfractal.core.tree.Node;
+import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
 
 /**
  * @author Andrea Medeghini
@@ -55,7 +55,7 @@ public class LongElementTest extends AbsractValueElementTest<Long, LongElement> 
 	}
 
 	@Override
-	protected Node createElementNode() {
+	protected NodeObject createElementNode() {
 		return new LongElementNode("value", getConfigElement()) {
 		};
 	}

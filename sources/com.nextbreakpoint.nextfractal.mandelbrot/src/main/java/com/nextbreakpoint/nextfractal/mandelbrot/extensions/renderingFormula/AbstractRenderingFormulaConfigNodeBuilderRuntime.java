@@ -28,7 +28,7 @@ package com.nextbreakpoint.nextfractal.mandelbrot.extensions.renderingFormula;
 import com.nextbreakpoint.nextfractal.core.common.ComplexElementNode;
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionConfig;
 import com.nextbreakpoint.nextfractal.core.extensionPoints.nodeBuilder.NodeBuilderExtensionRuntime;
-import com.nextbreakpoint.nextfractal.core.tree.Node;
+import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
 import com.nextbreakpoint.nextfractal.core.tree.NodeBuilder;
 import com.nextbreakpoint.nextfractal.core.util.AbstractExtensionConfigNodeBuilder;
 import com.nextbreakpoint.nextfractal.mandelbrot.common.IterationsElementNode;
@@ -51,7 +51,7 @@ public abstract class AbstractRenderingFormulaConfigNodeBuilderRuntime extends N
 	/**
 	 * @param parentNode
 	 */
-	public void createNodes(final Node parentNode, final RenderingFormulaExtensionConfig config) {
+	public void createNodes(final NodeObject parentNode, final RenderingFormulaExtensionConfig config) {
 	}
 
 	private class ConfigNodeBuilder extends AbstractExtensionConfigNodeBuilder<RenderingFormulaExtensionConfig> {
@@ -63,10 +63,10 @@ public abstract class AbstractRenderingFormulaConfigNodeBuilderRuntime extends N
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeBuilder#createNodes(Node)
+		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeBuilder#createNodes(NodeObject)
 		 */
 		@Override
-		public void createNodes(final Node parentNode) {
+		public void createNodes(final NodeObject parentNode) {
 			parentNode.appendChildNode(new IterationsNode(getConfig()));
 			parentNode.appendChildNode(new ThresholdNode(getConfig()));
 			parentNode.appendChildNode(new CenterNode(getConfig()));

@@ -32,7 +32,7 @@ import com.nextbreakpoint.nextfractal.core.common.ComplexElementNode;
 import com.nextbreakpoint.nextfractal.core.common.ComplexElementXMLExporter;
 import com.nextbreakpoint.nextfractal.core.common.ComplexElementXMLImporter;
 import com.nextbreakpoint.nextfractal.core.test.AbsractValueElementTest;
-import com.nextbreakpoint.nextfractal.core.tree.Node;
+import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
 import com.nextbreakpoint.nextfractal.core.util.DoubleVector2D;
 
 /**
@@ -56,7 +56,7 @@ public class ComplexElementTest extends AbsractValueElementTest<DoubleVector2D, 
 	}
 
 	@Override
-	protected Node createElementNode() {
+	protected NodeObject createElementNode() {
 		return new ComplexElementNode("value", getConfigElement()) {
 		};
 	}

@@ -32,7 +32,7 @@ import com.nextbreakpoint.nextfractal.core.common.RectangleElementNode;
 import com.nextbreakpoint.nextfractal.core.common.RectangleElementXMLExporter;
 import com.nextbreakpoint.nextfractal.core.common.RectangleElementXMLImporter;
 import com.nextbreakpoint.nextfractal.core.test.AbsractValueElementTest;
-import com.nextbreakpoint.nextfractal.core.tree.Node;
+import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
 import com.nextbreakpoint.nextfractal.core.util.Rectangle;
 
 /**
@@ -56,7 +56,7 @@ public class RectangleElementTest extends AbsractValueElementTest<Rectangle, Rec
 	}
 
 	@Override
-	protected Node createElementNode() {
+	protected NodeObject createElementNode() {
 		return new RectangleElementNode("value", getConfigElement()) {
 		};
 	}

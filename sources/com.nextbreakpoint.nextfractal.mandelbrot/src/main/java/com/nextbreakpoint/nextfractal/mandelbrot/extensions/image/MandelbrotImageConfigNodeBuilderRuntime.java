@@ -27,7 +27,7 @@ package com.nextbreakpoint.nextfractal.mandelbrot.extensions.image;
 
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionConfig;
 import com.nextbreakpoint.nextfractal.core.extensionPoints.nodeBuilder.NodeBuilderExtensionRuntime;
-import com.nextbreakpoint.nextfractal.core.tree.Node;
+import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
 import com.nextbreakpoint.nextfractal.core.tree.NodeBuilder;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotConfigNodeBuilder;
 
@@ -51,10 +51,10 @@ public class MandelbrotImageConfigNodeBuilderRuntime extends NodeBuilderExtensio
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeBuilder#createNodes(Node)
+		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeBuilder#createNodes(NodeObject)
 		 */
 		@Override
-		public void createNodes(final Node parentNode) {
+		public void createNodes(final NodeObject parentNode) {
 			final MandelbrotConfigNodeBuilder builder = new MandelbrotConfigNodeBuilder(config.getMandelbrotConfig());
 			builder.createNodes(parentNode);
 		}

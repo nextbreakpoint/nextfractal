@@ -38,13 +38,13 @@ import com.nextbreakpoint.nextfractal.core.config.ConfigContext;
 /**
  * @author Andrea Medeghini
  */
-public abstract class Node {
-	private static final Logger logger = Logger.getLogger(Node.class.getName());
+public abstract class NodeObject {
+	private static final Logger logger = Logger.getLogger(NodeObject.class.getName());
 	private final Map<String, Object> map = new HashMap<String, Object>();
 	private List<NodeCommand> commandList = new LinkedList<NodeCommand>();
-	private List<Node> childList;
+	private List<NodeObject> childList;
 	private NodeEditor editor;
-	private Node parentNode;
+	private NodeObject parentNode;
 	private boolean changed;
 	private final String nodeId;
 	private String nodeLabel;
@@ -80,7 +80,7 @@ public abstract class Node {
 			commandList = null;
 		}
 		if (childList != null) {
-			for (Node child : childList) {
+			for (NodeObject child : childList) {
 				child.dispose();
 			}
 			childList.clear();
@@ -99,7 +99,7 @@ public abstract class Node {
 	 * 
 	 * @param nodeId the nodeId.
 	 */
-	public Node(final String nodeId) {
+	public NodeObject(final String nodeId) {
 		if (nodeId == null) {
 			throw new IllegalArgumentException("nodeId is null");
 		}
@@ -228,7 +228,7 @@ public abstract class Node {
 		return path;
 	}
 
-	private void setParentNode(final Node parentNode) {
+	private void setParentNode(final NodeObject parentNode) {
 		this.parentNode = parentNode;
 	}
 
@@ -237,15 +237,15 @@ public abstract class Node {
 	 */
 	public void setSession(final NodeSession session) {
 		this.session = session;
-		// if (Node.logger.isDebugEnabled()) {
+		// if (NodeObject.logger.isDebugEnabled()) {
 		// if (session != null) {
-		// Node.logger.debug("Set session to \"" + session.getSessionName() + "\" for node \"" + getNodeId() + "\"");
+		// NodeObject.logger.debug("Set session to \"" + session.getSessionName() + "\" for node \"" + getNodeId() + "\"");
 		// }
 		// else {
-		// Node.logger.debug("Set session to null for node \"" + getNodeId() + "\"");
+		// NodeObject.logger.debug("Set session to null for node \"" + getNodeId() + "\"");
 		// }
 		// }
-		for (final Node node : getChildList()) {
+		for (final NodeObject node : getChildList()) {
 			node.setSession(session);
 		}
 	}
@@ -269,7 +269,7 @@ public abstract class Node {
 	 */
 	public void setContext(final ConfigContext context) {
 		this.context = context;
-		for (final Node node : getChildList()) {
+		for (final NodeObject node : getChildList()) {
 			node.setContext(context);
 		}
 	}
@@ -289,7 +289,7 @@ public abstract class Node {
 	 * 
 	 * @return the parent.
 	 */
-	public Node getParentNode() {
+	public NodeObject getParentNode() {
 		return parentNode;
 	}
 
@@ -297,7 +297,7 @@ public abstract class Node {
 	 * @param node
 	 * @return
 	 */
-	public boolean isChildNode(final Node node) {
+	public boolean isChildNode(final NodeObject node) {
 		return childList.contains(node);
 	}
 
@@ -307,11 +307,41 @@ public abstract class Node {
 	 * @param index the child index.
 	 * @return the child.
 	 */
-	public Node getChildNode(final int index) {
+	public NodeObject getChildNode(final int index) {
 		if ((index < 0) || (index >= getChildList().size())) {
 			return null;
 		}
 		return getChildList().get(index);
+	}
+
+	/**
+	 * Returns a child.
+	 * 
+	 * @param nodeClass the child class.
+	 * @return the child.
+	 */
+	public NodeObject getChildNodeByClass(final String nodeClass) {
+		for (NodeObject node : getChildList()) {
+			if (node.getNodeClass().equals(nodeClass)) {
+				return node;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Returns a child.
+	 * 
+	 * @param nodeId the child id.
+	 * @return the child.
+	 */
+	public NodeObject getChildNodeById(final String nodeId) {
+		for (NodeObject node : getChildList()) {
+			if (node.getNodeId().equals(nodeId)) {
+				return node;
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -347,7 +377,7 @@ public abstract class Node {
 	 * @param value the node value to set.
 	 */
 	protected final void setNodeValue(final NodeValue<?> value) {
-		if (Node.isValueChanged(value, this.value)) {
+		if (NodeObject.isValueChanged(value, this.value)) {
 			previousValue = this.value;
 			this.value = value;
 			updateNode();
@@ -567,7 +597,7 @@ public abstract class Node {
 	 * 
 	 * @param node the child to append.
 	 */
-	protected void appendChildNodeToParent(final Node node) {
+	protected void appendChildNodeToParent(final NodeObject node) {
 		if (parentNode != null) {
 			parentNode.appendChildNode(node);
 		}
@@ -578,13 +608,13 @@ public abstract class Node {
 	 * 
 	 * @param node the child to append.
 	 */
-	public void appendChildNode(final Node node) {
+	public void appendChildNode(final NodeObject node) {
 		node.setParentNode(this);
 		node.setContext(context);
 		node.setSession(session);
 		if (getChildList().contains(node)) {
-			if (Node.logger.isLoggable(Level.FINE)) {
-				Node.logger.fine("Node " + node.getLabel() + " is already in the list");
+			if (NodeObject.logger.isLoggable(Level.FINE)) {
+				NodeObject.logger.fine("NodeObject " + node.getLabel() + " is already in the list");
 			}
 			return;
 		}
@@ -600,7 +630,7 @@ public abstract class Node {
 	 * @param index the child to remove.
 	 */
 	public void removeChildNode(final int nodeIndex) {
-		final Node node = getChildList().get(nodeIndex);
+		final NodeObject node = getChildList().get(nodeIndex);
 		final NodePath path = node.getNodePath();
 		node.fireNodeRemoved(path);
 		getChildList().remove(nodeIndex);
@@ -623,13 +653,13 @@ public abstract class Node {
 	 * @param index
 	 * @param node
 	 */
-	public void insertNodeBefore(final int index, final Node node) {
+	public void insertNodeBefore(final int index, final NodeObject node) {
 		node.setParentNode(this);
 		node.setContext(context);
 		node.setSession(session);
 		if (getChildList().contains(node)) {
-			if (Node.logger.isLoggable(Level.FINE)) {
-				Node.logger.fine("Node " + node.getLabel() + " is already in the list");
+			if (NodeObject.logger.isLoggable(Level.FINE)) {
+				NodeObject.logger.fine("NodeObject " + node.getLabel() + " is already in the list");
 			}
 			return;
 		}
@@ -646,13 +676,13 @@ public abstract class Node {
 	 * @param index
 	 * @param node
 	 */
-	public void insertNodeAfter(final int index, final Node node) {
+	public void insertNodeAfter(final int index, final NodeObject node) {
 		node.setParentNode(this);
 		node.setContext(context);
 		node.setSession(session);
 		if (getChildList().contains(node)) {
-			if (Node.logger.isLoggable(Level.FINE)) {
-				Node.logger.fine("Node " + node.getLabel() + " is already in the list");
+			if (NodeObject.logger.isLoggable(Level.FINE)) {
+				NodeObject.logger.fine("NodeObject " + node.getLabel() + " is already in the list");
 			}
 			return;
 		}
@@ -674,7 +704,7 @@ public abstract class Node {
 	 * @param index
 	 * @param node
 	 */
-	public void insertChildNodeAt(final int index, final Node node) {
+	public void insertChildNodeAt(final int index, final NodeObject node) {
 		if (index < getChildList().size()) {
 			insertNodeBefore(index, node);
 		}
@@ -690,7 +720,7 @@ public abstract class Node {
 	 * @param index
 	 */
 	public void moveUpChildNode(final int index) {
-		final Node node = getChildList().get(index);
+		final NodeObject node = getChildList().get(index);
 		if (index > 0) {
 			removeChildNode(index);
 			insertNodeBefore(index - 1, node);
@@ -701,7 +731,7 @@ public abstract class Node {
 	 * @param index
 	 */
 	public void moveDownChildNode(final int index) {
-		final Node node = getChildList().get(index);
+		final NodeObject node = getChildList().get(index);
 		if (index < getChildList().size() - 1) {
 			removeChildNode(index);
 			insertNodeAfter(index, node);
@@ -711,7 +741,7 @@ public abstract class Node {
 	/**
 	 * @param index
 	 */
-	public void setChildNode(final int index, final Node node) {
+	public void setChildNode(final int index, final NodeObject node) {
 		if ((index < 0) || (index > getChildList().size() - 1)) {
 			throw new IllegalArgumentException("index out of bounds");
 		}
@@ -782,13 +812,13 @@ public abstract class Node {
 	 * @param node
 	 * @return the index.
 	 */
-	public int indexOf(final Node node) {
+	public int indexOf(final NodeObject node) {
 		return getChildList().indexOf(node);
 	}
 
-	private List<Node> getChildList() {
+	private List<NodeObject> getChildList() {
 		if (childList == null) {
-			childList = new ArrayList<Node>();
+			childList = new ArrayList<NodeObject>();
 		}
 		return childList;
 	}
@@ -814,7 +844,7 @@ public abstract class Node {
 		return builder.toString();
 	}
 
-	private void dumpNode(final StringBuilder builder, final Node node, final int level) {
+	private void dumpNode(final StringBuilder builder, final NodeObject node, final int level) {
 		for (int i = 0; i < level; i++) {
 			builder.append(" ");
 		}
@@ -848,10 +878,10 @@ public abstract class Node {
 	 * @param path
 	 * @return
 	 */
-	public Node getNodeByPath(final String path) {
+	public NodeObject getNodeByPath(final String path) {
 		NodePath nodePath = NodePath.valueOf(path);
 		final Integer[] pe = nodePath.getPathElements();
-		Node node = this;
+		NodeObject node = this;
 		for (final Integer element : pe) {
 			node = node.getChildNode(element);
 		}

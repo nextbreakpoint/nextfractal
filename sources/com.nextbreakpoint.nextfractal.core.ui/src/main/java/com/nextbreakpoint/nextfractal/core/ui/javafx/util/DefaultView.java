@@ -9,7 +9,7 @@ import javafx.scene.layout.VBox;
 
 import com.nextbreakpoint.nextfractal.core.extension.Extension;
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionNotFoundException;
-import com.nextbreakpoint.nextfractal.core.tree.Node;
+import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.CoreUIRegistry;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.Disposable;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.NodeEditorComponent;
@@ -25,12 +25,12 @@ public class DefaultView extends Pane implements Disposable {
 	 * @param context
 	 * @param tree
 	 */
-	public DefaultView(ViewContext viewContext, RenderContext context, Node rootNode) {
+	public DefaultView(ViewContext viewContext, RenderContext context, NodeObject rootNode) {
 		VBox panel = new VBox(10);
 		panel.setAlignment(Pos.CENTER_LEFT);
 		panel.setMaxWidth(viewContext.getConfigViewSize().getWidth());
 		for (int i = 0; i < rootNode.getChildNodeCount(); i++) {
-			Node node = rootNode.getChildNode(i);
+			NodeObject node = rootNode.getChildNode(i);
 			NodeEditorComponent editor = createEditor(node);
 			if (editor != null) {
 				panel.getChildren().add(editor.getComponent());
@@ -44,7 +44,7 @@ public class DefaultView extends Pane implements Disposable {
 		getChildren().add(panel);
 	}
 	
-	protected NodeEditorComponent createEditor(Node node) {
+	protected NodeEditorComponent createEditor(NodeObject node) {
 		NodeEditorComponent editor = null;
 		if (node.getNodeEditor() != null) {
 			try {

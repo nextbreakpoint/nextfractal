@@ -29,7 +29,7 @@ import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
-import com.nextbreakpoint.nextfractal.core.tree.Node;
+import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
 import com.nextbreakpoint.nextfractal.core.tree.NodeEditor;
 import com.nextbreakpoint.nextfractal.core.tree.NodeValue;
 
@@ -43,7 +43,7 @@ public class DefaultNodeEditor<T extends Serializable> extends NodeEditor {
 	 * @param node
 	 * @param nodeClass
 	 */
-	public DefaultNodeEditor(final Node node, final Class<? extends NodeValue<T>> nodeClass) {
+	public DefaultNodeEditor(final NodeObject node, final Class<? extends NodeValue<T>> nodeClass) {
 		super(node);
 		if (nodeClass == null) {
 			throw new IllegalArgumentException("nodeClass is null");
@@ -55,7 +55,7 @@ public class DefaultNodeEditor<T extends Serializable> extends NodeEditor {
 	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeEditor#createChildNode(com.nextbreakpoint.nextfractal.core.tree.NodeValue)
 	 */
 	@Override
-	protected Node createChildNode(final NodeValue<?> value) {
+	protected NodeObject createChildNode(final NodeValue<?> value) {
 		return null;
 	}
 

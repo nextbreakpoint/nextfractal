@@ -30,7 +30,7 @@ import com.nextbreakpoint.nextfractal.core.common.ConfigurableExtensionReference
 import com.nextbreakpoint.nextfractal.core.common.IntegerElementNode;
 import com.nextbreakpoint.nextfractal.core.common.StringElementNode;
 import com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionReference;
-import com.nextbreakpoint.nextfractal.core.tree.Node;
+import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
 import com.nextbreakpoint.nextfractal.core.tree.NodeEditor;
 import com.nextbreakpoint.nextfractal.core.tree.NodeValue;
 import com.nextbreakpoint.nextfractal.core.util.AbstractConfigElementNode;
@@ -110,7 +110,7 @@ public class IncolouringFormulaConfigElementNode extends AbstractConfigElementNo
 	// return null;
 	// }
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.Node#addDescription(java.lang.StringBuilder)
+	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#addDescription(java.lang.StringBuilder)
 	 */
 	@Override
 	protected void addDescription(final StringBuilder builder) {
@@ -131,7 +131,7 @@ public class IncolouringFormulaConfigElementNode extends AbstractConfigElementNo
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.Node#updateChildNodes()
+	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#updateChildNodes()
 	 */
 	@Override
 	protected void updateChildNodes() {
@@ -150,7 +150,7 @@ public class IncolouringFormulaConfigElementNode extends AbstractConfigElementNo
 		/**
 		 * @param node
 		 */
-		public FormulaNodeEditor(final Node node) {
+		public FormulaNodeEditor(final NodeObject node) {
 			super(node);
 		}
 
@@ -158,7 +158,7 @@ public class IncolouringFormulaConfigElementNode extends AbstractConfigElementNo
 		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeEditor#createChildNode(com.nextbreakpoint.nextfractal.core.tree.NodeValue)
 		 */
 		@Override
-		protected Node createChildNode(final NodeValue<?> value) {
+		protected NodeObject createChildNode(final NodeValue<?> value) {
 			return null;
 		}
 

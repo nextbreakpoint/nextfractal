@@ -32,7 +32,7 @@ import java.util.logging.Logger;
 
 import com.nextbreakpoint.nextfractal.core.DefaultTree;
 import com.nextbreakpoint.nextfractal.core.tree.DefaultNodeSession;
-import com.nextbreakpoint.nextfractal.core.tree.Node;
+import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
 import com.nextbreakpoint.nextfractal.core.tree.NodeAction;
 import com.nextbreakpoint.nextfractal.core.tree.NodePath;
 import com.nextbreakpoint.nextfractal.core.tree.Tree;
@@ -193,7 +193,7 @@ public abstract class AbstractTwisterController implements TwisterController {
 	private void executeRedoAction(final NodeAction action) {
 		final NodePath path = action.getActionTarget();
 		final Integer[] pe = path.getPathElements();
-		Node node = tree.getRootNode();
+		NodeObject node = tree.getRootNode();
 		try {
 			for (final Integer element : pe) {
 				node = node.getChildNode(element);
@@ -211,7 +211,7 @@ public abstract class AbstractTwisterController implements TwisterController {
 	private void executeUndoAction(final NodeAction action) {
 		final NodePath path = action.getActionTarget();
 		final Integer[] pe = path.getPathElements();
-		Node node = tree.getRootNode();
+		NodeObject node = tree.getRootNode();
 		try {
 			for (final Integer element : pe) {
 				node = node.getChildNode(element);

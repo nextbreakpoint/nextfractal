@@ -33,7 +33,7 @@ import com.nextbreakpoint.nextfractal.core.common.ConfigurableExtensionReference
 import com.nextbreakpoint.nextfractal.core.common.ConfigurableExtensionReferenceElementXMLImporter;
 import com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionReference;
 import com.nextbreakpoint.nextfractal.core.test.AbstractConfigurableExtensionConfigElementTest;
-import com.nextbreakpoint.nextfractal.core.tree.Node;
+import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
 import com.nextbreakpoint.nextfractal.core.tree.NodeValue;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotRegistry;
 import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.transformingFormula.TransformingFormulaExtensionConfig;
@@ -46,7 +46,7 @@ import com.nextbreakpoint.nextfractal.mandelbrot.transformingFormula.Transformin
  */
 public class TransformingFormulaElementTest extends AbstractConfigurableExtensionConfigElementTest<TransformingFormulaExtensionConfig> {
 	@Override
-	protected Node createElementNode() {
+	protected NodeObject createElementNode() {
 		return new ConfigurableExtensionReferenceElementNode<TransformingFormulaExtensionConfig>("reference", getConfigElement()) {
 			@Override
 			protected NodeValue<?> createNodeValue(final ConfigurableExtensionReference<TransformingFormulaExtensionConfig> value) {

@@ -71,7 +71,7 @@ public class FrameConfigElementNode extends AbstractConfigElementNode<FrameConfi
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.Node#updateNode()
+	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#updateNode()
 	 */
 	@Override
 	protected void updateChildNodes() {
@@ -126,7 +126,7 @@ public class FrameConfigElementNode extends AbstractConfigElementNode<FrameConfi
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.Node#isEditable()
+	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#isEditable()
 	 */
 	@Override
 	public boolean isEditable() {

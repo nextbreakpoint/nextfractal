@@ -35,7 +35,7 @@ import com.nextbreakpoint.nextfractal.core.extension.ExtensionConfig;
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionException;
 import com.nextbreakpoint.nextfractal.core.extensionPoints.nodeBuilder.NodeBuilderExtensionRuntime;
 import com.nextbreakpoint.nextfractal.core.tree.DefaultNode;
-import com.nextbreakpoint.nextfractal.core.tree.Node;
+import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
 import com.nextbreakpoint.nextfractal.core.tree.NodeAction;
 import com.nextbreakpoint.nextfractal.core.tree.NodeBuilder;
 import com.nextbreakpoint.nextfractal.core.tree.NodeEditor;
@@ -76,7 +76,7 @@ public abstract class ConfigurableExtensionReferenceElementNode<T extends Extens
 	protected abstract NodeValue<?> createNodeValue(ConfigurableExtensionReference<T> value);
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.Node#dispose()
+	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#dispose()
 	 */
 	@Override
 	public void dispose() {
@@ -89,7 +89,7 @@ public abstract class ConfigurableExtensionReferenceElementNode<T extends Extens
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.Node#setSession(com.nextbreakpoint.nextfractal.core.tree.NodeSession)
+	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#setSession(com.nextbreakpoint.nextfractal.core.tree.NodeSession)
 	 */
 	@Override
 	public void setSession(final NodeSession session) {
@@ -103,7 +103,7 @@ public abstract class ConfigurableExtensionReferenceElementNode<T extends Extens
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.Node#nodeAdded()
+	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#nodeAdded()
 	 */
 	@Override
 	protected void nodeAdded() {
@@ -111,7 +111,7 @@ public abstract class ConfigurableExtensionReferenceElementNode<T extends Extens
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.Node#nodeRemoved()
+	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#nodeRemoved()
 	 */
 	@Override
 	protected void nodeRemoved() {
@@ -166,7 +166,7 @@ public abstract class ConfigurableExtensionReferenceElementNode<T extends Extens
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.Node#addDescription(java.lang.StringBuilder)
+	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#addDescription(java.lang.StringBuilder)
 	 */
 	@Override
 	protected void addDescription(final StringBuilder builder) {
@@ -186,7 +186,7 @@ public abstract class ConfigurableExtensionReferenceElementNode<T extends Extens
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.Node#updateNode()
+	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#updateNode()
 	 */
 	@Override
 	protected void updateNode() {
@@ -198,7 +198,7 @@ public abstract class ConfigurableExtensionReferenceElementNode<T extends Extens
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.Node#updateNode()
+	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#updateNode()
 	 */
 	@Override
 	protected void updateChildNodes() {
@@ -253,7 +253,7 @@ public abstract class ConfigurableExtensionReferenceElementNode<T extends Extens
 		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeEditor#createChildNode(java.lang.NodeValue)
 		 */
 		@Override
-		protected Node createChildNode(final NodeValue<?> value) {
+		protected NodeObject createChildNode(final NodeValue<?> value) {
 			return null;
 		}
 

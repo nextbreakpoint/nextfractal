@@ -28,7 +28,7 @@ package com.nextbreakpoint.nextfractal.mandelbrot.extensions.outcolouringFormula
 import com.nextbreakpoint.nextfractal.core.common.ColorElementNode;
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionConfig;
 import com.nextbreakpoint.nextfractal.core.extensionPoints.nodeBuilder.NodeBuilderExtensionRuntime;
-import com.nextbreakpoint.nextfractal.core.tree.Node;
+import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
 import com.nextbreakpoint.nextfractal.core.tree.NodeBuilder;
 import com.nextbreakpoint.nextfractal.core.util.AbstractExtensionConfigNodeBuilder;
 
@@ -53,10 +53,10 @@ public class BinaryConfigNodeBuilderRuntime extends NodeBuilderExtensionRuntime 
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.util.AbstractExtensionConfigNodeBuilder#createNodes(com.nextbreakpoint.nextfractal.core.tree.Node)
+		 * @see com.nextbreakpoint.nextfractal.core.util.AbstractExtensionConfigNodeBuilder#createNodes(com.nextbreakpoint.nextfractal.core.tree.NodeObject)
 		 */
 		@Override
-		public void createNodes(final Node parentNode) {
+		public void createNodes(final NodeObject parentNode) {
 			parentNode.appendChildNode(new ColorNode(getConfig(), 0));
 			parentNode.appendChildNode(new ColorNode(getConfig(), 1));
 		}

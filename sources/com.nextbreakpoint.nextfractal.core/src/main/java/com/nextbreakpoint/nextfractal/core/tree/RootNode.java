@@ -31,7 +31,7 @@ import java.util.List;
 /**
  * @author Andrea Medeghini
  */
-public class RootNode extends Node {
+public class RootNode extends NodeObject {
 	private List<NodeListener> listeners = new ArrayList<NodeListener>();
 
 	/**
@@ -124,7 +124,7 @@ public class RootNode extends Node {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.Node#dispose()
+	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#dispose()
 	 */
 	@Override
 	public void dispose() {

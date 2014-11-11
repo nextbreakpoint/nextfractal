@@ -28,7 +28,7 @@ package com.nextbreakpoint.nextfractal.test.mandelbrot.common;
 import org.junit.Test;
 
 import com.nextbreakpoint.nextfractal.core.test.AbsractValueElementTest;
-import com.nextbreakpoint.nextfractal.core.tree.Node;
+import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
 import com.nextbreakpoint.nextfractal.mandelbrot.common.ExponentElement;
 import com.nextbreakpoint.nextfractal.mandelbrot.common.ExponentElementNode;
 import com.nextbreakpoint.nextfractal.mandelbrot.common.ExponentElementXMLExporter;
@@ -58,7 +58,7 @@ public class ExponentElementTest extends AbsractValueElementTest<Integer, Expone
 	}
 
 	@Override
-	protected Node createElementNode() {
+	protected NodeObject createElementNode() {
 		return new ExponentElementNode("value", getConfigElement()) {
 		};
 	}

@@ -32,7 +32,7 @@ import com.nextbreakpoint.nextfractal.core.common.FloatElementNode;
 import com.nextbreakpoint.nextfractal.core.common.FloatElementXMLExporter;
 import com.nextbreakpoint.nextfractal.core.common.FloatElementXMLImporter;
 import com.nextbreakpoint.nextfractal.core.test.AbsractValueElementTest;
-import com.nextbreakpoint.nextfractal.core.tree.Node;
+import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
 
 /**
  * @author Andrea Medeghini
@@ -55,7 +55,7 @@ public class FloatElementTest extends AbsractValueElementTest<Float, FloatElemen
 	}
 
 	@Override
-	protected Node createElementNode() {
+	protected NodeObject createElementNode() {
 		return new FloatElementNode("value", getConfigElement()) {
 		};
 	}

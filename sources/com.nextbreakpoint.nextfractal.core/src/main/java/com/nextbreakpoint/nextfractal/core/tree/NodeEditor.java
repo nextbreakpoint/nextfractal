@@ -31,14 +31,14 @@ import com.nextbreakpoint.nextfractal.core.config.ConfigContext;
  * @author Andrea Medeghini
  */
 public abstract class NodeEditor {
-	protected Node node;
+	protected NodeObject node;
 
 	/**
 	 * Constructs a new editor.
 	 * 
 	 * @param node the node.
 	 */
-	public NodeEditor(final Node node) {
+	public NodeEditor(final NodeObject node) {
 		this.node = node;
 	}
 
@@ -212,7 +212,7 @@ public abstract class NodeEditor {
 		if (!node.isMutable()) {
 			throw new UnsupportedOperationException();
 		}
-		final Node newNode = createChildNode(value);
+		final NodeObject newNode = createChildNode(value);
 		final ForwardCommand command = new ForwardCommand();
 		node.appendCommand(command);
 		node.appendChildNode(newNode);
@@ -232,7 +232,7 @@ public abstract class NodeEditor {
 		if (!node.isMutable()) {
 			throw new UnsupportedOperationException();
 		}
-		final Node newNode = createChildNode(value);
+		final NodeObject newNode = createChildNode(value);
 		final ForwardCommand command = new ForwardCommand();
 		node.appendCommand(command);
 		node.insertNodeBefore(index, newNode);
@@ -252,7 +252,7 @@ public abstract class NodeEditor {
 		if (!node.isMutable()) {
 			throw new UnsupportedOperationException();
 		}
-		final Node newNode = createChildNode(value);
+		final NodeObject newNode = createChildNode(value);
 		final ForwardCommand command = new ForwardCommand();
 		node.appendCommand(command);
 		node.insertNodeAfter(index, newNode);
@@ -271,7 +271,7 @@ public abstract class NodeEditor {
 		if (!node.isMutable()) {
 			throw new UnsupportedOperationException();
 		}
-		final Node newNode = createChildNode(value);
+		final NodeObject newNode = createChildNode(value);
 		if (index < node.getChildNodeCount()) {
 			final ForwardCommand command = new ForwardCommand();
 			node.appendCommand(command);
@@ -305,7 +305,7 @@ public abstract class NodeEditor {
 			throw new UnsupportedOperationException();
 		}
 		if ((index >= 0) && (index < node.getChildNodeCount())) {
-			final Node nodeToRemove = node.getChildNode(index);
+			final NodeObject nodeToRemove = node.getChildNode(index);
 			final ForwardCommand command = new ForwardCommand();
 			command.setCommand(new RemoveCommand(index, nodeToRemove));
 			node.removeChildNode(index);
@@ -384,7 +384,7 @@ public abstract class NodeEditor {
 	/**
 	 * @param value
 	 */
-	protected abstract Node createChildNode(NodeValue<?> value);
+	protected abstract NodeObject createChildNode(NodeValue<?> value);
 
 	/**
 	 * @param value
@@ -395,21 +395,21 @@ public abstract class NodeEditor {
 	/**
 	 * @param node
 	 */
-	protected void doAppendNode(final Node node) {
+	protected void doAppendNode(final NodeObject node) {
 	}
 
 	/**
 	 * @param index
 	 * @param node
 	 */
-	protected void doInsertNodeAfter(final int index, final Node node) {
+	protected void doInsertNodeAfter(final int index, final NodeObject node) {
 	}
 
 	/**
 	 * @param index
 	 * @param node
 	 */
-	protected void doInsertNodeBefore(final int index, final Node node) {
+	protected void doInsertNodeBefore(final int index, final NodeObject node) {
 	}
 
 	/**
@@ -433,7 +433,7 @@ public abstract class NodeEditor {
 	/**
 	 * @param nodeIndex
 	 */
-	protected void doChangeNode(final int nodeIndex, final Node node) {
+	protected void doChangeNode(final int nodeIndex, final NodeObject node) {
 	}
 
 	private abstract class AbstractCommand implements NodeCommand {
@@ -496,14 +496,14 @@ public abstract class NodeEditor {
 
 	private class AppendCommand extends AbstractCommand {
 		private final int index;
-		private final Node node;
+		private final NodeObject node;
 		private final NodeValue<?> value;
 		private final NodePath target;
 
 		/**
 		 * @param node
 		 */
-		public AppendCommand(final Node node) {
+		public AppendCommand(final NodeObject node) {
 			this.node = node;
 			value = node.getNodeValue();
 			target = node.getParentNode().getNodePath();
@@ -530,7 +530,7 @@ public abstract class NodeEditor {
 
 	private class InsertBeforeCommand extends AbstractCommand {
 		private final int index;
-		private final Node node;
+		private final NodeObject node;
 		private final NodeValue<?> value;
 		private final NodePath target;
 
@@ -538,7 +538,7 @@ public abstract class NodeEditor {
 		 * @param index
 		 * @param node
 		 */
-		public InsertBeforeCommand(final int index, final Node node) {
+		public InsertBeforeCommand(final int index, final NodeObject node) {
 			this.index = index;
 			this.node = node;
 			value = node.getNodeValue();
@@ -565,7 +565,7 @@ public abstract class NodeEditor {
 
 	private class InsertAfterCommand extends AbstractCommand {
 		private final int index;
-		private final Node node;
+		private final NodeObject node;
 		private final NodeValue<?> value;
 		private final NodePath target;
 
@@ -573,7 +573,7 @@ public abstract class NodeEditor {
 		 * @param index
 		 * @param node
 		 */
-		public InsertAfterCommand(final int index, final Node node) {
+		public InsertAfterCommand(final int index, final NodeObject node) {
 			this.index = index;
 			this.node = node;
 			value = node.getNodeValue();
@@ -599,7 +599,7 @@ public abstract class NodeEditor {
 	}
 
 	private class RemoveCommand extends AbstractCommand {
-		private final Node node;
+		private final NodeObject node;
 		private final int index;
 		private final NodeValue<?> value;
 		private final NodePath target;
@@ -608,7 +608,7 @@ public abstract class NodeEditor {
 		 * @param index
 		 * @param node
 		 */
-		public RemoveCommand(final int index, final Node node) {
+		public RemoveCommand(final int index, final NodeObject node) {
 			this.index = index;
 			this.node = node;
 			value = node.getNodeValue();

@@ -28,7 +28,7 @@ package com.nextbreakpoint.nextfractal.test.mandelbrot.common;
 import org.junit.Test;
 
 import com.nextbreakpoint.nextfractal.core.test.AbsractValueElementTest;
-import com.nextbreakpoint.nextfractal.core.tree.Node;
+import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
 import com.nextbreakpoint.nextfractal.mandelbrot.common.RenderedPaletteElement;
 import com.nextbreakpoint.nextfractal.mandelbrot.common.RenderedPaletteElementNode;
 import com.nextbreakpoint.nextfractal.mandelbrot.common.RenderedPaletteElementXMLExporter;
@@ -58,7 +58,7 @@ public class RenderedPaletteElementTest extends AbsractValueElementTest<Rendered
 	}
 
 	@Override
-	protected Node createElementNode() {
+	protected NodeObject createElementNode() {
 		return new RenderedPaletteElementNode("value", getConfigElement()) {
 		};
 	}

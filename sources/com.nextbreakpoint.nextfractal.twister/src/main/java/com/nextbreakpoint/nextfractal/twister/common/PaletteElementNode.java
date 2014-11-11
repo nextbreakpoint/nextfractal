@@ -29,7 +29,7 @@ import com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent;
 import com.nextbreakpoint.nextfractal.core.config.ValueChangeListener;
 import com.nextbreakpoint.nextfractal.core.config.ValueConfigElement;
 import com.nextbreakpoint.nextfractal.core.tree.AttributeNode;
-import com.nextbreakpoint.nextfractal.core.tree.Node;
+import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
 import com.nextbreakpoint.nextfractal.core.tree.NodeAction;
 import com.nextbreakpoint.nextfractal.core.tree.NodeEditor;
 import com.nextbreakpoint.nextfractal.core.tree.NodeSession;
@@ -60,7 +60,7 @@ public class PaletteElementNode extends AttributeNode {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.Node#dispose()
+	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#dispose()
 	 */
 	@Override
 	public void dispose() {
@@ -71,7 +71,7 @@ public class PaletteElementNode extends AttributeNode {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.Node#setSession(com.nextbreakpoint.nextfractal.core.tree.NodeSession)
+	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#setSession(com.nextbreakpoint.nextfractal.core.tree.NodeSession)
 	 */
 	@Override
 	public void setSession(final NodeSession session) {
@@ -85,7 +85,7 @@ public class PaletteElementNode extends AttributeNode {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.Node#nodeAdded()
+	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#nodeAdded()
 	 */
 	@Override
 	protected void nodeAdded() {
@@ -93,7 +93,7 @@ public class PaletteElementNode extends AttributeNode {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.Node#nodeRemoved()
+	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#nodeRemoved()
 	 */
 	@Override
 	protected void nodeRemoved() {
@@ -122,7 +122,7 @@ public class PaletteElementNode extends AttributeNode {
 		/**
 		 * @param node
 		 */
-		public PaletteNodeEditor(final Node node) {
+		public PaletteNodeEditor(final NodeObject node) {
 			super(node);
 		}
 
@@ -130,7 +130,7 @@ public class PaletteElementNode extends AttributeNode {
 		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeEditor#createChildNode(com.nextbreakpoint.nextfractal.core.tree.NodeValue)
 		 */
 		@Override
-		protected Node createChildNode(final NodeValue<?> value) {
+		protected NodeObject createChildNode(final NodeValue<?> value) {
 			return null;
 		}
 

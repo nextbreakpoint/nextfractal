@@ -25,7 +25,7 @@
  */
 package com.nextbreakpoint.nextfractal.core.scripting;
 
-import com.nextbreakpoint.nextfractal.core.tree.Node;
+import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
 import com.nextbreakpoint.nextfractal.core.util.RenderContext;
 
 /**
@@ -34,14 +34,14 @@ import com.nextbreakpoint.nextfractal.core.util.RenderContext;
 public class DefaultJSTree implements JSTree {
 	private final RenderContext renderContext;
 	private final JSNode jsRootNode;
-	private final Node rootNode;
+	private final NodeObject rootNode;
 
 	/**
 	 * @param renderContext
 	 * @param jsContext
 	 * @param rootNode
 	 */
-	public DefaultJSTree(final RenderContext renderContext, final Node rootNode) {
+	public DefaultJSTree(final RenderContext renderContext, final NodeObject rootNode) {
 		this.renderContext = renderContext;
 		this.rootNode = rootNode;
 		jsRootNode = new DefaultJSNode(rootNode);

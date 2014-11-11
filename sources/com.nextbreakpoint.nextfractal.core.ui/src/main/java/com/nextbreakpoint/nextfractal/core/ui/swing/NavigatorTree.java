@@ -49,7 +49,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 
-import com.nextbreakpoint.nextfractal.core.tree.Node;
+import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
 import com.nextbreakpoint.nextfractal.core.tree.NodeEditor;
 import com.nextbreakpoint.nextfractal.core.tree.NodeEvent;
 import com.nextbreakpoint.nextfractal.core.tree.NodeListener;
@@ -210,7 +210,7 @@ public class NavigatorTree extends JTree implements NodeListener, DropTargetList
 					final TransferableNodeValue nodeValue = (TransferableNodeValue) transferable.getTransferData(TransferableNodeValueAdapter.NODE_VALUE_FLAVOR);
 					final TreePath path = getPathForLocation(dtde.getLocation().x, dtde.getLocation().y);
 					if (path != null) {
-						final NodeEditor nodeEditor = ((Node) ((DefaultMutableTreeNode) path.getLastPathComponent()).getUserObject()).getNodeEditor();
+						final NodeEditor nodeEditor = ((NodeObject) ((DefaultMutableTreeNode) path.getLastPathComponent()).getUserObject()).getNodeEditor();
 						if (nodeEditor != null) {
 							if (nodeValue.getType().isAssignableFrom(nodeEditor.getNodeValueType())) {
 								NavigatorTree.logger.fine("Drop on node = " + nodeEditor.getNodeId());
@@ -245,7 +245,7 @@ public class NavigatorTree extends JTree implements NodeListener, DropTargetList
 					final TransferableNodeValue nodeValue = (TransferableNodeValue) transferable.getTransferData(TransferableNodeValueAdapter.NODE_VALUE_FLAVOR);
 					final TreePath path = getPathForLocation(dtde.getLocation().x, dtde.getLocation().y);
 					if (path != null) {
-						final NodeEditor nodeEditor = ((Node) ((DefaultMutableTreeNode) path.getLastPathComponent()).getUserObject()).getNodeEditor();
+						final NodeEditor nodeEditor = ((NodeObject) ((DefaultMutableTreeNode) path.getLastPathComponent()).getUserObject()).getNodeEditor();
 						if (nodeEditor != null) {
 							if (nodeValue.getType().isAssignableFrom(nodeEditor.getNodeValueType())) {
 								NavigatorTree.logger.fine("Drop on node = " + nodeEditor.getNodeId());
@@ -291,7 +291,7 @@ public class NavigatorTree extends JTree implements NodeListener, DropTargetList
 	@Override
 	public void dragGestureRecognized(final DragGestureEvent dge) {
 		if (getSelectionPath() != null) {
-			final NodeEditor nodeEditor = ((Node) ((DefaultMutableTreeNode) getSelectionPath().getLastPathComponent()).getUserObject()).getNodeEditor();
+			final NodeEditor nodeEditor = ((NodeObject) ((DefaultMutableTreeNode) getSelectionPath().getLastPathComponent()).getUserObject()).getNodeEditor();
 			if (nodeEditor != null) {
 				NavigatorTree.logger.fine("Drag node = " + nodeEditor.getNodeId());
 				dge.startDrag(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR), new TransferableNodeValueAdapter(nodeEditor.getNodeValueAsTransferable()), this);

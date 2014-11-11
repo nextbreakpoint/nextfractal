@@ -30,7 +30,7 @@ public class ${extension.extensionConfigClassName}NodeBuilderRuntime extends Nod
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.util.AbstractExtensionConfigNodeBuilder#createNodes(com.nextbreakpoint.nextfractal.core.tree.Node)
+		 * @see com.nextbreakpoint.nextfractal.core.util.AbstractExtensionConfigNodeBuilder#createNodes(com.nextbreakpoint.nextfractal.core.tree.NodeObject)
 		 */
 		@Override
 		public void createNodes(final Node parentNode) {

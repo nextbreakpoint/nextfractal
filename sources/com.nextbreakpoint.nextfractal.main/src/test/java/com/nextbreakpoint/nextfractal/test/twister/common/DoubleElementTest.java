@@ -32,7 +32,7 @@ import com.nextbreakpoint.nextfractal.core.common.DoubleElementNode;
 import com.nextbreakpoint.nextfractal.core.common.DoubleElementXMLExporter;
 import com.nextbreakpoint.nextfractal.core.common.DoubleElementXMLImporter;
 import com.nextbreakpoint.nextfractal.core.test.AbsractValueElementTest;
-import com.nextbreakpoint.nextfractal.core.tree.Node;
+import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
 
 /**
  * @author Andrea Medeghini
@@ -55,7 +55,7 @@ public class DoubleElementTest extends AbsractValueElementTest<Double, DoubleEle
 	}
 
 	@Override
-	protected Node createElementNode() {
+	protected NodeObject createElementNode() {
 		return new DoubleElementNode("value", getConfigElement()) {
 		};
 	}

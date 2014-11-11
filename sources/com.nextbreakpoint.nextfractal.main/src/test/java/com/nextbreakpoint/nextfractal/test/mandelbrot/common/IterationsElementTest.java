@@ -28,7 +28,7 @@ package com.nextbreakpoint.nextfractal.test.mandelbrot.common;
 import org.junit.Test;
 
 import com.nextbreakpoint.nextfractal.core.test.AbsractValueElementTest;
-import com.nextbreakpoint.nextfractal.core.tree.Node;
+import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
 import com.nextbreakpoint.nextfractal.mandelbrot.common.IterationsElement;
 import com.nextbreakpoint.nextfractal.mandelbrot.common.IterationsElementNode;
 import com.nextbreakpoint.nextfractal.mandelbrot.common.IterationsElementXMLExporter;
@@ -58,7 +58,7 @@ public class IterationsElementTest extends AbsractValueElementTest<Integer, Iter
 	}
 
 	@Override
-	protected Node createElementNode() {
+	protected NodeObject createElementNode() {
 		return new IterationsElementNode("value", getConfigElement()) {
 		};
 	}

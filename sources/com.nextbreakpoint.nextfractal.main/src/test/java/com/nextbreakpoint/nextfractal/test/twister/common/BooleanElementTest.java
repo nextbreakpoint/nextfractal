@@ -32,7 +32,7 @@ import com.nextbreakpoint.nextfractal.core.common.BooleanElementNode;
 import com.nextbreakpoint.nextfractal.core.common.BooleanElementXMLExporter;
 import com.nextbreakpoint.nextfractal.core.common.BooleanElementXMLImporter;
 import com.nextbreakpoint.nextfractal.core.test.AbsractValueElementTest;
-import com.nextbreakpoint.nextfractal.core.tree.Node;
+import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
 
 /**
  * @author Andrea Medeghini
@@ -55,7 +55,7 @@ public class BooleanElementTest extends AbsractValueElementTest<Boolean, Boolean
 	}
 
 	@Override
-	protected Node createElementNode() {
+	protected NodeObject createElementNode() {
 		return new BooleanElementNode("value", getConfigElement()) {
 		};
 	}

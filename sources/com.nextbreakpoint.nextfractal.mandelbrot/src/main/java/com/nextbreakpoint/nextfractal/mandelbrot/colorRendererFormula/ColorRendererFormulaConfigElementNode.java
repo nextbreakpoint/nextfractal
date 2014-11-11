@@ -27,7 +27,7 @@ package com.nextbreakpoint.nextfractal.mandelbrot.colorRendererFormula;
 
 import com.nextbreakpoint.nextfractal.core.common.ExtensionReferenceElementNode;
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionReference;
-import com.nextbreakpoint.nextfractal.core.tree.Node;
+import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
 import com.nextbreakpoint.nextfractal.core.tree.NodeEditor;
 import com.nextbreakpoint.nextfractal.core.tree.NodeValue;
 import com.nextbreakpoint.nextfractal.core.util.AbstractConfigElementNode;
@@ -115,7 +115,7 @@ public class ColorRendererFormulaConfigElementNode extends AbstractConfigElement
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.Node#updateChildNodes()
+	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#updateChildNodes()
 	 */
 	@Override
 	protected void updateChildNodes() {
@@ -134,7 +134,7 @@ public class ColorRendererFormulaConfigElementNode extends AbstractConfigElement
 		/**
 		 * @param node
 		 */
-		public FormulaNodeEditor(final Node node) {
+		public FormulaNodeEditor(final NodeObject node) {
 			super(node);
 		}
 
@@ -142,7 +142,7 @@ public class ColorRendererFormulaConfigElementNode extends AbstractConfigElement
 		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeEditor#createChildNode(com.nextbreakpoint.nextfractal.core.tree.NodeValue)
 		 */
 		@Override
-		protected Node createChildNode(final NodeValue<?> value) {
+		protected NodeObject createChildNode(final NodeValue<?> value) {
 			return null;
 		}
 

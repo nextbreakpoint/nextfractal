@@ -46,7 +46,7 @@ import com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionRefere
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionConfig;
 import com.nextbreakpoint.nextfractal.core.tree.DefaultNode;
 import com.nextbreakpoint.nextfractal.core.tree.DefaultNodeSession;
-import com.nextbreakpoint.nextfractal.core.tree.Node;
+import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
 import com.nextbreakpoint.nextfractal.core.tree.NodeAction;
 import com.nextbreakpoint.nextfractal.core.tree.NodeEditor;
 import com.nextbreakpoint.nextfractal.core.tree.NodePath;
@@ -76,7 +76,7 @@ public abstract class AbstractConfigurableExtensionConfigElementTest<V extends E
 
 	protected abstract ConfigurableExtensionReferenceElement<V> createConfigElement(ConfigurableExtensionReference<V> defaultValue);
 
-	protected abstract Node createElementNode();
+	protected abstract NodeObject createElementNode();
 
 	protected abstract ConfigurableExtensionReferenceElementXMLImporter<V> createXMLImporter();
 
@@ -116,7 +116,7 @@ public abstract class AbstractConfigurableExtensionConfigElementTest<V extends E
 			}
 		};
 		tree.getRootNode().appendChildNode(parentNode);
-		final Node node = createElementNode();
+		final NodeObject node = createElementNode();
 		parentNode.appendChildNode(node);
 		Assert.assertEquals(getFirstReference(), node.getNodeValue().getValue());
 		configElement.setReference(getSecondReference());

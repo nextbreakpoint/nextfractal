@@ -31,7 +31,7 @@ import com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent;
 import com.nextbreakpoint.nextfractal.core.config.ValueChangeListener;
 import com.nextbreakpoint.nextfractal.core.config.ValueConfigElement;
 import com.nextbreakpoint.nextfractal.core.tree.DefaultNode;
-import com.nextbreakpoint.nextfractal.core.tree.Node;
+import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
 import com.nextbreakpoint.nextfractal.core.tree.NodeAction;
 import com.nextbreakpoint.nextfractal.core.tree.NodeEditor;
 import com.nextbreakpoint.nextfractal.core.tree.NodeSession;
@@ -65,7 +65,7 @@ public abstract class AbstractConfigElementSingleNode<T extends ConfigElement> e
 	protected abstract AbstractConfigElementNode<T> createChildNode(T value);
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.Node#dispose()
+	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#dispose()
 	 */
 	@Override
 	public void dispose() {
@@ -78,7 +78,7 @@ public abstract class AbstractConfigElementSingleNode<T extends ConfigElement> e
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.Node#setSession(com.nextbreakpoint.nextfractal.core.tree.NodeSession)
+	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#setSession(com.nextbreakpoint.nextfractal.core.tree.NodeSession)
 	 */
 	@Override
 	public void setSession(final NodeSession session) {
@@ -92,7 +92,7 @@ public abstract class AbstractConfigElementSingleNode<T extends ConfigElement> e
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.Node#nodeAdded()
+	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#nodeAdded()
 	 */
 	@Override
 	protected void nodeAdded() {
@@ -100,7 +100,7 @@ public abstract class AbstractConfigElementSingleNode<T extends ConfigElement> e
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.Node#nodeRemoved()
+	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#nodeRemoved()
 	 */
 	@Override
 	protected void nodeRemoved() {
@@ -128,7 +128,7 @@ public abstract class AbstractConfigElementSingleNode<T extends ConfigElement> e
 	 * @param singleElement the frame element.
 	 */
 	protected void createConfigElementNodes(final SingleConfigElement<T> singleElement) {
-		final Node configElementNode = createChildNode(singleElement.getValue());
+		final NodeObject configElementNode = createChildNode(singleElement.getValue());
 		appendChildNode(configElementNode);
 	}
 
@@ -159,7 +159,7 @@ public abstract class AbstractConfigElementSingleNode<T extends ConfigElement> e
 		 */
 		@SuppressWarnings({ "unchecked", "rawtypes" })
 		@Override
-		protected Node createChildNode(final NodeValue value) {
+		protected NodeObject createChildNode(final NodeValue value) {
 			final T configElement = ((NodeValue<T>) value).getValue();
 			configElement.setContext(getContext());
 			return AbstractConfigElementSingleNode.this.createChildNode(configElement);

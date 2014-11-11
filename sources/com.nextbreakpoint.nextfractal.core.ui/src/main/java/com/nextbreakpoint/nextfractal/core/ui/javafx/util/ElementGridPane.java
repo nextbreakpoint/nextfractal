@@ -1,5 +1,6 @@
 package com.nextbreakpoint.nextfractal.core.ui.javafx.util;
 
+import java.io.Serializable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -15,18 +16,21 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 
-import com.nextbreakpoint.nextfractal.core.config.ConfigElement;
+import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
+import com.nextbreakpoint.nextfractal.core.tree.NodeValue;
 
-public abstract class ElementGridPane<T extends ConfigElement> extends BorderPane {
+public abstract class ElementGridPane<T extends Serializable> extends BorderPane {
+	private ElementGridDelegate delegate;
 	private Pane container = new Pane();
 	private GridGroup sentinelGroup;
+	private NodeObject listNode;
 	private int maxElements;
 	
-	public ElementGridPane(Dimension2D size) {
-		this(size, 7);
+	public ElementGridPane(NodeObject listNode, Dimension2D size) {
+		this(listNode, size, 7);
 	}
 
-	public ElementGridPane(Dimension2D size, int maxElements) {
+	public ElementGridPane(NodeObject listNode, Dimension2D size, int maxElements) {
 		setPrefWidth(size.getWidth());
 		setMinHeight(size.getHeight());
 		ScrollPane scrollPane = new ScrollPane(container);
@@ -38,37 +42,64 @@ public abstract class ElementGridPane<T extends ConfigElement> extends BorderPan
 		int cells = getCellCount(size.getWidth(), size.getHeight());
 		setMinWidth(cells * size.getHeight());
 		this.maxElements = maxElements;
+		this.listNode = listNode;
 	}
 
 	protected void init() {
-		for (int i = 0; i < getElementCount(); i++) {
-			container.getChildren().add(createItem(getElement(i)));
+		for (int i = 0; i < getNodeCount(); i++) {
+			container.getChildren().add(createItem(getNodeValue(i)));
 		}
 		sentinelGroup = createSentinel();
 		container.getChildren().add(sentinelGroup);
 		doLayout();
 	}
 
-	protected abstract void appendElement(T element);
+	public ElementGridDelegate getDelegate() {
+		return delegate;
+	}
 
-	protected abstract void insertElementAfter(int index, T element);
+	public void setDelegate(ElementGridDelegate delegate) {
+		this.delegate = delegate;
+	}
 
-	protected abstract void insertElementBefore(int index, T element);
+	protected void appendNode(NodeValue<?> value) {
+		listNode.getNodeEditor().appendChildNode(value);
+	}
 
-	protected abstract void removeElement(int index);
+	protected void insertNodeAfter(int index, NodeValue<?> value) {
+		listNode.getNodeEditor().insertChildNodeAfter(index, value);
+	}
 
+	protected void insertNodeBefore(int index, NodeValue<?> value) {
+		listNode.getNodeEditor().insertChildNodeBefore(index, value);
+	}
+
+	protected void removeNode(int index) {
+		listNode.getNodeEditor().removeChildNode(index);
+	}
+
+	protected NodeValue<?> getNodeValue(int index) {
+		return listNode.getChildNode(index).getNodeValue();
+	}
+	
+	protected int getNodeCount() {
+		return listNode.getChildNodeCount();
+	}
+	
+	protected NodeValue<?> createNodeValue() {
+		return listNode.getNodeEditor().createNodeValue(createElement());
+	}
+
+	protected void fireNodeSelected(NodeValue<?> node) {
+		if (delegate != null) {
+			delegate.didSelectValue(node);
+		}
+	}
+	
 	protected abstract T createElement();
 
-	protected abstract T getElement(int index);
-
-	protected abstract int getElementCount();
-
 	protected abstract String getElementName(T element);
-
-	protected abstract T makeElement();
-
-	protected abstract void selectElement(T element);
-
+	
 	private int getCellCount(double width, double size) {
 		return (int)Math.floor(width / (size + 10));
 	}
@@ -104,8 +135,8 @@ public abstract class ElementGridPane<T extends ConfigElement> extends BorderPan
 		return node;
 	}
 
-	private GridGroup createItem(T element) {
-		GridItem item = new GridItem(element);
+	private GridGroup createItem(NodeValue<?> value) {
+		GridItem item = new GridItem(value);
 		setCellSize(item);
 		GridGroup node = createGroup(item);
 		return node;
@@ -170,8 +201,8 @@ public abstract class ElementGridPane<T extends ConfigElement> extends BorderPan
 	}
 
 	@SuppressWarnings("unchecked")
-	private T getElement(final GridGroup sourceGroup) {
-		return ((GridItem)unwrapNode(sourceGroup)).getElement();
+	private NodeValue<?> getNodeValue(final GridGroup sourceGroup) {
+		return ((GridItem)unwrapNode(sourceGroup)).getNodeValue();
 	}
 
 	private double computeX(final DragContext dragContext, final GridGroup sourceGroup, final MouseEvent mouseEvent) {
@@ -271,28 +302,28 @@ public abstract class ElementGridPane<T extends ConfigElement> extends BorderPan
 				double tx = sourceGroup.getLayoutX() + x - targetGroup.getLayoutX();
 				if (sourceGroup instanceof ElementGridPane<?>.GroupItem) {
 					if (targetGroup instanceof ElementGridPane<?>.GroupItem) {
-						T element = getElement(sourceIndex);
-						removeElement(sourceIndex);
+						NodeValue<?> value = getNodeValue(sourceIndex);
+						removeNode(sourceIndex);
 						if (tx + node.getBoundsInLocal().getWidth() / 2 <= targetGroup.getBoundsInParent().getWidth() / 2) {
-							insertElementBefore(targetIndex, element);
+							insertNodeBefore(targetIndex, value);
 							container.getChildren().add(targetIndex, sourceGroup);
 						} else {
-							insertElementAfter(targetIndex, element);
+							insertNodeAfter(targetIndex, value);
 							container.getChildren().add(targetIndex + 1, sourceGroup);
 						}
 					} else if (targetGroup instanceof ElementGridPane<?>.GroupSentinel) {
-						removeElement(sourceIndex);
+						removeNode(sourceIndex);
 					}
 					doLayout();
 				} else if (sourceGroup instanceof ElementGridPane<?>.GroupSentinel) {
 					if (targetGroup instanceof ElementGridPane<?>.GroupItem) {
-						T element = makeElement();
-						Node newNode = createItem(element);
+						NodeValue<?> value = createNodeValue();
+						Node newNode = createItem(value);
 						if (tx + node.getBoundsInLocal().getWidth() / 2 <= targetGroup.getBoundsInParent().getWidth() / 2) {
-							insertElementBefore(targetIndex, element);
+							insertNodeBefore(targetIndex, value);
 							container.getChildren().add(targetIndex, newNode);
 						} else {
-							insertElementAfter(targetIndex, element);
+							insertNodeAfter(targetIndex, value);
 							container.getChildren().add(targetIndex + 1, newNode);
 						}
 					}
@@ -300,16 +331,16 @@ public abstract class ElementGridPane<T extends ConfigElement> extends BorderPan
 					doLayout();
 				}
 			} else if (sourceGroup instanceof ElementGridPane<?>.GroupSentinel) {
-				T element = makeElement();
-				Node newNode = createItem(element);
-				appendElement(element);
+				NodeValue<?> value = createNodeValue();
+				Node newNode = createItem(value);
+				appendNode(value);
 				container.getChildren().add(newNode);
 				container.getChildren().add(sourceGroup);
 				doLayout();
 			} else {
 				container.getChildren().add(dragContext.index, sourceGroup);
 				if (Math.hypot(node.getTranslateX(), node.getTranslateY()) < 5) {
-					selectElement(getElement(sourceGroup));
+					fireNodeSelected(getNodeValue(sourceGroup));
 				}
 			}
 			node.setTranslateX(0);
@@ -337,10 +368,10 @@ public abstract class ElementGridPane<T extends ConfigElement> extends BorderPan
 	}
 	
 	private class GridItem extends BorderPane {
-		private T element;
+		private NodeValue<?> value;
 		
-		public GridItem(T element) {
-			this.element = element;
+		public GridItem(NodeValue<?> value) {
+			this.value = value;
 			setId("grid-item");
 			Label label = new Label(getName());
 			label.setAlignment(Pos.CENTER);
@@ -348,7 +379,8 @@ public abstract class ElementGridPane<T extends ConfigElement> extends BorderPan
 		}
 
 		public String getName() {
-			String name = getElementName(element);
+			@SuppressWarnings("unchecked")
+			String name = getElementName((T)value.getValue());
 			if (name != null) {
 				Pattern pattern = Pattern.compile("([A-Z])[a-z ]*", 0);
 				Matcher matcher = pattern.matcher(name);
@@ -361,8 +393,8 @@ public abstract class ElementGridPane<T extends ConfigElement> extends BorderPan
 			return "?";
 		}
 
-		public T getElement() {
-			return element;
+		public NodeValue<?> getNodeValue() {
+			return value;
 		}
 	}
 	
@@ -425,7 +457,7 @@ public abstract class ElementGridPane<T extends ConfigElement> extends BorderPan
 	}
 	
 	private class GroupItem extends GridGroup {
-		public GroupItem(ElementGridPane<T>.GridItem node) {
+		public GroupItem(GridItem node) {
 			super(node);
 		}
 
@@ -456,7 +488,7 @@ public abstract class ElementGridPane<T extends ConfigElement> extends BorderPan
 	}
 	
 	private class GroupSentinel extends GridGroup {
-		public GroupSentinel(ElementGridPane<T>.GridSentinel node) {
+		public GroupSentinel(GridSentinel node) {
 			super(node);
 		}
 

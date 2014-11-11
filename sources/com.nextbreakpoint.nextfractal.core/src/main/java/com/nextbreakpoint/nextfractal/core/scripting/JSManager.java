@@ -37,7 +37,7 @@ import javax.script.Bindings;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 
-import com.nextbreakpoint.nextfractal.core.tree.Node;
+import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
 import com.nextbreakpoint.nextfractal.core.util.RenderContext;
 
 /**
@@ -56,7 +56,7 @@ public class JSManager {
 	 * @param file
 	 * @throws JSException
 	 */
-	public static void execute(final RenderContext renderContext, final JSContext jsContext, final Node node, final File basedir, final File file) throws JSException {
+	public static void execute(final RenderContext renderContext, final JSContext jsContext, final NodeObject node, final File basedir, final File file) throws JSException {
 		try {
 			execute(renderContext, jsContext, node, basedir, new FileInputStream(file), file.getName());
 		}
@@ -71,7 +71,7 @@ public class JSManager {
 	 * @param is
 	 * @throws JSException
 	 */
-	private static void execute(final RenderContext renderContext, final JSContext jsContext, final Node node, final File basedir, final InputStream is, final String name) throws JSException {
+	private static void execute(final RenderContext renderContext, final JSContext jsContext, final NodeObject node, final File basedir, final InputStream is, final String name) throws JSException {
 		try {
 			ScriptEngineManager manager = new ScriptEngineManager();
 			ScriptEngine engine = manager.getEngineByMimeType("text/javascript");

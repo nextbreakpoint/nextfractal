@@ -28,7 +28,7 @@ package com.nextbreakpoint.nextfractal.test.mandelbrot.common;
 import org.junit.Test;
 
 import com.nextbreakpoint.nextfractal.core.test.AbsractValueElementTest;
-import com.nextbreakpoint.nextfractal.core.tree.Node;
+import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
 import com.nextbreakpoint.nextfractal.mandelbrot.common.ThresholdElement;
 import com.nextbreakpoint.nextfractal.mandelbrot.common.ThresholdElementNode;
 import com.nextbreakpoint.nextfractal.mandelbrot.common.ThresholdElementXMLExporter;
@@ -58,7 +58,7 @@ public class ThresholdElementTest extends AbsractValueElementTest<Double, Thresh
 	}
 
 	@Override
-	protected Node createElementNode() {
+	protected NodeObject createElementNode() {
 		return new ThresholdElementNode("value", getConfigElement()) {
 		};
 	}

@@ -55,7 +55,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeCellRenderer;
 import javax.swing.tree.TreePath;
 
-import com.nextbreakpoint.nextfractal.core.tree.Node;
+import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
 import com.nextbreakpoint.nextfractal.core.tree.NodeEvent;
 import com.nextbreakpoint.nextfractal.core.tree.NodeListener;
 import com.nextbreakpoint.nextfractal.core.tree.NodeSession;
@@ -302,7 +302,7 @@ public class NavigatorFrame extends JFrame {
 					public void run() {
 						navigatorPanel.removeChangeListener(panelSelectionListener);
 						if (navigatorTree.getSelectionPath() != null) {
-							final Node node = (Node) ((DefaultMutableTreeNode) navigatorTree.getSelectionPath().getLastPathComponent()).getUserObject();
+							final NodeObject node = (NodeObject) ((DefaultMutableTreeNode) navigatorTree.getSelectionPath().getLastPathComponent()).getUserObject();
 							navigatorPanel.loadNode(node);
 						}
 						else {

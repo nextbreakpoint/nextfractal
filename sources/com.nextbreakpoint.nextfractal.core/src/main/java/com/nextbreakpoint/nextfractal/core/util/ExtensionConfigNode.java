@@ -73,7 +73,7 @@ public class ExtensionConfigNode<T extends ExtensionConfig> extends DefaultNode 
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.Node#isEditable()
+	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#isEditable()
 	 */
 	@Override
 	public boolean isEditable() {

@@ -33,7 +33,7 @@ import com.nextbreakpoint.nextfractal.core.common.ConfigurableExtensionReference
 import com.nextbreakpoint.nextfractal.core.common.ConfigurableExtensionReferenceElementXMLImporter;
 import com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionReference;
 import com.nextbreakpoint.nextfractal.core.test.AbstractConfigurableExtensionConfigElementTest;
-import com.nextbreakpoint.nextfractal.core.tree.Node;
+import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
 import com.nextbreakpoint.nextfractal.core.tree.NodeValue;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotRegistry;
 import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.incolouringFormula.IncolouringFormulaExtensionConfig;
@@ -46,7 +46,7 @@ import com.nextbreakpoint.nextfractal.mandelbrot.incolouringFormula.IncolouringF
  */
 public class IncolouringFormulaElementTest extends AbstractConfigurableExtensionConfigElementTest<IncolouringFormulaExtensionConfig> {
 	@Override
-	protected Node createElementNode() {
+	protected NodeObject createElementNode() {
 		return new ConfigurableExtensionReferenceElementNode<IncolouringFormulaExtensionConfig>("reference", getConfigElement()) {
 			@Override
 			protected NodeValue<?> createNodeValue(final ConfigurableExtensionReference<IncolouringFormulaExtensionConfig> value) {

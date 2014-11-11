@@ -33,7 +33,7 @@ import com.nextbreakpoint.nextfractal.core.common.ExtensionReferenceElementXMLEx
 import com.nextbreakpoint.nextfractal.core.common.ExtensionReferenceElementXMLImporter;
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionReference;
 import com.nextbreakpoint.nextfractal.core.test.AbstractExtensionConfigElementTest;
-import com.nextbreakpoint.nextfractal.core.tree.Node;
+import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
 import com.nextbreakpoint.nextfractal.core.tree.NodeValue;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotRegistry;
 import com.nextbreakpoint.nextfractal.mandelbrot.paletteRendererFormula.PaletteRendererFormulaExtensionReferenceNodeValue;
@@ -43,7 +43,7 @@ import com.nextbreakpoint.nextfractal.mandelbrot.paletteRendererFormula.PaletteR
  */
 public class PaletteRendererFormulaElementTest extends AbstractExtensionConfigElementTest {
 	@Override
-	protected Node createElementNode() {
+	protected NodeObject createElementNode() {
 		return new ExtensionReferenceElementNode("reference", getConfigElement()) {
 			@Override
 			protected NodeValue<?> createNodeValue(final ExtensionReference value) {

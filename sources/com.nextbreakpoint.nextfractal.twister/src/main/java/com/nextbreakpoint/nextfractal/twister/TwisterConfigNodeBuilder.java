@@ -25,7 +25,7 @@
  */
 package com.nextbreakpoint.nextfractal.twister;
 
-import com.nextbreakpoint.nextfractal.core.tree.Node;
+import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
 
 /**
  * @author Andrea Medeghini
@@ -47,7 +47,7 @@ public class TwisterConfigNodeBuilder {
 	 * 
 	 * @param parentNode
 	 */
-	public void createNodes(final Node parentNode) {
+	public void createNodes(final NodeObject parentNode) {
 		parentNode.appendChildNode(new TwisterConfigNode(config));
 	}
 }

@@ -27,7 +27,7 @@ package com.nextbreakpoint.nextfractal.core.ui.swing.util;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import com.nextbreakpoint.nextfractal.core.tree.Node;
+import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
 
 /**
  * @author Andrea Medeghini
@@ -40,7 +40,7 @@ public class MutableTreeNodeAdapter extends DefaultMutableTreeNode {
 	 * 
 	 * @param node the node.
 	 */
-	public MutableTreeNodeAdapter(final Node node) {
+	public MutableTreeNodeAdapter(final NodeObject node) {
 		super(node);
 		for (int i = 0; i < node.getChildNodeCount(); i++) {
 			add(new MutableTreeNodeAdapter(node.getChildNode(i)));

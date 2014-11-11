@@ -28,7 +28,7 @@ package com.nextbreakpoint.nextfractal.twister.layer;
 import com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent;
 import com.nextbreakpoint.nextfractal.core.config.ValueChangeListener;
 import com.nextbreakpoint.nextfractal.core.config.ValueConfigElement;
-import com.nextbreakpoint.nextfractal.core.tree.Node;
+import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
 import com.nextbreakpoint.nextfractal.core.tree.NodeAction;
 import com.nextbreakpoint.nextfractal.core.tree.NodeEditor;
 import com.nextbreakpoint.nextfractal.core.tree.NodeValue;
@@ -82,7 +82,7 @@ public class ImageLayerConfigElementNode extends LayerConfigElementNode<ImageLay
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.Node#addLabel(java.lang.StringBuilder)
+	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#addLabel(java.lang.StringBuilder)
 	 */
 	@Override
 	protected void addLabel(final StringBuilder builder) {
@@ -93,7 +93,7 @@ public class ImageLayerConfigElementNode extends LayerConfigElementNode<ImageLay
 		/**
 		 * @param node
 		 */
-		public ImageLayerNodeEditor(final Node node) {
+		public ImageLayerNodeEditor(final NodeObject node) {
 			super(node);
 		}
 
@@ -101,7 +101,7 @@ public class ImageLayerConfigElementNode extends LayerConfigElementNode<ImageLay
 		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeEditor#createChildNode(com.nextbreakpoint.nextfractal.core.tree.NodeValue)
 		 */
 		@Override
-		protected Node createChildNode(final NodeValue<?> value) {
+		protected NodeObject createChildNode(final NodeValue<?> value) {
 			return null;
 		}
 
@@ -135,7 +135,7 @@ public class ImageLayerConfigElementNode extends LayerConfigElementNode<ImageLay
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.tree.Node#isEditable()
+		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#isEditable()
 		 */
 		@Override
 		public boolean isEditable() {
@@ -143,7 +143,7 @@ public class ImageLayerConfigElementNode extends LayerConfigElementNode<ImageLay
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.tree.Node#dispose()
+		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#dispose()
 		 */
 		@Override
 		public void dispose() {
@@ -154,7 +154,7 @@ public class ImageLayerConfigElementNode extends LayerConfigElementNode<ImageLay
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.tree.Node#nodeAdded()
+		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#nodeAdded()
 		 */
 		@Override
 		protected void nodeAdded() {
@@ -163,7 +163,7 @@ public class ImageLayerConfigElementNode extends LayerConfigElementNode<ImageLay
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.tree.Node#nodeRemoved()
+		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#nodeRemoved()
 		 */
 		@Override
 		protected void nodeRemoved() {
@@ -182,7 +182,7 @@ public class ImageLayerConfigElementNode extends LayerConfigElementNode<ImageLay
 			/**
 			 * @param node
 			 */
-			public ImageNodeEditor(final Node node) {
+			public ImageNodeEditor(final NodeObject node) {
 				super(node);
 			}
 
@@ -200,7 +200,7 @@ public class ImageLayerConfigElementNode extends LayerConfigElementNode<ImageLay
 			 * @see com.nextbreakpoint.nextfractal.core.tree.NodeEditor#createChildNode(com.nextbreakpoint.nextfractal.core.tree.NodeValue)
 			 */
 			@Override
-			protected Node createChildNode(final NodeValue<?> value) {
+			protected NodeObject createChildNode(final NodeValue<?> value) {
 				return null;
 			}
 

@@ -70,7 +70,7 @@ public class ConfigElementNodeProcessorRuntime extends ProcessorExtensionRuntime
 				Configuration config = new Configuration();
 				config.setTemplateLoader(new ProcessorTemplateLoader());
 				Template template = config.getTemplate("templates/ConfigElementNode.ftl");
-				template.process(map, new PrintWriter(new File(packagePath, element.getConfigElementClassName() + "Node.java")));
+				template.process(map, new PrintWriter(new File(packagePath, element.getConfigElementClassName() + "NodeObject.java")));
 			}
 		}
 		catch (Exception e) {
@@ -89,7 +89,7 @@ public class ConfigElementNodeProcessorRuntime extends ProcessorExtensionRuntime
 	private void prepare(Set<String> imports, ProcessorDescriptor descriptor) {
 		if (descriptor.isComplexElement()) {
 			imports.add("com.nextbreakpoint.nextfractal.core.util.AbstractConfigElementNode");
-			imports.add("com.nextbreakpoint.nextfractal.core.tree.Node");
+			imports.add("com.nextbreakpoint.nextfractal.core.tree.NodeObject");
 			imports.add("com.nextbreakpoint.nextfractal.core.tree.NodeEditor");
 			imports.add("com.nextbreakpoint.nextfractal.core.tree.NodeValue");
 			if (descriptor.getResourcesPackageName() != null && descriptor.getResourcesClassName() != null) {
@@ -101,7 +101,7 @@ public class ConfigElementNodeProcessorRuntime extends ProcessorExtensionRuntime
 			imports.add("com.nextbreakpoint.nextfractal.core.config.ValueChangeListener");
 			imports.add("com.nextbreakpoint.nextfractal.core.config.ValueConfigElement");
 			imports.add("com.nextbreakpoint.nextfractal.core.tree.AttributeNode");
-			imports.add("com.nextbreakpoint.nextfractal.core.tree.Node");
+			imports.add("com.nextbreakpoint.nextfractal.core.tree.NodeObject");
 			imports.add("com.nextbreakpoint.nextfractal.core.tree.NodeAction");
 			imports.add("com.nextbreakpoint.nextfractal.core.tree.NodeEditor");
 			imports.add("com.nextbreakpoint.nextfractal.core.tree.NodeSession");
@@ -116,7 +116,7 @@ public class ConfigElementNodeProcessorRuntime extends ProcessorExtensionRuntime
 	private void prepare(Set<String> imports, List<ProcessorDescriptor> descriptors) {
 		for (ProcessorDescriptor descriptor : descriptors) {
 			if (descriptor.isExtensionElement() || descriptor.isConfigurableExtensionElement()) {
-				imports.add(descriptor.getConfigElementPackageName() + "." + descriptor.getConfigElementClassName() + "Node");
+				imports.add(descriptor.getConfigElementPackageName() + "." + descriptor.getConfigElementClassName() + "NodeObject");
 				if (descriptor.getResourcesPackageName() != null && descriptor.getResourcesClassName() != null) {
 					imports.add(descriptor.getResourcesPackageName() + "." + descriptor.getResourcesClassName());
 				}
@@ -130,23 +130,23 @@ public class ConfigElementNodeProcessorRuntime extends ProcessorExtensionRuntime
 			}
 			else if (descriptor.isComplexElement()) {
 				if (descriptor.getCardinality() == ProcessorCardinality.NONE) {
-					imports.add(descriptor.getConfigElementPackageName() + "." + descriptor.getConfigElementClassName() + "Node");
+					imports.add(descriptor.getConfigElementPackageName() + "." + descriptor.getConfigElementClassName() + "NodeObject");
 				}
 				else if (descriptor.getCardinality() == ProcessorCardinality.ONE) {
 					imports.add(descriptor.getConfigElementPackageName() + "." + descriptor.getConfigElementClassName());
-					imports.add(descriptor.getConfigElementPackageName() + "." + descriptor.getConfigElementClassName() + "Node");
+					imports.add(descriptor.getConfigElementPackageName() + "." + descriptor.getConfigElementClassName() + "NodeObject");
 					imports.add("com.nextbreakpoint.nextfractal.core.util.ConfigElementSingleNodeValue");
 					imports.add("com.nextbreakpoint.nextfractal.core.util.AbstractConfigElementSingleNode");
 				}
 				else if (descriptor.getCardinality() == ProcessorCardinality.MANY) {
 					imports.add(descriptor.getConfigElementPackageName() + "." + descriptor.getConfigElementClassName());
-					imports.add(descriptor.getConfigElementPackageName() + "." + descriptor.getConfigElementClassName() + "Node");
+					imports.add(descriptor.getConfigElementPackageName() + "." + descriptor.getConfigElementClassName() + "NodeObject");
 					imports.add("com.nextbreakpoint.nextfractal.core.util.ConfigElementListNodeValue");
 					imports.add("com.nextbreakpoint.nextfractal.core.util.AbstractConfigElementListNode");
 				}
 			}
 			else if (descriptor.isSimpleElement()) {
-				imports.add(descriptor.getConfigElementPackageName() + "." + descriptor.getConfigElementClassName() + "Node");
+				imports.add(descriptor.getConfigElementPackageName() + "." + descriptor.getConfigElementClassName() + "NodeObject");
 				if (descriptor.getResourcesPackageName() != null && descriptor.getResourcesClassName() != null) {
 					imports.add(descriptor.getResourcesPackageName() + "." + descriptor.getResourcesClassName());
 				}

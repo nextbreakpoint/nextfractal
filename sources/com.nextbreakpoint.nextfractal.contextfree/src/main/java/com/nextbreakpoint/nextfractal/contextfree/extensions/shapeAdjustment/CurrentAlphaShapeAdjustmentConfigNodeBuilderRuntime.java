@@ -9,7 +9,7 @@ import com.nextbreakpoint.nextfractal.core.common.BooleanElementNode;
 import com.nextbreakpoint.nextfractal.core.common.FloatElementNode;
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionConfig;
 import com.nextbreakpoint.nextfractal.core.extensionPoints.nodeBuilder.NodeBuilderExtensionRuntime;
-import com.nextbreakpoint.nextfractal.core.tree.Node;
+import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
 import com.nextbreakpoint.nextfractal.core.tree.NodeBuilder;
 import com.nextbreakpoint.nextfractal.core.util.AbstractExtensionConfigNodeBuilder;
 
@@ -34,10 +34,10 @@ public class CurrentAlphaShapeAdjustmentConfigNodeBuilderRuntime extends NodeBui
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.util.AbstractExtensionConfigNodeBuilder#createNodes(com.nextbreakpoint.nextfractal.core.tree.Node)
+		 * @see com.nextbreakpoint.nextfractal.core.util.AbstractExtensionConfigNodeBuilder#createNodes(com.nextbreakpoint.nextfractal.core.tree.NodeObject)
 		 */
 		@Override
-		public void createNodes(final Node parentNode) {
+		public void createNodes(final NodeObject parentNode) {
 			parentNode.appendChildNode(new ValueElementNode(getConfig()));
 			parentNode.appendChildNode(new TargetElementNode(getConfig()));
 		}

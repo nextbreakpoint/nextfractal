@@ -29,7 +29,7 @@ import com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent;
 import com.nextbreakpoint.nextfractal.core.config.ValueChangeListener;
 import com.nextbreakpoint.nextfractal.core.config.ValueConfigElement;
 import com.nextbreakpoint.nextfractal.core.tree.DefaultNode;
-import com.nextbreakpoint.nextfractal.core.tree.Node;
+import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
 import com.nextbreakpoint.nextfractal.core.tree.NodeAction;
 import com.nextbreakpoint.nextfractal.core.tree.NodeEditor;
 import com.nextbreakpoint.nextfractal.core.tree.NodeSession;
@@ -59,7 +59,7 @@ public class ViewElementNode extends DefaultNode {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.Node#isHighFrequency()
+	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#isHighFrequency()
 	 */
 	@Override
 	public boolean isHighFrequency() {
@@ -67,7 +67,7 @@ public class ViewElementNode extends DefaultNode {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.Node#dispose()
+	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#dispose()
 	 */
 	@Override
 	public void dispose() {
@@ -78,7 +78,7 @@ public class ViewElementNode extends DefaultNode {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.Node#setSession(com.nextbreakpoint.nextfractal.core.tree.NodeSession)
+	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#setSession(com.nextbreakpoint.nextfractal.core.tree.NodeSession)
 	 */
 	@Override
 	public void setSession(final NodeSession session) {
@@ -92,21 +92,21 @@ public class ViewElementNode extends DefaultNode {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.Node#nodeAdded()
+	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#nodeAdded()
 	 */
 	@Override
 	protected void nodeAdded() {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.Node#nodeRemoved()
+	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#nodeRemoved()
 	 */
 	@Override
 	protected void nodeRemoved() {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.Node#isEditable()
+	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#isEditable()
 	 */
 	@Override
 	public boolean isEditable() {
@@ -130,7 +130,7 @@ public class ViewElementNode extends DefaultNode {
 	}
 
 	// /**
-	// * @see com.nextbreakpoint.nextfractal.core.tree.Node#updateChildNodes()
+	// * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#updateChildNodes()
 	// */
 	// @Override
 	// protected void updateChildNodes() {
@@ -141,7 +141,7 @@ public class ViewElementNode extends DefaultNode {
 		/**
 		 * @param node
 		 */
-		public ViewNodeEditor(final Node node) {
+		public ViewNodeEditor(final NodeObject node) {
 			super(node);
 		}
 
@@ -167,7 +167,7 @@ public class ViewElementNode extends DefaultNode {
 		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeEditor#createChildNode(com.nextbreakpoint.nextfractal.core.tree.NodeValue)
 		 */
 		@Override
-		protected Node createChildNode(final NodeValue<?> value) {
+		protected NodeObject createChildNode(final NodeValue<?> value) {
 			return null;
 		}
 
@@ -217,7 +217,7 @@ public class ViewElementNode extends DefaultNode {
 	// }
 	//
 	// /**
-	// * @see com.nextbreakpoint.nextfractal.core.tree.Node#isEditable()
+	// * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#isEditable()
 	// */
 	// @Override
 	// public boolean isEditable() {
@@ -225,7 +225,7 @@ public class ViewElementNode extends DefaultNode {
 	// }
 	//
 	// /**
-	// * @see com.nextbreakpoint.nextfractal.core.tree.Node#getNodeValue()
+	// * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#getNodeValue()
 	// */
 	// @Override
 	// public NodeValue<?> getNodeValue() {
@@ -274,7 +274,7 @@ public class ViewElementNode extends DefaultNode {
 	// }
 	//
 	// /**
-	// * @see com.nextbreakpoint.nextfractal.core.tree.Node#isEditable()
+	// * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#isEditable()
 	// */
 	// @Override
 	// public boolean isEditable() {
@@ -282,7 +282,7 @@ public class ViewElementNode extends DefaultNode {
 	// }
 	//
 	// /**
-	// * @see com.nextbreakpoint.nextfractal.core.tree.Node#getNodeValue()
+	// * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#getNodeValue()
 	// */
 	// @Override
 	// public NodeValue<?> getNodeValue() {
@@ -321,7 +321,7 @@ public class ViewElementNode extends DefaultNode {
 	// /**
 	// * @param node
 	// */
-	// public ViewVector4DNodeEditor(final Node node) {
+	// public ViewVector4DNodeEditor(final NodeObject node) {
 	// super(node);
 	// }
 	//
@@ -329,7 +329,7 @@ public class ViewElementNode extends DefaultNode {
 	// * @see com.nextbreakpoint.nextfractal.core.tree.NodeEditor#createChildNode(com.nextbreakpoint.nextfractal.core.tree.NodeValue)
 	// */
 	// @Override
-	// protected Node createChildNode(final NodeValue<?> value) {
+	// protected NodeObject createChildNode(final NodeValue<?> value) {
 	// return null;
 	// }
 	//

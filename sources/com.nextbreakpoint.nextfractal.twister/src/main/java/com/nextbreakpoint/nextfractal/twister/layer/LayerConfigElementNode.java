@@ -96,7 +96,7 @@ public abstract class LayerConfigElementNode<T extends LayerConfigElement> exten
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.Node#isMutable()
+	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#isMutable()
 	 */
 	@Override
 	public boolean isMutable() {

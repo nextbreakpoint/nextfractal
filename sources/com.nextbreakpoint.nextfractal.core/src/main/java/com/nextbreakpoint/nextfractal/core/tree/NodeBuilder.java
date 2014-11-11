@@ -34,5 +34,5 @@ public interface NodeBuilder {
 	 * 
 	 * @param parentNode the parent.
 	 */
-	public void createNodes(Node parentNode);
+	public void createNodes(NodeObject parentNode);
 }

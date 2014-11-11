@@ -29,18 +29,18 @@ import com.nextbreakpoint.nextfractal.core.CoreRegistry;
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionException;
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionNotFoundException;
 import com.nextbreakpoint.nextfractal.core.extensionPoints.creator.CreatorExtensionRuntime;
-import com.nextbreakpoint.nextfractal.core.tree.Node;
+import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
 
 /**
  * @author Andrea Medeghini
  */
 public class DefaultJSNode implements JSNode {
-	private final Node node;
+	private final NodeObject node;
 
 	/**
 	 * @param node
 	 */
-	public DefaultJSNode(final Node node) {
+	public DefaultJSNode(final NodeObject node) {
 		this.node = node;
 		if (node == null) {
 			throw new IllegalArgumentException("node is null");
@@ -64,7 +64,7 @@ public class DefaultJSNode implements JSNode {
 	 */
 	@Override
 	public JSNode getChildNode(final int index) {
-		Node childNode = node.getChildNode(index);
+		NodeObject childNode = node.getChildNode(index);
 		if (childNode != null) {
 			JSNode jsNode = (JSNode) childNode.getObject("scripting.jsNode");
 			if (jsNode == null) {
@@ -315,7 +315,7 @@ public class DefaultJSNode implements JSNode {
 	 */
 	@Override
 	public JSNode getParentNode() {
-		Node tmpNode = node.getParentNode();
+		NodeObject tmpNode = node.getParentNode();
 		if (tmpNode != null) {
 			JSNode jsNode = (JSNode) tmpNode.getObject("scripting.jsNode");
 			if (jsNode == null) {
@@ -340,7 +340,7 @@ public class DefaultJSNode implements JSNode {
 	 */
 	@Override
 	public JSNode getNodeByPath(final String path) {
-		Node tmpNode = node.getNodeByPath(path);
+		NodeObject tmpNode = node.getNodeByPath(path);
 		if (tmpNode != null) {
 			JSNode jsNode = (JSNode) tmpNode.getObject("scripting.jsNode");
 			if (jsNode == null) {

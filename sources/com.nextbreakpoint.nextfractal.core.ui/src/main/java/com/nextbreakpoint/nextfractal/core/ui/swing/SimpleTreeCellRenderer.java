@@ -30,7 +30,7 @@ import java.awt.Component;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeCellRenderer;
 
-import com.nextbreakpoint.nextfractal.core.tree.Node;
+import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
 import com.nextbreakpoint.nextfractal.core.ui.swing.util.MutableTreeNodeAdapter;
 
 /**
@@ -46,7 +46,7 @@ public class SimpleTreeCellRenderer extends DefaultTreeCellRenderer {
 	public Component getTreeCellRendererComponent(final JTree tree, final Object value, final boolean selected, final boolean expanded, final boolean leaf, final int row, final boolean hasFocus) {
 		if (value instanceof MutableTreeNodeAdapter) {
 			final MutableTreeNodeAdapter adapter = (MutableTreeNodeAdapter) value;
-			final Node node = (Node) adapter.getUserObject();
+			final NodeObject node = (NodeObject) adapter.getUserObject();
 			// return super.getTreeCellRendererComponent(tree, "[" + node.getNodeId() + "] " + node.getLabel(), selected, expanded, leaf, row, hasFocus);
 			return super.getTreeCellRendererComponent(tree, node.getLabel(), selected, expanded, leaf, row, hasFocus);
 		}

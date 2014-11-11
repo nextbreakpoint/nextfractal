@@ -8,7 +8,7 @@ import com.nextbreakpoint.nextfractal.contextfree.ContextFreeResources;
 import com.nextbreakpoint.nextfractal.contextfree.extensionPoints.pathReplacement.PathReplacementExtensionConfig;
 import com.nextbreakpoint.nextfractal.core.common.ConfigurableExtensionReferenceElementNode;
 import com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionReference;
-import com.nextbreakpoint.nextfractal.core.tree.Node;
+import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
 import com.nextbreakpoint.nextfractal.core.tree.NodeEditor;
 import com.nextbreakpoint.nextfractal.core.tree.NodeValue;
 import com.nextbreakpoint.nextfractal.core.util.AbstractConfigElementNode;
@@ -58,7 +58,7 @@ public class PathReplacementConfigElementNode extends AbstractConfigElementNode<
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.Node#addDescription(java.lang.StringBuilder)
+	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#addDescription(java.lang.StringBuilder)
 	 */
 	@Override
 	protected void addDescription(final StringBuilder builder) {
@@ -71,7 +71,7 @@ public class PathReplacementConfigElementNode extends AbstractConfigElementNode<
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.Node#updateNode()
+	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#updateNode()
 	 */
 	@Override
 	protected void updateChildNodes() {
@@ -98,7 +98,7 @@ public class PathReplacementConfigElementNode extends AbstractConfigElementNode<
 		/**
 		 * @param node
 		 */
-		public PathReplacementNodeEditor(final Node node) {
+		public PathReplacementNodeEditor(final NodeObject node) {
 			super(node);
 		}
 
@@ -106,7 +106,7 @@ public class PathReplacementConfigElementNode extends AbstractConfigElementNode<
 		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeEditor#createChildNode(com.nextbreakpoint.nextfractal.core.tree.NodeValue)
 		 */
 		@Override
-		protected Node createChildNode(final NodeValue<?> value) {
+		protected NodeObject createChildNode(final NodeValue<?> value) {
 			return null;
 		}
 

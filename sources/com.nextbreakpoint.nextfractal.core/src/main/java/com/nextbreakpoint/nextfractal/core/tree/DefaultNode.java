@@ -28,7 +28,7 @@ package com.nextbreakpoint.nextfractal.core.tree;
 /**
  * @author Andrea Medeghini
  */
-public abstract class DefaultNode extends Node {
+public abstract class DefaultNode extends NodeObject {
 	/**
 	 * Constructs a new node.
 	 * 
@@ -51,7 +51,7 @@ public abstract class DefaultNode extends Node {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.Node#isEditable()
+	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#isEditable()
 	 */
 	@Override
 	public boolean isEditable() {
@@ -79,7 +79,7 @@ public abstract class DefaultNode extends Node {
 	protected abstract NodeEditor createNodeEditor();
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.Node#getValueAsString()
+	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#getValueAsString()
 	 */
 	@Override
 	public String getValueAsString() {

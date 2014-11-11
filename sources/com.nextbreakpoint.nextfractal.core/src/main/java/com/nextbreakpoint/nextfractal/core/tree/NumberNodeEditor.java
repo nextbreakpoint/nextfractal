@@ -62,7 +62,7 @@ public abstract class NumberNodeEditor extends NodeEditor {
 	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeEditor#createChildNode(java.lang.Object)
 	 */
 	@Override
-	protected Node createChildNode(final NodeValue<?> value) {
+	protected NodeObject createChildNode(final NodeValue<?> value) {
 		return null;
 	}
 }

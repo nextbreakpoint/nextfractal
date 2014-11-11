@@ -25,7 +25,7 @@
  */
 package com.nextbreakpoint.nextfractal.twister.layer;
 
-import com.nextbreakpoint.nextfractal.core.tree.Node;
+import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
 import com.nextbreakpoint.nextfractal.core.tree.NodeEditor;
 import com.nextbreakpoint.nextfractal.core.tree.NodeValue;
 import com.nextbreakpoint.nextfractal.core.util.AbstractConfigElementListNode;
@@ -78,7 +78,7 @@ public class GroupLayerConfigElementNode extends LayerConfigElementNode<GroupLay
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.Node#addLabel(java.lang.StringBuilder)
+	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#addLabel(java.lang.StringBuilder)
 	 */
 	@Override
 	protected void addLabel(final StringBuilder builder) {
@@ -89,7 +89,7 @@ public class GroupLayerConfigElementNode extends LayerConfigElementNode<GroupLay
 		/**
 		 * @param node
 		 */
-		public GroupLayerNodeEditor(final Node node) {
+		public GroupLayerNodeEditor(final NodeObject node) {
 			super(node);
 		}
 
@@ -97,7 +97,7 @@ public class GroupLayerConfigElementNode extends LayerConfigElementNode<GroupLay
 		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeEditor#createChildNode(com.nextbreakpoint.nextfractal.core.tree.NodeValue)
 		 */
 		@Override
-		protected Node createChildNode(final NodeValue<?> value) {
+		protected NodeObject createChildNode(final NodeValue<?> value) {
 			return null;
 		}
 

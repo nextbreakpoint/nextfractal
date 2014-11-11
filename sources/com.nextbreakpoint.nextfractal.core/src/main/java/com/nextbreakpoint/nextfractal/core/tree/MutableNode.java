@@ -41,7 +41,7 @@ public abstract class MutableNode extends DefaultNode {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.Node#isEditable()
+	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#isEditable()
 	 */
 	@Override
 	public boolean isEditable() {
@@ -49,7 +49,7 @@ public abstract class MutableNode extends DefaultNode {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.Node#isMutable()
+	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#isMutable()
 	 */
 	@Override
 	public final boolean isMutable() {

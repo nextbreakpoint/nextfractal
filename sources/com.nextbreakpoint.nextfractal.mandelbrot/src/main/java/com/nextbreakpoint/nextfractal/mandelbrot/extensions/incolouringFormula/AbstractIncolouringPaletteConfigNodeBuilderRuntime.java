@@ -27,7 +27,7 @@ package com.nextbreakpoint.nextfractal.mandelbrot.extensions.incolouringFormula;
 
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionConfig;
 import com.nextbreakpoint.nextfractal.core.extensionPoints.nodeBuilder.NodeBuilderExtensionRuntime;
-import com.nextbreakpoint.nextfractal.core.tree.Node;
+import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
 import com.nextbreakpoint.nextfractal.core.tree.NodeBuilder;
 import com.nextbreakpoint.nextfractal.core.util.AbstractExtensionConfigNodeBuilder;
 import com.nextbreakpoint.nextfractal.mandelbrot.paletteRenderer.PaletteRendererConfigElementNode;
@@ -48,7 +48,7 @@ public abstract class AbstractIncolouringPaletteConfigNodeBuilderRuntime extends
 	 * @param parentNode
 	 * @param config
 	 */
-	public void createNodes(final Node parentNode, final AbstractIncolouringPaletteConfig config) {
+	public void createNodes(final NodeObject parentNode, final AbstractIncolouringPaletteConfig config) {
 	}
 
 	private class ConfigNodeBuilder extends AbstractExtensionConfigNodeBuilder<AbstractIncolouringPaletteConfig> {
@@ -60,10 +60,10 @@ public abstract class AbstractIncolouringPaletteConfigNodeBuilderRuntime extends
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.util.AbstractExtensionConfigNodeBuilder#createNodes(com.nextbreakpoint.nextfractal.core.tree.Node)
+		 * @see com.nextbreakpoint.nextfractal.core.util.AbstractExtensionConfigNodeBuilder#createNodes(com.nextbreakpoint.nextfractal.core.tree.NodeObject)
 		 */
 		@Override
-		public void createNodes(final Node parentNode) {
+		public void createNodes(final NodeObject parentNode) {
 			parentNode.appendChildNode(new PaletteRendererConfigElementNode(getConfig().getPaletteRendererElement()));
 			AbstractIncolouringPaletteConfigNodeBuilderRuntime.this.createNodes(parentNode, getConfig());
 		}

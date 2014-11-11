@@ -26,7 +26,7 @@
 package com.nextbreakpoint.nextfractal.core.util;
 
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionConfig;
-import com.nextbreakpoint.nextfractal.core.tree.Node;
+import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
 import com.nextbreakpoint.nextfractal.core.tree.NodeBuilder;
 
 /**
@@ -50,9 +50,9 @@ public abstract class AbstractExtensionConfigNodeBuilder<T extends ExtensionConf
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeBuilder#createNodes(Node)
+	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeBuilder#createNodes(NodeObject)
 	 */
 	@Override
-	public void createNodes(final Node parentNode) {
+	public void createNodes(final NodeObject parentNode) {
 	}
 }

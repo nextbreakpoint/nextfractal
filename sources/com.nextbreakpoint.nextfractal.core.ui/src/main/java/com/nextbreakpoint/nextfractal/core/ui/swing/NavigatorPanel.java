@@ -56,7 +56,7 @@ import javax.swing.event.ChangeListener;
 
 import com.nextbreakpoint.nextfractal.core.extension.Extension;
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionNotFoundException;
-import com.nextbreakpoint.nextfractal.core.tree.Node;
+import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
 import com.nextbreakpoint.nextfractal.core.tree.NodeEvent;
 import com.nextbreakpoint.nextfractal.core.tree.NodeListener;
 import com.nextbreakpoint.nextfractal.core.tree.RootNode;
@@ -75,8 +75,8 @@ public class NavigatorPanel extends JPanel {
 	private final ViewContext viewContext;
 	private NodeEditorComponent editor;
 	// private RootNode rootNode;
-	private Node editorNode;
-	private Node viewNode;
+	private NodeObject editorNode;
+	private NodeObject viewNode;
 	private final RootNode rootNode;
 	private final NavigatorTreeListener navigatorTreeListener;
 
@@ -143,18 +143,18 @@ public class NavigatorPanel extends JPanel {
 	/**
 	 * @return
 	 */
-	public Node getViewNode() {
+	public NodeObject getViewNode() {
 		return viewNode;
 	}
 
 	/**
 	 * @return
 	 */
-	public Node getEditorNode() {
+	public NodeObject getEditorNode() {
 		return editorNode;
 	}
 
-	public void reloadNode(final Node node) {
+	public void reloadNode(final NodeObject node) {
 		iconsPanel.removeAll();
 		if (node != null) {
 			if (node.getChildNodeCount() == 0) {
@@ -169,7 +169,7 @@ public class NavigatorPanel extends JPanel {
 		}
 	}
 
-	public void loadNode(final Node node) {
+	public void loadNode(final NodeObject node) {
 		if (viewNode != node) {
 			iconsPanel.removeAll();
 			viewNode = node;
@@ -197,13 +197,13 @@ public class NavigatorPanel extends JPanel {
 		}
 	}
 
-	private void loadIcons(final Node node) {
+	private void loadIcons(final NodeObject node) {
 		// if (node != rootNode) {
 		// NavigatorIcon icon = new NavigatorIcon("Root", rootNode);
 		// icon.addIconListener(new NavigatorIconListener() {
 		// public void actionPerformed(NavigatorIconEvent e) {
 		// if (e.getEventId() == NavigatorIconEvent.OPEN_EVENT) {
-		// Node childNode = ((NavigatorIcon) e.getSource()).getNode();
+		// NodeObject childNode = ((NavigatorIcon) e.getSource()).getNode();
 		// if (e.getClickCount() == 2 && childNode.getChildNodeCount() > 0) {
 		// loadNode(childNode);
 		// }
@@ -223,7 +223,7 @@ public class NavigatorPanel extends JPanel {
 			// icon.addIconListener(new NavigatorIconListener() {
 			// public void actionPerformed(final NavigatorIconEvent e) {
 			// if (e.getEventId() == NavigatorIconEvent.OPEN_EVENT) {
-			// final Node childNode = ((NavigatorIcon) e.getSource()).getNode();
+			// final NodeObject childNode = ((NavigatorIcon) e.getSource()).getNode();
 			// if ((e.getClickCount() == 2) && (childNode.getChildNodeCount() > 0)) {
 			// loadNode(childNode);
 			// }
@@ -241,7 +241,7 @@ public class NavigatorPanel extends JPanel {
 					@Override
 					public void actionPerformed(final NavigatorIconEvent e) {
 						if (e.getEventId() == NavigatorIconEvent.OPEN_EVENT) {
-							final Node childNode = ((NavigatorIcon) e.getSource()).getNode();
+							final NodeObject childNode = ((NavigatorIcon) e.getSource()).getNode();
 							if ((e.getClickCount() == 2) && (childNode.getChildNodeCount() > 0)) {
 								loadNode(childNode);
 							}
@@ -264,7 +264,7 @@ public class NavigatorPanel extends JPanel {
 		}
 	}
 
-	private void updateEditor(final Node node) {
+	private void updateEditor(final NodeObject node) {
 		editorNode = node;
 		if (editor != null) {
 			editorPanel.remove(editor.getComponent());
@@ -400,7 +400,7 @@ public class NavigatorPanel extends JPanel {
 		private ImageIcon nodeIcon;
 		private ImageIcon leafIcon;
 		private ImageIcon icon;
-		private final Node node;
+		private final NodeObject node;
 		private int textH1 = 0;
 		private int textW1 = 0;
 		private int textH2 = 0;
@@ -416,7 +416,7 @@ public class NavigatorPanel extends JPanel {
 		/**
 		 * @param node
 		 */
-		public NavigatorIcon(final Node node) {
+		public NavigatorIcon(final NodeObject node) {
 			try {
 				nodeIcon = new ImageIcon(ImageIO.read(NavigatorPanel.class.getResourceAsStream("/icons/treeNode-icon.png")));
 			}
@@ -557,7 +557,7 @@ public class NavigatorPanel extends JPanel {
 		/**
 		 * @return the node
 		 */
-		public Node getNode() {
+		public NodeObject getNode() {
 			return node;
 		}
 

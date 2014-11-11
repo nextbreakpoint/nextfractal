@@ -25,7 +25,7 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.extensions.outcolouringFormula.processed;
 
-import com.nextbreakpoint.nextfractal.core.tree.Node;
+import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
 import com.nextbreakpoint.nextfractal.mandelbrot.extensions.MandelbrotExtensionResources;
 import com.nextbreakpoint.nextfractal.mandelbrot.extensions.outcolouringFormula.AbstractOutcolouringPaletteConfig;
 import com.nextbreakpoint.nextfractal.mandelbrot.extensions.outcolouringFormula.AbstractOutcolouringPaletteConfigNodeBuilderRuntime;
@@ -36,10 +36,10 @@ import com.nextbreakpoint.nextfractal.twister.common.PercentageElementNode;
  */
 public class BinaryAndPotentialConfigNodeBuilderRuntime extends AbstractOutcolouringPaletteConfigNodeBuilderRuntime {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensions.outcolouringFormula.AbstractOutcolouringPaletteConfigNodeBuilderRuntime#createNodes(com.nextbreakpoint.nextfractal.core.tree.Node, com.nextbreakpoint.nextfractal.mandelbrot.extensions.outcolouringFormula.AbstractOutcolouringPaletteConfig)
+	 * @see com.nextbreakpoint.nextfractal.mandelbrot.extensions.outcolouringFormula.AbstractOutcolouringPaletteConfigNodeBuilderRuntime#createNodes(com.nextbreakpoint.nextfractal.core.tree.NodeObject, com.nextbreakpoint.nextfractal.mandelbrot.extensions.outcolouringFormula.AbstractOutcolouringPaletteConfig)
 	 */
 	@Override
-	public void createNodes(final Node parentNode, final AbstractOutcolouringPaletteConfig config) {
+	public void createNodes(final NodeObject parentNode, final AbstractOutcolouringPaletteConfig config) {
 		parentNode.appendChildNode(new OffsetElementNode((BinaryAndPotentialConfig) config));
 	}
 

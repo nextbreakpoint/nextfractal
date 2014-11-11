@@ -44,7 +44,7 @@ import com.nextbreakpoint.nextfractal.core.extension.Extension;
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionConfig;
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionException;
 import com.nextbreakpoint.nextfractal.core.extensionPoints.nodeBuilder.NodeBuilderExtensionRuntime;
-import com.nextbreakpoint.nextfractal.core.tree.Node;
+import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
 import com.nextbreakpoint.nextfractal.core.tree.NodeAction;
 import com.nextbreakpoint.nextfractal.core.tree.NodeBuilder;
 import com.nextbreakpoint.nextfractal.core.tree.NodeEvent;
@@ -207,7 +207,7 @@ public class DefaultViewRuntime extends ViewExtensionRuntime {
 					public void run() {
 						navigatorPanel.removeChangeListener(panelSelectionListener);
 						if (navigatorTree.getSelectionPath() != null) {
-							final Node node = (Node) ((DefaultMutableTreeNode) navigatorTree.getSelectionPath().getLastPathComponent()).getUserObject();
+							final NodeObject node = (NodeObject) ((DefaultMutableTreeNode) navigatorTree.getSelectionPath().getLastPathComponent()).getUserObject();
 							navigatorPanel.loadNode(node);
 						}
 						else {

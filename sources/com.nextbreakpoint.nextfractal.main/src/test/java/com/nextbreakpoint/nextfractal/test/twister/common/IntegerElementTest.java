@@ -32,7 +32,7 @@ import com.nextbreakpoint.nextfractal.core.common.IntegerElementNode;
 import com.nextbreakpoint.nextfractal.core.common.IntegerElementXMLExporter;
 import com.nextbreakpoint.nextfractal.core.common.IntegerElementXMLImporter;
 import com.nextbreakpoint.nextfractal.core.test.AbsractValueElementTest;
-import com.nextbreakpoint.nextfractal.core.tree.Node;
+import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
 
 /**
  * @author Andrea Medeghini
@@ -55,7 +55,7 @@ public class IntegerElementTest extends AbsractValueElementTest<Integer, Integer
 	}
 
 	@Override
-	protected Node createElementNode() {
+	protected NodeObject createElementNode() {
 		return new IntegerElementNode("value", getConfigElement()) {
 		};
 	}

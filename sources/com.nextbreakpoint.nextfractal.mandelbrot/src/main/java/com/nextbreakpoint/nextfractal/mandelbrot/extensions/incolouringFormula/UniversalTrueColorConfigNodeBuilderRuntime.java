@@ -27,7 +27,7 @@ package com.nextbreakpoint.nextfractal.mandelbrot.extensions.incolouringFormula;
 
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionConfig;
 import com.nextbreakpoint.nextfractal.core.extensionPoints.nodeBuilder.NodeBuilderExtensionRuntime;
-import com.nextbreakpoint.nextfractal.core.tree.Node;
+import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
 import com.nextbreakpoint.nextfractal.core.tree.NodeBuilder;
 import com.nextbreakpoint.nextfractal.core.util.AbstractExtensionConfigNodeBuilder;
 import com.nextbreakpoint.nextfractal.mandelbrot.colorRenderer.ColorRendererConfigElement;
@@ -55,10 +55,10 @@ public class UniversalTrueColorConfigNodeBuilderRuntime extends NodeBuilderExten
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.util.AbstractExtensionConfigNodeBuilder#createNodes(com.nextbreakpoint.nextfractal.core.tree.Node)
+		 * @see com.nextbreakpoint.nextfractal.core.util.AbstractExtensionConfigNodeBuilder#createNodes(com.nextbreakpoint.nextfractal.core.tree.NodeObject)
 		 */
 		@Override
-		public void createNodes(final Node parentNode) {
+		public void createNodes(final NodeObject parentNode) {
 			parentNode.appendChildNode(new ColorRendererNode(MandelbrotExtensionResources.getInstance().getString("node.label.RedColorRendererElement"), getConfig().getColorRendererElements()[0]));
 			parentNode.appendChildNode(new ColorRendererNode(MandelbrotExtensionResources.getInstance().getString("node.label.GreenColorRendererElement"), getConfig().getColorRendererElements()[1]));
 			parentNode.appendChildNode(new ColorRendererNode(MandelbrotExtensionResources.getInstance().getString("node.label.BlueColorRendererElement"), getConfig().getColorRendererElements()[2]));

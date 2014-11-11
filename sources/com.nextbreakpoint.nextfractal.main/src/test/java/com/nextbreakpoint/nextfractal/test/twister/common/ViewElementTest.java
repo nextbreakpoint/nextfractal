@@ -28,7 +28,7 @@ package com.nextbreakpoint.nextfractal.test.twister.common;
 import org.junit.Test;
 
 import com.nextbreakpoint.nextfractal.core.test.AbsractValueElementTest;
-import com.nextbreakpoint.nextfractal.core.tree.Node;
+import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
 import com.nextbreakpoint.nextfractal.core.util.DoubleVector4D;
 import com.nextbreakpoint.nextfractal.core.util.IntegerVector4D;
 import com.nextbreakpoint.nextfractal.twister.common.ViewElement;
@@ -58,7 +58,7 @@ public class ViewElementTest extends AbsractValueElementTest<View, ViewElement> 
 	}
 
 	@Override
-	protected Node createElementNode() {
+	protected NodeObject createElementNode() {
 		return new ViewElementNode("value", getConfigElement()) {
 		};
 	}

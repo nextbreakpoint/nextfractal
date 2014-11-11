@@ -29,7 +29,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 
-import com.nextbreakpoint.nextfractal.core.tree.Node;
+import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.CoreUIResources;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.ViewContext;
 import com.nextbreakpoint.nextfractal.core.util.RenderContext;
@@ -42,7 +42,7 @@ public class DefaultNodeEditorComponent extends AnchorPane {
 	 * @param viewContext 
 	 * @param nodeEditor
 	 */
-	public DefaultNodeEditorComponent(ViewContext viewContext, RenderContext context, Node node) {
+	public DefaultNodeEditorComponent(ViewContext viewContext, RenderContext context, NodeObject node) {
 		Label label = new Label(node.getNodeLabel());
 		Button edit = new Button(CoreUIResources.getInstance().getString("action.edit"));
 		edit.setOnAction(e -> { 

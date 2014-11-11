@@ -31,7 +31,7 @@ import com.nextbreakpoint.nextfractal.core.config.ListConfigElement;
 import com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent;
 import com.nextbreakpoint.nextfractal.core.config.ValueChangeListener;
 import com.nextbreakpoint.nextfractal.core.tree.MutableNode;
-import com.nextbreakpoint.nextfractal.core.tree.Node;
+import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
 import com.nextbreakpoint.nextfractal.core.tree.NodeAction;
 import com.nextbreakpoint.nextfractal.core.tree.NodeEditor;
 import com.nextbreakpoint.nextfractal.core.tree.NodeSession;
@@ -65,7 +65,7 @@ public abstract class AbstractConfigElementListNode<T extends ConfigElement> ext
 	protected abstract AbstractConfigElementNode<? extends T> createChildNode(T value);
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.Node#dispose()
+	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#dispose()
 	 */
 	@Override
 	public void dispose() {
@@ -78,7 +78,7 @@ public abstract class AbstractConfigElementListNode<T extends ConfigElement> ext
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.Node#setSession(com.nextbreakpoint.nextfractal.core.tree.NodeSession)
+	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#setSession(com.nextbreakpoint.nextfractal.core.tree.NodeSession)
 	 */
 	@Override
 	public void setSession(final NodeSession session) {
@@ -92,7 +92,7 @@ public abstract class AbstractConfigElementListNode<T extends ConfigElement> ext
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.Node#nodeAdded()
+	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#nodeAdded()
 	 */
 	@Override
 	protected void nodeAdded() {
@@ -100,14 +100,14 @@ public abstract class AbstractConfigElementListNode<T extends ConfigElement> ext
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.Node#nodeRemoved()
+	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#nodeRemoved()
 	 */
 	@Override
 	protected void nodeRemoved() {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.Node#addLabel(java.lang.StringBuilder)
+	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#addLabel(java.lang.StringBuilder)
 	 */
 	@Override
 	protected void addLabel(final StringBuilder builder) {
@@ -144,7 +144,7 @@ public abstract class AbstractConfigElementListNode<T extends ConfigElement> ext
 	protected void createConfigElementNodes(final ListConfigElement<T> listElement) {
 		for (int i = 0; i < listElement.getElementCount(); i++) {
 			final T configElement = listElement.getElement(i);
-			final Node configElementNode = createChildNode(configElement);
+			final NodeObject configElementNode = createChildNode(configElement);
 			appendChildNode(configElementNode);
 		}
 	}
@@ -182,40 +182,40 @@ public abstract class AbstractConfigElementListNode<T extends ConfigElement> ext
 		 */
 		@SuppressWarnings({ "unchecked", "rawtypes" })
 		@Override
-		protected Node createChildNode(final NodeValue value) {
+		protected NodeObject createChildNode(final NodeValue value) {
 			final T configElement = ((NodeValue<T>) value).getValue();
 			configElement.setContext(getContext());
 			return AbstractConfigElementListNode.this.createChildNode(configElement);
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeEditor#doAppendNode(com.nextbreakpoint.nextfractal.core.tree.Node)
+		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeEditor#doAppendNode(com.nextbreakpoint.nextfractal.core.tree.NodeObject)
 		 */
 		@SuppressWarnings("unchecked")
 		@Override
-		protected void doAppendNode(final Node node) {
+		protected void doAppendNode(final NodeObject node) {
 			listElement.removeChangeListener(listListener);
 			listElement.appendElement(((AbstractConfigElementNode<T>) node).getConfigElement());
 			listElement.addChangeListener(listListener);
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeEditor#doInsertNodeAfter(int, com.nextbreakpoint.nextfractal.core.tree.Node)
+		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeEditor#doInsertNodeAfter(int, com.nextbreakpoint.nextfractal.core.tree.NodeObject)
 		 */
 		@SuppressWarnings("unchecked")
 		@Override
-		protected void doInsertNodeAfter(final int index, final Node node) {
+		protected void doInsertNodeAfter(final int index, final NodeObject node) {
 			listElement.removeChangeListener(listListener);
 			listElement.insertElementAfter(index, ((AbstractConfigElementNode<T>) node).getConfigElement());
 			listElement.addChangeListener(listListener);
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeEditor#doInsertNodeBefore(int, com.nextbreakpoint.nextfractal.core.tree.Node)
+		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeEditor#doInsertNodeBefore(int, com.nextbreakpoint.nextfractal.core.tree.NodeObject)
 		 */
 		@SuppressWarnings("unchecked")
 		@Override
-		protected void doInsertNodeBefore(final int index, final Node node) {
+		protected void doInsertNodeBefore(final int index, final NodeObject node) {
 			listElement.removeChangeListener(listListener);
 			listElement.insertElementBefore(index, ((AbstractConfigElementNode<T>) node).getConfigElement());
 			listElement.addChangeListener(listListener);

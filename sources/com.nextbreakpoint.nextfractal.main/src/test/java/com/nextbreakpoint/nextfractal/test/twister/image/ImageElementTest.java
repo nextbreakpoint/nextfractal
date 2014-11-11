@@ -33,7 +33,7 @@ import com.nextbreakpoint.nextfractal.core.common.ConfigurableExtensionReference
 import com.nextbreakpoint.nextfractal.core.common.ConfigurableExtensionReferenceElementXMLImporter;
 import com.nextbreakpoint.nextfractal.core.extension.ConfigurableExtensionReference;
 import com.nextbreakpoint.nextfractal.core.test.AbstractConfigurableExtensionConfigElementTest;
-import com.nextbreakpoint.nextfractal.core.tree.Node;
+import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
 import com.nextbreakpoint.nextfractal.core.tree.NodeValue;
 import com.nextbreakpoint.nextfractal.twister.TwisterRegistry;
 import com.nextbreakpoint.nextfractal.twister.extensionPoints.image.ImageExtensionConfig;
@@ -46,7 +46,7 @@ import com.nextbreakpoint.nextfractal.twister.image.ImageExtensionReferenceNodeV
  */
 public class ImageElementTest extends AbstractConfigurableExtensionConfigElementTest<ImageExtensionConfig> {
 	@Override
-	protected Node createElementNode() {
+	protected NodeObject createElementNode() {
 		return new ConfigurableExtensionReferenceElementNode<ImageExtensionConfig>("reference", getConfigElement()) {
 			@Override
 			protected NodeValue<?> createNodeValue(final ConfigurableExtensionReference<ImageExtensionConfig> value) {

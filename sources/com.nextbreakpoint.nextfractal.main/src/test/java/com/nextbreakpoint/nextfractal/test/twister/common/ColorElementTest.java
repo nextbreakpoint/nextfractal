@@ -32,7 +32,7 @@ import com.nextbreakpoint.nextfractal.core.common.ColorElementNode;
 import com.nextbreakpoint.nextfractal.core.common.ColorElementXMLExporter;
 import com.nextbreakpoint.nextfractal.core.common.ColorElementXMLImporter;
 import com.nextbreakpoint.nextfractal.core.test.AbsractValueElementTest;
-import com.nextbreakpoint.nextfractal.core.tree.Node;
+import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
 import com.nextbreakpoint.nextfractal.core.util.Color32bit;
 
 /**
@@ -56,7 +56,7 @@ public class ColorElementTest extends AbsractValueElementTest<Color32bit, ColorE
 	}
 
 	@Override
-	protected Node createElementNode() {
+	protected NodeObject createElementNode() {
 		return new ColorElementNode("value", getConfigElement()) {
 		};
 	}

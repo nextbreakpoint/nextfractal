@@ -32,7 +32,7 @@ import com.nextbreakpoint.nextfractal.core.common.ShortElementNode;
 import com.nextbreakpoint.nextfractal.core.common.ShortElementXMLExporter;
 import com.nextbreakpoint.nextfractal.core.common.ShortElementXMLImporter;
 import com.nextbreakpoint.nextfractal.core.test.AbsractValueElementTest;
-import com.nextbreakpoint.nextfractal.core.tree.Node;
+import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
 
 /**
  * @author Andrea Medeghini
@@ -55,7 +55,7 @@ public class ShortElementTest extends AbsractValueElementTest<Short, ShortElemen
 	}
 
 	@Override
-	protected Node createElementNode() {
+	protected NodeObject createElementNode() {
 		return new ShortElementNode("value", getConfigElement()) {
 		};
 	}
