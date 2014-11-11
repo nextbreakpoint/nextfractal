@@ -30,7 +30,7 @@ import java.awt.Component;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeCellRenderer;
 
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeObject;
 import com.nextbreakpoint.nextfractal.core.ui.swing.util.MutableTreeNodeAdapter;
 
 /**

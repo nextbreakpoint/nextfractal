@@ -27,7 +27,7 @@ package com.nextbreakpoint.nextfractal.core.ui.swing.util;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeObject;
 
 /**
  * @author Andrea Medeghini

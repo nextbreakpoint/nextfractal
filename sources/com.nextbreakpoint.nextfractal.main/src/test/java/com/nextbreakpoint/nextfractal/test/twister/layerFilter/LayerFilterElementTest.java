@@ -32,8 +32,8 @@ import com.nextbreakpoint.nextfractal.core.elements.ConfigurableExtensionReferen
 import com.nextbreakpoint.nextfractal.core.elements.ConfigurableExtensionReferenceElementXMLExporter;
 import com.nextbreakpoint.nextfractal.core.elements.ConfigurableExtensionReferenceElementXMLImporter;
 import com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtensionReference;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeObject;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeValue;
 import com.nextbreakpoint.nextfractal.core.test.AbstractConfigurableExtensionConfigElementTest;
 import com.nextbreakpoint.nextfractal.twister.TwisterRegistry;
 import com.nextbreakpoint.nextfractal.twister.extensionPoints.layerFilter.LayerFilterExtensionConfig;

@@ -31,7 +31,7 @@ import com.nextbreakpoint.nextfractal.core.CoreRegistry;
 import com.nextbreakpoint.nextfractal.core.extensionPoints.actionXMLImporter.ActionXMLImporterExtensionRuntime;
 import com.nextbreakpoint.nextfractal.core.runtime.extension.Extension;
 import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionException;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeActionValue;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeActionValue;
 
 /**
  * @author Andrea Medeghini

@@ -65,12 +65,12 @@ import javax.swing.event.ChangeListener;
 
 import com.nextbreakpoint.nextfractal.core.runtime.DefaultConfigContext;
 import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionException;
-import com.nextbreakpoint.nextfractal.core.runtime.model.DefaultNodeSession;
-import com.nextbreakpoint.nextfractal.core.runtime.model.DefaultRootNode;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeAction;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeActionValue;
 import com.nextbreakpoint.nextfractal.core.runtime.scripting.DefaultJSContext;
 import com.nextbreakpoint.nextfractal.core.runtime.scripting.JSManager;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.DefaultNodeSession;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.DefaultRootNode;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeAction;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeActionValue;
 import com.nextbreakpoint.nextfractal.core.ui.swing.IconButton;
 import com.nextbreakpoint.nextfractal.core.ui.swing.NavigatorFrame;
 import com.nextbreakpoint.nextfractal.core.ui.swing.util.GUIFactory;

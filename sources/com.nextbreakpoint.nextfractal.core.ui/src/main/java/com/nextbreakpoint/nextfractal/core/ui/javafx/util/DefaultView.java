@@ -10,7 +10,7 @@ import javafx.scene.layout.VBox;
 import com.nextbreakpoint.nextfractal.core.RenderContext;
 import com.nextbreakpoint.nextfractal.core.runtime.extension.Extension;
 import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionNotFoundException;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeObject;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.CoreUIRegistry;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.Disposable;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.NodeEditorComponent;

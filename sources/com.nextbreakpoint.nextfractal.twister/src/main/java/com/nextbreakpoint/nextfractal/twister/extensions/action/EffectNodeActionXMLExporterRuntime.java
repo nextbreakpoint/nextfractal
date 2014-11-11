@@ -25,7 +25,7 @@
  */
 package com.nextbreakpoint.nextfractal.twister.extensions.action;
 
-import com.nextbreakpoint.nextfractal.core.runtime.util.AbstractConfigElementNodeActionXMLExporterRuntime;
+import com.nextbreakpoint.nextfractal.core.runtime.common.AbstractConfigElementNodeActionXMLExporterRuntime;
 import com.nextbreakpoint.nextfractal.twister.effect.EffectConfigElement;
 import com.nextbreakpoint.nextfractal.twister.effect.EffectConfigElementXMLExporter;
 
@@ -34,7 +34,7 @@ import com.nextbreakpoint.nextfractal.twister.effect.EffectConfigElementXMLExpor
  */
 public class EffectNodeActionXMLExporterRuntime extends AbstractConfigElementNodeActionXMLExporterRuntime<EffectConfigElement> {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.util.AbstractConfigElementNodeActionXMLExporterRuntime#createExporter()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.common.AbstractConfigElementNodeActionXMLExporterRuntime#createExporter()
 	 */
 	@Override
 	protected EffectConfigElementXMLExporter createExporter() {

@@ -30,7 +30,7 @@ import javafx.scene.layout.Pane;
 import com.nextbreakpoint.nextfractal.core.RenderContext;
 import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionConfig;
 import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionRuntime;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeSession;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeSession;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.ViewContext;
 
 /**

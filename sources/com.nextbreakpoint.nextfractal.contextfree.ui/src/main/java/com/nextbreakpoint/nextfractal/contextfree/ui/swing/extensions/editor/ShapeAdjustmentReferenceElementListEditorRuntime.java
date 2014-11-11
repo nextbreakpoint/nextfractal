@@ -9,7 +9,7 @@ import com.nextbreakpoint.nextfractal.contextfree.shapeAdjustment.ShapeAdjustmen
 import com.nextbreakpoint.nextfractal.contextfree.shapeAdjustment.ShapeAdjustmentConfigElementNodeValue;
 import com.nextbreakpoint.nextfractal.contextfree.ui.swing.extensions.ContextFreeSwingExtensionResources;
 import com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtensionReference;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeValue;
 import com.nextbreakpoint.nextfractal.core.ui.swing.editor.ConfigurableReferenceElementListEditorRuntime;
 import com.nextbreakpoint.nextfractal.core.ui.swing.extension.ConfigurableExtensionComboBoxModel;
 /**

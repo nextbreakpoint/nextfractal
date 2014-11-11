@@ -44,7 +44,7 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.WindowConstants;
 
 import com.nextbreakpoint.nextfractal.core.RenderContext;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeSession;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeSession;
 import com.nextbreakpoint.nextfractal.core.ui.swing.ViewContext;
 import com.nextbreakpoint.nextfractal.core.ui.swing.util.Buttons;
 import com.nextbreakpoint.nextfractal.twister.TwisterConfig;

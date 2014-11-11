@@ -31,11 +31,11 @@ import com.nextbreakpoint.nextfractal.contextfree.cfdg.CFDGConfigElementNodeValu
 import com.nextbreakpoint.nextfractal.core.runtime.ElementChangeEvent;
 import com.nextbreakpoint.nextfractal.core.runtime.ElementChangeListener;
 import com.nextbreakpoint.nextfractal.core.runtime.ValueConfigElement;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeAction;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeBuilder;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeAction;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeBuilder;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeEditor;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeObject;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeValue;
 import com.nextbreakpoint.nextfractal.twister.elements.SpeedElementNode;
 import com.nextbreakpoint.nextfractal.twister.elements.ViewElementNode;
 
@@ -103,7 +103,7 @@ public class ContextFreeConfigNodeBuilder implements NodeBuilder {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject#isEditable()
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeObject#isEditable()
 		 */
 		@Override
 		public boolean isEditable() {
@@ -111,7 +111,7 @@ public class ContextFreeConfigNodeBuilder implements NodeBuilder {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject#dispose()
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeObject#dispose()
 		 */
 		@Override
 		public void dispose() {
@@ -122,7 +122,7 @@ public class ContextFreeConfigNodeBuilder implements NodeBuilder {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject#nodeAdded()
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeObject#nodeAdded()
 		 */
 		@Override
 		protected void nodeAdded() {
@@ -131,7 +131,7 @@ public class ContextFreeConfigNodeBuilder implements NodeBuilder {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject#nodeRemoved()
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeObject#nodeRemoved()
 		 */
 		@Override
 		protected void nodeRemoved() {
@@ -139,7 +139,7 @@ public class ContextFreeConfigNodeBuilder implements NodeBuilder {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.DefaultNode#createNodeEditor()
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.DefaultNode#createNodeEditor()
 		 */
 		@Override
 		protected NodeEditor createNodeEditor() {
@@ -155,7 +155,7 @@ public class ContextFreeConfigNodeBuilder implements NodeBuilder {
 			}
 
 			/**
-			 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor#doSetValue(java.lang.NodeValue)
+			 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeEditor#doSetValue(java.lang.NodeValue)
 			 */
 			@Override
 			protected void doSetValue(final NodeValue<?> value) {
@@ -165,7 +165,7 @@ public class ContextFreeConfigNodeBuilder implements NodeBuilder {
 			}
 
 			/**
-			 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor#createChildNode(com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue)
+			 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeEditor#createChildNode(com.nextbreakpoint.nextfractal.core.runtime.tree.NodeValue)
 			 */
 			@Override
 			protected NodeObject createChildNode(final NodeValue<?> value) {
@@ -173,7 +173,7 @@ public class ContextFreeConfigNodeBuilder implements NodeBuilder {
 			}
 
 			/**
-			 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor#getNodeValueType()
+			 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeEditor#getNodeValueType()
 			 */
 			@Override
 			public Class<?> getNodeValueType() {
@@ -181,7 +181,7 @@ public class ContextFreeConfigNodeBuilder implements NodeBuilder {
 			}
 
 			/**
-			 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor#createNodeValue(Object)
+			 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeEditor#createNodeValue(Object)
 			 */
 			@Override
 			public NodeValue<?> createNodeValue(final Object value) {

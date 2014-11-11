@@ -5,7 +5,7 @@
 package com.nextbreakpoint.nextfractal.contextfree.extensions.action;
 
 import com.nextbreakpoint.nextfractal.contextfree.extensionPoints.shapeAdjustment.ShapeAdjustmentExtensionConfig;
-import com.nextbreakpoint.nextfractal.core.runtime.util.AbstractConfigurableExtensionReferenceElementNodeActionXMLExporterRuntime;
+import com.nextbreakpoint.nextfractal.core.runtime.common.AbstractConfigurableExtensionReferenceElementNodeActionXMLExporterRuntime;
 /**
  * @author Andrea Medeghini
  */

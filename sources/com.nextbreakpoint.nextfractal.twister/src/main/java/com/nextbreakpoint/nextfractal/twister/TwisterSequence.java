@@ -29,7 +29,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeAction;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeAction;
 
 /**
  * @author Andrea Medeghini

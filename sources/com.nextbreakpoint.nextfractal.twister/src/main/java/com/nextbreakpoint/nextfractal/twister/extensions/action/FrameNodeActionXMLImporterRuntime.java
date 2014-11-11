@@ -25,7 +25,7 @@
  */
 package com.nextbreakpoint.nextfractal.twister.extensions.action;
 
-import com.nextbreakpoint.nextfractal.core.runtime.util.AbstractConfigElementNodeActionXMLImporterRuntime;
+import com.nextbreakpoint.nextfractal.core.runtime.common.AbstractConfigElementNodeActionXMLImporterRuntime;
 import com.nextbreakpoint.nextfractal.twister.frame.FrameConfigElement;
 import com.nextbreakpoint.nextfractal.twister.frame.FrameConfigElementXMLImporter;
 
@@ -34,7 +34,7 @@ import com.nextbreakpoint.nextfractal.twister.frame.FrameConfigElementXMLImporte
  */
 public class FrameNodeActionXMLImporterRuntime extends AbstractConfigElementNodeActionXMLImporterRuntime<FrameConfigElement> {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.util.AbstractConfigElementNodeActionXMLImporterRuntime#createImporter()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.common.AbstractConfigElementNodeActionXMLImporterRuntime#createImporter()
 	 */
 	@Override
 	protected FrameConfigElementXMLImporter createImporter() {

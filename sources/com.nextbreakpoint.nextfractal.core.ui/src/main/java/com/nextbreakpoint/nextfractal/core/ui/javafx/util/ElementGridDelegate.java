@@ -1,6 +1,6 @@
 package com.nextbreakpoint.nextfractal.core.ui.javafx.util;
 
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeObject;
 
 @FunctionalInterface
 public interface ElementGridDelegate {

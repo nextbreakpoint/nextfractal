@@ -26,7 +26,7 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.ui.swing.extensions.editor;
 
 import com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtensionReference;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeValue;
 import com.nextbreakpoint.nextfractal.core.ui.swing.editor.ConfigurableReferenceElementEditorRuntime;
 import com.nextbreakpoint.nextfractal.core.ui.swing.extension.ConfigurableExtensionComboBoxModel;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotRegistry;

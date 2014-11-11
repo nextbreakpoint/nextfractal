@@ -27,7 +27,7 @@ package com.nextbreakpoint.nextfractal.test.twister.common;
 
 import org.junit.Test;
 
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeObject;
 import com.nextbreakpoint.nextfractal.core.test.AbsractValueElementTest;
 import com.nextbreakpoint.nextfractal.core.util.DoubleVector4D;
 import com.nextbreakpoint.nextfractal.core.util.IntegerVector4D;

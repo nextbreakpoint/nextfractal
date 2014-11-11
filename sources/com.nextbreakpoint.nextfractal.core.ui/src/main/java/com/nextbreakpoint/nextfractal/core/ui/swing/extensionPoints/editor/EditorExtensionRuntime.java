@@ -26,7 +26,7 @@
 package com.nextbreakpoint.nextfractal.core.ui.swing.extensionPoints.editor;
 
 import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionRuntime;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeEditor;
 import com.nextbreakpoint.nextfractal.core.ui.swing.NodeEditorComponent;
 
 /**

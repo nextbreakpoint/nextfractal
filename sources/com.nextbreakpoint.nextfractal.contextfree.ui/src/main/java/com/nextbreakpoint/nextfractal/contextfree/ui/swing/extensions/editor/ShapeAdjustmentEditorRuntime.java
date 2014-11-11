@@ -9,7 +9,7 @@ import java.awt.FlowLayout;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeEditor;
 import com.nextbreakpoint.nextfractal.core.ui.swing.NodeEditorComponent;
 import com.nextbreakpoint.nextfractal.core.ui.swing.extensionPoints.editor.EditorExtensionRuntime;
 /**
@@ -17,7 +17,7 @@ import com.nextbreakpoint.nextfractal.core.ui.swing.extensionPoints.editor.Edito
  */
 public class ShapeAdjustmentEditorRuntime extends EditorExtensionRuntime {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.swing.editor.element.EditorExtensionRuntime#createEditor(com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor)
+	 * @see com.nextbreakpoint.nextfractal.core.swing.editor.element.EditorExtensionRuntime#createEditor(com.nextbreakpoint.nextfractal.core.runtime.tree.NodeEditor)
 	 */
 	@Override
 	public NodeEditorComponent createEditor(final NodeEditor nodeEditor) {

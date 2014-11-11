@@ -26,9 +26,9 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.extensions.transformingFormula;
 
 import com.nextbreakpoint.nextfractal.core.extensionPoints.nodeBuilder.NodeBuilderExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.runtime.common.AbstractExtensionConfigNodeBuilder;
 import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionConfig;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeBuilder;
-import com.nextbreakpoint.nextfractal.core.runtime.util.AbstractExtensionConfigNodeBuilder;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeBuilder;
 
 /**
  * @author Andrea Medeghini

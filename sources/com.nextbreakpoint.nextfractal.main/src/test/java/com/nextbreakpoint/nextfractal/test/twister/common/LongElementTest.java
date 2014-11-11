@@ -31,7 +31,7 @@ import com.nextbreakpoint.nextfractal.core.elements.LongElement;
 import com.nextbreakpoint.nextfractal.core.elements.LongElementNode;
 import com.nextbreakpoint.nextfractal.core.elements.LongElementXMLExporter;
 import com.nextbreakpoint.nextfractal.core.elements.LongElementXMLImporter;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeObject;
 import com.nextbreakpoint.nextfractal.core.test.AbsractValueElementTest;
 
 /**

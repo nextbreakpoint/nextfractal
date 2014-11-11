@@ -25,7 +25,7 @@
  */
 package com.nextbreakpoint.nextfractal.twister.extensions.action;
 
-import com.nextbreakpoint.nextfractal.core.runtime.util.AbstractConfigElementListNodeActionXMLImporterRuntime;
+import com.nextbreakpoint.nextfractal.core.runtime.common.AbstractConfigElementListNodeActionXMLImporterRuntime;
 import com.nextbreakpoint.nextfractal.twister.layerFilter.LayerFilterConfigElement;
 import com.nextbreakpoint.nextfractal.twister.layerFilter.LayerFilterConfigElementXMLImporter;
 
@@ -34,7 +34,7 @@ import com.nextbreakpoint.nextfractal.twister.layerFilter.LayerFilterConfigEleme
  */
 public class LayerFilterListNodeActionXMLImporterRuntime extends AbstractConfigElementListNodeActionXMLImporterRuntime<LayerFilterConfigElement> {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.util.AbstractConfigElementListNodeActionXMLImporterRuntime#createImporter()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.common.AbstractConfigElementListNodeActionXMLImporterRuntime#createImporter()
 	 */
 	@Override
 	protected LayerFilterConfigElementXMLImporter createImporter() {

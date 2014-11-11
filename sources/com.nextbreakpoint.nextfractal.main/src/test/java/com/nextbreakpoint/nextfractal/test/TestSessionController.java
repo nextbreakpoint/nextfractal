@@ -29,8 +29,8 @@ import org.junit.Test;
 
 import com.nextbreakpoint.nextfractal.core.runtime.ConfigContext;
 import com.nextbreakpoint.nextfractal.core.runtime.DefaultConfigContext;
-import com.nextbreakpoint.nextfractal.core.runtime.model.DefaultRootNode;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeAction;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.DefaultRootNode;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeAction;
 import com.nextbreakpoint.nextfractal.twister.ControllerListener;
 import com.nextbreakpoint.nextfractal.twister.TwisterConfig;
 import com.nextbreakpoint.nextfractal.twister.TwisterConfigBuilder;
@@ -182,7 +182,7 @@ public class TestSessionController {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.twister.TwisterSessionController#appendAction(com.nextbreakpoint.nextfractal.core.runtime.model.NodeAction)
+		 * @see com.nextbreakpoint.nextfractal.twister.TwisterSessionController#appendAction(com.nextbreakpoint.nextfractal.core.runtime.tree.NodeAction)
 		 */
 		@Override
 		public void appendAction(final NodeAction action) {

@@ -30,7 +30,7 @@ import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
 
-import com.nextbreakpoint.nextfractal.core.runtime.model.TransferableNodeValue;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.TransferableNodeValue;
 
 /**
  * @author Andrea Medeghini

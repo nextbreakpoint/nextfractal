@@ -31,11 +31,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.nextbreakpoint.nextfractal.core.RenderContext;
-import com.nextbreakpoint.nextfractal.core.runtime.model.DefaultNodeSession;
-import com.nextbreakpoint.nextfractal.core.runtime.model.DefaultRootNode;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeAction;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodePath;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.DefaultNodeSession;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.DefaultRootNode;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeAction;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeObject;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodePath;
 
 /**
  * @author Andrea Medeghini

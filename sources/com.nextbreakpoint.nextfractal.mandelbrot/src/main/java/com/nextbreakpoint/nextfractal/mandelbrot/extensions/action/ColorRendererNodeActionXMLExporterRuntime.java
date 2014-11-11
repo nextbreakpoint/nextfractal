@@ -25,7 +25,7 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.extensions.action;
 
-import com.nextbreakpoint.nextfractal.core.runtime.util.AbstractConfigElementNodeActionXMLExporterRuntime;
+import com.nextbreakpoint.nextfractal.core.runtime.common.AbstractConfigElementNodeActionXMLExporterRuntime;
 import com.nextbreakpoint.nextfractal.mandelbrot.colorRenderer.ColorRendererConfigElement;
 import com.nextbreakpoint.nextfractal.mandelbrot.colorRenderer.ColorRendererConfigElementXMLExporter;
 
@@ -34,7 +34,7 @@ import com.nextbreakpoint.nextfractal.mandelbrot.colorRenderer.ColorRendererConf
  */
 public class ColorRendererNodeActionXMLExporterRuntime extends AbstractConfigElementNodeActionXMLExporterRuntime<ColorRendererConfigElement> {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.util.AbstractConfigElementNodeActionXMLExporterRuntime#createExporter()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.common.AbstractConfigElementNodeActionXMLExporterRuntime#createExporter()
 	 */
 	@Override
 	protected ColorRendererConfigElementXMLExporter createExporter() {

@@ -25,7 +25,7 @@
  */
 package com.nextbreakpoint.nextfractal.core.elements;
 
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeValue;
 import com.nextbreakpoint.nextfractal.core.util.Rectangle;
 
 /**
@@ -42,7 +42,7 @@ public class RectangleElementNodeValue extends NodeValue<Rectangle> {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue#getValueClone()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeValue#getValueClone()
 	 */
 	@Override
 	public Rectangle getValueClone() {
@@ -50,7 +50,7 @@ public class RectangleElementNodeValue extends NodeValue<Rectangle> {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue#clone()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeValue#clone()
 	 */
 	@Override
 	public RectangleElementNodeValue clone() {

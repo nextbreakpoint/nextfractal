@@ -31,7 +31,7 @@ import com.nextbreakpoint.nextfractal.core.elements.ColorElement;
 import com.nextbreakpoint.nextfractal.core.elements.ColorElementNode;
 import com.nextbreakpoint.nextfractal.core.elements.ColorElementXMLExporter;
 import com.nextbreakpoint.nextfractal.core.elements.ColorElementXMLImporter;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeObject;
 import com.nextbreakpoint.nextfractal.core.test.AbsractValueElementTest;
 import com.nextbreakpoint.nextfractal.core.util.Color32bit;
 

@@ -86,7 +86,7 @@ import com.nextbreakpoint.nextfractal.core.RenderContext;
 import com.nextbreakpoint.nextfractal.core.RenderContextListener;
 import com.nextbreakpoint.nextfractal.core.runtime.extension.Extension;
 import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionException;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeAction;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeAction;
 import com.nextbreakpoint.nextfractal.core.runtime.xml.XML;
 import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLImportException;
 import com.nextbreakpoint.nextfractal.core.ui.swing.util.GUIUtil;

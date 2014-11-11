@@ -25,7 +25,7 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.extensions.action;
 
-import com.nextbreakpoint.nextfractal.core.runtime.util.AbstractConfigElementNodeActionXMLImporterRuntime;
+import com.nextbreakpoint.nextfractal.core.runtime.common.AbstractConfigElementNodeActionXMLImporterRuntime;
 import com.nextbreakpoint.nextfractal.mandelbrot.outcolouringFormula.OutcolouringFormulaConfigElement;
 import com.nextbreakpoint.nextfractal.mandelbrot.outcolouringFormula.OutcolouringFormulaConfigElementXMLImporter;
 
@@ -34,7 +34,7 @@ import com.nextbreakpoint.nextfractal.mandelbrot.outcolouringFormula.Outcolourin
  */
 public class OutcolouringFormulaNodeActionXMLImporterRuntime extends AbstractConfigElementNodeActionXMLImporterRuntime<OutcolouringFormulaConfigElement> {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.util.AbstractConfigElementNodeActionXMLImporterRuntime#createImporter()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.common.AbstractConfigElementNodeActionXMLImporterRuntime#createImporter()
 	 */
 	@Override
 	protected OutcolouringFormulaConfigElementXMLImporter createImporter() {

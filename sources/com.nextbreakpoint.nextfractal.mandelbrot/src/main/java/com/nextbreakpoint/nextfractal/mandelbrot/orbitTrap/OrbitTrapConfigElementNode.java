@@ -27,11 +27,11 @@ package com.nextbreakpoint.nextfractal.mandelbrot.orbitTrap;
 
 import com.nextbreakpoint.nextfractal.core.elements.ComplexElementNode;
 import com.nextbreakpoint.nextfractal.core.elements.ConfigurableExtensionReferenceElementNode;
+import com.nextbreakpoint.nextfractal.core.runtime.common.AbstractConfigElementNode;
 import com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtensionReference;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue;
-import com.nextbreakpoint.nextfractal.core.runtime.util.AbstractConfigElementNode;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeEditor;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeObject;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeValue;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotResources;
 import com.nextbreakpoint.nextfractal.mandelbrot.orbitTrap.extension.OrbitTrapExtensionConfig;
 
@@ -86,7 +86,7 @@ public class OrbitTrapConfigElementNode extends AbstractConfigElementNode<OrbitT
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.DefaultNode#isEditable()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.DefaultNode#isEditable()
 	 */
 	@Override
 	public boolean isEditable() {
@@ -94,7 +94,7 @@ public class OrbitTrapConfigElementNode extends AbstractConfigElementNode<OrbitT
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject#addDescription(java.lang.StringBuilder)
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeObject#addDescription(java.lang.StringBuilder)
 	 */
 	@Override
 	protected void addDescription(final StringBuilder builder) {
@@ -107,7 +107,7 @@ public class OrbitTrapConfigElementNode extends AbstractConfigElementNode<OrbitT
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.util.AbstractConfigElementNode#getConfigElement()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.common.AbstractConfigElementNode#getConfigElement()
 	 */
 	@Override
 	public OrbitTrapConfigElement getConfigElement() {
@@ -115,7 +115,7 @@ public class OrbitTrapConfigElementNode extends AbstractConfigElementNode<OrbitT
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject#updateChildNodes()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeObject#updateChildNodes()
 	 */
 	@Override
 	protected void updateChildNodes() {
@@ -123,7 +123,7 @@ public class OrbitTrapConfigElementNode extends AbstractConfigElementNode<OrbitT
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.DefaultNode#createNodeEditor()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.DefaultNode#createNodeEditor()
 	 */
 	@Override
 	protected NodeEditor createNodeEditor() {
@@ -139,7 +139,7 @@ public class OrbitTrapConfigElementNode extends AbstractConfigElementNode<OrbitT
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor#createChildNode(com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeEditor#createChildNode(com.nextbreakpoint.nextfractal.core.runtime.tree.NodeValue)
 		 */
 		@Override
 		protected NodeObject createChildNode(final NodeValue<?> value) {
@@ -147,7 +147,7 @@ public class OrbitTrapConfigElementNode extends AbstractConfigElementNode<OrbitT
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor#createNodeValue(Object)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeEditor#createNodeValue(Object)
 		 */
 		@Override
 		public NodeValue<?> createNodeValue(final Object value) {
@@ -155,7 +155,7 @@ public class OrbitTrapConfigElementNode extends AbstractConfigElementNode<OrbitT
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor#getNodeValueType()
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeEditor#getNodeValueType()
 		 */
 		@Override
 		public Class<?> getNodeValueType() {

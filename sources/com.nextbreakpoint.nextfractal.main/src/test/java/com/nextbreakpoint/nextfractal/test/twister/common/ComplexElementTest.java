@@ -31,7 +31,7 @@ import com.nextbreakpoint.nextfractal.core.elements.ComplexElement;
 import com.nextbreakpoint.nextfractal.core.elements.ComplexElementNode;
 import com.nextbreakpoint.nextfractal.core.elements.ComplexElementXMLExporter;
 import com.nextbreakpoint.nextfractal.core.elements.ComplexElementXMLImporter;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeObject;
 import com.nextbreakpoint.nextfractal.core.test.AbsractValueElementTest;
 import com.nextbreakpoint.nextfractal.core.util.DoubleVector2D;
 

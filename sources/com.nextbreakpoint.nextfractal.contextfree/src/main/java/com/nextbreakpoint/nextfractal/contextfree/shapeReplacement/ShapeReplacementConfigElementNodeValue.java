@@ -4,7 +4,7 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.shapeReplacement;
 
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeValue;
 
 public class ShapeReplacementConfigElementNodeValue extends NodeValue<ShapeReplacementConfigElement> {
 	private static final long serialVersionUID = 1L;
@@ -17,7 +17,7 @@ public class ShapeReplacementConfigElementNodeValue extends NodeValue<ShapeRepla
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue#getValueClone()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeValue#getValueClone()
 	 */
 	@Override
 	public ShapeReplacementConfigElement getValueClone() {
@@ -28,7 +28,7 @@ public class ShapeReplacementConfigElementNodeValue extends NodeValue<ShapeRepla
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue#clone()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeValue#clone()
 	 */
 	@Override
 	public ShapeReplacementConfigElementNodeValue clone() {

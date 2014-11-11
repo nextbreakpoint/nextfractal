@@ -27,7 +27,7 @@ package com.nextbreakpoint.nextfractal.test.mandelbrot.common;
 
 import org.junit.Test;
 
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeObject;
 import com.nextbreakpoint.nextfractal.core.test.AbsractValueElementTest;
 import com.nextbreakpoint.nextfractal.mandelbrot.elements.ThresholdElement;
 import com.nextbreakpoint.nextfractal.mandelbrot.elements.ThresholdElementNode;

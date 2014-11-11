@@ -28,8 +28,8 @@ package com.nextbreakpoint.nextfractal.contextfree.extensions.image;
 import com.nextbreakpoint.nextfractal.contextfree.ContextFreeConfigNodeBuilder;
 import com.nextbreakpoint.nextfractal.core.extensionPoints.nodeBuilder.NodeBuilderExtensionRuntime;
 import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionConfig;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeBuilder;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeBuilder;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeObject;
 
 /**
  * @author Andrea Medeghini
@@ -51,7 +51,7 @@ public class ContextFreeImageConfigNodeBuilderRuntime extends NodeBuilderExtensi
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeBuilder#createNodes(NodeObject)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeBuilder#createNodes(NodeObject)
 		 */
 		@Override
 		public void createNodes(final NodeObject parentNode) {

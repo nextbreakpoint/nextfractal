@@ -45,14 +45,14 @@ import com.nextbreakpoint.nextfractal.core.extensionPoints.nodeBuilder.NodeBuild
 import com.nextbreakpoint.nextfractal.core.runtime.extension.Extension;
 import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionConfig;
 import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionException;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeAction;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeBuilder;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeEvent;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeListener;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeSession;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeSessionListener;
-import com.nextbreakpoint.nextfractal.core.runtime.model.RootNode;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeAction;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeBuilder;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeEvent;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeListener;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeObject;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeSession;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeSessionListener;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.RootNode;
 import com.nextbreakpoint.nextfractal.core.ui.swing.NavigatorPanel;
 import com.nextbreakpoint.nextfractal.core.ui.swing.NavigatorTree;
 import com.nextbreakpoint.nextfractal.core.ui.swing.ViewContext;
@@ -133,28 +133,28 @@ public class DefaultViewRuntime extends ViewExtensionRuntime {
 
 		private class NavigatorTreeListener implements NodeListener {
 			/**
-			 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeListener#nodeChanged(com.nextbreakpoint.nextfractal.core.runtime.model.NodeEvent)
+			 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeListener#nodeChanged(com.nextbreakpoint.nextfractal.core.runtime.tree.NodeEvent)
 			 */
 			@Override
 			public void nodeChanged(final NodeEvent e) {
 			}
 
 			/**
-			 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeListener#nodeAdded(com.nextbreakpoint.nextfractal.core.runtime.model.NodeEvent)
+			 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeListener#nodeAdded(com.nextbreakpoint.nextfractal.core.runtime.tree.NodeEvent)
 			 */
 			@Override
 			public void nodeAdded(final NodeEvent e) {
 			}
 
 			/**
-			 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeListener#nodeRemoved(com.nextbreakpoint.nextfractal.core.runtime.model.NodeEvent)
+			 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeListener#nodeRemoved(com.nextbreakpoint.nextfractal.core.runtime.tree.NodeEvent)
 			 */
 			@Override
 			public void nodeRemoved(final NodeEvent e) {
 			}
 
 			/**
-			 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeListener#nodeAccepted(com.nextbreakpoint.nextfractal.core.runtime.model.NodeEvent)
+			 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeListener#nodeAccepted(com.nextbreakpoint.nextfractal.core.runtime.tree.NodeEvent)
 			 */
 			@Override
 			public void nodeAccepted(final NodeEvent e) {
@@ -167,7 +167,7 @@ public class DefaultViewRuntime extends ViewExtensionRuntime {
 			}
 
 			/**
-			 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeListener#nodeCancelled(com.nextbreakpoint.nextfractal.core.runtime.model.NodeEvent)
+			 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeListener#nodeCancelled(com.nextbreakpoint.nextfractal.core.runtime.tree.NodeEvent)
 			 */
 			@Override
 			public void nodeCancelled(final NodeEvent e) {
@@ -283,14 +283,14 @@ public class DefaultViewRuntime extends ViewExtensionRuntime {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeSession#appendAction(com.nextbreakpoint.nextfractal.core.runtime.model.NodeAction)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeSession#appendAction(com.nextbreakpoint.nextfractal.core.runtime.tree.NodeAction)
 		 */
 		@Override
 		public void appendAction(final NodeAction action) {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeSession#getActions()
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeSession#getActions()
 		 */
 		@Override
 		public List<NodeAction> getActions() {
@@ -298,7 +298,7 @@ public class DefaultViewRuntime extends ViewExtensionRuntime {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeSession#getSessionName()
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeSession#getSessionName()
 		 */
 		@Override
 		public String getSessionName() {
@@ -306,7 +306,7 @@ public class DefaultViewRuntime extends ViewExtensionRuntime {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeSession#getTimestamp()
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeSession#getTimestamp()
 		 */
 		@Override
 		public long getTimestamp() {
@@ -314,7 +314,7 @@ public class DefaultViewRuntime extends ViewExtensionRuntime {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeSession#isAcceptImmediatly()
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeSession#isAcceptImmediatly()
 		 */
 		@Override
 		public boolean isAcceptImmediatly() {
@@ -322,14 +322,14 @@ public class DefaultViewRuntime extends ViewExtensionRuntime {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeSession#setAcceptImmediatly(boolean)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeSession#setAcceptImmediatly(boolean)
 		 */
 		@Override
 		public void setAcceptImmediatly(final boolean isApplyImmediatly) {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeSession#setTimestamp(long)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeSession#setTimestamp(long)
 		 */
 		@Override
 		public void setTimestamp(final long timestamp) {

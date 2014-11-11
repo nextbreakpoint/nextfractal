@@ -25,12 +25,12 @@
  */
 package com.nextbreakpoint.nextfractal.twister.layer;
 
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue;
-import com.nextbreakpoint.nextfractal.core.runtime.util.AbstractConfigElementListNode;
-import com.nextbreakpoint.nextfractal.core.runtime.util.AbstractConfigElementNode;
-import com.nextbreakpoint.nextfractal.core.runtime.util.ConfigElementListNodeValue;
+import com.nextbreakpoint.nextfractal.core.runtime.common.AbstractConfigElementListNode;
+import com.nextbreakpoint.nextfractal.core.runtime.common.AbstractConfigElementNode;
+import com.nextbreakpoint.nextfractal.core.runtime.common.ConfigElementListNodeValue;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeEditor;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeObject;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeValue;
 import com.nextbreakpoint.nextfractal.twister.TwisterResources;
 
 /**
@@ -70,7 +70,7 @@ public class GroupLayerConfigElementNode extends LayerConfigElementNode<GroupLay
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.DefaultNode#createNodeEditor()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.DefaultNode#createNodeEditor()
 	 */
 	@Override
 	protected NodeEditor createNodeEditor() {
@@ -78,7 +78,7 @@ public class GroupLayerConfigElementNode extends LayerConfigElementNode<GroupLay
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject#addLabel(java.lang.StringBuilder)
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeObject#addLabel(java.lang.StringBuilder)
 	 */
 	@Override
 	protected void addLabel(final StringBuilder builder) {
@@ -94,7 +94,7 @@ public class GroupLayerConfigElementNode extends LayerConfigElementNode<GroupLay
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor#createChildNode(com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeEditor#createChildNode(com.nextbreakpoint.nextfractal.core.runtime.tree.NodeValue)
 		 */
 		@Override
 		protected NodeObject createChildNode(final NodeValue<?> value) {
@@ -102,7 +102,7 @@ public class GroupLayerConfigElementNode extends LayerConfigElementNode<GroupLay
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor#getNodeValueType()
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeEditor#getNodeValueType()
 		 */
 		@Override
 		public Class<?> getNodeValueType() {
@@ -110,7 +110,7 @@ public class GroupLayerConfigElementNode extends LayerConfigElementNode<GroupLay
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor#createNodeValue(Object)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeEditor#createNodeValue(Object)
 		 */
 		@Override
 		public NodeValue<?> createNodeValue(final Object value) {
@@ -133,7 +133,7 @@ public class GroupLayerConfigElementNode extends LayerConfigElementNode<GroupLay
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.runtime.util.AbstractConfigElementListNode#createChildNode(com.nextbreakpoint.nextfractal.core.runtime.ConfigElement)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.common.AbstractConfigElementListNode#createChildNode(com.nextbreakpoint.nextfractal.core.runtime.ConfigElement)
 		 */
 		@Override
 		protected AbstractConfigElementNode<ImageLayerConfigElement> createChildNode(final ImageLayerConfigElement value) {
@@ -141,7 +141,7 @@ public class GroupLayerConfigElementNode extends LayerConfigElementNode<GroupLay
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.runtime.util.AbstractConfigElementListNode#getChildValueType()
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.common.AbstractConfigElementListNode#getChildValueType()
 		 */
 		@Override
 		public Class<?> getChildValueType() {
@@ -149,7 +149,7 @@ public class GroupLayerConfigElementNode extends LayerConfigElementNode<GroupLay
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.runtime.util.AbstractConfigElementListNode#createNodeValue(Object)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.common.AbstractConfigElementListNode#createNodeValue(Object)
 		 */
 		@Override
 		public NodeValue<ImageLayerConfigElement> createNodeValue(final Object value) {

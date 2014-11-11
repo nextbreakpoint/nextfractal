@@ -26,11 +26,11 @@
 package com.nextbreakpoint.nextfractal.twister.image;
 
 import com.nextbreakpoint.nextfractal.core.elements.ConfigurableExtensionReferenceElementNode;
+import com.nextbreakpoint.nextfractal.core.runtime.common.AbstractConfigElementNode;
 import com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtensionReference;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue;
-import com.nextbreakpoint.nextfractal.core.runtime.util.AbstractConfigElementNode;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeEditor;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeObject;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeValue;
 import com.nextbreakpoint.nextfractal.twister.TwisterResources;
 import com.nextbreakpoint.nextfractal.twister.extensionPoints.image.ImageExtensionConfig;
 
@@ -71,7 +71,7 @@ public class ImageConfigElementNode extends AbstractConfigElementNode<ImageConfi
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.util.AbstractConfigElementNode#getConfigElement()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.common.AbstractConfigElementNode#getConfigElement()
 	 */
 	@Override
 	public ImageConfigElement getConfigElement() {
@@ -85,7 +85,7 @@ public class ImageConfigElementNode extends AbstractConfigElementNode<ImageConfi
 	// return null;
 	// }
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject#addDescription(java.lang.StringBuilder)
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeObject#addDescription(java.lang.StringBuilder)
 	 */
 	@Override
 	protected void addDescription(final StringBuilder builder) {
@@ -106,7 +106,7 @@ public class ImageConfigElementNode extends AbstractConfigElementNode<ImageConfi
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject#updateNode()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeObject#updateNode()
 	 */
 	@Override
 	protected void updateChildNodes() {
@@ -114,7 +114,7 @@ public class ImageConfigElementNode extends AbstractConfigElementNode<ImageConfi
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.DefaultNode#createNodeEditor()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.DefaultNode#createNodeEditor()
 	 */
 	@Override
 	protected NodeEditor createNodeEditor() {
@@ -152,7 +152,7 @@ public class ImageConfigElementNode extends AbstractConfigElementNode<ImageConfi
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor#createChildNode(com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeEditor#createChildNode(com.nextbreakpoint.nextfractal.core.runtime.tree.NodeValue)
 		 */
 		@Override
 		protected NodeObject createChildNode(final NodeValue<?> value) {
@@ -160,7 +160,7 @@ public class ImageConfigElementNode extends AbstractConfigElementNode<ImageConfi
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor#createNodeValue(Object)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeEditor#createNodeValue(Object)
 		 */
 		@Override
 		public NodeValue<?> createNodeValue(final Object value) {
@@ -169,7 +169,7 @@ public class ImageConfigElementNode extends AbstractConfigElementNode<ImageConfi
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor#getNodeValueType()
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeEditor#getNodeValueType()
 		 */
 		@Override
 		public Class<?> getNodeValueType() {

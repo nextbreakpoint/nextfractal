@@ -25,7 +25,7 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.processingFormula;
 
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeValue;
 
 /**
  * @author Andrea Medeghini
@@ -41,7 +41,7 @@ public class ProcessingFormulaConfigElementNodeValue extends NodeValue<Processin
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue#getValueClone()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeValue#getValueClone()
 	 */
 	@Override
 	public ProcessingFormulaConfigElement getValueClone() {
@@ -52,7 +52,7 @@ public class ProcessingFormulaConfigElementNodeValue extends NodeValue<Processin
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue#clone()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeValue#clone()
 	 */
 	@Override
 	public ProcessingFormulaConfigElementNodeValue clone() {

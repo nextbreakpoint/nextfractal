@@ -65,7 +65,7 @@ import com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtensi
 import com.nextbreakpoint.nextfractal.core.runtime.extension.Extension;
 import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionException;
 import com.nextbreakpoint.nextfractal.core.runtime.extension.NullConfigurableExtension;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeSession;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeSession;
 import com.nextbreakpoint.nextfractal.core.ui.swing.ViewContext;
 import com.nextbreakpoint.nextfractal.core.ui.swing.extension.ConfigurableExtensionComboBoxModel;
 import com.nextbreakpoint.nextfractal.core.ui.swing.extension.ExtensionComboBoxModel;

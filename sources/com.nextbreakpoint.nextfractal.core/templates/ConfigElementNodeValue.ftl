@@ -23,7 +23,7 @@ public class ${element.configElementClassName}NodeValue extends NodeValue<${elem
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue#getValueClone()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeValue#getValueClone()
 	 */
 	@Override
 	public ${element.valueClassName} getValueClone() {
@@ -31,7 +31,7 @@ public class ${element.configElementClassName}NodeValue extends NodeValue<${elem
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue#clone()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeValue#clone()
 	 */
 	@Override
 	public ${element.configElementClassName}NodeValue clone() {
@@ -54,7 +54,7 @@ public class ${element.configElementClassName}NodeValue extends NodeValue<${elem
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue#getValueClone()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeValue#getValueClone()
 	 */
 	@Override
 	public ${element.configElementClassName} getValueClone() {
@@ -65,7 +65,7 @@ public class ${element.configElementClassName}NodeValue extends NodeValue<${elem
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue#clone()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeValue#clone()
 	 */
 	@Override
 	public ${element.configElementClassName}NodeValue clone() {

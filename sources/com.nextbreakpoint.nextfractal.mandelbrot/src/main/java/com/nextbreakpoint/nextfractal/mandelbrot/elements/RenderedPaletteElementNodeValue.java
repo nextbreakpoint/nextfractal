@@ -25,7 +25,7 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.elements;
 
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeValue;
 import com.nextbreakpoint.nextfractal.mandelbrot.util.RenderedPalette;
 
 /**
@@ -42,7 +42,7 @@ public class RenderedPaletteElementNodeValue extends NodeValue<RenderedPalette> 
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue#getValueClone()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeValue#getValueClone()
 	 */
 	@Override
 	public RenderedPalette getValueClone() {
@@ -50,7 +50,7 @@ public class RenderedPaletteElementNodeValue extends NodeValue<RenderedPalette> 
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue#clone()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeValue#clone()
 	 */
 	@Override
 	public RenderedPaletteElementNodeValue clone() {

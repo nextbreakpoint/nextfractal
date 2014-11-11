@@ -25,7 +25,7 @@
  */
 package com.nextbreakpoint.nextfractal.twister.frame;
 
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeValue;
 
 /**
  * @author Andrea Medeghini
@@ -41,7 +41,7 @@ public class FrameConfigElementNodeValue extends NodeValue<FrameConfigElement> {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue#getValueClone()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeValue#getValueClone()
 	 */
 	@Override
 	public FrameConfigElement getValueClone() {
@@ -52,7 +52,7 @@ public class FrameConfigElementNodeValue extends NodeValue<FrameConfigElement> {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue#clone()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeValue#clone()
 	 */
 	@Override
 	public FrameConfigElementNodeValue clone() {

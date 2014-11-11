@@ -27,7 +27,7 @@ package com.nextbreakpoint.nextfractal.core.extensionPoints.nodeBuilder;
 
 import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionConfig;
 import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionRuntime;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeBuilder;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeBuilder;
 
 /**
  * @author Andrea Medeghini

@@ -14,7 +14,7 @@ import ${import};
  */
 public class ${extension.extensionConfigClassName}NodeBuilderRuntime extends NodeBuilderExtensionRuntime {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.extension.NodeBuilderExtensionRuntime#createNodeBuilder(com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionConfig)
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.extension.NodeBuilderExtensionRuntime#createNodeBuilder(com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionConfig)
 	 */
 	@Override
 	public NodeBuilder createNodeBuilder(final ExtensionConfig config) {
@@ -30,7 +30,7 @@ public class ${extension.extensionConfigClassName}NodeBuilderRuntime extends Nod
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.util.AbstractExtensionConfigNodeBuilder#createNodes(com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject)
+		 * @see com.nextbreakpoint.nextfractal.core.util.AbstractExtensionConfigNodeBuilder#createNodes(com.nextbreakpoint.nextfractal.core.runtime.tree.NodeObject)
 		 */
 		@Override
 		public void createNodes(final Node parentNode) {

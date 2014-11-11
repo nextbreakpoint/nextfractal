@@ -6,7 +6,7 @@ package com.nextbreakpoint.nextfractal.contextfree.extensions.action;
 
 import com.nextbreakpoint.nextfractal.contextfree.ContextFreeRegistry;
 import com.nextbreakpoint.nextfractal.contextfree.extensionPoints.pathAdjustment.PathAdjustmentExtensionConfig;
-import com.nextbreakpoint.nextfractal.core.runtime.util.AbstractConfigurableExtensionReferenceElementNodeActionXMLImporterRuntime;
+import com.nextbreakpoint.nextfractal.core.runtime.common.AbstractConfigurableExtensionReferenceElementNodeActionXMLImporterRuntime;
 /**
  * @author Andrea Medeghini
  */

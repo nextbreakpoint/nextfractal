@@ -29,8 +29,8 @@ import org.w3c.dom.Element;
 
 import com.nextbreakpoint.nextfractal.core.elements.LongElement;
 import com.nextbreakpoint.nextfractal.core.elements.LongElementXMLExporter;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeActionValue;
-import com.nextbreakpoint.nextfractal.core.runtime.util.AbstractActionXMLExporterRuntime;
+import com.nextbreakpoint.nextfractal.core.runtime.common.AbstractActionXMLExporterRuntime;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeActionValue;
 import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLExportException;
 import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLNodeBuilder;
 
@@ -39,7 +39,7 @@ import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLNodeBuilder;
  */
 public class LongNodeActionXMLExporterRuntime extends AbstractActionXMLExporterRuntime {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.util.twister.util.AbstractActionXMLExporterRuntime#exportParams(com.nextbreakpoint.nextfractal.core.runtime.model.NodeActionValue, org.w3c.dom.Element, com.nextbreakpoint.nextfractal.core.runtime.xml.XMLNodeBuilder)
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.common.twister.util.AbstractActionXMLExporterRuntime#exportParams(com.nextbreakpoint.nextfractal.core.runtime.tree.NodeActionValue, org.w3c.dom.Element, com.nextbreakpoint.nextfractal.core.runtime.xml.XMLNodeBuilder)
 	 */
 	@Override
 	protected void exportParams(final NodeActionValue action, final Element element, final XMLNodeBuilder builder) throws XMLExportException {

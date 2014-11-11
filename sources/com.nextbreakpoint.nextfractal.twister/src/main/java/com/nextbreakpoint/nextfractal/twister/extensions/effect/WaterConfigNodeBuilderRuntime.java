@@ -26,10 +26,10 @@
 package com.nextbreakpoint.nextfractal.twister.extensions.effect;
 
 import com.nextbreakpoint.nextfractal.core.extensionPoints.nodeBuilder.NodeBuilderExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.runtime.common.AbstractExtensionConfigNodeBuilder;
 import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionConfig;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeBuilder;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject;
-import com.nextbreakpoint.nextfractal.core.runtime.util.AbstractExtensionConfigNodeBuilder;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeBuilder;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeObject;
 import com.nextbreakpoint.nextfractal.twister.elements.PercentageElementNode;
 import com.nextbreakpoint.nextfractal.twister.extensions.TwisterExtensionResources;
 
@@ -54,7 +54,7 @@ public class WaterConfigNodeBuilderRuntime extends NodeBuilderExtensionRuntime {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.runtime.util.AbstractExtensionConfigNodeBuilder#createNodes(com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.common.AbstractExtensionConfigNodeBuilder#createNodes(com.nextbreakpoint.nextfractal.core.runtime.tree.NodeObject)
 		 */
 		@Override
 		public void createNodes(final NodeObject parentNode) {

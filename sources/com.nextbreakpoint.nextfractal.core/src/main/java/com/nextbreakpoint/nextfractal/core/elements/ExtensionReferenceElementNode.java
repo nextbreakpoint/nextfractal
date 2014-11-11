@@ -29,12 +29,12 @@ import com.nextbreakpoint.nextfractal.core.CoreResources;
 import com.nextbreakpoint.nextfractal.core.runtime.ElementChangeEvent;
 import com.nextbreakpoint.nextfractal.core.runtime.ElementChangeListener;
 import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionReference;
-import com.nextbreakpoint.nextfractal.core.runtime.model.DefaultNode;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeAction;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeSession;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.DefaultNode;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeAction;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeEditor;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeObject;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeSession;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeValue;
 
 /**
  * @author Andrea Medeghini
@@ -70,7 +70,7 @@ public abstract class ExtensionReferenceElementNode extends DefaultNode {
 	protected abstract NodeValue<?> createNodeValue(ExtensionReference value);
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject#dispose()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeObject#dispose()
 	 */
 	@Override
 	public void dispose() {
@@ -83,7 +83,7 @@ public abstract class ExtensionReferenceElementNode extends DefaultNode {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject#setSession(com.nextbreakpoint.nextfractal.core.runtime.model.NodeSession)
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeObject#setSession(com.nextbreakpoint.nextfractal.core.runtime.tree.NodeSession)
 	 */
 	@Override
 	public void setSession(final NodeSession session) {
@@ -97,7 +97,7 @@ public abstract class ExtensionReferenceElementNode extends DefaultNode {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject#nodeAdded()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeObject#nodeAdded()
 	 */
 	@Override
 	protected void nodeAdded() {
@@ -105,7 +105,7 @@ public abstract class ExtensionReferenceElementNode extends DefaultNode {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject#nodeRemoved()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeObject#nodeRemoved()
 	 */
 	@Override
 	protected void nodeRemoved() {
@@ -141,7 +141,7 @@ public abstract class ExtensionReferenceElementNode extends DefaultNode {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject#addDescription(java.lang.StringBuilder)
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeObject#addDescription(java.lang.StringBuilder)
 	 */
 	@Override
 	protected void addDescription(final StringBuilder builder) {
@@ -161,7 +161,7 @@ public abstract class ExtensionReferenceElementNode extends DefaultNode {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject#updateNode()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeObject#updateNode()
 	 */
 	@Override
 	protected void updateNode() {
@@ -173,14 +173,14 @@ public abstract class ExtensionReferenceElementNode extends DefaultNode {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject#updateNode()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeObject#updateNode()
 	 */
 	@Override
 	protected void updateChildNodes() {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.DefaultNode#createNodeEditor()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.DefaultNode#createNodeEditor()
 	 */
 	@Override
 	protected NodeEditor createNodeEditor() {
@@ -188,7 +188,7 @@ public abstract class ExtensionReferenceElementNode extends DefaultNode {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.DefaultNode#getValueAsString()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.DefaultNode#getValueAsString()
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
@@ -205,7 +205,7 @@ public abstract class ExtensionReferenceElementNode extends DefaultNode {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor#doSetValue(com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeEditor#doSetValue(com.nextbreakpoint.nextfractal.core.runtime.tree.NodeValue)
 		 */
 		@SuppressWarnings({ "unchecked", "rawtypes" })
 		@Override
@@ -217,7 +217,7 @@ public abstract class ExtensionReferenceElementNode extends DefaultNode {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor#createChildNode(java.lang.NodeValue)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeEditor#createChildNode(java.lang.NodeValue)
 		 */
 		@Override
 		protected NodeObject createChildNode(final NodeValue<?> value) {
@@ -225,7 +225,7 @@ public abstract class ExtensionReferenceElementNode extends DefaultNode {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor#getNodeValueType()
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeEditor#getNodeValueType()
 		 */
 		@Override
 		public Class<?> getNodeValueType() {
@@ -233,7 +233,7 @@ public abstract class ExtensionReferenceElementNode extends DefaultNode {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor#createNodeValue(Object)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeEditor#createNodeValue(Object)
 		 */
 		@Override
 		public NodeValue<?> createNodeValue(final Object value) {

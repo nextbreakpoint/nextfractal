@@ -56,11 +56,11 @@ import javax.swing.tree.TreeCellRenderer;
 import javax.swing.tree.TreePath;
 
 import com.nextbreakpoint.nextfractal.core.RenderContext;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeEvent;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeListener;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeSession;
-import com.nextbreakpoint.nextfractal.core.runtime.model.RootNode;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeEvent;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeListener;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeObject;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeSession;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.RootNode;
 import com.nextbreakpoint.nextfractal.core.ui.swing.util.GUIFactory;
 import com.nextbreakpoint.nextfractal.core.ui.swing.util.GUIUtil;
 
@@ -224,7 +224,7 @@ public class NavigatorFrame extends JFrame {
 			}
 
 			/**
-			 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeListener#nodeChanged(com.nextbreakpoint.nextfractal.core.runtime.model.NodeEvent)
+			 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeListener#nodeChanged(com.nextbreakpoint.nextfractal.core.runtime.tree.NodeEvent)
 			 */
 			@Override
 			public void nodeChanged(final NodeEvent e) {
@@ -232,7 +232,7 @@ public class NavigatorFrame extends JFrame {
 			}
 
 			/**
-			 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeListener#nodeAdded(com.nextbreakpoint.nextfractal.core.runtime.model.NodeEvent)
+			 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeListener#nodeAdded(com.nextbreakpoint.nextfractal.core.runtime.tree.NodeEvent)
 			 */
 			@Override
 			public void nodeAdded(final NodeEvent e) {
@@ -240,7 +240,7 @@ public class NavigatorFrame extends JFrame {
 			}
 
 			/**
-			 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeListener#nodeRemoved(com.nextbreakpoint.nextfractal.core.runtime.model.NodeEvent)
+			 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeListener#nodeRemoved(com.nextbreakpoint.nextfractal.core.runtime.tree.NodeEvent)
 			 */
 			@Override
 			public void nodeRemoved(final NodeEvent e) {
@@ -248,7 +248,7 @@ public class NavigatorFrame extends JFrame {
 			}
 
 			/**
-			 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeListener#nodeAccepted(com.nextbreakpoint.nextfractal.core.runtime.model.NodeEvent)
+			 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeListener#nodeAccepted(com.nextbreakpoint.nextfractal.core.runtime.tree.NodeEvent)
 			 */
 			@Override
 			public void nodeAccepted(final NodeEvent e) {
@@ -263,7 +263,7 @@ public class NavigatorFrame extends JFrame {
 			}
 
 			/**
-			 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeListener#nodeCancelled(com.nextbreakpoint.nextfractal.core.runtime.model.NodeEvent)
+			 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeListener#nodeCancelled(com.nextbreakpoint.nextfractal.core.runtime.tree.NodeEvent)
 			 */
 			@Override
 			public void nodeCancelled(final NodeEvent e) {

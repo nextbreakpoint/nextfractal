@@ -4,7 +4,7 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.pathAdjustment;
 
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeValue;
 
 public class PathAdjustmentConfigElementNodeValue extends NodeValue<PathAdjustmentConfigElement> {
 	private static final long serialVersionUID = 1L;
@@ -17,7 +17,7 @@ public class PathAdjustmentConfigElementNodeValue extends NodeValue<PathAdjustme
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue#getValueClone()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeValue#getValueClone()
 	 */
 	@Override
 	public PathAdjustmentConfigElement getValueClone() {
@@ -28,7 +28,7 @@ public class PathAdjustmentConfigElementNodeValue extends NodeValue<PathAdjustme
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue#clone()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeValue#clone()
 	 */
 	@Override
 	public PathAdjustmentConfigElementNodeValue clone() {

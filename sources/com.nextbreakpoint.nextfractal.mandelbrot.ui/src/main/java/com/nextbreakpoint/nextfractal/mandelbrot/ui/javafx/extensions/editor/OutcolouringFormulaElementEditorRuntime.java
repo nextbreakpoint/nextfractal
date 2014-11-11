@@ -30,7 +30,7 @@ import java.util.List;
 
 import com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtension;
 import com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtensionReference;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeValue;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.editor.ConfigurableReferenceElementEditorRuntime;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotRegistry;
 import com.nextbreakpoint.nextfractal.mandelbrot.outcolouringFormula.OutcolouringFormulaConfigElement;

@@ -26,7 +26,7 @@
 package com.nextbreakpoint.nextfractal.core.extensionPoints.actionXMLImporter;
 
 import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionRuntime;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeActionValue;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeActionValue;
 import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLImporter;
 
 /**

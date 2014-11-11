@@ -36,10 +36,10 @@ import com.nextbreakpoint.nextfractal.core.extensionPoints.nodeBuilder.NodeBuild
 import com.nextbreakpoint.nextfractal.core.runtime.extension.Extension;
 import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionConfig;
 import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionException;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeBuilder;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeSession;
-import com.nextbreakpoint.nextfractal.core.runtime.model.RootNode;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeBuilder;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeObject;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeSession;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.RootNode;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.ViewContext;
 import com.nextbreakpoint.nextfractal.mandelbrot.extensions.image.MandelbrotImageConfig;
 import com.nextbreakpoint.nextfractal.mandelbrot.fractal.MandelbrotFractalConfigElementNode;
@@ -54,7 +54,7 @@ public class MandelbrotImageConfigViewRuntime extends ViewExtensionRuntime {
 	private static final Logger logger = Logger.getLogger(MandelbrotImageConfigViewRuntime.class.getName());
 	
 	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.ui.javafx.extensionPoints.view.ViewExtensionRuntime#createView(com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionConfig, com.nextbreakpoint.nextfractal.core.ui.javafx.ViewContext, com.nextbreakpoint.nextfractal.core.RenderContext, com.nextbreakpoint.nextfractal.core.runtime.model.NodeSession)
+	 * @see com.nextbreakpoint.nextfractal.twister.ui.javafx.extensionPoints.view.ViewExtensionRuntime#createView(com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionConfig, com.nextbreakpoint.nextfractal.core.ui.javafx.ViewContext, com.nextbreakpoint.nextfractal.core.RenderContext, com.nextbreakpoint.nextfractal.core.runtime.tree.NodeSession)
 	 */
 	@Override
 	public Pane createConfigView(final ExtensionConfig config, final ViewContext viewContext, final RenderContext context, final NodeSession session) {
@@ -76,7 +76,7 @@ public class MandelbrotImageConfigViewRuntime extends ViewExtensionRuntime {
 	}
 	
 	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.ui.javafx.extensionPoints.view.ViewExtensionRuntime#createView(com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionConfig, com.nextbreakpoint.nextfractal.core.ui.javafx.ViewContext, com.nextbreakpoint.nextfractal.core.RenderContext, com.nextbreakpoint.nextfractal.core.runtime.model.NodeSession)
+	 * @see com.nextbreakpoint.nextfractal.twister.ui.javafx.extensionPoints.view.ViewExtensionRuntime#createView(com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionConfig, com.nextbreakpoint.nextfractal.core.ui.javafx.ViewContext, com.nextbreakpoint.nextfractal.core.RenderContext, com.nextbreakpoint.nextfractal.core.runtime.tree.NodeSession)
 	 */
 	@Override
 	public Pane createEditorView(final ExtensionConfig config, final ViewContext viewContext, final RenderContext context, final NodeSession session) {

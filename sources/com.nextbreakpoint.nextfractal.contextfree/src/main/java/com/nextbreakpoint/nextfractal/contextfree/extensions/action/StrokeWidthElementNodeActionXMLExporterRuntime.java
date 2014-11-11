@@ -6,13 +6,13 @@ package com.nextbreakpoint.nextfractal.contextfree.extensions.action;
 
 import com.nextbreakpoint.nextfractal.contextfree.elements.StrokeWidthElement;
 import com.nextbreakpoint.nextfractal.contextfree.elements.StrokeWidthElementXMLExporter;
-import com.nextbreakpoint.nextfractal.core.runtime.util.AbstractConfigElementNodeActionXMLExporterRuntime;
+import com.nextbreakpoint.nextfractal.core.runtime.common.AbstractConfigElementNodeActionXMLExporterRuntime;
 /**
  * @author Andrea Medeghini
  */
 public class StrokeWidthElementNodeActionXMLExporterRuntime extends AbstractConfigElementNodeActionXMLExporterRuntime<StrokeWidthElement> {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.util.AbstractConfigElementNodeActionXMLExporterRuntime#createExporter()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.common.AbstractConfigElementNodeActionXMLExporterRuntime#createExporter()
 	 */
 	@Override
 	protected StrokeWidthElementXMLExporter createExporter() {

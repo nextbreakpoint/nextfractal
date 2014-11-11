@@ -88,10 +88,10 @@ public class ExtensionConfigNodeBuilderProcessorRuntime extends ProcessorExtensi
 
 	private void prepare(Set<String> imports, ProcessorDescriptor descriptor) {
 		if (descriptor.isConfigurableExtension()) {
-			imports.add("com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject");
-			imports.add("com.nextbreakpoint.nextfractal.core.runtime.model.NodeBuilder");
+			imports.add("com.nextbreakpoint.nextfractal.core.runtime.tree.NodeObject");
+			imports.add("com.nextbreakpoint.nextfractal.core.runtime.tree.NodeBuilder");
 			imports.add("com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionConfig");
-			imports.add("com.nextbreakpoint.nextfractal.core.runtime.model.extension.NodeBuilderExtensionRuntime");
+			imports.add("com.nextbreakpoint.nextfractal.core.runtime.tree.extension.NodeBuilderExtensionRuntime");
 			imports.add("com.nextbreakpoint.nextfractal.core.util.AbstractExtensionConfigNodeBuilder");
 			imports.add(descriptor.getResourcesPackageName() + "." + descriptor.getResourcesClassName());
 		}
@@ -101,20 +101,20 @@ public class ExtensionConfigNodeBuilderProcessorRuntime extends ProcessorExtensi
 		for (ProcessorDescriptor descriptor : descriptors) {
 			if (descriptor.isExtensionElement()) {
 				imports.add(descriptor.getConfigElementPackageName() + "." + descriptor.getConfigElementClassName() + "NodeObject");
-				imports.add("com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue");
+				imports.add("com.nextbreakpoint.nextfractal.core.runtime.tree.NodeValue");
 				imports.add("com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionReference");
 				imports.add("com.nextbreakpoint.nextfractal.core.elements.ExtensionReferenceElementNodeValue");
 			}
 			else if (descriptor.isConfigurableExtensionElement()) {
 				imports.add(descriptor.getConfigElementPackageName() + "." + descriptor.getConfigElementClassName() + "NodeObject");
-				imports.add("com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue");
+				imports.add("com.nextbreakpoint.nextfractal.core.runtime.tree.NodeValue");
 				imports.add("com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtensionReference");
 				imports.add("com.nextbreakpoint.nextfractal.core.elements.ExtensionReferenceElementNodeValue");
 			}
 			else if (descriptor.isComplexElement()) {
 				imports.add(descriptor.getConfigElementPackageName() + "." + descriptor.getConfigElementClassName());
 				imports.add(descriptor.getConfigElementPackageName() + "." + descriptor.getConfigElementClassName() + "NodeObject");
-				imports.add("com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue");
+				imports.add("com.nextbreakpoint.nextfractal.core.runtime.tree.NodeValue");
 				imports.add("com.nextbreakpoint.nextfractal.core.util.AbstractConfigElementNode");
 				if (descriptor.getCardinality() == ProcessorCardinality.ONE) {
 					imports.add("com.nextbreakpoint.nextfractal.core.util.AbstractConfigElementSingleNode");

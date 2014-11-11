@@ -145,7 +145,7 @@ public class EditorProcessorRuntime extends ProcessorExtensionRuntime {
 		imports.add("javax.swing.JComponent");
 		imports.add("javax.swing.JPanel");
 		imports.add("java.awt.FlowLayout");
-		imports.add("com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor");
+		imports.add("com.nextbreakpoint.nextfractal.core.runtime.tree.NodeEditor");
 		imports.add("com.nextbreakpoint.nextfractal.core.swing.NodeEditorComponent");
 		imports.add("com.nextbreakpoint.nextfractal.core.swing.editor.extension.EditorExtensionRuntime");
 	}
@@ -160,7 +160,7 @@ public class EditorProcessorRuntime extends ProcessorExtensionRuntime {
 			imports.add("com.nextbreakpoint.nextfractal.core.swing.editor.ConfigurableReferenceEditorRuntime");
 			imports.add("com.nextbreakpoint.nextfractal.core.swing.extension.ConfigurableExtensionComboBoxModel");
 		}
-		imports.add("com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue");
+		imports.add("com.nextbreakpoint.nextfractal.core.runtime.tree.NodeValue");
 		imports.add(descriptor.getRegistryPackageName() + "." + descriptor.getRegistryClassName());
 		imports.add(variables.get("configElementPackageName") + "." + capitalize(descriptor.getElementName()) + "ExtensionReferenceNodeValue");
 	}
@@ -175,7 +175,7 @@ public class EditorProcessorRuntime extends ProcessorExtensionRuntime {
 			imports.add("com.nextbreakpoint.nextfractal.core.swing.editor.ConfigurableReferenceElementEditorRuntime");
 			imports.add("com.nextbreakpoint.nextfractal.core.swing.extension.ConfigurableExtensionComboBoxModel");
 		}
-		imports.add("com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue");
+		imports.add("com.nextbreakpoint.nextfractal.core.runtime.tree.NodeValue");
 		imports.add(descriptor.getRegistryPackageName() + "." + descriptor.getRegistryClassName());
 		imports.add(variables.get("resourcesPackageName") + "." + variables.get("resourcesClassName"));
 		imports.add(variables.get("configElementPackageName") + "." + variables.get("configElementClassName"));
@@ -192,7 +192,7 @@ public class EditorProcessorRuntime extends ProcessorExtensionRuntime {
 			imports.add("com.nextbreakpoint.nextfractal.core.swing.editor.ConfigurableReferenceElementListEditorRuntime");
 			imports.add("com.nextbreakpoint.nextfractal.core.swing.extension.ConfigurableExtensionComboBoxModel");
 		}
-		imports.add("com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue");
+		imports.add("com.nextbreakpoint.nextfractal.core.runtime.tree.NodeValue");
 		imports.add(descriptor.getRegistryPackageName() + "." + descriptor.getRegistryClassName());
 		imports.add(variables.get("resourcesPackageName") + "." + variables.get("resourcesClassName"));
 		imports.add(variables.get("configElementPackageName") + "." + variables.get("configElementClassName"));

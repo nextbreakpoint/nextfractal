@@ -38,7 +38,7 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 
 import com.nextbreakpoint.nextfractal.core.RenderContext;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeObject;
 
 /**
  * @author Andrea Medeghini

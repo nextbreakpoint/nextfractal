@@ -4,7 +4,7 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.elements;
 
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeValue;
 
 /**
  * @author Andrea Medeghini
@@ -20,7 +20,7 @@ public class StrokeWidthElementNodeValue extends NodeValue<Float> {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue#getValueClone()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeValue#getValueClone()
 	 */
 	@Override
 	public Float getValueClone() {
@@ -28,7 +28,7 @@ public class StrokeWidthElementNodeValue extends NodeValue<Float> {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue#clone()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeValue#clone()
 	 */
 	@Override
 	public StrokeWidthElementNodeValue clone() {

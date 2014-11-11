@@ -27,7 +27,7 @@ package com.nextbreakpoint.nextfractal.core.elements;
 
 import java.awt.Font;
 
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeValue;
 
 /**
  * @author Andrea Medeghini
@@ -43,7 +43,7 @@ public class FontElementNodeValue extends NodeValue<Font> {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue#getValueClone()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeValue#getValueClone()
 	 */
 	@Override
 	public Font getValueClone() {
@@ -51,7 +51,7 @@ public class FontElementNodeValue extends NodeValue<Font> {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue#clone()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeValue#clone()
 	 */
 	@Override
 	public FontElementNodeValue clone() {

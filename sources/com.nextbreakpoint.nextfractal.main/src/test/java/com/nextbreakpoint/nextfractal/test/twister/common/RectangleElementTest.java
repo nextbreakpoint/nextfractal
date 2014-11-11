@@ -31,7 +31,7 @@ import com.nextbreakpoint.nextfractal.core.elements.RectangleElement;
 import com.nextbreakpoint.nextfractal.core.elements.RectangleElementNode;
 import com.nextbreakpoint.nextfractal.core.elements.RectangleElementXMLExporter;
 import com.nextbreakpoint.nextfractal.core.elements.RectangleElementXMLImporter;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeObject;
 import com.nextbreakpoint.nextfractal.core.test.AbsractValueElementTest;
 import com.nextbreakpoint.nextfractal.core.util.Rectangle;
 

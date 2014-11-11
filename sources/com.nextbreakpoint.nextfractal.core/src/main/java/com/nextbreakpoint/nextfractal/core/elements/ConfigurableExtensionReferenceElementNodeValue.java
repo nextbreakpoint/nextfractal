@@ -27,7 +27,7 @@ package com.nextbreakpoint.nextfractal.core.elements;
 
 import com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtensionReference;
 import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionConfig;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeValue;
 
 /**
  * @author Andrea Medeghini
@@ -44,7 +44,7 @@ public class ConfigurableExtensionReferenceElementNodeValue<V extends ExtensionC
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue#getValueClone()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeValue#getValueClone()
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
@@ -56,7 +56,7 @@ public class ConfigurableExtensionReferenceElementNodeValue<V extends ExtensionC
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue#clone()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeValue#clone()
 	 */
 	@Override
 	public ConfigurableExtensionReferenceElementNodeValue<V, T> clone() {

@@ -26,10 +26,10 @@
 package com.nextbreakpoint.nextfractal.twister.layer;
 
 import com.nextbreakpoint.nextfractal.core.elements.StringElementNode;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue;
-import com.nextbreakpoint.nextfractal.core.runtime.util.AbstractConfigElementListNode;
-import com.nextbreakpoint.nextfractal.core.runtime.util.AbstractConfigElementNode;
-import com.nextbreakpoint.nextfractal.core.runtime.util.ConfigElementListNodeValue;
+import com.nextbreakpoint.nextfractal.core.runtime.common.AbstractConfigElementListNode;
+import com.nextbreakpoint.nextfractal.core.runtime.common.AbstractConfigElementNode;
+import com.nextbreakpoint.nextfractal.core.runtime.common.ConfigElementListNodeValue;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeValue;
 import com.nextbreakpoint.nextfractal.twister.TwisterResources;
 import com.nextbreakpoint.nextfractal.twister.layerFilter.LayerFilterConfigElement;
 import com.nextbreakpoint.nextfractal.twister.layerFilter.LayerFilterConfigElementNode;
@@ -56,7 +56,7 @@ public abstract class LayerConfigElementNode<T extends LayerConfigElement> exten
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.util.AbstractConfigElementNode#getConfigElement()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.common.AbstractConfigElementNode#getConfigElement()
 	 */
 	@Override
 	public T getConfigElement() {
@@ -88,7 +88,7 @@ public abstract class LayerConfigElementNode<T extends LayerConfigElement> exten
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.DefaultNode#isEditable()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.DefaultNode#isEditable()
 	 */
 	@Override
 	public boolean isEditable() {
@@ -96,7 +96,7 @@ public abstract class LayerConfigElementNode<T extends LayerConfigElement> exten
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject#isMutable()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeObject#isMutable()
 	 */
 	@Override
 	public boolean isMutable() {
@@ -166,7 +166,7 @@ public abstract class LayerConfigElementNode<T extends LayerConfigElement> exten
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.runtime.util.AbstractConfigElementListNode#createChildNode(com.nextbreakpoint.nextfractal.core.runtime.ConfigElement)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.common.AbstractConfigElementListNode#createChildNode(com.nextbreakpoint.nextfractal.core.runtime.ConfigElement)
 		 */
 		@Override
 		protected AbstractConfigElementNode<LayerFilterConfigElement> createChildNode(final LayerFilterConfigElement value) {
@@ -174,7 +174,7 @@ public abstract class LayerConfigElementNode<T extends LayerConfigElement> exten
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.runtime.util.AbstractConfigElementListNode#getChildValueType()
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.common.AbstractConfigElementListNode#getChildValueType()
 		 */
 		@Override
 		public Class<?> getChildValueType() {
@@ -182,7 +182,7 @@ public abstract class LayerConfigElementNode<T extends LayerConfigElement> exten
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.runtime.util.AbstractConfigElementListNode#createNodeValue(Object)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.common.AbstractConfigElementListNode#createNodeValue(Object)
 		 */
 		@Override
 		public NodeValue<LayerFilterConfigElement> createNodeValue(final Object value) {

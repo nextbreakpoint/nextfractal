@@ -25,7 +25,7 @@
  */
 package com.nextbreakpoint.nextfractal.twister.util;
 
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeValue;
 import com.nextbreakpoint.nextfractal.core.util.DoubleVector4D;
 
 /**
@@ -42,7 +42,7 @@ public class ViewVector4DNodeValue extends NodeValue<DoubleVector4D> {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue#getValueClone()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeValue#getValueClone()
 	 */
 	@Override
 	public DoubleVector4D getValueClone() {
@@ -50,7 +50,7 @@ public class ViewVector4DNodeValue extends NodeValue<DoubleVector4D> {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue#clone()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeValue#clone()
 	 */
 	@Override
 	public ViewVector4DNodeValue clone() {

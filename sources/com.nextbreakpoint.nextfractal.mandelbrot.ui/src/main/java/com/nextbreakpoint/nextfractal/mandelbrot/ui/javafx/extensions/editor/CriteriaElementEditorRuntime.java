@@ -37,7 +37,7 @@ import javax.swing.DefaultListCellRenderer;
 import javax.swing.JComboBox;
 import javax.swing.JList;
 
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeEditor;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.NodeEditorComponent;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.extensionPoints.editor.EditorExtensionRuntime;
 import com.nextbreakpoint.nextfractal.mandelbrot.elements.CriteriaElementNodeValue;
@@ -47,7 +47,7 @@ import com.nextbreakpoint.nextfractal.mandelbrot.elements.CriteriaElementNodeVal
  */
 public class CriteriaElementEditorRuntime extends EditorExtensionRuntime {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.ui.javafx.extensionPoints.editor.EditorExtensionRuntime#createEditor(com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor)
+	 * @see com.nextbreakpoint.nextfractal.core.ui.javafx.extensionPoints.editor.EditorExtensionRuntime#createEditor(com.nextbreakpoint.nextfractal.core.runtime.tree.NodeEditor)
 	 */
 	@Override
 	public NodeEditorComponent createEditor(final NodeEditor nodeEditor) {

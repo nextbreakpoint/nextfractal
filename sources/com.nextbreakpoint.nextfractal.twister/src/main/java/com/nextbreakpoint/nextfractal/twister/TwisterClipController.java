@@ -28,8 +28,8 @@ package com.nextbreakpoint.nextfractal.twister;
 import java.util.List;
 
 import com.nextbreakpoint.nextfractal.core.runtime.DefaultConfigContext;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeAction;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeActionValue;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeAction;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeActionValue;
 
 /**
  * @author Andrea Medeghini

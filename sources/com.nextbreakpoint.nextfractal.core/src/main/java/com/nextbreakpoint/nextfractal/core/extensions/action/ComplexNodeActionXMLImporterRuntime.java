@@ -32,8 +32,8 @@ import org.w3c.dom.Element;
 
 import com.nextbreakpoint.nextfractal.core.elements.ComplexElement;
 import com.nextbreakpoint.nextfractal.core.elements.ComplexElementXMLImporter;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeActionValue;
-import com.nextbreakpoint.nextfractal.core.runtime.util.AbstractActionXMLImporterRuntime;
+import com.nextbreakpoint.nextfractal.core.runtime.common.AbstractActionXMLImporterRuntime;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeActionValue;
 import com.nextbreakpoint.nextfractal.core.runtime.xml.XML;
 import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLImportException;
 
@@ -42,7 +42,7 @@ import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLImportException;
  */
 public class ComplexNodeActionXMLImporterRuntime extends AbstractActionXMLImporterRuntime {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.util.twister.util.AbstractActionXMLImporterRuntime#importParams(com.nextbreakpoint.nextfractal.core.runtime.model.NodeActionValue, org.w3c.dom.Element)
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.common.twister.util.AbstractActionXMLImporterRuntime#importParams(com.nextbreakpoint.nextfractal.core.runtime.tree.NodeActionValue, org.w3c.dom.Element)
 	 */
 	@Override
 	protected void importParams(final NodeActionValue action, final Element element) throws XMLImportException {

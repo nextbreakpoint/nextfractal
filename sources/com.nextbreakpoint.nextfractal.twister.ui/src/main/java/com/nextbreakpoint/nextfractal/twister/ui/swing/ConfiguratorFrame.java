@@ -51,7 +51,7 @@ import org.w3c.dom.Element;
 
 import com.nextbreakpoint.nextfractal.core.RenderContext;
 import com.nextbreakpoint.nextfractal.core.RenderContextListener;
-import com.nextbreakpoint.nextfractal.core.runtime.model.DefaultRootNode;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.DefaultRootNode;
 import com.nextbreakpoint.nextfractal.core.runtime.xml.XML;
 import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLNodeBuilder;
 import com.nextbreakpoint.nextfractal.core.ui.swing.NavigatorFrame;

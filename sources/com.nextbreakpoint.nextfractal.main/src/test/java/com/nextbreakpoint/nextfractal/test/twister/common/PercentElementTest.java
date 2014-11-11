@@ -31,7 +31,7 @@ import com.nextbreakpoint.nextfractal.core.elements.BooleanElement;
 import com.nextbreakpoint.nextfractal.core.elements.BooleanElementNode;
 import com.nextbreakpoint.nextfractal.core.elements.BooleanElementXMLExporter;
 import com.nextbreakpoint.nextfractal.core.elements.BooleanElementXMLImporter;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeObject;
 import com.nextbreakpoint.nextfractal.core.test.AbsractValueElementTest;
 
 /**

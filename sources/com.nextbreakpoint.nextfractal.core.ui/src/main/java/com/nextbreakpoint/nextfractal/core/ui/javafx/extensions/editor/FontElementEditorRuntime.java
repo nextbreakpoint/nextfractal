@@ -28,7 +28,7 @@ package com.nextbreakpoint.nextfractal.core.ui.javafx.extensions.editor;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeEditor;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.NodeEditorComponent;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.extensionPoints.editor.EditorExtensionRuntime;
 
@@ -37,7 +37,7 @@ import com.nextbreakpoint.nextfractal.core.ui.javafx.extensionPoints.editor.Edit
  */
 public class FontElementEditorRuntime extends EditorExtensionRuntime {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.ui.javafx.extensionPoints.editor.EditorExtensionRuntime#createEditor(com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor)
+	 * @see com.nextbreakpoint.nextfractal.core.ui.javafx.extensionPoints.editor.EditorExtensionRuntime#createEditor(com.nextbreakpoint.nextfractal.core.runtime.tree.NodeEditor)
 	 */
 	@Override
 	public NodeEditorComponent createEditor(final NodeEditor nodeEditor) {

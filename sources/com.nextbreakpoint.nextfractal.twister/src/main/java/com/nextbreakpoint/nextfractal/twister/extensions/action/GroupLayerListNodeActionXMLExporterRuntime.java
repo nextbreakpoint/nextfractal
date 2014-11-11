@@ -25,7 +25,7 @@
  */
 package com.nextbreakpoint.nextfractal.twister.extensions.action;
 
-import com.nextbreakpoint.nextfractal.core.runtime.util.AbstractConfigElementListNodeActionXMLExporterRuntime;
+import com.nextbreakpoint.nextfractal.core.runtime.common.AbstractConfigElementListNodeActionXMLExporterRuntime;
 import com.nextbreakpoint.nextfractal.twister.layer.GroupLayerConfigElement;
 import com.nextbreakpoint.nextfractal.twister.layer.GroupLayerConfigElementXMLExporter;
 
@@ -34,7 +34,7 @@ import com.nextbreakpoint.nextfractal.twister.layer.GroupLayerConfigElementXMLEx
  */
 public class GroupLayerListNodeActionXMLExporterRuntime extends AbstractConfigElementListNodeActionXMLExporterRuntime<GroupLayerConfigElement> {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.util.AbstractConfigElementListNodeActionXMLExporterRuntime#createExporter()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.common.AbstractConfigElementListNodeActionXMLExporterRuntime#createExporter()
 	 */
 	@Override
 	protected GroupLayerConfigElementXMLExporter createExporter() {

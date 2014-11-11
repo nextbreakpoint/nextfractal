@@ -29,7 +29,7 @@ import org.w3c.dom.Element;
 
 import com.nextbreakpoint.nextfractal.core.elements.LongElement;
 import com.nextbreakpoint.nextfractal.core.elements.LongElementXMLExporter;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeAction;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeAction;
 import com.nextbreakpoint.nextfractal.core.runtime.xml.ActionXMLExporter;
 import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLExportException;
 import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLExporter;

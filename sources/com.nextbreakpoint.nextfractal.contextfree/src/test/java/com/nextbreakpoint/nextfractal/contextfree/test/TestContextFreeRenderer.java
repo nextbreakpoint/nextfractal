@@ -44,7 +44,7 @@ import com.nextbreakpoint.nextfractal.contextfree.ContextFreeRuntime;
 import com.nextbreakpoint.nextfractal.contextfree.parser.ContextFreeParser;
 import com.nextbreakpoint.nextfractal.contextfree.renderer.ContextFreeRenderer;
 import com.nextbreakpoint.nextfractal.contextfree.renderer.DefaultContextFreeRenderer;
-import com.nextbreakpoint.nextfractal.core.runtime.model.RootNode;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.RootNode;
 import com.nextbreakpoint.nextfractal.core.util.IntegerVector2D;
 import com.nextbreakpoint.nextfractal.core.util.Surface;
 import com.nextbreakpoint.nextfractal.core.util.Tile;

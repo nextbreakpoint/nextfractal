@@ -27,7 +27,7 @@ package com.nextbreakpoint.nextfractal.core.runtime.scripting;
 
 import com.nextbreakpoint.nextfractal.core.runtime.ConfigElement;
 import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionReference;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeValue;
 
 /**
  * @author Andrea Medeghini

@@ -25,7 +25,7 @@
  */
 package com.nextbreakpoint.nextfractal.core.elements;
 
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeValue;
 import com.nextbreakpoint.nextfractal.core.util.Color32bit;
 
 /**
@@ -42,7 +42,7 @@ public class ColorElementNodeValue extends NodeValue<Color32bit> {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue#getValueClone()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeValue#getValueClone()
 	 */
 	@Override
 	public Color32bit getValueClone() {
@@ -50,7 +50,7 @@ public class ColorElementNodeValue extends NodeValue<Color32bit> {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue#clone()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeValue#clone()
 	 */
 	@Override
 	public ColorElementNodeValue clone() {

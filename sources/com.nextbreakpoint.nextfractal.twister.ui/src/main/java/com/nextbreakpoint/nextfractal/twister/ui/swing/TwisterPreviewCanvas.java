@@ -63,7 +63,7 @@ import java.util.concurrent.Semaphore;
 import com.nextbreakpoint.nextfractal.core.RenderContext;
 import com.nextbreakpoint.nextfractal.core.RenderContextListener;
 import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionException;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeAction;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeAction;
 import com.nextbreakpoint.nextfractal.core.ui.swing.util.GUIUtil;
 import com.nextbreakpoint.nextfractal.core.util.IntegerVector2D;
 import com.nextbreakpoint.nextfractal.core.util.Rectangle;

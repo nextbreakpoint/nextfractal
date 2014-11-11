@@ -36,11 +36,11 @@ import com.nextbreakpoint.nextfractal.core.extensionPoints.nodeBuilder.NodeBuild
 import com.nextbreakpoint.nextfractal.core.runtime.extension.Extension;
 import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionConfig;
 import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionException;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeAction;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeBuilder;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeSession;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeSessionListener;
-import com.nextbreakpoint.nextfractal.core.runtime.model.RootNode;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeAction;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeBuilder;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeSession;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeSessionListener;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.RootNode;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.ViewContext;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.util.DefaultView;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.util.EmptyView;
@@ -72,7 +72,7 @@ public class DefaultViewRuntime extends ViewExtensionRuntime {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.ui.javafx.extensionPoints.view.ViewExtensionRuntime#createEditorView(com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionConfig, com.nextbreakpoint.nextfractal.core.ui.javafx.ViewContext, com.nextbreakpoint.nextfractal.core.RenderContext, com.nextbreakpoint.nextfractal.core.runtime.model.NodeSession)
+	 * @see com.nextbreakpoint.nextfractal.twister.ui.javafx.extensionPoints.view.ViewExtensionRuntime#createEditorView(com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionConfig, com.nextbreakpoint.nextfractal.core.ui.javafx.ViewContext, com.nextbreakpoint.nextfractal.core.RenderContext, com.nextbreakpoint.nextfractal.core.runtime.tree.NodeSession)
 	 */
 	@Override
 	public Pane createEditorView(ExtensionConfig config, ViewContext viewContext, RenderContext context, NodeSession session) {
@@ -82,14 +82,14 @@ public class DefaultViewRuntime extends ViewExtensionRuntime {
 
 	private class NavigatorNodeSession implements NodeSession {
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeSession#appendAction(com.nextbreakpoint.nextfractal.core.runtime.model.NodeAction)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeSession#appendAction(com.nextbreakpoint.nextfractal.core.runtime.tree.NodeAction)
 		 */
 		@Override
 		public void appendAction(final NodeAction action) {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeSession#getActions()
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeSession#getActions()
 		 */
 		@Override
 		public List<NodeAction> getActions() {
@@ -97,7 +97,7 @@ public class DefaultViewRuntime extends ViewExtensionRuntime {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeSession#getSessionName()
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeSession#getSessionName()
 		 */
 		@Override
 		public String getSessionName() {
@@ -105,7 +105,7 @@ public class DefaultViewRuntime extends ViewExtensionRuntime {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeSession#getTimestamp()
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeSession#getTimestamp()
 		 */
 		@Override
 		public long getTimestamp() {
@@ -113,7 +113,7 @@ public class DefaultViewRuntime extends ViewExtensionRuntime {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeSession#isAcceptImmediatly()
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeSession#isAcceptImmediatly()
 		 */
 		@Override
 		public boolean isAcceptImmediatly() {
@@ -121,49 +121,49 @@ public class DefaultViewRuntime extends ViewExtensionRuntime {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeSession#setAcceptImmediatly(boolean)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeSession#setAcceptImmediatly(boolean)
 		 */
 		@Override
 		public void setAcceptImmediatly(final boolean isApplyImmediatly) {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeSession#setTimestamp(long)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeSession#setTimestamp(long)
 		 */
 		@Override
 		public void setTimestamp(final long timestamp) {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeSession#fireSessionAccepted()
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeSession#fireSessionAccepted()
 		 */
 		@Override
 		public void fireSessionAccepted() {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeSession#fireSessionCancelled()
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeSession#fireSessionCancelled()
 		 */
 		@Override
 		public void fireSessionCancelled() {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeSession#fireSessionChanged()
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeSession#fireSessionChanged()
 		 */
 		@Override
 		public void fireSessionChanged() {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeSession#addSessionListener(com.nextbreakpoint.nextfractal.core.runtime.model.NodeSessionListener)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeSession#addSessionListener(com.nextbreakpoint.nextfractal.core.runtime.tree.NodeSessionListener)
 		 */
 		@Override
 		public void addSessionListener(NodeSessionListener listener) {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeSession#removeSessionListener(com.nextbreakpoint.nextfractal.core.runtime.model.NodeSessionListener)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeSession#removeSessionListener(com.nextbreakpoint.nextfractal.core.runtime.tree.NodeSessionListener)
 		 */
 		@Override
 		public void removeSessionListener(NodeSessionListener listener) {

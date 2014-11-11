@@ -57,8 +57,8 @@ import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionConfigXMLI
 import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionException;
 import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionReference;
 import com.nextbreakpoint.nextfractal.core.runtime.extension.NullConfigurableExtension;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeEditor;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeValue;
 import com.nextbreakpoint.nextfractal.core.runtime.xml.XML;
 import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLNodeBuilder;
 import com.nextbreakpoint.nextfractal.core.ui.swing.CoreSwingResources;
@@ -74,7 +74,7 @@ import com.nextbreakpoint.nextfractal.core.ui.swing.util.StackLayout;
  */
 public abstract class ConfigurableReferenceEditorRuntime extends EditorExtensionRuntime {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.swing.editor.extension.EditorExtensionRuntime#createEditor(com.nextbreakpoint.nextfractal.core.runtime.model.NodeEditor)
+	 * @see com.nextbreakpoint.nextfractal.twister.swing.editor.extension.EditorExtensionRuntime#createEditor(com.nextbreakpoint.nextfractal.core.runtime.tree.NodeEditor)
 	 */
 	@Override
 	public NodeEditorComponent createEditor(final NodeEditor nodeEditor) {

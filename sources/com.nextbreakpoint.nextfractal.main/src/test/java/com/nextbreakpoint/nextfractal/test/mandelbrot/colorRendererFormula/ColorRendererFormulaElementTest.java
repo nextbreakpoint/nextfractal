@@ -32,8 +32,8 @@ import com.nextbreakpoint.nextfractal.core.elements.ExtensionReferenceElementNod
 import com.nextbreakpoint.nextfractal.core.elements.ExtensionReferenceElementXMLExporter;
 import com.nextbreakpoint.nextfractal.core.elements.ExtensionReferenceElementXMLImporter;
 import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionReference;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeObject;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeValue;
 import com.nextbreakpoint.nextfractal.core.test.AbstractExtensionConfigElementTest;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotRegistry;
 import com.nextbreakpoint.nextfractal.mandelbrot.colorRendererFormula.ColorRendererFormulaExtensionReferenceNodeValue;

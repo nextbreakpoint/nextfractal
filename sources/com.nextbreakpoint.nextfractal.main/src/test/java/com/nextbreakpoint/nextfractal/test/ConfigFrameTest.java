@@ -42,13 +42,13 @@ import com.nextbreakpoint.nextfractal.core.launcher.Launcher;
 import com.nextbreakpoint.nextfractal.core.launcher.LauncherContextListener;
 import com.nextbreakpoint.nextfractal.core.launcher.LauncherThreadFactory;
 import com.nextbreakpoint.nextfractal.core.runtime.DefaultConfigContext;
-import com.nextbreakpoint.nextfractal.core.runtime.model.DefaultRootNode;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeAction;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeSession;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeSessionListener;
 import com.nextbreakpoint.nextfractal.core.runtime.scripting.DefaultJSContext;
 import com.nextbreakpoint.nextfractal.core.runtime.scripting.JSException;
 import com.nextbreakpoint.nextfractal.core.runtime.scripting.JSManager;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.DefaultRootNode;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeAction;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeSession;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeSessionListener;
 import com.nextbreakpoint.nextfractal.core.util.IntegerVector2D;
 import com.nextbreakpoint.nextfractal.twister.TwisterConfig;
 import com.nextbreakpoint.nextfractal.twister.TwisterConfigBuilder;
@@ -276,7 +276,7 @@ public class ConfigFrameTest {
 
 	private class TestNodeSesion implements NodeSession {
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeSession#appendAction(com.nextbreakpoint.nextfractal.core.runtime.model.NodeAction)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeSession#appendAction(com.nextbreakpoint.nextfractal.core.runtime.tree.NodeAction)
 		 */
 		@Override
 		public void appendAction(final NodeAction action) {
@@ -284,7 +284,7 @@ public class ConfigFrameTest {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeSession#getActions()
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeSession#getActions()
 		 */
 		@Override
 		public List<NodeAction> getActions() {
@@ -292,7 +292,7 @@ public class ConfigFrameTest {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeSession#getSessionName()
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeSession#getSessionName()
 		 */
 		@Override
 		public String getSessionName() {
@@ -300,7 +300,7 @@ public class ConfigFrameTest {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeSession#getTimestamp()
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeSession#getTimestamp()
 		 */
 		@Override
 		public long getTimestamp() {
@@ -308,7 +308,7 @@ public class ConfigFrameTest {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeSession#isAcceptImmediatly()
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeSession#isAcceptImmediatly()
 		 */
 		@Override
 		public boolean isAcceptImmediatly() {
@@ -316,14 +316,14 @@ public class ConfigFrameTest {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeSession#setAcceptImmediatly(boolean)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeSession#setAcceptImmediatly(boolean)
 		 */
 		@Override
 		public void setAcceptImmediatly(final boolean isApplyImmediatly) {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeSession#setTimestamp(long)
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeSession#setTimestamp(long)
 		 */
 		@Override
 		public void setTimestamp(final long timestamp) {

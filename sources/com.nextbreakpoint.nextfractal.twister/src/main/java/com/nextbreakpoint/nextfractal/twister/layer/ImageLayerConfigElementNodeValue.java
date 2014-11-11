@@ -25,7 +25,7 @@
  */
 package com.nextbreakpoint.nextfractal.twister.layer;
 
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeValue;
 
 /**
  * @author Andrea Medeghini
@@ -41,7 +41,7 @@ public class ImageLayerConfigElementNodeValue extends NodeValue<ImageLayerConfig
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue#getValueClone()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeValue#getValueClone()
 	 */
 	@Override
 	public ImageLayerConfigElement getValueClone() {
@@ -52,7 +52,7 @@ public class ImageLayerConfigElementNodeValue extends NodeValue<ImageLayerConfig
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue#clone()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeValue#clone()
 	 */
 	@Override
 	public ImageLayerConfigElementNodeValue clone() {

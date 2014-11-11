@@ -46,7 +46,7 @@ import com.nextbreakpoint.nextfractal.core.runtime.ElementChangeEvent;
 import com.nextbreakpoint.nextfractal.core.runtime.ElementChangeListener;
 import com.nextbreakpoint.nextfractal.core.runtime.extension.Extension;
 import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionException;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeSession;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeSession;
 import com.nextbreakpoint.nextfractal.core.ui.swing.ViewContext;
 import com.nextbreakpoint.nextfractal.twister.ui.swing.extensionPoints.view.DefaultViewRuntime;
 import com.nextbreakpoint.nextfractal.twister.ui.swing.extensionPoints.view.ViewExtensionRuntime;

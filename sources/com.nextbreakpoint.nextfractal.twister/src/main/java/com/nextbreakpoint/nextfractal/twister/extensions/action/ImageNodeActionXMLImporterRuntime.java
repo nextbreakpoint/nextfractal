@@ -25,7 +25,7 @@
  */
 package com.nextbreakpoint.nextfractal.twister.extensions.action;
 
-import com.nextbreakpoint.nextfractal.core.runtime.util.AbstractConfigElementNodeActionXMLImporterRuntime;
+import com.nextbreakpoint.nextfractal.core.runtime.common.AbstractConfigElementNodeActionXMLImporterRuntime;
 import com.nextbreakpoint.nextfractal.twister.layer.ImageLayerConfigElement;
 import com.nextbreakpoint.nextfractal.twister.layer.ImageLayerConfigElementXMLImporter;
 
@@ -34,7 +34,7 @@ import com.nextbreakpoint.nextfractal.twister.layer.ImageLayerConfigElementXMLIm
  */
 public class ImageNodeActionXMLImporterRuntime extends AbstractConfigElementNodeActionXMLImporterRuntime<ImageLayerConfigElement> {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.util.AbstractConfigElementListNodeActionXMLImporterRuntime#createImporter()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.common.AbstractConfigElementListNodeActionXMLImporterRuntime#createImporter()
 	 */
 	@Override
 	protected ImageLayerConfigElementXMLImporter createImporter() {

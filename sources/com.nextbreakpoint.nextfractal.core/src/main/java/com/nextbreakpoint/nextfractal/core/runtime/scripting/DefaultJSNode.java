@@ -29,7 +29,7 @@ import com.nextbreakpoint.nextfractal.core.CoreRegistry;
 import com.nextbreakpoint.nextfractal.core.extensionPoints.creator.CreatorExtensionRuntime;
 import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionException;
 import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionNotFoundException;
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeObject;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeObject;
 
 /**
  * @author Andrea Medeghini
@@ -193,7 +193,7 @@ public class DefaultJSNode implements JSNode {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.scripting.JSNode#appendChildNode(com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue)
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.scripting.JSNode#appendChildNode(com.nextbreakpoint.nextfractal.core.runtime.tree.NodeValue)
 	 */
 	@Override
 	public void appendChildNode(final JSNodeValue value) throws JSException {
@@ -204,7 +204,7 @@ public class DefaultJSNode implements JSNode {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.scripting.JSNode#insertChildNodeAfter(int, com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue)
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.scripting.JSNode#insertChildNodeAfter(int, com.nextbreakpoint.nextfractal.core.runtime.tree.NodeValue)
 	 */
 	@Override
 	public void insertChildNodeAfter(final int index, final JSNodeValue value) throws JSException {
@@ -215,7 +215,7 @@ public class DefaultJSNode implements JSNode {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.scripting.JSNode#insertChildNodeAt(java.lang.Integer, com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue)
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.scripting.JSNode#insertChildNodeAt(java.lang.Integer, com.nextbreakpoint.nextfractal.core.runtime.tree.NodeValue)
 	 */
 	@Override
 	public void insertChildNodeAt(final Integer index, final JSNodeValue value) throws JSException {
@@ -226,7 +226,7 @@ public class DefaultJSNode implements JSNode {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.scripting.JSNode#insertChildNodeBefore(int, com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue)
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.scripting.JSNode#insertChildNodeBefore(int, com.nextbreakpoint.nextfractal.core.runtime.tree.NodeValue)
 	 */
 	@Override
 	public void insertChildNodeBefore(final int index, final JSNodeValue value) throws JSException {
@@ -281,7 +281,7 @@ public class DefaultJSNode implements JSNode {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.scripting.JSNode#setValue(com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue)
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.scripting.JSNode#setValue(com.nextbreakpoint.nextfractal.core.runtime.tree.NodeValue)
 	 */
 	@Override
 	public void setValue(final JSNodeValue value) throws JSException {

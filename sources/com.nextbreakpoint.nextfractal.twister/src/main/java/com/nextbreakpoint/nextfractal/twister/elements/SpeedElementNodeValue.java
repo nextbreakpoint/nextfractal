@@ -25,7 +25,7 @@
  */
 package com.nextbreakpoint.nextfractal.twister.elements;
 
-import com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeValue;
 import com.nextbreakpoint.nextfractal.twister.util.Speed;
 
 /**
@@ -42,7 +42,7 @@ public class SpeedElementNodeValue extends NodeValue<Speed> {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue#getValueClone()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeValue#getValueClone()
 	 */
 	@Override
 	public Speed getValueClone() {
@@ -50,7 +50,7 @@ public class SpeedElementNodeValue extends NodeValue<Speed> {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.model.NodeValue#clone()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeValue#clone()
 	 */
 	@Override
 	public SpeedElementNodeValue clone() {
