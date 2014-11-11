@@ -19,7 +19,7 @@ public class LongPane extends BorderPane {
 		});
 		setLeft(label);
 		setRight(textfield);
-		setId("long-pane");
+		getStyleClass().add("long-pane");
 		element.addChangeListener(e -> {
 			Long value = (Long)e.getParams()[0] != null ? (Long)e.getParams()[0] : 0;
 			if (textfield.getText().length() == 0 || Long.parseLong(textfield.getText()) != value) {

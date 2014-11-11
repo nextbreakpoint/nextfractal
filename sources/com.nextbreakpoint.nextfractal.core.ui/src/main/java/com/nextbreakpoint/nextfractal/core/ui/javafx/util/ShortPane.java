@@ -19,7 +19,7 @@ public class ShortPane extends BorderPane {
 		});
 		setLeft(label);
 		setRight(textfield);
-		setId("short-pane");
+		getStyleClass().add("short-pane");
 		element.addChangeListener(e -> {
 			Short value = (Short)e.getParams()[0] != null ? (Short)e.getParams()[0] : 0;
 			if (textfield.getText().length() == 0 || Short.parseShort(textfield.getText()) != value) {

@@ -22,7 +22,7 @@ public class ExtensionPane<T extends ExtensionConfig> extends BorderPane {
 		});
 		setLeft(label);
 		setRight(button);
-		setId("extension-pane");
+		getStyleClass().add("extension-pane");
 		element.addChangeListener(e -> {
 			label.setText(getExtensionName(element));
 		});

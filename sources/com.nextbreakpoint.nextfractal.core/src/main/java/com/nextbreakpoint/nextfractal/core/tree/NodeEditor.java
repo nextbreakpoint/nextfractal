@@ -112,6 +112,14 @@ public abstract class NodeEditor {
 	public abstract NodeValue<?> createNodeValue(Object value);
 
 	/**
+	 * @param value
+	 * @return
+	 */
+	public NodeObjectRef createNode(Object value) {
+		return new NodeObjectRef(createChildNode(createNodeValue(value)));
+	}
+
+	/**
 	 * Returns the previous node value.
 	 * 
 	 * @return the previous node value.
@@ -359,6 +367,118 @@ public abstract class NodeEditor {
 	}
 
 	/**
+	 * @param value
+	 */
+	public final void appendChildNode(final NodeObjectRef nodeRef) {
+		if (!node.isMutable()) {
+			throw new UnsupportedOperationException();
+		}
+		final NodeObject newNode = nodeRef.node;
+		final ForwardCommand command = new ForwardCommand();
+		node.appendCommand(command);
+		node.appendChildNode(newNode);
+		command.setCommand(new AppendCommand(newNode));
+		if (node.getSession().isAcceptImmediatly()) {
+			node.getContext().updateTimestamp();
+			node.getSession().fireSessionAccepted();
+			node.accept();
+		}
+	}
+
+	/**
+	 * @param index
+	 * @param value
+	 */
+	public final void insertChildNodeBefore(final int index, final NodeObjectRef nodeRef) {
+		if (!node.isMutable()) {
+			throw new UnsupportedOperationException();
+		}
+		final NodeObject newNode = nodeRef.node;
+		final ForwardCommand command = new ForwardCommand();
+		node.appendCommand(command);
+		node.insertNodeBefore(index, newNode);
+		command.setCommand(new InsertBeforeCommand(index, newNode));
+		if (node.getSession().isAcceptImmediatly()) {
+			node.getContext().updateTimestamp();
+			node.getSession().fireSessionAccepted();
+			node.accept();
+		}
+	}
+
+	/**
+	 * @param index
+	 * @param value
+	 */
+	public final void insertChildNodeAfter(final int index, final NodeObjectRef nodeRef) {
+		if (!node.isMutable()) {
+			throw new UnsupportedOperationException();
+		}
+		final NodeObject newNode = nodeRef.node;
+		final ForwardCommand command = new ForwardCommand();
+		node.appendCommand(command);
+		node.insertNodeAfter(index, newNode);
+		command.setCommand(new InsertAfterCommand(index, newNode));
+		if (node.getSession().isAcceptImmediatly()) {
+			node.getSession().fireSessionAccepted();
+			node.accept();
+		}
+	}
+
+	/**
+	 * @param index
+	 * @param value
+	 */
+	public void insertChildNodeAt(final Integer index, final NodeObjectRef nodeRef) {
+		if (!node.isMutable()) {
+			throw new UnsupportedOperationException();
+		}
+		final NodeObject newNode = nodeRef.node;
+		if (index < node.getChildNodeCount()) {
+			final ForwardCommand command = new ForwardCommand();
+			node.appendCommand(command);
+			node.insertNodeBefore(index, newNode);
+			command.setCommand(new InsertBeforeCommand(index, newNode));
+		}
+		else if (index > 0) {
+			final ForwardCommand command = new ForwardCommand();
+			node.appendCommand(command);
+			node.insertNodeAfter(index - 1, newNode);
+			command.setCommand(new InsertAfterCommand(index - 1, newNode));
+		}
+		else {
+			final ForwardCommand command = new ForwardCommand();
+			node.appendCommand(command);
+			node.appendChildNode(newNode);
+			command.setCommand(new AppendCommand(newNode));
+		}
+		if (node.getSession().isAcceptImmediatly()) {
+			node.getContext().updateTimestamp();
+			node.getSession().fireSessionAccepted();
+			node.accept();
+		}
+	}
+
+	/**
+	 * @param index
+	 */
+	public final void moveChildNode(final int index, final int newIndex) {
+		if (!node.isMutable()) {
+			throw new UnsupportedOperationException();
+		}
+		if ((index >= 0) && (index < node.getChildNodeCount())) {
+			final ForwardCommand command = new ForwardCommand();
+			command.setCommand(new MoveCommand(index, newIndex));
+			node.moveChildNode(index, newIndex);
+			node.appendCommand(command);
+			if (node.getSession().isAcceptImmediatly()) {
+				node.getContext().updateTimestamp();
+				node.getSession().fireSessionAccepted();
+				node.accept();
+			}
+		}
+	}
+
+	/**
 	 * 
 	 */
 	public void removeAllChildNodes() {
@@ -385,6 +505,13 @@ public abstract class NodeEditor {
 	 * @param value
 	 */
 	protected abstract NodeObject createChildNode(NodeValue<?> value);
+
+	/**
+	 * @param value
+	 */
+	public NodeObjectRef createChildNodeRef(NodeValue<?> value) {
+		return new NodeObjectRef(createChildNode(value));
+	}
 
 	/**
 	 * @param value
@@ -690,6 +817,38 @@ public abstract class NodeEditor {
 		@Override
 		public void cancel() {
 			node.moveUpChildNode(index);
+		}
+	}
+
+	private class MoveCommand extends AbstractCommand {
+		private final int index;
+		private final int newIndex;
+		private final NodePath target;
+
+		/**
+		 * @param index
+		 */
+		public MoveCommand(final int index, final int newIndex) {
+			this.index = index;
+			this.newIndex = newIndex;
+			target = node.getNodePath();
+		}
+
+		/**
+		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeCommand#accept(com.nextbreakpoint.nextfractal.core.tree.NodeSession, long)
+		 */
+		@Override
+		public void accept(final NodeSession session, final long timestamp) {
+			doMoveDownNode(index);
+			session.appendAction(new NodeAction(getNodeClass(), NodeAction.ACTION_MOVE_NODE, timestamp, target, index, newIndex));
+		}
+
+		/**
+		 * @see com.nextbreakpoint.nextfractal.core.tree.NodeCommand#accept()
+		 */
+		@Override
+		public void cancel() {
+			node.moveChildNode(newIndex, index);
 		}
 	}
 

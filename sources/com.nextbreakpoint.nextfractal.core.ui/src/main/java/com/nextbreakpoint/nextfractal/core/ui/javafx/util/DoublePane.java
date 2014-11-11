@@ -19,7 +19,7 @@ public class DoublePane extends BorderPane {
 		});
 		setLeft(label);
 		setRight(textfield);
-		setId("double-pane");
+		getStyleClass().add("double-pane");
 		element.addChangeListener(e -> {
 			Double value = (Double)e.getParams()[0] != null ? (Double)e.getParams()[0] : 0;
 			if (textfield.getText().length() == 0 || Double.parseDouble(textfield.getText()) != value) {

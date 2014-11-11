@@ -17,7 +17,7 @@ public class StringPane extends BorderPane {
 		});
 		setLeft(label);
 		setRight(textfield);
-		setId("string-pane");
+		getStyleClass().add("string-pane");
 		element.addChangeListener(e -> {
 			String value = (String)e.getParams()[0] != null ? (String)e.getParams()[0] : "";
 			if (!textfield.getText().equals(value)) {

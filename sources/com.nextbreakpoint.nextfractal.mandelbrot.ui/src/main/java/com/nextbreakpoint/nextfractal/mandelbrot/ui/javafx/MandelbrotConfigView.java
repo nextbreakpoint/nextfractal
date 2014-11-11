@@ -6,15 +6,10 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
 import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
-import com.nextbreakpoint.nextfractal.core.tree.NodeValue;
-import com.nextbreakpoint.nextfractal.core.ui.javafx.CoreUIResources;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.Disposable;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.ViewContext;
-import com.nextbreakpoint.nextfractal.core.ui.javafx.util.BooleanPane;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.util.ConfigurableExtensionGridPane;
-import com.nextbreakpoint.nextfractal.core.ui.javafx.util.ConfigurableExtensionPane;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.util.ElementGridPane;
-import com.nextbreakpoint.nextfractal.core.ui.javafx.util.IntegerPane;
 import com.nextbreakpoint.nextfractal.core.util.RenderContext;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotRegistry;
 import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.incolouringFormula.IncolouringFormulaExtensionConfig;
@@ -25,8 +20,6 @@ import com.nextbreakpoint.nextfractal.mandelbrot.incolouringFormula.IncolouringF
 import com.nextbreakpoint.nextfractal.mandelbrot.incolouringFormula.IncolouringFormulaConfigElementNode;
 import com.nextbreakpoint.nextfractal.mandelbrot.outcolouringFormula.OutcolouringFormulaConfigElement;
 import com.nextbreakpoint.nextfractal.mandelbrot.outcolouringFormula.OutcolouringFormulaConfigElementNode;
-import com.nextbreakpoint.nextfractal.mandelbrot.ui.javafx.extensions.MandelbrotUIExtensionResources;
-import com.nextbreakpoint.nextfractal.mandelbrot.ui.javafx.util.PercentagePane;
 
 public class MandelbrotConfigView extends Pane implements Disposable {
 	private ViewContext viewContext;
@@ -47,14 +40,14 @@ public class MandelbrotConfigView extends Pane implements Disposable {
 		NodeObject outcolouringFormulaListNode = mandelbrotFractalNode.getChildNodeByClass(OutcolouringFormulaConfigElementNode.NODE_CLASS + "List");
 		OutcolouringFormulaGridItems outcolouringFormulaGridPane = new OutcolouringFormulaGridItems(viewContext, outcolouringFormulaListNode);
 		pane.getChildren().add(outcolouringFormulaGridPane);
-		incolouringFormulaGridPane.setDelegate(element -> {
-			IncolouringFormulaPane incolouringFormulaPane = new IncolouringFormulaPane();
-			incolouringFormulaPane.setId("config-view");
+		incolouringFormulaGridPane.setDelegate(nodeObject -> {
+			IncolouringFormulaPane incolouringFormulaPane = new IncolouringFormulaPane(nodeObject);
+			incolouringFormulaPane.getStyleClass().add("config-view");
 			viewContext.showConfigView(incolouringFormulaPane);
 		});
-		outcolouringFormulaGridPane.setDelegate(element -> {
-			OutcolouringFormulaPane outcolouringFormulaPane = new OutcolouringFormulaPane();
-			outcolouringFormulaPane.setId("config-view");
+		outcolouringFormulaGridPane.setDelegate(nodeObject -> {
+			OutcolouringFormulaPane outcolouringFormulaPane = new OutcolouringFormulaPane(nodeObject);
+			outcolouringFormulaPane.getStyleClass().add("config-view");
 			viewContext.showConfigView(outcolouringFormulaPane);
 		});
 	}
@@ -102,6 +95,10 @@ public class MandelbrotConfigView extends Pane implements Disposable {
 	public class IncolouringFormulaPane extends BorderPane implements Disposable {
 		private ConfigurableExtensionGridPane<IncolouringFormulaExtensionRuntime<? extends IncolouringFormulaExtensionConfig>, IncolouringFormulaExtensionConfig> extensionGridPane;
 		
+		public IncolouringFormulaPane(NodeObject nodeObject) {
+			// TODO Auto-generated constructor stub
+		}
+
 		public void setElement(NodeObject formulaNode) {
 			VBox pane = new VBox(10);
 //			formulaNode.getChildNodeById();
@@ -140,7 +137,7 @@ public class MandelbrotConfigView extends Pane implements Disposable {
 			extensionGridPane.setOnAction(x -> {
 				dismissExtensionGridPane();
 			});
-			extensionGridPane.setId("config-view");
+			extensionGridPane.getStyleClass().add("config-view");
 			return extensionGridPane;
 		}
 
@@ -153,6 +150,10 @@ public class MandelbrotConfigView extends Pane implements Disposable {
 	public class OutcolouringFormulaPane extends BorderPane implements Disposable {
 		private ConfigurableExtensionGridPane<OutcolouringFormulaExtensionRuntime<? extends OutcolouringFormulaExtensionConfig>, OutcolouringFormulaExtensionConfig> extensionGridPane;
 		
+		public OutcolouringFormulaPane(NodeObject nodeObject) {
+			// TODO Auto-generated constructor stub
+		}
+
 		public void setElement(NodeObject formulaNode) {
 			VBox pane = new VBox(10);
 //			ConfigurableExtensionPane<OutcolouringFormulaExtensionConfig> extPane = new ConfigurableExtensionPane<OutcolouringFormulaExtensionConfig>(element.getExtensionElement());
@@ -190,7 +191,7 @@ public class MandelbrotConfigView extends Pane implements Disposable {
 			extensionGridPane.setOnAction(x -> {
 				dismissExtensionGridPane();
 			});
-			extensionGridPane.setId("config-view");
+			extensionGridPane.getStyleClass().add("config-view");
 			return extensionGridPane;
 		}
 

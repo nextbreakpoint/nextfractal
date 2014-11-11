@@ -1,9 +1,9 @@
 package com.nextbreakpoint.nextfractal.core.ui.javafx.util;
 
-import com.nextbreakpoint.nextfractal.core.tree.NodeValue;
+import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
 
 @FunctionalInterface
 public interface ElementGridDelegate {
-	public void didSelectValue(NodeValue<?> node);
+	public void didSelectValue(NodeObject node);
 }
 

@@ -25,7 +25,7 @@ public class ThresholdPane extends BorderPane {
 		});
 		setLeft(label);
 		setRight(textfield);
-		setId("threshold-pane");
+		getStyleClass().add("threshold-pane");
 		element.addChangeListener(e -> {
 			Double value = (Double)e.getParams()[0] != null ? (Double)e.getParams()[0] : 0;
 			if (textfield.getText().length() == 0 || Double.parseDouble(textfield.getText()) != value) {

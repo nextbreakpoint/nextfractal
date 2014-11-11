@@ -25,7 +25,7 @@ public class IterationsPane extends BorderPane {
 		});
 		setLeft(label);
 		setRight(textfield);
-		setId("iterations-pane");
+		getStyleClass().add("iterations-pane");
 		element.addChangeListener(e -> {
 			Integer value = (Integer)e.getParams()[0] != null ? (Integer)e.getParams()[0] : 0;
 			if (textfield.getText().length() == 0 || Integer.parseInt(textfield.getText()) != value) {

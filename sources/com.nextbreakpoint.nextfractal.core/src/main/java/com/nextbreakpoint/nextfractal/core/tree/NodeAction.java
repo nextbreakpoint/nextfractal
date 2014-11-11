@@ -43,7 +43,8 @@ public final class NodeAction implements Serializable {
 	public static final int ACTION_MOVE_UP_NODE = 5;
 	public static final int ACTION_MOVE_DOWN_NODE = 6;
 	public static final int ACTION_CHANGE_NODE = 7;
-	public static final String[] actionNames = { "ACTION_SET_VALUE", "ACTION_APPEND_NODE", "ACTION_INSERT_NODE_BEFORE", "ACTION_INSERT_NODE_AFTER", "ACTION_REMOVE_NODE", "ACTION_MOVE_UP_NODE", "ACTION_MOVE_DOWN_NODE", "ACTION_CHANGE_NODE" };
+	public static final int ACTION_MOVE_NODE = 8;
+	public static final String[] actionNames = { "ACTION_SET_VALUE", "ACTION_APPEND_NODE", "ACTION_INSERT_NODE_BEFORE", "ACTION_INSERT_NODE_AFTER", "ACTION_REMOVE_NODE", "ACTION_MOVE_UP_NODE", "ACTION_MOVE_DOWN_NODE", "ACTION_CHANGE_NODE", "ACTION_MOVE_NODE" };
 	private final String actionId;
 	private final int actionType;
 	private final long timestamp;
@@ -180,6 +181,10 @@ public final class NodeAction implements Serializable {
 				editor.moveDownChildNode((Integer) actionParams[0]);
 				break;
 			}
+			case ACTION_MOVE_NODE: {
+				editor.moveChildNode((Integer) actionParams[0], (Integer) actionParams[1]);
+				break;
+			}
 			case ACTION_CHANGE_NODE: {
 				if ((actionParams[0] != null) && (actionParams[0] instanceof ConfigElement)) {
 					editor.setNodeValue(editor.createNodeValue(((ConfigElement) actionParams[0]).clone()));
@@ -245,6 +250,10 @@ public final class NodeAction implements Serializable {
 			}
 			case ACTION_MOVE_DOWN_NODE: {
 				editor.moveUpChildNode((Integer) actionParams[0] + 1);
+				break;
+			}
+			case ACTION_MOVE_NODE: {
+				editor.moveChildNode((Integer) actionParams[1], (Integer) actionParams[0]);
 				break;
 			}
 			case ACTION_CHANGE_NODE: {

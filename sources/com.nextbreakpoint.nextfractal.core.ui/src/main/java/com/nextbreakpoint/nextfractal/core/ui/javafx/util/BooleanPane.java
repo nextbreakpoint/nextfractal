@@ -17,7 +17,7 @@ public class BooleanPane extends BorderPane {
 		});
 		setLeft(label);
 		setRight(checkbox);
-		setId("boolean-pane");
+		getStyleClass().add("boolean-pane");
 		element.addChangeListener(e -> {
 			boolean value = (Boolean)e.getParams()[0] != null ? (Boolean)e.getParams()[0] : false;
 			if (checkbox.isSelected() != value) {

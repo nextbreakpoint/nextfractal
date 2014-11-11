@@ -25,7 +25,7 @@ public class PercentagePane extends BorderPane {
 		});
 		setLeft(label);
 		setRight(textfield);
-		setId("percentage-pane");
+		getStyleClass().add("percentage-pane");
 		element.addChangeListener(e -> {
 			Integer value = (Integer)e.getParams()[0] != null ? (Integer)e.getParams()[0] : 0;
 			if (textfield.getText().length() == 0 || Integer.parseInt(textfield.getText()) != value) {

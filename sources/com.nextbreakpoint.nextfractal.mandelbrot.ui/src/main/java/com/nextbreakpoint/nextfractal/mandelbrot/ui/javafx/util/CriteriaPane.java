@@ -19,7 +19,7 @@ public class CriteriaPane extends BorderPane {
 		});
 		setLeft(label);
 		setRight(textfield);
-		setId("criteria-pane");
+		getStyleClass().add("criteria-pane");
 		element.addChangeListener(e -> {
 			Integer value = (Integer)e.getParams()[0] != null ? (Integer)e.getParams()[0] : 0;
 			if (textfield.getText().length() == 0 || Integer.parseInt(textfield.getText()) != value) {

@@ -17,7 +17,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 
 import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
-import com.nextbreakpoint.nextfractal.core.tree.NodeValue;
+import com.nextbreakpoint.nextfractal.core.tree.NodeObjectRef;
 
 public abstract class ElementGridPane<T extends Serializable> extends BorderPane {
 	private ElementGridDelegate delegate;
@@ -47,7 +47,7 @@ public abstract class ElementGridPane<T extends Serializable> extends BorderPane
 
 	protected void init() {
 		for (int i = 0; i < getNodeCount(); i++) {
-			container.getChildren().add(createItem(getNodeValue(i)));
+			container.getChildren().add(createItem(getNode(i)));
 		}
 		sentinelGroup = createSentinel();
 		container.getChildren().add(sentinelGroup);
@@ -62,37 +62,37 @@ public abstract class ElementGridPane<T extends Serializable> extends BorderPane
 		this.delegate = delegate;
 	}
 
-	protected void appendNode(NodeValue<?> value) {
-		listNode.getNodeEditor().appendChildNode(value);
+	protected void appendNode(NodeObjectRef nodeRef) {
+		listNode.getNodeEditor().appendChildNode(nodeRef);
 	}
 
-	protected void insertNodeAfter(int index, NodeValue<?> value) {
-		listNode.getNodeEditor().insertChildNodeAfter(index, value);
+	protected void insertNodeAfter(int index, NodeObjectRef nodeRef) {
+		listNode.getNodeEditor().insertChildNodeAfter(index, nodeRef);
 	}
 
-	protected void insertNodeBefore(int index, NodeValue<?> value) {
-		listNode.getNodeEditor().insertChildNodeBefore(index, value);
+	protected void insertNodeBefore(int index, NodeObjectRef nodeRef) {
+		listNode.getNodeEditor().insertChildNodeBefore(index, nodeRef);
 	}
 
 	protected void removeNode(int index) {
 		listNode.getNodeEditor().removeChildNode(index);
 	}
 
-	protected NodeValue<?> getNodeValue(int index) {
-		return listNode.getChildNode(index).getNodeValue();
+	protected NodeObject getNode(int index) {
+		return listNode.getChildNode(index);
 	}
 	
 	protected int getNodeCount() {
 		return listNode.getChildNodeCount();
 	}
 	
-	protected NodeValue<?> createNodeValue() {
-		return listNode.getNodeEditor().createNodeValue(createElement());
+	protected NodeObjectRef createNode(T element) {
+		return listNode.getNodeEditor().createNode(element);
 	}
 
-	protected void fireNodeSelected(NodeValue<?> node) {
+	protected void fireNodeSelected(NodeObject nodeObject) {
 		if (delegate != null) {
-			delegate.didSelectValue(node);
+			delegate.didSelectValue(nodeObject);
 		}
 	}
 	
@@ -135,11 +135,11 @@ public abstract class ElementGridPane<T extends Serializable> extends BorderPane
 		return node;
 	}
 
-	private GridGroup createItem(NodeValue<?> value) {
-		GridItem item = new GridItem(value);
+	private GridGroup createItem(NodeObject nodeObject) {
+		GridItem item = new GridItem(nodeObject);
 		setCellSize(item);
-		GridGroup node = createGroup(item);
-		return node;
+		GridGroup group = createGroup(item);
+		return group;
 	}
 
 	private GridGroup createGroup(final GridItem node) {
@@ -201,8 +201,8 @@ public abstract class ElementGridPane<T extends Serializable> extends BorderPane
 	}
 
 	@SuppressWarnings("unchecked")
-	private NodeValue<?> getNodeValue(final GridGroup sourceGroup) {
-		return ((GridItem)unwrapNode(sourceGroup)).getNodeValue();
+	private NodeObject getNode(final GridGroup sourceGroup) {
+		return ((GridItem)unwrapNode(sourceGroup)).getNode();
 	}
 
 	private double computeX(final DragContext dragContext, final GridGroup sourceGroup, final MouseEvent mouseEvent) {
@@ -302,13 +302,13 @@ public abstract class ElementGridPane<T extends Serializable> extends BorderPane
 				double tx = sourceGroup.getLayoutX() + x - targetGroup.getLayoutX();
 				if (sourceGroup instanceof ElementGridPane<?>.GroupItem) {
 					if (targetGroup instanceof ElementGridPane<?>.GroupItem) {
-						NodeValue<?> value = getNodeValue(sourceIndex);
+						NodeObject nodeObject = getNode(sourceIndex);
 						removeNode(sourceIndex);
 						if (tx + node.getBoundsInLocal().getWidth() / 2 <= targetGroup.getBoundsInParent().getWidth() / 2) {
-							insertNodeBefore(targetIndex, value);
+							insertNodeBefore(targetIndex, new NodeObjectRef(nodeObject));
 							container.getChildren().add(targetIndex, sourceGroup);
 						} else {
-							insertNodeAfter(targetIndex, value);
+							insertNodeAfter(targetIndex, new NodeObjectRef(nodeObject));
 							container.getChildren().add(targetIndex + 1, sourceGroup);
 						}
 					} else if (targetGroup instanceof ElementGridPane<?>.GroupSentinel) {
@@ -317,13 +317,13 @@ public abstract class ElementGridPane<T extends Serializable> extends BorderPane
 					doLayout();
 				} else if (sourceGroup instanceof ElementGridPane<?>.GroupSentinel) {
 					if (targetGroup instanceof ElementGridPane<?>.GroupItem) {
-						NodeValue<?> value = createNodeValue();
-						Node newNode = createItem(value);
+						NodeObjectRef nodeRef = createNode(createElement());
+						Node newNode = createItem(nodeRef.getNode());
 						if (tx + node.getBoundsInLocal().getWidth() / 2 <= targetGroup.getBoundsInParent().getWidth() / 2) {
-							insertNodeBefore(targetIndex, value);
+							insertNodeBefore(targetIndex, nodeRef);
 							container.getChildren().add(targetIndex, newNode);
 						} else {
-							insertNodeAfter(targetIndex, value);
+							insertNodeAfter(targetIndex, nodeRef);
 							container.getChildren().add(targetIndex + 1, newNode);
 						}
 					}
@@ -331,16 +331,16 @@ public abstract class ElementGridPane<T extends Serializable> extends BorderPane
 					doLayout();
 				}
 			} else if (sourceGroup instanceof ElementGridPane<?>.GroupSentinel) {
-				NodeValue<?> value = createNodeValue();
-				Node newNode = createItem(value);
-				appendNode(value);
+				NodeObjectRef nodeRef = createNode(createElement());
+				Node newNode = createItem(nodeRef.getNode());
+				appendNode(nodeRef);
 				container.getChildren().add(newNode);
 				container.getChildren().add(sourceGroup);
 				doLayout();
 			} else {
 				container.getChildren().add(dragContext.index, sourceGroup);
 				if (Math.hypot(node.getTranslateX(), node.getTranslateY()) < 5) {
-					fireNodeSelected(getNodeValue(sourceGroup));
+					fireNodeSelected(getNode(sourceGroup));
 				}
 			}
 			node.setTranslateX(0);
@@ -368,11 +368,11 @@ public abstract class ElementGridPane<T extends Serializable> extends BorderPane
 	}
 	
 	private class GridItem extends BorderPane {
-		private NodeValue<?> value;
+		private NodeObject nodeObject;
 		
-		public GridItem(NodeValue<?> value) {
-			this.value = value;
-			setId("grid-item");
+		public GridItem(NodeObject nodeObject) {
+			this.nodeObject = nodeObject;
+			getStyleClass().add("grid-item");
 			Label label = new Label(getName());
 			label.setAlignment(Pos.CENTER);
 			setCenter(label);
@@ -380,7 +380,7 @@ public abstract class ElementGridPane<T extends Serializable> extends BorderPane
 
 		public String getName() {
 			@SuppressWarnings("unchecked")
-			String name = getElementName((T)value.getValue());
+			String name = getElementName((T)nodeObject.getNodeValue().getValue());
 			if (name != null) {
 				Pattern pattern = Pattern.compile("([A-Z])[a-z ]*", 0);
 				Matcher matcher = pattern.matcher(name);
@@ -393,14 +393,14 @@ public abstract class ElementGridPane<T extends Serializable> extends BorderPane
 			return "?";
 		}
 
-		public NodeValue<?> getNodeValue() {
-			return value;
+		public NodeObject getNode() {
+			return nodeObject;
 		}
 	}
 	
 	private class GridSentinel extends BorderPane {
 		public GridSentinel() {
-			setId("grid-sentinel");
+			getStyleClass().add("grid-sentinel");
 			Label label = new Label("+");
 			label.setAlignment(Pos.CENTER);
 			setCenter(label);

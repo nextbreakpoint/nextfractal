@@ -19,7 +19,7 @@ public class FloatPane extends BorderPane {
 		});
 		setLeft(label);
 		setRight(textfield);
-		setId("float-pane");
+		getStyleClass().add("float-pane");
 		element.addChangeListener(e -> {
 			Float value = (Float)e.getParams()[0] != null ? (Float)e.getParams()[0] : 0;
 			if (textfield.getText().length() == 0 || Float.parseFloat(textfield.getText()) != value) {

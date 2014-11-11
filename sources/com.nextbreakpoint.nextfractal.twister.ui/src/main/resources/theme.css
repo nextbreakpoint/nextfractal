@@ -18,11 +18,11 @@
 #editor-panel {
 }
 
-#config-view {
+.config-view {
 	-fx-background-color:#777777;
 }
 
-#grid-item  {
+.grid-item  {
 	-fx-border-radius: 5px;
 	-fx-border-width: 1px;
 	-fx-border-color: #444444;
@@ -31,7 +31,7 @@
 	-fx-font-size: 20px;
 }
 
-#grid-sentinel {
+.grid-sentinel {
 	-fx-border-radius: 5px;
 	-fx-border-width: 1px;
 	-fx-border-color: #444400;
@@ -40,7 +40,7 @@
 	-fx-font-size: 20px;
 }
 
-#extension-pane {
+.extension-pane {
 	-fx-border-radius: 5px;
 	-fx-border-width: 1px;
 	-fx-border-color: #444444;
@@ -49,7 +49,7 @@
 	-fx-padding: 10px;
 }
 
-#boolean-pane {
+.boolean-pane {
 	-fx-border-radius: 5px;
 	-fx-border-width: 1px;
 	-fx-border-color: #444444;
@@ -58,7 +58,7 @@
 	-fx-padding: 10px;
 }
 
-#integer-pane {
+.integer-pane {
 	-fx-border-radius: 5px;
 	-fx-border-width: 1px;
 	-fx-border-color: #444444;
@@ -67,7 +67,7 @@
 	-fx-padding: 10px;
 }
 
-#long-pane {
+.long-pane {
 	-fx-border-radius: 5px;
 	-fx-border-width: 1px;
 	-fx-border-color: #444444;
@@ -76,7 +76,7 @@
 	-fx-padding: 10px;
 }
 
-#short-pane {
+.short-pane {
 	-fx-border-radius: 5px;
 	-fx-border-width: 1px;
 	-fx-border-color: #444444;
@@ -85,7 +85,7 @@
 	-fx-padding: 10px;
 }
 
-#float-pane {
+.float-pane {
 	-fx-border-radius: 5px;
 	-fx-border-width: 1px;
 	-fx-border-color: #444444;
@@ -94,7 +94,7 @@
 	-fx-padding: 10px;
 }
 
-#double-pane {
+.double-pane {
 	-fx-border-radius: 5px;
 	-fx-border-width: 1px;
 	-fx-border-color: #444444;
@@ -103,7 +103,7 @@
 	-fx-padding: 10px;
 }
 
-#string-pane {
+.string-pane {
 	-fx-border-radius: 5px;
 	-fx-border-width: 1px;
 	-fx-border-color: #444444;
@@ -112,7 +112,7 @@
 	-fx-padding: 10px;
 }
 
-#iterations-pane {
+.iterations-pane {
 	-fx-border-radius: 5px;
 	-fx-border-width: 1px;
 	-fx-border-color: #444444;
@@ -121,7 +121,7 @@
 	-fx-padding: 10px;
 }
 
-#threshold-pane {
+.threshold-pane {
 	-fx-border-radius: 5px;
 	-fx-border-width: 1px;
 	-fx-border-color: #444444;
@@ -130,7 +130,7 @@
 	-fx-padding: 10px;
 }
 
-#percentage-pane {
+.percentage-pane {
 	-fx-border-radius: 5px;
 	-fx-border-width: 1px;
 	-fx-border-color: #444444;
@@ -139,7 +139,7 @@
 	-fx-padding: 10px;
 }
 
-#exponent-pane {
+.exponent-pane {
 	-fx-border-radius: 5px;
 	-fx-border-width: 1px;
 	-fx-border-color: #444444;
@@ -148,7 +148,7 @@
 	-fx-padding: 10px;
 }
 
-#criteria-pane {
+.criteria-pane {
 	-fx-border-radius: 5px;
 	-fx-border-width: 1px;
 	-fx-border-color: #444444;

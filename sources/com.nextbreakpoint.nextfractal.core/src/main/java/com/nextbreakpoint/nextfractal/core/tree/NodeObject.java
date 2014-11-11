@@ -741,6 +741,17 @@ public abstract class NodeObject {
 	/**
 	 * @param index
 	 */
+	public void moveChildNode(final int index, final int newIndex) {
+		final NodeObject node = getChildList().get(index);
+		if (index < getChildList().size() - 1) {
+			removeChildNode(index);
+			insertNodeAfter(newIndex, node);
+		}
+	}
+
+	/**
+	 * @param index
+	 */
 	public void setChildNode(final int index, final NodeObject node) {
 		if ((index < 0) || (index > getChildList().size() - 1)) {
 			throw new IllegalArgumentException("index out of bounds");
@@ -921,10 +932,16 @@ public abstract class NodeObject {
 		return null;
 	}
 
+	/**
+	 * @return
+	 */
 	public String getExtensionId() {
 		return extensionId;
 	}
 
+	/**
+	 * @param extensionId
+	 */
 	public void setExtensionId(String extensionId) {
 		this.extensionId = extensionId;
 	}
