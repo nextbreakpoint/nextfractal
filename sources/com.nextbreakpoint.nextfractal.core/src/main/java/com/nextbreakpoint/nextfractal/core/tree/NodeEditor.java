@@ -115,8 +115,8 @@ public abstract class NodeEditor {
 	 * @param value
 	 * @return
 	 */
-	public NodeObjectRef createNode(Object value) {
-		return new NodeObjectRef(createChildNode(createNodeValue(value)));
+	public NodeObject createNode(Object value) {
+		return createChildNode(createNodeValue(value));
 	}
 
 	/**
@@ -209,6 +209,10 @@ public abstract class NodeEditor {
 		return node.getChildNode(index).getNodeEditor();
 	}
 
+	/**
+	 * @param index
+	 * @return
+	 */
 	public String getChildNodeValueAsString(int index) {
 		return node.getChildNode(index).getValueAsString();
 	}
@@ -369,11 +373,10 @@ public abstract class NodeEditor {
 	/**
 	 * @param value
 	 */
-	public final void appendChildNode(final NodeObjectRef nodeRef) {
+	public final void appendChildNode(final NodeObject newNode) {
 		if (!node.isMutable()) {
 			throw new UnsupportedOperationException();
 		}
-		final NodeObject newNode = nodeRef.node;
 		final ForwardCommand command = new ForwardCommand();
 		node.appendCommand(command);
 		node.appendChildNode(newNode);
@@ -389,11 +392,10 @@ public abstract class NodeEditor {
 	 * @param index
 	 * @param value
 	 */
-	public final void insertChildNodeBefore(final int index, final NodeObjectRef nodeRef) {
+	public final void insertChildNodeBefore(final int index, final NodeObject newNode) {
 		if (!node.isMutable()) {
 			throw new UnsupportedOperationException();
 		}
-		final NodeObject newNode = nodeRef.node;
 		final ForwardCommand command = new ForwardCommand();
 		node.appendCommand(command);
 		node.insertNodeBefore(index, newNode);
@@ -409,11 +411,10 @@ public abstract class NodeEditor {
 	 * @param index
 	 * @param value
 	 */
-	public final void insertChildNodeAfter(final int index, final NodeObjectRef nodeRef) {
+	public final void insertChildNodeAfter(final int index, final NodeObject newNode) {
 		if (!node.isMutable()) {
 			throw new UnsupportedOperationException();
 		}
-		final NodeObject newNode = nodeRef.node;
 		final ForwardCommand command = new ForwardCommand();
 		node.appendCommand(command);
 		node.insertNodeAfter(index, newNode);
@@ -428,11 +429,10 @@ public abstract class NodeEditor {
 	 * @param index
 	 * @param value
 	 */
-	public void insertChildNodeAt(final Integer index, final NodeObjectRef nodeRef) {
+	public void insertChildNodeAt(final Integer index, final NodeObject newNode) {
 		if (!node.isMutable()) {
 			throw new UnsupportedOperationException();
 		}
-		final NodeObject newNode = nodeRef.node;
 		if (index < node.getChildNodeCount()) {
 			final ForwardCommand command = new ForwardCommand();
 			node.appendCommand(command);
@@ -505,13 +505,6 @@ public abstract class NodeEditor {
 	 * @param value
 	 */
 	protected abstract NodeObject createChildNode(NodeValue<?> value);
-
-	/**
-	 * @param value
-	 */
-	public NodeObjectRef createChildNodeRef(NodeValue<?> value) {
-		return new NodeObjectRef(createChildNode(value));
-	}
 
 	/**
 	 * @param value

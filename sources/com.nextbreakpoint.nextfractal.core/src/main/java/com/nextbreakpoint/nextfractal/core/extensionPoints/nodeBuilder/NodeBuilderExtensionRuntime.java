@@ -38,11 +38,4 @@ public abstract class NodeBuilderExtensionRuntime extends ExtensionRuntime {
 	 * @return the node builder.
 	 */
 	public abstract NodeBuilder createNodeBuilder(ExtensionConfig config);
-
-	/**
-	 * @see com.nextbreakpoint.nextfractal.core.extension.ExtensionRuntime#dispose()
-	 */
-	@Override
-	public void dispose() {
-	}
 }

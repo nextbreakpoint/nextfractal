@@ -45,13 +45,12 @@ import com.nextbreakpoint.nextfractal.core.config.ValueConfigElementXMLExporter;
 import com.nextbreakpoint.nextfractal.core.config.ValueConfigElementXMLImporter;
 import com.nextbreakpoint.nextfractal.core.tree.DefaultNode;
 import com.nextbreakpoint.nextfractal.core.tree.DefaultNodeSession;
-import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
 import com.nextbreakpoint.nextfractal.core.tree.NodeAction;
 import com.nextbreakpoint.nextfractal.core.tree.NodeEditor;
+import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
 import com.nextbreakpoint.nextfractal.core.tree.NodePath;
 import com.nextbreakpoint.nextfractal.core.tree.NodeSession;
 import com.nextbreakpoint.nextfractal.core.tree.RootNode;
-import com.nextbreakpoint.nextfractal.core.tree.Tree;
 import com.nextbreakpoint.nextfractal.core.xml.XML;
 import com.nextbreakpoint.nextfractal.core.xml.XMLNodeBuilder;
 
@@ -96,25 +95,25 @@ public abstract class AbsractValueElementTest<V extends Serializable, T extends 
 	}
 
 	protected void testNode() {
-		final Tree tree = new Tree(new RootNode("test", "test"));
+		final RootNode rootNode = new RootNode("test", "test");
 		final NodeSession session = new DefaultNodeSession("test");
 		final ConfigContext context = configElement.getContext();
-		tree.getRootNode().setSession(session);
-		tree.getRootNode().setContext(context);
+		rootNode.setSession(session);
+		rootNode.setContext(context);
 		DefaultNode parentNode = new DefaultNode("element") {
 			@Override
 			protected NodeEditor createNodeEditor() {
 				return null;
 			}
 		};
-		tree.getRootNode().appendChildNode(parentNode);
+		rootNode.appendChildNode(parentNode);
 		parentNode = new DefaultNode("element") {
 			@Override
 			protected NodeEditor createNodeEditor() {
 				return null;
 			}
 		};
-		tree.getRootNode().appendChildNode(parentNode);
+		rootNode.appendChildNode(parentNode);
 		final NodeObject node = createElementNode();
 		parentNode.appendChildNode(node);
 		Assert.assertEquals(getFirstValue(), node.getNodeValue().getValue());

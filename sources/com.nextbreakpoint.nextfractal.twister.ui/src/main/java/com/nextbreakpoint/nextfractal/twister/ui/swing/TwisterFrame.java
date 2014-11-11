@@ -63,12 +63,12 @@ import javax.swing.border.LineBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import com.nextbreakpoint.nextfractal.core.DefaultTree;
 import com.nextbreakpoint.nextfractal.core.config.DefaultConfigContext;
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionException;
 import com.nextbreakpoint.nextfractal.core.scripting.DefaultJSContext;
 import com.nextbreakpoint.nextfractal.core.scripting.JSManager;
 import com.nextbreakpoint.nextfractal.core.tree.DefaultNodeSession;
+import com.nextbreakpoint.nextfractal.core.tree.DefaultRootNode;
 import com.nextbreakpoint.nextfractal.core.tree.NodeAction;
 import com.nextbreakpoint.nextfractal.core.tree.NodeActionValue;
 import com.nextbreakpoint.nextfractal.core.ui.swing.IconButton;
@@ -107,7 +107,7 @@ public class TwisterFrame extends JFrame {
 	private final Semaphore semaphore = new Semaphore(0, true);
 	private final TwisterSessionController sessionController;
 	private final DefaultSingleSelectionModel model;
-	private final DefaultTree twisterTree;
+	private final DefaultRootNode rootNode;
 	private final RenderService service;
 	private OutputFrame outputFrame;
 	private ConfigFrame configFrame;
@@ -118,7 +118,7 @@ public class TwisterFrame extends JFrame {
 	private TwisterClip clip;
 	private TwisterClip tmpClip;
 	private TwisterClip playClip;
-	private DefaultTree tree;
+	private DefaultRootNode clipNode;
 	private Thread scriptThread;
 	private long clipDuration;
 	private long sequenceStopTime;
@@ -167,11 +167,11 @@ public class TwisterFrame extends JFrame {
 		sessionController = new TwisterSessionController("options", config);
 		sessionController.init();
 		sessionController.setRenderContext(canvas);
-		twisterTree = new DefaultTree();
+		rootNode = new DefaultRootNode();
 		final TwisterConfigNodeBuilder nodeBuilder = new TwisterConfigNodeBuilder(config);
-		twisterTree.getRootNode().setContext(config.getContext());
-		twisterTree.getRootNode().setSession(sessionController);
-		nodeBuilder.createNodes(twisterTree.getRootNode());
+		rootNode.setContext(config.getContext());
+		rootNode.setSession(sessionController);
+		nodeBuilder.createNodes(rootNode);
 		addWindowListener(new TwisterWindowListener(canvas));
 		setBackground(new Color(0x2f2f2f));
 		canvas.setShowBookmarkIcons(true);
@@ -187,7 +187,7 @@ public class TwisterFrame extends JFrame {
 					clip = canvas.getClip();
 					tmpClip = canvas.getClip();
 					sequence = null;
-					tree = null;
+					clipNode = null;
 					panel.updateButtons();
 				}
 				else if (panel.isPlayState()) {
@@ -195,7 +195,7 @@ public class TwisterFrame extends JFrame {
 					tmpClip = canvas.getClip();
 					playClip = tmpClip;
 					sequence = null;
-					tree = null;
+					clipNode = null;
 					panel.updateButtons();
 				}
 			}
@@ -232,7 +232,7 @@ public class TwisterFrame extends JFrame {
 					tmpClip = clip;
 					playClip = tmpClip;
 					sequence = null;
-					tree = null;
+					clipNode = null;
 					canvas.start(clip);
 					canvas.startRenderers();
 					canvas.release();
@@ -242,7 +242,7 @@ public class TwisterFrame extends JFrame {
 					canvas.acquire();
 					canvas.stopRenderers();
 					sequence = null;
-					tree = null;
+					clipNode = null;
 					config.setFrameConfigElement(controller.getConfig().getFrameConfigElement().clone());
 					config.setEffectConfigElement(controller.getConfig().getEffectConfigElement().clone());
 					config.setBackground(controller.getConfig().getBackground());
@@ -330,7 +330,7 @@ public class TwisterFrame extends JFrame {
 				@Override
 				public void run() {
 				if (advancedConfigFrame == null) {
-					advancedConfigFrame = new NavigatorFrame(twisterTree, canvas, sessionController);
+					advancedConfigFrame = new NavigatorFrame(rootNode, canvas, sessionController);
 					advancedConfigFrame.addWindowListener(new WindowAdapter() {
 													/**
 						 * @see java.awt.event.WindowAdapter#windowClosing(java.awt.event.WindowEvent)
@@ -919,14 +919,14 @@ public class TwisterFrame extends JFrame {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				if (canStartSession()) {
-					tree = new DefaultTree();
+					clipNode = new DefaultRootNode();
 					clip = new TwisterClip();
 					sequence = new TwisterSequence();
 					sequence.setInitialConfig(config.clone());
 					final TwisterConfigNodeBuilder builder = new TwisterConfigNodeBuilder(config);
-					builder.createNodes(tree.getRootNode());
-					tree.getRootNode().setContext(config.getContext());
-					tree.getRootNode().setSession(new DefaultNodeSession("clip " + clip.getSequenceCount()));
+					builder.createNodes(clipNode.getRootNode());
+					clipNode.getRootNode().setContext(config.getContext());
+					clipNode.getRootNode().setSession(new DefaultNodeSession("clip " + clip.getSequenceCount()));
 					canvas.setSymbol(TwisterCanvas.SYMBOL_RECORD);
 					sequenceStartTime = System.currentTimeMillis();
 					clipDuration = 0;
@@ -955,7 +955,7 @@ public class TwisterFrame extends JFrame {
 						playClip = null;
 						sequence = null;
 						clip = null;
-						tree = null;
+						clipNode = null;
 						config.getContext().updateTimestamp();
 						config.setFrameConfigElement(canvas.getConfig().getFrameConfigElement().clone());
 						config.setEffectConfigElement(canvas.getConfig().getEffectConfigElement().clone());
@@ -972,7 +972,7 @@ public class TwisterFrame extends JFrame {
 				else if (canStopSession()) {
 					if (sequence != null) {
 						sequenceStopTime = System.currentTimeMillis();
-						final List<NodeAction> nodeActions = tree.getRootNode().getSession().getActions();
+						final List<NodeAction> nodeActions = clipNode.getRootNode().getSession().getActions();
 						sequence.setFinalConfig(config.clone());
 						for (final NodeAction nodeAction : nodeActions) {
 							final NodeActionValue value = nodeAction.toActionValue();
@@ -987,7 +987,7 @@ public class TwisterFrame extends JFrame {
 					tmpClip = clip;
 					sequence = null;
 					clip = null;
-					tree = null;
+					clipNode = null;
 					canvas.setSymbol(TwisterCanvas.SYMBOL_NONE);
 				}
 				updateButtons();
@@ -1009,7 +1009,7 @@ public class TwisterFrame extends JFrame {
 				if (canSuspendSession()) {
 					if (isEditState()) {
 						sequenceStopTime = System.currentTimeMillis();
-						final List<NodeAction> nodeActions = tree.getRootNode().getSession().getActions();
+						final List<NodeAction> nodeActions = clipNode.getRootNode().getSession().getActions();
 						sequence.setFinalConfig(config.clone());
 						for (final NodeAction nodeAction : nodeActions) {
 							final NodeActionValue value = nodeAction.toActionValue();
@@ -1020,7 +1020,7 @@ public class TwisterFrame extends JFrame {
 						clipDuration += sequence.getDuration();
 						clip.addSequence(sequence);
 						sequence = null;
-						tree = null;
+						clipNode = null;
 						canvas.setSymbol(TwisterCanvas.SYMBOL_PAUSE);
 					}
 					else if (isPlayState()) {
@@ -1048,11 +1048,11 @@ public class TwisterFrame extends JFrame {
 				if (canResumeSession()) {
 					sequence = new TwisterSequence();
 					sequence.setInitialConfig(config.clone());
-					tree = new DefaultTree();
+					clipNode = new DefaultRootNode();
 					final TwisterConfigNodeBuilder builder = new TwisterConfigNodeBuilder(config);
-					builder.createNodes(tree.getRootNode());
-					tree.getRootNode().setContext(config.getContext());
-					tree.getRootNode().setSession(new DefaultNodeSession("clip " + clip.getSequenceCount()));
+					builder.createNodes(clipNode.getRootNode());
+					clipNode.getRootNode().setContext(config.getContext());
+					clipNode.getRootNode().setSession(new DefaultNodeSession("clip " + clip.getSequenceCount()));
 					canvas.setSymbol(TwisterCanvas.SYMBOL_RECORD);
 					sequenceStartTime = System.currentTimeMillis();
 				}
@@ -1439,7 +1439,7 @@ public class TwisterFrame extends JFrame {
 						}
 					}, false);
 					try {
-						JSManager.execute(canvas, new TwisterJSContext(), twisterTree.getRootNode(), file.getParentFile(), file);
+						JSManager.execute(canvas, new TwisterJSContext(), rootNode, file.getParentFile(), file);
 					}
 					catch (final Exception x) {
 						x.printStackTrace();

@@ -33,7 +33,6 @@ import com.nextbreakpoint.nextfractal.contextfree.ContextFreeConfig;
 import com.nextbreakpoint.nextfractal.contextfree.ContextFreeConfigNodeBuilder;
 import com.nextbreakpoint.nextfractal.contextfree.parser.ContextFreeParser;
 import com.nextbreakpoint.nextfractal.core.tree.RootNode;
-import com.nextbreakpoint.nextfractal.core.tree.Tree;
 
 public class TestContextFreeParser {
 	@Test
@@ -76,8 +75,7 @@ public class TestContextFreeParser {
 			RootNode rootNode = new RootNode("contextfree");
 			ContextFreeConfigNodeBuilder nodeBuilder = new ContextFreeConfigNodeBuilder(config);
 			nodeBuilder.createNodes(rootNode);
-			Tree tree = new Tree(rootNode);
-			System.out.println(tree);
+			System.out.println(rootNode);
 		}
 		catch (Exception e) {
 			e.printStackTrace();

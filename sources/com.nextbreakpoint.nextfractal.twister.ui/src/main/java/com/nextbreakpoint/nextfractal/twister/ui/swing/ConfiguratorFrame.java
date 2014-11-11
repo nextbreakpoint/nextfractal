@@ -49,7 +49,7 @@ import javax.swing.WindowConstants;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.nextbreakpoint.nextfractal.core.DefaultTree;
+import com.nextbreakpoint.nextfractal.core.tree.DefaultRootNode;
 import com.nextbreakpoint.nextfractal.core.ui.swing.NavigatorFrame;
 import com.nextbreakpoint.nextfractal.core.ui.swing.util.GUIFactory;
 import com.nextbreakpoint.nextfractal.core.ui.swing.util.GUIUtil;
@@ -72,7 +72,7 @@ public class ConfiguratorFrame extends JFrame {
 	private final ConfiguratorWindowListener listener = new ConfiguratorWindowListener();
 	private final DefaultRenderContrext renderContext = new DefaultRenderContrext();
 	private final TwisterSessionController sessionController;
-	private final DefaultTree configuratorTree;
+	private final DefaultRootNode rootNode;
 	private final TwisterConfig config;
 	private final ConfiguratorPanel panel;
 	private final TwisterContext context;
@@ -86,7 +86,7 @@ public class ConfiguratorFrame extends JFrame {
 	public ConfiguratorFrame(TwisterContext context, TwisterConfig config) {
 		this.context = context;
 		this.config = config;
-		configuratorTree = new DefaultTree();
+		rootNode = new DefaultRootNode();
 		setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		setTitle(TwisterSwingResources.getInstance().getString("configuratorFrame.title"));
 		panel = new ConfiguratorPanel();
@@ -95,9 +95,9 @@ public class ConfiguratorFrame extends JFrame {
 		sessionController.init();
 		sessionController.setRenderContext(renderContext);
 		final TwisterConfigNodeBuilder nodeBuilder = new TwisterConfigNodeBuilder(config);
-		configuratorTree.getRootNode().setContext(config.getContext());
-		configuratorTree.getRootNode().setSession(sessionController);
-		nodeBuilder.createNodes(configuratorTree.getRootNode());
+		rootNode.setContext(config.getContext());
+		rootNode.setSession(sessionController);
+		nodeBuilder.createNodes(rootNode);
 		addWindowListener(listener);
 		pack();
 		final Point p = GraphicsEnvironment.getLocalGraphicsEnvironment().getCenterPoint();
@@ -111,7 +111,7 @@ public class ConfiguratorFrame extends JFrame {
 				@Override
 				public void run() {
 				if (advancedConfigFrame == null) {
-					advancedConfigFrame = new NavigatorFrame(configuratorTree, renderContext, sessionController);
+					advancedConfigFrame = new NavigatorFrame(rootNode, renderContext, sessionController);
 					advancedConfigFrame.addWindowListener(new WindowAdapter() {
 													/**
 						 * @see java.awt.event.WindowAdapter#windowClosing(java.awt.event.WindowEvent)

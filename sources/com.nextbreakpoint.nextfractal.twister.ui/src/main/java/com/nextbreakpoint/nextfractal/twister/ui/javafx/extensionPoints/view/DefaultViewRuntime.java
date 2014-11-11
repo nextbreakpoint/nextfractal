@@ -40,7 +40,6 @@ import com.nextbreakpoint.nextfractal.core.tree.NodeBuilder;
 import com.nextbreakpoint.nextfractal.core.tree.NodeSession;
 import com.nextbreakpoint.nextfractal.core.tree.NodeSessionListener;
 import com.nextbreakpoint.nextfractal.core.tree.RootNode;
-import com.nextbreakpoint.nextfractal.core.tree.Tree;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.ViewContext;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.util.DefaultView;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.util.EmptyView;
@@ -60,11 +59,11 @@ public class DefaultViewRuntime extends ViewExtensionRuntime {
 		try {
 			final Extension<NodeBuilderExtensionRuntime> extension = CoreRegistry.getInstance().getNodeBuilderExtension(config.getExtensionId());
 			final NodeBuilder nodeBuilder = extension.createExtensionRuntime().createNodeBuilder(config);
-			final Tree tree = new Tree(new RootNode("navigator.root", extension.getExtensionName() + " extension"));
-			nodeBuilder.createNodes(tree.getRootNode());
-			tree.getRootNode().setContext(config.getContext());
-			tree.getRootNode().setSession(new NavigatorNodeSession());
-			return new DefaultView(viewContext, context, tree.getRootNode());
+			final RootNode rootNode = new RootNode("navigator.root", extension.getExtensionName() + " extension");
+			nodeBuilder.createNodes(rootNode);
+			rootNode.setContext(config.getContext());
+			rootNode.setSession(new NavigatorNodeSession());
+			return new DefaultView(viewContext, context, rootNode);
 		}
 		catch (final ExtensionException e) {
 			e.printStackTrace();

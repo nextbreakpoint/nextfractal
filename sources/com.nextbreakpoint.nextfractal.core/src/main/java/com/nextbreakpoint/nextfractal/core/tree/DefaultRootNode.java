@@ -25,21 +25,19 @@
  */
 package com.nextbreakpoint.nextfractal.core.tree;
 
-/**
- * @author Andrea Medeghini
- */
-public class NodeObjectRef {
-	final NodeObject node;
-	
-	public NodeObjectRef(NodeObject node) {
-		this.node = node;
-	}
+import com.nextbreakpoint.nextfractal.core.CoreResources;
 
-	public NodeValue<?> getNodeValue() {
-		return node.getNodeValue();
-	}
+public class DefaultRootNode extends RootNode {
+	private static final String NODE_LABEL = CoreResources.getInstance().getString("node.label.Root");
+	public static final String NODE_CLASS = "node.class.Root";
+	public static final String NODE_ID = "root";
 
-	public NodeObject getNode() {
-		return node;
+	/**
+	 * 
+	 */
+	public DefaultRootNode() {
+		super(DefaultRootNode.NODE_ID);
+		setNodeLabel(DefaultRootNode.NODE_LABEL);
+		setNodeClass(DefaultRootNode.NODE_CLASS);
 	}
 }

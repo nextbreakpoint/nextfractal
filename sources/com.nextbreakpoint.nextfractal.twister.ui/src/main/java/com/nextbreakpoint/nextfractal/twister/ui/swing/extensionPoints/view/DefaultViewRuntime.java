@@ -44,15 +44,14 @@ import com.nextbreakpoint.nextfractal.core.extension.Extension;
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionConfig;
 import com.nextbreakpoint.nextfractal.core.extension.ExtensionException;
 import com.nextbreakpoint.nextfractal.core.extensionPoints.nodeBuilder.NodeBuilderExtensionRuntime;
-import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
 import com.nextbreakpoint.nextfractal.core.tree.NodeAction;
 import com.nextbreakpoint.nextfractal.core.tree.NodeBuilder;
 import com.nextbreakpoint.nextfractal.core.tree.NodeEvent;
 import com.nextbreakpoint.nextfractal.core.tree.NodeListener;
+import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
 import com.nextbreakpoint.nextfractal.core.tree.NodeSession;
 import com.nextbreakpoint.nextfractal.core.tree.NodeSessionListener;
 import com.nextbreakpoint.nextfractal.core.tree.RootNode;
-import com.nextbreakpoint.nextfractal.core.tree.Tree;
 import com.nextbreakpoint.nextfractal.core.ui.swing.NavigatorPanel;
 import com.nextbreakpoint.nextfractal.core.ui.swing.NavigatorTree;
 import com.nextbreakpoint.nextfractal.core.ui.swing.ViewContext;
@@ -72,11 +71,11 @@ public class DefaultViewRuntime extends ViewExtensionRuntime {
 		try {
 			final Extension<NodeBuilderExtensionRuntime> extension = CoreRegistry.getInstance().getNodeBuilderExtension(config.getExtensionId());
 			final NodeBuilder nodeBuilder = extension.createExtensionRuntime().createNodeBuilder(config);
-			final Tree tree = new Tree(new RootNode("navigator.root", extension.getExtensionName() + " extension"));
-			nodeBuilder.createNodes(tree.getRootNode());
-			tree.getRootNode().setContext(config.getContext());
-			tree.getRootNode().setSession(new NavigatorNodeSession());
-			return new DefaultViewPanel(viewContext, context, tree);
+			final RootNode rootNode = new RootNode("navigator.root", extension.getExtensionName() + " extension");
+			nodeBuilder.createNodes(rootNode);
+			rootNode.setContext(config.getContext());
+			rootNode.setSession(new NavigatorNodeSession());
+			return new DefaultViewPanel(viewContext, context, rootNode);
 		}
 		catch (final ExtensionException e) {
 			e.printStackTrace();
@@ -104,20 +103,20 @@ public class DefaultViewRuntime extends ViewExtensionRuntime {
 		private final NavigatorPanel navigatorPanel;
 		private final NavigatorTree navigatorTree;
 		private final RenderContext context;
-		private final Tree tree;
+		private final RootNode rootNode;
 
 		/**
 		 * @param viewContext
 		 * @param context
 		 * @param tree
 		 */
-		public DefaultViewPanel(final ViewContext viewContext, final RenderContext context, final Tree tree) {
-			this.tree = tree;
+		public DefaultViewPanel(final ViewContext viewContext, final RenderContext context, final RootNode rootNode) {
+			this.rootNode = rootNode;
 			this.context = context;
 			setLayout(new BorderLayout());
 			setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20), BorderFactory.createLineBorder(Color.DARK_GRAY)));
-			navigatorTree = new NavigatorTree(tree.getRootNode());
-			navigatorPanel = new NavigatorPanel(viewContext, tree.getRootNode());
+			navigatorTree = new NavigatorTree(rootNode);
+			navigatorPanel = new NavigatorPanel(viewContext, rootNode);
 			navigatorTree.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, Color.DARK_GRAY), BorderFactory.createEmptyBorder(2, 2, 2, 2)));
 			add(navigatorTree, BorderLayout.WEST);
 			add(navigatorPanel, BorderLayout.CENTER);
@@ -125,7 +124,7 @@ public class DefaultViewRuntime extends ViewExtensionRuntime {
 			treeSelectionListener = new NavigatorTreeSelectionListener();
 			treeModelListener = new NavigatorTreeModelListener();
 			navigatorTreeListener = new NavigatorTreeListener();
-			tree.getRootNode().addNodeListener(navigatorTreeListener);
+			rootNode.addNodeListener(navigatorTreeListener);
 			navigatorPanel.addChangeListener(panelSelectionListener);
 			navigatorTree.getModel().addTreeModelListener(treeModelListener);
 			navigatorTree.getSelectionModel().addTreeSelectionListener(treeSelectionListener);
@@ -266,13 +265,13 @@ public class DefaultViewRuntime extends ViewExtensionRuntime {
 		 */
 		@Override
 		public void dispose() {
-			tree.getRootNode().removeTreeListener(navigatorTreeListener);
+			rootNode.removeTreeListener(navigatorTreeListener);
 			navigatorPanel.removeChangeListener(panelSelectionListener);
 			navigatorTree.getModel().removeTreeModelListener(treeModelListener);
 			navigatorTree.getSelectionModel().removeTreeSelectionListener(treeSelectionListener);
-			tree.getRootNode().setContext(null);
-			tree.getRootNode().setSession(null);
-			tree.getRootNode().dispose();
+			rootNode.setContext(null);
+			rootNode.setSession(null);
+			rootNode.dispose();
 		}
 	}
 

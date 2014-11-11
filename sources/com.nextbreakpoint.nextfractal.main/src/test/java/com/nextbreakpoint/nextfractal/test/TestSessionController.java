@@ -27,9 +27,9 @@ package com.nextbreakpoint.nextfractal.test;
 
 import org.junit.Test;
 
-import com.nextbreakpoint.nextfractal.core.DefaultTree;
 import com.nextbreakpoint.nextfractal.core.config.ConfigContext;
 import com.nextbreakpoint.nextfractal.core.config.DefaultConfigContext;
+import com.nextbreakpoint.nextfractal.core.tree.DefaultRootNode;
 import com.nextbreakpoint.nextfractal.core.tree.NodeAction;
 import com.nextbreakpoint.nextfractal.twister.ControllerListener;
 import com.nextbreakpoint.nextfractal.twister.TwisterConfig;
@@ -49,15 +49,15 @@ public class TestSessionController {
 		final TwisterConfig config = configBuilder.createDefaultConfig();
 		final TwisterConfigNodeBuilder builder = new TwisterConfigNodeBuilder(config);
 		config.setContext(context);
-		DefaultTree tree = null;
+		DefaultRootNode rootNode = null;
 		TwisterSessionController controller = null;
 		controller = new DebugSessionController(config);
 		controller.init();
 		long time = 0;
-		tree = new DefaultTree();
-		builder.createNodes(tree.getRootNode());
-		tree.getRootNode().setContext(context);
-		tree.getRootNode().setSession(controller);
+		rootNode = new DefaultRootNode();
+		builder.createNodes(rootNode);
+		rootNode.setContext(context);
+		rootNode.setSession(controller);
 		controller.setRefTimestamp(System.currentTimeMillis());
 		Thread.sleep(500);
 		context.updateTimestamp();

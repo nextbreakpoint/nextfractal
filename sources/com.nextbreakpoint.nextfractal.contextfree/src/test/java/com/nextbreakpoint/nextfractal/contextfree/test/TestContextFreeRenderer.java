@@ -45,7 +45,6 @@ import com.nextbreakpoint.nextfractal.contextfree.parser.ContextFreeParser;
 import com.nextbreakpoint.nextfractal.contextfree.renderer.ContextFreeRenderer;
 import com.nextbreakpoint.nextfractal.contextfree.renderer.DefaultContextFreeRenderer;
 import com.nextbreakpoint.nextfractal.core.tree.RootNode;
-import com.nextbreakpoint.nextfractal.core.tree.Tree;
 import com.nextbreakpoint.nextfractal.core.util.IntegerVector2D;
 import com.nextbreakpoint.nextfractal.core.util.Surface;
 import com.nextbreakpoint.nextfractal.core.util.Tile;
@@ -73,8 +72,7 @@ public class TestContextFreeRenderer {
 			RootNode rootNode = new RootNode("contextfree");
 			ContextFreeConfigNodeBuilder nodeBuilder = new ContextFreeConfigNodeBuilder(config);
 			nodeBuilder.createNodes(rootNode);
-			Tree tree = new Tree(rootNode);
-			System.out.println(tree);
+			System.out.println(rootNode);
 			CFDGBuilder cfdgBuilder = new CFDGBuilder();
 			config.getCFDG().toCFDG(cfdgBuilder);
 			System.out.println(cfdgBuilder.toString());

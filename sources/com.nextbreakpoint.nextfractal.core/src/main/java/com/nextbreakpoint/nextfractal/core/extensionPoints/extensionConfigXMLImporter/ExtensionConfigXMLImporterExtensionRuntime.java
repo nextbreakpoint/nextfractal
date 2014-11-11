@@ -37,11 +37,4 @@ public abstract class ExtensionConfigXMLImporterExtensionRuntime extends Extensi
 	 * @return the importer.
 	 */
 	public abstract XMLImporter<? extends ExtensionConfig> createXMLImporter();
-
-	/**
-	 * @see com.nextbreakpoint.nextfractal.core.extension.ExtensionRuntime#dispose()
-	 */
-	@Override
-	public void dispose() {
-	}
 }

@@ -17,7 +17,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 
 import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
-import com.nextbreakpoint.nextfractal.core.tree.NodeObjectRef;
 
 public abstract class ElementGridPane<T extends Serializable> extends BorderPane {
 	private ElementGridDelegate delegate;
@@ -62,15 +61,15 @@ public abstract class ElementGridPane<T extends Serializable> extends BorderPane
 		this.delegate = delegate;
 	}
 
-	protected void appendNode(NodeObjectRef nodeRef) {
+	protected void appendNode(NodeObject nodeRef) {
 		listNode.getNodeEditor().appendChildNode(nodeRef);
 	}
 
-	protected void insertNodeAfter(int index, NodeObjectRef nodeRef) {
+	protected void insertNodeAfter(int index, NodeObject nodeRef) {
 		listNode.getNodeEditor().insertChildNodeAfter(index, nodeRef);
 	}
 
-	protected void insertNodeBefore(int index, NodeObjectRef nodeRef) {
+	protected void insertNodeBefore(int index, NodeObject nodeRef) {
 		listNode.getNodeEditor().insertChildNodeBefore(index, nodeRef);
 	}
 
@@ -86,7 +85,7 @@ public abstract class ElementGridPane<T extends Serializable> extends BorderPane
 		return listNode.getChildNodeCount();
 	}
 	
-	protected NodeObjectRef createNode(T element) {
+	protected NodeObject createNode(T element) {
 		return listNode.getNodeEditor().createNode(element);
 	}
 
@@ -305,10 +304,10 @@ public abstract class ElementGridPane<T extends Serializable> extends BorderPane
 						NodeObject nodeObject = getNode(sourceIndex);
 						removeNode(sourceIndex);
 						if (tx + node.getBoundsInLocal().getWidth() / 2 <= targetGroup.getBoundsInParent().getWidth() / 2) {
-							insertNodeBefore(targetIndex, new NodeObjectRef(nodeObject));
+							insertNodeBefore(targetIndex, nodeObject);
 							container.getChildren().add(targetIndex, sourceGroup);
 						} else {
-							insertNodeAfter(targetIndex, new NodeObjectRef(nodeObject));
+							insertNodeAfter(targetIndex, nodeObject);
 							container.getChildren().add(targetIndex + 1, sourceGroup);
 						}
 					} else if (targetGroup instanceof ElementGridPane<?>.GroupSentinel) {
@@ -317,13 +316,13 @@ public abstract class ElementGridPane<T extends Serializable> extends BorderPane
 					doLayout();
 				} else if (sourceGroup instanceof ElementGridPane<?>.GroupSentinel) {
 					if (targetGroup instanceof ElementGridPane<?>.GroupItem) {
-						NodeObjectRef nodeRef = createNode(createElement());
-						Node newNode = createItem(nodeRef.getNode());
+						NodeObject nodeObject = createNode(createElement());
+						Node newNode = createItem(nodeObject);
 						if (tx + node.getBoundsInLocal().getWidth() / 2 <= targetGroup.getBoundsInParent().getWidth() / 2) {
-							insertNodeBefore(targetIndex, nodeRef);
+							insertNodeBefore(targetIndex, nodeObject);
 							container.getChildren().add(targetIndex, newNode);
 						} else {
-							insertNodeAfter(targetIndex, nodeRef);
+							insertNodeAfter(targetIndex, nodeObject);
 							container.getChildren().add(targetIndex + 1, newNode);
 						}
 					}
@@ -331,9 +330,9 @@ public abstract class ElementGridPane<T extends Serializable> extends BorderPane
 					doLayout();
 				}
 			} else if (sourceGroup instanceof ElementGridPane<?>.GroupSentinel) {
-				NodeObjectRef nodeRef = createNode(createElement());
-				Node newNode = createItem(nodeRef.getNode());
-				appendNode(nodeRef);
+				NodeObject nodeObject = createNode(createElement());
+				Node newNode = createItem(nodeObject);
+				appendNode(nodeObject);
 				container.getChildren().add(newNode);
 				container.getChildren().add(sourceGroup);
 				doLayout();

@@ -29,10 +29,10 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.nextbreakpoint.nextfractal.core.DefaultTree;
 import com.nextbreakpoint.nextfractal.core.config.ConfigContext;
 import com.nextbreakpoint.nextfractal.core.config.DefaultConfigContext;
 import com.nextbreakpoint.nextfractal.core.tree.DefaultNodeSession;
+import com.nextbreakpoint.nextfractal.core.tree.DefaultRootNode;
 import com.nextbreakpoint.nextfractal.core.tree.NodeAction;
 import com.nextbreakpoint.nextfractal.core.tree.NodeActionValue;
 import com.nextbreakpoint.nextfractal.twister.ControllerListener;
@@ -54,7 +54,7 @@ public class TestClipController {
 		final TwisterConfig config = configBuilder.createDefaultConfig();
 		final TwisterConfigNodeBuilder builder = new TwisterConfigNodeBuilder(config);
 		config.setContext(context);
-		DefaultTree tree = null;
+		DefaultRootNode rootNode = null;
 		TwisterSequence sequence = null;
 		List<NodeAction> actions = null;
 		TwisterClipController controller = null;
@@ -68,10 +68,10 @@ public class TestClipController {
 		time = System.currentTimeMillis() - time;
 		sequence.setDuration(time);
 		clip.addSequence(sequence);
-		tree = new DefaultTree();
-		builder.createNodes(tree.getRootNode());
-		tree.getRootNode().setContext(context);
-		tree.getRootNode().setSession(new DefaultNodeSession("clip"));
+		rootNode = new DefaultRootNode();
+		builder.createNodes(rootNode);
+		rootNode.setContext(context);
+		rootNode.setSession(new DefaultNodeSession("clip"));
 		time = System.currentTimeMillis();
 		sequence = new TwisterSequence();
 		sequence.setInitialConfig(config.clone());
@@ -92,7 +92,7 @@ public class TestClipController {
 		time = System.currentTimeMillis() - time;
 		sequence.setDuration(time);
 		clip.addSequence(sequence);
-		actions = tree.getRootNode().getSession().getActions();
+		actions = rootNode.getSession().getActions();
 		for (NodeAction action : actions) {
 			final NodeActionValue value = action.toActionValue();
 			value.setTimestamp(value.getTimestamp() - refTimestamp);
@@ -100,10 +100,10 @@ public class TestClipController {
 			sequence.addAction(action);
 			System.out.println(action);
 		}
-		tree = new DefaultTree();
-		builder.createNodes(tree.getRootNode());
-		tree.getRootNode().setContext(context);
-		tree.getRootNode().setSession(new DefaultNodeSession("clip"));
+		rootNode = new DefaultRootNode();
+		builder.createNodes(rootNode);
+		rootNode.setContext(context);
+		rootNode.setSession(new DefaultNodeSession("clip"));
 		time = System.currentTimeMillis();
 		sequence = new TwisterSequence();
 		sequence.setInitialConfig(config.clone());
@@ -124,7 +124,7 @@ public class TestClipController {
 		time = System.currentTimeMillis() - time;
 		sequence.setDuration(time);
 		clip.addSequence(sequence);
-		actions = tree.getRootNode().getSession().getActions();
+		actions = rootNode.getSession().getActions();
 		for (NodeAction action : actions) {
 			final NodeActionValue value = action.toActionValue();
 			value.setTimestamp(value.getTimestamp() - refTimestamp);

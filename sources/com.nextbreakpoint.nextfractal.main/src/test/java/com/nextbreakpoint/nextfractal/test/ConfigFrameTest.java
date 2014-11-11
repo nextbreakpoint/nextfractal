@@ -36,7 +36,6 @@ import javax.swing.UIManager;
 
 import org.junit.Test;
 
-import com.nextbreakpoint.nextfractal.core.DefaultTree;
 import com.nextbreakpoint.nextfractal.core.config.DefaultConfigContext;
 import com.nextbreakpoint.nextfractal.core.launcher.Launcher;
 import com.nextbreakpoint.nextfractal.core.launcher.LauncherContextListener;
@@ -44,6 +43,7 @@ import com.nextbreakpoint.nextfractal.core.launcher.LauncherThreadFactory;
 import com.nextbreakpoint.nextfractal.core.scripting.DefaultJSContext;
 import com.nextbreakpoint.nextfractal.core.scripting.JSException;
 import com.nextbreakpoint.nextfractal.core.scripting.JSManager;
+import com.nextbreakpoint.nextfractal.core.tree.DefaultRootNode;
 import com.nextbreakpoint.nextfractal.core.tree.NodeAction;
 import com.nextbreakpoint.nextfractal.core.tree.NodeSession;
 import com.nextbreakpoint.nextfractal.core.tree.NodeSessionListener;
@@ -62,7 +62,7 @@ import com.nextbreakpoint.nextfractal.twister.ui.swing.TwisterContext;
  */
 public class ConfigFrameTest {
 	private final Launcher<TwisterContext> launcher = new Launcher<TwisterContext>(new TestTwisterContext(), new TestThreadFactory());
-	private DefaultTree twisterTree;
+	private DefaultRootNode rootNode;
 	private TwisterConfig config;
 
 	@Test
@@ -93,14 +93,14 @@ public class ConfigFrameTest {
 						}
 						final TestRenderContext renderContext = new TestRenderContext();
 						final NodeSession session = new TestNodeSesion();
-						twisterTree = new DefaultTree();
+						rootNode = new DefaultRootNode();
 						TwisterConfigBuilder builder = new TwisterConfigBuilder();
 						config = builder.createDefaultConfig();
 						config.setContext(new DefaultConfigContext());
 						final TwisterConfigNodeBuilder nodeBuilder = new TwisterConfigNodeBuilder(config);
-						twisterTree.getRootNode().setContext(config.getContext());
-						twisterTree.getRootNode().setSession(session);
-						nodeBuilder.createNodes(twisterTree.getRootNode());
+						rootNode.setContext(config.getContext());
+						rootNode.setSession(session);
+						nodeBuilder.createNodes(rootNode);
 						final ConfigFrame frame = new ConfigFrame(new TestTwisterConfigContext(renderContext), config, renderContext, session);
 						frame.addWindowListener(new WindowAdapter() {
 							@Override
@@ -148,7 +148,7 @@ public class ConfigFrameTest {
 		 * @see com.nextbreakpoint.nextfractal.twister.swing.TwisterConfigContext#executeScript(java.io.File)
 		 */
 		public void executeScript(File scriptFile) throws JSException {
-			JSManager.execute(renderContext, new TestJSContext(), twisterTree.getRootNode(), scriptFile.getParentFile(), scriptFile);
+			JSManager.execute(renderContext, new TestJSContext(), rootNode, scriptFile.getParentFile(), scriptFile);
 		}
 	}
 

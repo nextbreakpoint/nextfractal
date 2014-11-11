@@ -30,12 +30,11 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.nextbreakpoint.nextfractal.core.DefaultTree;
 import com.nextbreakpoint.nextfractal.core.tree.DefaultNodeSession;
-import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
+import com.nextbreakpoint.nextfractal.core.tree.DefaultRootNode;
 import com.nextbreakpoint.nextfractal.core.tree.NodeAction;
+import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
 import com.nextbreakpoint.nextfractal.core.tree.NodePath;
-import com.nextbreakpoint.nextfractal.core.tree.Tree;
 import com.nextbreakpoint.nextfractal.core.util.RenderContext;
 
 /**
@@ -46,7 +45,7 @@ public abstract class AbstractTwisterController implements TwisterController {
 	private final List<ControllerListener> listeners = new ArrayList<ControllerListener>();
 	protected List<ControllerCommand> commands = new ArrayList<ControllerCommand>();
 	protected List<ControllerAction> actions = new ArrayList<ControllerAction>();
-	private final Tree tree = new DefaultTree();
+	private final NodeObject rootNode = new DefaultRootNode();
 	private TwisterConfig config;
 	protected int commandIndex = -1;
 	protected long clipDuration = 0;
@@ -77,10 +76,10 @@ public abstract class AbstractTwisterController implements TwisterController {
 		if (this.config == null) {
 			this.config = config;
 			final TwisterConfigNodeBuilder builder = new TwisterConfigNodeBuilder(config);
-			tree.getRootNode().removeAllChildNodes();
-			builder.createNodes(tree.getRootNode());
-			tree.getRootNode().setContext(config.getContext());
-			tree.getRootNode().setSession(new DefaultNodeSession("controller"));
+			rootNode.removeAllChildNodes();
+			builder.createNodes(rootNode);
+			rootNode.setContext(config.getContext());
+			rootNode.setSession(new DefaultNodeSession("controller"));
 		}
 		else {
 			this.config.setFrameConfigElement(config.getFrameConfigElement().clone());
@@ -193,7 +192,7 @@ public abstract class AbstractTwisterController implements TwisterController {
 	private void executeRedoAction(final NodeAction action) {
 		final NodePath path = action.getActionTarget();
 		final Integer[] pe = path.getPathElements();
-		NodeObject node = tree.getRootNode();
+		NodeObject node = rootNode;
 		try {
 			for (final Integer element : pe) {
 				node = node.getChildNode(element);
@@ -211,7 +210,7 @@ public abstract class AbstractTwisterController implements TwisterController {
 	private void executeUndoAction(final NodeAction action) {
 		final NodePath path = action.getActionTarget();
 		final Integer[] pe = path.getPathElements();
-		NodeObject node = tree.getRootNode();
+		NodeObject node = rootNode;
 		try {
 			for (final Integer element : pe) {
 				node = node.getChildNode(element);
@@ -280,7 +279,7 @@ public abstract class AbstractTwisterController implements TwisterController {
 	 * 
 	 */
 	protected void doAccept() {
-		tree.getRootNode().accept();
+		rootNode.accept();
 	}
 
 	/**

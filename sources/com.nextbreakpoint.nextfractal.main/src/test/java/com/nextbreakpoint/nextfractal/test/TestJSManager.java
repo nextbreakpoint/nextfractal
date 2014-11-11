@@ -31,11 +31,11 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
-import com.nextbreakpoint.nextfractal.core.DefaultTree;
 import com.nextbreakpoint.nextfractal.core.config.DefaultConfigContext;
 import com.nextbreakpoint.nextfractal.core.scripting.DefaultJSContext;
 import com.nextbreakpoint.nextfractal.core.scripting.JSManager;
 import com.nextbreakpoint.nextfractal.core.tree.DefaultNodeSession;
+import com.nextbreakpoint.nextfractal.core.tree.DefaultRootNode;
 import com.nextbreakpoint.nextfractal.core.util.IntegerVector2D;
 import com.nextbreakpoint.nextfractal.core.util.RenderContext;
 import com.nextbreakpoint.nextfractal.core.util.RenderContextListener;
@@ -54,11 +54,11 @@ public class TestJSManager {
 			TwisterConfigBuilder builder = new TwisterConfigBuilder();
 			TwisterConfig config = builder.createDefaultConfig();
 			TwisterConfigNode configNode = new TwisterConfigNode(config);
-			DefaultTree twisterTree = new DefaultTree();
-			twisterTree.getRootNode().appendChildNode(configNode);
-			twisterTree.getRootNode().setSession(session);
-			twisterTree.getRootNode().setContext(new DefaultConfigContext());
-			JSManager.execute(new TestRenderContext(), new TestJSContext(), twisterTree.getRootNode(), new File("."), new File("test.js"));
+			DefaultRootNode rootNode = new DefaultRootNode();
+			rootNode.appendChildNode(configNode);
+			rootNode.setSession(session);
+			rootNode.setContext(new DefaultConfigContext());
+			JSManager.execute(new TestRenderContext(), new TestJSContext(), rootNode, new File("."), new File("test.js"));
 		}
 		catch (Exception e) {
 			e.printStackTrace();

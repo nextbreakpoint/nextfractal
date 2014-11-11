@@ -30,17 +30,17 @@ import com.nextbreakpoint.nextfractal.core.config.ConfigElement;
 import com.nextbreakpoint.nextfractal.core.config.ListConfigElement;
 import com.nextbreakpoint.nextfractal.core.config.ValueChangeEvent;
 import com.nextbreakpoint.nextfractal.core.config.ValueChangeListener;
-import com.nextbreakpoint.nextfractal.core.tree.MutableNode;
-import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
+import com.nextbreakpoint.nextfractal.core.tree.DefaultNode;
 import com.nextbreakpoint.nextfractal.core.tree.NodeAction;
 import com.nextbreakpoint.nextfractal.core.tree.NodeEditor;
+import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
 import com.nextbreakpoint.nextfractal.core.tree.NodeSession;
 import com.nextbreakpoint.nextfractal.core.tree.NodeValue;
 
 /**
  * @author Andrea Medeghini
  */
-public abstract class AbstractConfigElementListNode<T extends ConfigElement> extends MutableNode {
+public abstract class AbstractConfigElementListNode<T extends ConfigElement> extends DefaultNode {
 	protected ConfigElementListener listListener;
 	protected ListConfigElement<T> listElement;
 
@@ -56,6 +56,30 @@ public abstract class AbstractConfigElementListNode<T extends ConfigElement> ext
 		}
 		this.listElement = listElement;
 		listListener = new ConfigElementListener();
+	}
+
+	/**
+	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#isEditable()
+	 */
+	@Override
+	public boolean isEditable() {
+		return false;
+	}
+
+	/**
+	 * @see com.nextbreakpoint.nextfractal.core.tree.NodeObject#isMutable()
+	 */
+	@Override
+	public final boolean isMutable() {
+		return true;
+	}
+
+	/**
+	 * @see com.nextbreakpoint.nextfractal.core.tree.DefaultNode#getValueAsString()
+	 */
+	@Override
+	public String getValueAsString() {
+		return isEditable() ? super.getValueAsString() : getChildNodeCount() + " " + CoreResources.getInstance().getString("label.elements");
 	}
 
 	/**
@@ -150,9 +174,8 @@ public abstract class AbstractConfigElementListNode<T extends ConfigElement> ext
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.tree.MutableNode#getChildValueType()
+	 * @see com.nextbreakpoint.nextfractal.core.tree.ListNode#getChildValueType()
 	 */
-	@Override
 	public abstract Class<?> getChildValueType();
 
 	/**

@@ -55,11 +55,11 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeCellRenderer;
 import javax.swing.tree.TreePath;
 
-import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
 import com.nextbreakpoint.nextfractal.core.tree.NodeEvent;
 import com.nextbreakpoint.nextfractal.core.tree.NodeListener;
+import com.nextbreakpoint.nextfractal.core.tree.NodeObject;
 import com.nextbreakpoint.nextfractal.core.tree.NodeSession;
-import com.nextbreakpoint.nextfractal.core.tree.Tree;
+import com.nextbreakpoint.nextfractal.core.tree.RootNode;
 import com.nextbreakpoint.nextfractal.core.ui.swing.util.GUIFactory;
 import com.nextbreakpoint.nextfractal.core.ui.swing.util.GUIUtil;
 import com.nextbreakpoint.nextfractal.core.util.RenderContext;
@@ -82,8 +82,8 @@ public class NavigatorFrame extends JFrame {
 	 * @param session
 	 * @throws HeadlessException
 	 */
-	public NavigatorFrame(final Tree twisterTree, final RenderContext context, final NodeSession session) throws HeadlessException {
-		navigationPanel = new NavigationPanel(new NavigatorViewContext(), twisterTree, context, session);
+	public NavigatorFrame(final RootNode rootNode, final RenderContext context, final NodeSession session) throws HeadlessException {
+		navigationPanel = new NavigationPanel(new NavigatorViewContext(), rootNode, context, session);
 		getContentPane().add(navigationPanel);
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		final int defaultWidth = Integer.parseInt(CoreSwingResources.getInstance().getString(NavigatorFrame.NAVIGATOR_FRAME_WIDTH));
@@ -118,7 +118,7 @@ public class NavigatorFrame extends JFrame {
 		private static final long serialVersionUID = 1L;
 		private final NavigatorPanel navigatorPanel;
 		private final NavigatorTree navigatorTree;
-		private final Tree twisterTree;
+		private final RootNode rootNode;
 		private final RenderContext context;
 		private final NavigatorPanelSelectionListener panelSelectionListener;
 		private final NavigatorTreeSelectionListener treeSelectionListener;
@@ -132,14 +132,14 @@ public class NavigatorFrame extends JFrame {
 		 * @param context
 		 * @param session
 		 */
-		public NavigationPanel(final ViewContext viewContext, final Tree twisterTree, final RenderContext context, final NodeSession session) {
+		public NavigationPanel(final ViewContext viewContext, final RootNode rootNode, final RenderContext context, final NodeSession session) {
 			this.context = context;
+			this.rootNode = rootNode;
 			// this.session = session;
-			this.twisterTree = twisterTree;
 			setLayout(new BorderLayout());
-			navigatorTree = new NavigatorTree(twisterTree.getRootNode());
+			navigatorTree = new NavigatorTree(rootNode);
 			navigatorTree.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.DARK_GRAY), BorderFactory.createEmptyBorder(2, 2, 2, 2)));
-			navigatorPanel = new NavigatorPanel(viewContext, twisterTree.getRootNode());
+			navigatorPanel = new NavigatorPanel(viewContext, rootNode);
 			navigatorPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.DARK_GRAY), BorderFactory.createEmptyBorder(2, 2, 2, 2)));
 			final JScrollPane scrollPane = new JScrollPane(navigatorTree);
 			scrollPane.setPreferredSize(new Dimension(300, 500));
@@ -173,7 +173,7 @@ public class NavigatorFrame extends JFrame {
 			navigatorPanel.addChangeListener(panelSelectionListener);
 			navigatorTree.getModel().addTreeModelListener(treeModelListener);
 			navigatorTree.getSelectionModel().addTreeSelectionListener(treeSelectionListener);
-			twisterTree.getRootNode().addNodeListener(navigatorTreeListener);
+			rootNode.addNodeListener(navigatorTreeListener);
 			acceptImmediatlyCheckBox.addChangeListener(navigatorChangeListener);
 		}
 
@@ -181,7 +181,7 @@ public class NavigatorFrame extends JFrame {
 			navigatorPanel.removeChangeListener(panelSelectionListener);
 			navigatorTree.getModel().removeTreeModelListener(treeModelListener);
 			navigatorTree.getSelectionModel().removeTreeSelectionListener(treeSelectionListener);
-			twisterTree.getRootNode().removeTreeListener(navigatorTreeListener);
+			rootNode.removeTreeListener(navigatorTreeListener);
 		}
 
 		private final class NavigatorChangeListener implements ChangeListener {
@@ -228,7 +228,7 @@ public class NavigatorFrame extends JFrame {
 			 */
 			@Override
 			public void nodeChanged(final NodeEvent e) {
-				twisterTree.getRootNode().getSession().fireSessionChanged();
+				rootNode.getSession().fireSessionChanged();
 			}
 
 			/**
@@ -236,7 +236,7 @@ public class NavigatorFrame extends JFrame {
 			 */
 			@Override
 			public void nodeAdded(final NodeEvent e) {
-				twisterTree.getRootNode().getSession().fireSessionChanged();
+				rootNode.getSession().fireSessionChanged();
 			}
 
 			/**
@@ -244,7 +244,7 @@ public class NavigatorFrame extends JFrame {
 			 */
 			@Override
 			public void nodeRemoved(final NodeEvent e) {
-				twisterTree.getRootNode().getSession().fireSessionChanged();
+				rootNode.getSession().fireSessionChanged();
 			}
 
 			/**
@@ -418,9 +418,9 @@ public class NavigatorFrame extends JFrame {
 			try {
 				context.acquire();
 				context.stopRenderers();
-				twisterTree.getRootNode().getContext().updateTimestamp();
-				twisterTree.getRootNode().getSession().fireSessionAccepted();
-				twisterTree.getRootNode().accept();
+				rootNode.getContext().updateTimestamp();
+				rootNode.getSession().fireSessionAccepted();
+				rootNode.accept();
 				context.startRenderers();
 				context.release();
 				context.refresh();
@@ -434,8 +434,8 @@ public class NavigatorFrame extends JFrame {
 		 * 
 		 */
 		public void doCancel() {
-			twisterTree.getRootNode().cancel();
-			twisterTree.getRootNode().getSession().fireSessionCancelled();
+			rootNode.cancel();
+			rootNode.getSession().fireSessionCancelled();
 		}
 	}
 
