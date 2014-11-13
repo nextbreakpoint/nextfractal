@@ -32,9 +32,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.VBox;
 
+import com.nextbreakpoint.nextfractal.core.runtime.common.NumberNodeEditor;
 import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeEditor;
 import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeValue;
-import com.nextbreakpoint.nextfractal.core.runtime.tree.NumberNodeEditor;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.AdvancedTextField;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.NodeEditorComponent;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.extensionPoints.editor.EditorExtensionRuntime;

@@ -25,14 +25,14 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.elements;
 
-import com.nextbreakpoint.nextfractal.core.runtime.ValueConfigElementXMLExporter;
+import com.nextbreakpoint.nextfractal.core.runtime.common.ValueConfigElementXMLExporter;
 
 /**
  * @author Andrea Medeghini
  */
 public class CriteriaElementXMLExporter extends ValueConfigElementXMLExporter<Integer, CriteriaElement> {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.ValueConfigElementXMLExporter#formatValue(java.io.Serializable)
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.common.ValueConfigElementXMLExporter#formatValue(java.io.Serializable)
 	 */
 	@Override
 	protected String formatValue(final Integer value) {

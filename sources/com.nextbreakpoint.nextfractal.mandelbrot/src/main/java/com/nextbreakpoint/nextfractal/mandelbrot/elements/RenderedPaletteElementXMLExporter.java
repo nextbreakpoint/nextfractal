@@ -31,7 +31,7 @@ import com.nextbreakpoint.nextfractal.core.elements.ColorElement;
 import com.nextbreakpoint.nextfractal.core.elements.ColorElementXMLExporter;
 import com.nextbreakpoint.nextfractal.core.elements.DoubleElement;
 import com.nextbreakpoint.nextfractal.core.elements.DoubleElementXMLExporter;
-import com.nextbreakpoint.nextfractal.core.runtime.ValueConfigElementXMLExporter;
+import com.nextbreakpoint.nextfractal.core.runtime.common.ValueConfigElementXMLExporter;
 import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLExportException;
 import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLNodeBuilder;
 import com.nextbreakpoint.nextfractal.core.util.Color32bit;
@@ -138,7 +138,7 @@ public class RenderedPaletteElementXMLExporter extends ValueConfigElementXMLExpo
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.ValueConfigElementXMLExporter#formatValue(java.io.Serializable)
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.common.ValueConfigElementXMLExporter#formatValue(java.io.Serializable)
 	 */
 	@Override
 	protected String formatValue(final RenderedPalette value) {

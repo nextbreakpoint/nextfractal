@@ -55,7 +55,6 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeCellRenderer;
 import javax.swing.tree.TreePath;
 
-import com.nextbreakpoint.nextfractal.core.RenderContext;
 import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeEvent;
 import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeListener;
 import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeObject;
@@ -63,6 +62,7 @@ import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeSession;
 import com.nextbreakpoint.nextfractal.core.runtime.tree.RootNode;
 import com.nextbreakpoint.nextfractal.core.ui.swing.util.GUIFactory;
 import com.nextbreakpoint.nextfractal.core.ui.swing.util.GUIUtil;
+import com.nextbreakpoint.nextfractal.core.util.RenderContext;
 
 /**
  * @author Andrea Medeghini

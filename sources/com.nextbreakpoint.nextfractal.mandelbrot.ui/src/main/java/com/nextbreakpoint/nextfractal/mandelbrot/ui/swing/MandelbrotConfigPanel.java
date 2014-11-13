@@ -55,7 +55,6 @@ import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import com.nextbreakpoint.nextfractal.core.RenderContext;
 import com.nextbreakpoint.nextfractal.core.elements.ExtensionReferenceElement;
 import com.nextbreakpoint.nextfractal.core.runtime.ElementChangeEvent;
 import com.nextbreakpoint.nextfractal.core.runtime.ElementChangeListener;
@@ -73,6 +72,7 @@ import com.nextbreakpoint.nextfractal.core.ui.swing.extension.ExtensionListCellR
 import com.nextbreakpoint.nextfractal.core.ui.swing.util.GUIFactory;
 import com.nextbreakpoint.nextfractal.core.ui.swing.util.StackLayout;
 import com.nextbreakpoint.nextfractal.core.util.DoubleVector4D;
+import com.nextbreakpoint.nextfractal.core.util.RenderContext;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotConfig;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotRegistry;
 import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.incolouringFormula.IncolouringFormulaExtensionConfig;
@@ -94,11 +94,11 @@ import com.nextbreakpoint.nextfractal.mandelbrot.outcolouringFormula.Outcolourin
 import com.nextbreakpoint.nextfractal.mandelbrot.processingFormula.ProcessingFormulaConfigElement;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderingFormula.RenderingFormulaConfigElement;
 import com.nextbreakpoint.nextfractal.mandelbrot.transformingFormula.TransformingFormulaConfigElement;
+import com.nextbreakpoint.nextfractal.twister.ui.swing.DefaultViewRuntime;
 import com.nextbreakpoint.nextfractal.twister.ui.swing.TwisterConfigPanel;
 import com.nextbreakpoint.nextfractal.twister.ui.swing.TwisterSwingRegistry;
 import com.nextbreakpoint.nextfractal.twister.ui.swing.TwisterSwingResources;
 import com.nextbreakpoint.nextfractal.twister.ui.swing.ViewPanel;
-import com.nextbreakpoint.nextfractal.twister.ui.swing.extensionPoints.view.DefaultViewRuntime;
 import com.nextbreakpoint.nextfractal.twister.ui.swing.extensionPoints.view.ViewExtensionRuntime;
 import com.nextbreakpoint.nextfractal.twister.util.Speed;
 

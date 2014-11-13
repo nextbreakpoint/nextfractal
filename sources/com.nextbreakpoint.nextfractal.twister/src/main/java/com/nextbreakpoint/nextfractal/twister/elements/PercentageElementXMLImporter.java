@@ -27,7 +27,7 @@ package com.nextbreakpoint.nextfractal.twister.elements;
 
 import org.w3c.dom.Element;
 
-import com.nextbreakpoint.nextfractal.core.runtime.ValueConfigElementXMLImporter;
+import com.nextbreakpoint.nextfractal.core.runtime.common.ValueConfigElementXMLImporter;
 import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLExporter;
 import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLImportException;
 
@@ -49,7 +49,7 @@ public class PercentageElementXMLImporter extends ValueConfigElementXMLImporter<
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.ValueConfigElementXMLImporter#parseValue(java.lang.String)
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.common.ValueConfigElementXMLImporter#parseValue(java.lang.String)
 	 */
 	@Override
 	protected Integer parseValue(final String value) {
@@ -57,7 +57,7 @@ public class PercentageElementXMLImporter extends ValueConfigElementXMLImporter<
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.ValueConfigElementXMLImporter#createDefaultConfigElement()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.common.ValueConfigElementXMLImporter#createDefaultConfigElement()
 	 */
 	@Override
 	protected PercentageElement createDefaultConfigElement() {

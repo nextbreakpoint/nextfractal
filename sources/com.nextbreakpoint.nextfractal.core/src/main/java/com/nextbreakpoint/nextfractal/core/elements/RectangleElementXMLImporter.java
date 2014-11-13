@@ -25,7 +25,7 @@
  */
 package com.nextbreakpoint.nextfractal.core.elements;
 
-import com.nextbreakpoint.nextfractal.core.runtime.ValueConfigElementXMLImporter;
+import com.nextbreakpoint.nextfractal.core.runtime.common.ValueConfigElementXMLImporter;
 import com.nextbreakpoint.nextfractal.core.util.Rectangle;
 
 /**
@@ -33,7 +33,7 @@ import com.nextbreakpoint.nextfractal.core.util.Rectangle;
  */
 public class RectangleElementXMLImporter extends ValueConfigElementXMLImporter<Rectangle, RectangleElement> {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.ValueConfigElementXMLImporter#createDefaultConfigElement()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.common.ValueConfigElementXMLImporter#createDefaultConfigElement()
 	 */
 	@Override
 	protected RectangleElement createDefaultConfigElement() {
@@ -41,7 +41,7 @@ public class RectangleElementXMLImporter extends ValueConfigElementXMLImporter<R
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.ValueConfigElementXMLImporter#parseValue(java.lang.String)
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.common.ValueConfigElementXMLImporter#parseValue(java.lang.String)
 	 */
 	@Override
 	protected Rectangle parseValue(final String value) {

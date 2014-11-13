@@ -122,12 +122,12 @@ public class NavigatorTree extends JTree implements NodeListener, DropTargetList
 	@Override
 	public void nodeChanged(final NodeEvent e) {
 		GUIUtil.executeTask(new Runnable() {
-				@Override
-				public void run() {
-				final TreePath path = creareTreePath(e.getPath());
-				getModel().valueForPathChanged(path, e.getNode());
-				}
-						}, true);
+			@Override
+			public void run() {
+			final TreePath path = creareTreePath(e.getPath());
+			getModel().valueForPathChanged(path, e.getNode());
+			}
+		}, true);
 	}
 
 	/**
@@ -136,17 +136,17 @@ public class NavigatorTree extends JTree implements NodeListener, DropTargetList
 	@Override
 	public void nodeAdded(final NodeEvent e) {
 		GUIUtil.executeTask(new Runnable() {
-				@Override
-				public void run() {
+			@Override
+			public void run() {
 				final Integer[] nodePath = e.getPath().getPathElements();
 				final Integer[] parentPath = new Integer[nodePath.length - 1];
 				System.arraycopy(nodePath, 0, parentPath, 0, parentPath.length);
 				final TreePath path = creareTreePath(new NodePath(parentPath));
 				((DefaultTreeModel) getModel()).insertNodeInto(new MutableTreeNodeAdapter(e.getNode()), (DefaultMutableTreeNode) path.getLastPathComponent(), nodePath[nodePath.length - 1]);
 				expandPath(new TreePath(((DefaultMutableTreeNode) path.getLastPathComponent()).getPath()));
-								// expandNode((DefaultMutableTreeNode) path.getLastPathComponent());
+				// expandNode((DefaultMutableTreeNode) path.getLastPathComponent());
 			}
-						}, true);
+		}, true);
 	}
 
 	/**
@@ -155,12 +155,12 @@ public class NavigatorTree extends JTree implements NodeListener, DropTargetList
 	@Override
 	public void nodeRemoved(final NodeEvent e) {
 		GUIUtil.executeTask(new Runnable() {
-				@Override
-				public void run() {
-				final TreePath path = creareTreePath(e.getPath());
-				((DefaultTreeModel) getModel()).removeNodeFromParent((DefaultMutableTreeNode) path.getLastPathComponent());
-				}
-						}, true);
+			@Override
+			public void run() {
+			final TreePath path = creareTreePath(e.getPath());
+			((DefaultTreeModel) getModel()).removeNodeFromParent((DefaultMutableTreeNode) path.getLastPathComponent());
+			}
+		}, true);
 	}
 
 	/**
@@ -339,10 +339,10 @@ public class NavigatorTree extends JTree implements NodeListener, DropTargetList
 	 */
 	public void expandAll() {
 		GUIUtil.executeTask(new Runnable() {
-				@Override
-				public void run() {
-				expandNode((DefaultMutableTreeNode) getModel().getRoot());
-				}
-						}, true);
+			@Override
+			public void run() {
+			expandNode((DefaultMutableTreeNode) getModel().getRoot());
+			}
+		}, true);
 	}
 }

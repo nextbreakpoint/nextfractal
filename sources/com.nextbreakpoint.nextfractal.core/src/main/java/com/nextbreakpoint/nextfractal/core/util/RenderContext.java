@@ -23,46 +23,50 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.core.runtime.tree;
+package com.nextbreakpoint.nextfractal.core.util;
+
 
 /**
  * @author Andrea Medeghini
  */
-public abstract class NumberNodeEditor extends NodeEditor {
+public interface RenderContext {
 	/**
-	 * @param node
+	 * @throws InterruptedException
 	 */
-	public NumberNodeEditor(final AttributeNode node) {
-		super(node);
-	}
+	public void acquire() throws InterruptedException;
+
+	/**
+	 * 
+	 */
+	public void release();
+
+	/**
+	 * 
+	 */
+	public void stopRenderers();
+
+	/**
+	 * 
+	 */
+	public void startRenderers();
+
+	/**
+	 * 
+	 */
+	public void refresh();
 
 	/**
 	 * @return
 	 */
-	public Number getNumberValue() {
-		return (Number) getNodeValue().getValue();
-	}
+	public IntegerVector2D getImageSize();
 
 	/**
-	 * @return
+	 * @param listener
 	 */
-	public abstract Number getMinimum();
+	public void addRenderContextListener(RenderContextListener listener);
 
 	/**
-	 * @return
+	 * @param listener
 	 */
-	public abstract Number getMaximum();
-
-	/**
-	 * @return
-	 */
-	public abstract Number getStep();
-
-	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeEditor#createChildNode(java.lang.Object)
-	 */
-	@Override
-	protected NodeObject createChildNode(final NodeValue<?> value) {
-		return null;
-	}
+	public void removeRenderContextListener(RenderContextListener listener);
 }

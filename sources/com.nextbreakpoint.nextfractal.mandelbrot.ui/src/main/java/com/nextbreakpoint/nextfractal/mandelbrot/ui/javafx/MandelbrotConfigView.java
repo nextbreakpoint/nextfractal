@@ -1,16 +1,24 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.ui.javafx;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javafx.geometry.Dimension2D;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
-import com.nextbreakpoint.nextfractal.core.RenderContext;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.Extension;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionNotFoundException;
 import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeObject;
+import com.nextbreakpoint.nextfractal.core.ui.javafx.CoreUIRegistry;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.Disposable;
+import com.nextbreakpoint.nextfractal.core.ui.javafx.NodeEditorComponent;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.ViewContext;
+import com.nextbreakpoint.nextfractal.core.ui.javafx.extensionPoints.editor.EditorExtensionRuntime;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.util.ConfigurableExtensionGridPane;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.util.ElementGridPane;
+import com.nextbreakpoint.nextfractal.core.util.RenderContext;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotRegistry;
 import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.incolouringFormula.IncolouringFormulaExtensionConfig;
 import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.incolouringFormula.IncolouringFormulaExtensionRuntime;
@@ -22,6 +30,7 @@ import com.nextbreakpoint.nextfractal.mandelbrot.outcolouringFormula.Outcolourin
 import com.nextbreakpoint.nextfractal.mandelbrot.outcolouringFormula.OutcolouringFormulaConfigElementNode;
 
 public class MandelbrotConfigView extends Pane implements Disposable {
+	private static final Logger logger = Logger.getLogger(MandelbrotConfigView.class.getName());
 	private ViewContext viewContext;
 	private RenderContext renderContext;
 	private NodeObject mandelbrotFractalNode;
@@ -42,18 +51,65 @@ public class MandelbrotConfigView extends Pane implements Disposable {
 		pane.getChildren().add(outcolouringFormulaGridPane);
 		incolouringFormulaGridPane.setDelegate(nodeObject -> {
 			IncolouringFormulaPane incolouringFormulaPane = new IncolouringFormulaPane(nodeObject);
-			incolouringFormulaPane.getStyleClass().add("config-view");
 			viewContext.showConfigView(incolouringFormulaPane);
 		});
 		outcolouringFormulaGridPane.setDelegate(nodeObject -> {
 			OutcolouringFormulaPane outcolouringFormulaPane = new OutcolouringFormulaPane(nodeObject);
-			outcolouringFormulaPane.getStyleClass().add("config-view");
 			viewContext.showConfigView(outcolouringFormulaPane);
 		});
 	}
 
 	@Override
 	public void dispose() {
+	}
+
+	protected NodeEditorComponent createEditor(NodeObject node) {
+		NodeEditorComponent editor = null;
+		if (node.getNodeEditor() != null) {
+			try {
+				final Extension<EditorExtensionRuntime> extension = CoreUIRegistry.getInstance().getEditorExtension(node.getNodeId());
+				final EditorExtensionRuntime runtime = extension.createExtensionRuntime();
+				if (MandelbrotConfigView.logger.isLoggable(Level.FINE)) {	
+					MandelbrotConfigView.logger.fine("Editor found for node = " + node.getNodeId());
+				}
+				editor = runtime.createEditor(node.getNodeEditor());
+			}
+			catch (final ExtensionNotFoundException x) {
+			}
+			catch (final Exception x) {
+				if (MandelbrotConfigView.logger.isLoggable(Level.WARNING)) {
+					MandelbrotConfigView.logger.log(Level.WARNING, "Can't create editor for node = " + node.getNodeId(), x);
+				}
+			}
+			if (editor == null) {
+				try {
+					final Extension<EditorExtensionRuntime> extension = CoreUIRegistry.getInstance().getEditorExtension(node.getNodeClass());
+					final EditorExtensionRuntime runtime = extension.createExtensionRuntime();
+					if (MandelbrotConfigView.logger.isLoggable(Level.FINE)) {	
+						MandelbrotConfigView.logger.fine("Editor found for node class = " + node.getNodeClass());
+					}
+					editor = runtime.createEditor(node.getNodeEditor());
+				}
+				catch (final ExtensionNotFoundException x) {
+				}
+				catch (final Exception x) {
+					if (MandelbrotConfigView.logger.isLoggable(Level.WARNING)) {
+						MandelbrotConfigView.logger.log(Level.WARNING, "Can't create editor for node class = " + node.getNodeClass(), x);
+					}
+				}
+			}
+			if (editor == null) {
+				if (MandelbrotConfigView.logger.isLoggable(Level.FINE)) {	
+					MandelbrotConfigView.logger.fine("Can't find editor for node = " + node.getNodeId() + " (" + node.getNodeClass() + ")");
+				}
+			}
+		}
+		else {
+			if (MandelbrotConfigView.logger.isLoggable(Level.FINE)) {	
+				MandelbrotConfigView.logger.fine("Undefined editor for node = " + node.getNodeId());
+			}
+		}
+		return editor;
 	}
 
 	public class IncolouringFormulaGridItems extends ElementGridPane<IncolouringFormulaConfigElement> {
@@ -96,6 +152,7 @@ public class MandelbrotConfigView extends Pane implements Disposable {
 		private ConfigurableExtensionGridPane<IncolouringFormulaExtensionRuntime<? extends IncolouringFormulaExtensionConfig>, IncolouringFormulaExtensionConfig> extensionGridPane;
 		
 		public IncolouringFormulaPane(NodeObject nodeObject) {
+			getStyleClass().add("config-view");
 			// TODO Auto-generated constructor stub
 		}
 
@@ -151,6 +208,7 @@ public class MandelbrotConfigView extends Pane implements Disposable {
 		private ConfigurableExtensionGridPane<OutcolouringFormulaExtensionRuntime<? extends OutcolouringFormulaExtensionConfig>, OutcolouringFormulaExtensionConfig> extensionGridPane;
 		
 		public OutcolouringFormulaPane(NodeObject nodeObject) {
+			getStyleClass().add("config-view");
 			// TODO Auto-generated constructor stub
 		}
 

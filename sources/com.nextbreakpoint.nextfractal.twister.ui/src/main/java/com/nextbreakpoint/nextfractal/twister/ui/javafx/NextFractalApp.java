@@ -24,8 +24,6 @@ import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 
 import com.aquafx_project.AquaFx;
-import com.nextbreakpoint.nextfractal.core.RenderContext;
-import com.nextbreakpoint.nextfractal.core.RenderContextListener;
 import com.nextbreakpoint.nextfractal.core.runtime.DefaultConfigContext;
 import com.nextbreakpoint.nextfractal.core.runtime.extension.Extension;
 import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionException;
@@ -33,6 +31,8 @@ import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionNotFoundEx
 import com.nextbreakpoint.nextfractal.core.ui.javafx.Disposable;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.ViewContext;
 import com.nextbreakpoint.nextfractal.core.util.IntegerVector2D;
+import com.nextbreakpoint.nextfractal.core.util.RenderContext;
+import com.nextbreakpoint.nextfractal.core.util.RenderContextListener;
 import com.nextbreakpoint.nextfractal.core.util.Tile;
 import com.nextbreakpoint.nextfractal.twister.TwisterConfig;
 import com.nextbreakpoint.nextfractal.twister.TwisterConfigBuilder;
@@ -229,21 +229,21 @@ public class NextFractalApp extends Application {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.RenderContext#acquire()
+	 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#acquire()
 	 */
 	public void acquire() throws InterruptedException {
 		semaphore.acquire();
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.RenderContext#release()
+	 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#release()
 	 */
 	public void release() {
 		semaphore.release();
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.RenderContext#addRenderContextListener(com.nextbreakpoint.nextfractal.core.RenderContextListener)
+	 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#addRenderContextListener(com.nextbreakpoint.nextfractal.core.util.RenderContextListener)
 	 */
 	public void addRenderContextListener(RenderContextListener listener) {
 		synchronized (contextListeners) {
@@ -252,7 +252,7 @@ public class NextFractalApp extends Application {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.RenderContext#removeRenderContextListener(com.nextbreakpoint.nextfractal.core.RenderContextListener)
+	 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#removeRenderContextListener(com.nextbreakpoint.nextfractal.core.util.RenderContextListener)
 	 */
 	public void removeRenderContextListener(RenderContextListener listener) {
 		synchronized (contextListeners) {
@@ -261,7 +261,7 @@ public class NextFractalApp extends Application {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.RenderContext#startRenderers()
+	 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#startRenderers()
 	 */
 	public void startRenderers() {
 		synchronized (contextListeners) {
@@ -275,7 +275,7 @@ public class NextFractalApp extends Application {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.RenderContext#stopRenderers()
+	 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#stopRenderers()
 	 */
 	public void stopRenderers() {
 		synchronized (contextListeners) {
@@ -414,7 +414,7 @@ public class NextFractalApp extends Application {
 	
 	private class DefaultRenderContext implements RenderContext {
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.RenderContext#startRenderers()
+		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#startRenderers()
 		 */
 		@Override
 		public void startRenderers() {
@@ -422,7 +422,7 @@ public class NextFractalApp extends Application {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.RenderContext#stopRenderers()
+		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#stopRenderers()
 		 */
 		@Override
 		public void stopRenderers() {
@@ -430,7 +430,7 @@ public class NextFractalApp extends Application {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.RenderContext#getImageSize()
+		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#getImageSize()
 		 */
 		@Override
 		public IntegerVector2D getImageSize() {
@@ -438,7 +438,7 @@ public class NextFractalApp extends Application {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.RenderContext#refresh()
+		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#refresh()
 		 */
 		@Override
 		public void refresh() {
@@ -446,7 +446,7 @@ public class NextFractalApp extends Application {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.RenderContext#acquire()
+		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#acquire()
 		 */
 		@Override
 		public void acquire() throws InterruptedException {
@@ -454,7 +454,7 @@ public class NextFractalApp extends Application {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.RenderContext#release()
+		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#release()
 		 */
 		@Override
 		public void release() {
@@ -462,7 +462,7 @@ public class NextFractalApp extends Application {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.RenderContext#addRenderContextListener(com.nextbreakpoint.nextfractal.core.RenderContextListener)
+		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#addRenderContextListener(com.nextbreakpoint.nextfractal.core.util.RenderContextListener)
 		 */
 		@Override
 		public void addRenderContextListener(RenderContextListener listener) {
@@ -470,7 +470,7 @@ public class NextFractalApp extends Application {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.RenderContext#removeRenderContextListener(com.nextbreakpoint.nextfractal.core.RenderContextListener)
+		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContext#removeRenderContextListener(com.nextbreakpoint.nextfractal.core.util.RenderContextListener)
 		 */
 		@Override
 		public void removeRenderContextListener(RenderContextListener listener) {

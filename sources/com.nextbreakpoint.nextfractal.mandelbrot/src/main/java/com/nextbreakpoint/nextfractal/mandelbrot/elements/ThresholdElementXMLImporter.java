@@ -25,14 +25,14 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.elements;
 
-import com.nextbreakpoint.nextfractal.core.runtime.ValueConfigElementXMLImporter;
+import com.nextbreakpoint.nextfractal.core.runtime.common.ValueConfigElementXMLImporter;
 
 /**
  * @author Andrea Medeghini
  */
 public class ThresholdElementXMLImporter extends ValueConfigElementXMLImporter<Double, ThresholdElement> {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.ValueConfigElementXMLImporter#createDefaultConfigElement()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.common.ValueConfigElementXMLImporter#createDefaultConfigElement()
 	 */
 	@Override
 	protected ThresholdElement createDefaultConfigElement() {
@@ -40,7 +40,7 @@ public class ThresholdElementXMLImporter extends ValueConfigElementXMLImporter<D
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.ValueConfigElementXMLImporter#parseValue(java.lang.String)
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.common.ValueConfigElementXMLImporter#parseValue(java.lang.String)
 	 */
 	@Override
 	protected Double parseValue(final String value) {

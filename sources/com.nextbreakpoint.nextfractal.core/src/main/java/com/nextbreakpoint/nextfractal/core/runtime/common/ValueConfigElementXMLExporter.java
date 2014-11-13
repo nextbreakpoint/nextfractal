@@ -23,12 +23,13 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.core.runtime;
+package com.nextbreakpoint.nextfractal.core.runtime.common;
 
 import java.io.Serializable;
 
 import org.w3c.dom.Element;
 
+import com.nextbreakpoint.nextfractal.core.runtime.ValueConfigElement;
 import com.nextbreakpoint.nextfractal.core.runtime.xml.XML;
 import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLExportException;
 import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLExporter;

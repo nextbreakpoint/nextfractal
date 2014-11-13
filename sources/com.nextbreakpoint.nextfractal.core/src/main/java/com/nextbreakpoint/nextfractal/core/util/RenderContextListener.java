@@ -23,33 +23,31 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.core;
-
-import com.nextbreakpoint.nextfractal.core.util.IntegerVector2D;
+package com.nextbreakpoint.nextfractal.core.util;
 
 /**
  * @author Andrea Medeghini
  */
-public interface RenderContext {
+public interface RenderContextListener {
 	/**
-	 * @throws InterruptedException
+	 * 
 	 */
-	public void acquire() throws InterruptedException;
+	public void startRenderer();
 
 	/**
 	 * 
 	 */
-	public void release();
+	public void stopRenderer();
 
 	/**
 	 * 
 	 */
-	public void stopRenderers();
+	public void joinRenderer();
 
 	/**
 	 * 
 	 */
-	public void startRenderers();
+	public void abortRenderer();
 
 	/**
 	 * 
@@ -57,17 +55,12 @@ public interface RenderContext {
 	public void refresh();
 
 	/**
-	 * @return
+	 * 
 	 */
-	public IntegerVector2D getImageSize();
+	public void drawImage();
 
 	/**
-	 * @param listener
+	 * @param isDynamic
 	 */
-	public void addRenderContextListener(RenderContextListener listener);
-
-	/**
-	 * @param listener
-	 */
-	public void removeRenderContextListener(RenderContextListener listener);
+	public void prepareImage(boolean isDynamic);
 }

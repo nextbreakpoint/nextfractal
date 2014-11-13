@@ -66,8 +66,6 @@ import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import com.nextbreakpoint.nextfractal.core.RenderContext;
-import com.nextbreakpoint.nextfractal.core.RenderContextListener;
 import com.nextbreakpoint.nextfractal.core.elements.ExtensionReferenceElement;
 import com.nextbreakpoint.nextfractal.core.runtime.ElementChangeEvent;
 import com.nextbreakpoint.nextfractal.core.runtime.ElementChangeListener;
@@ -90,6 +88,8 @@ import com.nextbreakpoint.nextfractal.core.ui.swing.util.GUIUtil;
 import com.nextbreakpoint.nextfractal.core.ui.swing.util.StackLayout;
 import com.nextbreakpoint.nextfractal.core.util.Color32bit;
 import com.nextbreakpoint.nextfractal.core.util.IntegerVector2D;
+import com.nextbreakpoint.nextfractal.core.util.RenderContext;
+import com.nextbreakpoint.nextfractal.core.util.RenderContextListener;
 import com.nextbreakpoint.nextfractal.core.util.Tile;
 import com.nextbreakpoint.nextfractal.twister.TwisterConfig;
 import com.nextbreakpoint.nextfractal.twister.TwisterRegistry;
@@ -114,7 +114,6 @@ import com.nextbreakpoint.nextfractal.twister.renderer.DefaultTwisterRenderer;
 import com.nextbreakpoint.nextfractal.twister.renderer.TwisterRenderer;
 import com.nextbreakpoint.nextfractal.twister.renderer.TwisterRenderingHints;
 import com.nextbreakpoint.nextfractal.twister.renderer.java2D.Java2DRenderFactory;
-import com.nextbreakpoint.nextfractal.twister.ui.swing.extensionPoints.view.DefaultViewRuntime;
 import com.nextbreakpoint.nextfractal.twister.ui.swing.extensionPoints.view.ViewExtensionRuntime;
 
 /**
@@ -154,7 +153,6 @@ public class TwisterConfigPanel extends ViewPanel {
 
 	@Override
 	public void dispose() {
-		config.getContext().setParentConfigContext(null);
 		if (refreshPreview != null) {
 			refreshPreview.stop();
 		}
@@ -3477,7 +3475,7 @@ public class TwisterConfigPanel extends ViewPanel {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.RenderContextListener#startRenderer()
+		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContextListener#startRenderer()
 		 */
 		@Override
 		public void startRenderer() {
@@ -3485,7 +3483,7 @@ public class TwisterConfigPanel extends ViewPanel {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.RenderContextListener#stopRenderer()
+		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContextListener#stopRenderer()
 		 */
 		@Override
 		public void stopRenderer() {
@@ -3493,7 +3491,7 @@ public class TwisterConfigPanel extends ViewPanel {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.RenderContextListener#joinRenderer()
+		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContextListener#joinRenderer()
 		 */
 		@Override
 		public void joinRenderer() {
@@ -3501,7 +3499,7 @@ public class TwisterConfigPanel extends ViewPanel {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.RenderContextListener#abortRenderer()
+		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContextListener#abortRenderer()
 		 */
 		@Override
 		public void abortRenderer() {
@@ -3509,7 +3507,7 @@ public class TwisterConfigPanel extends ViewPanel {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.RenderContextListener#refresh()
+		 * @see com.nextbreakpoint.nextfractal.core.util.RenderContextListener#refresh()
 		 */
 		@Override
 		public void refresh() {

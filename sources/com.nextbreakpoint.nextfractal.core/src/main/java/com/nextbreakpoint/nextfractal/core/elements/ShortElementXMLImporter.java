@@ -25,14 +25,14 @@
  */
 package com.nextbreakpoint.nextfractal.core.elements;
 
-import com.nextbreakpoint.nextfractal.core.runtime.ValueConfigElementXMLImporter;
+import com.nextbreakpoint.nextfractal.core.runtime.common.ValueConfigElementXMLImporter;
 
 /**
  * @author Andrea Medeghini
  */
 public class ShortElementXMLImporter extends ValueConfigElementXMLImporter<Short, ShortElement> {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.ValueConfigElementXMLImporter#parseValue(java.lang.String)
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.common.ValueConfigElementXMLImporter#parseValue(java.lang.String)
 	 */
 	@Override
 	protected Short parseValue(final String value) {
@@ -40,7 +40,7 @@ public class ShortElementXMLImporter extends ValueConfigElementXMLImporter<Short
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.ValueConfigElementXMLImporter#createDefaultConfigElement()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.common.ValueConfigElementXMLImporter#createDefaultConfigElement()
 	 */
 	@Override
 	protected ShortElement createDefaultConfigElement() {

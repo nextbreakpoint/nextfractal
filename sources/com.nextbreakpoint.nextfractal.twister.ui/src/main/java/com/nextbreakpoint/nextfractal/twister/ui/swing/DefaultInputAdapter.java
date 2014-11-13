@@ -28,10 +28,10 @@ package com.nextbreakpoint.nextfractal.twister.ui.swing;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
-import com.nextbreakpoint.nextfractal.core.RenderContext;
 import com.nextbreakpoint.nextfractal.core.runtime.extension.Extension;
 import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionConfig;
 import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionException;
+import com.nextbreakpoint.nextfractal.core.util.RenderContext;
 import com.nextbreakpoint.nextfractal.twister.TwisterConfig;
 import com.nextbreakpoint.nextfractal.twister.effect.EffectConfigElement;
 import com.nextbreakpoint.nextfractal.twister.extensionPoints.effect.EffectExtensionConfig;
@@ -44,7 +44,6 @@ import com.nextbreakpoint.nextfractal.twister.image.ImageConfigElement;
 import com.nextbreakpoint.nextfractal.twister.layer.GroupLayerConfigElement;
 import com.nextbreakpoint.nextfractal.twister.layer.ImageLayerConfigElement;
 import com.nextbreakpoint.nextfractal.twister.layerFilter.LayerFilterConfigElement;
-import com.nextbreakpoint.nextfractal.twister.ui.swing.extensionPoints.inputAdapter.DefaultInputAdapterRuntime;
 import com.nextbreakpoint.nextfractal.twister.ui.swing.extensionPoints.inputAdapter.InputAdapterExtensionRuntime;
 import com.nextbreakpoint.nextfractal.twister.util.AdapterContext;
 

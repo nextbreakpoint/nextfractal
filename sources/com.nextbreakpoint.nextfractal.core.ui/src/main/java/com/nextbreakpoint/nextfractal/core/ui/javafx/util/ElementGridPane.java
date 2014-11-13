@@ -98,7 +98,11 @@ public abstract class ElementGridPane<T extends Serializable> extends BorderPane
 	protected abstract T createElement();
 
 	protected abstract String getElementName(T element);
-	
+
+	protected T getElement(NodeObject nodeObject) {
+		return (T)nodeObject.getNodeValue().getValue();
+	}
+
 	private int getCellCount(double width, double size) {
 		return (int)Math.floor(width / (size + 10));
 	}
@@ -379,7 +383,7 @@ public abstract class ElementGridPane<T extends Serializable> extends BorderPane
 
 		public String getName() {
 			@SuppressWarnings("unchecked")
-			String name = getElementName((T)nodeObject.getNodeValue().getValue());
+			String name = getElementName(getElement(nodeObject));
 			if (name != null) {
 				Pattern pattern = Pattern.compile("([A-Z])[a-z ]*", 0);
 				Matcher matcher = pattern.matcher(name);

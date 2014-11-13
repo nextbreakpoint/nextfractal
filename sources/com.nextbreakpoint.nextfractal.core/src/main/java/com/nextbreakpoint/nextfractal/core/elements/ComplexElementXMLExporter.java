@@ -25,7 +25,7 @@
  */
 package com.nextbreakpoint.nextfractal.core.elements;
 
-import com.nextbreakpoint.nextfractal.core.runtime.ValueConfigElementXMLExporter;
+import com.nextbreakpoint.nextfractal.core.runtime.common.ValueConfigElementXMLExporter;
 import com.nextbreakpoint.nextfractal.core.util.DoubleVector2D;
 
 /**
@@ -33,7 +33,7 @@ import com.nextbreakpoint.nextfractal.core.util.DoubleVector2D;
  */
 public class ComplexElementXMLExporter extends ValueConfigElementXMLExporter<DoubleVector2D, ComplexElement> {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.ValueConfigElementXMLExporter#formatValue(java.io.Serializable)
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.common.ValueConfigElementXMLExporter#formatValue(java.io.Serializable)
 	 */
 	@Override
 	protected String formatValue(final DoubleVector2D value) {

@@ -31,8 +31,8 @@ import org.w3c.dom.Element;
 
 import com.nextbreakpoint.nextfractal.core.elements.LongElement;
 import com.nextbreakpoint.nextfractal.core.elements.LongElementXMLImporter;
+import com.nextbreakpoint.nextfractal.core.runtime.common.ActionXMLImporter;
 import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeAction;
-import com.nextbreakpoint.nextfractal.core.runtime.xml.ActionXMLImporter;
 import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLImportException;
 import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLImporter;
 

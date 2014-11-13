@@ -27,7 +27,7 @@ package com.nextbreakpoint.nextfractal.twister.elements;
 
 import java.util.StringTokenizer;
 
-import com.nextbreakpoint.nextfractal.core.runtime.ValueConfigElementXMLImporter;
+import com.nextbreakpoint.nextfractal.core.runtime.common.ValueConfigElementXMLImporter;
 import com.nextbreakpoint.nextfractal.core.util.DoubleVector4D;
 import com.nextbreakpoint.nextfractal.twister.util.Speed;
 
@@ -36,7 +36,7 @@ import com.nextbreakpoint.nextfractal.twister.util.Speed;
  */
 public class SpeedElementXMLImporter extends ValueConfigElementXMLImporter<Speed, SpeedElement> {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.ValueConfigElementXMLImporter#parseValue(java.lang.String)
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.common.ValueConfigElementXMLImporter#parseValue(java.lang.String)
 	 */
 	@Override
 	protected Speed parseValue(final String value) {
@@ -52,7 +52,7 @@ public class SpeedElementXMLImporter extends ValueConfigElementXMLImporter<Speed
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.ValueConfigElementXMLImporter#createDefaultConfigElement()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.common.ValueConfigElementXMLImporter#createDefaultConfigElement()
 	 */
 	@Override
 	protected SpeedElement createDefaultConfigElement() {

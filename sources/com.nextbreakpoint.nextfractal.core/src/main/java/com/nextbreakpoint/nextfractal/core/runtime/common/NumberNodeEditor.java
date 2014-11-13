@@ -23,44 +23,51 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.core;
+package com.nextbreakpoint.nextfractal.core.runtime.common;
+
+import com.nextbreakpoint.nextfractal.core.runtime.tree.AttributeNode;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeEditor;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeObject;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeValue;
 
 /**
  * @author Andrea Medeghini
  */
-public interface RenderContextListener {
+public abstract class NumberNodeEditor extends NodeEditor {
 	/**
-	 * 
+	 * @param node
 	 */
-	public void startRenderer();
+	public NumberNodeEditor(final AttributeNode node) {
+		super(node);
+	}
 
 	/**
-	 * 
+	 * @return
 	 */
-	public void stopRenderer();
+	public Number getNumberValue() {
+		return (Number) getNodeValue().getValue();
+	}
 
 	/**
-	 * 
+	 * @return
 	 */
-	public void joinRenderer();
+	public abstract Number getMinimum();
 
 	/**
-	 * 
+	 * @return
 	 */
-	public void abortRenderer();
+	public abstract Number getMaximum();
 
 	/**
-	 * 
+	 * @return
 	 */
-	public void refresh();
+	public abstract Number getStep();
 
 	/**
-	 * 
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NodeEditor#createChildNode(java.lang.Object)
 	 */
-	public void drawImage();
-
-	/**
-	 * @param isDynamic
-	 */
-	public void prepareImage(boolean isDynamic);
+	@Override
+	protected NodeObject createChildNode(final NodeValue<?> value) {
+		return null;
+	}
 }

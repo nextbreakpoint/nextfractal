@@ -23,13 +23,14 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.twister.ui.javafx.extensionPoints.inputAdapter;
+package com.nextbreakpoint.nextfractal.twister.ui.javafx;
 
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 
-import com.nextbreakpoint.nextfractal.core.RenderContext;
 import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionConfig;
+import com.nextbreakpoint.nextfractal.core.util.RenderContext;
+import com.nextbreakpoint.nextfractal.twister.ui.javafx.extensionPoints.inputAdapter.InputAdapterExtensionRuntime;
 import com.nextbreakpoint.nextfractal.twister.util.AdapterContext;
 import com.nextbreakpoint.nextfractal.twister.util.DefaultAdapterContext;
 
@@ -38,7 +39,7 @@ public class DefaultInputAdapterRuntime extends InputAdapterExtensionRuntime {
 	private RenderContext renderContext;
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.ui.swing.extensionPoints.inputAdapter.InputAdapterExtensionRuntime#init(com.nextbreakpoint.nextfractal.core.RenderContext, com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionConfig)
+	 * @see com.nextbreakpoint.nextfractal.twister.ui.swing.extensionPoints.inputAdapter.InputAdapterExtensionRuntime#init(com.nextbreakpoint.nextfractal.core.util.RenderContext, com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionConfig)
 	 */
 	@Override
 	public void init(final RenderContext renderContext, final ExtensionConfig config) {

@@ -59,12 +59,4 @@ public class DefaultConfigContext implements ConfigContext {
 			context.updateTimestamp();
 		}
 	}
-
-	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.ConfigContext#setParentConfigContext(com.nextbreakpoint.nextfractal.core.runtime.ConfigContext)
-	 */
-	@Override
-	public void setParentConfigContext(final ConfigContext context) {
-		this.context = context;
-	}
 }

@@ -25,7 +25,7 @@
  */
 package com.nextbreakpoint.nextfractal.core.elements;
 
-import com.nextbreakpoint.nextfractal.core.runtime.ValueConfigElementXMLImporter;
+import com.nextbreakpoint.nextfractal.core.runtime.common.ValueConfigElementXMLImporter;
 import com.nextbreakpoint.nextfractal.core.util.DoubleVector2D;
 
 /**
@@ -33,7 +33,7 @@ import com.nextbreakpoint.nextfractal.core.util.DoubleVector2D;
  */
 public class ComplexElementXMLImporter extends ValueConfigElementXMLImporter<DoubleVector2D, ComplexElement> {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.ValueConfigElementXMLImporter#parseValue(java.lang.String)
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.common.ValueConfigElementXMLImporter#parseValue(java.lang.String)
 	 */
 	@Override
 	protected DoubleVector2D parseValue(final String value) {
@@ -41,7 +41,7 @@ public class ComplexElementXMLImporter extends ValueConfigElementXMLImporter<Dou
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.ValueConfigElementXMLImporter#createDefaultConfigElement()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.common.ValueConfigElementXMLImporter#createDefaultConfigElement()
 	 */
 	@Override
 	protected ComplexElement createDefaultConfigElement() {

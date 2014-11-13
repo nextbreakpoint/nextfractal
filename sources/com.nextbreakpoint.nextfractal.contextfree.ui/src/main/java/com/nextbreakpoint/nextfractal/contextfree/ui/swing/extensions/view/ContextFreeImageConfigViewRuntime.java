@@ -27,10 +27,10 @@ package com.nextbreakpoint.nextfractal.contextfree.ui.swing.extensions.view;
 
 import com.nextbreakpoint.nextfractal.contextfree.extensions.image.ContextFreeImageConfig;
 import com.nextbreakpoint.nextfractal.contextfree.ui.swing.ContextFreeConfigPanel;
-import com.nextbreakpoint.nextfractal.core.RenderContext;
 import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionConfig;
 import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeSession;
 import com.nextbreakpoint.nextfractal.core.ui.swing.ViewContext;
+import com.nextbreakpoint.nextfractal.core.util.RenderContext;
 import com.nextbreakpoint.nextfractal.twister.ui.swing.ViewPanel;
 import com.nextbreakpoint.nextfractal.twister.ui.swing.extensionPoints.view.ViewExtensionRuntime;
 
@@ -39,7 +39,7 @@ import com.nextbreakpoint.nextfractal.twister.ui.swing.extensionPoints.view.View
  */
 public class ContextFreeImageConfigViewRuntime extends ViewExtensionRuntime {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.ui.swing.extensionPoints.view.ViewExtensionRuntime#createView(com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionConfig, com.nextbreakpoint.nextfractal.core.ui.swing.ViewContext, com.nextbreakpoint.nextfractal.core.RenderContext, com.nextbreakpoint.nextfractal.core.runtime.tree.NodeSession)
+	 * @see com.nextbreakpoint.nextfractal.twister.ui.swing.extensionPoints.view.ViewExtensionRuntime#createView(com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionConfig, com.nextbreakpoint.nextfractal.core.ui.swing.ViewContext, com.nextbreakpoint.nextfractal.core.util.RenderContext, com.nextbreakpoint.nextfractal.core.runtime.tree.NodeSession)
 	 */
 	@Override
 	public ViewPanel createView(final ExtensionConfig config, final ViewContext viewContext, final RenderContext context, final NodeSession session) {

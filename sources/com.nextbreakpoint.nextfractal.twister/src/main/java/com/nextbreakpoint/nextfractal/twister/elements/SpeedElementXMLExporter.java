@@ -25,7 +25,7 @@
  */
 package com.nextbreakpoint.nextfractal.twister.elements;
 
-import com.nextbreakpoint.nextfractal.core.runtime.ValueConfigElementXMLExporter;
+import com.nextbreakpoint.nextfractal.core.runtime.common.ValueConfigElementXMLExporter;
 import com.nextbreakpoint.nextfractal.twister.util.Speed;
 
 /**
@@ -33,7 +33,7 @@ import com.nextbreakpoint.nextfractal.twister.util.Speed;
  */
 public class SpeedElementXMLExporter extends ValueConfigElementXMLExporter<Speed, SpeedElement> {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.ValueConfigElementXMLExporter#formatValue(java.io.Serializable)
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.common.ValueConfigElementXMLExporter#formatValue(java.io.Serializable)
 	 */
 	@Override
 	protected String formatValue(final Speed value) {

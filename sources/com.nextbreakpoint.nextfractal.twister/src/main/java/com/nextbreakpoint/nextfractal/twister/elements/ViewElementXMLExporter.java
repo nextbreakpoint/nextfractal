@@ -25,7 +25,7 @@
  */
 package com.nextbreakpoint.nextfractal.twister.elements;
 
-import com.nextbreakpoint.nextfractal.core.runtime.ValueConfigElementXMLExporter;
+import com.nextbreakpoint.nextfractal.core.runtime.common.ValueConfigElementXMLExporter;
 import com.nextbreakpoint.nextfractal.twister.util.View;
 
 /**

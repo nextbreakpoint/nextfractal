@@ -27,14 +27,14 @@ package com.nextbreakpoint.nextfractal.core.elements;
 
 import java.awt.Font;
 
-import com.nextbreakpoint.nextfractal.core.runtime.ValueConfigElementXMLExporter;
+import com.nextbreakpoint.nextfractal.core.runtime.common.ValueConfigElementXMLExporter;
 
 /**
  * @author Andrea Medeghini
  */
 public class FontElementXMLExporter extends ValueConfigElementXMLExporter<Font, FontElement> {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.ValueConfigElementXMLExporter#formatValue(java.io.Serializable)
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.common.ValueConfigElementXMLExporter#formatValue(java.io.Serializable)
 	 */
 	@Override
 	protected String formatValue(final Font value) {

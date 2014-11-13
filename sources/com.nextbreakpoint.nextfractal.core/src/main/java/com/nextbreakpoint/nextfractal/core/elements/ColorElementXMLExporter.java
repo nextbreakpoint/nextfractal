@@ -25,7 +25,7 @@
  */
 package com.nextbreakpoint.nextfractal.core.elements;
 
-import com.nextbreakpoint.nextfractal.core.runtime.ValueConfigElementXMLExporter;
+import com.nextbreakpoint.nextfractal.core.runtime.common.ValueConfigElementXMLExporter;
 import com.nextbreakpoint.nextfractal.core.util.Color32bit;
 
 /**
@@ -33,7 +33,7 @@ import com.nextbreakpoint.nextfractal.core.util.Color32bit;
  */
 public class ColorElementXMLExporter extends ValueConfigElementXMLExporter<Color32bit, ColorElement> {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.ValueConfigElementXMLExporter#formatValue(java.io.Serializable)
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.common.ValueConfigElementXMLExporter#formatValue(java.io.Serializable)
 	 */
 	@Override
 	protected String formatValue(final Color32bit value) {

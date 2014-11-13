@@ -28,13 +28,13 @@ package com.nextbreakpoint.nextfractal.mandelbrot.elements;
 import com.nextbreakpoint.nextfractal.core.runtime.ElementChangeEvent;
 import com.nextbreakpoint.nextfractal.core.runtime.ElementChangeListener;
 import com.nextbreakpoint.nextfractal.core.runtime.ValueConfigElement;
+import com.nextbreakpoint.nextfractal.core.runtime.common.NumberNodeEditor;
 import com.nextbreakpoint.nextfractal.core.runtime.tree.AttributeNode;
 import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeAction;
 import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeEditor;
 import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeObject;
 import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeSession;
 import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeValue;
-import com.nextbreakpoint.nextfractal.core.runtime.tree.NumberNodeEditor;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotResources;
 
 /**
@@ -136,7 +136,7 @@ public class ThresholdElementNode extends AttributeNode {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NumberNodeEditor#getMaximum()
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.common.NumberNodeEditor#getMaximum()
 		 */
 		@Override
 		public Double getMaximum() {
@@ -144,7 +144,7 @@ public class ThresholdElementNode extends AttributeNode {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NumberNodeEditor#getMinimum()
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.common.NumberNodeEditor#getMinimum()
 		 */
 		@Override
 		public Double getMinimum() {
@@ -152,7 +152,7 @@ public class ThresholdElementNode extends AttributeNode {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.runtime.tree.NumberNodeEditor#getStep()
+		 * @see com.nextbreakpoint.nextfractal.core.runtime.common.NumberNodeEditor#getStep()
 		 */
 		@Override
 		public Number getStep() {

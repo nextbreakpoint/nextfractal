@@ -27,7 +27,7 @@ package com.nextbreakpoint.nextfractal.twister.elements;
 
 import java.util.StringTokenizer;
 
-import com.nextbreakpoint.nextfractal.core.runtime.ValueConfigElementXMLImporter;
+import com.nextbreakpoint.nextfractal.core.runtime.common.ValueConfigElementXMLImporter;
 import com.nextbreakpoint.nextfractal.core.util.DoubleVector4D;
 import com.nextbreakpoint.nextfractal.core.util.IntegerVector4D;
 import com.nextbreakpoint.nextfractal.twister.util.View;
@@ -37,7 +37,7 @@ import com.nextbreakpoint.nextfractal.twister.util.View;
  */
 public class ViewElementXMLImporter extends ValueConfigElementXMLImporter<View, ViewElement> {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.ValueConfigElementXMLImporter#parseValue(java.lang.String)
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.common.ValueConfigElementXMLImporter#parseValue(java.lang.String)
 	 */
 	@Override
 	protected View parseValue(final String value) {
@@ -56,7 +56,7 @@ public class ViewElementXMLImporter extends ValueConfigElementXMLImporter<View, 
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.ValueConfigElementXMLImporter#createDefaultConfigElement()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.common.ValueConfigElementXMLImporter#createDefaultConfigElement()
 	 */
 	@Override
 	protected ViewElement createDefaultConfigElement() {

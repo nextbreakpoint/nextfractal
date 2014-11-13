@@ -23,32 +23,35 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.core.runtime.xml;
+package com.nextbreakpoint.nextfractal.core.runtime.common;
 
 import org.w3c.dom.Element;
 
 import com.nextbreakpoint.nextfractal.core.CoreRegistry;
-import com.nextbreakpoint.nextfractal.core.extensionPoints.actionXMLExporter.ActionXMLExporterExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.extensionPoints.actionXMLImporter.ActionXMLImporterExtensionRuntime;
 import com.nextbreakpoint.nextfractal.core.runtime.extension.Extension;
 import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionException;
 import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeActionValue;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLImportException;
+import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLImporter;
 
 /**
  * @author Andrea Medeghini
  */
-public class ActionXMLExporter extends XMLExporter<NodeActionValue> {
+public class ActionXMLImporter extends XMLImporter<NodeActionValue> {
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.xml.XMLExporter#exportToElement(java.lang.Object, com.nextbreakpoint.nextfractal.core.runtime.xml.XMLNodeBuilder)
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.xml.XMLImporter#importFromElement(org.w3c.dom.Element)
 	 */
 	@Override
-	public Element exportToElement(final NodeActionValue action, final XMLNodeBuilder builder) throws XMLExportException {
+	public NodeActionValue importFromElement(final Element element) throws XMLImportException {
+		checkClassId(element, "action");
 		try {
-			final Extension<ActionXMLExporterExtensionRuntime> extension = CoreRegistry.getInstance().getXMLActionExporterExtension(action.getActionId());
-			final XMLExporter<NodeActionValue> exporter = extension.createExtensionRuntime().createXMLExporter();
-			return exporter.exportToElement(action, builder);
+			final Extension<ActionXMLImporterExtensionRuntime> extension = CoreRegistry.getInstance().getXMLActionImporterExtension(getExtensionId(element));
+			final XMLImporter<NodeActionValue> importer = extension.createExtensionRuntime().createXMLImporter();
+			return importer.importFromElement(element);
 		}
 		catch (final ExtensionException e) {
-			throw new XMLExportException(e);
+			throw new XMLImportException(e);
 		}
 	}
 }

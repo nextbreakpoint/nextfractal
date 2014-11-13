@@ -28,7 +28,7 @@ package com.nextbreakpoint.nextfractal.twister.ui.swing.extensions.inputAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
-import com.nextbreakpoint.nextfractal.twister.ui.swing.extensionPoints.inputAdapter.DefaultInputAdapterRuntime;
+import com.nextbreakpoint.nextfractal.twister.ui.swing.DefaultInputAdapterRuntime;
 
 /**
  * @author Andrea Medeghini
@@ -41,77 +41,77 @@ public class MotionBlurInputAdapterRuntime extends DefaultInputAdapterRuntime {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.ui.swing.extensionPoints.inputAdapter.DefaultInputAdapterRuntime#refresh()
+	 * @see com.nextbreakpoint.nextfractal.twister.ui.swing.DefaultInputAdapterRuntime#refresh()
 	 */
 	@Override
 	public void refresh() {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.ui.swing.extensionPoints.inputAdapter.DefaultInputAdapterRuntime#processKeyPressed(java.awt.event.KeyEvent)
+	 * @see com.nextbreakpoint.nextfractal.twister.ui.swing.DefaultInputAdapterRuntime#processKeyPressed(java.awt.event.KeyEvent)
 	 */
 	@Override
 	public void processKeyPressed(final KeyEvent e) {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.ui.swing.extensionPoints.inputAdapter.DefaultInputAdapterRuntime#processKeyReleased(java.awt.event.KeyEvent)
+	 * @see com.nextbreakpoint.nextfractal.twister.ui.swing.DefaultInputAdapterRuntime#processKeyReleased(java.awt.event.KeyEvent)
 	 */
 	@Override
 	public void processKeyReleased(final KeyEvent e) {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.ui.swing.extensionPoints.inputAdapter.DefaultInputAdapterRuntime#processKeyTyped(java.awt.event.KeyEvent)
+	 * @see com.nextbreakpoint.nextfractal.twister.ui.swing.DefaultInputAdapterRuntime#processKeyTyped(java.awt.event.KeyEvent)
 	 */
 	@Override
 	public void processKeyTyped(final KeyEvent e) {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.ui.swing.extensionPoints.inputAdapter.DefaultInputAdapterRuntime#processMouseClicked(java.awt.event.MouseEvent)
+	 * @see com.nextbreakpoint.nextfractal.twister.ui.swing.DefaultInputAdapterRuntime#processMouseClicked(java.awt.event.MouseEvent)
 	 */
 	@Override
 	public void processMouseClicked(final MouseEvent e) {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.ui.swing.extensionPoints.inputAdapter.DefaultInputAdapterRuntime#processMouseDragged(java.awt.event.MouseEvent)
+	 * @see com.nextbreakpoint.nextfractal.twister.ui.swing.DefaultInputAdapterRuntime#processMouseDragged(java.awt.event.MouseEvent)
 	 */
 	@Override
 	public void processMouseDragged(final MouseEvent e) {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.ui.swing.extensionPoints.inputAdapter.DefaultInputAdapterRuntime#processMouseEntered(java.awt.event.MouseEvent)
+	 * @see com.nextbreakpoint.nextfractal.twister.ui.swing.DefaultInputAdapterRuntime#processMouseEntered(java.awt.event.MouseEvent)
 	 */
 	@Override
 	public void processMouseEntered(final MouseEvent e) {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.ui.swing.extensionPoints.inputAdapter.DefaultInputAdapterRuntime#processMouseExited(java.awt.event.MouseEvent)
+	 * @see com.nextbreakpoint.nextfractal.twister.ui.swing.DefaultInputAdapterRuntime#processMouseExited(java.awt.event.MouseEvent)
 	 */
 	@Override
 	public void processMouseExited(final MouseEvent e) {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.ui.swing.extensionPoints.inputAdapter.DefaultInputAdapterRuntime#processMouseMoved(java.awt.event.MouseEvent)
+	 * @see com.nextbreakpoint.nextfractal.twister.ui.swing.DefaultInputAdapterRuntime#processMouseMoved(java.awt.event.MouseEvent)
 	 */
 	@Override
 	public void processMouseMoved(final MouseEvent e) {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.ui.swing.extensionPoints.inputAdapter.DefaultInputAdapterRuntime#processMousePressed(java.awt.event.MouseEvent)
+	 * @see com.nextbreakpoint.nextfractal.twister.ui.swing.DefaultInputAdapterRuntime#processMousePressed(java.awt.event.MouseEvent)
 	 */
 	@Override
 	public void processMousePressed(final MouseEvent e) {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.twister.ui.swing.extensionPoints.inputAdapter.DefaultInputAdapterRuntime#processMouseReleased(java.awt.event.MouseEvent)
+	 * @see com.nextbreakpoint.nextfractal.twister.ui.swing.DefaultInputAdapterRuntime#processMouseReleased(java.awt.event.MouseEvent)
 	 */
 	@Override
 	public void processMouseReleased(final MouseEvent e) {

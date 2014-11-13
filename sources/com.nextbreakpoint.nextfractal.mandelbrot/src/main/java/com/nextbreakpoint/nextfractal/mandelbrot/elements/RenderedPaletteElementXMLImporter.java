@@ -33,7 +33,7 @@ import com.nextbreakpoint.nextfractal.core.elements.ColorElement;
 import com.nextbreakpoint.nextfractal.core.elements.ColorElementXMLImporter;
 import com.nextbreakpoint.nextfractal.core.elements.DoubleElement;
 import com.nextbreakpoint.nextfractal.core.elements.DoubleElementXMLImporter;
-import com.nextbreakpoint.nextfractal.core.runtime.ValueConfigElementXMLImporter;
+import com.nextbreakpoint.nextfractal.core.runtime.common.ValueConfigElementXMLImporter;
 import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionReference;
 import com.nextbreakpoint.nextfractal.core.runtime.xml.XMLImportException;
 import com.nextbreakpoint.nextfractal.mandelbrot.paletteRendererFormula.PaletteRendererFormulaConfigElement;
@@ -143,7 +143,7 @@ public class RenderedPaletteElementXMLImporter extends ValueConfigElementXMLImpo
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.ValueConfigElementXMLImporter#createDefaultConfigElement()
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.common.ValueConfigElementXMLImporter#createDefaultConfigElement()
 	 */
 	@Override
 	protected RenderedPaletteElement createDefaultConfigElement() {
@@ -151,7 +151,7 @@ public class RenderedPaletteElementXMLImporter extends ValueConfigElementXMLImpo
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.runtime.ValueConfigElementXMLImporter#parseValue(java.lang.String)
+	 * @see com.nextbreakpoint.nextfractal.core.runtime.common.ValueConfigElementXMLImporter#parseValue(java.lang.String)
 	 */
 	@Override
 	protected RenderedPalette parseValue(final String value) {

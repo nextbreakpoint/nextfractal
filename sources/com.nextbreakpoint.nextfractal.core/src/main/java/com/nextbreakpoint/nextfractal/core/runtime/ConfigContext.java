@@ -42,11 +42,4 @@ public interface ConfigContext {
 	 * Updates the timestamp.
 	 */
 	public void updateTimestamp();
-
-	/**
-	 * Sets the parent context.
-	 * 
-	 * @param context the parent context.
-	 */
-	public void setParentConfigContext(ConfigContext context);
 }
