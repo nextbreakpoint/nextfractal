@@ -15,13 +15,13 @@ import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 
-import com.nextbreakpoint.nextfractal.core.elements.ConfigurableExtensionReferenceElement;
 import com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtension;
 import com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtensionReference;
 import com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtensionRegistry;
 import com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtensionRuntime;
 import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionConfig;
 import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionException;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeObject;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.Disposable;
 
 public class ConfigurableExtensionGridPane<T extends ConfigurableExtensionRuntime<? extends V>, V extends ExtensionConfig> extends BorderPane implements Disposable {
@@ -31,7 +31,7 @@ public class ConfigurableExtensionGridPane<T extends ConfigurableExtensionRuntim
 	private int cellsPerRow = 3;
 	private double cellSize = 0;
 
-	public ConfigurableExtensionGridPane(ConfigurableExtensionReferenceElement<? extends V> extensionElement, ConfigurableExtensionRegistry<T, V> registry, Dimension2D size) {
+	public ConfigurableExtensionGridPane(NodeObject nodeObject, ConfigurableExtensionRegistry<T, V> registry, Dimension2D size) {
 		// TODO Auto-generated constructor stub
 		getStyleClass().add("extension-grid-pane");
 		setWidth(size.getWidth());

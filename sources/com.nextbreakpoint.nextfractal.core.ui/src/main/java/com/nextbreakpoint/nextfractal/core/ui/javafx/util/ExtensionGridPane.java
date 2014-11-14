@@ -4,15 +4,15 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.layout.Pane;
 
-import com.nextbreakpoint.nextfractal.core.elements.ExtensionReferenceElement;
 import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionRegistry;
 import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeObject;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.Disposable;
 
 public class ExtensionGridPane<T extends ExtensionRuntime> extends Pane implements Disposable {
 	private EventHandler<ActionEvent> onAction;
 
-	public ExtensionGridPane(ExtensionReferenceElement extensionElement, ExtensionRegistry<T> registry) {
+	public ExtensionGridPane(NodeObject nodeObject, ExtensionRegistry<T> registry) {
 		// TODO Auto-generated constructor stub
 	}
 
