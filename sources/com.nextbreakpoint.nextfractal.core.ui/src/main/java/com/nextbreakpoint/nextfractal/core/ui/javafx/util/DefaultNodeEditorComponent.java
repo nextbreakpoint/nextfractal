@@ -46,8 +46,8 @@ public class DefaultNodeEditorComponent extends AnchorPane {
 		Label label = new Label(node.getNodeLabel());
 		Button edit = new Button(CoreUIResources.getInstance().getString("action.edit"));
 		edit.setOnAction(e -> { 
-			DefaultView view = new DefaultView(viewContext, context, node);
-			viewContext.showConfigView(view); 
+//			DefaultView view = new DefaultView(viewContext, context, node);
+//			viewContext.showConfigView(view); 
 		});
 		AnchorPane.setLeftAnchor(label, 0.0);
 		AnchorPane.setRightAnchor(edit, 0.0);

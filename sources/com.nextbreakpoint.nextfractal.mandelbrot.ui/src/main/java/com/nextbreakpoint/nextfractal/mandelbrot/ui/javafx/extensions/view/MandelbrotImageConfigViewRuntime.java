@@ -41,8 +41,6 @@ import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeSession;
 import com.nextbreakpoint.nextfractal.core.runtime.tree.RootNode;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.ViewContext;
 import com.nextbreakpoint.nextfractal.core.util.RenderContext;
-import com.nextbreakpoint.nextfractal.mandelbrot.extensions.image.MandelbrotImageConfig;
-import com.nextbreakpoint.nextfractal.mandelbrot.fractal.MandelbrotFractalConfigElementNode;
 import com.nextbreakpoint.nextfractal.mandelbrot.ui.javafx.MandelbrotConfigView;
 import com.nextbreakpoint.nextfractal.mandelbrot.ui.javafx.MandelbrotEditorView;
 import com.nextbreakpoint.nextfractal.twister.ui.javafx.extensionPoints.view.ViewExtensionRuntime;
@@ -65,11 +63,10 @@ public class MandelbrotImageConfigViewRuntime extends ViewExtensionRuntime {
 			nodeBuilder.createNodes(rootNode);
 			rootNode.setContext(config.getContext());
 			rootNode.setSession(session);
-			NodeObject mandelbrotFractalNode = rootNode.getChildNodeByClass(MandelbrotFractalConfigElementNode.NODE_CLASS);
-			return new MandelbrotConfigView(viewContext, context, mandelbrotFractalNode);
+			return new MandelbrotConfigView(viewContext, context, rootNode);
 		} catch (ExtensionException x) {
 			if (MandelbrotImageConfigViewRuntime.logger.isLoggable(Level.WARNING)) {
-				MandelbrotImageConfigViewRuntime.logger.log(Level.WARNING, "Can't create view for " + config.getExtensionId(), x);
+				MandelbrotImageConfigViewRuntime.logger.log(Level.WARNING, "Can't create config view for " + config.getExtensionId(), x);
 			}
 		}
 		return null;
@@ -80,6 +77,19 @@ public class MandelbrotImageConfigViewRuntime extends ViewExtensionRuntime {
 	 */
 	@Override
 	public Pane createEditorView(final ExtensionConfig config, final ViewContext viewContext, final RenderContext context, final NodeSession session) {
-		return new MandelbrotEditorView(((MandelbrotImageConfig) config).getMandelbrotConfig(), viewContext, context, session);
+		try {
+			final Extension<NodeBuilderExtensionRuntime> extension = CoreRegistry.getInstance().getNodeBuilderExtension(config.getExtensionId());
+			final NodeBuilder nodeBuilder = extension.createExtensionRuntime().createNodeBuilder(config);
+			NodeObject rootNode = new RootNode("root", extension.getExtensionName());
+			nodeBuilder.createNodes(rootNode);
+			rootNode.setContext(config.getContext());
+			rootNode.setSession(session);
+			return new MandelbrotEditorView(viewContext, context, rootNode);
+		} catch (ExtensionException x) {
+			if (MandelbrotImageConfigViewRuntime.logger.isLoggable(Level.WARNING)) {
+				MandelbrotImageConfigViewRuntime.logger.log(Level.WARNING, "Can't create editor view for " + config.getExtensionId(), x);
+			}
+		}
+		return null;
 	}
 }

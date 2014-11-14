@@ -6,14 +6,15 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 
-import com.nextbreakpoint.nextfractal.core.elements.ExtensionReferenceElement;
 import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionConfig;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionReference;
+import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeObject;
 
 public class ExtensionPane<T extends ExtensionConfig> extends BorderPane {
 	private EventHandler<ActionEvent> onAction;
 	
-	public ExtensionPane(ExtensionReferenceElement element) {
-		Label label = new Label(getExtensionName(element));
+	public ExtensionPane(NodeObject nodeObject) {
+		Label label = new Label(getExtensionName((ExtensionReference)nodeObject.getNodeValue().getValue()));
 		Button button = new Button("?");
 		button.setOnAction(e -> {
 			if (onAction != null) {
@@ -23,14 +24,14 @@ public class ExtensionPane<T extends ExtensionConfig> extends BorderPane {
 		setLeft(label);
 		setRight(button);
 		getStyleClass().add("extension-pane");
-		element.addChangeListener(e -> {
-			label.setText(getExtensionName(element));
-		});
+//		element.addChangeListener(e -> {
+//			label.setText(getExtensionName(element));
+//		});
 	}
 
-	protected String getExtensionName(ExtensionReferenceElement element) {
-		if (element.getReference() != null) {
-			return element.getReference().getExtensionName();
+	protected String getExtensionName(ExtensionReference reference) {
+		if (reference != null) {
+			return reference.getExtensionName();
 		}
 		return "?";
 	}

@@ -17,9 +17,10 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 
 import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeObject;
+import com.nextbreakpoint.nextfractal.core.ui.javafx.Disposable;
 
-public abstract class ElementGridPane<T extends Serializable> extends BorderPane {
-	private ElementGridDelegate delegate;
+public abstract class ElementGridPane<T extends Serializable> extends BorderPane implements Disposable {
+	private SelectionDelegate<NodeObject> delegate;
 	private Pane container = new Pane();
 	private GridGroup sentinelGroup;
 	private NodeObject listNode;
@@ -53,11 +54,17 @@ public abstract class ElementGridPane<T extends Serializable> extends BorderPane
 		doLayout();
 	}
 
-	public ElementGridDelegate getDelegate() {
+	@Override
+	public void dispose() {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	public SelectionDelegate<NodeObject> getDelegate() {
 		return delegate;
 	}
 
-	public void setDelegate(ElementGridDelegate delegate) {
+	public void setDelegate(SelectionDelegate<NodeObject> delegate) {
 		this.delegate = delegate;
 	}
 
