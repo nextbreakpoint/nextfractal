@@ -7,9 +7,8 @@ import javafx.scene.layout.Pane;
 import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionRegistry;
 import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionRuntime;
 import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeObject;
-import com.nextbreakpoint.nextfractal.core.ui.javafx.Disposable;
 
-public class ExtensionGridPane<T extends ExtensionRuntime> extends Pane implements Disposable {
+public class ExtensionGridPane<T extends ExtensionRuntime> extends Pane {
 	private EventHandler<ActionEvent> onAction;
 
 	public ExtensionGridPane(NodeObject nodeObject, ExtensionRegistry<T> registry) {
@@ -22,11 +21,5 @@ public class ExtensionGridPane<T extends ExtensionRuntime> extends Pane implemen
 
 	public void setOnAction(EventHandler<ActionEvent> onAction) {
 		this.onAction = onAction;
-	}
-
-	@Override
-	public void dispose() {
-		// TODO Auto-generated method stub
-		
 	}
 }

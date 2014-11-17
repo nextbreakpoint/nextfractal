@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javafx.geometry.Dimension2D;
-import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -64,14 +63,13 @@ public class MandelbrotConfigView extends Pane implements Disposable {
 			disposable.dispose();
 		}
 		disposables.clear();
-		getChildren().clear();
 	}
 	
 	private NodeObject getChildNode(NodeObject nodeObject, String nodeId) {
 		return nodeObject.getChildNodeById(nodeId);
 	}
 
-	public class IncolouringFormulaGridItems extends ElementGridPane<IncolouringFormulaConfigElement> {
+	public class IncolouringFormulaGridItems extends ElementGridPane<IncolouringFormulaConfigElement> implements Disposable {
 		public IncolouringFormulaGridItems(ViewContext viewContext, NodeObject listNode) {
 			super(listNode, new Dimension2D(viewContext.getConfigViewSize().getWidth(), 50));
 			disposables.add(this);
@@ -91,11 +89,10 @@ public class MandelbrotConfigView extends Pane implements Disposable {
 		
 		public void dispose() {
 			disposables.remove(this);
-			super.dispose();
 		}
 	}
 
-	public class OutcolouringFormulaGridItems extends ElementGridPane<OutcolouringFormulaConfigElement> {
+	public class OutcolouringFormulaGridItems extends ElementGridPane<OutcolouringFormulaConfigElement> implements Disposable {
 		public OutcolouringFormulaGridItems(ViewContext viewContext, NodeObject listNode) {
 			super(listNode, new Dimension2D(viewContext.getConfigViewSize().getWidth(), 50));
 			disposables.add(this);
@@ -115,7 +112,6 @@ public class MandelbrotConfigView extends Pane implements Disposable {
 		
 		public void dispose() {
 			disposables.remove(this);
-			super.dispose();
 		}
 	}
 
@@ -167,12 +163,6 @@ public class MandelbrotConfigView extends Pane implements Disposable {
 				task.run();
 			}
 			tasks.clear();
-			for (Node node : getChildren()) {
-				if (node instanceof Disposable) {
-					((Disposable)node).dispose();
-				}
-			}
-			getChildren().clear();
 		}
 		
 		public class IncolouringFormulaExtensionGridPane extends ConfigurableExtensionGridPane<IncolouringFormulaExtensionRuntime<? extends IncolouringFormulaExtensionConfig>, IncolouringFormulaExtensionConfig> implements Disposable {
@@ -185,7 +175,6 @@ public class MandelbrotConfigView extends Pane implements Disposable {
 			@Override
 			public void dispose() {
 				tasks.remove(this);
-				super.dispose();
 			}
 		}
 	}
@@ -238,12 +227,6 @@ public class MandelbrotConfigView extends Pane implements Disposable {
 				task.run();
 			}
 			tasks.clear();
-			for (Node node : getChildren()) {
-				if (node instanceof Disposable) {
-					((Disposable)node).dispose();
-				}
-			}
-			getChildren().clear();
 		}
 		
 		public class OutcolouringFormulaExtensionGridPane extends ConfigurableExtensionGridPane<OutcolouringFormulaExtensionRuntime<? extends OutcolouringFormulaExtensionConfig>, OutcolouringFormulaExtensionConfig> implements Disposable {
@@ -256,7 +239,6 @@ public class MandelbrotConfigView extends Pane implements Disposable {
 			@Override
 			public void dispose() {
 				tasks.remove(this);
-				super.dispose();
 			}
 		}
 	}

@@ -22,9 +22,8 @@ import com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtensi
 import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionConfig;
 import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionException;
 import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeObject;
-import com.nextbreakpoint.nextfractal.core.ui.javafx.Disposable;
 
-public class ConfigurableExtensionGridPane<T extends ConfigurableExtensionRuntime<? extends V>, V extends ExtensionConfig> extends BorderPane implements Disposable {
+public class ConfigurableExtensionGridPane<T extends ConfigurableExtensionRuntime<? extends V>, V extends ExtensionConfig> extends BorderPane {
 	private static final Logger logger = Logger.getLogger(ConfigurableExtensionGridPane.class.getName());
 	private EventHandler<ActionEvent> onAction;
 	private Pane container = new Pane();
@@ -114,11 +113,5 @@ public class ConfigurableExtensionGridPane<T extends ConfigurableExtensionRuntim
 		public ConfigurableExtensionReference<V> getReference() {
 			return reference;
 		}
-	}
-
-	@Override
-	public void dispose() {
-		// TODO Auto-generated method stub
-		
 	}
 }
