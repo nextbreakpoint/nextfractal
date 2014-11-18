@@ -33,7 +33,7 @@ import com.nextbreakpoint.nextfractal.core.extensionPoints.enumerator.Enumerator
 import com.nextbreakpoint.nextfractal.core.runtime.extension.Extension;
 import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionNotFoundException;
 import com.nextbreakpoint.nextfractal.core.runtime.scripting.JSException;
-import com.nextbreakpoint.nextfractal.core.runtime.scripting.JSExtension;
+import com.nextbreakpoint.nextfractal.core.runtime.scripting.ExtensionWrapper;
 
 /**
  * @author Andrea Medeghini
@@ -56,9 +56,9 @@ public class EnumeratorEnumeratorRuntime extends EnumeratorExtensionRuntime {
 	 * @see com.nextbreakpoint.nextfractal.core.extensionPoints.enumerator.EnumeratorExtensionRuntime#getExtension(java.lang.String)
 	 */
 	@Override
-	public JSExtension getExtension(final String extensionId) throws JSException {
+	public ExtensionWrapper getExtension(final String extensionId) throws JSException {
 		try {
-			return new JSExtension(CoreRegistry.getInstance().getEnumeratorExtension(extensionId));
+			return new ExtensionWrapper(CoreRegistry.getInstance().getEnumeratorExtension(extensionId));
 		}
 		catch (ExtensionNotFoundException e) {
 			throw new JSException(e);

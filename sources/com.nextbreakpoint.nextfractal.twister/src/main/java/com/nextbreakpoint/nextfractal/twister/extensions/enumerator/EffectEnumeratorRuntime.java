@@ -32,7 +32,7 @@ import com.nextbreakpoint.nextfractal.core.extensionPoints.enumerator.Enumerator
 import com.nextbreakpoint.nextfractal.core.runtime.extension.Extension;
 import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionNotFoundException;
 import com.nextbreakpoint.nextfractal.core.runtime.scripting.JSException;
-import com.nextbreakpoint.nextfractal.core.runtime.scripting.JSExtension;
+import com.nextbreakpoint.nextfractal.core.runtime.scripting.ExtensionWrapper;
 import com.nextbreakpoint.nextfractal.twister.TwisterRegistry;
 import com.nextbreakpoint.nextfractal.twister.extensionPoints.effect.EffectExtensionRuntime;
 
@@ -57,9 +57,9 @@ public class EffectEnumeratorRuntime extends EnumeratorExtensionRuntime {
 	 * @see com.nextbreakpoint.nextfractal.core.extensionPoints.enumerator.EnumeratorExtensionRuntime#getExtension(java.lang.String)
 	 */
 	@Override
-	public JSExtension getExtension(final String extensionId) throws JSException {
+	public ExtensionWrapper getExtension(final String extensionId) throws JSException {
 		try {
-			return new JSExtension(TwisterRegistry.getInstance().getEffectExtension(extensionId));
+			return new ExtensionWrapper(TwisterRegistry.getInstance().getEffectExtension(extensionId));
 		}
 		catch (ExtensionNotFoundException e) {
 			throw new JSException(e);

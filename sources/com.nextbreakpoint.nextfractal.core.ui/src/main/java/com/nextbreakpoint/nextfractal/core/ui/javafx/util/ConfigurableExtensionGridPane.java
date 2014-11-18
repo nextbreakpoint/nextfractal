@@ -15,12 +15,14 @@ import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 
+import com.nextbreakpoint.nextfractal.core.CoreRegistry;
+import com.nextbreakpoint.nextfractal.core.extensionPoints.enumerator.EnumeratorExtensionRuntime;
 import com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtension;
 import com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtensionReference;
-import com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtensionRegistry;
 import com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtensionRuntime;
+import com.nextbreakpoint.nextfractal.core.runtime.extension.Extension;
 import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionConfig;
-import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionException;
+import com.nextbreakpoint.nextfractal.core.runtime.scripting.ExtensionWrapper;
 import com.nextbreakpoint.nextfractal.core.runtime.tree.NodeObject;
 
 public class ConfigurableExtensionGridPane<T extends ConfigurableExtensionRuntime<? extends V>, V extends ExtensionConfig> extends BorderPane {
@@ -30,8 +32,7 @@ public class ConfigurableExtensionGridPane<T extends ConfigurableExtensionRuntim
 	private int cellsPerRow = 3;
 	private double cellSize = 0;
 
-	public ConfigurableExtensionGridPane(NodeObject nodeObject, ConfigurableExtensionRegistry<T, V> registry, Dimension2D size) {
-		// TODO Auto-generated constructor stub
+	public ConfigurableExtensionGridPane(NodeObject nodeObject, Dimension2D size) {
 		getStyleClass().add("extension-grid-pane");
 		setWidth(size.getWidth());
 		setHeight(size.getHeight());
@@ -40,14 +41,23 @@ public class ConfigurableExtensionGridPane<T extends ConfigurableExtensionRuntim
 		scrollPane.setVbarPolicy(ScrollBarPolicy.NEVER);
 		setCenter(scrollPane);
 		cellSize = Math.floor(getWidth() / cellsPerRow);
-		for (ConfigurableExtension<T, V> extension : registry.getConfigurableExtensionList()) {
-			try {
-				Pane item = createItem(extension.createConfigurableExtensionReference(extension.createDefaultExtensionConfig()));
-				container.getChildren().add(item);
-				logger.info("Created extension reference: " + extension.getExtensionId());
-			} catch (ExtensionException e) {
-				logger.warning("Cannot create extension reference: " + e.getMessage());
+		try {
+			Extension<EnumeratorExtensionRuntime> enumeratorExtension = CoreRegistry.getInstance().getEnumeratorExtension(nodeObject.getNodeClass());
+			EnumeratorExtensionRuntime enumeratorRuntime = enumeratorExtension.createExtensionRuntime();
+			for (String extensionId : enumeratorRuntime.listExtensions()) {
+				try {
+					ExtensionWrapper extensionWrapper = enumeratorRuntime.getExtension(extensionId);
+					@SuppressWarnings("unchecked")
+					ConfigurableExtension<T, V> configurableExtension = (ConfigurableExtension<T, V>)extensionWrapper.getExtension();
+					Pane item = createItem(configurableExtension.createConfigurableExtensionReference(configurableExtension.createDefaultExtensionConfig()));
+					container.getChildren().add(item);
+					logger.info("Created extension " + extensionId);
+				} catch (Exception e) {
+					logger.warning("Cannot create extension " + extensionId + ": " + e.getMessage());
+				}
 			}
+		} catch (Exception e) {
+			logger.warning("Cannot enumerate extensions for node class " + nodeObject.getNodeClass() + ": " + e.getMessage());
 		}
 		doLayout();
 	}

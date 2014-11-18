@@ -32,7 +32,7 @@ import com.nextbreakpoint.nextfractal.core.extensionPoints.enumerator.Enumerator
 import com.nextbreakpoint.nextfractal.core.runtime.extension.Extension;
 import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionNotFoundException;
 import com.nextbreakpoint.nextfractal.core.runtime.scripting.JSException;
-import com.nextbreakpoint.nextfractal.core.runtime.scripting.JSExtension;
+import com.nextbreakpoint.nextfractal.core.runtime.scripting.ExtensionWrapper;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotRegistry;
 import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.colorRenderer.ColorRendererExtensionRuntime;
 
@@ -57,9 +57,9 @@ public class ColorRendererEnumeratorRuntime extends EnumeratorExtensionRuntime {
 	 * @see com.nextbreakpoint.nextfractal.core.extensionPoints.enumerator.EnumeratorExtensionRuntime#getExtension(java.lang.String)
 	 */
 	@Override
-	public JSExtension getExtension(final String extensionId) throws JSException {
+	public ExtensionWrapper getExtension(final String extensionId) throws JSException {
 		try {
-			return new JSExtension(MandelbrotRegistry.getInstance().getColorRendererExtension(extensionId));
+			return new ExtensionWrapper(MandelbrotRegistry.getInstance().getColorRendererExtension(extensionId));
 		}
 		catch (ExtensionNotFoundException e) {
 			throw new JSException(e);

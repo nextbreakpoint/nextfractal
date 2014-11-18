@@ -28,7 +28,7 @@ package com.nextbreakpoint.nextfractal.core.extensions.creator;
 import com.nextbreakpoint.nextfractal.core.extensionPoints.creator.CreatorExtensionRuntime;
 import com.nextbreakpoint.nextfractal.core.runtime.extension.ConfigurableExtension;
 import com.nextbreakpoint.nextfractal.core.runtime.scripting.JSException;
-import com.nextbreakpoint.nextfractal.core.runtime.scripting.JSExtension;
+import com.nextbreakpoint.nextfractal.core.runtime.scripting.ExtensionWrapper;
 
 /**
  * @author Andrea Medeghini
@@ -40,15 +40,15 @@ public class ReferenceCreatorRuntime extends CreatorExtensionRuntime {
 	@Override
 	public Object create(final Object... args) throws JSException {
 		try {
-			if (((JSExtension) args[0]).getExtension() instanceof ConfigurableExtension<?, ?>) {
-				return ((ConfigurableExtension<?, ?>) ((JSExtension) args[0]).getExtension()).createConfigurableExtensionReference();
+			if (((ExtensionWrapper) args[0]).getExtension() instanceof ConfigurableExtension<?, ?>) {
+				return ((ConfigurableExtension<?, ?>) ((ExtensionWrapper) args[0]).getExtension()).createConfigurableExtensionReference();
 			}
 			else {
-				return ((JSExtension) args[0]).getExtension().getExtensionReference();
+				return ((ExtensionWrapper) args[0]).getExtension().getExtensionReference();
 			}
 		}
 		catch (Exception e) {
-			throw new JSException("Reference creator requires one arguments: #1 of type JSExtension", e);
+			throw new JSException("Reference creator requires one arguments: #1 of type ExtensionWrapper", e);
 		}
 	}
 }

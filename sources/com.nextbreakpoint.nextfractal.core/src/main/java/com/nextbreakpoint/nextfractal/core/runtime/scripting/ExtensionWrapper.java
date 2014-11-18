@@ -30,13 +30,13 @@ import com.nextbreakpoint.nextfractal.core.runtime.extension.Extension;
 /**
  * @author Andrea Medeghini
  */
-public class JSExtension {
+public class ExtensionWrapper {
 	private final Extension<?> extension;
 
 	/**
 	 * @param extension
 	 */
-	public JSExtension(final Extension<?> extension) {
+	public ExtensionWrapper(final Extension<?> extension) {
 		this.extension = extension;
 	}
 
@@ -65,7 +65,7 @@ public class JSExtension {
 	 */
 	@Override
 	public Object clone() throws CloneNotSupportedException {
-		return new JSExtension(extension);
+		return new ExtensionWrapper(extension);
 	}
 
 	/**
@@ -79,7 +79,7 @@ public class JSExtension {
 		if (obj.getClass() != JSNodeValue.class) {
 			return false;
 		}
-		return extension.equals(((JSExtension) obj).extension);
+		return extension.equals(((ExtensionWrapper) obj).extension);
 	}
 
 	/**

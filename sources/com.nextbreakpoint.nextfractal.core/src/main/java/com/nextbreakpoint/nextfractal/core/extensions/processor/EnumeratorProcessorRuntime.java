@@ -96,7 +96,7 @@ public class EnumeratorProcessorRuntime extends ProcessorExtensionRuntime {
 		imports.add("com.nextbreakpoint.nextfractal.core.runtime.extension.Extension");
 		imports.add("com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionNotFoundException");
 		imports.add("com.nextbreakpoint.nextfractal.core.runtime.scripting.JSException");
-		imports.add("com.nextbreakpoint.nextfractal.core.runtime.scripting.JSExtension");
+		imports.add("com.nextbreakpoint.nextfractal.core.runtime.scripting.ExtensionWrapper");
 		imports.add("com.nextbreakpoint.nextfractal.core.runtime.scripting.extension.EnumeratorExtensionRuntime");
 		imports.add(descriptor.getRegistryPackageName() + "." + descriptor.getRegistryClassName());
 		imports.add(descriptor.getExtensionRuntimePackageName() + "." + descriptor.getExtensionRuntimeClassName());

@@ -29,7 +29,7 @@ import java.util.List;
 
 import com.nextbreakpoint.nextfractal.core.runtime.extension.ExtensionRuntime;
 import com.nextbreakpoint.nextfractal.core.runtime.scripting.JSException;
-import com.nextbreakpoint.nextfractal.core.runtime.scripting.JSExtension;
+import com.nextbreakpoint.nextfractal.core.runtime.scripting.ExtensionWrapper;
 
 /**
  * @author Andrea Medeghini
@@ -46,5 +46,5 @@ public abstract class EnumeratorExtensionRuntime extends ExtensionRuntime {
 	 * @return
 	 * @throws JSException
 	 */
-	public abstract JSExtension getExtension(String extensionId) throws JSException;
+	public abstract ExtensionWrapper getExtension(String extensionId) throws JSException;
 }

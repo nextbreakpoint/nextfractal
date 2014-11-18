@@ -17,7 +17,6 @@ import com.nextbreakpoint.nextfractal.core.ui.javafx.util.ConfigurableExtensionP
 import com.nextbreakpoint.nextfractal.core.ui.javafx.util.ElementGridPane;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.util.IntegerPane;
 import com.nextbreakpoint.nextfractal.core.util.RenderContext;
-import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotRegistry;
 import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.incolouringFormula.IncolouringFormulaExtensionConfig;
 import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.incolouringFormula.IncolouringFormulaExtensionRuntime;
 import com.nextbreakpoint.nextfractal.mandelbrot.extensionPoints.outcolouringFormula.OutcolouringFormulaExtensionConfig;
@@ -168,7 +167,7 @@ public class MandelbrotConfigView extends Pane implements Disposable {
 		public class IncolouringFormulaExtensionGridPane extends ConfigurableExtensionGridPane<IncolouringFormulaExtensionRuntime<? extends IncolouringFormulaExtensionConfig>, IncolouringFormulaExtensionConfig> implements Disposable {
 			
 			public IncolouringFormulaExtensionGridPane(NodeObject nodeObject,	Dimension2D size) {
-				super(nodeObject, MandelbrotRegistry.getInstance().getIncolouringFormulaRegistry(), size);
+				super(nodeObject, size);
 				tasks.add(() -> { viewContext.discardEditorView(); });
 			}
 			
@@ -232,7 +231,7 @@ public class MandelbrotConfigView extends Pane implements Disposable {
 		public class OutcolouringFormulaExtensionGridPane extends ConfigurableExtensionGridPane<OutcolouringFormulaExtensionRuntime<? extends OutcolouringFormulaExtensionConfig>, OutcolouringFormulaExtensionConfig> implements Disposable {
 			
 			public OutcolouringFormulaExtensionGridPane(NodeObject nodeObject,	Dimension2D size) {
-				super(nodeObject, MandelbrotRegistry.getInstance().getOutcolouringFormulaRegistry(), size);
+				super(nodeObject, size);
 				tasks.add(() -> { viewContext.discardEditorView(); });
 			}
 			
