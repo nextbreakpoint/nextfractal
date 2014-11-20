@@ -17,6 +17,7 @@
 		<module>../com.nextbreakpoint.nextfractal.contextfree</module>
 		<module>../com.nextbreakpoint.nextfractal.contextfree.ui</module>
 		<module>../com.nextbreakpoint.nextfractal.main</module>
+		<module>../com.nextbreakpoint.nextfractal.flux</module>
 	</modules>
 	<build>
 		<plugins>
@@ -152,6 +153,11 @@
 		<dependency>
 			<groupId>com.nextbreakpoint</groupId>
 			<artifactId>com.nextbreakpoint.nextfractal.contextfree.ui</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.nextbreakpoint</groupId>
+			<artifactId>com.nextbreakpoint.nextfractal.flux</artifactId>
 			<version>1.0.0</version>
 		</dependency>
 		<dependency>
