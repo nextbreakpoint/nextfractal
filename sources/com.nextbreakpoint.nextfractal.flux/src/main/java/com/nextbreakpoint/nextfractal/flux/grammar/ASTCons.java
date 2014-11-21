@@ -1,4 +1,4 @@
-package com.nextbreakpoint.nextfractal.flux.orbit.equation;
+package com.nextbreakpoint.nextfractal.flux.grammar;
 
 import java.util.ArrayList;
 import java.util.List;

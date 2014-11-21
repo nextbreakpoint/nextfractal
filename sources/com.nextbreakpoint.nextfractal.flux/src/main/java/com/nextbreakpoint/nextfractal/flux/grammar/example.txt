@@ -1,5 +1,3 @@
-fractal [1];
-
 orbit [a, b] {
 	trap trapName1 [c] {
 		moveTo(0);
@@ -33,7 +31,6 @@ orbit [a, b] {
 		m += |z|;
 		a += <z>;
 		...
-		z
 	}
 	condition {
 		|z| > 40 | trapName1 & trapName2
