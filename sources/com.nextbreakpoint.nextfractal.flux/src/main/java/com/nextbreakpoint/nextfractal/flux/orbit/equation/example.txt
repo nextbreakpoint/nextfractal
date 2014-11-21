@@ -1,21 +1,14 @@
-ta = Math.cos(cp.zr);
-tb = Math.sin(cp.zr);
-tc = Math.exp(+cp.zi);
-td = Math.exp(-cp.zi);
-te = tb * 0.5d * (tc + td);
-tf = ta * 0.5d * (tc - td);
-cp.zr = (cp.wr * te) - (cp.wi * tf);
-cp.zi = (cp.wi * te) + (cp.wr * tf);
+fractal [1];
 
-orbit [x0, y0, x1, y1] {
-	trap trapName1 [x, y] {
-		moveTo(0, 0);
-		lineTo(1, 2);
+orbit [a, b] {
+	trap trapName1 [c] {
+		moveTo(0);
+		lineTo(1 + 2i);
 		...
 	}
-	trap trapName2 [x, y] {
-		moveTo(0, 0);
-		lineTo(1, 2);
+	trap trapName2 [c] {
+		moveTo(0);
+		lineTo(3 + 5i);
 		...
 	}
 	projection {
@@ -27,7 +20,7 @@ orbit [x0, y0, x1, y1] {
 	}
 	loop [1, 1000] {
 		...
-		p.z = ...;
+		z = x ^ 2 + w;
 		t = 2;
 		w = t * p.z;
 		d = |w|;
@@ -37,33 +30,37 @@ orbit [x0, y0, x1, y1] {
 		j = <6 + 7i>;
 		k = |2 + 3i|;
 		...
-		m += |p.z|;
-		a += <p.z>;
+		m += |z|;
+		a += <z>;
 		...
+		z
 	}
 	condition {
-		|p.z| > 40 | trapName1 & trapName2
+		|z| > 40 | trapName1 & trapName2
 	}
 	end {
-		m = m / p.n;
-		a = a / p.n;
+		m = m / n;
+		a = a / n;
 	}
 }
 
-color [(255,0,0,0)] {
+color [(1,0,0,0)] {
 	palette paletteName [50] {
 		[ 0, FF000000] -> [ 5, FFFF0000],
 		[ 5, FF000000] -> [10, FFFF0000] : [x],
 		[10, FF000000] -> [20, FFFF0000] : [log(1 - x)],
 		...
-		[30, FF000000] -> [50, (255,255,0,0)] : [sin(pi * x), cos(pi * x), x]
+		[30, FF000000] -> [50, (1,1,0,0)] : [sin(pi * x), cos(pi * x), x]
 	}
-	rule (p.n == 0) [10%] {
-		paletteName(p.n)
+	rule (n == 0) [10%] {
+		paletteName(n, i)
 	}
-	rule (p.n != 0) [30%] {
-		..., 
-		...,
+	rule (n != 0) [70%] {
+		paletteName(n)
+	}
+	rule (n != 0) [30%] {
+		|z| / 10, 
+		m * 10,
 		...,
 		...
 	}
