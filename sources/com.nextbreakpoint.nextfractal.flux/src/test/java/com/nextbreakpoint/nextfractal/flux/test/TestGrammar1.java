@@ -44,7 +44,10 @@ public class TestGrammar1 {
 	@Test
 	public void parse() {
 		try {
-			String source = "orbit [-1 - 1i,+1 + 1i] {} color [#000000] {}";
+			String source = ""
+					+ "orbit [-1 - 1i,+1 + 1i] {"
+					+ "} color [#000000] {"
+					+ "}";
 			ANTLRInputStream is = new ANTLRInputStream(new StringReader(source));
 			NextFractalLexer lexer = new NextFractalLexer(is);
 			CommonTokenStream tokens = new CommonTokenStream(lexer);

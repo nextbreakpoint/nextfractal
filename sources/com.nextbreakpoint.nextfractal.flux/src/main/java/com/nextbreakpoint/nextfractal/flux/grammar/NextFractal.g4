@@ -32,38 +32,134 @@ color
 		
 begin
 	:
-	statement*
+	BEGIN '{' statement* '}'
 	;
 		
 loop
 	:
-	statement*
+	LOOP '[' integer ',' integer ']' '{' statement* '}'
 	;
 		
 condition
 	:
+	CONDITION '{' conditionexp '}'
+	;
+			
+projection
+	:
+	PROJECTION '{' projectionexp '}'
+	;
+	
+trap
+	:
+	TRAP USER_TRAP '[' complex ']' '{' pathop* '}'
 	;
 		
 end
 	:
-	statement*
+	END '{' statement* '}'
+	;
+		
+pathop
+	:
+	USER_PATHOP
 	;
 		
 statement
 	:
-	variable '=' exp
+	variable '=' complexexp ';'
 	;
 		
+conditionexp
+	:
+	(
+	realexp USER_COMPARE_OPERATOR realexp
+	|
+	USER_TRAP
+	)
+	(
+	USER_LOGIC_OPERATOR conditionexp	
+	)?
+	;
+	
+projectionexp
+	:
+	complexexp
+	;
+	
 variable
 	:
 	USER_VARIABLE
 	;
-		
-exp
+
+realexp
 	:
-	('+'|'-')? USER_RATIONAL
+	(
+	real 
+	|
+	realfunction
+	|
+	'(' realexp ')'
+	|
+	'-' realexp
+	|
+	'+' realexp
+	|
+	'|' realexp '|'
+	|
+	'<' realexp '>'
+	)
+	(
+	USER_MATH_OPERATOR realexp
+	)?
 	;
 		
+complexexp
+	:
+	(
+	realexp
+	|
+	complex 
+	|
+	complexfunction
+	|
+	'(' complexexp ')'
+	|
+	'-' complexexp
+	|
+	'+' complexexp
+	|
+	'|' complexexp '|'
+	|
+	'<' complexexp '>'
+	)
+	(
+	USER_MATH_OPERATOR complexexp
+	)?
+	;
+				
+realfunction 
+	:
+	USER_REAL_FUNCTION_1ARGS '(' realexp ')'
+	|
+	USER_REAL_FUNCTION_2ARGS '(' realexp ',' realexp ')'
+	;
+			
+complexfunction 
+	:
+	USER_COMPLEX_FUNCTION_1ARGS '(' complexexp ')'
+	;
+	
+integer
+	:
+	USER_INTEGER
+	; 
+	
+real
+	:
+	('+'|'-')? USER_RATIONAL
+	; 
+	
 complex
 	:
 	('+'|'-')? USER_RATIONAL '+' USER_RATIONAL 'i'
@@ -72,7 +168,7 @@ complex
 	|
 	('+'|'-')? USER_RATIONAL 'i'
 	|
-	('+'|'-')? USER_RATIONAL
+	real
 	; 
 	
 argb 
@@ -137,6 +233,36 @@ RULE
 	'rule'
 	;
 
+USER_LOGIC_OPERATOR
+	:
+	'&' | '|' | '^'
+	;
+
+USER_COMPARE_OPERATOR
+	:
+	'=' | '<>' | '<' | '>' | '<=' | '>='
+	;
+
+USER_MATH_OPERATOR
+	:
+	'*' | '/' | '^' | '+' | '-'
+	;
+
+USER_REAL_FUNCTION_1ARGS
+	:
+	'cos' | 'sin' | 'tan' | 'acos' | 'asin' | 'atan' | 'log' | 'exp' | 'mod' | 'sqrt'
+	;
+
+USER_REAL_FUNCTION_2ARGS
+	:
+	'pow' | 'atan2' | 'hypot'
+	;
+
+USER_COMPLEX_FUNCTION_1ARGS
+	:
+	'cos' | 'sin' | 'tan' | 'acos' | 'asin' | 'atan' | 'exp' | 'mod'
+	;
+
 USER_ARGB
  	:
  	('0'..'9' | 'a'..'f' | 'A'..'F')('0'..'9' | 'a'..'f' | 'A'..'F')('0'..'9' | 'a'..'f' | 'A'..'F')('0'..'9' | 'a'..'f' | 'A'..'F')('0'..'9' | 'a'..'f' | 'A'..'F')('0'..'9' | 'a'..'f' | 'A'..'F')('0'..'9' | 'a'..'f' | 'A'..'F')('0'..'9' | 'a'..'f' | 'A'..'F')
@@ -149,55 +275,10 @@ USER_RATIONAL
 	('0'..'9')+ | ('0'..'9')+ '.' ('0'..'9')* '%'? | '.' ('0'..'9')+ '%'? | '0'..'9'+ '%' '.' '.'? ('0'..'9')+ '.' ('0'..'9')* ('e'|'E') ('+|-')? ('0'..'9')+ '%'? | '.' ('0'..'9')+ ('e'|'E') ('+|-')? ('0'..'9')+ '%'? | ('0'..'9')+ ('e'|'E') ('+|-')? ('0'..'9')+ '%'?
 	; 
 
-LT
+USER_INTEGER
 	: 
-	'<' 
-	;
-
-GT
-	: 
-	'>' 
-	;
-
-LE
-	: 
-	'<='
-	;
-
-GE
-	: 
-	'>=' 
-	;
-
-EQ
-	: 
-	'==' 
-	;
-
-NEQ
-	: 
-	'!='
-	;
-
-NOT
-	: 
-	'!' 
-	;
-
-AND
-	: 
-	'&&' 
-	;
-
-OR
-	: 
-	'||' 
-	;
-
-XOR
-	: 
-	'^^' 
-	;
+	('0'..'9')+
+	; 
 
 USER_PATHOP
 	: 
@@ -221,6 +302,16 @@ USER_PATHOP
 	;
 
 USER_VARIABLE 
+	: 
+	('a'..'z'|'A'..'Z') ('a'..'z'|'A'..'Z'|':'|'0'..'9')* 
+	;
+
+USER_TRAP 
+	: 
+	('a'..'z'|'A'..'Z') ('a'..'z'|'A'..'Z'|':'|'0'..'9')* 
+	;
+
+USER_PALETTE 
 	: 
 	('a'..'z'|'A'..'Z') ('a'..'z'|'A'..'Z'|':'|'0'..'9')* 
 	;
