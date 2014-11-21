@@ -158,7 +158,7 @@
 		<dependency>
 			<groupId>com.nextbreakpoint</groupId>
 			<artifactId>com.nextbreakpoint.nextfractal.flux</artifactId>
-			<version>1.0.0</version>
+			<version>7.0.0</version>
 		</dependency>
 		<dependency>
 			<groupId>net.sf.ffmpeg4java</groupId>

@@ -17,12 +17,13 @@ options
 
 choose
 		:
-		ORBITEQUATION orbitequation 
+		ORBITEQUATION orbitequation
 		;
 		 
-orbitequation [ASTExpression result]
+orbitequation 
+		:
 		e=exp3 {
-			$result = $e.result;
+			driver.setExpression($e.result);
 		}
 		;
 
@@ -40,15 +41,15 @@ explist returns [ASTExpression result]
 exp returns [ASTExpression result]
         : 
         n=USER_RATIONAL { 
-			$result = new ASTReal(Float.parseFloat($n.getText()), $n); 
+			$result = new ASTReal($n, Float.parseFloat($n.getText())); 
         }
         |
         CF_INFINITY { 
-			$result = new ASTReal(Float.MAX_VALUE, $CF_INFINITY); 
+			$result = new ASTReal($CF_INFINITY, Float.MAX_VALUE); 
         }
         |
         t='(' x=exp2 ')' { 
-			$result = new ASTParen($x.result, $t); 
+			$result = new ASTParen($t, $x.result); 
         }
         | 
         f=expfunc { 
@@ -56,11 +57,11 @@ exp returns [ASTExpression result]
         }
         |
         t='-' e=exp { 
-			$result = new ASTOperator('N', $e.result, $t); 
+			$result = new ASTOperator($t, 'N', $e.result); 
         }
         |
         t='+' e=exp { 
-			$result = new ASTOperator('P', $e.result, $t); 
+			$result = new ASTOperator($t, 'P', $e.result); 
         }
         ;
 
@@ -68,11 +69,11 @@ exp2 returns [ASTExpression result]
         : 
         (
         n=USER_RATIONAL { 
-        	$result = new ASTReal(Float.parseFloat($n.getText()), $n); 
+        	$result = new ASTReal($n, Float.parseFloat($n.getText())); 
         }
         |
         CF_INFINITY { 
-			$result = new ASTReal(Float.MAX_VALUE, $CF_INFINITY); 
+			$result = new ASTReal($CF_INFINITY, Float.MAX_VALUE); 
         }
         |
         f=exp2func { 
@@ -80,19 +81,19 @@ exp2 returns [ASTExpression result]
         }
         | 
         t='-' e=exp2 { 
-			$result = new ASTOperator('N', $e.result, $t); 
+			$result = new ASTOperator($t, 'N', $e.result); 
         }
         |
         t='+' e=exp2 { 
-			$result = new ASTOperator('P', $e.result, $t); 
+			$result = new ASTOperator($t, 'P', $e.result); 
         }
         |
         t=NOT e=exp2 { 
-			$result = new ASTOperator('!', $e.result, $t); 
+			$result = new ASTOperator($t, '!', $e.result); 
         }
         |
         t='(' e=exp2 ')' { 
-			$result = new ASTParen($e.result, $t); 
+			$result = new ASTParen($t, $e.result); 
         }
         )
         (
@@ -101,63 +102,63 @@ exp2 returns [ASTExpression result]
         }
         |
         '+' r=exp2 {
-        	$result = new ASTOperator('+', $result, $r.result, $result.getLocation());
+        	$result = new ASTOperator($result.getLocation(), '+', $result, $r.result);
         }
         |
         '-' r=exp2 {
-        	$result = new ASTOperator('-', $result, $r.result, $result.getLocation());
+        	$result = new ASTOperator($result.getLocation(), '-', $result, $r.result);
         }
         |
         '_' r=exp2 {
-        	$result = new ASTOperator('_', $result, $r.result, $result.getLocation());
+        	$result = new ASTOperator($result.getLocation(), '_', $result, $r.result);
         }
         |
         '*' r=exp2 {
-        	$result = new ASTOperator('*', $result, $r.result, $result.getLocation());
+        	$result = new ASTOperator($result.getLocation(), '*', $result, $r.result);
         }
         |
         '/' r=exp2 {
-        	$result = new ASTOperator('/', $result, $r.result, $result.getLocation());
+        	$result = new ASTOperator($result.getLocation(), '/', $result, $r.result);
         }
         |
         '^' r=exp2 {
-        	$result = new ASTOperator('^', $result, $r.result, $result.getLocation());
+        	$result = new ASTOperator($result.getLocation(), '^', $result, $r.result);
         }
         |
         LT r=exp2 {
-        	$result = new ASTOperator('<', $result, $r.result, $result.getLocation());
+        	$result = new ASTOperator($result.getLocation(), '<', $result, $r.result);
         }
         |
         GT r=exp2 {
-        	$result = new ASTOperator('>', $result, $r.result, $result.getLocation());
+        	$result = new ASTOperator($result.getLocation(), '>', $result, $r.result);
         }
         |
         LE r=exp2 {
-        	$result = new ASTOperator('L', $result, $r.result, $result.getLocation());
+        	$result = new ASTOperator($result.getLocation(), 'L', $result, $r.result);
         }
         |
         GE r=exp2 {
-        	$result = new ASTOperator('G', $result, $r.result, $result.getLocation());
+        	$result = new ASTOperator($result.getLocation(), 'G', $result, $r.result);
         }
         |
         EQ r=exp2 {
-        	$result = new ASTOperator('=', $result, $r.result, $result.getLocation());
+        	$result = new ASTOperator($result.getLocation(), '=', $result, $r.result);
         }
         |
         NEQ r=exp2 {
-        	$result = new ASTOperator('n', $result, $r.result, $result.getLocation());
+        	$result = new ASTOperator($result.getLocation(), 'n', $result, $r.result);
         }
         |
         AND r=exp2 {
-        	$result = new ASTOperator('&', $result, $r.result, $result.getLocation());
+        	$result = new ASTOperator($result.getLocation(), '&', $result, $r.result);
         }
         |
         OR r=exp2 {
-        	$result = new ASTOperator('|', $result, $r.result, $result.getLocation());
+        	$result = new ASTOperator($result.getLocation(), '|', $result, $r.result);
         }
         |
         XOR r=exp2 {
-        	$result = new ASTOperator('X', $result, $r.result, $result.getLocation());
+        	$result = new ASTOperator($result.getLocation(), 'X', $result, $r.result);
         }
         )?
         ;
@@ -166,11 +167,11 @@ exp3 returns [ASTExpression result]
         : 
         (
         n=USER_RATIONAL { 
-        	$result = new ASTReal(Float.parseFloat($n.getText()), $n); 
+        	$result = new ASTReal($n, Float.parseFloat($n.getText())); 
         }
         |
         CF_INFINITY { 
-			$result = new ASTReal(Float.MAX_VALUE, $CF_INFINITY); 
+			$result = new ASTReal($CF_INFINITY, Float.MAX_VALUE); 
         }
         |
         f=exp2func { 
@@ -178,105 +179,116 @@ exp3 returns [ASTExpression result]
         }
         | 
         t='-' e=exp3 { 
-			$result = new ASTOperator('N', $e.result, $t); 
+			$result = new ASTOperator($t, 'N', $e.result); 
         }
         |
         t='+' e=exp3 { 
-			$result = new ASTOperator('P', $e.result, $t); 
+			$result = new ASTOperator($t, 'P', $e.result); 
         }
         |
         t=NOT e=exp3 { 
-			$result = new ASTOperator('!', $e.result, $t); 
+			$result = new ASTOperator($t, '!', $e.result); 
         }
         |
         t='(' x=exp2 ')' { 
-			$result = new ASTParen($x.result, $t); 
+			$result = new ASTParen($t, $x.result); 
         }
         )
         (
         '+' r=exp3 {
-        	$result = new ASTOperator('+', $result, $r.result, $result.getLocation());
+        	$result = new ASTOperator($result.getLocation(), '+', $result, $r.result);
         }
         |
         '-' r=exp3 {
-        	$result = new ASTOperator('-', $result, $r.result, $result.getLocation());
+        	$result = new ASTOperator($result.getLocation(), '-', $result, $r.result);
         }
         |
         '_' r=exp3 {
-        	$result = new ASTOperator('_', $result, $r.result, $result.getLocation());
+        	$result = new ASTOperator($result.getLocation(), '_', $result, $r.result);
         }
         |
         '*' r=exp3 {
-        	$result = new ASTOperator('*', $result, $r.result, $result.getLocation());
+        	$result = new ASTOperator($result.getLocation(), '*', $result, $r.result);
         }
         |
         '/' r=exp3 {
-        	$result = new ASTOperator('/', $result, $r.result, $result.getLocation());
+        	$result = new ASTOperator($result.getLocation(), '/', $result, $r.result);
         }
         |
         '^' r=exp3 {
-        	$result = new ASTOperator('^', $result, $r.result, $result.getLocation());
+        	$result = new ASTOperator($result.getLocation(), '^', $result, $r.result);
         }
         |
         LT r=exp3 {
-        	$result = new ASTOperator('<', $result, $r.result, $result.getLocation());
+        	$result = new ASTOperator($result.getLocation(), '<', $result, $r.result);
         }
         |
         GT r=exp3 {
-        	$result = new ASTOperator('>', $result, $r.result, $result.getLocation());
+        	$result = new ASTOperator($result.getLocation(), '>', $result, $r.result);
         }
         |
         LE r=exp3 {
-        	$result = new ASTOperator('L', $result, $r.result, $result.getLocation());
+        	$result = new ASTOperator($result.getLocation(), 'L', $result, $r.result);
         }
         |
         GE r=exp3 {
-        	$result = new ASTOperator('G', $result, $r.result, $result.getLocation());
+        	$result = new ASTOperator($result.getLocation(), 'G', $result, $r.result);
         }
         |
         EQ r=exp3 {
-        	$result = new ASTOperator('=', $result, $r.result, $result.getLocation());
+        	$result = new ASTOperator($result.getLocation(), '=', $result, $r.result);
         }
         |
         NEQ r=exp3 {
-        	$result = new ASTOperator('n', $result, $r.result, $result.getLocation());
+        	$result = new ASTOperator($result.getLocation(), 'n', $result, $r.result);
         }
         |
         AND r=exp3 {
-        	$result = new ASTOperator('&', $result, $r.result, $result.getLocation());
+        	$result = new ASTOperator($result.getLocation(), '&', $result, $r.result);
         }
         |
         OR r=exp3 {
-        	$result = new ASTOperator('|', $result, $r.result, $result.getLocation());
+        	$result = new ASTOperator($result.getLocation(), '|', $result, $r.result);
         }
         |
         XOR r=exp3 {
-        	$result = new ASTOperator('X', $result, $r.result, $result.getLocation());
+        	$result = new ASTOperator($result.getLocation(), 'X', $result, $r.result);
         }
         )?
+        ;
+
+arglist returns [ASTExpression result]
+        : 
+        e2=explist e1=exp3 {
+        	$result = $e2.result.append($e1.result);
+        }
+        | 
+        e=exp3 { 
+        	$result = new ASTCons($e.start, new ASTParen($e.start, $e.result));
+        }
         ;
 
 expfunc returns [ASTExpression result]
         : 
         f=USER_STRING '(' ')' { 
         	String func = $f.getText();
-        	$result = driver.makeFunction(func, null, $f);
+        	$result = driver.makeFunction($f, func, null);
         }
         | 
         f=USER_STRING '(' a=arglist ')' { 
         	String func = $f.getText();
         	ASTExpression args = $a.result;
-        	$result = driver.makeFunction(func, args, $f);
+        	$result = driver.makeFunction($f, func, args);
         }
         |
         IF '(' e=exp2 ')' { 
         	ASTExpression args = $e.result;
-        	$result = driver.makeFunction("if", args, $IF);
+        	$result = driver.makeFunction($IF, "if", args);
         }
         |
         v=USER_STRING { 
         	String var = $v.getText();
-        	$result = driver.makeVariable(var, $v);
+        	$result = driver.makeVariable($v, var);
         }
         ;
 
@@ -284,23 +296,23 @@ exp2func returns [ASTExpression result]
         : 
         f=USER_STRING '(' ')' { 
         	String func = $f.getText();
-        	$result = driver.makeFunction(func, null, $f);
+        	$result = driver.makeFunction($f, func, null);
         }
         | 
         f=USER_STRING '(' a=arglist ')' { 
         	String func = $f.getText();
         	ASTExpression args = $a.result;
-        	$result = driver.makeFunction(func, args, $f);
+        	$result = driver.makeFunction($f, func, args);
         }
         |
         IF '(' e=exp2 ')' { 
         	ASTExpression args = $e.result;
-        	$result = driver.makeFunction("if", args, $IF);
+        	$result = driver.makeFunction($IF, "if", args);
         }
         |
         v=USER_STRING { 
         	String var = $v.getText();
-        	$result = driver.makeVariable(var, $v);
+        	$result = driver.makeVariable($v, var);
         }
         ;
         
@@ -364,6 +376,11 @@ XOR
 	'^^' 
 	;
 
+IF
+	: 
+	'if' 
+	;
+	
 CF_INFINITY
 	: 
 	'CF_INFINITY' 
