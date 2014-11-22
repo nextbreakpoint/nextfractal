@@ -17,7 +17,7 @@ options
 
 choose
 		:
-		CFDG2 cfdg2 
+		CFDG2 cfdg2
 		|
 		CFDG3 cfdg3
 		;

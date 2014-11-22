@@ -27,6 +27,12 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="src" output="target/classes" path="src/main/antlr4">
+		<attributes>
+			<attribute name="optional" value="true"/>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="src" output="target/classes" path="src/main/generated">
 		<attributes>
 			<attribute name="optional" value="true"/>

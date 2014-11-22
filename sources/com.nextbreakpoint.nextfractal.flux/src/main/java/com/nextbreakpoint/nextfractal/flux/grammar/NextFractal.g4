@@ -9,7 +9,7 @@ options
 
 @parser::header {
 	import java.util.Map;
-}
+} 
 
 @members {
 	ASTBuilder driver = new ASTBuilder();
@@ -17,7 +17,7 @@ options
 
 root
 	:
-	orbit color eof
+	orbit color eof 
 	;
 		
 orbit
@@ -137,7 +137,7 @@ complexexp
 	)
 	(
 	USER_MATH_OPERATOR complexexp
-	)?
+	)? 
 	;
 				
 realfunction 
