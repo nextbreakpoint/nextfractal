@@ -22,12 +22,12 @@ root
 		
 orbit
 	:
-	ORBIT '[' complex ',' complex ']' '{' begin loop condition end '}'
+	ORBIT '[' complex ',' complex ']' '{' trap* projection? begin? loop condition end? '}'
 	;
 		
 color
 	:
-	COLOR '[' argb ']' '{' '}' 
+	COLOR '[' argb ']' '{' palette* colorrule* '}' 
 	;
 		
 begin
@@ -62,7 +62,9 @@ end
 		
 pathop
 	:
-	USER_PATHOP
+	USER_PATHOP_1POINTS '(' complex ')' ';'
+	|
+	USER_PATHOP_2POINTS '(' complex ',' complex ')' ';'
 	;
 		
 statement
@@ -170,7 +172,43 @@ complex
 	|
 	real
 	; 
-	
+
+palette 
+	:
+	PALETTE USER_PALETTE '[' integer ']' '{' paletteexp '}'
+	;
+		
+paletteexp 
+	:
+	'[' integer ',' argb ']' '>' '[' integer ',' argb ']' ':' '[' realexp ']' ';'  
+	;
+		
+colorrule 
+	:
+	RULE '(' ruleexp ')' '[' integer '%' ']' '{' colorexp '}'
+	;
+		
+ruleexp 
+	:
+	(
+	realexp USER_COMPARE_OPERATOR realexp
+	)
+	(
+	USER_LOGIC_OPERATOR ruleexp	
+	)?
+	;
+		
+colorexp 
+	:
+	realexp
+	|
+	realexp ',' realexp ',' realexp
+	|
+	realexp ',' realexp ',' realexp ',' realexp
+	|
+	USER_PALETTE '(' integer ')'
+	;
+		
 argb 
 	:
 	'(' USER_RATIONAL ',' USER_RATIONAL ',' USER_RATIONAL ',' USER_RATIONAL ')'
@@ -280,7 +318,7 @@ USER_INTEGER
 	('0'..'9')+
 	; 
 
-USER_PATHOP
+USER_PATHOP_1POINTS
 	: 
 	'MOVETO'
 	| 
@@ -288,17 +326,18 @@ USER_PATHOP
 	| 
 	'ARCTO'
 	| 
-	'CURVETO'
-	| 
 	'MOVEREL'
 	| 
 	'LINEREL'
 	| 
 	'ARCREL'
+	;
+
+USER_PATHOP_2POINTS
+	: 
+	'CURVETO'
 	| 
 	'CURVEREL'
-	| 
-	'CLOSEPOLY' 
 	;
 
 USER_VARIABLE 
