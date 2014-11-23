@@ -22,54 +22,99 @@ root
 		
 orbit
 	:
-	ORBIT '[' complex ',' complex ']' '{' trap* projection? begin? loop condition end? '}'
+	o=ORBIT '[' ra=complex ',' rb=complex ']' {
+		driver.setOrbit(new ASTOrbit($o, new ASTRegion($ra.result, $rb.result)));
+	} '{' trap* projection? begin? loop condition end? '}'
 	;
 		
 color
 	:
-	COLOR '[' argb ']' '{' palette* colorrule* '}' 
+	c=COLOR '[' argb=colorargb ']' { 
+		driver.setColor(new ASTColor($c, $argb.result));
+	} '{' palette* colorrule* '}'
 	;
 		
 begin
 	:
-	BEGIN '{' statement* '}'
+	b=BEGIN { 
+		driver.setOrbitBegin(new ASTOrbitBegin($b));
+	} '{' beginstatements '}'
 	;
 		
 loop
 	:
-	LOOP '[' integer ',' integer ']' '{' statement* '}'
+	l=LOOP '[' lb=USER_INTEGER ',' le=USER_INTEGER ']' {
+		driver.setOrbitLoop(new ASTOrbitLoop($l, $lb.text, $le.text));
+	} '{' loopstatements '}'
 	;
 		
 condition
 	:
-	CONDITION '{' conditionexp '}'
+	c=CONDITION '{' conditionexp '}' {
+		driver.setOrbitCondition(new ASTOrbitCondition($c, null));
+	}
 	;
 			
 projection
 	:
-	PROJECTION '{' projectionexp '}'
+	p=PROJECTION '{' e=complexexp '}' {
+		driver.setOrbitProjection(new ASTOrbitProjection($p, $e.result));
+	}
 	;
 	
 trap
 	:
-	TRAP USER_TRAP '[' complex ']' '{' pathop* '}'
+	t=TRAP n=USER_TRAP '[' c=complex ']' {
+		driver.addOrbitTrap(new ASTOrbitTrap($t, $n.text));
+	} '{' pathops '}' 
 	;
 		
 end
 	:
-	END '{' statement* '}'
+	e=END {
+		driver.setOrbitEnd(new ASTOrbitEnd($e));		
+	} '{' endstatements '}'
+	;
+		
+pathops 
+	:
+	o=pathop* {
+	}
 	;
 		
 pathop
 	:
-	USER_PATHOP_1POINTS '(' complex ')' ';'
+	o=USER_PATHOP_1POINTS '(' c=complex ')' ';'
 	|
-	USER_PATHOP_2POINTS '(' complex ',' complex ')' ';'
+	o=USER_PATHOP_2POINTS '(' c1=complex ',' c2=complex ')' ';'
 	;
 		
-statement
+beginstatements 
 	:
-	variable '=' complexexp ';'
+	s=statement* {
+		driver.addBeginStatement($s.result);
+	}
+	;
+		
+loopstatements 
+	:
+	s=statement* {
+		driver.addLoopStatement($s.result);
+	}
+	;
+		
+endstatements 
+	:
+	s=statement* {
+		driver.addEndStatement($s.result);
+	}
+	;
+		
+statement returns [ASTStatement result]
+	:
+	v=USER_VARIABLE '=' e=complexexp ';' {
+		$result = new ASTStatement($v, $v.text, $e.result);
+	}
 	;
 		
 conditionexp
@@ -84,93 +129,123 @@ conditionexp
 	)?
 	;
 	
-projectionexp
-	:
-	complexexp
-	;
-	
-variable
-	:
-	USER_VARIABLE
-	;
-
-realexp
+realexp returns [ASTRealExpression result]
 	:
 	(
-	real 
+	r=real {
+		$result = $r.result;
+	}
 	|
-	realfunction
+	f=realfunction {
+		$result = $f.result;
+	}
 	|
-	'(' realexp ')'
+	t='(' re=realexp ')' {
+		$result = new ASTRealParen($t, $re.result);
+	}
 	|
-	'-' realexp
+	s='-' re=realexp {
+		$result = new ASTRealOp($s, "-", $re.result);
+	}
 	|
-	'+' realexp
+	'+' re=realexp {
+		$result = $re.result;	
+	}
 	|
-	'|' realexp '|'
+	m='|' ce=complexexp '|' {
+		$result = new ASTComplexMod($m, $ce.result);	
+	}
 	|
-	'<' realexp '>'
+	a='<' ce=complexexp '>' {
+		$result = new ASTComplexAng($a, $ce.result);	
+	}
 	)
 	(
-	USER_MATH_OPERATOR realexp
+	o=USER_MATH_OPERATOR re2=realexp {
+		$result = new ASTRealOp($o, $o.text, $re.result, $re2.result);		
+	}
 	)?
 	;
 		
-complexexp
+complexexp returns [ASTComplexExpression result]
 	:
 	(
-	realexp
+	re=realexp {
+		$result = $re.result;
+	}
 	|
-	complex 
+	c=complex  {
+		$result = $c.result;
+	}
 	|
-	complexfunction
+	f=complexfunction {
+		$result = $f.result;
+	}
 	|
-	'(' complexexp ')'
+	t='(' ce=complexexp ')' {
+		$result = new ASTComplexParen($t, $ce.result);
+	}
 	|
-	'-' complexexp
+	s='-' ce=complexexp {
+		$result = new ASTComplexOp($s, "-", $ce.result);
+	}
 	|
-	'+' complexexp
-	|
-	'|' complexexp '|'
-	|
-	'<' complexexp '>'
+	'+' complexexp {
+		$result = $ce.result;
+	}
 	)
 	(
-	USER_MATH_OPERATOR complexexp
+	o=USER_MATH_OPERATOR ce2=complexexp {
+		$result = new ASTComplexOp($o, $o.text, $ce.result, $ce2.result);
+	}
 	)? 
 	;
 				
-realfunction 
+realfunction returns [ASTRealExpression result]
 	:
-	USER_REAL_FUNCTION_1ARGS '(' realexp ')'
+	f=USER_REAL_FUNCTION_1ARGS '(' a=realexp ')' {
+		$result = new ASTRealFunction($f, $f.text, new ASTRealExpression[] { $a.result });		
+	}
 	|
-	USER_REAL_FUNCTION_2ARGS '(' realexp ',' realexp ')'
+	f=USER_REAL_FUNCTION_2ARGS '(' a=realexp ',' b=realexp ')' {
+		$result = new ASTRealFunction($f, $f.text, new ASTRealExpression[] { $a.result, $b.result });		
+	}
 	;
 			
-complexfunction 
+complexfunction returns [ASTComplexExpression result]
 	:
-	USER_COMPLEX_FUNCTION_1ARGS '(' complexexp ')'
+	f=USER_COMPLEX_FUNCTION_1ARGS '(' a=complexexp ')' {
+		$result = new ASTComplexFunction($f, $f.text, new ASTComplexExpression[] { $a.result });
+	}
 	;
 	
-integer
+integer returns [ASTInteger result]
 	:
-	USER_INTEGER
+	i=USER_INTEGER {
+		$result = new ASTInteger($i, $i.text);
+	}
 	; 
 	
-real
+real returns [ASTReal result] 
 	:
-	('+'|'-')? USER_RATIONAL
+	p=('+'|'-')? r=USER_RATIONAL {
+		$result = new ASTReal($p, $p != null ? $p.text + $r.text : $r.text);
+	}
 	; 
 	
-complex
+complex returns [ASTComplex result]
 	:
-	('+'|'-')? USER_RATIONAL '+' USER_RATIONAL 'i'
+	p=('+'|'-')? r=USER_RATIONAL '+' i=USER_RATIONAL 'i' {
+		$result = new ASTComplex($p, $p != null ? $p.text + $r.text : $r.text, "+" + $i.text);
+	}
 	|
-	('+'|'-')? USER_RATIONAL '-' USER_RATIONAL 'i'
+	p=('+'|'-')? r=USER_RATIONAL '-' i=USER_RATIONAL 'i' {
+		$result = new ASTComplex($p, $p != null ? $p.text + $r.text : $r.text, "-" + $i.text);
+	}
 	|
-	('+'|'-')? USER_RATIONAL 'i'
-	|
-	real
+	p=('+'|'-')? i=USER_RATIONAL 'i' {
+		$result = new ASTComplex($p, "0", $p != null ? $p.text + $i.text : $i.text);
+	}
 	; 
 
 palette 
@@ -180,7 +255,7 @@ palette
 		
 paletteexp 
 	:
-	'[' integer ',' argb ']' '>' '[' integer ',' argb ']' ':' '[' realexp ']' ';'  
+	'[' integer ',' colorargb ']' '>' '[' integer ',' colorargb ']' ':' '[' realexp ']' ';'  
 	;
 		
 colorrule 
@@ -209,11 +284,15 @@ colorexp
 	USER_PALETTE '(' integer ')'
 	;
 		
-argb 
+colorargb returns [ASTColorARGB result]
 	:
-	'(' USER_RATIONAL ',' USER_RATIONAL ',' USER_RATIONAL ',' USER_RATIONAL ')'
+	'(' a=USER_RATIONAL ',' r=USER_RATIONAL ',' g=USER_RATIONAL ',' b=USER_RATIONAL ')' {
+		$result = new ASTColorARGB($a.text, $r.text, $g.text, $b.text);
+	}
 	|
-	'#' USER_ARGB
+	'#' argb=USER_ARGB {
+		$result = new ASTColorARGB($argb.text);
+	}
 	;
 		
 eof 

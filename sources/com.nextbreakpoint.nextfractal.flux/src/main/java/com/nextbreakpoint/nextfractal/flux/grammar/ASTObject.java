@@ -2,10 +2,10 @@ package com.nextbreakpoint.nextfractal.flux.grammar;
 
 import org.antlr.v4.runtime.Token;
 
-class ASTExpression {
+abstract class ASTObject {
 	protected Token location;
 
-	public ASTExpression(Token location) {
+	public ASTObject(Token location) {
 		this.location = location;
 	}
 
@@ -15,10 +15,5 @@ class ASTExpression {
 
 	public void setLocation(Token location) {
 		this.location = location;
-	}
-
-	public ASTExpression append(ASTExpression exp) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 }

@@ -14,15 +14,70 @@ public class ASTBuilder {
 		System.err.println("[" + location.getLine() + ":" + location.getCharPositionInLine() + "] : " + message);
 	}
 	
-	public ASTExpression makeVariable(Token location, String name) {
-		return new ASTVariable(location, 0, name);
+	public ASTStatement makeVariable(Token location, String name, ASTComplexExpression exp) {
+		return new ASTStatement(location, name, exp);
 	}
 
-	public ASTExpression makeFunction(Token location, String name, ASTExpression args) {
-		return new ASTFunction(location, name, args);
+	public ASTComplexExpression makeFunction(Token location, String name, ASTComplexExpression[] args) {
+		return new ASTComplexFunction(location, name, args);
 	}
 	
-	public void setExpression(ASTExpression exp) {
+	public void setExpression(ASTComplexExpression exp) {
+		
+	}
+
+	public void addBeginStatement(ASTStatement result) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void addEndStatement(ASTStatement result) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void addLoopStatement(ASTStatement result) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void setColor(ASTColor color) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void setOrbitBegin(ASTOrbitBegin orbitBegin) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void setOrbitProjection(ASTOrbitProjection orbitProjection) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void setOrbitEnd(ASTOrbitEnd orbitEnd) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void addOrbitTrap(ASTOrbitTrap orbitTrap) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void setOrbitLoop(ASTOrbitLoop orbitLoop) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void setOrbitCondition(ASTOrbitCondition orbitCondition) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void setOrbit(ASTOrbit orbit) {
+		// TODO Auto-generated method stub
 		
 	}
 }	
