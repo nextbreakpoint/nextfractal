@@ -1,5 +1,6 @@
 package com.nextbreakpoint.nextfractal.flux.grammar;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.antlr.v4.runtime.Token;
@@ -68,5 +69,12 @@ class ASTOrbit extends ASTObject {
 
 	public ASTRegion getRegion() {
 		return region;
+	}
+
+	public void addTrap(ASTOrbitTrap trap) {
+		if (traps == null) {
+			traps = new ArrayList<ASTOrbitTrap>();
+		}
+		traps.add(trap);
 	}
 }

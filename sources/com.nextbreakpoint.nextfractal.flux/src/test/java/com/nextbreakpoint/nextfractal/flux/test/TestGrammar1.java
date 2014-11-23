@@ -46,6 +46,11 @@ public class TestGrammar1 {
 		try {
 			String source = ""
 					+ "orbit [-1 - 1i,+1 + 1i] {"
+					+ "loop [1, 1000] {"
+					+ "}"
+					+ "condition {"
+					+ "|z| > 40"
+					+ "}"
 					+ "} color [#000000] {"
 					+ "}";
 			ANTLRInputStream is = new ANTLRInputStream(new StringReader(source));

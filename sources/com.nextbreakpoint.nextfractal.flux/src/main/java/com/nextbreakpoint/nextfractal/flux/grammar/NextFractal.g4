@@ -38,14 +38,21 @@ begin
 	:
 	b=BEGIN { 
 		driver.setOrbitBegin(new ASTOrbitBegin($b));
-	} '{' beginstatements '}'
+	} '{' beginstatements? '}'
 	;
 		
 loop
 	:
 	l=LOOP '[' lb=USER_INTEGER ',' le=USER_INTEGER ']' {
 		driver.setOrbitLoop(new ASTOrbitLoop($l, $lb.text, $le.text));
-	} '{' loopstatements '}'
+	} '{' loopstatements? '}'
+	;
+		
+end
+	:
+	e=END {
+		driver.setOrbitEnd(new ASTOrbitEnd($e));		
+	} '{' endstatements? '}'
 	;
 		
 condition
@@ -57,8 +64,12 @@ condition
 			
 projection
 	:
-	p=PROJECTION '{' e=complexexp '}' {
-		driver.setOrbitProjection(new ASTOrbitProjection($p, $e.result));
+	p=PROJECTION '{' ce=complexexp '}' {
+		driver.setOrbitProjection(new ASTOrbitProjection($p, $ce.result));
+	}
+	|
+	p=PROJECTION '{' re=realexp '}' {
+		driver.setOrbitProjection(new ASTOrbitProjection($p, $re.result));
 	}
 	;
 	
@@ -66,19 +77,12 @@ trap
 	:
 	t=TRAP n=USER_TRAP '[' c=complex ']' {
 		driver.addOrbitTrap(new ASTOrbitTrap($t, $n.text));
-	} '{' pathops '}' 
-	;
-		
-end
-	:
-	e=END {
-		driver.setOrbitEnd(new ASTOrbitEnd($e));		
-	} '{' endstatements '}'
+	} '{' pathops? '}' 
 	;
 		
 pathops 
 	:
-	o=pathop* {
+	o=pathop+ {
 	}
 	;
 		
@@ -91,21 +95,21 @@ pathop
 		
 beginstatements 
 	:
-	s=statement* {
+	s=statement+ {
 		driver.addBeginStatement($s.result);
 	}
 	;
 		
 loopstatements 
 	:
-	s=statement* {
+	s=statement+ {
 		driver.addLoopStatement($s.result);
 	}
 	;
 		
 endstatements 
 	:
-	s=statement* {
+	s=statement+ {
 		driver.addEndStatement($s.result);
 	}
 	;
@@ -129,9 +133,27 @@ conditionexp
 	)?
 	;
 	
+realvariable returns [ASTRealVariable result]
+	:
+	v=USER_VARIABLE {
+		$result = new ASTRealVariable($v, $v.text);
+	}
+	;
+	
+complexvariable returns [ASTComplexVariable result]
+	:
+	v=USER_VARIABLE {
+		$result = new ASTComplexVariable($v, $v.text);
+	}
+	;
+	
 realexp returns [ASTRealExpression result]
 	:
 	(
+	v=realvariable {
+		$result = $v.result;
+	}
+	|
 	r=real {
 		$result = $r.result;
 	}
@@ -170,8 +192,8 @@ realexp returns [ASTRealExpression result]
 complexexp returns [ASTComplexExpression result]
 	:
 	(
-	re=realexp {
-		$result = $re.result;
+	v=complexvariable {
+		$result = $v.result;
 	}
 	|
 	c=complex  {
@@ -228,22 +250,22 @@ integer returns [ASTInteger result]
 	
 real returns [ASTReal result] 
 	:
-	p=('+'|'-')? r=USER_RATIONAL {
+	p=('+'|'-')? r=(USER_RATIONAL | USER_INTEGER) {
 		$result = new ASTReal($p, $p != null ? $p.text + $r.text : $r.text);
 	}
 	; 
 	
 complex returns [ASTComplex result]
 	:
-	p=('+'|'-')? r=USER_RATIONAL '+' i=USER_RATIONAL 'i' {
+	p=('+'|'-')? r=(USER_RATIONAL | USER_INTEGER) '+' i=(USER_RATIONAL | USER_INTEGER) 'i' {
 		$result = new ASTComplex($p, $p != null ? $p.text + $r.text : $r.text, "+" + $i.text);
 	}
 	|
-	p=('+'|'-')? r=USER_RATIONAL '-' i=USER_RATIONAL 'i' {
+	p=('+'|'-')? r=(USER_RATIONAL | USER_INTEGER) '-' i=(USER_RATIONAL | USER_INTEGER) 'i' {
 		$result = new ASTComplex($p, $p != null ? $p.text + $r.text : $r.text, "-" + $i.text);
 	}
 	|
-	p=('+'|'-')? i=USER_RATIONAL 'i' {
+	p=('+'|'-')? i=(USER_RATIONAL | USER_INTEGER) 'i' {
 		$result = new ASTComplex($p, "0", $p != null ? $p.text + $i.text : $i.text);
 	}
 	; 
@@ -327,7 +349,7 @@ BEGIN
   
 LOOP 
 	:
-	'lopp'
+	'loop'
 	;
 	
 END 
@@ -389,7 +411,7 @@ USER_ARGB
  	
 USER_RATIONAL
 	: 
-	('0'..'9')+ | ('0'..'9')+ '.' ('0'..'9')* '%'? | '.' ('0'..'9')+ '%'? | '0'..'9'+ '%' '.' '.'? ('0'..'9')+ '.' ('0'..'9')* ('e'|'E') ('+|-')? ('0'..'9')+ '%'? | '.' ('0'..'9')+ ('e'|'E') ('+|-')? ('0'..'9')+ '%'? | ('0'..'9')+ ('e'|'E') ('+|-')? ('0'..'9')+ '%'?
+	('0'..'9')+ '.' ('0'..'9')* '%'? | '.' ('0'..'9')+ '%'? | '0'..'9'+ '%' '.' '.'? ('0'..'9')+ '.' ('0'..'9')* ('e'|'E') ('+|-')? ('0'..'9')+ '%'? | '.' ('0'..'9')+ ('e'|'E') ('+|-')? ('0'..'9')+ '%'? | ('0'..'9')+ ('e'|'E') ('+|-')? ('0'..'9')+ '%'?
 	; 
 
 USER_INTEGER

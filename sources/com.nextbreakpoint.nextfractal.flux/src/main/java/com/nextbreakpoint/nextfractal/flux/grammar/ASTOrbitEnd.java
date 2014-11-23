@@ -1,5 +1,6 @@
 package com.nextbreakpoint.nextfractal.flux.grammar;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.antlr.v4.runtime.Token;
@@ -13,5 +14,12 @@ class ASTOrbitEnd extends ASTObject {
 
 	public List<ASTStatement> getStatements() {
 		return statements;
+	}
+
+	public void addStatement(ASTStatement statement) {
+		if (statements == null) {
+			statements = new ArrayList<ASTStatement>();
+		}
+		statements.add(statement);
 	}
 }

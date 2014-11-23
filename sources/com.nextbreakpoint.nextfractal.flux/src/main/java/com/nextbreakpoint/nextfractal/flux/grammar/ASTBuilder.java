@@ -3,6 +3,9 @@ package com.nextbreakpoint.nextfractal.flux.grammar;
 import org.antlr.v4.runtime.Token;
 
 public class ASTBuilder {
+	private ASTOrbit orbit;
+	private ASTColor color;
+	
 	public ASTBuilder() {
 	}
 	
@@ -14,70 +17,55 @@ public class ASTBuilder {
 		System.err.println("[" + location.getLine() + ":" + location.getCharPositionInLine() + "] : " + message);
 	}
 	
-	public ASTStatement makeVariable(Token location, String name, ASTComplexExpression exp) {
-		return new ASTStatement(location, name, exp);
-	}
-
-	public ASTComplexExpression makeFunction(Token location, String name, ASTComplexExpression[] args) {
-		return new ASTComplexFunction(location, name, args);
-	}
-	
-	public void setExpression(ASTComplexExpression exp) {
-		
-	}
-
-	public void addBeginStatement(ASTStatement result) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void addEndStatement(ASTStatement result) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void addLoopStatement(ASTStatement result) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void setColor(ASTColor color) {
-		// TODO Auto-generated method stub
-		
+	public void setOrbit(ASTOrbit orbit) {
+		this.orbit = orbit;
 	}
 
 	public void setOrbitBegin(ASTOrbitBegin orbitBegin) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void setOrbitProjection(ASTOrbitProjection orbitProjection) {
-		// TODO Auto-generated method stub
-		
+		orbit.setBegin(orbitBegin);
 	}
 
 	public void setOrbitEnd(ASTOrbitEnd orbitEnd) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void addOrbitTrap(ASTOrbitTrap orbitTrap) {
-		// TODO Auto-generated method stub
-		
+		orbit.setEnd(orbitEnd);
 	}
 
 	public void setOrbitLoop(ASTOrbitLoop orbitLoop) {
-		// TODO Auto-generated method stub
-		
+		orbit.setLoop(orbitLoop);
+	}
+	
+	public void setOrbitProjection(ASTOrbitProjection orbitProjection) {
+		orbit.setProjection(orbitProjection);
 	}
 
 	public void setOrbitCondition(ASTOrbitCondition orbitCondition) {
-		// TODO Auto-generated method stub
-		
+		orbit.setCondition(orbitCondition);
 	}
 
-	public void setOrbit(ASTOrbit orbit) {
-		// TODO Auto-generated method stub
-		
+	public void addOrbitTrap(ASTOrbitTrap orbitTrap) {
+		orbit.addTrap(orbitTrap);
+	}
+
+	public void addBeginStatement(ASTStatement statement) {
+		orbit.getBegin().addStatement(statement);
+	}
+
+	public void addEndStatement(ASTStatement statement) {
+		orbit.getEnd().addStatement(statement);
+	}
+
+	public void addLoopStatement(ASTStatement statement) {
+		orbit.getLoop().addStatement(statement);
+	}
+	
+	public void setColor(ASTColor color) {
+		this.color = color;
+	}
+
+	public ASTObject getOrbit() {
+		return orbit;
+	}
+
+	public ASTColor getColor() {
+		return color;
 	}
 }	
