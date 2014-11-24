@@ -45,11 +45,12 @@ public class TestGrammar1 {
 	public void parse() {
 		try {
 			String source = ""
-					+ "orbit [-1 - 1i,+1 + 1i] {"
+					+ "orbit [-1 - 1i,1 + 1i] {"
 					+ "loop [1, 1000] {"
+					+ "z = x ^ 2 + w;"
 					+ "}"
 					+ "condition {"
-					+ "|z| > 40"
+					+ "|z| > 4"
 					+ "}"
 					+ "} color [#000000] {"
 					+ "}";
@@ -68,17 +69,17 @@ public class TestGrammar1 {
 					
 					@Override
 					public void visitErrorNode(ErrorNode node) {
-//						System.out.println(node.getText() + " " + node.getSymbol());
+						System.out.println(node.getText() + " " + node.getSymbol());
 					}
 					
 					@Override
 					public void exitEveryRule(ParserRuleContext ctx) {
-//						System.out.println(ctx.getText());
+						System.out.println(ctx.getRuleContext().getClass().getName() + " " + ctx.getText());
 					}
 					
 					@Override
 					public void enterEveryRule(ParserRuleContext ctx) {
-//						System.out.println(ctx.getText());
+						System.out.println(ctx.getRuleContext().getClass().getName() + " " + ctx.getText());
 					}
 				}, root);
             }

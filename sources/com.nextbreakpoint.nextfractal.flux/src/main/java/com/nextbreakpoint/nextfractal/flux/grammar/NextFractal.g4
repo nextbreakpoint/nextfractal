@@ -75,7 +75,7 @@ projection
 	
 trap
 	:
-	t=TRAP n=USER_TRAP '[' c=complex ']' {
+	t=TRAP n=USER_VARIABLE '[' c=complex ']' {
 		driver.addOrbitTrap(new ASTOrbitTrap($t, $n.text));
 	} '{' pathops? '}' 
 	;
@@ -124,36 +124,32 @@ statement returns [ASTStatement result]
 conditionexp
 	:
 	(
-	realexp USER_COMPARE_OPERATOR realexp
+	realexp '=' realexp
 	|
-	USER_TRAP
+	realexp '>' realexp
+	|
+	realexp '<' realexp
+	|
+	realexp '>=' realexp
+	|
+	realexp '<=' realexp
+	|
+	realexp '<>' realexp
+	|
+	'%' USER_VARIABLE 
 	)
 	(
-	USER_LOGIC_OPERATOR conditionexp	
+	'&' conditionexp	
+	|
+	'|' conditionexp
+	|	
+	'^' conditionexp	
 	)?
-	;
-	
-realvariable returns [ASTRealVariable result]
-	:
-	v=USER_VARIABLE {
-		$result = new ASTRealVariable($v, $v.text);
-	}
-	;
-	
-complexvariable returns [ASTComplexVariable result]
-	:
-	v=USER_VARIABLE {
-		$result = new ASTComplexVariable($v, $v.text);
-	}
 	;
 	
 realexp returns [ASTRealExpression result]
 	:
 	(
-	v=realvariable {
-		$result = $v.result;
-	}
-	|
 	r=real {
 		$result = $r.result;
 	}
@@ -166,34 +162,54 @@ realexp returns [ASTRealExpression result]
 		$result = new ASTRealParen($t, $re.result);
 	}
 	|
-	s='-' re=realexp {
-		$result = new ASTRealOp($s, "-", $re.result);
-	}
-	|
-	'+' re=realexp {
-		$result = $re.result;	
-	}
-	|
 	m='|' ce=complexexp '|' {
 		$result = new ASTComplexMod($m, $ce.result);	
 	}
 	|
-	a='<' ce=complexexp '>' {
+	a='[' ce=complexexp ']' {
 		$result = new ASTComplexAng($a, $ce.result);	
+	}
+	|
+	s='-' re=realexp {
+		$result = new ASTRealOp($s, "-", $re.result);
+	}
+	|
+	s='+' re=realexp {
+		$result = $re.result;	
 	}
 	)
 	(
-	o=USER_MATH_OPERATOR re2=realexp {
-		$result = new ASTRealOp($o, $o.text, $re.result, $re2.result);		
+	'+' re2=realexp {
+		$result = new ASTRealOp($result.getLocation(), "+", $result, $re2.result);		
+	}
+	|
+	'-' re2=realexp {
+		$result = new ASTRealOp($result.getLocation(), "-", $result, $re2.result);		
+	}
+	|
+	'*' re2=realexp {
+		$result = new ASTRealOp($result.getLocation(), "*", $result, $re2.result);		
+	}
+	|
+	'/' re2=realexp {
+		$result = new ASTRealOp($result.getLocation(), "/", $result, $re2.result);		
+	}
+	|
+	'^' re2=realexp {
+		$result = new ASTRealOp($result.getLocation(), "^", $result, $re2.result);		
 	}
 	)?
 	;
-		
+	
 complexexp returns [ASTComplexExpression result]
 	:
 	(
-	v=complexvariable {
+	v=variable {
 		$result = $v.result;
+	}
+	|
+	re=realexp {
+		$result = $re.result;
 	}
 	|
 	c=complex  {
@@ -212,19 +228,39 @@ complexexp returns [ASTComplexExpression result]
 		$result = new ASTComplexOp($s, "-", $ce.result);
 	}
 	|
-	'+' complexexp {
+	s='+' ce=complexexp {
 		$result = $ce.result;
 	}
 	)
 	(
-	o=USER_MATH_OPERATOR ce2=complexexp {
-		$result = new ASTComplexOp($o, $o.text, $ce.result, $ce2.result);
+	'+' ce2=complexexp {
+		$result = new ASTComplexOp($result.getLocation(), "+", $result, $ce2.result);
+	}
+	|
+	'-' ce2=complexexp {
+		$result = new ASTComplexOp($result.getLocation(), "-", $result, $ce2.result);
+	}
+	|
+	'*' ce2=complexexp {
+		$result = new ASTComplexOp($result.getLocation(), "*", $result, $ce2.result);
+	}
+	|
+	'^' re2=realexp {
+		$result = new ASTComplexOp($result.getLocation(), "^", $result, $re2.result);
 	}
 	)? 
 	;
-				
-realfunction returns [ASTRealExpression result]
+	
+realfunction returns [ASTRealFunction result]
 	:
+	f='mod' '(' ce=complexexp ')' {
+		$result = new ASTModFunction($f, $ce.result);		
+	}
+	|
+	f='ang' '(' ce=complexexp ')' {
+		$result = new ASTAngFunction($f, $ce.result);		
+	}
+	|
 	f=USER_REAL_FUNCTION_1ARGS '(' a=realexp ')' {
 		$result = new ASTRealFunction($f, $f.text, new ASTRealExpression[] { $a.result });		
 	}
@@ -234,64 +270,94 @@ realfunction returns [ASTRealExpression result]
 	}
 	;
 			
-complexfunction returns [ASTComplexExpression result]
+complexfunction returns [ASTComplexFunction result]
 	:
 	f=USER_COMPLEX_FUNCTION_1ARGS '(' a=complexexp ')' {
 		$result = new ASTComplexFunction($f, $f.text, new ASTComplexExpression[] { $a.result });
 	}
 	;
 	
-integer returns [ASTInteger result]
+variable returns [ASTVariable result]
 	:
-	i=USER_INTEGER {
-		$result = new ASTInteger($i, $i.text);
+	v=USER_VARIABLE {
+		$result = new ASTVariable($v, $v.text);
 	}
-	; 
+	;
 	
 real returns [ASTReal result] 
 	:
-	p=('+'|'-')? r=(USER_RATIONAL | USER_INTEGER) {
-		$result = new ASTReal($p, $p != null ? $p.text + $r.text : $r.text);
+	r=(USER_RATIONAL | USER_INTEGER) {
+		$result = new ASTReal($r, $r.text);
+	}
+	|
+	'-' r=(USER_RATIONAL | USER_INTEGER) {
+		$result = new ASTReal($r, "-" + $r.text);
 	}
 	; 
 	
 complex returns [ASTComplex result]
 	:
-	p=('+'|'-')? r=(USER_RATIONAL | USER_INTEGER) '+' i=(USER_RATIONAL | USER_INTEGER) 'i' {
-		$result = new ASTComplex($p, $p != null ? $p.text + $r.text : $r.text, "+" + $i.text);
+	r=(USER_RATIONAL | USER_INTEGER) '+' i=(USER_RATIONAL | USER_INTEGER) 'i' {
+		$result = new ASTComplex($r, $r.text, "+" + $i.text);
 	}
 	|
-	p=('+'|'-')? r=(USER_RATIONAL | USER_INTEGER) '-' i=(USER_RATIONAL | USER_INTEGER) 'i' {
-		$result = new ASTComplex($p, $p != null ? $p.text + $r.text : $r.text, "-" + $i.text);
+	r=(USER_RATIONAL | USER_INTEGER) '-' i=(USER_RATIONAL | USER_INTEGER) 'i' {
+		$result = new ASTComplex($r, $r.text, "-" + $i.text);
 	}
 	|
-	p=('+'|'-')? i=(USER_RATIONAL | USER_INTEGER) 'i' {
-		$result = new ASTComplex($p, "0", $p != null ? $p.text + $i.text : $i.text);
+	i=(USER_RATIONAL | USER_INTEGER) 'i' {
+		$result = new ASTComplex($i, "0", $i.text);
+	}
+	|
+	'-' r=(USER_RATIONAL | USER_INTEGER) '+' i=(USER_RATIONAL | USER_INTEGER) 'i' {
+		$result = new ASTComplex($r, "-" + $r.text, "+" + $i.text);
+	}
+	|
+	'-' r=(USER_RATIONAL | USER_INTEGER) '-' i=(USER_RATIONAL | USER_INTEGER) 'i' {
+		$result = new ASTComplex($r, "-" + $r.text, "-" + $i.text);
+	}
+	|
+	'-' i=(USER_RATIONAL | USER_INTEGER) 'i' {
+		$result = new ASTComplex($i, "0", "-" + $i.text);
 	}
 	; 
 
 palette 
 	:
-	PALETTE USER_PALETTE '[' integer ']' '{' paletteexp '}'
+	PALETTE USER_VARIABLE '[' USER_INTEGER ']' '{' paletteexp '}'
 	;
 		
 paletteexp 
 	:
-	'[' integer ',' colorargb ']' '>' '[' integer ',' colorargb ']' ':' '[' realexp ']' ';'  
+	'[' USER_INTEGER ',' colorargb ']' '>' '[' USER_INTEGER ',' colorargb ']' ':' '[' realexp ']' ';'  
 	;
 		
 colorrule 
 	:
-	RULE '(' ruleexp ')' '[' integer '%' ']' '{' colorexp '}'
+	RULE '(' ruleexp ')' '[' USER_INTEGER '%' ']' '{' colorexp '}'
 	;
 		
 ruleexp 
 	:
 	(
-	realexp USER_COMPARE_OPERATOR realexp
+	realexp '=' realexp
+	|
+	realexp '>' realexp
+	|
+	realexp '<' realexp
+	|
+	realexp '>=' realexp
+	|
+	realexp '<=' realexp
+	|
+	realexp '<>' realexp
 	)
 	(
-	USER_LOGIC_OPERATOR ruleexp	
+	'&' ruleexp
+	|	
+	'|' ruleexp	
+	|	
+	'^' ruleexp	
 	)?
 	;
 		
@@ -303,7 +369,7 @@ colorexp
 	|
 	realexp ',' realexp ',' realexp ',' realexp
 	|
-	USER_PALETTE '(' integer ')'
+	'%' USER_VARIABLE '(' USER_INTEGER ')'
 	;
 		
 colorargb returns [ASTColorARGB result]
@@ -372,21 +438,6 @@ RULE
 	'rule'
 	;
 
-USER_LOGIC_OPERATOR
-	:
-	'&' | '|' | '^'
-	;
-
-USER_COMPARE_OPERATOR
-	:
-	'=' | '<>' | '<' | '>' | '<=' | '>='
-	;
-
-USER_MATH_OPERATOR
-	:
-	'*' | '/' | '^' | '+' | '-'
-	;
-
 USER_REAL_FUNCTION_1ARGS
 	:
 	'cos' | 'sin' | 'tan' | 'acos' | 'asin' | 'atan' | 'log' | 'exp' | 'mod' | 'sqrt'
@@ -399,7 +450,7 @@ USER_REAL_FUNCTION_2ARGS
 
 USER_COMPLEX_FUNCTION_1ARGS
 	:
-	'cos' | 'sin' | 'tan' | 'acos' | 'asin' | 'atan' | 'exp' | 'mod'
+	'cos' | 'sin' | 'tan' | 'acos' | 'asin' | 'atan' | 'exp'
 	;
 
 USER_ARGB
@@ -443,29 +494,9 @@ USER_PATHOP_2POINTS
 
 USER_VARIABLE 
 	: 
-	('a'..'z'|'A'..'Z') ('a'..'z'|'A'..'Z'|':'|'0'..'9')* 
+	('a'..'z'|'A'..'Z') ('a'..'z'|'A'..'Z'|'0'..'9')* 
 	;
 
-USER_TRAP 
-	: 
-	('a'..'z'|'A'..'Z') ('a'..'z'|'A'..'Z'|':'|'0'..'9')* 
-	;
-
-USER_PALETTE 
-	: 
-	('a'..'z'|'A'..'Z') ('a'..'z'|'A'..'Z'|':'|'0'..'9')* 
-	;
-
-USER_STRING 
-	: 
-	('a'..'z'|'A'..'Z'|'_'|'\u0200'..'\u0301'|'\u0303'..'\u0377') (('a'..'z'|'A'..'Z'|':'|'0'..'9'|'_'|'\u0200'..'\u0301'|'\u0303'..'\u0377')|('\u0302'('\u0200'..'\u0260'|'\u0262'..'\u0377')))* 
-	;
-
-USER_QSTRING	
-	:	
-	'"' USER_STRING '"' 
-	;
-	
 COMMENT
 	: 
 	('//' ~('\n'|'\r')* '\r'? '\n' {} | '/*' (.)*? '*/' {}) -> skip 

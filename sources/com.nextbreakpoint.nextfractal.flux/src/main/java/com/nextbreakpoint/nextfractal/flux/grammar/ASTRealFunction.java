@@ -4,9 +4,14 @@ import org.antlr.v4.runtime.Token;
 
 class ASTRealFunction extends ASTRealExpression {
 	private String name;
-	private ASTRealExpression[] arguments;
+	private ASTComplexExpression[] arguments;
 
 	public ASTRealFunction(Token location, String name, ASTRealExpression[] arguments) {
+		super(location);
+		this.arguments = arguments;
+	}
+
+	public ASTRealFunction(Token location, String name, ASTComplexExpression[] arguments) {
 		super(location);
 		this.arguments = arguments;
 	}
@@ -15,7 +20,7 @@ class ASTRealFunction extends ASTRealExpression {
 		return name;
 	}
 
-	public ASTRealExpression[] getArguments() {
+	public ASTComplexExpression[] getArguments() {
 		return arguments;
 	}
 }
