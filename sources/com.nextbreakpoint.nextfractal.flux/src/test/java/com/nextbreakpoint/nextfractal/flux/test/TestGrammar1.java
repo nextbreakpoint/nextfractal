@@ -64,22 +64,20 @@ public class TestGrammar1 {
             	walker.walk(new ParseTreeListener() {
 					@Override
 					public void visitTerminal(TerminalNode node) {
-						System.out.println(node.getText() + " " + node.getSymbol());
+//						System.out.println(node.getText() + " " + node.getSymbol());
 					}
 					
 					@Override
 					public void visitErrorNode(ErrorNode node) {
-						System.out.println(node.getText() + " " + node.getSymbol());
 					}
 					
 					@Override
 					public void exitEveryRule(ParserRuleContext ctx) {
-						System.out.println(ctx.getRuleContext().getClass().getName() + " " + ctx.getText());
+						System.out.println(ctx.getRuleContext().getClass().getSimpleName() + " " + ctx.getText());
 					}
 					
 					@Override
 					public void enterEveryRule(ParserRuleContext ctx) {
-						System.out.println(ctx.getRuleContext().getClass().getName() + " " + ctx.getText());
 					}
 				}, root);
             }

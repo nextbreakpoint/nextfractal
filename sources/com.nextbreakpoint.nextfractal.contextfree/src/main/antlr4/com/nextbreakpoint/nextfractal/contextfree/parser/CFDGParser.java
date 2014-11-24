@@ -131,11 +131,6 @@ public class CFDGParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof CFDGListener ) ((CFDGListener)listener).exitChoose(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFDGVisitor ) return ((CFDGVisitor<? extends T>)visitor).visitChoose(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final ChooseContext choose() throws RecognitionException {
@@ -192,11 +187,6 @@ public class CFDGParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof CFDGListener ) ((CFDGListener)listener).exitCfdg2(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFDGVisitor ) return ((CFDGVisitor<? extends T>)visitor).visitCfdg2(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -262,11 +252,6 @@ public class CFDGParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof CFDGListener ) ((CFDGListener)listener).exitCfdg3(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFDGVisitor ) return ((CFDGVisitor<? extends T>)visitor).visitCfdg3(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -348,11 +333,6 @@ public class CFDGParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof CFDGListener ) ((CFDGListener)listener).exitStatement_v2(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFDGVisitor ) return ((CFDGVisitor<? extends T>)visitor).visitStatement_v2(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -481,11 +461,6 @@ public class CFDGParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof CFDGListener ) ((CFDGListener)listener).exitStatement_v3(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFDGVisitor ) return ((CFDGVisitor<? extends T>)visitor).visitStatement_v3(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final Statement_v3Context statement_v3() throws RecognitionException {
@@ -609,11 +584,6 @@ public class CFDGParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof CFDGListener ) ((CFDGListener)listener).exitV3clues(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFDGVisitor ) return ((CFDGVisitor<? extends T>)visitor).visitV3clues(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -752,11 +722,6 @@ public class CFDGParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof CFDGListener ) ((CFDGListener)listener).exitV2stuff(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFDGVisitor ) return ((CFDGVisitor<? extends T>)visitor).visitV2stuff(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final V2stuffContext v2stuff() throws RecognitionException {
@@ -832,11 +797,6 @@ public class CFDGParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof CFDGListener ) ((CFDGListener)listener).exitInclusion_v2(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFDGVisitor ) return ((CFDGVisitor<? extends T>)visitor).visitInclusion_v2(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final Inclusion_v2Context inclusion_v2() throws RecognitionException {
@@ -904,11 +864,6 @@ public class CFDGParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof CFDGListener ) ((CFDGListener)listener).exitImport_v3(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFDGVisitor ) return ((CFDGVisitor<? extends T>)visitor).visitImport_v3(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final Import_v3Context import_v3() throws RecognitionException {
@@ -955,11 +910,6 @@ public class CFDGParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof CFDGListener ) ((CFDGListener)listener).exitEof(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFDGVisitor ) return ((CFDGVisitor<? extends T>)visitor).visitEof(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final EofContext eof() throws RecognitionException {
@@ -1002,11 +952,6 @@ public class CFDGParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof CFDGListener ) ((CFDGListener)listener).exitFileString(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFDGVisitor ) return ((CFDGVisitor<? extends T>)visitor).visitFileString(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -1064,11 +1009,6 @@ public class CFDGParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof CFDGListener ) ((CFDGListener)listener).exitFileNameSpace(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFDGVisitor ) return ((CFDGVisitor<? extends T>)visitor).visitFileNameSpace(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -1138,11 +1078,6 @@ public class CFDGParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof CFDGListener ) ((CFDGListener)listener).exitInitialization_v3(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFDGVisitor ) return ((CFDGVisitor<? extends T>)visitor).visitInitialization_v3(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -1241,11 +1176,6 @@ public class CFDGParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof CFDGListener ) ((CFDGListener)listener).exitInitialization_v2(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFDGVisitor ) return ((CFDGVisitor<? extends T>)visitor).visitInitialization_v2(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final Initialization_v2Context initialization_v2() throws RecognitionException {
@@ -1300,11 +1230,6 @@ public class CFDGParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof CFDGListener ) ((CFDGListener)listener).exitDirective_v2(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFDGVisitor ) return ((CFDGVisitor<? extends T>)visitor).visitDirective_v2(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final Directive_v2Context directive_v2() throws RecognitionException {
@@ -1354,11 +1279,6 @@ public class CFDGParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof CFDGListener ) ((CFDGListener)listener).exitDirective_string(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFDGVisitor ) return ((CFDGVisitor<? extends T>)visitor).visitDirective_string(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -1437,11 +1357,6 @@ public class CFDGParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof CFDGListener ) ((CFDGListener)listener).exitShape(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFDGVisitor ) return ((CFDGVisitor<? extends T>)visitor).visitShape(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final ShapeContext shape() throws RecognitionException {
@@ -1488,11 +1403,6 @@ public class CFDGParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof CFDGListener ) ((CFDGListener)listener).exitShape_singleton_header(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFDGVisitor ) return ((CFDGVisitor<? extends T>)visitor).visitShape_singleton_header(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -1544,11 +1454,6 @@ public class CFDGParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof CFDGListener ) ((CFDGListener)listener).exitShape_singleton(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFDGVisitor ) return ((CFDGVisitor<? extends T>)visitor).visitShape_singleton(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final Shape_singletonContext shape_singleton() throws RecognitionException {
@@ -1596,11 +1501,6 @@ public class CFDGParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof CFDGListener ) ((CFDGListener)listener).exitRule_header_v2(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFDGVisitor ) return ((CFDGVisitor<? extends T>)visitor).visitRule_header_v2(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -1675,11 +1575,6 @@ public class CFDGParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof CFDGListener ) ((CFDGListener)listener).exitRule_v2(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFDGVisitor ) return ((CFDGVisitor<? extends T>)visitor).visitRule_v2(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final Rule_v2Context rule_v2() throws RecognitionException {
@@ -1727,11 +1622,6 @@ public class CFDGParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof CFDGListener ) ((CFDGListener)listener).exitRule_header(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFDGVisitor ) return ((CFDGVisitor<? extends T>)visitor).visitRule_header(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -1802,11 +1692,6 @@ public class CFDGParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof CFDGListener ) ((CFDGListener)listener).exitPath_header(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFDGVisitor ) return ((CFDGVisitor<? extends T>)visitor).visitPath_header(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final Path_headerContext path_header() throws RecognitionException {
@@ -1861,11 +1746,6 @@ public class CFDGParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof CFDGListener ) ((CFDGListener)listener).exitRule_v3(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFDGVisitor ) return ((CFDGVisitor<? extends T>)visitor).visitRule_v3(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final Rule_v3Context rule_v3() throws RecognitionException {
@@ -1917,11 +1797,6 @@ public class CFDGParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof CFDGListener ) ((CFDGListener)listener).exitPath(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFDGVisitor ) return ((CFDGVisitor<? extends T>)visitor).visitPath(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final PathContext path() throws RecognitionException {
@@ -1970,11 +1845,6 @@ public class CFDGParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof CFDGListener ) ((CFDGListener)listener).exitPath_header_v2(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFDGVisitor ) return ((CFDGVisitor<? extends T>)visitor).visitPath_header_v2(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -2029,11 +1899,6 @@ public class CFDGParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof CFDGListener ) ((CFDGListener)listener).exitPath_v2(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFDGVisitor ) return ((CFDGVisitor<? extends T>)visitor).visitPath_v2(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final Path_v2Context path_v2() throws RecognitionException {
@@ -2085,11 +1950,6 @@ public class CFDGParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof CFDGListener ) ((CFDGListener)listener).exitParameter(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFDGVisitor ) return ((CFDGVisitor<? extends T>)visitor).visitParameter(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -2198,11 +2058,6 @@ public class CFDGParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof CFDGListener ) ((CFDGListener)listener).exitBuncha_parameters(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFDGVisitor ) return ((CFDGVisitor<? extends T>)visitor).visitBuncha_parameters(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final Buncha_parametersContext buncha_parameters() throws RecognitionException {
@@ -2275,11 +2130,6 @@ public class CFDGParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof CFDGListener ) ((CFDGListener)listener).exitParameter_list(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFDGVisitor ) return ((CFDGVisitor<? extends T>)visitor).visitParameter_list(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final Parameter_listContext parameter_list() throws RecognitionException {
@@ -2345,11 +2195,6 @@ public class CFDGParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof CFDGListener ) ((CFDGListener)listener).exitFunction_parameter_list(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFDGVisitor ) return ((CFDGVisitor<? extends T>)visitor).visitFunction_parameter_list(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final Function_parameter_listContext function_parameter_list() throws RecognitionException {
@@ -2406,11 +2251,6 @@ public class CFDGParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof CFDGListener ) ((CFDGListener)listener).exitParameter_spec(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFDGVisitor ) return ((CFDGVisitor<? extends T>)visitor).visitParameter_spec(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -2496,11 +2336,6 @@ public class CFDGParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof CFDGListener ) ((CFDGListener)listener).exitBuncha_elements(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFDGVisitor ) return ((CFDGVisitor<? extends T>)visitor).visitBuncha_elements(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final Buncha_elementsContext buncha_elements() throws RecognitionException {
@@ -2577,11 +2412,6 @@ public class CFDGParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof CFDGListener ) ((CFDGListener)listener).exitBuncha_pathOps_v2(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFDGVisitor ) return ((CFDGVisitor<? extends T>)visitor).visitBuncha_pathOps_v2(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -2667,11 +2497,6 @@ public class CFDGParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof CFDGListener ) ((CFDGListener)listener).exitPathOp_simple_v2(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFDGVisitor ) return ((CFDGVisitor<? extends T>)visitor).visitPathOp_simple_v2(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -2770,11 +2595,6 @@ public class CFDGParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof CFDGListener ) ((CFDGListener)listener).exitElement_simple(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFDGVisitor ) return ((CFDGVisitor<? extends T>)visitor).visitElement_simple(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -2908,11 +2728,6 @@ public class CFDGParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof CFDGListener ) ((CFDGListener)listener).exitOne_or_more_elements(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFDGVisitor ) return ((CFDGVisitor<? extends T>)visitor).visitOne_or_more_elements(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final One_or_more_elementsContext one_or_more_elements() throws RecognitionException {
@@ -2979,11 +2794,6 @@ public class CFDGParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof CFDGListener ) ((CFDGListener)listener).exitOne_or_more_pathOp_v2(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFDGVisitor ) return ((CFDGVisitor<? extends T>)visitor).visitOne_or_more_pathOp_v2(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final One_or_more_pathOp_v2Context one_or_more_pathOp_v2() throws RecognitionException {
@@ -3046,11 +2856,6 @@ public class CFDGParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof CFDGListener ) ((CFDGListener)listener).exitCaseBody(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFDGVisitor ) return ((CFDGVisitor<? extends T>)visitor).visitCaseBody(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final CaseBodyContext caseBody() throws RecognitionException {
@@ -3106,11 +2911,6 @@ public class CFDGParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof CFDGListener ) ((CFDGListener)listener).exitCaseBody_element(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFDGVisitor ) return ((CFDGVisitor<? extends T>)visitor).visitCaseBody_element(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -3189,11 +2989,6 @@ public class CFDGParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof CFDGListener ) ((CFDGListener)listener).exitElement(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFDGVisitor ) return ((CFDGVisitor<? extends T>)visitor).visitElement(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -3356,11 +3151,6 @@ public class CFDGParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof CFDGListener ) ((CFDGListener)listener).exitElement_v2clue(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFDGVisitor ) return ((CFDGVisitor<? extends T>)visitor).visitElement_v2clue(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final Element_v2clueContext element_v2clue() throws RecognitionException {
@@ -3433,11 +3223,6 @@ public class CFDGParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof CFDGListener ) ((CFDGListener)listener).exitPathOp_v2(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFDGVisitor ) return ((CFDGVisitor<? extends T>)visitor).visitPathOp_v2(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -3519,11 +3304,6 @@ public class CFDGParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof CFDGListener ) ((CFDGListener)listener).exitPathOp_v3clues(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFDGVisitor ) return ((CFDGVisitor<? extends T>)visitor).visitPathOp_v3clues(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -3637,11 +3417,6 @@ public class CFDGParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof CFDGListener ) ((CFDGListener)listener).exitElement_loop(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFDGVisitor ) return ((CFDGVisitor<? extends T>)visitor).visitElement_loop(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final Element_loopContext element_loop() throws RecognitionException {
@@ -3689,11 +3464,6 @@ public class CFDGParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof CFDGListener ) ((CFDGListener)listener).exitBuncha_replacements_v2(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFDGVisitor ) return ((CFDGVisitor<? extends T>)visitor).visitBuncha_replacements_v2(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -3754,11 +3524,6 @@ public class CFDGParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof CFDGListener ) ((CFDGListener)listener).exitOne_or_more_replacements_v2(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFDGVisitor ) return ((CFDGVisitor<? extends T>)visitor).visitOne_or_more_replacements_v2(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -3825,11 +3590,6 @@ public class CFDGParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof CFDGListener ) ((CFDGListener)listener).exitReplacement_simple_v2(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFDGVisitor ) return ((CFDGVisitor<? extends T>)visitor).visitReplacement_simple_v2(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final Replacement_simple_v2Context replacement_simple_v2() throws RecognitionException {
@@ -3883,11 +3643,6 @@ public class CFDGParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof CFDGListener ) ((CFDGListener)listener).exitReplacement_v2(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFDGVisitor ) return ((CFDGVisitor<? extends T>)visitor).visitReplacement_v2(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -3956,11 +3711,6 @@ public class CFDGParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof CFDGListener ) ((CFDGListener)listener).exitLoopHeader_v2(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFDGVisitor ) return ((CFDGVisitor<? extends T>)visitor).visitLoopHeader_v2(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final LoopHeader_v2Context loopHeader_v2() throws RecognitionException {
@@ -4021,11 +3771,6 @@ public class CFDGParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof CFDGListener ) ((CFDGListener)listener).exitLoopHeader(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFDGVisitor ) return ((CFDGVisitor<? extends T>)visitor).visitLoopHeader(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -4113,11 +3858,6 @@ public class CFDGParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof CFDGListener ) ((CFDGListener)listener).exitIfHeader(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFDGVisitor ) return ((CFDGVisitor<? extends T>)visitor).visitIfHeader(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final IfHeaderContext ifHeader() throws RecognitionException {
@@ -4170,11 +3910,6 @@ public class CFDGParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof CFDGListener ) ((CFDGListener)listener).exitIfElseHeader(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFDGVisitor ) return ((CFDGVisitor<? extends T>)visitor).visitIfElseHeader(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final IfElseHeaderContext ifElseHeader() throws RecognitionException {
@@ -4225,11 +3960,6 @@ public class CFDGParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof CFDGListener ) ((CFDGListener)listener).exitTransHeader(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFDGVisitor ) return ((CFDGVisitor<? extends T>)visitor).visitTransHeader(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -4302,11 +4032,6 @@ public class CFDGParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof CFDGListener ) ((CFDGListener)listener).exitSwitchHeader(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFDGVisitor ) return ((CFDGVisitor<? extends T>)visitor).visitSwitchHeader(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final SwitchHeaderContext switchHeader() throws RecognitionException {
@@ -4358,11 +4083,6 @@ public class CFDGParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof CFDGListener ) ((CFDGListener)listener).exitCaseHeader(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFDGVisitor ) return ((CFDGVisitor<? extends T>)visitor).visitCaseHeader(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -4453,11 +4173,6 @@ public class CFDGParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof CFDGListener ) ((CFDGListener)listener).exitModification_v2(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFDGVisitor ) return ((CFDGVisitor<? extends T>)visitor).visitModification_v2(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final Modification_v2Context modification_v2() throws RecognitionException {
@@ -4521,11 +4236,6 @@ public class CFDGParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof CFDGListener ) ((CFDGListener)listener).exitModification(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFDGVisitor ) return ((CFDGVisitor<? extends T>)visitor).visitModification(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -4594,11 +4304,6 @@ public class CFDGParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof CFDGListener ) ((CFDGListener)listener).exitBuncha_adjustments(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFDGVisitor ) return ((CFDGVisitor<? extends T>)visitor).visitBuncha_adjustments(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -4691,11 +4396,6 @@ public class CFDGParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof CFDGListener ) ((CFDGListener)listener).exitAdjustment(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFDGVisitor ) return ((CFDGVisitor<? extends T>)visitor).visitAdjustment(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final AdjustmentContext adjustment() throws RecognitionException {
@@ -4782,11 +4482,6 @@ public class CFDGParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof CFDGListener ) ((CFDGListener)listener).exitLetHeader(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFDGVisitor ) return ((CFDGVisitor<? extends T>)visitor).visitLetHeader(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final LetHeaderContext letHeader() throws RecognitionException {
@@ -4833,11 +4528,6 @@ public class CFDGParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof CFDGListener ) ((CFDGListener)listener).exitLetBody(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFDGVisitor ) return ((CFDGVisitor<? extends T>)visitor).visitLetBody(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -4886,11 +4576,6 @@ public class CFDGParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof CFDGListener ) ((CFDGListener)listener).exitLetVariables(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFDGVisitor ) return ((CFDGVisitor<? extends T>)visitor).visitLetVariables(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -4966,11 +4651,6 @@ public class CFDGParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof CFDGListener ) ((CFDGListener)listener).exitLetVariable(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFDGVisitor ) return ((CFDGVisitor<? extends T>)visitor).visitLetVariable(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final LetVariableContext letVariable() throws RecognitionException {
@@ -5018,11 +4698,6 @@ public class CFDGParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof CFDGListener ) ((CFDGListener)listener).exitExplist(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFDGVisitor ) return ((CFDGVisitor<? extends T>)visitor).visitExplist(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -5109,11 +4784,6 @@ public class CFDGParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof CFDGListener ) ((CFDGListener)listener).exitArglist(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFDGVisitor ) return ((CFDGVisitor<? extends T>)visitor).visitArglist(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final ArglistContext arglist() throws RecognitionException {
@@ -5191,11 +4861,6 @@ public class CFDGParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof CFDGListener ) ((CFDGListener)listener).exitExp(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFDGVisitor ) return ((CFDGVisitor<? extends T>)visitor).visitExp(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -5348,11 +5013,6 @@ public class CFDGParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof CFDGListener ) ((CFDGListener)listener).exitExp2(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFDGVisitor ) return ((CFDGVisitor<? extends T>)visitor).visitExp2(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -5687,11 +5347,6 @@ public class CFDGParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof CFDGListener ) ((CFDGListener)listener).exitExp3(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFDGVisitor ) return ((CFDGVisitor<? extends T>)visitor).visitExp3(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final Exp3Context exp3() throws RecognitionException {
@@ -6000,11 +5655,6 @@ public class CFDGParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof CFDGListener ) ((CFDGListener)listener).exitExpfunc(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFDGVisitor ) return ((CFDGVisitor<? extends T>)visitor).visitExpfunc(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final ExpfuncContext expfunc() throws RecognitionException {
@@ -6142,11 +5792,6 @@ public class CFDGParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof CFDGListener ) ((CFDGListener)listener).exitExp2func(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFDGVisitor ) return ((CFDGVisitor<? extends T>)visitor).visitExp2func(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final Exp2funcContext exp2func() throws RecognitionException {
@@ -6279,11 +5924,6 @@ public class CFDGParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof CFDGListener ) ((CFDGListener)listener).exitShapeName(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFDGVisitor ) return ((CFDGVisitor<? extends T>)visitor).visitShapeName(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final ShapeNameContext shapeName() throws RecognitionException {
@@ -6346,11 +5986,6 @@ public class CFDGParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof CFDGListener ) ((CFDGListener)listener).exitGlobal_definition(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFDGVisitor ) return ((CFDGVisitor<? extends T>)visitor).visitGlobal_definition(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -6433,11 +6068,6 @@ public class CFDGParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof CFDGListener ) ((CFDGListener)listener).exitFunction_definition_header(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFDGVisitor ) return ((CFDGVisitor<? extends T>)visitor).visitFunction_definition_header(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -6579,11 +6209,6 @@ public class CFDGParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof CFDGListener ) ((CFDGListener)listener).exitGlobal_definition_header(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFDGVisitor ) return ((CFDGVisitor<? extends T>)visitor).visitGlobal_definition_header(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final Global_definition_headerContext global_definition_header() throws RecognitionException {
@@ -6651,11 +6276,6 @@ public class CFDGParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof CFDGListener ) ((CFDGListener)listener).exitDefinition_header(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFDGVisitor ) return ((CFDGVisitor<? extends T>)visitor).visitDefinition_header(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final Definition_headerContext definition_header() throws RecognitionException {
@@ -6722,11 +6342,6 @@ public class CFDGParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof CFDGListener ) ((CFDGListener)listener).exitDefinition(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CFDGVisitor ) return ((CFDGVisitor<? extends T>)visitor).visitDefinition(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 
