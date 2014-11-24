@@ -50,7 +50,7 @@ public class TestGrammar1 {
 			String source = ""
 					+ "orbit [-1 - 1i,+1 + 1i] {"
 					+ "loop [1, 1000] {"
-					+ "z = x ^ 2 + w;"
+					+ "z = 5 + 4 * x ^ 2 + w;"
 					+ "x = z;"
 					+ "}"
 					+ "condition {"
