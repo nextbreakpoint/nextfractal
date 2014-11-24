@@ -2,7 +2,7 @@ package com.nextbreakpoint.nextfractal.flux.grammar;
 
 import org.antlr.v4.runtime.Token;
 
-class ASTPalette extends ASTObject {
+public class ASTPalette extends ASTObject {
 	private String name;
 
 	public ASTPalette(Token location, String name) {

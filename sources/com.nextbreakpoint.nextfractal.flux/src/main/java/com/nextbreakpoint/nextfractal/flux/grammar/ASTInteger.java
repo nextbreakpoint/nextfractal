@@ -2,7 +2,7 @@ package com.nextbreakpoint.nextfractal.flux.grammar;
 
 import org.antlr.v4.runtime.Token;
 
-class ASTInteger extends ASTRealExpression {
+public class ASTInteger extends ASTRealExpression {
 	private int value;
 
 	public ASTInteger(Token location, int value) {

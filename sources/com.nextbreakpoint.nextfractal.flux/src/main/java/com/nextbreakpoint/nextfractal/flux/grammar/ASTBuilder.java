@@ -61,7 +61,7 @@ public class ASTBuilder {
 		this.color = color;
 	}
 
-	public ASTObject getOrbit() {
+	public ASTOrbit getOrbit() {
 		return orbit;
 	}
 

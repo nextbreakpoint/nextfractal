@@ -2,7 +2,7 @@ package com.nextbreakpoint.nextfractal.flux.grammar;
 
 import org.antlr.v4.runtime.Token;
 
-class ASTRealFunction extends ASTRealExpression {
+public class ASTRealFunction extends ASTRealExpression {
 	private String name;
 	private ASTComplexExpression[] arguments;
 

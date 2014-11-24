@@ -37,6 +37,9 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.junit.Test;
 
+import com.nextbreakpoint.nextfractal.flux.grammar.ASTBuilder;
+import com.nextbreakpoint.nextfractal.flux.grammar.ASTColor;
+import com.nextbreakpoint.nextfractal.flux.grammar.ASTOrbit;
 import com.nextbreakpoint.nextfractal.flux.grammar.NextFractalLexer;
 import com.nextbreakpoint.nextfractal.flux.grammar.NextFractalParser;
 
@@ -45,9 +48,10 @@ public class TestGrammar1 {
 	public void parse() {
 		try {
 			String source = ""
-					+ "orbit [-1 - 1i,1 + 1i] {"
+					+ "orbit [-1 - 1i,+1 + 1i] {"
 					+ "loop [1, 1000] {"
 					+ "z = x ^ 2 + w;"
+					+ "x = z;"
 					+ "}"
 					+ "condition {"
 					+ "|z| > 4"
@@ -58,6 +62,11 @@ public class TestGrammar1 {
 			NextFractalLexer lexer = new NextFractalLexer(is);
 			CommonTokenStream tokens = new CommonTokenStream(lexer);
 			NextFractalParser parser = new NextFractalParser(tokens);
+			ASTBuilder builder = parser.getBuilder();
+			ASTOrbit orbit = builder.getOrbit();
+			ASTColor color = builder.getColor();
+			System.out.println(orbit);
+			System.out.println(color);
 			ParseTree root = parser.root();
             if (root != null) {
             	ParseTreeWalker walker = new ParseTreeWalker();

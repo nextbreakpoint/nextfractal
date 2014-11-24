@@ -4,7 +4,7 @@ import org.antlr.v4.runtime.Token;
 
 import com.nextbreakpoint.nextfractal.core.math.Complex;
 
-class ASTComplex extends ASTComplexExpression {
+public class ASTComplex extends ASTComplexExpression {
 	private Complex value;
 
 	public ASTComplex(Token location, Complex value) {

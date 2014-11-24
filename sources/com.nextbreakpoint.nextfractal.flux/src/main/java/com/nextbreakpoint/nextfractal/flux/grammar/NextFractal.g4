@@ -12,7 +12,9 @@ options
 } 
 
 @members {
-	ASTBuilder driver = new ASTBuilder();
+	private ASTBuilder builder = new ASTBuilder();
+	
+	public ASTBuilder getBuilder() { return builder; }
 }
 
 root
@@ -23,60 +25,60 @@ root
 orbit
 	:
 	o=ORBIT '[' ra=complex ',' rb=complex ']' {
-		driver.setOrbit(new ASTOrbit($o, new ASTRegion($ra.result, $rb.result)));
+		builder.setOrbit(new ASTOrbit($o, new ASTRegion($ra.result, $rb.result)));
 	} '{' trap* projection? begin? loop condition end? '}'
 	;
 		
 color
 	:
 	c=COLOR '[' argb=colorargb ']' { 
-		driver.setColor(new ASTColor($c, $argb.result));
+		builder.setColor(new ASTColor($c, $argb.result));
 	} '{' palette* colorrule* '}'
 	;
 		
 begin
 	:
 	b=BEGIN { 
-		driver.setOrbitBegin(new ASTOrbitBegin($b));
+		builder.setOrbitBegin(new ASTOrbitBegin($b));
 	} '{' beginstatements? '}'
 	;
 		
 loop
 	:
 	l=LOOP '[' lb=USER_INTEGER ',' le=USER_INTEGER ']' {
-		driver.setOrbitLoop(new ASTOrbitLoop($l, $lb.text, $le.text));
+		builder.setOrbitLoop(new ASTOrbitLoop($l, $lb.text, $le.text));
 	} '{' loopstatements? '}'
 	;
 		
 end
 	:
 	e=END {
-		driver.setOrbitEnd(new ASTOrbitEnd($e));		
+		builder.setOrbitEnd(new ASTOrbitEnd($e));		
 	} '{' endstatements? '}'
 	;
 		
 condition
 	:
 	c=CONDITION '{' conditionexp '}' {
-		driver.setOrbitCondition(new ASTOrbitCondition($c, null));
+		builder.setOrbitCondition(new ASTOrbitCondition($c, null));
 	}
 	;
 			
 projection
 	:
 	p=PROJECTION '{' ce=complexexp '}' {
-		driver.setOrbitProjection(new ASTOrbitProjection($p, $ce.result));
+		builder.setOrbitProjection(new ASTOrbitProjection($p, $ce.result));
 	}
 	|
 	p=PROJECTION '{' re=realexp '}' {
-		driver.setOrbitProjection(new ASTOrbitProjection($p, $re.result));
+		builder.setOrbitProjection(new ASTOrbitProjection($p, $re.result));
 	}
 	;
 	
 trap
 	:
 	t=TRAP n=USER_VARIABLE '[' c=complex ']' {
-		driver.addOrbitTrap(new ASTOrbitTrap($t, $n.text));
+		builder.addOrbitTrap(new ASTOrbitTrap($t, $n.text));
 	} '{' pathops? '}' 
 	;
 		
@@ -96,21 +98,21 @@ pathop
 beginstatements 
 	:
 	s=statement+ {
-		driver.addBeginStatement($s.result);
+		builder.addBeginStatement($s.result);
 	}
 	;
 		
 loopstatements 
 	:
 	s=statement+ {
-		driver.addLoopStatement($s.result);
+		builder.addLoopStatement($s.result);
 	}
 	;
 		
 endstatements 
 	:
 	s=statement+ {
-		driver.addEndStatement($s.result);
+		builder.addEndStatement($s.result);
 	}
 	;
 		
@@ -334,7 +336,7 @@ variable returns [ASTVariable result]
 	
 real returns [ASTReal result] 
 	:
-	r=(USER_RATIONAL | USER_INTEGER) {
+	'+'? r=(USER_RATIONAL | USER_INTEGER) {
 		$result = new ASTReal($r, $r.text);
 	}
 	|
@@ -345,15 +347,15 @@ real returns [ASTReal result]
 	
 complex returns [ASTComplex result]
 	:
-	r=(USER_RATIONAL | USER_INTEGER) '+' i=(USER_RATIONAL | USER_INTEGER) 'i' {
+	'+'? r=(USER_RATIONAL | USER_INTEGER) '+' i=(USER_RATIONAL | USER_INTEGER) 'i' {
 		$result = new ASTComplex($r, $r.text, "+" + $i.text);
 	}
 	|
-	r=(USER_RATIONAL | USER_INTEGER) '-' i=(USER_RATIONAL | USER_INTEGER) 'i' {
+	'+'? r=(USER_RATIONAL | USER_INTEGER) '-' i=(USER_RATIONAL | USER_INTEGER) 'i' {
 		$result = new ASTComplex($r, $r.text, "-" + $i.text);
 	}
 	|
-	i=(USER_RATIONAL | USER_INTEGER) 'i' {
+	'+'? i=(USER_RATIONAL | USER_INTEGER) 'i' {
 		$result = new ASTComplex($i, "0", $i.text);
 	}
 	|

@@ -1,7 +1,6 @@
 package com.nextbreakpoint.nextfractal.flux.grammar;
 
-
-class ASTRegion {
+public class ASTRegion {
 	private ASTComplex a; 
 	private ASTComplex b; 
 

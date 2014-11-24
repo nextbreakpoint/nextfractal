@@ -2,7 +2,7 @@ package com.nextbreakpoint.nextfractal.flux.grammar;
 
 import org.antlr.v4.runtime.Token;
 
-abstract class ASTObject {
+public abstract class ASTObject {
 	protected Token location;
 
 	public ASTObject(Token location) {

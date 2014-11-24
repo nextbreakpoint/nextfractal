@@ -2,7 +2,7 @@ package com.nextbreakpoint.nextfractal.flux.grammar;
 
 import org.antlr.v4.runtime.Token;
 
-class ASTComplexParen extends ASTComplexExpression {
+public class ASTComplexParen extends ASTComplexExpression {
 	private ASTComplexExpression exp;
 
 	public ASTComplexParen(Token location, ASTComplexExpression exp) {

@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.antlr.v4.runtime.Token;
 
-class ASTOrbitLoop extends ASTObject {
+public class ASTOrbitLoop extends ASTObject {
 	private int begin;
 	private int end;
 	private List<ASTStatement> statements; 
