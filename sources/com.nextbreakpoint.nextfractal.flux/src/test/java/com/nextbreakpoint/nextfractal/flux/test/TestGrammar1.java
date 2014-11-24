@@ -50,7 +50,7 @@ public class TestGrammar1 {
 			String source = ""
 					+ "orbit [-1 - 1i,+1 + 1i] {"
 					+ "loop [1, 1000] {"
-					+ "z = 5 + 4 * x ^ 2 + w;"
+					+ "z = 5 + |4i| * x ^ 2 i + w + sin(5i);"
 					+ "x = z;"
 					+ "}"
 					+ "condition {"
@@ -62,13 +62,13 @@ public class TestGrammar1 {
 			NextFractalLexer lexer = new NextFractalLexer(is);
 			CommonTokenStream tokens = new CommonTokenStream(lexer);
 			NextFractalParser parser = new NextFractalParser(tokens);
-			ASTBuilder builder = parser.getBuilder();
-			ASTOrbit orbit = builder.getOrbit();
-			ASTColor color = builder.getColor();
-			System.out.println(orbit);
-			System.out.println(color);
 			ParseTree root = parser.root();
             if (root != null) {
+            	ASTBuilder builder = parser.getBuilder();
+            	ASTOrbit orbit = builder.getOrbit();
+            	ASTColor color = builder.getColor();
+            	System.out.println(orbit);
+            	System.out.println(color);
             	ParseTreeWalker walker = new ParseTreeWalker();
             	walker.walk(new ParseTreeListener() {
 					@Override
