@@ -7,7 +7,7 @@ import org.antlr.v4.runtime.Token;
 
 public class ASTOrbit extends ASTObject {
 	private ASTRegion region; 
-	private List<ASTOrbitTrap> traps; 
+	private List<ASTOrbitTrap> traps = new ArrayList<>(); 
 	private ASTOrbitProjection projection; 
 	private ASTOrbitBegin begin; 
 	private ASTOrbitLoop loop; 
@@ -76,5 +76,34 @@ public class ASTOrbit extends ASTObject {
 			traps = new ArrayList<ASTOrbitTrap>();
 		}
 		traps.add(trap);
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("region = ");
+		builder.append(region);
+		builder.append("\n");
+		builder.append("projection = ");
+		builder.append(projection);
+		builder.append("\n");
+		builder.append("begin = ");
+		builder.append(begin);
+		builder.append("\n");
+		builder.append("loop = ");
+		builder.append(loop);
+		builder.append("\n");
+		builder.append("condition = ");
+		builder.append(condition);
+		builder.append("\n");
+		builder.append("end = ");
+		builder.append(end);
+		builder.append("\n");
+		for (ASTOrbitTrap trap : traps) {
+			builder.append("trap = ");
+			builder.append(trap);
+			builder.append("\n");
+		}
+		return builder.toString();
 	}
 }

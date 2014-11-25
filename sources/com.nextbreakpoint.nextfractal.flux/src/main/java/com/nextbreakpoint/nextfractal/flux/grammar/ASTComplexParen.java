@@ -13,4 +13,13 @@ public class ASTComplexParen extends ASTComplexExpression {
 	public ASTComplexExpression getExp() {
 		return exp;
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("(");
+		builder.append(exp);
+		builder.append(")");
+		return builder.toString();
+	}
 }

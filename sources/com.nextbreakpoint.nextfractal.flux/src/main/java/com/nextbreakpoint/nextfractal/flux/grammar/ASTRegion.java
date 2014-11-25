@@ -16,4 +16,15 @@ public class ASTRegion {
 	public ASTComplex getB() {
 		return b;
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("[");
+		builder.append(a);
+		builder.append(",");
+		builder.append(b);
+		builder.append("]");
+		return builder.toString();
+	}
 }

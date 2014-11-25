@@ -13,4 +13,11 @@ public class ASTOrbitProjection extends ASTObject {
 	public ASTComplexExpression getExpression() {
 		return exp;
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append(exp);
+		return builder.toString();
+	}
 }

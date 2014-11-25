@@ -13,4 +13,14 @@ public class ASTComplexMod extends ASTRealExpression {
 	public ASTComplexExpression getExp() {
 		return exp;
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("mod");
+		builder.append("(");
+		builder.append(exp);
+		builder.append(")");
+		return builder.toString();
+	}
 }

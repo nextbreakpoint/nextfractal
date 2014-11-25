@@ -13,4 +13,13 @@ public class ASTOrbitTrap extends ASTObject {
 	public String getName() {
 		return name;
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append(name);
+		builder.append("[");
+		builder.append("]");
+		return builder.toString();
+	}
 }

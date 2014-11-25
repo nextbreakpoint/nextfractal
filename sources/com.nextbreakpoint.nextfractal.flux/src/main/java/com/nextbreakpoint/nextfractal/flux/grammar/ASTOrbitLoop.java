@@ -8,7 +8,7 @@ import org.antlr.v4.runtime.Token;
 public class ASTOrbitLoop extends ASTObject {
 	private int begin;
 	private int end;
-	private List<ASTStatement> statements; 
+	private List<ASTStatement> statements = new ArrayList<>(); 
 
 	public ASTOrbitLoop(Token location, int begin, int end) {
 		super(location);
@@ -27,9 +27,6 @@ public class ASTOrbitLoop extends ASTObject {
 	}
 
 	public void addStatement(ASTStatement statement) {
-		if (statements == null) {
-			statements = new ArrayList<ASTStatement>();
-		}
 		statements.add(statement);
 	}
 
@@ -39,5 +36,16 @@ public class ASTOrbitLoop extends ASTObject {
 
 	public int getEnd() {
 		return end;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		for (ASTStatement statement : statements) {
+			builder.append("statement = ");
+			builder.append(statement);
+			builder.append("\n");
+		}
+		return builder.toString();
 	}
 }

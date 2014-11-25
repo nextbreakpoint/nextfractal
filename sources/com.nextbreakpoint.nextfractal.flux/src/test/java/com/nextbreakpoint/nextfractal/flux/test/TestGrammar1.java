@@ -64,11 +64,6 @@ public class TestGrammar1 {
 			NextFractalParser parser = new NextFractalParser(tokens);
 			ParseTree root = parser.root();
             if (root != null) {
-            	ASTBuilder builder = parser.getBuilder();
-            	ASTOrbit orbit = builder.getOrbit();
-            	ASTColor color = builder.getColor();
-            	System.out.println(orbit);
-            	System.out.println(color);
             	ParseTreeWalker walker = new ParseTreeWalker();
             	walker.walk(new ParseTreeListener() {
 					@Override
@@ -89,6 +84,11 @@ public class TestGrammar1 {
 					public void enterEveryRule(ParserRuleContext ctx) {
 					}
 				}, root);
+            	ASTBuilder builder = parser.getBuilder();
+            	ASTOrbit orbit = builder.getOrbit();
+            	ASTColor color = builder.getColor();
+            	System.out.println(orbit);
+            	System.out.println(color);
             }
 		}
 		catch (Exception e) {

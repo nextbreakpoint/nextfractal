@@ -8,6 +8,7 @@ public class ASTComplexFunction extends ASTComplexExpression {
 
 	public ASTComplexFunction(Token location, String name, ASTComplexExpression[] arguments) {
 		super(location);
+		this.name = name;
 		this.arguments = arguments;
 	}
 
@@ -17,5 +18,20 @@ public class ASTComplexFunction extends ASTComplexExpression {
 
 	public ASTComplexExpression[] getArguments() {
 		return arguments;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append(name);
+		builder.append("(");
+		for (int i = 0; i < arguments.length; i++) {
+			builder.append(arguments[i]);
+			if (i < arguments.length - 1) {
+				builder.append(",");
+			}
+		}
+		builder.append(")");
+		return builder.toString();
 	}
 }

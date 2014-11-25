@@ -6,7 +6,7 @@ import java.util.List;
 import org.antlr.v4.runtime.Token;
 
 public class ASTOrbitEnd extends ASTObject {
-	private List<ASTStatement> statements; 
+	private List<ASTStatement> statements = new ArrayList<>(); 
 
 	public ASTOrbitEnd(Token location) {
 		super(location);
@@ -17,9 +17,17 @@ public class ASTOrbitEnd extends ASTObject {
 	}
 
 	public void addStatement(ASTStatement statement) {
-		if (statements == null) {
-			statements = new ArrayList<ASTStatement>();
-		}
 		statements.add(statement);
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		for (ASTStatement statement : statements) {
+			builder.append("statement = ");
+			builder.append(statement);
+			builder.append("\n");
+		}
+		return builder.toString();
 	}
 }

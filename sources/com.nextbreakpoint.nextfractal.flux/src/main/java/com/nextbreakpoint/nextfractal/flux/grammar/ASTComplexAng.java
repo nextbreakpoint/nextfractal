@@ -13,4 +13,14 @@ public class ASTComplexAng extends ASTRealExpression {
 	public ASTComplexExpression getExp() {
 		return exp;
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("ang");
+		builder.append("(");
+		builder.append(exp);
+		builder.append(")");
+		return builder.toString();
+	}
 }

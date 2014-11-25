@@ -6,4 +6,10 @@ public class ASTRule extends ASTObject {
 	public ASTRule(Token location) {
 		super(location);
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		return builder.toString();
+	}
 }

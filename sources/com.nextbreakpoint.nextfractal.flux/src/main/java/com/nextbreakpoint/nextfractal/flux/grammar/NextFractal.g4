@@ -40,21 +40,21 @@ begin
 	:
 	b=BEGIN { 
 		builder.setOrbitBegin(new ASTOrbitBegin($b));
-	} '{' beginstatements? '}'
+	} '{' beginstatements* '}'
 	;
 		
 loop
 	:
 	l=LOOP '[' lb=USER_INTEGER ',' le=USER_INTEGER ']' {
 		builder.setOrbitLoop(new ASTOrbitLoop($l, $lb.text, $le.text));
-	} '{' loopstatements? '}'
+	} '{' loopstatements* '}'
 	;
 		
 end
 	:
 	e=END {
 		builder.setOrbitEnd(new ASTOrbitEnd($e));		
-	} '{' endstatements? '}'
+	} '{' endstatements* '}'
 	;
 		
 condition
@@ -79,12 +79,12 @@ trap
 	:
 	t=TRAP n=USER_VARIABLE '[' c=complex ']' {
 		builder.addOrbitTrap(new ASTOrbitTrap($t, $n.text));
-	} '{' pathops? '}' 
+	} '{' pathops* '}' 
 	;
 		
 pathops 
 	:
-	o=pathop+ {
+	o=pathop {
 	}
 	;
 		
@@ -97,21 +97,21 @@ pathop
 		
 beginstatements 
 	:
-	s=statement+ {
+	s=statement {
 		builder.addBeginStatement($s.result);
 	}
 	;
 		
 loopstatements 
 	:
-	s=statement+ {
+	s=statement {
 		builder.addLoopStatement($s.result);
 	}
 	;
 		
 endstatements 
 	:
-	s=statement+ {
+	s=statement {
 		builder.addEndStatement($s.result);
 	}
 	;

@@ -19,4 +19,13 @@ public class ASTStatement extends ASTObject {
 	public ASTComplexExpression getExp() {
 		return exp;
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append(name);
+		builder.append(" = ");
+		builder.append(exp);
+		return builder.toString();
+	}
 }
