@@ -410,7 +410,7 @@ realvariable returns [ASTRealVariable result]
 	}
 	;
 	
-complexvariable returns [ASTVariable result]
+complexvariable returns [ASTComplexVariable result]
 	:
 	v=USER_VARIABLE {
 		$result = new ASTComplexVariable($v, $v.text);
@@ -509,8 +509,8 @@ colorexp returns [ASTColorExpression result]
 		$result = new ASTColorComponent($e1.result.getLocation(), $e1.result, $e2.result, $e3.result, $e4.result);
 	}
 	|
-	v=USER_VARIABLE '[' i=USER_INTEGER ']' {
-		$result = new ASTColorPalette($v, $v.text, Integer.parseInt($i.text));
+	v=USER_VARIABLE '[' e=realexp ']' {
+		$result = new ASTColorPalette($v, $v.text, $e.result);
 	}
 	;
 		

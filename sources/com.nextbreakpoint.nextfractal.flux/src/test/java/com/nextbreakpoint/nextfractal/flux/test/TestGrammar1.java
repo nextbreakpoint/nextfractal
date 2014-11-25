@@ -64,11 +64,15 @@ public class TestGrammar1 {
 					+ "|z| > 4 & trap1[z]"
 					+ "}"
 					+ "} color [#000000] {"
-					+ "palette palette1 [100] {"
+					+ "palette palette1 [200] {"
 					+ "[0, #000000] > [100, #FFFFFF];"
+					+ "[101, #FFFFFF] > [200, #FF0000];"
 					+ "}"
-					+ "rule (4 > 6) [1.0] {"
-					+ "5,5,5,5"
+					+ "rule (n = 0) [1.0] {"
+					+ "x,5,5,5"
+					+ "}"
+					+ "rule (n > 0) [1.0] {"
+					+ "palette1[n]"
 					+ "}"
 					+ "}";
 			ANTLRInputStream is = new ANTLRInputStream(new StringReader(source));

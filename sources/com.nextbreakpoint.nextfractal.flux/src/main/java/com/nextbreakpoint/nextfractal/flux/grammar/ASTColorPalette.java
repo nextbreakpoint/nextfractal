@@ -4,20 +4,20 @@ import org.antlr.v4.runtime.Token;
 
 public class ASTColorPalette extends ASTColorExpression {
 	private String name;
-	private int index;
+	private ASTRealExpression exp;
 	
-	public ASTColorPalette(Token location, String name, int index) {
+	public ASTColorPalette(Token location, String name, ASTRealExpression exp) {
 		super(location);
 		this.name = name;
-		this.index = index;
+		this.exp = exp;
 	}
 
 	public String getName() {
 		return name;
 	}
 
-	public int getIndex() {
-		return index;
+	public ASTRealExpression getExp() {
+		return exp;
 	}
 
 	@Override
@@ -25,7 +25,7 @@ public class ASTColorPalette extends ASTColorExpression {
 		StringBuilder builder = new StringBuilder();
 		builder.append(name);
 		builder.append("[");
-		builder.append(index);
+		builder.append(exp);
 		builder.append("]");
 		return builder.toString();
 	}
