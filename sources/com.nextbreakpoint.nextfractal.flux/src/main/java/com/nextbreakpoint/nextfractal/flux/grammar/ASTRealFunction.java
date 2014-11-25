@@ -8,11 +8,13 @@ public class ASTRealFunction extends ASTRealExpression {
 
 	public ASTRealFunction(Token location, String name, ASTRealExpression[] arguments) {
 		super(location);
+		this.name = name;
 		this.arguments = arguments;
 	}
 
 	public ASTRealFunction(Token location, String name, ASTComplexExpression[] arguments) {
 		super(location);
+		this.name = name;
 		this.arguments = arguments;
 	}
 

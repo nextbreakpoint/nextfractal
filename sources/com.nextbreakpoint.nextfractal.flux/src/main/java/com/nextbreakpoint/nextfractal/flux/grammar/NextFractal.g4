@@ -138,14 +138,6 @@ conditionexp returns [ASTConditionExpression result]
 	
 realexp returns [ASTRealExpression result]
 	:
-	r=real {
-		$result = $r.result;
-	}
-	|
-	f=realfunction {
-		$result = $f.result;
-	}
-	|
 	t='(' re=realexp ')' {
 		$result = new ASTRealParen($t, $re.result);
 	}
@@ -181,6 +173,10 @@ realexp returns [ASTRealExpression result]
 	
 realexp2 returns [ASTRealExpression result]
 	:
+	v=realvariable {
+		$result = $v.result;
+	}
+	|
 	r=real {
 		$result = $r.result;
 	}
@@ -212,6 +208,10 @@ realexp2 returns [ASTRealExpression result]
 
 realexp3 returns [ASTRealExpression result]
 	:
+	v=realvariable {
+		$result = $v.result;
+	}
+	|
 	r=real {
 		$result = $r.result;
 	}
@@ -243,6 +243,10 @@ realexp3 returns [ASTRealExpression result]
 
 realexp4 returns [ASTRealExpression result]
 	:
+	v=realvariable {
+		$result = $v.result;
+	}
+	|
 	r=real {
 		$result = $r.result;
 	}
@@ -317,7 +321,7 @@ complexexp2 returns [ASTComplexExpression result]
 		$result = $re.result;
 	}
 	|
-	v=variable {
+	v=complexvariable {
 		$result = $v.result;
 	}
 	|
@@ -352,7 +356,7 @@ complexexp3 returns [ASTComplexExpression result]
 		$result = $re.result;
 	}
 	|
-	v=variable {
+	v=complexvariable {
 		$result = $v.result;
 	}
 	|
@@ -399,10 +403,17 @@ complexfunction returns [ASTComplexFunction result]
 	}
 	;
 	
-variable returns [ASTVariable result]
+realvariable returns [ASTRealVariable result]
 	:
 	v=USER_VARIABLE {
-		$result = new ASTVariable($v, $v.text);
+		$result = new ASTRealVariable($v, $v.text);
+	}
+	;
+	
+complexvariable returns [ASTVariable result]
+	:
+	v=USER_VARIABLE {
+		$result = new ASTComplexVariable($v, $v.text);
 	}
 	;
 	
