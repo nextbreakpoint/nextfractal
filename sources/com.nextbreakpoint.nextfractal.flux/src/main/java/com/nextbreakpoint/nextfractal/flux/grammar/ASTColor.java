@@ -19,16 +19,16 @@ public class ASTColor extends ASTObject {
 		return palettes;
 	}
 
-	public void setPalettes(List<ASTPalette> palettes) {
-		this.palettes = palettes;
+	public void addPalette(ASTPalette palette) {
+		palettes.add(palette);
 	}
-
+	
 	public List<ASTRule> getRules() {
 		return rules;
 	}
 
-	public void setRules(List<ASTRule> rules) {
-		this.rules = rules;
+	public void addRule(ASTRule rule) {
+		rules.add(rule);
 	}
 
 	public ASTColorARGB getArgb() {

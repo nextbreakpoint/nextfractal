@@ -64,6 +64,21 @@ public class ASTBuilder {
 		}
 	}
 
+	public void addPalette(ASTPalette palette) {
+		color.addPalette(palette);
+	}
+	
+	public void addRule(ASTRule rule) {
+		color.addRule(rule);
+	}
+
+	public void addPaletteElement(ASTPaletteElement element) {
+		if (color.getPalettes().size() > 0) {
+			ASTPalette palette = color.getPalettes().get(color.getPalettes().size() - 1);
+			palette.addElements(element);
+		}
+	}
+
 	public void setColor(ASTColor color) {
 		this.color = color;
 	}

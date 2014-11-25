@@ -64,6 +64,12 @@ public class TestGrammar1 {
 					+ "|z| > 4 & trap1[z]"
 					+ "}"
 					+ "} color [#000000] {"
+					+ "palette palette1 [100] {"
+					+ "[0, #000000] > [100, #FFFFFF];"
+					+ "}"
+					+ "rule (4 > 6) [1.0] {"
+					+ "5,5,5,5"
+					+ "}"
 					+ "}";
 			ANTLRInputStream is = new ANTLRInputStream(new StringReader(source));
 			NextFractalLexer lexer = new NextFractalLexer(is);

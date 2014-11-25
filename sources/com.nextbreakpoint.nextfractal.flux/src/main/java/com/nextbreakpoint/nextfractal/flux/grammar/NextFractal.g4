@@ -151,11 +151,11 @@ realexp returns [ASTRealExpression result]
 	}
 	|
 	m='|' ce=complexexp '|' {
-		$result = new ASTComplexMod($m, $ce.result);	
+		$result = new ASTComplexRealFunction($m, "mod", $ce.result);	
 	}
 	|
 	a='[' ce=complexexp ']' {
-		$result = new ASTComplexAng($a, $ce.result);	
+		$result = new ASTComplexRealFunction($m, "pha", $ce.result);	
 	}
 	|
 	s='-' re=realexp {
@@ -194,11 +194,11 @@ realexp2 returns [ASTRealExpression result]
 	}
 	|
 	m='|' ce=complexexp '|' {
-		$result = new ASTComplexMod($m, $ce.result);	
+		$result = new ASTComplexRealFunction($m, "mod", $ce.result);	
 	}
 	|
 	a='[' ce=complexexp ']' {
-		$result = new ASTComplexAng($a, $ce.result);	
+		$result = new ASTComplexRealFunction($m, "pha", $ce.result);	
 	}
 	|
 	re1=realexp2 '*' re2=realexp2 {
@@ -225,11 +225,11 @@ realexp3 returns [ASTRealExpression result]
 	}
 	|
 	m='|' ce=complexexp '|' {
-		$result = new ASTComplexMod($m, $ce.result);	
+		$result = new ASTComplexRealFunction($m, "mod", $ce.result);	
 	}
 	|
 	a='[' ce=complexexp ']' {
-		$result = new ASTComplexAng($a, $ce.result);	
+		$result = new ASTComplexRealFunction($m, "pha", $ce.result);	
 	}
 	|
 	re1=realexp3 '/' re2=realexp3 {
@@ -256,11 +256,11 @@ realexp4 returns [ASTRealExpression result]
 	}
 	|
 	m='|' ce=complexexp '|' {
-		$result = new ASTComplexMod($m, $ce.result);	
+		$result = new ASTComplexRealFunction($m, "mod", $ce.result);	
 	}
 	|
 	a='[' ce=complexexp ']' {
-		$result = new ASTComplexAng($a, $ce.result);	
+		$result = new ASTComplexRealFunction($m, "pha", $ce.result);	
 	}
 	|
 	re1=realexp4 '^' re2=realexp4 {
@@ -330,11 +330,11 @@ complexexp2 returns [ASTComplexExpression result]
 	}
 	|
 	i='i' ce2=complexexp2 {
-		$result = new ASTComplexOp($i, "i", $ce2.result);
+		$result = new ASTComplexOp($i, "*", new ASTComplex($i, 0.0, 1.0), $ce2.result);
 	}
 	|
-	ce2=complexexp2 'i' {
-		$result = new ASTComplexOp($ce2.result.getLocation(), "i", $ce2.result);
+	ce2=complexexp2 i='i' {
+		$result = new ASTComplexOp($ce2.result.getLocation(), "*", new ASTComplex($i, 0.0, 1.0), $ce2.result);
 	}
 	|
 	ce1=complexexp2 '*' ce2=complexexp2 {
@@ -365,11 +365,11 @@ complexexp3 returns [ASTComplexExpression result]
 	}
 	|
 	i='i' ce2=complexexp3 {
-		$result = new ASTComplexOp($i, "i", $ce2.result);
+		$result = new ASTComplexOp($i, "*", new ASTComplex($i, 0.0, 1.0), $ce2.result);
 	}
 	|
-	ce2=complexexp3 'i' {
-		$result = new ASTComplexOp($ce2.result.getLocation(), "i", $ce2.result);
+	ce2=complexexp3 i='i' {
+		$result = new ASTComplexOp($ce2.result.getLocation(), "*", new ASTComplex($i, 0.0, 1.0), $ce2.result);
 	}
 	|
 	ce1=complexexp3 '^' re2=realexp2 {
@@ -379,12 +379,8 @@ complexexp3 returns [ASTComplexExpression result]
 	
 realfunction returns [ASTRealFunction result]
 	:
-	f='mod' '(' ce=complexexp ')' {
-		$result = new ASTModFunction($f, $ce.result);		
-	}
-	|
-	f='ang' '(' ce=complexexp ')' {
-		$result = new ASTAngFunction($f, $ce.result);		
+	f=('mod' | 'pha') '(' ce=complexexp ')' {
+		$result = new ASTComplexRealFunction($f, $f.text, $ce.result);		
 	}
 	|
 	f=('cos' | 'sin' | 'tan' | 'acos' | 'asin' | 'atan' | 'log' | 'exp' | 'mod' | 'sqrt') '(' a=realexp ')' {
@@ -454,52 +450,57 @@ complex returns [ASTComplex result]
 
 palette 
 	:
-	PALETTE USER_VARIABLE '[' USER_INTEGER ']' '{' paletteexp '}'
+	p=PALETTE v=USER_VARIABLE '[' l=USER_INTEGER ']' {
+		builder.addPalette(new ASTPalette($p, $v.text, $l.text)); 
+	} '{' paletteelement+ '}'
 	;
 		
-paletteexp 
+paletteelement 
 	:
-	'[' USER_INTEGER ',' colorargb ']' '>' '[' USER_INTEGER ',' colorargb ']' ':' '[' realexp ']' ';'  
+	t='[' bi=USER_INTEGER ',' bc=colorargb ']' '>' '[' ei=USER_INTEGER ',' ec=colorargb ']' ':' '[' e=realexp ']' ';' {
+		builder.addPaletteElement(new ASTPaletteElement($t, $bi.text, $ei.text, $bc.result, $ec.result, $e.result));
+	}
+	|
+	t='[' bi=USER_INTEGER ',' bc=colorargb ']' '>' '[' ei=USER_INTEGER ',' ec=colorargb ']' ';' {
+		builder.addPaletteElement(new ASTPaletteElement($t, $bi.text, $ei.text, $bc.result, $ec.result, null));
+	}  
 	;
 		
 colorrule 
 	:
-	RULE '(' ruleexp ')' '[' USER_INTEGER '%' ']' '{' colorexp '}'
+	t=RULE '(' r=ruleexp ')' '[' o=USER_RATIONAL ']' '{' c=colorexp '}' {
+		builder.addRule(new ASTRule($t, Float.parseFloat($o.text), $r.result, $c.result));
+	} 
 	;
 		
-ruleexp 
+ruleexp returns [ASTRuleExpression result]
 	:
-	(
-	realexp '=' realexp
+	e1=realexp o=('=' | '>' | '<' | '>=' | '<=' | '<>') e2=realexp {
+		$result = new ASTRuleOpExpression($e1.result.getLocation(), $o.text, $e1.result, $e2.result);
+	}
 	|
-	realexp '>' realexp
-	|
-	realexp '<' realexp
-	|
-	realexp '>=' realexp
-	|
-	realexp '<=' realexp
-	|
-	realexp '<>' realexp
-	)
-	(
-	'&' ruleexp
-	|	
-	'|' ruleexp	
-	|	
-	'^' ruleexp	
-	)?
+	r1=ruleexp o=('&' | '|' | '^') r2=ruleexp {
+		$result = new ASTRuleLogicOpExpression($r1.result.getLocation(), $o.text, $r1.result, $r2.result);
+	}
 	;
 		
-colorexp 
+colorexp returns [ASTColorExpression result]
 	:
-	realexp
+	e1=realexp {
+		$result = new ASTColorComponent($e1.result.getLocation(), $e1.result);
+	}
 	|
-	realexp ',' realexp ',' realexp
+	e1=realexp ',' e2=realexp ',' e3=realexp {
+		$result = new ASTColorComponent($e1.result.getLocation(), $e1.result, $e2.result, $e3.result);
+	}
 	|
-	realexp ',' realexp ',' realexp ',' realexp
+	e1=realexp ',' e2=realexp ',' e3=realexp ',' e4=realexp {
+		$result = new ASTColorComponent($e1.result.getLocation(), $e1.result, $e2.result, $e3.result, $e4.result);
+	}
 	|
-	'%' USER_VARIABLE '(' USER_INTEGER ')'
+	v=USER_VARIABLE '[' i=USER_INTEGER ']' {
+		$result = new ASTColorPalette($v, $v.text, Integer.parseInt($i.text));
+	}
 	;
 		
 colorargb returns [ASTColorARGB result]
