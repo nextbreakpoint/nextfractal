@@ -23,11 +23,17 @@ public class ASTOrbitEnd extends ASTObject {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		for (ASTStatement statement : statements) {
-			builder.append("statement = ");
+		builder.append("statements = [");
+		for (int i = 0; i < statements.size(); i++) {
+			ASTStatement statement = statements.get(i);
+			builder.append("{");
 			builder.append(statement);
-			builder.append("\n");
+			builder.append("}");
+			if (i < statements.size() - 1) {
+				builder.append(",");
+			}
 		}
+		builder.append("]");
 		return builder.toString();
 	}
 }

@@ -22,7 +22,7 @@ public class ASTRegion {
 		StringBuilder builder = new StringBuilder();
 		builder.append("[");
 		builder.append(a);
-		builder.append(",");
+		builder.append(", ");
 		builder.append(b);
 		builder.append("]");
 		return builder.toString();

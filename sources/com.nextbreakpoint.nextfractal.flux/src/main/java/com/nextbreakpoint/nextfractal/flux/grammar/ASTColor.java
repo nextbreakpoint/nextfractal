@@ -44,17 +44,28 @@ public class ASTColor extends ASTObject {
 		StringBuilder builder = new StringBuilder();
 		builder.append("argb = ");
 		builder.append(argb);
-		builder.append("\n");
-		for (ASTPalette palette : palettes) {
-			builder.append("palette = ");
+		builder.append(",palettes = [");
+		for (int i = 0; i < palettes.size(); i++) {
+			ASTPalette palette = palettes.get(i);
+			builder.append("{");
 			builder.append(palette);
-			builder.append("\n");
+			builder.append("}");
+			if (i < palettes.size() - 1) {
+				builder.append(",");
+			}
 		}
-		for (ASTRule rule : rules) {
-			builder.append("rule = ");
+		builder.append("]");
+		builder.append(",rules = [");
+		for (int i = 0; i < rules.size(); i++) {
+			ASTRule rule = rules.get(i);
+			builder.append("{");
 			builder.append(rule);
-			builder.append("\n");
+			builder.append("}");
+			if (i < rules.size() - 1) {
+				builder.append(",");
+			}
 		}
+		builder.append("]");
 		return builder.toString();
 	}
 }

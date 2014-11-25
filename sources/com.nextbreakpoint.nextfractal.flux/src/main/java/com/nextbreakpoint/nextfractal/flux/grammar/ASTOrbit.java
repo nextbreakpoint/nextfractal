@@ -81,29 +81,78 @@ public class ASTOrbit extends ASTObject {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("region = ");
-		builder.append(region);
-		builder.append("\n");
-		builder.append("projection = ");
-		builder.append(projection);
-		builder.append("\n");
-		builder.append("begin = ");
-		builder.append(begin);
-		builder.append("\n");
-		builder.append("loop = ");
-		builder.append(loop);
-		builder.append("\n");
-		builder.append("condition = ");
-		builder.append(condition);
-		builder.append("\n");
-		builder.append("end = ");
-		builder.append(end);
-		builder.append("\n");
-		for (ASTOrbitTrap trap : traps) {
-			builder.append("trap = ");
-			builder.append(trap);
-			builder.append("\n");
+		String suffix = "";
+		if (region != null) {
+			builder.append("region = ");
+			builder.append(region);
+			suffix = ",";
 		}
+		if (projection != null) {
+			if (suffix.length() != 0) {
+				builder.append(suffix);
+			} else {
+				suffix = ",";
+			}
+			builder.append("projection = {");
+			builder.append(projection);
+			builder.append("}");
+		}
+		if (begin != null) {
+			if (suffix.length() != 0) {
+				builder.append(suffix);
+			} else {
+				suffix = ",";
+			}
+			builder.append("begin = {");
+			builder.append(begin);
+			builder.append("}");
+		}
+		if (loop != null) {
+			if (suffix.length() != 0) {
+				builder.append(suffix);
+			} else {
+				suffix = ",";
+			}
+			builder.append("loop = {");
+			builder.append(loop);
+			builder.append("}");
+		}
+		if (condition != null) {
+			if (suffix.length() != 0) {
+				builder.append(suffix);
+			} else {
+				suffix = ",";
+			}
+			builder.append("condition = {");
+			builder.append(condition);
+			builder.append("}");
+		}
+		if (end != null) {
+			if (suffix.length() != 0) {
+				builder.append(suffix);
+			} else {
+				suffix = ",";
+			}
+			builder.append("end = {");
+			builder.append(end);
+			builder.append("}");
+		}
+		if (suffix.length() != 0) {
+			builder.append(suffix);
+		} else {
+			suffix = ",";
+		}
+		builder.append("traps = [");
+		for (int i = 0; i < traps.size(); i++) {
+			ASTOrbitTrap trap = traps.get(i);
+			builder.append("{");
+			builder.append(trap);
+			builder.append("}");
+			if (i < traps.size() - 1) {
+				builder.append(",");
+			}
+		}
+		builder.append("]");
 		return builder.toString();
 	}
 }
