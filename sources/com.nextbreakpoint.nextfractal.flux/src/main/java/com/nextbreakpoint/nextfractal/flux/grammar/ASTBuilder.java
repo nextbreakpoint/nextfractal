@@ -56,7 +56,14 @@ public class ASTBuilder {
 	public void addLoopStatement(ASTStatement statement) {
 		orbit.getLoop().addStatement(statement);
 	}
-	
+
+	public void addOrbitTrapOp(ASTOrbitTrapOp orbitTrapOp) {
+		if (orbit.getTraps().size() > 0) {
+			ASTOrbitTrap trap = orbit.getTraps().get(orbit.getTraps().size() - 1);
+			trap.addOperator(orbitTrapOp);
+		}
+	}
+
 	public void setColor(ASTColor color) {
 		this.color = color;
 	}

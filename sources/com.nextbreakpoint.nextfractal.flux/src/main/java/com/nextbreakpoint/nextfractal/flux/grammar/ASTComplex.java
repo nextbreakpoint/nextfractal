@@ -22,12 +22,17 @@ public class ASTComplex extends ASTComplexExpression {
 		this.value = new Complex(Double.parseDouble(r), Double.parseDouble(i));
 	}
 
+	public ASTComplex(ASTReal real) {
+		super(real.getLocation());
+		this.value = new Complex(real.getValue(), 0);
+	}
+
 	public Complex getValue() {
 		return value;
 	}
 
 	@Override
 	public String toString() {
-		return "(" + value + ")";
+		return String.valueOf(value);
 	}
 }

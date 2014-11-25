@@ -59,8 +59,8 @@ end
 		
 condition
 	:
-	c=CONDITION '{' conditionexp '}' {
-		builder.setOrbitCondition(new ASTOrbitCondition($c, null));
+	c=CONDITION '{' e=conditionexp '}' {
+		builder.setOrbitCondition(new ASTOrbitCondition($c, $e.result));
 	}
 	;
 			
@@ -78,21 +78,19 @@ projection
 trap
 	:
 	t=TRAP n=USER_VARIABLE '[' c=complex ']' {
-		builder.addOrbitTrap(new ASTOrbitTrap($t, $n.text));
-	} '{' pathops* '}' 
-	;
-		
-pathops 
-	:
-	o=pathop {
-	}
+		builder.addOrbitTrap(new ASTOrbitTrap($t, $n.text, $c.result));
+	} '{' pathop* '}'
 	;
 		
 pathop
 	:
-	o=USER_PATHOP_1POINTS '(' c=complex ')' ';'
+	o=USER_PATHOP_1POINTS '(' c=complex ')' ';' {
+		builder.addOrbitTrapOp(new ASTOrbitTrapOp($o, $o.text, $c.result));
+	}
 	|
-	o=USER_PATHOP_2POINTS '(' c1=complex ',' c2=complex ')' ';'
+	o=USER_PATHOP_2POINTS '(' c1=complex ',' c2=complex ')' ';' {
+		builder.addOrbitTrapOp(new ASTOrbitTrapOp($o, $o.text, $c1.result, $c2.result));
+	}
 	;
 		
 beginstatements 
@@ -123,30 +121,19 @@ statement returns [ASTStatement result]
 	}
 	;
 		
-conditionexp
+conditionexp returns [ASTConditionExpression result]
 	:
-	(
-	realexp '=' realexp
+	e1=realexp o=('=' | '<' | '>' | '<=' | '>=' | '<>') e2=realexp {
+		$result = new ASTConditionCompareOp($e1.result.getLocation(), $o.text, $e1.result, $e2.result);
+	}
 	|
-	realexp '>' realexp
-	|
-	realexp '<' realexp
-	|
-	realexp '>=' realexp
-	|
-	realexp '<=' realexp
-	|
-	realexp '<>' realexp
-	|
-	'%' USER_VARIABLE 
-	)
-	(
-	'&' conditionexp	
-	|
-	'|' conditionexp
-	|	
-	'^' conditionexp	
-	)?
+	v=USER_VARIABLE '[' e=complexexp ']'{
+		$result = new ASTConditionTrap($v, $v.text, $e.result);
+	}
+	| 
+	c1=conditionexp l=('&' | '|' | '^') c2=conditionexp {
+		$result = new ASTConditionLogicOp($c1.result.getLocation(), $l.text, $c1.result, $c2.result);
+	}	
 	;
 	
 realexp returns [ASTRealExpression result]
@@ -326,16 +313,12 @@ complexexp returns [ASTComplexExpression result]
 		
 complexexp2 returns [ASTComplexExpression result]
 	:
-	re=real {
+	re=realexp2 {
 		$result = $re.result;
 	}
 	|
 	v=variable {
 		$result = $v.result;
-	}
-	|
-	rf=realfunction {
-		$result = $rf.result;
 	}
 	|
 	cf=complexfunction {
@@ -344,14 +327,6 @@ complexexp2 returns [ASTComplexExpression result]
 	|
 	t='(' ce=complexexp ')' {
 		$result = new ASTComplexParen($t, $ce.result);
-	}
-	|
-	m='|' ce=complexexp '|' {
-		$result = new ASTComplexMod($m, $ce.result);	
-	}
-	|
-	a='[' ce=complexexp ']' {
-		$result = new ASTComplexAng($a, $ce.result);	
 	}
 	|
 	i='i' ce2=complexexp2 {
@@ -373,16 +348,12 @@ complexexp2 returns [ASTComplexExpression result]
 	
 complexexp3 returns [ASTComplexExpression result]
 	:
-	re=real {
+	re=realexp2 {
 		$result = $re.result;
 	}
 	|
 	v=variable {
 		$result = $v.result;
-	}
-	|
-	rf=realfunction {
-		$result = $rf.result;
 	}
 	|
 	cf=complexfunction {
@@ -391,14 +362,6 @@ complexexp3 returns [ASTComplexExpression result]
 	|
 	t='(' ce=complexexp ')' {
 		$result = new ASTComplexParen($t, $ce.result);
-	}
-	|
-	m='|' ce=complexexp '|' {
-		$result = new ASTComplexMod($m, $ce.result);	
-	}
-	|
-	a='[' ce=complexexp ']' {
-		$result = new ASTComplexAng($a, $ce.result);	
 	}
 	|
 	i='i' ce2=complexexp3 {
@@ -482,6 +445,10 @@ complex returns [ASTComplex result]
 	|
 	'-' i=(USER_RATIONAL | USER_INTEGER) 'i' {
 		$result = new ASTComplex($i, "0", "-" + $i.text);
+	}
+	|
+	rn=real {
+		$result = new ASTComplex($rn.result);
 	}
 	; 
 
