@@ -206,7 +206,7 @@ public class Complex implements Serializable, Cloneable {
 	public String toString() {
 		final StringBuilder builder = new StringBuilder();
 		builder.append(r);
-		builder.append(", ");
+		builder.append(",");
 		builder.append(i);
 		return builder.toString();
 	}

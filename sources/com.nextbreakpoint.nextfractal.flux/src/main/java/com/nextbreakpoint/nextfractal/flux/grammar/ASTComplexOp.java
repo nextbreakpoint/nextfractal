@@ -37,10 +37,8 @@ public class ASTComplexOp extends ASTComplexExpression {
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append(exp1);
-		builder.append(" ");
 		builder.append(op);
 		if (exp2 != null) {
-			builder.append(" ");
 			builder.append(exp2);
 		}
 		return builder.toString();
