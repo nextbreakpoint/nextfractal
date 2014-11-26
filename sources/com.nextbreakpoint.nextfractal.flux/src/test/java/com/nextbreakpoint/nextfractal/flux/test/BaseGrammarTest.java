@@ -35,7 +35,6 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.antlr.v4.runtime.tree.TerminalNode;
-import org.junit.Test;
 
 import com.nextbreakpoint.nextfractal.flux.grammar.ASTBuilder;
 import com.nextbreakpoint.nextfractal.flux.grammar.ASTColor;
@@ -43,38 +42,10 @@ import com.nextbreakpoint.nextfractal.flux.grammar.ASTOrbit;
 import com.nextbreakpoint.nextfractal.flux.grammar.NextFractalLexer;
 import com.nextbreakpoint.nextfractal.flux.grammar.NextFractalParser;
 
-public class TestGrammar1 {
-	@Test
-	public void parse() {
+public abstract class BaseGrammarTest {
+	protected void parse() {
 		try {
-			String source = ""
-					+ "orbit [-1 - 1i,+1 + 1i] {"
-					+ "trap trap1 [0] {"
-					+ "MOVETO(1);"
-					+ "LINETO(2);"
-					+ "LINETO(2 + 2i);"
-					+ "LINETO(1 + 2i);"
-					+ "LINETO(1);"
-					+ "}"
-					+ "loop [1, 1000] {"
-					+ "z = 5 + |4i| * x ^ 2 i + w + sin(5i);"
-					+ "x = z;"
-					+ "}"
-					+ "condition {"
-					+ "|z| > 4 & trap1[z]"
-					+ "}"
-					+ "} color [#000000] {"
-					+ "palette palette1 [200] {"
-					+ "[0, #000000] > [100, #FFFFFF];"
-					+ "[101, #FFFFFF] > [200, #FF0000];"
-					+ "}"
-					+ "rule (n = 0) [1.0] {"
-					+ "x,5,5,5"
-					+ "}"
-					+ "rule (n > 0) [1.0] {"
-					+ "palette1[n]"
-					+ "}"
-					+ "}";
+			String source = getSource();
 			ANTLRInputStream is = new ANTLRInputStream(new StringReader(source));
 			NextFractalLexer lexer = new NextFractalLexer(is);
 			CommonTokenStream tokens = new CommonTokenStream(lexer);
@@ -112,4 +83,6 @@ public class TestGrammar1 {
 			e.printStackTrace();
 		}
 	}
+
+	protected abstract String getSource();
 }
