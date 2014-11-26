@@ -18,15 +18,6 @@ public class ASTPaletteElement extends ASTObject {
 		this.exp = exp;
 	}
 	
-	public ASTPaletteElement(Token location, String beginIndex, String endIndex, ASTColorARGB beginColor, ASTColorARGB endColor, ASTRealExpression exp) {
-		super(location);
-		this.beginIndex = Integer.parseInt(beginIndex);
-		this.endIndex = Integer.parseInt(endIndex);
-		this.beginColor = beginColor;
-		this.endColor = endColor;
-		this.exp = exp;
-	}
-
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();

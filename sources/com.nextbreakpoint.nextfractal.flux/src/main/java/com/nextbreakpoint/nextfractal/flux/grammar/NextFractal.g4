@@ -46,7 +46,7 @@ begin
 loop
 	:
 	l=LOOP '[' lb=USER_INTEGER ',' le=USER_INTEGER ']' {
-		builder.setOrbitLoop(new ASTOrbitLoop($l, $lb.text, $le.text));
+		builder.setOrbitLoop(new ASTOrbitLoop($l, builder.parseInt($lb.text), builder.parseInt($le.text)));
 	} '{' loopstatements* '}'
 	;
 		
@@ -401,38 +401,38 @@ complexvariable returns [ASTComplexVariable result]
 real returns [ASTReal result] 
 	:
 	'+'? r=(USER_RATIONAL | USER_INTEGER) {
-		$result = new ASTReal($r, $r.text);
+		$result = new ASTReal($r, builder.parseDouble($r.text));
 	}
 	|
 	'-' r=(USER_RATIONAL | USER_INTEGER) {
-		$result = new ASTReal($r, "-" + $r.text);
+		$result = new ASTReal($r, builder.parseDouble("-" + $r.text));
 	}
 	; 
 	
 complex returns [ASTComplex result]
 	:
 	'+'? r=(USER_RATIONAL | USER_INTEGER) '+' i=(USER_RATIONAL | USER_INTEGER) 'i' {
-		$result = new ASTComplex($r, $r.text, "+" + $i.text);
+		$result = new ASTComplex($r, builder.parseDouble($r.text), builder.parseDouble("+" + $i.text));
 	}
 	|
 	'+'? r=(USER_RATIONAL | USER_INTEGER) '-' i=(USER_RATIONAL | USER_INTEGER) 'i' {
-		$result = new ASTComplex($r, $r.text, "-" + $i.text);
+		$result = new ASTComplex($r, builder.parseDouble($r.text), builder.parseDouble("-" + $i.text));
 	}
 	|
 	'+'? i=(USER_RATIONAL | USER_INTEGER) 'i' {
-		$result = new ASTComplex($i, "0", $i.text);
+		$result = new ASTComplex($i, 0.0, builder.parseDouble($i.text));
 	}
 	|
 	'-' r=(USER_RATIONAL | USER_INTEGER) '+' i=(USER_RATIONAL | USER_INTEGER) 'i' {
-		$result = new ASTComplex($r, "-" + $r.text, "+" + $i.text);
+		$result = new ASTComplex($r, builder.parseDouble("-" + $r.text), builder.parseDouble("+" + $i.text));
 	}
 	|
 	'-' r=(USER_RATIONAL | USER_INTEGER) '-' i=(USER_RATIONAL | USER_INTEGER) 'i' {
-		$result = new ASTComplex($r, "-" + $r.text, "-" + $i.text);
+		$result = new ASTComplex($r, builder.parseDouble("-" + $r.text), builder.parseDouble("-" + $i.text));
 	}
 	|
 	'-' i=(USER_RATIONAL | USER_INTEGER) 'i' {
-		$result = new ASTComplex($i, "0", "-" + $i.text);
+		$result = new ASTComplex($i, 0.0, builder.parseDouble("-" + $i.text));
 	}
 	|
 	rn=real {
@@ -443,25 +443,25 @@ complex returns [ASTComplex result]
 palette 
 	:
 	p=PALETTE v=USER_VARIABLE '[' l=USER_INTEGER ']' {
-		builder.addPalette(new ASTPalette($p, $v.text, $l.text)); 
+		builder.addPalette(new ASTPalette($p, $v.text, builder.parseInt($l.text))); 
 	} '{' paletteelement+ '}'
 	;
 		
 paletteelement 
 	:
 	t='[' bi=USER_INTEGER ',' bc=colorargb ']' '>' '[' ei=USER_INTEGER ',' ec=colorargb ']' ':' '[' e=realexp ']' ';' {
-		builder.addPaletteElement(new ASTPaletteElement($t, $bi.text, $ei.text, $bc.result, $ec.result, $e.result));
+		builder.addPaletteElement(new ASTPaletteElement($t, builder.parseInt($bi.text), builder.parseInt($ei.text), $bc.result, $ec.result, $e.result));
 	}
 	|
 	t='[' bi=USER_INTEGER ',' bc=colorargb ']' '>' '[' ei=USER_INTEGER ',' ec=colorargb ']' ';' {
-		builder.addPaletteElement(new ASTPaletteElement($t, $bi.text, $ei.text, $bc.result, $ec.result, null));
+		builder.addPaletteElement(new ASTPaletteElement($t, builder.parseInt($bi.text), builder.parseInt($ei.text), $bc.result, $ec.result, null));
 	}  
 	;
 		
 colorrule 
 	:
 	t=RULE '(' r=ruleexp ')' '[' o=USER_RATIONAL ']' '{' c=colorexp '}' {
-		builder.addRule(new ASTRule($t, Float.parseFloat($o.text), $r.result, $c.result));
+		builder.addRule(new ASTRule($t, builder.parseFloat($o.text), $r.result, $c.result));
 	} 
 	;
 		
@@ -498,11 +498,11 @@ colorexp returns [ASTColorExpression result]
 colorargb returns [ASTColorARGB result]
 	:
 	'(' a=USER_RATIONAL ',' r=USER_RATIONAL ',' g=USER_RATIONAL ',' b=USER_RATIONAL ')' {
-		$result = new ASTColorARGB($a.text, $r.text, $g.text, $b.text);
+		$result = new ASTColorARGB(builder.parseFloat($a.text), builder.parseFloat($r.text), builder.parseFloat($g.text), builder.parseFloat($b.text));
 	}
 	|
 	'#' argb=USER_ARGB {
-		$result = new ASTColorARGB($argb.text);
+		$result = new ASTColorARGB(builder.parseInt($argb.text, 16));
 	}
 	;
 		

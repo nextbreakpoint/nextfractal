@@ -90,4 +90,20 @@ public class ASTBuilder {
 	public ASTColor getColor() {
 		return color;
 	}
+
+	public double parseDouble(String text) {
+		return Double.parseDouble(text);
+	}
+
+	public float parseFloat(String text) {
+		return Float.parseFloat(text);
+	}
+
+	public int parseInt(String text) {
+		return Integer.parseInt(text);
+	}
+
+	public int parseInt(String text, int base) {
+		return Integer.parseInt(text, base);
+	}
 }	

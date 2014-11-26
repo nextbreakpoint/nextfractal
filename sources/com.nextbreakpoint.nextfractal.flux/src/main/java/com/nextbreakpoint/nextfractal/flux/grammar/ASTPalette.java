@@ -16,12 +16,6 @@ public class ASTPalette extends ASTObject {
 		this.length = length;
 	}
 
-	public ASTPalette(Token location, String name, String length) {
-		super(location);
-		this.name = name;
-		this.length = Integer.parseInt(length);
-	}
-
 	public String getName() {
 		return name;
 	}

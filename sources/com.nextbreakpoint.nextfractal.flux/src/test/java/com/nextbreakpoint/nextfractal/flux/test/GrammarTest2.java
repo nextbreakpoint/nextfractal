@@ -45,7 +45,7 @@ public class GrammarTest2 extends BaseGrammarTest {
 				+ "LINETO(1);"
 				+ "}"
 				+ "loop [1, 1000] {"
-				+ "z = x * y + 5;"
+				+ "z = x * (y + 5i);"
 				+ "}"
 				+ "condition {"
 				+ "|z| > 4 & trap1[z]"

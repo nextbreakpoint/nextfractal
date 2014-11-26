@@ -6,19 +6,18 @@ public class ASTColorARGB {
 	private static final DecimalFormat format = new DecimalFormat("0.##");
 	private final float[] components = new float[] { 0f, 0f, 0f, 0f };
 
-	public ASTColorARGB(String argb) {
-		int x = Integer.parseInt(argb, 16);
+	public ASTColorARGB(int x) {
 		components[0] = (0xFF & (x >> 24)) / 255;
 		components[1] = (0xFF & (x >> 16)) / 255;
 		components[2] = (0xFF & (x >> 8)) / 255;
 		components[3] = (0xFF & (x >> 0)) / 255;
 	}
 
-	public ASTColorARGB(String a, String r, String g, String b) {
-		components[0] = Float.parseFloat(a);
-		components[1] = Float.parseFloat(r);
-		components[2] = Float.parseFloat(g);
-		components[3] = Float.parseFloat(b);
+	public ASTColorARGB(float a, float r, float g, float b) {
+		components[0] = a;
+		components[1] = r;
+		components[2] = g;
+		components[3] = b;
 	}
 
 	public float[] getComponents() {

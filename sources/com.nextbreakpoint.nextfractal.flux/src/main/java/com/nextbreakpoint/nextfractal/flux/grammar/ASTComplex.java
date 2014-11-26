@@ -17,11 +17,6 @@ public class ASTComplex extends ASTComplexExpression {
 		this.value = new Complex(r, i);
 	}
 
-	public ASTComplex(Token location, String r, String i) {
-		super(location);
-		this.value = new Complex(Double.parseDouble(r), Double.parseDouble(i));
-	}
-
 	public ASTComplex(ASTReal real) {
 		super(real.getLocation());
 		this.value = new Complex(real.getValue(), 0);

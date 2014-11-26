@@ -10,11 +10,6 @@ public class ASTReal extends ASTRealExpression {
 		this.value = value;
 	}
 
-	public ASTReal(Token location, String text) {
-		super(location);
-		this.value = Double.parseDouble(text);
-	}
-
 	public double getValue() {
 		return value;
 	}

@@ -16,12 +16,6 @@ public class ASTOrbitLoop extends ASTObject {
 		this.end = end;
 	}
 
-	public ASTOrbitLoop(Token location, String begin, String end) {
-		super(location);
-		this.begin = Integer.parseInt(begin);
-		this.end = Integer.parseInt(end);
-	}
-
 	public List<ASTStatement> getStatements() {
 		return statements;
 	}
