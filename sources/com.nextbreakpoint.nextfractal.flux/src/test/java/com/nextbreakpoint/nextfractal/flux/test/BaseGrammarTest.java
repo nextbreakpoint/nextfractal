@@ -37,8 +37,7 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 import com.nextbreakpoint.nextfractal.flux.grammar.ASTBuilder;
-import com.nextbreakpoint.nextfractal.flux.grammar.ASTColor;
-import com.nextbreakpoint.nextfractal.flux.grammar.ASTOrbit;
+import com.nextbreakpoint.nextfractal.flux.grammar.ASTFractal;
 import com.nextbreakpoint.nextfractal.flux.grammar.NextFractalLexer;
 import com.nextbreakpoint.nextfractal.flux.grammar.NextFractalParser;
 
@@ -50,8 +49,8 @@ public abstract class BaseGrammarTest {
 			NextFractalLexer lexer = new NextFractalLexer(is);
 			CommonTokenStream tokens = new CommonTokenStream(lexer);
 			NextFractalParser parser = new NextFractalParser(tokens);
-			ParseTree root = parser.root();
-            if (root != null) {
+			ParseTree fractalTree = parser.fractal();
+            if (fractalTree != null) {
             	ParseTreeWalker walker = new ParseTreeWalker();
             	walker.walk(new ParseTreeListener() {
 					@Override
@@ -71,12 +70,10 @@ public abstract class BaseGrammarTest {
 					@Override
 					public void enterEveryRule(ParserRuleContext ctx) {
 					}
-				}, root);
+				}, fractalTree);
             	ASTBuilder builder = parser.getBuilder();
-            	ASTOrbit orbit = builder.getOrbit();
-            	ASTColor color = builder.getColor();
-            	System.out.println(orbit);
-            	System.out.println(color);
+            	ASTFractal fractal = builder.getFractal();
+            	System.out.println(fractal);
             }
 		}
 		catch (Exception e) {

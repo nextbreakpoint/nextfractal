@@ -36,6 +36,7 @@ public class GrammarTest1 extends BaseGrammarTest {
 	@Override
 	protected String getSource() {
 		String source = ""
+				+ "fractal {"
 				+ "orbit [-1 - 1i,+1 + 1i] {"
 				+ "trap trap1 [0] {"
 				+ "MOVETO(1);"
@@ -61,6 +62,7 @@ public class GrammarTest1 extends BaseGrammarTest {
 				+ "}"
 				+ "rule (n > 0) [1.0] {"
 				+ "palette1[n]"
+				+ "}"
 				+ "}"
 				+ "}";
 		return source;

@@ -17,9 +17,11 @@ options
 	public ASTBuilder getBuilder() { return builder; }
 }
 
-root
+fractal
 	:
-	orbit color eof 
+	f=FRACTAL {
+		builder.setFractal(new ASTFractal($f));
+	} '{' orbit color '}' eof 
 	;
 		
 orbit
@@ -511,6 +513,11 @@ eof
 	EOF
 	;
 	
+FRACTAL 
+	:
+	'fractal'
+	;
+ 
 ORBIT 
 	:
 	'orbit'

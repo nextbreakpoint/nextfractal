@@ -3,8 +3,7 @@ package com.nextbreakpoint.nextfractal.flux.grammar;
 import org.antlr.v4.runtime.Token;
 
 public class ASTBuilder {
-	private ASTOrbit orbit;
-	private ASTColor color;
+	private ASTFractal fractal;
 	
 	public ASTBuilder() {
 	}
@@ -18,77 +17,77 @@ public class ASTBuilder {
 	}
 	
 	public void setOrbit(ASTOrbit orbit) {
-		this.orbit = orbit;
+		fractal.setOrbit(orbit);
 	}
 
 	public void setOrbitBegin(ASTOrbitBegin orbitBegin) {
-		orbit.setBegin(orbitBegin);
+		fractal.getOrbit().setBegin(orbitBegin);
 	}
 
 	public void setOrbitEnd(ASTOrbitEnd orbitEnd) {
-		orbit.setEnd(orbitEnd);
+		fractal.getOrbit().setEnd(orbitEnd);
 	}
 
 	public void setOrbitLoop(ASTOrbitLoop orbitLoop) {
-		orbit.setLoop(orbitLoop);
+		fractal.getOrbit().setLoop(orbitLoop);
 	}
 	
 	public void setOrbitProjection(ASTOrbitProjection orbitProjection) {
-		orbit.setProjection(orbitProjection);
+		fractal.getOrbit().setProjection(orbitProjection);
 	}
 
 	public void setOrbitCondition(ASTOrbitCondition orbitCondition) {
-		orbit.setCondition(orbitCondition);
+		fractal.getOrbit().setCondition(orbitCondition);
 	}
 
 	public void addOrbitTrap(ASTOrbitTrap orbitTrap) {
-		orbit.addTrap(orbitTrap);
+		fractal.getOrbit().addTrap(orbitTrap);
 	}
 
 	public void addBeginStatement(ASTStatement statement) {
-		orbit.getBegin().addStatement(statement);
+		fractal.getOrbit().getBegin().addStatement(statement);
 	}
 
 	public void addEndStatement(ASTStatement statement) {
-		orbit.getEnd().addStatement(statement);
+		fractal.getOrbit().getEnd().addStatement(statement);
 	}
 
 	public void addLoopStatement(ASTStatement statement) {
-		orbit.getLoop().addStatement(statement);
+		fractal.getOrbit().getLoop().addStatement(statement);
 	}
 
 	public void addOrbitTrapOp(ASTOrbitTrapOp orbitTrapOp) {
-		if (orbit.getTraps().size() > 0) {
-			ASTOrbitTrap trap = orbit.getTraps().get(orbit.getTraps().size() - 1);
+		if (fractal.getOrbit().getTraps().size() > 0) {
+			ASTOrbitTrap trap = fractal.getOrbit().getTraps().get(fractal.getOrbit().getTraps().size() - 1);
 			trap.addOperator(orbitTrapOp);
 		}
 	}
 
+	public void setColor(ASTColor color) {
+		fractal.setColor(color);;
+	}
+
 	public void addPalette(ASTPalette palette) {
-		color.addPalette(palette);
+		fractal.getColor().addPalette(palette);
 	}
 	
 	public void addRule(ASTRule rule) {
-		color.addRule(rule);
+		fractal.getColor().addRule(rule);
 	}
 
 	public void addPaletteElement(ASTPaletteElement element) {
-		if (color.getPalettes().size() > 0) {
-			ASTPalette palette = color.getPalettes().get(color.getPalettes().size() - 1);
+		if (fractal.getColor().getPalettes().size() > 0) {
+			ASTPalette palette = fractal.getColor().getPalettes().get(fractal.getColor().getPalettes().size() - 1);
 			palette.addElements(element);
 		}
 	}
 
-	public void setColor(ASTColor color) {
-		this.color = color;
+	public ASTFractal getFractal() {
+		return fractal;
 	}
-
-	public ASTOrbit getOrbit() {
-		return orbit;
-	}
-
-	public ASTColor getColor() {
-		return color;
+	
+	public void setFractal(ASTFractal fractal) {
+		this.fractal = fractal;
 	}
 
 	public double parseDouble(String text) {
