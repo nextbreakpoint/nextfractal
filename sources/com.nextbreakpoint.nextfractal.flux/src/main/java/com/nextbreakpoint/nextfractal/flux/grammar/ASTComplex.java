@@ -30,4 +30,13 @@ public class ASTComplex extends ASTComplexExpression {
 	public String toString() {
 		return String.valueOf(value);
 	}
+
+	@Override
+	public void compile(StringBuilder builder) {
+		builder.append("new Complex(");
+		builder.append(value.r);
+		builder.append(",");
+		builder.append(value.i);
+		builder.append(")");
+	}
 }

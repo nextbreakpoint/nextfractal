@@ -25,12 +25,17 @@
  */
 package com.nextbreakpoint.nextfractal.flux.test;
 
+import org.junit.Assert;
 import org.junit.Test;
 
-public class GrammarTest2 extends BaseGrammarTest {
+import com.nextbreakpoint.nextfractal.flux.grammar.ASTFractal;
+
+public class GrammarTest2 extends BaseTest {
 	@Test
 	public void TestGrammar() {
-		parse();
+		ASTFractal fractal = parse();
+    	System.out.println(fractal);
+    	Assert.assertNotNull(fractal);
 	}
 
 	@Override

@@ -41,8 +41,8 @@ import com.nextbreakpoint.nextfractal.flux.grammar.ASTFractal;
 import com.nextbreakpoint.nextfractal.flux.grammar.NextFractalLexer;
 import com.nextbreakpoint.nextfractal.flux.grammar.NextFractalParser;
 
-public abstract class BaseGrammarTest {
-	protected void parse() {
+public abstract class BaseTest {
+	protected ASTFractal parse() {
 		try {
 			String source = getSource();
 			ANTLRInputStream is = new ANTLRInputStream(new StringReader(source));
@@ -73,12 +73,13 @@ public abstract class BaseGrammarTest {
 				}, fractalTree);
             	ASTBuilder builder = parser.getBuilder();
             	ASTFractal fractal = builder.getFractal();
-            	System.out.println(fractal);
+            	return fractal;
             }
 		}
 		catch (Exception e) {
 			e.printStackTrace();
 		}
+		return null;
 	}
 
 	protected abstract String getSource();

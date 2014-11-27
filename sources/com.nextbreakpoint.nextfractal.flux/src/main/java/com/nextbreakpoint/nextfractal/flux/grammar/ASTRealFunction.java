@@ -40,4 +40,19 @@ public class ASTRealFunction extends ASTRealExpression {
 		builder.append(")");
 		return builder.toString();
 	}
+	
+	@Override
+	public void compile(StringBuilder builder) {
+		builder.append("func");
+		builder.append(name.toUpperCase().substring(0, 1));
+		builder.append(name.substring(1));
+		builder.append("(");
+		for (int i = 0; i < arguments.length; i++) {
+			arguments[i].compile(builder);
+			if (i < arguments.length - 1) {
+				builder.append(",");
+			}
+		}
+		builder.append(")");
+	}
 }

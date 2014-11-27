@@ -6,4 +6,6 @@ public abstract class ASTComplexExpression extends ASTObject {
 	public ASTComplexExpression(Token location) {
 		super(location);
 	}
+
+	public abstract void compile(StringBuilder builder);
 }

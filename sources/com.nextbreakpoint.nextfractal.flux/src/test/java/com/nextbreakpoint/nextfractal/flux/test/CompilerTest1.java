@@ -25,17 +25,32 @@
  */
 package com.nextbreakpoint.nextfractal.flux.test;
 
+import java.io.IOException;
+
 import org.junit.Assert;
 import org.junit.Test;
 
 import com.nextbreakpoint.nextfractal.flux.grammar.ASTFractal;
+import com.nextbreakpoint.nextfractal.flux.grammar.ASTJavaCompiler;
 
-public class GrammarTest1 extends BaseTest {
+public class CompilerTest1 extends BaseTest {
 	@Test
-	public void TestGrammar() {
+	public void TestCompiler() {
 		ASTFractal fractal = parse();
     	System.out.println(fractal);
-    	Assert.assertNotNull(fractal);
+		try {
+			Class<?> clazz = compile(fractal);
+			System.out.println(clazz);
+			Assert.assertNotNull(clazz);
+		} catch (IOException e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	private Class<?> compile(ASTFractal fractal) throws IOException {
+		ASTJavaCompiler compiler = new ASTJavaCompiler(fractal);
+		Class<?> clazz = compiler.compile();
+		return clazz;
 	}
 
 	@Override
@@ -51,8 +66,7 @@ public class GrammarTest1 extends BaseTest {
 				+ "LINETO(1);"
 				+ "}"
 				+ "loop [1, 1000] {"
-				+ "z = 5 + |4i| * x ^ 2 i + w + sin(5i);"
-				+ "x = z;"
+				+ "z = x * (y + 5i);"
 				+ "}"
 				+ "condition {"
 				+ "|z| > 4 & trap1[z]"

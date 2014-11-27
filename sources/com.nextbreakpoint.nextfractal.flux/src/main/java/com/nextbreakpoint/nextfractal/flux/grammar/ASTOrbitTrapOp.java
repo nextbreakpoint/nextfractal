@@ -2,7 +2,7 @@ package com.nextbreakpoint.nextfractal.flux.grammar;
 
 import org.antlr.v4.runtime.Token;
 
-public class ASTOrbitTrapOp extends ASTComplexExpression {
+public class ASTOrbitTrapOp extends ASTObject {
 	private String op;
 	private ASTComplex c1;
 	private ASTComplex c2;

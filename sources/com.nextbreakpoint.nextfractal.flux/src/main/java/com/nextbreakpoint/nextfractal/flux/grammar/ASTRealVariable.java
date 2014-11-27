@@ -18,4 +18,9 @@ public class ASTRealVariable extends ASTRealExpression {
 	public String toString() {
 		return name;
 	}
+	
+	@Override
+	public void compile(StringBuilder builder) {
+		builder.append(name);
+	}
 }
