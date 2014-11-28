@@ -30,27 +30,31 @@ import java.io.IOException;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.nextbreakpoint.nextfractal.core.math.Complex;
+import com.nextbreakpoint.nextfractal.flux.Fractal;
 import com.nextbreakpoint.nextfractal.flux.grammar.ASTFractal;
 import com.nextbreakpoint.nextfractal.flux.grammar.ASTJavaCompiler;
 
 public class CompilerTest1 extends BaseTest {
 	@Test
 	public void TestCompiler() {
-		ASTFractal fractal = parse();
-    	System.out.println(fractal);
+		ASTFractal astFractal = parse();
+    	System.out.println(astFractal);
 		try {
-			Class<?> clazz = compile(fractal);
-			System.out.println(clazz);
-			Assert.assertNotNull(clazz);
+			Fractal fractal = compile(astFractal);
+			Assert.assertNotNull(fractal);
+			Complex z = new Complex(0, 0);
+			Complex w = new Complex(0, 0);
+			int c = fractal.renderPoint(z, w);
+			System.out.println(String.format("%x", c));
 		} catch (IOException e) {
 			Assert.fail(e.getMessage());
 		}
 	}
 
-	private Class<?> compile(ASTFractal fractal) throws IOException {
+	private Fractal compile(ASTFractal fractal) throws IOException {
 		ASTJavaCompiler compiler = new ASTJavaCompiler(fractal);
-		Class<?> clazz = compiler.compile();
-		return clazz;
+		return compiler.compile();
 	}
 
 	@Override

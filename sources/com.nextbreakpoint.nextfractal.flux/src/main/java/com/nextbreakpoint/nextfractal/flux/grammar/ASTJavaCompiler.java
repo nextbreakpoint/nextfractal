@@ -1,9 +1,12 @@
 package com.nextbreakpoint.nextfractal.flux.grammar;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.tools.Diagnostic;
@@ -14,6 +17,8 @@ import javax.tools.SimpleJavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
+import com.nextbreakpoint.nextfractal.flux.Fractal;
+
 public class ASTJavaCompiler {
 	private ASTFractal fractal;
 	
@@ -21,11 +26,10 @@ public class ASTJavaCompiler {
 		this.fractal = fractal;
 	}
 
-	public Class<?> compile() throws IOException {
+	public Fractal compile() throws IOException {
 		StringBuilder builder = new StringBuilder();
 		compile(builder, fractal);
 		String source = builder.toString();
-		
 		List<SimpleJavaFileObject> compilationUnits = new ArrayList<>();
 		compilationUnits.add(new JavaSourceFromString("Fractal75", source));
 		List<String> options = new ArrayList<>();
@@ -37,11 +41,45 @@ public class ASTJavaCompiler {
 		for (Diagnostic<? extends JavaFileObject> diagnostic : diagnostics.getDiagnostics()) {
 			System.out.format("Error on line %d: %s\n", diagnostic.getLineNumber(), diagnostic.getMessage(null));
 		}
+		Iterable<? extends JavaFileObject> files = fileManager.getJavaFileObjects("Fractal75.class");
+		Iterator<? extends JavaFileObject> iterator = files.iterator();
+		if (iterator.hasNext()) {
+			JavaFileObject file = files.iterator().next();
+			byte[] fileData = loadBytes(file);
+			JavaClassLoader loader = new JavaClassLoader("com.nextbreakpoint.nextfractal.flux.Fractal75", fileData);
+			try {
+				Class<?> clazz = loader.loadClass("com.nextbreakpoint.nextfractal.flux.Fractal75");
+				Fractal fractal = (Fractal)clazz.newInstance();
+				System.out.println(file.toUri().toString());
+				System.out.println(clazz.getCanonicalName() + " (" + fileData.length + ")");
+				return fractal;
+			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+			}
+		}
 		fileManager.close();
-//		FileObject out = fileManager.getFileForOutput(StandardLocation.CLASS_OUTPUT, "com.nextbreakpoint.nextfractal.flux", "Fractal75", null);
-//		CharSequence content = out.getCharContent(false);
-//		System.out.println(content.toString());
 		return null;
+	}
+
+	private byte[] loadBytes(JavaFileObject file) throws IOException {
+		InputStream is = null;
+		try {
+			is = file.openInputStream();
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			byte[] buffer = new byte[4096];
+			int length = 0;
+			while ((length = is.read(buffer)) > 0) {
+				baos.write(buffer, 0, length);
+			}
+			byte[] out = baos.toByteArray();
+			return out;
+		} finally {
+			if (is != null) {
+				try {
+					is.close();
+				} catch (IOException e) {
+				}
+			}
+		}
 	}
 
 	private String compile(StringBuilder builder, ASTFractal fractal) {
@@ -115,7 +153,7 @@ public class ASTJavaCompiler {
 		}		
 	}
 	
-	public class JavaSourceFromString extends SimpleJavaFileObject {
+	private class JavaSourceFromString extends SimpleJavaFileObject {
         private final String code;
 
         public JavaSourceFromString(String name, String code) {
@@ -128,4 +166,11 @@ public class ASTJavaCompiler {
             return code;
         }
     }
+	
+	private class JavaClassLoader extends ClassLoader {
+		public JavaClassLoader(String name, byte[] data) {
+			Class<?> clazz = defineClass(name, data, 0, data.length);
+			resolveClass(clazz);
+		}
+	}
 }	
