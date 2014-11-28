@@ -14,7 +14,6 @@ import javax.tools.SimpleJavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
-
 public class ASTJavaCompiler {
 	private ASTFractal fractal;
 	
@@ -30,11 +29,7 @@ public class ASTJavaCompiler {
 		List<SimpleJavaFileObject> compilationUnits = new ArrayList<>();
 		compilationUnits.add(new JavaSourceFromString("Fractal75", source));
 		List<String> options = new ArrayList<>();
-		options.add("-source");
-		options.add("1.8");
-		options.add("-target");
-		options.add("1.8");
-		options.addAll(Arrays.asList("-classpath", System.getProperty("java.class.path")));
+		options.addAll(Arrays.asList("-source", "1.8", "-target", "1.8", "-proc:none", "-classpath", System.getProperty("java.class.path")));
 		DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 		StandardJavaFileManager fileManager = compiler.getStandardFileManager(diagnostics, null, null);
@@ -43,7 +38,9 @@ public class ASTJavaCompiler {
 			System.out.format("Error on line %d: %s\n", diagnostic.getLineNumber(), diagnostic.getMessage(null));
 		}
 		fileManager.close();
-
+//		FileObject out = fileManager.getFileForOutput(StandardLocation.CLASS_OUTPUT, "com.nextbreakpoint.nextfractal.flux", "Fractal75", null);
+//		CharSequence content = out.getCharContent(false);
+//		System.out.println(content.toString());
 		return null;
 	}
 
@@ -66,12 +63,19 @@ public class ASTJavaCompiler {
 	private void compile(StringBuilder builder, ASTOrbit orbit) {
 		if (orbit != null) {
 			//TODO trap
-			//TODO projection
-			//TODO condition
 			builder.append("Complex _z = new Complex(0, 0);\n");
+			builder.append("Complex _w = new Complex(0, 0);\n");
 			compile(builder, orbit.getBegin());
+			builder.append("for (int i = ");
+			builder.append(orbit.getLoop().getBegin());
+			builder.append("; i < ");
+			builder.append(orbit.getLoop().getEnd());
+			builder.append("; i++) {\n");
+			//TODO projection
+//			compile(builder, orbit.getLoop());
+			//TODO condition
+			builder.append("}\n");
 			builder.append("int _c = 0xFF000000;\n");
-			compile(builder, orbit.getLoop());
 			compile(builder, orbit.getEnd());
 		}
 	}
