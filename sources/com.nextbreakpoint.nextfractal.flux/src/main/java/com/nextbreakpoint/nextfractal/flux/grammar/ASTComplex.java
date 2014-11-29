@@ -32,11 +32,7 @@ public class ASTComplex extends ASTComplexExpression {
 	}
 
 	@Override
-	public void compile(StringBuilder builder) {
-		builder.append("new Complex(");
-		builder.append(value.r);
-		builder.append(",");
-		builder.append(value.i);
-		builder.append(")");
+	public void compile(ASTExpressionCompiler compiler) {
+		compiler.compile(this);
 	}
 }

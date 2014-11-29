@@ -18,9 +18,9 @@ public class ASTReal extends ASTRealExpression {
 	public String toString() {
 		return String.valueOf(value);
 	}
-	
+
 	@Override
-	public void compile(StringBuilder builder) {
-		builder.append(value);
+	public void compile(ASTExpressionCompiler compiler) {
+		compiler.compile(this);
 	}
 }

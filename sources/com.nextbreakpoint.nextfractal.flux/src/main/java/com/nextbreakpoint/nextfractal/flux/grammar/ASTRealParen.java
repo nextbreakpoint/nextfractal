@@ -22,9 +22,9 @@ public class ASTRealParen extends ASTRealExpression {
 		builder.append(")");
 		return builder.toString();
 	}
-	
+
 	@Override
-	public void compile(StringBuilder builder) {
-		exp.compile(builder);
+	public void compile(ASTExpressionCompiler compiler) {
+		compiler.compile(this);
 	}
 }

@@ -43,52 +43,9 @@ public class ASTRealOp extends ASTRealExpression {
 		}
 		return builder.toString();
 	}
-	
+
 	@Override
-	public void compile(StringBuilder builder) {
-		if (exp2 == null) {
-			switch (op) {
-				case "-":
-					builder.append("opNeg");
-					break;
-				
-				default:
-					builder.append("opPos");
-					break;
-			}
-			builder.append("(");
-			exp1.compile(builder);
-			builder.append(")");
-		} else {
-			switch (op) {
-				case "+":
-					builder.append("opAdd");
-					break;
-				
-				case "-":
-					builder.append("opSub");
-					break;
-					
-				case "*":
-					builder.append("opMul");
-					break;
-					
-				case "/":
-					builder.append("opDiv");
-					break;
-					
-				case "^":
-					builder.append("opPow");
-					break;
-				
-				default:
-					break;
-			}
-			builder.append("(");
-			exp1.compile(builder);
-			builder.append(",");
-			exp2.compile(builder);
-			builder.append(")");
-		}
+	public void compile(ASTExpressionCompiler compiler) {
+		compiler.compile(this);
 	}
 }

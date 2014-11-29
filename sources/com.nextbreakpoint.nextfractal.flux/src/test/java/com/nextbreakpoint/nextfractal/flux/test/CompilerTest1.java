@@ -30,8 +30,8 @@ import java.io.IOException;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.nextbreakpoint.nextfractal.core.math.Complex;
 import com.nextbreakpoint.nextfractal.flux.Fractal;
+import com.nextbreakpoint.nextfractal.flux.Number;
 import com.nextbreakpoint.nextfractal.flux.grammar.ASTFractal;
 import com.nextbreakpoint.nextfractal.flux.grammar.ASTJavaCompiler;
 
@@ -42,18 +42,21 @@ public class CompilerTest1 extends BaseTest {
     	System.out.println(astFractal);
 		try {
 			Fractal fractal = compile(astFractal);
+			System.out.println(fractal.getSourceCode());
 			Assert.assertNotNull(fractal);
-			Complex z = new Complex(0, 0);
-			Complex w = new Complex(0, 0);
-			int c = fractal.renderPoint(z, w);
-			System.out.println(String.format("%x", c));
+			Number z = new Number(0, 0);
+			Number w = new Number(0, 0);
+			Number c = fractal.compute(z, w);
+			z = fractal.getVar("z");
+			System.out.println(String.format("%x", c.n()));
+			System.out.println(String.format("%f,%f", z.r(), z.i()));
 		} catch (IOException e) {
 			Assert.fail(e.getMessage());
 		}
 	}
 
 	private Fractal compile(ASTFractal fractal) throws IOException {
-		ASTJavaCompiler compiler = new ASTJavaCompiler(fractal);
+		ASTJavaCompiler compiler = new ASTJavaCompiler(fractal, "test", "TestFractal");
 		return compiler.compile();
 	}
 
@@ -69,7 +72,8 @@ public class CompilerTest1 extends BaseTest {
 				+ "LINETO(1 + 2i);"
 				+ "LINETO(1);"
 				+ "}"
-				+ "loop [1, 1000] {"
+				+ "loop [1, 2] {"
+				+ "x = 4i;"
 				+ "z = x * (y + 5i);"
 				+ "}"
 				+ "condition {"

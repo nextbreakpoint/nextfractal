@@ -7,5 +7,5 @@ public abstract class ASTComplexExpression extends ASTObject {
 		super(location);
 	}
 
-	public abstract void compile(StringBuilder builder);
+	public abstract void compile(ASTExpressionCompiler compiler);
 }
