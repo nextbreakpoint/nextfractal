@@ -1,12 +1,12 @@
 orbit [a, b] {
 	trap trapName1 [c] {
-		moveTo(0);
-		lineTo(1 + 2i);
+		MOVETO(0);
+		LINETO(1 + 2i);
 		...
 	}
 	trap trapName2 [c] {
-		moveTo(0);
-		lineTo(3 + 5i);
+		MOVETO(0);
+		LINETO(3 + 5i);
 		...
 	}
 	projection {
@@ -33,7 +33,7 @@ orbit [a, b] {
 		...
 	}
 	condition {
-		|z| > 40 | trapName1 & trapName2
+		|z| > 40 | trapName1[z] & trapName2[z]
 	}
 	end {
 		m = m / n;
@@ -43,17 +43,17 @@ orbit [a, b] {
 
 color [(1,0,0,0)] {
 	palette paletteName [50] {
-		[ 0, FF000000] -> [ 5, FFFF0000],
-		[ 5, FF000000] -> [10, FFFF0000] : [x],
-		[10, FF000000] -> [20, FFFF0000] : [log(1 - x)],
+		[ 0, FF000000] > [ 5, FFFF0000];
+		[ 5, FF000000] > [10, FFFF0000] : [x];
+		[10, FF000000] > [20, FFFF0000] : [log(1 - x)];
 		...
-		[30, FF000000] -> [50, (1,1,0,0)] : [sin(pi * x), cos(pi * x), x]
+		[30, FF000000] > [50, (1,1,0,0)] : [sin(pi * x), cos(pi * x), x];
 	}
 	rule (n == 0) [10%] {
-		paletteName(n, i)
+		paletteName[n, i]
 	}
 	rule (n != 0) [70%] {
-		paletteName(n)
+		paletteName[n]
 	}
 	rule (n != 0) [30%] {
 		|z| / 10, 
