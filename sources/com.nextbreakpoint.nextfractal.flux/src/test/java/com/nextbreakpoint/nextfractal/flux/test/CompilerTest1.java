@@ -47,7 +47,7 @@ public class CompilerTest1 extends BaseTest {
 			Number z = new Number(0, 0);
 			Number w = new Number(0, 0);
 			Number c = fractal.compute(z, w);
-			z = fractal.getVar("z");
+			z = fractal.var("z");
 			System.out.println(String.format("%x", c.n()));
 			System.out.println(String.format("%f,%f", z.r(), z.i()));
 		} catch (IOException e) {

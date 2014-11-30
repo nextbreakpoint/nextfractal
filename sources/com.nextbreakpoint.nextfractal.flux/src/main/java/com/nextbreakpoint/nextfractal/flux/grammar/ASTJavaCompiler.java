@@ -105,7 +105,7 @@ public class ASTJavaCompiler {
 			compile(builder, variables, fractal.getOrbit());
 			//TODO color
 		}
-		builder.append("return getVar(\"c\");\n");
+		builder.append("return var(\"c\");\n");
 		builder.append("}\n");
 		builder.append("}\n");
 		return builder.toString();
@@ -114,21 +114,21 @@ public class ASTJavaCompiler {
 	private void compile(StringBuilder builder, Map<String, Variable> variables, ASTOrbit orbit) {
 		if (orbit != null) {
 			//TODO trap
-			builder.append("setVar(\"z\",0,0);\n");
-			builder.append("setVar(\"x\",x);\n");
-			builder.append("setVar(\"w\",w);\n");
+			builder.append("var(\"z\",0,0);\n");
+			builder.append("var(\"x\",x);\n");
+			builder.append("var(\"w\",w);\n");
 			compile(builder, variables, orbit.getBegin());
 			builder.append("for (int i = ");
 			builder.append(orbit.getLoop().getBegin());
 			builder.append("; i < ");
 			builder.append(orbit.getLoop().getEnd());
 			builder.append("; i++) {\n");
-			builder.append("setVar(\"n\",i);\n");
+			builder.append("var(\"n\",i);\n");
 			//TODO projection
 			compile(builder, variables, orbit.getLoop());
 			//TODO condition
 			builder.append("}\n");
-			builder.append("setVar(\"c\", 0xFF000000);\n");
+			builder.append("var(\"c\",0xFF000000);\n");
 			compile(builder, variables, orbit.getEnd());
 		}
 	}
@@ -165,7 +165,7 @@ public class ASTJavaCompiler {
 				var = new Variable(statement.getName());
 				variables.put(var.getName(), var);
 			}
-			builder.append("setVar(\"");
+			builder.append("var(\"");
 			ExpressionCompiler compiler = new ExpressionCompiler(builder, variables);
 			builder.append(statement.getName());
 			builder.append("\",");
@@ -185,7 +185,7 @@ public class ASTJavaCompiler {
 
 		@Override
 		public void compile(ASTComplex complex) {
-			builder.append("new Number(");
+			builder.append("number(");
 			builder.append(complex.getValue().r);
 			builder.append(",");
 			builder.append(complex.getValue().i);
@@ -265,11 +265,11 @@ public class ASTJavaCompiler {
 			if (var == null) {
 				var = new Variable(variable.getName());
 				variables.put(var.getName(), var);
-				builder.append("setVar(\"");
+				builder.append("var(\"");
 				builder.append(variable.getName());
-				builder.append("\", 0.0, 0.0)");
+				builder.append("\",0.0,0.0)");
 			} else {
-				builder.append("getVar(\"");
+				builder.append("var(\"");
 				builder.append(variable.getName());
 				builder.append("\")");
 			}
@@ -357,11 +357,11 @@ public class ASTJavaCompiler {
 			if (var == null) {
 				var = new Variable(variable.getName());
 				variables.put(var.getName(), var);
-				builder.append("setVar(\"");
+				builder.append("var(\"");
 				builder.append(variable.getName());
-				builder.append("\", 0.0)");
+				builder.append("\",0.0)");
 			} else {
-				builder.append("getVar(\"");
+				builder.append("var(\"");
 				builder.append(variable.getName());
 				builder.append("\")");
 			}
