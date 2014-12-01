@@ -2,7 +2,7 @@ package com.nextbreakpoint.nextfractal.flux.grammar;
 
 import org.antlr.v4.runtime.Token;
 
-public class ASTPaletteElement extends ASTObject {
+public class ASTPaletteElement extends ASTObjectImpl {
 	private int beginIndex; 
 	private int endIndex; 
 	private ASTColorARGB beginColor; 

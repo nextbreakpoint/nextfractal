@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.antlr.v4.runtime.Token;
 
-public class ASTOrbitTrap extends ASTObject {
+public class ASTOrbitTrap extends ASTObjectImpl {
 	private String name;
 	private ASTComplex center;
 	private List<ASTOrbitTrapOp> operators = new ArrayList<>(); 

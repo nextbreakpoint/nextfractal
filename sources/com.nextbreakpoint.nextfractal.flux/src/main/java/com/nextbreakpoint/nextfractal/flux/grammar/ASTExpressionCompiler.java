@@ -9,8 +9,6 @@ public interface ASTExpressionCompiler {
 
 	public void compile(ASTComplexParen paren);
 
-	public void compile(ASTComplexVariable variable);
-
 	public void compile(ASTReal real);
 
 	public void compile(ASTRealFunction function);
@@ -19,5 +17,5 @@ public interface ASTExpressionCompiler {
 
 	public void compile(ASTRealParen paren);
 
-	public void compile(ASTRealVariable variable);
+	public void compile(ASTVariable variable);
 }

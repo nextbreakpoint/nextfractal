@@ -27,4 +27,8 @@ public class ASTComplexParen extends ASTComplexExpression {
 	public void compile(ASTExpressionCompiler compiler) {
 		compiler.compile(this);
 	}
+
+	public boolean isReal() {
+		return exp.isReal();
+	}
 }

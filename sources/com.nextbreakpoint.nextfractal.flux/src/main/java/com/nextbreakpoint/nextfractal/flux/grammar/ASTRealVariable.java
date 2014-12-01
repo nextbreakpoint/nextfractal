@@ -2,7 +2,7 @@ package com.nextbreakpoint.nextfractal.flux.grammar;
 
 import org.antlr.v4.runtime.Token;
 
-public class ASTRealVariable extends ASTRealExpression {
+public class ASTRealVariable extends ASTRealExpression implements ASTVariable {
 	private String name;
 
 	public ASTRealVariable(Token location, String name) {

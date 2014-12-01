@@ -184,9 +184,13 @@ realexp returns [ASTRealExpression result]
 		$result = $re3.result;	
 	}
 	;
-	
+
 realexp2 returns [ASTRealExpression result]
 	:
+	v=realvariable {
+		$result = $v.result;
+	}
+	|
 	r=real {
 		$result = $r.result;
 	}
@@ -206,6 +210,7 @@ realexp2 returns [ASTRealExpression result]
 	a='[' ce=complexexp ']' {
 		$result = new ASTComplexRealFunction($a, "pha", $ce.result);	
 	}
+	|
 	re1=realexp2 '*' re2=realexp2 {
 		$result = new ASTRealOp($re1.result.getLocation(), "*", $re1.result, $re2.result);		
 	}
@@ -217,6 +222,10 @@ realexp2 returns [ASTRealExpression result]
 
 realexp3 returns [ASTRealExpression result]
 	:
+	v=realvariable {
+		$result = $v.result;
+	}
+	|
 	r=real {
 		$result = $r.result;
 	}
@@ -236,6 +245,7 @@ realexp3 returns [ASTRealExpression result]
 	a='[' ce=complexexp ']' {
 		$result = new ASTComplexRealFunction($a, "pha", $ce.result);	
 	}
+	|
 	re1=realexp3 '/' re2=realexp3 {
 		$result = new ASTRealOp($re1.result.getLocation(), "/", $re1.result, $re2.result);		
 	}
@@ -247,6 +257,10 @@ realexp3 returns [ASTRealExpression result]
 
 realexp4 returns [ASTRealExpression result]
 	:
+	v=realvariable {
+		$result = $v.result;
+	}
+	|
 	r=real {
 		$result = $r.result;
 	}
@@ -266,6 +280,7 @@ realexp4 returns [ASTRealExpression result]
 	a='[' ce=complexexp ']' {
 		$result = new ASTComplexRealFunction($a, "pha", $ce.result);	
 	}
+	|
 	re1=realexp4 '^' re2=realexp2 {
 		$result = new ASTRealOp($re1.result.getLocation(), "^", $re1.result, $re2.result);		
 	}
@@ -273,16 +288,12 @@ realexp4 returns [ASTRealExpression result]
 	
 complexexp returns [ASTComplexExpression result]
 	:
-	v=complexvariable {
-		$result = $v.result;
-	}
-	|
 	c=complex {
 		$result = $c.result;
 	}
 	|
-	r=realexp {
-		$result = $r.result;
+	v=complexvariable {
+		$result = $v.result;
 	}
 	|
 	s='-' ce=complexexp {
@@ -301,6 +312,10 @@ complexexp returns [ASTComplexExpression result]
 		$result = new ASTComplexOp($ce1.result.getLocation(), "-", $ce1.result, $ce2.result);
 	}
 	|
+	r=realexp {
+		$result = $r.result;
+	}
+	|
 	ce3=complexexp2 {
 		$result = $ce3.result;
 	}
@@ -310,10 +325,6 @@ complexexp2 returns [ASTComplexExpression result]
 	:
 	v=complexvariable {
 		$result = $v.result;
-	}
-	|
-	r=realexp2 {
-		$result = $r.result;
 	}
 	|
 	cf=complexfunction {
@@ -336,6 +347,10 @@ complexexp2 returns [ASTComplexExpression result]
 		$result = new ASTComplexOp($ce2.result.getLocation(), "*", new ASTComplex($i, 0.0, 1.0), $ce2.result);
 	}
 	|
+	r=realexp2 {
+		$result = $r.result;
+	}
+	|
 	ce3=complexexp3 {
 		$result = $ce3.result;
 	}
@@ -345,10 +360,6 @@ complexexp3 returns [ASTComplexExpression result]
 	:
 	v=complexvariable {
 		$result = $v.result;
-	}
-	|
-	r=realexp2 {
-		$result = $r.result;
 	}
 	|
 	cf=complexfunction {
@@ -361,6 +372,10 @@ complexexp3 returns [ASTComplexExpression result]
 	|
 	ce1=complexexp3 '^' re2=realexp3 {
 		$result = new ASTComplexOp($ce1.result.getLocation(), "^", $ce1.result, $re2.result);
+	}
+	|
+	r=realexp2 {
+		$result = $r.result;
 	}
 	;
 	

@@ -48,4 +48,8 @@ public class ASTComplexOp extends ASTComplexExpression {
 	public void compile(ASTExpressionCompiler compiler) {
 		compiler.compile(this);
 	}
+
+	public boolean isReal() {
+		return exp1.isReal() && (exp2 !=null && exp2.isReal());
+	}
 }

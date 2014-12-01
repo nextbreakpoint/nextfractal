@@ -114,9 +114,9 @@ public class ASTJavaCompiler {
 	private void compile(StringBuilder builder, Map<String, Variable> variables, ASTOrbit orbit) {
 		if (orbit != null) {
 			//TODO trap
-			variables.put("x", new Variable("x", Number.class));
-			variables.put("w", new Variable("w", Number.class));
-			variables.put("z", new Variable("z", Number.class));
+			variables.put("x", new Variable("x"));
+			variables.put("w", new Variable("w"));
+			variables.put("z", new Variable("z"));
 			builder.append("Number z = number(0.0,0.0);\n");
 			compile(builder, variables, orbit.getBegin());
 			builder.append("for (int i = ");
@@ -124,13 +124,13 @@ public class ASTJavaCompiler {
 			builder.append("; i < ");
 			builder.append(orbit.getLoop().getEnd());
 			builder.append("; i++) {\n");
-			variables.put("n", new Variable("n", Number.class));
+			variables.put("n", new Variable("n"));
 			builder.append("Number n = number(i);\n");
 			//TODO projection
 			compile(builder, variables, orbit.getLoop());
 			//TODO condition
 			builder.append("}\n");
-			variables.put("c", new Variable("c", Number.class));
+			variables.put("c", new Variable("c"));
 			builder.append("Number c = number(0xFF000000);\n");
 			compile(builder, variables, orbit.getEnd());
 		}
@@ -163,109 +163,111 @@ public class ASTJavaCompiler {
 
 	private void compile(StringBuilder builder, Map<String, Variable> variables, ASTStatement statement) {
 		if (statement != null) {
-			statement.getExp().compile(new VariableCompiler(builder, variables));
+//			statement.getExp().compile(new VariableCompiler(builder, variables));
 			Variable var = variables.get(statement.getName());
 			if (var == null) {
-				var = new Variable(statement.getName(), Number.class);
-				variables.put(var.getName(), var);
-				builder.append("Number ");
-				builder.append(statement.getName());
-				builder.append(" = number(0.0,0.0);\n");
+				if (statement.getExp().isReal()) {
+					var = new RealVariable(statement.getName());
+					variables.put(var.getName(), var);
+					builder.append("double ");
+				} else {
+					var = new Variable(statement.getName());
+					variables.put(var.getName(), var);
+					builder.append("Number ");
+				}
 			}
 			builder.append(statement.getName());
 			builder.append(" = ");
-			statement.getExp().compile(new ExpressionCompiler(builder, variables));
+			statement.getExp().compile(new ExpressionCompiler(builder, variables, statement.getExp().isReal()));
 			builder.append(";\n");
 		}		
 	}
 	
-	private class VariableCompiler implements ASTExpressionCompiler {
-		private final StringBuilder builder;
-		private final Map<String, Variable> variables; 
-		
-		public VariableCompiler(StringBuilder builder, Map<String, Variable> variables) {
-			this.builder = builder;
-			this.variables = variables;
-		}
-
-		@Override
-		public void compile(ASTComplex complex) {
-		}
-
-		@Override
-		public void compile(ASTComplexFunction function) {
-		}
-
-		@Override
-		public void compile(ASTComplexOp op) {
-			op.getExp1().compile(this);
-			if (op.getExp2() != null) {
-				op.getExp2().compile(this);
-			}
-		}
-
-		@Override
-		public void compile(ASTComplexParen paren) {
-			paren.getExp().compile(this);
-		}
-
-		@Override
-		public void compile(ASTComplexVariable variable) {
-			Variable var = variables.get(variable.getName());
-			if (var == null) {
-				var = new Variable(variable.getName(), Number.class);
-				variables.put(var.getName(), var);
-				builder.append("Number ");
-				builder.append(variable.getName());
-				builder.append(" = number(0.0,0.0);\n");
-			} else if (var.getClazz() != Number.class) {
-				throw new RuntimeException("Variable type not compatible with previous definition");
-			}
-		}
-
-		@Override
-		public void compile(ASTReal real) {
-		}
-
-		@Override
-		public void compile(ASTRealFunction function) {
-		}
-
-		@Override
-		public void compile(ASTRealOp op) {
-			op.getExp1().compile(this);
-			if (op.getExp2() != null) {
-				op.getExp2().compile(this);
-			}
-		}
-
-		@Override
-		public void compile(ASTRealParen paren) {
-			paren.getExp().compile(this);
-		}
-
-		@Override
-		public void compile(ASTRealVariable variable) {
-			Variable var = variables.get(variable.getName());
-			if (var == null) {
-				var = new Variable(variable.getName(), Double.class);
-				variables.put(var.getName(), var);
-				builder.append("double ");
-				builder.append(variable.getName());
-				builder.append(" = 0.0;\n");
-			} else if (var.getClazz() != Double.class) {
-				throw new RuntimeException("Variable type not compatible with previous definition");
-			}
-		}
-	}
+//	private class VariableCompiler implements ASTExpressionCompiler {
+//		private final StringBuilder builder;
+//		private final Map<String, Variable> variables; 
+//		
+//		public VariableCompiler(StringBuilder builder, Map<String, Variable> variables) {
+//			this.builder = builder;
+//			this.variables = variables;
+//		}
+//
+//		@Override
+//		public void compile(ASTComplex complex) {
+//		}
+//
+//		@Override
+//		public void compile(ASTComplexFunction function) {
+//		}
+//
+//		@Override
+//		public void compile(ASTComplexOp op) {
+//			op.getExp1().compile(this);
+//			if (op.getExp2() != null) {
+//				op.getExp2().compile(this);
+//			}
+//		}
+//
+//		@Override
+//		public void compile(ASTComplexParen paren) {
+//			paren.getExp().compile(this);
+//		}
+//
+//		@Override
+//		public void compile(ASTComplexVariable variable) {
+//			Variable var = variables.get(variable.getName());
+//			if (var == null) {
+//				var = new Variable(variable.getName());
+//				variables.put(var.getName(), var);
+//				builder.append("Number ");
+//				builder.append(variable.getName());
+//				builder.append(" = number(0.0,0.0);\n");
+//			}
+//		}
+//
+//		@Override
+//		public void compile(ASTReal real) {
+//		}
+//
+//		@Override
+//		public void compile(ASTRealFunction function) {
+//		}
+//
+//		@Override
+//		public void compile(ASTRealOp op) {
+//			op.getExp1().compile(this);
+//			if (op.getExp2() != null) {
+//				op.getExp2().compile(this);
+//			}
+//		}
+//
+//		@Override
+//		public void compile(ASTRealParen paren) {
+//			paren.getExp().compile(this);
+//		}
+//
+//		@Override
+//		public void compile(ASTRealVariable variable) {
+//			Variable var = variables.get(variable.getName());
+//			if (var == null) {
+//				var = new RealVariable(variable.getName());
+//				variables.put(var.getName(), var);
+//				builder.append("double ");
+//				builder.append(variable.getName());
+//				builder.append(" = 0.0;\n");
+//			}
+//		}
+//	}
 
 	private class ExpressionCompiler implements ASTExpressionCompiler {
 		private final StringBuilder builder;
 		private final Map<String, Variable> variables; 
+		private final boolean realExp;
 		
-		public ExpressionCompiler(StringBuilder builder, Map<String, Variable> variables) {
+		public ExpressionCompiler(StringBuilder builder, Map<String, Variable> variables, boolean realExp) {
 			this.builder = builder;
 			this.variables = variables;
+			this.realExp = realExp;
 		}
 
 		@Override
@@ -345,11 +347,6 @@ public class ASTJavaCompiler {
 		}
 
 		@Override
-		public void compile(ASTComplexVariable variable) {
-			builder.append(variable.getName());
-		}
-
-		@Override
 		public void compile(ASTReal real) {
 			builder.append(real.getValue());
 		}
@@ -426,8 +423,16 @@ public class ASTJavaCompiler {
 		}
 
 		@Override
-		public void compile(ASTRealVariable variable) {
-			builder.append(variable.getName());
+		public void compile(ASTVariable variable) {
+			Variable var = variables.get(variable.getName());
+			if (var != null) {
+				if (realExp && !var.isReal()) {
+					throw new RuntimeException("Variable type is not compatible with expression type: " + variable.getLocation().getText() + " [" + variable.getLocation().getLine() + ":" + variable.getLocation().getCharPositionInLine() + "]");
+				}
+				builder.append(variable.getName());
+			} else {
+				throw new RuntimeException("Variable not defined: " + variable.getLocation().getText() + " [" + variable.getLocation().getLine() + ":" + variable.getLocation().getCharPositionInLine() + "]");
+			}
 		}
 	}
 
@@ -454,19 +459,27 @@ public class ASTJavaCompiler {
 	
 	private class Variable {
 		private final String name;
-		private final Class<?> clazz;
 
-		public Variable(String name, Class<?> clazz) {
+		public Variable(String name) {
 			this.name = name;
-			this.clazz = clazz;
 		}
 
 		public String getName() {
 			return name;
 		}
-		
-		public Class<?> getClazz() {
-			return clazz;
+
+		public boolean isReal() {
+			return false;
+		}
+	}
+	
+	private class RealVariable extends Variable {
+		public RealVariable(String name) {
+			super(name);
+		}
+
+		public boolean isReal() {
+			return true;
 		}
 	}
 }	

@@ -2,7 +2,7 @@ package com.nextbreakpoint.nextfractal.flux.grammar;
 
 import org.antlr.v4.runtime.Token;
 
-public class ASTFractal extends ASTObject {
+public class ASTFractal extends ASTObjectImpl {
 	private ASTOrbit orbit;
 	private ASTColor color;
 
