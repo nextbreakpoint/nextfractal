@@ -1,10 +1,7 @@
 package com.nextbreakpoint.nextfractal.flux;
 
-import java.util.HashMap;
-import java.util.Map;
 
 public abstract class Fractal {
-	private Map<String, Variable> variables = new HashMap<>();
 	private String sourceCode;
 
 	public Fractal() {
@@ -12,34 +9,8 @@ public abstract class Fractal {
 
 	public abstract Number compute(Number z, Number w);
 	
-	protected Number var(String name, int r) {
-		return var(name, new Number(r));
-	}
-	
-	protected Number var(String name, double r) {
-		return var(name, new Number(r));
-	}
-	
-	protected Number var(String name, double r, double i) {
-		return var(name, new Number(r, i));
-	}
-	
-	protected Number var(String name, Number x) {
-		Variable var = variables.get(name);
-		if (var == null) {
-			var = new Variable(name);
-			variables.put(name, var);
-		}
-		var.set(x);
-		return var;
-	}
-	
-	public Number var(String name) {
-		Variable var = variables.get(name);
-		if (var == null) {
-			throw new RuntimeException("Variable not defined");
-		}
-		return var;
+	protected Number number(int n) {
+		return new Number(n, 0);
 	}
 	
 	protected Number number(double r, double i) {

@@ -4,12 +4,8 @@ public class Number {
 	private double r;
 	private double i;
 
-	public Number() {
-		this(0, 0);
-	}
-
-	public Number(int r) {
-		this(r, 0);
+	public Number(int n) {
+		this(n, 0);
 	}
 
 	public Number(double r) {
