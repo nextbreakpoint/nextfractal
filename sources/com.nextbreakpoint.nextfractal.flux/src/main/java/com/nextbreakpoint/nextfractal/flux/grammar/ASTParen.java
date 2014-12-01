@@ -2,15 +2,15 @@ package com.nextbreakpoint.nextfractal.flux.grammar;
 
 import org.antlr.v4.runtime.Token;
 
-public class ASTRealParen extends ASTRealExpression {
-	private ASTRealExpression exp;
+public class ASTParen extends ASTExpression {
+	private ASTExpression exp;
 
-	public ASTRealParen(Token location, ASTRealExpression exp) {
+	public ASTParen(Token location, ASTExpression exp) {
 		super(location);
 		this.exp = exp;
 	}
 
-	public ASTRealExpression getExp() {
+	public ASTExpression getExp() {
 		return exp;
 	}
 
@@ -26,5 +26,9 @@ public class ASTRealParen extends ASTRealExpression {
 	@Override
 	public void compile(ASTExpressionCompiler compiler) {
 		compiler.compile(this);
+	}
+
+	public boolean isReal() {
+		return exp.isReal();
 	}
 }

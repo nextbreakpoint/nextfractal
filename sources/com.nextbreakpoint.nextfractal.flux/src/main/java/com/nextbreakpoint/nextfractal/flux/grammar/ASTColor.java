@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.antlr.v4.runtime.Token;
 
-public class ASTColor extends ASTObjectImpl {
+public class ASTColor extends ASTObject {
 	private List<ASTPalette> palettes = new ArrayList<>(); 
 	private List<ASTRule> rules = new ArrayList<>(); 
 	private ASTColorARGB argb; 

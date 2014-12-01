@@ -2,11 +2,11 @@ package com.nextbreakpoint.nextfractal.flux.grammar;
 
 import org.antlr.v4.runtime.Token;
 
-public class ASTStatement extends ASTObjectImpl {
+public class ASTStatement extends ASTObject {
 	private String name;
-	private ASTComplexExpression exp;
+	private ASTExpression exp;
 
-	public ASTStatement(Token location, String name, ASTComplexExpression exp) {
+	public ASTStatement(Token location, String name, ASTExpression exp) {
 		super(location);
 		this.name = name;
 		this.exp = exp;
@@ -16,7 +16,7 @@ public class ASTStatement extends ASTObjectImpl {
 		return name;
 	}
 
-	public ASTComplexExpression getExp() {
+	public ASTExpression getExp() {
 		return exp;
 	}
 

@@ -5,12 +5,12 @@ import java.util.List;
 
 import org.antlr.v4.runtime.Token;
 
-public class ASTOrbitTrap extends ASTObjectImpl {
+public class ASTOrbitTrap extends ASTObject {
 	private String name;
-	private ASTComplex center;
+	private ASTNumber center;
 	private List<ASTOrbitTrapOp> operators = new ArrayList<>(); 
 
-	public ASTOrbitTrap(Token location, String name, ASTComplex center) {
+	public ASTOrbitTrap(Token location, String name, ASTNumber center) {
 		super(location);
 		this.center = center;
 		this.name = name;
@@ -20,7 +20,7 @@ public class ASTOrbitTrap extends ASTObjectImpl {
 		return name;
 	}
 
-	public ASTComplex getCenter() {
+	public ASTNumber getCenter() {
 		return center;
 	}
 

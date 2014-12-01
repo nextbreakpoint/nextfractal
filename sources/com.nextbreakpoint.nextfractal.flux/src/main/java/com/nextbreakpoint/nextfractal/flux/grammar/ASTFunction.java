@@ -2,11 +2,11 @@ package com.nextbreakpoint.nextfractal.flux.grammar;
 
 import org.antlr.v4.runtime.Token;
 
-public class ASTComplexFunction extends ASTComplexExpression {
+public class ASTFunction extends ASTExpression {
 	private String name;
-	private ASTComplexExpression[] arguments;
+	private ASTExpression[] arguments;
 
-	public ASTComplexFunction(Token location, String name, ASTComplexExpression[] arguments) {
+	public ASTFunction(Token location, String name, ASTExpression[] arguments) {
 		super(location);
 		this.name = name;
 		this.arguments = arguments;
@@ -16,7 +16,7 @@ public class ASTComplexFunction extends ASTComplexExpression {
 		return name;
 	}
 
-	public ASTComplexExpression[] getArguments() {
+	public ASTExpression[] getArguments() {
 		return arguments;
 	}
 
@@ -38,5 +38,18 @@ public class ASTComplexFunction extends ASTComplexExpression {
 	@Override
 	public void compile(ASTExpressionCompiler compiler) {
 		compiler.compile(this);
+	}
+
+	@Override
+	public boolean isReal() {
+		if (name.equals("mod") || name.equals("pha")) {
+			return true;
+		}
+		for (ASTExpression argument : arguments) {
+			if (!argument.isReal()) {
+				return false;
+			}
+		}
+		return true;
 	}
 }

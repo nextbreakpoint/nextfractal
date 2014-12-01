@@ -4,9 +4,9 @@ import org.antlr.v4.runtime.Token;
 
 public class ASTConditionTrap extends ASTConditionExpression {
 	private String name;
-	private ASTComplexExpression exp;
+	private ASTExpression exp;
 
-	public ASTConditionTrap(Token location, String name, ASTComplexExpression exp) {
+	public ASTConditionTrap(Token location, String name, ASTExpression exp) {
 		super(location);
 		this.name = name;
 		this.exp = exp;
@@ -16,7 +16,7 @@ public class ASTConditionTrap extends ASTConditionExpression {
 		return name;
 	}
 	
-	public ASTComplexExpression getExp() {
+	public ASTExpression getExp() {
 		return exp;
 	}
 	

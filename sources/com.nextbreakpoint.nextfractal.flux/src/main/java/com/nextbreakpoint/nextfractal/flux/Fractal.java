@@ -1,6 +1,5 @@
 package com.nextbreakpoint.nextfractal.flux;
 
-
 public abstract class Fractal {
 	private String sourceCode;
 
@@ -247,6 +246,18 @@ public abstract class Fractal {
 		} else {
 			throw new RuntimeException("Number is not real");
 		}
+	}
+	
+	protected double funcMod(Number x) {
+		if (x.isReal()) {
+			return Math.abs(x.r());
+		} else {
+			return Math.hypot(x.r(), x.i());
+		}
+	}
+
+	protected double funcMod(double x) {
+		return Math.abs(x);
 	}
 
 	public String getSourceCode() {

@@ -4,9 +4,9 @@ import org.antlr.v4.runtime.Token;
 
 public class ASTColorPalette extends ASTColorExpression {
 	private String name;
-	private ASTRealExpression exp;
+	private ASTExpression exp;
 	
-	public ASTColorPalette(Token location, String name, ASTRealExpression exp) {
+	public ASTColorPalette(Token location, String name, ASTExpression exp) {
 		super(location);
 		this.name = name;
 		this.exp = exp;
@@ -16,7 +16,7 @@ public class ASTColorPalette extends ASTColorExpression {
 		return name;
 	}
 
-	public ASTRealExpression getExp() {
+	public ASTExpression getExp() {
 		return exp;
 	}
 

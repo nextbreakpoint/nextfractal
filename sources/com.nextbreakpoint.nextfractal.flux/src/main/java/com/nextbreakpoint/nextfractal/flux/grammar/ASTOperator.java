@@ -2,19 +2,19 @@ package com.nextbreakpoint.nextfractal.flux.grammar;
 
 import org.antlr.v4.runtime.Token;
 
-public class ASTComplexOp extends ASTComplexExpression {
+public class ASTOperator extends ASTExpression {
 	private String op;
-	private ASTComplexExpression exp1;
-	private ASTComplexExpression exp2;
+	private ASTExpression exp1;
+	private ASTExpression exp2;
 
-	public ASTComplexOp(Token location, String op, ASTComplexExpression exp) {
+	public ASTOperator(Token location, String op, ASTExpression exp) {
 		super(location);
 		this.op = op;
 		this.exp1 = exp;
 		this.exp2 = null;
 	}
 
-	public ASTComplexOp(Token location, String op, ASTComplexExpression exp1, ASTComplexExpression exp2) {
+	public ASTOperator(Token location, String op, ASTExpression exp1, ASTExpression exp2) {
 		super(location);
 		this.op = op;
 		this.exp1 = exp1;
@@ -25,11 +25,11 @@ public class ASTComplexOp extends ASTComplexExpression {
 		return op;
 	}
 	
-	public ASTComplexExpression getExp1() {
+	public ASTExpression getExp1() {
 		return exp1;
 	}
 
-	public ASTComplexExpression getExp2() {
+	public ASTExpression getExp2() {
 		return exp2;
 	}
 

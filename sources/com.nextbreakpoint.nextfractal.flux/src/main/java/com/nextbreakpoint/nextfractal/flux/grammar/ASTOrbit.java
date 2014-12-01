@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.antlr.v4.runtime.Token;
 
-public class ASTOrbit extends ASTObjectImpl {
+public class ASTOrbit extends ASTObject {
 	private ASTRegion region; 
 	private List<ASTOrbitTrap> traps = new ArrayList<>(); 
 	private ASTOrbitProjection projection; 

@@ -1,19 +1,19 @@
 package com.nextbreakpoint.nextfractal.flux.grammar;
 
 public class ASTRegion {
-	private ASTComplex a; 
-	private ASTComplex b; 
+	private ASTNumber a; 
+	private ASTNumber b; 
 
-	public ASTRegion(ASTComplex a, ASTComplex b) {
+	public ASTRegion(ASTNumber a, ASTNumber b) {
 		this.a = a;
 		this.b = b;
 	}
 
-	public ASTComplex getA() {
+	public ASTNumber getA() {
 		return a;
 	}
 
-	public ASTComplex getB() {
+	public ASTNumber getB() {
 		return b;
 	}
 

@@ -2,14 +2,14 @@ package com.nextbreakpoint.nextfractal.flux.grammar;
 
 import org.antlr.v4.runtime.Token;
 
-public class ASTPaletteElement extends ASTObjectImpl {
+public class ASTPaletteElement extends ASTObject {
 	private int beginIndex; 
 	private int endIndex; 
 	private ASTColorARGB beginColor; 
 	private ASTColorARGB endColor; 
-	private ASTRealExpression exp;
+	private ASTExpression exp;
 	
-	public ASTPaletteElement(Token location, int beginIndex, int endIndex, ASTColorARGB beginColor, ASTColorARGB endColor, ASTRealExpression exp) {
+	public ASTPaletteElement(Token location, int beginIndex, int endIndex, ASTColorARGB beginColor, ASTColorARGB endColor, ASTExpression exp) {
 		super(location);
 		this.beginIndex = beginIndex;
 		this.endIndex = endIndex;

@@ -3,12 +3,12 @@ package com.nextbreakpoint.nextfractal.flux.grammar;
 import org.antlr.v4.runtime.Token;
 
 public class ASTColorComponent extends ASTColorExpression {
-	private ASTRealExpression exp1;
-	private ASTRealExpression exp2;
-	private ASTRealExpression exp3;
-	private ASTRealExpression exp4;
+	private ASTExpression exp1;
+	private ASTExpression exp2;
+	private ASTExpression exp3;
+	private ASTExpression exp4;
 	
-	public ASTColorComponent(Token location, ASTRealExpression exp1, ASTRealExpression exp2, ASTRealExpression exp3, ASTRealExpression exp4) {
+	public ASTColorComponent(Token location, ASTExpression exp1, ASTExpression exp2, ASTExpression exp3, ASTExpression exp4) {
 		super(location);
 		this.exp1 = exp1;
 		this.exp2 = exp2;
@@ -16,7 +16,7 @@ public class ASTColorComponent extends ASTColorExpression {
 		this.exp4 = exp4;
 	}
 
-	public ASTColorComponent(Token location, ASTRealExpression exp1, ASTRealExpression exp2, ASTRealExpression exp3) {
+	public ASTColorComponent(Token location, ASTExpression exp1, ASTExpression exp2, ASTExpression exp3) {
 		super(location);
 		this.exp1 = exp1;
 		this.exp2 = exp2;
@@ -24,7 +24,7 @@ public class ASTColorComponent extends ASTColorExpression {
 		this.exp4 = null;
 	}
 
-	public ASTColorComponent(Token location, ASTRealExpression exp1) {
+	public ASTColorComponent(Token location, ASTExpression exp1) {
 		super(location);
 		this.exp1 = exp1;
 		this.exp2 = null;
@@ -32,19 +32,19 @@ public class ASTColorComponent extends ASTColorExpression {
 		this.exp4 = null;
 	}
 
-	public ASTRealExpression getExp1() {
+	public ASTExpression getExp1() {
 		return exp1;
 	}
 
-	public ASTRealExpression getExp2() {
+	public ASTExpression getExp2() {
 		return exp2;
 	}
 
-	public ASTRealExpression getExp3() {
+	public ASTExpression getExp3() {
 		return exp3;
 	}
 
-	public ASTRealExpression getExp4() {
+	public ASTExpression getExp4() {
 		return exp4;
 	}
 

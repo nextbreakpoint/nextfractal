@@ -1,10 +1,16 @@
 package com.nextbreakpoint.nextfractal.flux.grammar;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.antlr.v4.runtime.Token;
+
+import com.nextbreakpoint.nextfractal.flux.Variable;
 
 public class ASTBuilder {
 	private ASTFractal fractal;
-	
+	private Map<String, Variable> variables = new HashMap<>();
+
 	public ASTBuilder() {
 	}
 	
@@ -104,5 +110,15 @@ public class ASTBuilder {
 
 	public int parseInt(String text, int base) {
 		return Integer.parseInt(text, base);
+	}
+
+	public void registerVariable(ASTStatement statement) {
+		Variable var = variables.get(statement.getName());
+		if (var == null) {
+			var = new Variable(statement.getName(), statement.getExp().isReal());
+			variables.put(var.getName(), var);
+		} else if (!statement.getExp().isReal() && var.isReal()) {
+			throw new RuntimeException("Variable type is not compatible with expression type: " + statement.getLocation().getText() + " [" + statement.getLocation().getLine() + ":" + statement.getLocation().getCharPositionInLine() + "]");
+		}
 	}
 }	

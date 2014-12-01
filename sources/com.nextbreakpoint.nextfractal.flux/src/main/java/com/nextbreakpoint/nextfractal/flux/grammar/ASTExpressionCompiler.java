@@ -1,21 +1,13 @@
 package com.nextbreakpoint.nextfractal.flux.grammar;
 
 public interface ASTExpressionCompiler {
-	public void compile(ASTComplex complex);
+	public void compile(ASTNumber number);
 
-	public void compile(ASTComplexFunction function);
+	public void compile(ASTFunction function);
 
-	public void compile(ASTComplexOp op);
+	public void compile(ASTOperator operator);
 
-	public void compile(ASTComplexParen paren);
-
-	public void compile(ASTReal real);
-
-	public void compile(ASTRealFunction function);
-
-	public void compile(ASTRealOp op);
-
-	public void compile(ASTRealParen paren);
+	public void compile(ASTParen paren);
 
 	public void compile(ASTVariable variable);
 }

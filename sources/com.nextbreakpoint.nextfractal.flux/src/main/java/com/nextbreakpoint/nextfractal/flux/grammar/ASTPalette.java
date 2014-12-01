@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.antlr.v4.runtime.Token;
 
-public class ASTPalette extends ASTObjectImpl {
+public class ASTPalette extends ASTObject {
 	private String name;
 	private int length;
 	private List<ASTPaletteElement> elements = new ArrayList<>(); 

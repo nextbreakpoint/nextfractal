@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.antlr.v4.runtime.Token;
 
-public class ASTOrbitEnd extends ASTObjectImpl {
+public class ASTOrbitEnd extends ASTObject {
 	private List<ASTStatement> statements = new ArrayList<>(); 
 
 	public ASTOrbitEnd(Token location) {

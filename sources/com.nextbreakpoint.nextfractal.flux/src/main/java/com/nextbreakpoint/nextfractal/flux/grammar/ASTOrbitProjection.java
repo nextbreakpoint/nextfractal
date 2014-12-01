@@ -2,15 +2,15 @@ package com.nextbreakpoint.nextfractal.flux.grammar;
 
 import org.antlr.v4.runtime.Token;
 
-public class ASTOrbitProjection extends ASTObjectImpl {
-	private ASTComplexExpression exp;
+public class ASTOrbitProjection extends ASTObject {
+	private ASTExpression exp;
 	
-	public ASTOrbitProjection(Token location, ASTComplexExpression exp) {
+	public ASTOrbitProjection(Token location, ASTExpression exp) {
 		super(location);
 		this.exp = exp;
 	}
 
-	public ASTComplexExpression getExpression() {
+	public ASTExpression getExpression() {
 		return exp;
 	}
 

@@ -4,10 +4,10 @@ import org.antlr.v4.runtime.Token;
 
 public class ASTConditionCompareOp extends ASTConditionExpression {
 	private String op;
-	private ASTRealExpression exp1;
-	private ASTRealExpression exp2;
+	private ASTExpression exp1;
+	private ASTExpression exp2;
 
-	public ASTConditionCompareOp(Token location, String op, ASTRealExpression exp1, ASTRealExpression exp2) {
+	public ASTConditionCompareOp(Token location, String op, ASTExpression exp1, ASTExpression exp2) {
 		super(location);
 		this.op = op;
 		this.exp1 = exp1;
@@ -18,11 +18,11 @@ public class ASTConditionCompareOp extends ASTConditionExpression {
 		return op;
 	}
 	
-	public ASTRealExpression getExp1() {
+	public ASTExpression getExp1() {
 		return exp1;
 	}
 
-	public ASTRealExpression getExp2() {
+	public ASTExpression getExp2() {
 		return exp2;
 	}
 
