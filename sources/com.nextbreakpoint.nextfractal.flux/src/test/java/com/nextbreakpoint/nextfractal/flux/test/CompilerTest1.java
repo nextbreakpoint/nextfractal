@@ -31,6 +31,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.nextbreakpoint.nextfractal.flux.Fractal;
+import com.nextbreakpoint.nextfractal.flux.Getter;
 import com.nextbreakpoint.nextfractal.flux.Number;
 import com.nextbreakpoint.nextfractal.flux.grammar.ASTFractal;
 import com.nextbreakpoint.nextfractal.flux.grammar.ASTJavaCompiler;
@@ -44,11 +45,15 @@ public class CompilerTest1 extends BaseTest {
 			Fractal fractal = compile(astFractal);
 			Assert.assertNotNull(fractal);
 			System.out.println(fractal.getSourceCode());
-			Number z = new Number(0, 0);
-			Number w = new Number(0, 0);
-			Number c = fractal.compute(z, w);
-			Assert.assertNotNull(c);
-			System.out.println(String.format("%x", c.n()));
+			fractal.setX(new Number(0, 0));
+			fractal.setW(new Number(0, 0));
+			fractal.compute();
+			Getter getterC = fractal.getGetter("c");
+			Assert.assertNotNull(getterC);
+			System.out.println(String.format("%x", getterC.get().n()));
+			Getter getterZ = fractal.getGetter("z");
+			Assert.assertNotNull(getterZ);
+			System.out.println(String.format("%f,%f", getterZ.get().r(), getterZ.get().i()));
 		} catch (IOException e) {
 			Assert.fail(e.getMessage());
 		}

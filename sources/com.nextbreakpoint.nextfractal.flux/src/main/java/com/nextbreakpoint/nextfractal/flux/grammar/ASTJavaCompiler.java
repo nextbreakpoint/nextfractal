@@ -104,27 +104,57 @@ public class ASTJavaCompiler {
 		builder.append("public class ");
 		builder.append(className);
 		builder.append(" extends Fractal {\n");
-		builder.append("public Number compute(Number x, Number w) {\n");
 		if (fractal != null) {
 			for (Variable variable : fractal.getVariables()) {
 				variables.put(variable.getName(), variable);
 				if (variable.isCreate()) {
 					if (variable.isReal()) {
-						builder.append("double ");
+						builder.append("private double ");
 						builder.append(variable.getName());
 						builder.append(" = 0.0;\n");
+						builder.append("private double get");
+						builder.append(variable.getName().toUpperCase());
+						builder.append("() { return ");
+						builder.append(variable.getName());
+						builder.append("; }\n");
 					} else {
-						builder.append("Number ");
+						builder.append("private Number ");
 						builder.append(variable.getName());
 						builder.append(" = number(0.0,0.0);\n");
+						builder.append("private Number get");
+						builder.append(variable.getName().toUpperCase());
+						builder.append("() { return ");
+						builder.append(variable.getName());
+						builder.append("; }\n");
 					}
 				}
 			}
+		}
+		builder.append("public ");
+		builder.append(className);
+		builder.append("() {\n");
+		if (fractal != null) {
+			for (Variable variable : fractal.getVariables()) {
+				if (variable.isReal()) {
+					builder.append("registerGetter(\"");
+					builder.append(variable.getName());
+					builder.append("\",() -> { return number(get");
+					builder.append(variable.getName().toUpperCase());
+					builder.append("(),0); });\n");
+				} else {
+					builder.append("registerGetter(\"");
+					builder.append(variable.getName());
+					builder.append("\",() -> { return get");
+					builder.append(variable.getName().toUpperCase());
+					builder.append("(); });\n");
+				}
+			}
+		}
+		builder.append("}\n");
+		builder.append("public void compute() {\n");
+		if (fractal != null) {
 			compile(builder, variables, fractal.getOrbit());
 			//TODO color
-			builder.append("return c;\n");
-		} else {
-			builder.append("return null;\n");
 		}
 		builder.append("}\n");
 		builder.append("}\n");
@@ -222,6 +252,58 @@ public class ASTJavaCompiler {
 			builder.append(function.getName().toUpperCase().substring(0, 1));
 			builder.append(function.getName().substring(1));
 			builder.append("(");
+			switch (function.getName()) {
+				case "mod":
+				case "pha":
+					if (function.getArguments().length != 1) {
+						throw new RuntimeException("Invalid number of arguments: " + function.getLocation().getText() + " [" + function.getLocation().getLine() + ":" + function.getLocation().getCharPositionInLine() + "]");
+					}				
+					break;
+					
+				case "sin":
+				case "cos":
+				case "tan":
+				case "asin":
+				case "acos":
+				case "atan":
+					if (function.getArguments().length != 1) {
+						throw new RuntimeException("Invalid number of arguments: " + function.getLocation().getText() + " [" + function.getLocation().getLine() + ":" + function.getLocation().getCharPositionInLine() + "]");
+					}				
+					break;
+	
+				case "log":
+				case "sqrt":
+					if (function.getArguments().length != 1) {
+						throw new RuntimeException("Invalid number of arguments: " + function.getLocation().getText() + " [" + function.getLocation().getLine() + ":" + function.getLocation().getCharPositionInLine() + "]");
+					}				
+					if (!function.getArguments()[0].isReal()) {
+						throw new RuntimeException("Invalid type of arguments: " + function.getLocation().getText() + " [" + function.getLocation().getLine() + ":" + function.getLocation().getCharPositionInLine() + "]");
+					}				
+					break;
+					
+				case "atan2":
+				case "hypot":
+				case "pow":
+					if (function.getArguments().length != 2) {
+						throw new RuntimeException("Invalid number of arguments: " + function.getLocation().getText() + " [" + function.getLocation().getLine() + ":" + function.getLocation().getCharPositionInLine() + "]");
+					}				
+					if (!function.getArguments()[0].isReal()) {
+						throw new RuntimeException("Invalid type of arguments: " + function.getLocation().getText() + " [" + function.getLocation().getLine() + ":" + function.getLocation().getCharPositionInLine() + "]");
+					}				
+					if (!function.getArguments()[1].isReal()) {
+						throw new RuntimeException("Invalid type of arguments: " + function.getLocation().getText() + " [" + function.getLocation().getLine() + ":" + function.getLocation().getCharPositionInLine() + "]");
+					}				
+					break;
+	
+				case "exp":
+					if (function.getArguments().length != 1) {
+						throw new RuntimeException("Invalid number of arguments: " + function.getLocation().getText() + " [" + function.getLocation().getLine() + ":" + function.getLocation().getCharPositionInLine() + "]");
+					}				
+					break;
+					
+				default:
+					throw new RuntimeException("Unsupported function: " + function.getLocation().getText() + " [" + function.getLocation().getLine() + ":" + function.getLocation().getCharPositionInLine() + "]");
+			}
 			ASTExpression[] arguments = function.getArguments();
 			for (int i = 0; i < arguments.length; i++) {
 				arguments[i].compile(this);
@@ -240,50 +322,62 @@ public class ASTJavaCompiler {
 				switch (operator.getOp()) {
 					case "-":
 						if (exp1.isReal()) {
-							builder.append("opNegReal");
+							builder.append("-");
+							exp1.compile(this);
 						} else {
 							builder.append("opNeg");
+							builder.append("(");
+							exp1.compile(this);
+							builder.append(")");
+						}
+						break;
+					
+					case "+":
+						if (exp1.isReal()) {
+							builder.append("-");
+							exp1.compile(this);
+						} else {
+							builder.append("opPos");
+							builder.append("(");
+							exp1.compile(this);
+							builder.append(")");
 						}
 						break;
 					
 					default:
-						if (exp1.isReal()) {
-							builder.append("opPosReal");
-						} else {
-							builder.append("opPos");
-						}
-						break;
+						throw new RuntimeException("Unsupported operator: " + operator.getLocation().getText() + " [" + operator.getLocation().getLine() + ":" + operator.getLocation().getCharPositionInLine() + "]");
 				}
-				builder.append("(");
-				exp1.compile(this);
-				builder.append(")");
 			} else {
 				if (exp1.isReal() && exp2.isReal()) {
+					builder.append("(");
+					exp1.compile(this);
 					switch (operator.getOp()) {
 						case "+":
-							builder.append("opAddReal");
+							builder.append("+");
 							break;
 						
 						case "-":
-							builder.append("opSubReal");
+							builder.append("-");
 							break;
 							
 						case "*":
-							builder.append("opMulReal");
+							builder.append("*");
 							break;
 							
 						case "/":
-							builder.append("opDivReal");
+							builder.append("/");
 							break;
 							
 						case "^":
-							builder.append("opPowReal");
+							builder.append("^");
 							break;
 						
 						default:
-							break;
+							throw new RuntimeException("Unsupported operator: " + operator.getLocation().getText() + " [" + operator.getLocation().getLine() + ":" + operator.getLocation().getCharPositionInLine() + "]");
 					}
-				} else {
+					exp2.compile(this);
+					builder.append(")");
+				} else if (exp2.isReal()) {
 					switch (operator.getOp()) {
 						case "+":
 							builder.append("opAdd");
@@ -300,26 +394,46 @@ public class ASTJavaCompiler {
 						case "/":
 							builder.append("opDiv");
 							break;
-							
-						case "^":
-							builder.append("opPow");
-							break;
 						
 						default:
-							break;
+							throw new RuntimeException("Unsupported operator: " + operator.getLocation().getText() + " [" + operator.getLocation().getLine() + ":" + operator.getLocation().getCharPositionInLine() + "]");
 					}
+					builder.append("(");
+					exp1.compile(this);
+					builder.append(",");
+					exp2.compile(this);
+					builder.append(")");
+				} else {
+					switch (operator.getOp()) {
+						case "+":
+							builder.append("opAdd");
+							break;
+						
+						case "-":
+							builder.append("opSub");
+							break;
+							
+						case "*":
+							builder.append("opMul");
+							break;
+							
+						default:
+							throw new RuntimeException("Unsupported operator: " + operator.getLocation().getText() + " [" + operator.getLocation().getLine() + ":" + operator.getLocation().getCharPositionInLine() + "]");
+					}
+					builder.append("(");
+					exp1.compile(this);
+					builder.append(",");
+					exp2.compile(this);
+					builder.append(")");
 				}
-				builder.append("(");
-				exp1.compile(this);
-				builder.append(",");
-				exp2.compile(this);
-				builder.append(")");
 			}
 		}
 
 		@Override
 		public void compile(ASTParen paren) {
+			builder.append("(");
 			paren.getExp().compile(this);
+			builder.append(")");
 		}
 
 		@Override

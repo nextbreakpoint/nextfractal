@@ -1,13 +1,48 @@
 package com.nextbreakpoint.nextfractal.flux;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public abstract class Fractal {
 	private String sourceCode;
+	private Map<String, Getter> getters = new HashMap<>();
+	protected Number x = new Number(0,0);
+	protected Number w = new Number(0,0);
+	protected Number z = new Number(0,0);
+	protected Number n = new Number(0);
+	protected Number c = new Number(0);
 
 	public Fractal() {
 	}
 
-	public abstract Number compute(Number z, Number w);
-	
+	public void setX(Number x) {
+		this.x = x;
+	}
+
+	public void setW(Number w) {
+		this.w = w;
+	}
+
+	public Number getX() {
+		return x;
+	}
+
+	public Number getW() {
+		return w;
+	}
+
+	public Number getZ() {
+		return z;
+	}
+
+	public Number getN() {
+		return n;
+	}
+
+	public Number getC() {
+		return c;
+	}
+
 	protected Number number(int n) {
 		return new Number(n, 0);
 	}
@@ -68,6 +103,10 @@ public abstract class Fractal {
 		return new Number(a * b, 0);
 	}
 
+	protected Number opPow(double a, double b) {
+		return new Number(Math.pow(a, b), 0);
+	}
+
 	protected Number opNeg(Number a) {
 		return new Number(-a.r(), -a.i());
 	}
@@ -76,188 +115,103 @@ public abstract class Fractal {
 		return new Number(+a.r(), +a.i());
 	}
 
-	protected Number opNeg(double a) {
-		return new Number(-a, 0);
-	}
-	
-	protected Number opPos(double a) {
-		return new Number(+a, 0);
-	}
-	
-	protected double opAddReal(double a, double b) {
-		return a + b;
-	}
-	
-	protected double opSubReal(double a, double b) {
-		return a - b;
-	}
-	
-	protected double opMulReal(double a, double b) {
-		return a * b;
-	}
-	
-	protected double opDivReal(double a, double b) {
-		return a / b;
-	}
-	
-	protected double opPowReal(double a, double b) {
-		return Math.pow(a, b);
-	}
-	
-	protected double opNegReal(double a) {
-		return -a;
-	}
-	
-	protected double opPosReal(double a) {
-		return +a;
-	}
-
-	protected double opAddReal(Number a, double b) {
-		if (a.isReal()) {
-			return a.r() + b;
-		} else {
-			throw new RuntimeException("Number is not real");
-		}
-	}
-	
-	protected double opSubReal(Number a, double b) {
-		if (a.isReal()) {
-			return a.r() - b;
-		} else {
-			throw new RuntimeException("Number is not real");
-		}
-	}
-	
-	protected double opMulReal(Number a, double b) {
-		if (a.isReal()) {
-			return a.r() * b;
-		} else {
-			throw new RuntimeException("Number is not real");
-		}
-	}
-	
-	protected double opDivReal(Number a, double b) {
-		if (a.isReal()) {
-			return a.r() / b;
-		} else {
-			throw new RuntimeException("Number is not real");
-		}
-	}
-	
-	protected double opPowReal(Number a, double b) {
-		if (a.isReal()) {
-			return Math.pow(a.r(), b);
-		} else {
-			throw new RuntimeException("Number is not real");
-		}
-	}
-	
-	protected double opAddReal(double a, Number b) {
-		if (b.isReal()) {
-			return a + b.r();
-		} else {
-			throw new RuntimeException("Number is not real");
-		}
-	}
-	
-	protected double opSubReal(double a, Number b) {
-		if (b.isReal()) {
-			return a - b.r();
-		} else {
-			throw new RuntimeException("Number is not real");
-		}
-	}
-	
-	protected double opMulReal(double a, Number b) {
-		if (b.isReal()) {
-			return a * b.r();
-		} else {
-			throw new RuntimeException("Number is not real");
-		}
-	}
-	
-	protected double opDivReal(double a, Number b) {
-		if (b.isReal()) {
-			return a / b.r();
-		} else {
-			throw new RuntimeException("Number is not real");
-		}
-	}
-	
-	protected double opPowReal(double a, Number b) {
-		if (b.isReal()) {
-			return Math.pow(a, b.r());
-		} else {
-			throw new RuntimeException("Number is not real");
-		}
-	}
-	
-	protected double opAddReal(Number a, Number b) {
-		if (a.isReal() && b.isReal()) {
-			return a.r() + b.r();
-		} else {
-			throw new RuntimeException("Number is not real");
-		}
-	}
-	
-	protected double opSubReal(Number a, Number b) {
-		if (a.isReal() && b.isReal()) {
-			return a.r() - b.r();
-		} else {
-			throw new RuntimeException("Number is not real");
-		}
-	}
-	
-	protected double opMulReal(Number a, Number b) {
-		if (a.isReal() && b.isReal()) {
-			return a.r() * b.r();
-		} else {
-			throw new RuntimeException("Number is not real");
-		}
-	}
-	
-	protected double opDivReal(Number a, Number b) {
-		if (a.isReal() && b.isReal()) {
-			return a.r() / b.r();
-		} else {
-			throw new RuntimeException("Number is not real");
-		}
-	}
-	
-	protected double opPowReal(Number a, Number b) {
-		if (a.isReal() && b.isReal()) {
-			return Math.pow(a.r(), b.r());
-		} else {
-			throw new RuntimeException("Number is not real");
-		}
-	}
-
-	protected double opNegReal(Number a) {
-		if (a.isReal()) {
-			return -a.r();
-		} else {
-			throw new RuntimeException("Number is not real");
-		}
-	}
-	
-	protected double opPosReal(Number a) {
-		if (a.isReal()) {
-			return +a.r();
-		} else {
-			throw new RuntimeException("Number is not real");
-		}
-	}
-	
-	protected double funcMod(Number x) {
-		if (x.isReal()) {
-			return Math.abs(x.r());
-		} else {
-			return Math.hypot(x.r(), x.i());
-		}
-	}
-
 	protected double funcMod(double x) {
 		return Math.abs(x);
+	}
+
+	protected double funcPha(double x) {
+		return 0;
+	}
+
+	protected double funcAcos(double x) {
+		return Math.acos(x);
+	}
+
+	protected double funcAsin(double x) {
+		return Math.asin(x);
+	}
+
+	protected double funcAtan(double x) {
+		return Math.atan(x);
+	}
+
+	protected double funcCos(double x) {
+		return Math.cos(x);
+	}
+	
+	protected double funcSin(double x) {
+		return Math.sin(x);
+	}
+
+	protected double funTan(double x) {
+		return Math.tan(x);
+	}
+
+	protected double funCotan(double x) {
+		return 1 / Math.tan(x);
+	}
+
+	protected double funExp(double x) {
+		return Math.exp(x);
+	}
+
+	protected double funLog(double x) {
+		return Math.log(x);
+	}
+
+	protected double funcSqrt(double x) {
+		return Math.sqrt(x);
+	}
+
+	protected double funcPow(double x, double y) {
+		return Math.pow(x, y);
+	}
+
+	protected double funHypot(double x, double y) {
+		return Math.hypot(x, y);
+	}
+
+	protected double funAtan2(double x, double y) {
+		return Math.atan2(x, y);
+	}
+
+	protected double funcMod(Number x) {
+		return Math.hypot(x.r(), x.i());
+	}
+	
+	protected double funcPha(Number x) {
+		return Math.atan2(x.i(), x.r());
+	}
+	
+	protected Number funcTan(Number x) {
+		double d = Math.pow(Math.cos(x.r()), 2) + Math.pow(Math.sinh(x.i()), 2);
+		return new Number((Math.sin(x.r())*Math.cos(x.r())) / d, (Math.sinh(x.i())*Math.cosh(x.i())) / d);
+	}
+
+	protected Number funcCotan(Number x) {
+		double d = Math.pow(Math.sin(x.r()), 2) - Math.pow(Math.sinh(x.i()), 2);
+		return new Number((Math.sin(x.r())*Math.cos(x.r())) / d, (Math.sinh(x.i())*Math.cosh(x.i())) / d);
+	}
+
+	protected Number funcSin(Number x) {
+		return new Number(Math.sin(x.r())*Math.cosh(x.i()), +Math.cos(x.r())*Math.sinh(x.i()));
+	}
+
+	protected Number funcCos(Number x) {
+		return new Number(Math.cos(x.r())*Math.cosh(x.i()), -Math.sin(x.r())*Math.sinh(x.i()));
+	}
+
+	protected Number funcExp(Number x) {
+		double d = Math.exp(x.r());
+		return new Number(d*Math.cos(x.i()), d*Math.sin(x.i()));
+	}
+
+	protected Number funcMul(Number x, double y) {
+		return new Number(x.r() * y, x.i() * y);
+	}
+
+	protected Number funcDiv(Number x, double y) {
+		return new Number(x.r() / y, x.i() / y);
 	}
 
 	public String getSourceCode() {
@@ -267,4 +221,18 @@ public abstract class Fractal {
 	public void setSourceCode(String sourceCode) {
 		this.sourceCode = sourceCode;
 	}
+	
+	public void registerGetter(String name, Getter getter) {
+		getters.put(name, getter);
+	}
+
+	public Getter getGetter(String name) {
+		return getters.get(name);
+	}
+
+	public Map<String, Getter> getGetters() {
+		return getters;
+	}
+
+	public abstract void compute();
 }

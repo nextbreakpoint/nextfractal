@@ -23,9 +23,9 @@ fractal
 		builder.setFractal(new ASTFractal($f));
 		builder.registerVariable("x", false, false, $f);
 		builder.registerVariable("w", false, false, $f);
-		builder.registerVariable("z", false, true, $f);
-		builder.registerVariable("n", false, true, $f);
-		builder.registerVariable("c", false, true, $f);
+		builder.registerVariable("z", false, false, $f);
+		builder.registerVariable("n", false, false, $f);
+		builder.registerVariable("c", false, false, $f);
 	} '{' orbit color '}' eof 
 	;
 		
@@ -174,12 +174,12 @@ expression returns [ASTExpression result]
 		$result = new ASTOperator($s, "+", $e.result);
 	}
 	|
-	e1=expression '+' e2=expression {
-		$result = new ASTOperator($e1.result.getLocation(), "+", $e1.result, $e2.result);		
+	e1=expression s='+' e2=expression {
+		$result = new ASTOperator($s, "+", $e1.result, $e2.result);		
 	}
 	|
-	e1=expression '-' e2=expression {
-		$result = new ASTOperator($e1.result.getLocation(), "-", $e1.result, $e2.result);		
+	e1=expression s='-' e2=expression {
+		$result = new ASTOperator($s, "-", $e1.result, $e2.result);		
 	}
 	|
 	e3=expression2 {
@@ -213,8 +213,8 @@ expression2 returns [ASTExpression result]
 		$result = new ASTRealFunction($a, "pha", $e.result);	
 	}
 	|
-	e1=expression2 '*' e2=expression2 {
-		$result = new ASTOperator($e1.result.getLocation(), "*", $e1.result, $e2.result);
+	e1=expression2 s='*' e2=expression2 {
+		$result = new ASTOperator($s, "*", $e1.result, $e2.result);
 	}
 	|
 	i='i' e2=expression2 {
@@ -222,7 +222,7 @@ expression2 returns [ASTExpression result]
 	}
 	|
 	e2=expression2 i='i' {
-		$result = new ASTOperator($e2.result.getLocation(), "*", new ASTNumber($i, 0.0, 1.0), $e2.result);
+		$result = new ASTOperator($i, "*", new ASTNumber($i, 0.0, 1.0), $e2.result);
 	}
 	|
 	e3=expression3 {
@@ -256,8 +256,8 @@ expression3 returns [ASTExpression result]
 		$result = new ASTRealFunction($a, "pha", $e.result);	
 	}
 	|
-	e1=expression3 '/' e2=expression3 {
-		$result = new ASTOperator($e1.result.getLocation(), "/", $e1.result, $e2.result);
+	e1=expression3 s='/' e2=expression3 {
+		$result = new ASTOperator($s, "/", $e1.result, $e2.result);
 	}
 	|
 	e3=expression4 {
@@ -291,8 +291,8 @@ expression4 returns [ASTExpression result]
 		$result = new ASTRealFunction($a, "pha", $e.result);	
 	}
 	|
-	e1=expression4 '^' e2=expression4 {
-		$result = new ASTOperator($e1.result.getLocation(), "^", $e1.result, $e2.result);
+	e1=expression4 s='^' e2=expression4 {
+		$result = new ASTOperator($s, "^", $e1.result, $e2.result);
 	}
 	;
 
@@ -302,7 +302,11 @@ function returns [ASTFunction result]
 		$result = new ASTRealFunction($f, $f.text, $e.result);		
 	}
 	|
-	f=('cos' | 'sin' | 'tan' | 'acos' | 'asin' | 'atan' | 'log' | 'exp' | 'mod' | 'sqrt') '(' e=expression ')' {
+	f=('cos' | 'sin' | 'tan' | 'acos' | 'asin' | 'atan') '(' e=expression ')' {
+		$result = new ASTFunction($f, $f.text, new ASTExpression[] { $e.result });		
+	}
+	|
+	f=('log' | 'exp' | 'sqrt') '(' e=expression ')' {
 		$result = new ASTFunction($f, $f.text, new ASTExpression[] { $e.result });		
 	}
 	|
