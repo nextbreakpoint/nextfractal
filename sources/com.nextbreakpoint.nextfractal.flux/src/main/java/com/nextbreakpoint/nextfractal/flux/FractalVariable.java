@@ -1,6 +1,6 @@
 package com.nextbreakpoint.nextfractal.flux;
 
 @FunctionalInterface
-public interface Getter {
+public interface FractalVariable {
 	public Number get();
 }

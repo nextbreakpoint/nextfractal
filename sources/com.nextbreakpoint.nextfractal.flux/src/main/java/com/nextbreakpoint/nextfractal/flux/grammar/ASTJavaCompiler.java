@@ -33,12 +33,15 @@ public class ASTJavaCompiler {
 		this.className = className;
 	}
 
-	public Fractal compile() throws IOException {
+	public String compile() throws IOException {
 		StringBuilder builder = new StringBuilder();
 		Map<String, Variable> variables = new HashMap<>();
 		compile(builder, variables, fractal);
 		String source = builder.toString();
-		System.out.println(source);
+		return source;
+	}
+	
+	public Fractal compileJava(String source) throws IOException {
 		List<SimpleJavaFileObject> compilationUnits = new ArrayList<>();
 		compilationUnits.add(new JavaSourceFromString(className, source));
 		List<String> options = new ArrayList<>();
@@ -60,7 +63,6 @@ public class ASTJavaCompiler {
 				try {
 					Class<?> clazz = loader.loadClass(packageName + "." + className);
 					Fractal fractal = (Fractal)clazz.newInstance();
-					fractal.setSourceCode(source);
 					System.out.println(file.toUri().toString());
 					System.out.println(clazz.getCanonicalName() + " (" + fileData.length + ")");
 					return fractal;
@@ -112,11 +114,11 @@ public class ASTJavaCompiler {
 						builder.append("private double ");
 						builder.append(variable.getName());
 						builder.append(" = 0.0;\n");
-						builder.append("private double get");
+						builder.append("private Number get");
 						builder.append(variable.getName().toUpperCase());
-						builder.append("() { return ");
+						builder.append("() { return number(");
 						builder.append(variable.getName());
-						builder.append("; }\n");
+						builder.append(",0); }\n");
 					} else {
 						builder.append("private Number ");
 						builder.append(variable.getName());
@@ -135,19 +137,11 @@ public class ASTJavaCompiler {
 		builder.append("() {\n");
 		if (fractal != null) {
 			for (Variable variable : fractal.getVariables()) {
-				if (variable.isReal()) {
-					builder.append("registerGetter(\"");
-					builder.append(variable.getName());
-					builder.append("\",() -> { return number(get");
-					builder.append(variable.getName().toUpperCase());
-					builder.append("(),0); });\n");
-				} else {
-					builder.append("registerGetter(\"");
-					builder.append(variable.getName());
-					builder.append("\",() -> { return get");
-					builder.append(variable.getName().toUpperCase());
-					builder.append("(); });\n");
-				}
+				builder.append("registerVar(\"");
+				builder.append(variable.getName());
+				builder.append("\",() -> { return get");
+				builder.append(variable.getName().toUpperCase());
+				builder.append("(); });\n");
 			}
 		}
 		builder.append("}\n");

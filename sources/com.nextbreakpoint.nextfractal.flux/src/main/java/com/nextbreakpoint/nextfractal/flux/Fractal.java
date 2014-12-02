@@ -4,8 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public abstract class Fractal {
-	private String sourceCode;
-	private Map<String, Getter> getters = new HashMap<>();
+	private Map<String, FractalVariable> vars = new HashMap<>();
 	protected Number x = new Number(0,0);
 	protected Number w = new Number(0,0);
 	protected Number z = new Number(0,0);
@@ -214,24 +213,16 @@ public abstract class Fractal {
 		return new Number(x.r() / y, x.i() / y);
 	}
 
-	public String getSourceCode() {
-		return sourceCode;
+	public void registerVar(String name, FractalVariable var) {
+		vars.put(name, var);
 	}
 
-	public void setSourceCode(String sourceCode) {
-		this.sourceCode = sourceCode;
-	}
-	
-	public void registerGetter(String name, Getter getter) {
-		getters.put(name, getter);
+	public FractalVariable getVar(String name) {
+		return vars.get(name);
 	}
 
-	public Getter getGetter(String name) {
-		return getters.get(name);
-	}
-
-	public Map<String, Getter> getGetters() {
-		return getters;
+	public Map<String, FractalVariable> getVars() {
+		return vars;
 	}
 
 	public abstract void compute();

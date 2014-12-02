@@ -31,7 +31,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.nextbreakpoint.nextfractal.flux.Fractal;
-import com.nextbreakpoint.nextfractal.flux.Getter;
+import com.nextbreakpoint.nextfractal.flux.FractalVariable;
 import com.nextbreakpoint.nextfractal.flux.Number;
 import com.nextbreakpoint.nextfractal.flux.grammar.ASTFractal;
 import com.nextbreakpoint.nextfractal.flux.grammar.ASTJavaCompiler;
@@ -42,26 +42,24 @@ public class CompilerTest1 extends BaseTest {
 		ASTFractal astFractal = parse();
     	System.out.println(astFractal);
 		try {
-			Fractal fractal = compile(astFractal);
+			ASTJavaCompiler compiler = new ASTJavaCompiler(astFractal, "test", "TestFractal");
+			String source = compiler.compile();
+			Assert.assertNotNull(source);
+			System.out.println(source);
+			Fractal fractal = compiler.compileJava(source);
 			Assert.assertNotNull(fractal);
-			System.out.println(fractal.getSourceCode());
 			fractal.setX(new Number(0, 0));
 			fractal.setW(new Number(0, 0));
 			fractal.compute();
-			Getter getterC = fractal.getGetter("c");
-			Assert.assertNotNull(getterC);
-			System.out.println(String.format("%x", getterC.get().n()));
-			Getter getterZ = fractal.getGetter("z");
-			Assert.assertNotNull(getterZ);
-			System.out.println(String.format("%f,%f", getterZ.get().r(), getterZ.get().i()));
+			FractalVariable c = fractal.getVar("c");
+			Assert.assertNotNull(c);
+			System.out.println(String.format("%x", c.get().n()));
+			FractalVariable z = fractal.getVar("z");
+			Assert.assertNotNull(z);
+			System.out.println(String.format("%f,%f", z.get().r(), z.get().i()));
 		} catch (IOException e) {
 			Assert.fail(e.getMessage());
 		}
-	}
-
-	private Fractal compile(ASTFractal fractal) throws IOException {
-		ASTJavaCompiler compiler = new ASTJavaCompiler(fractal, "test", "TestFractal");
-		return compiler.compile();
 	}
 
 	@Override
