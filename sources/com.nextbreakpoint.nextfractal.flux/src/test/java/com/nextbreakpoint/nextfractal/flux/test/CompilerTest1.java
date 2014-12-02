@@ -26,6 +26,7 @@
 package com.nextbreakpoint.nextfractal.flux.test;
 
 import java.io.IOException;
+import java.util.regex.Pattern;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -40,6 +41,7 @@ public class CompilerTest1 extends BaseTest {
 	@Test
 	public void TestCompiler() {
 		try {
+//			Assert.assertTrue(Pattern.matches("([A-Z][a-z]*)-(\\d).(.jpg|.png)", "Andrea-10.png"));
 			ASTFractal astFractal = parse();
 			System.out.println(astFractal);
 			ASTJavaCompiler compiler = new ASTJavaCompiler(astFractal, "test", "TestFractal");

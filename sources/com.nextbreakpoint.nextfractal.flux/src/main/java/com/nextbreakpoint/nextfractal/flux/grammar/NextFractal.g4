@@ -8,7 +8,6 @@ options
 }
 
 @parser::header {
-	import java.util.Map;
 } 
 
 @members {
