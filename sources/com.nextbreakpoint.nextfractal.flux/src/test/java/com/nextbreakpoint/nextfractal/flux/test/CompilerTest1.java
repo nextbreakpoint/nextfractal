@@ -42,11 +42,12 @@ public class CompilerTest1 extends BaseTest {
     	System.out.println(astFractal);
 		try {
 			Fractal fractal = compile(astFractal);
-			System.out.println(fractal.getSourceCode());
 			Assert.assertNotNull(fractal);
+			System.out.println(fractal.getSourceCode());
 			Number z = new Number(0, 0);
 			Number w = new Number(0, 0);
 			Number c = fractal.compute(z, w);
+			Assert.assertNotNull(c);
 			System.out.println(String.format("%x", c.n()));
 		} catch (IOException e) {
 			Assert.fail(e.getMessage());
@@ -75,7 +76,7 @@ public class CompilerTest1 extends BaseTest {
 				+ "t = 3;"
 				+ "x = t + 4;"
 				+ "k = t + 4;"
-				+ "z = x * (y + 5);"
+				+ "z = x * (y + 5i);"
 				+ "t = |z|;"
 				+ "}"
 				+ "condition {"

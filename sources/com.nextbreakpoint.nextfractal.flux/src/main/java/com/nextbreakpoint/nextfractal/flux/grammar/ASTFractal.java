@@ -43,10 +43,10 @@ public class ASTFractal extends ASTObject {
 		return builder.toString();
 	}
 
-	public void registerVariable(String name, boolean real, Token location) {
+	public void registerVariable(String name, boolean real, boolean create, Token location) {
 		Variable var = variables.get(name);
 		if (var == null) {
-			var = new Variable(name, real);
+			var = new Variable(name, real, create);
 			variables.put(var.getName(), var);
 		} else if (!real && var.isReal()) {
 			throw new RuntimeException("Expression not assignable: " + location.getText() + " [" + location.getLine() + ":" + location.getCharPositionInLine() + "]");

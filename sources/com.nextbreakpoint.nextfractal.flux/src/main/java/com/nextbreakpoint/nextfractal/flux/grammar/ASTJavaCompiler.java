@@ -38,6 +38,7 @@ public class ASTJavaCompiler {
 		Map<String, Variable> variables = new HashMap<>();
 		compile(builder, variables, fractal);
 		String source = builder.toString();
+		System.out.println(source);
 		List<SimpleJavaFileObject> compilationUnits = new ArrayList<>();
 		compilationUnits.add(new JavaSourceFromString(className, source));
 		List<String> options = new ArrayList<>();
@@ -49,20 +50,22 @@ public class ASTJavaCompiler {
 		for (Diagnostic<? extends JavaFileObject> diagnostic : diagnostics.getDiagnostics()) {
 			System.out.format("Error on line %d: %s\n", diagnostic.getLineNumber(), diagnostic.getMessage(null));
 		}
-		Iterable<? extends JavaFileObject> files = fileManager.getJavaFileObjects(className + ".class");
-		Iterator<? extends JavaFileObject> iterator = files.iterator();
-		if (iterator.hasNext()) {
-			JavaFileObject file = files.iterator().next();
-			byte[] fileData = loadBytes(file);
-			JavaClassLoader loader = new JavaClassLoader(packageName + "." + className, fileData);
-			try {
-				Class<?> clazz = loader.loadClass(packageName + "." + className);
-				Fractal fractal = (Fractal)clazz.newInstance();
-				fractal.setSourceCode(source);
-				System.out.println(file.toUri().toString());
-				System.out.println(clazz.getCanonicalName() + " (" + fileData.length + ")");
-				return fractal;
-			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+		if (diagnostics.getDiagnostics().size() == 0) {
+			Iterable<? extends JavaFileObject> files = fileManager.getJavaFileObjects(className + ".class");
+			Iterator<? extends JavaFileObject> iterator = files.iterator();
+			if (iterator.hasNext()) {
+				JavaFileObject file = files.iterator().next();
+				byte[] fileData = loadBytes(file);
+				JavaClassLoader loader = new JavaClassLoader(packageName + "." + className, fileData);
+				try {
+					Class<?> clazz = loader.loadClass(packageName + "." + className);
+					Fractal fractal = (Fractal)clazz.newInstance();
+					fractal.setSourceCode(source);
+					System.out.println(file.toUri().toString());
+					System.out.println(clazz.getCanonicalName() + " (" + fileData.length + ")");
+					return fractal;
+				} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+				}
 			}
 		}
 		fileManager.close();
@@ -105,20 +108,24 @@ public class ASTJavaCompiler {
 		if (fractal != null) {
 			for (Variable variable : fractal.getVariables()) {
 				variables.put(variable.getName(), variable);
-				if (variable.isReal()) {
-					builder.append("double ");
-					builder.append(variable.getName());
-					builder.append(" = 0.0;\n");
-				} else {
-					builder.append("Number ");
-					builder.append(variable.getName());
-					builder.append(" = number(0.0,0.0);\n");
+				if (variable.isCreate()) {
+					if (variable.isReal()) {
+						builder.append("double ");
+						builder.append(variable.getName());
+						builder.append(" = 0.0;\n");
+					} else {
+						builder.append("Number ");
+						builder.append(variable.getName());
+						builder.append(" = number(0.0,0.0);\n");
+					}
 				}
 			}
 			compile(builder, variables, fractal.getOrbit());
 			//TODO color
+			builder.append("return c;\n");
+		} else {
+			builder.append("return null;\n");
 		}
-		builder.append("return c;\n");
 		builder.append("}\n");
 		builder.append("}\n");
 		return builder.toString();

@@ -21,6 +21,11 @@ fractal
 	:
 	f=FRACTAL {
 		builder.setFractal(new ASTFractal($f));
+		builder.registerVariable("x", false, false, $f);
+		builder.registerVariable("w", false, false, $f);
+		builder.registerVariable("z", false, true, $f);
+		builder.registerVariable("n", false, true, $f);
+		builder.registerVariable("c", false, true, $f);
 	} '{' orbit color '}' eof 
 	;
 		
@@ -28,11 +33,6 @@ orbit
 	:
 	o=ORBIT '[' ra=complex ',' rb=complex ']' {
 		builder.setOrbit(new ASTOrbit($o, new ASTRegion($ra.result, $rb.result)));
-		builder.registerVariable("z", false, $o);
-		builder.registerVariable("x", false, $o);
-		builder.registerVariable("w", false, $o);
-		builder.registerVariable("n", false, $o);
-		builder.registerVariable("c", false, $o);
 	} '{' trap* projection? begin? loop condition end? '}'
 	;
 		

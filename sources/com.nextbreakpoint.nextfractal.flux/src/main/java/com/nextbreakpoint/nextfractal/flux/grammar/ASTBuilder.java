@@ -108,8 +108,12 @@ public class ASTBuilder {
 		return Integer.parseInt(text, base);
 	}
 
+	public void registerVariable(String name, boolean real, boolean create, Token location) {
+		fractal.registerVariable(name, real, create, location);
+	}
+
 	public void registerVariable(String name, boolean real, Token location) {
-		fractal.registerVariable(name, real, location);
+		fractal.registerVariable(name, real, true, location);
 	}
 
 	public Variable getVariable(String name, Token location) {
