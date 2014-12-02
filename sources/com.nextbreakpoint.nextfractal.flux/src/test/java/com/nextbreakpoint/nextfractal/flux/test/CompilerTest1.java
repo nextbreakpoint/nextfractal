@@ -74,6 +74,7 @@ public class CompilerTest1 extends BaseTest {
 				+ "y = 0;"
 				+ "t = 3;"
 				+ "x = t + 4;"
+				+ "k = t + 4;"
 				+ "z = x * (y + 5);"
 				+ "t = |z|;"
 				+ "}"

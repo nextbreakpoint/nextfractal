@@ -28,6 +28,11 @@ orbit
 	:
 	o=ORBIT '[' ra=complex ',' rb=complex ']' {
 		builder.setOrbit(new ASTOrbit($o, new ASTRegion($ra.result, $rb.result)));
+		builder.registerVariable("z", false, $o);
+		builder.registerVariable("x", false, $o);
+		builder.registerVariable("w", false, $o);
+		builder.registerVariable("n", false, $o);
+		builder.registerVariable("c", false, $o);
 	} '{' trap* projection? begin? loop condition end? '}'
 	;
 		
@@ -116,7 +121,7 @@ statement returns [ASTStatement result]
 	:
 	v=USER_VARIABLE '=' e=expression ';' {
 		$result = new ASTStatement($v, $v.text, $e.result);
-		builder.registerVariable($result);
+		builder.registerVariable($v.text, $e.result.isReal(), $v);
 	}
 	;
 		
@@ -309,7 +314,7 @@ function returns [ASTFunction result]
 variable returns [ASTVariable result]
 	:
 	v=USER_VARIABLE {
-		$result = new ASTVariable($v, $v.text);
+		$result = new ASTVariable($v, builder.getVariable($v.text, $v));
 	}
 	;
 	

@@ -20,6 +20,7 @@ import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
 import com.nextbreakpoint.nextfractal.flux.Fractal;
+import com.nextbreakpoint.nextfractal.flux.Variable;
 
 public class ASTJavaCompiler {
 	private final ASTFractal fractal;
@@ -102,6 +103,18 @@ public class ASTJavaCompiler {
 		builder.append(" extends Fractal {\n");
 		builder.append("public Number compute(Number x, Number w) {\n");
 		if (fractal != null) {
+			for (Variable variable : fractal.getVariables()) {
+				variables.put(variable.getName(), variable);
+				if (variable.isReal()) {
+					builder.append("double ");
+					builder.append(variable.getName());
+					builder.append(" = 0.0;\n");
+				} else {
+					builder.append("Number ");
+					builder.append(variable.getName());
+					builder.append(" = number(0.0,0.0);\n");
+				}
+			}
 			compile(builder, variables, fractal.getOrbit());
 			//TODO color
 		}
@@ -114,24 +127,18 @@ public class ASTJavaCompiler {
 	private void compile(StringBuilder builder, Map<String, Variable> variables, ASTOrbit orbit) {
 		if (orbit != null) {
 			//TODO trap
-			variables.put("x", new Variable("x"));
-			variables.put("w", new Variable("w"));
-			variables.put("z", new Variable("z"));
-			builder.append("Number z = number(0.0,0.0);\n");
 			compile(builder, variables, orbit.getBegin());
 			builder.append("for (int i = ");
 			builder.append(orbit.getLoop().getBegin());
 			builder.append("; i < ");
 			builder.append(orbit.getLoop().getEnd());
 			builder.append("; i++) {\n");
-			variables.put("n", new Variable("n"));
-			builder.append("Number n = number(i);\n");
+			builder.append("n = number(i);\n");
 			//TODO projection
 			compile(builder, variables, orbit.getLoop());
 			//TODO condition
 			builder.append("}\n");
-			variables.put("c", new Variable("c"));
-			builder.append("Number c = number(0xFF000000);\n");
+			builder.append("c = number(0xFF000000);\n");
 			compile(builder, variables, orbit.getEnd());
 		}
 	}
@@ -164,33 +171,19 @@ public class ASTJavaCompiler {
 	private void compile(StringBuilder builder, Map<String, Variable> variables, ASTStatement statement) {
 		if (statement != null) {
 			Variable var = variables.get(statement.getName());
-			if (var == null) {
-				if (statement.getExp().isReal()) {
-					var = new RealVariable(statement.getName());
-					variables.put(var.getName(), var);
-					builder.append("double ");
-				} else {
-					var = new Variable(statement.getName());
-					variables.put(var.getName(), var);
-					builder.append("Number ");
-				}
-				builder.append(statement.getName());
-				builder.append(" = ");
-				statement.getExp().compile(new ExpressionCompiler(builder, variables, statement.getExp().isReal()));
-				builder.append(";\n");
-			} else {
+			if (var != null) {
 				if ((var.isReal() && statement.getExp().isReal()) || (!var.isReal() && !statement.getExp().isReal())) {
 					builder.append(statement.getName());
 					builder.append(" = ");
-					statement.getExp().compile(new ExpressionCompiler(builder, variables, statement.getExp().isReal()));
+					statement.getExp().compile(new ExpressionCompiler(builder));
 					builder.append(";\n");
 				} else if (!var.isReal() && statement.getExp().isReal()) {
 					builder.append(statement.getName());
 					builder.append(" = number(");
-					statement.getExp().compile(new ExpressionCompiler(builder, variables, statement.getExp().isReal()));
+					statement.getExp().compile(new ExpressionCompiler(builder));
 					builder.append(",0);\n");
 				} else if (var.isReal() && !statement.getExp().isReal()) {
-					throw new RuntimeException("Variable type is not compatible with expression type: " + statement.getLocation().getText() + " [" + statement.getLocation().getLine() + ":" + statement.getLocation().getCharPositionInLine() + "]");
+					throw new RuntimeException("Expression not assignable: " + statement.getLocation().getText() + " [" + statement.getLocation().getLine() + ":" + statement.getLocation().getCharPositionInLine() + "]");
 				}
 			}
 		}		
@@ -198,13 +191,9 @@ public class ASTJavaCompiler {
 	
 	private class ExpressionCompiler implements ASTExpressionCompiler {
 		private final StringBuilder builder;
-		private final Map<String, Variable> variables; 
-		private final boolean realExp;
 		
-		public ExpressionCompiler(StringBuilder builder, Map<String, Variable> variables, boolean realExp) {
+		public ExpressionCompiler(StringBuilder builder) {
 			this.builder = builder;
-			this.variables = variables;
-			this.realExp = realExp;
 		}
 
 		@Override
@@ -328,15 +317,7 @@ public class ASTJavaCompiler {
 
 		@Override
 		public void compile(ASTVariable variable) {
-			Variable var = variables.get(variable.getName());
-			if (var != null) {
-//				if (realExp && !var.isReal()) {
-//					throw new RuntimeException("Variable type is not compatible with expression type: " + variable.getLocation().getText() + " [" + variable.getLocation().getLine() + ":" + variable.getLocation().getCharPositionInLine() + "]");
-//				}
-				builder.append(variable.getName());
-			} else {
-				throw new RuntimeException("Variable not defined: " + variable.getLocation().getText() + " [" + variable.getLocation().getLine() + ":" + variable.getLocation().getCharPositionInLine() + "]");
-			}
+			builder.append(variable.getName());
 		}
 	}
 
@@ -358,32 +339,6 @@ public class ASTJavaCompiler {
 		public JavaClassLoader(String name, byte[] data) {
 			Class<?> clazz = defineClass(name, data, 0, data.length);
 			resolveClass(clazz);
-		}
-	}
-	
-	private class Variable {
-		private final String name;
-
-		public Variable(String name) {
-			this.name = name;
-		}
-
-		public String getName() {
-			return name;
-		}
-
-		public boolean isReal() {
-			return false;
-		}
-	}
-	
-	private class RealVariable extends Variable {
-		public RealVariable(String name) {
-			super(name);
-		}
-
-		public boolean isReal() {
-			return true;
 		}
 	}
 }	

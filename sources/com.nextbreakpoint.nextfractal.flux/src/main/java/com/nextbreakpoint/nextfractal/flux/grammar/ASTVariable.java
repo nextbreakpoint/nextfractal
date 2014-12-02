@@ -2,21 +2,27 @@ package com.nextbreakpoint.nextfractal.flux.grammar;
 
 import org.antlr.v4.runtime.Token;
 
-public class ASTVariable extends ASTExpression {
-	private String name;
+import com.nextbreakpoint.nextfractal.flux.Variable;
 
-	public ASTVariable(Token location, String name) {
+public class ASTVariable extends ASTExpression {
+	private Variable variable;
+
+	public ASTVariable(Token location, Variable variable) {
 		super(location);
-		this.name = name;
+		this.variable = variable;
 	}
 
 	public String getName() {
-		return name;
+		return variable.getName();
+	}
+
+	public boolean isReal() {
+		return variable.isReal();
 	}
 
 	@Override
 	public String toString() {
-		return name;
+		return variable.getName();
 	}
 
 	@Override
