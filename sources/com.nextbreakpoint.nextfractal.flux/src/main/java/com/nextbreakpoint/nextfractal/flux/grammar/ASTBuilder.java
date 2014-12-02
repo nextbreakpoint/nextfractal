@@ -108,6 +108,14 @@ public class ASTBuilder {
 		return Integer.parseInt(text, base);
 	}
 
+	public long parseLong(String text) {
+		return Long.parseLong(text);
+	}
+
+	public long parseLong(String text, int base) {
+		return Long.parseLong(text, base);
+	}
+
 	public void registerVariable(String name, boolean real, boolean create, Token location) {
 		fractal.registerVariable(name, real, create, location);
 	}

@@ -106,32 +106,21 @@ public class ASTJavaCompiler {
 		builder.append("public class ");
 		builder.append(className);
 		builder.append(" extends Fractal {\n");
+		buildFields(builder, variables, fractal);
+		buildCostructor(builder, fractal);
 		if (fractal != null) {
-			for (Variable variable : fractal.getVariables()) {
-				variables.put(variable.getName(), variable);
-				if (variable.isCreate()) {
-					if (variable.isReal()) {
-						builder.append("private double ");
-						builder.append(variable.getName());
-						builder.append(" = 0.0;\n");
-						builder.append("private Number get");
-						builder.append(variable.getName().toUpperCase());
-						builder.append("() { return number(");
-						builder.append(variable.getName());
-						builder.append(",0); }\n");
-					} else {
-						builder.append("private Number ");
-						builder.append(variable.getName());
-						builder.append(" = number(0.0,0.0);\n");
-						builder.append("private Number get");
-						builder.append(variable.getName().toUpperCase());
-						builder.append("() { return ");
-						builder.append(variable.getName());
-						builder.append("; }\n");
-					}
-				}
-			}
+			compile(builder, variables, fractal.getOrbit());
+			compile(builder, variables, fractal.getColor());
+			builder.append("public void compute() {\n");
+			builder.append("renderOrbit();\n");
+			builder.append("renderColor();\n");
+			builder.append("}\n");
 		}
+		builder.append("}\n");
+		return builder.toString();
+	}
+
+	private void buildCostructor(StringBuilder builder, ASTFractal fractal) {
 		builder.append("public ");
 		builder.append(className);
 		builder.append("() {\n");
@@ -145,22 +134,39 @@ public class ASTJavaCompiler {
 			}
 		}
 		builder.append("}\n");
-		if (fractal != null) {
-			compile(builder, variables, fractal.getOrbit());
-			compile(builder, variables, fractal.getColor());
-			builder.append("public void compute() {\n");
-			builder.append("orbit();\n");
-			builder.append("color();\n");
-			builder.append("}\n");
+	}
+
+	private void buildFields(StringBuilder builder, Map<String, Variable> variables, ASTFractal fractal) {
+		for (Variable variable : fractal.getVariables()) {
+			variables.put(variable.getName(), variable);
+			if (variable.isCreate()) {
+				if (variable.isReal()) {
+					builder.append("private double ");
+					builder.append(variable.getName());
+					builder.append(" = 0.0;\n");
+					builder.append("private Number get");
+					builder.append(variable.getName().toUpperCase());
+					builder.append("() { return number(");
+					builder.append(variable.getName());
+					builder.append(",0); }\n");
+				} else {
+					builder.append("private Number ");
+					builder.append(variable.getName());
+					builder.append(" = number(0.0,0.0);\n");
+					builder.append("private Number get");
+					builder.append(variable.getName().toUpperCase());
+					builder.append("() { return ");
+					builder.append(variable.getName());
+					builder.append("; }\n");
+				}
+			}
 		}
-		builder.append("}\n");
-		return builder.toString();
 	}
 
 	private void compile(StringBuilder builder, Map<String, Variable> variables, ASTColor color) {
-		builder.append("private int color() {\n");
+		builder.append("private int renderColor() {\n");
 		builder.append("c = number(");
-		builder.append(String.format("%h", color.getArgb().getARGB()));
+		builder.append(String.format("0x%h", color.getArgb().getARGB()));
 		builder.append(");\n");
 		for (ASTPalette palette : color.getPalettes()) {
 			compile(builder, variables, palette);
@@ -181,21 +187,20 @@ public class ASTJavaCompiler {
 	}
 
 	private void compile(StringBuilder builder, Map<String, Variable> variables, ASTOrbit orbit) {
-		builder.append("private void init() {\n");
+		builder.append("private void initTraps() {\n");
 		for (ASTOrbitTrap trap : orbit.getTraps()) {
 			compile(builder, variables, trap);
 		}
 		builder.append("}\n");
-		builder.append("private boolean stop() {\n");
-		compile(builder, variables, orbit.getCondition());
-		builder.append("return true;\n");
-		builder.append("}\n");
-		builder.append("private Number project() {\n");
+		builder.append("private Number projectPoint() {\n");
 		compile(builder, variables, orbit.getProjection());
 		builder.append("return x;\n");
 		builder.append("}\n");
-		builder.append("private void orbit() {\n");
-		builder.append("init();\n");
+		builder.append("private boolean checkOrbit() {\n");
+		compile(builder, variables, orbit.getCondition());
+		builder.append("return true;\n");
+		builder.append("}\n");
+		builder.append("private void renderOrbit() {\n");
 		compile(builder, variables, orbit.getBegin());
 		compile(builder, variables, orbit.getLoop());
 		compile(builder, variables, orbit.getEnd());
@@ -232,7 +237,8 @@ public class ASTJavaCompiler {
 
 	private void compile(StringBuilder builder, Map<String, Variable> variables, ASTOrbitLoop loop) {
 		if (loop != null) {
-			builder.append("x = project();\n");
+			builder.append("x = projectPoint();\n");
+			builder.append("initTraps();\n");
 			builder.append("for (int i = ");
 			builder.append(loop.getBegin());
 			builder.append("; i < ");
@@ -242,7 +248,7 @@ public class ASTJavaCompiler {
 			for (ASTStatement statement : loop.getStatements()) {
 				compile(builder, variables, statement);
 			}
-			builder.append("if (stop()) break;\n");
+			builder.append("if (checkOrbit()) break;\n");
 			builder.append("}\n");
 		}
 	}

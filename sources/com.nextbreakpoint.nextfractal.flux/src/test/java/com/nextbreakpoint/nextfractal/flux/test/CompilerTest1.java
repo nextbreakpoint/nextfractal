@@ -85,7 +85,7 @@ public class CompilerTest1 extends BaseTest {
 				+ "condition {"
 				+ "|z| > 4 & trap1[z]"
 				+ "}"
-				+ "} color [#000000] {"
+				+ "} color [#FF000000] {"
 				+ "palette palette1 [200] {"
 				+ "[0, #000000] > [100, #FFFFFF];"
 				+ "[101, #FFFFFF] > [200, #FF0000];"

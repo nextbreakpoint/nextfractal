@@ -426,7 +426,7 @@ colorargb returns [ASTColorARGB result]
 	}
 	|
 	'#' argb=USER_ARGB {
-		$result = new ASTColorARGB(builder.parseInt($argb.text, 16));
+		$result = new ASTColorARGB((int)(0xFF000000 & builder.parseLong($argb.text, 16)));
 	}
 	;
 		
