@@ -146,10 +146,6 @@ public abstract class Fractal {
 		return Math.tan(x);
 	}
 
-	protected double funCotan(double x) {
-		return 1 / Math.tan(x);
-	}
-
 	protected double funExp(double x) {
 		return Math.exp(x);
 	}
@@ -182,22 +178,17 @@ public abstract class Fractal {
 		return Math.atan2(x.i(), x.r());
 	}
 	
-	protected Number funcTan(Number x) {
-		double d = Math.pow(Math.cos(x.r()), 2) + Math.pow(Math.sinh(x.i()), 2);
-		return new Number((Math.sin(x.r())*Math.cos(x.r())) / d, (Math.sinh(x.i())*Math.cosh(x.i())) / d);
-	}
-
-	protected Number funcCotan(Number x) {
-		double d = Math.pow(Math.sin(x.r()), 2) - Math.pow(Math.sinh(x.i()), 2);
-		return new Number((Math.sin(x.r())*Math.cos(x.r())) / d, (Math.sinh(x.i())*Math.cosh(x.i())) / d);
-	}
-
 	protected Number funcSin(Number x) {
 		return new Number(Math.sin(x.r())*Math.cosh(x.i()), +Math.cos(x.r())*Math.sinh(x.i()));
 	}
-
+	
 	protected Number funcCos(Number x) {
 		return new Number(Math.cos(x.r())*Math.cosh(x.i()), -Math.sin(x.r())*Math.sinh(x.i()));
+	}
+	
+	protected Number funcTan(Number x) {
+		double d = Math.pow(Math.cos(x.r()), 2) + Math.pow(Math.sinh(x.i()), 2);
+		return new Number((Math.sin(x.r())*Math.cos(x.r())) / d, (Math.sinh(x.i())*Math.cosh(x.i())) / d);
 	}
 
 	protected Number funcExp(Number x) {
@@ -205,24 +196,22 @@ public abstract class Fractal {
 		return new Number(d*Math.cos(x.i()), d*Math.sin(x.i()));
 	}
 
-	protected Number funcMul(Number x, double y) {
-		return new Number(x.r() * y, x.i() * y);
+	protected Number funcPow(Number x, double y) {
+		double d = Math.pow(Math.hypot(x.r(), x.i()), y);
+		return new Number(d*Math.cos(x.r()*y), d*Math.sin(x.i()*y));
 	}
 
-	protected Number funcDiv(Number x, double y) {
-		return new Number(x.r() / y, x.i() / y);
+	protected Number funcSqrt(Number x) {
+		double d = Math.sqrt(Math.hypot(x.r(), x.i()));
+		return new Number(d*Math.cos(x.r()*0.5), d*Math.sin(x.i()*0.5));
 	}
 
-	public void registerVar(String name, FractalVariable var) {
+	protected void registerVar(String name, FractalVariable var) {
 		vars.put(name, var);
 	}
 
 	public FractalVariable getVar(String name) {
 		return vars.get(name);
-	}
-
-	public Map<String, FractalVariable> getVars() {
-		return vars;
 	}
 
 	public abstract void compute();

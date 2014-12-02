@@ -145,33 +145,73 @@ public class ASTJavaCompiler {
 			}
 		}
 		builder.append("}\n");
-		builder.append("public void compute() {\n");
 		if (fractal != null) {
 			compile(builder, variables, fractal.getOrbit());
-			//TODO color
+			compile(builder, variables, fractal.getColor());
+			builder.append("public void compute() {\n");
+			builder.append("orbit();\n");
+			builder.append("color();\n");
+			builder.append("}\n");
 		}
-		builder.append("}\n");
 		builder.append("}\n");
 		return builder.toString();
 	}
 
-	private void compile(StringBuilder builder, Map<String, Variable> variables, ASTOrbit orbit) {
-		if (orbit != null) {
-			//TODO trap
-			compile(builder, variables, orbit.getBegin());
-			builder.append("for (int i = ");
-			builder.append(orbit.getLoop().getBegin());
-			builder.append("; i < ");
-			builder.append(orbit.getLoop().getEnd());
-			builder.append("; i++) {\n");
-			builder.append("n = number(i);\n");
-			//TODO projection
-			compile(builder, variables, orbit.getLoop());
-			//TODO condition
-			builder.append("}\n");
-			builder.append("c = number(0xFF000000);\n");
-			compile(builder, variables, orbit.getEnd());
+	private void compile(StringBuilder builder, Map<String, Variable> variables, ASTColor color) {
+		builder.append("private int color() {\n");
+		builder.append("c = number(");
+		builder.append(String.format("%h", color.getArgb().getARGB()));
+		builder.append(");\n");
+		for (ASTPalette palette : color.getPalettes()) {
+			compile(builder, variables, palette);
 		}
+		for (ASTRule rule : color.getRules()) {
+			compile(builder, variables, rule);
+		}
+		builder.append("return c.n();\n");
+		builder.append("}\n");
+	}
+
+	private void compile(StringBuilder builder,	Map<String, Variable> variables, ASTRule rule) {
+		// TODO rule
+	}
+
+	private void compile(StringBuilder builder, Map<String, Variable> variables, ASTPalette palette) {
+		// TODO palette
+	}
+
+	private void compile(StringBuilder builder, Map<String, Variable> variables, ASTOrbit orbit) {
+		builder.append("private void init() {\n");
+		for (ASTOrbitTrap trap : orbit.getTraps()) {
+			compile(builder, variables, trap);
+		}
+		builder.append("}\n");
+		builder.append("private boolean stop() {\n");
+		compile(builder, variables, orbit.getCondition());
+		builder.append("return true;\n");
+		builder.append("}\n");
+		builder.append("private Number project() {\n");
+		compile(builder, variables, orbit.getProjection());
+		builder.append("return x;\n");
+		builder.append("}\n");
+		builder.append("private void orbit() {\n");
+		builder.append("init();\n");
+		compile(builder, variables, orbit.getBegin());
+		compile(builder, variables, orbit.getLoop());
+		compile(builder, variables, orbit.getEnd());
+		builder.append("}\n");
+	}
+
+	private void compile(StringBuilder builder,	Map<String, Variable> variables, ASTOrbitProjection projection) {
+		// TODO projection
+	}
+
+	private void compile(StringBuilder builder,	Map<String, Variable> variables, ASTOrbitCondition condition) {
+		// TODO condition
+	}
+
+	private void compile(StringBuilder builder,	Map<String, Variable> variables, ASTOrbitTrap trap) {
+		//TODO trap
 	}
 
 	private void compile(StringBuilder builder, Map<String, Variable> variables, ASTOrbitBegin begin) {
@@ -192,10 +232,18 @@ public class ASTJavaCompiler {
 
 	private void compile(StringBuilder builder, Map<String, Variable> variables, ASTOrbitLoop loop) {
 		if (loop != null) {
-			//TODO for
+			builder.append("x = project();\n");
+			builder.append("for (int i = ");
+			builder.append(loop.getBegin());
+			builder.append("; i < ");
+			builder.append(loop.getEnd());
+			builder.append("; i++) {\n");
+			builder.append("n = number(i);\n");
 			for (ASTStatement statement : loop.getStatements()) {
 				compile(builder, variables, statement);
 			}
+			builder.append("if (stop()) break;\n");
+			builder.append("}\n");
 		}
 	}
 
@@ -266,7 +314,6 @@ public class ASTJavaCompiler {
 					break;
 	
 				case "log":
-				case "sqrt":
 					if (function.getArguments().length != 1) {
 						throw new RuntimeException("Invalid number of arguments: " + function.getLocation().getText() + " [" + function.getLocation().getLine() + ":" + function.getLocation().getCharPositionInLine() + "]");
 					}				
@@ -277,7 +324,6 @@ public class ASTJavaCompiler {
 					
 				case "atan2":
 				case "hypot":
-				case "pow":
 					if (function.getArguments().length != 2) {
 						throw new RuntimeException("Invalid number of arguments: " + function.getLocation().getText() + " [" + function.getLocation().getLine() + ":" + function.getLocation().getCharPositionInLine() + "]");
 					}				
@@ -288,7 +334,17 @@ public class ASTJavaCompiler {
 						throw new RuntimeException("Invalid type of arguments: " + function.getLocation().getText() + " [" + function.getLocation().getLine() + ":" + function.getLocation().getCharPositionInLine() + "]");
 					}				
 					break;
+					
+				case "pow":
+					if (function.getArguments().length != 2) {
+						throw new RuntimeException("Invalid number of arguments: " + function.getLocation().getText() + " [" + function.getLocation().getLine() + ":" + function.getLocation().getCharPositionInLine() + "]");
+					}				
+					if (!function.getArguments()[1].isReal()) {
+						throw new RuntimeException("Invalid type of arguments: " + function.getLocation().getText() + " [" + function.getLocation().getLine() + ":" + function.getLocation().getCharPositionInLine() + "]");
+					}				
+					break;
 	
+				case "sqrt":
 				case "exp":
 					if (function.getArguments().length != 1) {
 						throw new RuntimeException("Invalid number of arguments: " + function.getLocation().getText() + " [" + function.getLocation().getLine() + ":" + function.getLocation().getCharPositionInLine() + "]");

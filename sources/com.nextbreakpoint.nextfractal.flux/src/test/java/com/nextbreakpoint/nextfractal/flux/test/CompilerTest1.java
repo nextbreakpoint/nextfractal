@@ -39,9 +39,9 @@ import com.nextbreakpoint.nextfractal.flux.grammar.ASTJavaCompiler;
 public class CompilerTest1 extends BaseTest {
 	@Test
 	public void TestCompiler() {
-		ASTFractal astFractal = parse();
-    	System.out.println(astFractal);
 		try {
+			ASTFractal astFractal = parse();
+			System.out.println(astFractal);
 			ASTJavaCompiler compiler = new ASTJavaCompiler(astFractal, "test", "TestFractal");
 			String source = compiler.compile();
 			Assert.assertNotNull(source);
@@ -77,7 +77,7 @@ public class CompilerTest1 extends BaseTest {
 				+ "loop [1, 2] {"
 				+ "y = 0;"
 				+ "t = 3;"
-				+ "x = t + 4;"
+				+ "x = t + 4 + 1i;"
 				+ "k = t + 4;"
 				+ "z = x * (y + 5i);"
 				+ "t = |z|;"
