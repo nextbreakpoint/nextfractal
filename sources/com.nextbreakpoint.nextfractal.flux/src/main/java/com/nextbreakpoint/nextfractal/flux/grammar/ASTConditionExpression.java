@@ -6,4 +6,6 @@ public abstract class ASTConditionExpression extends ASTObject {
 	public ASTConditionExpression(Token location) {
 		super(location);
 	}
+
+	public abstract void compile(ASTExpressionCompiler compiler);
 }

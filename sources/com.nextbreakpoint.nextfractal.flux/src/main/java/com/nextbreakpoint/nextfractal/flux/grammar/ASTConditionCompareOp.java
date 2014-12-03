@@ -36,4 +36,8 @@ public class ASTConditionCompareOp extends ASTConditionExpression {
 		}
 		return builder.toString();
 	}
+
+	public void compile(ASTExpressionCompiler compiler) {
+		compiler.compile(this);
+	}
 }

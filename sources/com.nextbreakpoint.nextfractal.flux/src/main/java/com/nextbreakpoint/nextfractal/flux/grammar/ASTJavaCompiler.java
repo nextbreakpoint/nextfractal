@@ -33,7 +33,7 @@ public class ASTJavaCompiler {
 		this.className = className;
 	}
 
-	public String compile() throws IOException {
+	public String compileToJava() throws IOException {
 		StringBuilder builder = new StringBuilder();
 		Map<String, Variable> variables = new HashMap<>();
 		compile(builder, variables, fractal);
@@ -41,7 +41,7 @@ public class ASTJavaCompiler {
 		return source;
 	}
 	
-	public Fractal compileJava(String source) throws IOException {
+	public Fractal compileToClass(String source) throws IOException {
 		List<SimpleJavaFileObject> compilationUnits = new ArrayList<>();
 		compilationUnits.add(new JavaSourceFromString(className, source));
 		List<String> options = new ArrayList<>();
@@ -103,24 +103,18 @@ public class ASTJavaCompiler {
 		builder.append("import com.nextbreakpoint.nextfractal.flux.Fractal;\n");
 		builder.append("import com.nextbreakpoint.nextfractal.flux.Number;\n");
 		builder.append("import com.nextbreakpoint.nextfractal.flux.Variable;\n");
+		builder.append("import com.nextbreakpoint.nextfractal.flux.Trap;\n");
 		builder.append("public class ");
 		builder.append(className);
 		builder.append(" extends Fractal {\n");
-		buildFields(builder, variables, fractal);
-		buildCostructor(builder, fractal);
-		if (fractal != null) {
-			compile(builder, variables, fractal.getOrbit());
-			compile(builder, variables, fractal.getColor());
-			builder.append("public void compute() {\n");
-			builder.append("renderOrbit();\n");
-			builder.append("renderColor();\n");
-			builder.append("}\n");
-		}
+		members(builder, variables, fractal);
+		costructor(builder, fractal);
+		methods(builder, variables, fractal);
 		builder.append("}\n");
 		return builder.toString();
 	}
 
-	private void buildCostructor(StringBuilder builder, ASTFractal fractal) {
+	private void costructor(StringBuilder builder, ASTFractal fractal) {
 		builder.append("public ");
 		builder.append(className);
 		builder.append("() {\n");
@@ -136,30 +130,43 @@ public class ASTJavaCompiler {
 		builder.append("}\n");
 	}
 
-	private void buildFields(StringBuilder builder, Map<String, Variable> variables, ASTFractal fractal) {
-		for (Variable variable : fractal.getVariables()) {
-			variables.put(variable.getName(), variable);
-			if (variable.isCreate()) {
-				if (variable.isReal()) {
-					builder.append("private double ");
-					builder.append(variable.getName());
-					builder.append(" = 0.0;\n");
-					builder.append("private Number get");
-					builder.append(variable.getName().toUpperCase());
-					builder.append("() { return number(");
-					builder.append(variable.getName());
-					builder.append(",0); }\n");
-				} else {
-					builder.append("private Number ");
-					builder.append(variable.getName());
-					builder.append(" = number(0.0,0.0);\n");
-					builder.append("private Number get");
-					builder.append(variable.getName().toUpperCase());
-					builder.append("() { return ");
-					builder.append(variable.getName());
-					builder.append("; }\n");
+	private void members(StringBuilder builder, Map<String, Variable> variables, ASTFractal fractal) {
+		if (fractal != null) {
+			for (Variable variable : fractal.getVariables()) {
+				variables.put(variable.getName(), variable);
+				if (variable.isCreate()) {
+					if (variable.isReal()) {
+						builder.append("private double ");
+						builder.append(variable.getName());
+						builder.append(" = 0.0;\n");
+						builder.append("private Number get");
+						builder.append(variable.getName().toUpperCase());
+						builder.append("() { return number(");
+						builder.append(variable.getName());
+						builder.append(",0); }\n");
+					} else {
+						builder.append("private Number ");
+						builder.append(variable.getName());
+						builder.append(" = number(0.0,0.0);\n");
+						builder.append("private Number get");
+						builder.append(variable.getName().toUpperCase());
+						builder.append("() { return ");
+						builder.append(variable.getName());
+						builder.append("; }\n");
+					}
 				}
 			}
+		}
+	}
+
+	private void methods(StringBuilder builder,	Map<String, Variable> variables, ASTFractal fractal) {
+		if (fractal != null) {
+			compile(builder, variables, fractal.getOrbit());
+			compile(builder, variables, fractal.getColor());
+			builder.append("public void compute() {\n");
+			builder.append("renderOrbit();\n");
+			builder.append("renderColor();\n");
+			builder.append("}\n");
 		}
 	}
 
@@ -193,12 +200,14 @@ public class ASTJavaCompiler {
 		}
 		builder.append("}\n");
 		builder.append("private Number projectPoint() {\n");
+		builder.append("return ");
 		compile(builder, variables, orbit.getProjection());
-		builder.append("return x;\n");
+		builder.append(";\n");
 		builder.append("}\n");
 		builder.append("private boolean checkOrbit() {\n");
+		builder.append("return ");
 		compile(builder, variables, orbit.getCondition());
-		builder.append("return true;\n");
+		builder.append(";\n");
 		builder.append("}\n");
 		builder.append("private void renderOrbit() {\n");
 		compile(builder, variables, orbit.getBegin());
@@ -208,15 +217,80 @@ public class ASTJavaCompiler {
 	}
 
 	private void compile(StringBuilder builder,	Map<String, Variable> variables, ASTOrbitProjection projection) {
-		// TODO projection
+		if (projection != null) {
+			projection.getExpression().compile(new ExpressionCompiler(builder));
+		} else {
+			builder.append("x");
+		}
 	}
 
 	private void compile(StringBuilder builder,	Map<String, Variable> variables, ASTOrbitCondition condition) {
-		// TODO condition
+		if (condition != null) {
+			condition.getExpression().compile(new ExpressionCompiler(builder));
+		} else {
+			builder.append("true");
+		}
 	}
 
 	private void compile(StringBuilder builder,	Map<String, Variable> variables, ASTOrbitTrap trap) {
-		//TODO trap
+		builder.append("registerTrap(trap(\"");
+		builder.append(trap.getName());
+		builder.append("\",number(");
+		builder.append(trap.getCenter());
+		builder.append(")));\n");
+		builder.append("Trap trap = getTrap(\"");
+		builder.append(trap.getName());
+		builder.append("\");\n");
+		for (ASTOrbitTrapOp operator : trap.getOperators()) {
+			builder.append("trap.");
+			switch (operator.getOp()) {
+				case "MOVETO":
+					builder.append("moveTo");
+					break;
+
+				case "LINETO":
+					builder.append("lineTo");
+					break;
+
+				case "ARCTO":
+					builder.append("arcTo");
+					break;
+
+				case "MOVEREL":
+					builder.append("moveRel");
+					break;
+
+				case "LINEREL":
+					builder.append("lineRel");
+					break;
+
+				case "ARCREL":
+					builder.append("arcRel");
+					break;
+
+				default:
+					break;
+			}
+			builder.append("(");
+			if (operator.getC1().isReal()) {
+				builder.append("number(");
+				operator.getC1().compile(new ExpressionCompiler(builder));
+				builder.append(")");
+			} else {
+				operator.getC1().compile(new ExpressionCompiler(builder));
+			}
+			if (operator.getC2() != null) {
+				builder.append(",");
+				if (operator.getC2().isReal()) {
+					builder.append("number(");
+					operator.getC2().compile(new ExpressionCompiler(builder));
+					builder.append(")");
+				} else {
+					operator.getC2().compile(new ExpressionCompiler(builder));
+				}
+			}
+			builder.append(");\n");
+		}
 	}
 
 	private void compile(StringBuilder builder, Map<String, Variable> variables, ASTOrbitBegin begin) {
@@ -495,6 +569,81 @@ public class ASTJavaCompiler {
 		@Override
 		public void compile(ASTVariable variable) {
 			builder.append(variable.getName());
+		}
+
+		@Override
+		public void compile(ASTConditionCompareOp compareOp) {
+			ASTExpression exp1 = compareOp.getExp1();
+			ASTExpression exp2 = compareOp.getExp2();
+			if (exp1.isReal() && exp2.isReal()) {
+				builder.append("(");
+				exp1.compile(this);
+				switch (compareOp.getOp()) {
+					case ">":
+						builder.append(">");
+						break;
+					
+					case "<":
+						builder.append("<");
+						break;
+						
+					case ">=":
+						builder.append(">=");
+						break;
+						
+					case "<=":
+						builder.append("<=");
+						break;
+						
+					case "=":
+						builder.append("==");
+						break;
+						
+					case "<>":
+						builder.append("!=");
+						break;
+					
+					default:
+						throw new RuntimeException("Unsupported operator: " + compareOp.getLocation().getText() + " [" + compareOp.getLocation().getLine() + ":" + compareOp.getLocation().getCharPositionInLine() + "]");
+				}
+				exp2.compile(this);
+				builder.append(")");
+			}
+		}
+
+		@Override
+		public void compile(ASTConditionLogicOp logicOp) {
+			ASTConditionExpression exp1 = logicOp.getExp1();
+			ASTConditionExpression exp2 = logicOp.getExp2();
+			builder.append("(");
+			exp1.compile(this);
+			switch (logicOp.getOp()) {
+				case "&":
+					builder.append("&&");
+					break;
+				
+				case "|":
+					builder.append("||");
+					break;
+					
+				case "^":
+					builder.append("^^");
+					break;
+					
+				default:
+					throw new RuntimeException("Unsupported operator: " + logicOp.getLocation().getText() + " [" + logicOp.getLocation().getLine() + ":" + logicOp.getLocation().getCharPositionInLine() + "]");
+			}
+			exp2.compile(this);
+			builder.append(")");
+		}
+
+		@Override
+		public void compile(ASTConditionTrap trap) {
+			builder.append("getTrap(\"");
+			builder.append(trap.getName());
+			builder.append("\").contains(");
+			trap.getExp().compile(this);
+			builder.append(")");
 		}
 	}
 

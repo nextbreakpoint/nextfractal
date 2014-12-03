@@ -45,10 +45,10 @@ public class CompilerTest1 extends BaseTest {
 			ASTFractal astFractal = parse();
 			System.out.println(astFractal);
 			ASTJavaCompiler compiler = new ASTJavaCompiler(astFractal, "test", "TestFractal");
-			String source = compiler.compile();
+			String source = compiler.compileToJava();
 			Assert.assertNotNull(source);
 			System.out.println(source);
-			Fractal fractal = compiler.compileJava(source);
+			Fractal fractal = compiler.compileToClass(source);
 			Assert.assertNotNull(fractal);
 			fractal.setX(new Number(0, 0));
 			fractal.setW(new Number(0, 0));

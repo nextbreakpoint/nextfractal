@@ -28,6 +28,10 @@ public class ASTOrbitTrap extends ASTObject {
 		operators.add(operator);
 	}
 
+	public List<ASTOrbitTrapOp> getOperators() {
+		return operators;
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();

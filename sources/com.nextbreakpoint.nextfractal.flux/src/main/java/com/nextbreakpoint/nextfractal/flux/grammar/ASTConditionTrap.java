@@ -29,4 +29,8 @@ public class ASTConditionTrap extends ASTConditionExpression {
 		builder.append("]");
 		return builder.toString();
 	}
+
+	public void compile(ASTExpressionCompiler compiler) {
+		compiler.compile(this);
+	}
 }
