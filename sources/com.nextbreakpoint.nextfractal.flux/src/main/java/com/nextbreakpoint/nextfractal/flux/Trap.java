@@ -12,30 +12,37 @@ public class Trap {
 	}
 
 	public Trap moveTo(Number x) {
+		//TODO moveTo
 		return this;
 	}
 
 	public Trap lineTo(Number x) {
+		//TODO lineTo
 		return this;
 	}
 
 	public Trap arcTo(Number x, Number y) {
+		//TODO arcTo
 		return this;
 	}
 
 	public Trap moveRel(Number x) {
+		//TODO moveRel
 		return this;
 	}
 
 	public Trap lineRel(Number x) {
+		//TODO lineRel
 		return this;
 	}
 
 	public Trap arcRel(Number x, Number y) {
+		//TODO arcRel
 		return this;
 	}
 	
 	public boolean contains(Number z) {
+		//TODO contains
 		return false;
 	}
 }
