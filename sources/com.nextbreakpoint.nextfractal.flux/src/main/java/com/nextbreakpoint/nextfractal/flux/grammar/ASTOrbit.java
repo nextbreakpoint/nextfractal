@@ -8,10 +8,8 @@ import org.antlr.v4.runtime.Token;
 public class ASTOrbit extends ASTObject {
 	private ASTRegion region; 
 	private List<ASTOrbitTrap> traps = new ArrayList<>(); 
-	private ASTOrbitProjection projection; 
 	private ASTOrbitBegin begin; 
 	private ASTOrbitLoop loop; 
-	private ASTOrbitCondition condition; 
 	private ASTOrbitEnd end; 
 
 	public ASTOrbit(Token location, ASTRegion region) {
@@ -25,14 +23,6 @@ public class ASTOrbit extends ASTObject {
 
 	public void setTraps(List<ASTOrbitTrap> traps) {
 		this.traps = traps;
-	}
-
-	public ASTOrbitProjection getProjection() {
-		return projection;
-	}
-
-	public void setProjection(ASTOrbitProjection projection) {
-		this.projection = projection;
 	}
 
 	public ASTOrbitBegin getBegin() {
@@ -49,14 +39,6 @@ public class ASTOrbit extends ASTObject {
 
 	public void setLoop(ASTOrbitLoop loop) {
 		this.loop = loop;
-	}
-
-	public ASTOrbitCondition getCondition() {
-		return condition;
-	}
-
-	public void setCondition(ASTOrbitCondition condition) {
-		this.condition = condition;
 	}
 
 	public ASTOrbitEnd getEnd() {
@@ -87,16 +69,6 @@ public class ASTOrbit extends ASTObject {
 			builder.append(region);
 			suffix = ",";
 		}
-		if (projection != null) {
-			if (suffix.length() != 0) {
-				builder.append(suffix);
-			} else {
-				suffix = ",";
-			}
-			builder.append("projection = {");
-			builder.append(projection);
-			builder.append("}");
-		}
 		if (begin != null) {
 			if (suffix.length() != 0) {
 				builder.append(suffix);
@@ -115,16 +87,6 @@ public class ASTOrbit extends ASTObject {
 			}
 			builder.append("loop = {");
 			builder.append(loop);
-			builder.append("}");
-		}
-		if (condition != null) {
-			if (suffix.length() != 0) {
-				builder.append(suffix);
-			} else {
-				suffix = ",";
-			}
-			builder.append("condition = {");
-			builder.append(condition);
 			builder.append("}");
 		}
 		if (end != null) {

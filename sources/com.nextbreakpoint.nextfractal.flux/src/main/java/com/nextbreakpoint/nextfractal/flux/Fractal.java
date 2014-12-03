@@ -5,7 +5,6 @@ import java.util.Map;
 
 public abstract class Fractal {
 	private Map<String, FractalVariable> vars = new HashMap<>();
-	private Map<String, Trap> traps = new HashMap<>();
 	protected Number x = new Number(0,0);
 	protected Number w = new Number(0,0);
 	protected Number z = new Number(0,0);
@@ -219,16 +218,8 @@ public abstract class Fractal {
 		return vars.get(name);
 	}
 
-	protected void registerTrap(Trap trap) {
-		traps.put(trap.getName(), trap);
-	}
-
-	protected Trap getTrap(String name) {
-		return traps.get(name);
-	}
-
-	protected Trap trap(String name, Number center) {
-		return new Trap(name, center);
+	protected Trap trap(Number center) {
+		return new Trap(center);
 	}
 
 	public abstract void compute();

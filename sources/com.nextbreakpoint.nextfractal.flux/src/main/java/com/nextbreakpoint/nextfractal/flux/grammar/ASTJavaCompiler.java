@@ -194,21 +194,9 @@ public class ASTJavaCompiler {
 	}
 
 	private void compile(StringBuilder builder, Map<String, Variable> variables, ASTOrbit orbit) {
-		builder.append("private void initTraps() {\n");
 		for (ASTOrbitTrap trap : orbit.getTraps()) {
 			compile(builder, variables, trap);
 		}
-		builder.append("}\n");
-		builder.append("private Number projectPoint() {\n");
-		builder.append("return ");
-		compile(builder, variables, orbit.getProjection());
-		builder.append(";\n");
-		builder.append("}\n");
-		builder.append("private boolean checkOrbit() {\n");
-		builder.append("return ");
-		compile(builder, variables, orbit.getCondition());
-		builder.append(";\n");
-		builder.append("}\n");
 		builder.append("private void renderOrbit() {\n");
 		compile(builder, variables, orbit.getBegin());
 		compile(builder, variables, orbit.getLoop());
@@ -216,33 +204,15 @@ public class ASTJavaCompiler {
 		builder.append("}\n");
 	}
 
-	private void compile(StringBuilder builder,	Map<String, Variable> variables, ASTOrbitProjection projection) {
-		if (projection != null) {
-			projection.getExpression().compile(new ExpressionCompiler(builder));
-		} else {
-			builder.append("x");
-		}
-	}
-
-	private void compile(StringBuilder builder,	Map<String, Variable> variables, ASTOrbitCondition condition) {
-		if (condition != null) {
-			condition.getExpression().compile(new ExpressionCompiler(builder));
-		} else {
-			builder.append("true");
-		}
-	}
-
 	private void compile(StringBuilder builder,	Map<String, Variable> variables, ASTOrbitTrap trap) {
-		builder.append("registerTrap(trap(\"");
-		builder.append(trap.getName());
-		builder.append("\",number(");
+		builder.append("private Trap trap");
+		builder.append(trap.getName().toUpperCase().substring(0, 1));
+		builder.append(trap.getName().substring(1));
+		builder.append(" = trap(number(");
 		builder.append(trap.getCenter());
-		builder.append(")));\n");
-		builder.append("Trap trap = getTrap(\"");
-		builder.append(trap.getName());
-		builder.append("\");\n");
+		builder.append("))");
 		for (ASTOrbitTrapOp operator : trap.getOperators()) {
-			builder.append("trap.");
+			builder.append(".");
 			switch (operator.getOp()) {
 				case "MOVETO":
 					builder.append("moveTo");
@@ -289,8 +259,9 @@ public class ASTJavaCompiler {
 					operator.getC2().compile(new ExpressionCompiler(builder));
 				}
 			}
-			builder.append(");\n");
+			builder.append(")");
 		}
+		builder.append(";\n");
 	}
 
 	private void compile(StringBuilder builder, Map<String, Variable> variables, ASTOrbitBegin begin) {
@@ -311,8 +282,6 @@ public class ASTJavaCompiler {
 
 	private void compile(StringBuilder builder, Map<String, Variable> variables, ASTOrbitLoop loop) {
 		if (loop != null) {
-			builder.append("x = projectPoint();\n");
-			builder.append("initTraps();\n");
 			builder.append("for (int i = ");
 			builder.append(loop.getBegin());
 			builder.append("; i < ");
@@ -322,7 +291,9 @@ public class ASTJavaCompiler {
 			for (ASTStatement statement : loop.getStatements()) {
 				compile(builder, variables, statement);
 			}
-			builder.append("if (checkOrbit()) break;\n");
+			builder.append("if (");
+			loop.getExpression().compile(new ExpressionCompiler(builder));
+			builder.append(") break;\n");
 			builder.append("}\n");
 		}
 	}
@@ -639,9 +610,10 @@ public class ASTJavaCompiler {
 
 		@Override
 		public void compile(ASTConditionTrap trap) {
-			builder.append("getTrap(\"");
-			builder.append(trap.getName());
-			builder.append("\").contains(");
+			builder.append("trap");
+			builder.append(trap.getName().toUpperCase().substring(0, 1));
+			builder.append(trap.getName().substring(1));
+			builder.append(".contains(");
 			trap.getExp().compile(this);
 			builder.append(")");
 		}

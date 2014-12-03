@@ -34,14 +34,6 @@ public class ASTBuilder {
 		fractal.getOrbit().setLoop(orbitLoop);
 	}
 	
-	public void setOrbitProjection(ASTOrbitProjection orbitProjection) {
-		fractal.getOrbit().setProjection(orbitProjection);
-	}
-
-	public void setOrbitCondition(ASTOrbitCondition orbitCondition) {
-		fractal.getOrbit().setCondition(orbitCondition);
-	}
-
 	public void addOrbitTrap(ASTOrbitTrap orbitTrap) {
 		fractal.getOrbit().addTrap(orbitTrap);
 	}

@@ -33,9 +33,13 @@ import com.nextbreakpoint.nextfractal.flux.grammar.ASTFractal;
 public class GrammarTest2 extends BaseTest {
 	@Test
 	public void TestGrammar() {
-		ASTFractal fractal = parse();
-    	System.out.println(fractal);
-    	Assert.assertNotNull(fractal);
+		try {
+			ASTFractal fractal = parse();
+			System.out.println(fractal);
+			Assert.assertNotNull(fractal);
+		} catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
 	}
 
 	@Override
@@ -50,11 +54,9 @@ public class GrammarTest2 extends BaseTest {
 				+ "LINETO(1 + 2i);"
 				+ "LINETO(1);"
 				+ "}"
-				+ "loop [1, 1000] {"
+				+ "loop [1, 1000] (|z| > 4 & trap1[z]) {"
+				+ "y = 2;"
 				+ "z = x * (y + 5i);"
-				+ "}"
-				+ "condition {"
-				+ "|z| > 4 & trap1[z]"
 				+ "}"
 				+ "} color [#000000] {"
 				+ "palette palette1 [200] {"

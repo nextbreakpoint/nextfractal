@@ -8,12 +8,22 @@ import org.antlr.v4.runtime.Token;
 public class ASTOrbitLoop extends ASTObject {
 	private int begin;
 	private int end;
+	private ASTConditionExpression expression;
 	private List<ASTStatement> statements = new ArrayList<>(); 
 
-	public ASTOrbitLoop(Token location, int begin, int end) {
+	public ASTOrbitLoop(Token location, int begin, int end, ASTConditionExpression expression) {
 		super(location);
 		this.begin = begin;
 		this.end = end;
+		this.expression = expression;
+	}
+
+	public ASTConditionExpression getExpression() {
+		return expression;
+	}
+
+	public void setExpression(ASTConditionExpression expression) {
+		this.expression = expression;
 	}
 
 	public List<ASTStatement> getStatements() {
@@ -41,6 +51,9 @@ public class ASTOrbitLoop extends ASTObject {
 		builder.append("end = ");
 		builder.append(end);
 		builder.append(",");
+		builder.append("expression = [");
+		builder.append(expression);
+		builder.append("],");
 		builder.append("statements = [");
 		for (int i = 0; i < statements.size(); i++) {
 			ASTStatement statement = statements.get(i);

@@ -32,7 +32,7 @@ orbit
 	:
 	o=ORBIT '[' ra=complex ',' rb=complex ']' {
 		builder.setOrbit(new ASTOrbit($o, new ASTRegion($ra.result, $rb.result)));
-	} '{' trap* projection? begin? loop condition end? '}'
+	} '{' trap* begin? loop end? '}'
 	;
 		
 color
@@ -51,8 +51,8 @@ begin
 		
 loop
 	:
-	l=LOOP '[' lb=USER_INTEGER ',' le=USER_INTEGER ']' {
-		builder.setOrbitLoop(new ASTOrbitLoop($l, builder.parseInt($lb.text), builder.parseInt($le.text)));
+	l=LOOP '[' lb=USER_INTEGER ',' le=USER_INTEGER ']' '(' e=conditionexp ')'{
+		builder.setOrbitLoop(new ASTOrbitLoop($l, builder.parseInt($lb.text), builder.parseInt($le.text), $e.result));
 	} '{' loopstatements* '}'
 	;
 		
@@ -63,20 +63,6 @@ end
 	} '{' endstatements* '}'
 	;
 		
-condition
-	:
-	c=CONDITION '{' e=conditionexp '}' {
-		builder.setOrbitCondition(new ASTOrbitCondition($c, $e.result));
-	}
-	;
-			
-projection
-	:
-	p=PROJECTION '{' e=expression '}' {
-		builder.setOrbitProjection(new ASTOrbitProjection($p, $e.result));
-	}
-	;
-	
 trap
 	:
 	t=TRAP n=USER_VARIABLE '[' c=complex ']' {

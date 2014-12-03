@@ -59,7 +59,7 @@ public class CompilerTest1 extends BaseTest {
 			FractalVariable z = fractal.getVar("z");
 			Assert.assertNotNull(z);
 			System.out.println(String.format("%f,%f", z.get().r(), z.get().i()));
-		} catch (IOException e) {
+		} catch (Exception e) {
 			Assert.fail(e.getMessage());
 		}
 	}
@@ -76,16 +76,13 @@ public class CompilerTest1 extends BaseTest {
 				+ "LINETO(1 + 2i);"
 				+ "LINETO(1);"
 				+ "}"
-				+ "loop [1, 2] {"
+				+ "loop [1, 2] (|z| > 4 & trap1[z]) {"
 				+ "y = 0;"
 				+ "t = 3;"
 				+ "x = t + 4 + 1i;"
 				+ "k = t + 4;"
 				+ "z = x * (y + 5i);"
 				+ "t = |z|;"
-				+ "}"
-				+ "condition {"
-				+ "|z| > 4 & trap1[z]"
 				+ "}"
 				+ "} color [#FF000000] {"
 				+ "palette palette1 [200] {"

@@ -42,7 +42,7 @@ import com.nextbreakpoint.nextfractal.flux.grammar.NextFractalLexer;
 import com.nextbreakpoint.nextfractal.flux.grammar.NextFractalParser;
 
 public abstract class BaseTest {
-	protected ASTFractal parse() {
+	protected ASTFractal parse() throws Exception {
 		try {
 			String source = getSource();
 			ANTLRInputStream is = new ANTLRInputStream(new StringReader(source));
@@ -75,11 +75,11 @@ public abstract class BaseTest {
             	ASTFractal fractal = builder.getFractal();
             	return fractal;
             }
+            return null;
 		}
 		catch (Exception e) {
-			e.printStackTrace();
+			throw new Exception("Parse error: " + e.getMessage(), e);
 		}
-		return null;
 	}
 
 	protected abstract String getSource();

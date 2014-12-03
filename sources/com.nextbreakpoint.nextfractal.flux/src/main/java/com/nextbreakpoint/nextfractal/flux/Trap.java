@@ -1,38 +1,38 @@
 package com.nextbreakpoint.nextfractal.flux;
 
 public class Trap {
-	private String name;
 	private Number center;
 	
-	public Trap(String name, Number center) {
-		this.name = name;
+	public Trap(Number center) {
 		this.center = center;
 	}
 	
-	public String getName() {
-		return name;
-	}
-
 	public Number getCenter() {
 		return center;
 	}
 
-	public void moveTo(Number x) {
+	public Trap moveTo(Number x) {
+		return this;
 	}
 
-	public void lineTo(Number x) {
+	public Trap lineTo(Number x) {
+		return this;
 	}
 
-	public void arcTo(Number x, Number y) {
+	public Trap arcTo(Number x, Number y) {
+		return this;
 	}
 
-	public void moveRel(Number x) {
+	public Trap moveRel(Number x) {
+		return this;
 	}
 
-	public void lineRel(Number x) {
+	public Trap lineRel(Number x) {
+		return this;
 	}
 
-	public void arcRel(Number x, Number y) {
+	public Trap arcRel(Number x, Number y) {
+		return this;
 	}
 	
 	public boolean contains(Number z) {
