@@ -42,7 +42,7 @@ public class ASTFunction extends ASTExpression {
 
 	@Override
 	public boolean isReal() {
-		if (name.equals("mod") || name.equals("pha")) {
+		if (name.equals("mod") || name.equals("pha") || name.equals("log") || name.equals("exp") || name.equals("atan2") || name.equals("hypot") || name.equals("sqrt") || name.equals("real")) {
 			return true;
 		}
 		for (ASTExpression argument : arguments) {

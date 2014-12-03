@@ -104,6 +104,8 @@ public class ASTJavaCompiler {
 		builder.append("import com.nextbreakpoint.nextfractal.flux.Number;\n");
 		builder.append("import com.nextbreakpoint.nextfractal.flux.Variable;\n");
 		builder.append("import com.nextbreakpoint.nextfractal.flux.Trap;\n");
+		builder.append("import com.nextbreakpoint.nextfractal.flux.Palette;\n");
+		builder.append("import com.nextbreakpoint.nextfractal.flux.PaletteElement;\n");
 		builder.append("public class ");
 		builder.append(className);
 		builder.append(" extends Fractal {\n");
@@ -171,13 +173,13 @@ public class ASTJavaCompiler {
 	}
 
 	private void compile(StringBuilder builder, Map<String, Variable> variables, ASTColor color) {
+		for (ASTPalette palette : color.getPalettes()) {
+			compile(builder, variables, palette);
+		}
 		builder.append("private int renderColor() {\n");
 		builder.append("c = number(");
 		builder.append(String.format("0x%h", color.getArgb().getARGB()));
 		builder.append(");\n");
-		for (ASTPalette palette : color.getPalettes()) {
-			compile(builder, variables, palette);
-		}
 		for (ASTRule rule : color.getRules()) {
 			compile(builder, variables, rule);
 		}
@@ -186,11 +188,52 @@ public class ASTJavaCompiler {
 	}
 
 	private void compile(StringBuilder builder,	Map<String, Variable> variables, ASTRule rule) {
-		// TODO rule
+		builder.append("if (");
+		rule.getRuleExp().compile(new ExpressionCompiler(builder));
+		builder.append(") {\n");
+		rule.getColorExp().compile(new ExpressionCompiler(builder));
+		builder.append(";\n}\n");
 	}
 
 	private void compile(StringBuilder builder, Map<String, Variable> variables, ASTPalette palette) {
-		// TODO palette
+		builder.append("private Palette palette");
+		builder.append(palette.getName().toUpperCase().substring(0, 1));
+		builder.append(palette.getName().substring(1));
+		builder.append(" = palette(");
+		builder.append(palette.getLength());
+		builder.append(")");
+		for (ASTPaletteElement element : palette.getElements()) {
+			builder.append(".add(");
+			compile(builder, variables, element);
+			builder.append(")");
+		}
+		builder.append(";\n");
+	}
+
+	private void compile(StringBuilder builder, Map<String, Variable> variables, ASTPaletteElement element) {
+		builder.append("element(");
+		builder.append(element.getBeginIndex());
+		builder.append(",");
+		builder.append(element.getEndIndex());
+		builder.append(",");
+		builder.append(createArray(element.getBeginColor().getComponents()));
+		builder.append(",");
+		builder.append(createArray(element.getEndColor().getComponents()));
+		builder.append(",(start, end, step) -> { return ");
+		if (element.getExp() != null) {
+			if (element.getExp().isReal()) {
+				element.getExp().compile(new ExpressionCompiler(builder));
+			} else {
+				throw new RuntimeException("Expression type not valid: " + element.getLocation().getText() + " [" + element.getLocation().getLine() + ":" + element.getLocation().getCharPositionInLine() + "]");
+			}
+		} else {
+			builder.append("step / (end - start)");
+		}
+		builder.append(";})");
+	}
+
+	private String createArray(float[] components) {
+		return "new float[] {" + components[0] + "f," + components[1] + "f," + components[2] + "f," + components[3] + "f}";
 	}
 
 	private void compile(StringBuilder builder, Map<String, Variable> variables, ASTOrbit orbit) {
@@ -397,6 +440,7 @@ public class ASTJavaCompiler {
 	
 				case "sqrt":
 				case "exp":
+				case "real":
 					if (function.getArguments().length != 1) {
 						throw new RuntimeException("Invalid number of arguments: " + function.getLocation().getText() + " [" + function.getLocation().getLine() + ":" + function.getLocation().getCharPositionInLine() + "]");
 					}				
@@ -615,6 +659,105 @@ public class ASTJavaCompiler {
 			builder.append(trap.getName().substring(1));
 			builder.append(".contains(");
 			trap.getExp().compile(this);
+			builder.append(")");
+		}
+
+		@Override
+		public void compile(ASTRuleLogicOpExpression logicOp) {
+			ASTRuleExpression exp1 = logicOp.getExp1();
+			ASTRuleExpression exp2 = logicOp.getExp2();
+			builder.append("(");
+			exp1.compile(this);
+			switch (logicOp.getOp()) {
+				case "&":
+					builder.append("&&");
+					break;
+				
+				case "|":
+					builder.append("||");
+					break;
+					
+				case "^":
+					builder.append("^^");
+					break;
+					
+				default:
+					throw new RuntimeException("Unsupported operator: " + logicOp.getLocation().getText() + " [" + logicOp.getLocation().getLine() + ":" + logicOp.getLocation().getCharPositionInLine() + "]");
+			}
+			exp2.compile(this);
+			builder.append(")");
+		}
+
+		@Override
+		public void compile(ASTRuleCompareOpExpression compareOp) {
+			ASTExpression exp1 = compareOp.getExp1();
+			ASTExpression exp2 = compareOp.getExp2();
+			if (exp1.isReal() && exp2.isReal()) {
+				builder.append("(");
+				exp1.compile(this);
+				switch (compareOp.getOp()) {
+					case ">":
+						builder.append(">");
+						break;
+					
+					case "<":
+						builder.append("<");
+						break;
+						
+					case ">=":
+						builder.append(">=");
+						break;
+						
+					case "<=":
+						builder.append("<=");
+						break;
+						
+					case "=":
+						builder.append("==");
+						break;
+						
+					case "<>":
+						builder.append("!=");
+						break;
+					
+					default:
+						throw new RuntimeException("Unsupported operator: " + compareOp.getLocation().getText() + " [" + compareOp.getLocation().getLine() + ":" + compareOp.getLocation().getCharPositionInLine() + "]");
+				}
+				exp2.compile(this);
+				builder.append(")");
+			}
+		}
+
+		@Override
+		public void compile(ASTColorPalette palette) {
+			builder.append("palette");
+			builder.append(palette.getName().toUpperCase().substring(0, 1));
+			builder.append(palette.getName().substring(1));
+			builder.append(".get(");
+			if (palette.getExp().isReal()) {
+				palette.getExp().compile(this);
+			} else {
+				throw new RuntimeException("Expression type not valid: " + palette.getLocation().getText() + " [" + palette.getLocation().getLine() + ":" + palette.getLocation().getCharPositionInLine() + "]");
+			}
+			builder.append(")");
+		}
+
+		@Override
+		public void compile(ASTColorComponent component) {
+			builder.append("color(");
+			component.getExp1().compile(this);
+			if (component.getExp2() != null) {
+				builder.append(",");
+				component.getExp2().compile(this);
+			}
+			if (component.getExp3() != null) {
+				builder.append(",");
+				component.getExp3().compile(this);
+			}
+			if (component.getExp4() != null) {
+				builder.append(",");
+				component.getExp4().compile(this);
+			}
 			builder.append(")");
 		}
 	}

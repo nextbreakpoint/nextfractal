@@ -291,7 +291,7 @@ function returns [ASTFunction result]
 		$result = new ASTFunction($f, $f.text, new ASTExpression[] { $e.result });		
 	}
 	|
-	f=('log' | 'exp' | 'sqrt') '(' e=expression ')' {
+	f=('log' | 'exp' | 'sqrt' | 'real') '(' e=expression ')' {
 		$result = new ASTFunction($f, $f.text, new ASTExpression[] { $e.result });		
 	}
 	|
@@ -377,7 +377,7 @@ colorrule
 ruleexp returns [ASTRuleExpression result]
 	:
 	e1=expression o=('=' | '>' | '<' | '>=' | '<=' | '<>') e2=expression {
-		$result = new ASTRuleOpExpression($e1.result.getLocation(), $o.text, $e1.result, $e2.result);
+		$result = new ASTRuleCompareOpExpression($e1.result.getLocation(), $o.text, $e1.result, $e2.result);
 	}
 	|
 	r1=ruleexp o=('&' | '|' | '^') r2=ruleexp {

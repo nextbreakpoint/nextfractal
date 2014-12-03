@@ -34,4 +34,24 @@ public class ASTPaletteElement extends ASTObject {
 		builder.append("}");
 		return builder.toString();
 	}
+
+	public int getBeginIndex() {
+		return beginIndex;
+	}
+
+	public int getEndIndex() {
+		return endIndex;
+	}
+
+	public ASTColorARGB getBeginColor() {
+		return beginColor;
+	}
+
+	public ASTColorARGB getEndColor() {
+		return endColor;
+	}
+
+	public ASTExpression getExp() {
+		return exp;
+	}
 }

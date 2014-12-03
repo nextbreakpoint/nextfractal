@@ -2,12 +2,12 @@ package com.nextbreakpoint.nextfractal.flux.grammar;
 
 import org.antlr.v4.runtime.Token;
 
-public class ASTRuleOpExpression extends ASTRuleExpression {
+public class ASTRuleCompareOpExpression extends ASTRuleExpression {
 	private String op;
 	private ASTExpression exp1;
 	private ASTExpression exp2;
 	
-	public ASTRuleOpExpression(Token location, String op, ASTExpression exp1, ASTExpression exp2) {
+	public ASTRuleCompareOpExpression(Token location, String op, ASTExpression exp1, ASTExpression exp2) {
 		super(location);
 		this.op = op;
 		this.exp1 = exp1;
@@ -35,5 +35,10 @@ public class ASTRuleOpExpression extends ASTRuleExpression {
 			builder.append(exp2);
 		}
 		return builder.toString();
+	}
+
+	@Override
+	public void compile(ASTExpressionCompiler compiler) {
+		compiler.compile(this);
 	}
 }

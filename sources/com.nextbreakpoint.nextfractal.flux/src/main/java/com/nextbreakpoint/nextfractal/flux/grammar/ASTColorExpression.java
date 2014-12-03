@@ -6,4 +6,6 @@ public abstract class ASTColorExpression extends ASTObject {
 	public ASTColorExpression(Token location) {
 		super(location);
 	}
+
+	public abstract void compile(ASTExpressionCompiler compiler);
 }

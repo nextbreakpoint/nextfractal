@@ -36,4 +36,9 @@ public class ASTRuleLogicOpExpression extends ASTRuleExpression {
 		}
 		return builder.toString();
 	}
+
+	@Override
+	public void compile(ASTExpressionCompiler compiler) {
+		compiler.compile(this);
+	}
 }

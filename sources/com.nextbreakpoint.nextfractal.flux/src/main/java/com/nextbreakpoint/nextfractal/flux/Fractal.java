@@ -210,6 +210,10 @@ public abstract class Fractal {
 		return new Number(d*Math.cos(x.r()*0.5), d*Math.sin(x.i()*0.5));
 	}
 
+	protected double funcReal(Number n) {
+		return n.r();
+	}
+	
 	protected void registerVar(String name, FractalVariable var) {
 		vars.put(name, var);
 	}
@@ -222,5 +226,25 @@ public abstract class Fractal {
 		return new Trap(center);
 	}
 
+	protected Palette palette(int length) {
+		return new Palette(length);
+	}
+
+	protected PaletteElement element(int beginIndex, int endIndex, float[] beginColor, float[] endColor, PaletteExpression expression) {
+		return new PaletteElement(beginIndex, endIndex, beginColor, endColor, expression);
+	}
+	
+	protected float[] color(double x) {
+		return new float[] { 1f, (float)x, (float)x, (float)x };
+	}
+	
+	protected float[] color(double r, double g, double b) {
+		return new float[] { 1f, (float)r, (float)g, (float)b };
+	}
+	
+	protected float[] color(double a, double r, double g, double b) {
+		return new float[] { (float)a, (float)r, (float)g, (float)b };
+	}
+	
 	public abstract void compute();
 }

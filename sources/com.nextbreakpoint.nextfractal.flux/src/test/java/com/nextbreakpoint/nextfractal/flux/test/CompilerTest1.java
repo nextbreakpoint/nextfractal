@@ -25,9 +25,6 @@
  */
 package com.nextbreakpoint.nextfractal.flux.test;
 
-import java.io.IOException;
-import java.util.regex.Pattern;
-
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -89,11 +86,11 @@ public class CompilerTest1 extends BaseTest {
 				+ "[0, #000000] > [100, #FFFFFF];"
 				+ "[101, #FFFFFF] > [200, #FF0000];"
 				+ "}"
-				+ "rule (n = 0) [1.0] {"
-				+ "x,5,5,5"
+				+ "rule (real(n) = 0) [1.0] {"
+				+ "|x|,5,5,5"
 				+ "}"
-				+ "rule (n > 0) [1.0] {"
-				+ "palette1[n]"
+				+ "rule (real(n) > 0) [1.0] {"
+				+ "palette1[real(n)]"
 				+ "}"
 				+ "}"
 				+ "}";

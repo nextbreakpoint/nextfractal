@@ -66,4 +66,9 @@ public class ASTColorComponent extends ASTColorExpression {
 		}
 		return builder.toString();
 	}
+
+	@Override
+	public void compile(ASTExpressionCompiler compiler) {
+		compiler.compile(this);
+	}
 }

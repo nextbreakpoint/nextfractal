@@ -6,4 +6,6 @@ public abstract class ASTRuleExpression extends ASTObject {
 	public ASTRuleExpression(Token location) {
 		super(location);
 	}
+
+	public abstract void compile(ASTExpressionCompiler compiler);
 }

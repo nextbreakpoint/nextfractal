@@ -29,4 +29,9 @@ public class ASTColorPalette extends ASTColorExpression {
 		builder.append("]");
 		return builder.toString();
 	}
+
+	@Override
+	public void compile(ASTExpressionCompiler compiler) {
+		compiler.compile(this);
+	}
 }

@@ -15,15 +15,16 @@ public class Palette {
 		return table.length;
 	}
 
-	public float[] get(Number index) {
-		return table[index.n() % table.length];
+	public float[] get(double n) {
+		return table[((int)Math.rint(n)) % table.length];
 	}
 
 	public void build() {
 		//TODO build
 	}
 
-	public void add(PaletteElement element) {
+	public Palette add(PaletteElement element) {
 		elements.add(element);
+		return this;
 	}
 }
