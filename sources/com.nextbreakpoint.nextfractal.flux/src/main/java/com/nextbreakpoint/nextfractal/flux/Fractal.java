@@ -10,6 +10,7 @@ public abstract class Fractal {
 	protected Number z = new Number(0,0);
 	protected Number n = new Number(0);
 	protected Number c = new Number(0);
+	protected float[] color = new float[] { 1f, 0f, 0f, 0f };
 
 	public Fractal() {
 	}
@@ -244,6 +245,17 @@ public abstract class Fractal {
 	
 	protected float[] color(double a, double r, double g, double b) {
 		return new float[] { (float)a, (float)r, (float)g, (float)b };
+	}
+	
+	protected float[] addColor(double opacity, float[] color) {
+		for (int i = 0; i < 4; i++) {
+			this.color[i] = (float)Math.min(1, this.color[i] + Math.max(0, color[i]) * opacity);
+		}
+		return color;
+	}
+	
+	public float[] color() {
+		return color;
 	}
 	
 	public abstract void compute();

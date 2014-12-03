@@ -50,9 +50,9 @@ public class CompilerTest1 extends BaseTest {
 			fractal.setX(new Number(0, 0));
 			fractal.setW(new Number(0, 0));
 			fractal.compute();
-			FractalVariable c = fractal.getVar("c");
+			float[] c = fractal.color();
 			Assert.assertNotNull(c);
-			System.out.println(String.format("%x", c.get().n()));
+			System.out.println(String.format("%f,%f,%f,%f", c[0], c[1], c[2], c[3]));
 			FractalVariable z = fractal.getVar("z");
 			Assert.assertNotNull(z);
 			System.out.println(String.format("%f,%f", z.get().r(), z.get().i()));

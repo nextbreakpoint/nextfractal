@@ -176,14 +176,13 @@ public class ASTJavaCompiler {
 		for (ASTPalette palette : color.getPalettes()) {
 			compile(builder, variables, palette);
 		}
-		builder.append("private int renderColor() {\n");
-		builder.append("c = number(");
-		builder.append(String.format("0x%h", color.getArgb().getARGB()));
+		builder.append("private void renderColor() {\n");
+		builder.append("addColor(1f,");
+		builder.append(createArray(color.getArgb().getComponents()));
 		builder.append(");\n");
 		for (ASTRule rule : color.getRules()) {
 			compile(builder, variables, rule);
 		}
-		builder.append("return c.n();\n");
 		builder.append("}\n");
 	}
 
@@ -191,8 +190,11 @@ public class ASTJavaCompiler {
 		builder.append("if (");
 		rule.getRuleExp().compile(new ExpressionCompiler(builder));
 		builder.append(") {\n");
+		builder.append("addColor(");
+		builder.append(rule.getOpacity());
+		builder.append(",");
 		rule.getColorExp().compile(new ExpressionCompiler(builder));
-		builder.append(";\n}\n");
+		builder.append(");\n}\n");
 	}
 
 	private void compile(StringBuilder builder, Map<String, Variable> variables, ASTPalette palette) {
