@@ -298,7 +298,7 @@ public class Compiler {
 			compile(builder, variables, element);
 			builder.append(")");
 		}
-		builder.append(";\n");
+		builder.append(".build();\n");
 	}
 
 	private void compile(StringBuilder builder, Map<String, CompilerVariable> variables, ASTPaletteElement element) {

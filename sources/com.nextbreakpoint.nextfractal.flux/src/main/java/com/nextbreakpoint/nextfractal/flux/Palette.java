@@ -8,7 +8,7 @@ public class Palette {
 	private float[][] table;
 	
 	public Palette(int size) {
-		table = new float[4][size];
+		table = new float[size][4];
 	}
 	
 	public int getSize() {
@@ -19,8 +19,12 @@ public class Palette {
 		return table[((int)Math.rint(n)) % table.length];
 	}
 
-	public void build() {
+	public Palette build() {
 		//TODO build
+		for (int i = 0; i < table.length; i++) {
+			table[i] = new float[] { 1, 1, 0, 0 };
+		}
+		return this;
 	}
 
 	public Palette add(PaletteElement element) {
