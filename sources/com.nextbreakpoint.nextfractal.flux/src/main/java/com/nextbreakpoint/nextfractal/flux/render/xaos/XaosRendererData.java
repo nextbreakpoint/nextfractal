@@ -1,4 +1,4 @@
-package com.nextbreakpoint.nextfractal.mandelbrot.renderer;
+package com.nextbreakpoint.nextfractal.flux.render.xaos;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
@@ -92,11 +92,11 @@ public class XaosRendererData {
 	/**
 	 * 
 	 */
-	public ChunkTable moveTable;
+	public XaosChunkTable moveTable;
 	/**
 	 * 
 	 */
-	public ChunkTable fillTable;
+	public XaosChunkTable fillTable;
 	/**
 	 * 
 	 */
@@ -181,8 +181,8 @@ public class XaosRendererData {
 		reallocY = new XaosRealloc[height];
 		dynamicx = new XaosDynamic(width);
 		dynamicy = new XaosDynamic(height);
-		moveTable = new ChunkTable(width);
-		fillTable = new ChunkTable(width);
+		moveTable = new XaosChunkTable(width);
+		fillTable = new XaosChunkTable(width);
 		queue = new XaosRealloc[reallocX.length + reallocY.length];
 		for (int i = 0; i < width; i++) {
 			reallocX[i] = new XaosRealloc(false);
