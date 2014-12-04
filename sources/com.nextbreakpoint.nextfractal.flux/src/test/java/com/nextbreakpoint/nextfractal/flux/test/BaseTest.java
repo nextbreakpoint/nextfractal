@@ -29,12 +29,7 @@ import java.io.StringReader;
 
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.antlr.v4.runtime.tree.ParseTreeListener;
-import org.antlr.v4.runtime.tree.ParseTreeWalker;
-import org.antlr.v4.runtime.tree.TerminalNode;
 
 import com.nextbreakpoint.nextfractal.flux.grammar.ASTBuilder;
 import com.nextbreakpoint.nextfractal.flux.grammar.ASTFractal;
@@ -42,35 +37,14 @@ import com.nextbreakpoint.nextfractal.flux.grammar.NextFractalLexer;
 import com.nextbreakpoint.nextfractal.flux.grammar.NextFractalParser;
 
 public abstract class BaseTest {
-	protected ASTFractal parse() throws Exception {
+	protected ASTFractal parse(String source) throws Exception {
 		try {
-			String source = getSource();
 			ANTLRInputStream is = new ANTLRInputStream(new StringReader(source));
 			NextFractalLexer lexer = new NextFractalLexer(is);
 			CommonTokenStream tokens = new CommonTokenStream(lexer);
 			NextFractalParser parser = new NextFractalParser(tokens);
 			ParseTree fractalTree = parser.fractal();
             if (fractalTree != null) {
-            	ParseTreeWalker walker = new ParseTreeWalker();
-            	walker.walk(new ParseTreeListener() {
-					@Override
-					public void visitTerminal(TerminalNode node) {
-//						System.out.println(node.getText() + " " + node.getSymbol());
-					}
-					
-					@Override
-					public void visitErrorNode(ErrorNode node) {
-					}
-					
-					@Override
-					public void exitEveryRule(ParserRuleContext ctx) {
-						System.out.println(ctx.getRuleContext().getClass().getSimpleName() + " " + ctx.getText());
-					}
-					
-					@Override
-					public void enterEveryRule(ParserRuleContext ctx) {
-					}
-				}, fractalTree);
             	ASTBuilder builder = parser.getBuilder();
             	ASTFractal fractal = builder.getFractal();
             	return fractal;
@@ -81,6 +55,4 @@ public abstract class BaseTest {
 			throw new Exception("Parse error: " + e.getMessage(), e);
 		}
 	}
-
-	protected abstract String getSource();
 }

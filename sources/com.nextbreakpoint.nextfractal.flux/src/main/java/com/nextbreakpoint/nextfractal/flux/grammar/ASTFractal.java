@@ -6,15 +6,20 @@ import java.util.Map;
 
 import org.antlr.v4.runtime.Token;
 
-import com.nextbreakpoint.nextfractal.flux.Variable;
+import com.nextbreakpoint.nextfractal.flux.CompilerVariable;
 
 public class ASTFractal extends ASTObject {
-	private Map<String, Variable> variables = new HashMap<>();
+	private Map<String, CompilerVariable> variables = new HashMap<>();
 	private ASTOrbit orbit;
 	private ASTColor color;
 
 	public ASTFractal(Token location) {
 		super(location);
+		registerVariable("x", false, false, location);
+		registerVariable("w", false, false, location);
+		registerVariable("z", false, false, location);
+		registerVariable("n", false, false, location);
+		registerVariable("c", false, false, location);
 	}
 	
 	public ASTOrbit getOrbit() {
@@ -44,24 +49,24 @@ public class ASTFractal extends ASTObject {
 	}
 
 	public void registerVariable(String name, boolean real, boolean create, Token location) {
-		Variable var = variables.get(name);
+		CompilerVariable var = variables.get(name);
 		if (var == null) {
-			var = new Variable(name, real, create);
+			var = new CompilerVariable(name, real, create);
 			variables.put(var.getName(), var);
 		} else if (!real && var.isReal()) {
 			throw new RuntimeException("Expression not assignable: " + location.getText() + " [" + location.getLine() + ":" + location.getCharPositionInLine() + "]");
 		}
 	}
 
-	public Variable getVariable(String name, Token location) {
-		Variable var = variables.get(name);
+	public CompilerVariable getVariable(String name, Token location) {
+		CompilerVariable var = variables.get(name);
 		if (var == null) {
-			throw new RuntimeException("Variable not defined: " + location.getText() + " [" + location.getLine() + ":" + location.getCharPositionInLine() + "]");
+			throw new RuntimeException("CompilerVariable not defined: " + location.getText() + " [" + location.getLine() + ":" + location.getCharPositionInLine() + "]");
 		}
 		return var;
 	}
 
-	public Collection<Variable> getVariables() {
+	public Collection<CompilerVariable> getVariables() {
 		return variables.values();
 	}
 }

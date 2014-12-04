@@ -28,32 +28,33 @@ package com.nextbreakpoint.nextfractal.flux.test;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.nextbreakpoint.nextfractal.flux.Compiler;
+import com.nextbreakpoint.nextfractal.flux.CompilerReport;
 import com.nextbreakpoint.nextfractal.flux.Fractal;
-import com.nextbreakpoint.nextfractal.flux.FractalVariable;
 import com.nextbreakpoint.nextfractal.flux.Number;
-import com.nextbreakpoint.nextfractal.flux.grammar.ASTFractal;
-import com.nextbreakpoint.nextfractal.flux.grammar.ASTJavaCompiler;
+import com.nextbreakpoint.nextfractal.flux.Variable;
 
 public class CompilerTest1 extends BaseTest {
 	@Test
 	public void TestCompiler() {
 		try {
 //			Assert.assertTrue(Pattern.matches("([A-Z][a-z]*)-(\\d).(.jpg|.png)", "Andrea-10.png"));
-			ASTFractal astFractal = parse();
-			System.out.println(astFractal);
-			ASTJavaCompiler compiler = new ASTJavaCompiler(astFractal, "test", "TestFractal");
-			String source = compiler.compileToJava();
-			Assert.assertNotNull(source);
-			System.out.println(source);
-			Fractal fractal = compiler.compileToClass(source);
-			Assert.assertNotNull(fractal);
+			Compiler compiler = new Compiler("test", "TestFractal", getSource());
+			CompilerReport report = compiler.compile();
+			Assert.assertNotNull(report);
+			Assert.assertNotNull(report.getAst());
+			Assert.assertNotNull(report.getSource());
+			Assert.assertNotNull(report.getFractal());
+			System.out.println(report.getAst());
+			System.out.println(report.getSource());
+			Fractal fractal = report.getFractal();
 			fractal.setX(new Number(0, 0));
 			fractal.setW(new Number(0, 0));
 			fractal.compute();
 			float[] c = fractal.color();
 			Assert.assertNotNull(c);
 			System.out.println(String.format("%f,%f,%f,%f", c[0], c[1], c[2], c[3]));
-			FractalVariable z = fractal.getVar("z");
+			Variable z = fractal.getVar("z");
 			Assert.assertNotNull(z);
 			System.out.println(String.format("%f,%f", z.get().r(), z.get().i()));
 		} catch (Exception e) {
@@ -61,7 +62,6 @@ public class CompilerTest1 extends BaseTest {
 		}
 	}
 
-	@Override
 	protected String getSource() {
 		String source = ""
 				+ "fractal {"

@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public abstract class Fractal {
-	private Map<String, FractalVariable> vars = new HashMap<>();
+	private Map<String, Variable> vars = new HashMap<>();
 	protected Number x = new Number(0,0);
 	protected Number w = new Number(0,0);
 	protected Number z = new Number(0,0);
@@ -215,11 +215,11 @@ public abstract class Fractal {
 		return n.r();
 	}
 	
-	protected void registerVar(String name, FractalVariable var) {
+	protected void registerVar(String name, Variable var) {
 		vars.put(name, var);
 	}
 
-	public FractalVariable getVar(String name) {
+	public Variable getVar(String name) {
 		return vars.get(name);
 	}
 

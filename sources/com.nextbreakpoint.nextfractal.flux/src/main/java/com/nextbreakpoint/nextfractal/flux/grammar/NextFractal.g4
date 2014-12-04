@@ -20,11 +20,6 @@ fractal
 	:
 	f=FRACTAL {
 		builder.setFractal(new ASTFractal($f));
-		builder.registerVariable("x", false, false, $f);
-		builder.registerVariable("w", false, false, $f);
-		builder.registerVariable("z", false, false, $f);
-		builder.registerVariable("n", false, false, $f);
-		builder.registerVariable("c", false, false, $f);
 	} '{' orbit color '}' eof 
 	;
 		

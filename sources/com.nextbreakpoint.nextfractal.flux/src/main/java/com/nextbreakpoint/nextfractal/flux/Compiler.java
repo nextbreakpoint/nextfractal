@@ -1,8 +1,9 @@
-package com.nextbreakpoint.nextfractal.flux.grammar;
+package com.nextbreakpoint.nextfractal.flux;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,6 +11,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.tools.Diagnostic;
 import javax.tools.DiagnosticCollector;
@@ -19,29 +22,117 @@ import javax.tools.SimpleJavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
-import com.nextbreakpoint.nextfractal.flux.Fractal;
-import com.nextbreakpoint.nextfractal.flux.Variable;
+import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.DiagnosticErrorListener;
+import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.RecognitionException;
+import org.antlr.v4.runtime.Recognizer;
+import org.antlr.v4.runtime.tree.ErrorNode;
+import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.tree.ParseTreeListener;
+import org.antlr.v4.runtime.tree.ParseTreeWalker;
+import org.antlr.v4.runtime.tree.TerminalNode;
 
-public class ASTJavaCompiler {
-	private final ASTFractal fractal;
+import com.nextbreakpoint.nextfractal.flux.grammar.ASTBuilder;
+import com.nextbreakpoint.nextfractal.flux.grammar.ASTColor;
+import com.nextbreakpoint.nextfractal.flux.grammar.ASTColorComponent;
+import com.nextbreakpoint.nextfractal.flux.grammar.ASTColorPalette;
+import com.nextbreakpoint.nextfractal.flux.grammar.ASTConditionCompareOp;
+import com.nextbreakpoint.nextfractal.flux.grammar.ASTConditionExpression;
+import com.nextbreakpoint.nextfractal.flux.grammar.ASTConditionLogicOp;
+import com.nextbreakpoint.nextfractal.flux.grammar.ASTConditionTrap;
+import com.nextbreakpoint.nextfractal.flux.grammar.ASTExpression;
+import com.nextbreakpoint.nextfractal.flux.grammar.ASTExpressionCompiler;
+import com.nextbreakpoint.nextfractal.flux.grammar.ASTFractal;
+import com.nextbreakpoint.nextfractal.flux.grammar.ASTFunction;
+import com.nextbreakpoint.nextfractal.flux.grammar.ASTNumber;
+import com.nextbreakpoint.nextfractal.flux.grammar.ASTOperator;
+import com.nextbreakpoint.nextfractal.flux.grammar.ASTOrbit;
+import com.nextbreakpoint.nextfractal.flux.grammar.ASTOrbitBegin;
+import com.nextbreakpoint.nextfractal.flux.grammar.ASTOrbitEnd;
+import com.nextbreakpoint.nextfractal.flux.grammar.ASTOrbitLoop;
+import com.nextbreakpoint.nextfractal.flux.grammar.ASTOrbitTrap;
+import com.nextbreakpoint.nextfractal.flux.grammar.ASTOrbitTrapOp;
+import com.nextbreakpoint.nextfractal.flux.grammar.ASTPalette;
+import com.nextbreakpoint.nextfractal.flux.grammar.ASTPaletteElement;
+import com.nextbreakpoint.nextfractal.flux.grammar.ASTParen;
+import com.nextbreakpoint.nextfractal.flux.grammar.ASTRule;
+import com.nextbreakpoint.nextfractal.flux.grammar.ASTRuleCompareOpExpression;
+import com.nextbreakpoint.nextfractal.flux.grammar.ASTRuleExpression;
+import com.nextbreakpoint.nextfractal.flux.grammar.ASTRuleLogicOpExpression;
+import com.nextbreakpoint.nextfractal.flux.grammar.ASTStatement;
+import com.nextbreakpoint.nextfractal.flux.grammar.ASTVariable;
+import com.nextbreakpoint.nextfractal.flux.grammar.NextFractalLexer;
+import com.nextbreakpoint.nextfractal.flux.grammar.NextFractalParser;
+
+public class Compiler {
+	private static final Logger logger = Logger.getLogger(Compiler.class.getName());
 	private final String packageName;
 	private final String className;
+	private final String source;
 	
-	public ASTJavaCompiler(ASTFractal fractal, String packageName, String className) {
-		this.fractal = fractal;
+	public Compiler(String packageName, String className, String source) {
 		this.packageName = packageName;
 		this.className = className;
+		this.source = source;
 	}
 
-	public String compileToJava() throws IOException {
+	public CompilerReport compile() throws Exception {
+		ASTFractal ast = parse(source);
+		String javaSource = compileToJava(ast);
+		Fractal fractal = compileToClass(javaSource);
+		return new CompilerReport(ast.toString(), javaSource, fractal);
+	}
+
+	private ASTFractal parse(String source) throws Exception {
+		try {
+			ANTLRInputStream is = new ANTLRInputStream(new StringReader(source));
+			NextFractalLexer lexer = new NextFractalLexer(is);
+			CommonTokenStream tokens = new CommonTokenStream(lexer);
+			NextFractalParser parser = new NextFractalParser(tokens);
+			lexer.addErrorListener(new ErrorListener());
+//			parser.addErrorListener(new ErrorListener());
+			ParseTree fractalTree = parser.fractal();
+            if (fractalTree != null) {
+            	ParseTreeWalker walker = new ParseTreeWalker();
+            	walker.walk(new ParseTreeListener() {
+					@Override
+					public void visitTerminal(TerminalNode node) {
+					}
+					
+					@Override
+					public void visitErrorNode(ErrorNode node) {
+					}
+					
+					@Override
+					public void exitEveryRule(ParserRuleContext ctx) {
+						logger.log(Level.FINE, ctx.getRuleContext().getClass().getSimpleName() + " " + ctx.getText());
+					}
+					
+					@Override
+					public void enterEveryRule(ParserRuleContext ctx) {
+					}
+				}, fractalTree);
+            	ASTBuilder builder = parser.getBuilder();
+            	ASTFractal fractal = builder.getFractal();
+            	return fractal;
+            }
+            return null;
+		}
+		catch (Exception e) {
+			throw new Exception("Parse error: " + e.getMessage(), e);
+		}
+	}
+
+	private String compileToJava(ASTFractal fractal) throws Exception {
 		StringBuilder builder = new StringBuilder();
-		Map<String, Variable> variables = new HashMap<>();
+		Map<String, CompilerVariable> variables = new HashMap<>();
 		compile(builder, variables, fractal);
-		String source = builder.toString();
-		return source;
+		return builder.toString();
 	}
 	
-	public Fractal compileToClass(String source) throws IOException {
+	private Fractal compileToClass(String source) throws IOException {
 		List<SimpleJavaFileObject> compilationUnits = new ArrayList<>();
 		compilationUnits.add(new JavaSourceFromString(className, source));
 		List<String> options = new ArrayList<>();
@@ -51,7 +142,7 @@ public class ASTJavaCompiler {
 		StandardJavaFileManager fileManager = compiler.getStandardFileManager(diagnostics, null, null);
 		compiler.getTask(null, fileManager, diagnostics, options, null, compilationUnits).call();
 		for (Diagnostic<? extends JavaFileObject> diagnostic : diagnostics.getDiagnostics()) {
-			System.out.format("Error on line %d: %s\n", diagnostic.getLineNumber(), diagnostic.getMessage(null));
+			logger.log(Level.FINE, String.format("Error on line %d: %s\n", diagnostic.getLineNumber(), diagnostic.getMessage(null)));
 		}
 		if (diagnostics.getDiagnostics().size() == 0) {
 			Iterable<? extends JavaFileObject> files = fileManager.getJavaFileObjects(className + ".class");
@@ -63,8 +154,8 @@ public class ASTJavaCompiler {
 				try {
 					Class<?> clazz = loader.loadClass(packageName + "." + className);
 					Fractal fractal = (Fractal)clazz.newInstance();
-					System.out.println(file.toUri().toString());
-					System.out.println(clazz.getCanonicalName() + " (" + fileData.length + ")");
+					logger.log(Level.FINE, file.toUri().toString());
+					logger.log(Level.FINE, clazz.getCanonicalName() + " (" + fileData.length + ")");
 					return fractal;
 				} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
 				}
@@ -96,16 +187,14 @@ public class ASTJavaCompiler {
 		}
 	}
 
-	private String compile(StringBuilder builder, Map<String, Variable> variables, ASTFractal fractal) {
+	private String compile(StringBuilder builder, Map<String, CompilerVariable> variables, ASTFractal fractal) {
 		builder.append("package ");
 		builder.append(packageName);
 		builder.append(";\n");
 		builder.append("import com.nextbreakpoint.nextfractal.flux.Fractal;\n");
 		builder.append("import com.nextbreakpoint.nextfractal.flux.Number;\n");
-		builder.append("import com.nextbreakpoint.nextfractal.flux.Variable;\n");
 		builder.append("import com.nextbreakpoint.nextfractal.flux.Trap;\n");
 		builder.append("import com.nextbreakpoint.nextfractal.flux.Palette;\n");
-		builder.append("import com.nextbreakpoint.nextfractal.flux.PaletteElement;\n");
 		builder.append("public class ");
 		builder.append(className);
 		builder.append(" extends Fractal {\n");
@@ -121,7 +210,7 @@ public class ASTJavaCompiler {
 		builder.append(className);
 		builder.append("() {\n");
 		if (fractal != null) {
-			for (Variable variable : fractal.getVariables()) {
+			for (CompilerVariable variable : fractal.getVariables()) {
 				builder.append("registerVar(\"");
 				builder.append(variable.getName());
 				builder.append("\",() -> { return get");
@@ -132,9 +221,9 @@ public class ASTJavaCompiler {
 		builder.append("}\n");
 	}
 
-	private void members(StringBuilder builder, Map<String, Variable> variables, ASTFractal fractal) {
+	private void members(StringBuilder builder, Map<String, CompilerVariable> variables, ASTFractal fractal) {
 		if (fractal != null) {
-			for (Variable variable : fractal.getVariables()) {
+			for (CompilerVariable variable : fractal.getVariables()) {
 				variables.put(variable.getName(), variable);
 				if (variable.isCreate()) {
 					if (variable.isReal()) {
@@ -161,7 +250,7 @@ public class ASTJavaCompiler {
 		}
 	}
 
-	private void methods(StringBuilder builder,	Map<String, Variable> variables, ASTFractal fractal) {
+	private void methods(StringBuilder builder,	Map<String, CompilerVariable> variables, ASTFractal fractal) {
 		if (fractal != null) {
 			compile(builder, variables, fractal.getOrbit());
 			compile(builder, variables, fractal.getColor());
@@ -172,7 +261,7 @@ public class ASTJavaCompiler {
 		}
 	}
 
-	private void compile(StringBuilder builder, Map<String, Variable> variables, ASTColor color) {
+	private void compile(StringBuilder builder, Map<String, CompilerVariable> variables, ASTColor color) {
 		for (ASTPalette palette : color.getPalettes()) {
 			compile(builder, variables, palette);
 		}
@@ -186,7 +275,7 @@ public class ASTJavaCompiler {
 		builder.append("}\n");
 	}
 
-	private void compile(StringBuilder builder,	Map<String, Variable> variables, ASTRule rule) {
+	private void compile(StringBuilder builder,	Map<String, CompilerVariable> variables, ASTRule rule) {
 		builder.append("if (");
 		rule.getRuleExp().compile(new ExpressionCompiler(builder));
 		builder.append(") {\n");
@@ -197,7 +286,7 @@ public class ASTJavaCompiler {
 		builder.append(");\n}\n");
 	}
 
-	private void compile(StringBuilder builder, Map<String, Variable> variables, ASTPalette palette) {
+	private void compile(StringBuilder builder, Map<String, CompilerVariable> variables, ASTPalette palette) {
 		builder.append("private Palette palette");
 		builder.append(palette.getName().toUpperCase().substring(0, 1));
 		builder.append(palette.getName().substring(1));
@@ -212,7 +301,7 @@ public class ASTJavaCompiler {
 		builder.append(";\n");
 	}
 
-	private void compile(StringBuilder builder, Map<String, Variable> variables, ASTPaletteElement element) {
+	private void compile(StringBuilder builder, Map<String, CompilerVariable> variables, ASTPaletteElement element) {
 		builder.append("element(");
 		builder.append(element.getBeginIndex());
 		builder.append(",");
@@ -238,7 +327,7 @@ public class ASTJavaCompiler {
 		return "new float[] {" + components[0] + "f," + components[1] + "f," + components[2] + "f," + components[3] + "f}";
 	}
 
-	private void compile(StringBuilder builder, Map<String, Variable> variables, ASTOrbit orbit) {
+	private void compile(StringBuilder builder, Map<String, CompilerVariable> variables, ASTOrbit orbit) {
 		for (ASTOrbitTrap trap : orbit.getTraps()) {
 			compile(builder, variables, trap);
 		}
@@ -249,7 +338,7 @@ public class ASTJavaCompiler {
 		builder.append("}\n");
 	}
 
-	private void compile(StringBuilder builder,	Map<String, Variable> variables, ASTOrbitTrap trap) {
+	private void compile(StringBuilder builder,	Map<String, CompilerVariable> variables, ASTOrbitTrap trap) {
 		builder.append("private Trap trap");
 		builder.append(trap.getName().toUpperCase().substring(0, 1));
 		builder.append(trap.getName().substring(1));
@@ -309,7 +398,7 @@ public class ASTJavaCompiler {
 		builder.append(";\n");
 	}
 
-	private void compile(StringBuilder builder, Map<String, Variable> variables, ASTOrbitBegin begin) {
+	private void compile(StringBuilder builder, Map<String, CompilerVariable> variables, ASTOrbitBegin begin) {
 		if (begin != null) {
 			for (ASTStatement statement : begin.getStatements()) {
 				compile(builder, variables, statement);
@@ -317,7 +406,7 @@ public class ASTJavaCompiler {
 		}
 	}
 
-	private void compile(StringBuilder builder, Map<String, Variable> variables, ASTOrbitEnd end) {
+	private void compile(StringBuilder builder, Map<String, CompilerVariable> variables, ASTOrbitEnd end) {
 		if (end != null) {
 			for (ASTStatement statement : end.getStatements()) {
 				compile(builder, variables, statement);
@@ -325,7 +414,7 @@ public class ASTJavaCompiler {
 		}
 	}
 
-	private void compile(StringBuilder builder, Map<String, Variable> variables, ASTOrbitLoop loop) {
+	private void compile(StringBuilder builder, Map<String, CompilerVariable> variables, ASTOrbitLoop loop) {
 		if (loop != null) {
 			builder.append("for (int i = ");
 			builder.append(loop.getBegin());
@@ -343,9 +432,9 @@ public class ASTJavaCompiler {
 		}
 	}
 
-	private void compile(StringBuilder builder, Map<String, Variable> variables, ASTStatement statement) {
+	private void compile(StringBuilder builder, Map<String, CompilerVariable> variables, ASTStatement statement) {
 		if (statement != null) {
-			Variable var = variables.get(statement.getName());
+			CompilerVariable var = variables.get(statement.getName());
 			if (var != null) {
 				if ((var.isReal() && statement.getExp().isReal()) || (!var.isReal() && !statement.getExp().isReal())) {
 					builder.append(statement.getName());
@@ -782,6 +871,14 @@ public class ASTJavaCompiler {
 		public JavaClassLoader(String name, byte[] data) {
 			Class<?> clazz = defineClass(name, data, 0, data.length);
 			resolveClass(clazz);
+		}
+	}
+	
+	private class ErrorListener extends DiagnosticErrorListener {
+		@Override
+		public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line, int charPositionInLine, String msg, RecognitionException e) {
+			logger.log(Level.WARNING, "[" + line + ":" + charPositionInLine + "] " + msg, e);
+			super.syntaxError(recognizer, offendingSymbol, line, charPositionInLine, msg, e);
 		}
 	}
 }	

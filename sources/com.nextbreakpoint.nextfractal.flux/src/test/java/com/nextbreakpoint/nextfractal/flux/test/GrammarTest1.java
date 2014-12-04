@@ -34,7 +34,7 @@ public class GrammarTest1 extends BaseTest {
 	@Test
 	public void TestGrammar() {
 		try {
-			ASTFractal fractal = parse();
+			ASTFractal fractal = parse(getSource());
 			System.out.println(fractal);
 			Assert.assertNotNull(fractal);
 		} catch (Exception e) {
@@ -42,7 +42,6 @@ public class GrammarTest1 extends BaseTest {
 		}
 	}
 
-	@Override
 	protected String getSource() {
 		String source = ""
 				+ "fractal {"

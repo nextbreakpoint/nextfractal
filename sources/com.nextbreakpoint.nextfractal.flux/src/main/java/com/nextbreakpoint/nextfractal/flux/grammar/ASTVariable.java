@@ -2,12 +2,12 @@ package com.nextbreakpoint.nextfractal.flux.grammar;
 
 import org.antlr.v4.runtime.Token;
 
-import com.nextbreakpoint.nextfractal.flux.Variable;
+import com.nextbreakpoint.nextfractal.flux.CompilerVariable;
 
 public class ASTVariable extends ASTExpression {
-	private Variable variable;
+	private CompilerVariable variable;
 
-	public ASTVariable(Token location, Variable variable) {
+	public ASTVariable(Token location, CompilerVariable variable) {
 		super(location);
 		this.variable = variable;
 	}

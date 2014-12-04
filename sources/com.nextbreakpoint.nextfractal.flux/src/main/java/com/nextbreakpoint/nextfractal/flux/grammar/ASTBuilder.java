@@ -2,7 +2,7 @@ package com.nextbreakpoint.nextfractal.flux.grammar;
 
 import org.antlr.v4.runtime.Token;
 
-import com.nextbreakpoint.nextfractal.flux.Variable;
+import com.nextbreakpoint.nextfractal.flux.CompilerVariable;
 
 public class ASTBuilder {
 	private ASTFractal fractal;
@@ -116,7 +116,7 @@ public class ASTBuilder {
 		fractal.registerVariable(name, real, true, location);
 	}
 
-	public Variable getVariable(String name, Token location) {
+	public CompilerVariable getVariable(String name, Token location) {
 		return fractal.getVariable(name, location);
 	}
 }	
