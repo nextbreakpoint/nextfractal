@@ -25,87 +25,52 @@
  */
 package com.nextbreakpoint.nextfractal.flux.render.simple;
 
-import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferInt;
-
 import com.nextbreakpoint.nextfractal.core.math.Complex;
-import com.nextbreakpoint.nextfractal.core.util.Surface;
-import com.nextbreakpoint.nextfractal.flux.render.MandelbrotRenderer;
 import com.nextbreakpoint.nextfractal.flux.render.RenderBuffer;
+import com.nextbreakpoint.nextfractal.flux.render.RenderStrategy;
 import com.nextbreakpoint.nextfractal.flux.render.RenderedPoint;
+import com.nextbreakpoint.nextfractal.flux.render.Renderer;
 
 /**
  * @author Andrea Medeghini
  */
-public final class SimpleRenderer extends MandelbrotRenderer {
-	private final RenderingStrategy mandelbrotRenderingStrategy = new MandelbrotRenderingStrategy();
-	private final RenderingStrategy juliaRenderingStrategy = new JuliaRenderingStrategy();
+public final class SimpleRenderer implements Renderer {
 	private RendererData renderedData;
 	private boolean isAborted = false;
+	
+	private RenderStrategy renderingStrategy;
+	private int percent;
+	private Complex[] points;
 
 	/**
 	 * @param threadPriority
 	 */
 	public SimpleRenderer(final int threadPriority) {
-		super(threadPriority);
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.flux.render.MandelbrotRenderer.core.fractal.renderer.AbstractFractalRenderer#free()
+	 * @see com.nextbreakpoint.nextfractal.flux.render.MandelbrotManager.core.fractal.renderer.AbstractFractalRenderer#free()
 	 */
-	@Override
 	protected void free() {
-		super.free();
 		if (renderedData != null) {
 			renderedData.free();
 		}
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.flux.render.MandelbrotRenderer.core.fractal.renderer.AbstractFractalRenderer#init()
+	 * @see com.nextbreakpoint.nextfractal.flux.render.MandelbrotManager.core.fractal.renderer.AbstractFractalRenderer#init()
 	 */
-	@Override
 	protected void init() {
-		super.init();
 		renderedData = new RendererData();
 		renderedData.reallocate(getBufferWidth(), getBufferHeight());
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.flux.render.MandelbrotRenderer.renderer.AbstractMandelbrotRenderer#doRender(boolean)
+	 * @see com.nextbreakpoint.nextfractal.flux.render.MandelbrotManager.renderer.AbstractMandelbrotRenderer#doRender(boolean)
 	 */
-	@Override
 	protected void doRender(final boolean dynamic) {
-		updateShift();
-		updateRegion();
-		updateTransform();
+		update();
 		renderingStrategy.updateParameters();
-//		if (fractalRuntime.getRenderingFormula().getFormulaRuntime() != null) {
-//			fractalRuntime.getRenderingFormula().getFormulaRuntime().prepareForRendering(fractalRuntime.getProcessingFormula().getFormulaRuntime(), fractalRuntime.getOrbitTrap().getOrbitTrapRuntime());
-//			if (fractalRuntime.getOrbitTrap().getOrbitTrapRuntime() != null) {
-//				fractalRuntime.getOrbitTrap().getOrbitTrapRuntime().prepareForProcessing(fractalRuntime.getOrbitTrap().getCenter());
-//			}
-//		}
-//		for (int i = 0; i < fractalRuntime.getOutcolouringFormulaCount(); i++) {
-//			if (fractalRuntime.getOutcolouringFormula(i).getFormulaRuntime() != null) {
-//				if (fractalRuntime.getOutcolouringFormula(i).isAutoIterations() && (fractalRuntime.getRenderingFormula().getFormulaRuntime() != null)) {
-//					fractalRuntime.getOutcolouringFormula(i).getFormulaRuntime().prepareForRendering(fractalRuntime.getRenderingFormula().getFormulaRuntime(), fractalRuntime.getRenderingFormula().getFormulaRuntime().getIterations());
-//				}
-//				else {
-//					fractalRuntime.getOutcolouringFormula(i).getFormulaRuntime().prepareForRendering(fractalRuntime.getRenderingFormula().getFormulaRuntime(), fractalRuntime.getOutcolouringFormula(i).getIterations());
-//				}
-//			}
-//		}
-//		for (int i = 0; i < fractalRuntime.getIncolouringFormulaCount(); i++) {
-//			if (fractalRuntime.getIncolouringFormula(i).getFormulaRuntime() != null) {
-//				if (fractalRuntime.getIncolouringFormula(i).isAutoIterations() && (fractalRuntime.getRenderingFormula().getFormulaRuntime() != null)) {
-//					fractalRuntime.getIncolouringFormula(i).getFormulaRuntime().prepareForRendering(fractalRuntime.getRenderingFormula().getFormulaRuntime(), fractalRuntime.getRenderingFormula().getFormulaRuntime().getIterations());
-//				}
-//				else {
-//					fractalRuntime.getIncolouringFormula(i).getFormulaRuntime().prepareForRendering(fractalRuntime.getRenderingFormula().getFormulaRuntime(), fractalRuntime.getIncolouringFormula(i).getIterations());
-//				}
-//			}
-//		}
 		final Complex px = new Complex(0, 0);
 		final Complex pw = new Complex(0, 0);
 		final RenderedPoint p = new RenderedPoint();
@@ -160,213 +125,53 @@ public final class SimpleRenderer extends MandelbrotRenderer {
 		buffer.update(renderedData.newRGB);
 	}
 
-	/**
-	 * @see com.nextbreakpoint.nextfractal.flux.render.MandelbrotRenderer.core.fractal.renderer.AbstractFractalRenderer#getMandelbrotRenderingStrategy()
-	 */
+	private RenderBuffer getRenderBuffer() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	private int getBufferWidth() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	private int getBufferHeight() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	private void update() {
+		// TODO Auto-generated method stub
+		
+	}
+
 	@Override
-	protected RenderingStrategy getMandelbrotRenderingStrategy() {
-		return mandelbrotRenderingStrategy;
+	public boolean isInterrupted() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
-	/**
-	 * @see com.nextbreakpoint.nextfractal.flux.render.MandelbrotRenderer.core.fractal.renderer.AbstractFractalRenderer#createJuliaRenderingStrategy()
-	 */
 	@Override
-	protected RenderingStrategy getJuliaRenderingStrategy() {
-		return juliaRenderingStrategy;
+	public void start() {
+		// TODO Auto-generated method stub
+		
 	}
 
-	/**
-	 * @author Andrea Medeghini
-	 */
-	public static class RendererData {
-		/**
-		 * 
-		 */
-		public BufferedImage newBuffer;
-		/**
-		 * 
-		 */
-		public int[] newRGB;
-		/**
-		 * 
-		 */
-		public double[] positionX;
-		/**
-		 * 
-		 */
-		public double[] positionY;
-		/**
-		 * 
-		 */
-		public double x0 = 0;
-		/**
-		 * 
-		 */
-		public double y0 = 0;
-
-		/**
-		 * @see java.lang.Object#finalize()
-		 */
-		@Override
-		public void finalize() throws Throwable {
-			free();
-			super.finalize();
-		}
-
-		/**
-		 * 
-		 */
-		public void free() {
-			positionX = null;
-			positionY = null;
-			if (newBuffer != null) {
-				newBuffer.flush();
-			}
-			newBuffer = null;
-			newRGB = null;
-		}
-
-		/**
-		 * @param width
-		 * @param height
-		 */
-		public void reallocate(final int width, final int height) {
-			free();
-			positionX = new double[width];
-			positionY = new double[height];
-			for (int i = 0; i < width; i++) {
-				positionX[i] = 0;
-			}
-			for (int i = 0; i < height; i++) {
-				positionY[i] = 0;
-			}
-			newBuffer = new BufferedImage(width, height, Surface.DEFAULT_TYPE);
-			newRGB = ((DataBufferInt) newBuffer.getRaster().getDataBuffer()).getData();
-		}
+	@Override
+	public void stop() {
+		// TODO Auto-generated method stub
+		
 	}
 
-	private class MandelbrotRenderingStrategy implements RenderingStrategy {
-		/**
-		 * @see com.nextbreakpoint.nextfractal.flux.render.MandelbrotRenderer.renderer.AbstractMandelbrotRenderer.RenderingStrategy#isVerticalSymetrySupported()
-		 */
-		@Override
-		public boolean isVerticalSymetrySupported() {
-//			for (int i = 0; i < fractalRuntime.getOutcolouringFormulaCount(); i++) {
-//				final OutcolouringFormulaRuntimeElement outcolouringFormula = fractalRuntime.getOutcolouringFormula(i);
-//				if ((outcolouringFormula.getFormulaRuntime() != null) && !outcolouringFormula.getFormulaRuntime().isVerticalSymetryAllowed() && outcolouringFormula.isEnabled()) {
-//					return false;
-//				}
-//			}
-//			for (int i = 0; i < fractalRuntime.getIncolouringFormulaCount(); i++) {
-//				final IncolouringFormulaRuntimeElement incolouringFormula = fractalRuntime.getIncolouringFormula(i);
-//				if ((incolouringFormula.getFormulaRuntime() != null) && !incolouringFormula.getFormulaRuntime().isVerticalSymetryAllowed() && incolouringFormula.isEnabled()) {
-//					return false;
-//				}
-//			}
-			return true;
-		}
-
-		/**
-		 * @see com.nextbreakpoint.nextfractal.flux.render.MandelbrotRenderer.renderer.AbstractMandelbrotRenderer.RenderingStrategy#isHorizontalSymetrySupported()
-		 */
-		@Override
-		public boolean isHorizontalSymetrySupported() {
-//			for (int i = 0; i < fractalRuntime.getOutcolouringFormulaCount(); i++) {
-//				final OutcolouringFormulaRuntimeElement outcolouringFormula = fractalRuntime.getOutcolouringFormula(i);
-//				if ((outcolouringFormula.getFormulaRuntime() != null) && !outcolouringFormula.getFormulaRuntime().isHorizontalSymetryAllowed()) {
-//					return false;
-//				}
-//			}
-//			for (int i = 0; i < fractalRuntime.getIncolouringFormulaCount(); i++) {
-//				final IncolouringFormulaRuntimeElement incolouringFormula = fractalRuntime.getIncolouringFormula(i);
-//				if ((incolouringFormula.getFormulaRuntime() != null) && !incolouringFormula.getFormulaRuntime().isHorizontalSymetryAllowed()) {
-//					return false;
-//				}
-//			}
-			return true;
-		}
-
-		/**
-		 * @see com.nextbreakpoint.nextfractal.flux.render.MandelbrotRenderer.renderer.AbstractMandelbrotRenderer.RenderingStrategy#renderPoint(com.nextbreakpoint.nextfractal.flux.render.mandelbrot.renderer.RenderedPoint)
-		 */
-		@Override
-		public int renderPoint(final RenderedPoint p, final Complex px, final Complex pw) {
-//			if ((fractalRuntime.getRenderingFormula().getFormulaRuntime() != null) && (fractalRuntime.getTransformingFormula().getFormulaRuntime() != null)) {
-//				fractalRuntime.getTransformingFormula().getFormulaRuntime().renderPoint(pw);
-//				p.xr = px.r;
-//				p.xi = px.i;
-//				p.wr = pw.r;
-//				p.wi = pw.i;
-//				p.dr = 0;
-//				p.di = 0;
-//				p.tr = 0;
-//				p.ti = 0;
-//				return SimpleRenderer.this.renderPoint(p);
-//			}
-			return 0;
-		}
-
-		/**
-		 * @see com.nextbreakpoint.nextfractal.flux.render.MandelbrotRenderer.renderer.AbstractMandelbrotRenderer.RenderingStrategy#updateParameters()
-		 */
-		@Override
-		public void updateParameters() {
-//			if (fractalRuntime.getRenderingFormula().getFormulaRuntime() != null) {
-//				renderedData.x0 = fractalRuntime.getRenderingFormula().getFormulaRuntime().getInitialPoint().r;
-//				renderedData.y0 = fractalRuntime.getRenderingFormula().getFormulaRuntime().getInitialPoint().i;
-//			}
-//			else {
-//				renderedData.x0 = 0;
-//				renderedData.y0 = 0;
-//			}
-		}
+	@Override
+	public void join() {
+		// TODO Auto-generated method stub
+		
 	}
 
-	private class JuliaRenderingStrategy implements RenderingStrategy {
-		/**
-		 * @see com.nextbreakpoint.nextfractal.flux.render.MandelbrotRenderer.renderer.AbstractMandelbrotRenderer.RenderingStrategy#isHorizontalSymetrySupported()
-		 */
-		@Override
-		public boolean isHorizontalSymetrySupported() {
-			return false;
-		}
-
-		/**
-		 * @see com.nextbreakpoint.nextfractal.flux.render.MandelbrotRenderer.renderer.AbstractMandelbrotRenderer.RenderingStrategy#isVerticalSymetrySupported()
-		 */
-		@Override
-		public boolean isVerticalSymetrySupported() {
-			return false;
-		}
-
-		/**
-		 * @see com.nextbreakpoint.nextfractal.flux.render.MandelbrotRenderer.renderer.AbstractMandelbrotRenderer.RenderingStrategy#renderPoint(com.nextbreakpoint.nextfractal.flux.render.mandelbrot.renderer.RenderedPoint)
-		 */
-		@Override
-		public int renderPoint(final RenderedPoint p, final Complex px, final Complex pw) {
-//			if ((fractalRuntime.getRenderingFormula().getFormulaRuntime() != null) && (fractalRuntime.getTransformingFormula().getFormulaRuntime() != null)) {
-//				fractalRuntime.getTransformingFormula().getFormulaRuntime().renderPoint(px);
-//				p.xr = pw.r;
-//				p.xi = pw.i;
-//				p.wr = px.r;
-//				p.wi = px.i;
-//				p.dr = 0;
-//				p.di = 0;
-//				p.tr = 0;
-//				p.ti = 0;
-//				return SimpleRenderer.this.renderPoint(p);
-//			}
-			return 0;
-		}
-
-		/**
-		 * @see com.nextbreakpoint.nextfractal.flux.render.MandelbrotRenderer.renderer.AbstractMandelbrotRenderer.RenderingStrategy#updateParameters()
-		 */
-		@Override
-		public void updateParameters() {
-			renderedData.x0 = oldConstant.getX();
-			renderedData.y0 = oldConstant.getY();
-		}
+	@Override
+	public void dispose() {
+		// TODO Auto-generated method stub
+		
 	}
 }

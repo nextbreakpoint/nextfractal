@@ -61,6 +61,21 @@ public class Worker {
 		running = false;
 		if (thread != null) {
 			abortTasks();
+//			try {
+//				thread.join();
+//			}
+//			catch (InterruptedException e) {
+//				Thread.currentThread().interrupt();
+//			}
+//			thread = null;
+		}
+	}
+
+	/**
+	 * 
+	 */
+	public void join() {
+		if (thread != null) {
 			try {
 				thread.join();
 			}

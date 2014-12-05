@@ -27,88 +27,63 @@
  */
 package com.nextbreakpoint.nextfractal.flux.render.xaos;
 
-import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferInt;
+import java.util.logging.Logger;
 
 import com.nextbreakpoint.nextfractal.core.math.Complex;
 import com.nextbreakpoint.nextfractal.core.util.Colors;
-import com.nextbreakpoint.nextfractal.core.util.RenderWorker;
-import com.nextbreakpoint.nextfractal.core.util.Surface;
-import com.nextbreakpoint.nextfractal.flux.render.MandelbrotRenderer;
-import com.nextbreakpoint.nextfractal.flux.render.Renderer;
 import com.nextbreakpoint.nextfractal.flux.render.RenderBuffer;
+import com.nextbreakpoint.nextfractal.flux.render.RenderStrategy;
 import com.nextbreakpoint.nextfractal.flux.render.RenderedPoint;
+import com.nextbreakpoint.nextfractal.flux.render.Renderer;
 
 /**
  * @author Andrea Medeghini
  */
-public final class XaosRenderer extends MandelbrotRenderer {
+public final class XaosRenderer implements Renderer {
+	protected static final Logger logger = Logger.getLogger(XaosRenderer.class.getName());
 	static {
 		if (XaosConstants.PRINT_MULTABLE) {
-			MandelbrotRenderer.logger.fine("Multable:");
+			logger.fine("Multable:");
 			for (int i = -XaosConstants.FPRANGE; i < XaosConstants.FPRANGE; i++) {
-				MandelbrotRenderer.logger.fine("i = " + i + ", i * i = " + XaosConstants.MULTABLE[XaosConstants.FPRANGE + i]);
+				logger.fine("i = " + i + ", i * i = " + XaosConstants.MULTABLE[XaosConstants.FPRANGE + i]);
 			}
 		}
 	}
-	private final RenderingStrategy mandelbrotRenderingStrategy = new MandelbrotRenderingStrategy();
-	private final RenderingStrategy juliaRenderingStrategy = new JuliaRenderingStrategy();
-	// private final PrepareColumnsWorker prepareColumnsWorker = new PrepareColumnsWorker();
-	// private final PrepareLinesWorker prepareLinesWorker = new PrepareLinesWorker();
-	private final MandelbrotWorker2 renderWorker2 = new MandelbrotWorker2();
+//	private final MandelbrotWorker2 renderWorker2 = new MandelbrotWorker2();
+	private final boolean isSolidguessEnabled = true;
+	private boolean isSolidguessSupported = true;
 	private final boolean isSymetryEnabled = true;
 	private boolean isVerticalSymetrySupported = true;
 	private boolean isHorizontalSymetrySupported = true;
+	private boolean useCache = false;
 	private boolean isAborted = false;
-	private RendererData renderedData;
+	private XaosRendererData renderedData;
+	
+	private RenderStrategy renderingStrategy;
+	private int percent;
+	private int renderMode;
+	private Complex[] points;
 
 	/**
 	 * @param threadPriority
 	 */
 	public XaosRenderer(final int threadPriority) {
-		super(threadPriority);
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.MandelbrotRenderer.renderer.AbstractMandelbrotRenderer#start()
+	 * @see com.nextbreakpoint.nextfractal.MandelbrotManager.core.fractal.renderer.AbstractFractalRenderer#free()
 	 */
-	@Override
-	public void start() {
-		// prepareLinesWorker.start();
-		// prepareColumnsWorker.start();
-		renderWorker2.start();
-		super.start();
-	}
-
-	/**
-	 * @see com.nextbreakpoint.nextfractal.MandelbrotRenderer.renderer.AbstractMandelbrotRenderer#stop()
-	 */
-	@Override
-	public void stop() {
-		super.stop();
-		// prepareLinesWorker.stop();
-		// prepareColumnsWorker.stop();
-		renderWorker2.stop();
-	}
-
-	/**
-	 * @see com.nextbreakpoint.nextfractal.MandelbrotRenderer.core.fractal.renderer.AbstractFractalRenderer#free()
-	 */
-	@Override
 	protected void free() {
-		super.free();
 		if (renderedData != null) {
 			renderedData.free();
 		}
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.MandelbrotRenderer.core.fractal.renderer.AbstractFractalRenderer#init()
+	 * @see com.nextbreakpoint.nextfractal.MandelbrotManager.core.fractal.renderer.AbstractFractalRenderer#init()
 	 */
-	@Override
 	protected void init() {
-		super.init();
-		renderedData = new RendererData();
+		renderedData = new XaosRendererData();
 		renderedData.reallocate(getBufferWidth(), getBufferHeight());
 	}
 
@@ -117,85 +92,55 @@ public final class XaosRenderer extends MandelbrotRenderer {
 	 */
 	protected void swapBuffers() {
 		if (XaosConstants.DUMP) {
-			MandelbrotRenderer.logger.fine("Swap buffers...");
+			logger.fine("Swap buffers...");
 		}
 		renderedData.swap();
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.MandelbrotRenderer.core.fractal.renderer.AbstractFractalRenderer#doRender(boolean)
+	 * @see com.nextbreakpoint.nextfractal.MandelbrotManager.core.fractal.renderer.AbstractFractalRenderer#doRender(boolean)
 	 */
-	@Override
 	protected void doRender(final boolean dynamic) {
 		isAborted = false;
-		if ((renderMode & MODE_REFRESH) != 0) {
-			renderMode |= MODE_CALCULATE;
-		}
-		updateShift();
-		updateRegion();
-		updateTransform();
+		update();
 		renderingStrategy.updateParameters();
-//		if (fractalRuntime.getRenderingFormula().getFormulaRuntime() != null) {
-//			fractalRuntime.getRenderingFormula().getFormulaRuntime().prepareForRendering(fractalRuntime.getProcessingFormula().getFormulaRuntime(), fractalRuntime.getOrbitTrap().getOrbitTrapRuntime());
-//			if (fractalRuntime.getOrbitTrap().getOrbitTrapRuntime() != null) {
-//				fractalRuntime.getOrbitTrap().getOrbitTrapRuntime().prepareForProcessing(fractalRuntime.getOrbitTrap().getCenter());
-//			}
-//		}
-//		for (int i = 0; i < fractalRuntime.getOutcolouringFormulaCount(); i++) {
-//			if (fractalRuntime.getOutcolouringFormula(i).getFormulaRuntime() != null) {
-//				if (fractalRuntime.getOutcolouringFormula(i).isAutoIterations() && (fractalRuntime.getRenderingFormula().getFormulaRuntime() != null)) {
-//					fractalRuntime.getOutcolouringFormula(i).getFormulaRuntime().prepareForRendering(fractalRuntime.getRenderingFormula().getFormulaRuntime(), fractalRuntime.getRenderingFormula().getFormulaRuntime().getIterations());
-//				}
-//				else {
-//					fractalRuntime.getOutcolouringFormula(i).getFormulaRuntime().prepareForRendering(fractalRuntime.getRenderingFormula().getFormulaRuntime(), fractalRuntime.getOutcolouringFormula(i).getIterations());
-//				}
-//			}
-//		}
-//		for (int i = 0; i < fractalRuntime.getIncolouringFormulaCount(); i++) {
-//			if (fractalRuntime.getIncolouringFormula(i).getFormulaRuntime() != null) {
-//				if (fractalRuntime.getIncolouringFormula(i).isAutoIterations() && (fractalRuntime.getRenderingFormula().getFormulaRuntime() != null)) {
-//					fractalRuntime.getIncolouringFormula(i).getFormulaRuntime().prepareForRendering(fractalRuntime.getRenderingFormula().getFormulaRuntime(), fractalRuntime.getRenderingFormula().getFormulaRuntime().getIterations());
-//				}
-//				else {
-//					fractalRuntime.getIncolouringFormula(i).getFormulaRuntime().prepareForRendering(fractalRuntime.getRenderingFormula().getFormulaRuntime(), fractalRuntime.getIncolouringFormula(i).getIterations());
-//				}
-//			}
-//		}
 		if (XaosConstants.PRINT_REGION) {
-			MandelbrotRenderer.logger.fine("Region: " + points[0].toString() + " " + points[1].toString());
+			logger.fine("Region: " + points[0].toString() + " " + points[1].toString());
 		}
+		final boolean refresh = (renderMode & Renderer.MODE_REFRESH) != 0;
+		useCache = refresh || !dynamic;
+		isSolidguessSupported = XaosConstants.USE_SOLIDGUESS && isSolidguessEnabled && isSolidGuessSupported();
 		isVerticalSymetrySupported = XaosConstants.USE_SYMETRY && isSymetryEnabled && isVerticalSymetrySupported();
 		isHorizontalSymetrySupported = XaosConstants.USE_SYMETRY && isSymetryEnabled && isHorizontalSymetrySupported();
 		if (XaosConstants.DUMP) {
-			MandelbrotRenderer.logger.fine("Vertical symetry supported = " + isVerticalSymetrySupported);
-			MandelbrotRenderer.logger.fine("Horizontal symetry supported = " + isHorizontalSymetrySupported);
+			logger.fine("Solidguess supported = " + isSolidguessSupported);
+			logger.fine("Vertical symetry supported = " + isVerticalSymetrySupported);
+			logger.fine("Horizontal symetry supported = " + isHorizontalSymetrySupported);
+			logger.fine("Use cache = " + useCache);
 		}
 		if (XaosConstants.USE_MULTITHREAD && !XaosConstants.DUMP_XAOS) {
-			// prepareLinesWorker.executeTask();
-			// prepareColumnsWorker.executeTask();
-			// prepareLinesWorker.waitTasks();
-			// prepareColumnsWorker.waitTasks();
-			renderWorker2.executeTask();
+//			renderWorker2.executeTask();
 			prepareLines();
-			renderWorker2.waitTasks();
+			prepareColumns();
+//			renderWorker2.waitTasks();
 		}
 		else {
 			prepareLines();
 			prepareColumns();
 		}
 		if (XaosConstants.PRINT_REALLOCTABLE) {
-			MandelbrotRenderer.logger.fine("ReallocTable:");
-			for (final Realloc element : renderedData.reallocX) {
-				MandelbrotRenderer.logger.fine(element.toString());
+			logger.fine("ReallocTable:");
+			for (final XaosRealloc element : renderedData.reallocX) {
+				logger.fine(element.toString());
 			}
-			MandelbrotRenderer.logger.fine("ReallocTable:");
-			for (final Realloc element : renderedData.reallocY) {
-				MandelbrotRenderer.logger.fine(element.toString());
+			logger.fine("ReallocTable:");
+			for (final XaosRealloc element : renderedData.reallocY) {
+				logger.fine(element.toString());
 			}
 		}
 		swapBuffers();
 		move();
-		processReallocTable(dynamic, false);
+		processReallocTable(dynamic, refresh);
 		updatePosition();
 		renderMode = 0;
 	}
@@ -205,7 +150,7 @@ public final class XaosRenderer extends MandelbrotRenderer {
 		final double endy = points[1].i;
 		double stepy = 0;
 		if (((renderMode & Renderer.MODE_CALCULATE) == 0) && XaosConstants.USE_XAOS) {
-			stepy = XaosRenderer.makeReallocTable(renderedData.reallocY, renderedData.dynamicy, beginy, endy, renderedData.positionY, false);
+			stepy = XaosRenderer.makeReallocTable(renderedData.reallocY, renderedData.dynamicy, beginy, endy, renderedData.positionY, !useCache);
 		}
 		else {
 			stepy = XaosRenderer.initReallocTableAndPosition(renderedData.reallocY, renderedData.positionY, beginy, endy);
@@ -223,7 +168,7 @@ public final class XaosRenderer extends MandelbrotRenderer {
 		final double endx = points[1].r;
 		double stepx = 0;
 		if (((renderMode & Renderer.MODE_CALCULATE) == 0) && XaosConstants.USE_XAOS) {
-			stepx = XaosRenderer.makeReallocTable(renderedData.reallocX, renderedData.dynamicx, beginx, endx, renderedData.positionX, false);
+			stepx = XaosRenderer.makeReallocTable(renderedData.reallocX, renderedData.dynamicx, beginx, endx, renderedData.positionX, !useCache);
 		}
 		else {
 			stepx = XaosRenderer.initReallocTableAndPosition(renderedData.reallocX, renderedData.positionX, beginx, endx);
@@ -236,13 +181,13 @@ public final class XaosRenderer extends MandelbrotRenderer {
 //		}
 	}
 
-	private static double initReallocTableAndPosition(final Realloc[] realloc, final double[] position, final double begin, final double end) {
+	private static double initReallocTableAndPosition(final XaosRealloc[] realloc, final double[] position, final double begin, final double end) {
 		if (XaosConstants.DUMP) {
-			MandelbrotRenderer.logger.fine("Init ReallocTable and position...");
+			logger.fine("Init ReallocTable and position...");
 		}
 		final double step = (end - begin) / realloc.length;
 		double tmpPosition = begin;
-		Realloc tmpRealloc = null;
+		XaosRealloc tmpRealloc = null;
 		for (int i = 0; i < realloc.length; i++) {
 			tmpRealloc = realloc[i];
 			position[i] = tmpPosition;
@@ -250,6 +195,7 @@ public final class XaosRenderer extends MandelbrotRenderer {
 			tmpRealloc.recalculate = true;
 			tmpRealloc.refreshed = false;
 			tmpRealloc.dirty = true;
+			tmpRealloc.isCached = false;
 			tmpRealloc.plus = i;
 			tmpRealloc.symTo = -1;
 			tmpRealloc.symRef = -1;
@@ -260,7 +206,7 @@ public final class XaosRenderer extends MandelbrotRenderer {
 
 	private void updatePosition() {
 		if (XaosConstants.DUMP) {
-			MandelbrotRenderer.logger.fine("Update position...");
+			logger.fine("Update position...");
 		}
 		for (int k = 0; k < renderedData.reallocX.length; k++) {
 			renderedData.positionX[k] = renderedData.reallocX[k].position;
@@ -274,7 +220,7 @@ public final class XaosRenderer extends MandelbrotRenderer {
 		return XaosConstants.MULTABLE[(XaosConstants.FPRANGE + p1) - p2];
 	}
 
-	private static void addPrices(final Realloc[] realloc, int r1, final int r2) {
+	private static void addPrices(final XaosRealloc[] realloc, int r1, final int r2) {
 		// if (r1 < r2)
 		while (r1 < r2) {
 			final int r3 = r1 + ((r2 - r1) >> 1);
@@ -288,9 +234,9 @@ public final class XaosRenderer extends MandelbrotRenderer {
 		}
 	}
 
-	private static void prepareSymetry(final Realloc[] realloc, final int symi, double symPosition, final double step) {
+	private static void prepareSymetry(final XaosRealloc[] realloc, final int symi, double symPosition, final double step) {
 		if (XaosConstants.DUMP) {
-			MandelbrotRenderer.logger.fine("Prepare symetry...");
+			logger.fine("Prepare symetry...");
 		}
 		int i = 0;
 		int j = 0;
@@ -302,8 +248,8 @@ public final class XaosRenderer extends MandelbrotRenderer {
 		final int max = size - XaosConstants.RANGE - 1;
 		int min = XaosConstants.RANGE;
 		int istart = 0;
-		Realloc tmpRealloc = null;
-		Realloc symRealloc = null;
+		XaosRealloc tmpRealloc = null;
+		XaosRealloc symRealloc = null;
 		symPosition *= 2;
 		int symj = (2 * symi) - size;
 		if (symj < 0) {
@@ -372,6 +318,7 @@ public final class XaosRenderer extends MandelbrotRenderer {
 				symRealloc.recalculate = false;
 				symRealloc.refreshed = false;
 				symRealloc.dirty = true;
+				symRealloc.isCached = false;
 				tmpRealloc.symRef = tmpRealloc.symTo;
 				symRealloc.position = symPosition - tmpRealloc.position;
 			}
@@ -385,18 +332,19 @@ public final class XaosRenderer extends MandelbrotRenderer {
 				tmpRealloc.recalculate = false;
 				tmpRealloc.refreshed = false;
 				tmpRealloc.dirty = true;
+				tmpRealloc.isCached = false;
 				symRealloc.symRef = i;
 				tmpRealloc.position = symPosition - symRealloc.position;
 			}
 		}
 	}
 
-	private static void prepareMove(final Movetable movetable, final Realloc[] reallocX) {
+	private static void prepareMove(final XaosChunkTable movetable, final XaosRealloc[] reallocX) {
 		if (XaosConstants.DUMP) {
-			MandelbrotRenderer.logger.fine("Prepare move...");
+			logger.fine("Prepare move...");
 		}
-		final Movetable.Data[] table = movetable.data;
-		Movetable.Data tmpData = null;
+		final XaosChunk[] table = movetable.data;
+		XaosChunk tmpData = null;
 		int i = 0;
 		int j = 0;
 		int s = 0;
@@ -422,19 +370,19 @@ public final class XaosRenderer extends MandelbrotRenderer {
 		tmpData = table[s];
 		tmpData.length = 0;
 		if (XaosConstants.PRINT_MOVETABLE) {
-			MandelbrotRenderer.logger.fine("Movetable:");
+			logger.fine("Movetable:");
 			for (i = 0; table[i].length > 0; i++) {
-				MandelbrotRenderer.logger.fine("i = " + i + " " + table[i].toString());
+				logger.fine("i = " + i + " " + table[i].toString());
 			}
 		}
 	}
 
-	private static void prepareFill(final Filltable filltable, final Realloc[] reallocX) {
+	private static void prepareFill(final XaosChunkTable filltable, final XaosRealloc[] reallocX) {
 		if (XaosConstants.DUMP) {
-			MandelbrotRenderer.logger.fine("Prepare fill...");
+			logger.fine("Prepare fill...");
 		}
-		final Filltable.Data[] table = filltable.data;
-		Filltable.Data tmpData = null;
+		final XaosChunk[] table = filltable.data;
+		XaosChunk tmpData = null;
 		int i = 0;
 		int j = 0;
 		int k = 0;
@@ -473,21 +421,21 @@ public final class XaosRenderer extends MandelbrotRenderer {
 		tmpData = table[s];
 		tmpData.length = 0;
 		if (XaosConstants.PRINT_FILLTABLE) {
-			MandelbrotRenderer.logger.fine("XaosChunkTable:");
+			logger.fine("XaosChunkTable:");
 			for (i = 0; table[i].length > 0; i++) {
-				MandelbrotRenderer.logger.fine("i = " + i + " " + table[i].toString());
+				logger.fine("i = " + i + " " + table[i].toString());
 			}
 		}
 	}
 
-	private static double makeReallocTable(final Realloc[] realloc, final Dynamic dynamic, final double begin, final double end, final double[] position, final boolean invalidate) {
+	private static double makeReallocTable(final XaosRealloc[] realloc, final XaosDynamic dynamic, final double begin, final double end, final double[] position, final boolean invalidate) {
 		if (XaosConstants.DUMP) {
-			MandelbrotRenderer.logger.fine("Make ReallocTable...");
+			logger.fine("Make ReallocTable...");
 		}
-		Realloc tmpRealloc = null;
-		Dynamic.Data prevData = null;
-		Dynamic.Data bestData = null;
-		Dynamic.Data tmpData = null;
+		XaosRealloc tmpRealloc = null;
+		XaosDynamic.Data prevData = null;
+		XaosDynamic.Data bestData = null;
+		XaosDynamic.Data tmpData = null;
 		int bestPrice = XaosConstants.MAX_PRICE;
 		int price = 0;
 		int price1 = 0;
@@ -511,16 +459,16 @@ public final class XaosRenderer extends MandelbrotRenderer {
 			}
 		}
 		if (XaosConstants.DUMP_XAOS) {
-			MandelbrotRenderer.logger.fine("positions (fixed point):");
+			logger.fine("positions (fixed point):");
 			for (i = 0; i < size; i++) {
-				MandelbrotRenderer.logger.fine(String.valueOf(delta[i]));
+				logger.fine(String.valueOf(delta[i]));
 			}
 		}
 		for (i = 0; i < size; i++) {
 			dynamic.swap();
 			yend = y - XaosConstants.FPRANGE;
 			if (XaosConstants.DUMP_XAOS) {
-				MandelbrotRenderer.logger.fine("a0) yend = " + yend);
+				logger.fine("a0) yend = " + yend);
 			}
 			if (yend < 0) {
 				yend = 0;
@@ -532,22 +480,22 @@ public final class XaosRenderer extends MandelbrotRenderer {
 			ps1 = p;
 			yend = y + XaosConstants.FPRANGE;
 			if (XaosConstants.DUMP_XAOS) {
-				MandelbrotRenderer.logger.fine("a1) yend = " + yend);
+				logger.fine("a1) yend = " + yend);
 			}
 			if (XaosConstants.DUMP_XAOS) {
-				MandelbrotRenderer.logger.fine("b0) i = " + i + ", y = " + y + ", ps1 = " + ps1 + ", ps = " + ps + ", pe = " + pe);
+				logger.fine("b0) i = " + i + ", y = " + y + ", ps1 = " + ps1 + ", ps = " + ps + ", pe = " + pe);
 			}
 			if ((ps != pe) && (p > ps)) {
 				if (p < pe) {
 					prevData = dynamic.oldBest[p - 1];
 					if (XaosConstants.DUMP_XAOS) {
-						MandelbrotRenderer.logger.fine("c0) previous = " + prevData.toString());
+						logger.fine("c0) previous = " + prevData.toString());
 					}
 				}
 				else {
 					prevData = dynamic.oldBest[pe - 1];
 					if (XaosConstants.DUMP_XAOS) {
-						MandelbrotRenderer.logger.fine("c1) previous = " + prevData.toString());
+						logger.fine("c1) previous = " + prevData.toString());
 					}
 				}
 				price1 = prevData.price;
@@ -557,21 +505,21 @@ public final class XaosRenderer extends MandelbrotRenderer {
 					prevData = dynamic.calData[i - 1];
 					price1 = prevData.price;
 					if (XaosConstants.DUMP_XAOS) {
-						MandelbrotRenderer.logger.fine("c2) previous = " + prevData.toString());
+						logger.fine("c2) previous = " + prevData.toString());
 					}
 				}
 				else {
 					prevData = null;
 					price1 = 0;
 					if (XaosConstants.DUMP_XAOS) {
-						MandelbrotRenderer.logger.fine("c3) previous = null");
+						logger.fine("c3) previous = null");
 					}
 				}
 			}
 			tmpData = dynamic.calData[i];
 			price = price1 + XaosConstants.NEW_PRICE;
 			if (XaosConstants.DUMP_XAOS) {
-				MandelbrotRenderer.logger.fine("d0) add row/column " + i + ": price = " + price + " (previous price = " + price1 + ")");
+				logger.fine("d0) add row/column " + i + ": price = " + price + " (previous price = " + price1 + ")");
 			}
 			bestData = tmpData;
 			bestPrice = price;
@@ -588,7 +536,7 @@ public final class XaosRenderer extends MandelbrotRenderer {
 						price1 = prevData.price;
 						price = price1 + XaosRenderer.price(delta[p], y);
 						if (XaosConstants.DUMP_XAOS) {
-							MandelbrotRenderer.logger.fine("g0) approximate row/column " + i + " with old row/column " + p + ": price = " + price + " (previous price = " + price1 + ")");
+							logger.fine("g0) approximate row/column " + i + " with old row/column " + p + ": price = " + price + " (previous price = " + price1 + ")");
 						}
 						if (price < bestPrice) {
 							tmpData = dynamic.conData[(p << XaosConstants.DSIZE) + (i & XaosConstants.MASK)];
@@ -603,7 +551,7 @@ public final class XaosRenderer extends MandelbrotRenderer {
 						}
 					}
 					if (XaosConstants.DUMP_XAOS) {
-						MandelbrotRenderer.logger.fine("g2) store data: p = " + p + ", bestdata = " + bestData.toString());
+						logger.fine("g2) store data: p = " + p + ", bestdata = " + bestData.toString());
 					}
 					dynamic.newBest[p++] = bestData;
 				}
@@ -617,7 +565,7 @@ public final class XaosRenderer extends MandelbrotRenderer {
 						price1 = prevData.price;
 						price = price1 + XaosConstants.NEW_PRICE;
 						if (XaosConstants.DUMP_XAOS) {
-							MandelbrotRenderer.logger.fine("h0) add row/column " + i + ": price = " + price + " (previous price = " + price1 + ")");
+							logger.fine("h0) add row/column " + i + ": price = " + price + " (previous price = " + price1 + ")");
 						}
 						if (price < bestPrice) {
 							tmpData = dynamic.conData[((p - 1) << XaosConstants.DSIZE) + (i & XaosConstants.MASK)];
@@ -627,7 +575,7 @@ public final class XaosRenderer extends MandelbrotRenderer {
 							tmpData.pos = -1;
 							tmpData.previous = prevData;
 							if (XaosConstants.DUMP_XAOS) {
-								MandelbrotRenderer.logger.fine("h1) store data: p - 1 = " + (p - 1) + ", bestdata = " + bestData.toString());
+								logger.fine("h1) store data: p - 1 = " + (p - 1) + ", bestdata = " + bestData.toString());
 							}
 							dynamic.newBest[p - 1] = bestData;
 							if (XaosConstants.DUMP_XAOS) {
@@ -636,7 +584,7 @@ public final class XaosRenderer extends MandelbrotRenderer {
 						}
 						price = price1 + XaosRenderer.price(delta[p], y);
 						if (XaosConstants.DUMP_XAOS) {
-							MandelbrotRenderer.logger.fine("h3) approximate row/column " + i + " with old row/column " + p + ": price = " + price + " (previous price = " + price1 + ")");
+							logger.fine("h3) approximate row/column " + i + " with old row/column " + p + ": price = " + price + " (previous price = " + price1 + ")");
 						}
 						if (price < bestPrice) {
 							tmpData = dynamic.conData[(p << XaosConstants.DSIZE) + (i & XaosConstants.MASK)];
@@ -651,7 +599,7 @@ public final class XaosRenderer extends MandelbrotRenderer {
 						}
 						else if (delta[p] > y) {
 							if (XaosConstants.DUMP_XAOS) {
-								MandelbrotRenderer.logger.fine("h5) store data: p = " + p + ", bestdata = " + bestData.toString());
+								logger.fine("h5) store data: p = " + p + ", bestdata = " + bestData.toString());
 							}
 							dynamic.newBest[p++] = bestData;
 							break;
@@ -659,7 +607,7 @@ public final class XaosRenderer extends MandelbrotRenderer {
 						// }
 					}
 					if (XaosConstants.DUMP_XAOS) {
-						MandelbrotRenderer.logger.fine("h6) store data: p = " + p + ", bestdata = " + bestData.toString());
+						logger.fine("h6) store data: p = " + p + ", bestdata = " + bestData.toString());
 					}
 					dynamic.newBest[p++] = bestData;
 				}
@@ -671,7 +619,7 @@ public final class XaosRenderer extends MandelbrotRenderer {
 						price1 = prevData.price;
 						price = price1 + XaosConstants.NEW_PRICE;
 						if (XaosConstants.DUMP_XAOS) {
-							MandelbrotRenderer.logger.fine("i0) add row/column " + i + ": price = " + price + " (previous price = " + price1 + ")");
+							logger.fine("i0) add row/column " + i + ": price = " + price + " (previous price = " + price1 + ")");
 						}
 						if (price < bestPrice) {
 							tmpData = dynamic.conData[((p - 1) << XaosConstants.DSIZE) + (i & XaosConstants.MASK)];
@@ -681,7 +629,7 @@ public final class XaosRenderer extends MandelbrotRenderer {
 							tmpData.pos = -1;
 							tmpData.previous = prevData;
 							if (XaosConstants.DUMP_XAOS) {
-								MandelbrotRenderer.logger.fine("i1) store data: p - 1 = " + (p - 1) + ", bestdata = " + bestData.toString());
+								logger.fine("i1) store data: p - 1 = " + (p - 1) + ", bestdata = " + bestData.toString());
 							}
 							dynamic.newBest[p - 1] = bestData;
 							if (XaosConstants.DUMP_XAOS) {
@@ -690,7 +638,7 @@ public final class XaosRenderer extends MandelbrotRenderer {
 						}
 						price = price1 + XaosRenderer.price(delta[p], y);
 						if (XaosConstants.DUMP_XAOS) {
-							MandelbrotRenderer.logger.fine("i3) add row/column " + i + ": price = " + price + " (previous price = " + price1 + ")");
+							logger.fine("i3) add row/column " + i + ": price = " + price + " (previous price = " + price1 + ")");
 						}
 						if (price < bestPrice) {
 							tmpData = dynamic.conData[(p << XaosConstants.DSIZE) + (i & XaosConstants.MASK)];
@@ -700,7 +648,7 @@ public final class XaosRenderer extends MandelbrotRenderer {
 							tmpData.pos = p;
 							tmpData.previous = prevData;
 							if (XaosConstants.DUMP_XAOS) {
-								MandelbrotRenderer.logger.fine("i4) bestprice = " + bestPrice + ", bestdata = " + bestData.toString());
+								logger.fine("i4) bestprice = " + bestPrice + ", bestdata = " + bestData.toString());
 							}
 						}
 						// }
@@ -720,7 +668,7 @@ public final class XaosRenderer extends MandelbrotRenderer {
 				}
 				price = price1 + XaosConstants.NEW_PRICE;
 				if (XaosConstants.DUMP_XAOS) {
-					MandelbrotRenderer.logger.fine("l0) add row/column " + i + ": price = " + price + " (previous price = " + price1 + ")");
+					logger.fine("l0) add row/column " + i + ": price = " + price + " (previous price = " + price1 + ")");
 				}
 				if ((price < bestPrice) && (p > ps1)) {
 					tmpData = dynamic.conData[((p - 1) << XaosConstants.DSIZE) + (i & XaosConstants.MASK)];
@@ -730,7 +678,7 @@ public final class XaosRenderer extends MandelbrotRenderer {
 					tmpData.pos = -1;
 					tmpData.previous = prevData;
 					if (XaosConstants.DUMP_XAOS) {
-						MandelbrotRenderer.logger.fine("l1) store data: p - 1 = " + (p - 1) + ", bestdata = " + bestData.toString());
+						logger.fine("l1) store data: p - 1 = " + (p - 1) + ", bestdata = " + bestData.toString());
 					}
 					dynamic.newBest[p - 1] = bestData;
 					if (XaosConstants.DUMP_XAOS) {
@@ -741,7 +689,7 @@ public final class XaosRenderer extends MandelbrotRenderer {
 					if (delta[p] != delta[p + 1]) {
 						price = price1 + XaosRenderer.price(delta[p], y);
 						if (XaosConstants.DUMP_XAOS) {
-							MandelbrotRenderer.logger.fine("l3) approximate row/column " + i + " with old row/column " + p + ": price = " + price + " (previous price = " + price1 + ")");
+							logger.fine("l3) approximate row/column " + i + " with old row/column " + p + ": price = " + price + " (previous price = " + price1 + ")");
 						}
 						if (price < bestPrice) {
 							tmpData = dynamic.conData[(p << XaosConstants.DSIZE) + (i & XaosConstants.MASK)];
@@ -759,13 +707,13 @@ public final class XaosRenderer extends MandelbrotRenderer {
 						}
 					}
 					if (XaosConstants.DUMP_XAOS) {
-						MandelbrotRenderer.logger.fine("l5) store data: p = " + p + ", bestdata = " + bestData.toString());
+						logger.fine("l5) store data: p = " + p + ", bestdata = " + bestData.toString());
 					}
 					dynamic.newBest[p++] = bestData;
 				}
 				while (delta[p] < yend) {
 					if (XaosConstants.DUMP_XAOS) {
-						MandelbrotRenderer.logger.fine("l6) store data: p = " + p + ", bestdata = " + bestData.toString());
+						logger.fine("l6) store data: p = " + p + ", bestdata = " + bestData.toString());
 					}
 					dynamic.newBest[p++] = bestData;
 				}
@@ -776,21 +724,21 @@ public final class XaosRenderer extends MandelbrotRenderer {
 						prevData = dynamic.calData[i - 1];
 						price1 = prevData.price;
 						if (XaosConstants.DUMP_XAOS) {
-							MandelbrotRenderer.logger.fine("e0) previous = " + prevData.toString());
+							logger.fine("e0) previous = " + prevData.toString());
 						}
 					}
 					else {
 						prevData = null;
 						price1 = 0;
 						if (XaosConstants.DUMP_XAOS) {
-							MandelbrotRenderer.logger.fine("e1) previous = null");
+							logger.fine("e1) previous = null");
 						}
 					}
 					while (delta[p] < yend) {
 						if (delta[p] != delta[p + 1]) {
 							price = price1 + XaosRenderer.price(delta[p], y);
 							if (XaosConstants.DUMP_XAOS) {
-								MandelbrotRenderer.logger.fine("f0) approximate row/column " + i + " with old row/column " + p + ": price = " + price + " (previous price = " + price1 + ")");
+								logger.fine("f0) approximate row/column " + i + " with old row/column " + p + ": price = " + price + " (previous price = " + price1 + ")");
 							}
 							if (price < bestPrice) {
 								tmpData = dynamic.conData[(p << XaosConstants.DSIZE) + (i & XaosConstants.MASK)];
@@ -808,13 +756,13 @@ public final class XaosRenderer extends MandelbrotRenderer {
 							}
 						}
 						if (XaosConstants.DUMP_XAOS) {
-							MandelbrotRenderer.logger.fine("f2) store data: p = " + p + ", bestdata = " + bestData.toString());
+							logger.fine("f2) store data: p = " + p + ", bestdata = " + bestData.toString());
 						}
 						dynamic.newBest[p++] = bestData;
 					}
 					while (delta[p] < yend) {
 						if (XaosConstants.DUMP_XAOS) {
-							MandelbrotRenderer.logger.fine("f3) store data: p = " + p + ", bestdata = " + bestData.toString());
+							logger.fine("f3) store data: p = " + p + ", bestdata = " + bestData.toString());
 						}
 						dynamic.newBest[p++] = bestData;
 					}
@@ -832,14 +780,14 @@ public final class XaosRenderer extends MandelbrotRenderer {
 			flag = 2;
 		}
 		if (XaosConstants.DUMP_XAOS) {
-			MandelbrotRenderer.logger.fine("flag = " + flag);
+			logger.fine("flag = " + flag);
 		}
 		if (XaosConstants.DUMP_XAOS) {
-			MandelbrotRenderer.logger.fine("best table:");
+			logger.fine("best table:");
 		}
 		for (i = size - 1; i >= 0; i--) {
 			if (XaosConstants.DUMP_XAOS) {
-				MandelbrotRenderer.logger.fine("data = " + bestData.toString());
+				logger.fine("data = " + bestData.toString());
 			}
 			tmpData = bestData.previous;
 			tmpRealloc = realloc[i];
@@ -849,11 +797,15 @@ public final class XaosRenderer extends MandelbrotRenderer {
 				tmpRealloc.recalculate = true;
 				tmpRealloc.refreshed = false;
 				tmpRealloc.dirty = true;
+				tmpRealloc.isCached = false;
 				tmpRealloc.plus = tmpRealloc.pos;
 			}
 			else {
 				tmpRealloc.plus = bestData.pos;
 				tmpRealloc.position = position[bestData.pos];
+				if (invalidate) {
+					tmpRealloc.isCached = false;
+				}
 				tmpRealloc.recalculate = false;
 				tmpRealloc.refreshed = false;
 				tmpRealloc.dirty = false;
@@ -864,8 +816,8 @@ public final class XaosRenderer extends MandelbrotRenderer {
 		return step;
 	}
 
-	private static void newPositions(final Realloc[] realloc, final int size, double begin1, final double end1, final double step, final double[] position, final int flag) {
-		Realloc tmpRealloc = null;
+	private static void newPositions(final XaosRealloc[] realloc, final int size, double begin1, final double end1, final double step, final double[] position, final int flag) {
+		XaosRealloc tmpRealloc = null;
 		double delta = 0;
 		double begin = 0;
 		double end = 0;
@@ -876,7 +828,7 @@ public final class XaosRenderer extends MandelbrotRenderer {
 			begin1 = end1;
 		}
 		if (XaosConstants.PRINT_POSITIONS) {
-			MandelbrotRenderer.logger.fine("Positions :");
+			logger.fine("Positions :");
 		}
 		while (s < (l - 1)) {
 			e = s + 1;
@@ -916,7 +868,7 @@ public final class XaosRenderer extends MandelbrotRenderer {
 							tmpRealloc.position = begin;
 							tmpRealloc.priority = 1 / (1 + (Math.abs((position[s] - begin)) * step));
 							if (XaosConstants.PRINT_POSITIONS) {
-								MandelbrotRenderer.logger.fine("pos = " + s + ",position = " + tmpRealloc.position + ",price = " + tmpRealloc.priority);
+								logger.fine("pos = " + s + ",position = " + tmpRealloc.position + ",price = " + tmpRealloc.priority);
 							}
 						}
 						break;
@@ -928,7 +880,7 @@ public final class XaosRenderer extends MandelbrotRenderer {
 							tmpRealloc.position = begin;
 							tmpRealloc.priority = Math.abs((position[s] - begin)) * step;
 							if (XaosConstants.PRINT_POSITIONS) {
-								MandelbrotRenderer.logger.fine("pos = " + s + ",position = " + tmpRealloc.position + ",price = " + tmpRealloc.priority);
+								logger.fine("pos = " + s + ",position = " + tmpRealloc.position + ",price = " + tmpRealloc.priority);
 							}
 						}
 						break;
@@ -940,7 +892,7 @@ public final class XaosRenderer extends MandelbrotRenderer {
 							tmpRealloc.position = begin;
 							tmpRealloc.priority = 1.0;
 							if (XaosConstants.PRINT_POSITIONS) {
-								MandelbrotRenderer.logger.fine("pos = " + s + ",position = " + tmpRealloc.position + ",price = " + tmpRealloc.priority);
+								logger.fine("pos = " + s + ",position = " + tmpRealloc.position + ",price = " + tmpRealloc.priority);
 							}
 						}
 						break;
@@ -953,14 +905,14 @@ public final class XaosRenderer extends MandelbrotRenderer {
 
 	private void processReallocTable(final boolean dynamic, final boolean refresh) {
 		if (XaosConstants.DUMP) {
-			MandelbrotRenderer.logger.fine("Process ReallocTable...");
+			logger.fine("Process ReallocTable...");
 		}
 		if (dynamic || !XaosConstants.USE_XAOS) {
 			int total = 0;
 			total = XaosRenderer.initPrices(renderedData.queue, total, renderedData.reallocX);
 			total = XaosRenderer.initPrices(renderedData.queue, total, renderedData.reallocY);
 			if (XaosConstants.DUMP) {
-				MandelbrotRenderer.logger.fine("total = " + total);
+				logger.fine("total = " + total);
 			}
 			if (total > 0) {
 				if (total > 1) {
@@ -982,7 +934,7 @@ public final class XaosRenderer extends MandelbrotRenderer {
 			int j = 0;
 			int tocalcx = 0;
 			int tocalcy = 0;
-			Realloc[] tmpRealloc = null;
+			XaosRealloc[] tmpRealloc = null;
 			tmpRealloc = renderedData.reallocX;
 			for (i = 0; i < tmpRealloc.length; i++) {
 				if (tmpRealloc[i].recalculate) {
@@ -1015,6 +967,20 @@ public final class XaosRenderer extends MandelbrotRenderer {
 			// {
 			// System.out.println(i + " = " + position[i] + ", " + offset[i]);
 			// }
+			if (refresh) {
+				tmpRealloc = renderedData.reallocY;
+				for (final XaosRealloc element : tmpRealloc) {
+					if (element.isCached && !element.refreshed) {
+						refreshLine(element, renderedData.reallocX, renderedData.reallocY);
+					}
+				}
+				tmpRealloc = renderedData.reallocX;
+				for (final XaosRealloc element : tmpRealloc) {
+					if (element.isCached && !element.refreshed) {
+						refreshColumn(element, renderedData.reallocX, renderedData.reallocY);
+					}
+				}
+			}
 			renderedData.oldTime = renderedData.newTime = System.currentTimeMillis();
 			for (s = 0; !isAborted && (s < XaosConstants.STEPS); s++) {
 				// AbstractFractalRenderer.logger.fine("step = " + s);
@@ -1023,6 +989,9 @@ public final class XaosRenderer extends MandelbrotRenderer {
 					if (tmpRealloc[i].recalculate) {
 						renderLine(tmpRealloc[i], renderedData.reallocX, renderedData.reallocY);
 						tocalcy -= 1;
+					}
+					else if (!tmpRealloc[i].isCached) {
+						renderLine(tmpRealloc[i], renderedData.reallocX, renderedData.reallocY);
 					}
 					if (isInterrupted()) {
 						isAborted = true;
@@ -1035,6 +1004,9 @@ public final class XaosRenderer extends MandelbrotRenderer {
 					if (tmpRealloc[i].recalculate) {
 						renderColumn(tmpRealloc[i], renderedData.reallocX, renderedData.reallocY);
 						tocalcx -= 1;
+					}
+					else if (!tmpRealloc[i].isCached) {
+						renderColumn(tmpRealloc[i], renderedData.reallocX, renderedData.reallocY);
 					}
 					if (isInterrupted()) {
 						isAborted = true;
@@ -1103,7 +1075,7 @@ public final class XaosRenderer extends MandelbrotRenderer {
 		buffer.update(renderedData.newRGB);
 	}
 
-	private static int initPrices(final Realloc[] queue, int total, final Realloc[] realloc) {
+	private static int initPrices(final XaosRealloc[] queue, int total, final XaosRealloc[] realloc) {
 		int i = 0;
 		int j = 0;
 		for (i = 0; i < realloc.length; i++) {
@@ -1121,12 +1093,12 @@ public final class XaosRenderer extends MandelbrotRenderer {
 		return total;
 	}
 
-	private static void sortQueue(final Realloc[] queue, final int l, final int r) {
+	private static void sortQueue(final XaosRealloc[] queue, final int l, final int r) {
 		if (XaosConstants.DUMP) {
-			MandelbrotRenderer.logger.fine("Sort queue...");
+			logger.fine("Sort queue...");
 		}
 		final double m = (queue[l].priority + queue[r].priority) / 2.0;
-		Realloc t = null;
+		XaosRealloc t = null;
 		int i = l;
 		int j = r;
 		do {
@@ -1155,7 +1127,7 @@ public final class XaosRenderer extends MandelbrotRenderer {
 
 	private void processQueue(final int size) {
 		if (XaosConstants.DUMP) {
-			MandelbrotRenderer.logger.fine("Process queue...");
+			logger.fine("Process queue...");
 		}
 		int i = 0;
 		for (i = 0; i < size; i++) {
@@ -1173,9 +1145,9 @@ public final class XaosRenderer extends MandelbrotRenderer {
 		}
 	}
 
-	private void doSymetry(final Realloc[] reallocX, final Realloc[] reallocY) {
+	private void doSymetry(final XaosRealloc[] reallocX, final XaosRealloc[] reallocY) {
 		if (XaosConstants.DUMP) {
-			MandelbrotRenderer.logger.fine("Do symetry...");
+			logger.fine("Do symetry...");
 		}
 		final int rowsize = getBufferWidth();
 		int from_offset = 0;
@@ -1186,12 +1158,20 @@ public final class XaosRenderer extends MandelbrotRenderer {
 			if ((reallocY[i].symTo >= 0) && (!reallocY[reallocY[i].symTo].dirty)) {
 				from_offset = reallocY[i].symTo * rowsize;
 				System.arraycopy(renderedData.newRGB, from_offset, renderedData.newRGB, to_offset, rowsize);
+				if (useCache) {
+					System.arraycopy(renderedData.newCacheZR, from_offset, renderedData.newCacheZR, to_offset, rowsize);
+					System.arraycopy(renderedData.newCacheZI, from_offset, renderedData.newCacheZI, to_offset, rowsize);
+					System.arraycopy(renderedData.newCacheTR, from_offset, renderedData.newCacheTR, to_offset, rowsize);
+					System.arraycopy(renderedData.newCacheTI, from_offset, renderedData.newCacheTI, to_offset, rowsize);
+					System.arraycopy(renderedData.newCacheTime, from_offset, renderedData.newCacheTime, to_offset, rowsize);
+				}
 				if (XaosConstants.SHOW_SYMETRY) {
 					for (int k = 0; k < rowsize; k++) {
 						renderedData.newRGB[to_offset + k] = Colors.mixColors(renderedData.newRGB[to_offset + k], 0xFFFF0000, 127);
 					}
 				}
 				reallocY[i].dirty = false;
+				reallocY[i].isCached = useCache;
 			}
 			to_offset += rowsize;
 			// Thread.yield();
@@ -1201,8 +1181,20 @@ public final class XaosRenderer extends MandelbrotRenderer {
 				to_offset = i;
 				from_offset = reallocX[i].symTo;
 				final int[] newRGB = renderedData.newRGB;
+				final double[] newCacheZR = renderedData.newCacheZR;
+				final double[] newCacheZI = renderedData.newCacheZI;
+				final double[] newCacheTR = renderedData.newCacheTR;
+				final double[] newCacheTI = renderedData.newCacheTI;
+				final int[] newCacheTime = renderedData.newCacheTime;
 				for (j = 0; j < reallocY.length; j++) {
 					newRGB[to_offset] = newRGB[from_offset];
+					if (useCache) {
+						newCacheZR[to_offset] = newCacheZR[from_offset];
+						newCacheZI[to_offset] = newCacheZI[from_offset];
+						newCacheTR[to_offset] = newCacheTR[from_offset];
+						newCacheTI[to_offset] = newCacheTI[from_offset];
+						newCacheTime[to_offset] = newCacheTime[from_offset];
+					}
 					if (XaosConstants.SHOW_SYMETRY) {
 						newRGB[to_offset] = Colors.mixColors(newRGB[to_offset], 0xFFFF0000, 127);
 					}
@@ -1210,17 +1202,18 @@ public final class XaosRenderer extends MandelbrotRenderer {
 					from_offset += rowsize;
 				}
 				reallocX[i].dirty = false;
+				reallocX[i].isCached = useCache;
 			}
 			// Thread.yield();
 		}
 	}
-
-	private void doMove(final Movetable movetable, final Realloc[] reallocY) {
+	
+	private void doMove(final XaosChunkTable movetable, final XaosRealloc[] reallocY) {
 		if (XaosConstants.DUMP) {
-			MandelbrotRenderer.logger.fine("Do move...");
+			logger.fine("Do move...");
 		}
-		final Movetable.Data[] table = movetable.data;
-		Movetable.Data tmpData = null;
+		final XaosChunk[] table = movetable.data;
+		XaosChunk tmpData = null;
 		final int rowsize = getBufferWidth();
 		int new_offset = 0;
 		int old_offset = 0;
@@ -1236,6 +1229,13 @@ public final class XaosRenderer extends MandelbrotRenderer {
 					from = old_offset + tmpData.from;
 					to = new_offset + tmpData.to;
 					System.arraycopy(renderedData.oldRGB, from, renderedData.newRGB, to, tmpData.length);
+					if (useCache) {
+						System.arraycopy(renderedData.oldCacheZR, from, renderedData.newCacheZR, to, tmpData.length);
+						System.arraycopy(renderedData.oldCacheZI, from, renderedData.newCacheZI, to, tmpData.length);
+						System.arraycopy(renderedData.oldCacheTR, from, renderedData.newCacheTR, to, tmpData.length);
+						System.arraycopy(renderedData.oldCacheTI, from, renderedData.newCacheTI, to, tmpData.length);
+						System.arraycopy(renderedData.oldCacheTime, from, renderedData.newCacheTime, to, tmpData.length);
+					}
 					s += 1;
 				}
 			}
@@ -1244,12 +1244,12 @@ public final class XaosRenderer extends MandelbrotRenderer {
 		}
 	}
 
-	private void doFill(final Filltable filltable, final Realloc[] reallocY) {
+	private void doFill(final XaosChunkTable filltable, final XaosRealloc[] reallocY) {
 		if (XaosConstants.DUMP) {
-			MandelbrotRenderer.logger.fine("Do fill...");
+			logger.fine("Do fill...");
 		}
-		final Filltable.Data[] table = filltable.data;
-		Filltable.Data tmpData = null;
+		final XaosChunk[] table = filltable.data;
+		XaosChunk tmpData = null;
 		final int rowsize = getBufferWidth();
 		int from_offset = 0;
 		int to_offset = 0;
@@ -1262,6 +1262,9 @@ public final class XaosRenderer extends MandelbrotRenderer {
 		int s = 0;
 		int c = 0;
 		int d = 0;
+		// double c_xr = 0;
+		// double c_xi = 0;
+		// int c_time = 0;
 		for (i = 0; i < reallocY.length; i++) {
 			if (reallocY[i].dirty) {
 				j = i - 1;
@@ -1282,19 +1285,41 @@ public final class XaosRenderer extends MandelbrotRenderer {
 					if (!reallocY[j].dirty) {
 						s = 0;
 						final int[] newRGB = renderedData.newRGB;
+						// final double[] newCacheR = renderedData.newCacheR;
+						// final double[] newCacheI = renderedData.newCacheI;
+						// final int[] newCacheTime = renderedData.newCacheTime;
 						while ((tmpData = table[s]).length > 0) {
 							from = from_offset + tmpData.from;
 							to = from_offset + tmpData.to;
 							c = newRGB[from];
+							// if (useCache)
+							// {
+							// c_xr = newCacheR[from];
+							// c_xi = newCacheI[from];
+							// c_time = newCacheTime[from];
+							// }
 							for (t = 0; t < tmpData.length; t++) {
 								d = to + t;
 								newRGB[d] = c;
+								// if (useCache)
+								// {
+								// newCacheR[d] = c_xr;
+								// newCacheI[d] = c_xi;
+								// newCacheTime[d] = c_time;
+								// }
 							}
 							s += 1;
 						}
 					}
 					System.arraycopy(renderedData.newRGB, from_offset, renderedData.newRGB, to_offset, rowsize);
+					// if (useCache)
+					// {
+					// System.arraycopy(renderedData.newCacheR, from_offset, renderedData.newCacheR, to_offset, rowsize);
+					// System.arraycopy(renderedData.newCacheI, from_offset, renderedData.newCacheI, to_offset, rowsize);
+					// System.arraycopy(renderedData.newCacheTime, from_offset, renderedData.newCacheTime, to_offset, rowsize);
+					// }
 					reallocY[i].position = reallocY[j].position;
+					// reallocY[i].isCached = false;
 					reallocY[i].dirty = false;
 					i += 1;
 				}
@@ -1303,697 +1328,554 @@ public final class XaosRenderer extends MandelbrotRenderer {
 				s = 0;
 				from_offset = i * rowsize;
 				final int[] newRGB = renderedData.newRGB;
+				// final double[] newCacheR = renderedData.newCacheR;
+				// final double[] newCacheI = renderedData.newCacheI;
+				// final int[] newCacheTime = renderedData.newCacheTime;
 				while ((tmpData = table[s]).length > 0) {
 					from = from_offset + tmpData.from;
 					to = from_offset + tmpData.to;
 					c = newRGB[from];
+					// if (useCache)
+					// {
+					// c_xr = newCacheR[from];
+					// c_xi = newCacheI[from];
+					// c_time = newCacheTime[from];
+					// }
 					for (t = 0; t < tmpData.length; t++) {
 						d = to + t;
 						newRGB[d] = c;
+						// if (useCache)
+						// {
+						// newCacheR[d] = c_xr;
+						// newCacheI[d] = c_xi;
+						// newCacheTime[d] = c_time;
+						// }
 					}
 					s += 1;
 				}
+				// reallocY[i].isCached = false;
 				reallocY[i].dirty = false;
 			}
 			// Thread.yield();
 		}
 	}
 
-	private void renderLine(final Realloc realloc, final Realloc[] reallocX, final Realloc[] reallocY) {
+	private void renderLine(final XaosRealloc realloc, final XaosRealloc[] reallocX, final XaosRealloc[] reallocY) {
 		if (XaosConstants.PRINT_CALCULATE) {
-			MandelbrotRenderer.logger.fine("Calculate line " + realloc.pos);
+			logger.fine("Calculate line " + realloc.pos);
 		}
 		final int rowsize = getBufferWidth();
 		final double position = realloc.position;
 		final int r = realloc.pos;
 		int offset = r * rowsize;
+		int i;
+		int j;
 		int k;
+		int n;
+		double n_zr = 0;
+		double n_zi = 0;
+		double n_tr = 0;
+		double n_ti = 0;
+		int n_time = 0;
+		int distl = 0;
+		int distr = 0;
+		int distu = 0;
+		int distd = 0;
+		int offsetu;
+		int offsetd;
+		int offsetl;
+		int offsetul;
+		int offsetur;
+		int offsetdl;
+		int offsetdr;
+		int rend = r - XaosConstants.GUESS_RANGE;
 		final Complex z = new Complex(0, 0);
 		final Complex w = new Complex(0, 0);
 		final RenderedPoint p = new RenderedPoint();
 		final int[] newRGB = renderedData.newRGB;
-		for (k = 0; k < reallocX.length; k++) {
-			if (!reallocX[k].dirty) {
-				z.r = renderedData.x0;
-				z.i = renderedData.y0;
-				w.r = reallocX[k].position;
-				w.i = position;
-				p.pr = reallocX[k].position;
-				p.pi = position;
-				newRGB[offset] = renderingStrategy.renderPoint(p, z, w);
-				if (XaosConstants.SHOW_CALCULATE) {
-					newRGB[offset] = Colors.mixColors(newRGB[offset], 0xFFFFFF00, 127);
+		final double[] newCacheZR = renderedData.newCacheZR;
+		final double[] newCacheZI = renderedData.newCacheZI;
+		final double[] newCacheTR = renderedData.newCacheTR;
+		final double[] newCacheTI = renderedData.newCacheTI;
+		final int[] newCacheTime = renderedData.newCacheTime;
+		if (rend < 0) {
+			rend = 0;
+		}
+		for (i = r - 1; (i >= rend) && reallocY[i].dirty; i--) {
+			;
+		}
+		distu = r - i;
+		rend = r + XaosConstants.GUESS_RANGE;
+		if (rend >= reallocY.length) {
+			rend = reallocY.length - 1;
+		}
+		for (j = r + 1; (j < rend) && reallocY[j].dirty; j++) {
+			;
+		}
+		distd = j - r;
+		if ((!isSolidguessSupported) || (i < 0) || (j >= reallocY.length) || reallocY[i].dirty || reallocY[j].dirty) {
+			for (k = 0; k < reallocX.length; k++) {
+				if (!reallocX[k].dirty) {
+					z.r = renderedData.x0;
+					z.i = renderedData.y0;
+					w.r = reallocX[k].position;
+					w.i = position;
+					p.pr = reallocX[k].position;
+					p.pi = position;
+					newRGB[offset] = renderingStrategy.renderPoint(p, z, w);
+					if (useCache) {
+						newCacheZR[offset] = p.zr;
+						newCacheZI[offset] = p.zi;
+						newCacheTR[offset] = p.tr;
+						newCacheTI[offset] = p.ti;
+						newCacheTime[offset] = p.time;
+					}
+					if (XaosConstants.SHOW_CALCULATE) {
+						newRGB[offset] = Colors.mixColors(newRGB[offset], 0xFFFFFF00, 127);
+					}
 				}
+				offset += 1;
 			}
-			offset += 1;
+		}
+		else {
+			distr = 0;
+			distl = Integer.MAX_VALUE / 2;
+			offsetu = offset - (distu * rowsize);
+			offsetd = offset + (distd * rowsize);
+			for (k = 0; k < reallocX.length; k++) {
+				if (!reallocX[k].dirty) {
+					if (distr <= 0) {
+						rend = k + XaosConstants.GUESS_RANGE;
+						if (rend >= reallocX.length) {
+							rend = reallocX.length - 1;
+						}
+						for (j = k + 1; (j < rend) && reallocX[j].dirty; j++) {
+							distr = j - k;
+						}
+						if (j >= rend) {
+							distr = Integer.MAX_VALUE / 2;
+						}
+					}
+					if ((distr < (Integer.MAX_VALUE / 4)) && (distl < (Integer.MAX_VALUE / 4))) {
+						offsetl = offset - distl;
+						offsetul = offsetu - distl;
+						offsetdl = offsetd - distl;
+						offsetur = offsetu + distr;
+						offsetdr = offsetd + distr;
+						n = newRGB[offsetl];
+						if (useCache) {
+							n_zr = newCacheZR[offsetl];
+							n_zi = newCacheZI[offsetl];
+							n_tr = newCacheTR[offsetu];
+							n_ti = newCacheTI[offsetu];
+							n_time = newCacheTime[offsetl];
+						}
+						if ((n == newRGB[offsetu]) && (n == newRGB[offsetd]) && (n == newRGB[offsetul]) && (n == newRGB[offsetur]) && (n == newRGB[offsetdl]) && (n == newRGB[offsetdr])) {
+							newRGB[offset] = n;
+							if (useCache) {
+								newCacheZR[offset] = n_zr;
+								newCacheZI[offset] = n_zi;
+								newCacheTR[offset] = n_tr;
+								newCacheTI[offset] = n_ti;
+								newCacheTime[offset] = n_time;
+							}
+							if (XaosConstants.SHOW_SOLIDGUESS) {
+								newRGB[offset] = Colors.mixColors(newRGB[offset], 0xFFFF0000, 127);
+							}
+						}
+						else {
+							z.r = renderedData.x0;
+							z.i = renderedData.y0;
+							w.r = reallocX[k].position;
+							w.i = position;
+							p.pr = reallocX[k].position;
+							p.pi = position;
+							newRGB[offset] = renderingStrategy.renderPoint(p, z, w);
+							if (useCache) {
+								newCacheZR[offset] = p.zr;
+								newCacheZI[offset] = p.zi;
+								newCacheTR[offset] = p.tr;
+								newCacheTI[offset] = p.ti;
+								newCacheTime[offset] = p.time;
+							}
+							if (XaosConstants.SHOW_CALCULATE) {
+								newRGB[offset] = Colors.mixColors(newRGB[offset], 0xFFFFFF00, 127);
+							}
+						}
+					}
+					else {
+						z.r = renderedData.x0;
+						z.i = renderedData.y0;
+						w.r = reallocX[k].position;
+						w.i = position;
+						p.pr = reallocX[k].position;
+						p.pi = position;
+						newRGB[offset] = renderingStrategy.renderPoint(p, z, w);
+						if (useCache) {
+							newCacheZR[offset] = p.zr;
+							newCacheZI[offset] = p.zi;
+							newCacheTR[offset] = p.tr;
+							newCacheTI[offset] = p.ti;
+							newCacheTime[offset] = p.time;
+						}
+						if (XaosConstants.SHOW_CALCULATE) {
+							newRGB[offset] = Colors.mixColors(newRGB[offset], 0xFFFFFF00, 127);
+						}
+					}
+					distl = 0;
+				}
+				offset += 1;
+				offsetu += 1;
+				offsetd += 1;
+				distr -= 1;
+				distl += 1;
+			}
 		}
 		realloc.recalculate = false;
 		realloc.refreshed = true;
 		realloc.dirty = false;
+		realloc.isCached = useCache;
 	}
 
-	private void renderColumn(final Realloc realloc, final Realloc[] reallocX, final Realloc[] reallocY) {
+	private void renderColumn(final XaosRealloc realloc, final XaosRealloc[] reallocX, final XaosRealloc[] reallocY) {
 		if (XaosConstants.PRINT_CALCULATE) {
-			MandelbrotRenderer.logger.fine("Calculate column " + realloc.pos);
+			logger.fine("Calculate column " + realloc.pos);
 		}
 		final int rowsize = getBufferWidth();
 		final double position = realloc.position;
 		final int r = realloc.pos;
 		int offset = r;
+		int rend = r - XaosConstants.GUESS_RANGE;
+		int i;
+		int j;
 		int k;
+		int n;
+		double n_zr = 0;
+		double n_zi = 0;
+		double n_tr = 0;
+		double n_ti = 0;
+		int n_time = 0;
+		int distl = 0;
+		int distr = 0;
+		int distu = 0;
+		int distd = 0;
+		int offsetl;
+		int offsetr;
+		int offsetu;
+		int offsetlu;
+		int offsetru;
+		int offsetld;
+		int offsetrd;
+		int sumu;
+		int sumd;
 		final Complex z = new Complex(0, 0);
 		final Complex w = new Complex(0, 0);
 		final RenderedPoint p = new RenderedPoint();
 		final int[] newRGB = renderedData.newRGB;
-		for (k = 0; k < reallocY.length; k++) {
-			if (!reallocY[k].dirty) {
-				z.r = renderedData.x0;
-				z.i = renderedData.y0;
-				w.r = position;
-				w.i = reallocY[k].position;
-				p.pr = position;
-				p.pi = reallocY[k].position;
-				newRGB[offset] = renderingStrategy.renderPoint(p, z, w);
-				if (XaosConstants.SHOW_CALCULATE) {
-					newRGB[offset] = Colors.mixColors(newRGB[offset], 0xFFFFFF00, 127);
+		final double[] newCacheZR = renderedData.newCacheZR;
+		final double[] newCacheZI = renderedData.newCacheZI;
+		final double[] newCacheTR = renderedData.newCacheTR;
+		final double[] newCacheTI = renderedData.newCacheTI;
+		final int[] newCacheTime = renderedData.newCacheTime;
+		if (rend < 0) {
+			rend = 0;
+		}
+		for (i = r - 1; (i >= rend) && reallocX[i].dirty; i--) {
+			;
+		}
+		distl = r - i;
+		rend = r + XaosConstants.GUESS_RANGE;
+		if (rend >= reallocX.length) {
+			rend = reallocX.length - 1;
+		}
+		for (j = r + 1; (j < rend) && reallocX[j].dirty; j++) {
+			;
+		}
+		distr = j - r;
+		if ((!isSolidguessSupported) || (i < 0) || (j >= reallocX.length) || reallocX[i].dirty || reallocX[j].dirty) {
+			for (k = 0; k < reallocY.length; k++) {
+				if (!reallocY[k].dirty) {
+					z.r = renderedData.x0;
+					z.i = renderedData.y0;
+					w.r = position;
+					w.i = reallocY[k].position;
+					p.pr = position;
+					p.pi = reallocY[k].position;
+					newRGB[offset] = renderingStrategy.renderPoint(p, z, w);
+					if (useCache) {
+						newCacheZR[offset] = p.zr;
+						newCacheZI[offset] = p.zi;
+						newCacheTR[offset] = p.tr;
+						newCacheTI[offset] = p.ti;
+						newCacheTime[offset] = p.time;
+					}
+					if (XaosConstants.SHOW_CALCULATE) {
+						newRGB[offset] = Colors.mixColors(newRGB[offset], 0xFFFFFF00, 127);
+					}
 				}
+				offset += rowsize;
 			}
-			offset += rowsize;
+		}
+		else {
+			distd = 0;
+			distu = Integer.MAX_VALUE / 2;
+			offsetl = offset - distl;
+			offsetr = offset + distr;
+			for (k = 0; k < reallocY.length; k++) {
+				if (!reallocY[k].dirty) {
+					if (distd <= 0) {
+						rend = k + XaosConstants.GUESS_RANGE;
+						if (rend >= reallocY.length) {
+							rend = reallocY.length - 1;
+						}
+						for (j = k + 1; (j < rend) && reallocY[j].dirty; j++) {
+							distd = j - k;
+						}
+						if (j >= rend) {
+							distd = Integer.MAX_VALUE / 2;
+						}
+					}
+					if ((distd < (Integer.MAX_VALUE / 4)) && (distu < (Integer.MAX_VALUE / 4))) {
+						sumu = distu * rowsize;
+						sumd = distd * rowsize;
+						offsetu = offset - sumu;
+						offsetlu = offsetl - sumu;
+						offsetru = offsetr - sumu;
+						offsetld = offsetl + sumd;
+						offsetrd = offsetr + sumd;
+						n = newRGB[offsetu];
+						if (useCache) {
+							n_zr = newCacheZR[offsetu];
+							n_zi = newCacheZI[offsetu];
+							n_tr = newCacheTR[offsetu];
+							n_ti = newCacheTI[offsetu];
+							n_time = newCacheTime[offsetu];
+						}
+						if ((n == newRGB[offsetl]) && (n == newRGB[offsetr]) && (n == newRGB[offsetlu]) && (n == newRGB[offsetru]) && (n == newRGB[offsetld]) && (n == newRGB[offsetrd])) {
+							newRGB[offset] = n;
+							if (useCache) {
+								newCacheZR[offset] = n_zr;
+								newCacheZI[offset] = n_zi;
+								newCacheTR[offset] = n_tr;
+								newCacheTI[offset] = n_ti;
+								newCacheTime[offset] = n_time;
+							}
+							if (XaosConstants.SHOW_SOLIDGUESS) {
+								newRGB[offset] = Colors.mixColors(newRGB[offset], 0xFFFF0000, 127);
+							}
+						}
+						else {
+							z.r = renderedData.x0;
+							z.i = renderedData.y0;
+							w.r = position;
+							w.i = reallocY[k].position;
+							p.pr = position;
+							p.pi = reallocY[k].position;
+							newRGB[offset] = renderingStrategy.renderPoint(p, z, w);
+							if (useCache) {
+								newCacheZR[offset] = p.zr;
+								newCacheZI[offset] = p.zi;
+								newCacheTR[offset] = p.tr;
+								newCacheTI[offset] = p.ti;
+								newCacheTime[offset] = p.time;
+							}
+							if (XaosConstants.SHOW_CALCULATE) {
+								newRGB[offset] = Colors.mixColors(newRGB[offset], 0xFFFFFF00, 127);
+							}
+						}
+					}
+					else {
+						z.r = renderedData.x0;
+						z.i = renderedData.y0;
+						w.r = position;
+						w.i = reallocY[k].position;
+						p.pr = position;
+						p.pi = reallocY[k].position;
+						newRGB[offset] = renderingStrategy.renderPoint(p, z, w);
+						if (useCache) {
+							newCacheZR[offset] = p.zr;
+							newCacheZI[offset] = p.zi;
+							newCacheTR[offset] = p.tr;
+							newCacheTI[offset] = p.ti;
+							newCacheTime[offset] = p.time;
+						}
+						if (XaosConstants.SHOW_CALCULATE) {
+							newRGB[offset] = Colors.mixColors(newRGB[offset], 0xFFFFFF00, 127);
+						}
+					}
+					distu = 0;
+				}
+				offset += rowsize;
+				offsetl += rowsize;
+				offsetr += rowsize;
+				distd -= 1;
+				distu += 1;
+			}
 		}
 		realloc.recalculate = false;
 		realloc.refreshed = true;
 		realloc.dirty = false;
+		realloc.isCached = useCache;
 	}
 
-	/**
-	 * @see com.nextbreakpoint.nextfractal.MandelbrotRenderer.core.fractal.renderer.AbstractFractalRenderer#getMandelbrotRenderingStrategy()
-	 */
+	private void refreshLine(final XaosRealloc realloc, final XaosRealloc[] reallocX, final XaosRealloc[] reallocY) {
+		if (XaosConstants.DUMP) {
+			logger.fine("Refresh line...");
+		}
+		final int rowsize = getBufferWidth();
+		int offset = realloc.pos * rowsize;
+		int k = 0;
+		final RenderedPoint p = new RenderedPoint();
+		final int[] newRGB = renderedData.newRGB;
+		final double[] newCacheZR = renderedData.newCacheZR;
+		final double[] newCacheZI = renderedData.newCacheZI;
+		final double[] newCacheTR = renderedData.newCacheTR;
+		final double[] newCacheTI = renderedData.newCacheTI;
+		final int[] newCacheTime = renderedData.newCacheTime;
+		if (realloc.isCached && !realloc.refreshed) {
+			for (final XaosRealloc tmpRealloc : reallocX) {
+				if (tmpRealloc.isCached && !tmpRealloc.refreshed) {
+					k = offset;
+					p.zr = newCacheZR[k];
+					p.zi = newCacheZI[k];
+					p.tr = newCacheTR[k];
+					p.ti = newCacheTI[k];
+					p.time = newCacheTime[k];
+					p.pr = tmpRealloc.position;
+					p.pi = realloc.position;
+					newRGB[k] = renderColor(p);
+					if (XaosConstants.SHOW_REFRESH) {
+						newRGB[k] = Colors.mixColors(newRGB[k], 0xFF0000FF, 127);
+					}
+				}
+				offset += 1;
+			}
+			realloc.refreshed = true;
+		}
+	}
+
+	private void refreshColumn(final XaosRealloc realloc, final XaosRealloc[] reallocX, final XaosRealloc[] reallocY) {
+		if (XaosConstants.DUMP) {
+			logger.fine("Refresh column...");
+		}
+		final int rowsize = getBufferWidth();
+		int offset = realloc.pos;
+		int k = 0;
+		final RenderedPoint p = new RenderedPoint();
+		final int[] newRGB = renderedData.newRGB;
+		final double[] newCacheZR = renderedData.newCacheZR;
+		final double[] newCacheZI = renderedData.newCacheZI;
+		final double[] newCacheTR = renderedData.newCacheTR;
+		final double[] newCacheTI = renderedData.newCacheTI;
+		final int[] newCacheTime = renderedData.newCacheTime;
+		if (realloc.isCached && !realloc.refreshed) {
+			for (final XaosRealloc tmpRealloc : reallocY) {
+				if (tmpRealloc.isCached && !tmpRealloc.refreshed) {
+					k = offset;
+					p.zr = newCacheZR[k];
+					p.zi = newCacheZI[k];
+					p.tr = newCacheTR[k];
+					p.ti = newCacheTI[k];
+					p.time = newCacheTime[k];
+					p.pr = realloc.position;
+					p.pi = tmpRealloc.position;
+					newRGB[k] = renderColor(p);
+					if (XaosConstants.SHOW_REFRESH) {
+						newRGB[k] = Colors.mixColors(newRGB[k], 0xFF0000FF, 127);
+					}
+				}
+				offset += rowsize;
+			}
+			realloc.refreshed = true;
+		}
+	}
+
+	private int renderColor(RenderedPoint p) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	private RenderBuffer getRenderBuffer() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	private int getBufferWidth() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	private int getBufferHeight() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	private void update() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private boolean isHorizontalSymetrySupported() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	private boolean isVerticalSymetrySupported() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	private boolean isSolidGuessSupported() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 	@Override
-	protected RenderingStrategy getMandelbrotRenderingStrategy() {
-		return mandelbrotRenderingStrategy;
+	public boolean isInterrupted() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
-	/**
-	 * @see com.nextbreakpoint.nextfractal.MandelbrotRenderer.core.fractal.renderer.AbstractFractalRenderer#createJuliaRenderingStrategy()
-	 */
 	@Override
-	protected RenderingStrategy getJuliaRenderingStrategy() {
-		return juliaRenderingStrategy;
+	public void start() {
+		// prepareLinesWorker.start();
+		// prepareColumnsWorker.start();
+//		renderWorker2.start();
 	}
 
-	/**
-	 * @author Andrea Medeghini
-	 */
-	public static class Movetable {
-		/**
-		 * 
-		 */
-		public Data[] data;
-
-		/**
-		 * @param width
-		 */
-		public Movetable(final int width) {
-			data = new Data[width + 1];
-			for (int i = 0; i <= width; i++) {
-				data[i] = new Data();
-			}
-		}
-
-		/**
-		 * @see java.lang.Object#finalize()
-		 */
-		@Override
-		public void finalize() throws Throwable {
-			data = null;
-			super.finalize();
-		}
-
-		/**
-		 * @author Andrea Medeghini
-		 */
-		public class Data {
-			int length;
-			int from;
-			int to;
-
-			/**
-			 * @see java.lang.Object#toString()
-			 */
-			@Override
-			public String toString() {
-				return "<from = " + from + ", to = " + to + ", length = " + length + ">";
-			}
-		}
+	@Override
+	public void stop() {
+		// prepareLinesWorker.stop();
+		// prepareColumnsWorker.stop();
+//		renderWorker2.stop();
 	}
 
-	/**
-	 * @author Andrea Medeghini
-	 */
-	public static class Filltable {
-		/**
-		 * 
-		 */
-		public Data[] data;
-
-		/**
-		 * @param width
-		 */
-		public Filltable(final int width) {
-			data = new Data[width + 1];
-			for (int i = 0; i <= width; i++) {
-				data[i] = new Data();
-			}
-		}
-
-		/**
-		 * @see java.lang.Object#finalize()
-		 */
-		@Override
-		public void finalize() throws Throwable {
-			data = null;
-			super.finalize();
-		}
-
-		/**
-		 * @author Andrea Medeghini
-		 */
-		public class Data {
-			int length;
-			int from;
-			int to;
-
-			/**
-			 * @see java.lang.Object#toString()
-			 */
-			@Override
-			public String toString() {
-				return "<from = " + from + ", to = " + to + ", length = " + length + ">";
-			}
-		}
+	@Override
+	public void join() {
+		// TODO Auto-generated method stub
+		
 	}
 
-	/**
-	 * @author Andrea Medeghini
-	 */
-	public static class Dynamic {
-		/**
-		 * 
-		 */
-		public int[] delta;
-		/**
-		 * 
-		 */
-		public Data[] oldBest;
-		/**
-		 * 
-		 */
-		public Data[] newBest;
-		/**
-		 * 
-		 */
-		public Data[] calData;
-		/**
-		 * 
-		 */
-		public Data[] conData;
-
-		/**
-		 * @param size
-		 */
-		public Dynamic(final int size) {
-			delta = new int[size + 1];
-			oldBest = new Data[size];
-			newBest = new Data[size];
-			calData = new Data[size];
-			conData = new Data[size << XaosConstants.DSIZE];
-			for (int i = 0; i < size; i++) {
-				calData[i] = new Data();
-			}
-			for (int i = 0; i < (size << XaosConstants.DSIZE); i++) {
-				conData[i] = new Data();
-			}
-		}
-
-		/**
-		 * @see java.lang.Object#finalize()
-		 */
-		@Override
-		public void finalize() throws Throwable {
-			oldBest = null;
-			newBest = null;
-			calData = null;
-			conData = null;
-			super.finalize();
-		}
-
-		/**
-		 * 
-		 */
-		public void swap() {
-			final Dynamic.Data[] tmp_best = newBest;
-			newBest = oldBest;
-			oldBest = tmp_best;
-		}
-
-		/**
-		 * @author Andrea Medeghini
-		 */
-		public class Data {
-			Data previous;
-			int pos;
-			int price;
-
-			/**
-			 * @see java.lang.Object#toString()
-			 */
-			@Override
-			public String toString() {
-				return "<price = " + price + ", pos = " + pos + ">";
-			}
-		}
+	@Override
+	public void dispose() {
+		// TODO Auto-generated method stub
+		
 	}
 
-	/**
-	 * @author Andrea Medeghini
-	 */
-	public static class Realloc {
-		/**
-		 * 
-		 */
-		public boolean refreshed;
-		/**
-		 * 
-		 */
-		public boolean recalculate;
-		/**
-		 * 
-		 */
-		public boolean changeDirty;
-		/**
-		 * 
-		 */
-		public boolean dirty;
-		/**
-		 * 
-		 */
-		public boolean line;
-		/**
-		 * 
-		 */
-		public int pos;
-		/**
-		 * 
-		 */
-		public int plus;
-		/**
-		 * 
-		 */
-		public int symTo;
-		/**
-		 * 
-		 */
-		public int symRef;
-		/**
-		 * 
-		 */
-		public double changePosition;
-		/**
-		 * 
-		 */
-		public double position;
-		/**
-		 * 
-		 */
-		public double priority;
-
-		/**
-		 * @param line
-		 */
-		public Realloc(final boolean line) {
-			this.line = line;
-		}
-
-		/**
-		 * @see java.lang.Object#toString()
-		 */
-		@Override
-		public String toString() {
-			return "<pos = " + pos + ", symref = " + symRef + ", symto = " + symTo + ", plus = " + plus + ", dirty = " + dirty + ", recalculate = " + recalculate + ", line = " + line + ", priority = " + priority + ", position = " + position + ">";
-		}
-	}
-
-	/**
-	 * @author Andrea Medeghini
-	 */
-	public static class RendererData {
-		/**
-		 * 
-		 */
-		public BufferedImage newBuffer;
-		/**
-		 * 
-		 */
-		public BufferedImage oldBuffer;
-		/**
-		 * 
-		 */
-		public int[] newRGB;
-		/**
-		 * 
-		 */
-		public int[] oldRGB;
-		/**
-		 * 
-		 */
-		public double[] positionX;
-		/**
-		 * 
-		 */
-		public double[] positionY;
-		/**
-		 * 
-		 */
-		public Realloc[] reallocX;
-		/**
-		 * 
-		 */
-		public Realloc[] reallocY;
-		/**
-		 * 
-		 */
-		public Dynamic dynamicx;
-		/**
-		 * 
-		 */
-		public Dynamic dynamicy;
-		/**
-		 * 
-		 */
-		public Movetable moveTable;
-		/**
-		 * 
-		 */
-		public Filltable fillTable;
-		/**
-		 * 
-		 */
-		public Realloc[] queue;
-		/**
-		 * 
-		 */
-		public double x0 = 0;
-		/**
-		 * 
-		 */
-		public double y0 = 0;
-		/**
-		 * 
-		 */
-		public long newTime;
-		/**
-		 * 
-		 */
-		public long oldTime;
-		/**
-		 * 
-		 */
-		public final int[] position = new int[XaosConstants.STEPS];
-		/**
-		 * 
-		 */
-		public final int[] offset = new int[XaosConstants.STEPS];
-
-		/**
-		 * @see java.lang.Object#finalize()
-		 */
-		@Override
-		public void finalize() throws Throwable {
-			free();
-			super.finalize();
-		}
-
-		/**
-		 * 
-		 */
-		public void free() {
-			positionX = null;
-			positionY = null;
-			reallocX = null;
-			reallocY = null;
-			dynamicx = null;
-			dynamicy = null;
-			moveTable = null;
-			fillTable = null;
-			queue = null;
-			if (newBuffer != null) {
-				newBuffer.flush();
-			}
-			newBuffer = null;
-			newRGB = null;
-			if (oldBuffer != null) {
-				oldBuffer.flush();
-			}
-			oldBuffer = null;
-			oldRGB = null;
-		}
-
-		/**
-		 * @param width
-		 * @param height
-		 */
-		public void reallocate(final int width, final int height) {
-			positionX = new double[width];
-			positionY = new double[height];
-			reallocX = new Realloc[width];
-			reallocY = new Realloc[height];
-			dynamicx = new Dynamic(width);
-			dynamicy = new Dynamic(height);
-			moveTable = new Movetable(width);
-			fillTable = new Filltable(width);
-			queue = new Realloc[reallocX.length + reallocY.length];
-			for (int i = 0; i < width; i++) {
-				reallocX[i] = new Realloc(false);
-				reallocX[i].pos = i;
-				positionX[i] = 0;
-			}
-			for (int i = 0; i < height; i++) {
-				reallocY[i] = new Realloc(true);
-				reallocY[i].pos = i;
-				positionY[i] = 0;
-			}
-			newBuffer = new BufferedImage(width, height, Surface.DEFAULT_TYPE);
-			newRGB = ((DataBufferInt) newBuffer.getRaster().getDataBuffer()).getData();
-			oldBuffer = new BufferedImage(width, height, Surface.DEFAULT_TYPE);
-			oldRGB = ((DataBufferInt) oldBuffer.getRaster().getDataBuffer()).getData();
-		}
-
-		/**
-		 * 
-		 */
-		public void swap() {
-			final int[] tmpRGB = oldRGB;
-			final BufferedImage tmpBuffer = oldBuffer;
-			oldRGB = newRGB;
-			oldBuffer = newBuffer;
-			newRGB = tmpRGB;
-			newBuffer = tmpBuffer;
-		}
-	}
-
-	private class MandelbrotRenderingStrategy implements RenderingStrategy {
-		/**
-		 * @see com.nextbreakpoint.nextfractal.MandelbrotRenderer.renderer.AbstractMandelbrotRenderer.RenderingStrategy#isVerticalSymetrySupported()
-		 */
-		@Override
-		public boolean isVerticalSymetrySupported() {
-//			for (int i = 0; i < fractalRuntime.getOutcolouringFormulaCount(); i++) {
-//				final OutcolouringFormulaRuntimeElement outcolouringFormula = fractalRuntime.getOutcolouringFormula(i);
-//				if ((outcolouringFormula.getFormulaRuntime() != null) && !outcolouringFormula.getFormulaRuntime().isVerticalSymetryAllowed()) {
-//					return false;
-//				}
-//			}
-//			for (int i = 0; i < fractalRuntime.getIncolouringFormulaCount(); i++) {
-//				final IncolouringFormulaRuntimeElement incolouringFormula = fractalRuntime.getIncolouringFormula(i);
-//				if ((incolouringFormula.getFormulaRuntime() != null) && !incolouringFormula.getFormulaRuntime().isVerticalSymetryAllowed()) {
-//					return false;
-//				}
-//			}
-			return true;
-		}
-
-		/**
-		 * @see com.nextbreakpoint.nextfractal.MandelbrotRenderer.renderer.AbstractMandelbrotRenderer.RenderingStrategy#isHorizontalSymetrySupported()
-		 */
-		@Override
-		public boolean isHorizontalSymetrySupported() {
-//			for (int i = 0; i < fractalRuntime.getOutcolouringFormulaCount(); i++) {
-//				final OutcolouringFormulaRuntimeElement outcolouringFormula = fractalRuntime.getOutcolouringFormula(i);
-//				if ((outcolouringFormula.getFormulaRuntime() != null) && !outcolouringFormula.getFormulaRuntime().isHorizontalSymetryAllowed()) {
-//					return false;
-//				}
-//			}
-//			for (int i = 0; i < fractalRuntime.getIncolouringFormulaCount(); i++) {
-//				final IncolouringFormulaRuntimeElement incolouringFormula = fractalRuntime.getIncolouringFormula(i);
-//				if ((incolouringFormula.getFormulaRuntime() != null) && !incolouringFormula.getFormulaRuntime().isHorizontalSymetryAllowed()) {
-//					return false;
-//				}
-//			}
-			return true;
-		}
-
-		/**
-		 * @see com.nextbreakpoint.nextfractal.MandelbrotRenderer.renderer.AbstractMandelbrotRenderer.RenderingStrategy#renderPoint(com.nextbreakpoint.nextfractal.mandelbrot.renderer.RenderedPoint)
-		 */
-		@Override
-		public int renderPoint(final RenderedPoint p, final Complex px, final Complex pw) {
-//			if ((fractalRuntime.getRenderingFormula().getFormulaRuntime() != null) && (fractalRuntime.getTransformingFormula().getFormulaRuntime() != null)) {
-//				fractalRuntime.getTransformingFormula().getFormulaRuntime().renderPoint(pw);
-//				p.xr = px.r;
-//				p.xi = px.i;
-//				p.wr = pw.r;
-//				p.wi = pw.i;
-//				p.dr = 0;
-//				p.di = 0;
-//				p.tr = 0;
-//				p.ti = 0;
-//				return XaosRenderer.this.renderPoint(p);
-//			}
-			return 0;
-		}
-
-		/**
-		 * @see com.nextbreakpoint.nextfractal.MandelbrotRenderer.renderer.AbstractMandelbrotRenderer.RenderingStrategy#updateParameters()
-		 */
-		@Override
-		public void updateParameters() {
-//			if (fractalRuntime.getRenderingFormula().getFormulaRuntime() != null) {
-//				renderedData.x0 = fractalRuntime.getRenderingFormula().getFormulaRuntime().getInitialPoint().r;
-//				renderedData.y0 = fractalRuntime.getRenderingFormula().getFormulaRuntime().getInitialPoint().i;
-//			}
-//			else {
-//				renderedData.x0 = 0;
-//				renderedData.y0 = 0;
-//			}
-		}
-	}
-
-	private class JuliaRenderingStrategy implements RenderingStrategy {
-		/**
-		 * @see com.nextbreakpoint.nextfractal.MandelbrotRenderer.renderer.AbstractMandelbrotRenderer.RenderingStrategy#isHorizontalSymetrySupported()
-		 */
-		@Override
-		public boolean isHorizontalSymetrySupported() {
-			return false;
-		}
-
-		/**
-		 * @see com.nextbreakpoint.nextfractal.MandelbrotRenderer.renderer.AbstractMandelbrotRenderer.RenderingStrategy#isVerticalSymetrySupported()
-		 */
-		@Override
-		public boolean isVerticalSymetrySupported() {
-			return false;
-		}
-
-		/**
-		 * @see com.nextbreakpoint.nextfractal.MandelbrotRenderer.renderer.AbstractMandelbrotRenderer.RenderingStrategy#renderPoint(com.nextbreakpoint.nextfractal.mandelbrot.renderer.RenderedPoint)
-		 */
-		@Override
-		public int renderPoint(final RenderedPoint p, final Complex px, final Complex pw) {
-//			if ((fractalRuntime.getRenderingFormula().getFormulaRuntime() != null) && (fractalRuntime.getTransformingFormula().getFormulaRuntime() != null)) {
-//				fractalRuntime.getTransformingFormula().getFormulaRuntime().renderPoint(px);
-//				p.xr = pw.r;
-//				p.xi = pw.i;
-//				p.wr = px.r;
-//				p.wi = px.i;
-//				p.dr = 0;
-//				p.di = 0;
-//				p.tr = 0;
-//				p.ti = 0;
-//				return XaosRenderer.this.renderPoint(p);
-//			}
-			return 0;
-		}
-
-		/**
-		 * @see com.nextbreakpoint.nextfractal.MandelbrotRenderer.renderer.AbstractMandelbrotRenderer.RenderingStrategy#updateParameters()
-		 */
-		@Override
-		public void updateParameters() {
-			renderedData.x0 = oldConstant.getX();
-			renderedData.y0 = oldConstant.getY();
-		}
-	}
-
-	private class MandelbrotWorker2 extends RenderWorker {
-		/**
-		 * 
-		 */
-		public MandelbrotWorker2() {
-			super(factory);
-		}
-
-		/**
-		 * 
-		 */
-		@Override
-		protected void execute() {
-			prepareColumns();
-		}
-	}
-	// private class PrepareLinesWorker extends RenderWorker {
-	// /**
-	// *
-	// */
-	// public PrepareLinesWorker() {
-	// super(factory);
-	// }
-	//
-	// /**
-	// * @param runnable
-	// * @return
-	// */
-	// @Override
-	// protected Thread createThread(final Runnable runnable) {
-	// Thread thread = super.createThread(runnable);
-	// thread.setName("PrepareLinesWorker");
-	// return thread;
-	// }
-	//
-	// /**
-	// *
-	// */
-	// @Override
-	// protected void execute() {
-	// prepareLines();
-	// }
-	// }
-	//
-	// private class PrepareColumnsWorker extends RenderWorker {
-	// /**
-	// *
-	// */
-	// public PrepareColumnsWorker() {
-	// super(factory);
-	// }
-	//
-	// /**
-	// * @param runnable
-	// * @return
-	// */
-	// @Override
-	// protected Thread createThread(final Runnable runnable) {
-	// Thread thread = super.createThread(runnable);
-	// thread.setName("PrepareColumnsWorker");
-	// return thread;
-	// }
-	//
-	// /**
-	// *
-	// */
-	// @Override
-	// protected void execute() {
-	// prepareColumns();
-	// }
-	// }
+//	private class MandelbrotWorker2 extends RenderWorker {
+//		/**
+//		 * 
+//		 */
+//		public MandelbrotWorker2() {
+//			super(factory);
+//		}
+//
+//		/**
+//		 * 
+//		 */
+//		@Override
+//		protected void execute() {
+//			prepareColumns();
+//		}
+//	}
 }

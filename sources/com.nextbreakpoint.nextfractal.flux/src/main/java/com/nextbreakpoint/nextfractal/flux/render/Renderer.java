@@ -25,141 +25,17 @@
  */
 package com.nextbreakpoint.nextfractal.flux.render;
 
-import java.util.Map;
-
-import com.nextbreakpoint.nextfractal.core.util.DoubleVector2D;
-import com.nextbreakpoint.nextfractal.core.util.Tile;
-
 /**
  * @author Andrea Medeghini
  */
 public interface Renderer {
-	/**
-	 * 
-	 */
 	public static final int MODE_CALCULATE = 0x01;
-	/**
-	 * 
-	 */
 	public static final int MODE_REFRESH = 0x02;
-
-	/**
-	 * @param gc
-	 */
-	public void drawImage(RenderGraphicsContext gc);
-
-	/**
-	 * @param gc
-	 * @param x
-	 * @param y
-	 */
-	public void drawImage(RenderGraphicsContext gc, int x, int y);
-
-	/**
-	 * @param gc
-	 * @param x
-	 * @param y
-	 * @param w
-	 * @param h
-	 */
-	public void drawImage(RenderGraphicsContext gc, int x, int y, int w, int h);
-
-	/**
-	 * 
-	 */
-	public void startRenderer();
-
-	/**
-	 * 
-	 */
-	public void abortRenderer();
-
-	/**
-	 * @throws InterruptedException
-	 */
-	public void joinRenderer() throws InterruptedException;
 
 	/**
 	 * @return true if is interrupted.
 	 */
 	public boolean isInterrupted();
-
-	/**
-	 * @return the status.
-	 */
-	public int getRenderingStatus();
-
-	/**
-	 * @param mode
-	 */
-	public void setMode(int mode);
-
-	/**
-	 * @return
-	 */
-	public int getMode();
-
-	/**
-	 * @param hints
-	 */
-	public void setRenderingHints(Map<Object, Object> hints);
-
-//	/**
-//	 * @param view
-//	 */
-//	public void setView(View view);
-//
-//	/**
-//	 * @param view
-//	 * @param constant
-//	 * @param imageMode
-//	 */
-//	public void setView(final View view, final DoubleVector2D constant, final int imageMode);
-
-	/**
-	 * @param tile
-	 */
-	public void setTile(Tile tile);
-
-	/**
-	 * @return
-	 */
-	public Tile getTile();
-
-	/**
-	 * @return
-	 */
-	public abstract RenderFactory getRenderFactory();
-	
-	/**
-	 * @param renderFactory
-	 */
-	public abstract void setRenderFactory(RenderFactory renderFactory);
-
-	/**
-	 * @param mode
-	 */
-	public void setMandelbrotMode(Integer mode);
-
-	/**
-	 * @param constant
-	 */
-	public void setConstant(DoubleVector2D constant);
-
-	/**
-	 * @return
-	 */
-	public boolean isDynamic();
-
-	/**
-	 * @return
-	 */
-	public boolean isViewChanged();
-
-	/**
-	 * 
-	 */
-	public void dispose();
 
 	/**
 	 * 
@@ -174,10 +50,10 @@ public interface Renderer {
 	/**
 	 * 
 	 */
-	public void asyncStart();
-
+	public void join();
+	
 	/**
 	 * 
 	 */
-	public void asyncStop();
+	public void dispose();
 }

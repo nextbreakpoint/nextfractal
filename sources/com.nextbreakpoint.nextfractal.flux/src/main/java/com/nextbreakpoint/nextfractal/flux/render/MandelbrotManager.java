@@ -25,7 +25,6 @@
  */
 package com.nextbreakpoint.nextfractal.flux.render;
 
-import java.util.Map;
 import java.util.concurrent.ThreadFactory;
 import java.util.logging.Logger;
 
@@ -39,48 +38,48 @@ import com.nextbreakpoint.nextfractal.core.util.Tile;
 /**
  * @author Andrea Medeghini
  */
-public abstract class MandelbrotRenderer implements Renderer {
+public abstract class MandelbrotManager implements Manager {
+	protected static final Logger logger = Logger.getLogger(MandelbrotManager.class.getName());
 	public static final int STATUS_RENDERING = 0x01;
 	public static final int STATUS_TERMINATED = 0x02;
 	public static final int STATUS_ABORTED = 0x03;
-	protected static final Logger logger = Logger.getLogger(MandelbrotRenderer.class.getName());
 	private RenderBuffer newBuffer;
 	private RenderBuffer oldBuffer;
-	private IntegerVector2D bufferSize;
 	private Tile newTile;
 	private Tile oldTile;
-	private int imageDim;
-	private int tileDim;
 	protected int newShiftValue;
 	protected int oldShiftValue;
-	protected double rotationValue;
 	protected DoubleVector2D newConstant;
 	protected DoubleVector2D oldConstant;
-	protected int renderMode = Renderer.MODE_CALCULATE;
-	protected int newImageMode = 0;
-	protected int oldImageMode = 0;
-	private boolean dynamic = false;
-	private boolean dynamicZoom = false;
-	private RenderAffine affine;
-	protected final Complex[] points = new Complex[] { new Complex(0, 0), new Complex(0, 0) };
-	protected RenderingStrategy renderingStrategy;
-	private final Complex center = new Complex();
-	private final Complex scale = new Complex();
 //	protected View newView = new View(new IntegerVector4D(0, 0, 0, 0), new DoubleVector4D(0, 0, 1, 0), new DoubleVector4D(0, 0, 0, 0));
 //	protected View oldView = new View(new IntegerVector4D(0, 0, 0, 0), new DoubleVector4D(0, 0, 1, 0), new DoubleVector4D(0, 0, 0, 0));
+	protected int newImageMode = 0;
+	protected int oldImageMode = 0;
+	protected double rotationValue;
+	private IntegerVector2D bufferSize;
+	private int imageDim;
+	private int tileDim;
+	private boolean dynamic = false;
+	private boolean dynamicZoom = false;
+	protected int renderMode = Renderer.MODE_CALCULATE;
+	protected final Complex[] points = new Complex[] { new Complex(0, 0), new Complex(0, 0) };
+	private final Complex center = new Complex();
+	private final Complex scale = new Complex();
+	private RenderAffine affine;
 	protected int percent = 100;
 	protected int status = STATUS_TERMINATED;
+	private boolean viewChanged;
+	private boolean invalidated;
+	protected RenderStrategy renderingStrategy;
 	private final MandelbrotWorker renderWorker;
 	private RenderFactory renderFactory;
 	protected final ThreadFactory factory;
-	private boolean viewChanged;
-	private boolean invalidated;
 	private final Object lock = new Object();
 
 	/**
 	 * @param threadPriority
 	 */
-	public MandelbrotRenderer(final int threadPriority) {
+	public MandelbrotManager(final int threadPriority) {
 		factory = new DefaultThreadFactory("MandelbrotRendererWorker", true, threadPriority);
 		renderWorker = new MandelbrotWorker(factory);
 	}
@@ -104,39 +103,9 @@ public abstract class MandelbrotRenderer implements Renderer {
 	/**
 	 * 
 	 */
-	public void startTasks() {
-		renderWorker.executeTask();
-	}
-
-	/**
-	 * 
-	 */
-	public void clearTasks() {
-		renderWorker.clearTasks();
-	}
-
-	/**
-	 * 
-	 */
-	public void abortTasks() {
-		renderWorker.abortTasks();
-	}
-
-	/**
-	 * @see com.nextbreakpoint.nextfractal.flux.render.Renderer.renderer.MandelbrotRenderer#asyncStop()
-	 */
 	@Override
-	public final void asyncStop() {
-		clearTasks();
-		abortTasks();
-	}
-
-	/**
-	 * @see com.nextbreakpoint.nextfractal.flux.render.Renderer.renderer.MandelbrotRenderer#asyncStart()
-	 */
-	@Override
-	public final void asyncStart() {
-		startTasks();
+	public void join() {
+		renderWorker.join();
 	}
 
 	/**
@@ -151,7 +120,7 @@ public abstract class MandelbrotRenderer implements Renderer {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.flux.render.Renderer.renderer.MandelbrotRenderer#dispose()
+	 * @see com.nextbreakpoint.nextfractal.flux.render.Renderer.renderer.MandelbrotManager#dispose()
 	 */
 	@Override
 	public final void dispose() {
@@ -195,7 +164,7 @@ public abstract class MandelbrotRenderer implements Renderer {
 //	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.flux.render.Renderer.renderer.MandelbrotRenderer#isDynamic()
+	 * @see com.nextbreakpoint.nextfractal.flux.render.Renderer.renderer.MandelbrotManager#isDynamic()
 	 */
 	@Override
 	public boolean isDynamic() {
@@ -205,7 +174,7 @@ public abstract class MandelbrotRenderer implements Renderer {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.flux.render.Renderer.renderer.MandelbrotRenderer#isViewChanged()
+	 * @see com.nextbreakpoint.nextfractal.flux.render.Renderer.renderer.MandelbrotManager#isViewChanged()
 	 */
 	@Override
 	public boolean isViewChanged() {
@@ -252,14 +221,7 @@ public abstract class MandelbrotRenderer implements Renderer {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.flux.render.Renderer.renderer.MandelbrotRenderer#setRenderingHints(java.util.Map)
-	 */
-	@Override
-	public void setRenderingHints(final Map<Object, Object> hints) {
-	}
-
-	/**
-	 * @see com.nextbreakpoint.nextfractal.flux.render.Renderer.renderer.MandelbrotRenderer#setMode(int)
+	 * @see com.nextbreakpoint.nextfractal.flux.render.Renderer.renderer.MandelbrotManager#setMode(int)
 	 */
 	@Override
 	public void setMode(final int renderMode) {
@@ -267,35 +229,11 @@ public abstract class MandelbrotRenderer implements Renderer {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.flux.render.Renderer.renderer.MandelbrotRenderer#getMode()
+	 * @see com.nextbreakpoint.nextfractal.flux.render.Renderer.renderer.MandelbrotManager#getMode()
 	 */
 	@Override
 	public int getMode() {
 		return renderMode;
-	}
-
-	/**
-	 * @see com.nextbreakpoint.nextfractal.flux.render.Renderer.renderer.MandelbrotRenderer#startRenderer()
-	 */
-	@Override
-	public void startRenderer() {
-		renderWorker.executeTask();
-	}
-
-	/**
-	 * @see com.nextbreakpoint.nextfractal.flux.render.Renderer.renderer.MandelbrotRenderer#abortRenderer()
-	 */
-	@Override
-	public void abortRenderer() {
-		renderWorker.abortTasks();
-	}
-
-	/**
-	 * @see com.nextbreakpoint.nextfractal.flux.render.Renderer.renderer.MandelbrotRenderer#joinRenderer()
-	 */
-	@Override
-	public void joinRenderer() throws InterruptedException {
-		renderWorker.waitTasks();
 	}
 
 	private void render() {
@@ -346,7 +284,7 @@ public abstract class MandelbrotRenderer implements Renderer {
 			}
 		}
 		if (oldImageMode == 0) {
-			renderingStrategy = getMandelbrotRenderingStrategy();
+//			renderingStrategy = getMandelbrotRenderingStrategy();
 //			if ((fractalRuntime.getRenderingFormula() != null) && (fractalRuntime.getRenderingFormula().getFormulaRuntime() != null) && !fractalRuntime.getRenderingFormula().getFormulaRuntime().isMandelbrotModeAllowed()) {
 //				status = TwisterRenderer.STATUS_TERMINATED;
 //				newBuffer.clear();
@@ -355,7 +293,7 @@ public abstract class MandelbrotRenderer implements Renderer {
 //			}
 		}
 		else {
-			renderingStrategy = getJuliaRenderingStrategy();
+//			renderingStrategy = getJuliaRenderingStrategy();
 		}
 		percent = 0;
 		status = STATUS_RENDERING;
@@ -370,7 +308,7 @@ public abstract class MandelbrotRenderer implements Renderer {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.flux.render.Renderer.renderer.MandelbrotRenderer#getRenderingStatus()
+	 * @see com.nextbreakpoint.nextfractal.flux.render.Renderer.renderer.MandelbrotManager#getRenderingStatus()
 	 */
 	@Override
 	public int getRenderingStatus() {
@@ -378,7 +316,7 @@ public abstract class MandelbrotRenderer implements Renderer {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.flux.render.Renderer.renderer.MandelbrotRenderer#setTile(com.nextbreakpoint.nextfractal.core.util.Tile)
+	 * @see com.nextbreakpoint.nextfractal.flux.render.Renderer.renderer.MandelbrotManager#setTile(com.nextbreakpoint.nextfractal.core.util.Tile)
 	 */
 	@Override
 	public void setTile(final Tile tile) {
@@ -389,7 +327,7 @@ public abstract class MandelbrotRenderer implements Renderer {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.flux.render.Renderer.renderer.MandelbrotRenderer#getTile()
+	 * @see com.nextbreakpoint.nextfractal.flux.render.Renderer.renderer.MandelbrotManager#getTile()
 	 */
 	@Override
 	public Tile getTile() {
@@ -397,7 +335,7 @@ public abstract class MandelbrotRenderer implements Renderer {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.flux.render.Renderer.renderer.MandelbrotRenderer#getRenderFactory()
+	 * @see com.nextbreakpoint.nextfractal.flux.render.Renderer.renderer.MandelbrotManager#getRenderFactory()
 	 */
 	@Override
 	public RenderFactory getRenderFactory() {
@@ -405,7 +343,7 @@ public abstract class MandelbrotRenderer implements Renderer {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.flux.render.Renderer.renderer.MandelbrotRenderer#setRenderFactory(com.nextbreakpoint.nextfractal.twister.renderer.RenderFactory)
+	 * @see com.nextbreakpoint.nextfractal.flux.render.Renderer.renderer.MandelbrotManager#setRenderFactory(com.nextbreakpoint.nextfractal.twister.renderer.RenderFactory)
 	 */
 	@Override
 	public void setRenderFactory(RenderFactory renderFactory) {
@@ -427,7 +365,7 @@ public abstract class MandelbrotRenderer implements Renderer {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.flux.render.Renderer.renderer.MandelbrotRenderer#setMandelbrotMode(boolean)
+	 * @see com.nextbreakpoint.nextfractal.flux.render.Renderer.renderer.MandelbrotManager#setMandelbrotMode(boolean)
 	 */
 	@Override
 	public void setMandelbrotMode(final Integer mode) {
@@ -437,7 +375,7 @@ public abstract class MandelbrotRenderer implements Renderer {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.flux.render.Renderer.renderer.MandelbrotRenderer#setConstant(com.nextbreakpoint.nextfractal.core.util.DoubleVector2D)
+	 * @see com.nextbreakpoint.nextfractal.flux.render.Renderer.renderer.MandelbrotManager#setConstant(com.nextbreakpoint.nextfractal.core.util.DoubleVector2D)
 	 */
 	@Override
 	public void setConstant(final DoubleVector2D constant) {
@@ -528,72 +466,6 @@ public abstract class MandelbrotRenderer implements Renderer {
 	 */
 	protected int renderPoint(final RenderedPoint cp) {
 //		fractalRuntime.getRenderingFormula().getFormulaRuntime().renderPoint(cp);
-		return renderColor(cp);
-	}
-
-	/**
-	 * @param p
-	 * @return the color.
-	 */
-	protected int renderColor(final RenderedPoint cp) {
-//		int newRGB = 0;
-//		int tmpRGB = 0;
-//		if (cp.time > 0) {
-//			if (fractalRuntime.getOutcolouringFormulaCount() == 1) {
-//				final OutcolouringFormulaRuntimeElement outcolouringFormula = fractalRuntime.getOutcolouringFormula(0);
-//				if ((outcolouringFormula.getFormulaRuntime() != null) && outcolouringFormula.isEnabled()) {
-//					if (newShiftValue != 0) {
-//						newRGB = outcolouringFormula.getFormulaRuntime().renderColor(cp, newShiftValue);
-//					}
-//					else {
-//						newRGB = outcolouringFormula.getFormulaRuntime().renderColor(cp);
-//					}
-//				}
-//			}
-//			else {
-//				for (int i = 0; i < fractalRuntime.getOutcolouringFormulaCount(); i++) {
-//					final OutcolouringFormulaRuntimeElement outcolouringFormula = fractalRuntime.getOutcolouringFormula(i);
-//					if ((outcolouringFormula.getFormulaRuntime() != null) && outcolouringFormula.isEnabled()) {
-//						if (newShiftValue != 0) {
-//							tmpRGB = outcolouringFormula.getFormulaRuntime().renderColor(cp, newShiftValue);
-//						}
-//						else {
-//							tmpRGB = outcolouringFormula.getFormulaRuntime().renderColor(cp);
-//						}
-//						newRGB = (newRGB != 0) ? Colors.mixColors(newRGB, tmpRGB, outcolouringFormula.getOpacity()) : tmpRGB;
-//					}
-//				}
-//			}
-//			return newRGB;
-//		}
-//		else {
-//			if (fractalRuntime.getIncolouringFormulaCount() == 1) {
-//				final IncolouringFormulaRuntimeElement incolouringFormula = fractalRuntime.getIncolouringFormula(0);
-//				if ((incolouringFormula.getFormulaRuntime() != null) && incolouringFormula.isEnabled()) {
-//					if (newShiftValue != 0) {
-//						newRGB = incolouringFormula.getFormulaRuntime().renderColor(cp, newShiftValue);
-//					}
-//					else {
-//						newRGB = incolouringFormula.getFormulaRuntime().renderColor(cp);
-//					}
-//				}
-//			}
-//			else {
-//				for (int i = 0; i < fractalRuntime.getIncolouringFormulaCount(); i++) {
-//					final IncolouringFormulaRuntimeElement incolouringFormula = fractalRuntime.getIncolouringFormula(i);
-//					if ((incolouringFormula.getFormulaRuntime() != null) && incolouringFormula.isEnabled()) {
-//						if (newShiftValue != 0) {
-//							tmpRGB = incolouringFormula.getFormulaRuntime().renderColor(cp, newShiftValue);
-//						}
-//						else {
-//							tmpRGB = incolouringFormula.getFormulaRuntime().renderColor(cp);
-//						}
-//						newRGB = (newRGB != 0) ? Colors.mixColors(newRGB, tmpRGB, incolouringFormula.getOpacity()) : tmpRGB;
-//					}
-//				}
-//			}
-//			return newRGB;
-//		}
 		return 0;
 	}
 
@@ -636,7 +508,7 @@ public abstract class MandelbrotRenderer implements Renderer {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.flux.render.Renderer.renderer.MandelbrotRenderer#drawImage(com.nextbreakpoint.nextfractal.twister.renderer.RenderGraphicsContext)
+	 * @see com.nextbreakpoint.nextfractal.flux.render.Renderer.renderer.MandelbrotManager#drawImage(com.nextbreakpoint.nextfractal.twister.renderer.RenderGraphicsContext)
 	 */
 	@Override
 	public void drawImage(final RenderGraphicsContext gc) {
@@ -655,7 +527,7 @@ public abstract class MandelbrotRenderer implements Renderer {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.flux.render.Renderer.renderer.MandelbrotRenderer#drawImage(com.nextbreakpoint.nextfractal.twister.renderer.RenderGraphicsContext, int, int)
+	 * @see com.nextbreakpoint.nextfractal.flux.render.Renderer.renderer.MandelbrotManager#drawImage(com.nextbreakpoint.nextfractal.twister.renderer.RenderGraphicsContext, int, int)
 	 */
 	@Override
 	public void drawImage(final RenderGraphicsContext gc, final int x, final int y) {
@@ -674,7 +546,7 @@ public abstract class MandelbrotRenderer implements Renderer {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.flux.render.Renderer.renderer.MandelbrotRenderer#drawImage(com.nextbreakpoint.nextfractal.twister.renderer.RenderGraphicsContext, int, int, int, int)
+	 * @see com.nextbreakpoint.nextfractal.flux.render.Renderer.renderer.MandelbrotManager#drawImage(com.nextbreakpoint.nextfractal.twister.renderer.RenderGraphicsContext, int, int, int, int)
 	 */
 	@Override
 	public void drawImage(final RenderGraphicsContext gc, final int x, final int y, final int w, final int h) {
@@ -704,49 +576,11 @@ public abstract class MandelbrotRenderer implements Renderer {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.flux.render.Renderer.renderer.MandelbrotRenderer#isInterrupted()
+	 * @see com.nextbreakpoint.nextfractal.flux.render.Renderer.renderer.MandelbrotManager#isInterrupted()
 	 */
 	@Override
 	public boolean isInterrupted() {
 		return Thread.currentThread().isInterrupted();
-	}
-
-	/**
-	 * @return the strategy.
-	 */
-	protected abstract RenderingStrategy getMandelbrotRenderingStrategy();
-
-	/**
-	 * @return the strategy.
-	 */
-	protected abstract RenderingStrategy getJuliaRenderingStrategy();
-
-	/**
-	 * @author Andrea Medeghini
-	 */
-	protected interface RenderingStrategy {
-		/**
-		 * @param p
-		 * @param pw
-		 * @param px
-		 * @return the time
-		 */
-		public int renderPoint(RenderedPoint p, Complex px, Complex pw);
-
-		/**
-		 * @return true if vertical symetry is supported.
-		 */
-		public boolean isVerticalSymetrySupported();
-
-		/**
-		 * @return true if horizontal symetry is supported.
-		 */
-		public boolean isHorizontalSymetrySupported();
-
-		/**
-		 * 
-		 */
-		public void updateParameters();
 	}
 
 	private class MandelbrotWorker extends RenderWorker {
