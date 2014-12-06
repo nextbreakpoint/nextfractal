@@ -31,10 +31,10 @@ import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 
-import com.nextbreakpoint.nextfractal.flux.grammar.ASTBuilder;
-import com.nextbreakpoint.nextfractal.flux.grammar.ASTFractal;
-import com.nextbreakpoint.nextfractal.flux.grammar.NextFractalLexer;
-import com.nextbreakpoint.nextfractal.flux.grammar.NextFractalParser;
+import com.nextbreakpoint.nextfractal.flux.mandelbrot.grammar.ASTBuilder;
+import com.nextbreakpoint.nextfractal.flux.mandelbrot.grammar.ASTFractal;
+import com.nextbreakpoint.nextfractal.flux.mandelbrot.grammar.NextFractalLexer;
+import com.nextbreakpoint.nextfractal.flux.mandelbrot.grammar.NextFractalParser;
 
 public abstract class BaseTest {
 	protected ASTFractal parse(String source) throws Exception {

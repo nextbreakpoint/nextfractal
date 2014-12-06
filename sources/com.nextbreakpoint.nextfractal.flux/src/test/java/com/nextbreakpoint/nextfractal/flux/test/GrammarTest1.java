@@ -28,7 +28,7 @@ package com.nextbreakpoint.nextfractal.flux.test;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.nextbreakpoint.nextfractal.flux.grammar.ASTFractal;
+import com.nextbreakpoint.nextfractal.flux.mandelbrot.grammar.ASTFractal;
 
 public class GrammarTest1 extends BaseTest {
 	@Test

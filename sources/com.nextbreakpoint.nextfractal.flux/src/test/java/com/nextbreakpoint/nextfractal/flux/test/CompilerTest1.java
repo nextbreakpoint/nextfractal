@@ -28,11 +28,11 @@ package com.nextbreakpoint.nextfractal.flux.test;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.nextbreakpoint.nextfractal.flux.Compiler;
-import com.nextbreakpoint.nextfractal.flux.CompilerReport;
-import com.nextbreakpoint.nextfractal.flux.Fractal;
-import com.nextbreakpoint.nextfractal.flux.Number;
-import com.nextbreakpoint.nextfractal.flux.Variable;
+import com.nextbreakpoint.nextfractal.flux.mandelbrot.Fractal;
+import com.nextbreakpoint.nextfractal.flux.mandelbrot.Number;
+import com.nextbreakpoint.nextfractal.flux.mandelbrot.Variable;
+import com.nextbreakpoint.nextfractal.flux.mandelbrot.compiler.Compiler;
+import com.nextbreakpoint.nextfractal.flux.mandelbrot.compiler.CompilerReport;
 
 public class CompilerTest1 extends BaseTest {
 	@Test
