@@ -10,7 +10,10 @@ public class RendererData {
 	public double[] positionY;
 	public Number[] region;
 	public Number point;
-	public int[] pixels;
+	public int[] newPixels;
+	public int[] oldPixels;
+	public Number[][] newCache;
+	public Number[][] oldCache;
 	
 	/**
 	 * @see java.lang.Object#finalize()
@@ -27,16 +30,20 @@ public class RendererData {
 	public void free() {
 		positionX = null;
 		positionY = null;
-		pixels = null;
+		newPixels = null;
+		oldPixels = null;
 		region = null;
 		point = null;
+		newCache = null;
+		oldCache = null;
 	}
 
 	/**
 	 * @param width
 	 * @param height
+	 * @param depth
 	 */
-	public void init(final int width, final int height) {
+	public void init(final int width, final int height, final int depth) {
 		free();
 		region = new Number[2];
 		point = new Number(0, 0);
@@ -48,6 +55,21 @@ public class RendererData {
 		for (int i = 0; i < height; i++) {
 			positionY[i] = 0;
 		}
-		pixels = new int[width * height];
+		newPixels = new int[width * height];
+		oldPixels = new int[width * height];
+		newCache = new Number[width * height][depth];
+		oldCache = new Number[width * height][depth];
+	}
+
+	/**
+	 * 
+	 */
+	public void swap() {
+		final Number[][] tmpCache = oldCache;
+		oldCache = newCache;
+		newCache = tmpCache;
+		final int[] tmpPixels = oldPixels;
+		oldPixels = newPixels;
+		newPixels = tmpPixels;
 	}
 }

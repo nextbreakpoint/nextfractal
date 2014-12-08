@@ -25,7 +25,7 @@
  */
 package com.nextbreakpoint.nextfractal.flux.mandelbrot.simple;
 
-import com.nextbreakpoint.nextfractal.flux.mandelbrot.Number;
+import com.nextbreakpoint.nextfractal.flux.mandelbrot.MutableNumber;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.Renderer;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.RendererData;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.RendererFractal;
@@ -40,16 +40,18 @@ public final class SimpleRenderer implements Renderer {
 	private final RendererFractal rendererFractal;
 	private final RendererStrategy rendererStrategy;
 	private final RendererData rendererData;
+	private final RenderBuffer renderBuffer;
 	private boolean isAborted;
 	private float progress;
 
 	/**
 	 * @param threadPriority
 	 */
-	public SimpleRenderer(RendererFractal rendererFractal, RendererStrategy renderingStrategy, RendererData renderedData) {
+	public SimpleRenderer(RenderBuffer renderBuffer, RendererFractal rendererFractal, RendererStrategy renderingStrategy, RendererData renderedData) {
 		this.rendererFractal = rendererFractal;
 		this.rendererStrategy = renderingStrategy;
 		this.rendererData = renderedData;
+		this.renderBuffer = renderBuffer;
 	}
 
 	/**
@@ -63,7 +65,7 @@ public final class SimpleRenderer implements Renderer {
 	 * @see com.nextbreakpoint.nextfractal.flux.mandelbrot.MandelbrotManager.core.fractal.renderer.AbstractFractalRenderer#init()
 	 */
 	protected void init() {
-		rendererData.init(getBufferWidth(), getBufferHeight());
+		rendererData.init(getRenderBuffer().getWidth(), getRenderBuffer().getHeight(), 1/*TODO*/);
 	}
 
 	/**
@@ -73,15 +75,15 @@ public final class SimpleRenderer implements Renderer {
 		progress = 0;
 		update();
 		rendererStrategy.updateParameters();
-		Number px = new Number(0, 0);
-		Number pw = new Number(0, 0);
+		MutableNumber px = new MutableNumber(0, 0);
+		MutableNumber pw = new MutableNumber(0, 0);
 		final RendererPoint p = new RendererPoint();
 		final double beginx = rendererData.region[0].r();
 		final double endx = rendererData.region[1].r();
 		final double beginy = rendererData.region[0].i();
 		final double endy = rendererData.region[1].i();
-		final int sizex = getBufferWidth();
-		final int sizey = getBufferHeight();
+		final int sizex = getRenderBuffer().getWidth();
+		final int sizey = getRenderBuffer().getHeight();
 		final double stepx = (endx - beginx) / (sizex - 1);
 		final double stepy = (endy - beginy) / (sizey - 1);
 		double posx = beginx;
@@ -97,11 +99,11 @@ public final class SimpleRenderer implements Renderer {
 		int offset = 0;
 		for (int y = 0; y < sizey; y++) {
 			for (int x = 0; x < sizex; x++) {
-				px = rendererData.point;
-				pw = new Number(rendererData.positionX[x], rendererData.positionY[y]);
+				px.set(rendererData.point);
+				pw.set(rendererData.positionX[x], rendererData.positionY[y]);
 				p.pr = rendererData.positionX[x];
 				p.pi = rendererData.positionY[y];
-				rendererData.pixels[offset] = rendererStrategy.renderPoint(rendererFractal, p, px, pw);
+				rendererData.newPixels[offset] = rendererStrategy.renderPoint(rendererFractal, p, px, pw);
 				offset += 1;
 			}
 			if (y % 20 == 0) {
@@ -122,24 +124,13 @@ public final class SimpleRenderer implements Renderer {
 
 	private void copy() {
 		RenderBuffer buffer = getRenderBuffer();
-		buffer.update(rendererData.pixels);
+		buffer.update(rendererData.newPixels);
 	}
 
 	private RenderBuffer getRenderBuffer() {
-		// TODO Auto-generated method stub
-		return null;
+		return renderBuffer;
 	}
 	
-	private int getBufferWidth() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	private int getBufferHeight() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
 	private void update() {
 		// TODO Auto-generated method stub
 		
@@ -148,7 +139,7 @@ public final class SimpleRenderer implements Renderer {
 	@Override
 	public boolean isInterrupted() {
 		// TODO Auto-generated method stub
-		return false;
+		return isAborted || Thread.currentThread().isInterrupted();
 	}
 
 	@Override
@@ -172,7 +163,6 @@ public final class SimpleRenderer implements Renderer {
 	@Override
 	public void dispose() {
 		// TODO Auto-generated method stub
-		
 	}
 
 	public float getProgress() {

@@ -1,8 +1,8 @@
 package com.nextbreakpoint.nextfractal.flux.mandelbrot;
 
 public class Number {
-	private double r;
-	private double i;
+	protected double r;
+	protected double i;
 
 	public Number(int n) {
 		this(n, 0);
