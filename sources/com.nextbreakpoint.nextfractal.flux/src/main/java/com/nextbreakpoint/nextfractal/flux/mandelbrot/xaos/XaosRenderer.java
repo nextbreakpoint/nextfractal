@@ -81,9 +81,7 @@ public final class XaosRenderer implements Renderer {
 	 * @see com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.MandelbrotManager.core.fractal.renderer.AbstractFractalRenderer#free()
 	 */
 	protected void free() {
-		if (rendererData != null) {
-			rendererData.free();
-		}
+		rendererData.free();
 	}
 
 	/**
