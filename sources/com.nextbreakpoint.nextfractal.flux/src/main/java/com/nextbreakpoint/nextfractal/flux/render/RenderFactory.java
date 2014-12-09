@@ -1,9 +1,5 @@
-package com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer;
+package com.nextbreakpoint.nextfractal.flux.render;
 
-import com.nextbreakpoint.nextfractal.flux.render.RenderAffine;
-import com.nextbreakpoint.nextfractal.flux.render.RenderBuffer;
-import com.nextbreakpoint.nextfractal.flux.render.RenderColor;
-import com.nextbreakpoint.nextfractal.flux.render.RenderGraphicsContext;
 
 public interface RenderFactory {
 	public RenderBuffer createBuffer(int widh, int height);

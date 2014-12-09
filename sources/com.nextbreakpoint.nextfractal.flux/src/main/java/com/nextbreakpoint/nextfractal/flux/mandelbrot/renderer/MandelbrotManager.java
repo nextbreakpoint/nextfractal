@@ -36,6 +36,7 @@ import com.nextbreakpoint.nextfractal.core.util.RenderWorker;
 import com.nextbreakpoint.nextfractal.core.util.Tile;
 import com.nextbreakpoint.nextfractal.flux.render.RenderAffine;
 import com.nextbreakpoint.nextfractal.flux.render.RenderBuffer;
+import com.nextbreakpoint.nextfractal.flux.render.RenderFactory;
 import com.nextbreakpoint.nextfractal.flux.render.RenderGraphicsContext;
 
 /**
@@ -346,7 +347,7 @@ public abstract class MandelbrotManager implements Manager {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.flux.mandelbrot.Renderer.renderer.MandelbrotManager#setRenderFactory(com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.twister.renderer.RenderFactory)
+	 * @see com.nextbreakpoint.nextfractal.flux.mandelbrot.Renderer.renderer.MandelbrotManager#setRenderFactory(com.nextbreakpoint.nextfractal.flux.render.twister.renderer.RenderFactory)
 	 */
 	@Override
 	public void setRenderFactory(RenderFactory renderFactory) {

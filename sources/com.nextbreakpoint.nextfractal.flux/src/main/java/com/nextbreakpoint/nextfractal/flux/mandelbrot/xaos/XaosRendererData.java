@@ -1,6 +1,7 @@
 package com.nextbreakpoint.nextfractal.flux.mandelbrot.xaos;
 
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.RendererData;
+import com.nextbreakpoint.nextfractal.flux.render.RenderFactory;
 
 /**
  * @author Andrea Medeghini
@@ -30,6 +31,10 @@ public class XaosRendererData extends RendererData {
 	public final int[] position = new int[XaosConstants.STEPS];
 	public final int[] offset = new int[XaosConstants.STEPS];
 
+	public XaosRendererData(RenderFactory renderFactory) {
+		super(renderFactory);
+	}
+
 	/**
 	 * @see com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.RendererData#free()
 	 */
@@ -58,8 +63,8 @@ public class XaosRendererData extends RendererData {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.RendererData#init(int, int, int)
 	 */
-	public void init(final int width, final int height, final int depth) {
-		super.init(width, height, depth);
+	public void init(final int width, final int height) {
+		super.init(width, height);
 		reallocX = new XaosRealloc[width];
 		reallocY = new XaosRealloc[height];
 		dynamicX = new XaosDynamic(width);

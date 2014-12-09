@@ -13,7 +13,7 @@ public interface RendererStrategy {
 	 * @param w
 	 * @return the time
 	 */
-	public int renderPoint(RendererFractal rendererFractal, RendererPoint p, Number x, Number w);
+	public int renderPoint(RendererPoint p, Number x, Number w);
 
 	/**
 	 * @return true if vertical symetry is supported.
@@ -29,4 +29,10 @@ public interface RendererStrategy {
 	 * 
 	 */
 	public void updateParameters();
+
+	/**
+	 * @param p
+	 * @return
+	 */
+	public int renderColor(RendererPoint p);
 }

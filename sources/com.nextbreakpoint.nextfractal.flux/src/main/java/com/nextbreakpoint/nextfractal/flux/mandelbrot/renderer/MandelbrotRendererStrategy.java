@@ -1,9 +1,14 @@
 package com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer;
 
-import com.nextbreakpoint.nextfractal.core.math.Complex;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.Number;
 
 class MandelbrotRendererStrategy implements RendererStrategy {
+		private RendererFractal rendererFractal;
+
+		public MandelbrotRendererStrategy(RendererFractal rendererFractal) {
+			this.rendererFractal = rendererFractal;
+		}
+
 		/**
 		 * @see com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.RendererStrategy.renderer.AbstractMandelbrotRenderer.RenderingStrategy#isVerticalSymetrySupported()
 		 */
@@ -48,7 +53,7 @@ class MandelbrotRendererStrategy implements RendererStrategy {
 		 * @see com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.RendererStrategy.renderer.AbstractMandelbrotRenderer.RenderingStrategy#renderPoint(com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.RendererPoint.renderer.RenderedPoint)
 		 */
 		@Override
-		public int renderPoint(RendererFractal rendererFractal, RendererPoint p, Number x, Number w) {
+		public int renderPoint(RendererPoint p, Number x, Number w) {
 //			if ((fractalRuntime.getRenderingFormula().getFormulaRuntime() != null) && (fractalRuntime.getTransformingFormula().getFormulaRuntime() != null)) {
 //				fractalRuntime.getTransformingFormula().getFormulaRuntime().renderPoint(pw);
 //				p.xr = px.r;
@@ -77,5 +82,14 @@ class MandelbrotRendererStrategy implements RendererStrategy {
 //				renderedData.x0 = 0;
 //				renderedData.y0 = 0;
 //			}
+		}
+
+		/**
+		 * @see com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.RendererStrategy#renderColor(com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.RendererPoint)
+		 */
+		@Override
+		public int renderColor(RendererPoint p) {
+			// TODO Auto-generated method stub
+			return 0;
 		}
 	}

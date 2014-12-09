@@ -32,15 +32,13 @@ import java.util.logging.Logger;
 import com.nextbreakpoint.nextfractal.core.util.Colors;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.MutableNumber;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.Renderer;
-import com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.RendererFractal;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.RendererPoint;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.RendererStrategy;
-import com.nextbreakpoint.nextfractal.flux.render.RenderBuffer;
 
 /**
  * @author Andrea Medeghini
  */
-public final class XaosRenderer implements Renderer {
+public final class XaosRenderer extends Renderer {
 	protected static final Logger logger = Logger.getLogger(XaosRenderer.class.getName());
 	static {
 		if (XaosConstants.PRINT_MULTABLE) {
@@ -56,39 +54,16 @@ public final class XaosRenderer implements Renderer {
 	private boolean isVerticalSymetrySupported = true;
 	private boolean isHorizontalSymetrySupported = true;
 	private boolean useCache = false;
-	private boolean isAborted = false;
 
-	private final RendererFractal rendererFractal;
-	private final RendererStrategy rendererStrategy;
-	private final XaosRendererData rendererData;
-	private final RenderBuffer renderBuffer;
-
-	private float progress;
-	
+	private final XaosRendererData xaosRendererData;
 	private int renderMode;
 
 	/**
 	 * @param threadPriority
 	 */
-	public XaosRenderer(RenderBuffer renderBuffer, RendererFractal rendererFractal, RendererStrategy renderingStrategy, XaosRendererData rendererData) {
-		this.rendererFractal = rendererFractal;
-		this.rendererStrategy = renderingStrategy;
-		this.rendererData = rendererData;
-		this.renderBuffer = renderBuffer;
-	}
-
-	/**
-	 * @see com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.MandelbrotManager.core.fractal.renderer.AbstractFractalRenderer#free()
-	 */
-	protected void free() {
-		rendererData.free();
-	}
-
-	/**
-	 * @see com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.MandelbrotManager.core.fractal.renderer.AbstractFractalRenderer#init()
-	 */
-	protected void init() {
-		rendererData.init(getRenderBuffer().getWidth(), getRenderBuffer().getHeight(), 1/*TODO*/);
+	public XaosRenderer(RendererStrategy rendererStrategy, XaosRendererData xaosRendererData, int width, int height) {
+		super(rendererStrategy, xaosRendererData, width, height);
+		this.xaosRendererData = xaosRendererData;
 	}
 
 	/**
@@ -98,7 +73,7 @@ public final class XaosRenderer implements Renderer {
 		if (XaosConstants.DUMP) {
 			logger.fine("Swap buffers...");
 		}
-		rendererData.swap();
+		xaosRendererData.swap();
 	}
 
 	/**
@@ -109,7 +84,7 @@ public final class XaosRenderer implements Renderer {
 		update();
 		rendererStrategy.updateParameters();
 		if (XaosConstants.PRINT_REGION) {
-			logger.fine("Region: " + rendererData.region[0].toString() + " " + rendererData.region[1].toString());
+			logger.fine("Region: (" + xaosRendererData.left() + "," + xaosRendererData.right() + ") -> (" + xaosRendererData.left() + "," + xaosRendererData.right() + ")");
 		}
 		final boolean refresh = (renderMode & Renderer.MODE_REFRESH) != 0;
 		useCache = refresh || !dynamic;
@@ -134,30 +109,30 @@ public final class XaosRenderer implements Renderer {
 		}
 		if (XaosConstants.PRINT_REALLOCTABLE) {
 			logger.fine("ReallocTable:");
-			for (final XaosRealloc element : rendererData.reallocX) {
+			for (final XaosRealloc element : xaosRendererData.reallocX) {
 				logger.fine(element.toString());
 			}
 			logger.fine("ReallocTable:");
-			for (final XaosRealloc element : rendererData.reallocY) {
+			for (final XaosRealloc element : xaosRendererData.reallocY) {
 				logger.fine(element.toString());
 			}
 		}
 		swapBuffers();
 		move();
 		processReallocTable(dynamic, refresh);
-		updatePosition();
+		updatePositions();
 		renderMode = 0;
 	}
 
 	private void prepareLines() {
-		final double beginy = rendererData.region[0].i();
-		final double endy = rendererData.region[1].i();
+		final double beginy = xaosRendererData.bottom();
+		final double endy = xaosRendererData.top();
 		double stepy = 0;
 		if (((renderMode & Renderer.MODE_CALCULATE) == 0) && XaosConstants.USE_XAOS) {
-			stepy = XaosRenderer.makeReallocTable(rendererData.reallocY, rendererData.dynamicY, beginy, endy, rendererData.positionY, !useCache);
+			stepy = XaosRenderer.makeReallocTable(xaosRendererData.reallocY, xaosRendererData.dynamicY, xaosRendererData.bottom(), xaosRendererData.top(), xaosRendererData.positionY(), !useCache);
 		}
 		else {
-			stepy = XaosRenderer.initReallocTableAndPosition(rendererData.reallocY, rendererData.positionY, beginy, endy);
+			stepy = XaosRenderer.initReallocTableAndPosition(xaosRendererData.reallocY, xaosRendererData.positionY(), beginy, endy);
 		}
 //		if ((fractalRuntime.getRenderingFormula().getFormulaRuntime() != null) && (fractalRuntime.getTransformingFormula().getFormulaRuntime() != null)) {
 //			final double symy = fractalRuntime.getRenderingFormula().getFormulaRuntime().getVerticalSymetryPoint();
@@ -168,14 +143,14 @@ public final class XaosRenderer implements Renderer {
 	}
 
 	private void prepareColumns() {
-		final double beginx = rendererData.region[0].r();
-		final double endx = rendererData.region[1].r();
+		final double beginx = xaosRendererData.left();
+		final double endx = xaosRendererData.right();
 		double stepx = 0;
 		if (((renderMode & Renderer.MODE_CALCULATE) == 0) && XaosConstants.USE_XAOS) {
-			stepx = XaosRenderer.makeReallocTable(rendererData.reallocX, rendererData.dynamicX, beginx, endx, rendererData.positionX, !useCache);
+			stepx = XaosRenderer.makeReallocTable(xaosRendererData.reallocX, xaosRendererData.dynamicX, beginx, endx, xaosRendererData.positionX(), !useCache);
 		}
 		else {
-			stepx = XaosRenderer.initReallocTableAndPosition(rendererData.reallocX, rendererData.positionX, beginx, endx);
+			stepx = XaosRenderer.initReallocTableAndPosition(xaosRendererData.reallocX, xaosRendererData.positionX(), beginx, endx);
 		}
 //		if ((fractalRuntime.getRenderingFormula().getFormulaRuntime() != null) && (fractalRuntime.getTransformingFormula().getFormulaRuntime() != null)) {
 //			final double symx = fractalRuntime.getRenderingFormula().getFormulaRuntime().getHorizontalSymetryPoint();
@@ -208,15 +183,15 @@ public final class XaosRenderer implements Renderer {
 		return step;
 	}
 
-	private void updatePosition() {
+	private void updatePositions() {
 		if (XaosConstants.DUMP) {
-			logger.fine("Update position...");
+			logger.fine("Update positions...");
 		}
-		for (int k = 0; k < rendererData.reallocX.length; k++) {
-			rendererData.positionX[k] = rendererData.reallocX[k].position;
+		for (int k = 0; k < xaosRendererData.reallocX.length; k++) {
+			xaosRendererData.setPositionX(k, xaosRendererData.reallocX[k].position);
 		}
-		for (int k = 0; k < rendererData.reallocY.length; k++) {
-			rendererData.positionY[k] = rendererData.reallocY[k].position;
+		for (int k = 0; k < xaosRendererData.reallocY.length; k++) {
+			xaosRendererData.setPositionY(k, xaosRendererData.reallocY[k].position);
 		}
 	}
 
@@ -913,14 +888,14 @@ public final class XaosRenderer implements Renderer {
 		}
 		if (dynamic || !XaosConstants.USE_XAOS) {
 			int total = 0;
-			total = XaosRenderer.initPrices(rendererData.queue, total, rendererData.reallocX);
-			total = XaosRenderer.initPrices(rendererData.queue, total, rendererData.reallocY);
+			total = XaosRenderer.initPrices(xaosRendererData.queue, total, xaosRendererData.reallocX);
+			total = XaosRenderer.initPrices(xaosRendererData.queue, total, xaosRendererData.reallocY);
 			if (XaosConstants.DUMP) {
 				logger.fine("total = " + total);
 			}
 			if (total > 0) {
 				if (total > 1) {
-					XaosRenderer.sortQueue(rendererData.queue, 0, total - 1);
+					XaosRenderer.sortQueue(xaosRendererData.queue, 0, total - 1);
 				}
 				processQueue(total);
 			}
@@ -929,8 +904,8 @@ public final class XaosRenderer implements Renderer {
 			}
 		}
 		else {
-			final int[] position = rendererData.position;
-			final int[] offset = rendererData.offset;
+			final int[] position = xaosRendererData.position;
+			final int[] offset = xaosRendererData.offset;
 			position[0] = 1;
 			offset[0] = 0;
 			int s = 1;
@@ -939,13 +914,13 @@ public final class XaosRenderer implements Renderer {
 			int tocalcx = 0;
 			int tocalcy = 0;
 			XaosRealloc[] tmpRealloc = null;
-			tmpRealloc = rendererData.reallocX;
+			tmpRealloc = xaosRendererData.reallocX;
 			for (i = 0; i < tmpRealloc.length; i++) {
 				if (tmpRealloc[i].recalculate) {
 					tocalcx++;
 				}
 			}
-			tmpRealloc = rendererData.reallocY;
+			tmpRealloc = xaosRendererData.reallocY;
 			for (i = 0; i < tmpRealloc.length; i++) {
 				if (tmpRealloc[i].recalculate) {
 					tocalcy++;
@@ -972,30 +947,30 @@ public final class XaosRenderer implements Renderer {
 			// System.out.println(i + " = " + position[i] + ", " + offset[i]);
 			// }
 			if (refresh) {
-				tmpRealloc = rendererData.reallocY;
+				tmpRealloc = xaosRendererData.reallocY;
 				for (final XaosRealloc element : tmpRealloc) {
 					if (element.isCached && !element.refreshed) {
-						refreshLine(element, rendererData.reallocX, rendererData.reallocY);
+						refreshLine(element, xaosRendererData.reallocX, xaosRendererData.reallocY);
 					}
 				}
-				tmpRealloc = rendererData.reallocX;
+				tmpRealloc = xaosRendererData.reallocX;
 				for (final XaosRealloc element : tmpRealloc) {
 					if (element.isCached && !element.refreshed) {
-						refreshColumn(element, rendererData.reallocX, rendererData.reallocY);
+						refreshColumn(element, xaosRendererData.reallocX, xaosRendererData.reallocY);
 					}
 				}
 			}
-			rendererData.oldTime = rendererData.newTime = System.currentTimeMillis();
+			xaosRendererData.oldTime = xaosRendererData.newTime = System.currentTimeMillis();
 			for (s = 0; !isAborted && (s < XaosConstants.STEPS); s++) {
 				// AbstractFractalRenderer.logger.fine("step = " + s);
-				tmpRealloc = rendererData.reallocY;
+				tmpRealloc = xaosRendererData.reallocY;
 				for (i = offset[s]; !isAborted && (i < tmpRealloc.length); i += XaosConstants.STEPS) {
 					if (tmpRealloc[i].recalculate) {
-						renderLine(tmpRealloc[i], rendererData.reallocX, rendererData.reallocY);
+						renderLine(tmpRealloc[i], xaosRendererData.reallocX, xaosRendererData.reallocY);
 						tocalcy -= 1;
 					}
 					else if (!tmpRealloc[i].isCached) {
-						renderLine(tmpRealloc[i], rendererData.reallocX, rendererData.reallocY);
+						renderLine(tmpRealloc[i], xaosRendererData.reallocX, xaosRendererData.reallocY);
 					}
 					if (isInterrupted()) {
 						isAborted = true;
@@ -1003,14 +978,14 @@ public final class XaosRenderer implements Renderer {
 					}
 					Thread.yield();
 				}
-				tmpRealloc = rendererData.reallocX;
+				tmpRealloc = xaosRendererData.reallocX;
 				for (i = offset[s]; !isAborted && (i < tmpRealloc.length); i += XaosConstants.STEPS) {
 					if (tmpRealloc[i].recalculate) {
-						renderColumn(tmpRealloc[i], rendererData.reallocX, rendererData.reallocY);
+						renderColumn(tmpRealloc[i], xaosRendererData.reallocX, xaosRendererData.reallocY);
 						tocalcx -= 1;
 					}
 					else if (!tmpRealloc[i].isCached) {
-						renderColumn(tmpRealloc[i], rendererData.reallocX, rendererData.reallocY);
+						renderColumn(tmpRealloc[i], xaosRendererData.reallocX, xaosRendererData.reallocY);
 					}
 					if (isInterrupted()) {
 						isAborted = true;
@@ -1018,33 +993,33 @@ public final class XaosRenderer implements Renderer {
 					}
 					Thread.yield();
 				}
-				rendererData.newTime = System.currentTimeMillis();
-				if (!isAborted && ((rendererData.newTime - rendererData.oldTime) > 50) && (s < XaosConstants.STEPS)) {
-					tmpRealloc = rendererData.reallocY;
+				xaosRendererData.newTime = System.currentTimeMillis();
+				if (!isAborted && ((xaosRendererData.newTime - xaosRendererData.oldTime) > 50) && (s < XaosConstants.STEPS)) {
+					tmpRealloc = xaosRendererData.reallocY;
 					for (i = 0; i < tmpRealloc.length; i++) {
 						tmpRealloc[i].changeDirty = tmpRealloc[i].dirty;
 						tmpRealloc[i].changePosition = tmpRealloc[i].position;
 					}
-					tmpRealloc = rendererData.reallocX;
+					tmpRealloc = xaosRendererData.reallocX;
 					for (i = 0; i < tmpRealloc.length; i++) {
 						tmpRealloc[i].changeDirty = tmpRealloc[i].dirty;
 						tmpRealloc[i].changePosition = tmpRealloc[i].position;
 					}
 					progress = (s + 1f) / (float)XaosConstants.STEPS;
 					fill();
-					copy();
+					xaosRendererData.copy();
 					Thread.yield();
-					tmpRealloc = rendererData.reallocY;
+					tmpRealloc = xaosRendererData.reallocY;
 					for (i = 0; i < tmpRealloc.length; i++) {
 						tmpRealloc[i].dirty = tmpRealloc[i].changeDirty;
 						tmpRealloc[i].position = tmpRealloc[i].changePosition;
 					}
-					tmpRealloc = rendererData.reallocX;
+					tmpRealloc = xaosRendererData.reallocX;
 					for (i = 0; i < tmpRealloc.length; i++) {
 						tmpRealloc[i].dirty = tmpRealloc[i].changeDirty;
 						tmpRealloc[i].position = tmpRealloc[i].changePosition;
 					}
-					rendererData.oldTime = rendererData.newTime;
+					xaosRendererData.oldTime = xaosRendererData.newTime;
 				}
 				// if (isInterrupted())
 				// {
@@ -1057,26 +1032,21 @@ public final class XaosRenderer implements Renderer {
 			}
 		}
 		fill();
-		copy();
+		xaosRendererData.copy();
 		Thread.yield();
 	}
 
 	private void move() {
-		XaosRenderer.prepareMove(rendererData.moveTable, rendererData.reallocX);
-		doMove(rendererData.moveTable, rendererData.reallocY);
+		XaosRenderer.prepareMove(xaosRendererData.moveTable, xaosRendererData.reallocX);
+		doMove(xaosRendererData.moveTable, xaosRendererData.reallocY);
 	}
 
 	private void fill() {
 		if (isVerticalSymetrySupported && isHorizontalSymetrySupported) {
-			doSymetry(rendererData.reallocX, rendererData.reallocY);
+			doSymetry(xaosRendererData.reallocX, xaosRendererData.reallocY);
 		}
-		XaosRenderer.prepareFill(rendererData.fillTable, rendererData.reallocX);
-		doFill(rendererData.fillTable, rendererData.reallocY);
-	}
-
-	private void copy() {
-		final RenderBuffer buffer = getRenderBuffer();
-		buffer.update(rendererData.newRGB);
+		XaosRenderer.prepareFill(xaosRendererData.fillTable, xaosRendererData.reallocX);
+		doFill(xaosRendererData.fillTable, xaosRendererData.reallocY);
 	}
 
 	private static int initPrices(final XaosRealloc[] queue, int total, final XaosRealloc[] realloc) {
@@ -1135,11 +1105,11 @@ public final class XaosRenderer implements Renderer {
 		}
 		int i = 0;
 		for (i = 0; i < size; i++) {
-			if (rendererData.queue[i].line) {
-				renderLine(rendererData.queue[i], rendererData.reallocX, rendererData.reallocY);
+			if (xaosRendererData.queue[i].line) {
+				renderLine(xaosRendererData.queue[i], xaosRendererData.reallocX, xaosRendererData.reallocY);
 			}
 			else {
-				renderColumn(rendererData.queue[i], rendererData.reallocX, rendererData.reallocY);
+				renderColumn(xaosRendererData.queue[i], xaosRendererData.reallocX, xaosRendererData.reallocY);
 			}
 			if (isInterrupted()) {
 				isAborted = true;
@@ -1153,7 +1123,7 @@ public final class XaosRenderer implements Renderer {
 		if (XaosConstants.DUMP) {
 			logger.fine("Do symetry...");
 		}
-		final int rowsize = getRenderBuffer().getWidth();
+		final int rowsize = width;
 		int from_offset = 0;
 		int to_offset = 0;
 		int i = 0;
@@ -1161,17 +1131,17 @@ public final class XaosRenderer implements Renderer {
 		for (i = 0; i < reallocY.length; i++) {
 			if ((reallocY[i].symTo >= 0) && (!reallocY[reallocY[i].symTo].dirty)) {
 				from_offset = reallocY[i].symTo * rowsize;
-				System.arraycopy(rendererData.newRGB, from_offset, rendererData.newRGB, to_offset, rowsize);
+				System.arraycopy(xaosRendererData.newRGB, from_offset, xaosRendererData.newRGB, to_offset, rowsize);
 				if (useCache) {
-					System.arraycopy(rendererData.newCacheZR, from_offset, rendererData.newCacheZR, to_offset, rowsize);
-					System.arraycopy(rendererData.newCacheZI, from_offset, rendererData.newCacheZI, to_offset, rowsize);
-					System.arraycopy(rendererData.newCacheTR, from_offset, rendererData.newCacheTR, to_offset, rowsize);
-					System.arraycopy(rendererData.newCacheTI, from_offset, rendererData.newCacheTI, to_offset, rowsize);
-					System.arraycopy(rendererData.newCacheTime, from_offset, rendererData.newCacheTime, to_offset, rowsize);
+					System.arraycopy(xaosRendererData.newCacheZR, from_offset, xaosRendererData.newCacheZR, to_offset, rowsize);
+					System.arraycopy(xaosRendererData.newCacheZI, from_offset, xaosRendererData.newCacheZI, to_offset, rowsize);
+					System.arraycopy(xaosRendererData.newCacheTR, from_offset, xaosRendererData.newCacheTR, to_offset, rowsize);
+					System.arraycopy(xaosRendererData.newCacheTI, from_offset, xaosRendererData.newCacheTI, to_offset, rowsize);
+					System.arraycopy(xaosRendererData.newCacheTime, from_offset, xaosRendererData.newCacheTime, to_offset, rowsize);
 				}
 				if (XaosConstants.SHOW_SYMETRY) {
 					for (int k = 0; k < rowsize; k++) {
-						rendererData.newRGB[to_offset + k] = Colors.mixColors(rendererData.newRGB[to_offset + k], 0xFFFF0000, 127);
+						xaosRendererData.newRGB[to_offset + k] = Colors.mixColors(xaosRendererData.newRGB[to_offset + k], 0xFFFF0000, 127);
 					}
 				}
 				reallocY[i].dirty = false;
@@ -1184,12 +1154,12 @@ public final class XaosRenderer implements Renderer {
 			if ((reallocX[i].symTo >= 0) && (!reallocX[reallocX[i].symTo].dirty)) {
 				to_offset = i;
 				from_offset = reallocX[i].symTo;
-				final int[] newRGB = rendererData.newRGB;
-				final double[] newCacheZR = rendererData.newCacheZR;
-				final double[] newCacheZI = rendererData.newCacheZI;
-				final double[] newCacheTR = rendererData.newCacheTR;
-				final double[] newCacheTI = rendererData.newCacheTI;
-				final int[] newCacheTime = rendererData.newCacheTime;
+				final int[] newRGB = xaosRendererData.newRGB;
+				final double[] newCacheZR = xaosRendererData.newCacheZR;
+				final double[] newCacheZI = xaosRendererData.newCacheZI;
+				final double[] newCacheTR = xaosRendererData.newCacheTR;
+				final double[] newCacheTI = xaosRendererData.newCacheTI;
+				final int[] newCacheTime = xaosRendererData.newCacheTime;
 				for (j = 0; j < reallocY.length; j++) {
 					newRGB[to_offset] = newRGB[from_offset];
 					if (useCache) {
@@ -1218,7 +1188,7 @@ public final class XaosRenderer implements Renderer {
 		}
 		final XaosChunk[] table = movetable.data;
 		XaosChunk tmpData = null;
-		final int rowsize = getRenderBuffer().getWidth();
+		final int rowsize = width;
 		int new_offset = 0;
 		int old_offset = 0;
 		int from = 0;
@@ -1232,13 +1202,13 @@ public final class XaosRenderer implements Renderer {
 				while ((tmpData = table[s]).length > 0) {
 					from = old_offset + tmpData.from;
 					to = new_offset + tmpData.to;
-					System.arraycopy(rendererData.oldRGB, from, rendererData.newRGB, to, tmpData.length);
+					System.arraycopy(xaosRendererData.oldRGB, from, xaosRendererData.newRGB, to, tmpData.length);
 					if (useCache) {
-						System.arraycopy(rendererData.oldCacheZR, from, rendererData.newCacheZR, to, tmpData.length);
-						System.arraycopy(rendererData.oldCacheZI, from, rendererData.newCacheZI, to, tmpData.length);
-						System.arraycopy(rendererData.oldCacheTR, from, rendererData.newCacheTR, to, tmpData.length);
-						System.arraycopy(rendererData.oldCacheTI, from, rendererData.newCacheTI, to, tmpData.length);
-						System.arraycopy(rendererData.oldCacheTime, from, rendererData.newCacheTime, to, tmpData.length);
+						System.arraycopy(xaosRendererData.oldCacheZR, from, xaosRendererData.newCacheZR, to, tmpData.length);
+						System.arraycopy(xaosRendererData.oldCacheZI, from, xaosRendererData.newCacheZI, to, tmpData.length);
+						System.arraycopy(xaosRendererData.oldCacheTR, from, xaosRendererData.newCacheTR, to, tmpData.length);
+						System.arraycopy(xaosRendererData.oldCacheTI, from, xaosRendererData.newCacheTI, to, tmpData.length);
+						System.arraycopy(xaosRendererData.oldCacheTime, from, xaosRendererData.newCacheTime, to, tmpData.length);
 					}
 					s += 1;
 				}
@@ -1254,7 +1224,7 @@ public final class XaosRenderer implements Renderer {
 		}
 		final XaosChunk[] table = filltable.data;
 		XaosChunk tmpData = null;
-		final int rowsize = getRenderBuffer().getWidth();
+		final int rowsize = width;
 		int from_offset = 0;
 		int to_offset = 0;
 		int from = 0;
@@ -1288,7 +1258,7 @@ public final class XaosRenderer implements Renderer {
 					from_offset = j * rowsize;
 					if (!reallocY[j].dirty) {
 						s = 0;
-						final int[] newRGB = rendererData.newRGB;
+						final int[] newRGB = xaosRendererData.newRGB;
 						// final double[] newCacheR = renderedData.newCacheR;
 						// final double[] newCacheI = renderedData.newCacheI;
 						// final int[] newCacheTime = renderedData.newCacheTime;
@@ -1315,7 +1285,7 @@ public final class XaosRenderer implements Renderer {
 							s += 1;
 						}
 					}
-					System.arraycopy(rendererData.newRGB, from_offset, rendererData.newRGB, to_offset, rowsize);
+					System.arraycopy(xaosRendererData.newRGB, from_offset, xaosRendererData.newRGB, to_offset, rowsize);
 					// if (useCache)
 					// {
 					// System.arraycopy(renderedData.newCacheR, from_offset, renderedData.newCacheR, to_offset, rowsize);
@@ -1331,7 +1301,7 @@ public final class XaosRenderer implements Renderer {
 			else {
 				s = 0;
 				from_offset = i * rowsize;
-				final int[] newRGB = rendererData.newRGB;
+				final int[] newRGB = xaosRendererData.newRGB;
 				// final double[] newCacheR = renderedData.newCacheR;
 				// final double[] newCacheI = renderedData.newCacheI;
 				// final int[] newCacheTime = renderedData.newCacheTime;
@@ -1368,7 +1338,7 @@ public final class XaosRenderer implements Renderer {
 		if (XaosConstants.PRINT_CALCULATE) {
 			logger.fine("Calculate line " + realloc.pos);
 		}
-		final int rowsize = getRenderBuffer().getWidth();
+		final int rowsize = width;
 		final double position = realloc.position;
 		final int r = realloc.pos;
 		int offset = r * rowsize;
@@ -1396,12 +1366,12 @@ public final class XaosRenderer implements Renderer {
 		MutableNumber z = new MutableNumber(0, 0);
 		MutableNumber w = new MutableNumber(0, 0);
 		final RendererPoint p = new RendererPoint();
-		final int[] newRGB = rendererData.newRGB;
-		final double[] newCacheZR = rendererData.newCacheZR;
-		final double[] newCacheZI = rendererData.newCacheZI;
-		final double[] newCacheTR = rendererData.newCacheTR;
-		final double[] newCacheTI = rendererData.newCacheTI;
-		final int[] newCacheTime = rendererData.newCacheTime;
+		final int[] newRGB = xaosRendererData.newRGB;
+		final double[] newCacheZR = xaosRendererData.newCacheZR;
+		final double[] newCacheZI = xaosRendererData.newCacheZI;
+		final double[] newCacheTR = xaosRendererData.newCacheTR;
+		final double[] newCacheTI = xaosRendererData.newCacheTI;
+		final int[] newCacheTime = xaosRendererData.newCacheTime;
 		if (rend < 0) {
 			rend = 0;
 		}
@@ -1420,11 +1390,11 @@ public final class XaosRenderer implements Renderer {
 		if ((!isSolidguessSupported) || (i < 0) || (j >= reallocY.length) || reallocY[i].dirty || reallocY[j].dirty) {
 			for (k = 0; k < reallocX.length; k++) {
 				if (!reallocX[k].dirty) {
-					z.set(rendererData.point);
+					z.set(xaosRendererData.point());
 					w.set(reallocX[k].position, position);
 					p.pr = reallocX[k].position;
 					p.pi = position;
-					newRGB[offset] = rendererStrategy.renderPoint(rendererFractal, p, z, w);
+					newRGB[offset] = rendererStrategy.renderPoint(p, z, w);
 					if (useCache) {
 						newCacheZR[offset] = p.zr;
 						newCacheZI[offset] = p.zi;
@@ -1486,11 +1456,11 @@ public final class XaosRenderer implements Renderer {
 							}
 						}
 						else {
-							z.set(rendererData.point);
+							z.set(xaosRendererData.point());
 							w.set(reallocX[k].position, position);
 							p.pr = reallocX[k].position;
 							p.pi = position;
-							newRGB[offset] = rendererStrategy.renderPoint(rendererFractal, p, z, w);
+							newRGB[offset] = rendererStrategy.renderPoint(p, z, w);
 							if (useCache) {
 								newCacheZR[offset] = p.zr;
 								newCacheZI[offset] = p.zi;
@@ -1504,11 +1474,11 @@ public final class XaosRenderer implements Renderer {
 						}
 					}
 					else {
-						z.set(rendererData.point);
+						z.set(xaosRendererData.point());
 						w.set(reallocX[k].position, position);
 						p.pr = reallocX[k].position;
 						p.pi = position;
-						newRGB[offset] = rendererStrategy.renderPoint(rendererFractal, p, z, w);
+						newRGB[offset] = rendererStrategy.renderPoint(p, z, w);
 						if (useCache) {
 							newCacheZR[offset] = p.zr;
 							newCacheZI[offset] = p.zi;
@@ -1539,7 +1509,7 @@ public final class XaosRenderer implements Renderer {
 		if (XaosConstants.PRINT_CALCULATE) {
 			logger.fine("Calculate column " + realloc.pos);
 		}
-		final int rowsize = getRenderBuffer().getWidth();
+		final int rowsize = width;
 		final double position = realloc.position;
 		final int r = realloc.pos;
 		int offset = r;
@@ -1569,12 +1539,12 @@ public final class XaosRenderer implements Renderer {
 		MutableNumber z = new MutableNumber(0, 0);
 		MutableNumber w = new MutableNumber(0, 0);
 		final RendererPoint p = new RendererPoint();
-		final int[] newRGB = rendererData.newRGB;
-		final double[] newCacheZR = rendererData.newCacheZR;
-		final double[] newCacheZI = rendererData.newCacheZI;
-		final double[] newCacheTR = rendererData.newCacheTR;
-		final double[] newCacheTI = rendererData.newCacheTI;
-		final int[] newCacheTime = rendererData.newCacheTime;
+		final int[] newRGB = xaosRendererData.newRGB;
+		final double[] newCacheZR = xaosRendererData.newCacheZR;
+		final double[] newCacheZI = xaosRendererData.newCacheZI;
+		final double[] newCacheTR = xaosRendererData.newCacheTR;
+		final double[] newCacheTI = xaosRendererData.newCacheTI;
+		final int[] newCacheTime = xaosRendererData.newCacheTime;
 		if (rend < 0) {
 			rend = 0;
 		}
@@ -1593,11 +1563,11 @@ public final class XaosRenderer implements Renderer {
 		if ((!isSolidguessSupported) || (i < 0) || (j >= reallocX.length) || reallocX[i].dirty || reallocX[j].dirty) {
 			for (k = 0; k < reallocY.length; k++) {
 				if (!reallocY[k].dirty) {
-					z.set(rendererData.point);
+					z.set(xaosRendererData.point());
 					w.set(position, reallocY[k].position);
 					p.pr = position;
 					p.pi = reallocY[k].position;
-					newRGB[offset] = rendererStrategy.renderPoint(rendererFractal, p, z, w);
+					newRGB[offset] = rendererStrategy.renderPoint(p, z, w);
 					if (useCache) {
 						newCacheZR[offset] = p.zr;
 						newCacheZI[offset] = p.zi;
@@ -1661,11 +1631,11 @@ public final class XaosRenderer implements Renderer {
 							}
 						}
 						else {
-							z.set(rendererData.point);
+							z.set(xaosRendererData.point());
 							w.set(position, reallocY[k].position);
 							p.pr = position;
 							p.pi = reallocY[k].position;
-							newRGB[offset] = rendererStrategy.renderPoint(rendererFractal, p, z, w);
+							newRGB[offset] = rendererStrategy.renderPoint(p, z, w);
 							if (useCache) {
 								newCacheZR[offset] = p.zr;
 								newCacheZI[offset] = p.zi;
@@ -1679,11 +1649,11 @@ public final class XaosRenderer implements Renderer {
 						}
 					}
 					else {
-						z.set(rendererData.point);
+						z.set(xaosRendererData.point());
 						w.set(position, reallocY[k].position);
 						p.pr = position;
 						p.pi = reallocY[k].position;
-						newRGB[offset] = rendererStrategy.renderPoint(rendererFractal, p, z, w);
+						newRGB[offset] = rendererStrategy.renderPoint(p, z, w);
 						if (useCache) {
 							newCacheZR[offset] = p.zr;
 							newCacheZI[offset] = p.zi;
@@ -1714,16 +1684,16 @@ public final class XaosRenderer implements Renderer {
 		if (XaosConstants.DUMP) {
 			logger.fine("Refresh line...");
 		}
-		final int rowsize = getRenderBuffer().getWidth();
+		final int rowsize = width;
 		int offset = realloc.pos * rowsize;
 		int k = 0;
 		final RendererPoint p = new RendererPoint();
-		final int[] newRGB = rendererData.newRGB;
-		final double[] newCacheZR = rendererData.newCacheZR;
-		final double[] newCacheZI = rendererData.newCacheZI;
-		final double[] newCacheTR = rendererData.newCacheTR;
-		final double[] newCacheTI = rendererData.newCacheTI;
-		final int[] newCacheTime = rendererData.newCacheTime;
+		final int[] newRGB = xaosRendererData.newRGB;
+		final double[] newCacheZR = xaosRendererData.newCacheZR;
+		final double[] newCacheZI = xaosRendererData.newCacheZI;
+		final double[] newCacheTR = xaosRendererData.newCacheTR;
+		final double[] newCacheTI = xaosRendererData.newCacheTI;
+		final int[] newCacheTime = xaosRendererData.newCacheTime;
 		if (realloc.isCached && !realloc.refreshed) {
 			for (final XaosRealloc tmpRealloc : reallocX) {
 				if (tmpRealloc.isCached && !tmpRealloc.refreshed) {
@@ -1735,7 +1705,7 @@ public final class XaosRenderer implements Renderer {
 					p.time = newCacheTime[k];
 					p.pr = tmpRealloc.position;
 					p.pi = realloc.position;
-					newRGB[k] = renderColor(p);
+					newRGB[k] = rendererStrategy.renderColor(p);
 					if (XaosConstants.SHOW_REFRESH) {
 						newRGB[k] = Colors.mixColors(newRGB[k], 0xFF0000FF, 127);
 					}
@@ -1750,16 +1720,16 @@ public final class XaosRenderer implements Renderer {
 		if (XaosConstants.DUMP) {
 			logger.fine("Refresh column...");
 		}
-		final int rowsize = getRenderBuffer().getWidth();
+		final int rowsize = width;
 		int offset = realloc.pos;
 		int k = 0;
 		final RendererPoint p = new RendererPoint();
-		final int[] newRGB = rendererData.newRGB;
-		final double[] newCacheZR = rendererData.newCacheZR;
-		final double[] newCacheZI = rendererData.newCacheZI;
-		final double[] newCacheTR = rendererData.newCacheTR;
-		final double[] newCacheTI = rendererData.newCacheTI;
-		final int[] newCacheTime = rendererData.newCacheTime;
+		final int[] newRGB = xaosRendererData.newRGB;
+		final double[] newCacheZR = xaosRendererData.newCacheZR;
+		final double[] newCacheZI = xaosRendererData.newCacheZI;
+		final double[] newCacheTR = xaosRendererData.newCacheTR;
+		final double[] newCacheTI = xaosRendererData.newCacheTI;
+		final int[] newCacheTime = xaosRendererData.newCacheTime;
 		if (realloc.isCached && !realloc.refreshed) {
 			for (final XaosRealloc tmpRealloc : reallocY) {
 				if (tmpRealloc.isCached && !tmpRealloc.refreshed) {
@@ -1771,7 +1741,7 @@ public final class XaosRenderer implements Renderer {
 					p.time = newCacheTime[k];
 					p.pr = realloc.position;
 					p.pi = tmpRealloc.position;
-					newRGB[k] = renderColor(p);
+					newRGB[k] = rendererStrategy.renderColor(p);
 					if (XaosConstants.SHOW_REFRESH) {
 						newRGB[k] = Colors.mixColors(newRGB[k], 0xFF0000FF, 127);
 					}
@@ -1782,15 +1752,6 @@ public final class XaosRenderer implements Renderer {
 		}
 	}
 
-	private int renderColor(RendererPoint p) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	private RenderBuffer getRenderBuffer() {
-		return renderBuffer;
-	}
-	
 	private void update() {
 		// TODO Auto-generated method stub
 		
@@ -1809,12 +1770,6 @@ public final class XaosRenderer implements Renderer {
 	private boolean isSolidGuessSupported() {
 		// TODO Auto-generated method stub
 		return false;
-	}
-
-	@Override
-	public boolean isInterrupted() {
-		// TODO Auto-generated method stub
-		return isAborted || Thread.currentThread().isInterrupted();
 	}
 
 	@Override
@@ -1841,10 +1796,6 @@ public final class XaosRenderer implements Renderer {
 	public void dispose() {
 		// TODO Auto-generated method stub
 		
-	}
-
-	public float getProgress() {
-		return progress;
 	}
 
 //	private class MandelbrotWorker2 extends RenderWorker {

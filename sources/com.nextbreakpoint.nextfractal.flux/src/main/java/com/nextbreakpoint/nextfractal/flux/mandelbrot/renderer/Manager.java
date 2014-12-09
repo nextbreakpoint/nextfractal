@@ -27,6 +27,7 @@ package com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer;
 
 import com.nextbreakpoint.nextfractal.core.util.DoubleVector2D;
 import com.nextbreakpoint.nextfractal.core.util.Tile;
+import com.nextbreakpoint.nextfractal.flux.render.RenderFactory;
 import com.nextbreakpoint.nextfractal.flux.render.RenderGraphicsContext;
 
 /**
