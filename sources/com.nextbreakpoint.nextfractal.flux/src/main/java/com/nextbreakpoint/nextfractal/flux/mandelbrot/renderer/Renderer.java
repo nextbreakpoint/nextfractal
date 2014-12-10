@@ -26,7 +26,6 @@
 package com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer;
 
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.MutableNumber;
-import com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.Renderer;
 
 /**
  * @author Andrea Medeghini
@@ -36,7 +35,7 @@ public class Renderer {
 	public static final int MODE_REFRESH = 0x02;
 	protected final RendererStrategy rendererStrategy;
 	protected final RendererData rendererData;
-	protected boolean isAborted;
+	protected boolean aborted;
 	protected float progress;
 	protected int width;
 	protected int height;
@@ -49,6 +48,21 @@ public class Renderer {
 		this.rendererData = renderedData;
 		this.width = width;
 		this.height = height;
+	}
+
+	public int getWidth() {
+		return width;
+	}
+
+	public int getHeight() {
+		return height;
+	}
+
+	public void setSize(int width, int height) {
+		this.width = width;
+		this.height = height;
+		free();
+		init();
 	}
 
 	/**
@@ -74,15 +88,13 @@ public class Renderer {
 		rendererStrategy.updateParameters();
 		final MutableNumber px = new MutableNumber(0, 0);
 		final MutableNumber pw = new MutableNumber(0, 0);
-		final RendererPoint p = new RendererPoint();
 		rendererData.initPositions();
 		int offset = 0;
 		for (int y = 0; y < height; y++) {
 			for (int x = 0; x < width; x++) {
 				px.set(rendererData.point());
 				pw.set(rendererData.positionX(x), rendererData.positionY(y));
-				p.pr = rendererData.positionX(x);
-				p.pi = rendererData.positionY(y);
+				RendererPoint p = rendererData.newCache()[offset];
 				rendererData.setPixel(offset, rendererStrategy.renderPoint(p, px, pw));
 				offset += 1;
 			}
@@ -92,12 +104,12 @@ public class Renderer {
 			}
 			Thread.yield();
 			if (isInterrupted()) {
-				isAborted = true;
+				aborted = true;
 				break;
 			}
 		}
 		rendererData.copy();
-		if (isAborted) {
+		if (aborted) {
 			progress = 1;
 		}
 	}
@@ -108,8 +120,7 @@ public class Renderer {
 	}
 
 	public boolean isInterrupted() {
-		// TODO Auto-generated method stub
-		return isAborted || Thread.currentThread().isInterrupted();
+		return aborted || Thread.currentThread().isInterrupted();
 	}
 
 	public void start() {
@@ -128,7 +139,7 @@ public class Renderer {
 	}
 
 	public void dispose() {
-		// TODO Auto-generated method stub
+		free();
 	}
 
 	public float getProgress() {

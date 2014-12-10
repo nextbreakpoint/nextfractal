@@ -7,29 +7,17 @@ import com.nextbreakpoint.nextfractal.flux.render.RenderFactory;
  * @author Andrea Medeghini
  */
 public class XaosRendererData extends RendererData {
-	public double[] newCacheZR;
-	public double[] newCacheZI;
-	public double[] newCacheTR;
-	public double[] newCacheTI;
-	public int[] newCacheTime;
-	public double[] oldCacheZR;
-	public double[] oldCacheZI;
-	public double[] oldCacheTR;
-	public double[] oldCacheTI;
-	public int[] oldCacheTime;
-	public int[] newRGB;
-	public int[] oldRGB;
-	public long newTime;
-	public long oldTime;
-	public XaosRealloc[] reallocX;
-	public XaosRealloc[] reallocY;
-	public XaosDynamic dynamicX;
-	public XaosDynamic dynamicY;
-	public XaosChunkTable moveTable;
-	public XaosChunkTable fillTable;
-	public XaosRealloc[] queue;
-	public final int[] position = new int[XaosConstants.STEPS];
-	public final int[] offset = new int[XaosConstants.STEPS];
+	private long newTime;
+	private long oldTime;
+	private XaosRealloc[] reallocX;
+	private XaosRealloc[] reallocY;
+	private XaosDynamic dynamicX;
+	private XaosDynamic dynamicY;
+	private XaosChunkTable moveTable;
+	private XaosChunkTable fillTable;
+	private XaosRealloc[] queue;
+	private final int[] position = new int[XaosConstants.STEPS];
+	private final int[] offset = new int[XaosConstants.STEPS];
 
 	public XaosRendererData(RenderFactory renderFactory) {
 		super(renderFactory);
@@ -46,17 +34,6 @@ public class XaosRendererData extends RendererData {
 		moveTable = null;
 		fillTable = null;
 		queue = null;
-		newCacheZR = null;
-		newCacheZI = null;
-		newCacheTR = null;
-		newCacheTI = null;
-		newCacheTime = null;
-		oldCacheZR = null;
-		oldCacheZI = null;
-		oldCacheTR = null;
-		oldCacheTI = null;
-		oldCacheTime = null;
-		oldRGB = null;
 		super.free();
 	}
 
@@ -82,42 +59,57 @@ public class XaosRendererData extends RendererData {
 			reallocY[i].pos = i;
 			positionY[i] = 0;
 		}
-		newRGB = new int[width * height];
-		oldRGB = new int[width * height];
-		newCacheZR = new double[width * height];
-		newCacheZI = new double[width * height];
-		newCacheTR = new double[width * height];
-		newCacheTI = new double[width * height];
-		newCacheTime = new int[width * height];
-		oldCacheZR = new double[width * height];
-		oldCacheZI = new double[width * height];
-		oldCacheTR = new double[width * height];
-		oldCacheTI = new double[width * height];
-		oldCacheTime = new int[width * height];
 	}
 
-	/**
-	 * @see com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.RendererData#swap()
-	 */
-	public void swap() {
-		final int[] tmpRGB = oldRGB;
-		oldRGB = newRGB;
-		newRGB = tmpRGB;
-		final double[] tmpCacheZR = oldCacheZR;
-		final double[] tmpCacheZI = oldCacheZI;
-		final double[] tmpCacheTR = oldCacheTR;
-		final double[] tmpCacheTI = oldCacheTI;
-		final int[] tmpCacheTime = oldCacheTime;
-		oldCacheZR = newCacheZR;
-		oldCacheZI = newCacheZI;
-		oldCacheTR = newCacheTR;
-		oldCacheTI = newCacheTI;
-		oldCacheTime = newCacheTime;
-		newCacheZR = tmpCacheZR;
-		newCacheZI = tmpCacheZI;
-		newCacheTR = tmpCacheTR;
-		newCacheTI = tmpCacheTI;
-		newCacheTime = tmpCacheTime;
-		super.swap();
+	public long newTime() {
+		return newTime;
+	}
+
+	public long oldTime() {
+		return oldTime;
+	}
+
+	public XaosRealloc[] reallocX() {
+		return reallocX;
+	}
+
+	public XaosRealloc[] reallocY() {
+		return reallocY;
+	}
+
+	public XaosDynamic dynamicX() {
+		return dynamicX;
+	}
+
+	public XaosDynamic dynamicY() {
+		return dynamicY;
+	}
+
+	public XaosChunkTable moveTable() {
+		return moveTable;
+	}
+
+	public XaosChunkTable fillTable() {
+		return fillTable;
+	}
+
+	public XaosRealloc[] queue() {
+		return queue;
+	}
+
+	public int[] position() {
+		return position;
+	}
+
+	public int[] offset() {
+		return offset;
+	}
+
+	public void setNewTime(long newTime) {
+		this.newTime = newTime;
+	}
+
+	public void setOldTime(long oldTime) {
+		this.oldTime = oldTime;
 	}
 }

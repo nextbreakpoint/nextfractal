@@ -64,4 +64,22 @@ class JuliaRendererStrategy implements RendererStrategy {
 		// TODO Auto-generated method stub
 		return 0;
 	}
+
+	@Override
+	public boolean isSolidGuessSupported() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public double getVerticalSymetryPoint() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public double getHorizontalSymetryPoint() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 }

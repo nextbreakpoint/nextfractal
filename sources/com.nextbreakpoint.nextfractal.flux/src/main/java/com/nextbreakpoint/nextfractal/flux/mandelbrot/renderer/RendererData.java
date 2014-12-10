@@ -16,8 +16,8 @@ public class RendererData {
 	protected Number point;
 	protected int[] newPixels;
 	protected int[] oldPixels;
-	protected Number[][] newCache;
-	protected Number[][] oldCache;
+	protected RendererPoint[] newCache;
+	protected RendererPoint[] oldCache;
 
 	/**
 	 * @param renderFactory
@@ -69,15 +69,20 @@ public class RendererData {
 		}
 		newPixels = new int[width * height];
 		oldPixels = new int[width * height];
-		newCache = new Number[width * height][1];//TODO depth
-		oldCache = new Number[width * height][1];//TODO depth
+		newCache = new RendererPoint[width * height];
+		oldCache = new RendererPoint[width * height];
+		int depth = 1;//TODO depth
+		for (int i = 0; i < width * height; i++) {
+			newCache[i] = new RendererPoint(depth);
+			oldCache[i] = new RendererPoint(depth);
+		}
 	}
 
 	/**
 	 * 
 	 */
 	public void swap() {
-		final Number[][] tmpCache = oldCache;
+		final RendererPoint[] tmpCache = oldCache;
 		oldCache = newCache;
 		newCache = tmpCache;
 		final int[] tmpPixels = oldPixels;
@@ -199,5 +204,21 @@ public class RendererData {
 			positionY[y] = posy;
 			posy += stepy;
 		}
+	}
+
+	public int[] newPixels() {
+		return newPixels;
+	}
+
+	public int[] oldPixels() {
+		return oldPixels;
+	}
+
+	public RendererPoint[] newCache() {
+		return newCache;
+	}
+
+	public RendererPoint[] oldCache() {
+		return oldCache;
 	}
 }

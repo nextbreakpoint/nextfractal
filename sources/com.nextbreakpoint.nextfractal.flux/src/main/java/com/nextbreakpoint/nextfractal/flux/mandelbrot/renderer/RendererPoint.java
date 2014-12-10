@@ -25,88 +25,61 @@
  */
 package com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer;
 
+import com.nextbreakpoint.nextfractal.flux.mandelbrot.MutableNumber;
+import com.nextbreakpoint.nextfractal.flux.mandelbrot.Number;
+
 /**
  * @author Andrea Medeghini
  */
 public class RendererPoint {
-	/**
-	 * 
-	 */
-	public double xr;
-	/**
-	 * 
-	 */
-	public double xi;
-	/**
-	 * 
-	 */
-	public double zr;
-	/**
-	 * 
-	 */
-	public double zi;
-	/**
-	 * 
-	 */
-	public double wr;
-	/**
-	 * 
-	 */
-	public double wi;
-	/**
-	 * 
-	 */
-	public double pr;
-	/**
-	 * 
-	 */
-	public double pi;
-	/**
-	 * 
-	 */
-	public double tr;
-	/**
-	 * 
-	 */
-	public double ti;
-	/**
-	 * 
-	 */
-	public double dr;
-	/**
-	 * 
-	 */
-	public double di;
-	/**
-	 * 
-	 */
-	public int time;
+	protected final MutableNumber[] vars;
+	protected final MutableNumber x;
+	protected final MutableNumber w;
+	protected int n;
+	
+	public RendererPoint(int depth) {
+		vars = new MutableNumber[depth];
+		for (int i = 0; i < depth; i++) {
+			vars[i] = new MutableNumber(0, 0);
+		}
+		x = new MutableNumber(0, 0);
+		w = new MutableNumber(0, 0);
+		n = 0;
+	}
+	
+	public MutableNumber[] getVars() {
+		return vars;
+	}
+	
+	public int getN() {
+		return n;
+	}
+	
+	public void setN(int n) {
+		this.n = n;
+	}
 
-	/**
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		final StringBuilder point = new StringBuilder();
-		point.append("<xr = ");
-		point.append(xr);
-		point.append(", xi = ");
-		point.append(xi);
-		point.append(", zr = ");
-		point.append(zr);
-		point.append(", zi = ");
-		point.append(zi);
-		point.append(", wr = ");
-		point.append(wr);
-		point.append(", wi = ");
-		point.append(wi);
-		point.append(", tr = ");
-		point.append(pr);
-		point.append(", ti = ");
-		point.append(pi);
-		point.append(", time = ");
-		point.append(time);
-		point.append(">");
-		return point.toString();
+	public Number getX() {
+		return x;
+	}
+
+	public void setX(Number x) {
+		this.x.set(x);
+	}
+
+	public void setX(double r, double i) {
+		x.set(r, i);
+	}
+
+	public Number getW() {
+		return w;
+	}
+
+	public void setW(Number w) {
+		this.w.set(w);
+	}
+
+	public void setW(double r, double i) {
+		w.set(r, i);
 	}
 }

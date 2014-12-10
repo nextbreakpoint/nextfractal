@@ -24,6 +24,11 @@ public interface RendererStrategy {
 	 * @return true if horizontal symetry is supported.
 	 */
 	public boolean isHorizontalSymetrySupported();
+	
+	/**
+	 * @return
+	 */
+	public boolean isSolidGuessSupported();
 
 	/**
 	 * 
@@ -35,4 +40,8 @@ public interface RendererStrategy {
 	 * @return
 	 */
 	public int renderColor(RendererPoint p);
+
+	public double getVerticalSymetryPoint();
+
+	public double getHorizontalSymetryPoint();
 }
