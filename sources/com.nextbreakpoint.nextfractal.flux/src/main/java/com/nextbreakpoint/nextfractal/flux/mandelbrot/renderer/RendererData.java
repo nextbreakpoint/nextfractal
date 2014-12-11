@@ -1,30 +1,25 @@
 package com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.nextbreakpoint.nextfractal.flux.mandelbrot.MutableNumber;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.Number;
-import com.nextbreakpoint.nextfractal.flux.render.RenderBuffer;
-import com.nextbreakpoint.nextfractal.flux.render.RenderFactory;
 
 /**
  * @author Andrea Medeghini
  */
 public class RendererData {
-	protected RenderFactory renderFactory;
-	protected RenderBuffer renderBuffer;
 	protected double[] positionX;
 	protected double[] positionY;
 	protected Number[] region;
 	protected Number point;
 	protected int[] newPixels;
 	protected int[] oldPixels;
-	protected RendererPoint[] newCache;
-	protected RendererPoint[] oldCache;
-
-	/**
-	 * @param renderFactory
-	 */
-	public RendererData(RenderFactory renderFactory) {
-		this.renderFactory = renderFactory;
-	}
+	protected List<double[]> newCache;
+	protected List<double[]> oldCache;
+	protected int width; 
+	protected int height;
 
 	/**
 	 * @see java.lang.Object#finalize()
@@ -56,7 +51,8 @@ public class RendererData {
 	 */
 	public void init(final int width, final int height) {
 		free();
-		renderBuffer = renderFactory.createBuffer(width, height);
+		this.width = width;
+		this.height = height;
 		region = new Number[2];
 		point = new Number(0, 0);
 		positionX = new double[width];
@@ -69,32 +65,33 @@ public class RendererData {
 		}
 		newPixels = new int[width * height];
 		oldPixels = new int[width * height];
-		newCache = new RendererPoint[width * height];
-		oldCache = new RendererPoint[width * height];
-		int depth = 1;//TODO depth
-		for (int i = 0; i < width * height; i++) {
-			newCache[i] = new RendererPoint(depth);
-			oldCache[i] = new RendererPoint(depth);
+		int depth = getDepth();
+		newCache = new ArrayList<double[]>(depth);
+		oldCache = new ArrayList<double[]>(depth);
+		for (int i = 0; i < depth; i++) {
+			newCache.add(new double[width * height * 2]);
+			oldCache.add(new double[width * height * 2]);
 		}
+	}
+
+	/**
+	 * @return
+	 */
+	public int getDepth() {
+		int depth = 1;//TODO depth
+		return depth;
 	}
 
 	/**
 	 * 
 	 */
 	public void swap() {
-		final RendererPoint[] tmpCache = oldCache;
+		final List<double[]> tmpCache = oldCache;
 		oldCache = newCache;
 		newCache = tmpCache;
 		final int[] tmpPixels = oldPixels;
 		oldPixels = newPixels;
 		newPixels = tmpPixels;
-	}
-
-	/**
-	 * 
-	 */
-	public void copy() {
-		renderBuffer.update(newPixels);
 	}
 
 	/**
@@ -138,6 +135,21 @@ public class RendererData {
 	 */
 	public void setPixel(int offset, int argb) {
 		newPixels[offset] = argb;
+	}
+
+	/**
+	 * @param offset
+	 * @return
+	 */
+	public int getPixel(int offset) {
+		return newPixels[offset];
+	}
+
+	/**
+	 * @return
+	 */
+	public int[] getPixels() {
+		return newPixels;
 	}
 
 	/**
@@ -190,8 +202,8 @@ public class RendererData {
 	 * 
 	 */
 	public void initPositions() {
-		final int sizex = renderBuffer.getWidth();
-		final int sizey = renderBuffer.getHeight();
+		final int sizex = width;
+		final int sizey = height;
 		final double stepx = (right() - left()) / (sizex - 1);
 		final double stepy = (bottom() - top()) / (sizey - 1);
 		double posx = left();
@@ -206,19 +218,80 @@ public class RendererData {
 		}
 	}
 
-	public int[] newPixels() {
-		return newPixels;
+	/**
+	 * @return
+	 */
+	public RendererPoint newPoint() {
+		return new RendererPoint(getDepth());
 	}
 
-	public int[] oldPixels() {
-		return oldPixels;
+	/**
+	 * @param offset
+	 * @param p
+	 */
+	public void getPoint(int offset, RendererPoint p) {
+		int depth = getDepth();
+		for (int j = 0; j < depth; j++) {
+			double[] cache = newCache.get(j);
+			double r = cache[offset * 2 + 0];
+			double i = cache[offset * 2 + 1];
+			p.vars[j].set(r, i);
+		}
 	}
 
-	public RendererPoint[] newCache() {
-		return newCache;
+	/**
+	 * @param offset
+	 * @param p
+	 */
+	public void setPoint(int offset, RendererPoint p) {
+		int depth = getDepth();
+		for (int j = 0; j < depth; j++) {
+			MutableNumber var = p.vars[j];
+			double[] cache = newCache.get(j);
+			cache[offset * 2 + 0] = var.r();
+			cache[offset * 2 + 1] = var.i();
+		}
 	}
 
-	public RendererPoint[] oldCache() {
-		return oldCache;
+	/**
+	 * @param from
+	 * @param to
+	 * @param length
+	 */
+	public void movePixels(int from, int to, int length) {
+		System.arraycopy(newPixels, from, newPixels, to, length);
+	}
+
+	/**
+	 * @param from
+	 * @param to
+	 * @param length
+	 */
+	public void moveCache(int from, int to, int length) {
+		int depth = getDepth();
+		for (int i = 0; i < depth; i++) {
+			System.arraycopy(newCache.get(i), from * 2, newCache.get(i), to * 2, length * 2);
+		}
+	}
+
+	/**
+	 * @param from
+	 * @param to
+	 * @param length
+	 */
+	public void copyPixels(int from, int to, int length) {
+		System.arraycopy(oldPixels, from, newPixels, to, length);
+	}
+
+	/**
+	 * @param from
+	 * @param to
+	 * @param length
+	 */
+	public void copyCache(int from, int to, int length) {
+		int depth = getDepth();
+		for (int i = 0; i < depth; i++) {
+			System.arraycopy(oldCache.get(i), from * 2, newCache.get(i), to * 2, length * 2);
+		}
 	}
 }

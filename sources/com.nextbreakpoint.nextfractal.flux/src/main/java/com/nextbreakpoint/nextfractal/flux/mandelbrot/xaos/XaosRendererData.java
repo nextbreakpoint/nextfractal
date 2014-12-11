@@ -1,14 +1,13 @@
 package com.nextbreakpoint.nextfractal.flux.mandelbrot.xaos;
 
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.RendererData;
-import com.nextbreakpoint.nextfractal.flux.render.RenderFactory;
 
 /**
  * @author Andrea Medeghini
  */
 public class XaosRendererData extends RendererData {
-	private long newTime;
-	private long oldTime;
+	private final int[] position = new int[XaosConstants.STEPS];
+	private final int[] offset = new int[XaosConstants.STEPS];
 	private XaosRealloc[] reallocX;
 	private XaosRealloc[] reallocY;
 	private XaosDynamic dynamicX;
@@ -16,12 +15,6 @@ public class XaosRendererData extends RendererData {
 	private XaosChunkTable moveTable;
 	private XaosChunkTable fillTable;
 	private XaosRealloc[] queue;
-	private final int[] position = new int[XaosConstants.STEPS];
-	private final int[] offset = new int[XaosConstants.STEPS];
-
-	public XaosRendererData(RenderFactory renderFactory) {
-		super(renderFactory);
-	}
 
 	/**
 	 * @see com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.RendererData#free()
@@ -61,14 +54,6 @@ public class XaosRendererData extends RendererData {
 		}
 	}
 
-	public long newTime() {
-		return newTime;
-	}
-
-	public long oldTime() {
-		return oldTime;
-	}
-
 	public XaosRealloc[] reallocX() {
 		return reallocX;
 	}
@@ -103,13 +88,5 @@ public class XaosRendererData extends RendererData {
 
 	public int[] offset() {
 		return offset;
-	}
-
-	public void setNewTime(long newTime) {
-		this.newTime = newTime;
-	}
-
-	public void setOldTime(long oldTime) {
-		this.oldTime = oldTime;
 	}
 }

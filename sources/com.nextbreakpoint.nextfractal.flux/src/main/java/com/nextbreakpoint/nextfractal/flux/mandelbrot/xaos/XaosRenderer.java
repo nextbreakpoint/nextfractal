@@ -32,6 +32,7 @@ import java.util.logging.Logger;
 import com.nextbreakpoint.nextfractal.core.util.Colors;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.MutableNumber;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.Renderer;
+import com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.RendererDelegate;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.RendererPoint;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.RendererStrategy;
 
@@ -48,21 +49,19 @@ public final class XaosRenderer extends Renderer {
 			}
 		}
 	}
-	private final boolean isSolidguessEnabled = true;
+	
 	private boolean isSolidguessSupported = true;
-	private final boolean isSymetryEnabled = true;
 	private boolean isVerticalSymetrySupported = true;
 	private boolean isHorizontalSymetrySupported = true;
-	private boolean useCache = false;
-
 	private final XaosRendererData xaosRendererData;
+	private boolean cacheActive;
 	private int renderMode;
 
 	/**
 	 * @param threadPriority
 	 */
-	public XaosRenderer(RendererStrategy rendererStrategy, XaosRendererData xaosRendererData, int width, int height) {
-		super(rendererStrategy, xaosRendererData, width, height);
+	public XaosRenderer(RendererDelegate rendererDelegate, RendererStrategy rendererStrategy, XaosRendererData xaosRendererData, int width, int height) {
+		super(rendererDelegate, rendererStrategy, xaosRendererData, width, height);
 		this.xaosRendererData = xaosRendererData;
 	}
 
@@ -86,16 +85,17 @@ public final class XaosRenderer extends Renderer {
 		if (XaosConstants.PRINT_REGION) {
 			logger.fine("Region: (" + xaosRendererData.left() + "," + xaosRendererData.right() + ") -> (" + xaosRendererData.left() + "," + xaosRendererData.right() + ")");
 		}
-		final boolean refresh = (renderMode & Renderer.MODE_REFRESH) != 0;
-		useCache = refresh || !dynamic;
-		isSolidguessSupported = XaosConstants.USE_SOLIDGUESS && isSolidguessEnabled && isSolidGuessSupported();
-		isVerticalSymetrySupported = XaosConstants.USE_SYMETRY && isSymetryEnabled && isVerticalSymetrySupported();
-		isHorizontalSymetrySupported = XaosConstants.USE_SYMETRY && isSymetryEnabled && isHorizontalSymetrySupported();
+		cacheActive = (renderMode & Renderer.MODE_REFRESH) != 0 && !dynamic;
+//		if ((renderMode & Renderer.MODE_CALCULATE) != 0 || dynamic) {
+//			xaosRendererData.invalidateCache();
+//		}
+		isSolidguessSupported = XaosConstants.USE_SOLIDGUESS && rendererStrategy.isSolidGuessSupported();
+		isVerticalSymetrySupported = XaosConstants.USE_SYMETRY && rendererStrategy.isVerticalSymetrySupported();
+		isHorizontalSymetrySupported = XaosConstants.USE_SYMETRY && rendererStrategy.isHorizontalSymetrySupported();
 		if (XaosConstants.DUMP) {
 			logger.fine("Solidguess supported = " + isSolidguessSupported);
 			logger.fine("Vertical symetry supported = " + isVerticalSymetrySupported);
 			logger.fine("Horizontal symetry supported = " + isHorizontalSymetrySupported);
-			logger.fine("Use newCache = " + useCache);
 		}
 		if (XaosConstants.USE_MULTITHREAD && !XaosConstants.DUMP_XAOS) {
 //			renderWorker2.executeTask();
@@ -119,7 +119,7 @@ public final class XaosRenderer extends Renderer {
 		}
 		swapBuffers();
 		move();
-		processReallocTable(dynamic, refresh);
+		processReallocTable(dynamic, (renderMode & Renderer.MODE_REFRESH) != 0);
 		updatePositions();
 		renderMode = 0;
 	}
@@ -129,7 +129,7 @@ public final class XaosRenderer extends Renderer {
 		final double endy = xaosRendererData.top();
 		double stepy = 0;
 		if (((renderMode & Renderer.MODE_CALCULATE) == 0) && XaosConstants.USE_XAOS) {
-			stepy = XaosRenderer.makeReallocTable(xaosRendererData.reallocY(), xaosRendererData.dynamicY(), xaosRendererData.bottom(), xaosRendererData.top(), xaosRendererData.positionY(), !useCache);
+			stepy = XaosRenderer.makeReallocTable(xaosRendererData.reallocY(), xaosRendererData.dynamicY(), xaosRendererData.bottom(), xaosRendererData.top(), xaosRendererData.positionY(), !cacheActive);
 		}
 		else {
 			stepy = XaosRenderer.initReallocTableAndPosition(xaosRendererData.reallocY(), xaosRendererData.positionY(), beginy, endy);
@@ -145,7 +145,7 @@ public final class XaosRenderer extends Renderer {
 		final double endx = xaosRendererData.right();
 		double stepy = 0;
 		if (((renderMode & Renderer.MODE_CALCULATE) == 0) && XaosConstants.USE_XAOS) {
-			stepy = XaosRenderer.makeReallocTable(xaosRendererData.reallocX(), xaosRendererData.dynamicX(), beginx, endx, xaosRendererData.positionX(), !useCache);
+			stepy = XaosRenderer.makeReallocTable(xaosRendererData.reallocX(), xaosRendererData.dynamicX(), beginx, endx, xaosRendererData.positionX(), !cacheActive);
 		}
 		else {
 			stepy = XaosRenderer.initReallocTableAndPosition(xaosRendererData.reallocX(), xaosRendererData.positionX(), beginx, endx);
@@ -956,9 +956,7 @@ public final class XaosRenderer extends Renderer {
 					}
 				}
 			}
-			long time = System.currentTimeMillis();
-			xaosRendererData.setOldTime(time);
-			xaosRendererData.setNewTime(time);
+			long oldTime = System.currentTimeMillis();
 			for (s = 0; !aborted && (s < XaosConstants.STEPS); s++) {
 				// AbstractFractalRenderer.logger.fine("step = " + s);
 				tmpRealloc = xaosRendererData.reallocY();
@@ -991,9 +989,8 @@ public final class XaosRenderer extends Renderer {
 					}
 					Thread.yield();
 				}
-				time = System.currentTimeMillis();
-				xaosRendererData.setNewTime(time);
-				if (!aborted && ((xaosRendererData.newTime() - xaosRendererData.oldTime()) > 50) && (s < XaosConstants.STEPS)) {
+				long newTime = System.currentTimeMillis();
+				if (!aborted && ((newTime - oldTime) > 50) && (s < XaosConstants.STEPS)) {
 					tmpRealloc = xaosRendererData.reallocY();
 					for (i = 0; i < tmpRealloc.length; i++) {
 						tmpRealloc[i].changeDirty = tmpRealloc[i].dirty;
@@ -1006,7 +1003,7 @@ public final class XaosRenderer extends Renderer {
 					}
 					progress = (s + 1f) / (float)XaosConstants.STEPS;
 					fill();
-					xaosRendererData.copy();
+					rendererDelegate.didPixelsChange(xaosRendererData.getPixels());
 					Thread.yield();
 					tmpRealloc = xaosRendererData.reallocY();
 					for (i = 0; i < tmpRealloc.length; i++) {
@@ -1018,7 +1015,7 @@ public final class XaosRenderer extends Renderer {
 						tmpRealloc[i].dirty = tmpRealloc[i].changeDirty;
 						tmpRealloc[i].position = tmpRealloc[i].changePosition;
 					}
-					xaosRendererData.setOldTime(xaosRendererData.newTime());
+					oldTime = newTime;
 				}
 				// if (isInterrupted())
 				// {
@@ -1031,7 +1028,7 @@ public final class XaosRenderer extends Renderer {
 			}
 		}
 		fill();
-		xaosRendererData.copy();
+		rendererDelegate.didPixelsChange(xaosRendererData.getPixels());
 		Thread.yield();
 	}
 
@@ -1130,17 +1127,17 @@ public final class XaosRenderer extends Renderer {
 		for (i = 0; i < reallocY.length; i++) {
 			if ((reallocY[i].symTo >= 0) && (!reallocY[reallocY[i].symTo].dirty)) {
 				from_offset = reallocY[i].symTo * rowsize;
-				System.arraycopy(xaosRendererData.newPixels(), from_offset, xaosRendererData.newPixels(), to_offset, rowsize);
-				if (useCache) {
-					System.arraycopy(xaosRendererData.newCache(), from_offset, xaosRendererData.newCache(), to_offset, rowsize);
+				xaosRendererData.movePixels(from_offset, to_offset, rowsize);
+				if (cacheActive) {
+					xaosRendererData.moveCache(from_offset, to_offset, rowsize);
 				}
 				if (XaosConstants.SHOW_SYMETRY) {
 					for (int k = 0; k < rowsize; k++) {
-						xaosRendererData.newPixels()[to_offset + k] = Colors.mixColors(xaosRendererData.newPixels()[to_offset + k], 0xFFFF0000, 127);
+						xaosRendererData.setPixel(to_offset + k, Colors.mixColors(xaosRendererData.getPixel(to_offset + k), 0xFFFF0000, 127));
 					}
 				}
 				reallocY[i].dirty = false;
-				reallocY[i].isCached = useCache;
+				reallocY[i].isCached = cacheActive;
 			}
 			to_offset += rowsize;
 			// Thread.yield();
@@ -1149,21 +1146,19 @@ public final class XaosRenderer extends Renderer {
 			if ((reallocX[i].symTo >= 0) && (!reallocX[reallocX[i].symTo].dirty)) {
 				to_offset = i;
 				from_offset = reallocX[i].symTo;
-				final int[] newPixels = xaosRendererData.newPixels();
-				final RendererPoint[] newCache = xaosRendererData.newCache();
 				for (j = 0; j < reallocY.length; j++) {
-					newPixels[to_offset] = newPixels[from_offset];
-					if (useCache) {
-						newCache[to_offset] = newCache[from_offset];
+					xaosRendererData.movePixels(from_offset, to_offset, 1);
+					if (cacheActive) {
+						xaosRendererData.moveCache(from_offset, to_offset, 1);
 					}
 					if (XaosConstants.SHOW_SYMETRY) {
-						newPixels[to_offset] = Colors.mixColors(newPixels[to_offset], 0xFFFF0000, 127);
+						xaosRendererData.setPixel(to_offset, Colors.mixColors(xaosRendererData.getPixel(to_offset), 0xFFFF0000, 127));
 					}
 					to_offset += rowsize;
 					from_offset += rowsize;
 				}
 				reallocX[i].dirty = false;
-				reallocX[i].isCached = useCache;
+				reallocX[i].isCached = cacheActive;
 			}
 			// Thread.yield();
 		}
@@ -1189,9 +1184,9 @@ public final class XaosRenderer extends Renderer {
 				while ((tmpData = table[s]).length > 0) {
 					from = old_offset + tmpData.from;
 					to = new_offset + tmpData.to;
-					System.arraycopy(xaosRendererData.oldPixels(), from, xaosRendererData.newPixels(), to, tmpData.length);
-					if (useCache) {
-						System.arraycopy(xaosRendererData.oldCache(), from, xaosRendererData.newCache(), to, tmpData.length);
+					xaosRendererData.copyPixels(from, to, tmpData.length);
+					if (cacheActive) {
+						xaosRendererData.copyCache(from, to, tmpData.length);
 					}
 					s += 1;
 				}
@@ -1238,19 +1233,18 @@ public final class XaosRenderer extends Renderer {
 					from_offset = j * rowsize;
 					if (!reallocY[j].dirty) {
 						s = 0;
-						final int[] newPixels = xaosRendererData.newPixels();
 						while ((tmpData = table[s]).length > 0) {
 							from = from_offset + tmpData.from;
 							to = from_offset + tmpData.to;
-							c = newPixels[from];
+							c = xaosRendererData.getPixel(from);
 							for (t = 0; t < tmpData.length; t++) {
 								d = to + t;
-								newPixels[d] = c;
+								xaosRendererData.setPixel(d, c);
 							}
 							s += 1;
 						}
 					}
-					System.arraycopy(xaosRendererData.newPixels(), from_offset, xaosRendererData.newPixels(), to_offset, rowsize);
+					xaosRendererData.movePixels(from_offset, to_offset, rowsize);
 					reallocY[i].position = reallocY[j].position;
 					reallocY[i].dirty = false;
 					i += 1;
@@ -1259,14 +1253,13 @@ public final class XaosRenderer extends Renderer {
 			else {
 				s = 0;
 				from_offset = i * rowsize;
-				final int[] newPixels = xaosRendererData.newPixels();
 				while ((tmpData = table[s]).length > 0) {
 					from = from_offset + tmpData.from;
 					to = from_offset + tmpData.to;
-					c = newPixels[from];
+					c = xaosRendererData.getPixel(from);
 					for (t = 0; t < tmpData.length; t++) {
 						d = to + t;
-						newPixels[d] = c;
+						xaosRendererData.setPixel(d, c);
 					}
 					s += 1;
 				}
@@ -1288,6 +1281,7 @@ public final class XaosRenderer extends Renderer {
 		int j;
 		int k;
 		int n;
+		int c;
 		int distl = 0;
 		int distr = 0;
 		int distu = 0;
@@ -1302,9 +1296,7 @@ public final class XaosRenderer extends Renderer {
 		int rend = r - XaosConstants.GUESS_RANGE;
 		MutableNumber z = new MutableNumber(0, 0);
 		MutableNumber w = new MutableNumber(0, 0);
-		final int[] newPixels = xaosRendererData.newPixels();
-		final RendererPoint[] newCache = xaosRendererData.newCache();
-		RendererPoint p = null;
+		final RendererPoint p = xaosRendererData.newPoint();
 		if (rend < 0) {
 			rend = 0;
 		}
@@ -1327,9 +1319,11 @@ public final class XaosRenderer extends Renderer {
 					w.set(reallocX[k].position, position);
 //					p.pr = reallocX[k].position;
 //					p.pi = position;
-					newPixels[offset] = rendererStrategy.renderPoint(newCache[offset], z, w);
+					c = rendererStrategy.renderPoint(p, z, w);
+					xaosRendererData.setPixel(offset, c);
+					xaosRendererData.setPoint(offset, p);
 					if (XaosConstants.SHOW_CALCULATE) {
-						newPixels[offset] = Colors.mixColors(newPixels[offset], 0xFFFFFF00, 127);
+						xaosRendererData.setPixel(offset, Colors.mixColors(xaosRendererData.getPixel(offset), 0xFFFFFF00, 127));
 					}
 				}
 				offset += 1;
@@ -1360,17 +1354,17 @@ public final class XaosRenderer extends Renderer {
 						offsetdl = offsetd - distl;
 						offsetur = offsetu + distr;
 						offsetdr = offsetd + distr;
-						n = newPixels[offsetl];
-						if (useCache) {
-							p = newCache[offsetl];
+						n = xaosRendererData.getPixel(offsetl);
+						if (cacheActive) {
+							xaosRendererData.getPoint(offset, p);
 						}
-						if ((n == newPixels[offsetu]) && (n == newPixels[offsetd]) && (n == newPixels[offsetul]) && (n == newPixels[offsetur]) && (n == newPixels[offsetdl]) && (n == newPixels[offsetdr])) {
-							newPixels[offset] = n;
-							if (useCache) {
-								newCache[offset] = p;
+						if ((n == xaosRendererData.getPixel(offsetu)) && (n == xaosRendererData.getPixel(offsetd)) && (n == xaosRendererData.getPixel(offsetul)) && (n == xaosRendererData.getPixel(offsetur)) && (n == xaosRendererData.getPixel(offsetdl)) && (n == xaosRendererData.getPixel(offsetdr))) {
+							xaosRendererData.setPixel(offset, n);
+							if (cacheActive) {
+								xaosRendererData.setPoint(offset, p);
 							}
 							if (XaosConstants.SHOW_SOLIDGUESS) {
-								newPixels[offset] = Colors.mixColors(newPixels[offset], 0xFFFF0000, 127);
+								xaosRendererData.setPixel(offset, Colors.mixColors(xaosRendererData.getPixel(offset), 0xFFFF0000, 127));
 							}
 						}
 						else {
@@ -1378,9 +1372,11 @@ public final class XaosRenderer extends Renderer {
 							w.set(reallocX[k].position, position);
 //							p.pr = reallocX[k].position;
 //							p.pi = position;
-							newPixels[offset] = rendererStrategy.renderPoint(newCache[offset], z, w);
+							c = rendererStrategy.renderPoint(p, z, w);
+							xaosRendererData.setPixel(offset, c);
+							xaosRendererData.setPoint(offset, p);
 							if (XaosConstants.SHOW_CALCULATE) {
-								newPixels[offset] = Colors.mixColors(newPixels[offset], 0xFFFFFF00, 127);
+								xaosRendererData.setPixel(offset, Colors.mixColors(xaosRendererData.getPixel(offset), 0xFFFFFF00, 127));
 							}
 						}
 					}
@@ -1389,9 +1385,11 @@ public final class XaosRenderer extends Renderer {
 						w.set(reallocX[k].position, position);
 //						p.pr = reallocX[k].position;
 //						p.pi = position;
-						newPixels[offset] = rendererStrategy.renderPoint(newCache[offset], z, w);
+						c = rendererStrategy.renderPoint(p, z, w);
+						xaosRendererData.setPixel(offset, c);
+						xaosRendererData.setPoint(offset, p);
 						if (XaosConstants.SHOW_CALCULATE) {
-							newPixels[offset] = Colors.mixColors(newPixels[offset], 0xFFFFFF00, 127);
+							xaosRendererData.setPixel(offset, Colors.mixColors(xaosRendererData.getPixel(offset), 0xFFFFFF00, 127));
 						}
 					}
 					distl = 0;
@@ -1406,7 +1404,7 @@ public final class XaosRenderer extends Renderer {
 		realloc.recalculate = false;
 		realloc.refreshed = true;
 		realloc.dirty = false;
-		realloc.isCached = useCache;
+		realloc.isCached = cacheActive;
 	}
 
 	private void renderColumn(final XaosRealloc realloc, final XaosRealloc[] reallocX, final XaosRealloc[] reallocY) {
@@ -1422,6 +1420,7 @@ public final class XaosRenderer extends Renderer {
 		int j;
 		int k;
 		int n;
+		int c;
 		int distl = 0;
 		int distr = 0;
 		int distu = 0;
@@ -1437,9 +1436,7 @@ public final class XaosRenderer extends Renderer {
 		int sumd;
 		MutableNumber z = new MutableNumber(0, 0);
 		MutableNumber w = new MutableNumber(0, 0);
-		final int[] newPixels = xaosRendererData.newPixels();
-		final RendererPoint[] newCache = xaosRendererData.newCache();
-		RendererPoint p = null;
+		final RendererPoint p = xaosRendererData.newPoint();
 		if (rend < 0) {
 			rend = 0;
 		}
@@ -1462,9 +1459,11 @@ public final class XaosRenderer extends Renderer {
 					w.set(position, reallocY[k].position);
 //					p.pr = position;
 //					p.pi = reallocY[k].position;
-					newPixels[offset] = rendererStrategy.renderPoint(newCache[offset], z, w);
+					c = rendererStrategy.renderPoint(p, z, w);
+					xaosRendererData.setPixel(offset, c);
+					xaosRendererData.setPoint(offset, p);
 					if (XaosConstants.SHOW_CALCULATE) {
-						newPixels[offset] = Colors.mixColors(newPixels[offset], 0xFFFFFF00, 127);
+						xaosRendererData.setPixel(offset, Colors.mixColors(xaosRendererData.getPixel(offset), 0xFFFFFF00, 127));
 					}
 				}
 				offset += rowsize;
@@ -1497,17 +1496,17 @@ public final class XaosRenderer extends Renderer {
 						offsetru = offsetr - sumu;
 						offsetld = offsetl + sumd;
 						offsetrd = offsetr + sumd;
-						n = newPixels[offsetu];
-						if (useCache) {
-							p = newCache[offsetlu];
+						n = xaosRendererData.getPixel(offsetu);
+						if (cacheActive) {
+							xaosRendererData.getPoint(offset, p);
 						}
-						if ((n == newPixels[offsetl]) && (n == newPixels[offsetr]) && (n == newPixels[offsetlu]) && (n == newPixels[offsetru]) && (n == newPixels[offsetld]) && (n == newPixels[offsetrd])) {
-							newPixels[offset] = n;
-							if (useCache) {
-								newCache[offset] = p;
+						if ((n == xaosRendererData.getPixel(offsetl)) && (n == xaosRendererData.getPixel(offsetr)) && (n == xaosRendererData.getPixel(offsetlu)) && (n == xaosRendererData.getPixel(offsetru)) && (n == xaosRendererData.getPixel(offsetld)) && (n == xaosRendererData.getPixel(offsetrd))) {
+							xaosRendererData.setPixel(offset, n);
+							if (cacheActive) {
+								xaosRendererData.setPoint(offset, p);
 							}
 							if (XaosConstants.SHOW_SOLIDGUESS) {
-								newPixels[offset] = Colors.mixColors(newPixels[offset], 0xFFFF0000, 127);
+								xaosRendererData.setPixel(offset, Colors.mixColors(xaosRendererData.getPixel(offset), 0xFFFF0000, 127));
 							}
 						}
 						else {
@@ -1515,9 +1514,11 @@ public final class XaosRenderer extends Renderer {
 							w.set(position, reallocY[k].position);
 //							p.pr = position;
 //							p.pi = reallocY[k].position;
-							newPixels[offset] = rendererStrategy.renderPoint(newCache[offset], z, w);
+							c = rendererStrategy.renderPoint(p, z, w);
+							xaosRendererData.setPixel(offset, c);
+							xaosRendererData.setPoint(offset, p);
 							if (XaosConstants.SHOW_CALCULATE) {
-								newPixels[offset] = Colors.mixColors(newPixels[offset], 0xFFFFFF00, 127);
+								xaosRendererData.setPixel(offset, Colors.mixColors(xaosRendererData.getPixel(offset), 0xFFFFFF00, 127));
 							}
 						}
 					}
@@ -1526,9 +1527,11 @@ public final class XaosRenderer extends Renderer {
 						w.set(position, reallocY[k].position);
 //						p.pr = position;
 //						p.pi = reallocY[k].position;
-						newPixels[offset] = rendererStrategy.renderPoint(newCache[offset], z, w);
+						c = rendererStrategy.renderPoint(p, z, w);
+						xaosRendererData.setPixel(offset, c);
+						xaosRendererData.setPoint(offset, p);
 						if (XaosConstants.SHOW_CALCULATE) {
-							newPixels[offset] = Colors.mixColors(newPixels[offset], 0xFFFFFF00, 127);
+							xaosRendererData.setPixel(offset, Colors.mixColors(xaosRendererData.getPixel(offset), 0xFFFFFF00, 127));
 						}
 					}
 					distu = 0;
@@ -1543,7 +1546,7 @@ public final class XaosRenderer extends Renderer {
 		realloc.recalculate = false;
 		realloc.refreshed = true;
 		realloc.dirty = false;
-		realloc.isCached = useCache;
+		realloc.isCached = cacheActive;
 	}
 
 	private void refreshLine(final XaosRealloc realloc, final XaosRealloc[] reallocX, final XaosRealloc[] reallocY) {
@@ -1553,15 +1556,17 @@ public final class XaosRenderer extends Renderer {
 		final int rowsize = width;
 		int offset = realloc.pos * rowsize;
 		int k = 0;
-		final int[] newPixels = xaosRendererData.newPixels();
-		final RendererPoint[] newCache = xaosRendererData.newCache();
+		int c = 0;
+		RendererPoint p = xaosRendererData.newPoint();
 		if (realloc.isCached && !realloc.refreshed) {
 			for (final XaosRealloc tmpRealloc : reallocX) {
 				if (tmpRealloc.isCached && !tmpRealloc.refreshed) {
 					k = offset;
-					newPixels[k] = rendererStrategy.renderColor(newCache[offset]);
+					xaosRendererData.getPoint(offset, p);
+					c = rendererStrategy.renderColor(p);
+					xaosRendererData.setPixel(k, c);
 					if (XaosConstants.SHOW_REFRESH) {
-						newPixels[k] = Colors.mixColors(newPixels[k], 0xFF0000FF, 127);
+						xaosRendererData.setPixel(k, Colors.mixColors(xaosRendererData.getPixel(k), 0xFF0000FF, 127));
 					}
 				}
 				offset += 1;
@@ -1577,15 +1582,17 @@ public final class XaosRenderer extends Renderer {
 		final int rowsize = width;
 		int offset = realloc.pos;
 		int k = 0;
-		final int[] newPixels = xaosRendererData.newPixels();
-		final RendererPoint[] newCache = xaosRendererData.newCache();
+		int c = 0;
+		RendererPoint p = xaosRendererData.newPoint();
 		if (realloc.isCached && !realloc.refreshed) {
 			for (final XaosRealloc tmpRealloc : reallocY) {
 				if (tmpRealloc.isCached && !tmpRealloc.refreshed) {
 					k = offset;
-					newPixels[k] = rendererStrategy.renderColor(newCache[offset]);
+					xaosRendererData.getPoint(offset, p);
+					c = rendererStrategy.renderColor(p);
+					xaosRendererData.setPixel(k, c);
 					if (XaosConstants.SHOW_REFRESH) {
-						newPixels[k] = Colors.mixColors(newPixels[k], 0xFF0000FF, 127);
+						xaosRendererData.setPixel(k, Colors.mixColors(xaosRendererData.getPixel(k), 0xFF0000FF, 127));
 					}
 				}
 				offset += rowsize;
@@ -1599,37 +1606,23 @@ public final class XaosRenderer extends Renderer {
 		
 	}
 
-	private boolean isHorizontalSymetrySupported() {
-		return rendererStrategy.isHorizontalSymetrySupported();
-	}
-
-	private boolean isVerticalSymetrySupported() {
-		return rendererStrategy.isVerticalSymetrySupported();
-	}
-
-	private boolean isSolidGuessSupported() {
-		return rendererStrategy.isSolidGuessSupported();
-	}
-
-	@Override
-	public void start() {
-		// prepareLinesWorker.start();
-		// prepareColumnsWorker.start();
-//		renderWorker2.start();
-	}
-
-	@Override
-	public void abort() {
-		// prepareLinesWorker.stop();
-		// prepareColumnsWorker.stop();
-//		renderWorker2.stop();
-	}
-
-	@Override
-	public void join() {
-		// TODO Auto-generated method stub
-		
-	}
+//	@Override
+//	public void start() {
+//		// prepareLinesWorker.start();
+//		// prepareColumnsWorker.start();
+////		renderWorker2.start();
+//	}
+//
+//	@Override
+//	public void abort() {
+//		// prepareLinesWorker.stop();
+//		// prepareColumnsWorker.stop();
+////		renderWorker2.stop();
+//	}
+//
+//	@Override
+//	public void join() {
+//	}
 
 //	private class MandelbrotWorker2 extends RenderWorker {
 //		/**

@@ -33,6 +33,7 @@ import com.nextbreakpoint.nextfractal.flux.mandelbrot.MutableNumber;
 public class Renderer {
 	public static final int MODE_CALCULATE = 0x01;
 	public static final int MODE_REFRESH = 0x02;
+	protected final RendererDelegate rendererDelegate;
 	protected final RendererStrategy rendererStrategy;
 	protected final RendererData rendererData;
 	protected boolean aborted;
@@ -43,7 +44,8 @@ public class Renderer {
 	/**
 	 * @param threadPriority
 	 */
-	public Renderer(RendererStrategy renderingStrategy, RendererData renderedData, int width, int height) {
+	public Renderer(RendererDelegate rendererDelegate, RendererStrategy renderingStrategy, RendererData renderedData, int width, int height) {
+		this.rendererDelegate = rendererDelegate;
 		this.rendererStrategy = renderingStrategy;
 		this.rendererData = renderedData;
 		this.width = width;
@@ -88,19 +90,19 @@ public class Renderer {
 		rendererStrategy.updateParameters();
 		final MutableNumber px = new MutableNumber(0, 0);
 		final MutableNumber pw = new MutableNumber(0, 0);
+		final RendererPoint p = rendererData.newPoint();
 		rendererData.initPositions();
 		int offset = 0;
 		for (int y = 0; y < height; y++) {
 			for (int x = 0; x < width; x++) {
 				px.set(rendererData.point());
 				pw.set(rendererData.positionX(x), rendererData.positionY(y));
-				RendererPoint p = rendererData.newCache()[offset];
 				rendererData.setPixel(offset, rendererStrategy.renderPoint(p, px, pw));
 				offset += 1;
 			}
 			if (y % 20 == 0) {
 				progress = (float)y / (float)height;
-				rendererData.copy();
+				rendererDelegate.didPixelsChange(rendererData.getPixels());
 			}
 			Thread.yield();
 			if (isInterrupted()) {
@@ -108,7 +110,7 @@ public class Renderer {
 				break;
 			}
 		}
-		rendererData.copy();
+		rendererDelegate.didPixelsChange(rendererData.getPixels());
 		if (aborted) {
 			progress = 1;
 		}

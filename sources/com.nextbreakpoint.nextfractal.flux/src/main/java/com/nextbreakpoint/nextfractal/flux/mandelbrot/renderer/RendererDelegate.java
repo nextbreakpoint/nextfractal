@@ -25,22 +25,9 @@
  */
 package com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer;
 
-import com.nextbreakpoint.nextfractal.flux.mandelbrot.MutableNumber;
-
 /**
  * @author Andrea Medeghini
  */
-public class RendererPoint {
-	protected final MutableNumber[] vars;
-	
-	public RendererPoint(int depth) {
-		vars = new MutableNumber[depth];
-		for (int i = 0; i < depth; i++) {
-			vars[i] = new MutableNumber(0, 0);
-		}
-	}
-	
-	public MutableNumber[] getVars() {
-		return vars;
-	}
+public interface RendererDelegate {
+	public void didPixelsChange(int[] pixels);
 }
