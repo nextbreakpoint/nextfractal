@@ -235,7 +235,7 @@ public class RendererData {
 			double[] cache = newCache.get(j);
 			double r = cache[offset * 2 + 0];
 			double i = cache[offset * 2 + 1];
-			p.vars[j].set(r, i);
+			p.vars()[j].set(r, i);
 		}
 	}
 
@@ -246,7 +246,7 @@ public class RendererData {
 	public void setPoint(int offset, RendererPoint p) {
 		int depth = getDepth();
 		for (int j = 0; j < depth; j++) {
-			MutableNumber var = p.vars[j];
+			MutableNumber var = p.vars()[j];
 			double[] cache = newCache.get(j);
 			cache[offset * 2 + 0] = var.r();
 			cache[offset * 2 + 1] = var.i();

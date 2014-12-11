@@ -87,17 +87,20 @@ public class Renderer {
 	protected void doRender(final boolean dynamic) {
 		progress = 0;
 		update();
-		rendererStrategy.updateParameters();
+		rendererStrategy.prepare();
 		final MutableNumber px = new MutableNumber(0, 0);
 		final MutableNumber pw = new MutableNumber(0, 0);
 		final RendererPoint p = rendererData.newPoint();
 		rendererData.initPositions();
 		int offset = 0;
+		int c = 0;
 		for (int y = 0; y < height; y++) {
 			for (int x = 0; x < width; x++) {
 				px.set(rendererData.point());
 				pw.set(rendererData.positionX(x), rendererData.positionY(y));
-				rendererData.setPixel(offset, rendererStrategy.renderPoint(p, px, pw));
+				c = rendererStrategy.renderPoint(p, px, pw);
+				rendererData.setPixel(offset, c);
+				rendererData.setPoint(offset, p);
 				offset += 1;
 			}
 			if (y % 20 == 0) {

@@ -1,6 +1,6 @@
 package com.nextbreakpoint.nextfractal.flux.mandelbrot.xaos;
 
-public class XaosConstants {
+class XaosConstants {
 	public static final boolean DUMP = false;
 	public static final boolean DUMP_XAOS = false;
 	public static final boolean SHOW_REFRESH = false;

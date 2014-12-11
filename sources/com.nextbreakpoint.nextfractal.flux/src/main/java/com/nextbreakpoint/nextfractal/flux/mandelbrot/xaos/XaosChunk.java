@@ -3,7 +3,7 @@ package com.nextbreakpoint.nextfractal.flux.mandelbrot.xaos;
 /**
  * @author Andrea Medeghini
  */
-public class XaosChunk {
+class XaosChunk {
 	int length;
 	int from;
 	int to;

@@ -3,42 +3,27 @@ package com.nextbreakpoint.nextfractal.flux.mandelbrot.xaos;
 /**
  * @author Andrea Medeghini
  */
-public class XaosDynamic {
-	/**
-	 * 
-	 */
-	public int[] delta;
-	/**
-	 * 
-	 */
-	public Data[] oldBest;
-	/**
-	 * 
-	 */
-	public Data[] newBest;
-	/**
-	 * 
-	 */
-	public Data[] calData;
-	/**
-	 * 
-	 */
-	public Data[] conData;
+class XaosDynamic {
+	int[] delta;
+	XaosPrice[] oldBest;
+	XaosPrice[] newBest;
+	XaosPrice[] calData;
+	XaosPrice[] conData;
 
 	/**
 	 * @param size
 	 */
-	public XaosDynamic(final int size) {
+	XaosDynamic(final int size) {
 		delta = new int[size + 1];
-		oldBest = new Data[size];
-		newBest = new Data[size];
-		calData = new Data[size];
-		conData = new Data[size << XaosConstants.DSIZE];
+		oldBest = new XaosPrice[size];
+		newBest = new XaosPrice[size];
+		calData = new XaosPrice[size];
+		conData = new XaosPrice[size << XaosConstants.DSIZE];
 		for (int i = 0; i < size; i++) {
-			calData[i] = new Data();
+			calData[i] = new XaosPrice();
 		}
 		for (int i = 0; i < (size << XaosConstants.DSIZE); i++) {
-			conData[i] = new Data();
+			conData[i] = new XaosPrice();
 		}
 	}
 
@@ -58,25 +43,8 @@ public class XaosDynamic {
 	 * 
 	 */
 	public void swap() {
-		final XaosDynamic.Data[] tmp_best = newBest;
+		final XaosPrice[] tmp_best = newBest;
 		newBest = oldBest;
 		oldBest = tmp_best;
-	}
-
-	/**
-	 * @author Andrea Medeghini
-	 */
-	public class Data {
-		Data previous;
-		int pos;
-		int price;
-
-		/**
-		 * @see java.lang.Object#toString()
-		 */
-		@Override
-		public String toString() {
-			return "<price = " + price + ", pos = " + pos + ">";
-		}
 	}
 }

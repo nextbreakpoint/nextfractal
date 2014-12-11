@@ -7,6 +7,17 @@ import com.nextbreakpoint.nextfractal.flux.mandelbrot.Number;
  */
 public interface RendererStrategy {
 	/**
+	 * 
+	 */
+	public void prepare();
+
+	/**
+	 * @param p
+	 * @return
+	 */
+	public int renderColor(RendererPoint p);
+	
+	/**
 	 * @param rendererFractal 
 	 * @param p
 	 * @param x
@@ -14,6 +25,11 @@ public interface RendererStrategy {
 	 * @return the time
 	 */
 	public int renderPoint(RendererPoint p, Number x, Number w);
+	
+	/**
+	 * @return
+	 */
+	public boolean isSolidGuessSupported();
 
 	/**
 	 * @return true if vertical symetry is supported.
@@ -24,24 +40,14 @@ public interface RendererStrategy {
 	 * @return true if horizontal symetry is supported.
 	 */
 	public boolean isHorizontalSymetrySupported();
-	
+
 	/**
 	 * @return
 	 */
-	public boolean isSolidGuessSupported();
-
-	/**
-	 * 
-	 */
-	public void updateParameters();
-
-	/**
-	 * @param p
-	 * @return
-	 */
-	public int renderColor(RendererPoint p);
-
 	public double getVerticalSymetryPoint();
 
+	/**
+	 * @return
+	 */
 	public double getHorizontalSymetryPoint();
 }

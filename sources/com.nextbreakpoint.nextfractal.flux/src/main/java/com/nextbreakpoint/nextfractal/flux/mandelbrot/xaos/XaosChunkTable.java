@@ -3,11 +3,8 @@ package com.nextbreakpoint.nextfractal.flux.mandelbrot.xaos;
 /**
  * @author Andrea Medeghini
  */
-public class XaosChunkTable {
-	/**
-	 * 
-	 */
-	public XaosChunk[] data;
+class XaosChunkTable {
+	XaosChunk[] data;
 
 	/**
 	 * @param width

@@ -31,7 +31,7 @@ import com.nextbreakpoint.nextfractal.flux.mandelbrot.MutableNumber;
  * @author Andrea Medeghini
  */
 public class RendererPoint {
-	protected final MutableNumber[] vars;
+	private final MutableNumber[] vars;
 	
 	public RendererPoint(int depth) {
 		vars = new MutableNumber[depth];
@@ -40,7 +40,7 @@ public class RendererPoint {
 		}
 	}
 	
-	public MutableNumber[] getVars() {
+	public MutableNumber[] vars() {
 		return vars;
 	}
 }

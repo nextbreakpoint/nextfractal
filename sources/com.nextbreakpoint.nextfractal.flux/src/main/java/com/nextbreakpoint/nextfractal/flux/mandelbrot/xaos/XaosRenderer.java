@@ -69,9 +69,6 @@ public final class XaosRenderer extends Renderer {
 	 * 
 	 */
 	protected void swapBuffers() {
-		if (XaosConstants.DUMP) {
-			logger.fine("Swap buffers...");
-		}
 		xaosRendererData.swap();
 	}
 
@@ -81,14 +78,11 @@ public final class XaosRenderer extends Renderer {
 	protected void doRender(final boolean dynamic) {
 		aborted = false;
 		update();
-		rendererStrategy.updateParameters();
+		rendererStrategy.prepare();
 		if (XaosConstants.PRINT_REGION) {
 			logger.fine("Region: (" + xaosRendererData.left() + "," + xaosRendererData.right() + ") -> (" + xaosRendererData.left() + "," + xaosRendererData.right() + ")");
 		}
 		cacheActive = (renderMode & Renderer.MODE_REFRESH) != 0 && !dynamic;
-//		if ((renderMode & Renderer.MODE_CALCULATE) != 0 || dynamic) {
-//			xaosRendererData.invalidateCache();
-//		}
 		isSolidguessSupported = XaosConstants.USE_SOLIDGUESS && rendererStrategy.isSolidGuessSupported();
 		isVerticalSymetrySupported = XaosConstants.USE_SYMETRY && rendererStrategy.isVerticalSymetrySupported();
 		isHorizontalSymetrySupported = XaosConstants.USE_SYMETRY && rendererStrategy.isHorizontalSymetrySupported();
@@ -408,9 +402,9 @@ public final class XaosRenderer extends Renderer {
 			logger.fine("Make ReallocTable...");
 		}
 		XaosRealloc tmpRealloc = null;
-		XaosDynamic.Data prevData = null;
-		XaosDynamic.Data bestData = null;
-		XaosDynamic.Data tmpData = null;
+		XaosPrice prevData = null;
+		XaosPrice bestData = null;
+		XaosPrice tmpData = null;
 		int bestPrice = XaosConstants.MAX_PRICE;
 		int price = 0;
 		int price1 = 0;

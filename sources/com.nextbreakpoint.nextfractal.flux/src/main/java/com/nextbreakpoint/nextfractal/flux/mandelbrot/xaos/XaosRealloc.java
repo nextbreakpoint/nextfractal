@@ -3,59 +3,20 @@ package com.nextbreakpoint.nextfractal.flux.mandelbrot.xaos;
 /**
  * @author Andrea Medeghini
  */
-public class XaosRealloc {
-	/**
-	 * 
-	 */
-	public boolean isCached;
-	/**
-	 * 
-	 */
-	public boolean refreshed;
-	/**
-	 * 
-	 */
-	public boolean recalculate;
-	/**
-	 * 
-	 */
-	public boolean changeDirty;
-	/**
-	 * 
-	 */
-	public boolean dirty;
-	/**
-	 * 
-	 */
-	public boolean line;
-	/**
-	 * 
-	 */
-	public int pos;
-	/**
-	 * 
-	 */
-	public int plus;
-	/**
-	 * 
-	 */
-	public int symTo;
-	/**
-	 * 
-	 */
-	public int symRef;
-	/**
-	 * 
-	 */
-	public double changePosition;
-	/**
-	 * 
-	 */
-	public double position;
-	/**
-	 * 
-	 */
-	public double priority;
+class XaosRealloc {
+	boolean isCached;
+	boolean refreshed;
+	boolean recalculate;
+	boolean changeDirty;
+	boolean dirty;
+	boolean line;
+	int pos;
+	int plus;
+	int symTo;
+	int symRef;
+	double changePosition;
+	double position;
+	double priority;
 
 	/**
 	 * @param line
