@@ -25,7 +25,7 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.flux.mandelbrot.xaos;
+package com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.xaos;
 
 import java.util.logging.Logger;
 

@@ -44,9 +44,9 @@ public class Renderer {
 	/**
 	 * @param threadPriority
 	 */
-	public Renderer(RendererDelegate rendererDelegate, RendererStrategy renderingStrategy, RendererData renderedData, int width, int height) {
+	public Renderer(RendererDelegate rendererDelegate, RendererStrategy rendererStrategy, RendererData renderedData, int width, int height) {
 		this.rendererDelegate = rendererDelegate;
-		this.rendererStrategy = renderingStrategy;
+		this.rendererStrategy = rendererStrategy;
 		this.rendererData = renderedData;
 		this.width = width;
 		this.height = height;
@@ -149,5 +149,10 @@ public class Renderer {
 
 	public float getProgress() {
 		return progress;
+	}
+
+	public void setMode(int modeRefresh) {
+		// TODO Auto-generated method stub
+		
 	}
 }

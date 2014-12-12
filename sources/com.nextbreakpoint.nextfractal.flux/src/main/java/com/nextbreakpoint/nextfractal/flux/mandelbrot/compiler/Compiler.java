@@ -222,7 +222,7 @@ public class Compiler {
 		builder.append(className);
 		builder.append("() {\n");
 		if (fractal != null) {
-			for (CompilerVariable variable : fractal.getVariables()) {
+			for (CompilerVariable variable : fractal.getVars()) {
 				builder.append("registerVar(\"");
 				builder.append(variable.getName());
 				builder.append("\",() -> { return get");
@@ -235,7 +235,7 @@ public class Compiler {
 
 	private void members(StringBuilder builder, Map<String, CompilerVariable> variables, ASTFractal fractal) {
 		if (fractal != null) {
-			for (CompilerVariable variable : fractal.getVariables()) {
+			for (CompilerVariable variable : fractal.getVars()) {
 				variables.put(variable.getName(), variable);
 				if (variable.isCreate()) {
 					if (variable.isReal()) {

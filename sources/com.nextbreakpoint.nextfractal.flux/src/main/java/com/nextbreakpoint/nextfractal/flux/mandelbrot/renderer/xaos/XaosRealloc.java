@@ -1,4 +1,4 @@
-package com.nextbreakpoint.nextfractal.flux.mandelbrot.xaos;
+package com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.xaos;
 
 /**
  * @author Andrea Medeghini

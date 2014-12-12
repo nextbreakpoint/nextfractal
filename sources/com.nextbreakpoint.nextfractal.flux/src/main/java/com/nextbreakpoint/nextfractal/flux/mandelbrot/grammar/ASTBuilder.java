@@ -84,6 +84,10 @@ public class ASTBuilder {
 		this.fractal = fractal;
 	}
 
+	public void addVariable(String variable) {
+		fractal.addVariable(variable);
+	}
+
 	public double parseDouble(String text) {
 		return Double.parseDouble(text);
 	}
@@ -108,15 +112,15 @@ public class ASTBuilder {
 		return Long.parseLong(text, base);
 	}
 
-	public void registerVariable(String name, boolean real, boolean create, Token location) {
-		fractal.registerVariable(name, real, create, location);
+	public void registerVar(String name, boolean real, boolean create, Token location) {
+		fractal.registerVar(name, real, create, location);
 	}
 
-	public void registerVariable(String name, boolean real, Token location) {
-		fractal.registerVariable(name, real, true, location);
+	public void registerVar(String name, boolean real, Token location) {
+		fractal.registerVar(name, real, true, location);
 	}
 
-	public CompilerVariable getVariable(String name, Token location) {
-		return fractal.getVariable(name, location);
+	public CompilerVariable getVar(String name, Token location) {
+		return fractal.getVar(name, location);
 	}
 }	

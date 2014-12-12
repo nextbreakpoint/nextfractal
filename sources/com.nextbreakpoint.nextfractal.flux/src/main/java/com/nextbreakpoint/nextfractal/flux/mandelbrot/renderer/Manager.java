@@ -26,8 +26,6 @@
 package com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer;
 
 import com.nextbreakpoint.nextfractal.core.util.DoubleVector2D;
-import com.nextbreakpoint.nextfractal.core.util.Tile;
-import com.nextbreakpoint.nextfractal.flux.render.RenderFactory;
 import com.nextbreakpoint.nextfractal.flux.render.RenderGraphicsContext;
 
 /**
@@ -35,14 +33,10 @@ import com.nextbreakpoint.nextfractal.flux.render.RenderGraphicsContext;
  */
 public interface Manager {
 	/**
-	 * 
+	 * @param constant
 	 */
-	public static final int MODE_CALCULATE = 0x01;
-	/**
-	 * 
-	 */
-	public static final int MODE_REFRESH = 0x02;
-
+	public void setConstant(DoubleVector2D constant);
+	
 	/**
 	 * @param gc
 	 */
@@ -65,66 +59,6 @@ public interface Manager {
 	public void drawImage(RenderGraphicsContext gc, int x, int y, int w, int h);
 
 	/**
-	 * @return true if is interrupted.
-	 */
-	public boolean isInterrupted();
-
-	/**
-	 * @return the status.
-	 */
-	public int getRenderingStatus();
-
-	/**
-	 * @param mode
-	 */
-	public void setMode(int mode);
-
-	/**
-	 * @return
-	 */
-	public int getMode();
-
-	/**
-	 * @param tile
-	 */
-	public void setTile(Tile tile);
-
-	/**
-	 * @return
-	 */
-	public Tile getTile();
-
-	/**
-	 * @return
-	 */
-	public abstract RenderFactory getRenderFactory();
-	
-	/**
-	 * @param renderFactory
-	 */
-	public abstract void setRenderFactory(RenderFactory renderFactory);
-
-	/**
-	 * @param mode
-	 */
-	public void setMandelbrotMode(Integer mode);
-
-	/**
-	 * @param constant
-	 */
-	public void setConstant(DoubleVector2D constant);
-
-	/**
-	 * @return
-	 */
-	public boolean isDynamic();
-
-	/**
-	 * @return
-	 */
-	public boolean isViewChanged();
-
-	/**
 	 * 
 	 */
 	public void dispose();
@@ -137,7 +71,7 @@ public interface Manager {
 	/**
 	 * 
 	 */
-	public void stop();
+	public void abort();
 
 	/**
 	 * 

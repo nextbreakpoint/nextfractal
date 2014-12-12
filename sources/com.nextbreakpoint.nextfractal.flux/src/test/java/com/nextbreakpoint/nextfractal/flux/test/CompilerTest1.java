@@ -64,7 +64,7 @@ public class CompilerTest1 extends BaseTest {
 
 	protected String getSource() {
 		String source = ""
-				+ "fractal {"
+				+ "fractal [z,x] {"
 				+ "orbit [-1 - 1i,+1 + 1i] {"
 				+ "trap trap1 [0] {"
 				+ "MOVETO(1);"
