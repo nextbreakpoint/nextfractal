@@ -55,7 +55,7 @@ public class CompilerTest1 extends BaseTest {
 			float[] c = fractal.getColor();
 			Assert.assertNotNull(c);
 			System.out.println(String.format("%f,%f,%f,%f", c[0], c[1], c[2], c[3]));
-			Variable z = fractal.getVar("z");
+			Variable z = fractal.getVariable("z");
 			Assert.assertNotNull(z);
 			System.out.println(String.format("%f,%f", z.get().r(), z.get().i()));
 		} catch (Exception e) {
@@ -66,7 +66,7 @@ public class CompilerTest1 extends BaseTest {
 
 	protected String getSource() {
 		String source = ""
-				+ "fractal {"
+				+ "fractal [z,x,n] {"
 				+ "orbit [-1 - 1i,+1 + 1i] {"
 				+ "trap trap1 [0] {"
 				+ "MOVETO(1);"
@@ -83,7 +83,7 @@ public class CompilerTest1 extends BaseTest {
 				+ "z = x * (y + 5i);"
 				+ "t = |z|;"
 				+ "}"
-				+ "} color [#FF000000] [z,x,n] {"
+				+ "} color [#FF000000] {"
 				+ "palette palette1 [200] {"
 				+ "[0, #000000] > [100, #FFFFFF];"
 				+ "[101, #FFFFFF] > [200, #FF0000];"

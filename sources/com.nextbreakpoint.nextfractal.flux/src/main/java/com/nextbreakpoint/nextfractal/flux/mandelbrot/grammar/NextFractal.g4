@@ -20,7 +20,7 @@ fractal
 	:
 	f=FRACTAL {
 		builder.setFractal(new ASTFractal($f));
-	} '{' orbit color '}' eof 
+	} '[' v=variablelist ']' '{' orbit color '}' eof 
 	;
 		
 orbit
@@ -34,7 +34,7 @@ color
 	:
 	c=COLOR '[' argb=colorargb ']' { 
 		builder.setColor(new ASTColor($c, $argb.result));
-	} '[' v=variablelist ']' '{' palette* colorrule* '}'
+	} '{' palette* colorrule* '}'
 	;
 		
 begin
@@ -101,18 +101,18 @@ statement returns [ASTStatement result]
 	:
 	v=USER_VARIABLE '=' e=expression ';' {
 		$result = new ASTStatement($v, $v.text, $e.result);
-		builder.registerVar($v.text, $e.result.isReal(), $v);
+		builder.registerVariable($v.text, $e.result.isReal(), $v);
 	}
 	;
 		
 variablelist 
 	:
 	v=USER_VARIABLE {
-		builder.addVariable($v.text);
+		builder.registerStateVariable($v.text, $v);
 	}
 	| 
-	v=USER_VARIABLE ',' vl=variablelist {
-		builder.addVariable($v.text);
+	vl=variablelist ',' v=USER_VARIABLE {
+		builder.registerStateVariable($v.text, $v);
 	} 
 	;
 		
@@ -309,7 +309,7 @@ function returns [ASTFunction result]
 variable returns [ASTVariable result]
 	:
 	v=USER_VARIABLE {
-		$result = new ASTVariable($v, builder.getVar($v.text, $v));
+		$result = new ASTVariable($v, builder.getVariable($v.text, $v));
 	}
 	;
 	

@@ -7,6 +7,7 @@ import java.io.StringReader;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -97,8 +98,8 @@ public class Compiler {
 			NextFractalLexer lexer = new NextFractalLexer(is);
 			CommonTokenStream tokens = new CommonTokenStream(lexer);
 			NextFractalParser parser = new NextFractalParser(tokens);
-			lexer.addErrorListener(new ErrorListener());
-//			parser.addErrorListener(new ErrorListener());
+			lexer.addErrorListener(new CompilerErrorListener());
+//			parser.addErrorListener(new CompilerErrorListener());
 			ParseTree fractalTree = parser.fractal();
             if (fractalTree != null) {
             	ParseTreeWalker walker = new ParseTreeWalker();
@@ -140,7 +141,7 @@ public class Compiler {
 	
 	private Fractal compileToClass(String source) throws Exception {
 		List<SimpleJavaFileObject> compilationUnits = new ArrayList<>();
-		compilationUnits.add(new JavaSourceFromString(className, source));
+		compilationUnits.add(new CompilerJavaFileObject(className, source));
 		List<String> options = new ArrayList<>();
 		options.addAll(Arrays.asList("-source", "1.8", "-target", "1.8", "-proc:none", "-Xdiags:verbose", "-classpath", System.getProperty("java.class.path")));
 		DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
@@ -151,7 +152,7 @@ public class Compiler {
 			logger.log(Level.FINE, String.format("Error on line %d: %s\n", diagnostic.getLineNumber(), diagnostic.getMessage(null)));
 		}
 		if (diagnostics.getDiagnostics().size() == 0) {
-			JavaClassLoader loader = new JavaClassLoader();
+			CompilerClassLoader loader = new CompilerClassLoader();
 			{
 				Iterable<? extends JavaFileObject> files = fileManager.getJavaFileObjects(className + ".class");
 				Iterator<? extends JavaFileObject> iterator = files.iterator();
@@ -250,6 +251,7 @@ public class Compiler {
 		builder.append("return new ");
 		builder.append(className);
 		builder.append("Color();\n}\n");
+		buildConstructor(builder, fractal);
 		builder.append("public void renderOrbit() {\n");
 		builder.append("orbit.render();\n");
 		builder.append("}\n");
@@ -270,59 +272,66 @@ public class Compiler {
 		return builder.toString();
 	}
 
+	private void buildConstructor(StringBuilder builder, ASTFractal fractal) {
+		if (fractal != null) {
+			builder.append("public ");
+			builder.append(className);
+			builder.append("() {\n");
+			for (String varName : fractal.getVariables()) {
+				builder.append("registerStateVariable(\"");
+				builder.append(varName);
+				builder.append("\");\n");
+			}
+			builder.append("}\n");
+		}
+	}
+
 	private void buildOrbit(StringBuilder builder, Map<String, CompilerVariable> variables, ASTFractal fractal) {
 		if (fractal != null) {
-			costructorOrbit(builder, fractal);
-			membersOrbit(builder, variables, fractal);
+			compile(builder, variables, fractal.getVars());
 			compile(builder, variables, fractal.getOrbit());
 		}
 	}
 
 	private void buildColor(StringBuilder builder, Map<String, CompilerVariable> variables, ASTFractal fractal) {
 		if (fractal != null) {
-			costructorColor(builder, fractal.getColor());
 			compile(builder, variables, fractal.getColor());
 		}
 	}
 
-	private void costructorOrbit(StringBuilder builder, ASTFractal fractal) {
-		builder.append("public ");
-		builder.append(className);
-		builder.append("Orbit() {\n");
-		if (fractal != null) {
-			for (CompilerVariable variable : fractal.getVars()) {
-				builder.append("registerVar(\"");
-				builder.append(variable.getName());
+	private void compile(StringBuilder builder, Map<String, CompilerVariable> variables, Collection<CompilerVariable> vars) {
+		if (vars != null) {
+			builder.append("public ");
+			builder.append(className);
+			builder.append("Orbit() {\n");
+			for (CompilerVariable var : vars) {
+				builder.append("registerVariable(\"");
+				builder.append(var.getName());
 				builder.append("\",() -> { return get");
-				builder.append(variable.getName().toUpperCase());
+				builder.append(var.getName().toUpperCase());
 				builder.append("(); });\n");
 			}
-		}
-		builder.append("}\n");
-	}
-
-	private void membersOrbit(StringBuilder builder, Map<String, CompilerVariable> variables, ASTFractal fractal) {
-		if (fractal != null) {
-			for (CompilerVariable variable : fractal.getVars()) {
-				variables.put(variable.getName(), variable);
-				if (variable.isCreate()) {
-					if (variable.isReal()) {
+			builder.append("}\n");
+			for (CompilerVariable var : vars) {
+				variables.put(var.getName(), var);
+				if (var.isCreate()) {
+					if (var.isReal()) {
 						builder.append("private double ");
-						builder.append(variable.getName());
+						builder.append(var.getName());
 						builder.append(" = 0.0;\n");
 						builder.append("public Number get");
-						builder.append(variable.getName().toUpperCase());
+						builder.append(var.getName().toUpperCase());
 						builder.append("() { return number(");
-						builder.append(variable.getName());
+						builder.append(var.getName());
 						builder.append(",0); }\n");
 					} else {
 						builder.append("private Number ");
-						builder.append(variable.getName());
+						builder.append(var.getName());
 						builder.append(" = number(0.0,0.0);\n");
 						builder.append("public Number get");
-						builder.append(variable.getName().toUpperCase());
+						builder.append(var.getName().toUpperCase());
 						builder.append("() { return ");
-						builder.append(variable.getName());
+						builder.append(var.getName());
 						builder.append("; }\n");
 					}
 				}
@@ -330,40 +339,34 @@ public class Compiler {
 		}
 	}
 
-	private void costructorColor(StringBuilder builder, ASTColor color) {
-		builder.append("public ");
-		builder.append(className);
-		builder.append("Color() {\n");
-		if (color != null) {
-			for (String varName : color.getVariables()) {
-				builder.append("registerStateVar(\"");
-				builder.append(varName);
-				builder.append("\");\n");
-			}
-		}
-		builder.append("}\n");
-	}
-
 	private void compile(StringBuilder builder, Map<String, CompilerVariable> variables, ASTColor color) {
-		for (ASTPalette palette : color.getPalettes()) {
-			compile(builder, variables, palette);
+		if (color != null) {
+			builder.append("public ");
+			builder.append(className);
+			builder.append("Color() {\n");
+			builder.append("}\n");
+			for (ASTPalette palette : color.getPalettes()) {
+				compile(builder, variables, palette);
+			}
 		}
 		builder.append("public void render() {\n");
-		for (String varName : color.getVariables()) {
-			CompilerVariable variable = variables.get(varName);
-			if (variable != null) {
-				builder.append("Number ");
-				builder.append(variable.getName());
-				builder.append(" = getVar(\"");
-				builder.append(variable.getName());
-				builder.append("\").get();\n");
+		if (color != null) {
+			for (String varName : color.getVariables()) {
+				CompilerVariable variable = variables.get(varName);
+				if (variable != null) {
+					builder.append("Number ");
+					builder.append(variable.getName());
+					builder.append(" = getVariable(\"");
+					builder.append(variable.getName());
+					builder.append("\").get();\n");
+				}
 			}
-		}
-		builder.append("addColor(1f,");
-		builder.append(createArray(color.getArgb().getComponents()));
-		builder.append(");\n");
-		for (ASTRule rule : color.getRules()) {
-			compile(builder, variables, rule);
+			builder.append("addColor(1f,");
+			builder.append(createArray(color.getArgb().getComponents()));
+			builder.append(");\n");
+			for (ASTRule rule : color.getRules()) {
+				compile(builder, variables, rule);
+			}
 		}
 		builder.append("}\n");
 	}
@@ -416,18 +419,18 @@ public class Compiler {
 		builder.append(";})");
 	}
 
-	private String createArray(float[] components) {
-		return "new float[] {" + components[0] + "f," + components[1] + "f," + components[2] + "f," + components[3] + "f}";
-	}
-
 	private void compile(StringBuilder builder, Map<String, CompilerVariable> variables, ASTOrbit orbit) {
-		for (ASTOrbitTrap trap : orbit.getTraps()) {
-			compile(builder, variables, trap);
+		if (orbit != null) {
+			for (ASTOrbitTrap trap : orbit.getTraps()) {
+				compile(builder, variables, trap);
+			}
 		}
 		builder.append("public void render() {\n");
-		compile(builder, variables, orbit.getBegin());
-		compile(builder, variables, orbit.getLoop());
-		compile(builder, variables, orbit.getEnd());
+		if (orbit != null) {
+			compile(builder, variables, orbit.getBegin());
+			compile(builder, variables, orbit.getLoop());
+			compile(builder, variables, orbit.getEnd());
+		}
 		builder.append("}\n");
 	}
 
@@ -546,6 +549,10 @@ public class Compiler {
 		}		
 	}
 	
+	private String createArray(float[] components) {
+		return "new float[] {" + components[0] + "f," + components[1] + "f," + components[2] + "f," + components[3] + "f}";
+	}
+
 	private class ExpressionCompiler implements ASTExpressionCompiler {
 		private final StringBuilder builder;
 		
@@ -946,10 +953,10 @@ public class Compiler {
 		}
 	}
 
-	private class JavaSourceFromString extends SimpleJavaFileObject {
+	private class CompilerJavaFileObject extends SimpleJavaFileObject {
         private final String code;
 
-        public JavaSourceFromString(String name, String code) {
+        public CompilerJavaFileObject(String name, String code) {
             super(URI.create("string:///" + name.replace('.','/') + Kind.SOURCE.extension), Kind.SOURCE);
             this.code = code;
         }
@@ -960,14 +967,14 @@ public class Compiler {
         }
     }
 	
-	private class JavaClassLoader extends ClassLoader {
+	private class CompilerClassLoader extends ClassLoader {
 		public void defineClassFromData(String name, byte[] data) {
 			Class<?> clazz = defineClass(name, data, 0, data.length);
 			super.resolveClass(clazz);
 		}
 	}
 	
-	private class ErrorListener extends DiagnosticErrorListener {
+	private class CompilerErrorListener extends DiagnosticErrorListener {
 		@Override
 		public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line, int charPositionInLine, String msg, RecognitionException e) {
 			logger.log(Level.WARNING, "[" + line + ":" + charPositionInLine + "] " + msg, e);

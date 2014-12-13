@@ -1,7 +1,9 @@
 package com.nextbreakpoint.nextfractal.flux.mandelbrot.grammar;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.antlr.v4.runtime.Token;
@@ -10,16 +12,28 @@ import com.nextbreakpoint.nextfractal.flux.mandelbrot.compiler.CompilerVariable;
 
 public class ASTFractal extends ASTObject {
 	private Map<String, CompilerVariable> vars = new HashMap<>();
+	private List<String> variables = new ArrayList<>();
 	private ASTOrbit orbit;
 	private ASTColor color;
 
 	public ASTFractal(Token location) {
 		super(location);
-		registerVar("x", false, false, location);
-		registerVar("w", false, false, location);
-		registerVar("z", false, false, location);
-		registerVar("n", false, false, location);
-		registerVar("c", false, false, location);
+		registerVariable("x", false, false, location);
+		registerVariable("w", false, false, location);
+		registerVariable("z", false, false, location);
+		registerVariable("n", false, false, location);
+		registerVariable("c", false, false, location);
+	}
+
+	public void registerStateVariable(String varName, Token location) {
+		if (vars.get(varName) == null) {
+			throw new RuntimeException("CompilerVariable not defined: " + location.getText() + " [" + location.getLine() + ":" + location.getCharPositionInLine() + "]");
+		}
+		variables.add(varName);
+	}
+
+	public List<String> getVariables() {
+		return variables;
 	}
 	
 	public ASTOrbit getOrbit() {
@@ -36,6 +50,7 @@ public class ASTFractal extends ASTObject {
 	
 	public void setColor(ASTColor color) {
 		this.color = color;
+		color.setVariables(variables);
 	}
 
 	public String toString() {
@@ -48,7 +63,7 @@ public class ASTFractal extends ASTObject {
 		return builder.toString();
 	}
 
-	public void registerVar(String name, boolean real, boolean create, Token location) {
+	public void registerVariable(String name, boolean real, boolean create, Token location) {
 		CompilerVariable var = vars.get(name);
 		if (var == null) {
 			var = new CompilerVariable(name, real, create);
@@ -58,7 +73,7 @@ public class ASTFractal extends ASTObject {
 		}
 	}
 
-	public CompilerVariable getVar(String name, Token location) {
+	public CompilerVariable getVariable(String name, Token location) {
 		CompilerVariable var = vars.get(name);
 		if (var == null) {
 			throw new RuntimeException("CompilerVariable not defined: " + location.getText() + " [" + location.getLine() + ":" + location.getCharPositionInLine() + "]");

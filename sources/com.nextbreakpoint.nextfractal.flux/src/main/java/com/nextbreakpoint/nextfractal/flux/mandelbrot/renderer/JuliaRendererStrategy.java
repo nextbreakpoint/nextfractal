@@ -40,23 +40,22 @@ class JuliaRendererStrategy implements RendererStrategy {
 	 */
 	@Override
 	public boolean isSolidGuessSupported() {
-		// TODO Auto-generated method stub
-		return false;
+		return rendererFractal.isSolidGuessSupported();
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.RendererStrategy.renderer.AbstractMandelbrotRenderer.RenderingStrategy#isHorizontalSymetrySupported()
-	 */
-	@Override
-	public boolean isHorizontalSymetrySupported() {
-		return false;
-	}
-
-	/**
-	 * @see com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.RendererStrategy.renderer.AbstractMandelbrotRenderer.RenderingStrategy#isVerticalSymetrySupported()
+	 * @see com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.RendererStrategy#isVerticalSymetrySupported()
 	 */
 	@Override
 	public boolean isVerticalSymetrySupported() {
+		return false;
+	}
+
+	/**
+	 * @see com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.RendererStrategy#isHorizontalSymetrySupported()
+	 */
+	@Override
+	public boolean isHorizontalSymetrySupported() {
 		return false;
 	}
 
@@ -65,8 +64,7 @@ class JuliaRendererStrategy implements RendererStrategy {
 	 */
 	@Override
 	public double getVerticalSymetryPoint() {
-		// TODO Auto-generated method stub
-		return 0;
+		return rendererFractal.getVerticalSymetryPoint();
 	}
 
 	/**
@@ -74,7 +72,6 @@ class JuliaRendererStrategy implements RendererStrategy {
 	 */
 	@Override
 	public double getHorizontalSymetryPoint() {
-		// TODO Auto-generated method stub
-		return 0;
+		return rendererFractal.getHorizontalSymetryPoint();
 	}
 }

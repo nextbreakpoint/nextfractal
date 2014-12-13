@@ -20,6 +20,7 @@ public class RendererData {
 	protected List<double[]> oldCache;
 	protected int width; 
 	protected int height;
+	protected int depth;
 
 	/**
 	 * @see java.lang.Object#finalize()
@@ -49,9 +50,10 @@ public class RendererData {
 	 * @param height
 	 * @param depth
 	 */
-	public void init(final int width, final int height) {
+	public void init(final int width, final int height, final int depth) {
 		free();
-		this.width = width;
+		this.depth = depth;
+		this.height = height;
 		this.height = height;
 		region = new Number[2];
 		point = new Number(0, 0);
@@ -65,21 +67,12 @@ public class RendererData {
 		}
 		newPixels = new int[width * height];
 		oldPixels = new int[width * height];
-		int depth = getDepth();
 		newCache = new ArrayList<double[]>(depth);
 		oldCache = new ArrayList<double[]>(depth);
 		for (int i = 0; i < depth; i++) {
 			newCache.add(new double[width * height * 2]);
 			oldCache.add(new double[width * height * 2]);
 		}
-	}
-
-	/**
-	 * @return
-	 */
-	public int getDepth() {
-		int depth = 1;//TODO depth
-		return depth;
 	}
 
 	/**
@@ -222,7 +215,7 @@ public class RendererData {
 	 * @return
 	 */
 	public RendererPoint newPoint() {
-		return new RendererPoint(getDepth());
+		return new RendererPoint(depth);
 	}
 
 	/**
@@ -230,7 +223,6 @@ public class RendererData {
 	 * @param p
 	 */
 	public void getPoint(int offset, RendererPoint p) {
-		int depth = getDepth();
 		for (int j = 0; j < depth; j++) {
 			double[] cache = newCache.get(j);
 			double r = cache[offset * 2 + 0];
@@ -244,7 +236,6 @@ public class RendererData {
 	 * @param p
 	 */
 	public void setPoint(int offset, RendererPoint p) {
-		int depth = getDepth();
 		for (int j = 0; j < depth; j++) {
 			MutableNumber var = p.vars()[j];
 			double[] cache = newCache.get(j);
@@ -268,7 +259,6 @@ public class RendererData {
 	 * @param length
 	 */
 	public void moveCache(int from, int to, int length) {
-		int depth = getDepth();
 		for (int i = 0; i < depth; i++) {
 			System.arraycopy(newCache.get(i), from * 2, newCache.get(i), to * 2, length * 2);
 		}
@@ -289,7 +279,6 @@ public class RendererData {
 	 * @param length
 	 */
 	public void copyCache(int from, int to, int length) {
-		int depth = getDepth();
 		for (int i = 0; i < depth; i++) {
 			System.arraycopy(oldCache.get(i), from * 2, newCache.get(i), to * 2, length * 2);
 		}

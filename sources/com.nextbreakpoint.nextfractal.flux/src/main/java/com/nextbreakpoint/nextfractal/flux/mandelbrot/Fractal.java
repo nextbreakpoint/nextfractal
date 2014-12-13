@@ -196,15 +196,15 @@ public abstract class Fractal {
 		return n.r();
 	}
 	
-	protected void registerVar(String name, Variable var) {
+	protected void registerVariable(String name, Variable var) {
 		vars.put(name, var);
 	}
 
-	protected void registerStateVar(String name) {
+	protected void registerStateVariable(String name) {
 		stateVars.add(name);
 	}
 
-	public Variable getVar(String name) {
+	public Variable getVariable(String name) {
 		return vars.get(name);
 	}
 

@@ -40,14 +40,6 @@ public class ASTColor extends ASTObject {
 		this.argb = argb;
 	}
 
-	public void addVariable(String variable) {
-		variables.add(variable);
-	}
-
-	public List<String> getVariables() {
-		return variables;
-	}
-
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
@@ -76,5 +68,13 @@ public class ASTColor extends ASTObject {
 		}
 		builder.append("]");
 		return builder.toString();
+	}
+
+	public List<String> getVariables() {
+		return variables;
+	}
+
+	public void setVariables(List<String> variables) {
+		this.variables = variables;
 	}
 }
