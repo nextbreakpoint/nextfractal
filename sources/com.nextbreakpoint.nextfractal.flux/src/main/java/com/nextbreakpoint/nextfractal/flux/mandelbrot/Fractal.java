@@ -1,46 +1,27 @@
 package com.nextbreakpoint.nextfractal.flux.mandelbrot;
 
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
 public abstract class Fractal {
-	private Map<String, Variable> vars = new HashMap<>();
-	protected Number x = new Number(0,0);
-	protected Number w = new Number(0,0);
-	protected Number z = new Number(0,0);
-	protected Number n = new Number(0);
-	protected Number c = new Number(0);
-	protected float[] color = new float[] { 1f, 0f, 0f, 0f };
+	private final Map<String, Variable> vars = new HashMap<>();
+	private final Set<String> stateVars = new LinkedHashSet<>();
+	protected final Orbit orbit;
+	protected final Color color;
 
 	public Fractal() {
+		orbit = createOrbit();
+		color = createColor();
 	}
 
 	public void setX(Number x) {
-		this.x = x;
+		this.orbit.setX(x);
 	}
 
 	public void setW(Number w) {
-		this.w = w;
-	}
-
-	public Number getX() {
-		return x;
-	}
-
-	public Number getW() {
-		return w;
-	}
-
-	public Number getZ() {
-		return z;
-	}
-
-	public Number getN() {
-		return n;
-	}
-
-	public Number getC() {
-		return c;
+		this.orbit.setW(w);
 	}
 
 	protected Number number(int n) {
@@ -219,6 +200,10 @@ public abstract class Fractal {
 		vars.put(name, var);
 	}
 
+	protected void registerStateVar(String name) {
+		stateVars.add(name);
+	}
+
 	public Variable getVar(String name) {
 		return vars.get(name);
 	}
@@ -247,16 +232,33 @@ public abstract class Fractal {
 		return new float[] { (float)a, (float)r, (float)g, (float)b };
 	}
 	
-	protected float[] addColor(double opacity, float[] color) {
-		for (int i = 0; i < 4; i++) {
-			this.color[i] = (float)Math.min(1, this.color[i] + Math.max(0, color[i]) * opacity);
+	public float[] getColor() {
+		return color.getColor();
+	}
+	
+	public Number[] state() {
+		Number[] state = new Number[stateVars.size()];
+		int i = 0;
+		for (String varName : stateVars) {
+			Variable var = vars.get(varName);
+			state[i++] = new Number(var.get());
 		}
-		return color;
+		return state;
 	}
 	
-	public float[] color() {
-		return color;
+	public void setState(Number[] state) {
+		int i = 0;
+		for (String varName : stateVars) {
+			Variable var = vars.get(varName);
+			var.get().set(state[i++]);
+		}
 	}
 	
-	public abstract void compute();
+	protected abstract Orbit createOrbit();
+
+	protected abstract Color createColor();
+
+	public abstract void renderOrbit();
+
+	public abstract void renderColor();
 }

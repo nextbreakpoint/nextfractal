@@ -32,9 +32,10 @@ import java.util.logging.Logger;
 import com.nextbreakpoint.nextfractal.core.util.Colors;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.MutableNumber;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.Renderer;
+import com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.RendererData;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.RendererDelegate;
+import com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.RendererFractal;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.RendererPoint;
-import com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.RendererStrategy;
 
 /**
  * @author Andrea Medeghini
@@ -58,24 +59,28 @@ public final class XaosRenderer extends Renderer {
 	private int renderMode;
 
 	/**
-	 * @param threadPriority
+	 * @param rendererDelegate
+	 * @param rendererStrategy
+	 * @param width
+	 * @param height
 	 */
-	public XaosRenderer(RendererDelegate rendererDelegate, RendererStrategy rendererStrategy, XaosRendererData xaosRendererData, int width, int height) {
-		super(rendererDelegate, rendererStrategy, xaosRendererData, width, height);
-		this.xaosRendererData = xaosRendererData;
+	public XaosRenderer(RendererDelegate rendererDelegate, RendererFractal rendererFractal, int width, int height) {
+		super(rendererDelegate, rendererFractal, width, height);
+		this.xaosRendererData = (XaosRendererData)rendererData;
 	}
 
 	/**
-	 * 
+	 * @see com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.Renderer#createRendererData()
 	 */
-	protected void swapBuffers() {
-		xaosRendererData.swap();
+	@Override
+	protected RendererData createRendererData() {
+		return new XaosRendererData();
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.MandelbrotManager.core.fractal.renderer.AbstractFractalRenderer#doRender(boolean)
+	 * @see com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.Renderer#doRender(boolean)
 	 */
-	protected void doRender(final boolean dynamic) {
+	public void doRender(final boolean dynamic) {
 		aborted = false;
 		update();
 		rendererStrategy.prepare();
@@ -111,7 +116,7 @@ public final class XaosRenderer extends Renderer {
 				logger.fine(element.toString());
 			}
 		}
-		swapBuffers();
+		xaosRendererData.swap();
 		move();
 		processReallocTable(dynamic, (renderMode & Renderer.MODE_REFRESH) != 0);
 		updatePositions();

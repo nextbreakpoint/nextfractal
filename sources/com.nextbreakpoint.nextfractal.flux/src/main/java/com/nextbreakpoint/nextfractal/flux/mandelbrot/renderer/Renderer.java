@@ -34,7 +34,8 @@ public class Renderer {
 	public static final int MODE_CALCULATE = 0x01;
 	public static final int MODE_REFRESH = 0x02;
 	protected final RendererDelegate rendererDelegate;
-	protected final RendererStrategy rendererStrategy;
+	protected RendererStrategy rendererStrategy;
+	protected final RendererFractal rendererFractal;
 	protected final RendererData rendererData;
 	protected boolean aborted;
 	protected float progress;
@@ -42,24 +43,56 @@ public class Renderer {
 	protected int height;
 
 	/**
-	 * @param threadPriority
+	 * @param rendererDelegate
+	 * @param rendererFractal
+	 * @param width
+	 * @param height
 	 */
-	public Renderer(RendererDelegate rendererDelegate, RendererStrategy rendererStrategy, RendererData renderedData, int width, int height) {
+	public Renderer(RendererDelegate rendererDelegate, RendererFractal rendererFractal, int width, int height) {
 		this.rendererDelegate = rendererDelegate;
-		this.rendererStrategy = rendererStrategy;
-		this.rendererData = renderedData;
+		this.rendererFractal = rendererFractal;
+		this.rendererStrategy = new MandelbrotRendererStrategy(rendererFractal);
+		this.rendererData = createRendererData();
 		this.width = width;
 		this.height = height;
 	}
 
+	/**
+	 * @return
+	 */
+	protected RendererData createRendererData() {
+		return new RendererData();
+	}
+	
+	/**
+	 * @param julia
+	 */
+	public void setJulia(boolean julia) {
+		if (julia) {
+			rendererStrategy = new JuliaRendererStrategy(rendererFractal);
+		} else {
+			rendererStrategy = new MandelbrotRendererStrategy(rendererFractal);
+		}
+	}
+	
+	/**
+	 * @return
+	 */
 	public int getWidth() {
 		return width;
 	}
 
+	/**
+	 * @return
+	 */
 	public int getHeight() {
 		return height;
 	}
 
+	/**
+	 * @param width
+	 * @param height
+	 */
 	public void setSize(int width, int height) {
 		this.width = width;
 		this.height = height;
@@ -68,23 +101,23 @@ public class Renderer {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.flux.mandelbrot.MandelbrotManager.core.fractal.renderer.AbstractFractalRenderer#free()
+	 * 
 	 */
 	protected void free() {
 		rendererData.free();
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.flux.mandelbrot.MandelbrotManager.core.fractal.renderer.AbstractFractalRenderer#init()
+	 * 
 	 */
 	protected void init() {
 		rendererData.init(width, height);
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.flux.mandelbrot.MandelbrotManager.renderer.AbstractMandelbrotRenderer#doRender(boolean)
+	 * @param dynamic
 	 */
-	protected void doRender(final boolean dynamic) {
+	public void doRender(final boolean dynamic) {
 		progress = 0;
 		update();
 		rendererStrategy.prepare();
@@ -94,6 +127,7 @@ public class Renderer {
 		rendererData.initPositions();
 		int offset = 0;
 		int c = 0;
+		rendererData.swap();
 		for (int y = 0; y < height; y++) {
 			for (int x = 0; x < width; x++) {
 				px.set(rendererData.point());
@@ -119,38 +153,62 @@ public class Renderer {
 		}
 	}
 
+	/**
+	 * 
+	 */
 	private void update() {
 		// TODO Auto-generated method stub
 		
 	}
 
+	/**
+	 * @return
+	 */
 	public boolean isInterrupted() {
 		return aborted || Thread.currentThread().isInterrupted();
 	}
 
+	/**
+	 * 
+	 */
 	public void start() {
 		// TODO Auto-generated method stub
 		
 	}
 
+	/**
+	 * 
+	 */
 	public void abort() {
 		// TODO Auto-generated method stub
 		
 	}
 
+	/**
+	 * 
+	 */
 	public void join() {
 		// TODO Auto-generated method stub
 		
 	}
 
+	/**
+	 * 
+	 */
 	public void dispose() {
 		free();
 	}
 
+	/**
+	 * @return
+	 */
 	public float getProgress() {
 		return progress;
 	}
 
+	/**
+	 * @param modeRefresh
+	 */
 	public void setMode(int modeRefresh) {
 		// TODO Auto-generated method stub
 		

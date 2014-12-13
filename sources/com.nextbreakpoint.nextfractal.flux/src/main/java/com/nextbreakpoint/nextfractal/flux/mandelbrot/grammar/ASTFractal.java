@@ -1,9 +1,7 @@
 package com.nextbreakpoint.nextfractal.flux.mandelbrot.grammar;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.antlr.v4.runtime.Token;
@@ -12,7 +10,6 @@ import com.nextbreakpoint.nextfractal.flux.mandelbrot.compiler.CompilerVariable;
 
 public class ASTFractal extends ASTObject {
 	private Map<String, CompilerVariable> vars = new HashMap<>();
-	private List<String> variables = new ArrayList<>();
 	private ASTOrbit orbit;
 	private ASTColor color;
 
@@ -39,10 +36,6 @@ public class ASTFractal extends ASTObject {
 	
 	public void setColor(ASTColor color) {
 		this.color = color;
-	}
-
-	public void addVariable(String variable) {
-		variables.add(variable);
 	}
 
 	public String toString() {
@@ -73,6 +66,10 @@ public class ASTFractal extends ASTObject {
 		return var;
 	}
 
+	public CompilerVariable getVar(String name) {
+		return vars.get(name);
+	}
+	
 	public Collection<CompilerVariable> getVars() {
 		return vars.values();
 	}

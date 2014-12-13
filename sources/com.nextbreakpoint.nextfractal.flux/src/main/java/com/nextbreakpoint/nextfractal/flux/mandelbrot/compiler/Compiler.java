@@ -34,8 +34,10 @@ import org.antlr.v4.runtime.tree.ParseTreeListener;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
-import com.nextbreakpoint.nextfractal.flux.mandelbrot.Number;
+import com.nextbreakpoint.nextfractal.flux.mandelbrot.Color;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.Fractal;
+import com.nextbreakpoint.nextfractal.flux.mandelbrot.Number;
+import com.nextbreakpoint.nextfractal.flux.mandelbrot.Orbit;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.Palette;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.Trap;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.grammar.ASTBuilder;
@@ -136,7 +138,7 @@ public class Compiler {
 		return builder.toString();
 	}
 	
-	private Fractal compileToClass(String source) throws IOException {
+	private Fractal compileToClass(String source) throws Exception {
 		List<SimpleJavaFileObject> compilationUnits = new ArrayList<>();
 		compilationUnits.add(new JavaSourceFromString(className, source));
 		List<String> options = new ArrayList<>();
@@ -149,20 +151,44 @@ public class Compiler {
 			logger.log(Level.FINE, String.format("Error on line %d: %s\n", diagnostic.getLineNumber(), diagnostic.getMessage(null)));
 		}
 		if (diagnostics.getDiagnostics().size() == 0) {
-			Iterable<? extends JavaFileObject> files = fileManager.getJavaFileObjects(className + ".class");
-			Iterator<? extends JavaFileObject> iterator = files.iterator();
-			if (iterator.hasNext()) {
-				JavaFileObject file = files.iterator().next();
-				byte[] fileData = loadBytes(file);
-				JavaClassLoader loader = new JavaClassLoader(packageName + "." + className, fileData);
-				try {
-					Class<?> clazz = loader.loadClass(packageName + "." + className);
-					Fractal fractal = (Fractal)clazz.newInstance();
-					logger.log(Level.FINE, file.toUri().toString());
-					logger.log(Level.FINE, clazz.getCanonicalName() + " (" + fileData.length + ")");
-					return fractal;
-				} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+			JavaClassLoader loader = new JavaClassLoader();
+			{
+				Iterable<? extends JavaFileObject> files = fileManager.getJavaFileObjects(className + ".class");
+				Iterator<? extends JavaFileObject> iterator = files.iterator();
+				if (iterator.hasNext()) {
+					JavaFileObject file = files.iterator().next();
+					byte[] fileData = loadBytes(file);
+					logger.log(Level.FINE, file.toUri().toString() + " (" + fileData.length + ")");
+					loader.defineClassFromData(packageName + "." + file.getName().replace(".class", ""), fileData);
 				}
+			}
+			{
+				Iterable<? extends JavaFileObject> files = fileManager.getJavaFileObjects(className + "$" + className + "Orbit.class");
+				Iterator<? extends JavaFileObject> iterator = files.iterator();
+				if (iterator.hasNext()) {
+					JavaFileObject file = files.iterator().next();
+					byte[] fileData = loadBytes(file);
+					logger.log(Level.FINE, file.toUri().toString() + " (" + fileData.length + ")");
+					loader.defineClassFromData(packageName + "." + file.getName().replace(".class", ""), fileData);
+				}
+			}
+			{
+				Iterable<? extends JavaFileObject> files = fileManager.getJavaFileObjects(className + "$" + className + "Color.class");
+				Iterator<? extends JavaFileObject> iterator = files.iterator();
+				if (iterator.hasNext()) {
+					JavaFileObject file = files.iterator().next();
+					byte[] fileData = loadBytes(file);
+					logger.log(Level.FINE, file.toUri().toString() + " (" + fileData.length + ")");
+					loader.defineClassFromData(packageName + "." + file.getName().replace(".class", ""), fileData);
+				}
+			}
+			try {
+				Class<?> clazz = loader.loadClass(packageName + "." + className);
+				logger.log(Level.FINE, clazz.getCanonicalName());
+				Fractal fractal = (Fractal)clazz.newInstance();
+				return fractal;
+			} catch (Exception e) {
+				throw new Exception("Cannot instantiate fractal ", e);
 			}
 		}
 		fileManager.close();
@@ -207,20 +233,62 @@ public class Compiler {
 		builder.append("import ");
 		builder.append(Palette.class.getCanonicalName());
 		builder.append(";\n");
+		builder.append("import ");
+		builder.append(Orbit.class.getCanonicalName());
+		builder.append(";\n");
+		builder.append("import ");
+		builder.append(Color.class.getCanonicalName());
+		builder.append(";\n");
 		builder.append("public class ");
 		builder.append(className);
 		builder.append(" extends Fractal {\n");
-		members(builder, variables, fractal);
-		costructor(builder, fractal);
-		methods(builder, variables, fractal);
+		builder.append("protected Orbit createOrbit() {\n");
+		builder.append("return new ");
+		builder.append(className);
+		builder.append("Orbit();\n}\n");
+		builder.append("protected Color createColor() {\n");
+		builder.append("return new ");
+		builder.append(className);
+		builder.append("Color();\n}\n");
+		builder.append("public void renderOrbit() {\n");
+		builder.append("orbit.render();\n");
+		builder.append("}\n");
+		builder.append("public void renderColor() {\n");
+		builder.append("color.render();\n");
+		builder.append("}\n");
+		builder.append("public class ");
+		builder.append(className);
+		builder.append("Orbit extends Orbit {\n");
+		buildOrbit(builder, variables, fractal);
+		builder.append("}\n");
+		builder.append("public class ");
+		builder.append(className);
+		builder.append("Color extends Color {\n");
+		buildColor(builder, variables, fractal);
+		builder.append("}\n");
 		builder.append("}\n");
 		return builder.toString();
 	}
 
-	private void costructor(StringBuilder builder, ASTFractal fractal) {
+	private void buildOrbit(StringBuilder builder, Map<String, CompilerVariable> variables, ASTFractal fractal) {
+		if (fractal != null) {
+			costructorOrbit(builder, fractal);
+			membersOrbit(builder, variables, fractal);
+			compile(builder, variables, fractal.getOrbit());
+		}
+	}
+
+	private void buildColor(StringBuilder builder, Map<String, CompilerVariable> variables, ASTFractal fractal) {
+		if (fractal != null) {
+			costructorColor(builder, fractal.getColor());
+			compile(builder, variables, fractal.getColor());
+		}
+	}
+
+	private void costructorOrbit(StringBuilder builder, ASTFractal fractal) {
 		builder.append("public ");
 		builder.append(className);
-		builder.append("() {\n");
+		builder.append("Orbit() {\n");
 		if (fractal != null) {
 			for (CompilerVariable variable : fractal.getVars()) {
 				builder.append("registerVar(\"");
@@ -233,7 +301,7 @@ public class Compiler {
 		builder.append("}\n");
 	}
 
-	private void members(StringBuilder builder, Map<String, CompilerVariable> variables, ASTFractal fractal) {
+	private void membersOrbit(StringBuilder builder, Map<String, CompilerVariable> variables, ASTFractal fractal) {
 		if (fractal != null) {
 			for (CompilerVariable variable : fractal.getVars()) {
 				variables.put(variable.getName(), variable);
@@ -242,7 +310,7 @@ public class Compiler {
 						builder.append("private double ");
 						builder.append(variable.getName());
 						builder.append(" = 0.0;\n");
-						builder.append("private Number get");
+						builder.append("public Number get");
 						builder.append(variable.getName().toUpperCase());
 						builder.append("() { return number(");
 						builder.append(variable.getName());
@@ -251,7 +319,7 @@ public class Compiler {
 						builder.append("private Number ");
 						builder.append(variable.getName());
 						builder.append(" = number(0.0,0.0);\n");
-						builder.append("private Number get");
+						builder.append("public Number get");
 						builder.append(variable.getName().toUpperCase());
 						builder.append("() { return ");
 						builder.append(variable.getName());
@@ -262,22 +330,35 @@ public class Compiler {
 		}
 	}
 
-	private void methods(StringBuilder builder,	Map<String, CompilerVariable> variables, ASTFractal fractal) {
-		if (fractal != null) {
-			compile(builder, variables, fractal.getOrbit());
-			compile(builder, variables, fractal.getColor());
-			builder.append("public void compute() {\n");
-			builder.append("renderOrbit();\n");
-			builder.append("renderColor();\n");
-			builder.append("}\n");
+	private void costructorColor(StringBuilder builder, ASTColor color) {
+		builder.append("public ");
+		builder.append(className);
+		builder.append("Color() {\n");
+		if (color != null) {
+			for (String varName : color.getVariables()) {
+				builder.append("registerStateVar(\"");
+				builder.append(varName);
+				builder.append("\");\n");
+			}
 		}
+		builder.append("}\n");
 	}
 
 	private void compile(StringBuilder builder, Map<String, CompilerVariable> variables, ASTColor color) {
 		for (ASTPalette palette : color.getPalettes()) {
 			compile(builder, variables, palette);
 		}
-		builder.append("private void renderColor() {\n");
+		builder.append("public void render() {\n");
+		for (String varName : color.getVariables()) {
+			CompilerVariable variable = variables.get(varName);
+			if (variable != null) {
+				builder.append("Number ");
+				builder.append(variable.getName());
+				builder.append(" = getVar(\"");
+				builder.append(variable.getName());
+				builder.append("\").get();\n");
+			}
+		}
 		builder.append("addColor(1f,");
 		builder.append(createArray(color.getArgb().getComponents()));
 		builder.append(");\n");
@@ -343,7 +424,7 @@ public class Compiler {
 		for (ASTOrbitTrap trap : orbit.getTraps()) {
 			compile(builder, variables, trap);
 		}
-		builder.append("private void renderOrbit() {\n");
+		builder.append("public void render() {\n");
 		compile(builder, variables, orbit.getBegin());
 		compile(builder, variables, orbit.getLoop());
 		compile(builder, variables, orbit.getEnd());
@@ -880,9 +961,9 @@ public class Compiler {
     }
 	
 	private class JavaClassLoader extends ClassLoader {
-		public JavaClassLoader(String name, byte[] data) {
+		public void defineClassFromData(String name, byte[] data) {
 			Class<?> clazz = defineClass(name, data, 0, data.length);
-			resolveClass(clazz);
+			super.resolveClass(clazz);
 		}
 	}
 	

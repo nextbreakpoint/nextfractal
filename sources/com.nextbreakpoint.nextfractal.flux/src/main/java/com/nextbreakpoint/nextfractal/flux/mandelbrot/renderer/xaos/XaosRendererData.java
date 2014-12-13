@@ -5,7 +5,7 @@ import com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.RendererData;
 /**
  * @author Andrea Medeghini
  */
-public class XaosRendererData extends RendererData {
+class XaosRendererData extends RendererData {
 	private final int[] position = new int[XaosConstants.STEPS];
 	private final int[] offset = new int[XaosConstants.STEPS];
 	private XaosRealloc[] reallocX;
@@ -27,14 +27,12 @@ public class XaosRendererData extends RendererData {
 		moveTable = null;
 		fillTable = null;
 		queue = null;
-		super.free();
 	}
 
 	/**
 	 * @see com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.RendererData#init(int, int, int)
 	 */
 	public void init(final int width, final int height) {
-		super.init(width, height);
 		reallocX = new XaosRealloc[width];
 		reallocY = new XaosRealloc[height];
 		dynamicX = new XaosDynamic(width);
@@ -45,12 +43,10 @@ public class XaosRendererData extends RendererData {
 		for (int i = 0; i < width; i++) {
 			reallocX[i] = new XaosRealloc(false);
 			reallocX[i].pos = i;
-			positionX[i] = 0;
 		}
 		for (int i = 0; i < height; i++) {
 			reallocY[i] = new XaosRealloc(true);
 			reallocY[i].pos = i;
-			positionY[i] = 0;
 		}
 	}
 

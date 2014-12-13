@@ -20,7 +20,7 @@ fractal
 	:
 	f=FRACTAL {
 		builder.setFractal(new ASTFractal($f));
-	} '[' v=variablelist ']' '{' orbit color '}' eof 
+	} '{' orbit color '}' eof 
 	;
 		
 orbit
@@ -34,7 +34,7 @@ color
 	:
 	c=COLOR '[' argb=colorargb ']' { 
 		builder.setColor(new ASTColor($c, $argb.result));
-	} '{' palette* colorrule* '}'
+	} '[' v=variablelist ']' '{' palette* colorrule* '}'
 	;
 		
 begin

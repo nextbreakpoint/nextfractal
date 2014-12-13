@@ -44,7 +44,7 @@ public class GrammarTest2 extends BaseTest {
 
 	protected String getSource() {
 		String source = ""
-				+ "fractal [z] {"
+				+ "fractal {"
 				+ "orbit [-1 - 1i,+1 + 1i] {"
 				+ "trap trap1 [0] {"
 				+ "MOVETO(1);"
@@ -58,7 +58,7 @@ public class GrammarTest2 extends BaseTest {
 				+ "z = x * (y + 5i);"
 				+ "}"
 				+ "} color [#000000] {"
-				+ "palette palette1 [200] {"
+				+ "palette palette1 [200] [z,n] {"
 				+ "[0, #000000] > [100, #FFFFFF];"
 				+ "[101, #FFFFFF] > [200, #FF0000];"
 				+ "}"

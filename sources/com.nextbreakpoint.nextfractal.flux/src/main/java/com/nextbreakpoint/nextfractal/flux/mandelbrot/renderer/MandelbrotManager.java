@@ -42,7 +42,11 @@ import com.nextbreakpoint.nextfractal.flux.render.RenderGraphicsContext;
 /**
  * @author Andrea Medeghini
  */
-public abstract class MandelbrotManager implements Manager, RendererDelegate {
+/**
+ * @author amedeghini
+ *
+ */
+public class MandelbrotManager implements RendererDelegate {
 	protected static final Logger logger = Logger.getLogger(MandelbrotManager.class.getName());
 	private RenderBuffer newBuffer;
 	private RenderBuffer oldBuffer;
@@ -61,65 +65,57 @@ public abstract class MandelbrotManager implements Manager, RendererDelegate {
 	private int imageDim;
 	private int tileDim;
 //	private boolean dynamic = false;
-	private boolean dynamicZoom = false;
+//	private boolean dynamicZoom = false;
 	private final Complex center = new Complex();
 	private final Complex scale = new Complex();
 	private RenderAffine affine;
 	private boolean invalidated;
 	private Renderer renderer;
 	private RendererFractal rendererFractal;
-	private RendererStrategy rendererStrategy;
-	private final RendererData rendererData;
 	private final RenderFactory renderFactory;
-	private final MandelbrotWorker renderWorker;
+	private final RendererWorker rendererWorker;
 	private final ThreadFactory factory;
 	private final Tile tile;
 	private final Object lock = new Object();
 
 	/**
 	 * @param threadPriority
+	 * @param renderFactory
+	 * @param rendererFractal
+	 * @param tile
 	 */
 	public MandelbrotManager(final int threadPriority, RenderFactory renderFactory, RendererFractal rendererFractal, Tile tile) {
-		factory = new DefaultThreadFactory("MandelbrotRendererWorker", true, threadPriority);
-		renderWorker = new MandelbrotWorker(factory);
-		rendererStrategy = new MandelbrotRendererStrategy(rendererFractal);
+		factory = new DefaultThreadFactory("MandelbrotManager", true, threadPriority);
+		rendererWorker = new RendererWorker(factory);
 		this.rendererFractal = rendererFractal;
 		this.renderFactory = renderFactory;
-		this.rendererData = createRendererData();
-		this.renderer = createRenderer(rendererData);
+		this.renderer = createRenderer();
 		this.tile = tile;
 	}
 
-	protected Renderer createRenderer(RendererData rendererData) {
-		return new Renderer(this, rendererStrategy, rendererData, tile.getImageSize().getX(), tile.getImageSize().getY());
-	}
-
-	protected RendererData createRendererData() {
-		return new RendererData();
+	protected Renderer createRenderer() {
+		return new Renderer(this, rendererFractal, tile.getImageSize().getX(), tile.getImageSize().getY());
 	}
 
 	/**
 	 * 
 	 */
-	@Override
 	public void start() {
-		renderWorker.start();
+		rendererWorker.start();
 	}
 
 	/**
 	 * 
 	 */
-	@Override
 	public void abort() {
-		renderWorker.stop();
+		rendererWorker.stop();
 	}
 
 	/**
 	 * 
 	 */
-	@Override
 	public void join() {
-		renderWorker.join();
+		rendererWorker.join();
 	}
 
 	/**
@@ -129,26 +125,25 @@ public abstract class MandelbrotManager implements Manager, RendererDelegate {
 	public void finalize() throws Throwable {
 		dispose();
 		affine = null;
-		rendererStrategy = null;
+		renderer = null;
+		rendererFractal = null;
 		super.finalize();
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.flux.mandelbrot.Renderer.renderer.MandelbrotManager#dispose()
+	 * 
 	 */
-	@Override
 	public final void dispose() {
 		abort();
 		join();
 		free();
 	}
 
+	/**
+	 * @param julia
+	 */
 	public void setJulia(boolean julia) {
-		if (julia) {
-			rendererStrategy = new JuliaRendererStrategy(rendererFractal);
-		} else {
-			rendererStrategy = new MandelbrotRendererStrategy(rendererFractal);
-		}
+		renderer.setJulia(julia);
 	}
 	
 //	/**
@@ -238,24 +233,6 @@ public abstract class MandelbrotManager implements Manager, RendererDelegate {
 			if ((newConstant != oldConstant) && (newImageMode != 0)) {
 				renderer.setMode(Renderer.MODE_CALCULATE);
 			}
-//			if (fractalRuntime.isRenderingFormulaChanged()) {
-//				renderer.setMode(Renderer.MODE_CALCULATE);
-//			}
-//			if (fractalRuntime.isTransformingFormulaChanged()) {
-//				renderer.setMode(Renderer.MODE_CALCULATE);
-//			}
-//			if (fractalRuntime.isProcessingFormulaChanged()) {
-//				renderer.setMode(Renderer.MODE_CALCULATE);
-//			}
-//			if (fractalRuntime.isOrbitTrapChanged()) {
-//				renderer.setMode(Renderer.MODE_CALCULATE);
-//			}
-//			if (fractalRuntime.isIncolouringFormulaChanged()) {
-//				renderer.setMode(Renderer.MODE_REFRESH);
-//			}
-//			if (fractalRuntime.isOutcolouringFormulaChanged()) {
-//				renderer.setMode(Renderer.MODE_REFRESH);
-//			}
 			// if (!isDynamic) {
 			// setMode(FractalRenderer.MODE_REFRESH);
 			// }
@@ -270,8 +247,7 @@ public abstract class MandelbrotManager implements Manager, RendererDelegate {
 				init();
 			}
 		}
-//		doRender(dynamicZoom);
-		dynamicZoom = false;
+		rendererWorker.executeTask();
 	}
 
 	/**
@@ -289,9 +265,8 @@ public abstract class MandelbrotManager implements Manager, RendererDelegate {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.flux.mandelbrot.Renderer.renderer.MandelbrotManager#setConstant(com.nextbreakpoint.nextfractal.core.util.DoubleVector2D)
+	 * @param constant
 	 */
-	@Override
 	public void setConstant(final DoubleVector2D constant) {
 		synchronized (this) {
 			newConstant = constant;
@@ -360,18 +335,13 @@ public abstract class MandelbrotManager implements Manager, RendererDelegate {
 		final int offsetY = (getBufferHeight() - oldTile.getTileSize().getY() - oldTile.getTileBorder().getY() * 2) / 2;
 		final int centerX = getBufferWidth() / 2;
 		final int centerY = getBufferHeight() / 2;
-//TODO cleanup		transform.setToTranslation(-offsetX, -offsetY);
-//		affine.setToTransform(Affine.translate(-offsetX, -offsetY));
-//		transform.rotate(rotationValue, centerX, centerY);
-//		affine.append(Affine.rotate(rotationValue, centerX, centerY));
 		affine = renderFactory.createTranslateAffine(-offsetX, -offsetY);
 		affine.append(renderFactory.createRotateAffine(rotationValue, centerX, centerY));
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.flux.mandelbrot.Renderer.renderer.MandelbrotManager#drawImage(com.nextbreakpoint.nextfractal.flux.render.twister.renderer.RenderGraphicsContext)
+	 * @param gc
 	 */
-	@Override
 	public void drawImage(final RenderGraphicsContext gc) {
 		synchronized (lock) {
 			if (oldTile != null) {
@@ -388,9 +358,10 @@ public abstract class MandelbrotManager implements Manager, RendererDelegate {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.flux.mandelbrot.Renderer.renderer.MandelbrotManager#drawImage(com.nextbreakpoint.nextfractal.flux.render.twister.renderer.RenderGraphicsContext, int, int)
+	 * @param gc
+	 * @param x
+	 * @param y
 	 */
-	@Override
 	public void drawImage(final RenderGraphicsContext gc, final int x, final int y) {
 		synchronized (lock) {
 			if (oldTile != null) {
@@ -407,9 +378,12 @@ public abstract class MandelbrotManager implements Manager, RendererDelegate {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.flux.mandelbrot.Renderer.renderer.MandelbrotManager#drawImage(com.nextbreakpoint.nextfractal.flux.render.twister.renderer.RenderGraphicsContext, int, int, int, int)
+	 * @param gc
+	 * @param x
+	 * @param y
+	 * @param w
+	 * @param h
 	 */
-	@Override
 	public void drawImage(final RenderGraphicsContext gc, final int x, final int y, final int w, final int h) {
 		synchronized (lock) {
 			if (oldTile != null) {
@@ -428,11 +402,15 @@ public abstract class MandelbrotManager implements Manager, RendererDelegate {
 		}
 	}
 
-	private class MandelbrotWorker extends RenderWorker {
+	@Override
+	public void didPixelsChange(int[] pixels) {
+	}
+
+	private class RendererWorker extends RenderWorker {
 		/**
 		 * @param factory
 		 */
-		public MandelbrotWorker(ThreadFactory factory) {
+		public RendererWorker(ThreadFactory factory) {
 			super(factory);
 		}
 
@@ -448,7 +426,6 @@ public abstract class MandelbrotManager implements Manager, RendererDelegate {
 			}
 			catch (final Throwable e) {
 				invalidated = true;
-				e.printStackTrace();
 			}
 		}
 	}

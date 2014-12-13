@@ -12,6 +12,10 @@ public class Number {
 		this(r, 0);
 	}
 
+	public Number(Number number) {
+		this(number.r(), number.i());
+	}
+	
 	public Number(double r, double i) {
 		this.r = r;
 		this.i = i;

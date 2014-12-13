@@ -85,7 +85,7 @@ public class ASTBuilder {
 	}
 
 	public void addVariable(String variable) {
-		fractal.addVariable(variable);
+		fractal.getColor().addVariable(variable);
 	}
 
 	public double parseDouble(String text) {
