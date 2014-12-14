@@ -153,36 +153,7 @@ public class Compiler {
 		}
 		if (diagnostics.getDiagnostics().size() == 0) {
 			CompilerClassLoader loader = new CompilerClassLoader();
-			{
-				Iterable<? extends JavaFileObject> files = fileManager.getJavaFileObjects(className + ".class");
-				Iterator<? extends JavaFileObject> iterator = files.iterator();
-				if (iterator.hasNext()) {
-					JavaFileObject file = files.iterator().next();
-					byte[] fileData = loadBytes(file);
-					logger.log(Level.FINE, file.toUri().toString() + " (" + fileData.length + ")");
-					loader.defineClassFromData(packageName + "." + file.getName().replace(".class", ""), fileData);
-				}
-			}
-			{
-				Iterable<? extends JavaFileObject> files = fileManager.getJavaFileObjects(className + "$" + className + "Orbit.class");
-				Iterator<? extends JavaFileObject> iterator = files.iterator();
-				if (iterator.hasNext()) {
-					JavaFileObject file = files.iterator().next();
-					byte[] fileData = loadBytes(file);
-					logger.log(Level.FINE, file.toUri().toString() + " (" + fileData.length + ")");
-					loader.defineClassFromData(packageName + "." + file.getName().replace(".class", ""), fileData);
-				}
-			}
-			{
-				Iterable<? extends JavaFileObject> files = fileManager.getJavaFileObjects(className + "$" + className + "Color.class");
-				Iterator<? extends JavaFileObject> iterator = files.iterator();
-				if (iterator.hasNext()) {
-					JavaFileObject file = files.iterator().next();
-					byte[] fileData = loadBytes(file);
-					logger.log(Level.FINE, file.toUri().toString() + " (" + fileData.length + ")");
-					loader.defineClassFromData(packageName + "." + file.getName().replace(".class", ""), fileData);
-				}
-			}
+			defineClasses(fileManager, loader);
 			try {
 				Class<?> clazz = loader.loadClass(packageName + "." + className);
 				logger.log(Level.FINE, clazz.getCanonicalName());
@@ -194,6 +165,40 @@ public class Compiler {
 		}
 		fileManager.close();
 		return null;
+	}
+
+	private void defineClasses(StandardJavaFileManager fileManager,
+			CompilerClassLoader loader) throws IOException {
+		{
+			Iterable<? extends JavaFileObject> files = fileManager.getJavaFileObjects(className + ".class");
+			Iterator<? extends JavaFileObject> iterator = files.iterator();
+			if (iterator.hasNext()) {
+				JavaFileObject file = files.iterator().next();
+				byte[] fileData = loadBytes(file);
+				logger.log(Level.FINE, file.toUri().toString() + " (" + fileData.length + ")");
+				loader.defineClassFromData(packageName + "." + file.getName().replace(".class", ""), fileData);
+			}
+		}
+		{
+			Iterable<? extends JavaFileObject> files = fileManager.getJavaFileObjects(className + "$" + className + "Orbit.class");
+			Iterator<? extends JavaFileObject> iterator = files.iterator();
+			if (iterator.hasNext()) {
+				JavaFileObject file = files.iterator().next();
+				byte[] fileData = loadBytes(file);
+				logger.log(Level.FINE, file.toUri().toString() + " (" + fileData.length + ")");
+				loader.defineClassFromData(packageName + "." + file.getName().replace(".class", ""), fileData);
+			}
+		}
+		{
+			Iterable<? extends JavaFileObject> files = fileManager.getJavaFileObjects(className + "$" + className + "Color.class");
+			Iterator<? extends JavaFileObject> iterator = files.iterator();
+			if (iterator.hasNext()) {
+				JavaFileObject file = files.iterator().next();
+				byte[] fileData = loadBytes(file);
+				logger.log(Level.FINE, file.toUri().toString() + " (" + fileData.length + ")");
+				loader.defineClassFromData(packageName + "." + file.getName().replace(".class", ""), fileData);
+			}
+		}
 	}
 
 	private byte[] loadBytes(JavaFileObject file) throws IOException {
