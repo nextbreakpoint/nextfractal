@@ -29,6 +29,7 @@ import java.util.concurrent.ThreadFactory;
 
 import com.nextbreakpoint.nextfractal.core.util.Worker;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.MutableNumber;
+import com.nextbreakpoint.nextfractal.flux.mandelbrot.Number;
 
 /**
  * @author Andrea Medeghini
@@ -36,15 +37,14 @@ import com.nextbreakpoint.nextfractal.flux.mandelbrot.MutableNumber;
 public class Renderer {
 	public static final int MODE_CALCULATE = 0x01;
 	public static final int MODE_REFRESH = 0x02;
-	protected final RendererDelegate rendererDelegate;
 	protected final ThreadFactory threadFactory;
 	protected final RendererFractal rendererFractal;
 	protected final RendererData rendererData;
 	protected final Worker rendererWorker;
+	protected volatile RendererDelegate rendererDelegate;
 	protected volatile RendererStrategy rendererStrategy;
 	protected volatile boolean aborted;
 	protected volatile float progress;
-	private volatile int mode;
 	protected int width;
 	protected int height;
 	protected int depth;
@@ -55,35 +55,16 @@ public class Renderer {
 	 * @param width
 	 * @param height
 	 */
-	public Renderer(ThreadFactory threadFactory, RendererDelegate rendererDelegate, RendererFractal rendererFractal, int width, int height) {
+	public Renderer(ThreadFactory threadFactory, RendererFractal rendererFractal, int width, int height) {
 		this.threadFactory = threadFactory;
-		this.rendererDelegate = rendererDelegate;
 		this.rendererFractal = rendererFractal;
 		this.rendererStrategy = new MandelbrotRendererStrategy(rendererFractal);
+		this.rendererWorker = new Worker(threadFactory);
 		this.rendererData = createRendererData();
 		this.width = width;
 		this.height = height;
-		this.rendererWorker= new Worker(threadFactory);
 		this.depth = rendererFractal.getStateSize();
 		init();
-	}
-
-	/**
-	 * @return
-	 */
-	protected RendererData createRendererData() {
-		return new RendererData();
-	}
-	
-	/**
-	 * @param julia
-	 */
-	public void setJulia(boolean julia) {
-		if (julia) {
-			rendererStrategy = new JuliaRendererStrategy(rendererFractal);
-		} else {
-			rendererStrategy = new MandelbrotRendererStrategy(rendererFractal);
-		}
 	}
 	
 	/**
@@ -99,6 +80,115 @@ public class Renderer {
 	public int getHeight() {
 		return height;
 	}
+	
+	/**
+	 * @return
+	 */
+	public boolean isInterrupted() {
+		return aborted || Thread.currentThread().isInterrupted();
+	}
+
+	/**
+	 * 
+	 */
+	public void start() {
+		rendererWorker.start();
+	}
+
+	/**
+	 * 
+	 */
+	public void stop() {
+		rendererWorker.stop();
+	}
+
+	/**
+	 * 
+	 */
+	public void dispose() {
+		stop();
+		free();
+	}
+
+	/**
+	 * @return
+	 */
+	public float getProgress() {
+		return progress;
+	}
+
+	/**
+	 * 
+	 */
+	public void stopRender() {
+		rendererWorker.abortTasks();
+		rendererWorker.waitTasks();
+	}
+
+	/**
+	 * 
+	 */
+	public void abortRender() {
+		rendererWorker.abortTasks();
+	}
+
+	/**
+	 * 
+	 */
+	public void joinRender() {
+		rendererWorker.waitTasks();
+	}
+
+	/**
+	 * @param dynamic
+	 */
+	public void startRender(final boolean dynamic, final int mode) {
+		rendererWorker.addTask(new Runnable() {
+			@Override
+			public void run() {
+				doRender(dynamic, mode);
+			}
+		});
+	}
+	
+	/**
+	 * @param julia
+	 */
+	public void setJulia(boolean julia) {
+		if (julia) {
+			rendererStrategy = new JuliaRendererStrategy(rendererFractal);
+		} else {
+			rendererStrategy = new MandelbrotRendererStrategy(rendererFractal);
+		}
+	}
+
+	/**
+	 * @param constant
+	 */
+	public void setConstant(double x, double y) {
+		rendererFractal.setConstant(new Number(x, y));
+	}
+
+	/**
+	 * @return
+	 */
+	public RendererDelegate getRendererDelegate() {
+		return rendererDelegate;
+	}
+
+	/**
+	 * @param rendererDelegate
+	 */
+	public void setRendererDelegate(RendererDelegate rendererDelegate) {
+		this.rendererDelegate = rendererDelegate;
+	}
+
+	/**
+	 * @return
+	 */
+	protected RendererData createRendererData() {
+		return new RendererData();
+	}
 
 	/**
 	 * 
@@ -112,19 +202,6 @@ public class Renderer {
 	 */
 	protected void init() {
 		rendererData.init(width, height, depth);
-	}
-
-	/**
-	 * @param dynamic
-	 */
-	public void render(final boolean dynamic) {
-		rendererWorker.addTask(new Runnable() {
-			@Override
-			public void run() {
-				doRender(dynamic, mode);
-			}
-		});
-		mode = 0;
 	}
 	
 	/**
@@ -152,7 +229,9 @@ public class Renderer {
 			}
 			if (y % 20 == 0) {
 				progress = (float)y / (float)height;
-				rendererDelegate.didPixelsChange(rendererData.getPixels());
+				if (rendererDelegate != null) {
+					rendererDelegate.didChanged(progress, rendererData.getPixels());
+				}
 			}
 			Thread.yield();
 			if (isInterrupted()) {
@@ -160,57 +239,12 @@ public class Renderer {
 				break;
 			}
 		}
-		rendererDelegate.didPixelsChange(rendererData.getPixels());
 		if (aborted) {
 			progress = 1;
 		}
-	}
-
-	public void setMode(int mode) {
-		this.mode = mode;
-	}
-
-	/**
-	 * @return
-	 */
-	public boolean isInterrupted() {
-		return aborted || Thread.currentThread().isInterrupted();
-	}
-
-	/**
-	 * 
-	 */
-	public void start() {
-		rendererWorker.start();
-	}
-
-	/**
-	 * 
-	 */
-	public void abort() {
-		rendererWorker.abort();
-	}
-
-	/**
-	 * 
-	 */
-	public void join() {
-		rendererWorker.join();
-	}
-
-	/**
-	 * 
-	 */
-	public void dispose() {
-		abort();
-		join();
-		free();
-	}
-
-	/**
-	 * @return
-	 */
-	public float getProgress() {
-		return progress;
+		if (rendererDelegate != null) {
+			rendererDelegate.didChanged(progress, rendererData.getPixels());
+		}
+		Thread.yield();
 	}
 }

@@ -34,7 +34,6 @@ import com.nextbreakpoint.nextfractal.core.util.Colors;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.MutableNumber;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.Renderer;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.RendererData;
-import com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.RendererDelegate;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.RendererFractal;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.RendererPoint;
 
@@ -64,8 +63,8 @@ public final class XaosRenderer extends Renderer {
 	 * @param width
 	 * @param height
 	 */
-	public XaosRenderer(ThreadFactory threadFactory, RendererDelegate rendererDelegate, RendererFractal rendererFractal, int width, int height) {
-		super(threadFactory, rendererDelegate, rendererFractal, width, height);
+	public XaosRenderer(ThreadFactory threadFactory, RendererFractal rendererFractal, int width, int height) {
+		super(threadFactory, rendererFractal, width, height);
 		this.xaosRendererData = (XaosRendererData)rendererData;
 	}
 
@@ -1001,7 +1000,9 @@ public final class XaosRenderer extends Renderer {
 					}
 					progress = (s + 1f) / (float)XaosConstants.STEPS;
 					fill();
-					rendererDelegate.didPixelsChange(xaosRendererData.getPixels());
+					if (rendererDelegate != null) {
+						rendererDelegate.didChanged(progress, xaosRendererData.getPixels());
+					}
 					Thread.yield();
 					tmpRealloc = xaosRendererData.reallocY();
 					for (i = 0; i < tmpRealloc.length; i++) {
@@ -1026,7 +1027,9 @@ public final class XaosRenderer extends Renderer {
 			}
 		}
 		fill();
-		rendererDelegate.didPixelsChange(xaosRendererData.getPixels());
+		if (rendererDelegate != null) {
+			rendererDelegate.didChanged(progress, xaosRendererData.getPixels());
+		}
 		Thread.yield();
 	}
 

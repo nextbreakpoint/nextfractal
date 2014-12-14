@@ -40,21 +40,13 @@ import com.nextbreakpoint.nextfractal.flux.render.RenderGraphicsContext;
 /**
  * @author Andrea Medeghini
  */
-/**
- * @author amedeghini
- *
- */
-public class MandelbrotManager implements RendererDelegate {
-	protected static final Logger logger = Logger.getLogger(MandelbrotManager.class.getName());
+public class RendererCoordinator implements RendererDelegate {
+	protected static final Logger logger = Logger.getLogger(RendererCoordinator.class.getName());
 	private RenderBuffer newBuffer;
 	private RenderBuffer oldBuffer;
-	private boolean newJulia;
-	private boolean oldJulia;
-	private DoubleVector2D newConstant;
-	private DoubleVector2D oldConstant;
 //	private View newView = new View(new IntegerVector4D(0, 0, 0, 0), new DoubleVector4D(0, 0, 1, 0), new DoubleVector4D(0, 0, 0, 0));
 //	private View oldView = new View(new IntegerVector4D(0, 0, 0, 0), new DoubleVector4D(0, 0, 1, 0), new DoubleVector4D(0, 0, 0, 0));
-	private IntegerVector2D bufferSize;
+	private IntegerVector2D size;
 	private DoubleVector4D rotation;
 	private DoubleVector4D center;
 	private DoubleVector4D scale;
@@ -63,6 +55,8 @@ public class MandelbrotManager implements RendererDelegate {
 	private final RenderFactory renderFactory;
 	private Renderer renderer;
 	private RenderAffine affine;
+	private volatile boolean changed;
+	private volatile float progress;
 	private final Tile tile;
 
 	/**
@@ -71,8 +65,8 @@ public class MandelbrotManager implements RendererDelegate {
 	 * @param rendererFractal
 	 * @param tile
 	 */
-	public MandelbrotManager(ThreadFactory threadFactory, RenderFactory renderFactory, RendererFractal rendererFractal, Tile tile) {
-//		factory = new DefaultThreadFactory("MandelbrotManager", true, threadPriority);
+	public RendererCoordinator(ThreadFactory threadFactory, RenderFactory renderFactory, RendererFractal rendererFractal, Tile tile) {
+//		factory = new DefaultThreadFactory("RendererCoordinator", true, threadPriority);
 		this.threadFactory = threadFactory;
 		this.renderFactory = renderFactory;
 		this.rendererFractal = rendererFractal;
@@ -93,15 +87,8 @@ public class MandelbrotManager implements RendererDelegate {
 	/**
 	 * 
 	 */
-	public void abort() {
-		renderer.abort();
-	}
-
-	/**
-	 * 
-	 */
-	public void join() {
-		renderer.join();
+	public void stop() {
+		renderer.stop();
 	}
 
 	/**
@@ -120,9 +107,184 @@ public class MandelbrotManager implements RendererDelegate {
 	 * 
 	 */
 	public final void dispose() {
-		abort();
-		join();
+		stop();
 		free();
+	}
+
+	/**
+	 * 
+	 */
+	public void stopRender() {
+		renderer.stopRender();
+	}
+	
+	/**
+	 * 
+	 */
+	public void abortRender() {
+		renderer.abortRender();
+	}
+	
+	/**
+	 * 
+	 */
+	public void joinRender() {
+		renderer.joinRender();
+	}
+	
+	/**
+	 * 
+	 */
+	public void startRender() {
+		changed = false;
+		progress = 0;
+//		if (oldView != newView) {
+//			viewChanged = true;
+//			updateView(newView);
+//		}
+		// if (!isDynamic) {
+		// setMode(FractalRenderer.MODE_REFRESH);
+		// }
+		renderer.startRender(false, 0);//TODO
+	}
+
+	/**
+	 * @see com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.RendererDelegate#didChanged(float, int[])
+	 */
+	@Override
+	public void didChanged(float progress, int[] pixels) {
+		this.progress = progress;
+		this.changed = true;
+	}
+
+	/**
+	 * @return
+	 */
+	public boolean isChanged() {
+		return changed;
+	}
+
+	/**
+	 * 
+	 */
+	public void clearChanged() {
+		changed = false;
+	}
+
+	/**
+	 * @return
+	 */
+	public float getProgress() {
+		return progress;
+	}
+
+	/**
+	 * @return
+	 */
+	public int getWidth() {
+		return size.getX();
+	}
+
+	/**
+	 * @return
+	 */
+	public int getHeight() {
+		return size.getY();
+	}
+
+	/**
+	 * @param constant
+	 */
+	public void setConstant(final DoubleVector2D constant) {
+		renderer.setConstant(constant.getX(), constant.getY());
+	}
+
+	/**
+	 * @param julia
+	 */
+	public void setJulia(final boolean julia) {
+		renderer.setJulia(julia);
+	}
+
+	/**
+	 * @return
+	 */
+	public boolean isTileSupported() {
+		return true;
+	}
+
+	/**
+	 * 
+	 */
+	public final void swap() {
+		synchronized (this) {
+			final RenderBuffer tmpBuffer = oldBuffer;
+			oldBuffer = newBuffer;
+			newBuffer = tmpBuffer;
+		}
+	}
+
+	/**
+	 * @param gc
+	 */
+	public void drawImage(final RenderGraphicsContext gc) {
+		synchronized (this) {
+			if (newBuffer != null && affine != null) {
+				gc.saveTransform();
+				// g.setClip(oldTile.getTileBorder().getX(), oldTile.getTileBorder().getY(), oldTile.getTileSize().getX(), oldTile.getTileSize().getY());
+				// g.setClip(0, 0, oldTile.getTileSize().getX() + oldTile.getTileBorder().getX() + 2, oldTile.getTileSize().getY() + oldTile.getTileBorder().getY() + 2);
+				gc.setAffine(affine);
+				gc.drawImage(newBuffer.getImage(), 0, 0);
+				//gc.setClip(null);
+				// g.dispose();
+				gc.restoreTransform();
+			}
+		}
+	}
+
+	/**
+	 * @param gc
+	 * @param x
+	 * @param y
+	 */
+	public void drawImage(final RenderGraphicsContext gc, final int x, final int y) {
+		synchronized (this) {
+			if (newBuffer != null && affine != null) {
+				gc.saveTransform();
+				// g.setClip(oldTile.getTileBorder().getX(), oldTile.getTileBorder().getY(), oldTile.getTileSize().getX(), oldTile.getTileSize().getY());
+				// g.setClip(0, 0, oldTile.getTileSize().getX() + oldTile.getTileBorder().getX() + 2, oldTile.getTileSize().getY() + oldTile.getTileBorder().getY() + 2);
+				gc.setAffine(affine);
+				gc.drawImage(newBuffer.getImage(), x, y);
+				//gc.setClip(null);
+				// g.dispose();
+				gc.restoreTransform();
+			}
+		}
+	}
+
+	/**
+	 * @param gc
+	 * @param x
+	 * @param y
+	 * @param w
+	 * @param h
+	 */
+	public void drawImage(final RenderGraphicsContext gc, final int x, final int y, final int w, final int h) {
+		synchronized (this) {
+			if (newBuffer != null && affine != null) {
+				gc.saveTransform();
+				//TODO gc.setClip(x, y, w, h);
+				gc.setAffine(affine);
+				final double sx = w / (double) tile.getTileSize().getX();
+				final double sy = h / (double) tile.getTileSize().getY();
+				final int dw = (int) Math.rint(size.getX() * sx);
+				final int dh = (int) Math.rint(size.getY() * sy);
+				gc.drawImage(newBuffer.getImage(), x, y, dw, dh);
+				//TODO gc.setClip(null);
+				// g.dispose();
+				gc.restoreTransform();
+			}
+		}
 	}
 
 //	/**
@@ -184,83 +346,17 @@ public class MandelbrotManager implements RendererDelegate {
 	protected void init() {
 //		int imageDim = (int) Math.sqrt(((tile.getImageSize().getX() + tile.getTileBorder().getX() * 2) * (tile.getImageSize().getX() + tile.getTileBorder().getX() * 2)) + ((tile.getImageSize().getY() + tile.getTileBorder().getY() * 2) * (tile.getImageSize().getY() + tile.getTileBorder().getY() * 2)));
 		int tileDim = (int) Math.sqrt(((tile.getTileSize().getX() + tile.getTileBorder().getX() * 2) * (tile.getTileSize().getX() + tile.getTileBorder().getX() * 2)) + ((tile.getTileSize().getY() + tile.getTileBorder().getY() * 2) * (tile.getTileSize().getY() + tile.getTileBorder().getY() * 2)));
-		bufferSize = new IntegerVector2D(tileDim, tileDim);
-		newBuffer = renderFactory.createBuffer(bufferSize.getX(), bufferSize.getY());
-		oldBuffer = renderFactory.createBuffer(bufferSize.getX(), bufferSize.getY());
+		size = new IntegerVector2D(tileDim, tileDim);
+		newBuffer = renderFactory.createBuffer(size.getX(), size.getY());
+		oldBuffer = renderFactory.createBuffer(size.getX(), size.getY());
 		affine = renderFactory.createAffine();
 		renderer = createRenderer();
+		renderer.setRendererDelegate(this);
 		renderer.start();
 	}
 
 	protected Renderer createRenderer() {
-		return new Renderer(threadFactory, this, rendererFractal, bufferSize.getX(), bufferSize.getY());
-	}
-
-	/**
-	 * 
-	 */
-	protected final void swap() {
-		synchronized (this) {
-			final RenderBuffer tmpBuffer = oldBuffer;
-			oldBuffer = newBuffer;
-			newBuffer = tmpBuffer;
-		}
-	}
-
-	public void render() {
-//		if (oldView != newView) {
-//			viewChanged = true;
-//			updateView(newView);
-//		}
-		if (newJulia != oldJulia) {
-			renderer.setMode(Renderer.MODE_CALCULATE);
-			renderer.setJulia(newJulia);
-		}
-		if ((newConstant != oldConstant) && newJulia) {
-			renderer.setMode(Renderer.MODE_CALCULATE);
-		}
-		// if (!isDynamic) {
-		// setMode(FractalRenderer.MODE_REFRESH);
-		// }
-//		oldView = newView;
-		oldConstant = newConstant;
-		oldJulia = newJulia;
-		renderer.render(false);
-	}
-
-	/**
-	 * @return
-	 */
-	public int getBufferWidth() {
-		return bufferSize.getX();
-	}
-
-	/**
-	 * @return
-	 */
-	public int getBufferHeight() {
-		return bufferSize.getY();
-	}
-
-	/**
-	 * @param constant
-	 */
-	public void setConstant(final DoubleVector2D constant) {
-		newConstant = constant;
-	}
-
-	/**
-	 * @param julia
-	 */
-	public void setJulia(final boolean julia) {
-		newJulia = julia;
-	}
-
-	/**
-	 * @return
-	 */
-	protected boolean isTileSupported() {
-		return true;
+		return new Renderer(threadFactory, rendererFractal, size.getX(), size.getY());
 	}
 
 	/**
@@ -295,8 +391,8 @@ public class MandelbrotManager implements RendererDelegate {
 //			Point2D.Double p = new Point2D.Double(t0.r / dr, t0.i / di);
 //			p = (Point2D.Double) t.transform(p, p);
 //			p.setLocation(p.getX() * dr, p.getY() * di);
-//			sx = dr * 0.5 * bufferSize.getX() / imageDim;
-//			sy = di * 0.5 * bufferSize.getY() / imageDim;
+//			sx = dr * 0.5 * size.getX() / imageDim;
+//			sy = di * 0.5 * size.getY() / imageDim;
 //			p0 = new Complex(p.getX() - sx, p.getY() - sy);
 //			p1 = new Complex(p.getX() + sx, p.getY() + sy);
 //			area.points[0] = p0;
@@ -314,78 +410,11 @@ public class MandelbrotManager implements RendererDelegate {
 	 * 
 	 */
 	protected void updateTransform() {
-		final int offsetX = (getBufferWidth() - tile.getTileSize().getX() - tile.getTileBorder().getX() * 2) / 2;
-		final int offsetY = (getBufferHeight() - tile.getTileSize().getY() - tile.getTileBorder().getY() * 2) / 2;
-		final int centerX = getBufferWidth() / 2;
-		final int centerY = getBufferHeight() / 2;
+		final int offsetX = (getWidth() - tile.getTileSize().getX() - tile.getTileBorder().getX() * 2) / 2;
+		final int offsetY = (getHeight() - tile.getTileSize().getY() - tile.getTileBorder().getY() * 2) / 2;
+		final int centerX = getWidth() / 2;
+		final int centerY = getHeight() / 2;
 		affine = renderFactory.createTranslateAffine(-offsetX, -offsetY);
 		affine.append(renderFactory.createRotateAffine(rotation.getZ(), centerX, centerY));
-	}
-
-	/**
-	 * @param gc
-	 */
-	public void drawImage(final RenderGraphicsContext gc) {
-		synchronized (this) {
-			if (newBuffer != null && affine != null) {
-				gc.saveTransform();
-				// g.setClip(oldTile.getTileBorder().getX(), oldTile.getTileBorder().getY(), oldTile.getTileSize().getX(), oldTile.getTileSize().getY());
-				// g.setClip(0, 0, oldTile.getTileSize().getX() + oldTile.getTileBorder().getX() + 2, oldTile.getTileSize().getY() + oldTile.getTileBorder().getY() + 2);
-				gc.setAffine(affine);
-				gc.drawImage(newBuffer.getImage(), 0, 0);
-				//gc.setClip(null);
-				// g.dispose();
-				gc.restoreTransform();
-			}
-		}
-	}
-
-	/**
-	 * @param gc
-	 * @param x
-	 * @param y
-	 */
-	public void drawImage(final RenderGraphicsContext gc, final int x, final int y) {
-		synchronized (this) {
-			if (newBuffer != null && affine != null) {
-				gc.saveTransform();
-				// g.setClip(oldTile.getTileBorder().getX(), oldTile.getTileBorder().getY(), oldTile.getTileSize().getX(), oldTile.getTileSize().getY());
-				// g.setClip(0, 0, oldTile.getTileSize().getX() + oldTile.getTileBorder().getX() + 2, oldTile.getTileSize().getY() + oldTile.getTileBorder().getY() + 2);
-				gc.setAffine(affine);
-				gc.drawImage(newBuffer.getImage(), x, y);
-				//gc.setClip(null);
-				// g.dispose();
-				gc.restoreTransform();
-			}
-		}
-	}
-
-	/**
-	 * @param gc
-	 * @param x
-	 * @param y
-	 * @param w
-	 * @param h
-	 */
-	public void drawImage(final RenderGraphicsContext gc, final int x, final int y, final int w, final int h) {
-		synchronized (this) {
-			if (newBuffer != null && affine != null) {
-				gc.saveTransform();
-				//TODO gc.setClip(x, y, w, h);
-				gc.setAffine(affine);
-				final double sx = w / (double) tile.getTileSize().getX();
-				final double sy = h / (double) tile.getTileSize().getY();
-				final int dw = (int) Math.rint(bufferSize.getX() * sx);
-				final int dh = (int) Math.rint(bufferSize.getY() * sy);
-				gc.drawImage(newBuffer.getImage(), x, y, dw, dh);
-				//TODO gc.setClip(null);
-				// g.dispose();
-				gc.restoreTransform();
-			}
-		}
-	}
-
-	@Override
-	public void didPixelsChange(int[] pixels) {
 	}
 }

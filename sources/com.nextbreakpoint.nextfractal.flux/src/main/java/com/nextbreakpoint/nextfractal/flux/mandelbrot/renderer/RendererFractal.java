@@ -1,5 +1,7 @@
 package com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer;
 
+import com.nextbreakpoint.nextfractal.flux.mandelbrot.Number;
+
 public interface RendererFractal {
 	public Number[] renderOrbit(Number x, Number y);
 
@@ -16,4 +18,6 @@ public interface RendererFractal {
 	public double getVerticalSymetryPoint();
 
 	public double getHorizontalSymetryPoint();
+
+	public void setConstant(Number w);
 }

@@ -119,24 +119,6 @@ public class Worker {
 	/**
 	 * 
 	 */
-	public void terminateTasks() {
-		synchronized (tasks) {
-			while ((runnable != null) || (tasks.size() > 0)) {
-				if (thread != null) {
-					thread.interrupt();
-				}
-				try {
-					tasks.wait(1000);
-				}
-				catch (InterruptedException e) {
-				}
-			}
-		}
-	}
-
-	/**
-	 * 
-	 */
 	public void abortTasks() {
 		synchronized (tasks) {
 			tasks.clear();
