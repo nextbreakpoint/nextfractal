@@ -49,10 +49,10 @@ public class MandelbrotConfigView extends Pane implements Disposable {
 		OutcolouringFormulaGridItems outcolouringFormulaGridPane = new OutcolouringFormulaGridItems(viewContext, outcolouringFormulaListNode);
 		pane.getChildren().add(outcolouringFormulaGridPane);
 		incolouringFormulaGridPane.setDelegate(nodeObject -> {
-			viewContext.showConfigView(new IncolouringFormulaPane(nodeObject));
+			viewContext.showEditorView(new IncolouringFormulaPane(nodeObject));
 		});
 		outcolouringFormulaGridPane.setDelegate(nodeObject -> {
-			viewContext.showConfigView(new OutcolouringFormulaPane(nodeObject));
+			viewContext.showEditorView(new OutcolouringFormulaPane(nodeObject));
 		});
 	}
 
@@ -139,11 +139,11 @@ public class MandelbrotConfigView extends Pane implements Disposable {
 
 		private void showExtensionGridPane(NodeObject nodeObject) {
 			IncolouringFormulaExtensionGridPane extensionGridPane = createExtensionGridPane(nodeObject, viewContext.getEditorViewSize());
-			viewContext.showEditorView(extensionGridPane);
+			viewContext.showRenderView(extensionGridPane);
 		}
 		
 		private void dismissExtensionGridPane() {
-			viewContext.discardEditorView();
+			viewContext.discardRenderView();
 		}
 
 		private IncolouringFormulaExtensionGridPane createExtensionGridPane(NodeObject nodeObject, Dimension2D size) {
@@ -168,7 +168,7 @@ public class MandelbrotConfigView extends Pane implements Disposable {
 			
 			public IncolouringFormulaExtensionGridPane(NodeObject nodeObject,	Dimension2D size) {
 				super(nodeObject, size);
-				tasks.add(() -> { viewContext.discardEditorView(); });
+				tasks.add(() -> { viewContext.discardRenderView(); });
 			}
 			
 			@Override
@@ -203,11 +203,11 @@ public class MandelbrotConfigView extends Pane implements Disposable {
 
 		private void showExtensionGridPane(NodeObject nodeObject) {
 			OutcolouringFormulaExtensionGridPane extensionGridPane = createExtensionGridPane(nodeObject, viewContext.getEditorViewSize());
-			viewContext.showEditorView(extensionGridPane);
+			viewContext.showRenderView(extensionGridPane);
 		}
 		
 		private void dismissExtensionGridPane() {
-			viewContext.discardEditorView();
+			viewContext.discardRenderView();
 		}
 
 		private OutcolouringFormulaExtensionGridPane createExtensionGridPane(NodeObject nodeObject, Dimension2D size) {
@@ -232,7 +232,7 @@ public class MandelbrotConfigView extends Pane implements Disposable {
 			
 			public OutcolouringFormulaExtensionGridPane(NodeObject nodeObject,	Dimension2D size) {
 				super(nodeObject, size);
-				tasks.add(() -> { viewContext.discardEditorView(); });
+				tasks.add(() -> { viewContext.discardRenderView(); });
 			}
 			
 			@Override

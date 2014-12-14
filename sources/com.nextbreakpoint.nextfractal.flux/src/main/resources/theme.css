@@ -10,10 +10,10 @@
 	-fx-background-color:transparent;
 }
 
-.config-panel {
-	-fx-background-color:#777777;
-	-fx-padding:10px;
+.editor-panel {
+	-fx-background-color:#222222;
+	-fx-padding: 10px;
 }
 
-.editor-panel {
+.render-panel {
 }

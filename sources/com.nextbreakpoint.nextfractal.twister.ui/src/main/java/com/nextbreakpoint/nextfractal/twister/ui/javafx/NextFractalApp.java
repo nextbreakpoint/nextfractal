@@ -127,13 +127,13 @@ public class NextFractalApp extends Application {
 			sessionController.setRenderContext(renderContext);
 			Pane configView = createConfigView(viewContext, renderContext, config);
 			if (configView != null) {
-				viewContext.showConfigView(configView);
+				viewContext.showEditorView(configView);
 			}
 			Pane editorView = createEditorView(viewContext, renderContext, config);
 			if (editorView != null) {
-				viewContext.showEditorView(editorView);
+				viewContext.showRenderView(editorView);
 			}
-	        close.setOnAction(e -> { viewContext.discardConfigView(); });
+	        close.setOnAction(e -> { viewContext.discardEditorView(); });
 			startRenderers();
 			runTimer(canvas);
 		} catch (ExtensionNotFoundException e) {
@@ -296,10 +296,10 @@ public class NextFractalApp extends Application {
 
 	private class DefaultViewContext implements ViewContext {
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.ui.javafx.ViewContext#showConfigView(com.nextbreakpoint.nextfractal.core.ui.javafx.View)
+		 * @see com.nextbreakpoint.nextfractal.core.ui.javafx.ViewContext#showEditorView(com.nextbreakpoint.nextfractal.core.ui.javafx.View)
 		 */
 		@Override
-		public void showConfigView(Pane node) {
+		public void showEditorView(Pane node) {
 			if (configViewPane.getChildren().size() > 0) {
 				configViewPane.getChildren().get(configViewPane.getChildren().size() - 1).setDisable(true);
 			}
@@ -325,10 +325,10 @@ public class NextFractalApp extends Application {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.ui.javafx.ViewContext#discardConfigView()
+		 * @see com.nextbreakpoint.nextfractal.core.ui.javafx.ViewContext#discardEditorView()
 		 */
 		@Override
-		public void discardConfigView() {
+		public void discardEditorView() {
 			if (configViewPane.getChildren().size() > 1) {
 				close.setDisable(true);
 				Node node = configViewPane.getChildren().get(configViewPane.getChildren().size() - 1);
@@ -357,10 +357,10 @@ public class NextFractalApp extends Application {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.ui.javafx.ViewContext#showEditorView(com.nextbreakpoint.nextfractal.core.ui.javafx.View)
+		 * @see com.nextbreakpoint.nextfractal.core.ui.javafx.ViewContext#showRenderView(com.nextbreakpoint.nextfractal.core.ui.javafx.View)
 		 */
 		@Override
-		public void showEditorView(Pane node) {
+		public void showRenderView(Pane node) {
 			node.setPrefWidth(editorViewPane.getWidth());
 			node.setPrefHeight(editorViewPane.getHeight());
 			editorViewPane.getChildren().add(node);
@@ -372,10 +372,10 @@ public class NextFractalApp extends Application {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.core.ui.javafx.ViewContext#discardEditorView()
+		 * @see com.nextbreakpoint.nextfractal.core.ui.javafx.ViewContext#discardRenderView()
 		 */
 		@Override
-		public void discardEditorView() {
+		public void discardRenderView() {
 			if (editorViewPane.getChildren().size() > 1) {
 				Node node = editorViewPane.getChildren().get(editorViewPane.getChildren().size() - 1);
 				FadeTransition ft = new FadeTransition(Duration.seconds(0.4));

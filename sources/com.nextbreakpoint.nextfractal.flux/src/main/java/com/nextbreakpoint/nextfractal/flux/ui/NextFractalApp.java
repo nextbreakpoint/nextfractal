@@ -10,7 +10,6 @@ import javafx.geometry.Dimension2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -19,13 +18,13 @@ import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 
 import com.aquafx_project.AquaFx;
-import com.nextbreakpoint.nextfractal.core.ui.javafx.Disposable;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.ViewContext;
+import com.nextbreakpoint.nextfractal.flux.ui.editor.EditorPane;
+import com.nextbreakpoint.nextfractal.flux.ui.render.RenderPane;
 
 public class NextFractalApp extends Application {
-	private final Pane configViewPane = new Pane();
-	private final Pane editorViewPane = new Pane();
-	private final Button close = new Button("<");
+	private final Pane editorRootPane = new Pane();
+	private final Pane renderRootPane = new Pane();
 	private AnimationTimer timer;
 
 	public static void main(String[] args) {
@@ -45,28 +44,26 @@ public class NextFractalApp extends Application {
         mainPane.setPrefHeight(height);
         mainPane.setMinWidth(width);
         mainPane.setMinHeight(height);
-        VBox configPane = new VBox(10);
-		configPane.setPrefWidth(configPaneWidth);
-        configPane.setPrefHeight(height);
-        configPane.setOpacity(0.7);
-        configPane.setLayoutX(width - configPaneWidth);
-        configPane.getStyleClass().add("config-panel");
-        StackPane editorPane = new StackPane();
-        editorPane.setPrefWidth(width - configPaneWidth);
+        VBox editorPane = new VBox();
+		editorPane.setPrefWidth(configPaneWidth);
         editorPane.setPrefHeight(height);
-        configViewPane.setPrefWidth(configPaneWidth);
-        configViewPane.setPrefHeight(height - 40);
-        editorViewPane.setPrefWidth(width - configPaneWidth);
-        editorViewPane.setPrefHeight(height);
-        close.setVisible(false);
+        editorPane.setOpacity(0.7);
+        editorPane.setLayoutX(width - configPaneWidth);
+        StackPane renderPane = new StackPane();
+        renderPane.setPrefWidth(width - configPaneWidth);
+        renderPane.setPrefHeight(height);
+        editorRootPane.getStyleClass().add("editor-panel");
+        editorRootPane.setPrefWidth(configPaneWidth);
+        editorRootPane.setPrefHeight(height);
+        renderRootPane.getStyleClass().add("render-panel");
+        renderRootPane.setPrefWidth(width - configPaneWidth);
+        renderRootPane.setPrefHeight(height);
         Canvas canvas = new Canvas(width - configPaneWidth, height);
-        configPane.getChildren().add(close);
-        configPane.getChildren().add(configViewPane);
-        editorPane.getChildren().add(canvas);
-        editorPane.getChildren().add(editorViewPane);
-        editorPane.getStyleClass().add("editor-panel");
+        editorPane.getChildren().add(editorRootPane);
+        renderPane.getChildren().add(canvas);
+        renderPane.getChildren().add(renderRootPane);
+        mainPane.getChildren().add(renderPane);
         mainPane.getChildren().add(editorPane);
-        mainPane.getChildren().add(configPane);
         root.getChildren().add(mainPane);
         Scene scene = new Scene(root);
         AquaFx.style();
@@ -83,6 +80,11 @@ public class NextFractalApp extends Application {
     }
 
 	private void execute(int width, int height, Canvas canvas) {
+		DefaultViewContext context = new DefaultViewContext();
+		RenderPane renderPane = new RenderPane(context.getRenderViewSize());
+		EditorPane editorPane = new EditorPane(context.getEditorViewSize());
+		context.showRenderView(renderPane);
+		context.showEditorView(editorPane);
 	}
 
 //	private Pane createConfigView(ViewContext viewContext, RenderContext renderContext, TwisterConfig config) {
@@ -125,75 +127,59 @@ public class NextFractalApp extends Application {
 	}
 
 	private class DefaultViewContext implements ViewContext {
-		/**
-		 * @see com.nextbreakpoint.nextfractal.core.ui.javafx.ViewContext#showConfigView(com.nextbreakpoint.nextfractal.core.ui.javafx.View)
-		 */
 		@Override
-		public void showConfigView(Pane node) {
-			if (configViewPane.getChildren().size() > 0) {
-				configViewPane.getChildren().get(configViewPane.getChildren().size() - 1).setDisable(true);
+		public void showEditorView(Pane node) {
+			if (editorRootPane.getChildren().size() > 0) {
+				editorRootPane.getChildren().get(editorRootPane.getChildren().size() - 1).setDisable(true);
 			}
-			close.setDisable(true);
-			node.setLayoutY(configViewPane.getHeight());
-			node.setPrefWidth(configViewPane.getWidth());
-			node.setPrefHeight(configViewPane.getHeight());
-			configViewPane.getChildren().add(node);
+			node.setLayoutY(editorRootPane.getHeight());
+			Dimension2D size = getEditorViewSize();
+			node.setLayoutX(editorRootPane.getPadding().getLeft());
+//			node.setLayoutY(editorRootPane.getPadding().getTop());
+			node.setPrefWidth(size.getWidth());
+			node.setPrefHeight(size.getHeight());
+			editorRootPane.getChildren().add(node);
 			TranslateTransition tt = new TranslateTransition(Duration.seconds(0.4));
 			tt.setFromY(0);
-			tt.setToY(-configViewPane.getHeight());
+			tt.setToY(-editorRootPane.getHeight() + editorRootPane.getPadding().getTop());
 			tt.setNode(node);
 			tt.play();
 			tt.setOnFinished(new EventHandler<ActionEvent>() {
 				@Override
 				public void handle(ActionEvent event) {
-					if (configViewPane.getChildren().size() > 1) {
-						close.setVisible(true);
-					}
-					close.setDisable(false);
 				}
 			});
 		}
 
-		/**
-		 * @see com.nextbreakpoint.nextfractal.core.ui.javafx.ViewContext#discardConfigView()
-		 */
 		@Override
-		public void discardConfigView() {
-			if (configViewPane.getChildren().size() > 1) {
-				close.setDisable(true);
-				Node node = configViewPane.getChildren().get(configViewPane.getChildren().size() - 1);
+		public void discardEditorView() {
+			if (editorRootPane.getChildren().size() > 1) {
+				Node node = editorRootPane.getChildren().get(editorRootPane.getChildren().size() - 1);
 				TranslateTransition tt = new TranslateTransition(Duration.seconds(0.4));
-				tt.setFromY(-configViewPane.getHeight());
+				tt.setFromY(-editorRootPane.getHeight());
 				tt.setToY(0);
 				tt.setNode(node);
 				tt.setOnFinished(new EventHandler<ActionEvent>() {
 					@Override
 					public void handle(ActionEvent event) {
-						configViewPane.getChildren().remove(node);
-						if (node instanceof Disposable) {
-							((Disposable)node).dispose();
+						editorRootPane.getChildren().remove(node);
+						if (editorRootPane.getChildren().size() > 0) {
+							editorRootPane.getChildren().get(editorRootPane.getChildren().size() - 1).setDisable(false);
 						}
-						if (configViewPane.getChildren().size() <= 1) {
-							close.setVisible(false);
-						}
-						if (configViewPane.getChildren().size() > 0) {
-							configViewPane.getChildren().get(configViewPane.getChildren().size() - 1).setDisable(false);
-						}
-						close.setDisable(false);
 					}
 				});
 				tt.play();
 			}
 		}
 
-		/**
-		 * @see com.nextbreakpoint.nextfractal.core.ui.javafx.ViewContext#showEditorView(com.nextbreakpoint.nextfractal.core.ui.javafx.View)
-		 */
 		@Override
-		public void showEditorView(Pane node) {
-			node.setPrefWidth(editorViewPane.getWidth());
-			node.setPrefHeight(editorViewPane.getHeight());
-			editorViewPane.getChildren().add(node);
+		public void showRenderView(Pane node) {
+			Dimension2D size = getRenderViewSize();
+			node.setLayoutX(renderRootPane.getPadding().getLeft());
+			node.setLayoutY(renderRootPane.getPadding().getTop());
+			node.setPrefWidth(size.getWidth());
+			node.setPrefHeight(size.getHeight());
+			renderRootPane.getChildren().add(node);
 			FadeTransition ft = new FadeTransition(Duration.seconds(0.4));
 			ft.setFromValue(0);
 			ft.setToValue(1);
@@ -201,13 +187,10 @@ public class NextFractalApp extends Application {
 			ft.play();
 		}
 
-		/**
-		 * @see com.nextbreakpoint.nextfractal.core.ui.javafx.ViewContext#discardEditorView()
-		 */
 		@Override
-		public void discardEditorView() {
-			if (editorViewPane.getChildren().size() > 1) {
-				Node node = editorViewPane.getChildren().get(editorViewPane.getChildren().size() - 1);
+		public void discardRenderView() {
+			if (renderRootPane.getChildren().size() > 1) {
+				Node node = renderRootPane.getChildren().get(renderRootPane.getChildren().size() - 1);
 				FadeTransition ft = new FadeTransition(Duration.seconds(0.4));
 				ft.setFromValue(1);
 				ft.setToValue(0);
@@ -215,30 +198,21 @@ public class NextFractalApp extends Application {
 				ft.setOnFinished(new EventHandler<ActionEvent>() {
 					@Override
 					public void handle(ActionEvent event) {
-						editorViewPane.getChildren().remove(node);
-						if (node instanceof Disposable) {
-							((Disposable)node).dispose();
-						}
+						renderRootPane.getChildren().remove(node);
 					}
 				});
 				ft.play();
 			}
 		}
 
-		/**
-		 * @see com.nextbreakpoint.nextfractal.core.ui.javafx.ViewContext#getConfigViewSize()
-		 */
-		@Override
-		public Dimension2D getConfigViewSize() {
-			return new Dimension2D(configViewPane.getWidth(), configViewPane.getHeight());
-		}
-
-		/**
-		 * @see com.nextbreakpoint.nextfractal.core.ui.javafx.ViewContext#getEditorViewSize()
-		 */
 		@Override
 		public Dimension2D getEditorViewSize() {
-			return new Dimension2D(editorViewPane.getWidth(), editorViewPane.getHeight());
+			return new Dimension2D(editorRootPane.getWidth() - editorRootPane.getPadding().getLeft() - editorRootPane.getPadding().getRight(), editorRootPane.getHeight() - editorRootPane.getPadding().getTop() - editorRootPane.getPadding().getBottom());
+		}
+
+		@Override
+		public Dimension2D getRenderViewSize() {
+			return new Dimension2D(renderRootPane.getWidth() - renderRootPane.getPadding().getLeft() - renderRootPane.getPadding().getRight(), renderRootPane.getHeight() - renderRootPane.getPadding().getTop() - renderRootPane.getPadding().getBottom());
 		}
 	}
 }

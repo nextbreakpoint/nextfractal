@@ -35,30 +35,30 @@ public interface ViewContext {
 	/**
 	 * @param c
 	 */
-	public void showConfigView(Pane node);
-
-	/**
-	 * 
-	 */
-	public void discardConfigView();
-
-	/**
-	 * @param c
-	 */
 	public void showEditorView(Pane node);
 
 	/**
 	 * 
 	 */
 	public void discardEditorView();
-	
+
 	/**
-	 * @return
+	 * @param c
 	 */
-	public Dimension2D getConfigViewSize();
+	public void showRenderView(Pane node);
+
+	/**
+	 * 
+	 */
+	public void discardRenderView();
 	
 	/**
 	 * @return
 	 */
 	public Dimension2D getEditorViewSize();
+	
+	/**
+	 * @return
+	 */
+	public Dimension2D getRenderViewSize();
 }
