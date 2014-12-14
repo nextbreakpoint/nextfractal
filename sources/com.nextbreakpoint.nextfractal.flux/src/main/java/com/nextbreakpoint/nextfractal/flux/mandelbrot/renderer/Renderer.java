@@ -25,6 +25,9 @@
  */
 package com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer;
 
+import java.util.concurrent.ThreadFactory;
+
+import com.nextbreakpoint.nextfractal.core.util.Worker;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.MutableNumber;
 
 /**
@@ -34,11 +37,14 @@ public class Renderer {
 	public static final int MODE_CALCULATE = 0x01;
 	public static final int MODE_REFRESH = 0x02;
 	protected final RendererDelegate rendererDelegate;
-	protected RendererStrategy rendererStrategy;
+	protected final ThreadFactory threadFactory;
 	protected final RendererFractal rendererFractal;
 	protected final RendererData rendererData;
-	protected boolean aborted;
-	protected float progress;
+	protected final Worker rendererWorker;
+	protected volatile RendererStrategy rendererStrategy;
+	protected volatile boolean aborted;
+	protected volatile float progress;
+	private volatile int mode;
 	protected int width;
 	protected int height;
 	protected int depth;
@@ -49,14 +55,17 @@ public class Renderer {
 	 * @param width
 	 * @param height
 	 */
-	public Renderer(RendererDelegate rendererDelegate, RendererFractal rendererFractal, int width, int height) {
+	public Renderer(ThreadFactory threadFactory, RendererDelegate rendererDelegate, RendererFractal rendererFractal, int width, int height) {
+		this.threadFactory = threadFactory;
 		this.rendererDelegate = rendererDelegate;
 		this.rendererFractal = rendererFractal;
 		this.rendererStrategy = new MandelbrotRendererStrategy(rendererFractal);
 		this.rendererData = createRendererData();
 		this.width = width;
 		this.height = height;
+		this.rendererWorker= new Worker(threadFactory);
 		this.depth = rendererFractal.getStateSize();
+		init();
 	}
 
 	/**
@@ -92,17 +101,6 @@ public class Renderer {
 	}
 
 	/**
-	 * @param width
-	 * @param height
-	 */
-	public void setSize(int width, int height) {
-		this.width = width;
-		this.height = height;
-		free();
-		init();
-	}
-
-	/**
 	 * 
 	 */
 	protected void free() {
@@ -119,9 +117,22 @@ public class Renderer {
 	/**
 	 * @param dynamic
 	 */
-	public void doRender(final boolean dynamic) {
+	public void render(final boolean dynamic) {
+		rendererWorker.addTask(new Runnable() {
+			@Override
+			public void run() {
+				doRender(dynamic, mode);
+			}
+		});
+		mode = 0;
+	}
+	
+	/**
+	 * @param dynamic
+	 * @param mode
+	 */
+	protected void doRender(final boolean dynamic, final int mode) {
 		progress = 0;
-		update();
 		rendererStrategy.prepare();
 		final MutableNumber px = new MutableNumber(0, 0);
 		final MutableNumber pw = new MutableNumber(0, 0);
@@ -155,12 +166,8 @@ public class Renderer {
 		}
 	}
 
-	/**
-	 * 
-	 */
-	private void update() {
-		// TODO Auto-generated method stub
-		
+	public void setMode(int mode) {
+		this.mode = mode;
 	}
 
 	/**
@@ -174,30 +181,29 @@ public class Renderer {
 	 * 
 	 */
 	public void start() {
-		// TODO Auto-generated method stub
-		
+		rendererWorker.start();
 	}
 
 	/**
 	 * 
 	 */
 	public void abort() {
-		// TODO Auto-generated method stub
-		
+		rendererWorker.abort();
 	}
 
 	/**
 	 * 
 	 */
 	public void join() {
-		// TODO Auto-generated method stub
-		
+		rendererWorker.join();
 	}
 
 	/**
 	 * 
 	 */
 	public void dispose() {
+		abort();
+		join();
 		free();
 	}
 
@@ -206,13 +212,5 @@ public class Renderer {
 	 */
 	public float getProgress() {
 		return progress;
-	}
-
-	/**
-	 * @param modeRefresh
-	 */
-	public void setMode(int modeRefresh) {
-		// TODO Auto-generated method stub
-		
 	}
 }

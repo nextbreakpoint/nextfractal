@@ -27,6 +27,7 @@
  */
 package com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.xaos;
 
+import java.util.concurrent.ThreadFactory;
 import java.util.logging.Logger;
 
 import com.nextbreakpoint.nextfractal.core.util.Colors;
@@ -56,7 +57,6 @@ public final class XaosRenderer extends Renderer {
 	private boolean isHorizontalSymetrySupported = true;
 	private final XaosRendererData xaosRendererData;
 	private boolean cacheActive;
-	private int renderMode;
 
 	/**
 	 * @param rendererDelegate
@@ -64,8 +64,8 @@ public final class XaosRenderer extends Renderer {
 	 * @param width
 	 * @param height
 	 */
-	public XaosRenderer(RendererDelegate rendererDelegate, RendererFractal rendererFractal, int width, int height) {
-		super(rendererDelegate, rendererFractal, width, height);
+	public XaosRenderer(ThreadFactory threadFactory, RendererDelegate rendererDelegate, RendererFractal rendererFractal, int width, int height) {
+		super(threadFactory, rendererDelegate, rendererFractal, width, height);
 		this.xaosRendererData = (XaosRendererData)rendererData;
 	}
 
@@ -78,16 +78,16 @@ public final class XaosRenderer extends Renderer {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.Renderer#doRender(boolean)
+	 * @see com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.Renderer#doRender(boolean, int)
 	 */
-	public void doRender(final boolean dynamic) {
+	@Override
+	protected void doRender(final boolean dynamic, final int mode) {
 		aborted = false;
-		update();
 		rendererStrategy.prepare();
 		if (XaosConstants.PRINT_REGION) {
 			logger.fine("Region: (" + xaosRendererData.left() + "," + xaosRendererData.right() + ") -> (" + xaosRendererData.left() + "," + xaosRendererData.right() + ")");
 		}
-		cacheActive = (renderMode & Renderer.MODE_REFRESH) != 0 && !dynamic;
+		cacheActive = (mode & Renderer.MODE_REFRESH) != 0 && !dynamic;
 		isSolidguessSupported = XaosConstants.USE_SOLIDGUESS && rendererStrategy.isSolidGuessSupported();
 		isVerticalSymetrySupported = XaosConstants.USE_SYMETRY && rendererStrategy.isVerticalSymetrySupported();
 		isHorizontalSymetrySupported = XaosConstants.USE_SYMETRY && rendererStrategy.isHorizontalSymetrySupported();
@@ -96,16 +96,16 @@ public final class XaosRenderer extends Renderer {
 			logger.fine("Vertical symetry supported = " + isVerticalSymetrySupported);
 			logger.fine("Horizontal symetry supported = " + isHorizontalSymetrySupported);
 		}
-		if (XaosConstants.USE_MULTITHREAD && !XaosConstants.DUMP_XAOS) {
-//			renderWorker2.executeTask();
-			prepareLines();
-			prepareColumns();
-//			renderWorker2.waitTasks();
-		}
-		else {
-			prepareLines();
-			prepareColumns();
-		}
+		prepareLines(mode);
+		prepareColumns(mode);
+//		if (XaosConstants.USE_MULTITHREAD && !XaosConstants.DUMP_XAOS) {
+//			prepareLines(mode);
+//			prepareColumns(mode);
+//		}
+//		else {
+//			prepareLines(mode);
+//			prepareColumns(mode);
+//		}
 		if (XaosConstants.PRINT_REALLOCTABLE) {
 			logger.fine("ReallocTable:");
 			for (final XaosRealloc element : xaosRendererData.reallocX()) {
@@ -118,16 +118,15 @@ public final class XaosRenderer extends Renderer {
 		}
 		xaosRendererData.swap();
 		move();
-		processReallocTable(dynamic, (renderMode & Renderer.MODE_REFRESH) != 0);
+		processReallocTable(dynamic, (mode & Renderer.MODE_REFRESH) != 0);
 		updatePositions();
-		renderMode = 0;
 	}
 
-	private void prepareLines() {
+	private void prepareLines(int mode) {
 		final double beginy = xaosRendererData.bottom();
 		final double endy = xaosRendererData.top();
 		double stepy = 0;
-		if (((renderMode & Renderer.MODE_CALCULATE) == 0) && XaosConstants.USE_XAOS) {
+		if (((mode & Renderer.MODE_CALCULATE) == 0) && XaosConstants.USE_XAOS) {
 			stepy = XaosRenderer.makeReallocTable(xaosRendererData.reallocY(), xaosRendererData.dynamicY(), xaosRendererData.bottom(), xaosRendererData.top(), xaosRendererData.positionY(), !cacheActive);
 		}
 		else {
@@ -139,11 +138,11 @@ public final class XaosRenderer extends Renderer {
 		}
 	}
 
-	private void prepareColumns() {
+	private void prepareColumns(int mode) {
 		final double beginx = xaosRendererData.left();
 		final double endx = xaosRendererData.right();
 		double stepy = 0;
-		if (((renderMode & Renderer.MODE_CALCULATE) == 0) && XaosConstants.USE_XAOS) {
+		if (((mode & Renderer.MODE_CALCULATE) == 0) && XaosConstants.USE_XAOS) {
 			stepy = XaosRenderer.makeReallocTable(xaosRendererData.reallocX(), xaosRendererData.dynamicX(), beginx, endx, xaosRendererData.positionX(), !cacheActive);
 		}
 		else {
@@ -1599,44 +1598,4 @@ public final class XaosRenderer extends Renderer {
 			realloc.refreshed = true;
 		}
 	}
-
-	private void update() {
-		// TODO Auto-generated method stub
-		
-	}
-
-//	@Override
-//	public void start() {
-//		// prepareLinesWorker.start();
-//		// prepareColumnsWorker.start();
-////		renderWorker2.start();
-//	}
-//
-//	@Override
-//	public void abort() {
-//		// prepareLinesWorker.stop();
-//		// prepareColumnsWorker.stop();
-////		renderWorker2.stop();
-//	}
-//
-//	@Override
-//	public void join() {
-//	}
-
-//	private class MandelbrotWorker2 extends RenderWorker {
-//		/**
-//		 * 
-//		 */
-//		public MandelbrotWorker2() {
-//			super(factory);
-//		}
-//
-//		/**
-//		 * 
-//		 */
-//		@Override
-//		protected void execute() {
-//			prepareColumns();
-//		}
-//	}
 }

@@ -97,6 +97,10 @@ public class Worker {
 		}
 	}
 
+	public void abort() {
+		abortTasks();
+	}
+
 	/**
 	 * 
 	 */
