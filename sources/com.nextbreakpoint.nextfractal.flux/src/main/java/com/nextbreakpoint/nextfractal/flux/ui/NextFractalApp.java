@@ -50,7 +50,7 @@ public class NextFractalApp extends Application {
         configPane.setPrefHeight(height);
         configPane.setOpacity(0.7);
         configPane.setLayoutX(width - configPaneWidth);
-        configPane.setId("config-panel");
+        configPane.getStyleClass().add("config-panel");
         StackPane editorPane = new StackPane();
         editorPane.setPrefWidth(width - configPaneWidth);
         editorPane.setPrefHeight(height);
@@ -64,7 +64,7 @@ public class NextFractalApp extends Application {
         configPane.getChildren().add(configViewPane);
         editorPane.getChildren().add(canvas);
         editorPane.getChildren().add(editorViewPane);
-        editorPane.setId("editor-panel");
+        editorPane.getStyleClass().add("editor-panel");
         mainPane.getChildren().add(editorPane);
         mainPane.getChildren().add(configPane);
         root.getChildren().add(mainPane);

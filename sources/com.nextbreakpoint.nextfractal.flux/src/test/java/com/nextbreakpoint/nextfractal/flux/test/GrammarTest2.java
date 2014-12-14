@@ -32,7 +32,7 @@ import com.nextbreakpoint.nextfractal.flux.mandelbrot.grammar.ASTFractal;
 
 public class GrammarTest2 extends BaseTest {
 	@Test
-	public void TestGrammar() {
+	public void Grammar2() {
 		try {
 			ASTFractal fractal = parse(getSource());
 			System.out.println(fractal);

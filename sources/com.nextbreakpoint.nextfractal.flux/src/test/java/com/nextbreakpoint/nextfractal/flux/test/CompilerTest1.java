@@ -36,7 +36,7 @@ import com.nextbreakpoint.nextfractal.flux.mandelbrot.compiler.CompilerReport;
 
 public class CompilerTest1 extends BaseTest {
 	@Test
-	public void TestCompiler() {
+	public void Compiler1() {
 		try {
 //			Assert.assertTrue(Pattern.matches("([A-Z][a-z]*)-(\\d).(.jpg|.png)", "Andrea-10.png"));
 			Compiler compiler = new Compiler("test", "TestFractal", getSource());

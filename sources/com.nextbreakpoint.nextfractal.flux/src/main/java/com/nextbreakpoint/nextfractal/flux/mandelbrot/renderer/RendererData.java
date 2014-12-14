@@ -12,8 +12,8 @@ import com.nextbreakpoint.nextfractal.flux.mandelbrot.Number;
 public class RendererData {
 	protected double[] positionX;
 	protected double[] positionY;
-	protected Number[] region;
-	protected Number point;
+	protected MutableNumber[] region;
+	protected MutableNumber point;
 	protected int[] newPixels;
 	protected int[] oldPixels;
 	protected List<double[]> newCache;
@@ -55,8 +55,10 @@ public class RendererData {
 		this.depth = depth;
 		this.height = height;
 		this.height = height;
-		region = new Number[2];
-		point = new Number(0, 0);
+		region = new MutableNumber[2];
+		region[0] = new MutableNumber();
+		region[1] = new MutableNumber();
+		point = new MutableNumber(0, 0);
 		positionX = new double[width];
 		positionY = new double[height];
 		for (int i = 0; i < width; i++) {
