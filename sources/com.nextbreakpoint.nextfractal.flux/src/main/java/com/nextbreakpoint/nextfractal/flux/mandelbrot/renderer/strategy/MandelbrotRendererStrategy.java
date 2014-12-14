@@ -1,8 +1,11 @@
-package com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer;
+package com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.strategy;
 
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.Number;
+import com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.RendererFractal;
+import com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.RendererPoint;
+import com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.RendererStrategy;
 
-class MandelbrotRendererStrategy implements RendererStrategy {
+public class MandelbrotRendererStrategy implements RendererStrategy {
 		private RendererFractal rendererFractal;
 
 		public MandelbrotRendererStrategy(RendererFractal rendererFractal) {
