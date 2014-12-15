@@ -28,7 +28,7 @@ public class DefaultView extends Pane implements Disposable {
 	public DefaultView(ViewContext viewContext, RenderContext context, NodeObject rootNode) {
 		VBox panel = new VBox(10);
 		panel.setAlignment(Pos.CENTER_LEFT);
-		panel.setMaxWidth(viewContext.getConfigViewSize().getWidth());
+		panel.setMaxWidth(viewContext.getEditorViewSize().getWidth());
 		for (int i = 0; i < rootNode.getChildNodeCount(); i++) {
 			NodeObject node = rootNode.getChildNode(i);
 			NodeEditorComponent editor = createEditor(node);

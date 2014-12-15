@@ -1,5 +1,7 @@
 package com.nextbreakpoint.nextfractal.flux.ui;
 
+import java.util.ServiceLoader;
+
 import javafx.animation.FadeTransition;
 import javafx.animation.TranslateTransition;
 import javafx.application.Application;
@@ -17,8 +19,9 @@ import javafx.util.Duration;
 
 import com.aquafx_project.AquaFx;
 import com.nextbreakpoint.nextfractal.core.ui.javafx.ViewContext;
-import com.nextbreakpoint.nextfractal.flux.ui.editor.EditorPane;
-import com.nextbreakpoint.nextfractal.flux.ui.render.RenderPane;
+import com.nextbreakpoint.nextfractal.flux.mandelbrot.ui.editor.MandelbrotEditorPane;
+import com.nextbreakpoint.nextfractal.flux.mandelbrot.ui.render.MandelbrotRenderPane;
+import com.nextbreakpoint.nextfractal.flux.ui.plugin.UIFactory;
 
 public class NextFractalApp extends Application {
 	private BorderPane editorRootPane;
@@ -53,9 +56,10 @@ public class NextFractalApp extends Application {
         mainPane.getChildren().add(renderRootPane);
         mainPane.getChildren().add(editorRootPane);
         root.getChildren().add(mainPane);
-		RenderPane renderPane = new RenderPane(width - editorWidth, height);
+        String pluginId = "MandelbrotUIFactory";
+		Pane renderPane = createRenderPane(pluginId, width - editorWidth, height);
 		renderRootPane.setCenter(renderPane);
-		EditorPane editorPane = new EditorPane();
+		Pane editorPane = createEditorPane(pluginId);
 		editorRootPane.setCenter(editorPane);
         Scene scene = new Scene(root);
         AquaFx.style();
@@ -68,6 +72,32 @@ public class NextFractalApp extends Application {
 			}
 		});
     }
+
+	private Pane createEditorPane(String pluginId) {
+		final ServiceLoader<? extends UIFactory> plugins = ServiceLoader.load(UIFactory.class);
+		for (UIFactory plugin : plugins) {
+			try {
+				if (pluginId.equals(plugin.getId())) {
+					return plugin.createEditorPane();
+				}
+			} catch (Exception e) {
+			}
+		}
+		return null;
+	}
+
+	private Pane createRenderPane(String pluginId, int width, int height) {
+		final ServiceLoader<? extends UIFactory> plugins = ServiceLoader.load(UIFactory.class);
+		for (UIFactory plugin : plugins) {
+			try {
+				if (pluginId.equals(plugin.getId())) {
+					return plugin.createRenderPane(width, height);
+				}
+			} catch (Exception e) {
+			}
+		}
+		return null;
+	}
 
 	private class DefaultViewContext implements ViewContext {
 		@Override

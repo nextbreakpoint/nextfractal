@@ -53,6 +53,6 @@ public class DefaultNodeEditorComponent extends AnchorPane {
 		AnchorPane.setRightAnchor(edit, 0.0);
 		getChildren().add(label);
 		getChildren().add(edit);
-		setPrefWidth(viewContext.getConfigViewSize().getWidth());
+		setPrefWidth(viewContext.getEditorViewSize().getWidth());
 	}
 }

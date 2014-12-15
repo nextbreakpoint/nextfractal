@@ -1,4 +1,4 @@
-package com.nextbreakpoint.nextfractal.flux.ui.render;
+package com.nextbreakpoint.nextfractal.flux.mandelbrot.ui.render;
 
 import java.util.concurrent.ThreadFactory;
 
@@ -9,20 +9,23 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 
 import com.nextbreakpoint.nextfractal.core.util.DefaultThreadFactory;
-import com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.Renderer;
+import com.nextbreakpoint.nextfractal.core.util.IntegerVector2D;
+import com.nextbreakpoint.nextfractal.core.util.Tile;
+import com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.RendererCoordinator;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.RendererFractal;
+import com.nextbreakpoint.nextfractal.flux.render.RenderGraphicsContext;
 import com.nextbreakpoint.nextfractal.flux.render.javaFX.JavaFXRenderFactory;
 
-public class RenderPane extends BorderPane {
+public class MandelbrotRenderPane extends BorderPane {
 	private JavaFXRenderFactory renderFactory;
 	private ThreadFactory threadFactory;
+	private RendererCoordinator rendererCoordinator;
 	private RendererFractal rendererFractal;
 	private AnimationTimer timer;
-	private Renderer renderer;
 	private int width;
 	private int height;
 	
-	public RenderPane(int width, int height) {
+	public MandelbrotRenderPane(int width, int height) {
 		this.width = width;
 		this.height = height;
         Canvas canvas = new Canvas(width, height);
@@ -42,11 +45,11 @@ public class RenderPane extends BorderPane {
 			@Override
 			public void handle(long now) {
 				long time = now / 1000000;
-//				if ((time - last) > 20 && runtime != null && runtime.isChanged()) {
-//					RenderGraphicsContext gc = renderFactory.createGraphicsContext(canvas.getGraphicsContext2D());
-//					//runtime.getFrameElement().getLayer(0).getLayer(0).getImage().getImageRuntime().drawImage(gc);
-//					last = time;
-//				}
+				if ((time - last) > 20 && rendererCoordinator != null && rendererCoordinator.isChanged()) {
+					RenderGraphicsContext gc = renderFactory.createGraphicsContext(canvas.getGraphicsContext2D());
+					rendererCoordinator.drawImage(gc);
+					last = time;
+				}
 			}
 		};
 		timer.start();
@@ -57,15 +60,22 @@ public class RenderPane extends BorderPane {
 	}
 
 	public void setRendererFractal(RendererFractal rendererFractal) {
-		if (renderer != null) {
-			renderer.stopRender();
-			renderer.stop();
-			renderer.dispose();
-			renderer = null;
+		if (rendererCoordinator != null) {
+			rendererCoordinator.stop();
+			rendererCoordinator.dispose();
+			rendererCoordinator = null;
 		}
 		this.rendererFractal = rendererFractal;
-		renderer = new Renderer(threadFactory, rendererFractal, width, height);
-		renderer.start();
-		renderer.startRender(false, 0);
+		rendererCoordinator = new RendererCoordinator(threadFactory, renderFactory, rendererFractal, createTile());
+		rendererCoordinator.start();
+	}
+
+	private Tile createTile() {
+		IntegerVector2D imageSize = new IntegerVector2D(width, height);
+		IntegerVector2D tileSize = new IntegerVector2D(width, height);
+		IntegerVector2D tileBorder = new IntegerVector2D(0, 0);
+		IntegerVector2D tileOffset = new IntegerVector2D(0, 0);
+		Tile tile = new Tile(imageSize, tileSize, tileOffset, tileBorder);
+		return tile;
 	}
 }

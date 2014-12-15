@@ -40,8 +40,8 @@ public class MandelbrotConfigView extends Pane implements Disposable {
 		this.mandelbrotFractalNode = rootNode.getChildNodeByClass(MandelbrotFractalConfigElementNode.NODE_CLASS);;
 		VBox pane = new VBox(10);
 		getChildren().add(pane);
-		pane.setPrefWidth(viewContext.getConfigViewSize().getWidth());
-		pane.setPrefHeight(viewContext.getConfigViewSize().getHeight());
+		pane.setPrefWidth(viewContext.getEditorViewSize().getWidth());
+		pane.setPrefHeight(viewContext.getEditorViewSize().getHeight());
 		NodeObject incolouringFormulaListNode = mandelbrotFractalNode.getChildNodeByClass(IncolouringFormulaConfigElementNode.NODE_CLASS + "List");
 		IncolouringFormulaGridItems incolouringFormulaGridPane = new IncolouringFormulaGridItems(viewContext, incolouringFormulaListNode);
 		pane.getChildren().add(incolouringFormulaGridPane);
@@ -70,7 +70,7 @@ public class MandelbrotConfigView extends Pane implements Disposable {
 
 	public class IncolouringFormulaGridItems extends ElementGridPane<IncolouringFormulaConfigElement> implements Disposable {
 		public IncolouringFormulaGridItems(ViewContext viewContext, NodeObject listNode) {
-			super(listNode, new Dimension2D(viewContext.getConfigViewSize().getWidth(), 50));
+			super(listNode, new Dimension2D(viewContext.getEditorViewSize().getWidth(), 50));
 			disposables.add(this);
 			init();
 		}
@@ -93,7 +93,7 @@ public class MandelbrotConfigView extends Pane implements Disposable {
 
 	public class OutcolouringFormulaGridItems extends ElementGridPane<OutcolouringFormulaConfigElement> implements Disposable {
 		public OutcolouringFormulaGridItems(ViewContext viewContext, NodeObject listNode) {
-			super(listNode, new Dimension2D(viewContext.getConfigViewSize().getWidth(), 50));
+			super(listNode, new Dimension2D(viewContext.getEditorViewSize().getWidth(), 50));
 			disposables.add(this);
 			init();
 		}

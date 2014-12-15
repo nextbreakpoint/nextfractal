@@ -399,7 +399,7 @@ public class NextFractalApp extends Application {
 		 * @see com.nextbreakpoint.nextfractal.core.ui.javafx.ViewContext#getConfigViewSize()
 		 */
 		@Override
-		public Dimension2D getConfigViewSize() {
+		public Dimension2D getEditorViewSize() {
 			return new Dimension2D(configViewPane.getWidth(), configViewPane.getHeight());
 		}
 
@@ -407,7 +407,7 @@ public class NextFractalApp extends Application {
 		 * @see com.nextbreakpoint.nextfractal.core.ui.javafx.ViewContext#getEditorViewSize()
 		 */
 		@Override
-		public Dimension2D getEditorViewSize() {
+		public Dimension2D getRenderViewSize() {
 			return new Dimension2D(editorViewPane.getWidth(), editorViewPane.getHeight());
 		}
 	}
