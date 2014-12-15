@@ -10,10 +10,18 @@
 	-fx-background-color:transparent;
 }
 
-.editor-panel {
-	-fx-background-color:#222222;
-	-fx-padding: 10px;
+.text-area {
+	-fx-background-color:#FFFFFF;
+	-fx-focus-color: transparent;
 }
 
-.render-panel {
+.text-area:focused {
+	-fx-focus-color: transparent;
+}
+
+.editor-pane {
+	-fx-background-color:#FFFFFF;
+}
+
+.render-pane {
 }
