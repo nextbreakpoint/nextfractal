@@ -30,7 +30,7 @@ package com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.xaos;
 import java.util.concurrent.ThreadFactory;
 import java.util.logging.Logger;
 
-import com.nextbreakpoint.nextfractal.core.util.Colors;
+import com.nextbreakpoint.nextfractal.flux.core.Colors;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.MutableNumber;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.Renderer;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.RendererData;

@@ -8,9 +8,9 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 
-import com.nextbreakpoint.nextfractal.core.util.DefaultThreadFactory;
-import com.nextbreakpoint.nextfractal.core.util.IntegerVector2D;
-import com.nextbreakpoint.nextfractal.core.util.Tile;
+import com.nextbreakpoint.nextfractal.flux.core.DefaultThreadFactory;
+import com.nextbreakpoint.nextfractal.flux.core.IntegerVector2D;
+import com.nextbreakpoint.nextfractal.flux.core.Tile;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.RendererCoordinator;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.RendererFractal;
 import com.nextbreakpoint.nextfractal.flux.render.RenderGraphicsContext;

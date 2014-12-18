@@ -23,45 +23,38 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer;
+package com.nextbreakpoint.nextfractal.flux.core;
 
 import java.util.concurrent.ThreadFactory;
-
-import com.nextbreakpoint.nextfractal.flux.core.Worker;
-
 
 /**
  * @author Andrea Medeghini
  */
-public abstract class RendererWorker extends Worker {
-	private final RenderTaskRunnable runnable = new RenderTaskRunnable();
+public class DefaultThreadFactory implements ThreadFactory {
+	private final boolean isDaemon;
+	private final int priority;
+	private final String name;
 
 	/**
-	 * @param factory
+	 * @param name
+	 * @param isDeamon
+	 * @param priority
 	 */
-	public RendererWorker(ThreadFactory factory) {
-		super(factory);
+	public DefaultThreadFactory(final String name, final boolean isDeamon, final int priority) {
+		this.name = name;
+		isDaemon = isDeamon;
+		this.priority = priority;
 	}
 
 	/**
-	 * 
+	 * @see java.util.concurrent.ThreadFactory#newThread(java.lang.Runnable)
 	 */
-	public void executeTask() {
-		addTask(runnable);
-	}
-
-	/**
-	 * 
-	 */
-	protected abstract void execute();
-
-	private class RenderTaskRunnable implements Runnable {
-		/**
-		 * @see java.lang.Runnable#run()
-		 */
-		@Override
-		public void run() {
-			execute();
-		}
+	@Override
+	public Thread newThread(final Runnable r) {
+		final Thread thread = new Thread(r);
+		thread.setPriority(priority);
+		thread.setDaemon(isDaemon);
+		thread.setName(name);
+		return thread;
 	}
 }

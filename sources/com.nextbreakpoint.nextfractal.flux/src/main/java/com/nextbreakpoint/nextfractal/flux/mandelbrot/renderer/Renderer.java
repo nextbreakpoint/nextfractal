@@ -27,7 +27,7 @@ package com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer;
 
 import java.util.concurrent.ThreadFactory;
 
-import com.nextbreakpoint.nextfractal.core.util.Worker;
+import com.nextbreakpoint.nextfractal.flux.core.Worker;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.MutableNumber;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.Number;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.strategy.JuliaRendererStrategy;

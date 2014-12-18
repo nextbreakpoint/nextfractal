@@ -28,10 +28,10 @@ package com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer;
 import java.util.concurrent.ThreadFactory;
 import java.util.logging.Logger;
 
-import com.nextbreakpoint.nextfractal.core.util.DoubleVector2D;
-import com.nextbreakpoint.nextfractal.core.util.DoubleVector4D;
-import com.nextbreakpoint.nextfractal.core.util.IntegerVector2D;
-import com.nextbreakpoint.nextfractal.core.util.Tile;
+import com.nextbreakpoint.nextfractal.flux.core.DoubleVector2D;
+import com.nextbreakpoint.nextfractal.flux.core.DoubleVector4D;
+import com.nextbreakpoint.nextfractal.flux.core.IntegerVector2D;
+import com.nextbreakpoint.nextfractal.flux.core.Tile;
 import com.nextbreakpoint.nextfractal.flux.render.RenderAffine;
 import com.nextbreakpoint.nextfractal.flux.render.RenderBuffer;
 import com.nextbreakpoint.nextfractal.flux.render.RenderFactory;
@@ -161,14 +161,9 @@ public class RendererCoordinator implements RendererDelegate {
 	 * @return
 	 */
 	public boolean isChanged() {
-		return changed;
-	}
-
-	/**
-	 * 
-	 */
-	public void clearChanged() {
+		boolean result = changed;
 		changed = false;
+		return result;
 	}
 
 	/**

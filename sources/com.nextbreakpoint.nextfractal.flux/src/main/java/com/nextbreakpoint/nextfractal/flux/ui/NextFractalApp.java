@@ -2,25 +2,16 @@ package com.nextbreakpoint.nextfractal.flux.ui;
 
 import java.util.ServiceLoader;
 
-import javafx.animation.FadeTransition;
-import javafx.animation.TranslateTransition;
 import javafx.application.Application;
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Dimension2D;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import javafx.util.Duration;
 
 import com.aquafx_project.AquaFx;
-import com.nextbreakpoint.nextfractal.core.ui.javafx.ViewContext;
-import com.nextbreakpoint.nextfractal.flux.mandelbrot.ui.editor.MandelbrotEditorPane;
-import com.nextbreakpoint.nextfractal.flux.mandelbrot.ui.render.MandelbrotRenderPane;
 import com.nextbreakpoint.nextfractal.flux.ui.plugin.UIFactory;
 
 public class NextFractalApp extends Application {
@@ -99,7 +90,7 @@ public class NextFractalApp extends Application {
 		return null;
 	}
 
-	private class DefaultViewContext implements ViewContext {
+/*	private class DefaultViewContext implements ViewContext {
 		@Override
 		public void showEditorView(Pane node) {
 			if (editorRootPane.getChildren().size() > 0) {
@@ -187,5 +178,5 @@ public class NextFractalApp extends Application {
 		public Dimension2D getRenderViewSize() {
 			return new Dimension2D(renderRootPane.getWidth() - renderRootPane.getPadding().getLeft() - renderRootPane.getPadding().getRight(), renderRootPane.getHeight() - renderRootPane.getPadding().getTop() - renderRootPane.getPadding().getBottom());
 		}
-	}
+	}*/
 }

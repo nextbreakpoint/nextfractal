@@ -27,7 +27,7 @@ package com.nextbreakpoint.nextfractal.flux.test;
 
 import org.junit.Test;
 
-import com.nextbreakpoint.nextfractal.core.util.DefaultThreadFactory;
+import com.nextbreakpoint.nextfractal.flux.core.DefaultThreadFactory;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.Renderer;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.fractal.RendererFractalAdapter;
 

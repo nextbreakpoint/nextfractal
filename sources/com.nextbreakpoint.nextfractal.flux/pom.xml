@@ -46,16 +46,6 @@
 	</properties>
 	<dependencies>
 		<dependency>
-			<groupId>com.nextbreakpoint</groupId>
-			<artifactId>com.nextbreakpoint.nextfractal.core</artifactId>
-			<version>2.0.0</version>
-		</dependency>
-		<dependency>
-			<groupId>com.nextbreakpoint</groupId>
-			<artifactId>com.nextbreakpoint.nextfractal.core.ui</artifactId>
-			<version>2.0.0</version>
-		</dependency>
-		<dependency>
 			<groupId>com.aquafx-project</groupId>
 			<artifactId>aquafx</artifactId>
 			<version>0.1</version>
