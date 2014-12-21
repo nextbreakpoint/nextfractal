@@ -347,7 +347,6 @@ public class RendererCoordinator implements RendererDelegate {
 		affine = renderFactory.createAffine();
 		renderer = createRenderer();
 		renderer.setRendererDelegate(this);
-		renderer.start();
 	}
 
 	protected Renderer createRenderer() {
