@@ -78,20 +78,6 @@ public class RendererCoordinator implements RendererDelegate {
 	}
 
 	/**
-	 * 
-	 */
-	public void start() {
-		renderer.start();
-	}
-
-	/**
-	 * 
-	 */
-	public void stop() {
-		renderer.stop();
-	}
-
-	/**
 	 * @see java.lang.Object#finalize()
 	 */
 	@Override
@@ -107,7 +93,6 @@ public class RendererCoordinator implements RendererDelegate {
 	 * 
 	 */
 	public final void dispose() {
-		stop();
 		free();
 	}
 

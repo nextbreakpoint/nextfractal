@@ -38,9 +38,8 @@ public class RendererTest {
 //		JavaFXRenderFactory renderFactory = new JavaFXRenderFactory();
 		RendererFractalAdapter rendererFractal = new RendererFractalAdapter();
 		Renderer renderer = new Renderer(threadFactory, rendererFractal, 100, 100);
-		renderer.start();
 		renderer.startRender(false, 0);
 		renderer.joinRender();
-		renderer.stop();
+		renderer.dispose();
 	}
 }

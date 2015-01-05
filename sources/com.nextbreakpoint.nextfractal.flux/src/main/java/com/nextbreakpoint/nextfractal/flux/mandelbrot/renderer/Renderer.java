@@ -67,6 +67,7 @@ public class Renderer {
 		this.height = height;
 		this.depth = rendererFractal.getStateSize();
 		init();
+		start();
 	}
 	
 	/**
@@ -88,20 +89,6 @@ public class Renderer {
 	 */
 	public boolean isInterrupted() {
 		return aborted || Thread.currentThread().isInterrupted();
-	}
-
-	/**
-	 * 
-	 */
-	public void start() {
-		rendererWorker.start();
-	}
-
-	/**
-	 * 
-	 */
-	public void stop() {
-		rendererWorker.stop();
 	}
 
 	/**
@@ -205,7 +192,21 @@ public class Renderer {
 	protected void init() {
 		rendererData.init(width, height, depth);
 	}
-	
+
+	/**
+	 * 
+	 */
+	protected void start() {
+		rendererWorker.start();
+	}
+
+	/**
+	 * 
+	 */
+	protected void stop() {
+		rendererWorker.stop();
+	}
+
 	/**
 	 * @param dynamic
 	 * @param mode
