@@ -12,7 +12,10 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
 import com.aquafx_project.AquaFx;
-import com.nextbreakpoint.nextfractal.flux.ui.plugin.UIFactory;
+import com.nextbreakpoint.nextfractal.flux.FractalFactory;
+import com.nextbreakpoint.nextfractal.flux.FractalParser;
+import com.nextbreakpoint.nextfractal.flux.FractalSession;
+import com.nextbreakpoint.nextfractal.flux.FractalSessionListener;
 
 public class NextFractalApp extends Application {
 	private BorderPane editorRootPane;
@@ -47,11 +50,20 @@ public class NextFractalApp extends Application {
         mainPane.getChildren().add(renderRootPane);
         mainPane.getChildren().add(editorRootPane);
         root.getChildren().add(mainPane);
-        String pluginId = "MandelbrotUIFactory";
-		Pane renderPane = createRenderPane(pluginId, width - editorWidth, height);
-		renderRootPane.setCenter(renderPane);
-		Pane editorPane = createEditorPane(pluginId);
-		editorRootPane.setCenter(editorPane);
+        String pluginId = "Mandelbrot";
+		String packageName = "com.nextbreakpoint.generated";
+		String className = pluginId + "Fractal";
+        FractalSession session = createFractalSession(pluginId);
+        if (session != null) {
+        	Pane renderPane = createRenderPane(session, pluginId, width - editorWidth, height);
+        	if (renderPane != null) {
+        		renderRootPane.setCenter(renderPane);
+        	}
+        	Pane editorPane = createEditorPane(session, pluginId);
+        	if (editorPane != null) {
+        		editorRootPane.setCenter(editorPane);
+        	}
+        }
         Scene scene = new Scene(root);
         AquaFx.style();
         scene.getStylesheets().add(getClass().getResource("/theme.css").toExternalForm());
@@ -62,14 +74,31 @@ public class NextFractalApp extends Application {
 			public void handle(WindowEvent event) {
 			}
 		});
+		if (session != null) {
+			session.addSessionListener(new FractalSessionListener() {
+				@Override
+				public void fractalChanged(FractalSession session) {
+				}
+				
+				@Override
+				public void sourceChanged(FractalSession session) {
+					try {
+						FractalParser parser = createFractalParser(pluginId);
+						session.setFractal(parser.parse(packageName, className, session.getSource()));
+					} catch (Exception e) {
+						e.printStackTrace();//TODO display errors
+					}
+				}
+			});
+		}
     }
 
-	private Pane createEditorPane(String pluginId) {
-		final ServiceLoader<? extends UIFactory> plugins = ServiceLoader.load(UIFactory.class);
-		for (UIFactory plugin : plugins) {
+	private Pane createEditorPane(FractalSession session, String pluginId) {
+		final ServiceLoader<? extends FractalFactory> plugins = ServiceLoader.load(FractalFactory.class);
+		for (FractalFactory plugin : plugins) {
 			try {
 				if (pluginId.equals(plugin.getId())) {
-					return plugin.createEditorPane();
+					return plugin.createEditorPane(session);
 				}
 			} catch (Exception e) {
 			}
@@ -77,12 +106,38 @@ public class NextFractalApp extends Application {
 		return null;
 	}
 
-	private Pane createRenderPane(String pluginId, int width, int height) {
-		final ServiceLoader<? extends UIFactory> plugins = ServiceLoader.load(UIFactory.class);
-		for (UIFactory plugin : plugins) {
+	private Pane createRenderPane(FractalSession session, String pluginId, int width, int height) {
+		final ServiceLoader<? extends FractalFactory> plugins = ServiceLoader.load(FractalFactory.class);
+		for (FractalFactory plugin : plugins) {
 			try {
 				if (pluginId.equals(plugin.getId())) {
-					return plugin.createRenderPane(width, height);
+					return plugin.createRenderPane(session, width, height);
+				}
+			} catch (Exception e) {
+			}
+		}
+		return null;
+	}
+
+	private FractalSession createFractalSession(String pluginId) {
+		final ServiceLoader<? extends FractalFactory> plugins = ServiceLoader.load(FractalFactory.class);
+		for (FractalFactory plugin : plugins) {
+			try {
+				if (pluginId.equals(plugin.getId())) {
+					return plugin.createSession();
+				}
+			} catch (Exception e) {
+			}
+		}
+		return null;
+	}
+
+	private FractalParser createFractalParser(String pluginId) {
+		final ServiceLoader<? extends FractalFactory> plugins = ServiceLoader.load(FractalFactory.class);
+		for (FractalFactory plugin : plugins) {
+			try {
+				if (pluginId.equals(plugin.getId())) {
+					return plugin.createParser();
 				}
 			} catch (Exception e) {
 			}

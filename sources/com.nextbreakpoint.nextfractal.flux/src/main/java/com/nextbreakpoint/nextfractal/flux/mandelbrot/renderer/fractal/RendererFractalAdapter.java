@@ -1,9 +1,15 @@
 package com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.fractal;
 
+import com.nextbreakpoint.nextfractal.flux.mandelbrot.Fractal;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.Number;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.RendererFractal;
 
 public class RendererFractalAdapter implements RendererFractal {
+	private final Fractal fractal;
+
+	public RendererFractalAdapter(Fractal fractal) {
+		this.fractal = fractal;
+	}
 
 	@Override
 	public Number[] renderOrbit(Number x, Number y) {

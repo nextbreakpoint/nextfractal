@@ -8,6 +8,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 
+import com.nextbreakpoint.nextfractal.flux.FractalSession;
 import com.nextbreakpoint.nextfractal.flux.core.DefaultThreadFactory;
 import com.nextbreakpoint.nextfractal.flux.core.IntegerVector2D;
 import com.nextbreakpoint.nextfractal.flux.core.Tile;
@@ -17,6 +18,7 @@ import com.nextbreakpoint.nextfractal.flux.render.RenderGraphicsContext;
 import com.nextbreakpoint.nextfractal.flux.render.javaFX.JavaFXRenderFactory;
 
 public class MandelbrotRenderPane extends BorderPane {
+	private final FractalSession session;
 	private JavaFXRenderFactory renderFactory;
 	private ThreadFactory threadFactory;
 	private RendererCoordinator rendererCoordinator;
@@ -25,7 +27,8 @@ public class MandelbrotRenderPane extends BorderPane {
 	private int width;
 	private int height;
 	
-	public MandelbrotRenderPane(int width, int height) {
+	public MandelbrotRenderPane(FractalSession session, int width, int height) {
+		this.session = session;
 		this.width = width;
 		this.height = height;
         Canvas canvas = new Canvas(width, height);

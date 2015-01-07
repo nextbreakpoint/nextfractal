@@ -1,10 +1,15 @@
 package com.nextbreakpoint.nextfractal.flux.mandelbrot.ui.editor;
 
+import com.nextbreakpoint.nextfractal.flux.FractalSession;
+
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
 
 public class MandelbrotEditorPane extends BorderPane {
-	public MandelbrotEditorPane() {
+	private final FractalSession session;
+	
+	public MandelbrotEditorPane(FractalSession session) {
+		this.session = session;
 		TextArea textarea = new TextArea();
 		setCenter(textarea);
 		textarea.setText(getSource());

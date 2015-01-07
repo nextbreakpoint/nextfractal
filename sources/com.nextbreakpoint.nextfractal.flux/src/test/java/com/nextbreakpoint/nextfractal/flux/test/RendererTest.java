@@ -36,7 +36,7 @@ public class RendererTest {
 	public void RendererStart() {
 		DefaultThreadFactory threadFactory = new DefaultThreadFactory("Test", false, Thread.NORM_PRIORITY);
 //		JavaFXRenderFactory renderFactory = new JavaFXRenderFactory();
-		RendererFractalAdapter rendererFractal = new RendererFractalAdapter();
+		RendererFractalAdapter rendererFractal = new RendererFractalAdapter(null);
 		Renderer renderer = new Renderer(threadFactory, rendererFractal, 100, 100);
 		renderer.startRender(false, 0);
 		renderer.joinRender();
