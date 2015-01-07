@@ -35,12 +35,12 @@ import org.antlr.v4.runtime.tree.ParseTreeListener;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
-import com.nextbreakpoint.nextfractal.flux.mandelbrot.Color;
-import com.nextbreakpoint.nextfractal.flux.mandelbrot.Fractal;
-import com.nextbreakpoint.nextfractal.flux.mandelbrot.Number;
-import com.nextbreakpoint.nextfractal.flux.mandelbrot.Orbit;
-import com.nextbreakpoint.nextfractal.flux.mandelbrot.Palette;
-import com.nextbreakpoint.nextfractal.flux.mandelbrot.Trap;
+import com.nextbreakpoint.nextfractal.flux.mandelbrot.core.Color;
+import com.nextbreakpoint.nextfractal.flux.mandelbrot.core.Fractal;
+import com.nextbreakpoint.nextfractal.flux.mandelbrot.core.Number;
+import com.nextbreakpoint.nextfractal.flux.mandelbrot.core.Orbit;
+import com.nextbreakpoint.nextfractal.flux.mandelbrot.core.Palette;
+import com.nextbreakpoint.nextfractal.flux.mandelbrot.core.Trap;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.grammar.ASTBuilder;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.grammar.ASTColor;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.grammar.ASTColorComponent;

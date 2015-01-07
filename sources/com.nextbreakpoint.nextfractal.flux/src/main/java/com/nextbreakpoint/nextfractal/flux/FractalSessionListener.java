@@ -9,5 +9,5 @@ public interface FractalSessionListener {
 	/**
 	 * @param session
 	 */
-	public void fractalChanged(FractalSession session);
+	public void terminate(FractalSession session);
 }

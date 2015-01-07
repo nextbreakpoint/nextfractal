@@ -13,9 +13,7 @@ import javafx.stage.WindowEvent;
 
 import com.aquafx_project.AquaFx;
 import com.nextbreakpoint.nextfractal.flux.FractalFactory;
-import com.nextbreakpoint.nextfractal.flux.FractalParser;
 import com.nextbreakpoint.nextfractal.flux.FractalSession;
-import com.nextbreakpoint.nextfractal.flux.FractalSessionListener;
 
 public class NextFractalApp extends Application {
 	private BorderPane editorRootPane;
@@ -54,6 +52,8 @@ public class NextFractalApp extends Application {
 		String packageName = "com.nextbreakpoint.generated";
 		String className = pluginId + "Fractal";
         FractalSession session = createFractalSession(pluginId);
+        session.setPackageName(packageName);
+        session.setClassName(className);
         if (session != null) {
         	Pane renderPane = createRenderPane(session, pluginId, width - editorWidth, height);
         	if (renderPane != null) {
@@ -72,25 +72,10 @@ public class NextFractalApp extends Application {
 		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 			@Override
 			public void handle(WindowEvent event) {
+				session.terminate();
 			}
 		});
-		if (session != null) {
-			session.addSessionListener(new FractalSessionListener() {
-				@Override
-				public void fractalChanged(FractalSession session) {
-				}
-				
-				@Override
-				public void sourceChanged(FractalSession session) {
-					try {
-						FractalParser parser = createFractalParser(pluginId);
-						session.setFractal(parser.parse(packageName, className, session.getSource()));
-					} catch (Exception e) {
-						e.printStackTrace();//TODO display errors
-					}
-				}
-			});
-		}
+        session.setSource(getInitialSource());
     }
 
 	private Pane createEditorPane(FractalSession session, String pluginId) {
@@ -132,19 +117,41 @@ public class NextFractalApp extends Application {
 		return null;
 	}
 
-	private FractalParser createFractalParser(String pluginId) {
-		final ServiceLoader<? extends FractalFactory> plugins = ServiceLoader.load(FractalFactory.class);
-		for (FractalFactory plugin : plugins) {
-			try {
-				if (pluginId.equals(plugin.getId())) {
-					return plugin.createParser();
-				}
-			} catch (Exception e) {
-			}
-		}
-		return null;
+	protected String getInitialSource() {
+		String source = ""
+				+ "fractal [z,x,n] {\n"
+				+ "\torbit [-1 - 1i,+1 + 1i] {\n"
+				+ "\t\ttrap trap1 [0] {\n"
+				+ "\t\t\tMOVETO(1);\n"
+				+ "\t\t\tLINETO(2);\n"
+				+ "\t\t\tLINETO(2 + 2i);\n"
+				+ "\t\t\tLINETO(1 + 2i);\n"
+				+ "\t\t\tLINETO(1);\n"
+				+ "\t\t}\n"
+				+ "\t\tloop [0, 2] (|z| > 4 & trap1[z]) {\n"
+				+ "\t\t\ty = 0;\n"
+				+ "\t\t\tt = 3;\n"
+				+ "\t\t\tx = t + 4 + 1i;\n"
+				+ "\t\t\tk = t + 4;\n"
+				+ "\t\t\tz = x * (y + 5i);\n"
+				+ "\t\t\tt = |z|;\n"
+				+ "\t\t}\n"
+				+ "\t}\n\tcolor [#FF000000] {\n"
+				+ "\t\tpalette palette1 [200] {\n"
+				+ "\t\t\t[0, #000000] > [100, #FFFFFF];\n"
+				+ "\t\t\t[101, #FFFFFF] > [200, #FF0000];\n"
+				+ "\t\t}\n"
+				+ "\t\trule (real(n) = 0) [0.5] {\n"
+				+ "\t\t\t|x|,5,5,5\n"
+				+ "\t\t}\n"
+				+ "\t\trule (real(n) > 0) [0.5] {\n"
+				+ "\t\t\tpalette1[real(n)]\n"
+				+ "\t\t}\n"
+				+ "\t}\n"
+				+ "}\n";
+		return source;
 	}
-
+	
 /*	private class DefaultViewContext implements ViewContext {
 		@Override
 		public void showEditorView(Pane node) {

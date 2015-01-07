@@ -32,6 +32,7 @@ import com.nextbreakpoint.nextfractal.flux.core.DoubleVector2D;
 import com.nextbreakpoint.nextfractal.flux.core.DoubleVector4D;
 import com.nextbreakpoint.nextfractal.flux.core.IntegerVector2D;
 import com.nextbreakpoint.nextfractal.flux.core.Tile;
+import com.nextbreakpoint.nextfractal.flux.mandelbrot.MandelbrotFractal;
 import com.nextbreakpoint.nextfractal.flux.render.RenderAffine;
 import com.nextbreakpoint.nextfractal.flux.render.RenderBuffer;
 import com.nextbreakpoint.nextfractal.flux.render.RenderFactory;
@@ -50,7 +51,7 @@ public class RendererCoordinator implements RendererDelegate {
 	private DoubleVector4D rotation;
 	private DoubleVector4D center;
 	private DoubleVector4D scale;
-	private RendererFractal rendererFractal;
+	private MandelbrotFractal rendererFractal;
 	private final ThreadFactory threadFactory;
 	private final RenderFactory renderFactory;
 	private Renderer renderer;
@@ -65,7 +66,7 @@ public class RendererCoordinator implements RendererDelegate {
 	 * @param rendererFractal
 	 * @param tile
 	 */
-	public RendererCoordinator(ThreadFactory threadFactory, RenderFactory renderFactory, RendererFractal rendererFractal, Tile tile) {
+	public RendererCoordinator(ThreadFactory threadFactory, RenderFactory renderFactory, MandelbrotFractal rendererFractal, Tile tile) {
 //		factory = new DefaultThreadFactory("RendererCoordinator", true, threadPriority);
 		this.threadFactory = threadFactory;
 		this.renderFactory = renderFactory;

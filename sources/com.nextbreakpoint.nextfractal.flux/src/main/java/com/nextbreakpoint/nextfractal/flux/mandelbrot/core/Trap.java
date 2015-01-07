@@ -1,4 +1,5 @@
-package com.nextbreakpoint.nextfractal.flux.mandelbrot;
+package com.nextbreakpoint.nextfractal.flux.mandelbrot.core;
+
 
 public class Trap {
 	private Number center;

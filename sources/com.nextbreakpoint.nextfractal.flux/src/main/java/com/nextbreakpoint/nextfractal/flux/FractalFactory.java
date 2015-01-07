@@ -7,11 +7,6 @@ public interface FractalFactory {
 	 * @return
 	 */
 	public String getId();
-	
-	/**
-	 * @return
-	 */
-	public FractalParser createParser();
 
 	/**
 	 * @return

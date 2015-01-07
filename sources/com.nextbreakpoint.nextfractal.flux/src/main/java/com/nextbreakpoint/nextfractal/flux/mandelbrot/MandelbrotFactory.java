@@ -1,14 +1,11 @@
-package com.nextbreakpoint.nextfractal.flux.mandelbrot.plugin;
+package com.nextbreakpoint.nextfractal.flux.mandelbrot;
 
 import javafx.scene.layout.Pane;
 
 import com.nextbreakpoint.nextfractal.flux.FractalFactory;
-import com.nextbreakpoint.nextfractal.flux.FractalParser;
 import com.nextbreakpoint.nextfractal.flux.FractalSession;
-import com.nextbreakpoint.nextfractal.flux.mandelbrot.MandelbrotFractalSession;
-import com.nextbreakpoint.nextfractal.flux.mandelbrot.parser.MandelbrotFractalParser;
-import com.nextbreakpoint.nextfractal.flux.mandelbrot.ui.editor.MandelbrotEditorPane;
-import com.nextbreakpoint.nextfractal.flux.mandelbrot.ui.render.MandelbrotRenderPane;
+import com.nextbreakpoint.nextfractal.flux.mandelbrot.ui.MandelbrotEditorPane;
+import com.nextbreakpoint.nextfractal.flux.mandelbrot.ui.MandelbrotRenderPane;
 
 public class MandelbrotFactory implements FractalFactory {
 	/**
@@ -19,19 +16,11 @@ public class MandelbrotFactory implements FractalFactory {
 	}
 	
 	/**
-	 * @see com.nextbreakpoint.nextfractal.flux.FractalFactory#createParser()
-	 */
-	@Override
-	public FractalParser createParser() {
-		return new MandelbrotFractalParser();
-	}
-
-	/**
 	 * @see com.nextbreakpoint.nextfractal.flux.FractalFactory#createSession()
 	 */
 	@Override
 	public FractalSession createSession() {
-		return new MandelbrotFractalSession();
+		return new MandelbrotSession();
 	}
 	
 	/**

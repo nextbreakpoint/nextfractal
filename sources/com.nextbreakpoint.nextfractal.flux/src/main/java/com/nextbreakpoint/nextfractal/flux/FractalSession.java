@@ -1,6 +1,5 @@
 package com.nextbreakpoint.nextfractal.flux;
 
-import com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.RendererFractal;
 
 public interface FractalSession {
 	/**
@@ -24,12 +23,27 @@ public interface FractalSession {
 	public String getSource();
 
 	/**
-	 * @param fractal
+	 * @param packageName
 	 */
-	public void setFractal(RendererFractal fractal);
+	public void setPackageName(String packageName);
 
 	/**
 	 * @return
 	 */
-	public RendererFractal getFractal();
+	public String getPackageName();
+
+	/**
+	 * @param className
+	 */
+	public void setClassName(String className);
+
+	/**
+	 * @return
+	 */
+	public String getClassName();
+
+	/**
+	 * 
+	 */
+	public void terminate();
 }

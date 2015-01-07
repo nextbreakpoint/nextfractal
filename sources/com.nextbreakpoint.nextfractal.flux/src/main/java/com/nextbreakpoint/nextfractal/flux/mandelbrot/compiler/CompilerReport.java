@@ -1,6 +1,6 @@
 package com.nextbreakpoint.nextfractal.flux.mandelbrot.compiler;
 
-import com.nextbreakpoint.nextfractal.flux.mandelbrot.Fractal;
+import com.nextbreakpoint.nextfractal.flux.mandelbrot.core.Fractal;
 
 public class CompilerReport {
 	private String ast;

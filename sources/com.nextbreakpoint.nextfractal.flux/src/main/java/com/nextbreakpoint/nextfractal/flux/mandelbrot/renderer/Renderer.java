@@ -28,8 +28,9 @@ package com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer;
 import java.util.concurrent.ThreadFactory;
 
 import com.nextbreakpoint.nextfractal.flux.core.Worker;
-import com.nextbreakpoint.nextfractal.flux.mandelbrot.MutableNumber;
-import com.nextbreakpoint.nextfractal.flux.mandelbrot.Number;
+import com.nextbreakpoint.nextfractal.flux.mandelbrot.MandelbrotFractal;
+import com.nextbreakpoint.nextfractal.flux.mandelbrot.core.MutableNumber;
+import com.nextbreakpoint.nextfractal.flux.mandelbrot.core.Number;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.strategy.JuliaRendererStrategy;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.strategy.MandelbrotRendererStrategy;
 
@@ -40,7 +41,7 @@ public class Renderer {
 	public static final int MODE_CALCULATE = 0x01;
 	public static final int MODE_REFRESH = 0x02;
 	protected final ThreadFactory threadFactory;
-	protected final RendererFractal rendererFractal;
+	protected final MandelbrotFractal rendererFractal;
 	protected final RendererData rendererData;
 	protected final Worker rendererWorker;
 	protected volatile RendererDelegate rendererDelegate;
@@ -57,7 +58,7 @@ public class Renderer {
 	 * @param width
 	 * @param height
 	 */
-	public Renderer(ThreadFactory threadFactory, RendererFractal rendererFractal, int width, int height) {
+	public Renderer(ThreadFactory threadFactory, MandelbrotFractal rendererFractal, int width, int height) {
 		this.threadFactory = threadFactory;
 		this.rendererFractal = rendererFractal;
 		this.rendererStrategy = new MandelbrotRendererStrategy(rendererFractal);

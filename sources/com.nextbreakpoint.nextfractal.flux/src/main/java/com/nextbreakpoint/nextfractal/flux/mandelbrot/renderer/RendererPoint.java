@@ -25,7 +25,7 @@
  */
 package com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer;
 
-import com.nextbreakpoint.nextfractal.flux.mandelbrot.MutableNumber;
+import com.nextbreakpoint.nextfractal.flux.mandelbrot.core.MutableNumber;
 
 /**
  * @author Andrea Medeghini

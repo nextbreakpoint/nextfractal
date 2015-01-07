@@ -1,6 +1,6 @@
 package com.nextbreakpoint.nextfractal.flux.mandelbrot.compiler;
 
-import com.nextbreakpoint.nextfractal.flux.mandelbrot.Number;
+import com.nextbreakpoint.nextfractal.flux.mandelbrot.core.Number;
 
 public class CompilerVariable extends Number {
 	private final String name;

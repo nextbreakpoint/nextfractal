@@ -28,15 +28,15 @@ package com.nextbreakpoint.nextfractal.flux.test;
 import org.junit.Test;
 
 import com.nextbreakpoint.nextfractal.flux.core.DefaultThreadFactory;
+import com.nextbreakpoint.nextfractal.flux.mandelbrot.MandelbrotFractal;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.Renderer;
-import com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.fractal.RendererFractalAdapter;
 
 public class RendererTest {
 	@Test
 	public void RendererStart() {
 		DefaultThreadFactory threadFactory = new DefaultThreadFactory("Test", false, Thread.NORM_PRIORITY);
 //		JavaFXRenderFactory renderFactory = new JavaFXRenderFactory();
-		RendererFractalAdapter rendererFractal = new RendererFractalAdapter(null);
+		MandelbrotFractal rendererFractal = new MandelbrotFractal(null);
 		Renderer renderer = new Renderer(threadFactory, rendererFractal, 100, 100);
 		renderer.startRender(false, 0);
 		renderer.joinRender();

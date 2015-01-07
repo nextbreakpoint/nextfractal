@@ -1,4 +1,4 @@
-package com.nextbreakpoint.nextfractal.flux.mandelbrot;
+package com.nextbreakpoint.nextfractal.flux.mandelbrot.core;
 
 import java.util.ArrayList;
 import java.util.List;

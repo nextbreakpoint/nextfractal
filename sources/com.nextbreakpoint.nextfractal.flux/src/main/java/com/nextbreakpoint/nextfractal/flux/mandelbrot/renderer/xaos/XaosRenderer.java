@@ -31,10 +31,10 @@ import java.util.concurrent.ThreadFactory;
 import java.util.logging.Logger;
 
 import com.nextbreakpoint.nextfractal.flux.core.Colors;
-import com.nextbreakpoint.nextfractal.flux.mandelbrot.MutableNumber;
+import com.nextbreakpoint.nextfractal.flux.mandelbrot.MandelbrotFractal;
+import com.nextbreakpoint.nextfractal.flux.mandelbrot.core.MutableNumber;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.Renderer;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.RendererData;
-import com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.RendererFractal;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.RendererPoint;
 
 /**
@@ -63,7 +63,7 @@ public final class XaosRenderer extends Renderer {
 	 * @param width
 	 * @param height
 	 */
-	public XaosRenderer(ThreadFactory threadFactory, RendererFractal rendererFractal, int width, int height) {
+	public XaosRenderer(ThreadFactory threadFactory, MandelbrotFractal rendererFractal, int width, int height) {
 		super(threadFactory, rendererFractal, width, height);
 		this.xaosRendererData = (XaosRendererData)rendererData;
 	}

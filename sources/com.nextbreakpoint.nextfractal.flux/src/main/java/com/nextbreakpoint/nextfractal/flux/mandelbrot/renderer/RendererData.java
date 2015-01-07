@@ -3,8 +3,8 @@ package com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.nextbreakpoint.nextfractal.flux.mandelbrot.MutableNumber;
-import com.nextbreakpoint.nextfractal.flux.mandelbrot.Number;
+import com.nextbreakpoint.nextfractal.flux.mandelbrot.core.MutableNumber;
+import com.nextbreakpoint.nextfractal.flux.mandelbrot.core.Number;
 
 /**
  * @author Andrea Medeghini

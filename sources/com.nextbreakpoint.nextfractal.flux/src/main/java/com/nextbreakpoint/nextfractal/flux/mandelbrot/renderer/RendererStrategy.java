@@ -1,6 +1,6 @@
 package com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer;
 
-import com.nextbreakpoint.nextfractal.flux.mandelbrot.Number;
+import com.nextbreakpoint.nextfractal.flux.mandelbrot.core.Number;
 
 /**
  * @author Andrea Medeghini

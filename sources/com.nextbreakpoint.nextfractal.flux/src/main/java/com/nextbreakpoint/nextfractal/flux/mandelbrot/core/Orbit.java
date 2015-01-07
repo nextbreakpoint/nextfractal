@@ -1,4 +1,5 @@
-package com.nextbreakpoint.nextfractal.flux.mandelbrot;
+package com.nextbreakpoint.nextfractal.flux.mandelbrot.core;
+
 
 public abstract class Orbit {
 	protected Number x = new Number(0,0);
