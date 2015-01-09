@@ -1,5 +1,6 @@
 package com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.strategy;
 
+import com.nextbreakpoint.nextfractal.flux.core.Colors;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.MandelbrotFractal;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.core.Number;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.RendererPoint;
@@ -17,8 +18,6 @@ public class JuliaRendererStrategy implements RendererStrategy {
 	 */
 	@Override
 	public void prepare() {
-		// renderedData.x0 = oldConstant.getX();
-		// renderedData.y0 = oldConstant.getY();
 	}
 
 	/**
@@ -26,7 +25,11 @@ public class JuliaRendererStrategy implements RendererStrategy {
 	 */
 	@Override
 	public int renderPoint(RendererPoint p, Number x, Number w) {
-		return 0;
+		Number[] state = rendererFractal.renderOrbit(w, x);
+		for (int i = 0; i < p.size(); i++) {
+			p.vars()[i].set(state[i]);
+		}
+		return Colors.color(rendererFractal.renderColor(state));
 	}
 
 	/**
@@ -34,8 +37,7 @@ public class JuliaRendererStrategy implements RendererStrategy {
 	 */
 	@Override
 	public int renderColor(RendererPoint p) {
-		// TODO Auto-generated method stub
-		return 0;
+		return Colors.color(rendererFractal.renderColor(p.vars()));
 	}
 
 	/**

@@ -33,14 +33,18 @@ import com.nextbreakpoint.nextfractal.flux.mandelbrot.core.MutableNumber;
 public class RendererPoint {
 	private final MutableNumber[] vars;
 	
-	public RendererPoint(int depth) {
-		vars = new MutableNumber[depth];
-		for (int i = 0; i < depth; i++) {
+	public RendererPoint(int size) {
+		vars = new MutableNumber[size];
+		for (int i = 0; i < size; i++) {
 			vars[i] = new MutableNumber(0, 0);
 		}
 	}
 	
 	public MutableNumber[] vars() {
 		return vars;
+	}
+
+	public int size() {
+		return vars.length;
 	}
 }

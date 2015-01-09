@@ -11,19 +11,23 @@ public class MandelbrotFractal implements RendererFractal {
 		this.fractal = fractal;
 	}
 
-	public Number[] renderOrbit(Number x, Number y) {
-		// TODO Auto-generated method stub
-		return null;
+	public Number[] renderOrbit(Number x, Number w) {
+		fractal.setX(x);
+		fractal.setW(w);
+		fractal.renderOrbit();
+		Number[] state = fractal.state();
+		return state;
 	}
 
-	public float[] renderColor(Number[] o) {
-		// TODO Auto-generated method stub
-		return null;
+	public float[] renderColor(Number[] state) {
+		fractal.setState(state);
+		fractal.renderColor();
+		float[] color = fractal.getColor();
+		return color;
 	}
 
 	public int getStateSize() {
-		// TODO Auto-generated method stub
-		return 0;
+		return fractal.stateSize();
 	}
 
 	public boolean isSolidGuessSupported() {
@@ -52,8 +56,6 @@ public class MandelbrotFractal implements RendererFractal {
 	}
 
 	public void setConstant(Number w) {
-		// TODO Auto-generated method stub
-
+		fractal.setW(w);
 	}
-
 }

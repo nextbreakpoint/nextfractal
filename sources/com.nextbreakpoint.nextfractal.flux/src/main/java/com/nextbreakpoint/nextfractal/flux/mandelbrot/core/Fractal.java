@@ -246,6 +246,10 @@ public abstract class Fractal {
 		return state;
 	}
 	
+	public int stateSize() {
+		return stateVars.size();
+	}
+	
 	public void setState(Number[] state) {
 		int i = 0;
 		for (String varName : stateVars) {

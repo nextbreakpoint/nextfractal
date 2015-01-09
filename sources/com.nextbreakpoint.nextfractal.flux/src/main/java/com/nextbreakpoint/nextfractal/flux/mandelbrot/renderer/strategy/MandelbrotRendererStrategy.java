@@ -1,5 +1,6 @@
 package com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.strategy;
 
+import com.nextbreakpoint.nextfractal.flux.core.Colors;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.MandelbrotFractal;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.core.Number;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.RendererPoint;
@@ -17,14 +18,6 @@ public class MandelbrotRendererStrategy implements RendererStrategy {
 		 */
 		@Override
 		public void prepare() {
-//			if (fractalRuntime.getRenderingFormula().getFormulaRuntime() != null) {
-//				renderedData.x0 = fractalRuntime.getRenderingFormula().getFormulaRuntime().getInitialPoint().r;
-//				renderedData.y0 = fractalRuntime.getRenderingFormula().getFormulaRuntime().getInitialPoint().i;
-//			}
-//			else {
-//				renderedData.x0 = 0;
-//				renderedData.y0 = 0;
-//			}
 		}
 
 		/**
@@ -32,7 +25,11 @@ public class MandelbrotRendererStrategy implements RendererStrategy {
 		 */
 		@Override
 		public int renderPoint(RendererPoint p, Number x, Number w) {
-			return 0;
+			Number[] state = rendererFractal.renderOrbit(x, w);
+			for (int i = 0; i < p.size(); i++) {
+				p.vars()[i].set(state[i]);
+			}
+			return Colors.color(rendererFractal.renderColor(state));
 		}
 
 		/**
@@ -40,8 +37,7 @@ public class MandelbrotRendererStrategy implements RendererStrategy {
 		 */
 		@Override
 		public int renderColor(RendererPoint p) {
-			// TODO Auto-generated method stub
-			return 0;
+			return Colors.color(rendererFractal.renderColor(p.vars()));
 		}
 
 		/**

@@ -48,7 +48,7 @@ public class RendererData {
 	/**
 	 * @param width
 	 * @param height
-	 * @param depth
+	 * @param size
 	 */
 	public void init(final int width, final int height, final int depth) {
 		free();

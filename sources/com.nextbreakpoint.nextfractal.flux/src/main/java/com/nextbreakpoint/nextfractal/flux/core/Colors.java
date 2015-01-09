@@ -124,6 +124,18 @@ public class Colors {
 	}
 
 	/**
+	 * @param components
+	 * @return
+	 */
+	public static int color(final float[] components) {
+		final int a = ((int)(components[0] * 255)) & 0xFF;
+		final int r = ((int)(components[1] * 255)) & 0xFF;
+		final int g = ((int)(components[1] * 255)) & 0xFF;
+		final int b = ((int)(components[1] * 255)) & 0xFF;
+		return (a << 24) | (r << 16) | (g << 8) | b;
+	}
+
+	/**
 	 * @param alpha
 	 * @return
 	 */

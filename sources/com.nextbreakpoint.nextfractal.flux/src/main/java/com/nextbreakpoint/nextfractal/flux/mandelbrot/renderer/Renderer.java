@@ -50,7 +50,7 @@ public class Renderer {
 	protected volatile float progress;
 	protected int width;
 	protected int height;
-	protected int depth;
+	protected int size;
 
 	/**
 	 * @param rendererDelegate
@@ -66,7 +66,7 @@ public class Renderer {
 		this.rendererData = createRendererData();
 		this.width = width;
 		this.height = height;
-		this.depth = rendererFractal.getStateSize();
+		this.size = rendererFractal.getStateSize();
 		init();
 		start();
 	}
@@ -191,7 +191,7 @@ public class Renderer {
 	 * 
 	 */
 	protected void init() {
-		rendererData.init(width, height, depth);
+		rendererData.init(width, height, size);
 	}
 
 	/**
