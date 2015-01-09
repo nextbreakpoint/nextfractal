@@ -29,7 +29,7 @@ public class JuliaRendererStrategy implements RendererStrategy {
 		for (int i = 0; i < p.size(); i++) {
 			p.vars()[i].set(state[i]);
 		}
-		return Colors.color(rendererFractal.renderColor(state));
+		return renderColor(p);
 	}
 
 	/**
