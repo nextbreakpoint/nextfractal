@@ -4,8 +4,8 @@ import javafx.scene.layout.Pane;
 
 import com.nextbreakpoint.nextfractal.flux.FractalFactory;
 import com.nextbreakpoint.nextfractal.flux.FractalSession;
-import com.nextbreakpoint.nextfractal.flux.mandelbrot.ui.MandelbrotEditorPane;
-import com.nextbreakpoint.nextfractal.flux.mandelbrot.ui.MandelbrotRenderPane;
+import com.nextbreakpoint.nextfractal.flux.mandelbrot.javaFX.MandelbrotEditorPane;
+import com.nextbreakpoint.nextfractal.flux.mandelbrot.javaFX.MandelbrotRenderPane;
 
 public class MandelbrotFactory implements FractalFactory {
 	/**

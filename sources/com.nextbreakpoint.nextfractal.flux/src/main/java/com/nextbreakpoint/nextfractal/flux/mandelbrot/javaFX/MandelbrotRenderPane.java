@@ -1,4 +1,4 @@
-package com.nextbreakpoint.nextfractal.flux.mandelbrot.ui;
+package com.nextbreakpoint.nextfractal.flux.mandelbrot.javaFX;
 
 import java.util.concurrent.ThreadFactory;
 

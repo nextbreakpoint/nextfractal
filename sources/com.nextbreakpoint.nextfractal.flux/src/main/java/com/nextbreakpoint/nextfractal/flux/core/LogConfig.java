@@ -1,4 +1,4 @@
-package com.nextbreakpoint.nextfractal.flux;
+package com.nextbreakpoint.nextfractal.flux.core;
 
 import java.io.IOException;
 import java.util.logging.LogManager;

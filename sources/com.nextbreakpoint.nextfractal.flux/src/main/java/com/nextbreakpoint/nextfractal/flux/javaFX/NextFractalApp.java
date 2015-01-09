@@ -1,4 +1,4 @@
-package com.nextbreakpoint.nextfractal.flux.ui;
+package com.nextbreakpoint.nextfractal.flux.javaFX;
 
 import java.util.ServiceLoader;
 
