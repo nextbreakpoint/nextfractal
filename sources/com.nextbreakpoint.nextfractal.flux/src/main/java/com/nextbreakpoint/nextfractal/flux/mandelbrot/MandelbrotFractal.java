@@ -58,4 +58,8 @@ public class MandelbrotFractal implements RendererFractal {
 	public void setConstant(Number w) {
 		fractal.setW(w);
 	}
+
+	public Number[] getRegion() {
+		return fractal.getRegion();
+	}
 }

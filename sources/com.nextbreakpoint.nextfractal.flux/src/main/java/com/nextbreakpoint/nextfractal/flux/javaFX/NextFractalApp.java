@@ -25,37 +25,41 @@ public class NextFractalApp extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-		int width = 800;
+		int width = 500;
 		int height = 500;
 		int editorWidth = 300;
         primaryStage.setTitle("NextFractal");
         primaryStage.setResizable(false);
         StackPane root = new StackPane();
         Pane mainPane = new Pane();
-        mainPane.setPrefWidth(width);
+        mainPane.setPrefWidth(width + editorWidth);
         mainPane.setPrefHeight(height);
-        mainPane.setMinWidth(width);
+        mainPane.setMinWidth(width + editorWidth);
         mainPane.setMinHeight(height);
         editorRootPane = new BorderPane();
 		editorRootPane.setPrefWidth(editorWidth);
         editorRootPane.setPrefHeight(height);
-        editorRootPane.setLayoutX(width - editorWidth);
+        editorRootPane.setLayoutX(width);
         editorRootPane.getStyleClass().add("editor-pane");
         renderRootPane = new BorderPane();
-        renderRootPane.setPrefWidth(width - editorWidth);
+        renderRootPane.setPrefWidth(width);
         renderRootPane.setPrefHeight(height);
+        renderRootPane.setMinWidth(width);
+        renderRootPane.setMinHeight(height);
+        renderRootPane.setMaxWidth(width);
+        renderRootPane.setMaxHeight(height);
         renderRootPane.getStyleClass().add("render-pane");
         mainPane.getChildren().add(renderRootPane);
         mainPane.getChildren().add(editorRootPane);
         root.getChildren().add(mainPane);
         String pluginId = "Mandelbrot";
-		String packageName = "com.nextbreakpoint.generated";
+		String packageName = "com.nextbreakpoint.nextfractal.flux.mandelbrot.fractal";
 		String className = pluginId + "Fractal";
         FractalSession session = createFractalSession(pluginId);
         session.setPackageName(packageName);
         session.setClassName(className);
         if (session != null) {
-        	Pane renderPane = createRenderPane(session, pluginId, width - editorWidth, height);
+        	Pane renderPane = createRenderPane(session, pluginId, width, height);
         	if (renderPane != null) {
         		renderRootPane.setCenter(renderPane);
         	}
@@ -120,32 +124,19 @@ public class NextFractalApp extends Application {
 	protected String getInitialSource() {
 		String source = ""
 				+ "fractal [z,x,n] {\n"
-				+ "\torbit [-1 - 1i,+1 + 1i] {\n"
-				+ "\t\ttrap trap1 [0] {\n"
-				+ "\t\t\tMOVETO(1);\n"
-				+ "\t\t\tLINETO(2);\n"
-				+ "\t\t\tLINETO(2 + 2i);\n"
-				+ "\t\t\tLINETO(1 + 2i);\n"
-				+ "\t\t\tLINETO(1);\n"
+				+ "\torbit [-2.0 - 1.5i,+1.0 + 1.5i] {\n"
+				+ "\t\tbegin {\n"
+				+ "\t\t\tz = x;\n"
 				+ "\t\t}\n"
-				+ "\t\tloop [0, 2] (|z| > 4 & trap1[z]) {\n"
-				+ "\t\t\ty = 0;\n"
-				+ "\t\t\tt = 3;\n"
-				+ "\t\t\tx = t + 4 + 1i;\n"
-				+ "\t\t\tk = t + 4;\n"
-				+ "\t\t\tz = x * (y + 5i);\n"
-				+ "\t\t\tt = |z|;\n"
+				+ "\t\tloop [0, 10] (|z| > 2) {\n"
+				+ "\t\t\tz = z * z + w;\n"
 				+ "\t\t}\n"
 				+ "\t}\n\tcolor [#FF000000] {\n"
-				+ "\t\tpalette palette1 [200] {\n"
-				+ "\t\t\t[0, #000000] > [100, #FFFFFF];\n"
-				+ "\t\t\t[101, #FFFFFF] > [200, #FF0000];\n"
+				+ "\t\trule (real(n) = 0) [1.0] {\n"
+				+ "\t\t\t1,0,0,0\n"
 				+ "\t\t}\n"
-				+ "\t\trule (real(n) = 0) [0.5] {\n"
-				+ "\t\t\t|x|,5,5,5\n"
-				+ "\t\t}\n"
-				+ "\t\trule (real(n) > 0) [0.5] {\n"
-				+ "\t\t\tpalette1[real(n)]\n"
+				+ "\t\trule (real(n) > 0) [1.0] {\n"
+				+ "\t\t\t1,1,1,1\n"
 				+ "\t\t}\n"
 				+ "\t}\n"
 				+ "}\n";

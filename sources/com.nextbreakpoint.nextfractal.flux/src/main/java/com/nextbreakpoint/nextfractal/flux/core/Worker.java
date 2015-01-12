@@ -58,16 +58,16 @@ public class Worker {
 	 * 
 	 */
 	public void stop() {
+		abortTasks();
 		running = false;
 		if (thread != null) {
-			abortTasks();
-//			try {
-//				thread.join();
-//			}
-//			catch (InterruptedException e) {
-//				Thread.currentThread().interrupt();
-//			}
-//			thread = null;
+			try {
+				thread.join();
+			}
+			catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+			}
+			thread = null;
 		}
 	}
 

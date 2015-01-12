@@ -2,12 +2,18 @@ package com.nextbreakpoint.nextfractal.flux.mandelbrot.core;
 
 
 public abstract class Orbit {
+	private final MutableNumber[] region = new MutableNumber[2];
 	protected Number x = new Number(0,0);
 	protected Number w = new Number(0,0);
 	protected Number z = new Number(0,0);
 	protected Number n = new Number(0);
 	protected Number c = new Number(0);
 
+	public Orbit() {
+		region[0] = new MutableNumber();
+		region[1] = new MutableNumber();
+	}
+	
 	public void setX(Number x) {
 		this.x = x;
 	}
@@ -36,5 +42,14 @@ public abstract class Orbit {
 		return c;
 	}
 
+	public Number[] region() {
+		return region;
+	}
+
+	protected void setRegion(Number a, Number b) {
+		this.region[0].set(a);
+		this.region[1].set(b);
+	}
+	
 	public abstract void render();
 }

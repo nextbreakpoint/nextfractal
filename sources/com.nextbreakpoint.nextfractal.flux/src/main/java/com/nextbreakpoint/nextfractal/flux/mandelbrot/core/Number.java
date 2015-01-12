@@ -45,4 +45,9 @@ public class Number {
 		this.r = x.r;
 		this.i = x.i;
 	}
+
+	@Override
+	public String toString() {
+		return r + ", " + i;
+	}
 }

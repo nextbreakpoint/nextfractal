@@ -53,7 +53,7 @@ public class RendererData {
 	public void init(final int width, final int height, final int depth) {
 		free();
 		this.depth = depth;
-		this.height = height;
+		this.width = width;
 		this.height = height;
 		region = new MutableNumber[2];
 		region[0] = new MutableNumber();
@@ -117,6 +117,14 @@ public class RendererData {
 		return region[1].i();
 	}
 
+	/**
+	 * @param region
+	 */
+	public void setRegion(Number[] region) {
+		this.region[0].set(region[0]);
+		this.region[1].set(region[1]);
+	}
+	
 	/**
 	 * @return
 	 */
@@ -200,7 +208,7 @@ public class RendererData {
 		final int sizex = width;
 		final int sizey = height;
 		final double stepx = (right() - left()) / (sizex - 1);
-		final double stepy = (bottom() - top()) / (sizey - 1);
+		final double stepy = (top() - bottom()) / (sizey - 1);
 		double posx = left();
 		double posy = bottom();
 		for (int x = 0; x < sizex; x++) {

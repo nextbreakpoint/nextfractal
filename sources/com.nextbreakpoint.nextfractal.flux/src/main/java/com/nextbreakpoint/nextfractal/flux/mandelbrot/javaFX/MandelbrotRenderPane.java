@@ -1,5 +1,7 @@
 package com.nextbreakpoint.nextfractal.flux.mandelbrot.javaFX;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ThreadFactory;
 
 import javafx.animation.AnimationTimer;
@@ -69,7 +71,7 @@ public class MandelbrotRenderPane extends BorderPane {
 			@Override
 			public void handle(long now) {
 				long time = now / 1000000;
-				if ((time - last) > 20 && rendererCoordinator != null && rendererCoordinator.isChanged()) {
+				if ((time - last) > 1000 && rendererCoordinator != null && rendererCoordinator.isChanged()) {
 					RenderGraphicsContext gc = renderFactory.createGraphicsContext(canvas.getGraphicsContext2D());
 					rendererCoordinator.drawImage(gc);
 					last = time;
@@ -85,7 +87,9 @@ public class MandelbrotRenderPane extends BorderPane {
 			rendererCoordinator = null;
 		}
 		if (rendererFractal != null) {
-			rendererCoordinator = new RendererCoordinator(threadFactory, renderFactory, rendererFractal, createTile());
+			Map<String, Integer> hints = new HashMap<String, Integer>();
+			hints.put(RendererCoordinator.KEY_TYPE, RendererCoordinator.VALUE_REALTIME);
+			rendererCoordinator = new RendererCoordinator(threadFactory, renderFactory, rendererFractal, createTile(), hints);
 			rendererCoordinator.startRender();
 		}
 	}

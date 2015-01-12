@@ -25,6 +25,8 @@
  */
 package com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ThreadFactory;
 import java.util.logging.Logger;
 
@@ -33,6 +35,7 @@ import com.nextbreakpoint.nextfractal.flux.core.DoubleVector4D;
 import com.nextbreakpoint.nextfractal.flux.core.IntegerVector2D;
 import com.nextbreakpoint.nextfractal.flux.core.Tile;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.MandelbrotFractal;
+import com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.xaos.XaosRenderer;
 import com.nextbreakpoint.nextfractal.flux.render.RenderAffine;
 import com.nextbreakpoint.nextfractal.flux.render.RenderBuffer;
 import com.nextbreakpoint.nextfractal.flux.render.RenderFactory;
@@ -43,6 +46,9 @@ import com.nextbreakpoint.nextfractal.flux.render.RenderGraphicsContext;
  */
 public class RendererCoordinator implements RendererDelegate {
 	protected static final Logger logger = Logger.getLogger(RendererCoordinator.class.getName());
+	public static final String KEY_TYPE = "TYPE";
+	public static final Integer VALUE_REALTIME = 1;
+	private final HashMap<String, Integer> hints = new HashMap<>();
 	private RenderBuffer newBuffer;
 	private RenderBuffer oldBuffer;
 //	private View newView = new View(new IntegerVector4D(0, 0, 0, 0), new DoubleVector4D(0, 0, 1, 0), new DoubleVector4D(0, 0, 0, 0));
@@ -66,8 +72,8 @@ public class RendererCoordinator implements RendererDelegate {
 	 * @param rendererFractal
 	 * @param tile
 	 */
-	public RendererCoordinator(ThreadFactory threadFactory, RenderFactory renderFactory, MandelbrotFractal rendererFractal, Tile tile) {
-//		factory = new DefaultThreadFactory("RendererCoordinator", true, threadPriority);
+	public RendererCoordinator(ThreadFactory threadFactory, RenderFactory renderFactory, MandelbrotFractal rendererFractal, Tile tile, Map<String, Integer> hints) {
+//		factory = new DefaultThreadFactory("XaosRendererCoordinator", true, threadPriority);
 		this.threadFactory = threadFactory;
 		this.renderFactory = renderFactory;
 		this.rendererFractal = rendererFractal;
@@ -75,6 +81,7 @@ public class RendererCoordinator implements RendererDelegate {
 		this.rotation = new DoubleVector4D(0, 0, 0, 0);
 		this.center = new DoubleVector4D(0, 0, 0, 0);
 		this.scale = new DoubleVector4D(1, 1, 1, 1);
+		this.hints.putAll(hints);
 		init();
 	}
 
@@ -139,6 +146,9 @@ public class RendererCoordinator implements RendererDelegate {
 	 */
 	@Override
 	public void didChanged(float progress, int[] pixels) {
+		if (newBuffer != null) {
+			newBuffer.update(pixels);
+		}
 		this.progress = progress;
 		this.changed = true;
 	}
@@ -333,10 +343,16 @@ public class RendererCoordinator implements RendererDelegate {
 		affine = renderFactory.createAffine();
 		renderer = createRenderer();
 		renderer.setRendererDelegate(this);
+		updateTransform();
 	}
 
 	protected Renderer createRenderer() {
-		return new Renderer(threadFactory, rendererFractal, size.getX(), size.getY());
+		Integer type = hints.get(KEY_TYPE);
+		if (type != null && type.equals(VALUE_REALTIME)) {
+			return new XaosRenderer(threadFactory, rendererFractal, size.getX(), size.getY());
+		} else {
+			return new Renderer(threadFactory, rendererFractal, size.getX(), size.getY());
+		}
 	}
 
 	/**

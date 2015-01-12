@@ -218,6 +218,7 @@ public class Renderer {
 		final MutableNumber px = new MutableNumber(0, 0);
 		final MutableNumber pw = new MutableNumber(0, 0);
 		final RendererPoint p = rendererData.newPoint();
+		rendererData.setRegion(rendererFractal.getRegion());
 		rendererData.initPositions();
 		int offset = 0;
 		int c = 0;

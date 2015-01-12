@@ -1,6 +1,8 @@
 package com.nextbreakpoint.nextfractal.flux.mandelbrot.compiler;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
@@ -78,6 +80,7 @@ public class Compiler {
 	private final String packageName;
 	private final String className;
 	private final String source;
+	private File outDir = new File(System.getProperty("output", "generated"));
 	
 	public Compiler(String packageName, String className, String source) {
 		this.packageName = packageName;
@@ -140,10 +143,21 @@ public class Compiler {
 	}
 	
 	private Fractal compileToClass(String source) throws Exception {
+		File dir = new File(outDir, packageName.replace(".", "/"));
+		dir.mkdirs();
+		FileWriter writer = null;
+		try {
+			writer = new FileWriter(new File(dir, "/" + className + ".java"));
+			writer.write(source);
+		} finally {
+			if (writer != null) {
+				writer.close();
+			}
+		}
 		List<SimpleJavaFileObject> compilationUnits = new ArrayList<>();
 		compilationUnits.add(new CompilerJavaFileObject(className, source));
 		List<String> options = new ArrayList<>();
-		options.addAll(Arrays.asList("-source", "1.8", "-target", "1.8", "-proc:none", "-Xdiags:verbose", "-classpath", System.getProperty("java.class.path")));
+		options.addAll(Arrays.asList("-d", outDir.getAbsolutePath(), "-source", "1.8", "-target", "1.8", "-proc:none", "-Xdiags:verbose", "-classpath", System.getProperty("java.class.path")));
 		DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 		StandardJavaFileManager fileManager = compiler.getStandardFileManager(diagnostics, null, null);
@@ -170,33 +184,36 @@ public class Compiler {
 	private void defineClasses(StandardJavaFileManager fileManager,
 			CompilerClassLoader loader) throws IOException {
 		{
-			Iterable<? extends JavaFileObject> files = fileManager.getJavaFileObjects(className + ".class");
+			String name = packageName.replace(".", "/") + "/" + className + ".class";
+			Iterable<? extends JavaFileObject> files = fileManager.getJavaFileObjects(outDir.getAbsolutePath() + "/" + name);
 			Iterator<? extends JavaFileObject> iterator = files.iterator();
 			if (iterator.hasNext()) {
 				JavaFileObject file = files.iterator().next();
 				byte[] fileData = loadBytes(file);
 				logger.log(Level.FINE, file.toUri().toString() + " (" + fileData.length + ")");
-				loader.defineClassFromData(packageName + "." + file.getName().replace(".class", ""), fileData);
+				loader.defineClassFromData(name.replace("/", ".").replace(".class", ""), fileData);
 			}
 		}
 		{
-			Iterable<? extends JavaFileObject> files = fileManager.getJavaFileObjects(className + "$" + className + "Orbit.class");
+			String name = packageName.replace(".", "/") + "/" + className + "$" + className + "Orbit.class";
+			Iterable<? extends JavaFileObject> files = fileManager.getJavaFileObjects(outDir.getAbsolutePath() + "/" + name);
 			Iterator<? extends JavaFileObject> iterator = files.iterator();
 			if (iterator.hasNext()) {
 				JavaFileObject file = files.iterator().next();
 				byte[] fileData = loadBytes(file);
 				logger.log(Level.FINE, file.toUri().toString() + " (" + fileData.length + ")");
-				loader.defineClassFromData(packageName + "." + file.getName().replace(".class", ""), fileData);
+				loader.defineClassFromData(name.replace("/", ".").replace(".class", ""), fileData);
 			}
 		}
 		{
-			Iterable<? extends JavaFileObject> files = fileManager.getJavaFileObjects(className + "$" + className + "Color.class");
+			String name = packageName.replace(".", "/") + "/" + className + "$" + className + "Color.class";
+			Iterable<? extends JavaFileObject> files = fileManager.getJavaFileObjects(outDir.getAbsolutePath() + "/" + name);
 			Iterator<? extends JavaFileObject> iterator = files.iterator();
 			if (iterator.hasNext()) {
 				JavaFileObject file = files.iterator().next();
 				byte[] fileData = loadBytes(file);
 				logger.log(Level.FINE, file.toUri().toString() + " (" + fileData.length + ")");
-				loader.defineClassFromData(packageName + "." + file.getName().replace(".class", ""), fileData);
+				loader.defineClassFromData(name.replace("/", ".").replace(".class", ""), fileData);
 			}
 		}
 	}
@@ -293,7 +310,7 @@ public class Compiler {
 
 	private void buildOrbit(StringBuilder builder, Map<String, CompilerVariable> variables, ASTFractal fractal) {
 		if (fractal != null) {
-			compile(builder, variables, fractal.getVars());
+			compile(builder, variables, fractal.getVars(), fractal.getOrbit());
 			compile(builder, variables, fractal.getOrbit());
 		}
 	}
@@ -304,11 +321,17 @@ public class Compiler {
 		}
 	}
 
-	private void compile(StringBuilder builder, Map<String, CompilerVariable> variables, Collection<CompilerVariable> vars) {
+	private void compile(StringBuilder builder, Map<String, CompilerVariable> variables, Collection<CompilerVariable> vars, ASTOrbit orbit) {
 		if (vars != null) {
 			builder.append("public ");
 			builder.append(className);
 			builder.append("Orbit() {\n");
+			builder.append("setRegion(");
+			builder.append("new Number(");
+			builder.append(orbit.getRegion().getA());
+			builder.append("),new Number(");
+			builder.append(orbit.getRegion().getB());
+			builder.append("));\n");
 			for (CompilerVariable var : vars) {
 				builder.append("registerVariable(\"");
 				builder.append(var.getName());
@@ -366,9 +389,15 @@ public class Compiler {
 					builder.append("\").get();\n");
 				}
 			}
-			builder.append("addColor(1f,");
-			builder.append(createArray(color.getArgb().getComponents()));
-			builder.append(");\n");
+			builder.append("setColor(color(");
+			builder.append(color.getArgb().getComponents()[0]);
+			builder.append(",");
+			builder.append(color.getArgb().getComponents()[1]);
+			builder.append(",");
+			builder.append(color.getArgb().getComponents()[2]);
+			builder.append(",");
+			builder.append(color.getArgb().getComponents()[3]);
+			builder.append("));\n");
 			for (ASTRule rule : color.getRules()) {
 				compile(builder, variables, rule);
 			}
@@ -517,18 +546,16 @@ public class Compiler {
 
 	private void compile(StringBuilder builder, Map<String, CompilerVariable> variables, ASTOrbitLoop loop) {
 		if (loop != null) {
-			builder.append("for (int i = ");
-			builder.append(loop.getBegin());
-			builder.append("; i < ");
+			builder.append("n = number(0);\n");
+			builder.append("for (int i = 1; i <= ");
 			builder.append(loop.getEnd());
 			builder.append("; i++) {\n");
-			builder.append("n = number(i);\n");
 			for (ASTStatement statement : loop.getStatements()) {
 				compile(builder, variables, statement);
 			}
 			builder.append("if (");
 			loop.getExpression().compile(new ExpressionCompiler(builder));
-			builder.append(") break;\n");
+			builder.append(") { n = number(i - 1); break; }\n");
 			builder.append("}\n");
 		}
 	}

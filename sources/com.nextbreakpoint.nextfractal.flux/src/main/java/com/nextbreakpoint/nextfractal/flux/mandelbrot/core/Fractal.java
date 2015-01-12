@@ -257,6 +257,10 @@ public abstract class Fractal {
 			var.get().set(state[i++]);
 		}
 	}
+
+	public Number[] getRegion() {
+		return orbit.region();
+	}
 	
 	protected abstract Orbit createOrbit();
 

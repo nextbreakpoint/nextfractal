@@ -19,6 +19,7 @@ class XaosRendererData extends RendererData {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.RendererData#free()
 	 */
+	@Override
 	public void free() {
 		reallocX = null;
 		reallocY = null;
@@ -27,12 +28,15 @@ class XaosRendererData extends RendererData {
 		moveTable = null;
 		fillTable = null;
 		queue = null;
+		super.free();
 	}
 
 	/**
 	 * @see com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.RendererData#init(int, int, int)
 	 */
-	public void init(final int width, final int height) {
+	@Override
+	public void init(final int width, final int height, final int depth) {
+		super.init(width, height, depth);
 		reallocX = new XaosRealloc[width];
 		reallocY = new XaosRealloc[height];
 		dynamicX = new XaosDynamic(width);
