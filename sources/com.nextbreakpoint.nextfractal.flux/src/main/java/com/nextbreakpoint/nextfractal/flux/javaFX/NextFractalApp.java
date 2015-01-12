@@ -54,7 +54,7 @@ public class NextFractalApp extends Application {
         root.getChildren().add(mainPane);
         String pluginId = "Mandelbrot";
 		String packageName = "com.nextbreakpoint.nextfractal.flux.mandelbrot.fractal";
-		String className = pluginId + "Fractal";
+		String className = pluginId;
         FractalSession session = createFractalSession(pluginId);
         session.setPackageName(packageName);
         session.setClassName(className);
@@ -128,14 +128,14 @@ public class NextFractalApp extends Application {
 				+ "\t\tbegin {\n"
 				+ "\t\t\tz = x;\n"
 				+ "\t\t}\n"
-				+ "\t\tloop [0, 10] (|z| > 2) {\n"
+				+ "\t\tloop [0, 200] (|pow(re(z),2)+pow(im(z),2)| > 4) {\n"
 				+ "\t\t\tz = z * z + w;\n"
 				+ "\t\t}\n"
 				+ "\t}\n\tcolor [#FF000000] {\n"
-				+ "\t\trule (real(n) = 0) [1.0] {\n"
+				+ "\t\trule (re(n) = 0) [1.0] {\n"
 				+ "\t\t\t1,0,0,0\n"
 				+ "\t\t}\n"
-				+ "\t\trule (real(n) > 0) [1.0] {\n"
+				+ "\t\trule (re(n) > 0) [1.0] {\n"
 				+ "\t\t\t1,1,1,1\n"
 				+ "\t\t}\n"
 				+ "\t}\n"

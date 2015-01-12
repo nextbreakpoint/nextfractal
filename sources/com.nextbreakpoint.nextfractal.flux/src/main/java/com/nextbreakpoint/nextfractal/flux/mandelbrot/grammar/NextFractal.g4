@@ -150,11 +150,11 @@ expression returns [ASTExpression result]
 	}
 	|
 	m='|' e=expression '|' {
-		$result = new ASTRealFunction($m, "mod", $e.result);	
+		$result = new ASTFunction($m, "mod", $e.result);	
 	}
 	|
 	a='[' e=expression ']' {
-		$result = new ASTRealFunction($a, "pha", $e.result);	
+		$result = new ASTFunction($a, "pha", $e.result);	
 	}
 	|
 	s='-' e=expression {
@@ -197,11 +197,11 @@ expression2 returns [ASTExpression result]
 	}
 	|
 	m='|' e=expression '|' {
-		$result = new ASTRealFunction($m, "mod", $e.result);	
+		$result = new ASTFunction($m, "mod", $e.result);	
 	}
 	|
 	a='[' e=expression ']' {
-		$result = new ASTRealFunction($a, "pha", $e.result);	
+		$result = new ASTFunction($a, "pha", $e.result);	
 	}
 	|
 	e1=expression2 s='*' e2=expression2 {
@@ -240,11 +240,11 @@ expression3 returns [ASTExpression result]
 	}
 	|
 	m='|' e=expression '|' {
-		$result = new ASTRealFunction($m, "mod", $e.result);	
+		$result = new ASTFunction($m, "mod", $e.result);	
 	}
 	|
 	a='[' e=expression ']' {
-		$result = new ASTRealFunction($a, "pha", $e.result);	
+		$result = new ASTFunction($a, "pha", $e.result);	
 	}
 	|
 	e1=expression3 s='/' e2=expression3 {
@@ -275,11 +275,11 @@ expression4 returns [ASTExpression result]
 	}
 	|
 	m='|' e=expression '|' {
-		$result = new ASTRealFunction($m, "mod", $e.result);	
+		$result = new ASTFunction($m, "mod", $e.result);	
 	}
 	|
 	a='[' e=expression ']' {
-		$result = new ASTRealFunction($a, "pha", $e.result);	
+		$result = new ASTFunction($a, "pha", $e.result);	
 	}
 	|
 	e1=expression4 s='^' e2=expression4 {
@@ -289,15 +289,15 @@ expression4 returns [ASTExpression result]
 
 function returns [ASTFunction result]
 	:
-	f=('mod' | 'pha') '(' e=expression ')' {
-		$result = new ASTRealFunction($f, $f.text, $e.result);		
+	f=('mod' | 'pha' | 're' | 'im') '(' e=expression ')' {
+		$result = new ASTFunction($f, $f.text, $e.result);		
 	}
 	|
 	f=('cos' | 'sin' | 'tan' | 'acos' | 'asin' | 'atan') '(' e=expression ')' {
 		$result = new ASTFunction($f, $f.text, new ASTExpression[] { $e.result });		
 	}
 	|
-	f=('log' | 'exp' | 'sqrt' | 'real') '(' e=expression ')' {
+	f=('log' | 'exp' | 'sqrt') '(' e=expression ')' {
 		$result = new ASTFunction($f, $f.text, new ASTExpression[] { $e.result });		
 	}
 	|

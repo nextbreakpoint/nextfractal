@@ -12,6 +12,10 @@ public class ASTFunction extends ASTExpression {
 		this.arguments = arguments;
 	}
 
+	public ASTFunction(Token location, String name, ASTExpression argument) {
+		this(location, name, new ASTExpression[] { argument });
+	}
+
 	public String getName() {
 		return name;
 	}
@@ -42,7 +46,7 @@ public class ASTFunction extends ASTExpression {
 
 	@Override
 	public boolean isReal() {
-		if (name.equals("mod") || name.equals("pha") || name.equals("log") || name.equals("exp") || name.equals("atan2") || name.equals("hypot") || name.equals("sqrt") || name.equals("real")) {
+		if (name.equals("mod") || name.equals("pha") || name.equals("log") || name.equals("exp") || name.equals("atan2") || name.equals("hypot") || name.equals("sqrt") || name.equals("re") || name.equals("im")) {
 			return true;
 		}
 		for (ASTExpression argument : arguments) {

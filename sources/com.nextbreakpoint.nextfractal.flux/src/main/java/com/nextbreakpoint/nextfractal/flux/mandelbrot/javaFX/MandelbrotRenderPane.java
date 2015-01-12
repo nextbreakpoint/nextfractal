@@ -15,9 +15,10 @@ import com.nextbreakpoint.nextfractal.flux.FractalSessionListener;
 import com.nextbreakpoint.nextfractal.flux.core.DefaultThreadFactory;
 import com.nextbreakpoint.nextfractal.flux.core.IntegerVector2D;
 import com.nextbreakpoint.nextfractal.flux.core.Tile;
-import com.nextbreakpoint.nextfractal.flux.mandelbrot.MandelbrotFractal;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.compiler.Compiler;
+import com.nextbreakpoint.nextfractal.flux.mandelbrot.MandelbrotFractal;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.compiler.CompilerReport;
+import com.nextbreakpoint.nextfractal.flux.mandelbrot.fractal.Mandelbrot;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.RendererCoordinator;
 import com.nextbreakpoint.nextfractal.flux.render.RenderGraphicsContext;
 import com.nextbreakpoint.nextfractal.flux.render.javaFX.JavaFXRenderFactory;
@@ -49,8 +50,9 @@ public class MandelbrotRenderPane extends BorderPane {
 				try {
 					Compiler compiler = new Compiler(session.getPackageName(), session.getClassName(), session.getSource());
 					CompilerReport report = compiler.compile();
-					//TODO report errors
 					MandelbrotFractal rendererFractal = new MandelbrotFractal(report.getFractal());
+					//TODO report errors
+//					MandelbrotFractal rendererFractal = new MandelbrotFractal(new Mandelbrot()); 
 					setRendererFractal(rendererFractal); 
 				} catch (Exception e) {
 					e.printStackTrace();//TODO display errors

@@ -27,35 +27,36 @@ public abstract class Fractal {
 	protected Number number(int n) {
 		return new Number(n, 0);
 	}
-	
+
 	protected Number number(double r) {
 		return new Number(r, 0);
 	}
-	
+
 	protected Number number(double r, double i) {
 		return new Number(r, i);
 	}
-	
+
 	protected Number opAdd(Number a, Number b) {
 		return new Number(a.r() + b.r(), a.i() + b.i());
 	}
-	
+
 	protected Number opSub(Number a, Number b) {
 		return new Number(a.r() - b.r(), a.i() - b.i());
 	}
-	
+
 	protected Number opMul(Number a, Number b) {
-		return new Number(a.r() * b.r() - a.i() * b.i(), a.r() * b.i() + a.r() * b.i());
+		return new Number(a.r() * b.r() - a.i() * b.i(), a.r() * b.i() + a.r()
+				* b.i());
 	}
-	
+
 	protected Number opAdd(Number a, double b) {
 		return new Number(a.r() + b, a.i());
 	}
-	
+
 	protected Number opSub(Number a, double b) {
 		return new Number(a.r() - b, a.i());
 	}
-	
+
 	protected Number opMul(Number a, double b) {
 		return new Number(a.r() * b, a.i() * b);
 	}
@@ -63,15 +64,15 @@ public abstract class Fractal {
 	protected Number opDiv(Number a, double b) {
 		return new Number(a.r() / b, a.i() / b);
 	}
-	
+
 	protected Number opAdd(double a, Number b) {
 		return new Number(a + b.r(), +b.i());
 	}
-	
+
 	protected Number opSub(double a, Number b) {
 		return new Number(a - b.r(), -b.i());
 	}
-	
+
 	protected Number opMul(double a, Number b) {
 		return new Number(a * b.r(), a * b.i());
 	}
@@ -79,11 +80,11 @@ public abstract class Fractal {
 	protected Number opAdd(double a, double b) {
 		return new Number(a + b, 0);
 	}
-	
+
 	protected Number opSub(double a, double b) {
 		return new Number(a - b, 0);
 	}
-	
+
 	protected Number opMul(double a, double b) {
 		return new Number(a * b, 0);
 	}
@@ -95,7 +96,7 @@ public abstract class Fractal {
 	protected Number opNeg(Number a) {
 		return new Number(-a.r(), -a.i());
 	}
-	
+
 	protected Number opPos(Number a) {
 		return new Number(+a.r(), +a.i());
 	}
@@ -123,7 +124,7 @@ public abstract class Fractal {
 	protected double funcCos(double x) {
 		return Math.cos(x);
 	}
-	
+
 	protected double funcSin(double x) {
 		return Math.sin(x);
 	}
@@ -159,43 +160,47 @@ public abstract class Fractal {
 	protected double funcMod(Number x) {
 		return Math.hypot(x.r(), x.i());
 	}
-	
+
 	protected double funcPha(Number x) {
 		return Math.atan2(x.i(), x.r());
 	}
-	
+
 	protected Number funcSin(Number x) {
-		return new Number(Math.sin(x.r())*Math.cosh(x.i()), +Math.cos(x.r())*Math.sinh(x.i()));
+		return new Number(Math.sin(x.r()) * Math.cosh(x.i()), +Math.cos(x.r()) * Math.sinh(x.i()));
 	}
-	
+
 	protected Number funcCos(Number x) {
-		return new Number(Math.cos(x.r())*Math.cosh(x.i()), -Math.sin(x.r())*Math.sinh(x.i()));
+		return new Number(Math.cos(x.r()) * Math.cosh(x.i()), -Math.sin(x.r()) * Math.sinh(x.i()));
 	}
-	
+
 	protected Number funcTan(Number x) {
 		double d = Math.pow(Math.cos(x.r()), 2) + Math.pow(Math.sinh(x.i()), 2);
-		return new Number((Math.sin(x.r())*Math.cos(x.r())) / d, (Math.sinh(x.i())*Math.cosh(x.i())) / d);
+		return new Number((Math.sin(x.r()) * Math.cos(x.r())) / d, (Math.sinh(x.i()) * Math.cosh(x.i())) / d);
 	}
 
 	protected Number funcExp(Number x) {
 		double d = Math.exp(x.r());
-		return new Number(d*Math.cos(x.i()), d*Math.sin(x.i()));
+		return new Number(d * Math.cos(x.i()), d * Math.sin(x.i()));
 	}
 
 	protected Number funcPow(Number x, double y) {
 		double d = Math.pow(Math.hypot(x.r(), x.i()), y);
-		return new Number(d*Math.cos(x.r()*y), d*Math.sin(x.i()*y));
+		return new Number(d * Math.cos(x.r() * y), d * Math.sin(x.i() * y));
 	}
 
 	protected Number funcSqrt(Number x) {
 		double d = Math.sqrt(Math.hypot(x.r(), x.i()));
-		return new Number(d*Math.cos(x.r()*0.5), d*Math.sin(x.i()*0.5));
+		return new Number(d * Math.cos(x.r() * 0.5), d * Math.sin(x.i() * 0.5));
 	}
 
-	protected double funcReal(Number n) {
+	protected double funcRe(Number n) {
 		return n.r();
 	}
-	
+
+	protected double funcIm(Number n) {
+		return n.i();
+	}
+
 	protected void registerVariable(String name, Variable var) {
 		vars.put(name, var);
 	}
@@ -219,23 +224,23 @@ public abstract class Fractal {
 	protected PaletteElement element(int beginIndex, int endIndex, float[] beginColor, float[] endColor, PaletteExpression expression) {
 		return new PaletteElement(beginIndex, endIndex, beginColor, endColor, expression);
 	}
-	
+
 	protected float[] color(double x) {
-		return new float[] { 1f, (float)x, (float)x, (float)x };
+		return new float[] { 1f, (float) x, (float) x, (float) x };
 	}
-	
+
 	protected float[] color(double r, double g, double b) {
-		return new float[] { 1f, (float)r, (float)g, (float)b };
+		return new float[] { 1f, (float) r, (float) g, (float) b };
 	}
-	
+
 	protected float[] color(double a, double r, double g, double b) {
-		return new float[] { (float)a, (float)r, (float)g, (float)b };
+		return new float[] { (float) a, (float) r, (float) g, (float) b };
 	}
-	
+
 	public float[] getColor() {
 		return color.getColor();
 	}
-	
+
 	public Number[] state() {
 		Number[] state = new Number[stateVars.size()];
 		int i = 0;
@@ -245,11 +250,11 @@ public abstract class Fractal {
 		}
 		return state;
 	}
-	
+
 	public int stateSize() {
 		return stateVars.size();
 	}
-	
+
 	public void setState(Number[] state) {
 		int i = 0;
 		for (String varName : stateVars) {
@@ -261,7 +266,7 @@ public abstract class Fractal {
 	public Number[] getRegion() {
 		return orbit.region();
 	}
-	
+
 	protected abstract Orbit createOrbit();
 
 	protected abstract Color createColor();

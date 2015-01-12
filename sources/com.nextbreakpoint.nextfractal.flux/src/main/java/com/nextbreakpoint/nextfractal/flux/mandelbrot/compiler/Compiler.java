@@ -614,6 +614,8 @@ public class Compiler {
 			switch (function.getName()) {
 				case "mod":
 				case "pha":
+				case "re":
+				case "im":
 					if (function.getArguments().length != 1) {
 						throw new RuntimeException("Invalid number of arguments: " + function.getLocation().getText() + " [" + function.getLocation().getLine() + ":" + function.getLocation().getCharPositionInLine() + "]");
 					}				
@@ -663,7 +665,6 @@ public class Compiler {
 	
 				case "sqrt":
 				case "exp":
-				case "real":
 					if (function.getArguments().length != 1) {
 						throw new RuntimeException("Invalid number of arguments: " + function.getLocation().getText() + " [" + function.getLocation().getLine() + ":" + function.getLocation().getCharPositionInLine() + "]");
 					}				
