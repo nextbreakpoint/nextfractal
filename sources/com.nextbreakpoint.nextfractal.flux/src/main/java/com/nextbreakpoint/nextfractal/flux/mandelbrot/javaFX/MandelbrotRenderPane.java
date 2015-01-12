@@ -41,7 +41,7 @@ public class MandelbrotRenderPane extends BorderPane {
         gc.setFill(Color.BLACK);
         gc.fillRect(0, 0, width, height);
         runTimer(canvas);
-		threadFactory = new DefaultThreadFactory("Render", false, Thread.NORM_PRIORITY);
+		threadFactory = new DefaultThreadFactory("Render", false, Thread.MIN_PRIORITY);
 		renderFactory = new JavaFXRenderFactory();
 		session.addSessionListener(new FractalSessionListener() {
 			@Override

@@ -84,7 +84,7 @@ public final class XaosRenderer extends Renderer {
 		aborted = false;
 		rendererStrategy.prepare();
 		rendererData.setRegion(rendererFractal.getRegion());
-		rendererData.initPositions();
+		//rendererData.initPositions();
 		if (XaosConstants.PRINT_REGION) {
 			logger.fine("Region: (" + xaosRendererData.left() + "," + xaosRendererData.right() + ") -> (" + xaosRendererData.left() + "," + xaosRendererData.right() + ")");
 		}
