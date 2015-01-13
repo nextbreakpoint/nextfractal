@@ -1,7 +1,8 @@
 package com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer;
 
-import com.nextbreakpoint.nextfractal.flux.mandelbrot.core.Number;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.core.Fractal;
+import com.nextbreakpoint.nextfractal.flux.mandelbrot.core.MutableNumber;
+import com.nextbreakpoint.nextfractal.flux.mandelbrot.core.Number;
 
 public class RendererFractal {
 	private final Fractal fractal;
@@ -17,16 +18,15 @@ public class RendererFractal {
 	}
 
 	/**
+	 * @param state
 	 * @param x
 	 * @param w
-	 * @return
 	 */
-	public Number[] renderOrbit(Number x, Number w) {
+	public void renderOrbit(MutableNumber[] state, Number x, Number w) {
 		fractal.setX(x);
 		fractal.setW(w);
 		fractal.renderOrbit();
-		Number[] state = fractal.state();
-		return state;
+		fractal.getState(state);
 	}
 
 	/**

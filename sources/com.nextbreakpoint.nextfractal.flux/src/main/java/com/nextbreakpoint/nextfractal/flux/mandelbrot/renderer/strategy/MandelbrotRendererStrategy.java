@@ -25,10 +25,7 @@ public class MandelbrotRendererStrategy implements RendererStrategy {
 		 */
 		@Override
 		public int renderPoint(RendererPoint p, Number x, Number w) {
-			Number[] state = rendererFractal.renderOrbit(x, w);
-			for (int i = 0; i < p.size(); i++) {
-				p.vars()[i].set(state[i]);
-			}
+			rendererFractal.renderOrbit(p.vars(), x, w);
 			return renderColor(p);
 		}
 

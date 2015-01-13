@@ -131,6 +131,7 @@ public final class XaosRenderer extends Renderer {
 			prepareLines(mode);
 		}
 		prepareColumns(mode);
+		prepareWorker.waitTasks();
 		if (XaosConstants.PRINT_REALLOCTABLE) {
 			logger.fine("ReallocTable:");
 			for (final XaosRealloc element : xaosRendererData.reallocX()) {

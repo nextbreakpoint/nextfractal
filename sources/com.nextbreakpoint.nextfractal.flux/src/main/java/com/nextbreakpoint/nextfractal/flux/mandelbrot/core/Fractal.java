@@ -240,14 +240,12 @@ public abstract class Fractal {
 		return color.getColor();
 	}
 
-	public Number[] state() {
-		Number[] state = new Number[stateVars.size()];
+	public void getState(MutableNumber[] state) {
 		int i = 0;
 		for (String varName : stateVars) {
 			Variable var = vars.get(varName);
-			state[i++] = new Number(var.get());
+			state[i++].set(var.get());
 		}
-		return state;
 	}
 
 	public int stateSize() {
