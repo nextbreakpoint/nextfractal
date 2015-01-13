@@ -143,6 +143,7 @@ public class RendererCoordinator implements RendererDelegate {
 		if (backBuffer != null) {
 			backBuffer.update(pixels);
 		}
+		swap();
 		this.progress = progress;
 		this.changed = true;
 	}
@@ -212,7 +213,7 @@ public class RendererCoordinator implements RendererDelegate {
 	/**
 	 * 
 	 */
-	public final void swap() {
+	protected final void swap() {
 		synchronized (this) {
 			final RenderBuffer tmpBuffer = backBuffer;
 			backBuffer = buffer;
