@@ -352,6 +352,9 @@ public class RendererCoordinator implements RendererDelegate {
 		updateTransform();
 	}
 
+	/**
+	 * @return
+	 */
 	protected Renderer createRenderer() {
 		Integer type = hints.get(KEY_TYPE);
 		if (type != null && type.equals(VALUE_REALTIME)) {

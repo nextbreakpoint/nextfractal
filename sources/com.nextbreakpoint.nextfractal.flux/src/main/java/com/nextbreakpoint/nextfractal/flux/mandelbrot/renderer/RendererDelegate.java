@@ -29,5 +29,9 @@ package com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer;
  * @author Andrea Medeghini
  */
 public interface RendererDelegate {
+	/**
+	 * @param progress
+	 * @param pixels
+	 */
 	public void didChanged(float progress, int[] pixels);
 }

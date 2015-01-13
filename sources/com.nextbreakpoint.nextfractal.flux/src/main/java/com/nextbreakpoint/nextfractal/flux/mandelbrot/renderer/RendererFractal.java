@@ -6,6 +6,9 @@ import com.nextbreakpoint.nextfractal.flux.mandelbrot.core.Fractal;
 public class RendererFractal {
 	private final Fractal fractal;
 
+	/**
+	 * @param fractal
+	 */
 	public RendererFractal(Fractal fractal) {
 		this.fractal = fractal;
 		if (fractal == null) {
@@ -13,6 +16,11 @@ public class RendererFractal {
 		}
 	}
 
+	/**
+	 * @param x
+	 * @param w
+	 * @return
+	 */
 	public Number[] renderOrbit(Number x, Number w) {
 		fractal.setX(x);
 		fractal.setW(w);
@@ -21,6 +29,10 @@ public class RendererFractal {
 		return state;
 	}
 
+	/**
+	 * @param state
+	 * @return
+	 */
 	public float[] renderColor(Number[] state) {
 		fractal.setState(state);
 		fractal.renderColor();
@@ -28,39 +40,63 @@ public class RendererFractal {
 		return color;
 	}
 
+	/**
+	 * @return
+	 */
 	public int getStateSize() {
 		return fractal.stateSize();
 	}
 
+	/**
+	 * @return
+	 */
 	public boolean isSolidGuessSupported() {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
+	/**
+	 * @return
+	 */
 	public boolean isVerticalSymetrySupported() {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
+	/**
+	 * @return
+	 */
 	public boolean isHorizontalSymetrySupported() {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
+	/**
+	 * @return
+	 */
 	public double getVerticalSymetryPoint() {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
+	/**
+	 * @return
+	 */
 	public double getHorizontalSymetryPoint() {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
+	/**
+	 * @param w
+	 */
 	public void setConstant(Number w) {
 		fractal.setW(w);
 	}
 
+	/**
+	 * @return
+	 */
 	public Number[] getRegion() {
 		return fractal.getRegion();
 	}

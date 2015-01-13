@@ -31,6 +31,7 @@ import java.util.concurrent.ThreadFactory;
 import java.util.logging.Logger;
 
 import com.nextbreakpoint.nextfractal.flux.core.Colors;
+import com.nextbreakpoint.nextfractal.flux.core.Worker;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.core.MutableNumber;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.Renderer;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.RendererData;
@@ -56,6 +57,7 @@ public final class XaosRenderer extends Renderer {
 	private boolean isVerticalSymetrySupported = true;
 	private boolean isHorizontalSymetrySupported = true;
 	private final XaosRendererData xaosRendererData;
+	protected final Worker prepareWorker;
 	private boolean cacheActive;
 
 	/**
@@ -66,7 +68,18 @@ public final class XaosRenderer extends Renderer {
 	 */
 	public XaosRenderer(ThreadFactory threadFactory, int width, int height) {
 		super(threadFactory, width, height);
+		prepareWorker = new Worker(threadFactory);
+		prepareWorker.start();
 		this.xaosRendererData = (XaosRendererData)rendererData;
+	}
+	
+	/**
+	 * 
+	 */
+	@Override
+	public void dispose() {
+		prepareWorker.stop();
+		super.dispose();
 	}
 
 	/**
@@ -95,7 +108,6 @@ public final class XaosRenderer extends Renderer {
 		}
 		rendererStrategy.prepare();
 		rendererData.setRegion(rendererFractal.getRegion());
-		//rendererData.initPositions();
 		if (XaosConstants.PRINT_REGION) {
 			logger.fine("Region: (" + xaosRendererData.left() + "," + xaosRendererData.right() + ") -> (" + xaosRendererData.left() + "," + xaosRendererData.right() + ")");
 		}
@@ -108,16 +120,17 @@ public final class XaosRenderer extends Renderer {
 			logger.fine("Vertical symetry supported = " + isVerticalSymetrySupported);
 			logger.fine("Horizontal symetry supported = " + isHorizontalSymetrySupported);
 		}
-		prepareLines(mode);
+		if (XaosConstants.USE_MULTITHREAD && !XaosConstants.DUMP_XAOS) {
+			prepareWorker.addTask(new Runnable() {
+				@Override
+				public void run() {
+					prepareLines(mode);
+				}
+			});
+		} else {
+			prepareLines(mode);
+		}
 		prepareColumns(mode);
-//		if (XaosConstants.USE_MULTITHREAD && !XaosConstants.DUMP_XAOS) {
-//			prepareLines(mode);
-//			prepareColumns(mode);
-//		}
-//		else {
-//			prepareLines(mode);
-//			prepareColumns(mode);
-//		}
 		if (XaosConstants.PRINT_REALLOCTABLE) {
 			logger.fine("ReallocTable:");
 			for (final XaosRealloc element : xaosRendererData.reallocX()) {
