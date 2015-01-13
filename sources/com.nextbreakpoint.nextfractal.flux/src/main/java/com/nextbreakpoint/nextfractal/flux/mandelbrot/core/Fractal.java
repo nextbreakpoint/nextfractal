@@ -45,8 +45,7 @@ public abstract class Fractal {
 	}
 
 	protected Number opMul(Number a, Number b) {
-		return new Number(a.r() * b.r() - a.i() * b.i(), a.r() * b.i() + a.r()
-				* b.i());
+		return new Number(a.r() * b.r() - a.i() * b.i(), a.r() * b.i() + a.r() * b.i());
 	}
 
 	protected Number opAdd(Number a, double b) {

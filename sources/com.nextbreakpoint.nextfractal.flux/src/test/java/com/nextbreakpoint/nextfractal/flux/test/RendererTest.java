@@ -25,21 +25,62 @@
  */
 package com.nextbreakpoint.nextfractal.flux.test;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import com.nextbreakpoint.nextfractal.flux.core.DefaultThreadFactory;
-import com.nextbreakpoint.nextfractal.flux.mandelbrot.MandelbrotFractal;
+import com.nextbreakpoint.nextfractal.flux.mandelbrot.core.Color;
+import com.nextbreakpoint.nextfractal.flux.mandelbrot.core.Fractal;
+import com.nextbreakpoint.nextfractal.flux.mandelbrot.core.Orbit;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.Renderer;
+import com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.RendererFractal;
 
 public class RendererTest {
 	@Test
 	public void RendererStart() {
-		DefaultThreadFactory threadFactory = new DefaultThreadFactory("Test", false, Thread.NORM_PRIORITY);
-//		JavaFXRenderFactory renderFactory = new JavaFXRenderFactory();
-		MandelbrotFractal rendererFractal = new MandelbrotFractal(null);
-		Renderer renderer = new Renderer(threadFactory, rendererFractal, 100, 100);
-		renderer.startRender(false, 0);
-		renderer.joinRender();
-		renderer.dispose();
+		DefaultThreadFactory threadFactory = new DefaultThreadFactory("Test", false, Thread.MIN_PRIORITY);
+		Renderer renderer = new Renderer(threadFactory, 100, 100);
+		try {
+			RendererFractal rendererFractal = new RendererFractal(new TestFractal());
+			renderer.setFractal(rendererFractal);
+			renderer.startRender(false, 0);
+			renderer.joinRender();
+		} catch (Exception e) {
+			Assert.fail(e.getMessage());
+		} finally {
+			renderer.dispose();
+		}
+	}
+	
+	private class TestFractal extends Fractal {
+		@Override
+		protected Orbit createOrbit() {
+			return new TestOrbit();
+		}
+
+		@Override
+		protected Color createColor() {
+			return new TestColor();
+		}
+
+		@Override
+		public void renderOrbit() {
+		}
+
+		@Override
+		public void renderColor() {
+		}
+	}
+	
+	private class TestOrbit extends Orbit {
+		@Override
+		public void render() {
+		}
+	}
+	
+	private class TestColor extends Color {
+		@Override
+		public void render() {
+		}
 	}
 }

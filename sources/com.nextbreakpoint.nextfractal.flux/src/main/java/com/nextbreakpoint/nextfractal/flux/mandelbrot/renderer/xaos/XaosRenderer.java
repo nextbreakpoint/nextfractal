@@ -31,11 +31,12 @@ import java.util.concurrent.ThreadFactory;
 import java.util.logging.Logger;
 
 import com.nextbreakpoint.nextfractal.flux.core.Colors;
-import com.nextbreakpoint.nextfractal.flux.mandelbrot.MandelbrotFractal;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.core.MutableNumber;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.Renderer;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.RendererData;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.RendererPoint;
+import com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.strategy.JuliaRendererStrategy;
+import com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.strategy.MandelbrotRendererStrategy;
 
 /**
  * @author Andrea Medeghini
@@ -63,8 +64,8 @@ public final class XaosRenderer extends Renderer {
 	 * @param width
 	 * @param height
 	 */
-	public XaosRenderer(ThreadFactory threadFactory, MandelbrotFractal rendererFractal, int width, int height) {
-		super(threadFactory, rendererFractal, width, height);
+	public XaosRenderer(ThreadFactory threadFactory, int width, int height) {
+		super(threadFactory, width, height);
 		this.xaosRendererData = (XaosRendererData)rendererData;
 	}
 
@@ -81,7 +82,17 @@ public final class XaosRenderer extends Renderer {
 	 */
 	@Override
 	protected void doRender(final boolean dynamic, final int mode) {
+		if (rendererFractal == null) {
+			progress = 1;
+			return;
+		}
 		aborted = false;
+		rendererFractal.setConstant(constant);
+		if (julia) {
+			rendererStrategy = new JuliaRendererStrategy(rendererFractal);
+		} else {
+			rendererStrategy = new MandelbrotRendererStrategy(rendererFractal);
+		}
 		rendererStrategy.prepare();
 		rendererData.setRegion(rendererFractal.getRegion());
 		//rendererData.initPositions();

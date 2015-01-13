@@ -1,15 +1,15 @@
 package com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.strategy;
 
 import com.nextbreakpoint.nextfractal.flux.core.Colors;
-import com.nextbreakpoint.nextfractal.flux.mandelbrot.MandelbrotFractal;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.core.Number;
+import com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.RendererFractal;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.RendererPoint;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.RendererStrategy;
 
 public class JuliaRendererStrategy implements RendererStrategy {
-	private MandelbrotFractal rendererFractal;
+	private RendererFractal rendererFractal;
 
-	public JuliaRendererStrategy(MandelbrotFractal rendererFractal) {
+	public JuliaRendererStrategy(RendererFractal rendererFractal) {
 		this.rendererFractal = rendererFractal;
 	}
 

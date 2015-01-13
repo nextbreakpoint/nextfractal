@@ -28,7 +28,6 @@ package com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer;
 import java.util.concurrent.ThreadFactory;
 
 import com.nextbreakpoint.nextfractal.flux.core.Worker;
-import com.nextbreakpoint.nextfractal.flux.mandelbrot.MandelbrotFractal;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.core.MutableNumber;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.core.Number;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.strategy.JuliaRendererStrategy;
@@ -41,16 +40,17 @@ public class Renderer {
 	public static final int MODE_CALCULATE = 0x01;
 	public static final int MODE_REFRESH = 0x02;
 	protected final ThreadFactory threadFactory;
-	protected final MandelbrotFractal rendererFractal;
 	protected final RendererData rendererData;
 	protected final Worker rendererWorker;
 	protected volatile RendererDelegate rendererDelegate;
 	protected volatile RendererStrategy rendererStrategy;
+	protected volatile RendererFractal rendererFractal;
 	protected volatile boolean aborted;
 	protected volatile float progress;
 	protected int width;
 	protected int height;
-	protected int size;
+	protected boolean julia;
+	protected Number constant;
 
 	/**
 	 * @param rendererDelegate
@@ -58,16 +58,12 @@ public class Renderer {
 	 * @param width
 	 * @param height
 	 */
-	public Renderer(ThreadFactory threadFactory, MandelbrotFractal rendererFractal, int width, int height) {
+	public Renderer(ThreadFactory threadFactory, int width, int height) {
 		this.threadFactory = threadFactory;
-		this.rendererFractal = rendererFractal;
-		this.rendererStrategy = new MandelbrotRendererStrategy(rendererFractal);
 		this.rendererWorker = new Worker(threadFactory);
 		this.rendererData = createRendererData();
 		this.width = width;
 		this.height = height;
-		this.size = rendererFractal.getStateSize();
-		init();
 		start();
 	}
 	
@@ -145,18 +141,14 @@ public class Renderer {
 	 * @param julia
 	 */
 	public void setJulia(boolean julia) {
-		if (julia) {
-			rendererStrategy = new JuliaRendererStrategy(rendererFractal);
-		} else {
-			rendererStrategy = new MandelbrotRendererStrategy(rendererFractal);
-		}
+		this.julia = julia;
 	}
 
 	/**
 	 * @param constant
 	 */
 	public void setConstant(double x, double y) {
-		rendererFractal.setConstant(new Number(x, y));
+		this.constant = new Number(x, y);
 	}
 
 	/**
@@ -181,17 +173,22 @@ public class Renderer {
 	}
 
 	/**
-	 * 
+	 * @param rendererFractal
 	 */
-	protected void free() {
-		rendererData.free();
+	public void setFractal(RendererFractal rendererFractal) {
+		this.rendererFractal = rendererFractal;
+		if (rendererFractal != null) {
+			rendererData.init(width, height, rendererFractal.getStateSize());
+		} else {
+			rendererData.free();
+		}
 	}
 
 	/**
 	 * 
 	 */
-	protected void init() {
-		rendererData.init(width, height, size);
+	protected void free() {
+		rendererData.free();
 	}
 
 	/**
@@ -213,16 +210,26 @@ public class Renderer {
 	 * @param mode
 	 */
 	protected void doRender(final boolean dynamic, final int mode) {
+		if (rendererFractal == null) {
+			progress = 1;
+			return;
+		}
 		progress = 0;
+		rendererFractal.setConstant(constant);
+		if (julia) {
+			rendererStrategy = new JuliaRendererStrategy(rendererFractal);
+		} else {
+			rendererStrategy = new MandelbrotRendererStrategy(rendererFractal);
+		}
 		rendererStrategy.prepare();
+		rendererData.setRegion(rendererFractal.getRegion());
+		rendererData.initPositions();
+		rendererData.swap();
 		final MutableNumber px = new MutableNumber(0, 0);
 		final MutableNumber pw = new MutableNumber(0, 0);
 		final RendererPoint p = rendererData.newPoint();
-		rendererData.setRegion(rendererFractal.getRegion());
-		rendererData.initPositions();
 		int offset = 0;
 		int c = 0;
-		rendererData.swap();
 		for (int y = 0; y < height; y++) {
 			for (int x = 0; x < width; x++) {
 				px.set(rendererData.point());

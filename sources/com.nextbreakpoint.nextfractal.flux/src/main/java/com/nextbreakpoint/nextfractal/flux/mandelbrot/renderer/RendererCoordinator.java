@@ -34,7 +34,6 @@ import com.nextbreakpoint.nextfractal.flux.core.DoubleVector2D;
 import com.nextbreakpoint.nextfractal.flux.core.DoubleVector4D;
 import com.nextbreakpoint.nextfractal.flux.core.IntegerVector2D;
 import com.nextbreakpoint.nextfractal.flux.core.Tile;
-import com.nextbreakpoint.nextfractal.flux.mandelbrot.MandelbrotFractal;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.xaos.XaosRenderer;
 import com.nextbreakpoint.nextfractal.flux.render.RenderAffine;
 import com.nextbreakpoint.nextfractal.flux.render.RenderBuffer;
@@ -49,15 +48,14 @@ public class RendererCoordinator implements RendererDelegate {
 	public static final String KEY_TYPE = "TYPE";
 	public static final Integer VALUE_REALTIME = 1;
 	private final HashMap<String, Integer> hints = new HashMap<>();
-	private RenderBuffer newBuffer;
-	private RenderBuffer oldBuffer;
+	private RenderBuffer buffer;
+	private RenderBuffer backBuffer;
 //	private View newView = new View(new IntegerVector4D(0, 0, 0, 0), new DoubleVector4D(0, 0, 1, 0), new DoubleVector4D(0, 0, 0, 0));
 //	private View oldView = new View(new IntegerVector4D(0, 0, 0, 0), new DoubleVector4D(0, 0, 1, 0), new DoubleVector4D(0, 0, 0, 0));
 	private IntegerVector2D size;
 	private DoubleVector4D rotation;
 	private DoubleVector4D center;
 	private DoubleVector4D scale;
-	private MandelbrotFractal rendererFractal;
 	private final ThreadFactory threadFactory;
 	private final RenderFactory renderFactory;
 	private Renderer renderer;
@@ -67,16 +65,15 @@ public class RendererCoordinator implements RendererDelegate {
 	private final Tile tile;
 
 	/**
-	 * @param threadPriority
+	 * @param threadFactory
 	 * @param renderFactory
-	 * @param rendererFractal
 	 * @param tile
+	 * @param hints
 	 */
-	public RendererCoordinator(ThreadFactory threadFactory, RenderFactory renderFactory, MandelbrotFractal rendererFractal, Tile tile, Map<String, Integer> hints) {
+	public RendererCoordinator(ThreadFactory threadFactory, RenderFactory renderFactory, Tile tile, Map<String, Integer> hints) {
 //		factory = new DefaultThreadFactory("XaosRendererCoordinator", true, threadPriority);
 		this.threadFactory = threadFactory;
 		this.renderFactory = renderFactory;
-		this.rendererFractal = rendererFractal;
 		this.tile = tile;
 		this.rotation = new DoubleVector4D(0, 0, 0, 0);
 		this.center = new DoubleVector4D(0, 0, 0, 0);
@@ -91,9 +88,6 @@ public class RendererCoordinator implements RendererDelegate {
 	@Override
 	public void finalize() throws Throwable {
 		dispose();
-		affine = null;
-		renderer = null;
-		rendererFractal = null;
 		super.finalize();
 	}
 
@@ -114,21 +108,21 @@ public class RendererCoordinator implements RendererDelegate {
 	/**
 	 * 
 	 */
-	public void abortRender() {
+	protected void abortRender() {
 		renderer.abortRender();
 	}
 	
 	/**
 	 * 
 	 */
-	public void joinRender() {
+	protected void joinRender() {
 		renderer.joinRender();
 	}
 	
 	/**
 	 * 
 	 */
-	public void startRender() {
+	protected void startRender() {
 		changed = false;
 		progress = 0;
 //		if (oldView != newView) {
@@ -146,9 +140,10 @@ public class RendererCoordinator implements RendererDelegate {
 	 */
 	@Override
 	public void didChanged(float progress, int[] pixels) {
-		if (newBuffer != null) {
-			newBuffer.update(pixels);
+		if (backBuffer != null) {
+			backBuffer.update(pixels);
 		}
+		swap();
 		this.progress = progress;
 		this.changed = true;
 	}
@@ -198,6 +193,17 @@ public class RendererCoordinator implements RendererDelegate {
 	}
 
 	/**
+	 * @param rendererFractal
+	 */
+	public void setRendererFractal(RendererFractal rendererFractal) {
+		stopRender();
+		renderer.setFractal(rendererFractal);
+		if (rendererFractal != null) {
+			startRender();
+		}
+	}
+
+	/**
 	 * @return
 	 */
 	public boolean isTileSupported() {
@@ -209,9 +215,9 @@ public class RendererCoordinator implements RendererDelegate {
 	 */
 	public final void swap() {
 		synchronized (this) {
-			final RenderBuffer tmpBuffer = oldBuffer;
-			oldBuffer = newBuffer;
-			newBuffer = tmpBuffer;
+			final RenderBuffer tmpBuffer = backBuffer;
+			backBuffer = buffer;
+			buffer = tmpBuffer;
 		}
 	}
 
@@ -220,12 +226,12 @@ public class RendererCoordinator implements RendererDelegate {
 	 */
 	public void drawImage(final RenderGraphicsContext gc) {
 		synchronized (this) {
-			if (newBuffer != null && affine != null) {
+			if (buffer != null && affine != null) {
 				gc.saveTransform();
 				// g.setClip(oldTile.getTileBorder().getX(), oldTile.getTileBorder().getY(), oldTile.getTileSize().getX(), oldTile.getTileSize().getY());
 				// g.setClip(0, 0, oldTile.getTileSize().getX() + oldTile.getTileBorder().getX() + 2, oldTile.getTileSize().getY() + oldTile.getTileBorder().getY() + 2);
 				gc.setAffine(affine);
-				gc.drawImage(newBuffer.getImage(), 0, 0);
+				gc.drawImage(buffer.getImage(), 0, 0);
 				//gc.setClip(null);
 				// g.dispose();
 				gc.restoreTransform();
@@ -240,12 +246,12 @@ public class RendererCoordinator implements RendererDelegate {
 	 */
 	public void drawImage(final RenderGraphicsContext gc, final int x, final int y) {
 		synchronized (this) {
-			if (newBuffer != null && affine != null) {
+			if (buffer != null && affine != null) {
 				gc.saveTransform();
 				// g.setClip(oldTile.getTileBorder().getX(), oldTile.getTileBorder().getY(), oldTile.getTileSize().getX(), oldTile.getTileSize().getY());
 				// g.setClip(0, 0, oldTile.getTileSize().getX() + oldTile.getTileBorder().getX() + 2, oldTile.getTileSize().getY() + oldTile.getTileBorder().getY() + 2);
 				gc.setAffine(affine);
-				gc.drawImage(newBuffer.getImage(), x, y);
+				gc.drawImage(buffer.getImage(), x, y);
 				//gc.setClip(null);
 				// g.dispose();
 				gc.restoreTransform();
@@ -262,7 +268,7 @@ public class RendererCoordinator implements RendererDelegate {
 	 */
 	public void drawImage(final RenderGraphicsContext gc, final int x, final int y, final int w, final int h) {
 		synchronized (this) {
-			if (newBuffer != null && affine != null) {
+			if (buffer != null && affine != null) {
 				gc.saveTransform();
 				//TODO gc.setClip(x, y, w, h);
 				gc.setAffine(affine);
@@ -270,7 +276,7 @@ public class RendererCoordinator implements RendererDelegate {
 				final double sy = h / (double) tile.getTileSize().getY();
 				final int dw = (int) Math.rint(size.getX() * sx);
 				final int dh = (int) Math.rint(size.getY() * sy);
-				gc.drawImage(newBuffer.getImage(), x, y, dw, dh);
+				gc.drawImage(buffer.getImage(), x, y, dw, dh);
 				//TODO gc.setClip(null);
 				// g.dispose();
 				gc.restoreTransform();
@@ -321,13 +327,13 @@ public class RendererCoordinator implements RendererDelegate {
 			renderer.dispose();
 			renderer = null;
 		}
-		if (newBuffer != null) {
-			newBuffer.dispose();
-			newBuffer = null;
+		if (buffer != null) {
+			buffer.dispose();
+			buffer = null;
 		}
-		if (oldBuffer != null) {
-			oldBuffer.dispose();
-			oldBuffer = null;
+		if (backBuffer != null) {
+			backBuffer.dispose();
+			backBuffer = null;
 		}
 	}
 
@@ -338,8 +344,8 @@ public class RendererCoordinator implements RendererDelegate {
 //		int imageDim = (int) Math.sqrt(((tile.getImageSize().getX() + tile.getTileBorder().getX() * 2) * (tile.getImageSize().getX() + tile.getTileBorder().getX() * 2)) + ((tile.getImageSize().getY() + tile.getTileBorder().getY() * 2) * (tile.getImageSize().getY() + tile.getTileBorder().getY() * 2)));
 		int tileDim = (int) Math.sqrt(((tile.getTileSize().getX() + tile.getTileBorder().getX() * 2) * (tile.getTileSize().getX() + tile.getTileBorder().getX() * 2)) + ((tile.getTileSize().getY() + tile.getTileBorder().getY() * 2) * (tile.getTileSize().getY() + tile.getTileBorder().getY() * 2)));
 		size = new IntegerVector2D(tileDim, tileDim);
-		newBuffer = renderFactory.createBuffer(size.getX(), size.getY());
-		oldBuffer = renderFactory.createBuffer(size.getX(), size.getY());
+		buffer = renderFactory.createBuffer(size.getX(), size.getY());
+		backBuffer = renderFactory.createBuffer(size.getX(), size.getY());
 		affine = renderFactory.createAffine();
 		renderer = createRenderer();
 		renderer.setRendererDelegate(this);
@@ -349,9 +355,9 @@ public class RendererCoordinator implements RendererDelegate {
 	protected Renderer createRenderer() {
 		Integer type = hints.get(KEY_TYPE);
 		if (type != null && type.equals(VALUE_REALTIME)) {
-			return new XaosRenderer(threadFactory, rendererFractal, size.getX(), size.getY());
+			return new XaosRenderer(threadFactory, size.getX(), size.getY());
 		} else {
-			return new Renderer(threadFactory, rendererFractal, size.getX(), size.getY());
+			return new Renderer(threadFactory, size.getX(), size.getY());
 		}
 	}
 

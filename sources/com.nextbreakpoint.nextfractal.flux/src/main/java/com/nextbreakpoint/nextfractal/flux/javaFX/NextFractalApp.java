@@ -54,7 +54,7 @@ public class NextFractalApp extends Application {
         root.getChildren().add(mainPane);
         String pluginId = "Mandelbrot";
 		String packageName = "com.nextbreakpoint.nextfractal.flux.mandelbrot.fractal";
-		String className = pluginId;
+		String className = pluginId + "Fractal";
         FractalSession session = createFractalSession(pluginId);
         session.setPackageName(packageName);
         session.setClassName(className);

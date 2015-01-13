@@ -16,10 +16,9 @@ import com.nextbreakpoint.nextfractal.flux.core.DefaultThreadFactory;
 import com.nextbreakpoint.nextfractal.flux.core.IntegerVector2D;
 import com.nextbreakpoint.nextfractal.flux.core.Tile;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.compiler.Compiler;
-import com.nextbreakpoint.nextfractal.flux.mandelbrot.MandelbrotFractal;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.compiler.CompilerReport;
-import com.nextbreakpoint.nextfractal.flux.mandelbrot.fractal.Mandelbrot;
 import com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.RendererCoordinator;
+import com.nextbreakpoint.nextfractal.flux.mandelbrot.renderer.RendererFractal;
 import com.nextbreakpoint.nextfractal.flux.render.RenderGraphicsContext;
 import com.nextbreakpoint.nextfractal.flux.render.javaFX.JavaFXRenderFactory;
 
@@ -44,16 +43,19 @@ public class MandelbrotRenderPane extends BorderPane {
         runTimer(canvas);
 		threadFactory = new DefaultThreadFactory("Render", false, Thread.MIN_PRIORITY);
 		renderFactory = new JavaFXRenderFactory();
+		Map<String, Integer> hints = new HashMap<String, Integer>();
+		hints.put(RendererCoordinator.KEY_TYPE, RendererCoordinator.VALUE_REALTIME);
+		rendererCoordinator = new RendererCoordinator(threadFactory, renderFactory, createTile(), hints);
 		session.addSessionListener(new FractalSessionListener() {
 			@Override
 			public void sourceChanged(FractalSession session) {
 				try {
 					Compiler compiler = new Compiler(session.getPackageName(), session.getClassName(), session.getSource());
 					CompilerReport report = compiler.compile();
-					MandelbrotFractal rendererFractal = new MandelbrotFractal(report.getFractal());
+					RendererFractal rendererFractal = new RendererFractal(report.getFractal());
 					//TODO report errors
-//					MandelbrotFractal rendererFractal = new MandelbrotFractal(new Mandelbrot()); 
-					setRendererFractal(rendererFractal); 
+//					RendererFractal rendererFractal = new RendererFractal(new MandelbrotFractal()); 
+					rendererCoordinator.setRendererFractal(rendererFractal);
 				} catch (Exception e) {
 					e.printStackTrace();//TODO display errors
 				}
@@ -61,7 +63,9 @@ public class MandelbrotRenderPane extends BorderPane {
 
 			@Override
 			public void terminate(FractalSession session) {
-				setRendererFractal(null); 
+				rendererCoordinator.setRendererFractal(null);
+				rendererCoordinator.dispose();
+				rendererCoordinator = null;
 			}
 		});
 	}
@@ -81,19 +85,6 @@ public class MandelbrotRenderPane extends BorderPane {
 			}
 		};
 		timer.start();
-	}
-
-	private void setRendererFractal(MandelbrotFractal rendererFractal) {
-		if (rendererCoordinator != null) {
-			rendererCoordinator.dispose();
-			rendererCoordinator = null;
-		}
-		if (rendererFractal != null) {
-			Map<String, Integer> hints = new HashMap<String, Integer>();
-			hints.put(RendererCoordinator.KEY_TYPE, RendererCoordinator.VALUE_REALTIME);
-			rendererCoordinator = new RendererCoordinator(threadFactory, renderFactory, rendererFractal, createTile(), hints);
-			rendererCoordinator.startRender();
-		}
 	}
 
 	private Tile createTile() {
