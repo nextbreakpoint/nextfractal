@@ -39,6 +39,7 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Color;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Expression;
+import com.nextbreakpoint.nextfractal.mandelbrot.core.MutableNumber;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Orbit;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Palette;
@@ -241,6 +242,9 @@ public class Compiler {
 		builder.append(Number.class.getCanonicalName());
 		builder.append(";\n");
 		builder.append("import ");
+		builder.append(MutableNumber.class.getCanonicalName());
+		builder.append(";\n");
+		builder.append("import ");
 		builder.append(Trap.class.getCanonicalName());
 		builder.append(";\n");
 		builder.append("import ");
@@ -267,6 +271,9 @@ public class Compiler {
 		builder.append(".*;\n");
 		builder.append("import ");
 		builder.append(Number.class.getCanonicalName());
+		builder.append(";\n");
+		builder.append("import ");
+		builder.append(MutableNumber.class.getCanonicalName());
 		builder.append(";\n");
 		builder.append("import ");
 		builder.append(Palette.class.getCanonicalName());
@@ -307,19 +314,12 @@ public class Compiler {
 			builder.append("),new Number(");
 			builder.append(orbit.getRegion().getB());
 			builder.append("));\n");
-			if (vars != null) {
-				for (CompilerVariable var : vars) {
-					builder.append("registerVariable(\"");
-					builder.append(var.getName());
-					builder.append("\",() -> { return get");
-					builder.append(var.getName().toUpperCase());
-					builder.append("(); });\n");
-				}
-			}
 			for (String varName : orbit.getVariables()) {
-				builder.append("addStateVariable(\"");
+				builder.append("setVariable(\"");
 				builder.append(varName);
-				builder.append("\");\n");
+				builder.append("\",");
+				builder.append(varName);
+				builder.append(");\n");
 			}
 		}
 		builder.append("}\n");
@@ -359,6 +359,13 @@ public class Compiler {
 			compile(builder, variables, orbit.getBegin());
 			compile(builder, variables, orbit.getLoop());
 			compile(builder, variables, orbit.getEnd());
+			for (String varName : orbit.getVariables()) {
+				builder.append("setVariable(\"");
+				builder.append(varName);
+				builder.append("\",");
+				builder.append(varName);
+				builder.append(");\n");
+			}
 		}
 		builder.append("}\n");
 	}

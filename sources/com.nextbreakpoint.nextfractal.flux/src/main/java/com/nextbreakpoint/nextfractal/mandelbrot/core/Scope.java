@@ -1,23 +1,21 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.core;
 
-import java.util.HashMap;
-import java.util.LinkedHashSet;
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
+import java.util.Map.Entry;
 
 /**
  * @author amedeghini
  */
 public class Scope {
-	private final Map<String, Variable> vars = new HashMap<>();
-	private final Set<String> stateVars = new LinkedHashSet<>();
+	private final Map<String, MutableNumber> vars = new LinkedHashMap<>();
 
 	/**
 	 * @param name
-	 * @param var
+	 * @param value
 	 */
-	public void registerVariable(String name, Variable var) {
-		vars.put(name, var);
+	public void setVariable(String name, Number value) {
+		vars.put(name, new MutableNumber(value));
 	}
 
 	/**
@@ -25,28 +23,14 @@ public class Scope {
 	 * @return
 	 */
 	public Number getVariable(String name) {
-		return vars.get(name).get();
-	}
-	
-	/**
-	 * @param name
-	 */
-	public void addStateVariable(String name) {
-		stateVars.add(name);
-	}
-
-	/**
-	 * @param name
-	 */
-	public void removeStateVariable(String name) {
-		stateVars.remove(name);
+		return vars.get(name);
 	}
 	
 	/**
 	 * @return
 	 */
 	public int stateSize() {
-		return stateVars.size();
+		return vars.size();
 	}
 
 	/**
@@ -54,11 +38,8 @@ public class Scope {
 	 */
 	public void getState(MutableNumber[] state) {
 		int i = 0;
-		for (String varName : stateVars) {
-			Variable var = vars.get(varName);
-			if (var != null) {
-				state[i++].set(var.get());
-			}
+		for (Entry<String, MutableNumber> entry : vars.entrySet()) {
+			state[i++].set(entry.getValue());
 		}
 	}
 
@@ -67,11 +48,8 @@ public class Scope {
 	 */
 	public void setState(Number[] state) {
 		int i = 0;
-		for (String varName : stateVars) {
-			Variable var = vars.get(varName);
-			if (var != null) {
-				var.get().set(state[i++]);
-			}
+		for (Entry<String, MutableNumber> entry : vars.entrySet()) {
+			entry.getValue().set(state[i++]);
 		}
 	}
 
@@ -79,7 +57,6 @@ public class Scope {
 	 * 
 	 */
 	public void clear() {
-		stateVars.clear();
 		vars.clear();
 	}
 }

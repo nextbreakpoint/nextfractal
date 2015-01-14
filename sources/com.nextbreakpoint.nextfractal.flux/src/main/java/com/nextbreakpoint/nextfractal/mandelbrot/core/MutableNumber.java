@@ -17,6 +17,10 @@ public class MutableNumber extends Number {
 		super(0, 0);
 	}
 	
+	public MutableNumber(Number value) {
+		super(value.r, value.i);
+	}
+
 	public void set(double r, double i) {
 		this.r = r;
 		this.i = i;

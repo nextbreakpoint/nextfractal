@@ -79,15 +79,7 @@ public abstract class Orbit {
 		return scope.getVariable(name);
 	}
 
-	public void registerVariable(String name, Variable var) {
-		scope.registerVariable(name, var);
-	}
-
-	public void addStateVariable(String name) {
-		scope.addStateVariable(name);
-	}
-
-	public void removeStateVariable(String name) {
-		scope.removeStateVariable(name);
+	public void setVariable(String name, Number value) {
+		scope.setVariable(name, value);
 	}
 }

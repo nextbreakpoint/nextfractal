@@ -34,7 +34,6 @@ import com.nextbreakpoint.nextfractal.mandelbrot.core.Color;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Orbit;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Scope;
-import com.nextbreakpoint.nextfractal.mandelbrot.core.Variable;
 
 public class CompilerTest1 extends BaseTest {
 	@Test
