@@ -75,7 +75,7 @@ public abstract class Orbit {
 		return scope.stateSize();
 	}
 
-	public Variable getVariable(String name) {
+	public Number getVariable(String name) {
 		return scope.getVariable(name);
 	}
 

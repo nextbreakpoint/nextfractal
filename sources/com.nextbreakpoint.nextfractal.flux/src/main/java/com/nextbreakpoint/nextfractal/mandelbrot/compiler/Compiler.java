@@ -381,7 +381,7 @@ public class Compiler {
 					builder.append(variable.getName());
 					builder.append(" = getVariable(\"");
 					builder.append(variable.getName());
-					builder.append("\").get();\n");
+					builder.append("\");\n");
 				}
 			}
 			builder.append("setColor(color(");

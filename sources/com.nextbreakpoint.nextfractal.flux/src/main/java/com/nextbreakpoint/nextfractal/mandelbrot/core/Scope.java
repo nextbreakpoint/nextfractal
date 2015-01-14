@@ -24,8 +24,8 @@ public class Scope {
 	 * @param name
 	 * @return
 	 */
-	public Variable getVariable(String name) {
-		return vars.get(name);
+	public Number getVariable(String name) {
+		return vars.get(name).get();
 	}
 	
 	/**
