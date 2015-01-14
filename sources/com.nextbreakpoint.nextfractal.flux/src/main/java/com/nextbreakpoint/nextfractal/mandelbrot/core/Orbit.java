@@ -75,15 +75,15 @@ public abstract class Orbit {
 		return scope.stateSize();
 	}
 
-	public Number getVariable(String name) {
-		return scope.getVariable(name);
+	public Number getVariable(int index) {
+		return scope.getVariable(index);
 	}
 
-	public void setVariable(String name, Number value) {
-		scope.setVariable(name, value);
+	public void setVariable(int index, Number value) {
+		scope.setVariable(index, value);
 	}
 
-	public void createVariable(String name, Number value) {
-		scope.createVariable(name, value);
+	public void createVariable(Number value) {
+		scope.createVariable(value);
 	}
 }

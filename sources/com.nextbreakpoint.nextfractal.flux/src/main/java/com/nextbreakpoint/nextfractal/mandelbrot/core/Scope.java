@@ -1,56 +1,50 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.core;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 /**
  * @author amedeghini
  */
 public class Scope {
-	private final Map<String, MutableNumber> vars = new HashMap<>();
-	private final List<String> variables = new ArrayList<>();
+	private MutableNumber[] vars = new MutableNumber[0]; 
 
 	/**
-	 * @param name
 	 * @param value
 	 */
-	public void createVariable(String name, Number value) {
-		variables.add(name);
-		setVariable(name, value);
+	public void createVariable(Number value) {
+		MutableNumber[] tmpVars = vars;
+		vars = new MutableNumber[vars.length + 1];
+		System.arraycopy(tmpVars, 0, vars, 0, tmpVars.length);
+		vars[tmpVars.length] = new MutableNumber(value);
 	}
 
 	/**
-	 * @param name
+	 * @param index
 	 * @param value
 	 */
-	public void setVariable(String name, Number value) {
-		vars.put(name, new MutableNumber(value));
+	public void setVariable(int index, Number value) {
+		vars[index].set(value);
 	}
 
 	/**
-	 * @param name
+	 * @param index
 	 * @return
 	 */
-	public Number getVariable(String name) {
-		return vars.get(name);
+	public Number getVariable(int index) {
+		return vars[index];
 	}
 	
 	/**
 	 * @return
 	 */
 	public int stateSize() {
-		return variables.size();
+		return vars.length;
 	}
 
 	/**
 	 * @param state
 	 */
 	public void getState(MutableNumber[] state) {
-		int i = 0;
-		for (String variable : variables) {
-			state[i++].set(vars.get(variable));
+		for (int i = 0; i < vars.length; i++) {
+			state[i].set(vars[i]);
 		}
 	}
 
@@ -58,9 +52,8 @@ public class Scope {
 	 * @param state
 	 */
 	public void setState(Number[] state) {
-		int i = 0;
-		for (String variable : variables) {
-			vars.get(variable).set(state[i++]);
+		for (int i = 0; i < vars.length; i++) {
+			vars[i].set(state[i]);
 		}
 	}
 
@@ -68,7 +61,6 @@ public class Scope {
 	 * 
 	 */
 	public void clear() {
-		vars.clear();
-		variables.clear();
+		vars = new MutableNumber[0];
 	}
 }

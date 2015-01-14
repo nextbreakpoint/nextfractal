@@ -3,6 +3,7 @@ package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ThreadFactory;
+import java.util.logging.Logger;
 
 import javafx.animation.AnimationTimer;
 import javafx.scene.canvas.Canvas;
@@ -23,6 +24,7 @@ import com.nextbreakpoint.nextfractal.render.RenderGraphicsContext;
 import com.nextbreakpoint.nextfractal.render.javaFX.JavaFXRenderFactory;
 
 public class MandelbrotRenderPane extends BorderPane {
+	private static final Logger logger = Logger.getLogger(MandelbrotRenderPane.class.getName());
 	private final FractalSession session;
 	private JavaFXRenderFactory renderFactory;
 	private ThreadFactory threadFactory;
@@ -46,7 +48,7 @@ public class MandelbrotRenderPane extends BorderPane {
 		threadFactory = new DefaultThreadFactory("Render", false, Thread.MIN_PRIORITY);
 		renderFactory = new JavaFXRenderFactory();
 		Map<String, Integer> hints = new HashMap<String, Integer>();
-		if (!Boolean.getBoolean("disableXaos")) {
+		if (!Boolean.getBoolean("disableXaosRender")) {
 			hints.put(RendererCoordinator.KEY_TYPE, RendererCoordinator.VALUE_REALTIME);
 		}
 		rendererCoordinator = new RendererCoordinator(threadFactory, renderFactory, createTile(), hints);
@@ -63,14 +65,23 @@ public class MandelbrotRenderPane extends BorderPane {
 					//TODO report errors
 					boolean colorChanged = reportColor.getAst().equals(astColor);
 					astColor = reportColor.getAst();
-					rendererCoordinator.setOrbitAndColor((Orbit)reportOrbit.getObject(), (Color)reportColor.getObject());
-//					if (orbitChanged) {
-//						System.out.println("orbit changed");
-//						rendererCoordinator.setOrbitAndColor((Orbit)reportOrbit.getObject(), (Color)reportColor.getObject());
-//					} else if (colorChanged) {
-//						System.out.println("color changed");
-//						rendererCoordinator.setColor((Color)reportColor.getObject());
-//					}
+					if (orbitChanged) {
+						logger.info("Orbit algorithm is changed");
+					}
+					if (colorChanged) {
+						logger.info("Color algorithm is changed");
+					}
+					if (Boolean.getBoolean("disableSmartRender")) {
+						rendererCoordinator.setOrbitAndColor((Orbit)reportOrbit.getObject(), (Color)reportColor.getObject());
+					} else {
+						if (orbitChanged) {
+							System.out.println("orbit changed");
+							rendererCoordinator.setOrbitAndColor((Orbit)reportOrbit.getObject(), (Color)reportColor.getObject());
+						} else if (colorChanged) {
+							System.out.println("color changed");
+							rendererCoordinator.setColor((Color)reportColor.getObject());
+						}
+					}
 //					rendererCoordinator.setOrbitAndColor(new MandelbrotOrbit(), new MandelbrotColor());
 				} catch (Exception e) {
 					e.printStackTrace();//TODO display errors

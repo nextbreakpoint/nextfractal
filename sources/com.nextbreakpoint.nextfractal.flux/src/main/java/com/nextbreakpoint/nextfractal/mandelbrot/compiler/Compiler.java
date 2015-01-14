@@ -315,9 +315,7 @@ public class Compiler {
 			builder.append(orbit.getRegion().getB());
 			builder.append("));\n");
 			for (String varName : orbit.getVariables()) {
-				builder.append("createVariable(\"");
-				builder.append(varName);
-				builder.append("\",");
+				builder.append("createVariable(");
 				builder.append(varName);
 				builder.append(");\n");
 			}
@@ -359,10 +357,11 @@ public class Compiler {
 			compile(builder, variables, orbit.getBegin());
 			compile(builder, variables, orbit.getLoop());
 			compile(builder, variables, orbit.getEnd());
+			int i = 0;
 			for (String varName : orbit.getVariables()) {
-				builder.append("setVariable(\"");
-				builder.append(varName);
-				builder.append("\",");
+				builder.append("setVariable(");
+				builder.append(i++);
+				builder.append(",");
 				builder.append(varName);
 				builder.append(");\n");
 			}
@@ -381,15 +380,14 @@ public class Compiler {
 		}
 		builder.append("public void render() {\n");
 		if (color != null) {
+			int i = 0;
 			for (String varName : color.getVariables()) {
 				CompilerVariable variable = variables.get(varName);
-				if (variable != null) {
-					builder.append("Number ");
-					builder.append(variable.getName());
-					builder.append(" = getVariable(\"");
-					builder.append(variable.getName());
-					builder.append("\");\n");
-				}
+				builder.append("Number ");
+				builder.append(variable.getName());
+				builder.append(" = getVariable(");
+				builder.append(i++);
+				builder.append(");\n");
 			}
 			builder.append("setColor(color(");
 			builder.append(color.getArgb().getComponents()[0]);

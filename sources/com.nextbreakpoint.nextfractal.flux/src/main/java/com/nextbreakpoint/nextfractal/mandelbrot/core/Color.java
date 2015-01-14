@@ -12,8 +12,8 @@ public abstract class Color {
 		this.scope = scope;
 	}
 
-	public Number getVariable(String name) {
-		return scope.getVariable(name);
+	public Number getVariable(int index) {
+		return scope.getVariable(index);
 	}
 
 	protected float[] setColor(float[] color) {

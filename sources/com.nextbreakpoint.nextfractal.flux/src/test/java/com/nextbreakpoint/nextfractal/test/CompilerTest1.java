@@ -67,7 +67,7 @@ public class CompilerTest1 extends BaseTest {
 			float[] c = color.getColor();
 			Assert.assertNotNull(c);
 			System.out.println(String.format("%f,%f,%f,%f", c[0], c[1], c[2], c[3]));
-			Number z = orbit.getVariable("z");
+			Number z = orbit.getVariable(0);
 			Assert.assertNotNull(z);
 			System.out.println(String.format("%f,%f", z.r(), z.i()));
 		} catch (Exception e) {
