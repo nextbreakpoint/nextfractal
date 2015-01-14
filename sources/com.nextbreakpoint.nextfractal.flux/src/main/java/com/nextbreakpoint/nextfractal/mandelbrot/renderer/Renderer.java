@@ -47,7 +47,6 @@ public class Renderer {
 	protected final Worker rendererWorker;
 	protected volatile RendererDelegate rendererDelegate;
 	protected volatile RendererStrategy rendererStrategy;
-	protected volatile PixelStrategy pixelStrategy;
 	protected volatile boolean aborted;
 	protected volatile boolean orbitChanged;
 	protected volatile boolean colorChanged;
@@ -223,7 +222,7 @@ public class Renderer {
 			progress = 1;
 			return;
 		}
-		boolean redraw = orbitChanged;
+		final boolean redraw = orbitChanged;
 		orbitChanged = false;
 		colorChanged = false;
 		progress = 0;
@@ -234,6 +233,7 @@ public class Renderer {
 		} else {
 			rendererStrategy = new MandelbrotRendererStrategy(rendererFractal);
 		}
+		PixelStrategy pixelStrategy = null;
 		if (redraw) {
 			pixelStrategy = new RedrawPixelStrategy();
 		} else {

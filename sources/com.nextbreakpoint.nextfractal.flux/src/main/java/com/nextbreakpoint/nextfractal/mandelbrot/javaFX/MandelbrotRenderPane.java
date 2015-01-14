@@ -30,6 +30,8 @@ public class MandelbrotRenderPane extends BorderPane {
 	private AnimationTimer timer;
 	private int width;
 	private int height;
+	private String astOrbit;
+	private String astColor;
 	
 	public MandelbrotRenderPane(FractalSession session, int width, int height) {
 		this.session = session;
@@ -54,9 +56,21 @@ public class MandelbrotRenderPane extends BorderPane {
 				try {
 					Compiler compiler = new Compiler(session.getPackageName(), session.getClassName(), session.getSource());
 					CompilerReport reportOrbit = compiler.compileOrbit();
+					//TODO report errors
+					boolean orbitChanged = reportOrbit.getAst().equals(astOrbit);
+					astOrbit = reportOrbit.getAst();
 					CompilerReport reportColor = compiler.compileColor();
 					//TODO report errors
+					boolean colorChanged = reportColor.getAst().equals(astColor);
+					astColor = reportColor.getAst();
 					rendererCoordinator.setOrbitAndColor((Orbit)reportOrbit.getObject(), (Color)reportColor.getObject());
+//					if (orbitChanged) {
+//						System.out.println("orbit changed");
+//						rendererCoordinator.setOrbitAndColor((Orbit)reportOrbit.getObject(), (Color)reportColor.getObject());
+//					} else if (colorChanged) {
+//						System.out.println("color changed");
+//						rendererCoordinator.setColor((Color)reportColor.getObject());
+//					}
 //					rendererCoordinator.setOrbitAndColor(new MandelbrotOrbit(), new MandelbrotColor());
 				} catch (Exception e) {
 					e.printStackTrace();//TODO display errors

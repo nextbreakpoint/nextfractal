@@ -202,7 +202,7 @@ public class RendererCoordinator implements RendererDelegate {
 		stopRender();
 		renderer.setOrbit(orbit);
 		renderer.setColor(color);
-		if (orbit != null) {
+		if (orbit != null && color != null) {
 			startRender();
 		}
 	}
@@ -210,10 +210,10 @@ public class RendererCoordinator implements RendererDelegate {
 	/**
 	 * @param color
 	 */
-	public void setColor(Orbit orbit, Color color) {
+	public void setColor(Color color) {
 		stopRender();
 		renderer.setColor(color);
-		if (orbit != null) {
+		if (color != null) {
 			startRender();
 		}
 	}

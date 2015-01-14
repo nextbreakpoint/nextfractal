@@ -315,7 +315,7 @@ public class Compiler {
 			builder.append(orbit.getRegion().getB());
 			builder.append("));\n");
 			for (String varName : orbit.getVariables()) {
-				builder.append("setVariable(\"");
+				builder.append("createVariable(\"");
 				builder.append(varName);
 				builder.append("\",");
 				builder.append(varName);

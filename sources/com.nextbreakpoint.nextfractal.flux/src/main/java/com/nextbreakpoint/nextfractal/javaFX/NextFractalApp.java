@@ -136,7 +136,7 @@ public class NextFractalApp extends Application {
 				+ "\t\t\t1,0,0,0\n"
 				+ "\t\t}\n"
 				+ "\t\trule (re(n) > 0) [1.0] {\n"
-				+ "\t\t\t1,1,1,1\n"
+				+ "\t\t\t1,0,0,0.4\n"
 				+ "\t\t}\n"
 				+ "\t}\n"
 				+ "}\n";

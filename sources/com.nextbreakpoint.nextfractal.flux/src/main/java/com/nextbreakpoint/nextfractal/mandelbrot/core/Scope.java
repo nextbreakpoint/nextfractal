@@ -1,14 +1,25 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.core;
 
-import java.util.LinkedHashMap;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 /**
  * @author amedeghini
  */
 public class Scope {
-	private final Map<String, MutableNumber> vars = new LinkedHashMap<>();
+	private final Map<String, MutableNumber> vars = new HashMap<>();
+	private final List<String> variables = new ArrayList<>();
+
+	/**
+	 * @param name
+	 * @param value
+	 */
+	public void createVariable(String name, Number value) {
+		variables.add(name);
+		setVariable(name, value);
+	}
 
 	/**
 	 * @param name
@@ -30,7 +41,7 @@ public class Scope {
 	 * @return
 	 */
 	public int stateSize() {
-		return vars.size();
+		return variables.size();
 	}
 
 	/**
@@ -38,8 +49,8 @@ public class Scope {
 	 */
 	public void getState(MutableNumber[] state) {
 		int i = 0;
-		for (Entry<String, MutableNumber> entry : vars.entrySet()) {
-			state[i++].set(entry.getValue());
+		for (String variable : variables) {
+			state[i++].set(vars.get(variable));
 		}
 	}
 
@@ -48,8 +59,8 @@ public class Scope {
 	 */
 	public void setState(Number[] state) {
 		int i = 0;
-		for (Entry<String, MutableNumber> entry : vars.entrySet()) {
-			entry.getValue().set(state[i++]);
+		for (String variable : variables) {
+			vars.get(variable).set(state[i++]);
 		}
 	}
 
@@ -58,5 +69,6 @@ public class Scope {
 	 */
 	public void clear() {
 		vars.clear();
+		variables.clear();
 	}
 }

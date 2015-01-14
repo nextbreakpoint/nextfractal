@@ -100,9 +100,9 @@ public final class XaosRenderer extends Renderer {
 			progress = 1;
 			return;
 		}
-		boolean redraw = orbitChanged;
+		final boolean redraw = orbitChanged;
 		orbitChanged = false;
-		boolean refresh = redraw || colorChanged;//TODO redraw?
+		final boolean refresh = redraw || colorChanged;//TODO redraw?
 		colorChanged = false;
 		aborted = false;
 		progress = 0;

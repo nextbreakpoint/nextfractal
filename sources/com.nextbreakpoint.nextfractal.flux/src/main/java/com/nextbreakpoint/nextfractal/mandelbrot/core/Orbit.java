@@ -82,4 +82,8 @@ public abstract class Orbit {
 	public void setVariable(String name, Number value) {
 		scope.setVariable(name, value);
 	}
+
+	public void createVariable(String name, Number value) {
+		scope.createVariable(name, value);
+	}
 }
