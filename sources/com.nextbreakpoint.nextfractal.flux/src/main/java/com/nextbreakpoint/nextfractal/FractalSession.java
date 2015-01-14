@@ -1,6 +1,5 @@
 package com.nextbreakpoint.nextfractal;
 
-
 public interface FractalSession {
 	/**
 	 * @param listener

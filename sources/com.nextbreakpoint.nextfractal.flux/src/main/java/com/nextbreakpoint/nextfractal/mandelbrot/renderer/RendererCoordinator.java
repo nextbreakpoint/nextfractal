@@ -44,25 +44,25 @@ import com.nextbreakpoint.nextfractal.render.RenderGraphicsContext;
  * @author Andrea Medeghini
  */
 public class RendererCoordinator implements RendererDelegate {
-	protected static final Logger logger = Logger.getLogger(RendererCoordinator.class.getName());
 	public static final String KEY_TYPE = "TYPE";
 	public static final Integer VALUE_REALTIME = 1;
+	protected static final Logger logger = Logger.getLogger(RendererCoordinator.class.getName());
 	private final HashMap<String, Integer> hints = new HashMap<>();
-	private RenderBuffer buffer;
-	private RenderBuffer backBuffer;
 //	private View newView = new View(new IntegerVector4D(0, 0, 0, 0), new DoubleVector4D(0, 0, 1, 0), new DoubleVector4D(0, 0, 0, 0));
 //	private View oldView = new View(new IntegerVector4D(0, 0, 0, 0), new DoubleVector4D(0, 0, 1, 0), new DoubleVector4D(0, 0, 0, 0));
+	private final ThreadFactory threadFactory;
+	private final RenderFactory renderFactory;
+	private final Tile tile;
+	private volatile boolean changed;
+	private volatile float progress;
+	private RenderAffine affine;
+	private RenderBuffer buffer;
+	private RenderBuffer backBuffer;
 	private IntegerVector2D size;
 	private DoubleVector4D rotation;
 	private DoubleVector4D center;
 	private DoubleVector4D scale;
-	private final ThreadFactory threadFactory;
-	private final RenderFactory renderFactory;
 	private Renderer renderer;
-	private RenderAffine affine;
-	private volatile boolean changed;
-	private volatile float progress;
-	private final Tile tile;
 
 	/**
 	 * @param threadFactory

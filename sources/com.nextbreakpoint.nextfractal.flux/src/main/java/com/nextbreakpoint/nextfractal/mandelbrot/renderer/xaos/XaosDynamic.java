@@ -13,7 +13,7 @@ class XaosDynamic {
 	/**
 	 * @param size
 	 */
-	XaosDynamic(final int size) {
+	public XaosDynamic(final int size) {
 		delta = new int[size + 1];
 		oldBest = new XaosPrice[size];
 		newBest = new XaosPrice[size];

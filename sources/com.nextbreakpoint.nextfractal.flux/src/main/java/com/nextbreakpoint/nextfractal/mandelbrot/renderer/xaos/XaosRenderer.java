@@ -57,7 +57,7 @@ public final class XaosRenderer extends Renderer {
 	private boolean isVerticalSymetrySupported = true;
 	private boolean isHorizontalSymetrySupported = true;
 	private final XaosRendererData xaosRendererData;
-	protected final Worker prepareWorker;
+	private final Worker prepareWorker;
 	private boolean cacheActive;
 
 	/**

@@ -18,7 +18,6 @@ public interface RendererStrategy {
 	public int renderColor(RendererPoint p);
 	
 	/**
-	 * @param rendererFractal 
 	 * @param p
 	 * @param x
 	 * @param w
