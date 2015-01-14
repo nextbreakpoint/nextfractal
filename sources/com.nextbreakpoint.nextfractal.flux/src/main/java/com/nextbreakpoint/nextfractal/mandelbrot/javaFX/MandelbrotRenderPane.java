@@ -19,7 +19,6 @@ import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerReport;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Color;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Orbit;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererCoordinator;
-import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererFractal;
 import com.nextbreakpoint.nextfractal.render.RenderGraphicsContext;
 import com.nextbreakpoint.nextfractal.render.javaFX.JavaFXRenderFactory;
 
@@ -57,13 +56,8 @@ public class MandelbrotRenderPane extends BorderPane {
 					CompilerReport reportOrbit = compiler.compileOrbit();
 					CompilerReport reportColor = compiler.compileColor();
 					//TODO report errors
-					RendererFractal rendererFractal = new RendererFractal();
-					rendererFractal.setOrbit((Orbit)reportOrbit.getObject());
-					rendererFractal.setColor((Color)reportColor.getObject());
-					rendererFractal.init();
-//					rendererFractal.setOrbit(new MandelbrotOrbit());
-//					rendererFractal.setColor(new MandelbrotColor());
-					rendererCoordinator.setRendererFractal(rendererFractal);
+					rendererCoordinator.setOrbitAndColor((Orbit)reportOrbit.getObject(), (Color)reportColor.getObject());
+//					rendererCoordinator.setOrbitAndColor(new MandelbrotOrbit(), new MandelbrotColor());
 				} catch (Exception e) {
 					e.printStackTrace();//TODO display errors
 				}
@@ -71,7 +65,6 @@ public class MandelbrotRenderPane extends BorderPane {
 
 			@Override
 			public void terminate(FractalSession session) {
-				rendererCoordinator.setRendererFractal(null);
 				rendererCoordinator.dispose();
 				rendererCoordinator = null;
 			}

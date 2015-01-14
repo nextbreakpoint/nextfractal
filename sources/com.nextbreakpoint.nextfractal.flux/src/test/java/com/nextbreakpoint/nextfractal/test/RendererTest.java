@@ -33,7 +33,6 @@ import com.nextbreakpoint.nextfractal.mandelbrot.core.Color;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Orbit;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Scope;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.Renderer;
-import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererFractal;
 
 public class RendererTest {
 	@Test
@@ -41,15 +40,13 @@ public class RendererTest {
 		DefaultThreadFactory threadFactory = new DefaultThreadFactory("Test", false, Thread.MIN_PRIORITY);
 		Renderer renderer = new Renderer(threadFactory, 100, 100);
 		try {
-			RendererFractal rendererFractal = new RendererFractal();
 			TestOrbit orbit = new TestOrbit();
 			TestColor color = new TestColor();
 			Scope scope = new Scope();
 			orbit.setScope(scope);
 			color.setScope(scope);
-			rendererFractal.setOrbit(orbit);
-			rendererFractal.setColor(color);
-			renderer.setFractal(rendererFractal);
+			renderer.setOrbit(orbit);
+			renderer.setColor(color);
 			renderer.startRender(false);
 			renderer.joinRender();
 		} catch (Exception e) {

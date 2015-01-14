@@ -13,12 +13,13 @@ public class RendererFractal {
 
 	public void clearScope() {
 		scope.clear();
-		orbit.init();
-	}
-
-	public void init() {
-		orbit.setScope(scope);
-		color.setScope(scope);
+		if (orbit != null) {
+			orbit.setScope(scope);
+			orbit.init();
+		}
+		if (color != null) {
+			color.setScope(scope);
+		}
 	}
 
 	public Orbit getOrbit() {

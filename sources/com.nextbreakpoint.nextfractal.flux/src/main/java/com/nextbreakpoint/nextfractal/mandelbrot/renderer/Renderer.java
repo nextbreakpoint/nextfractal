@@ -28,8 +28,10 @@ package com.nextbreakpoint.nextfractal.mandelbrot.renderer;
 import java.util.concurrent.ThreadFactory;
 
 import com.nextbreakpoint.nextfractal.core.Worker;
+import com.nextbreakpoint.nextfractal.mandelbrot.core.Color;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.MutableNumber;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
+import com.nextbreakpoint.nextfractal.mandelbrot.core.Orbit;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.strategy.JuliaRendererStrategy;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.strategy.MandelbrotRendererStrategy;
 
@@ -39,13 +41,16 @@ import com.nextbreakpoint.nextfractal.mandelbrot.renderer.strategy.MandelbrotRen
 public class Renderer {
 	public static final int MODE_CALCULATE = 0x01;
 	public static final int MODE_REFRESH = 0x02;
+	protected final RendererFractal rendererFractal;
 	protected final ThreadFactory threadFactory;
 	protected final RendererData rendererData;
 	protected final Worker rendererWorker;
 	protected volatile RendererDelegate rendererDelegate;
 	protected volatile RendererStrategy rendererStrategy;
-	protected volatile RendererFractal rendererFractal;
+	protected volatile PixelStrategy pixelStrategy;
 	protected volatile boolean aborted;
+	protected volatile boolean orbitChanged;
+	protected volatile boolean colorChanged;
 	protected volatile float progress;
 	protected int width;
 	protected int height;
@@ -62,6 +67,7 @@ public class Renderer {
 		this.threadFactory = threadFactory;
 		this.rendererWorker = new Worker(threadFactory);
 		this.rendererData = createRendererData();
+		this.rendererFractal = new RendererFractal();
 		this.width = width;
 		this.height = height;
 		start();
@@ -173,10 +179,19 @@ public class Renderer {
 	}
 
 	/**
-	 * @param rendererFractal
+	 * @param orbit
 	 */
-	public void setFractal(RendererFractal rendererFractal) {
-		this.rendererFractal = rendererFractal;
+	public void setOrbit(Orbit orbit) {
+		rendererFractal.setOrbit(orbit);
+		orbitChanged = true;
+	}
+
+	/**
+	 * @param color
+	 */
+	public void setColor(Color color) {
+		rendererFractal.setColor(color);
+		colorChanged = true;
 	}
 
 	/**
@@ -208,14 +223,21 @@ public class Renderer {
 			progress = 1;
 			return;
 		}
+		boolean redraw = orbitChanged;
+		orbitChanged = false;
+		colorChanged = false;
 		progress = 0;
-		int mode = 0;//TODO mode
 		rendererFractal.clearScope();
 		rendererFractal.setConstant(constant);
 		if (julia) {
 			rendererStrategy = new JuliaRendererStrategy(rendererFractal);
 		} else {
 			rendererStrategy = new MandelbrotRendererStrategy(rendererFractal);
+		}
+		if (redraw) {
+			pixelStrategy = new RedrawPixelStrategy();
+		} else {
+			pixelStrategy = new RefreshPixelStrategy();
 		}
 		rendererStrategy.prepare();
 		rendererData.setSize(width, height, rendererFractal.getStateSize());
@@ -226,14 +248,11 @@ public class Renderer {
 		final MutableNumber pw = new MutableNumber(0, 0);
 		final RendererPoint p = rendererData.newPoint();
 		int offset = 0;
-		int c = 0;
 		for (int y = 0; y < height; y++) {
 			for (int x = 0; x < width; x++) {
 				px.set(rendererData.point());
 				pw.set(rendererData.positionX(x), rendererData.positionY(y));
-				c = rendererStrategy.renderPoint(p, px, pw);
-				rendererData.setPixel(offset, c);
-				rendererData.setPoint(offset, p);
+				pixelStrategy.renderPixel(p, px, pw, offset);
 				offset += 1;
 			}
 			if (y % 20 == 0) {
@@ -255,5 +274,25 @@ public class Renderer {
 			rendererDelegate.didChanged(progress, rendererData.getPixels());
 		}
 		Thread.yield();
+	}
+	
+	private class RedrawPixelStrategy implements PixelStrategy {
+		@Override
+		public int renderPixel(RendererPoint p, Number x, Number w, int offset) {
+			int c = rendererStrategy.renderPoint(p, x, w);
+			rendererData.setPoint(offset, p);
+			rendererData.setPixel(offset, c);
+			return c;
+		}
+	}
+
+	private class RefreshPixelStrategy implements PixelStrategy {
+		@Override
+		public int renderPixel(RendererPoint p, Number x, Number w, int offset) {
+			rendererData.getPoint(offset, p);
+			int c = rendererStrategy.renderColor(p);
+			rendererData.setPixel(offset, c);
+			return c;
+		}
 	}
 }

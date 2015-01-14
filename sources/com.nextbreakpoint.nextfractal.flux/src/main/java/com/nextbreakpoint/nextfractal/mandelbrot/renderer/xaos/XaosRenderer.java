@@ -100,8 +100,12 @@ public final class XaosRenderer extends Renderer {
 			progress = 1;
 			return;
 		}
+		boolean redraw = orbitChanged;
+		orbitChanged = false;
+		boolean refresh = redraw || colorChanged;//TODO redraw?
+		colorChanged = false;
 		aborted = false;
-		int mode = 0;//TODO mode
+		progress = 0;
 		rendererFractal.clearScope();
 		rendererFractal.setConstant(constant);
 		if (julia) {
@@ -114,7 +118,7 @@ public final class XaosRenderer extends Renderer {
 		if (XaosConstants.PRINT_REGION) {
 			logger.fine("Region: (" + xaosRendererData.left() + "," + xaosRendererData.right() + ") -> (" + xaosRendererData.left() + "," + xaosRendererData.right() + ")");
 		}
-		cacheActive = (mode & Renderer.MODE_REFRESH) != 0 && !dynamic;
+		cacheActive = refresh && !dynamic;
 		isSolidguessSupported = XaosConstants.USE_SOLIDGUESS && rendererStrategy.isSolidGuessSupported();
 		isVerticalSymetrySupported = XaosConstants.USE_SYMETRY && rendererStrategy.isVerticalSymetrySupported();
 		isHorizontalSymetrySupported = XaosConstants.USE_SYMETRY && rendererStrategy.isHorizontalSymetrySupported();
@@ -128,13 +132,13 @@ public final class XaosRenderer extends Renderer {
 			prepareWorker.addTask(new Runnable() {
 				@Override
 				public void run() {
-					prepareLines(mode);
+					prepareLines(redraw);
 				}
 			});
 		} else {
-			prepareLines(mode);
+			prepareLines(redraw);
 		}
-		prepareColumns(mode);
+		prepareColumns(redraw);
 		prepareWorker.waitTasks();
 		if (XaosConstants.PRINT_REALLOCTABLE) {
 			logger.fine("ReallocTable:");
@@ -148,19 +152,19 @@ public final class XaosRenderer extends Renderer {
 		}
 		xaosRendererData.swap();
 		move();
-		processReallocTable(dynamic, (mode & Renderer.MODE_REFRESH) != 0);
+		processReallocTable(dynamic, refresh);
 		updatePositions();
 	}
 
-	private void prepareLines(int mode) {
+	private void prepareLines(boolean redraw) {
 		final double beginy = xaosRendererData.bottom();
 		final double endy = xaosRendererData.top();
 		double stepy = 0;
-		if (((mode & Renderer.MODE_CALCULATE) == 0) && XaosConstants.USE_XAOS) {
-			stepy = XaosRenderer.makeReallocTable(xaosRendererData.reallocY(), xaosRendererData.dynamicY(), xaosRendererData.bottom(), xaosRendererData.top(), xaosRendererData.positionY(), !cacheActive);
+		if (redraw || !XaosConstants.USE_XAOS) {
+			stepy = XaosRenderer.initReallocTableAndPosition(xaosRendererData.reallocY(), xaosRendererData.positionY(), beginy, endy);
 		}
 		else {
-			stepy = XaosRenderer.initReallocTableAndPosition(xaosRendererData.reallocY(), xaosRendererData.positionY(), beginy, endy);
+			stepy = XaosRenderer.makeReallocTable(xaosRendererData.reallocY(), xaosRendererData.dynamicY(), xaosRendererData.bottom(), xaosRendererData.top(), xaosRendererData.positionY(), !cacheActive);
 		}
 		final double symy = rendererStrategy.getVerticalSymetryPoint();
 		if (isVerticalSymetrySupported && rendererStrategy.isVerticalSymetrySupported() && (!((beginy > symy) || (symy > endy)))) {
@@ -168,15 +172,15 @@ public final class XaosRenderer extends Renderer {
 		}
 	}
 
-	private void prepareColumns(int mode) {
+	private void prepareColumns(boolean redraw) {
 		final double beginx = xaosRendererData.left();
 		final double endx = xaosRendererData.right();
 		double stepy = 0;
-		if (((mode & Renderer.MODE_CALCULATE) == 0) && XaosConstants.USE_XAOS) {
-			stepy = XaosRenderer.makeReallocTable(xaosRendererData.reallocX(), xaosRendererData.dynamicX(), beginx, endx, xaosRendererData.positionX(), !cacheActive);
+		if (redraw || !XaosConstants.USE_XAOS) {
+			stepy = XaosRenderer.initReallocTableAndPosition(xaosRendererData.reallocX(), xaosRendererData.positionX(), beginx, endx);
 		}
 		else {
-			stepy = XaosRenderer.initReallocTableAndPosition(xaosRendererData.reallocX(), xaosRendererData.positionX(), beginx, endx);
+			stepy = XaosRenderer.makeReallocTable(xaosRendererData.reallocX(), xaosRendererData.dynamicX(), beginx, endx, xaosRendererData.positionX(), !cacheActive);
 		}
 		final double symy = rendererStrategy.getHorizontalSymetryPoint();
 		if (isVerticalSymetrySupported && rendererStrategy.isVerticalSymetrySupported() && (!((beginx > symy) || (symy > endx)))) {

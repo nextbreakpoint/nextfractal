@@ -34,6 +34,8 @@ import com.nextbreakpoint.nextfractal.core.DoubleVector2D;
 import com.nextbreakpoint.nextfractal.core.DoubleVector4D;
 import com.nextbreakpoint.nextfractal.core.IntegerVector2D;
 import com.nextbreakpoint.nextfractal.core.Tile;
+import com.nextbreakpoint.nextfractal.mandelbrot.core.Color;
+import com.nextbreakpoint.nextfractal.mandelbrot.core.Orbit;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.xaos.XaosRenderer;
 import com.nextbreakpoint.nextfractal.render.RenderAffine;
 import com.nextbreakpoint.nextfractal.render.RenderBuffer;
@@ -193,12 +195,25 @@ public class RendererCoordinator implements RendererDelegate {
 	}
 
 	/**
-	 * @param rendererFractal
+	 * @param orbit
+	 * @param color
 	 */
-	public void setRendererFractal(RendererFractal rendererFractal) {
+	public void setOrbitAndColor(Orbit orbit, Color color) {
 		stopRender();
-		renderer.setFractal(rendererFractal);
-		if (rendererFractal != null) {
+		renderer.setOrbit(orbit);
+		renderer.setColor(color);
+		if (orbit != null) {
+			startRender();
+		}
+	}
+
+	/**
+	 * @param color
+	 */
+	public void setColor(Orbit orbit, Color color) {
+		stopRender();
+		renderer.setColor(color);
+		if (orbit != null) {
 			startRender();
 		}
 	}
