@@ -59,11 +59,11 @@ public class MandelbrotRenderPane extends BorderPane {
 					Compiler compiler = new Compiler(session.getPackageName(), session.getClassName(), session.getSource());
 					CompilerReport reportOrbit = compiler.compileOrbit();
 					//TODO report errors
-					boolean orbitChanged = reportOrbit.getAst().equals(astOrbit);
+					boolean orbitChanged = !reportOrbit.getAst().equals(astOrbit);
 					astOrbit = reportOrbit.getAst();
 					CompilerReport reportColor = compiler.compileColor();
 					//TODO report errors
-					boolean colorChanged = reportColor.getAst().equals(astColor);
+					boolean colorChanged = !reportColor.getAst().equals(astColor);
 					astColor = reportColor.getAst();
 					if (orbitChanged) {
 						logger.info("Orbit algorithm is changed");
