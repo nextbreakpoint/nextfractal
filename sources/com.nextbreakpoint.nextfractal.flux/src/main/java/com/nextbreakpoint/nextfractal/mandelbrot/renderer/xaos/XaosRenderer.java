@@ -114,7 +114,9 @@ public final class XaosRenderer extends Renderer {
 			rendererStrategy = new MandelbrotRendererStrategy(rendererFractal);
 		}
 		rendererStrategy.prepare();
+		rendererData.setSize(width, height, rendererFractal.getStateSize());
 		rendererData.setRegion(rendererFractal.getRegion());
+		rendererData.initPositions();
 		if (XaosConstants.PRINT_REGION) {
 			logger.fine("Region: (" + xaosRendererData.left() + "," + xaosRendererData.right() + ") -> (" + xaosRendererData.left() + "," + xaosRendererData.right() + ")");
 		}
@@ -127,7 +129,6 @@ public final class XaosRenderer extends Renderer {
 			logger.fine("Vertical symetry supported = " + isVerticalSymetrySupported);
 			logger.fine("Horizontal symetry supported = " + isHorizontalSymetrySupported);
 		}
-		xaosRendererData.setSize(width, height, rendererFractal.getStateSize());
 		if (XaosConstants.USE_MULTITHREAD && !XaosConstants.DUMP_XAOS) {
 			prepareWorker.addTask(new Runnable() {
 				@Override

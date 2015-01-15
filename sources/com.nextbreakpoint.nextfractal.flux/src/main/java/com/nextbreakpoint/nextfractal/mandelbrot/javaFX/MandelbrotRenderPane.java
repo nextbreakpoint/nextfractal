@@ -103,7 +103,7 @@ public class MandelbrotRenderPane extends BorderPane {
 			@Override
 			public void handle(long now) {
 				long time = now / 1000000;
-				if ((time - last) > 1000 && rendererCoordinator != null && rendererCoordinator.isChanged()) {
+				if ((time - last) > 50 && rendererCoordinator != null && rendererCoordinator.isChanged()) {
 					RenderGraphicsContext gc = renderFactory.createGraphicsContext(canvas.getGraphicsContext2D());
 					rendererCoordinator.drawImage(gc);
 					last = time;
