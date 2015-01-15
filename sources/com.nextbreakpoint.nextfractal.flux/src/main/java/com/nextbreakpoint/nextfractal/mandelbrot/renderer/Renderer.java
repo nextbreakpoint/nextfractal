@@ -244,6 +244,7 @@ public class Renderer {
 		rendererData.setRegion(rendererFractal.getRegion());
 		rendererData.initPositions();
 		rendererData.swap();
+		rendererData.clearPixels();
 		final MutableNumber px = new MutableNumber(0, 0);
 		final MutableNumber pw = new MutableNumber(0, 0);
 		final RendererPoint p = rendererData.newPoint();
@@ -291,6 +292,7 @@ public class Renderer {
 		public int renderPixel(RendererPoint p, Number x, Number w, int offset) {
 			rendererData.getPoint(offset, p);
 			int c = rendererStrategy.renderColor(p);
+			rendererData.setPoint(offset, p);
 			rendererData.setPixel(offset, c);
 			return c;
 		}

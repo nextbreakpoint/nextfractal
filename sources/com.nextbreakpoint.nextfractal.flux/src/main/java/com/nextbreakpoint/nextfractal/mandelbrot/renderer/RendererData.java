@@ -248,7 +248,7 @@ public class RendererData {
 	 */
 	public void getPoint(int offset, RendererPoint p) {
 		for (int j = 0; j < depth; j++) {
-			double[] cache = newCache.get(j);
+			double[] cache = oldCache.get(j);
 			double r = cache[offset * 2 + 0];
 			double i = cache[offset * 2 + 1];
 			p.vars()[j].set(r, i);
@@ -306,5 +306,12 @@ public class RendererData {
 		for (int i = 0; i < depth; i++) {
 			System.arraycopy(oldCache.get(i), from * 2, newCache.get(i), to * 2, length * 2);
 		}
+	}
+
+	/**
+	 * 
+	 */
+	public void clearPixels() {
+		newPixels = new int[newPixels.length];
 	}
 }
