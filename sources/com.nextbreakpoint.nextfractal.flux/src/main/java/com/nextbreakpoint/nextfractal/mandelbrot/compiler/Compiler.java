@@ -94,14 +94,14 @@ public class Compiler {
 		ASTFractal ast = parse(source);
 		String javaSource = compileOrbit(ast);
 		Object object = compileToClass(javaSource, className + "Orbit");
-		return new CompilerReport(ast.toString(), javaSource, object);
+		return new CompilerReport(ast.getOrbit().toString(), javaSource, object);
 	}
 
 	public CompilerReport compileColor() throws Exception {
 		ASTFractal ast = parse(source);
 		String javaSource = compileColor(ast);
 		Object object = compileToClass(javaSource, className + "Color");
-		return new CompilerReport(ast.toString(), javaSource, object);
+		return new CompilerReport(ast.getColor().toString(), javaSource, object);
 	}
 
 	private ASTFractal parse(String source) throws Exception {
