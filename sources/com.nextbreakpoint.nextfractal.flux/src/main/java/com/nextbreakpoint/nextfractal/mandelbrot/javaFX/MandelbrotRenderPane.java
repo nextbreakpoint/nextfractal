@@ -56,7 +56,7 @@ public class MandelbrotRenderPane extends BorderPane {
 			@Override
 			public void sourceChanged(FractalSession session) {
 				try {
-					Compiler compiler = new Compiler(session.getPackageName(), session.getClassName(), session.getSource());
+					Compiler compiler = new Compiler(session.getOutDir(), session.getPackageName(), session.getClassName(), session.getSource());
 					CompilerReport reportOrbit = compiler.compileOrbit();
 					//TODO report errors
 					boolean orbitChanged = !reportOrbit.getAst().equals(astOrbit);
@@ -92,6 +92,21 @@ public class MandelbrotRenderPane extends BorderPane {
 				rendererCoordinator = null;
 			}
 		});
+		canvas.setOnMouseClicked(e -> {
+			//TODO
+		});
+		canvas.setOnMousePressed(e -> {
+			//TODO
+		});
+		canvas.setOnMouseReleased(e -> {
+			//TODO
+		});
+		canvas.setOnMouseDragged(e -> {
+			//TODO
+		});
+		canvas.setOnMouseMoved(e -> {
+			//TODO
+		});
 	}
 
 	private void runTimer(Canvas canvas) {
@@ -101,7 +116,7 @@ public class MandelbrotRenderPane extends BorderPane {
 			@Override
 			public void handle(long now) {
 				long time = now / 1000000;
-				if ((time - last) > 50 && rendererCoordinator != null && rendererCoordinator.isChanged()) {
+				if ((time - last) > 50 && rendererCoordinator != null && rendererCoordinator.isPixelsChanged()) {
 					RenderGraphicsContext gc = renderFactory.createGraphicsContext(canvas.getGraphicsContext2D());
 					rendererCoordinator.drawImage(gc);
 					last = time;

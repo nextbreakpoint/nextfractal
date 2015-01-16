@@ -95,7 +95,7 @@ public final class XaosRenderer extends Renderer {
 	 */
 	@SuppressWarnings("unused")
 	@Override
-	protected void doRender(final boolean dynamic) {
+	protected void doRender() {
 		if (rendererFractal == null) {
 			progress = 1;
 			return;
@@ -120,7 +120,7 @@ public final class XaosRenderer extends Renderer {
 		if (XaosConstants.PRINT_REGION) {
 			logger.fine("Region: (" + xaosRendererData.left() + "," + xaosRendererData.right() + ") -> (" + xaosRendererData.left() + "," + xaosRendererData.right() + ")");
 		}
-		cacheActive = refresh && !dynamic;
+		cacheActive = refresh && !continuous;
 		isSolidguessSupported = XaosConstants.USE_SOLIDGUESS && rendererStrategy.isSolidGuessSupported();
 		isVerticalSymetrySupported = XaosConstants.USE_SYMETRY && rendererStrategy.isVerticalSymetrySupported();
 		isHorizontalSymetrySupported = XaosConstants.USE_SYMETRY && rendererStrategy.isHorizontalSymetrySupported();
@@ -153,7 +153,7 @@ public final class XaosRenderer extends Renderer {
 		}
 		xaosRendererData.swap();
 		move();
-		processReallocTable(dynamic, refresh);
+		processReallocTable(continuous, refresh);
 		updatePositions();
 	}
 
@@ -911,11 +911,11 @@ public final class XaosRenderer extends Renderer {
 		}
 	}
 
-	private void processReallocTable(final boolean dynamic, final boolean refresh) {
+	private void processReallocTable(final boolean continuous, final boolean refresh) {
 		if (XaosConstants.DUMP) {
 			logger.fine("Process ReallocTable...");
 		}
-		if (dynamic || !XaosConstants.USE_XAOS) {
+		if (continuous || !XaosConstants.USE_XAOS) {
 			int total = 0;
 			total = XaosRenderer.initPrices(xaosRendererData.queue(), total, xaosRendererData.reallocX());
 			total = XaosRenderer.initPrices(xaosRendererData.queue(), total, xaosRendererData.reallocY());

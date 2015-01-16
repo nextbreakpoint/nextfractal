@@ -34,6 +34,7 @@ public class DefaultThreadFactory implements ThreadFactory {
 	private final boolean isDaemon;
 	private final int priority;
 	private final String name;
+	private int ordinal;
 
 	/**
 	 * @param name
@@ -54,7 +55,7 @@ public class DefaultThreadFactory implements ThreadFactory {
 		final Thread thread = new Thread(r);
 		thread.setPriority(priority);
 		thread.setDaemon(isDaemon);
-		thread.setName(name);
+		thread.setName(name + "-" + (ordinal++));
 		return thread;
 	}
 }

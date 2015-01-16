@@ -25,6 +25,8 @@
  */
 package com.nextbreakpoint.nextfractal.test;
 
+import java.io.File;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -40,7 +42,7 @@ public class CompilerTest1 extends BaseTest {
 	public void Compiler1() {
 		try {
 //			Assert.assertTrue(Pattern.matches("([A-Z][a-z]*)-(\\d).(.jpg|.png)", "Andrea-10.png"));
-			Compiler compiler = new Compiler("test", "TestFractal", getSource());
+			Compiler compiler = new Compiler(new File("test"), "test", "TestFractal", getSource());
 			CompilerReport reportOrbit = compiler.compileOrbit();
 			Assert.assertNotNull(reportOrbit);
 			Assert.assertNotNull(reportOrbit.getAst());

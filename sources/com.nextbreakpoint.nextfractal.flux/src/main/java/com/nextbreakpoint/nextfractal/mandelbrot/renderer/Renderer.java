@@ -27,6 +27,7 @@ package com.nextbreakpoint.nextfractal.mandelbrot.renderer;
 
 import java.util.concurrent.ThreadFactory;
 
+import com.nextbreakpoint.nextfractal.core.DoubleVector4D;
 import com.nextbreakpoint.nextfractal.core.Worker;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Color;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.MutableNumber;
@@ -39,8 +40,6 @@ import com.nextbreakpoint.nextfractal.mandelbrot.renderer.strategy.MandelbrotRen
  * @author Andrea Medeghini
  */
 public class Renderer {
-	public static final int MODE_CALCULATE = 0x01;
-	public static final int MODE_REFRESH = 0x02;
 	protected final RendererFractal rendererFractal;
 	protected final ThreadFactory threadFactory;
 	protected final RendererData rendererData;
@@ -54,7 +53,11 @@ public class Renderer {
 	protected int width;
 	protected int height;
 	protected boolean julia;
+	protected boolean continuous;
 	protected Number constant;
+	protected DoubleVector4D traslation;
+	protected DoubleVector4D rotation;
+	protected DoubleVector4D scale;
 
 	/**
 	 * @param rendererDelegate
@@ -131,13 +134,13 @@ public class Renderer {
 	}
 
 	/**
-	 * @param dynamic
+	 * 
 	 */
-	public void startRender(final boolean dynamic) {
+	public void startRender() {
 		rendererWorker.addTask(new Runnable() {
 			@Override
 			public void run() {
-				doRender(dynamic);
+				doRender();
 			}
 		});
 	}
@@ -152,8 +155,29 @@ public class Renderer {
 	/**
 	 * @param constant
 	 */
-	public void setConstant(double x, double y) {
-		this.constant = new Number(x, y);
+	public void setConstant(Number constant) {
+		this.constant = constant;
+	}
+
+	/**
+	 * @param traslation
+	 */
+	public void setTraslation(DoubleVector4D traslation) {
+		this.traslation = traslation;
+	}
+
+	/**
+	 * @param rotation
+	 */
+	public void setRotation(DoubleVector4D rotation) {
+		this.rotation = rotation;
+	}
+
+	/**
+	 * @param scale
+	 */
+	public void setScale(DoubleVector4D scale) {
+		this.scale = scale;
 	}
 
 	/**
@@ -194,6 +218,13 @@ public class Renderer {
 	}
 
 	/**
+	 * @param continuous
+	 */
+	public void setContinuous(boolean continuous) {
+		this.continuous = continuous;
+	}
+
+	/**
 	 * 
 	 */
 	protected void free() {
@@ -217,7 +248,7 @@ public class Renderer {
 	/**
 	 * @param dynamic
 	 */
-	protected void doRender(final boolean dynamic) {
+	protected void doRender() {
 		if (rendererFractal == null) {
 			progress = 1;
 			return;
@@ -233,12 +264,6 @@ public class Renderer {
 		} else {
 			rendererStrategy = new MandelbrotRendererStrategy(rendererFractal);
 		}
-		PixelStrategy pixelStrategy = null;
-		if (redraw) {
-			pixelStrategy = new RedrawPixelStrategy();
-		} else {
-			pixelStrategy = new RefreshPixelStrategy();
-		}
 		rendererStrategy.prepare();
 		rendererData.setSize(width, height, rendererFractal.getStateSize());
 		rendererData.setRegion(rendererFractal.getRegion());
@@ -249,11 +274,19 @@ public class Renderer {
 		final MutableNumber pw = new MutableNumber(0, 0);
 		final RendererPoint p = rendererData.newPoint();
 		int offset = 0;
+		int c = 0;
 		for (int y = 0; y < height; y++) {
 			for (int x = 0; x < width; x++) {
 				px.set(rendererData.point());
 				pw.set(rendererData.positionX(x), rendererData.positionY(y));
-				pixelStrategy.renderPixel(p, px, pw, offset);
+				if (redraw) {
+					c = rendererStrategy.renderPoint(p, px, pw);
+				} else {
+					rendererData.getPoint(offset, p);
+					c = rendererStrategy.renderColor(p);
+				}
+				rendererData.setPoint(offset, p);
+				rendererData.setPixel(offset, c);
 				offset += 1;
 			}
 			if (y % 20 == 0) {
@@ -275,26 +308,5 @@ public class Renderer {
 			rendererDelegate.didChanged(progress, rendererData.getPixels());
 		}
 		Thread.yield();
-	}
-	
-	private class RedrawPixelStrategy implements PixelStrategy {
-		@Override
-		public int renderPixel(RendererPoint p, Number x, Number w, int offset) {
-			int c = rendererStrategy.renderPoint(p, x, w);
-			rendererData.setPoint(offset, p);
-			rendererData.setPixel(offset, c);
-			return c;
-		}
-	}
-
-	private class RefreshPixelStrategy implements PixelStrategy {
-		@Override
-		public int renderPixel(RendererPoint p, Number x, Number w, int offset) {
-			rendererData.getPoint(offset, p);
-			int c = rendererStrategy.renderColor(p);
-			rendererData.setPoint(offset, p);
-			rendererData.setPixel(offset, c);
-			return c;
-		}
 	}
 }

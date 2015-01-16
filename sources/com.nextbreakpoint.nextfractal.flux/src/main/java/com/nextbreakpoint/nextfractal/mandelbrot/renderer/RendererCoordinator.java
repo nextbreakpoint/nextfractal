@@ -30,11 +30,10 @@ import java.util.Map;
 import java.util.concurrent.ThreadFactory;
 import java.util.logging.Logger;
 
-import com.nextbreakpoint.nextfractal.core.DoubleVector2D;
-import com.nextbreakpoint.nextfractal.core.DoubleVector4D;
 import com.nextbreakpoint.nextfractal.core.IntegerVector2D;
 import com.nextbreakpoint.nextfractal.core.Tile;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Color;
+import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Orbit;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.xaos.XaosRenderer;
 import com.nextbreakpoint.nextfractal.render.RenderAffine;
@@ -50,22 +49,19 @@ public class RendererCoordinator implements RendererDelegate {
 	public static final Integer VALUE_REALTIME = 1;
 	protected static final Logger logger = Logger.getLogger(RendererCoordinator.class.getName());
 	private final HashMap<String, Integer> hints = new HashMap<>();
-//	private View newView = new View(new IntegerVector4D(0, 0, 0, 0), new DoubleVector4D(0, 0, 1, 0), new DoubleVector4D(0, 0, 0, 0));
-//	private View oldView = new View(new IntegerVector4D(0, 0, 0, 0), new DoubleVector4D(0, 0, 1, 0), new DoubleVector4D(0, 0, 0, 0));
 	private final ThreadFactory threadFactory;
 	private final RenderFactory renderFactory;
 	private final Tile tile;
-	private volatile boolean changed;
+	private volatile boolean continuous;
+	private volatile boolean pixelsChanged;
 	private volatile float progress;
 	private RenderAffine affine;
 	private RenderBuffer buffer;
 	private RenderBuffer backBuffer;
 	private IntegerVector2D size;
-	private DoubleVector4D rotation;
-	private DoubleVector4D center;
-	private DoubleVector4D scale;
 	private Renderer renderer;
-
+	private RendererView view;
+	
 	/**
 	 * @param threadFactory
 	 * @param renderFactory
@@ -73,14 +69,11 @@ public class RendererCoordinator implements RendererDelegate {
 	 * @param hints
 	 */
 	public RendererCoordinator(ThreadFactory threadFactory, RenderFactory renderFactory, Tile tile, Map<String, Integer> hints) {
-//		factory = new DefaultThreadFactory("XaosRendererCoordinator", true, threadPriority);
 		this.threadFactory = threadFactory;
 		this.renderFactory = renderFactory;
 		this.tile = tile;
-		this.rotation = new DoubleVector4D(0, 0, 0, 0);
-		this.center = new DoubleVector4D(0, 0, 0, 0);
-		this.scale = new DoubleVector4D(1, 1, 1, 1);
 		this.hints.putAll(hints);
+		view = new RendererView();
 		init();
 	}
 
@@ -125,16 +118,10 @@ public class RendererCoordinator implements RendererDelegate {
 	 * 
 	 */
 	protected void startRender() {
-		changed = false;
+		pixelsChanged = false;
 		progress = 0;
-//		if (oldView != newView) {
-//			viewChanged = true;
-//			updateView(newView);
-//		}
-		// if (!isDynamic) {
-		// setMode(FractalRenderer.MODE_REFRESH);
-		// }
-		renderer.startRender(false);//TODO
+		renderer.setContinuous(continuous);
+		renderer.startRender();
 	}
 
 	/**
@@ -147,15 +134,15 @@ public class RendererCoordinator implements RendererDelegate {
 		}
 		swap();
 		this.progress = progress;
-		this.changed = true;
+		this.pixelsChanged = true;
 	}
 
 	/**
 	 * @return
 	 */
-	public boolean isChanged() {
-		boolean result = changed;
-		changed = false;
+	public boolean isPixelsChanged() {
+		boolean result = pixelsChanged;
+		pixelsChanged = false;
 		return result;
 	}
 
@@ -183,8 +170,8 @@ public class RendererCoordinator implements RendererDelegate {
 	/**
 	 * @param constant
 	 */
-	public void setConstant(final DoubleVector2D constant) {
-		renderer.setConstant(constant.getX(), constant.getY());
+	public void setConstant(Number constant) {
+		renderer.setConstant(constant);
 	}
 
 	/**
@@ -299,41 +286,6 @@ public class RendererCoordinator implements RendererDelegate {
 		}
 	}
 
-//	/**
-//	 * @see com.nextbreakpoint.nextfractal.mandelbrot.mandelbrot.renderer.MandelbrotRenderer#setView(com.nextbreakpoint.nextfractal.twister.util.View, com.nextbreakpoint.nextfractal.core.util.DoubleVector2D, int)
-//	 */
-//	@Override
-//	public void setView(final View view, final DoubleVector2D constant, final int imageMode) {
-//		synchronized (this) {
-//			newView = view;
-//			newConstant = constant;
-//			newImageMode = imageMode;
-//		}
-//	}
-//
-//	/**
-//	 * @see com.nextbreakpoint.nextfractal.mandelbrot.mandelbrot.renderer.MandelbrotRenderer#setView(com.nextbreakpoint.nextfractal.twister.util.View)
-//	 */
-//	@Override
-//	public void setView(final View view) {
-//		synchronized (this) {
-//			newView = view;
-//		}
-//	}
-
-//	private void updateView(final View view) {
-//		rotation = view.getRotation().getZ();
-//		newShiftValue = (int) Math.rint(view.getRotation().getW());
-//		if (newShiftValue < 0) {
-//			newShiftValue = 0;
-//		}
-//		dynamic = (view.getStatus().getZ() == 1) || (view.getStatus().getW() == 1);
-//		dynamicZoom = dynamic;
-//		if (view.getStatus().getZ() == 2) {
-//			setMode(Renderer.MODE_CALCULATE);
-//		}
-//	}
-
 	/**
 	 * 
 	 */
@@ -380,24 +332,38 @@ public class RendererCoordinator implements RendererDelegate {
 	}
 
 	/**
+	 * @param view
+	 */
+	public void setView(RendererView view) {
+		this.view = view;
+		stopRender();
+		renderer.setTraslation(view.getTraslation());
+		renderer.setRotation(view.getRotation());
+		renderer.setScale(view.getScale());
+		renderer.setJulia(view.isJulia());
+		renderer.setConstant(view.getConstant());
+		continuous = (view.getState().getZ() == 1) || (view.getState().getW() == 1);
+		startRender();
+	}
+	
+	/**
 	 * 
 	 */
 	protected void updateRegion() {
-//		if ((fractalRuntime.getRenderingFormula() != null) && (fractalRuntime.getRenderingFormula().getFormulaRuntime() != null)) {
 //			final DoubleVector2D s = fractalRuntime.getRenderingFormula().getFormulaRuntime().getScale();
 //			final double x = oldView.getPosition().getX();
 //			final double y = oldView.getPosition().getY();
 //			final double z = oldView.getPosition().getZ();
 //			scale.r = s.getX() * z;
 //			scale.i = s.getY() * z;
-//			center.r = fractalRuntime.getRenderingFormula().getFormulaRuntime().getCenter().getX() + x;
-//			center.i = fractalRuntime.getRenderingFormula().getFormulaRuntime().getCenter().getY() + y;
+//			traslation.r = fractalRuntime.getRenderingFormula().getFormulaRuntime().getCenter().getX() + x;
+//			traslation.i = fractalRuntime.getRenderingFormula().getFormulaRuntime().getCenter().getY() + y;
 //			final double imageOffsetX = (imageDim - oldTile.getImageSize().getX()) / 2;
 //			final double imageOffsetY = (imageDim - oldTile.getImageSize().getY()) / 2;
 //			double sx = (scale.r * 0.5d * imageDim) / oldTile.getImageSize().getX();
 //			double sy = (scale.i * 0.5d * imageDim) / oldTile.getImageSize().getX();
-//			Complex p0 = new Complex(center.r - sx, center.i - sy);
-//			Complex p1 = new Complex(center.r + sx, center.i + sy);
+//			Complex p0 = new Complex(traslation.r - sx, traslation.i - sy);
+//			Complex p1 = new Complex(traslation.r + sx, traslation.i + sy);
 //			final Complex t0 = new Complex();
 //			final Complex t1 = new Complex();
 //			final double dr = p1.r - p0.r;
@@ -417,13 +383,6 @@ public class RendererCoordinator implements RendererDelegate {
 //			p1 = new Complex(p.getX() + sx, p.getY() + sy);
 //			area.points[0] = p0;
 //			area.points[1] = p1;
-//		}
-//		else {
-//			final Complex p0 = new Complex(-0.5, +0.5);
-//			final Complex p1 = new Complex(-0.5, +0.5);
-//			area.points[0] = p0;
-//			area.points[1] = p1;
-//		}
 	}
 
 	/**
@@ -435,6 +394,6 @@ public class RendererCoordinator implements RendererDelegate {
 		final int centerX = getWidth() / 2;
 		final int centerY = getHeight() / 2;
 		affine = renderFactory.createTranslateAffine(-offsetX, -offsetY);
-		affine.append(renderFactory.createRotateAffine(rotation.getZ(), centerX, centerY));
+		affine.append(renderFactory.createRotateAffine(view.getRotation().getZ(), centerX, centerY));
 	}
 }

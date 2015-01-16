@@ -82,12 +82,13 @@ public class Compiler {
 	private final String packageName;
 	private final String className;
 	private final String source;
-	private File outDir = new File(System.getProperty("output", "generated"));
+	private final File outDir;
 	
-	public Compiler(String packageName, String className, String source) {
+	public Compiler(File outDir, String packageName, String className, String source) {
 		this.packageName = packageName;
 		this.className = className;
 		this.source = source;
+		this.outDir = outDir;
 	}
 
 	public CompilerReport compileOrbit() throws Exception {

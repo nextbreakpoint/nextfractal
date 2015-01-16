@@ -1,5 +1,7 @@
 package com.nextbreakpoint.nextfractal;
 
+import java.io.File;
+
 public interface FractalSession {
 	/**
 	 * @param listener
@@ -45,4 +47,14 @@ public interface FractalSession {
 	 * 
 	 */
 	public void terminate();
+
+	/**
+	 * @return
+	 */
+	public File getOutDir();
+
+	/**
+	 * @param outDir
+	 */
+	public void setOutDir(File outDir);
 }

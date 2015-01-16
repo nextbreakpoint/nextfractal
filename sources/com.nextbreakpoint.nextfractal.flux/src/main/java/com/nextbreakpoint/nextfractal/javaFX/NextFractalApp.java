@@ -1,5 +1,6 @@
 package com.nextbreakpoint.nextfractal.javaFX;
 
+import java.io.File;
 import java.util.ServiceLoader;
 
 import javafx.application.Application;
@@ -28,6 +29,17 @@ public class NextFractalApp extends Application {
 		int width = 500;
 		int height = 500;
 		int editorWidth = 300;
+        String pluginId = "Mandelbrot";
+    	File outDir = new File(System.getProperty("output", "generated"));
+//    	if (!outDir.exists()) {
+//    		return;
+//    	}
+//    	try {
+//			File lockFile = File.createTempFile("next-fractal", ".lock", outDir);
+//		} catch (IOException e) {
+//		}
+		String packageName = "com.nextbreakpoint.nextfractal.mandelbrot.fractal";
+		String className = pluginId;
         primaryStage.setTitle("NextFractal");
         primaryStage.setResizable(false);
         StackPane root = new StackPane();
@@ -52,12 +64,10 @@ public class NextFractalApp extends Application {
         mainPane.getChildren().add(renderRootPane);
         mainPane.getChildren().add(editorRootPane);
         root.getChildren().add(mainPane);
-        String pluginId = "Mandelbrot";
-		String packageName = "com.nextbreakpoint.nextfractal.mandelbrot.fractal";
-		String className = pluginId;
         FractalSession session = createFractalSession(pluginId);
         session.setPackageName(packageName);
         session.setClassName(className);
+        session.setOutDir(outDir);
         if (session != null) {
         	Pane renderPane = createRenderPane(session, pluginId, width, height);
         	if (renderPane != null) {
@@ -142,94 +152,4 @@ public class NextFractalApp extends Application {
 				+ "}\n";
 		return source;
 	}
-	
-/*	private class DefaultViewContext implements ViewContext {
-		@Override
-		public void showEditorView(Pane node) {
-			if (editorRootPane.getChildren().size() > 0) {
-				editorRootPane.getChildren().get(editorRootPane.getChildren().size() - 1).setDisable(true);
-			}
-			node.setLayoutY(editorRootPane.getHeight());
-			Dimension2D size = getEditorViewSize();
-			node.setLayoutX(editorRootPane.getPadding().getLeft());
-//			node.setLayoutY(editorRootPane.getPadding().getTop());
-			node.setPrefWidth(size.getWidth());
-			node.setPrefHeight(size.getHeight());
-			editorRootPane.getChildren().add(node);
-			TranslateTransition tt = new TranslateTransition(Duration.seconds(0.4));
-			tt.setFromY(0);
-			tt.setToY(-editorRootPane.getHeight() + editorRootPane.getPadding().getTop());
-			tt.setNode(node);
-			tt.play();
-			tt.setOnFinished(new EventHandler<ActionEvent>() {
-				@Override
-				public void handle(ActionEvent event) {
-				}
-			});
-		}
-
-		@Override
-		public void discardEditorView() {
-			if (editorRootPane.getChildren().size() > 1) {
-				Node node = editorRootPane.getChildren().get(editorRootPane.getChildren().size() - 1);
-				TranslateTransition tt = new TranslateTransition(Duration.seconds(0.4));
-				tt.setFromY(-editorRootPane.getHeight());
-				tt.setToY(0);
-				tt.setNode(node);
-				tt.setOnFinished(new EventHandler<ActionEvent>() {
-					@Override
-					public void handle(ActionEvent event) {
-						editorRootPane.getChildren().remove(node);
-						if (editorRootPane.getChildren().size() > 0) {
-							editorRootPane.getChildren().get(editorRootPane.getChildren().size() - 1).setDisable(false);
-						}
-					}
-				});
-				tt.play();
-			}
-		}
-
-		@Override
-		public void showRenderView(Pane node) {
-			Dimension2D size = getRenderViewSize();
-			node.setLayoutX(renderRootPane.getPadding().getLeft());
-			node.setLayoutY(renderRootPane.getPadding().getTop());
-			node.setPrefWidth(size.getWidth());
-			node.setPrefHeight(size.getHeight());
-			renderRootPane.getChildren().add(node);
-			FadeTransition ft = new FadeTransition(Duration.seconds(0.4));
-			ft.setFromValue(0);
-			ft.setToValue(1);
-			ft.setNode(node);
-			ft.play();
-		}
-
-		@Override
-		public void discardRenderView() {
-			if (renderRootPane.getChildren().size() > 1) {
-				Node node = renderRootPane.getChildren().get(renderRootPane.getChildren().size() - 1);
-				FadeTransition ft = new FadeTransition(Duration.seconds(0.4));
-				ft.setFromValue(1);
-				ft.setToValue(0);
-				ft.setNode(node);
-				ft.setOnFinished(new EventHandler<ActionEvent>() {
-					@Override
-					public void handle(ActionEvent event) {
-						renderRootPane.getChildren().remove(node);
-					}
-				});
-				ft.play();
-			}
-		}
-
-		@Override
-		public Dimension2D getEditorViewSize() {
-			return new Dimension2D(editorRootPane.getWidth() - editorRootPane.getPadding().getLeft() - editorRootPane.getPadding().getRight(), editorRootPane.getHeight() - editorRootPane.getPadding().getTop() - editorRootPane.getPadding().getBottom());
-		}
-
-		@Override
-		public Dimension2D getRenderViewSize() {
-			return new Dimension2D(renderRootPane.getWidth() - renderRootPane.getPadding().getLeft() - renderRootPane.getPadding().getRight(), renderRootPane.getHeight() - renderRootPane.getPadding().getTop() - renderRootPane.getPadding().getBottom());
-		}
-	}*/
 }

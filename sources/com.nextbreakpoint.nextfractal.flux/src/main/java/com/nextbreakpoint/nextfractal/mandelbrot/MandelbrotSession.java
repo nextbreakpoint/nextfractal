@@ -1,5 +1,6 @@
 package com.nextbreakpoint.nextfractal.mandelbrot;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,6 +12,7 @@ public class MandelbrotSession implements FractalSession {
 	private String packageName;
 	private String className;
 	private String source;
+	private File outDir;
 	
 	/**
 	 * @see com.nextbreakpoint.nextfractal.FractalSession#getSource()
@@ -83,5 +85,13 @@ public class MandelbrotSession implements FractalSession {
 		for (FractalSessionListener listener : listeners) {
 			listener.terminate(this);
 		}
+	}
+
+	public File getOutDir() {
+		return outDir;
+	}
+
+	public void setOutDir(File outDir) {
+		this.outDir = outDir;
 	}
 }
