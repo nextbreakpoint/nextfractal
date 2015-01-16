@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 import javafx.animation.AnimationTimer;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 
 import com.nextbreakpoint.nextfractal.FractalSession;
@@ -34,11 +35,13 @@ public class MandelbrotRenderPane extends BorderPane {
 	private int height;
 	private String astOrbit;
 	private String astColor;
+	private Tool currentTool;
 	
 	public MandelbrotRenderPane(FractalSession session, int width, int height) {
 		this.session = session;
 		this.width = width;
 		this.height = height;
+		currentTool = new ZoomTool();
         Canvas canvas = new Canvas(width, height);
         setCenter(canvas);
         GraphicsContext gc = canvas.getGraphicsContext2D();
@@ -93,19 +96,29 @@ public class MandelbrotRenderPane extends BorderPane {
 			}
 		});
 		canvas.setOnMouseClicked(e -> {
-			//TODO
+			if (currentTool != null) {
+				currentTool.clicked(e);
+			}
 		});
 		canvas.setOnMousePressed(e -> {
-			//TODO
+			if (currentTool != null) {
+				currentTool.pressed(e);
+			}
 		});
 		canvas.setOnMouseReleased(e -> {
-			//TODO
+			if (currentTool != null) {
+				currentTool.released(e);
+			}
 		});
 		canvas.setOnMouseDragged(e -> {
-			//TODO
+			if (currentTool != null) {
+				currentTool.dragged(e);
+			}
 		});
 		canvas.setOnMouseMoved(e -> {
-			//TODO
+			if (currentTool != null) {
+				currentTool.moved(e);
+			}
 		});
 	}
 
@@ -133,5 +146,98 @@ public class MandelbrotRenderPane extends BorderPane {
 		RendererSize tileOffset = new RendererSize(0, 0);
 		RendererTile tile = new RendererTile(imageSize, tileSize, tileOffset, tileBorder);
 		return tile;
+	}
+	
+	private interface Tool {
+		public void clicked(MouseEvent e);
+
+		public void moved(MouseEvent e);
+
+		public void dragged(MouseEvent e);
+
+		public void released(MouseEvent e);
+
+		public void pressed(MouseEvent e);
+	}
+	
+	private class ZoomTool implements Tool {
+		@Override
+		public void clicked(MouseEvent e) {
+			// TODO Auto-generated method stub
+		}
+
+		@Override
+		public void moved(MouseEvent e) {
+			// TODO Auto-generated method stub
+		}
+
+		@Override
+		public void dragged(MouseEvent e) {
+			// TODO Auto-generated method stub
+		}
+
+		@Override
+		public void released(MouseEvent e) {
+			// TODO Auto-generated method stub
+		}
+
+		@Override
+		public void pressed(MouseEvent e) {
+			// TODO Auto-generated method stub
+		}
+	}
+	
+	private class MoveTool implements Tool {
+		@Override
+		public void clicked(MouseEvent e) {
+			// TODO Auto-generated method stub
+		}
+
+		@Override
+		public void moved(MouseEvent e) {
+			// TODO Auto-generated method stub
+		}
+
+		@Override
+		public void dragged(MouseEvent e) {
+			// TODO Auto-generated method stub
+		}
+
+		@Override
+		public void released(MouseEvent e) {
+			// TODO Auto-generated method stub
+		}
+
+		@Override
+		public void pressed(MouseEvent e) {
+			// TODO Auto-generated method stub
+		}
+	}
+	
+	private class PickTool implements Tool {
+		@Override
+		public void clicked(MouseEvent e) {
+			// TODO Auto-generated method stub
+		}
+
+		@Override
+		public void moved(MouseEvent e) {
+			// TODO Auto-generated method stub
+		}
+
+		@Override
+		public void dragged(MouseEvent e) {
+			// TODO Auto-generated method stub
+		}
+
+		@Override
+		public void released(MouseEvent e) {
+			// TODO Auto-generated method stub
+		}
+
+		@Override
+		public void pressed(MouseEvent e) {
+			// TODO Auto-generated method stub
+		}
 	}
 }
