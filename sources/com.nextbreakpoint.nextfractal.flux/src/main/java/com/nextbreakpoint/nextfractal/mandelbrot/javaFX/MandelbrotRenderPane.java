@@ -75,10 +75,8 @@ public class MandelbrotRenderPane extends BorderPane {
 						rendererCoordinator.setOrbitAndColor((Orbit)reportOrbit.getObject(), (Color)reportColor.getObject());
 					} else {
 						if (orbitChanged) {
-							System.out.println("orbit changed");
 							rendererCoordinator.setOrbitAndColor((Orbit)reportOrbit.getObject(), (Color)reportColor.getObject());
 						} else if (colorChanged) {
-							System.out.println("color changed");
 							rendererCoordinator.setColor((Color)reportColor.getObject());
 						}
 					}
