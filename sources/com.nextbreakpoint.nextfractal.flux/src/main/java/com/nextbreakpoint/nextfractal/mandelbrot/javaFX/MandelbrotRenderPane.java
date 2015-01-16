@@ -13,13 +13,13 @@ import javafx.scene.layout.BorderPane;
 import com.nextbreakpoint.nextfractal.FractalSession;
 import com.nextbreakpoint.nextfractal.FractalSessionListener;
 import com.nextbreakpoint.nextfractal.core.DefaultThreadFactory;
-import com.nextbreakpoint.nextfractal.core.IntegerVector2D;
-import com.nextbreakpoint.nextfractal.core.Tile;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.Compiler;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerReport;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Color;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Orbit;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererCoordinator;
+import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererSize;
+import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererTile;
 import com.nextbreakpoint.nextfractal.render.RenderGraphicsContext;
 import com.nextbreakpoint.nextfractal.render.javaFX.JavaFXRenderFactory;
 
@@ -126,12 +126,12 @@ public class MandelbrotRenderPane extends BorderPane {
 		timer.start();
 	}
 
-	private Tile createTile() {
-		IntegerVector2D imageSize = new IntegerVector2D(width, height);
-		IntegerVector2D tileSize = new IntegerVector2D(width, height);
-		IntegerVector2D tileBorder = new IntegerVector2D(0, 0);
-		IntegerVector2D tileOffset = new IntegerVector2D(0, 0);
-		Tile tile = new Tile(imageSize, tileSize, tileOffset, tileBorder);
+	private RendererTile createTile() {
+		RendererSize imageSize = new RendererSize(width, height);
+		RendererSize tileSize = new RendererSize(width, height);
+		RendererSize tileBorder = new RendererSize(0, 0);
+		RendererSize tileOffset = new RendererSize(0, 0);
+		RendererTile tile = new RendererTile(imageSize, tileSize, tileOffset, tileBorder);
 		return tile;
 	}
 }

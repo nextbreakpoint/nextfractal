@@ -27,7 +27,6 @@ package com.nextbreakpoint.nextfractal.mandelbrot.renderer;
 
 import java.util.concurrent.ThreadFactory;
 
-import com.nextbreakpoint.nextfractal.core.DoubleVector4D;
 import com.nextbreakpoint.nextfractal.core.Worker;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Color;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.MutableNumber;
@@ -55,9 +54,7 @@ public class Renderer {
 	protected boolean julia;
 	protected boolean continuous;
 	protected Number constant;
-	protected DoubleVector4D traslation;
-	protected DoubleVector4D rotation;
-	protected DoubleVector4D scale;
+	protected Number[] region;
 
 	/**
 	 * @param rendererDelegate
@@ -160,27 +157,6 @@ public class Renderer {
 	}
 
 	/**
-	 * @param traslation
-	 */
-	public void setTraslation(DoubleVector4D traslation) {
-		this.traslation = traslation;
-	}
-
-	/**
-	 * @param rotation
-	 */
-	public void setRotation(DoubleVector4D rotation) {
-		this.rotation = rotation;
-	}
-
-	/**
-	 * @param scale
-	 */
-	public void setScale(DoubleVector4D scale) {
-		this.scale = scale;
-	}
-
-	/**
 	 * @return
 	 */
 	public RendererDelegate getRendererDelegate() {
@@ -206,6 +182,7 @@ public class Renderer {
 	 */
 	public void setOrbit(Orbit orbit) {
 		rendererFractal.setOrbit(orbit);
+		region = orbit.getInitialRegion();
 		orbitChanged = true;
 	}
 
@@ -246,6 +223,20 @@ public class Renderer {
 	}
 
 	/**
+	 * @return
+	 */
+	public Number[] getRegion() {
+		return region;
+	}
+
+	/**
+	 * @param region
+	 */
+	public void setRegion(Number[] region) {
+		this.region = region;
+	}
+
+	/**
 	 * @param dynamic
 	 */
 	protected void doRender() {
@@ -257,7 +248,8 @@ public class Renderer {
 		orbitChanged = false;
 		colorChanged = false;
 		progress = 0;
-		rendererFractal.clearScope();
+		rendererFractal.initialize();
+		rendererFractal.setRegion(region);
 		rendererFractal.setConstant(constant);
 		if (julia) {
 			rendererStrategy = new JuliaRendererStrategy(rendererFractal);

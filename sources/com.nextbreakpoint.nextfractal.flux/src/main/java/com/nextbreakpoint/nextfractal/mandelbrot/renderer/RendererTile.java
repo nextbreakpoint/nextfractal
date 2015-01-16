@@ -23,20 +23,16 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.core;
-
-import java.io.Serializable;
-
+package com.nextbreakpoint.nextfractal.mandelbrot.renderer;
 
 /**
  * @author Andrea Medeghini
  */
-public class Tile implements Serializable {
-	private static final long serialVersionUID = 1L;
-	private final IntegerVector2D imageSize;
-	private final IntegerVector2D tileSize;
-	private final IntegerVector2D tileOffset;
-	private final IntegerVector2D tileBorder;
+public class RendererTile {
+	private final RendererSize imageSize;
+	private final RendererSize tileSize;
+	private final RendererSize tileOffset;
+	private final RendererSize tileBorder;
 
 	/**
 	 * @param imageSize
@@ -44,7 +40,7 @@ public class Tile implements Serializable {
 	 * @param tileOffset
 	 * @param tileBorder
 	 */
-	public Tile(final IntegerVector2D imageSize, final IntegerVector2D tileSize, final IntegerVector2D tileOffset, final IntegerVector2D tileBorder) {
+	public RendererTile(final RendererSize imageSize, final RendererSize tileSize, final RendererSize tileOffset, final RendererSize tileBorder) {
 		this.imageSize = imageSize;
 		this.tileSize = tileSize;
 		this.tileOffset = tileOffset;
@@ -54,28 +50,28 @@ public class Tile implements Serializable {
 	/**
 	 * @return the imageSize
 	 */
-	public IntegerVector2D getImageSize() {
+	public RendererSize getImageSize() {
 		return imageSize;
 	}
 
 	/**
 	 * @return the tileBorder
 	 */
-	public IntegerVector2D getTileBorder() {
+	public RendererSize getTileBorder() {
 		return tileBorder;
 	}
 
 	/**
 	 * @return the tileOffset
 	 */
-	public IntegerVector2D getTileOffset() {
+	public RendererSize getTileOffset() {
 		return tileOffset;
 	}
 
 	/**
 	 * @return the tileSize
 	 */
-	public IntegerVector2D getTileSize() {
+	public RendererSize getTileSize() {
 		return tileSize;
 	}
 

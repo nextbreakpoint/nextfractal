@@ -309,7 +309,7 @@ public class Compiler {
 	private void compile(StringBuilder builder, Map<String, CompilerVariable> variables, Collection<CompilerVariable> vars, ASTOrbit orbit) {
 		builder.append("public void init() {\n");
 		if (orbit != null) {
-			builder.append("setRegion(");
+			builder.append("setInitialRegion(");
 			builder.append("new Number(");
 			builder.append(orbit.getRegion().getA());
 			builder.append("),new Number(");

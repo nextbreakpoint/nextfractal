@@ -106,7 +106,8 @@ public final class XaosRenderer extends Renderer {
 		colorChanged = false;
 		aborted = false;
 		progress = 0;
-		rendererFractal.clearScope();
+		rendererFractal.initialize();
+		rendererFractal.setRegion(region);
 		rendererFractal.setConstant(constant);
 		if (julia) {
 			rendererStrategy = new JuliaRendererStrategy(rendererFractal);

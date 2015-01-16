@@ -11,7 +11,7 @@ public class RendererFractal {
 	private Orbit orbit;
 	private Color color;
 
-	public void clearScope() {
+	public void initialize() {
 		scope.clear();
 		if (orbit != null) {
 			orbit.setScope(scope);
@@ -119,5 +119,12 @@ public class RendererFractal {
 	 */
 	public Number[] getRegion() {
 		return orbit.region();
+	}
+
+	/**
+	 * @param region
+	 */
+	public void setRegion(Number[] region) {
+		orbit.setRegion(region);
 	}
 }

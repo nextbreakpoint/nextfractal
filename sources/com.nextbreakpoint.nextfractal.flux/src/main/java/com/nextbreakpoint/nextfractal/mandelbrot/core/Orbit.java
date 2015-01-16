@@ -1,7 +1,8 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.core;
 
 public abstract class Orbit {
-	private final MutableNumber[] region = new MutableNumber[2];
+	protected Number[] initialRegion = new Number[2];
+	protected Number[] region = new Number[2];
 	protected Number x = new Number(0,0);
 	protected Number w = new Number(0,0);
 	protected Number z = new Number(0,0);
@@ -10,6 +11,8 @@ public abstract class Orbit {
 	protected Scope scope;
 
 	public Orbit() {
+		initialRegion[0] = new MutableNumber();
+		initialRegion[1] = new MutableNumber();
 		region[0] = new MutableNumber();
 		region[1] = new MutableNumber();
 	}
@@ -54,11 +57,6 @@ public abstract class Orbit {
 		return region;
 	}
 
-	protected void setRegion(Number a, Number b) {
-		this.region[0].set(a);
-		this.region[1].set(b);
-	}
-
 	protected Trap trap(Number center) {
 		return new Trap(center);
 	}
@@ -85,5 +83,18 @@ public abstract class Orbit {
 
 	public void createVariable(Number value) {
 		scope.createVariable(value);
+	}
+
+	public void setRegion(Number[] region) {
+		this.region = region;
+	}
+
+	public Number[] getInitialRegion() {
+		return initialRegion;
+	}
+
+	public void setInitialRegion(Number a, Number b) {
+		this.initialRegion[0].set(a);
+		this.initialRegion[1].set(b);
 	}
 }
