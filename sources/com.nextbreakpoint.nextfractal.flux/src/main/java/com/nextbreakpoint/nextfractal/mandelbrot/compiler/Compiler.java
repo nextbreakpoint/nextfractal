@@ -541,7 +541,7 @@ public class Compiler {
 			}
 			builder.append("if (");
 			loop.getExpression().compile(new ExpressionCompiler(builder));
-			builder.append(") { n = number(i - 1); break; }\n");
+			builder.append(") { n = number(i); break; }\n");
 			builder.append("}\n");
 		}
 	}

@@ -16,10 +16,10 @@ public class RendererView {
 	private boolean julia;
 	
 	public RendererView() {
-		traslation = new DoubleVector4D(0, 0, 0, 0);
+		traslation = new DoubleVector4D(0, 0, 1, 0);
 		rotation = new DoubleVector4D(0, 0, 0, 0);
 		scale = new DoubleVector4D(1, 1, 1, 1);
-		state = new IntegerVector4D(1, 1, 1, 1);
+		state = new IntegerVector4D(0, 0, 0, 0);
 		constant = new Number(0, 0);
 	}
 	

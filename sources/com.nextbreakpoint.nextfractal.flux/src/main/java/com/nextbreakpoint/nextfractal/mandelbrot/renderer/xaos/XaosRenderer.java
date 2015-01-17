@@ -105,8 +105,11 @@ public final class XaosRenderer extends Renderer {
 		final boolean refresh = redraw || colorChanged;//TODO redraw?
 		colorChanged = false;
 		aborted = false;
+//		logger.info("redraw " + redraw);
+//		logger.info("refresh " + refresh);
+//		logger.info("continuous " + continuous);
 		progress = 0;
-		rendererFractal.initialize();
+		rendererFractal.clearScope();
 		rendererFractal.setRegion(region);
 		rendererFractal.setConstant(constant);
 		if (julia) {

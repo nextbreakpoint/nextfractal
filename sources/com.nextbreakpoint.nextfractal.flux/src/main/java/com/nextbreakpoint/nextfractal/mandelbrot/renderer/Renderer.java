@@ -182,7 +182,6 @@ public class Renderer {
 	 */
 	public void setOrbit(Orbit orbit) {
 		rendererFractal.setOrbit(orbit);
-		region = orbit.getInitialRegion();
 		orbitChanged = true;
 	}
 
@@ -204,6 +203,13 @@ public class Renderer {
 	/**
 	 * 
 	 */
+	protected void init() {
+		rendererFractal.initialize();
+	}
+
+	/**
+	 * 
+	 */
 	protected void free() {
 		rendererData.free();
 	}
@@ -220,6 +226,13 @@ public class Renderer {
 	 */
 	protected void stop() {
 		rendererWorker.stop();
+	}
+
+	/**
+	 * @return
+	 */
+	public Number[] getInitialRegion() {
+		return rendererFractal.getInitialRegion();
 	}
 
 	/**
@@ -248,7 +261,7 @@ public class Renderer {
 		orbitChanged = false;
 		colorChanged = false;
 		progress = 0;
-		rendererFractal.initialize();
+		rendererFractal.clearScope();
 		rendererFractal.setRegion(region);
 		rendererFractal.setConstant(constant);
 		if (julia) {

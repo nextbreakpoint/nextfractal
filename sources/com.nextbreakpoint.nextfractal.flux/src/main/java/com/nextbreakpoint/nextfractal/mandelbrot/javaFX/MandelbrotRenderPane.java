@@ -14,6 +14,8 @@ import javafx.scene.layout.BorderPane;
 import com.nextbreakpoint.nextfractal.FractalSession;
 import com.nextbreakpoint.nextfractal.FractalSessionListener;
 import com.nextbreakpoint.nextfractal.core.DefaultThreadFactory;
+import com.nextbreakpoint.nextfractal.core.DoubleVector4D;
+import com.nextbreakpoint.nextfractal.core.IntegerVector4D;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.Compiler;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerReport;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Color;
@@ -21,6 +23,7 @@ import com.nextbreakpoint.nextfractal.mandelbrot.core.Orbit;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererCoordinator;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererSize;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererTile;
+import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererView;
 import com.nextbreakpoint.nextfractal.render.RenderGraphicsContext;
 import com.nextbreakpoint.nextfractal.render.javaFX.JavaFXRenderFactory;
 
@@ -36,12 +39,14 @@ public class MandelbrotRenderPane extends BorderPane {
 	private String astOrbit;
 	private String astColor;
 	private Tool currentTool;
+	private RendererView view;
 	
 	public MandelbrotRenderPane(FractalSession session, int width, int height) {
 		this.session = session;
 		this.width = width;
 		this.height = height;
 		currentTool = new ZoomTool();
+		view = new RendererView();
         Canvas canvas = new Canvas(width, height);
         setCenter(canvas);
         GraphicsContext gc = canvas.getGraphicsContext2D();
@@ -74,6 +79,7 @@ public class MandelbrotRenderPane extends BorderPane {
 					if (colorChanged) {
 						logger.info("Color algorithm is changed");
 					}
+					rendererCoordinator.stopRender();
 					if (Boolean.getBoolean("disableSmartRender")) {
 						rendererCoordinator.setOrbitAndColor((Orbit)reportOrbit.getObject(), (Color)reportColor.getObject());
 					} else {
@@ -83,6 +89,9 @@ public class MandelbrotRenderPane extends BorderPane {
 							rendererCoordinator.setColor((Color)reportColor.getObject());
 						}
 					}
+					rendererCoordinator.init();
+					rendererCoordinator.setView(view);
+					rendererCoordinator.startRender();
 //					rendererCoordinator.setOrbitAndColor(new MandelbrotOrbit(), new MandelbrotColor());
 				} catch (Exception e) {
 					e.printStackTrace();//TODO display errors
@@ -129,6 +138,11 @@ public class MandelbrotRenderPane extends BorderPane {
 			@Override
 			public void handle(long now) {
 				long time = now / 1000000;
+				if ((time - last) > 20 && rendererCoordinator != null) {
+					if (currentTool != null) {
+						currentTool.update(time);
+					}
+				}
 				if ((time - last) > 50 && rendererCoordinator != null && rendererCoordinator.isPixelsChanged()) {
 					RenderGraphicsContext gc = renderFactory.createGraphicsContext(canvas.getGraphicsContext2D());
 					rendererCoordinator.drawImage(gc);
@@ -158,86 +172,154 @@ public class MandelbrotRenderPane extends BorderPane {
 		public void released(MouseEvent e);
 
 		public void pressed(MouseEvent e);
+
+		public void update(long time);
 	}
 	
 	private class ZoomTool implements Tool {
+		private volatile boolean pressed;
+		private volatile boolean active;
+		private boolean zoomin;
+		private double x0;
+		private double y0;
+		private double x1;
+		private double y1;
+		private double z;
+		private DoubleVector4D t;
+		private IntegerVector4D s;
+		
 		@Override
 		public void clicked(MouseEvent e) {
-			// TODO Auto-generated method stub
 		}
 
 		@Override
 		public void moved(MouseEvent e) {
-			// TODO Auto-generated method stub
 		}
 
 		@Override
 		public void dragged(MouseEvent e) {
-			// TODO Auto-generated method stub
+			x1 = (e.getSceneX() - rendererCoordinator.getWidth() / 2) / rendererCoordinator.getWidth();
+			y1 = (e.getSceneY() - rendererCoordinator.getHeight() / 2) / rendererCoordinator.getHeight();
+			z = zoomin ? z * 0.01 : z / 0.01;
 		}
 
 		@Override
 		public void released(MouseEvent e) {
-			// TODO Auto-generated method stub
+			pressed = false;
 		}
 
 		@Override
 		public void pressed(MouseEvent e) {
-			// TODO Auto-generated method stub
+			pressed = true;
+			active = true;
+			x0 = (e.getSceneX() - rendererCoordinator.getWidth() / 2) / rendererCoordinator.getWidth();
+			y0 = (e.getSceneY() - rendererCoordinator.getHeight() / 2) / rendererCoordinator.getHeight();
+			z = 1;
+			s = view.getState();
+			t = view.getTraslation();
+			zoomin = (e.isPrimaryButtonDown()) ? true : false;
+		}
+
+		@Override
+		public void update(long time) {
+			if (pressed) {
+				rendererCoordinator.stopRender();
+				view.setTraslation(new DoubleVector4D(t.getX() + x1 - x0, t.getY() + y0 - y1, t.getZ() * z, t.getW()));
+				view.setState(new IntegerVector4D(s.getX(), s.getY(), 1, s.getW()));
+				rendererCoordinator.setView(view);
+				rendererCoordinator.startRender();
+			} else if (active) {
+				rendererCoordinator.stopRender();
+				view.setTraslation(new DoubleVector4D(t.getX() + x1 - x0, t.getY() + y0 - y1, t.getZ() * z, t.getW()));
+				view.setState(new IntegerVector4D(s.getX(), s.getY(), 0, s.getW()));
+				rendererCoordinator.setView(view);
+				rendererCoordinator.startRender();
+				active = false;
+			}
 		}
 	}
 	
 	private class MoveTool implements Tool {
+		private volatile boolean pressed;
+		private volatile boolean active;
+		private double x0;
+		private double y0;
+		private double x1;
+		private double y1;
+		private DoubleVector4D t;
+		private IntegerVector4D s;
+
 		@Override
 		public void clicked(MouseEvent e) {
-			// TODO Auto-generated method stub
 		}
 
 		@Override
 		public void moved(MouseEvent e) {
-			// TODO Auto-generated method stub
 		}
 
 		@Override
 		public void dragged(MouseEvent e) {
-			// TODO Auto-generated method stub
+			x1 = (e.getSceneX() - rendererCoordinator.getWidth() / 2) / rendererCoordinator.getWidth();
+			y1 = (e.getSceneY() - rendererCoordinator.getHeight() / 2) / rendererCoordinator.getHeight();
 		}
 
 		@Override
 		public void released(MouseEvent e) {
-			// TODO Auto-generated method stub
+			pressed = false;
 		}
 
 		@Override
 		public void pressed(MouseEvent e) {
-			// TODO Auto-generated method stub
+			pressed = true;
+			active = true;
+			x0 = (e.getSceneX() - rendererCoordinator.getWidth() / 2) / rendererCoordinator.getWidth();
+			y0 = (e.getSceneY() - rendererCoordinator.getHeight() / 2) / rendererCoordinator.getHeight();
+			s = view.getState();
+			t = view.getTraslation();
+		}
+
+		@Override
+		public void update(long time) {
+			if (pressed) {
+				rendererCoordinator.stopRender();
+				view.setTraslation(new DoubleVector4D(t.getX() + x1 - x0, t.getY() + y0 - y1, t.getZ(), t.getW()));
+				view.setState(new IntegerVector4D(s.getX(), s.getY(), 1, s.getW()));
+				rendererCoordinator.setView(view);
+				rendererCoordinator.startRender();
+			} else if (active) {
+				rendererCoordinator.stopRender();
+				view.setTraslation(new DoubleVector4D(t.getX() + x1 - x0, t.getY() + y0 - y1, t.getZ(), t.getW()));
+				view.setState(new IntegerVector4D(s.getX(), s.getY(), 0, s.getW()));
+				rendererCoordinator.setView(view);
+				rendererCoordinator.startRender();
+				active = false;
+			}
 		}
 	}
 	
 	private class PickTool implements Tool {
 		@Override
 		public void clicked(MouseEvent e) {
-			// TODO Auto-generated method stub
 		}
 
 		@Override
 		public void moved(MouseEvent e) {
-			// TODO Auto-generated method stub
 		}
 
 		@Override
 		public void dragged(MouseEvent e) {
-			// TODO Auto-generated method stub
 		}
 
 		@Override
 		public void released(MouseEvent e) {
-			// TODO Auto-generated method stub
 		}
 
 		@Override
 		public void pressed(MouseEvent e) {
-			// TODO Auto-generated method stub
+		}
+
+		@Override
+		public void update(long time) {
 		}
 	}
 }

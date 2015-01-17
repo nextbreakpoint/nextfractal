@@ -12,13 +12,9 @@ public class RendererFractal {
 	private Color color;
 
 	public void initialize() {
-		scope.clear();
+		scope.empty();
 		if (orbit != null) {
-			orbit.setScope(scope);
 			orbit.init();
-		}
-		if (color != null) {
-			color.setScope(scope);
 		}
 	}
 
@@ -32,10 +28,16 @@ public class RendererFractal {
 
 	public void setOrbit(Orbit orbit) {
 		this.orbit = orbit;
+		if (orbit != null) {
+			orbit.setScope(scope);
+		}
 	}
 
 	public void setColor(Color color) {
 		this.color = color;
+		if (color != null) {
+			color.setScope(scope);
+		}
 	}
 
 	/**
@@ -126,5 +128,19 @@ public class RendererFractal {
 	 */
 	public void setRegion(Number[] region) {
 		orbit.setRegion(region);
+	}
+
+	/**
+	 * @return
+	 */
+	public Number[] getInitialRegion() {
+		return orbit.getInitialRegion();
+	}
+
+	/**
+	 * 
+	 */
+	public void clearScope() {
+		scope.clear();
 	}
 }

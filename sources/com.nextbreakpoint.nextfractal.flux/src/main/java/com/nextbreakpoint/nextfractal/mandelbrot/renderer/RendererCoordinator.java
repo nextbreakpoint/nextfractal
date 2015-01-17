@@ -118,21 +118,21 @@ public class RendererCoordinator implements RendererDelegate {
 	/**
 	 * 
 	 */
-	protected void abortRender() {
+	public void abortRender() {
 		renderer.abortRender();
 	}
 	
 	/**
 	 * 
 	 */
-	protected void joinRender() {
+	public void joinRender() {
 		renderer.joinRender();
 	}
 	
 	/**
 	 * 
 	 */
-	protected void startRender() {
+	public void startRender() {
 		pixelsChanged = false;
 		progress = 0;
 		renderer.setContinuous(continuous);
@@ -201,23 +201,22 @@ public class RendererCoordinator implements RendererDelegate {
 	 * @param color
 	 */
 	public void setOrbitAndColor(Orbit orbit, Color color) {
-		stopRender();
 		renderer.setOrbit(orbit);
 		renderer.setColor(color);
-		if (orbit != null && color != null) {
-			startRender();
-		}
 	}
 
 	/**
 	 * @param color
 	 */
 	public void setColor(Color color) {
-		stopRender();
 		renderer.setColor(color);
-		if (color != null) {
-			startRender();
-		}
+	}
+
+	/**
+	 * 
+	 */
+	public void init() {
+		renderer.init();
 	}
 
 	/**
@@ -358,7 +357,7 @@ public class RendererCoordinator implements RendererDelegate {
 		final RendererSize tileOffset = tile.getTileOffset();
 		final RendererSize tileSize = tile.getTileSize();
 		final RendererSize imageSize = tile.getImageSize();
-		final Number[] region = renderer.getRegion();
+		final Number[] region = renderer.getInitialRegion();
 		final Number center = new Number((region[0].r() + region[1].r()) / 2 + tx, (region[0].i() + region[1].i()) / 2 + ty);
 		final Number size = new Number((region[1].r() - region[0].r()) * tz, (region[1].i() - region[0].i()) * tz);
 		final int imageDim = (int) Math.hypot(imageSize.getWidth() + tileBorder.getWidth() * 2, imageSize.getHeight() + tileBorder.getHeight() * 2);
@@ -381,6 +380,7 @@ public class RendererCoordinator implements RendererDelegate {
 		final Number[] newRegion = new Number[2];
 		newRegion[0] = new Number(cx - dx, cy - dy);
 		newRegion[1] = new Number(cx + dx, cy + dy);
+		logger.info(newRegion[0] + " " + newRegion[1]);
 		return newRegion;
 	}
 
