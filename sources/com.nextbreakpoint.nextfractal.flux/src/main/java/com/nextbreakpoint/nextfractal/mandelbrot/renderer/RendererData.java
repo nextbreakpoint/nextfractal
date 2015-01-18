@@ -74,12 +74,6 @@ public class RendererData {
 			}
 			this.depth = depth;
 		}
-		for (int i = 0; i < width; i++) {
-			positionX[i] = 0;
-		}
-		for (int i = 0; i < height; i++) {
-			positionY[i] = 0;
-		}
 	}
 
 	/**
@@ -139,7 +133,6 @@ public class RendererData {
 	public void setRegion(Number[] region) {
 		this.region[0].set(region[0]);
 		this.region[1].set(region[1]);
-		initPositions();
 	}
 	
 	/**

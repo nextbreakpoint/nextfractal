@@ -276,6 +276,7 @@ public class Renderer {
 		rendererStrategy.prepare();
 		rendererData.setSize(width, height, rendererFractal.getStateSize());
 		rendererData.setRegion(rendererFractal.getRegion());
+		rendererData.initPositions();
 		rendererData.swap();
 //		rendererData.clearPixels();
 //		if (rendererDelegate != null) {

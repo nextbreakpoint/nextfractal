@@ -134,7 +134,8 @@ public class NextFractalApp extends Application {
 	protected String getInitialSource() {
 		String source = ""
 				+ "fractal {\n"
-				+ "\torbit [-2.0 - 1.5i,+1.0 + 1.5i] [z,x,n] {\n"
+//				+ "\torbit [-2.0 - 1.5i,+1.0 + 1.5i] [z,x,n] {\n"
+				+ "\torbit [-1 - 1i,+1 + 1i] [z,x,n] {\n"
 				+ "\t\tbegin {\n"
 				+ "\t\t\tz = x;\n"
 				+ "\t\t}\n"
@@ -146,7 +147,7 @@ public class NextFractalApp extends Application {
 				+ "\t\t\t1,0,0,0\n"
 				+ "\t\t}\n"
 				+ "\t\trule (re(n) > 0) [1.0] {\n"
-				+ "\t\t\t1,0,0,0.4\n"
+				+ "\t\t\t1,1,1,1\n"
 				+ "\t\t}\n"
 				+ "\t}\n"
 				+ "}\n";

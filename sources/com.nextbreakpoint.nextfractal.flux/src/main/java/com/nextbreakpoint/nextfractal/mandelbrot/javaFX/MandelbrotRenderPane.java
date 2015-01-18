@@ -46,6 +46,7 @@ public class MandelbrotRenderPane extends BorderPane {
 		this.width = width;
 		this.height = height;
 		currentTool = new ZoomTool();
+//		currentTool = new MoveTool();
 		view = new RendererView();
         Canvas canvas = new Canvas(width, height);
         setCenter(canvas);
@@ -225,11 +226,12 @@ public class MandelbrotRenderPane extends BorderPane {
 		@Override
 		public void update(long time) {
 			if (pressed || changed) {
-				z = zoomin ? z / 1.01 : z * 1.01;
+				z = zoomin ? z / 1.05 : z * 1.05;
 				rendererCoordinator.abortRender();
 				rendererCoordinator.joinRender();
-				view.setTraslation(new DoubleVector4D(t.getX() + x0 - x1, t.getY() + y0 - y1, t.getZ() * z, t.getW()));
-				view.setState(new IntegerVector4D(s.getX(), s.getY(), pressed ? 0 : 0, s.getW()));
+//				view.setTraslation(new DoubleVector4D(t.getX() + x0 - x1, t.getY() + y0 - y1, t.getZ() * z, t.getW()));
+				view.setTraslation(new DoubleVector4D(t.getX(), t.getY(), t.getZ() * z, t.getW()));
+				view.setState(new IntegerVector4D(s.getX(), s.getY(), pressed ? 1 : 0, s.getW()));
 				rendererCoordinator.setView(view);
 				rendererCoordinator.startRender();
 				changed = false;
@@ -285,6 +287,7 @@ public class MandelbrotRenderPane extends BorderPane {
 				rendererCoordinator.abortRender();
 				rendererCoordinator.joinRender();
 				view.setTraslation(new DoubleVector4D(t.getX() + x0 - x1, t.getY() + y0 - y1, t.getZ(), t.getW()));
+//				view.setTraslation(new DoubleVector4D(t.getX(), t.getY() + 0.1, t.getZ(), t.getW()));
 				view.setState(new IntegerVector4D(s.getX(), s.getY(), pressed ? 1 : 0, s.getW()));
 				rendererCoordinator.setView(view);
 				rendererCoordinator.startRender();
