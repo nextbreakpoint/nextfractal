@@ -116,14 +116,11 @@ public final class XaosRenderer extends Renderer {
 		}
 		rendererStrategy.prepare();
 		rendererData.setSize(width, height, rendererFractal.getStateSize());
-		if (regionChanged) {
-			rendererData.setRegion(rendererFractal.getRegion());
-			regionChanged = false;
-		}
+		rendererData.setRegion(rendererFractal.getRegion());
 		if (XaosConstants.PRINT_REGION) {
 			logger.fine("Region: (" + xaosRendererData.left() + "," + xaosRendererData.bottom() + ") -> (" + xaosRendererData.right() + "," + xaosRendererData.top() + ")");
 		}
-		cacheActive = true;//refresh && !continuous;
+		cacheActive = true;//refresh || !continuous;
 		isSolidguessSupported = XaosConstants.USE_SOLIDGUESS && rendererStrategy.isSolidGuessSupported();
 		isVerticalSymetrySupported = XaosConstants.USE_SYMETRY && rendererStrategy.isVerticalSymetrySupported();
 		isHorizontalSymetrySupported = XaosConstants.USE_SYMETRY && rendererStrategy.isHorizontalSymetrySupported();
@@ -1016,36 +1013,36 @@ public final class XaosRenderer extends Renderer {
 				break;
 			}
 			Thread.yield();
-//				long newTime = System.currentTimeMillis();
-//				if (!aborted && ((newTime - oldTime) > 50) && (s < XaosConstants.STEPS)) {
-//					tmpRealloc = xaosRendererData.reallocY();
-//					for (i = 0; i < tmpRealloc.length; i++) {
-//						tmpRealloc[i].changeDirty = tmpRealloc[i].dirty;
-//						tmpRealloc[i].changePosition = tmpRealloc[i].position;
-//					}
-//					tmpRealloc = xaosRendererData.reallocX();
-//					for (i = 0; i < tmpRealloc.length; i++) {
-//						tmpRealloc[i].changeDirty = tmpRealloc[i].dirty;
-//						tmpRealloc[i].changePosition = tmpRealloc[i].position;
-//					}
-//					progress = (s + 1f) / (float)XaosConstants.STEPS;
-//					fill();
-//					if (rendererDelegate != null) {
-//						rendererDelegate.didChanged(progress, xaosRendererData.getPixels());
-//					}
-//					Thread.yield();
-//					tmpRealloc = xaosRendererData.reallocY();
-//					for (i = 0; i < tmpRealloc.length; i++) {
-//						tmpRealloc[i].dirty = tmpRealloc[i].changeDirty;
-//						tmpRealloc[i].position = tmpRealloc[i].changePosition;
-//					}
-//					tmpRealloc = xaosRendererData.reallocX();
-//					for (i = 0; i < tmpRealloc.length; i++) {
-//						tmpRealloc[i].dirty = tmpRealloc[i].changeDirty;
-//						tmpRealloc[i].position = tmpRealloc[i].changePosition;
-//					}
-//					oldTime = newTime;
-//				}
+			long newTime = System.currentTimeMillis();
+			if (!aborted && ((newTime - oldTime) > 100) && (s < XaosConstants.STEPS)) {
+				tmpRealloc = xaosRendererData.reallocY();
+				for (i = 0; i < tmpRealloc.length; i++) {
+					tmpRealloc[i].changeDirty = tmpRealloc[i].dirty;
+					tmpRealloc[i].changePosition = tmpRealloc[i].position;
+				}
+				tmpRealloc = xaosRendererData.reallocX();
+				for (i = 0; i < tmpRealloc.length; i++) {
+					tmpRealloc[i].changeDirty = tmpRealloc[i].dirty;
+					tmpRealloc[i].changePosition = tmpRealloc[i].position;
+				}
+				progress = (s + 1f) / (float)XaosConstants.STEPS;
+				fill();
+				if (rendererDelegate != null) {
+					rendererDelegate.didChanged(progress, xaosRendererData.getPixels());
+				}
+				Thread.yield();
+				tmpRealloc = xaosRendererData.reallocY();
+				for (i = 0; i < tmpRealloc.length; i++) {
+					tmpRealloc[i].dirty = tmpRealloc[i].changeDirty;
+					tmpRealloc[i].position = tmpRealloc[i].changePosition;
+				}
+				tmpRealloc = xaosRendererData.reallocX();
+				for (i = 0; i < tmpRealloc.length; i++) {
+					tmpRealloc[i].dirty = tmpRealloc[i].changeDirty;
+					tmpRealloc[i].position = tmpRealloc[i].changePosition;
+				}
+				oldTime = newTime;
+			}
 		}
 		if (!aborted) {
 			progress = 1f;

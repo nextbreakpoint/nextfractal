@@ -14,11 +14,11 @@ class XaosConstants {
 	public static final boolean PRINT_FILLTABLE = false;
 	public static final boolean PRINT_MULTABLE = false;
 	public static final boolean PRINT_REGION = false;
-	public static final boolean PRINT_ONLYNEW = false;
+	public static final boolean PRINT_ONLYNEW = true;
 	public static final boolean USE_XAOS = true; 
-	public static final boolean USE_SYMETRY = false;
+	public static final boolean USE_SYMETRY = true;
 	public static final boolean USE_SOLIDGUESS = false;
-	public static final boolean USE_MULTITHREAD = false;
+	public static final boolean USE_MULTITHREAD = true;
 	public static final int GUESS_RANGE = 4;
 	public static final int RANGES = 2;
 	public static final int RANGE = 4;
