@@ -116,7 +116,10 @@ public final class XaosRenderer extends Renderer {
 		}
 		rendererStrategy.prepare();
 		rendererData.setSize(width, height, rendererFractal.getStateSize());
-		rendererData.setRegion(rendererFractal.getRegion());
+		if (regionChanged) {
+			rendererData.setRegion(rendererFractal.getRegion());
+			regionChanged = false;
+		}
 		if (XaosConstants.PRINT_REGION) {
 			logger.fine("Region: (" + xaosRendererData.left() + "," + xaosRendererData.bottom() + ") -> (" + xaosRendererData.right() + "," + xaosRendererData.top() + ")");
 		}
