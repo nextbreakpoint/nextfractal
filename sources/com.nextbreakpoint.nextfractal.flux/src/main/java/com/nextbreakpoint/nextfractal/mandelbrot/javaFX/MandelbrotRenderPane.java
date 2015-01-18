@@ -138,14 +138,14 @@ public class MandelbrotRenderPane extends BorderPane {
 			@Override
 			public void handle(long now) {
 				long time = now / 1000000;
-				if ((time - last) > 20 && rendererCoordinator != null) {
+				if ((time - last) > 50 && rendererCoordinator != null) {
+					if (rendererCoordinator.isPixelsChanged()) {
+						RenderGraphicsContext gc = renderFactory.createGraphicsContext(canvas.getGraphicsContext2D());
+						rendererCoordinator.drawImage(gc);
+					}
 					if (currentTool != null) {
 						currentTool.update(time);
 					}
-				}
-				if ((time - last) > 50 && rendererCoordinator != null && rendererCoordinator.isPixelsChanged()) {
-					RenderGraphicsContext gc = renderFactory.createGraphicsContext(canvas.getGraphicsContext2D());
-					rendererCoordinator.drawImage(gc);
 					last = time;
 				}
 			}
@@ -178,7 +178,7 @@ public class MandelbrotRenderPane extends BorderPane {
 	
 	private class ZoomTool implements Tool {
 		private volatile boolean pressed;
-		private volatile boolean active;
+		private volatile boolean changed;
 		private boolean zoomin;
 		private double x0;
 		private double y0;
@@ -200,48 +200,46 @@ public class MandelbrotRenderPane extends BorderPane {
 		public void dragged(MouseEvent e) {
 			x1 = (e.getSceneX() - rendererCoordinator.getWidth() / 2) / rendererCoordinator.getWidth();
 			y1 = (e.getSceneY() - rendererCoordinator.getHeight() / 2) / rendererCoordinator.getHeight();
-			z = zoomin ? z * 0.01 : z / 0.01;
+			changed = true;
 		}
 
 		@Override
 		public void released(MouseEvent e) {
+			x1 = (e.getSceneX() - rendererCoordinator.getWidth() / 2) / rendererCoordinator.getWidth();
+			y1 = (e.getSceneY() - rendererCoordinator.getHeight() / 2) / rendererCoordinator.getHeight();
 			pressed = false;
+			changed = true;
 		}
 
 		@Override
 		public void pressed(MouseEvent e) {
-			pressed = true;
-			active = true;
-			x0 = (e.getSceneX() - rendererCoordinator.getWidth() / 2) / rendererCoordinator.getWidth();
-			y0 = (e.getSceneY() - rendererCoordinator.getHeight() / 2) / rendererCoordinator.getHeight();
+			x1 = x0 = (e.getSceneX() - rendererCoordinator.getWidth() / 2) / rendererCoordinator.getWidth();
+			y1 = y0 = (e.getSceneY() - rendererCoordinator.getHeight() / 2) / rendererCoordinator.getHeight();
 			z = 1;
 			s = view.getState();
 			t = view.getTraslation();
 			zoomin = (e.isPrimaryButtonDown()) ? true : false;
+			pressed = true;
 		}
 
 		@Override
 		public void update(long time) {
-			if (pressed) {
-				rendererCoordinator.stopRender();
-				view.setTraslation(new DoubleVector4D(t.getX() + x1 - x0, t.getY() + y0 - y1, t.getZ() * z, t.getW()));
-				view.setState(new IntegerVector4D(s.getX(), s.getY(), 1, s.getW()));
+			if (pressed || changed) {
+				z = zoomin ? z / 1.01 : z * 1.01;
+				rendererCoordinator.abortRender();
+				rendererCoordinator.joinRender();
+				view.setTraslation(new DoubleVector4D(t.getX() + x0 - x1, t.getY() + y0 - y1, t.getZ() * z, t.getW()));
+				view.setState(new IntegerVector4D(s.getX(), s.getY(), pressed ? 0 : 0, s.getW()));
 				rendererCoordinator.setView(view);
 				rendererCoordinator.startRender();
-			} else if (active) {
-				rendererCoordinator.stopRender();
-				view.setTraslation(new DoubleVector4D(t.getX() + x1 - x0, t.getY() + y0 - y1, t.getZ() * z, t.getW()));
-				view.setState(new IntegerVector4D(s.getX(), s.getY(), 0, s.getW()));
-				rendererCoordinator.setView(view);
-				rendererCoordinator.startRender();
-				active = false;
+				changed = false;
 			}
 		}
 	}
 	
 	private class MoveTool implements Tool {
 		private volatile boolean pressed;
-		private volatile boolean active;
+		private volatile boolean changed;
 		private double x0;
 		private double y0;
 		private double x1;
@@ -261,38 +259,36 @@ public class MandelbrotRenderPane extends BorderPane {
 		public void dragged(MouseEvent e) {
 			x1 = (e.getSceneX() - rendererCoordinator.getWidth() / 2) / rendererCoordinator.getWidth();
 			y1 = (e.getSceneY() - rendererCoordinator.getHeight() / 2) / rendererCoordinator.getHeight();
+			changed = true;
 		}
 
 		@Override
 		public void released(MouseEvent e) {
+			x1 = (e.getSceneX() - rendererCoordinator.getWidth() / 2) / rendererCoordinator.getWidth();
+			y1 = (e.getSceneY() - rendererCoordinator.getHeight() / 2) / rendererCoordinator.getHeight();
 			pressed = false;
+			changed = true;
 		}
 
 		@Override
 		public void pressed(MouseEvent e) {
-			pressed = true;
-			active = true;
-			x0 = (e.getSceneX() - rendererCoordinator.getWidth() / 2) / rendererCoordinator.getWidth();
-			y0 = (e.getSceneY() - rendererCoordinator.getHeight() / 2) / rendererCoordinator.getHeight();
+			x1 = x0 = (e.getSceneX() - rendererCoordinator.getWidth() / 2) / rendererCoordinator.getWidth();
+			y1 = y0 = (e.getSceneY() - rendererCoordinator.getHeight() / 2) / rendererCoordinator.getHeight();
 			s = view.getState();
 			t = view.getTraslation();
+			pressed = true;
 		}
 
 		@Override
 		public void update(long time) {
-			if (pressed) {
-				rendererCoordinator.stopRender();
-				view.setTraslation(new DoubleVector4D(t.getX() + x1 - x0, t.getY() + y0 - y1, t.getZ(), t.getW()));
-				view.setState(new IntegerVector4D(s.getX(), s.getY(), 1, s.getW()));
+			if (changed) {
+				rendererCoordinator.abortRender();
+				rendererCoordinator.joinRender();
+				view.setTraslation(new DoubleVector4D(t.getX() + x0 - x1, t.getY() + y0 - y1, t.getZ(), t.getW()));
+				view.setState(new IntegerVector4D(s.getX(), s.getY(), pressed ? 1 : 0, s.getW()));
 				rendererCoordinator.setView(view);
 				rendererCoordinator.startRender();
-			} else if (active) {
-				rendererCoordinator.stopRender();
-				view.setTraslation(new DoubleVector4D(t.getX() + x1 - x0, t.getY() + y0 - y1, t.getZ(), t.getW()));
-				view.setState(new IntegerVector4D(s.getX(), s.getY(), 0, s.getW()));
-				rendererCoordinator.setView(view);
-				rendererCoordinator.startRender();
-				active = false;
+				changed = false;
 			}
 		}
 	}

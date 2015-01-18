@@ -49,7 +49,6 @@ public class RendererCoordinator implements RendererDelegate {
 	private final ThreadFactory threadFactory;
 	private final RenderFactory renderFactory;
 	private volatile boolean pixelsChanged;
-	private volatile boolean continuous;
 	private volatile float progress;
 	private final RendererSize size;
 	private final RendererTile tile;
@@ -133,9 +132,6 @@ public class RendererCoordinator implements RendererDelegate {
 	 * 
 	 */
 	public void startRender() {
-		pixelsChanged = false;
-		progress = 0;
-		renderer.setContinuous(continuous);
 		renderer.startRender();
 	}
 
@@ -288,10 +284,10 @@ public class RendererCoordinator implements RendererDelegate {
 				gc.saveTransform();
 				//TODO gc.setClip(x, y, w, h);
 				gc.setAffine(frontBuffer.getAffine());
-				final double sx = w / (double) tile.getTileSize().getWidth();
-				final double sy = h / (double) tile.getTileSize().getHeight();
-				final int dw = (int) Math.rint(size.getWidth() * sx);
-				final int dh = (int) Math.rint(size.getHeight() * sy);
+				final double sx = w / (double) frontBuffer.getTile().getTileSize().getWidth();
+				final double sy = h / (double) frontBuffer.getTile().getTileSize().getHeight();
+				final int dw = (int) Math.rint(frontBuffer.getSize().getWidth() * sx);
+				final int dh = (int) Math.rint(frontBuffer.getSize().getHeight() * sy);
 				gc.drawImage(frontBuffer.getBuffer().getImage(), x, y, dw, dh);
 				//TODO gc.setClip(null);
 				// g.dispose();
@@ -335,14 +331,12 @@ public class RendererCoordinator implements RendererDelegate {
 	 */
 	public void setView(RendererView view) {
 		this.view = view;
-		stopRender();
 		Number[] region = computeRegion();
 		renderer.setRegion(region);
 		renderer.setJulia(view.isJulia());
 		renderer.setConstant(view.getConstant());
-		continuous = (view.getState().getZ() == 1) || (view.getState().getW() == 1);
+		renderer.setContinuous((view.getState().getZ() == 1) || (view.getState().getW() == 1));
 		backBuffer.setAffine(createTransform(view.getRotation().getZ()));
-		startRender();
 	}
 	
 	/**
@@ -380,7 +374,6 @@ public class RendererCoordinator implements RendererDelegate {
 		final Number[] newRegion = new Number[2];
 		newRegion[0] = new Number(cx - dx, cy - dy);
 		newRegion[1] = new Number(cx + dx, cy + dy);
-		logger.info(newRegion[0] + " " + newRegion[1]);
 		return newRegion;
 	}
 

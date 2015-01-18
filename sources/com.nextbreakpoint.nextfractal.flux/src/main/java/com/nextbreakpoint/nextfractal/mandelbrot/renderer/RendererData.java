@@ -2,6 +2,7 @@ package com.nextbreakpoint.nextfractal.mandelbrot.renderer;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import com.nextbreakpoint.nextfractal.mandelbrot.core.MutableNumber;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
@@ -10,6 +11,7 @@ import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
  * @author Andrea Medeghini
  */
 public class RendererData {
+	protected static final Logger logger = Logger.getLogger(RendererData.class.getName());
 	protected double[] positionX;
 	protected double[] positionY;
 	protected MutableNumber[] region;
@@ -137,6 +139,7 @@ public class RendererData {
 	public void setRegion(Number[] region) {
 		this.region[0].set(region[0]);
 		this.region[1].set(region[1]);
+		initPositions();
 	}
 	
 	/**
@@ -312,6 +315,8 @@ public class RendererData {
 	 * 
 	 */
 	public void clearPixels() {
-		newPixels = new int[newPixels.length];
+		for (int i = 0; i < newPixels.length; i++) {
+			newPixels[i] = 0xFF000000;
+		}
 	}
 }

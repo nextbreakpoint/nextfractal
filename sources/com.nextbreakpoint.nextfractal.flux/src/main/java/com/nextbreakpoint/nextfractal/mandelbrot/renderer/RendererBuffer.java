@@ -46,7 +46,9 @@ public class RendererBuffer {
 	}
 
 	public void dispose() {
-		// TODO Auto-generated method stub
-		
+		if (buffer != null) {
+			buffer.dispose();
+			buffer = null;
+		}
 	}
 }

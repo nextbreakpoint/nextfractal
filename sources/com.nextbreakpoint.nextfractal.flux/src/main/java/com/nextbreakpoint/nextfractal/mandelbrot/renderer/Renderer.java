@@ -48,6 +48,7 @@ public class Renderer {
 	protected volatile boolean aborted;
 	protected volatile boolean orbitChanged;
 	protected volatile boolean colorChanged;
+	protected volatile boolean regionChanged;
 	protected volatile float progress;
 	protected int width;
 	protected int height;
@@ -247,6 +248,7 @@ public class Renderer {
 	 */
 	public void setRegion(Number[] region) {
 		this.region = region;
+		regionChanged = true; 
 	}
 
 	/**
@@ -257,9 +259,11 @@ public class Renderer {
 			progress = 1;
 			return;
 		}
-		final boolean redraw = orbitChanged;
+		final boolean redraw = orbitChanged || regionChanged || regionChanged;
 		orbitChanged = false;
 		colorChanged = false;
+		regionChanged = false;
+		aborted = false;
 		progress = 0;
 		rendererFractal.clearScope();
 		rendererFractal.setRegion(region);
@@ -272,9 +276,11 @@ public class Renderer {
 		rendererStrategy.prepare();
 		rendererData.setSize(width, height, rendererFractal.getStateSize());
 		rendererData.setRegion(rendererFractal.getRegion());
-		rendererData.initPositions();
 		rendererData.swap();
-		rendererData.clearPixels();
+//		rendererData.clearPixels();
+//		if (rendererDelegate != null) {
+//			rendererDelegate.didChanged(progress, rendererData.getPixels());
+//		}
 		final MutableNumber px = new MutableNumber(0, 0);
 		final MutableNumber pw = new MutableNumber(0, 0);
 		final RendererPoint p = rendererData.newPoint();
@@ -300,11 +306,11 @@ public class Renderer {
 					rendererDelegate.didChanged(progress, rendererData.getPixels());
 				}
 			}
-			Thread.yield();
 			if (isInterrupted()) {
 				aborted = true;
 				break;
 			}
+			Thread.yield();
 		}
 		if (aborted) {
 			progress = 1;
