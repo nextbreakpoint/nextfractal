@@ -373,12 +373,13 @@ public class RendererCoordinator implements RendererDelegate {
 		final double di = (p1.i() - p0.i()) / 2;
 		final double cr = p0.r() + dr;
 		final double ci = p0.i() + di;
+		
 //		final double tr = p0.r() + dr * ((imageDim - imageSize.getWidth()) / 2 + tileOffset.getWidth() + tileSize.getWidth() / 2) / imageDim;
 //		final double ti = p0.i() + di * ((imageDim - imageSize.getHeight()) / 2 + tileOffset.getHeight() + tileSize.getHeight() / 2) / imageDim;
 //		final double pr = Math.cos(rz) * (tr - cr) - Math.sin(rz) * (ti - ci) + cr; 
 //		final double pi = Math.sin(rz) * (tr - cr) + Math.cos(rz) * (ti - ci) + ci;
-//		final double sr = dr * 0.5 * (tileSize.getWidth() / imageDim);
-//		final double si = di * 0.5 * (tileSize.getHeight() / imageDim);
+//		final double sr = dr * (tileSize.getWidth() / imageDim);
+//		final double si = di * (tileSize.getHeight() / imageDim);
 
 		final Number[] newRegion = new Number[2];
 //		newRegion[0] = new Number(pr - sr, pi - si);

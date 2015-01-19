@@ -225,7 +225,7 @@ public class MandelbrotRenderPane extends BorderPane {
 				double x = t.getX();
 				double y = t.getY();
 				double z = t.getZ();
-				double a = r.getZ();
+				double a = r.getZ() * Math.PI / 180;
 				double zs = zoomin ? 1 / 1.05 : 1.05;
 				Number size = rendererCoordinator.getSize();
 				x -= (zs - 1) * z * size.r() * (Math.cos(a) * x1 + Math.sin(a) * y1);
@@ -234,6 +234,7 @@ public class MandelbrotRenderPane extends BorderPane {
 				rendererCoordinator.abortRender();
 				rendererCoordinator.joinRender();
 				view.setTraslation(new DoubleVector4D(x, y, z, t.getW()));
+				view.setRotation(new DoubleVector4D(0, 0, r.getZ(), r.getW()));
 				view.setState(new IntegerVector4D(s.getX(), s.getY(), pressed ? 1 : 0, s.getW()));
 				rendererCoordinator.setView(view);
 				rendererCoordinator.startRender();
