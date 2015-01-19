@@ -71,11 +71,13 @@ public class RendererCoordinator implements RendererDelegate {
 		frontBuffer = new RendererBuffer(); 
 		backBuffer = new RendererBuffer(); 
 		RendererSize tileSize = tile.getTileSize();
+		RendererSize imageSize = tile.getImageSize();
 		RendererSize tileBorder = tile.getTileBorder();
 		int tsw = tileSize.getWidth();
 		int tbw = tileBorder.getWidth();
 		int tsh = tileSize.getHeight();
 		int tbh = tileBorder.getHeight();
+//		imageDim = (int) Math.hypot(imageSize.getWidth() + tileBorder.getWidth() * 2, imageSize.getHeight() + tileBorder.getHeight() * 2);
 		int tileDim = (int) Math.hypot(tsw + tbw * 2, tsh + tbh * 2);
 		size = new RendererSize(tileDim, tileDim);
 		view = new RendererView();
@@ -335,7 +337,7 @@ public class RendererCoordinator implements RendererDelegate {
 		renderer.setRegion(region);
 		renderer.setJulia(view.isJulia());
 		renderer.setConstant(view.getConstant());
-		renderer.setContinuous((view.getState().getZ() == 1) || (view.getState().getW() == 1));
+		renderer.setContinuous(view.getState().getX() >= 1 || view.getState().getY() >= 1 || view.getState().getZ() >= 1 || view.getState().getW() >= 1);
 		backBuffer.setAffine(createTransform(view.getRotation().getZ()));
 	}
 	
@@ -347,33 +349,47 @@ public class RendererCoordinator implements RendererDelegate {
 		final double ty = view.getTraslation().getY();
 		final double tz = view.getTraslation().getZ();
 		final double rz = view.getRotation().getZ();
+		
+		logger.info("tx = " + tx + ", ty = " + ty + ", tz = " + tz + ", rz = " + rz);
+		
 		final RendererSize tileBorder = tile.getTileBorder();
 		final RendererSize tileOffset = tile.getTileOffset();
 		final RendererSize tileSize = tile.getTileSize();
 		final RendererSize imageSize = tile.getImageSize();
+		
 		final Number[] region = renderer.getInitialRegion();
-		final Number center = new Number((region[0].r() + region[1].r()) / 2 + tx, (region[0].i() + region[1].i()) / 2 + ty);
-		final Number size = new Number((region[1].r() - region[0].r()) * tz, (region[1].i() - region[0].i()) * tz);
-		final int imageDim = (int) Math.hypot(imageSize.getWidth() + tileBorder.getWidth() * 2, imageSize.getHeight() + tileBorder.getHeight() * 2);
-		final double imageOffsetX = (imageDim - imageSize.getWidth()) / 2;
-		final double imageOffsetY = (imageDim - imageSize.getHeight()) / 2;
-		final double w = (size.r() * 0.5 * imageDim) / imageSize.getWidth();
-		final double h = (size.i() * 0.5 * imageDim) / imageSize.getWidth();
-		final Number p0 = new Number(center.r() - w, center.i() - h);
-		final Number p1 = new Number(center.r() + w, center.i() + h);
-		final double dr = p1.r() - p0.r();
-		final double di = p1.i() - p0.i();
-		final double qr = p0.r() + dr * (imageOffsetX + tileOffset.getWidth() + tileSize.getWidth() / 2d) / imageDim;
-		final double qi = p0.i() + di * (imageOffsetY + tileOffset.getHeight() + tileSize.getHeight() / 2d) / imageDim;
-		final double cr = p0.r() + dr * 0.5;
-		final double ci = p0.i() + di * 0.5;
-		final double cx = (Math.cos(rz) * (qr - cr) - Math.sin(rz) * (qi - ci)) + cr; 
-		final double cy = (Math.sin(rz) * (qr - cr) + Math.cos(rz) * (qi - ci)) + ci; 
-		final double dx = (dr * 0.5 * getWidth()) / imageDim;
-		final double dy = (di * 0.5 * getHeight()) / imageDim;
+		
+		final Number size = new Number((region[1].r() - region[0].r()) * tz / 2, (region[1].i() - region[0].i()) * tz / 2);
+		final Number center = new Number((region[0].r() + region[1].r()) / 2, (region[0].i() + region[1].i()) / 2);
+
+		final double imageDim = (int) Math.hypot(imageSize.getWidth() + tileBorder.getWidth() * 2, imageSize.getHeight() + tileBorder.getHeight() * 2);
+
+		final Number outerSize = new Number(size.r() * (imageDim / imageSize.getWidth()), size.i() * (imageDim / imageSize.getHeight()));
+		
+		final double wx = tx * size.r() * tz * 2;
+		final double wy = ty * size.i() * tz * 2;
+
+		final Number p0 = new Number(center.r() - outerSize.r() + wx, center.i() - outerSize.i() + wy);
+		final Number p1 = new Number(center.r() + outerSize.r() + wx, center.i() + outerSize.i() + wy);
+
+		final double dr = (p1.r() - p0.r()) / 2;
+		final double di = (p1.i() - p0.i()) / 2;
+		final double cr = p0.r() + dr;
+		final double ci = p0.i() + di;
+//		final double tr = p0.r() + dr * ((imageDim - imageSize.getWidth()) / 2 + tileOffset.getWidth() + tileSize.getWidth() / 2) / imageDim;
+//		final double ti = p0.i() + di * ((imageDim - imageSize.getHeight()) / 2 + tileOffset.getHeight() + tileSize.getHeight() / 2) / imageDim;
+//		final double pr = Math.cos(rz) * (tr - cr) - Math.sin(rz) * (ti - ci) + cr; 
+//		final double pi = Math.sin(rz) * (tr - cr) + Math.cos(rz) * (ti - ci) + ci;
+		
+//		final double sr = dr * 0.5 * (tileSize.getWidth() / imageDim);
+//		final double si = di * 0.5 * (tileSize.getHeight() / imageDim);
+
 		final Number[] newRegion = new Number[2];
-		newRegion[0] = new Number(cx - dx, cy - dy);
-		newRegion[1] = new Number(cx + dx, cy + dy);
+//		newRegion[0] = new Number(pr - sr, pi - si);
+//		newRegion[1] = new Number(pr + sr, pi + si);
+		newRegion[0] = new Number(cr - dr, ci - di);
+		newRegion[1] = new Number(cr + dr, ci + di);
+		logger.info("[" + newRegion[0] + ", " + newRegion[1] + "]");
 		return newRegion;
 	}
 
@@ -391,5 +407,17 @@ public class RendererCoordinator implements RendererDelegate {
 		final RenderAffine affine = renderFactory.createTranslateAffine(-offsetX, -offsetY);
 		affine.append(renderFactory.createRotateAffine(rotation, centerX, centerY));
 		return affine;
+	}
+
+	public Number getCenter() {
+		final Number[] region = renderer.getInitialRegion();
+		final Number center = new Number((region[0].r() + region[1].r()) / (2 * (region[1].r() - region[0].r())), (region[0].i() + region[1].i()) / (2 * (region[1].i() - region[0].i())));
+		return center;
+	}
+
+	public Number getSize() {
+		final Number[] region = renderer.getInitialRegion();
+		final Number size = new Number(region[1].r() - region[0].r(), region[1].i() - region[0].i());
+		return size;
 	}
 }

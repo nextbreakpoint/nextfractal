@@ -20,6 +20,7 @@ import com.nextbreakpoint.nextfractal.mandelbrot.compiler.Compiler;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerReport;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Color;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Orbit;
+import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererCoordinator;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererSize;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererTile;
@@ -139,7 +140,7 @@ public class MandelbrotRenderPane extends BorderPane {
 			@Override
 			public void handle(long now) {
 				long time = now / 1000000;
-				if ((time - last) > 50 && rendererCoordinator != null) {
+				if ((time - last) > 20 && rendererCoordinator != null) {
 					if (rendererCoordinator.isPixelsChanged()) {
 						RenderGraphicsContext gc = renderFactory.createGraphicsContext(canvas.getGraphicsContext2D());
 						rendererCoordinator.drawImage(gc);
@@ -181,11 +182,13 @@ public class MandelbrotRenderPane extends BorderPane {
 		private volatile boolean pressed;
 		private volatile boolean changed;
 		private boolean zoomin;
-		private double x0;
-		private double y0;
 		private double x1;
 		private double y1;
 		private double z;
+		private double x;
+		private double y;
+		private double a;
+		private DoubleVector4D r;
 		private DoubleVector4D t;
 		private IntegerVector4D s;
 		
@@ -199,38 +202,44 @@ public class MandelbrotRenderPane extends BorderPane {
 
 		@Override
 		public void dragged(MouseEvent e) {
-			x1 = (e.getSceneX() - rendererCoordinator.getWidth() / 2) / rendererCoordinator.getWidth();
-			y1 = (e.getSceneY() - rendererCoordinator.getHeight() / 2) / rendererCoordinator.getHeight();
+			x1 = (e.getX() - width / 2) / width;
+			y1 = (e.getY() - height / 2) / height;
 			changed = true;
 		}
 
 		@Override
 		public void released(MouseEvent e) {
-			x1 = (e.getSceneX() - rendererCoordinator.getWidth() / 2) / rendererCoordinator.getWidth();
-			y1 = (e.getSceneY() - rendererCoordinator.getHeight() / 2) / rendererCoordinator.getHeight();
+			x1 = (e.getX() - width / 2) / width;
+			y1 = (e.getY() - height / 2) / height;
 			pressed = false;
 			changed = true;
 		}
 
 		@Override
 		public void pressed(MouseEvent e) {
-			x1 = x0 = (e.getSceneX() - rendererCoordinator.getWidth() / 2) / rendererCoordinator.getWidth();
-			y1 = y0 = (e.getSceneY() - rendererCoordinator.getHeight() / 2) / rendererCoordinator.getHeight();
-			z = 1;
-			s = view.getState();
-			t = view.getTraslation();
+			x1 = (e.getX() - width / 2) / width;
+			y1 = (e.getY() - height / 2) / height;
 			zoomin = (e.isPrimaryButtonDown()) ? true : false;
+			r = view.getRotation();
+			s = view.getState();
 			pressed = true;
 		}
 
 		@Override
 		public void update(long time) {
 			if (pressed || changed) {
-				z = zoomin ? z / 1.05 : z * 1.05;
+				t = view.getTraslation();
+				z = t.getZ();
+				a = r.getZ();
+				double zs = zoomin ? 1 / 1.05 : 1.05;
+//				x = -(zs - 1) / zs * (Math.cos(a) * x1 + Math.sin(a) * y1);
+//				y = -(zs - 1) / zs * (Math.cos(a) * y1 - Math.sin(a) * x1);
+				x = -(zs - 1) / zs * x1;
+				y = -(zs - 1) / zs * y1;
+				z = z * zs;
 				rendererCoordinator.abortRender();
 				rendererCoordinator.joinRender();
-//				view.setTraslation(new DoubleVector4D(t.getX() + x0 - x1, t.getY() + y0 - y1, t.getZ() * z, t.getW()));
-				view.setTraslation(new DoubleVector4D(t.getX(), t.getY(), t.getZ() * z, t.getW()));
+				view.setTraslation(new DoubleVector4D(t.getX() + x, t.getY() + y, z, t.getW()));
 				view.setState(new IntegerVector4D(s.getX(), s.getY(), pressed ? 1 : 0, s.getW()));
 				rendererCoordinator.setView(view);
 				rendererCoordinator.startRender();
@@ -246,6 +255,8 @@ public class MandelbrotRenderPane extends BorderPane {
 		private double y0;
 		private double x1;
 		private double y1;
+		private double x;
+		private double y;
 		private DoubleVector4D t;
 		private IntegerVector4D s;
 
@@ -259,36 +270,39 @@ public class MandelbrotRenderPane extends BorderPane {
 
 		@Override
 		public void dragged(MouseEvent e) {
-			x1 = (e.getSceneX() - rendererCoordinator.getWidth() / 2) / rendererCoordinator.getWidth();
-			y1 = (e.getSceneY() - rendererCoordinator.getHeight() / 2) / rendererCoordinator.getHeight();
+			x1 = (e.getX() - width / 2) / width;
+			y1 = (e.getY() - height / 2) / height;
 			changed = true;
 		}
 
 		@Override
 		public void released(MouseEvent e) {
-			x1 = (e.getSceneX() - rendererCoordinator.getWidth() / 2) / rendererCoordinator.getWidth();
-			y1 = (e.getSceneY() - rendererCoordinator.getHeight() / 2) / rendererCoordinator.getHeight();
+			x1 = (e.getX() - width / 2) / width;
+			y1 = (e.getY() - height / 2) / height;
 			pressed = false;
 			changed = true;
 		}
 
 		@Override
 		public void pressed(MouseEvent e) {
-			x1 = x0 = (e.getSceneX() - rendererCoordinator.getWidth() / 2) / rendererCoordinator.getWidth();
-			y1 = y0 = (e.getSceneY() - rendererCoordinator.getHeight() / 2) / rendererCoordinator.getHeight();
+			x1 = x0 = (e.getX() - width / 2) / width;
+			y1 = y0 = (e.getY() - height / 2) / height;
 			s = view.getState();
-			t = view.getTraslation();
 			pressed = true;
 		}
 
 		@Override
 		public void update(long time) {
 			if (changed) {
+				t = view.getTraslation();
+				x = x1 - x0;
+				y = y1 - y0;
+				x0 = x1;
+				y0 = y1;
 				rendererCoordinator.abortRender();
 				rendererCoordinator.joinRender();
-				view.setTraslation(new DoubleVector4D(t.getX() + x0 - x1, t.getY() + y0 - y1, t.getZ(), t.getW()));
-//				view.setTraslation(new DoubleVector4D(t.getX(), t.getY() + 0.1, t.getZ(), t.getW()));
-				view.setState(new IntegerVector4D(s.getX(), s.getY(), pressed ? 1 : 0, s.getW()));
+				view.setTraslation(new DoubleVector4D(t.getX() - x, t.getY() - y, t.getZ(), t.getW()));
+				view.setState(new IntegerVector4D(0, 0, pressed ? 1 : 0, s.getW()));
 				rendererCoordinator.setView(view);
 				rendererCoordinator.startRender();
 				changed = false;

@@ -17,7 +17,7 @@ class XaosConstants {
 	public static final boolean PRINT_ONLYNEW = true;
 	public static final boolean USE_XAOS = true; 
 	public static final boolean USE_SYMETRY = true;
-	public static final boolean USE_SOLIDGUESS = false;
+	public static final boolean USE_SOLIDGUESS = true;
 	public static final boolean USE_MULTITHREAD = true;
 	public static final int GUESS_RANGE = 4;
 	public static final int RANGES = 2;

@@ -102,7 +102,7 @@ public final class XaosRenderer extends Renderer {
 		}
 		final boolean redraw = orbitChanged;
 		orbitChanged = false;
-		final boolean refresh = redraw || colorChanged;//TODO redraw?
+		final boolean refresh = !redraw && colorChanged;
 		colorChanged = false;
 		aborted = false;
 		progress = 0;
@@ -123,7 +123,7 @@ public final class XaosRenderer extends Renderer {
 		if (XaosConstants.PRINT_REGION) {
 			logger.fine("Region: (" + xaosRendererData.left() + "," + xaosRendererData.bottom() + ") -> (" + xaosRendererData.right() + "," + xaosRendererData.top() + ")");
 		}
-		cacheActive = true;//refresh || !continuous;
+		cacheActive = refresh || !continuous;
 		isSolidguessSupported = XaosConstants.USE_SOLIDGUESS && rendererStrategy.isSolidGuessSupported();
 		isVerticalSymetrySupported = XaosConstants.USE_SYMETRY && rendererStrategy.isVerticalSymetrySupported();
 		isHorizontalSymetrySupported = XaosConstants.USE_SYMETRY && rendererStrategy.isHorizontalSymetrySupported();
@@ -992,7 +992,7 @@ public final class XaosRenderer extends Renderer {
 		long oldTime = System.currentTimeMillis();
 		for (s = 0; !aborted && (s < XaosConstants.STEPS); s++) {
 			tmpRealloc = xaosRendererData.reallocY();
-			for (i = offset[s]; i < tmpRealloc.length; i += XaosConstants.STEPS) {
+			for (i = offset[s]; !aborted && i < tmpRealloc.length; i += XaosConstants.STEPS) {
 				if (tmpRealloc[i].recalculate) {
 					renderLine(tmpRealloc[i], xaosRendererData.reallocX(), xaosRendererData.reallocY());
 					tocalcy -= 1;
@@ -1000,9 +1000,13 @@ public final class XaosRenderer extends Renderer {
 				else if (!tmpRealloc[i].isCached) {
 					renderLine(tmpRealloc[i], xaosRendererData.reallocX(), xaosRendererData.reallocY());
 				}
+				if (isInterrupted()) {
+					aborted = true;
+					break;
+				}
 			}
 			tmpRealloc = xaosRendererData.reallocX();
-			for (i = offset[s]; i < tmpRealloc.length; i += XaosConstants.STEPS) {
+			for (i = offset[s]; !aborted && i < tmpRealloc.length; i += XaosConstants.STEPS) {
 				if (tmpRealloc[i].recalculate) {
 					renderColumn(tmpRealloc[i], xaosRendererData.reallocX(), xaosRendererData.reallocY());
 					tocalcx -= 1;
@@ -1010,10 +1014,10 @@ public final class XaosRenderer extends Renderer {
 				else if (!tmpRealloc[i].isCached) {
 					renderColumn(tmpRealloc[i], xaosRendererData.reallocX(), xaosRendererData.reallocY());
 				}
-			}
-			if (isInterrupted()) {
-				aborted = true;
-				break;
+				if (isInterrupted()) {
+					aborted = true;
+					break;
+				}
 			}
 			Thread.yield();
 			long newTime = System.currentTimeMillis();
