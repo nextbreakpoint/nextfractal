@@ -359,18 +359,15 @@ public class RendererCoordinator implements RendererDelegate {
 		
 		final Number[] region = renderer.getInitialRegion();
 		
-		final Number size = new Number((region[1].r() - region[0].r()) * tz / 2, (region[1].i() - region[0].i()) * tz / 2);
+		final Number size = new Number((region[1].r() - region[0].r()) / 2, (region[1].i() - region[0].i()) / 2);
 		final Number center = new Number((region[0].r() + region[1].r()) / 2, (region[0].i() + region[1].i()) / 2);
 
 		final double imageDim = (int) Math.hypot(imageSize.getWidth() + tileBorder.getWidth() * 2, imageSize.getHeight() + tileBorder.getHeight() * 2);
 
-		final Number outerSize = new Number(size.r() * (imageDim / imageSize.getWidth()), size.i() * (imageDim / imageSize.getHeight()));
+		final Number outerSize = new Number(tz * size.r() * (imageDim / imageSize.getWidth()), tz * size.i() * (imageDim / imageSize.getHeight()));
 		
-		final double wx = tx * size.r() * tz * 2;
-		final double wy = ty * size.i() * tz * 2;
-
-		final Number p0 = new Number(center.r() - outerSize.r() + wx, center.i() - outerSize.i() + wy);
-		final Number p1 = new Number(center.r() + outerSize.r() + wx, center.i() + outerSize.i() + wy);
+		final Number p0 = new Number(center.r() - outerSize.r() + tx, center.i() - outerSize.i() + ty);
+		final Number p1 = new Number(center.r() + outerSize.r() + tx, center.i() + outerSize.i() + ty);
 
 		final double dr = (p1.r() - p0.r()) / 2;
 		final double di = (p1.i() - p0.i()) / 2;
@@ -380,7 +377,6 @@ public class RendererCoordinator implements RendererDelegate {
 //		final double ti = p0.i() + di * ((imageDim - imageSize.getHeight()) / 2 + tileOffset.getHeight() + tileSize.getHeight() / 2) / imageDim;
 //		final double pr = Math.cos(rz) * (tr - cr) - Math.sin(rz) * (ti - ci) + cr; 
 //		final double pi = Math.sin(rz) * (tr - cr) + Math.cos(rz) * (ti - ci) + ci;
-		
 //		final double sr = dr * 0.5 * (tileSize.getWidth() / imageDim);
 //		final double si = di * 0.5 * (tileSize.getHeight() / imageDim);
 
