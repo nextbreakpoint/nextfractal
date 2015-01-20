@@ -227,7 +227,7 @@ public class MandelbrotRenderPane extends BorderPane {
 				double z = t.getZ();
 				double a = r.getZ() * Math.PI / 180;
 				double zs = zoomin ? 1 / 1.05 : 1.05;
-				Number size = rendererCoordinator.getSize();
+				Number size = rendererCoordinator.getInitialSize();
 				x -= (zs - 1) * z * size.r() * (Math.cos(a) * x1 + Math.sin(a) * y1);
 				y -= (zs - 1) * z * size.i() * (Math.cos(a) * y1 - Math.sin(a) * x1);
 				z *= zs;

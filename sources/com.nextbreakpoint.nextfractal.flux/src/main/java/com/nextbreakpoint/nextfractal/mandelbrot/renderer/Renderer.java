@@ -55,7 +55,8 @@ public class Renderer {
 	protected boolean julia;
 	protected boolean continuous;
 	protected Number constant;
-	protected Number[] region;
+	protected RendererRegion region;
+	protected RendererRegion initialRegion;
 
 	/**
 	 * @param rendererDelegate
@@ -206,6 +207,7 @@ public class Renderer {
 	 */
 	protected void init() {
 		rendererFractal.initialize();
+		initialRegion = new RendererRegion(rendererFractal.getOrbit().getInitialRegion());
 	}
 
 	/**
@@ -232,21 +234,21 @@ public class Renderer {
 	/**
 	 * @return
 	 */
-	public Number[] getInitialRegion() {
-		return rendererFractal.getInitialRegion();
+	public RendererRegion getInitialRegion() {
+		return initialRegion;
 	}
 
 	/**
 	 * @return
 	 */
-	public Number[] getRegion() {
+	public RendererRegion getRegion() {
 		return region;
 	}
 
 	/**
 	 * @param region
 	 */
-	public void setRegion(Number[] region) {
+	public void setRegion(RendererRegion region) {
 		this.region = region;
 		regionChanged = true; 
 	}
@@ -266,7 +268,6 @@ public class Renderer {
 		aborted = false;
 		progress = 0;
 		rendererFractal.clearScope();
-		rendererFractal.setRegion(region);
 		rendererFractal.setConstant(constant);
 		if (julia) {
 			rendererStrategy = new JuliaRendererStrategy(rendererFractal);
@@ -275,7 +276,7 @@ public class Renderer {
 		}
 		rendererStrategy.prepare();
 		rendererData.setSize(width, height, rendererFractal.getStateSize());
-		rendererData.setRegion(rendererFractal.getRegion());
+		rendererData.setRegion(region);
 		rendererData.initPositions();
 		rendererData.swap();
 //		rendererData.clearPixels();

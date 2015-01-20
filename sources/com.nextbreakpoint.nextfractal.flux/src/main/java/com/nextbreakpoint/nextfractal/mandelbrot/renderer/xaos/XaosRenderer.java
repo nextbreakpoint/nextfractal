@@ -107,7 +107,6 @@ public final class XaosRenderer extends Renderer {
 		aborted = false;
 		progress = 0;
 		rendererFractal.clearScope();
-		rendererFractal.setRegion(region);
 		rendererFractal.setConstant(constant);
 		if (julia) {
 			rendererStrategy = new JuliaRendererStrategy(rendererFractal);
@@ -117,7 +116,7 @@ public final class XaosRenderer extends Renderer {
 		rendererStrategy.prepare();
 		rendererData.setSize(width, height, rendererFractal.getStateSize());
 		if (regionChanged) {
-			rendererData.setRegion(rendererFractal.getRegion());
+			rendererData.setRegion(region);
 			regionChanged = false;
 		}
 		if (XaosConstants.PRINT_REGION) {

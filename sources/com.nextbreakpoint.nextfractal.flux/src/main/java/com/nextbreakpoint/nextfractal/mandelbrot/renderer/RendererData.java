@@ -14,7 +14,7 @@ public class RendererData {
 	protected static final Logger logger = Logger.getLogger(RendererData.class.getName());
 	protected double[] positionX;
 	protected double[] positionY;
-	protected MutableNumber[] region;
+	protected RendererRegion region;
 	protected MutableNumber point;
 	protected int[] newPixels;
 	protected int[] oldPixels;
@@ -25,9 +25,7 @@ public class RendererData {
 	protected int depth;
 
 	public RendererData() {
-		region = new MutableNumber[2];
-		region[0] = new MutableNumber();
-		region[1] = new MutableNumber();
+		region = new RendererRegion();
 		point = new MutableNumber(0, 0);
 	}
 
@@ -103,36 +101,35 @@ public class RendererData {
 	 * @return
 	 */
 	public double left() {
-		return region[0].r();
+		return region.left();
 	}
 
 	/**
 	 * @return
 	 */
 	public double right() {
-		return region[1].r();
+		return region.right();
 	}
 
 	/**
 	 * @return
 	 */
 	public double bottom() {
-		return region[0].i();
+		return region.bottom();
 	}
 
 	/**
 	 * @return
 	 */
 	public double top() {
-		return region[1].i();
+		return region.top();
 	}
 
 	/**
 	 * @param region
 	 */
-	public void setRegion(Number[] region) {
-		this.region[0].set(region[0]);
-		this.region[1].set(region[1]);
+	public void setRegion(RendererRegion region) {
+		this.region = region;
 	}
 	
 	/**

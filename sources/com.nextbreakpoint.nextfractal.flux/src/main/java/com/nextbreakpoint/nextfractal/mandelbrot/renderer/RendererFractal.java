@@ -117,27 +117,6 @@ public class RendererFractal {
 	}
 
 	/**
-	 * @return
-	 */
-	public Number[] getRegion() {
-		return orbit.region();
-	}
-
-	/**
-	 * @param region
-	 */
-	public void setRegion(Number[] region) {
-		orbit.setRegion(region);
-	}
-
-	/**
-	 * @return
-	 */
-	public Number[] getInitialRegion() {
-		return orbit.getInitialRegion();
-	}
-
-	/**
 	 * 
 	 */
 	public void clearScope() {

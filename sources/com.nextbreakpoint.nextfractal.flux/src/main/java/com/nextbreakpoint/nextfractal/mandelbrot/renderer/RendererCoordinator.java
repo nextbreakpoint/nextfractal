@@ -333,7 +333,7 @@ public class RendererCoordinator implements RendererDelegate {
 	 */
 	public void setView(RendererView view) {
 		this.view = view;
-		Number[] region = computeRegion();
+		RendererRegion region = computeRegion();
 		renderer.setRegion(region);
 		renderer.setJulia(view.isJulia());
 		renderer.setConstant(view.getConstant());
@@ -344,7 +344,7 @@ public class RendererCoordinator implements RendererDelegate {
 	/**
 	 * 
 	 */
-	protected Number[] computeRegion() {
+	protected RendererRegion computeRegion() {
 		final double tx = view.getTraslation().getX();
 		final double ty = view.getTraslation().getY();
 		final double tz = view.getTraslation().getZ();
@@ -357,23 +357,21 @@ public class RendererCoordinator implements RendererDelegate {
 		final RendererSize tileSize = tile.getTileSize();
 		final RendererSize imageSize = tile.getImageSize();
 		
-		final Number[] region = renderer.getInitialRegion();
+		final RendererRegion region = renderer.getInitialRegion();
 		
-		final Number size = new Number((region[1].r() - region[0].r()) / 2, (region[1].i() - region[0].i()) / 2);
-		final Number center = new Number((region[0].r() + region[1].r()) / 2, (region[0].i() + region[1].i()) / 2);
+		final Number size = region.getSize();
+		final Number center = region.getCenter();
 
 		final double imageDim = (int) Math.hypot(imageSize.getWidth() + tileBorder.getWidth() * 2, imageSize.getHeight() + tileBorder.getHeight() * 2);
 
-		final Number outerSize = new Number(tz * size.r() * (imageDim / imageSize.getWidth()), tz * size.i() * (imageDim / imageSize.getHeight()));
+		final double dx = tz * size.r() * (imageDim / imageSize.getWidth()) / 2;
+		final double dy = tz * size.i() * (imageDim / imageSize.getHeight()) / 2;
 		
-		final Number p0 = new Number(center.r() - outerSize.r() + tx, center.i() - outerSize.i() + ty);
-		final Number p1 = new Number(center.r() + outerSize.r() + tx, center.i() + outerSize.i() + ty);
+		final double px = center.r() - dx + tx;
+		final double py = center.i() - dy + ty;
+		final double qx = center.r() + dx + tx;
+		final double qy = center.i() + dy + ty;
 
-		final double dr = (p1.r() - p0.r()) / 2;
-		final double di = (p1.i() - p0.i()) / 2;
-		final double cr = p0.r() + dr;
-		final double ci = p0.i() + di;
-		
 //		final double tr = p0.r() + dr * ((imageDim - imageSize.getWidth()) / 2 + tileOffset.getWidth() + tileSize.getWidth() / 2) / imageDim;
 //		final double ti = p0.i() + di * ((imageDim - imageSize.getHeight()) / 2 + tileOffset.getHeight() + tileSize.getHeight() / 2) / imageDim;
 //		final double pr = Math.cos(rz) * (tr - cr) - Math.sin(rz) * (ti - ci) + cr; 
@@ -381,12 +379,9 @@ public class RendererCoordinator implements RendererDelegate {
 //		final double sr = dr * (tileSize.getWidth() / imageDim);
 //		final double si = di * (tileSize.getHeight() / imageDim);
 
-		final Number[] newRegion = new Number[2];
-//		newRegion[0] = new Number(pr - sr, pi - si);
-//		newRegion[1] = new Number(pr + sr, pi + si);
-		newRegion[0] = new Number(cr - dr, ci - di);
-		newRegion[1] = new Number(cr + dr, ci + di);
-		logger.info("[" + newRegion[0] + ", " + newRegion[1] + "]");
+		final RendererRegion newRegion = new RendererRegion();
+		newRegion.setPoints(new Number(px, py), new Number(qx, qy));
+		logger.info(newRegion.toString());
 		return newRegion;
 	}
 
@@ -406,15 +401,11 @@ public class RendererCoordinator implements RendererDelegate {
 		return affine;
 	}
 
-	public Number getCenter() {
-		final Number[] region = renderer.getInitialRegion();
-		final Number center = new Number((region[0].r() + region[1].r()) / (2 * (region[1].r() - region[0].r())), (region[0].i() + region[1].i()) / (2 * (region[1].i() - region[0].i())));
-		return center;
+	public Number getInitialCenter() {
+		return renderer.getInitialRegion().getCenter();
 	}
 
-	public Number getSize() {
-		final Number[] region = renderer.getInitialRegion();
-		final Number size = new Number(region[1].r() - region[0].r(), region[1].i() - region[0].i());
-		return size;
+	public Number getInitialSize() {
+		return renderer.getInitialRegion().getSize();
 	}
 }
