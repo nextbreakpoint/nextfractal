@@ -3,7 +3,7 @@ package com.nextbreakpoint.nextfractal.mandelbrot.renderer.strategy;
 import com.nextbreakpoint.nextfractal.core.Colors;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererFractal;
-import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererPoint;
+import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererState;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererStrategy;
 
 public class MandelbrotRendererStrategy implements RendererStrategy {
@@ -21,19 +21,19 @@ public class MandelbrotRendererStrategy implements RendererStrategy {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererStrategy.renderer.AbstractMandelbrotRenderer.RenderingStrategy#renderPoint(com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererPoint.renderer.RenderedPoint)
+		 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererStrategy.renderer.AbstractMandelbrotRenderer.RenderingStrategy#renderPoint(com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererState.renderer.RenderedPoint)
 		 */
 		@Override
-		public int renderPoint(RendererPoint p, Number x, Number w) {
+		public int renderPoint(RendererState p, Number x, Number w) {
 			rendererFractal.renderOrbit(p.vars(), x, w);
 			return renderColor(p);
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererStrategy#renderColor(com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererPoint)
+		 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererStrategy#renderColor(com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererState)
 		 */
 		@Override
-		public int renderColor(RendererPoint p) {
+		public int renderColor(RendererState p) {
 			return Colors.color(rendererFractal.renderColor(p.vars()));
 		}
 

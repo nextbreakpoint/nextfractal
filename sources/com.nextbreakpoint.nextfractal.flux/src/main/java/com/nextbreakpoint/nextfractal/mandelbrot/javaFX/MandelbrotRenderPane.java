@@ -17,11 +17,13 @@ import com.nextbreakpoint.nextfractal.core.DefaultThreadFactory;
 import com.nextbreakpoint.nextfractal.core.DoubleVector4D;
 import com.nextbreakpoint.nextfractal.core.IntegerVector4D;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.Compiler;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerBuilder;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerReport;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Color;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Orbit;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererCoordinator;
+import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererPoint;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererSize;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererTile;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererView;
@@ -33,19 +35,23 @@ public class MandelbrotRenderPane extends BorderPane {
 	private final FractalSession session;
 	private JavaFXRenderFactory renderFactory;
 	private ThreadFactory threadFactory;
-	private RendererCoordinator rendererCoordinator;
+	private RendererCoordinator[] coordinators;
 	private AnimationTimer timer;
 	private int width;
 	private int height;
+	private int rows;
+	private int columns;
 	private String astOrbit;
 	private String astColor;
 	private Tool currentTool;
 	private RendererView view;
 	
-	public MandelbrotRenderPane(FractalSession session, int width, int height) {
+	public MandelbrotRenderPane(FractalSession session, int width, int height, int rows, int columns) {
 		this.session = session;
 		this.width = width;
 		this.height = height;
+		this.rows = rows;
+		this.columns = columns;
 		currentTool = new ZoomTool();
 //		currentTool = new MoveTool();
 		view = new RendererView();
@@ -55,55 +61,23 @@ public class MandelbrotRenderPane extends BorderPane {
         gc.setFill(javafx.scene.paint.Color.BLACK);
         gc.fillRect(0, 0, width, height);
         runTimer(canvas);
+        coordinators = new RendererCoordinator[rows * columns];
 		threadFactory = new DefaultThreadFactory("Render", false, Thread.MIN_PRIORITY);
 		renderFactory = new JavaFXRenderFactory();
 		Map<String, Integer> hints = new HashMap<String, Integer>();
 		if (!Boolean.getBoolean("disableXaosRender")) {
 			hints.put(RendererCoordinator.KEY_TYPE, RendererCoordinator.VALUE_REALTIME);
 		}
-		rendererCoordinator = new RendererCoordinator(threadFactory, renderFactory, createTile(), hints);
+		createCoordinators(rows, columns, hints);
 		session.addSessionListener(new FractalSessionListener() {
 			@Override
 			public void sourceChanged(FractalSession session) {
-				try {
-					Compiler compiler = new Compiler(session.getOutDir(), session.getPackageName(), session.getClassName(), session.getSource());
-					CompilerReport reportOrbit = compiler.compileOrbit();
-					//TODO report errors
-					boolean orbitChanged = !reportOrbit.getAst().equals(astOrbit);
-					astOrbit = reportOrbit.getAst();
-					CompilerReport reportColor = compiler.compileColor();
-					//TODO report errors
-					boolean colorChanged = !reportColor.getAst().equals(astColor);
-					astColor = reportColor.getAst();
-					if (orbitChanged) {
-						logger.info("Orbit algorithm is changed");
-					}
-					if (colorChanged) {
-						logger.info("Color algorithm is changed");
-					}
-					rendererCoordinator.stopRender();
-					if (Boolean.getBoolean("disableSmartRender")) {
-						rendererCoordinator.setOrbitAndColor((Orbit)reportOrbit.getObject(), (Color)reportColor.getObject());
-					} else {
-						if (orbitChanged) {
-							rendererCoordinator.setOrbitAndColor((Orbit)reportOrbit.getObject(), (Color)reportColor.getObject());
-						} else if (colorChanged) {
-							rendererCoordinator.setColor((Color)reportColor.getObject());
-						}
-					}
-					rendererCoordinator.init();
-					rendererCoordinator.setView(view);
-					rendererCoordinator.startRender();
-//					rendererCoordinator.setOrbitAndColor(new MandelbrotOrbit(), new MandelbrotColor());
-				} catch (Exception e) {
-					e.printStackTrace();//TODO display errors
-				}
+				updateFractal(session);
 			}
 
 			@Override
 			public void terminate(FractalSession session) {
-				rendererCoordinator.dispose();
-				rendererCoordinator = null;
+				disposeCoordinators();
 			}
 		});
 		canvas.setOnMouseClicked(e -> {
@@ -133,6 +107,23 @@ public class MandelbrotRenderPane extends BorderPane {
 		});
 	}
 
+	private void createCoordinators(int rows, int columns, Map<String, Integer> hints) {
+		for (int row = 0; row < rows; row++) {
+			for (int column = 0; column < columns; column++) {
+				coordinators[row * columns + column] = new RendererCoordinator(threadFactory, renderFactory, createTile(row, column), hints);
+			}
+		}
+	}
+
+	private void disposeCoordinators() {
+		for (int i = 0; i < coordinators.length; i++) {
+			if (coordinators[i] != null) {
+				coordinators[i].dispose();
+				coordinators[i] = null;
+			}
+		}
+	}
+
 	private void runTimer(Canvas canvas) {
 		timer = new AnimationTimer() {
 			private long last;
@@ -140,10 +131,17 @@ public class MandelbrotRenderPane extends BorderPane {
 			@Override
 			public void handle(long now) {
 				long time = now / 1000000;
-				if ((time - last) > 20 && rendererCoordinator != null) {
-					if (rendererCoordinator.isPixelsChanged()) {
-						RenderGraphicsContext gc = renderFactory.createGraphicsContext(canvas.getGraphicsContext2D());
-						rendererCoordinator.drawImage(gc);
+				if ((time - last) > 20) {
+					for (int i = 0; i < coordinators.length; i++) {
+						RendererCoordinator coordinator = coordinators[i];
+						if (coordinator != null && coordinator.isPixelsChanged()) {
+							RenderGraphicsContext gc = renderFactory.createGraphicsContext(canvas.getGraphicsContext2D());
+							RendererSize tileBorder = coordinator.getTile().getTileBorder();
+							RendererSize tileSize = coordinator.getTile().getTileSize();
+							gc.setClip(tileBorder.getWidth(), tileBorder.getHeight(), tileSize.getWidth(), tileSize.getHeight());
+							RendererPoint tileOffset = coordinator.getTile().getTileOffset();
+							coordinator.drawImage(gc, tileOffset.getX(), tileOffset.getY());
+						}
 					}
 					if (currentTool != null) {
 						currentTool.update(time);
@@ -155,15 +153,61 @@ public class MandelbrotRenderPane extends BorderPane {
 		timer.start();
 	}
 
-	private RendererTile createTile() {
+	private RendererTile createTile(int row, int column) {
+		int tileWidth = width / columns;
+		int tileHeight = height / rows;
 		RendererSize imageSize = new RendererSize(width, height);
-		RendererSize tileSize = new RendererSize(width, height);
-		RendererSize tileBorder = new RendererSize(0, 0);
-		RendererSize tileOffset = new RendererSize(0, 0);
+		RendererSize tileSize = new RendererSize(tileWidth, tileHeight);
+		RendererSize tileBorder = new RendererSize(0, 0);//TODO border?
+		RendererPoint tileOffset = new RendererPoint(column * width / columns, row * height / rows);
 		RendererTile tile = new RendererTile(imageSize, tileSize, tileOffset, tileBorder);
 		return tile;
 	}
 	
+	private void updateFractal(FractalSession session) {
+		try {
+			Compiler compiler = new Compiler(session.getOutDir(), session.getPackageName(), session.getClassName());
+			CompilerReport report = compiler.generateJavaSource(session.getSource());
+			CompilerBuilder<Orbit> orbitBuilder = compiler.compileOrbit(report);
+			//TODO report errors
+			String newASTOrbit = report.getAST().getOrbit().toString();
+			boolean orbitChanged = !newASTOrbit.equals(astOrbit);
+			astOrbit = newASTOrbit;
+			CompilerBuilder<Color> colorBuilder = compiler.compileColor(report);
+			//TODO report errors
+			String newASTColor = report.getAST().getColor().toString();
+			boolean colorChanged = !newASTColor.equals(astColor);
+			astColor = newASTColor;
+			if (orbitChanged) {
+				logger.info("Orbit algorithm is changed");
+			}
+			if (colorChanged) {
+				logger.info("Color algorithm is changed");
+			}
+			for (int i = 0; i < coordinators.length; i++) {
+				RendererCoordinator coordinator = coordinators[i];
+				if (coordinator != null) {
+					coordinator.stopRender();
+					if (Boolean.getBoolean("disableSmartRender")) {
+						coordinator.setOrbitAndColor(orbitBuilder.build(), colorBuilder.build());
+					} else {
+						if (orbitChanged) {
+							coordinator.setOrbitAndColor(orbitBuilder.build(), colorBuilder.build());
+						} else if (colorChanged) {
+							coordinator.setColor(colorBuilder.build());
+						}
+					}
+					coordinator.init();
+					coordinator.setView(view);
+					coordinator.startRender();
+//					coordinator.setOrbitAndColor(new MandelbrotOrbit(), new MandelbrotColor());
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();//TODO display errors
+		}
+	}
+
 	private interface Tool {
 		public void clicked(MouseEvent e);
 
@@ -219,25 +263,30 @@ public class MandelbrotRenderPane extends BorderPane {
 		@Override
 		public void update(long time) {
 			if (pressed || changed) {
-				DoubleVector4D t = view.getTraslation();
-				DoubleVector4D r = view.getRotation();
-				IntegerVector4D s = view.getState();
-				double x = t.getX();
-				double y = t.getY();
-				double z = t.getZ();
-				double a = r.getZ() * Math.PI / 180;
-				double zs = zoomin ? 1 / 1.05 : 1.05;
-				Number size = rendererCoordinator.getInitialSize();
-				x -= (zs - 1) * z * size.r() * (Math.cos(a) * x1 + Math.sin(a) * y1);
-				y -= (zs - 1) * z * size.i() * (Math.cos(a) * y1 - Math.sin(a) * x1);
-				z *= zs;
-				rendererCoordinator.abortRender();
-				rendererCoordinator.joinRender();
-				view.setTraslation(new DoubleVector4D(x, y, z, t.getW()));
-				view.setRotation(new DoubleVector4D(0, 0, r.getZ(), r.getW()));
-				view.setState(new IntegerVector4D(s.getX(), s.getY(), pressed ? 1 : 0, s.getW()));
-				rendererCoordinator.setView(view);
-				rendererCoordinator.startRender();
+				for (int i = 0; i < coordinators.length; i++) {
+					RendererCoordinator coordinator = coordinators[i];
+					if (coordinator != null) {
+						DoubleVector4D t = view.getTraslation();
+						DoubleVector4D r = view.getRotation();
+						IntegerVector4D s = view.getState();
+						double x = t.getX();
+						double y = t.getY();
+						double z = t.getZ();
+						double a = r.getZ() * Math.PI / 180;
+						double zs = zoomin ? 1 / 1.05 : 1.05;
+						Number size = coordinator.getInitialSize();
+						x -= (zs - 1) * z * size.r() * (Math.cos(a) * x1 + Math.sin(a) * y1);
+						y -= (zs - 1) * z * size.i() * (Math.cos(a) * y1 - Math.sin(a) * x1);
+						z *= zs;
+						coordinator.abortRender();
+						coordinator.joinRender();
+						view.setTraslation(new DoubleVector4D(x, y, z, t.getW()));
+						view.setRotation(new DoubleVector4D(0, 0, r.getZ(), r.getW()));
+						view.setState(new IntegerVector4D(s.getX(), s.getY(), pressed ? 1 : 0, s.getW()));
+						coordinator.setView(view);
+						coordinator.startRender();
+					}
+				}
 				changed = false;
 			}
 		}
@@ -284,22 +333,27 @@ public class MandelbrotRenderPane extends BorderPane {
 		@Override
 		public void update(long time) {
 			if (changed) {
-				DoubleVector4D t = view.getTraslation();
-				IntegerVector4D s = view.getState();
-				double x = t.getX();
-				double y = t.getY();
-				double z = t.getZ();
-				double w = t.getW();
-				x -= x1 - x0;
-				y -= y1 - y0;
-				x0 = x1;
-				y0 = y1;
-				rendererCoordinator.abortRender();
-				rendererCoordinator.joinRender();
-				view.setTraslation(new DoubleVector4D(x, y, z, w));
-				view.setState(new IntegerVector4D(0, 0, pressed ? 1 : 0, s.getW()));
-				rendererCoordinator.setView(view);
-				rendererCoordinator.startRender();
+				for (int i = 0; i < coordinators.length; i++) {
+					RendererCoordinator coordinator = coordinators[i];
+					if (coordinator != null) {
+						DoubleVector4D t = view.getTraslation();
+						IntegerVector4D s = view.getState();
+						double x = t.getX();
+						double y = t.getY();
+						double z = t.getZ();
+						double w = t.getW();
+						x -= x1 - x0;
+						y -= y1 - y0;
+						x0 = x1;
+						y0 = y1;
+						coordinator.abortRender();
+						coordinator.joinRender();
+						view.setTraslation(new DoubleVector4D(x, y, z, w));
+						view.setState(new IntegerVector4D(0, 0, pressed ? 1 : 0, s.getW()));
+						coordinator.setView(view);
+						coordinator.startRender();
+					}
+				}
 				changed = false;
 			}
 		}

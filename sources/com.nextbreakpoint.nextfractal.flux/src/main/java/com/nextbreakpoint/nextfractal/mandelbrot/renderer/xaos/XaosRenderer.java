@@ -35,7 +35,7 @@ import com.nextbreakpoint.nextfractal.core.Worker;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.MutableNumber;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.Renderer;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererData;
-import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererPoint;
+import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererState;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.strategy.JuliaRendererStrategy;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.strategy.MandelbrotRendererStrategy;
 
@@ -1321,7 +1321,7 @@ public final class XaosRenderer extends Renderer {
 		int rend = r - XaosConstants.GUESS_RANGE;
 		MutableNumber z = new MutableNumber(0, 0);
 		MutableNumber w = new MutableNumber(0, 0);
-		final RendererPoint p = xaosRendererData.newPoint();
+		final RendererState p = xaosRendererData.newPoint();
 		if (rend < 0) {
 			rend = 0;
 		}
@@ -1455,7 +1455,7 @@ public final class XaosRenderer extends Renderer {
 		int sumd;
 		MutableNumber z = new MutableNumber(0, 0);
 		MutableNumber w = new MutableNumber(0, 0);
-		final RendererPoint p = xaosRendererData.newPoint();
+		final RendererState p = xaosRendererData.newPoint();
 		if (rend < 0) {
 			rend = 0;
 		}
@@ -1569,7 +1569,7 @@ public final class XaosRenderer extends Renderer {
 		final int rowsize = width;
 		int offset = realloc.pos * rowsize;
 		int c = 0;
-		RendererPoint p = xaosRendererData.newPoint();
+		RendererState p = xaosRendererData.newPoint();
 		if (realloc.isCached && !realloc.refreshed) {
 			for (final XaosRealloc tmpRealloc : reallocX) {
 				if (tmpRealloc.isCached && !tmpRealloc.refreshed) {
@@ -1593,7 +1593,7 @@ public final class XaosRenderer extends Renderer {
 		final int rowsize = width;
 		int offset = realloc.pos;
 		int c = 0;
-		RendererPoint p = xaosRendererData.newPoint();
+		RendererState p = xaosRendererData.newPoint();
 		if (realloc.isCached && !realloc.refreshed) {
 			for (final XaosRealloc tmpRealloc : reallocY) {
 				if (tmpRealloc.isCached && !tmpRealloc.refreshed) {

@@ -15,7 +15,7 @@ public interface RendererStrategy {
 	 * @param p
 	 * @return the color
 	 */
-	public int renderColor(RendererPoint p);
+	public int renderColor(RendererState p);
 	
 	/**
 	 * @param p
@@ -23,7 +23,7 @@ public interface RendererStrategy {
 	 * @param w
 	 * @return the color
 	 */
-	public int renderPoint(RendererPoint p, Number x, Number w);
+	public int renderPoint(RendererState p, Number x, Number w);
 	
 	/**
 	 * @return

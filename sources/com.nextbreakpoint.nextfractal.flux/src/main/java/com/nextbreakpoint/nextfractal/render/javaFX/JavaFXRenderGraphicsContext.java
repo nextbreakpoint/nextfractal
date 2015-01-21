@@ -98,4 +98,12 @@ public class JavaFXRenderGraphicsContext implements RenderGraphicsContext {
 	public GraphicsContext getGraphicsContext() {
 		return gc;
 	}
+
+	public void setClip(int x, int y, int width, int height) {
+		//TODO clip
+	}
+
+	public void clearClip() {
+		//TODO clip
+	}
 }

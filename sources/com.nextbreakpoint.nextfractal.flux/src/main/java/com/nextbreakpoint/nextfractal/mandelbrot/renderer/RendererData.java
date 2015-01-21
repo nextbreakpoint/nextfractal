@@ -231,15 +231,15 @@ public class RendererData {
 	/**
 	 * @return
 	 */
-	public RendererPoint newPoint() {
-		return new RendererPoint(depth);
+	public RendererState newPoint() {
+		return new RendererState(depth);
 	}
 
 	/**
 	 * @param offset
 	 * @param p
 	 */
-	public void getPoint(int offset, RendererPoint p) {
+	public void getPoint(int offset, RendererState p) {
 		for (int j = 0; j < depth; j++) {
 			double[] cache = oldCache.get(j);
 			double r = cache[offset * 2 + 0];
@@ -252,7 +252,7 @@ public class RendererData {
 	 * @param offset
 	 * @param p
 	 */
-	public void setPoint(int offset, RendererPoint p) {
+	public void setPoint(int offset, RendererState p) {
 		for (int j = 0; j < depth; j++) {
 			MutableNumber var = p.vars()[j];
 			double[] cache = newCache.get(j);

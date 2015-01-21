@@ -31,6 +31,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.Compiler;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerBuilder;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerReport;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Color;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
@@ -42,23 +43,20 @@ public class CompilerTest1 extends BaseTest {
 	public void Compiler1() {
 		try {
 //			Assert.assertTrue(Pattern.matches("([A-Z][a-z]*)-(\\d).(.jpg|.png)", "Andrea-10.png"));
-			Compiler compiler = new Compiler(new File("test"), "test", "TestFractal", getSource());
-			CompilerReport reportOrbit = compiler.compileOrbit();
-			Assert.assertNotNull(reportOrbit);
-			Assert.assertNotNull(reportOrbit.getAst());
-			System.out.println(reportOrbit.getAst());
-			Assert.assertNotNull(reportOrbit.getSource());
-			System.out.println(reportOrbit.getSource());
-			Assert.assertNotNull(reportOrbit.getObject());
-			CompilerReport reportColor = compiler.compileColor();
-			Assert.assertNotNull(reportColor);
-			Assert.assertNotNull(reportColor.getAst());
-			System.out.println(reportColor.getAst());
-			Assert.assertNotNull(reportColor.getSource());
-			System.out.println(reportColor.getSource());
-			Assert.assertNotNull(reportColor.getObject());
-			Orbit orbit = (Orbit)reportOrbit.getObject();
-			Color color = (Color)reportColor.getObject();
+			Compiler compiler = new Compiler(new File("test"), "test", "TestFractal");
+			CompilerReport report = compiler.generateJavaSource(getSource());
+			Assert.assertNotNull(report.getAST());
+			System.out.println(report.getAST());
+			Assert.assertNotNull(report.getOrbitSource());
+			System.out.println(report.getOrbitSource());
+			Assert.assertNotNull(report.getColorSource());
+			System.out.println(report.getColorSource());
+			CompilerBuilder<Orbit> orbitBuilder = compiler.compileOrbit(report);
+			Assert.assertNotNull(orbitBuilder);
+			CompilerBuilder<Color> colorBuilder = compiler.compileColor(report);
+			Assert.assertNotNull(colorBuilder);
+			Orbit orbit = orbitBuilder.build();
+			Color color = colorBuilder.build();
 			Scope scope = new Scope();
 			orbit.setScope(scope);
 			color.setScope(scope);

@@ -28,7 +28,6 @@ package com.nextbreakpoint.nextfractal.mandelbrot.renderer;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ThreadFactory;
-import java.util.logging.Logger;
 
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Color;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
@@ -44,7 +43,6 @@ import com.nextbreakpoint.nextfractal.render.RenderGraphicsContext;
 public class RendererCoordinator implements RendererDelegate {
 	public static final String KEY_TYPE = "TYPE";
 	public static final Integer VALUE_REALTIME = 1;
-	protected static final Logger logger = Logger.getLogger(RendererCoordinator.class.getName());
 	private final HashMap<String, Integer> hints = new HashMap<>();
 	private final ThreadFactory threadFactory;
 	private final RenderFactory renderFactory;
@@ -68,10 +66,8 @@ public class RendererCoordinator implements RendererDelegate {
 		this.renderFactory = renderFactory;
 		this.tile = tile;
 		this.hints.putAll(hints);
-		frontBuffer = new RendererBuffer(); 
-		backBuffer = new RendererBuffer(); 
 		RendererSize tileSize = tile.getTileSize();
-		RendererSize imageSize = tile.getImageSize();
+//		RendererSize imageSize = tile.getImageSize();
 		RendererSize tileBorder = tile.getTileBorder();
 		int tsw = tileSize.getWidth();
 		int tbw = tileBorder.getWidth();
@@ -81,6 +77,8 @@ public class RendererCoordinator implements RendererDelegate {
 		int tileDim = (int) Math.hypot(tsw + tbw * 2, tsh + tbh * 2);
 		size = new RendererSize(tileDim, tileDim);
 		view = new RendererView();
+		frontBuffer = new RendererBuffer(); 
+		backBuffer = new RendererBuffer(); 
 		frontBuffer.setTile(tile);
 		backBuffer.setTile(tile);
 		frontBuffer.setSize(size);
@@ -350,12 +348,12 @@ public class RendererCoordinator implements RendererDelegate {
 		final double tz = view.getTraslation().getZ();
 		final double rz = view.getRotation().getZ();
 		
-		logger.info("tx = " + tx + ", ty = " + ty + ", tz = " + tz + ", rz = " + rz);
+//		logger.info("tx = " + tx + ", ty = " + ty + ", tz = " + tz + ", rz = " + rz);
 		
-		final RendererSize tileBorder = tile.getTileBorder();
-		final RendererSize tileOffset = tile.getTileOffset();
-		final RendererSize tileSize = tile.getTileSize();
-		final RendererSize imageSize = tile.getImageSize();
+		final RendererSize tileBorder = backBuffer.getTile().getTileBorder();
+		final RendererPoint tileOffset = backBuffer.getTile().getTileOffset();
+		final RendererSize tileSize = backBuffer.getTile().getTileSize();
+		final RendererSize imageSize = backBuffer.getTile().getImageSize();
 		
 		final RendererRegion region = renderer.getInitialRegion();
 		
@@ -381,7 +379,7 @@ public class RendererCoordinator implements RendererDelegate {
 
 		final RendererRegion newRegion = new RendererRegion();
 		newRegion.setPoints(new Number(px, py), new Number(qx, qy));
-		logger.info(newRegion.toString());
+//		logger.info(newRegion.toString());
 		return newRegion;
 	}
 
@@ -390,8 +388,8 @@ public class RendererCoordinator implements RendererDelegate {
 	 * @return
 	 */
 	protected RenderAffine createTransform(double rotation) {
-		final RendererSize tileSize = tile.getTileSize();
-		final RendererSize tileBorder = tile.getTileBorder();
+		final RendererSize tileSize = backBuffer.getTile().getTileSize();
+		final RendererSize tileBorder = backBuffer.getTile().getTileBorder();
 		final int offsetX = (getWidth() - tileSize.getWidth() - tileBorder.getWidth() * 2) / 2;
 		final int offsetY = (getHeight() - tileSize.getHeight() - tileBorder.getHeight() * 2) / 2;
 		final int centerX = getWidth() / 2;
@@ -407,5 +405,9 @@ public class RendererCoordinator implements RendererDelegate {
 
 	public Number getInitialSize() {
 		return renderer.getInitialRegion().getSize();
+	}
+
+	public RendererTile getTile() {
+		return tile;
 	}
 }

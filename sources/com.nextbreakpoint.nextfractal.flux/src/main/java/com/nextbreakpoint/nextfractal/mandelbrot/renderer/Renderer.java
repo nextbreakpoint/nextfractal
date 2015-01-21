@@ -205,7 +205,7 @@ public class Renderer {
 	/**
 	 * 
 	 */
-	protected void init() {
+	public void init() {
 		rendererFractal.initialize();
 		initialRegion = new RendererRegion(rendererFractal.getOrbit().getInitialRegion());
 	}
@@ -285,7 +285,7 @@ public class Renderer {
 //		}
 		final MutableNumber px = new MutableNumber(0, 0);
 		final MutableNumber pw = new MutableNumber(0, 0);
-		final RendererPoint p = rendererData.newPoint();
+		final RendererState p = rendererData.newPoint();
 		int offset = 0;
 		int c = 0;
 		for (int y = 0; y < height; y++) {

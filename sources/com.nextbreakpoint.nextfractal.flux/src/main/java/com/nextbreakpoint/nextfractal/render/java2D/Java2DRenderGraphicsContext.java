@@ -129,4 +129,12 @@ public class Java2DRenderGraphicsContext implements RenderGraphicsContext {
 	public Graphics2D getGraphicsContext() {
 		return g2d;
 	}
+
+	public void setClip(int x, int y, int width, int height) {
+		g2d.setClip(x, y, width, height);
+	}
+
+	public void clearClip() {
+		g2d.setClip(null);
+	}
 }

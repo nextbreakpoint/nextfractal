@@ -31,8 +31,8 @@ package com.nextbreakpoint.nextfractal.mandelbrot.renderer;
 public class RendererTile {
 	private final RendererSize imageSize;
 	private final RendererSize tileSize;
-	private final RendererSize tileOffset;
 	private final RendererSize tileBorder;
+	private final RendererPoint tileOffset;
 
 	/**
 	 * @param imageSize
@@ -40,7 +40,7 @@ public class RendererTile {
 	 * @param tileOffset
 	 * @param tileBorder
 	 */
-	public RendererTile(final RendererSize imageSize, final RendererSize tileSize, final RendererSize tileOffset, final RendererSize tileBorder) {
+	public RendererTile(final RendererSize imageSize, final RendererSize tileSize, final RendererPoint tileOffset, final RendererSize tileBorder) {
 		this.imageSize = imageSize;
 		this.tileSize = tileSize;
 		this.tileOffset = tileOffset;
@@ -64,7 +64,7 @@ public class RendererTile {
 	/**
 	 * @return the tileOffset
 	 */
-	public RendererSize getTileOffset() {
+	public RendererPoint getTileOffset() {
 		return tileOffset;
 	}
 

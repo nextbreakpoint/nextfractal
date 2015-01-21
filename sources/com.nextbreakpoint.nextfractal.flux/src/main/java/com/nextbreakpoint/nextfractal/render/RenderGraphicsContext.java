@@ -38,4 +38,8 @@ public interface RenderGraphicsContext {
 	public void saveTransform();
 
 	public void restoreTransform();
+
+	public void setClip(int x, int y, int width, int height);
+
+	public void clearClip();
 }

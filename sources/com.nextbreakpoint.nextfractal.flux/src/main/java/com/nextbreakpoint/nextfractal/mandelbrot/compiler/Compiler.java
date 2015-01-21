@@ -81,28 +81,29 @@ public class Compiler {
 	private static final Logger logger = Logger.getLogger(Compiler.class.getName());
 	private final String packageName;
 	private final String className;
-	private final String source;
 	private final File outDir;
 	
-	public Compiler(File outDir, String packageName, String className, String source) {
+	public Compiler(File outDir, String packageName, String className) {
 		this.packageName = packageName;
 		this.className = className;
-		this.source = source;
 		this.outDir = outDir;
 	}
-
-	public CompilerReport compileOrbit() throws Exception {
+	
+	public CompilerReport generateJavaSource(String source) throws Exception {
 		ASTFractal ast = parse(source);
-		String javaSource = compileOrbit(ast);
-		Object object = compileToClass(javaSource, className + "Orbit");
-		return new CompilerReport(ast.getOrbit().toString(), javaSource, object);
+		String orbitSource = compileOrbit(ast);
+		String colorSource = compileColor(ast);
+		return new CompilerReport(ast, orbitSource, colorSource);
+	}
+	
+	public CompilerBuilder<Orbit> compileOrbit(CompilerReport report) throws Exception {
+		Class<Orbit> clazz = compileToClass(report.getOrbitSource(), className + "Orbit", Orbit.class);
+		return new CompilerBuilder<Orbit>(clazz);
 	}
 
-	public CompilerReport compileColor() throws Exception {
-		ASTFractal ast = parse(source);
-		String javaSource = compileColor(ast);
-		Object object = compileToClass(javaSource, className + "Color");
-		return new CompilerReport(ast.getColor().toString(), javaSource, object);
+	public CompilerBuilder<Color> compileColor(CompilerReport report) throws Exception {
+		Class<Color> clazz = compileToClass(report.getColorSource(), className + "Color", Color.class);
+		return new CompilerBuilder<Color>(clazz);
 	}
 
 	private ASTFractal parse(String source) throws Exception {
@@ -159,7 +160,8 @@ public class Compiler {
 		return builder.toString();
 	}
 	
-	private Object compileToClass(String source, String className) throws Exception {
+	@SuppressWarnings("unchecked")
+	private <T> Class<T> compileToClass(String source, String className, Class<T> clazz) throws Exception {
 		File dir = new File(outDir, packageName.replace(".", "/"));
 		dir.mkdirs();
 		FileWriter writer = null;
@@ -178,23 +180,27 @@ public class Compiler {
 		DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 		StandardJavaFileManager fileManager = compiler.getStandardFileManager(diagnostics, null, null);
-		compiler.getTask(null, fileManager, diagnostics, options, null, compilationUnits).call();
-		for (Diagnostic<? extends JavaFileObject> diagnostic : diagnostics.getDiagnostics()) {
-			logger.log(Level.FINE, String.format("Error on line %d: %s\n", diagnostic.getLineNumber(), diagnostic.getMessage(null)));
-		}
-		if (diagnostics.getDiagnostics().size() == 0) {
-			CompilerClassLoader loader = new CompilerClassLoader();
-			defineClasses(fileManager, loader, className);
-			try {
-				Class<?> clazz = loader.loadClass(packageName + "." + className);
-				logger.log(Level.FINE, clazz.getCanonicalName());
-				Object object = clazz.newInstance();
-				return object;
-			} catch (Exception e) {
-				throw new Exception("Cannot instantiate fractal ", e);
+		try {
+			compiler.getTask(null, fileManager, diagnostics, options, null, compilationUnits).call();
+			for (Diagnostic<? extends JavaFileObject> diagnostic : diagnostics.getDiagnostics()) {
+				logger.log(Level.FINE, String.format("Error on line %d: %s\n", diagnostic.getLineNumber(), diagnostic.getMessage(null)));
 			}
+			if (diagnostics.getDiagnostics().size() == 0) {
+				CompilerClassLoader loader = new CompilerClassLoader();
+				defineClasses(fileManager, loader, className);
+				try {
+					Class<?> compiledClazz = loader.loadClass(packageName + "." + className);
+					logger.log(Level.FINE, compiledClazz.getCanonicalName());
+					if (clazz.isAssignableFrom(compiledClazz)) {
+						return (Class<T>) compiledClazz;
+					}
+				} catch (Exception e) {
+					throw new Exception("Cannot instantiate fractal ", e);
+				}
+			}
+		} finally {
+			fileManager.close();
 		}
-		fileManager.close();
 		return null;
 	}
 

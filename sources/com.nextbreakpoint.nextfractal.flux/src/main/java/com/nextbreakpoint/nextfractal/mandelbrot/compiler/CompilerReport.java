@@ -1,25 +1,27 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.compiler;
 
-public class CompilerReport {
-	private String ast;
-	private String source;
-	private Object object;
+import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTFractal;
 
-	public CompilerReport(String ast, String source, Object object) {
+public class CompilerReport {
+	private ASTFractal ast;
+	private String orbitSource;
+	private String colorSource;
+
+	public CompilerReport(ASTFractal ast, String orbitSource, String colorSource) {
 		this.ast = ast;
-		this.source = source;
-		this.object = object;
+		this.orbitSource = orbitSource;
+		this.colorSource = colorSource;
 	}
 
-	public String getAst() {
+	public ASTFractal getAST() {
 		return ast;
 	}
 
-	public String getSource() {
-		return source;
+	public String getOrbitSource() {
+		return orbitSource;
 	}
 
-	public Object getObject() {
-		return object;
+	public String getColorSource() {
+		return colorSource;
 	}
 }

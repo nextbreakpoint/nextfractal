@@ -47,6 +47,8 @@ public class RendererTest {
 			color.setScope(scope);
 			renderer.setOrbit(orbit);
 			renderer.setColor(color);
+			renderer.init();
+			renderer.setRegion(renderer.getInitialRegion());
 			renderer.startRender();
 			renderer.joinRender();
 		} catch (Exception e) {
