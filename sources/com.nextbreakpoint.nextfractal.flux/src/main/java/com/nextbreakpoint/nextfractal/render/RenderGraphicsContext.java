@@ -35,11 +35,9 @@ public interface RenderGraphicsContext {
 
 	public void setAffine(RenderAffine t);
 
-	public void saveTransform();
+	public void save();
 
-	public void restoreTransform();
+	public void restore();
 
 	public void setClip(int x, int y, int width, int height);
-
-	public void clearClip();
 }

@@ -1,9 +1,6 @@
 package com.nextbreakpoint.nextfractal.render.javaFX;
 
-import java.util.Stack;
-
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.transform.Affine;
 
 import com.nextbreakpoint.nextfractal.render.RenderAffine;
 import com.nextbreakpoint.nextfractal.render.RenderColor;
@@ -13,7 +10,6 @@ import com.nextbreakpoint.nextfractal.render.RenderImage;
 
 public class JavaFXRenderGraphicsContext implements RenderGraphicsContext {
 	private GraphicsContext gc;
-	private Stack<Affine> stack = new Stack<>();
 
 	public JavaFXRenderGraphicsContext(GraphicsContext gc) {
 		this.gc = gc;
@@ -87,12 +83,12 @@ public class JavaFXRenderGraphicsContext implements RenderGraphicsContext {
 		affine.setAffine(this);
 	}
 
-	public void saveTransform() {
-		stack.push(gc.getTransform());
+	public void save() {
+		gc.save();
 	}
 
-	public void restoreTransform() {
-		gc.setTransform(stack.pop());
+	public void restore() {
+		gc.restore();
 	}
 
 	public GraphicsContext getGraphicsContext() {
@@ -100,10 +96,8 @@ public class JavaFXRenderGraphicsContext implements RenderGraphicsContext {
 	}
 
 	public void setClip(int x, int y, int width, int height) {
-		//TODO clip
-	}
-
-	public void clearClip() {
-		//TODO clip
+		gc.beginPath();
+		gc.rect(x, y, width, height);
+		gc.clip();
 	}
 }

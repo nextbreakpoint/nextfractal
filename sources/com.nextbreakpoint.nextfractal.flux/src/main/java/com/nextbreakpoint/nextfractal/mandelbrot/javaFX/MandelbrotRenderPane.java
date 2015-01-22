@@ -107,6 +107,10 @@ public class MandelbrotRenderPane extends BorderPane {
 		});
 	}
 
+	private double getZoomSpeed() {
+		return 1.02;
+	}
+
 	private void createCoordinators(int rows, int columns, Map<String, Integer> hints) {
 		for (int row = 0; row < rows; row++) {
 			for (int column = 0; column < columns; column++) {
@@ -118,6 +122,12 @@ public class MandelbrotRenderPane extends BorderPane {
 	private void disposeCoordinators() {
 		for (int i = 0; i < coordinators.length; i++) {
 			if (coordinators[i] != null) {
+				coordinators[i].abortRender();
+			}
+		}
+		for (int i = 0; i < coordinators.length; i++) {
+			if (coordinators[i] != null) {
+				coordinators[i].joinRender();
 				coordinators[i].dispose();
 				coordinators[i] = null;
 			}
@@ -131,16 +141,12 @@ public class MandelbrotRenderPane extends BorderPane {
 			@Override
 			public void handle(long now) {
 				long time = now / 1000000;
-				if ((time - last) > 20) {
+				if ((time - last) > 50) {
 					for (int i = 0; i < coordinators.length; i++) {
 						RendererCoordinator coordinator = coordinators[i];
 						if (coordinator != null && coordinator.isPixelsChanged()) {
 							RenderGraphicsContext gc = renderFactory.createGraphicsContext(canvas.getGraphicsContext2D());
-							RendererSize tileBorder = coordinator.getTile().getTileBorder();
-							RendererSize tileSize = coordinator.getTile().getTileSize();
-							gc.setClip(tileBorder.getWidth(), tileBorder.getHeight(), tileSize.getWidth(), tileSize.getHeight());
-							RendererPoint tileOffset = coordinator.getTile().getTileOffset();
-							coordinator.drawImage(gc, tileOffset.getX(), tileOffset.getY());
+							coordinator.drawImage(gc);
 						}
 					}
 					if (currentTool != null) {
@@ -187,7 +193,13 @@ public class MandelbrotRenderPane extends BorderPane {
 			for (int i = 0; i < coordinators.length; i++) {
 				RendererCoordinator coordinator = coordinators[i];
 				if (coordinator != null) {
-					coordinator.stopRender();
+					coordinator.abortRender();
+				}
+			}
+			for (int i = 0; i < coordinators.length; i++) {
+				RendererCoordinator coordinator = coordinators[i];
+				if (coordinator != null) {
+					coordinator.joinRender();
 					if (Boolean.getBoolean("disableSmartRender")) {
 						coordinator.setOrbitAndColor(orbitBuilder.build(), colorBuilder.build());
 					} else {
@@ -199,8 +211,12 @@ public class MandelbrotRenderPane extends BorderPane {
 					}
 					coordinator.init();
 					coordinator.setView(view);
+				}
+			}
+			for (int i = 0; i < coordinators.length; i++) {
+				RendererCoordinator coordinator = coordinators[i];
+				if (coordinator != null) {
 					coordinator.startRender();
-//					coordinator.setOrbitAndColor(new MandelbrotOrbit(), new MandelbrotColor());
 				}
 			}
 		} catch (Exception e) {
@@ -266,6 +282,12 @@ public class MandelbrotRenderPane extends BorderPane {
 				for (int i = 0; i < coordinators.length; i++) {
 					RendererCoordinator coordinator = coordinators[i];
 					if (coordinator != null) {
+						coordinator.abortRender();
+					}
+				}
+				for (int i = 0; i < coordinators.length; i++) {
+					RendererCoordinator coordinator = coordinators[i];
+					if (coordinator != null) {
 						DoubleVector4D t = view.getTraslation();
 						DoubleVector4D r = view.getRotation();
 						IntegerVector4D s = view.getState();
@@ -273,17 +295,21 @@ public class MandelbrotRenderPane extends BorderPane {
 						double y = t.getY();
 						double z = t.getZ();
 						double a = r.getZ() * Math.PI / 180;
-						double zs = zoomin ? 1 / 1.05 : 1.05;
+						double zs = zoomin ? 1 / getZoomSpeed() : getZoomSpeed();
 						Number size = coordinator.getInitialSize();
 						x -= (zs - 1) * z * size.r() * (Math.cos(a) * x1 + Math.sin(a) * y1);
 						y -= (zs - 1) * z * size.i() * (Math.cos(a) * y1 - Math.sin(a) * x1);
 						z *= zs;
-						coordinator.abortRender();
 						coordinator.joinRender();
 						view.setTraslation(new DoubleVector4D(x, y, z, t.getW()));
 						view.setRotation(new DoubleVector4D(0, 0, r.getZ(), r.getW()));
 						view.setState(new IntegerVector4D(s.getX(), s.getY(), pressed ? 1 : 0, s.getW()));
 						coordinator.setView(view);
+					}
+				}
+				for (int i = 0; i < coordinators.length; i++) {
+					RendererCoordinator coordinator = coordinators[i];
+					if (coordinator != null) {
 						coordinator.startRender();
 					}
 				}
@@ -336,6 +362,12 @@ public class MandelbrotRenderPane extends BorderPane {
 				for (int i = 0; i < coordinators.length; i++) {
 					RendererCoordinator coordinator = coordinators[i];
 					if (coordinator != null) {
+						coordinator.abortRender();
+					}
+				}
+				for (int i = 0; i < coordinators.length; i++) {
+					RendererCoordinator coordinator = coordinators[i];
+					if (coordinator != null) {
 						DoubleVector4D t = view.getTraslation();
 						IntegerVector4D s = view.getState();
 						double x = t.getX();
@@ -346,11 +378,15 @@ public class MandelbrotRenderPane extends BorderPane {
 						y -= y1 - y0;
 						x0 = x1;
 						y0 = y1;
-						coordinator.abortRender();
 						coordinator.joinRender();
 						view.setTraslation(new DoubleVector4D(x, y, z, w));
 						view.setState(new IntegerVector4D(0, 0, pressed ? 1 : 0, s.getW()));
 						coordinator.setView(view);
+					}
+				}
+				for (int i = 0; i < coordinators.length; i++) {
+					RendererCoordinator coordinator = coordinators[i];
+					if (coordinator != null) {
 						coordinator.startRender();
 					}
 				}

@@ -2,6 +2,7 @@ package com.nextbreakpoint.nextfractal.render.java2D;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Rectangle2D;
@@ -15,7 +16,7 @@ import com.nextbreakpoint.nextfractal.render.RenderImage;
 
 public class Java2DRenderGraphicsContext implements RenderGraphicsContext {
 	private Graphics2D g2d;
-	private Stack<AffineTransform> stack = new Stack<>();
+	private Stack<State> stack = new Stack<>();
 	private GeneralPath shape;
 	private RenderColor strokeColor;
 	private RenderColor fillColor;
@@ -118,12 +119,17 @@ public class Java2DRenderGraphicsContext implements RenderGraphicsContext {
 		affine.setAffine(this);
 	}
 
-	public void saveTransform() {
-		stack.push(g2d.getTransform());
+	public void save() {
+		State state = new State();
+		state.transform = g2d.getTransform();
+		state.clip = g2d.getClip();
+		stack.push(state);
 	}
 
-	public void restoreTransform() {
-		g2d.setTransform(stack.pop());
+	public void restore() {
+		State state = stack.pop();
+		g2d.setTransform(state.transform);
+		g2d.setClip(state.clip);
 	}
 
 	public Graphics2D getGraphicsContext() {
@@ -136,5 +142,10 @@ public class Java2DRenderGraphicsContext implements RenderGraphicsContext {
 
 	public void clearClip() {
 		g2d.setClip(null);
+	}
+	
+	private class State {
+		AffineTransform transform;
+		Shape clip;
 	}
 }

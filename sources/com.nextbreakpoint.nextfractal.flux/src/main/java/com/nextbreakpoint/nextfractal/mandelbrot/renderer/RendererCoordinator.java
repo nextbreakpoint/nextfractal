@@ -239,14 +239,13 @@ public class RendererCoordinator implements RendererDelegate {
 	public void drawImage(final RenderGraphicsContext gc) {
 		synchronized (this) {
 			if (frontBuffer != null) {
-				gc.saveTransform();
-				// g.setClip(oldTile.getTileBorder().getX(), oldTile.getTileBorder().getY(), oldTile.getTileSize().getX(), oldTile.getTileSize().getY());
-				// g.setClip(0, 0, oldTile.getTileSize().getX() + oldTile.getTileBorder().getX() + 2, oldTile.getTileSize().getY() + oldTile.getTileBorder().getY() + 2);
+				gc.save();
+				RendererPoint tileOffset = frontBuffer.getTile().getTileOffset();
+				RendererSize tileSize = frontBuffer.getTile().getTileSize();
+				gc.setClip(tileOffset.getX(), tileOffset.getY(), tileSize.getWidth(), tileSize.getHeight());
 				gc.setAffine(frontBuffer.getAffine());
-				gc.drawImage(frontBuffer.getBuffer().getImage(), 0, 0);
-				//gc.setClip(null);
-				// g.dispose();
-				gc.restoreTransform();
+				gc.drawImage(frontBuffer.getBuffer().getImage(), tileOffset.getX(), tileOffset.getY());
+				gc.restore();
 			}
 		}
 	}
@@ -259,14 +258,12 @@ public class RendererCoordinator implements RendererDelegate {
 	public void drawImage(final RenderGraphicsContext gc, final int x, final int y) {
 		synchronized (this) {
 			if (frontBuffer != null) {
-				gc.saveTransform();
-				// g.setClip(oldTile.getTileBorder().getX(), oldTile.getTileBorder().getY(), oldTile.getTileSize().getX(), oldTile.getTileSize().getY());
-				// g.setClip(0, 0, oldTile.getTileSize().getX() + oldTile.getTileBorder().getX() + 2, oldTile.getTileSize().getY() + oldTile.getTileBorder().getY() + 2);
+				gc.save();
+				RendererSize tileSize = frontBuffer.getTile().getTileSize();
+				gc.setClip(x, y, tileSize.getWidth(), tileSize.getHeight());
 				gc.setAffine(frontBuffer.getAffine());
 				gc.drawImage(frontBuffer.getBuffer().getImage(), x, y);
-				//gc.setClip(null);
-				// g.dispose();
-				gc.restoreTransform();
+				gc.restore();
 			}
 		}
 	}
@@ -281,17 +278,15 @@ public class RendererCoordinator implements RendererDelegate {
 	public void drawImage(final RenderGraphicsContext gc, final int x, final int y, final int w, final int h) {
 		synchronized (this) {
 			if (frontBuffer != null) {
-				gc.saveTransform();
-				//TODO gc.setClip(x, y, w, h);
+				gc.save();
+				gc.setClip(x, y, w, h);
 				gc.setAffine(frontBuffer.getAffine());
 				final double sx = w / (double) frontBuffer.getTile().getTileSize().getWidth();
 				final double sy = h / (double) frontBuffer.getTile().getTileSize().getHeight();
 				final int dw = (int) Math.rint(frontBuffer.getSize().getWidth() * sx);
 				final int dh = (int) Math.rint(frontBuffer.getSize().getHeight() * sy);
 				gc.drawImage(frontBuffer.getBuffer().getImage(), x, y, dw, dh);
-				//TODO gc.setClip(null);
-				// g.dispose();
-				gc.restoreTransform();
+				gc.restore();
 			}
 		}
 	}
@@ -348,6 +343,8 @@ public class RendererCoordinator implements RendererDelegate {
 		final double tz = view.getTraslation().getZ();
 		final double rz = view.getRotation().getZ();
 		
+		double a = rz * Math.PI / 180;
+		
 //		logger.info("tx = " + tx + ", ty = " + ty + ", tz = " + tz + ", rz = " + rz);
 		
 		final RendererSize tileBorder = backBuffer.getTile().getTileBorder();
@@ -362,23 +359,32 @@ public class RendererCoordinator implements RendererDelegate {
 
 		final double imageDim = (int) Math.hypot(imageSize.getWidth() + tileBorder.getWidth() * 2, imageSize.getHeight() + tileBorder.getHeight() * 2);
 
+		int tsw = tileSize.getWidth();
+		int tbw = tileBorder.getWidth();
+		int tsh = tileSize.getHeight();
+		int tbh = tileBorder.getHeight();
+		int tileDim = (int) Math.hypot(tsw + tbw * 2, tsh + tbh * 2);
+
 		final double dx = tz * size.r() * (imageDim / imageSize.getWidth()) / 2;
 		final double dy = tz * size.i() * (imageDim / imageSize.getHeight()) / 2;
 		
-		final double px = center.r() - dx + tx;
-		final double py = center.i() - dy + ty;
-		final double qx = center.r() + dx + tx;
-		final double qy = center.i() + dy + ty;
+		final double cx = center.r();
+		final double cy = center.i();
+		final double px = cx - dx + tx;
+		final double py = cy - dy + ty;
+		final double qx = cx + dx + tx;
+		final double qy = cy + dy + ty;
 
-//		final double tr = p0.r() + dr * ((imageDim - imageSize.getWidth()) / 2 + tileOffset.getWidth() + tileSize.getWidth() / 2) / imageDim;
-//		final double ti = p0.i() + di * ((imageDim - imageSize.getHeight()) / 2 + tileOffset.getHeight() + tileSize.getHeight() / 2) / imageDim;
-//		final double pr = Math.cos(rz) * (tr - cr) - Math.sin(rz) * (ti - ci) + cr; 
-//		final double pi = Math.sin(rz) * (tr - cr) + Math.cos(rz) * (ti - ci) + ci;
-//		final double sr = dr * (tileSize.getWidth() / imageDim);
-//		final double si = di * (tileSize.getHeight() / imageDim);
+		final double gx = px + (qx - px) * ((imageDim - imageSize.getWidth()) / 2 + tileOffset.getX() + tileSize.getWidth() / 2) / imageDim;
+		final double gy = py + (qy - py) * ((imageDim - imageSize.getHeight()) / 2 + tileOffset.getY() + tileSize.getHeight() / 2) / imageDim;
+		final double fx = Math.cos(a) * (gx - cx) + Math.sin(a) * (gy - cx) + cx; 
+		final double fy = Math.cos(a) * (gy - cy) - Math.sin(a) * (gx - cx) + cy;
+		final double sx = dx * (tileDim / imageDim);
+		final double sy = dy * (tileDim / imageDim);
 
 		final RendererRegion newRegion = new RendererRegion();
-		newRegion.setPoints(new Number(px, py), new Number(qx, qy));
+//		newRegion.setPoints(new Number(px, py), new Number(qx, qy));
+		newRegion.setPoints(new Number(fx - sx, fy - sy), new Number(fx + sx, fy + sy));
 //		logger.info(newRegion.toString());
 		return newRegion;
 	}
