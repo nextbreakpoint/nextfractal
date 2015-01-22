@@ -63,6 +63,7 @@ public class NextFractalApp extends Application {
         renderRootPane.getStyleClass().add("render-pane");
         mainPane.getChildren().add(renderRootPane);
         mainPane.getChildren().add(editorRootPane);
+        mainPane.getStyleClass().add("application");
         root.getChildren().add(mainPane);
         FractalSession session = createFractalSession(pluginId);
         session.setPackageName(packageName);

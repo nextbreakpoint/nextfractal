@@ -8,8 +8,11 @@ import java.util.logging.Logger;
 import javafx.animation.AnimationTimer;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 
 import com.nextbreakpoint.nextfractal.FractalSession;
 import com.nextbreakpoint.nextfractal.FractalSessionListener;
@@ -52,9 +55,16 @@ public class MandelbrotRenderPane extends BorderPane {
 		this.height = height;
 		this.rows = rows;
 		this.columns = columns;
+		HBox buttons = new HBox(10);
+		Button zoomButton = new Button("Zoom");
+		Button moveButton = new Button("Move");
+		Button pickButton = new Button("Pick");
+		buttons.getChildren().add(zoomButton);
+		buttons.getChildren().add(moveButton);
+		buttons.getChildren().add(pickButton);
         Canvas canvas = new Canvas(width, height);
         GraphicsContext gc = canvas.getGraphicsContext2D();
-        gc.setFill(javafx.scene.paint.Color.BLACK);
+        gc.setFill(javafx.scene.paint.Color.WHITESMOKE);
         gc.fillRect(0, 0, width, height);
 		views = new RendererView[rows * columns];
         coordinators = new RendererCoordinator[rows * columns];
@@ -92,6 +102,15 @@ public class MandelbrotRenderPane extends BorderPane {
 				currentTool.moved(e);
 			}
 		});
+		zoomButton.setOnAction(e -> {
+			currentTool = new ZoomTool();
+		});
+		moveButton.setOnAction(e -> {
+			currentTool = new MoveTool();
+		});
+		pickButton.setOnAction(e -> {
+			currentTool = new PickTool();
+		});
 		session.addSessionListener(new FractalSessionListener() {
 			@Override
 			public void sourceChanged(FractalSession session) {
@@ -103,7 +122,13 @@ public class MandelbrotRenderPane extends BorderPane {
 				disposeCoordinators();
 			}
 		});
-		setCenter(canvas);
+		StackPane stackPane = new StackPane();
+		stackPane.getChildren().add(canvas);
+		stackPane.getChildren().add(buttons);
+		canvas.getStyleClass().add("render-pane");
+		buttons.getStyleClass().add("tools-pane");
+		getStyleClass().add("mandelbrot");
+		setCenter(stackPane);
         runTimer(canvas);
 	}
 

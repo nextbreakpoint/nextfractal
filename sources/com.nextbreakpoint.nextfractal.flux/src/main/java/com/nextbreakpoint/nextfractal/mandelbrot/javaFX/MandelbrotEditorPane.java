@@ -15,10 +15,13 @@ public class MandelbrotEditorPane extends BorderPane {
 		this.session = session;
 		TextArea textarea = new TextArea();
 		setCenter(textarea);
-		HBox buttonsBox = new HBox(10);
+		HBox buttons = new HBox(10);
 		Button renderButton = new Button("Render");
-		buttonsBox.getChildren().add(renderButton);
-		setBottom(buttonsBox);
+		buttons.getChildren().add(renderButton);
+		setBottom(buttons);
+		textarea.getStyleClass().add("source-pane");
+		buttons.getStyleClass().add("actions-pane");
+		getStyleClass().add("mandelbrot");
 		session.addSessionListener(new FractalSessionListener() {
 			@Override
 			public void sourceChanged(FractalSession session) {

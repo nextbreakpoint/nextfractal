@@ -1,27 +1,43 @@
 .root {
-	-fx-background-color:#444444;
+	-fx-background-color: #444444;
 }
 
 .scroll-pane {
-	-fx-background-color:transparent;
+	-fx-background-color: transparent;
 }
 
 .scroll-pane > .viewport {
-	-fx-background-color:transparent;
+	-fx-background-color: transparent;
 }
 
 .text-area {
-	-fx-background-color:#FFFFFF;
-	-fx-focus-color: transparent;
+    -fx-background-color: #FFFFFF;
 }
 
-.text-area:focused {
-	-fx-focus-color: transparent;
+.application .editor-pane {
+	-fx-background-color: #FFFFFF;
 }
 
-.editor-pane {
-	-fx-background-color:#FFFFFF;
+.application .render-pane {
 }
 
-.render-pane {
+.application .mandelbrot .stack-pane {
 }
+
+.application .mandelbrot .tools-pane {
+	-fx-alignment: bottom-center;
+	-fx-padding: 10px;
+}
+
+.application .mandelbrot .render-pane {
+}
+
+.application .mandelbrot .source-pane {
+	-fx-border-width: 0;
+}
+
+.application .mandelbrot .actions-pane {
+	-fx-alignment: center;
+	-fx-padding: 10px;
+}
+
