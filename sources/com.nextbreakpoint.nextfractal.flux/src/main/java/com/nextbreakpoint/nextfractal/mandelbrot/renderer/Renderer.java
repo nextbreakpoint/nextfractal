@@ -279,10 +279,10 @@ public class Renderer {
 		rendererData.setRegion(region);
 		rendererData.initPositions();
 		rendererData.swap();
-//		rendererData.clearPixels();
-//		if (rendererDelegate != null) {
-//			rendererDelegate.didChanged(progress, rendererData.getPixels());
-//		}
+		rendererData.clearPixels();
+		if (rendererDelegate != null) {
+			rendererDelegate.didChanged(progress, rendererData.getPixels());
+		}
 		final MutableNumber px = new MutableNumber(0, 0);
 		final MutableNumber pw = new MutableNumber(0, 0);
 		final RendererState p = rendererData.newPoint();

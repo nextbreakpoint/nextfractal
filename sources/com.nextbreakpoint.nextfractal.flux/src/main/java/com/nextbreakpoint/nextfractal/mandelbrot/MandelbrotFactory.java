@@ -36,6 +36,6 @@ public class MandelbrotFactory implements FractalFactory {
 	 */
 	@Override
 	public Pane createRenderPane(FractalSession session, int width, int height) {
-		return new MandelbrotRenderPane(session, width, height, 2, 2);
+		return new MandelbrotRenderPane(session, width, height, 1, 1);
 	}
 }
