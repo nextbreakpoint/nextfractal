@@ -4,6 +4,8 @@
 
 .scroll-pane {
 	-fx-background-color: transparent;
+	-fx-hbar-policy: never;
+	-fx-vbar-policy: never;
 }
 
 .scroll-pane > .viewport {
@@ -12,6 +14,11 @@
 
 .text-area {
     -fx-background-color: #FFFFFF;
+}
+
+.text-area:focused .content {
+	-fx-background-color: white white black black;
+	-fx-background-insets: 0, 0, 1, 2;
 }
 
 .application .editor-pane {

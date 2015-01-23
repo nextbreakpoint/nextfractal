@@ -80,7 +80,7 @@ public class NextFractalApp extends Application {
         	}
         }
         Scene scene = new Scene(root);
-        AquaFx.style();
+//        AquaFx.style();
         scene.getStylesheets().add(getClass().getResource("/theme.css").toExternalForm());
 		primaryStage.setScene(scene);
         primaryStage.show();

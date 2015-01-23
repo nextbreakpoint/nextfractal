@@ -77,27 +77,27 @@ public class MandelbrotRenderPane extends BorderPane {
 		createViews(rows, columns);
 		createCoordinators(rows, columns, hints);
 		currentTool = new ZoomTool();
-		canvas.setOnMouseClicked(e -> {
+		buttons.setOnMouseClicked(e -> {
 			if (currentTool != null) {
 				currentTool.clicked(e);
 			}
 		});
-		canvas.setOnMousePressed(e -> {
+		buttons.setOnMousePressed(e -> {
 			if (currentTool != null) {
 				currentTool.pressed(e);
 			}
 		});
-		canvas.setOnMouseReleased(e -> {
+		buttons.setOnMouseReleased(e -> {
 			if (currentTool != null) {
 				currentTool.released(e);
 			}
 		});
-		canvas.setOnMouseDragged(e -> {
+		buttons.setOnMouseDragged(e -> {
 			if (currentTool != null) {
 				currentTool.dragged(e);
 			}
 		});
-		canvas.setOnMouseMoved(e -> {
+		buttons.setOnMouseMoved(e -> {
 			if (currentTool != null) {
 				currentTool.moved(e);
 			}
@@ -177,7 +177,7 @@ public class MandelbrotRenderPane extends BorderPane {
 						RendererCoordinator coordinator = coordinators[i];
 						if (coordinator != null && coordinator.isPixelsChanged()) {
 							RenderGraphicsContext gc = renderFactory.createGraphicsContext(canvas.getGraphicsContext2D());
-							//coordinator.drawImage(gc);TODO restore
+							coordinator.drawImage(gc);
 						}
 					}
 					if (currentTool != null) {
@@ -420,8 +420,9 @@ public class MandelbrotRenderPane extends BorderPane {
 						double y = t.getY();
 						double z = t.getZ();
 						double w = t.getW();
-						x -= x1 - x0;
-						y -= y1 - y0;
+						Number size = coordinator.getInitialSize();
+						x -= (x1 - x0) * z * size.r();
+						y -= (y1 - y0) * z * size.i();
 						x0 = x1;
 						y0 = y1;
 						view.setTraslation(new DoubleVector4D(x, y, z, w));
