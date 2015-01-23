@@ -17,7 +17,13 @@ public class MandelbrotEditorPane extends BorderPane {
 		setCenter(textarea);
 		HBox buttons = new HBox(10);
 		Button renderButton = new Button("Render");
+		Button exportButton = new Button("Export");
+		Button loadButton = new Button("Load");
+		Button saveButton = new Button("Save");
 		buttons.getChildren().add(renderButton);
+		buttons.getChildren().add(exportButton);
+		buttons.getChildren().add(loadButton);
+		buttons.getChildren().add(saveButton);
 		setBottom(buttons);
 		textarea.getStyleClass().add("source-pane");
 		buttons.getStyleClass().add("actions-pane");
@@ -34,6 +40,15 @@ public class MandelbrotEditorPane extends BorderPane {
 		});
 		renderButton.setOnAction(e -> {
 			session.setSource(textarea.getText());
+		});
+		exportButton.setOnAction(e -> {
+			//TODO export
+		});
+		loadButton.setOnAction(e -> {
+			//TODO load
+		});
+		saveButton.setOnAction(e -> {
+			//TODO save
 		});
 	}
 }

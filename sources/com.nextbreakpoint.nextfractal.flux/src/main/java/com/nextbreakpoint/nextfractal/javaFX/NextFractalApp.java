@@ -12,7 +12,6 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
-import com.aquafx_project.AquaFx;
 import com.nextbreakpoint.nextfractal.FractalFactory;
 import com.nextbreakpoint.nextfractal.FractalSession;
 
@@ -80,7 +79,6 @@ public class NextFractalApp extends Application {
         	}
         }
         Scene scene = new Scene(root);
-//        AquaFx.style();
         scene.getStylesheets().add(getClass().getResource("/theme.css").toExternalForm());
 		primaryStage.setScene(scene);
         primaryStage.show();
