@@ -39,6 +39,13 @@ public class DoubleVector4D implements Serializable, Cloneable {
 	private final double w;
 
 	/**
+	 * 
+	 */
+	public DoubleVector4D() {
+		this(0, 0, 0, 0);
+	}
+
+	/**
 	 * @param x
 	 * @param y
 	 * @param z

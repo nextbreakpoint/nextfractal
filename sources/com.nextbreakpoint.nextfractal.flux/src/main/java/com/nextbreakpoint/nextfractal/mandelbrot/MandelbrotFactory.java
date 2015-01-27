@@ -20,7 +20,9 @@ public class MandelbrotFactory implements FractalFactory {
 	 */
 	@Override
 	public FractalSession createSession() {
-		return new MandelbrotSession();
+		MandelbrotSession session = new MandelbrotSession();
+        ((MandelbrotData)session.getData()).setSource(getInitialSource());
+		return session;
 	}
 	
 	/**
@@ -37,5 +39,28 @@ public class MandelbrotFactory implements FractalFactory {
 	@Override
 	public Pane createRenderPane(FractalSession session, int width, int height) {
 		return new MandelbrotRenderPane(session, width, height, 1, 1);
+	}
+
+	protected String getInitialSource() {
+		String source = ""
+				+ "fractal {\n"
+				+ "\torbit [-2.0 - 1.5i,+1.0 + 1.5i] [z,n] {\n"
+//				+ "\torbit [-1 - 1i,+1 + 1i] [z,x,n] {\n"
+				+ "\t\tbegin {\n"
+				+ "\t\t\tz = x;\n"
+				+ "\t\t}\n"
+				+ "\t\tloop [0, 200] (|pow(re(z),2)+pow(im(z),2)| > 4) {\n"
+				+ "\t\t\tz = z * z + w;\n"
+				+ "\t\t}\n"
+				+ "\t}\n\tcolor [#FF000000] {\n"
+				+ "\t\trule (re(n) = 0) [1.0] {\n"
+				+ "\t\t\t1,0,0,0\n"
+				+ "\t\t}\n"
+				+ "\t\trule (re(n) > 0) [1.0] {\n"
+				+ "\t\t\t1,1,1,1\n"
+				+ "\t\t}\n"
+				+ "\t}\n"
+				+ "}\n";
+		return source;
 	}
 }

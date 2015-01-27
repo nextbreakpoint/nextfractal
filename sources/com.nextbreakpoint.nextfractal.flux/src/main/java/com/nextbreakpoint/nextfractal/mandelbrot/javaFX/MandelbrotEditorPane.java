@@ -9,8 +9,9 @@ import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 
 import com.nextbreakpoint.nextfractal.FractalSession;
-import com.nextbreakpoint.nextfractal.FractalSessionListener;import com.nextbreakpoint.nextfractal.mandelbrot.service.FileService;
-import com.nextbreakpoint.nextfractal.mandelbrot.service.MandelbrotData;
+import com.nextbreakpoint.nextfractal.FractalSessionListener;
+import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotData;
+import com.nextbreakpoint.nextfractal.mandelbrot.service.FileService;
 
 
 public class MandelbrotEditorPane extends BorderPane {
@@ -33,10 +34,11 @@ public class MandelbrotEditorPane extends BorderPane {
 		textarea.getStyleClass().add("source-pane");
 		buttons.getStyleClass().add("actions-pane");
 		getStyleClass().add("mandelbrot");
+		textarea.setText(((MandelbrotData)session.getData()).getSource());
 		session.addSessionListener(new FractalSessionListener() {
 			@Override
-			public void sourceChanged(FractalSession session) {
-				textarea.setText(session.getSource());
+			public void dataChanged(FractalSession session) {
+				textarea.setText(((MandelbrotData)session.getData()).getSource());
 			}
 
 			@Override
@@ -44,7 +46,7 @@ public class MandelbrotEditorPane extends BorderPane {
 			}
 		});
 		renderButton.setOnAction(e -> {
-			session.setSource(textarea.getText());
+			((MandelbrotData)session.getData()).setSource(textarea.getText());
 		});
 		loadButton.setOnAction(e -> {
 			createFileChooser();
@@ -55,8 +57,7 @@ public class MandelbrotEditorPane extends BorderPane {
 				try {
 					FileService service = new FileService();
 					MandelbrotData data = service.loadFromFile(currentFile);
-					session.setSource(data.getSource());
-					//TODO set view
+					session.setData(data);
 				} catch (Exception x) {
 					//TODO show error
 				}
@@ -70,9 +71,7 @@ public class MandelbrotEditorPane extends BorderPane {
 				currentFile = file;
 				try {
 					FileService service = new FileService();
-					MandelbrotData data = new MandelbrotData();
-					//TODO set view
-					data.setSource(textarea.getText());
+					MandelbrotData data = (MandelbrotData) session.getData();
 					service.saveToFile(currentFile, data);
 				} catch (Exception x) {
 					//TODO show error

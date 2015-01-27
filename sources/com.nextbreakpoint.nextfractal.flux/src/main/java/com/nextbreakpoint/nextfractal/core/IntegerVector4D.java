@@ -37,6 +37,13 @@ public class IntegerVector4D implements Serializable, Cloneable {
 	private final int y;
 	private final int z;
 	private final int w;
+	
+	/**
+	 * 
+	 */
+	public IntegerVector4D() {
+		this(0, 0, 0, 0);
+	}
 
 	/**
 	 * @param x

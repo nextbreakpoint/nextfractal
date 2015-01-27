@@ -19,6 +19,7 @@ import com.nextbreakpoint.nextfractal.FractalSessionListener;
 import com.nextbreakpoint.nextfractal.core.DefaultThreadFactory;
 import com.nextbreakpoint.nextfractal.core.DoubleVector4D;
 import com.nextbreakpoint.nextfractal.core.IntegerVector4D;
+import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotData;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.Compiler;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerBuilder;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerReport;
@@ -128,7 +129,7 @@ public class MandelbrotRenderPane extends BorderPane {
 		});
 		session.addSessionListener(new FractalSessionListener() {
 			@Override
-			public void sourceChanged(FractalSession session) {
+			public void dataChanged(FractalSession session) {
 				updateFractal(session);
 			}
 
@@ -145,6 +146,7 @@ public class MandelbrotRenderPane extends BorderPane {
 		getStyleClass().add("mandelbrot");
 		setCenter(stackPane);
         runTimer(canvas);
+		updateFractal(session);
 	}
 
 	private void resetRegion() {
@@ -235,7 +237,7 @@ public class MandelbrotRenderPane extends BorderPane {
 	private void updateFractal(FractalSession session) {
 		try {
 			Compiler compiler = new Compiler(session.getOutDir(), session.getPackageName(), session.getClassName());
-			CompilerReport report = compiler.generateJavaSource(session.getSource());
+			CompilerReport report = compiler.generateJavaSource(((MandelbrotData)session.getData()).getSource());
 			CompilerBuilder<Orbit> orbitBuilder = compiler.compileOrbit(report);
 			//TODO report errors
 			String newASTOrbit = report.getAST().getOrbit().toString();

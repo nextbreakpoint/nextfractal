@@ -1,4 +1,4 @@
-package com.nextbreakpoint.nextfractal.mandelbrot.service;
+package com.nextbreakpoint.nextfractal.mandelbrot;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -74,5 +74,10 @@ public class MandelbrotData {
 
 	public String getVersion() {
 		return version;
+	}
+
+	@Override
+	public String toString() {
+		return "[traslation=" + traslation + ", rotation=" + rotation + ", scale=" + scale + ", constant=" + constant + ", julia=" + julia + ", time=" + time + ", version=" + version + "]";
 	}
 }

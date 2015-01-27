@@ -4,6 +4,10 @@ public class Number {
 	protected double r;
 	protected double i;
 
+	public Number() {
+		this(0, 0);
+	}
+
 	public Number(int n) {
 		this(n, 0);
 	}

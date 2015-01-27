@@ -14,14 +14,14 @@ public interface FractalSession {
 	public void removeSessionListener(FractalSessionListener listener);
 
 	/**
-	 * @param source
+	 * @param data
 	 */
-	public void setSource(String source);
+	public void setData(Object data);
 
 	/**
 	 * @return
 	 */
-	public String getSource();
+	public Object getData();
 
 	/**
 	 * @param packageName

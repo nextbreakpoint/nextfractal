@@ -4,6 +4,8 @@ import java.io.File;
 
 import javax.xml.bind.JAXB;
 
+import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotData;
+
 public class FileService {
 	public MandelbrotData loadFromFile(File path) throws Exception {
 		try {

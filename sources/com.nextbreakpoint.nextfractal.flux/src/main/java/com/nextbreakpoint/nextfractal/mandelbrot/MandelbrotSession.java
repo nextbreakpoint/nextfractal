@@ -9,27 +9,25 @@ import com.nextbreakpoint.nextfractal.FractalSessionListener;
 
 public class MandelbrotSession implements FractalSession {
 	private final List<FractalSessionListener> listeners = new ArrayList<>();
+	private MandelbrotData data = new MandelbrotData();
 	private String packageName;
 	private String className;
-	private String source;
 	private File outDir;
 	
 	/**
 	 * @see com.nextbreakpoint.nextfractal.FractalSession#getSource()
 	 */
-	@Override
 	public String getSource() {
-		return source;
+		return data.getSource();
 	}
 
 	/**
 	 * @param source
 	 */
-	@Override
 	public void setSource(String source) {
-		this.source = source;
+		data.setSource(source);
 		for (FractalSessionListener listener : listeners) {
-			listener.sourceChanged(this);
+			listener.dataChanged(this);
 		}
 	}
 
@@ -93,5 +91,15 @@ public class MandelbrotSession implements FractalSession {
 
 	public void setOutDir(File outDir) {
 		this.outDir = outDir;
+	}
+
+	@Override
+	public void setData(Object data) {
+		this.data = (MandelbrotData)data;
+	}
+
+	@Override
+	public Object getData() {
+		return data;
 	}
 }

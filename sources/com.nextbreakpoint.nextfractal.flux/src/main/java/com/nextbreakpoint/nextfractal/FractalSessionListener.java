@@ -4,7 +4,7 @@ public interface FractalSessionListener {
 	/**
 	 * @param session
 	 */
-	public void sourceChanged(FractalSession session);
+	public void dataChanged(FractalSession session);
 
 	/**
 	 * @param session
