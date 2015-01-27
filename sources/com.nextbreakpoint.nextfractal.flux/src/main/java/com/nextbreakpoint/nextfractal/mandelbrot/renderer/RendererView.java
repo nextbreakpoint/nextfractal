@@ -2,6 +2,7 @@ package com.nextbreakpoint.nextfractal.mandelbrot.renderer;
 
 import com.nextbreakpoint.nextfractal.core.DoubleVector4D;
 import com.nextbreakpoint.nextfractal.core.IntegerVector4D;
+import com.nextbreakpoint.nextfractal.core.View;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 
 /**
@@ -69,5 +70,9 @@ public class RendererView {
 
 	public void setState(IntegerVector4D state) {
 		this.state = state;
+	}
+	
+	public View toView() {
+		return new View(traslation, rotation, scale);
 	}
 }

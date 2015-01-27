@@ -14,16 +14,6 @@ public interface FractalSession {
 	public void removeSessionListener(FractalSessionListener listener);
 
 	/**
-	 * @param data
-	 */
-	public void setData(Object data);
-
-	/**
-	 * @return
-	 */
-	public Object getData();
-
-	/**
 	 * @param packageName
 	 */
 	public void setPackageName(String packageName);

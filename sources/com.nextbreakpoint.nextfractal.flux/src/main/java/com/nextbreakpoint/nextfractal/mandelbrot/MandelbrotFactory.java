@@ -21,7 +21,7 @@ public class MandelbrotFactory implements FractalFactory {
 	@Override
 	public FractalSession createSession() {
 		MandelbrotSession session = new MandelbrotSession();
-        ((MandelbrotData)session.getData()).setSource(getInitialSource());
+        session.setSource(getInitialSource());
 		return session;
 	}
 	
@@ -44,8 +44,7 @@ public class MandelbrotFactory implements FractalFactory {
 	protected String getInitialSource() {
 		String source = ""
 				+ "fractal {\n"
-				+ "\torbit [-2.0 - 1.5i,+1.0 + 1.5i] [z,n] {\n"
-//				+ "\torbit [-1 - 1i,+1 + 1i] [z,x,n] {\n"
+				+ "\torbit [-2.5 - 1.5i,+0.5 + 1.5i] [z,n] {\n"
 				+ "\t\tbegin {\n"
 				+ "\t\t\tz = x;\n"
 				+ "\t\t}\n"

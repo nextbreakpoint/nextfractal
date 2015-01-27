@@ -8,6 +8,12 @@ public interface FractalSessionListener {
 
 	/**
 	 * @param session
+	 * @param zoom 
+	 */
+	public void viewChanged(FractalSession session, boolean zoom);
+
+	/**
+	 * @param session
 	 */
 	public void terminate(FractalSession session);
 }

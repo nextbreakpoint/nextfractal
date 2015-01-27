@@ -2,42 +2,24 @@ package com.nextbreakpoint.nextfractal.mandelbrot;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import com.nextbreakpoint.nextfractal.core.DoubleVector4D;
+import com.nextbreakpoint.nextfractal.core.View;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 
 @XmlRootElement(name="mandelbrot")
 public class MandelbrotData {
-	private DoubleVector4D traslation = new DoubleVector4D(0, 0, 0, 0);
-	private DoubleVector4D rotation = new DoubleVector4D(0, 0, 0, 0);
-	private DoubleVector4D scale = new DoubleVector4D(1, 1, 1, 1);
+	private final static String version = "1.0";
 	private Number constant = new Number(0, 0);
-	private boolean julia;
+	private View view = new View();
 	private String source = "";
-	private final String version = "1.0";
+	private boolean julia;
 	private double time;
 
-	public DoubleVector4D getTraslation() {
-		return traslation;
+	public View getView() {
+		return view;
 	}
 
-	public void setTraslation(DoubleVector4D traslation) {
-		this.traslation = traslation;
-	}
-
-	public DoubleVector4D getRotation() {
-		return rotation;
-	}
-
-	public void setRotation(DoubleVector4D rotation) {
-		this.rotation = rotation;
-	}
-
-	public DoubleVector4D getScale() {
-		return scale;
-	}
-
-	public void setScale(DoubleVector4D scale) {
-		this.scale = scale;
+	public void setView(View view) {
+		this.view = view;
 	}
 
 	public Number getConstant() {
@@ -78,6 +60,6 @@ public class MandelbrotData {
 
 	@Override
 	public String toString() {
-		return "[traslation=" + traslation + ", rotation=" + rotation + ", scale=" + scale + ", constant=" + constant + ", julia=" + julia + ", time=" + time + ", version=" + version + "]";
+		return "[view=" + view + ", constant=" + constant + ", julia=" + julia + ", time=" + time + ", version=" + version + "]";
 	}
 }
