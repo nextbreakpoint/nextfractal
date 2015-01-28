@@ -58,6 +58,13 @@ public class DoubleVector4D implements Serializable, Cloneable {
 		this.w = w;
 	}
 
+	public DoubleVector4D(double[] v) {
+		this.x = v[0];
+		this.y = v[1];
+		this.z = v[2];
+		this.w = v[3];
+	}
+
 	/**
 	 * @return the w
 	 */
@@ -148,5 +155,9 @@ public class DoubleVector4D implements Serializable, Cloneable {
 	@Override
 	public DoubleVector4D clone() {
 		return new DoubleVector4D(x, y, z, w);
+	}
+	
+	public double[] toArray() {
+		return new double[] { x, y, z, w }; 
 	}
 }

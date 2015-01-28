@@ -1,34 +1,19 @@
 package com.nextbreakpoint.nextfractal.mandelbrot;
 
-import javax.xml.bind.annotation.XmlRootElement;
+import java.util.Arrays;
 
-import com.nextbreakpoint.nextfractal.core.View;
-import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
+import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name="mandelbrot")
 public class MandelbrotData {
 	private final static String version = "1.0";
-	private Number constant = new Number(0, 0);
-	private View view = new View();
+	private double[] constant = new double[] { 0, 0 };
+	private double[] traslation = new double[] { 0, 0, 1, 0 };
+	private double[] rotation = new double[] { 0, 0, 0, 0 };
+	private double[] scale = new double[] { 1, 1, 1, 1 };
 	private String source = "";
 	private boolean julia;
 	private double time;
-
-	public View getView() {
-		return view;
-	}
-
-	public void setView(View view) {
-		this.view = view;
-	}
-
-	public Number getConstant() {
-		return constant;
-	}
-
-	public void setConstant(Number constant) {
-		this.constant = constant;
-	}
 
 	public boolean isJulia() {
 		return julia;
@@ -58,8 +43,40 @@ public class MandelbrotData {
 		return version;
 	}
 
+	public double[] getConstant() {
+		return constant;
+	}
+
+	public void setConstant(double[] constant) {
+		this.constant = constant;
+	}
+
+	public double[] getTraslation() {
+		return traslation;
+	}
+
+	public void setTraslation(double[] traslation) {
+		this.traslation = traslation;
+	}
+
+	public double[] getRotation() {
+		return rotation;
+	}
+
+	public void setRotation(double[] rotation) {
+		this.rotation = rotation;
+	}
+
+	public double[] getScale() {
+		return scale;
+	}
+
+	public void setScale(double[] scale) {
+		this.scale = scale;
+	}
+
 	@Override
 	public String toString() {
-		return "[view=" + view + ", constant=" + constant + ", julia=" + julia + ", time=" + time + ", version=" + version + "]";
+		return "[traslation=" + Arrays.toString(traslation)	+ ", rotation=" + Arrays.toString(rotation) + ", scale=" + Arrays.toString(scale) + ", julia=" + julia + ", constant=" + Arrays.toString(constant) + ", time=" + time + "]";
 	}
 }

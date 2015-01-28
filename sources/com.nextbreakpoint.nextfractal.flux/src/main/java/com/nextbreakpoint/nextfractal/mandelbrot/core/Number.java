@@ -1,5 +1,7 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.core;
 
+import javax.xml.bind.annotation.XmlElement;
+
 public class Number {
 	protected double r;
 	protected double i;
@@ -14,6 +16,10 @@ public class Number {
 
 	public Number(double r) {
 		this(r, 0);
+	}
+
+	public Number(double[] v) {
+		this(v[0], v[1]);
 	}
 
 	public Number(Number number) {

@@ -6,8 +6,6 @@ import java.util.List;
 
 import com.nextbreakpoint.nextfractal.FractalSession;
 import com.nextbreakpoint.nextfractal.FractalSessionListener;
-import com.nextbreakpoint.nextfractal.core.View;
-import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 
 public class MandelbrotSession implements FractalSession {
 	private final List<FractalSessionListener> listeners = new ArrayList<>();
@@ -85,11 +83,11 @@ public class MandelbrotSession implements FractalSession {
 		fireDataChanged();
 	}
 	
-	public Number getConstant() {
+	public double[] getConstant() {
 		return data.getConstant();
 	}
 
-	public void setConstant(Number constant) {
+	public void setConstant(double[] constant) {
 		data.setConstant(constant);
 		fireDataChanged();
 	}
@@ -112,20 +110,24 @@ public class MandelbrotSession implements FractalSession {
 		fireDataChanged();
 	}
 
-	public void setView(View view, boolean zoom) {
-		this.data.setView(view);
+	public void setView(MandelbrotView view, boolean zoom) {
+		this.data.setTraslation(view.getTraslation());
+		this.data.setRotation(view.getRotation());
+		this.data.setScale(view.getScale());
 		fireViewChanged(zoom);
 	}
 
-	public View getView() {
-		return data.getView();
+	public MandelbrotView getView() {
+		return new MandelbrotView(data.getTraslation(), data.getRotation(), data.getScale());
 	}
 
 	public void setData(MandelbrotData data) {
 		this.data.setConstant(data.getConstant());
 		this.data.setSource(data.getSource());
 		this.data.setJulia(data.isJulia());
-		this.data.setView(data.getView());
+		this.data.setTraslation(data.getTraslation());
+		this.data.setRotation(data.getRotation());
+		this.data.setScale(data.getScale());
 		this.data.setTime(data.getTime());
 		fireDataChanged();
 	}
@@ -157,7 +159,9 @@ public class MandelbrotSession implements FractalSession {
 		data.setConstant(this.data.getConstant());
 		data.setSource(this.data.getSource());
 		data.setJulia(this.data.isJulia());
-		data.setView(this.data.getView());
+		data.setTraslation(this.data.getTraslation());
+		data.setRotation(this.data.getRotation());
+		data.setScale(this.data.getScale());
 		data.setTime(this.data.getTime());
 		return data;
 	}

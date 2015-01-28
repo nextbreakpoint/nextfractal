@@ -1,6 +1,7 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
 
 import java.io.File;
+import java.util.logging.Logger;
 
 import javafx.scene.control.Button;
 import javafx.scene.control.Tab;
@@ -15,9 +16,11 @@ import com.nextbreakpoint.nextfractal.FractalSession;
 import com.nextbreakpoint.nextfractal.FractalSessionListener;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotData;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotSession;
+import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 import com.nextbreakpoint.nextfractal.mandelbrot.service.FileService;
 
 public class MandelbrotEditorPane extends BorderPane {
+	private static final Logger logger = Logger.getLogger(MandelbrotEditorPane.class.getName());
 	private final FractalSession session;
 	private FileChooser fileChooser;
 	private File currentFile;
@@ -130,6 +133,7 @@ public class MandelbrotEditorPane extends BorderPane {
 				try {
 					FileService service = new FileService();
 					MandelbrotData data = service.loadFromFile(currentFile);
+					logger.info(data.toString());
 					getMandelbrotSession().setData(data);
 				} catch (Exception x) {
 					//TODO show error
@@ -146,6 +150,7 @@ public class MandelbrotEditorPane extends BorderPane {
 				try {
 					FileService service = new FileService();
 					MandelbrotData data = getMandelbrotSession().toData();
+					logger.info(data.toString());
 					service.saveToFile(currentFile, data);
 				} catch (Exception x) {
 					//TODO show error
