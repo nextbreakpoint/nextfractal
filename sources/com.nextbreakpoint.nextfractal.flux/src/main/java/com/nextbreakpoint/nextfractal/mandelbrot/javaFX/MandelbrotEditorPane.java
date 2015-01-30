@@ -4,19 +4,25 @@ import java.io.File;
 import java.util.logging.Logger;
 
 import javafx.scene.control.Button;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
+import javafx.util.Callback;
+
+import org.controlsfx.control.GridCell;
+import org.controlsfx.control.GridView;
 
 import com.nextbreakpoint.nextfractal.FractalSession;
 import com.nextbreakpoint.nextfractal.FractalSessionListener;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotData;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotSession;
-import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 import com.nextbreakpoint.nextfractal.mandelbrot.service.FileService;
 
 public class MandelbrotEditorPane extends BorderPane {
@@ -61,19 +67,31 @@ public class MandelbrotEditorPane extends BorderPane {
 		sourceTab.setContent(sourcePane);
 
 		BorderPane historyPane = new BorderPane();
-		Pane historyList = new Pane();
-		historyList.getStyleClass().add("history-pane");
+		ListView<MandelbrotData> historyList = new ListView<>();
+		historyList.getStyleClass().add("history-list");
+		historyList.setCellFactory(new Callback<ListView<MandelbrotData>, ListCell<MandelbrotData>>() {
+			@Override
+			public ListCell<MandelbrotData> call(ListView<MandelbrotData> param) {
+				return new HistoryListCell();
+			}
+		});
 		HBox historyButtons = new HBox(10);
 		Button clearButton = new Button("Clear");
 		historyButtons.getChildren().add(clearButton);
 		historyButtons.getStyleClass().add("actions-pane");
-		historyPane.setCenter(historyList);
+		historyPane.setCenter(new ScrollPane(historyList));
 		historyPane.setBottom(historyButtons);
 		historyTab.setContent(historyPane);
 
 		BorderPane libraryPane = new BorderPane();
-		Pane libraryList = new Pane();
-		libraryList.getStyleClass().add("library-pane");
+		GridView<MandelbrotData> libraryGrid = new GridView<>();
+		libraryGrid.getStyleClass().add("history-list");
+		libraryGrid.setCellFactory(new Callback<GridView<MandelbrotData>, GridCell<MandelbrotData>>() {
+			@Override
+			public GridCell<MandelbrotData> call(GridView<MandelbrotData> param) {
+				return new LibraryGridCell();
+			}
+		});
 		HBox libraryButtons = new HBox(10);
 		Button insertButton = new Button("Insert");
 		Button deleteButton = new Button("Delete");
@@ -84,12 +102,12 @@ public class MandelbrotEditorPane extends BorderPane {
 		libraryButtons.getChildren().add(importButton);
 		libraryButtons.getChildren().add(exportButton);
 		libraryButtons.getStyleClass().add("actions-pane");
-		libraryPane.setCenter(libraryList);
+		libraryPane.setCenter(new ScrollPane(libraryGrid));
 		libraryPane.setBottom(libraryButtons);
 		libraryTab.setContent(libraryPane);
 
 		BorderPane jobsPane = new BorderPane();
-		Pane jobsList = new Pane();
+		GridPane jobsList = new GridPane();
 		jobsList.getStyleClass().add("jobs-pane");
 		HBox jobsButtons = new HBox(10);
 		Button suspendButton = new Button("Suspend");
@@ -99,7 +117,7 @@ public class MandelbrotEditorPane extends BorderPane {
 		jobsButtons.getChildren().add(resumeButton);
 		jobsButtons.getChildren().add(removeButton);
 		jobsButtons.getStyleClass().add("actions-pane");
-		jobsPane.setCenter(jobsList);
+		jobsPane.setCenter(new ScrollPane(jobsList));
 		jobsPane.setBottom(jobsButtons);
 		jobsTab.setContent(jobsPane);
 
@@ -109,10 +127,14 @@ public class MandelbrotEditorPane extends BorderPane {
 			@Override
 			public void dataChanged(FractalSession session) {
 				sourceText.setText(getMandelbrotSession().getSource());
+				addDataToHistory(historyList);
 			}
-			
+
 			@Override
 			public void viewChanged(FractalSession session, boolean zoom) {
+				if (!zoom) {
+					addDataToHistory(historyList);
+				}
 			}
 
 			@Override
@@ -143,7 +165,7 @@ public class MandelbrotEditorPane extends BorderPane {
 		
 		saveButton.setOnAction(e -> {
 			createFileChooser();
-			fileChooser.setTitle("Load");
+			fileChooser.setTitle("Save");
 			File file = fileChooser.showSaveDialog(null);
 			if (file != null) {
 				currentFile = file;
@@ -157,8 +179,76 @@ public class MandelbrotEditorPane extends BorderPane {
 				}
 			}
 		});
+		
+		clearButton.setOnAction(e -> {
+			logger.info("Clear history");
+			clearHistory(historyList);
+		});
+		
+		insertButton.setOnAction(e -> {
+			logger.info("Insert data");
+			addDataToLibrary(libraryGrid, getMandelbrotSession().toData());
+		});
+		
+		deleteButton.setOnAction(e -> {
+			logger.info("Delete data");
+//			removeDataFromLibrary(libraryGrid, );
+		});
+		
+		importButton.setOnAction(e -> {
+			logger.info("Import data");
+			createFileChooser();
+			fileChooser.setTitle("Import");
+			File file = fileChooser.showOpenDialog(null);
+			if (file != null) {
+				currentFile = file;
+				try {
+					FileService service = new FileService();
+					MandelbrotData data = service.loadFromFile(currentFile);
+					logger.info(data.toString());
+					addDataToLibrary(libraryGrid, data);
+				} catch (Exception x) {
+					//TODO show error
+				}
+			}
+		});
+		
+		exportButton.setOnAction(e -> {
+			logger.info("Export data");
+			createFileChooser();
+			fileChooser.setTitle("Export");
+			File file = fileChooser.showSaveDialog(null);
+			if (file != null) {
+				currentFile = file;
+				try {
+					FileService service = new FileService();
+//					logger.info(selectedData.toString());
+//					service.saveToFile(currentFile, selectedData);
+				} catch (Exception x) {
+					//TODO show error
+				}
+			}
+		});
+		
+		addDataToHistory(historyList);
 	}
 
+	private void addDataToLibrary(GridView<MandelbrotData> libraryGrid, MandelbrotData data) {
+		libraryGrid.getItems().add(data);
+	}
+
+	private void removeDataFromLibrary(GridView<MandelbrotData> libraryGrid, MandelbrotData data) {
+		libraryGrid.getItems().remove(data);
+	}
+
+	private void addDataToHistory(ListView<MandelbrotData> historyList) {
+		historyList.getItems().add(getMandelbrotSession().toData());
+	}
+	
+	private void clearHistory(ListView<MandelbrotData> historyList) {
+		historyList.getItems().clear();
+	}
+	
 	private MandelbrotSession getMandelbrotSession() {
 		return (MandelbrotSession) session;
 	}

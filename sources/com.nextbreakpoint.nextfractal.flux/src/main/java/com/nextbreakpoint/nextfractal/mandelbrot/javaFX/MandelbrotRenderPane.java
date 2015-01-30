@@ -216,13 +216,7 @@ public class MandelbrotRenderPane extends BorderPane {
 			public void handle(long now) {
 				long time = now / 1000000;
 				if ((time - last) > 25) {
-					for (int i = 0; i < coordinators.length; i++) {
-						RendererCoordinator coordinator = coordinators[i];
-						if (coordinator != null && coordinator.isPixelsChanged()) {
-							RenderGraphicsContext gc = renderFactory.createGraphicsContext(canvas.getGraphicsContext2D());
-							coordinator.drawImage(gc);
-						}
-					}
+					redrawCanvasIfCoordinatorsPixelsChanged(canvas);
 					if (currentTool != null) {
 						currentTool.update(time);
 					}
@@ -362,6 +356,16 @@ public class MandelbrotRenderPane extends BorderPane {
 			RendererCoordinator coordinator = coordinators[i];
 			if (coordinator != null) {
 				coordinator.startRender();
+			}
+		}
+	}
+
+	private void redrawCanvasIfCoordinatorsPixelsChanged(Canvas canvas) {
+		for (int i = 0; i < coordinators.length; i++) {
+			RendererCoordinator coordinator = coordinators[i];
+			if (coordinator != null && coordinator.isPixelsChanged()) {
+				RenderGraphicsContext gc = renderFactory.createGraphicsContext(canvas.getGraphicsContext2D());
+//				coordinator.drawImage(gc);
 			}
 		}
 	}
