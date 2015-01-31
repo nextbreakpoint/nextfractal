@@ -365,7 +365,7 @@ public class MandelbrotRenderPane extends BorderPane {
 			RendererCoordinator coordinator = coordinators[i];
 			if (coordinator != null && coordinator.isPixelsChanged()) {
 				RenderGraphicsContext gc = renderFactory.createGraphicsContext(canvas.getGraphicsContext2D());
-//				coordinator.drawImage(gc);
+				coordinator.drawImage(gc);
 			}
 		}
 	}

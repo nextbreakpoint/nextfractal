@@ -3,12 +3,11 @@ package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
 import java.text.SimpleDateFormat;
 
 import javafx.scene.control.Label;
-
-import org.controlsfx.control.GridCell;
+import javafx.scene.control.ListCell;
 
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotData;
 
-public class LibraryGridCell extends GridCell<MandelbrotData> {
+public class LibraryListCell extends ListCell<MandelbrotData> {
 	private static final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	private Label label = new Label();
 	

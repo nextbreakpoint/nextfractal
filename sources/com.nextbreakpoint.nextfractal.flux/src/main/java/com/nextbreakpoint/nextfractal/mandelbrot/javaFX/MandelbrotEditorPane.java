@@ -15,9 +15,6 @@ import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 import javafx.util.Callback;
 
-import org.controlsfx.control.GridCell;
-import org.controlsfx.control.GridView;
-
 import com.nextbreakpoint.nextfractal.FractalSession;
 import com.nextbreakpoint.nextfractal.FractalSessionListener;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotData;
@@ -83,18 +80,14 @@ public class MandelbrotEditorPane extends BorderPane {
 		historyTab.setContent(historyPane);
 
 		BorderPane libraryPane = new BorderPane();
-		CustomGridView<MandelbrotData> libraryGrid = new CustomGridView<>();
-		libraryGrid.getStyleClass().add("library-grid");
-		libraryGrid.setCellFactory(new Callback<GridView<MandelbrotData>, GridCell<MandelbrotData>>() {
+		ListView<MandelbrotData> libraryList = new ListView<>();
+		libraryList.getStyleClass().add("library-list");
+		libraryList.setCellFactory(new Callback<ListView<MandelbrotData>, ListCell<MandelbrotData>>() {
 			@Override
-			public GridCell<MandelbrotData> call(GridView<MandelbrotData> gridView) {
-				LibraryGridCell gridCell = new LibraryGridCell();
-				gridCell.setOnMouseClicked(e -> {
-					((CustomGridView<MandelbrotData>)gridView).getSelectionModel().select(gridCell.getIndex());
-				});
-				return gridCell;
+			public ListCell<MandelbrotData> call(ListView<MandelbrotData> gridView) {
+				return new LibraryListCell();
 			}
-		});
+		});		
 		HBox libraryButtons = new HBox(10);
 		Button insertButton = new Button("Insert");
 		Button deleteButton = new Button("Delete");
@@ -105,7 +98,7 @@ public class MandelbrotEditorPane extends BorderPane {
 		libraryButtons.getChildren().add(importButton);
 		libraryButtons.getChildren().add(exportButton);
 		libraryButtons.getStyleClass().add("actions-pane");
-		libraryPane.setCenter(libraryGrid);
+		libraryPane.setCenter(libraryList);
 		libraryPane.setBottom(libraryButtons);
 		libraryTab.setContent(libraryPane);
 
@@ -190,17 +183,13 @@ public class MandelbrotEditorPane extends BorderPane {
 		
 		insertButton.setOnAction(e -> {
 			logger.info("Insert data");
-			addDataToLibrary(libraryGrid, getMandelbrotSession().toData());
+			addDataToLibrary(libraryList, getMandelbrotSession().toData());
 		});
 		
 		deleteButton.setOnAction(e -> {
 			logger.info("Delete data");
-			ObservableList<MandelbrotData> selectedItems = libraryGrid.getSelectionModel().getSelectedItems();
-			ObservableList<Integer> selectedIndices = libraryGrid.getSelectionModel().getSelectedIndices();
-			for (Integer index : selectedIndices) {
-				libraryGrid.getSelectionModel().clearSelection(index);
-			}
-			removeDataFromLibrary(libraryGrid, selectedItems.toArray(new MandelbrotData[0]));
+			ObservableList<MandelbrotData> selectedItems = libraryList.getSelectionModel().getSelectedItems();
+			removeDataFromLibrary(libraryList, selectedItems.toArray(new MandelbrotData[0]));
 		});
 		
 		importButton.setOnAction(e -> {
@@ -214,7 +203,7 @@ public class MandelbrotEditorPane extends BorderPane {
 					FileService service = new FileService();
 					MandelbrotData data = service.loadFromFile(currentFile);
 					logger.info(data.toString());
-					addDataToLibrary(libraryGrid, data);
+					addDataToLibrary(libraryList, data);
 				} catch (Exception x) {
 					//TODO show error
 				}
@@ -222,7 +211,7 @@ public class MandelbrotEditorPane extends BorderPane {
 		});
 		
 		exportButton.setOnAction(e -> {
-			ObservableList<MandelbrotData> selectedItems = libraryGrid.getSelectionModel().getSelectedItems();
+			ObservableList<MandelbrotData> selectedItems = libraryList.getSelectionModel().getSelectedItems();
 			if (selectedItems.size() == 1) {
 				logger.info("Export data");
 				createFileChooser();
@@ -244,11 +233,11 @@ public class MandelbrotEditorPane extends BorderPane {
 		addDataToHistory(historyList);
 	}
 
-	private void addDataToLibrary(GridView<MandelbrotData> libraryGrid, MandelbrotData data) {
+	private void addDataToLibrary(ListView<MandelbrotData> libraryGrid, MandelbrotData data) {
 		libraryGrid.getItems().add(data);
 	}
 
-	private void removeDataFromLibrary(GridView<MandelbrotData> libraryGrid, MandelbrotData[] items) {
+	private void removeDataFromLibrary(ListView<MandelbrotData> libraryGrid, MandelbrotData[] items) {
 		libraryGrid.getItems().removeAll(items);
 	}
 
