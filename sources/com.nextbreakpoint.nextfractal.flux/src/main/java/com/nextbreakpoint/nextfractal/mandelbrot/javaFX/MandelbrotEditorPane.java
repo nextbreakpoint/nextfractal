@@ -1,6 +1,9 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
+import java.nio.IntBuffer;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 
@@ -11,10 +14,15 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
+import javafx.scene.image.PixelFormat;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 import javafx.util.Callback;
+import javafx.embed.swing.SwingFXUtils;
+
+import javax.imageio.ImageIO;
 
 import com.nextbreakpoint.nextfractal.FractalSession;
 import com.nextbreakpoint.nextfractal.FractalSessionListener;
@@ -259,6 +267,9 @@ public class MandelbrotEditorPane extends BorderPane {
 	}
 
 	private void addDataToLibrary(ListView<MandelbrotData> libraryGrid, MandelbrotData data) {
+		IntBuffer pixels = IntBuffer.allocate(renderer.getWidth() * renderer.getHeight());
+		renderImage(getMandelbrotSession(), data, pixels);
+		data.setPixels(pixels);
 		libraryGrid.getItems().add(data);
 	}
 
@@ -296,21 +307,21 @@ public class MandelbrotEditorPane extends BorderPane {
 		return tile;
 	}
 	
-	private void updateFractalData(MandelbrotSession session) {
+	private void renderImage(MandelbrotSession session, MandelbrotData data, IntBuffer pixels) {
 		try {
 			Compiler compiler = new Compiler(session.getOutDir(), session.getPackageName(), session.getClassName());
-			CompilerReport report = compiler.generateJavaSource(session.getSource());
+			CompilerReport report = compiler.generateJavaSource(data.getSource());
 			//TODO report errors
 			CompilerBuilder<Orbit> orbitBuilder = compiler.compileOrbit(report);
 			CompilerBuilder<Color> colorBuilder = compiler.compileColor(report);
 			if (renderer != null) {
 				renderer.abortTasks();
 				renderer.waitForTasks();
-				double[] traslation = session.getView().getTraslation();
-				double[] rotation = session.getView().getRotation();
-				double[] scale = session.getView().getScale();
-				double[] constant = session.getConstant();
-				boolean julia = session.isJulia();
+				double[] traslation = data.getTraslation();
+				double[] rotation = data.getRotation();
+				double[] scale = data.getScale();
+				double[] constant = data.getConstant();
+				boolean julia = data.isJulia();
 				renderer.setOrbit(orbitBuilder.build());
 				renderer.setColor(colorBuilder.build());
 				renderer.init();
@@ -324,6 +335,7 @@ public class MandelbrotEditorPane extends BorderPane {
 				renderer.setView(view);
 				renderer.runTask();
 				renderer.waitForTasks();
+				renderer.getPixels(pixels);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();//TODO display errors

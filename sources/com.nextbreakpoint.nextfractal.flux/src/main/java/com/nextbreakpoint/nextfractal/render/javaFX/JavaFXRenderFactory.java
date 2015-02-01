@@ -14,8 +14,8 @@ public class JavaFXRenderFactory implements RenderFactory {
 	 * @see com.nextbreakpoint.nextfractal.render.twister.renderer.RenderFactory#createBuffer(int, int)
 	 */
 	@Override
-	public RenderBuffer createBuffer(int widh, int height) {
-		return new JavaFXRenderBuffer(widh, height);
+	public RenderBuffer createBuffer(int width, int height) {
+		return new JavaFXRenderBuffer(width, height);
 	}
 
 	/**

@@ -1,5 +1,6 @@
 package com.nextbreakpoint.nextfractal.mandelbrot;
 
+import java.nio.IntBuffer;
 import java.util.Arrays;
 import java.util.Date;
 
@@ -20,6 +21,7 @@ public class MandelbrotData {
 	private String source = "";
 	private boolean julia;
 	private double time;
+	private IntBuffer pixels;
 
 	public boolean isJulia() {
 		return julia;
@@ -88,5 +90,13 @@ public class MandelbrotData {
 	@Override
 	public String toString() {
 		return "[traslation=" + Arrays.toString(traslation)	+ ", rotation=" + Arrays.toString(rotation) + ", scale=" + Arrays.toString(scale) + ", julia=" + julia + ", constant=" + Arrays.toString(constant) + ", time=" + time + "]";
+	}
+
+	public IntBuffer getPixels() {
+		return pixels;
+	}
+
+	public void setPixels(IntBuffer pixels) {
+		this.pixels = pixels;
 	}
 }

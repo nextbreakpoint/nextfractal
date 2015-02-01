@@ -25,7 +25,10 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.renderer;
 
+import java.nio.IntBuffer;
 import java.util.concurrent.ThreadFactory;
+
+import javafx.application.Platform;
 
 import com.nextbreakpoint.nextfractal.core.Worker;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Color;
@@ -37,8 +40,6 @@ import com.nextbreakpoint.nextfractal.mandelbrot.renderer.strategy.MandelbrotRen
 import com.nextbreakpoint.nextfractal.render.RenderAffine;
 import com.nextbreakpoint.nextfractal.render.RenderFactory;
 import com.nextbreakpoint.nextfractal.render.RenderGraphicsContext;
-
-import javafx.application.Platform;
 
 /**
  * @author Andrea Medeghini
@@ -88,7 +89,7 @@ public class Renderer {
 		int tsh = tileSize.getHeight();
 		int tbh = tileBorder.getHeight();
 		int tileDim = (int) Math.hypot(tsw + tbw * 2, tsh + tbh * 2);
-		size = new RendererSize(tileDim, tileDim);
+		size = new RendererSize(tsw, tsw);
 		view = new RendererView();
 		frontBuffer = new RendererBuffer(); 
 		backBuffer = new RendererBuffer(); 
@@ -514,5 +515,12 @@ public class Renderer {
 				gc.restore();
 			}
 		}
+	}
+	
+	/**
+	 * @param pixels
+	 */
+	public void getPixels(IntBuffer pixels) {
+		frontBuffer.getBuffer().getImage().getPixels(pixels);
 	}
 }
