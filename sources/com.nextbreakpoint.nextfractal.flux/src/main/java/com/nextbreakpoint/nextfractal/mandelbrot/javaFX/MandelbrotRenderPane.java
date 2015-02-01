@@ -196,12 +196,12 @@ public class MandelbrotRenderPane extends BorderPane {
 	private void disposeCoordinators() {
 		for (int i = 0; i < coordinators.length; i++) {
 			if (coordinators[i] != null) {
-				coordinators[i].abortRender();
+				coordinators[i].abort();
 			}
 		}
 		for (int i = 0; i < coordinators.length; i++) {
 			if (coordinators[i] != null) {
-				coordinators[i].joinRender();
+				coordinators[i].waitFor();
 				coordinators[i].dispose();
 				coordinators[i] = null;
 			}
@@ -261,13 +261,13 @@ public class MandelbrotRenderPane extends BorderPane {
 			for (int i = 0; i < coordinators.length; i++) {
 				RendererCoordinator coordinator = coordinators[i];
 				if (coordinator != null) {
-					coordinator.abortRender();
+					coordinator.abort();
 				}
 			}
 			for (int i = 0; i < coordinators.length; i++) {
 				RendererCoordinator coordinator = coordinators[i];
 				if (coordinator != null) {
-					coordinator.joinRender();
+					coordinator.waitFor();
 				}
 			}
 			double[] traslation = getMandelbrotSession().getView().getTraslation();
@@ -301,7 +301,7 @@ public class MandelbrotRenderPane extends BorderPane {
 			for (int i = 0; i < coordinators.length; i++) {
 				RendererCoordinator coordinator = coordinators[i];
 				if (coordinator != null) {
-					coordinator.startRender();
+					coordinator.run();
 				}
 			}
 		} catch (Exception e) {
@@ -337,7 +337,7 @@ public class MandelbrotRenderPane extends BorderPane {
 		for (int i = 0; i < coordinators.length; i++) {
 			RendererCoordinator coordinator = coordinators[i];
 			if (coordinator != null) {
-				coordinator.abortRender();
+				coordinator.abort();
 			}
 		}
 	}
@@ -346,7 +346,7 @@ public class MandelbrotRenderPane extends BorderPane {
 		for (int i = 0; i < coordinators.length; i++) {
 			RendererCoordinator coordinator = coordinators[i];
 			if (coordinator != null) {
-				coordinator.joinRender();
+				coordinator.waitFor();
 			}
 		}
 	}
@@ -355,7 +355,7 @@ public class MandelbrotRenderPane extends BorderPane {
 		for (int i = 0; i < coordinators.length; i++) {
 			RendererCoordinator coordinator = coordinators[i];
 			if (coordinator != null) {
-				coordinator.startRender();
+				coordinator.run();
 			}
 		}
 	}

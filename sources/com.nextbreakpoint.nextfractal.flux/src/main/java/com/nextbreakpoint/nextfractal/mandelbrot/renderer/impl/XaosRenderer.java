@@ -25,7 +25,7 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.mandelbrot.renderer.xaos;
+package com.nextbreakpoint.nextfractal.mandelbrot.renderer.impl;
 
 import java.util.concurrent.ThreadFactory;
 import java.util.logging.Logger;
@@ -36,8 +36,10 @@ import com.nextbreakpoint.nextfractal.mandelbrot.core.MutableNumber;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.Renderer;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererData;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererState;
+import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererTile;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.strategy.JuliaRendererStrategy;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.strategy.MandelbrotRendererStrategy;
+import com.nextbreakpoint.nextfractal.render.RenderFactory;
 
 /**
  * @author Andrea Medeghini
@@ -61,13 +63,12 @@ public final class XaosRenderer extends Renderer {
 	private boolean cacheActive;
 
 	/**
-	 * @param rendererDelegate
-	 * @param rendererStrategy
-	 * @param width
-	 * @param height
+	 * @param threadFactory
+	 * @param renderFactory
+	 * @param tile
 	 */
-	public XaosRenderer(ThreadFactory threadFactory, int width, int height) {
-		super(threadFactory, width, height);
+	public XaosRenderer(ThreadFactory threadFactory, RenderFactory renderFactory, RendererTile tile) {
+		super(threadFactory, renderFactory, tile);
 		prepareWorker = new Worker(threadFactory);
 		prepareWorker.start();
 		this.xaosRendererData = (XaosRendererData)rendererData;
@@ -114,7 +115,7 @@ public final class XaosRenderer extends Renderer {
 			rendererStrategy = new MandelbrotRendererStrategy(rendererFractal);
 		}
 		rendererStrategy.prepare();
-		rendererData.setSize(width, height, rendererFractal.getStateSize());
+		rendererData.setSize(getWidth(), getHeight(), rendererFractal.getStateSize());
 		if (regionChanged) {
 			rendererData.setRegion(region);
 			regionChanged = false;
@@ -143,7 +144,7 @@ public final class XaosRenderer extends Renderer {
 		}
 		prepareColumns(redraw);
 		if (XaosConstants.USE_MULTITHREAD && !XaosConstants.DUMP_XAOS) {
-			prepareWorker.waitTasks();
+			prepareWorker.waitForTasks();
 		}
 		if (XaosConstants.PRINT_REALLOCTABLE) {
 			logger.fine("ReallocTable X:");
@@ -1033,9 +1034,7 @@ public final class XaosRenderer extends Renderer {
 				}
 				progress = (s + 1f) / (float)XaosConstants.STEPS;
 				fill();
-				if (rendererDelegate != null) {
-					rendererDelegate.didChanged(progress, xaosRendererData.getPixels());
-				}
+				didChanged(progress, rendererData.getPixels());
 				Thread.yield();
 				tmpRealloc = xaosRendererData.reallocY();
 				for (i = 0; i < tmpRealloc.length; i++) {
@@ -1054,9 +1053,7 @@ public final class XaosRenderer extends Renderer {
 			progress = 1f;
 		}
 		fill();
-		if (rendererDelegate != null) {
-			rendererDelegate.didChanged(progress, xaosRendererData.getPixels());
-		}
+		didChanged(progress, rendererData.getPixels());
 		Thread.yield();
 	}
 
@@ -1144,7 +1141,7 @@ public final class XaosRenderer extends Renderer {
 		if (XaosConstants.DUMP) {
 			logger.fine("Do symetry...");
 		}
-		final int rowsize = width;
+		final int rowsize = getWidth();
 		int from_offset = 0;
 		int to_offset = 0;
 		int i = 0;
@@ -1195,7 +1192,7 @@ public final class XaosRenderer extends Renderer {
 		}
 		final XaosChunk[] table = movetable.data;
 		XaosChunk tmpData = null;
-		final int rowsize = width;
+		final int rowsize = getWidth();
 		int new_offset = 0;
 		int old_offset = 0;
 		int from = 0;
@@ -1227,7 +1224,7 @@ public final class XaosRenderer extends Renderer {
 		}
 		final XaosChunk[] table = filltable.data;
 		XaosChunk tmpData = null;
-		final int rowsize = width;
+		final int rowsize = getWidth();
 		int from_offset = 0;
 		int to_offset = 0;
 		int from = 0;
@@ -1298,7 +1295,7 @@ public final class XaosRenderer extends Renderer {
 		if (XaosConstants.PRINT_CALCULATE) {
 			logger.fine("Calculate line " + realloc.pos);
 		}
-		final int rowsize = width;
+		final int rowsize = getWidth();
 		final double position = realloc.position;
 		final int r = realloc.pos;
 		int offset = r * rowsize;
@@ -1430,7 +1427,7 @@ public final class XaosRenderer extends Renderer {
 		if (XaosConstants.PRINT_CALCULATE) {
 			logger.fine("Calculate column " + realloc.pos);
 		}
-		final int rowsize = width;
+		final int rowsize = getWidth();
 		final double position = realloc.position;
 		final int r = realloc.pos;
 		int offset = r;
@@ -1566,7 +1563,7 @@ public final class XaosRenderer extends Renderer {
 		if (XaosConstants.DUMP) {
 			logger.fine("Refresh line...");
 		}
-		final int rowsize = width;
+		final int rowsize = getWidth();
 		int offset = realloc.pos * rowsize;
 		int c = 0;
 		RendererState p = xaosRendererData.newPoint();
@@ -1590,7 +1587,7 @@ public final class XaosRenderer extends Renderer {
 		if (XaosConstants.DUMP) {
 			logger.fine("Refresh column...");
 		}
-		final int rowsize = width;
+		final int rowsize = getWidth();
 		int offset = realloc.pos;
 		int c = 0;
 		RendererState p = xaosRendererData.newPoint();

@@ -34,6 +34,11 @@ import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Orbit;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.strategy.JuliaRendererStrategy;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.strategy.MandelbrotRendererStrategy;
+import com.nextbreakpoint.nextfractal.render.RenderAffine;
+import com.nextbreakpoint.nextfractal.render.RenderFactory;
+import com.nextbreakpoint.nextfractal.render.RenderGraphicsContext;
+
+import javafx.application.Platform;
 
 /**
  * @author Andrea Medeghini
@@ -41,6 +46,7 @@ import com.nextbreakpoint.nextfractal.mandelbrot.renderer.strategy.MandelbrotRen
 public class Renderer {
 	protected final RendererFractal rendererFractal;
 	protected final ThreadFactory threadFactory;
+	protected final RenderFactory renderFactory;
 	protected final RendererData rendererData;
 	protected final Worker rendererWorker;
 	protected volatile RendererDelegate rendererDelegate;
@@ -50,44 +56,71 @@ public class Renderer {
 	protected volatile boolean colorChanged;
 	protected volatile boolean regionChanged;
 	protected volatile float progress;
-	protected int width;
-	protected int height;
 	protected boolean julia;
 	protected boolean continuous;
 	protected Number constant;
 	protected RendererRegion region;
 	protected RendererRegion initialRegion;
+	protected final RendererSize size;
+	protected final RendererTile tile;
+	protected RendererBuffer frontBuffer;
+	protected RendererBuffer backBuffer;
+	protected RendererView view;
 
 	/**
+	 * @param renderFactory 
 	 * @param rendererDelegate
 	 * @param rendererFractal
 	 * @param width
 	 * @param height
 	 */
-	public Renderer(ThreadFactory threadFactory, int width, int height) {
+	public Renderer(ThreadFactory threadFactory, RenderFactory renderFactory, RendererTile tile) {
 		this.threadFactory = threadFactory;
+		this.renderFactory = renderFactory;
 		this.rendererWorker = new Worker(threadFactory);
 		this.rendererData = createRendererData();
 		this.rendererFractal = new RendererFractal();
-		this.width = width;
-		this.height = height;
+		this.tile = tile;
+		RendererSize tileSize = tile.getTileSize();
+		RendererSize tileBorder = tile.getTileBorder();
+		int tsw = tileSize.getWidth();
+		int tbw = tileBorder.getWidth();
+		int tsh = tileSize.getHeight();
+		int tbh = tileBorder.getHeight();
+		int tileDim = (int) Math.hypot(tsw + tbw * 2, tsh + tbh * 2);
+		size = new RendererSize(tileDim, tileDim);
+		view = new RendererView();
+		frontBuffer = new RendererBuffer(); 
+		backBuffer = new RendererBuffer(); 
+		frontBuffer.setTile(tile);
+		backBuffer.setTile(tile);
+		frontBuffer.setSize(size);
+		backBuffer.setSize(size);
+		frontBuffer.setAffine(createTransform(0));
+		backBuffer.setAffine(createTransform(0));
+		frontBuffer.setBuffer(renderFactory.createBuffer(size.getWidth(), size.getWidth()));
+		backBuffer.setBuffer(renderFactory.createBuffer(size.getWidth(), size.getHeight()));
 		start();
 	}
-	
+
+	public RendererTile getTile() {
+		return tile;
+	}
+
 	/**
 	 * @return
 	 */
 	public int getWidth() {
-		return width;
+		return size.getWidth();
 	}
 
 	/**
 	 * @return
 	 */
 	public int getHeight() {
-		return height;
+		return size.getHeight();
 	}
-	
+
 	/**
 	 * @return
 	 */
@@ -113,29 +146,21 @@ public class Renderer {
 	/**
 	 * 
 	 */
-	public void stopRender() {
-		rendererWorker.abortTasks();
-		rendererWorker.waitTasks();
-	}
-
-	/**
-	 * 
-	 */
-	public void abortRender() {
+	public void abortTasks() {
 		rendererWorker.abortTasks();
 	}
 
 	/**
 	 * 
 	 */
-	public void joinRender() {
-		rendererWorker.waitTasks();
+	public void waitForTasks() {
+		rendererWorker.waitForTasks();
 	}
 
 	/**
 	 * 
 	 */
-	public void startRender() {
+	public void runTask() {
 		rendererWorker.addTask(new Runnable() {
 			@Override
 			public void run() {
@@ -215,6 +240,14 @@ public class Renderer {
 	 */
 	protected void free() {
 		rendererData.free();
+		if (frontBuffer != null) {
+			frontBuffer.dispose();
+			frontBuffer = null;
+		}
+		if (backBuffer != null) {
+			backBuffer.dispose();
+			backBuffer = null;
+		}
 	}
 
 	/**
@@ -274,15 +307,14 @@ public class Renderer {
 		} else {
 			rendererStrategy = new MandelbrotRendererStrategy(rendererFractal);
 		}
+		int width = getWidth();
+		int height = getHeight();
 		rendererStrategy.prepare();
 		rendererData.setSize(width, height, rendererFractal.getStateSize());
 		rendererData.setRegion(region);
 		rendererData.initPositions();
 		rendererData.swap();
 		rendererData.clearPixels();
-		if (rendererDelegate != null) {
-			rendererDelegate.didChanged(progress, rendererData.getPixels());
-		}
 		final MutableNumber px = new MutableNumber(0, 0);
 		final MutableNumber pw = new MutableNumber(0, 0);
 		final RendererState p = rendererData.newPoint();
@@ -302,24 +334,185 @@ public class Renderer {
 				rendererData.setPixel(offset, c);
 				offset += 1;
 			}
-			if (y % 20 == 0) {
-				progress = (float)y / (float)height;
-				if (rendererDelegate != null) {
-					rendererDelegate.didChanged(progress, rendererData.getPixels());
-				}
-			}
 			if (isInterrupted()) {
 				aborted = true;
 				break;
 			}
+			if (y % 20 == 0) {
+				progress = (float)y / (float)height;
+				didChanged(progress, rendererData.getPixels());
+			}
 			Thread.yield();
 		}
-		if (aborted) {
-			progress = 1;
+		if (!aborted) {
+			progress = 1f;
 		}
-		if (rendererDelegate != null) {
-			rendererDelegate.didChanged(progress, rendererData.getPixels());
-		}
+		didChanged(progress, rendererData.getPixels());
 		Thread.yield();
+	}
+
+	/**
+	 * @param view
+	 */
+	public void setView(RendererView view) {
+		this.view = view;
+		RendererRegion region = computeRegion();
+		setRegion(region);
+		setJulia(view.isJulia());
+		setConstant(view.getConstant());
+		setContinuous(view.getState().getX() >= 1 || view.getState().getY() >= 1 || view.getState().getZ() >= 1 || view.getState().getW() >= 1);
+		backBuffer.setAffine(createTransform(view.getRotation().getZ()));
+	}
+	
+	/**
+	 * 
+	 */
+	protected RendererRegion computeRegion() {
+		final double tx = view.getTraslation().getX();
+		final double ty = view.getTraslation().getY();
+		final double tz = view.getTraslation().getZ();
+		final double rz = view.getRotation().getZ();
+		
+		double a = rz * Math.PI / 180;
+		
+//		logger.info("tx = " + tx + ", ty = " + ty + ", tz = " + tz + ", rz = " + rz);
+		
+		final RendererSize tileBorder = backBuffer.getTile().getTileBorder();
+		final RendererPoint tileOffset = backBuffer.getTile().getTileOffset();
+		final RendererSize tileSize = backBuffer.getTile().getTileSize();
+		final RendererSize imageSize = backBuffer.getTile().getImageSize();
+		
+		final RendererRegion region = getInitialRegion();
+		
+		final Number size = region.getSize();
+		final Number center = region.getCenter();
+
+		final double imageDim = (int) Math.hypot(imageSize.getWidth() + tileBorder.getWidth() * 2, imageSize.getHeight() + tileBorder.getHeight() * 2);
+
+		int tsw = tileSize.getWidth();
+		int tbw = tileBorder.getWidth();
+		int tsh = tileSize.getHeight();
+		int tbh = tileBorder.getHeight();
+		int tileDim = (int) Math.hypot(tsw + tbw * 2, tsh + tbh * 2);
+
+		final double dx = tz * size.r() * (imageDim / imageSize.getWidth()) / 2;
+		final double dy = tz * size.i() * (imageDim / imageSize.getHeight()) / 2;
+		
+		final double cx = center.r();
+		final double cy = center.i();
+		final double px = cx - dx + tx;
+		final double py = cy - dy + ty;
+		final double qx = cx + dx + tx;
+		final double qy = cy + dy + ty;
+
+		final double gx = px + (qx - px) * ((imageDim - imageSize.getWidth()) / 2 + tileOffset.getX() + tileSize.getWidth() / 2) / imageDim;
+		final double gy = py + (qy - py) * ((imageDim - imageSize.getHeight()) / 2 + tileOffset.getY() + tileSize.getHeight() / 2) / imageDim;
+		final double fx = Math.cos(a) * (gx - cx) + Math.sin(a) * (gy - cx) + cx; 
+		final double fy = Math.cos(a) * (gy - cy) - Math.sin(a) * (gx - cx) + cy;
+		final double sx = dx * (tileDim / imageDim);
+		final double sy = dy * (tileDim / imageDim);
+
+		final RendererRegion newRegion = new RendererRegion();
+//		newRegion.setPoints(new Number(px, py), new Number(qx, qy));
+		newRegion.setPoints(new Number(fx - sx, fy - sy), new Number(fx + sx, fy + sy));
+//		logger.info(newRegion.toString());
+		return newRegion;
+	}
+
+	/**
+	 * @param rotation
+	 * @return
+	 */
+	protected RenderAffine createTransform(double rotation) {
+		final RendererSize tileSize = backBuffer.getTile().getTileSize();
+		final RendererSize tileBorder = backBuffer.getTile().getTileBorder();
+		final int offsetX = (getWidth() - tileSize.getWidth() - tileBorder.getWidth() * 2) / 2;
+		final int offsetY = (getHeight() - tileSize.getHeight() - tileBorder.getHeight() * 2) / 2;
+		final int centerX = getWidth() / 2;
+		final int centerY = getHeight() / 2;
+		final RenderAffine affine = renderFactory.createTranslateAffine(-offsetX, -offsetY);
+		affine.append(renderFactory.createRotateAffine(rotation, centerX, centerY));
+		return affine;
+	}
+
+	protected void didChanged(float progress, int[] pixels) {
+		if (backBuffer != null) {
+			backBuffer.getBuffer().update(pixels);
+		}
+		swap();
+		Platform.runLater(() -> {
+			if (rendererDelegate != null) {
+				rendererDelegate.didChanged(progress);
+			}
+		});
+	}
+
+	/**
+	 * 
+	 */
+	protected final void swap() {
+		synchronized (this) {
+			final RendererBuffer tmpBuffer = backBuffer;
+			backBuffer = frontBuffer;
+			frontBuffer = tmpBuffer;
+		}
+	}
+
+	/**
+	 * @param gc
+	 */
+	public void drawImage(final RenderGraphicsContext gc) {
+		synchronized (this) {
+			if (frontBuffer != null) {
+				gc.save();
+				RendererPoint tileOffset = frontBuffer.getTile().getTileOffset();
+				RendererSize tileSize = frontBuffer.getTile().getTileSize();
+				gc.setClip(tileOffset.getX(), tileOffset.getY(), tileSize.getWidth(), tileSize.getHeight());
+				gc.setAffine(frontBuffer.getAffine());
+				gc.drawImage(frontBuffer.getBuffer().getImage(), tileOffset.getX(), tileOffset.getY());
+				gc.restore();
+			}
+		}
+	}
+
+	/**
+	 * @param gc
+	 * @param x
+	 * @param y
+	 */
+	public void drawImage(final RenderGraphicsContext gc, final int x, final int y) {
+		synchronized (this) {
+			if (frontBuffer != null) {
+				gc.save();
+				RendererSize tileSize = frontBuffer.getTile().getTileSize();
+				gc.setClip(x, y, tileSize.getWidth(), tileSize.getHeight());
+				gc.setAffine(frontBuffer.getAffine());
+				gc.drawImage(frontBuffer.getBuffer().getImage(), x, y);
+				gc.restore();
+			}
+		}
+	}
+
+	/**
+	 * @param gc
+	 * @param x
+	 * @param y
+	 * @param w
+	 * @param h
+	 */
+	public void drawImage(final RenderGraphicsContext gc, final int x, final int y, final int w, final int h) {
+		synchronized (this) {
+			if (frontBuffer != null) {
+				gc.save();
+				gc.setClip(x, y, w, h);
+				gc.setAffine(frontBuffer.getAffine());
+				final double sx = w / (double) frontBuffer.getTile().getTileSize().getWidth();
+				final double sy = h / (double) frontBuffer.getTile().getTileSize().getHeight();
+				final int dw = (int) Math.rint(frontBuffer.getSize().getWidth() * sx);
+				final int dh = (int) Math.rint(frontBuffer.getSize().getHeight() * sy);
+				gc.drawImage(frontBuffer.getBuffer().getImage(), x, y, dw, dh);
+				gc.restore();
+			}
+		}
 	}
 }

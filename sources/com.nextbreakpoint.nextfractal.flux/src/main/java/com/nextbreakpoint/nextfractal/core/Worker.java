@@ -104,7 +104,7 @@ public class Worker {
 	/**
 	 * 
 	 */
-	public void waitTasks() {
+	public void waitForTasks() {
 		synchronized (tasks) {
 			while ((runnable != null) || (tasks.size() > 0)) {
 				try {

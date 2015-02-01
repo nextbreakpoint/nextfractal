@@ -1,4 +1,4 @@
-package com.nextbreakpoint.nextfractal.mandelbrot.renderer.xaos;
+package com.nextbreakpoint.nextfractal.mandelbrot.renderer.impl;
 
 class XaosConstants {
 	public static final boolean DUMP = false;

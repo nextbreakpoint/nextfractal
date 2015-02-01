@@ -3,7 +3,9 @@ package com.nextbreakpoint.nextfractal.mandelbrot;
 import java.util.Arrays;
 import java.util.Date;
 
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 @XmlRootElement(name="mandelbrot")
 public class MandelbrotData {
@@ -12,6 +14,8 @@ public class MandelbrotData {
 	private double[] traslation = new double[] { 0, 0, 1, 0 };
 	private double[] rotation = new double[] { 0, 0, 0, 0 };
 	private double[] scale = new double[] { 1, 1, 1, 1 };
+	@XmlElement(name = "timestamp", required = true) 
+	@XmlJavaTypeAdapter(DateAdapter.class)
 	private Date timestamp = new Date();
 	private String source = "";
 	private boolean julia;
@@ -76,13 +80,13 @@ public class MandelbrotData {
 	public void setScale(double[] scale) {
 		this.scale = scale;
 	}
+	
+	public Date getTimestamp() {
+		return timestamp;
+	}
 
 	@Override
 	public String toString() {
 		return "[traslation=" + Arrays.toString(traslation)	+ ", rotation=" + Arrays.toString(rotation) + ", scale=" + Arrays.toString(scale) + ", julia=" + julia + ", constant=" + Arrays.toString(constant) + ", time=" + time + "]";
-	}
-
-	public Date getTimestamp() {
-		return timestamp;
 	}
 }

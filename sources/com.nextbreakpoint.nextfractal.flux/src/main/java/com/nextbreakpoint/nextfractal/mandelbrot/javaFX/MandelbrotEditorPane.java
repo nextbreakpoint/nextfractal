@@ -1,6 +1,7 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
 
 import java.io.File;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 
 import javafx.collections.ObservableList;
@@ -17,19 +18,41 @@ import javafx.util.Callback;
 
 import com.nextbreakpoint.nextfractal.FractalSession;
 import com.nextbreakpoint.nextfractal.FractalSessionListener;
+import com.nextbreakpoint.nextfractal.core.DefaultThreadFactory;
+import com.nextbreakpoint.nextfractal.core.DoubleVector4D;
+import com.nextbreakpoint.nextfractal.core.IntegerVector4D;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotData;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotSession;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.Compiler;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerBuilder;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerReport;
+import com.nextbreakpoint.nextfractal.mandelbrot.core.Color;
+import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
+import com.nextbreakpoint.nextfractal.mandelbrot.core.Orbit;
+import com.nextbreakpoint.nextfractal.mandelbrot.renderer.Renderer;
+import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererPoint;
+import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererSize;
+import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererTile;
+import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererView;
 import com.nextbreakpoint.nextfractal.mandelbrot.service.FileService;
+import com.nextbreakpoint.nextfractal.render.javaFX.JavaFXRenderFactory;
 
 public class MandelbrotEditorPane extends BorderPane {
 	private static final Logger logger = Logger.getLogger(MandelbrotEditorPane.class.getName());
+	private static final AtomicInteger id = new AtomicInteger(0);
+	private final DefaultThreadFactory threadFactory;
+	private final JavaFXRenderFactory renderFactory;
 	private final FractalSession session;
 	private FileChooser fileChooser;
 	private File currentFile;
+	private Renderer renderer;
 	
 	public MandelbrotEditorPane(FractalSession session) {
 		this.session = session;
 		
+		threadFactory = new DefaultThreadFactory("Image", true, Thread.MIN_PRIORITY);
+		renderFactory = new JavaFXRenderFactory();
+
 		getStyleClass().add("mandelbrot");
 
 		TabPane tabPane = new TabPane();
@@ -231,6 +254,8 @@ public class MandelbrotEditorPane extends BorderPane {
 		});
 		
 		addDataToHistory(historyList);
+		
+		renderer = new Renderer(threadFactory, renderFactory, createTile(100, 100));
 	}
 
 	private void addDataToLibrary(ListView<MandelbrotData> libraryGrid, MandelbrotData data) {
@@ -257,6 +282,51 @@ public class MandelbrotEditorPane extends BorderPane {
 		if (fileChooser == null) {
 			fileChooser = new FileChooser();
 			fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+		}
+	}
+
+	private RendererTile createTile(int width, int height) {
+		int tileWidth = width;
+		int tileHeight = height;
+		RendererSize imageSize = new RendererSize(width, height);
+		RendererSize tileSize = new RendererSize(tileWidth, tileHeight);
+		RendererSize tileBorder = new RendererSize(0, 0);
+		RendererPoint tileOffset = new RendererPoint(0, 0);
+		RendererTile tile = new RendererTile(imageSize, tileSize, tileOffset, tileBorder);
+		return tile;
+	}
+	
+	private void updateFractalData(MandelbrotSession session) {
+		try {
+			Compiler compiler = new Compiler(session.getOutDir(), session.getPackageName(), session.getClassName());
+			CompilerReport report = compiler.generateJavaSource(session.getSource());
+			//TODO report errors
+			CompilerBuilder<Orbit> orbitBuilder = compiler.compileOrbit(report);
+			CompilerBuilder<Color> colorBuilder = compiler.compileColor(report);
+			if (renderer != null) {
+				renderer.abortTasks();
+				renderer.waitForTasks();
+				double[] traslation = session.getView().getTraslation();
+				double[] rotation = session.getView().getRotation();
+				double[] scale = session.getView().getScale();
+				double[] constant = session.getConstant();
+				boolean julia = session.isJulia();
+				renderer.setOrbit(orbitBuilder.build());
+				renderer.setColor(colorBuilder.build());
+				renderer.init();
+				RendererView view = new RendererView();
+				view .setTraslation(new DoubleVector4D(traslation));
+				view.setRotation(new DoubleVector4D(rotation));
+				view.setScale(new DoubleVector4D(scale));
+				view.setState(new IntegerVector4D(0, 0, 0, 0));
+				view.setJulia(julia);
+				view.setConstant(new Number(constant));
+				renderer.setView(view);
+				renderer.runTask();
+				renderer.waitForTasks();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();//TODO display errors
 		}
 	}
 }

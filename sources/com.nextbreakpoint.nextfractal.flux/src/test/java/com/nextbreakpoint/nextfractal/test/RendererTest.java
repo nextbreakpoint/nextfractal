@@ -25,6 +25,9 @@
  */
 package com.nextbreakpoint.nextfractal.test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -33,12 +36,22 @@ import com.nextbreakpoint.nextfractal.mandelbrot.core.Color;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Orbit;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Scope;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.Renderer;
+import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererPoint;
+import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererSize;
+import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererTile;
+import com.nextbreakpoint.nextfractal.render.RenderFactory;
+import com.nextbreakpoint.nextfractal.render.javaFX.JavaFXRenderFactory;
 
 public class RendererTest {
 	@Test
-	public void RendererStart() {
+	public void testProgress() {
 		DefaultThreadFactory threadFactory = new DefaultThreadFactory("Test", false, Thread.MIN_PRIORITY);
-		Renderer renderer = new Renderer(threadFactory, 100, 100);
+		RenderFactory renderFactory = new JavaFXRenderFactory();
+		RendererPoint tileOffest = new RendererPoint(0, 0);
+		RendererSize borderSize = new RendererSize(0, 0);
+		RendererSize tileSize = new RendererSize(100, 100);
+		RendererTile tile = new RendererTile(tileSize, tileSize, tileOffest, borderSize);
+		Renderer renderer = new Renderer(threadFactory, renderFactory, tile);
 		try {
 			TestOrbit orbit = new TestOrbit();
 			TestColor color = new TestColor();
@@ -49,8 +62,14 @@ public class RendererTest {
 			renderer.setColor(color);
 			renderer.init();
 			renderer.setRegion(renderer.getInitialRegion());
-			renderer.startRender();
-			renderer.joinRender();
+			List<Float> output = new ArrayList<>(); 
+			renderer.setRendererDelegate(progress -> {
+				System.out.println(progress);
+				output.add(progress);
+			});
+			renderer.runTask();
+			renderer.waitForTasks();
+			Assert.assertArrayEquals(new Float[] { 0.0f, 0.2f, 0.4f, 0.6f, 0.8f, 1.0f }, output.toArray(new Float[0]));
 		} catch (Exception e) {
 			Assert.fail(e.getMessage());
 		} finally {

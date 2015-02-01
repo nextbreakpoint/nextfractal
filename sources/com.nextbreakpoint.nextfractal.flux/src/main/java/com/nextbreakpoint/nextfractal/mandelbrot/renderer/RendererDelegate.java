@@ -28,10 +28,10 @@ package com.nextbreakpoint.nextfractal.mandelbrot.renderer;
 /**
  * @author Andrea Medeghini
  */
+@FunctionalInterface
 public interface RendererDelegate {
 	/**
 	 * @param progress
-	 * @param pixels
 	 */
-	public void didChanged(float progress, int[] pixels);
+	public void didChanged(float progress);
 }

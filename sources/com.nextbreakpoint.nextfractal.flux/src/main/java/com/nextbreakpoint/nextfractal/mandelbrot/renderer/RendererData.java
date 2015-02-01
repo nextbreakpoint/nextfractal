@@ -2,7 +2,6 @@ package com.nextbreakpoint.nextfractal.mandelbrot.renderer;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
 import com.nextbreakpoint.nextfractal.mandelbrot.core.MutableNumber;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
@@ -11,7 +10,6 @@ import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
  * @author Andrea Medeghini
  */
 public class RendererData {
-	protected static final Logger logger = Logger.getLogger(RendererData.class.getName());
 	protected double[] positionX;
 	protected double[] positionY;
 	protected RendererRegion region;
