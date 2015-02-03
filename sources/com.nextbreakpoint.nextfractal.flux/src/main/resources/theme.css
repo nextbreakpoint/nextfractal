@@ -21,6 +21,18 @@
 	-fx-background-insets: 0, 0, 1, 2;
 }
 
+.list-view {
+	-fx-background-color: white white black black;
+	-fx-background-insets: 0, 0, 1, 2;
+	-fx-border-width: 0 0 0 0;
+}
+
+.list-view:focused {
+	-fx-background-color: white white black black;
+	-fx-background-insets: 0, 0, 1, 2;
+	-fx-border-width: 0 0 0 0;
+}
+
 .application .editor-pane {
 	-fx-background-color: #FFFFFF;
 	-fx-border-width: 0 0 0 1;

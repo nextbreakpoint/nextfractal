@@ -89,7 +89,7 @@ public class Renderer {
 		int tsh = tileSize.getHeight();
 		int tbh = tileBorder.getHeight();
 		int tileDim = (int) Math.hypot(tsw + tbw * 2, tsh + tbh * 2);
-		size = new RendererSize(tsw, tsw);
+		size = new RendererSize(tileDim, tileDim);
 		view = new RendererView();
 		frontBuffer = new RendererBuffer(); 
 		backBuffer = new RendererBuffer(); 
