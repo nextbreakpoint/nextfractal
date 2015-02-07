@@ -6,8 +6,11 @@ import java.util.concurrent.ThreadFactory;
 import java.util.logging.Logger;
 
 import javafx.animation.AnimationTimer;
+import javafx.animation.TranslateTransition;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -23,6 +26,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Callback;
+import javafx.util.Duration;
 import javafx.util.StringConverter;
 
 import com.nextbreakpoint.nextfractal.FractalSession;
@@ -89,9 +93,9 @@ public class MandelbrotRenderPane extends BorderPane {
 		buttons.getStyleClass().add("tools-pane");
 		
 		ExportPane export = new ExportPane();
-		export.setMinHeight(200);
-		export.setMaxHeight(200);
-		export.setPrefHeight(200);
+		export.setMinHeight(250);
+		export.setMaxHeight(250);
+		export.setPrefHeight(250);
 		
 		controls.setTop(export);
 		controls.setBottom(buttons);
@@ -394,6 +398,11 @@ public class MandelbrotRenderPane extends BorderPane {
 		}
 	}
 
+	public void createExportSession() {
+		// TODO Auto-generated method stub
+		logger.info("Create export session...");
+	}
+
 	private interface Tool {
 		public void clicked(MouseEvent e);
 
@@ -621,7 +630,7 @@ public class MandelbrotRenderPane extends BorderPane {
 	}
 	
 	private class ExportPane extends Pane {
-		private VBox box = new VBox();
+		private VBox box = new VBox(10);
 
 		public ExportPane() {
 			ComboBox<Integer[]> presets = new ComboBox<>();
@@ -650,7 +659,13 @@ public class MandelbrotRenderPane extends BorderPane {
 			heightField.setPrefWidth(400);
 			heightField.setText(String.valueOf(item0[1]));
 			Button close = new Button("Close");
+			Button start = new Button("Start");
 
+			HBox buttons = new HBox(10);
+			buttons.getChildren().add(start);
+			buttons.getChildren().add(close);
+			buttons.setAlignment(Pos.CENTER);
+			
 			box.setAlignment(Pos.TOP_CENTER);
 			box.getChildren().add(new Label("Presets"));
 			box.getChildren().add(presets);
@@ -658,7 +673,7 @@ public class MandelbrotRenderPane extends BorderPane {
 			box.getChildren().add(widthField);
 			box.getChildren().add(new Label("Height"));
 			box.getChildren().add(heightField);
-			box.getChildren().add(close);
+			box.getChildren().add(buttons);
 			box.getStyleClass().add("export-pane");
 			
 			presets.setConverter(new StringConverter<Integer[]>() {
@@ -724,6 +739,11 @@ public class MandelbrotRenderPane extends BorderPane {
 				hide();
 			});
 			
+			start.setOnMouseClicked(e -> {
+				hide();
+				createExportSession();
+			});
+			
 			getChildren().add(box);
 			
 			widthProperty().addListener(new ChangeListener<java.lang.Number>() {
@@ -737,6 +757,7 @@ public class MandelbrotRenderPane extends BorderPane {
 				@Override
 				public void changed(ObservableValue<? extends java.lang.Number> observable, java.lang.Number oldValue, java.lang.Number newValue) {
 					box.setPrefHeight(newValue.doubleValue());
+					box.setLayoutY(-newValue.doubleValue());
 				}
 			});
 		}
@@ -746,11 +767,29 @@ public class MandelbrotRenderPane extends BorderPane {
 		}
 		
 		public void show() {
-			box.setLayoutY(0);
+			TranslateTransition tt = new TranslateTransition(Duration.seconds(0.4));
+			tt.setFromY(box.getTranslateY());
+			tt.setToY(box.getHeight());
+			tt.setNode(box);
+			tt.setOnFinished(new EventHandler<ActionEvent>() {
+				@Override
+				public void handle(ActionEvent event) {
+				}
+			});
+			tt.play();
 		}
 		
 		public void hide() {
-			box.setLayoutY(-400);
+			TranslateTransition tt = new TranslateTransition(Duration.seconds(0.4));
+			tt.setFromY(box.getHeight());
+			tt.setToY(0);
+			tt.setNode(box);
+			tt.setOnFinished(new EventHandler<ActionEvent>() {
+				@Override
+				public void handle(ActionEvent event) {
+				}
+			});
+			tt.play();
 		}
 	}
 }

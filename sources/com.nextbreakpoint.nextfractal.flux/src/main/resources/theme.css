@@ -66,6 +66,9 @@
 	-fx-alignment: center;
 	-fx-padding: 10px;
 	-fx-background-color: lightgray;
+	-fx-opacity: 0.98;
+	-fx-border-width: 0 0 1 0;
+	-fx-border-color: #444444;
 }
 
 .root.popup {
