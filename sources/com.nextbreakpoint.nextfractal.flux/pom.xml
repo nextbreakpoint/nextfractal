@@ -51,6 +51,21 @@
 			<version>4.3</version>
 		</dependency>
 		<dependency>
+			<groupId>net.jxta</groupId>
+			<artifactId>jxta-jxse</artifactId>
+			<version>2.5</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.ffmpeg4java</groupId>
+			<artifactId>net.sf.ffmpeg4java</artifactId>
+			<version>0.1.2</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.freeimage4java</groupId>
+			<artifactId>net.sf.freeimage4java</artifactId>
+			<version>0.1.1</version>
+		</dependency>
+		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.11</version>

@@ -2,6 +2,7 @@ package com.nextbreakpoint.nextfractal.mandelbrot;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.nextbreakpoint.nextfractal.FractalSession;
@@ -9,6 +10,7 @@ import com.nextbreakpoint.nextfractal.FractalSessionListener;
 
 public class MandelbrotSession implements FractalSession {
 	private final List<FractalSessionListener> listeners = new ArrayList<>();
+	private final List<ExportSession> sessions = new ArrayList<>();
 	private MandelbrotData data = new MandelbrotData();
 	private String packageName;
 	private String className;
@@ -164,5 +166,17 @@ public class MandelbrotSession implements FractalSession {
 		data.setScale(this.data.getScale());
 		data.setTime(this.data.getTime());
 		return data;
+	}
+
+	public void add(ExportSession session) {
+		sessions.add(session);
+	}
+
+	public void remove(ExportSession session) {
+		sessions.remove(session);
+	}
+
+	public void getSessions() {
+		Collections.unmodifiableCollection(sessions);
 	}
 }

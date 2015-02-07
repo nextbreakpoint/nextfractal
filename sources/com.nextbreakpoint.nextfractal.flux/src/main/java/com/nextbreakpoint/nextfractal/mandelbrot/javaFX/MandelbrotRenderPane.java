@@ -9,10 +9,12 @@ import javafx.animation.AnimationTimer;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 
 import com.nextbreakpoint.nextfractal.FractalSession;
 import com.nextbreakpoint.nextfractal.FractalSessionListener;
@@ -80,6 +82,13 @@ public class MandelbrotRenderPane extends BorderPane {
         gc.fillRect(0, 0, width, height);
 		canvas.getStyleClass().add("render-pane");
 
+		ExportPane export = new ExportPane();
+		export.setMinWidth(400);
+		export.setMaxWidth(400);
+		export.setPrefWidth(400);
+		export.setTranslateX(-export.getWidth());
+//		export.setVisible(false);
+		
         coordinators = new RendererCoordinator[rows * columns];
 		threadFactory = new DefaultThreadFactory("Render", true, Thread.MIN_PRIORITY);
 		renderFactory = new JavaFXRenderFactory();
@@ -142,7 +151,7 @@ public class MandelbrotRenderPane extends BorderPane {
 		});
 		
 		exportButton.setOnAction(e -> {
-			//TODO export
+			export.setLayoutX(0);
 		});
 		
 		session.addSessionListener(new FractalSessionListener() {
@@ -162,8 +171,9 @@ public class MandelbrotRenderPane extends BorderPane {
 			}
 		});
 		
-		StackPane stackPane = new StackPane();
+		Pane stackPane = new Pane();
 		stackPane.getChildren().add(canvas);
+		stackPane.getChildren().add(export);
 		stackPane.getChildren().add(buttons);
 		setCenter(stackPane);
         
@@ -593,6 +603,20 @@ public class MandelbrotRenderPane extends BorderPane {
 			if (changed) {
 				changed = false;
 			}
+		}
+	}
+	
+	private class ExportPane extends BorderPane {
+		public ExportPane() {
+			ComboBox<Integer[]> presets = new ComboBox<>();
+			presets.getItems().add(new Integer[] { 640, 480 });
+			presets.getItems().add(new Integer[] { 1024, 768 });
+			presets.getItems().add(new Integer[] { 1650, 1050 });
+			presets.getItems().add(new Integer[] { 1900, 1080 });
+			VBox box = new VBox();
+			box.getChildren().add(presets);
+			setMinWidth(400);
+			setCenter(box);
 		}
 	}
 }

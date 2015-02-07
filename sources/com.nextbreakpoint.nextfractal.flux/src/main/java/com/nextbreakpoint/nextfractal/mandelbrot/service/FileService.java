@@ -1,6 +1,8 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.service;
 
 import java.io.File;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 import javax.xml.bind.JAXB;
 
@@ -21,5 +23,15 @@ public class FileService {
 		} catch (Exception e) {
 			throw new Exception("Cannot save data to file " + path.getAbsolutePath());
 		}
+	}
+
+	public MandelbrotData loadFromStream(InputStream is) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void saveToStream(OutputStream os, MandelbrotData data) {
+		// TODO Auto-generated method stub
+		
 	}
 }
