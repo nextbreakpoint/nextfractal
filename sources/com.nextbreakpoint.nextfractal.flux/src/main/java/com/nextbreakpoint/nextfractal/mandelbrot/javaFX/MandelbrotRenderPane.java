@@ -6,21 +6,31 @@ import java.util.concurrent.ThreadFactory;
 import java.util.logging.Logger;
 
 import javafx.animation.AnimationTimer;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.geometry.Pos;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.util.Callback;
+import javafx.util.StringConverter;
 
 import com.nextbreakpoint.nextfractal.FractalSession;
 import com.nextbreakpoint.nextfractal.FractalSessionListener;
 import com.nextbreakpoint.nextfractal.core.DefaultThreadFactory;
 import com.nextbreakpoint.nextfractal.core.DoubleVector4D;
 import com.nextbreakpoint.nextfractal.core.IntegerVector4D;
+import com.nextbreakpoint.nextfractal.javaFX.AdvancedTextField;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotSession;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotView;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.Compiler;
@@ -61,6 +71,8 @@ public class MandelbrotRenderPane extends BorderPane {
 		
 		getStyleClass().add("mandelbrot");
 
+		BorderPane controls = new BorderPane();
+				
 		HBox buttons = new HBox(10);
 		Button zoomButton = new Button("Zoom");
 		Button moveButton = new Button("Move");
@@ -76,19 +88,20 @@ public class MandelbrotRenderPane extends BorderPane {
 		buttons.getChildren().add(exportButton);
 		buttons.getStyleClass().add("tools-pane");
 		
+		ExportPane export = new ExportPane();
+		export.setMinHeight(200);
+		export.setMaxHeight(200);
+		export.setPrefHeight(200);
+		
+		controls.setTop(export);
+		controls.setBottom(buttons);
+		
         Canvas canvas = new Canvas(width, height);
         GraphicsContext gc = canvas.getGraphicsContext2D();
         gc.setFill(javafx.scene.paint.Color.WHITESMOKE);
         gc.fillRect(0, 0, width, height);
 		canvas.getStyleClass().add("render-pane");
 
-		ExportPane export = new ExportPane();
-		export.setMinWidth(400);
-		export.setMaxWidth(400);
-		export.setPrefWidth(400);
-		export.setTranslateX(-export.getWidth());
-//		export.setVisible(false);
-		
         coordinators = new RendererCoordinator[rows * columns];
 		threadFactory = new DefaultThreadFactory("Render", true, Thread.MIN_PRIORITY);
 		renderFactory = new JavaFXRenderFactory();
@@ -100,31 +113,31 @@ public class MandelbrotRenderPane extends BorderPane {
 		
 		currentTool = new ZoomTool();
 		
-		buttons.setOnMouseClicked(e -> {
+		controls.setOnMouseClicked(e -> {
 			if (currentTool != null) {
 				currentTool.clicked(e);
 			}
 		});
 		
-		buttons.setOnMousePressed(e -> {
+		controls.setOnMousePressed(e -> {
 			if (currentTool != null) {
 				currentTool.pressed(e);
 			}
 		});
 		
-		buttons.setOnMouseReleased(e -> {
+		controls.setOnMouseReleased(e -> {
 			if (currentTool != null) {
 				currentTool.released(e);
 			}
 		});
 		
-		buttons.setOnMouseDragged(e -> {
+		controls.setOnMouseDragged(e -> {
 			if (currentTool != null) {
 				currentTool.dragged(e);
 			}
 		});
 		
-		buttons.setOnMouseMoved(e -> {
+		controls.setOnMouseMoved(e -> {
 			if (currentTool != null) {
 				currentTool.moved(e);
 			}
@@ -151,7 +164,7 @@ public class MandelbrotRenderPane extends BorderPane {
 		});
 		
 		exportButton.setOnAction(e -> {
-			export.setLayoutX(0);
+			export.show();
 		});
 		
 		session.addSessionListener(new FractalSessionListener() {
@@ -171,15 +184,16 @@ public class MandelbrotRenderPane extends BorderPane {
 			}
 		});
 		
-		Pane stackPane = new Pane();
+		StackPane stackPane = new StackPane();
 		stackPane.getChildren().add(canvas);
-		stackPane.getChildren().add(export);
-		stackPane.getChildren().add(buttons);
+		stackPane.getChildren().add(controls);
 		setCenter(stackPane);
         
 		runTimer(canvas);
 		
 		updateFractalData(session);
+
+		export.hide();
 	}
 
 	private void resetView() {
@@ -375,7 +389,7 @@ public class MandelbrotRenderPane extends BorderPane {
 			RendererCoordinator coordinator = coordinators[i];
 			if (coordinator != null && coordinator.isPixelsChanged()) {
 				RenderGraphicsContext gc = renderFactory.createGraphicsContext(canvas.getGraphicsContext2D());
-//				coordinator.drawImage(gc);
+				coordinator.drawImage(gc);
 			}
 		}
 	}
@@ -606,17 +620,137 @@ public class MandelbrotRenderPane extends BorderPane {
 		}
 	}
 	
-	private class ExportPane extends BorderPane {
+	private class ExportPane extends Pane {
+		private VBox box = new VBox();
+
 		public ExportPane() {
 			ComboBox<Integer[]> presets = new ComboBox<>();
-			presets.getItems().add(new Integer[] { 640, 480 });
-			presets.getItems().add(new Integer[] { 1024, 768 });
-			presets.getItems().add(new Integer[] { 1650, 1050 });
 			presets.getItems().add(new Integer[] { 1900, 1080 });
-			VBox box = new VBox();
+			presets.getItems().add(new Integer[] { 1650, 1050 });
+			presets.getItems().add(new Integer[] { 1024, 768 });
+			presets.getItems().add(new Integer[] { 640, 480 });
+			presets.getItems().add(new Integer[] { 0, 0 });
+			presets.setMinWidth(400);
+			presets.setMaxWidth(400);
+			presets.setPrefWidth(400);
+			presets.getSelectionModel().select(0);
+			Integer[] item0 = presets.getSelectionModel().getSelectedItem();
+			AdvancedTextField widthField = new AdvancedTextField();
+			widthField.setRestrict(getRestriction());
+			widthField.setEditable(false);
+			widthField.setMinWidth(400);
+			widthField.setMaxWidth(400);
+			widthField.setPrefWidth(400);
+			widthField.setText(String.valueOf(item0[0]));
+			AdvancedTextField heightField = new AdvancedTextField();
+			heightField.setRestrict(getRestriction());
+			heightField.setEditable(false);
+			heightField.setMinWidth(400);
+			heightField.setMaxWidth(400);
+			heightField.setPrefWidth(400);
+			heightField.setText(String.valueOf(item0[1]));
+			Button close = new Button("Close");
+
+			box.setAlignment(Pos.TOP_CENTER);
+			box.getChildren().add(new Label("Presets"));
 			box.getChildren().add(presets);
-			setMinWidth(400);
-			setCenter(box);
+			box.getChildren().add(new Label("Width"));
+			box.getChildren().add(widthField);
+			box.getChildren().add(new Label("Height"));
+			box.getChildren().add(heightField);
+			box.getChildren().add(close);
+			box.getStyleClass().add("export-pane");
+			
+			presets.setConverter(new StringConverter<Integer[]>() {
+				@Override
+				public String toString(Integer[] item) {
+					if (item == null) {
+						return null;
+					} else {
+						if (item[0] == 0 || item[1] == 0) {
+							return "Custom";
+						} else {
+							return item[0] + " \u00D7 " + item[1] + " px";
+						}
+					}
+				}
+
+				@Override
+				public Integer[] fromString(String preset) {
+					return null;
+				}
+			});
+			presets.setCellFactory(new Callback<ListView<Integer[]>, ListCell<Integer[]>>() {
+				@Override
+				public ListCell<Integer[]> call(ListView<Integer[]> p) {
+					return new ListCell<Integer[]>() {
+						private final Label label;
+						{
+							label = new Label();
+						}
+						
+						@Override
+						protected void updateItem(Integer[] item, boolean empty) {
+							super.updateItem(item, empty);
+							if (item == null || empty) {
+								setGraphic(null);
+							} else {
+								label.setText(presets.getConverter().toString(item));
+								setGraphic(label);
+							}
+						}
+					};
+				}
+			});
+
+			presets.valueProperty().addListener(new ChangeListener<Integer[]>() {
+		        @Override 
+		        public void changed(ObservableValue<? extends Integer[]> value, Integer[] oldItem, Integer[] newItem) {
+					if (newItem[0] == 0 || newItem[1] == 0) {
+						widthField.setEditable(true);
+						heightField.setEditable(true);
+						widthField.setText("1024");
+						heightField.setText("768");
+					} else {
+						widthField.setEditable(false);
+						heightField.setEditable(false);
+						widthField.setText(String.valueOf(newItem[0]));
+						heightField.setText(String.valueOf(newItem[1]));
+					}
+		        }    
+		    });
+			
+			close.setOnMouseClicked(e -> {
+				hide();
+			});
+			
+			getChildren().add(box);
+			
+			widthProperty().addListener(new ChangeListener<java.lang.Number>() {
+				@Override
+				public void changed(ObservableValue<? extends java.lang.Number> observable, java.lang.Number oldValue, java.lang.Number newValue) {
+					box.setPrefWidth(newValue.doubleValue());
+				}
+			});
+			
+			heightProperty().addListener(new ChangeListener<java.lang.Number>() {
+				@Override
+				public void changed(ObservableValue<? extends java.lang.Number> observable, java.lang.Number oldValue, java.lang.Number newValue) {
+					box.setPrefHeight(newValue.doubleValue());
+				}
+			});
+		}
+
+		protected String getRestriction() {
+			return "-?\\d*\\.?\\d*";
+		}
+		
+		public void show() {
+			box.setLayoutY(0);
+		}
+		
+		public void hide() {
+			box.setLayoutY(-400);
 		}
 	}
 }

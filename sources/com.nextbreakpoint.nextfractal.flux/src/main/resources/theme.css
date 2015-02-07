@@ -62,3 +62,12 @@
 	-fx-padding: 10px;
 }
 
+.application .mandelbrot .export-pane {
+	-fx-alignment: center;
+	-fx-padding: 10px;
+	-fx-background-color: lightgray;
+}
+
+.root.popup {
+    -fx-background-color: transparent;
+}
