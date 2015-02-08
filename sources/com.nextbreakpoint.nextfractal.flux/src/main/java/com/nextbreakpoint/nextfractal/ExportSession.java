@@ -10,17 +10,19 @@ import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererSize;
 public class ExportSession {
 	private final List<ExportSessionListener> listeners = new ArrayList<>();
 	private final String sessioinId;
+	private final ExportService exportService;
 	private final DataEncoder encoder;
 	private final RendererSize size;
 	private final Object data;
 	private final File file;
 	private float progress;
 
-	public ExportSession(File file, Object data, RendererSize size, DataEncoder encoder) {
+	public ExportSession(ExportService exportService, File file, Object data, RendererSize size, DataEncoder encoder) {
 		this.file = file;
 		this.data = data;
 		this.size = size;
 		this.encoder = encoder;
+		this.exportService = exportService;
 		sessioinId = UUID.randomUUID().toString();
 	}
 	
@@ -64,22 +66,18 @@ public class ExportSession {
 	}
 
 	public void start() {
-		// TODO Auto-generated method stub
-		
+		exportService.startSession(this);
 	}
 
 	public void stop() {
-		// TODO Auto-generated method stub
-		
+		exportService.stopSession(this);
 	}
 
 	public void suspend() {
-		// TODO Auto-generated method stub
-		
+		exportService.suspendSession(this);
 	}
 
 	public void resume() {
-		// TODO Auto-generated method stub
-		
+		exportService.resumeSession(this);
 	}
 }

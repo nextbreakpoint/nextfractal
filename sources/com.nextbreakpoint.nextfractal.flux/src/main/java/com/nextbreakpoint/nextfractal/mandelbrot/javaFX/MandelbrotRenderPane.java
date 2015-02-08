@@ -85,7 +85,7 @@ public class MandelbrotRenderPane extends BorderPane {
 		this.rows = rows;
 		this.columns = columns;
 		
-		threadFactory = new DefaultThreadFactory("Render", true, Thread.MIN_PRIORITY);
+		threadFactory = new DefaultThreadFactory("MandelbrotRenderPane", true, Thread.MIN_PRIORITY);
 		renderFactory = new JavaFXRenderFactory();
 
 		exportWorker = new Worker(threadFactory);
@@ -448,7 +448,7 @@ public class MandelbrotRenderPane extends BorderPane {
 	}
 
 	private void storeExportData() {
-		exportData = getMandelbrotSession().toData();
+		exportData = getMandelbrotSession().getData();
 	}
 
 	public void createExportSession(RendererSize rendererSize) {
@@ -467,6 +467,7 @@ public class MandelbrotRenderPane extends BorderPane {
 							try {
 								ExportSession exportSession = session.createExportSession(file, data, rendererSize);
 								logger.info("Export session created: " + exportSession.getSessionId());
+								session.addExportSession(exportSession);
 								exportSession.start();
 							} catch (Exception e) {
 								logger.log(Level.WARNING, "Failed to export data", e);

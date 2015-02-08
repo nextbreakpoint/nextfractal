@@ -11,7 +11,7 @@ public interface FractalFactory {
 	/**
 	 * @return
 	 */
-	public FractalSession createSession();
+	public FractalSession createSession(ExportService exportService);
 	
 	/**
 	 * @param session

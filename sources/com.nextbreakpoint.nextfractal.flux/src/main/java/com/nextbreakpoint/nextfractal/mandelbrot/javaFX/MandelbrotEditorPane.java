@@ -44,7 +44,7 @@ public class MandelbrotEditorPane extends BorderPane {
 	public MandelbrotEditorPane(FractalSession session) {
 		this.session = session;
 		
-		threadFactory = new DefaultThreadFactory("Image", true, Thread.MIN_PRIORITY);
+		threadFactory = new DefaultThreadFactory("MandelbrotEditorPane", true, Thread.MIN_PRIORITY);
 		renderFactory = new JavaFXRenderFactory();
 
 		historyWorker = new Worker(threadFactory);
@@ -179,7 +179,7 @@ public class MandelbrotEditorPane extends BorderPane {
 				currentFile = file;
 				try {
 					FileService service = new FileService();
-					MandelbrotData data = getMandelbrotSession().toData();
+					MandelbrotData data = getMandelbrotSession().getData();
 					logger.info(data.toString());
 					service.saveToFile(currentFile, data);
 				} catch (Exception x) {
@@ -209,7 +209,7 @@ public class MandelbrotEditorPane extends BorderPane {
 		if (noHistory) {
 			return;
 		}
-		MandelbrotData data = getMandelbrotSession().toData();
+		MandelbrotData data = getMandelbrotSession().getData();
 		historyWorker.addTask(new Runnable() {
 			@Override
 			public void run() {

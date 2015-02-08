@@ -12,8 +12,11 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
+import com.nextbreakpoint.nextfractal.ExportService;
 import com.nextbreakpoint.nextfractal.FractalFactory;
 import com.nextbreakpoint.nextfractal.FractalSession;
+import com.nextbreakpoint.nextfractal.core.DefaultThreadFactory;
+import com.nextbreakpoint.nextfractal.render.javaFX.JavaFXRenderFactory;
 
 public class NextFractalApp extends Application {
 	private BorderPane editorRootPane;
@@ -64,7 +67,10 @@ public class NextFractalApp extends Application {
         mainPane.getChildren().add(editorRootPane);
         mainPane.getStyleClass().add("application");
         root.getChildren().add(mainPane);
-        FractalSession session = createFractalSession(pluginId);
+		DefaultThreadFactory threadFactory = new DefaultThreadFactory("NextFractalApp", true, Thread.MIN_PRIORITY);
+		JavaFXRenderFactory renderFactory = new JavaFXRenderFactory();
+        ExportService exportService = new ExportService(threadFactory, renderFactory, 200);
+        FractalSession session = createFractalSession(exportService, pluginId);
         session.setPackageName(packageName);
         session.setClassName(className);
         session.setOutDir(outDir);
@@ -116,12 +122,12 @@ public class NextFractalApp extends Application {
 		return null;
 	}
 
-	private FractalSession createFractalSession(String pluginId) {
+	private FractalSession createFractalSession(ExportService exportService, String pluginId) {
 		final ServiceLoader<? extends FractalFactory> plugins = ServiceLoader.load(FractalFactory.class);
 		for (FractalFactory plugin : plugins) {
 			try {
 				if (pluginId.equals(plugin.getId())) {
-					return plugin.createSession();
+					return plugin.createSession(exportService);
 				}
 			} catch (Exception e) {
 			}

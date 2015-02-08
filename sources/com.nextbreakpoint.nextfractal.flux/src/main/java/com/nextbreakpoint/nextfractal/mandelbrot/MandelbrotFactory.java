@@ -2,6 +2,7 @@ package com.nextbreakpoint.nextfractal.mandelbrot;
 
 import javafx.scene.layout.Pane;
 
+import com.nextbreakpoint.nextfractal.ExportService;
 import com.nextbreakpoint.nextfractal.FractalFactory;
 import com.nextbreakpoint.nextfractal.FractalSession;
 import com.nextbreakpoint.nextfractal.mandelbrot.javaFX.MandelbrotEditorPane;
@@ -16,11 +17,11 @@ public class MandelbrotFactory implements FractalFactory {
 	}
 	
 	/**
-	 * @see com.nextbreakpoint.nextfractal.FractalFactory#createSession()
+	 * @see com.nextbreakpoint.nextfractal.FractalFactory#createSession(com.nextbreakpoint.nextfractal.ExportService)
 	 */
 	@Override
-	public FractalSession createSession() {
-		MandelbrotSession session = new MandelbrotSession();
+	public FractalSession createSession(ExportService exportService) {
+		MandelbrotSession session = new MandelbrotSession(exportService);
         session.setSource(getInitialSource());
 		return session;
 	}
@@ -38,7 +39,7 @@ public class MandelbrotFactory implements FractalFactory {
 	 */
 	@Override
 	public Pane createRenderPane(FractalSession session, int width, int height) {
-		return new MandelbrotRenderPane(session, width, height, 1, 1);
+		return new MandelbrotRenderPane(session, width, height, 2, 2);
 	}
 
 	protected String getInitialSource() {
