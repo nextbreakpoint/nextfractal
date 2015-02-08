@@ -89,7 +89,6 @@ import com.nextbreakpoint.nextfractal.net.ServiceProcessor;
 import com.nextbreakpoint.nextfractal.net.ServiceProducer;
 import com.nextbreakpoint.nextfractal.net.ServiceSession;
 import com.nextbreakpoint.nextfractal.net.SessionHandler;
-import com.nextbreakpoint.nextfractal.net.SessionIDFactory;
 
 /**
  * @author Andrea Medeghini
@@ -229,9 +228,8 @@ public class JXTANetworkService {
 		final JXTAConnectionHandler handler = new JXTAConnectionHandler();
 		final JxtaBiDiPipe pipe = new JxtaBiDiPipe(manager.getNetPeerGroup(), pipeadv, CONNECTION_TIMEOUT, handler, true);
 		handler.setPipe(pipe);
-		final String sessionId = SessionIDFactory.newSessionId();
-		handler.setSessionId(sessionId);
-		final JXTAServiceSession session = new JXTAServiceSession(sessionId, new JXTAClientServiceConsumer(handler, listener), new JXTAClientServiceProducer(handler));
+		final JXTAServiceSession session = new JXTAServiceSession(new JXTAClientServiceConsumer(handler, listener), new JXTAClientServiceProducer(handler));
+		handler.setSessionId(session.getSessionId());
 		logger.info("Client session created " + session.getSessionId());
 		synchronized (clientSessions) {
 			clientSessions.put(session.getSessionId(), session);
@@ -376,10 +374,9 @@ public class JXTANetworkService {
 		private void createServerSession(final JxtaBiDiPipe pipe) throws Exception {
 			final JXTAConnectionHandler handler = new JXTAConnectionHandler();
 			handler.setPipe(pipe);
-			final String sessionId = SessionIDFactory.newSessionId();
-			handler.setSessionId(sessionId);
 			final SessionHandler sessionHandler = processor.createSessionHandler();
-			final JXTAServiceSession session = new JXTAServiceSession(sessionId, new JXTAServerServiceConsumer(handler, sessionHandler), new JXTAServerServiceProducer(handler));
+			final JXTAServiceSession session = new JXTAServiceSession(new JXTAServerServiceConsumer(handler, sessionHandler), new JXTAServerServiceProducer(handler));
+			handler.setSessionId(session.getSessionId());
 			sessionHandler.setSession(session);
 			logger.info("Server session created " + session.getSessionId());
 			synchronized (serverSessions) {
@@ -1386,23 +1383,21 @@ public class JXTANetworkService {
 
 	private class JXTAServiceSession extends ServiceSession {
 		/**
-		 * @param sessionId
 		 * @param consumer
 		 * @param producer
 		 * @throws Exception
 		 */
-		public JXTAServiceSession(final String sessionId, final JXTAClientServiceConsumer consumer, final JXTAClientServiceProducer producer) throws Exception {
-			super(sessionId, consumer, producer);
+		public JXTAServiceSession(final JXTAClientServiceConsumer consumer, final JXTAClientServiceProducer producer) throws Exception {
+			super(consumer, producer);
 		}
 
 		/**
-		 * @param sessionId
 		 * @param consumer
 		 * @param producer
 		 * @throws Exception
 		 */
-		public JXTAServiceSession(final String sessionId, final JXTAServerServiceConsumer consumer, final JXTAServerServiceProducer producer) throws Exception {
-			super(sessionId, consumer, producer);
+		public JXTAServiceSession(final JXTAServerServiceConsumer consumer, final JXTAServerServiceProducer producer) throws Exception {
+			super(consumer, producer);
 		}
 
 		/**

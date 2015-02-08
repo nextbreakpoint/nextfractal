@@ -31,9 +31,7 @@ import java.io.Serializable;
  * @author Andrea Medeghini
  */
 public abstract class ServiceMessage implements Serializable {
-	/**
-	 * 
-	 */
+	private static long lastMessageId = System.currentTimeMillis();
 	private static final long serialVersionUID = 1L;
 	public static final int MESSAGE_TYPE_EVENT = 10;
 	public static final int MESSAGE_TYPE_REQUEST = 20;
@@ -80,4 +78,13 @@ public abstract class ServiceMessage implements Serializable {
 				return "unknown";
 		}
 	}
+
+	/**
+	 * @return
+	 */
+	protected static synchronized String newMessageId() {
+		final long id = lastMessageId;
+		lastMessageId += 1;
+		return String.valueOf(id);
+	};
 }

@@ -43,7 +43,6 @@ import com.nextbreakpoint.nextfractal.core.DefaultThreadFactory;
 import com.nextbreakpoint.nextfractal.core.Worker;
 import com.nextbreakpoint.nextfractal.net.DiscoveryService;
 import com.nextbreakpoint.nextfractal.net.EventMessage;
-import com.nextbreakpoint.nextfractal.net.RequestIDFactory;
 import com.nextbreakpoint.nextfractal.net.RequestMessage;
 import com.nextbreakpoint.nextfractal.net.ResponseMessage;
 import com.nextbreakpoint.nextfractal.net.ServiceEndpoint;
@@ -1210,7 +1209,6 @@ public abstract class AbstractSpoolJobService implements JobService<JobInterface
 
 		private RequestMessage createPutRequest(final DistributedSpoolJobInterface job) throws Exception {
 			final RequestMessage message = new RequestMessage();
-			message.setRequestId(RequestIDFactory.newRequestId());
 			message.setRequestType(RequestMessage.TYPE_PUT);
 			if (!session.isLocalSession()) {
 				byte[] jobData = null;
@@ -1256,14 +1254,12 @@ public abstract class AbstractSpoolJobService implements JobService<JobInterface
 
 		private RequestMessage createHelloRequest() {
 			final RequestMessage message = new RequestMessage();
-			message.setRequestId(RequestIDFactory.newRequestId());
 			message.setRequestType(RequestMessage.TYPE_HELLO);
 			return message;
 		}
 
 		private RequestMessage createGetRequest(final DistributedSpoolJobInterface job, final int frameNumber) throws Exception {
 			final RequestMessage message = new RequestMessage();
-			message.setRequestId(RequestIDFactory.newRequestId());
 			message.setRequestType(RequestMessage.TYPE_GET);
 			message.setUserData(new Object[] { job.getRemoteJobId(), frameNumber });
 			return message;
@@ -1271,7 +1267,6 @@ public abstract class AbstractSpoolJobService implements JobService<JobInterface
 
 		private RequestMessage createAbortRequest(final DistributedSpoolJobInterface job) throws Exception {
 			final RequestMessage message = new RequestMessage();
-			message.setRequestId(RequestIDFactory.newRequestId());
 			message.setRequestType(RequestMessage.TYPE_ABORT);
 			message.setUserData(job.getRemoteJobId());
 			return message;
@@ -1279,7 +1274,6 @@ public abstract class AbstractSpoolJobService implements JobService<JobInterface
 
 		private RequestMessage createDeleteRequest(final DistributedSpoolJobInterface job) throws Exception {
 			final RequestMessage message = new RequestMessage();
-			message.setRequestId(RequestIDFactory.newRequestId());
 			message.setRequestType(RequestMessage.TYPE_DELETE);
 			message.setUserData(job.getRemoteJobId());
 			return message;

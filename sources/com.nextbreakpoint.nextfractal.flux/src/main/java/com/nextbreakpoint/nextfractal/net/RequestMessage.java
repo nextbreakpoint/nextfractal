@@ -45,7 +45,7 @@ public class RequestMessage extends ServiceMessage {
 	 * 
 	 */
 	public RequestMessage() {
-		super(MessageIDFactory.newMessageId(), MESSAGE_TYPE_REQUEST);
+		super(newMessageId(), MESSAGE_TYPE_REQUEST);
 	}
 
 	/**
@@ -74,13 +74,6 @@ public class RequestMessage extends ServiceMessage {
 	 */
 	public String getRequestId() {
 		return requestId;
-	}
-
-	/**
-	 * @param requestId the requestId to set
-	 */
-	public void setRequestId(final String requestId) {
-		this.requestId = requestId;
 	}
 
 	/**

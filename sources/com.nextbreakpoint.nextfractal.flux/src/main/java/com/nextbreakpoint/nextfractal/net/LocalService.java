@@ -111,12 +111,12 @@ public class LocalService {
 		final SessionHandler sessionHandler = processor.createSessionHandler();
 		final ServiceConsumer clientConsumer = new LocalServiceConsumer(listener);
 		final ServiceConsumer serverConsumer = new LocalServiceConsumer(sessionHandler);
-		final LocalServiceSession clientSession = new LocalServiceSession(SessionIDFactory.newSessionId(), clientConsumer, new LocalServiceProducer(serverConsumer));
+		final LocalServiceSession clientSession = new LocalServiceSession(clientConsumer, new LocalServiceProducer(serverConsumer));
 		logger.info("Local client session created " + clientSession.getSessionId());
 		synchronized (clientSessions) {
 			clientSessions.put(clientSession.getSessionId(), clientSession);
 		}
-		final LocalServiceSession serverSession = new LocalServiceSession(SessionIDFactory.newSessionId(), serverConsumer, new LocalServiceProducer(clientConsumer));
+		final LocalServiceSession serverSession = new LocalServiceSession(serverConsumer, new LocalServiceProducer(clientConsumer));
 		logger.info("Local server session created " + serverSession.getSessionId());
 		sessionHandler.setSession(serverSession);
 		synchronized (serverSessions) {
@@ -127,12 +127,11 @@ public class LocalService {
 
 	private class LocalServiceSession extends ServiceSession {
 		/**
-		 * @param sessionId
 		 * @param consumer
 		 * @param producer
 		 */
-		public LocalServiceSession(final String sessionId, final ServiceConsumer consumer, final ServiceProducer producer) {
-			super(sessionId, consumer, producer);
+		public LocalServiceSession(final ServiceConsumer consumer, final ServiceProducer producer) {
+			super(consumer, producer);
 		}
 
 		/**

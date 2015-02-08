@@ -38,7 +38,7 @@ public class EventMessage extends ServiceMessage {
 	 * 
 	 */
 	public EventMessage() {
-		super(MessageIDFactory.newMessageId(), MESSAGE_TYPE_EVENT);
+		super(newMessageId(), MESSAGE_TYPE_EVENT);
 	}
 
 	/**

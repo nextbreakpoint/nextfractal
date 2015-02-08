@@ -41,7 +41,7 @@ public class ResponseMessage extends ServiceMessage {
 	 * 
 	 */
 	public ResponseMessage() {
-		super(MessageIDFactory.newMessageId(), MESSAGE_TYPE_RESPONSE);
+		super(newMessageId(), MESSAGE_TYPE_RESPONSE);
 	}
 
 	/**

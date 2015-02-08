@@ -29,6 +29,7 @@ package com.nextbreakpoint.nextfractal.net;
  * @author Andrea Medeghini
  */
 public abstract class ServiceSession {
+	private static long lastSessionId = System.currentTimeMillis();
 	protected ServiceConsumer consumer;
 	protected ServiceProducer producer;
 	private ServiceEndpoint endpoint;
@@ -40,8 +41,8 @@ public abstract class ServiceSession {
 	 * @param consumer
 	 * @param producer
 	 */
-	public ServiceSession(final String sessionId, final ServiceConsumer consumer, final ServiceProducer producer) {
-		this.sessionId = sessionId;
+	public ServiceSession(final ServiceConsumer consumer, final ServiceProducer producer) {
+		this.sessionId = newSessionId();
 		this.consumer = consumer;
 		this.producer = producer;
 		if (sessionId == null) {
@@ -140,4 +141,13 @@ public abstract class ServiceSession {
 	public void setEndpointJobCount(final int jobCount) {
 		endpoint.setJobCount(jobCount);
 	}
+
+	/**
+	 * @return
+	 */
+	protected static synchronized String newSessionId() {
+		final long id = lastSessionId;
+		lastSessionId += 1;
+		return String.valueOf(id);
+	};
 }
