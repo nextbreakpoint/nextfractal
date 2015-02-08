@@ -48,7 +48,7 @@ import net.sf.ffmpeg4java.SWIGTYPE_p_uint8_t;
 /**
  * @author Andrea Medeghini
  */
-public abstract class AbstractVideoEncoder {
+public abstract class AbstractVideoEncoder implements Encoder {
 	private static final Logger logger = Logger.getLogger(AbstractVideoEncoder.class.getName());
 	private static final int PKT_BIT_BUFFER_SIZE = 200000;
 	private EncoderDelegate delegate;
@@ -57,10 +57,16 @@ public abstract class AbstractVideoEncoder {
 		FFmpeg4Java.av_register_all();
 	}
 
+	/**
+	 * @see com.nextbreakpoint.nextfractal.encoder.Encoder#setDelegate(com.nextbreakpoint.nextfractal.encoder.EncoderDelegate)
+	 */
 	public void setDelegate(final EncoderDelegate delegate) {
 		this.delegate = delegate;
 	}
 
+	/**
+	 * @see com.nextbreakpoint.nextfractal.encoder.Encoder#encode(com.nextbreakpoint.nextfractal.encoder.EncoderContext, java.io.File)
+	 */
 	public void encode(final EncoderContext context, final File path) throws EncoderException {
 		fireStateChanged(0);
 		AVFormatContext format_context = null;
@@ -271,6 +277,9 @@ public abstract class AbstractVideoEncoder {
 		}
 	}
 
+	/**
+	 * @param state
+	 */
 	protected void fireStateChanged(int state) {
 		// TODO Auto-generated method stub
 		

@@ -1,7 +1,6 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
 
 import java.io.File;
-import java.nio.IntBuffer;
 import java.util.logging.Logger;
 
 import javafx.application.Platform;
@@ -16,25 +15,17 @@ import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 import javafx.util.Callback;
 
+import com.nextbreakpoint.nextfractal.ExportSession;
 import com.nextbreakpoint.nextfractal.FractalSession;
 import com.nextbreakpoint.nextfractal.FractalSessionListener;
 import com.nextbreakpoint.nextfractal.core.DefaultThreadFactory;
-import com.nextbreakpoint.nextfractal.core.DoubleVector4D;
-import com.nextbreakpoint.nextfractal.core.IntegerVector4D;
 import com.nextbreakpoint.nextfractal.core.Worker;
+import com.nextbreakpoint.nextfractal.mandelbrot.ImageGenerator;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotData;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotSession;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.Compiler;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerBuilder;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerReport;
-import com.nextbreakpoint.nextfractal.mandelbrot.core.Color;
-import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
-import com.nextbreakpoint.nextfractal.mandelbrot.core.Orbit;
-import com.nextbreakpoint.nextfractal.mandelbrot.renderer.Renderer;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererPoint;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererSize;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererTile;
-import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererView;
 import com.nextbreakpoint.nextfractal.mandelbrot.service.FileService;
 import com.nextbreakpoint.nextfractal.render.javaFX.JavaFXRenderFactory;
 
@@ -45,9 +36,9 @@ public class MandelbrotEditorPane extends BorderPane {
 	private final JavaFXRenderFactory renderFactory;
 	private final FractalSession session;
 	private final Worker historyWorker;
+	private ImageGenerator generator;
 	private FileChooser fileChooser;
 	private File currentFile;
-	private Renderer renderer;
 	private boolean noHistory;
 	
 	public MandelbrotEditorPane(FractalSession session) {
@@ -59,7 +50,7 @@ public class MandelbrotEditorPane extends BorderPane {
 		historyWorker = new Worker(threadFactory);
 		historyWorker.start();
 		
-		renderer = new Renderer(threadFactory, renderFactory, createTile(25, 25));
+		generator = new ImageGenerator(threadFactory, renderFactory, createSingleTile(25, 25));
 		
 		getStyleClass().add("mandelbrot");
 
@@ -96,7 +87,7 @@ public class MandelbrotEditorPane extends BorderPane {
 		historyList.setCellFactory(new Callback<ListView<MandelbrotData>, ListCell<MandelbrotData>>() {
 			@Override
 			public ListCell<MandelbrotData> call(ListView<MandelbrotData> gridView) {
-				return new HistoryListCell(renderer.getWidth(), renderer.getHeight());
+				return new HistoryListCell(generator.getWidth(), generator.getHeight());
 			}
 		});
 		HBox historyButtons = new HBox(10);
@@ -108,7 +99,13 @@ public class MandelbrotEditorPane extends BorderPane {
 		historyTab.setContent(historyPane);
 
 		BorderPane jobsPane = new BorderPane();
-		ListView<MandelbrotData> jobsList = new ListView<>();
+		ListView<ExportSession> jobsList = new ListView<>();
+		jobsList.setCellFactory(new Callback<ListView<ExportSession>, ListCell<ExportSession>>() {
+			@Override
+			public ListCell<ExportSession> call(ListView<ExportSession> gridView) {
+				return new ExportListCell(generator.getWidth(), generator.getHeight());
+			}
+		});
 		jobsList.getStyleClass().add("jobs-list");
 		HBox jobsButtons = new HBox(10);
 		Button suspendButton = new Button("Suspend");
@@ -140,6 +137,16 @@ public class MandelbrotEditorPane extends BorderPane {
 
 			@Override
 			public void terminate(FractalSession session) {
+			}
+
+			@Override
+			public void sessionAdded(FractalSession session, ExportSession exportSession) {
+				jobsList.getItems().add(exportSession);
+			}
+
+			@Override
+			public void sessionRemoved(FractalSession session, ExportSession exportSession) {
+				jobsList.getItems().remove(exportSession);
 			}
 		});
 		
@@ -206,7 +213,7 @@ public class MandelbrotEditorPane extends BorderPane {
 		historyWorker.addTask(new Runnable() {
 			@Override
 			public void run() {
-				data.setPixels(renderImage(getMandelbrotSession(), data));
+				data.setPixels(generator.renderImage(getMandelbrotSession(), data));
 				Platform.runLater(new Runnable() {
 					@Override
 					public void run() {
@@ -232,7 +239,7 @@ public class MandelbrotEditorPane extends BorderPane {
 		}
 	}
 
-	private RendererTile createTile(int width, int height) {
+	private RendererTile createSingleTile(int width, int height) {
 		int tileWidth = width;
 		int tileHeight = height;
 		RendererSize imageSize = new RendererSize(width, height);
@@ -241,43 +248,5 @@ public class MandelbrotEditorPane extends BorderPane {
 		RendererPoint tileOffset = new RendererPoint(0, 0);
 		RendererTile tile = new RendererTile(imageSize, tileSize, tileOffset, tileBorder);
 		return tile;
-	}
-	
-	private IntBuffer renderImage(MandelbrotSession session, MandelbrotData data) {
-		if (renderer == null) {
-			return null;
-		}
-		IntBuffer pixels = IntBuffer.allocate(renderer.getWidth() * renderer.getHeight());
-		try {
-			Compiler compiler = new Compiler(session.getOutDir(), session.getPackageName(), session.getClassName() + "History");
-			CompilerReport report = compiler.generateJavaSource(data.getSource());
-			//TODO report errors
-			CompilerBuilder<Orbit> orbitBuilder = compiler.compileOrbit(report);
-			CompilerBuilder<Color> colorBuilder = compiler.compileColor(report);
-			renderer.abortTasks();
-			renderer.waitForTasks();
-			double[] traslation = data.getTraslation();
-			double[] rotation = data.getRotation();
-			double[] scale = data.getScale();
-			double[] constant = data.getConstant();
-			boolean julia = data.isJulia();
-			renderer.setOrbit(orbitBuilder.build());
-			renderer.setColor(colorBuilder.build());
-			renderer.init();
-			RendererView view = new RendererView();
-			view .setTraslation(new DoubleVector4D(traslation));
-			view.setRotation(new DoubleVector4D(rotation));
-			view.setScale(new DoubleVector4D(scale));
-			view.setState(new IntegerVector4D(0, 0, 0, 0));
-			view.setJulia(julia);
-			view.setConstant(new Number(constant));
-			renderer.setView(view);
-			renderer.runTask();
-			renderer.waitForTasks();
-			renderer.getPixels(pixels);
-		} catch (Exception e) {
-			e.printStackTrace();//TODO display errors
-		}
-		return pixels;
 	}
 }

@@ -2,6 +2,8 @@ package com.nextbreakpoint.nextfractal;
 
 import java.io.File;
 
+import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererSize;
+
 public interface FractalSession {
 	/**
 	 * @param listener
@@ -47,4 +49,13 @@ public interface FractalSession {
 	 * @param outDir
 	 */
 	public void setOutDir(File outDir);
+
+	/**
+	 * @param file
+	 * @param data
+	 * @param size
+	 * @return
+	 * @throws SessionException 
+	 */
+	public ExportSession createExportSession(File file, Object data, RendererSize size) throws SessionException;
 }

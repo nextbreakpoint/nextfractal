@@ -38,17 +38,25 @@ import net.sf.freeimage4java.RGBQUAD;
 /**
  * @author Andrea Medeghini
  */
-public abstract class AbstractImageEncoder {
+public abstract class AbstractImageEncoder implements Encoder {
 	private static final Logger logger = Logger.getLogger(AbstractImageEncoder.class.getName());
 	private EncoderDelegate delegate;
 	static {
 		FreeImage4Java.FreeImage_Initialise(FreeImage4JavaConstants.TRUE);
 	}
 
+	/**
+	 * @see com.nextbreakpoint.nextfractal.encoder.Encoder#setDelegate(com.nextbreakpoint.nextfractal.encoder.EncoderDelegate)
+	 */
+	@Override
 	public void setDelegate(final EncoderDelegate delegate) {
 		this.delegate = delegate;
 	}
 
+	/**
+	 * @see com.nextbreakpoint.nextfractal.encoder.Encoder#encode(com.nextbreakpoint.nextfractal.encoder.EncoderContext, java.io.File)
+	 */
+	@Override
 	public void encode(final EncoderContext context, final File path) throws EncoderException {
 		fireStateChanged(0);
 		RGBQUAD value = null;
@@ -104,16 +112,26 @@ public abstract class AbstractImageEncoder {
 		}
 	}
 
+	/**
+	 * @return
+	 */
 	protected boolean isAlphaSupported() {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
+	/**
+	 * @param state
+	 */
 	protected void fireStateChanged(int state) {
 		// TODO Auto-generated method stub
 		
 	}
 
+	/**
+	 * @param formatName
+	 * @return
+	 */
 	protected FREE_IMAGE_FORMAT getFormat(String formatName) {
 		switch (formatName) {
 		case "PNG":
@@ -127,5 +145,8 @@ public abstract class AbstractImageEncoder {
 		}
 	}
 
+	/**
+	 * @return
+	 */
 	protected abstract String getFormatName();
 }

@@ -5,8 +5,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.nextbreakpoint.nextfractal.DataEncoder;
+import com.nextbreakpoint.nextfractal.ExportSession;
 import com.nextbreakpoint.nextfractal.FractalSession;
 import com.nextbreakpoint.nextfractal.FractalSessionListener;
+import com.nextbreakpoint.nextfractal.SessionException;
+import com.nextbreakpoint.nextfractal.encoder.PNGImageEncoder;
+import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererSize;
 
 public class MandelbrotSession implements FractalSession {
 	private final List<FractalSessionListener> listeners = new ArrayList<>();
@@ -150,6 +155,18 @@ public class MandelbrotSession implements FractalSession {
 		}
 	}
 
+	private void fireSessionAdded(ExportSession session) {
+		for (FractalSessionListener listener : listeners) {
+			listener.sessionAdded(this, session);
+		}
+	}
+	
+	private void fireSessionRemoved(ExportSession session) {
+		for (FractalSessionListener listener : listeners) {
+			listener.sessionRemoved(this, session);
+		}
+	}
+	
 	private void fireTerminate() {
 		for (FractalSessionListener listener : listeners) {
 			listener.terminate(this);
@@ -178,5 +195,20 @@ public class MandelbrotSession implements FractalSession {
 
 	public void getSessions() {
 		Collections.unmodifiableCollection(sessions);
+	}
+
+	@Override
+	public ExportSession createExportSession(File file, Object data, RendererSize size) throws SessionException {
+		if (!(data instanceof MandelbrotData)) {
+			throw new SessionException("Unsupported data");
+		}
+		try {
+			ExportSession exportSession = new ExportSession(file, data, size, new DataEncoder(new PNGImageEncoder()));
+			sessions.add(exportSession);
+			fireSessionAdded(exportSession);
+			return exportSession;
+		} catch (Throwable e) {
+			throw new SessionException("Failed to create session", e);
+		}
 	}
 }

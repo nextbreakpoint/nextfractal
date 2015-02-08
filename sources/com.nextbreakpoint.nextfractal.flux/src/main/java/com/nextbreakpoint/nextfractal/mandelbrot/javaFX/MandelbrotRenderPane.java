@@ -1,12 +1,15 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ThreadFactory;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javafx.animation.AnimationTimer;
 import javafx.animation.TranslateTransition;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -25,16 +28,21 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import javafx.util.Callback;
 import javafx.util.Duration;
 import javafx.util.StringConverter;
 
+import com.nextbreakpoint.nextfractal.ExportSession;
 import com.nextbreakpoint.nextfractal.FractalSession;
 import com.nextbreakpoint.nextfractal.FractalSessionListener;
 import com.nextbreakpoint.nextfractal.core.DefaultThreadFactory;
 import com.nextbreakpoint.nextfractal.core.DoubleVector4D;
 import com.nextbreakpoint.nextfractal.core.IntegerVector4D;
+import com.nextbreakpoint.nextfractal.core.Worker;
 import com.nextbreakpoint.nextfractal.javaFX.AdvancedTextField;
+import com.nextbreakpoint.nextfractal.mandelbrot.ImageGenerator;
+import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotData;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotSession;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotView;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.Compiler;
@@ -54,10 +62,13 @@ import com.nextbreakpoint.nextfractal.render.javaFX.JavaFXRenderFactory;
 public class MandelbrotRenderPane extends BorderPane {
 	private static final Logger logger = Logger.getLogger(MandelbrotRenderPane.class.getName());
 	private final FractalSession session;
+	private final Worker exportWorker;
 	private ThreadFactory threadFactory;
 	private JavaFXRenderFactory renderFactory;
 	private RendererCoordinator[] coordinators;
+	private ImageGenerator generator;
 	private AnimationTimer timer;
+	private FileChooser fileChooser;
 	private int width;
 	private int height;
 	private int rows;
@@ -65,13 +76,29 @@ public class MandelbrotRenderPane extends BorderPane {
 	private String astOrbit;
 	private String astColor;
 	private Tool currentTool;
-	
+	private MandelbrotData exportData;
+
 	public MandelbrotRenderPane(FractalSession session, int width, int height, int rows, int columns) {
 		this.session = session;
 		this.width = width;
 		this.height = height;
 		this.rows = rows;
 		this.columns = columns;
+		
+		threadFactory = new DefaultThreadFactory("Render", true, Thread.MIN_PRIORITY);
+		renderFactory = new JavaFXRenderFactory();
+
+		exportWorker = new Worker(threadFactory);
+		exportWorker.start();
+
+		generator = new ImageGenerator(threadFactory, renderFactory, createSingleTile(25, 25));
+
+		coordinators = new RendererCoordinator[rows * columns];
+		Map<String, Integer> hints = new HashMap<String, Integer>();
+		if (!Boolean.getBoolean("disableXaosRender")) {
+			hints.put(RendererCoordinator.KEY_TYPE, RendererCoordinator.VALUE_REALTIME);
+		}
+		createCoordinators(rows, columns, hints);
 		
 		getStyleClass().add("mandelbrot");
 
@@ -106,15 +133,6 @@ public class MandelbrotRenderPane extends BorderPane {
         gc.fillRect(0, 0, width, height);
 		canvas.getStyleClass().add("render-pane");
 
-        coordinators = new RendererCoordinator[rows * columns];
-		threadFactory = new DefaultThreadFactory("Render", true, Thread.MIN_PRIORITY);
-		renderFactory = new JavaFXRenderFactory();
-		Map<String, Integer> hints = new HashMap<String, Integer>();
-		if (!Boolean.getBoolean("disableXaosRender")) {
-			hints.put(RendererCoordinator.KEY_TYPE, RendererCoordinator.VALUE_REALTIME);
-		}
-		createCoordinators(rows, columns, hints);
-		
 		currentTool = new ZoomTool();
 		
 		controls.setOnMouseClicked(e -> {
@@ -168,6 +186,7 @@ public class MandelbrotRenderPane extends BorderPane {
 		});
 		
 		exportButton.setOnAction(e -> {
+			storeExportData();
 			export.show();
 		});
 		
@@ -185,6 +204,18 @@ public class MandelbrotRenderPane extends BorderPane {
 			@Override
 			public void terminate(FractalSession session) {
 				disposeCoordinators();
+			}
+
+			@Override
+			public void sessionAdded(FractalSession session, ExportSession exportSession) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void sessionRemoved(FractalSession session, ExportSession exportSession) {
+				// TODO Auto-generated method stub
+				
 			}
 		});
 		
@@ -211,6 +242,13 @@ public class MandelbrotRenderPane extends BorderPane {
 
 	private double getZoomSpeed() {
 		return 1.1;
+	}
+
+	private void createFileChooser() {
+		if (fileChooser == null) {
+			fileChooser = new FileChooser();
+			fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+		}
 	}
 
 	private void createCoordinators(int rows, int columns, Map<String, Integer> hints) {
@@ -265,7 +303,18 @@ public class MandelbrotRenderPane extends BorderPane {
 		RendererTile tile = new RendererTile(imageSize, tileSize, tileOffset, tileBorder);
 		return tile;
 	}
-	
+
+	private RendererTile createSingleTile(int width, int height) {
+		int tileWidth = width;
+		int tileHeight = height;
+		RendererSize imageSize = new RendererSize(width, height);
+		RendererSize tileSize = new RendererSize(tileWidth, tileHeight);
+		RendererSize tileBorder = new RendererSize(0, 0);
+		RendererPoint tileOffset = new RendererPoint(0, 0);
+		RendererTile tile = new RendererTile(imageSize, tileSize, tileOffset, tileBorder);
+		return tile;
+	}
+
 	private void updateFractalData(FractalSession session) {
 		try {
 			Compiler compiler = new Compiler(session.getOutDir(), session.getPackageName(), session.getClassName());
@@ -398,9 +447,36 @@ public class MandelbrotRenderPane extends BorderPane {
 		}
 	}
 
-	public void createExportSession() {
-		// TODO Auto-generated method stub
-		logger.info("Create export session...");
+	private void storeExportData() {
+		exportData = getMandelbrotSession().toData();
+	}
+
+	public void createExportSession(RendererSize rendererSize) {
+		createFileChooser();
+		fileChooser.setTitle("Export");
+		File file = fileChooser.showSaveDialog(null);
+		if (file != null) {
+			MandelbrotData data = exportData; 
+			exportWorker.addTask(new Runnable() {
+				@Override
+				public void run() {
+					data.setPixels(generator.renderImage(getMandelbrotSession(), data));
+					Platform.runLater(new Runnable() {
+						@Override
+						public void run() {
+							try {
+								ExportSession exportSession = session.createExportSession(file, data, rendererSize);
+								logger.info("Export session created: " + exportSession.getSessionId());
+								exportSession.start();
+							} catch (Exception e) {
+								logger.log(Level.WARNING, "Failed to export data", e);
+								//TODO display error
+							}
+						}
+					});
+				}
+			});
+		}
 	}
 
 	private interface Tool {
@@ -741,7 +817,9 @@ public class MandelbrotRenderPane extends BorderPane {
 			
 			start.setOnMouseClicked(e -> {
 				hide();
-				createExportSession();
+				int width = Integer.parseInt(widthField.getText());
+				int height = Integer.parseInt(heightField.getText());
+				createExportSession(new RendererSize(width, height));
 			});
 			
 			getChildren().add(box);
