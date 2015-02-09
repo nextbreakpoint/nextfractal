@@ -16,6 +16,7 @@ import javafx.stage.FileChooser;
 import javafx.util.Callback;
 
 import com.nextbreakpoint.nextfractal.ExportSession;
+import com.nextbreakpoint.nextfractal.ExportSessionListener;
 import com.nextbreakpoint.nextfractal.FractalSession;
 import com.nextbreakpoint.nextfractal.FractalSessionListener;
 import com.nextbreakpoint.nextfractal.core.DefaultThreadFactory;
@@ -142,6 +143,12 @@ public class MandelbrotEditorPane extends BorderPane {
 			@Override
 			public void sessionAdded(FractalSession session, ExportSession exportSession) {
 				jobsList.getItems().add(exportSession);
+				exportSession.addSessionListener(new ExportSessionListener() {
+					@Override
+					public void stateChanged(ExportSession exportSession, float progress) {
+						jobsList.getItems().set(jobsList.getItems().indexOf(exportSession), exportSession);
+					}
+				});
 			}
 
 			@Override

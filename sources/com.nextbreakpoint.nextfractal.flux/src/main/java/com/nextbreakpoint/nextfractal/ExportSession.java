@@ -67,17 +67,25 @@ public class ExportSession {
 
 	public void start() {
 		exportService.startSession(this);
+		fireStateChanged();
 	}
 
 	public void stop() {
 		exportService.stopSession(this);
+		fireStateChanged();
 	}
 
 	public void suspend() {
 		exportService.suspendSession(this);
+		fireStateChanged();
 	}
 
 	public void resume() {
 		exportService.resumeSession(this);
+		fireStateChanged();
+	}
+
+	public float getProgress() {
+		return progress;
 	}
 }
