@@ -45,9 +45,9 @@ import com.nextbreakpoint.nextfractal.spool.JobData;
 import com.nextbreakpoint.nextfractal.spool.JobEvent;
 import com.nextbreakpoint.nextfractal.spool.JobListener;
 import com.nextbreakpoint.nextfractal.spool.JobStatus;
-import com.nextbreakpoint.nextfractal.spool.StoreData;
-import com.nextbreakpoint.nextfractal.spool.StoreService;
 import com.nextbreakpoint.nextfractal.spool.jobservice.RemoteJobService;
+import com.nextbreakpoint.nextfractal.spool.store.StoreData;
+import com.nextbreakpoint.nextfractal.spool.store.StoreService;
 
 /**
  * @author Andrea Medeghini

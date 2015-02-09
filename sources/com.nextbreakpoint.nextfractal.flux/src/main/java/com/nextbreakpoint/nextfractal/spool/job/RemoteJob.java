@@ -36,7 +36,7 @@ import com.nextbreakpoint.nextfractal.core.Worker;
 import com.nextbreakpoint.nextfractal.spool.JobData;
 import com.nextbreakpoint.nextfractal.spool.JobListener;
 import com.nextbreakpoint.nextfractal.spool.RemoteJobInterface;
-import com.nextbreakpoint.nextfractal.spool.StoreData;
+import com.nextbreakpoint.nextfractal.spool.store.StoreData;
 
 /**
  * @author Andrea Medeghini

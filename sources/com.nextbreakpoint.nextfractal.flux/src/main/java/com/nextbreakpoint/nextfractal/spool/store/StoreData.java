@@ -1,4 +1,4 @@
-package com.nextbreakpoint.nextfractal.spool;
+package com.nextbreakpoint.nextfractal.spool.store;
 
 public abstract class StoreData {
 	private Object data;

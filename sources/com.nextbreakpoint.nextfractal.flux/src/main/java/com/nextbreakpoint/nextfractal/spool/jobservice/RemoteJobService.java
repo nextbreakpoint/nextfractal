@@ -32,7 +32,7 @@ import com.nextbreakpoint.nextfractal.core.Worker;
 import com.nextbreakpoint.nextfractal.spool.RemoteJobInterface;
 import com.nextbreakpoint.nextfractal.spool.JobFactory;
 import com.nextbreakpoint.nextfractal.spool.JobService;
-import com.nextbreakpoint.nextfractal.spool.StoreData;
+import com.nextbreakpoint.nextfractal.spool.store.StoreData;
 
 /**
  * @author Andrea Medeghini

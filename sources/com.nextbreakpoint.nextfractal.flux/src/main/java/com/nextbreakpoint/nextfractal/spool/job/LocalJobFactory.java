@@ -28,7 +28,7 @@ package com.nextbreakpoint.nextfractal.spool.job;
 import com.nextbreakpoint.nextfractal.core.Worker;
 import com.nextbreakpoint.nextfractal.spool.JobFactory;
 import com.nextbreakpoint.nextfractal.spool.JobListener;
-import com.nextbreakpoint.nextfractal.spool.StoreService;
+import com.nextbreakpoint.nextfractal.spool.store.StoreService;
 
 /**
  * @author Andrea Medeghini

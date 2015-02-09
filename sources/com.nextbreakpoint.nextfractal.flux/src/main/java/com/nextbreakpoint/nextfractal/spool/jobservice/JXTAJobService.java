@@ -60,9 +60,9 @@ import com.nextbreakpoint.nextfractal.spool.JobListener;
 import com.nextbreakpoint.nextfractal.spool.JobService;
 import com.nextbreakpoint.nextfractal.spool.JobServiceListener;
 import com.nextbreakpoint.nextfractal.spool.JobStatus;
-import com.nextbreakpoint.nextfractal.spool.StoreData;
 import com.nextbreakpoint.nextfractal.spool.SpoolJobInterface;
-import com.nextbreakpoint.nextfractal.spool.StoreService;
+import com.nextbreakpoint.nextfractal.spool.store.StoreData;
+import com.nextbreakpoint.nextfractal.spool.store.StoreService;
 
 /**
  * @author Andrea Medeghini

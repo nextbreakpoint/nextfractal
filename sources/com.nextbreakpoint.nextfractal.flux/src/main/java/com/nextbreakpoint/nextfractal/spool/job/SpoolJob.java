@@ -33,8 +33,8 @@ import com.nextbreakpoint.nextfractal.core.Worker;
 import com.nextbreakpoint.nextfractal.spool.JobData;
 import com.nextbreakpoint.nextfractal.spool.JobListener;
 import com.nextbreakpoint.nextfractal.spool.SpoolJobInterface;
-import com.nextbreakpoint.nextfractal.spool.StoreData;
-import com.nextbreakpoint.nextfractal.spool.StoreService;
+import com.nextbreakpoint.nextfractal.spool.store.StoreData;
+import com.nextbreakpoint.nextfractal.spool.store.StoreService;
 
 /**
  * @author Andrea Medeghini
@@ -164,7 +164,7 @@ public class SpoolJob implements SpoolJobInterface {
 		}
 		try {
 			final InputStream is = service.getClipInputStream(jobDataRow.getClipId());
-			return service.getSpoolData(is);
+			return service.loadStoreData(is);
 		}
 		catch (final Exception e) {
 			throw new IOException(e.getMessage());

@@ -23,18 +23,21 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.spool;
+package com.nextbreakpoint.nextfractal.spool.impl;
 
 import com.nextbreakpoint.nextfractal.core.Worker;
+import com.nextbreakpoint.nextfractal.spool.JobService;
 import com.nextbreakpoint.nextfractal.spool.job.LocalJob;
 import com.nextbreakpoint.nextfractal.spool.job.LocalJobFactory;
 import com.nextbreakpoint.nextfractal.spool.jobservice.DefaultJobService;
+import com.nextbreakpoint.nextfractal.spool.store.StoreData;
+import com.nextbreakpoint.nextfractal.spool.store.StoreService;
 
 /**
  * @author Andrea Medeghini
  */
 public class LocalSpool {
-	public JobService<LocalJob> getJobService(final int serviceId, final StoreService service, final Worker worker) {
+	public JobService<LocalJob> getJobService(final int serviceId, final StoreService<StoreData> service, final Worker worker) {
 		return new DefaultJobService<LocalJob>(serviceId, "LocalProcessor", new LocalJobFactory(service, worker), worker);
 	}
 }

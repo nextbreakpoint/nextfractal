@@ -28,62 +28,48 @@ package com.nextbreakpoint.nextfractal.spool;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.io.OutputStream;
+
+import com.nextbreakpoint.nextfractal.spool.store.StoreData;
+import com.nextbreakpoint.nextfractal.spool.store.StoreService;
 
 /**
  * @author Andrea Medeghini
  */
 public class JobEncoder {
-	private StoreService<?> storeService;
-	private final JobData jobData;
-	private final StoreData data;
-	private final byte[] frameData;
+	private byte[] bytes;
 
 	/**
-	 * @param data
+	 * @param storeData
 	 * @param jobDataRow
 	 * @param jobData
+	 * @throws Exception 
 	 */
-	public JobEncoder(StoreService<?> storeService, final StoreData data, final JobData jobDataRow, final byte[] jobData) {
-		this.storeService = storeService;
-		this.data = data;
-		this.jobData = jobDataRow;
-		frameData = jobData;
+	public JobEncoder(StoreService<?> storeService, final StoreData storeData, final JobData jobDataRow, final byte[] jobData) throws Exception {
 		if (jobDataRow == null) {
 			throw new IllegalArgumentException("jobDataRow is null");
 		}
-		if (data == null) {
+		if (jobData == null) {
+			throw new IllegalArgumentException("jobData is null");
+		}
+		if (storeData == null) {
 			throw new IllegalArgumentException("data is null");
 		}
-	}
-
-	/**
-	 * @return the data
-	 */
-	public StoreData getSpoolData() {
-		return data;
-	}
-
-	/**
-	 * @return the jobData
-	 */
-	public JobData getJobData() {
-		return jobData;
-	}
-
-	/**
-	 * @return the frameData
-	 */
-	public byte[] getFrameData() {
-		return frameData;
-	}
-
-	private void writeData(final OutputStream os, final StoreData data) throws IOException {
 		try {
-			storeService.saveToStream(os, data);
+			final ByteArrayOutputStream baos2 = new ByteArrayOutputStream();
+			storeService.saveStoreData(baos2, storeData);
+			baos2.close();
+			final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			final ObjectOutputStream oos = new ObjectOutputStream(baos);
+			byte[] bytes = baos2.toByteArray();
+			oos.writeObject(bytes);
+			oos.writeObject(jobDataRow);
+			oos.writeObject(jobData);
+			oos.close();
+			baos.close();
+			bytes = baos.toByteArray();
 		}
 		catch (final Exception e) {
-			throw new IOException(e.getMessage());
+			throw new IOException("An error has happened marshalling the data: " + e.getMessage());
 		}
 	}
 
@@ -92,22 +78,6 @@ public class JobEncoder {
 	 * @throws IOException
 	 */
 	public byte[] getBytes() throws IOException {
-		try {
-			final ByteArrayOutputStream baos2 = new ByteArrayOutputStream();
-			writeData(baos2, data);
-			baos2.close();
-			final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			final ObjectOutputStream oos = new ObjectOutputStream(baos);
-			byte[] bytes = baos2.toByteArray();
-			oos.writeObject(bytes);
-			oos.writeObject(jobData);
-			oos.writeObject(frameData);
-			oos.close();
-			baos.close();
-			return baos.toByteArray();
-		}
-		catch (final Exception e) {
-			throw new IOException("An error has happened marshalling the data: " + e.getMessage());
-		}
+		return bytes;
 	}
 }

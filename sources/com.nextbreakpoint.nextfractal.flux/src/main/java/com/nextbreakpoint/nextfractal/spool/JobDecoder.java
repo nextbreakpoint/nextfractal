@@ -26,54 +26,44 @@
 package com.nextbreakpoint.nextfractal.spool;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.ObjectInputStream;
+
+import com.nextbreakpoint.nextfractal.spool.store.StoreData;
+import com.nextbreakpoint.nextfractal.spool.store.StoreService;
 
 /**
  * @author Andrea Medeghini
  */
 public class JobDecoder {
-	private StoreService<?> storeService;
 	private JobData jobDataRow;
-	private StoreData data;
+	private StoreData storeData;
 	private byte[] frameData;
 
 	/**
-	 * @param bytes
+	 * @param encodedData
 	 * @throws Exception
 	 */
-	public JobDecoder(StoreService<?> storeService, final byte[] bytes) throws Exception {
+	public JobDecoder(StoreService<?> storeService, final byte[] encodedData) throws Exception {
 		try {
-			this.storeService = storeService;
-			final ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
+			final ByteArrayInputStream bais = new ByteArrayInputStream(encodedData);
 			final ObjectInputStream ois = new ObjectInputStream(bais);
-			byte[] clipData = (byte[]) ois.readObject();
-			final ByteArrayInputStream bais2 = new ByteArrayInputStream(clipData);
+			byte[] bytes = (byte[]) ois.readObject();
+			final ByteArrayInputStream bais2 = new ByteArrayInputStream(bytes);
 			jobDataRow = (JobData) ois.readObject();
 			frameData = (byte[]) ois.readObject();
-			data = readData(bais2);
+			storeData = storeService.loadStoreData(bais2);
 			bais2.close();
 			ois.close();
 			bais.close();
 		}
 		catch (final Exception e) {
-			throw new Exception("An error has happened unmarshalling the data: " + e.getMessage(), e);
+			throw new Exception("An error has happened unmarshalling the storeData: " + e.getMessage(), e);
 		}
 		if (jobDataRow == null) {
-			throw new Exception("An error has happened unmarshalling the data: jobDataRow is null");
+			throw new Exception("An error has happened unmarshalling the storeData: jobDataRow is null");
 		}
-		if (bytes == null) {
-			throw new Exception("An error has happened unmarshalling the data: data is null");
-		}
-	}
-
-	private StoreData readData(final InputStream is) throws IOException {
-		try {
-			return storeService.getSpoolData(is);
-		}
-		catch (final Exception e) {
-			throw new IOException(e.getMessage());
+		if (encodedData == null) {
+			throw new Exception("An error has happened unmarshalling the storeData: storeData is null");
 		}
 	}
 
@@ -81,7 +71,7 @@ public class JobDecoder {
 	 * @return
 	 */
 	public StoreData getSpoolData() {
-		return data;
+		return storeData;
 	}
 
 	/**

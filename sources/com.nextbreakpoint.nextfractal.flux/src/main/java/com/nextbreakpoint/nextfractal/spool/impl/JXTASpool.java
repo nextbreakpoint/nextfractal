@@ -23,13 +23,15 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.spool;
+package com.nextbreakpoint.nextfractal.spool.impl;
 
 import java.io.File;
 
 import com.nextbreakpoint.nextfractal.core.Worker;
 import com.nextbreakpoint.nextfractal.net.jxta.JXTADiscoveryService;
 import com.nextbreakpoint.nextfractal.net.jxta.JXTANetworkService;
+import com.nextbreakpoint.nextfractal.spool.JobInterface;
+import com.nextbreakpoint.nextfractal.spool.JobService;
 import com.nextbreakpoint.nextfractal.spool.job.LocalJobFactory;
 import com.nextbreakpoint.nextfractal.spool.job.RemoteJob;
 import com.nextbreakpoint.nextfractal.spool.job.LocalJob;
@@ -40,6 +42,8 @@ import com.nextbreakpoint.nextfractal.spool.jobservice.RemoteJobService;
 import com.nextbreakpoint.nextfractal.spool.jobservice.JXTAJobService;
 import com.nextbreakpoint.nextfractal.spool.processor.RemoteServiceProcessor;
 import com.nextbreakpoint.nextfractal.spool.processor.LocalServiceProcessor;
+import com.nextbreakpoint.nextfractal.spool.store.StoreData;
+import com.nextbreakpoint.nextfractal.spool.store.StoreService;
 
 /**
  * @author Andrea Medeghini

@@ -1,4 +1,4 @@
-package com.nextbreakpoint.nextfractal.spool;
+package com.nextbreakpoint.nextfractal.spool.store;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -31,11 +31,11 @@ public abstract class StoreService<T extends StoreData> {
 	 * @param is
 	 * @return
 	 */
-	public abstract StoreData getSpoolData(InputStream is);
+	public abstract StoreData loadStoreData(InputStream is);
 
 	/**
 	 * @param os
 	 * @param data
 	 */
-	public abstract void saveToStream(OutputStream os, StoreData data);
+	public abstract void saveStoreData(OutputStream os, StoreData data);
 }

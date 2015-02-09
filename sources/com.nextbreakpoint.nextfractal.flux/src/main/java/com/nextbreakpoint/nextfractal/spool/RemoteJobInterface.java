@@ -28,6 +28,7 @@ package com.nextbreakpoint.nextfractal.spool;
 import java.io.IOException;
 
 import com.nextbreakpoint.nextfractal.core.ChunkedRandomAccessFile;
+import com.nextbreakpoint.nextfractal.spool.store.StoreData;
 
 /**
  * @author Andrea Medeghini
