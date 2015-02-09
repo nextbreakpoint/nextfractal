@@ -25,26 +25,25 @@
  */
 package com.nextbreakpoint.nextfractal.spool.job;
 
+import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.concurrent.ThreadFactory;
 
+import com.nextbreakpoint.nextfractal.core.ChunkedRandomAccessFile;
 import com.nextbreakpoint.nextfractal.core.DefaultThreadFactory;
+import com.nextbreakpoint.nextfractal.core.Files;
 import com.nextbreakpoint.nextfractal.core.Worker;
-import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotData;
-import com.nextbreakpoint.nextfractal.mandelbrot.service.FileService;
-import com.nextbreakpoint.nextfractal.spool.DefaultJobData;
 import com.nextbreakpoint.nextfractal.spool.JobData;
-import com.nextbreakpoint.nextfractal.spool.JobInterface;
 import com.nextbreakpoint.nextfractal.spool.JobListener;
-import com.nextbreakpoint.nextfractal.spool.LibraryService;
-import com.nextbreakpoint.nextfractal.spool.SpoolData;
+import com.nextbreakpoint.nextfractal.spool.RemoteJobInterface;
+import com.nextbreakpoint.nextfractal.spool.StoreData;
 
 /**
  * @author Andrea Medeghini
  */
-public class LocalSpoolJob implements JobInterface {
-	private static final ThreadFactory factory = new DefaultThreadFactory("LocalSpoolJob Task", true, Thread.MIN_PRIORITY);
+public class RemoteJob implements RemoteJobInterface {
+	private static final ThreadFactory factory = new DefaultThreadFactory("RemoteJob Task", true, Thread.MIN_PRIORITY);
+	private static final int CHUNK_LENGTH = 1024 * 10000;
 	private final JobListener listener;
 	private final String jobId;
 	private volatile long lastUpdate;
@@ -52,23 +51,26 @@ public class LocalSpoolJob implements JobInterface {
 	private volatile boolean aborted;
 	private volatile boolean terminated;
 	private volatile JobData jobDataRow;
+	private volatile StoreData storeData;
+	private volatile byte[] jobData;
 	private volatile Thread thread;
-	private final LibraryService service;
 	private int firstFrameNumber;
 	private final Worker worker;
+	private File tmpPath;
 
 	/**
-	 * @param service
+	 * @param tmpDir
 	 * @param worker
 	 * @param jobId
 	 * @param listener
 	 */
-	public LocalSpoolJob(final LibraryService service, final Worker worker, final String jobId, final JobListener listener) {
+	public RemoteJob(final File tmpDir, final Worker worker, final String jobId, final JobListener listener) {
 		lastUpdate = System.currentTimeMillis();
 		this.listener = listener;
-		this.service = service;
 		this.worker = worker;
 		this.jobId = jobId;
+		tmpPath = new File(tmpDir, jobId);
+		tmpPath.mkdirs();
 	}
 
 	/**
@@ -99,7 +101,7 @@ public class LocalSpoolJob implements JobInterface {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.queue.spool.SpoolJobInterface#setFirstFrameNumber(int)
+	 * @see com.nextbreakpoint.nextfractal.RemoteJobInterface.spool.DistributedJobInterface#setFirstFrameNumber(int)
 	 */
 	@Override
 	public synchronized void setFirstFrameNumber(final int frameNumber) {
@@ -113,25 +115,35 @@ public class LocalSpoolJob implements JobInterface {
 		jobDataRow.setFrameNumber(frameNumber);
 	}
 
-	/**
-	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobInterface#getFirstFrameNumber()
-	 */
 	@Override
 	public synchronized int getFirstFrameNumber() {
 		return firstFrameNumber;
 	}
 
-	/**
-	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobInterface#getJobDataRow()
-	 */
 	@Override
 	public synchronized JobData getJobDataRow() {
 		return jobDataRow;
 	}
 
-	/**
-	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobInterface#setJobDataRow(JobData)
-	 */
+	@Override
+	public synchronized byte[] getJobData() {
+		return jobData;
+	}
+
+
+	@Override
+	public StoreData getStoreData() throws IOException {
+		return storeData;
+	}
+
+	@Override
+	public synchronized void setStoreData(final StoreData data) {
+		if (thread != null) {
+			throw new IllegalStateException();
+		}
+		this.storeData = data;
+	}
+
 	@Override
 	public synchronized void setJobDataRow(final JobData jobDataRow) {
 		if (thread != null) {
@@ -143,23 +155,17 @@ public class LocalSpoolJob implements JobInterface {
 		this.jobDataRow = jobDataRow;
 	}
 
-	/**
-	 * @see com.nextbreakpoint.nextfractal.queue.spool.SpoolJobInterface#getSpoolData()
-	 */
 	@Override
-	public synchronized SpoolData getSpoolData() throws IOException {
-		if (jobDataRow == null) {
+	public synchronized void setJobData(final byte[] jobData) {
+		if (thread != null) {
 			throw new IllegalStateException();
 		}
-		try {
-			final InputStream is = service.getClipInputStream(jobDataRow.getClipId());
-			FileService service = new FileService();
-			MandelbrotData data = service.loadFromStream(is);
-			return new SpoolData(data);
-		}
-		catch (final Exception e) {
-			throw new IOException(e.getMessage());
-		}
+		this.jobData = jobData;
+	}
+
+	@Override
+	public synchronized ChunkedRandomAccessFile getRAF() throws IOException {
+		return new ChunkedRandomAccessFile(tmpPath, "", ".bin", CHUNK_LENGTH);
 	}
 
 	/**
@@ -219,7 +225,7 @@ public class LocalSpoolJob implements JobInterface {
 				started = true;
 				aborted = false;
 				terminated = false;
-				worker.addTask(new StartedTask(new DefaultJobData(jobDataRow)));
+				worker.addTask(new StartedTask(new JobData(jobDataRow)));
 				thread = factory.newThread(new RenderTask());
 				thread.start();
 			}
@@ -246,7 +252,7 @@ public class LocalSpoolJob implements JobInterface {
 			}
 			started = false;
 			thread = null;
-			worker.addTask(new StoppedTask(new DefaultJobData(jobDataRow)));
+			worker.addTask(new StoppedTask(new JobData(jobDataRow)));
 		}
 	}
 
@@ -263,8 +269,13 @@ public class LocalSpoolJob implements JobInterface {
 	 */
 	@Override
 	public synchronized void dispose() {
+		if (tmpPath != null) {
+			Files.deleteFiles(tmpPath);
+			tmpPath.delete();
+			tmpPath = null;
+		}
 		if (jobDataRow != null) {
-			worker.addTask(new DisposedTask(new DefaultJobData(jobDataRow)));
+			worker.addTask(new DisposedTask(new JobData(jobDataRow)));
 		}
 	}
 
@@ -304,13 +315,8 @@ public class LocalSpoolJob implements JobInterface {
 //			TwisterRuntime overlayRuntime = null;
 //			TwisterRenderer overlayRenderer = null;
 //			ChunkedRandomAccessFile jobRaf = null;
-//			InputStream clipStream = null;
 //			try {
-//				clipStream = service.getClipInputStream(jobDataRow.getClipId());
-//				final TwisterClipXMLImporter importer = new TwisterClipXMLImporter();
-//				final Document doc = XML.loadDocument(clipStream, "twister-clip.xml");
-//				final SpoolData clip = importer.importFromElement(doc.getDocumentElement());
-//				if (clip.getSequenceCount() > 0) {
+//				if (storeData.getSequenceCount() > 0) {
 //					final int frameCount = (jobDataRow.getStopTime() - jobDataRow.getStartTime()) * jobDataRow.getFrameRate();
 //					int frameTimeInMillis = 0;
 //					final int tx = jobDataRow.getTileOffsetX();
@@ -324,9 +330,9 @@ public class LocalSpoolJob implements JobInterface {
 //					final int sw = tw + 2 * bw;
 //					final int sh = th + 2 * bh;
 //					if ((jobDataRow.getFrameRate() == 0) || (frameCount == 0)) {
-//						TwisterConfig config = clip.getSequence(0).getInitialConfig();
+//						TwisterConfig config = storeData.getSequence(0).getInitialConfig();
 //						if (config == null) {
-//							config = clip.getSequence(0).getFinalConfig();
+//							config = storeData.getSequence(0).getFinalConfig();
 //						}
 //						if (config != null) {
 //							surface = new Surface(sw, sh);
@@ -348,32 +354,29 @@ public class LocalSpoolJob implements JobInterface {
 //							overlayHints.put(TwisterRenderingHints.KEY_TYPE, TwisterRenderingHints.TYPE_OVERLAY);
 //							overlayRenderer.setRenderFactory(new Java2DRenderFactory());
 //							overlayRenderer.setRenderingHints(overlayHints);
-//							overlayRenderer.setTile(new Tile(new IntegerVector2D(iw, ih), new IntegerVector2D(tw, th), new IntegerVector2D(tx, ty), new IntegerVector2D(bw, bh)));
+//							overlayRenderer.setTile(new Tile(new IntegerVector2D(iw, ih), new IntegerVector2D(tw, th), new IntegerVector2D(tx, ty), new IntegerVector2D(0, 0)));
 //							renderer.prepareImage(false);
 //							overlayRenderer.prepareImage(false);
 //							renderer.render();
 //							overlayRenderer.render();
 //							renderer.drawSurface(surface.getGraphics2D());
 //							overlayRenderer.drawSurface(surface.getGraphics2D());
+//							jobRaf = getRAF();
 //							final byte[] row = new byte[sw * 4];
-//							jobRaf = service.getJobRandomAccessFile(jobDataRow.getJobId());
-//							final int[] data = ((DataBufferInt) surface.getImage().getRaster().getDataBuffer()).getData();
-//							long pos = 0;
+//							final int[] storeData = ((DataBufferInt) surface.getImage().getRaster().getDataBuffer()).getData();
 //							for (int j = 0, k = 0; k < sh; k++) {
 //								for (int i = 0; i < row.length; i += 4) {
-//									row[i + 0] = (byte) ((data[j] & 0x00FF0000) >> 16);
-//									row[i + 1] = (byte) ((data[j] & 0x0000FF00) >> 8);
-//									row[i + 2] = (byte) ((data[j] & 0x000000FF) >> 0);
-//									row[i + 3] = (byte) ((data[j] & 0xFF000000) >> 24);
+//									row[i + 0] = (byte) ((storeData[j] & 0x00FF0000) >> 16);
+//									row[i + 1] = (byte) ((storeData[j] & 0x0000FF00) >> 8);
+//									row[i + 2] = (byte) ((storeData[j] & 0x000000FF) >> 0);
+//									row[i + 3] = (byte) ((storeData[j] & 0xFF000000) >> 24);
 //									j += 1;
 //								}
-//								jobRaf.seek(pos);
 //								jobRaf.write(row);
-//								pos += row.length;
 //								Thread.yield();
 //							}
 //							setFrameNumber(0);
-//							worker.addTask(new StatusChangedTask(new DefaultJobData(jobDataRow)));
+//							worker.addTask(new StatusChangedTask(new JobData(jobDataRow)));
 //						}
 //					}
 //					else if (jobDataRow.getFrameNumber() < frameCount) {
@@ -382,31 +385,27 @@ public class LocalSpoolJob implements JobInterface {
 //						surface.getGraphics2D().setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
 //						surface.getGraphics2D().setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 //						surface.getGraphics2D().setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-//						final TwisterClipController controller = new TwisterClipController(clip);
+//						final TwisterClipController controller = new TwisterClipController(storeData);
 //						controller.init();
 //						final TwisterConfig config = controller.getConfig();
 //						runtime = new TwisterRuntime(config);
 //						renderer = new DefaultTwisterRenderer(runtime);
 //						final Map<Object, Object> hints = new HashMap<Object, Object>();
 //						hints.put(TwisterRenderingHints.KEY_MEMORY, TwisterRenderingHints.MEMORY_LOW);
-//						renderer.setRenderFactory(new Java2DRenderFactory());
 //						renderer.setRenderingHints(hints);
 //						renderer.setTile(new Tile(new IntegerVector2D(iw, ih), new IntegerVector2D(tw, th), new IntegerVector2D(tx, ty), new IntegerVector2D(bw, bh)));
-//						jobRaf = service.getJobRandomAccessFile(jobDataRow.getJobId());
+//						jobRaf = getRAF();
 //						final byte[] row = new byte[sw * 4];
-//						final int[] data = ((DataBufferInt) surface.getImage().getRaster().getDataBuffer()).getData();
+//						final int[] storeData = ((DataBufferInt) surface.getImage().getRaster().getDataBuffer()).getData();
 //						int startFrameNumber = 0;
-//						if (jobDataRow.getFrameNumber() > 0) {
-//							long pos = jobDataRow.getFrameNumber() * sw * sh * 4;
+//						if ((jobDataRow.getFrameNumber() > 0) && (jobData != null)) {
 //							for (int j = 0, k = 0; k < sh; k++) {
-//								jobRaf.seek(pos);
-//								jobRaf.readFully(row);
+//								System.arraycopy(jobData, k * sw * 4, row, 0, row.length);
 //								for (int i = 0; i < row.length; i += 4) {
 //									final int argb = Colors.color(row[i + 3], row[i + 0], row[i + 1], row[i + 2]);
-//									data[j] = argb;
+//									storeData[j] = argb;
 //									j += 1;
 //								}
-//								pos += row.length;
 //							}
 //							startFrameNumber = jobDataRow.getFrameNumber() + 1;
 //							frameTimeInMillis = jobDataRow.getStartTime() * 1000 + (jobDataRow.getFrameNumber() * 1000) / jobDataRow.getFrameRate();
@@ -421,22 +420,19 @@ public class LocalSpoolJob implements JobInterface {
 //							renderer.prepareImage(false);
 //							renderer.render();
 //							renderer.drawSurface(surface.getGraphics2D());
-//							long pos = frameNumber * sw * sh * 4;
 //							for (int j = 0, k = 0; k < sh; k++) {
 //								for (int i = 0; i < row.length; i += 4) {
-//									row[i + 0] = (byte) ((data[j] & 0x00FF0000) >> 16);
-//									row[i + 1] = (byte) ((data[j] & 0x0000FF00) >> 8);
-//									row[i + 2] = (byte) ((data[j] & 0x000000FF) >> 0);
-//									row[i + 3] = (byte) ((data[j] & 0xFF000000) >> 24);
+//									row[i + 0] = (byte) ((storeData[j] & 0x00FF0000) >> 16);
+//									row[i + 1] = (byte) ((storeData[j] & 0x0000FF00) >> 8);
+//									row[i + 2] = (byte) ((storeData[j] & 0x000000FF) >> 0);
+//									row[i + 3] = (byte) ((storeData[j] & 0xFF000000) >> 24);
 //									j += 1;
 //								}
-//								jobRaf.seek(pos);
 //								jobRaf.write(row);
-//								pos += row.length;
 //								Thread.yield();
 //							}
 //							setFrameNumber(frameNumber);
-//							worker.addTask(new StatusChangedTask(new DefaultJobData(jobDataRow)));
+//							worker.addTask(new StatusChangedTask(new JobData(jobDataRow)));
 //							if ((((frameNumber + 1) % MAX_FRAMES) == 0) && ((frameCount - frameNumber - 1) > (MAX_FRAMES / 2))) {
 //								break;
 //							}
@@ -482,20 +478,13 @@ public class LocalSpoolJob implements JobInterface {
 //					catch (final IOException e) {
 //					}
 //				}
-//				if (clipStream != null) {
-//					try {
-//						clipStream.close();
-//					}
-//					catch (final IOException e) {
-//					}
-//				}
 //			}
-//			synchronized (LocalSpoolJob.this) {
+//			synchronized (RemoteJob.this) {
 //				if (!aborted) {
 //					terminated = true;
 //				}
 //				if (terminated) {
-//					worker.addTask(new TerminatedTask(new DefaultJobData(jobDataRow)));
+//					worker.addTask(new TerminatedTask(new JobData(jobDataRow)));
 //				}
 //			}
 		}

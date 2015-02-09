@@ -39,23 +39,26 @@ import com.nextbreakpoint.nextfractal.net.ServiceMessage;
 import com.nextbreakpoint.nextfractal.net.ServiceProcessor;
 import com.nextbreakpoint.nextfractal.net.ServiceSession;
 import com.nextbreakpoint.nextfractal.net.SessionHandler;
-import com.nextbreakpoint.nextfractal.spool.DistributedJobDecoder;
-import com.nextbreakpoint.nextfractal.spool.DistributedJobInterface;
-import com.nextbreakpoint.nextfractal.spool.DistributedJobService;
+import com.nextbreakpoint.nextfractal.spool.JobDecoder;
+import com.nextbreakpoint.nextfractal.spool.RemoteJobInterface;
 import com.nextbreakpoint.nextfractal.spool.JobData;
 import com.nextbreakpoint.nextfractal.spool.JobEvent;
 import com.nextbreakpoint.nextfractal.spool.JobListener;
 import com.nextbreakpoint.nextfractal.spool.JobStatus;
+import com.nextbreakpoint.nextfractal.spool.StoreData;
+import com.nextbreakpoint.nextfractal.spool.StoreService;
+import com.nextbreakpoint.nextfractal.spool.jobservice.RemoteJobService;
 
 /**
  * @author Andrea Medeghini
  */
-public class DistributedServiceProcessor implements ServiceProcessor {
-	private static final Logger logger = Logger.getLogger(DistributedServiceProcessor.class.getName());
+public class RemoteServiceProcessor implements ServiceProcessor {
+	private static final Logger logger = Logger.getLogger(RemoteServiceProcessor.class.getName());
 	private static final ThreadFactory factory = new DefaultThreadFactory("Thread", true, Thread.MIN_PRIORITY);
 	private final List<ExecutorTask> tasks = new LinkedList<ExecutorTask>();
 	private final Object monitor = new Object();
-	private final DistributedJobService<? extends DistributedJobInterface> jobService;
+	private final RemoteJobService<? extends RemoteJobInterface> jobService;
+	private final StoreService<StoreData> storeService;
 	private Thread thread;
 	private boolean running;
 	private boolean dirty;
@@ -64,8 +67,9 @@ public class DistributedServiceProcessor implements ServiceProcessor {
 	 * @param jobService
 	 * @param maxJobCount
 	 */
-	public DistributedServiceProcessor(final DistributedJobService<? extends DistributedJobInterface> jobService, final int maxJobCount) {
+	public RemoteServiceProcessor(final RemoteJobService<? extends RemoteJobInterface> jobService, final int maxJobCount, StoreService<StoreData> storeService) {
 		this.jobService = jobService;
+		this.storeService = storeService;
 	}
 
 	/**
@@ -317,9 +321,9 @@ public class DistributedServiceProcessor implements ServiceProcessor {
 			final String jobId = (String) ((Object[]) request.getUserData())[0];
 			final int frameNumber = (Integer) ((Object[]) request.getUserData())[1];
 			final byte[] data = (byte[]) ((Object[]) request.getUserData())[2];
-			final DistributedJobDecoder decoder = new DistributedJobDecoder(data);
+			final JobDecoder decoder = new JobDecoder(storeService, data);
 			jobService.setJobData(jobId, decoder.getJobData(), frameNumber);
-			jobService.setJobFrame(jobId, decoder.getClip(), decoder.getFrameData());
+			jobService.setJobFrame(jobId, decoder.getSpoolData(), decoder.getFrameData());
 			jobService.runJob(jobId);
 			synchronized (tasks) {
 				final ResponseMessage response = createPutResponse(request, jobId);

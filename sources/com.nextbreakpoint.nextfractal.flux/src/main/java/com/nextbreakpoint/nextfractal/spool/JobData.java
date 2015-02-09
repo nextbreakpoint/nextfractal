@@ -30,98 +30,186 @@ import java.io.Serializable;
 /**
  * @author Andrea Medeghini
  */
-public interface JobData extends Serializable {
+public class JobData implements Serializable {
 	public static final int PROCESS_JOB = 0;
 	public static final int COPY_PROCESS_JOB = 1;
 	public static final int POST_PROCESS_JOB = 2;
+	private static final long serialVersionUID = 1L;
+	private final int jobId;
+	private final int profileId;
+	private final int clipId;
+	private final int imageWidth;
+	private final int imageHeight;
+	private final int frameRate;
+	private final int startTime;
+	private final int stopTime;
+	private final int quality;
+	private final int frameNumber;
+	private final int tileWidth;
+	private final int tileHeight;
+	private final int borderWidth;
+	private final int borderHeight;
+	private final int tileOffsetX;
+	private final int tileOffsetY;
+	private final int jobType;
 
 	/**
-	 * @return the id
+	 * @param jobData
 	 */
-	public int getJobId();
+	public JobData(final JobData jobData) {
+		jobId = jobData.getJobId();
+		profileId = jobData.getProfileId();
+		clipId = jobData.getClipId();
+		imageWidth = jobData.getImageWidth();
+		imageHeight = jobData.getImageHeight();
+		frameRate = jobData.getFrameRate();
+		startTime = jobData.getStartTime();
+		stopTime = jobData.getStopTime();
+		quality = jobData.getQuality();
+		frameNumber = jobData.getFrameNumber();
+		tileWidth = jobData.getTileWidth();
+		tileHeight = jobData.getTileHeight();
+		borderWidth = jobData.getBorderWidth();
+		borderHeight = jobData.getBorderHeight();
+		tileOffsetX = jobData.getTileOffsetX();
+		tileOffsetY = jobData.getTileOffsetY();
+		jobType = jobData.getJobType();
+	}
+
+	/**
+	 * @return the jobId
+	 */
+	public int getJobId() {
+		return jobId;
+	}
 
 	/**
 	 * @return the profileId
 	 */
-	public int getProfileId();
+	public int getProfileId() {
+		return profileId;
+	}
 
 	/**
 	 * @return the clipId
 	 */
-	public int getClipId();
+	public int getClipId() {
+		return clipId;
+	}
 
 	/**
-	 * @return
+	 * @return the imageWidth
 	 */
-	public int getBorderHeight();
+	public int getImageWidth() {
+		return imageWidth;
+	}
 
 	/**
-	 * @return
+	 * @return the imageHeight
 	 */
-	public int getBorderWidth();
+	public int getImageHeight() {
+		return imageHeight;
+	}
 
 	/**
-	 * @return
+	 * @return the frameRate
 	 */
-	public int getFrameNumber();
+	public int getFrameRate() {
+		return frameRate;
+	}
 
 	/**
-	 * @return
+	 * @return the startTime
 	 */
-	public int getFrameRate();
+	public int getStartTime() {
+		return startTime;
+	}
 
 	/**
-	 * @return
+	 * @return the stopTime
 	 */
-	public int getImageHeight();
+	public int getStopTime() {
+		return stopTime;
+	}
 
 	/**
-	 * @return
+	 * @return the quality
 	 */
-	public int getImageWidth();
+	public int getQuality() {
+		return quality;
+	}
 
 	/**
-	 * @return
+	 * @return the frameNumber
 	 */
-	public int getQuality();
+	public int getFrameNumber() {
+		return frameNumber;
+	}
 
 	/**
-	 * @return
+	 * @return the tileWidth
 	 */
-	public int getStartTime();
+	public int getTileWidth() {
+		return tileWidth;
+	}
 
 	/**
-	 * @return
+	 * @return the tileHeight
 	 */
-	public int getStopTime();
+	public int getTileHeight() {
+		return tileHeight;
+	}
 
 	/**
-	 * @return
+	 * @return the borderWidth
 	 */
-	public int getTileHeight();
+	public int getBorderWidth() {
+		return borderWidth;
+	}
 
 	/**
-	 * @return
+	 * @return the borderHeight
 	 */
-	public int getTileOffsetX();
+	public int getBorderHeight() {
+		return borderHeight;
+	}
 
 	/**
-	 * @return
+	 * @return the tileOffsetX
 	 */
-	public int getTileOffsetY();
+	public int getTileOffsetX() {
+		return tileOffsetX;
+	}
 
 	/**
-	 * @return
+	 * @return the tileOffsetY
 	 */
-	public int getTileWidth();
+	public int getTileOffsetY() {
+		return tileOffsetY;
+	}
 
 	/**
-	 * @param frame
+	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobData#setFrameNumber(int)
 	 */
-	public void setFrameNumber(final int frame);
+	public void setFrameNumber(final int frame) {
+	}
 
 	/**
-	 * @return
+	 * @see java.lang.Object#toString()
 	 */
-	public int getJobType();
+	@Override
+	public String toString() {
+		final StringBuilder builder = new StringBuilder();
+		builder.append("[jobId = ");
+		builder.append(jobId);
+		builder.append("]");
+		return builder.toString();
+	}
+
+	/**
+	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobData#getJobType()
+	 */
+	public int getJobType() {
+		return jobType;
+	}
 }

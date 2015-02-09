@@ -47,7 +47,7 @@ import com.nextbreakpoint.nextfractal.spool.JobInterface;
 import com.nextbreakpoint.nextfractal.spool.JobListener;
 import com.nextbreakpoint.nextfractal.spool.JobService;
 import com.nextbreakpoint.nextfractal.spool.JobStatus;
-import com.nextbreakpoint.nextfractal.spool.job.LocalSpoolJob;
+import com.nextbreakpoint.nextfractal.spool.job.LocalJob;
 
 /**
  * @author Andrea Medeghini
@@ -67,7 +67,7 @@ public class LocalServiceProcessor implements ServiceProcessor {
 	 * @param jobService
 	 * @param maxJobCount
 	 */
-	public LocalServiceProcessor(final JobService<LocalSpoolJob> jobService, final int maxJobCount) {
+	public LocalServiceProcessor(final JobService<LocalJob> jobService, final int maxJobCount) {
 		this.jobService = jobService;
 	}
 

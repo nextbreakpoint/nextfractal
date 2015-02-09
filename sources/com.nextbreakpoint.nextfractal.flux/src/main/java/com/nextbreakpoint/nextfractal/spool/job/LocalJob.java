@@ -31,20 +31,17 @@ import java.util.concurrent.ThreadFactory;
 
 import com.nextbreakpoint.nextfractal.core.DefaultThreadFactory;
 import com.nextbreakpoint.nextfractal.core.Worker;
-import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotData;
-import com.nextbreakpoint.nextfractal.mandelbrot.service.FileService;
-import com.nextbreakpoint.nextfractal.spool.DefaultJobData;
 import com.nextbreakpoint.nextfractal.spool.JobData;
 import com.nextbreakpoint.nextfractal.spool.JobInterface;
 import com.nextbreakpoint.nextfractal.spool.JobListener;
-import com.nextbreakpoint.nextfractal.spool.LibraryService;
-import com.nextbreakpoint.nextfractal.spool.SpoolData;
+import com.nextbreakpoint.nextfractal.spool.StoreData;
+import com.nextbreakpoint.nextfractal.spool.StoreService;
 
 /**
  * @author Andrea Medeghini
  */
-public class PostProcessSpoolJob implements JobInterface {
-	private static final ThreadFactory factory = new DefaultThreadFactory("PostProcessSpoolJob Task", true, Thread.MIN_PRIORITY);
+public class LocalJob implements JobInterface {
+	private static final ThreadFactory factory = new DefaultThreadFactory("LocalJob Task", true, Thread.MIN_PRIORITY);
 	private final JobListener listener;
 	private final String jobId;
 	private volatile long lastUpdate;
@@ -53,7 +50,7 @@ public class PostProcessSpoolJob implements JobInterface {
 	private volatile boolean terminated;
 	private volatile JobData jobDataRow;
 	private volatile Thread thread;
-	private final LibraryService service;
+	private final StoreService<?> service;
 	private int firstFrameNumber;
 	private final Worker worker;
 
@@ -63,7 +60,7 @@ public class PostProcessSpoolJob implements JobInterface {
 	 * @param jobId
 	 * @param listener
 	 */
-	public PostProcessSpoolJob(final LibraryService service, final Worker worker, final String jobId, final JobListener listener) {
+	public LocalJob(final StoreService<?> service, final Worker worker, final String jobId, final JobListener listener) {
 		lastUpdate = System.currentTimeMillis();
 		this.listener = listener;
 		this.service = service;
@@ -144,18 +141,16 @@ public class PostProcessSpoolJob implements JobInterface {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.queue.spool.SpoolJobInterface#getSpoolData()
+	 * @see com.nextbreakpoint.nextfractal.queue.spool.SpoolJobInterface#getStoreData()
 	 */
 	@Override
-	public synchronized SpoolData getSpoolData() throws IOException {
+	public synchronized StoreData getStoreData() throws IOException {
 		if (jobDataRow == null) {
 			throw new IllegalStateException();
 		}
 		try {
 			final InputStream is = service.getClipInputStream(jobDataRow.getClipId());
-			FileService service = new FileService();
-			MandelbrotData data = service.loadFromStream(is);
-			return new SpoolData(data);
+			return service.getSpoolData(is);
 		}
 		catch (final Exception e) {
 			throw new IOException(e.getMessage());
@@ -219,7 +214,7 @@ public class PostProcessSpoolJob implements JobInterface {
 				started = true;
 				aborted = false;
 				terminated = false;
-				worker.addTask(new StartedTask(new DefaultJobData(jobDataRow)));
+				worker.addTask(new StartedTask(new JobData(jobDataRow)));
 				thread = factory.newThread(new RenderTask());
 				thread.start();
 			}
@@ -246,7 +241,7 @@ public class PostProcessSpoolJob implements JobInterface {
 			}
 			started = false;
 			thread = null;
-			worker.addTask(new StoppedTask(new DefaultJobData(jobDataRow)));
+			worker.addTask(new StoppedTask(new JobData(jobDataRow)));
 		}
 	}
 
@@ -264,7 +259,7 @@ public class PostProcessSpoolJob implements JobInterface {
 	@Override
 	public synchronized void dispose() {
 		if (jobDataRow != null) {
-			worker.addTask(new DisposedTask(new DefaultJobData(jobDataRow)));
+			worker.addTask(new DisposedTask(new JobData(jobDataRow)));
 		}
 	}
 
@@ -299,96 +294,150 @@ public class PostProcessSpoolJob implements JobInterface {
 		@Override
 		public void run() {
 //			Surface surface = null;
+//			TwisterRuntime runtime = null;
+//			TwisterRenderer renderer = null;
 //			TwisterRuntime overlayRuntime = null;
 //			TwisterRenderer overlayRenderer = null;
-//			ChunkedRandomAccessFile profileRaf = null;
+//			ChunkedRandomAccessFile jobRaf = null;
 //			InputStream clipStream = null;
 //			try {
 //				clipStream = service.getClipInputStream(jobDataRow.getClipId());
 //				final TwisterClipXMLImporter importer = new TwisterClipXMLImporter();
 //				final Document doc = XML.loadDocument(clipStream, "twister-clip.xml");
-//				final SpoolData clip = importer.importFromElement(doc.getDocumentElement());
+//				final MandelbrotStoreData clip = importer.importFromElement(doc.getDocumentElement());
 //				if (clip.getSequenceCount() > 0) {
 //					final int frameCount = (jobDataRow.getStopTime() - jobDataRow.getStartTime()) * jobDataRow.getFrameRate();
 //					int frameTimeInMillis = 0;
+//					final int tx = jobDataRow.getTileOffsetX();
+//					final int ty = jobDataRow.getTileOffsetY();
+//					final int tw = jobDataRow.getTileWidth();
+//					final int th = jobDataRow.getTileHeight();
 //					final int iw = jobDataRow.getImageWidth();
 //					final int ih = jobDataRow.getImageHeight();
-//					final byte[] row = new byte[iw * 4];
-//					surface = new Surface(iw, ih);
-//					surface.getGraphics2D().setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
-//					surface.getGraphics2D().setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-//					surface.getGraphics2D().setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-//					surface.getGraphics2D().setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-//					final TwisterClipController controller = new TwisterClipController(clip);
-//					controller.init();
-//					final TwisterConfig config = controller.getConfig();
-//					overlayRuntime = new TwisterRuntime(config);
-//					overlayRenderer = new OverlayTwisterRenderer(overlayRuntime);
-//					final Map<Object, Object> overlayHints = new HashMap<Object, Object>();
-//					overlayHints.put(TwisterRenderingHints.KEY_MEMORY, TwisterRenderingHints.MEMORY_LOW);
-//					overlayHints.put(TwisterRenderingHints.KEY_TYPE, TwisterRenderingHints.TYPE_OVERLAY);
-//					overlayRenderer.setRenderFactory(new Java2DRenderFactory());
-//					overlayRenderer.setRenderingHints(overlayHints);
-//					final IntegerVector2D size = new IntegerVector2D(iw, ih);
-//					overlayRenderer.setTile(new Tile(size, size, new IntegerVector2D(0, 0), new IntegerVector2D(0, 0)));
-//					final int[] data = ((DataBufferInt) (surface.getImage().getRaster().getDataBuffer())).getData();
-//					profileRaf = service.getProfileRandomAccessFile(jobDataRow.getProfileId());
-//					int startFrameNumber = 0;
-//					if (jobDataRow.getFrameNumber() > 0) {
-//						startFrameNumber = jobDataRow.getFrameNumber() + 1;
-//						frameTimeInMillis = jobDataRow.getStartTime() * 1000 + (jobDataRow.getFrameNumber() * 1000) / jobDataRow.getFrameRate();
-//						controller.redoAction(frameTimeInMillis, false);
-//						overlayRenderer.prepareImage(false);
-//						overlayRenderer.render();
-//					}
-//					for (int frameNumber = 0; frameNumber < startFrameNumber; frameNumber++) {
-//						frameTimeInMillis = jobDataRow.getStartTime() * 1000 + (frameNumber * 1000) / jobDataRow.getFrameRate();
-//						controller.redoAction(frameTimeInMillis, false);
-//						if (overlayRuntime.getEffectElement().getEffectRuntime() != null) {
-//							overlayRuntime.getEffectElement().getEffectRuntime().setSize(size);
-//							overlayRuntime.getEffectElement().getEffectRuntime().prepareEffect();
+//					final int bw = jobDataRow.getBorderWidth();
+//					final int bh = jobDataRow.getBorderHeight();
+//					final int sw = tw + 2 * bw;
+//					final int sh = th + 2 * bh;
+//					if ((jobDataRow.getFrameRate() == 0) || (frameCount == 0)) {
+//						TwisterConfig config = clip.getSequence(0).getInitialConfig();
+//						if (config == null) {
+//							config = clip.getSequence(0).getFinalConfig();
 //						}
-//					}
-//					for (int frameNumber = startFrameNumber; frameNumber < frameCount; frameNumber++) {
-//						frameTimeInMillis = jobDataRow.getStartTime() * 1000 + (frameNumber * 1000) / jobDataRow.getFrameRate();
-//						controller.redoAction(frameTimeInMillis, false);
-//						overlayRenderer.prepareImage(false);
-//						overlayRenderer.render();
-//						long pos = frameNumber * iw * ih * 4;
-//						for (int j = 0, k = 0; k < ih; k++) {
-//							profileRaf.seek(pos);
-//							profileRaf.readFully(row);
-//							for (int i = 0; i < row.length; i += 4) {
-//								data[j] = (((row[i + 3]) & 0xFF) << 24) | (((row[i + 0]) & 0xFF) << 16) | (((row[i + 1]) & 0xFF) << 8) | ((row[i + 2]) & 0xFF);
-//								j += 1;
+//						if (config != null) {
+//							surface = new Surface(sw, sh);
+//							surface.getGraphics2D().setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
+//							surface.getGraphics2D().setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+//							surface.getGraphics2D().setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+//							surface.getGraphics2D().setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+//							runtime = new TwisterRuntime(config);
+//							renderer = new DefaultTwisterRenderer(runtime);
+//							final Map<Object, Object> hints = new HashMap<Object, Object>();
+//							hints.put(TwisterRenderingHints.KEY_MEMORY, TwisterRenderingHints.MEMORY_LOW);
+//							renderer.setRenderFactory(new Java2DRenderFactory());
+//							renderer.setRenderingHints(hints);
+//							renderer.setTile(new Tile(new IntegerVector2D(iw, ih), new IntegerVector2D(tw, th), new IntegerVector2D(tx, ty), new IntegerVector2D(bw, bh)));
+//							overlayRuntime = new TwisterRuntime(config);
+//							overlayRenderer = new OverlayTwisterRenderer(overlayRuntime);
+//							final Map<Object, Object> overlayHints = new HashMap<Object, Object>();
+//							overlayHints.put(TwisterRenderingHints.KEY_MEMORY, TwisterRenderingHints.MEMORY_LOW);
+//							overlayHints.put(TwisterRenderingHints.KEY_TYPE, TwisterRenderingHints.TYPE_OVERLAY);
+//							overlayRenderer.setRenderFactory(new Java2DRenderFactory());
+//							overlayRenderer.setRenderingHints(overlayHints);
+//							overlayRenderer.setTile(new Tile(new IntegerVector2D(iw, ih), new IntegerVector2D(tw, th), new IntegerVector2D(tx, ty), new IntegerVector2D(bw, bh)));
+//							renderer.prepareImage(false);
+//							overlayRenderer.prepareImage(false);
+//							renderer.render();
+//							overlayRenderer.render();
+//							renderer.drawSurface(surface.getGraphics2D());
+//							overlayRenderer.drawSurface(surface.getGraphics2D());
+//							final byte[] row = new byte[sw * 4];
+//							jobRaf = service.getJobRandomAccessFile(jobDataRow.getJobId());
+//							final int[] data = ((DataBufferInt) surface.getImage().getRaster().getDataBuffer()).getData();
+//							long pos = 0;
+//							for (int j = 0, k = 0; k < sh; k++) {
+//								for (int i = 0; i < row.length; i += 4) {
+//									row[i + 0] = (byte) ((data[j] & 0x00FF0000) >> 16);
+//									row[i + 1] = (byte) ((data[j] & 0x0000FF00) >> 8);
+//									row[i + 2] = (byte) ((data[j] & 0x000000FF) >> 0);
+//									row[i + 3] = (byte) ((data[j] & 0xFF000000) >> 24);
+//									j += 1;
+//								}
+//								jobRaf.seek(pos);
+//								jobRaf.write(row);
+//								pos += row.length;
+//								Thread.yield();
 //							}
-//							pos += row.length;
-//							Thread.yield();
+//							setFrameNumber(0);
+//							worker.addTask(new StatusChangedTask(new JobData(jobDataRow)));
 //						}
-//						if (overlayRuntime.getEffectElement().getEffectRuntime() != null) {
-//							overlayRuntime.getEffectElement().getEffectRuntime().setSize(size);
-//							overlayRuntime.getEffectElement().getEffectRuntime().prepareEffect();
-//							overlayRuntime.getEffectElement().getEffectRuntime().renderImage(surface);
-//						}
-//						overlayRenderer.drawImage(surface.getGraphics2D());
-//						pos = frameNumber * iw * ih * 4;
-//						for (int j = 0, k = 0; k < ih; k++) {
-//							for (int i = 0; i < row.length; i += 4) {
-//								row[i + 0] = (byte) ((data[j] & 0x00FF0000) >> 16);
-//								row[i + 1] = (byte) ((data[j] & 0x0000FF00) >> 8);
-//								row[i + 2] = (byte) ((data[j] & 0x000000FF) >> 0);
-//								row[i + 3] = (byte) ((data[j] & 0xFF000000) >> 24);
-//								j += 1;
+//					}
+//					else if (jobDataRow.getFrameNumber() < frameCount) {
+//						surface = new Surface(sw, sh);
+//						surface.getGraphics2D().setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
+//						surface.getGraphics2D().setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+//						surface.getGraphics2D().setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+//						surface.getGraphics2D().setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+//						final TwisterClipController controller = new TwisterClipController(clip);
+//						controller.init();
+//						final TwisterConfig config = controller.getConfig();
+//						runtime = new TwisterRuntime(config);
+//						renderer = new DefaultTwisterRenderer(runtime);
+//						final Map<Object, Object> hints = new HashMap<Object, Object>();
+//						hints.put(TwisterRenderingHints.KEY_MEMORY, TwisterRenderingHints.MEMORY_LOW);
+//						renderer.setRenderFactory(new Java2DRenderFactory());
+//						renderer.setRenderingHints(hints);
+//						renderer.setTile(new Tile(new IntegerVector2D(iw, ih), new IntegerVector2D(tw, th), new IntegerVector2D(tx, ty), new IntegerVector2D(bw, bh)));
+//						jobRaf = service.getJobRandomAccessFile(jobDataRow.getJobId());
+//						final byte[] row = new byte[sw * 4];
+//						final int[] data = ((DataBufferInt) surface.getImage().getRaster().getDataBuffer()).getData();
+//						int startFrameNumber = 0;
+//						if (jobDataRow.getFrameNumber() > 0) {
+//							long pos = jobDataRow.getFrameNumber() * sw * sh * 4;
+//							for (int j = 0, k = 0; k < sh; k++) {
+//								jobRaf.seek(pos);
+//								jobRaf.readFully(row);
+//								for (int i = 0; i < row.length; i += 4) {
+//									final int argb = Colors.color(row[i + 3], row[i + 0], row[i + 1], row[i + 2]);
+//									data[j] = argb;
+//									j += 1;
+//								}
+//								pos += row.length;
 //							}
-//							profileRaf.seek(pos);
-//							profileRaf.write(row);
-//							pos += row.length;
-//							Thread.yield();
+//							startFrameNumber = jobDataRow.getFrameNumber() + 1;
+//							frameTimeInMillis = jobDataRow.getStartTime() * 1000 + (jobDataRow.getFrameNumber() * 1000) / jobDataRow.getFrameRate();
+//							controller.redoAction(frameTimeInMillis, false);
+//							renderer.prepareImage(false);
+//							renderer.render();
+//							renderer.loadSurface(surface);
 //						}
-//						setFrameNumber(frameNumber);
-//						worker.addTask(new StatusChangedTask(new DefaultJobData(jobDataRow)));
-//						if (aborted) {
-//							break;
+//						for (int frameNumber = startFrameNumber; frameNumber < frameCount; frameNumber++) {
+//							frameTimeInMillis = jobDataRow.getStartTime() * 1000 + (frameNumber * 1000) / jobDataRow.getFrameRate();
+//							controller.redoAction(frameTimeInMillis, false);
+//							renderer.prepareImage(false);
+//							renderer.render();
+//							renderer.drawSurface(surface.getGraphics2D());
+//							long pos = frameNumber * sw * sh * 4;
+//							for (int j = 0, k = 0; k < sh; k++) {
+//								for (int i = 0; i < row.length; i += 4) {
+//									row[i + 0] = (byte) ((data[j] & 0x00FF0000) >> 16);
+//									row[i + 1] = (byte) ((data[j] & 0x0000FF00) >> 8);
+//									row[i + 2] = (byte) ((data[j] & 0x000000FF) >> 0);
+//									row[i + 3] = (byte) ((data[j] & 0xFF000000) >> 24);
+//									j += 1;
+//								}
+//								jobRaf.seek(pos);
+//								jobRaf.write(row);
+//								pos += row.length;
+//								Thread.yield();
+//							}
+//							setFrameNumber(frameNumber);
+//							worker.addTask(new StatusChangedTask(new JobData(jobDataRow)));
+//							if ((((frameNumber + 1) % MAX_FRAMES) == 0) && ((frameCount - frameNumber - 1) > (MAX_FRAMES / 2))) {
+//								break;
+//							}
+//							if (aborted) {
+//								break;
+//							}
 //						}
 //					}
 //				}
@@ -409,13 +458,21 @@ public class PostProcessSpoolJob implements JobInterface {
 //					overlayRuntime.dispose();
 //					overlayRuntime = null;
 //				}
+//				if (renderer != null) {
+//					renderer.dispose();
+//					renderer = null;
+//				}
+//				if (runtime != null) {
+//					runtime.dispose();
+//					runtime = null;
+//				}
 //				if (surface != null) {
 //					surface.dispose();
 //					surface = null;
 //				}
-//				if (profileRaf != null) {
+//				if (jobRaf != null) {
 //					try {
-//						profileRaf.close();
+//						jobRaf.close();
 //					}
 //					catch (final IOException e) {
 //					}
@@ -428,12 +485,12 @@ public class PostProcessSpoolJob implements JobInterface {
 //					}
 //				}
 //			}
-//			synchronized (PostProcessSpoolJob.this) {
+//			synchronized (LocalJob.this) {
 //				if (!aborted) {
 //					terminated = true;
 //				}
 //				if (terminated) {
-//					worker.addTask(new TerminatedTask(new DefaultJobData(jobDataRow)));
+//					worker.addTask(new TerminatedTask(new JobData(jobDataRow)));
 //				}
 //			}
 		}

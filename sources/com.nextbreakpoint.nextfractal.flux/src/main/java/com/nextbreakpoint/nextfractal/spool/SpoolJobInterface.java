@@ -32,48 +32,35 @@ import com.nextbreakpoint.nextfractal.core.ChunkedRandomAccessFile;
 /**
  * @author Andrea Medeghini
  */
-public interface DistributedJobInterface extends JobInterface {
-	/**
-	 * @param jobData
-	 */
-	public void setJobData(byte[] jobData);
-
+public interface SpoolJobInterface extends JobInterface {
 	/**
 	 * @return
 	 */
-	public byte[] getJobData();
+	public String getRemoteJobId();
 
 	/**
-	 * @param job
+	 * @param jobId
 	 */
-	@Override
-	public void setJobDataRow(JobData job);
-
-	/**
-	 * @return
-	 */
-	@Override
-	public JobData getJobDataRow();
-
-	/**
-	 * @param job
-	 */
-	public void setClip(SpoolData clip);
-
-	/**
-	 * @return
-	 */
-	public SpoolData getClip();
-
-	/**
-	 * @param frameNumber
-	 */
-	@Override
-	public void setFirstFrameNumber(int frameNumber);
+	public void setRemoteJobId(String remoteJobId);
 
 	/**
 	 * @return
 	 * @throws IOException
 	 */
 	public ChunkedRandomAccessFile getRAF() throws IOException;
+
+	/**
+	 * @return
+	 */
+	public int getTotalFrames();
+
+	/**
+	 * @param frameNumber
+	 */
+	public void setFrameNumber(int frameNumber);
+
+	/**
+	 * 
+	 */
+	public void terminate();
 }

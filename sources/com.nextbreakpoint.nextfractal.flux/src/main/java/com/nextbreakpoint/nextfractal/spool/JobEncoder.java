@@ -30,39 +30,38 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 
-import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotData;
-import com.nextbreakpoint.nextfractal.mandelbrot.service.FileService;
-
 /**
  * @author Andrea Medeghini
  */
-public class DistributedJobEncoder {
+public class JobEncoder {
+	private StoreService<?> storeService;
 	private final JobData jobData;
-	private final SpoolData clip;
+	private final StoreData data;
 	private final byte[] frameData;
 
 	/**
-	 * @param clip
+	 * @param data
 	 * @param jobDataRow
 	 * @param jobData
 	 */
-	public DistributedJobEncoder(final SpoolData clip, final JobData jobDataRow, final byte[] jobData) {
-		this.clip = clip;
+	public JobEncoder(StoreService<?> storeService, final StoreData data, final JobData jobDataRow, final byte[] jobData) {
+		this.storeService = storeService;
+		this.data = data;
 		this.jobData = jobDataRow;
 		frameData = jobData;
 		if (jobDataRow == null) {
 			throw new IllegalArgumentException("jobDataRow is null");
 		}
-		if (clip == null) {
-			throw new IllegalArgumentException("clip is null");
+		if (data == null) {
+			throw new IllegalArgumentException("data is null");
 		}
 	}
 
 	/**
-	 * @return the clip
+	 * @return the data
 	 */
-	public SpoolData getClip() {
-		return clip;
+	public StoreData getSpoolData() {
+		return data;
 	}
 
 	/**
@@ -79,11 +78,9 @@ public class DistributedJobEncoder {
 		return frameData;
 	}
 
-	private void writeClip(final OutputStream os, final SpoolData clip) throws IOException {
+	private void writeData(final OutputStream os, final StoreData data) throws IOException {
 		try {
-			FileService service = new FileService();
-			MandelbrotData data = clip.getData();
-			service.saveToStream(os, data);
+			storeService.saveToStream(os, data);
 		}
 		catch (final Exception e) {
 			throw new IOException(e.getMessage());
@@ -97,18 +94,17 @@ public class DistributedJobEncoder {
 	public byte[] getBytes() throws IOException {
 		try {
 			final ByteArrayOutputStream baos2 = new ByteArrayOutputStream();
-			writeClip(baos2, clip);
+			writeData(baos2, data);
 			baos2.close();
 			final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			final ObjectOutputStream oos = new ObjectOutputStream(baos);
-			byte[] clipData = baos2.toByteArray();
-			oos.writeObject(clipData);
+			byte[] bytes = baos2.toByteArray();
+			oos.writeObject(bytes);
 			oos.writeObject(jobData);
 			oos.writeObject(frameData);
 			oos.close();
 			baos.close();
-			final byte[] data = baos.toByteArray();
-			return data;
+			return baos.toByteArray();
 		}
 		catch (final Exception e) {
 			throw new IOException("An error has happened marshalling the data: " + e.getMessage());

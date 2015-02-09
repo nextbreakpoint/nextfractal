@@ -23,7 +23,7 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.spool;
+package com.nextbreakpoint.nextfractal.spool.jobservice;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -34,6 +34,12 @@ import java.util.logging.Logger;
 
 import com.nextbreakpoint.nextfractal.core.DefaultThreadFactory;
 import com.nextbreakpoint.nextfractal.core.Worker;
+import com.nextbreakpoint.nextfractal.spool.JobData;
+import com.nextbreakpoint.nextfractal.spool.JobFactory;
+import com.nextbreakpoint.nextfractal.spool.JobInterface;
+import com.nextbreakpoint.nextfractal.spool.JobListener;
+import com.nextbreakpoint.nextfractal.spool.JobService;
+import com.nextbreakpoint.nextfractal.spool.JobServiceListener;
 
 /**
  * @author Andrea Medeghini
@@ -216,7 +222,7 @@ public class DefaultJobService<T extends JobInterface> implements JobService<T> 
 			throw new NullPointerException("listener == null");
 		}
 		synchronized (spooledJobs) {
-			final T job = jobFactory.createJob(JobIDFactory.newJobId(), new ServiceJobListener(listener));
+			final T job = jobFactory.createJob(JobFactory.newJobId(), new ServiceJobListener(listener));
 			spooledJobs.put(job.getJobId(), new ScheduledJob(job));
 			return job.getJobId();
 		}
@@ -538,7 +544,7 @@ public class DefaultJobService<T extends JobInterface> implements JobService<T> 
 		 */
 		@Override
 		public void updated(final String jobId, final JobData job) {
-			listener.updated(jobId, new DefaultJobData(job));
+			listener.updated(jobId, new JobData(job));
 		}
 
 		/**
@@ -546,7 +552,7 @@ public class DefaultJobService<T extends JobInterface> implements JobService<T> 
 		 */
 		@Override
 		public void started(final String jobId, final JobData job) {
-			listener.started(jobId, new DefaultJobData(job));
+			listener.started(jobId, new JobData(job));
 		}
 
 		/**
@@ -554,7 +560,7 @@ public class DefaultJobService<T extends JobInterface> implements JobService<T> 
 		 */
 		@Override
 		public void stopped(final String jobId, final JobData job) {
-			listener.stopped(jobId, new DefaultJobData(job));
+			listener.stopped(jobId, new JobData(job));
 			synchronized (dispatchMonitor) {
 				dispatchDirty = true;
 				dispatchMonitor.notify();
@@ -566,7 +572,7 @@ public class DefaultJobService<T extends JobInterface> implements JobService<T> 
 		 */
 		@Override
 		public void terminated(final String jobId, final JobData job) {
-			listener.terminated(jobId, new DefaultJobData(job));
+			listener.terminated(jobId, new JobData(job));
 			synchronized (serviceMonitor) {
 				serviceDirty = true;
 				serviceMonitor.notify();
@@ -578,7 +584,7 @@ public class DefaultJobService<T extends JobInterface> implements JobService<T> 
 		 */
 		@Override
 		public void disposed(final String jobId, final JobData job) {
-			listener.disposed(jobId, new DefaultJobData(job));
+			listener.disposed(jobId, new JobData(job));
 		}
 	}
 

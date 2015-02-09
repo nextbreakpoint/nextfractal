@@ -28,11 +28,22 @@ package com.nextbreakpoint.nextfractal.spool;
 /**
  * @author Andrea Medeghini
  */
-public interface JobFactory<T extends JobInterface> {
+public abstract class JobFactory<T extends JobInterface> {
+	private static long jobId = System.currentTimeMillis();
+
 	/**
 	 * @param jobId
 	 * @param listener
 	 * @return
 	 */
-	public T createJob(String jobId, JobListener listener);
+	public abstract T createJob(String jobId, JobListener listener);
+
+	/**
+	 * @return
+	 */
+	public static synchronized String newJobId() {
+		final long id = jobId;
+		jobId += 1;
+		return String.valueOf(id);
+	}
 }

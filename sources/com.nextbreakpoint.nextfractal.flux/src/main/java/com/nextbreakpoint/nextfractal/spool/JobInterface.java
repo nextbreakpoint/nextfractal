@@ -115,5 +115,5 @@ public interface JobInterface {
 	 * @return
 	 * @throws IOException
 	 */
-	public SpoolData getSpoolData() throws IOException;
+	public StoreData getStoreData() throws IOException;
 }

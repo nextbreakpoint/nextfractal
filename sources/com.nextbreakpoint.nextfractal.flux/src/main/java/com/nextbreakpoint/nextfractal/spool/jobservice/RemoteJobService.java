@@ -23,45 +23,41 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.spool;
+package com.nextbreakpoint.nextfractal.spool.jobservice;
 
 import java.io.IOException;
 
 import com.nextbreakpoint.nextfractal.core.ChunkedRandomAccessFile;
 import com.nextbreakpoint.nextfractal.core.Worker;
+import com.nextbreakpoint.nextfractal.spool.RemoteJobInterface;
+import com.nextbreakpoint.nextfractal.spool.JobFactory;
+import com.nextbreakpoint.nextfractal.spool.JobService;
+import com.nextbreakpoint.nextfractal.spool.StoreData;
 
 /**
  * @author Andrea Medeghini
  */
-public class DefaultDistributedJobService<T extends DistributedJobInterface> extends DefaultJobService<T> implements DistributedJobService<T> {
+public class RemoteJobService<T extends RemoteJobInterface> extends DefaultJobService<T> implements JobService<T> {
 	/**
 	 * @param serviceId
 	 * @param serviceName
 	 * @param jobFactory
 	 * @param worker
 	 */
-	public DefaultDistributedJobService(final int serviceId, final String serviceName, final JobFactory<T> jobFactory, final Worker worker) {
+	public RemoteJobService(final int serviceId, final String serviceName, final JobFactory<T> jobFactory, final Worker worker) {
 		super(serviceId, serviceName, jobFactory, worker);
 	}
 
-	/**
-	 * @see com.nextbreakpoint.nextfractal.queue.spool.DistributedJobService#setJobFrame(java.lang.String, com.nextbreakpoint.nextfractal.SpoolData.TwisterClip, byte[])
-	 */
-	@Override
-	public void setJobFrame(final String jobId, final SpoolData clip, final byte[] data) throws IOException {
+	public void setJobFrame(final String jobId, final StoreData spoolData, final byte[] data) throws IOException {
 		synchronized (spooledJobs) {
 			ScheduledJob job = spooledJobs.get(jobId);
 			if (job != null) {
-				job.getJob().setClip(clip);
+				job.getJob().setStoreData(spoolData);
 				job.getJob().setJobData(data);
 			}
 		}
 	}
 
-	/**
-	 * @see com.nextbreakpoint.nextfractal.queue.spool.DistributedJobService#getJobFrame(java.lang.String, int)
-	 */
-	@Override
 	public byte[] getJobFrame(final String jobId, final int frameNumber) throws IOException {
 		synchronized (spooledJobs) {
 			ScheduledJob job = spooledJobs.get(jobId);

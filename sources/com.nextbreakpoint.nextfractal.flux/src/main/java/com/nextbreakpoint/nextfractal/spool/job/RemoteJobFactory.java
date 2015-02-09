@@ -23,22 +23,37 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.spool;
+package com.nextbreakpoint.nextfractal.spool.job;
 
+import java.io.File;
+
+import com.nextbreakpoint.nextfractal.core.Files;
 import com.nextbreakpoint.nextfractal.core.Worker;
-import com.nextbreakpoint.nextfractal.net.DiscoveryService;
+import com.nextbreakpoint.nextfractal.spool.JobFactory;
+import com.nextbreakpoint.nextfractal.spool.JobListener;
 
 /**
  * @author Andrea Medeghini
  */
-public class JXTASpoolJobService extends AbstractSpoolJobService {
+public class RemoteJobFactory extends JobFactory<RemoteJob> {
+	private final File tmpDir;
+	private final Worker worker;
+
 	/**
-	 * @param serviceId
-	 * @param discoveryService
-	 * @param jobFactory
-	 * @param worker
+	 * @param tmpDir
 	 */
-	public JXTASpoolJobService(final int serviceId, final DiscoveryService discoveryService, final JobFactory<? extends DistributedSpoolJobInterface> jobFactory, final Worker worker) {
-		super(serviceId, "JXTAProcessor", discoveryService, jobFactory, worker);
+	public RemoteJobFactory(final File tmpDir, final Worker worker) {
+		this.worker = worker;
+		this.tmpDir = tmpDir;
+		tmpDir.mkdirs();
+		Files.deleteFiles(tmpDir);
+	}
+
+	/**
+	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobFactory#createJob(java.lang.String, com.nextbreakpoint.nextfractal.queue.spool.JobListener)
+	 */
+	@Override
+	public RemoteJob createJob(final String jobId, final JobListener listener) {
+		return new RemoteJob(tmpDir, worker, jobId, listener);
 	}
 }

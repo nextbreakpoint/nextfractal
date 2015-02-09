@@ -23,38 +23,59 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.spool.factory;
+package com.nextbreakpoint.nextfractal.spool;
 
-import java.io.File;
+import java.io.IOException;
 
-import com.nextbreakpoint.nextfractal.core.Files;
-import com.nextbreakpoint.nextfractal.core.Worker;
-import com.nextbreakpoint.nextfractal.spool.JobFactory;
-import com.nextbreakpoint.nextfractal.spool.JobListener;
-import com.nextbreakpoint.nextfractal.spool.job.DistributedJob;
+import com.nextbreakpoint.nextfractal.core.ChunkedRandomAccessFile;
 
 /**
  * @author Andrea Medeghini
  */
-public class DistributedJobFactory implements JobFactory<DistributedJob> {
-	private final File tmpDir;
-	private final Worker worker;
-
+public interface RemoteJobInterface extends JobInterface {
 	/**
-	 * @param tmpDir
+	 * @param jobData
 	 */
-	public DistributedJobFactory(final File tmpDir, final Worker worker) {
-		this.worker = worker;
-		this.tmpDir = tmpDir;
-		tmpDir.mkdirs();
-		Files.deleteFiles(tmpDir);
-	}
+	public void setJobData(byte[] jobData);
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobFactory#createJob(java.lang.String, com.nextbreakpoint.nextfractal.queue.spool.JobListener)
+	 * @return
+	 */
+	public byte[] getJobData();
+
+	/**
+	 * @param job
 	 */
 	@Override
-	public DistributedJob createJob(final String jobId, final JobListener listener) {
-		return new DistributedJob(tmpDir, worker, jobId, listener);
-	}
+	public void setJobDataRow(JobData job);
+
+	/**
+	 * @return
+	 */
+	@Override
+	public JobData getJobDataRow();
+
+	/**
+	 * @return
+	 * @throws IOException
+	 */
+	public StoreData getStoreData() throws IOException;
+
+	/**
+	 * @param data
+	 * @throws IOException
+	 */
+	public void setStoreData(StoreData data) throws IOException;
+
+	/**
+	 * @param frameNumber
+	 */
+	@Override
+	public void setFirstFrameNumber(int frameNumber);
+
+	/**
+	 * @return
+	 * @throws IOException
+	 */
+	public ChunkedRandomAccessFile getRAF() throws IOException;
 }

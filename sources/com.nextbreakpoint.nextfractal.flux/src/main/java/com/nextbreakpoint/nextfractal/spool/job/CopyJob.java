@@ -32,20 +32,17 @@ import java.util.concurrent.ThreadFactory;
 import com.nextbreakpoint.nextfractal.core.ChunkedRandomAccessFile;
 import com.nextbreakpoint.nextfractal.core.DefaultThreadFactory;
 import com.nextbreakpoint.nextfractal.core.Worker;
-import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotData;
-import com.nextbreakpoint.nextfractal.mandelbrot.service.FileService;
-import com.nextbreakpoint.nextfractal.spool.DefaultJobData;
 import com.nextbreakpoint.nextfractal.spool.JobData;
 import com.nextbreakpoint.nextfractal.spool.JobInterface;
 import com.nextbreakpoint.nextfractal.spool.JobListener;
-import com.nextbreakpoint.nextfractal.spool.LibraryService;
-import com.nextbreakpoint.nextfractal.spool.SpoolData;
+import com.nextbreakpoint.nextfractal.spool.StoreData;
+import com.nextbreakpoint.nextfractal.spool.StoreService;
 
 /**
  * @author Andrea Medeghini
  */
-public class CopyProcessSpoolJob implements JobInterface {
-	private static final ThreadFactory factory = new DefaultThreadFactory("CopyProcessSpoolJob Task", true, Thread.MIN_PRIORITY);
+public class CopyJob implements JobInterface {
+	private static final ThreadFactory factory = new DefaultThreadFactory("CopyJob Task", true, Thread.MIN_PRIORITY);
 	private final JobListener listener;
 	private final String jobId;
 	private volatile long lastUpdate;
@@ -54,7 +51,7 @@ public class CopyProcessSpoolJob implements JobInterface {
 	private volatile boolean terminated;
 	private volatile JobData jobDataRow;
 	private volatile Thread thread;
-	private final LibraryService service;
+	private final StoreService<?> service;
 	private int firstFrameNumber;
 	private final Worker worker;
 
@@ -64,7 +61,7 @@ public class CopyProcessSpoolJob implements JobInterface {
 	 * @param jobId
 	 * @param listener
 	 */
-	public CopyProcessSpoolJob(final LibraryService service, final Worker worker, final String jobId, final JobListener listener) {
+	public CopyJob(final StoreService<?> service, final Worker worker, final String jobId, final JobListener listener) {
 		lastUpdate = System.currentTimeMillis();
 		this.listener = listener;
 		this.service = service;
@@ -145,18 +142,16 @@ public class CopyProcessSpoolJob implements JobInterface {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.queue.spool.SpoolJobInterface#getSpoolData()
+	 * @see com.nextbreakpoint.nextfractal.queue.spool.SpoolJobInterface#getStoreData()
 	 */
 	@Override
-	public synchronized SpoolData getSpoolData() throws IOException {
+	public synchronized StoreData getStoreData() throws IOException {
 		if (jobDataRow == null) {
 			throw new IllegalStateException();
 		}
 		try {
 			final InputStream is = service.getClipInputStream(jobDataRow.getClipId());
-			FileService service = new FileService();
-			MandelbrotData data = service.loadFromStream(is);
-			return new SpoolData(data);
+			return service.getSpoolData(is);
 		}
 		catch (final Exception e) {
 			throw new IOException(e.getMessage());
@@ -220,7 +215,7 @@ public class CopyProcessSpoolJob implements JobInterface {
 				started = true;
 				aborted = false;
 				terminated = false;
-				worker.addTask(new StartedTask(new DefaultJobData(jobDataRow)));
+				worker.addTask(new StartedTask(new JobData(jobDataRow)));
 				thread = factory.newThread(new RenderTask());
 				thread.start();
 			}
@@ -247,7 +242,7 @@ public class CopyProcessSpoolJob implements JobInterface {
 			}
 			started = false;
 			thread = null;
-			worker.addTask(new StoppedTask(new DefaultJobData(jobDataRow)));
+			worker.addTask(new StoppedTask(new JobData(jobDataRow)));
 		}
 	}
 
@@ -265,7 +260,7 @@ public class CopyProcessSpoolJob implements JobInterface {
 	@Override
 	public synchronized void dispose() {
 		if (jobDataRow != null) {
-			worker.addTask(new DisposedTask(new DefaultJobData(jobDataRow)));
+			worker.addTask(new DisposedTask(new JobData(jobDataRow)));
 		}
 	}
 
@@ -326,7 +321,7 @@ public class CopyProcessSpoolJob implements JobInterface {
 						Thread.yield();
 					}
 					setFrameNumber(0);
-					worker.addTask(new StatusChangedTask(new DefaultJobData(jobDataRow)));
+					worker.addTask(new StatusChangedTask(new JobData(jobDataRow)));
 				}
 				else if (jobDataRow.getFrameNumber() < frameCount) {
 					final int tx = jobDataRow.getTileOffsetX();
@@ -359,7 +354,7 @@ public class CopyProcessSpoolJob implements JobInterface {
 							Thread.yield();
 						}
 						setFrameNumber(frameNumber);
-						worker.addTask(new StatusChangedTask(new DefaultJobData(jobDataRow)));
+						worker.addTask(new StatusChangedTask(new JobData(jobDataRow)));
 						if (aborted) {
 							break;
 						}
@@ -386,12 +381,12 @@ public class CopyProcessSpoolJob implements JobInterface {
 					}
 				}
 			}
-			synchronized (CopyProcessSpoolJob.this) {
+			synchronized (CopyJob.this) {
 				if (!aborted) {
 					terminated = true;
 				}
 				if (terminated) {
-					worker.addTask(new TerminatedTask(new DefaultJobData(jobDataRow)));
+					worker.addTask(new TerminatedTask(new JobData(jobDataRow)));
 				}
 			}
 		}

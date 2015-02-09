@@ -1,10 +1,11 @@
 package com.nextbreakpoint.nextfractal.spool;
 
 import java.io.InputStream;
+import java.io.OutputStream;
 
 import com.nextbreakpoint.nextfractal.core.ChunkedRandomAccessFile;
 
-public class LibraryService {
+public abstract class StoreService<T extends StoreData> {
 
 	public InputStream getClipInputStream(int clipId) {
 		// TODO Auto-generated method stub
@@ -26,4 +27,15 @@ public class LibraryService {
 		return null;
 	}
 
+	/**
+	 * @param is
+	 * @return
+	 */
+	public abstract StoreData getSpoolData(InputStream is);
+
+	/**
+	 * @param os
+	 * @param data
+	 */
+	public abstract void saveToStream(OutputStream os, StoreData data);
 }

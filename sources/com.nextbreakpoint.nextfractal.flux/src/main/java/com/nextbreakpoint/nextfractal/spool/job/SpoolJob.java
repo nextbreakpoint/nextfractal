@@ -30,19 +30,16 @@ import java.io.InputStream;
 
 import com.nextbreakpoint.nextfractal.core.ChunkedRandomAccessFile;
 import com.nextbreakpoint.nextfractal.core.Worker;
-import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotData;
-import com.nextbreakpoint.nextfractal.mandelbrot.service.FileService;
-import com.nextbreakpoint.nextfractal.spool.DefaultJobData;
-import com.nextbreakpoint.nextfractal.spool.DistributedSpoolJobInterface;
 import com.nextbreakpoint.nextfractal.spool.JobData;
 import com.nextbreakpoint.nextfractal.spool.JobListener;
-import com.nextbreakpoint.nextfractal.spool.LibraryService;
-import com.nextbreakpoint.nextfractal.spool.SpoolData;
+import com.nextbreakpoint.nextfractal.spool.SpoolJobInterface;
+import com.nextbreakpoint.nextfractal.spool.StoreData;
+import com.nextbreakpoint.nextfractal.spool.StoreService;
 
 /**
  * @author Andrea Medeghini
  */
-public class DistributedSpoolJob implements DistributedSpoolJobInterface {
+public class SpoolJob implements SpoolJobInterface {
 	private final JobListener listener;
 	private final String jobId;
 	private String remoteJobId;
@@ -51,7 +48,7 @@ public class DistributedSpoolJob implements DistributedSpoolJobInterface {
 	private volatile boolean aborted;
 	private volatile boolean terminated;
 	private volatile JobData jobDataRow;
-	private final LibraryService service;
+	private final StoreService<?> service;
 	private int firstFrameNumber;
 	private final Worker worker;
 
@@ -61,7 +58,7 @@ public class DistributedSpoolJob implements DistributedSpoolJobInterface {
 	 * @param jobId
 	 * @param listener
 	 */
-	public DistributedSpoolJob(final LibraryService service, final Worker worker, final String jobId, final JobListener listener) {
+	public SpoolJob(final StoreService<?> service, final Worker worker, final String jobId, final JobListener listener) {
 		lastUpdate = System.currentTimeMillis();
 		this.listener = listener;
 		this.service = service;
@@ -98,7 +95,7 @@ public class DistributedSpoolJob implements DistributedSpoolJobInterface {
 		}
 		jobDataRow.setFrameNumber(frameNumber);
 		lastUpdate = System.currentTimeMillis();
-		worker.addTask(new StatusChangedTask(new DefaultJobData(jobDataRow)));
+		worker.addTask(new StatusChangedTask(new JobData(jobDataRow)));
 	}
 
 	/**
@@ -133,7 +130,7 @@ public class DistributedSpoolJob implements DistributedSpoolJobInterface {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobInterface#setJobDataRow(JobData)
+	 * @see com.nextbreakpoint.nextfractal.spool.JobInterface#setJobDataRow(com.nextbreakpoint.nextfractal.spool.JobData)
 	 */
 	@Override
 	public synchronized void setJobDataRow(final JobData jobDataRow) {
@@ -147,7 +144,7 @@ public class DistributedSpoolJob implements DistributedSpoolJobInterface {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.queue.spool.DistributedSpoolJobInterface#getRAF()
+	 * @see com.nextbreakpoint.nextfractal.spool.SpoolJobInterface#getRAF()
 	 */
 	@Override
 	public synchronized ChunkedRandomAccessFile getRAF() throws IOException {
@@ -158,18 +155,16 @@ public class DistributedSpoolJob implements DistributedSpoolJobInterface {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.queue.spool.SpoolJobInterface#getSpoolData()
+	 * @see com.nextbreakpoint.nextfractal.spool.JobInterface#getStoreData()
 	 */
 	@Override
-	public synchronized SpoolData getSpoolData() throws IOException {
+	public synchronized StoreData getStoreData() throws IOException {
 		if (jobDataRow == null) {
 			throw new IllegalStateException();
 		}
 		try {
 			final InputStream is = service.getClipInputStream(jobDataRow.getClipId());
-			FileService service = new FileService();
-			MandelbrotData data = service.loadFromStream(is);
-			return new SpoolData(data);
+			return service.getSpoolData(is);
 		}
 		catch (final Exception e) {
 			throw new IOException(e.getMessage());
@@ -224,7 +219,7 @@ public class DistributedSpoolJob implements DistributedSpoolJobInterface {
 				started = true;
 				aborted = false;
 				terminated = false;
-				worker.addTask(new StartedTask(new DefaultJobData(jobDataRow)));
+				worker.addTask(new StartedTask(new JobData(jobDataRow)));
 			}
 		}
 	}
@@ -240,7 +235,7 @@ public class DistributedSpoolJob implements DistributedSpoolJobInterface {
 			}
 			started = false;
 			if (started) {
-				worker.addTask(new StoppedTask(new DefaultJobData(jobDataRow)));
+				worker.addTask(new StoppedTask(new JobData(jobDataRow)));
 			}
 		}
 	}
@@ -259,7 +254,7 @@ public class DistributedSpoolJob implements DistributedSpoolJobInterface {
 	@Override
 	public synchronized void dispose() {
 		if (jobDataRow != null) {
-			worker.addTask(new DisposedTask(new DefaultJobData(jobDataRow)));
+			worker.addTask(new DisposedTask(new JobData(jobDataRow)));
 		}
 	}
 
@@ -288,7 +283,7 @@ public class DistributedSpoolJob implements DistributedSpoolJobInterface {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.queue.spool.DistributedSpoolJobInterface#getRemoteJobId()
+	 * @see com.nextbreakpoint.nextfractal.SpoolJobInterface.spool.DistributedSpoolJobInterface#getRemoteJobId()
 	 */
 	@Override
 	public synchronized String getRemoteJobId() {
@@ -296,7 +291,7 @@ public class DistributedSpoolJob implements DistributedSpoolJobInterface {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.queue.spool.DistributedSpoolJobInterface#setRemoteJobId(java.lang.String)
+	 * @see com.nextbreakpoint.nextfractal.SpoolJobInterface.spool.DistributedSpoolJobInterface#setRemoteJobId(java.lang.String)
 	 */
 	@Override
 	public synchronized void setRemoteJobId(final String remoteJobId) {
@@ -304,7 +299,7 @@ public class DistributedSpoolJob implements DistributedSpoolJobInterface {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.queue.spool.DistributedSpoolJobInterface#getTotalFrames()
+	 * @see com.nextbreakpoint.nextfractal.SpoolJobInterface.spool.DistributedSpoolJobInterface#getTotalFrames()
 	 */
 	@Override
 	public synchronized int getTotalFrames() {
@@ -324,7 +319,7 @@ public class DistributedSpoolJob implements DistributedSpoolJobInterface {
 		}
 		terminated = true;
 		aborted = false;
-		worker.addTask(new TerminatedTask(new DefaultJobData(jobDataRow)));
+		worker.addTask(new TerminatedTask(new JobData(jobDataRow)));
 	}
 
 	private class StatusChangedTask implements Runnable {

@@ -25,24 +25,16 @@
  */
 package com.nextbreakpoint.nextfractal.spool;
 
-import java.io.IOException;
+import com.nextbreakpoint.nextfractal.core.Worker;
+import com.nextbreakpoint.nextfractal.spool.job.LocalJob;
+import com.nextbreakpoint.nextfractal.spool.job.LocalJobFactory;
+import com.nextbreakpoint.nextfractal.spool.jobservice.DefaultJobService;
 
 /**
  * @author Andrea Medeghini
  */
-public interface DistributedJobService<T extends DistributedJobInterface> extends JobService<T> {
-	/**
-	 * @param jobId
-	 * @param frameNumber
-	 * @return
-	 */
-	public byte[] getJobFrame(String jobId, int frameNumber) throws IOException;
-
-	/**
-	 * @param jobId
-	 * @param clip
-	 * @param data
-	 * @throws IOException
-	 */
-	public void setJobFrame(String jobId, SpoolData clip, byte[] data) throws IOException;
+public class LocalSpool {
+	public JobService<LocalJob> getJobService(final int serviceId, final StoreService service, final Worker worker) {
+		return new DefaultJobService<LocalJob>(serviceId, "LocalProcessor", new LocalJobFactory(service, worker), worker);
+	}
 }

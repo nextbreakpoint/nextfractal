@@ -23,25 +23,25 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.spool.factory;
+package com.nextbreakpoint.nextfractal.spool.job;
 
 import com.nextbreakpoint.nextfractal.core.Worker;
 import com.nextbreakpoint.nextfractal.spool.JobFactory;
 import com.nextbreakpoint.nextfractal.spool.JobListener;
-import com.nextbreakpoint.nextfractal.spool.LibraryService;
-import com.nextbreakpoint.nextfractal.spool.job.CopyProcessSpoolJob;
+import com.nextbreakpoint.nextfractal.spool.StoreService;
 
 /**
  * @author Andrea Medeghini
  */
-public class CopyProcessSpoolJobFactory implements JobFactory<CopyProcessSpoolJob> {
-	private final LibraryService service;
+public class SpoolJobFactory extends JobFactory<SpoolJob> {
+	private final StoreService service;
 	private final Worker worker;
 
 	/**
 	 * @param service
+	 * @param worker
 	 */
-	public CopyProcessSpoolJobFactory(final LibraryService service, final Worker worker) {
+	public SpoolJobFactory(final StoreService service, final Worker worker) {
 		this.service = service;
 		this.worker = worker;
 	}
@@ -50,7 +50,7 @@ public class CopyProcessSpoolJobFactory implements JobFactory<CopyProcessSpoolJo
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobFactory#createJob(java.lang.String, com.nextbreakpoint.nextfractal.queue.spool.JobListener)
 	 */
 	@Override
-	public CopyProcessSpoolJob createJob(final String jobId, final JobListener listener) {
-		return new CopyProcessSpoolJob(service, worker, jobId, listener);
+	public SpoolJob createJob(final String jobId, final JobListener listener) {
+		return new SpoolJob(service, worker, jobId, listener);
 	}
 }

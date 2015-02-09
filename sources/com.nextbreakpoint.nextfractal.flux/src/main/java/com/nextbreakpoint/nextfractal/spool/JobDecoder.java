@@ -30,30 +30,29 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 
-import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotData;
-import com.nextbreakpoint.nextfractal.mandelbrot.service.FileService;
-
 /**
  * @author Andrea Medeghini
  */
-public class DistributedJobDecoder {
+public class JobDecoder {
+	private StoreService<?> storeService;
 	private JobData jobDataRow;
-	private SpoolData clip;
+	private StoreData data;
 	private byte[] frameData;
 
 	/**
-	 * @param data
+	 * @param bytes
 	 * @throws Exception
 	 */
-	public DistributedJobDecoder(final byte[] data) throws Exception {
+	public JobDecoder(StoreService<?> storeService, final byte[] bytes) throws Exception {
 		try {
-			final ByteArrayInputStream bais = new ByteArrayInputStream(data);
+			this.storeService = storeService;
+			final ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
 			final ObjectInputStream ois = new ObjectInputStream(bais);
 			byte[] clipData = (byte[]) ois.readObject();
 			final ByteArrayInputStream bais2 = new ByteArrayInputStream(clipData);
 			jobDataRow = (JobData) ois.readObject();
 			frameData = (byte[]) ois.readObject();
-			clip = readClip(bais2);
+			data = readData(bais2);
 			bais2.close();
 			ois.close();
 			bais.close();
@@ -64,16 +63,14 @@ public class DistributedJobDecoder {
 		if (jobDataRow == null) {
 			throw new Exception("An error has happened unmarshalling the data: jobDataRow is null");
 		}
-		if (clip == null) {
-			throw new Exception("An error has happened unmarshalling the data: clip is null");
+		if (bytes == null) {
+			throw new Exception("An error has happened unmarshalling the data: data is null");
 		}
 	}
 
-	private SpoolData readClip(final InputStream is) throws IOException {
+	private StoreData readData(final InputStream is) throws IOException {
 		try {
-			FileService service = new FileService();
-			MandelbrotData data = service.loadFromStream(is);
-			return new SpoolData(data);
+			return storeService.getSpoolData(is);
 		}
 		catch (final Exception e) {
 			throw new IOException(e.getMessage());
@@ -81,10 +78,10 @@ public class DistributedJobDecoder {
 	}
 
 	/**
-	 * @return the clip
+	 * @return
 	 */
-	public SpoolData getClip() {
-		return clip;
+	public StoreData getSpoolData() {
+		return data;
 	}
 
 	/**

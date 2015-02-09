@@ -23,7 +23,7 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.spool;
+package com.nextbreakpoint.nextfractal.spool.jobservice;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -51,12 +51,24 @@ import com.nextbreakpoint.nextfractal.net.ServiceListener;
 import com.nextbreakpoint.nextfractal.net.ServiceMessage;
 import com.nextbreakpoint.nextfractal.net.ServiceSession;
 import com.nextbreakpoint.nextfractal.net.SessionHandler;
+import com.nextbreakpoint.nextfractal.spool.JobData;
+import com.nextbreakpoint.nextfractal.spool.JobEncoder;
+import com.nextbreakpoint.nextfractal.spool.JobEvent;
+import com.nextbreakpoint.nextfractal.spool.JobFactory;
+import com.nextbreakpoint.nextfractal.spool.JobInterface;
+import com.nextbreakpoint.nextfractal.spool.JobListener;
+import com.nextbreakpoint.nextfractal.spool.JobService;
+import com.nextbreakpoint.nextfractal.spool.JobServiceListener;
+import com.nextbreakpoint.nextfractal.spool.JobStatus;
+import com.nextbreakpoint.nextfractal.spool.StoreData;
+import com.nextbreakpoint.nextfractal.spool.SpoolJobInterface;
+import com.nextbreakpoint.nextfractal.spool.StoreService;
 
 /**
  * @author Andrea Medeghini
  */
-public abstract class AbstractSpoolJobService implements JobService<JobInterface> {
-	private static final Logger logger = Logger.getLogger(AbstractSpoolJobService.class.getName());
+public class JXTAJobService implements JobService<JobInterface> {
+	private static final Logger logger = Logger.getLogger(JXTAJobService.class.getName());
 	private static final long CLEANUP_POLLINGTIME = 60 * 1000L;
 	private static final long DISPATCHER_POLLINGTIME = 10 * 1000L;
 	private static final long KEEPALIVE_POLLINGTIME = 60 * 1000L;
@@ -76,8 +88,9 @@ public abstract class AbstractSpoolJobService implements JobService<JobInterface
 	private final HashMap<String, ScheduledJob> spooledJobs = new HashMap<String, ScheduledJob>();
 	private final Set<JobSession> sessionHandlers = new LinkedHashSet<JobSession>();
 	private volatile List<ServiceEndpoint> services = new LinkedList<ServiceEndpoint>();
+	private final StoreService<StoreData> storeService;
 	private final DiscoveryService discoveryService;
-	private final JobFactory<? extends DistributedSpoolJobInterface> jobFactory;
+	private final JobFactory<? extends SpoolJobInterface> jobFactory;
 	private final Object dispatchMonitor = new Object();
 	private final Object serviceMonitor = new Object();
 	private final Object messageMonitor = new Object();
@@ -100,7 +113,8 @@ public abstract class AbstractSpoolJobService implements JobService<JobInterface
 	 * @param jobFactory
 	 * @param worker
 	 */
-	public AbstractSpoolJobService(final int serviceId, final String serviceName, final DiscoveryService discoveryService, final JobFactory<? extends DistributedSpoolJobInterface> jobFactory, final Worker worker) {
+	public JXTAJobService(final int serviceId, final String serviceName, final DiscoveryService discoveryService, final JobFactory<? extends SpoolJobInterface> jobFactory, final Worker worker, StoreService<StoreData> storeService) {
+		this.storeService = storeService;
 		this.serviceId = serviceId;
 		this.serviceName = serviceName;
 		this.discoveryService = discoveryService;
@@ -245,7 +259,7 @@ public abstract class AbstractSpoolJobService implements JobService<JobInterface
 			throw new NullPointerException("listener == null");
 		}
 		synchronized (spooledJobs) {
-			final DistributedSpoolJobInterface job = jobFactory.createJob(JobIDFactory.newJobId(), listener);
+			final SpoolJobInterface job = jobFactory.createJob(JobFactory.newJobId(), listener);
 			spooledJobs.put(job.getJobId(), new ScheduledJob(job));
 			return job.getJobId();
 		}
@@ -824,7 +838,7 @@ public abstract class AbstractSpoolJobService implements JobService<JobInterface
 		/**
 		 * @param job
 		 */
-		public ScheduledJob(final DistributedSpoolJobInterface job) {
+		public ScheduledJob(final SpoolJobInterface job) {
 			jobSession = new JobSession(job);
 		}
 
@@ -915,7 +929,7 @@ public abstract class AbstractSpoolJobService implements JobService<JobInterface
 		/**
 		 * @return the job
 		 */
-		public DistributedSpoolJobInterface getJob() {
+		public SpoolJobInterface getJob() {
 			return jobSession.job;
 		}
 
@@ -952,7 +966,7 @@ public abstract class AbstractSpoolJobService implements JobService<JobInterface
 		private final List<ServiceMessage> messages = new LinkedList<ServiceMessage>();
 		private final List<Status> requiredStatusList = new LinkedList<Status>();
 		private final List<JobEvent> jobEventList = new LinkedList<JobEvent>();
-		private final DistributedSpoolJobInterface job;
+		private final SpoolJobInterface job;
 		private volatile ServiceSession session;
 		private volatile long lastSentMessage;
 		private volatile Status status = INITIALIZED_STATUS;
@@ -963,7 +977,7 @@ public abstract class AbstractSpoolJobService implements JobService<JobInterface
 		/**
 		 * @param job
 		 */
-		public JobSession(final DistributedSpoolJobInterface job) {
+		public JobSession(final SpoolJobInterface job) {
 			this.job = job;
 			synchronized (sessionHandlers) {
 				sessionHandlers.add(this);
@@ -1207,7 +1221,7 @@ public abstract class AbstractSpoolJobService implements JobService<JobInterface
 			}
 		}
 
-		private RequestMessage createPutRequest(final DistributedSpoolJobInterface job) throws Exception {
+		private RequestMessage createPutRequest(final SpoolJobInterface job) throws Exception {
 			final RequestMessage message = new RequestMessage();
 			message.setRequestType(RequestMessage.TYPE_PUT);
 			if (!session.isLocalSession()) {
@@ -1238,7 +1252,7 @@ public abstract class AbstractSpoolJobService implements JobService<JobInterface
 						}
 					}
 				}
-				final DistributedJobEncoder encoder = new DistributedJobEncoder(job.getSpoolData(), job.getJobDataRow(), jobData);
+				final JobEncoder encoder = new JobEncoder(storeService, job.getStoreData(), job.getJobDataRow(), jobData);
 				message.setUserData(new Object[] { job.getRemoteJobId(), job.getFrameNumber(), encoder.getBytes() });
 			}
 			else {
@@ -1258,21 +1272,21 @@ public abstract class AbstractSpoolJobService implements JobService<JobInterface
 			return message;
 		}
 
-		private RequestMessage createGetRequest(final DistributedSpoolJobInterface job, final int frameNumber) throws Exception {
+		private RequestMessage createGetRequest(final SpoolJobInterface job, final int frameNumber) throws Exception {
 			final RequestMessage message = new RequestMessage();
 			message.setRequestType(RequestMessage.TYPE_GET);
 			message.setUserData(new Object[] { job.getRemoteJobId(), frameNumber });
 			return message;
 		}
 
-		private RequestMessage createAbortRequest(final DistributedSpoolJobInterface job) throws Exception {
+		private RequestMessage createAbortRequest(final SpoolJobInterface job) throws Exception {
 			final RequestMessage message = new RequestMessage();
 			message.setRequestType(RequestMessage.TYPE_ABORT);
 			message.setUserData(job.getRemoteJobId());
 			return message;
 		}
 
-		private RequestMessage createDeleteRequest(final DistributedSpoolJobInterface job) throws Exception {
+		private RequestMessage createDeleteRequest(final SpoolJobInterface job) throws Exception {
 			final RequestMessage message = new RequestMessage();
 			message.setRequestType(RequestMessage.TYPE_DELETE);
 			message.setUserData(job.getRemoteJobId());
