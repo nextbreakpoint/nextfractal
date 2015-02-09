@@ -1,4 +1,4 @@
-package com.nextbreakpoint.nextfractal.mandelbrot.renderer.impl;
+package com.nextbreakpoint.nextfractal.mandelbrot.renderer.xaos;
 
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererData;
 

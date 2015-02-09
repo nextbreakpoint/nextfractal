@@ -69,7 +69,11 @@ public class RendererTest {
 			});
 			renderer.runTask();
 			renderer.waitForTasks();
-			Assert.assertArrayEquals(new Float[] { 0.0f, 0.2f, 0.4f, 0.6f, 0.8f, 1.0f }, output.toArray(new Float[0]));
+			float[] v = new float[output.size()];
+			for (int i = 0; i < v.length; i++) {
+				v[i] = output.get(i);
+			}
+			Assert.assertArrayEquals(new float[] { 0.0f, 0.2f, 0.4f, 0.6f, 0.8f, 1.0f }, v, 0.01f);
 		} catch (Exception e) {
 			Assert.fail(e.getMessage());
 		} finally {

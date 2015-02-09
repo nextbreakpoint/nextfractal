@@ -32,7 +32,7 @@ import java.util.concurrent.ThreadFactory;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Color;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Orbit;
-import com.nextbreakpoint.nextfractal.mandelbrot.renderer.impl.XaosRenderer;
+import com.nextbreakpoint.nextfractal.mandelbrot.renderer.xaos.XaosRenderer;
 import com.nextbreakpoint.nextfractal.render.RenderFactory;
 import com.nextbreakpoint.nextfractal.render.RenderGraphicsContext;
 

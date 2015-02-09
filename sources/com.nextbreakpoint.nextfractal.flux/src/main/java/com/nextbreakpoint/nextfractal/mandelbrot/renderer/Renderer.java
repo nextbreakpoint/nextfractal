@@ -321,6 +321,9 @@ public class Renderer {
 		final RendererState p = rendererData.newPoint();
 		int offset = 0;
 		int c = 0;
+		float dy = height / 5.0f;
+		float ty = dy;
+		didChanged(0, rendererData.getPixels());
 		for (int y = 0; y < height; y++) {
 			for (int x = 0; x < width; x++) {
 				px.set(rendererData.point());
@@ -339,9 +342,10 @@ public class Renderer {
 				aborted = true;
 				break;
 			}
-			if (y % 20 == 0) {
-				progress = (float)y / (float)height;
+			if (y >= ty) {
+				progress = y / (float)(height - 1);
 				didChanged(progress, rendererData.getPixels());
+				ty += dy;
 			}
 			Thread.yield();
 		}
@@ -441,11 +445,9 @@ public class Renderer {
 			backBuffer.getBuffer().update(pixels);
 		}
 		swap();
-		Platform.runLater(() -> {
-			if (rendererDelegate != null) {
-				rendererDelegate.didChanged(progress);
-			}
-		});
+		if (rendererDelegate != null) {
+			rendererDelegate.didChanged(progress);
+		}
 	}
 
 	/**

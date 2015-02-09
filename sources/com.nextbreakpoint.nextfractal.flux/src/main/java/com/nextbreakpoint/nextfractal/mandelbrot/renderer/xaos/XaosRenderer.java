@@ -25,7 +25,7 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.mandelbrot.renderer.impl;
+package com.nextbreakpoint.nextfractal.mandelbrot.renderer.xaos;
 
 import java.util.concurrent.ThreadFactory;
 import java.util.logging.Logger;
