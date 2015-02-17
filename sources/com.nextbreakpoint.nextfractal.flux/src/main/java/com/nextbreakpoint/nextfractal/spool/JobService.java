@@ -25,6 +25,8 @@
  */
 package com.nextbreakpoint.nextfractal.spool;
 
+import java.io.IOException;
+
 /**
  * @author Andrea Medeghini
  */
@@ -48,6 +50,10 @@ public interface JobService<T extends JobInterface> {
 	 * @return
 	 */
 	public int getJobCount();
+
+	public void setJobFrame(final String jobId, final byte[] data) throws IOException;
+
+	public byte[] getJobFrame(final String jobId, final int frameNumber) throws IOException;
 
 	/**
 	 * @param jobId

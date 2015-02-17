@@ -28,8 +28,6 @@ package com.nextbreakpoint.nextfractal.mandelbrot.renderer;
 import java.nio.IntBuffer;
 import java.util.concurrent.ThreadFactory;
 
-import javafx.application.Platform;
-
 import com.nextbreakpoint.nextfractal.core.Worker;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Color;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.MutableNumber;

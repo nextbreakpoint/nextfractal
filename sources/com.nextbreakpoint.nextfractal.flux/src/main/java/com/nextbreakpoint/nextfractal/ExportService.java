@@ -54,12 +54,16 @@ public class ExportService {
 		return tileSize;
 	}
 
-	public synchronized void runSession(ExportSession exportSession) {
+	public void runSession(ExportSession exportSession) {
+		addSession(exportSession);
+	}
+
+	private synchronized void addSession(ExportSession exportSession) {
 		sessions.add(exportSession);
 		notify();
 	}
 
-	protected synchronized ExportSession findOneSession() {
+	private synchronized ExportSession findOneSession() {
 		for (ExportSession session : sessions) {
 			if (!session.isSuspended()) {
 				return session;
@@ -68,35 +72,44 @@ public class ExportService {
 		return null;
 	}
 
-	protected synchronized void terminateSession(ExportSession exportSession) {
+	private synchronized void terminateSession(ExportSession exportSession) {
 		sessions.remove(exportSession);
+		exportSession.dispose();
 	}
 
-	protected synchronized void waitForSession() {
+	private synchronized void waitForSession() {
 		try {
 			wait(1000);
 		} catch (InterruptedException e) {
 		}
 	}
 
-	protected void processSession(ExportSession session) {
+	private void processSession(ExportSession session) {
+		processJobs(session);
+		session.updateState();
+		if (session.isTerminated()) {
+			terminateSession(session);
+		}
+	}
+
+	private void processJobs(ExportSession session) {
 		for (ExportJob job : session.getJobs()) {
 			if (isSessionValid(session)) {
 				break;
 			}
 			processJob(job);
 		}
-		session.updateState();
 	}
 
 	private boolean isSessionValid(ExportSession session) {
 		return session.isTerminated() || session.isSuspended();
 	}
 
-	protected void processJob(ExportJob job) {
+	private void processJob(ExportJob job) {
 		// TODO Auto-generated method stub
 		// 1. wait until a thread is available to process the job
 		// 2. pass the job to the thread
+		
 	}
 
 	private class ProcessSessions implements Runnable {
@@ -112,9 +125,6 @@ public class ExportService {
 				}
 				if (running && exportSession != null) {
 					processSession(exportSession);
-					if (exportSession.isTerminated()) {
-						terminateSession(exportSession);
-					}
 				}
 			}
 		}

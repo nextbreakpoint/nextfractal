@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
+import com.nextbreakpoint.nextfractal.encoder.Encoder;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererSize;
 
 public class ExportSession {
@@ -13,26 +14,28 @@ public class ExportSession {
 	private final List<ExportSessionListener> listeners = new ArrayList<>();
 	private final List<ExportJob> jobs = new ArrayList<>();
 	private final String sessioinId;
-	private final ExportService exportService;
-	private final DataEncoder encoder;
+	private final Encoder encoder;
 	private final RendererSize size;
+	private final String pluginId;
 	private final Object data;
 	private final File tmpFile;
 	private final File file;
 	private float progress;
 	private float quality;
 	private float frameRate;
-	private int frame;
+	private int frameNumber;
+	private int tileSize;
 	private volatile boolean terminated;
 	private volatile boolean suspended;
 
-	public ExportSession(ExportService exportService, File file, File tmpFile, Object data, RendererSize size, DataEncoder encoder) {
+	public ExportSession(String pluginId, Object data, File file, File tmpFile, RendererSize size, int tileSize, Encoder encoder) {
+		this.pluginId = pluginId;
 		this.tmpFile = tmpFile;
 		this.file = file;
 		this.data = data;
 		this.size = size;
 		this.encoder = encoder;
-		this.exportService = exportService;
+		this.tileSize = tileSize;
 		sessioinId = UUID.randomUUID().toString();
 		jobs.addAll(createJobs());
 	}
@@ -49,7 +52,7 @@ public class ExportSession {
 		return size;
 	}
 
-	public DataEncoder getEncoder() {
+	public Encoder getEncoder() {
 		return encoder;
 	}
 
@@ -77,18 +80,22 @@ public class ExportSession {
 	}
 
 	public void start() {
+		// TODO Auto-generated method stub
 		fireStateChanged();
 	}
 
 	public void stop() {
+		// TODO Auto-generated method stub
 		fireStateChanged();
 	}
 
 	public void suspend() {
+		// TODO Auto-generated method stub
 		fireStateChanged();
 	}
 
 	public void resume() {
+		// TODO Auto-generated method stub
 		fireStateChanged();
 	}
 
@@ -98,7 +105,6 @@ public class ExportSession {
 
 	protected List<ExportJob> createJobs() {
 		final List<ExportJob> jobs = new ArrayList<ExportJob>();
-		final int tileSize = exportService.getTileSize();
 		final int frameWidth = size.getWidth();
 		final int frameHeight = size.getHeight();
 		final int nx = frameWidth / tileSize;
@@ -110,8 +116,9 @@ public class ExportSession {
 				for (int ty = 0; ty < ny; ty++) {
 					final ExportJob job = createJob();
 					final ExportProfile profile = new ExportProfile();
+					profile.setPluginId(pluginId);
 					profile.setQuality(quality);
-					profile.setFrameNumber(frame);
+					profile.setFrameNumber(frameNumber);
 					profile.setFrameRate(frameRate);
 					profile.setFrameWidth(frameWidth);
 					profile.setFrameHeight(frameHeight);
@@ -130,8 +137,9 @@ public class ExportSession {
 			for (int ty = 0; ty < ny; ty++) {
 				final ExportJob job = createJob();
 				final ExportProfile profile = new ExportProfile();
+				profile.setPluginId(pluginId);
 				profile.setQuality(quality);
-				profile.setFrameNumber(frame);
+				profile.setFrameNumber(frameNumber);
 				profile.setFrameRate(frameRate);
 				profile.setFrameWidth(frameWidth);
 				profile.setFrameHeight(frameHeight);
@@ -149,8 +157,9 @@ public class ExportSession {
 			for (int tx = 0; tx < nx; tx++) {
 				final ExportJob job = createJob();
 				final ExportProfile profile = new ExportProfile();
+				profile.setPluginId(pluginId);
 				profile.setQuality(quality);
-				profile.setFrameNumber(frame);
+				profile.setFrameNumber(frameNumber);
 				profile.setFrameRate(frameRate);
 				profile.setFrameWidth(frameWidth);
 				profile.setFrameHeight(frameHeight);
@@ -167,8 +176,9 @@ public class ExportSession {
 		if (rx > 0 && ry > 0) {
 			final ExportJob job = createJob();
 			final ExportProfile profile = new ExportProfile();
+			profile.setPluginId(pluginId);
 			profile.setQuality(quality);
-			profile.setFrameNumber(frame);
+			profile.setFrameNumber(frameNumber);
 			profile.setFrameRate(frameRate);
 			profile.setFrameWidth(frameWidth);
 			profile.setFrameHeight(frameHeight);
@@ -185,7 +195,7 @@ public class ExportSession {
 	}
 
 	protected ExportJob createJob() {
-		final ExportJob job = new ExportJob(this);
+		final ExportJob job = new ExportJob();
 		return job;
 	}
 
@@ -211,10 +221,18 @@ public class ExportSession {
 
 	public void updateState() {
 		// TODO Auto-generated method stub
-		
 	}
 
 	public File getTmpFile() {
 		return tmpFile;
+	}
+
+	public String getPluginId() {
+		return pluginId;
+	}
+
+	public void dispose() {
+		listeners.clear();
+		jobs.clear();
 	}
 }

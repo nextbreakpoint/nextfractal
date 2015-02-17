@@ -1,4 +1,4 @@
-package com.nextbreakpoint.nextfractal.mandelbrot.service;
+package com.nextbreakpoint.nextfractal.mandelbrot;
 
 import java.io.File;
 import java.io.InputStream;
@@ -6,9 +6,7 @@ import java.io.OutputStream;
 
 import javax.xml.bind.JAXB;
 
-import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotData;
-
-public class FileService {
+public class DataStore {
 	public MandelbrotData loadFromFile(File path) throws Exception {
 		try {
 			return JAXB.unmarshal(path, MandelbrotData.class);

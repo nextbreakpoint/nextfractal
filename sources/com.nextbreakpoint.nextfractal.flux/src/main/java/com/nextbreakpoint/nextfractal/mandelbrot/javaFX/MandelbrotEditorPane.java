@@ -21,13 +21,13 @@ import com.nextbreakpoint.nextfractal.FractalSession;
 import com.nextbreakpoint.nextfractal.FractalSessionListener;
 import com.nextbreakpoint.nextfractal.core.DefaultThreadFactory;
 import com.nextbreakpoint.nextfractal.core.Worker;
+import com.nextbreakpoint.nextfractal.mandelbrot.DataStore;
 import com.nextbreakpoint.nextfractal.mandelbrot.ImageGenerator;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotData;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotSession;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererPoint;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererSize;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererTile;
-import com.nextbreakpoint.nextfractal.mandelbrot.service.FileService;
 import com.nextbreakpoint.nextfractal.render.javaFX.JavaFXRenderFactory;
 
 public class MandelbrotEditorPane extends BorderPane {
@@ -168,7 +168,7 @@ public class MandelbrotEditorPane extends BorderPane {
 			if (file != null) {
 				currentFile = file;
 				try {
-					FileService service = new FileService();
+					DataStore service = new DataStore();
 					MandelbrotData data = service.loadFromFile(currentFile);
 					logger.info(data.toString());
 					getMandelbrotSession().setData(data);
@@ -185,7 +185,7 @@ public class MandelbrotEditorPane extends BorderPane {
 			if (file != null) {
 				currentFile = file;
 				try {
-					FileService service = new FileService();
+					DataStore service = new DataStore();
 					MandelbrotData data = getMandelbrotSession().getData();
 					logger.info(data.toString());
 					service.saveToFile(currentFile, data);

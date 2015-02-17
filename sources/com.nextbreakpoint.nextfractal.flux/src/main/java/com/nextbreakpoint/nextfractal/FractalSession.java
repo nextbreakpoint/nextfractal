@@ -2,25 +2,15 @@ package com.nextbreakpoint.nextfractal;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-
-import com.nextbreakpoint.nextfractal.encoder.PNGImageEncoder;
-import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotData;
-import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererSize;
 
 public abstract class FractalSession {
 	protected final List<FractalSessionListener> listeners = new ArrayList<>();
 	protected final List<ExportSession> sessions = new ArrayList<>();
-	private ExportService exportService;
 	private String packageName;
 	private String className;
 	private File outDir;
 
-	public FractalSession(ExportService exportService) {
-		this.exportService = exportService;
-	}
-	
 	public String getPackageName() {
 		return packageName;
 	}
@@ -57,16 +47,14 @@ public abstract class FractalSession {
 		this.outDir = outDir;
 	}
 
-	protected void fireSessionAdded(ExportSession session) {
-		for (FractalSessionListener listener : listeners) {
-			listener.sessionAdded(this, session);
-		}
+	public void addExportSession(ExportSession exportSession) {
+		sessions.add(exportSession);
+		fireSessionAdded(exportSession);
 	}
-	
-	protected void fireSessionRemoved(ExportSession session) {
-		for (FractalSessionListener listener : listeners) {
-			listener.sessionRemoved(this, session);
-		}
+
+	public void removeExportSession(ExportSession exportSession) {
+		sessions.remove(exportSession);
+		fireSessionRemoved(exportSession);
 	}
 
 	protected void fireDataChanged() {
@@ -87,28 +75,15 @@ public abstract class FractalSession {
 		}
 	}
 
-	public void addExportSession(ExportSession exportSession) {
-		sessions.add(exportSession);
-		fireSessionAdded(exportSession);
-	}
-
-	public void removeExportSession(ExportSession exportSession) {
-		sessions.remove(exportSession);
-		fireSessionAdded(exportSession);
-	}
-
-	public void getSessions() {
-		Collections.unmodifiableCollection(sessions);
-	}
-
-	public ExportSession createExportSession(File file, File tmpFile, Object data, RendererSize size) throws SessionException {
-		if (!(data instanceof MandelbrotData)) {
-			throw new SessionException("Unsupported data");
+	protected void fireSessionAdded(ExportSession session) {
+		for (FractalSessionListener listener : listeners) {
+			listener.sessionAdded(this, session);
 		}
-		try {
-			return new ExportSession(exportService, file, tmpFile, data, size, new DataEncoder(new PNGImageEncoder()));
-		} catch (Throwable e) {
-			throw new SessionException("Failed to create session", e);
+	}
+	
+	protected void fireSessionRemoved(ExportSession session) {
+		for (FractalSessionListener listener : listeners) {
+			listener.sessionRemoved(this, session);
 		}
 	}
 }

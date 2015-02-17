@@ -25,6 +25,7 @@
  */
 package com.nextbreakpoint.nextfractal.spool.job;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
@@ -45,8 +46,10 @@ public class SpoolJob implements SpoolJobInterface {
 	private volatile boolean aborted;
 	private volatile boolean terminated;
 	private volatile JobProfile profile;
+	private volatile byte[] jobData;
 	private int firstFrameNumber;
 	private final Worker worker;
+	private File tmpPath;
 
 	/**
 	 * @param service
@@ -59,6 +62,7 @@ public class SpoolJob implements SpoolJobInterface {
 		this.listener = listener;
 		this.worker = worker;
 		this.jobId = jobId;
+		this.tmpPath = null;//TODO tmpPath
 	}
 
 	/**
@@ -116,6 +120,24 @@ public class SpoolJob implements SpoolJobInterface {
 		return firstFrameNumber;
 	}
 
+	@Override
+	public synchronized byte[] getJobData() {
+		return jobData;
+	}
+
+	@Override
+	public synchronized void setJobData(final byte[] jobData) {
+		this.jobData = jobData;
+	}
+
+	@Override
+	public synchronized RandomAccessFile getRAF() throws IOException {
+		if (profile == null) {
+			throw new IllegalStateException();
+		}
+		return null;
+	}
+
 	/**
 	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobInterface#getJobProfile()
 	 */
@@ -136,17 +158,6 @@ public class SpoolJob implements SpoolJobInterface {
 			throw new IllegalArgumentException();
 		}
 		this.profile = profile;
-	}
-
-	/**
-	 * @see com.nextbreakpoint.nextfractal.spool.SpoolJobInterface#getRAF()
-	 */
-	@Override
-	public synchronized RandomAccessFile getRAF() throws IOException {
-		if (profile == null) {
-			throw new IllegalStateException();
-		}
-		return new RandomAccessFile(profile.getProfile().getTmpFile(), "rw");
 	}
 
 	/**

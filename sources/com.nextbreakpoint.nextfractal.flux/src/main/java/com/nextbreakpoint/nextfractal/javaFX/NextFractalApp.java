@@ -13,8 +13,10 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
 import com.nextbreakpoint.nextfractal.ExportService;
+import com.nextbreakpoint.nextfractal.ExportSession;
 import com.nextbreakpoint.nextfractal.FractalFactory;
 import com.nextbreakpoint.nextfractal.FractalSession;
+import com.nextbreakpoint.nextfractal.FractalSessionListener;
 import com.nextbreakpoint.nextfractal.core.DefaultThreadFactory;
 import com.nextbreakpoint.nextfractal.render.javaFX.JavaFXRenderFactory;
 
@@ -71,7 +73,7 @@ public class NextFractalApp extends Application {
 		JavaFXRenderFactory renderFactory = new JavaFXRenderFactory();
         ExportService exportService = new ExportService(threadFactory, renderFactory, 200);
         exportService.start();
-        FractalSession session = createFractalSession(exportService, pluginId);
+        FractalSession session = createFractalSession(pluginId);
         session.setPackageName(packageName);
         session.setClassName(className);
         session.setOutDir(outDir);
@@ -93,6 +95,28 @@ public class NextFractalApp extends Application {
 			@Override
 			public void handle(WindowEvent event) {
 				session.terminate();
+			}
+		});
+		session.addSessionListener(new FractalSessionListener() {
+			@Override
+			public void viewChanged(FractalSession session, boolean zoom) {
+			}
+			
+			@Override
+			public void dataChanged(FractalSession session) {
+			}
+			
+			@Override
+			public void terminate(FractalSession session) {
+			}
+			
+			@Override
+			public void sessionAdded(FractalSession session, ExportSession exportSession) {
+				exportService.runSession(exportSession);
+			}
+			
+			@Override
+			public void sessionRemoved(FractalSession session, ExportSession exportSession) {
 			}
 		});
     }
@@ -123,12 +147,12 @@ public class NextFractalApp extends Application {
 		return null;
 	}
 
-	private FractalSession createFractalSession(ExportService exportService, String pluginId) {
+	private FractalSession createFractalSession(String pluginId) {
 		final ServiceLoader<? extends FractalFactory> plugins = ServiceLoader.load(FractalFactory.class);
 		for (FractalFactory plugin : plugins) {
 			try {
 				if (pluginId.equals(plugin.getId())) {
-					return plugin.createSession(exportService);
+					return plugin.createSession();
 				}
 			} catch (Exception e) {
 			}

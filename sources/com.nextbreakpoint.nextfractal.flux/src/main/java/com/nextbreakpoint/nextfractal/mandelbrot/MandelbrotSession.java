@@ -6,10 +6,6 @@ import com.nextbreakpoint.nextfractal.FractalSession;
 public class MandelbrotSession extends FractalSession {
 	private MandelbrotData data = new MandelbrotData();
 
-	public MandelbrotSession(ExportService exportService) {
-		super(exportService);
-	}
-	
 	public String getSource() {
 		return data.getSource();
 	}

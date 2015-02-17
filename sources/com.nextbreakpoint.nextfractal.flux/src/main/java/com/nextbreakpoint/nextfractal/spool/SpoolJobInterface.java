@@ -25,9 +25,6 @@
  */
 package com.nextbreakpoint.nextfractal.spool;
 
-import java.io.IOException;
-import java.io.RandomAccessFile;
-
 /**
  * @author Andrea Medeghini
  */
@@ -41,17 +38,6 @@ public interface SpoolJobInterface extends JobInterface {
 	 * @param jobId
 	 */
 	public void setRemoteJobId(String remoteJobId);
-
-	/**
-	 * @return
-	 * @throws IOException
-	 */
-	public RandomAccessFile getRAF() throws IOException;
-
-	/**
-	 * @return
-	 */
-	public int getTotalFrames();
 
 	/**
 	 * 

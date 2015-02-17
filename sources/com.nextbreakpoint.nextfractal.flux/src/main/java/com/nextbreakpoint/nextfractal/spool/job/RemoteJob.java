@@ -33,14 +33,14 @@ import java.util.concurrent.ThreadFactory;
 import com.nextbreakpoint.nextfractal.core.DefaultThreadFactory;
 import com.nextbreakpoint.nextfractal.core.Files;
 import com.nextbreakpoint.nextfractal.core.Worker;
+import com.nextbreakpoint.nextfractal.spool.JobInterface;
 import com.nextbreakpoint.nextfractal.spool.JobListener;
 import com.nextbreakpoint.nextfractal.spool.JobProfile;
-import com.nextbreakpoint.nextfractal.spool.RemoteJobInterface;
 
 /**
  * @author Andrea Medeghini
  */
-public class RemoteJob implements RemoteJobInterface {
+public class RemoteJob implements JobInterface {
 	private static final ThreadFactory factory = new DefaultThreadFactory("RemoteJob Task", true, Thread.MIN_PRIORITY);
 	private static final int CHUNK_LENGTH = 1024 * 10000;
 	private final JobListener listener;
@@ -286,6 +286,17 @@ public class RemoteJob implements RemoteJobInterface {
 	@Override
 	public synchronized boolean isTerminated() {
 		return terminated;
+	}
+
+	/**
+	 * @see com.nextbreakpoint.nextfractal.SpoolJobInterface.spool.DistributedSpoolJobInterface#getTotalFrames()
+	 */
+	@Override
+	public synchronized int getTotalFrames() {
+		if (profile == null) {
+			throw new IllegalStateException();
+		}
+		return (int)Math.floor(profile.getProfile().getFrameRate() > 0 ? ((profile.getProfile().getStopTime() - profile.getProfile().getStartTime()) * profile.getProfile().getFrameRate()) : 1);
 	}
 
 	private class RenderTask implements Runnable {

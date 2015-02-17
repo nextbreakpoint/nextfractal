@@ -41,11 +41,11 @@ import com.nextbreakpoint.nextfractal.net.ServiceSession;
 import com.nextbreakpoint.nextfractal.net.SessionHandler;
 import com.nextbreakpoint.nextfractal.spool.JobDecoder;
 import com.nextbreakpoint.nextfractal.spool.JobEvent;
+import com.nextbreakpoint.nextfractal.spool.JobInterface;
 import com.nextbreakpoint.nextfractal.spool.JobListener;
 import com.nextbreakpoint.nextfractal.spool.JobProfile;
+import com.nextbreakpoint.nextfractal.spool.JobService;
 import com.nextbreakpoint.nextfractal.spool.JobStatus;
-import com.nextbreakpoint.nextfractal.spool.RemoteJobInterface;
-import com.nextbreakpoint.nextfractal.spool.jobservice.RemoteJobService;
 
 /**
  * @author Andrea Medeghini
@@ -55,7 +55,7 @@ public class RemoteServiceProcessor implements ServiceProcessor {
 	private static final ThreadFactory factory = new DefaultThreadFactory("Thread", true, Thread.MIN_PRIORITY);
 	private final List<ServiceTask> tasks = new LinkedList<ServiceTask>();
 	private final Object monitor = new Object();
-	private final RemoteJobService<? extends RemoteJobInterface> jobService;
+	private final JobService<? extends JobInterface> jobService;
 	private Thread thread;
 	private boolean running;
 	private boolean dirty;
@@ -64,7 +64,7 @@ public class RemoteServiceProcessor implements ServiceProcessor {
 	 * @param jobService
 	 * @param maxJobCount
 	 */
-	public RemoteServiceProcessor(final RemoteJobService<? extends RemoteJobInterface> jobService, final int maxJobCount) {
+	public RemoteServiceProcessor(final JobService<? extends JobInterface> jobService, final int maxJobCount) {
 		this.jobService = jobService;
 	}
 
@@ -75,7 +75,7 @@ public class RemoteServiceProcessor implements ServiceProcessor {
 	public void start() {
 		jobService.start();
 		if (thread == null) {
-			thread = factory.newThread(new ServiceHandler());
+			thread = factory.newThread(new ServiceRunnable());
 			thread.setName(jobService.getName() + " Executor Thread");
 			running = true;
 			thread.start();
@@ -108,7 +108,7 @@ public class RemoteServiceProcessor implements ServiceProcessor {
 		return new RemoteSessionHandler();
 	}
 
-	private class ServiceHandler implements Runnable {
+	private class ServiceRunnable implements Runnable {
 		/**
 		 * @see java.lang.Runnable#run()
 		 */
@@ -319,7 +319,7 @@ public class RemoteServiceProcessor implements ServiceProcessor {
 			final byte[] data = (byte[]) ((Object[]) request.getUserData())[2];
 			final JobDecoder decoder = new JobDecoder(data);
 			jobService.setJobData(jobId, decoder.getProfile(), frameNumber);
-			jobService.setJobFrame(jobId, decoder.getProfile(), decoder.getFrameData());
+			jobService.setJobFrame(jobId, decoder.getFrameData());
 			jobService.runJob(jobId);
 			synchronized (tasks) {
 				final ResponseMessage response = createPutResponse(request, jobId);

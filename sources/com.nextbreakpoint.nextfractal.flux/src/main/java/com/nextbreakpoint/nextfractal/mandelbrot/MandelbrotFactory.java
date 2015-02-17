@@ -20,8 +20,8 @@ public class MandelbrotFactory implements FractalFactory {
 	 * @see com.nextbreakpoint.nextfractal.FractalFactory#createSession(com.nextbreakpoint.nextfractal.ExportService)
 	 */
 	@Override
-	public FractalSession createSession(ExportService exportService) {
-		MandelbrotSession session = new MandelbrotSession(exportService);
+	public FractalSession createSession() {
+		MandelbrotSession session = new MandelbrotSession();
         session.setSource(getInitialSource());
 		return session;
 	}

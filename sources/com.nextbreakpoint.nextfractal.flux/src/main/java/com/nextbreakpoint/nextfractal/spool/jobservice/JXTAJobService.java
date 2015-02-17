@@ -178,6 +178,60 @@ public class JXTAJobService implements JobService<JobInterface> {
 		}
 	}
 
+	public void setJobFrame(final String jobId, final byte[] data) throws IOException {
+		synchronized (spooledJobs) {
+			ScheduledJob job = spooledJobs.get(jobId);
+			if (job != null) {
+				job.getJob().setJobData(data);
+			}
+		}
+	}
+
+	public byte[] getJobFrame(final String jobId, final int frameNumber) throws IOException {
+		synchronized (spooledJobs) {
+			ScheduledJob job = spooledJobs.get(jobId);
+			if (job != null) {
+				final int tw = job.getJob().getJobProfile().getProfile().getTileWidth();
+				final int th = job.getJob().getJobProfile().getProfile().getTileHeight();
+				final int bw = job.getJob().getJobProfile().getProfile().getTileBorderWidth();
+				final int bh = job.getJob().getJobProfile().getProfile().getTileBorderHeight();
+				final int sw = tw + 2 * bw;
+				final int sh = th + 2 * bh;
+				final byte[] data = new byte[sw * sh * 4];
+				RandomAccessFile raf = null;
+				try {
+					if (job.getJob().getFirstFrameNumber() > 0) {
+						final long pos = (frameNumber - job.getJob().getFirstFrameNumber() - 1) * sw * sh * 4;
+						raf = job.getJob().getRAF();
+						raf.seek(pos);
+						raf.readFully(data);
+					}
+					else {
+						final long pos = frameNumber * sw * sh * 4;
+						raf = job.getJob().getRAF();
+						raf.seek(pos);
+						raf.readFully(data);
+					}
+				}
+				catch (final IOException e) {
+					// System.out.println("firstFrame = " + job.getFirstFrameNumber() + ", frame = " + frameNumber + ", length = " + raf.length() / (sw * sh * 4));
+					e.printStackTrace();
+				}
+				finally {
+					if (raf != null) {
+						try {
+							raf.close();
+						}
+						catch (final IOException e) {
+						}
+					}
+				}
+				return data;
+			}
+		}
+		return null;
+	}
+
 	private boolean isBusy() {
 		return (scheduledJobs.size() != 0) || (startedJobs.size() != 0) || (terminatedJobs.size() != 0);
 	}

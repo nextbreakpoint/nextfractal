@@ -40,6 +40,7 @@ import com.nextbreakpoint.nextfractal.core.DefaultThreadFactory;
 import com.nextbreakpoint.nextfractal.core.DoubleVector4D;
 import com.nextbreakpoint.nextfractal.core.IntegerVector4D;
 import com.nextbreakpoint.nextfractal.core.Worker;
+import com.nextbreakpoint.nextfractal.encoder.PNGImageEncoder;
 import com.nextbreakpoint.nextfractal.javaFX.AdvancedTextField;
 import com.nextbreakpoint.nextfractal.mandelbrot.ImageGenerator;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotData;
@@ -442,7 +443,7 @@ public class MandelbrotRenderPane extends BorderPane {
 			RendererCoordinator coordinator = coordinators[i];
 			if (coordinator != null && coordinator.isPixelsChanged()) {
 				RenderGraphicsContext gc = renderFactory.createGraphicsContext(canvas.getGraphicsContext2D());
-				coordinator.drawImage(gc);
+//				coordinator.drawImage(gc);
 			}
 		}
 	}
@@ -466,7 +467,7 @@ public class MandelbrotRenderPane extends BorderPane {
 						public void run() {
 							try {
 								File tmpFile = File.createTempFile("nextfractal-profile-", ".dat");
-								ExportSession exportSession = session.createExportSession(file, tmpFile, data, rendererSize);
+								ExportSession exportSession = new ExportSession("Mandelbrot", data, file, tmpFile, rendererSize, 200, new PNGImageEncoder());
 								logger.info("Export session created: " + exportSession.getSessionId());
 								session.addExportSession(exportSession);
 								exportSession.start();

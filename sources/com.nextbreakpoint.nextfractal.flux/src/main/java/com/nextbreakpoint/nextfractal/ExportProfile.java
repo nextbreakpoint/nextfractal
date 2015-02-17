@@ -1,9 +1,6 @@
 package com.nextbreakpoint.nextfractal;
 
-import java.io.File;
-
 public class ExportProfile {
-	private File tmpFile;
 	private float quality;
 	private float frameRate;
 	private int frameNumber;
@@ -15,6 +12,7 @@ public class ExportProfile {
 	private int tileOffsetY;
 	private int tileBorderWidth;
 	private int tileBorderHeight;
+	private String pluginId;
 	private Object data;
 
 	public float getQuality() {
@@ -105,14 +103,6 @@ public class ExportProfile {
 		this.tileBorderHeight = tileBorderHeight;
 	}
 
-	public File getTmpFile() {
-		return tmpFile;
-	}
-
-	public void setTmpFile(File tmpFile) {
-		this.tmpFile = tmpFile;
-	}
-
 	public Object getData() {
 		return data;
 	}
@@ -127,5 +117,13 @@ public class ExportProfile {
 
 	public double getStopTime() {
 		return 0;
+	}
+
+	public String getPluginId() {
+		return pluginId;
+	}
+
+	public void setPluginId(String pluginId) {
+		this.pluginId = pluginId;
 	}
 }

@@ -25,6 +25,9 @@
  */
 package com.nextbreakpoint.nextfractal.spool;
 
+import java.io.IOException;
+import java.io.RandomAccessFile;
+
 /**
  * @author Andrea Medeghini
  */
@@ -108,4 +111,25 @@ public interface JobInterface {
 	 * @param frameNumber
 	 */
 	public void setFirstFrameNumber(int frameNumber);
+
+	/**
+	 * @return
+	 */
+	public int getTotalFrames();
+
+	/**
+	 * @param jobData
+	 */
+	public void setJobData(byte[] jobData);
+
+	/**
+	 * @return
+	 */
+	public byte[] getJobData();
+
+	/**
+	 * @return
+	 * @throws IOException
+	 */
+	public RandomAccessFile getRAF() throws IOException;
 }

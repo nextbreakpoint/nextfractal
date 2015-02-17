@@ -25,6 +25,9 @@
  */
 package com.nextbreakpoint.nextfractal.spool.job;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.util.concurrent.ThreadFactory;
 
 import com.nextbreakpoint.nextfractal.core.DefaultThreadFactory;
@@ -45,9 +48,11 @@ public class LocalJob implements JobInterface {
 	private volatile boolean aborted;
 	private volatile boolean terminated;
 	private volatile JobProfile profile;
+	private volatile byte[] jobData;
 	private volatile Thread thread;
 	private int firstFrameNumber;
 	private final Worker worker;
+	private File tmpPath;
 
 	/**
 	 * @param service
@@ -60,6 +65,7 @@ public class LocalJob implements JobInterface {
 		this.listener = listener;
 		this.worker = worker;
 		this.jobId = jobId;
+		this.tmpPath = null;//TODO tmpPath
 	}
 
 	/**
@@ -110,6 +116,24 @@ public class LocalJob implements JobInterface {
 	@Override
 	public synchronized int getFirstFrameNumber() {
 		return firstFrameNumber;
+	}
+
+	@Override
+	public synchronized byte[] getJobData() {
+		return jobData;
+	}
+
+	@Override
+	public synchronized void setJobData(final byte[] jobData) {
+		if (thread != null) {
+			throw new IllegalStateException();
+		}
+		this.jobData = jobData;
+	}
+
+	@Override
+	public synchronized RandomAccessFile getRAF() throws IOException {
+		return new RandomAccessFile(tmpPath, "rw");
 	}
 
 	/**
@@ -262,6 +286,17 @@ public class LocalJob implements JobInterface {
 	@Override
 	public synchronized boolean isTerminated() {
 		return terminated;
+	}
+
+	/**
+	 * @see com.nextbreakpoint.nextfractal.SpoolJobInterface.spool.DistributedSpoolJobInterface#getTotalFrames()
+	 */
+	@Override
+	public synchronized int getTotalFrames() {
+		if (profile == null) {
+			throw new IllegalStateException();
+		}
+		return (int)Math.floor(profile.getProfile().getFrameRate() > 0 ? ((profile.getProfile().getStopTime() - profile.getProfile().getStartTime()) * profile.getProfile().getFrameRate()) : 1);
 	}
 
 	private class RenderTask implements Runnable {
