@@ -26,9 +26,7 @@
 package com.nextbreakpoint.nextfractal.spool;
 
 import java.io.IOException;
-
-import com.nextbreakpoint.nextfractal.core.ChunkedRandomAccessFile;
-import com.nextbreakpoint.nextfractal.spool.store.StoreData;
+import java.io.RandomAccessFile;
 
 /**
  * @author Andrea Medeghini
@@ -45,38 +43,8 @@ public interface RemoteJobInterface extends JobInterface {
 	public byte[] getJobData();
 
 	/**
-	 * @param job
-	 */
-	@Override
-	public void setJobDataRow(JobData job);
-
-	/**
-	 * @return
-	 */
-	@Override
-	public JobData getJobDataRow();
-
-	/**
 	 * @return
 	 * @throws IOException
 	 */
-	public StoreData getStoreData() throws IOException;
-
-	/**
-	 * @param data
-	 * @throws IOException
-	 */
-	public void setStoreData(StoreData data) throws IOException;
-
-	/**
-	 * @param frameNumber
-	 */
-	@Override
-	public void setFirstFrameNumber(int frameNumber);
-
-	/**
-	 * @return
-	 * @throws IOException
-	 */
-	public ChunkedRandomAccessFile getRAF() throws IOException;
+	public RandomAccessFile getRAF() throws IOException;
 }

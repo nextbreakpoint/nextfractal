@@ -25,17 +25,13 @@
  */
 package com.nextbreakpoint.nextfractal.spool.job;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.concurrent.ThreadFactory;
 
 import com.nextbreakpoint.nextfractal.core.DefaultThreadFactory;
 import com.nextbreakpoint.nextfractal.core.Worker;
-import com.nextbreakpoint.nextfractal.spool.JobData;
 import com.nextbreakpoint.nextfractal.spool.JobInterface;
 import com.nextbreakpoint.nextfractal.spool.JobListener;
-import com.nextbreakpoint.nextfractal.spool.store.StoreData;
-import com.nextbreakpoint.nextfractal.spool.store.StoreService;
+import com.nextbreakpoint.nextfractal.spool.JobProfile;
 
 /**
  * @author Andrea Medeghini
@@ -48,9 +44,8 @@ public class LocalJob implements JobInterface {
 	private volatile boolean started;
 	private volatile boolean aborted;
 	private volatile boolean terminated;
-	private volatile JobData jobDataRow;
+	private volatile JobProfile profile;
 	private volatile Thread thread;
-	private final StoreService<?> service;
 	private int firstFrameNumber;
 	private final Worker worker;
 
@@ -60,10 +55,9 @@ public class LocalJob implements JobInterface {
 	 * @param jobId
 	 * @param listener
 	 */
-	public LocalJob(final StoreService<?> service, final Worker worker, final String jobId, final JobListener listener) {
+	public LocalJob(final Worker worker, final String jobId, final JobListener listener) {
 		lastUpdate = System.currentTimeMillis();
 		this.listener = listener;
-		this.service = service;
 		this.worker = worker;
 		this.jobId = jobId;
 	}
@@ -81,17 +75,17 @@ public class LocalJob implements JobInterface {
 	 */
 	@Override
 	public synchronized int getFrameNumber() {
-		if (jobDataRow == null) {
+		if (profile == null) {
 			throw new IllegalStateException();
 		}
-		return jobDataRow.getFrameNumber();
+		return profile.getProfile().getFrameNumber();
 	}
 
 	private void setFrameNumber(final int frameNumber) {
-		if (jobDataRow == null) {
+		if (profile == null) {
 			throw new IllegalStateException();
 		}
-		jobDataRow.setFrameNumber(frameNumber);
+		profile.getProfile().setFrameNumber(frameNumber);
 		lastUpdate = System.currentTimeMillis();
 	}
 
@@ -100,14 +94,14 @@ public class LocalJob implements JobInterface {
 	 */
 	@Override
 	public synchronized void setFirstFrameNumber(final int frameNumber) {
-		if (jobDataRow == null) {
+		if (profile == null) {
 			throw new IllegalStateException();
 		}
 		if (thread != null) {
 			throw new IllegalStateException();
 		}
 		firstFrameNumber = frameNumber;
-		jobDataRow.setFrameNumber(frameNumber);
+		profile.getProfile().setFrameNumber(frameNumber);
 	}
 
 	/**
@@ -119,42 +113,25 @@ public class LocalJob implements JobInterface {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobInterface#getJobDataRow()
+	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobInterface#getJobProfile()
 	 */
 	@Override
-	public synchronized JobData getJobDataRow() {
-		return jobDataRow;
+	public synchronized JobProfile getJobProfile() {
+		return profile;
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobInterface#setJobDataRow(JobData)
+	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobInterface#setJobProfile(JobProfile)
 	 */
 	@Override
-	public synchronized void setJobDataRow(final JobData jobDataRow) {
+	public synchronized void setJobProfile(final JobProfile profile) {
 		if (thread != null) {
 			throw new IllegalStateException();
 		}
-		if (jobDataRow == null) {
+		if (profile == null) {
 			throw new IllegalArgumentException();
 		}
-		this.jobDataRow = jobDataRow;
-	}
-
-	/**
-	 * @see com.nextbreakpoint.nextfractal.queue.spool.SpoolJobInterface#getStoreData()
-	 */
-	@Override
-	public synchronized StoreData getStoreData() throws IOException {
-		if (jobDataRow == null) {
-			throw new IllegalStateException();
-		}
-		try {
-			final InputStream is = service.getClipInputStream(jobDataRow.getClipId());
-			return service.loadStoreData(is);
-		}
-		catch (final Exception e) {
-			throw new IOException(e.getMessage());
-		}
+		this.profile = profile;
 	}
 
 	/**
@@ -166,7 +143,7 @@ public class LocalJob implements JobInterface {
 		builder.append("id = ");
 		builder.append(jobId);
 		builder.append(", frameNumber = ");
-		builder.append(jobDataRow != null ? jobDataRow.getFrameNumber() : "N/A");
+		builder.append(profile != null ? profile.getProfile().getFrameNumber() : "N/A");
 		return builder.toString();
 	}
 
@@ -206,7 +183,7 @@ public class LocalJob implements JobInterface {
 	@Override
 	public void start() {
 		synchronized (this) {
-			if (jobDataRow == null) {
+			if (profile == null) {
 				throw new IllegalStateException();
 			}
 			if (thread == null) {
@@ -214,7 +191,7 @@ public class LocalJob implements JobInterface {
 				started = true;
 				aborted = false;
 				terminated = false;
-				worker.addTask(new StartedTask(new JobData(jobDataRow)));
+				worker.addTask(new StartedTask(profile));
 				thread = factory.newThread(new RenderTask());
 				thread.start();
 			}
@@ -236,12 +213,12 @@ public class LocalJob implements JobInterface {
 			}
 		}
 		synchronized (this) {
-			if (jobDataRow == null) {
+			if (profile == null) {
 				throw new IllegalStateException();
 			}
 			started = false;
 			thread = null;
-			worker.addTask(new StoppedTask(new JobData(jobDataRow)));
+			worker.addTask(new StoppedTask(profile));
 		}
 	}
 
@@ -258,8 +235,8 @@ public class LocalJob implements JobInterface {
 	 */
 	@Override
 	public synchronized void dispose() {
-		if (jobDataRow != null) {
-			worker.addTask(new DisposedTask(new JobData(jobDataRow)));
+		if (profile != null) {
+			worker.addTask(new DisposedTask(profile));
 		}
 	}
 
@@ -301,24 +278,24 @@ public class LocalJob implements JobInterface {
 //			ChunkedRandomAccessFile jobRaf = null;
 //			InputStream clipStream = null;
 //			try {
-//				clipStream = service.getClipInputStream(jobDataRow.getClipId());
+//				clipStream = service.getClipInputStream(profile.getClipId());
 //				final TwisterClipXMLImporter importer = new TwisterClipXMLImporter();
 //				final Document doc = XML.loadDocument(clipStream, "twister-clip.xml");
 //				final MandelbrotStoreData clip = importer.importFromElement(doc.getDocumentElement());
 //				if (clip.getSequenceCount() > 0) {
-//					final int frameCount = (jobDataRow.getStopTime() - jobDataRow.getStartTime()) * jobDataRow.getFrameRate();
+//					final int frameCount = (profile.getStopTime() - profile.getStartTime()) * profile.getFrameRate();
 //					int frameTimeInMillis = 0;
-//					final int tx = jobDataRow.getTileOffsetX();
-//					final int ty = jobDataRow.getTileOffsetY();
-//					final int tw = jobDataRow.getTileWidth();
-//					final int th = jobDataRow.getTileHeight();
-//					final int iw = jobDataRow.getImageWidth();
-//					final int ih = jobDataRow.getImageHeight();
-//					final int bw = jobDataRow.getBorderWidth();
-//					final int bh = jobDataRow.getBorderHeight();
+//					final int tx = profile.getTileOffsetX();
+//					final int ty = profile.getTileOffsetY();
+//					final int tw = profile.getTileWidth();
+//					final int th = profile.getTileHeight();
+//					final int iw = profile.getImageWidth();
+//					final int ih = profile.getImageHeight();
+//					final int bw = profile.getBorderWidth();
+//					final int bh = profile.getBorderHeight();
 //					final int sw = tw + 2 * bw;
 //					final int sh = th + 2 * bh;
-//					if ((jobDataRow.getFrameRate() == 0) || (frameCount == 0)) {
+//					if ((profile.getFrameRate() == 0) || (frameCount == 0)) {
 //						TwisterConfig config = clip.getSequence(0).getInitialConfig();
 //						if (config == null) {
 //							config = clip.getSequence(0).getFinalConfig();
@@ -351,7 +328,7 @@ public class LocalJob implements JobInterface {
 //							renderer.drawSurface(surface.getGraphics2D());
 //							overlayRenderer.drawSurface(surface.getGraphics2D());
 //							final byte[] row = new byte[sw * 4];
-//							jobRaf = service.getJobRandomAccessFile(jobDataRow.getJobId());
+//							jobRaf = service.getJobRandomAccessFile(profile.getJobId());
 //							final int[] data = ((DataBufferInt) surface.getImage().getRaster().getDataBuffer()).getData();
 //							long pos = 0;
 //							for (int j = 0, k = 0; k < sh; k++) {
@@ -368,10 +345,10 @@ public class LocalJob implements JobInterface {
 //								Thread.yield();
 //							}
 //							setFrameNumber(0);
-//							worker.addTask(new StatusChangedTask(new JobData(jobDataRow)));
+//							worker.addTask(new StatusChangedTask(new JobProfile(profile)));
 //						}
 //					}
-//					else if (jobDataRow.getFrameNumber() < frameCount) {
+//					else if (profile.getFrameNumber() < frameCount) {
 //						surface = new Surface(sw, sh);
 //						surface.getGraphics2D().setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
 //						surface.getGraphics2D().setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
@@ -387,12 +364,12 @@ public class LocalJob implements JobInterface {
 //						renderer.setRenderFactory(new Java2DRenderFactory());
 //						renderer.setRenderingHints(hints);
 //						renderer.setTile(new Tile(new IntegerVector2D(iw, ih), new IntegerVector2D(tw, th), new IntegerVector2D(tx, ty), new IntegerVector2D(bw, bh)));
-//						jobRaf = service.getJobRandomAccessFile(jobDataRow.getJobId());
+//						jobRaf = service.getJobRandomAccessFile(profile.getJobId());
 //						final byte[] row = new byte[sw * 4];
 //						final int[] data = ((DataBufferInt) surface.getImage().getRaster().getDataBuffer()).getData();
 //						int startFrameNumber = 0;
-//						if (jobDataRow.getFrameNumber() > 0) {
-//							long pos = jobDataRow.getFrameNumber() * sw * sh * 4;
+//						if (profile.getFrameNumber() > 0) {
+//							long pos = profile.getFrameNumber() * sw * sh * 4;
 //							for (int j = 0, k = 0; k < sh; k++) {
 //								jobRaf.seek(pos);
 //								jobRaf.readFully(row);
@@ -403,15 +380,15 @@ public class LocalJob implements JobInterface {
 //								}
 //								pos += row.length;
 //							}
-//							startFrameNumber = jobDataRow.getFrameNumber() + 1;
-//							frameTimeInMillis = jobDataRow.getStartTime() * 1000 + (jobDataRow.getFrameNumber() * 1000) / jobDataRow.getFrameRate();
+//							startFrameNumber = profile.getFrameNumber() + 1;
+//							frameTimeInMillis = profile.getStartTime() * 1000 + (profile.getFrameNumber() * 1000) / profile.getFrameRate();
 //							controller.redoAction(frameTimeInMillis, false);
 //							renderer.prepareImage(false);
 //							renderer.render();
 //							renderer.loadSurface(surface);
 //						}
 //						for (int frameNumber = startFrameNumber; frameNumber < frameCount; frameNumber++) {
-//							frameTimeInMillis = jobDataRow.getStartTime() * 1000 + (frameNumber * 1000) / jobDataRow.getFrameRate();
+//							frameTimeInMillis = profile.getStartTime() * 1000 + (frameNumber * 1000) / profile.getFrameRate();
 //							controller.redoAction(frameTimeInMillis, false);
 //							renderer.prepareImage(false);
 //							renderer.render();
@@ -431,7 +408,7 @@ public class LocalJob implements JobInterface {
 //								Thread.yield();
 //							}
 //							setFrameNumber(frameNumber);
-//							worker.addTask(new StatusChangedTask(new JobData(jobDataRow)));
+//							worker.addTask(new StatusChangedTask(new JobProfile(profile)));
 //							if ((((frameNumber + 1) % MAX_FRAMES) == 0) && ((frameCount - frameNumber - 1) > (MAX_FRAMES / 2))) {
 //								break;
 //							}
@@ -490,19 +467,19 @@ public class LocalJob implements JobInterface {
 //					terminated = true;
 //				}
 //				if (terminated) {
-//					worker.addTask(new TerminatedTask(new JobData(jobDataRow)));
+//					worker.addTask(new TerminatedTask(new JobProfile(profile)));
 //				}
 //			}
 		}
 	}
 
 	private class StatusChangedTask implements Runnable {
-		private final JobData jobData;
+		private final JobProfile jobData;
 
 		/**
 		 * @param jobData
 		 */
-		protected StatusChangedTask(final JobData jobData) {
+		protected StatusChangedTask(final JobProfile jobData) {
 			this.jobData = jobData;
 		}
 
@@ -516,12 +493,12 @@ public class LocalJob implements JobInterface {
 	}
 
 	private class StartedTask implements Runnable {
-		private final JobData jobData;
+		private final JobProfile jobData;
 
 		/**
 		 * @param jobData
 		 */
-		protected StartedTask(final JobData jobData) {
+		protected StartedTask(final JobProfile jobData) {
 			this.jobData = jobData;
 		}
 
@@ -535,12 +512,12 @@ public class LocalJob implements JobInterface {
 	}
 
 	private class StoppedTask implements Runnable {
-		private final JobData jobData;
+		private final JobProfile jobData;
 
 		/**
 		 * @param jobData
 		 */
-		protected StoppedTask(final JobData jobData) {
+		protected StoppedTask(final JobProfile jobData) {
 			this.jobData = jobData;
 		}
 
@@ -554,12 +531,12 @@ public class LocalJob implements JobInterface {
 	}
 
 	private class TerminatedTask implements Runnable {
-		private final JobData jobData;
+		private final JobProfile jobData;
 
 		/**
 		 * @param jobData
 		 */
-		protected TerminatedTask(final JobData jobData) {
+		protected TerminatedTask(final JobProfile jobData) {
 			this.jobData = jobData;
 		}
 
@@ -573,12 +550,12 @@ public class LocalJob implements JobInterface {
 	}
 
 	private class DisposedTask implements Runnable {
-		private final JobData jobData;
+		private final JobProfile jobData;
 
 		/**
 		 * @param jobData
 		 */
-		protected DisposedTask(final JobData jobData) {
+		protected DisposedTask(final JobProfile jobData) {
 			this.jobData = jobData;
 		}
 

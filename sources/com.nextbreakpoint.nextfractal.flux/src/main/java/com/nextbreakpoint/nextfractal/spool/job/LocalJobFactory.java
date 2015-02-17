@@ -28,20 +28,17 @@ package com.nextbreakpoint.nextfractal.spool.job;
 import com.nextbreakpoint.nextfractal.core.Worker;
 import com.nextbreakpoint.nextfractal.spool.JobFactory;
 import com.nextbreakpoint.nextfractal.spool.JobListener;
-import com.nextbreakpoint.nextfractal.spool.store.StoreService;
 
 /**
  * @author Andrea Medeghini
  */
 public class LocalJobFactory extends JobFactory<LocalJob> {
-	private final StoreService service;
 	private final Worker worker;
 
 	/**
 	 * @param service
 	 */
-	public LocalJobFactory(final StoreService service, final Worker worker) {
-		this.service = service;
+	public LocalJobFactory(final Worker worker) {
 		this.worker = worker;
 	}
 
@@ -50,6 +47,6 @@ public class LocalJobFactory extends JobFactory<LocalJob> {
 	 */
 	@Override
 	public LocalJob createJob(final String jobId, final JobListener listener) {
-		return new LocalJob(service, worker, jobId, listener);
+		return new LocalJob(worker, jobId, listener);
 	}
 }

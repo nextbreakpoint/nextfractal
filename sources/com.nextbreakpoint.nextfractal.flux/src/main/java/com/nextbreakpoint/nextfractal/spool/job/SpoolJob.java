@@ -26,15 +26,12 @@
 package com.nextbreakpoint.nextfractal.spool.job;
 
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.RandomAccessFile;
 
-import com.nextbreakpoint.nextfractal.core.ChunkedRandomAccessFile;
 import com.nextbreakpoint.nextfractal.core.Worker;
-import com.nextbreakpoint.nextfractal.spool.JobData;
 import com.nextbreakpoint.nextfractal.spool.JobListener;
+import com.nextbreakpoint.nextfractal.spool.JobProfile;
 import com.nextbreakpoint.nextfractal.spool.SpoolJobInterface;
-import com.nextbreakpoint.nextfractal.spool.store.StoreData;
-import com.nextbreakpoint.nextfractal.spool.store.StoreService;
 
 /**
  * @author Andrea Medeghini
@@ -47,8 +44,7 @@ public class SpoolJob implements SpoolJobInterface {
 	private volatile boolean started;
 	private volatile boolean aborted;
 	private volatile boolean terminated;
-	private volatile JobData jobDataRow;
-	private final StoreService<?> service;
+	private volatile JobProfile profile;
 	private int firstFrameNumber;
 	private final Worker worker;
 
@@ -58,10 +54,9 @@ public class SpoolJob implements SpoolJobInterface {
 	 * @param jobId
 	 * @param listener
 	 */
-	public SpoolJob(final StoreService<?> service, final Worker worker, final String jobId, final JobListener listener) {
+	public SpoolJob(final Worker worker, final String jobId, final JobListener listener) {
 		lastUpdate = System.currentTimeMillis();
 		this.listener = listener;
-		this.service = service;
 		this.worker = worker;
 		this.jobId = jobId;
 	}
@@ -79,10 +74,10 @@ public class SpoolJob implements SpoolJobInterface {
 	 */
 	@Override
 	public synchronized int getFrameNumber() {
-		if (jobDataRow == null) {
+		if (profile == null) {
 			throw new IllegalStateException();
 		}
-		return jobDataRow.getFrameNumber();
+		return profile.getProfile().getFrameNumber();
 	}
 
 	/**
@@ -90,12 +85,12 @@ public class SpoolJob implements SpoolJobInterface {
 	 */
 	@Override
 	public synchronized void setFrameNumber(final int frameNumber) {
-		if (jobDataRow == null) {
+		if (profile == null) {
 			throw new IllegalStateException();
 		}
-		jobDataRow.setFrameNumber(frameNumber);
+		profile.getProfile().setFrameNumber(frameNumber);
 		lastUpdate = System.currentTimeMillis();
-		worker.addTask(new StatusChangedTask(new JobData(jobDataRow)));
+		worker.addTask(new StatusChangedTask(profile));
 	}
 
 	/**
@@ -103,14 +98,14 @@ public class SpoolJob implements SpoolJobInterface {
 	 */
 	@Override
 	public synchronized void setFirstFrameNumber(final int frameNumber) {
-		if (jobDataRow == null) {
+		if (profile == null) {
 			throw new IllegalStateException();
 		}
 		if (started) {
 			throw new IllegalStateException();
 		}
 		firstFrameNumber = frameNumber;
-		jobDataRow.setFrameNumber(frameNumber);
+		profile.getProfile().setFrameNumber(frameNumber);
 	}
 
 	/**
@@ -122,53 +117,36 @@ public class SpoolJob implements SpoolJobInterface {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobInterface#getJobDataRow()
+	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobInterface#getJobProfile()
 	 */
 	@Override
-	public synchronized JobData getJobDataRow() {
-		return jobDataRow;
+	public synchronized JobProfile getJobProfile() {
+		return profile;
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.spool.JobInterface#setJobDataRow(com.nextbreakpoint.nextfractal.spool.JobData)
+	 * @see com.nextbreakpoint.nextfractal.spool.JobInterface#setJobProfile(com.nextbreakpoint.nextfractal.spool.JobProfile)
 	 */
 	@Override
-	public synchronized void setJobDataRow(final JobData jobDataRow) {
+	public synchronized void setJobProfile(final JobProfile profile) {
 		if (started) {
 			throw new IllegalStateException();
 		}
-		if (jobDataRow == null) {
+		if (profile == null) {
 			throw new IllegalArgumentException();
 		}
-		this.jobDataRow = jobDataRow;
+		this.profile = profile;
 	}
 
 	/**
 	 * @see com.nextbreakpoint.nextfractal.spool.SpoolJobInterface#getRAF()
 	 */
 	@Override
-	public synchronized ChunkedRandomAccessFile getRAF() throws IOException {
-		if (jobDataRow == null) {
+	public synchronized RandomAccessFile getRAF() throws IOException {
+		if (profile == null) {
 			throw new IllegalStateException();
 		}
-		return service.getJobRandomAccessFile(jobDataRow.getJobId());
-	}
-
-	/**
-	 * @see com.nextbreakpoint.nextfractal.spool.JobInterface#getStoreData()
-	 */
-	@Override
-	public synchronized StoreData getStoreData() throws IOException {
-		if (jobDataRow == null) {
-			throw new IllegalStateException();
-		}
-		try {
-			final InputStream is = service.getClipInputStream(jobDataRow.getClipId());
-			return service.loadStoreData(is);
-		}
-		catch (final Exception e) {
-			throw new IOException(e.getMessage());
-		}
+		return new RandomAccessFile(profile.getProfile().getTmpFile(), "rw");
 	}
 
 	/**
@@ -180,7 +158,7 @@ public class SpoolJob implements SpoolJobInterface {
 		builder.append("id = ");
 		builder.append(jobId);
 		builder.append(", frameNumber = ");
-		builder.append(jobDataRow != null ? jobDataRow.getFrameNumber() : "N/A");
+		builder.append(profile != null ? profile.getProfile().getFrameNumber() : "N/A");
 		return builder.toString();
 	}
 
@@ -211,7 +189,7 @@ public class SpoolJob implements SpoolJobInterface {
 	@Override
 	public void start() {
 		synchronized (this) {
-			if (jobDataRow == null) {
+			if (profile == null) {
 				throw new IllegalStateException();
 			}
 			if (!started) {
@@ -219,7 +197,7 @@ public class SpoolJob implements SpoolJobInterface {
 				started = true;
 				aborted = false;
 				terminated = false;
-				worker.addTask(new StartedTask(new JobData(jobDataRow)));
+				worker.addTask(new StartedTask(profile));
 			}
 		}
 	}
@@ -230,12 +208,12 @@ public class SpoolJob implements SpoolJobInterface {
 	@Override
 	public void stop() {
 		synchronized (this) {
-			if (jobDataRow == null) {
+			if (profile == null) {
 				throw new IllegalStateException();
 			}
 			started = false;
 			if (started) {
-				worker.addTask(new StoppedTask(new JobData(jobDataRow)));
+				worker.addTask(new StoppedTask(profile));
 			}
 		}
 	}
@@ -253,8 +231,8 @@ public class SpoolJob implements SpoolJobInterface {
 	 */
 	@Override
 	public synchronized void dispose() {
-		if (jobDataRow != null) {
-			worker.addTask(new DisposedTask(new JobData(jobDataRow)));
+		if (profile != null) {
+			worker.addTask(new DisposedTask(profile));
 		}
 	}
 
@@ -303,10 +281,10 @@ public class SpoolJob implements SpoolJobInterface {
 	 */
 	@Override
 	public synchronized int getTotalFrames() {
-		if (jobDataRow == null) {
+		if (profile == null) {
 			throw new IllegalStateException();
 		}
-		return (jobDataRow.getFrameRate() > 0) ? ((jobDataRow.getStopTime() - jobDataRow.getStartTime()) * jobDataRow.getFrameRate()) : 1;
+		return (int)Math.floor(profile.getProfile().getFrameRate() > 0 ? ((profile.getProfile().getStopTime() - profile.getProfile().getStartTime()) * profile.getProfile().getFrameRate()) : 1);
 	}
 
 	/**
@@ -314,21 +292,21 @@ public class SpoolJob implements SpoolJobInterface {
 	 */
 	@Override
 	public synchronized void terminate() {
-		if (jobDataRow == null) {
+		if (profile == null) {
 			throw new IllegalStateException();
 		}
 		terminated = true;
 		aborted = false;
-		worker.addTask(new TerminatedTask(new JobData(jobDataRow)));
+		worker.addTask(new TerminatedTask(profile));
 	}
 
 	private class StatusChangedTask implements Runnable {
-		private final JobData jobData;
+		private final JobProfile jobData;
 
 		/**
 		 * @param jobData
 		 */
-		protected StatusChangedTask(final JobData jobData) {
+		protected StatusChangedTask(final JobProfile jobData) {
 			this.jobData = jobData;
 		}
 
@@ -342,12 +320,12 @@ public class SpoolJob implements SpoolJobInterface {
 	}
 
 	private class StartedTask implements Runnable {
-		private final JobData jobData;
+		private final JobProfile jobData;
 
 		/**
 		 * @param jobData
 		 */
-		protected StartedTask(final JobData jobData) {
+		protected StartedTask(final JobProfile jobData) {
 			this.jobData = jobData;
 		}
 
@@ -361,12 +339,12 @@ public class SpoolJob implements SpoolJobInterface {
 	}
 
 	private class StoppedTask implements Runnable {
-		private final JobData jobData;
+		private final JobProfile jobData;
 
 		/**
 		 * @param jobData
 		 */
-		protected StoppedTask(final JobData jobData) {
+		protected StoppedTask(final JobProfile jobData) {
 			this.jobData = jobData;
 		}
 
@@ -380,12 +358,12 @@ public class SpoolJob implements SpoolJobInterface {
 	}
 
 	private class TerminatedTask implements Runnable {
-		private final JobData jobData;
+		private final JobProfile jobData;
 
 		/**
 		 * @param jobData
 		 */
-		protected TerminatedTask(final JobData jobData) {
+		protected TerminatedTask(final JobProfile jobData) {
 			this.jobData = jobData;
 		}
 
@@ -399,12 +377,12 @@ public class SpoolJob implements SpoolJobInterface {
 	}
 
 	private class DisposedTask implements Runnable {
-		private final JobData jobData;
+		private final JobProfile jobData;
 
 		/**
 		 * @param jobData
 		 */
-		protected DisposedTask(final JobData jobData) {
+		protected DisposedTask(final JobProfile jobData) {
 			this.jobData = jobData;
 		}
 

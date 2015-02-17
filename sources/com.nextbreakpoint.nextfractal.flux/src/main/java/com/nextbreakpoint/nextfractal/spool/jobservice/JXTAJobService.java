@@ -28,6 +28,7 @@ package com.nextbreakpoint.nextfractal.spool.jobservice;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.io.RandomAccessFile;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -38,7 +39,6 @@ import java.util.concurrent.ThreadFactory;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.nextbreakpoint.nextfractal.core.ChunkedRandomAccessFile;
 import com.nextbreakpoint.nextfractal.core.DefaultThreadFactory;
 import com.nextbreakpoint.nextfractal.core.Worker;
 import com.nextbreakpoint.nextfractal.net.DiscoveryService;
@@ -51,18 +51,16 @@ import com.nextbreakpoint.nextfractal.net.ServiceListener;
 import com.nextbreakpoint.nextfractal.net.ServiceMessage;
 import com.nextbreakpoint.nextfractal.net.ServiceSession;
 import com.nextbreakpoint.nextfractal.net.SessionHandler;
-import com.nextbreakpoint.nextfractal.spool.JobData;
 import com.nextbreakpoint.nextfractal.spool.JobEncoder;
 import com.nextbreakpoint.nextfractal.spool.JobEvent;
 import com.nextbreakpoint.nextfractal.spool.JobFactory;
 import com.nextbreakpoint.nextfractal.spool.JobInterface;
 import com.nextbreakpoint.nextfractal.spool.JobListener;
+import com.nextbreakpoint.nextfractal.spool.JobProfile;
 import com.nextbreakpoint.nextfractal.spool.JobService;
 import com.nextbreakpoint.nextfractal.spool.JobServiceListener;
 import com.nextbreakpoint.nextfractal.spool.JobStatus;
 import com.nextbreakpoint.nextfractal.spool.SpoolJobInterface;
-import com.nextbreakpoint.nextfractal.spool.store.StoreData;
-import com.nextbreakpoint.nextfractal.spool.store.StoreService;
 
 /**
  * @author Andrea Medeghini
@@ -88,7 +86,6 @@ public class JXTAJobService implements JobService<JobInterface> {
 	private final HashMap<String, ScheduledJob> spooledJobs = new HashMap<String, ScheduledJob>();
 	private final Set<JobSession> sessionHandlers = new LinkedHashSet<JobSession>();
 	private volatile List<ServiceEndpoint> services = new LinkedList<ServiceEndpoint>();
-	private final StoreService<StoreData> storeService;
 	private final DiscoveryService discoveryService;
 	private final JobFactory<? extends SpoolJobInterface> jobFactory;
 	private final Object dispatchMonitor = new Object();
@@ -113,8 +110,7 @@ public class JXTAJobService implements JobService<JobInterface> {
 	 * @param jobFactory
 	 * @param worker
 	 */
-	public JXTAJobService(final int serviceId, final String serviceName, final DiscoveryService discoveryService, final JobFactory<? extends SpoolJobInterface> jobFactory, final Worker worker, StoreService<StoreData> storeService) {
-		this.storeService = storeService;
+	public JXTAJobService(final int serviceId, final String serviceName, final DiscoveryService discoveryService, final JobFactory<? extends SpoolJobInterface> jobFactory, final Worker worker) {
 		this.serviceId = serviceId;
 		this.serviceName = serviceName;
 		this.discoveryService = discoveryService;
@@ -266,10 +262,10 @@ public class JXTAJobService implements JobService<JobInterface> {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobService#setJobData(java.lang.String, JobData, int)
+	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobService#setJobData(java.lang.String, JobProfile, int)
 	 */
 	@Override
-	public void setJobData(final String jobId, final JobData jobData, final int frameNumber) {
+	public void setJobData(final String jobId, final JobProfile jobData, final int frameNumber) {
 		if (jobId == null) {
 			throw new NullPointerException("jobId == null");
 		}
@@ -279,7 +275,7 @@ public class JXTAJobService implements JobService<JobInterface> {
 		synchronized (spooledJobs) {
 			ScheduledJob job = spooledJobs.get(jobId);
 			if (job != null) {
-				job.getJob().setJobDataRow(jobData);
+				job.getJob().setJobProfile(jobData);
 				job.getJob().setFirstFrameNumber(frameNumber);
 			}
 		}
@@ -1227,13 +1223,13 @@ public class JXTAJobService implements JobService<JobInterface> {
 			if (!session.isLocalSession()) {
 				byte[] jobData = null;
 				if (job.getFrameNumber() > 0) {
-					ChunkedRandomAccessFile raf = job.getRAF();
+					RandomAccessFile raf = job.getRAF();
 					try {
 						raf = job.getRAF();
-						final int tw = job.getJobDataRow().getTileWidth();
-						final int th = job.getJobDataRow().getTileHeight();
-						final int bw = job.getJobDataRow().getBorderWidth();
-						final int bh = job.getJobDataRow().getBorderHeight();
+						final int tw = job.getJobProfile().getProfile().getTileWidth();
+						final int th = job.getJobProfile().getProfile().getTileHeight();
+						final int bw = job.getJobProfile().getProfile().getTileBorderWidth();
+						final int bh = job.getJobProfile().getProfile().getTileBorderHeight();
 						final int sw = tw + 2 * bw;
 						final int sh = th + 2 * bh;
 						final byte[] data = new byte[sw * sh * 4];
@@ -1252,13 +1248,13 @@ public class JXTAJobService implements JobService<JobInterface> {
 						}
 					}
 				}
-				final JobEncoder encoder = new JobEncoder(storeService, job.getStoreData(), job.getJobDataRow(), jobData);
+				final JobEncoder encoder = new JobEncoder(job.getJobProfile(), jobData);
 				message.setUserData(new Object[] { job.getRemoteJobId(), job.getFrameNumber(), encoder.getBytes() });
 			}
 			else {
 				final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 				final ObjectOutputStream oos = new ObjectOutputStream(baos);
-				oos.writeObject(job.getJobDataRow());
+				oos.writeObject(job.getJobProfile());
 				oos.close();
 				baos.close();
 				message.setUserData(new Object[] { job.getRemoteJobId(), job.getFrameNumber(), baos.toByteArray() });
@@ -1304,11 +1300,11 @@ public class JXTAJobService implements JobService<JobInterface> {
 			final int frameNumber = (Integer) ((Object[]) response.getUserData())[1];
 			if (!session.isLocalSession()) {
 				final byte[] data = (byte[]) ((Object[]) response.getUserData())[2];
-				ChunkedRandomAccessFile raf = null;
-				final int tw = job.getJobDataRow().getTileWidth();
-				final int th = job.getJobDataRow().getTileHeight();
-				final int bw = job.getJobDataRow().getBorderWidth();
-				final int bh = job.getJobDataRow().getBorderHeight();
+				RandomAccessFile raf = null;
+				final int tw = job.getJobProfile().getProfile().getTileWidth();
+				final int th = job.getJobProfile().getProfile().getTileHeight();
+				final int bw = job.getJobProfile().getProfile().getTileBorderWidth();
+				final int bh = job.getJobProfile().getProfile().getTileBorderHeight();
 				final int sw = tw + 2 * bw;
 				final int sh = th + 2 * bh;
 				final long pos = frameNumber * sw * sh * 4;

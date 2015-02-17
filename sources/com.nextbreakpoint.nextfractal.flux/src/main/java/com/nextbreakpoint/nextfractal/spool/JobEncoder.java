@@ -29,9 +29,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 
-import com.nextbreakpoint.nextfractal.spool.store.StoreData;
-import com.nextbreakpoint.nextfractal.spool.store.StoreService;
-
 /**
  * @author Andrea Medeghini
  */
@@ -39,37 +36,35 @@ public class JobEncoder {
 	private byte[] bytes;
 
 	/**
-	 * @param storeData
-	 * @param jobDataRow
-	 * @param jobData
+	 * @param profile
+	 * @param frameData
 	 * @throws Exception 
 	 */
-	public JobEncoder(StoreService<?> storeService, final StoreData storeData, final JobData jobDataRow, final byte[] jobData) throws Exception {
-		if (jobDataRow == null) {
-			throw new IllegalArgumentException("jobDataRow is null");
+	public JobEncoder(final JobProfile profile, final byte[] frameData) throws Exception {
+		if (profile == null) {
+			throw new IllegalArgumentException("profile is null");
 		}
-		if (jobData == null) {
-			throw new IllegalArgumentException("jobData is null");
+		if (frameData == null) {
+			throw new IllegalArgumentException("frameData is null");
 		}
-		if (storeData == null) {
-			throw new IllegalArgumentException("data is null");
-		}
+		ByteArrayOutputStream baos = null;
+		ObjectOutputStream oos = null;
 		try {
-			final ByteArrayOutputStream baos2 = new ByteArrayOutputStream();
-			storeService.saveStoreData(baos2, storeData);
-			baos2.close();
-			final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			final ObjectOutputStream oos = new ObjectOutputStream(baos);
-			byte[] bytes = baos2.toByteArray();
-			oos.writeObject(bytes);
-			oos.writeObject(jobDataRow);
-			oos.writeObject(jobData);
-			oos.close();
-			baos.close();
+			baos = new ByteArrayOutputStream();
+			oos = new ObjectOutputStream(baos);
+			oos.writeObject(profile);
+			oos.writeObject(frameData);
 			bytes = baos.toByteArray();
 		}
 		catch (final Exception e) {
 			throw new IOException("An error has happened marshalling the data: " + e.getMessage());
+		} finally {
+			if (oos != null) {
+				oos.close();
+			}
+			if (baos != null) {
+				baos.close();
+			}
 		}
 	}
 

@@ -34,7 +34,7 @@ import java.util.logging.Logger;
 
 import com.nextbreakpoint.nextfractal.core.DefaultThreadFactory;
 import com.nextbreakpoint.nextfractal.core.Worker;
-import com.nextbreakpoint.nextfractal.spool.JobData;
+import com.nextbreakpoint.nextfractal.spool.JobProfile;
 import com.nextbreakpoint.nextfractal.spool.JobFactory;
 import com.nextbreakpoint.nextfractal.spool.JobInterface;
 import com.nextbreakpoint.nextfractal.spool.JobListener;
@@ -229,10 +229,10 @@ public class DefaultJobService<T extends JobInterface> implements JobService<T> 
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobService#setJobData(java.lang.String, JobData, int)
+	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobService#setJobData(java.lang.String, JobProfile, int)
 	 */
 	@Override
-	public void setJobData(final String jobId, final JobData jobData, final int frameNumber) {
+	public void setJobData(final String jobId, final JobProfile jobData, final int frameNumber) {
 		if (jobId == null) {
 			throw new NullPointerException("jobId == null");
 		}
@@ -242,7 +242,7 @@ public class DefaultJobService<T extends JobInterface> implements JobService<T> 
 		synchronized (spooledJobs) {
 			ScheduledJob job = spooledJobs.get(jobId);
 			if (job != null) {
-				job.getJob().setJobDataRow(jobData);
+				job.getJob().setJobProfile(jobData);
 				job.getJob().setFirstFrameNumber(frameNumber);
 			}
 		}
@@ -540,27 +540,27 @@ public class DefaultJobService<T extends JobInterface> implements JobService<T> 
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.queue.spool.JobListener#updated(java.lang.String, com.nextbreakpoint.nextfractal.queue.spool.JobData)
+		 * @see com.nextbreakpoint.nextfractal.queue.spool.JobListener#updated(java.lang.String, com.nextbreakpoint.nextfractal.JobProfile.spool.JobData)
 		 */
 		@Override
-		public void updated(final String jobId, final JobData job) {
-			listener.updated(jobId, new JobData(job));
+		public void updated(final String jobId, final JobProfile job) {
+			listener.updated(jobId, job);
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.queue.spool.JobListener#started(java.lang.String, com.nextbreakpoint.nextfractal.queue.spool.JobData)
+		 * @see com.nextbreakpoint.nextfractal.queue.spool.JobListener#started(java.lang.String, com.nextbreakpoint.nextfractal.JobProfile.spool.JobData)
 		 */
 		@Override
-		public void started(final String jobId, final JobData job) {
-			listener.started(jobId, new JobData(job));
+		public void started(final String jobId, final JobProfile job) {
+			listener.started(jobId, job);
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.queue.spool.JobListener#stopped(java.lang.String, com.nextbreakpoint.nextfractal.queue.spool.JobData)
+		 * @see com.nextbreakpoint.nextfractal.queue.spool.JobListener#stopped(java.lang.String, com.nextbreakpoint.nextfractal.JobProfile.spool.JobData)
 		 */
 		@Override
-		public void stopped(final String jobId, final JobData job) {
-			listener.stopped(jobId, new JobData(job));
+		public void stopped(final String jobId, final JobProfile job) {
+			listener.stopped(jobId, job);
 			synchronized (dispatchMonitor) {
 				dispatchDirty = true;
 				dispatchMonitor.notify();
@@ -568,11 +568,11 @@ public class DefaultJobService<T extends JobInterface> implements JobService<T> 
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.queue.spool.JobListener#terminated(java.lang.String, com.nextbreakpoint.nextfractal.queue.spool.JobData)
+		 * @see com.nextbreakpoint.nextfractal.queue.spool.JobListener#terminated(java.lang.String, com.nextbreakpoint.nextfractal.JobProfile.spool.JobData)
 		 */
 		@Override
-		public void terminated(final String jobId, final JobData job) {
-			listener.terminated(jobId, new JobData(job));
+		public void terminated(final String jobId, final JobProfile job) {
+			listener.terminated(jobId, job);
 			synchronized (serviceMonitor) {
 				serviceDirty = true;
 				serviceMonitor.notify();
@@ -580,11 +580,11 @@ public class DefaultJobService<T extends JobInterface> implements JobService<T> 
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.queue.spool.JobListener#disposed(java.lang.String, com.nextbreakpoint.nextfractal.queue.spool.JobData)
+		 * @see com.nextbreakpoint.nextfractal.queue.spool.JobListener#disposed(java.lang.String, com.nextbreakpoint.nextfractal.JobProfile.spool.JobData)
 		 */
 		@Override
-		public void disposed(final String jobId, final JobData job) {
-			listener.disposed(jobId, new JobData(job));
+		public void disposed(final String jobId, final JobProfile job) {
+			listener.disposed(jobId, job);
 		}
 	}
 

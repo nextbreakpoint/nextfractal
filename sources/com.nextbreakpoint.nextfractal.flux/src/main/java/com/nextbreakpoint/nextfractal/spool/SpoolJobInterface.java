@@ -26,8 +26,7 @@
 package com.nextbreakpoint.nextfractal.spool;
 
 import java.io.IOException;
-
-import com.nextbreakpoint.nextfractal.core.ChunkedRandomAccessFile;
+import java.io.RandomAccessFile;
 
 /**
  * @author Andrea Medeghini
@@ -47,7 +46,7 @@ public interface SpoolJobInterface extends JobInterface {
 	 * @return
 	 * @throws IOException
 	 */
-	public ChunkedRandomAccessFile getRAF() throws IOException;
+	public RandomAccessFile getRAF() throws IOException;
 
 	/**
 	 * @return
@@ -55,12 +54,12 @@ public interface SpoolJobInterface extends JobInterface {
 	public int getTotalFrames();
 
 	/**
-	 * @param frameNumber
-	 */
-	public void setFrameNumber(int frameNumber);
-
-	/**
 	 * 
 	 */
 	public void terminate();
+
+	/**
+	 * @param frameNumber
+	 */
+	public void setFrameNumber(int frameNumber);
 }

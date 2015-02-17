@@ -27,16 +27,15 @@ package com.nextbreakpoint.nextfractal.spool.job;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.util.concurrent.ThreadFactory;
 
-import com.nextbreakpoint.nextfractal.core.ChunkedRandomAccessFile;
 import com.nextbreakpoint.nextfractal.core.DefaultThreadFactory;
 import com.nextbreakpoint.nextfractal.core.Files;
 import com.nextbreakpoint.nextfractal.core.Worker;
-import com.nextbreakpoint.nextfractal.spool.JobData;
 import com.nextbreakpoint.nextfractal.spool.JobListener;
+import com.nextbreakpoint.nextfractal.spool.JobProfile;
 import com.nextbreakpoint.nextfractal.spool.RemoteJobInterface;
-import com.nextbreakpoint.nextfractal.spool.store.StoreData;
 
 /**
  * @author Andrea Medeghini
@@ -50,8 +49,8 @@ public class RemoteJob implements RemoteJobInterface {
 	private volatile boolean started;
 	private volatile boolean aborted;
 	private volatile boolean terminated;
-	private volatile JobData jobDataRow;
-	private volatile StoreData storeData;
+	private volatile JobProfile profile;
+	private volatile Object storeData;
 	private volatile byte[] jobData;
 	private volatile Thread thread;
 	private int firstFrameNumber;
@@ -86,17 +85,17 @@ public class RemoteJob implements RemoteJobInterface {
 	 */
 	@Override
 	public synchronized int getFrameNumber() {
-		if (jobDataRow == null) {
+		if (profile == null) {
 			throw new IllegalStateException();
 		}
-		return jobDataRow.getFrameNumber();
+		return profile.getProfile().getFrameNumber();
 	}
 
 	private void setFrameNumber(final int frameNumber) {
-		if (jobDataRow == null) {
+		if (profile == null) {
 			throw new IllegalStateException();
 		}
-		jobDataRow.setFrameNumber(frameNumber);
+		profile.getProfile().setFrameNumber(frameNumber);
 		lastUpdate = System.currentTimeMillis();
 	}
 
@@ -105,14 +104,14 @@ public class RemoteJob implements RemoteJobInterface {
 	 */
 	@Override
 	public synchronized void setFirstFrameNumber(final int frameNumber) {
-		if (jobDataRow == null) {
+		if (profile == null) {
 			throw new IllegalStateException();
 		}
 		if (thread != null) {
 			throw new IllegalStateException();
 		}
 		firstFrameNumber = frameNumber;
-		jobDataRow.setFrameNumber(frameNumber);
+		profile.getProfile().setFrameNumber(frameNumber);
 	}
 
 	@Override
@@ -121,8 +120,8 @@ public class RemoteJob implements RemoteJobInterface {
 	}
 
 	@Override
-	public synchronized JobData getJobDataRow() {
-		return jobDataRow;
+	public synchronized JobProfile getJobProfile() {
+		return profile;
 	}
 
 	@Override
@@ -130,29 +129,15 @@ public class RemoteJob implements RemoteJobInterface {
 		return jobData;
 	}
 
-
 	@Override
-	public StoreData getStoreData() throws IOException {
-		return storeData;
-	}
-
-	@Override
-	public synchronized void setStoreData(final StoreData data) {
+	public synchronized void setJobProfile(final JobProfile profile) {
 		if (thread != null) {
 			throw new IllegalStateException();
 		}
-		this.storeData = data;
-	}
-
-	@Override
-	public synchronized void setJobDataRow(final JobData jobDataRow) {
-		if (thread != null) {
-			throw new IllegalStateException();
-		}
-		if (jobDataRow == null) {
+		if (profile == null) {
 			throw new IllegalArgumentException();
 		}
-		this.jobDataRow = jobDataRow;
+		this.profile = profile;
 	}
 
 	@Override
@@ -164,8 +149,8 @@ public class RemoteJob implements RemoteJobInterface {
 	}
 
 	@Override
-	public synchronized ChunkedRandomAccessFile getRAF() throws IOException {
-		return new ChunkedRandomAccessFile(tmpPath, "", ".bin", CHUNK_LENGTH);
+	public synchronized RandomAccessFile getRAF() throws IOException {
+		return new RandomAccessFile(tmpPath, "rw");
 	}
 
 	/**
@@ -177,7 +162,7 @@ public class RemoteJob implements RemoteJobInterface {
 		builder.append("id = ");
 		builder.append(jobId);
 		builder.append(", frameNumber = ");
-		builder.append(jobDataRow != null ? jobDataRow.getFrameNumber() : "N/A");
+		builder.append(profile != null ? profile.getProfile().getFrameNumber() : "N/A");
 		return builder.toString();
 	}
 
@@ -217,7 +202,7 @@ public class RemoteJob implements RemoteJobInterface {
 	@Override
 	public void start() {
 		synchronized (this) {
-			if (jobDataRow == null) {
+			if (profile == null) {
 				throw new IllegalStateException();
 			}
 			if (thread == null) {
@@ -225,7 +210,7 @@ public class RemoteJob implements RemoteJobInterface {
 				started = true;
 				aborted = false;
 				terminated = false;
-				worker.addTask(new StartedTask(new JobData(jobDataRow)));
+				worker.addTask(new StartedTask(profile));
 				thread = factory.newThread(new RenderTask());
 				thread.start();
 			}
@@ -247,12 +232,12 @@ public class RemoteJob implements RemoteJobInterface {
 			}
 		}
 		synchronized (this) {
-			if (jobDataRow == null) {
+			if (profile == null) {
 				throw new IllegalStateException();
 			}
 			started = false;
 			thread = null;
-			worker.addTask(new StoppedTask(new JobData(jobDataRow)));
+			worker.addTask(new StoppedTask(profile));
 		}
 	}
 
@@ -274,8 +259,8 @@ public class RemoteJob implements RemoteJobInterface {
 			tmpPath.delete();
 			tmpPath = null;
 		}
-		if (jobDataRow != null) {
-			worker.addTask(new DisposedTask(new JobData(jobDataRow)));
+		if (profile != null) {
+			worker.addTask(new DisposedTask(profile));
 		}
 	}
 
@@ -317,19 +302,19 @@ public class RemoteJob implements RemoteJobInterface {
 //			ChunkedRandomAccessFile jobRaf = null;
 //			try {
 //				if (storeData.getSequenceCount() > 0) {
-//					final int frameCount = (jobDataRow.getStopTime() - jobDataRow.getStartTime()) * jobDataRow.getFrameRate();
+//					final int frameCount = (profile.getStopTime() - profile.getStartTime()) * profile.getFrameRate();
 //					int frameTimeInMillis = 0;
-//					final int tx = jobDataRow.getTileOffsetX();
-//					final int ty = jobDataRow.getTileOffsetY();
-//					final int tw = jobDataRow.getTileWidth();
-//					final int th = jobDataRow.getTileHeight();
-//					final int iw = jobDataRow.getImageWidth();
-//					final int ih = jobDataRow.getImageHeight();
-//					final int bw = jobDataRow.getBorderWidth();
-//					final int bh = jobDataRow.getBorderHeight();
+//					final int tx = profile.getTileOffsetX();
+//					final int ty = profile.getTileOffsetY();
+//					final int tw = profile.getTileWidth();
+//					final int th = profile.getTileHeight();
+//					final int iw = profile.getImageWidth();
+//					final int ih = profile.getImageHeight();
+//					final int bw = profile.getBorderWidth();
+//					final int bh = profile.getBorderHeight();
 //					final int sw = tw + 2 * bw;
 //					final int sh = th + 2 * bh;
-//					if ((jobDataRow.getFrameRate() == 0) || (frameCount == 0)) {
+//					if ((profile.getFrameRate() == 0) || (frameCount == 0)) {
 //						TwisterConfig config = storeData.getSequence(0).getInitialConfig();
 //						if (config == null) {
 //							config = storeData.getSequence(0).getFinalConfig();
@@ -376,10 +361,10 @@ public class RemoteJob implements RemoteJobInterface {
 //								Thread.yield();
 //							}
 //							setFrameNumber(0);
-//							worker.addTask(new StatusChangedTask(new JobData(jobDataRow)));
+//							worker.addTask(new StatusChangedTask(new JobProfile(profile)));
 //						}
 //					}
-//					else if (jobDataRow.getFrameNumber() < frameCount) {
+//					else if (profile.getFrameNumber() < frameCount) {
 //						surface = new Surface(sw, sh);
 //						surface.getGraphics2D().setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
 //						surface.getGraphics2D().setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
@@ -398,7 +383,7 @@ public class RemoteJob implements RemoteJobInterface {
 //						final byte[] row = new byte[sw * 4];
 //						final int[] storeData = ((DataBufferInt) surface.getImage().getRaster().getDataBuffer()).getData();
 //						int startFrameNumber = 0;
-//						if ((jobDataRow.getFrameNumber() > 0) && (jobData != null)) {
+//						if ((profile.getFrameNumber() > 0) && (jobData != null)) {
 //							for (int j = 0, k = 0; k < sh; k++) {
 //								System.arraycopy(jobData, k * sw * 4, row, 0, row.length);
 //								for (int i = 0; i < row.length; i += 4) {
@@ -407,15 +392,15 @@ public class RemoteJob implements RemoteJobInterface {
 //									j += 1;
 //								}
 //							}
-//							startFrameNumber = jobDataRow.getFrameNumber() + 1;
-//							frameTimeInMillis = jobDataRow.getStartTime() * 1000 + (jobDataRow.getFrameNumber() * 1000) / jobDataRow.getFrameRate();
+//							startFrameNumber = profile.getFrameNumber() + 1;
+//							frameTimeInMillis = profile.getStartTime() * 1000 + (profile.getFrameNumber() * 1000) / profile.getFrameRate();
 //							controller.redoAction(frameTimeInMillis, false);
 //							renderer.prepareImage(false);
 //							renderer.render();
 //							renderer.loadSurface(surface);
 //						}
 //						for (int frameNumber = startFrameNumber; frameNumber < frameCount; frameNumber++) {
-//							frameTimeInMillis = jobDataRow.getStartTime() * 1000 + (frameNumber * 1000) / jobDataRow.getFrameRate();
+//							frameTimeInMillis = profile.getStartTime() * 1000 + (frameNumber * 1000) / profile.getFrameRate();
 //							controller.redoAction(frameTimeInMillis, false);
 //							renderer.prepareImage(false);
 //							renderer.render();
@@ -432,7 +417,7 @@ public class RemoteJob implements RemoteJobInterface {
 //								Thread.yield();
 //							}
 //							setFrameNumber(frameNumber);
-//							worker.addTask(new StatusChangedTask(new JobData(jobDataRow)));
+//							worker.addTask(new StatusChangedTask(new JobProfile(profile)));
 //							if ((((frameNumber + 1) % MAX_FRAMES) == 0) && ((frameCount - frameNumber - 1) > (MAX_FRAMES / 2))) {
 //								break;
 //							}
@@ -484,19 +469,19 @@ public class RemoteJob implements RemoteJobInterface {
 //					terminated = true;
 //				}
 //				if (terminated) {
-//					worker.addTask(new TerminatedTask(new JobData(jobDataRow)));
+//					worker.addTask(new TerminatedTask(new JobProfile(profile)));
 //				}
 //			}
 		}
 	}
 
 	private class StatusChangedTask implements Runnable {
-		private final JobData jobData;
+		private final JobProfile jobData;
 
 		/**
 		 * @param jobData
 		 */
-		protected StatusChangedTask(final JobData jobData) {
+		protected StatusChangedTask(final JobProfile jobData) {
 			this.jobData = jobData;
 		}
 
@@ -510,12 +495,12 @@ public class RemoteJob implements RemoteJobInterface {
 	}
 
 	private class StartedTask implements Runnable {
-		private final JobData jobData;
+		private final JobProfile jobData;
 
 		/**
 		 * @param jobData
 		 */
-		protected StartedTask(final JobData jobData) {
+		protected StartedTask(final JobProfile jobData) {
 			this.jobData = jobData;
 		}
 
@@ -529,12 +514,12 @@ public class RemoteJob implements RemoteJobInterface {
 	}
 
 	private class StoppedTask implements Runnable {
-		private final JobData jobData;
+		private final JobProfile jobData;
 
 		/**
 		 * @param jobData
 		 */
-		protected StoppedTask(final JobData jobData) {
+		protected StoppedTask(final JobProfile jobData) {
 			this.jobData = jobData;
 		}
 
@@ -548,12 +533,12 @@ public class RemoteJob implements RemoteJobInterface {
 	}
 
 	private class TerminatedTask implements Runnable {
-		private final JobData jobData;
+		private final JobProfile jobData;
 
 		/**
 		 * @param jobData
 		 */
-		protected TerminatedTask(final JobData jobData) {
+		protected TerminatedTask(final JobProfile jobData) {
 			this.jobData = jobData;
 		}
 
@@ -567,12 +552,12 @@ public class RemoteJob implements RemoteJobInterface {
 	}
 
 	private class DisposedTask implements Runnable {
-		private final JobData jobData;
+		private final JobProfile jobData;
 
 		/**
 		 * @param jobData
 		 */
-		protected DisposedTask(final JobData jobData) {
+		protected DisposedTask(final JobProfile jobData) {
 			this.jobData = jobData;
 		}
 

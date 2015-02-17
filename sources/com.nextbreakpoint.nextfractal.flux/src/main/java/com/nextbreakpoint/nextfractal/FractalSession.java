@@ -101,12 +101,12 @@ public abstract class FractalSession {
 		Collections.unmodifiableCollection(sessions);
 	}
 
-	public ExportSession createExportSession(File file, Object data, RendererSize size) throws SessionException {
+	public ExportSession createExportSession(File file, File tmpFile, Object data, RendererSize size) throws SessionException {
 		if (!(data instanceof MandelbrotData)) {
 			throw new SessionException("Unsupported data");
 		}
 		try {
-			return new ExportSession(exportService, file, data, size, new DataEncoder(new PNGImageEncoder()));
+			return new ExportSession(exportService, file, tmpFile, data, size, new DataEncoder(new PNGImageEncoder()));
 		} catch (Throwable e) {
 			throw new SessionException("Failed to create session", e);
 		}

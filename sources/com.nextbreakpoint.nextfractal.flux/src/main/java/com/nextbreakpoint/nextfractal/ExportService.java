@@ -39,6 +39,7 @@ public class ExportService {
 	public void stop() {
 		running = false;
 		if (thread != null) {
+			thread.interrupt();
 			try {
 				thread.join();
 			}
@@ -49,60 +50,53 @@ public class ExportService {
 		}
 	}
 
-	public synchronized void startSession(ExportSession exportSession) {
-		sessions.add(exportSession);
-		notify();
-	}
-
-	public synchronized void stopSession(ExportSession exportSession) {
-		sessions.remove(exportSession);
-		notify();
-	}
-	
-	public synchronized void resumeSession(ExportSession exportSession) {
-		sessions.add(exportSession);
-		notify();
-	}
-
-	public synchronized void suspendSession(ExportSession exportSession) {
-		sessions.remove(exportSession);
-		notify();
-	}
-
 	public int getTileSize() {
 		return tileSize;
 	}
 
-	protected ExportSession findOneSession() {
-		synchronized (ExportService.this) {
-			for (ExportSession session : sessions) {
-				if (!session.isSuspended()) {
-					return session;
-				}
+	public synchronized void runSession(ExportSession exportSession) {
+		sessions.add(exportSession);
+		notify();
+	}
+
+	protected synchronized ExportSession findOneSession() {
+		for (ExportSession session : sessions) {
+			if (!session.isSuspended()) {
+				return session;
 			}
 		}
 		return null;
 	}
 
-	private void terminateSession(ExportSession exportSession) {
-		synchronized (ExportService.this) {
-			sessions.remove(exportSession);
+	protected synchronized void terminateSession(ExportSession exportSession) {
+		sessions.remove(exportSession);
+	}
+
+	protected synchronized void waitForSession() {
+		try {
+			wait(1000);
+		} catch (InterruptedException e) {
 		}
 	}
 
 	protected void processSession(ExportSession session) {
 		for (ExportJob job : session.getJobs()) {
-			if (session.isTerminated() || session.isSuspended()) {
-				return;
+			if (isSessionValid(session)) {
+				break;
 			}
 			processJob(job);
 		}
 		session.updateState();
 	}
 
+	private boolean isSessionValid(ExportSession session) {
+		return session.isTerminated() || session.isSuspended();
+	}
+
 	protected void processJob(ExportJob job) {
 		// TODO Auto-generated method stub
-		
+		// 1. wait until a thread is available to process the job
+		// 2. pass the job to the thread
 	}
 
 	private class ProcessSessions implements Runnable {
@@ -113,19 +107,13 @@ public class ExportService {
 		public void run() {
 			while (running) {
 				ExportSession exportSession = null;
-				exportSession = findOneSession();
-				if (exportSession != null) {
+				while (running && (exportSession = findOneSession()) == null) {
+					waitForSession();
+				}
+				if (running && exportSession != null) {
+					processSession(exportSession);
 					if (exportSession.isTerminated()) {
-						terminateSession(exportSession);						
-					} else {
-						processSession(exportSession);
-					}
-				} else {
-					synchronized (ExportService.this) {
-						try {
-							ExportService.this.wait(1000);
-						} catch (InterruptedException e) {
-						}
+						terminateSession(exportSession);
 					}
 				}
 			}

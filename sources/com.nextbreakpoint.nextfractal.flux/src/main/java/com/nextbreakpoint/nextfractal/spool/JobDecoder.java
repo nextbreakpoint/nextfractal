@@ -28,57 +28,48 @@ package com.nextbreakpoint.nextfractal.spool;
 import java.io.ByteArrayInputStream;
 import java.io.ObjectInputStream;
 
-import com.nextbreakpoint.nextfractal.spool.store.StoreData;
-import com.nextbreakpoint.nextfractal.spool.store.StoreService;
-
 /**
  * @author Andrea Medeghini
  */
 public class JobDecoder {
-	private JobData jobDataRow;
-	private StoreData storeData;
+	private JobProfile profile;
 	private byte[] frameData;
 
 	/**
 	 * @param encodedData
 	 * @throws Exception
 	 */
-	public JobDecoder(StoreService<?> storeService, final byte[] encodedData) throws Exception {
+	public JobDecoder(final byte[] encodedData) throws Exception {
+		ByteArrayInputStream bais = null;
+		ObjectInputStream ois = null;
 		try {
-			final ByteArrayInputStream bais = new ByteArrayInputStream(encodedData);
-			final ObjectInputStream ois = new ObjectInputStream(bais);
-			byte[] bytes = (byte[]) ois.readObject();
-			final ByteArrayInputStream bais2 = new ByteArrayInputStream(bytes);
-			jobDataRow = (JobData) ois.readObject();
+			bais = new ByteArrayInputStream(encodedData);
+			ois = new ObjectInputStream(bais);
+			profile = (JobProfile) ois.readObject();
 			frameData = (byte[]) ois.readObject();
-			storeData = storeService.loadStoreData(bais2);
-			bais2.close();
-			ois.close();
-			bais.close();
+		} catch (final Exception e) {
+			throw new Exception("An error has happened unmarshalling the data: " + e.getMessage(), e);
+		} finally {
+			if (ois != null) {
+				ois.close();
+			}
+			if (bais != null) {
+				bais.close();
+			}
 		}
-		catch (final Exception e) {
-			throw new Exception("An error has happened unmarshalling the storeData: " + e.getMessage(), e);
+		if (profile == null) {
+			throw new Exception("profile is null");
 		}
-		if (jobDataRow == null) {
-			throw new Exception("An error has happened unmarshalling the storeData: jobDataRow is null");
+		if (frameData == null) {
+			throw new Exception("frameData is null");
 		}
-		if (encodedData == null) {
-			throw new Exception("An error has happened unmarshalling the storeData: storeData is null");
-		}
-	}
-
-	/**
-	 * @return
-	 */
-	public StoreData getSpoolData() {
-		return storeData;
 	}
 
 	/**
 	 * @return the jobData
 	 */
-	public JobData getJobData() {
-		return jobDataRow;
+	public JobProfile getProfile() {
+		return profile;
 	}
 
 	/**

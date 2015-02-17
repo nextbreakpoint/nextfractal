@@ -25,10 +25,6 @@
  */
 package com.nextbreakpoint.nextfractal.spool;
 
-import java.io.IOException;
-
-import com.nextbreakpoint.nextfractal.spool.store.StoreData;
-
 /**
  * @author Andrea Medeghini
  */
@@ -94,14 +90,14 @@ public interface JobInterface {
 	public boolean isTerminated();
 
 	/**
-	 * @param jobDataRow
+	 * @param profile
 	 */
-	public void setJobDataRow(JobData jobDataRow);
+	public void setJobProfile(JobProfile profile);
 
 	/**
 	 * @return
 	 */
-	public JobData getJobDataRow();
+	public JobProfile getJobProfile();
 
 	/**
 	 * @return the first frame number
@@ -112,10 +108,4 @@ public interface JobInterface {
 	 * @param frameNumber
 	 */
 	public void setFirstFrameNumber(int frameNumber);
-
-	/**
-	 * @return
-	 * @throws IOException
-	 */
-	public StoreData getStoreData() throws IOException;
 }

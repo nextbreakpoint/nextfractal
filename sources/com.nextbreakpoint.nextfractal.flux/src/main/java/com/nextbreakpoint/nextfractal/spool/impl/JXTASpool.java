@@ -32,28 +32,26 @@ import com.nextbreakpoint.nextfractal.net.jxta.JXTADiscoveryService;
 import com.nextbreakpoint.nextfractal.net.jxta.JXTANetworkService;
 import com.nextbreakpoint.nextfractal.spool.JobInterface;
 import com.nextbreakpoint.nextfractal.spool.JobService;
+import com.nextbreakpoint.nextfractal.spool.job.LocalJob;
 import com.nextbreakpoint.nextfractal.spool.job.LocalJobFactory;
 import com.nextbreakpoint.nextfractal.spool.job.RemoteJob;
-import com.nextbreakpoint.nextfractal.spool.job.LocalJob;
 import com.nextbreakpoint.nextfractal.spool.job.RemoteJobFactory;
 import com.nextbreakpoint.nextfractal.spool.job.SpoolJobFactory;
 import com.nextbreakpoint.nextfractal.spool.jobservice.DefaultJobService;
-import com.nextbreakpoint.nextfractal.spool.jobservice.RemoteJobService;
 import com.nextbreakpoint.nextfractal.spool.jobservice.JXTAJobService;
-import com.nextbreakpoint.nextfractal.spool.processor.RemoteServiceProcessor;
+import com.nextbreakpoint.nextfractal.spool.jobservice.RemoteJobService;
 import com.nextbreakpoint.nextfractal.spool.processor.LocalServiceProcessor;
-import com.nextbreakpoint.nextfractal.spool.store.StoreData;
-import com.nextbreakpoint.nextfractal.spool.store.StoreService;
+import com.nextbreakpoint.nextfractal.spool.processor.RemoteServiceProcessor;
 
 /**
  * @author Andrea Medeghini
  */
 public class JXTASpool {
-	public JobService<? extends JobInterface> getJobService(final int serviceId, final StoreService<StoreData> storeService, final Worker worker) {
-		final File tmpDir = new File(storeService.getWorkspace(), "JXTASpool");
-		final RemoteServiceProcessor processor1 = new RemoteServiceProcessor(new RemoteJobService<RemoteJob>(serviceId, "DistributedProcessor", new RemoteJobFactory(new File(tmpDir, "spool"), worker), worker), 10, storeService);
-		final LocalServiceProcessor processor2 = new LocalServiceProcessor(new DefaultJobService<LocalJob>(serviceId, "LocalProcessor", new LocalJobFactory(storeService, worker), worker), 10);
-		final JXTAJobService jobService = new JXTAJobService(serviceId, "JXTAProcessor", new JXTADiscoveryService(new JXTANetworkService(tmpDir, "http://nextfractal.sf.net", "JXTASpool", "Andrea Medeghini", "2.0.0", processor1), processor2), new SpoolJobFactory(storeService, worker), worker, storeService);
+	public JobService<? extends JobInterface> getJobService(final int serviceId, final Worker worker) {
+		File tmpDir = new File("tmp");//TODO tmp
+		final RemoteServiceProcessor processor1 = new RemoteServiceProcessor(new RemoteJobService<RemoteJob>(serviceId, "DistributedProcessor", new RemoteJobFactory(new File(tmpDir , "spool"), worker), worker), 10);
+		final LocalServiceProcessor processor2 = new LocalServiceProcessor(new DefaultJobService<LocalJob>(serviceId, "LocalProcessor", new LocalJobFactory(worker), worker), 10);
+		final JXTAJobService jobService = new JXTAJobService(serviceId, "JXTAProcessor", new JXTADiscoveryService(new JXTANetworkService(tmpDir, "http://nextfractal.sf.net", "JXTASpool", "Andrea Medeghini", "2.0.0", processor1), processor2), new SpoolJobFactory(worker), worker);
 		return jobService;
 	}
 }

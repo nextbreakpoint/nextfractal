@@ -26,13 +26,13 @@
 package com.nextbreakpoint.nextfractal.spool.jobservice;
 
 import java.io.IOException;
+import java.io.RandomAccessFile;
 
-import com.nextbreakpoint.nextfractal.core.ChunkedRandomAccessFile;
 import com.nextbreakpoint.nextfractal.core.Worker;
-import com.nextbreakpoint.nextfractal.spool.RemoteJobInterface;
 import com.nextbreakpoint.nextfractal.spool.JobFactory;
+import com.nextbreakpoint.nextfractal.spool.JobProfile;
 import com.nextbreakpoint.nextfractal.spool.JobService;
-import com.nextbreakpoint.nextfractal.spool.store.StoreData;
+import com.nextbreakpoint.nextfractal.spool.RemoteJobInterface;
 
 /**
  * @author Andrea Medeghini
@@ -48,11 +48,11 @@ public class RemoteJobService<T extends RemoteJobInterface> extends DefaultJobSe
 		super(serviceId, serviceName, jobFactory, worker);
 	}
 
-	public void setJobFrame(final String jobId, final StoreData spoolData, final byte[] data) throws IOException {
+	public void setJobFrame(final String jobId, final JobProfile profile, final byte[] data) throws IOException {
 		synchronized (spooledJobs) {
 			ScheduledJob job = spooledJobs.get(jobId);
 			if (job != null) {
-				job.getJob().setStoreData(spoolData);
+				job.getJob().setJobProfile(profile);
 				job.getJob().setJobData(data);
 			}
 		}
@@ -62,14 +62,14 @@ public class RemoteJobService<T extends RemoteJobInterface> extends DefaultJobSe
 		synchronized (spooledJobs) {
 			ScheduledJob job = spooledJobs.get(jobId);
 			if (job != null) {
-				final int tw = job.getJob().getJobDataRow().getTileWidth();
-				final int th = job.getJob().getJobDataRow().getTileHeight();
-				final int bw = job.getJob().getJobDataRow().getBorderWidth();
-				final int bh = job.getJob().getJobDataRow().getBorderHeight();
+				final int tw = job.getJob().getJobProfile().getProfile().getTileWidth();
+				final int th = job.getJob().getJobProfile().getProfile().getTileHeight();
+				final int bw = job.getJob().getJobProfile().getProfile().getTileBorderWidth();
+				final int bh = job.getJob().getJobProfile().getProfile().getTileBorderHeight();
 				final int sw = tw + 2 * bw;
 				final int sh = th + 2 * bh;
 				final byte[] data = new byte[sw * sh * 4];
-				ChunkedRandomAccessFile raf = null;
+				RandomAccessFile raf = null;
 				try {
 					if (job.getJob().getFirstFrameNumber() > 0) {
 						final long pos = (frameNumber - job.getJob().getFirstFrameNumber() - 1) * sw * sh * 4;

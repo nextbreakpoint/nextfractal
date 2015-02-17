@@ -56,10 +56,10 @@ public interface JobService<T extends JobInterface> {
 
 	/**
 	 * @param jobId
-	 * @param jobData
+	 * @param profile
 	 * @param frameNumber
 	 */
-	public void setJobData(String jobId, JobData jobData, int frameNumber);
+	public void setJobData(String jobId, JobProfile profile, int frameNumber);
 
 	/**
 	 * @param listener

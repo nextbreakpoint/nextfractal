@@ -25,37 +25,22 @@
  */
 package com.nextbreakpoint.nextfractal.spool;
 
+import java.io.Serializable;
+
+import com.nextbreakpoint.nextfractal.ExportProfile;
+
 /**
  * @author Andrea Medeghini
  */
-public interface JobListener {
-	/**
-	 * @param jobId
-	 * @param job
-	 */
-	public void updated(String jobId, JobProfile job);
+public class JobProfile implements Serializable {
+	private static final long serialVersionUID = 1L;
+	private ExportProfile profile;
 
-	/**
-	 * @param jobId
-	 * @param job
-	 */
-	public void started(String jobId, JobProfile job);
+	public ExportProfile getProfile() {
+		return profile;
+	}
 
-	/**
-	 * @param jobId
-	 * @param job
-	 */
-	public void stopped(String jobId, JobProfile job);
-
-	/**
-	 * @param jobId
-	 * @param job
-	 */
-	public void terminated(String jobId, JobProfile job);
-
-	/**
-	 * @param jobId
-	 * @param job
-	 */
-	public void disposed(String jobId, JobProfile job);
+	public void setProfile(ExportProfile profile) {
+		this.profile = profile;
+	}
 }

@@ -465,7 +465,8 @@ public class MandelbrotRenderPane extends BorderPane {
 						@Override
 						public void run() {
 							try {
-								ExportSession exportSession = session.createExportSession(file, data, rendererSize);
+								File tmpFile = File.createTempFile("nextfractal-profile-", ".dat");
+								ExportSession exportSession = session.createExportSession(file, tmpFile, data, rendererSize);
 								logger.info("Export session created: " + exportSession.getSessionId());
 								session.addExportSession(exportSession);
 								exportSession.start();

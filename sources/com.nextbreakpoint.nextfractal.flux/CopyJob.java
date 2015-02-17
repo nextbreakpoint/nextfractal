@@ -26,17 +26,14 @@
 package com.nextbreakpoint.nextfractal.spool.job;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.concurrent.ThreadFactory;
 
 import com.nextbreakpoint.nextfractal.core.ChunkedRandomAccessFile;
 import com.nextbreakpoint.nextfractal.core.DefaultThreadFactory;
 import com.nextbreakpoint.nextfractal.core.Worker;
-import com.nextbreakpoint.nextfractal.spool.JobData;
 import com.nextbreakpoint.nextfractal.spool.JobInterface;
 import com.nextbreakpoint.nextfractal.spool.JobListener;
-import com.nextbreakpoint.nextfractal.spool.store.StoreData;
-import com.nextbreakpoint.nextfractal.spool.store.StoreService;
+import com.nextbreakpoint.nextfractal.spool.JobProfile;
 
 /**
  * @author Andrea Medeghini
@@ -49,9 +46,8 @@ public class CopyJob implements JobInterface {
 	private volatile boolean started;
 	private volatile boolean aborted;
 	private volatile boolean terminated;
-	private volatile JobData jobDataRow;
+	private volatile JobProfile profile;
 	private volatile Thread thread;
-	private final StoreService<?> service;
 	private int firstFrameNumber;
 	private final Worker worker;
 
@@ -61,10 +57,9 @@ public class CopyJob implements JobInterface {
 	 * @param jobId
 	 * @param listener
 	 */
-	public CopyJob(final StoreService<?> service, final Worker worker, final String jobId, final JobListener listener) {
+	public CopyJob(final Worker worker, final String jobId, final JobListener listener) {
 		lastUpdate = System.currentTimeMillis();
 		this.listener = listener;
-		this.service = service;
 		this.worker = worker;
 		this.jobId = jobId;
 	}
@@ -82,17 +77,17 @@ public class CopyJob implements JobInterface {
 	 */
 	@Override
 	public synchronized int getFrameNumber() {
-		if (jobDataRow == null) {
+		if (profile == null) {
 			throw new IllegalStateException();
 		}
-		return jobDataRow.getFrameNumber();
+		return profile.getProfile().getFrameNumber();
 	}
 
 	private void setFrameNumber(final int frameNumber) {
-		if (jobDataRow == null) {
+		if (profile == null) {
 			throw new IllegalStateException();
 		}
-		jobDataRow.setFrameNumber(frameNumber);
+		profile.getProfile().setFrameNumber(frameNumber);
 		lastUpdate = System.currentTimeMillis();
 	}
 
@@ -101,14 +96,14 @@ public class CopyJob implements JobInterface {
 	 */
 	@Override
 	public synchronized void setFirstFrameNumber(final int frameNumber) {
-		if (jobDataRow == null) {
+		if (profile == null) {
 			throw new IllegalStateException();
 		}
 		if (thread != null) {
 			throw new IllegalStateException();
 		}
 		firstFrameNumber = frameNumber;
-		jobDataRow.setFrameNumber(frameNumber);
+		profile.getProfile().setFrameNumber(frameNumber);
 	}
 
 	/**
@@ -120,42 +115,25 @@ public class CopyJob implements JobInterface {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobInterface#getJobDataRow()
+	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobInterface#getJobProfile()
 	 */
 	@Override
-	public synchronized JobData getJobDataRow() {
-		return jobDataRow;
+	public synchronized JobProfile getJobProfile() {
+		return profile;
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobInterface#setJobDataRow(JobData)
+	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobInterface#setJobProfile(JobProfile)
 	 */
 	@Override
-	public synchronized void setJobDataRow(final JobData jobDataRow) {
+	public synchronized void setJobProfile(final JobProfile profile) {
 		if (thread != null) {
 			throw new IllegalStateException();
 		}
-		if (jobDataRow == null) {
+		if (profile == null) {
 			throw new IllegalArgumentException();
 		}
-		this.jobDataRow = jobDataRow;
-	}
-
-	/**
-	 * @see com.nextbreakpoint.nextfractal.queue.spool.SpoolJobInterface#getStoreData()
-	 */
-	@Override
-	public synchronized StoreData getStoreData() throws IOException {
-		if (jobDataRow == null) {
-			throw new IllegalStateException();
-		}
-		try {
-			final InputStream is = service.getClipInputStream(jobDataRow.getClipId());
-			return service.loadStoreData(is);
-		}
-		catch (final Exception e) {
-			throw new IOException(e.getMessage());
-		}
+		this.profile = profile;
 	}
 
 	/**
@@ -167,7 +145,7 @@ public class CopyJob implements JobInterface {
 		builder.append("id = ");
 		builder.append(jobId);
 		builder.append(", frameNumber = ");
-		builder.append(jobDataRow != null ? jobDataRow.getFrameNumber() : "N/A");
+		builder.append(profile != null ? profile.getProfile().getFrameNumber() : "N/A");
 		return builder.toString();
 	}
 
@@ -207,7 +185,7 @@ public class CopyJob implements JobInterface {
 	@Override
 	public void start() {
 		synchronized (this) {
-			if (jobDataRow == null) {
+			if (profile == null) {
 				throw new IllegalStateException();
 			}
 			if (thread == null) {
@@ -215,7 +193,7 @@ public class CopyJob implements JobInterface {
 				started = true;
 				aborted = false;
 				terminated = false;
-				worker.addTask(new StartedTask(new JobData(jobDataRow)));
+				worker.addTask(new StartedTask(profile));
 				thread = factory.newThread(new RenderTask());
 				thread.start();
 			}
@@ -237,12 +215,12 @@ public class CopyJob implements JobInterface {
 			}
 		}
 		synchronized (this) {
-			if (jobDataRow == null) {
+			if (profile == null) {
 				throw new IllegalStateException();
 			}
 			started = false;
 			thread = null;
-			worker.addTask(new StoppedTask(new JobData(jobDataRow)));
+			worker.addTask(new StoppedTask(profile));
 		}
 	}
 
@@ -259,8 +237,8 @@ public class CopyJob implements JobInterface {
 	 */
 	@Override
 	public synchronized void dispose() {
-		if (jobDataRow != null) {
-			worker.addTask(new DisposedTask(new JobData(jobDataRow)));
+		if (profile != null) {
+			worker.addTask(new DisposedTask(profile));
 		}
 	}
 
@@ -297,21 +275,21 @@ public class CopyJob implements JobInterface {
 			ChunkedRandomAccessFile jobRaf = null;
 			ChunkedRandomAccessFile profileRaf = null;
 			try {
-				final int frameCount = (jobDataRow.getStopTime() - jobDataRow.getStartTime()) * jobDataRow.getFrameRate();
+				final int frameCount = (int)Math.floor((profile.getProfile().getStopTime() - profile.getProfile().getStartTime()) * profile.getProfile().getFrameRate());
 				if (frameCount == 0) {
-					final int tx = jobDataRow.getTileOffsetX();
-					final int ty = jobDataRow.getTileOffsetY();
-					final int tw = jobDataRow.getTileWidth();
-					final int th = jobDataRow.getTileHeight();
-					final int bw = jobDataRow.getBorderWidth();
-					final int bh = jobDataRow.getBorderHeight();
-					final int iw = jobDataRow.getImageWidth();
+					final int tx = profile.getProfile().getTileOffsetX();
+					final int ty = profile.getProfile().getTileOffsetY();
+					final int tw = profile.getProfile().getTileWidth();
+					final int th = profile.getProfile().getTileHeight();
+					final int bw = profile.getProfile().getTileBorderWidth();
+					final int bh = profile.getProfile().getTileBorderHeight();
+					final int iw = profile.getProfile().getFrameWidth();
 					final int sw = tw + 2 * bw;
 					final int sh = th + 2 * bh;
 					final byte[] data = new byte[sw * sh * 4];
-					jobRaf = service.getJobRandomAccessFile(jobDataRow.getJobId());
+					jobRaf = service.getJobRandomAccessFile(profile.getJobId());
 					jobRaf.readFully(data);
-					profileRaf = service.getProfileRandomAccessFile(jobDataRow.getProfileId());
+					profileRaf = service.getProfileRandomAccessFile(profile.getJobId());
 					long pos = (ty * iw + tx) * 4;
 					for (int j = sw * bh * 4 + bw * 4, k = 0; k < th; k++) {
 						profileRaf.seek(pos);
@@ -321,25 +299,25 @@ public class CopyJob implements JobInterface {
 						Thread.yield();
 					}
 					setFrameNumber(0);
-					worker.addTask(new StatusChangedTask(new JobData(jobDataRow)));
+					worker.addTask(new StatusChangedTask(profile));
 				}
-				else if (jobDataRow.getFrameNumber() < frameCount) {
-					final int tx = jobDataRow.getTileOffsetX();
-					final int ty = jobDataRow.getTileOffsetY();
-					final int tw = jobDataRow.getTileWidth();
-					final int th = jobDataRow.getTileHeight();
-					final int bw = jobDataRow.getBorderWidth();
-					final int bh = jobDataRow.getBorderHeight();
-					final int iw = jobDataRow.getImageWidth();
-					final int ih = jobDataRow.getImageHeight();
+				else if (profile.getProfile().getFrameNumber() < frameCount) {
+					final int tx = profile.getProfile().getTileOffsetX();
+					final int ty = profile.getProfile().getTileOffsetY();
+					final int tw = profile.getProfile().getTileWidth();
+					final int th = profile.getProfile().getTileHeight();
+					final int bw = profile.getProfile().getTileBorderWidth();
+					final int bh = profile.getProfile().getTileBorderHeight();
+					final int iw = profile.getProfile().getFrameWidth();
+					final int ih = profile.getProfile().getFrameHeight();
 					final int sw = tw + 2 * bw;
 					final int sh = th + 2 * bh;
 					final byte[] data = new byte[sw * sh * 4];
-					jobRaf = service.getJobRandomAccessFile(jobDataRow.getJobId());
-					profileRaf = service.getProfileRandomAccessFile(jobDataRow.getProfileId());
+					jobRaf = service.getJobRandomAccessFile(profile.getJobId());
+					profileRaf = service.getProfileRandomAccessFile(profile.getJobId());
 					int startFrameNumber = 0;
-					if (jobDataRow.getFrameNumber() > 0) {
-						startFrameNumber = jobDataRow.getFrameNumber() + 1;
+					if (profile.getProfile().getFrameNumber() > 0) {
+						startFrameNumber = profile.getProfile().getFrameNumber() + 1;
 					}
 					long pos = (startFrameNumber * sw * sh) * 4;
 					jobRaf.seek(pos);
@@ -354,7 +332,7 @@ public class CopyJob implements JobInterface {
 							Thread.yield();
 						}
 						setFrameNumber(frameNumber);
-						worker.addTask(new StatusChangedTask(new JobData(jobDataRow)));
+						worker.addTask(new StatusChangedTask(profile));
 						if (aborted) {
 							break;
 						}
@@ -386,19 +364,19 @@ public class CopyJob implements JobInterface {
 					terminated = true;
 				}
 				if (terminated) {
-					worker.addTask(new TerminatedTask(new JobData(jobDataRow)));
+					worker.addTask(new TerminatedTask(profile));
 				}
 			}
 		}
 	}
 
 	private class StatusChangedTask implements Runnable {
-		private final JobData jobData;
+		private final JobProfile jobData;
 
 		/**
 		 * @param jobData
 		 */
-		protected StatusChangedTask(final JobData jobData) {
+		protected StatusChangedTask(final JobProfile jobData) {
 			this.jobData = jobData;
 		}
 
@@ -412,12 +390,12 @@ public class CopyJob implements JobInterface {
 	}
 
 	private class StartedTask implements Runnable {
-		private final JobData jobData;
+		private final JobProfile jobData;
 
 		/**
 		 * @param jobData
 		 */
-		protected StartedTask(final JobData jobData) {
+		protected StartedTask(final JobProfile jobData) {
 			this.jobData = jobData;
 		}
 
@@ -431,12 +409,12 @@ public class CopyJob implements JobInterface {
 	}
 
 	private class StoppedTask implements Runnable {
-		private final JobData jobData;
+		private final JobProfile jobData;
 
 		/**
 		 * @param jobData
 		 */
-		protected StoppedTask(final JobData jobData) {
+		protected StoppedTask(final JobProfile jobData) {
 			this.jobData = jobData;
 		}
 
@@ -450,12 +428,12 @@ public class CopyJob implements JobInterface {
 	}
 
 	private class TerminatedTask implements Runnable {
-		private final JobData jobData;
+		private final JobProfile jobData;
 
 		/**
 		 * @param jobData
 		 */
-		protected TerminatedTask(final JobData jobData) {
+		protected TerminatedTask(final JobProfile jobData) {
 			this.jobData = jobData;
 		}
 
@@ -469,12 +447,12 @@ public class CopyJob implements JobInterface {
 	}
 
 	private class DisposedTask implements Runnable {
-		private final JobData jobData;
+		private final JobProfile jobData;
 
 		/**
 		 * @param jobData
 		 */
-		protected DisposedTask(final JobData jobData) {
+		protected DisposedTask(final JobProfile jobData) {
 			this.jobData = jobData;
 		}
 

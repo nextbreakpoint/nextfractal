@@ -40,14 +40,12 @@ import com.nextbreakpoint.nextfractal.net.ServiceProcessor;
 import com.nextbreakpoint.nextfractal.net.ServiceSession;
 import com.nextbreakpoint.nextfractal.net.SessionHandler;
 import com.nextbreakpoint.nextfractal.spool.JobDecoder;
-import com.nextbreakpoint.nextfractal.spool.RemoteJobInterface;
-import com.nextbreakpoint.nextfractal.spool.JobData;
 import com.nextbreakpoint.nextfractal.spool.JobEvent;
 import com.nextbreakpoint.nextfractal.spool.JobListener;
+import com.nextbreakpoint.nextfractal.spool.JobProfile;
 import com.nextbreakpoint.nextfractal.spool.JobStatus;
+import com.nextbreakpoint.nextfractal.spool.RemoteJobInterface;
 import com.nextbreakpoint.nextfractal.spool.jobservice.RemoteJobService;
-import com.nextbreakpoint.nextfractal.spool.store.StoreData;
-import com.nextbreakpoint.nextfractal.spool.store.StoreService;
 
 /**
  * @author Andrea Medeghini
@@ -55,10 +53,9 @@ import com.nextbreakpoint.nextfractal.spool.store.StoreService;
 public class RemoteServiceProcessor implements ServiceProcessor {
 	private static final Logger logger = Logger.getLogger(RemoteServiceProcessor.class.getName());
 	private static final ThreadFactory factory = new DefaultThreadFactory("Thread", true, Thread.MIN_PRIORITY);
-	private final List<ExecutorTask> tasks = new LinkedList<ExecutorTask>();
+	private final List<ServiceTask> tasks = new LinkedList<ServiceTask>();
 	private final Object monitor = new Object();
 	private final RemoteJobService<? extends RemoteJobInterface> jobService;
-	private final StoreService<StoreData> storeService;
 	private Thread thread;
 	private boolean running;
 	private boolean dirty;
@@ -67,9 +64,8 @@ public class RemoteServiceProcessor implements ServiceProcessor {
 	 * @param jobService
 	 * @param maxJobCount
 	 */
-	public RemoteServiceProcessor(final RemoteJobService<? extends RemoteJobInterface> jobService, final int maxJobCount, StoreService<StoreData> storeService) {
+	public RemoteServiceProcessor(final RemoteJobService<? extends RemoteJobInterface> jobService, final int maxJobCount) {
 		this.jobService = jobService;
-		this.storeService = storeService;
 	}
 
 	/**
@@ -79,7 +75,7 @@ public class RemoteServiceProcessor implements ServiceProcessor {
 	public void start() {
 		jobService.start();
 		if (thread == null) {
-			thread = factory.newThread(new ExecutorHandler());
+			thread = factory.newThread(new ServiceHandler());
 			thread.setName(jobService.getName() + " Executor Thread");
 			running = true;
 			thread.start();
@@ -109,17 +105,17 @@ public class RemoteServiceProcessor implements ServiceProcessor {
 	 */
 	@Override
 	public SessionHandler createSessionHandler() {
-		return new SpoolSessionHandler();
+		return new RemoteSessionHandler();
 	}
 
-	private class ExecutorHandler implements Runnable {
+	private class ServiceHandler implements Runnable {
 		/**
 		 * @see java.lang.Runnable#run()
 		 */
 		@Override
 		public void run() {
 			final long pollingTime = 60 * 1000L;
-			final List<ExecutorTask> tasksToRun = new LinkedList<ExecutorTask>();
+			final List<ServiceTask> tasksToRun = new LinkedList<ServiceTask>();
 			try {
 				while (running) {
 					try {
@@ -127,7 +123,7 @@ public class RemoteServiceProcessor implements ServiceProcessor {
 							tasksToRun.addAll(tasks);
 							tasks.clear();
 						}
-						for (final ExecutorTask task : tasksToRun) {
+						for (final ServiceTask task : tasksToRun) {
 							task.run();
 							Thread.yield();
 						}
@@ -150,7 +146,7 @@ public class RemoteServiceProcessor implements ServiceProcessor {
 		}
 	}
 
-	private class ExecutorTask implements Runnable {
+	private class ServiceTask implements Runnable {
 		private final ServiceSession session;
 		private final ServiceMessage message;
 
@@ -158,7 +154,7 @@ public class RemoteServiceProcessor implements ServiceProcessor {
 		 * @param session
 		 * @param message
 		 */
-		public ExecutorTask(final ServiceSession session, final ServiceMessage message) {
+		public ServiceTask(final ServiceSession session, final ServiceMessage message) {
 			this.session = session;
 			this.message = message;
 		}
@@ -188,7 +184,7 @@ public class RemoteServiceProcessor implements ServiceProcessor {
 		}
 	}
 
-	private class SpoolSessionHandler implements SessionHandler {
+	private class RemoteSessionHandler implements SessionHandler {
 		private ServiceSession session;
 
 		/**
@@ -293,7 +289,7 @@ public class RemoteServiceProcessor implements ServiceProcessor {
 			jobService.deleteJob(jobId);
 			synchronized (tasks) {
 				final ResponseMessage response = createDeleteResponse(request, jobId);
-				tasks.add(new ExecutorTask(session, response));
+				tasks.add(new ServiceTask(session, response));
 			}
 		}
 
@@ -303,7 +299,7 @@ public class RemoteServiceProcessor implements ServiceProcessor {
 			jobService.stopJob(jobId);
 			synchronized (tasks) {
 				final ResponseMessage response = createAbortResponse(request, jobId);
-				tasks.add(new ExecutorTask(session, response));
+				tasks.add(new ServiceTask(session, response));
 			}
 		}
 
@@ -313,7 +309,7 @@ public class RemoteServiceProcessor implements ServiceProcessor {
 			byte[] frameData = jobService.getJobFrame(jobId, frameNumber);
 			synchronized (tasks) {
 				final ResponseMessage response = createGetResponse(request, jobId, frameNumber, frameData);
-				tasks.add(new ExecutorTask(session, response));
+				tasks.add(new ServiceTask(session, response));
 			}
 		}
 
@@ -321,29 +317,29 @@ public class RemoteServiceProcessor implements ServiceProcessor {
 			final String jobId = (String) ((Object[]) request.getUserData())[0];
 			final int frameNumber = (Integer) ((Object[]) request.getUserData())[1];
 			final byte[] data = (byte[]) ((Object[]) request.getUserData())[2];
-			final JobDecoder decoder = new JobDecoder(storeService, data);
-			jobService.setJobData(jobId, decoder.getJobData(), frameNumber);
-			jobService.setJobFrame(jobId, decoder.getSpoolData(), decoder.getFrameData());
+			final JobDecoder decoder = new JobDecoder(data);
+			jobService.setJobData(jobId, decoder.getProfile(), frameNumber);
+			jobService.setJobFrame(jobId, decoder.getProfile(), decoder.getFrameData());
 			jobService.runJob(jobId);
 			synchronized (tasks) {
 				final ResponseMessage response = createPutResponse(request, jobId);
-				tasks.add(new ExecutorTask(session, response));
+				tasks.add(new ServiceTask(session, response));
 			}
 		}
 
 		private void processHelloRequest(final RequestMessage request) throws Exception {
-			final String jobId = jobService.createJob(new SpoolJobListener(session));
+			final String jobId = jobService.createJob(new RemoteJobListener(session));
 			int jobCount = jobService.getJobCount();
 			if (jobId != null) {
 				synchronized (tasks) {
 					final ResponseMessage response = createHelloResponse(request, jobCount, jobId);
-					tasks.add(new ExecutorTask(session, response));
+					tasks.add(new ServiceTask(session, response));
 				}
 			}
 			else {
 				synchronized (tasks) {
 					final ResponseMessage response = createHelloResponse(request, jobCount, null);
-					tasks.add(new ExecutorTask(session, response));
+					tasks.add(new ServiceTask(session, response));
 				}
 			}
 		}
@@ -420,21 +416,21 @@ public class RemoteServiceProcessor implements ServiceProcessor {
 		}
 	}
 
-	private class SpoolJobListener implements JobListener {
+	private class RemoteJobListener implements JobListener {
 		private final ServiceSession session;
 
 		/**
 		 * @param session
 		 */
-		public SpoolJobListener(final ServiceSession session) {
+		public RemoteJobListener(final ServiceSession session) {
 			this.session = session;
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.queue.spool.JobListener#stateChanged(String, JobData)
+		 * @see com.nextbreakpoint.nextfractal.queue.spool.JobListener#stateChanged(String, JobProfile)
 		 */
 		@Override
-		public void updated(final String jobId, final JobData job) {
+		public void updated(final String jobId, final JobProfile job) {
 			if (session.isExpired()) {
 				return;
 			}
@@ -442,10 +438,10 @@ public class RemoteServiceProcessor implements ServiceProcessor {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.queue.spool.JobListener#started(String, JobData)
+		 * @see com.nextbreakpoint.nextfractal.queue.spool.JobListener#started(String, JobProfile)
 		 */
 		@Override
-		public void started(final String jobId, final JobData job) {
+		public void started(final String jobId, final JobProfile job) {
 			if (session.isExpired()) {
 				return;
 			}
@@ -453,10 +449,10 @@ public class RemoteServiceProcessor implements ServiceProcessor {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.queue.spool.JobListener#stopped(String, JobData)
+		 * @see com.nextbreakpoint.nextfractal.queue.spool.JobListener#stopped(String, JobProfile)
 		 */
 		@Override
-		public void stopped(final String jobId, final JobData job) {
+		public void stopped(final String jobId, final JobProfile job) {
 			if (session.isExpired()) {
 				return;
 			}
@@ -464,10 +460,10 @@ public class RemoteServiceProcessor implements ServiceProcessor {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.queue.spool.JobListener#terminated(String, JobData)
+		 * @see com.nextbreakpoint.nextfractal.queue.spool.JobListener#terminated(String, JobProfile)
 		 */
 		@Override
-		public void terminated(final String jobId, final JobData job) {
+		public void terminated(final String jobId, final JobProfile job) {
 			if (session.isExpired()) {
 				return;
 			}
@@ -475,22 +471,22 @@ public class RemoteServiceProcessor implements ServiceProcessor {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.queue.spool.JobListener#disposed(String, JobData)
+		 * @see com.nextbreakpoint.nextfractal.queue.spool.JobListener#disposed(String, JobProfile)
 		 */
 		@Override
-		public void disposed(final String jobId, final JobData job) {
+		public void disposed(final String jobId, final JobProfile job) {
 			if (session.isExpired()) {
 				return;
 			}
 			processDisposed(jobId, job);
 		}
 
-		private void processUpdated(final String jobId, final JobData job) {
+		private void processUpdated(final String jobId, final JobProfile job) {
 			int jobCount = jobService.getJobCount();
 			synchronized (tasks) {
 				try {
 					final EventMessage message = createFrameMessage(jobId, job, jobCount);
-					tasks.add(new ExecutorTask(session, message));
+					tasks.add(new ServiceTask(session, message));
 				}
 				catch (final Exception e) {
 					e.printStackTrace();
@@ -502,12 +498,12 @@ public class RemoteServiceProcessor implements ServiceProcessor {
 			}
 		}
 
-		private void processStarted(final String jobId, final JobData job) {
+		private void processStarted(final String jobId, final JobProfile job) {
 			int jobCount = jobService.getJobCount();
 			synchronized (tasks) {
 				try {
 					final EventMessage message = createStartMessage(jobId, job, jobCount);
-					tasks.add(new ExecutorTask(session, message));
+					tasks.add(new ServiceTask(session, message));
 				}
 				catch (final Exception e) {
 					e.printStackTrace();
@@ -519,12 +515,12 @@ public class RemoteServiceProcessor implements ServiceProcessor {
 			}
 		}
 
-		private void processStopped(final String jobId, final JobData job) {
+		private void processStopped(final String jobId, final JobProfile job) {
 			int jobCount = jobService.getJobCount();
 			synchronized (tasks) {
 				try {
 					final EventMessage message = createStopMessage(jobId, job, jobCount);
-					tasks.add(new ExecutorTask(session, message));
+					tasks.add(new ServiceTask(session, message));
 				}
 				catch (final Exception e) {
 					e.printStackTrace();
@@ -536,12 +532,12 @@ public class RemoteServiceProcessor implements ServiceProcessor {
 			}
 		}
 
-		private void processTerminated(final String jobId, final JobData job) {
+		private void processTerminated(final String jobId, final JobProfile job) {
 			int jobCount = jobService.getJobCount();
 			synchronized (tasks) {
 				try {
 					final EventMessage message = createDoneMessage(jobId, job, jobCount);
-					tasks.add(new ExecutorTask(session, message));
+					tasks.add(new ServiceTask(session, message));
 				}
 				catch (final Exception e) {
 					e.printStackTrace();
@@ -553,34 +549,34 @@ public class RemoteServiceProcessor implements ServiceProcessor {
 			}
 		}
 
-		private void processDisposed(final String jobId, final JobData job) {
+		private void processDisposed(final String jobId, final JobProfile job) {
 			synchronized (monitor) {
 				dirty = true;
 				monitor.notify();
 			}
 		}
 
-		private EventMessage createFrameMessage(final String jobId, final JobData job, final int jobCount) throws Exception {
+		private EventMessage createFrameMessage(final String jobId, final JobProfile job, final int jobCount) throws Exception {
 			final EventMessage message = new EventMessage();
-			message.setUserData(new JobEvent(JobEvent.EVENT_TYPE_FRAME, new JobStatus(jobId, job.getFrameNumber(), jobCount)));
+			message.setUserData(new JobEvent(JobEvent.EVENT_TYPE_FRAME, new JobStatus(jobId, job.getProfile().getFrameNumber(), jobCount)));
 			return message;
 		}
 
-		private EventMessage createStartMessage(final String jobId, final JobData job, final int jobCount) throws Exception {
+		private EventMessage createStartMessage(final String jobId, final JobProfile job, final int jobCount) throws Exception {
 			final EventMessage message = new EventMessage();
-			message.setUserData(new JobEvent(JobEvent.EVENT_TYPE_BEGIN, new JobStatus(jobId, job.getFrameNumber(), jobCount)));
+			message.setUserData(new JobEvent(JobEvent.EVENT_TYPE_BEGIN, new JobStatus(jobId, job.getProfile().getFrameNumber(), jobCount)));
 			return message;
 		}
 
-		private EventMessage createStopMessage(final String jobId, final JobData job, final int jobCount) throws Exception {
+		private EventMessage createStopMessage(final String jobId, final JobProfile job, final int jobCount) throws Exception {
 			final EventMessage message = new EventMessage();
-			message.setUserData(new JobEvent(JobEvent.EVENT_TYPE_END, new JobStatus(jobId, job.getFrameNumber(), jobCount)));
+			message.setUserData(new JobEvent(JobEvent.EVENT_TYPE_END, new JobStatus(jobId, job.getProfile().getFrameNumber(), jobCount)));
 			return message;
 		}
 
-		private EventMessage createDoneMessage(final String jobId, final JobData job, final int jobCount) throws Exception {
+		private EventMessage createDoneMessage(final String jobId, final JobProfile job, final int jobCount) throws Exception {
 			final EventMessage message = new EventMessage();
-			message.setUserData(new JobEvent(JobEvent.EVENT_TYPE_DONE, new JobStatus(jobId, job.getFrameNumber(), jobCount)));
+			message.setUserData(new JobEvent(JobEvent.EVENT_TYPE_DONE, new JobStatus(jobId, job.getProfile().getFrameNumber(), jobCount)));
 			return message;
 		}
 	}

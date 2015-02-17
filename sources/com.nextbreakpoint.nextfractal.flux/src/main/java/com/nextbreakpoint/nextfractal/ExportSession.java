@@ -17,13 +17,17 @@ public class ExportSession {
 	private final DataEncoder encoder;
 	private final RendererSize size;
 	private final Object data;
+	private final File tmpFile;
 	private final File file;
 	private float progress;
 	private float quality;
 	private float frameRate;
 	private int frame;
+	private volatile boolean terminated;
+	private volatile boolean suspended;
 
-	public ExportSession(ExportService exportService, File file, Object data, RendererSize size, DataEncoder encoder) {
+	public ExportSession(ExportService exportService, File file, File tmpFile, Object data, RendererSize size, DataEncoder encoder) {
+		this.tmpFile = tmpFile;
 		this.file = file;
 		this.data = data;
 		this.size = size;
@@ -73,22 +77,18 @@ public class ExportSession {
 	}
 
 	public void start() {
-		exportService.startSession(this);
 		fireStateChanged();
 	}
 
 	public void stop() {
-		exportService.stopSession(this);
 		fireStateChanged();
 	}
 
 	public void suspend() {
-		exportService.suspendSession(this);
 		fireStateChanged();
 	}
 
 	public void resume() {
-		exportService.resumeSession(this);
 		fireStateChanged();
 	}
 
@@ -109,17 +109,19 @@ public class ExportSession {
 			for (int tx = 0; tx < nx; tx++) {
 				for (int ty = 0; ty < ny; ty++) {
 					final ExportJob job = createJob();
-					job.setQuality(quality);
-					job.setFrameNumber(frame);
-					job.setFrameRate(frameRate);
-					job.setFrameWidth(frameWidth);
-					job.setFrameHeight(frameHeight);
-					job.setTileWidth(tileSize);
-					job.setTileHeight(tileSize);
-					job.setTileOffsetX(tileSize * tx);
-					job.setTileOffsetY(tileSize * ty);
-					job.setTileBorderWidth(TILE_BORDER_SIZE);
-					job.setTileBorderHeight(TILE_BORDER_SIZE);
+					final ExportProfile profile = new ExportProfile();
+					profile.setQuality(quality);
+					profile.setFrameNumber(frame);
+					profile.setFrameRate(frameRate);
+					profile.setFrameWidth(frameWidth);
+					profile.setFrameHeight(frameHeight);
+					profile.setTileWidth(tileSize);
+					profile.setTileHeight(tileSize);
+					profile.setTileOffsetX(tileSize * tx);
+					profile.setTileOffsetY(tileSize * ty);
+					profile.setTileBorderWidth(TILE_BORDER_SIZE);
+					profile.setTileBorderHeight(TILE_BORDER_SIZE);
+					job.setProfile(profile);
 					jobs.add(job);
 				}
 			}
@@ -127,50 +129,56 @@ public class ExportSession {
 		if (rx > 0) {
 			for (int ty = 0; ty < ny; ty++) {
 				final ExportJob job = createJob();
-				job.setQuality(quality);
-				job.setFrameNumber(frame);
-				job.setFrameRate(frameRate);
-				job.setFrameWidth(frameWidth);
-				job.setFrameHeight(frameHeight);
-				job.setTileWidth(rx);
-				job.setTileHeight(tileSize);
-				job.setTileOffsetX(tileSize * nx);
-				job.setTileOffsetY(tileSize * ty);
-				job.setTileBorderWidth(TILE_BORDER_SIZE);
-				job.setTileBorderHeight(TILE_BORDER_SIZE);
+				final ExportProfile profile = new ExportProfile();
+				profile.setQuality(quality);
+				profile.setFrameNumber(frame);
+				profile.setFrameRate(frameRate);
+				profile.setFrameWidth(frameWidth);
+				profile.setFrameHeight(frameHeight);
+				profile.setTileWidth(rx);
+				profile.setTileHeight(tileSize);
+				profile.setTileOffsetX(tileSize * nx);
+				profile.setTileOffsetY(tileSize * ty);
+				profile.setTileBorderWidth(TILE_BORDER_SIZE);
+				profile.setTileBorderHeight(TILE_BORDER_SIZE);
+				job.setProfile(profile);
 				jobs.add(job);
 			}
 		}
 		if (ry > 0) {
 			for (int tx = 0; tx < nx; tx++) {
 				final ExportJob job = createJob();
-				job.setQuality(quality);
-				job.setFrameNumber(frame);
-				job.setFrameRate(frameRate);
-				job.setFrameWidth(frameWidth);
-				job.setFrameHeight(frameHeight);
-				job.setTileWidth(tileSize);
-				job.setTileHeight(ry);
-				job.setTileOffsetX(tileSize * tx);
-				job.setTileOffsetY(tileSize * ny);
-				job.setTileBorderWidth(TILE_BORDER_SIZE);
-				job.setTileBorderHeight(TILE_BORDER_SIZE);
+				final ExportProfile profile = new ExportProfile();
+				profile.setQuality(quality);
+				profile.setFrameNumber(frame);
+				profile.setFrameRate(frameRate);
+				profile.setFrameWidth(frameWidth);
+				profile.setFrameHeight(frameHeight);
+				profile.setTileWidth(tileSize);
+				profile.setTileHeight(ry);
+				profile.setTileOffsetX(tileSize * tx);
+				profile.setTileOffsetY(tileSize * ny);
+				profile.setTileBorderWidth(TILE_BORDER_SIZE);
+				profile.setTileBorderHeight(TILE_BORDER_SIZE);
+				job.setProfile(profile);
 				jobs.add(job);
 			}
 		}
 		if (rx > 0 && ry > 0) {
 			final ExportJob job = createJob();
-			job.setQuality(quality);
-			job.setFrameNumber(frame);
-			job.setFrameRate(frameRate);
-			job.setFrameWidth(frameWidth);
-			job.setFrameHeight(frameHeight);
-			job.setTileWidth(rx);
-			job.setTileHeight(ry);
-			job.setTileOffsetX(tileSize * nx);
-			job.setTileOffsetY(tileSize * ny);
-			job.setTileBorderWidth(TILE_BORDER_SIZE);
-			job.setTileBorderHeight(TILE_BORDER_SIZE);
+			final ExportProfile profile = new ExportProfile();
+			profile.setQuality(quality);
+			profile.setFrameNumber(frame);
+			profile.setFrameRate(frameRate);
+			profile.setFrameWidth(frameWidth);
+			profile.setFrameHeight(frameHeight);
+			profile.setTileWidth(rx);
+			profile.setTileHeight(ry);
+			profile.setTileOffsetX(tileSize * nx);
+			profile.setTileOffsetY(tileSize * ny);
+			profile.setTileBorderWidth(TILE_BORDER_SIZE);
+			profile.setTileBorderHeight(TILE_BORDER_SIZE);
+			job.setProfile(profile);
 			jobs.add(job);
 		}
 		return jobs;
@@ -181,14 +189,20 @@ public class ExportSession {
 		return job;
 	}
 
+	public void setTerminated(boolean terminated) {
+		this.terminated = terminated;
+	}
+
+	public void setSuspended(boolean suspended) {
+		this.suspended = suspended;
+	}
+
 	public boolean isTerminated() {
-		// TODO Auto-generated method stub
-		return false;
+		return terminated;
 	}
 
 	public boolean isSuspended() {
-		// TODO Auto-generated method stub
-		return false;
+		return suspended;
 	}
 
 	public List<ExportJob> getJobs() {
@@ -198,5 +212,9 @@ public class ExportSession {
 	public void updateState() {
 		// TODO Auto-generated method stub
 		
+	}
+
+	public File getTmpFile() {
+		return tmpFile;
 	}
 }

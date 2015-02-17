@@ -30,14 +30,12 @@ import com.nextbreakpoint.nextfractal.spool.JobService;
 import com.nextbreakpoint.nextfractal.spool.job.LocalJob;
 import com.nextbreakpoint.nextfractal.spool.job.LocalJobFactory;
 import com.nextbreakpoint.nextfractal.spool.jobservice.DefaultJobService;
-import com.nextbreakpoint.nextfractal.spool.store.StoreData;
-import com.nextbreakpoint.nextfractal.spool.store.StoreService;
 
 /**
  * @author Andrea Medeghini
  */
 public class LocalSpool {
-	public JobService<LocalJob> getJobService(final int serviceId, final StoreService<StoreData> service, final Worker worker) {
-		return new DefaultJobService<LocalJob>(serviceId, "LocalProcessor", new LocalJobFactory(service, worker), worker);
+	public JobService<LocalJob> getJobService(final int serviceId, final Worker worker) {
+		return new DefaultJobService<LocalJob>(serviceId, "LocalProcessor", new LocalJobFactory(worker), worker);
 	}
 }
