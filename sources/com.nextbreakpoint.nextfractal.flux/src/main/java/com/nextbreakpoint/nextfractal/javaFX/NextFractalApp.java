@@ -12,6 +12,7 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
+import com.nextbreakpoint.nextfractal.DispatchService;
 import com.nextbreakpoint.nextfractal.ExportService;
 import com.nextbreakpoint.nextfractal.ExportSession;
 import com.nextbreakpoint.nextfractal.FractalFactory;
@@ -71,7 +72,8 @@ public class NextFractalApp extends Application {
         root.getChildren().add(mainPane);
 		DefaultThreadFactory threadFactory = new DefaultThreadFactory("NextFractalApp", true, Thread.MIN_PRIORITY);
 		JavaFXRenderFactory renderFactory = new JavaFXRenderFactory();
-        ExportService exportService = new ExportService(threadFactory, renderFactory, 200);
+		DispatchService dispatchService = new DispatchService(outDir, threadFactory, renderFactory);
+        ExportService exportService = new ExportService(threadFactory, dispatchService, 200);
         exportService.start();
         FractalSession session = createFractalSession(pluginId);
         session.setPackageName(packageName);

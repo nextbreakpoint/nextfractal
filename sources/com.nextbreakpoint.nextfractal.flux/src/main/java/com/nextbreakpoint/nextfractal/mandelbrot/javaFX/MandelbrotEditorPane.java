@@ -22,8 +22,8 @@ import com.nextbreakpoint.nextfractal.FractalSessionListener;
 import com.nextbreakpoint.nextfractal.core.DefaultThreadFactory;
 import com.nextbreakpoint.nextfractal.core.Worker;
 import com.nextbreakpoint.nextfractal.mandelbrot.DataStore;
-import com.nextbreakpoint.nextfractal.mandelbrot.ImageGenerator;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotData;
+import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotImageGenerator;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotSession;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererPoint;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererSize;
@@ -37,7 +37,7 @@ public class MandelbrotEditorPane extends BorderPane {
 	private final JavaFXRenderFactory renderFactory;
 	private final FractalSession session;
 	private final Worker historyWorker;
-	private ImageGenerator generator;
+	private MandelbrotImageGenerator generator;
 	private FileChooser fileChooser;
 	private File currentFile;
 	private boolean noHistory;
@@ -51,7 +51,7 @@ public class MandelbrotEditorPane extends BorderPane {
 		historyWorker = new Worker(threadFactory);
 		historyWorker.start();
 		
-		generator = new ImageGenerator(threadFactory, renderFactory, createSingleTile(25, 25));
+		generator = new MandelbrotImageGenerator(threadFactory, renderFactory, createSingleTile(25, 25));
 		
 		getStyleClass().add("mandelbrot");
 
@@ -220,7 +220,7 @@ public class MandelbrotEditorPane extends BorderPane {
 		historyWorker.addTask(new Runnable() {
 			@Override
 			public void run() {
-				data.setPixels(generator.renderImage(getMandelbrotSession(), data));
+				data.setPixels(generator.renderImage(getMandelbrotSession().getOutDir(), data));
 				Platform.runLater(new Runnable() {
 					@Override
 					public void run() {

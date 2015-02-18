@@ -264,7 +264,7 @@ public class SpoolJob implements SpoolJobInterface {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobInterface#isTerminated()
+	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobInterface#isCompleted()
 	 */
 	@Override
 	public synchronized boolean isTerminated() {

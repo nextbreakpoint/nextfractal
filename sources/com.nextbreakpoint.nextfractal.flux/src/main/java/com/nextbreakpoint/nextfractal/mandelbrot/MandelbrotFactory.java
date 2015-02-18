@@ -1,12 +1,16 @@
 package com.nextbreakpoint.nextfractal.mandelbrot;
 
+import java.util.concurrent.ThreadFactory;
+
 import javafx.scene.layout.Pane;
 
-import com.nextbreakpoint.nextfractal.ExportService;
 import com.nextbreakpoint.nextfractal.FractalFactory;
 import com.nextbreakpoint.nextfractal.FractalSession;
+import com.nextbreakpoint.nextfractal.ImageGenerator;
 import com.nextbreakpoint.nextfractal.mandelbrot.javaFX.MandelbrotEditorPane;
 import com.nextbreakpoint.nextfractal.mandelbrot.javaFX.MandelbrotRenderPane;
+import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererTile;
+import com.nextbreakpoint.nextfractal.render.RenderFactory;
 
 public class MandelbrotFactory implements FractalFactory {
 	/**
@@ -62,5 +66,13 @@ public class MandelbrotFactory implements FractalFactory {
 				+ "\t}\n"
 				+ "}\n";
 		return source;
+	}
+
+	/**
+	 * @see com.nextbreakpoint.nextfractal.FractalFactory#createImageGenerator(java.util.concurrent.ThreadFactory, com.nextbreakpoint.nextfractal.render.RenderFactory, com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererTile)
+	 */
+	@Override
+	public ImageGenerator createImageGenerator(ThreadFactory threadFactory,	RenderFactory renderFactory, RendererTile tile) {
+		return new MandelbrotImageGenerator(threadFactory, renderFactory, tile);
 	}
 }

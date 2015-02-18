@@ -1,8 +1,10 @@
 package com.nextbreakpoint.nextfractal.mandelbrot;
 
+import java.io.File;
 import java.nio.IntBuffer;
 import java.util.concurrent.ThreadFactory;
 
+import com.nextbreakpoint.nextfractal.ImageGenerator;
 import com.nextbreakpoint.nextfractal.core.DoubleVector4D;
 import com.nextbreakpoint.nextfractal.core.IntegerVector4D;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.Compiler;
@@ -16,28 +18,29 @@ import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererTile;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererView;
 import com.nextbreakpoint.nextfractal.render.RenderFactory;
 
-public class ImageGenerator {
+public class MandelbrotImageGenerator implements ImageGenerator {
 	private Renderer renderer;
 
-	public ImageGenerator(ThreadFactory threadFactory, RenderFactory renderFactory, RendererTile tile) {
+	public MandelbrotImageGenerator(ThreadFactory threadFactory, RenderFactory renderFactory, RendererTile tile) {
 		renderer = new Renderer(threadFactory, renderFactory, tile);
 	}
 
-	public IntBuffer renderImage(MandelbrotSession session, MandelbrotData data) {
+	public IntBuffer renderImage(File outDir, Object data) {
+		MandelbrotData generatorData = (MandelbrotData)data;
 		IntBuffer pixels = IntBuffer.allocate(renderer.getWidth() * renderer.getHeight());
 		try {
-			Compiler compiler = new Compiler(session.getOutDir(), session.getPackageName(), session.getClassName() + "Generator");
-			CompilerReport report = compiler.generateJavaSource(data.getSource());
+			Compiler compiler = new Compiler(outDir, getClass().getPackage().getName(), getClass().getName() + "Fractal");
+			CompilerReport report = compiler.generateJavaSource(generatorData.getSource());
 			//TODO report errors
 			CompilerBuilder<Orbit> orbitBuilder = compiler.compileOrbit(report);
 			CompilerBuilder<Color> colorBuilder = compiler.compileColor(report);
 			renderer.abortTasks();
 			renderer.waitForTasks();
-			double[] traslation = data.getTraslation();
-			double[] rotation = data.getRotation();
-			double[] scale = data.getScale();
-			double[] constant = data.getConstant();
-			boolean julia = data.isJulia();
+			double[] traslation = generatorData.getTraslation();
+			double[] rotation = generatorData.getRotation();
+			double[] scale = generatorData.getScale();
+			double[] constant = generatorData.getConstant();
+			boolean julia = generatorData.isJulia();
 			renderer.setOrbit(orbitBuilder.build());
 			renderer.setColor(colorBuilder.build());
 			renderer.init();

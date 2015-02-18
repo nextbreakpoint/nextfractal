@@ -42,8 +42,8 @@ import com.nextbreakpoint.nextfractal.core.IntegerVector4D;
 import com.nextbreakpoint.nextfractal.core.Worker;
 import com.nextbreakpoint.nextfractal.encoder.PNGImageEncoder;
 import com.nextbreakpoint.nextfractal.javaFX.AdvancedTextField;
-import com.nextbreakpoint.nextfractal.mandelbrot.ImageGenerator;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotData;
+import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotImageGenerator;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotSession;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotView;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.Compiler;
@@ -67,7 +67,7 @@ public class MandelbrotRenderPane extends BorderPane {
 	private ThreadFactory threadFactory;
 	private JavaFXRenderFactory renderFactory;
 	private RendererCoordinator[] coordinators;
-	private ImageGenerator generator;
+	private MandelbrotImageGenerator generator;
 	private AnimationTimer timer;
 	private FileChooser fileChooser;
 	private int width;
@@ -92,7 +92,7 @@ public class MandelbrotRenderPane extends BorderPane {
 		exportWorker = new Worker(threadFactory);
 		exportWorker.start();
 
-		generator = new ImageGenerator(threadFactory, renderFactory, createSingleTile(25, 25));
+		generator = new MandelbrotImageGenerator(threadFactory, renderFactory, createSingleTile(25, 25));
 
 		coordinators = new RendererCoordinator[rows * columns];
 		Map<String, Integer> hints = new HashMap<String, Integer>();
@@ -461,7 +461,7 @@ public class MandelbrotRenderPane extends BorderPane {
 			exportWorker.addTask(new Runnable() {
 				@Override
 				public void run() {
-					data.setPixels(generator.renderImage(getMandelbrotSession(), data));
+					data.setPixels(generator.renderImage(getMandelbrotSession().getOutDir(), data));
 					Platform.runLater(new Runnable() {
 						@Override
 						public void run() {

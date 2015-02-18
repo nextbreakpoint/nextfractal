@@ -195,7 +195,7 @@ public class ExportSession {
 	}
 
 	protected ExportJob createJob() {
-		final ExportJob job = new ExportJob();
+		final ExportJob job = new ExportJob(this);
 		return job;
 	}
 

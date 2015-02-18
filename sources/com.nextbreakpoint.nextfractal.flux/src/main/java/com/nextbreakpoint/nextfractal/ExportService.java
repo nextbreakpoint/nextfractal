@@ -4,19 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadFactory;
 
-import com.nextbreakpoint.nextfractal.render.RenderFactory;
-
 public class ExportService {
 	private final List<ExportSession> sessions = new ArrayList<>();
+	private DispatchService dispatchService;
 	private ThreadFactory threadFactory;
-	private RenderFactory renderFactory;
 	private volatile Thread thread;
 	private volatile boolean running;
 	private int tileSize;
 	
-	public ExportService(ThreadFactory threadFactory, RenderFactory renderFactory, int tileSize) {
+	public ExportService(ThreadFactory threadFactory, DispatchService dispatchService, int tileSize) {
 		this.threadFactory = threadFactory;
-		this.renderFactory = renderFactory;
+		this.dispatchService = dispatchService;
 		this.tileSize = tileSize;
 	}
 
@@ -97,19 +95,18 @@ public class ExportService {
 			if (isSessionValid(session)) {
 				break;
 			}
-			processJob(job);
+			if (!job.isCompleted()) {
+				dispatchJob(job);
+			}
 		}
 	}
 
 	private boolean isSessionValid(ExportSession session) {
 		return session.isTerminated() || session.isSuspended();
 	}
-
-	private void processJob(ExportJob job) {
-		// TODO Auto-generated method stub
-		// 1. wait until a thread is available to process the job
-		// 2. pass the job to the thread
-		
+	
+	private void dispatchJob(ExportJob job) {
+		dispatchService.dispatch(job);
 	}
 
 	private class ProcessSessions implements Runnable {

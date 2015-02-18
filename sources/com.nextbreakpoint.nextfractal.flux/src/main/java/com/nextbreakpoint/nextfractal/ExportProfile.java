@@ -1,5 +1,9 @@
 package com.nextbreakpoint.nextfractal;
 
+import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererPoint;
+import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererSize;
+import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererTile;
+
 public class ExportProfile {
 	private float quality;
 	private float frameRate;
@@ -125,5 +129,14 @@ public class ExportProfile {
 
 	public void setPluginId(String pluginId) {
 		this.pluginId = pluginId;
+	}
+
+	public RendererTile createTile() {
+		RendererSize imageSize = new RendererSize(frameWidth, frameHeight);
+		RendererSize tileSize = new RendererSize(tileWidth, tileHeight);
+		RendererSize tileBorder = new RendererSize(tileBorderWidth, tileBorderHeight);
+		RendererPoint tileOffset = new RendererPoint(tileOffsetX, tileOffsetY);
+		RendererTile tile = new RendererTile(imageSize, tileSize, tileOffset, tileBorder);
+		return tile;
 	}
 }
