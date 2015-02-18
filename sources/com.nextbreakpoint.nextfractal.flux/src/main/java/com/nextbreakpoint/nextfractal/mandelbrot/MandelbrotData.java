@@ -8,6 +8,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import com.nextbreakpoint.nextfractal.core.DateAdapter;
+
 @XmlRootElement(name="mandelbrot")
 public class MandelbrotData {
 	private final static String version = "1.0";
@@ -83,6 +85,14 @@ public class MandelbrotData {
 		this.scale = scale;
 	}
 	
+	public IntBuffer getPixels() {
+		return pixels;
+	}
+	
+	public void setPixels(IntBuffer pixels) {
+		this.pixels = pixels;
+	}
+	
 	public Date getTimestamp() {
 		return timestamp;
 	}
@@ -90,13 +100,5 @@ public class MandelbrotData {
 	@Override
 	public String toString() {
 		return "[traslation=" + Arrays.toString(traslation)	+ ", rotation=" + Arrays.toString(rotation) + ", scale=" + Arrays.toString(scale) + ", julia=" + julia + ", constant=" + Arrays.toString(constant) + ", time=" + time + "]";
-	}
-
-	public IntBuffer getPixels() {
-		return pixels;
-	}
-
-	public void setPixels(IntBuffer pixels) {
-		this.pixels = pixels;
 	}
 }

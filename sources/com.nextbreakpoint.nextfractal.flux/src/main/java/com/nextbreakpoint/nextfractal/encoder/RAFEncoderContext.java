@@ -26,20 +26,19 @@
 package com.nextbreakpoint.nextfractal.encoder;
 
 import java.io.IOException;
-
-import com.nextbreakpoint.nextfractal.core.ChunkedRandomAccessFile;
+import java.io.RandomAccessFile;
 
 /**
  * @author Andrea Medeghini
  */
 public class RAFEncoderContext implements EncoderContext {
-	private final ChunkedRandomAccessFile raf;
+	private final RandomAccessFile raf;
 	private final int imageWidth;
 	private final int imageHeight;
 	private final int frameRate;
 	private final int frameCount;
 
-	public RAFEncoderContext(final ChunkedRandomAccessFile raf, final int imageWidth, final int imageHeight, final int frameRate, final int frameCount) throws IOException {
+	public RAFEncoderContext(final RandomAccessFile raf, final int imageWidth, final int imageHeight, final int frameRate, final int frameCount) throws IOException {
 		this.raf = raf;
 		this.imageWidth = imageWidth;
 		this.imageHeight = imageHeight;

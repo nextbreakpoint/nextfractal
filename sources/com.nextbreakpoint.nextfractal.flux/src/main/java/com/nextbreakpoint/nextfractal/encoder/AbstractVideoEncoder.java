@@ -52,6 +52,8 @@ public abstract class AbstractVideoEncoder implements Encoder {
 	private static final Logger logger = Logger.getLogger(AbstractVideoEncoder.class.getName());
 	private static final int PKT_BIT_BUFFER_SIZE = 200000;
 	private EncoderDelegate delegate;
+	private volatile float progress;
+
 	static {
 		FFmpeg4Java.avcodec_register_all();
 		FFmpeg4Java.av_register_all();
@@ -68,7 +70,7 @@ public abstract class AbstractVideoEncoder implements Encoder {
 	 * @see com.nextbreakpoint.nextfractal.encoder.Encoder#encode(com.nextbreakpoint.nextfractal.encoder.EncoderContext, java.io.File)
 	 */
 	public void encode(final EncoderContext context, final File path) throws EncoderException {
-		fireStateChanged(0);
+		setProgress(0);
 		AVFormatContext format_context = null;
 		AVOutputFormat output_format = null;
 		AVCodecContext codec_context = null;
@@ -185,7 +187,7 @@ public abstract class AbstractVideoEncoder implements Encoder {
 																	AbstractVideoEncoder.logger.fine(frame + " frames encoded...");
 																}
 															}
-															fireStateChanged(frame * 100 / (frame_count - 1));
+															setProgress(frame * 100 / (frame_count - 1));
 															byte[] data = context.getPixelsAsByteArray(frame, 0, 0, context.getImageWidth(), context.getImageHeight(), 3);
 															FFmpeg4Java.swig_set_bytes(rgb_bit_buffer, data);
 															FFmpeg4Java.sws_scale(sws_context, rgb_frame.getData(), rgb_frame.getLinesize(), 0, codec_context.getHeight(), yuv_frame.getData(), yuv_frame.getLinesize());
@@ -233,7 +235,7 @@ public abstract class AbstractVideoEncoder implements Encoder {
 				if (AbstractVideoEncoder.logger.isLoggable(Level.INFO)) {
 					AbstractVideoEncoder.logger.info("Profile exported: elapsed time " + String.format("%3.2f", time / 1000.0d) + "s");
 				}
-				fireStateChanged(100);
+				setProgress(100);
 			}
 		}
 		catch (final Exception e) {
@@ -278,15 +280,18 @@ public abstract class AbstractVideoEncoder implements Encoder {
 	}
 
 	/**
-	 * @param state
+	 * @param progress
 	 */
-	protected void fireStateChanged(int state) {
-		// TODO Auto-generated method stub
-		
+	protected void setProgress(float progress) {
+		this.progress = progress;
 	}
 
 	/**
 	 * @return
 	 */
 	protected abstract String getFormatName();
+
+	public float getProgress() {
+		return progress;
+	}
 }

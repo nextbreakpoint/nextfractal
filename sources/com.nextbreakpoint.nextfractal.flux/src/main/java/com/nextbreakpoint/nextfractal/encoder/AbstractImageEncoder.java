@@ -41,6 +41,8 @@ import net.sf.freeimage4java.RGBQUAD;
 public abstract class AbstractImageEncoder implements Encoder {
 	private static final Logger logger = Logger.getLogger(AbstractImageEncoder.class.getName());
 	private EncoderDelegate delegate;
+	private volatile float progress;
+
 	static {
 		FreeImage4Java.FreeImage_Initialise(FreeImage4JavaConstants.TRUE);
 	}
@@ -58,7 +60,7 @@ public abstract class AbstractImageEncoder implements Encoder {
 	 */
 	@Override
 	public void encode(final EncoderContext context, final File path) throws EncoderException {
-		fireStateChanged(0);
+		setProgress(0);
 		RGBQUAD value = null;
 		FIBITMAP dib = null;
 		try {
@@ -95,7 +97,7 @@ public abstract class AbstractImageEncoder implements Encoder {
 				if (AbstractImageEncoder.logger.isLoggable(Level.INFO)) {
 					AbstractImageEncoder.logger.info("Profile exported: elapsed time " + String.format("%3.2f", time / 1000.0d) + "s");
 				}
-				fireStateChanged(100);
+				setProgress(100);
 			}
 		}
 		catch (final Exception e) {
@@ -116,16 +118,14 @@ public abstract class AbstractImageEncoder implements Encoder {
 	 * @return
 	 */
 	protected boolean isAlphaSupported() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	/**
-	 * @param state
+	 * @param progress
 	 */
-	protected void fireStateChanged(int state) {
-		// TODO Auto-generated method stub
-		
+	protected void setProgress(float progress) {
+		this.progress = progress;
 	}
 
 	/**
@@ -149,4 +149,8 @@ public abstract class AbstractImageEncoder implements Encoder {
 	 * @return
 	 */
 	protected abstract String getFormatName();
+
+	public float getProgress() {
+		return progress;
+	}
 }

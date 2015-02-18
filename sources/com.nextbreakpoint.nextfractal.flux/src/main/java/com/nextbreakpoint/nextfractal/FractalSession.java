@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class FractalSession {
-	protected final List<FractalSessionListener> listeners = new ArrayList<>();
+	protected final List<SessionListener> listeners = new ArrayList<>();
 	protected final List<ExportSession> sessions = new ArrayList<>();
 	private String packageName;
 	private String className;
@@ -27,11 +27,11 @@ public abstract class FractalSession {
 		this.className = className;
 	}
 
-	public void addSessionListener(FractalSessionListener listener) {
+	public void addSessionListener(SessionListener listener) {
 		listeners.add(listener);
 	}
 
-	public void removeSessionListener(FractalSessionListener listener) {
+	public void removeSessionListener(SessionListener listener) {
 		listeners.remove(listener);
 	}
 
@@ -58,31 +58,31 @@ public abstract class FractalSession {
 	}
 
 	protected void fireDataChanged() {
-		for (FractalSessionListener listener : listeners) {
+		for (SessionListener listener : listeners) {
 			listener.dataChanged(this);
 		}
 	}
 
 	protected void fireViewChanged(boolean zoom) {
-		for (FractalSessionListener listener : listeners) {
+		for (SessionListener listener : listeners) {
 			listener.viewChanged(this, zoom);
 		}
 	}
 	
 	protected void fireTerminate() {
-		for (FractalSessionListener listener : listeners) {
+		for (SessionListener listener : listeners) {
 			listener.terminate(this);
 		}
 	}
 
 	protected void fireSessionAdded(ExportSession session) {
-		for (FractalSessionListener listener : listeners) {
+		for (SessionListener listener : listeners) {
 			listener.sessionAdded(this, session);
 		}
 	}
 	
 	protected void fireSessionRemoved(ExportSession session) {
-		for (FractalSessionListener listener : listeners) {
+		for (SessionListener listener : listeners) {
 			listener.sessionRemoved(this, session);
 		}
 	}

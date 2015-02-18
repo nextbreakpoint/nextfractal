@@ -1,10 +1,13 @@
 package com.nextbreakpoint.nextfractal.mandelbrot;
 
-import com.nextbreakpoint.nextfractal.ExportService;
 import com.nextbreakpoint.nextfractal.FractalSession;
 
 public class MandelbrotSession extends FractalSession {
 	private MandelbrotData data = new MandelbrotData();
+
+	public String getVersion() {
+		return data.getVersion();
+	}
 
 	public String getSource() {
 		return data.getSource();
@@ -64,10 +67,6 @@ public class MandelbrotSession extends FractalSession {
 		fireDataChanged();
 	}
 
-	public String getVersion() {
-		return data.getVersion();
-	}
-	
 	public MandelbrotData getData() {
 		MandelbrotData data = new MandelbrotData();
 		data.setConstant(this.data.getConstant());

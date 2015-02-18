@@ -1,19 +1,22 @@
 package com.nextbreakpoint.nextfractal;
 
 import java.io.File;
+import java.nio.IntBuffer;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ServiceLoader;
 import java.util.concurrent.ThreadFactory;
 
-import com.nextbreakpoint.nextfractal.core.Worker;
-import com.nextbreakpoint.nextfractal.mandelbrot.ImageGenerator;
 import com.nextbreakpoint.nextfractal.render.RenderFactory;
 
 public class DispatchService {
-	private ThreadFactory threadFactory;
-	private RenderFactory renderFactory;
-	private Worker worker;
-	private File outDir;
+	private final ThreadFactory threadFactory;
+	private final RenderFactory renderFactory;
+	private final List<Thread> threads = new ArrayList<>();
+	private final File outDir;
 	
 	/**
+	 * @param outDir
 	 * @param threadFactory
 	 * @param renderFactory
 	 */
@@ -21,26 +24,67 @@ public class DispatchService {
 		this.threadFactory = threadFactory; 
 		this.renderFactory = renderFactory;
 		this.outDir = outDir;
-		worker = new Worker(threadFactory);
-		worker.start();
 	}
 	
-	/**
-	 * 
-	 */
-	public void dispose() {
-		worker.stop();
+	public void dispatch(ExportJob job) {
+		synchronized (threads) {
+			if (threads.size() < 10) {
+				Thread thread = createThread(new ProcessJob(job));
+				threads.add(thread);
+				job.setDispatched(true);
+				thread.start();
+			}
+		}
 	}
 
-	public void dispatch(ExportJob job) {
-		worker.addTask(new Runnable() {
-			@Override
-			public void run() {
-				ImageGenerator generator = new ImageGenerator(threadFactory, renderFactory, job.getTile());
-				generator.renderImage(outDir, job.getProfile().getData());
-				//TODO job
-				
+	/**
+	 * @param runnable
+	 * @return
+	 */
+	protected Thread createThread(Runnable runnable) {
+		return threadFactory.newThread(runnable);
+	}
+
+	private void processJob(ExportJob job) {
+		ImageGenerator generator = createImageGenerator(job);
+		IntBuffer pixels = generator.renderImage(outDir, job.getProfile().getData());
+		job.setResult(new ExportResult(pixels, null));
+		job.setTerminated(true);
+		//TODO interrupt generator when job is terminated or suspended
+	}
+	
+	private ImageGenerator createImageGenerator(ExportJob job) {
+		final ServiceLoader<? extends FractalFactory> plugins = ServiceLoader.load(FractalFactory.class);
+		for (FractalFactory plugin : plugins) {
+			try {
+				if (job.getPluginId().equals(plugin.getId())) {
+					return plugin.createImageGenerator(threadFactory, renderFactory, job.getTile());
+				}
+			} catch (Exception e) {
 			}
-		});
+		}
+		return null;
+	}
+
+	private class ProcessJob implements Runnable {
+		private ExportJob job;
+		
+		public ProcessJob(ExportJob job) {
+			this.job = job;
+		}
+
+		/**
+		 * @see java.lang.Runnable#run()
+		 */
+		@Override
+		public void run() {
+			try {
+				processJob(job);
+			} finally {
+				synchronized (threads) {
+					threads.remove(this);
+				}
+			}
+		}
 	}
 }

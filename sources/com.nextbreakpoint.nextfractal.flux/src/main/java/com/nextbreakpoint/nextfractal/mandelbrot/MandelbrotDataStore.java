@@ -6,7 +6,7 @@ import java.io.OutputStream;
 
 import javax.xml.bind.JAXB;
 
-public class DataStore {
+public class MandelbrotDataStore {
 	public MandelbrotData loadFromFile(File path) throws Exception {
 		try {
 			return JAXB.unmarshal(path, MandelbrotData.class);
@@ -23,13 +23,19 @@ public class DataStore {
 		}
 	}
 
-	public MandelbrotData loadFromStream(InputStream is) {
-		// TODO Auto-generated method stub
-		return null;
+	public MandelbrotData loadFromStream(InputStream is) throws Exception {
+		try {
+			return JAXB.unmarshal(is, MandelbrotData.class);
+		} catch (Exception e) {
+			throw new Exception("Cannot load data from stream");
+		}
 	}
 
-	public void saveToStream(OutputStream os, MandelbrotData data) {
-		// TODO Auto-generated method stub
-		
+	public void saveToStream(OutputStream os, MandelbrotData data) throws Exception {
+		try {
+			JAXB.marshal(data, os);
+		} catch (Exception e) {
+			throw new Exception("Cannot save data to stream");
+		}
 	}
 }

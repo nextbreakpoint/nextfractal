@@ -16,13 +16,12 @@ import javafx.stage.FileChooser;
 import javafx.util.Callback;
 
 import com.nextbreakpoint.nextfractal.ExportSession;
-import com.nextbreakpoint.nextfractal.ExportSessionListener;
 import com.nextbreakpoint.nextfractal.FractalSession;
-import com.nextbreakpoint.nextfractal.FractalSessionListener;
+import com.nextbreakpoint.nextfractal.SessionListener;
 import com.nextbreakpoint.nextfractal.core.DefaultThreadFactory;
 import com.nextbreakpoint.nextfractal.core.Worker;
-import com.nextbreakpoint.nextfractal.mandelbrot.DataStore;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotData;
+import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotDataStore;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotImageGenerator;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotSession;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererPoint;
@@ -122,7 +121,7 @@ public class MandelbrotEditorPane extends BorderPane {
 
 		sourceText.setText(getMandelbrotSession().getSource());
 		
-		session.addSessionListener(new FractalSessionListener() {
+		session.addSessionListener(new SessionListener() {
 			@Override
 			public void dataChanged(FractalSession session) {
 				sourceText.setText(getMandelbrotSession().getSource());
@@ -143,12 +142,13 @@ public class MandelbrotEditorPane extends BorderPane {
 			@Override
 			public void sessionAdded(FractalSession session, ExportSession exportSession) {
 				jobsList.getItems().add(exportSession);
-				exportSession.addSessionListener(new ExportSessionListener() {
-					@Override
-					public void stateChanged(ExportSession exportSession, float progress) {
-						jobsList.getItems().set(jobsList.getItems().indexOf(exportSession), exportSession);
-					}
-				});
+				//TODO sessionAdded
+//				exportSession.addSessionListener(new ExportSessionListener() {
+//					@Override
+//					public void stateChanged(ExportSession exportSession, float progress) {
+//						jobsList.getItems().set(jobsList.getItems().indexOf(exportSession), exportSession);
+//					}
+//				});
 			}
 
 			@Override
@@ -168,7 +168,7 @@ public class MandelbrotEditorPane extends BorderPane {
 			if (file != null) {
 				currentFile = file;
 				try {
-					DataStore service = new DataStore();
+					MandelbrotDataStore service = new MandelbrotDataStore();
 					MandelbrotData data = service.loadFromFile(currentFile);
 					logger.info(data.toString());
 					getMandelbrotSession().setData(data);
@@ -185,7 +185,7 @@ public class MandelbrotEditorPane extends BorderPane {
 			if (file != null) {
 				currentFile = file;
 				try {
-					DataStore service = new DataStore();
+					MandelbrotDataStore service = new MandelbrotDataStore();
 					MandelbrotData data = getMandelbrotSession().getData();
 					logger.info(data.toString());
 					service.saveToFile(currentFile, data);

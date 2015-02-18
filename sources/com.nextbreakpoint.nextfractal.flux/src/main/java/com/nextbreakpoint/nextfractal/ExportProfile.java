@@ -19,14 +19,6 @@ public class ExportProfile {
 	private String pluginId;
 	private Object data;
 
-	public float getQuality() {
-		return quality;
-	}
-
-	public void setQuality(float quality) {
-		this.quality = quality;
-	}
-
 	public float getFrameRate() {
 		return frameRate;
 	}
@@ -107,6 +99,22 @@ public class ExportProfile {
 		this.tileBorderHeight = tileBorderHeight;
 	}
 
+	public float getQuality() {
+		return quality;
+	}
+
+	public void setQuality(float quality) {
+		this.quality = quality;
+	}
+
+	public String getPluginId() {
+		return pluginId;
+	}
+
+	public void setPluginId(String pluginId) {
+		this.pluginId = pluginId;
+	}
+
 	public Object getData() {
 		return data;
 	}
@@ -123,12 +131,10 @@ public class ExportProfile {
 		return 0;
 	}
 
-	public String getPluginId() {
-		return pluginId;
+	public void setStartTime(double time) {
 	}
 
-	public void setPluginId(String pluginId) {
-		this.pluginId = pluginId;
+	public void setStopTime(double time) {
 	}
 
 	public RendererTile createTile() {

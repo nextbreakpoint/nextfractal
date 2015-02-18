@@ -3,9 +3,9 @@ package com.nextbreakpoint.nextfractal.mandelbrot;
 import java.util.Arrays;
 
 public class MandelbrotView {
-	private double[] traslation;
-	private double[] rotation;
-	private double[] scale;
+	private final double[] traslation;
+	private final double[] rotation;
+	private final double[] scale;
 
 	public MandelbrotView(double[] traslation, double[] rotation, double[] scale) {
 		this.traslation = traslation;

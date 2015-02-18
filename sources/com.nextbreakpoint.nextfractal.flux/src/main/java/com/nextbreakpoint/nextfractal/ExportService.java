@@ -1,16 +1,18 @@
 package com.nextbreakpoint.nextfractal;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ThreadFactory;
 
 public class ExportService {
 	private final List<ExportSession> sessions = new ArrayList<>();
-	private DispatchService dispatchService;
-	private ThreadFactory threadFactory;
-	private volatile Thread thread;
+	private final DispatchService dispatchService;
+	private final ThreadFactory threadFactory;
+	private final int tileSize;
+	private volatile Thread cleanupThread;
+	private volatile Thread dispatchThread;
 	private volatile boolean running;
-	private int tileSize;
 	
 	public ExportService(ThreadFactory threadFactory, DispatchService dispatchService, int tileSize) {
 		this.threadFactory = threadFactory;
@@ -27,24 +29,42 @@ public class ExportService {
 	}
 
 	public void start() {
-		if (thread == null) {
-			thread = createThread(new ProcessSessions());
-			running = true;
-			thread.start();
+		running = true;
+		if (cleanupThread == null) {
+			cleanupThread = createThread(new CleanupSessions());
+			cleanupThread.start();
+		}
+		if (dispatchThread == null) {
+			dispatchThread = createThread(new DispatchSessions());
+			dispatchThread.start();
 		}
 	}
 
 	public void stop() {
 		running = false;
-		if (thread != null) {
-			thread.interrupt();
+		if (cleanupThread != null) {
+			cleanupThread.interrupt();
+		}
+		if (dispatchThread != null) {
+			dispatchThread.interrupt();
+		}
+		if (cleanupThread != null) {
 			try {
-				thread.join();
+				cleanupThread.join();
 			}
 			catch (InterruptedException e) {
 				Thread.currentThread().interrupt();
 			}
-			thread = null;
+			cleanupThread = null;
+		}
+		if (dispatchThread != null) {
+			try {
+				dispatchThread.join();
+			}
+			catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+			}
+			dispatchThread = null;
 		}
 	}
 
@@ -58,71 +78,68 @@ public class ExportService {
 
 	private synchronized void addSession(ExportSession exportSession) {
 		sessions.add(exportSession);
-		notify();
+		notifyAll();
 	}
 
-	private synchronized ExportSession findOneSession() {
-		for (ExportSession session : sessions) {
-			if (!session.isSuspended()) {
-				return session;
-			}
-		}
-		return null;
-	}
-
-	private synchronized void terminateSession(ExportSession exportSession) {
-		sessions.remove(exportSession);
-		exportSession.dispose();
-	}
-
-	private synchronized void waitForSession() {
+	private synchronized void waitForSession(long millis) {
 		try {
-			wait(1000);
+			wait(millis);
 		} catch (InterruptedException e) {
 		}
 	}
 
-	private void processSession(ExportSession session) {
-		processJobs(session);
-		session.updateState();
-		if (session.isTerminated()) {
-			terminateSession(session);
+	private synchronized void cleanupSessions() {
+		for (Iterator<ExportSession> i = sessions.iterator(); i.hasNext();) {
+			ExportSession session = i.next();
+			if (session.isTerminated()) {
+				i.remove();
+			}
 		}
 	}
 
-	private void processJobs(ExportSession session) {
-		for (ExportJob job : session.getJobs()) {
-			if (isSessionValid(session)) {
-				break;
+	private synchronized void dispatchSessions() {
+		for (Iterator<ExportSession> i = sessions.iterator(); i.hasNext();) {
+			ExportSession session = i.next();
+			if (!session.isTerminated() && !session.isSuspended() && !session.isDispatched()) {
+				dispatchSession(session);
 			}
-			if (!job.isCompleted()) {
+		}
+	}
+
+	private void dispatchSession(ExportSession session) {
+		for (ExportJob job : session.getJobs()) {
+			if (!job.isTerminated() && !job.isSuspended() && !job.isDispatched()) {
 				dispatchJob(job);
 			}
 		}
-	}
-
-	private boolean isSessionValid(ExportSession session) {
-		return session.isTerminated() || session.isSuspended();
 	}
 	
 	private void dispatchJob(ExportJob job) {
 		dispatchService.dispatch(job);
 	}
-
-	private class ProcessSessions implements Runnable {
+	
+	private class CleanupSessions implements Runnable {
 		/**
 		 * @see java.lang.Runnable#run()
 		 */
 		@Override
 		public void run() {
 			while (running) {
-				ExportSession exportSession = null;
-				while (running && (exportSession = findOneSession()) == null) {
-					waitForSession();
-				}
-				if (running && exportSession != null) {
-					processSession(exportSession);
-				}
+				cleanupSessions();
+				waitForSession(1000);
+			}
+		}
+	}
+
+	private class DispatchSessions implements Runnable {
+		/**
+		 * @see java.lang.Runnable#run()
+		 */
+		@Override
+		public void run() {
+			while (running) {
+				dispatchSessions();
+				waitForSession(1000);
 			}
 		}
 	}

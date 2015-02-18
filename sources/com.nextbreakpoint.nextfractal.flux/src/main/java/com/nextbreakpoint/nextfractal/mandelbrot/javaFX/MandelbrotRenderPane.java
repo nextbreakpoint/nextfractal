@@ -35,7 +35,7 @@ import javafx.util.StringConverter;
 
 import com.nextbreakpoint.nextfractal.ExportSession;
 import com.nextbreakpoint.nextfractal.FractalSession;
-import com.nextbreakpoint.nextfractal.FractalSessionListener;
+import com.nextbreakpoint.nextfractal.SessionListener;
 import com.nextbreakpoint.nextfractal.core.DefaultThreadFactory;
 import com.nextbreakpoint.nextfractal.core.DoubleVector4D;
 import com.nextbreakpoint.nextfractal.core.IntegerVector4D;
@@ -191,7 +191,7 @@ public class MandelbrotRenderPane extends BorderPane {
 			export.show();
 		});
 		
-		session.addSessionListener(new FractalSessionListener() {
+		session.addSessionListener(new SessionListener() {
 			@Override
 			public void dataChanged(FractalSession session) {
 				updateFractalData(session);

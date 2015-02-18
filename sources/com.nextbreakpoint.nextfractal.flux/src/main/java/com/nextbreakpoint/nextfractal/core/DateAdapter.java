@@ -1,4 +1,4 @@
-package com.nextbreakpoint.nextfractal.mandelbrot;
+package com.nextbreakpoint.nextfractal.core;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

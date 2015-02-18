@@ -281,7 +281,7 @@ public class LocalJob implements JobInterface {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobInterface#isCompleted()
+	 * @see com.nextbreakpoint.nextfractal.queue.spool.JobInterface#isTerminated()
 	 */
 	@Override
 	public synchronized boolean isTerminated() {

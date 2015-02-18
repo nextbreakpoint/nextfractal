@@ -17,7 +17,7 @@ import com.nextbreakpoint.nextfractal.ExportService;
 import com.nextbreakpoint.nextfractal.ExportSession;
 import com.nextbreakpoint.nextfractal.FractalFactory;
 import com.nextbreakpoint.nextfractal.FractalSession;
-import com.nextbreakpoint.nextfractal.FractalSessionListener;
+import com.nextbreakpoint.nextfractal.SessionListener;
 import com.nextbreakpoint.nextfractal.core.DefaultThreadFactory;
 import com.nextbreakpoint.nextfractal.render.javaFX.JavaFXRenderFactory;
 
@@ -99,7 +99,7 @@ public class NextFractalApp extends Application {
 				session.terminate();
 			}
 		});
-		session.addSessionListener(new FractalSessionListener() {
+		session.addSessionListener(new SessionListener() {
 			@Override
 			public void viewChanged(FractalSession session, boolean zoom) {
 			}
