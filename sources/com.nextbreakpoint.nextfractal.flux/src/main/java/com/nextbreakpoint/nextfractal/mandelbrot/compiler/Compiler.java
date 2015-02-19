@@ -1,10 +1,11 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.compiler;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.StringReader;
 import java.net.URI;
 import java.util.ArrayList;
@@ -14,15 +15,19 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.tools.Diagnostic;
 import javax.tools.DiagnosticCollector;
+import javax.tools.FileObject;
 import javax.tools.JavaCompiler;
+import javax.tools.JavaFileManager;
 import javax.tools.JavaFileObject;
+import javax.tools.JavaFileObject.Kind;
 import javax.tools.SimpleJavaFileObject;
-import javax.tools.StandardJavaFileManager;
+import javax.tools.StandardLocation;
 import javax.tools.ToolProvider;
 
 import org.antlr.v4.runtime.ANTLRInputStream;
@@ -81,12 +86,10 @@ public class Compiler {
 	private static final Logger logger = Logger.getLogger(Compiler.class.getName());
 	private final String packageName;
 	private final String className;
-	private final File outDir;
 	
 	public Compiler(File outDir, String packageName, String className) {
 		this.packageName = packageName;
 		this.className = className;
-		this.outDir = outDir;
 	}
 	
 	public CompilerReport generateJavaSource(String source) throws Exception {
@@ -162,24 +165,24 @@ public class Compiler {
 	
 	@SuppressWarnings("unchecked")
 	private <T> Class<T> compileToClass(String source, String className, Class<T> clazz) throws Exception {
-		File dir = new File(outDir, packageName.replace(".", "/"));
-		dir.mkdirs();
-		FileWriter writer = null;
-		try {
-			writer = new FileWriter(new File(dir, "/" + className + ".java"));
-			writer.write(source);
-		} finally {
-			if (writer != null) {
-				writer.close();
-			}
-		}
+//		File dir = new File(outDir, packageName.replace(".", "/"));
+//		dir.mkdirs();
+//		FileWriter writer = null;
+//		try {
+//			writer = new FileWriter(new File(dir, "/" + className + ".java"));
+//			//writer.write(source);
+//		} finally {
+//			if (writer != null) {
+//				writer.close();
+//			}
+//		}
 		List<SimpleJavaFileObject> compilationUnits = new ArrayList<>();
-		compilationUnits.add(new CompilerJavaFileObject(className, source));
+		compilationUnits.add(new SourceJavaFileObject(className, source));
 		List<String> options = new ArrayList<>();
-		options.addAll(Arrays.asList("-d", outDir.getAbsolutePath(), "-source", "1.8", "-target", "1.8", "-proc:none", "-Xdiags:verbose", "-classpath", System.getProperty("java.class.path")));
+		options.addAll(Arrays.asList("-source", "1.8", "-target", "1.8", "-proc:none", "-Xdiags:verbose", "-classpath", System.getProperty("java.class.path")));
 		DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-		StandardJavaFileManager fileManager = compiler.getStandardFileManager(diagnostics, null, null);
+		JavaFileManager fileManager = new CompilerJavaFileManager(compiler.getStandardFileManager(diagnostics, null, null));
 		try {
 			compiler.getTask(null, fileManager, diagnostics, options, null, compilationUnits).call();
 			for (Diagnostic<? extends JavaFileObject> diagnostic : diagnostics.getDiagnostics()) {
@@ -204,16 +207,12 @@ public class Compiler {
 		return null;
 	}
 
-	private void defineClasses(StandardJavaFileManager fileManager, CompilerClassLoader loader, String className) throws IOException {
-		String name = packageName.replace(".", "/") + "/" + className + ".class";
-		Iterable<? extends JavaFileObject> files = fileManager.getJavaFileObjects(outDir.getAbsolutePath() + "/" + name);
-		Iterator<? extends JavaFileObject> iterator = files.iterator();
-		if (iterator.hasNext()) {
-			JavaFileObject file = files.iterator().next();
-			byte[] fileData = loadBytes(file);
-			logger.log(Level.FINE, file.toUri().toString() + " (" + fileData.length + ")");
-			loader.defineClassFromData(name.replace("/", ".").replace(".class", ""), fileData);
-		}
+	private void defineClasses(JavaFileManager fileManager, CompilerClassLoader loader, String className) throws IOException {
+		String name = packageName + "." + className;
+		JavaFileObject file = fileManager.getJavaFileForOutput(StandardLocation.locationFor(name), name, Kind.CLASS, null);
+		byte[] fileData = loadBytes(file);
+		logger.log(Level.FINE, file.toUri().toString() + " (" + fileData.length + ")");
+		loader.defineClassFromData(name, fileData);
 	}
 
 	private byte[] loadBytes(JavaFileObject file) throws IOException {
@@ -978,10 +977,10 @@ public class Compiler {
 		}
 	}
 
-	private class CompilerJavaFileObject extends SimpleJavaFileObject {
+	private class SourceJavaFileObject extends SimpleJavaFileObject {
         private final String code;
 
-        public CompilerJavaFileObject(String name, String code) {
+        public SourceJavaFileObject(String name, String code) {
             super(URI.create("string:///" + name.replace('.','/') + Kind.SOURCE.extension), Kind.SOURCE);
             this.code = code;
         }
@@ -990,6 +989,25 @@ public class Compiler {
         public CharSequence getCharContent(boolean ignoreEncodingErrors) {
             return code;
         }
+    }
+
+	private class ClassJavaFileObject extends SimpleJavaFileObject {
+		private ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+        public ClassJavaFileObject(String name) {
+            super(URI.create("string:///" + name.replace('.','/') + Kind.SOURCE.extension), Kind.CLASS);
+        }
+
+		@Override
+		public InputStream openInputStream() throws IOException {
+			return new ByteArrayInputStream(baos.toByteArray());
+		}
+
+		@Override
+		public OutputStream openOutputStream() throws IOException {
+			baos.reset();
+			return baos;
+		}
     }
 	
 	private class CompilerClassLoader extends ClassLoader {
@@ -1004,6 +1022,129 @@ public class Compiler {
 		public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line, int charPositionInLine, String msg, RecognitionException e) {
 			logger.log(Level.WARNING, "[" + line + ":" + charPositionInLine + "] " + msg, e);
 			super.syntaxError(recognizer, offendingSymbol, line, charPositionInLine, msg, e);
+		}
+	}
+	
+	private class CompilerJavaFileManager implements JavaFileManager {
+		private Map<String, JavaFileObject> files = new HashMap<>();
+		private JavaFileManager fileManager;
+		
+		public CompilerJavaFileManager(JavaFileManager fileManager) {
+			this.fileManager = fileManager;
+		}
+
+		/**
+		 * @see javax.tools.OptionChecker#isSupportedOption(java.lang.String)
+		 */
+		@Override
+		public int isSupportedOption(String option) {
+			return fileManager.isSupportedOption(option);
+		}
+
+		/**
+		 * @see javax.tools.JavaFileManager#getClassLoader(javax.tools.JavaFileManager.Location)
+		 */
+		@Override
+		public ClassLoader getClassLoader(Location location) {
+			return fileManager.getClassLoader(location);
+		}
+
+		/**
+		 * @see javax.tools.JavaFileManager#list(javax.tools.JavaFileManager.Location, java.lang.String, java.util.Set, boolean)
+		 */
+		@Override
+		public Iterable<JavaFileObject> list(Location location, String packageName, Set<Kind> kinds, boolean recurse) throws IOException {
+			return fileManager.list(location, packageName, kinds, recurse);
+		}
+
+		/**
+		 * @see javax.tools.JavaFileManager#inferBinaryName(javax.tools.JavaFileManager.Location, javax.tools.JavaFileObject)
+		 */
+		@Override
+		public String inferBinaryName(Location location, JavaFileObject file) {
+			return fileManager.inferBinaryName(location, file);
+		}
+
+		/**
+		 * @see javax.tools.JavaFileManager#isSameFile(javax.tools.FileObject, javax.tools.FileObject)
+		 */
+		@Override
+		public boolean isSameFile(FileObject a, FileObject b) {
+			return fileManager.isSameFile(a, b);
+		}
+
+		/**
+		 * @see javax.tools.JavaFileManager#handleOption(java.lang.String, java.util.Iterator)
+		 */
+		@Override
+		public boolean handleOption(String current, Iterator<String> remaining) {
+			return fileManager.handleOption(current, remaining);
+		}
+
+		/**
+		 * @see javax.tools.JavaFileManager#hasLocation(javax.tools.JavaFileManager.Location)
+		 */
+		@Override
+		public boolean hasLocation(Location location) {
+			return fileManager.hasLocation(location);
+		}
+
+		/**
+		 * @see javax.tools.JavaFileManager#getJavaFileForInput(javax.tools.JavaFileManager.Location, java.lang.String, javax.tools.JavaFileObject.Kind)
+		 */
+		@Override
+		public JavaFileObject getJavaFileForInput(Location location, String className, Kind kind) throws IOException {
+			return fileManager.getJavaFileForInput(location, className, kind);
+		}
+
+		/**
+		 * @see javax.tools.JavaFileManager#getJavaFileForOutput(javax.tools.JavaFileManager.Location, java.lang.String, javax.tools.JavaFileObject.Kind, javax.tools.FileObject)
+		 */
+		@Override
+		public JavaFileObject getJavaFileForOutput(Location location, String className, Kind kind, FileObject sibling) throws IOException {
+			if (className.equals(Compiler.this.packageName + "." + Compiler.this.className + "Orbit") || className.equals(Compiler.this.packageName + "." + Compiler.this.className + "Color")) {
+				JavaFileObject file = files.get(className);
+				if (file == null) {
+					file = new ClassJavaFileObject(className);
+					files.put(className, file);
+				}
+				return file;
+			} else {
+				return fileManager.getJavaFileForOutput(location, className, kind, sibling);
+			}
+		}
+
+		/**
+		 * @see javax.tools.JavaFileManager#getFileForInput(javax.tools.JavaFileManager.Location, java.lang.String, java.lang.String)
+		 */
+		@Override
+		public FileObject getFileForInput(Location location, String packageName, String relativeName) throws IOException {
+			return fileManager.getFileForInput(location, packageName, relativeName);
+		}
+
+		/**
+		 * @see javax.tools.JavaFileManager#getFileForOutput(javax.tools.JavaFileManager.Location, java.lang.String, java.lang.String, javax.tools.FileObject)
+		 */
+		@Override
+		public FileObject getFileForOutput(Location location, String packageName, String relativeName, FileObject sibling) throws IOException {
+			return fileManager.getFileForOutput(location, packageName, relativeName, sibling);
+		}
+
+		/**
+		 * @see javax.tools.JavaFileManager#flush()
+		 */
+		@Override
+		public void flush() throws IOException {
+			fileManager.flush();
+		}
+
+		/**
+		 * @see javax.tools.JavaFileManager#close()
+		 */
+		@Override
+		public void close() throws IOException {
+			fileManager.close();
+			files.clear();
 		}
 	}
 }	

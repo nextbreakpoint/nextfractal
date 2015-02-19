@@ -51,7 +51,7 @@ public class DispatchService {
 			ImageGenerator generator = createImageGenerator(job);
 			IntBuffer pixels = generator.renderImage(outDir, job.getProfile().getData());
 			job.setResult(new ExportResult(pixels, null));
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			job.setResult(new ExportResult(null, e.getMessage()));
 		} finally {
 			job.setTerminated(true);
@@ -88,7 +88,7 @@ public class DispatchService {
 				processJob(job);
 			} finally {
 				synchronized (threads) {
-					threads.remove(this);
+					threads.remove(Thread.currentThread());
 				}
 			}
 		}
