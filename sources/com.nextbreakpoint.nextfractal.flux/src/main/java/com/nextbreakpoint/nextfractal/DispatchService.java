@@ -46,10 +46,16 @@ public class DispatchService {
 	}
 
 	private void processJob(ExportJob job) {
-		ImageGenerator generator = createImageGenerator(job);
-		IntBuffer pixels = generator.renderImage(outDir, job.getProfile().getData());
-		job.setResult(new ExportResult(pixels, null));
-		job.setTerminated(true);
+		try {
+			System.out.println(job);
+			ImageGenerator generator = createImageGenerator(job);
+			IntBuffer pixels = generator.renderImage(outDir, job.getProfile().getData());
+			job.setResult(new ExportResult(pixels, null));
+		} catch (Exception e) {
+			job.setResult(new ExportResult(null, e.getMessage()));
+		} finally {
+			job.setTerminated(true);
+		}
 		//TODO interrupt generator when job is terminated or suspended
 	}
 	

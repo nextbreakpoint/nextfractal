@@ -145,4 +145,16 @@ public class ExportProfile {
 		RendererTile tile = new RendererTile(imageSize, tileSize, tileOffset, tileBorder);
 		return tile;
 	}
+
+	@Override
+	public String toString() {
+		return "ExportProfile [pluginId=" + pluginId + ", frameRate="
+				+ frameRate + ", frameNumber=" + frameNumber + ", frameWidth="
+				+ frameWidth + ", frameHeight=" + frameHeight + ", tileWidth="
+				+ tileWidth + ", tileHeight=" + tileHeight + ", tileOffsetX="
+				+ tileOffsetX + ", tileOffsetY=" + tileOffsetY
+				+ ", tileBorderWidth=" + tileBorderWidth
+				+ ", tileBorderHeight=" + tileBorderHeight + ", quality="
+				+ quality + "]";
+	}
 }

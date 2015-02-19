@@ -76,7 +76,8 @@ public class ExportSession {
 		jobs.clear();
 	}
 	
-	public void start() {
+	public synchronized void start() {
+		requestTerminate = false;
 		for (ExportJob job : jobs) {
 			job.setTerminated(false);
 		}
@@ -86,7 +87,8 @@ public class ExportSession {
 		requestTerminate = true;
 	}
 
-	public void resume() {
+	public synchronized void resume() {
+		requestSuspend = false;
 		for (ExportJob job : jobs) {
 			job.setSuspended(false);
 		}
@@ -100,16 +102,8 @@ public class ExportSession {
 		return requestTerminate;
 	}
 
-	public void setRequestTerminate(boolean requestTerminate) {
-		this.requestTerminate = requestTerminate;
-	}
-
 	public boolean isRequestSuspend() {
 		return requestSuspend;
-	}
-
-	public void setRequestSuspend(boolean requestSuspend) {
-		this.requestSuspend = requestSuspend;
 	}
 
 	public boolean isDispatched() {
@@ -128,7 +122,7 @@ public class ExportSession {
 		return Collections.unmodifiableList(jobs);
 	}
 
-	public void updateState() {
+	public synchronized void updateState() {
 		float count = 0;
 		for (ExportJob job : jobs) {
 			if (job.isTerminated()) {
@@ -200,6 +194,7 @@ public class ExportSession {
 					profile.setTileOffsetY(tileSize * ty);
 					profile.setTileBorderWidth(TILE_BORDER_SIZE);
 					profile.setTileBorderHeight(TILE_BORDER_SIZE);
+					profile.setData(data);
 					final ExportJob job = createJob(profile);
 					jobs.add(job);
 				}
@@ -220,6 +215,7 @@ public class ExportSession {
 				profile.setTileOffsetY(tileSize * ty);
 				profile.setTileBorderWidth(TILE_BORDER_SIZE);
 				profile.setTileBorderHeight(TILE_BORDER_SIZE);
+				profile.setData(data);
 				final ExportJob job = createJob(profile);
 				jobs.add(job);
 			}
@@ -239,6 +235,7 @@ public class ExportSession {
 				profile.setTileOffsetY(tileSize * ny);
 				profile.setTileBorderWidth(TILE_BORDER_SIZE);
 				profile.setTileBorderHeight(TILE_BORDER_SIZE);
+				profile.setData(data);
 				final ExportJob job = createJob(profile);
 				jobs.add(job);
 			}
@@ -257,6 +254,7 @@ public class ExportSession {
 			profile.setTileOffsetY(tileSize * ny);
 			profile.setTileBorderWidth(TILE_BORDER_SIZE);
 			profile.setTileBorderHeight(TILE_BORDER_SIZE);
+			profile.setData(data);
 			final ExportJob job = createJob(profile);
 			jobs.add(job);
 		}

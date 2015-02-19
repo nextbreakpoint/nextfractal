@@ -91,6 +91,7 @@ public class ExportService {
 	private synchronized void cleanupSessions() {
 		for (Iterator<ExportSession> i = sessions.iterator(); i.hasNext();) {
 			ExportSession session = i.next();
+			session.updateState();
 			if (session.isTerminated()) {
 				i.remove();
 			}
@@ -100,6 +101,7 @@ public class ExportService {
 	private synchronized void dispatchSessions() {
 		for (Iterator<ExportSession> i = sessions.iterator(); i.hasNext();) {
 			ExportSession session = i.next();
+			session.updateState();
 			if (!session.isTerminated() && !session.isSuspended() && !session.isDispatched()) {
 				dispatchSession(session);
 			}

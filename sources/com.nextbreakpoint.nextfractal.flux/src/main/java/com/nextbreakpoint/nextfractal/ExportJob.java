@@ -66,4 +66,9 @@ public class ExportJob {
 	public String getPluginId() {
 		return profile.getPluginId();
 	}
+
+	@Override
+	public String toString() {
+		return "ExportJob [profile=" + profile + "]";
+	}
 }

@@ -29,7 +29,7 @@ public class MandelbrotImageGenerator implements ImageGenerator {
 		MandelbrotData generatorData = (MandelbrotData)data;
 		IntBuffer pixels = IntBuffer.allocate(renderer.getWidth() * renderer.getHeight());
 		try {
-			Compiler compiler = new Compiler(outDir, getClass().getPackage().getName(), getClass().getName() + "Fractal");
+			Compiler compiler = new Compiler(outDir, getClass().getPackage().getName(), getClass().getSimpleName() + "Fractal");
 			CompilerReport report = compiler.generateJavaSource(generatorData.getSource());
 			//TODO report errors
 			CompilerBuilder<Orbit> orbitBuilder = compiler.compileOrbit(report);
