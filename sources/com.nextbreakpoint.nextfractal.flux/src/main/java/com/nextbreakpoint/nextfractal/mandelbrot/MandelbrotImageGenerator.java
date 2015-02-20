@@ -1,6 +1,5 @@
 package com.nextbreakpoint.nextfractal.mandelbrot;
 
-import java.io.File;
 import java.nio.IntBuffer;
 import java.util.concurrent.ThreadFactory;
 
@@ -25,11 +24,11 @@ public class MandelbrotImageGenerator implements ImageGenerator {
 		renderer = new Renderer(threadFactory, renderFactory, tile);
 	}
 
-	public IntBuffer renderImage(File outDir, Object data) {
+	public IntBuffer renderImage(Object data) {
 		MandelbrotData generatorData = (MandelbrotData)data;
 		IntBuffer pixels = IntBuffer.allocate(renderer.getWidth() * renderer.getHeight());
 		try {
-			Compiler compiler = new Compiler(outDir, getClass().getPackage().getName(), getClass().getSimpleName() + "Fractal");
+			Compiler compiler = new Compiler(getClass().getPackage().getName(), getClass().getSimpleName());
 			CompilerReport report = compiler.generateJavaSource(generatorData.getSource());
 			//TODO report errors
 			CompilerBuilder<Orbit> orbitBuilder = compiler.compileOrbit(report);

@@ -2,7 +2,6 @@ package com.nextbreakpoint.nextfractal.mandelbrot.compiler;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -16,6 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -87,7 +87,7 @@ public class Compiler {
 	private final String packageName;
 	private final String className;
 	
-	public Compiler(File outDir, String packageName, String className) {
+	public Compiler(String packageName, String className) {
 		this.packageName = packageName;
 		this.className = className;
 	}
@@ -1010,10 +1010,22 @@ public class Compiler {
 		}
     }
 	
-	private class CompilerClassLoader extends ClassLoader {
+	private static class CompilerClassLoader extends ClassLoader {
+		private static final AtomicInteger count = new AtomicInteger();
+		
+		public CompilerClassLoader() {
+			logger.fine("Create classloader (" + count.addAndGet(1) + ")");
+		}
+		
 		public void defineClassFromData(String name, byte[] data) {
 			Class<?> clazz = defineClass(name, data, 0, data.length);
 			super.resolveClass(clazz);
+		}
+
+		@Override
+		protected void finalize() throws Throwable {
+			logger.fine("Finalize classloader (" + count.addAndGet(-1) + ")");
+			super.finalize();
 		}
 	}
 	

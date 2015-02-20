@@ -220,7 +220,7 @@ public class MandelbrotEditorPane extends BorderPane {
 		historyWorker.addTask(new Runnable() {
 			@Override
 			public void run() {
-				data.setPixels(generator.renderImage(getMandelbrotSession().getOutDir(), data));
+				data.setPixels(generator.renderImage(data));
 				Platform.runLater(new Runnable() {
 					@Override
 					public void run() {

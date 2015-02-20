@@ -148,7 +148,7 @@ public class ExportProfile {
 
 	@Override
 	public String toString() {
-		return "ExportProfile [pluginId=" + pluginId + ", frameRate="
+		return "[pluginId=" + pluginId + ", frameRate="
 				+ frameRate + ", frameNumber=" + frameNumber + ", frameWidth="
 				+ frameWidth + ", frameHeight=" + frameHeight + ", tileWidth="
 				+ tileWidth + ", tileHeight=" + tileHeight + ", tileOffsetX="

@@ -69,6 +69,6 @@ public class ExportJob {
 
 	@Override
 	public String toString() {
-		return "ExportJob [profile=" + profile + "]";
+		return "[sessionId = " + session.getSessionId() + ", profile=" + profile + "]";
 	}
 }

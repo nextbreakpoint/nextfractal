@@ -1,29 +1,27 @@
 package com.nextbreakpoint.nextfractal;
 
-import java.io.File;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ServiceLoader;
 import java.util.concurrent.ThreadFactory;
+import java.util.logging.Logger;
 
 import com.nextbreakpoint.nextfractal.render.RenderFactory;
 
 public class DispatchService {
+	private static final Logger logger = Logger.getLogger(DispatchService.class.getName());
 	private final ThreadFactory threadFactory;
 	private final RenderFactory renderFactory;
 	private final List<Thread> threads = new ArrayList<>();
-	private final File outDir;
 	
 	/**
-	 * @param outDir
 	 * @param threadFactory
 	 * @param renderFactory
 	 */
-	public DispatchService(File outDir, ThreadFactory threadFactory, RenderFactory renderFactory) {
+	public DispatchService(ThreadFactory threadFactory, RenderFactory renderFactory) {
 		this.threadFactory = threadFactory; 
 		this.renderFactory = renderFactory;
-		this.outDir = outDir;
 	}
 	
 	public void dispatch(ExportJob job) {
@@ -47,9 +45,9 @@ public class DispatchService {
 
 	private void processJob(ExportJob job) {
 		try {
-			System.out.println(job);
+			logger.fine(job.toString());
 			ImageGenerator generator = createImageGenerator(job);
-			IntBuffer pixels = generator.renderImage(outDir, job.getProfile().getData());
+			IntBuffer pixels = generator.renderImage(job.getProfile().getData());
 			job.setResult(new ExportResult(pixels, null));
 		} catch (Throwable e) {
 			job.setResult(new ExportResult(null, e.getMessage()));
