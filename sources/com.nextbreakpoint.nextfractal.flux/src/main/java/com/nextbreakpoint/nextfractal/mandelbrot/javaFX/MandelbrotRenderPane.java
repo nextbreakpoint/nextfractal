@@ -318,7 +318,7 @@ public class MandelbrotRenderPane extends BorderPane {
 
 	private void updateFractalData(FractalSession session) {
 		try {
-			Compiler compiler = new Compiler(session.getPackageName(), session.getClassName());
+			Compiler compiler = new Compiler(getClass().getPackage().getName(), getClass().getSimpleName());
 			CompilerReport report = compiler.generateJavaSource(getMandelbrotSession().getSource());
 			CompilerBuilder<Orbit> orbitBuilder = compiler.compileOrbit(report);
 			//TODO report errors

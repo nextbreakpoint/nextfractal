@@ -1,6 +1,5 @@
 package com.nextbreakpoint.nextfractal.javaFX;
 
-import java.io.File;
 import java.util.ServiceLoader;
 
 import javafx.application.Application;
@@ -35,16 +34,6 @@ public class NextFractalApp extends Application {
 		int height = 500;
 		int editorWidth = 300;
         String pluginId = "Mandelbrot";
-    	File outDir = new File(System.getProperty("output", "generated"));
-//    	if (!outDir.exists()) {
-//    		return;
-//    	}
-//    	try {
-//			File lockFile = File.createTempFile("next-fractal", ".lock", outDir);
-//		} catch (IOException e) {
-//		}
-		String packageName = "com.nextbreakpoint.nextfractal.mandelbrot.fractal";
-		String className = pluginId;
         primaryStage.setTitle("NextFractal");
         primaryStage.setResizable(false);
         StackPane root = new StackPane();
@@ -76,9 +65,6 @@ public class NextFractalApp extends Application {
         ExportService exportService = new ExportService(threadFactory, dispatchService, 200);
         exportService.start();
         FractalSession session = createFractalSession(pluginId);
-        session.setPackageName(packageName);
-        session.setClassName(className);
-        session.setOutDir(outDir);
         if (session != null) {
         	Pane renderPane = createRenderPane(session, pluginId, width, height);
         	if (renderPane != null) {
