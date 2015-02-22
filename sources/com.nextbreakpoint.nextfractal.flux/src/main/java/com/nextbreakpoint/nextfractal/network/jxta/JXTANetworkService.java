@@ -373,7 +373,7 @@ public class JXTANetworkService {
 			final JXTAConnectionHandler handler = new JXTAConnectionHandler();
 			handler.setPipe(pipe);
 			final SessionHandler sessionHandler = processor.createSessionHandler();
-			final JXTAServiceSession session = new JXTAServiceSession(new JXTAServerServiceConsumer(handler, sessionHandler), new JXTAServerServiceProducer(handler));
+			final JXTAServiceSession session = new JXTAServiceSession(new JXTAServerServiceConsumer(handler, new JXTASessionDelegate(sessionHandler)), new JXTAServerServiceProducer(handler));
 			handler.setSessionId(session.getSessionId());
 			sessionHandler.setSession(session);
 			logger.info("Server session created " + session.getSessionId());
@@ -1449,6 +1449,22 @@ public class JXTANetworkService {
 				throw new ServiceException("Expired session " + sessionId);
 			}
 			consumer.consumeMessages();
+		}
+	}
+	
+	private class JXTASessionDelegate implements SessionDelegate {
+		private SessionHandler sessionHandler;
+
+		public JXTASessionDelegate(SessionHandler sessionHandler) {
+			this.sessionHandler = sessionHandler;
+		}
+
+		/**
+		 * @see com.nextbreakpoint.nextfractal.network.SessionDelegate#onMessage(com.nextbreakpoint.nextfractal.network.ServiceMessage)
+		 */
+		@Override
+		public void onMessage(ServiceMessage message) throws ServiceException {
+			sessionHandler.onMessage(message);
 		}
 	}
 }

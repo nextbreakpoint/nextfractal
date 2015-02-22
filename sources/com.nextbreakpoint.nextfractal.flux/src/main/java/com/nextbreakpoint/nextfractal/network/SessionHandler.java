@@ -28,7 +28,7 @@ package com.nextbreakpoint.nextfractal.network;
 /**
  * @author Andrea Medeghini
  */
-public interface SessionHandler extends SessionDelegate {
+public interface SessionHandler {
 	/**
 	 * 
 	 */
@@ -48,4 +48,10 @@ public interface SessionHandler extends SessionDelegate {
 	 * @return
 	 */
 	public ServiceSession getSession();
+
+	/**
+	 * @param message
+	 * @throws ServiceException
+	 */
+	public void onMessage(ServiceMessage message) throws ServiceException;
 }

@@ -58,7 +58,7 @@ public class JXTAServiceProcessor implements ServiceProcessor {
 		private ServiceSession session;
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.queue.network.SessionHandler#dispose()
+		 * @see com.nextbreakpoint.nextfractal.network.SessionHandler#dispose()
 		 */
 		@Override
 		public void dispose() {
@@ -69,7 +69,7 @@ public class JXTAServiceProcessor implements ServiceProcessor {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.queue.network.SessionHandler#setSession(com.nextbreakpoint.nextfractal.queue.network.ServiceSession)
+		 * @see com.nextbreakpoint.nextfractal.network.SessionHandler#setSession(com.nextbreakpoint.nextfractal.network.ServiceSession)
 		 */
 		@Override
 		public void setSession(final ServiceSession session) {
@@ -80,7 +80,7 @@ public class JXTAServiceProcessor implements ServiceProcessor {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.queue.network.SessionHandler#getSession()
+		 * @see com.nextbreakpoint.nextfractal.network.SessionHandler#getSession()
 		 */
 		@Override
 		public ServiceSession getSession() {
@@ -88,7 +88,7 @@ public class JXTAServiceProcessor implements ServiceProcessor {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.queue.network.SessionHandler#isExpired()
+		 * @see com.nextbreakpoint.nextfractal.network.SessionHandler#isExpired()
 		 */
 		@Override
 		public boolean isExpired() {
@@ -96,7 +96,7 @@ public class JXTAServiceProcessor implements ServiceProcessor {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.queue.network.SessionHandler#onMessage(com.nextbreakpoint.nextfractal.queue.network.ServiceMessage)
+		 * @see com.nextbreakpoint.nextfractal.network.SessionDelegate#onMessage(com.nextbreakpoint.nextfractal.network.ServiceMessage)
 		 */
 		@Override
 		public void onMessage(final ServiceMessage message) throws ServiceException {
