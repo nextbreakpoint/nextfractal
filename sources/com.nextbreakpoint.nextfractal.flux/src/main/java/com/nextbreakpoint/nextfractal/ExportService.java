@@ -7,14 +7,14 @@ import java.util.concurrent.ThreadFactory;
 
 public class ExportService {
 	private final List<ExportSession> sessions = new ArrayList<>();
-	private final DispatchService dispatchService;
+	private final RenderService dispatchService;
 	private final ThreadFactory threadFactory;
 	private final int tileSize;
 	private volatile Thread cleanupThread;
 	private volatile Thread dispatchThread;
 	private volatile boolean running;
 	
-	public ExportService(ThreadFactory threadFactory, DispatchService dispatchService, int tileSize) {
+	public ExportService(ThreadFactory threadFactory, RenderService dispatchService, int tileSize) {
 		this.threadFactory = threadFactory;
 		this.dispatchService = dispatchService;
 		this.tileSize = tileSize;
