@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.logging.Logger;
 
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
@@ -40,7 +41,10 @@ public class MandelbrotEditorPane extends BorderPane {
 	private FileChooser fileChooser;
 	private File currentFile;
 	private boolean noHistory;
-	
+	private final UpdateSessions updateSessions;
+	private volatile Thread watchSessionsThread;
+	private volatile boolean watchRunning;
+
 	public MandelbrotEditorPane(FractalSession session) {
 		this.session = session;
 		
@@ -137,18 +141,12 @@ public class MandelbrotEditorPane extends BorderPane {
 
 			@Override
 			public void terminate(FractalSession session) {
+				stopWatchingSessions();
 			}
 
 			@Override
 			public void sessionAdded(FractalSession session, ExportSession exportSession) {
 				jobsList.getItems().add(exportSession);
-				//TODO sessionAdded
-//				exportSession.addSessionListener(new ExportSessionListener() {
-//					@Override
-//					public void stateChanged(ExportSession exportSession, float progress) {
-//						jobsList.getItems().set(jobsList.getItems().indexOf(exportSession), exportSession);
-//					}
-//				});
 			}
 
 			@Override
@@ -195,6 +193,24 @@ public class MandelbrotEditorPane extends BorderPane {
 			}
 		});
 
+		suspendButton.setOnAction(e -> {
+			for (ExportSession exportSession : jobsList.getSelectionModel().getSelectedItems()) {
+				exportSession.suspend();
+			};
+		});
+
+		resumeButton.setOnAction(e -> {
+			for (ExportSession exportSession : jobsList.getSelectionModel().getSelectedItems()) {
+				exportSession.resume();
+			};
+		});
+
+		removeButton.setOnAction(e -> {
+			for (ExportSession exportSession : jobsList.getSelectionModel().getSelectedItems()) {
+				exportSession.stop();
+			};
+		});
+
 		clearButton.setOnAction(e -> {
 			logger.info("Clear history");
 			clearHistory(historyList);
@@ -210,6 +226,16 @@ public class MandelbrotEditorPane extends BorderPane {
 		});
 		
 		addDataToHistory(historyList);
+		
+		updateSessions = new UpdateSessions(jobsList);
+
+		startWatchingSessions();
+	}
+
+	@Override
+	protected void finalize() throws Throwable {
+		stopWatchingSessions();
+		super.finalize();
 	}
 
 	private void addDataToHistory(ListView<MandelbrotData> historyList) {
@@ -255,5 +281,72 @@ public class MandelbrotEditorPane extends BorderPane {
 		RendererPoint tileOffset = new RendererPoint(0, 0);
 		RendererTile tile = new RendererTile(imageSize, tileSize, tileOffset, tileBorder);
 		return tile;
+	}
+	
+	private void startWatchingSessions() {
+		watchRunning = true;
+		if (watchSessionsThread == null) {
+			watchSessionsThread = createThread(updateSessions);
+			watchSessionsThread.start();
+		}
+	}
+
+	private void stopWatchingSessions() {
+		watchRunning = false;
+		if (watchSessionsThread != null) {
+			watchSessionsThread.interrupt();
+		}
+		if (watchSessionsThread != null) {
+			try {
+				watchSessionsThread.join();
+			}
+			catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+			}
+			watchSessionsThread = null;
+		}
+	}
+	
+	private void updateSessions(ListView<ExportSession> jobsList) {
+		Platform.runLater(() -> {
+			ObservableList<ExportSession> items = jobsList.getItems();
+			for (int i = items.size() - 1; i >= 0; i--) {
+				ExportSession session = items.get(i);
+				if (session.isTerminated()) {
+					items.remove(i);
+				} else {
+					session.updateState();
+					items.set(i, session);
+				}
+			}
+		});
+	}
+
+	private Thread createThread(Runnable runnable) {
+		return threadFactory.newThread(runnable);
+	}
+
+	private class UpdateSessions implements Runnable {
+		private final ListView<ExportSession> jobsList;
+		
+		public UpdateSessions(ListView<ExportSession> jobsList) {
+			this.jobsList = jobsList;
+		}
+
+		/**
+		 * @see java.lang.Runnable#run()
+		 */
+		@Override
+		public void run() {
+			try {
+				while (watchRunning) {
+					updateSessions(jobsList);
+					synchronized (this) {
+						wait(500);
+					}
+				}
+			} catch (InterruptedException e) {
+			}
+		}
 	}
 }

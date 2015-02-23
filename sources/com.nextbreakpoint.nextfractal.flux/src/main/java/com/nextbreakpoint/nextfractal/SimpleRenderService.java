@@ -40,10 +40,13 @@ public class SimpleRenderService implements RenderService {
 		return threadFactory.newThread(runnable);
 	}
 
-	private void processJob(ExportJob job) {
+	private void processJob(final ExportJob job) {
 		try {
 			logger.fine(job.toString());
 			ImageGenerator generator = createImageGenerator(job);
+			generator.setStopCondition(() -> {
+				return job.isRequestSuspend() || job.isRequestTerminate();
+			});
 			IntBuffer pixels = generator.renderImage(job.getProfile().getData());
 			job.setResult(new ExportResult(pixels, null));
 		} catch (Throwable e) {

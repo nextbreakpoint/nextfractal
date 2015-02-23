@@ -73,47 +73,50 @@ public class ExportService {
 	}
 
 	public void runSession(ExportSession exportSession) {
-		addSession(exportSession);
-	}
-
-	private synchronized void addSession(ExportSession exportSession) {
-		sessions.add(exportSession);
-		notifyAll();
-	}
-
-	private synchronized void waitForSession(long millis) {
-		try {
-			wait(millis);
-		} catch (InterruptedException e) {
+		synchronized (sessions) {
+			sessions.add(exportSession);
+			sessions.notifyAll();
 		}
 	}
 
-	private synchronized void cleanupSessions() {
-		for (Iterator<ExportSession> i = sessions.iterator(); i.hasNext();) {
-			ExportSession session = i.next();
-			session.updateState();
-			if (session.isTerminated()) {
-				i.remove();
+	private void cleanupSessions() {
+		synchronized (sessions) {
+			for (Iterator<ExportSession> i = sessions.iterator(); i.hasNext();) {
+				ExportSession session = i.next();
+				session.updateState();
+				if (session.isTerminated()) {
+					i.remove();
+				}
 			}
 		}
 	}
 
 	private synchronized void dispatchSessions() {
-		for (Iterator<ExportSession> i = sessions.iterator(); i.hasNext();) {
-			ExportSession session = i.next();
-			session.updateState();
-			if (!session.isTerminated() && !session.isSuspended() && !session.isDispatched()) {
-				dispatchSession(session);
+		synchronized (sessions) {
+			for (Iterator<ExportSession> i = sessions.iterator(); i.hasNext();) {
+				ExportSession session = i.next();
+				session.updateState();
+				if (isSessionReady(session)) {
+					dispatchSession(session);
+				}
 			}
 		}
 	}
 
+	private boolean isSessionReady(ExportSession session) {
+		return !session.isTerminated() && !session.isSuspended() && !session.isDispatched();
+	}
+
 	private void dispatchSession(ExportSession session) {
 		for (ExportJob job : session.getJobs()) {
-			if (!job.isTerminated() && !job.isSuspended() && !job.isDispatched()) {
+			if (isJobReady(job)) {
 				dispatchJob(job);
 			}
 		}
+	}
+
+	private boolean isJobReady(ExportJob job) {
+		return !job.isTerminated() && !job.isSuspended() && !job.isDispatched();
 	}
 	
 	private void dispatchJob(ExportJob job) {
@@ -126,9 +129,14 @@ public class ExportService {
 		 */
 		@Override
 		public void run() {
-			while (running) {
-				cleanupSessions();
-				waitForSession(1000);
+			try {
+				while (running) {
+					cleanupSessions();
+					synchronized (sessions) {
+						sessions.wait(500);
+					}
+				}
+			} catch (InterruptedException e) {
 			}
 		}
 	}
@@ -139,9 +147,14 @@ public class ExportService {
 		 */
 		@Override
 		public void run() {
-			while (running) {
-				dispatchSessions();
-				waitForSession(1000);
+			try {
+				while (running) {
+					dispatchSessions();
+					synchronized (sessions) {
+						sessions.wait(500);
+					}
+				}
+			} catch (InterruptedException e) {
 			}
 		}
 	}

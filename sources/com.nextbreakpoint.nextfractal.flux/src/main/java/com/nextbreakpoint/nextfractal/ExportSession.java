@@ -5,11 +5,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import java.util.logging.Logger;
 
 import com.nextbreakpoint.nextfractal.encoder.Encoder;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererSize;
 
 public class ExportSession {
+	private static final Logger logger = Logger.getLogger(ExportSession.class.getName());
 	private static final int TILE_BORDER_SIZE = 24;
 	private final List<ExportJob> jobs = new ArrayList<>();
 	private final String sessioinId;
@@ -77,24 +79,28 @@ public class ExportSession {
 	}
 	
 	public synchronized void start() {
+		logger.info(sessioinId + " -> start");
 		requestTerminate = false;
 		for (ExportJob job : jobs) {
 			job.setTerminated(false);
 		}
 	}
 
-	public void stop() {
+	public synchronized void stop() {
+		logger.info(sessioinId + " -> stop");
 		requestTerminate = true;
 	}
 
 	public synchronized void resume() {
+		logger.info(sessioinId + " -> resume");
 		requestSuspend = false;
 		for (ExportJob job : jobs) {
 			job.setSuspended(false);
 		}
 	}
 
-	public void suspend() {
+	public synchronized void suspend() {
+		logger.info(sessioinId + " -> suspend");
 		requestSuspend = true;
 	}
 
@@ -151,12 +157,15 @@ public class ExportSession {
 			}
 		}
 		if (allJobDispatched) {
+			logger.info(sessioinId + " -> dispatched");
 			this.dispatched = true;
 		}
 		if (allJobTerminated) {
+			logger.info(sessioinId + " -> terminated");
 			this.terminated = true;
 		}
 		if (allJobSuspended) {
+			logger.info(sessioinId + " -> suspended");
 			this.suspended = true;
 		}
 		setProgress(count / jobs.size());
@@ -167,6 +176,7 @@ public class ExportSession {
 	}
 
 	protected void setProgress(float progress) {
+		logger.info(sessioinId + " -> progress = " + progress);
 		this.progress = progress;
 	}
 

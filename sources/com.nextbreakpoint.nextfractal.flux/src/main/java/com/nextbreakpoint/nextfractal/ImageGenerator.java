@@ -8,4 +8,6 @@ public interface ImageGenerator {
 	public int getHeight();
 
 	public int getWidth();
+
+	public void setStopCondition(Condition condition);
 }

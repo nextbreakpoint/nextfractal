@@ -3,6 +3,7 @@ package com.nextbreakpoint.nextfractal.mandelbrot;
 import java.nio.IntBuffer;
 import java.util.concurrent.ThreadFactory;
 
+import com.nextbreakpoint.nextfractal.Condition;
 import com.nextbreakpoint.nextfractal.ImageGenerator;
 import com.nextbreakpoint.nextfractal.core.DoubleVector4D;
 import com.nextbreakpoint.nextfractal.core.IntegerVector4D;
@@ -19,6 +20,7 @@ import com.nextbreakpoint.nextfractal.render.RenderFactory;
 
 public class MandelbrotImageGenerator implements ImageGenerator {
 	private Renderer renderer;
+	private Condition condition;
 
 	public MandelbrotImageGenerator(ThreadFactory threadFactory, RenderFactory renderFactory, RendererTile tile) {
 		renderer = new Renderer(threadFactory, renderFactory, tile);
@@ -33,6 +35,7 @@ public class MandelbrotImageGenerator implements ImageGenerator {
 			//TODO report errors
 			CompilerBuilder<Orbit> orbitBuilder = compiler.compileOrbit(report);
 			CompilerBuilder<Color> colorBuilder = compiler.compileColor(report);
+			renderer.setCondition(condition);
 			renderer.abortTasks();
 			renderer.waitForTasks();
 			double[] traslation = generatorData.getTraslation();
@@ -66,5 +69,10 @@ public class MandelbrotImageGenerator implements ImageGenerator {
 
 	public int getWidth() {
 		return renderer.getHeight();
+	}
+
+	@Override
+	public void setStopCondition(Condition condition) {
+		this.condition = condition;
 	}
 }

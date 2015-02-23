@@ -28,6 +28,7 @@ package com.nextbreakpoint.nextfractal.mandelbrot.renderer;
 import java.nio.IntBuffer;
 import java.util.concurrent.ThreadFactory;
 
+import com.nextbreakpoint.nextfractal.Condition;
 import com.nextbreakpoint.nextfractal.core.Worker;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Color;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.MutableNumber;
@@ -65,6 +66,7 @@ public class Renderer {
 	protected RendererBuffer frontBuffer;
 	protected RendererBuffer backBuffer;
 	protected RendererView view;
+	protected Condition condition;
 
 	/**
 	 * @param renderFactory 
@@ -124,7 +126,7 @@ public class Renderer {
 	 * @return
 	 */
 	public boolean isInterrupted() {
-		return aborted || Thread.currentThread().isInterrupted();
+		return aborted || Thread.currentThread().isInterrupted() || (condition != null && condition.evaluate());
 	}
 
 	/**
@@ -522,5 +524,9 @@ public class Renderer {
 	 */
 	public void getPixels(IntBuffer pixels) {
 		frontBuffer.getBuffer().getImage().getPixels(pixels);
+	}
+
+	public void setCondition(Condition condition) {
+		this.condition = condition;
 	}
 }
