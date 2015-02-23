@@ -151,38 +151,38 @@ public class JXTAServiceProcessor implements ServiceProcessor {
 		}
 
 		private void processDeleteRequest(final RequestMessage request) throws Exception {
-			final String jobId = (String) request.getUserData();
-			jobService.deleteJob(jobId);
-			final ResponseMessage response = createDeleteResponse(request, jobId);
+//			final String jobId = (String) request.getUserData();
+//			jobService.deleteJob(jobId);
+//			final ResponseMessage response = createDeleteResponse(request, jobId);
 		}
 
 		private void processAbortRequest(final RequestMessage request) throws Exception {
-			final String jobId = (String) request.getUserData();
-			jobService.abortJob(jobId);
-			jobService.stopJob(jobId);
-			final ResponseMessage response = createAbortResponse(request, jobId);
+//			final String jobId = (String) request.getUserData();
+//			jobService.abortJob(jobId);
+//			jobService.stopJob(jobId);
+//			final ResponseMessage response = createAbortResponse(request, jobId);
 		}
 
 		private void processGetRequest(final RequestMessage request) throws Exception {
-			final String jobId = (String) ((Object[]) request.getUserData())[0];
-			final int frameNumber = (Integer) ((Object[]) request.getUserData())[1];
-			byte[] frameData = jobService.getJobFrame(jobId, frameNumber);
-			final ResponseMessage response = createGetResponse(request, jobId, frameNumber, frameData);
+//			final String jobId = (String) ((Object[]) request.getUserData())[0];
+//			final int frameNumber = (Integer) ((Object[]) request.getUserData())[1];
+//			byte[] frameData = jobService.getJobFrame(jobId, frameNumber);
+//			final ResponseMessage response = createGetResponse(request, jobId, frameNumber, frameData);
 		}
 
 		private void processPutRequest(final RequestMessage request) throws Exception {
-			final String jobId = (String) ((Object[]) request.getUserData())[0];
-			final int frameNumber = (Integer) ((Object[]) request.getUserData())[1];
-			final byte[] data = (byte[]) ((Object[]) request.getUserData())[2];
-			final JobDecoder decoder = new JobDecoder(data);
-			jobService.setJobData(jobId, decoder.getProfile(), frameNumber);
-			jobService.setJobFrame(jobId, decoder.getFrameData());
-			jobService.runJob(jobId);
-			final ResponseMessage response = createPutResponse(request, jobId);
+//			final String jobId = (String) ((Object[]) request.getUserData())[0];
+//			final int frameNumber = (Integer) ((Object[]) request.getUserData())[1];
+//			final byte[] data = (byte[]) ((Object[]) request.getUserData())[2];
+//			final JobDecoder decoder = new JobDecoder(data);
+//			jobService.setJobData(jobId, decoder.getProfile(), frameNumber);
+//			jobService.setJobFrame(jobId, decoder.getFrameData());
+//			jobService.runJob(jobId);
+//			final ResponseMessage response = createPutResponse(request, jobId);
 		}
 
 		private void processHelloRequest(final RequestMessage request) throws Exception {
-			final ResponseMessage response = createHelloResponse(request, jobCount, jobId);
+//			final ResponseMessage response = createHelloResponse(request, jobCount, jobId);
 		}
 
 		private ResponseMessage createHelloResponse(final RequestMessage request, final Integer jobCount, final String jobId) throws Exception {

@@ -5,6 +5,7 @@ import java.util.Collection;
 
 import com.nextbreakpoint.nextfractal.ExportJob;
 import com.nextbreakpoint.nextfractal.RenderService;
+import com.nextbreakpoint.nextfractal.network.RequestMessage;
 import com.nextbreakpoint.nextfractal.network.ServiceEndpoint;
 import com.nextbreakpoint.nextfractal.network.ServiceException;
 import com.nextbreakpoint.nextfractal.network.ServiceMessage;
@@ -23,6 +24,7 @@ public class JXTARenderService implements RenderService {
 	 */
 	public JXTARenderService(RenderService renderService) {
 		this.networkService = new JXTANetworkService(new File("jxta"), "http://nextbreakpoint.com", "JXTARenderService", "NextBreakpoint", "1.0", new JXTAServiceProcessor(renderService));
+		networkService.start();
 	}
 	
 	@Override
@@ -42,8 +44,17 @@ public class JXTARenderService implements RenderService {
 	}
 	
 	private void dispatchJob(ServiceSession session, ExportJob job) {
-		// TODO Auto-generated method stub
-		
+		try {
+			RequestMessage helloMessage = createHelloRequest();
+			session.sendMessage(helloMessage);
+		} catch (ServiceException e) {
+		}
+	}
+
+	private RequestMessage createHelloRequest() {
+		final RequestMessage message = new RequestMessage();
+		message.setRequestType(RequestMessage.TYPE_HELLO);
+		return message;
 	}
 
 	private class JXTASessionDelegate implements SessionDelegate {

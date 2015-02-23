@@ -18,7 +18,9 @@ import com.nextbreakpoint.nextfractal.FractalSession;
 import com.nextbreakpoint.nextfractal.RenderService;
 import com.nextbreakpoint.nextfractal.SessionListener;
 import com.nextbreakpoint.nextfractal.core.DefaultThreadFactory;
+import com.nextbreakpoint.nextfractal.network.jxta.JXTANetworkService;
 import com.nextbreakpoint.nextfractal.render.javaFX.JavaFXRenderFactory;
+import com.nextbreakpoint.nextfractal.service.JXTARenderService;
 import com.nextbreakpoint.nextfractal.service.SimpleRenderService;
 
 public class NextFractalApp extends Application {
@@ -62,8 +64,9 @@ public class NextFractalApp extends Application {
         root.getChildren().add(mainPane);
 		DefaultThreadFactory threadFactory = new DefaultThreadFactory("NextFractalApp", true, Thread.MIN_PRIORITY);
 		JavaFXRenderFactory renderFactory = new JavaFXRenderFactory();
-		RenderService dispatchService = new SimpleRenderService(threadFactory, renderFactory);
-        ExportService exportService = new ExportService(threadFactory, dispatchService, 200);
+		RenderService renderService = new SimpleRenderService(threadFactory, renderFactory);
+		RenderService jxtaRenderService = new JXTARenderService(renderService);
+        ExportService exportService = new ExportService(threadFactory, jxtaRenderService, 200);
         exportService.start();
         FractalSession session = createFractalSession(pluginId);
         if (session != null) {
