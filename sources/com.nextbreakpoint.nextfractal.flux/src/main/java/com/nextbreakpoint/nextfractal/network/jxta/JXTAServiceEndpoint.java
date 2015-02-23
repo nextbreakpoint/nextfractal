@@ -27,10 +27,10 @@ package com.nextbreakpoint.nextfractal.network.jxta;
 
 import net.jxta.protocol.PipeAdvertisement;
 
-import com.nextbreakpoint.nextfractal.network.ServiceEndpoint;
-import com.nextbreakpoint.nextfractal.network.ServiceException;
-import com.nextbreakpoint.nextfractal.network.ServiceSession;
-import com.nextbreakpoint.nextfractal.network.SessionDelegate;
+import com.nextbreakpoint.nextfractal.network.core.ServiceEndpoint;
+import com.nextbreakpoint.nextfractal.network.core.ServiceException;
+import com.nextbreakpoint.nextfractal.network.core.ServiceSession;
+import com.nextbreakpoint.nextfractal.network.core.SessionDelegate;
 
 /**
  * @author Andrea Medeghini
@@ -69,7 +69,7 @@ public class JXTAServiceEndpoint implements ServiceEndpoint {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.network.ServiceEndpoint#createSession(com.nextbreakpoint.nextfractal.network.SessionDelegate)
+	 * @see com.nextbreakpoint.nextfractal.network.core.ServiceEndpoint#createSession(com.nextbreakpoint.nextfractal.network.core.SessionDelegate)
 	 */
 	@Override
 	public ServiceSession createSession(final SessionDelegate delegate) throws ServiceException {
@@ -79,7 +79,7 @@ public class JXTAServiceEndpoint implements ServiceEndpoint {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.network.ServiceEndpoint#invalidate()
+	 * @see com.nextbreakpoint.nextfractal.network.core.ServiceEndpoint#invalidate()
 	 */
 	@Override
 	public void invalidate() {
@@ -87,7 +87,7 @@ public class JXTAServiceEndpoint implements ServiceEndpoint {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.network.ServiceEndpoint#isInvalidated()
+	 * @see com.nextbreakpoint.nextfractal.network.core.ServiceEndpoint#isInvalidated()
 	 */
 	@Override
 	public boolean isInvalidated() {

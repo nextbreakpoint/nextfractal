@@ -23,54 +23,29 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.network;
-
-import java.io.Serializable;
+package com.nextbreakpoint.nextfractal.network.core;
 
 /**
  * @author Andrea Medeghini
  */
-public class EventMessage extends ServiceMessage {
-	private static final long serialVersionUID = 1L;
-	private Serializable userData;
+public interface ServiceConsumer {
+	/**
+	 * @throws Exception
+	 */
+	public void consumeMessages() throws ServiceException;
+
+	/**
+	 * @param message
+	 */
+	public void onMessage(ServiceMessage message) throws ServiceException;
+
+	/**
+	 * @return
+	 */
+	public boolean isTimeout();
 
 	/**
 	 * 
 	 */
-	public EventMessage() {
-		super(newMessageId(), MESSAGE_TYPE_EVENT);
-	}
-
-	/**
-	 * @return the userData
-	 */
-	public Serializable getUserData() {
-		return userData;
-	}
-
-	/**
-	 * @param userData the userData to set
-	 */
-	public void setUserData(final Serializable userData) {
-		this.userData = userData;
-	}
-
-	/**
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		final StringBuilder builder = new StringBuilder();
-		builder.append("[");
-		builder.append("messageId = ");
-		builder.append(getMessageId());
-		builder.append(", messageType = ");
-		builder.append(decodeMessageType(getMessageType()));
-		builder.append(", userData = ");
-		builder.append("[");
-		builder.append(getUserData());
-		builder.append("]");
-		builder.append("]");
-		return builder.toString();
-	}
+	public void dispose();
 }

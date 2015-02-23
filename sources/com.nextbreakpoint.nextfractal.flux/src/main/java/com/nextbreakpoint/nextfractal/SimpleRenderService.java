@@ -1,4 +1,4 @@
-package com.nextbreakpoint.nextfractal.service;
+package com.nextbreakpoint.nextfractal;
 
 import java.nio.IntBuffer;
 import java.util.ArrayList;
@@ -7,11 +7,6 @@ import java.util.ServiceLoader;
 import java.util.concurrent.ThreadFactory;
 import java.util.logging.Logger;
 
-import com.nextbreakpoint.nextfractal.ExportJob;
-import com.nextbreakpoint.nextfractal.ExportResult;
-import com.nextbreakpoint.nextfractal.FractalFactory;
-import com.nextbreakpoint.nextfractal.ImageGenerator;
-import com.nextbreakpoint.nextfractal.RenderService;
 import com.nextbreakpoint.nextfractal.render.RenderFactory;
 
 public class SimpleRenderService implements RenderService {

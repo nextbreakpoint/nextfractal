@@ -23,39 +23,30 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.network;
+package com.nextbreakpoint.nextfractal.network.core;
 
 /**
  * @author Andrea Medeghini
  */
-public class ServiceException extends Exception {
-	private static final long serialVersionUID = 1L;
+public interface ServiceProducer {
+	/**
+	 * @param message
+	 * @throws ServiceException
+	 */
+	public void sendMessage(ServiceMessage message) throws ServiceException;
+
+	/**
+	 * @throws ServiceException
+	 */
+	public void sendKeepAliveMessage() throws ServiceException;
+
+	/**
+	 * @throws ServiceException
+	 */
+	public void sendAckMessage() throws ServiceException;
 
 	/**
 	 * 
 	 */
-	public ServiceException() {
-	}
-
-	/**
-	 * @param message
-	 * @param cause
-	 */
-	public ServiceException(final String message, final Throwable cause) {
-		super(message, cause);
-	}
-
-	/**
-	 * @param message
-	 */
-	public ServiceException(final String message) {
-		super(message);
-	}
-
-	/**
-	 * @param cause
-	 */
-	public ServiceException(final Throwable cause) {
-		super(cause);
-	}
+	public void dispose();
 }

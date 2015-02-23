@@ -23,7 +23,7 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.network;
+package com.nextbreakpoint.nextfractal.network.core;
 
 import java.io.Serializable;
 

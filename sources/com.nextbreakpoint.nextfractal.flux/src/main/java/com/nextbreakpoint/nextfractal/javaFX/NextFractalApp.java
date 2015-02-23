@@ -17,11 +17,9 @@ import com.nextbreakpoint.nextfractal.FractalFactory;
 import com.nextbreakpoint.nextfractal.FractalSession;
 import com.nextbreakpoint.nextfractal.RenderService;
 import com.nextbreakpoint.nextfractal.SessionListener;
+import com.nextbreakpoint.nextfractal.SimpleRenderService;
 import com.nextbreakpoint.nextfractal.core.DefaultThreadFactory;
-import com.nextbreakpoint.nextfractal.network.jxta.JXTANetworkService;
 import com.nextbreakpoint.nextfractal.render.javaFX.JavaFXRenderFactory;
-import com.nextbreakpoint.nextfractal.service.JXTARenderService;
-import com.nextbreakpoint.nextfractal.service.SimpleRenderService;
 
 public class NextFractalApp extends Application {
 	private BorderPane editorRootPane;
@@ -65,8 +63,7 @@ public class NextFractalApp extends Application {
 		DefaultThreadFactory threadFactory = new DefaultThreadFactory("NextFractalApp", true, Thread.MIN_PRIORITY);
 		JavaFXRenderFactory renderFactory = new JavaFXRenderFactory();
 		RenderService renderService = new SimpleRenderService(threadFactory, renderFactory);
-		RenderService jxtaRenderService = new JXTARenderService(renderService);
-        ExportService exportService = new ExportService(threadFactory, jxtaRenderService, 200);
+        ExportService exportService = new ExportService(threadFactory, renderService, 200);
         exportService.start();
         FractalSession session = createFractalSession(pluginId);
         if (session != null) {

@@ -1,29 +1,26 @@
-package com.nextbreakpoint.nextfractal.service;
+package com.nextbreakpoint.nextfractal.network.jxta;
 
 import java.io.File;
 import java.util.Collection;
 
 import com.nextbreakpoint.nextfractal.ExportJob;
 import com.nextbreakpoint.nextfractal.RenderService;
-import com.nextbreakpoint.nextfractal.network.RequestMessage;
-import com.nextbreakpoint.nextfractal.network.ServiceEndpoint;
-import com.nextbreakpoint.nextfractal.network.ServiceException;
-import com.nextbreakpoint.nextfractal.network.ServiceMessage;
-import com.nextbreakpoint.nextfractal.network.ServiceSession;
-import com.nextbreakpoint.nextfractal.network.SessionDelegate;
-import com.nextbreakpoint.nextfractal.network.jxta.JXTANetworkService;
-import com.nextbreakpoint.nextfractal.network.jxta.JXTAServiceProcessor;
+import com.nextbreakpoint.nextfractal.network.core.RequestMessage;
+import com.nextbreakpoint.nextfractal.network.core.ServiceEndpoint;
+import com.nextbreakpoint.nextfractal.network.core.ServiceException;
+import com.nextbreakpoint.nextfractal.network.core.ServiceMessage;
+import com.nextbreakpoint.nextfractal.network.core.ServiceSession;
+import com.nextbreakpoint.nextfractal.network.core.SessionDelegate;
 
 public class JXTARenderService implements RenderService {
 	private final JXTANetworkService networkService;
 	
 	/**
-	 * @param threadFactory
-	 * @param renderFactory
-	 * @param networkService
+	 * @param workDir
+	 * @param renderService
 	 */
-	public JXTARenderService(RenderService renderService) {
-		this.networkService = new JXTANetworkService(new File("jxta"), "http://nextbreakpoint.com", "JXTARenderService", "NextBreakpoint", "1.0", new JXTAServiceProcessor(renderService));
+	public JXTARenderService(File workDir, RenderService renderService) {
+		this.networkService = new JXTANetworkService(workDir, "http://nextbreakpoint.com", "JXTARenderService", "NextBreakpoint", "1.0", new JXTAServiceProcessor(renderService));
 		networkService.start();
 	}
 	

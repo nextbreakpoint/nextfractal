@@ -23,30 +23,15 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.network;
+package com.nextbreakpoint.nextfractal.network.core;
 
 /**
  * @author Andrea Medeghini
  */
-public interface ServiceProducer {
+public interface SessionDelegate {
 	/**
 	 * @param message
 	 * @throws ServiceException
 	 */
-	public void sendMessage(ServiceMessage message) throws ServiceException;
-
-	/**
-	 * @throws ServiceException
-	 */
-	public void sendKeepAliveMessage() throws ServiceException;
-
-	/**
-	 * @throws ServiceException
-	 */
-	public void sendAckMessage() throws ServiceException;
-
-	/**
-	 * 
-	 */
-	public void dispose();
+	public void onMessage(ServiceMessage message) throws ServiceException;
 }

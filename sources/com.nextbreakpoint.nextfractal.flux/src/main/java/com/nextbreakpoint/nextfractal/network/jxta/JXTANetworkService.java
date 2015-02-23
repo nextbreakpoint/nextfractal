@@ -80,23 +80,23 @@ import net.jxta.util.PipeEventListener;
 import net.jxta.util.PipeStateListener;
 
 import com.nextbreakpoint.nextfractal.core.DefaultThreadFactory;
-import com.nextbreakpoint.nextfractal.network.ServiceConsumer;
-import com.nextbreakpoint.nextfractal.network.ServiceEndpoint;
-import com.nextbreakpoint.nextfractal.network.ServiceException;
-import com.nextbreakpoint.nextfractal.network.ServiceMessage;
-import com.nextbreakpoint.nextfractal.network.ServiceProcessor;
-import com.nextbreakpoint.nextfractal.network.ServiceProducer;
-import com.nextbreakpoint.nextfractal.network.ServiceSession;
-import com.nextbreakpoint.nextfractal.network.SessionDelegate;
-import com.nextbreakpoint.nextfractal.network.SessionHandler;
+import com.nextbreakpoint.nextfractal.network.core.ServiceConsumer;
+import com.nextbreakpoint.nextfractal.network.core.ServiceEndpoint;
+import com.nextbreakpoint.nextfractal.network.core.ServiceException;
+import com.nextbreakpoint.nextfractal.network.core.ServiceMessage;
+import com.nextbreakpoint.nextfractal.network.core.ServiceProcessor;
+import com.nextbreakpoint.nextfractal.network.core.ServiceProducer;
+import com.nextbreakpoint.nextfractal.network.core.ServiceSession;
+import com.nextbreakpoint.nextfractal.network.core.SessionDelegate;
+import com.nextbreakpoint.nextfractal.network.core.SessionHandler;
 
 /**
  * @author Andrea Medeghini
  */
 public class JXTANetworkService {
-	public static final String JXTA_MULTICAST = "nextfractal.jxta.multicast";
-	public static final String JXTA_RELAY_SEEDS = "nextfractal.jxta.relay.seeds";
-	public static final String JXTA_RENDEZVOUS_SEEDS = "nextfractal.jxta.rendezvous.seeds";
+	public static final String JXTA_MULTICAST = "jxta.multicast";
+	public static final String JXTA_RELAY_SEEDS = "jxta.relay.seeds";
+	public static final String JXTA_RENDEZVOUS_SEEDS = "jxta.rendezvous.seeds";
 	private static final MimeMediaType GZIP_MEDIA_TYPE = new MimeMediaType("application/gzip");
 	private static final Logger logger = Logger.getLogger(JXTANetworkService.class.getName());
 	private static final int CONNECTION_RETRY = 2;
@@ -702,7 +702,7 @@ public class JXTANetworkService {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.SessionDelegate.network.ServiceListener#onMessage(com.nextbreakpoint.nextfractal.queue.network.ServiceMessage)
+		 * @see com.nextbreakpoint.nextfractal.network.core.SessionDelegate.network.ServiceListener#onMessage(com.nextbreakpoint.nextfractal.network.core.queue.network.ServiceMessage)
 		 */
 		@Override
 		public void onMessage(final ServiceMessage message) throws ServiceException {
@@ -742,7 +742,7 @@ public class JXTANetworkService {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.SessionDelegate.network.ServiceListener#onMessage(com.nextbreakpoint.nextfractal.queue.network.ServiceMessage)
+		 * @see com.nextbreakpoint.nextfractal.network.core.SessionDelegate.network.ServiceListener#onMessage(com.nextbreakpoint.nextfractal.network.core.queue.network.ServiceMessage)
 		 */
 		@Override
 		public void onMessage(final ServiceMessage message) throws ServiceException {
@@ -1150,7 +1150,7 @@ public class JXTANetworkService {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.queue.network.ServiceProducer#sendMessage(com.nextbreakpoint.nextfractal.queue.network.ServiceMessage)
+		 * @see com.nextbreakpoint.nextfractal.network.core.queue.network.ServiceProducer#sendMessage(com.nextbreakpoint.nextfractal.network.core.queue.network.ServiceMessage)
 		 */
 		@Override
 		public void sendMessage(final ServiceMessage message) throws ServiceException {
@@ -1160,7 +1160,7 @@ public class JXTANetworkService {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.queue.network.ServiceProducer#dispose()
+		 * @see com.nextbreakpoint.nextfractal.network.core.queue.network.ServiceProducer#dispose()
 		 */
 		@Override
 		public void dispose() {
@@ -1171,7 +1171,7 @@ public class JXTANetworkService {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.queue.network.ServiceProducer#sendKeepAliveMessage()
+		 * @see com.nextbreakpoint.nextfractal.network.core.queue.network.ServiceProducer#sendKeepAliveMessage()
 		 */
 		@Override
 		public void sendKeepAliveMessage() throws ServiceException {
@@ -1181,7 +1181,7 @@ public class JXTANetworkService {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.queue.network.ServiceProducer#sendAckMessage()
+		 * @see com.nextbreakpoint.nextfractal.network.core.queue.network.ServiceProducer#sendAckMessage()
 		 */
 		@Override
 		public void sendAckMessage() throws ServiceException {
@@ -1202,7 +1202,7 @@ public class JXTANetworkService {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.queue.network.ServiceProducer#sendMessage(com.nextbreakpoint.nextfractal.queue.network.ServiceMessage)
+		 * @see com.nextbreakpoint.nextfractal.network.core.queue.network.ServiceProducer#sendMessage(com.nextbreakpoint.nextfractal.network.core.queue.network.ServiceMessage)
 		 */
 		@Override
 		public void sendMessage(final ServiceMessage message) throws ServiceException {
@@ -1212,7 +1212,7 @@ public class JXTANetworkService {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.queue.network.ServiceProducer#dispose()
+		 * @see com.nextbreakpoint.nextfractal.network.core.queue.network.ServiceProducer#dispose()
 		 */
 		@Override
 		public void dispose() {
@@ -1223,7 +1223,7 @@ public class JXTANetworkService {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.queue.network.ServiceProducer#sendKeepAliveMessage()
+		 * @see com.nextbreakpoint.nextfractal.network.core.queue.network.ServiceProducer#sendKeepAliveMessage()
 		 */
 		@Override
 		public void sendKeepAliveMessage() throws ServiceException {
@@ -1233,7 +1233,7 @@ public class JXTANetworkService {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.queue.network.ServiceProducer#sendAckMessage()
+		 * @see com.nextbreakpoint.nextfractal.network.core.queue.network.ServiceProducer#sendAckMessage()
 		 */
 		@Override
 		public void sendAckMessage() throws ServiceException {
@@ -1258,7 +1258,7 @@ public class JXTANetworkService {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.queue.network.ServiceConsumer#onMessage(com.nextbreakpoint.nextfractal.queue.network.ServiceMessage)
+		 * @see com.nextbreakpoint.nextfractal.network.core.queue.network.ServiceConsumer#onMessage(com.nextbreakpoint.nextfractal.network.core.queue.network.ServiceMessage)
 		 */
 		@Override
 		public void onMessage(final ServiceMessage message) throws ServiceException {
@@ -1268,7 +1268,7 @@ public class JXTANetworkService {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.queue.network.ServiceConsumer#consumeMessages()
+		 * @see com.nextbreakpoint.nextfractal.network.core.queue.network.ServiceConsumer#consumeMessages()
 		 */
 		@Override
 		public void consumeMessages() throws ServiceException {
@@ -1278,7 +1278,7 @@ public class JXTANetworkService {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.queue.network.ServiceConsumer#isTimeout()
+		 * @see com.nextbreakpoint.nextfractal.network.core.queue.network.ServiceConsumer#isTimeout()
 		 */
 		@Override
 		public boolean isTimeout() {
@@ -1289,7 +1289,7 @@ public class JXTANetworkService {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.queue.network.ServiceConsumer#dispose()
+		 * @see com.nextbreakpoint.nextfractal.network.core.queue.network.ServiceConsumer#dispose()
 		 */
 		@Override
 		public void dispose() {
@@ -1326,7 +1326,7 @@ public class JXTANetworkService {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.SessionDelegate.network.ServiceListener#onMessage(com.nextbreakpoint.nextfractal.queue.network.ServiceMessage)
+		 * @see com.nextbreakpoint.nextfractal.network.core.SessionDelegate.network.ServiceListener#onMessage(com.nextbreakpoint.nextfractal.network.core.queue.network.ServiceMessage)
 		 */
 		@Override
 		public void onMessage(final ServiceMessage message) throws ServiceException {
@@ -1336,7 +1336,7 @@ public class JXTANetworkService {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.queue.network.ServiceConsumer#consumeMessages()
+		 * @see com.nextbreakpoint.nextfractal.network.core.queue.network.ServiceConsumer#consumeMessages()
 		 */
 		@Override
 		public void consumeMessages() throws ServiceException {
@@ -1346,7 +1346,7 @@ public class JXTANetworkService {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.queue.network.ServiceConsumer#isTimeout()
+		 * @see com.nextbreakpoint.nextfractal.network.core.queue.network.ServiceConsumer#isTimeout()
 		 */
 		@Override
 		public boolean isTimeout() {
@@ -1357,7 +1357,7 @@ public class JXTANetworkService {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.queue.network.ServiceConsumer#dispose()
+		 * @see com.nextbreakpoint.nextfractal.network.core.queue.network.ServiceConsumer#dispose()
 		 */
 		@Override
 		public void dispose() {
@@ -1399,7 +1399,7 @@ public class JXTANetworkService {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.queue.network.ServiceSession#dispose()
+		 * @see com.nextbreakpoint.nextfractal.network.core.queue.network.ServiceSession#dispose()
 		 */
 		@Override
 		public void dispose() {
@@ -1412,7 +1412,7 @@ public class JXTANetworkService {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.queue.network.ServiceSession#isLocalSession()
+		 * @see com.nextbreakpoint.nextfractal.network.core.queue.network.ServiceSession#isLocalSession()
 		 */
 		@Override
 		public boolean isLocalSession() {
@@ -1460,7 +1460,7 @@ public class JXTANetworkService {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.network.SessionDelegate#onMessage(com.nextbreakpoint.nextfractal.network.ServiceMessage)
+		 * @see com.nextbreakpoint.nextfractal.network.core.SessionDelegate#onMessage(com.nextbreakpoint.nextfractal.network.core.ServiceMessage)
 		 */
 		@Override
 		public void onMessage(ServiceMessage message) throws ServiceException {
