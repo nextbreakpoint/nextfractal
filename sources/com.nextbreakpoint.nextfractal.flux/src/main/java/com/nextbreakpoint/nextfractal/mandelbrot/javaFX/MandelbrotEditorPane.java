@@ -5,6 +5,8 @@ import java.util.logging.Logger;
 
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
+import javafx.event.Event;
+import javafx.event.EventType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
@@ -315,8 +317,12 @@ public class MandelbrotEditorPane extends BorderPane {
 				if (session.isTerminated()) {
 					items.remove(i);
 				} else {
-					session.updateState();
-					items.set(i, session);
+					if (jobsList.getSelectionModel().isSelected(i)) {
+						triggerUpdate(jobsList, session, i);
+						jobsList.getSelectionModel().select(i);
+					} else {
+						triggerUpdate(jobsList, session, i);
+					}
 				}
 			}
 		});
@@ -326,6 +332,12 @@ public class MandelbrotEditorPane extends BorderPane {
 		return threadFactory.newThread(runnable);
 	}
 
+	public static <T> void triggerUpdate(ListView<T> listView, T newValue, int i) {
+        EventType<? extends ListView.EditEvent<T>> type = ListView.editCommitEvent();
+        Event event = new ListView.EditEvent<>(listView, type, newValue, i);
+        listView.fireEvent(event);
+    }
+	
 	private class UpdateSessions implements Runnable {
 		private final ListView<ExportSession> jobsList;
 		

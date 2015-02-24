@@ -83,7 +83,6 @@ public class ExportService {
 		synchronized (sessions) {
 			for (Iterator<ExportSession> i = sessions.iterator(); i.hasNext();) {
 				ExportSession session = i.next();
-				session.updateState();
 				if (session.isTerminated()) {
 					i.remove();
 				}
@@ -95,19 +94,15 @@ public class ExportService {
 		synchronized (sessions) {
 			for (Iterator<ExportSession> i = sessions.iterator(); i.hasNext();) {
 				ExportSession session = i.next();
-				session.updateState();
-				if (isSessionReady(session)) {
+				if (!session.isTerminated()) {
 					dispatchSession(session);
 				}
 			}
 		}
 	}
 
-	private boolean isSessionReady(ExportSession session) {
-		return !session.isTerminated() && !session.isSuspended() && !session.isDispatched();
-	}
-
 	private void dispatchSession(ExportSession session) {
+		session.updateState();
 		for (ExportJob job : session.getJobs()) {
 			if (isJobReady(job)) {
 				dispatchJob(job);

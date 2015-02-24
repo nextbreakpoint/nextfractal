@@ -26,7 +26,6 @@ public class ExportSession {
 	private final float frameRate;
 	private volatile float progress;
 	private volatile int frameNumber;
-	private volatile boolean dispatched;
 	private volatile boolean terminated;
 	private volatile boolean suspended;
 	private volatile boolean requestTerminate;
@@ -79,28 +78,32 @@ public class ExportSession {
 	}
 	
 	public synchronized void start() {
-		logger.info(sessioinId + " -> start");
-		requestTerminate = false;
+		if (requestTerminate) {
+			throw new IllegalStateException();
+		}
 		for (ExportJob job : jobs) {
 			job.setTerminated(false);
+			job.setDispatched(false);
+			job.setSuspended(false);
 		}
+		updateState();
 	}
 
 	public synchronized void stop() {
-		logger.info(sessioinId + " -> stop");
 		requestTerminate = true;
 	}
 
 	public synchronized void resume() {
-		logger.info(sessioinId + " -> resume");
-		requestSuspend = false;
+		if (requestSuspend) {
+			throw new IllegalStateException();
+		}
 		for (ExportJob job : jobs) {
 			job.setSuspended(false);
 		}
+		updateState();
 	}
 
 	public synchronized void suspend() {
-		logger.info(sessioinId + " -> suspend");
 		requestSuspend = true;
 	}
 
@@ -110,10 +113,6 @@ public class ExportSession {
 
 	public boolean isRequestSuspend() {
 		return requestSuspend;
-	}
-
-	public boolean isDispatched() {
-		return dispatched;
 	}
 
 	public boolean isTerminated() {
@@ -129,46 +128,26 @@ public class ExportSession {
 	}
 
 	public synchronized void updateState() {
-		float count = 0;
+		int jobsTerminated = 0;
+		int jobsSuspended = 0;
 		for (ExportJob job : jobs) {
 			if (job.isTerminated()) {
-				count += 1;
+				jobsTerminated += 1;
+			}
+			if (job.isSuspended()) {
+				jobsSuspended += 1;
 			}
 		}
-		boolean allJobDispatched = true;
-		for (ExportJob job : jobs) {
-			if (!job.isDispatched()) {
-				allJobDispatched = false;
-				break;
-			}
+		if (jobsSuspended > 0) {
+			requestSuspend = false;
+			suspended = true;
 		}
-		boolean allJobTerminated = true;
-		for (ExportJob job : jobs) {
-			if (!job.isTerminated()) {
-				allJobTerminated = false;
-				break;
-			}
+		if (jobsTerminated == jobs.size()) {
+			requestTerminate = false;
+			terminated = true;
 		}
-		boolean allJobSuspended = true;
-		for (ExportJob job : jobs) {
-			if (!job.isSuspended()) {
-				allJobSuspended = false;
-				break;
-			}
-		}
-		if (allJobDispatched) {
-			logger.info(sessioinId + " -> dispatched");
-			this.dispatched = true;
-		}
-		if (allJobTerminated) {
-			logger.info(sessioinId + " -> terminated");
-			this.terminated = true;
-		}
-		if (allJobSuspended) {
-			logger.info(sessioinId + " -> suspended");
-			this.suspended = true;
-		}
-		setProgress(count / jobs.size());
+		logger.info(sessioinId + " -> terminated = " + terminated + ", suspended = " + suspended);
+		setProgress(jobsTerminated / (float)jobs.size());
 	}
 
 	public float getProgress() {

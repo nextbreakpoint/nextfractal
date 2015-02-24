@@ -27,7 +27,7 @@ public class SimpleRenderService implements RenderService {
 	@Override
 	public void dispatch(ExportJob job) {
 		synchronized (threads) {
-			if (threads.size() < 10) {
+			if (threads.size() < 5) {
 				Thread thread = createThread(new ProcessJob(job));
 				threads.add(thread);
 				job.setDispatched(true);
@@ -47,14 +47,25 @@ public class SimpleRenderService implements RenderService {
 			generator.setStopCondition(() -> {
 				return job.isRequestSuspend() || job.isRequestTerminate();
 			});
+			if (job.isRequestSuspend()) {
+				job.setDispatched(false);
+				job.setSuspended(true);
+				return;
+			}
+			if (job.isRequestTerminate()) {
+				job.setDispatched(false);
+				job.setTerminated(true);
+				return;
+			}
 			IntBuffer pixels = generator.renderImage(job.getProfile().getData());
 			job.setResult(new ExportResult(pixels, null));
+			job.setDispatched(false);
+			job.setTerminated(true);
 		} catch (Throwable e) {
 			job.setResult(new ExportResult(null, e.getMessage()));
-		} finally {
+			job.setDispatched(false);
 			job.setTerminated(true);
 		}
-		//TODO interrupt generator when job is terminated or suspended
 	}
 	
 	private ImageGenerator createImageGenerator(ExportJob job) {
