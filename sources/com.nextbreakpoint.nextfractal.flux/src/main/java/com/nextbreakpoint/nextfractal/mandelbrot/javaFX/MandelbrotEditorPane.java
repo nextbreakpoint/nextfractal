@@ -203,7 +203,7 @@ public class MandelbrotEditorPane extends BorderPane {
 
 		resumeButton.setOnAction(e -> {
 			for (ExportSession exportSession : jobsList.getSelectionModel().getSelectedItems()) {
-				exportSession.resume();
+				exportSession.start();
 			};
 		});
 

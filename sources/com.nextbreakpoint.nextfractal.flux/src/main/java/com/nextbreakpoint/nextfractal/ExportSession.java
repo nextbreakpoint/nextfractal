@@ -26,10 +26,7 @@ public class ExportSession {
 	private final float frameRate;
 	private volatile float progress;
 	private volatile int frameNumber;
-	private volatile boolean terminated;
-	private volatile boolean suspended;
-	private volatile boolean requestTerminate;
-	private volatile boolean requestSuspend;
+	private volatile SessionState state = SessionState.SUSPENDED;
 
 	public ExportSession(String pluginId, Object data, File file, File tmpFile, RendererSize size, int tileSize, Encoder encoder) {
 		this.pluginId = pluginId;
@@ -78,49 +75,52 @@ public class ExportSession {
 	}
 	
 	public synchronized void start() {
-		if (requestTerminate) {
+		if (state == SessionState.STARTED) {
+			return;
+		}
+		if (state != SessionState.SUSPENDED) {
 			throw new IllegalStateException();
 		}
 		for (ExportJob job : jobs) {
-			job.setTerminated(false);
-			job.setDispatched(false);
-			job.setSuspended(false);
+			if (job.getState() != JobState.COMPLETED) {
+				job.setState(JobState.READY);
+			}
 		}
-		updateState();
+		setState(SessionState.STARTED);
 	}
 
 	public synchronized void stop() {
-		requestTerminate = true;
-	}
-
-	public synchronized void resume() {
-		if (requestSuspend) {
+		if (state == SessionState.DONE) {
+			return;
+		}
+		if (state == SessionState.INTERRUPTED || state == SessionState.PENDING_SUSPEND || state == SessionState.PENDING_INTERRUPT) {
+			return;
+		}
+		if (state != SessionState.STARTED && state != SessionState.SUSPENDED) {
 			throw new IllegalStateException();
 		}
-		for (ExportJob job : jobs) {
-			job.setSuspended(false);
-		}
-		updateState();
+		setState(SessionState.PENDING_INTERRUPT);
 	}
 
 	public synchronized void suspend() {
-		requestSuspend = true;
+		if (state == SessionState.DONE) {
+			return;
+		}
+		if (state == SessionState.SUSPENDED || state == SessionState.PENDING_SUSPEND || state == SessionState.PENDING_INTERRUPT) {
+			return;
+		}
+		if (state != SessionState.STARTED && state != SessionState.INTERRUPTED) {
+			throw new IllegalStateException();
+		}
+		setState(SessionState.PENDING_SUSPEND);
 	}
 
-	public boolean isRequestTerminate() {
-		return requestTerminate;
+	public SessionState getState() {
+		return state;
 	}
 
-	public boolean isRequestSuspend() {
-		return requestSuspend;
-	}
-
-	public boolean isTerminated() {
-		return terminated;
-	}
-
-	public boolean isSuspended() {
-		return suspended;
+	private void setState(SessionState state) {
+		this.state = state;
 	}
 
 	public List<ExportJob> getJobs() {
@@ -128,26 +128,26 @@ public class ExportSession {
 	}
 
 	public synchronized void updateState() {
-		int jobsTerminated = 0;
-		int jobsSuspended = 0;
+		int jobsCompleted = 0;
+		int activeJobs = 0;
 		for (ExportJob job : jobs) {
-			if (job.isTerminated()) {
-				jobsTerminated += 1;
+			if (job.getState() == JobState.COMPLETED) {
+				jobsCompleted += 1;
+			} else if (job.getState() == JobState.DISPATCHED) {
+				activeJobs += 1;
 			}
-			if (job.isSuspended()) {
-				jobsSuspended += 1;
+		}
+		if (jobsCompleted == jobs.size()) {
+			setState(SessionState.DONE);
+		} else if (activeJobs == 0) {
+			if (state == SessionState.PENDING_SUSPEND) {
+				setState(SessionState.SUSPENDED);
+			} else if (state == SessionState.PENDING_INTERRUPT) {
+				setState(SessionState.INTERRUPTED);
 			}
 		}
-		if (jobsSuspended > 0) {
-			requestSuspend = false;
-			suspended = true;
-		}
-		if (jobsTerminated == jobs.size()) {
-			requestTerminate = false;
-			terminated = true;
-		}
-		logger.info(sessioinId + " -> terminated = " + terminated + ", suspended = " + suspended);
-		setProgress(jobsTerminated / (float)jobs.size());
+		setProgress((float)jobsCompleted / (float)jobs.size());
+		logger.info(sessioinId + " -> state = " + state + ", progress = " + progress);
 	}
 
 	public float getProgress() {
@@ -155,7 +155,6 @@ public class ExportSession {
 	}
 
 	protected void setProgress(float progress) {
-		logger.info(sessioinId + " -> progress = " + progress);
 		this.progress = progress;
 	}
 
@@ -252,5 +251,9 @@ public class ExportSession {
 
 	protected ExportJob createJob(ExportProfile profile) {
 		return new ExportJob(this, profile);
+	}
+
+	public boolean isTerminated() {
+		return state == SessionState.DONE || state == SessionState.INTERRUPTED;
 	}
 }

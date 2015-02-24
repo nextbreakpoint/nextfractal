@@ -111,7 +111,7 @@ public class ExportService {
 	}
 
 	private boolean isJobReady(ExportJob job) {
-		return !job.isTerminated() && !job.isSuspended() && !job.isDispatched();
+		return job.getState() == JobState.READY;
 	}
 	
 	private void dispatchJob(ExportJob job) {

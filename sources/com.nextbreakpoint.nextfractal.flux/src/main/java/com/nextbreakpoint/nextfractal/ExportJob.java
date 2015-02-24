@@ -6,37 +6,11 @@ public class ExportJob {
 	private final ExportSession session;
 	private final ExportProfile profile;
 	private volatile ExportResult result;
-	private volatile boolean dispatched;
-	private volatile boolean terminated;
-	private volatile boolean suspended;
+	private volatile JobState state = JobState.READY;
 
 	public ExportJob(ExportSession session, ExportProfile profile) {
 		this.session = session;
 		this.profile = profile;
-	}
-
-	public boolean isDispatched() {
-		return dispatched;
-	}
-
-	public void setDispatched(boolean dispatched) {
-		this.dispatched = dispatched;
-	}
-
-	public boolean isTerminated() {
-		return terminated;
-	}
-
-	public void setTerminated(boolean terminated) {
-		this.terminated = terminated;
-	}
-
-	public boolean isSuspended() {
-		return suspended;
-	}
-
-	public void setSuspended(boolean suspended) {
-		this.suspended = suspended;
 	}
 
 	public ExportProfile getProfile() {
@@ -55,20 +29,24 @@ public class ExportJob {
 		this.result = result;
 	}
 
-	public boolean isRequestTerminate() {
-		return session.isRequestTerminate();
-	}
-
-	public boolean isRequestSuspend() {
-		return session.isRequestSuspend();
+	public boolean isInterrupted() {
+		return session.getState() == SessionState.PENDING_INTERRUPT || session.getState() == SessionState.PENDING_SUSPEND;
 	}
 
 	public String getPluginId() {
 		return profile.getPluginId();
 	}
+	
+	public JobState getState() {
+		return state;
+	}
+	
+	public void setState(JobState state) {
+		this.state = state;
+	}
 
 	@Override
 	public String toString() {
-		return "[sessionId = " + session.getSessionId() + ", profile=" + profile + "]";
+		return "[sessionId = " + session.getSessionId() + ", profile=" + profile + ", state=" + state + "]";
 	}
 }

@@ -30,7 +30,7 @@ public class SimpleRenderService implements RenderService {
 			if (threads.size() < 5) {
 				Thread thread = createThread(new ProcessJob(job));
 				threads.add(thread);
-				job.setDispatched(true);
+				job.setState(JobState.DISPATCHED);
 				thread.start();
 			}
 		}
@@ -45,26 +45,19 @@ public class SimpleRenderService implements RenderService {
 			logger.fine(job.toString());
 			ImageGenerator generator = createImageGenerator(job);
 			generator.setStopCondition(() -> {
-				return job.isRequestSuspend() || job.isRequestTerminate();
+				return job.isInterrupted();
 			});
-			if (job.isRequestSuspend()) {
-				job.setDispatched(false);
-				job.setSuspended(true);
-				return;
-			}
-			if (job.isRequestTerminate()) {
-				job.setDispatched(false);
-				job.setTerminated(true);
-				return;
-			}
 			IntBuffer pixels = generator.renderImage(job.getProfile().getData());
-			job.setResult(new ExportResult(pixels, null));
-			job.setDispatched(false);
-			job.setTerminated(true);
+			if (job.isInterrupted()) {
+				job.setResult(new ExportResult(null, null));
+				job.setState(JobState.INTERRUPTED);
+			} else {
+				job.setResult(new ExportResult(pixels, null));
+				job.setState(JobState.COMPLETED);
+			}
 		} catch (Throwable e) {
 			job.setResult(new ExportResult(null, e.getMessage()));
-			job.setDispatched(false);
-			job.setTerminated(true);
+			job.setState(JobState.INTERRUPTED);
 		}
 	}
 	
