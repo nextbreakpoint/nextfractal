@@ -256,4 +256,8 @@ public class ExportSession {
 	public boolean isTerminated() {
 		return state == SessionState.DONE || state == SessionState.INTERRUPTED;
 	}
+
+	public boolean isStarted() {
+		return state == SessionState.STARTED;
+	}
 }

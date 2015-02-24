@@ -94,7 +94,7 @@ public class ExportService {
 		synchronized (sessions) {
 			for (Iterator<ExportSession> i = sessions.iterator(); i.hasNext();) {
 				ExportSession session = i.next();
-				if (!session.isTerminated()) {
+				if (session.isStarted()) {
 					dispatchSession(session);
 				}
 			}
