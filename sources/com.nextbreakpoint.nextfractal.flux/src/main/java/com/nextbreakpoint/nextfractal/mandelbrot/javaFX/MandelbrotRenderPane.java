@@ -470,7 +470,7 @@ public class MandelbrotRenderPane extends BorderPane {
 								ExportSession exportSession = new ExportSession("Mandelbrot", data, file, tmpFile, rendererSize, 200, new PNGImageEncoder());
 								logger.info("Export session created: " + exportSession.getSessionId());
 								session.addExportSession(exportSession);
-								exportSession.start();
+								session.getExportService().startSession(exportSession);
 							} catch (Exception e) {
 								logger.log(Level.WARNING, "Failed to export data", e);
 								//TODO display error

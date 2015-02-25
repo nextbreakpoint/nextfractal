@@ -6,7 +6,6 @@ public class ExportJob {
 	private final ExportSession session;
 	private final ExportProfile profile;
 	private volatile ExportResult result;
-	private volatile JobState state = JobState.READY;
 
 	public ExportJob(ExportSession session, ExportProfile profile) {
 		this.session = session;
@@ -29,24 +28,20 @@ public class ExportJob {
 		this.result = result;
 	}
 
-	public boolean isInterrupted() {
-		return session.getState() == SessionState.PENDING_INTERRUPT || session.getState() == SessionState.PENDING_SUSPEND;
-	}
-
 	public String getPluginId() {
 		return profile.getPluginId();
 	}
 	
-	public JobState getState() {
-		return state;
-	}
-	
-	public void setState(JobState state) {
-		this.state = state;
-	}
-
 	@Override
 	public String toString() {
-		return "[sessionId = " + session.getSessionId() + ", profile=" + profile + ", state=" + state + "]";
+		return "[sessionId = " + session.getSessionId() + ", profile=" + profile + "]";
+	}
+
+	public boolean isCompleted() {
+		return getResult() != null && getResult().getPixels() != null;
+	}
+
+	public boolean isInterrupted() {
+		return getResult() != null && getResult().getPixels() == null;
 	}
 }

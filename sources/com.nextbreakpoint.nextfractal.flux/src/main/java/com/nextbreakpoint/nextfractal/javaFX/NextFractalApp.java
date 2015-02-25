@@ -66,6 +66,7 @@ public class NextFractalApp extends Application {
         ExportService exportService = new ExportService(threadFactory, renderService, 200);
         exportService.start();
         FractalSession session = createFractalSession(pluginId);
+        session.setExportService(exportService);
         if (session != null) {
         	Pane renderPane = createRenderPane(session, pluginId, width, height);
         	if (renderPane != null) {
@@ -101,7 +102,6 @@ public class NextFractalApp extends Application {
 			
 			@Override
 			public void sessionAdded(FractalSession session, ExportSession exportSession) {
-				exportService.runSession(exportSession);
 			}
 			
 			@Override

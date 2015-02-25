@@ -26,6 +26,7 @@ public class ExportSession {
 	private final float frameRate;
 	private volatile float progress;
 	private volatile int frameNumber;
+	private volatile boolean cancelled;
 	private volatile SessionState state = SessionState.SUSPENDED;
 
 	public ExportSession(String pluginId, Object data, File file, File tmpFile, RendererSize size, int tileSize, Encoder encoder) {
@@ -73,81 +74,32 @@ public class ExportSession {
 	public void dispose() {
 		jobs.clear();
 	}
-	
-	public synchronized void start() {
-		if (state == SessionState.STARTED) {
-			return;
-		}
-		if (state != SessionState.SUSPENDED) {
-			throw new IllegalStateException();
-		}
-		for (ExportJob job : jobs) {
-			if (job.getState() != JobState.COMPLETED) {
-				job.setState(JobState.READY);
-			}
-		}
-		setState(SessionState.STARTED);
-	}
-
-	public synchronized void stop() {
-		if (state == SessionState.DONE) {
-			return;
-		}
-		if (state == SessionState.INTERRUPTED || state == SessionState.PENDING_SUSPEND || state == SessionState.PENDING_INTERRUPT) {
-			return;
-		}
-		if (state != SessionState.STARTED && state != SessionState.SUSPENDED) {
-			throw new IllegalStateException();
-		}
-		setState(SessionState.PENDING_INTERRUPT);
-	}
-
-	public synchronized void suspend() {
-		if (state == SessionState.DONE) {
-			return;
-		}
-		if (state == SessionState.SUSPENDED || state == SessionState.PENDING_SUSPEND || state == SessionState.PENDING_INTERRUPT) {
-			return;
-		}
-		if (state != SessionState.STARTED && state != SessionState.INTERRUPTED) {
-			throw new IllegalStateException();
-		}
-		setState(SessionState.PENDING_SUSPEND);
-	}
 
 	public SessionState getState() {
 		return state;
 	}
 
-	private void setState(SessionState state) {
+	public void setState(SessionState state) {
 		this.state = state;
+		logger.info(getSessionId() + " -> state = " + state);
 	}
 
 	public List<ExportJob> getJobs() {
 		return Collections.unmodifiableList(jobs);
 	}
 
-	public synchronized void updateState() {
-		int jobsCompleted = 0;
-		int activeJobs = 0;
+	public void updateProgress() {
+		setProgress((float)getCompletedJobsCount() / (float)jobs.size());
+	}
+
+	public int getCompletedJobsCount() {
+		int count = 0;
 		for (ExportJob job : jobs) {
-			if (job.getState() == JobState.COMPLETED) {
-				jobsCompleted += 1;
-			} else if (job.getState() == JobState.DISPATCHED) {
-				activeJobs += 1;
+			if (job.isCompleted()) {
+				count += 1;
 			}
 		}
-		if (jobsCompleted == jobs.size()) {
-			setState(SessionState.DONE);
-		} else if (activeJobs == 0) {
-			if (state == SessionState.PENDING_SUSPEND) {
-				setState(SessionState.SUSPENDED);
-			} else if (state == SessionState.PENDING_INTERRUPT) {
-				setState(SessionState.INTERRUPTED);
-			}
-		}
-		setProgress((float)jobsCompleted / (float)jobs.size());
-		logger.info(sessioinId + " -> state = " + state + ", progress = " + progress);
+		return count;
 	}
 
 	public float getProgress() {
@@ -253,11 +205,39 @@ public class ExportSession {
 		return new ExportJob(this, profile);
 	}
 
-	public boolean isTerminated() {
-		return state == SessionState.DONE || state == SessionState.INTERRUPTED;
+	public boolean isStopped() {
+		return state == SessionState.STOPPED;
+	}
+
+	public boolean isDispatched() {
+		return state == SessionState.DISPATCHED;
 	}
 
 	public boolean isStarted() {
 		return state == SessionState.STARTED;
+	}
+
+	public boolean isSuspended() {
+		return state == SessionState.SUSPENDED;
+	}
+
+	public boolean isInterrupted() {
+		return state == SessionState.INTERRUPTED;
+	}
+
+	public boolean isCompleted() {
+		return state == SessionState.COMPLETED;
+	}
+
+	public boolean isCancelled() {
+		return cancelled;
+	}
+
+	public void setCancelled(boolean cancelled) {
+		this.cancelled = cancelled;
+	}
+
+	public int getJobsCount() {
+		return jobs.size();
 	}
 }

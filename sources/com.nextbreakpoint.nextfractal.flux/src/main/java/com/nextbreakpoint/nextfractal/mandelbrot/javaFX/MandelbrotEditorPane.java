@@ -197,19 +197,19 @@ public class MandelbrotEditorPane extends BorderPane {
 
 		suspendButton.setOnAction(e -> {
 			for (ExportSession exportSession : jobsList.getSelectionModel().getSelectedItems()) {
-				exportSession.suspend();
+				session.getExportService().suspendSession(exportSession);
 			};
 		});
 
 		resumeButton.setOnAction(e -> {
 			for (ExportSession exportSession : jobsList.getSelectionModel().getSelectedItems()) {
-				exportSession.start();
+				session.getExportService().resumeSession(exportSession);
 			};
 		});
 
 		removeButton.setOnAction(e -> {
 			for (ExportSession exportSession : jobsList.getSelectionModel().getSelectedItems()) {
-				exportSession.stop();
+				session.getExportService().stopSession(exportSession);
 			};
 		});
 
@@ -314,7 +314,7 @@ public class MandelbrotEditorPane extends BorderPane {
 			ObservableList<ExportSession> items = jobsList.getItems();
 			for (int i = items.size() - 1; i >= 0; i--) {
 				ExportSession session = items.get(i);
-				if (session.isTerminated()) {
+				if (session.isStopped()) {
 					items.remove(i);
 				} else {
 					if (jobsList.getSelectionModel().isSelected(i)) {

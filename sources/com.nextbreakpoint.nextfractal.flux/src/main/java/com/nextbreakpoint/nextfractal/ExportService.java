@@ -1,16 +1,21 @@
 package com.nextbreakpoint.nextfractal;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Future;
 import java.util.concurrent.ThreadFactory;
+import java.util.logging.Logger;
 
 public class ExportService {
+	private static final Logger logger = Logger.getLogger(ExportService.class.getName());
 	private final List<ExportSession> sessions = new ArrayList<>();
+	private final Map<String, List<Future<ExportJob>>> futures = new HashMap<>();
 	private final RenderService dispatchService;
 	private final ThreadFactory threadFactory;
 	private final int tileSize;
-	private volatile Thread cleanupThread;
 	private volatile Thread dispatchThread;
 	private volatile boolean running;
 	
@@ -30,10 +35,6 @@ public class ExportService {
 
 	public void start() {
 		running = true;
-		if (cleanupThread == null) {
-			cleanupThread = createThread(new CleanupSessions());
-			cleanupThread.start();
-		}
 		if (dispatchThread == null) {
 			dispatchThread = createThread(new DispatchSessions());
 			dispatchThread.start();
@@ -42,20 +43,8 @@ public class ExportService {
 
 	public void stop() {
 		running = false;
-		if (cleanupThread != null) {
-			cleanupThread.interrupt();
-		}
 		if (dispatchThread != null) {
 			dispatchThread.interrupt();
-		}
-		if (cleanupThread != null) {
-			try {
-				cleanupThread.join();
-			}
-			catch (InterruptedException e) {
-				Thread.currentThread().interrupt();
-			}
-			cleanupThread = null;
 		}
 		if (dispatchThread != null) {
 			try {
@@ -72,66 +61,116 @@ public class ExportService {
 		return tileSize;
 	}
 
-	public void runSession(ExportSession exportSession) {
+	public void startSession(ExportSession session) {
 		synchronized (sessions) {
-			sessions.add(exportSession);
+			logger.info(session.getSessionId() + " -> added");
+			session.setState(SessionState.STARTED);
+			session.setCancelled(false);
+			sessions.add(session);
 			sessions.notifyAll();
 		}
 	}
 
-	private void cleanupSessions() {
+	public void stopSession(ExportSession session) {
+		synchronized (sessions) {
+			session.setCancelled(true);
+			cancelSession(session);
+			sessions.notifyAll();
+		}
+	}
+
+	public void suspendSession(ExportSession session) {
+		synchronized (sessions) {
+			session.setCancelled(false);
+			cancelSession(session);
+			sessions.notifyAll();
+		}
+	}
+
+	public void resumeSession(ExportSession session) {
+		synchronized (sessions) {
+			session.setState(SessionState.STARTED);
+			session.setCancelled(false);
+			sessions.notifyAll();
+		}
+	}
+
+	private void updateSessions() {
 		synchronized (sessions) {
 			for (Iterator<ExportSession> i = sessions.iterator(); i.hasNext();) {
 				ExportSession session = i.next();
-				if (session.isTerminated()) {
+				updateSession(session);
+				if (session.isStopped()) {
+					logger.info(session.getSessionId() + " -> removed");
+					futures.remove(session.getSessionId());
 					i.remove();
 				}
 			}
 		}
 	}
 
-	private synchronized void dispatchSessions() {
-		synchronized (sessions) {
-			for (Iterator<ExportSession> i = sessions.iterator(); i.hasNext();) {
-				ExportSession session = i.next();
-				if (session.isStarted()) {
-					dispatchSession(session);
+	private void updateSession(ExportSession session) {
+		if (session.isStarted()) {
+			dispatchJobs(session);
+			session.setState(SessionState.DISPATCHED);
+		} else if (session.isInterrupted()) {
+			session.setState(SessionState.STOPPED);
+		} else if (session.isCompleted()) {
+			session.setState(SessionState.STOPPED);
+		} else {
+			processSession(session);
+		}
+		session.updateProgress();
+	}
+
+	private void processSession(ExportSession session) {
+		List<Future<ExportJob>> list = futures.get(session.getSessionId());
+		if (list != null) {
+			removeTerminatedJobs(list);
+			if (list.size() == 0) {
+				if (session.isCancelled()) {
+					session.setState(SessionState.INTERRUPTED);
+				} else if (isSessionCompleted(session)) {
+					session.setState(SessionState.COMPLETED);
+				} else {
+					session.setState(SessionState.SUSPENDED);
 				}
 			}
 		}
 	}
 
-	private void dispatchSession(ExportSession session) {
-		session.updateState();
+	private void removeTerminatedJobs(List<Future<ExportJob>> list) {
+		for (Iterator<Future<ExportJob>> i = list.iterator(); i.hasNext();) {
+			Future<ExportJob> future = i.next();
+			if (future.isCancelled() || future.isDone()) {
+				i.remove();
+			}
+		}
+	}
+
+	private boolean isSessionCompleted(ExportSession session) {
+		return session.getCompletedJobsCount() == session.getJobsCount();
+	}
+
+	private void cancelSession(ExportSession session) {
+		List<Future<ExportJob>> list = futures.get(session.getSessionId());
+		if (list != null) {
+			for (Future<ExportJob> future : list) {
+				future.cancel(true);
+			}
+		}
+	}
+
+	private void dispatchJobs(ExportSession session) {
 		for (ExportJob job : session.getJobs()) {
-			if (isJobReady(job)) {
-				dispatchJob(job);
-			}
-		}
-	}
-
-	private boolean isJobReady(ExportJob job) {
-		return job.getState() == JobState.READY;
-	}
-	
-	private void dispatchJob(ExportJob job) {
-		dispatchService.dispatch(job);
-	}
-	
-	private class CleanupSessions implements Runnable {
-		/**
-		 * @see java.lang.Runnable#run()
-		 */
-		@Override
-		public void run() {
-			try {
-				while (running) {
-					cleanupSessions();
-					synchronized (sessions) {
-						sessions.wait(500);
-					}
+			if (!job.isCompleted()) {
+				Future<ExportJob> future = dispatchService.dispatch(job);
+				List<Future<ExportJob>> list = futures.get(session.getSessionId());
+				if (list == null) {
+					list = new ArrayList<>();
+					futures.put(session.getSessionId(), list);
 				}
-			} catch (InterruptedException e) {
+				list.add(future);
 			}
 		}
 	}
@@ -144,9 +183,9 @@ public class ExportService {
 		public void run() {
 			try {
 				while (running) {
-					dispatchSessions();
+					updateSessions();
 					synchronized (sessions) {
-						sessions.wait(500);
+						sessions.wait(1000);
 					}
 				}
 			} catch (InterruptedException e) {

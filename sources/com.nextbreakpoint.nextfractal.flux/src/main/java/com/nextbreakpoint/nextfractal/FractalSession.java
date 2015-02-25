@@ -6,6 +6,7 @@ import java.util.List;
 public abstract class FractalSession {
 	protected final List<SessionListener> listeners = new ArrayList<>();
 	protected final List<ExportSession> sessions = new ArrayList<>();
+	protected ExportService exportService;
 
 	public void addSessionListener(SessionListener listener) {
 		listeners.add(listener);
@@ -57,5 +58,13 @@ public abstract class FractalSession {
 		for (SessionListener listener : listeners) {
 			listener.sessionRemoved(this, session);
 		}
+	}
+
+	public ExportService getExportService() {
+		return exportService;
+	}
+
+	public void setExportService(ExportService exportService) {
+		this.exportService = exportService;
 	}
 }
