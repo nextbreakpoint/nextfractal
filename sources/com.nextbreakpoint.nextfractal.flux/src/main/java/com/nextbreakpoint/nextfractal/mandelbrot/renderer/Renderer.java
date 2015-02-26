@@ -26,10 +26,14 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.renderer;
 
 import java.nio.IntBuffer;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
 
 import com.nextbreakpoint.nextfractal.Condition;
-import com.nextbreakpoint.nextfractal.core.Worker;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Color;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.MutableNumber;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
@@ -48,7 +52,6 @@ public class Renderer {
 	protected final ThreadFactory threadFactory;
 	protected final RenderFactory renderFactory;
 	protected final RendererData rendererData;
-	protected final Worker rendererWorker;
 	protected volatile RendererDelegate rendererDelegate;
 	protected volatile RendererStrategy rendererStrategy;
 	protected volatile boolean aborted;
@@ -67,6 +70,8 @@ public class Renderer {
 	protected RendererBuffer backBuffer;
 	protected RendererView view;
 	protected Condition condition;
+	private ExecutorService executor;
+	private Future<?> future;
 
 	/**
 	 * @param renderFactory 
@@ -78,7 +83,6 @@ public class Renderer {
 	public Renderer(ThreadFactory threadFactory, RenderFactory renderFactory, RendererTile tile) {
 		this.threadFactory = threadFactory;
 		this.renderFactory = renderFactory;
-		this.rendererWorker = new Worker(threadFactory);
 		this.rendererData = createRendererData();
 		this.rendererFractal = new RendererFractal();
 		this.tile = tile;
@@ -101,7 +105,7 @@ public class Renderer {
 		backBuffer.setAffine(createTransform(0));
 		frontBuffer.setBuffer(renderFactory.createBuffer(size.getWidth(), size.getWidth()));
 		backBuffer.setBuffer(renderFactory.createBuffer(size.getWidth(), size.getHeight()));
-		start();
+		executor = Executors.newSingleThreadExecutor(threadFactory);
 	}
 
 	public RendererTile getTile() {
@@ -133,7 +137,7 @@ public class Renderer {
 	 * 
 	 */
 	public void dispose() {
-		stop();
+		shutdown();
 		free();
 	}
 
@@ -148,26 +152,32 @@ public class Renderer {
 	 * 
 	 */
 	public void abortTasks() {
-		rendererWorker.abortTasks();
+		if (future != null) {
+			future.cancel(true);
+		}
 	}
 
 	/**
 	 * 
 	 */
 	public void waitForTasks() {
-		rendererWorker.waitForTasks();
+		try {
+			if (future != null) {
+				if (!future.isCancelled()) {
+					future.get();
+				}
+			}
+		} catch (InterruptedException | ExecutionException e) {
+		}
 	}
 
 	/**
 	 * 
 	 */
 	public void runTask() {
-		rendererWorker.addTask(new Runnable() {
-			@Override
-			public void run() {
-				doRender();
-			}
-		});
+		abortTasks();
+		waitForTasks();
+		future = executor.submit(new RenderRunnable());
 	}
 	
 	/**
@@ -254,15 +264,12 @@ public class Renderer {
 	/**
 	 * 
 	 */
-	protected void start() {
-		rendererWorker.start();
-	}
-
-	/**
-	 * 
-	 */
-	protected void stop() {
-		rendererWorker.stop();
+	protected void shutdown() {
+		executor.shutdownNow();
+		try {
+			executor.awaitTermination(5000, TimeUnit.MILLISECONDS);
+		} catch (InterruptedException e) {
+		}
 	}
 
 	/**
@@ -291,69 +298,72 @@ public class Renderer {
 	 * @param dynamic
 	 */
 	protected void doRender() {
-		if (rendererFractal == null) {
-			progress = 1;
-			return;
-		}
-		final boolean redraw = orbitChanged || regionChanged || regionChanged;
-		orbitChanged = false;
-		colorChanged = false;
-		regionChanged = false;
-		aborted = false;
-		progress = 0;
-		rendererFractal.clearScope();
-		rendererFractal.setConstant(constant);
-		if (julia) {
-			rendererStrategy = new JuliaRendererStrategy(rendererFractal);
-		} else {
-			rendererStrategy = new MandelbrotRendererStrategy(rendererFractal);
-		}
-		int width = getWidth();
-		int height = getHeight();
-		rendererStrategy.prepare();
-		rendererData.setSize(width, height, rendererFractal.getStateSize());
-		rendererData.setRegion(region);
-		rendererData.initPositions();
-		rendererData.swap();
-		rendererData.clearPixels();
-		final MutableNumber px = new MutableNumber(0, 0);
-		final MutableNumber pw = new MutableNumber(0, 0);
-		final RendererState p = rendererData.newPoint();
-		int offset = 0;
-		int c = 0;
-		float dy = height / 5.0f;
-		float ty = dy;
-		didChanged(0, rendererData.getPixels());
-		for (int y = 0; y < height; y++) {
-			for (int x = 0; x < width; x++) {
-				px.set(rendererData.point());
-				pw.set(rendererData.positionX(x), rendererData.positionY(y));
-				if (redraw) {
-					c = rendererStrategy.renderPoint(p, px, pw);
-				} else {
-					rendererData.getPoint(offset, p);
-					c = rendererStrategy.renderColor(p);
+		try {
+			if (rendererFractal == null) {
+				progress = 1;
+				return;
+			}
+			final boolean redraw = orbitChanged || regionChanged || regionChanged;
+			orbitChanged = false;
+			colorChanged = false;
+			regionChanged = false;
+			aborted = false;
+			progress = 0;
+			rendererFractal.clearScope();
+			rendererFractal.setConstant(constant);
+			if (julia) {
+				rendererStrategy = new JuliaRendererStrategy(rendererFractal);
+			} else {
+				rendererStrategy = new MandelbrotRendererStrategy(rendererFractal);
+			}
+			int width = getWidth();
+			int height = getHeight();
+			rendererStrategy.prepare();
+			rendererData.setSize(width, height, rendererFractal.getStateSize());
+			rendererData.setRegion(region);
+			rendererData.initPositions();
+			rendererData.swap();
+			rendererData.clearPixels();
+			final MutableNumber px = new MutableNumber(0, 0);
+			final MutableNumber pw = new MutableNumber(0, 0);
+			final RendererState p = rendererData.newPoint();
+			int offset = 0;
+			int c = 0;
+			float dy = height / 5.0f;
+			float ty = dy;
+			didChanged(0, rendererData.getPixels());
+			for (int y = 0; y < height; y++) {
+				for (int x = 0; x < width; x++) {
+					px.set(rendererData.point());
+					pw.set(rendererData.positionX(x), rendererData.positionY(y));
+					if (redraw) {
+						c = rendererStrategy.renderPoint(p, px, pw);
+					} else {
+						rendererData.getPoint(offset, p);
+						c = rendererStrategy.renderColor(p);
+					}
+					rendererData.setPoint(offset, p);
+					rendererData.setPixel(offset, c);
+					offset += 1;
 				}
-				rendererData.setPoint(offset, p);
-				rendererData.setPixel(offset, c);
-				offset += 1;
+				if (isInterrupted()) {
+					aborted = true;
+					break;
+				}
+				if (y >= ty) {
+					progress = y / (float)(height - 1);
+					didChanged(progress, rendererData.getPixels());
+					ty += dy;
+				}
+				Thread.yield();
 			}
-			if (isInterrupted()) {
-				aborted = true;
-				break;
+			if (!aborted) {
+				progress = 1f;
 			}
-			if (y >= ty) {
-				progress = y / (float)(height - 1);
-				didChanged(progress, rendererData.getPixels());
-				ty += dy;
-			}
+			didChanged(progress, rendererData.getPixels());
 			Thread.yield();
+		} catch (Throwable e) {
 		}
-		if (!aborted) {
-			progress = 1f;
-		}
-		didChanged(progress, rendererData.getPixels());
-		Thread.yield();
 	}
 
 	/**
@@ -528,5 +538,12 @@ public class Renderer {
 
 	public void setCondition(Condition condition) {
 		this.condition = condition;
+	}
+	
+	private class RenderRunnable implements Runnable {
+		@Override
+		public void run() {
+			doRender();
+		}
 	}
 }

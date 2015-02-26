@@ -60,11 +60,11 @@ public class NextFractalApp extends Application {
         mainPane.getChildren().add(editorRootPane);
         mainPane.getStyleClass().add("application");
         root.getChildren().add(mainPane);
-		DefaultThreadFactory threadFactory = new DefaultThreadFactory("NextFractalApp", true, Thread.MIN_PRIORITY);
+		DefaultThreadFactory renderThreadFactory = new DefaultThreadFactory("NextFractalApp", true, Thread.MIN_PRIORITY + 1);
+		DefaultThreadFactory exportThreadFactory = new DefaultThreadFactory("NextFractalApp", true, Thread.MIN_PRIORITY + 0);
 		JavaFXRenderFactory renderFactory = new JavaFXRenderFactory();
-		RenderService renderService = new SimpleRenderService(threadFactory, renderFactory);
-        ExportService exportService = new ExportService(threadFactory, renderService, 200);
-        exportService.start();
+		RenderService renderService = new SimpleRenderService(renderThreadFactory, renderFactory);
+        ExportService exportService = new ExportService(exportThreadFactory, renderService, 200);
         FractalSession session = createFractalSession(pluginId);
         session.setExportService(exportService);
         if (session != null) {
@@ -98,6 +98,7 @@ public class NextFractalApp extends Application {
 			
 			@Override
 			public void terminate(FractalSession session) {
+				exportService.shutdown();
 			}
 			
 			@Override

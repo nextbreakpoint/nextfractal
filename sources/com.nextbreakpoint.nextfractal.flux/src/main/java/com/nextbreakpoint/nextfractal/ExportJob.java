@@ -32,16 +32,16 @@ public class ExportJob {
 		return profile.getPluginId();
 	}
 	
-	@Override
-	public String toString() {
-		return "[sessionId = " + session.getSessionId() + ", profile=" + profile + "]";
-	}
-
 	public boolean isCompleted() {
 		return getResult() != null && getResult().getPixels() != null;
 	}
-
+	
 	public boolean isInterrupted() {
 		return getResult() != null && getResult().getPixels() == null;
+	}
+	
+	@Override
+	public String toString() {
+		return "[sessionId = " + session.getSessionId() + ", profile=" + profile + "]";
 	}
 }

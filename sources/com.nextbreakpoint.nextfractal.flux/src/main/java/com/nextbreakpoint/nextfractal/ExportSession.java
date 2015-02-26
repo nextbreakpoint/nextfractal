@@ -81,7 +81,7 @@ public class ExportSession {
 
 	public void setState(SessionState state) {
 		this.state = state;
-		logger.info(getSessionId() + " -> state = " + state);
+		logger.fine(getSessionId() + " -> state = " + state);
 	}
 
 	public List<ExportJob> getJobs() {

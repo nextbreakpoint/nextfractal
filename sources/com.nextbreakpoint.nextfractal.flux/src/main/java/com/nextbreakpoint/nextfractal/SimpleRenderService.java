@@ -22,9 +22,9 @@ public class SimpleRenderService implements RenderService {
 	 * @param renderFactory
 	 */
 	public SimpleRenderService(ThreadFactory threadFactory, RenderFactory renderFactory) {
-		service = new ExecutorCompletionService<>(Executors.newFixedThreadPool(5, threadFactory));
 		this.threadFactory = threadFactory;
 		this.renderFactory = renderFactory;
+		service = new ExecutorCompletionService<>(Executors.newFixedThreadPool(5, threadFactory));
 	}
 	
 	@Override
@@ -55,7 +55,7 @@ public class SimpleRenderService implements RenderService {
 		@Override
 		public ExportJob call() throws Exception {
 			try {
-				logger.info(job.toString());
+				logger.fine(job.toString());
 				ImageGenerator generator = createImageGenerator(job);
 				IntBuffer pixels = generator.renderImage(job.getProfile().getData());
 				job.setResult(new ExportResult(pixels, null));

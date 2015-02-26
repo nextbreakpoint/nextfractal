@@ -5,55 +5,33 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
-import java.util.logging.Logger;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class ExportService {
-	private static final Logger logger = Logger.getLogger(ExportService.class.getName());
 	private final List<ExportSession> sessions = new ArrayList<>();
 	private final Map<String, List<Future<ExportJob>>> futures = new HashMap<>();
+	private final ReentrantLock lock = new ReentrantLock();
+	private final ScheduledExecutorService executor;
 	private final RenderService dispatchService;
-	private final ThreadFactory threadFactory;
 	private final int tileSize;
-	private volatile Thread dispatchThread;
-	private volatile boolean running;
 	
 	public ExportService(ThreadFactory threadFactory, RenderService dispatchService, int tileSize) {
-		this.threadFactory = threadFactory;
 		this.dispatchService = dispatchService;
 		this.tileSize = tileSize;
+		executor = Executors.newSingleThreadScheduledExecutor(threadFactory);
+		executor.scheduleWithFixedDelay(new UpdateSessionsRunnable(), 1000, 1000, TimeUnit.MILLISECONDS);
 	}
 
-	/**
-	 * @param runnable
-	 * @return
-	 */
-	protected Thread createThread(Runnable runnable) {
-		return threadFactory.newThread(runnable);
-	}
-
-	public void start() {
-		running = true;
-		if (dispatchThread == null) {
-			dispatchThread = createThread(new DispatchSessions());
-			dispatchThread.start();
-		}
-	}
-
-	public void stop() {
-		running = false;
-		if (dispatchThread != null) {
-			dispatchThread.interrupt();
-		}
-		if (dispatchThread != null) {
-			try {
-				dispatchThread.join();
-			}
-			catch (InterruptedException e) {
-				Thread.currentThread().interrupt();
-			}
-			dispatchThread = null;
+	public void shutdown() {
+		executor.shutdownNow();
+		try {
+			executor.awaitTermination(5000, TimeUnit.MILLISECONDS);
+		} catch (InterruptedException e) {
 		}
 	}
 
@@ -62,51 +40,39 @@ public class ExportService {
 	}
 
 	public void startSession(ExportSession session) {
-		synchronized (sessions) {
-			logger.info(session.getSessionId() + " -> added");
-			session.setState(SessionState.STARTED);
-			session.setCancelled(false);
-			sessions.add(session);
-			sessions.notifyAll();
-		}
+		session.setState(SessionState.STARTED);
+		session.setCancelled(false);
+		lock.lock();
+		sessions.add(session);
+		lock.unlock();
 	}
 
 	public void stopSession(ExportSession session) {
-		synchronized (sessions) {
-			session.setCancelled(true);
-			cancelSession(session);
-			sessions.notifyAll();
-		}
+		session.setCancelled(true);
+		cancelSession(session);
 	}
 
 	public void suspendSession(ExportSession session) {
-		synchronized (sessions) {
-			session.setCancelled(false);
-			cancelSession(session);
-			sessions.notifyAll();
-		}
+		session.setCancelled(false);
+		cancelSession(session);
 	}
 
 	public void resumeSession(ExportSession session) {
-		synchronized (sessions) {
-			session.setState(SessionState.STARTED);
-			session.setCancelled(false);
-			sessions.notifyAll();
-		}
+		session.setState(SessionState.STARTED);
+		session.setCancelled(false);
 	}
 
 	private void updateSessions() {
-		synchronized (sessions) {
-			for (Iterator<ExportSession> i = sessions.iterator(); i.hasNext();) {
-				ExportSession session = i.next();
-				updateSession(session);
-				if (session.isStopped()) {
-					logger.info(session.getSessionId() + " -> removed");
-					futures.remove(session.getSessionId());
-					i.remove();
-				}
+		lock.lock();
+		for (Iterator<ExportSession> i = sessions.iterator(); i.hasNext();) {
+			ExportSession session = i.next();
+			updateSession(session);
+			if (session.isStopped()) {
+				futures.remove(session.getSessionId());
+				i.remove();
 			}
 		}
+		lock.unlock();
 	}
 
 	private void updateSession(ExportSession session) {
@@ -175,21 +141,13 @@ public class ExportService {
 		}
 	}
 
-	private class DispatchSessions implements Runnable {
+	private class UpdateSessionsRunnable implements Runnable {
 		/**
 		 * @see java.lang.Runnable#run()
 		 */
 		@Override
 		public void run() {
-			try {
-				while (running) {
-					updateSessions();
-					synchronized (sessions) {
-						sessions.wait(1000);
-					}
-				}
-			} catch (InterruptedException e) {
-			}
+			updateSessions();
 		}
 	}
 }
