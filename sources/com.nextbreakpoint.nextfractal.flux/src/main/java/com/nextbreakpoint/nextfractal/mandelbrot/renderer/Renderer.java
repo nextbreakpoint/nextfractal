@@ -115,15 +115,8 @@ public class Renderer {
 	/**
 	 * @return
 	 */
-	public int getWidth() {
-		return size.getWidth();
-	}
-
-	/**
-	 * @return
-	 */
-	public int getHeight() {
-		return size.getHeight();
+	public RendererSize getSize() {
+		return size;
 	}
 
 	/**
@@ -316,8 +309,8 @@ public class Renderer {
 			} else {
 				rendererStrategy = new MandelbrotRendererStrategy(rendererFractal);
 			}
-			int width = getWidth();
-			int height = getHeight();
+			int width = getSize().getWidth();
+			int height = getSize().getHeight();
 			rendererStrategy.prepare();
 			rendererData.setSize(width, height, rendererFractal.getStateSize());
 			rendererData.setRegion(region);
@@ -441,10 +434,12 @@ public class Renderer {
 	protected RenderAffine createTransform(double rotation) {
 		final RendererSize tileSize = backBuffer.getTile().getTileSize();
 		final RendererSize tileBorder = backBuffer.getTile().getTileBorder();
-		final int offsetX = (getWidth() - tileSize.getWidth() - tileBorder.getWidth() * 2) / 2;
-		final int offsetY = (getHeight() - tileSize.getHeight() - tileBorder.getHeight() * 2) / 2;
-		final int centerX = getWidth() / 2;
-		final int centerY = getHeight() / 2;
+		int width = getSize().getWidth();
+		int height = getSize().getHeight();
+		final int offsetX = (width - tileSize.getWidth() - tileBorder.getWidth() * 2) / 2;
+		final int offsetY = (height - tileSize.getHeight() - tileBorder.getHeight() * 2) / 2;
+		final int centerX = width / 2;
+		final int centerY = height / 2;
 		final RenderAffine affine = renderFactory.createTranslateAffine(-offsetX, -offsetY);
 		affine.append(renderFactory.createRotateAffine(rotation, centerX, centerY));
 		return affine;

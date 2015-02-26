@@ -126,7 +126,9 @@ public final class XaosRenderer extends Renderer {
 				rendererStrategy = new MandelbrotRendererStrategy(rendererFractal);
 			}
 			rendererStrategy.prepare();
-			rendererData.setSize(getWidth(), getHeight(), rendererFractal.getStateSize());
+			int width = getSize().getWidth();
+			int height = getSize().getHeight();
+			rendererData.setSize(width, height, rendererFractal.getStateSize());
 			if (regionChanged) {
 				rendererData.setRegion(region);
 				regionChanged = false;
@@ -1155,7 +1157,7 @@ public final class XaosRenderer extends Renderer {
 		if (XaosConstants.DUMP) {
 			logger.fine("Do symetry...");
 		}
-		final int rowsize = getWidth();
+		final int rowsize = getSize().getWidth();
 		int from_offset = 0;
 		int to_offset = 0;
 		int i = 0;
@@ -1206,7 +1208,7 @@ public final class XaosRenderer extends Renderer {
 		}
 		final XaosChunk[] table = movetable.data;
 		XaosChunk tmpData = null;
-		final int rowsize = getWidth();
+		final int rowsize = getSize().getWidth();
 		int new_offset = 0;
 		int old_offset = 0;
 		int from = 0;
@@ -1238,7 +1240,7 @@ public final class XaosRenderer extends Renderer {
 		}
 		final XaosChunk[] table = filltable.data;
 		XaosChunk tmpData = null;
-		final int rowsize = getWidth();
+		final int rowsize = getSize().getWidth();
 		int from_offset = 0;
 		int to_offset = 0;
 		int from = 0;
@@ -1309,7 +1311,7 @@ public final class XaosRenderer extends Renderer {
 		if (XaosConstants.PRINT_CALCULATE) {
 			logger.fine("Calculate line " + realloc.pos);
 		}
-		final int rowsize = getWidth();
+		final int rowsize = getSize().getWidth();
 		final double position = realloc.position;
 		final int r = realloc.pos;
 		int offset = r * rowsize;
@@ -1441,7 +1443,7 @@ public final class XaosRenderer extends Renderer {
 		if (XaosConstants.PRINT_CALCULATE) {
 			logger.fine("Calculate column " + realloc.pos);
 		}
-		final int rowsize = getWidth();
+		final int rowsize = getSize().getWidth();
 		final double position = realloc.position;
 		final int r = realloc.pos;
 		int offset = r;
@@ -1577,7 +1579,7 @@ public final class XaosRenderer extends Renderer {
 		if (XaosConstants.DUMP) {
 			logger.fine("Refresh line...");
 		}
-		final int rowsize = getWidth();
+		final int rowsize = getSize().getWidth();
 		int offset = realloc.pos * rowsize;
 		int c = 0;
 		RendererState p = xaosRendererData.newPoint();
@@ -1601,7 +1603,7 @@ public final class XaosRenderer extends Renderer {
 		if (XaosConstants.DUMP) {
 			logger.fine("Refresh column...");
 		}
-		final int rowsize = getWidth();
+		final int rowsize = getSize().getWidth();
 		int offset = realloc.pos;
 		int c = 0;
 		RendererState p = xaosRendererData.newPoint();

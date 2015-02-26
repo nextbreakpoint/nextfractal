@@ -13,6 +13,8 @@ import javafx.scene.layout.BorderPane;
 
 import com.nextbreakpoint.nextfractal.ExportSession;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotData;
+import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererSize;
+import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererTile;
 
 public class ExportListCell extends ListCell<ExportSession> {
 	private static final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -20,13 +22,13 @@ public class ExportListCell extends ListCell<ExportSession> {
 	private ProgressBar progress;
 	private Canvas canvas;
 	private Label label;
-	private int imageWidth;
-	private int imageHeight;
+	private RendererSize size;
+	private RendererTile tile;
 
-	public ExportListCell(int imageWidth, int imageHeight) {
-		this.imageWidth = imageWidth;
-		this.imageHeight = imageHeight;
-		canvas = new Canvas(imageWidth, imageHeight);
+	public ExportListCell(RendererSize size, RendererTile tile) {
+		this.size = size;
+		this.tile = tile;
+		canvas = new Canvas(tile.getTileSize().getWidth(), tile.getTileSize().getHeight());
 		progress = new ProgressBar();
 		label = new Label();
 		pane = new BorderPane();
@@ -46,9 +48,9 @@ public class ExportListCell extends ListCell<ExportSession> {
 		} else {
 			MandelbrotData data = (MandelbrotData)session.getData();
 			if (data.getPixels() != null) {
-				WritableImage image = new WritableImage(imageWidth, imageHeight);
+				WritableImage image = new WritableImage(size.getWidth(), size.getHeight());
 				image.getPixelWriter().setPixels(0, 0, (int)image.getWidth(), (int)image.getHeight(), PixelFormat.getIntArgbInstance(), data.getPixels(), (int)image.getWidth());
-				canvas.getGraphicsContext2D().drawImage(image, 0, 0);
+				canvas.getGraphicsContext2D().drawImage(image, (tile.getTileSize().getWidth() - size.getWidth()) / 2, (tile.getTileSize().getHeight() - size.getHeight()) / 2);
 			}
 			progress.setProgress(session.getProgress());
 			label.setText(df.format(data.getTimestamp()));

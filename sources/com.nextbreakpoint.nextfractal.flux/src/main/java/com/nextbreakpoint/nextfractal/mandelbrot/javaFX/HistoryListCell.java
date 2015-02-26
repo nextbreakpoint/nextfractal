@@ -10,19 +10,21 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.layout.BorderPane;
 
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotData;
+import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererSize;
+import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererTile;
 
 public class HistoryListCell extends ListCell<MandelbrotData> {
 	private static final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	private BorderPane pane;
 	private Canvas canvas;
 	private Label label;
-	private int imageWidth;
-	private int imageHeight;
+	private RendererSize size;
+	private RendererTile tile;
 
-	public HistoryListCell(int imageWidth, int imageHeight) {
-		this.imageWidth = imageWidth;
-		this.imageHeight = imageHeight;
-		canvas = new Canvas(imageWidth, imageHeight);
+	public HistoryListCell(RendererSize size, RendererTile tile) {
+		this.size = size;
+		this.tile = tile;
+		canvas = new Canvas(tile.getTileSize().getWidth(), tile.getTileSize().getHeight());
 		label = new Label();
 		pane = new BorderPane();
 		pane.setCenter(label);
@@ -36,9 +38,9 @@ public class HistoryListCell extends ListCell<MandelbrotData> {
 			setGraphic(null);
 		} else {
 			if (data.getPixels() != null) {
-				WritableImage image = new WritableImage(imageWidth, imageHeight);
+				WritableImage image = new WritableImage(size.getWidth(), size.getHeight());
 				image.getPixelWriter().setPixels(0, 0, (int)image.getWidth(), (int)image.getHeight(), PixelFormat.getIntArgbInstance(), data.getPixels(), (int)image.getWidth());
-				canvas.getGraphicsContext2D().drawImage(image, 0, 0);
+				canvas.getGraphicsContext2D().drawImage(image, (tile.getTileSize().getWidth() - size.getWidth()) / 2, (tile.getTileSize().getHeight() - size.getHeight()) / 2);
 			}
 			label.setText(df.format(data.getTimestamp()));
 			this.setGraphic(pane);

@@ -56,7 +56,9 @@ public class MandelbrotEditorPane extends BorderPane {
 		historyWorker = new Worker(threadFactory);
 		historyWorker.start();
 		
-		generator = new MandelbrotImageGenerator(threadFactory, renderFactory, createSingleTile(25, 25));
+		RendererTile generatorTile = createSingleTile(25, 25);
+		
+		generator = new MandelbrotImageGenerator(threadFactory, renderFactory, generatorTile);
 		
 		getStyleClass().add("mandelbrot");
 
@@ -93,7 +95,7 @@ public class MandelbrotEditorPane extends BorderPane {
 		historyList.setCellFactory(new Callback<ListView<MandelbrotData>, ListCell<MandelbrotData>>() {
 			@Override
 			public ListCell<MandelbrotData> call(ListView<MandelbrotData> gridView) {
-				return new HistoryListCell(generator.getWidth(), generator.getHeight());
+				return new HistoryListCell(generator.getSize(), generatorTile);
 			}
 		});
 		HBox historyButtons = new HBox(10);
@@ -109,7 +111,7 @@ public class MandelbrotEditorPane extends BorderPane {
 		jobsList.setCellFactory(new Callback<ListView<ExportSession>, ListCell<ExportSession>>() {
 			@Override
 			public ListCell<ExportSession> call(ListView<ExportSession> gridView) {
-				return new ExportListCell(generator.getWidth(), generator.getHeight());
+				return new ExportListCell(generator.getSize(), generatorTile);
 			}
 		});
 		jobsList.getStyleClass().add("jobs-list");

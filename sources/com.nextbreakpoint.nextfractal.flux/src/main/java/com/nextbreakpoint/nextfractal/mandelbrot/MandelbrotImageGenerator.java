@@ -14,6 +14,7 @@ import com.nextbreakpoint.nextfractal.mandelbrot.core.Color;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Orbit;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.Renderer;
+import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererSize;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererTile;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererView;
 import com.nextbreakpoint.nextfractal.render.RenderFactory;
@@ -28,7 +29,7 @@ public class MandelbrotImageGenerator implements ImageGenerator {
 
 	public IntBuffer renderImage(Object data) {
 		MandelbrotData generatorData = (MandelbrotData)data;
-		IntBuffer pixels = IntBuffer.allocate(renderer.getWidth() * renderer.getHeight());
+		IntBuffer pixels = IntBuffer.allocate(renderer.getSize().getWidth() * renderer.getSize().getHeight());
 		try {
 			Compiler compiler = new Compiler(getClass().getPackage().getName(), getClass().getSimpleName());
 			CompilerReport report = compiler.generateJavaSource(generatorData.getSource());
@@ -63,14 +64,10 @@ public class MandelbrotImageGenerator implements ImageGenerator {
 		return pixels;
 	}
 
-	public int getHeight() {
-		return renderer.getWidth();
+	public RendererSize getSize() {
+		return renderer.getSize();
 	}
-
-	public int getWidth() {
-		return renderer.getHeight();
-	}
-
+	
 	@Override
 	public void setStopCondition(Condition condition) {
 		this.condition = condition;

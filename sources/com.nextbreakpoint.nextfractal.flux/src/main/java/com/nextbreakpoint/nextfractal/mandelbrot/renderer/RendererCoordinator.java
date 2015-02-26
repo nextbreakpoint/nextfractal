@@ -128,15 +128,8 @@ public class RendererCoordinator implements RendererDelegate {
 	/**
 	 * @return
 	 */
-	public int getWidth() {
-		return renderer.getWidth();
-	}
-
-	/**
-	 * @return
-	 */
-	public int getHeight() {
-		return renderer.getHeight();
+	public RendererSize getSize() {
+		return renderer.getSize();
 	}
 
 	/**

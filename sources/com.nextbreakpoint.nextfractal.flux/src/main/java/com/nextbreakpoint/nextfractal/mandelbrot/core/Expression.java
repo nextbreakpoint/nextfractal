@@ -25,7 +25,7 @@ public class Expression {
 	}
 
 	public static Number opMul(Number a, Number b) {
-		return new Number(a.r() * b.r() - a.i() * b.i(), a.r() * b.i() + a.r() * b.i());
+		return new Number(a.r() * b.r() - a.i() * b.i(), a.r() * b.i() + a.i() * b.r());
 	}
 
 	public static Number opAdd(Number a, double b) {
