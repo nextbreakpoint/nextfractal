@@ -27,6 +27,18 @@ public class ExportService {
 		executor.scheduleWithFixedDelay(new UpdateSessionsRunnable(), 1000, 1000, TimeUnit.MILLISECONDS);
 	}
 
+//	public void shutdown() {
+//		executor.shutdown(); 
+//		try {
+//			if (!executor.awaitTermination(5, TimeUnit.SECONDS)) {
+//				executor.shutdownNow(); 
+//			}
+//		} catch (InterruptedException x) {
+//			executor.shutdownNow();
+//			Thread.currentThread().interrupt();
+//		}
+//	}
+
 	public void shutdown() {
 		executor.shutdownNow();
 		try {
