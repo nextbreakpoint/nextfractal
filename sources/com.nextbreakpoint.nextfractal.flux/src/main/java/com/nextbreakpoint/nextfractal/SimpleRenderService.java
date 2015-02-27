@@ -39,6 +39,25 @@ public class SimpleRenderService implements RenderService {
 			this.job = job;
 		}
 
+		@Override
+		public ExportJob call() throws Exception {
+			try {
+				logger.fine(job.toString());
+				ImageGenerator generator = createImageGenerator(job);
+				IntBuffer pixels = generator.renderImage(job.getProfile().getData());
+				if (generator.isInterrupted()) {
+					job.setState(JobState.INTERRUPTED);
+				} else {
+					job.writePixels(pixels);
+					job.setState(JobState.COMPLETED);
+				}
+			} catch (Throwable e) {
+				job.setError(e);
+				job.setState(JobState.INTERRUPTED);
+			}
+			return job;
+		}
+		
 		private ImageGenerator createImageGenerator(ExportJob job) {
 			final ServiceLoader<? extends FractalFactory> plugins = ServiceLoader.load(FractalFactory.class);
 			for (FractalFactory plugin : plugins) {
@@ -50,19 +69,6 @@ public class SimpleRenderService implements RenderService {
 				}
 			}
 			return null;
-		}
-
-		@Override
-		public ExportJob call() throws Exception {
-			try {
-				logger.fine(job.toString());
-				ImageGenerator generator = createImageGenerator(job);
-				IntBuffer pixels = generator.renderImage(job.getProfile().getData());
-				job.setResult(new ExportResult(pixels, null));
-			} catch (Throwable e) {
-				job.setResult(new ExportResult(null, e.getMessage()));
-			}
-			return job;
 		}
 	}
 }

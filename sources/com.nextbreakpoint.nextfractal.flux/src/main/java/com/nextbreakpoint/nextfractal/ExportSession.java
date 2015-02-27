@@ -40,7 +40,7 @@ public class ExportSession {
 		this.quality = 1;
 		this.frameRate = 1.0f/24.0f;
 		sessioinId = UUID.randomUUID().toString();
-		jobs.addAll(createJobs());
+		jobs.addAll(createJobs(0));
 	}
 	
 	public String getSessionId() {
@@ -110,7 +110,7 @@ public class ExportSession {
 		this.progress = progress;
 	}
 
-	protected List<ExportJob> createJobs() {
+	protected List<ExportJob> createJobs(int frameNumber) {
 		final List<ExportJob> jobs = new ArrayList<ExportJob>();
 		final int frameWidth = size.getWidth();
 		final int frameHeight = size.getHeight();
@@ -239,5 +239,13 @@ public class ExportSession {
 
 	public int getJobsCount() {
 		return jobs.size();
+	}
+
+	public int getFrameNumber() {
+		return frameNumber;
+	}
+
+	public void setFrameNumber(int frameNumber) {
+		this.frameNumber = frameNumber;
 	}
 }

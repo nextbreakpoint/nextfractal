@@ -109,6 +109,7 @@ public class ExportService {
 				if (session.isCancelled()) {
 					session.setState(SessionState.INTERRUPTED);
 				} else if (isSessionCompleted(session)) {
+					encodeData(session);
 					session.setState(SessionState.COMPLETED);
 				} else {
 					session.setState(SessionState.SUSPENDED);
@@ -117,6 +118,10 @@ public class ExportService {
 		}
 	}
 
+	private void encodeData(ExportSession session) {
+		//TODO
+	}
+	
 	private void removeTerminatedJobs(List<Future<ExportJob>> list) {
 		for (Iterator<Future<ExportJob>> i = list.iterator(); i.hasNext();) {
 			Future<ExportJob> future = i.next();

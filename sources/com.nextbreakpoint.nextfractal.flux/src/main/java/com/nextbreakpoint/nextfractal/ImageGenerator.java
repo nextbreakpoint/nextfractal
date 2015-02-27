@@ -10,4 +10,6 @@ public interface ImageGenerator {
 	public RendererSize getSize();
 
 	public void setStopCondition(Condition condition);
+
+	public boolean isInterrupted();
 }

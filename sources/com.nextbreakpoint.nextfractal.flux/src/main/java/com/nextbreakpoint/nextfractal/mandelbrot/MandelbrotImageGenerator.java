@@ -72,4 +72,9 @@ public class MandelbrotImageGenerator implements ImageGenerator {
 	public void setStopCondition(Condition condition) {
 		this.condition = condition;
 	}
+
+	@Override
+	public boolean isInterrupted() {
+		return renderer.isInterrupted();
+	}
 }
