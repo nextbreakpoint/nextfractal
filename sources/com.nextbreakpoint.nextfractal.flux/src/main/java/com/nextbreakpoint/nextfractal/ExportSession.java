@@ -12,7 +12,7 @@ import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererSize;
 
 public class ExportSession {
 	private static final Logger logger = Logger.getLogger(ExportSession.class.getName());
-	private static final int TILE_BORDER_SIZE = 24;
+	private static final int BORDER_SIZE = 0;
 	private final List<ExportJob> jobs = new ArrayList<>();
 	private final String sessioinId;
 	private final Encoder encoder;
@@ -24,6 +24,8 @@ public class ExportSession {
 	private final int tileSize;
 	private final float quality;
 	private final float frameRate;
+	private final float startTime;
+	private final float stopTime;
 	private volatile float progress;
 	private volatile int frameNumber;
 	private volatile boolean cancelled;
@@ -38,7 +40,9 @@ public class ExportSession {
 		this.encoder = encoder;
 		this.tileSize = tileSize;
 		this.quality = 1;
-		this.frameRate = 1.0f/24.0f;
+		this.frameRate = 1.0f / 24.0f;
+		this.startTime = 0;
+		this.stopTime = 0;
 		sessioinId = UUID.randomUUID().toString();
 		jobs.addAll(createJobs(0));
 	}
@@ -110,6 +114,30 @@ public class ExportSession {
 		this.progress = progress;
 	}
 
+	public int getJobsCount() {
+		return jobs.size();
+	}
+
+	public int getFrameNumber() {
+		return frameNumber;
+	}
+
+	public void setFrameNumber(int frameNumber) {
+		this.frameNumber = frameNumber;
+	}
+
+	protected float getFrameRate() {
+		return frameRate;
+	}
+
+	public float getStartTime() {
+		return startTime;
+	}
+
+	public float getStopTime() {
+		return stopTime;
+	}
+
 	protected List<ExportJob> createJobs(int frameNumber) {
 		final List<ExportJob> jobs = new ArrayList<ExportJob>();
 		final int frameWidth = size.getWidth();
@@ -121,84 +149,50 @@ public class ExportSession {
 		if ((nx > 0) && (ny > 0)) {
 			for (int tx = 0; tx < nx; tx++) {
 				for (int ty = 0; ty < ny; ty++) {
-					final ExportProfile profile = new ExportProfile();
-					profile.setPluginId(pluginId);
-					profile.setQuality(quality);
-					profile.setFrameNumber(frameNumber);
-					profile.setFrameRate(frameRate);
-					profile.setFrameWidth(frameWidth);
-					profile.setFrameHeight(frameHeight);
-					profile.setTileWidth(tileSize);
-					profile.setTileHeight(tileSize);
-					profile.setTileOffsetX(tileSize * tx);
-					profile.setTileOffsetY(tileSize * ty);
-					profile.setTileBorderWidth(TILE_BORDER_SIZE);
-					profile.setTileBorderHeight(TILE_BORDER_SIZE);
-					profile.setData(data);
-					final ExportJob job = createJob(profile);
-					jobs.add(job);
+					int tileOffsetX = tileSize * tx;
+					int tileOffsetY = tileSize * ty;
+					jobs.add(createJob(createProfile(frameNumber, frameWidth, frameHeight, tileOffsetX, tileOffsetY)));
 				}
 			}
 		}
 		if (rx > 0) {
 			for (int ty = 0; ty < ny; ty++) {
-				final ExportProfile profile = new ExportProfile();
-				profile.setPluginId(pluginId);
-				profile.setQuality(quality);
-				profile.setFrameNumber(frameNumber);
-				profile.setFrameRate(frameRate);
-				profile.setFrameWidth(frameWidth);
-				profile.setFrameHeight(frameHeight);
-				profile.setTileWidth(rx);
-				profile.setTileHeight(tileSize);
-				profile.setTileOffsetX(tileSize * nx);
-				profile.setTileOffsetY(tileSize * ty);
-				profile.setTileBorderWidth(TILE_BORDER_SIZE);
-				profile.setTileBorderHeight(TILE_BORDER_SIZE);
-				profile.setData(data);
-				final ExportJob job = createJob(profile);
-				jobs.add(job);
+				int tileOffsetX = tileSize * nx;
+				int tileOffsetY = tileSize * ty;
+				jobs.add(createJob(createProfile(frameNumber, frameWidth, frameHeight, tileOffsetX, tileOffsetY)));
 			}
 		}
 		if (ry > 0) {
 			for (int tx = 0; tx < nx; tx++) {
-				final ExportProfile profile = new ExportProfile();
-				profile.setPluginId(pluginId);
-				profile.setQuality(quality);
-				profile.setFrameNumber(frameNumber);
-				profile.setFrameRate(frameRate);
-				profile.setFrameWidth(frameWidth);
-				profile.setFrameHeight(frameHeight);
-				profile.setTileWidth(tileSize);
-				profile.setTileHeight(ry);
-				profile.setTileOffsetX(tileSize * tx);
-				profile.setTileOffsetY(tileSize * ny);
-				profile.setTileBorderWidth(TILE_BORDER_SIZE);
-				profile.setTileBorderHeight(TILE_BORDER_SIZE);
-				profile.setData(data);
-				final ExportJob job = createJob(profile);
-				jobs.add(job);
+				int tileOffsetX = tileSize * tx;
+				int tileOffsetY = tileSize * ny;
+				jobs.add(createJob(createProfile(frameNumber, frameWidth, frameHeight, tileOffsetX, tileOffsetY)));
 			}
 		}
 		if (rx > 0 && ry > 0) {
-			final ExportProfile profile = new ExportProfile();
-			profile.setPluginId(pluginId);
-			profile.setQuality(quality);
-			profile.setFrameNumber(frameNumber);
-			profile.setFrameRate(frameRate);
-			profile.setFrameWidth(frameWidth);
-			profile.setFrameHeight(frameHeight);
-			profile.setTileWidth(rx);
-			profile.setTileHeight(ry);
-			profile.setTileOffsetX(tileSize * nx);
-			profile.setTileOffsetY(tileSize * ny);
-			profile.setTileBorderWidth(TILE_BORDER_SIZE);
-			profile.setTileBorderHeight(TILE_BORDER_SIZE);
-			profile.setData(data);
-			final ExportJob job = createJob(profile);
-			jobs.add(job);
+			int tileOffsetX = tileSize * nx;
+			int tileOffsetY = tileSize * ny;
+			jobs.add(createJob(createProfile(frameNumber, frameWidth, frameHeight, tileOffsetX, tileOffsetY)));
 		}
 		return jobs;
+	}
+
+	private ExportProfile createProfile(int frameNumber, final int frameWidth, final int frameHeight, int tileOffsetX, int tileOffsetY) {
+		final ExportProfile profile = new ExportProfile();
+		profile.setPluginId(pluginId);
+		profile.setQuality(quality);
+		profile.setFrameNumber(frameNumber);
+		profile.setFrameRate(frameRate);
+		profile.setFrameWidth(frameWidth);
+		profile.setFrameHeight(frameHeight);
+		profile.setTileWidth(tileSize);
+		profile.setTileHeight(tileSize);
+		profile.setTileOffsetX(tileOffsetX);
+		profile.setTileOffsetY(tileOffsetY);
+		profile.setBorderWidth(BORDER_SIZE);
+		profile.setBorderHeight(BORDER_SIZE);
+		profile.setData(data);
+		return profile;
 	}
 
 	protected ExportJob createJob(ExportProfile profile) {
@@ -229,23 +223,15 @@ public class ExportSession {
 		return state == SessionState.COMPLETED;
 	}
 
+	public boolean isFailed() {
+		return state == SessionState.FAILED;
+	}
+
 	public boolean isCancelled() {
 		return cancelled;
 	}
 
 	public void setCancelled(boolean cancelled) {
 		this.cancelled = cancelled;
-	}
-
-	public int getJobsCount() {
-		return jobs.size();
-	}
-
-	public int getFrameNumber() {
-		return frameNumber;
-	}
-
-	public void setFrameNumber(int frameNumber) {
-		this.frameNumber = frameNumber;
 	}
 }

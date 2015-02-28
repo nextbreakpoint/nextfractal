@@ -208,7 +208,7 @@ public abstract class AbstractVideoEncoder implements Encoder {
 																FFmpeg4Java.av_free_packet(packet);
 																packet.delete();
 															}
-															if (delegate.isInterrupted()) {
+															if (delegate != null && delegate.isInterrupted()) {
 																break;
 															}
 														}
@@ -227,7 +227,7 @@ public abstract class AbstractVideoEncoder implements Encoder {
 					}
 				}
 			}
-			if (!delegate.isInterrupted()) {
+			if (delegate == null || !delegate.isInterrupted()) {
 				if (AbstractVideoEncoder.logger.isLoggable(Level.FINE)) {
 					AbstractVideoEncoder.logger.fine(frame_count + " frames encoded.");
 				}

@@ -1,6 +1,5 @@
 package com.nextbreakpoint.nextfractal.render;
 
-
 public interface RenderFactory {
 	public RenderBuffer createBuffer(int widh, int height);
 	

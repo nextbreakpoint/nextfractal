@@ -86,12 +86,12 @@ public abstract class AbstractImageEncoder implements Encoder {
 						value.setRgbReserved((short) 255);
 					}
 					FreeImage4Java.FreeImage_SetPixelColor(dib, x, y, value);
-					if (delegate.isInterrupted()) {
+					if (delegate != null && delegate.isInterrupted()) {
 						break;
 					}
 				}
 			}
-			if (!delegate.isInterrupted()) {
+			if (delegate == null || !delegate.isInterrupted()) {
 				FreeImage4Java.FreeImage_Save(getFormat(getFormatName()), dib, path.getAbsolutePath(), 0);
 				time = System.currentTimeMillis() - time;
 				if (AbstractImageEncoder.logger.isLoggable(Level.INFO)) {

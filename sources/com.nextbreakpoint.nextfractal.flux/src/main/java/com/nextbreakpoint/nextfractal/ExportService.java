@@ -1,5 +1,7 @@
 package com.nextbreakpoint.nextfractal;
 
+import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -11,6 +13,9 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
+
+import com.nextbreakpoint.nextfractal.encoder.EncoderException;
+import com.nextbreakpoint.nextfractal.encoder.RAFEncoderContext;
 
 public class ExportService {
 	private final List<ExportSession> sessions = new ArrayList<>();
@@ -95,6 +100,10 @@ public class ExportService {
 			session.setState(SessionState.STOPPED);
 		} else if (session.isCompleted()) {
 			session.setState(SessionState.STOPPED);
+		} else if (session.isFailed()) {
+			if (session.isCancelled()) {
+				session.setState(SessionState.STOPPED);
+			}
 		} else {
 			processSession(session);
 		}
@@ -109,8 +118,12 @@ public class ExportService {
 				if (session.isCancelled()) {
 					session.setState(SessionState.INTERRUPTED);
 				} else if (isSessionCompleted(session)) {
-					encodeData(session);
-					session.setState(SessionState.COMPLETED);
+					try {
+						encodeData(session);
+						session.setState(SessionState.COMPLETED);
+					} catch (Exception e) {
+						session.setState(SessionState.FAILED);
+					}
 				} else {
 					session.setState(SessionState.SUSPENDED);
 				}
@@ -118,8 +131,26 @@ public class ExportService {
 		}
 	}
 
-	private void encodeData(ExportSession session) {
-		//TODO
+	private void encodeData(ExportSession session) throws IOException, EncoderException {
+		RandomAccessFile raf = null;
+		try {
+			raf = new RandomAccessFile(session.getTmpFile(), "r");
+			final int frameRate = (int)Math.rint(1 / session.getFrameRate());
+			final int imageWidth = session.getSize().getWidth();
+			final int imageHeight = session.getSize().getHeight();
+			final double stopTime = session.getStopTime();
+			final double startTime = session.getStartTime();
+			final int frameCount = (int) Math.floor((stopTime - startTime) * frameRate);
+			session.getEncoder().encode(new RAFEncoderContext(raf, imageWidth, imageHeight, frameRate, frameCount), session.getFile());
+		} finally {
+			session.getTmpFile().delete();
+			if (raf != null) {
+				try {
+					raf.close();
+				} catch (final IOException e) {
+				}
+			}			
+		}
 	}
 	
 	private void removeTerminatedJobs(List<Future<ExportJob>> list) {

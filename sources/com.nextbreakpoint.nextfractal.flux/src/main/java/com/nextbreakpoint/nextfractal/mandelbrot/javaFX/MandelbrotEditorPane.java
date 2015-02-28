@@ -151,6 +151,7 @@ public class MandelbrotEditorPane extends BorderPane {
 			@Override
 			public void sessionAdded(FractalSession session, ExportSession exportSession) {
 				jobsList.getItems().add(exportSession);
+				tabPane.getSelectionModel().select(jobsTab);
 			}
 
 			@Override

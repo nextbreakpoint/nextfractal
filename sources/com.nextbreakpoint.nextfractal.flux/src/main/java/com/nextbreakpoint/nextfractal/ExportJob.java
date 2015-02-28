@@ -3,7 +3,6 @@ package com.nextbreakpoint.nextfractal;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererSize;
@@ -41,65 +40,54 @@ public class ExportJob {
 	}
 
 	public void writePixels(RendererSize size, IntBuffer pixels) throws IOException {
-		File tmpFile = this.getTmpFile();
-		RandomAccessFile jobRaf = null;
+		RandomAccessFile raf = null;
 		try {
 			byte[] data = convertToBytes(size, pixels);
-			jobRaf = new RandomAccessFile(tmpFile, "rw");
-			double stopTime = this.getProfile().getStopTime();
+			raf = new RandomAccessFile(this.getTmpFile(), "rw");
 			double startTime = this.getProfile().getStartTime();
+			double stopTime = this.getProfile().getStopTime();
 			float frameRate = this.getProfile().getFrameRate();
-			final int frameCount = (int) Math.floor((stopTime - startTime) * frameRate);
+			int firstFrame = this.getProfile().getFrameNumber();
+			final int frameCount = computeFrameCount(startTime, stopTime, frameRate);
 			if (frameCount == 0) {
-				final int sw = size.getWidth();
-				final int sh = size.getHeight();
-				final int tx = this.getProfile().getTileOffsetX();
-				final int ty = this.getProfile().getTileOffsetY();
-				final int tw = this.getProfile().getTileWidth();
-				final int th = this.getProfile().getTileHeight();
-				final int iw = this.getProfile().getFrameWidth();
-				long pos = (ty * iw + tx) * 4;
-				for (int j = sw * (sh - th) * 4 / 2 + (sw - tw) * 4 / 2, k = 0; k < th; k++) {
-					jobRaf.seek(pos);
-					jobRaf.write(data, j, tw * 4);
-					j += sw * 4;
-					pos += iw * 4;
-					Thread.yield();
-				}
-				// this.setFrameNumber(0);
-			} else if (this.getProfile().getFrameNumber() < frameCount) {
-				final int sw = size.getWidth();
-				final int sh = size.getHeight();
-				final int tx = this.getProfile().getTileOffsetX();
-				final int ty = this.getProfile().getTileOffsetY();
-				final int tw = this.getProfile().getTileWidth();
-				final int th = this.getProfile().getTileHeight();
-				final int iw = this.getProfile().getFrameWidth();
-				final int ih = this.getProfile().getFrameHeight();
-				int startFrameNumber = 0;
-				if (this.getProfile().getFrameNumber() > 0) {
-					startFrameNumber = this.getProfile().getFrameNumber() + 1;
-				}
-				for (int frameNumber = startFrameNumber; frameNumber < frameCount; frameNumber++) {
-					jobRaf.readFully(data);
-					long pos = (frameNumber * iw * ih + ty * iw + tx) * 4;
-					for (int j = sw * (sh - th) * 4 / 2 + (sw - tw) * 4 / 2, k = 0; k < th; k++) {
-						jobRaf.seek(pos);
-						jobRaf.write(data, j, tw * 4);
-						j += sw * 4;
-						pos += iw * 4;
-						Thread.yield();
-					}
-					// this.setFrameNumber(frameNumber);
+				writeFrame(raf, 0, size, data);
+			} else if (firstFrame > 0 && firstFrame < frameCount) {
+				for (int frameNumber = firstFrame; frameNumber < frameCount; frameNumber++) {
+					writeFrame(raf, frameNumber, size, data);
 				}
 			}
 		} finally {
-			if (jobRaf != null) {
+			if (raf != null) {
 				try {
-					jobRaf.close();
+					raf.close();
 				} catch (final IOException e) {
 				}
 			}
+		}
+	}
+
+	private int computeFrameCount(double startTime, double stopTime, float frameRate) {
+		return (int) Math.floor((stopTime - startTime) * frameRate);
+	}
+
+	private void writeFrame(RandomAccessFile raf, int frameNumber, RendererSize size, byte[] data) throws IOException {
+		final int sw = size.getWidth();
+		final int sh = size.getHeight();
+		final int tx = this.getProfile().getTileOffsetX();
+		final int ty = this.getProfile().getTileOffsetY();
+		final int tw = this.getProfile().getTileWidth();
+		final int th = this.getProfile().getTileHeight();
+		final int iw = this.getProfile().getFrameWidth();
+		final int ih = this.getProfile().getFrameHeight();
+		final int ly = Math.min(th, ih - ty);
+		final int lx = Math.min(tw, iw - tx);
+		long pos = (frameNumber * iw * ih + ty * iw + tx) * 4;
+		for (int j = ((sw * (sh - th) + (sw - tw)) / 2) * 4, k = 0; k < ly; k++) {
+			raf.seek(pos);
+			raf.write(data, j, lx * 4);
+			j += sw * 4;
+			pos += iw * 4;
+			Thread.yield();
 		}
 	}
 

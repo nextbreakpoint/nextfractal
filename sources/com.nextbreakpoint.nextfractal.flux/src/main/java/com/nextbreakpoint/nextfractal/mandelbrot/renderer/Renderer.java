@@ -48,6 +48,7 @@ import com.nextbreakpoint.nextfractal.render.RenderGraphicsContext;
  * @author Andrea Medeghini
  */
 public class Renderer {
+//	private static final Logger logger = Logger.getLogger(Renderer.class.getName());
 	protected final RendererFractal rendererFractal;
 	protected final ThreadFactory threadFactory;
 	protected final RenderFactory renderFactory;
@@ -87,12 +88,8 @@ public class Renderer {
 		this.rendererFractal = new RendererFractal();
 		this.tile = tile;
 		RendererSize tileSize = tile.getTileSize();
-		RendererSize tileBorder = tile.getTileBorder();
-		int tsw = tileSize.getWidth();
-		int tbw = tileBorder.getWidth();
-		int tsh = tileSize.getHeight();
-		int tbh = tileBorder.getHeight();
-		int tileDim = (int) Math.hypot(tsw + tbw * 2, tsh + tbh * 2);
+		RendererSize borderSize = tile.getBorderSize();
+		int tileDim = computeDim(tileSize, borderSize);
 		size = new RendererSize(tileDim, tileDim);
 		view = new RendererView();
 		frontBuffer = new RendererBuffer(); 
@@ -103,7 +100,7 @@ public class Renderer {
 		backBuffer.setSize(size);
 		frontBuffer.setAffine(createTransform(0));
 		backBuffer.setAffine(createTransform(0));
-		frontBuffer.setBuffer(renderFactory.createBuffer(size.getWidth(), size.getWidth()));
+		frontBuffer.setBuffer(renderFactory.createBuffer(size.getWidth(), size.getHeight()));
 		backBuffer.setBuffer(renderFactory.createBuffer(size.getWidth(), size.getHeight()));
 		executor = Executors.newSingleThreadExecutor(threadFactory);
 	}
@@ -371,7 +368,21 @@ public class Renderer {
 		setContinuous(view.getState().getX() >= 1 || view.getState().getY() >= 1 || view.getState().getZ() >= 1 || view.getState().getW() >= 1);
 		backBuffer.setAffine(createTransform(view.getRotation().getZ()));
 	}
-	
+
+	/**
+	 * @param tileSize
+	 * @param borderSize
+	 * @return
+	 */
+	protected int computeDim(RendererSize tileSize, RendererSize borderSize) {
+		int tw = tileSize.getWidth();
+		int bw = borderSize.getWidth();
+		int th = tileSize.getHeight();
+		int bh = borderSize.getHeight();
+		int tileDim = (int) Math.hypot(tw + bw * 2, th + bh * 2);
+		return tileDim;
+	}
+
 	/**
 	 * 
 	 */
@@ -381,30 +392,24 @@ public class Renderer {
 		final double tz = view.getTraslation().getZ();
 		final double rz = view.getRotation().getZ();
 		
-		double a = rz * Math.PI / 180;
+		double a = convertDegToRad(rz);
 		
 //		logger.info("tx = " + tx + ", ty = " + ty + ", tz = " + tz + ", rz = " + rz);
 		
-		final RendererSize tileBorder = backBuffer.getTile().getTileBorder();
-		final RendererPoint tileOffset = backBuffer.getTile().getTileOffset();
-		final RendererSize tileSize = backBuffer.getTile().getTileSize();
 		final RendererSize imageSize = backBuffer.getTile().getImageSize();
+		final RendererSize tileSize = backBuffer.getTile().getTileSize();
+		final RendererPoint tileOffset = backBuffer.getTile().getTileOffset();
+		final RendererSize borderSize = backBuffer.getTile().getBorderSize();
 		
 		final RendererRegion region = getInitialRegion();
 		
 		final Number size = region.getSize();
 		final Number center = region.getCenter();
 
-		final double imageDim = (int) Math.hypot(imageSize.getWidth() + tileBorder.getWidth() * 2, imageSize.getHeight() + tileBorder.getHeight() * 2);
-
-		int tsw = tileSize.getWidth();
-		int tbw = tileBorder.getWidth();
-		int tsh = tileSize.getHeight();
-		int tbh = tileBorder.getHeight();
-		int tileDim = (int) Math.hypot(tsw + tbw * 2, tsh + tbh * 2);
+		final double imageDim = computeDim(imageSize, borderSize);
 
 		final double dx = tz * size.r() * (imageDim / imageSize.getWidth()) / 2;
-		final double dy = tz * size.i() * (imageDim / imageSize.getHeight()) / 2;
+		final double dy = tz * size.i() * (imageDim / imageSize.getWidth()) / 2;
 		
 		final double cx = center.r();
 		final double cy = center.i();
@@ -417,14 +422,16 @@ public class Renderer {
 		final double gy = py + (qy - py) * ((imageDim - imageSize.getHeight()) / 2 + tileOffset.getY() + tileSize.getHeight() / 2) / imageDim;
 		final double fx = Math.cos(a) * (gx - cx) + Math.sin(a) * (gy - cx) + cx; 
 		final double fy = Math.cos(a) * (gy - cy) - Math.sin(a) * (gx - cx) + cy;
-		final double sx = dx * (tileDim / imageDim);
-		final double sy = dy * (tileDim / imageDim);
+		final double sx = dx * (getSize().getWidth() / imageDim);
+		final double sy = dy * (getSize().getHeight() / imageDim);
 
-		final RendererRegion newRegion = new RendererRegion();
-//		newRegion.setPoints(new Number(px, py), new Number(qx, qy));
-		newRegion.setPoints(new Number(fx - sx, fy - sy), new Number(fx + sx, fy + sy));
+		final RendererRegion newRegion = new RendererRegion(new Number(fx - sx, fy - sy), new Number(fx + sx, fy + sy));
 //		logger.info(newRegion.toString());
 		return newRegion;
+	}
+
+	protected double convertDegToRad(final double a) {
+		return a * Math.PI / 180;
 	}
 
 	/**
@@ -433,7 +440,7 @@ public class Renderer {
 	 */
 	protected RenderAffine createTransform(double rotation) {
 		final RendererSize tileSize = backBuffer.getTile().getTileSize();
-		final RendererSize tileBorder = backBuffer.getTile().getTileBorder();
+		final RendererSize tileBorder = backBuffer.getTile().getBorderSize();
 		int width = getSize().getWidth();
 		int height = getSize().getHeight();
 		final int offsetX = (width - tileSize.getWidth() - tileBorder.getWidth() * 2) / 2;

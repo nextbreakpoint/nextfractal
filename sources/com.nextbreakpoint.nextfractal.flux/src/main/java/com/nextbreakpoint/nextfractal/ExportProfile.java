@@ -14,8 +14,10 @@ public class ExportProfile {
 	private int tileHeight;
 	private int tileOffsetX;
 	private int tileOffsetY;
-	private int tileBorderWidth;
-	private int tileBorderHeight;
+	private int borderWidth;
+	private int borderHeight;
+	private float startTime;
+	private float stopTime;
 	private String pluginId;
 	private Object data;
 
@@ -83,20 +85,20 @@ public class ExportProfile {
 		this.tileOffsetY = tileOffsetY;
 	}
 
-	public int getTileBorderWidth() {
-		return tileBorderWidth;
+	public int getBorderWidth() {
+		return borderWidth;
 	}
 
-	public void setTileBorderWidth(int tileBorderWidth) {
-		this.tileBorderWidth = tileBorderWidth;
+	public void setBorderWidth(int borderWidth) {
+		this.borderWidth = borderWidth;
 	}
 
-	public int getTileBorderHeight() {
-		return tileBorderHeight;
+	public int getBorderHeight() {
+		return borderHeight;
 	}
 
-	public void setTileBorderHeight(int tileBorderHeight) {
-		this.tileBorderHeight = tileBorderHeight;
+	public void setBorderHeight(int borderHeight) {
+		this.borderHeight = borderHeight;
 	}
 
 	public float getQuality() {
@@ -123,24 +125,26 @@ public class ExportProfile {
 		this.data = data;
 	}
 
-	public double getStartTime() {
-		return 0;
+	public float getStartTime() {
+		return startTime;
 	}
 
-	public double getStopTime() {
-		return 0;
+	public void setStartTime(float startTime) {
+		this.startTime = startTime;
 	}
 
-	public void setStartTime(double time) {
+	public float getStopTime() {
+		return stopTime;
 	}
 
-	public void setStopTime(double time) {
+	public void setStopTime(float stopTime) {
+		this.stopTime = stopTime;
 	}
 
 	public RendererTile createTile() {
 		RendererSize imageSize = new RendererSize(frameWidth, frameHeight);
 		RendererSize tileSize = new RendererSize(tileWidth, tileHeight);
-		RendererSize tileBorder = new RendererSize(tileBorderWidth, tileBorderHeight);
+		RendererSize tileBorder = new RendererSize(borderWidth, borderHeight);
 		RendererPoint tileOffset = new RendererPoint(tileOffsetX, tileOffsetY);
 		RendererTile tile = new RendererTile(imageSize, tileSize, tileOffset, tileBorder);
 		return tile;
@@ -148,13 +152,7 @@ public class ExportProfile {
 
 	@Override
 	public String toString() {
-		return "[pluginId=" + pluginId + ", frameRate="
-				+ frameRate + ", frameNumber=" + frameNumber + ", frameWidth="
-				+ frameWidth + ", frameHeight=" + frameHeight + ", tileWidth="
-				+ tileWidth + ", tileHeight=" + tileHeight + ", tileOffsetX="
-				+ tileOffsetX + ", tileOffsetY=" + tileOffsetY
-				+ ", tileBorderWidth=" + tileBorderWidth
-				+ ", tileBorderHeight=" + tileBorderHeight + ", quality="
-				+ quality + "]";
+		return "[pluginId=" + pluginId + ", frameRate="	+ frameRate + ", frameNumber=" + frameNumber + ", frameWidth=" + frameWidth + ", frameHeight=" + frameHeight + ", tileWidth=" + tileWidth + ", tileHeight=" + tileHeight 
+				+ ", tileOffsetX=" + tileOffsetX + ", tileOffsetY=" + tileOffsetY + ", borderWidth=" + borderWidth + ", borderHeight=" + borderHeight + ", quality=" + quality + ", startTime=" + startTime + ", stopTime=" + stopTime + "]";
 	}
 }
