@@ -7,6 +7,7 @@ import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadFactory;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.nextbreakpoint.nextfractal.render.RenderFactory;
@@ -48,10 +49,11 @@ public class SimpleRenderService implements RenderService {
 				if (generator.isInterrupted()) {
 					job.setState(JobState.INTERRUPTED);
 				} else {
-					job.writePixels(pixels);
+					job.writePixels(generator.getSize(), pixels);
 					job.setState(JobState.COMPLETED);
 				}
 			} catch (Throwable e) {
+				logger.log(Level.WARNING, "Failed to render tile", e);
 				job.setError(e);
 				job.setState(JobState.INTERRUPTED);
 			}
