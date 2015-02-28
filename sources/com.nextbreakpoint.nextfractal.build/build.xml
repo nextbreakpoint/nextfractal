@@ -54,12 +54,6 @@
 					<include name="**/*" />
 				</fileset>
 				<fileset dir="${basedir}/resources">
-					<include name="examples/*" />
-				</fileset>
-				<fileset dir="${basedir}/resources">
-					<include name="scripts/*" />
-				</fileset>
-				<fileset dir="${basedir}/resources">
 					<include name="thirdparties/**/*" />
 				</fileset>
 				<fileset dir="${basedir}/resources">

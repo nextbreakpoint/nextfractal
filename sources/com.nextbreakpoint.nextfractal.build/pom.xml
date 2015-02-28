@@ -7,7 +7,7 @@
 	<name>com.nextbreakpoint.nextfractal.build</name>
 	<packaging>pom</packaging>
 	<modules>
-		<module>../com.nextbreakpoint.nextfractal.flux</module>
+		<module>../com.nextbreakpoint.nextfractal.runtime</module>
 	</modules>
 	<build>
 		<plugins>
@@ -97,7 +97,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.nextbreakpoint</groupId>
-			<artifactId>com.nextbreakpoint.nextfractal.flux</artifactId>
+			<artifactId>com.nextbreakpoint.nextfractal.runtime</artifactId>
 			<version>7.0.0</version>
 		</dependency>
 		<dependency>

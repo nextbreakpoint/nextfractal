@@ -1,9 +1,0 @@
-com.nextbreakpoint.nextfractal.queue.extensions.encoder.MOVEncoderDescriptor
-com.nextbreakpoint.nextfractal.queue.extensions.encoder.TARGAEncoderDescriptor
-com.nextbreakpoint.nextfractal.queue.extensions.encoder.BMPEncoderDescriptor
-com.nextbreakpoint.nextfractal.queue.extensions.encoder.MPEG4EncoderDescriptor
-com.nextbreakpoint.nextfractal.queue.extensions.encoder.TIFFEncoderDescriptor
-com.nextbreakpoint.nextfractal.queue.extensions.encoder.MPEGEncoderDescriptor
-com.nextbreakpoint.nextfractal.queue.extensions.encoder.AVIEncoderDescriptor
-com.nextbreakpoint.nextfractal.queue.extensions.encoder.JPEGEncoderDescriptor
-com.nextbreakpoint.nextfractal.queue.extensions.encoder.PNGEncoderDescriptor

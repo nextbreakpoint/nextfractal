@@ -1,9 +1,0 @@
-CFDG3
-
-startshape Foo
-
-shape Foo
-
-rule {
-	SQUARE[]
-}
