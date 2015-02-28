@@ -162,7 +162,7 @@ public class MandelbrotEditorPane extends BorderPane {
 		});
 		
 		loadButton.setOnAction(e -> {
-			createFileChooser();
+			createFileChooser(".mg");
 			fileChooser.setTitle("Load");
 			File file = fileChooser.showOpenDialog(null);
 			if (file != null) {
@@ -179,7 +179,7 @@ public class MandelbrotEditorPane extends BorderPane {
 		});
 		
 		saveButton.setOnAction(e -> {
-			createFileChooser();
+			createFileChooser(".mg");
 			fileChooser.setTitle("Save");
 			File file = fileChooser.showSaveDialog(null);
 			if (file != null) {
@@ -268,9 +268,10 @@ public class MandelbrotEditorPane extends BorderPane {
 		return (MandelbrotSession) session;
 	}
 
-	private void createFileChooser() {
+	private void createFileChooser(String suffix) {
 		if (fileChooser == null) {
 			fileChooser = new FileChooser();
+			fileChooser.setInitialFileName("mandel" + suffix);
 			fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
 		}
 	}

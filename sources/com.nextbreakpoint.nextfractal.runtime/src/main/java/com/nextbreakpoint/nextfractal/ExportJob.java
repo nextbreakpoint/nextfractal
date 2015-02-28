@@ -95,10 +95,10 @@ public class ExportJob {
 		byte[] data = new byte[size.getWidth() * size.getHeight() * 4];
 		for (int j = 0, i = 0; i < data.length; i += 4) {
 			int pixel = pixels.get(j++);
-			data[i + 0] = (byte)((pixel >> 0) & 0xFF);
-			data[i + 1] = (byte)((pixel >> 8) & 0xFF);
-			data[i + 2] = (byte)((pixel >> 16) & 0xFF);
 			data[i + 3] = (byte)((pixel >> 24) & 0xFF);
+			data[i + 0] = (byte)((pixel >> 16) & 0xFF);
+			data[i + 1] = (byte)((pixel >> 8) & 0xFF);
+			data[i + 2] = (byte)((pixel >> 0) & 0xFF);
 		}
 		return data;
 	}

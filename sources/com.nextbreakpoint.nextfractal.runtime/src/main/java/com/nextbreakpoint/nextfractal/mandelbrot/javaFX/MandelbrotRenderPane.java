@@ -42,6 +42,7 @@ import com.nextbreakpoint.nextfractal.SessionListener;
 import com.nextbreakpoint.nextfractal.core.DefaultThreadFactory;
 import com.nextbreakpoint.nextfractal.core.DoubleVector4D;
 import com.nextbreakpoint.nextfractal.core.IntegerVector4D;
+import com.nextbreakpoint.nextfractal.encoder.Encoder;
 import com.nextbreakpoint.nextfractal.encoder.PNGImageEncoder;
 import com.nextbreakpoint.nextfractal.javaFX.AdvancedTextField;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotData;
@@ -246,9 +247,10 @@ public class MandelbrotRenderPane extends BorderPane {
 		return 1.1;
 	}
 
-	private void createFileChooser() {
+	private void createFileChooser(String suffix) {
 		if (fileChooser == null) {
 			fileChooser = new FileChooser();
+			fileChooser.setInitialFileName("image" + suffix);
 			fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
 		}
 	}
@@ -454,7 +456,8 @@ public class MandelbrotRenderPane extends BorderPane {
 	}
 
 	public void createExportSession(RendererSize rendererSize) {
-		createFileChooser();
+		PNGImageEncoder encoder = new PNGImageEncoder();
+		createFileChooser(encoder.getSuffix());
 		fileChooser.setTitle("Export");
 		File file = fileChooser.showSaveDialog(null);
 		if (file != null) {
@@ -467,7 +470,7 @@ public class MandelbrotRenderPane extends BorderPane {
 						@Override
 						public void run() {
 							try {
-								ExportSession exportSession = createExportSession(rendererSize, file, data);
+								ExportSession exportSession = createExportSession(rendererSize, file, data, encoder);
 								session.addExportSession(exportSession);
 								session.getExportService().startSession(exportSession);
 							} catch (Exception e) {
@@ -481,9 +484,9 @@ public class MandelbrotRenderPane extends BorderPane {
 		}
 	}
 
-	private ExportSession createExportSession(RendererSize rendererSize, File file,	MandelbrotData data) throws IOException {
+	private ExportSession createExportSession(RendererSize rendererSize, File file,	MandelbrotData data, Encoder encoder) throws IOException {
 		File tmpFile = File.createTempFile("nextfractal-profile-", ".dat");
-		ExportSession exportSession = new ExportSession("Mandelbrot", data, file, tmpFile, rendererSize, 200, new PNGImageEncoder());
+		ExportSession exportSession = new ExportSession("Mandelbrot", data, file, tmpFile, rendererSize, 200, encoder);
 		logger.info("Export session created: " + exportSession.getSessionId());
 		return exportSession;
 	}
