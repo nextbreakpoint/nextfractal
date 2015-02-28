@@ -32,6 +32,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantLock;
 
 import com.nextbreakpoint.nextfractal.Condition;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Color;
@@ -53,6 +54,7 @@ public class Renderer {
 	protected final ThreadFactory threadFactory;
 	protected final RenderFactory renderFactory;
 	protected final RendererData rendererData;
+	private final ReentrantLock lock = new ReentrantLock();
 	protected volatile RendererDelegate rendererDelegate;
 	protected volatile RendererStrategy rendererStrategy;
 	protected volatile boolean aborted;
@@ -466,28 +468,28 @@ public class Renderer {
 	 * 
 	 */
 	protected final void swap() {
-		synchronized (this) {
-			final RendererBuffer tmpBuffer = backBuffer;
-			backBuffer = frontBuffer;
-			frontBuffer = tmpBuffer;
-		}
+		lock.lock();
+		final RendererBuffer tmpBuffer = backBuffer;
+		backBuffer = frontBuffer;
+		frontBuffer = tmpBuffer;
+		lock.unlock();
 	}
 
 	/**
 	 * @param gc
 	 */
 	public void drawImage(final RenderGraphicsContext gc) {
-		synchronized (this) {
-			if (frontBuffer != null) {
-				gc.save();
-				RendererPoint tileOffset = frontBuffer.getTile().getTileOffset();
-				RendererSize tileSize = frontBuffer.getTile().getTileSize();
-				gc.setClip(tileOffset.getX(), tileOffset.getY(), tileSize.getWidth(), tileSize.getHeight());
-				gc.setAffine(frontBuffer.getAffine());
-				gc.drawImage(frontBuffer.getBuffer().getImage(), tileOffset.getX(), tileOffset.getY());
-				gc.restore();
-			}
+		lock.lock();
+		if (frontBuffer != null) {
+			gc.save();
+			RendererPoint tileOffset = frontBuffer.getTile().getTileOffset();
+			RendererSize tileSize = frontBuffer.getTile().getTileSize();
+			gc.setClip(tileOffset.getX(), tileOffset.getY(), tileSize.getWidth(), tileSize.getHeight());
+			gc.setAffine(frontBuffer.getAffine());
+			gc.drawImage(frontBuffer.getBuffer().getImage(), tileOffset.getX(), tileOffset.getY());
+			gc.restore();
 		}
+		lock.unlock();
 	}
 
 	/**
@@ -496,16 +498,16 @@ public class Renderer {
 	 * @param y
 	 */
 	public void drawImage(final RenderGraphicsContext gc, final int x, final int y) {
-		synchronized (this) {
-			if (frontBuffer != null) {
-				gc.save();
-				RendererSize tileSize = frontBuffer.getTile().getTileSize();
-				gc.setClip(x, y, tileSize.getWidth(), tileSize.getHeight());
-				gc.setAffine(frontBuffer.getAffine());
-				gc.drawImage(frontBuffer.getBuffer().getImage(), x, y);
-				gc.restore();
-			}
+		lock.lock();
+		if (frontBuffer != null) {
+			gc.save();
+			RendererSize tileSize = frontBuffer.getTile().getTileSize();
+			gc.setClip(x, y, tileSize.getWidth(), tileSize.getHeight());
+			gc.setAffine(frontBuffer.getAffine());
+			gc.drawImage(frontBuffer.getBuffer().getImage(), x, y);
+			gc.restore();
 		}
+		lock.unlock();
 	}
 
 	/**
@@ -516,19 +518,19 @@ public class Renderer {
 	 * @param h
 	 */
 	public void drawImage(final RenderGraphicsContext gc, final int x, final int y, final int w, final int h) {
-		synchronized (this) {
-			if (frontBuffer != null) {
-				gc.save();
-				gc.setClip(x, y, w, h);
-				gc.setAffine(frontBuffer.getAffine());
-				final double sx = w / (double) frontBuffer.getTile().getTileSize().getWidth();
-				final double sy = h / (double) frontBuffer.getTile().getTileSize().getHeight();
-				final int dw = (int) Math.rint(frontBuffer.getSize().getWidth() * sx);
-				final int dh = (int) Math.rint(frontBuffer.getSize().getHeight() * sy);
-				gc.drawImage(frontBuffer.getBuffer().getImage(), x, y, dw, dh);
-				gc.restore();
-			}
+		lock.lock();
+		if (frontBuffer != null) {
+			gc.save();
+			gc.setClip(x, y, w, h);
+			gc.setAffine(frontBuffer.getAffine());
+			final double sx = w / (double) frontBuffer.getTile().getTileSize().getWidth();
+			final double sy = h / (double) frontBuffer.getTile().getTileSize().getHeight();
+			final int dw = (int) Math.rint(frontBuffer.getSize().getWidth() * sx);
+			final int dh = (int) Math.rint(frontBuffer.getSize().getHeight() * sy);
+			gc.drawImage(frontBuffer.getBuffer().getImage(), x, y, dw, dh);
+			gc.restore();
 		}
+		lock.unlock();
 	}
 	
 	/**

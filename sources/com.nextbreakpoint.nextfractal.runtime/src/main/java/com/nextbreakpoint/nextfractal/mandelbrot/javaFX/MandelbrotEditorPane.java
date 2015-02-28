@@ -1,6 +1,10 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
 
 import java.io.File;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import javafx.application.Platform;
@@ -22,7 +26,6 @@ import com.nextbreakpoint.nextfractal.ExportSession;
 import com.nextbreakpoint.nextfractal.FractalSession;
 import com.nextbreakpoint.nextfractal.SessionListener;
 import com.nextbreakpoint.nextfractal.core.DefaultThreadFactory;
-import com.nextbreakpoint.nextfractal.core.Worker;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotData;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotDataStore;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotImageGenerator;
@@ -34,18 +37,15 @@ import com.nextbreakpoint.nextfractal.render.javaFX.JavaFXRenderFactory;
 
 public class MandelbrotEditorPane extends BorderPane {
 	private static final Logger logger = Logger.getLogger(MandelbrotEditorPane.class.getName());
-//	private static final AtomicInteger id = new AtomicInteger(0);
 	private final DefaultThreadFactory threadFactory;
 	private final JavaFXRenderFactory renderFactory;
 	private final FractalSession session;
-	private final Worker historyWorker;
 	private MandelbrotImageGenerator generator;
 	private FileChooser fileChooser;
 	private File currentFile;
 	private boolean noHistory;
-	private final UpdateSessions updateSessions;
-	private volatile Thread watchSessionsThread;
-	private volatile boolean watchRunning;
+	private ScheduledExecutorService sessionsExecutor;
+	private ExecutorService historyExecutor;
 
 	public MandelbrotEditorPane(FractalSession session) {
 		this.session = session;
@@ -53,9 +53,6 @@ public class MandelbrotEditorPane extends BorderPane {
 		threadFactory = new DefaultThreadFactory("MandelbrotEditorPane", true, Thread.MIN_PRIORITY);
 		renderFactory = new JavaFXRenderFactory();
 
-		historyWorker = new Worker(threadFactory);
-		historyWorker.start();
-		
 		RendererTile generatorTile = createSingleTile(25, 25);
 		
 		generator = new MandelbrotImageGenerator(threadFactory, renderFactory, generatorTile);
@@ -145,7 +142,7 @@ public class MandelbrotEditorPane extends BorderPane {
 
 			@Override
 			public void terminate(FractalSession session) {
-				stopWatchingSessions();
+				shutdown();
 			}
 
 			@Override
@@ -230,16 +227,17 @@ public class MandelbrotEditorPane extends BorderPane {
 			noHistory = false;
 		});
 		
-		addDataToHistory(historyList);
+		historyExecutor = Executors.newSingleThreadExecutor(threadFactory);
 		
-		updateSessions = new UpdateSessions(jobsList);
-
-		startWatchingSessions();
+		sessionsExecutor = Executors.newSingleThreadScheduledExecutor(threadFactory);
+		sessionsExecutor.scheduleWithFixedDelay(new UpdateSessionsRunnable(jobsList), 500, 500, TimeUnit.MILLISECONDS);
+		
+		addDataToHistory(historyList);
 	}
 
 	@Override
 	protected void finalize() throws Throwable {
-		stopWatchingSessions();
+		shutdown();
 		super.finalize();
 	}
 
@@ -248,7 +246,7 @@ public class MandelbrotEditorPane extends BorderPane {
 			return;
 		}
 		MandelbrotData data = getMandelbrotSession().getData();
-		historyWorker.addTask(new Runnable() {
+		historyExecutor.submit(new Runnable() {
 			@Override
 			public void run() {
 				data.setPixels(generator.renderImage(data));
@@ -288,27 +286,16 @@ public class MandelbrotEditorPane extends BorderPane {
 		return tile;
 	}
 	
-	private void startWatchingSessions() {
-		watchRunning = true;
-		if (watchSessionsThread == null) {
-			watchSessionsThread = createThread(updateSessions);
-			watchSessionsThread.start();
+	private void shutdown() {
+		sessionsExecutor.shutdownNow();
+		historyExecutor.shutdownNow();
+		try {
+			sessionsExecutor.awaitTermination(5000, TimeUnit.MILLISECONDS);
+		} catch (InterruptedException e) {
 		}
-	}
-
-	private void stopWatchingSessions() {
-		watchRunning = false;
-		if (watchSessionsThread != null) {
-			watchSessionsThread.interrupt();
-		}
-		if (watchSessionsThread != null) {
-			try {
-				watchSessionsThread.join();
-			}
-			catch (InterruptedException e) {
-				Thread.currentThread().interrupt();
-			}
-			watchSessionsThread = null;
+		try {
+			historyExecutor.awaitTermination(5000, TimeUnit.MILLISECONDS);
+		} catch (InterruptedException e) {
 		}
 	}
 	
@@ -331,20 +318,16 @@ public class MandelbrotEditorPane extends BorderPane {
 		});
 	}
 
-	private Thread createThread(Runnable runnable) {
-		return threadFactory.newThread(runnable);
-	}
-
 	public static <T> void triggerUpdate(ListView<T> listView, T newValue, int i) {
         EventType<? extends ListView.EditEvent<T>> type = ListView.editCommitEvent();
         Event event = new ListView.EditEvent<>(listView, type, newValue, i);
         listView.fireEvent(event);
     }
 	
-	private class UpdateSessions implements Runnable {
+	private class UpdateSessionsRunnable implements Runnable {
 		private final ListView<ExportSession> jobsList;
 		
-		public UpdateSessions(ListView<ExportSession> jobsList) {
+		public UpdateSessionsRunnable(ListView<ExportSession> jobsList) {
 			this.jobsList = jobsList;
 		}
 
@@ -353,15 +336,7 @@ public class MandelbrotEditorPane extends BorderPane {
 		 */
 		@Override
 		public void run() {
-			try {
-				while (watchRunning) {
-					updateSessions(jobsList);
-					synchronized (this) {
-						wait(500);
-					}
-				}
-			} catch (InterruptedException e) {
-			}
+			updateSessions(jobsList);
 		}
 	}
 }

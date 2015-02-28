@@ -25,11 +25,13 @@
  */
 package com.nextbreakpoint.nextfractal.network.core;
 
+import java.util.concurrent.atomic.AtomicLong;
+
 /**
  * @author Andrea Medeghini
  */
 public abstract class ServiceSession {
-	private static long lastSessionId = System.currentTimeMillis();
+	private static AtomicLong lastSessionId = new AtomicLong(System.currentTimeMillis());
 	protected ServiceConsumer consumer;
 	protected ServiceProducer producer;
 	private ServiceEndpoint endpoint;
@@ -145,9 +147,7 @@ public abstract class ServiceSession {
 	/**
 	 * @return
 	 */
-	protected static synchronized String newSessionId() {
-		final long id = lastSessionId;
-		lastSessionId += 1;
-		return String.valueOf(id);
+	protected static String newSessionId() {
+		return String.valueOf(lastSessionId.incrementAndGet());
 	}
 }

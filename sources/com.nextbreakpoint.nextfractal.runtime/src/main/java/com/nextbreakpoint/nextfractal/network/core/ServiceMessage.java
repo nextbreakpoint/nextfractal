@@ -26,12 +26,13 @@
 package com.nextbreakpoint.nextfractal.network.core;
 
 import java.io.Serializable;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * @author Andrea Medeghini
  */
 public abstract class ServiceMessage implements Serializable {
-	private static long lastMessageId = System.currentTimeMillis();
+	private static AtomicLong lastMessageId = new AtomicLong(System.currentTimeMillis());
 	private static final long serialVersionUID = 1L;
 	public static final int MESSAGE_TYPE_EVENT = 10;
 	public static final int MESSAGE_TYPE_REQUEST = 20;
@@ -82,9 +83,7 @@ public abstract class ServiceMessage implements Serializable {
 	/**
 	 * @return
 	 */
-	protected static synchronized String newMessageId() {
-		final long id = lastMessageId;
-		lastMessageId += 1;
-		return String.valueOf(id);
+	protected static String newMessageId() {
+		return String.valueOf(lastMessageId.incrementAndGet());
 	};
 }
