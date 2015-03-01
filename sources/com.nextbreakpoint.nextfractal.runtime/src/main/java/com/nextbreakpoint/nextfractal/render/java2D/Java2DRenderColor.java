@@ -8,8 +8,8 @@ import com.nextbreakpoint.nextfractal.render.RenderGraphicsContext;
 public class Java2DRenderColor implements RenderColor {
 	private Color color;
 	
-	public Java2DRenderColor(int red, int green, int blue, int opacity) {
-		color = new Color(red, green, blue, opacity);
+	public Java2DRenderColor(double red, double green, double blue, double opacity) {
+		color = new Color((float)red, (float)green, (float)blue, (float)opacity);
 	}
 
 	@Override

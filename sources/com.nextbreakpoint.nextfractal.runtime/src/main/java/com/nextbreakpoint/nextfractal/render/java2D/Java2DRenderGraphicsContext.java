@@ -148,4 +148,14 @@ public class Java2DRenderGraphicsContext implements RenderGraphicsContext {
 		AffineTransform transform;
 		Shape clip;
 	}
+
+	@Override
+	public void moveTo(int x, int y) {
+		shape.moveTo(x, y);
+	}
+
+	@Override
+	public void lineTo(int x, int y) {
+		shape.lineTo(x, y);
+	}
 }

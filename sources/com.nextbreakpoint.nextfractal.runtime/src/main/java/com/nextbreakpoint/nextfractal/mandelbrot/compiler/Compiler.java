@@ -165,17 +165,7 @@ public class Compiler {
 	
 	@SuppressWarnings("unchecked")
 	private <T> Class<T> compileToClass(String source, String className, Class<T> clazz) throws Exception {
-//		File dir = new File(outDir, packageName.replace(".", "/"));
-//		dir.mkdirs();
-//		FileWriter writer = null;
-//		try {
-//			writer = new FileWriter(new File(dir, "/" + className + ".java"));
-//			//writer.write(source);
-//		} finally {
-//			if (writer != null) {
-//				writer.close();
-//			}
-//		}
+		logger.fine(source);
 		List<SimpleJavaFileObject> compilationUnits = new ArrayList<>();
 		compilationUnits.add(new SourceJavaFileObject(className, source));
 		List<String> options = new ArrayList<>();
@@ -258,6 +248,9 @@ public class Compiler {
 		builder.append(";\n");
 		builder.append("import ");
 		builder.append(Scope.class.getCanonicalName());
+		builder.append(";\n");
+		builder.append("import ");
+		builder.append(List.class.getCanonicalName());
 		builder.append(";\n");
 		builder.append("@SuppressWarnings(value=\"unused\")\n");
 		builder.append("public class ");
@@ -358,11 +351,11 @@ public class Compiler {
 				compile(builder, variables, trap);
 			}
 		}
-		builder.append("public void render() {\n");
+		builder.append("public void render(List<Number[]> states) {\n");
 		if (orbit != null) {
-			compile(builder, variables, orbit.getBegin());
-			compile(builder, variables, orbit.getLoop());
-			compile(builder, variables, orbit.getEnd());
+			compile(builder, variables, orbit.getBegin(), orbit.getVariables());
+			compile(builder, variables, orbit.getLoop(), orbit.getVariables());
+			compile(builder, variables, orbit.getEnd(), orbit.getVariables());
 			int i = 0;
 			for (String varName : orbit.getVariables()) {
 				builder.append("setVariable(");
@@ -519,7 +512,7 @@ public class Compiler {
 		builder.append(";\n");
 	}
 
-	private void compile(StringBuilder builder, Map<String, CompilerVariable> variables, ASTOrbitBegin begin) {
+	private void compile(StringBuilder builder, Map<String, CompilerVariable> variables, ASTOrbitBegin begin, List<String> stateVariables) {
 		if (begin != null) {
 			for (ASTStatement statement : begin.getStatements()) {
 				compile(builder, variables, statement);
@@ -527,7 +520,7 @@ public class Compiler {
 		}
 	}
 
-	private void compile(StringBuilder builder, Map<String, CompilerVariable> variables, ASTOrbitEnd end) {
+	private void compile(StringBuilder builder, Map<String, CompilerVariable> variables, ASTOrbitEnd end, List<String> stateVariables) {
 		if (end != null) {
 			for (ASTStatement statement : end.getStatements()) {
 				compile(builder, variables, statement);
@@ -535,7 +528,7 @@ public class Compiler {
 		}
 	}
 
-	private void compile(StringBuilder builder, Map<String, CompilerVariable> variables, ASTOrbitLoop loop) {
+	private void compile(StringBuilder builder, Map<String, CompilerVariable> variables, ASTOrbitLoop loop, List<String> stateVariables) {
 		if (loop != null) {
 			builder.append("n = number(0);\n");
 			builder.append("for (int i = 1; i <= ");
@@ -544,6 +537,20 @@ public class Compiler {
 			for (ASTStatement statement : loop.getStatements()) {
 				compile(builder, variables, statement);
 			}
+			builder.append("if (states != null) {\n");
+			builder.append("states.add(new Number[] { ");
+			int i = 0;
+			for (String varName : stateVariables) {
+				if (i > 0) {
+					builder.append(", ");
+				}
+				builder.append("new Number(");
+				builder.append(varName);
+				builder.append(")");
+				i += 1;
+			}
+			builder.append(" });\n");
+			builder.append("}\n");
 			builder.append("if (");
 			loop.getExpression().compile(new ExpressionCompiler(builder));
 			builder.append(") { n = number(i); break; }\n");

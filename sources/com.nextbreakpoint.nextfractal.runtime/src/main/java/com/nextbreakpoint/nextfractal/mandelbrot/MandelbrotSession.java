@@ -18,9 +18,9 @@ public class MandelbrotSession extends FractalSession {
 		fireDataChanged();
 	}
 	
-	public void setPoint(double[] point) {
+	public void setPoint(double[] point, boolean continuous) {
 		data.setPoint(point);
-		firePointChanged();
+		firePointChanged(continuous);
 	}
 
 	public double getTime() {
@@ -32,13 +32,13 @@ public class MandelbrotSession extends FractalSession {
 		fireDataChanged();
 	}
 
-	public void setView(MandelbrotView view, boolean zoom) {
+	public void setView(MandelbrotView view, boolean continuous) {
 		this.data.setTraslation(view.getTraslation());
 		this.data.setRotation(view.getRotation());
 		this.data.setScale(view.getScale());
 		this.data.setPoint(view.getPoint());
 		this.data.setJulia(view.isJulia());
-		fireViewChanged(zoom);
+		fireViewChanged(continuous);
 	}
 
 	public MandelbrotView getView() {

@@ -19,6 +19,10 @@ public interface RenderGraphicsContext {
 
 	public void closePath();
 
+	public void moveTo(int x, int y);
+	
+	public void lineTo(int x, int y);
+	
 	public void strokeRect(int x, int y, int width, int height);
 	
 	public void fillRect(int x, int y, int width, int height);

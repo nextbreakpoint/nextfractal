@@ -2,6 +2,10 @@
 	-fx-background-color: #444444;
 }
 
+.root.popup {
+    -fx-background-color: transparent;
+}
+
 .scroll-pane {
 	-fx-background-color: transparent;
 	-fx-hbar-policy: never;
@@ -33,44 +37,26 @@
 	-fx-border-width: 0 0 0 0;
 }
 
-.application .editor-pane {
+.application .editor {
 	-fx-background-color: #FFFFFF;
 	-fx-border-width: 0 0 0 1;
 	-fx-border-color: #444444;
 }
 
-.application .render-pane {
-}
-
-.application .mandelbrot .stack-pane {
-}
-
-.application .mandelbrot .tools-pane {
+.application .mandelbrot .toolbar {
 	-fx-alignment: bottom-center;
 	-fx-padding: 10px;
 }
 
-.application .mandelbrot .render-pane {
-}
-
-.application .mandelbrot .source-pane {
+.application .mandelbrot .source {
 	-fx-border-width: 0;
 }
 
-.application .mandelbrot .actions-pane {
-	-fx-alignment: center;
-	-fx-padding: 10px;
-}
-
-.application .mandelbrot .export-pane {
+.application .mandelbrot .export {
 	-fx-alignment: center;
 	-fx-padding: 10px;
 	-fx-background-color: lightgray;
 	-fx-opacity: 0.98;
 	-fx-border-width: 0 0 1 0;
 	-fx-border-color: #444444;
-}
-
-.root.popup {
-    -fx-background-color: transparent;
 }

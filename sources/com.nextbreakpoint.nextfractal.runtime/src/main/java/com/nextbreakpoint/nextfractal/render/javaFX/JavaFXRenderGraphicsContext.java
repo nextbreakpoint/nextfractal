@@ -100,4 +100,12 @@ public class JavaFXRenderGraphicsContext implements RenderGraphicsContext {
 		gc.rect(x, y, width, height);
 		gc.clip();
 	}
+
+	public void moveTo(int x, int y) {
+		gc.moveTo(x, y);
+	}
+
+	public void lineTo(int x, int y) {
+		gc.lineTo(x, y);
+	}
 }

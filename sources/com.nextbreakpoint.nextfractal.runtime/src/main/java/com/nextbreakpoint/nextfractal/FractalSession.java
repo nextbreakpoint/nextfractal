@@ -36,15 +36,15 @@ public abstract class FractalSession {
 		}
 	}
 
-	protected void firePointChanged() {
+	protected void firePointChanged(boolean continuous) {
 		for (SessionListener listener : listeners) {
-			listener.pointChanged(this);
+			listener.pointChanged(this, continuous);
 		}
 	}
 
-	protected void fireViewChanged(boolean zoom) {
+	protected void fireViewChanged(boolean continuous) {
 		for (SessionListener listener : listeners) {
-			listener.viewChanged(this, zoom);
+			listener.viewChanged(this, continuous);
 		}
 	}
 	

@@ -33,6 +33,7 @@ import org.junit.Test;
 
 import com.nextbreakpoint.nextfractal.core.DefaultThreadFactory;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Color;
+import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Orbit;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Scope;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.Renderer;
@@ -85,9 +86,9 @@ public class RendererTest {
 		@Override
 		public void init() {
 		}
-		
+
 		@Override
-		public void render() {
+		public void render(List<Number[]> states) {
 		}
 	}
 	

@@ -49,7 +49,7 @@ public class RendererFractal {
 	public void renderOrbit(MutableNumber[] state, Number x, Number w) {
 		orbit.setX(x);
 		orbit.setW(w);
-		orbit.render();
+		orbit.render(null);
 		orbit.getState(state);
 	}
 

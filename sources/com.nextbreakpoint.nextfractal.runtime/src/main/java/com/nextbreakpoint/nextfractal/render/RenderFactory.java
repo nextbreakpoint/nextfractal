@@ -9,7 +9,7 @@ public interface RenderFactory {
 
 	public RenderAffine createRotateAffine(double a, double centerX, double centerY);
 
-	public RenderColor createColor(int red, int green, int blue, int opacity);
+	public RenderColor createColor(double red, double green, double blue, double opacity);
 
 	public RenderAffine createAffine();
 }

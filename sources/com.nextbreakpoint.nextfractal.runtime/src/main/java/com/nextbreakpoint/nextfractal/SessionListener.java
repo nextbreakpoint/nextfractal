@@ -9,14 +9,15 @@ public interface SessionListener {
 	
 	/**
 	 * @param session
+	 * @param continuous 
 	 */
-	public void pointChanged(FractalSession session);
+	public void pointChanged(FractalSession session, boolean continuous);
 
 	/**
 	 * @param session
-	 * @param zoom 
+	 * @param continuous 
 	 */
-	public void viewChanged(FractalSession session, boolean zoom);
+	public void viewChanged(FractalSession session, boolean continuous);
 
 	/**
 	 * @param session

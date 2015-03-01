@@ -54,7 +54,7 @@ public class JavaFXRenderFactory implements RenderFactory {
 	 * @see com.nextbreakpoint.nextfractal.render.twister.renderer.RenderFactory#createColor(int, int, int, int)
 	 */
 	@Override
-	public RenderColor createColor(int red, int green, int blue, int opacity) {
+	public RenderColor createColor(double red, double green, double blue, double opacity) {
 		return new JavaFXRenderColor(red, green, blue, opacity);
 	}
 }

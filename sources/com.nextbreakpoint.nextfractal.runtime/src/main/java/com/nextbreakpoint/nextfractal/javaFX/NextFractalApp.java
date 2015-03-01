@@ -53,7 +53,7 @@ public class NextFractalApp extends Application {
 		editorRootPane.setPrefWidth(editorWidth);
         editorRootPane.setPrefHeight(height);
         editorRootPane.setLayoutX(width);
-        editorRootPane.getStyleClass().add("editor-pane");
+        editorRootPane.getStyleClass().add("editor");
         renderRootPane = new BorderPane();
         renderRootPane.setPrefWidth(width);
         renderRootPane.setPrefHeight(height);
@@ -61,7 +61,7 @@ public class NextFractalApp extends Application {
         renderRootPane.setMinHeight(height);
         renderRootPane.setMaxWidth(width);
         renderRootPane.setMaxHeight(height);
-        renderRootPane.getStyleClass().add("render-pane");
+        renderRootPane.getStyleClass().add("render");
         mainPane.getChildren().add(renderRootPane);
         mainPane.getChildren().add(editorRootPane);
         mainPane.getStyleClass().add("application");
@@ -120,11 +120,11 @@ public class NextFractalApp extends Application {
 //		});
 		session.addSessionListener(new SessionListener() {
 			@Override
-			public void viewChanged(FractalSession session, boolean zoom) {
+			public void viewChanged(FractalSession session, boolean continuous) {
 			}
 			
 			@Override
-			public void pointChanged(FractalSession session) {
+			public void pointChanged(FractalSession sessio, boolean continuousn) {
 			}
 
 			@Override

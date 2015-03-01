@@ -8,7 +8,7 @@ import com.nextbreakpoint.nextfractal.render.RenderGraphicsContext;
 public class JavaFXRenderColor implements RenderColor {
 	private Color color;
 	
-	public JavaFXRenderColor(int red, int green, int blue, int opacity) {
+	public JavaFXRenderColor(double red, double green, double blue, double opacity) {
 		color = new Color(red, green, blue, opacity);
 	}
 

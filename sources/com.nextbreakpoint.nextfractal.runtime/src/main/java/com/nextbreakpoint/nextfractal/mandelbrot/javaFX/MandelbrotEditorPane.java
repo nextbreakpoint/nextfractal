@@ -73,7 +73,7 @@ public class MandelbrotEditorPane extends BorderPane {
 
 		BorderPane sourcePane = new BorderPane();
 		TextArea sourceText = new TextArea();
-		sourceText.getStyleClass().add("source-pane");
+		sourceText.getStyleClass().add("source");
 		HBox sourceButtons = new HBox(10);
 		Button renderButton = new Button("Render");
 		Button loadButton = new Button("Load");
@@ -81,14 +81,14 @@ public class MandelbrotEditorPane extends BorderPane {
 		sourceButtons.getChildren().add(renderButton);
 		sourceButtons.getChildren().add(loadButton);
 		sourceButtons.getChildren().add(saveButton);
-		sourceButtons.getStyleClass().add("actions-pane");
+		sourceButtons.getStyleClass().add("toolbar");
 		sourcePane.setCenter(sourceText);
 		sourcePane.setBottom(sourceButtons);
 		sourceTab.setContent(sourcePane);
 
 		BorderPane historyPane = new BorderPane();
 		ListView<MandelbrotData> historyList = new ListView<>();
-		historyList.getStyleClass().add("history-list");
+		historyList.getStyleClass().add("history");
 		historyList.setCellFactory(new Callback<ListView<MandelbrotData>, ListCell<MandelbrotData>>() {
 			@Override
 			public ListCell<MandelbrotData> call(ListView<MandelbrotData> gridView) {
@@ -98,7 +98,7 @@ public class MandelbrotEditorPane extends BorderPane {
 		HBox historyButtons = new HBox(10);
 		Button clearButton = new Button("Clear");
 		historyButtons.getChildren().add(clearButton);
-		historyButtons.getStyleClass().add("actions-pane");
+		historyButtons.getStyleClass().add("toolbar");
 		historyPane.setCenter(historyList);
 		historyPane.setBottom(historyButtons);
 		historyTab.setContent(historyPane);
@@ -111,7 +111,7 @@ public class MandelbrotEditorPane extends BorderPane {
 				return new ExportListCell(generator.getSize(), generatorTile);
 			}
 		});
-		jobsList.getStyleClass().add("jobs-list");
+		jobsList.getStyleClass().add("jobs");
 		HBox jobsButtons = new HBox(10);
 		Button suspendButton = new Button("Suspend");
 		Button resumeButton = new Button("Resume");
@@ -119,7 +119,7 @@ public class MandelbrotEditorPane extends BorderPane {
 		jobsButtons.getChildren().add(suspendButton);
 		jobsButtons.getChildren().add(resumeButton);
 		jobsButtons.getChildren().add(removeButton);
-		jobsButtons.getStyleClass().add("actions-pane");
+		jobsButtons.getStyleClass().add("toolbar");
 		jobsPane.setCenter(jobsList);
 		jobsPane.setBottom(jobsButtons);
 		jobsTab.setContent(jobsPane);
@@ -134,12 +134,15 @@ public class MandelbrotEditorPane extends BorderPane {
 			}
 			
 			@Override
-			public void pointChanged(FractalSession session) {
+			public void pointChanged(FractalSession session, boolean continuous) {
+				if (!continuous) {
+					addDataToHistory(historyList);
+				}
 			}
 
 			@Override
-			public void viewChanged(FractalSession session, boolean zoom) {
-				if (!zoom) {
+			public void viewChanged(FractalSession session, boolean continuous) {
+				if (!continuous) {
 					addDataToHistory(historyList);
 				}
 			}

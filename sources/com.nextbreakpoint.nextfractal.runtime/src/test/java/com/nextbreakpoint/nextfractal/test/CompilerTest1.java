@@ -25,8 +25,6 @@
  */
 package com.nextbreakpoint.nextfractal.test;
 
-import java.io.File;
-
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -63,7 +61,7 @@ public class CompilerTest1 extends BaseTest {
 			orbit.init();
 			orbit.setX(new Number(0, 0));
 			orbit.setW(new Number(0, 0));
-			orbit.render();
+			orbit.render(null);
 			float[] c = color.getColor();
 			Assert.assertNotNull(c);
 			System.out.println(String.format("%f,%f,%f,%f", c[0], c[1], c[2], c[3]));

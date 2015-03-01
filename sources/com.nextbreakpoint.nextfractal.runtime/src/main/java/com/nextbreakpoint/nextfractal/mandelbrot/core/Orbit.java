@@ -1,5 +1,8 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.core;
 
+import java.util.List;
+
+
 public abstract class Orbit {
 	protected Number[] region = new Number[2];
 	protected Number point = new Number(0, 0);
@@ -57,7 +60,7 @@ public abstract class Orbit {
 	
 	public abstract void init();
 
-	public abstract void render();
+	public abstract void render(List<Number[]> states);
 
 	public void getState(MutableNumber[] state) {
 		scope.getState(state);
