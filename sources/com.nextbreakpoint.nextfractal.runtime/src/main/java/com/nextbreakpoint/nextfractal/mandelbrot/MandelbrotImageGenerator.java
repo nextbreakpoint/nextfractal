@@ -42,7 +42,7 @@ public class MandelbrotImageGenerator implements ImageGenerator {
 			double[] traslation = generatorData.getTraslation();
 			double[] rotation = generatorData.getRotation();
 			double[] scale = generatorData.getScale();
-			double[] constant = generatorData.getConstant();
+			double[] constant = generatorData.getPoint();
 			boolean julia = generatorData.isJulia();
 			renderer.setOrbit(orbitBuilder.build());
 			renderer.setColor(colorBuilder.build());
@@ -53,7 +53,7 @@ public class MandelbrotImageGenerator implements ImageGenerator {
 			view.setScale(new DoubleVector4D(scale));
 			view.setState(new IntegerVector4D(0, 0, 0, 0));
 			view.setJulia(julia);
-			view.setConstant(new Number(constant));
+			view.setPoint(new Number(constant));
 			renderer.setView(view);
 			renderer.runTask();
 			renderer.waitForTasks();

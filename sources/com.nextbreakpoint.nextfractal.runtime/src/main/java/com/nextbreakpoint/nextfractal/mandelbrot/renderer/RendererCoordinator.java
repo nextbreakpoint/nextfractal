@@ -133,10 +133,10 @@ public class RendererCoordinator implements RendererDelegate {
 	}
 
 	/**
-	 * @param constant
+	 * @param point
 	 */
 	public void setConstant(Number constant) {
-		renderer.setConstant(constant);
+		renderer.setPoint(constant);
 	}
 
 	/**

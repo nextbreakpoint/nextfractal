@@ -112,14 +112,16 @@ public final class XaosRenderer extends Renderer {
 				progress = 1;
 				return;
 			}
-			final boolean redraw = orbitChanged;
+			final boolean redraw = orbitChanged || juliaChanged;
+			logger.fine("redraw " + redraw);
 			orbitChanged = false;
+			juliaChanged = false;
 			final boolean refresh = !redraw && colorChanged;
 			colorChanged = false;
 			aborted = false;
 			progress = 0;
 			rendererFractal.clearScope();
-			rendererFractal.setConstant(constant);
+			rendererFractal.setPoint(point);
 			if (julia) {
 				rendererStrategy = new JuliaRendererStrategy(rendererFractal);
 			} else {
@@ -129,6 +131,7 @@ public final class XaosRenderer extends Renderer {
 			int width = getSize().getWidth();
 			int height = getSize().getHeight();
 			rendererData.setSize(width, height, rendererFractal.getStateSize());
+			rendererData.setPoint(rendererFractal.getPoint());
 			if (regionChanged) {
 				rendererData.setRegion(region);
 				regionChanged = false;

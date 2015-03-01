@@ -61,10 +61,11 @@ public class Renderer {
 	protected volatile boolean orbitChanged;
 	protected volatile boolean colorChanged;
 	protected volatile boolean regionChanged;
+	protected volatile boolean juliaChanged;
 	protected volatile float progress;
 	protected boolean julia;
+	protected Number point;
 	protected boolean continuous;
-	protected Number constant;
 	protected RendererRegion region;
 	protected RendererRegion initialRegion;
 	protected final RendererSize size;
@@ -180,10 +181,10 @@ public class Renderer {
 	}
 
 	/**
-	 * @param constant
+	 * @param point
 	 */
-	public void setConstant(Number constant) {
-		this.constant = constant;
+	public void setPoint(Number constant) {
+		this.point = constant;
 	}
 
 	/**
@@ -295,14 +296,14 @@ public class Renderer {
 				progress = 1;
 				return;
 			}
-			final boolean redraw = orbitChanged || regionChanged || regionChanged;
+			final boolean redraw = orbitChanged || regionChanged || juliaChanged;
 			orbitChanged = false;
 			colorChanged = false;
 			regionChanged = false;
 			aborted = false;
 			progress = 0;
 			rendererFractal.clearScope();
-			rendererFractal.setConstant(constant);
+			rendererFractal.setPoint(point);
 			if (julia) {
 				rendererStrategy = new JuliaRendererStrategy(rendererFractal);
 			} else {
@@ -313,6 +314,7 @@ public class Renderer {
 			rendererStrategy.prepare();
 			rendererData.setSize(width, height, rendererFractal.getStateSize());
 			rendererData.setRegion(region);
+			rendererData.setPoint(rendererFractal.getPoint());
 			rendererData.initPositions();
 			rendererData.swap();
 			rendererData.clearPixels();
@@ -362,11 +364,14 @@ public class Renderer {
 	 * @param view
 	 */
 	public void setView(RendererView view) {
+		if (this.view.isJulia() != view.isJulia()) {
+			juliaChanged = true;
+		}
 		this.view = view;
 		RendererRegion region = computeRegion();
 		setRegion(region);
 		setJulia(view.isJulia());
-		setConstant(view.getConstant());
+		setPoint(view.getPoint());
 		setContinuous(view.getState().getX() >= 1 || view.getState().getY() >= 1 || view.getState().getZ() >= 1 || view.getState().getW() >= 1);
 		backBuffer.setAffine(createTransform(view.getRotation().getZ()));
 	}

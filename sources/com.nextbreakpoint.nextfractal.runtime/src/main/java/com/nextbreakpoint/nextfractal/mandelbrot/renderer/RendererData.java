@@ -136,6 +136,13 @@ public class RendererData {
 	public Number point() {
 		return point;
 	}
+	
+	/**
+	 * @return
+	 */
+	public void setPoint(Number point) {
+		this.point.set(point);
+	}
 
 	/**
 	 * @param offset

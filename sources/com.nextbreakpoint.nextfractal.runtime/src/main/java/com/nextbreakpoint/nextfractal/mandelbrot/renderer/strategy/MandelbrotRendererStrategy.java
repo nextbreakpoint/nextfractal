@@ -18,6 +18,7 @@ public class MandelbrotRendererStrategy implements RendererStrategy {
 		 */
 		@Override
 		public void prepare() {
+			rendererFractal.setPoint(rendererFractal.getOrbit().getInitialPoint());
 		}
 
 		/**

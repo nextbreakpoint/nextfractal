@@ -2,6 +2,7 @@ package com.nextbreakpoint.nextfractal.mandelbrot.core;
 
 public abstract class Orbit {
 	protected Number[] region = new Number[2];
+	protected Number point = new Number(0, 0);
 	protected Number x = new Number(0,0);
 	protected Number w = new Number(0,0);
 	protected Number z = new Number(0,0);
@@ -80,6 +81,10 @@ public abstract class Orbit {
 
 	public Number[] getInitialRegion() {
 		return region;
+	}
+
+	public Number getInitialPoint() {
+		return point;
 	}
 
 	public void setInitialRegion(Number a, Number b) {

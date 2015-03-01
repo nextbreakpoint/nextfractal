@@ -6,6 +6,11 @@ public interface SessionListener {
 	 * @param session
 	 */
 	public void dataChanged(FractalSession session);
+	
+	/**
+	 * @param session
+	 */
+	public void pointChanged(FractalSession session);
 
 	/**
 	 * @param session

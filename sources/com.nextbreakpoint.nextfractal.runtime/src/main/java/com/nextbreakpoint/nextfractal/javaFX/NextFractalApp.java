@@ -124,6 +124,10 @@ public class NextFractalApp extends Application {
 			}
 			
 			@Override
+			public void pointChanged(FractalSession session) {
+			}
+
+			@Override
 			public void dataChanged(FractalSession session) {
 			}
 			

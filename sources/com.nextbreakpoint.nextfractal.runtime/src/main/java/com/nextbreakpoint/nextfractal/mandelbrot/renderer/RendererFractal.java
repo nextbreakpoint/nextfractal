@@ -10,6 +10,7 @@ public class RendererFractal {
 	private final Scope scope = new Scope();
 	private Orbit orbit;
 	private Color color;
+	private Number point;
 
 	public void initialize() {
 		scope.empty();
@@ -110,16 +111,17 @@ public class RendererFractal {
 	}
 
 	/**
-	 * @param w
-	 */
-	public void setConstant(Number w) {
-		orbit.setW(w);
-	}
-
-	/**
 	 * 
 	 */
 	public void clearScope() {
 		scope.clear();
+	}
+
+	public Number getPoint() {
+		return point;
+	}
+
+	public void setPoint(Number point) {
+		this.point = point;
 	}
 }

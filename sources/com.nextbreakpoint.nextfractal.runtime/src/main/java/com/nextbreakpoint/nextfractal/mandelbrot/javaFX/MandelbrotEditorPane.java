@@ -132,6 +132,10 @@ public class MandelbrotEditorPane extends BorderPane {
 				sourceText.setText(getMandelbrotSession().getSource());
 				addDataToHistory(historyList);
 			}
+			
+			@Override
+			public void pointChanged(FractalSession session) {
+			}
 
 			@Override
 			public void viewChanged(FractalSession session, boolean zoom) {

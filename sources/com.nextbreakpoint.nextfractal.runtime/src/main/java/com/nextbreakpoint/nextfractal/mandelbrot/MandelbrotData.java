@@ -13,7 +13,7 @@ import com.nextbreakpoint.nextfractal.core.DateAdapter;
 @XmlRootElement(name="mandelbrot")
 public class MandelbrotData {
 	private final static String version = "1.0";
-	private double[] constant = new double[] { 0, 0 };
+	private double[] point = new double[] { 0, 0 };
 	private double[] traslation = new double[] { 0, 0, 1, 0 };
 	private double[] rotation = new double[] { 0, 0, 0, 0 };
 	private double[] scale = new double[] { 1, 1, 1, 1 };
@@ -53,12 +53,12 @@ public class MandelbrotData {
 		return version;
 	}
 
-	public double[] getConstant() {
-		return constant;
+	public double[] getPoint() {
+		return point;
 	}
 
-	public void setConstant(double[] constant) {
-		this.constant = constant;
+	public void setPoint(double[] constant) {
+		this.point = constant;
 	}
 
 	public double[] getTraslation() {
@@ -99,6 +99,6 @@ public class MandelbrotData {
 
 	@Override
 	public String toString() {
-		return "[traslation=" + Arrays.toString(traslation)	+ ", rotation=" + Arrays.toString(rotation) + ", scale=" + Arrays.toString(scale) + ", julia=" + julia + ", constant=" + Arrays.toString(constant) + ", time=" + time + "]";
+		return "[traslation=" + Arrays.toString(traslation)	+ ", rotation=" + Arrays.toString(rotation) + ", scale=" + Arrays.toString(scale) + ", julia=" + julia + ", point=" + Arrays.toString(point) + ", time=" + time + "]";
 	}
 }

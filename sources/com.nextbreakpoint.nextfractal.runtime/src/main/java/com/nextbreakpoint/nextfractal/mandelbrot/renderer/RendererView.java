@@ -12,7 +12,7 @@ public class RendererView {
 	private DoubleVector4D rotation;
 	private DoubleVector4D scale;
 	private IntegerVector4D state;
-	private Number constant;
+	private Number point;
 	private boolean julia;
 	
 	public RendererView() {
@@ -20,7 +20,7 @@ public class RendererView {
 		rotation = new DoubleVector4D(0, 0, 0, 0);
 		scale = new DoubleVector4D(1, 1, 1, 1);
 		state = new IntegerVector4D(0, 0, 0, 0);
-		constant = new Number(0, 0);
+		point = new Number(0, 0);
 	}
 	
 	public DoubleVector4D getTraslation() {
@@ -47,12 +47,12 @@ public class RendererView {
 		this.scale = scale;
 	}
 
-	public Number getConstant() {
-		return constant;
+	public Number getPoint() {
+		return point;
 	}
 
-	public void setConstant(Number constant) {
-		this.constant = constant;
+	public void setPoint(Number point) {
+		this.point = point;
 	}
 
 	public boolean isJulia() {

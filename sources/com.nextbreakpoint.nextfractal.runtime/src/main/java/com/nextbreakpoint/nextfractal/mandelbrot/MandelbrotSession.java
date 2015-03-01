@@ -18,13 +18,13 @@ public class MandelbrotSession extends FractalSession {
 		fireDataChanged();
 	}
 	
-	public double[] getConstant() {
-		return data.getConstant();
+	public double[] getPoint() {
+		return data.getPoint();
 	}
 
-	public void setConstant(double[] constant) {
-		data.setConstant(constant);
-		fireDataChanged();
+	public void setPoint(double[] point) {
+		data.setPoint(point);
+		firePointChanged();
 	}
 
 	public boolean isJulia() {
@@ -57,7 +57,7 @@ public class MandelbrotSession extends FractalSession {
 	}
 
 	public void setData(MandelbrotData data) {
-		this.data.setConstant(data.getConstant());
+		this.data.setPoint(data.getPoint());
 		this.data.setSource(data.getSource());
 		this.data.setJulia(data.isJulia());
 		this.data.setTraslation(data.getTraslation());
@@ -69,7 +69,7 @@ public class MandelbrotSession extends FractalSession {
 
 	public MandelbrotData getData() {
 		MandelbrotData data = new MandelbrotData();
-		data.setConstant(this.data.getConstant());
+		data.setPoint(this.data.getPoint());
 		data.setSource(this.data.getSource());
 		data.setJulia(this.data.isJulia());
 		data.setTraslation(this.data.getTraslation());
