@@ -13,10 +13,10 @@ import com.nextbreakpoint.nextfractal.core.DateAdapter;
 @XmlRootElement(name="mandelbrot")
 public class MandelbrotData {
 	private final static String version = "1.0";
-	private double[] point = new double[] { 0, 0 };
 	private double[] traslation = new double[] { 0, 0, 1, 0 };
 	private double[] rotation = new double[] { 0, 0, 0, 0 };
 	private double[] scale = new double[] { 1, 1, 1, 1 };
+	private double[] point = new double[] { 0, 0 };
 	@XmlElement(name = "timestamp", required = true) 
 	@XmlJavaTypeAdapter(DateAdapter.class)
 	private Date timestamp = new Date();

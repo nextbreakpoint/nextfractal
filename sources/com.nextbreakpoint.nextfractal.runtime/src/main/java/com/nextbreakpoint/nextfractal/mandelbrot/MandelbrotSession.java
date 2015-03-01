@@ -18,22 +18,9 @@ public class MandelbrotSession extends FractalSession {
 		fireDataChanged();
 	}
 	
-	public double[] getPoint() {
-		return data.getPoint();
-	}
-
 	public void setPoint(double[] point) {
 		data.setPoint(point);
 		firePointChanged();
-	}
-
-	public boolean isJulia() {
-		return data.isJulia();
-	}
-
-	public void setJulia(boolean julia) {
-		data.setJulia(julia);
-		fireDataChanged();
 	}
 
 	public double getTime() {
@@ -49,33 +36,35 @@ public class MandelbrotSession extends FractalSession {
 		this.data.setTraslation(view.getTraslation());
 		this.data.setRotation(view.getRotation());
 		this.data.setScale(view.getScale());
+		this.data.setPoint(view.getPoint());
+		this.data.setJulia(view.isJulia());
 		fireViewChanged(zoom);
 	}
 
 	public MandelbrotView getView() {
-		return new MandelbrotView(data.getTraslation(), data.getRotation(), data.getScale());
+		return new MandelbrotView(data.getTraslation(), data.getRotation(), data.getScale(), data.getPoint(), data.isJulia());
 	}
 
 	public void setData(MandelbrotData data) {
-		this.data.setPoint(data.getPoint());
 		this.data.setSource(data.getSource());
-		this.data.setJulia(data.isJulia());
 		this.data.setTraslation(data.getTraslation());
 		this.data.setRotation(data.getRotation());
 		this.data.setScale(data.getScale());
 		this.data.setTime(data.getTime());
+		this.data.setPoint(data.getPoint());
+		this.data.setJulia(data.isJulia());
 		fireDataChanged();
 	}
 
 	public MandelbrotData getData() {
 		MandelbrotData data = new MandelbrotData();
-		data.setPoint(this.data.getPoint());
 		data.setSource(this.data.getSource());
-		data.setJulia(this.data.isJulia());
 		data.setTraslation(this.data.getTraslation());
 		data.setRotation(this.data.getRotation());
 		data.setScale(this.data.getScale());
 		data.setTime(this.data.getTime());
+		data.setPoint(this.data.getPoint());
+		data.setJulia(this.data.isJulia());
 		return data;
 	}
 }
