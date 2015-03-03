@@ -112,8 +112,8 @@ public final class XaosRenderer extends Renderer {
 				progress = 1;
 				return;
 			}
-			final boolean redraw = orbitChanged || juliaChanged;
-			logger.fine("redraw " + redraw);
+			final boolean redraw = orbitChanged || juliaChanged || (julia && pointChanged);
+			pointChanged = false;
 			orbitChanged = false;
 			juliaChanged = false;
 			final boolean refresh = !redraw && colorChanged;

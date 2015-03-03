@@ -108,4 +108,9 @@ public class JavaFXRenderGraphicsContext implements RenderGraphicsContext {
 	public void lineTo(int x, int y) {
 		gc.lineTo(x, y);
 	}
+
+	@Override
+	public void setAlpha(double alpha) {
+		gc.setGlobalAlpha(alpha);
+	}
 }

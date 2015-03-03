@@ -62,9 +62,11 @@ public class Renderer {
 	protected volatile boolean colorChanged;
 	protected volatile boolean regionChanged;
 	protected volatile boolean juliaChanged;
+	protected volatile boolean pointChanged;
 	protected volatile float progress;
 	protected boolean julia;
 	protected Number point;
+	protected boolean singlePass;
 	protected boolean continuous;
 	protected RendererRegion region;
 	protected RendererRegion initialRegion;
@@ -296,7 +298,8 @@ public class Renderer {
 				progress = 1;
 				return;
 			}
-			final boolean redraw = orbitChanged || regionChanged || juliaChanged;
+			final boolean redraw = orbitChanged || regionChanged || juliaChanged || (julia && pointChanged);
+			pointChanged = false;
 			orbitChanged = false;
 			colorChanged = false;
 			regionChanged = false;
@@ -325,7 +328,9 @@ public class Renderer {
 			int c = 0;
 			float dy = height / 5.0f;
 			float ty = dy;
-			didChanged(0, rendererData.getPixels());
+			if (!singlePass) {
+				didChanged(0, rendererData.getPixels());
+			}
 			for (int y = 0; y < height; y++) {
 				for (int x = 0; x < width; x++) {
 					px.set(rendererData.point());
@@ -346,15 +351,17 @@ public class Renderer {
 				}
 				if (y >= ty) {
 					progress = y / (float)(height - 1);
-					didChanged(progress, rendererData.getPixels());
+					if (!singlePass) {
+						didChanged(progress, rendererData.getPixels());
+					}
 					ty += dy;
 				}
 				Thread.yield();
 			}
 			if (!aborted) {
 				progress = 1f;
+				didChanged(progress, rendererData.getPixels());
 			}
-			didChanged(progress, rendererData.getPixels());
 			Thread.yield();
 		} catch (Throwable e) {
 		}
@@ -367,6 +374,9 @@ public class Renderer {
 		if (this.view.isJulia() != view.isJulia()) {
 			juliaChanged = true;
 		}
+		if (!this.view.getPoint().equals(view.getPoint())) {
+			pointChanged = true;
+		}
 		this.view = view;
 		RendererRegion region = computeRegion();
 		setRegion(region);
@@ -374,6 +384,25 @@ public class Renderer {
 		setPoint(view.getPoint());
 		setContinuous(view.getState().getX() >= 1 || view.getState().getY() >= 1 || view.getState().getZ() >= 1 || view.getState().getW() >= 1);
 		backBuffer.setAffine(createTransform(view.getRotation().getZ()));
+	}
+	
+	/**
+	 * @param pixels
+	 */
+	public void getPixels(IntBuffer pixels) {
+		frontBuffer.getBuffer().getImage().getPixels(pixels);
+	}
+
+	public void setCondition(Condition condition) {
+		this.condition = condition;
+	}
+
+	public boolean isSinglePass() {
+		return singlePass;
+	}
+
+	public void setSinglePass(boolean singlePass) {
+		this.singlePass = singlePass;
 	}
 
 	/**
@@ -537,18 +566,7 @@ public class Renderer {
 		}
 		lock.unlock();
 	}
-	
-	/**
-	 * @param pixels
-	 */
-	public void getPixels(IntBuffer pixels) {
-		frontBuffer.getBuffer().getImage().getPixels(pixels);
-	}
 
-	public void setCondition(Condition condition) {
-		this.condition = condition;
-	}
-	
 	private class RenderRunnable implements Runnable {
 		@Override
 		public void run() {

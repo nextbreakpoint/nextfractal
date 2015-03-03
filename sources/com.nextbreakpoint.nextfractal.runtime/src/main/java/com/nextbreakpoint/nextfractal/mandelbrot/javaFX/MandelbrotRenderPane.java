@@ -74,6 +74,7 @@ public class MandelbrotRenderPane extends BorderPane {
 	private ThreadFactory threadFactory;
 	private JavaFXRenderFactory renderFactory;
 	private RendererCoordinator[] coordinators;
+	private RendererCoordinator juliaCoordinator;
 	private MandelbrotImageGenerator generator;
 	private AnimationTimer timer;
 	private FileChooser fileChooser;
@@ -110,6 +111,9 @@ public class MandelbrotRenderPane extends BorderPane {
 			hints.put(RendererCoordinator.KEY_TYPE, RendererCoordinator.VALUE_REALTIME);
 		}
 		createCoordinators(rows, columns, hints);
+		Map<String, Integer> juliaHints = new HashMap<String, Integer>();
+		juliaHints.put(RendererCoordinator.KEY_PROGRESS, RendererCoordinator.VALUE_SINGLE_PASS);
+		createJuliaCoordinator(juliaHints);
 		
 		getStyleClass().add("mandelbrot");
 
@@ -147,6 +151,12 @@ public class MandelbrotRenderPane extends BorderPane {
         GraphicsContext gcOrbitCanvas = orbitCanvas.getGraphicsContext2D();
         gcOrbitCanvas.setFill(javafx.scene.paint.Color.TRANSPARENT);
         gcOrbitCanvas.fillRect(0, 0, width, height);
+
+        Canvas juliaCanvas = new Canvas(width, height);
+        GraphicsContext gcJuliaCanvas = juliaCanvas.getGraphicsContext2D();
+        gcJuliaCanvas.setFill(javafx.scene.paint.Color.TRANSPARENT);
+        gcJuliaCanvas.fillRect(0, 0, width, height);
+        juliaCanvas.setOpacity(0.8);
 
 		currentTool = new ZoomTool();
 		
@@ -196,10 +206,6 @@ public class MandelbrotRenderPane extends BorderPane {
 			currentTool = new PickTool();
 		});
 		
-		orbitButton.setOnAction(e -> {
-			toggleFractalJulia();
-		});
-		
 		exportButton.setOnAction(e -> {
 			storeExportData();
 			export.show();
@@ -223,31 +229,32 @@ public class MandelbrotRenderPane extends BorderPane {
 
 			@Override
 			public void terminate(FractalSession session) {
-				disposeCoordinators();
+				dispose();
 			}
 
 			@Override
 			public void sessionAdded(FractalSession session, ExportSession exportSession) {
-				// TODO Auto-generated method stub
-				
 			}
 
 			@Override
 			public void sessionRemoved(FractalSession session, ExportSession exportSession) {
-				// TODO Auto-generated method stub
-				
 			}
 		});
 		
 		StackPane stackPane = new StackPane();
 		stackPane.getChildren().add(fractalCanvas);
 		stackPane.getChildren().add(orbitCanvas);
+		stackPane.getChildren().add(juliaCanvas);
 		stackPane.getChildren().add(controls);
 		setCenter(stackPane);
         
+		orbitButton.setOnAction(e -> {
+			toggleFractalJulia(juliaCanvas);
+		});
+		
 		exportExecutor = Executors.newSingleThreadExecutor(threadFactory);
 		
-		runTimer(fractalCanvas, orbitCanvas);
+		runTimer(fractalCanvas, orbitCanvas, juliaCanvas);
 		
 		updateFractalData(session);
 
@@ -281,12 +288,16 @@ public class MandelbrotRenderPane extends BorderPane {
 				coordinators[row * columns + column] = new RendererCoordinator(threadFactory, renderFactory, createTile(row, column), hints);
 			}
 		}
+		juliaCoordinator = new RendererCoordinator(threadFactory, renderFactory, createSingleTile(200, 200), hints);
 	}
 
 	private void disposeCoordinators() {
 		for (int i = 0; i < coordinators.length; i++) {
 			if (coordinators[i] != null) {
 				coordinators[i].abort();
+			}
+			if (juliaCoordinator != null) {
+				juliaCoordinator.abort();
 			}
 		}
 		for (int i = 0; i < coordinators.length; i++) {
@@ -295,10 +306,30 @@ public class MandelbrotRenderPane extends BorderPane {
 				coordinators[i].dispose();
 				coordinators[i] = null;
 			}
+			if (juliaCoordinator != null) {
+				juliaCoordinator.waitFor();
+				juliaCoordinator.dispose();
+				juliaCoordinator = null;
+			}
 		}
 	}
 
-	private void runTimer(Canvas fractalCanvas, Canvas orbitCanvas) {
+	private void createJuliaCoordinator(Map<String, Integer> hints) {
+		juliaCoordinator = new RendererCoordinator(threadFactory, renderFactory, createSingleTile(200, 200), hints);
+	}
+
+	private void disposeJuliaCoordinator() {
+		if (juliaCoordinator != null) {
+			juliaCoordinator.abort();
+		}
+		if (juliaCoordinator != null) {
+			juliaCoordinator.waitFor();
+			juliaCoordinator.dispose();
+			juliaCoordinator = null;
+		}
+	}
+
+	private void runTimer(Canvas fractalCanvas, Canvas orbitCanvas, Canvas juliaCanvas) {
 		timer = new AnimationTimer() {
 			private long last;
 
@@ -307,6 +338,7 @@ public class MandelbrotRenderPane extends BorderPane {
 				long time = now / 1000000;
 				if ((time - last) > 25) {
 					redrawIfPixelsChanged(fractalCanvas);
+					redrawIfJuliaPixelsChanged(juliaCanvas);
 					redrawIfOrbitChanged(orbitCanvas);
 					if (currentTool != null) {
 						currentTool.update(time);
@@ -351,13 +383,15 @@ public class MandelbrotRenderPane extends BorderPane {
 		return tile;
 	}
 
-	private void toggleFractalJulia() {
+	private void toggleFractalJulia(Canvas juliaCanvas) {
 		if (getMandelbrotSession().getView().isJulia()) {
+			juliaCanvas.setVisible(true);
 			MandelbrotView oldView = popView();
 			pushView();
 			MandelbrotView view = new MandelbrotView(oldView != null ? oldView.getTraslation() : new double[] { 0, 0, 1, 0 }, oldView != null ? oldView.getRotation() : new double[] { 0, 0, 0, 0 }, oldView != null ? oldView.getScale() : new double[] { 1, 1, 1, 1 }, getMandelbrotSession().getView().getPoint(), false);
 			getMandelbrotSession().setView(view, false);
 		} else {
+			juliaCanvas.setVisible(false);
 			MandelbrotView oldView = popView();
 			pushView();
 			MandelbrotView view = new MandelbrotView(oldView != null ? oldView.getTraslation() : new double[] { 0, 0, 1, 0 }, oldView != null ? oldView.getRotation() : new double[] { 0, 0, 0, 0 }, oldView != null ? oldView.getScale() : new double[] { 1, 1, 1, 1 }, getMandelbrotSession().getView().getPoint(), true);
@@ -385,13 +419,19 @@ public class MandelbrotRenderPane extends BorderPane {
 			if (colorChanged) {
 				logger.info("Color algorithm is changed");
 			}
-			abortCoordinators();
-			joinCoordinators();
 			double[] traslation = getMandelbrotSession().getView().getTraslation();
 			double[] rotation = getMandelbrotSession().getView().getRotation();
 			double[] scale = getMandelbrotSession().getView().getScale();
 			double[] point = getMandelbrotSession().getView().getPoint();
 			boolean julia = getMandelbrotSession().getView().isJulia();
+			abortCoordinators();
+			if (!julia && juliaCoordinator != null) {
+				juliaCoordinator.abort();
+			}
+			joinCoordinators();
+			if (!julia && juliaCoordinator != null) {
+				juliaCoordinator.waitFor();
+			}
 			for (int i = 0; i < coordinators.length; i++) {
 				RendererCoordinator coordinator = coordinators[i];
 				if (coordinator != null) {
@@ -406,7 +446,7 @@ public class MandelbrotRenderPane extends BorderPane {
 					}
 					coordinator.init();
 					RendererView view = new RendererView();
-					view .setTraslation(new DoubleVector4D(traslation));
+					view.setTraslation(new DoubleVector4D(traslation));
 					view.setRotation(new DoubleVector4D(rotation));
 					view.setScale(new DoubleVector4D(scale));
 					view.setState(new IntegerVector4D(0, 0, 0, 0));
@@ -415,7 +455,30 @@ public class MandelbrotRenderPane extends BorderPane {
 					coordinator.setView(view);
 				}
 			}
+			if (!julia && juliaCoordinator != null) {
+				if (Boolean.getBoolean("disableSmartRender")) {
+					juliaCoordinator.setOrbitAndColor(orbitBuilder.build(), colorBuilder.build());
+				} else {
+					if (orbitChanged) {
+						juliaCoordinator.setOrbitAndColor(orbitBuilder.build(), colorBuilder.build());
+					} else if (colorChanged) {
+						juliaCoordinator.setColor(colorBuilder.build());
+					}
+				}
+				juliaCoordinator.init();
+				RendererView view = new RendererView();
+				view.setTraslation(new DoubleVector4D(traslation));
+				view.setRotation(new DoubleVector4D(rotation));
+				view.setScale(new DoubleVector4D(scale));
+				view.setState(new IntegerVector4D(0, 0, 0, 0));
+				view.setJulia(true);
+				view.setPoint(new Number(point));
+				juliaCoordinator.setView(view);
+			}
 			startCoordinators();
+			if (!julia && juliaCoordinator != null) {
+				juliaCoordinator.run();
+			}
 			if (!julia) {
 				states = renderOrbit(point);
 				redrawOrbit = true;
@@ -439,10 +502,10 @@ public class MandelbrotRenderPane extends BorderPane {
 				RendererCoordinator coordinator = coordinators[i];
 				if (coordinator != null) {
 					RendererView view = new RendererView();
-					view .setTraslation(new DoubleVector4D(traslation));
+					view.setTraslation(new DoubleVector4D(traslation));
 					view.setRotation(new DoubleVector4D(rotation));
 					view.setScale(new DoubleVector4D(scale));
-					view.setState(new IntegerVector4D(0, 0, 0, 0));
+					view.setState(new IntegerVector4D(0, 0, continuous ? 1 : 0, 0));
 					view.setJulia(julia);
 					view.setPoint(new Number(point));
 					coordinator.setView(view);
@@ -450,6 +513,25 @@ public class MandelbrotRenderPane extends BorderPane {
 			}
 			startCoordinators();
 		} else {
+			if (juliaCoordinator != null) {
+				juliaCoordinator.abort();
+			}
+			if (juliaCoordinator != null) {
+				juliaCoordinator.waitFor();
+			}
+			if (juliaCoordinator != null) {
+				RendererView view = new RendererView();
+				view.setTraslation(new DoubleVector4D(new double[] { 0, 0, 1, 0 }));
+				view.setRotation(new DoubleVector4D(new double[] { 0, 0, 0, 0 }));
+				view.setScale(new DoubleVector4D(new double[] { 1, 1, 1, 1 }));
+				view.setState(new IntegerVector4D(0, 0, continuous ? 1 : 0, 0));
+				view.setJulia(true);
+				view.setPoint(new Number(point));
+				juliaCoordinator.setView(view);
+			}
+			if (juliaCoordinator != null) {
+				juliaCoordinator.run();
+			}
 			states = renderOrbit(point);
 			redrawOrbit = true;
 			logger.info("Orbit: point = " + Arrays.toString(point) + ", length = " + states.size());
@@ -457,13 +539,19 @@ public class MandelbrotRenderPane extends BorderPane {
 	}
 
 	private void updateFractalView(boolean continuous) {
-		abortCoordinators();
-		joinCoordinators();
 		double[] traslation = getMandelbrotSession().getView().getTraslation();
 		double[] rotation = getMandelbrotSession().getView().getRotation();
 		double[] scale = getMandelbrotSession().getView().getScale();
 		double[] point = getMandelbrotSession().getView().getPoint();
 		boolean julia = getMandelbrotSession().getView().isJulia();
+		abortCoordinators();
+		if (!julia && juliaCoordinator != null) {
+			juliaCoordinator.abort();
+		}
+		joinCoordinators();
+		if (!julia && juliaCoordinator != null) {
+			juliaCoordinator.waitFor();
+		}
 		for (int i = 0; i < coordinators.length; i++) {
 			RendererCoordinator coordinator = coordinators[i];
 			if (coordinator != null) {
@@ -477,7 +565,20 @@ public class MandelbrotRenderPane extends BorderPane {
 				coordinator.setView(view);
 			}
 		}
+		if (!julia && juliaCoordinator != null) {
+			RendererView view = new RendererView();
+			view.setTraslation(new DoubleVector4D(new double[] { 0, 0, 1, 0 }));
+			view.setRotation(new DoubleVector4D(new double[] { 0, 0, 0, 0 }));
+			view.setScale(new DoubleVector4D(new double[] { 1, 1, 1, 1 }));
+			view.setState(new IntegerVector4D(0, 0, continuous ? 1 : 0, 0));
+			view.setJulia(true);
+			view.setPoint(new Number(point));
+			juliaCoordinator.setView(view);
+		}
 		startCoordinators();
+		if (!julia && juliaCoordinator != null) {
+			juliaCoordinator.run();
+		}
 		redrawOrbit = true;
 	}
 
@@ -534,6 +635,16 @@ public class MandelbrotRenderPane extends BorderPane {
 		}
 	}
 
+	private void redrawIfJuliaPixelsChanged(Canvas canvas) {
+		if (!getMandelbrotSession().getView().isJulia() && juliaCoordinator != null && juliaCoordinator.isPixelsChanged()) {
+			RenderGraphicsContext gc = renderFactory.createGraphicsContext(canvas.getGraphicsContext2D());
+			double dw = canvas.getWidth();
+			double dh = canvas.getHeight();
+			gc.clearRect(0, 0, (int)dw, (int)dh);
+			juliaCoordinator.drawImage(gc, 10, 10, 200, 200);
+		}
+	}
+
 	protected void redrawIfOrbitChanged(Canvas canvas) {
 		if (redrawOrbit) {
 			redrawOrbit = false;
@@ -553,7 +664,7 @@ public class MandelbrotRenderPane extends BorderPane {
 				gc.setStroke(renderFactory.createColor(1, 0, 0, 1));
 				Number[] state = states.get(0);
 				double zx = state[0].r();
-				double zy = -state[0].i();
+				double zy = state[0].i();
 				double cx = dw / 2;
 				double cy = dh / 2;
 				double px = (zx - tx - center.r()) / (tz * size.r());
@@ -567,7 +678,7 @@ public class MandelbrotRenderPane extends BorderPane {
 				for (int i = 1; i < states.size(); i++) {
 					state = states.get(i);
 					zx = state[0].r();
-					zy = -state[0].i();
+					zy = state[0].i();
 					px = (zx - tx - center.r()) / (tz * size.r());
 					py = (zy - ty - center.i()) / (tz * size.r());
 					qx = Math.cos(a) * px + Math.sin(a) * py;
@@ -619,6 +730,11 @@ public class MandelbrotRenderPane extends BorderPane {
 		ExportSession exportSession = new ExportSession("Mandelbrot", data, file, tmpFile, rendererSize, 200, encoder);
 		logger.info("Export session created: " + exportSession.getSessionId());
 		return exportSession;
+	}
+
+	private void dispose() {
+		disposeCoordinators();
+		disposeJuliaCoordinator();
 	}
 
 	private interface Tool {
@@ -801,14 +917,14 @@ public class MandelbrotRenderPane extends BorderPane {
 				if (!getMandelbrotSession().getView().isJulia()) {
 					double[] t = getMandelbrotSession().getView().getTraslation();
 					double[] r = getMandelbrotSession().getView().getRotation();
-					double x = +t[0];
-					double y = -t[1];
+					double x = t[0];
+					double y = t[1];
 					double z = t[2];
 					double a = r[2] * Math.PI / 180;
 					Number size = coordinators[0].getInitialSize();
 					Number center = coordinators[0].getInitialCenter();
-					x += center.r() + z * size.r() * (Math.cos(a) * +x1 + Math.sin(a) * -y1);
-					y += center.i() + z * size.i() * (Math.cos(a) * -y1 - Math.sin(a) * +x1);
+					x += center.r() + z * size.r() * (Math.cos(a) * x1 + Math.sin(a) * y1);
+					y += center.i() + z * size.i() * (Math.cos(a) * y1 - Math.sin(a) * x1);
 					getMandelbrotSession().setPoint(new double[] { x, y }, pressed);
 				}
 				changed = false;

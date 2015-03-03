@@ -44,4 +44,6 @@ public interface RenderGraphicsContext {
 	public void restore();
 
 	public void setClip(int x, int y, int width, int height);
+
+	public void setAlpha(double alpha);
 }

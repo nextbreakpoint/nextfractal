@@ -1,5 +1,6 @@
 package com.nextbreakpoint.nextfractal.render.java2D;
 
+import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Shape;
@@ -157,5 +158,10 @@ public class Java2DRenderGraphicsContext implements RenderGraphicsContext {
 	@Override
 	public void lineTo(int x, int y) {
 		shape.lineTo(x, y);
+	}
+
+	@Override
+	public void setAlpha(double alpha) {
+		g2d.setComposite(AlphaComposite.SrcOver.derive((float)alpha));
 	}
 }

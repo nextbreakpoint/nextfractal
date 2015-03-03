@@ -42,6 +42,8 @@ import com.nextbreakpoint.nextfractal.render.RenderGraphicsContext;
 public class RendererCoordinator implements RendererDelegate {
 	public static final String KEY_TYPE = "TYPE";
 	public static final Integer VALUE_REALTIME = 1;
+	public static final String KEY_PROGRESS = "PROGRESS";
+	public static final Integer VALUE_SINGLE_PASS = 1;
 	private final HashMap<String, Integer> hints = new HashMap<>();
 	private final ThreadFactory threadFactory;
 	private final RenderFactory renderFactory;
@@ -61,6 +63,9 @@ public class RendererCoordinator implements RendererDelegate {
 		this.hints.putAll(hints);
 		renderer = createRenderer(tile);
 		renderer.setRendererDelegate(this);
+		if (hints.get(KEY_PROGRESS) != null && hints.get(KEY_PROGRESS) == VALUE_SINGLE_PASS) {
+			renderer.setSinglePass(true);
+		}
 	}
 
 	/**
