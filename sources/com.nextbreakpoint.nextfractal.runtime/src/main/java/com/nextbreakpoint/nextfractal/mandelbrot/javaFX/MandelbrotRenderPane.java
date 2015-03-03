@@ -396,13 +396,15 @@ public class MandelbrotRenderPane extends BorderPane {
 
 	private void toggleFractalJulia(Canvas juliaCanvas) {
 		if (getMandelbrotSession().getView().isJulia()) {
-			juliaCanvas.setVisible(true);
+			currentTool = new ZoomTool();
+			juliaCanvas.setVisible(false);
 //			orbitCanvas.setVisible(!hideOrbit);
 			MandelbrotView oldView = popView();
 			pushView();
 			MandelbrotView view = new MandelbrotView(oldView != null ? oldView.getTraslation() : new double[] { 0, 0, 1, 0 }, oldView != null ? oldView.getRotation() : new double[] { 0, 0, 0, 0 }, oldView != null ? oldView.getScale() : new double[] { 1, 1, 1, 1 }, getMandelbrotSession().getView().getPoint(), false);
 			getMandelbrotSession().setView(view, false);
 		} else {
+			currentTool = new ZoomTool();
 			juliaCanvas.setVisible(false);
 //			orbitCanvas.setVisible(!hideOrbit);
 			MandelbrotView oldView = popView();
