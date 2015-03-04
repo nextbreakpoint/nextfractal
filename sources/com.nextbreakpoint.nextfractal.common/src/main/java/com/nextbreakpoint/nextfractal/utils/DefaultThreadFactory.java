@@ -23,26 +23,39 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.encoder;
+package com.nextbreakpoint.nextfractal.utils;
+
+import java.util.concurrent.ThreadFactory;
 
 /**
  * @author Andrea Medeghini
  */
-public class MPEG4VideoEncoder extends AbstractVideoEncoder {
-	protected String getFormatName() {
-		return "mp4";
+public class DefaultThreadFactory implements ThreadFactory {
+	private final boolean isDaemon;
+	private final int priority;
+	private final String name;
+	private int ordinal;
+
+	/**
+	 * @param name
+	 * @param isDeamon
+	 * @param priority
+	 */
+	public DefaultThreadFactory(final String name, final boolean isDeamon, final int priority) {
+		this.name = name;
+		isDaemon = isDeamon;
+		this.priority = priority;
 	}
 
-	public String getSuffix() {
-		return ".mp4";
-	}
-
-	public boolean isAlphaSupported() {
-		return false;
-	}
-
+	/**
+	 * @see java.util.concurrent.ThreadFactory#newThread(java.lang.Runnable)
+	 */
 	@Override
-	public String getId() {
-		return "MPEG4";
+	public Thread newThread(final Runnable r) {
+		final Thread thread = new Thread(r);
+		thread.setPriority(priority);
+		thread.setDaemon(isDaemon);
+		thread.setName(name + "-" + (ordinal++));
+		return thread;
 	}
 }

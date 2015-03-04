@@ -23,26 +23,26 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.encoder;
+package com.nextbreakpoint.nextfractal.network;
 
 /**
  * @author Andrea Medeghini
  */
-public class MPEG4VideoEncoder extends AbstractVideoEncoder {
-	protected String getFormatName() {
-		return "mp4";
-	}
+public interface ServiceEndpoint {
+	/**
+	 * @param listener
+	 * @return
+	 * @throws ServiceException
+	 */
+	public ServiceSession createSession(SessionDelegate listener) throws ServiceException;
 
-	public String getSuffix() {
-		return ".mp4";
-	}
+	/**
+	 * 
+	 */
+	public void invalidate();
 
-	public boolean isAlphaSupported() {
-		return false;
-	}
-
-	@Override
-	public String getId() {
-		return "MPEG4";
-	}
+	/**
+	 * @return the invalidated
+	 */
+	public boolean isInvalidated();
 }

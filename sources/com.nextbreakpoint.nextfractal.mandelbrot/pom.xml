@@ -2,7 +2,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.nextbreakpoint.nextfractal</groupId>
-	<artifactId>com.nextbreakpoint.nextfractal.runtime</artifactId>
+	<artifactId>com.nextbreakpoint.nextfractal.mandelbrot</artifactId>
 	<version>7.0.0</version>
 	<build>
 		<plugins>
@@ -16,19 +16,18 @@
 				</configuration>
 			</plugin>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<version>2.4</version>
+				<groupId>org.antlr</groupId>
+				<artifactId>antlr4-maven-plugin</artifactId>
+				<version>4.3</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>antlr4</goal>
+						</goals>
+					</execution>
+				</executions>
 				<configuration>
-					<archive>
-						<manifest>
-							<mainClass>com.nextbreakpoint.nextfractal.Main</mainClass>
-							<!-- 
-							<addClasspath>true</addClasspath>
-							<classpathPrefix>jars/</classpathPrefix>
-			 				 -->
-						</manifest>
-					</archive>
+					<outputDirectory>src/main/antlr4</outputDirectory>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -58,24 +57,9 @@
 			<version>7.0.0</version>
 		</dependency>
 		<dependency>
-			<groupId>com.nextbreakpoint.nextfractal</groupId>
-			<artifactId>com.nextbreakpoint.nextfractal.mandelbrot</artifactId>
-			<version>7.0.0</version>
-		</dependency>
-		<dependency>
-			<groupId>com.nextbreakpoint.nextfractal</groupId>
-			<artifactId>com.nextbreakpoint.nextfractal.contextfree</artifactId>
-			<version>1.0.0</version>
-		</dependency>
-		<dependency>
-			<groupId>net.sf.ffmpeg4java</groupId>
-			<artifactId>net.sf.ffmpeg4java</artifactId>
-			<version>0.1.2</version>
-		</dependency>
-		<dependency>
-			<groupId>net.sf.freeimage4java</groupId>
-			<artifactId>net.sf.freeimage4java</artifactId>
-			<version>0.1.1</version>
+			<groupId>org.antlr</groupId>
+			<artifactId>antlr4-runtime</artifactId>
+			<version>4.3</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>

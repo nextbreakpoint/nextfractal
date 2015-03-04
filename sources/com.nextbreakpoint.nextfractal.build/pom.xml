@@ -1,13 +1,16 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.nextbreakpoint</groupId>
+	<groupId>com.nextbreakpoint.nextfractal</groupId>
 	<artifactId>com.nextbreakpoint.nextfractal.build</artifactId>
 	<version>7.0.0</version>
 	<name>com.nextbreakpoint.nextfractal.build</name>
 	<packaging>pom</packaging>
 	<modules>
+		<module>../com.nextbreakpoint.nextfractal.common</module>
 		<module>../com.nextbreakpoint.nextfractal.runtime</module>
+		<module>../com.nextbreakpoint.nextfractal.mandelbrot</module>
+		<module>../com.nextbreakpoint.nextfractal.contextfree</module>
 	</modules>
 	<build>
 		<plugins>
@@ -32,7 +35,7 @@
 							<goal>copy-dependencies</goal>
 						</goals>
 						<configuration>
-							<includeGroupIds>com.nextbreakpoint,net.sf.ffmpeg4java,net.sf.freeimage4java,org.antlr,org.apache.derby,org.freemarker</includeGroupIds>
+							<includeGroupIds>com.nextbreakpoint.nextfractal,net.sf.ffmpeg4java,net.sf.freeimage4java,org.antlr,org.apache.derby,org.freemarker</includeGroupIds>
 							<excludeArtifactIds>net.sf.ffmpeg4java.native,net.sf.freeimage4java.native</excludeArtifactIds>
 							<outputDirectory>${project.build.directory}/jars/</outputDirectory>
 						</configuration>
@@ -96,9 +99,24 @@
 	</build>
 	<dependencies>
 		<dependency>
-			<groupId>com.nextbreakpoint</groupId>
+			<groupId>com.nextbreakpoint.nextfractal</groupId>
+			<artifactId>com.nextbreakpoint.nextfractal.common</artifactId>
+			<version>7.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.nextbreakpoint.nextfractal</groupId>
 			<artifactId>com.nextbreakpoint.nextfractal.runtime</artifactId>
 			<version>7.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.nextbreakpoint.nextfractal</groupId>
+			<artifactId>com.nextbreakpoint.nextfractal.mandelbrot</artifactId>
+			<version>7.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.nextbreakpoint.nextfractal</groupId>
+			<artifactId>com.nextbreakpoint.nextfractal.contextfree</artifactId>
+			<version>1.0.0</version>
 		</dependency>
 		<dependency>
 			<groupId>net.sf.ffmpeg4java</groupId>

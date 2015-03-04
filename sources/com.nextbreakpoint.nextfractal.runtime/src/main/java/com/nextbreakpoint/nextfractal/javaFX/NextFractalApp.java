@@ -16,15 +16,16 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
-import com.nextbreakpoint.nextfractal.ExportService;
-import com.nextbreakpoint.nextfractal.ExportSession;
 import com.nextbreakpoint.nextfractal.FractalFactory;
-import com.nextbreakpoint.nextfractal.FractalSession;
-import com.nextbreakpoint.nextfractal.RenderService;
-import com.nextbreakpoint.nextfractal.SessionListener;
-import com.nextbreakpoint.nextfractal.SimpleRenderService;
-import com.nextbreakpoint.nextfractal.core.DefaultThreadFactory;
-import com.nextbreakpoint.nextfractal.render.javaFX.JavaFXRenderFactory;
+import com.nextbreakpoint.nextfractal.export.ExportRenderer;
+import com.nextbreakpoint.nextfractal.export.ExportService;
+import com.nextbreakpoint.nextfractal.export.ExportSession;
+import com.nextbreakpoint.nextfractal.export.SimpleExportRenderer;
+import com.nextbreakpoint.nextfractal.export.SimpleExportService;
+import com.nextbreakpoint.nextfractal.renderer.javaFX.JavaFXRendererFactory;
+import com.nextbreakpoint.nextfractal.session.Session;
+import com.nextbreakpoint.nextfractal.session.SessionListener;
+import com.nextbreakpoint.nextfractal.utils.DefaultThreadFactory;
 
 
 public class NextFractalApp extends Application {
@@ -68,10 +69,10 @@ public class NextFractalApp extends Application {
         root.getChildren().add(mainPane);
 		DefaultThreadFactory renderThreadFactory = new DefaultThreadFactory("NextFractalApp", true, Thread.MIN_PRIORITY + 1);
 		DefaultThreadFactory exportThreadFactory = new DefaultThreadFactory("NextFractalApp", true, Thread.MIN_PRIORITY + 0);
-		JavaFXRenderFactory renderFactory = new JavaFXRenderFactory();
-		RenderService renderService = new SimpleRenderService(renderThreadFactory, renderFactory);
-        ExportService exportService = new ExportService(exportThreadFactory, renderService, 200);
-        FractalSession session = createFractalSession(pluginId);
+		JavaFXRendererFactory renderFactory = new JavaFXRendererFactory();
+		ExportRenderer exportRenderer = new SimpleExportRenderer(renderThreadFactory, renderFactory);
+        ExportService exportService = new SimpleExportService(exportThreadFactory, exportRenderer, 200);
+        Session session = createFractalSession(pluginId);
         session.setExportService(exportService);
         if (session != null) {
         	Pane renderPane = createRenderPane(session, pluginId, width, height);
@@ -120,33 +121,33 @@ public class NextFractalApp extends Application {
 //		});
 		session.addSessionListener(new SessionListener() {
 			@Override
-			public void viewChanged(FractalSession session, boolean continuous) {
+			public void viewChanged(Session session, boolean continuous) {
 			}
 			
 			@Override
-			public void pointChanged(FractalSession sessio, boolean continuousn) {
+			public void pointChanged(Session sessio, boolean continuousn) {
 			}
 
 			@Override
-			public void dataChanged(FractalSession session) {
+			public void dataChanged(Session session) {
 			}
 			
 			@Override
-			public void terminate(FractalSession session) {
+			public void terminate(Session session) {
 				exportService.shutdown();
 			}
 			
 			@Override
-			public void sessionAdded(FractalSession session, ExportSession exportSession) {
+			public void sessionAdded(Session session, ExportSession exportSession) {
 			}
 			
 			@Override
-			public void sessionRemoved(FractalSession session, ExportSession exportSession) {
+			public void sessionRemoved(Session session, ExportSession exportSession) {
 			}
 		});
     }
 
-	private Pane createEditorPane(FractalSession session, String pluginId) {
+	private Pane createEditorPane(Session session, String pluginId) {
 		final ServiceLoader<? extends FractalFactory> plugins = ServiceLoader.load(FractalFactory.class);
 		for (FractalFactory plugin : plugins) {
 			try {
@@ -159,7 +160,7 @@ public class NextFractalApp extends Application {
 		return null;
 	}
 
-	private Pane createRenderPane(FractalSession session, String pluginId, int width, int height) {
+	private Pane createRenderPane(Session session, String pluginId, int width, int height) {
 		final ServiceLoader<? extends FractalFactory> plugins = ServiceLoader.load(FractalFactory.class);
 		for (FractalFactory plugin : plugins) {
 			try {
@@ -172,7 +173,7 @@ public class NextFractalApp extends Application {
 		return null;
 	}
 
-	private FractalSession createFractalSession(String pluginId) {
+	private Session createFractalSession(String pluginId) {
 		final ServiceLoader<? extends FractalFactory> plugins = ServiceLoader.load(FractalFactory.class);
 		for (FractalFactory plugin : plugins) {
 			try {

@@ -40,4 +40,9 @@ public class PNGImageEncoder extends AbstractImageEncoder {
 	public boolean isAlphaSupported() {
 		return true;
 	}
+
+	@Override
+	public String getId() {
+		return "PNG";
+	}
 }
