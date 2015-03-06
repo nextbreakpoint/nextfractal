@@ -53,7 +53,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.nextbreakpoint.nextfractal</groupId>
-			<artifactId>com.nextbreakpoint.nextfractal.common</artifactId>
+			<artifactId>com.nextbreakpoint.nextfractal.core</artifactId>
 			<version>7.0.0</version>
 		</dependency>
 		<dependency>

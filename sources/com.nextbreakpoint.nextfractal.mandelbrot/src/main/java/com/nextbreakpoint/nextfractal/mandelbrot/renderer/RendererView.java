@@ -1,9 +1,9 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.renderer;
 
+import com.nextbreakpoint.nextfractal.core.utils.DoubleVector4D;
+import com.nextbreakpoint.nextfractal.core.utils.IntegerVector4D;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotView;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
-import com.nextbreakpoint.nextfractal.utils.DoubleVector4D;
-import com.nextbreakpoint.nextfractal.utils.IntegerVector4D;
 
 /**
  * @author Andrea Medeghini

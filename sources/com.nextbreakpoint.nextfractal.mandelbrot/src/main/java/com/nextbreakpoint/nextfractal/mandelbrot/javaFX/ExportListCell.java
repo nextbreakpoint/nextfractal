@@ -11,10 +11,10 @@ import javafx.scene.image.PixelFormat;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.BorderPane;
 
-import com.nextbreakpoint.nextfractal.export.ExportSession;
+import com.nextbreakpoint.nextfractal.core.export.ExportSession;
+import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
+import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotData;
-import com.nextbreakpoint.nextfractal.renderer.RendererSize;
-import com.nextbreakpoint.nextfractal.renderer.RendererTile;
 
 public class ExportListCell extends ListCell<ExportSession> {
 	private static final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

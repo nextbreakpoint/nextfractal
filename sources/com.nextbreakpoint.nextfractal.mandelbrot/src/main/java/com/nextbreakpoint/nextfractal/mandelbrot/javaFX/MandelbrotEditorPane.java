@@ -22,18 +22,18 @@ import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 import javafx.util.Callback;
 
-import com.nextbreakpoint.nextfractal.export.ExportSession;
+import com.nextbreakpoint.nextfractal.core.export.ExportSession;
+import com.nextbreakpoint.nextfractal.core.renderer.RendererPoint;
+import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
+import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
+import com.nextbreakpoint.nextfractal.core.renderer.javaFX.JavaFXRendererFactory;
+import com.nextbreakpoint.nextfractal.core.session.Session;
+import com.nextbreakpoint.nextfractal.core.session.SessionListener;
+import com.nextbreakpoint.nextfractal.core.utils.DefaultThreadFactory;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotData;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotDataStore;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotImageGenerator;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotSession;
-import com.nextbreakpoint.nextfractal.renderer.RendererPoint;
-import com.nextbreakpoint.nextfractal.renderer.RendererSize;
-import com.nextbreakpoint.nextfractal.renderer.RendererTile;
-import com.nextbreakpoint.nextfractal.renderer.javaFX.JavaFXRendererFactory;
-import com.nextbreakpoint.nextfractal.session.Session;
-import com.nextbreakpoint.nextfractal.session.SessionListener;
-import com.nextbreakpoint.nextfractal.utils.DefaultThreadFactory;
 
 public class MandelbrotEditorPane extends BorderPane {
 	private static final Logger logger = Logger.getLogger(MandelbrotEditorPane.class.getName());

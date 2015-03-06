@@ -3,7 +3,13 @@ package com.nextbreakpoint.nextfractal.mandelbrot;
 import java.nio.IntBuffer;
 import java.util.concurrent.ThreadFactory;
 
-import com.nextbreakpoint.nextfractal.ImageGenerator;
+import com.nextbreakpoint.nextfractal.core.ImageGenerator;
+import com.nextbreakpoint.nextfractal.core.renderer.RendererFactory;
+import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
+import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
+import com.nextbreakpoint.nextfractal.core.utils.Condition;
+import com.nextbreakpoint.nextfractal.core.utils.DoubleVector4D;
+import com.nextbreakpoint.nextfractal.core.utils.IntegerVector4D;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.Compiler;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerBuilder;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerReport;
@@ -12,12 +18,6 @@ import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Orbit;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.Renderer;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererView;
-import com.nextbreakpoint.nextfractal.renderer.RendererFactory;
-import com.nextbreakpoint.nextfractal.renderer.RendererSize;
-import com.nextbreakpoint.nextfractal.renderer.RendererTile;
-import com.nextbreakpoint.nextfractal.utils.Condition;
-import com.nextbreakpoint.nextfractal.utils.DoubleVector4D;
-import com.nextbreakpoint.nextfractal.utils.IntegerVector4D;
 
 public class MandelbrotImageGenerator implements ImageGenerator {
 	private Renderer renderer;

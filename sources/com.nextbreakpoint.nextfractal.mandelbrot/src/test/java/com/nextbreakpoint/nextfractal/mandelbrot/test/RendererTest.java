@@ -31,17 +31,17 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.nextbreakpoint.nextfractal.core.renderer.RendererFactory;
+import com.nextbreakpoint.nextfractal.core.renderer.RendererPoint;
+import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
+import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
+import com.nextbreakpoint.nextfractal.core.renderer.javaFX.JavaFXRendererFactory;
+import com.nextbreakpoint.nextfractal.core.utils.DefaultThreadFactory;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Color;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Orbit;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Scope;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.Renderer;
-import com.nextbreakpoint.nextfractal.renderer.RendererFactory;
-import com.nextbreakpoint.nextfractal.renderer.RendererPoint;
-import com.nextbreakpoint.nextfractal.renderer.RendererSize;
-import com.nextbreakpoint.nextfractal.renderer.RendererTile;
-import com.nextbreakpoint.nextfractal.renderer.javaFX.JavaFXRendererFactory;
-import com.nextbreakpoint.nextfractal.utils.DefaultThreadFactory;
 
 public class RendererTest {
 	@Test

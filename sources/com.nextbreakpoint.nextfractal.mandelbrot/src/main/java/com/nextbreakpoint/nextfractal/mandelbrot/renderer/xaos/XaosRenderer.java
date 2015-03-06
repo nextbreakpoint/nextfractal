@@ -34,15 +34,15 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
+import com.nextbreakpoint.nextfractal.core.renderer.RendererFactory;
+import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
+import com.nextbreakpoint.nextfractal.core.utils.Colors;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.MutableNumber;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.Renderer;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererData;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererState;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.strategy.JuliaRendererStrategy;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.strategy.MandelbrotRendererStrategy;
-import com.nextbreakpoint.nextfractal.renderer.RendererFactory;
-import com.nextbreakpoint.nextfractal.renderer.RendererTile;
-import com.nextbreakpoint.nextfractal.utils.Colors;
 
 /**
  * @author Andrea Medeghini

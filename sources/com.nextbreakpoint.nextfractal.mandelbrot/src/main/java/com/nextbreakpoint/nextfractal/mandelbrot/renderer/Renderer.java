@@ -34,20 +34,20 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
+import com.nextbreakpoint.nextfractal.core.renderer.RendererAffine;
+import com.nextbreakpoint.nextfractal.core.renderer.RendererFactory;
+import com.nextbreakpoint.nextfractal.core.renderer.RendererGraphicsContext;
+import com.nextbreakpoint.nextfractal.core.renderer.RendererPoint;
+import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
+import com.nextbreakpoint.nextfractal.core.renderer.RendererSurface;
+import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
+import com.nextbreakpoint.nextfractal.core.utils.Condition;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Color;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.MutableNumber;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Orbit;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.strategy.JuliaRendererStrategy;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.strategy.MandelbrotRendererStrategy;
-import com.nextbreakpoint.nextfractal.renderer.RendererAffine;
-import com.nextbreakpoint.nextfractal.renderer.RendererFactory;
-import com.nextbreakpoint.nextfractal.renderer.RendererGraphicsContext;
-import com.nextbreakpoint.nextfractal.renderer.RendererPoint;
-import com.nextbreakpoint.nextfractal.renderer.RendererSize;
-import com.nextbreakpoint.nextfractal.renderer.RendererSurface;
-import com.nextbreakpoint.nextfractal.renderer.RendererTile;
-import com.nextbreakpoint.nextfractal.utils.Condition;
 
 /**
  * @author Andrea Medeghini

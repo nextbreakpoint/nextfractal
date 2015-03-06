@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import com.nextbreakpoint.nextfractal.utils.DateAdapter;
+import com.nextbreakpoint.nextfractal.core.utils.DateAdapter;
 
 @XmlRootElement(name="mandelbrot")
 public class MandelbrotData {

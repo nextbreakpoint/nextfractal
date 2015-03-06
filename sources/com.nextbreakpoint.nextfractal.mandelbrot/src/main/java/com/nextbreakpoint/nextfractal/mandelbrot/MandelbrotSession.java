@@ -1,6 +1,6 @@
 package com.nextbreakpoint.nextfractal.mandelbrot;
 
-import com.nextbreakpoint.nextfractal.session.Session;
+import com.nextbreakpoint.nextfractal.core.session.Session;
 
 public class MandelbrotSession extends Session {
 	private MandelbrotData data = new MandelbrotData();

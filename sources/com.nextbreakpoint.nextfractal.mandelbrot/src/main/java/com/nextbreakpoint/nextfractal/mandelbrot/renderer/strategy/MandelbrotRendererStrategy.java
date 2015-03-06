@@ -1,10 +1,10 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.renderer.strategy;
 
+import com.nextbreakpoint.nextfractal.core.utils.Colors;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererFractal;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererState;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererStrategy;
-import com.nextbreakpoint.nextfractal.utils.Colors;
 
 public class MandelbrotRendererStrategy implements RendererStrategy {
 		private RendererFractal rendererFractal;
@@ -14,7 +14,7 @@ public class MandelbrotRendererStrategy implements RendererStrategy {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererStrategy.renderer.AbstractMandelbrotRenderer.RenderingStrategy#prepare()
+		 * @see com.nextbreakpoint.nextfractal.core.mandelbrot.renderer.RendererStrategy.renderer.AbstractMandelbrotRenderer.RenderingStrategy#prepare()
 		 */
 		@Override
 		public void prepare() {
@@ -22,7 +22,7 @@ public class MandelbrotRendererStrategy implements RendererStrategy {
 		}
 
 		/**
-		 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererStrategy.renderer.AbstractMandelbrotRenderer.RenderingStrategy#renderPoint(com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererState.renderer.RenderedPoint)
+		 * @see com.nextbreakpoint.nextfractal.core.mandelbrot.renderer.RendererStrategy.renderer.AbstractMandelbrotRenderer.RenderingStrategy#renderPoint(com.nextbreakpoint.nextfractal.core.mandelbrot.renderer.RendererState.renderer.RenderedPoint)
 		 */
 		@Override
 		public int renderPoint(RendererState p, Number x, Number w) {
