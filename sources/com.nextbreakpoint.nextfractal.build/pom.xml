@@ -23,13 +23,14 @@
 					<target>1.8</target>
 				</configuration>
 			</plugin>
+			<!-- 
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<version>2.5.3</version>
 				<configuration>
-					<descriptorRefs>
-						<descriptorRef>jar-with-dependencies</descriptorRef>
-					</descriptorRefs>
+					<descriptors>
+						<descriptor>assembly.xml</descriptor>
+					</descriptors>
 					<archive>
 						<manifest>
 							<mainClass>com.nextbreakpoint.nextfractal.runtime.javaFX.NextFractalApp</mainClass>
@@ -46,6 +47,7 @@
 					</execution>
 				</executions>
 			</plugin>
+			 -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
@@ -78,7 +80,7 @@
 									<classifier>${build.type}</classifier>
 									<type>jar</type>
 									<overWrite>true</overWrite>
-									<outputDirectory>${project.build.directory}/lib/${os.type}/${arch.type}</outputDirectory>
+									<outputDirectory>${project.build.directory}/libs/${os.type}/${arch.type}</outputDirectory>
 								</artifactItem>
 								<artifactItem>
 									<groupId>net.sf.freeimage4java</groupId>
@@ -87,7 +89,7 @@
 									<classifier>${build.type}</classifier>
 									<type>jar</type>
 									<overWrite>true</overWrite>
-									<outputDirectory>${project.build.directory}/lib/${os.type}/${arch.type}</outputDirectory>
+									<outputDirectory>${project.build.directory}/libs/${os.type}/${arch.type}</outputDirectory>
 								</artifactItem>
 							</artifactItems>
 						</configuration>

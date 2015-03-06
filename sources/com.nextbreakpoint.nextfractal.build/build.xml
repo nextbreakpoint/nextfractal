@@ -38,18 +38,23 @@
 		<sequential>
 			<maven basedir="@{basedir}" options="-P @{os}_@{arch}" goal="install" resultproperty="maven.build.result" />
 			<delete dir="@{basedir}/dist/@{os}_@{arch}" />
-			<copy failonerror="true" todir="@{basedir}/dist/@{os}_@{arch}" overwrite="true">
-				<fileset dir="@{basedir}/target/lib/@{os}/@{arch}">
+			<mkdir dir="@{basedir}/dist/@{os}_@{arch}/NextFractal"/>
+			<copy failonerror="true" todir="@{basedir}/dist/@{os}_@{arch}/NextFractal" overwrite="true">
+				<fileset dir="@{basedir}/target/libs/@{os}/@{arch}">
 					<include name="*" />
 				</fileset>
 			</copy>
-			<copy failonerror="true" todir="@{basedir}/dist/@{os}_@{arch}" overwrite="true">
-				<fileset dir="@{basedir}/target">
-					<include name="*.jar" />
+			<copy failonerror="true" todir="@{basedir}/dist/@{os}_@{arch}/NextFractal" overwrite="true">
+				<fileset dir="@{basedir}/target/jars">
+					<include name="*" />
 				</fileset>
+			</copy>
+			<copy failonerror="true" todir="@{basedir}/dist/@{os}_@{arch}/NextFractal" overwrite="true">
 				<fileset dir="@{basedir}/resources/exe/@{os}">
 					<include name="**/*" />
 				</fileset>
+			</copy>
+			<copy failonerror="true" todir="@{basedir}/dist/@{os}_@{arch}" overwrite="true">
 				<fileset dir="@{basedir}/resources">
 					<include name="thirdparties/**/*" />
 				</fileset>
@@ -71,15 +76,15 @@
 		<element name="args" implicit="true" optional="true" />
 		<sequential>
 			<build basedir="@{basedir}" os="@{os}" arch="@{arch}" version="@{version}" resultproperty="build.result" />
-			<move failonerror="true" todir="@{basedir}/dist/@{os}_@{arch}/NextFractal.app/Contents">
-				<fileset dir="@{basedir}/dist/@{os}_@{arch}">
+			<move failonerror="true" todir="@{basedir}/dist/@{os}_@{arch}/NextFractal/NextFractal.app/Contents/MacOS">
+				<fileset dir="@{basedir}/dist/@{os}_@{arch}/NextFractal">
 					<filename name="*.jnilib"/>
 				</fileset>
-				<fileset dir="@{basedir}/dist/@{os}_@{arch}">
+				<fileset dir="@{basedir}/dist/@{os}_@{arch}/NextFractal">
 					<filename name="*.jar"/>
 				</fileset>
 			</move>
-			<chmod failonerror="true" perm="aug+x" file="@{basedir}/dist/@{os}_@{arch}/NextFractal.app/Contents/MacOS/Application Stub" />
+			<chmod failonerror="true" perm="aug+x" file="@{basedir}/dist/@{os}_@{arch}/NextFractal/NextFractal.app/Contents/MacOS/Application Stub" />
 		</sequential>
 	</macrodef>
 	<macrodef name="makedmg">
@@ -135,7 +140,7 @@
 		<element name="args" implicit="true" optional="true" />
 		<sequential>
 			<zip destfile="@{basedir}/dist/@{name}.native-@{version}-@{os}_@{arch}.jar">
-				<fileset dir="@{basedir}/resources/lib/@{name}/@{os}/@{arch}">
+				<fileset dir="@{basedir}/resources/libs/@{name}/@{os}/@{arch}">
 					<include name="**/*" />
 					<exclude name="**/.DS_store" />
 				</fileset>
