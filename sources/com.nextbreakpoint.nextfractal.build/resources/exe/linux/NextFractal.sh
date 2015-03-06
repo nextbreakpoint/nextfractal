@@ -1,1 +1,1 @@
-java -Djava.library.path=lib -Djava.ext.dirs=jars:plugins -jar jars/com.nextbreakpoint.nextfractal.main-6.2.0-jar
+java -Xmx1024m -Djava.util.logging.config=com.nextbreakpoint.nextfractal.runtime.LogConfig -Djava.library.path=lib -Djava.ext.dirs=jars:plugins -jar jars/com.nextbreakpoint.nextfractal.runtime-7.0.0-jar

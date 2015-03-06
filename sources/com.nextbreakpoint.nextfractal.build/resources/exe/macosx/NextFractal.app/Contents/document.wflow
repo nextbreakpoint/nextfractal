@@ -51,7 +51,7 @@
 				<key>ActionParameters</key>
 				<dict>
 					<key>source</key>
-					<string>tell application "Finder"	set currentFolder to parent of (path to me) as string	set currentFolder to POSIX path of currentFolder	do shell script "cd \"" &amp; currentFolder &amp; "\"; java -Xdock:name=NextFractal -Xdock:icon=NextFractal.app/Contents/NextFractal.png -Djava.library.path=lib -Djava.ext.dirs=jars:plugins -jar jars/com.nextbreakpoint.nextfractal.main-6.2.0.jar"end tell</string>
+					<string>tell application "Finder"	set currentFolder to parent of (path to me) as string	set currentFolder to POSIX path of currentFolder	do shell script "cd \"" &amp; currentFolder &amp; "\"; java -Xmx1024m -Xdock:name=NextFractal -Xdock:icon=NextFractal.app/Contents/NextFractal.png -Djava.util.logging.config=com.nextbreakpoint.nextfractal.runtime.LogConfig -Djava.library.path=lib -Djava.ext.dirs=jars:plugins -jar jars/com.nextbreakpoint.nextfractal.runtime-7.0.0.jar"end tell</string>
 				</dict>
 				<key>BundleIdentifier</key>
 				<string>com.apple.Automator.RunScript</string>
