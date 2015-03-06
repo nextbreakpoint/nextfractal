@@ -36,33 +36,50 @@
 		<attribute name="resultproperty" default="build.result" />
 		<element name="args" implicit="true" optional="true" />
 		<sequential>
-			<maven basedir="${basedir}" options="-P @{os}_@{arch}" goal="install" resultproperty="maven.build.result" />
-			<delete dir="${basedir}/dist/@{os}_@{arch}" />
-			<mkdir dir="${basedir}/dist/@{os}_@{arch}/plugins" />
-			<mkdir dir="${basedir}/dist/@{os}_@{arch}/jars" />
-			<mkdir dir="${basedir}/dist/@{os}_@{arch}/lib" />
-			<copy failonerror="true" todir="${basedir}/dist/@{os}_@{arch}/lib" overwrite="true">
-				<fileset dir="${basedir}/target/lib/@{os}/@{arch}">
+			<maven basedir="@{basedir}" options="-P @{os}_@{arch}" goal="install" resultproperty="maven.build.result" />
+			<delete dir="@{basedir}/dist/@{os}_@{arch}" />
+			<copy failonerror="true" todir="@{basedir}/dist/@{os}_@{arch}" overwrite="true">
+				<fileset dir="@{basedir}/target/lib/@{os}/@{arch}">
 					<include name="*" />
 				</fileset>
 			</copy>
-			<copy failonerror="true" todir="${basedir}/dist/@{os}_@{arch}" overwrite="true">
-				<fileset dir="${basedir}/target">
-					<include name="jars/*" />
+			<copy failonerror="true" todir="@{basedir}/dist/@{os}_@{arch}" overwrite="true">
+				<fileset dir="@{basedir}/target">
+					<include name="*.jar" />
 				</fileset>
-				<fileset dir="${basedir}/resources/exe/@{os}">
+				<fileset dir="@{basedir}/resources/exe/@{os}">
 					<include name="**/*" />
 				</fileset>
-				<fileset dir="${basedir}/resources">
+				<fileset dir="@{basedir}/resources">
 					<include name="thirdparties/**/*" />
 				</fileset>
-				<fileset dir="${basedir}/resources">
+				<fileset dir="@{basedir}/resources">
 					<include name="*.html" />
 				</fileset>
-				<fileset dir="${basedir}/resources">
+				<fileset dir="@{basedir}/resources">
 					<include name="*.txt" />
 				</fileset>
 			</copy>
+		</sequential>
+	</macrodef>
+	<macrodef name="buildosx">
+		<attribute name="os" />
+		<attribute name="arch" />
+		<attribute name="version" />
+		<attribute name="basedir" />
+		<attribute name="resultproperty" default="build.osx.result" />
+		<element name="args" implicit="true" optional="true" />
+		<sequential>
+			<build basedir="@{basedir}" os="@{os}" arch="@{arch}" version="@{version}" resultproperty="build.result" />
+			<move failonerror="true" todir="@{basedir}/dist/@{os}_@{arch}/NextFractal.app/Contents">
+				<fileset dir="@{basedir}/dist/@{os}_@{arch}">
+					<filename name="*.jnilib"/>
+				</fileset>
+				<fileset dir="@{basedir}/dist/@{os}_@{arch}">
+					<filename name="*.jar"/>
+				</fileset>
+			</move>
+			<chmod failonerror="true" perm="aug+x" file="@{basedir}/dist/@{os}_@{arch}/NextFractal.app/Contents/MacOS/Application Stub" />
 		</sequential>
 	</macrodef>
 	<macrodef name="makedmg">
@@ -73,23 +90,22 @@
 		<attribute name="resultproperty" default="makedmg.result" />
 		<element name="args" implicit="true" optional="true" />
 		<sequential>
-			<chmod failonerror="true" perm="aug+x" file="${basedir}/dist/@{os}_@{arch}/NextFractal.app/Contents/MacOS/Application Stub" />
 			<exec executable="find">
-				<arg value="${basedir}/dist/@{os}_@{arch}" />
+				<arg value="@{basedir}/dist/@{os}_@{arch}" />
 				<arg value="-name" />
 				<arg value=".DS_Store" />
 				<arg value='-delete' />
 			</exec>
-			<delete file="${basedir}/dist/nextfractal_@{os}_@{arch}_@{version}.dmg" />
+			<delete file="@{basedir}/dist/nextfractal_@{os}_@{arch}_@{version}.dmg" />
 			<exec executable="hdiutil">
 				<arg value="create" />
-				<arg value="${basedir}/dist/nextfractal_@{os}_@{arch}_@{version}.dmg" />
+				<arg value="@{basedir}/dist/nextfractal_@{os}_@{arch}_@{version}.dmg" />
 				<arg value="-volname" />
 				<arg value="NextFractal @{version}" />
 				<arg value="-fs" />
 				<arg value="HFS+" />
 				<arg value="-srcfolder" />
-				<arg value="${basedir}/dist/@{os}_@{arch}" />
+				<arg value="@{basedir}/dist/@{os}_@{arch}" />
 			</exec>
 		</sequential>
 	</macrodef>
@@ -101,8 +117,8 @@
 		<attribute name="resultproperty" default="makezip.result" />
 		<element name="args" implicit="true" optional="true" />
 		<sequential>
-			<zip destfile="${basedir}/dist/nextfractal_@{os}_@{arch}_@{version}.zip">
-				<fileset dir="${basedir}/dist/@{os}_@{arch}">
+			<zip destfile="@{basedir}/dist/nextfractal_@{os}_@{arch}_@{version}.zip">
+				<fileset dir="@{basedir}/dist/@{os}_@{arch}">
 					<include name="**/*" />
 					<exclude name="**/.DS_store" />
 				</fileset>
@@ -118,8 +134,8 @@
 		<attribute name="resultproperty" default="makelibjar.result" />
 		<element name="args" implicit="true" optional="true" />
 		<sequential>
-			<zip destfile="${basedir}/dist/@{name}.native-@{version}-@{os}_@{arch}.jar">
-				<fileset dir="${basedir}/resources/lib/@{name}/@{os}/@{arch}">
+			<zip destfile="@{basedir}/dist/@{name}.native-@{version}-@{os}_@{arch}.jar">
+				<fileset dir="@{basedir}/resources/lib/@{name}/@{os}/@{arch}">
 					<include name="**/*" />
 					<exclude name="**/.DS_store" />
 				</fileset>
@@ -133,7 +149,7 @@
 		<attribute name="resultproperty" default="installjar.result" />
 		<element name="args" implicit="true" optional="true" />
 		<sequential>
-			<maven basedir="${basedir}" options="-Dpackaging=jar -DgroupId=@{name} -DartifactId=@{name} -Dversion=@{version} -Dfile=${basedir}/dist/@{name}-@{version}.jar" goal="install:install-file" resultproperty="maven.installjar.result" />
+			<maven basedir="@{basedir}" options="-Dpackaging=jar -DgroupId=@{name} -DartifactId=@{name} -Dversion=@{version} -Dfile=@{basedir}/dist/@{name}-@{version}.jar" goal="install:install-file" resultproperty="maven.installjar.result" />
 		</sequential>
 	</macrodef>
 	<macrodef name="installlibjar">
@@ -145,7 +161,7 @@
 		<attribute name="resultproperty" default="installlibjar.result" />
 		<element name="args" implicit="true" optional="true" />
 		<sequential>
-			<maven basedir="${basedir}" options="-Dpackaging=jar -DgroupId=@{name} -DartifactId=@{name}.native -Dversion=@{version} -Dclassifier=@{os}_@{arch} -Dfile=${basedir}/dist/@{name}.native-@{version}-@{os}_@{arch}.jar" goal="install:install-file" resultproperty="maven.installlibjar.result" />
+			<maven basedir="@{basedir}" options="-Dpackaging=jar -DgroupId=@{name} -DartifactId=@{name}.native -Dversion=@{version} -Dclassifier=@{os}_@{arch} -Dfile=@{basedir}/dist/@{name}.native-@{version}-@{os}_@{arch}.jar" goal="install:install-file" resultproperty="maven.installlibjar.result" />
 		</sequential>
 	</macrodef>
 	<condition property="is_macosx">
@@ -153,7 +169,7 @@
 	</condition>
 	<target name="build-macosx-32bit" if="is_macosx">
 		<!-- osx 32bit -->
-		<build basedir="${basedir}" os="macosx" arch="x86" version="${nextfractal.version}" resultproperty="ant.build.result" />
+		<buildosx basedir="${basedir}" os="macosx" arch="x86" version="${nextfractal.version}" resultproperty="ant.build.result" />
 		<makedmg basedir="${basedir}" os="macosx" arch="x86" version="${nextfractal.version}" resultproperty="ant.makedmg.result" />
 	</target>
 	<target name="build-win32-32bit">
@@ -168,7 +184,7 @@
 	</target>
 	<target name="build-macosx-64bit" if="is_macosx">
 		<!-- osx 64bit -->
-		<build basedir="${basedir}" os="macosx" arch="x86_64" version="${nextfractal.version}" resultproperty="ant.build.result" />
+		<buildosx basedir="${basedir}" os="macosx" arch="x86_64" version="${nextfractal.version}" resultproperty="ant.build.result" />
 		<makedmg basedir="${basedir}" os="macosx" arch="x86_64" version="${nextfractal.version}" resultproperty="ant.makedmg.result" />
 	</target>
 	<target name="build-win32-64bit">

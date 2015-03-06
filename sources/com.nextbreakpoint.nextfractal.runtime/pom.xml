@@ -15,6 +15,7 @@
 					<target>1.8</target>
 				</configuration>
 			</plugin>
+			<!-- 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
@@ -22,15 +23,14 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>com.nextbreakpoint.nextfractal.Main</mainClass>
-							<!-- 
+							<mainClass>com.nextbreakpoint.nextfractal.runtime.javaFX.NextFractalApp</mainClass>
 							<addClasspath>true</addClasspath>
 							<classpathPrefix>jars/</classpathPrefix>
-			 				 -->
 						</manifest>
 					</archive>
 				</configuration>
 			</plugin>
+			 -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>

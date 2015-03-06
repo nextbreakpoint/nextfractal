@@ -38,6 +38,8 @@ public class NextFractalApp extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+    	System.out.println(System.getProperty("java.vendor"));
+    	System.out.println(System.getProperty("java.version"));
 		int width = 500;
 		int height = 500;
 		int editorWidth = 300;
@@ -146,6 +148,33 @@ public class NextFractalApp extends Application {
 			}
 		});
     }
+
+//	private void setup() {
+//		try {
+//			addLibraryPath("lib");
+//		} catch (Exception x) {
+//			x.printStackTrace();
+//		}
+////    	System.setProperty("java.library.path", "lib");
+////    	try {
+////			Field fieldSysPath = ClassLoader.class.getDeclaredField("sys_paths");
+////			fieldSysPath.setAccessible(true);
+////			fieldSysPath.set(null, null);
+////    	} catch (Exception e) {
+////    	}
+//	}
+	
+//	private static void addLibraryPath(String pathToAdd) throws Exception {
+//		Field usrPathsField = ClassLoader.class.getDeclaredField("usr_paths");
+//		usrPathsField.setAccessible(true);
+//		String[] paths = (String[]) usrPathsField.get(null);
+//		for (String path : paths)
+//			if (path.equals(pathToAdd))
+//				return;
+//		String[] newPaths = Arrays.copyOf(paths, paths.length + 1);
+//		newPaths[newPaths.length - 1] = pathToAdd;
+//		usrPathsField.set(null, newPaths);
+//	}
 
 	private Pane createEditorPane(Session session, String pluginId) {
 		final ServiceLoader<? extends FractalFactory> plugins = ServiceLoader.load(FractalFactory.class);

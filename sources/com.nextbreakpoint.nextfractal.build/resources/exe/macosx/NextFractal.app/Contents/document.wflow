@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>AMApplicationBuild</key>
-	<string>381</string>
+	<string>409.1</string>
 	<key>AMApplicationVersion</key>
-	<string>2.4</string>
+	<string>2.5</string>
 	<key>AMDocumentVersion</key>
 	<string>2</string>
 	<key>actions</key>
@@ -47,11 +47,16 @@
 				<key>ActionBundlePath</key>
 				<string>/System/Library/Automator/Run AppleScript.action</string>
 				<key>ActionName</key>
-				<string>Esegui AppleScript</string>
+				<string>Run AppleScript</string>
 				<key>ActionParameters</key>
 				<dict>
 					<key>source</key>
-					<string>tell application "Finder"	set currentFolder to parent of (path to me) as string	set currentFolder to POSIX path of currentFolder	do shell script "cd \"" &amp; currentFolder &amp; "\"; java -Xmx1024m -Xdock:name=NextFractal -Xdock:icon=NextFractal.app/Contents/NextFractal.png -Djava.util.logging.config=com.nextbreakpoint.nextfractal.runtime.LogConfig -Djava.library.path=lib -Djava.ext.dirs=jars:plugins -jar jars/com.nextbreakpoint.nextfractal.runtime-7.0.0.jar"end tell</string>
+					<string>on run {input, parameters}						tell application "Finder"
+						set currentFolder to (path to me) as string
+						set currentFolder to POSIX path of currentFolder
+						do shell script "cd \"" &amp; currentFolder &amp; "/Contents\"; java -Xmx1024m -Xdock:name=NextFractal -Xdock:icon=NextFractal.png -Djava.util.logging.config=com.nextbreakpoint.nextfractal.runtime.LogConfig -jar com.nextbreakpoint.nextfractal.build-7.0.0-jar-with-dependencies.jar"
+						end tell
+						return input					end run</string>	
 				</dict>
 				<key>BundleIdentifier</key>
 				<string>com.apple.Automator.RunScript</string>
@@ -68,15 +73,15 @@
 				<key>Class Name</key>
 				<string>RunScriptAction</string>
 				<key>InputUUID</key>
-				<string>D54C3439-A8FF-4DF3-8E80-B63D542E8E8A</string>
+				<string>B4B198FE-9A17-4B94-A484-DABB03769255</string>
 				<key>Keywords</key>
 				<array>
-					<string>Esegui</string>
+					<string>Run</string>
 				</array>
 				<key>OutputUUID</key>
-				<string>F5D66E86-D5BD-4AAD-B6F4-AC100DC06C1E</string>
+				<string>2D7547CD-D4F8-4011-9A8C-85E0CFA67D82</string>
 				<key>UUID</key>
-				<string>ED0B23D9-0E75-45A5-85AB-F8DF0B8DF11F</string>
+				<string>6D42916B-F3D6-4FF6-96AB-9AF93B24A0B6</string>
 				<key>UnlocalizedApplications</key>
 				<array>
 					<string>Automator</string>
@@ -102,12 +107,14 @@ end run</string>
 						<string>0</string>
 					</dict>
 				</dict>
+				<key>conversionLabel</key>
+				<integer>0</integer>
 				<key>isViewVisible</key>
 				<true/>
 				<key>location</key>
-				<string>553.000000:507.000000</string>
+				<string>423.000000:316.000000</string>
 				<key>nibPath</key>
-				<string>/System/Library/Automator/Run AppleScript.action/Contents/Resources/Italian.lproj/main.nib</string>
+				<string>/System/Library/Automator/Run AppleScript.action/Contents/Resources/Base.lproj/main.nib</string>
 			</dict>
 			<key>isViewVisible</key>
 			<true/>
@@ -115,25 +122,6 @@ end run</string>
 	</array>
 	<key>connectors</key>
 	<dict/>
-	<key>variables</key>
-	<array>
-		<dict>
-			<key>UUID</key>
-			<string>878D0ABB-3D94-405D-8FCD-945B4B3BB01D</string>
-			<key>identifier</key>
-			<string>com.apple.Automator.Variable.Storage</string>
-			<key>name</key>
-			<string>folderName</string>
-		</dict>
-		<dict>
-			<key>UUID</key>
-			<string>C4163430-61D1-42F6-B1D3-781EBB9984E1</string>
-			<key>identifier</key>
-			<string>com.apple.Automator.Variable.Storage</string>
-			<key>name</key>
-			<string>Archivio</string>
-		</dict>
-	</array>
 	<key>workflowMetaData</key>
 	<dict>
 		<key>workflowTypeIdentifier</key>
