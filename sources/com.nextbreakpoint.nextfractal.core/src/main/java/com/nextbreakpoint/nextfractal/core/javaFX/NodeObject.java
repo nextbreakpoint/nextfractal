@@ -29,22 +29,19 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * @author Andrea Medeghini
  */
 public abstract class NodeObject {
-	private static final Logger logger = Logger.getLogger(NodeObject.class.getName());
 	private final Map<String, Object> map = new HashMap<String, Object>();
 	private List<NodeObject> childList;
 	private NodeObject parentNode;
-	private boolean changed;
 	private final String nodeId;
 	private String nodeLabel;
 	private String nodeClass;
-	private String extensionId;
+	private Object value;
+	private boolean changed;
 
 	/**
 	 * @see java.lang.Object#finalize()
@@ -53,13 +50,6 @@ public abstract class NodeObject {
 	protected void finalize() throws Throwable {
 		dispose();
 		super.finalize();
-	}
-
-	/**
-	 * @return
-	 */
-	public boolean isHighFrequency() {
-		return false;
 	}
 
 	/**
@@ -152,8 +142,6 @@ public abstract class NodeObject {
 		return null;
 	}
 	
-	public abstract NodeObject createNode(Object element);
-
 	/**
 	 * Returns the number of childs.
 	 * 
@@ -226,7 +214,7 @@ public abstract class NodeObject {
 	 * 
 	 * @return true if node has pending commands.
 	 */
-	public boolean hasPendingCommands() {
+	public boolean isChanged() {
 		return changed;
 	}
 
@@ -263,18 +251,13 @@ public abstract class NodeObject {
 	@Override
 	public String toString() {
 		final StringBuilder builder = new StringBuilder();
-		if (hasPendingCommands()) {
+		if (isChanged()) {
 			builder.append("*");
 		}
 		builder.append(nodeId);
 		builder.append(" (");
 		builder.append(nodeClass != null ? nodeClass : "<no class>");
 		builder.append(")");
-		if (extensionId != null) {
-			builder.append(" [");
-			builder.append(extensionId);
-			builder.append("]");
-		}
 		return builder.toString();
 	}
 
@@ -297,9 +280,6 @@ public abstract class NodeObject {
 	public void appendChildNode(final NodeObject node) {
 		node.setParentNode(this);
 		if (getChildList().contains(node)) {
-			if (NodeObject.logger.isLoggable(Level.FINE)) {
-				NodeObject.logger.fine("NodeObject " + node.getLabel() + " is already in the list");
-			}
 			return;
 		}
 		getChildList().add(node);
@@ -334,9 +314,6 @@ public abstract class NodeObject {
 	public void insertNodeBefore(final int index, final NodeObject node) {
 		node.setParentNode(this);
 		if (getChildList().contains(node)) {
-			if (NodeObject.logger.isLoggable(Level.FINE)) {
-				NodeObject.logger.fine("NodeObject " + node.getLabel() + " is already in the list");
-			}
 			return;
 		}
 		if ((index < 0) || (index > getChildList().size())) {
@@ -353,9 +330,6 @@ public abstract class NodeObject {
 	public void insertNodeAfter(final int index, final NodeObject node) {
 		node.setParentNode(this);
 		if (getChildList().contains(node)) {
-			if (NodeObject.logger.isLoggable(Level.FINE)) {
-				NodeObject.logger.fine("NodeObject " + node.getLabel() + " is already in the list");
-			}
 			return;
 		}
 		if ((index < 0) || (index > getChildList().size() - 1)) {
@@ -444,7 +418,7 @@ public abstract class NodeObject {
 	 */
 	public final String getLabel() {
 		final StringBuilder builder = new StringBuilder();
-		if (hasPendingCommands()) {
+		if (isChanged()) {
 			builder.append("*");
 		}
 		addLabel(builder);
@@ -571,19 +545,14 @@ public abstract class NodeObject {
 	/**
 	 * @return
 	 */
-	public String getExtensionId() {
-		return extensionId;
+	public Object getValue() {
+		return value;
 	}
 
 	/**
-	 * @param extensionId
+	 * @param value
 	 */
-	public void setExtensionId(String extensionId) {
-		this.extensionId = extensionId;
-	}
-
-	public Object getValue() {
-		// TODO Auto-generated method stub
-		return null;
+	public void setValue(Object value) {
+		this.value = value;
 	}
 }

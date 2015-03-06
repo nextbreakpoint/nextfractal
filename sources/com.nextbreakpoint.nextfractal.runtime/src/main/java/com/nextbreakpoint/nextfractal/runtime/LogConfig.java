@@ -1,4 +1,4 @@
-package com.nextbreakpoint.nextfractal.core.utils;
+package com.nextbreakpoint.nextfractal.runtime;
 
 import java.io.IOException;
 import java.util.logging.LogManager;

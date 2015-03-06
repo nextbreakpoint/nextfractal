@@ -1,7 +1,7 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.renderer;
 
-import com.nextbreakpoint.nextfractal.core.utils.DoubleVector4D;
-import com.nextbreakpoint.nextfractal.core.utils.IntegerVector4D;
+import com.nextbreakpoint.nextfractal.core.utils.Double4D;
+import com.nextbreakpoint.nextfractal.core.utils.Integer4D;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotView;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 
@@ -9,50 +9,50 @@ import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
  * @author Andrea Medeghini
  */
 public class RendererView {
-	private DoubleVector4D traslation;
-	private DoubleVector4D rotation;
-	private DoubleVector4D scale;
-	private IntegerVector4D state;
+	private Double4D traslation;
+	private Double4D rotation;
+	private Double4D scale;
+	private Integer4D state;
 	private Number point;
 	private boolean julia;
 	
 	public RendererView() {
-		traslation = new DoubleVector4D(0, 0, 1, 0);
-		rotation = new DoubleVector4D(0, 0, 0, 0);
-		scale = new DoubleVector4D(1, 1, 1, 1);
-		state = new IntegerVector4D(0, 0, 0, 0);
+		traslation = new Double4D(0, 0, 1, 0);
+		rotation = new Double4D(0, 0, 0, 0);
+		scale = new Double4D(1, 1, 1, 1);
+		state = new Integer4D(0, 0, 0, 0);
 		point = new Number(0, 0);
 	}
 
 	public RendererView(MandelbrotView view) {
-		traslation = new DoubleVector4D(view.getTraslation());
-		rotation = new DoubleVector4D(view.getRotation());
-		scale = new DoubleVector4D(view.getScale());
-		state = new IntegerVector4D(0, 0, 0, 0);
+		traslation = new Double4D(view.getTraslation());
+		rotation = new Double4D(view.getRotation());
+		scale = new Double4D(view.getScale());
+		state = new Integer4D(0, 0, 0, 0);
 		point = new Number(0, 0);
 	}
 	
-	public DoubleVector4D getTraslation() {
+	public Double4D getTraslation() {
 		return traslation;
 	}
 
-	public void setTraslation(DoubleVector4D translation) {
+	public void setTraslation(Double4D translation) {
 		this.traslation = translation;
 	}
 
-	public DoubleVector4D getRotation() {
+	public Double4D getRotation() {
 		return rotation;
 	}
 
-	public void setRotation(DoubleVector4D rotation) {
+	public void setRotation(Double4D rotation) {
 		this.rotation = rotation;
 	}
 
-	public DoubleVector4D getScale() {
+	public Double4D getScale() {
 		return scale;
 	}
 
-	public void setScale(DoubleVector4D scale) {
+	public void setScale(Double4D scale) {
 		this.scale = scale;
 	}
 
@@ -72,11 +72,11 @@ public class RendererView {
 		this.julia = julia;
 	}
 
-	public IntegerVector4D getState() {
+	public Integer4D getState() {
 		return state;
 	}
 
-	public void setState(IntegerVector4D state) {
+	public void setState(Integer4D state) {
 		this.state = state;
 	}
 }

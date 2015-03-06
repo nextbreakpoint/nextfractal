@@ -8,8 +8,8 @@ import com.nextbreakpoint.nextfractal.core.renderer.RendererFactory;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
 import com.nextbreakpoint.nextfractal.core.utils.Condition;
-import com.nextbreakpoint.nextfractal.core.utils.DoubleVector4D;
-import com.nextbreakpoint.nextfractal.core.utils.IntegerVector4D;
+import com.nextbreakpoint.nextfractal.core.utils.Double4D;
+import com.nextbreakpoint.nextfractal.core.utils.Integer4D;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.Compiler;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerBuilder;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerReport;
@@ -48,10 +48,10 @@ public class MandelbrotImageGenerator implements ImageGenerator {
 			renderer.setColor(colorBuilder.build());
 			renderer.init();
 			RendererView view = new RendererView();
-			view .setTraslation(new DoubleVector4D(traslation));
-			view.setRotation(new DoubleVector4D(rotation));
-			view.setScale(new DoubleVector4D(scale));
-			view.setState(new IntegerVector4D(0, 0, 0, 0));
+			view .setTraslation(new Double4D(traslation));
+			view.setRotation(new Double4D(rotation));
+			view.setScale(new Double4D(scale));
+			view.setState(new Integer4D(0, 0, 0, 0));
 			view.setJulia(julia);
 			view.setPoint(new Number(constant));
 			renderer.setView(view);
@@ -68,11 +68,6 @@ public class MandelbrotImageGenerator implements ImageGenerator {
 		return renderer.getSize();
 	}
 	
-	@Override
-	public void setStopCondition(Condition condition) {
-		this.condition = condition;
-	}
-
 	@Override
 	public boolean isInterrupted() {
 		return renderer.isInterrupted();

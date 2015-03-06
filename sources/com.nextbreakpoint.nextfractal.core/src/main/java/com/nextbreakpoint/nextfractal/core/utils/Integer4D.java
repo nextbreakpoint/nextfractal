@@ -31,17 +31,17 @@ import java.util.StringTokenizer;
 /**
  * @author Andrea Medeghini
  */
-public class DoubleVector4D implements Serializable, Cloneable {
+public class Integer4D implements Serializable, Cloneable {
 	private static final long serialVersionUID = 1L;
-	private final double x;
-	private final double y;
-	private final double z;
-	private final double w;
-
+	private final int x;
+	private final int y;
+	private final int z;
+	private final int w;
+	
 	/**
 	 * 
 	 */
-	public DoubleVector4D() {
+	public Integer4D() {
 		this(0, 0, 0, 0);
 	}
 
@@ -51,45 +51,38 @@ public class DoubleVector4D implements Serializable, Cloneable {
 	 * @param z
 	 * @param w
 	 */
-	public DoubleVector4D(final double x, final double y, final double z, final double w) {
+	public Integer4D(final int x, final int y, final int z, final int w) {
 		this.x = x;
 		this.y = y;
 		this.z = z;
 		this.w = w;
 	}
 
-	public DoubleVector4D(double[] v) {
-		this.x = v[0];
-		this.y = v[1];
-		this.z = v[2];
-		this.w = v[3];
-	}
-
 	/**
 	 * @return the w
 	 */
-	public double getW() {
+	public int getW() {
 		return w;
 	}
 
 	/**
 	 * @return the x
 	 */
-	public double getX() {
+	public int getX() {
 		return x;
 	}
 
 	/**
 	 * @return the y
 	 */
-	public double getY() {
+	public int getY() {
 		return y;
 	}
 
 	/**
 	 * @return the z
 	 */
-	public double getZ() {
+	public int getZ() {
 		return z;
 	}
 
@@ -113,13 +106,13 @@ public class DoubleVector4D implements Serializable, Cloneable {
 	 * @param value
 	 * @return
 	 */
-	public static DoubleVector4D valueOf(final String value) {
+	public static Integer4D valueOf(final String value) {
 		final StringTokenizer tkn = new StringTokenizer(value, ",");
 		final String x = tkn.nextToken().trim();
 		final String y = tkn.nextToken().trim();
 		final String z = tkn.nextToken().trim();
 		final String w = tkn.nextToken().trim();
-		return new DoubleVector4D(Double.valueOf(x), Double.valueOf(y), Double.valueOf(z), Double.valueOf(w));
+		return new Integer4D(Integer.valueOf(x), Integer.valueOf(y), Integer.valueOf(z), Integer.valueOf(w));
 	}
 
 	/**
@@ -133,17 +126,17 @@ public class DoubleVector4D implements Serializable, Cloneable {
 		if (obj == null) {
 			return false;
 		}
-		final DoubleVector4D other = (DoubleVector4D) obj;
-		if (Double.doubleToLongBits(x) != Double.doubleToLongBits(other.x)) {
+		final Integer4D other = (Integer4D) obj;
+		if (w != other.w) {
 			return false;
 		}
-		if (Double.doubleToLongBits(y) != Double.doubleToLongBits(other.y)) {
+		if (x != other.x) {
 			return false;
 		}
-		if (Double.doubleToLongBits(z) != Double.doubleToLongBits(other.z)) {
+		if (y != other.y) {
 			return false;
 		}
-		if (Double.doubleToLongBits(w) != Double.doubleToLongBits(other.w)) {
+		if (z != other.z) {
 			return false;
 		}
 		return true;
@@ -153,11 +146,7 @@ public class DoubleVector4D implements Serializable, Cloneable {
 	 * @see java.lang.Object#clone()
 	 */
 	@Override
-	public DoubleVector4D clone() {
-		return new DoubleVector4D(x, y, z, w);
-	}
-	
-	public double[] toArray() {
-		return new double[] { x, y, z, w }; 
+	public Integer4D clone() {
+		return new Integer4D(x, y, z, w);
 	}
 }

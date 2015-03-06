@@ -52,8 +52,8 @@ import com.nextbreakpoint.nextfractal.core.renderer.javaFX.JavaFXRendererFactory
 import com.nextbreakpoint.nextfractal.core.session.Session;
 import com.nextbreakpoint.nextfractal.core.session.SessionListener;
 import com.nextbreakpoint.nextfractal.core.utils.DefaultThreadFactory;
-import com.nextbreakpoint.nextfractal.core.utils.DoubleVector4D;
-import com.nextbreakpoint.nextfractal.core.utils.IntegerVector4D;
+import com.nextbreakpoint.nextfractal.core.utils.Double4D;
+import com.nextbreakpoint.nextfractal.core.utils.Integer4D;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotData;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotImageGenerator;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotSession;
@@ -467,10 +467,10 @@ public class MandelbrotRenderPane extends BorderPane {
 					}
 					coordinator.init();
 					RendererView view = new RendererView();
-					view.setTraslation(new DoubleVector4D(traslation));
-					view.setRotation(new DoubleVector4D(rotation));
-					view.setScale(new DoubleVector4D(scale));
-					view.setState(new IntegerVector4D(0, 0, 0, 0));
+					view.setTraslation(new Double4D(traslation));
+					view.setRotation(new Double4D(rotation));
+					view.setScale(new Double4D(scale));
+					view.setState(new Integer4D(0, 0, 0, 0));
 					view.setJulia(julia);
 					view.setPoint(new Number(point));
 					coordinator.setView(view);
@@ -488,10 +488,10 @@ public class MandelbrotRenderPane extends BorderPane {
 				}
 				juliaCoordinator.init();
 				RendererView view = new RendererView();
-				view.setTraslation(new DoubleVector4D(traslation));
-				view.setRotation(new DoubleVector4D(rotation));
-				view.setScale(new DoubleVector4D(scale));
-				view.setState(new IntegerVector4D(0, 0, 0, 0));
+				view.setTraslation(new Double4D(traslation));
+				view.setRotation(new Double4D(rotation));
+				view.setScale(new Double4D(scale));
+				view.setState(new Integer4D(0, 0, 0, 0));
 				view.setJulia(true);
 				view.setPoint(new Number(point));
 				juliaCoordinator.setView(view);
@@ -523,10 +523,10 @@ public class MandelbrotRenderPane extends BorderPane {
 				RendererCoordinator coordinator = coordinators[i];
 				if (coordinator != null) {
 					RendererView view = new RendererView();
-					view.setTraslation(new DoubleVector4D(traslation));
-					view.setRotation(new DoubleVector4D(rotation));
-					view.setScale(new DoubleVector4D(scale));
-					view.setState(new IntegerVector4D(0, 0, continuous ? 1 : 0, 0));
+					view.setTraslation(new Double4D(traslation));
+					view.setRotation(new Double4D(rotation));
+					view.setScale(new Double4D(scale));
+					view.setState(new Integer4D(0, 0, continuous ? 1 : 0, 0));
 					view.setJulia(julia);
 					view.setPoint(new Number(point));
 					coordinator.setView(view);
@@ -538,10 +538,10 @@ public class MandelbrotRenderPane extends BorderPane {
 				juliaCoordinator.abort();
 				juliaCoordinator.waitFor();
 				RendererView view = new RendererView();
-				view.setTraslation(new DoubleVector4D(new double[] { 0, 0, 1, 0 }));
-				view.setRotation(new DoubleVector4D(new double[] { 0, 0, 0, 0 }));
-				view.setScale(new DoubleVector4D(new double[] { 1, 1, 1, 1 }));
-				view.setState(new IntegerVector4D(0, 0, continuous ? 1 : 0, 0));
+				view.setTraslation(new Double4D(new double[] { 0, 0, 1, 0 }));
+				view.setRotation(new Double4D(new double[] { 0, 0, 0, 0 }));
+				view.setScale(new Double4D(new double[] { 1, 1, 1, 1 }));
+				view.setState(new Integer4D(0, 0, continuous ? 1 : 0, 0));
 				view.setJulia(true);
 				view.setPoint(new Number(point));
 				juliaCoordinator.setView(view);
@@ -565,10 +565,10 @@ public class MandelbrotRenderPane extends BorderPane {
 			RendererCoordinator coordinator = coordinators[i];
 			if (coordinator != null) {
 				RendererView view = new RendererView();
-				view.setTraslation(new DoubleVector4D(traslation));
-				view.setRotation(new DoubleVector4D(rotation));
-				view.setScale(new DoubleVector4D(scale));
-				view.setState(new IntegerVector4D(0, 0, continuous ? 1 : 0, 0));
+				view.setTraslation(new Double4D(traslation));
+				view.setRotation(new Double4D(rotation));
+				view.setScale(new Double4D(scale));
+				view.setState(new Integer4D(0, 0, continuous ? 1 : 0, 0));
 				view.setJulia(julia);
 				view.setPoint(new Number(point));
 				coordinator.setView(view);
@@ -579,10 +579,10 @@ public class MandelbrotRenderPane extends BorderPane {
 			juliaCoordinator.abort();
 			juliaCoordinator.waitFor();
 			RendererView view = new RendererView();
-			view.setTraslation(new DoubleVector4D(new double[] { 0, 0, 1, 0 }));
-			view.setRotation(new DoubleVector4D(new double[] { 0, 0, 0, 0 }));
-			view.setScale(new DoubleVector4D(new double[] { 1, 1, 1, 1 }));
-			view.setState(new IntegerVector4D(0, 0, continuous ? 1 : 0, 0));
+			view.setTraslation(new Double4D(new double[] { 0, 0, 1, 0 }));
+			view.setRotation(new Double4D(new double[] { 0, 0, 0, 0 }));
+			view.setScale(new Double4D(new double[] { 1, 1, 1, 1 }));
+			view.setState(new Integer4D(0, 0, continuous ? 1 : 0, 0));
 			view.setJulia(true);
 			view.setPoint(new Number(point));
 			juliaCoordinator.setView(view);

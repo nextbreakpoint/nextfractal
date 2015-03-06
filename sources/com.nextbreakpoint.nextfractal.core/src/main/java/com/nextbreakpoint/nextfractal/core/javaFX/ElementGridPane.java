@@ -83,9 +83,7 @@ public abstract class ElementGridPane<T extends Serializable> extends BorderPane
 		return listNode.getChildNodeCount();
 	}
 	
-	protected NodeObject createNode(T element) {
-		return listNode.createNode(element);
-	}
+	protected abstract NodeObject createNode(T element);
 
 	protected void fireNodeSelected(NodeObject nodeObject) {
 //		if (delegate != null) {
