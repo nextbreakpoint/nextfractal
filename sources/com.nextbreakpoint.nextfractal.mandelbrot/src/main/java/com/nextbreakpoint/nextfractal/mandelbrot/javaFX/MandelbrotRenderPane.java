@@ -422,18 +422,9 @@ public class MandelbrotRenderPane extends BorderPane {
 	
 	private void updateFractalData(Session session) {
 		try {
-			Compiler compiler = new Compiler(getClass().getPackage().getName(), getClass().getSimpleName());
-			CompilerReport report = compiler.generateJavaSource(getMandelbrotSession().getSource());
-			orbitBuilder = compiler.compileOrbit(report);
-			//TODO report errors
-			String newASTOrbit = report.getAST().getOrbit().toString();
-			boolean orbitChanged = !newASTOrbit.equals(astOrbit);
-			astOrbit = newASTOrbit;
-			colorBuilder = compiler.compileColor(report);
-			//TODO report errors
-			String newASTColor = report.getAST().getColor().toString();
-			boolean colorChanged = !newASTColor.equals(astColor);
-			astColor = newASTColor;
+			boolean[] changed = recompileFractal();
+			boolean orbitChanged = changed[0];
+			boolean colorChanged = changed[1];
 			if (orbitChanged) {
 				logger.info("Orbit algorithm is changed");
 			}
@@ -508,6 +499,23 @@ public class MandelbrotRenderPane extends BorderPane {
 		} catch (Exception e) {
 			e.printStackTrace();//TODO display errors
 		}
+	}
+
+	private boolean[] recompileFractal() throws Exception {
+		boolean[] changed = new boolean[2];
+		Compiler compiler = new Compiler(getClass().getPackage().getName(), getClass().getSimpleName());
+		CompilerReport report = compiler.generateJavaSource(getMandelbrotSession().getSource());
+		orbitBuilder = compiler.compileOrbit(report);
+		//TODO report errors
+		String newASTOrbit = report.getAST().getOrbit().toString();
+		changed[0] = !newASTOrbit.equals(astOrbit);
+		astOrbit = newASTOrbit;
+		colorBuilder = compiler.compileColor(report);
+		//TODO report errors
+		String newASTColor = report.getAST().getColor().toString();
+		changed[1] = !newASTColor.equals(astColor);
+		astColor = newASTColor;
+		return changed;
 	}
 
 	private void updateFractalPoint(boolean continuous) {

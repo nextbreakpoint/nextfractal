@@ -26,11 +26,16 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.test;
 
 import java.io.StringReader;
+import java.util.List;
 
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.DiagnosticErrorListener;
+import org.antlr.v4.runtime.RecognitionException;
+import org.antlr.v4.runtime.Recognizer;
 import org.antlr.v4.runtime.tree.ParseTree;
 
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerError;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTBuilder;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTFractal;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.MandelbrotLexer;
@@ -38,21 +43,32 @@ import com.nextbreakpoint.nextfractal.mandelbrot.grammar.MandelbrotParser;
 
 public abstract class BaseTest {
 	protected ASTFractal parse(String source) throws Exception {
-		try {
-			ANTLRInputStream is = new ANTLRInputStream(new StringReader(source));
-			MandelbrotLexer lexer = new MandelbrotLexer(is);
-			CommonTokenStream tokens = new CommonTokenStream(lexer);
-			MandelbrotParser parser = new MandelbrotParser(tokens);
-			ParseTree fractalTree = parser.fractal();
-            if (fractalTree != null) {
-            	ASTBuilder builder = parser.getBuilder();
-            	ASTFractal fractal = builder.getFractal();
-            	return fractal;
-            }
-            return null;
+		ANTLRInputStream is = new ANTLRInputStream(new StringReader(source));
+		MandelbrotLexer lexer = new MandelbrotLexer(is);
+		CommonTokenStream tokens = new CommonTokenStream(lexer);
+		lexer.addErrorListener(new CompilerErrorListener());
+		MandelbrotParser parser = new MandelbrotParser(tokens);
+		parser.addErrorListener(new CompilerErrorListener());
+		ParseTree fractalTree = parser.fractal();
+        if (fractalTree != null) {
+        	ASTBuilder builder = parser.getBuilder();
+        	ASTFractal fractal = builder.getFractal();
+        	return fractal;
+        }
+        return null;
+	}
+	
+	protected void printErrors(List<CompilerError> errors) {
+		for (CompilerError error : errors) {
+			System.out.println(error.toString());
 		}
-		catch (Exception e) {
-			throw new Exception("Parse error: " + e.getMessage(), e);
+	}
+
+	private class CompilerErrorListener extends DiagnosticErrorListener {
+		@Override
+		public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line, int charPositionInLine, String msg, RecognitionException e) {
+			System.out.println("[" + line + ":" + charPositionInLine + "] " + msg);
+			super.syntaxError(recognizer, offendingSymbol, line, charPositionInLine, msg, e);
 		}
 	}
 }

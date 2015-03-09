@@ -43,6 +43,8 @@ public class CompilerTest1 extends BaseTest {
 //			Assert.assertTrue(Pattern.matches("([A-Z][a-z]*)-(\\d).(.jpg|.png)", "Andrea-10.png"));
 			Compiler compiler = new Compiler("test", "TestFractal");
 			CompilerReport report = compiler.generateJavaSource(getSource());
+			printErrors(report.getErrors());
+			Assert.assertEquals(0, report.getErrors().size());
 			Assert.assertNotNull(report.getAST());
 			System.out.println(report.getAST());
 			Assert.assertNotNull(report.getOrbitSource());
@@ -50,8 +52,12 @@ public class CompilerTest1 extends BaseTest {
 			Assert.assertNotNull(report.getColorSource());
 			System.out.println(report.getColorSource());
 			CompilerBuilder<Orbit> orbitBuilder = compiler.compileOrbit(report);
+			printErrors(orbitBuilder.getErrors());
+			Assert.assertEquals(0, orbitBuilder.getErrors().size());
 			Assert.assertNotNull(orbitBuilder);
 			CompilerBuilder<Color> colorBuilder = compiler.compileColor(report);
+			printErrors(colorBuilder.getErrors());
+			Assert.assertEquals(0, colorBuilder.getErrors().size());
 			Assert.assertNotNull(colorBuilder);
 			Orbit orbit = orbitBuilder.build();
 			Color color = colorBuilder.build();
@@ -77,7 +83,7 @@ public class CompilerTest1 extends BaseTest {
 	protected String getSource() {
 		String source = ""
 				+ "fractal {"
-				+ "orbit [-1 - 1i,+1 + 1i] [z,x,n] {"
+				+ "orbit -1 - 1i,+1 + 1i] [z,x,n] {"
 				+ "trap trap1 [0] {"
 				+ "MOVETO(1);"
 				+ "LINETO(2);"

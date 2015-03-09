@@ -92,31 +92,34 @@ public class Compiler {
 		this.className = className;
 	}
 	
-	public CompilerReport generateJavaSource(String source) throws Exception {
-		ASTFractal ast = parse(source);
-		String orbitSource = compileOrbit(ast);
-		String colorSource = compileColor(ast);
-		return new CompilerReport(ast, orbitSource, colorSource);
+	public CompilerReport generateJavaSource(String source) {
+		List<CompilerError> errors = new ArrayList<>();
+		ASTFractal ast = parse(source, errors);
+		String orbitSource = buildOrbit(ast);
+		String colorSource = buildColor(ast);
+		return new CompilerReport(ast, orbitSource, colorSource, errors);
 	}
 	
-	public CompilerBuilder<Orbit> compileOrbit(CompilerReport report) throws Exception {
-		Class<Orbit> clazz = compileToClass(report.getOrbitSource(), className + "Orbit", Orbit.class);
-		return new CompilerBuilder<Orbit>(clazz);
+	public CompilerBuilder<Orbit> compileOrbit(CompilerReport report) {
+		List<CompilerError> errors = new ArrayList<>();
+		Class<Orbit> clazz = compileToClass(report.getOrbitSource(), className + "Orbit", Orbit.class, errors);
+		return new CompilerBuilder<Orbit>(clazz, errors);
 	}
 
-	public CompilerBuilder<Color> compileColor(CompilerReport report) throws Exception {
-		Class<Color> clazz = compileToClass(report.getColorSource(), className + "Color", Color.class);
-		return new CompilerBuilder<Color>(clazz);
+	public CompilerBuilder<Color> compileColor(CompilerReport report) {
+		List<CompilerError> errors = new ArrayList<>();
+		Class<Color> clazz = compileToClass(report.getColorSource(), className + "Color", Color.class, errors);
+		return new CompilerBuilder<Color>(clazz, errors);
 	}
 
-	private ASTFractal parse(String source) throws Exception {
+	private ASTFractal parse(String source, List<CompilerError> errors) {
 		try {
 			ANTLRInputStream is = new ANTLRInputStream(new StringReader(source));
 			MandelbrotLexer lexer = new MandelbrotLexer(is);
 			CommonTokenStream tokens = new CommonTokenStream(lexer);
+			lexer.addErrorListener(new CompilerErrorListener(errors));
 			MandelbrotParser parser = new MandelbrotParser(tokens);
-			lexer.addErrorListener(new CompilerErrorListener());
-//			parser.addErrorListener(new CompilerErrorListener());
+			parser.addErrorListener(new CompilerErrorListener(errors));
 			ParseTree fractalTree = parser.fractal();
             if (fractalTree != null) {
             	ParseTreeWalker walker = new ParseTreeWalker();
@@ -142,21 +145,21 @@ public class Compiler {
             	ASTFractal fractal = builder.getFractal();
             	return fractal;
             }
-            return null;
 		}
 		catch (Exception e) {
-			throw new Exception("Parse error: " + e.getMessage(), e);
+			errors.add(new CompilerError(0, 0, 0, e.getMessage()));
 		}
+		return null;
 	}
 
-	private String compileOrbit(ASTFractal fractal) throws Exception {
+	private String buildOrbit(ASTFractal fractal) {
 		StringBuilder builder = new StringBuilder();
 		Map<String, CompilerVariable> variables = new HashMap<>();
 		compileOrbit(builder, variables, fractal);
 		return builder.toString();
 	}
 	
-	private String compileColor(ASTFractal fractal) throws Exception {
+	private String buildColor(ASTFractal fractal) {
 		StringBuilder builder = new StringBuilder();
 		Map<String, CompilerVariable> variables = new HashMap<>();
 		compileColor(builder, variables, fractal);
@@ -164,7 +167,7 @@ public class Compiler {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private <T> Class<T> compileToClass(String source, String className, Class<T> clazz) throws Exception {
+	private <T> Class<T> compileToClass(String source, String className, Class<T> clazz, List<CompilerError> errors) {
 		logger.fine(source);
 		List<SimpleJavaFileObject> compilationUnits = new ArrayList<>();
 		compilationUnits.add(new SourceJavaFileObject(className, source));
@@ -176,23 +179,26 @@ public class Compiler {
 		try {
 			compiler.getTask(null, fileManager, diagnostics, options, null, compilationUnits).call();
 			for (Diagnostic<? extends JavaFileObject> diagnostic : diagnostics.getDiagnostics()) {
-				logger.log(Level.FINE, String.format("Error on line %d: %s\n", diagnostic.getLineNumber(), diagnostic.getMessage(null)));
+				CompilerError error = new CompilerError(diagnostic.getLineNumber(), diagnostic.getColumnNumber(), diagnostic.getEndPosition() - diagnostic.getStartPosition(), diagnostic.getMessage(null));
+				logger.log(Level.FINE, error.toString());
+				errors.add(error);
 			}
 			if (diagnostics.getDiagnostics().size() == 0) {
 				CompilerClassLoader loader = new CompilerClassLoader();
 				defineClasses(fileManager, loader, className);
-				try {
-					Class<?> compiledClazz = loader.loadClass(packageName + "." + className);
-					logger.log(Level.FINE, compiledClazz.getCanonicalName());
-					if (clazz.isAssignableFrom(compiledClazz)) {
-						return (Class<T>) compiledClazz;
-					}
-				} catch (Exception e) {
-					throw new Exception("Cannot instantiate fractal ", e);
+				Class<?> compiledClazz = loader.loadClass(packageName + "." + className);
+				logger.log(Level.FINE, compiledClazz.getCanonicalName());
+				if (clazz.isAssignableFrom(compiledClazz)) {
+					return (Class<T>) compiledClazz;
 				}
 			}
+		} catch (Throwable e) {
+			errors.add(new CompilerError(0, 0, 0, e.getMessage()));
 		} finally {
-			fileManager.close();
+			try {
+				fileManager.close();
+			} catch (IOException e) {
+			}
 		}
 		return null;
 	}
@@ -1037,9 +1043,17 @@ public class Compiler {
 	}
 	
 	private class CompilerErrorListener extends DiagnosticErrorListener {
+		private List<CompilerError> errors;
+		
+		public CompilerErrorListener(List<CompilerError> errors) {
+			this.errors = errors;
+		}
+
 		@Override
 		public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line, int charPositionInLine, String msg, RecognitionException e) {
-			logger.log(Level.WARNING, "[" + line + ":" + charPositionInLine + "] " + msg, e);
+			CompilerError error = new CompilerError(line, charPositionInLine, 0, msg);
+			logger.log(Level.WARNING, error.toString(), e);
+			errors.add(error);
 			super.syntaxError(recognizer, offendingSymbol, line, charPositionInLine, msg, e);
 		}
 	}
