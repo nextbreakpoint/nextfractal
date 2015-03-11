@@ -357,19 +357,19 @@ complex returns [ASTNumber result]
 
 palette 
 	:
-	p=PALETTE v=USER_VARIABLE '[' l=USER_INTEGER ']' {
-		builder.addPalette(new ASTPalette($p, $v.text, builder.parseInt($l.text))); 
+	p=PALETTE v=USER_VARIABLE {
+		builder.addPalette(new ASTPalette($p, $v.text)); 
 	} '{' paletteelement+ '}'
 	;
 		
 paletteelement 
 	:
-	t='[' bi=USER_INTEGER ',' bc=colorargb ']' '>' '[' ei=USER_INTEGER ',' ec=colorargb ']' ':' '[' e=expression ']' ';' {
-		builder.addPaletteElement(new ASTPaletteElement($t, builder.parseInt($bi.text), builder.parseInt($ei.text), $bc.result, $ec.result, $e.result));
+	t='[' bc=colorargb '>' ec=colorargb ',' s=USER_INTEGER ',' e=expression ']' ';' {
+		builder.addPaletteElement(new ASTPaletteElement($t, $bc.result, $ec.result, builder.parseInt($s.text), $e.result));
 	}
 	|
-	t='[' bi=USER_INTEGER ',' bc=colorargb ']' '>' '[' ei=USER_INTEGER ',' ec=colorargb ']' ';' {
-		builder.addPaletteElement(new ASTPaletteElement($t, builder.parseInt($bi.text), builder.parseInt($ei.text), $bc.result, $ec.result, null));
+	t='[' bc=colorargb '>' ec=colorargb ',' s=USER_INTEGER ']' ';' {
+		builder.addPaletteElement(new ASTPaletteElement($t, $bc.result, $ec.result, builder.parseInt($s.text), null));
 	}  
 	;
 		

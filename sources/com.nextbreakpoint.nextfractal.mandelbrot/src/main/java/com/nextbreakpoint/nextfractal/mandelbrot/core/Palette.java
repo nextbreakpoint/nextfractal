@@ -7,8 +7,7 @@ public class Palette {
 	private List<PaletteElement> elements = new ArrayList<>();
 	private float[][] table;
 	
-	public Palette(int size) {
-		table = new float[size][4];
+	public Palette() {
 	}
 	
 	public int getSize() {
@@ -20,9 +19,11 @@ public class Palette {
 	}
 
 	public Palette build() {
+		int size = 1;//TODO
+		table = new float[size][4];
 		//TODO build
 		for (int i = 0; i < table.length; i++) {
-			table[i] = new float[] { 1, 1, 0, 0 };
+			table[i] = new float[] { 1, 0, 0, 0 };
 		}
 		return this;
 	}

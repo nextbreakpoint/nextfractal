@@ -1,26 +1,20 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.core;
 
 public class PaletteElement {
-	private int beginIndex;
-	private int endIndex;
 	private float[] beginColor;
 	private float[] endColor;
+	private int steps;
 	private PaletteExpression expression;
 
-	public PaletteElement(int beginIndex, int endIndex, float[] beginColor, float[] endColor, PaletteExpression expression) {
-		this.beginIndex = beginIndex;
-		this.endIndex = endIndex;
+	public PaletteElement(float[] beginColor, float[] endColor, int steps, PaletteExpression expression) {
 		this.beginColor = beginColor;
 		this.endColor = endColor;
+		this.steps = steps;
 		this.expression = expression;
 	}
 
-	public int getBeginIndex() {
-		return beginIndex;
-	}
-
-	public int getEndIndex() {
-		return endIndex;
+	public int getSteps() {
+		return steps;
 	}
 
 	public float[] getBeginColor() {

@@ -7,21 +7,15 @@ import org.antlr.v4.runtime.Token;
 
 public class ASTPalette extends ASTObject {
 	private String name;
-	private int length;
 	private List<ASTPaletteElement> elements = new ArrayList<>(); 
 
-	public ASTPalette(Token location, String name, int length) {
+	public ASTPalette(Token location, String name) {
 		super(location);
 		this.name = name;
-		this.length = length;
 	}
 
 	public String getName() {
 		return name;
-	}
-
-	public int getLength() {
-		return length;
 	}
 
 	public List<ASTPaletteElement> getElements() {
@@ -37,8 +31,6 @@ public class ASTPalette extends ASTObject {
 		StringBuilder builder = new StringBuilder();
 		builder.append("name = ");
 		builder.append(name);
-		builder.append(",length = ");
-		builder.append(length);
 		builder.append(",elements = [");
 		for (int i = 0; i < elements.size(); i++) {
 			ASTPaletteElement statement = elements.get(i);

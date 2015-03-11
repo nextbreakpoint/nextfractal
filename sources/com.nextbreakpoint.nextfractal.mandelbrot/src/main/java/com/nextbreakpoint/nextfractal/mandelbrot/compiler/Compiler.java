@@ -425,9 +425,7 @@ public class Compiler {
 		builder.append("private Palette palette");
 		builder.append(palette.getName().toUpperCase().substring(0, 1));
 		builder.append(palette.getName().substring(1));
-		builder.append(" = palette(");
-		builder.append(palette.getLength());
-		builder.append(")");
+		builder.append(" = palette()");
 		for (ASTPaletteElement element : palette.getElements()) {
 			builder.append(".add(");
 			compile(builder, variables, element);
@@ -438,13 +436,11 @@ public class Compiler {
 
 	private void compile(StringBuilder builder, Map<String, CompilerVariable> variables, ASTPaletteElement element) {
 		builder.append("element(");
-		builder.append(element.getBeginIndex());
-		builder.append(",");
-		builder.append(element.getEndIndex());
-		builder.append(",");
 		builder.append(createArray(element.getBeginColor().getComponents()));
 		builder.append(",");
 		builder.append(createArray(element.getEndColor().getComponents()));
+		builder.append(",");
+		builder.append(element.getSteps());
 		builder.append(",(start, end, step) -> { return ");
 		if (element.getExp() != null) {
 			if (element.getExp().isReal()) {

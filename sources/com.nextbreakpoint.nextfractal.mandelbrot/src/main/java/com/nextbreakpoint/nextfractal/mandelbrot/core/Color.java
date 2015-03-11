@@ -34,12 +34,12 @@ public abstract class Color {
 		return color;
 	}
 
-	protected Palette palette(int length) {
-		return new Palette(length);
+	protected Palette palette() {
+		return new Palette();
 	}
 
-	protected PaletteElement element(int beginIndex, int endIndex, float[] beginColor, float[] endColor, PaletteExpression expression) {
-		return new PaletteElement(beginIndex, endIndex, beginColor, endColor, expression);
+	protected PaletteElement element(float[] beginColor, float[] endColor, int steps, PaletteExpression expression) {
+		return new PaletteElement(beginColor, endColor, steps, expression);
 	}
 
 	protected float[] color(double x) {
