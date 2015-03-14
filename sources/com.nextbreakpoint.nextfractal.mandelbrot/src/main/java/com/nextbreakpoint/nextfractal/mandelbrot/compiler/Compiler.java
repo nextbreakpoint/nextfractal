@@ -32,15 +32,12 @@ import javax.tools.ToolProvider;
 
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.DiagnosticErrorListener;
-import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.DefaultErrorStrategy;
+import org.antlr.v4.runtime.FailedPredicateException;
+import org.antlr.v4.runtime.InputMismatchException;
+import org.antlr.v4.runtime.Parser;
 import org.antlr.v4.runtime.RecognitionException;
-import org.antlr.v4.runtime.Recognizer;
-import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.antlr.v4.runtime.tree.ParseTreeListener;
-import org.antlr.v4.runtime.tree.ParseTreeWalker;
-import org.antlr.v4.runtime.tree.TerminalNode;
 
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Color;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Expression;
@@ -117,30 +114,29 @@ public class Compiler {
 			ANTLRInputStream is = new ANTLRInputStream(new StringReader(source));
 			MandelbrotLexer lexer = new MandelbrotLexer(is);
 			CommonTokenStream tokens = new CommonTokenStream(lexer);
-			lexer.addErrorListener(new CompilerErrorListener(errors));
 			MandelbrotParser parser = new MandelbrotParser(tokens);
-			parser.addErrorListener(new CompilerErrorListener(errors));
+			parser.setErrorHandler(new CompilerErrorStrategy(errors));
 			ParseTree fractalTree = parser.fractal();
             if (fractalTree != null) {
-            	ParseTreeWalker walker = new ParseTreeWalker();
-            	walker.walk(new ParseTreeListener() {
-					@Override
-					public void visitTerminal(TerminalNode node) {
-					}
-					
-					@Override
-					public void visitErrorNode(ErrorNode node) {
-					}
-					
-					@Override
-					public void exitEveryRule(ParserRuleContext ctx) {
-						logger.log(Level.FINE, ctx.getRuleContext().getClass().getSimpleName() + " " + ctx.getText());
-					}
-					
-					@Override
-					public void enterEveryRule(ParserRuleContext ctx) {
-					}
-				}, fractalTree);
+//            	ParseTreeWalker walker = new ParseTreeWalker();
+//            	walker.walk(new ParseTreeListener() {
+//					@Override
+//					public void visitTerminal(TerminalNode node) {
+//					}
+//					
+//					@Override
+//					public void visitErrorNode(ErrorNode node) {
+//					}
+//					
+//					@Override
+//					public void exitEveryRule(ParserRuleContext ctx) {
+//						logger.log(Level.FINE, ctx.getRuleContext().getClass().getSimpleName() + " " + ctx.getText());
+//					}
+//					
+//					@Override
+//					public void enterEveryRule(ParserRuleContext ctx) {
+//					}
+//				}, fractalTree);
             	ASTBuilder builder = parser.getBuilder();
             	ASTFractal fractal = builder.getFractal();
             	return fractal;
@@ -1038,19 +1034,46 @@ public class Compiler {
 		}
 	}
 	
-	private class CompilerErrorListener extends DiagnosticErrorListener {
+	private class CompilerErrorStrategy extends DefaultErrorStrategy {
 		private List<CompilerError> errors;
 		
-		public CompilerErrorListener(List<CompilerError> errors) {
+		public CompilerErrorStrategy(List<CompilerError> errors) {
 			this.errors = errors;
 		}
 
 		@Override
-		public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line, int charPositionInLine, String msg, RecognitionException e) {
-			CompilerError error = new CompilerError(line, charPositionInLine, 0, msg);
+		public void reportError(Parser recognizer, RecognitionException e) {
+			CompilerError error = new CompilerError(e.getOffendingToken().getLine(), e.getOffendingToken().getCharPositionInLine(), 0, e.getMessage());
 			logger.log(Level.WARNING, error.toString(), e);
 			errors.add(error);
-			super.syntaxError(recognizer, offendingSymbol, line, charPositionInLine, msg, e);
+		}
+
+		@Override
+		protected void reportInputMismatch(Parser recognizer, InputMismatchException e) {
+			CompilerError error = new CompilerError(e.getOffendingToken().getLine(), e.getOffendingToken().getCharPositionInLine(), recognizer.getCurrentToken().getStopIndex() - recognizer.getCurrentToken().getStartIndex(), e.getMessage());
+			logger.log(Level.WARNING, error.toString(), e);
+			errors.add(error);
+		}
+
+		@Override
+		protected void reportFailedPredicate(Parser recognizer, FailedPredicateException e) {
+			CompilerError error = new CompilerError(e.getOffendingToken().getLine(), e.getOffendingToken().getCharPositionInLine(), recognizer.getCurrentToken().getStopIndex() - recognizer.getCurrentToken().getStartIndex(), e.getMessage());
+			logger.log(Level.WARNING, error.toString(), e);
+			errors.add(error);
+		}
+
+		@Override
+		protected void reportUnwantedToken(Parser recognizer) {
+			CompilerError error = new CompilerError(recognizer.getCurrentToken().getLine(), recognizer.getCurrentToken().getCharPositionInLine(), recognizer.getCurrentToken().getStopIndex() - recognizer.getCurrentToken().getStartIndex(), "Unwanted token");
+			logger.log(Level.WARNING, error.toString());
+			errors.add(error);
+		}
+
+		@Override
+		protected void reportMissingToken(Parser recognizer) {
+			CompilerError error = new CompilerError(recognizer.getCurrentToken().getLine(), recognizer.getCurrentToken().getCharPositionInLine(), recognizer.getCurrentToken().getStopIndex() - recognizer.getCurrentToken().getStartIndex(), "Missing token");
+			logger.log(Level.WARNING, error.toString());
+			errors.add(error);
 		}
 	}
 	

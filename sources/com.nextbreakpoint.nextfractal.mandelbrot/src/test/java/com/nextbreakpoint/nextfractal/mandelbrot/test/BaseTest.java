@@ -25,6 +25,9 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.test;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringReader;
 import java.util.List;
 
@@ -70,5 +73,16 @@ public abstract class BaseTest {
 			System.out.println("[" + line + ":" + charPositionInLine + "] " + msg);
 			super.syntaxError(recognizer, offendingSymbol, line, charPositionInLine, msg, e);
 		}
+	}
+
+	protected String getSource(String name) throws IOException {
+		InputStream is = getClass().getResourceAsStream(name);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		byte[] buffer = new byte[4096];
+		int length = 0;
+		while ((length = is.read(buffer)) > 0) {
+			baos.write(buffer, 0, length);
+		}
+		return baos.toString();
 	}
 }

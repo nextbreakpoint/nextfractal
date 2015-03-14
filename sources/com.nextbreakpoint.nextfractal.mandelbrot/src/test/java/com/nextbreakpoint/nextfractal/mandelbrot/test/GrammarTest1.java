@@ -34,42 +34,11 @@ public class GrammarTest1 extends BaseTest {
 	@Test
 	public void Grammar1() {
 		try {
-			ASTFractal fractal = parse(getSource());
+			ASTFractal fractal = parse(getSource("/source1.m"));
 			System.out.println(fractal);
 			Assert.assertNotNull(fractal);
 		} catch (Exception e) {
 			Assert.fail(e.getMessage());
 		}
-	}
-
-	protected String getSource() {
-		String source = ""
-				+ "fractal {"
-				+ "orbit [-1 - 1i,+1 + 1i] [z,n] {"
-				+ "trap trap1 [0] {"
-				+ "MOVETO(1);"
-				+ "LINETO(2);"
-				+ "LINETO(2 + 2i);"
-				+ "LINETO(1 + 2i);"
-				+ "LINETO(1);"
-				+ "}"
-				+ "loop [1, 1000] (|z| > 4 & trap1[z]) {"
-				+ "z = 5 + |4i| * x ^ 2 i + w + sin(5i);"
-				+ "x = z;"
-				+ "}"
-				+ "} color [#000000] {"
-				+ "palette palette1 [200] {"
-				+ "[0, #000000] > [100, #FFFFFF];"
-				+ "[101, #FFFFFF] > [200, #FF0000];"
-				+ "}"
-				+ "rule (n = 0) [1.0] {"
-				+ "x,5,5,5"
-				+ "}"
-				+ "rule (n > 0) [1.0] {"
-				+ "palette1[n]"
-				+ "}"
-				+ "}"
-				+ "}";
-		return source;
 	}
 }
