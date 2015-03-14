@@ -1,6 +1,7 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
 
 import java.io.File;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -28,6 +29,7 @@ import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
 import com.nextbreakpoint.nextfractal.core.renderer.javaFX.JavaFXRendererFactory;
 import com.nextbreakpoint.nextfractal.core.session.Session;
+import com.nextbreakpoint.nextfractal.core.session.SessionError;
 import com.nextbreakpoint.nextfractal.core.session.SessionListener;
 import com.nextbreakpoint.nextfractal.core.utils.DefaultThreadFactory;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotData;
@@ -161,6 +163,17 @@ public class MandelbrotEditorPane extends BorderPane {
 			@Override
 			public void sessionRemoved(Session session, ExportSession exportSession) {
 				jobsList.getItems().remove(exportSession);
+			}
+
+			@Override
+			public void errorsChanged(Session session) {
+				List<SessionError> errors = session.getErrors();
+				for (SessionError error : errors) {
+					// TODO Auto-generated method stub
+//					sourceText.set
+//					error.getLine();
+					logger.info(error.toString());
+				}
 			}
 		});
 		

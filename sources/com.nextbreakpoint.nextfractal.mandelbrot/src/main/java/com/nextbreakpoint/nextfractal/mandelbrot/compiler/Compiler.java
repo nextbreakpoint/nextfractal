@@ -118,32 +118,13 @@ public class Compiler {
 			parser.setErrorHandler(new CompilerErrorStrategy(errors));
 			ParseTree fractalTree = parser.fractal();
             if (fractalTree != null) {
-//            	ParseTreeWalker walker = new ParseTreeWalker();
-//            	walker.walk(new ParseTreeListener() {
-//					@Override
-//					public void visitTerminal(TerminalNode node) {
-//					}
-//					
-//					@Override
-//					public void visitErrorNode(ErrorNode node) {
-//					}
-//					
-//					@Override
-//					public void exitEveryRule(ParserRuleContext ctx) {
-//						logger.log(Level.FINE, ctx.getRuleContext().getClass().getSimpleName() + " " + ctx.getText());
-//					}
-//					
-//					@Override
-//					public void enterEveryRule(ParserRuleContext ctx) {
-//					}
-//				}, fractalTree);
             	ASTBuilder builder = parser.getBuilder();
             	ASTFractal fractal = builder.getFractal();
             	return fractal;
             }
 		}
 		catch (Exception e) {
-			errors.add(new CompilerError(0, 0, 0, e.getMessage()));
+			errors.add(new CompilerError(CompilerError.ErrorType.PARSER, 0, 0, 0, e.getMessage()));
 		}
 		return null;
 	}
@@ -168,14 +149,15 @@ public class Compiler {
 		List<SimpleJavaFileObject> compilationUnits = new ArrayList<>();
 		compilationUnits.add(new SourceJavaFileObject(className, source));
 		List<String> options = new ArrayList<>();
-		options.addAll(Arrays.asList("-source", "1.8", "-target", "1.8", "-proc:none", "-Xdiags:verbose", "-classpath", System.getProperty("java.class.path")));
+//		options.addAll(Arrays.asList("-source", "1.8", "-target", "1.8", "-proc:none", "-Xdiags:verbose", "-classpath", System.getProperty("java.class.path")));
+		options.addAll(Arrays.asList("-proc:none", "-Xdiags:verbose", "-classpath", System.getProperty("java.class.path")));
 		DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 		JavaFileManager fileManager = new CompilerJavaFileManager(compiler.getStandardFileManager(diagnostics, null, null));
 		try {
 			compiler.getTask(null, fileManager, diagnostics, options, null, compilationUnits).call();
 			for (Diagnostic<? extends JavaFileObject> diagnostic : diagnostics.getDiagnostics()) {
-				CompilerError error = new CompilerError(diagnostic.getLineNumber(), diagnostic.getColumnNumber(), diagnostic.getEndPosition() - diagnostic.getStartPosition(), diagnostic.getMessage(null));
+				CompilerError error = new CompilerError(CompilerError.ErrorType.JAVA_COMPILER, diagnostic.getLineNumber(), diagnostic.getColumnNumber(), diagnostic.getEndPosition() - diagnostic.getStartPosition(), diagnostic.getMessage(null));
 				logger.log(Level.FINE, error.toString());
 				errors.add(error);
 			}
@@ -189,7 +171,7 @@ public class Compiler {
 				}
 			}
 		} catch (Throwable e) {
-			errors.add(new CompilerError(0, 0, 0, e.getMessage()));
+			errors.add(new CompilerError(CompilerError.ErrorType.JAVA_COMPILER, 0, 0, 0, e.getMessage()));
 		} finally {
 			try {
 				fileManager.close();
@@ -1043,35 +1025,35 @@ public class Compiler {
 
 		@Override
 		public void reportError(Parser recognizer, RecognitionException e) {
-			CompilerError error = new CompilerError(e.getOffendingToken().getLine(), e.getOffendingToken().getCharPositionInLine(), 0, e.getMessage());
+			CompilerError error = new CompilerError(CompilerError.ErrorType.PARSER, e.getOffendingToken().getLine(), e.getOffendingToken().getCharPositionInLine(), 0, e.getMessage());
 			logger.log(Level.WARNING, error.toString(), e);
 			errors.add(error);
 		}
 
 		@Override
 		protected void reportInputMismatch(Parser recognizer, InputMismatchException e) {
-			CompilerError error = new CompilerError(e.getOffendingToken().getLine(), e.getOffendingToken().getCharPositionInLine(), recognizer.getCurrentToken().getStopIndex() - recognizer.getCurrentToken().getStartIndex(), e.getMessage());
+			CompilerError error = new CompilerError(CompilerError.ErrorType.PARSER, e.getOffendingToken().getLine(), e.getOffendingToken().getCharPositionInLine(), recognizer.getCurrentToken().getStopIndex() - recognizer.getCurrentToken().getStartIndex(), e.getMessage());
 			logger.log(Level.WARNING, error.toString(), e);
 			errors.add(error);
 		}
 
 		@Override
 		protected void reportFailedPredicate(Parser recognizer, FailedPredicateException e) {
-			CompilerError error = new CompilerError(e.getOffendingToken().getLine(), e.getOffendingToken().getCharPositionInLine(), recognizer.getCurrentToken().getStopIndex() - recognizer.getCurrentToken().getStartIndex(), e.getMessage());
+			CompilerError error = new CompilerError(CompilerError.ErrorType.PARSER, e.getOffendingToken().getLine(), e.getOffendingToken().getCharPositionInLine(), recognizer.getCurrentToken().getStopIndex() - recognizer.getCurrentToken().getStartIndex(), e.getMessage());
 			logger.log(Level.WARNING, error.toString(), e);
 			errors.add(error);
 		}
 
 		@Override
 		protected void reportUnwantedToken(Parser recognizer) {
-			CompilerError error = new CompilerError(recognizer.getCurrentToken().getLine(), recognizer.getCurrentToken().getCharPositionInLine(), recognizer.getCurrentToken().getStopIndex() - recognizer.getCurrentToken().getStartIndex(), "Unwanted token");
+			CompilerError error = new CompilerError(CompilerError.ErrorType.PARSER, recognizer.getCurrentToken().getLine(), recognizer.getCurrentToken().getCharPositionInLine(), recognizer.getCurrentToken().getStopIndex() - recognizer.getCurrentToken().getStartIndex(), "Unwanted token");
 			logger.log(Level.WARNING, error.toString());
 			errors.add(error);
 		}
 
 		@Override
 		protected void reportMissingToken(Parser recognizer) {
-			CompilerError error = new CompilerError(recognizer.getCurrentToken().getLine(), recognizer.getCurrentToken().getCharPositionInLine(), recognizer.getCurrentToken().getStopIndex() - recognizer.getCurrentToken().getStartIndex(), "Missing token");
+			CompilerError error = new CompilerError(CompilerError.ErrorType.PARSER, recognizer.getCurrentToken().getLine(), recognizer.getCurrentToken().getCharPositionInLine(), recognizer.getCurrentToken().getStopIndex() - recognizer.getCurrentToken().getStartIndex(), "Missing token");
 			logger.log(Level.WARNING, error.toString());
 			errors.add(error);
 		}

@@ -222,6 +222,10 @@ public class MandelbrotRenderPane extends BorderPane {
 			@Override
 			public void sessionRemoved(Session session, ExportSession exportSession) {
 			}
+
+			@Override
+			public void errorsChanged(Session session) {
+			}
 		});
 		
 		StackPane stackPane = new StackPane();
@@ -505,6 +509,7 @@ public class MandelbrotRenderPane extends BorderPane {
 		boolean[] changed = new boolean[2];
 		Compiler compiler = new Compiler(getClass().getPackage().getName(), getClass().getSimpleName());
 		CompilerReport report = compiler.generateJavaSource(getMandelbrotSession().getSource());
+		getMandelbrotSession().setErrors(report.getErrors());
 		orbitBuilder = compiler.compileOrbit(report);
 		//TODO report errors
 		String newASTOrbit = report.getAST().getOrbit().toString();

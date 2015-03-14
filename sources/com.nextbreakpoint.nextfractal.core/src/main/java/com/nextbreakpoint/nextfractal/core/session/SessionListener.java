@@ -25,6 +25,11 @@ public interface SessionListener {
 	 * @param session
 	 */
 	public void terminate(Session session);
+	
+	/**
+	 * @param session
+	 */
+	public void errorsChanged(Session session);
 
 	/**
 	 * @param session

@@ -4,7 +4,7 @@ import com.nextbreakpoint.nextfractal.core.session.Session;
 
 public class MandelbrotSession extends Session {
 	private MandelbrotData data = new MandelbrotData();
-
+	
 	public String getVersion() {
 		return data.getVersion();
 	}
