@@ -435,6 +435,10 @@ public class MandelbrotRenderPane extends BorderPane {
 			if (colorChanged) {
 				logger.info("Color algorithm is changed");
 			}
+			if (!orbitChanged && !colorChanged) {
+				logger.info("Orbit or color algorithms are not changed");
+				return;
+			}
 			double[] traslation = getMandelbrotSession().getView().getTraslation();
 			double[] rotation = getMandelbrotSession().getView().getRotation();
 			double[] scale = getMandelbrotSession().getView().getScale();
@@ -506,20 +510,30 @@ public class MandelbrotRenderPane extends BorderPane {
 	}
 
 	private boolean[] recompileFractal() throws Exception {
-		boolean[] changed = new boolean[2];
+		boolean[] changed = new boolean[] { false, false };
 		Compiler compiler = new Compiler(getClass().getPackage().getName(), getClass().getSimpleName());
 		CompilerReport report = compiler.generateJavaSource(getMandelbrotSession().getSource());
 		getMandelbrotSession().setErrors(report.getErrors());
-		orbitBuilder = compiler.compileOrbit(report);
-		//TODO report errors
-		String newASTOrbit = report.getAST().getOrbit().toString();
-		changed[0] = !newASTOrbit.equals(astOrbit);
-		astOrbit = newASTOrbit;
-		colorBuilder = compiler.compileColor(report);
-		//TODO report errors
-		String newASTColor = report.getAST().getColor().toString();
-		changed[1] = !newASTColor.equals(astColor);
-		astColor = newASTColor;
+		if (report.getErrors().size() == 0) {
+			CompilerBuilder<Orbit> newOrbitBuilder = compiler.compileOrbit(report);
+			getMandelbrotSession().setErrors(newOrbitBuilder.getErrors());
+			if (newOrbitBuilder.getErrors().size() > 0) {
+				return changed;
+			}
+			CompilerBuilder<Color> newColorBuilder = compiler.compileColor(report);
+			getMandelbrotSession().setErrors(newColorBuilder.getErrors());
+			if (newColorBuilder.getErrors().size() > 0) {
+				return changed;
+			}
+			orbitBuilder = newOrbitBuilder;
+			String newASTOrbit = report.getAST().getOrbit().toString();
+			changed[0] = !newASTOrbit.equals(astOrbit);
+			astOrbit = newASTOrbit;
+			colorBuilder = newColorBuilder;
+			String newASTColor = report.getAST().getColor().toString();
+			changed[1] = !newASTColor.equals(astColor);
+			astColor = newASTColor;
+		}
 		return changed;
 	}
 

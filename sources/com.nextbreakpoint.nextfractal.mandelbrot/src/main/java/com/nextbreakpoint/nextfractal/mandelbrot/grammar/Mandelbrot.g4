@@ -153,7 +153,7 @@ expression returns [ASTExpression result]
 		$result = new ASTFunction($m, "mod", $e.result);	
 	}
 	|
-	a='[' e=expression ']' {
+	a='<' e=expression '>' {
 		$result = new ASTFunction($a, "pha", $e.result);	
 	}
 	|
@@ -200,7 +200,7 @@ expression2 returns [ASTExpression result]
 		$result = new ASTFunction($m, "mod", $e.result);	
 	}
 	|
-	a='[' e=expression ']' {
+	a='<' e=expression '>' {
 		$result = new ASTFunction($a, "pha", $e.result);	
 	}
 	|
@@ -243,7 +243,7 @@ expression3 returns [ASTExpression result]
 		$result = new ASTFunction($m, "mod", $e.result);	
 	}
 	|
-	a='[' e=expression ']' {
+	a='<' e=expression '>' {
 		$result = new ASTFunction($a, "pha", $e.result);	
 	}
 	|
@@ -278,7 +278,7 @@ expression4 returns [ASTExpression result]
 		$result = new ASTFunction($m, "mod", $e.result);	
 	}
 	|
-	a='[' e=expression ']' {
+	a='<' e=expression '>' {
 		$result = new ASTFunction($a, "pha", $e.result);	
 	}
 	|
@@ -434,11 +434,6 @@ FRACTAL
 ORBIT 
 	:
 	'orbit'
-	;
- 
-PROJECTION 
-	:
-	'projection'
 	;
  
 TRAP 

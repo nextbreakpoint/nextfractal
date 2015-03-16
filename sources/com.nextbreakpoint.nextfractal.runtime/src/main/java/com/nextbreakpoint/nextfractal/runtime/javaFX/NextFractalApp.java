@@ -40,9 +40,9 @@ public class NextFractalApp extends Application {
     public void start(Stage primaryStage) {
     	System.out.println(System.getProperty("java.vendor"));
     	System.out.println(System.getProperty("java.version"));
-		int width = 500;
-		int height = 500;
-		int editorWidth = 300;
+		int width = 600;
+		int height = 600;
+		int editorWidth = 424;
         String pluginId = "Mandelbrot";
         primaryStage.setTitle("NextFractal");
         primaryStage.setResizable(false);
@@ -108,7 +108,17 @@ public class NextFractalApp extends Application {
         menuBar.setUseSystemMenuBar(true);
         Scene scene = new Scene(root);
         root.getChildren().add(menuBar);
+
         scene.getStylesheets().add(getClass().getResource("/theme.css").toExternalForm());
+        final ServiceLoader<? extends FractalFactory> plugins = ServiceLoader.load(FractalFactory.class);
+		plugins.forEach(factory -> {
+			try {
+				scene.getStylesheets().add(getClass().getResource("/" + factory.getId().toLowerCase() + ".css").toExternalForm());
+			} catch (Throwable e) {
+				//TODO log errors
+			}
+		});
+		
 		primaryStage.setScene(scene);
         primaryStage.show();
         primaryStage.setTitle("NextFractal");

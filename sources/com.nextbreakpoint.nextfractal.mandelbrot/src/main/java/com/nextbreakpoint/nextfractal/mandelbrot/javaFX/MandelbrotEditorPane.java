@@ -1,15 +1,21 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
 
 import java.io.File;
+import java.time.Duration;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.event.Event;
 import javafx.event.EventType;
 import javafx.scene.control.Button;
@@ -17,11 +23,18 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 import javafx.util.Callback;
+
+import org.fxmisc.richtext.CodeArea;
+import org.fxmisc.richtext.LineNumberFactory;
+import org.fxmisc.richtext.PlainTextChange;
+import org.fxmisc.richtext.StyleSpans;
+import org.fxmisc.richtext.StyleSpansBuilder;
+import org.reactfx.EventStream;
+import org.reactfx.util.Try;
 
 import com.nextbreakpoint.nextfractal.core.export.ExportSession;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererPoint;
@@ -48,6 +61,9 @@ public class MandelbrotEditorPane extends BorderPane {
 	private boolean noHistory;
 	private ScheduledExecutorService sessionsExecutor;
 	private ExecutorService historyExecutor;
+	private ExecutorService textExecutor;
+	private CodeArea sourceText;
+	private Pattern highlightingPattern;
 
 	public MandelbrotEditorPane(Session session) {
 		this.session = session;
@@ -74,7 +90,7 @@ public class MandelbrotEditorPane extends BorderPane {
 		setCenter(tabPane);
 
 		BorderPane sourcePane = new BorderPane();
-		TextArea sourceText = new TextArea();
+		sourceText = new CodeArea();
 		sourceText.getStyleClass().add("source");
 		HBox sourceButtons = new HBox(10);
 		Button renderButton = new Button("Render");
@@ -126,12 +142,23 @@ public class MandelbrotEditorPane extends BorderPane {
 		jobsPane.setBottom(jobsButtons);
 		jobsTab.setContent(jobsPane);
 
-		sourceText.setText(getMandelbrotSession().getSource());
+		initHighlightingPattern();
 		
+		sourceText.setParagraphGraphicFactory(LineNumberFactory.get(sourceText));
+        
+		EventStream<PlainTextChange> textChanges = sourceText.plainTextChanges();
+        textChanges.successionEnds(Duration.ofMillis(500))
+                .supplyTask(this::computeHighlightingAsync)
+                .awaitLatest(textChanges)
+                .map(Try::get)
+                .subscribe(this::applyHighlighting);
+        
+        sourceText.replaceText(getMandelbrotSession().getSource());
+        
 		session.addSessionListener(new SessionListener() {
 			@Override
 			public void dataChanged(Session session) {
-				sourceText.setText(getMandelbrotSession().getSource());
+				sourceText.replaceText(getMandelbrotSession().getSource());
 				addDataToHistory(historyList);
 			}
 			
@@ -252,7 +279,69 @@ public class MandelbrotEditorPane extends BorderPane {
 		sessionsExecutor = Executors.newSingleThreadScheduledExecutor(threadFactory);
 		sessionsExecutor.scheduleWithFixedDelay(new UpdateSessionsRunnable(jobsList), 500, 500, TimeUnit.MILLISECONDS);
 		
+		textExecutor = Executors.newSingleThreadExecutor();
+		
 		addDataToHistory(historyList);
+	}
+
+    private Task<StyleSpans<Collection<String>>> computeHighlightingAsync() {
+        String text = sourceText.getText();
+        Task<StyleSpans<Collection<String>>> task = new Task<StyleSpans<Collection<String>>>() {
+            @Override
+            protected StyleSpans<Collection<String>> call() throws Exception {
+                return computeHighlighting(text);
+            }
+        };
+        textExecutor.execute(task);
+        return task;
+    }
+
+	private void initHighlightingPattern() {
+		String[] KEYWORDS = new String[] {
+	        "fractal", "orbit", "color", "begin", "loop", "end", "rule", "trap", "palette", "condition"
+		};
+		
+		String[] FUNCTIONS = new String[] {
+		        "re", "im", "mod", "pha", "log", "exp", "sqrt", "pow", "hypot", "atan2", "cos", "sin", "tan", "asin", "acos", "atan"
+		};
+		
+		String KEYWORD_PATTERN = "\\b(" + String.join("|", KEYWORDS) + ")\\b";
+		String FUNCTION_PATTERN = "\\b(" + String.join("|", FUNCTIONS) + ")\\b";
+		String PAREN_PATTERN = "\\(|\\)";
+		String BRACE_PATTERN = "\\{|\\}";
+		String OPERATOR_PATTERN = "\\*|\\+|-|/|\\^|<|>|\\||&|=|#|;|\\[|\\]";
+		
+		highlightingPattern = Pattern.compile(
+		        "(?<KEYWORD>" + KEYWORD_PATTERN + ")"
+		        + "|(?<FUNCTION>" + FUNCTION_PATTERN + ")"
+		        + "|(?<PAREN>" + PAREN_PATTERN + ")"
+		        + "|(?<BRACE>" + BRACE_PATTERN + ")"
+		        + "|(?<OPERATOR>" + OPERATOR_PATTERN + ")"
+		);
+	}
+	
+    private void applyHighlighting(StyleSpans<Collection<String>> highlighting) {
+    	sourceText.setStyleSpans(0, highlighting);
+    }
+
+	private StyleSpans<Collection<String>> computeHighlighting(String text) {
+		Matcher matcher = highlightingPattern.matcher(text);
+		int lastKwEnd = 0;
+		StyleSpansBuilder<Collection<String>> spansBuilder = new StyleSpansBuilder<>();
+		while (matcher.find()) {
+			String styleClass = matcher
+					.group("KEYWORD") != null ? "keyword" : matcher
+					.group("FUNCTION") != null ? "function" : matcher
+					.group("PAREN") != null ? "paren" : matcher
+					.group("BRACE") != null ? "brace" : matcher
+					.group("OPERATOR") != null ? "operator" : null;
+			assert styleClass != null;
+			spansBuilder.add(Collections.emptyList(), matcher.start() - lastKwEnd);
+			spansBuilder.add(Collections.singleton(styleClass), matcher.end() - matcher.start());
+			lastKwEnd = matcher.end();
+		}
+		spansBuilder.add(Collections.emptyList(), text.length() - lastKwEnd);
+		return spansBuilder.create();
 	}
 
 	@Override
@@ -310,12 +399,17 @@ public class MandelbrotEditorPane extends BorderPane {
 	private void shutdown() {
 		sessionsExecutor.shutdownNow();
 		historyExecutor.shutdownNow();
+		textExecutor.shutdownNow();
 		try {
 			sessionsExecutor.awaitTermination(5000, TimeUnit.MILLISECONDS);
 		} catch (InterruptedException e) {
 		}
 		try {
 			historyExecutor.awaitTermination(5000, TimeUnit.MILLISECONDS);
+		} catch (InterruptedException e) {
+		}
+		try {
+			textExecutor.awaitTermination(5000, TimeUnit.MILLISECONDS);
 		} catch (InterruptedException e) {
 		}
 	}

@@ -145,7 +145,7 @@ public class Compiler {
 	
 	@SuppressWarnings("unchecked")
 	private <T> Class<T> compileToClass(String source, String className, Class<T> clazz, List<CompilerError> errors) {
-		logger.fine(source);
+		logger.log(Level.FINE, "Compile Java source:\n" + source);
 		List<SimpleJavaFileObject> compilationUnits = new ArrayList<>();
 		compilationUnits.add(new SourceJavaFileObject(className, source));
 		List<String> options = new ArrayList<>();
@@ -1026,21 +1026,21 @@ public class Compiler {
 		@Override
 		public void reportError(Parser recognizer, RecognitionException e) {
 			CompilerError error = new CompilerError(CompilerError.ErrorType.PARSER, e.getOffendingToken().getLine(), e.getOffendingToken().getCharPositionInLine(), 0, e.getMessage());
-			logger.log(Level.WARNING, error.toString(), e);
+			logger.log(Level.WARNING, error.toString());
 			errors.add(error);
 		}
 
 		@Override
 		protected void reportInputMismatch(Parser recognizer, InputMismatchException e) {
 			CompilerError error = new CompilerError(CompilerError.ErrorType.PARSER, e.getOffendingToken().getLine(), e.getOffendingToken().getCharPositionInLine(), recognizer.getCurrentToken().getStopIndex() - recognizer.getCurrentToken().getStartIndex(), e.getMessage());
-			logger.log(Level.WARNING, error.toString(), e);
+			logger.log(Level.WARNING, error.toString());
 			errors.add(error);
 		}
 
 		@Override
 		protected void reportFailedPredicate(Parser recognizer, FailedPredicateException e) {
 			CompilerError error = new CompilerError(CompilerError.ErrorType.PARSER, e.getOffendingToken().getLine(), e.getOffendingToken().getCharPositionInLine(), recognizer.getCurrentToken().getStopIndex() - recognizer.getCurrentToken().getStartIndex(), e.getMessage());
-			logger.log(Level.WARNING, error.toString(), e);
+			logger.log(Level.WARNING, error.toString());
 			errors.add(error);
 		}
 
