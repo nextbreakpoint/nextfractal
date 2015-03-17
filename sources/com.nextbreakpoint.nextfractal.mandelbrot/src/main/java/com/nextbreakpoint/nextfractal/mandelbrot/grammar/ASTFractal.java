@@ -25,12 +25,18 @@ public class ASTFractal extends ASTObject {
 
 	public void registerStateVariable(String varName, Token location) {
 		if (vars.get(varName) == null) {
-			throw new RuntimeException("CompilerVariable not defined: " + location.getText() + " [" + location.getLine() + ":" + location.getCharPositionInLine() + "]");
+			throw new ASTException("Variable not defined: " + location.getText(), location);
+		}
+		if (orbit == null) {
+			throw new ASTException("Orbit not defined", location);
 		}
 		orbit.addVariable(varName);
 	}
 
 	public List<String> getVariables() {
+		if (orbit == null) {
+			throw new ASTException("Orbit not defined", location);
+		}
 		return orbit.getVariables();
 	}
 	
@@ -48,6 +54,9 @@ public class ASTFractal extends ASTObject {
 	
 	public void setColor(ASTColor color) {
 		this.color = color;
+		if (orbit == null) {
+			throw new ASTException("Orbit not defined", location);
+		}
 		color.setVariables(orbit.getVariables());
 	}
 
@@ -67,14 +76,14 @@ public class ASTFractal extends ASTObject {
 			var = new CompilerVariable(name, real, create);
 			vars.put(var.getName(), var);
 		} else if (!real && var.isReal()) {
-			throw new RuntimeException("Expression not assignable: " + location.getText() + " [" + location.getLine() + ":" + location.getCharPositionInLine() + "]");
+			throw new ASTException("Expression not assignable: " + location.getText(), location);
 		}
 	}
 
 	public CompilerVariable getVariable(String name, Token location) {
 		CompilerVariable var = vars.get(name);
 		if (var == null) {
-			throw new RuntimeException("CompilerVariable not defined: " + location.getText() + " [" + location.getLine() + ":" + location.getCharPositionInLine() + "]");
+			throw new ASTException("Variable not defined: " + location.getText(), location);
 		}
 		return var;
 	}

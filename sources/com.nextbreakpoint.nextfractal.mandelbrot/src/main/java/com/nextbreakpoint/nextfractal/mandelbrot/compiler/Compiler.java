@@ -55,6 +55,7 @@ import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTConditionCompareOp;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTConditionExpression;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTConditionLogicOp;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTConditionTrap;
+import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTException;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTExpression;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTExpressionCompiler;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTFractal;
@@ -89,7 +90,7 @@ public class Compiler {
 		this.className = className;
 	}
 	
-	public CompilerReport generateJavaSource(String source) {
+	public CompilerReport generateJavaSource(String source) throws IOException {
 		List<CompilerError> errors = new ArrayList<>();
 		ASTFractal ast = parse(source, errors);
 		String orbitSource = buildOrbit(ast);
@@ -97,19 +98,19 @@ public class Compiler {
 		return new CompilerReport(ast, orbitSource, colorSource, errors);
 	}
 	
-	public CompilerBuilder<Orbit> compileOrbit(CompilerReport report) {
+	public CompilerBuilder<Orbit> compileOrbit(CompilerReport report) throws ClassNotFoundException, IOException {
 		List<CompilerError> errors = new ArrayList<>();
 		Class<Orbit> clazz = compileToClass(report.getOrbitSource(), className + "Orbit", Orbit.class, errors);
 		return new CompilerBuilder<Orbit>(clazz, errors);
 	}
 
-	public CompilerBuilder<Color> compileColor(CompilerReport report) {
+	public CompilerBuilder<Color> compileColor(CompilerReport report) throws ClassNotFoundException, IOException {
 		List<CompilerError> errors = new ArrayList<>();
 		Class<Color> clazz = compileToClass(report.getColorSource(), className + "Color", Color.class, errors);
 		return new CompilerBuilder<Color>(clazz, errors);
 	}
 
-	private ASTFractal parse(String source, List<CompilerError> errors) {
+	private ASTFractal parse(String source, List<CompilerError> errors) throws IOException {
 		try {
 			ANTLRInputStream is = new ANTLRInputStream(new StringReader(source));
 			MandelbrotLexer lexer = new MandelbrotLexer(is);
@@ -122,9 +123,10 @@ public class Compiler {
             	ASTFractal fractal = builder.getFractal();
             	return fractal;
             }
-		}
-		catch (Exception e) {
-			errors.add(new CompilerError(CompilerError.ErrorType.PARSER, 0, 0, 0, e.getMessage()));
+		} catch (ASTException e) {
+			CompilerError error = new CompilerError(CompilerError.ErrorType.M_COMPILER, e.getLocation().getLine(), e.getLocation().getCharPositionInLine(), e.getLocation().getStartIndex(), e.getLocation().getStopIndex() - e.getLocation().getStartIndex(), e.getMessage());
+			logger.log(Level.INFO, error.toString(), e);
+			errors.add(error);
 		}
 		return null;
 	}
@@ -144,7 +146,7 @@ public class Compiler {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private <T> Class<T> compileToClass(String source, String className, Class<T> clazz, List<CompilerError> errors) {
+	private <T> Class<T> compileToClass(String source, String className, Class<T> clazz, List<CompilerError> errors) throws IOException, ClassNotFoundException {
 		logger.log(Level.FINE, "Compile Java source:\n" + source);
 		List<SimpleJavaFileObject> compilationUnits = new ArrayList<>();
 		compilationUnits.add(new SourceJavaFileObject(className, source));
@@ -157,21 +159,19 @@ public class Compiler {
 		try {
 			compiler.getTask(null, fileManager, diagnostics, options, null, compilationUnits).call();
 			for (Diagnostic<? extends JavaFileObject> diagnostic : diagnostics.getDiagnostics()) {
-				CompilerError error = new CompilerError(CompilerError.ErrorType.JAVA_COMPILER, diagnostic.getLineNumber(), diagnostic.getColumnNumber(), diagnostic.getEndPosition() - diagnostic.getStartPosition(), diagnostic.getMessage(null));
-				logger.log(Level.FINE, error.toString());
+				CompilerError error = new CompilerError(CompilerError.ErrorType.JAVA_COMPILER, diagnostic.getLineNumber(), diagnostic.getColumnNumber(), diagnostic.getStartPosition(), diagnostic.getEndPosition() - diagnostic.getStartPosition(), diagnostic.getMessage(null));
+				logger.log(Level.INFO, error.toString());
 				errors.add(error);
 			}
 			if (diagnostics.getDiagnostics().size() == 0) {
 				CompilerClassLoader loader = new CompilerClassLoader();
 				defineClasses(fileManager, loader, className);
 				Class<?> compiledClazz = loader.loadClass(packageName + "." + className);
-				logger.log(Level.FINE, compiledClazz.getCanonicalName());
+				logger.log(Level.INFO, compiledClazz.getCanonicalName());
 				if (clazz.isAssignableFrom(compiledClazz)) {
 					return (Class<T>) compiledClazz;
 				}
 			}
-		} catch (Throwable e) {
-			errors.add(new CompilerError(CompilerError.ErrorType.JAVA_COMPILER, 0, 0, 0, e.getMessage()));
 		} finally {
 			try {
 				fileManager.close();
@@ -424,7 +424,7 @@ public class Compiler {
 			if (element.getExp().isReal()) {
 				element.getExp().compile(new ExpressionCompiler(builder));
 			} else {
-				throw new RuntimeException("Expression type not valid: " + element.getLocation().getText() + " [" + element.getLocation().getLine() + ":" + element.getLocation().getCharPositionInLine() + "]");
+				throw new ASTException("Expression type not valid: " + element.getLocation().getText(), element.getLocation());
 			}
 		} else {
 			builder.append("step / (end - start)");
@@ -553,7 +553,7 @@ public class Compiler {
 					statement.getExp().compile(new ExpressionCompiler(builder));
 					builder.append(",0);\n");
 				} else if (var.isReal() && !statement.getExp().isReal()) {
-					throw new RuntimeException("Expression not assignable: " + statement.getLocation().getText() + " [" + statement.getLocation().getLine() + ":" + statement.getLocation().getCharPositionInLine() + "]");
+					throw new ASTException("Expression not assignable: " + statement.getLocation().getText(), statement.getLocation());
 				}
 			}
 		}		
@@ -595,7 +595,7 @@ public class Compiler {
 				case "re":
 				case "im":
 					if (function.getArguments().length != 1) {
-						throw new RuntimeException("Invalid number of arguments: " + function.getLocation().getText() + " [" + function.getLocation().getLine() + ":" + function.getLocation().getCharPositionInLine() + "]");
+						throw new ASTException("Invalid number of arguments: " + function.getLocation().getText(), function.getLocation());
 					}				
 					break;
 					
@@ -606,50 +606,50 @@ public class Compiler {
 				case "acos":
 				case "atan":
 					if (function.getArguments().length != 1) {
-						throw new RuntimeException("Invalid number of arguments: " + function.getLocation().getText() + " [" + function.getLocation().getLine() + ":" + function.getLocation().getCharPositionInLine() + "]");
+						throw new ASTException("Invalid number of arguments: " + function.getLocation().getText(), function.getLocation());
 					}				
 					break;
 	
 				case "log":
 					if (function.getArguments().length != 1) {
-						throw new RuntimeException("Invalid number of arguments: " + function.getLocation().getText() + " [" + function.getLocation().getLine() + ":" + function.getLocation().getCharPositionInLine() + "]");
+						throw new ASTException("Invalid number of arguments: " + function.getLocation().getText(), function.getLocation());
 					}				
 					if (!function.getArguments()[0].isReal()) {
-						throw new RuntimeException("Invalid type of arguments: " + function.getLocation().getText() + " [" + function.getLocation().getLine() + ":" + function.getLocation().getCharPositionInLine() + "]");
+						throw new ASTException("Invalid type of arguments: " + function.getLocation().getText(), function.getLocation());
 					}				
 					break;
 					
 				case "atan2":
 				case "hypot":
 					if (function.getArguments().length != 2) {
-						throw new RuntimeException("Invalid number of arguments: " + function.getLocation().getText() + " [" + function.getLocation().getLine() + ":" + function.getLocation().getCharPositionInLine() + "]");
+						throw new ASTException("Invalid number of arguments: " + function.getLocation().getText(), function.getLocation());
 					}				
 					if (!function.getArguments()[0].isReal()) {
-						throw new RuntimeException("Invalid type of arguments: " + function.getLocation().getText() + " [" + function.getLocation().getLine() + ":" + function.getLocation().getCharPositionInLine() + "]");
+						throw new ASTException("Invalid type of arguments: " + function.getLocation().getText(), function.getLocation());
 					}				
 					if (!function.getArguments()[1].isReal()) {
-						throw new RuntimeException("Invalid type of arguments: " + function.getLocation().getText() + " [" + function.getLocation().getLine() + ":" + function.getLocation().getCharPositionInLine() + "]");
+						throw new ASTException("Invalid type of arguments: " + function.getLocation().getText(), function.getLocation());
 					}				
 					break;
 					
 				case "pow":
 					if (function.getArguments().length != 2) {
-						throw new RuntimeException("Invalid number of arguments: " + function.getLocation().getText() + " [" + function.getLocation().getLine() + ":" + function.getLocation().getCharPositionInLine() + "]");
+						throw new ASTException("Invalid number of arguments: " + function.getLocation().getText(), function.getLocation());
 					}				
 					if (!function.getArguments()[1].isReal()) {
-						throw new RuntimeException("Invalid type of arguments: " + function.getLocation().getText() + " [" + function.getLocation().getLine() + ":" + function.getLocation().getCharPositionInLine() + "]");
+						throw new ASTException("Invalid type of arguments: " + function.getLocation().getText(), function.getLocation());
 					}				
 					break;
 	
 				case "sqrt":
 				case "exp":
 					if (function.getArguments().length != 1) {
-						throw new RuntimeException("Invalid number of arguments: " + function.getLocation().getText() + " [" + function.getLocation().getLine() + ":" + function.getLocation().getCharPositionInLine() + "]");
+						throw new ASTException("Invalid number of arguments: " + function.getLocation().getText(), function.getLocation());
 					}				
 					break;
 					
 				default:
-					throw new RuntimeException("Unsupported function: " + function.getLocation().getText() + " [" + function.getLocation().getLine() + ":" + function.getLocation().getCharPositionInLine() + "]");
+					throw new ASTException("Unsupported function: " + function.getLocation().getText(), function.getLocation());
 			}
 			ASTExpression[] arguments = function.getArguments();
 			for (int i = 0; i < arguments.length; i++) {
@@ -692,7 +692,7 @@ public class Compiler {
 						break;
 					
 					default:
-						throw new RuntimeException("Unsupported operator: " + operator.getLocation().getText() + " [" + operator.getLocation().getLine() + ":" + operator.getLocation().getCharPositionInLine() + "]");
+						throw new ASTException("Unsupported operator: " + operator.getLocation().getText(), operator.getLocation());
 				}
 			} else {
 				if (exp1.isReal() && exp2.isReal()) {
@@ -720,7 +720,7 @@ public class Compiler {
 							break;
 						
 						default:
-							throw new RuntimeException("Unsupported operator: " + operator.getLocation().getText() + " [" + operator.getLocation().getLine() + ":" + operator.getLocation().getCharPositionInLine() + "]");
+							throw new ASTException("Unsupported operator: " + operator.getLocation().getText(), operator.getLocation());
 					}
 					exp2.compile(this);
 					builder.append(")");
@@ -743,7 +743,7 @@ public class Compiler {
 							break;
 						
 						default:
-							throw new RuntimeException("Unsupported operator: " + operator.getLocation().getText() + " [" + operator.getLocation().getLine() + ":" + operator.getLocation().getCharPositionInLine() + "]");
+							throw new ASTException("Unsupported operator: " + operator.getLocation().getText(), operator.getLocation());
 					}
 					builder.append("(");
 					exp1.compile(this);
@@ -765,7 +765,7 @@ public class Compiler {
 							break;
 							
 						default:
-							throw new RuntimeException("Unsupported operator: " + operator.getLocation().getText() + " [" + operator.getLocation().getLine() + ":" + operator.getLocation().getCharPositionInLine() + "]");
+							throw new ASTException("Unsupported operator: " + operator.getLocation().getText(), operator.getLocation());
 					}
 					builder.append("(");
 					exp1.compile(this);
@@ -821,7 +821,7 @@ public class Compiler {
 						break;
 					
 					default:
-						throw new RuntimeException("Unsupported operator: " + compareOp.getLocation().getText() + " [" + compareOp.getLocation().getLine() + ":" + compareOp.getLocation().getCharPositionInLine() + "]");
+						throw new ASTException("Unsupported operator: " + compareOp.getLocation().getText(), compareOp.getLocation());
 				}
 				exp2.compile(this);
 				builder.append(")");
@@ -848,7 +848,7 @@ public class Compiler {
 					break;
 					
 				default:
-					throw new RuntimeException("Unsupported operator: " + logicOp.getLocation().getText() + " [" + logicOp.getLocation().getLine() + ":" + logicOp.getLocation().getCharPositionInLine() + "]");
+					throw new ASTException("Unsupported operator: " + logicOp.getLocation().getText(), logicOp.getLocation());
 			}
 			exp2.compile(this);
 			builder.append(")");
@@ -884,7 +884,7 @@ public class Compiler {
 					break;
 					
 				default:
-					throw new RuntimeException("Unsupported operator: " + logicOp.getLocation().getText() + " [" + logicOp.getLocation().getLine() + ":" + logicOp.getLocation().getCharPositionInLine() + "]");
+					throw new ASTException("Unsupported operator: " + logicOp.getLocation().getText(), logicOp.getLocation());
 			}
 			exp2.compile(this);
 			builder.append(")");
@@ -923,7 +923,7 @@ public class Compiler {
 						break;
 					
 					default:
-						throw new RuntimeException("Unsupported operator: " + compareOp.getLocation().getText() + " [" + compareOp.getLocation().getLine() + ":" + compareOp.getLocation().getCharPositionInLine() + "]");
+						throw new ASTException("Unsupported operator: " + compareOp.getLocation().getText(), compareOp.getLocation());
 				}
 				exp2.compile(this);
 				builder.append(")");
@@ -939,7 +939,7 @@ public class Compiler {
 			if (palette.getExp().isReal()) {
 				palette.getExp().compile(this);
 			} else {
-				throw new RuntimeException("Expression type not valid: " + palette.getLocation().getText() + " [" + palette.getLocation().getLine() + ":" + palette.getLocation().getCharPositionInLine() + "]");
+				throw new ASTException("Expression type not valid: " + palette.getLocation().getText(), palette.getLocation());
 			}
 			builder.append(")");
 		}
@@ -1025,35 +1025,40 @@ public class Compiler {
 
 		@Override
 		public void reportError(Parser recognizer, RecognitionException e) {
-			CompilerError error = new CompilerError(CompilerError.ErrorType.PARSER, e.getOffendingToken().getLine(), e.getOffendingToken().getCharPositionInLine(), 0, e.getMessage());
-			logger.log(Level.WARNING, error.toString());
+			String message = generateErrorMessage("Error", recognizer);
+			CompilerError error = new CompilerError(CompilerError.ErrorType.M_COMPILER, e.getOffendingToken().getLine(), e.getOffendingToken().getCharPositionInLine(), e.getOffendingToken().getStartIndex(), recognizer.getCurrentToken().getStopIndex() - recognizer.getCurrentToken().getStartIndex(), message);
+			logger.log(Level.WARNING, "Token not recognized", e);
 			errors.add(error);
 		}
 
 		@Override
 		protected void reportInputMismatch(Parser recognizer, InputMismatchException e) {
-			CompilerError error = new CompilerError(CompilerError.ErrorType.PARSER, e.getOffendingToken().getLine(), e.getOffendingToken().getCharPositionInLine(), recognizer.getCurrentToken().getStopIndex() - recognizer.getCurrentToken().getStartIndex(), e.getMessage());
-			logger.log(Level.WARNING, error.toString());
+			String message = generateErrorMessage("Input mismatch", recognizer);
+			CompilerError error = new CompilerError(CompilerError.ErrorType.M_COMPILER, e.getOffendingToken().getLine(), e.getOffendingToken().getCharPositionInLine(), e.getOffendingToken().getStartIndex(), recognizer.getCurrentToken().getStopIndex() - recognizer.getCurrentToken().getStartIndex(), message);
+			logger.log(Level.WARNING, error.toString(), e);
 			errors.add(error);
 		}
 
 		@Override
 		protected void reportFailedPredicate(Parser recognizer, FailedPredicateException e) {
-			CompilerError error = new CompilerError(CompilerError.ErrorType.PARSER, e.getOffendingToken().getLine(), e.getOffendingToken().getCharPositionInLine(), recognizer.getCurrentToken().getStopIndex() - recognizer.getCurrentToken().getStartIndex(), e.getMessage());
-			logger.log(Level.WARNING, error.toString());
+			String message = generateErrorMessage("Failed predicate", recognizer);
+			CompilerError error = new CompilerError(CompilerError.ErrorType.M_COMPILER, e.getOffendingToken().getLine(), e.getOffendingToken().getCharPositionInLine(), e.getOffendingToken().getStartIndex(), recognizer.getCurrentToken().getStopIndex() - recognizer.getCurrentToken().getStartIndex(), message);
+			logger.log(Level.WARNING, error.toString(), e);
 			errors.add(error);
 		}
 
 		@Override
 		protected void reportUnwantedToken(Parser recognizer) {
-			CompilerError error = new CompilerError(CompilerError.ErrorType.PARSER, recognizer.getCurrentToken().getLine(), recognizer.getCurrentToken().getCharPositionInLine(), recognizer.getCurrentToken().getStopIndex() - recognizer.getCurrentToken().getStartIndex(), "Unwanted token");
+			String message = generateErrorMessage("Unwanted token", recognizer);
+			CompilerError error = new CompilerError(CompilerError.ErrorType.M_COMPILER, recognizer.getCurrentToken().getLine(), recognizer.getCurrentToken().getCharPositionInLine(), recognizer.getCurrentToken().getStartIndex(), recognizer.getCurrentToken().getStopIndex() - recognizer.getCurrentToken().getStartIndex(), message);
 			logger.log(Level.WARNING, error.toString());
 			errors.add(error);
 		}
 
 		@Override
 		protected void reportMissingToken(Parser recognizer) {
-			CompilerError error = new CompilerError(CompilerError.ErrorType.PARSER, recognizer.getCurrentToken().getLine(), recognizer.getCurrentToken().getCharPositionInLine(), recognizer.getCurrentToken().getStopIndex() - recognizer.getCurrentToken().getStartIndex(), "Missing token");
+			String message = generateErrorMessage("Missing token", recognizer);
+			CompilerError error = new CompilerError(CompilerError.ErrorType.M_COMPILER, recognizer.getCurrentToken().getLine(), recognizer.getCurrentToken().getCharPositionInLine(), recognizer.getCurrentToken().getStartIndex(), recognizer.getCurrentToken().getStopIndex() - recognizer.getCurrentToken().getStartIndex(), message);
 			logger.log(Level.WARNING, error.toString());
 			errors.add(error);
 		}
@@ -1180,5 +1185,12 @@ public class Compiler {
 			fileManager.close();
 			files.clear();
 		}
+	}
+
+	private String generateErrorMessage(String message, Parser recognizer) {
+		StringBuilder builder = new StringBuilder();
+		builder.append(message);
+		//TODO
+		return builder.toString();
 	}
 }	

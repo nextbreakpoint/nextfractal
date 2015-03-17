@@ -6,12 +6,14 @@ public class CompilerError implements SessionError {
 	private ErrorType type;
 	private long line;
 	private long charPositionInLine;
+	private long index;
 	private long length;
 	private String message;
 
-	public CompilerError(ErrorType type, long line, long charPositionInLine, long length, String message) {
+	public CompilerError(ErrorType type, long line, long charPositionInLine, long index, long length, String message) {
 		this.type = type;
 		this.line = line;
+		this.index = index;
 		this.charPositionInLine = charPositionInLine;
 		this.message = message;
 	}
@@ -35,9 +37,13 @@ public class CompilerError implements SessionError {
 	public long getLength() {
 		return length;
 	}
+	
+	public long getIndex() {
+		return index;
+	}
 
 	@Override
 	public String toString() {
-		return "[" + line + ":" + charPositionInLine + ":" + length + "] " + message;
+		return "[" + line + ":" + charPositionInLine + ":" + index + ":" + length + "] " + message;
 	}
 }

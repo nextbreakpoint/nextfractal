@@ -9,9 +9,11 @@ public interface SessionError {
 
 	public String getMessage();
 	
+	public long getIndex();
+	
 	public long getLength();
 
 	public static enum ErrorType {
-		LEXER, PARSER, JAVA_COMPILER;
+		M_COMPILER, JAVA_COMPILER;
 	}
 }

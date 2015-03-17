@@ -59,6 +59,7 @@ public class MandelbrotEditorPane extends BorderPane {
 	private FileChooser fileChooser;
 	private File currentFile;
 	private boolean noHistory;
+	private boolean noUpdateSource;
 	private ScheduledExecutorService sessionsExecutor;
 	private ExecutorService historyExecutor;
 	private ExecutorService textExecutor;
@@ -147,7 +148,9 @@ public class MandelbrotEditorPane extends BorderPane {
 		sourceText.setParagraphGraphicFactory(LineNumberFactory.get(sourceText));
         
 		EventStream<PlainTextChange> textChanges = sourceText.plainTextChanges();
-        textChanges.successionEnds(Duration.ofMillis(500))
+        textChanges.suppressible()
+//        		.suppressWhen(condition)
+        		.successionEnds(Duration.ofMillis(500))
                 .supplyTask(this::computeHighlightingAsync)
                 .awaitLatest(textChanges)
                 .map(Try::get)
@@ -158,7 +161,9 @@ public class MandelbrotEditorPane extends BorderPane {
 		session.addSessionListener(new SessionListener() {
 			@Override
 			public void dataChanged(Session session) {
-				sourceText.replaceText(getMandelbrotSession().getSource());
+				if (!noUpdateSource) {
+					sourceText.replaceText(getMandelbrotSession().getSource());
+				}
 				addDataToHistory(historyList);
 			}
 			
@@ -194,22 +199,18 @@ public class MandelbrotEditorPane extends BorderPane {
 
 			@Override
 			public void errorsChanged(Session session) {
-				List<SessionError> errors = session.getErrors();
-				for (SessionError error : errors) {
-					// TODO Auto-generated method stub
-//					sourceText.set
-//					error.getLine();
-					logger.info(error.toString());
-				}
+				displayErrors(session);
 			}
 		});
 		
 		renderButton.setOnAction(e -> {
+			noUpdateSource = true;
 			getMandelbrotSession().setSource(sourceText.getText());
+			noUpdateSource = false;
 		});
 		
 		loadButton.setOnAction(e -> {
-			createFileChooser(".mg");
+			createFileChooser(".m");
 			fileChooser.setTitle("Load");
 			File file = fileChooser.showOpenDialog(null);
 			if (file != null) {
@@ -226,7 +227,7 @@ public class MandelbrotEditorPane extends BorderPane {
 		});
 		
 		saveButton.setOnAction(e -> {
-			createFileChooser(".mg");
+			createFileChooser(".m");
 			fileChooser.setTitle("Save");
 			File file = fileChooser.showSaveDialog(null);
 			if (file != null) {
@@ -284,7 +285,38 @@ public class MandelbrotEditorPane extends BorderPane {
 		addDataToHistory(historyList);
 	}
 
-    private Task<StyleSpans<Collection<String>>> computeHighlightingAsync() {
+    private int findLineBegin(String text, int index) {
+    	if (index > 0) {
+    		while (text.charAt(--index) != '\n') {
+    		}
+    	}
+		return index;
+	}
+
+    private int findLineEnd(String text, int index) {
+    	if (index < text.length() - 1) {
+    		while (text.charAt(++index) != '\n') {
+    		}
+    	}
+		return index;
+	}
+
+	private void displayErrors(Session session) {
+		List<SessionError> errors = session.getErrors();
+		for (SessionError error : errors) {
+			logger.info(error.toString());
+			if (error.getType() == SessionError.ErrorType.M_COMPILER) {
+				String text = sourceText.getText();
+				int beginIndex = findLineBegin(text, (int)error.getIndex());
+				int endIndex = findLineEnd(text, (int)error.getIndex());
+				StyleSpansBuilder<Collection<String>> builder = new StyleSpansBuilder<>();
+				builder.add(Collections.singleton("error"), endIndex - beginIndex);
+				sourceText.setStyleSpans(beginIndex, builder.create());
+			}
+		}
+	}
+
+	private Task<StyleSpans<Collection<String>>> computeHighlightingAsync() {
         String text = sourceText.getText();
         Task<StyleSpans<Collection<String>>> task = new Task<StyleSpans<Collection<String>>>() {
             @Override
