@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
@@ -37,6 +38,7 @@ import org.antlr.v4.runtime.FailedPredicateException;
 import org.antlr.v4.runtime.InputMismatchException;
 import org.antlr.v4.runtime.Parser;
 import org.antlr.v4.runtime.RecognitionException;
+import org.antlr.v4.runtime.misc.IntervalSet;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Color;
@@ -93,9 +95,13 @@ public class Compiler {
 	public CompilerReport generateJavaSource(String source) throws IOException {
 		List<CompilerError> errors = new ArrayList<>();
 		ASTFractal ast = parse(source, errors);
-		String orbitSource = buildOrbit(ast);
-		String colorSource = buildColor(ast);
-		return new CompilerReport(ast, orbitSource, colorSource, errors);
+		if (errors.size() == 0) {
+			String orbitSource = buildOrbit(ast);
+			String colorSource = buildColor(ast);
+			return new CompilerReport(ast, orbitSource, colorSource, errors);
+		} else {
+			return new CompilerReport(ast, "", "", errors);
+		}
 	}
 	
 	public CompilerBuilder<Orbit> compileOrbit(CompilerReport report) throws ClassNotFoundException, IOException {
@@ -1025,9 +1031,9 @@ public class Compiler {
 
 		@Override
 		public void reportError(Parser recognizer, RecognitionException e) {
-			String message = generateErrorMessage("Error", recognizer);
+			String message = generateErrorMessage("Expected tokens", recognizer);
 			CompilerError error = new CompilerError(CompilerError.ErrorType.M_COMPILER, e.getOffendingToken().getLine(), e.getOffendingToken().getCharPositionInLine(), e.getOffendingToken().getStartIndex(), recognizer.getCurrentToken().getStopIndex() - recognizer.getCurrentToken().getStartIndex(), message);
-			logger.log(Level.WARNING, "Token not recognized", e);
+			logger.log(Level.WARNING, error.toString(), e);
 			errors.add(error);
 		}
 
@@ -1190,7 +1196,19 @@ public class Compiler {
 	private String generateErrorMessage(String message, Parser recognizer) {
 		StringBuilder builder = new StringBuilder();
 		builder.append(message);
-		//TODO
+		IntervalSet tokens = recognizer.getExpectedTokens();
+		boolean first = true;
+		for (Entry<String, Integer> entry : recognizer.getTokenTypeMap().entrySet()) {
+			if (tokens.contains(entry.getValue())) {
+				if (first) {
+					first = false;
+					builder.append(" ");
+				} else {
+					builder.append(", ");
+				}
+				builder.append(entry.getKey());
+			}
+		}
 		return builder.toString();
 	}
 }	

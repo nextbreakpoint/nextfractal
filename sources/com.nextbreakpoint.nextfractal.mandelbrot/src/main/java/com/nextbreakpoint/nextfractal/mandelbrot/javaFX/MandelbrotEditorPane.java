@@ -285,34 +285,24 @@ public class MandelbrotEditorPane extends BorderPane {
 		addDataToHistory(historyList);
 	}
 
-    private int findLineBegin(String text, int index) {
-    	if (index > 0) {
-    		while (text.charAt(--index) != '\n') {
-    		}
-    	}
-		return index;
-	}
-
-    private int findLineEnd(String text, int index) {
-    	if (index < text.length() - 1) {
-    		while (text.charAt(++index) != '\n') {
-    		}
-    	}
-		return index;
-	}
-
 	private void displayErrors(Session session) {
 		List<SessionError> errors = session.getErrors();
-		for (SessionError error : errors) {
-			logger.info(error.toString());
-			if (error.getType() == SessionError.ErrorType.M_COMPILER) {
-				String text = sourceText.getText();
-				int beginIndex = findLineBegin(text, (int)error.getIndex());
-				int endIndex = findLineEnd(text, (int)error.getIndex());
-				StyleSpansBuilder<Collection<String>> builder = new StyleSpansBuilder<>();
-				builder.add(Collections.singleton("error"), endIndex - beginIndex);
-				sourceText.setStyleSpans(beginIndex, builder.create());
+		if (errors.size() > 0) {
+			StyleSpansBuilder<Collection<String>> builder = new StyleSpansBuilder<>();
+			int lastIndex = 0;
+			for (SessionError error : errors) {
+				logger.info(error.toString());
+				if (error.getType() == SessionError.ErrorType.M_COMPILER) {
+					int lineEnd = (int)error.getIndex() + 1;
+					int lineBegin = (int)error.getIndex();
+					builder.add(Collections.emptyList(), lineBegin - lastIndex);
+					builder.add(Collections.singleton("error"), lineEnd - lineBegin);
+					lastIndex = lineEnd;
+				}
 			}
+			String text = sourceText.getText();
+			builder.add(Collections.emptyList(), text.length() - lastIndex);
+			sourceText.setStyleSpans(0, builder.create());
 		}
 	}
 
@@ -368,11 +358,11 @@ public class MandelbrotEditorPane extends BorderPane {
 					.group("BRACE") != null ? "brace" : matcher
 					.group("OPERATOR") != null ? "operator" : null;
 			assert styleClass != null;
-			spansBuilder.add(Collections.emptyList(), matcher.start() - lastKwEnd);
+			spansBuilder.add(Collections.singleton("code"), matcher.start() - lastKwEnd);
 			spansBuilder.add(Collections.singleton(styleClass), matcher.end() - matcher.start());
 			lastKwEnd = matcher.end();
 		}
-		spansBuilder.add(Collections.emptyList(), text.length() - lastKwEnd);
+		spansBuilder.add(Collections.singleton("code"), text.length() - lastKwEnd);
 		return spansBuilder.create();
 	}
 

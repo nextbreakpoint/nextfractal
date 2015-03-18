@@ -2,7 +2,6 @@ package com.nextbreakpoint.nextfractal.mandelbrot.grammar;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.antlr.v4.runtime.Token;
@@ -33,12 +32,12 @@ public class ASTFractal extends ASTObject {
 		orbit.addVariable(varName);
 	}
 
-	public List<String> getVariables() {
-		if (orbit == null) {
-			throw new ASTException("Orbit not defined", location);
-		}
-		return orbit.getVariables();
-	}
+//	public List<String> getVariables() {
+//		if (orbit == null) {
+//			throw new ASTException("Orbit not defined", location);
+//		}
+//		return orbit.getVariables();
+//	}
 	
 	public ASTOrbit getOrbit() {
 		return orbit;
@@ -46,6 +45,9 @@ public class ASTFractal extends ASTObject {
 	
 	public void setOrbit(ASTOrbit orbit) {
 		this.orbit = orbit;
+		if (orbit == null) {
+			throw new ASTException("Orbit is null", location);
+		}
 	}
 	
 	public ASTColor getColor() {
@@ -54,20 +56,13 @@ public class ASTFractal extends ASTObject {
 	
 	public void setColor(ASTColor color) {
 		this.color = color;
+		if (color == null) {
+			throw new ASTException("Color is null", location);
+		}
 		if (orbit == null) {
-			throw new ASTException("Orbit not defined", location);
+			throw new ASTException("Orbit not defined", color.getLocation());
 		}
 		color.setVariables(orbit.getVariables());
-	}
-
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("orbit = {");
-		builder.append(orbit);
-		builder.append("},color = {");
-		builder.append(color);
-		builder.append("}");
-		return builder.toString();
 	}
 
 	public void registerVariable(String name, boolean real, boolean create, Token location) {
@@ -88,11 +83,17 @@ public class ASTFractal extends ASTObject {
 		return var;
 	}
 
-	public CompilerVariable getVar(String name) {
-		return vars.get(name);
-	}
-	
 	public Collection<CompilerVariable> getVars() {
 		return vars.values();
+	}
+
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("orbit = {");
+		builder.append(orbit);
+		builder.append("},color = {");
+		builder.append(color);
+		builder.append("}");
+		return builder.toString();
 	}
 }

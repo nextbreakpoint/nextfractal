@@ -41,6 +41,11 @@
     -fx-font-weight: bold;
 }
 
+.application .mandelbrot .code {
+    -fx-fill: #808080;
+    -fx-font-weight: bold;
+}
+
 .application .mandelbrot .error {
     -fx-fill: red;
     -fx-font-weight: bold;
