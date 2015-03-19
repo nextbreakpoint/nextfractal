@@ -131,7 +131,7 @@ public class Compiler {
             }
 		} catch (ASTException e) {
 			CompilerError error = new CompilerError(CompilerError.ErrorType.M_COMPILER, e.getLocation().getLine(), e.getLocation().getCharPositionInLine(), e.getLocation().getStartIndex(), e.getLocation().getStopIndex() - e.getLocation().getStartIndex(), e.getMessage());
-			logger.log(Level.INFO, error.toString(), e);
+			logger.log(Level.FINE, error.toString(), e);
 			errors.add(error);
 		}
 		return null;
@@ -166,14 +166,14 @@ public class Compiler {
 			compiler.getTask(null, fileManager, diagnostics, options, null, compilationUnits).call();
 			for (Diagnostic<? extends JavaFileObject> diagnostic : diagnostics.getDiagnostics()) {
 				CompilerError error = new CompilerError(CompilerError.ErrorType.JAVA_COMPILER, diagnostic.getLineNumber(), diagnostic.getColumnNumber(), diagnostic.getStartPosition(), diagnostic.getEndPosition() - diagnostic.getStartPosition(), diagnostic.getMessage(null));
-				logger.log(Level.INFO, error.toString());
+				logger.log(Level.FINE, error.toString());
 				errors.add(error);
 			}
 			if (diagnostics.getDiagnostics().size() == 0) {
 				CompilerClassLoader loader = new CompilerClassLoader();
 				defineClasses(fileManager, loader, className);
 				Class<?> compiledClazz = loader.loadClass(packageName + "." + className);
-				logger.log(Level.INFO, compiledClazz.getCanonicalName());
+				logger.log(Level.FINE, compiledClazz.getCanonicalName());
 				if (clazz.isAssignableFrom(compiledClazz)) {
 					return (Class<T>) compiledClazz;
 				}
@@ -1033,7 +1033,7 @@ public class Compiler {
 		public void reportError(Parser recognizer, RecognitionException e) {
 			String message = generateErrorMessage("Expected tokens", recognizer);
 			CompilerError error = new CompilerError(CompilerError.ErrorType.M_COMPILER, e.getOffendingToken().getLine(), e.getOffendingToken().getCharPositionInLine(), e.getOffendingToken().getStartIndex(), recognizer.getCurrentToken().getStopIndex() - recognizer.getCurrentToken().getStartIndex(), message);
-			logger.log(Level.WARNING, error.toString(), e);
+			logger.log(Level.FINE, error.toString(), e);
 			errors.add(error);
 		}
 
@@ -1041,7 +1041,7 @@ public class Compiler {
 		protected void reportInputMismatch(Parser recognizer, InputMismatchException e) {
 			String message = generateErrorMessage("Input mismatch", recognizer);
 			CompilerError error = new CompilerError(CompilerError.ErrorType.M_COMPILER, e.getOffendingToken().getLine(), e.getOffendingToken().getCharPositionInLine(), e.getOffendingToken().getStartIndex(), recognizer.getCurrentToken().getStopIndex() - recognizer.getCurrentToken().getStartIndex(), message);
-			logger.log(Level.WARNING, error.toString(), e);
+			logger.log(Level.FINE, error.toString(), e);
 			errors.add(error);
 		}
 
@@ -1049,7 +1049,7 @@ public class Compiler {
 		protected void reportFailedPredicate(Parser recognizer, FailedPredicateException e) {
 			String message = generateErrorMessage("Failed predicate", recognizer);
 			CompilerError error = new CompilerError(CompilerError.ErrorType.M_COMPILER, e.getOffendingToken().getLine(), e.getOffendingToken().getCharPositionInLine(), e.getOffendingToken().getStartIndex(), recognizer.getCurrentToken().getStopIndex() - recognizer.getCurrentToken().getStartIndex(), message);
-			logger.log(Level.WARNING, error.toString(), e);
+			logger.log(Level.FINE, error.toString(), e);
 			errors.add(error);
 		}
 
@@ -1057,7 +1057,7 @@ public class Compiler {
 		protected void reportUnwantedToken(Parser recognizer) {
 			String message = generateErrorMessage("Unwanted token", recognizer);
 			CompilerError error = new CompilerError(CompilerError.ErrorType.M_COMPILER, recognizer.getCurrentToken().getLine(), recognizer.getCurrentToken().getCharPositionInLine(), recognizer.getCurrentToken().getStartIndex(), recognizer.getCurrentToken().getStopIndex() - recognizer.getCurrentToken().getStartIndex(), message);
-			logger.log(Level.WARNING, error.toString());
+			logger.log(Level.FINE, error.toString());
 			errors.add(error);
 		}
 
@@ -1065,7 +1065,7 @@ public class Compiler {
 		protected void reportMissingToken(Parser recognizer) {
 			String message = generateErrorMessage("Missing token", recognizer);
 			CompilerError error = new CompilerError(CompilerError.ErrorType.M_COMPILER, recognizer.getCurrentToken().getLine(), recognizer.getCurrentToken().getCharPositionInLine(), recognizer.getCurrentToken().getStartIndex(), recognizer.getCurrentToken().getStopIndex() - recognizer.getCurrentToken().getStartIndex(), message);
-			logger.log(Level.WARNING, error.toString());
+			logger.log(Level.FINE, error.toString());
 			errors.add(error);
 		}
 	}

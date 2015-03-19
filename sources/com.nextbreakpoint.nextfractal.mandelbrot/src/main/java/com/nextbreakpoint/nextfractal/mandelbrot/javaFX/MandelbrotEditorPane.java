@@ -149,7 +149,6 @@ public class MandelbrotEditorPane extends BorderPane {
         
 		EventStream<PlainTextChange> textChanges = sourceText.plainTextChanges();
         textChanges.suppressible()
-//        		.suppressWhen(condition)
         		.successionEnds(Duration.ofMillis(500))
                 .supplyTask(this::computeHighlightingAsync)
                 .awaitLatest(textChanges)
