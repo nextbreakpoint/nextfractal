@@ -505,35 +505,61 @@ public class MandelbrotRenderPane extends BorderPane {
 				logger.info("Orbit: point = " + Arrays.toString(point) + ", length = " + states.size());
 			}
 		} catch (Exception e) {
-			e.printStackTrace();//TODO display errors
+			abortCoordinators();
+			if (juliaCoordinator != null) {
+				juliaCoordinator.abort();
+			}
+			joinCoordinators();
+			if (juliaCoordinator != null) {
+				juliaCoordinator.waitFor();
+			}
+			for (int i = 0; i < coordinators.length; i++) {
+				RendererCoordinator coordinator = coordinators[i];
+				if (coordinator != null) {
+					coordinator.setOrbitAndColor(null, null);
+				}
+			}
+			if (juliaCoordinator != null) {
+				juliaCoordinator.setOrbitAndColor(null, null);
+			}
+			startCoordinators();
+			if (juliaCoordinator != null) {
+				juliaCoordinator.run();
+			}
+			logger.log(Level.INFO, "Cannot render fractal", e);
 		}
 	}
 
 	private boolean[] recompileFractal() throws Exception {
-		boolean[] changed = new boolean[] { false, false };
 		Compiler compiler = new Compiler(getClass().getPackage().getName(), getClass().getSimpleName());
 		CompilerReport report = compiler.generateJavaSource(getMandelbrotSession().getSource());
 		getMandelbrotSession().setErrors(report.getErrors());
-		if (report.getErrors().size() == 0) {
-			CompilerBuilder<Orbit> newOrbitBuilder = compiler.compileOrbit(report);
-			getMandelbrotSession().setErrors(newOrbitBuilder.getErrors());
-			if (newOrbitBuilder.getErrors().size() > 0) {
-				return changed;
-			}
-			CompilerBuilder<Color> newColorBuilder = compiler.compileColor(report);
-			getMandelbrotSession().setErrors(newColorBuilder.getErrors());
-			if (newColorBuilder.getErrors().size() > 0) {
-				return changed;
-			}
-			orbitBuilder = newOrbitBuilder;
-			String newASTOrbit = report.getAST().getOrbit().toString();
-			changed[0] = !newASTOrbit.equals(astOrbit);
-			astOrbit = newASTOrbit;
-			colorBuilder = newColorBuilder;
-			String newASTColor = report.getAST().getColor().toString();
-			changed[1] = !newASTColor.equals(astColor);
-			astColor = newASTColor;
+		if (report.getErrors().size() > 0) {
+			astOrbit = null;
+			astColor = null;
+			orbitBuilder = null;
+			colorBuilder = null;
+			throw new Exception("Failed to compile fractal");
 		}
+		boolean[] changed = new boolean[] { false, false };
+		CompilerBuilder<Orbit> newOrbitBuilder = compiler.compileOrbit(report);
+		getMandelbrotSession().setErrors(newOrbitBuilder.getErrors());
+		if (newOrbitBuilder.getErrors().size() > 0) {
+			return changed;
+		}
+		CompilerBuilder<Color> newColorBuilder = compiler.compileColor(report);
+		getMandelbrotSession().setErrors(newColorBuilder.getErrors());
+		if (newColorBuilder.getErrors().size() > 0) {
+			return changed;
+		}
+		orbitBuilder = newOrbitBuilder;
+		String newASTOrbit = report.getAST().getOrbit().toString();
+		changed[0] = !newASTOrbit.equals(astOrbit);
+		astOrbit = newASTOrbit;
+		colorBuilder = newColorBuilder;
+		String newASTColor = report.getAST().getColor().toString();
+		changed[1] = !newASTColor.equals(astColor);
+		astColor = newASTColor;
 		return changed;
 	}
 

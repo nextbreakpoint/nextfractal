@@ -148,8 +148,7 @@ public class MandelbrotEditorPane extends BorderPane {
 		sourceText.setParagraphGraphicFactory(LineNumberFactory.get(sourceText));
         
 		EventStream<PlainTextChange> textChanges = sourceText.plainTextChanges();
-        textChanges.suppressible()
-        		.successionEnds(Duration.ofMillis(500))
+        textChanges.successionEnds(Duration.ofMillis(500))
                 .supplyTask(this::computeHighlightingAsync)
                 .awaitLatest(textChanges)
                 .map(Try::get)
@@ -287,21 +286,20 @@ public class MandelbrotEditorPane extends BorderPane {
 	private void displayErrors(Session session) {
 		List<SessionError> errors = session.getErrors();
 		if (errors.size() > 0) {
-			StyleSpansBuilder<Collection<String>> builder = new StyleSpansBuilder<>();
-			int lastIndex = 0;
+			Collections.sort(errors, (o1, o2) -> {
+				long index = o2.getIndex() - o1.getIndex();
+				return index == 0 ? 0 : index > 0 ? +1 : -1;
+			});
 			for (SessionError error : errors) {
 				logger.info(error.toString());
 				if (error.getType() == SessionError.ErrorType.M_COMPILER) {
 					int lineEnd = (int)error.getIndex() + 1;
 					int lineBegin = (int)error.getIndex();
-					builder.add(Collections.emptyList(), lineBegin - lastIndex);
+					StyleSpansBuilder<Collection<String>> builder = new StyleSpansBuilder<>();
 					builder.add(Collections.singleton("error"), lineEnd - lineBegin);
-					lastIndex = lineEnd;
+					sourceText.setStyleSpans(lineBegin, builder.create());
 				}
 			}
-			String text = sourceText.getText();
-			builder.add(Collections.emptyList(), text.length() - lastIndex);
-			sourceText.setStyleSpans(0, builder.create());
 		}
 	}
 
@@ -343,6 +341,9 @@ public class MandelbrotEditorPane extends BorderPane {
 	
     private void applyHighlighting(StyleSpans<Collection<String>> highlighting) {
     	sourceText.setStyleSpans(0, highlighting);
+		noUpdateSource = true;
+		getMandelbrotSession().setSource(sourceText.getText());
+		noUpdateSource = false;
     }
 
 	private StyleSpans<Collection<String>> computeHighlighting(String text) {

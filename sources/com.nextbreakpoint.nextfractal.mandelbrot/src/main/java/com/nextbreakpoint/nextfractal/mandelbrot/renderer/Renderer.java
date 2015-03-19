@@ -300,6 +300,23 @@ public class Renderer {
 		try {
 			if (rendererFractal == null) {
 				progress = 1;
+				rendererData.swap();
+				rendererData.clearPixels();
+				didChanged(progress, rendererData.getPixels());
+				return;
+			}
+			if (rendererFractal.getOrbit() == null) {
+				progress = 1;
+				rendererData.swap();
+				rendererData.clearPixels();
+				didChanged(progress, rendererData.getPixels());
+				return;
+			}
+			if (rendererFractal.getColor() == null) {
+				progress = 1;
+				rendererData.swap();
+				rendererData.clearPixels();
+				didChanged(progress, rendererData.getPixels());
 				return;
 			}
 			final boolean redraw = orbitChanged || regionChanged || juliaChanged || (julia && pointChanged);
