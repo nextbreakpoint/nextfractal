@@ -58,9 +58,10 @@ public class Renderer {
 	protected final ThreadFactory threadFactory;
 	protected final RendererFactory renderFactory;
 	protected final RendererData rendererData;
-	private final ReentrantLock lock = new ReentrantLock();
 	protected volatile RendererDelegate rendererDelegate;
 	protected volatile RendererStrategy rendererStrategy;
+	protected volatile RendererSurface frontBuffer;
+	protected volatile RendererSurface backBuffer;
 	protected volatile boolean aborted;
 	protected volatile boolean orbitChanged;
 	protected volatile boolean colorChanged;
@@ -76,10 +77,9 @@ public class Renderer {
 	protected RendererRegion initialRegion;
 	protected final RendererSize size;
 	protected final RendererTile tile;
-	protected RendererSurface frontBuffer;
-	protected RendererSurface backBuffer;
 	protected RendererView view;
 	protected Condition condition;
+	private final ReentrantLock lock = new ReentrantLock();
 	private ExecutorService executor;
 	private Future<?> future;
 
@@ -524,7 +524,7 @@ public class Renderer {
 	 */
 	protected final void swap() {
 		lock.lock();
-		final RendererSurface tmpBuffer = backBuffer;
+		RendererSurface tmpBuffer = backBuffer;
 		backBuffer = frontBuffer;
 		frontBuffer = tmpBuffer;
 		lock.unlock();

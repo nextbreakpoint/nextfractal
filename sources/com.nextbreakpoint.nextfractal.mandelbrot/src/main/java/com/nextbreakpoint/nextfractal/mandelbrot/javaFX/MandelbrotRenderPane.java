@@ -69,6 +69,7 @@ import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererCoordinator;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererView;
 
 public class MandelbrotRenderPane extends BorderPane {
+	private static final int FRAME_LENGTH_IN_MILLIS = 10;
 	private static final Logger logger = Logger.getLogger(MandelbrotRenderPane.class.getName());
 	private final Session session;
 	private ThreadFactory threadFactory;
@@ -349,7 +350,7 @@ public class MandelbrotRenderPane extends BorderPane {
 			@Override
 			public void handle(long now) {
 				long time = now / 1000000;
-				if ((time - last) > 25) {
+				if (time - last > FRAME_LENGTH_IN_MILLIS) {
 					redrawIfPixelsChanged(fractalCanvas);
 					redrawIfJuliaPixelsChanged(juliaCanvas);
 					redrawIfOrbitChanged(orbitCanvas);

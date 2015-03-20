@@ -76,8 +76,8 @@ public final class XaosRenderer extends Renderer {
 	public XaosRenderer(ThreadFactory threadFactory, RendererFactory renderFactory, RendererTile tile) {
 		super(threadFactory, renderFactory, tile);
 		this.xaosRendererData = (XaosRendererData)rendererData;
-//		executor = Executors.newSingleThreadExecutor(threadFactory);
-		executor = Executors.newCachedThreadPool(threadFactory);
+		executor = Executors.newSingleThreadExecutor(threadFactory);
+//		executor = Executors.newCachedThreadPool(threadFactory);
 	}
 	
 	/**
