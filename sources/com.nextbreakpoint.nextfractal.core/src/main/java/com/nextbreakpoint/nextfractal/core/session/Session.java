@@ -9,7 +9,6 @@ import com.nextbreakpoint.nextfractal.core.export.ExportSession;
 public abstract class Session {
 	protected final List<SessionListener> listeners = new ArrayList<>();
 	protected final List<ExportSession> sessions = new ArrayList<>();
-	protected List<SessionError> errors = new ArrayList<>();
 	protected ExportService exportService;
 
 	public void addSessionListener(SessionListener listener) {
@@ -52,9 +51,9 @@ public abstract class Session {
 		}
 	}
 
-	protected void fireErrorsChanged() {
+	protected void fireFractalChanged() {
 		for (SessionListener listener : listeners) {
-			listener.errorsChanged(this);
+			listener.fractalChanged(this);
 		}
 	}
 	
@@ -82,15 +81,5 @@ public abstract class Session {
 
 	public void setExportService(ExportService exportService) {
 		this.exportService = exportService;
-	}
-
-	public void setErrors(List<? extends SessionError> errors) {
-		this.errors.clear();
-		this.errors.addAll(errors);
-		fireErrorsChanged();
-	}
-
-	public List<SessionError> getErrors() {
-		return errors;
 	}
 }

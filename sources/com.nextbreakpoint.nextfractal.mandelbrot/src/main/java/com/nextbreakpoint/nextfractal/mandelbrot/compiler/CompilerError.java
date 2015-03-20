@@ -1,8 +1,7 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.compiler;
 
-import com.nextbreakpoint.nextfractal.core.session.SessionError;
 
-public class CompilerError implements SessionError {
+public class CompilerError {
 	private ErrorType type;
 	private long line;
 	private long charPositionInLine;
@@ -45,5 +44,9 @@ public class CompilerError implements SessionError {
 	@Override
 	public String toString() {
 		return "[" + line + ":" + charPositionInLine + ":" + index + ":" + length + "] " + message;
+	}
+
+	public static enum ErrorType {
+		M_COMPILER, JAVA_COMPILER;
 	}
 }

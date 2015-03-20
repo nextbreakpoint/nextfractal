@@ -87,7 +87,11 @@ public class Compiler {
 	private final String packageName;
 	private final String className;
 	
-	public Compiler(String packageName, String className) {
+	public Compiler() {
+		this(Compiler.class.getPackage().getName(), Compiler.class.getSimpleName());
+	}
+	
+	protected Compiler(String packageName, String className) {
 		this.packageName = packageName;
 		this.className = className;
 	}

@@ -42,13 +42,15 @@ import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
 import com.nextbreakpoint.nextfractal.core.renderer.javaFX.JavaFXRendererFactory;
 import com.nextbreakpoint.nextfractal.core.session.Session;
-import com.nextbreakpoint.nextfractal.core.session.SessionError;
 import com.nextbreakpoint.nextfractal.core.session.SessionListener;
 import com.nextbreakpoint.nextfractal.core.utils.DefaultThreadFactory;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotData;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotDataStore;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotImageGenerator;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotSession;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.Compiler;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerError;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerReport;
 
 public class MandelbrotEditorPane extends BorderPane {
 	private static final Logger logger = Logger.getLogger(MandelbrotEditorPane.class.getName());
@@ -59,7 +61,6 @@ public class MandelbrotEditorPane extends BorderPane {
 	private FileChooser fileChooser;
 	private File currentFile;
 	private boolean noHistory;
-	private boolean noUpdateSource;
 	private ScheduledExecutorService sessionsExecutor;
 	private ExecutorService historyExecutor;
 	private ExecutorService textExecutor;
@@ -94,10 +95,10 @@ public class MandelbrotEditorPane extends BorderPane {
 		sourceText = new CodeArea();
 		sourceText.getStyleClass().add("source");
 		HBox sourceButtons = new HBox(10);
-		Button renderButton = new Button("Render");
+//		Button renderButton = new Button("Render");
 		Button loadButton = new Button("Load");
 		Button saveButton = new Button("Save");
-		sourceButtons.getChildren().add(renderButton);
+//		sourceButtons.getChildren().add(renderButton);
 		sourceButtons.getChildren().add(loadButton);
 		sourceButtons.getChildren().add(saveButton);
 		sourceButtons.getStyleClass().add("toolbar");
@@ -159,8 +160,9 @@ public class MandelbrotEditorPane extends BorderPane {
 		session.addSessionListener(new SessionListener() {
 			@Override
 			public void dataChanged(Session session) {
-				if (!noUpdateSource) {
+				if (!sourceText.getText().equals(getMandelbrotSession().getSource())) {
 					sourceText.replaceText(getMandelbrotSession().getSource());
+					compileSource(sourceText.getText());
 				}
 				addDataToHistory(historyList);
 			}
@@ -180,6 +182,10 @@ public class MandelbrotEditorPane extends BorderPane {
 			}
 
 			@Override
+			public void fractalChanged(Session session) {
+			}
+
+			@Override
 			public void terminate(Session session) {
 				shutdown();
 			}
@@ -194,18 +200,11 @@ public class MandelbrotEditorPane extends BorderPane {
 			public void sessionRemoved(Session session, ExportSession exportSession) {
 				jobsList.getItems().remove(exportSession);
 			}
-
-			@Override
-			public void errorsChanged(Session session) {
-				displayErrors(session);
-			}
 		});
 		
-		renderButton.setOnAction(e -> {
-			noUpdateSource = true;
-			getMandelbrotSession().setSource(sourceText.getText());
-			noUpdateSource = false;
-		});
+//		renderButton.setOnAction(e -> {
+//			compileSource(sourceText.getText());
+//		});
 		
 		loadButton.setOnAction(e -> {
 			createFileChooser(".m");
@@ -283,16 +282,38 @@ public class MandelbrotEditorPane extends BorderPane {
 		addDataToHistory(historyList);
 	}
 
-	private void displayErrors(Session session) {
-		List<SessionError> errors = session.getErrors();
+	private void compileSource(String text) {
+		try {
+			CompilerReport report = generateReport(text);
+			getMandelbrotSession().setReport(report);
+			if (report.getErrors().size() == 0) {
+				getMandelbrotSession().setSource(text);
+			}
+		} catch (Exception x) {
+			displayError(x.getMessage());
+		}
+	}
+	
+	private CompilerReport generateReport(String text) throws Exception {
+		Compiler compiler = new Compiler();
+		CompilerReport report = compiler.generateJavaSource(text);
+		return report;
+	}
+
+	private void displayError(String message) {
+		//TODO show alert
+	}
+	
+	private void displayErrors() {
+		List<CompilerError> errors = getMandelbrotSession().getReport().getErrors();
 		if (errors.size() > 0) {
 			Collections.sort(errors, (o1, o2) -> {
 				long index = o2.getIndex() - o1.getIndex();
 				return index == 0 ? 0 : index > 0 ? +1 : -1;
 			});
-			for (SessionError error : errors) {
+			for (CompilerError error : errors) {
 				logger.info(error.toString());
-				if (error.getType() == SessionError.ErrorType.M_COMPILER) {
+				if (error.getType() == CompilerError.ErrorType.M_COMPILER) {
 					int lineEnd = (int)error.getIndex() + 1;
 					int lineBegin = (int)error.getIndex();
 					StyleSpansBuilder<Collection<String>> builder = new StyleSpansBuilder<>();
@@ -308,6 +329,7 @@ public class MandelbrotEditorPane extends BorderPane {
         Task<StyleSpans<Collection<String>>> task = new Task<StyleSpans<Collection<String>>>() {
             @Override
             protected StyleSpans<Collection<String>> call() throws Exception {
+            	compileSource(sourceText.getText());
                 return computeHighlighting(text);
             }
         };
@@ -341,9 +363,7 @@ public class MandelbrotEditorPane extends BorderPane {
 	
     private void applyHighlighting(StyleSpans<Collection<String>> highlighting) {
     	sourceText.setStyleSpans(0, highlighting);
-		noUpdateSource = true;
-		getMandelbrotSession().setSource(sourceText.getText());
-		noUpdateSource = false;
+    	displayErrors();
     }
 
 	private StyleSpans<Collection<String>> computeHighlighting(String text) {

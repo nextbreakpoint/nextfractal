@@ -143,7 +143,11 @@ public class NextFractalApp extends Application {
 			@Override
 			public void dataChanged(Session session) {
 			}
-			
+
+			@Override
+			public void fractalChanged(Session session) {
+			}
+
 			@Override
 			public void terminate(Session session) {
 				exportService.shutdown();
@@ -155,10 +159,6 @@ public class NextFractalApp extends Application {
 			
 			@Override
 			public void sessionRemoved(Session session, ExportSession exportSession) {
-			}
-
-			@Override
-			public void errorsChanged(Session session) {
 			}
 		});
     }

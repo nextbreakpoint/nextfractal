@@ -1,9 +1,11 @@
 package com.nextbreakpoint.nextfractal.mandelbrot;
 
 import com.nextbreakpoint.nextfractal.core.session.Session;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerReport;
 
 public class MandelbrotSession extends Session {
 	private MandelbrotData data = new MandelbrotData();
+	private CompilerReport report;
 	
 	public String getVersion() {
 		return data.getVersion();
@@ -14,8 +16,10 @@ public class MandelbrotSession extends Session {
 	}
 	
 	public void setSource(String source) {
-		data.setSource(source);
-		fireDataChanged();
+		if (!data.getSource().equals(source)) {
+			data.setSource(source);
+			fireDataChanged();
+		}
 	}
 	
 	public void setPoint(double[] point, boolean continuous) {
@@ -66,5 +70,14 @@ public class MandelbrotSession extends Session {
 		data.setPoint(this.data.getPoint());
 		data.setJulia(this.data.isJulia());
 		return data;
+	}
+
+	public void setReport(CompilerReport report) {
+		this.report = report;
+		fireFractalChanged();
+	}
+
+	public CompilerReport getReport() {
+		return report;
 	}
 }

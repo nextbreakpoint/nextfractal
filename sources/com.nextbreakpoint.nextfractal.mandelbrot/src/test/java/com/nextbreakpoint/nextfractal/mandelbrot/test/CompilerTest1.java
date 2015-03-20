@@ -41,7 +41,7 @@ public class CompilerTest1 extends BaseTest {
 	public void Compiler1() {
 		try {
 //			Assert.assertTrue(Pattern.matches("([A-Z][a-z]*)-(\\d).(.jpg|.png)", "Andrea-10.png"));
-			Compiler compiler = new Compiler("test", "TestFractal");
+			Compiler compiler = new Compiler();
 			CompilerReport report = compiler.generateJavaSource(getSource("/source1.m"));
 			printErrors(report.getErrors());
 			Assert.assertEquals(0, report.getErrors().size());

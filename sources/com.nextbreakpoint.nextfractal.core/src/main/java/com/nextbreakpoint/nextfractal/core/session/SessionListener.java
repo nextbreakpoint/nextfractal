@@ -29,7 +29,7 @@ public interface SessionListener {
 	/**
 	 * @param session
 	 */
-	public void errorsChanged(Session session);
+	public void fractalChanged(Session session);
 
 	/**
 	 * @param session

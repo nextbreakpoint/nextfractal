@@ -197,17 +197,21 @@ public class MandelbrotRenderPane extends BorderPane {
 		session.addSessionListener(new SessionListener() {
 			@Override
 			public void dataChanged(Session session) {
-				updateFractalData(session);
 			}
 			
 			@Override
 			public void pointChanged(Session session, boolean continuous) {
-				updateFractalPoint(continuous);
+				updatePoint(continuous);
 			}
 			
 			@Override
 			public void viewChanged(Session session, boolean continuous) {
-				updateFractalView(continuous);
+				updateView(continuous);
+			}
+
+			@Override
+			public void fractalChanged(Session session) {
+				updateFractal(session);
 			}
 
 			@Override
@@ -221,10 +225,6 @@ public class MandelbrotRenderPane extends BorderPane {
 
 			@Override
 			public void sessionRemoved(Session session, ExportSession exportSession) {
-			}
-
-			@Override
-			public void errorsChanged(Session session) {
 			}
 		});
 		
@@ -271,8 +271,6 @@ public class MandelbrotRenderPane extends BorderPane {
 		
 		runTimer(fractalCanvas, orbitCanvas, juliaCanvas);
 		
-		updateFractalData(session);
-
 		export.hide();
 	}
 
@@ -424,9 +422,9 @@ public class MandelbrotRenderPane extends BorderPane {
 //		juliaCanvas.setVisible(!getMandelbrotSession().getView().isJulia() && !hideOrbit);
 	}
 	
-	private void updateFractalData(Session session) {
+	private void updateFractal(Session session) {
 		try {
-			boolean[] changed = recompileFractal();
+			boolean[] changed = generateOrbitAndColor();
 			boolean orbitChanged = changed[0];
 			boolean colorChanged = changed[1];
 			if (orbitChanged) {
@@ -530,27 +528,24 @@ public class MandelbrotRenderPane extends BorderPane {
 		}
 	}
 
-	private boolean[] recompileFractal() throws Exception {
-		Compiler compiler = new Compiler(getClass().getPackage().getName(), getClass().getSimpleName());
-		CompilerReport report = compiler.generateJavaSource(getMandelbrotSession().getSource());
-		getMandelbrotSession().setErrors(report.getErrors());
+	private boolean[] generateOrbitAndColor() throws Exception {
+		CompilerReport report = getMandelbrotSession().getReport();
 		if (report.getErrors().size() > 0) {
 			astOrbit = null;
 			astColor = null;
 			orbitBuilder = null;
 			colorBuilder = null;
-			throw new Exception("Failed to compile fractal");
+			throw new Exception("Failed to generate classes");
 		}
+		Compiler compiler = new Compiler();
 		boolean[] changed = new boolean[] { false, false };
 		CompilerBuilder<Orbit> newOrbitBuilder = compiler.compileOrbit(report);
-		getMandelbrotSession().setErrors(newOrbitBuilder.getErrors());
 		if (newOrbitBuilder.getErrors().size() > 0) {
-			return changed;
+			throw new Exception("Failed to compile fractal");
 		}
 		CompilerBuilder<Color> newColorBuilder = compiler.compileColor(report);
-		getMandelbrotSession().setErrors(newColorBuilder.getErrors());
 		if (newColorBuilder.getErrors().size() > 0) {
-			return changed;
+			throw new Exception("Failed to compile fractal");
 		}
 		orbitBuilder = newOrbitBuilder;
 		String newASTOrbit = report.getAST().getOrbit().toString();
@@ -563,7 +558,7 @@ public class MandelbrotRenderPane extends BorderPane {
 		return changed;
 	}
 
-	private void updateFractalPoint(boolean continuous) {
+	private void updatePoint(boolean continuous) {
 		boolean julia = getMandelbrotSession().getView().isJulia();
 		double[] point = getMandelbrotSession().getView().getPoint();
 		if (julia) {
@@ -606,7 +601,7 @@ public class MandelbrotRenderPane extends BorderPane {
 		}
 	}
 
-	private void updateFractalView(boolean continuous) {
+	private void updateView(boolean continuous) {
 		double[] traslation = getMandelbrotSession().getView().getTraslation();
 		double[] rotation = getMandelbrotSession().getView().getRotation();
 		double[] scale = getMandelbrotSession().getView().getScale();

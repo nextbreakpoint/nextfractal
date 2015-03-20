@@ -35,7 +35,7 @@ public class CompilerTest2 extends BaseTest {
 	@Test
 	public void Compiler1() {
 		try {
-			Compiler compiler = new Compiler("test", "TestFractal");
+			Compiler compiler = new Compiler();
 			CompilerReport report = compiler.generateJavaSource(getSource("/source2.m"));
 			printErrors(report.getErrors());
 			Assert.assertEquals(1, report.getErrors().size());
