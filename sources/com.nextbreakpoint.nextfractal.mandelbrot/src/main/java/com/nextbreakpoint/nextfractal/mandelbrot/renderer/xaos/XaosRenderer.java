@@ -1057,7 +1057,6 @@ public final class XaosRenderer extends Renderer {
 					break;
 				}
 			}
-			Thread.yield();
 			long newTime = System.currentTimeMillis();
 			if (!aborted && ((newTime - oldTime) > 100) && (s < XaosConstants.STEPS)) {
 				tmpRealloc = xaosRendererData.reallocY();
@@ -1073,7 +1072,6 @@ public final class XaosRenderer extends Renderer {
 				progress = (s + 1f) / (float)XaosConstants.STEPS;
 				fill();
 				didChanged(progress, rendererData.getPixels());
-				Thread.yield();
 				tmpRealloc = xaosRendererData.reallocY();
 				for (i = 0; i < tmpRealloc.length; i++) {
 					tmpRealloc[i].dirty = tmpRealloc[i].changeDirty;
@@ -1086,6 +1084,7 @@ public final class XaosRenderer extends Renderer {
 				}
 				oldTime = newTime;
 			}
+			Thread.yield();
 		}
 		if (!aborted) {
 			progress = 1f;
