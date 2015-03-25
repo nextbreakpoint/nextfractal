@@ -7,7 +7,7 @@
 	-fx-border-width: 0;
 }
 
-.application .mandelbrot .export {
+.application .mandelbrot .popup {
 	-fx-alignment: center;
 	-fx-padding: 10px;
 	-fx-background-color: lightgray;
@@ -51,4 +51,11 @@
     -fx-font-weight: bold;
 }
 
+.application .mandelbrot .error-title {
+    -fx-font-weight: bold;
+    -fx-text-fill: red;
+}
 
+.application .mandelbrot .error-message {
+    -fx-text-fill: red;
+}

@@ -1,0 +1,17 @@
+package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
+
+import javafx.beans.value.ObservableValueBase;
+
+public class BooleanObservableValue extends ObservableValueBase<Boolean> {
+	private Boolean value;
+	
+	public void setValue(Boolean value) {
+		this.value = value;
+		fireValueChangedEvent();
+	}
+
+	@Override
+	public Boolean getValue() {
+		return value;
+	}
+}

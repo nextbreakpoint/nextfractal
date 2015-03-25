@@ -60,6 +60,7 @@ import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotSession;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotView;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.Compiler;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerBuilder;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerError;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerReport;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Color;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
@@ -79,12 +80,13 @@ public class MandelbrotRenderPane extends BorderPane {
 	private MandelbrotImageGenerator generator;
 	private AnimationTimer timer;
 	private FileChooser fileChooser;
+	private StringObservableValue errorProperty;
+	private BooleanObservableValue hideOrbitProperty;
 	private int width;
 	private int height;
 	private int rows;
 	private int columns;
 	private boolean redrawOrbit;
-	private boolean hideOrbit;
 	private String astOrbit;
 	private String astColor;
 	private Tool currentTool;
@@ -101,6 +103,9 @@ public class MandelbrotRenderPane extends BorderPane {
 		this.height = height;
 		this.rows = rows;
 		this.columns = columns;
+
+		errorProperty = new StringObservableValue();
+		hideOrbitProperty = new BooleanObservableValue();
 		
 		threadFactory = new DefaultThreadFactory("MandelbrotRenderPane", true, Thread.MIN_PRIORITY);
 		renderFactory = new JavaFXRendererFactory();
@@ -138,12 +143,18 @@ public class MandelbrotRenderPane extends BorderPane {
 		buttons.getChildren().add(exportButton);
 		buttons.getStyleClass().add("toolbar");
 		
-		ExportPane export = new ExportPane();
-		export.setMinHeight(250);
-		export.setMaxHeight(250);
-		export.setPrefHeight(250);
+		ExportPane exportPane = new ExportPane();
+		exportPane.setMinHeight(250);
+		exportPane.setMaxHeight(250);
+		exportPane.setPrefHeight(250);
 		
-		controls.setTop(export);
+		ErrorPane errorPane = new ErrorPane();
+		errorPane.setMinHeight(250);
+		errorPane.setMaxHeight(250);
+		errorPane.setPrefHeight(250);
+		
+		controls.setTop(exportPane);
+		controls.setTop(errorPane);
 		controls.setBottom(buttons);
 		
         Canvas fractalCanvas = new Canvas(width, height);
@@ -257,7 +268,7 @@ public class MandelbrotRenderPane extends BorderPane {
 		
 		exportButton.setOnAction(e -> {
 			storeExportData();
-			export.show();
+			exportPane.show();
 		});
 		
 		orbitButton.setOnAction(e -> {
@@ -268,11 +279,25 @@ public class MandelbrotRenderPane extends BorderPane {
 			toggleFractalJulia(juliaCanvas);
 		});
 		
+		hideOrbitProperty.addListener((observable, oldValue, newValue) -> {
+			orbitCanvas.setVisible(!newValue);
+//			juliaCanvas.setVisible(!getMandelbrotSession().getView().isJulia() && !hideOrbit);
+		});
+		
+		errorProperty.addListener((observable, oldValue, newValue) -> {
+			errorPane.setMessage(newValue);
+			if (newValue == null) {
+				errorPane.hide();
+			} else {
+				errorPane.show();
+			}
+		});
+		
 		exportExecutor = Executors.newSingleThreadExecutor(threadFactory);
 		
 		runTimer(fractalCanvas, orbitCanvas, juliaCanvas);
 		
-		export.hide();
+		exportPane.hide();
 	}
 
 	private void resetView() {
@@ -285,7 +310,7 @@ public class MandelbrotRenderPane extends BorderPane {
 	}
 
 	private double getZoomSpeed() {
-		return 1.1;
+		return 1.05;
 	}
 
 	private void createFileChooser(String suffix) {
@@ -354,7 +379,7 @@ public class MandelbrotRenderPane extends BorderPane {
 					redrawIfPixelsChanged(fractalCanvas);
 					redrawIfJuliaPixelsChanged(juliaCanvas);
 					redrawIfOrbitChanged(orbitCanvas);
-					if (currentTool != null) {
+					if (errorProperty.getValue() != null && currentTool != null) {
 						currentTool.update(time);
 					}
 					last = time;
@@ -418,14 +443,13 @@ public class MandelbrotRenderPane extends BorderPane {
 	}
 
 	private void toggleShowOrbit(Canvas orbitCanvas) {
-		hideOrbit = !hideOrbit;
-		orbitCanvas.setVisible(!hideOrbit);
-//		juliaCanvas.setVisible(!getMandelbrotSession().getView().isJulia() && !hideOrbit);
+		hideOrbitProperty.setValue(!hideOrbitProperty.getValue());
 	}
 	
 	private void updateFractal(Session session) {
 		try {
 			boolean[] changed = generateOrbitAndColor();
+			displayError(null, null);
 			boolean orbitChanged = changed[0];
 			boolean colorChanged = changed[1];
 			if (orbitChanged) {
@@ -503,50 +527,44 @@ public class MandelbrotRenderPane extends BorderPane {
 				redrawOrbit = true;
 				logger.info("Orbit: point = " + Arrays.toString(point) + ", length = " + states.size());
 			}
-		} catch (Exception e) {
-			abortCoordinators();
-			if (juliaCoordinator != null) {
-				juliaCoordinator.abort();
-			}
-			joinCoordinators();
-			if (juliaCoordinator != null) {
-				juliaCoordinator.waitFor();
-			}
-			for (int i = 0; i < coordinators.length; i++) {
-				RendererCoordinator coordinator = coordinators[i];
-				if (coordinator != null) {
-					coordinator.setOrbitAndColor(null, null);
-				}
-			}
-			if (juliaCoordinator != null) {
-				juliaCoordinator.setOrbitAndColor(null, null);
-			}
-			startCoordinators();
-			if (juliaCoordinator != null) {
-				juliaCoordinator.run();
-			}
+		} catch (CompileSourceException e) {
 			logger.log(Level.INFO, "Cannot render fractal", e);
+			displayError(e.getMessage(), e.getErrors());
+		} catch (CompileClassException e) {
+			logger.log(Level.INFO, "Cannot render fractal", e);
+			displayError(e.getMessage(), null);
+		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | IOException e) {
+			logger.log(Level.INFO, "Cannot render fractal", e);
+			displayError(e.getMessage(), null);
 		}
 	}
 
-	private boolean[] generateOrbitAndColor() throws Exception {
+	private boolean[] generateOrbitAndColor() throws CompileSourceException, CompileClassException, ClassNotFoundException, IOException {
 		CompilerReport report = getMandelbrotSession().getReport();
 		if (report.getErrors().size() > 0) {
 			astOrbit = null;
 			astColor = null;
 			orbitBuilder = null;
 			colorBuilder = null;
-			throw new Exception("Failed to generate classes");
+			throw new CompileSourceException("Failed to compile source", report.getErrors());
 		}
 		Compiler compiler = new Compiler();
 		boolean[] changed = new boolean[] { false, false };
 		CompilerBuilder<Orbit> newOrbitBuilder = compiler.compileOrbit(report);
 		if (newOrbitBuilder.getErrors().size() > 0) {
-			throw new Exception("Failed to compile fractal");
+			astOrbit = null;
+			astColor = null;
+			orbitBuilder = null;
+			colorBuilder = null;
+			throw new CompileClassException("Failed to compile Orbit subclass");
 		}
 		CompilerBuilder<Color> newColorBuilder = compiler.compileColor(report);
 		if (newColorBuilder.getErrors().size() > 0) {
-			throw new Exception("Failed to compile fractal");
+			astOrbit = null;
+			astColor = null;
+			orbitBuilder = null;
+			colorBuilder = null;
+			throw new CompileClassException("Failed to compile Color subclass");
 		}
 		orbitBuilder = newOrbitBuilder;
 		String newASTOrbit = report.getAST().getOrbit().toString();
@@ -557,6 +575,24 @@ public class MandelbrotRenderPane extends BorderPane {
 		changed[1] = !newASTColor.equals(astColor);
 		astColor = newASTColor;
 		return changed;
+	}
+
+	private void displayError(String message, List<CompilerError> errors) {
+		Platform.runLater(() -> {
+			errorProperty.setValue(null);
+			if (message != null) {
+				StringBuilder builder = new StringBuilder();
+				builder.append(message);
+				if (errors != null) {
+					builder.append("\n");
+					for (CompilerError error : errors) {
+						builder.append(error.getMessage());
+						builder.append("\n");
+					}
+				}
+				errorProperty.setValue(builder.toString());
+			}
+		});
 	}
 
 	private void updatePoint(boolean continuous) {
@@ -1007,6 +1043,102 @@ public class MandelbrotRenderPane extends BorderPane {
 		}
 	}
 
+	private class ErrorPane extends Pane {
+		private StringObservableValue messageProperty;
+		private VBox box = new VBox(10);
+
+		public ErrorPane() {
+			messageProperty = new StringObservableValue();
+			
+			Button close = new Button("Close");
+
+			HBox buttons = new HBox(10);
+			buttons.getChildren().add(close);
+			buttons.setAlignment(Pos.CENTER);
+			
+			Label title = new Label("Error");
+			title.getStyleClass().add("error-title");
+			
+			Label message = new Label();
+			message.getStyleClass().add("error-message");
+
+			box.setAlignment(Pos.TOP_CENTER);
+			box.getChildren().add(title);
+			box.getChildren().add(message);
+			box.getChildren().add(buttons);
+			box.getStyleClass().add("popup");
+			getChildren().add(box);
+
+			close.setOnMouseClicked(e -> {
+				hide();
+			});
+
+			widthProperty().addListener(new ChangeListener<java.lang.Number>() {
+				@Override
+				public void changed(ObservableValue<? extends java.lang.Number> observable, java.lang.Number oldValue, java.lang.Number newValue) {
+					box.setPrefWidth(newValue.doubleValue());
+				}
+			});
+			
+			heightProperty().addListener(new ChangeListener<java.lang.Number>() {
+				@Override
+				public void changed(ObservableValue<? extends java.lang.Number> observable, java.lang.Number oldValue, java.lang.Number newValue) {
+					box.setPrefHeight(newValue.doubleValue());
+					box.setLayoutY(-newValue.doubleValue());
+				}
+			});
+			
+			heightProperty().addListener(new ChangeListener<java.lang.Number>() {
+				@Override
+				public void changed(ObservableValue<? extends java.lang.Number> observable, java.lang.Number oldValue, java.lang.Number newValue) {
+					box.setPrefHeight(newValue.doubleValue());
+					box.setLayoutY(-newValue.doubleValue());
+				}
+			});
+			
+			messageProperty().addListener(new ChangeListener<String>() {
+				@Override
+				public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+					message.setText(newValue);
+				}
+			});
+		}
+
+		public void setMessage(String message) {
+			messageProperty.setValue(message);
+		}
+
+		public ObservableValue<String> messageProperty() {
+			return messageProperty;
+		}
+
+		public void show() {
+			TranslateTransition tt = new TranslateTransition(Duration.seconds(0.4));
+			tt.setFromY(box.getTranslateY());
+			tt.setToY(box.getHeight());
+			tt.setNode(box);
+			tt.setOnFinished(new EventHandler<ActionEvent>() {
+				@Override
+				public void handle(ActionEvent event) {
+				}
+			});
+			tt.play();
+		}
+		
+		public void hide() {
+			TranslateTransition tt = new TranslateTransition(Duration.seconds(0.4));
+			tt.setFromY(box.getHeight());
+			tt.setToY(0);
+			tt.setNode(box);
+			tt.setOnFinished(new EventHandler<ActionEvent>() {
+				@Override
+				public void handle(ActionEvent event) {
+				}
+			});
+			tt.play();
+		}
+	}
+		
 	private class ExportPane extends Pane {
 		private VBox box = new VBox(10);
 
@@ -1052,7 +1184,7 @@ public class MandelbrotRenderPane extends BorderPane {
 			box.getChildren().add(new Label("Height"));
 			box.getChildren().add(heightField);
 			box.getChildren().add(buttons);
-			box.getStyleClass().add("export");
+			box.getStyleClass().add("popup");
 			
 			presets.setConverter(new StringConverter<Integer[]>() {
 				@Override
@@ -1073,6 +1205,7 @@ public class MandelbrotRenderPane extends BorderPane {
 					return null;
 				}
 			});
+			
 			presets.setCellFactory(new Callback<ListView<Integer[]>, ListCell<Integer[]>>() {
 				@Override
 				public ListCell<Integer[]> call(ListView<Integer[]> p) {
