@@ -30,6 +30,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TextArea;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -87,6 +88,7 @@ public class MandelbrotRenderPane extends BorderPane {
 	private int rows;
 	private int columns;
 	private boolean redrawOrbit;
+	private boolean disableTool;
 	private String astOrbit;
 	private String astColor;
 	private Tool currentTool;
@@ -376,11 +378,13 @@ public class MandelbrotRenderPane extends BorderPane {
 			public void handle(long now) {
 				long time = now / 1000000;
 				if (time - last > FRAME_LENGTH_IN_MILLIS) {
-					redrawIfPixelsChanged(fractalCanvas);
-					redrawIfJuliaPixelsChanged(juliaCanvas);
-					redrawIfOrbitChanged(orbitCanvas);
-					if (errorProperty.getValue() != null && currentTool != null) {
-						currentTool.update(time);
+					if (!disableTool) {
+						redrawIfPixelsChanged(fractalCanvas);
+						redrawIfJuliaPixelsChanged(juliaCanvas);
+						redrawIfOrbitChanged(orbitCanvas);
+						if (currentTool != null) {
+							currentTool.update(time);
+						}
 					}
 					last = time;
 				}
@@ -423,6 +427,9 @@ public class MandelbrotRenderPane extends BorderPane {
 	}
 
 	private void toggleFractalJulia(Canvas juliaCanvas) {
+		if (disableTool) {
+			return;
+		}
 		if (getMandelbrotSession().getView().isJulia()) {
 			currentTool = new ZoomTool();
 			juliaCanvas.setVisible(false);
@@ -443,13 +450,16 @@ public class MandelbrotRenderPane extends BorderPane {
 	}
 
 	private void toggleShowOrbit(Canvas orbitCanvas) {
+		if (disableTool) {
+			return;
+		}
 		hideOrbitProperty.setValue(!hideOrbitProperty.getValue());
 	}
 	
 	private void updateFractal(Session session) {
 		try {
 			boolean[] changed = generateOrbitAndColor();
-			displayError(null, null);
+			updateErrors(null, null);
 			boolean orbitChanged = changed[0];
 			boolean colorChanged = changed[1];
 			if (orbitChanged) {
@@ -529,13 +539,13 @@ public class MandelbrotRenderPane extends BorderPane {
 			}
 		} catch (CompileSourceException e) {
 			logger.log(Level.INFO, "Cannot render fractal", e);
-			displayError(e.getMessage(), e.getErrors());
+			updateErrors(e.getMessage(), e.getErrors());
 		} catch (CompileClassException e) {
 			logger.log(Level.INFO, "Cannot render fractal", e);
-			displayError(e.getMessage(), null);
+			updateErrors(e.getMessage(), null);
 		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | IOException e) {
 			logger.log(Level.INFO, "Cannot render fractal", e);
-			displayError(e.getMessage(), null);
+			updateErrors(e.getMessage(), null);
 		}
 	}
 
@@ -577,15 +587,19 @@ public class MandelbrotRenderPane extends BorderPane {
 		return changed;
 	}
 
-	private void displayError(String message, List<CompilerError> errors) {
+	private void updateErrors(String message, List<CompilerError> errors) {
+		disableTool = message != null;
 		Platform.runLater(() -> {
 			errorProperty.setValue(null);
 			if (message != null) {
 				StringBuilder builder = new StringBuilder();
 				builder.append(message);
 				if (errors != null) {
-					builder.append("\n");
+					builder.append("\n\n");
 					for (CompilerError error : errors) {
+						builder.append("Line ");
+						builder.append(error.getLine());
+						builder.append(": ");
 						builder.append(error.getMessage());
 						builder.append("\n");
 					}
@@ -1059,8 +1073,9 @@ public class MandelbrotRenderPane extends BorderPane {
 			Label title = new Label("Error");
 			title.getStyleClass().add("error-title");
 			
-			Label message = new Label();
+			TextArea message = new TextArea();
 			message.getStyleClass().add("error-message");
+			message.setEditable(false);
 
 			box.setAlignment(Pos.TOP_CENTER);
 			box.getChildren().add(title);

@@ -25,6 +25,11 @@
 	-fx-background-insets: 0, 0, 1, 2;
 }
 
+.text-area .content {
+	-fx-background-color: white white black black;
+	-fx-background-insets: 0, 0, 1, 2;
+}
+
 .list-view {
 	-fx-background-color: white white black black;
 	-fx-background-insets: 0, 0, 1, 2;

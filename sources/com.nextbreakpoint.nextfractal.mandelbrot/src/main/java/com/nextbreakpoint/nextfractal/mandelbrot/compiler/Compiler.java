@@ -1035,7 +1035,7 @@ public class Compiler {
 
 		@Override
 		public void reportError(Parser recognizer, RecognitionException e) {
-			String message = generateErrorMessage("Expected tokens", recognizer);
+			String message = generateErrorMessage("Parse failed", recognizer);
 			CompilerError error = new CompilerError(CompilerError.ErrorType.M_COMPILER, e.getOffendingToken().getLine(), e.getOffendingToken().getCharPositionInLine(), e.getOffendingToken().getStartIndex(), recognizer.getCurrentToken().getStopIndex() - recognizer.getCurrentToken().getStartIndex(), message);
 			logger.log(Level.FINE, error.toString(), e);
 			errors.add(error);
@@ -1206,7 +1206,10 @@ public class Compiler {
 			if (tokens.contains(entry.getValue())) {
 				if (first) {
 					first = false;
-					builder.append(" ");
+					if (message.length() > 0 && !message.endsWith(".")) {
+						builder.append(". ");
+					}
+					builder.append("Expected tokens: ");
 				} else {
 					builder.append(", ");
 				}

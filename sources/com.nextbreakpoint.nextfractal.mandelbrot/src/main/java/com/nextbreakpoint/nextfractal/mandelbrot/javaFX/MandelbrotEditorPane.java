@@ -318,7 +318,16 @@ public class MandelbrotEditorPane extends BorderPane {
 					int lineBegin = (int)error.getIndex();
 					StyleSpansBuilder<Collection<String>> builder = new StyleSpansBuilder<>();
 					builder.add(Collections.singleton("error"), lineEnd - lineBegin);
-					sourceText.setStyleSpans(lineBegin, builder.create());
+					try {
+						if (lineBegin < sourceText.getLength()) {
+							sourceText.setStyleSpans(lineBegin, builder.create());
+						} else {
+							logger.info("begin " + lineBegin + ", length " + (lineEnd - lineBegin));
+						}
+					} catch (Exception e) {
+						logger.info("begin " + lineBegin + ", length " + (lineEnd - lineBegin));
+						e.printStackTrace();
+					}
 				}
 			}
 		}
