@@ -27,7 +27,7 @@ orbit
 	:
 	o=ORBIT '[' ra=complex ',' rb=complex ']' {
 		builder.setOrbit(new ASTOrbit($o, new ASTRegion($ra.result, $rb.result)));
-	} '[' v=variablelist ']' '{' trap* begin? loop end? '}'
+	} '[' v=variablelist ']' '{' trap? begin? loop end? '}'
 	;
 		
 color
@@ -417,7 +417,7 @@ colorargb returns [ASTColorARGB result]
 	}
 	|
 	'#' argb=USER_ARGB {
-		$result = new ASTColorARGB((int)(0xFF000000 & builder.parseLong($argb.text, 16)));
+		$result = new ASTColorARGB((int)(0xFFFFFFFF & builder.parseLong($argb.text, 16)));
 	}
 	;
 		

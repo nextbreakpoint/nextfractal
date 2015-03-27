@@ -542,7 +542,7 @@ public class MandelbrotRenderPane extends BorderPane {
 			updateErrors(e.getMessage(), e.getErrors());
 		} catch (CompileClassException e) {
 			logger.log(Level.INFO, "Cannot render fractal", e);
-			updateErrors(e.getMessage(), null);
+			updateErrors(e.getMessage(), e.getErrors());
 		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | IOException e) {
 			logger.log(Level.INFO, "Cannot render fractal", e);
 			updateErrors(e.getMessage(), null);
@@ -566,7 +566,7 @@ public class MandelbrotRenderPane extends BorderPane {
 			astColor = null;
 			orbitBuilder = null;
 			colorBuilder = null;
-			throw new CompileClassException("Failed to compile Orbit subclass");
+			throw new CompileClassException("Failed to compile Orbit subclass", newOrbitBuilder.getErrors());
 		}
 		CompilerBuilder<Color> newColorBuilder = compiler.compileColor(report);
 		if (newColorBuilder.getErrors().size() > 0) {
@@ -574,7 +574,7 @@ public class MandelbrotRenderPane extends BorderPane {
 			astColor = null;
 			orbitBuilder = null;
 			colorBuilder = null;
-			throw new CompileClassException("Failed to compile Color subclass");
+			throw new CompileClassException("Failed to compile Color subclass", newColorBuilder.getErrors());
 		}
 		orbitBuilder = newOrbitBuilder;
 		String newASTOrbit = report.getAST().getOrbit().toString();

@@ -108,15 +108,15 @@ public class Expression {
 		return Math.sin(x);
 	}
 
-	public static double funTan(double x) {
+	public static double funcTan(double x) {
 		return Math.tan(x);
 	}
 
-	public static double funExp(double x) {
+	public static double funcExp(double x) {
 		return Math.exp(x);
 	}
 
-	public static double funLog(double x) {
+	public static double funcLog(double x) {
 		return Math.log(x);
 	}
 
@@ -128,11 +128,11 @@ public class Expression {
 		return Math.pow(x, y);
 	}
 
-	public static double funHypot(double x, double y) {
+	public static double funcHypot(double x, double y) {
 		return Math.hypot(x, y);
 	}
 
-	public static double funAtan2(double x, double y) {
+	public static double funcAtan2(double x, double y) {
 		return Math.atan2(x, y);
 	}
 
