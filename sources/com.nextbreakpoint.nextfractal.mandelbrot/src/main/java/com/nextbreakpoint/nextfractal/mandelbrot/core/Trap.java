@@ -1,8 +1,10 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.core;
 
+import java.awt.geom.Path2D;
 
 public class Trap {
-	private Number center;
+	private final Path2D.Double path2d = new Path2D.Double();
+	private final Number center;
 	
 	public Trap(Number center) {
 		this.center = center;
@@ -13,37 +15,36 @@ public class Trap {
 	}
 
 	public Trap moveTo(Number x) {
-		//TODO moveTo
+		path2d.moveTo(x.r(), x.i());
 		return this;
 	}
 
 	public Trap lineTo(Number x) {
-		//TODO lineTo
+		path2d.lineTo(x.r(), x.i());
 		return this;
 	}
 
 	public Trap arcTo(Number x, Number y) {
-		//TODO arcTo
+		path2d.quadTo(x.r(), x.i(), y.r(), y.i());
 		return this;
 	}
 
 	public Trap moveRel(Number x) {
-		//TODO moveRel
+		path2d.moveTo(x.r(), x.i());
 		return this;
 	}
 
 	public Trap lineRel(Number x) {
-		//TODO lineRel
+		path2d.lineTo(x.r(), x.i());
 		return this;
 	}
 
 	public Trap arcRel(Number x, Number y) {
-		//TODO arcRel
+		path2d.quadTo(x.r(), x.i(), y.r(), y.i());
 		return this;
 	}
 	
-	public boolean contains(Number z) {
-		//TODO contains
-		return false;
+	public boolean contains(Number x) {
+		return path2d.contains(x.r() - center.r(), x.i() - center.i());
 	}
 }

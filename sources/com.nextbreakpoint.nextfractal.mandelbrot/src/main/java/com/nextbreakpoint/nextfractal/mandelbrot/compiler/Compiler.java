@@ -866,7 +866,7 @@ public class Compiler {
 
 		@Override
 		public void compile(ASTConditionTrap trap) {
-			builder.append("trap");
+			builder.append("!trap");
 			builder.append(trap.getName().toUpperCase().substring(0, 1));
 			builder.append(trap.getName().substring(1));
 			builder.append(".contains(");

@@ -1,10 +1,9 @@
 fractal {
 	orbit [-1 - 1i,+1 + 1i] [z,x,n] {
-		trap trap1 [0] {
+		trap trap1 [1] {
 			MOVETO(1);
-			LINETO(2);
-			LINETO(2 + 2i);
-			LINETO(1 + 2i);
+			LINETO(1.1-0.1i);
+			LINETO(1.1+0.1i);
 			LINETO(1);
 		}
 		loop [0, 2] (|z| > 4 & trap1[z]) {
