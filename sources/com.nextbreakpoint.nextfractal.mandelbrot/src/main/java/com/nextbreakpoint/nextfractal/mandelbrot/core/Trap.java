@@ -24,26 +24,36 @@ public class Trap {
 		return this;
 	}
 
-	public Trap arcTo(Number x, Number y) {
+	public Trap arcTo(Number x) {
+		path2d.quadTo(path2d.getCurrentPoint().getX(), path2d.getCurrentPoint().getY(), x.r(), x.i());
+		return this;
+	}
+
+	public Trap curveTo(Number x, Number y) {
 		path2d.quadTo(x.r(), x.i(), y.r(), y.i());
 		return this;
 	}
 
-	public Trap moveRel(Number x) {
-		path2d.moveTo(x.r(), x.i());
+	public Trap moveToRel(Number x) {
+		path2d.moveTo(path2d.getCurrentPoint().getX() + x.r(), path2d.getCurrentPoint().getY() + x.i());
 		return this;
 	}
 
-	public Trap lineRel(Number x) {
-		path2d.lineTo(x.r(), x.i());
+	public Trap lineToRel(Number x) {
+		path2d.lineTo(path2d.getCurrentPoint().getX() + x.r(), path2d.getCurrentPoint().getY() + x.i());
 		return this;
 	}
 
-	public Trap arcRel(Number x, Number y) {
-		path2d.quadTo(x.r(), x.i(), y.r(), y.i());
+	public Trap arcToRel(Number x) {
+		path2d.quadTo(path2d.getCurrentPoint().getX(), path2d.getCurrentPoint().getY(), path2d.getCurrentPoint().getX() + x.r(), path2d.getCurrentPoint().getY() + x.i());
 		return this;
 	}
-	
+
+	public Trap curveToRel(Number x, Number y) {
+		path2d.quadTo(path2d.getCurrentPoint().getX() + x.r(), path2d.getCurrentPoint().getY() + x.i(), path2d.getCurrentPoint().getX() + y.r(), path2d.getCurrentPoint().getY() + y.i());
+		return this;
+	}
+
 	public boolean contains(Number x) {
 		return path2d.contains(x.r() - center.r(), x.i() - center.i());
 	}

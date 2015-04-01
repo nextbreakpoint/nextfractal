@@ -456,24 +456,32 @@ public class Compiler {
 					builder.append("moveTo");
 					break;
 
+				case "MOVETOREL":
+					builder.append("moveToRel");
+					break;
+
 				case "LINETO":
 					builder.append("lineTo");
+					break;
+
+				case "LINETOREL":
+					builder.append("lineToRel");
 					break;
 
 				case "ARCTO":
 					builder.append("arcTo");
 					break;
 
-				case "MOVEREL":
-					builder.append("moveRel");
+				case "ARCTOREL":
+					builder.append("arcToRel");
 					break;
 
-				case "LINEREL":
-					builder.append("lineRel");
+				case "CURVETO":
+					builder.append("curveTo");
 					break;
 
-				case "ARCREL":
-					builder.append("arcRel");
+				case "CURVETOREL":
+					builder.append("curveToRel");
 					break;
 
 				default:
@@ -866,7 +874,10 @@ public class Compiler {
 
 		@Override
 		public void compile(ASTConditionTrap trap) {
-			builder.append("!trap");
+			if (!trap.isContains()) {
+				builder.append("!");
+			}
+			builder.append("trap");
 			builder.append(trap.getName().toUpperCase().substring(0, 1));
 			builder.append(trap.getName().substring(1));
 			builder.append(".contains(");

@@ -27,7 +27,7 @@ orbit
 	:
 	o=ORBIT '[' ra=complex ',' rb=complex ']' {
 		builder.setOrbit(new ASTOrbit($o, new ASTRegion($ra.result, $rb.result)));
-	} '[' v=variablelist ']' '{' trap? begin? loop end? '}'
+	} '[' v=variablelist ']' '{' trap* begin? loop end? '}'
 	;
 		
 color
@@ -75,7 +75,7 @@ pathop
 		builder.addOrbitTrapOp(new ASTOrbitTrapOp($o, $o.text, $c1.result, $c2.result));
 	}
 	;
-		
+	
 beginstatements 
 	:
 	s=statement {
@@ -122,8 +122,12 @@ conditionexp returns [ASTConditionExpression result]
 		$result = new ASTConditionCompareOp($e1.result.getLocation(), $o.text, $e1.result, $e2.result);
 	}
 	|
-	v=USER_VARIABLE '[' e=expression ']'{
-		$result = new ASTConditionTrap($v, $v.text, $e.result);
+	v=USER_VARIABLE '?' e=expression {
+		$result = new ASTConditionTrap($v, $v.text, $e.result, true);
+	}
+	|
+	v=USER_VARIABLE '~?' e=expression {
+		$result = new ASTConditionTrap($v, $v.text, $e.result, false);
 	}
 	| 
 	c1=conditionexp l=('&' | '|' | '^') c2=conditionexp {
@@ -326,6 +330,22 @@ real returns [ASTNumber result]
 	
 complex returns [ASTNumber result]
 	:
+	'<' '+'? r=(USER_RATIONAL | USER_INTEGER) ',' '+'? i=(USER_RATIONAL | USER_INTEGER) '>' {
+		$result = new ASTNumber($r, builder.parseDouble($r.text), builder.parseDouble("+" + $i.text));
+	}
+	|
+	'<' '+'? r=(USER_RATIONAL | USER_INTEGER) ',' '-' i=(USER_RATIONAL | USER_INTEGER) '>' {
+		$result = new ASTNumber($r, builder.parseDouble($r.text), builder.parseDouble("-" + $i.text));
+	}
+	|
+	'<' '-' r=(USER_RATIONAL | USER_INTEGER) ',' '+'? i=(USER_RATIONAL | USER_INTEGER) '>' {
+		$result = new ASTNumber($r, builder.parseDouble("-" + $r.text), builder.parseDouble("+" + $i.text));
+	}
+	|
+	'<' '-' r=(USER_RATIONAL | USER_INTEGER) ',' '-' i=(USER_RATIONAL | USER_INTEGER) '>' {
+		$result = new ASTNumber($r, builder.parseDouble("-" + $r.text), builder.parseDouble("-" + $i.text));
+	}
+	|
 	'+'? r=(USER_RATIONAL | USER_INTEGER) '+' i=(USER_RATIONAL | USER_INTEGER) 'i' {
 		$result = new ASTNumber($r, builder.parseDouble($r.text), builder.parseDouble("+" + $i.text));
 	}
@@ -497,22 +517,22 @@ USER_PATHOP_1POINTS
 	: 
 	'MOVETO'
 	| 
+	'MOVETOREL'
+	| 
 	'LINETO'
+	| 
+	'LINETOREL'
 	| 
 	'ARCTO'
 	| 
-	'MOVEREL'
-	| 
-	'LINEREL'
-	| 
-	'ARCREL'
+	'ARCTOREL'
 	;
 
 USER_PATHOP_2POINTS
 	: 
 	'CURVETO'
 	| 
-	'CURVEREL'
+	'CURVETOREL'
 	;
 
 USER_VARIABLE 
