@@ -33,9 +33,17 @@ public class MandelbrotImageGenerator implements ImageGenerator {
 		try {
 			Compiler compiler = new Compiler();
 			CompilerReport report = compiler.generateJavaSource(generatorData.getSource());
-			//TODO report errors
+			if (report.getErrors().size() > 0) {
+				throw new RuntimeException("Failed to compile fractal");
+			}
 			CompilerBuilder<Orbit> orbitBuilder = compiler.compileOrbit(report);
+			if (orbitBuilder.getErrors().size() > 0) {
+				throw new RuntimeException("Failed to compile Orbit class");
+			}
 			CompilerBuilder<Color> colorBuilder = compiler.compileColor(report);
+			if (colorBuilder.getErrors().size() > 0) {
+				throw new RuntimeException("Failed to compile Color class");
+			}
 			renderer.setCondition(condition);
 			renderer.abortTasks();
 			renderer.waitForTasks();
