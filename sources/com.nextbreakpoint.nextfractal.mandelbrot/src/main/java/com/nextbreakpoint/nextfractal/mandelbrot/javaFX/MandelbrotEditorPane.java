@@ -9,6 +9,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -160,10 +161,12 @@ public class MandelbrotEditorPane extends BorderPane {
 		session.addSessionListener(new SessionListener() {
 			@Override
 			public void dataChanged(Session session) {
-				if (!sourceText.getText().equals(getMandelbrotSession().getSource())) {
-					sourceText.replaceText(getMandelbrotSession().getSource());
-					compileSource(sourceText.getText());
-				}
+				Platform.runLater(() -> {
+					if (!sourceText.getText().equals(getMandelbrotSession().getSource())) {
+						sourceText.replaceText(getMandelbrotSession().getSource());
+						compileSource(sourceText.getText());
+					}
+				});
 				addDataToHistory(historyList);
 			}
 			
@@ -290,7 +293,7 @@ public class MandelbrotEditorPane extends BorderPane {
 				getMandelbrotSession().setSource(text);
 			}
 		} catch (Exception x) {
-			displayError(x.getMessage());
+			logger.log(Level.WARNING, "Failed to compile source", x);
 		}
 	}
 	
@@ -300,10 +303,6 @@ public class MandelbrotEditorPane extends BorderPane {
 		return report;
 	}
 
-	private void displayError(String message) {
-		//TODO show alert
-	}
-	
 	private void displayErrors() {
 		List<CompilerError> errors = getMandelbrotSession().getReport().getErrors();
 		if (errors.size() > 0) {
@@ -338,7 +337,7 @@ public class MandelbrotEditorPane extends BorderPane {
         Task<StyleSpans<Collection<String>>> task = new Task<StyleSpans<Collection<String>>>() {
             @Override
             protected StyleSpans<Collection<String>> call() throws Exception {
-            	compileSource(sourceText.getText());
+            	compileSource(text);
                 return computeHighlighting(text);
             }
         };

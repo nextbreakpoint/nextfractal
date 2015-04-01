@@ -38,8 +38,6 @@ public class NextFractalApp extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-    	System.out.println(System.getProperty("java.vendor"));
-    	System.out.println(System.getProperty("java.version"));
 		int width = 600;
 		int height = 600;
 		int editorWidth = 424;
