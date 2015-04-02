@@ -1,3 +1,8 @@
+.application .mandelbrot .alerts {
+	-fx-alignment: top-left;
+	-fx-padding: 10px;
+}
+
 .application .mandelbrot .toolbar {
 	-fx-alignment: bottom-center;
 	-fx-padding: 10px;

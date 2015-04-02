@@ -16,6 +16,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javafx.animation.AnimationTimer;
+import javafx.animation.FadeTransition;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -23,6 +24,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
@@ -83,12 +85,13 @@ public class MandelbrotRenderPane extends BorderPane {
 	private FileChooser fileChooser;
 	private StringObservableValue errorProperty;
 	private BooleanObservableValue hideOrbitProperty;
+	private BooleanObservableValue hideErrorsProperty;
 	private int width;
 	private int height;
 	private int rows;
 	private int columns;
-	private boolean redrawOrbit;
-	private boolean disableTool;
+	private volatile boolean redrawOrbit;
+	private volatile boolean disableTool;
 	private String astOrbit;
 	private String astColor;
 	private Tool currentTool;
@@ -98,6 +101,8 @@ public class MandelbrotRenderPane extends BorderPane {
 	private CompilerBuilder<Orbit> orbitBuilder;
 	private CompilerBuilder<Color> colorBuilder;
 	private List<Number[]> states;
+	private FadeTransition alertsTransition;
+	private FadeTransition toolsTransition;
 
 	public MandelbrotRenderPane(Session session, int width, int height, int rows, int columns) {
 		this.session = session;
@@ -107,7 +112,13 @@ public class MandelbrotRenderPane extends BorderPane {
 		this.columns = columns;
 
 		errorProperty = new StringObservableValue();
+		errorProperty.setValue(null);
+		
 		hideOrbitProperty = new BooleanObservableValue();
+		hideOrbitProperty.setValue(true);
+		
+		hideErrorsProperty = new BooleanObservableValue();
+		hideErrorsProperty.setValue(true);
 		
 		threadFactory = new DefaultThreadFactory("MandelbrotRenderPane", true, Thread.MIN_PRIORITY);
 		renderFactory = new JavaFXRendererFactory();
@@ -128,7 +139,7 @@ public class MandelbrotRenderPane extends BorderPane {
 
 		BorderPane controls = new BorderPane();
 				
-		HBox buttons = new HBox(10);
+		HBox toolButtons = new HBox(10);
 		Button zoomButton = new Button("Zoom");
 		Button moveButton = new Button("Move");
 		Button homeButton = new Button("Home");
@@ -136,28 +147,40 @@ public class MandelbrotRenderPane extends BorderPane {
 		Button orbitButton = new Button("Orbit");
 		Button juliaButton = new Button("Julia");
 		Button exportButton = new Button("Export");
-		buttons.getChildren().add(homeButton);
-		buttons.getChildren().add(zoomButton);
-		buttons.getChildren().add(moveButton);
-		buttons.getChildren().add(pickButton);
-		buttons.getChildren().add(juliaButton);
-		buttons.getChildren().add(orbitButton);
-		buttons.getChildren().add(exportButton);
-		buttons.getStyleClass().add("toolbar");
-		
+		toolButtons.getChildren().add(homeButton);
+		toolButtons.getChildren().add(zoomButton);
+		toolButtons.getChildren().add(moveButton);
+		toolButtons.getChildren().add(pickButton);
+		toolButtons.getChildren().add(juliaButton);
+		toolButtons.getChildren().add(orbitButton);
+		toolButtons.getChildren().add(exportButton);
+		toolButtons.getStyleClass().add("toolbar");
+		toolButtons.setOpacity(0);
+		createToolsTransition(toolButtons);
+
+		HBox alertButtons = new HBox(10);
+		Button errorsButton = new Button("Errors");
+		alertButtons.getChildren().add(errorsButton);
+		alertButtons.getStyleClass().add("alerts");
+
 		ExportPane exportPane = new ExportPane();
-		exportPane.setMinHeight(250);
-		exportPane.setMaxHeight(250);
-		exportPane.setPrefHeight(250);
+		exportPane.setDisable(true);
 		
 		ErrorPane errorPane = new ErrorPane();
-		errorPane.setMinHeight(250);
-		errorPane.setMaxHeight(250);
-		errorPane.setPrefHeight(250);
+		errorPane.setDisable(true);
 		
-		controls.setTop(exportPane);
-		controls.setTop(errorPane);
-		controls.setBottom(buttons);
+		StackPane alertsPane = new StackPane();
+		alertsPane.setMinHeight(250);
+		alertsPane.setMaxHeight(250);
+		alertsPane.setPrefHeight(250);
+		
+		alertsPane.getChildren().add(alertButtons);
+		alertsPane.getChildren().add(exportPane);
+		alertsPane.getChildren().add(errorPane);
+		controls.setTop(alertsPane);
+		controls.setBottom(toolButtons);
+		alertButtons.setVisible(false);
+		createAlertsTransition(alertButtons);
 		
         Canvas fractalCanvas = new Canvas(width, height);
         GraphicsContext gcFractalCanvas = fractalCanvas.getGraphicsContext2D();
@@ -203,6 +226,11 @@ public class MandelbrotRenderPane extends BorderPane {
 		});
 		
 		controls.setOnMouseMoved(e -> {
+			if (e.getY() > controls.getHeight() - 50 && e.getY() < controls.getHeight()) {
+				fadeIn(toolsTransition, x -> {});
+			} else {
+				fadeOut(toolsTransition, x -> {});
+			}
 			if (currentTool != null) {
 				currentTool.moved(e);
 			}
@@ -264,13 +292,17 @@ public class MandelbrotRenderPane extends BorderPane {
 		});
 		
 		pickButton.setOnAction(e -> {
-			currentTool = new PickTool();
-			juliaCanvas.setVisible(true);
+			if (!getMandelbrotSession().getData().isJulia()) {
+				currentTool = new PickTool();
+				juliaCanvas.setVisible(true);
+			}
 		});
 		
 		exportButton.setOnAction(e -> {
-			storeExportData();
-			exportPane.show();
+			if (errorProperty.getValue() == null) {
+				storeExportData();
+				exportPane.show();
+			}
 		});
 		
 		orbitButton.setOnAction(e -> {
@@ -278,6 +310,8 @@ public class MandelbrotRenderPane extends BorderPane {
 		});
 		
 		juliaButton.setOnAction(e -> {
+			currentTool = new ZoomTool();
+			juliaCanvas.setVisible(false);
 			toggleFractalJulia(juliaCanvas);
 		});
 		
@@ -286,13 +320,39 @@ public class MandelbrotRenderPane extends BorderPane {
 //			juliaCanvas.setVisible(!getMandelbrotSession().getView().isJulia() && !hideOrbit);
 		});
 		
+		errorPane.disabledProperty().addListener((observable, oldValue, newValue) -> {
+			if (newValue) {
+				if (errorProperty.getValue() == null) {
+					fadeOut(alertsTransition, x -> { 
+						alertButtons.setVisible(false);
+					});
+				} else {
+					alertButtons.setVisible(true);
+					fadeIn(alertsTransition, x -> {
+					});
+				}
+			}
+		});
+		
 		errorProperty.addListener((observable, oldValue, newValue) -> {
+			exportPane.hide();
 			errorPane.setMessage(newValue);
 			if (newValue == null) {
-				errorPane.hide();
-			} else {
-				errorPane.show();
+				fadeOut(alertsTransition, x -> { 
+					alertButtons.setVisible(false);
+				});
+			} else if (hideErrorsProperty.getValue()) {
+				alertButtons.setVisible(true);
+				fadeIn(alertsTransition, x -> {
+				});
 			}
+		});
+		
+		errorsButton.setOnAction(e -> {
+			fadeOut(alertsTransition, x -> { 
+				alertButtons.setVisible(false);
+				errorPane.show();
+			});
 		});
 		
 		exportExecutor = Executors.newSingleThreadExecutor(threadFactory);
@@ -300,6 +360,36 @@ public class MandelbrotRenderPane extends BorderPane {
 		runTimer(fractalCanvas, orbitCanvas, juliaCanvas);
 		
 		exportPane.hide();
+	}
+
+	private void createAlertsTransition(Node node) {
+		alertsTransition = new FadeTransition();
+		alertsTransition.setNode(node);
+		alertsTransition.setDuration(Duration.seconds(0.5));
+		alertsTransition.play();
+	}
+	
+	private void createToolsTransition(Node node) {
+		toolsTransition = new FadeTransition();
+		toolsTransition.setNode(node);
+		toolsTransition.setDuration(Duration.seconds(0.5));
+		toolsTransition.play();
+	}
+	
+	private void fadeOut(FadeTransition transition, EventHandler<ActionEvent> handler) {
+		transition.stop();
+		transition.setFromValue(transition.getNode().getOpacity());
+		transition.setToValue(0);
+		transition.setOnFinished(handler);
+		transition.play();
+	}
+
+	private void fadeIn(FadeTransition transition, EventHandler<ActionEvent> handler) {
+		transition.stop();
+		transition.setFromValue(transition.getNode().getOpacity());
+		transition.setToValue(1);
+		transition.setOnFinished(handler);
+		transition.play();
 	}
 
 	private void resetView() {
@@ -538,13 +628,13 @@ public class MandelbrotRenderPane extends BorderPane {
 				logger.info("Orbit: point = " + Arrays.toString(point) + ", length = " + states.size());
 			}
 		} catch (CompileSourceException e) {
-			logger.log(Level.INFO, "Cannot render fractal", e);
+			logger.log(Level.INFO, "Cannot render fractal: " + e.getMessage());
 			updateErrors(e.getMessage(), e.getErrors());
 		} catch (CompileClassException e) {
-			logger.log(Level.INFO, "Cannot render fractal", e);
+			logger.log(Level.INFO, "Cannot render fractal: " + e.getMessage());
 			updateErrors(e.getMessage(), e.getErrors());
 		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | IOException e) {
-			logger.log(Level.INFO, "Cannot render fractal", e);
+			logger.log(Level.INFO, "Cannot render fractal: " + e.getMessage());
 			updateErrors(e.getMessage(), null);
 		}
 	}
@@ -701,7 +791,7 @@ public class MandelbrotRenderPane extends BorderPane {
 			orbit.setX(orbit.getInitialPoint());
 			orbit.render(states);
 		} catch (Throwable e) {
-			logger.log(Level.WARNING, "Failed to render orbit", e);
+			logger.log(Level.WARNING, "Failed to render orbit");
 		}
 		return states;
 	}
@@ -807,11 +897,8 @@ public class MandelbrotRenderPane extends BorderPane {
 	private Encoder createEncoder(String format) {
 		final ServiceLoader<? extends Encoder> plugins = ServiceLoader.load(Encoder.class);
 		for (Encoder plugin : plugins) {
-			try {
-				if (format.equals(plugin.getId())) {
-					return plugin;
-				}
-			} catch (Exception e) {
+			if (format.equals(plugin.getId())) {
+				return plugin;
 			}
 		}
 		return null;
@@ -820,7 +907,8 @@ public class MandelbrotRenderPane extends BorderPane {
 	public void createExportSession(RendererSize rendererSize) {
 		Encoder encoder = createEncoder("PNG");
 		if (encoder == null) {
-			//TODO error
+			logger.warning("Cannot find encoder for PNG format");
+			//TODO display error
 			return;
 		}
 		createFileChooser(encoder.getSuffix());
@@ -840,7 +928,7 @@ public class MandelbrotRenderPane extends BorderPane {
 								session.addExportSession(exportSession);
 								session.getExportService().startSession(exportSession);
 							} catch (Exception e) {
-								logger.log(Level.WARNING, "Failed to export data", e);
+								logger.log(Level.WARNING, "Cannot export data to file " + file.getAbsolutePath(), e);
 								//TODO display error
 							}
 						}
@@ -1070,7 +1158,7 @@ public class MandelbrotRenderPane extends BorderPane {
 			buttons.getChildren().add(close);
 			buttons.setAlignment(Pos.CENTER);
 			
-			Label title = new Label("Error");
+			Label title = new Label("Errors");
 			title.getStyleClass().add("error-title");
 			
 			TextArea message = new TextArea();
@@ -1092,14 +1180,6 @@ public class MandelbrotRenderPane extends BorderPane {
 				@Override
 				public void changed(ObservableValue<? extends java.lang.Number> observable, java.lang.Number oldValue, java.lang.Number newValue) {
 					box.setPrefWidth(newValue.doubleValue());
-				}
-			});
-			
-			heightProperty().addListener(new ChangeListener<java.lang.Number>() {
-				@Override
-				public void changed(ObservableValue<? extends java.lang.Number> observable, java.lang.Number oldValue, java.lang.Number newValue) {
-					box.setPrefHeight(newValue.doubleValue());
-					box.setLayoutY(-newValue.doubleValue());
 				}
 			});
 			
@@ -1135,6 +1215,7 @@ public class MandelbrotRenderPane extends BorderPane {
 			tt.setOnFinished(new EventHandler<ActionEvent>() {
 				@Override
 				public void handle(ActionEvent event) {
+					setDisable(false);
 				}
 			});
 			tt.play();
@@ -1142,12 +1223,13 @@ public class MandelbrotRenderPane extends BorderPane {
 		
 		public void hide() {
 			TranslateTransition tt = new TranslateTransition(Duration.seconds(0.4));
-			tt.setFromY(box.getHeight());
+			tt.setFromY(box.getTranslateY());
 			tt.setToY(0);
 			tt.setNode(box);
 			tt.setOnFinished(new EventHandler<ActionEvent>() {
 				@Override
 				public void handle(ActionEvent event) {
+					setDisable(true);
 				}
 			});
 			tt.play();
@@ -1302,6 +1384,7 @@ public class MandelbrotRenderPane extends BorderPane {
 			tt.setOnFinished(new EventHandler<ActionEvent>() {
 				@Override
 				public void handle(ActionEvent event) {
+					setDisable(false);
 				}
 			});
 			tt.play();
@@ -1309,12 +1392,13 @@ public class MandelbrotRenderPane extends BorderPane {
 		
 		public void hide() {
 			TranslateTransition tt = new TranslateTransition(Duration.seconds(0.4));
-			tt.setFromY(box.getHeight());
+			tt.setFromY(box.getTranslateY());
 			tt.setToY(0);
 			tt.setNode(box);
 			tt.setOnFinished(new EventHandler<ActionEvent>() {
 				@Override
 				public void handle(ActionEvent event) {
+					setDisable(true);
 				}
 			});
 			tt.play();

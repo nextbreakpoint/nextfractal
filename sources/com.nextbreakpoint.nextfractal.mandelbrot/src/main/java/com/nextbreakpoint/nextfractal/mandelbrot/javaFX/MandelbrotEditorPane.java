@@ -221,7 +221,8 @@ public class MandelbrotEditorPane extends BorderPane {
 					logger.info(data.toString());
 					getMandelbrotSession().setData(data);
 				} catch (Exception x) {
-					//TODO show error
+					logger.warning("Cannot read file " + file.getAbsolutePath());
+					//TODO display error
 				}
 			}
 		});
@@ -238,7 +239,8 @@ public class MandelbrotEditorPane extends BorderPane {
 					logger.info(data.toString());
 					service.saveToFile(currentFile, data);
 				} catch (Exception x) {
-					//TODO show error
+					logger.warning("Cannot save file " + file.getAbsolutePath());
+					//TODO display error
 				}
 			}
 		});
@@ -293,7 +295,7 @@ public class MandelbrotEditorPane extends BorderPane {
 				getMandelbrotSession().setSource(text);
 			}
 		} catch (Exception x) {
-			logger.log(Level.WARNING, "Failed to compile source", x);
+			logger.log(Level.INFO, "Cannot compile source");
 		}
 	}
 	
@@ -325,7 +327,7 @@ public class MandelbrotEditorPane extends BorderPane {
 						}
 					} catch (Exception e) {
 						logger.info("begin " + lineBegin + ", length " + (lineEnd - lineBegin));
-						e.printStackTrace();
+						logger.log(Level.WARNING, "Something is wrong", e);
 					}
 				}
 			}
