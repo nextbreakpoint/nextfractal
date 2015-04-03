@@ -2,6 +2,7 @@ package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -33,6 +34,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -145,13 +148,13 @@ public class MandelbrotRenderPane extends BorderPane {
 		BorderPane controls = new BorderPane();
 				
 		HBox toolButtons = new HBox(10);
-		Button zoomButton = new Button("Zoom");
-		Button moveButton = new Button("Move");
-		Button homeButton = new Button("Home");
-		Button pickButton = new Button("Pick");
-		Button orbitButton = new Button("Orbit");
-		Button juliaButton = new Button("Julia");
-		Button exportButton = new Button("Export");
+		Button zoomButton = new Button("", createIconImage("/icon-zoom.png"));
+		Button moveButton = new Button("", createIconImage("/icon-move.png"));
+		Button homeButton = new Button("", createIconImage("/icon-home.png"));
+		Button pickButton = new Button("", createIconImage("/icon-pick.png"));
+		Button orbitButton = new Button("", createIconImage("/icon-orbit.png"));
+		Button juliaButton = new Button("", createIconImage("/icon-julia.png"));
+		Button exportButton = new Button("", createIconImage("/icon-export.png"));
 		toolButtons.getChildren().add(homeButton);
 		toolButtons.getChildren().add(zoomButton);
 		toolButtons.getChildren().add(moveButton);
@@ -376,6 +379,15 @@ public class MandelbrotRenderPane extends BorderPane {
 		runTimer(fractalCanvas, orbitCanvas, juliaCanvas);
 		
 		exportPane.hide();
+	}
+
+	private ImageView createIconImage(String name) {
+		InputStream stream = getClass().getResourceAsStream(name);
+		ImageView image = new ImageView(new Image(stream));
+		image.setSmooth(true);
+		image.setFitWidth(32);
+		image.setFitHeight(32);
+		return image;
 	}
 
 	private void createAlertsTransition(Node node) {

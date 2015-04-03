@@ -1,6 +1,7 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
 
 import java.io.File;
+import java.io.InputStream;
 import java.time.Duration;
 import java.util.Collection;
 import java.util.Collections;
@@ -24,6 +25,8 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
@@ -98,8 +101,8 @@ public class MandelbrotEditorPane extends BorderPane {
 		sourceText.getStyleClass().add("source");
 		HBox sourceButtons = new HBox(10);
 //		Button renderButton = new Button("Render");
-		Button loadButton = new Button("Load");
-		Button saveButton = new Button("Save");
+		Button loadButton = new Button("", createIconImage("/icon-load.png"));
+		Button saveButton = new Button("", createIconImage("/icon-save.png"));
 //		sourceButtons.getChildren().add(renderButton);
 		sourceButtons.getChildren().add(loadButton);
 		sourceButtons.getChildren().add(saveButton);
@@ -118,7 +121,7 @@ public class MandelbrotEditorPane extends BorderPane {
 			}
 		});
 		HBox historyButtons = new HBox(10);
-		Button clearButton = new Button("Clear");
+		Button clearButton = new Button("", createIconImage("/icon-clear.png"));
 		historyButtons.getChildren().add(clearButton);
 		historyButtons.getStyleClass().add("toolbar");
 		historyPane.setCenter(historyList);
@@ -135,9 +138,9 @@ public class MandelbrotEditorPane extends BorderPane {
 		});
 		jobsList.getStyleClass().add("jobs");
 		HBox jobsButtons = new HBox(10);
-		Button suspendButton = new Button("Suspend");
-		Button resumeButton = new Button("Resume");
-		Button removeButton = new Button("Remove");
+		Button suspendButton = new Button("", createIconImage("/icon-suspend.png"));
+		Button resumeButton = new Button("", createIconImage("/icon-resume.png"));
+		Button removeButton = new Button("", createIconImage("/icon-remove.png"));
 		jobsButtons.getChildren().add(suspendButton);
 		jobsButtons.getChildren().add(resumeButton);
 		jobsButtons.getChildren().add(removeButton);
@@ -290,6 +293,15 @@ public class MandelbrotEditorPane extends BorderPane {
 		textExecutor = Executors.newSingleThreadExecutor();
 		
 		addDataToHistory(historyList);
+	}
+
+	private ImageView createIconImage(String name) {
+		InputStream stream = getClass().getResourceAsStream(name);
+		ImageView image = new ImageView(new Image(stream));
+		image.setSmooth(true);
+		image.setFitWidth(32);
+		image.setFitHeight(32);
+		return image;
 	}
 
 	private void updateReportAndSource(String text, CompilerReport report) {
