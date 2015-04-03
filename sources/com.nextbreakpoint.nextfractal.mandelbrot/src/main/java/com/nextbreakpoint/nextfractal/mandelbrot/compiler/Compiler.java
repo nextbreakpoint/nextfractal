@@ -609,6 +609,7 @@ public class Compiler {
 			builder.append("(");
 			switch (function.getName()) {
 				case "mod":
+				case "mod2":
 				case "pha":
 				case "re":
 				case "im":

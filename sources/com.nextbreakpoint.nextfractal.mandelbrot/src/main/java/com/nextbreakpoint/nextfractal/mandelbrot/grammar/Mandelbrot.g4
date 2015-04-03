@@ -293,7 +293,7 @@ expression4 returns [ASTExpression result]
 
 function returns [ASTFunction result]
 	:
-	f=('mod' | 'pha' | 're' | 'im') '(' e=expression ')' {
+	f=('mod' | 'mod2' | 'pha' | 're' | 'im') '(' e=expression ')' {
 		$result = new ASTFunction($f, $f.text, $e.result);		
 	}
 	|

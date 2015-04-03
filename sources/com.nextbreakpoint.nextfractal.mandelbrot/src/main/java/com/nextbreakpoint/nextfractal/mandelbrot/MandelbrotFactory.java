@@ -1,5 +1,8 @@
 package com.nextbreakpoint.nextfractal.mandelbrot;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.concurrent.ThreadFactory;
 
 import javafx.scene.layout.Pane;
@@ -47,25 +50,11 @@ public class MandelbrotFactory implements FractalFactory {
 	}
 
 	protected String getInitialSource() {
-		String source = ""
-				+ "fractal {\n"
-				+ "\torbit [-2.5 - 1.5i,+0.5 + 1.5i] [z,n] {\n"
-				+ "\t\tbegin {\n"
-				+ "\t\t\tz = x;\n"
-				+ "\t\t}\n"
-				+ "\t\tloop [0, 200] (|pow(re(z),2)+pow(im(z),2)| > 4) {\n"
-				+ "\t\t\tz = z * z + w;\n"
-				+ "\t\t}\n"
-				+ "\t}\n\tcolor [#FF000000] {\n"
-				+ "\t\trule (re(n) = 0) [1.0] {\n"
-				+ "\t\t\t1,0,0,0\n"
-				+ "\t\t}\n"
-				+ "\t\trule (re(n) > 0) [1.0] {\n"
-				+ "\t\t\t1,1,1,1\n"
-				+ "\t\t}\n"
-				+ "\t}\n"
-				+ "}\n";
-		return source;
+		try {
+			return getSource("source.m");
+		} catch (IOException e) {
+		}
+		return "";
 	}
 
 	/**
@@ -74,5 +63,16 @@ public class MandelbrotFactory implements FractalFactory {
 	@Override
 	public ImageGenerator createImageGenerator(ThreadFactory threadFactory,	RendererFactory renderFactory, RendererTile tile) {
 		return new MandelbrotImageGenerator(threadFactory, renderFactory, tile);
+	}
+
+	protected String getSource(String name) throws IOException {
+		InputStream is = getClass().getResourceAsStream(name);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		byte[] buffer = new byte[4096];
+		int length = 0;
+		while ((length = is.read(buffer)) > 0) {
+			baos.write(buffer, 0, length);
+		}
+		return baos.toString();
 	}
 }

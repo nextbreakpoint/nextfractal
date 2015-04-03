@@ -24,8 +24,9 @@ public abstract class Color {
 	}
 	
 	protected float[] addColor(double opacity, float[] color) {
+		double q = 1 - opacity;
 		for (int i = 0; i < 4; i++) {
-			this.color[i] = (float)Math.min(1, this.color[i] + Math.max(0, color[i]) * opacity);
+			this.color[i] = (float)Math.min(1, Math.max(0, q * this.color[i] + color[i] * opacity));
 		}
 		return color;
 	}

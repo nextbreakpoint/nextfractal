@@ -77,7 +77,7 @@ public class Colors {
 	 * @param rgb
 	 * @param hsbvals
 	 */
-	public static void toHSB(int rgb, float[] hsbvals) {
+	public static void RGBtoHSB(int rgb, float[] hsbvals) {
 		Color.RGBtoHSB((rgb >> 16) & 0xFF, (rgb >> 8) & 0xFF, (rgb >> 0) & 0xFF, hsbvals);
 	}
 
@@ -86,16 +86,16 @@ public class Colors {
 	 * @param hsbvals
 	 * @return
 	 */
-	public static int toRGB(int alpha, float[] hsbvals) {
+	public static int HSBtoRGB(int alpha, float[] hsbvals) {
 		return ((alpha & 0xFF) << 24) | Color.HSBtoRGB(hsbvals[0], hsbvals[1], hsbvals[2]);
 	}
 
 	/**
-	 * @param hsbvals
+	 * @param components
 	 * @return
 	 */
-	public static int toRGB(float[] hsbvals) {
-		return 0xFF000000 | Color.HSBtoRGB(hsbvals[0], hsbvals[1], hsbvals[2]);
+	public static int toARGB(float[] components) {
+		return ((0xFF & ((int)(components[0] * 255))) << 24) | ((0xFF & ((int)(components[1] * 255))) << 16) | ((0xFF & ((int)(components[2] * 255))) << 8) | ((0xFF & ((int)(components[3] * 255))) << 0);
 	}
 
 	/**
@@ -163,6 +163,19 @@ public class Colors {
 		final int a = alpha & 255;
 		final int l = level & 255;
 		return (a << 24) | (l << 16) | (l << 8) | l;
+	}
+
+	/**
+	 * @param argb
+	 * @return
+	 */
+	public static float[] color(final int argb) {
+		float[] components = new float[] { 0f, 0f, 0f, 0f };
+		components[0] = (0xFF & (argb >> 24)) / 255f;
+		components[1] = (0xFF & (argb >> 16)) / 255f;
+		components[2] = (0xFF & (argb >> 8)) / 255f;
+		components[3] = (0xFF & (argb >> 0)) / 255f;
+		return components;
 	}
 
 	/**

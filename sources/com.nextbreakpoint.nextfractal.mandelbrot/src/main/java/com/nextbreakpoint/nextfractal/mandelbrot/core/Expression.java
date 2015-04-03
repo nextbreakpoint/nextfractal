@@ -140,6 +140,10 @@ public class Expression {
 		return Math.hypot(x.r(), x.i());
 	}
 
+	public static double funcMod2(Number x) {
+		return Math.pow(x.r(), 2) + Math.pow(x.i(), 2);
+	}
+
 	public static double funcPha(Number x) {
 		return Math.atan2(x.i(), x.r());
 	}

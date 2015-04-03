@@ -86,6 +86,7 @@ public class MandelbrotRenderPane extends BorderPane {
 	private StringObservableValue errorProperty;
 	private BooleanObservableValue hideOrbitProperty;
 	private BooleanObservableValue hideErrorsProperty;
+	private BooleanObservableValue juliaProperty;
 	private int width;
 	private int height;
 	private int rows;
@@ -113,7 +114,10 @@ public class MandelbrotRenderPane extends BorderPane {
 
 		errorProperty = new StringObservableValue();
 		errorProperty.setValue(null);
-		
+
+		juliaProperty = new BooleanObservableValue();
+		juliaProperty.setValue(false);
+
 		hideOrbitProperty = new BooleanObservableValue();
 		hideOrbitProperty.setValue(true);
 		
@@ -191,6 +195,7 @@ public class MandelbrotRenderPane extends BorderPane {
         GraphicsContext gcOrbitCanvas = orbitCanvas.getGraphicsContext2D();
         gcOrbitCanvas.setFill(javafx.scene.paint.Color.TRANSPARENT);
         gcOrbitCanvas.fillRect(0, 0, width, height);
+		orbitCanvas.setVisible(false);
 
         Canvas juliaCanvas = new Canvas(width, height);
         GraphicsContext gcJuliaCanvas = juliaCanvas.getGraphicsContext2D();
@@ -311,13 +316,17 @@ public class MandelbrotRenderPane extends BorderPane {
 		
 		juliaButton.setOnAction(e -> {
 			currentTool = new ZoomTool();
-			juliaCanvas.setVisible(false);
 			toggleFractalJulia(juliaCanvas);
+			zoomButton.requestFocus();
 		});
 		
 		hideOrbitProperty.addListener((observable, oldValue, newValue) -> {
 			orbitCanvas.setVisible(!newValue);
 //			juliaCanvas.setVisible(!getMandelbrotSession().getView().isJulia() && !hideOrbit);
+		});
+		
+		juliaProperty.addListener((observable, oldValue, newValue) -> {
+			pickButton.setDisable(newValue);
 		});
 		
 		errorPane.disabledProperty().addListener((observable, oldValue, newValue) -> {
@@ -524,6 +533,7 @@ public class MandelbrotRenderPane extends BorderPane {
 			currentTool = new ZoomTool();
 			juliaCanvas.setVisible(false);
 //			orbitCanvas.setVisible(!hideOrbit);
+			juliaProperty.setValue(false);
 			MandelbrotView oldView = popView();
 			pushView();
 			MandelbrotView view = new MandelbrotView(oldView != null ? oldView.getTraslation() : new double[] { 0, 0, 1, 0 }, oldView != null ? oldView.getRotation() : new double[] { 0, 0, 0, 0 }, oldView != null ? oldView.getScale() : new double[] { 1, 1, 1, 1 }, getMandelbrotSession().getView().getPoint(), false);
@@ -532,6 +542,7 @@ public class MandelbrotRenderPane extends BorderPane {
 			currentTool = new ZoomTool();
 			juliaCanvas.setVisible(false);
 //			orbitCanvas.setVisible(!hideOrbit);
+			juliaProperty.setValue(true);
 			MandelbrotView oldView = popView();
 			pushView();
 			MandelbrotView view = new MandelbrotView(oldView != null ? oldView.getTraslation() : new double[] { 0, 0, 1, 0 }, oldView != null ? oldView.getRotation() : new double[] { 0, 0, 0, 0 }, oldView != null ? oldView.getScale() : new double[] { 1, 1, 1, 1 }, getMandelbrotSession().getView().getPoint(), true);
@@ -840,16 +851,43 @@ public class MandelbrotRenderPane extends BorderPane {
 			double dh = canvas.getHeight();
 			gc.clearRect(0, 0, (int)dw, (int)dh);
 			juliaCoordinator.drawImage(gc, 10, 10, 200, 200);
+			Number size = juliaCoordinator.getInitialSize();
+			Number center = juliaCoordinator.getInitialCenter();
+			gc.setStroke(renderFactory.createColor(1, 0, 0, 1));
+			double[] t = getMandelbrotSession().getView().getTraslation();
+			double[] r = getMandelbrotSession().getView().getRotation();
+			double tx = t[0];
+			double ty = t[1];
+			double tz = t[2];
+			double a = -r[2] * Math.PI / 180;
+			double[] point = getMandelbrotSession().getView().getPoint();
+			double zx = point[0];
+			double zy = point[1];
+			double cx = dw / 2;
+			double cy = dh / 2;
+			double px = (zx - tx - center.r()) / (tz * size.r());
+			double py = (zy - ty - center.i()) / (tz * size.r());
+			double qx = Math.cos(a) * px + Math.sin(a) * py;
+			double qy = Math.cos(a) * py - Math.sin(a) * px;
+			int x = (int)Math.rint(qx * dw + cx);
+			int y = (int)Math.rint(qy * dh + cy);
+			gc.beginPath();
+			gc.moveTo(x - 2, y - 2);
+			gc.lineTo(x + 2, y - 2);
+			gc.lineTo(x + 2, y + 2);
+			gc.lineTo(x - 2, y + 2);
+			gc.lineTo(x - 2, y - 2);
+			gc.stroke();
 		}
 	}
 
 	protected void redrawIfOrbitChanged(Canvas canvas) {
 		if (redrawOrbit) {
 			redrawOrbit = false;
+			Number size = coordinators[0].getInitialSize();
+			Number center = coordinators[0].getInitialCenter();
 			RendererGraphicsContext gc = renderFactory.createGraphicsContext(canvas.getGraphicsContext2D());
 			if (states.size() > 1) {
-				Number size = coordinators[0].getInitialSize();
-				Number center = coordinators[0].getInitialCenter();
 				double[] t = getMandelbrotSession().getView().getTraslation();
 				double[] r = getMandelbrotSession().getView().getRotation();
 				double tx = t[0];
