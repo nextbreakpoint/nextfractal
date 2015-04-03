@@ -7,7 +7,7 @@ fractal {
 			z = z * z + w;
 		}
 	}
-	color [#FF000000] {
+	color [(1,0,0,0)] {
 		rule (re(n) = 0) [1.0] {
 			1, // alpha
 			0, // red

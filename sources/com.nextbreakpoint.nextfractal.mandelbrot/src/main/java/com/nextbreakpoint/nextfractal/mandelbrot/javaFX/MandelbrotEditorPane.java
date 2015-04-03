@@ -48,6 +48,7 @@ import com.nextbreakpoint.nextfractal.core.utils.DefaultThreadFactory;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotData;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotDataStore;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotImageGenerator;
+import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotListener;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotSession;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.Compiler;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerError;
@@ -158,36 +159,40 @@ public class MandelbrotEditorPane extends BorderPane {
         
         sourceText.replaceText(getMandelbrotSession().getSource());
         
-		session.addSessionListener(new SessionListener() {
+		getMandelbrotSession().addMandelbrotListener(new MandelbrotListener() {
 			@Override
-			public void dataChanged(Session session) {
-				Platform.runLater(() -> {
-					if (!sourceText.getText().equals(getMandelbrotSession().getSource())) {
-						sourceText.replaceText(getMandelbrotSession().getSource());
-						compileSource(sourceText.getText());
-					}
-				});
+			public void dataChanged(MandelbrotSession session) {
 				addDataToHistory(historyList);
+				Platform.runLater(() -> {
+					sourceText.replaceText(getMandelbrotSession().getSource());
+				});
 			}
 			
 			@Override
-			public void pointChanged(Session session, boolean continuous) {
+			public void pointChanged(MandelbrotSession session, boolean continuous) {
 				if (!continuous) {
 					addDataToHistory(historyList);
 				}
 			}
 
 			@Override
-			public void viewChanged(Session session, boolean continuous) {
+			public void viewChanged(MandelbrotSession session, boolean continuous) {
 				if (!continuous) {
 					addDataToHistory(historyList);
 				}
 			}
 
 			@Override
-			public void fractalChanged(Session session) {
+			public void sourceChanged(MandelbrotSession session) {
+				addDataToHistory(historyList);
 			}
 
+			@Override
+			public void reportChanged(MandelbrotSession session) {
+			}
+		});
+
+		session.addSessionListener(new SessionListener() {
 			@Override
 			public void terminate(Session session) {
 				shutdown();
@@ -287,15 +292,10 @@ public class MandelbrotEditorPane extends BorderPane {
 		addDataToHistory(historyList);
 	}
 
-	private void compileSource(String text) {
-		try {
-			CompilerReport report = generateReport(text);
-			getMandelbrotSession().setReport(report);
-			if (report.getErrors().size() == 0) {
-				getMandelbrotSession().setSource(text);
-			}
-		} catch (Exception x) {
-			logger.log(Level.INFO, "Cannot compile source");
+	private void updateReportAndSource(String text, CompilerReport report) {
+		getMandelbrotSession().setReport(report);
+		if (report.getErrors().size() == 0) {
+			getMandelbrotSession().setSource(text);
 		}
 	}
 	
@@ -334,13 +334,22 @@ public class MandelbrotEditorPane extends BorderPane {
 		}
 	}
 
-	private Task<StyleSpans<Collection<String>>> computeHighlightingAsync() {
+	private class TaskResult {
+		String source;
+		CompilerReport report;
+		StyleSpans<Collection<String>> highlighting;
+	}
+	
+	private Task<TaskResult> computeHighlightingAsync() {
         String text = sourceText.getText();
-        Task<StyleSpans<Collection<String>>> task = new Task<StyleSpans<Collection<String>>>() {
+        Task<TaskResult> task = new Task<TaskResult>() {
             @Override
-            protected StyleSpans<Collection<String>> call() throws Exception {
-            	compileSource(text);
-                return computeHighlighting(text);
+            protected TaskResult call() throws Exception {
+            	TaskResult result = new TaskResult();
+            	result.source = text;
+            	result.report = generateReport(text);
+            	result.highlighting = computeHighlighting(text);
+                return result;
             }
         };
         textExecutor.execute(task);
@@ -371,8 +380,9 @@ public class MandelbrotEditorPane extends BorderPane {
 		);
 	}
 	
-    private void applyHighlighting(StyleSpans<Collection<String>> highlighting) {
-    	sourceText.setStyleSpans(0, highlighting);
+    private void applyHighlighting(TaskResult result) {
+		updateReportAndSource(result.source, result.report);
+		sourceText.setStyleSpans(0, result.highlighting);
     	displayErrors();
     }
 

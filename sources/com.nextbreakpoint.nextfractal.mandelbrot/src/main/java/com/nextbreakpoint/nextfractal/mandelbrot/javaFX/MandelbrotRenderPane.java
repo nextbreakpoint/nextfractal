@@ -59,6 +59,7 @@ import com.nextbreakpoint.nextfractal.core.utils.Double4D;
 import com.nextbreakpoint.nextfractal.core.utils.Integer4D;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotData;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotImageGenerator;
+import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotListener;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotSession;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotView;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.Compiler;
@@ -241,26 +242,32 @@ public class MandelbrotRenderPane extends BorderPane {
 			}
 		});
 		
-		session.addSessionListener(new SessionListener() {
+		getMandelbrotSession().addMandelbrotListener(new MandelbrotListener() {
 			@Override
-			public void dataChanged(Session session) {
+			public void dataChanged(MandelbrotSession session) {
 			}
 			
 			@Override
-			public void pointChanged(Session session, boolean continuous) {
+			public void sourceChanged(MandelbrotSession session) {
+			}
+			
+			@Override
+			public void pointChanged(MandelbrotSession session, boolean continuous) {
 				updatePoint(continuous);
 			}
 			
 			@Override
-			public void viewChanged(Session session, boolean continuous) {
+			public void viewChanged(MandelbrotSession session, boolean continuous) {
 				updateView(continuous);
 			}
 
 			@Override
-			public void fractalChanged(Session session) {
+			public void reportChanged(MandelbrotSession session) {
 				updateFractal(session);
 			}
+		});
 
+		session.addSessionListener(new SessionListener() {
 			@Override
 			public void terminate(Session session) {
 				dispose();
@@ -569,10 +576,10 @@ public class MandelbrotRenderPane extends BorderPane {
 			if (colorChanged) {
 				logger.info("Color algorithm is changed");
 			}
-			if (!orbitChanged && !colorChanged) {
-				logger.info("Orbit or color algorithms are not changed");
-				return;
-			}
+//			if (!orbitChanged && !colorChanged) {
+//				logger.info("Orbit or color algorithms are not changed");
+//				return;
+//			}
 			double[] traslation = getMandelbrotSession().getView().getTraslation();
 			double[] rotation = getMandelbrotSession().getView().getRotation();
 			double[] scale = getMandelbrotSession().getView().getScale();

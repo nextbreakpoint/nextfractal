@@ -131,22 +131,6 @@ public class NextFractalApp extends Application {
 //		});
 		session.addSessionListener(new SessionListener() {
 			@Override
-			public void viewChanged(Session session, boolean continuous) {
-			}
-			
-			@Override
-			public void pointChanged(Session sessio, boolean continuousn) {
-			}
-
-			@Override
-			public void dataChanged(Session session) {
-			}
-
-			@Override
-			public void fractalChanged(Session session) {
-			}
-
-			@Override
 			public void terminate(Session session) {
 				exportService.shutdown();
 			}

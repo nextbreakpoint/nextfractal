@@ -1,12 +1,24 @@
 package com.nextbreakpoint.nextfractal.mandelbrot;
 
-import com.nextbreakpoint.nextfractal.core.session.Session;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.nextbreakpoint.nextfractal.core.session.AbstractSession;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerReport;
 
-public class MandelbrotSession extends Session {
+public class MandelbrotSession extends AbstractSession {
+	private final List<MandelbrotListener> listeners = new ArrayList<>();
 	private MandelbrotData data = new MandelbrotData();
 	private CompilerReport report;
 	
+	public void addMandelbrotListener(MandelbrotListener listener) {
+		listeners.add(listener);
+	}
+
+	public void removeMandelbrotListener(MandelbrotListener listener) {
+		listeners.remove(listener);
+	}
+
 	public String getVersion() {
 		return data.getVersion();
 	}
@@ -18,13 +30,17 @@ public class MandelbrotSession extends Session {
 	public void setSource(String source) {
 		if (!data.getSource().equals(source)) {
 			data.setSource(source);
-			fireDataChanged();
+			fireSourceChanged();
 		}
 	}
 	
-	public void setPoint(double[] point, boolean continuous) {
-		data.setPoint(point);
-		firePointChanged(continuous);
+	public CompilerReport getReport() {
+		return report;
+	}
+
+	public void setReport(CompilerReport report) {
+		this.report = report;
+		fireReportChanged();
 	}
 
 	public double getTime() {
@@ -34,6 +50,15 @@ public class MandelbrotSession extends Session {
 	public void setTime(double time) {
 		data.setTime(time);
 		fireDataChanged();
+	}
+
+	public double[] getPoint() {
+		return data.getPoint();
+	}
+	
+	public void setPoint(double[] point, boolean continuous) {
+		data.setPoint(point);
+		firePointChanged(continuous);
 	}
 
 	public void setView(MandelbrotView view, boolean continuous) {
@@ -72,12 +97,33 @@ public class MandelbrotSession extends Session {
 		return data;
 	}
 
-	public void setReport(CompilerReport report) {
-		this.report = report;
-		fireFractalChanged();
+	protected void fireDataChanged() {
+		for (MandelbrotListener listener : listeners) {
+			listener.dataChanged(this);
+		}
 	}
 
-	public CompilerReport getReport() {
-		return report;
+	protected void fireSourceChanged() {
+		for (MandelbrotListener listener : listeners) {
+			listener.sourceChanged(this);
+		}
+	}
+
+	protected void fireReportChanged() {
+		for (MandelbrotListener listener : listeners) {
+			listener.reportChanged(this);
+		}
+	}
+
+	protected void firePointChanged(boolean continuous) {
+		for (MandelbrotListener listener : listeners) {
+			listener.pointChanged(this, continuous);
+		}
+	}
+
+	protected void fireViewChanged(boolean continuous) {
+		for (MandelbrotListener listener : listeners) {
+			listener.viewChanged(this, continuous);
+		}
 	}
 }

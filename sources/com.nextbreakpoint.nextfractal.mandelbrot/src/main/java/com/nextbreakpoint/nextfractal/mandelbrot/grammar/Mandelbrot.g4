@@ -395,7 +395,7 @@ paletteelement
 		
 colorrule 
 	:
-	t=RULE '(' r=ruleexp ')' '[' o=USER_RATIONAL ']' '{' c=colorexp '}' {
+	t=RULE '(' r=ruleexp ')' '[' o=(USER_RATIONAL | USER_INTEGER) ']' '{' c=colorexp '}' {
 		builder.addRule(new ASTRule($t, builder.parseFloat($o.text), $r.result, $c.result));
 	} 
 	;
@@ -432,7 +432,7 @@ colorexp returns [ASTColorExpression result]
 		
 colorargb returns [ASTColorARGB result]
 	:
-	'(' a=USER_RATIONAL ',' r=USER_RATIONAL ',' g=USER_RATIONAL ',' b=USER_RATIONAL ')' {
+	'(' a=(USER_RATIONAL | USER_INTEGER) ',' r=(USER_RATIONAL | USER_INTEGER) ',' g=(USER_RATIONAL | USER_INTEGER) ',' b=(USER_RATIONAL | USER_INTEGER) ')' {
 		$result = new ASTColorARGB(builder.parseFloat($a.text), builder.parseFloat($r.text), builder.parseFloat($g.text), builder.parseFloat($b.text));
 	}
 	|
