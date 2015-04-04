@@ -148,7 +148,8 @@ public class MandelbrotRenderPane extends BorderPane {
 		BorderPane controls = new BorderPane();
 				
 		HBox toolButtons = new HBox(10);
-		Button zoomButton = new Button("", createIconImage("/icon-zoom.png"));
+		Button zoominButton = new Button("", createIconImage("/icon-zoomin.png"));
+		Button zoomoutButton = new Button("", createIconImage("/icon-zoomout.png"));
 		Button moveButton = new Button("", createIconImage("/icon-move.png"));
 		Button homeButton = new Button("", createIconImage("/icon-home.png"));
 		Button pickButton = new Button("", createIconImage("/icon-pick.png"));
@@ -156,11 +157,11 @@ public class MandelbrotRenderPane extends BorderPane {
 		Button juliaButton = new Button("", createIconImage("/icon-julia.png"));
 		Button exportButton = new Button("", createIconImage("/icon-export.png"));
 		toolButtons.getChildren().add(homeButton);
-		toolButtons.getChildren().add(zoomButton);
+		toolButtons.getChildren().add(zoominButton);
+		toolButtons.getChildren().add(zoomoutButton);
 		toolButtons.getChildren().add(moveButton);
 		toolButtons.getChildren().add(pickButton);
 		toolButtons.getChildren().add(juliaButton);
-		toolButtons.getChildren().add(orbitButton);
 		toolButtons.getChildren().add(exportButton);
 		toolButtons.getStyleClass().add("toolbar");
 		toolButtons.setOpacity(0);
@@ -208,7 +209,7 @@ public class MandelbrotRenderPane extends BorderPane {
         juliaCanvas.setOpacity(0.8);
         juliaCanvas.setVisible(false);
 
-		currentTool = new ZoomTool();
+		currentTool = new ZoomTool(true);
 		
 		controls.setOnMouseClicked(e -> {
 			if (currentTool != null) {
@@ -235,7 +236,7 @@ public class MandelbrotRenderPane extends BorderPane {
 		});
 		
 		controls.setOnMouseMoved(e -> {
-			if (e.getY() > controls.getHeight() - 50 && e.getY() < controls.getHeight()) {
+			if (e.getY() > controls.getHeight() - 100 && e.getY() < controls.getHeight()) {
 				fadeIn(toolsTransition, x -> {});
 			} else {
 				fadeOut(toolsTransition, x -> {});
@@ -296,8 +297,13 @@ public class MandelbrotRenderPane extends BorderPane {
 			resetView();
 		});
 		
-		zoomButton.setOnAction(e -> {
-			currentTool = new ZoomTool();
+		zoominButton.setOnAction(e -> {
+			currentTool = new ZoomTool(true);
+			juliaCanvas.setVisible(false);
+		});
+		
+		zoomoutButton.setOnAction(e -> {
+			currentTool = new ZoomTool(false);
 			juliaCanvas.setVisible(false);
 		});
 		
@@ -325,14 +331,22 @@ public class MandelbrotRenderPane extends BorderPane {
 		});
 		
 		juliaButton.setOnAction(e -> {
-			currentTool = new ZoomTool();
-			toggleFractalJulia(juliaCanvas);
-			zoomButton.requestFocus();
+			currentTool = new ZoomTool(true);
+			juliaCanvas.setVisible(false);
+			if (juliaProperty.getValue()) {
+				juliaButton.setGraphic(createIconImage("/icon-julia.png"));
+				setFractalJulia(false);
+				juliaProperty.setValue(false);
+			} else {
+				juliaButton.setGraphic(createIconImage("/icon-mandelbrot.png"));
+				setFractalJulia(true);
+				juliaProperty.setValue(true);
+			}
+			zoominButton.requestFocus();
 		});
 		
 		hideOrbitProperty.addListener((observable, oldValue, newValue) -> {
 			orbitCanvas.setVisible(!newValue);
-//			juliaCanvas.setVisible(!getMandelbrotSession().getView().isJulia() && !hideOrbit);
 		});
 		
 		juliaProperty.addListener((observable, oldValue, newValue) -> {
@@ -544,24 +558,16 @@ public class MandelbrotRenderPane extends BorderPane {
 		return tile;
 	}
 
-	private void toggleFractalJulia(Canvas juliaCanvas) {
+	private void setFractalJulia(boolean julia) {
 		if (disableTool) {
 			return;
 		}
-		if (getMandelbrotSession().getView().isJulia()) {
-			currentTool = new ZoomTool();
-			juliaCanvas.setVisible(false);
-//			orbitCanvas.setVisible(!hideOrbit);
-			juliaProperty.setValue(false);
+		if (!julia && getMandelbrotSession().getView().isJulia()) {
 			MandelbrotView oldView = popView();
 			pushView();
 			MandelbrotView view = new MandelbrotView(oldView != null ? oldView.getTraslation() : new double[] { 0, 0, 1, 0 }, oldView != null ? oldView.getRotation() : new double[] { 0, 0, 0, 0 }, oldView != null ? oldView.getScale() : new double[] { 1, 1, 1, 1 }, getMandelbrotSession().getView().getPoint(), false);
 			getMandelbrotSession().setView(view, false);
-		} else {
-			currentTool = new ZoomTool();
-			juliaCanvas.setVisible(false);
-//			orbitCanvas.setVisible(!hideOrbit);
-			juliaProperty.setValue(true);
+		} else if (julia && !getMandelbrotSession().getView().isJulia()) {
 			MandelbrotView oldView = popView();
 			pushView();
 			MandelbrotView view = new MandelbrotView(oldView != null ? oldView.getTraslation() : new double[] { 0, 0, 1, 0 }, oldView != null ? oldView.getRotation() : new double[] { 0, 0, 0, 0 }, oldView != null ? oldView.getScale() : new double[] { 1, 1, 1, 1 }, getMandelbrotSession().getView().getPoint(), true);
@@ -1027,6 +1033,10 @@ public class MandelbrotRenderPane extends BorderPane {
 		private boolean zoomin;
 		private double x1;
 		private double y1;
+
+		public ZoomTool(boolean zoomin) {
+			this.zoomin = zoomin;
+		}
 		
 		@Override
 		public void clicked(MouseEvent e) {
@@ -1055,7 +1065,7 @@ public class MandelbrotRenderPane extends BorderPane {
 		public void pressed(MouseEvent e) {
 			x1 = (e.getX() - width / 2) / width;
 			y1 = (e.getY() - height / 2) / height;
-			zoomin = (e.isPrimaryButtonDown()) ? true : false;
+//			zoomin = (e.isPrimaryButtonDown()) ? true : false;
 			pressed = true;
 		}
 
