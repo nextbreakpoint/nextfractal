@@ -162,13 +162,14 @@ public class MandelbrotRenderPane extends BorderPane {
 		toolButtons.getChildren().add(moveButton);
 		toolButtons.getChildren().add(pickButton);
 		toolButtons.getChildren().add(juliaButton);
+		toolButtons.getChildren().add(orbitButton);
 		toolButtons.getChildren().add(exportButton);
 		toolButtons.getStyleClass().add("toolbar");
 		toolButtons.setOpacity(0);
 		createToolsTransition(toolButtons);
 
 		HBox alertButtons = new HBox(10);
-		Button errorsButton = new Button("Errors");
+		Button errorsButton = new Button("", createIconImage("/icon-errors.png"));
 		alertButtons.getChildren().add(errorsButton);
 		alertButtons.getStyleClass().add("alerts");
 
@@ -327,6 +328,15 @@ public class MandelbrotRenderPane extends BorderPane {
 		});
 		
 		orbitButton.setOnAction(e -> {
+			if (!getMandelbrotSession().getData().isJulia()) {
+				currentTool = new PickTool();
+				juliaCanvas.setVisible(true);
+				pickButton.requestFocus();
+			} else {
+				currentTool = new ZoomTool(true);
+				juliaCanvas.setVisible(false);
+				zoominButton.requestFocus();
+			}
 			toggleShowOrbit(orbitCanvas);
 		});
 		
