@@ -24,7 +24,7 @@ public class ASTFractal extends ASTObject {
 
 	public void registerStateVariable(String varName, Token location) {
 		if (vars.get(varName) == null) {
-			throw new ASTException("Variable not defined: " + location.getText(), location);
+			registerVariable(varName, false, true, location);
 		}
 		if (orbit == null) {
 			throw new ASTException("Orbit not defined", location);
