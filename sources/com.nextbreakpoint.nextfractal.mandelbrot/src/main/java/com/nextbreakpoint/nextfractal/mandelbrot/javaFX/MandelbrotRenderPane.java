@@ -18,38 +18,24 @@ import java.util.logging.Logger;
 
 import javafx.animation.AnimationTimer;
 import javafx.animation.FadeTransition;
-import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
-import javafx.util.Callback;
 import javafx.util.Duration;
-import javafx.util.StringConverter;
 
 import com.nextbreakpoint.nextfractal.core.encoder.Encoder;
 import com.nextbreakpoint.nextfractal.core.export.ExportSession;
-import com.nextbreakpoint.nextfractal.core.javaFX.AdvancedTextField;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererGraphicsContext;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererPoint;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
@@ -76,7 +62,7 @@ import com.nextbreakpoint.nextfractal.mandelbrot.core.Scope;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererCoordinator;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererView;
 
-public class MandelbrotRenderPane extends BorderPane {
+public class MandelbrotRenderPane extends BorderPane implements ExportPaneDelegate {
 	private static final int FRAME_LENGTH_IN_MILLIS = 20;
 	private static final Logger logger = Logger.getLogger(MandelbrotRenderPane.class.getName());
 	private final Session session;
@@ -174,6 +160,7 @@ public class MandelbrotRenderPane extends BorderPane {
 		alertButtons.getStyleClass().add("alerts");
 
 		ExportPane exportPane = new ExportPane();
+		exportPane.setDelegate(this);
 		exportPane.setDisable(true);
 		
 		ErrorPane errorPane = new ErrorPane();
@@ -1219,266 +1206,6 @@ public class MandelbrotRenderPane extends BorderPane {
 				}
 				changed = false;
 			}
-		}
-	}
-
-	private class ErrorPane extends Pane {
-		private StringObservableValue messageProperty;
-		private VBox box = new VBox(10);
-
-		public ErrorPane() {
-			messageProperty = new StringObservableValue();
-			
-			Button close = new Button("Close");
-
-			HBox buttons = new HBox(10);
-			buttons.getChildren().add(close);
-			buttons.setAlignment(Pos.CENTER);
-			
-			Label title = new Label("Errors");
-			title.getStyleClass().add("error-title");
-			
-			TextArea message = new TextArea();
-			message.getStyleClass().add("error-message");
-			message.setEditable(false);
-
-			box.setAlignment(Pos.TOP_CENTER);
-			box.getChildren().add(title);
-			box.getChildren().add(message);
-			box.getChildren().add(buttons);
-			box.getStyleClass().add("popup");
-			getChildren().add(box);
-
-			close.setOnMouseClicked(e -> {
-				hide();
-			});
-
-			widthProperty().addListener(new ChangeListener<java.lang.Number>() {
-				@Override
-				public void changed(ObservableValue<? extends java.lang.Number> observable, java.lang.Number oldValue, java.lang.Number newValue) {
-					box.setPrefWidth(newValue.doubleValue());
-				}
-			});
-			
-			heightProperty().addListener(new ChangeListener<java.lang.Number>() {
-				@Override
-				public void changed(ObservableValue<? extends java.lang.Number> observable, java.lang.Number oldValue, java.lang.Number newValue) {
-					box.setPrefHeight(newValue.doubleValue());
-					box.setLayoutY(-newValue.doubleValue());
-				}
-			});
-			
-			messageProperty().addListener(new ChangeListener<String>() {
-				@Override
-				public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-					message.setText(newValue);
-				}
-			});
-		}
-
-		public void setMessage(String message) {
-			messageProperty.setValue(message);
-		}
-
-		public ObservableValue<String> messageProperty() {
-			return messageProperty;
-		}
-
-		public void show() {
-			TranslateTransition tt = new TranslateTransition(Duration.seconds(0.4));
-			tt.setFromY(box.getTranslateY());
-			tt.setToY(box.getHeight());
-			tt.setNode(box);
-			tt.setOnFinished(new EventHandler<ActionEvent>() {
-				@Override
-				public void handle(ActionEvent event) {
-					setDisable(false);
-				}
-			});
-			tt.play();
-		}
-		
-		public void hide() {
-			TranslateTransition tt = new TranslateTransition(Duration.seconds(0.4));
-			tt.setFromY(box.getTranslateY());
-			tt.setToY(0);
-			tt.setNode(box);
-			tt.setOnFinished(new EventHandler<ActionEvent>() {
-				@Override
-				public void handle(ActionEvent event) {
-					setDisable(true);
-				}
-			});
-			tt.play();
-		}
-	}
-		
-	private class ExportPane extends Pane {
-		private VBox box = new VBox(10);
-
-		public ExportPane() {
-			ComboBox<Integer[]> presets = new ComboBox<>();
-			presets.getItems().add(new Integer[] { 1900, 1080 });
-			presets.getItems().add(new Integer[] { 1650, 1050 });
-			presets.getItems().add(new Integer[] { 1024, 768 });
-			presets.getItems().add(new Integer[] { 640, 480 });
-			presets.getItems().add(new Integer[] { 0, 0 });
-			presets.setMinWidth(400);
-			presets.setMaxWidth(400);
-			presets.setPrefWidth(400);
-			presets.getSelectionModel().select(0);
-			Integer[] item0 = presets.getSelectionModel().getSelectedItem();
-			AdvancedTextField widthField = new AdvancedTextField();
-			widthField.setRestrict(getRestriction());
-			widthField.setEditable(false);
-			widthField.setMinWidth(400);
-			widthField.setMaxWidth(400);
-			widthField.setPrefWidth(400);
-			widthField.setText(String.valueOf(item0[0]));
-			AdvancedTextField heightField = new AdvancedTextField();
-			heightField.setRestrict(getRestriction());
-			heightField.setEditable(false);
-			heightField.setMinWidth(400);
-			heightField.setMaxWidth(400);
-			heightField.setPrefWidth(400);
-			heightField.setText(String.valueOf(item0[1]));
-			Button close = new Button("Close");
-			Button start = new Button("Start");
-
-			HBox buttons = new HBox(10);
-			buttons.getChildren().add(start);
-			buttons.getChildren().add(close);
-			buttons.setAlignment(Pos.CENTER);
-			
-			box.setAlignment(Pos.TOP_CENTER);
-			box.getChildren().add(new Label("Presets"));
-			box.getChildren().add(presets);
-			box.getChildren().add(new Label("Width"));
-			box.getChildren().add(widthField);
-			box.getChildren().add(new Label("Height"));
-			box.getChildren().add(heightField);
-			box.getChildren().add(buttons);
-			box.getStyleClass().add("popup");
-			
-			presets.setConverter(new StringConverter<Integer[]>() {
-				@Override
-				public String toString(Integer[] item) {
-					if (item == null) {
-						return null;
-					} else {
-						if (item[0] == 0 || item[1] == 0) {
-							return "Custom";
-						} else {
-							return item[0] + " \u00D7 " + item[1] + " px";
-						}
-					}
-				}
-
-				@Override
-				public Integer[] fromString(String preset) {
-					return null;
-				}
-			});
-			
-			presets.setCellFactory(new Callback<ListView<Integer[]>, ListCell<Integer[]>>() {
-				@Override
-				public ListCell<Integer[]> call(ListView<Integer[]> p) {
-					return new ListCell<Integer[]>() {
-						private final Label label;
-						{
-							label = new Label();
-						}
-						
-						@Override
-						protected void updateItem(Integer[] item, boolean empty) {
-							super.updateItem(item, empty);
-							if (item == null || empty) {
-								setGraphic(null);
-							} else {
-								label.setText(presets.getConverter().toString(item));
-								setGraphic(label);
-							}
-						}
-					};
-				}
-			});
-
-			presets.valueProperty().addListener(new ChangeListener<Integer[]>() {
-		        @Override 
-		        public void changed(ObservableValue<? extends Integer[]> value, Integer[] oldItem, Integer[] newItem) {
-					if (newItem[0] == 0 || newItem[1] == 0) {
-						widthField.setEditable(true);
-						heightField.setEditable(true);
-						widthField.setText("1024");
-						heightField.setText("768");
-					} else {
-						widthField.setEditable(false);
-						heightField.setEditable(false);
-						widthField.setText(String.valueOf(newItem[0]));
-						heightField.setText(String.valueOf(newItem[1]));
-					}
-		        }    
-		    });
-			
-			close.setOnMouseClicked(e -> {
-				hide();
-			});
-			
-			start.setOnMouseClicked(e -> {
-				hide();
-				int width = Integer.parseInt(widthField.getText());
-				int height = Integer.parseInt(heightField.getText());
-				createExportSession(new RendererSize(width, height));
-			});
-			
-			getChildren().add(box);
-			
-			widthProperty().addListener(new ChangeListener<java.lang.Number>() {
-				@Override
-				public void changed(ObservableValue<? extends java.lang.Number> observable, java.lang.Number oldValue, java.lang.Number newValue) {
-					box.setPrefWidth(newValue.doubleValue());
-				}
-			});
-			
-			heightProperty().addListener(new ChangeListener<java.lang.Number>() {
-				@Override
-				public void changed(ObservableValue<? extends java.lang.Number> observable, java.lang.Number oldValue, java.lang.Number newValue) {
-					box.setPrefHeight(newValue.doubleValue());
-					box.setLayoutY(-newValue.doubleValue());
-				}
-			});
-		}
-
-		protected String getRestriction() {
-			return "-?\\d*\\.?\\d*";
-		}
-		
-		public void show() {
-			TranslateTransition tt = new TranslateTransition(Duration.seconds(0.4));
-			tt.setFromY(box.getTranslateY());
-			tt.setToY(box.getHeight());
-			tt.setNode(box);
-			tt.setOnFinished(new EventHandler<ActionEvent>() {
-				@Override
-				public void handle(ActionEvent event) {
-					setDisable(false);
-				}
-			});
-			tt.play();
-		}
-		
-		public void hide() {
-			TranslateTransition tt = new TranslateTransition(Duration.seconds(0.4));
-			tt.setFromY(box.getTranslateY());
-			tt.setToY(0);
-			tt.setNode(box);
-			tt.setOnFinished(new EventHandler<ActionEvent>() {
-				@Override
-				public void handle(ActionEvent event) {
-					setDisable(true);
-				}
-			});
-			tt.play();
 		}
 	}
 }
