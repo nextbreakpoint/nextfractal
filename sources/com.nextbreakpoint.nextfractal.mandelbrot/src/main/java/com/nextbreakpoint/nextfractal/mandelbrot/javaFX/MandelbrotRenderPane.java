@@ -250,6 +250,7 @@ public class MandelbrotRenderPane extends BorderPane {
 		getMandelbrotSession().addMandelbrotListener(new MandelbrotListener() {
 			@Override
 			public void dataChanged(MandelbrotSession session) {
+				juliaProperty.setValue(session.getData().isJulia());
 			}
 			
 			@Override
@@ -343,15 +344,7 @@ public class MandelbrotRenderPane extends BorderPane {
 		juliaButton.setOnAction(e -> {
 			currentTool = new ZoomTool(true);
 			juliaCanvas.setVisible(false);
-			if (juliaProperty.getValue()) {
-				juliaButton.setGraphic(createIconImage("/icon-julia.png"));
-				setFractalJulia(false);
-				juliaProperty.setValue(false);
-			} else {
-				juliaButton.setGraphic(createIconImage("/icon-mandelbrot.png"));
-				setFractalJulia(true);
-				juliaProperty.setValue(true);
-			}
+			juliaProperty.setValue(!juliaProperty.getValue());
 			zoominButton.requestFocus();
 		});
 		
@@ -360,6 +353,13 @@ public class MandelbrotRenderPane extends BorderPane {
 		});
 		
 		juliaProperty.addListener((observable, oldValue, newValue) -> {
+			if (newValue) {
+				juliaButton.setGraphic(createIconImage("/icon-mandelbrot.png"));
+				setFractalJulia(true);
+			} else {
+				juliaButton.setGraphic(createIconImage("/icon-julia.png"));
+				setFractalJulia(false);
+			}
 			pickButton.setDisable(newValue);
 		});
 		
