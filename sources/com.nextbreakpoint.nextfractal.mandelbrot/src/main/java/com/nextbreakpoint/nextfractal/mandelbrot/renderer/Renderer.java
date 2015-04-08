@@ -78,6 +78,7 @@ public class Renderer {
 	protected RendererView view;
 	protected Condition condition;
 	private final RendererLock lock = new DummyRendererLock();
+	private final RenderRunnable renderTask = new RenderRunnable();
 	private ExecutorService executor;
 	private volatile Future<?> future;
 
@@ -115,6 +116,9 @@ public class Renderer {
 		free();
 	}
 
+	/**
+	 * @return
+	 */
 	public RendererTile getTile() {
 		return tile;
 	}
@@ -162,7 +166,7 @@ public class Renderer {
 	public void runTask() {
 		abortTasks();
 		waitForTasks();
-		future = executor.submit(new RenderRunnable());
+		future = executor.submit(renderTask);
 	}
 
 	/**

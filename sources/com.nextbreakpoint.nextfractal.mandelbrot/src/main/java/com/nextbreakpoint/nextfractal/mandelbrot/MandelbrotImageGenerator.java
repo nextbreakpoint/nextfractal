@@ -27,6 +27,7 @@ public class MandelbrotImageGenerator implements ImageGenerator {
 		renderer = new Renderer(threadFactory, renderFactory, tile);
 	}
 
+	@Override
 	public IntBuffer renderImage(Object data) {
 		MandelbrotData generatorData = (MandelbrotData)data;
 		IntBuffer pixels = IntBuffer.allocate(renderer.getSize().getWidth() * renderer.getSize().getHeight());
@@ -34,7 +35,7 @@ public class MandelbrotImageGenerator implements ImageGenerator {
 			Compiler compiler = new Compiler();
 			CompilerReport report = compiler.generateJavaSource(generatorData.getSource());
 			if (report.getErrors().size() > 0) {
-				throw new RuntimeException("Failed to compile fractal");
+				throw new RuntimeException("Failed to compile source");
 			}
 			CompilerBuilder<Orbit> orbitBuilder = compiler.compileOrbit(report);
 			if (orbitBuilder.getErrors().size() > 0) {
@@ -72,6 +73,7 @@ public class MandelbrotImageGenerator implements ImageGenerator {
 		return pixels;
 	}
 
+	@Override
 	public RendererSize getSize() {
 		return renderer.getSize();
 	}

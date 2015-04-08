@@ -184,6 +184,34 @@ public class RendererCoordinator implements RendererDelegate {
 	}
 
 	/**
+	 * @return
+	 */
+	public Number getInitialCenter() {
+		return renderer.getInitialRegion().getCenter();
+	}
+
+	/**
+	 * @return
+	 */
+	public Number getInitialSize() {
+		return renderer.getInitialRegion().getSize();
+	}
+
+	/**
+	 * @return
+	 */
+	public RendererTile getTile() {
+		return renderer.getTile();
+	}
+
+	/**
+	 * @param view
+	 */
+	public void setView(RendererView view) {
+		renderer.setView(view);
+	}
+
+	/**
 	 * @param gc
 	 */
 	public void drawImage(final RendererGraphicsContext gc) {
@@ -231,21 +259,5 @@ public class RendererCoordinator implements RendererDelegate {
 		} else {
 			return new Renderer(threadFactory, renderFactory, tile);
 		}
-	}
-
-	public Number getInitialCenter() {
-		return renderer.getInitialRegion().getCenter();
-	}
-
-	public Number getInitialSize() {
-		return renderer.getInitialRegion().getSize();
-	}
-
-	public RendererTile getTile() {
-		return renderer.getTile();
-	}
-
-	public void setView(RendererView view) {
-		renderer.setView(view);
 	}
 }

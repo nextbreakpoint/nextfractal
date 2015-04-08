@@ -157,6 +157,9 @@ public class Double4D implements Serializable, Cloneable {
 		return new Double4D(x, y, z, w);
 	}
 	
+	/**
+	 * @return
+	 */
 	public double[] toArray() {
 		return new double[] { x, y, z, w }; 
 	}

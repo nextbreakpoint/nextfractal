@@ -67,8 +67,8 @@ public class NextFractalApp extends Application {
         mainPane.getChildren().add(editorRootPane);
         mainPane.getStyleClass().add("application");
         root.getChildren().add(mainPane);
-		DefaultThreadFactory renderThreadFactory = new DefaultThreadFactory("NextFractalApp", true, Thread.MIN_PRIORITY);
-		DefaultThreadFactory exportThreadFactory = new DefaultThreadFactory("NextFractalApp", true, Thread.MIN_PRIORITY);
+		DefaultThreadFactory renderThreadFactory = new DefaultThreadFactory("NextFractal Render", true, Thread.MIN_PRIORITY);
+		DefaultThreadFactory exportThreadFactory = new DefaultThreadFactory("NextFractal Export", true, Thread.MIN_PRIORITY);
 		JavaFXRendererFactory renderFactory = new JavaFXRendererFactory();
 		ExportRenderer exportRenderer = new SimpleExportRenderer(renderThreadFactory, renderFactory);
         ExportService exportService = new SimpleExportService(exportThreadFactory, exportRenderer, 200);

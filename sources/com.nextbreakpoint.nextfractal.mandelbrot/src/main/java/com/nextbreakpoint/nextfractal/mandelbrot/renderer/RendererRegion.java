@@ -24,6 +24,10 @@ public class RendererRegion {
 		setPoints(points[0], points[1]);
 	}
 
+	/**
+	 * @param a
+	 * @param b
+	 */
 	public void setPoints(Number a, Number b) {
 		this.x0 = a.r();
 		this.y0 = a.i();
@@ -33,10 +37,16 @@ public class RendererRegion {
 		center = new Number((x0 + x1) / (2 * size.r()), (y0 + y1) / (2 * size.i()));
 	}
 
+	/**
+	 * @return
+	 */
 	public Number getCenter() {
 		return center;
 	}
 
+	/**
+	 * @return
+	 */
 	public Number getSize() {
 		return size;
 	}

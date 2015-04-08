@@ -1,6 +1,5 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.compiler;
 
-
 public class CompilerError {
 	private ErrorType type;
 	private long line;

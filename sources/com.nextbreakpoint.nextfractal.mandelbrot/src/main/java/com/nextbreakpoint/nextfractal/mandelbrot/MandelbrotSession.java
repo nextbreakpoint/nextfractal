@@ -61,6 +61,10 @@ public class MandelbrotSession extends AbstractSession {
 		firePointChanged(continuous);
 	}
 
+	public MandelbrotView getView() {
+		return new MandelbrotView(data.getTraslation(), data.getRotation(), data.getScale(), data.getPoint(), data.isJulia());
+	}
+	
 	public void setView(MandelbrotView view, boolean continuous) {
 		this.data.setTraslation(view.getTraslation());
 		this.data.setRotation(view.getRotation());
@@ -69,9 +73,17 @@ public class MandelbrotSession extends AbstractSession {
 		this.data.setJulia(view.isJulia());
 		fireViewChanged(continuous);
 	}
-
-	public MandelbrotView getView() {
-		return new MandelbrotView(data.getTraslation(), data.getRotation(), data.getScale(), data.getPoint(), data.isJulia());
+	
+	public MandelbrotData getData() {
+		MandelbrotData data = new MandelbrotData();
+		data.setSource(this.data.getSource());
+		data.setTraslation(this.data.getTraslation());
+		data.setRotation(this.data.getRotation());
+		data.setScale(this.data.getScale());
+		data.setTime(this.data.getTime());
+		data.setPoint(this.data.getPoint());
+		data.setJulia(this.data.isJulia());
+		return data;
 	}
 
 	public void setData(MandelbrotData data) {
@@ -83,18 +95,6 @@ public class MandelbrotSession extends AbstractSession {
 		this.data.setPoint(data.getPoint());
 		this.data.setJulia(data.isJulia());
 		fireDataChanged();
-	}
-
-	public MandelbrotData getData() {
-		MandelbrotData data = new MandelbrotData();
-		data.setSource(this.data.getSource());
-		data.setTraslation(this.data.getTraslation());
-		data.setRotation(this.data.getRotation());
-		data.setScale(this.data.getScale());
-		data.setTime(this.data.getTime());
-		data.setPoint(this.data.getPoint());
-		data.setJulia(this.data.isJulia());
-		return data;
 	}
 
 	protected void fireDataChanged() {

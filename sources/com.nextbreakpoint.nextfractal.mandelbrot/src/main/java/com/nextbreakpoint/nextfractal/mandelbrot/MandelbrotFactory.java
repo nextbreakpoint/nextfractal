@@ -49,20 +49,20 @@ public class MandelbrotFactory implements FractalFactory {
 		return new MandelbrotRenderPane(session, width, height, 1, 1);
 	}
 
-	protected String getInitialSource() {
-		try {
-			return getSource("source.m");
-		} catch (IOException e) {
-		}
-		return "";
-	}
-
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.FractalFactory#createImageGenerator(java.util.concurrent.ThreadFactory, com.nextbreakpoint.nextfractal.core.renderer.RendererFactory, com.nextbreakpoint.nextfractal.core.renderer.RendererTile)
 	 */
 	@Override
 	public ImageGenerator createImageGenerator(ThreadFactory threadFactory,	RendererFactory renderFactory, RendererTile tile) {
 		return new MandelbrotImageGenerator(threadFactory, renderFactory, tile);
+	}
+
+	protected String getInitialSource() {
+		try {
+			return getSource("source.m");
+		} catch (IOException e) {
+		}
+		return "";
 	}
 
 	protected String getSource(String name) throws IOException {

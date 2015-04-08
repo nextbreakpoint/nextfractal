@@ -12,6 +12,9 @@ public class RendererFractal {
 	private Color color;
 	private Number point;
 
+	/**
+	 * 
+	 */
 	public void initialize() {
 		scope.empty();
 		if (orbit != null) {
@@ -19,14 +22,23 @@ public class RendererFractal {
 		}
 	}
 
+	/**
+	 * @return
+	 */
 	public Orbit getOrbit() {
 		return orbit;
 	}
 
+	/**
+	 * @return
+	 */
 	public Color getColor() {
 		return color;
 	}
 
+	/**
+	 * @param orbit
+	 */
 	public void setOrbit(Orbit orbit) {
 		this.orbit = orbit;
 		if (orbit != null) {
@@ -34,6 +46,9 @@ public class RendererFractal {
 		}
 	}
 
+	/**
+	 * @param color
+	 */
 	public void setColor(Color color) {
 		this.color = color;
 		if (color != null) {
@@ -117,10 +132,16 @@ public class RendererFractal {
 		scope.clear();
 	}
 
+	/**
+	 * @return
+	 */
 	public Number getPoint() {
 		return point;
 	}
 
+	/**
+	 * @param point
+	 */
 	public void setPoint(Number point) {
 		this.point = point;
 	}
