@@ -79,7 +79,7 @@ public class Renderer {
 	protected Condition condition;
 	private final RendererLock lock = new DummyRendererLock();
 	private ExecutorService executor;
-	private Future<?> future;
+	private volatile Future<?> future;
 
 	/**
 	 * @param renderFactory 
