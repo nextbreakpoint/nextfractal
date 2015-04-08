@@ -129,7 +129,7 @@ public final class XaosRenderer extends Renderer {
 				didChanged(progress, rendererData.getPixels());
 				return;
 			}
-			final boolean redraw = orbitChanged || juliaChanged || (julia && pointChanged);
+			final boolean redraw = (!continuous && regionChanged) || orbitChanged || juliaChanged || (julia && pointChanged);
 			pointChanged = false;
 			orbitChanged = false;
 			juliaChanged = false;
@@ -206,14 +206,14 @@ public final class XaosRenderer extends Renderer {
 		final double endy = xaosRendererData.top();
 		double stepy = 0;
 		if (redraw || !XaosConstants.USE_XAOS) {
-			stepy = XaosRenderer.initReallocTableAndPosition(xaosRendererData.reallocY(), xaosRendererData.positionY(), beginy, endy);
+			stepy = initReallocTableAndPosition(xaosRendererData.reallocY(), xaosRendererData.positionY(), beginy, endy);
 		}
 		else {
-			stepy = XaosRenderer.makeReallocTable(xaosRendererData.reallocY(), xaosRendererData.dynamicY(), xaosRendererData.bottom(), xaosRendererData.top(), xaosRendererData.positionY(), !cacheActive);
+			stepy = makeReallocTable(xaosRendererData.reallocY(), xaosRendererData.dynamicY(), xaosRendererData.bottom(), xaosRendererData.top(), xaosRendererData.positionY(), !cacheActive);
 		}
 		final double symy = rendererStrategy.getVerticalSymetryPoint();
 		if (isVerticalSymetrySupported && rendererStrategy.isVerticalSymetrySupported() && (!((beginy > symy) || (symy > endy)))) {
-			XaosRenderer.prepareSymetry(xaosRendererData.reallocY(), (int) ((symy - beginy) / stepy), symy, stepy);
+			prepareSymetry(xaosRendererData.reallocY(), (int) ((symy - beginy) / stepy), symy, stepy);
 		}
 	}
 
@@ -222,18 +222,18 @@ public final class XaosRenderer extends Renderer {
 		final double endx = xaosRendererData.right();
 		double stepy = 0;
 		if (redraw || !XaosConstants.USE_XAOS) {
-			stepy = XaosRenderer.initReallocTableAndPosition(xaosRendererData.reallocX(), xaosRendererData.positionX(), beginx, endx);
+			stepy = initReallocTableAndPosition(xaosRendererData.reallocX(), xaosRendererData.positionX(), beginx, endx);
 		}
 		else {
-			stepy = XaosRenderer.makeReallocTable(xaosRendererData.reallocX(), xaosRendererData.dynamicX(), beginx, endx, xaosRendererData.positionX(), !cacheActive);
+			stepy = makeReallocTable(xaosRendererData.reallocX(), xaosRendererData.dynamicX(), beginx, endx, xaosRendererData.positionX(), !cacheActive);
 		}
 		final double symy = rendererStrategy.getHorizontalSymetryPoint();
 		if (isVerticalSymetrySupported && rendererStrategy.isVerticalSymetrySupported() && (!((beginx > symy) || (symy > endx)))) {
-			XaosRenderer.prepareSymetry(xaosRendererData.reallocY(), (int) ((symy - beginx) / stepy), symy, stepy);
+			prepareSymetry(xaosRendererData.reallocY(), (int) ((symy - beginx) / stepy), symy, stepy);
 		}
 	}
 
-	private static double initReallocTableAndPosition(final XaosRealloc[] realloc, final double[] position, final double begin, final double end) {
+	private double initReallocTableAndPosition(final XaosRealloc[] realloc, final double[] position, final double begin, final double end) {
 		if (XaosConstants.DUMP) {
 			logger.fine("Init realloc and position...");
 		}
@@ -268,11 +268,11 @@ public final class XaosRenderer extends Renderer {
 		}
 	}
 
-	private static int price(final int p1, final int p2) {
+	private int price(final int p1, final int p2) {
 		return XaosConstants.MULTABLE[(XaosConstants.FPRANGE + p1) - p2];
 	}
 
-	private static void addPrices(final XaosRealloc[] realloc, int r1, final int r2) {
+	private void addPrices(final XaosRealloc[] realloc, int r1, final int r2) {
 		// if (r1 < r2)
 		while (r1 < r2) {
 			final int r3 = r1 + ((r2 - r1) >> 1);
@@ -280,13 +280,13 @@ public final class XaosRenderer extends Renderer {
 			if (realloc[r3].symRef != -1) {
 				realloc[r3].priority /= 2.0;
 			}
-			XaosRenderer.addPrices(realloc, r1, r3);
+			addPrices(realloc, r1, r3);
 			// XaosFractalRenderer.addPrices(realloc, r3 + 1, r2);
 			r1 = r3 + 1;
 		}
 	}
 
-	private static void prepareSymetry(final XaosRealloc[] realloc, final int symi, double symPosition, final double step) {
+	private void prepareSymetry(final XaosRealloc[] realloc, final int symi, double symPosition, final double step) {
 		if (XaosConstants.DUMP) {
 			logger.fine("Prepare symetry...");
 		}
@@ -391,7 +391,7 @@ public final class XaosRenderer extends Renderer {
 		}
 	}
 
-	private static void prepareMove(final XaosChunkTable movetable, final XaosRealloc[] reallocX) {
+	private void prepareMove(final XaosChunkTable movetable, final XaosRealloc[] reallocX) {
 		if (XaosConstants.DUMP) {
 			logger.fine("Prepare move...");
 		}
@@ -429,7 +429,7 @@ public final class XaosRenderer extends Renderer {
 		}
 	}
 
-	private static void prepareFill(final XaosChunkTable filltable, final XaosRealloc[] reallocX) {
+	private void prepareFill(final XaosChunkTable filltable, final XaosRealloc[] reallocX) {
 		if (XaosConstants.DUMP) {
 			logger.fine("Prepare fill...");
 		}
@@ -480,7 +480,7 @@ public final class XaosRenderer extends Renderer {
 		}
 	}
 
-	private static double makeReallocTable(final XaosRealloc[] realloc, final XaosDynamic dynamic, final double begin, final double end, final double[] position, final boolean invalidate) {
+	private double makeReallocTable(final XaosRealloc[] realloc, final XaosDynamic dynamic, final double begin, final double end, final double[] position, final boolean invalidate) {
 		if (XaosConstants.DUMP) {
 			logger.fine("Make realloc...");
 		}
@@ -583,7 +583,7 @@ public final class XaosRenderer extends Renderer {
 					if (delta[p] != delta[p + 1]) {
 						prevData = dynamic.calData[i - 1];
 						price1 = prevData.price;
-						price = price1 + XaosRenderer.price(delta[p], w);
+						price = price1 + price(delta[p], w);
 						if (XaosConstants.DUMP_XAOS) {
 							logger.fine("g0) approximate element " + i + " with old element " + p + ": price = " + price + " (previous price = " + price1 + ")");
 						}
@@ -631,7 +631,7 @@ public final class XaosRenderer extends Renderer {
 								// Toolbox.println("h2) bestprice = " + bestprice + ", bestdata = " + bestdata.toString());
 							}
 						}
-						price = price1 + XaosRenderer.price(delta[p], w);
+						price = price1 + price(delta[p], w);
 						if (XaosConstants.DUMP_XAOS) {
 							logger.fine("h3) approximate element " + i + " with old element " + p + ": price = " + price + " (previous price = " + price1 + ")");
 						}
@@ -684,7 +684,7 @@ public final class XaosRenderer extends Renderer {
 								// Toolbox.println("i2) bestprice = " + bestprice + ", bestdata = " + bestdata.toString());
 							}
 						}
-						price = price1 + XaosRenderer.price(delta[p], w);
+						price = price1 + price(delta[p], w);
 						if (XaosConstants.DUMP_XAOS) {
 							logger.fine("i3) approximate element " + i + " with old element " + p + ": price = " + price + " (previous price = " + price1 + ")");
 						}
@@ -735,7 +735,7 @@ public final class XaosRenderer extends Renderer {
 				}
 				while (delta[p] < wend) {
 					if (delta[p] != delta[p + 1]) {
-						price = price1 + XaosRenderer.price(delta[p], w);
+						price = price1 + price(delta[p], w);
 						if (XaosConstants.DUMP_XAOS) {
 							logger.fine("l3) approximate element " + i + " with old element " + p + ": price = " + price + " (previous price = " + price1 + ")");
 						}
@@ -781,7 +781,7 @@ public final class XaosRenderer extends Renderer {
 					}
 					while (delta[p] < wend) {
 						if (delta[p] != delta[p + 1]) {
-							price = price1 + XaosRenderer.price(delta[p], w);
+							price = price1 + price(delta[p], w);
 							if (XaosConstants.DUMP_XAOS) {
 								logger.fine("f0) approximate element " + i + " with old element " + p + ": price = " + price + " (previous price = " + price1 + ")");
 							}
@@ -855,11 +855,11 @@ public final class XaosRenderer extends Renderer {
 			}
 			bestData = tmpData;
 		}
-		XaosRenderer.newPositions(realloc, size, begin, end, step, position, flag);
+		newPositions(realloc, size, begin, end, step, position, flag);
 		return step;
 	}
 
-	private static void newPositions(final XaosRealloc[] realloc, final int size, double begin1, final double end1, final double step, final double[] position, final int flag) {
+	private void newPositions(final XaosRealloc[] realloc, final int size, double begin1, final double end1, final double step, final double[] position, final int flag) {
 		XaosRealloc tmpRealloc = null;
 		double delta = 0;
 		double begin = 0;
@@ -950,14 +950,14 @@ public final class XaosRenderer extends Renderer {
 		move();
 		if (continuous || !XaosConstants.USE_XAOS) {
 			int total = 0;
-			total = XaosRenderer.initPrices(xaosRendererData.queue(), total, xaosRendererData.reallocX());
-			total = XaosRenderer.initPrices(xaosRendererData.queue(), total, xaosRendererData.reallocY());
+			total = initPrices(xaosRendererData.queue(), total, xaosRendererData.reallocX());
+			total = initPrices(xaosRendererData.queue(), total, xaosRendererData.reallocY());
 			if (XaosConstants.DUMP) {
 				logger.fine("total = " + total);
 			}
 			if (total > 0) {
 				if (total > 1) {
-					XaosRenderer.sortQueue(xaosRendererData.queue(), 0, total - 1);
+					sortQueue(xaosRendererData.queue(), 0, total - 1);
 				}
 				processQueue(total);
 			}
@@ -1095,7 +1095,7 @@ public final class XaosRenderer extends Renderer {
 	}
 
 	private void move() {
-		XaosRenderer.prepareMove(xaosRendererData.moveTable(), xaosRendererData.reallocX());
+		prepareMove(xaosRendererData.moveTable(), xaosRendererData.reallocX());
 		doMove(xaosRendererData.moveTable(), xaosRendererData.reallocY());
 	}
 
@@ -1103,11 +1103,11 @@ public final class XaosRenderer extends Renderer {
 		if (isVerticalSymetrySupported && isHorizontalSymetrySupported) {
 			doSymetry(xaosRendererData.reallocX(), xaosRendererData.reallocY());
 		}
-		XaosRenderer.prepareFill(xaosRendererData.fillTable(), xaosRendererData.reallocX());
+		prepareFill(xaosRendererData.fillTable(), xaosRendererData.reallocX());
 		doFill(xaosRendererData.fillTable(), xaosRendererData.reallocY());
 	}
 
-	private static int initPrices(final XaosRealloc[] queue, int total, final XaosRealloc[] realloc) {
+	private int initPrices(final XaosRealloc[] queue, int total, final XaosRealloc[] realloc) {
 		int i = 0;
 		int j = 0;
 		for (i = 0; i < realloc.length; i++) {
@@ -1118,14 +1118,14 @@ public final class XaosRenderer extends Renderer {
 				if (j == realloc.length) {
 					j -= 1;
 				}
-				XaosRenderer.addPrices(realloc, i, j);
+				addPrices(realloc, i, j);
 				i = j;
 			}
 		}
 		return total;
 	}
 
-	private static void sortQueue(final XaosRealloc[] queue, final int l, final int r) {
+	private void sortQueue(final XaosRealloc[] queue, final int l, final int r) {
 		final double m = (queue[l].priority + queue[r].priority) / 2.0;
 		XaosRealloc t = null;
 		int i = l;
@@ -1147,10 +1147,10 @@ public final class XaosRenderer extends Renderer {
 		}
 		while (j >= i);
 		if (l < j) {
-			XaosRenderer.sortQueue(queue, l, j);
+			sortQueue(queue, l, j);
 		}
 		if (r > i) {
-			XaosRenderer.sortQueue(queue, i, r);
+			sortQueue(queue, i, r);
 		}
 	}
 

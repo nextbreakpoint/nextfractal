@@ -73,4 +73,52 @@ public class RendererRegion {
 	public String toString() {
 		return "[a=(" + x0 + "," + y0 + "), b=(" + x1 + "," + y1 + "), center=" + center + ", size=" + size + "]";
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((center == null) ? 0 : center.hashCode());
+		result = prime * result + ((size == null) ? 0 : size.hashCode());
+		long temp;
+		temp = Double.doubleToLongBits(x0);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(x1);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(y0);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(y1);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		RendererRegion other = (RendererRegion) obj;
+		if (center == null) {
+			if (other.center != null)
+				return false;
+		} else if (!center.equals(other.center))
+			return false;
+		if (size == null) {
+			if (other.size != null)
+				return false;
+		} else if (!size.equals(other.size))
+			return false;
+		if (Double.doubleToLongBits(x0) != Double.doubleToLongBits(other.x0))
+			return false;
+		if (Double.doubleToLongBits(x1) != Double.doubleToLongBits(other.x1))
+			return false;
+		if (Double.doubleToLongBits(y0) != Double.doubleToLongBits(other.y0))
+			return false;
+		if (Double.doubleToLongBits(y1) != Double.doubleToLongBits(other.y1))
+			return false;
+		return true;
+	}
 }

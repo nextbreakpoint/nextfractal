@@ -107,6 +107,14 @@ public class Renderer {
 		executor = Executors.newSingleThreadExecutor(threadFactory);
 	}
 
+	/**
+	 * 
+	 */
+	public void dispose() {
+		shutdown();
+		free();
+	}
+
 	public RendererTile getTile() {
 		return tile;
 	}
@@ -123,21 +131,6 @@ public class Renderer {
 	 */
 	public boolean isInterrupted() {
 		return aborted || Thread.currentThread().isInterrupted() || (condition != null && condition.evaluate());
-	}
-
-	/**
-	 * 
-	 */
-	public void dispose() {
-		shutdown();
-		free();
-	}
-
-	/**
-	 * @return
-	 */
-	public float getProgress() {
-		return progress;
 	}
 
 	/**
@@ -171,20 +164,6 @@ public class Renderer {
 		waitForTasks();
 		future = executor.submit(new RenderRunnable());
 	}
-	
-	/**
-	 * @param julia
-	 */
-	public void setJulia(boolean julia) {
-		this.julia = julia;
-	}
-
-	/**
-	 * @param point
-	 */
-	public void setPoint(Number constant) {
-		this.point = constant;
-	}
 
 	/**
 	 * @return
@@ -203,8 +182,44 @@ public class Renderer {
 	/**
 	 * @return
 	 */
-	protected RendererData createRendererData() {
-		return new RendererData();
+	public float getProgress() {
+		return progress;
+	}
+
+	/**
+	 * 
+	 */
+	public void init() {
+		rendererFractal.initialize();
+		initialRegion = new RendererRegion(rendererFractal.getOrbit().getInitialRegion());
+	}
+
+	/**
+	 * @return
+	 */
+	public boolean isSinglePass() {
+		return singlePass;
+	}
+
+	/**
+	 * @param singlePass
+	 */
+	public void setSinglePass(boolean singlePass) {
+		this.singlePass = singlePass;
+	}
+
+	/**
+	 * @param condition
+	 */
+	public void setCondition(Condition condition) {
+		this.condition = condition;
+	}
+
+	/**
+	 * @param continuous
+	 */
+	public void setContinuous(boolean continuous) {
+		this.continuous = continuous;
 	}
 
 	/**
@@ -224,40 +239,47 @@ public class Renderer {
 	}
 
 	/**
-	 * @param continuous
+	 * @param julia
 	 */
-	public void setContinuous(boolean continuous) {
-		this.continuous = continuous;
-	}
-
-	/**
-	 * 
-	 */
-	public void init() {
-		rendererFractal.initialize();
-		initialRegion = new RendererRegion(rendererFractal.getOrbit().getInitialRegion());
-	}
-
-	/**
-	 * 
-	 */
-	protected void free() {
-		rendererData.free();
-		if (buffer != null) {
-			buffer.dispose();
-			buffer = null;
+	public void setJulia(boolean julia) {
+		if (this.julia != julia) {
+			this.julia = julia;
+			juliaChanged = true;
 		}
 	}
 
 	/**
-	 * 
+	 * @param point
 	 */
-	protected void shutdown() {
-		executor.shutdownNow();
-		try {
-			executor.awaitTermination(5000, TimeUnit.MILLISECONDS);
-		} catch (InterruptedException e) {
+	public void setPoint(Number point) {
+		if (this.point == null || !this.point.equals(point)) {
+			this.point = point;
+			pointChanged = true;
 		}
+	}
+
+	/**
+	 * @param region
+	 */
+	public void setRegion(RendererRegion region) {
+		if (this.region == null || !this.region.equals(region)) {
+			this.region = region;
+			regionChanged = true; 
+		}
+	}
+
+	/**
+	 * @param view
+	 */
+	public void setView(RendererView view) {
+		this.view = view;
+		setRegion(computeRegion());
+		setJulia(view.isJulia());
+		setPoint(view.getPoint());
+		setContinuous(view.getState().getX() >= 1 || view.getState().getY() >= 1 || view.getState().getZ() >= 1 || view.getState().getW() >= 1);
+		lock.lock();
+		buffer.setAffine(createTransform(view.getRotation().getZ()));
+		lock.unlock();
 	}
 
 	/**
@@ -268,22 +290,72 @@ public class Renderer {
 	}
 
 	/**
-	 * @return
+	 * @param pixels
 	 */
-	public RendererRegion getRegion() {
-		return region;
+	public void getPixels(IntBuffer pixels) {
+		buffer.getBuffer().getImage().getPixels(pixels);
+	}
+	
+	/**
+	 * @param gc
+	 */
+	public void drawImage(final RendererGraphicsContext gc) {
+		lock.lock();
+		if (buffer != null) {
+			gc.save();
+			RendererPoint tileOffset = buffer.getTile().getTileOffset();
+			RendererSize tileSize = buffer.getTile().getTileSize();
+			gc.setClip(tileOffset.getX(), tileOffset.getY(), tileSize.getWidth(), tileSize.getHeight());
+			gc.setAffine(buffer.getAffine());
+			gc.drawImage(buffer.getBuffer().getImage(), tileOffset.getX(), tileOffset.getY());
+			gc.restore();
+		}
+		lock.unlock();
 	}
 
 	/**
-	 * @param region
+	 * @param gc
+	 * @param x
+	 * @param y
 	 */
-	public void setRegion(RendererRegion region) {
-		this.region = region;
-		regionChanged = true; 
+	public void drawImage(final RendererGraphicsContext gc, final int x, final int y) {
+		lock.lock();
+		if (buffer != null) {
+			gc.save();
+			RendererSize tileSize = buffer.getTile().getTileSize();
+			gc.setClip(x, y, tileSize.getWidth(), tileSize.getHeight());
+			gc.setAffine(buffer.getAffine());
+			gc.drawImage(buffer.getBuffer().getImage(), x, y);
+			gc.restore();
+		}
+		lock.unlock();
 	}
 
 	/**
-	 * @param dynamic
+	 * @param gc
+	 * @param x
+	 * @param y
+	 * @param w
+	 * @param h
+	 */
+	public void drawImage(final RendererGraphicsContext gc, final int x, final int y, final int w, final int h) {
+		lock.lock();
+		if (buffer != null) {
+			gc.save();
+			gc.setClip(x, y, w, h);
+			gc.setAffine(buffer.getAffine());
+			final double sx = w / (double) buffer.getTile().getTileSize().getWidth();
+			final double sy = h / (double) buffer.getTile().getTileSize().getHeight();
+			final int dw = (int) Math.rint(buffer.getSize().getWidth() * sx);
+			final int dh = (int) Math.rint(buffer.getSize().getHeight() * sy);
+			gc.drawImage(buffer.getBuffer().getImage(), x, y, dw, dh);
+			gc.restore();
+		}
+		lock.unlock();
+	}
+
+	/**
+	 * 
 	 */
 	protected void doRender() {
 		try {
@@ -378,46 +450,6 @@ public class Renderer {
 	}
 
 	/**
-	 * @param view
-	 */
-	public void setView(RendererView view) {
-		if (this.view.isJulia() != view.isJulia()) {
-			juliaChanged = true;
-		}
-		if (!this.view.getPoint().equals(view.getPoint())) {
-			pointChanged = true;
-		}
-		this.view = view;
-		RendererRegion region = computeRegion();
-		setRegion(region);
-		setJulia(view.isJulia());
-		setPoint(view.getPoint());
-		setContinuous(view.getState().getX() >= 1 || view.getState().getY() >= 1 || view.getState().getZ() >= 1 || view.getState().getW() >= 1);
-		lock.lock();
-		buffer.setAffine(createTransform(view.getRotation().getZ()));
-		lock.unlock();
-	}
-	
-	/**
-	 * @param pixels
-	 */
-	public void getPixels(IntBuffer pixels) {
-		buffer.getBuffer().getImage().getPixels(pixels);
-	}
-
-	public void setCondition(Condition condition) {
-		this.condition = condition;
-	}
-
-	public boolean isSinglePass() {
-		return singlePass;
-	}
-
-	public void setSinglePass(boolean singlePass) {
-		this.singlePass = singlePass;
-	}
-
-	/**
 	 * @param tileSize
 	 * @param borderSize
 	 * @return
@@ -478,10 +510,6 @@ public class Renderer {
 		return newRegion;
 	}
 
-	protected double convertDegToRad(final double a) {
-		return a * Math.PI / 180;
-	}
-
 	/**
 	 * @param rotation
 	 * @return
@@ -500,6 +528,10 @@ public class Renderer {
 		return affine;
 	}
 
+	/**
+	 * @param progress
+	 * @param pixels
+	 */
 	protected void didChanged(float progress, int[] pixels) {
 		lock.lock();
 		if (buffer != null) {
@@ -512,61 +544,40 @@ public class Renderer {
 	}
 
 	/**
-	 * @param gc
+	 * @return
 	 */
-	public void drawImage(final RendererGraphicsContext gc) {
-		lock.lock();
-		if (buffer != null) {
-			gc.save();
-			RendererPoint tileOffset = buffer.getTile().getTileOffset();
-			RendererSize tileSize = buffer.getTile().getTileSize();
-			gc.setClip(tileOffset.getX(), tileOffset.getY(), tileSize.getWidth(), tileSize.getHeight());
-			gc.setAffine(buffer.getAffine());
-			gc.drawImage(buffer.getBuffer().getImage(), tileOffset.getX(), tileOffset.getY());
-			gc.restore();
-		}
-		lock.unlock();
+	protected RendererData createRendererData() {
+		return new RendererData();
 	}
 
 	/**
-	 * @param gc
-	 * @param x
-	 * @param y
+	 * 
 	 */
-	public void drawImage(final RendererGraphicsContext gc, final int x, final int y) {
-		lock.lock();
+	protected void free() {
+		rendererData.free();
 		if (buffer != null) {
-			gc.save();
-			RendererSize tileSize = buffer.getTile().getTileSize();
-			gc.setClip(x, y, tileSize.getWidth(), tileSize.getHeight());
-			gc.setAffine(buffer.getAffine());
-			gc.drawImage(buffer.getBuffer().getImage(), x, y);
-			gc.restore();
+			buffer.dispose();
+			buffer = null;
 		}
-		lock.unlock();
 	}
 
 	/**
-	 * @param gc
-	 * @param x
-	 * @param y
-	 * @param w
-	 * @param h
+	 * 
 	 */
-	public void drawImage(final RendererGraphicsContext gc, final int x, final int y, final int w, final int h) {
-		lock.lock();
-		if (buffer != null) {
-			gc.save();
-			gc.setClip(x, y, w, h);
-			gc.setAffine(buffer.getAffine());
-			final double sx = w / (double) buffer.getTile().getTileSize().getWidth();
-			final double sy = h / (double) buffer.getTile().getTileSize().getHeight();
-			final int dw = (int) Math.rint(buffer.getSize().getWidth() * sx);
-			final int dh = (int) Math.rint(buffer.getSize().getHeight() * sy);
-			gc.drawImage(buffer.getBuffer().getImage(), x, y, dw, dh);
-			gc.restore();
+	protected void shutdown() {
+		executor.shutdownNow();
+		try {
+			executor.awaitTermination(5000, TimeUnit.MILLISECONDS);
+		} catch (InterruptedException e) {
 		}
-		lock.unlock();
+	}
+
+	/**
+	 * @param a
+	 * @return
+	 */
+	protected double convertDegToRad(final double a) {
+		return a * Math.PI / 180;
 	}
 
 	private class RenderRunnable implements Runnable {
