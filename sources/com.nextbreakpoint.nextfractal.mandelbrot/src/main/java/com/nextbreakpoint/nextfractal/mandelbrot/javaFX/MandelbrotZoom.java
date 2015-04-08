@@ -9,6 +9,7 @@ public class MandelbrotZoom implements MandelbrotTool {
 		private MandelbrotToolContext context;
 		private volatile boolean pressed;
 		private volatile boolean changed;
+		private boolean primary;
 		private boolean zoomin;
 		private double x1;
 		private double y1;
@@ -45,7 +46,7 @@ public class MandelbrotZoom implements MandelbrotTool {
 		public void pressed(MouseEvent e) {
 			x1 = (e.getX() - context.getWidth() / 2) / context.getWidth();
 			y1 = (e.getY() - context.getHeight() / 2) / context.getHeight();
-//			zoomin = (e.isPrimaryButtonDown()) ? true : false;
+			primary = e.isPrimaryButtonDown(); 
 			pressed = true;
 		}
 
@@ -61,7 +62,7 @@ public class MandelbrotZoom implements MandelbrotTool {
 				double y = t[1];
 				double z = t[2];
 				double a = r[2] * Math.PI / 180;
-				double zs = zoomin ? 1 / context.getZoomSpeed() : context.getZoomSpeed();
+				double zs = (primary ? zoomin : !zoomin) ? 1 / context.getZoomSpeed() : context.getZoomSpeed();
 				Number size = context.getInitialSize();
 				x -= (zs - 1) * z * size.r() * (Math.cos(a) * x1 + Math.sin(a) * y1);
 				y -= (zs - 1) * z * size.i() * (Math.cos(a) * y1 - Math.sin(a) * x1);

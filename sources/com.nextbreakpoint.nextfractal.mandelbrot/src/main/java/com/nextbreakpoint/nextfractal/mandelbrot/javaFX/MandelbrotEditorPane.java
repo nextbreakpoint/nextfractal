@@ -155,10 +155,10 @@ public class MandelbrotEditorPane extends BorderPane {
         
 		EventStream<PlainTextChange> textChanges = sourceText.plainTextChanges();
         textChanges.successionEnds(Duration.ofMillis(500))
-                .supplyTask(this::computeHighlightingAsync)
+                .supplyTask(this::computeTaskAsync)
                 .awaitLatest(textChanges)
                 .map(Try::get)
-                .subscribe(this::applyHighlighting);
+                .subscribe(this::applyTaskResult);
         
         sourceText.replaceText(getMandelbrotSession().getSource());
         
@@ -378,7 +378,7 @@ public class MandelbrotEditorPane extends BorderPane {
 		StyleSpans<Collection<String>> highlighting;
 	}
 	
-	private Task<TaskResult> computeHighlightingAsync() {
+	private Task<TaskResult> computeTaskAsync() {
         String text = sourceText.getText();
         Task<TaskResult> task = new Task<TaskResult>() {
             @Override
@@ -418,7 +418,7 @@ public class MandelbrotEditorPane extends BorderPane {
 		);
 	}
 	
-    private void applyHighlighting(TaskResult result) {
+    private void applyTaskResult(TaskResult result) {
 		updateReportAndSource(result.source, result.report);
 		sourceText.setStyleSpans(0, result.highlighting);
     	displayErrors();

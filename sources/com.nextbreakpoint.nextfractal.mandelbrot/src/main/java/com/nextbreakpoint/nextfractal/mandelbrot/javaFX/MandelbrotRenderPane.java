@@ -641,11 +641,11 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 			double[] point = getMandelbrotSession().getView().getPoint();
 			boolean julia = getMandelbrotSession().getView().isJulia();
 			abortCoordinators();
-			if (!julia && juliaCoordinator != null) {
+			if (juliaCoordinator != null) {
 				juliaCoordinator.abort();
 			}
 			joinCoordinators();
-			if (!julia && juliaCoordinator != null) {
+			if (juliaCoordinator != null) {
 				juliaCoordinator.waitFor();
 			}
 			for (int i = 0; i < coordinators.length; i++) {
@@ -671,7 +671,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 					coordinator.setView(view);
 				}
 			}
-			if (!julia && juliaCoordinator != null) {
+			if (juliaCoordinator != null) {
 				if (Boolean.getBoolean("disableSmartRender")) {
 					juliaCoordinator.setOrbitAndColor(orbitBuilder.build(), colorBuilder.build());
 				} else {
@@ -692,7 +692,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 				juliaCoordinator.setView(view);
 			}
 			startCoordinators();
-			if (!julia && juliaCoordinator != null) {
+			if (juliaCoordinator != null) {
 				juliaCoordinator.run();
 			}
 			if (!julia) {
