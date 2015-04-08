@@ -1,4 +1,4 @@
-package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
+package com.nextbreakpoint.nextfractal.core.javaFX;
 
 import javafx.beans.value.ObservableValueBase;
 

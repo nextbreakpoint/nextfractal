@@ -13,6 +13,7 @@ import java.util.Stack;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -27,7 +28,6 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -36,6 +36,8 @@ import javafx.util.Duration;
 
 import com.nextbreakpoint.nextfractal.core.encoder.Encoder;
 import com.nextbreakpoint.nextfractal.core.export.ExportSession;
+import com.nextbreakpoint.nextfractal.core.javaFX.BooleanObservableValue;
+import com.nextbreakpoint.nextfractal.core.javaFX.StringObservableValue;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererGraphicsContext;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererPoint;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
@@ -51,6 +53,8 @@ import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotImageGenerator;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotListener;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotSession;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotView;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompileClassException;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompileSourceException;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.Compiler;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerBuilder;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerError;
@@ -62,7 +66,7 @@ import com.nextbreakpoint.nextfractal.mandelbrot.core.Scope;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererCoordinator;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererView;
 
-public class MandelbrotRenderPane extends BorderPane implements ExportPaneDelegate {
+public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, MandelbrotToolContext {
 	private static final int FRAME_LENGTH_IN_MILLIS = 20;
 	private static final Logger logger = Logger.getLogger(MandelbrotRenderPane.class.getName());
 	private final Session session;
@@ -85,7 +89,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportPaneDelega
 	private volatile boolean disableTool;
 	private String astOrbit;
 	private String astColor;
-	private Tool currentTool;
+	private MandelbrotTool currentTool;
 	private MandelbrotData exportData;
 	private ExecutorService exportExecutor;
 	private Stack<MandelbrotView> views = new Stack<>();
@@ -197,7 +201,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportPaneDelega
         juliaCanvas.setOpacity(0.8);
         juliaCanvas.setVisible(false);
 
-		currentTool = new ZoomTool(true);
+		currentTool = new MandelbrotZoom(this, true);
 		
 		controls.setOnMouseClicked(e -> {
 			if (currentTool != null) {
@@ -287,41 +291,41 @@ public class MandelbrotRenderPane extends BorderPane implements ExportPaneDelega
 		});
 		
 		zoominButton.setOnAction(e -> {
-			currentTool = new ZoomTool(true);
+			currentTool = new MandelbrotZoom(this, true);
 			juliaCanvas.setVisible(false);
 		});
 		
 		zoomoutButton.setOnAction(e -> {
-			currentTool = new ZoomTool(false);
+			currentTool = new MandelbrotZoom(this, false);
 			juliaCanvas.setVisible(false);
 		});
 		
 		moveButton.setOnAction(e -> {
-			currentTool = new MoveTool();
+			currentTool = new MandelbrotMove(this);
 			juliaCanvas.setVisible(false);
 		});
 		
 		pickButton.setOnAction(e -> {
 			if (!getMandelbrotSession().getData().isJulia()) {
-				currentTool = new PickTool();
+				currentTool = new MandelbrotPick(this);
 				juliaCanvas.setVisible(true);
 			}
 		});
 		
 		exportButton.setOnAction(e -> {
 			if (errorProperty.getValue() == null) {
-				storeExportData();
+				exportData = getMandelbrotSession().getData();
 				exportPane.show();
 			}
 		});
 		
 		orbitButton.setOnAction(e -> {
 			if (!getMandelbrotSession().getData().isJulia()) {
-				currentTool = new PickTool();
+				currentTool = new MandelbrotPick(this);
 				juliaCanvas.setVisible(true);
 				pickButton.requestFocus();
 			} else {
-				currentTool = new ZoomTool(true);
+				currentTool = new MandelbrotZoom(this, true);
 				juliaCanvas.setVisible(false);
 				zoominButton.requestFocus();
 			}
@@ -329,7 +333,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportPaneDelega
 		});
 		
 		juliaButton.setOnAction(e -> {
-			currentTool = new ZoomTool(true);
+			currentTool = new MandelbrotZoom(this, true);
 			juliaCanvas.setVisible(false);
 			juliaProperty.setValue(!juliaProperty.getValue());
 			zoominButton.requestFocus();
@@ -392,6 +396,50 @@ public class MandelbrotRenderPane extends BorderPane implements ExportPaneDelega
 		exportPane.hide();
 	}
 
+	@Override
+	public void exportSession(RendererSize rendererSize) {
+		doExportSession(rendererSize);
+	}
+
+	@Override
+	public MandelbrotSession getMandelbrotSession() {
+		return (MandelbrotSession) session;
+	}
+
+	@Override
+	public Number getInitialSize() {
+		return coordinators[0].getInitialSize();
+	}
+
+	@Override
+	public Number getInitialCenter() {
+		return coordinators[0].getInitialCenter();
+	}
+
+	@Override
+	public double getZoomSpeed() {
+		return 1.05;
+	}
+
+	@Override
+	protected void finalize() throws Throwable {
+		shutdown();
+		super.finalize();
+	}
+
+	private void shutdown() {
+		exportExecutor.shutdownNow();
+		try {
+			exportExecutor.awaitTermination(5000, TimeUnit.MILLISECONDS);
+		} catch (InterruptedException e) {
+		}
+	}
+	
+	private void dispose() {
+		disposeCoordinators();
+		disposeJuliaCoordinator();
+	}
+
 	private ImageView createIconImage(String name) {
 		InputStream stream = getClass().getResourceAsStream(name);
 		ImageView image = new ImageView(new Image(stream));
@@ -434,14 +482,6 @@ public class MandelbrotRenderPane extends BorderPane implements ExportPaneDelega
 	private void resetView() {
 		MandelbrotView view = new MandelbrotView(new double[] { 0, 0, 1, 0 }, new double[] { 0, 0, 0, 0 }, new double[] { 1, 1, 1, 1 }, getMandelbrotSession().getView().getPoint(), getMandelbrotSession().getView().isJulia());
 		getMandelbrotSession().setView(view, false);
-	}
-
-	private MandelbrotSession getMandelbrotSession() {
-		return (MandelbrotSession) session;
-	}
-
-	private double getZoomSpeed() {
-		return 1.05;
 	}
 
 	private void createFileChooser(String suffix) {
@@ -903,7 +943,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportPaneDelega
 		}
 	}
 
-	protected void redrawIfOrbitChanged(Canvas canvas) {
+	private void redrawIfOrbitChanged(Canvas canvas) {
 		if (redrawOrbit) {
 			redrawOrbit = false;
 			Number size = coordinators[0].getInitialSize();
@@ -950,10 +990,6 @@ public class MandelbrotRenderPane extends BorderPane implements ExportPaneDelega
 		}
 	}
 
-	private void storeExportData() {
-		exportData = getMandelbrotSession().getData();
-	}
-
 	private Encoder createEncoder(String format) {
 		final ServiceLoader<? extends Encoder> plugins = ServiceLoader.load(Encoder.class);
 		for (Encoder plugin : plugins) {
@@ -964,7 +1000,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportPaneDelega
 		return null;
 	}
 
-	public void createExportSession(RendererSize rendererSize) {
+	private void doExportSession(RendererSize rendererSize) {
 		Encoder encoder = createEncoder("PNG");
 		if (encoder == null) {
 			logger.warning("Cannot find encoder for PNG format");
@@ -984,7 +1020,9 @@ public class MandelbrotRenderPane extends BorderPane implements ExportPaneDelega
 						@Override
 						public void run() {
 							try {
-								ExportSession exportSession = createExportSession(rendererSize, file, data, encoder);
+								File tmpFile = File.createTempFile("nextfractal-profile-", ".dat");
+								ExportSession exportSession = new ExportSession("Mandelbrot", data, file, tmpFile, rendererSize, 200, encoder);
+								logger.info("Export session created: " + exportSession.getSessionId());
 								session.addExportSession(exportSession);
 								session.getExportService().startSession(exportSession);
 							} catch (Exception e) {
@@ -995,217 +1033,6 @@ public class MandelbrotRenderPane extends BorderPane implements ExportPaneDelega
 					});
 				}
 			});
-		}
-	}
-
-	private ExportSession createExportSession(RendererSize rendererSize, File file,	MandelbrotData data, Encoder encoder) throws IOException {
-		File tmpFile = File.createTempFile("nextfractal-profile-", ".dat");
-		ExportSession exportSession = new ExportSession("Mandelbrot", data, file, tmpFile, rendererSize, 200, encoder);
-		logger.info("Export session created: " + exportSession.getSessionId());
-		return exportSession;
-	}
-
-	private void dispose() {
-		disposeCoordinators();
-		disposeJuliaCoordinator();
-	}
-
-	private interface Tool {
-		public void clicked(MouseEvent e);
-
-		public void moved(MouseEvent e);
-
-		public void dragged(MouseEvent e);
-
-		public void released(MouseEvent e);
-
-		public void pressed(MouseEvent e);
-
-		public void update(long time);
-	}
-	
-	private class ZoomTool implements Tool {
-		private volatile boolean pressed;
-		private volatile boolean changed;
-		private boolean zoomin;
-		private double x1;
-		private double y1;
-
-		public ZoomTool(boolean zoomin) {
-			this.zoomin = zoomin;
-		}
-		
-		@Override
-		public void clicked(MouseEvent e) {
-		}
-
-		@Override
-		public void moved(MouseEvent e) {
-		}
-
-		@Override
-		public void dragged(MouseEvent e) {
-			x1 = (e.getX() - width / 2) / width;
-			y1 = (e.getY() - height / 2) / height;
-			changed = true;
-		}
-
-		@Override
-		public void released(MouseEvent e) {
-			x1 = (e.getX() - width / 2) / width;
-			y1 = (e.getY() - height / 2) / height;
-			pressed = false;
-			changed = true;
-		}
-
-		@Override
-		public void pressed(MouseEvent e) {
-			x1 = (e.getX() - width / 2) / width;
-			y1 = (e.getY() - height / 2) / height;
-//			zoomin = (e.isPrimaryButtonDown()) ? true : false;
-			pressed = true;
-		}
-
-		@Override
-		public void update(long time) {
-			if (pressed || changed) {
-				double[] t = getMandelbrotSession().getView().getTraslation();
-				double[] r = getMandelbrotSession().getView().getRotation();
-				double[] s = getMandelbrotSession().getView().getScale();
-				double[] p = getMandelbrotSession().getView().getPoint();
-				boolean j = getMandelbrotSession().getView().isJulia();
-				double x = t[0];
-				double y = t[1];
-				double z = t[2];
-				double a = r[2] * Math.PI / 180;
-				double zs = zoomin ? 1 / getZoomSpeed() : getZoomSpeed();
-				Number size = coordinators[0].getInitialSize();
-				x -= (zs - 1) * z * size.r() * (Math.cos(a) * x1 + Math.sin(a) * y1);
-				y -= (zs - 1) * z * size.i() * (Math.cos(a) * y1 - Math.sin(a) * x1);
-				z *= zs;
-				MandelbrotView view = new MandelbrotView(new double[] { x, y, z, t[3] }, new double[] { 0, 0, r[2], r[3] }, s, p, j);
-				getMandelbrotSession().setView(view, pressed);
-				changed = false;
-			}
-		}
-	}
-	
-	private class MoveTool implements Tool {
-		private volatile boolean pressed;
-		private volatile boolean changed;
-		private double x0;
-		private double y0;
-		private double x1;
-		private double y1;
-
-		@Override
-		public void clicked(MouseEvent e) {
-		}
-
-		@Override
-		public void moved(MouseEvent e) {
-		}
-
-		@Override
-		public void dragged(MouseEvent e) {
-			x1 = (e.getX() - width / 2) / width;
-			y1 = (e.getY() - height / 2) / height;
-			changed = true;
-		}
-
-		@Override
-		public void released(MouseEvent e) {
-			x1 = (e.getX() - width / 2) / width;
-			y1 = (e.getY() - height / 2) / height;
-			pressed = false;
-			changed = true;
-		}
-
-		@Override
-		public void pressed(MouseEvent e) {
-			x1 = x0 = (e.getX() - width / 2) / width;
-			y1 = y0 = (e.getY() - height / 2) / height;
-			pressed = true;
-		}
-
-		@Override
-		public void update(long time) {
-			if (changed) {
-				double[] t = getMandelbrotSession().getView().getTraslation();
-				double[] r = getMandelbrotSession().getView().getRotation();
-				double[] s = getMandelbrotSession().getView().getScale();
-				double[] p = getMandelbrotSession().getView().getPoint();
-				boolean j = getMandelbrotSession().getView().isJulia();
-				double x = t[0];
-				double y = t[1];
-				double z = t[2];
-				double a = r[2] * Math.PI / 180;
-				Number size = coordinators[0].getInitialSize();
-				x -= z * size.r() * (Math.cos(a) * (x1 - x0) + Math.sin(a) * (y1 - y0));
-				y -= z * size.i() * (Math.cos(a) * (y1 - y0) - Math.sin(a) * (x1 - x0));
-				x0 = x1;
-				y0 = y1;
-				MandelbrotView view = new MandelbrotView(new double[] { x, y, z, t[3] }, new double[] { 0, 0, r[2], r[3] }, s, p, j);
-				getMandelbrotSession().setView(view, pressed);
-				changed = false;
-			}
-		}
-	}
-	
-	private class PickTool implements Tool {
-		private volatile boolean pressed;
-		private volatile boolean changed;
-		private double x1;
-		private double y1;
-
-		@Override
-		public void clicked(MouseEvent e) {
-		}
-
-		@Override
-		public void moved(MouseEvent e) {
-		}
-
-		@Override
-		public void dragged(MouseEvent e) {
-			x1 = (e.getX() - width / 2) / width;
-			y1 = (e.getY() - height / 2) / height;
-			changed = true;
-		}
-
-		@Override
-		public void released(MouseEvent e) {
-			x1 = (e.getX() - width / 2) / width;
-			y1 = (e.getY() - height / 2) / height;
-			pressed = false;
-			changed = true;
-		}
-
-		@Override
-		public void pressed(MouseEvent e) {
-			x1 = (e.getX() - width / 2) / width;
-			y1 = (e.getY() - height / 2) / height;
-			pressed = true;
-		}
-
-		@Override
-		public void update(long time) {
-			if (changed) {
-				if (!getMandelbrotSession().getView().isJulia()) {
-					double[] t = getMandelbrotSession().getView().getTraslation();
-					double[] r = getMandelbrotSession().getView().getRotation();
-					double x = t[0];
-					double y = t[1];
-					double z = t[2];
-					double a = r[2] * Math.PI / 180;
-					Number size = coordinators[0].getInitialSize();
-					Number center = coordinators[0].getInitialCenter();
-					x += center.r() + z * size.r() * (Math.cos(a) * x1 + Math.sin(a) * y1);
-					y += center.i() + z * size.i() * (Math.cos(a) * y1 - Math.sin(a) * x1);
-					getMandelbrotSession().setPoint(new double[] { x, y }, pressed);
-				}
-				changed = false;
-			}
 		}
 	}
 }

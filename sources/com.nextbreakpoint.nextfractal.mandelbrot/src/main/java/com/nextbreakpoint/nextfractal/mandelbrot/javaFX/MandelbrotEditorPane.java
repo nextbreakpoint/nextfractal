@@ -288,11 +288,37 @@ public class MandelbrotEditorPane extends BorderPane {
 		historyExecutor = Executors.newSingleThreadExecutor(threadFactory);
 		
 		sessionsExecutor = Executors.newSingleThreadScheduledExecutor(threadFactory);
-		sessionsExecutor.scheduleWithFixedDelay(new UpdateSessionsRunnable(jobsList), 500, 500, TimeUnit.MILLISECONDS);
+		sessionsExecutor.scheduleWithFixedDelay(() -> {	
+			updateSessions(jobsList); 
+		}, 500, 500, TimeUnit.MILLISECONDS);
 		
 		textExecutor = Executors.newSingleThreadExecutor();
 		
 		addDataToHistory(historyList);
+	}
+
+	@Override
+	protected void finalize() throws Throwable {
+		shutdown();
+		super.finalize();
+	}
+	
+	private void shutdown() {
+		sessionsExecutor.shutdownNow();
+		historyExecutor.shutdownNow();
+		textExecutor.shutdownNow();
+		try {
+			sessionsExecutor.awaitTermination(5000, TimeUnit.MILLISECONDS);
+		} catch (InterruptedException e) {
+		}
+		try {
+			historyExecutor.awaitTermination(5000, TimeUnit.MILLISECONDS);
+		} catch (InterruptedException e) {
+		}
+		try {
+			textExecutor.awaitTermination(5000, TimeUnit.MILLISECONDS);
+		} catch (InterruptedException e) {
+		}
 	}
 
 	private ImageView createIconImage(String name) {
@@ -418,12 +444,6 @@ public class MandelbrotEditorPane extends BorderPane {
 		return spansBuilder.create();
 	}
 
-	@Override
-	protected void finalize() throws Throwable {
-		shutdown();
-		super.finalize();
-	}
-
 	private void addDataToHistory(ListView<MandelbrotData> historyList) {
 		if (noHistory) {
 			return;
@@ -470,24 +490,6 @@ public class MandelbrotEditorPane extends BorderPane {
 		return tile;
 	}
 	
-	private void shutdown() {
-		sessionsExecutor.shutdownNow();
-		historyExecutor.shutdownNow();
-		textExecutor.shutdownNow();
-		try {
-			sessionsExecutor.awaitTermination(5000, TimeUnit.MILLISECONDS);
-		} catch (InterruptedException e) {
-		}
-		try {
-			historyExecutor.awaitTermination(5000, TimeUnit.MILLISECONDS);
-		} catch (InterruptedException e) {
-		}
-		try {
-			textExecutor.awaitTermination(5000, TimeUnit.MILLISECONDS);
-		} catch (InterruptedException e) {
-		}
-	}
-	
 	private void updateSessions(ListView<ExportSession> jobsList) {
 		Platform.runLater(() -> {
 			ObservableList<ExportSession> items = jobsList.getItems();
@@ -512,20 +514,4 @@ public class MandelbrotEditorPane extends BorderPane {
         Event event = new ListView.EditEvent<>(listView, type, newValue, i);
         listView.fireEvent(event);
     }
-	
-	private class UpdateSessionsRunnable implements Runnable {
-		private final ListView<ExportSession> jobsList;
-		
-		public UpdateSessionsRunnable(ListView<ExportSession> jobsList) {
-			this.jobsList = jobsList;
-		}
-
-		/**
-		 * @see java.lang.Runnable#run()
-		 */
-		@Override
-		public void run() {
-			updateSessions(jobsList);
-		}
-	}
 }

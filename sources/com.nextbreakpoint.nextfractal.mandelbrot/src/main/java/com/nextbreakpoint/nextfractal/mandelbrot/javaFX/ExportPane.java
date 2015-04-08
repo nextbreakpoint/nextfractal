@@ -23,7 +23,7 @@ import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 
 public class ExportPane extends Pane {
 	private VBox box = new VBox(10);
-	private ExportPaneDelegate delegate; 
+	private ExportDelegate delegate; 
 
 	public ExportPane() {
 		ComboBox<Integer[]> presets = new ComboBox<>();
@@ -138,7 +138,7 @@ public class ExportPane extends Pane {
 			int width = Integer.parseInt(widthField.getText());
 			int height = Integer.parseInt(heightField.getText());
 			if (delegate != null) {
-				delegate.createExportSession(new RendererSize(width, height));
+				delegate.exportSession(new RendererSize(width, height));
 			}
 		});
 		
@@ -192,11 +192,11 @@ public class ExportPane extends Pane {
 		tt.play();
 	}
 
-	public ExportPaneDelegate getDelegate() {
+	public ExportDelegate getDelegate() {
 		return delegate;
 	}
 
-	public void setDelegate(ExportPaneDelegate delegate) {
+	public void setDelegate(ExportDelegate delegate) {
 		this.delegate = delegate;
 	}
 }

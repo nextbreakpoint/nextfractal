@@ -1,8 +1,6 @@
-package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
+package com.nextbreakpoint.nextfractal.mandelbrot.compiler;
 
 import java.util.List;
-
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerError;
 
 public class CompileClassException extends Exception {
 	private static final long serialVersionUID = 1L;
