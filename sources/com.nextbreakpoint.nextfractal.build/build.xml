@@ -2,7 +2,7 @@
 <project name="NextFractal" default="build">
 	<property environment="env" />
 	<property name="maven.home" value="${env.M2_HOME}" />
-	<property name="nextfractal.version" value="7.0.0" />
+	<property name="nextfractal.version" value="1.0.0" />
 	<property name="ffmpeg4java.version" value="0.1.2" />
 	<property name="freeimage4java.version" value="0.1.1" />
 	<macrodef name="maven">
