@@ -60,7 +60,7 @@
 							<goal>copy-dependencies</goal>
 						</goals>
 						<configuration>
-							<includeGroupIds>com.nextbreakpoint.nextfractal,net.sf.ffmpeg4java,net.sf.freeimage4java,org.antlr,org.apache.derby,org.freemarker</includeGroupIds>
+							<includeGroupIds>com.nextbreakpoint.nextfractal,net.sf.ffmpeg4java,net.sf.freeimage4java,org.antlr</includeGroupIds>
 							<excludeArtifactIds>net.sf.ffmpeg4java.native,net.sf.freeimage4java.native</excludeArtifactIds>
 							<outputDirectory>${project.build.directory}/jars/</outputDirectory>
 						</configuration>
@@ -80,7 +80,7 @@
 									<classifier>${build.type}</classifier>
 									<type>jar</type>
 									<overWrite>true</overWrite>
-									<outputDirectory>${project.build.directory}/libs/${os.type}/${arch.type}</outputDirectory>
+									<outputDirectory>${project.build.directory}/lib/${os.type}/${arch.type}</outputDirectory>
 								</artifactItem>
 								<artifactItem>
 									<groupId>net.sf.freeimage4java</groupId>
@@ -89,7 +89,7 @@
 									<classifier>${build.type}</classifier>
 									<type>jar</type>
 									<overWrite>true</overWrite>
-									<outputDirectory>${project.build.directory}/libs/${os.type}/${arch.type}</outputDirectory>
+									<outputDirectory>${project.build.directory}/lib/${os.type}/${arch.type}</outputDirectory>
 								</artifactItem>
 							</artifactItems>
 						</configuration>

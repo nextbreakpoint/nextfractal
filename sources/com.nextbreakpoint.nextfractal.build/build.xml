@@ -45,7 +45,7 @@
 				</fileset>
 			</copy>
 			<copy failonerror="true" todir="@{basedir}/dist/@{os}_@{arch}/NextFractal" overwrite="true">
-				<fileset dir="@{basedir}/target/libs/@{os}/@{arch}">
+				<fileset dir="@{basedir}/target/lib/@{os}/@{arch}">
 					<include name="*" />
 				</fileset>
 			</copy>
@@ -215,7 +215,7 @@
 		<makelibjar basedir="${basedir}" name="net.sf.ffmpeg4java" os="linux" arch="x86" version="${ffmpeg4java.version}" resultproperty="ant.makelibjar.result" />
 		<makelibjar basedir="${basedir}" name="net.sf.ffmpeg4java" os="linux" arch="x86_64" version="${ffmpeg4java.version}" resultproperty="ant.makelibjar.result" />
 		<copy tofile="${basedir}/dist/net.sf.ffmpeg4java-${ffmpeg4java.version}.jar">
-			<fileset file="${basedir}/resources/lib/net.sf.ffmpeg4java/ffmpeg4java.jar" />
+			<fileset file="${basedir}/resources/libs/net.sf.ffmpeg4java/ffmpeg4java.jar" />
 		</copy>
 		<installjar basedir="${basedir}" name="net.sf.ffmpeg4java" version="${ffmpeg4java.version}" resultproperty="ant.installjar.result" />
 		<installlibjar basedir="${basedir}" name="net.sf.ffmpeg4java" os="macosx" arch="x86" version="${ffmpeg4java.version}" resultproperty="ant.installlibjar.result" />
@@ -233,7 +233,7 @@
 		<makelibjar basedir="${basedir}" name="net.sf.freeimage4java" os="linux" arch="x86" version="${freeimage4java.version}" resultproperty="ant.makelibjar.result" />
 		<makelibjar basedir="${basedir}" name="net.sf.freeimage4java" os="linux" arch="x86_64" version="${freeimage4java.version}" resultproperty="ant.makelibjar.result" />
 		<copy tofile="${basedir}/dist/net.sf.freeimage4java-${freeimage4java.version}.jar">
-			<fileset file="${basedir}/resources/lib/net.sf.freeimage4java/freeimage4java.jar" />
+			<fileset file="${basedir}/resources/libs/net.sf.freeimage4java/freeimage4java.jar" />
 		</copy>
 		<installjar basedir="${basedir}" name="net.sf.freeimage4java" version="${freeimage4java.version}" resultproperty="ant.installjar.result" />
 		<installlibjar basedir="${basedir}" name="net.sf.freeimage4java" os="macosx" arch="x86" version="${freeimage4java.version}" resultproperty="ant.installlibjar.result" />
