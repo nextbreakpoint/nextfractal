@@ -4,11 +4,11 @@ import com.nextbreakpoint.nextfractal.core.export.ExportService;
 import com.nextbreakpoint.nextfractal.core.export.ExportSession;
 
 public interface Session {
+	public void terminate();
+
 	public ExportService getExportService();
 
 	public void setExportService(ExportService exportService);
-
-	public void terminate();
 
 	public void addExportSession(ExportSession exportSession);
 

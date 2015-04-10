@@ -61,7 +61,7 @@ public class MandelbrotSession extends AbstractSession {
 		firePointChanged(continuous);
 	}
 
-	public MandelbrotView getView() {
+	public MandelbrotView getViewAsCopy() {
 		return new MandelbrotView(data.getTraslation(), data.getRotation(), data.getScale(), data.getPoint(), data.isJulia());
 	}
 	
@@ -74,7 +74,7 @@ public class MandelbrotSession extends AbstractSession {
 		fireViewChanged(continuous);
 	}
 	
-	public MandelbrotData getData() {
+	public MandelbrotData getDataAsCopy() {
 		MandelbrotData data = new MandelbrotData();
 		data.setSource(this.data.getSource());
 		data.setTraslation(this.data.getTraslation());

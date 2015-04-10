@@ -71,7 +71,7 @@ public class NextFractalApp extends Application {
 		DefaultThreadFactory exportThreadFactory = new DefaultThreadFactory("NextFractal Export", true, Thread.MIN_PRIORITY);
 		JavaFXRendererFactory renderFactory = new JavaFXRendererFactory();
 		ExportRenderer exportRenderer = new SimpleExportRenderer(renderThreadFactory, renderFactory);
-        ExportService exportService = new SimpleExportService(exportThreadFactory, exportRenderer, 200);
+        ExportService exportService = new SimpleExportService(exportThreadFactory, exportRenderer);
         Session session = createFractalSession(pluginId);
         session.setExportService(exportService);
         if (session != null) {

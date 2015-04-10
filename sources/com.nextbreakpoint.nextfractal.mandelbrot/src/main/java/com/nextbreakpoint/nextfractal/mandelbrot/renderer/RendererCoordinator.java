@@ -108,10 +108,10 @@ public class RendererCoordinator implements RendererDelegate {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererDelegate#didChanged(float)
+	 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererDelegate#updateImageInBackground(float)
 	 */
 	@Override
-	public void didChanged(float progress) {
+	public void updateImageInBackground(float progress) {
 		this.progress = progress;
 		this.pixelsChanged = true;
 	}

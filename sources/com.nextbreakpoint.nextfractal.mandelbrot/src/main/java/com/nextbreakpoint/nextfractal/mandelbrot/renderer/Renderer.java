@@ -543,7 +543,7 @@ public class Renderer {
 		}
 		lock.unlock();
 		if (rendererDelegate != null) {
-			rendererDelegate.didChanged(progress);
+			rendererDelegate.updateImageInBackground(progress);
 		}
 	}
 

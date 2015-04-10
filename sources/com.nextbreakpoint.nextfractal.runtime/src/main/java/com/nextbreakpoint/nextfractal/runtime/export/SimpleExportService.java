@@ -7,131 +7,114 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.ReentrantLock;
 
 import com.nextbreakpoint.nextfractal.core.encoder.EncoderException;
+import com.nextbreakpoint.nextfractal.core.export.AbstractExportService;
 import com.nextbreakpoint.nextfractal.core.export.ExportJob;
 import com.nextbreakpoint.nextfractal.core.export.ExportRenderer;
-import com.nextbreakpoint.nextfractal.core.export.ExportService;
 import com.nextbreakpoint.nextfractal.core.export.ExportSession;
+import com.nextbreakpoint.nextfractal.core.export.ExportSessionHolder;
 import com.nextbreakpoint.nextfractal.core.session.SessionState;
 import com.nextbreakpoint.nextfractal.runtime.encoder.RAFEncoderContext;
 
-public class SimpleExportService implements ExportService {
-	private final List<ExportSession> sessions = new ArrayList<>();
+public class SimpleExportService extends AbstractExportService {
 	private final Map<String, List<Future<ExportJob>>> futures = new HashMap<>();
-	private final ReentrantLock lock = new ReentrantLock();
-	private final ScheduledExecutorService executor;
 	private final ExportRenderer exportRenderer;
-	private final int tileSize;
-	
-	public SimpleExportService(ThreadFactory threadFactory, ExportRenderer exportRenderer, int tileSize) {
+
+	public SimpleExportService(ThreadFactory threadFactory, ExportRenderer exportRenderer) {
+		super(threadFactory);
 		this.exportRenderer = exportRenderer;
-		this.tileSize = tileSize;
-		executor = Executors.newSingleThreadScheduledExecutor(threadFactory);
-		executor.scheduleWithFixedDelay(new UpdateSessionsRunnable(), 1000, 1000, TimeUnit.MILLISECONDS);
 	}
 
-//	public void shutdown() {
-//		executor.shutdown(); 
-//		try {
-//			if (!executor.awaitTermination(5, TimeUnit.SECONDS)) {
-//				executor.shutdownNow(); 
-//			}
-//		} catch (InterruptedException x) {
-//			executor.shutdownNow();
-//			Thread.currentThread().interrupt();
-//		}
-//	}
-
-	public void shutdown() {
-		executor.shutdownNow();
-		try {
-			executor.awaitTermination(5000, TimeUnit.MILLISECONDS);
-		} catch (InterruptedException e) {
-		}
-	}
-
-	public int getTileSize() {
-		return tileSize;
-	}
-
-	public void startSession(ExportSession session) {
-		session.setState(SessionState.STARTED);
-		session.setCancelled(false);
-		lock.lock();
-		sessions.add(session);
-		lock.unlock();
-	}
-
-	public void stopSession(ExportSession session) {
-		session.setCancelled(true);
-		cancelSession(session);
-	}
-
-	public void suspendSession(ExportSession session) {
-		session.setCancelled(false);
-		cancelSession(session);
-	}
-
-	public void resumeSession(ExportSession session) {
-		session.setState(SessionState.STARTED);
-		session.setCancelled(false);
-	}
-
-	private void updateSessions() {
-		lock.lock();
-		for (Iterator<ExportSession> i = sessions.iterator(); i.hasNext();) {
-			ExportSession session = i.next();
-			updateSession(session);
+	@Override
+	protected void updateSessionsInBackground(List<ExportSessionHolder> holders) {
+		for (Iterator<ExportSessionHolder> i = holders.iterator(); i.hasNext();) {
+			ExportSessionHolder holder = i.next();
+			updateSession(holder);
+			ExportSession session = holder.getSession();
 			if (session.isStopped()) {
 				futures.remove(session.getSessionId());
 				i.remove();
 			}
 		}
-		lock.unlock();
 	}
 
-	private void updateSession(ExportSession session) {
+	@Override
+	protected void cancelJobs(ExportSession session) {
+		List<Future<ExportJob>> list = futures.get(session.getSessionId());
+		if (list != null) {
+			for (Future<ExportJob> future : list) {
+				future.cancel(true);
+			}
+		}
+	}
+
+	private void updateSession(ExportSessionHolder holder) {
+		ExportSession session = holder.getSession();
 		if (session.isStarted()) {
 			dispatchJobs(session);
-			session.setState(SessionState.DISPATCHED);
+			holder.setState(SessionState.DISPATCHED);
 		} else if (session.isInterrupted()) {
-			session.setState(SessionState.STOPPED);
+			holder.setState(SessionState.STOPPED);
 		} else if (session.isCompleted()) {
-			session.setState(SessionState.STOPPED);
+			holder.setState(SessionState.STOPPED);
 		} else if (session.isFailed()) {
 			if (session.isCancelled()) {
-				session.setState(SessionState.STOPPED);
+				holder.setState(SessionState.STOPPED);
 			}
 		} else {
-			processSession(session);
+			processSession(holder);
 		}
 		session.updateProgress();
 	}
 
-	private void processSession(ExportSession session) {
+	private void processSession(ExportSessionHolder holder) {
+		ExportSession session = holder.getSession();
 		List<Future<ExportJob>> list = futures.get(session.getSessionId());
 		if (list != null) {
 			removeTerminatedJobs(list);
 			if (list.size() == 0) {
 				if (session.isCancelled()) {
-					session.setState(SessionState.INTERRUPTED);
+					holder.setState(SessionState.INTERRUPTED);
 				} else if (isSessionCompleted(session)) {
 					try {
 						encodeData(session);
-						session.setState(SessionState.COMPLETED);
+						holder.setState(SessionState.COMPLETED);
 					} catch (Exception e) {
-						session.setState(SessionState.FAILED);
+						holder.setState(SessionState.FAILED);
 					}
 				} else {
-					session.setState(SessionState.SUSPENDED);
+					holder.setState(SessionState.SUSPENDED);
 				}
+			}
+		}
+	}
+	
+	private void removeTerminatedJobs(List<Future<ExportJob>> list) {
+		for (Iterator<Future<ExportJob>> i = list.iterator(); i.hasNext();) {
+			Future<ExportJob> future = i.next();
+			if (future.isCancelled() || future.isDone()) {
+				i.remove();
+			}
+		}
+	}
+
+	private boolean isSessionCompleted(ExportSession session) {
+		return session.getCompletedJobsCount() == session.getJobsCount();
+	}
+
+	private void dispatchJobs(ExportSession session) {
+		for (ExportJob job : session.getJobs()) {
+			if (!job.isCompleted()) {
+				Future<ExportJob> future = exportRenderer.dispatch(job);
+				List<Future<ExportJob>> list = futures.get(session.getSessionId());
+				if (list == null) {
+					list = new ArrayList<>();
+					futures.put(session.getSessionId(), list);
+				}
+				list.add(future);
 			}
 		}
 	}
@@ -155,52 +138,6 @@ public class SimpleExportService implements ExportService {
 				} catch (final IOException e) {
 				}
 			}			
-		}
-	}
-	
-	private void removeTerminatedJobs(List<Future<ExportJob>> list) {
-		for (Iterator<Future<ExportJob>> i = list.iterator(); i.hasNext();) {
-			Future<ExportJob> future = i.next();
-			if (future.isCancelled() || future.isDone()) {
-				i.remove();
-			}
-		}
-	}
-
-	private boolean isSessionCompleted(ExportSession session) {
-		return session.getCompletedJobsCount() == session.getJobsCount();
-	}
-
-	private void cancelSession(ExportSession session) {
-		List<Future<ExportJob>> list = futures.get(session.getSessionId());
-		if (list != null) {
-			for (Future<ExportJob> future : list) {
-				future.cancel(true);
-			}
-		}
-	}
-
-	private void dispatchJobs(ExportSession session) {
-		for (ExportJob job : session.getJobs()) {
-			if (!job.isCompleted()) {
-				Future<ExportJob> future = exportRenderer.dispatch(job);
-				List<Future<ExportJob>> list = futures.get(session.getSessionId());
-				if (list == null) {
-					list = new ArrayList<>();
-					futures.put(session.getSessionId(), list);
-				}
-				list.add(future);
-			}
-		}
-	}
-
-	private class UpdateSessionsRunnable implements Runnable {
-		/**
-		 * @see java.lang.Runnable#run()
-		 */
-		@Override
-		public void run() {
-			updateSessions();
 		}
 	}
 }

@@ -39,6 +39,34 @@ public class ExportJob {
 		return session.getTmpFile();
 	}
 
+	public boolean isInterrupted() {
+		return state == ExportJobState.INTERRUPTED;
+	}
+
+	public boolean isCompleted() {
+		return state == ExportJobState.COMPLETED;
+	}
+
+	public boolean isReady() {
+		return state == ExportJobState.READY;
+	}
+
+	public Throwable getError() {
+		return error;
+	}
+
+	public void setError(Throwable error) {
+		this.error = error;
+	}
+
+	public ExportJobState getState() {
+		return state;
+	}
+
+	public void setState(ExportJobState state) {
+		this.state = state;
+	}
+
 	public void writePixels(RendererSize size, IntBuffer pixels) throws IOException {
 		RandomAccessFile raf = null;
 		try {
@@ -64,6 +92,11 @@ public class ExportJob {
 				}
 			}
 		}
+	}
+	
+	@Override
+	public String toString() {
+		return "[sessionId = " + session.getSessionId() + ", profile=" + profile + "]";
 	}
 
 	private int computeFrameCount(double startTime, double stopTime, float frameRate) {
@@ -101,38 +134,5 @@ public class ExportJob {
 			data[i + 2] = (byte)((pixel >> 0) & 0xFF);
 		}
 		return data;
-	}
-	
-	@Override
-	public String toString() {
-		return "[sessionId = " + session.getSessionId() + ", profile=" + profile + "]";
-	}
-
-	public Throwable getError() {
-		return error;
-	}
-
-	public void setError(Throwable error) {
-		this.error = error;
-	}
-
-	public boolean isInterrupted() {
-		return state == ExportJobState.INTERRUPTED;
-	}
-
-	public boolean isCompleted() {
-		return state == ExportJobState.COMPLETED;
-	}
-
-	public boolean isReady() {
-		return state == ExportJobState.READY;
-	}
-
-	public ExportJobState getState() {
-		return state;
-	}
-
-	public void setState(ExportJobState state) {
-		this.state = state;
 	}
 }

@@ -51,11 +51,11 @@ public class MandelbrotMove implements MandelbrotTool {
 	@Override
 	public void update(long time) {
 		if (changed) {
-			double[] t = context.getMandelbrotSession().getView().getTraslation();
-			double[] r = context.getMandelbrotSession().getView().getRotation();
-			double[] s = context.getMandelbrotSession().getView().getScale();
-			double[] p = context.getMandelbrotSession().getView().getPoint();
-			boolean j = context.getMandelbrotSession().getView().isJulia();
+			double[] t = context.getMandelbrotSession().getViewAsCopy().getTraslation();
+			double[] r = context.getMandelbrotSession().getViewAsCopy().getRotation();
+			double[] s = context.getMandelbrotSession().getViewAsCopy().getScale();
+			double[] p = context.getMandelbrotSession().getViewAsCopy().getPoint();
+			boolean j = context.getMandelbrotSession().getViewAsCopy().isJulia();
 			double x = t[0];
 			double y = t[1];
 			double z = t[2];

@@ -33,5 +33,5 @@ public interface RendererDelegate {
 	/**
 	 * @param progress
 	 */
-	public void didChanged(float progress);
+	public void updateImageInBackground(float progress);
 }

@@ -5,14 +5,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
-import java.util.logging.Logger;
 
 import com.nextbreakpoint.nextfractal.core.encoder.Encoder;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 import com.nextbreakpoint.nextfractal.core.session.SessionState;
 
-public class ExportSession {
-	private static final Logger logger = Logger.getLogger(ExportSession.class.getName());
+public final class ExportSession {
 	private static final int BORDER_SIZE = 0;
 	private final List<ExportJob> jobs = new ArrayList<>();
 	private final String sessioinId;
@@ -27,8 +25,8 @@ public class ExportSession {
 	private final float frameRate;
 	private final float startTime;
 	private final float stopTime;
-	private volatile float progress;
 	private volatile int frameNumber;
+	private volatile float progress;
 	private volatile boolean cancelled;
 	private volatile SessionState state = SessionState.SUSPENDED;
 
@@ -76,17 +74,64 @@ public class ExportSession {
 		return tmpFile;
 	}
 
-	public void dispose() {
-		jobs.clear();
+	public float getFrameRate() {
+		return frameRate;
+	}
+
+	public float getStartTime() {
+		return startTime;
+	}
+
+	public float getStopTime() {
+		return stopTime;
+	}
+
+	public int getFrameNumber() {
+		return frameNumber;
+	}
+
+	public float getProgress() {
+		return progress;
+	}
+
+	public boolean isCancelled() {
+		return cancelled;
+	}
+
+	public boolean isStopped() {
+		return state == SessionState.STOPPED;
+	}
+
+	public boolean isDispatched() {
+		return state == SessionState.DISPATCHED;
+	}
+
+	public boolean isStarted() {
+		return state == SessionState.STARTED;
+	}
+
+	public boolean isSuspended() {
+		return state == SessionState.SUSPENDED;
+	}
+
+	public boolean isInterrupted() {
+		return state == SessionState.INTERRUPTED;
+	}
+
+	public boolean isCompleted() {
+		return state == SessionState.COMPLETED;
+	}
+
+	public boolean isFailed() {
+		return state == SessionState.FAILED;
 	}
 
 	public SessionState getState() {
 		return state;
 	}
 
-	public void setState(SessionState state) {
-		this.state = state;
-		logger.fine(getSessionId() + " -> state = " + state);
+	public int getJobsCount() {
+		return jobs.size();
 	}
 
 	public List<ExportJob> getJobs() {
@@ -107,39 +152,27 @@ public class ExportSession {
 		return count;
 	}
 
-	public float getProgress() {
-		return progress;
+	public void dispose() {
+		jobs.clear();
+	}
+
+	protected void setFrameNumber(int frameNumber) {
+		this.frameNumber = frameNumber;
 	}
 
 	protected void setProgress(float progress) {
 		this.progress = progress;
 	}
 
-	public int getJobsCount() {
-		return jobs.size();
+	protected void setCancelled(boolean cancelled) {
+		this.cancelled = cancelled;
 	}
 
-	public int getFrameNumber() {
-		return frameNumber;
+	protected void setState(SessionState state) {
+		this.state = state;
 	}
 
-	public void setFrameNumber(int frameNumber) {
-		this.frameNumber = frameNumber;
-	}
-
-	public float getFrameRate() {
-		return frameRate;
-	}
-
-	public float getStartTime() {
-		return startTime;
-	}
-
-	public float getStopTime() {
-		return stopTime;
-	}
-
-	protected List<ExportJob> createJobs(int frameNumber) {
+	private List<ExportJob> createJobs(int frameNumber) {
 		final List<ExportJob> jobs = new ArrayList<ExportJob>();
 		final int frameWidth = size.getWidth();
 		final int frameHeight = size.getHeight();
@@ -196,43 +229,7 @@ public class ExportSession {
 		return profile;
 	}
 
-	protected ExportJob createJob(ExportProfile profile) {
+	private ExportJob createJob(ExportProfile profile) {
 		return new ExportJob(this, profile);
-	}
-
-	public boolean isStopped() {
-		return state == SessionState.STOPPED;
-	}
-
-	public boolean isDispatched() {
-		return state == SessionState.DISPATCHED;
-	}
-
-	public boolean isStarted() {
-		return state == SessionState.STARTED;
-	}
-
-	public boolean isSuspended() {
-		return state == SessionState.SUSPENDED;
-	}
-
-	public boolean isInterrupted() {
-		return state == SessionState.INTERRUPTED;
-	}
-
-	public boolean isCompleted() {
-		return state == SessionState.COMPLETED;
-	}
-
-	public boolean isFailed() {
-		return state == SessionState.FAILED;
-	}
-
-	public boolean isCancelled() {
-		return cancelled;
-	}
-
-	public void setCancelled(boolean cancelled) {
-		this.cancelled = cancelled;
 	}
 }
