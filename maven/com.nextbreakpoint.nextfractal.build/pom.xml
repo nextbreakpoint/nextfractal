@@ -60,7 +60,7 @@
 							<goal>copy-dependencies</goal>
 						</goals>
 						<configuration>
-							<includeGroupIds>com.nextbreakpoint.nextfractal,net.sf.ffmpeg4java,net.sf.freeimage4java,org.antlr</includeGroupIds>
+							<includeGroupIds>com.nextbreakpoint.nextfractal,net.sf.ffmpeg4java,net.sf.freeimage4java,org.antlr,org.fxmisc</includeGroupIds>
 							<excludeArtifactIds>net.sf.ffmpeg4java.native,net.sf.freeimage4java.native</excludeArtifactIds>
 							<outputDirectory>${project.build.directory}/jars/</outputDirectory>
 						</configuration>

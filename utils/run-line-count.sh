@@ -1,3 +1,3 @@
-export ROOT=/Volumes/MAC/NextFractal
+export ROOT=`pwd`/..
 
-java -classpath FileUtility.jar net.sf.jame.fileutility.LineCount $ROOT/sources >report.txt
+java -classpath FileUtility.jar net.sf.jame.fileutility.LineCount $ROOT/maven >report.txt
