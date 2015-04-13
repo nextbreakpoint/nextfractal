@@ -9,7 +9,9 @@
 	<modules>
 		<module>../com.nextbreakpoint.nextfractal.core</module>
 		<module>../com.nextbreakpoint.nextfractal.mandelbrot</module>
+		<!-- 
 		<module>../com.nextbreakpoint.nextfractal.contextfree</module>
+		 -->
 		<module>../com.nextbreakpoint.nextfractal.runtime</module>
 	</modules>
 	<build>
@@ -138,11 +140,13 @@
 			<artifactId>com.nextbreakpoint.nextfractal.mandelbrot</artifactId>
 			<version>1.0.0</version>
 		</dependency>
+		<!-- 
 		<dependency>
 			<groupId>com.nextbreakpoint.nextfractal</groupId>
 			<artifactId>com.nextbreakpoint.nextfractal.contextfree</artifactId>
 			<version>0.0.1</version>
 		</dependency>
+		 -->
 		<dependency>
 			<groupId>net.sf.ffmpeg4java</groupId>
 			<artifactId>net.sf.ffmpeg4java</artifactId>
