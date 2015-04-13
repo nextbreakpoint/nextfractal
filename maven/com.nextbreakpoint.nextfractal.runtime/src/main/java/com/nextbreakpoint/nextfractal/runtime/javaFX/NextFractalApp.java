@@ -111,16 +111,19 @@ public class NextFractalApp extends Application {
         MenuBar menuBar = new MenuBar();
 //        final Menu fileMenu = new Menu("File");
 //        MenuItem quitItem = new MenuItem("Quit");
+//        quitItem.setOnAction(e -> {
+//			 primaryStage.close();
+//		});
 //		fileMenu.getItems().add(quitItem);
 //		menuBar.getMenus().add(fileMenu);
         final Menu helpMenu = new Menu("Help");
 		if (Desktop.isDesktopSupported()) {
-			MenuItem siteItem = new MenuItem("Online Manual");
+			MenuItem siteItem = new MenuItem("User Guide");
 			helpMenu.getItems().add(siteItem);
 			siteItem.setOnAction(e -> {
 				 try {
 					if (Desktop.isDesktopSupported()) {
-						Desktop.getDesktop().browse(new URI("http://nextbreakpoint.com"));
+						Desktop.getDesktop().browse(new URI("http://nextfractal.nextbreakpoint.com"));
 					}
 				} catch (Exception e1) {
 				}

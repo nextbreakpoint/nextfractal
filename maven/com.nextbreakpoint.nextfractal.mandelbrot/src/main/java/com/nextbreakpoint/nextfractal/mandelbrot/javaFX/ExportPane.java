@@ -46,7 +46,8 @@ import com.nextbreakpoint.nextfractal.core.javaFX.AdvancedTextField;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 
 public class ExportPane extends Pane {
-	private VBox box = new VBox(10);
+	private static final int CONTROL_SIZE = 250;
+	private VBox box = new VBox();
 	private ExportDelegate delegate; 
 
 	public ExportPane() {
@@ -56,40 +57,62 @@ public class ExportPane extends Pane {
 		presets.getItems().add(new Integer[] { 1024, 768 });
 		presets.getItems().add(new Integer[] { 640, 480 });
 		presets.getItems().add(new Integer[] { 0, 0 });
-		presets.setMinWidth(400);
-		presets.setMaxWidth(400);
-		presets.setPrefWidth(400);
+		presets.setMinWidth(CONTROL_SIZE);
+		presets.setMaxWidth(CONTROL_SIZE);
+		presets.setPrefWidth(CONTROL_SIZE);
 		presets.getSelectionModel().select(0);
 		Integer[] item0 = presets.getSelectionModel().getSelectedItem();
 		AdvancedTextField widthField = new AdvancedTextField();
 		widthField.setRestrict(getRestriction());
 		widthField.setEditable(false);
-		widthField.setMinWidth(400);
-		widthField.setMaxWidth(400);
-		widthField.setPrefWidth(400);
+		widthField.setMinWidth(CONTROL_SIZE);
+		widthField.setMaxWidth(CONTROL_SIZE);
+		widthField.setPrefWidth(CONTROL_SIZE);
 		widthField.setText(String.valueOf(item0[0]));
 		AdvancedTextField heightField = new AdvancedTextField();
 		heightField.setRestrict(getRestriction());
 		heightField.setEditable(false);
-		heightField.setMinWidth(400);
-		heightField.setMaxWidth(400);
-		heightField.setPrefWidth(400);
+		heightField.setMinWidth(CONTROL_SIZE);
+		heightField.setMaxWidth(CONTROL_SIZE);
+		heightField.setPrefWidth(CONTROL_SIZE);
 		heightField.setText(String.valueOf(item0[1]));
-		Button close = new Button("Close");
-		Button start = new Button("Start");
+		Button cancelButton = new Button("Cancel");
+		Button exportButton = new Button("Export...");
 
 		HBox buttons = new HBox(10);
-		buttons.getChildren().add(start);
-		buttons.getChildren().add(close);
+		buttons.getChildren().add(cancelButton);
+		buttons.getChildren().add(exportButton);
 		buttons.setAlignment(Pos.CENTER);
+		buttons.getStyleClass().add("buttons");
+
+		VBox dimensionBox = new VBox(5);
+		dimensionBox.setAlignment(Pos.CENTER);
+		dimensionBox.getChildren().add(new Label("Dimension"));
+		dimensionBox.getChildren().add(presets);
+		
+		VBox widthBox = new VBox(5);
+		widthBox.setAlignment(Pos.CENTER);
+		widthBox.getChildren().add(new Label("Width"));
+		widthBox.getChildren().add(widthField);
+		
+		VBox heightBox = new VBox(5);
+		heightBox.setAlignment(Pos.CENTER);
+		heightBox.getChildren().add(new Label("Height"));
+		heightBox.getChildren().add(heightField);
+
+		VBox controls = new VBox(8);
+		controls.setAlignment(Pos.CENTER);
+		controls.getChildren().add(dimensionBox);
+		controls.getChildren().add(widthBox);
+		controls.getChildren().add(heightBox);
+		controls.getStyleClass().add("controls");
+
+		Label title = new Label("Export as PNG");
+		title.getStyleClass().add("title");
 		
 		box.setAlignment(Pos.TOP_CENTER);
-		box.getChildren().add(new Label("Presets"));
-		box.getChildren().add(presets);
-		box.getChildren().add(new Label("Width"));
-		box.getChildren().add(widthField);
-		box.getChildren().add(new Label("Height"));
-		box.getChildren().add(heightField);
+		box.getChildren().add(title);
+		box.getChildren().add(controls);
 		box.getChildren().add(buttons);
 		box.getStyleClass().add("popup");
 		
@@ -153,11 +176,11 @@ public class ExportPane extends Pane {
 	        }    
 	    });
 		
-		close.setOnMouseClicked(e -> {
+		cancelButton.setOnMouseClicked(e -> {
 			hide();
 		});
 		
-		start.setOnMouseClicked(e -> {
+		exportButton.setOnMouseClicked(e -> {
 			hide();
 			int width = Integer.parseInt(widthField.getText());
 			int height = Integer.parseInt(heightField.getText());

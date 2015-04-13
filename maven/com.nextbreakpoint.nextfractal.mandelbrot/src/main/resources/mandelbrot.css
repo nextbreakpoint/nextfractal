@@ -21,6 +21,19 @@
 	-fx-border-color: #444444;
 }
 
+.application .mandelbrot .popup .title {
+    -fx-font-weight: bold;
+	-fx-padding: 15px;
+}
+
+.application .mandelbrot .popup .controls {
+	-fx-padding: 10px;
+}
+
+.application .mandelbrot .popup .buttons {
+	-fx-padding: 10px;
+}
+
 .application .mandelbrot .keyword {
     -fx-fill: blue;
     -fx-font-weight: bold;
@@ -56,9 +69,3 @@
     -fx-font-weight: bold;
 }
 
-.application .mandelbrot .error-title {
-    -fx-font-weight: bold;
-}
-
-.application .mandelbrot .error-message {
-}

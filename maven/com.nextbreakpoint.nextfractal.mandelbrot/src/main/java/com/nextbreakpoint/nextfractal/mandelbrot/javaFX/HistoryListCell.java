@@ -51,8 +51,8 @@ public class HistoryListCell extends ListCell<MandelbrotData> {
 		canvas = new Canvas(tile.getTileSize().getWidth(), tile.getTileSize().getHeight());
 		label = new Label();
 		pane = new BorderPane();
-		pane.setCenter(label);
 		pane.setLeft(canvas);
+		pane.setCenter(label);
 	}
 
 	@Override

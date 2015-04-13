@@ -42,32 +42,37 @@ import javafx.util.Duration;
 
 public class ErrorPane extends Pane {
 	private StringObservableValue messageProperty;
-	private VBox box = new VBox(10);
+	private VBox box = new VBox();
 
 	public ErrorPane() {
 		messageProperty = new StringObservableValue();
 		
-		Button close = new Button("Close");
+		Button closeButton = new Button("Close");
 
 		HBox buttons = new HBox(10);
-		buttons.getChildren().add(close);
+		buttons.getChildren().add(closeButton);
 		buttons.setAlignment(Pos.CENTER);
+		buttons.getStyleClass().add("buttons");
 		
 		Label title = new Label("Errors");
-		title.getStyleClass().add("error-title");
+		title.getStyleClass().add("title");
 		
 		TextArea message = new TextArea();
-		message.getStyleClass().add("error-message");
 		message.setEditable(false);
+
+		VBox controls = new VBox(5);
+		controls.setAlignment(Pos.CENTER);
+		controls.getChildren().add(message);
+		controls.getStyleClass().add("controls");
 
 		box.setAlignment(Pos.TOP_CENTER);
 		box.getChildren().add(title);
-		box.getChildren().add(message);
+		box.getChildren().add(controls);
 		box.getChildren().add(buttons);
 		box.getStyleClass().add("popup");
 		getChildren().add(box);
 
-		close.setOnMouseClicked(e -> {
+		closeButton.setOnMouseClicked(e -> {
 			hide();
 		});
 

@@ -145,7 +145,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 		threadFactory = new DefaultThreadFactory("MandelbrotRenderPane", true, Thread.MIN_PRIORITY);
 		renderFactory = new JavaFXRendererFactory();
 
-		generator = new MandelbrotImageGenerator(threadFactory, renderFactory, createSingleTile(25, 25));
+		generator = new MandelbrotImageGenerator(threadFactory, renderFactory, createSingleTile(50, 50));
 
 		coordinators = new RendererCoordinator[rows * columns];
 		
@@ -195,9 +195,9 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 		errorPane.setDisable(true);
 		
 		StackPane alertsPane = new StackPane();
-		alertsPane.setMinHeight(250);
-		alertsPane.setMaxHeight(250);
-		alertsPane.setPrefHeight(250);
+		alertsPane.setMinHeight(300);
+		alertsPane.setMaxHeight(300);
+		alertsPane.setPrefHeight(300);
 		
 		alertsPane.getChildren().add(alertButtons);
 		alertsPane.getChildren().add(exportPane);

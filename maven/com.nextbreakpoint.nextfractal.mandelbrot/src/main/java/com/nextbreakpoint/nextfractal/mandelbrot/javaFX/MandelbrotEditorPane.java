@@ -103,7 +103,7 @@ public class MandelbrotEditorPane extends BorderPane {
 		
 		renderFactory = new JavaFXRendererFactory();
 
-		RendererTile generatorTile = createSingleTile(25, 25);
+		RendererTile generatorTile = createSingleTile(50, 50);
 		
 		generator = new MandelbrotImageGenerator(threadFactory, renderFactory, generatorTile);
 		
@@ -111,12 +111,15 @@ public class MandelbrotEditorPane extends BorderPane {
 
 		TabPane tabPane = new TabPane();
 		Tab sourceTab = new Tab();
+		sourceTab.setClosable(false);
 		sourceTab.setText("Source");
 		tabPane.getTabs().add(sourceTab);
 		Tab historyTab = new Tab();
+		historyTab.setClosable(false);
 		historyTab.setText("History");
 		tabPane.getTabs().add(historyTab);
 		Tab jobsTab = new Tab();
+		jobsTab.setClosable(false);
 		jobsTab.setText("Jobs");
 		tabPane.getTabs().add(jobsTab);
 		setCenter(tabPane);
@@ -138,6 +141,7 @@ public class MandelbrotEditorPane extends BorderPane {
 
 		BorderPane historyPane = new BorderPane();
 		ListView<MandelbrotData> historyList = new ListView<>();
+		historyList.setFixedCellSize(60);
 		historyList.getStyleClass().add("history");
 		historyList.setCellFactory(new Callback<ListView<MandelbrotData>, ListCell<MandelbrotData>>() {
 			@Override
@@ -161,6 +165,7 @@ public class MandelbrotEditorPane extends BorderPane {
 				return new ExportListCell(generator.getSize(), generatorTile);
 			}
 		});
+		jobsList.setFixedCellSize(60);
 		jobsList.getStyleClass().add("jobs");
 		HBox jobsButtons = new HBox(10);
 		Button suspendButton = new Button("", createIconImage("/icon-suspend.png"));

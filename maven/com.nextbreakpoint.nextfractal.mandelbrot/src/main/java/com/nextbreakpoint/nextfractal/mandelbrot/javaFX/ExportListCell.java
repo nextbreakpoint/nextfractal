@@ -56,8 +56,8 @@ public class ExportListCell extends ListCell<ExportSession> {
 		progress = new ProgressBar();
 		label = new Label();
 		pane = new BorderPane();
-		pane.setCenter(label);
 		pane.setLeft(canvas);
+		pane.setCenter(label);
 		pane.setRight(progress);
 		BorderPane.setAlignment(label, Pos.CENTER);
 		BorderPane.setAlignment(canvas, Pos.CENTER);
