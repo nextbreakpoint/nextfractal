@@ -23,9 +23,9 @@ public class MandelbrotLexer extends Lexer {
 		T__18=24, T__17=25, T__16=26, T__15=27, T__14=28, T__13=29, T__12=30, 
 		T__11=31, T__10=32, T__9=33, T__8=34, T__7=35, T__6=36, T__5=37, T__4=38, 
 		T__3=39, T__2=40, T__1=41, T__0=42, FRACTAL=43, ORBIT=44, TRAP=45, CONDITION=46, 
-		BEGIN=47, LOOP=48, END=49, COLOR=50, PALETTE=51, RULE=52, USER_ARGB=53, 
-		USER_RATIONAL=54, USER_INTEGER=55, USER_PATHOP_1POINTS=56, USER_PATHOP_2POINTS=57, 
-		USER_VARIABLE=58, COMMENT=59, WHITESPACE=60;
+		BEGIN=47, LOOP=48, END=49, COLOR=50, PALETTE=51, RULE=52, ARGB=53, RATIONAL=54, 
+		INTEGER=55, PATHOP_1POINTS=56, PATHOP_2POINTS=57, VARIABLE=58, COMMENT=59, 
+		WHITESPACE=60;
 	public static String[] modeNames = {
 		"DEFAULT_MODE"
 	};
@@ -38,8 +38,8 @@ public class MandelbrotLexer extends Lexer {
 		"'>='", "'['", "'log'", "'|'", "'<'", "']'", "'>'", "'<>'", "'#'", "'acos'", 
 		"'i'", "')'", "'exp'", "'+'", "'hypot'", "'-'", "'fractal'", "'orbit'", 
 		"'trap'", "'condition'", "'begin'", "'loop'", "'end'", "'color'", "'palette'", 
-		"'rule'", "USER_ARGB", "USER_RATIONAL", "USER_INTEGER", "USER_PATHOP_1POINTS", 
-		"USER_PATHOP_2POINTS", "USER_VARIABLE", "COMMENT", "WHITESPACE"
+		"'rule'", "ARGB", "RATIONAL", "INTEGER", "PATHOP_1POINTS", "PATHOP_2POINTS", 
+		"VARIABLE", "COMMENT", "WHITESPACE"
 	};
 	public static final String[] ruleNames = {
 		"T__41", "T__40", "T__39", "T__38", "T__37", "T__36", "T__35", "T__34", 
@@ -48,9 +48,8 @@ public class MandelbrotLexer extends Lexer {
 		"T__17", "T__16", "T__15", "T__14", "T__13", "T__12", "T__11", "T__10", 
 		"T__9", "T__8", "T__7", "T__6", "T__5", "T__4", "T__3", "T__2", "T__1", 
 		"T__0", "FRACTAL", "ORBIT", "TRAP", "CONDITION", "BEGIN", "LOOP", "END", 
-		"COLOR", "PALETTE", "RULE", "USER_ARGB", "USER_RATIONAL", "USER_INTEGER", 
-		"USER_PATHOP_1POINTS", "USER_PATHOP_2POINTS", "USER_VARIABLE", "COMMENT", 
-		"WHITESPACE"
+		"COLOR", "PALETTE", "RULE", "ARGB", "RATIONAL", "INTEGER", "PATHOP_1POINTS", 
+		"PATHOP_2POINTS", "VARIABLE", "COMMENT", "WHITESPACE"
 	};
 
 

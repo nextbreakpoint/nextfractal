@@ -7,7 +7,7 @@ fractal {
 			LINETO(1 + 2i);
 			LINETO(1);
 		}
-		loop [0, 2] (|z| > 4 & trap1[z]) {
+		loop [0, 2] (|z| > 4 & trap1 ~? z) {
 			y = 0;
 			t = 3;
 			x = t + 4 + 1i;

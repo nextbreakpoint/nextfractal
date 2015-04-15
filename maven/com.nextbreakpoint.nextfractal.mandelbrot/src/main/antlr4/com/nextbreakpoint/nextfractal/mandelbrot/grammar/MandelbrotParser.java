@@ -23,9 +23,9 @@ public class MandelbrotParser extends Parser {
 		T__18=24, T__17=25, T__16=26, T__15=27, T__14=28, T__13=29, T__12=30, 
 		T__11=31, T__10=32, T__9=33, T__8=34, T__7=35, T__6=36, T__5=37, T__4=38, 
 		T__3=39, T__2=40, T__1=41, T__0=42, FRACTAL=43, ORBIT=44, TRAP=45, CONDITION=46, 
-		BEGIN=47, LOOP=48, END=49, COLOR=50, PALETTE=51, RULE=52, USER_ARGB=53, 
-		USER_RATIONAL=54, USER_INTEGER=55, USER_PATHOP_1POINTS=56, USER_PATHOP_2POINTS=57, 
-		USER_VARIABLE=58, COMMENT=59, WHITESPACE=60;
+		BEGIN=47, LOOP=48, END=49, COLOR=50, PALETTE=51, RULE=52, ARGB=53, RATIONAL=54, 
+		INTEGER=55, PATHOP_1POINTS=56, PATHOP_2POINTS=57, VARIABLE=58, COMMENT=59, 
+		WHITESPACE=60;
 	public static final String[] tokenNames = {
 		"<INVALID>", "'/'", "'cos'", "';'", "'{'", "'='", "'}'", "'asin'", "'mod2'", 
 		"'^'", "'im'", "'?'", "'sin'", "'<='", "'pow'", "'~?'", "'&'", "'('", 
@@ -33,8 +33,8 @@ public class MandelbrotParser extends Parser {
 		"'mod'", "'>='", "'['", "'log'", "'|'", "'<'", "']'", "'>'", "'<>'", "'#'", 
 		"'acos'", "'i'", "')'", "'exp'", "'+'", "'hypot'", "'-'", "'fractal'", 
 		"'orbit'", "'trap'", "'condition'", "'begin'", "'loop'", "'end'", "'color'", 
-		"'palette'", "'rule'", "USER_ARGB", "USER_RATIONAL", "USER_INTEGER", "USER_PATHOP_1POINTS", 
-		"USER_PATHOP_2POINTS", "USER_VARIABLE", "COMMENT", "WHITESPACE"
+		"'palette'", "'rule'", "ARGB", "RATIONAL", "INTEGER", "PATHOP_1POINTS", 
+		"PATHOP_2POINTS", "VARIABLE", "COMMENT", "WHITESPACE"
 	};
 	public static final int
 		RULE_fractal = 0, RULE_orbit = 1, RULE_color = 2, RULE_begin = 3, RULE_loop = 4, 
@@ -365,7 +365,7 @@ public class MandelbrotParser extends Parser {
 			setState(118);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while (_la==USER_VARIABLE) {
+			while (_la==VARIABLE) {
 				{
 				{
 				setState(115); beginstatements();
@@ -394,16 +394,16 @@ public class MandelbrotParser extends Parser {
 		public Token lb;
 		public Token le;
 		public ConditionexpContext e;
-		public List<TerminalNode> USER_INTEGER() { return getTokens(MandelbrotParser.USER_INTEGER); }
-		public TerminalNode USER_INTEGER(int i) {
-			return getToken(MandelbrotParser.USER_INTEGER, i);
-		}
+		public List<TerminalNode> INTEGER() { return getTokens(MandelbrotParser.INTEGER); }
 		public TerminalNode LOOP() { return getToken(MandelbrotParser.LOOP, 0); }
 		public ConditionexpContext conditionexp() {
 			return getRuleContext(ConditionexpContext.class,0);
 		}
 		public List<LoopstatementsContext> loopstatements() {
 			return getRuleContexts(LoopstatementsContext.class);
+		}
+		public TerminalNode INTEGER(int i) {
+			return getToken(MandelbrotParser.INTEGER, i);
 		}
 		public LoopstatementsContext loopstatements(int i) {
 			return getRuleContext(LoopstatementsContext.class,i);
@@ -431,9 +431,9 @@ public class MandelbrotParser extends Parser {
 			{
 			setState(123); ((LoopContext)_localctx).l = match(LOOP);
 			setState(124); match(28);
-			setState(125); ((LoopContext)_localctx).lb = match(USER_INTEGER);
+			setState(125); ((LoopContext)_localctx).lb = match(INTEGER);
 			setState(126); match(19);
-			setState(127); ((LoopContext)_localctx).le = match(USER_INTEGER);
+			setState(127); ((LoopContext)_localctx).le = match(INTEGER);
 			setState(128); match(32);
 			setState(129); match(17);
 			setState(130); ((LoopContext)_localctx).e = conditionexp(0);
@@ -445,7 +445,7 @@ public class MandelbrotParser extends Parser {
 			setState(137);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while (_la==USER_VARIABLE) {
+			while (_la==VARIABLE) {
 				{
 				{
 				setState(134); loopstatements();
@@ -507,7 +507,7 @@ public class MandelbrotParser extends Parser {
 			setState(148);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while (_la==USER_VARIABLE) {
+			while (_la==VARIABLE) {
 				{
 				{
 				setState(145); endstatements();
@@ -535,8 +535,8 @@ public class MandelbrotParser extends Parser {
 		public Token t;
 		public Token n;
 		public ComplexContext c;
-		public TerminalNode USER_VARIABLE() { return getToken(MandelbrotParser.USER_VARIABLE, 0); }
 		public TerminalNode TRAP() { return getToken(MandelbrotParser.TRAP, 0); }
+		public TerminalNode VARIABLE() { return getToken(MandelbrotParser.VARIABLE, 0); }
 		public PathopContext pathop(int i) {
 			return getRuleContext(PathopContext.class,i);
 		}
@@ -568,7 +568,7 @@ public class MandelbrotParser extends Parser {
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(153); ((TrapContext)_localctx).t = match(TRAP);
-			setState(154); ((TrapContext)_localctx).n = match(USER_VARIABLE);
+			setState(154); ((TrapContext)_localctx).n = match(VARIABLE);
 			setState(155); match(28);
 			setState(156); ((TrapContext)_localctx).c = complex();
 			setState(157); match(32);
@@ -579,7 +579,7 @@ public class MandelbrotParser extends Parser {
 			setState(163);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while (_la==USER_PATHOP_1POINTS || _la==USER_PATHOP_2POINTS) {
+			while (_la==PATHOP_1POINTS || _la==PATHOP_2POINTS) {
 				{
 				{
 				setState(160); pathop();
@@ -608,11 +608,11 @@ public class MandelbrotParser extends Parser {
 		public ComplexContext c;
 		public ComplexContext c1;
 		public ComplexContext c2;
-		public TerminalNode USER_PATHOP_2POINTS() { return getToken(MandelbrotParser.USER_PATHOP_2POINTS, 0); }
 		public ComplexContext complex(int i) {
 			return getRuleContext(ComplexContext.class,i);
 		}
-		public TerminalNode USER_PATHOP_1POINTS() { return getToken(MandelbrotParser.USER_PATHOP_1POINTS, 0); }
+		public TerminalNode PATHOP_2POINTS() { return getToken(MandelbrotParser.PATHOP_2POINTS, 0); }
+		public TerminalNode PATHOP_1POINTS() { return getToken(MandelbrotParser.PATHOP_1POINTS, 0); }
 		public List<ComplexContext> complex() {
 			return getRuleContexts(ComplexContext.class);
 		}
@@ -636,10 +636,10 @@ public class MandelbrotParser extends Parser {
 		try {
 			setState(184);
 			switch (_input.LA(1)) {
-			case USER_PATHOP_1POINTS:
+			case PATHOP_1POINTS:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(168); ((PathopContext)_localctx).o = match(USER_PATHOP_1POINTS);
+				setState(168); ((PathopContext)_localctx).o = match(PATHOP_1POINTS);
 				setState(169); match(17);
 				setState(170); ((PathopContext)_localctx).c = complex();
 				setState(171); match(38);
@@ -649,10 +649,10 @@ public class MandelbrotParser extends Parser {
 					
 				}
 				break;
-			case USER_PATHOP_2POINTS:
+			case PATHOP_2POINTS:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(175); ((PathopContext)_localctx).o = match(USER_PATHOP_2POINTS);
+				setState(175); ((PathopContext)_localctx).o = match(PATHOP_2POINTS);
 				setState(176); match(17);
 				setState(177); ((PathopContext)_localctx).c1 = complex();
 				setState(178); match(19);
@@ -809,7 +809,7 @@ public class MandelbrotParser extends Parser {
 		public ASTStatement result;
 		public Token v;
 		public ExpressionContext e;
-		public TerminalNode USER_VARIABLE() { return getToken(MandelbrotParser.USER_VARIABLE, 0); }
+		public TerminalNode VARIABLE() { return getToken(MandelbrotParser.VARIABLE, 0); }
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}
@@ -833,7 +833,7 @@ public class MandelbrotParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(195); ((StatementContext)_localctx).v = match(USER_VARIABLE);
+			setState(195); ((StatementContext)_localctx).v = match(VARIABLE);
 			setState(196); match(5);
 			setState(197); ((StatementContext)_localctx).e = expression(0);
 			setState(198); match(3);
@@ -860,7 +860,7 @@ public class MandelbrotParser extends Parser {
 		public VariablelistContext variablelist() {
 			return getRuleContext(VariablelistContext.class,0);
 		}
-		public TerminalNode USER_VARIABLE() { return getToken(MandelbrotParser.USER_VARIABLE, 0); }
+		public TerminalNode VARIABLE() { return getToken(MandelbrotParser.VARIABLE, 0); }
 		public VariablelistContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -891,7 +891,7 @@ public class MandelbrotParser extends Parser {
 			enterOuterAlt(_localctx, 1);
 			{
 			{
-			setState(202); ((VariablelistContext)_localctx).v = match(USER_VARIABLE);
+			setState(202); ((VariablelistContext)_localctx).v = match(VARIABLE);
 
 					builder.registerStateVariable((((VariablelistContext)_localctx).v!=null?((VariablelistContext)_localctx).v.getText():null), ((VariablelistContext)_localctx).v);
 				
@@ -912,7 +912,7 @@ public class MandelbrotParser extends Parser {
 					setState(205);
 					if (!(precpred(_ctx, 1))) throw new FailedPredicateException(this, "precpred(_ctx, 1)");
 					setState(206); match(19);
-					setState(207); ((VariablelistContext)_localctx).v = match(USER_VARIABLE);
+					setState(207); ((VariablelistContext)_localctx).v = match(VARIABLE);
 
 					          		builder.registerStateVariable((((VariablelistContext)_localctx).v!=null?((VariablelistContext)_localctx).v.getText():null), ((VariablelistContext)_localctx).v);
 					          	
@@ -949,10 +949,10 @@ public class MandelbrotParser extends Parser {
 		public List<ConditionexpContext> conditionexp() {
 			return getRuleContexts(ConditionexpContext.class);
 		}
-		public TerminalNode USER_VARIABLE() { return getToken(MandelbrotParser.USER_VARIABLE, 0); }
 		public ExpressionContext expression(int i) {
 			return getRuleContext(ExpressionContext.class,i);
 		}
+		public TerminalNode VARIABLE() { return getToken(MandelbrotParser.VARIABLE, 0); }
 		public ConditionexpContext conditionexp(int i) {
 			return getRuleContext(ConditionexpContext.class,i);
 		}
@@ -1010,7 +1010,7 @@ public class MandelbrotParser extends Parser {
 
 			case 2:
 				{
-				setState(220); ((ConditionexpContext)_localctx).v = match(USER_VARIABLE);
+				setState(220); ((ConditionexpContext)_localctx).v = match(VARIABLE);
 				setState(221); match(11);
 				setState(222); ((ConditionexpContext)_localctx).e = expression(0);
 
@@ -1021,7 +1021,7 @@ public class MandelbrotParser extends Parser {
 
 			case 3:
 				{
-				setState(225); ((ConditionexpContext)_localctx).v = match(USER_VARIABLE);
+				setState(225); ((ConditionexpContext)_localctx).v = match(VARIABLE);
 				setState(226); match(15);
 				setState(227); ((ConditionexpContext)_localctx).e = expression(0);
 
@@ -1726,7 +1726,7 @@ public class MandelbrotParser extends Parser {
 			{
 			setState(407);
 			switch (_input.LA(1)) {
-			case USER_VARIABLE:
+			case VARIABLE:
 				{
 				setState(383); ((Expression4Context)_localctx).v = variable();
 
@@ -1736,8 +1736,8 @@ public class MandelbrotParser extends Parser {
 				break;
 			case 40:
 			case 42:
-			case USER_RATIONAL:
-			case USER_INTEGER:
+			case RATIONAL:
+			case INTEGER:
 				{
 				setState(386); ((Expression4Context)_localctx).r = real();
 
@@ -1980,7 +1980,7 @@ public class MandelbrotParser extends Parser {
 	public static class VariableContext extends ParserRuleContext {
 		public ASTVariable result;
 		public Token v;
-		public TerminalNode USER_VARIABLE() { return getToken(MandelbrotParser.USER_VARIABLE, 0); }
+		public TerminalNode VARIABLE() { return getToken(MandelbrotParser.VARIABLE, 0); }
 		public VariableContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -2001,7 +2001,7 @@ public class MandelbrotParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(447); ((VariableContext)_localctx).v = match(USER_VARIABLE);
+			setState(447); ((VariableContext)_localctx).v = match(VARIABLE);
 
 					((VariableContext)_localctx).result =  new ASTVariable(((VariableContext)_localctx).v, builder.getVariable((((VariableContext)_localctx).v!=null?((VariableContext)_localctx).v.getText():null), ((VariableContext)_localctx).v));
 				
@@ -2021,8 +2021,8 @@ public class MandelbrotParser extends Parser {
 	public static class RealContext extends ParserRuleContext {
 		public ASTNumber result;
 		public Token r;
-		public TerminalNode USER_INTEGER() { return getToken(MandelbrotParser.USER_INTEGER, 0); }
-		public TerminalNode USER_RATIONAL() { return getToken(MandelbrotParser.USER_RATIONAL, 0); }
+		public TerminalNode INTEGER() { return getToken(MandelbrotParser.INTEGER, 0); }
+		public TerminalNode RATIONAL() { return getToken(MandelbrotParser.RATIONAL, 0); }
 		public RealContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -2045,8 +2045,8 @@ public class MandelbrotParser extends Parser {
 			setState(458);
 			switch (_input.LA(1)) {
 			case 40:
-			case USER_RATIONAL:
-			case USER_INTEGER:
+			case RATIONAL:
+			case INTEGER:
 				enterOuterAlt(_localctx, 1);
 				{
 				setState(451);
@@ -2060,7 +2060,7 @@ public class MandelbrotParser extends Parser {
 				setState(453);
 				((RealContext)_localctx).r = _input.LT(1);
 				_la = _input.LA(1);
-				if ( !(_la==USER_RATIONAL || _la==USER_INTEGER) ) {
+				if ( !(_la==RATIONAL || _la==INTEGER) ) {
 					((RealContext)_localctx).r = (Token)_errHandler.recoverInline(this);
 				}
 				consume();
@@ -2076,7 +2076,7 @@ public class MandelbrotParser extends Parser {
 				setState(456);
 				((RealContext)_localctx).r = _input.LT(1);
 				_la = _input.LA(1);
-				if ( !(_la==USER_RATIONAL || _la==USER_INTEGER) ) {
+				if ( !(_la==RATIONAL || _la==INTEGER) ) {
 					((RealContext)_localctx).r = (Token)_errHandler.recoverInline(this);
 				}
 				consume();
@@ -2105,17 +2105,17 @@ public class MandelbrotParser extends Parser {
 		public Token r;
 		public Token i;
 		public RealContext rn;
-		public List<TerminalNode> USER_INTEGER() { return getTokens(MandelbrotParser.USER_INTEGER); }
-		public TerminalNode USER_RATIONAL(int i) {
-			return getToken(MandelbrotParser.USER_RATIONAL, i);
-		}
-		public TerminalNode USER_INTEGER(int i) {
-			return getToken(MandelbrotParser.USER_INTEGER, i);
-		}
+		public List<TerminalNode> INTEGER() { return getTokens(MandelbrotParser.INTEGER); }
 		public RealContext real() {
 			return getRuleContext(RealContext.class,0);
 		}
-		public List<TerminalNode> USER_RATIONAL() { return getTokens(MandelbrotParser.USER_RATIONAL); }
+		public TerminalNode INTEGER(int i) {
+			return getToken(MandelbrotParser.INTEGER, i);
+		}
+		public TerminalNode RATIONAL(int i) {
+			return getToken(MandelbrotParser.RATIONAL, i);
+		}
+		public List<TerminalNode> RATIONAL() { return getTokens(MandelbrotParser.RATIONAL); }
 		public ComplexContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -2152,7 +2152,7 @@ public class MandelbrotParser extends Parser {
 				setState(464);
 				((ComplexContext)_localctx).r = _input.LT(1);
 				_la = _input.LA(1);
-				if ( !(_la==USER_RATIONAL || _la==USER_INTEGER) ) {
+				if ( !(_la==RATIONAL || _la==INTEGER) ) {
 					((ComplexContext)_localctx).r = (Token)_errHandler.recoverInline(this);
 				}
 				consume();
@@ -2168,7 +2168,7 @@ public class MandelbrotParser extends Parser {
 				setState(469);
 				((ComplexContext)_localctx).i = _input.LT(1);
 				_la = _input.LA(1);
-				if ( !(_la==USER_RATIONAL || _la==USER_INTEGER) ) {
+				if ( !(_la==RATIONAL || _la==INTEGER) ) {
 					((ComplexContext)_localctx).i = (Token)_errHandler.recoverInline(this);
 				}
 				consume();
@@ -2194,7 +2194,7 @@ public class MandelbrotParser extends Parser {
 				setState(476);
 				((ComplexContext)_localctx).r = _input.LT(1);
 				_la = _input.LA(1);
-				if ( !(_la==USER_RATIONAL || _la==USER_INTEGER) ) {
+				if ( !(_la==RATIONAL || _la==INTEGER) ) {
 					((ComplexContext)_localctx).r = (Token)_errHandler.recoverInline(this);
 				}
 				consume();
@@ -2203,7 +2203,7 @@ public class MandelbrotParser extends Parser {
 				setState(479);
 				((ComplexContext)_localctx).i = _input.LT(1);
 				_la = _input.LA(1);
-				if ( !(_la==USER_RATIONAL || _la==USER_INTEGER) ) {
+				if ( !(_la==RATIONAL || _la==INTEGER) ) {
 					((ComplexContext)_localctx).i = (Token)_errHandler.recoverInline(this);
 				}
 				consume();
@@ -2222,7 +2222,7 @@ public class MandelbrotParser extends Parser {
 				setState(484);
 				((ComplexContext)_localctx).r = _input.LT(1);
 				_la = _input.LA(1);
-				if ( !(_la==USER_RATIONAL || _la==USER_INTEGER) ) {
+				if ( !(_la==RATIONAL || _la==INTEGER) ) {
 					((ComplexContext)_localctx).r = (Token)_errHandler.recoverInline(this);
 				}
 				consume();
@@ -2238,7 +2238,7 @@ public class MandelbrotParser extends Parser {
 				setState(489);
 				((ComplexContext)_localctx).i = _input.LT(1);
 				_la = _input.LA(1);
-				if ( !(_la==USER_RATIONAL || _la==USER_INTEGER) ) {
+				if ( !(_la==RATIONAL || _la==INTEGER) ) {
 					((ComplexContext)_localctx).i = (Token)_errHandler.recoverInline(this);
 				}
 				consume();
@@ -2257,7 +2257,7 @@ public class MandelbrotParser extends Parser {
 				setState(494);
 				((ComplexContext)_localctx).r = _input.LT(1);
 				_la = _input.LA(1);
-				if ( !(_la==USER_RATIONAL || _la==USER_INTEGER) ) {
+				if ( !(_la==RATIONAL || _la==INTEGER) ) {
 					((ComplexContext)_localctx).r = (Token)_errHandler.recoverInline(this);
 				}
 				consume();
@@ -2266,7 +2266,7 @@ public class MandelbrotParser extends Parser {
 				setState(497);
 				((ComplexContext)_localctx).i = _input.LT(1);
 				_la = _input.LA(1);
-				if ( !(_la==USER_RATIONAL || _la==USER_INTEGER) ) {
+				if ( !(_la==RATIONAL || _la==INTEGER) ) {
 					((ComplexContext)_localctx).i = (Token)_errHandler.recoverInline(this);
 				}
 				consume();
@@ -2291,7 +2291,7 @@ public class MandelbrotParser extends Parser {
 				setState(503);
 				((ComplexContext)_localctx).r = _input.LT(1);
 				_la = _input.LA(1);
-				if ( !(_la==USER_RATIONAL || _la==USER_INTEGER) ) {
+				if ( !(_la==RATIONAL || _la==INTEGER) ) {
 					((ComplexContext)_localctx).r = (Token)_errHandler.recoverInline(this);
 				}
 				consume();
@@ -2299,7 +2299,7 @@ public class MandelbrotParser extends Parser {
 				setState(505);
 				((ComplexContext)_localctx).i = _input.LT(1);
 				_la = _input.LA(1);
-				if ( !(_la==USER_RATIONAL || _la==USER_INTEGER) ) {
+				if ( !(_la==RATIONAL || _la==INTEGER) ) {
 					((ComplexContext)_localctx).i = (Token)_errHandler.recoverInline(this);
 				}
 				consume();
@@ -2324,7 +2324,7 @@ public class MandelbrotParser extends Parser {
 				setState(511);
 				((ComplexContext)_localctx).r = _input.LT(1);
 				_la = _input.LA(1);
-				if ( !(_la==USER_RATIONAL || _la==USER_INTEGER) ) {
+				if ( !(_la==RATIONAL || _la==INTEGER) ) {
 					((ComplexContext)_localctx).r = (Token)_errHandler.recoverInline(this);
 				}
 				consume();
@@ -2332,7 +2332,7 @@ public class MandelbrotParser extends Parser {
 				setState(513);
 				((ComplexContext)_localctx).i = _input.LT(1);
 				_la = _input.LA(1);
-				if ( !(_la==USER_RATIONAL || _la==USER_INTEGER) ) {
+				if ( !(_la==RATIONAL || _la==INTEGER) ) {
 					((ComplexContext)_localctx).i = (Token)_errHandler.recoverInline(this);
 				}
 				consume();
@@ -2357,7 +2357,7 @@ public class MandelbrotParser extends Parser {
 				setState(519);
 				((ComplexContext)_localctx).i = _input.LT(1);
 				_la = _input.LA(1);
-				if ( !(_la==USER_RATIONAL || _la==USER_INTEGER) ) {
+				if ( !(_la==RATIONAL || _la==INTEGER) ) {
 					((ComplexContext)_localctx).i = (Token)_errHandler.recoverInline(this);
 				}
 				consume();
@@ -2375,7 +2375,7 @@ public class MandelbrotParser extends Parser {
 				setState(523);
 				((ComplexContext)_localctx).r = _input.LT(1);
 				_la = _input.LA(1);
-				if ( !(_la==USER_RATIONAL || _la==USER_INTEGER) ) {
+				if ( !(_la==RATIONAL || _la==INTEGER) ) {
 					((ComplexContext)_localctx).r = (Token)_errHandler.recoverInline(this);
 				}
 				consume();
@@ -2383,7 +2383,7 @@ public class MandelbrotParser extends Parser {
 				setState(525);
 				((ComplexContext)_localctx).i = _input.LT(1);
 				_la = _input.LA(1);
-				if ( !(_la==USER_RATIONAL || _la==USER_INTEGER) ) {
+				if ( !(_la==RATIONAL || _la==INTEGER) ) {
 					((ComplexContext)_localctx).i = (Token)_errHandler.recoverInline(this);
 				}
 				consume();
@@ -2401,7 +2401,7 @@ public class MandelbrotParser extends Parser {
 				setState(529);
 				((ComplexContext)_localctx).r = _input.LT(1);
 				_la = _input.LA(1);
-				if ( !(_la==USER_RATIONAL || _la==USER_INTEGER) ) {
+				if ( !(_la==RATIONAL || _la==INTEGER) ) {
 					((ComplexContext)_localctx).r = (Token)_errHandler.recoverInline(this);
 				}
 				consume();
@@ -2409,7 +2409,7 @@ public class MandelbrotParser extends Parser {
 				setState(531);
 				((ComplexContext)_localctx).i = _input.LT(1);
 				_la = _input.LA(1);
-				if ( !(_la==USER_RATIONAL || _la==USER_INTEGER) ) {
+				if ( !(_la==RATIONAL || _la==INTEGER) ) {
 					((ComplexContext)_localctx).i = (Token)_errHandler.recoverInline(this);
 				}
 				consume();
@@ -2427,7 +2427,7 @@ public class MandelbrotParser extends Parser {
 				setState(535);
 				((ComplexContext)_localctx).i = _input.LT(1);
 				_la = _input.LA(1);
-				if ( !(_la==USER_RATIONAL || _la==USER_INTEGER) ) {
+				if ( !(_la==RATIONAL || _la==INTEGER) ) {
 					((ComplexContext)_localctx).i = (Token)_errHandler.recoverInline(this);
 				}
 				consume();
@@ -2467,10 +2467,10 @@ public class MandelbrotParser extends Parser {
 		public List<PaletteelementContext> paletteelement() {
 			return getRuleContexts(PaletteelementContext.class);
 		}
-		public TerminalNode USER_VARIABLE() { return getToken(MandelbrotParser.USER_VARIABLE, 0); }
 		public PaletteelementContext paletteelement(int i) {
 			return getRuleContext(PaletteelementContext.class,i);
 		}
+		public TerminalNode VARIABLE() { return getToken(MandelbrotParser.VARIABLE, 0); }
 		public PaletteContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -2493,7 +2493,7 @@ public class MandelbrotParser extends Parser {
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(543); ((PaletteContext)_localctx).p = match(PALETTE);
-			setState(544); ((PaletteContext)_localctx).v = match(USER_VARIABLE);
+			setState(544); ((PaletteContext)_localctx).v = match(VARIABLE);
 
 					builder.addPalette(new ASTPalette(((PaletteContext)_localctx).p, (((PaletteContext)_localctx).v!=null?((PaletteContext)_localctx).v.getText():null))); 
 				
@@ -2531,7 +2531,7 @@ public class MandelbrotParser extends Parser {
 		public ColorargbContext ec;
 		public Token s;
 		public ExpressionContext e;
-		public TerminalNode USER_INTEGER() { return getToken(MandelbrotParser.USER_INTEGER, 0); }
+		public TerminalNode INTEGER() { return getToken(MandelbrotParser.INTEGER, 0); }
 		public ColorargbContext colorargb(int i) {
 			return getRuleContext(ColorargbContext.class,i);
 		}
@@ -2569,7 +2569,7 @@ public class MandelbrotParser extends Parser {
 				setState(556); match(33);
 				setState(557); ((PaletteelementContext)_localctx).ec = colorargb();
 				setState(558); match(19);
-				setState(559); ((PaletteelementContext)_localctx).s = match(USER_INTEGER);
+				setState(559); ((PaletteelementContext)_localctx).s = match(INTEGER);
 				setState(560); match(19);
 				setState(561); ((PaletteelementContext)_localctx).e = expression(0);
 				setState(562); match(32);
@@ -2588,7 +2588,7 @@ public class MandelbrotParser extends Parser {
 				setState(568); match(33);
 				setState(569); ((PaletteelementContext)_localctx).ec = colorargb();
 				setState(570); match(19);
-				setState(571); ((PaletteelementContext)_localctx).s = match(USER_INTEGER);
+				setState(571); ((PaletteelementContext)_localctx).s = match(INTEGER);
 				setState(572); match(32);
 				setState(573); match(3);
 
@@ -2615,11 +2615,11 @@ public class MandelbrotParser extends Parser {
 		public Token o;
 		public ColorexpContext c;
 		public TerminalNode RULE() { return getToken(MandelbrotParser.RULE, 0); }
-		public TerminalNode USER_INTEGER() { return getToken(MandelbrotParser.USER_INTEGER, 0); }
+		public TerminalNode INTEGER() { return getToken(MandelbrotParser.INTEGER, 0); }
 		public ColorexpContext colorexp() {
 			return getRuleContext(ColorexpContext.class,0);
 		}
-		public TerminalNode USER_RATIONAL() { return getToken(MandelbrotParser.USER_RATIONAL, 0); }
+		public TerminalNode RATIONAL() { return getToken(MandelbrotParser.RATIONAL, 0); }
 		public RuleexpContext ruleexp() {
 			return getRuleContext(RuleexpContext.class,0);
 		}
@@ -2652,7 +2652,7 @@ public class MandelbrotParser extends Parser {
 			setState(583);
 			((ColorruleContext)_localctx).o = _input.LT(1);
 			_la = _input.LA(1);
-			if ( !(_la==USER_RATIONAL || _la==USER_INTEGER) ) {
+			if ( !(_la==RATIONAL || _la==INTEGER) ) {
 				((ColorruleContext)_localctx).o = (Token)_errHandler.recoverInline(this);
 			}
 			consume();
@@ -2793,10 +2793,10 @@ public class MandelbrotParser extends Parser {
 		public ExpressionContext e4;
 		public Token v;
 		public ExpressionContext e;
-		public TerminalNode USER_VARIABLE() { return getToken(MandelbrotParser.USER_VARIABLE, 0); }
 		public ExpressionContext expression(int i) {
 			return getRuleContext(ExpressionContext.class,i);
 		}
+		public TerminalNode VARIABLE() { return getToken(MandelbrotParser.VARIABLE, 0); }
 		public List<ExpressionContext> expression() {
 			return getRuleContexts(ExpressionContext.class);
 		}
@@ -2863,7 +2863,7 @@ public class MandelbrotParser extends Parser {
 			case 4:
 				enterOuterAlt(_localctx, 4);
 				{
-				setState(625); ((ColorexpContext)_localctx).v = match(USER_VARIABLE);
+				setState(625); ((ColorexpContext)_localctx).v = match(VARIABLE);
 				setState(626); match(28);
 				setState(627); ((ColorexpContext)_localctx).e = expression(0);
 				setState(628); match(32);
@@ -2892,15 +2892,15 @@ public class MandelbrotParser extends Parser {
 		public Token g;
 		public Token b;
 		public Token argb;
-		public List<TerminalNode> USER_INTEGER() { return getTokens(MandelbrotParser.USER_INTEGER); }
-		public TerminalNode USER_RATIONAL(int i) {
-			return getToken(MandelbrotParser.USER_RATIONAL, i);
+		public List<TerminalNode> INTEGER() { return getTokens(MandelbrotParser.INTEGER); }
+		public TerminalNode INTEGER(int i) {
+			return getToken(MandelbrotParser.INTEGER, i);
 		}
-		public TerminalNode USER_INTEGER(int i) {
-			return getToken(MandelbrotParser.USER_INTEGER, i);
+		public TerminalNode ARGB() { return getToken(MandelbrotParser.ARGB, 0); }
+		public TerminalNode RATIONAL(int i) {
+			return getToken(MandelbrotParser.RATIONAL, i);
 		}
-		public TerminalNode USER_ARGB() { return getToken(MandelbrotParser.USER_ARGB, 0); }
-		public List<TerminalNode> USER_RATIONAL() { return getTokens(MandelbrotParser.USER_RATIONAL); }
+		public List<TerminalNode> RATIONAL() { return getTokens(MandelbrotParser.RATIONAL); }
 		public ColorargbContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -2929,7 +2929,7 @@ public class MandelbrotParser extends Parser {
 				setState(634);
 				((ColorargbContext)_localctx).a = _input.LT(1);
 				_la = _input.LA(1);
-				if ( !(_la==USER_RATIONAL || _la==USER_INTEGER) ) {
+				if ( !(_la==RATIONAL || _la==INTEGER) ) {
 					((ColorargbContext)_localctx).a = (Token)_errHandler.recoverInline(this);
 				}
 				consume();
@@ -2937,7 +2937,7 @@ public class MandelbrotParser extends Parser {
 				setState(636);
 				((ColorargbContext)_localctx).r = _input.LT(1);
 				_la = _input.LA(1);
-				if ( !(_la==USER_RATIONAL || _la==USER_INTEGER) ) {
+				if ( !(_la==RATIONAL || _la==INTEGER) ) {
 					((ColorargbContext)_localctx).r = (Token)_errHandler.recoverInline(this);
 				}
 				consume();
@@ -2945,7 +2945,7 @@ public class MandelbrotParser extends Parser {
 				setState(638);
 				((ColorargbContext)_localctx).g = _input.LT(1);
 				_la = _input.LA(1);
-				if ( !(_la==USER_RATIONAL || _la==USER_INTEGER) ) {
+				if ( !(_la==RATIONAL || _la==INTEGER) ) {
 					((ColorargbContext)_localctx).g = (Token)_errHandler.recoverInline(this);
 				}
 				consume();
@@ -2953,7 +2953,7 @@ public class MandelbrotParser extends Parser {
 				setState(640);
 				((ColorargbContext)_localctx).b = _input.LT(1);
 				_la = _input.LA(1);
-				if ( !(_la==USER_RATIONAL || _la==USER_INTEGER) ) {
+				if ( !(_la==RATIONAL || _la==INTEGER) ) {
 					((ColorargbContext)_localctx).b = (Token)_errHandler.recoverInline(this);
 				}
 				consume();
@@ -2967,7 +2967,7 @@ public class MandelbrotParser extends Parser {
 				enterOuterAlt(_localctx, 2);
 				{
 				setState(643); match(35);
-				setState(644); ((ColorargbContext)_localctx).argb = match(USER_ARGB);
+				setState(644); ((ColorargbContext)_localctx).argb = match(ARGB);
 
 						((ColorargbContext)_localctx).result =  new ASTColorARGB((int)(0xFFFFFFFF & builder.parseLong((((ColorargbContext)_localctx).argb!=null?((ColorargbContext)_localctx).argb.getText():null), 16)));
 					
