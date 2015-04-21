@@ -41,7 +41,7 @@ public class Palette {
 
 	public float[] get(double n) {
 		if (table != null) {
-			return table[((int)Math.rint(n - 1)) % table.length];
+			return table[((int)Math.rint(n)) % table.length];
 		}
 		return DEFAULT;
 	}
