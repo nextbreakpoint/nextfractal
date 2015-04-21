@@ -19,6 +19,19 @@ public class MandelbrotBaseListener implements MandelbrotListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterConstant(@NotNull MandelbrotParser.ConstantContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitConstant(@NotNull MandelbrotParser.ConstantContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterColor(@NotNull MandelbrotParser.ColorContext ctx) { }
 	/**
 	 * {@inheritDoc}

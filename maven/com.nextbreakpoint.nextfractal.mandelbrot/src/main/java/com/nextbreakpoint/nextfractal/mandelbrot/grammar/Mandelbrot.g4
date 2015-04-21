@@ -137,6 +137,10 @@ conditionexp returns [ASTConditionExpression result]
 	
 expression returns [ASTExpression result]
 	:
+	p=constant {
+		$result = $p.result;
+	}
+	|
 	v=variable {
 		$result = $v.result;
 	}
@@ -184,6 +188,10 @@ expression returns [ASTExpression result]
 
 expression2 returns [ASTExpression result]
 	:
+	p=constant {
+		$result = $p.result;
+	}
+	|
 	v=variable {
 		$result = $v.result;
 	}
@@ -227,6 +235,10 @@ expression2 returns [ASTExpression result]
 
 expression3 returns [ASTExpression result]
 	:
+	p=constant {
+		$result = $p.result;
+	}
+	|
 	v=variable {
 		$result = $v.result;
 	}
@@ -262,6 +274,10 @@ expression3 returns [ASTExpression result]
 
 expression4 returns [ASTExpression result]
 	:
+	p=constant {
+		$result = $p.result;
+	}
+	|
 	v=variable {
 		$result = $v.result;
 	}
@@ -310,6 +326,21 @@ function returns [ASTFunction result]
 	}
 	;
 			
+constant returns [ASTNumber result]
+	:
+	p='e' {
+		$result = new ASTNumber($p, Math.E);
+	}
+	|
+	p='pi' {
+		$result = new ASTNumber($p, Math.PI);
+	}
+	|
+	p='2pi' {
+		$result = new ASTNumber($p, 2 * Math.PI);
+	}
+	;
+	
 variable returns [ASTVariable result]
 	:
 	v=VARIABLE {

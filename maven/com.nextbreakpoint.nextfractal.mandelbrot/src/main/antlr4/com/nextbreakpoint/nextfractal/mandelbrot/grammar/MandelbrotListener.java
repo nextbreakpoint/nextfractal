@@ -11,6 +11,17 @@ import org.antlr.v4.runtime.tree.ParseTreeListener;
  */
 public interface MandelbrotListener extends ParseTreeListener {
 	/**
+	 * Enter a parse tree produced by {@link MandelbrotParser#constant}.
+	 * @param ctx the parse tree
+	 */
+	void enterConstant(@NotNull MandelbrotParser.ConstantContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link MandelbrotParser#constant}.
+	 * @param ctx the parse tree
+	 */
+	void exitConstant(@NotNull MandelbrotParser.ConstantContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link MandelbrotParser#color}.
 	 * @param ctx the parse tree
 	 */
