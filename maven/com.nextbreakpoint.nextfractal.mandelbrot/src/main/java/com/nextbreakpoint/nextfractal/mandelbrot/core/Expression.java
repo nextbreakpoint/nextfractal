@@ -157,7 +157,15 @@ public class Expression {
 	}
 
 	public static double funcAtan2(double x, double y) {
-		return Math.atan2(x, y);
+		return Math.atan2(y, x);
+	}
+
+	public static double funcRe(double n) {
+		return n;
+	}
+
+	public static double funcIm(double n) {
+		return n;
 	}
 
 	public static double funcMod(Number x) {
