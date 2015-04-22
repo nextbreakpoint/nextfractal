@@ -32,9 +32,7 @@ public abstract class Orbit {
 	protected Number point = new Number(0, 0);
 	protected Number x = new Number(0,0);
 	protected Number w = new Number(0,0);
-	protected Number z = new Number(0,0);
 	protected Number n = new Number(0);
-	protected Number c = new Number(0);
 	protected Scope scope;
 
 	public Orbit() {
@@ -66,16 +64,8 @@ public abstract class Orbit {
 		return w;
 	}
 
-	public Number getZ() {
-		return z;
-	}
-
 	public Number getN() {
 		return n;
-	}
-
-	public Number getC() {
-		return c;
 	}
 
 	protected Trap trap(Number center) {
