@@ -26,10 +26,35 @@ package com.nextbreakpoint.nextfractal.mandelbrot.grammar;
 
 import org.antlr.v4.runtime.Token;
 
-public abstract class ASTStatement extends ASTObject {
-	public ASTStatement(Token location) {
+public class ASTAssignStatement extends ASTStatement {
+	private String name;
+	private ASTExpression exp;
+
+	public ASTAssignStatement(Token location, String name, ASTExpression exp) {
 		super(location);
+		this.name = name;
+		this.exp = exp;
 	}
 
-	public abstract void compile(ASTExpressionCompiler compiler);
+	public String getName() {
+		return name;
+	}
+
+	public ASTExpression getExp() {
+		return exp;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append(name);
+		builder.append(" = ");
+		builder.append(exp);
+		return builder.toString();
+	}
+
+	@Override
+	public void compile(ASTExpressionCompiler compiler) {
+		compiler.compile(this);
+	}
 }

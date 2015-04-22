@@ -148,6 +148,18 @@ public class Expression {
 		return Math.sqrt(x);
 	}
 
+	public static double funcAbs(double x) {
+		return Math.abs(x);
+	}
+
+	public static double funcRe(double x) {
+		return x;
+	}
+
+	public static double funcIm(double x) {
+		return x;
+	}
+
 	public static double funcPow(double x, double y) {
 		return Math.pow(x, y);
 	}
@@ -160,12 +172,12 @@ public class Expression {
 		return Math.atan2(y, x);
 	}
 
-	public static double funcRe(double n) {
-		return n;
+	public static double funcMax(double x, double y) {
+		return Math.max(y, x);
 	}
 
-	public static double funcIm(double n) {
-		return n;
+	public static double funcMin(double x, double y) {
+		return Math.min(y, x);
 	}
 
 	public static double funcMod(Number x) {

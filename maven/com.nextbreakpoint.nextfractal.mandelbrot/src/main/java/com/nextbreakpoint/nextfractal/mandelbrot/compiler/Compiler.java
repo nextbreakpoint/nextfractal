@@ -396,12 +396,12 @@ public class Compiler {
 
 	private void compile(StringBuilder builder,	Map<String, CompilerVariable> variables, ASTRule rule) {
 		builder.append("if (");
-		rule.getRuleExp().compile(new ExpressionCompiler(builder));
+		rule.getRuleExp().compile(new ExpressionCompiler(variables, builder));
 		builder.append(") {\n");
 		builder.append("addColor(");
 		builder.append(rule.getOpacity());
 		builder.append(",");
-		rule.getColorExp().compile(new ExpressionCompiler(builder));
+		rule.getColorExp().compile(new ExpressionCompiler(variables, builder));
 		builder.append(");\n}\n");
 	}
 
@@ -428,7 +428,7 @@ public class Compiler {
 		builder.append(",(start, end, step) -> { return ");
 		if (element.getExp() != null) {
 			if (element.getExp().isReal()) {
-				element.getExp().compile(new ExpressionCompiler(builder));
+				element.getExp().compile(new ExpressionCompiler(variables, builder));
 			} else {
 				throw new ASTException("Expression type not valid: " + element.getLocation().getText(), element.getLocation());
 			}
@@ -486,19 +486,19 @@ public class Compiler {
 			builder.append("(");
 			if (operator.getC1().isReal()) {
 				builder.append("number(");
-				operator.getC1().compile(new ExpressionCompiler(builder));
+				operator.getC1().compile(new ExpressionCompiler(variables, builder));
 				builder.append(")");
 			} else {
-				operator.getC1().compile(new ExpressionCompiler(builder));
+				operator.getC1().compile(new ExpressionCompiler(variables, builder));
 			}
 			if (operator.getC2() != null) {
 				builder.append(",");
 				if (operator.getC2().isReal()) {
 					builder.append("number(");
-					operator.getC2().compile(new ExpressionCompiler(builder));
+					operator.getC2().compile(new ExpressionCompiler(variables, builder));
 					builder.append(")");
 				} else {
-					operator.getC2().compile(new ExpressionCompiler(builder));
+					operator.getC2().compile(new ExpressionCompiler(variables, builder));
 				}
 			}
 			builder.append(")");
@@ -546,7 +546,7 @@ public class Compiler {
 			builder.append(" });\n");
 			builder.append("}\n");
 			builder.append("if (");
-			loop.getExpression().compile(new ExpressionCompiler(builder));
+			loop.getExpression().compile(new ExpressionCompiler(variables, builder));
 			builder.append(") { n = number(i); break; }\n");
 			builder.append("}\n");
 		}
@@ -554,22 +554,7 @@ public class Compiler {
 
 	private void compile(StringBuilder builder, Map<String, CompilerVariable> variables, ASTStatement statement) {
 		if (statement != null) {
-			CompilerVariable var = variables.get(statement.getName());
-			if (var != null) {
-				if ((var.isReal() && statement.getExp().isReal()) || (!var.isReal() && !statement.getExp().isReal())) {
-					builder.append(statement.getName());
-					builder.append(" = ");
-					statement.getExp().compile(new ExpressionCompiler(builder));
-					builder.append(";\n");
-				} else if (!var.isReal() && statement.getExp().isReal()) {
-					builder.append(statement.getName());
-					builder.append(" = number(");
-					statement.getExp().compile(new ExpressionCompiler(builder));
-					builder.append(",0);\n");
-				} else if (var.isReal() && !statement.getExp().isReal()) {
-					throw new ASTException("Expression not assignable: " + statement.getLocation().getText(), statement.getLocation());
-				}
-			}
+			statement.compile(new ExpressionCompiler(variables, builder));
 		}		
 	}
 	

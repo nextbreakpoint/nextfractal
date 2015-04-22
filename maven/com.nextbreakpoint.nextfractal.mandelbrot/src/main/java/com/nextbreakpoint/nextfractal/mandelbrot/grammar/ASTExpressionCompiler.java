@@ -41,11 +41,15 @@ public interface ASTExpressionCompiler {
 
 	public void compile(ASTConditionTrap trap);
 
-	public void compile(ASTRuleLogicOpExpression astRuleLogicOpExpression);
+	public void compile(ASTRuleLogicOpExpression logicOp);
 
-	public void compile(ASTRuleCompareOpExpression astRuleOpExpression);
+	public void compile(ASTRuleCompareOpExpression compareOp);
 
-	public void compile(ASTColorPalette astColorPalette);
+	public void compile(ASTColorPalette palette);
 
-	public void compile(ASTColorComponent astColorComponent);
+	public void compile(ASTColorComponent component);
+
+	public void compile(ASTConditionalStatement statement);
+
+	public void compile(ASTAssignStatement statement);
 }

@@ -24,12 +24,16 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.compiler;
 
+import java.util.Map;
+
+import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTAssignStatement;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTColorComponent;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTColorPalette;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTConditionCompareOp;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTConditionExpression;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTConditionLogicOp;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTConditionTrap;
+import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTConditionalStatement;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTException;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTExpression;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTExpressionCompiler;
@@ -43,9 +47,11 @@ import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTRuleLogicOpExpressio
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTVariable;
 
 public class ExpressionCompiler implements ASTExpressionCompiler {
+	private final Map<String, CompilerVariable> variables;
 	private final StringBuilder builder;
 	
-	public ExpressionCompiler(StringBuilder builder) {
+	public ExpressionCompiler(Map<String, CompilerVariable> variables, StringBuilder builder) {
+		this.variables = variables;
 		this.builder = builder;
 	}
 
@@ -444,5 +450,34 @@ public class ExpressionCompiler implements ASTExpressionCompiler {
 			component.getExp4().compile(this);
 		}
 		builder.append(")");
+	}
+
+	@Override
+	public void compile(ASTConditionalStatement statement) {
+		builder.append("if (");
+		statement.getConditionExp().compile(this);
+		builder.append(") {\n");
+		statement.getStatement().compile(this);
+		builder.append("}\n");
+	}
+
+	@Override
+	public void compile(ASTAssignStatement statement) {
+		CompilerVariable var = variables.get(statement.getName());
+		if (var != null) {
+			if ((var.isReal() && statement.getExp().isReal()) || (!var.isReal() && !statement.getExp().isReal())) {
+				builder.append(statement.getName());
+				builder.append(" = ");
+				statement.getExp().compile(this);
+				builder.append(";\n");
+			} else if (!var.isReal() && statement.getExp().isReal()) {
+				builder.append(statement.getName());
+				builder.append(" = number(");
+				statement.getExp().compile(this);
+				builder.append(",0);\n");
+			} else if (var.isReal() && !statement.getExp().isReal()) {
+				throw new ASTException("Expression not assignable: " + statement.getLocation().getText(), statement.getLocation());
+			}
+		}
 	}
 }

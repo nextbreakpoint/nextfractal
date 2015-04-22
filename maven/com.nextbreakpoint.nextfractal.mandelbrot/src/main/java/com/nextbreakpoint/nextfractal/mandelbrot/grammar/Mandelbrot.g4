@@ -100,8 +100,12 @@ endstatements
 statement returns [ASTStatement result]
 	:
 	v=VARIABLE '=' e=expression ';' {
-		$result = new ASTStatement($v, $v.text, $e.result);
+		$result = new ASTAssignStatement($v, $v.text, $e.result);
 		builder.registerVariable($v.text, $e.result.isReal(), $v);
+	}
+	|
+	f=IF '(' c=conditionexp ')' '{' s=statement '}' {
+		$result = new ASTConditionalStatement($f, $c.result, $s.result);
 	}
 	;
 		
@@ -317,11 +321,11 @@ function returns [ASTFunction result]
 		$result = new ASTFunction($f, $f.text, new ASTExpression[] { $e.result });		
 	}
 	|
-	f=('log' | 'exp' | 'sqrt') '(' e=expression ')' {
+	f=('log' | 'exp' | 'sqrt' | 'abs') '(' e=expression ')' {
 		$result = new ASTFunction($f, $f.text, new ASTExpression[] { $e.result });		
 	}
 	|
-	f=('pow' | 'atan2' | 'hypot') '(' e1=expression ',' e2=expression ')' {
+	f=('pow' | 'atan2' | 'hypot' | 'max' | 'min') '(' e1=expression ',' e2=expression ')' {
 		$result = new ASTFunction($f, $f.text, new ASTExpression[] { $e1.result, $e2.result });		
 	}
 	;
@@ -492,11 +496,6 @@ TRAP
 	'trap'
 	;
  
-CONDITION 
-	:
-	'condition'
-	;
- 
 BEGIN 
 	:
 	'begin'
@@ -510,6 +509,11 @@ LOOP
 END 
 	:
 	'end'
+	;
+	
+IF 
+	:
+	'if'
 	;
 	
 COLOR 
