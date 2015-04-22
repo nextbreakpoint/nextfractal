@@ -101,6 +101,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 	private MandelbrotImageGenerator generator;
 	private AnimationTimer timer;
 	private FileChooser fileChooser;
+	private File currentFile;
 	private StringObservableValue errorProperty;
 	private BooleanObservableValue hideOrbitProperty;
 	private BooleanObservableValue hideErrorsProperty;
@@ -1033,8 +1034,13 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 		}
 		createFileChooser(encoder.getSuffix());
 		fileChooser.setTitle("Export");
+		if (currentFile != null) {
+			fileChooser.setInitialDirectory(currentFile.getParentFile());
+			fileChooser.setInitialFileName(currentFile.getName());
+		}
 		File file = fileChooser.showSaveDialog(null);
 		if (file != null) {
+			currentFile = file;
 			MandelbrotData data = exportData; 
 			exportExecutor.submit(new Runnable() {
 				@Override

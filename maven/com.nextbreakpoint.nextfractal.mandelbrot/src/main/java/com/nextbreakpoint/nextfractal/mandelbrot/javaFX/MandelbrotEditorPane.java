@@ -250,6 +250,10 @@ public class MandelbrotEditorPane extends BorderPane {
 		loadButton.setOnAction(e -> {
 			createFileChooser(".m");
 			fileChooser.setTitle("Load");
+			if (currentFile != null) {
+				fileChooser.setInitialDirectory(currentFile.getParentFile());
+				fileChooser.setInitialFileName(currentFile.getName());
+			}
 			File file = fileChooser.showOpenDialog(null);
 			if (file != null) {
 				currentFile = file;
@@ -268,6 +272,10 @@ public class MandelbrotEditorPane extends BorderPane {
 		saveButton.setOnAction(e -> {
 			createFileChooser(".m");
 			fileChooser.setTitle("Save");
+			if (currentFile != null) {
+				fileChooser.setInitialDirectory(currentFile.getParentFile());
+				fileChooser.setInitialFileName(currentFile.getName());
+			}
 			File file = fileChooser.showSaveDialog(null);
 			if (file != null) {
 				currentFile = file;
