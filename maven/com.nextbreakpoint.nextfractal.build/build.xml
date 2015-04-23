@@ -173,6 +173,9 @@
 	<condition property="is_macosx">
 		<os family="mac" />
 	</condition>
+	<target name="clean">
+		<maven basedir="${basedir}" goal="clean" resultproperty="maven.build.result" />
+	</target>
 	<target name="build-macosx-32bit" if="is_macosx">
 		<!-- osx 32bit -->
 		<buildosx basedir="${basedir}" os="macosx" arch="x86" version="${nextfractal.version}" resultproperty="ant.build.result" />
@@ -248,5 +251,5 @@
 	<target name="build-linux" depends="build-linux-32bit, build-linux-64bit" />
 	<target name="build" depends="build-macosx, build-win32, build-linux" />
 	<target name="setup" depends="-clear, -ffmpeg4java, -freeimage4java" />
-	<target name="all" depends="setup, build" />
+	<target name="all" depends="setup, clean, build" />
 </project>
