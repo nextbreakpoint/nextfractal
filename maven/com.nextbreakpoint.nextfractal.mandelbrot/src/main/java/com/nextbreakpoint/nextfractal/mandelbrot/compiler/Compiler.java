@@ -536,8 +536,12 @@ public class Compiler {
 
 	private void compile(StringBuilder builder, Map<String, CompilerVariable> variables, ASTOrbitLoop loop, Collection<CompilerVariable> stateVariables) {
 		if (loop != null) {
-			builder.append("n.set(0);\n");
-			builder.append("for (int i = 1; i <= ");
+			builder.append("n.set(");
+			builder.append(loop.getBegin());
+			builder.append(");\n");
+			builder.append("for (int i = ");
+			builder.append(loop.getBegin());
+			builder.append(" + 1; i <= ");
 			builder.append(loop.getEnd());
 			builder.append("; i++) {\n");
 			for (ASTStatement statement : loop.getStatements()) {
