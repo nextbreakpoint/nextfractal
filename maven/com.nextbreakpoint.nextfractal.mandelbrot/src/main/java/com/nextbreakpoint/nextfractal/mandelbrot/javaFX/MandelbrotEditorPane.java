@@ -436,11 +436,11 @@ public class MandelbrotEditorPane extends BorderPane {
 
 	private void initHighlightingPattern() {
 		String[] KEYWORDS = new String[] {
-	        "fractal", "orbit", "color", "begin", "loop", "end", "rule", "trap", "palette", "condition"
+	        "fractal", "orbit", "color", "begin", "loop", "end", "rule", "trap", "palette", "if", "init"
 		};
 		
 		String[] FUNCTIONS = new String[] {
-		        "re", "im", "mod", "pha", "log", "exp", "sqrt", "pow", "hypot", "atan2", "cos", "sin", "tan", "asin", "acos", "atan"
+		        "re", "im", "mod", "pha", "log", "exp", "sqrt", "abs", "pow", "hypot", "atan2", "min", "max", "cos", "sin", "tan", "asin", "acos", "atan"
 		};
 		
 		String KEYWORD_PATTERN = "\\b(" + String.join("|", KEYWORDS) + ")\\b";

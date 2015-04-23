@@ -30,7 +30,6 @@ import java.util.List;
 import org.antlr.v4.runtime.Token;
 
 public class ASTOrbit extends ASTObject {
-	private List<String> variables = new ArrayList<>();
 	private List<ASTOrbitTrap> traps = new ArrayList<>(); 
 	private ASTOrbitBegin begin; 
 	private ASTOrbitLoop loop; 
@@ -141,13 +140,5 @@ public class ASTOrbit extends ASTObject {
 		}
 		builder.append("]");
 		return builder.toString();
-	}
-
-	public void addVariable(String varName) {
-		variables.add(varName);
-	}
-
-	public List<String> getVariables() {
-		return variables;
 	}
 }

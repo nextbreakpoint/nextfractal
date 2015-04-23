@@ -26,28 +26,39 @@ package com.nextbreakpoint.nextfractal.mandelbrot.grammar;
 
 import org.antlr.v4.runtime.Token;
 
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
-
-public class ASTVariable extends ASTExpression {
-	private CompilerVariable variable;
-
-	public ASTVariable(Token location, CompilerVariable variable) {
+public class ASTRuleLogicOp extends ASTRuleExpression {
+	private String op;
+	private ASTRuleExpression exp1;
+	private ASTRuleExpression exp2;
+	
+	public ASTRuleLogicOp(Token location, String op, ASTRuleExpression exp1, ASTRuleExpression exp2) {
 		super(location);
-		this.variable = variable;
+		this.op = op;
+		this.exp1 = exp1;
+		this.exp2 = exp2;
+	}
+	
+	public String getOp() {
+		return op;
+	}
+	
+	public ASTRuleExpression getExp1() {
+		return exp1;
 	}
 
-	public String getName() {
-		return variable.getName();
+	public ASTRuleExpression getExp2() {
+		return exp2;
 	}
 
 	@Override
 	public String toString() {
-		return variable.getName();
-	}
-	
-	@Override
-	public boolean isReal() {
-		return variable.isReal();
+		StringBuilder builder = new StringBuilder();
+		builder.append(exp1);
+		builder.append(op);
+		if (exp2 != null) {
+			builder.append(exp2);
+		}
+		return builder.toString();
 	}
 
 	@Override

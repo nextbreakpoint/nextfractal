@@ -30,9 +30,9 @@ import java.util.List;
 public abstract class Orbit {
 	protected Number[] region = new Number[2];
 	protected Number point = new Number(0, 0);
-	protected Number x = new Number(0,0);
-	protected Number w = new Number(0,0);
-	protected Number n = new Number(0);
+	protected Variable x = new Variable(0, 0);
+	protected Variable w = new Variable(0, 0);
+	protected Variable n = new Variable(0, 0);
 	protected Scope scope;
 
 	public Orbit() {
@@ -49,11 +49,11 @@ public abstract class Orbit {
 	}
 
 	public void setX(Number x) {
-		this.x = x;
+		this.x.set(x);
 	}
 
 	public void setW(Number w) {
-		this.w = w;
+		this.w.set(w);
 	}
 
 	public Number getX() {
@@ -62,10 +62,6 @@ public abstract class Orbit {
 
 	public Number getW() {
 		return w;
-	}
-
-	public Number getN() {
-		return n;
 	}
 
 	protected Trap trap(Number center) {
@@ -84,16 +80,16 @@ public abstract class Orbit {
 		return scope.stateSize();
 	}
 
-	public Number getVariable(int index) {
+	public Variable getVariable(int index) {
 		return scope.getVariable(index);
 	}
 
-	public void setVariable(int index, Number value) {
+	public void setVariable(int index, Variable value) {
 		scope.setVariable(index, value);
 	}
 
-	public void createVariable(Number value) {
-		scope.createVariable(value);
+	public void addVariable(Variable value) {
+		scope.addVariable(value);
 	}
 
 	public Number[] getInitialRegion() {

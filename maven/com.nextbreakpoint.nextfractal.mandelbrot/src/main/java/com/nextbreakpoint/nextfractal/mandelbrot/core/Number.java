@@ -78,6 +78,16 @@ public class Number {
 		this.i = x.i;
 	}
 
+	public void set(double x) {
+		this.r = x;
+		this.i = 0;
+	}
+
+	public void set(int x) {
+		this.r = x;
+		this.i = 0;
+	}
+
 	@Override
 	public String toString() {
 		return r + ", " + i;

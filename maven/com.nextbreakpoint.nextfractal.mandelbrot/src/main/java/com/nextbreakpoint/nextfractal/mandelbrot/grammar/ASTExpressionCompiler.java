@@ -41,9 +41,9 @@ public interface ASTExpressionCompiler {
 
 	public void compile(ASTConditionTrap trap);
 
-	public void compile(ASTRuleLogicOpExpression logicOp);
+	public void compile(ASTRuleLogicOp logicOp);
 
-	public void compile(ASTRuleCompareOpExpression compareOp);
+	public void compile(ASTRuleCompareOp compareOp);
 
 	public void compile(ASTColorPalette palette);
 

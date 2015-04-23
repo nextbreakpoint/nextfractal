@@ -19,6 +19,19 @@ public class MandelbrotBaseListener implements MandelbrotListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterBeginstatement(@NotNull MandelbrotParser.BeginstatementContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitBeginstatement(@NotNull MandelbrotParser.BeginstatementContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterConstant(@NotNull MandelbrotParser.ConstantContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -45,13 +58,13 @@ public class MandelbrotBaseListener implements MandelbrotListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterBeginstatements(@NotNull MandelbrotParser.BeginstatementsContext ctx) { }
+	@Override public void enterLoopstatement(@NotNull MandelbrotParser.LoopstatementContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitBeginstatements(@NotNull MandelbrotParser.BeginstatementsContext ctx) { }
+	@Override public void exitLoopstatement(@NotNull MandelbrotParser.LoopstatementContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -214,19 +227,6 @@ public class MandelbrotBaseListener implements MandelbrotListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterLoopstatements(@NotNull MandelbrotParser.LoopstatementsContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitLoopstatements(@NotNull MandelbrotParser.LoopstatementsContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterReal(@NotNull MandelbrotParser.RealContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -279,6 +279,19 @@ public class MandelbrotBaseListener implements MandelbrotListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterColorinit(@NotNull MandelbrotParser.ColorinitContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitColorinit(@NotNull MandelbrotParser.ColorinitContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterRuleexp(@NotNull MandelbrotParser.RuleexpContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -305,13 +318,26 @@ public class MandelbrotBaseListener implements MandelbrotListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterEndstatements(@NotNull MandelbrotParser.EndstatementsContext ctx) { }
+	@Override public void enterEndstatement(@NotNull MandelbrotParser.EndstatementContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitEndstatements(@NotNull MandelbrotParser.EndstatementsContext ctx) { }
+	@Override public void exitEndstatement(@NotNull MandelbrotParser.EndstatementContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterColorstatement(@NotNull MandelbrotParser.ColorstatementContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitColorstatement(@NotNull MandelbrotParser.ColorstatementContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

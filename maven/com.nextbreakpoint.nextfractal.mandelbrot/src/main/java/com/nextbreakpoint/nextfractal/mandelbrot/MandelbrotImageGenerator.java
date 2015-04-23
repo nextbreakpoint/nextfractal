@@ -92,7 +92,7 @@ public class MandelbrotImageGenerator implements ImageGenerator {
 			renderer.waitForTasks();
 			renderer.getPixels(pixels);
 		} catch (Exception e) {
-			e.printStackTrace();//TODO display errors
+			//TODO display errors
 		}
 		return pixels;
 	}

@@ -34,28 +34,28 @@ color
 	:
 	c=COLOR '[' argb=colorargb ']' { 
 		builder.setColor(new ASTColor($c, $argb.result));
-	} '{' palette* colorrule* '}'
+	} '{' palette* colorinit? colorrule* '}'
 	;
 		
 begin
 	:
 	b=BEGIN { 
 		builder.setOrbitBegin(new ASTOrbitBegin($b));
-	} '{' beginstatements* '}'
+	} '{' beginstatement* '}'
 	;
 		
 loop
 	:
 	l=LOOP '[' lb=INTEGER ',' le=INTEGER ']' '(' e=conditionexp ')'{
 		builder.setOrbitLoop(new ASTOrbitLoop($l, builder.parseInt($lb.text), builder.parseInt($le.text), $e.result));
-	} '{' loopstatements* '}'
+	} '{' loopstatement* '}'
 	;
 		
 end
 	:
 	e=END {
 		builder.setOrbitEnd(new ASTOrbitEnd($e));		
-	} '{' endstatements* '}'
+	} '{' endstatement* '}'
 	;
 		
 trap
@@ -76,21 +76,21 @@ pathop
 	}
 	;
 	
-beginstatements 
+beginstatement 
 	:
 	s=statement {
 		builder.addBeginStatement($s.result);
 	}
 	;
 		
-loopstatements 
+loopstatement
 	:
 	s=statement {
 		builder.addLoopStatement($s.result);
 	}
 	;
 		
-endstatements 
+endstatement 
 	:
 	s=statement {
 		builder.addEndStatement($s.result);
@@ -427,6 +427,21 @@ paletteelement
 		builder.addPaletteElement(new ASTPaletteElement($t, $bc.result, $ec.result, builder.parseInt($s.text), null));
 	}  
 	;
+				
+colorinit 
+	:
+	i=INIT {
+		builder.setColorContext(true);
+		builder.setColorInit(new ASTColorInit($i));
+	} '{' colorstatement* '}' 
+	;
+		
+colorstatement
+	:
+	s=statement {
+		builder.addColorStatement($s.result);
+	}
+	;
 		
 colorrule 
 	:
@@ -438,11 +453,11 @@ colorrule
 ruleexp returns [ASTRuleExpression result]
 	:
 	e1=expression o=('=' | '>' | '<' | '>=' | '<=' | '<>') e2=expression {
-		$result = new ASTRuleCompareOpExpression($e1.result.getLocation(), $o.text, $e1.result, $e2.result);
+		$result = new ASTRuleCompareOp($e1.result.getLocation(), $o.text, $e1.result, $e2.result);
 	}
 	|
 	r1=ruleexp o=('&' | '|' | '^') r2=ruleexp {
-		$result = new ASTRuleLogicOpExpression($r1.result.getLocation(), $o.text, $r1.result, $r2.result);
+		$result = new ASTRuleLogicOp($r1.result.getLocation(), $o.text, $r1.result, $r2.result);
 	}
 	;
 		
@@ -509,6 +524,11 @@ LOOP
 END 
 	:
 	'end'
+	;
+	  
+INIT 
+	:
+	'init'
 	;
 	
 IF 

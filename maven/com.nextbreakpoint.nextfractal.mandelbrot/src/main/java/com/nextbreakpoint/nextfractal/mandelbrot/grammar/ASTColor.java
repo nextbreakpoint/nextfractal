@@ -32,7 +32,7 @@ import org.antlr.v4.runtime.Token;
 public class ASTColor extends ASTObject {
 	private List<ASTPalette> palettes = new ArrayList<>(); 
 	private List<ASTRule> rules = new ArrayList<>(); 
-	private List<String> variables = new ArrayList<>();
+	private ASTColorInit colorInit;
 	private ASTColorARGB argb; 
 
 	public ASTColor(Token location, ASTColorARGB argb) {
@@ -64,6 +64,14 @@ public class ASTColor extends ASTObject {
 		this.argb = argb;
 	}
 
+	public void setInit(ASTColorInit colorInit) {
+		this.colorInit = colorInit;
+	}
+
+	public ASTColorInit getInit() {
+		return colorInit;
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
@@ -80,6 +88,11 @@ public class ASTColor extends ASTObject {
 			}
 		}
 		builder.append("]");
+		builder.append(",init = {");
+		if (colorInit != null) {
+			builder.append(colorInit);
+		}
+		builder.append("}");
 		builder.append(",rules = [");
 		for (int i = 0; i < rules.size(); i++) {
 			ASTRule rule = rules.get(i);
@@ -92,13 +105,5 @@ public class ASTColor extends ASTObject {
 		}
 		builder.append("]");
 		return builder.toString();
-	}
-
-	public List<String> getVariables() {
-		return variables;
-	}
-
-	public void setVariables(List<String> variables) {
-		this.variables = variables;
 	}
 }

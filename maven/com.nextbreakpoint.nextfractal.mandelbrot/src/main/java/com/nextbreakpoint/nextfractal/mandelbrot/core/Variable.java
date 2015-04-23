@@ -22,47 +22,26 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.mandelbrot.grammar;
+package com.nextbreakpoint.nextfractal.mandelbrot.core;
 
-import org.antlr.v4.runtime.Token;
+public class Variable extends MutableNumber {
+	public Variable() {
+		super(0, 0);
+	}
 
-public class ASTRuleCompareOpExpression extends ASTRuleExpression {
-	private String op;
-	private ASTExpression exp1;
-	private ASTExpression exp2;
-	
-	public ASTRuleCompareOpExpression(Token location, String op, ASTExpression exp1, ASTExpression exp2) {
-		super(location);
-		this.op = op;
-		this.exp1 = exp1;
-		this.exp2 = exp2;
+	public Variable(double x) {
+		super(x, 0);
+	}
+
+	public Variable(double r, double i) {
+		super(r, i);
+	}
+
+	public Variable(Number value) {
+		super(value.r, value.i);
 	}
 	
-	public String getOp() {
-		return op;
-	}
-	
-	public ASTExpression getExp1() {
-		return exp1;
-	}
-
-	public ASTExpression getExp2() {
-		return exp2;
-	}
-
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append(exp1);
-		builder.append(op);
-		if (exp2 != null) {
-			builder.append(exp2);
-		}
-		return builder.toString();
-	}
-
-	@Override
-	public void compile(ASTExpressionCompiler compiler) {
-		compiler.compile(this);
+	public Variable(Variable var) {
+		super(var.r, var.i);
 	}
 }

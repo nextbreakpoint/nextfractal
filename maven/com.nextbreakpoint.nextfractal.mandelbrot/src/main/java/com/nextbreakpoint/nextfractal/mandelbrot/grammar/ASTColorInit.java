@@ -24,45 +24,40 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.grammar;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.antlr.v4.runtime.Token;
 
-public class ASTRuleLogicOpExpression extends ASTRuleExpression {
-	private String op;
-	private ASTRuleExpression exp1;
-	private ASTRuleExpression exp2;
-	
-	public ASTRuleLogicOpExpression(Token location, String op, ASTRuleExpression exp1, ASTRuleExpression exp2) {
+public class ASTColorInit extends ASTObject {
+	private List<ASTStatement> statements = new ArrayList<>(); 
+
+	public ASTColorInit(Token location) {
 		super(location);
-		this.op = op;
-		this.exp1 = exp1;
-		this.exp2 = exp2;
-	}
-	
-	public String getOp() {
-		return op;
-	}
-	
-	public ASTRuleExpression getExp1() {
-		return exp1;
 	}
 
-	public ASTRuleExpression getExp2() {
-		return exp2;
+	public List<ASTStatement> getStatements() {
+		return statements;
+	}
+
+	public void addStatement(ASTStatement statement) {
+		statements.add(statement);
 	}
 
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append(exp1);
-		builder.append(op);
-		if (exp2 != null) {
-			builder.append(exp2);
+		builder.append("statements = [");
+		for (int i = 0; i < statements.size(); i++) {
+			ASTStatement statement = statements.get(i);
+			builder.append("{");
+			builder.append(statement);
+			builder.append("}");
+			if (i < statements.size() - 1) {
+				builder.append(",");
+			}
 		}
+		builder.append("]");
 		return builder.toString();
-	}
-
-	@Override
-	public void compile(ASTExpressionCompiler compiler) {
-		compiler.compile(this);
 	}
 }

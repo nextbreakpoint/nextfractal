@@ -41,9 +41,9 @@ import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTFunction;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTNumber;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTOperator;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTParen;
-import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTRuleCompareOpExpression;
+import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTRuleCompareOp;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTRuleExpression;
-import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTRuleLogicOpExpression;
+import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTRuleLogicOp;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTVariable;
 
 public class ExpressionCompiler implements ASTExpressionCompiler {
@@ -272,6 +272,9 @@ public class ExpressionCompiler implements ASTExpressionCompiler {
 	@Override
 	public void compile(ASTVariable variable) {
 		builder.append(variable.getName());
+		if (variable.isReal()) {
+			builder.append(".r()");
+		}
 	}
 
 	@Override
@@ -311,6 +314,8 @@ public class ExpressionCompiler implements ASTExpressionCompiler {
 			}
 			exp2.compile(this);
 			builder.append(")");
+		} else {
+			throw new ASTException("Real expressions required: " + compareOp.getLocation().getText(), compareOp.getLocation());
 		}
 	}
 
@@ -354,7 +359,7 @@ public class ExpressionCompiler implements ASTExpressionCompiler {
 	}
 
 	@Override
-	public void compile(ASTRuleLogicOpExpression logicOp) {
+	public void compile(ASTRuleLogicOp logicOp) {
 		ASTRuleExpression exp1 = logicOp.getExp1();
 		ASTRuleExpression exp2 = logicOp.getExp2();
 		builder.append("(");
@@ -380,7 +385,7 @@ public class ExpressionCompiler implements ASTExpressionCompiler {
 	}
 
 	@Override
-	public void compile(ASTRuleCompareOpExpression compareOp) {
+	public void compile(ASTRuleCompareOp compareOp) {
 		ASTExpression exp1 = compareOp.getExp1();
 		ASTExpression exp2 = compareOp.getExp2();
 		if (exp1.isReal() && exp2.isReal()) {
@@ -416,6 +421,8 @@ public class ExpressionCompiler implements ASTExpressionCompiler {
 			}
 			exp2.compile(this);
 			builder.append(")");
+		} else {
+			throw new ASTException("Real expressions required: " + compareOp.getLocation().getText(), compareOp.getLocation());
 		}
 	}
 
@@ -467,14 +474,14 @@ public class ExpressionCompiler implements ASTExpressionCompiler {
 		if (var != null) {
 			if ((var.isReal() && statement.getExp().isReal()) || (!var.isReal() && !statement.getExp().isReal())) {
 				builder.append(statement.getName());
-				builder.append(" = ");
+				builder.append(".set(");
 				statement.getExp().compile(this);
-				builder.append(";\n");
+				builder.append(");\n");
 			} else if (!var.isReal() && statement.getExp().isReal()) {
 				builder.append(statement.getName());
-				builder.append(" = number(");
+				builder.append(".set(");
 				statement.getExp().compile(this);
-				builder.append(",0);\n");
+				builder.append(");\n");
 			} else if (var.isReal() && !statement.getExp().isReal()) {
 				throw new ASTException("Expression not assignable: " + statement.getLocation().getText(), statement.getLocation());
 			}

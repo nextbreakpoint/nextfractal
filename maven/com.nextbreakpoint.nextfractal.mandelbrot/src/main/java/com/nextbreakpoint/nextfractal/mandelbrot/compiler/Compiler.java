@@ -59,6 +59,7 @@ import com.nextbreakpoint.nextfractal.mandelbrot.core.Orbit;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Palette;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Scope;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Trap;
+import com.nextbreakpoint.nextfractal.mandelbrot.core.Variable;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTBuilder;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTColor;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTException;
@@ -94,12 +95,11 @@ public class Compiler {
 		List<CompilerError> errors = new ArrayList<>();
 		ASTFractal ast = parse(source, errors);
 		if (errors.size() == 0) {
-			String orbitSource = buildOrbit(ast);
-			String colorSource = buildColor(ast);
+			String orbitSource = buildOrbit(ast, errors);
+			String colorSource = buildColor(ast, errors);
 			return new CompilerReport(ast, orbitSource, colorSource, errors);
-		} else {
-			return new CompilerReport(ast, "", "", errors);
 		}
+		return new CompilerReport(ast, "", "", errors);
 	}
 	
 	public CompilerBuilder<Orbit> compileOrbit(CompilerReport report) throws ClassNotFoundException, IOException {
@@ -131,22 +131,40 @@ public class Compiler {
 			CompilerError error = new CompilerError(CompilerError.ErrorType.M_COMPILER, e.getLocation().getLine(), e.getLocation().getCharPositionInLine(), e.getLocation().getStartIndex(), e.getLocation().getStopIndex() - e.getLocation().getStartIndex(), e.getMessage());
 			logger.log(Level.FINE, error.toString(), e);
 			errors.add(error);
+		} catch (Exception e) {
+			CompilerError error = new CompilerError(CompilerError.ErrorType.M_COMPILER, 0L, 0L, 0L, 0L, e.getMessage());
+			logger.log(Level.FINE, error.toString(), e);
+			errors.add(error);
 		}
 		return null;
 	}
 
-	private String buildOrbit(ASTFractal fractal) {
-		StringBuilder builder = new StringBuilder();
-		Map<String, CompilerVariable> variables = new HashMap<>();
-		compileOrbit(builder, variables, fractal);
-		return builder.toString();
+	private String buildOrbit(ASTFractal fractal, List<CompilerError> errors) {
+		try {
+			StringBuilder builder = new StringBuilder();
+			Map<String, CompilerVariable> variables = new HashMap<>();
+			compileOrbit(builder, variables, fractal);
+			return builder.toString();
+		} catch (ASTException e) {
+			CompilerError error = new CompilerError(CompilerError.ErrorType.M_COMPILER, e.getLocation().getLine(), e.getLocation().getCharPositionInLine(), e.getLocation().getStartIndex(), e.getLocation().getStopIndex() - e.getLocation().getStartIndex(), e.getMessage());
+			logger.log(Level.FINE, error.toString(), e);
+			errors.add(error);
+		}
+		return "";
 	}
 	
-	private String buildColor(ASTFractal fractal) {
-		StringBuilder builder = new StringBuilder();
-		Map<String, CompilerVariable> variables = new HashMap<>();
-		compileColor(builder, variables, fractal);
-		return builder.toString();
+	private String buildColor(ASTFractal fractal, List<CompilerError> errors) {
+		try {
+			StringBuilder builder = new StringBuilder();
+			Map<String, CompilerVariable> variables = new HashMap<>();
+			compileColor(builder, variables, fractal);
+			return builder.toString();
+		} catch (ASTException e) {
+			CompilerError error = new CompilerError(CompilerError.ErrorType.M_COMPILER, e.getLocation().getLine(), e.getLocation().getCharPositionInLine(), e.getLocation().getStartIndex(), e.getLocation().getStopIndex() - e.getLocation().getStartIndex(), e.getMessage());
+			logger.log(Level.FINE, error.toString(), e);
+			errors.add(error);
+		}
+		return "";
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -242,6 +260,9 @@ public class Compiler {
 		builder.append("import ");
 		builder.append(List.class.getCanonicalName());
 		builder.append(";\n");
+		builder.append("import ");
+		builder.append(Variable.class.getCanonicalName());
+		builder.append(";\n");
 		builder.append("@SuppressWarnings(value=\"unused\")\n");
 		builder.append("public class ");
 		builder.append(className);
@@ -273,6 +294,9 @@ public class Compiler {
 		builder.append("import ");
 		builder.append(Scope.class.getCanonicalName());
 		builder.append(";\n");
+		builder.append("import ");
+		builder.append(Variable.class.getCanonicalName());
+		builder.append(";\n");
 		builder.append("@SuppressWarnings(value=\"unused\")\n");
 		builder.append("public class ");
 		builder.append(className);
@@ -282,19 +306,19 @@ public class Compiler {
 		return builder.toString();
 	}
 
-	private void buildOrbit(StringBuilder builder, Map<String, CompilerVariable> variables, ASTFractal fractal) {
+	private void buildOrbit(StringBuilder builder, Map<String, CompilerVariable> scope, ASTFractal fractal) {
 		if (fractal != null) {
-			compile(builder, variables, fractal.getVars(), fractal.getOrbit());
+			compile(builder, scope, fractal.getStateVariables(), fractal.getOrbit());
 		}
 	}
 
-	private void buildColor(StringBuilder builder, Map<String, CompilerVariable> variables, ASTFractal fractal) {
+	private void buildColor(StringBuilder builder, Map<String, CompilerVariable> scope, ASTFractal fractal) {
 		if (fractal != null) {
-			compile(builder, variables, fractal.getVars(), fractal.getColor());
+			compile(builder, scope, fractal.getStateVariables(), fractal.getColor());
 		}
 	}
 
-	private void compile(StringBuilder builder, Map<String, CompilerVariable> variables, Collection<CompilerVariable> vars, ASTOrbit orbit) {
+	private void compile(StringBuilder builder, Map<String, CompilerVariable> scope, Collection<CompilerVariable> stateVariables, ASTOrbit orbit) {
 		builder.append("public void init() {\n");
 		if (orbit != null) {
 			builder.append("setInitialRegion(");
@@ -303,81 +327,64 @@ public class Compiler {
 			builder.append("),new Number(");
 			builder.append(orbit.getRegion().getB());
 			builder.append("));\n");
-			for (String varName : orbit.getVariables()) {
-				builder.append("createVariable(");
-				builder.append(varName);
+			for (CompilerVariable var : stateVariables) {
+				builder.append("addVariable(");
+				builder.append(var.getName());
 				builder.append(");\n");
 			}
 		}
 		builder.append("}\n");
-		if (vars != null) {
-			for (CompilerVariable var : vars) {
-				variables.put(var.getName(), var);
+		if (stateVariables != null) {
+			for (CompilerVariable var : stateVariables) {
+				scope.put(var.getName(), var);
 				if (var.isCreate()) {
-					if (var.isReal()) {
-						builder.append("private double ");
-						builder.append(var.getName());
-						builder.append(" = 0.0;\n");
-						builder.append("public Number get");
-						builder.append(var.getName().toUpperCase());
-						builder.append("() { return number(");
-						builder.append(var.getName());
-						builder.append(",0); }\n");
-					} else {
-						builder.append("private Number ");
-						builder.append(var.getName());
-						builder.append(" = number(0.0,0.0);\n");
-						builder.append("public Number get");
-						builder.append(var.getName().toUpperCase());
-						builder.append("() { return ");
-						builder.append(var.getName());
-						builder.append("; }\n");
-					}
+					builder.append("private Variable ");
+					builder.append(var.getName());
+					builder.append(" = variable(0.0,0.0);\n");
 				}
 			}
 		}
 		if (orbit != null) {
 			for (ASTOrbitTrap trap : orbit.getTraps()) {
-				compile(builder, variables, trap);
+				compile(builder, scope, trap);
 			}
 		}
 		builder.append("public void render(List<Number[]> states) {\n");
 		if (orbit != null) {
-			compile(builder, variables, orbit.getBegin(), orbit.getVariables());
-			compile(builder, variables, orbit.getLoop(), orbit.getVariables());
-			compile(builder, variables, orbit.getEnd(), orbit.getVariables());
-			int i = 0;
-			for (String varName : orbit.getVariables()) {
-				builder.append("setVariable(");
-				builder.append(i++);
-				builder.append(",");
-				builder.append(varName);
-				builder.append(");\n");
-			}
+			compile(builder, scope, orbit.getBegin(), stateVariables);
+			compile(builder, scope, orbit.getLoop(), stateVariables);
+			compile(builder, scope, orbit.getEnd(), stateVariables);
+		}
+		int i = 0;
+		for (CompilerVariable var : stateVariables) {
+			builder.append("setVariable(");
+			builder.append(i++);
+			builder.append(",");
+			builder.append(var.getName());
+			builder.append(");\n");
 		}
 		builder.append("}\n");
 	}
 
-	private void compile(StringBuilder builder, Map<String, CompilerVariable> variables, Collection<CompilerVariable> vars, ASTColor color) {
+	private void compile(StringBuilder builder, Map<String, CompilerVariable> scope, Collection<CompilerVariable> stateVariables, ASTColor color) {
+		for (CompilerVariable var : stateVariables) {
+			scope.put(var.getName(), var);
+		}
 		if (color != null) {
 			for (ASTPalette palette : color.getPalettes()) {
-				compile(builder, variables, palette);
+				compile(builder, scope, palette);
 			}
-		}
-		for (CompilerVariable var : vars) {
-			variables.put(var.getName(), var);
 		}
 		builder.append("public void render() {\n");
+		int i = 0;
+		for (CompilerVariable var : stateVariables) {
+			builder.append("Variable ");
+			builder.append(var.getName());
+			builder.append(" = getVariable(");
+			builder.append(i++);
+			builder.append(");\n");
+		}
 		if (color != null) {
-			int i = 0;
-			for (String varName : color.getVariables()) {
-				CompilerVariable variable = variables.get(varName);
-				builder.append("Number ");
-				builder.append(variable.getName());
-				builder.append(" = getVariable(");
-				builder.append(i++);
-				builder.append(");\n");
-			}
 			builder.append("setColor(color(");
 			builder.append(color.getArgb().getComponents()[0]);
 			builder.append(",");
@@ -387,8 +394,13 @@ public class Compiler {
 			builder.append(",");
 			builder.append(color.getArgb().getComponents()[3]);
 			builder.append("));\n");
+			if (color.getInit() != null) {
+				for (ASTStatement statement : color.getInit().getStatements()) {
+					compile(builder, scope, statement);
+				}
+			}
 			for (ASTRule rule : color.getRules()) {
-				compile(builder, variables, rule);
+				compile(builder, scope, rule);
 			}
 		}
 		builder.append("}\n");
@@ -506,7 +518,7 @@ public class Compiler {
 		builder.append(";\n");
 	}
 
-	private void compile(StringBuilder builder, Map<String, CompilerVariable> variables, ASTOrbitBegin begin, List<String> stateVariables) {
+	private void compile(StringBuilder builder, Map<String, CompilerVariable> variables, ASTOrbitBegin begin, Collection<CompilerVariable> stateVariables) {
 		if (begin != null) {
 			for (ASTStatement statement : begin.getStatements()) {
 				compile(builder, variables, statement);
@@ -514,7 +526,7 @@ public class Compiler {
 		}
 	}
 
-	private void compile(StringBuilder builder, Map<String, CompilerVariable> variables, ASTOrbitEnd end, List<String> stateVariables) {
+	private void compile(StringBuilder builder, Map<String, CompilerVariable> variables, ASTOrbitEnd end, Collection<CompilerVariable> stateVariables) {
 		if (end != null) {
 			for (ASTStatement statement : end.getStatements()) {
 				compile(builder, variables, statement);
@@ -522,9 +534,9 @@ public class Compiler {
 		}
 	}
 
-	private void compile(StringBuilder builder, Map<String, CompilerVariable> variables, ASTOrbitLoop loop, List<String> stateVariables) {
+	private void compile(StringBuilder builder, Map<String, CompilerVariable> variables, ASTOrbitLoop loop, Collection<CompilerVariable> stateVariables) {
 		if (loop != null) {
-			builder.append("n = number(0);\n");
+			builder.append("n.set(0);\n");
 			builder.append("for (int i = 1; i <= ");
 			builder.append(loop.getEnd());
 			builder.append("; i++) {\n");
@@ -534,12 +546,12 @@ public class Compiler {
 			builder.append("if (states != null) {\n");
 			builder.append("states.add(new Number[] { ");
 			int i = 0;
-			for (String varName : stateVariables) {
+			for (CompilerVariable var : stateVariables) {
 				if (i > 0) {
 					builder.append(", ");
 				}
 				builder.append("new Number(");
-				builder.append(varName);
+				builder.append(var.getName());
 				builder.append(")");
 				i += 1;
 			}
@@ -547,7 +559,7 @@ public class Compiler {
 			builder.append("}\n");
 			builder.append("if (");
 			loop.getExpression().compile(new ExpressionCompiler(variables, builder));
-			builder.append(") { n = number(i); break; }\n");
+			builder.append(") { n.set(i); break; }\n");
 			builder.append("}\n");
 		}
 	}

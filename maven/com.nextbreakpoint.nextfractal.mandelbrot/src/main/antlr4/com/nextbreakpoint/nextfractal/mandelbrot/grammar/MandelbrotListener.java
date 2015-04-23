@@ -11,6 +11,17 @@ import org.antlr.v4.runtime.tree.ParseTreeListener;
  */
 public interface MandelbrotListener extends ParseTreeListener {
 	/**
+	 * Enter a parse tree produced by {@link MandelbrotParser#beginstatement}.
+	 * @param ctx the parse tree
+	 */
+	void enterBeginstatement(@NotNull MandelbrotParser.BeginstatementContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link MandelbrotParser#beginstatement}.
+	 * @param ctx the parse tree
+	 */
+	void exitBeginstatement(@NotNull MandelbrotParser.BeginstatementContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link MandelbrotParser#constant}.
 	 * @param ctx the parse tree
 	 */
@@ -33,15 +44,15 @@ public interface MandelbrotListener extends ParseTreeListener {
 	void exitColor(@NotNull MandelbrotParser.ColorContext ctx);
 
 	/**
-	 * Enter a parse tree produced by {@link MandelbrotParser#beginstatements}.
+	 * Enter a parse tree produced by {@link MandelbrotParser#loopstatement}.
 	 * @param ctx the parse tree
 	 */
-	void enterBeginstatements(@NotNull MandelbrotParser.BeginstatementsContext ctx);
+	void enterLoopstatement(@NotNull MandelbrotParser.LoopstatementContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link MandelbrotParser#beginstatements}.
+	 * Exit a parse tree produced by {@link MandelbrotParser#loopstatement}.
 	 * @param ctx the parse tree
 	 */
-	void exitBeginstatements(@NotNull MandelbrotParser.BeginstatementsContext ctx);
+	void exitLoopstatement(@NotNull MandelbrotParser.LoopstatementContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link MandelbrotParser#variablelist}.
@@ -176,17 +187,6 @@ public interface MandelbrotListener extends ParseTreeListener {
 	void exitExpression4(@NotNull MandelbrotParser.Expression4Context ctx);
 
 	/**
-	 * Enter a parse tree produced by {@link MandelbrotParser#loopstatements}.
-	 * @param ctx the parse tree
-	 */
-	void enterLoopstatements(@NotNull MandelbrotParser.LoopstatementsContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link MandelbrotParser#loopstatements}.
-	 * @param ctx the parse tree
-	 */
-	void exitLoopstatements(@NotNull MandelbrotParser.LoopstatementsContext ctx);
-
-	/**
 	 * Enter a parse tree produced by {@link MandelbrotParser#real}.
 	 * @param ctx the parse tree
 	 */
@@ -231,6 +231,17 @@ public interface MandelbrotListener extends ParseTreeListener {
 	void exitExpression3(@NotNull MandelbrotParser.Expression3Context ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link MandelbrotParser#colorinit}.
+	 * @param ctx the parse tree
+	 */
+	void enterColorinit(@NotNull MandelbrotParser.ColorinitContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link MandelbrotParser#colorinit}.
+	 * @param ctx the parse tree
+	 */
+	void exitColorinit(@NotNull MandelbrotParser.ColorinitContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link MandelbrotParser#ruleexp}.
 	 * @param ctx the parse tree
 	 */
@@ -253,15 +264,26 @@ public interface MandelbrotListener extends ParseTreeListener {
 	void exitConditionexp(@NotNull MandelbrotParser.ConditionexpContext ctx);
 
 	/**
-	 * Enter a parse tree produced by {@link MandelbrotParser#endstatements}.
+	 * Enter a parse tree produced by {@link MandelbrotParser#endstatement}.
 	 * @param ctx the parse tree
 	 */
-	void enterEndstatements(@NotNull MandelbrotParser.EndstatementsContext ctx);
+	void enterEndstatement(@NotNull MandelbrotParser.EndstatementContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link MandelbrotParser#endstatements}.
+	 * Exit a parse tree produced by {@link MandelbrotParser#endstatement}.
 	 * @param ctx the parse tree
 	 */
-	void exitEndstatements(@NotNull MandelbrotParser.EndstatementsContext ctx);
+	void exitEndstatement(@NotNull MandelbrotParser.EndstatementContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link MandelbrotParser#colorstatement}.
+	 * @param ctx the parse tree
+	 */
+	void enterColorstatement(@NotNull MandelbrotParser.ColorstatementContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link MandelbrotParser#colorstatement}.
+	 * @param ctx the parse tree
+	 */
+	void exitColorstatement(@NotNull MandelbrotParser.ColorstatementContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link MandelbrotParser#colorargb}.

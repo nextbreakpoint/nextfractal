@@ -27,7 +27,15 @@ package com.nextbreakpoint.nextfractal.mandelbrot.core;
 public class Expression {
 	private Expression() {
 	}
-	
+
+	public static Variable variable(double r, double i) {
+		return new Variable(r, i);
+	}
+
+	public static Variable variable(Number x) {
+		return new Variable(x);
+	}
+
 	public static Number number(int n) {
 		return new Number(n, 0);
 	}

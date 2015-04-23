@@ -33,27 +33,17 @@ import org.antlr.v4.runtime.Token;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
 
 public class ASTFractal extends ASTObject {
-	private Map<String, CompilerVariable> vars = new HashMap<>();
+	private Map<String, CompilerVariable> stateVars = new HashMap<>();
+	private Map<String, CompilerVariable> colorVars = new HashMap<>();
+	private Map<String, CompilerVariable> orbitVars = new HashMap<>();
 	private ASTOrbit orbit;
 	private ASTColor color;
 
 	public ASTFractal(Token location) {
 		super(location);
-		registerVariable("x", false, false, location);
-		registerVariable("w", false, false, location);
-		registerVariable("z", false, false, location);
-		registerVariable("n", false, false, location);
-		registerVariable("c", false, false, location);
-	}
-
-	public void registerStateVariable(String varName, Token location) {
-		if (vars.get(varName) == null) {
-			registerVariable(varName, false, true, location);
-		}
-		if (orbit == null) {
-			throw new ASTException("Orbit not defined", location);
-		}
-		orbit.addVariable(varName);
+		registerOrbitVariable("x", false, false, location);
+		registerOrbitVariable("w", false, false, location);
+		registerOrbitVariable("n", true, false, location);
 	}
 
 	public ASTOrbit getOrbit() {
@@ -70,31 +60,54 @@ public class ASTFractal extends ASTObject {
 	
 	public void setColor(ASTColor color) {
 		this.color = color;
-		if (orbit != null && color != null) {
-			color.setVariables(orbit.getVariables());
+	}
+
+	public void registerStateVariable(String varName, Token location) {
+		if (orbitVars.get(varName) == null) {
+			registerOrbitVariable(varName, false, true, location);
+		}
+		if (stateVars.get(varName) == null) {
+			stateVars.put(varName, orbitVars.get(varName));
 		}
 	}
 
-	public void registerVariable(String name, boolean real, boolean create, Token location) {
-		CompilerVariable var = vars.get(name);
+	public void registerOrbitVariable(String name, boolean real, boolean create, Token location) {
+		CompilerVariable var = orbitVars.get(name);
 		if (var == null) {
 			var = new CompilerVariable(name, real, create);
-			vars.put(var.getName(), var);
-		} else if (!real && var.isReal()) {
-			throw new ASTException("Expression not assignable: " + location.getText(), location);
+			orbitVars.put(var.getName(), var);
 		}
 	}
 
-	public CompilerVariable getVariable(String name, Token location) {
-		CompilerVariable var = vars.get(name);
+	public void registerColorVariable(String name, boolean real, boolean create, Token location) {
+		CompilerVariable var = colorVars.get(name);
+		if (var == null) {
+			var = new CompilerVariable(name, real, create);
+			colorVars.put(var.getName(), var);
+		}
+	}
+
+	public CompilerVariable getOrbitVariable(String name, Token location) {
+		CompilerVariable var = orbitVars.get(name);
 		if (var == null) {
 			throw new ASTException("Variable not defined: " + location.getText(), location);
 		}
 		return var;
 	}
 
-	public Collection<CompilerVariable> getVars() {
-		return vars.values();
+	public CompilerVariable getColorVariable(String name, Token location) {
+		CompilerVariable var = colorVars.get(name);
+		if (var == null) {
+			var = orbitVars.get(name);
+			if (var == null) {
+				throw new ASTException("Variable not defined: " + location.getText(), location);
+			}
+		}
+		return var;
+	}
+
+	public Collection<CompilerVariable> getStateVariables() {
+		return stateVars.values();
 	}
 
 	public String toString() {

@@ -36,7 +36,7 @@ public abstract class Color {
 		this.scope = scope;
 	}
 
-	public Number getVariable(int index) {
+	public Variable getVariable(int index) {
 		return scope.getVariable(index);
 	}
 

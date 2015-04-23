@@ -30,6 +30,7 @@ import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
 
 public class ASTBuilder {
 	private ASTFractal fractal;
+	private boolean isColorContext;
 
 	public ASTBuilder() {
 	}
@@ -74,7 +75,15 @@ public class ASTBuilder {
 	}
 
 	public void setColor(ASTColor color) {
-		fractal.setColor(color);;
+		fractal.setColor(color);
+	}
+
+	public void setColorInit(ASTColorInit colorInit) {
+		fractal.getColor().setInit(colorInit);
+	}
+
+	public void addColorStatement(ASTStatement statement) {
+		fractal.getColor().getInit().addStatement(statement);
 	}
 
 	public void addPalette(ASTPalette palette) {
@@ -124,19 +133,31 @@ public class ASTBuilder {
 		return Long.parseLong(text, base);
 	}
 
-	public void registerVariable(String name, boolean real, boolean create, Token location) {
-		fractal.registerVariable(name, real, create, location);
+	public void registerStateVariable(String name, Token location) {
+		fractal.registerStateVariable(name, location);
 	}
 
 	public void registerVariable(String name, boolean real, Token location) {
-		fractal.registerVariable(name, real, true, location);
+		if (isColorContext) {
+			fractal.registerColorVariable(name, real, true, location);
+		} else {
+			fractal.registerOrbitVariable(name, real, true, location);
+		}
 	}
 
 	public CompilerVariable getVariable(String name, Token location) {
-		return fractal.getVariable(name, location);
+		if (isColorContext) {
+			return fractal.getColorVariable(name, location);
+		} else {
+			return fractal.getOrbitVariable(name, location);
+		}
 	}
 
-	public void registerStateVariable(String variable, Token location) {
-		fractal.registerStateVariable(variable, location);
+	public boolean isColorContext() {
+		return isColorContext;
+	}
+
+	public void setColorContext(boolean isColorContext) {
+		this.isColorContext = isColorContext;
 	}
 }	

@@ -24,15 +24,12 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.compiler;
 
-import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
-
-public class CompilerVariable extends Number {
+public class CompilerVariable {
 	private final String name;
 	private final boolean real;
 	private final boolean create;
 
 	public CompilerVariable(String name, boolean real, boolean create) {
-		super(0, 0);
 		this.name = name;
 		this.real = real;
 		this.create = create;
