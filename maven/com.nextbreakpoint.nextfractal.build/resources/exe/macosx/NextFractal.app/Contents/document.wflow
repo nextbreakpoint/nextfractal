@@ -54,7 +54,7 @@
 					<string>on run {input, parameters}						tell application "Finder"
 						set currentFolder to (path to me) as string
 						set currentFolder to POSIX path of currentFolder
-						do shell script "cd \"" &amp; currentFolder &amp; "/Contents/MacOS\"; java -Xmx1024m -Xdock:name=NextFractal -Xdock:icon=../NextFractal.png -Djava.util.logging.config=com.nextbreakpoint.nextfractal.runtime.LogConfig -jar com.nextbreakpoint.nextfractal.runtime-1.0.0.jar"
+						do shell script "cd \"" &amp; currentFolder &amp; "/Contents/MacOS\"; java -Xmx1024m -Xdock:name=NextFractal -Xdock:icon=../NextFractal.png -Djava.util.logging.config=com.nextbreakpoint.nextfractal.runtime.LogConfig -jar com.nextbreakpoint.nextfractal.runtime-1.0.1.jar"
 						end tell
 						return input					end run</string>	
 				</dict>
