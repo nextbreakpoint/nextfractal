@@ -32,6 +32,10 @@ public class Expression {
 		return new Variable(r, i);
 	}
 
+	public static Variable variable(double x) {
+		return new Variable(x, 0);
+	}
+
 	public static Variable variable(Number x) {
 		return new Variable(x);
 	}

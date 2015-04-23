@@ -485,6 +485,14 @@ public class ExpressionCompiler implements ASTExpressionCompiler {
 			} else if (var.isReal() && !statement.getExp().isReal()) {
 				throw new ASTException("Expression not assignable: " + statement.getLocation().getText(), statement.getLocation());
 			}
+		} else {
+			var = new CompilerVariable(statement.getName(), statement.getExp().isReal(), false);
+			variables.put(statement.getName(), var);
+			builder.append("Variable ");
+			builder.append(statement.getName());
+			builder.append(" = variable(");
+			statement.getExp().compile(this);
+			builder.append(");\n");
 		}
 	}
 }
