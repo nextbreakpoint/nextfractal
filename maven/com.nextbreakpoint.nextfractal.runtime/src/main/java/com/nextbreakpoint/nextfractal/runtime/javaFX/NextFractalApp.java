@@ -97,8 +97,8 @@ public class NextFractalApp extends Application {
 		ExportRenderer exportRenderer = new SimpleExportRenderer(renderThreadFactory, renderFactory);
         ExportService exportService = new SimpleExportService(exportThreadFactory, exportRenderer);
         Session session = createFractalSession(pluginId);
-        session.setExportService(exportService);
         if (session != null) {
+        	session.setExportService(exportService);
         	Pane renderPane = createRenderPane(session, pluginId, width, height);
         	if (renderPane != null) {
         		renderRootPane.setCenter(renderPane);
@@ -150,26 +150,30 @@ public class NextFractalApp extends Application {
 		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 			@Override
 			public void handle(WindowEvent event) {
-				session.terminate();
+				if (session != null) {
+					session.terminate();
+				}
 			}
 		});
 //		quitItem.setOnAction(e -> {
 //			primaryStage.close();
 //		});
-		session.addSessionListener(new SessionListener() {
-			@Override
-			public void terminate(Session session) {
-				exportService.shutdown();
-			}
-			
-			@Override
-			public void sessionAdded(Session session, ExportSession exportSession) {
-			}
-			
-			@Override
-			public void sessionRemoved(Session session, ExportSession exportSession) {
-			}
-		});
+		if (session != null) {
+			session.addSessionListener(new SessionListener() {
+				@Override
+				public void terminate(Session session) {
+					exportService.shutdown();
+				}
+				
+				@Override
+				public void sessionAdded(Session session, ExportSession exportSession) {
+				}
+				
+				@Override
+				public void sessionRemoved(Session session, ExportSession exportSession) {
+				}
+			});
+		}
     }
 
 //	private void setup() {
