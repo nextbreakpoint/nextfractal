@@ -79,6 +79,6 @@ public class Trap {
 	}
 
 	public boolean contains(Number x) {
-		return path2d.contains(x.r() - center.r(), x.i() - center.i());
+		return path2d.contains(x.r() - center.r(), center.i() - x.i());
 	}
 }
