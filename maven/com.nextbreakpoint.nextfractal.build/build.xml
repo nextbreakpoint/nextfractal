@@ -251,5 +251,5 @@
 	<target name="build-linux" depends="build-linux-32bit, build-linux-64bit" />
 	<target name="build" depends="build-macosx, build-win32, build-linux" />
 	<target name="setup" depends="-clear, -ffmpeg4java, -freeimage4java" />
-	<target name="all" depends="setup, clean, build" />
+	<target name="all" depends="setup, build" />
 </project>
