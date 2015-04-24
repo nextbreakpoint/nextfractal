@@ -3,6 +3,7 @@
 	<property environment="env" />
 	<property name="maven.home" value="${env.M2_HOME}" />
 	<property name="nextfractal.version" value="1.0.1" />
+	<property name="nextfractal.folder" value="NextFractal" />
 	<property name="ffmpeg4java.version" value="0.1.2" />
 	<property name="freeimage4java.version" value="0.1.1" />
 	<macrodef name="maven">
@@ -38,23 +39,23 @@
 		<sequential>
 			<maven basedir="@{basedir}" options="-P @{os}_@{arch}" goal="install" resultproperty="maven.build.result" />
 			<delete dir="@{basedir}/dist/@{os}_@{arch}" />
-			<mkdir dir="@{basedir}/dist/@{os}_@{arch}/NextFractal/NextFractal"/>
-			<copy failonerror="true" todir="@{basedir}/dist/@{os}_@{arch}/NextFractal" overwrite="true">
+			<mkdir dir="@{basedir}/dist/@{os}_@{arch}/${nextfractal.folder}/NextFractal"/>
+			<copy failonerror="true" todir="@{basedir}/dist/@{os}_@{arch}/${nextfractal.folder}" overwrite="true">
 				<fileset dir="@{basedir}/resources/exe/@{os}">
 					<include name="**/*" />
 				</fileset>
 			</copy>
-			<copy failonerror="true" todir="@{basedir}/dist/@{os}_@{arch}/NextFractal/NextFractal" overwrite="true">
+			<copy failonerror="true" todir="@{basedir}/dist/@{os}_@{arch}/${nextfractal.folder}/NextFractal" overwrite="true">
 				<fileset dir="@{basedir}/target/lib/@{os}/@{arch}">
 					<include name="*" />
 				</fileset>
 			</copy>
-			<copy failonerror="true" todir="@{basedir}/dist/@{os}_@{arch}/NextFractal/NextFractal" overwrite="true">
+			<copy failonerror="true" todir="@{basedir}/dist/@{os}_@{arch}/${nextfractal.folder}/NextFractal" overwrite="true">
 				<fileset dir="@{basedir}/target/jars">
 					<include name="*" />
 				</fileset>
 			</copy>
-			<copy failonerror="true" todir="@{basedir}/dist/@{os}_@{arch}/NextFractal" overwrite="true">
+			<copy failonerror="true" todir="@{basedir}/dist/@{os}_@{arch}/${nextfractal.folder}" overwrite="true">
 				<fileset dir="@{basedir}/resources">
 					<include name="thirdparties/**/*" />
 				</fileset>
@@ -76,16 +77,16 @@
 		<element name="args" implicit="true" optional="true" />
 		<sequential>
 			<build basedir="@{basedir}" os="@{os}" arch="@{arch}" version="@{version}" resultproperty="build.result" />
-			<move failonerror="true" todir="@{basedir}/dist/@{os}_@{arch}/NextFractal/NextFractal.app/Contents/MacOS">
-				<fileset dir="@{basedir}/dist/@{os}_@{arch}/NextFractal/NextFractal">
+			<move failonerror="true" todir="@{basedir}/dist/@{os}_@{arch}/${nextfractal.folder}/NextFractal.app/Contents/MacOS">
+				<fileset dir="@{basedir}/dist/@{os}_@{arch}/${nextfractal.folder}/NextFractal">
 					<filename name="*.jnilib"/>
 				</fileset>
-				<fileset dir="@{basedir}/dist/@{os}_@{arch}/NextFractal/NextFractal">
+				<fileset dir="@{basedir}/dist/@{os}_@{arch}/${nextfractal.folder}/NextFractal">
 					<filename name="*.jar"/>
 				</fileset>
 			</move>
-			<chmod failonerror="true" perm="aug+x" file="@{basedir}/dist/@{os}_@{arch}/NextFractal/NextFractal.app/Contents/MacOS/Application Stub" />
-			<delete failonerror="true" dir="@{basedir}/dist/@{os}_@{arch}/NextFractal/NextFractal" />
+			<chmod failonerror="true" perm="aug+x" file="@{basedir}/dist/@{os}_@{arch}/${nextfractal.folder}/NextFractal.app/Contents/MacOS/Application Stub" />
+			<delete failonerror="true" dir="@{basedir}/dist/@{os}_@{arch}/${nextfractal.folder}/NextFractal" />
 		</sequential>
 	</macrodef>
 	<macrodef name="makedmg">
