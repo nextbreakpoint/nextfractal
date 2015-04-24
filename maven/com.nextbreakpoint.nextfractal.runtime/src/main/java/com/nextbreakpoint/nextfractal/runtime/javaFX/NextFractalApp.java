@@ -146,7 +146,6 @@ public class NextFractalApp extends Application {
 		
 		primaryStage.setScene(scene);
         primaryStage.show();
-        primaryStage.setTitle("NextFractal");
 		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 			@Override
 			public void handle(WindowEvent event) {
