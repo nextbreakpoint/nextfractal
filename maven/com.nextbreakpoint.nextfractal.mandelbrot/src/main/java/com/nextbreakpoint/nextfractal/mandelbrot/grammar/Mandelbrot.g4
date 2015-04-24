@@ -224,11 +224,11 @@ expression2 returns [ASTExpression result]
 		$result = new ASTOperator($s, "*", $e1.result, $e2.result);
 	}
 	|
-	i='i' e2=expression2 {
+	i='i' '*'? e2=expression2 {
 		$result = new ASTOperator($i, "*", new ASTNumber($i, 0.0, 1.0), $e2.result);
 	}
 	|
-	e2=expression2 i='i' {
+	e2=expression2 '*'? i='i' {
 		$result = new ASTOperator($i, "*", new ASTNumber($i, 0.0, 1.0), $e2.result);
 	}
 	|

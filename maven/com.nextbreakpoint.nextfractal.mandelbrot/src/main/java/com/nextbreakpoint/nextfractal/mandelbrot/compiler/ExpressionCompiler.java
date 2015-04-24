@@ -24,6 +24,7 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.compiler;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTAssignStatement;
@@ -464,7 +465,8 @@ public class ExpressionCompiler implements ASTExpressionCompiler {
 		builder.append("if (");
 		statement.getConditionExp().compile(this);
 		builder.append(") {\n");
-		statement.getStatement().compile(this);
+		Map<String, CompilerVariable> vars = new HashMap<String, CompilerVariable>(variables);
+		statement.getStatement().compile(new ExpressionCompiler(vars, builder));
 		builder.append("}\n");
 	}
 

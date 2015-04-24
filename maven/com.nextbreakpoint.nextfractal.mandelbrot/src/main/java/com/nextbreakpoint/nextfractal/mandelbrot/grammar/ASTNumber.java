@@ -29,17 +29,20 @@ import org.antlr.v4.runtime.Token;
 public class ASTNumber extends ASTExpression {
 	private final double r;
 	private final double i;
+	private final boolean real;
 
 	public ASTNumber(Token location, double r, double i) {
 		super(location);
 		this.r = r;
 		this.i = i;
+		real = false;
 	}
 
 	public ASTNumber(Token location, double r) {
 		super(location);
 		this.r = r;
 		this.i = 0;
+		real = true;
 	}
 
 	@Override
@@ -54,7 +57,7 @@ public class ASTNumber extends ASTExpression {
 
 	@Override
 	public boolean isReal() {
-		return i == 0;
+		return real;
 	}
 
 	public double r() {

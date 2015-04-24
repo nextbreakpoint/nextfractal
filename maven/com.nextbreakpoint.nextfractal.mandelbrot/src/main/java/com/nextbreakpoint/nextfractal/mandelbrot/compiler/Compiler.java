@@ -352,7 +352,8 @@ public class Compiler {
 		builder.append("public void render(List<Number[]> states) {\n");
 		if (orbit != null) {
 			compile(builder, scope, orbit.getBegin(), stateVariables);
-			compile(builder, scope, orbit.getLoop(), stateVariables);
+			Map<String, CompilerVariable> vars = new HashMap<String, CompilerVariable>(scope);
+			compile(builder, vars, orbit.getLoop(), stateVariables);
 			compile(builder, scope, orbit.getEnd(), stateVariables);
 		}
 		int i = 0;
