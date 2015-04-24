@@ -647,7 +647,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 	private void updateFractal(Session session) {
 		try {
 			boolean[] changed = generateOrbitAndColor();
-			updateErrors(null, null);
+			updateErrors(null, null, null);
 			boolean orbitChanged = changed[0];
 			boolean colorChanged = changed[1];
 			if (orbitChanged) {
@@ -727,13 +727,13 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 			}
 		} catch (CompileSourceException e) {
 			logger.log(Level.INFO, "Cannot render fractal: " + e.getMessage());
-			updateErrors(e.getMessage(), e.getErrors());
+			updateErrors(e.getMessage(), e.getErrors(), null);
 		} catch (CompileClassException e) {
 			logger.log(Level.INFO, "Cannot render fractal: " + e.getMessage());
-			updateErrors(e.getMessage(), e.getErrors());
+			updateErrors(e.getMessage(), e.getErrors(), e.getSource());
 		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | IOException e) {
 			logger.log(Level.INFO, "Cannot render fractal: " + e.getMessage());
-			updateErrors(e.getMessage(), null);
+			updateErrors(e.getMessage(), null, null);
 		}
 	}
 
@@ -754,7 +754,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 			astColor = null;
 			orbitBuilder = null;
 			colorBuilder = null;
-			throw new CompileClassException("Failed to compile Orbit subclass", newOrbitBuilder.getErrors());
+			throw new CompileClassException("Failed to compile Orbit subclass", report.getOrbitSource(), newOrbitBuilder.getErrors());
 		}
 		CompilerBuilder<Color> newColorBuilder = compiler.compileColor(report);
 		if (newColorBuilder.getErrors().size() > 0) {
@@ -762,7 +762,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 			astColor = null;
 			orbitBuilder = null;
 			colorBuilder = null;
-			throw new CompileClassException("Failed to compile Color subclass", newColorBuilder.getErrors());
+			throw new CompileClassException("Failed to compile Color subclass", report.getColorSource(), newColorBuilder.getErrors());
 		}
 		orbitBuilder = newOrbitBuilder;
 		String newASTOrbit = report.getAST().getOrbit().toString();
@@ -775,7 +775,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 		return changed;
 	}
 
-	private void updateErrors(String message, List<CompilerError> errors) {
+	private void updateErrors(String message, List<CompilerError> errors, String source) {
 		disableTool = message != null;
 		Platform.runLater(() -> {
 			errorProperty.setValue(null);
@@ -791,6 +791,11 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 						builder.append(error.getMessage());
 						builder.append("\n");
 					}
+				}
+				if (source != null) {
+					builder.append("\n\n");
+					builder.append(source);
+					builder.append("\n");
 				}
 				errorProperty.setValue(builder.toString());
 			}
