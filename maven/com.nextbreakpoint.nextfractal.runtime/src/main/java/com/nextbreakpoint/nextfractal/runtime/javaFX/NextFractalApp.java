@@ -66,7 +66,7 @@ public class NextFractalApp extends Application {
 		int height = 600;
 		int editorWidth = 424;
         String pluginId = "Mandelbrot";
-        primaryStage.setTitle("NextFractal");
+        primaryStage.setTitle("NextFractal 1.0.1");
         primaryStage.setResizable(false);
         StackPane root = new StackPane();
         Pane mainPane = new Pane();
