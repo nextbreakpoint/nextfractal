@@ -338,7 +338,7 @@ public class Compiler {
 			for (CompilerVariable var : stateVariables) {
 				scope.put(var.getName(), var);
 				if (var.isCreate()) {
-					builder.append("private Variable ");
+					builder.append("private final Variable ");
 					builder.append(var.getName());
 					builder.append(" = variable(0.0,0.0);\n");
 				}
@@ -379,7 +379,7 @@ public class Compiler {
 		builder.append("public void render() {\n");
 		int i = 0;
 		for (CompilerVariable var : stateVariables) {
-			builder.append("Variable ");
+			builder.append("final Variable ");
 			builder.append(var.getName());
 			builder.append(" = getVariable(");
 			builder.append(i++);
