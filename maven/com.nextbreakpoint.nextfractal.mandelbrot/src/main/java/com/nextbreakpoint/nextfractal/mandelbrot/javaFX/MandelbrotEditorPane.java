@@ -440,7 +440,7 @@ public class MandelbrotEditorPane extends BorderPane {
 		};
 		
 		String[] FUNCTIONS = new String[] {
-		        "re", "im", "mod", "pha", "log", "exp", "sqrt", "abs", "pow", "hypot", "atan2", "min", "max", "cos", "sin", "tan", "asin", "acos", "atan"
+		        "re", "im", "mod", "pha", "log", "exp", "sqrt", "abs", "ceil", "floor", "pow", "hypot", "atan2", "min", "max", "cos", "sin", "tan", "asin", "acos", "atan"
 		};
 		
 		String KEYWORD_PATTERN = "\\b(" + String.join("|", KEYWORDS) + ")\\b";

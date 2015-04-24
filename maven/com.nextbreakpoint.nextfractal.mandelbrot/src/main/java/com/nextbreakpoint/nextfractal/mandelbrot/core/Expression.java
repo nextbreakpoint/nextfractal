@@ -172,6 +172,14 @@ public class Expression {
 		return x;
 	}
 
+	public static double funcCeil(double x) {
+		return Math.ceil(x);
+	}
+
+	public static double funcFloor(double x) {
+		return Math.floor(x);
+	}
+
 	public static double funcPow(double x, double y) {
 		return Math.pow(x, y);
 	}

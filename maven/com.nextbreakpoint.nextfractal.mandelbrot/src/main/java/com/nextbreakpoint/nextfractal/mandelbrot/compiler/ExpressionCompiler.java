@@ -97,6 +97,9 @@ public class ExpressionCompiler implements ASTExpressionCompiler {
 				}				
 				break;
 
+			case "abs":
+			case "ceil":
+			case "floor":
 			case "log":
 				if (function.getArguments().length != 1) {
 					throw new ASTException("Invalid number of arguments: " + function.getLocation().getText(), function.getLocation());
@@ -106,6 +109,8 @@ public class ExpressionCompiler implements ASTExpressionCompiler {
 				}				
 				break;
 				
+			case "min":
+			case "max":
 			case "atan2":
 			case "hypot":
 				if (function.getArguments().length != 2) {

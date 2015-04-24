@@ -70,7 +70,7 @@ public class ASTFunction extends ASTExpression {
 
 	@Override
 	public boolean isReal() {
-		if (name.equals("mod") || name.equals("mod2") || name.equals("pha") || name.equals("log") || name.equals("exp") || name.equals("atan2") || name.equals("hypot") || name.equals("sqrt") || name.equals("re") || name.equals("im")) {
+		if (name.equals("mod") || name.equals("mod2") || name.equals("pha") || name.equals("log") || name.equals("exp") || name.equals("atan2") || name.equals("hypot") || name.equals("sqrt") || name.equals("re") || name.equals("im") || name.equals("ceil") || name.equals("floor")) {
 			return true;
 		}
 		for (ASTExpression argument : arguments) {

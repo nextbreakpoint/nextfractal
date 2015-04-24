@@ -321,7 +321,7 @@ function returns [ASTFunction result]
 		$result = new ASTFunction($f, $f.text, new ASTExpression[] { $e.result });		
 	}
 	|
-	f=('log' | 'exp' | 'sqrt' | 'abs') '(' e=expression ')' {
+	f=('log' | 'exp' | 'sqrt' | 'abs' | 'ceil' | 'floor') '(' e=expression ')' {
 		$result = new ASTFunction($f, $f.text, new ASTExpression[] { $e.result });		
 	}
 	|
