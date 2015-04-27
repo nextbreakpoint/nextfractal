@@ -83,7 +83,7 @@ public class MandelbrotFactory implements FractalFactory {
 
 	protected String getInitialSource() {
 		try {
-			return getSource("source.m");
+			return getSource("mandelbrot-default.m");
 		} catch (IOException e) {
 		}
 		return "";
@@ -91,12 +91,15 @@ public class MandelbrotFactory implements FractalFactory {
 
 	protected String getSource(String name) throws IOException {
 		InputStream is = getClass().getResourceAsStream(name);
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		byte[] buffer = new byte[4096];
-		int length = 0;
-		while ((length = is.read(buffer)) > 0) {
-			baos.write(buffer, 0, length);
+		if (is != null) {
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			byte[] buffer = new byte[4096];
+			int length = 0;
+			while ((length = is.read(buffer)) > 0) {
+				baos.write(buffer, 0, length);
+			}
+			return baos.toString();
 		}
-		return baos.toString();
+		return "";
 	}
 }

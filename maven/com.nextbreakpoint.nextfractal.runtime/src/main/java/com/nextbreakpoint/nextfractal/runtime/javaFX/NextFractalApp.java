@@ -27,6 +27,8 @@ package com.nextbreakpoint.nextfractal.runtime.javaFX;
 import java.awt.Desktop;
 import java.net.URI;
 import java.util.ServiceLoader;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javafx.application.Application;
 import javafx.event.EventHandler;
@@ -53,6 +55,7 @@ import com.nextbreakpoint.nextfractal.runtime.export.SimpleExportService;
 
 
 public class NextFractalApp extends Application {
+	private static Logger logger = Logger.getLogger(NextFractalApp.class.getName());
 	private BorderPane editorRootPane;
 	private BorderPane renderRootPane;
 
@@ -96,6 +99,7 @@ public class NextFractalApp extends Application {
 		JavaFXRendererFactory renderFactory = new JavaFXRendererFactory();
 		ExportRenderer exportRenderer = new SimpleExportRenderer(renderThreadFactory, renderFactory);
         ExportService exportService = new SimpleExportService(exportThreadFactory, exportRenderer);
+        printPlugins();
         Session session = createFractalSession(pluginId);
         if (session != null) {
         	session.setExportService(exportService);
@@ -210,6 +214,7 @@ public class NextFractalApp extends Application {
 					return plugin.createEditorPane(session);
 				}
 			} catch (Exception e) {
+				logger.log(Level.WARNING, "Cannot create editor panel with pluginId = " + pluginId, e);
 			}
 		}
 		return null;
@@ -223,6 +228,7 @@ public class NextFractalApp extends Application {
 					return plugin.createRenderPane(session, width, height);
 				}
 			} catch (Exception e) {
+				logger.log(Level.WARNING, "Cannot create renderer panel with pluginId = " + pluginId, e);
 			}
 		}
 		return null;
@@ -236,8 +242,16 @@ public class NextFractalApp extends Application {
 					return plugin.createSession();
 				}
 			} catch (Exception e) {
+				logger.log(Level.WARNING, "Cannot create session with pluginId = " + pluginId, e);
 			}
 		}
 		return null;
+	}
+
+	private void printPlugins() {
+		final ServiceLoader<? extends FractalFactory> plugins = ServiceLoader.load(FractalFactory.class);
+		plugins.forEach(plugin -> {
+			logger.fine("Found plugin " + plugin.getId());
+		});
 	}
 }
