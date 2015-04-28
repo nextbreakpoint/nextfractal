@@ -37,4 +37,4 @@ Download Maven and Ant. Make sure mvn and ant commands are in your system path. 
 
 Open a terminal, change current folder to maven/com.nextbreakpoint.nextfractal.build and execute the command:
 
-'ant all'
+*ant all*
