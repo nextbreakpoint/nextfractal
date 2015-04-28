@@ -45,6 +45,7 @@ import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTParen;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTRuleCompareOp;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTRuleExpression;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTRuleLogicOp;
+import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTStopStatement;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTVariable;
 
 public class ExpressionCompiler implements ASTExpressionCompiler {
@@ -254,6 +255,10 @@ public class ExpressionCompiler implements ASTExpressionCompiler {
 						
 					case "*":
 						builder.append("opMul");
+						break;
+						
+					case "/":
+						builder.append("opDiv");
 						break;
 						
 					default:
@@ -501,5 +506,10 @@ public class ExpressionCompiler implements ASTExpressionCompiler {
 			statement.getExp().compile(this);
 			builder.append(");\n");
 		}
+	}
+
+	@Override
+	public void compile(ASTStopStatement statement) {
+		builder.append("n.set(i);\nbreak;\n");
 	}
 }

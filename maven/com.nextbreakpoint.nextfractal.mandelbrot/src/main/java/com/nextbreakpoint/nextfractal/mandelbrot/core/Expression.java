@@ -64,6 +64,11 @@ public class Expression {
 		return new Number(a.r() * b.r() - a.i() * b.i(), a.r() * b.i() + a.i() * b.r());
 	}
 
+	public static Number opDiv(Number a, Number b) {
+		double m = b.r() * b.r() + b.i() * b.i();
+		return new Number((a.r() * b.r() + a.i() * b.i()) / m, (-a.r() * b.i() + a.i() * b.r()) / m);
+	}
+
 	public static Number opAdd(Number a, double b) {
 		return new Number(a.r() + b, a.i());
 	}

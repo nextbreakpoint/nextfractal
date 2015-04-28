@@ -99,13 +99,17 @@ endstatement
 		
 statement returns [ASTStatement result]
 	:
-	v=VARIABLE '=' e=expression ';' {
+	v=VARIABLE '=' e=expression ';'? {
 		$result = new ASTAssignStatement($v, $v.text, $e.result);
 		builder.registerVariable($v.text, $e.result.isReal(), $v);
 	}
 	|
-	f=IF '(' c=conditionexp ')' '{' s=statement '}' {
+	f=IF '(' c=conditionexp ')' '{' s=statement* '}' {
 		$result = new ASTConditionalStatement($f, $c.result, $s.result);
+	}
+	|
+	t=STOP ';'? {
+		$result = new ASTStopStatement($t);
 	}
 	;
 		
@@ -534,6 +538,11 @@ INIT
 IF 
 	:
 	'if'
+	;
+	
+STOP 
+	:
+	'stop'
 	;
 	
 COLOR 

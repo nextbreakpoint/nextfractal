@@ -24,34 +24,20 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.grammar;
 
-public interface ASTExpressionCompiler {
-	public void compile(ASTNumber number);
+import org.antlr.v4.runtime.Token;
 
-	public void compile(ASTFunction function);
+public class ASTStopStatement extends ASTStatement {
+	public ASTStopStatement(Token location) {
+		super(location);
+	}
 
-	public void compile(ASTOperator operator);
+	@Override
+	public String toString() {
+		return "stop";
+	}
 
-	public void compile(ASTParen paren);
-
-	public void compile(ASTVariable variable);
-
-	public void compile(ASTConditionCompareOp compareOp);
-
-	public void compile(ASTConditionLogicOp logicOp);
-
-	public void compile(ASTConditionTrap trap);
-
-	public void compile(ASTRuleLogicOp logicOp);
-
-	public void compile(ASTRuleCompareOp compareOp);
-
-	public void compile(ASTColorPalette palette);
-
-	public void compile(ASTColorComponent component);
-
-	public void compile(ASTConditionalStatement statement);
-
-	public void compile(ASTAssignStatement statement);
-
-	public void compile(ASTStopStatement statement);
+	@Override
+	public void compile(ASTExpressionCompiler compiler) {
+		compiler.compile(this);
+	}
 }
