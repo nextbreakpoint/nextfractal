@@ -1,5 +1,5 @@
 /*
- * NextFractal 1.0.1
+ * NextFractal 1.0.2
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015 Andrea Medeghini
@@ -51,6 +51,7 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
@@ -191,6 +192,29 @@ public class MandelbrotEditorPane extends BorderPane {
                 .subscribe(this::applyTaskResult);
         
         codeArea.replaceText(getMandelbrotSession().getSource());
+        
+        codeArea.setOnDragDropped(e -> {
+        	List<File> files = e.getDragboard().getFiles();
+        	if (files.size() > 0) {
+        		File file = files.get(0);
+				currentFile = file;
+				try {
+					MandelbrotDataStore service = new MandelbrotDataStore();
+					MandelbrotData data = service.loadFromFile(currentFile);
+					logger.info(data.toString());
+					getMandelbrotSession().setData(data);
+				} catch (Exception x) {
+					logger.warning("Cannot read file " + file.getAbsolutePath());
+					//TODO display error
+				}
+        	}
+        });
+        
+        codeArea.setOnDragOver(e -> {
+        	if (e.getGestureSource() != codeArea && e.getDragboard().hasFiles()) {
+                e.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+            }
+        });
         
 		getMandelbrotSession().addMandelbrotListener(new MandelbrotListener() {
 			@Override

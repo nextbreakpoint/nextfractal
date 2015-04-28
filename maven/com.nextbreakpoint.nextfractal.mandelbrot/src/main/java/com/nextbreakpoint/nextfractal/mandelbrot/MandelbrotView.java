@@ -1,5 +1,5 @@
 /*
- * NextFractal 1.0.1
+ * NextFractal 1.0.2
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015 Andrea Medeghini

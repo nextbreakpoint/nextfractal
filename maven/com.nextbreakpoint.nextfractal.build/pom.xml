@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.nextbreakpoint.nextfractal</groupId>
 	<artifactId>com.nextbreakpoint.nextfractal.build</artifactId>
-	<version>1.0.1</version>
+	<version>1.0.2</version>
 	<name>com.nextbreakpoint.nextfractal.build</name>
 	<packaging>pom</packaging>
 	<modules>
@@ -128,17 +128,17 @@
 		<dependency>
 			<groupId>com.nextbreakpoint.nextfractal</groupId>
 			<artifactId>com.nextbreakpoint.nextfractal.core</artifactId>
-			<version>1.0.1</version>
+			<version>1.0.2</version>
 		</dependency>
 		<dependency>
 			<groupId>com.nextbreakpoint.nextfractal</groupId>
 			<artifactId>com.nextbreakpoint.nextfractal.runtime</artifactId>
-			<version>1.0.1</version>
+			<version>1.0.2</version>
 		</dependency>
 		<dependency>
 			<groupId>com.nextbreakpoint.nextfractal</groupId>
 			<artifactId>com.nextbreakpoint.nextfractal.mandelbrot</artifactId>
-			<version>1.0.1</version>
+			<version>1.0.2</version>
 		</dependency>
 		<!-- 
 		<dependency>

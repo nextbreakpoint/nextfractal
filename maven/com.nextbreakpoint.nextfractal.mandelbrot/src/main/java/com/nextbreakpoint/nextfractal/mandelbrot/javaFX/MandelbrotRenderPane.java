@@ -1,5 +1,5 @@
 /*
- * NextFractal 1.0.1
+ * NextFractal 1.0.2
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015 Andrea Medeghini
@@ -52,6 +52,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -73,6 +74,7 @@ import com.nextbreakpoint.nextfractal.core.utils.DefaultThreadFactory;
 import com.nextbreakpoint.nextfractal.core.utils.Double4D;
 import com.nextbreakpoint.nextfractal.core.utils.Integer4D;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotData;
+import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotDataStore;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotImageGenerator;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotListener;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotSession;
@@ -414,6 +416,28 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 			});
 		});
 		
+		stackPane.setOnDragDropped(e -> {
+        	List<File> files = e.getDragboard().getFiles();
+        	if (files.size() > 0) {
+        		File file = files.get(0);
+				try {
+					MandelbrotDataStore service = new MandelbrotDataStore();
+					MandelbrotData data = service.loadFromFile(file);
+					logger.info(data.toString());
+					getMandelbrotSession().setData(data);
+				} catch (Exception x) {
+					logger.warning("Cannot read file " + file.getAbsolutePath());
+					//TODO display error
+				}
+        	}
+        });
+        
+		stackPane.setOnDragOver(e -> {
+        	if (e.getGestureSource() != stackPane && e.getDragboard().hasFiles()) {
+                e.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+            }
+        });
+
 		exportExecutor = Executors.newSingleThreadExecutor(threadFactory);
 		
 		runTimer(fractalCanvas, orbitCanvas, juliaCanvas);
