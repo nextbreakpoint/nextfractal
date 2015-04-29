@@ -77,39 +77,55 @@ pathop
 	;
 	
 beginstatement 
-	:
-	s=statement {
-		builder.addBeginStatement($s.result);
+	: 
+	{
+		builder.pushStatementList();	
+	}
+	statement {
+		builder.addBeginStatements(builder.getStatementList());
+		builder.popStatementList();	
 	}
 	;
 		
 loopstatement
 	:
-	s=statement {
-		builder.addLoopStatement($s.result);
+	{
+		builder.pushStatementList();	
+	}
+	statement {
+		builder.addLoopStatements(builder.getStatementList());
+		builder.popStatementList();	
 	}
 	;
 		
 endstatement 
 	:
-	s=statement {
-		builder.addEndStatement($s.result);
+	{
+		builder.pushStatementList();	
+	}
+	statement {
+		builder.addEndStatements(builder.getStatementList());
+		builder.popStatementList();	
 	}
 	;
 		
-statement returns [ASTStatement result]
+statement
 	:
 	v=VARIABLE '=' e=expression ';'? {
-		$result = new ASTAssignStatement($v, $v.text, $e.result);
 		builder.registerVariable($v.text, $e.result.isReal(), $v);
+		builder.appendStatement(new ASTAssignStatement($v, $v.text, $e.result));
 	}
 	|
-	f=IF '(' c=conditionexp ')' '{' s=statement* '}' {
-		$result = new ASTConditionalStatement($f, $c.result, $s.result);
+	f=IF '(' c=conditionexp ')' '{' {
+		builder.pushStatementList();
+	} statement* '}' {
+		ASTStatementList list = builder.getStatementList();
+		builder.popStatementList();
+		builder.appendStatement(new ASTConditionalStatement($f, $c.result, list));
 	}
 	|
 	t=STOP ';'? {
-		$result = new ASTStopStatement($t);
+		builder.appendStatement(new ASTStopStatement($t));
 	}
 	;
 		
@@ -138,8 +154,109 @@ conditionexp returns [ASTConditionExpression result]
 		$result = new ASTConditionTrap($v, $v.text, $e.result, false);
 	}
 	| 
-	c1=conditionexp l=('&' | '|' | '^') c2=conditionexp {
+	t=JULIA {
+		$result = new ASTConditionJulia($t);
+	}	
+	| 
+	s='(' c=conditionexp ')' {
+		$result = new ASTConditionParen($s, $c.result);
+	}	
+	| 
+	c2=conditionexp2 {
+		$result = $c2.result;
+	}	
+	| 
+	c1=conditionexp l='|' c2=conditionexp2 {
 		$result = new ASTConditionLogicOp($c1.result.getLocation(), $l.text, $c1.result, $c2.result);
+	}	
+	;
+	
+conditionexp2 returns [ASTConditionExpression result]
+	:
+	e1=expression o=('=' | '<' | '>' | '<=' | '>=' | '<>') e2=expression {
+		$result = new ASTConditionCompareOp($e1.result.getLocation(), $o.text, $e1.result, $e2.result);
+	}
+	|
+	v=VARIABLE '?' e=expression {
+		$result = new ASTConditionTrap($v, $v.text, $e.result, true);
+	}
+	|
+	v=VARIABLE '~?' e=expression {
+		$result = new ASTConditionTrap($v, $v.text, $e.result, false);
+	}
+	| 
+	t=JULIA {
+		$result = new ASTConditionJulia($t);
+	}	
+	| 
+	s='(' c=conditionexp ')' {
+		$result = new ASTConditionParen($s, $c.result);
+	}	
+	| 
+	c2=conditionexp3 {
+		$result = $c2.result;
+	}	
+	| 
+	c1=conditionexp2 l='^' c2=conditionexp3 {
+		$result = new ASTConditionLogicOp($c1.result.getLocation(), $l.text, $c1.result, $c2.result);
+	}	
+	;
+
+conditionexp3 returns [ASTConditionExpression result]
+	:
+	e1=expression o=('=' | '<' | '>' | '<=' | '>=' | '<>') e2=expression {
+		$result = new ASTConditionCompareOp($e1.result.getLocation(), $o.text, $e1.result, $e2.result);
+	}
+	|
+	v=VARIABLE '?' e=expression {
+		$result = new ASTConditionTrap($v, $v.text, $e.result, true);
+	}
+	|
+	v=VARIABLE '~?' e=expression {
+		$result = new ASTConditionTrap($v, $v.text, $e.result, false);
+	}
+	| 
+	t=JULIA {
+		$result = new ASTConditionJulia($t);
+	}	
+	| 
+	s='(' c=conditionexp ')' {
+		$result = new ASTConditionParen($s, $c.result);
+	}	
+	| 
+	c2=conditionexp4 {
+		$result = $c2.result;
+	}	
+	| 
+	c1=conditionexp3 l='&' c2=conditionexp4 {
+		$result = new ASTConditionLogicOp($c1.result.getLocation(), $l.text, $c1.result, $c2.result);
+	}	
+	;
+
+conditionexp4 returns [ASTConditionExpression result]
+	:
+	e1=expression o=('=' | '<' | '>' | '<=' | '>=' | '<>') e2=expression {
+		$result = new ASTConditionCompareOp($e1.result.getLocation(), $o.text, $e1.result, $e2.result);
+	}
+	|
+	v=VARIABLE '?' e=expression {
+		$result = new ASTConditionTrap($v, $v.text, $e.result, true);
+	}
+	|
+	v=VARIABLE '~?' e=expression {
+		$result = new ASTConditionTrap($v, $v.text, $e.result, false);
+	}
+	| 
+	t=JULIA {
+		$result = new ASTConditionJulia($t);
+	}	
+	| 
+	s='(' c=conditionexp ')' {
+		$result = new ASTConditionParen($s, $c.result);
+	}	
+	| 
+	n='~' c2=conditionexp4 {
+		$result = new ASTConditionNeg($n, $c2.result);
 	}	
 	;
 	
@@ -173,24 +290,24 @@ expression returns [ASTExpression result]
 		$result = new ASTFunction($a, "pha", $e.result);	
 	}
 	|
-	s='-' e=expression {
-		$result = new ASTOperator($s, "-", $e.result);
+	a='<' er=expression ',' ei=expression '>' {
+		$result = new ASTOperator($a, "<>", $er.result, $ei.result);	
 	}
 	|
-	s='+' e=expression {
-		$result = new ASTOperator($s, "+", $e.result);
+	e2=expression2 {
+		$result = $e2.result;	
 	}
 	|
-	e1=expression s='+' e2=expression {
+	e1=expression s='+' e2=expression2 {
 		$result = new ASTOperator($s, "+", $e1.result, $e2.result);		
 	}
 	|
-	e1=expression s='-' e2=expression {
-		$result = new ASTOperator($s, "-", $e1.result, $e2.result);		
+	e2=expression2 s='+' e1=expression {
+		$result = new ASTOperator($s, "+", $e2.result, $e1.result);		
 	}
 	|
-	e3=expression2 {
-		$result = $e3.result;	
+	e1=expression s='-' e2=expression2 {
+		$result = new ASTOperator($s, "-", $e1.result, $e2.result);		
 	}
 	;
 
@@ -224,8 +341,24 @@ expression2 returns [ASTExpression result]
 		$result = new ASTFunction($a, "pha", $e.result);	
 	}
 	|
+	a='<' er=expression ',' ei=expression '>' {
+		$result = new ASTOperator($a, "<>", $er.result, $ei.result);	
+	}
+	|
+	e3=expression3 {
+		$result = $e3.result;
+	}
+	|
 	e1=expression2 s='*' e2=expression2 {
 		$result = new ASTOperator($s, "*", $e1.result, $e2.result);
+	}
+	|
+	s='-' e2=expression2 {
+		$result = new ASTOperator($s, "-", $e2.result);
+	}
+	|
+	s='+' e2=expression2 {
+		$result = new ASTOperator($s, "+", $e2.result);
 	}
 	|
 	i='i' '*'? e2=expression2 {
@@ -234,10 +367,6 @@ expression2 returns [ASTExpression result]
 	|
 	e2=expression2 '*'? i='i' {
 		$result = new ASTOperator($i, "*", new ASTNumber($i, 0.0, 1.0), $e2.result);
-	}
-	|
-	e3=expression3 {
-		$result = $e3.result;
 	}
 	;
 
@@ -271,12 +400,16 @@ expression3 returns [ASTExpression result]
 		$result = new ASTFunction($a, "pha", $e.result);	
 	}
 	|
-	e1=expression3 s='/' e2=expression3 {
-		$result = new ASTOperator($s, "/", $e1.result, $e2.result);
+	a='<' er=expression ',' ei=expression '>' {
+		$result = new ASTOperator($a, "<>", $er.result, $ei.result);	
 	}
 	|
 	e3=expression4 {
 		$result = $e3.result;
+	}
+	|
+	e1=expression3 s='/' e2=expression3 {
+		$result = new ASTOperator($s, "/", $e1.result, $e2.result);
 	}
 	;
 
@@ -308,6 +441,10 @@ expression4 returns [ASTExpression result]
 	|
 	a='<' e=expression '>' {
 		$result = new ASTFunction($a, "pha", $e.result);	
+	}
+	|
+	a='<' er=expression ',' ei=expression '>' {
+		$result = new ASTOperator($a, "<>", $er.result, $ei.result);	
 	}
 	|
 	e1=expression4 s='^' e2=expression4 {
@@ -442,8 +579,12 @@ colorinit
 		
 colorstatement
 	:
-	s=statement {
-		builder.addColorStatement($s.result);
+	{
+		builder.pushStatementList();	
+	}
+	statement {
+		builder.addColorStatements(builder.getStatementList());
+		builder.popStatementList();	
 	}
 	;
 		
@@ -543,6 +684,11 @@ IF
 STOP 
 	:
 	'stop'
+	;
+	
+JULIA 
+	:
+	'julia'
 	;
 	
 COLOR 

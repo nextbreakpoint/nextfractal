@@ -71,6 +71,45 @@ public class MandelbrotBaseListener implements MandelbrotListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterConditionexp4(@NotNull MandelbrotParser.Conditionexp4Context ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitConditionexp4(@NotNull MandelbrotParser.Conditionexp4Context ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterConditionexp3(@NotNull MandelbrotParser.Conditionexp3Context ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitConditionexp3(@NotNull MandelbrotParser.Conditionexp3Context ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterConditionexp2(@NotNull MandelbrotParser.Conditionexp2Context ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitConditionexp2(@NotNull MandelbrotParser.Conditionexp2Context ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterVariablelist(@NotNull MandelbrotParser.VariablelistContext ctx) { }
 	/**
 	 * {@inheritDoc}

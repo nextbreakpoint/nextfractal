@@ -1,5 +1,5 @@
 /*
- * NextFractal 1.0.2
+ * NextFractal 1.0.3
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015 Andrea Medeghini
@@ -28,20 +28,20 @@ import org.antlr.v4.runtime.Token;
 
 public class ASTConditionalStatement extends ASTStatement {
 	private ASTConditionExpression conditionExp;
-	private ASTStatement statement;
+	private ASTStatementList statementList;
 
-	public ASTConditionalStatement(Token location, ASTConditionExpression conditionExp, ASTStatement statement) {
+	public ASTConditionalStatement(Token location, ASTConditionExpression conditionExp, ASTStatementList statementList) {
 		super(location);
 		this.conditionExp = conditionExp;
-		this.statement = statement;
+		this.statementList = statementList;
 	}
 
 	public ASTConditionExpression getConditionExp() {
 		return conditionExp;
 	}
 
-	public ASTStatement getStatement() {
-		return statement;
+	public ASTStatementList getStatementList() {
+		return statementList;
 	}
 
 	@Override
@@ -49,9 +49,9 @@ public class ASTConditionalStatement extends ASTStatement {
 		StringBuilder builder = new StringBuilder();
 		builder.append("if (");
 		builder.append(conditionExp);
-		builder.append(") { ");
-		builder.append(statement);
-		builder.append(" }");
+		builder.append(") {\n");
+		builder.append(statementList);
+		builder.append("}");
 		return builder.toString();
 	}
 

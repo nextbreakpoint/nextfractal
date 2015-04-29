@@ -1,5 +1,5 @@
 /*
- * NextFractal 1.0.2
+ * NextFractal 1.0.3
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015 Andrea Medeghini
@@ -109,8 +109,18 @@ public class Expression {
 		return new Number(a * b, 0);
 	}
 
+	public static Number opDiv(double a, double b) {
+		return new Number(a / b, 0);
+	}
+
 	public static Number opPow(double a, double b) {
 		return new Number(Math.pow(a, b), 0);
+	}
+
+	public static Number opPow(Number a, double b) {
+		double m = Math.pow(Math.hypot(a.r(), a.i()), b);
+		double f = Math.atan2(a.i(), a.r()) * b;
+		return new Number(m * Math.cos(f), m * Math.sin(f));
 	}
 
 	public static Number opNeg(Number a) {

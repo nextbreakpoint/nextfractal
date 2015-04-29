@@ -1,5 +1,5 @@
 /*
- * NextFractal 1.0.2
+ * NextFractal 1.0.3
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015 Andrea Medeghini
@@ -54,4 +54,12 @@ public interface ASTExpressionCompiler {
 	public void compile(ASTAssignStatement statement);
 
 	public void compile(ASTStopStatement statement);
+
+	public void compile(ASTConditionJulia condition);
+
+	public void compile(ASTConditionParen condition);
+
+	public void compile(ASTConditionNeg condition);
+
+	public void compile(ASTStatementList statementList);
 }

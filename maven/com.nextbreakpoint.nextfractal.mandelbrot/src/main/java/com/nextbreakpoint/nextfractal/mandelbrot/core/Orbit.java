@@ -1,5 +1,5 @@
 /*
- * NextFractal 1.0.2
+ * NextFractal 1.0.3
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015 Andrea Medeghini
@@ -34,6 +34,7 @@ public abstract class Orbit {
 	protected Variable w = new Variable(0, 0);
 	protected Variable n = new Variable(0, 0);
 	protected Scope scope;
+	protected boolean julia;
 
 	public Orbit() {
 		region[0] = new MutableNumber();
@@ -103,5 +104,13 @@ public abstract class Orbit {
 	public void setInitialRegion(Number a, Number b) {
 		this.region[0].set(a);
 		this.region[1].set(b);
+	}
+
+	public boolean isJulia() {
+		return julia;
+	}
+
+	public void setJulia(boolean julia) {
+		this.julia = julia;
 	}
 }

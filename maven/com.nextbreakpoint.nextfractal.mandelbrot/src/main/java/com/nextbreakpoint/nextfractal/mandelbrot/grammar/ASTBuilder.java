@@ -1,5 +1,5 @@
 /*
- * NextFractal 1.0.2
+ * NextFractal 1.0.3
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015 Andrea Medeghini
@@ -24,6 +24,8 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.grammar;
 
+import java.util.Stack;
+
 import org.antlr.v4.runtime.Token;
 
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
@@ -31,6 +33,8 @@ import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
 public class ASTBuilder {
 	private ASTFractal fractal;
 	private boolean isColorContext;
+	private ASTStatementList statementList = new ASTStatementList();
+	private Stack<ASTStatementList> stack = new Stack<>();
 
 	public ASTBuilder() {
 	}
@@ -159,5 +163,46 @@ public class ASTBuilder {
 
 	public void setColorContext(boolean isColorContext) {
 		this.isColorContext = isColorContext;
+	}
+
+	public void pushStatementList() {
+		stack.push(statementList);
+		statementList = new ASTStatementList();
+	}
+
+	public void popStatementList() {
+		statementList = stack.pop();
+	}
+
+	public ASTStatementList getStatementList() {
+		return statementList;
+	}
+
+	public void appendStatement(ASTStatement statement) {
+		statementList.addStatement(statement);
+	}
+
+	public void addColorStatements(ASTStatementList statementList) {
+		for (ASTStatement statement : statementList.getStatements()) {
+			addColorStatement(statement);
+		}
+	}
+
+	public void addBeginStatements(ASTStatementList statementList) {
+		for (ASTStatement statement : statementList.getStatements()) {
+			addBeginStatement(statement);
+		}
+	}
+
+	public void addEndStatements(ASTStatementList statementList) {
+		for (ASTStatement statement : statementList.getStatements()) {
+			addEndStatement(statement);
+		}
+	}
+
+	public void addLoopStatements(ASTStatementList statementList) {
+		for (ASTStatement statement : statementList.getStatements()) {
+			addLoopStatement(statement);
+		}
 	}
 }	

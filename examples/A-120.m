@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <mandelbrot>
-    <timestamp>2015-04-28 23:23:21</timestamp>
+    <timestamp>2015-04-29 12:41:47</timestamp>
     <julia>false</julia>
     <point>0.3016666666666667</point>
     <point>-0.005</point>
@@ -15,13 +15,13 @@
     <source>fractal {
 	orbit [2.5 - 2.5i,+7.5 + 2.5i] [x,n] {
 		loop [0, 200] (re(x) &gt; 1000 | im(x) &gt; 1000 | mod2(x) &gt; 40) {
-			ta = x * x + w - 1;
-			tb = 2 * x + w - 2;
-			if (mod2(tb) &lt; 0.000000000000000001) {
+			zn = x * x + w - 1;
+			zd = 2 * x + w - 2;
+			if (mod2(zd) &lt; 0.000000000000000001) {
 				tb = &lt;0.000000001,0&gt;;
 			}
-			tc = ta / tb;
-			x = tc * tc;
+			z = zn / zd;
+			x = z * z;
 			if (mod2(x - 1) &lt; 0.00000000000001) {
 				stop;
 			}

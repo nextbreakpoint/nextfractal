@@ -1,5 +1,5 @@
 /*
- * NextFractal 1.0.2
+ * NextFractal 1.0.3
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015 Andrea Medeghini
@@ -33,7 +33,10 @@ import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTColorPalette;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTConditionCompareOp;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTConditionExpression;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTConditionLogicOp;
+import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTConditionNeg;
+import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTConditionParen;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTConditionTrap;
+import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTConditionJulia;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTConditionalStatement;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTException;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTExpression;
@@ -45,6 +48,8 @@ import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTParen;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTRuleCompareOp;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTRuleExpression;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTRuleLogicOp;
+import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTStatement;
+import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTStatementList;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTStopStatement;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTVariable;
 
@@ -174,7 +179,6 @@ public class ExpressionCompiler implements ASTExpressionCompiler {
 				
 				case "+":
 					if (exp1.isReal()) {
-						builder.append("-");
 						exp1.compile(this);
 					} else {
 						builder.append("opPos");
@@ -189,6 +193,12 @@ public class ExpressionCompiler implements ASTExpressionCompiler {
 			}
 		} else {
 			if (exp1.isReal() && exp2.isReal()) {
+				if (operator.getOp().equals("^")) {
+					builder.append("opPow");
+				}
+				if (operator.getOp().equals("<>")) {
+					builder.append("number");
+				}
 				builder.append("(");
 				exp1.compile(this);
 				switch (operator.getOp()) {
@@ -209,7 +219,11 @@ public class ExpressionCompiler implements ASTExpressionCompiler {
 						break;
 						
 					case "^":
-						builder.append("^");
+						builder.append(",");
+						break;
+					
+					case "<>":
+						builder.append(",");
 						break;
 					
 					default:
@@ -233,6 +247,10 @@ public class ExpressionCompiler implements ASTExpressionCompiler {
 						
 					case "/":
 						builder.append("opDiv");
+						break;
+						
+					case "^":
+						builder.append("opPow");
 						break;
 					
 					default:
@@ -475,8 +493,12 @@ public class ExpressionCompiler implements ASTExpressionCompiler {
 		builder.append("if (");
 		statement.getConditionExp().compile(this);
 		builder.append(") {\n");
-		Map<String, CompilerVariable> vars = new HashMap<String, CompilerVariable>(variables);
-		statement.getStatement().compile(new ExpressionCompiler(vars, builder));
+		if (statement.getStatementList() != null) {
+			Map<String, CompilerVariable> vars = new HashMap<String, CompilerVariable>(variables);
+			for (ASTStatement innerStatement : statement.getStatementList().getStatements()) {
+				innerStatement.compile(new ExpressionCompiler(vars, builder));
+			}
+		}
 		builder.append("}\n");
 	}
 
@@ -511,5 +533,29 @@ public class ExpressionCompiler implements ASTExpressionCompiler {
 	@Override
 	public void compile(ASTStopStatement statement) {
 		builder.append("n.set(i);\nbreak;\n");
+	}
+
+	@Override
+	public void compile(ASTConditionJulia condition) {
+		builder.append("isJulia()");
+	}
+
+	@Override
+	public void compile(ASTConditionParen condition) {
+		builder.append("(");
+		condition.getExp().compile(this);
+		builder.append(")");
+	}
+
+	@Override
+	public void compile(ASTConditionNeg condition) {
+		builder.append("!");
+		condition.getExp().compile(this);
+	}
+
+	@Override
+	public void compile(ASTStatementList statementList) {
+		// TODO Auto-generated method stub
+		
 	}
 }

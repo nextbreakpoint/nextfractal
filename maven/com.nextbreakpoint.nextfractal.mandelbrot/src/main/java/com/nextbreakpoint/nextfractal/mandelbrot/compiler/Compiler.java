@@ -1,5 +1,5 @@
 /*
- * NextFractal 1.0.2
+ * NextFractal 1.0.3
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015 Andrea Medeghini
@@ -97,6 +97,10 @@ public class Compiler {
 		if (errors.size() == 0) {
 			String orbitSource = buildOrbit(ast, errors);
 			String colorSource = buildColor(ast, errors);
+			if (logger.isLoggable(Level.FINE)) {
+				logger.fine(orbitSource);
+				logger.fine(colorSource);
+			}
 			return new CompilerReport(ast, orbitSource, colorSource, errors);
 		}
 		return new CompilerReport(ast, "", "", errors);

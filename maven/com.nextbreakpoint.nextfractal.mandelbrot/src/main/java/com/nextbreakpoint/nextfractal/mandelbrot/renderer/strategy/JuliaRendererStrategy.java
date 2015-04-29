@@ -1,5 +1,5 @@
 /*
- * NextFractal 1.0.2
+ * NextFractal 1.0.3
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015 Andrea Medeghini
@@ -42,6 +42,7 @@ public class JuliaRendererStrategy implements RendererStrategy {
 	 */
 	@Override
 	public void prepare() {
+		rendererFractal.getOrbit().setJulia(true);
 	}
 
 	/**

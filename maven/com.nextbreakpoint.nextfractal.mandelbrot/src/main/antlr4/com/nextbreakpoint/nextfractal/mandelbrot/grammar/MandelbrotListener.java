@@ -55,6 +55,39 @@ public interface MandelbrotListener extends ParseTreeListener {
 	void exitLoopstatement(@NotNull MandelbrotParser.LoopstatementContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link MandelbrotParser#conditionexp4}.
+	 * @param ctx the parse tree
+	 */
+	void enterConditionexp4(@NotNull MandelbrotParser.Conditionexp4Context ctx);
+	/**
+	 * Exit a parse tree produced by {@link MandelbrotParser#conditionexp4}.
+	 * @param ctx the parse tree
+	 */
+	void exitConditionexp4(@NotNull MandelbrotParser.Conditionexp4Context ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link MandelbrotParser#conditionexp3}.
+	 * @param ctx the parse tree
+	 */
+	void enterConditionexp3(@NotNull MandelbrotParser.Conditionexp3Context ctx);
+	/**
+	 * Exit a parse tree produced by {@link MandelbrotParser#conditionexp3}.
+	 * @param ctx the parse tree
+	 */
+	void exitConditionexp3(@NotNull MandelbrotParser.Conditionexp3Context ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link MandelbrotParser#conditionexp2}.
+	 * @param ctx the parse tree
+	 */
+	void enterConditionexp2(@NotNull MandelbrotParser.Conditionexp2Context ctx);
+	/**
+	 * Exit a parse tree produced by {@link MandelbrotParser#conditionexp2}.
+	 * @param ctx the parse tree
+	 */
+	void exitConditionexp2(@NotNull MandelbrotParser.Conditionexp2Context ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link MandelbrotParser#variablelist}.
 	 * @param ctx the parse tree
 	 */
