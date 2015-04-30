@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <mandelbrot>
-    <timestamp>2015-04-30 09:20:22</timestamp>
+    <timestamp>2015-04-30 16:29:25</timestamp>
     <julia>false</julia>
     <point>1.5066666666666668</point>
     <point>0.2</point>
@@ -30,7 +30,7 @@
 			d0 = |x|;
 			l0 = 0;
 		}
-		loop [0, 200] (xr &gt; 1000 | xi &gt; 1000) {
+		loop [0, 200] (xr &gt; 100 | xi &gt; 100) {
 			xr = re(x);
 			xi = im(x);
 			ta = |x| ^ q;

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <mandelbrot>
-    <timestamp>2015-04-30 16:27:31</timestamp>
-    <julia>false</julia>
-    <point>0.3016666666666667</point>
-    <point>-0.005</point>
+    <timestamp>2015-04-30 16:24:23</timestamp>
+    <julia>true</julia>
+    <point>0.48</point>
+    <point>0.02</point>
     <rotation>0.0</rotation>
     <rotation>0.0</rotation>
     <rotation>0.0</rotation>
@@ -14,8 +14,27 @@
     <scale>1.0</scale>
     <source>fractal {
 	orbit [-1.5 - 1.5i,+1.5 + 1.5i] [x,n] {
-		loop [0, 200] (mod2(x) &gt; 40) {
-			x = x ^ 2.2 + w;
+		begin {
+			s = 0;
+			if (~julia) {
+				x = w;
+				w = 0;
+			}
+		}
+		loop [0, 200] (s = 1) {
+			ta = x * x;
+			tb = x * ta;
+			tc = tb - w;
+			if (mod2(tc) &lt; 0.0000001) {
+				x = x - w;
+				stop;
+			}
+			tc = 2 * tb + w;
+			td = 3 * ta;
+			if (mod2(td) &lt; 0.000000000000000000000001) {
+				td = &lt;0.000000000001, 0&gt;;
+			}
+			x = tc / td;
 		}
 	}
 	color [(1,0,0,0)] {
