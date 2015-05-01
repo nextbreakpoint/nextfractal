@@ -570,6 +570,12 @@ public class Compiler {
 			builder.append(" + 1; i <= ");
 			builder.append(loop.getEnd());
 			builder.append("; i++) {\n");
+			for (ASTStatement statement : loop.getStatements()) {
+				compile(context, builder, variables, statement);
+			}
+			builder.append("if (");
+			loop.getExpression().compile(new ExpressionCompiler(context, variables, builder));
+			builder.append(") { n = i; break; }\n");
 			builder.append("if (states != null) {\n");
 			builder.append("states.add(new Number[] { ");
 			int i = 0;
@@ -584,12 +590,20 @@ public class Compiler {
 			}
 			builder.append(" });\n");
 			builder.append("}\n");
-			for (ASTStatement statement : loop.getStatements()) {
-				compile(context, builder, variables, statement);
+			builder.append("}\n");
+			builder.append("if (states != null) {\n");
+			builder.append("states.add(new Number[] { ");
+			i = 0;
+			for (CompilerVariable var : stateVariables) {
+				if (i > 0) {
+					builder.append(", ");
+				}
+				builder.append("number(");
+				builder.append(var.getName());
+				builder.append(")");
+				i += 1;
 			}
-			builder.append("if (");
-			loop.getExpression().compile(new ExpressionCompiler(context, variables, builder));
-			builder.append(") { n = i; break; }\n");
+			builder.append(" });\n");
 			builder.append("}\n");
 		}
 	}
