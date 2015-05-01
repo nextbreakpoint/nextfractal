@@ -25,16 +25,26 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.core;
 
 public class Scope {
-	private Variable[] vars = new Variable[0]; 
+	private MutableNumber[] vars = new MutableNumber[0]; 
 
 	/**
 	 * @param value
 	 */
-	public void addVariable(Variable value) {
-		Variable[] tmpVars = vars;
-		vars = new Variable[vars.length + 1];
+	public void addVariable(MutableNumber value) {
+		MutableNumber[] tmpVars = vars;
+		vars = new MutableNumber[vars.length + 1];
 		System.arraycopy(tmpVars, 0, vars, 0, tmpVars.length);
-		vars[tmpVars.length] = new Variable(value);
+		vars[tmpVars.length] = new MutableNumber(value);
+	}
+
+	/**
+	 * @param value
+	 */
+	public void addVariable(double value) {
+		MutableNumber[] tmpVars = vars;
+		vars = new MutableNumber[vars.length + 1];
+		System.arraycopy(tmpVars, 0, vars, 0, tmpVars.length);
+		vars[tmpVars.length] = new MutableNumber(value);
 	}
 
 	/**
@@ -47,9 +57,17 @@ public class Scope {
 
 	/**
 	 * @param index
+	 * @param value
+	 */
+	public void setVariable(int index, double value) {
+		vars[index].set(value);
+	}
+
+	/**
+	 * @param index
 	 * @return
 	 */
-	public Variable getVariable(int index) {
+	public MutableNumber getVariable(int index) {
 		return vars[index];
 	}
 	
@@ -91,6 +109,6 @@ public class Scope {
 	 * 
 	 */
 	public void empty() {
-		vars = new Variable[0];
+		vars = new MutableNumber[0];
 	}
 }

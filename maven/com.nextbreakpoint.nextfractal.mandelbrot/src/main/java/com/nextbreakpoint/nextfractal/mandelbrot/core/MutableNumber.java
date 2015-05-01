@@ -45,18 +45,27 @@ public class MutableNumber extends Number {
 		super(value.r, value.i);
 	}
 
-	public void set(double r, double i) {
+	public MutableNumber set(Number x) {
+		this.r = x.r();
+		this.i = x.i();
+		return this;
+	}
+
+	public MutableNumber set(double r, double i) {
 		this.r = r;
 		this.i = i;
+		return this;
 	}
 	
-	public void set(double r) {
+	public MutableNumber set(double r) {
 		this.r = r;
 		this.i = 0;
+		return this;
 	}
 	
-	public void set(int n) {
+	public MutableNumber set(int n) {
 		this.r = n;
 		this.i = 0;
+		return this;
 	}
 }

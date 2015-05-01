@@ -28,17 +28,22 @@ import java.util.List;
 
 
 public abstract class Orbit {
-	protected Number[] region = new Number[2];
-	protected Number point = new Number(0, 0);
-	protected Variable x = new Variable(0, 0);
-	protected Variable w = new Variable(0, 0);
-	protected Variable n = new Variable(0, 0);
+	protected MutableNumber[] region = new MutableNumber[2];
+	protected MutableNumber point = new MutableNumber(0, 0);
+	protected MutableNumber x = new MutableNumber(0, 0);
+	protected MutableNumber w = new MutableNumber(0, 0);
+	protected double n = 0.0;
+	protected MutableNumber[] numbers;
 	protected Scope scope;
 	protected boolean julia;
 
 	public Orbit() {
 		region[0] = new MutableNumber();
 		region[1] = new MutableNumber();
+		numbers = createNumbers(); 
+		for (int i = 0; i < numbers.length; i++) {
+			numbers[i] = new MutableNumber();
+		}
 	}
 
 	public Scope getScope() {
@@ -68,10 +73,6 @@ public abstract class Orbit {
 	protected Trap trap(Number center) {
 		return new Trap(center);
 	}
-	
-	public abstract void init();
-
-	public abstract void render(List<Number[]> states);
 
 	public void getState(MutableNumber[] state) {
 		scope.getState(state);
@@ -81,15 +82,27 @@ public abstract class Orbit {
 		return scope.stateSize();
 	}
 
-	public Variable getVariable(int index) {
+	public MutableNumber getVariable(int index) {
 		return scope.getVariable(index);
 	}
 
-	public void setVariable(int index, Variable value) {
+	public double getRealVariable(int index) {
+		return scope.getVariable(index).r();
+	}
+
+	public void setVariable(int index, MutableNumber value) {
 		scope.setVariable(index, value);
 	}
 
-	public void addVariable(Variable value) {
+	public void setVariable(int index, double value) {
+		scope.setVariable(index, value);
+	}
+
+	public void addVariable(MutableNumber value) {
+		scope.addVariable(value);
+	}
+
+	public void addVariable(double value) {
 		scope.addVariable(value);
 	}
 
@@ -113,4 +126,17 @@ public abstract class Orbit {
 	public void setJulia(boolean julia) {
 		this.julia = julia;
 	}
+
+	public MutableNumber getNumber(int index) {
+		return numbers[index];
+	}
+	
+	public void reset() {
+	}
+
+	public abstract void init();
+
+	public abstract void render(List<Number[]> states);
+	
+	protected abstract MutableNumber[] createNumbers();
 }

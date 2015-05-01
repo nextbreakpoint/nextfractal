@@ -32,11 +32,11 @@ import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTColorComponent;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTColorPalette;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTConditionCompareOp;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTConditionExpression;
+import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTConditionJulia;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTConditionLogicOp;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTConditionNeg;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTConditionParen;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTConditionTrap;
-import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTConditionJulia;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTConditionalStatement;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTException;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTExpression;
@@ -49,16 +49,17 @@ import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTRuleCompareOp;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTRuleExpression;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTRuleLogicOp;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTStatement;
-import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTStatementList;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTStopStatement;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTVariable;
 
 public class ExpressionCompiler implements ASTExpressionCompiler {
 	private final Map<String, CompilerVariable> variables;
+	private final ExpressionContext context;
 	private final StringBuilder builder;
 	
-	public ExpressionCompiler(Map<String, CompilerVariable> variables, StringBuilder builder) {
+	public ExpressionCompiler(ExpressionContext context, Map<String, CompilerVariable> variables, StringBuilder builder) {
 		this.variables = variables;
+		this.context = context;
 		this.builder = builder;
 	}
 
@@ -67,7 +68,9 @@ public class ExpressionCompiler implements ASTExpressionCompiler {
 		if (number.isReal()) {
 			builder.append(number.r());
 		} else {
-			builder.append("number(");
+			builder.append("getNumber(");
+			builder.append(context.newNumberIndex());
+			builder.append(").set(");
 			builder.append(number.r());
 			builder.append(",");
 			builder.append(number.i());
@@ -100,7 +103,12 @@ public class ExpressionCompiler implements ASTExpressionCompiler {
 			case "atan":
 				if (function.getArguments().length != 1) {
 					throw new ASTException("Invalid number of arguments: " + function.getLocation().getText(), function.getLocation());
-				}				
+				}	
+				if (!function.getArguments()[0].isReal()) {
+					builder.append("getNumber(");
+					builder.append(context.newNumberIndex());
+					builder.append("),");
+				}
 				break;
 
 			case "abs":
@@ -137,6 +145,11 @@ public class ExpressionCompiler implements ASTExpressionCompiler {
 				if (!function.getArguments()[1].isReal()) {
 					throw new ASTException("Invalid type of arguments: " + function.getLocation().getText(), function.getLocation());
 				}				
+				if (!function.getArguments()[0].isReal()) {
+					builder.append("getNumber(");
+					builder.append(context.newNumberIndex());
+					builder.append("),");
+				}
 				break;
 
 			case "sqrt":
@@ -144,6 +157,11 @@ public class ExpressionCompiler implements ASTExpressionCompiler {
 				if (function.getArguments().length != 1) {
 					throw new ASTException("Invalid number of arguments: " + function.getLocation().getText(), function.getLocation());
 				}				
+				if (!function.getArguments()[0].isReal()) {
+					builder.append("getNumber(");
+					builder.append(context.newNumberIndex());
+					builder.append("),");
+				}
 				break;
 				
 			default:
@@ -172,6 +190,9 @@ public class ExpressionCompiler implements ASTExpressionCompiler {
 					} else {
 						builder.append("opNeg");
 						builder.append("(");
+						builder.append("getNumber(");
+						builder.append(context.newNumberIndex());
+						builder.append("),");
 						exp1.compile(this);
 						builder.append(")");
 					}
@@ -183,6 +204,9 @@ public class ExpressionCompiler implements ASTExpressionCompiler {
 					} else {
 						builder.append("opPos");
 						builder.append("(");
+						builder.append("getNumber(");
+						builder.append(context.newNumberIndex());
+						builder.append("),");
 						exp1.compile(this);
 						builder.append(")");
 					}
@@ -197,7 +221,9 @@ public class ExpressionCompiler implements ASTExpressionCompiler {
 					builder.append("opPow");
 				}
 				if (operator.getOp().equals("<>")) {
-					builder.append("number");
+					builder.append("getNumber(");
+					builder.append(context.newNumberIndex());
+					builder.append(").set");
 				}
 				builder.append("(");
 				exp1.compile(this);
@@ -257,6 +283,9 @@ public class ExpressionCompiler implements ASTExpressionCompiler {
 						throw new ASTException("Unsupported operator: " + operator.getLocation().getText(), operator.getLocation());
 				}
 				builder.append("(");
+				builder.append("getNumber(");
+				builder.append(context.newNumberIndex());
+				builder.append("),");
 				exp1.compile(this);
 				builder.append(",");
 				exp2.compile(this);
@@ -283,6 +312,9 @@ public class ExpressionCompiler implements ASTExpressionCompiler {
 						throw new ASTException("Unsupported operator: " + operator.getLocation().getText(), operator.getLocation());
 				}
 				builder.append("(");
+				builder.append("getNumber(");
+				builder.append(context.newNumberIndex());
+				builder.append("),");
 				exp1.compile(this);
 				builder.append(",");
 				exp2.compile(this);
@@ -301,9 +333,6 @@ public class ExpressionCompiler implements ASTExpressionCompiler {
 	@Override
 	public void compile(ASTVariable variable) {
 		builder.append(variable.getName());
-		if (variable.isReal()) {
-			builder.append(".r()");
-		}
 	}
 
 	@Override
@@ -496,7 +525,7 @@ public class ExpressionCompiler implements ASTExpressionCompiler {
 		if (statement.getStatementList() != null) {
 			Map<String, CompilerVariable> vars = new HashMap<String, CompilerVariable>(variables);
 			for (ASTStatement innerStatement : statement.getStatementList().getStatements()) {
-				innerStatement.compile(new ExpressionCompiler(vars, builder));
+				innerStatement.compile(new ExpressionCompiler(context, vars, builder));
 			}
 		}
 		builder.append("}\n");
@@ -506,7 +535,12 @@ public class ExpressionCompiler implements ASTExpressionCompiler {
 	public void compile(ASTAssignStatement statement) {
 		CompilerVariable var = variables.get(statement.getName());
 		if (var != null) {
-			if ((var.isReal() && statement.getExp().isReal()) || (!var.isReal() && !statement.getExp().isReal())) {
+			if (var.isReal() && statement.getExp().isReal()) {
+				builder.append(statement.getName());
+				builder.append(" = ");
+				statement.getExp().compile(this);
+				builder.append(";\n");
+			} else if (!var.isReal() && !statement.getExp().isReal()) {
 				builder.append(statement.getName());
 				builder.append(".set(");
 				statement.getExp().compile(this);
@@ -522,17 +556,27 @@ public class ExpressionCompiler implements ASTExpressionCompiler {
 		} else {
 			var = new CompilerVariable(statement.getName(), statement.getExp().isReal(), false);
 			variables.put(statement.getName(), var);
-			builder.append("final Variable ");
-			builder.append(statement.getName());
-			builder.append(" = variable(");
-			statement.getExp().compile(this);
-			builder.append(");\n");
+			if (var.isReal()) {
+				builder.append("double ");
+				builder.append(statement.getName());
+				builder.append(" = ");
+				statement.getExp().compile(this);
+				builder.append(";\n");
+			} else {
+				builder.append("final MutableNumber ");
+				builder.append(statement.getName());
+				builder.append(" = getNumber(");
+				builder.append(context.newNumberIndex());
+				builder.append(").set(");
+				statement.getExp().compile(this);
+				builder.append(");\n");
+			}
 		}
 	}
 
 	@Override
 	public void compile(ASTStopStatement statement) {
-		builder.append("n.set(i);\nbreak;\n");
+		builder.append("n = i;\nbreak;\n");
 	}
 
 	@Override
@@ -551,11 +595,5 @@ public class ExpressionCompiler implements ASTExpressionCompiler {
 	public void compile(ASTConditionNeg condition) {
 		builder.append("!");
 		condition.getExp().compile(this);
-	}
-
-	@Override
-	public void compile(ASTStatementList statementList) {
-		// TODO Auto-generated method stub
-		
 	}
 }

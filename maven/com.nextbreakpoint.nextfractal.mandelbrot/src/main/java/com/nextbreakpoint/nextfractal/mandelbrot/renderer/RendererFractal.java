@@ -86,6 +86,7 @@ public class RendererFractal {
 	 * @param w
 	 */
 	public void renderOrbit(MutableNumber[] state, Number x, Number w) {
+		orbit.reset();
 		orbit.setX(x);
 		orbit.setW(w);
 		orbit.render(null);
@@ -97,6 +98,7 @@ public class RendererFractal {
 	 * @return
 	 */
 	public float[] renderColor(Number[] state) {
+		color.reset();
 		color.setState(state);
 		color.render();
 		return color.getColor();

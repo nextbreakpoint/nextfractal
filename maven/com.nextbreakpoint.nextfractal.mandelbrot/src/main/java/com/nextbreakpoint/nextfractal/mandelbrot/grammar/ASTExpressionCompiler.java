@@ -60,6 +60,4 @@ public interface ASTExpressionCompiler {
 	public void compile(ASTConditionParen condition);
 
 	public void compile(ASTConditionNeg condition);
-
-	public void compile(ASTStatementList statementList);
 }

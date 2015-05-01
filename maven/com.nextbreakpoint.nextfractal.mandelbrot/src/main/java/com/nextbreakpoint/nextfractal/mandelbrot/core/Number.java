@@ -73,21 +73,6 @@ public class Number {
 		return i == 0 && r == (int)r;
 	}
 
-	public void set(Number x) {
-		this.r = x.r;
-		this.i = x.i;
-	}
-
-	public void set(double x) {
-		this.r = x;
-		this.i = 0;
-	}
-
-	public void set(int x) {
-		this.r = x;
-		this.i = 0;
-	}
-
 	@Override
 	public String toString() {
 		return r + ", " + i;

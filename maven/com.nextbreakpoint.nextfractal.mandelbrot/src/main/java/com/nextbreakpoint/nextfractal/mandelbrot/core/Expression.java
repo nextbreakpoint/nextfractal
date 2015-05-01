@@ -28,20 +28,20 @@ public class Expression {
 	private Expression() {
 	}
 
-	public static Variable variable(double r, double i) {
-		return new Variable(r, i);
+	public static MutableNumber variable(Number x) {
+		return new MutableNumber(x);
+	}
+	
+	public static MutableNumber variable(double x) {
+		return new MutableNumber(x, 0);
+	}
+	
+	public static MutableNumber variable(double r, double i) {
+		return new MutableNumber(r, i);
 	}
 
-	public static Variable variable(double x) {
-		return new Variable(x, 0);
-	}
-
-	public static Variable variable(Number x) {
-		return new Variable(x);
-	}
-
-	public static Number number(int n) {
-		return new Number(n, 0);
+	public static Number number(Number x) {
+		return new Number(x);
 	}
 
 	public static Number number(double r) {
@@ -52,83 +52,83 @@ public class Expression {
 		return new Number(r, i);
 	}
 
-	public static Number opAdd(Number a, Number b) {
-		return new Number(a.r() + b.r(), a.i() + b.i());
+	public static Number opAdd(MutableNumber out, Number a, Number b) {
+		return out.set(a.r() + b.r(), a.i() + b.i());
 	}
 
-	public static Number opSub(Number a, Number b) {
-		return new Number(a.r() - b.r(), a.i() - b.i());
+	public static Number opSub(MutableNumber out, Number a, Number b) {
+		return out.set(a.r() - b.r(), a.i() - b.i());
 	}
 
-	public static Number opMul(Number a, Number b) {
-		return new Number(a.r() * b.r() - a.i() * b.i(), a.r() * b.i() + a.i() * b.r());
+	public static Number opMul(MutableNumber out, Number a, Number b) {
+		return out.set(a.r() * b.r() - a.i() * b.i(), a.r() * b.i() + a.i() * b.r());
 	}
 
-	public static Number opDiv(Number a, Number b) {
+	public static Number opDiv(MutableNumber out, Number a, Number b) {
 		double m = b.r() * b.r() + b.i() * b.i();
-		return new Number((a.r() * b.r() + a.i() * b.i()) / m, (-a.r() * b.i() + a.i() * b.r()) / m);
+		return out.set((a.r() * b.r() + a.i() * b.i()) / m, (-a.r() * b.i() + a.i() * b.r()) / m);
 	}
 
-	public static Number opAdd(Number a, double b) {
-		return new Number(a.r() + b, a.i());
+	public static Number opAdd(MutableNumber out, Number a, double b) {
+		return out.set(a.r() + b, a.i());
 	}
 
-	public static Number opSub(Number a, double b) {
-		return new Number(a.r() - b, a.i());
+	public static Number opSub(MutableNumber out, Number a, double b) {
+		return out.set(a.r() - b, a.i());
 	}
 
-	public static Number opMul(Number a, double b) {
-		return new Number(a.r() * b, a.i() * b);
+	public static Number opMul(MutableNumber out, Number a, double b) {
+		return out.set(a.r() * b, a.i() * b);
 	}
 
-	public static Number opDiv(Number a, double b) {
-		return new Number(a.r() / b, a.i() / b);
+	public static Number opDiv(MutableNumber out, Number a, double b) {
+		return out.set(a.r() / b, a.i() / b);
 	}
 
-	public static Number opAdd(double a, Number b) {
-		return new Number(a + b.r(), +b.i());
+	public static Number opAdd(MutableNumber out, double a, Number b) {
+		return out.set(a + b.r(), +b.i());
 	}
 
-	public static Number opSub(double a, Number b) {
-		return new Number(a - b.r(), -b.i());
+	public static Number opSub(MutableNumber out, double a, Number b) {
+		return out.set(a - b.r(), -b.i());
 	}
 
-	public static Number opMul(double a, Number b) {
-		return new Number(a * b.r(), a * b.i());
+	public static Number opMul(MutableNumber out, double a, Number b) {
+		return out.set(a * b.r(), a * b.i());
 	}
-
-	public static Number opAdd(double a, double b) {
-		return new Number(a + b, 0);
-	}
-
-	public static Number opSub(double a, double b) {
-		return new Number(a - b, 0);
-	}
-
-	public static Number opMul(double a, double b) {
-		return new Number(a * b, 0);
-	}
-
-	public static Number opDiv(double a, double b) {
-		return new Number(a / b, 0);
-	}
-
-	public static Number opPow(double a, double b) {
-		return new Number(Math.pow(a, b), 0);
-	}
-
-	public static Number opPow(Number a, double b) {
+	
+	public static Number opPow(MutableNumber out, Number a, double b) {
 		double m = Math.pow(Math.hypot(a.r(), a.i()), b);
 		double f = Math.atan2(a.i(), a.r()) * b;
-		return new Number(m * Math.cos(f), m * Math.sin(f));
+		return out.set(m * Math.cos(f), m * Math.sin(f));
+	}
+	
+	public static Number opNeg(MutableNumber out, Number a) {
+		return out.set(-a.r(), -a.i());
+	}
+	
+	public static Number opPos(MutableNumber out, Number a) {
+		return out.set(+a.r(), +a.i());
 	}
 
-	public static Number opNeg(Number a) {
-		return new Number(-a.r(), -a.i());
+	public static double opAdd(double a, double b) {
+		return a + b;
 	}
 
-	public static Number opPos(Number a) {
-		return new Number(+a.r(), +a.i());
+	public static double opSub(double a, double b) {
+		return a - b;
+	}
+
+	public static double opMul(double a, double b) {
+		return a * b;
+	}
+
+	public static double opDiv(double a, double b) {
+		return a / b;
+	}
+
+	public static double opPow(double a, double b) {
+		return Math.pow(a, b);
 	}
 
 	public static double funcMod(double x) {
@@ -227,39 +227,41 @@ public class Expression {
 		return Math.atan2(x.i(), x.r());
 	}
 
-	public static Number funcSin(Number x) {
-		return new Number(Math.sin(x.r()) * Math.cosh(x.i()), +Math.cos(x.r()) * Math.sinh(x.i()));
-	}
-
-	public static Number funcCos(Number x) {
-		return new Number(Math.cos(x.r()) * Math.cosh(x.i()), -Math.sin(x.r()) * Math.sinh(x.i()));
-	}
-
-	public static Number funcTan(Number x) {
-		double d = Math.pow(Math.cos(x.r()), 2) + Math.pow(Math.sinh(x.i()), 2);
-		return new Number((Math.sin(x.r()) * Math.cos(x.r())) / d, (Math.sinh(x.i()) * Math.cosh(x.i())) / d);
-	}
-
-	public static Number funcExp(Number x) {
-		double d = Math.exp(x.r());
-		return new Number(d * Math.cos(x.i()), d * Math.sin(x.i()));
-	}
-
-	public static Number funcPow(Number x, double y) {
-		double d = Math.pow(Math.hypot(x.r(), x.i()), y);
-		return new Number(d * Math.cos(x.r() * y), d * Math.sin(x.i() * y));
-	}
-
-	public static Number funcSqrt(Number x) {
-		double d = Math.sqrt(Math.hypot(x.r(), x.i()));
-		return new Number(d * Math.cos(x.r() * 0.5), d * Math.sin(x.i() * 0.5));
-	}
-
 	public static double funcRe(Number n) {
 		return n.r();
 	}
 
 	public static double funcIm(Number n) {
 		return n.i();
+	}
+
+	public static Number funcSin(MutableNumber out, Number x) {
+		return out.set(Math.sin(x.r()) * Math.cosh(x.i()), +Math.cos(x.r()) * Math.sinh(x.i()));
+	}
+
+	public static Number funcCos(MutableNumber out, Number x) {
+		return out.set(Math.cos(x.r()) * Math.cosh(x.i()), -Math.sin(x.r()) * Math.sinh(x.i()));
+	}
+
+	public static Number funcTan(MutableNumber out, Number x) {
+		double d = Math.pow(Math.cos(x.r()), 2) + Math.pow(Math.sinh(x.i()), 2);
+		return out.set((Math.sin(x.r()) * Math.cos(x.r())) / d, (Math.sinh(x.i()) * Math.cosh(x.i())) / d);
+	}
+
+	public static Number funcExp(MutableNumber out, Number x) {
+		double d = Math.exp(x.r());
+		return out.set(d * Math.cos(x.i()), d * Math.sin(x.i()));
+	}
+
+	public static Number funcPow(MutableNumber out, Number x, double e) {
+		double d = Math.pow(Math.hypot(x.r(), x.i()), e);
+		double f = Math.atan2(x.i(), x.r()) * e;
+		return out.set(d * Math.cos(f), d * Math.sin(f));
+	}
+
+	public static Number funcSqrt(MutableNumber out, Number x) {
+		double d = Math.sqrt(Math.hypot(x.r(), x.i()));
+		double f = Math.atan2(x.i(), x.r()) * 0.5;
+		return out.set(d * Math.cos(f), d * Math.sin(f));
 	}
 }

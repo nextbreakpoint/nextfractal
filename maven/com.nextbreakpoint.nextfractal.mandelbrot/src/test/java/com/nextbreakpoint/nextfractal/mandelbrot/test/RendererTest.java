@@ -37,6 +37,7 @@ import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
 import com.nextbreakpoint.nextfractal.core.renderer.javaFX.JavaFXRendererFactory;
 import com.nextbreakpoint.nextfractal.core.utils.DefaultThreadFactory;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Color;
+import com.nextbreakpoint.nextfractal.mandelbrot.core.MutableNumber;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Orbit;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Scope;
@@ -89,11 +90,21 @@ public class RendererTest {
 		@Override
 		public void render(List<Number[]> states) {
 		}
+
+		@Override
+		protected MutableNumber[] createNumbers() {
+			return new MutableNumber[1];
+		}
 	}
 	
 	private class TestColor extends Color {
 		@Override
 		public void render() {
+		}
+
+		@Override
+		protected MutableNumber[] createNumbers() {
+			return new MutableNumber[1];
 		}
 	}
 }

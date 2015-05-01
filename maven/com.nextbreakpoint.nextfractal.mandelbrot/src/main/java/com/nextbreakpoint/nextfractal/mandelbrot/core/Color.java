@@ -26,8 +26,16 @@ package com.nextbreakpoint.nextfractal.mandelbrot.core;
 
 public abstract class Color {
 	protected final float[] color = new float[] { 1f, 0f, 0f, 0f };
+	protected MutableNumber[] numbers;
 	protected Scope scope;
 
+	public Color() {
+		numbers = createNumbers(); 
+		for (int i = 0; i < numbers.length; i++) {
+			numbers[i] = new MutableNumber();
+		}
+	}
+	
 	public Scope getScope() {
 		return scope;
 	}
@@ -36,8 +44,12 @@ public abstract class Color {
 		this.scope = scope;
 	}
 
-	public Variable getVariable(int index) {
+	public MutableNumber getVariable(int index) {
 		return scope.getVariable(index);
+	}
+
+	public double getRealVariable(int index) {
+		return scope.getVariable(index).r();
 	}
 
 	protected float[] setColor(float[] color) {
@@ -80,9 +92,18 @@ public abstract class Color {
 		return new float[] { (float) a, (float) r, (float) g, (float) b };
 	}
 
-	public abstract void render();
-
 	public void setState(Number[] state) {
 		scope.setState(state);
 	}
+
+	public MutableNumber getNumber(int index) {
+		return numbers[index];
+	}
+	
+	public void reset() {
+	}
+
+	public abstract void render();
+
+	protected abstract MutableNumber[] createNumbers();
 }
