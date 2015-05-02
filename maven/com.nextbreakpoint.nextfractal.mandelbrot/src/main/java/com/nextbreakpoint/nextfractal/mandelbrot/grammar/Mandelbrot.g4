@@ -140,7 +140,7 @@ variablelist
 	} 
 	;
 		
-conditionexp returns [ASTConditionExpression result]
+simpleconditionexp returns [ASTConditionExpression result]
 	:
 	e1=expression o=('=' | '<' | '>' | '<=' | '>=' | '<>') e2=expression {
 		$result = new ASTConditionCompareOp($e1.result.getLocation(), $o.text, $e1.result, $e2.result);
@@ -160,6 +160,13 @@ conditionexp returns [ASTConditionExpression result]
 	| 
 	s='(' c=conditionexp ')' {
 		$result = new ASTConditionParen($s, $c.result);
+	}	
+	;
+		
+conditionexp returns [ASTConditionExpression result]
+	:
+	c=simpleconditionexp {
+		$result = $c.result;
 	}	
 	| 
 	c2=conditionexp2 {
@@ -173,24 +180,8 @@ conditionexp returns [ASTConditionExpression result]
 	
 conditionexp2 returns [ASTConditionExpression result]
 	:
-	e1=expression o=('=' | '<' | '>' | '<=' | '>=' | '<>') e2=expression {
-		$result = new ASTConditionCompareOp($e1.result.getLocation(), $o.text, $e1.result, $e2.result);
-	}
-	|
-	v=VARIABLE '?' e=expression {
-		$result = new ASTConditionTrap($v, $v.text, $e.result, true);
-	}
-	|
-	v=VARIABLE '~?' e=expression {
-		$result = new ASTConditionTrap($v, $v.text, $e.result, false);
-	}
-	| 
-	t=JULIA {
-		$result = new ASTConditionJulia($t);
-	}	
-	| 
-	s='(' c=conditionexp ')' {
-		$result = new ASTConditionParen($s, $c.result);
+	c=simpleconditionexp {
+		$result = $c.result;
 	}	
 	| 
 	c2=conditionexp3 {
@@ -204,24 +195,8 @@ conditionexp2 returns [ASTConditionExpression result]
 
 conditionexp3 returns [ASTConditionExpression result]
 	:
-	e1=expression o=('=' | '<' | '>' | '<=' | '>=' | '<>') e2=expression {
-		$result = new ASTConditionCompareOp($e1.result.getLocation(), $o.text, $e1.result, $e2.result);
-	}
-	|
-	v=VARIABLE '?' e=expression {
-		$result = new ASTConditionTrap($v, $v.text, $e.result, true);
-	}
-	|
-	v=VARIABLE '~?' e=expression {
-		$result = new ASTConditionTrap($v, $v.text, $e.result, false);
-	}
-	| 
-	t=JULIA {
-		$result = new ASTConditionJulia($t);
-	}	
-	| 
-	s='(' c=conditionexp ')' {
-		$result = new ASTConditionParen($s, $c.result);
+	c=simpleconditionexp {
+		$result = $c.result;
 	}	
 	| 
 	c2=conditionexp4 {
@@ -235,24 +210,8 @@ conditionexp3 returns [ASTConditionExpression result]
 
 conditionexp4 returns [ASTConditionExpression result]
 	:
-	e1=expression o=('=' | '<' | '>' | '<=' | '>=' | '<>') e2=expression {
-		$result = new ASTConditionCompareOp($e1.result.getLocation(), $o.text, $e1.result, $e2.result);
-	}
-	|
-	v=VARIABLE '?' e=expression {
-		$result = new ASTConditionTrap($v, $v.text, $e.result, true);
-	}
-	|
-	v=VARIABLE '~?' e=expression {
-		$result = new ASTConditionTrap($v, $v.text, $e.result, false);
-	}
-	| 
-	t=JULIA {
-		$result = new ASTConditionJulia($t);
-	}	
-	| 
-	s='(' c=conditionexp ')' {
-		$result = new ASTConditionParen($s, $c.result);
+	c1=simpleconditionexp {
+		$result = $c1.result;
 	}	
 	| 
 	n='~' c2=conditionexp4 {
@@ -260,58 +219,7 @@ conditionexp4 returns [ASTConditionExpression result]
 	}	
 	;
 	
-expression returns [ASTExpression result]
-	:
-	p=constant {
-		$result = $p.result;
-	}
-	|
-	v=variable {
-		$result = $v.result;
-	}
-	|
-	c=complex {
-		$result = $c.result;
-	}
-	|
-	f=function {
-		$result = $f.result;
-	}
-	|
-	t='(' e=expression ')' {
-		$result = new ASTParen($t, $e.result);
-	}
-	|
-	m='|' e=expression '|' {
-		$result = new ASTFunction($m, "mod", $e.result);	
-	}
-	|
-	a='<' e=expression '>' {
-		$result = new ASTFunction($a, "pha", $e.result);	
-	}
-	|
-	a='<' er=expression ',' ei=expression '>' {
-		$result = new ASTOperator($a, "<>", $er.result, $ei.result);	
-	}
-	|
-	e2=expression2 {
-		$result = $e2.result;	
-	}
-	|
-	e1=expression s='+' e2=expression2 {
-		$result = new ASTOperator($s, "+", $e1.result, $e2.result);		
-	}
-	|
-	e2=expression2 s='+' e1=expression {
-		$result = new ASTOperator($s, "+", $e2.result, $e1.result);		
-	}
-	|
-	e1=expression s='-' e2=expression2 {
-		$result = new ASTOperator($s, "-", $e1.result, $e2.result);		
-	}
-	;
-
-expression2 returns [ASTExpression result]
+simpleexpression returns [ASTExpression result]
 	:
 	p=constant {
 		$result = $p.result;
@@ -343,6 +251,40 @@ expression2 returns [ASTExpression result]
 	|
 	a='<' er=expression ',' ei=expression '>' {
 		$result = new ASTOperator($a, "<>", $er.result, $ei.result);	
+	}
+	;
+	
+expression returns [ASTExpression result]
+	:
+	e=simpleexpression {
+		$result = $e.result;	
+	}
+	|
+	c=complex {
+		$result = $c.result;
+	}
+	|
+	e2=expression2 {
+		$result = $e2.result;	
+	}
+	|
+	e1=expression s='+' e2=expression2 {
+		$result = new ASTOperator($s, "+", $e1.result, $e2.result);		
+	}
+	|
+	e2=expression2 s='+' e1=expression {
+		$result = new ASTOperator($s, "+", $e2.result, $e1.result);		
+	}
+	|
+	e1=expression s='-' e2=expression2 {
+		$result = new ASTOperator($s, "-", $e1.result, $e2.result);		
+	}
+	;
+
+expression2 returns [ASTExpression result]
+	:
+	e=simpleexpression {
+		$result = $e.result;	
 	}
 	|
 	e3=expression3 {
@@ -372,36 +314,8 @@ expression2 returns [ASTExpression result]
 
 expression3 returns [ASTExpression result]
 	:
-	p=constant {
-		$result = $p.result;
-	}
-	|
-	v=variable {
-		$result = $v.result;
-	}
-	|
-	r=real {
-		$result = $r.result;
-	}
-	|
-	f=function {
-		$result = $f.result;
-	}
-	|
-	t='(' e=expression ')' {
-		$result = new ASTParen($t, $e.result);
-	}
-	|
-	m='|' e=expression '|' {
-		$result = new ASTFunction($m, "mod", $e.result);	
-	}
-	|
-	a='<' e=expression '>' {
-		$result = new ASTFunction($a, "pha", $e.result);	
-	}
-	|
-	a='<' er=expression ',' ei=expression '>' {
-		$result = new ASTOperator($a, "<>", $er.result, $ei.result);	
+	e=simpleexpression {
+		$result = $e.result;	
 	}
 	|
 	e3=expression4 {
@@ -415,36 +329,8 @@ expression3 returns [ASTExpression result]
 
 expression4 returns [ASTExpression result]
 	:
-	p=constant {
-		$result = $p.result;
-	}
-	|
-	v=variable {
-		$result = $v.result;
-	}
-	|
-	r=real {
-		$result = $r.result;
-	}
-	|
-	f=function {
-		$result = $f.result;
-	}
-	|
-	t='(' e=expression ')' {
-		$result = new ASTParen($t, $e.result);
-	}
-	|
-	m='|' e=expression '|' {
-		$result = new ASTFunction($m, "mod", $e.result);	
-	}
-	|
-	a='<' e=expression '>' {
-		$result = new ASTFunction($a, "pha", $e.result);	
-	}
-	|
-	a='<' er=expression ',' ei=expression '>' {
-		$result = new ASTOperator($a, "<>", $er.result, $ei.result);	
+	e=simpleexpression {
+		$result = $e.result;	
 	}
 	|
 	e1=expression4 s='^' e2=expression4 {

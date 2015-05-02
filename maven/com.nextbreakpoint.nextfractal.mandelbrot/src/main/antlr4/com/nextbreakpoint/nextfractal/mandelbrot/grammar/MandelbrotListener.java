@@ -209,6 +209,17 @@ public interface MandelbrotListener extends ParseTreeListener {
 	void exitExpression(@NotNull MandelbrotParser.ExpressionContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link MandelbrotParser#simpleexpression}.
+	 * @param ctx the parse tree
+	 */
+	void enterSimpleexpression(@NotNull MandelbrotParser.SimpleexpressionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link MandelbrotParser#simpleexpression}.
+	 * @param ctx the parse tree
+	 */
+	void exitSimpleexpression(@NotNull MandelbrotParser.SimpleexpressionContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link MandelbrotParser#expression4}.
 	 * @param ctx the parse tree
 	 */
@@ -306,6 +317,17 @@ public interface MandelbrotListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitEndstatement(@NotNull MandelbrotParser.EndstatementContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link MandelbrotParser#simpleconditionexp}.
+	 * @param ctx the parse tree
+	 */
+	void enterSimpleconditionexp(@NotNull MandelbrotParser.SimpleconditionexpContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link MandelbrotParser#simpleconditionexp}.
+	 * @param ctx the parse tree
+	 */
+	void exitSimpleconditionexp(@NotNull MandelbrotParser.SimpleconditionexpContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link MandelbrotParser#colorstatement}.

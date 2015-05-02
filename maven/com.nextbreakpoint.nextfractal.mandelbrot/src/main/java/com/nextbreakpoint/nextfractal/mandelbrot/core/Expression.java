@@ -52,6 +52,14 @@ public class Expression {
 		return new Number(r, i);
 	}
 
+	public static double real(Number x) {
+		return x.r();
+	}
+
+	public static double real(double r) {
+		return r;
+	}
+
 	public static Number opAdd(MutableNumber out, Number a, Number b) {
 		return out.set(a.r() + b.r(), a.i() + b.i());
 	}

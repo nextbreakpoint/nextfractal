@@ -253,6 +253,19 @@ public class MandelbrotBaseListener implements MandelbrotListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterSimpleexpression(@NotNull MandelbrotParser.SimpleexpressionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitSimpleexpression(@NotNull MandelbrotParser.SimpleexpressionContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterExpression4(@NotNull MandelbrotParser.Expression4Context ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -364,6 +377,19 @@ public class MandelbrotBaseListener implements MandelbrotListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitEndstatement(@NotNull MandelbrotParser.EndstatementContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterSimpleconditionexp(@NotNull MandelbrotParser.SimpleconditionexpContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitSimpleconditionexp(@NotNull MandelbrotParser.SimpleconditionexpContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

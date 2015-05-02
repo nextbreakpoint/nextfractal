@@ -537,9 +537,9 @@ public class ExpressionCompiler implements ASTExpressionCompiler {
 		if (var != null) {
 			if (var.isReal() && statement.getExp().isReal()) {
 				builder.append(statement.getName());
-				builder.append(" = ");
+				builder.append(" = real(");
 				statement.getExp().compile(this);
-				builder.append(";\n");
+				builder.append(");\n");
 			} else if (!var.isReal() && !statement.getExp().isReal()) {
 				builder.append(statement.getName());
 				builder.append(".set(");
@@ -559,9 +559,9 @@ public class ExpressionCompiler implements ASTExpressionCompiler {
 			if (var.isReal()) {
 				builder.append("double ");
 				builder.append(statement.getName());
-				builder.append(" = ");
+				builder.append(" = real(");
 				statement.getExp().compile(this);
-				builder.append(";\n");
+				builder.append(");\n");
 			} else {
 				builder.append("final MutableNumber ");
 				builder.append(statement.getName());
