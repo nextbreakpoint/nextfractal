@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <mandelbrot>
-    <timestamp>2015-05-01 19:04:19</timestamp>
+    <timestamp>2015-05-01 19:05:45</timestamp>
     <julia>false</julia>
     <point>1.5066666666666668</point>
     <point>0.2</point>
@@ -13,16 +13,17 @@
     <scale>1.0</scale>
     <scale>1.0</scale>
     <source>fractal {
-	orbit [-2.5 - 1.5i,+0.5 + 1.5i] [x,n] {
+	orbit [-1.5 - 1.5i,+1.5 + 1.5i] [x,n] {
 		begin {
+			q = 4;
 			wr = re(w);
 			wi = im(w);
 			tr = re(x);
 			ti = im(x);
 			xr = re(x);
 			xi = im(x);
-			ta = mod2(x);
-			tb = atan2(xr,xi) * 2;
+			ta = mod(x) ^ q;
+			tb = atan2(xr,xi) * q;
 			zr = ta * cos(tb) + wr;
 			zi = ta * sin(tb) + wi;
 			x = &lt;zr - tr,zi - ti&gt;;
@@ -32,8 +33,8 @@
 		loop [0, 200] (xr &gt; 1000 | xi &gt; 1000) {
 			xr = re(x);
 			xi = im(x);
-			ta = mod2(x);
-			tb = atan2(xr,xi) * 2;
+			ta = mod(x) ^ q;
+			tb = atan2(xr,xi) * q;
 			zr = ta * cos(tb) + wr;
 			zi = ta * sin(tb) + wi;
 			x = &lt;zr - tr,zi - ti&gt;;
@@ -63,8 +64,8 @@
 }
 </source>
     <time>0.0</time>
-    <traslation>0.0</traslation>
-    <traslation>0.0</traslation>
-    <traslation>1.0</traslation>
+    <traslation>-0.018999999999999965</traslation>
+    <traslation>-0.22859631979245196</traslation>
+    <traslation>1.0499999999999998</traslation>
     <traslation>0.0</traslation>
 </mandelbrot>

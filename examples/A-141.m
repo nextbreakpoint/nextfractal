@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <mandelbrot>
-    <timestamp>2015-04-30 16:29:25</timestamp>
+    <timestamp>2015-05-01 19:04:04</timestamp>
     <julia>false</julia>
-    <point>1.5066666666666668</point>
-    <point>0.2</point>
+    <point>-0.15333333333333332</point>
+    <point>0.7849999999999999</point>
     <rotation>0.0</rotation>
     <rotation>0.0</rotation>
     <rotation>0.0</rotation>
@@ -15,33 +15,32 @@
     <source>fractal {
 	orbit [-2.5 - 1.5i,+0.5 + 1.5i] [x,n] {
 		begin {
-			q = 2;
 			wr = re(w);
 			wi = im(w);
 			tr = re(x);
 			ti = im(x);
 			xr = re(x);
 			xi = im(x);
-			ta = |x| ^ q;
-			tb = atan2(xr,xi) * q;
+			ta = mod2(x);
+			tb = atan2(xr,xi) * 2;
 			zr = ta * cos(tb) + wr;
 			zi = ta * sin(tb) + wi;
 			x = &lt;zr - tr,zi - ti&gt;;
-			d0 = |x|;
+			d0 = mod2(x);
 			l0 = 0;
 		}
-		loop [0, 200] (xr &gt; 100 | xi &gt; 100) {
+		loop [0, 200] (xr &gt; 1000 | xi &gt; 1000) {
 			xr = re(x);
 			xi = im(x);
-			ta = |x| ^ q;
-			tb = atan2(xr,xi) * q;
+			ta = mod2(x);
+			tb = atan2(xr,xi) * 2;
 			zr = ta * cos(tb) + wr;
 			zi = ta * sin(tb) + wi;
 			x = &lt;zr - tr,zi - ti&gt;;
-			d1 = |x|;
+			d1 = mod2(x);
 			l1 = d1 / d0;
 			d = abs(l1 - l0);
-			if (d &lt; 0.000001 | d &gt; 1000 | d1 &lt; 0.000000001) {
+			if (d &lt; 0.000000001 | d &gt; 10000000000 | d1 &lt; 0.0000001) {
 				stop;
 			}
 			d0 = d1;
