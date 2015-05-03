@@ -110,6 +110,14 @@ public class ASTFractal extends ASTObject {
 		return stateVars.values();
 	}
 
+	public Collection<CompilerVariable> getOrbitVariables() {
+		return orbitVars.values();
+	}
+
+	public Collection<CompilerVariable> getColorVariables() {
+		return colorVars.values();
+	}
+
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("orbit = {");

@@ -307,12 +307,24 @@ public class Compiler {
 
 	private void buildOrbit(ExpressionContext context, StringBuilder builder, Map<String, CompilerVariable> scope, ASTFractal fractal) {
 		if (fractal != null) {
+			for (CompilerVariable var : fractal.getOrbitVariables()) {
+				scope.put(var.getName(),  var);
+			}
+			for (CompilerVariable var : fractal.getStateVariables()) {
+				scope.put(var.getName(),  var);
+			}
 			compile(context, builder, scope, fractal.getStateVariables(), fractal.getOrbit());
 		}
 	}
 
 	private void buildColor(ExpressionContext context, StringBuilder builder, Map<String, CompilerVariable> scope, ASTFractal fractal) {
 		if (fractal != null) {
+			for (CompilerVariable var : fractal.getColorVariables()) {
+				scope.put(var.getName(),  var);
+			}
+			for (CompilerVariable var : fractal.getStateVariables()) {
+				scope.put(var.getName(),  var);
+			}
 			compile(context, builder, scope, fractal.getStateVariables(), fractal.getColor());
 		}
 	}
@@ -333,21 +345,19 @@ public class Compiler {
 			}
 		}
 		builder.append("}\n");
-		if (stateVariables != null) {
-			for (CompilerVariable var : stateVariables) {
-				scope.put(var.getName(), var);
-				if (var.isCreate()) {
-					if (var.isReal()) {
-						builder.append("private double ");
-						builder.append(var.getName());
-						builder.append(" = 0.0;\n");
-					} else {
-						builder.append("private final MutableNumber ");
-						builder.append(var.getName());
-						builder.append(" = getNumber(");
-						builder.append(context.newNumberIndex());
-						builder.append(").set(0.0,0.0);\n");
-					}
+		for (CompilerVariable var : scope.values()) {
+			scope.put(var.getName(), var);
+			if (var.isCreate()) {
+				if (var.isReal()) {
+					builder.append("private double ");
+					builder.append(var.getName());
+					builder.append(" = 0.0;\n");
+				} else {
+					builder.append("private final MutableNumber ");
+					builder.append(var.getName());
+					builder.append(" = getNumber(");
+					builder.append(context.newNumberIndex());
+					builder.append(").set(0.0,0.0);\n");
 				}
 			}
 		}
@@ -403,6 +413,22 @@ public class Compiler {
 				builder.append(" = getVariable(");
 				builder.append(i++);
 				builder.append(");\n");
+			}
+		}
+		i = 0;
+		for (CompilerVariable var : scope.values()) {
+			if (!stateVariables.contains(var)) {
+				if (var.isReal()) {
+					builder.append("double ");
+					builder.append(var.getName());
+					builder.append(" = 0;\n");
+				} else {
+					builder.append("final MutableNumber ");
+					builder.append(var.getName());
+					builder.append(" = getNumber(");
+					builder.append(i++);
+					builder.append(");\n");
+				}
 			}
 		}
 		if (color != null) {
