@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <mandelbrot>
-    <timestamp>2015-04-28 18:45:54</timestamp>
+    <timestamp>2015-05-02 13:31:26</timestamp>
     <julia>false</julia>
     <point>0.3016666666666667</point>
     <point>0.025</point>
@@ -30,9 +30,9 @@
 		}
 		rule (n &gt; 0) [1] {
 			1,
-			(1 + sin(z1 * 6 / pi) / 2),
-			(1 + sin(z2 * 2 / pi) / 2),
-			(1 + sin(z3 * 1 / pi) / 2)
+			(1 + sin(z1 * 6 / pi)) / 2,
+			(1 + sin(z2 * 2 / pi)) / 2,
+			(1 + sin(z3 * 1 / pi)) / 2
 		}
 	}
 }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <mandelbrot>
-    <timestamp>2015-05-01 19:23:14</timestamp>
+    <timestamp>2015-05-03 22:07:39</timestamp>
     <julia>false</julia>
     <point>2.0909318768984955</point>
     <point>-0.001171337098545334</point>
@@ -16,7 +16,7 @@
 	orbit [3.5 - 2.5i,+8.5 + 2.5i] [x,n] {
 		begin {
 			d = mod2(w);
-			w = &lt;100000000000,0&gt;;
+			//w = &lt;100000000000,0&gt;;
 			if (d &gt; 0.0000001) {
 				w = &lt;re(w) / d + 0.25,-im(w) / d&gt;;
 			}
@@ -25,7 +25,7 @@
 			zn = x * x + w - 1;
 			zd = 2 * x + w - 2;
 			if (mod2(zd) &lt; 0.000000000000000001) {
-				tb = &lt;0.000000001,0&gt;;
+				zd = &lt;0.000000001,0&gt;;
 			}
 			z = zn / zd;
 			x = z * z;

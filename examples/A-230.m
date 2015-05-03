@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <mandelbrot>
-    <timestamp>2015-05-01 19:18:14</timestamp>
+    <timestamp>2015-05-02 13:30:00</timestamp>
     <julia>false</julia>
     <point>2.0909318768984955</point>
     <point>-0.001171337098545334</point>
@@ -18,7 +18,7 @@
 			zn = x * x + w - 1;
 			zd = 2 * x + w - 2;
 			if (mod2(zd) &lt; 0.000000000000000001) {
-				tb = &lt;0.000000001,0&gt;;
+				zd = &lt;0.000000001,0&gt;;
 			}
 			z = zn / zd;
 			x = z * z;
