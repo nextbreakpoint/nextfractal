@@ -28,20 +28,30 @@ import org.antlr.v4.runtime.Token;
 
 public class ASTConditionalStatement extends ASTStatement {
 	private ASTConditionExpression conditionExp;
-	private ASTStatementList statementList;
+	private ASTStatementList thenStatementList;
+	private ASTStatementList elseStatementList;
 
-	public ASTConditionalStatement(Token location, ASTConditionExpression conditionExp, ASTStatementList statementList) {
+	public ASTConditionalStatement(Token location, ASTConditionExpression conditionExp, ASTStatementList thenStatementList) {
 		super(location);
 		this.conditionExp = conditionExp;
-		this.statementList = statementList;
+		this.thenStatementList = thenStatementList;
+	}
+
+	public ASTConditionalStatement(Token location, ASTConditionExpression conditionExp, ASTStatementList thenStatementList, ASTStatementList elseStatementList) {
+		this(location, conditionExp, thenStatementList);
+		this.elseStatementList = elseStatementList;
 	}
 
 	public ASTConditionExpression getConditionExp() {
 		return conditionExp;
 	}
 
-	public ASTStatementList getStatementList() {
-		return statementList;
+	public ASTStatementList getThenStatementList() {
+		return thenStatementList;
+	}
+
+	public ASTStatementList getElseStatementList() {
+		return elseStatementList;
 	}
 
 	@Override
@@ -50,7 +60,11 @@ public class ASTConditionalStatement extends ASTStatement {
 		builder.append("if (");
 		builder.append(conditionExp);
 		builder.append(") {\n");
-		builder.append(statementList);
+		builder.append(thenStatementList);
+		if (elseStatementList != null) {
+			builder.append("} else {\n");
+			builder.append(elseStatementList);
+		}
 		builder.append("}");
 		return builder.toString();
 	}

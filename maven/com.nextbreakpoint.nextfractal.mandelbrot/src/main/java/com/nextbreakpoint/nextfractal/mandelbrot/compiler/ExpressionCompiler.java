@@ -522,9 +522,13 @@ public class ExpressionCompiler implements ASTExpressionCompiler {
 		builder.append("if (");
 		statement.getConditionExp().compile(this);
 		builder.append(") {\n");
-		if (statement.getStatementList() != null) {
-			Map<String, CompilerVariable> vars = new HashMap<String, CompilerVariable>(variables);
-			for (ASTStatement innerStatement : statement.getStatementList().getStatements()) {
+		Map<String, CompilerVariable> vars = new HashMap<String, CompilerVariable>(variables);
+		for (ASTStatement innerStatement : statement.getThenStatementList().getStatements()) {
+			innerStatement.compile(new ExpressionCompiler(context, vars, builder));
+		}
+		if (statement.getElseStatementList() != null) {
+			builder.append("} else {\n");
+			for (ASTStatement innerStatement : statement.getElseStatementList().getStatements()) {
 				innerStatement.compile(new ExpressionCompiler(context, vars, builder));
 			}
 		}

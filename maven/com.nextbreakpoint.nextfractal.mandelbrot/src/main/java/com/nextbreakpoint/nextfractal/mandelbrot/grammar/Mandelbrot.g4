@@ -119,10 +119,23 @@ statement
 	f=IF '(' c=conditionexp ')' '{' {
 		builder.pushStatementList();
 	} statement* '}' {
-		ASTStatementList list = builder.getStatementList();
+		ASTStatementList thenList = builder.getStatementList();
 		builder.popStatementList();
-		builder.appendStatement(new ASTConditionalStatement($f, $c.result, list));
-	}
+	} 'else' '{' {
+		builder.pushStatementList();
+	} statement* '}' {
+		ASTStatementList elseList = builder.getStatementList();
+		builder.popStatementList();
+		builder.appendStatement(new ASTConditionalStatement($f, $c.result, thenList, elseList));
+	} 
+	|
+	f=IF '(' c=conditionexp ')' '{' {
+		builder.pushStatementList();
+	} statement* '}' {
+		ASTStatementList thenList = builder.getStatementList();
+		builder.popStatementList();
+		builder.appendStatement(new ASTConditionalStatement($f, $c.result, thenList));
+	} 
 	|
 	t=STOP ';'? {
 		builder.appendStatement(new ASTStopStatement($t));
