@@ -48,13 +48,18 @@ public class Trap {
 		return this;
 	}
 
-	public Trap arcTo(Number x) {
-		path2d.quadTo(path2d.getCurrentPoint().getX(), path2d.getCurrentPoint().getY(), x.r(), x.i());
+	public Trap arcTo(Number p, Number x) {
+		path2d.curveTo(p.r(), p.i(), x.r(), x.i(), x.r(), x.i());
 		return this;
 	}
 
-	public Trap curveTo(Number x, Number y) {
-		path2d.quadTo(x.r(), x.i(), y.r(), y.i());
+	public Trap quadTo(Number p, Number x) {
+		path2d.quadTo(p.r(), p.i(), x.r(), x.i());
+		return this;
+	}
+
+	public Trap curveTo(Number p, Number q, Number x) {
+		path2d.curveTo(p.r(), p.i(), q.r(), q.i(), x.r(), x.i());
 		return this;
 	}
 
@@ -68,13 +73,18 @@ public class Trap {
 		return this;
 	}
 
-	public Trap arcToRel(Number x) {
-		path2d.quadTo(path2d.getCurrentPoint().getX(), path2d.getCurrentPoint().getY(), path2d.getCurrentPoint().getX() + x.r(), path2d.getCurrentPoint().getY() + x.i());
+	public Trap arcToRel(Number p, Number x) {
+		path2d.curveTo(path2d.getCurrentPoint().getX() + p.r(), path2d.getCurrentPoint().getY() + p.i(), path2d.getCurrentPoint().getX() + x.r(), path2d.getCurrentPoint().getY() + x.i(), path2d.getCurrentPoint().getX() + x.r(), path2d.getCurrentPoint().getY() + x.i());
 		return this;
 	}
 
-	public Trap curveToRel(Number x, Number y) {
-		path2d.quadTo(path2d.getCurrentPoint().getX() + x.r(), path2d.getCurrentPoint().getY() + x.i(), path2d.getCurrentPoint().getX() + y.r(), path2d.getCurrentPoint().getY() + y.i());
+	public Trap quadToRel(Number p, Number x) {
+		path2d.quadTo(path2d.getCurrentPoint().getX() + p.r(), path2d.getCurrentPoint().getY() + p.i(), path2d.getCurrentPoint().getX() + x.r(), path2d.getCurrentPoint().getY() + x.i());
+		return this;
+	}
+
+	public Trap curveToRel(Number p, Number q, Number x) {
+		path2d.curveTo(path2d.getCurrentPoint().getX() + p.r(), path2d.getCurrentPoint().getY() + p.i(), path2d.getCurrentPoint().getX() + q.r(), path2d.getCurrentPoint().getY() + q.i(), path2d.getCurrentPoint().getX() + x.r(), path2d.getCurrentPoint().getY() + x.i());
 		return this;
 	}
 

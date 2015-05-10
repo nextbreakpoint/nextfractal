@@ -74,6 +74,10 @@ pathop
 	o=PATHOP_2POINTS '(' c1=complex ',' c2=complex ')' ';' {
 		builder.addOrbitTrapOp(new ASTOrbitTrapOp($o, $o.text, $c1.result, $c2.result));
 	}
+	|
+	o=PATHOP_3POINTS '(' c1=complex ',' c2=complex ',' c3=complex ')' ';' {
+		builder.addOrbitTrapOp(new ASTOrbitTrapOp($o, $o.text, $c1.result, $c2.result, $c3.result));
+	}
 	;
 	
 beginstatement 
@@ -631,13 +635,20 @@ PATHOP_1POINTS
 	'LINETO'
 	| 
 	'LINETOREL'
-	| 
-	'ARCTO'
-	| 
-	'ARCTOREL'
 	;
 
 PATHOP_2POINTS
+	: 
+	'ARCTO'
+	| 
+	'ARCTOREL'
+	|
+	'QUADTO'
+	| 
+	'QUADTOREL'
+	;
+
+PATHOP_3POINTS
 	: 
 	'CURVETO'
 	| 

@@ -536,6 +536,14 @@ public class Compiler {
 					builder.append("arcToRel");
 					break;
 
+				case "QUADTO":
+					builder.append("quadTo");
+					break;
+
+				case "QUADTOREL":
+					builder.append("quadToRel");
+					break;
+
 				case "CURVETO":
 					builder.append("curveTo");
 					break;
@@ -563,6 +571,16 @@ public class Compiler {
 					builder.append(")");
 				} else {
 					operator.getC2().compile(new ExpressionCompiler(context, variables, builder));
+				}
+			}
+			if (operator.getC3() != null) {
+				builder.append(",");
+				if (operator.getC3().isReal()) {
+					builder.append("number(");
+					operator.getC3().compile(new ExpressionCompiler(context, variables, builder));
+					builder.append(")");
+				} else {
+					operator.getC3().compile(new ExpressionCompiler(context, variables, builder));
 				}
 			}
 			builder.append(")");
