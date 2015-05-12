@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <mandelbrot>
-    <timestamp>2015-05-12 09:05:50</timestamp>
-    <julia>false</julia>
-    <point>0.8995848371619241</point>
-    <point>-1.9145320739066554</point>
+    <timestamp>2015-05-12 09:27:05</timestamp>
+    <julia>true</julia>
+    <point>1.4212807345435305</point>
+    <point>-0.06081718214502961</point>
     <rotation>0.0</rotation>
     <rotation>0.0</rotation>
     <rotation>0.0</rotation>
@@ -14,7 +14,7 @@
     <scale>1.0</scale>
     <source>fractal {
 	orbit [-1.5 - 1.5i,+1.5 + 1.5i] [x,n,z] {
-		trap circle0 [&lt;-1.7,-0.2&gt;] {
+		trap circle0 [&lt;-1.6,-0.3&gt;] {
 			MOVETO(&lt;2,0&gt;);
 			ARCTO(&lt;2,2&gt;,&lt;0,2&gt;);
 			ARCTO(&lt;-2,2&gt;,&lt;-2,0&gt;);
@@ -53,20 +53,18 @@
 			[#FFFFFFFF &gt; #FF000000, 90];
 		}
 		palette gradient1 {
-			[#FF000088 &gt; #FFFFFF00, 40];
-			[#FFFFFF00 &gt; #FFFFFFFF, 80];
-			[#FFFFFFFF &gt; #FF000000, 80];
+			[#FF000088 &gt; #FFFFFF00, 10];
+			[#FFFFFF00 &gt; #FFFFFFFF, 10];
+			[#FFFFFFFF &gt; #FF000000, 180];
 		}
 		init {
-			m = mod(x);
+			m = mod(z);
 			p = atan2(re(z), im(z)) / 2pi;
 			if (p &lt; 0) {
 				p = p + 1;
 			}
 			p = 199 * p;
-			g = (n - 1) + (m - floor(m));
-			m = mod(z);
-			q = 199 * (m - floor(m));
+			t = 199 * (m - floor(m));
 		}
 		rule (n = 0) [1] {
 			1,0,0,0
@@ -74,8 +72,8 @@
 		rule (n &gt; 0) [1] {
 			gradient1[n - 1]
 		}
-		rule (n &gt; 0) [0.7] {
-			gradient1[g]
+		rule (n &gt; 0) [0.01] {
+			gradient1[t]
 		}
 		rule (n &gt; 0) [0.2] {
 			gradient1[p]
@@ -84,8 +82,8 @@
 }
 </source>
     <time>0.0</time>
-    <traslation>1.0699285944486185</traslation>
-    <traslation>0.05592173869024064</traslation>
-    <traslation>0.7106813301301181</traslation>
+    <traslation>-0.7044068397893728</traslation>
+    <traslation>0.8372657544318431</traslation>
+    <traslation>0.6446089162177954</traslation>
     <traslation>0.0</traslation>
 </mandelbrot>
