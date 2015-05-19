@@ -208,7 +208,7 @@ public final class XaosRenderer extends Renderer {
 			stepy = initReallocTableAndPosition(xaosRendererData.reallocY(), xaosRendererData.positionY(), beginy, endy);
 		}
 		else {
-			stepy = makeReallocTable(xaosRendererData.reallocY(), xaosRendererData.dynamicY(), xaosRendererData.bottom(), xaosRendererData.top(), xaosRendererData.positionY(), !cacheActive);
+			stepy = makeReallocTable(xaosRendererData.reallocY(), xaosRendererData.dynamicY(), beginy, endy, xaosRendererData.positionY(), !cacheActive);
 		}
 		final double symy = rendererStrategy.getVerticalSymetryPoint();
 		if (isVerticalSymetrySupported && rendererStrategy.isVerticalSymetrySupported() && (!((beginy > symy) || (symy > endy)))) {

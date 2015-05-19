@@ -147,7 +147,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 		hideErrorsProperty = new BooleanObservableValue();
 		hideErrorsProperty.setValue(true);
 		
-		threadFactory = new DefaultThreadFactory("MandelbrotRenderPane", true, Thread.MIN_PRIORITY);
+		threadFactory = new DefaultThreadFactory("MandelbrotRenderPane", true, Thread.MAX_PRIORITY);
 		renderFactory = new JavaFXRendererFactory();
 
 		generator = new MandelbrotImageGenerator(threadFactory, renderFactory, createSingleTile(50, 50));
@@ -159,6 +159,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 		createCoordinators(rows, columns, hints);
 		
 		Map<String, Integer> juliaHints = new HashMap<String, Integer>();
+//		juliaHints.put(RendererCoordinator.KEY_TYPE, RendererCoordinator.VALUE_REALTIME);
 		juliaHints.put(RendererCoordinator.KEY_PROGRESS, RendererCoordinator.VALUE_SINGLE_PASS);
 		createJuliaCoordinator(juliaHints);
 		
@@ -999,7 +1000,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 			double qx = Math.cos(a) * px + Math.sin(a) * py;
 			double qy = Math.cos(a) * py - Math.sin(a) * px;
 			int x = (int)Math.rint(qx * dw + cx);
-			int y = (int)Math.rint(qy * dh + cy);
+			int y = (int)Math.rint(cy - qy * dh);
 			gc.beginPath();
 			gc.moveTo(x - 2, y - 2);
 			gc.lineTo(x + 2, y - 2);
@@ -1037,7 +1038,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 				double qx = Math.cos(a) * px + Math.sin(a) * py;
 				double qy = Math.cos(a) * py - Math.sin(a) * px;
 				int x = (int)Math.rint(qx * dw + cx);
-				int y = (int)Math.rint(qy * dh + cy);
+				int y = (int)Math.rint(cy - qy * dh);
 				gc.beginPath();
 				gc.moveTo(x, y);
 				for (int i = 1; i < states.size(); i++) {
@@ -1049,7 +1050,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 					qx = Math.cos(a) * px + Math.sin(a) * py;
 					qy = Math.cos(a) * py - Math.sin(a) * px;
 					x = (int)Math.rint(qx * dw + cx);
-					y = (int)Math.rint(qy * dh + cy);
+					y = (int)Math.rint(cy - qy * dh);
 					gc.lineTo(x, y);
 				}
 				gc.stroke();
@@ -1087,7 +1088,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 						double qx = Math.cos(a) * px + Math.sin(a) * py;
 						double qy = Math.cos(a) * py - Math.sin(a) * px;
 						int x = (int)Math.rint(qx * dw + cx);
-						int y = (int)Math.rint(qy * dh + cy);
+						int y = (int)Math.rint(cy - qy * dh);
 						gc.beginPath();
 						gc.moveTo(x, y);
 						for (int i = 1; i < points.size(); i++) {
@@ -1098,7 +1099,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 							qx = Math.cos(a) * px + Math.sin(a) * py;
 							qy = Math.cos(a) * py - Math.sin(a) * px;
 							x = (int)Math.rint(qx * dw + cx);
-							y = (int)Math.rint(qy * dh + cy);
+							y = (int)Math.rint(cy - qy * dh);
 							gc.lineTo(x, y);
 						}
 						gc.stroke();

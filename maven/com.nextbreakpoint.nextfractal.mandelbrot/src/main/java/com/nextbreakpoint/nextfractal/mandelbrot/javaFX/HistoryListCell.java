@@ -27,11 +27,13 @@ package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
 import java.text.SimpleDateFormat;
 
 import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.image.PixelFormat;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.transform.Affine;
 
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
@@ -64,7 +66,15 @@ public class HistoryListCell extends ListCell<MandelbrotData> {
 			if (data.getPixels() != null) {
 				WritableImage image = new WritableImage(size.getWidth(), size.getHeight());
 				image.getPixelWriter().setPixels(0, 0, (int)image.getWidth(), (int)image.getHeight(), PixelFormat.getIntArgbInstance(), data.getPixels(), (int)image.getWidth());
-				canvas.getGraphicsContext2D().drawImage(image, (tile.getTileSize().getWidth() - size.getWidth()) / 2, (tile.getTileSize().getHeight() - size.getHeight()) / 2);
+				GraphicsContext g2d = canvas.getGraphicsContext2D();
+				Affine affine = new Affine();
+				int x = (tile.getTileSize().getWidth() - size.getWidth()) / 2;
+				int y = (tile.getTileSize().getHeight() - size.getHeight()) / 2;
+				affine.append(Affine.translate(0, +image.getHeight() / 2 + y));
+				affine.append(Affine.scale(1, -1));
+				affine.append(Affine.translate(0, -image.getHeight() / 2 - y));
+				g2d.setTransform(affine);
+				g2d.drawImage(image, x, y);
 			}
 			label.setText(df.format(data.getTimestamp()));
 			this.setGraphic(pane);

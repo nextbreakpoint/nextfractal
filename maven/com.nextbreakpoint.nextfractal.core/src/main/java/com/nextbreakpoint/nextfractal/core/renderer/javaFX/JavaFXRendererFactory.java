@@ -65,7 +65,15 @@ public class JavaFXRendererFactory implements RendererFactory {
 	public RendererAffine createRotateAffine(double a, double centerX, double centerY) {
 		return new JavaFXRendererAffine(new Affine(Affine.rotate(a, centerX, centerY)));
 	}
-	
+
+	/**
+	 * @see com.nextbreakpoint.nextfractal.core.renderer.RendererFactory#createScaleAffine(double, double)
+	 */
+	@Override
+	public RendererAffine createScaleAffine(double x, double y) {
+		return new JavaFXRendererAffine(new Affine(Affine.scale(x, y)));
+	}
+
 	/**
 	 * @see com.nextbreakpoint.nextfractal.RendererFactory.twister.renderer.RenderFactory#createAffine()
 	 */

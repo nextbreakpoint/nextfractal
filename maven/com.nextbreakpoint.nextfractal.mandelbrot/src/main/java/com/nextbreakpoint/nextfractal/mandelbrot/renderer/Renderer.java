@@ -528,7 +528,11 @@ public class Renderer {
 		final int offsetY = (height - tileSize.getHeight() - tileBorder.getHeight() * 2) / 2;
 		final int centerX = width / 2;
 		final int centerY = height / 2;
-		final RendererAffine affine = renderFactory.createTranslateAffine(-offsetX, -offsetY);
+		final RendererAffine affine = renderFactory.createAffine();
+		affine.append(renderFactory.createTranslateAffine(0, +centerY - offsetY));
+		affine.append(renderFactory.createScaleAffine(1, -1));
+		affine.append(renderFactory.createTranslateAffine(0, -centerY + offsetY));
+		affine.append(renderFactory.createTranslateAffine(-offsetX, -offsetY));
 		affine.append(renderFactory.createRotateAffine(rotation, centerX, centerY));
 		return affine;
 	}

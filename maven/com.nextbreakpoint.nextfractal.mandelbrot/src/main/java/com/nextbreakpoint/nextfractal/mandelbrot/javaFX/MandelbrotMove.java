@@ -53,14 +53,14 @@ public class MandelbrotMove implements MandelbrotTool {
 	@Override
 	public void dragged(MouseEvent e) {
 		x1 = (e.getX() - context.getWidth() / 2) / context.getWidth();
-		y1 = (e.getY() - context.getHeight() / 2) / context.getHeight();
+		y1 = (context.getHeight() / 2 - e.getY()) / context.getHeight();
 		changed = true;
 	}
 
 	@Override
 	public void released(MouseEvent e) {
 		x1 = (e.getX() - context.getWidth() / 2) / context.getWidth();
-		y1 = (e.getY() - context.getHeight() / 2) / context.getHeight();
+		y1 = (context.getHeight() / 2 - e.getY()) / context.getHeight();
 		pressed = false;
 		changed = true;
 	}
@@ -68,7 +68,7 @@ public class MandelbrotMove implements MandelbrotTool {
 	@Override
 	public void pressed(MouseEvent e) {
 		x1 = x0 = (e.getX() - context.getWidth() / 2) / context.getWidth();
-		y1 = y0 = (e.getY() - context.getHeight() / 2) / context.getHeight();
+		y1 = y0 = (context.getHeight() / 2 - e.getY()) / context.getHeight();
 		pressed = true;
 	}
 

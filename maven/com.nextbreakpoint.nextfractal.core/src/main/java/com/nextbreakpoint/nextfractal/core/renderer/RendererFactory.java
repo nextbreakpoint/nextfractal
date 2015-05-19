@@ -33,6 +33,8 @@ public interface RendererFactory {
 
 	public RendererAffine createRotateAffine(double a, double centerX, double centerY);
 
+	public RendererAffine createScaleAffine(double x, double y);
+
 	public RendererColor createColor(double red, double green, double blue, double opacity);
 
 	public RendererAffine createAffine();
