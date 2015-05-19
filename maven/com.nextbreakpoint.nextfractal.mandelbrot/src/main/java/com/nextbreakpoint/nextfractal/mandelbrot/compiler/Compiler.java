@@ -343,6 +343,12 @@ public class Compiler {
 				builder.append(var.getName());
 				builder.append(");\n");
 			}
+			for (ASTOrbitTrap trap : orbit.getTraps()) {
+				builder.append("addTrap(trap");
+				builder.append(trap.getName().toUpperCase().substring(0, 1));
+				builder.append(trap.getName().substring(1));
+				builder.append(");\n");
+			}
 		}
 		builder.append("}\n");
 		for (CompilerVariable var : scope.values()) {
@@ -609,6 +615,20 @@ public class Compiler {
 			builder.append("n = ");
 			builder.append(loop.getBegin());
 			builder.append(";\n");
+			builder.append("if (states != null) {\n");
+			builder.append("states.add(new Number[] { ");
+			int i = 0;
+			for (CompilerVariable var : stateVariables) {
+				if (i > 0) {
+					builder.append(", ");
+				}
+				builder.append("number(");
+				builder.append(var.getName());
+				builder.append(")");
+				i += 1;
+			}
+			builder.append(" });\n");
+			builder.append("}\n");
 			builder.append("for (int i = ");
 			builder.append(loop.getBegin());
 			builder.append(" + 1; i <= ");
@@ -622,7 +642,7 @@ public class Compiler {
 			builder.append(") { n = i; break; }\n");
 			builder.append("if (states != null) {\n");
 			builder.append("states.add(new Number[] { ");
-			int i = 0;
+			i = 0;
 			for (CompilerVariable var : stateVariables) {
 				if (i > 0) {
 					builder.append(", ");

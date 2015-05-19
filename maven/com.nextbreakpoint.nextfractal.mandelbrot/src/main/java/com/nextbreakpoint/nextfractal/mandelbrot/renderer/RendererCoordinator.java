@@ -25,6 +25,7 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.renderer;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ThreadFactory;
 
@@ -35,6 +36,7 @@ import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Color;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Orbit;
+import com.nextbreakpoint.nextfractal.mandelbrot.core.Trap;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.xaos.XaosRenderer;
 
 /**
@@ -258,5 +260,9 @@ public class RendererCoordinator implements RendererDelegate {
 		} else {
 			return new Renderer(threadFactory, renderFactory, tile);
 		}
+	}
+
+	public List<Trap> getTraps() {
+		return renderer.getTraps();
 	}
 }

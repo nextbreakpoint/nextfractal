@@ -89,6 +89,7 @@ import com.nextbreakpoint.nextfractal.mandelbrot.core.Color;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Orbit;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Scope;
+import com.nextbreakpoint.nextfractal.mandelbrot.core.Trap;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererCoordinator;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererView;
 
@@ -112,6 +113,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 	private int height;
 	private int rows;
 	private int columns;
+	private volatile boolean redrawTrap;
 	private volatile boolean redrawOrbit;
 	private volatile boolean disableTool;
 	private String astOrbit;
@@ -220,6 +222,12 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
         gcOrbitCanvas.setFill(javafx.scene.paint.Color.TRANSPARENT);
         gcOrbitCanvas.fillRect(0, 0, width, height);
 		orbitCanvas.setVisible(false);
+		
+		Canvas trapCanvas = new Canvas(width, height);
+		GraphicsContext gcTrapCanvas = trapCanvas.getGraphicsContext2D();
+		gcTrapCanvas.setFill(javafx.scene.paint.Color.TRANSPARENT);
+		gcTrapCanvas.fillRect(0, 0, width, height);
+		trapCanvas.setVisible(false);
 
         Canvas juliaCanvas = new Canvas(width, height);
         GraphicsContext gcJuliaCanvas = juliaCanvas.getGraphicsContext2D();
@@ -308,6 +316,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 		
 		StackPane stackPane = new StackPane();
 		stackPane.getChildren().add(fractalCanvas);
+		stackPane.getChildren().add(trapCanvas);
 		stackPane.getChildren().add(orbitCanvas);
 		stackPane.getChildren().add(juliaCanvas);
 		stackPane.getChildren().add(controls);
@@ -356,7 +365,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 				juliaCanvas.setVisible(false);
 				zoominButton.requestFocus();
 			}
-			toggleShowOrbit(orbitCanvas);
+			toggleShowOrbit();
 		});
 		
 		juliaButton.setOnAction(e -> {
@@ -368,6 +377,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 		
 		hideOrbitProperty.addListener((observable, oldValue, newValue) -> {
 			orbitCanvas.setVisible(!newValue);
+			trapCanvas.setVisible(!newValue);
 		});
 		
 		juliaProperty.addListener((observable, oldValue, newValue) -> {
@@ -440,7 +450,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 
 		exportExecutor = Executors.newSingleThreadExecutor(threadFactory);
 		
-		runTimer(fractalCanvas, orbitCanvas, juliaCanvas);
+		runTimer(fractalCanvas, orbitCanvas, juliaCanvas, trapCanvas);
 		
 		exportPane.hide();
 	}
@@ -588,7 +598,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 		}
 	}
 
-	private void runTimer(Canvas fractalCanvas, Canvas orbitCanvas, Canvas juliaCanvas) {
+	private void runTimer(Canvas fractalCanvas, Canvas orbitCanvas, Canvas juliaCanvas, Canvas trapCanvas) {
 		timer = new AnimationTimer() {
 			private long last;
 
@@ -600,6 +610,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 						redrawIfPixelsChanged(fractalCanvas);
 						redrawIfJuliaPixelsChanged(juliaCanvas);
 						redrawIfOrbitChanged(orbitCanvas);
+						redrawIfTrapChanged(trapCanvas);
 						if (currentTool != null) {
 							currentTool.update(time);
 						}
@@ -661,7 +672,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 		}
 	}
 
-	private void toggleShowOrbit(Canvas orbitCanvas) {
+	private void toggleShowOrbit() {
 		if (disableTool) {
 			return;
 		}
@@ -744,6 +755,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 			if (juliaCoordinator != null) {
 				juliaCoordinator.run();
 			}
+			redrawTrap = true;
 			if (!julia) {
 				states = renderOrbit(point);
 				redrawOrbit = true;
@@ -905,6 +917,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 			juliaCoordinator.run();
 		}
 		redrawOrbit = true;
+		redrawTrap = true;
 	}
 
 	private List<Number[]> renderOrbit(double[] point) {
@@ -1040,6 +1053,57 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 					gc.lineTo(x, y);
 				}
 				gc.stroke();
+			}
+		}
+	}
+
+	private void redrawIfTrapChanged(Canvas canvas) {
+		if (redrawTrap) {
+			redrawTrap = false;
+			Number size = coordinators[0].getInitialSize();
+			Number center = coordinators[0].getInitialCenter();
+			RendererGraphicsContext gc = renderFactory.createGraphicsContext(canvas.getGraphicsContext2D());
+			if (states.size() > 1) {
+				double[] t = getMandelbrotSession().getViewAsCopy().getTraslation();
+				double[] r = getMandelbrotSession().getViewAsCopy().getRotation();
+				double tx = t[0];
+				double ty = t[1];
+				double tz = t[2];
+				double a = -r[2] * Math.PI / 180;
+				double dw = canvas.getWidth();
+				double dh = canvas.getHeight();
+				gc.clearRect(0, 0, (int)dw, (int)dh);
+				gc.setStroke(renderFactory.createColor(1, 0, 0, 1));
+				List<Trap> traps = coordinators[0].getTraps();
+				for (Trap trap : traps) {
+					List<Number> points = trap.toPoints();
+					if (points.size() > 0) {
+						double zx = points.get(0).r();
+						double zy = points.get(0).i();
+						double cx = dw / 2;
+						double cy = dh / 2;
+						double px = (zx - tx - center.r()) / (tz * size.r());
+						double py = (zy - ty - center.i()) / (tz * size.r());
+						double qx = Math.cos(a) * px + Math.sin(a) * py;
+						double qy = Math.cos(a) * py - Math.sin(a) * px;
+						int x = (int)Math.rint(qx * dw + cx);
+						int y = (int)Math.rint(qy * dh + cy);
+						gc.beginPath();
+						gc.moveTo(x, y);
+						for (int i = 1; i < points.size(); i++) {
+							zx = points.get(i).r();
+							zy = points.get(i).i();
+							px = (zx - tx - center.r()) / (tz * size.r());
+							py = (zy - ty - center.i()) / (tz * size.r());
+							qx = Math.cos(a) * px + Math.sin(a) * py;
+							qy = Math.cos(a) * py - Math.sin(a) * px;
+							x = (int)Math.rint(qx * dw + cx);
+							y = (int)Math.rint(qy * dh + cy);
+							gc.lineTo(x, y);
+						}
+						gc.stroke();
+					}
+				}
 			}
 		}
 	}

@@ -49,6 +49,9 @@ public class ASTOrbitTrap extends ASTObject {
 	}
 
 	public void addOperator(ASTOrbitTrapOp operator) {
+		if ((operator.getOp().equals("MOVETO") || operator.getOp().equals("MOVETOREL")) && operators.size() > 0) {
+			throw new ASTException("Only one initial MOVETO or MOVETOREL operator is allowed", operator.location);
+		}
 		operators.add(operator);
 	}
 

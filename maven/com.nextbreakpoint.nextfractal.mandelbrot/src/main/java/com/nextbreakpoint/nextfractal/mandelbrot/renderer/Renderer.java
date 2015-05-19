@@ -25,6 +25,7 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.renderer;
 
 import java.nio.IntBuffer;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -44,6 +45,7 @@ import com.nextbreakpoint.nextfractal.mandelbrot.core.Color;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.MutableNumber;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Orbit;
+import com.nextbreakpoint.nextfractal.mandelbrot.core.Trap;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.strategy.JuliaRendererStrategy;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.strategy.MandelbrotRendererStrategy;
 
@@ -588,5 +590,9 @@ public class Renderer {
 		public void run() {
 			doRender();
 		}
+	}
+
+	public List<Trap> getTraps() {
+		return rendererFractal.getOrbit().getTraps();
 	}
 }

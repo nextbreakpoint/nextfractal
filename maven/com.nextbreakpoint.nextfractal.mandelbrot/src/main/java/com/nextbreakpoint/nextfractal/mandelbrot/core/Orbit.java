@@ -24,6 +24,7 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.core;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -34,6 +35,7 @@ public abstract class Orbit {
 	protected MutableNumber w = new MutableNumber(0, 0);
 	protected double n = 0.0;
 	protected MutableNumber[] numbers;
+	protected List<Trap> traps = new ArrayList<>();
 	protected Scope scope;
 	protected boolean julia;
 
@@ -134,6 +136,14 @@ public abstract class Orbit {
 	public void reset() {
 	}
 
+	public void addTrap(Trap trap) {
+		traps.add(trap);
+	}
+	
+	public List<Trap> getTraps() {
+		return traps;
+	}
+	
 	public abstract void init();
 
 	public abstract void render(List<Number[]> states);
