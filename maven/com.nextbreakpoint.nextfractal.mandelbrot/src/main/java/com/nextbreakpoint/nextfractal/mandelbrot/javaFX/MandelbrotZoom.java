@@ -77,11 +77,12 @@ public class MandelbrotZoom implements MandelbrotTool {
 		@Override
 		public void update(long time) {
 			if (pressed || changed) {
-				double[] t = context.getMandelbrotSession().getViewAsCopy().getTraslation();
-				double[] r = context.getMandelbrotSession().getViewAsCopy().getRotation();
-				double[] s = context.getMandelbrotSession().getViewAsCopy().getScale();
-				double[] p = context.getMandelbrotSession().getViewAsCopy().getPoint();
-				boolean j = context.getMandelbrotSession().getViewAsCopy().isJulia();
+				MandelbrotView oldView = context.getMandelbrotSession().getViewAsCopy();
+				double[] t = oldView.getTraslation();
+				double[] r = oldView.getRotation();
+				double[] s = oldView.getScale();
+				double[] p = oldView.getPoint();
+				boolean j = oldView.isJulia();
 				double x = t[0];
 				double y = t[1];
 				double z = t[2];

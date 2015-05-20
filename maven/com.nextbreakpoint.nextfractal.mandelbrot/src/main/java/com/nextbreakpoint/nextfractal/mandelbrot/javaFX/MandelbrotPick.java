@@ -26,6 +26,7 @@ package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
 
 import javafx.scene.input.MouseEvent;
 
+import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotView;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 
 public class MandelbrotPick implements MandelbrotTool {
@@ -72,9 +73,10 @@ public class MandelbrotPick implements MandelbrotTool {
 	@Override
 	public void update(long time) {
 		if (changed) {
-			if (!context.getMandelbrotSession().getViewAsCopy().isJulia()) {
-				double[] t = context.getMandelbrotSession().getViewAsCopy().getTraslation();
-				double[] r = context.getMandelbrotSession().getViewAsCopy().getRotation();
+			MandelbrotView view = context.getMandelbrotSession().getViewAsCopy();
+			if (!view.isJulia()) {
+				double[] t = view.getTraslation();
+				double[] r = view.getRotation();
 				double x = t[0];
 				double y = t[1];
 				double z = t[2];
