@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <mandelbrot>
-    <timestamp>2015-04-29 20:05:10</timestamp>
+    <timestamp>2015-05-20 08:26:27</timestamp>
     <julia>false</julia>
-    <point>1.5066666666666668</point>
-    <point>0.2</point>
+    <point>0.11666666666666667</point>
+    <point>0.9916666666666667</point>
     <rotation>0.0</rotation>
     <rotation>0.0</rotation>
     <rotation>0.0</rotation>
@@ -15,7 +15,9 @@
     <source>fractal {
 	orbit [-2.5 - 2.5i,+2.5 + 2.5i] [x,n] {
 		begin {
-			x = &lt;pi / 2,0&gt;;
+			if (~julia) {
+				x = &lt;pi / 2,0&gt;;
+			}
 		}
 		loop [0, 200] (abs(im(x)) &gt; 100) {
 			xr = re(x);
