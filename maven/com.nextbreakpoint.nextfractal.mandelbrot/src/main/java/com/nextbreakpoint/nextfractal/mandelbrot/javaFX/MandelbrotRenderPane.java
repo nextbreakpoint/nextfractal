@@ -990,7 +990,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 			juliaCoordinator.drawImage(gc, 10, 10, 200, 200);
 			Number size = juliaCoordinator.getInitialSize();
 			Number center = juliaCoordinator.getInitialCenter();
-			gc.setStroke(renderFactory.createColor(1, 0, 0, 1));
+			gc.setStroke(renderFactory.createColor(1, 1, 0, 1));
 			double[] t = view.getTraslation();
 			double[] r = view.getRotation();
 			double tx = t[0];
@@ -1083,7 +1083,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 				double dw = canvas.getWidth();
 				double dh = canvas.getHeight();
 				gc.clearRect(0, 0, (int)dw, (int)dh);
-				gc.setStroke(renderFactory.createColor(1, 0, 0, 1));
+				gc.setStroke(renderFactory.createColor(1, 1, 0, 1));
 				List<Trap> traps = coordinators[0].getTraps();
 				for (Trap trap : traps) {
 					List<Number> points = trap.toPoints();
