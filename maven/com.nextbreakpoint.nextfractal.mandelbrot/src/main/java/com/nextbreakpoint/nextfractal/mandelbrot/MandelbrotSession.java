@@ -24,6 +24,7 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,6 +35,7 @@ public class MandelbrotSession extends AbstractSession {
 	private final List<MandelbrotListener> listeners = new ArrayList<>();
 	private MandelbrotData data = new MandelbrotData();
 	private CompilerReport report;
+	private File currentFile;
 	
 	public void addMandelbrotListener(MandelbrotListener listener) {
 		listeners.add(listener);
@@ -45,6 +47,14 @@ public class MandelbrotSession extends AbstractSession {
 
 	public String getVersion() {
 		return data.getVersion();
+	}
+
+	public File getCurrentFile() {
+		return currentFile;
+	}
+
+	public void setCurrentFile(File currentFile) {
+		this.currentFile = currentFile;
 	}
 
 	public String getSource() {

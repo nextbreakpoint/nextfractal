@@ -199,13 +199,6 @@ public class RendererCoordinator implements RendererDelegate {
 	}
 
 	/**
-	 * @return
-	 */
-	public RendererTile getTile() {
-		return renderer.getTile();
-	}
-
-	/**
 	 * @param view
 	 */
 	public void setView(RendererView view) {

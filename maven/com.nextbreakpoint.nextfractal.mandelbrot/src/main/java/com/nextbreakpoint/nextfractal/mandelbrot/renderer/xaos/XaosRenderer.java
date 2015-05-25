@@ -107,6 +107,13 @@ public final class XaosRenderer extends Renderer {
 	@Override
 	protected void doRender() {
 		try {
+//			if (isInterrupted()) {
+//				progress = 0;
+//				rendererData.swap();
+//				rendererData.clearPixels();
+//				didChanged(progress, rendererData.getPixels());
+//				return;
+//			}
 			if (rendererFractal == null) {
 				progress = 1;
 				rendererData.swap();

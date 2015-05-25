@@ -40,6 +40,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javafx.application.Platform;
+import javafx.collections.ListChangeListener.Change;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.event.Event;
@@ -49,6 +50,7 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.TransferMode;
@@ -90,7 +92,6 @@ public class MandelbrotEditorPane extends BorderPane {
 	private final Session session;
 	private final CodeArea codeArea;
 	private FileChooser fileChooser;
-	private File currentFile;
 	private boolean noHistory;
 	private ScheduledExecutorService sessionsExecutor;
 	private ExecutorService historyExecutor;
@@ -114,14 +115,17 @@ public class MandelbrotEditorPane extends BorderPane {
 		Tab sourceTab = new Tab();
 		sourceTab.setClosable(false);
 		sourceTab.setText("Source");
+		sourceTab.setTooltip(new Tooltip("Source code of current fractal"));
 		tabPane.getTabs().add(sourceTab);
 		Tab historyTab = new Tab();
 		historyTab.setClosable(false);
 		historyTab.setText("History");
+		historyTab.setTooltip(new Tooltip("History of generated fractals"));
 		tabPane.getTabs().add(historyTab);
 		Tab jobsTab = new Tab();
 		jobsTab.setClosable(false);
-		jobsTab.setText("Jobs");
+		jobsTab.setText("Export Queue");
+		jobsTab.setTooltip(new Tooltip("Queue of active export tasks"));
 		tabPane.getTabs().add(jobsTab);
 		setCenter(tabPane);
 
@@ -132,6 +136,8 @@ public class MandelbrotEditorPane extends BorderPane {
 //		Button renderButton = new Button("Render");
 		Button loadButton = new Button("", createIconImage("/icon-load.png"));
 		Button saveButton = new Button("", createIconImage("/icon-save.png"));
+		loadButton.setTooltip(new Tooltip("Load source from a file"));
+		saveButton.setTooltip(new Tooltip("Save source to a file"));
 //		sourceButtons.getChildren().add(renderButton);
 		sourceButtons.getChildren().add(loadButton);
 		sourceButtons.getChildren().add(saveButton);
@@ -152,6 +158,7 @@ public class MandelbrotEditorPane extends BorderPane {
 		});
 		HBox historyButtons = new HBox(10);
 		Button clearButton = new Button("", createIconImage("/icon-clear.png"));
+		clearButton.setTooltip(new Tooltip("Remove all elements from history"));
 		historyButtons.getChildren().add(clearButton);
 		historyButtons.getStyleClass().add("toolbar");
 		historyPane.setCenter(historyList);
@@ -172,6 +179,12 @@ public class MandelbrotEditorPane extends BorderPane {
 		Button suspendButton = new Button("", createIconImage("/icon-suspend.png"));
 		Button resumeButton = new Button("", createIconImage("/icon-resume.png"));
 		Button removeButton = new Button("", createIconImage("/icon-remove.png"));
+		suspendButton.setTooltip(new Tooltip("Suspend selected export tasks"));
+		resumeButton.setTooltip(new Tooltip("Resume selected export tasks"));
+		removeButton.setTooltip(new Tooltip("Remove selected export tasks"));
+		suspendButton.setDisable(true);
+		resumeButton.setDisable(true);
+		removeButton.setDisable(true);
 		jobsButtons.getChildren().add(suspendButton);
 		jobsButtons.getChildren().add(resumeButton);
 		jobsButtons.getChildren().add(removeButton);
@@ -197,10 +210,10 @@ public class MandelbrotEditorPane extends BorderPane {
         	List<File> files = e.getDragboard().getFiles();
         	if (files.size() > 0) {
         		File file = files.get(0);
-				currentFile = file;
+				getMandelbrotSession().setCurrentFile(file);
 				try {
 					MandelbrotDataStore service = new MandelbrotDataStore();
-					MandelbrotData data = service.loadFromFile(currentFile);
+					MandelbrotData data = service.loadFromFile(getMandelbrotSession().getCurrentFile());
 					logger.info(data.toString());
 					getMandelbrotSession().setData(data);
 				} catch (Exception x) {
@@ -267,6 +280,18 @@ public class MandelbrotEditorPane extends BorderPane {
 			}
 		});
 		
+		jobsList.getSelectionModel().getSelectedItems().addListener((Change<? extends ExportSession> c) -> {
+			if (c.getList().size() > 0) {
+				suspendButton.setDisable(false);
+				resumeButton.setDisable(false);
+				removeButton.setDisable(false);
+			} else {
+				suspendButton.setDisable(true);
+				resumeButton.setDisable(true);
+				removeButton.setDisable(true);
+			}
+		});
+		
 //		renderButton.setOnAction(e -> {
 //			compileSource(sourceText.getText());
 //		});
@@ -274,16 +299,16 @@ public class MandelbrotEditorPane extends BorderPane {
 		loadButton.setOnAction(e -> {
 			createFileChooser(".m");
 			fileChooser.setTitle("Load");
-			if (currentFile != null) {
-				fileChooser.setInitialDirectory(currentFile.getParentFile());
-				fileChooser.setInitialFileName(currentFile.getName());
+			if (getMandelbrotSession().getCurrentFile() != null) {
+				fileChooser.setInitialDirectory(getMandelbrotSession().getCurrentFile().getParentFile());
+				fileChooser.setInitialFileName(getMandelbrotSession().getCurrentFile().getName());
 			}
 			File file = fileChooser.showOpenDialog(null);
 			if (file != null) {
-				currentFile = file;
+				getMandelbrotSession().setCurrentFile(file);
 				try {
 					MandelbrotDataStore service = new MandelbrotDataStore();
-					MandelbrotData data = service.loadFromFile(currentFile);
+					MandelbrotData data = service.loadFromFile(getMandelbrotSession().getCurrentFile());
 					logger.info(data.toString());
 					getMandelbrotSession().setData(data);
 				} catch (Exception x) {
@@ -296,18 +321,18 @@ public class MandelbrotEditorPane extends BorderPane {
 		saveButton.setOnAction(e -> {
 			createFileChooser(".m");
 			fileChooser.setTitle("Save");
-			if (currentFile != null) {
-				fileChooser.setInitialDirectory(currentFile.getParentFile());
-				fileChooser.setInitialFileName(currentFile.getName());
+			if (getMandelbrotSession().getCurrentFile() != null) {
+				fileChooser.setInitialDirectory(getMandelbrotSession().getCurrentFile().getParentFile());
+				fileChooser.setInitialFileName(getMandelbrotSession().getCurrentFile().getName());
 			}
 			File file = fileChooser.showSaveDialog(null);
 			if (file != null) {
-				currentFile = file;
+				getMandelbrotSession().setCurrentFile(file);
 				try {
 					MandelbrotDataStore service = new MandelbrotDataStore();
 					MandelbrotData data = getMandelbrotSession().getDataAsCopy();
 					logger.info(data.toString());
-					service.saveToFile(currentFile, data);
+					service.saveToFile(getMandelbrotSession().getCurrentFile(), data);
 				} catch (Exception x) {
 					logger.warning("Cannot save file " + file.getAbsolutePath());
 					//TODO display error
@@ -317,13 +342,17 @@ public class MandelbrotEditorPane extends BorderPane {
 
 		suspendButton.setOnAction(e -> {
 			for (ExportSession exportSession : jobsList.getSelectionModel().getSelectedItems()) {
-				session.getExportService().suspendSession(exportSession);
+				if (!exportSession.isSuspended()) {
+					session.getExportService().suspendSession(exportSession);
+				}
 			};
 		});
 
 		resumeButton.setOnAction(e -> {
 			for (ExportSession exportSession : jobsList.getSelectionModel().getSelectedItems()) {
-				session.getExportService().resumeSession(exportSession);
+				if (exportSession.isSuspended()) {
+					session.getExportService().resumeSession(exportSession);
+				}
 			};
 		});
 

@@ -37,6 +37,7 @@ import java.util.concurrent.ThreadFactory;
 import com.nextbreakpoint.nextfractal.core.encoder.EncoderException;
 import com.nextbreakpoint.nextfractal.core.export.AbstractExportService;
 import com.nextbreakpoint.nextfractal.core.export.ExportJob;
+import com.nextbreakpoint.nextfractal.core.export.ExportJobState;
 import com.nextbreakpoint.nextfractal.core.export.ExportRenderer;
 import com.nextbreakpoint.nextfractal.core.export.ExportSession;
 import com.nextbreakpoint.nextfractal.core.export.ExportSessionHolder;
@@ -59,7 +60,7 @@ public class SimpleExportService extends AbstractExportService {
 			updateSession(holder);
 			ExportSession session = holder.getSession();
 			if (session.isStopped()) {
-				futures.remove(session.getSessionId());
+				removeTasks(session);
 				i.remove();
 			}
 		}
@@ -67,9 +68,9 @@ public class SimpleExportService extends AbstractExportService {
 
 	@Override
 	protected void cancelJobs(ExportSession session) {
-		List<Future<ExportJob>> list = futures.get(session.getSessionId());
-		if (list != null) {
-			for (Future<ExportJob> future : list) {
+		List<Future<ExportJob>> tasks = getTasks(session);
+		if (tasks != null) {
+			for (Future<ExportJob> future : tasks) {
 				future.cancel(true);
 			}
 		}
@@ -89,37 +90,32 @@ public class SimpleExportService extends AbstractExportService {
 				holder.setState(SessionState.STOPPED);
 			}
 		} else {
-			processSession(holder);
-		}
-		session.updateProgress();
-	}
-
-	private void processSession(ExportSessionHolder holder) {
-		ExportSession session = holder.getSession();
-		List<Future<ExportJob>> list = futures.get(session.getSessionId());
-		if (list != null) {
-			removeTerminatedJobs(list);
-			if (list.size() == 0) {
-				if (session.isCancelled()) {
-					holder.setState(SessionState.INTERRUPTED);
-				} else if (isSessionCompleted(session)) {
-					try {
-						encodeData(session);
-						holder.setState(SessionState.COMPLETED);
-					} catch (Exception e) {
-						holder.setState(SessionState.FAILED);
+			List<Future<ExportJob>> tasks = getTasks(session);
+			if (tasks != null) {
+				removeTerminatedTasks(tasks);
+				if (tasks.size() == 0) {
+					if (session.isCancelled()) {
+						holder.setState(SessionState.INTERRUPTED);
+					} else if (isSessionCompleted(session)) {
+						try {
+							encodeData(session);
+							holder.setState(SessionState.COMPLETED);
+						} catch (Exception e) {
+							holder.setState(SessionState.FAILED);
+						}
+					} else {
+						holder.setState(SessionState.SUSPENDED);
 					}
-				} else {
-					holder.setState(SessionState.SUSPENDED);
 				}
 			}
 		}
+		session.updateProgress();
 	}
 	
-	private void removeTerminatedJobs(List<Future<ExportJob>> list) {
-		for (Iterator<Future<ExportJob>> i = list.iterator(); i.hasNext();) {
+	private void removeTerminatedTasks(List<Future<ExportJob>> tasks) {
+		for (Iterator<Future<ExportJob>> i = tasks.iterator(); i.hasNext();) {
 			Future<ExportJob> future = i.next();
-			if (future.isCancelled() || future.isDone()) {
+			if (future.isDone()) {
 				i.remove();
 			}
 		}
@@ -132,15 +128,30 @@ public class SimpleExportService extends AbstractExportService {
 	private void dispatchJobs(ExportSession session) {
 		for (ExportJob job : session.getJobs()) {
 			if (!job.isCompleted()) {
+				job.setState(ExportJobState.READY);
+				List<Future<ExportJob>> tasks = getOrCreateTasks(session);
 				Future<ExportJob> future = exportRenderer.dispatch(job);
-				List<Future<ExportJob>> list = futures.get(session.getSessionId());
-				if (list == null) {
-					list = new ArrayList<>();
-					futures.put(session.getSessionId(), list);
-				}
-				list.add(future);
+				tasks.add(future);
 			}
 		}
+	}
+
+	private void removeTasks(ExportSession session) {
+		futures.remove(session.getSessionId());
+	}
+
+	private List<Future<ExportJob>> getTasks(ExportSession session) {
+		List<Future<ExportJob>> task = futures.get(session.getSessionId());
+		return task;
+	}
+
+	private List<Future<ExportJob>> getOrCreateTasks(ExportSession session) {
+		List<Future<ExportJob>> tasks = getTasks(session);
+		if (tasks == null) {
+			tasks = new ArrayList<>();
+			futures.put(session.getSessionId(), tasks);
+		}
+		return tasks;
 	}
 
 	private void encodeData(ExportSession session) throws IOException, EncoderException {

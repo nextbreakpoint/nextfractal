@@ -61,6 +61,19 @@ public class SimpleExportRenderer implements ExportRenderer {
 	public Future<ExportJob> dispatch(ExportJob job) {
 		return service.submit(new ProcessJobCallable(job));
 	}
+	
+	private ImageGenerator createImageGenerator(ExportJob job) {
+		final ServiceLoader<? extends FractalFactory> plugins = ServiceLoader.load(FractalFactory.class);
+		for (FractalFactory plugin : plugins) {
+			try {
+				if (job.getPluginId().equals(plugin.getId())) {
+					return plugin.createImageGenerator(threadFactory, renderFactory, job.getTile());
+				}
+			} catch (Exception e) {
+			}
+		}
+		return null;
+	}
 
 	private class ProcessJobCallable implements Callable<ExportJob> {
 		private ExportJob job;
@@ -74,7 +87,8 @@ public class SimpleExportRenderer implements ExportRenderer {
 			try {
 				logger.fine(job.toString());
 				ImageGenerator generator = createImageGenerator(job);
-				IntBuffer pixels = generator.renderImage(job.getProfile().getData());
+				Object data = job.getProfile().getData();
+				IntBuffer pixels = generator.renderImage(data);
 				if (generator.isInterrupted()) {
 					job.setState(ExportJobState.INTERRUPTED);
 				} else {
@@ -87,19 +101,6 @@ public class SimpleExportRenderer implements ExportRenderer {
 				job.setState(ExportJobState.INTERRUPTED);
 			}
 			return job;
-		}
-		
-		private ImageGenerator createImageGenerator(ExportJob job) {
-			final ServiceLoader<? extends FractalFactory> plugins = ServiceLoader.load(FractalFactory.class);
-			for (FractalFactory plugin : plugins) {
-				try {
-					if (job.getPluginId().equals(plugin.getId())) {
-						return plugin.createImageGenerator(threadFactory, renderFactory, job.getTile());
-					}
-				} catch (Exception e) {
-				}
-			}
-			return null;
 		}
 	}
 }

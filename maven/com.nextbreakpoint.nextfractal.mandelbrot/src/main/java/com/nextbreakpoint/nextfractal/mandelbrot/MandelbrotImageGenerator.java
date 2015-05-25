@@ -31,7 +31,6 @@ import com.nextbreakpoint.nextfractal.core.ImageGenerator;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererFactory;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
-import com.nextbreakpoint.nextfractal.core.utils.Condition;
 import com.nextbreakpoint.nextfractal.core.utils.Double4D;
 import com.nextbreakpoint.nextfractal.core.utils.Integer4D;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.Compiler;
@@ -44,17 +43,22 @@ import com.nextbreakpoint.nextfractal.mandelbrot.renderer.Renderer;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererView;
 
 public class MandelbrotImageGenerator implements ImageGenerator {
-	private Renderer renderer;
-	private Condition condition;
+	private boolean aborted;
+	private RendererTile tile;
+	private ThreadFactory threadFactory;
+	private RendererFactory renderFactory;
 
 	public MandelbrotImageGenerator(ThreadFactory threadFactory, RendererFactory renderFactory, RendererTile tile) {
-		renderer = new Renderer(threadFactory, renderFactory, tile);
+		this.tile = tile;
+		this.threadFactory = threadFactory;
+		this.renderFactory = renderFactory;
 	}
 
 	@Override
 	public IntBuffer renderImage(Object data) {
 		MandelbrotData generatorData = (MandelbrotData)data;
-		IntBuffer pixels = IntBuffer.allocate(renderer.getSize().getWidth() * renderer.getSize().getHeight());
+		RendererSize suggestedSize = tile.getSuggestedSize();
+		IntBuffer pixels = IntBuffer.allocate(suggestedSize.getWidth() * suggestedSize.getHeight());
 		try {
 			Compiler compiler = new Compiler();
 			CompilerReport report = compiler.generateJavaSource(generatorData.getSource());
@@ -69,9 +73,7 @@ public class MandelbrotImageGenerator implements ImageGenerator {
 			if (colorBuilder.getErrors().size() > 0) {
 				throw new RuntimeException("Failed to compile Color class");
 			}
-			renderer.setCondition(condition);
-			renderer.abortTasks();
-			renderer.waitForTasks();
+			Renderer renderer = new Renderer(threadFactory, renderFactory, tile);
 			double[] traslation = generatorData.getTraslation();
 			double[] rotation = generatorData.getRotation();
 			double[] scale = generatorData.getScale();
@@ -91,6 +93,7 @@ public class MandelbrotImageGenerator implements ImageGenerator {
 			renderer.runTask();
 			renderer.waitForTasks();
 			renderer.getPixels(pixels);
+			aborted = renderer.isInterrupted();
 		} catch (Exception e) {
 			//TODO display errors
 		}
@@ -99,11 +102,11 @@ public class MandelbrotImageGenerator implements ImageGenerator {
 
 	@Override
 	public RendererSize getSize() {
-		return renderer.getSize();
+		return tile.getSuggestedSize();
 	}
 	
 	@Override
 	public boolean isInterrupted() {
-		return renderer.isInterrupted();
+		return aborted;
 	}
 }

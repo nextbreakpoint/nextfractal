@@ -26,7 +26,6 @@ package com.nextbreakpoint.nextfractal.mandelbrot.renderer;
 
 import java.nio.IntBuffer;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -40,7 +39,6 @@ import com.nextbreakpoint.nextfractal.core.renderer.RendererPoint;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSurface;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
-import com.nextbreakpoint.nextfractal.core.utils.Condition;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Color;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.MutableNumber;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
@@ -62,6 +60,7 @@ public class Renderer {
 	protected volatile RendererStrategy rendererStrategy;
 	protected volatile RendererSurface buffer;
 	protected volatile boolean aborted;
+	protected volatile boolean interrupted;
 	protected volatile boolean orbitChanged;
 	protected volatile boolean colorChanged;
 	protected volatile boolean regionChanged;
@@ -75,33 +74,25 @@ public class Renderer {
 	protected RendererRegion region;
 	protected RendererRegion initialRegion;
 	protected final RendererSize size;
-	protected final RendererTile tile;
 	protected RendererView view;
-	protected Condition condition;
 	private final RendererLock lock = new DummyRendererLock();
 	private final RenderRunnable renderTask = new RenderRunnable();
 	private ExecutorService executor;
 	private volatile Future<?> future;
 
 	/**
-	 * @param renderFactory 
-	 * @param rendererDelegate
-	 * @param rendererFractal
-	 * @param width
-	 * @param height
+	 * @param threadFactory
+	 * @param renderFactory
+	 * @param tile
 	 */
 	public Renderer(ThreadFactory threadFactory, RendererFactory renderFactory, RendererTile tile) {
 		this.threadFactory = threadFactory;
 		this.renderFactory = renderFactory;
 		this.rendererData = createRendererData();
 		this.rendererFractal = new RendererFractal();
-		this.tile = tile;
-		RendererSize tileSize = tile.getTileSize();
-		RendererSize borderSize = tile.getBorderSize();
-		int tileDim = computeDim(tileSize, borderSize);
-		size = new RendererSize(tileDim, tileDim);
 		view = new RendererView();
 		buffer = new RendererSurface(); 
+		size = tile.getSuggestedSize();
 		buffer.setTile(tile);
 		buffer.setSize(size);
 		buffer.setAffine(createTransform(0));
@@ -120,13 +111,6 @@ public class Renderer {
 	/**
 	 * @return
 	 */
-	public RendererTile getTile() {
-		return tile;
-	}
-
-	/**
-	 * @return
-	 */
 	public RendererSize getSize() {
 		return size;
 	}
@@ -135,16 +119,17 @@ public class Renderer {
 	 * @return
 	 */
 	public boolean isInterrupted() {
-		return aborted || Thread.currentThread().isInterrupted() || (condition != null && condition.evaluate());
+		return interrupted;
 	}
 
 	/**
 	 * 
 	 */
 	public void abortTasks() {
-		if (future != null) {
-			future.cancel(true);
-		}
+		interrupted = true;
+//		if (future != null) {
+//			future.cancel(true);
+//		}
 	}
 
 	/**
@@ -153,11 +138,12 @@ public class Renderer {
 	public void waitForTasks() {
 		try {
 			if (future != null) {
-				if (!future.isCancelled()) {
-					future.get();
-				}
+				future.get();
+				future = null;
 			}
-		} catch (InterruptedException | ExecutionException e) {
+		} catch (Exception e) {
+			interrupted = true;
+//			e.printStackTrace();
 		}
 	}
 
@@ -165,9 +151,10 @@ public class Renderer {
 	 * 
 	 */
 	public void runTask() {
-		abortTasks();
-		waitForTasks();
-		future = executor.submit(renderTask);
+		if (future == null) {
+			interrupted = false;
+			future = executor.submit(renderTask);
+		}
 	}
 
 	/**
@@ -211,13 +198,6 @@ public class Renderer {
 	 */
 	public void setSinglePass(boolean singlePass) {
 		this.singlePass = singlePass;
-	}
-
-	/**
-	 * @param condition
-	 */
-	public void setCondition(Condition condition) {
-		this.condition = condition;
 	}
 
 	/**
@@ -364,6 +344,13 @@ public class Renderer {
 	 */
 	protected void doRender() {
 		try {
+//			if (isInterrupted()) {
+//				progress = 0;
+//				rendererData.swap();
+//				rendererData.clearPixels();
+//				didChanged(progress, rendererData.getPixels());
+//				return;
+//			}
 			if (rendererFractal == null) {
 				progress = 1;
 				rendererData.swap();
@@ -466,6 +453,10 @@ public class Renderer {
 		int bh = borderSize.getHeight();
 		int tileDim = (int) Math.hypot(tw + bw * 2, th + bh * 2);
 		return tileDim;
+	}
+
+	protected RendererSize computeSize(int tileDim) {
+		return new RendererSize(tileDim, tileDim);
 	}
 
 	/**

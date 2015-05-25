@@ -67,44 +67,59 @@ public abstract class AbstractExportService implements ExportService {
 	}
 
 	public final void startSession(ExportSession session) {
-		lock.lock();
-		if (session.getState() != SessionState.SUSPENDED) {
-			throw new IllegalStateException("Session is not suspended");
+		try {
+			lock.lock();
+			if (session.getState() != SessionState.SUSPENDED) {
+				throw new IllegalStateException("Session is not suspended");
+			}
+			session.setState(SessionState.STARTED);
+			session.setCancelled(false);
+			holders.add(new ExportSessionHolder(session));
+		} finally {
+			lock.unlock();
 		}
-		session.setState(SessionState.STARTED);
-		session.setCancelled(false);
-		holders.add(new ExportSessionHolder(session));
-		lock.unlock();
 	}
 
 	public final void stopSession(ExportSession session) {
-		lock.lock();
-		session.setCancelled(true);
-		cancelJobs(session);
-		lock.unlock();
+		try {
+			lock.lock();
+			session.setCancelled(true);
+			cancelJobs(session);
+		} finally {
+			lock.unlock();
+		}
 	}
 
 	public final void suspendSession(ExportSession session) {
-		lock.lock();
-		session.setCancelled(false);
-		cancelJobs(session);
-		lock.unlock();
+		try {
+			lock.lock();
+			session.setCancelled(false);
+			cancelJobs(session);
+		} finally {
+			lock.unlock();
+		}
 	}
 
 	public final void resumeSession(ExportSession session) {
-		lock.lock();
-		if (session.getState() != SessionState.SUSPENDED) {
-			throw new IllegalStateException("Session is not suspended");
+		try {
+			lock.lock();
+			if (session.getState() != SessionState.SUSPENDED) {
+				throw new IllegalStateException("Session is not suspended");
+			}
+			session.setState(SessionState.STARTED);
+			session.setCancelled(false);
+		} finally {
+			lock.unlock();
 		}
-		session.setState(SessionState.STARTED);
-		session.setCancelled(false);
-		lock.unlock();
 	}
 
 	private void lockAndUpdateSessions() {
-		lock.lock();
-		updateSessionsInBackground(holders);
-		lock.unlock();
+		try {
+			lock.lock();
+			updateSessionsInBackground(holders);
+		} finally {
+			lock.unlock();
+		}
 	}
 
 	protected abstract void updateSessionsInBackground(List<ExportSessionHolder> holders);
