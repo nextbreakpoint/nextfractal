@@ -289,11 +289,13 @@ public class Renderer {
 		if (buffer != null) {
 			gc.save();
 			RendererPoint tileOffset = buffer.getTile().getTileOffset();
-			RendererSize imageSize = buffer.getTile().getImageSize();
+//			RendererSize imageSize = buffer.getTile().getImageSize();
 			RendererSize tileSize = buffer.getTile().getTileSize();
-			gc.setClip(tileOffset.getX(), imageSize.getHeight() / 2 - tileOffset.getY(), tileSize.getWidth(), tileSize.getHeight());
+//			gc.setClip(tileOffset.getX(), imageSize.getHeight() / 2 - tileOffset.getY(), tileSize.getWidth(), tileSize.getHeight());
+			gc.setClip(tileOffset.getX(), tileOffset.getY(), tileSize.getWidth(), tileSize.getHeight());
 			gc.setAffine(buffer.getAffine());
-			gc.drawImage(buffer.getBuffer().getImage(), tileOffset.getX(), tileOffset.getY() - imageSize.getHeight() / 2);
+//			gc.drawImage(buffer.getBuffer().getImage(), tileOffset.getX(), tileOffset.getY() - imageSize.getHeight() / 2);
+			gc.drawImage(buffer.getBuffer().getImage(), tileOffset.getX(), -tileOffset.getY());
 			gc.restore();
 		}
 		lock.unlock();
