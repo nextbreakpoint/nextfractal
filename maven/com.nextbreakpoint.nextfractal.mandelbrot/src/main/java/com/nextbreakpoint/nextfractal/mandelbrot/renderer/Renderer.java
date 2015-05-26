@@ -289,10 +289,11 @@ public class Renderer {
 		if (buffer != null) {
 			gc.save();
 			RendererPoint tileOffset = buffer.getTile().getTileOffset();
+			RendererSize imageSize = buffer.getTile().getImageSize();
 			RendererSize tileSize = buffer.getTile().getTileSize();
-			gc.setClip(tileOffset.getX(), tileOffset.getY(), tileSize.getWidth(), tileSize.getHeight());
+			gc.setClip(tileOffset.getX(), imageSize.getHeight() / 2 - tileOffset.getY(), tileSize.getWidth(), tileSize.getHeight());
 			gc.setAffine(buffer.getAffine());
-			gc.drawImage(buffer.getBuffer().getImage(), tileOffset.getX(), tileOffset.getY());
+			gc.drawImage(buffer.getBuffer().getImage(), tileOffset.getX(), tileOffset.getY() - imageSize.getHeight() / 2);
 			gc.restore();
 		}
 		lock.unlock();
@@ -308,9 +309,10 @@ public class Renderer {
 		if (buffer != null) {
 			gc.save();
 			RendererSize tileSize = buffer.getTile().getTileSize();
-			gc.setClip(x, y, tileSize.getWidth(), tileSize.getHeight());
+			RendererSize imageSize = buffer.getTile().getImageSize();
+			gc.setClip(x, imageSize.getHeight() / 2 - y, tileSize.getWidth(), tileSize.getHeight());
 			gc.setAffine(buffer.getAffine());
-			gc.drawImage(buffer.getBuffer().getImage(), x, y);
+			gc.drawImage(buffer.getBuffer().getImage(), x, y - imageSize.getHeight() / 2);
 			gc.restore();
 		}
 		lock.unlock();
@@ -327,13 +329,14 @@ public class Renderer {
 		lock.lock();
 		if (buffer != null) {
 			gc.save();
-			gc.setClip(x, y, w, h);
+			RendererSize imageSize = buffer.getTile().getImageSize();
+			gc.setClip(x, imageSize.getHeight() / 2 - y, w, h);
 			gc.setAffine(buffer.getAffine());
 			final double sx = w / (double) buffer.getTile().getTileSize().getWidth();
 			final double sy = h / (double) buffer.getTile().getTileSize().getHeight();
 			final int dw = (int) Math.rint(buffer.getSize().getWidth() * sx);
 			final int dh = (int) Math.rint(buffer.getSize().getHeight() * sy);
-			gc.drawImage(buffer.getBuffer().getImage(), x, y, dw, dh);
+			gc.drawImage(buffer.getBuffer().getImage(), x, y - imageSize.getHeight() / 2, dw, dh);
 			gc.restore();
 		}
 		lock.unlock();
