@@ -34,6 +34,36 @@
 	-fx-padding: 10px;
 }
 
+.application .mandelbrot .browse {
+	-fx-alignment: center;
+	-fx-padding: 0px;
+	-fx-background-color: lightgray;
+	-fx-opacity: 0.6;
+}
+
+.application .mandelbrot .browse .title {
+    -fx-font-weight: bold;
+	-fx-padding: 15px;
+}
+
+.application .mandelbrot .browse .controls {
+	-fx-padding: 10px;
+}
+
+.application .mandelbrot .browse .buttons {
+	-fx-background-color: white;
+	-fx-padding: 10px;
+	-fx-opacity: 0.90;
+}
+
+.application .mandelbrot .browse .list-view {
+	-fx-background-color: transparent;
+}
+
+.application .mandelbrot .browse .list-view:focused {
+	-fx-background-color: transparent;
+}
+
 .application .mandelbrot .keyword {
     -fx-fill: blue;
     -fx-font-weight: bold;
@@ -68,4 +98,3 @@
     -fx-fill: red;
     -fx-font-weight: bold;
 }
-

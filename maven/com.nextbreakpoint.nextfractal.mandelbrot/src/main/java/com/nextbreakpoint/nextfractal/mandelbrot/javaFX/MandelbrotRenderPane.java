@@ -94,7 +94,7 @@ import com.nextbreakpoint.nextfractal.mandelbrot.core.Trap;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererCoordinator;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererView;
 
-public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, MandelbrotToolContext {
+public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, BrowseDelegate, MandelbrotToolContext {
 	private static final int FRAME_LENGTH_IN_MILLIS = 20;
 	private static final Logger logger = Logger.getLogger(MandelbrotRenderPane.class.getName());
 	private final Session session;
@@ -167,7 +167,10 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 		getStyleClass().add("mandelbrot");
 
 		BorderPane controls = new BorderPane();
-				
+		controls.setMinHeight(height);
+		controls.setMaxHeight(height);
+		controls.setPrefHeight(height);
+		
 		HBox toolButtons = new HBox(10);
 		Button zoominButton = new Button("", createIconImage("/icon-zoomin.png"));
 		Button zoomoutButton = new Button("", createIconImage("/icon-zoomout.png"));
@@ -177,6 +180,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 		Button orbitButton = new Button("", createIconImage("/icon-orbit.png"));
 		Button juliaButton = new Button("", createIconImage("/icon-julia.png"));
 		Button exportButton = new Button("", createIconImage("/icon-export.png"));
+		Button browseButton = new Button("", createIconImage("/icon-export.png"));
 		zoominButton.setTooltip(new Tooltip("Select zoom in tool"));
 		zoomoutButton.setTooltip(new Tooltip("Select zoom out tool"));
 		moveButton.setTooltip(new Tooltip("Select move tool"));
@@ -185,6 +189,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 		orbitButton.setTooltip(new Tooltip("Toggle orbit rendering"));
 		juliaButton.setTooltip(new Tooltip("Toggle Julia rendering"));
 		exportButton.setTooltip(new Tooltip("Export fractal as image"));
+		browseButton.setTooltip(new Tooltip("Browse fractals in folders"));
 		toolButtons.getChildren().add(homeButton);
 		toolButtons.getChildren().add(zoominButton);
 		toolButtons.getChildren().add(zoomoutButton);
@@ -193,6 +198,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 		toolButtons.getChildren().add(juliaButton);
 		toolButtons.getChildren().add(orbitButton);
 		toolButtons.getChildren().add(exportButton);
+		toolButtons.getChildren().add(browseButton);
 		toolButtons.getStyleClass().add("toolbar");
 		toolButtons.setOpacity(0);
 		createToolsTransition(toolButtons);
@@ -205,20 +211,31 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 		ExportPane exportPane = new ExportPane();
 		exportPane.setDelegate(this);
 		exportPane.setDisable(true);
+		exportPane.setMinHeight(height / 2);
+		exportPane.setMaxHeight(height / 2);
+		exportPane.setPrefHeight(height / 2);
+		
+		BrowsePane browsePane = new BrowsePane(width / 4);
+		browsePane.setDelegate(this);
+		browsePane.setDisable(true);
+		browsePane.setMinHeight(height);
+		browsePane.setMaxHeight(height);
+		browsePane.setPrefHeight(height);
 		
 		ErrorPane errorPane = new ErrorPane();
 		errorPane.setDisable(true);
+		errorPane.setMinHeight(height / 2);
+		errorPane.setMaxHeight(height / 2);
+		errorPane.setPrefHeight(height / 2);
 		
 		StackPane alertsPane = new StackPane();
-		alertsPane.setMinHeight(300);
-		alertsPane.setMaxHeight(300);
-		alertsPane.setPrefHeight(300);
-		
 		alertsPane.getChildren().add(alertButtons);
 		alertsPane.getChildren().add(exportPane);
 		alertsPane.getChildren().add(errorPane);
+		
 		controls.setTop(alertsPane);
 		controls.setBottom(toolButtons);
+
 		alertButtons.setVisible(false);
 		createAlertsTransition(alertButtons);
 		
@@ -340,6 +357,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 		stackPane.getChildren().add(orbitCanvas);
 		stackPane.getChildren().add(juliaCanvas);
 		stackPane.getChildren().add(controls);
+		stackPane.getChildren().add(browsePane);
 		setCenter(stackPane);
         
 		homeButton.setOnAction(e -> {
@@ -373,6 +391,10 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 				exportData = getMandelbrotSession().getDataAsCopy();
 				exportPane.show();
 			}
+		});
+
+		browseButton.setOnAction(e -> {
+			browsePane.show();
 		});
 		
 		orbitButton.setOnAction(e -> {
@@ -474,11 +496,19 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 		runTimer(fractalCanvas, orbitCanvas, juliaCanvas, trapCanvas);
 		
 		exportPane.hide();
+		
+		browsePane.hide();
 	}
 
 	@Override
 	public void exportSession(RendererSize rendererSize) {
 		doExportSession(rendererSize);
+	}
+
+	@Override
+	public void didSelectFile(File file) {
+		// TODO Auto-generated method stub
+		logger.info(file.getAbsolutePath());
 	}
 
 	@Override

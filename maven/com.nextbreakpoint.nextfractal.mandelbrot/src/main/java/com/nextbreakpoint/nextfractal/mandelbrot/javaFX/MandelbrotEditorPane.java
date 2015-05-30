@@ -152,7 +152,7 @@ public class MandelbrotEditorPane extends BorderPane {
 		historyList.getStyleClass().add("history");
 		historyList.setCellFactory(new Callback<ListView<MandelbrotData>, ListCell<MandelbrotData>>() {
 			@Override
-			public ListCell<MandelbrotData> call(ListView<MandelbrotData> gridView) {
+			public ListCell<MandelbrotData> call(ListView<MandelbrotData> listView) {
 				return new HistoryListCell(generator.getSize(), generatorTile);
 			}
 		});
@@ -169,7 +169,7 @@ public class MandelbrotEditorPane extends BorderPane {
 		ListView<ExportSession> jobsList = new ListView<>();
 		jobsList.setCellFactory(new Callback<ListView<ExportSession>, ListCell<ExportSession>>() {
 			@Override
-			public ListCell<ExportSession> call(ListView<ExportSession> gridView) {
+			public ListCell<ExportSession> call(ListView<ExportSession> listView) {
 				return new ExportListCell(generator.getSize(), generatorTile);
 			}
 		});
