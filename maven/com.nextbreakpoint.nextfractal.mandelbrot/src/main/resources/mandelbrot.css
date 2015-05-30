@@ -38,7 +38,7 @@
 	-fx-alignment: center;
 	-fx-padding: 0px;
 	-fx-background-color: lightgray;
-	-fx-opacity: 0.6;
+	-fx-opacity: 1;
 }
 
 .application .mandelbrot .browse .title {
@@ -53,15 +53,11 @@
 .application .mandelbrot .browse .buttons {
 	-fx-background-color: white;
 	-fx-padding: 10px;
-	-fx-opacity: 0.90;
+	-fx-opacity: 0.8;
 }
 
-.application .mandelbrot .browse .list-view {
-	-fx-background-color: transparent;
-}
-
-.application .mandelbrot .browse .list-view:focused {
-	-fx-background-color: transparent;
+.application .mandelbrot .browse .grid-view {
+	-fx-background-color: white;
 }
 
 .application .mandelbrot .keyword {

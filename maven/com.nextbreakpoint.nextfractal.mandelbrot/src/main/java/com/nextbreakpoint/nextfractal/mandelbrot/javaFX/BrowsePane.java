@@ -26,6 +26,8 @@ package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -52,14 +54,15 @@ import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
 import com.nextbreakpoint.nextfractal.core.renderer.javaFX.JavaFXRendererFactory;
 import com.nextbreakpoint.nextfractal.core.utils.DefaultThreadFactory;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotData;
+import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotDataStore;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotImageGenerator;
 
 public class BrowsePane extends Pane {
 	private final DefaultThreadFactory threadFactory;
 	private final JavaFXRendererFactory renderFactory;
 	private final MandelbrotImageGenerator generator;
-	private final int numOfRows = 4;
-	private final int numOfColumns = 4;
+	private final int numRows = 4;
+	private final int numCols = 4;
 	private BorderPane box = new BorderPane();
 	private BrowseDelegate delegate; 
 	private FileChooser fileChooser;
@@ -81,16 +84,6 @@ public class BrowsePane extends Pane {
 		
 		generator = new MandelbrotImageGenerator(threadFactory, renderFactory, tile);
 		
-//		ListView<MandelbrotData[]> fileList = new ListView<>();
-//		fileList.setFixedCellSize(size);
-//		fileList.getStyleClass().add("browser");
-//		fileList.setCellFactory(new Callback<ListView<MandelbrotData[]>, ListCell<MandelbrotData[]>>() {
-//			@Override
-//			public ListCell<MandelbrotData[]> call(ListView<MandelbrotData[]> listView) {
-//				return new BrowseListCell(numOfColumns, generators[0].getSize(), generatorTile);
-//			}
-//		});
-
 		Button closeButton = new Button("Close");
 		Button chooseButton = new Button("Choose");
 
@@ -100,15 +93,33 @@ public class BrowsePane extends Pane {
 		buttons.setAlignment(Pos.CENTER);
 		buttons.getStyleClass().add("buttons");
 
-		//TODO to be completed
-		MandelbrotData[] data = new MandelbrotData[8];
-		for (int i = 0; i < 8; i++) {
-			data[i] = new MandelbrotData();
-		}
+		GridView grid = new GridView(numRows, numCols, size);
 		
-		GridView grid = new GridView(numOfRows, numOfColumns, size);
-		
-		grid.setData(data);
+		grid.setDelegate(new GridViewDelegate() {
+			@Override
+			public void didRangeChange(int firstRow, int lastRow) {
+				System.out.println(firstRow + " -> " + lastRow);
+				
+				
+//				fileExecutor.submit(new Runnable() {
+//					@Override
+//					public void run() {
+//						for (int j = 0; j < 4; j++) {
+//							if (dataArray[j] != null) {
+//								dataArray[j].setPixels(generators[j].renderImage(dataArray[j]));
+//							}
+//						}
+//						Platform.runLater(new Runnable() {
+//							@Override
+//							public void run() {
+//								fileList.getItems().add(dataArray);
+//							}
+//						});
+//					}
+//				});
+
+			}
+		});
 		
 		box.setCenter(grid);
 		box.setBottom(buttons);
@@ -209,52 +220,39 @@ public class BrowsePane extends Pane {
 
 	private void loadFiles(GridView grid, File folder) {
 //		fileList.getItems().clear();
-		File[] plainFiles = folder.getParentFile().listFiles(new FilenameFilter() {
+		File[] files = folder.getParentFile().listFiles(new FilenameFilter() {
 			@Override
 			public boolean accept(File dir, String name) {
 				return name.endsWith(".m");
 			}
 		});
-		if (plainFiles == null) {
+		if (files == null) {
 			return;
 		}
-//		MandelbrotDataStore service = new MandelbrotDataStore();
-//		for (int i = 0; i < plainFiles.length; i += numOfColumns) {
-//			File[] files = new File[numOfColumns];
-//			for (int j = 0; j < numOfColumns; j++) {
-//				files[j] = null;
-//				if (i + j < plainFiles.length) {
-//					files[j] = plainFiles[i + j];
-//				}
-//			}
-//			MandelbrotData[] dataArray = new MandelbrotData[numOfColumns];
-//			for (int j = 0; j < numOfColumns; j++) {
-//				if (files[j] != null) {
-//					try {
-//						dataArray[j] = service.loadFromFile(files[j]);
-//					} catch (Exception e) {
-//						// TODO Auto-generated catch block
-//						e.printStackTrace();
-//					}
-//				}
-//			}
-//			fileExecutor.submit(new Runnable() {
-//				@Override
-//				public void run() {
-//					for (int j = 0; j < 4; j++) {
-//						if (dataArray[j] != null) {
-//							dataArray[j].setPixels(generators[j].renderImage(dataArray[j]));
-//						}
-//					}
-//					Platform.runLater(new Runnable() {
-//						@Override
-//						public void run() {
-//							fileList.getItems().add(dataArray);
-//						}
-//					});
-//				}
-//			});
-//		}
+
+		MandelbrotDataStore service = new MandelbrotDataStore();
+
+		List<MandelbrotData> dataList = new ArrayList<>();
+		
+		for (File file : files) {
+			try {
+				MandelbrotData data = service.loadFromFile(file);
+				dataList.add(data);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+		MandelbrotData[] data = dataList.toArray(new MandelbrotData[0]);
+		
+		for (int i = 0; i < data.length; i++) {
+			data[i] = new MandelbrotData();
+			float s = ((float)i) / data.length;
+			data[i].setColor(new float[] { s, s, s, 1 });
+		}
+		
+		grid.setData(data);
 	}
 
 	private void renderImage(GraphicsContext g2d, MandelbrotData data) {

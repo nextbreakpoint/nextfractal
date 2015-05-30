@@ -48,6 +48,7 @@ public class MandelbrotData {
 	private boolean julia;
 	private double time;
 	private IntBuffer pixels;
+	private float[] color;
 
 	public boolean isJulia() {
 		return julia;
@@ -124,5 +125,13 @@ public class MandelbrotData {
 	@Override
 	public String toString() {
 		return "[traslation=" + Arrays.toString(traslation)	+ ", rotation=" + Arrays.toString(rotation) + ", scale=" + Arrays.toString(scale) + ", julia=" + julia + ", point=" + Arrays.toString(point) + ", time=" + time + "]";
+	}
+
+	public float[] getColor() {
+		return color;
+	}
+
+	public void setColor(float[] color) {
+		this.color = color;
 	}
 }
