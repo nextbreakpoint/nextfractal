@@ -24,6 +24,7 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.renderer;
 
+import java.nio.IntBuffer;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -257,5 +258,9 @@ public class RendererCoordinator implements RendererDelegate {
 
 	public List<Trap> getTraps() {
 		return renderer.getTraps();
+	}
+
+	public void getPixels(IntBuffer pixels) {
+		renderer.getPixels(pixels);;
 	}
 }

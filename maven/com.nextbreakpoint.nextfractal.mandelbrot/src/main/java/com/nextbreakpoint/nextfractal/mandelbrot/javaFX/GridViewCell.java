@@ -1,7 +1,5 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
 
-import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotData;
-
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.canvas.Canvas;
@@ -9,7 +7,11 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 
+import com.nextbreakpoint.nextfractal.core.renderer.RendererGraphicsContext;
+import com.nextbreakpoint.nextfractal.core.renderer.javaFX.JavaFXRendererFactory;
+
 public class GridViewCell extends BorderPane {
+	private JavaFXRendererFactory renderFactory = new JavaFXRendererFactory();
 	private Canvas canvas;
 	private Object data;
 	private int index;
@@ -39,9 +41,19 @@ public class GridViewCell extends BorderPane {
 	public void update() {
 		GraphicsContext g2d = canvas.getGraphicsContext2D();
 		if (data != null) {
-			float[] color = ((MandelbrotData)data).getColor();
-			g2d.setFill(new Color(color[0],color[1],color[2],color[3]));
-			g2d.fillRect(0, 0, getWidth(), getHeight());
+			GridItem item = (GridItem)data;
+			if (item.coordinator != null) {
+				if (item.coordinator.isPixelsChanged()) {
+					RendererGraphicsContext gc = renderFactory.createGraphicsContext(g2d);
+					item.coordinator.drawImage(gc);
+				}
+			} else if (item.data != null) {
+				g2d.setFill(Color.GRAY);
+				g2d.fillRect(0, 0, getWidth(), getHeight());
+			} else {
+				g2d.setFill(Color.LIGHTGRAY);
+				g2d.fillRect(0, 0, getWidth(), getHeight());
+			}
 		} else {
 			g2d.setFill(Color.WHITE);
 			g2d.fillRect(0, 0, getWidth(), getHeight());

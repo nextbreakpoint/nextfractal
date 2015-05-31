@@ -110,7 +110,7 @@ public class GridView extends Pane {
 			}
 		}
 		if (delegate != null) {
-			delegate.didRangeChange(firstRow, lastRow);
+			delegate.didRangeChange(this, firstRow, lastRow);
 		}
 	}
 	
@@ -152,17 +152,32 @@ public class GridView extends Pane {
 		layoutCells();
 	}
 	
-	public void updateCell(int row, int col) {
-		int firstRow = (int)Math.abs(offsetY / cellSize);
-		int index = (firstRow + row) * numCols + col;
-		cells[index].update();
-	}
-
 	public GridViewDelegate getDelegate() {
 		return delegate;
 	}
 
 	public void setDelegate(GridViewDelegate delegate) {
 		this.delegate = delegate;
+	}
+
+	public GridViewCell getCell(int row, int col) {
+		int firstRow = (int)Math.abs(offsetY / cellSize);
+		int index = (firstRow + row) * numCols + col;
+		if (index < cells.length) {
+			return cells[index];
+		} else {
+			return null;
+		}
+	}
+
+	public int getFirstRow() {
+		int firstRow = (int)Math.abs(offsetY / cellSize);
+		return firstRow;
+	}
+
+	public int getLastRow() {
+		int firstRow = (int)Math.abs(offsetY / cellSize);
+		int lastRow = firstRow + numRows;
+		return lastRow;
 	}
 }
