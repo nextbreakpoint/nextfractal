@@ -160,16 +160,6 @@ public class GridView extends Pane {
 		this.delegate = delegate;
 	}
 
-	public GridViewCell getCell(int row, int col) {
-		int firstRow = (int)Math.abs(offsetY / cellSize);
-		int index = (firstRow + row) * numCols + col;
-		if (index < cells.length) {
-			return cells[index];
-		} else {
-			return null;
-		}
-	}
-
 	public int getFirstRow() {
 		int firstRow = (int)Math.abs(offsetY / cellSize);
 		return firstRow;
@@ -179,5 +169,11 @@ public class GridView extends Pane {
 		int firstRow = (int)Math.abs(offsetY / cellSize);
 		int lastRow = firstRow + numRows;
 		return lastRow;
+	}
+
+	public void updateCells() {
+		for (int i = 0; i < cells.length; i++) {
+			cells[i].update();
+		}
 	}
 }

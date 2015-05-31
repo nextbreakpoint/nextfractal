@@ -12,6 +12,7 @@ import com.nextbreakpoint.nextfractal.core.renderer.javaFX.JavaFXRendererFactory
 
 public class GridViewCell extends BorderPane {
 	private JavaFXRendererFactory renderFactory = new JavaFXRendererFactory();
+	private boolean redraw;
 	private Canvas canvas;
 	private Object data;
 	private int index;
@@ -39,30 +40,28 @@ public class GridViewCell extends BorderPane {
 	}
 
 	public void update() {
-		GraphicsContext g2d = canvas.getGraphicsContext2D();
 		if (data != null) {
 			GridItem item = (GridItem)data;
 			if (item.coordinator != null) {
-				if (item.coordinator.isPixelsChanged()) {
-					RendererGraphicsContext gc = renderFactory.createGraphicsContext(g2d);
+				if (redraw || item.coordinator.isPixelsChanged()) {
+					RendererGraphicsContext gc = renderFactory.createGraphicsContext(canvas.getGraphicsContext2D());
 					item.coordinator.drawImage(gc);
+					redraw = false;
 				}
-			} else if (item.data != null) {
-				g2d.setFill(Color.GRAY);
-				g2d.fillRect(0, 0, getWidth(), getHeight());
-			} else {
-				g2d.setFill(Color.LIGHTGRAY);
-				g2d.fillRect(0, 0, getWidth(), getHeight());
 			}
-		} else {
+		}
+		if (redraw) {
+			GraphicsContext g2d = canvas.getGraphicsContext2D();
 			g2d.setFill(Color.WHITE);
 			g2d.fillRect(0, 0, getWidth(), getHeight());
+			redraw = false;
 		}
 	}
 
 	public void setData(Object data) {
 		if (this.data != data) {
 			this.data = data;
+			redraw = true;
 			update();
 		}
 	}

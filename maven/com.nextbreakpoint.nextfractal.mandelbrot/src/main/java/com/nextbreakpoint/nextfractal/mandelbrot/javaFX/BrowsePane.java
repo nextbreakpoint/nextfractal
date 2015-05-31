@@ -81,7 +81,6 @@ public class BrowsePane extends Pane {
 	private AnimationTimer timer;
 
 	public BrowsePane(int size) {
-		
 		threadFactory = new DefaultThreadFactory("MandelbrotEditorPane", true, Thread.MIN_PRIORITY);
 		
 		renderFactory = new JavaFXRendererFactory();
@@ -308,7 +307,7 @@ public class BrowsePane extends Pane {
 			public void handle(long now) {
 				long time = now / 1000000;
 				if (time - last > FRAME_LENGTH_IN_MILLIS) {
-					redrawCells(grid, grid.getFirstRow(), grid.getLastRow());					
+					grid.updateCells();
 					last = time;
 				}
 			}
@@ -316,27 +315,6 @@ public class BrowsePane extends Pane {
 		timer.start();
 	}
 
-	private void redrawCells(GridView grid, int firstRow, int lastRow) {
-		if (grid.getData() == null) {
-			return;
-		}
-		if (firstRow > 0) {
-			firstRow -= 1;
-		}
-		if (lastRow < grid.getData().length / numCols - 1) {
-			lastRow += 1;
-		}
-		int firstIndex = firstRow * numCols;
-		int lastIndex = lastRow * numCols + numCols;
-		for (int index = firstIndex; index < Math.min(lastIndex, items.size()); index++) {
-			GridItem item = items.get(index);
-			GridViewCell cell = grid.getCell(item.row, item.col);
-			if (cell != null) {
-				cell.update();
-			}
-		}
-	}
-	
 	private void updateCells(GridView grid, int firstRow, int lastRow) {
 		if (grid.getData() == null) {
 			return;
