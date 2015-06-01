@@ -3,6 +3,7 @@ package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.Pane;
 
@@ -12,6 +13,8 @@ public class GridView extends Pane {
 	protected final int cellSize;
 	private Object[] data;
 	private int numExtraRows = 2;
+	protected int selectedRow = -1;
+	protected int selectedCol = -1;
 	protected int numRows;
 	protected int numCols;
 	private double offsetX;
@@ -52,6 +55,17 @@ public class GridView extends Pane {
 					scrollCells(scrollEvent.getDeltaX(), scrollEvent.getDeltaY());
 				}
 			});
+
+		addEventFilter(MouseEvent.MOUSE_CLICKED,
+				new EventHandler<MouseEvent>() {
+					public void handle(final MouseEvent mouseEvent) {
+						selectedCol = (int)Math.abs((mouseEvent.getX() - offsetX) / cellSize);
+						selectedRow = (int)Math.abs((mouseEvent.getY() - offsetY) / cellSize);
+						if (delegate != null) {
+							delegate.didSelectionChange(GridView.this, selectedRow, selectedCol);
+						}
+					}
+				});
 
 		widthProperty().addListener(new ChangeListener<java.lang.Number>() {
 			@Override
@@ -182,5 +196,13 @@ public class GridView extends Pane {
 		for (int i = 0; i < cells.length; i++) {
 			cells[i].update();
 		}
+	}
+	
+	public int getSelectedRow() {
+		return selectedRow;
+	}
+	
+	public int getSelectedCol() {
+		return selectedCol;
 	}
 }

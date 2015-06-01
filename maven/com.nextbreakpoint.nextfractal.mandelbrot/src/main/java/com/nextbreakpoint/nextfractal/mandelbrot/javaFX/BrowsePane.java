@@ -111,6 +111,20 @@ public class BrowsePane extends Pane {
 			public void didRangeChange(GridView source, int firstRow, int lastRow) {
 				updateCells(source);
 			}
+
+			@Override
+			public void didSelectionChange(GridView source, int selectedRow, int selectedCol) {
+				int index = selectedRow * numCols + selectedCol;
+				if (index >= 0 && index < items.size()) {
+					GridItem item = items.get(index);
+					File file = item.getFile();
+					if (file != null) {
+						if (delegate != null) {
+							delegate.didSelectFile(BrowsePane.this, file);
+						}
+					}
+				}
+			}
 		});
 		
 		box.setCenter(grid);

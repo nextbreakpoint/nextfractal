@@ -472,16 +472,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
         	List<File> files = e.getDragboard().getFiles();
         	if (files.size() > 0) {
         		File file = files.get(0);
-				try {
-					MandelbrotDataStore service = new MandelbrotDataStore();
-					MandelbrotData data = service.loadFromFile(file);
-					getMandelbrotSession().setCurrentFile(file);
-					logger.info(data.toString());
-					getMandelbrotSession().setData(data);
-				} catch (Exception x) {
-					logger.warning("Cannot read file " + file.getAbsolutePath());
-					//TODO display error
-				}
+        		loadFile(file);
         	}
         });
         
@@ -506,9 +497,9 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 	}
 
 	@Override
-	public void didSelectFile(File file) {
-		// TODO Auto-generated method stub
-		logger.info(file.getAbsolutePath());
+	public void didSelectFile(BrowsePane source, File file) {
+		source.hide();
+		loadFile(file);
 	}
 
 	@Override
@@ -587,6 +578,19 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 		transition.setToValue(1);
 		transition.setOnFinished(handler);
 		transition.play();
+	}
+
+	private void loadFile(File file) {
+		try {
+			MandelbrotDataStore service = new MandelbrotDataStore();
+			MandelbrotData data = service.loadFromFile(file);
+			getMandelbrotSession().setCurrentFile(file);
+			logger.info(data.toString());
+			getMandelbrotSession().setData(data);
+		} catch (Exception x) {
+			logger.warning("Cannot read file " + file.getAbsolutePath());
+			//TODO display error
+		}
 	}
 
 	private void resetView() {

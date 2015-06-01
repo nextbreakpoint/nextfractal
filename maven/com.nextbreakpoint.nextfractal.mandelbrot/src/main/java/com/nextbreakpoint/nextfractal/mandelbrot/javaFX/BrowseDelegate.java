@@ -27,5 +27,5 @@ package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
 import java.io.File;
 
 public interface BrowseDelegate {
-	public void didSelectFile(File file);
+	public void didSelectFile(BrowsePane source, File file);
 }
