@@ -180,7 +180,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 		Button orbitButton = new Button("", createIconImage("/icon-orbit.png"));
 		Button juliaButton = new Button("", createIconImage("/icon-julia.png"));
 		Button exportButton = new Button("", createIconImage("/icon-export.png"));
-		Button browseButton = new Button("", createIconImage("/icon-export.png"));
+		Button browseButton = new Button("", createIconImage("/icon-load.png"));
 		zoominButton.setTooltip(new Tooltip("Select zoom in tool"));
 		zoomoutButton.setTooltip(new Tooltip("Select zoom out tool"));
 		moveButton.setTooltip(new Tooltip("Select move tool"));
