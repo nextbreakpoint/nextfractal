@@ -30,8 +30,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import javafx.animation.AnimationTimer;
 import javafx.animation.TranslateTransition;
@@ -66,7 +68,7 @@ import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererCoordinator;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererView;
 
 public class BrowsePane extends Pane {
-	private static final int FRAME_LENGTH_IN_MILLIS = 100;
+	private static final int FRAME_LENGTH_IN_MILLIS = 50;
 	private final DefaultThreadFactory threadFactory;
 	private final JavaFXRendererFactory renderFactory;
 	private final int numRows = 4;
@@ -85,7 +87,9 @@ public class BrowsePane extends Pane {
 		
 		renderFactory = new JavaFXRendererFactory();
 
-		executor = Executors.newFixedThreadPool(4, threadFactory);
+		int maxThreads = numRows * 2;
+		
+		executor = Executors.newFixedThreadPool(maxThreads, threadFactory);
 		
 		this.tile = createSingleTile(size, size);
 		
@@ -103,7 +107,7 @@ public class BrowsePane extends Pane {
 		grid.setDelegate(new GridViewDelegate() {
 			@Override
 			public void didRangeChange(GridView source, int firstRow, int lastRow) {
-				updateCells(grid, firstRow, lastRow);
+				updateCells(grid);
 			}
 		});
 		
@@ -175,6 +179,12 @@ public class BrowsePane extends Pane {
 		this.delegate = delegate;
 	}
 
+	@Override
+	protected void finalize() throws Throwable {
+		removeItems();
+		super.finalize();
+	}
+
 	private void createDirectoryChooser() {
 		if (directoryChooser == null) {
 			directoryChooser = new DirectoryChooser();
@@ -207,97 +217,101 @@ public class BrowsePane extends Pane {
 	}
 
 	private void loadFiles(GridView grid, File folder) {
-		for (int index = 0; index < items.size(); index++) {
-			GridItem item = items.get(index);
-			if (item.coordinator != null) {
-				item.coordinator.abort();
-			}
+		removeItems();
+		File[] files = listFiles(folder);
+		if (files != null) {
+			loadItems(grid, files);
 		}
-		
-		for (int index = 0; index < items.size(); index++) {
-			GridItem item = items.get(index);
-			if (item.coordinator != null) {
-				item.coordinator.waitFor();
-			}
-		}
+	}
 
-		for (int index = 0; index < items.size(); index++) {
-			GridItem item = items.get(index);
-			if (item.coordinator != null) {
-				RendererCoordinator coordinator = item.coordinator;
-				item.coordinator = null;
-				coordinator.dispose();
-			}
+	private void loadItems(GridView grid, File[] files) {
+		GridItem[] items = new GridItem[files.length];
+		for (int i = 0; i < files.length; i++) {
+			items[i] = new GridItem();
+			items[i].setFile(files[i]);
+			this.items.add(items[i]);
 		}
+		grid.setData(items);
+	}
 
-		items.clear();
-		
+	private File[] listFiles(File folder) {
 		File[] files = folder.listFiles(new FilenameFilter() {
 			@Override
 			public boolean accept(File dir, String name) {
 				return name.endsWith(".m");
 			}
 		});
+		return files;
+	}
 
-		if (files != null) {
-			for (int i = 0; i < files.length; i++) {
-				GridItem item = new GridItem();
-				item.row = i / numCols;
-				item.col = i % numCols;
-				item.file = files[i];
-				items.add(item);
-				
-				executor.submit(new Runnable() {
-					@Override
-					public void run() {
-						try {
-							MandelbrotDataStore service = new MandelbrotDataStore();
-							MandelbrotData data = service.loadFromFile(item.file);
-							Compiler compiler = new Compiler();
-							CompilerReport report = compiler.generateJavaSource(data.getSource());
-							if (report.getErrors().size() > 0) {
-								throw new RuntimeException("Failed to compile source");
-							}
-							CompilerBuilder<Orbit> orbitBuilder = compiler.compileOrbit(report);
-							if (orbitBuilder.getErrors().size() > 0) {
-								throw new RuntimeException("Failed to compile Orbit class");
-							}
-							CompilerBuilder<Color> colorBuilder = compiler.compileColor(report);
-							if (colorBuilder.getErrors().size() > 0) {
-								throw new RuntimeException("Failed to compile Color class");
-							}
-							item.astOrbit = report.getOrbitSource();
-							item.astColor = report.getColorSource();
-							item.orbitBuilder = orbitBuilder;
-							item.colorBuilder = colorBuilder;
-							item.data = data;
-						} catch (Exception e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					}
-				});
+	private void removeItems() {
+		for (int index = 0; index < items.size(); index++) {
+			GridItem item = items.get(index);
+			if (item.getFuture() != null && !item.getFuture().isDone()) {
+				item.getFuture().cancel(true);
 			}
+		}
 
-			grid.setData(items.toArray(new GridItem[0]));
+		for (int index = 0; index < items.size(); index++) {
+			GridItem item = items.get(index);
+			if (item.getCoordinator() != null) {
+				item.getCoordinator().abort();
+			}
+		}
+		
+		for (int index = 0; index < items.size(); index++) {
+			GridItem item = items.get(index);
+			if (item.getCoordinator() != null) {
+				item.getCoordinator().waitFor();
+			}
+		}
 
-			updateCells(grid, grid.getFirstRow(), grid.getLastRow());
+		for (int index = 0; index < items.size(); index++) {
+			GridItem item = items.get(index);
+			if (item.getCoordinator() != null) {
+				RendererCoordinator coordinator = item.getCoordinator();
+				item.setCoordinator(null);
+				coordinator.dispose();
+			}
+		}
+
+		items.clear();
+	}
+
+	private void loadItem(GridItem item) {
+		try {
+			MandelbrotDataStore service = new MandelbrotDataStore();
+			MandelbrotData data = service.loadFromFile(item.getFile());
+			if (Thread.currentThread().isInterrupted()) {
+				return;
+			}
+			Compiler compiler = new Compiler();
+			CompilerReport report = compiler.generateJavaSource(data.getSource());
+			if (report.getErrors().size() > 0) {
+				throw new RuntimeException("Failed to compile source");
+			}
+			if (Thread.currentThread().isInterrupted()) {
+				return;
+			}
+			CompilerBuilder<Orbit> orbitBuilder = compiler.compileOrbit(report);
+			if (orbitBuilder.getErrors().size() > 0) {
+				throw new RuntimeException("Failed to compile Orbit class");
+			}
+			if (Thread.currentThread().isInterrupted()) {
+				return;
+			}
+			CompilerBuilder<Color> colorBuilder = compiler.compileColor(report);
+			if (colorBuilder.getErrors().size() > 0) {
+				throw new RuntimeException("Failed to compile Color class");
+			}
+			item.setOrbitBuilder(orbitBuilder);
+			item.setColorBuilder(colorBuilder);
+			item.setData(data);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
-	
-//	private void renderImage(GraphicsContext g2d, MandelbrotData data) {
-//		data.setPixels(generator.renderImage(data));
-//		WritableImage image = new WritableImage(size.getWidth(), size.getHeight());
-//		image.getPixelWriter().setPixels(0, 0, (int)image.getWidth(), (int)image.getHeight(), PixelFormat.getIntArgbInstance(), data.getPixels(), (int)image.getWidth());
-//		Affine affine = new Affine();
-//		int x = (tile.getTileSize().getWidth() - size.getWidth()) / 2;
-//		int y = (tile.getTileSize().getHeight() - size.getHeight()) / 2;
-//		affine.append(Affine.translate(0, +image.getHeight() / 2 + y));
-//		affine.append(Affine.scale(1, -1));
-//		affine.append(Affine.translate(0, -image.getHeight() / 2 - y));
-//		g2d.setTransform(affine);
-//		g2d.drawImage(image, x, y);
-//	}
 
 	private void runTimer(GridView grid) {
 		timer = new AnimationTimer() {
@@ -307,7 +321,7 @@ public class BrowsePane extends Pane {
 			public void handle(long now) {
 				long time = now / 1000000;
 				if (time - last > FRAME_LENGTH_IN_MILLIS) {
-					grid.updateCells();
+					updateCells(grid);
 					last = time;
 				}
 			}
@@ -315,10 +329,12 @@ public class BrowsePane extends Pane {
 		timer.start();
 	}
 
-	private void updateCells(GridView grid, int firstRow, int lastRow) {
+	private void updateCells(GridView grid) {
 		if (grid.getData() == null) {
 			return;
 		}
+		int firstRow = grid.getFirstRow(); 
+		int lastRow = grid.getLastRow();
 		if (firstRow > 0) {
 			firstRow -= 1;
 		}
@@ -329,67 +345,99 @@ public class BrowsePane extends Pane {
 		int lastIndex = lastRow * numCols + numCols;
 		for (int index = 0; index < firstIndex; index++) {
 			GridItem item = items.get(index);
-			if (item.coordinator != null) {
-				item.coordinator.abort();
+			if (item.getFuture() != null && !item.getFuture().isDone()) {
+				item.getFuture().cancel(true);
+				item.setFuture(null);
 			}
 		}
 		for (int index = lastIndex; index < items.size(); index++) {
 			GridItem item = items.get(index);
-			if (item.coordinator != null) {
-				item.coordinator.abort();
+			if (item.getFuture() != null && !item.getFuture().isDone()) {
+				item.getFuture().cancel(true);
+				item.setFuture(null);
 			}
 		}
 		for (int index = 0; index < firstIndex; index++) {
 			GridItem item = items.get(index);
-			if (item.coordinator != null) {
-				item.coordinator.waitFor();
+			if (item.getCoordinator() != null) {
+				item.getCoordinator().abort();
 			}
 		}
 		for (int index = lastIndex; index < items.size(); index++) {
 			GridItem item = items.get(index);
-			if (item.coordinator != null) {
-				item.coordinator.waitFor();
+			if (item.getCoordinator() != null) {
+				item.getCoordinator().abort();
 			}
 		}
 		for (int index = 0; index < firstIndex; index++) {
 			GridItem item = items.get(index);
-			if (item.coordinator != null) {
-				RendererCoordinator coordinator = item.coordinator;
-				item.coordinator = null;
+			if (item.getCoordinator() != null) {
+				item.getCoordinator().waitFor();
+			}
+		}
+		for (int index = lastIndex; index < items.size(); index++) {
+			GridItem item = items.get(index);
+			if (item.getCoordinator() != null) {
+				item.getCoordinator().waitFor();
+			}
+		}
+		for (int index = 0; index < firstIndex; index++) {
+			GridItem item = items.get(index);
+			if (item.getCoordinator() != null) {
+				RendererCoordinator coordinator = item.getCoordinator();
+				item.setCoordinator(null);
 				coordinator.dispose();
 			}
 		}
 		for (int index = lastIndex; index < items.size(); index++) {
 			GridItem item = items.get(index);
-			if (item.coordinator != null) {
-				RendererCoordinator coordinator = item.coordinator;
-				item.coordinator = null;
+			if (item.getCoordinator() != null) {
+				RendererCoordinator coordinator = item.getCoordinator();
+				item.setCoordinator(null);
 				coordinator.dispose();
 			}
 		}
 		for (int index = firstIndex; index < Math.min(lastIndex, items.size()); index++) {
 			GridItem item = items.get(index);
-			if (item.data != null && item.coordinator == null) {
-				try {
-					Map<String, Integer> hints = new HashMap<String, Integer>();
-					hints.put(RendererCoordinator.KEY_TYPE, RendererCoordinator.VALUE_REALTIME);
-					RendererCoordinator coordinator = new RendererCoordinator(threadFactory, renderFactory, tile, hints);
-					coordinator.setOrbitAndColor(item.orbitBuilder.build(), item.colorBuilder.build());
-					coordinator.init();
-					RendererView view = new RendererView();
-					view.setTraslation(new Double4D(item.data.getTraslation()));
-					view.setRotation(new Double4D(item.data.getRotation()));
-					view.setScale(new Double4D(item.data.getScale()));
-					view.setState(new Integer4D(0, 0, 0, 0));
-					view.setJulia(item.data.isJulia());
-					view.setPoint(new Number(item.data.getPoint()));
-					coordinator.setView(view);
-					coordinator.run();
-					item.coordinator = coordinator;
-				} catch (Exception e) {
-					e.printStackTrace();//TODO
-				}
+			MandelbrotData data = item.getData();
+			long time = System.currentTimeMillis();
+			if (data == null && time - item.getLastChanged() > 200 && item.getFuture() == null) {
+				Future<GridItem> task = executor.submit(new Callable<GridItem>() {
+					@Override
+					public GridItem call() throws Exception {
+						loadItem(item);
+						return null;
+					}
+				});
+				item.setFuture(task);
+			}  
+			if (data != null && time - item.getLastChanged() > 200 && item.getCoordinator() == null) {
+				initItem(item, data);
 			}
+		}
+		grid.updateCells();
+	}
+
+	private void initItem(GridItem item, MandelbrotData data) {
+		try {
+			Map<String, Integer> hints = new HashMap<String, Integer>();
+			hints.put(RendererCoordinator.KEY_TYPE, RendererCoordinator.VALUE_REALTIME);
+			RendererCoordinator coordinator = new RendererCoordinator(threadFactory, renderFactory, tile, hints);
+			coordinator.setOrbitAndColor(item.getOrbitBuilder().build(), item.getColorBuilder().build());
+			coordinator.init();
+			RendererView view = new RendererView();
+			view.setTraslation(new Double4D(data.getTraslation()));
+			view.setRotation(new Double4D(data.getRotation()));
+			view.setScale(new Double4D(data.getScale()));
+			view.setState(new Integer4D(0, 0, 0, 0));
+			view.setPoint(new Number(data.getPoint()));
+			view.setJulia(data.isJulia());
+			coordinator.setView(view);
+			coordinator.run();
+			item.setCoordinator(coordinator);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 }

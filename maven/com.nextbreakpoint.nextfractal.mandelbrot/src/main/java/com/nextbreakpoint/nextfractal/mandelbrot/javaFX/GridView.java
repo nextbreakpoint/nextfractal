@@ -34,48 +34,21 @@ public class GridView extends Pane {
 		addEventFilter(ScrollEvent.SCROLL_STARTED,
 			new EventHandler<ScrollEvent>() {	
 				public void handle(final ScrollEvent scrollEvent) {
-					layoutCells();
+					scrollCells(scrollEvent.getDeltaX(), scrollEvent.getDeltaY());
 				}
 			});
 		
 		addEventFilter(ScrollEvent.SCROLL_FINISHED,
 			new EventHandler<ScrollEvent>() {
 				public void handle(final ScrollEvent scrollEvent) {
-					layoutCells();
+					scrollCells(scrollEvent.getDeltaX(), scrollEvent.getDeltaY());
 				}
 			});
 		
 		addEventFilter(ScrollEvent.SCROLL,
 			new EventHandler<ScrollEvent>() {
 				public void handle(final ScrollEvent scrollEvent) {
-					if (data != null) {
-						double y = (data.length / numCols) * cellSize - Math.min(numRows * cellSize, getHeight());
-						double x = numCols * cellSize - Math.min(numCols * cellSize, getWidth());
-						if (y > 0) {
-							offsetY += scrollEvent.getDeltaY();
-							if (offsetY < -y) {
-								offsetY = -y;
-							}
-							if (offsetY > 0) {
-								offsetY = 0;
-							}
-						}
-						if (x > 0) {
-							offsetX += scrollEvent.getDeltaX();
-							if (offsetX < -x) {
-								offsetX = -x;
-							}
-							if (offsetX > 0) {
-								offsetX = 0;
-							}
-						}
-						if (prevOffsetX != offsetX || prevOffsetY != offsetY) {
-							prevOffsetY = offsetY;
-							prevOffsetX = offsetX;
-							updateRows();
-							layoutCells();
-						}
-					}
+					scrollCells(scrollEvent.getDeltaX(), scrollEvent.getDeltaY());
 				}
 			});
 
@@ -83,6 +56,7 @@ public class GridView extends Pane {
 			@Override
 			public void changed(ObservableValue<? extends java.lang.Number> observable, java.lang.Number oldValue, java.lang.Number newValue) {
 				resetScroll();
+				updateRows();
 				layoutCells();
 			}
 		});
@@ -91,6 +65,7 @@ public class GridView extends Pane {
 			@Override
 			public void changed(ObservableValue<? extends java.lang.Number> observable, java.lang.Number oldValue, java.lang.Number newValue) {
 				resetScroll();
+				updateRows();
 				layoutCells();
 			}
 		});
@@ -135,6 +110,37 @@ public class GridView extends Pane {
 		offsetY = 0;
 		prevOffsetX = 0;
 		prevOffsetY = 0;
+	}
+
+	private void scrollCells(double deltaX, double deltaY) {
+		if (data != null) {
+			double y = (data.length / numCols) * cellSize - Math.min(numRows * cellSize, getHeight());
+			double x = numCols * cellSize - Math.min(numCols * cellSize, getWidth());
+			if (y > 0) {
+				offsetY += deltaY;
+				if (offsetY < -y) {
+					offsetY = -y;
+				}
+				if (offsetY > 0) {
+					offsetY = 0;
+				}
+			}
+			if (x > 0) {
+				offsetX += deltaX;
+				if (offsetX < -x) {
+					offsetX = -x;
+				}
+				if (offsetX > 0) {
+					offsetX = 0;
+				}
+			}
+			if (prevOffsetX != offsetX || prevOffsetY != offsetY) {
+				prevOffsetY = offsetY;
+				prevOffsetX = offsetX;
+				updateRows();
+				layoutCells();
+			}
+		}
 	}
 
 	protected GridViewCell createCell(int index) {
