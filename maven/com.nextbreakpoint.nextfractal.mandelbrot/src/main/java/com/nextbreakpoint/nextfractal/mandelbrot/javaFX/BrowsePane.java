@@ -109,7 +109,6 @@ public class BrowsePane extends Pane {
 		grid.setDelegate(new GridViewDelegate() {
 			@Override
 			public void didRangeChange(GridView source, int firstRow, int lastRow) {
-				System.out.println(firstRow + " " + lastRow);
 				updateCells(source);
 			}
 		});
