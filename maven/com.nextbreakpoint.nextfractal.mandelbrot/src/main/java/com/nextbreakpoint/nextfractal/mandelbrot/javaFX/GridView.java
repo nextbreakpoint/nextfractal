@@ -11,6 +11,7 @@ public class GridView extends Pane {
 	private GridViewDelegate delegate;
 	protected final int cellSize;
 	private Object[] data;
+	private int numExtraRows = 2;
 	protected int numRows;
 	protected int numCols;
 	private double offsetX;
@@ -24,7 +25,7 @@ public class GridView extends Pane {
 		this.cellSize = cellSize;
 		getStyleClass().add("grid-view");
 				
-		cells = new GridViewCell[(numRows + 1) * numCols];
+		cells = new GridViewCell[(numRows + numExtraRows) * numCols];
 
 		for (int i = 0; i < cells.length; i++) {
 			cells[i] = createCell(i);
@@ -74,10 +75,10 @@ public class GridView extends Pane {
 	private void updateRows() {
 		int firstRow = (int)Math.abs(offsetY / cellSize);
 		int lastRow = firstRow + numRows;
-		for (int row = 0; row < numRows + 1; row++) {
+		for (int row = 0; row < numRows + numExtraRows; row++) {
 			for (int col = 0; col < numCols; col++) {
 				int index = (firstRow + row) * numCols + col;
-				if (index < data.length) {
+				if (data != null && index < data.length) {
 					cells[row * numCols + col].setData(data[index]);
 				} else {
 					cells[row * numCols + col].setData(null);
@@ -90,7 +91,7 @@ public class GridView extends Pane {
 	}
 	
 	private void layoutCells() {
-		for (int row = 0; row < numRows + 1; row++) {
+		for (int row = 0; row < numRows + numExtraRows; row++) {
 			for (int col = 0; col < numCols; col++) {
 				GridViewCell cell = cells[row * numCols + col];
 				cell.setLayoutY(row * cellSize + (offsetY - ((int)(offsetY / cellSize)) * cellSize));
@@ -114,7 +115,7 @@ public class GridView extends Pane {
 
 	private void scrollCells(double deltaX, double deltaY) {
 		if (data != null) {
-			double y = (data.length / numCols) * cellSize - Math.min(numRows * cellSize, getHeight());
+			double y = (data.length / numCols) * cellSize - Math.min(numRows * cellSize, getHeight()) + (data.length % numCols > 0 ? cellSize : 0);
 			double x = numCols * cellSize - Math.min(numCols * cellSize, getWidth());
 			if (y > 0) {
 				offsetY += deltaY;

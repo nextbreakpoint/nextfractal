@@ -215,7 +215,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 		exportPane.setMaxHeight(height / 2);
 		exportPane.setPrefHeight(height / 2);
 		
-		BrowsePane browsePane = new BrowsePane(width / 4);
+		BrowsePane browsePane = new BrowsePane(width);
 		browsePane.setDelegate(this);
 		browsePane.setDisable(true);
 		browsePane.setMinHeight(height);

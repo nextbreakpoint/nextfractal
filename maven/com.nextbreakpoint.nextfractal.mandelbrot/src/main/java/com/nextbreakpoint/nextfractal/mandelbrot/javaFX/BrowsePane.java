@@ -71,8 +71,8 @@ public class BrowsePane extends Pane {
 	private static final int FRAME_LENGTH_IN_MILLIS = 50;
 	private final DefaultThreadFactory threadFactory;
 	private final JavaFXRendererFactory renderFactory;
-	private final int numRows = 4;
-	private final int numCols = 4;
+	private final int numRows = 3;
+	private final int numCols = 3;
 	private List<GridItem> items = new ArrayList<>();
 	private BorderPane box = new BorderPane();
 	private BrowseDelegate delegate; 
@@ -82,11 +82,13 @@ public class BrowsePane extends Pane {
 	private RendererTile tile;
 	private AnimationTimer timer;
 
-	public BrowsePane(int size) {
+	public BrowsePane(int width) {
 		threadFactory = new DefaultThreadFactory("MandelbrotEditorPane", true, Thread.MIN_PRIORITY);
 		
 		renderFactory = new JavaFXRendererFactory();
 
+		int size = width / numCols;
+		
 		int maxThreads = numRows * 2;
 		
 		executor = Executors.newFixedThreadPool(maxThreads, threadFactory);
@@ -107,7 +109,8 @@ public class BrowsePane extends Pane {
 		grid.setDelegate(new GridViewDelegate() {
 			@Override
 			public void didRangeChange(GridView source, int firstRow, int lastRow) {
-				updateCells(grid);
+				System.out.println(firstRow + " " + lastRow);
+				updateCells(source);
 			}
 		});
 		
