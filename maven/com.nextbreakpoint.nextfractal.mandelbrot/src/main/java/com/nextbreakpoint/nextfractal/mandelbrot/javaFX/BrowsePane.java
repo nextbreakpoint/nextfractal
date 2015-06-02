@@ -70,6 +70,7 @@ import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererView;
 
 public class BrowsePane extends Pane {
 	private static final int FRAME_LENGTH_IN_MILLIS = 50;
+	private static final int SCROLL_BOUNCE_DELAY = 500;
 	private final DefaultThreadFactory threadFactory;
 	private final JavaFXRendererFactory renderFactory;
 	private final int numRows = 3;
@@ -95,7 +96,7 @@ public class BrowsePane extends Pane {
 
 		int size = width / numCols;
 		
-		int maxThreads = numRows * 2;
+		int maxThreads = numCols;
 		
 		executor = Executors.newFixedThreadPool(maxThreads, threadFactory);
 		
@@ -297,19 +298,19 @@ public class BrowsePane extends Pane {
 			}
 		}
 		
-		for (int index = 0; index < items.size(); index++) {
-			GridItem item = items.get(index);
-			if (item.getCoordinator() != null) {
-				item.getCoordinator().waitFor();
-			}
-		}
+//		for (int index = 0; index < items.size(); index++) {
+//			GridItem item = items.get(index);
+//			if (item.getCoordinator() != null) {
+//				item.getCoordinator().waitFor();
+//			}
+//		}
 
 		for (int index = 0; index < items.size(); index++) {
 			GridItem item = items.get(index);
 			if (item.getCoordinator() != null) {
-				RendererCoordinator coordinator = item.getCoordinator();
+//				RendererCoordinator coordinator = item.getCoordinator();
 				item.setCoordinator(null);
-				coordinator.dispose();
+//				coordinator.dispose();
 			}
 		}
 
@@ -439,7 +440,7 @@ public class BrowsePane extends Pane {
 			GridItem item = items.get(index);
 			MandelbrotData data = item.getData();
 			long time = System.currentTimeMillis();
-			if (data == null && time - item.getLastChanged() > 200 && item.getFuture() == null) {
+			if (data == null && time - item.getLastChanged() > SCROLL_BOUNCE_DELAY && item.getFuture() == null) {
 				Future<GridItem> task = executor.submit(new Callable<GridItem>() {
 					@Override
 					public GridItem call() throws Exception {
@@ -449,7 +450,7 @@ public class BrowsePane extends Pane {
 				});
 				item.setFuture(task);
 			}  
-			if (data != null && time - item.getLastChanged() > 200 && item.getCoordinator() == null) {
+			if (data != null && time - item.getLastChanged() > SCROLL_BOUNCE_DELAY && item.getCoordinator() == null) {
 				initItem(item, data);
 			}
 		}

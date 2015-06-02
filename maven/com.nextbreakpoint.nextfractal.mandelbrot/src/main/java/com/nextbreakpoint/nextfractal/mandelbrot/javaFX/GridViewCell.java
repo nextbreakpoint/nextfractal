@@ -53,7 +53,7 @@ public class GridViewCell extends BorderPane {
 			} else {
 				if (redraw) {
 					GraphicsContext g2d = canvas.getGraphicsContext2D();
-					g2d.setFill(Color.WHITE);
+					g2d.setFill(Color.LIGHTGREY);
 					g2d.fillRect(0, 0, getWidth(), getHeight());
 					redraw = false;
 				}
