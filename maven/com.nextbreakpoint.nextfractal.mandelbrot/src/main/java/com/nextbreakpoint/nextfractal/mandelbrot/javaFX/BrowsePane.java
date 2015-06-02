@@ -34,6 +34,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.prefs.Preferences;
 
 import javafx.animation.AnimationTimer;
 import javafx.animation.TranslateTransition;
@@ -78,12 +79,17 @@ public class BrowsePane extends Pane {
 	private BrowseDelegate delegate; 
 	private DirectoryChooser directoryChooser;
 	private File currentFolder;
+	private File defaultDir;
 	private ExecutorService executor;
 	private RendererTile tile;
 	private AnimationTimer timer;
 
 	public BrowsePane(int width) {
-		threadFactory = new DefaultThreadFactory("MandelbrotEditorPane", true, Thread.MIN_PRIORITY);
+		Preferences prefs = Preferences.userNodeForPackage(MandelbrotRenderPane.class);
+		
+	    defaultDir = new File(prefs.get("mandelbrot.browser.default", getDefaultBrowserDir()));
+
+		threadFactory = new DefaultThreadFactory("BrowserPane", true, Thread.MIN_PRIORITY);
 		
 		renderFactory = new JavaFXRendererFactory();
 
@@ -157,6 +163,8 @@ public class BrowsePane extends Pane {
 		});
 		
 		runTimer(grid);
+		
+		loadFiles(grid, defaultDir);
 	}
 
 	public void show() {
@@ -202,9 +210,18 @@ public class BrowsePane extends Pane {
 	}
 
 	private void createDirectoryChooser() {
+//		Alert alert = new Alert(AlertType.INFORMATION);
+//		alert.setTitle("Dialog");
+//		alert.setHeaderText("Path");
+//		alert.setContentText(defaultDir.getAbsolutePath());
+//		alert.showAndWait();
 		if (directoryChooser == null) {
 			directoryChooser = new DirectoryChooser();
-			directoryChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+			if (defaultDir.exists()) {
+				directoryChooser.setInitialDirectory(defaultDir);
+			} else {
+				directoryChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+			}
 		}
 	}
 
@@ -212,12 +229,12 @@ public class BrowsePane extends Pane {
 		createDirectoryChooser();
 		directoryChooser.setTitle("Choose");
 		if (currentFolder != null) {
+			currentFolder = currentFolder.exists() ? currentFolder : new File(System.getProperty("user.home"));
 			directoryChooser.setInitialDirectory(currentFolder);
 		}
 		File folder = directoryChooser.showDialog(null);
 		if (folder != null) {
-			currentFolder = folder;
-			loadFiles(grid, currentFolder);
+			loadFiles(grid, folder);
 		}
 	}
 
@@ -233,6 +250,7 @@ public class BrowsePane extends Pane {
 	}
 
 	private void loadFiles(GridView grid, File folder) {
+		currentFolder = folder;
 		removeItems();
 		File[] files = listFiles(folder);
 		if (files != null) {
@@ -251,6 +269,10 @@ public class BrowsePane extends Pane {
 	}
 
 	private File[] listFiles(File folder) {
+		Preferences prefs = Preferences.userNodeForPackage(MandelbrotRenderPane.class);
+
+		prefs.put("mandelbrot.browser.default", folder.getAbsolutePath()); 
+		
 		File[] files = folder.listFiles(new FilenameFilter() {
 			@Override
 			public boolean accept(File dir, String name) {
@@ -438,6 +460,7 @@ public class BrowsePane extends Pane {
 		try {
 			Map<String, Integer> hints = new HashMap<String, Integer>();
 			hints.put(RendererCoordinator.KEY_TYPE, RendererCoordinator.VALUE_REALTIME);
+			hints.put(RendererCoordinator.KEY_MULTITHREAD, RendererCoordinator.VALUE_SINGLE_THREAD);
 			RendererCoordinator coordinator = new RendererCoordinator(threadFactory, renderFactory, tile, hints);
 			coordinator.setOrbitAndColor(item.getOrbitBuilder().build(), item.getColorBuilder().build());
 			coordinator.init();
@@ -455,5 +478,14 @@ public class BrowsePane extends Pane {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	private String getDefaultBrowserDir() {
+		String defaultBrowserDir = System.getProperty("mandelbrot.browser.default", "#[user.home]}");
+		String userHome = System.getProperty("user.home");
+		String userDir = System.getProperty("user.dir");
+		defaultBrowserDir = defaultBrowserDir.replace("#[user.home]", userHome);
+		defaultBrowserDir = defaultBrowserDir.replace("#[user.dir]", userDir);
+		return defaultBrowserDir;
 	}
 }

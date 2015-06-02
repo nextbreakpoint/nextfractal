@@ -69,6 +69,7 @@ public class Renderer {
 	protected volatile float progress;
 	protected boolean julia;
 	protected Number point;
+	protected boolean multiThread;
 	protected boolean singlePass;
 	protected boolean continuous;
 	protected RendererRegion region;
@@ -198,6 +199,13 @@ public class Renderer {
 	 */
 	public void setSinglePass(boolean singlePass) {
 		this.singlePass = singlePass;
+	}
+
+	/**
+	 * @param multiThread
+	 */
+	public void setMultiThread(boolean multiThread) {
+		this.multiThread = multiThread;
 	}
 
 	/**

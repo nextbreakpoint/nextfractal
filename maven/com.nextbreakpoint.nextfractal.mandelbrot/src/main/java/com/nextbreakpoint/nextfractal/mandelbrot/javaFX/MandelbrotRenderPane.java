@@ -27,6 +27,13 @@ package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardWatchEventKinds;
+import java.nio.file.WatchEvent;
+import java.nio.file.WatchKey;
+import java.nio.file.WatchService;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -149,6 +156,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 		hideErrorsProperty.setValue(true);
 		
 		threadFactory = new DefaultThreadFactory("MandelbrotRenderPane", true, Thread.MIN_PRIORITY);
+		
 		renderFactory = new JavaFXRendererFactory();
 
 		generator = new MandelbrotImageGenerator(threadFactory, renderFactory, createSingleTile(50, 50));
@@ -528,6 +536,53 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 		super.finalize();
 	}
 
+	private void watchLoop(Path dir) throws IOException {
+		WatchService watcher = FileSystems.getDefault().newWatchService();
+
+		try {
+		    WatchKey key = dir.register(watcher, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_DELETE, StandardWatchEventKinds.ENTRY_MODIFY);
+		} catch (IOException x) {
+		    System.err.println(x);
+		}
+		
+		try {
+			for (;;) {
+				WatchKey key = watcher.take();
+	
+			    for (WatchEvent<?> event: key.pollEvents()) {
+			        WatchEvent.Kind<?> kind = event.kind();
+	
+			        if (kind == StandardWatchEventKinds.OVERFLOW) {
+			            continue;
+			        }
+	
+			        WatchEvent<Path> ev = (WatchEvent<Path>)event;
+	
+			        Path filename = ev.context();
+	
+			        try {
+			            Path child = dir.resolve(filename);
+			            if (!Files.probeContentType(child).equals("text/plain")) {
+			                System.err.format("New file '%s' is not a plain text file.%n", filename);
+			                continue;
+			            }
+			        } catch (IOException x) {
+			            System.err.println(x);
+			            continue;
+			        }
+	
+			        //Details left to reader....
+			    }
+	
+			    boolean valid = key.reset();
+			    if (!valid) {
+			        break;
+			    }
+			}
+		} catch (InterruptedException x) {
+		}
+	}
+	
 	private void shutdown() {
 		exportExecutor.shutdownNow();
 		try {

@@ -48,6 +48,8 @@ public class RendererCoordinator implements RendererDelegate {
 	public static final Integer VALUE_REALTIME = 1;
 	public static final String KEY_PROGRESS = "PROGRESS";
 	public static final Integer VALUE_SINGLE_PASS = 1;
+	public static final String KEY_MULTITHREAD = "MULTITHREAD";
+	public static final Integer VALUE_SINGLE_THREAD = 1;
 	private final HashMap<String, Integer> hints = new HashMap<>();
 	private final ThreadFactory threadFactory;
 	private final RendererFactory renderFactory;
@@ -67,8 +69,12 @@ public class RendererCoordinator implements RendererDelegate {
 		this.hints.putAll(hints);
 		renderer = createRenderer(tile);
 		renderer.setRendererDelegate(this);
+		renderer.setMultiThread(true);
 		if (hints.get(KEY_PROGRESS) != null && hints.get(KEY_PROGRESS) == VALUE_SINGLE_PASS) {
 			renderer.setSinglePass(true);
+		}
+		if (hints.get(KEY_MULTITHREAD) != null && hints.get(KEY_MULTITHREAD) == VALUE_SINGLE_THREAD) {
+			renderer.setMultiThread(false);
 		}
 	}
 

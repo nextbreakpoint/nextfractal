@@ -75,8 +75,10 @@ public final class XaosRenderer extends Renderer {
 	public XaosRenderer(ThreadFactory threadFactory, RendererFactory renderFactory, RendererTile tile) {
 		super(threadFactory, renderFactory, tile);
 		this.xaosRendererData = (XaosRendererData)rendererData;
-		executor = Executors.newSingleThreadExecutor(threadFactory);
-//		executor = Executors.newCachedThreadPool(threadFactory);
+		if (multiThread) {
+			executor = Executors.newSingleThreadExecutor(threadFactory);
+//			executor = Executors.newCachedThreadPool(threadFactory);
+		}
 	}
 	
 	/**
@@ -84,10 +86,12 @@ public final class XaosRenderer extends Renderer {
 	 */
 	@Override
 	public void dispose() {
-		executor.shutdownNow();
-		try {
-			executor.awaitTermination(5000, TimeUnit.MILLISECONDS);
-		} catch (InterruptedException e) {
+		if (executor != null) {
+			executor.shutdownNow();
+			try {
+				executor.awaitTermination(5000, TimeUnit.MILLISECONDS);
+			} catch (InterruptedException e) {
+			}
 		}
 		super.dispose();
 	}
@@ -171,7 +175,7 @@ public final class XaosRenderer extends Renderer {
 				logger.fine("Vertical symetry supported = " + isVerticalSymetrySupported);
 				logger.fine("Horizontal symetry supported = " + isHorizontalSymetrySupported);
 			}
-			if (XaosConstants.USE_MULTITHREAD && !XaosConstants.DUMP_XAOS) {
+			if (executor != null && XaosConstants.USE_MULTITHREAD && !XaosConstants.DUMP_XAOS) {
 				if (redraw) {
 					future = executor.submit(redrawLinesRunnable);
 				} else {
