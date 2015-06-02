@@ -117,6 +117,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 	private BooleanObservableValue hideOrbitProperty;
 	private BooleanObservableValue hideErrorsProperty;
 	private BooleanObservableValue juliaProperty;
+	private boolean pressed; 
 	private int width;
 	private int height;
 	private int rows;
@@ -180,6 +181,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 		controls.setPrefHeight(height);
 		
 		HBox toolButtons = new HBox(10);
+		Button browseButton = new Button("", createIconImage("/icon-load.png"));
 		Button zoominButton = new Button("", createIconImage("/icon-zoomin.png"));
 		Button zoomoutButton = new Button("", createIconImage("/icon-zoomout.png"));
 		Button moveButton = new Button("", createIconImage("/icon-move.png"));
@@ -188,7 +190,6 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 		Button orbitButton = new Button("", createIconImage("/icon-orbit.png"));
 		Button juliaButton = new Button("", createIconImage("/icon-julia.png"));
 		Button exportButton = new Button("", createIconImage("/icon-export.png"));
-		Button browseButton = new Button("", createIconImage("/icon-load.png"));
 		zoominButton.setTooltip(new Tooltip("Select zoom in tool"));
 		zoomoutButton.setTooltip(new Tooltip("Select zoom out tool"));
 		moveButton.setTooltip(new Tooltip("Select move tool"));
@@ -198,6 +199,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 		juliaButton.setTooltip(new Tooltip("Toggle Julia rendering"));
 		exportButton.setTooltip(new Tooltip("Export fractal as image"));
 		browseButton.setTooltip(new Tooltip("Browse fractals in folders"));
+		toolButtons.getChildren().add(browseButton);
 		toolButtons.getChildren().add(homeButton);
 		toolButtons.getChildren().add(zoominButton);
 		toolButtons.getChildren().add(zoomoutButton);
@@ -206,7 +208,6 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 		toolButtons.getChildren().add(juliaButton);
 		toolButtons.getChildren().add(orbitButton);
 		toolButtons.getChildren().add(exportButton);
-		toolButtons.getChildren().add(browseButton);
 		toolButtons.getStyleClass().add("toolbar");
 		toolButtons.setOpacity(0);
 		createToolsTransition(toolButtons);
@@ -274,31 +275,45 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 		currentTool = new MandelbrotZoom(this, true);
 		
 		controls.setOnMouseClicked(e -> {
+			if (!pressed && e.getY() > controls.getHeight() - toolButtons.getHeight() && e.getY() < controls.getHeight()) {
+				fadeIn(toolsTransition, x -> {});
+			} else {
+				fadeOut(toolsTransition, x -> {});
+			}
 			if (currentTool != null) {
 				currentTool.clicked(e);
 			}
 		});
 		
 		controls.setOnMousePressed(e -> {
+			pressed = true;
+			fadeOut(toolsTransition, x -> {});
 			if (currentTool != null) {
 				currentTool.pressed(e);
 			}
 		});
 		
 		controls.setOnMouseReleased(e -> {
+			pressed = false;
+			if (!pressed && e.getY() > controls.getHeight() - toolButtons.getHeight() && e.getY() < controls.getHeight()) {
+				fadeIn(toolsTransition, x -> {});
+			} else {
+				fadeOut(toolsTransition, x -> {});
+			}
 			if (currentTool != null) {
 				currentTool.released(e);
 			}
 		});
 		
 		controls.setOnMouseDragged(e -> {
+			fadeOut(toolsTransition, x -> {});
 			if (currentTool != null) {
 				currentTool.dragged(e);
 			}
 		});
 		
 		controls.setOnMouseMoved(e -> {
-			if (e.getY() > controls.getHeight() - 100 && e.getY() < controls.getHeight()) {
+			if (!pressed && e.getY() > controls.getHeight() - toolButtons.getHeight() && e.getY() < controls.getHeight()) {
 				fadeIn(toolsTransition, x -> {});
 			} else {
 				fadeOut(toolsTransition, x -> {});
@@ -309,7 +324,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 		});
 		
 		controls.setOnMouseEntered(e -> {
-			if (e.getY() > controls.getHeight() - 100 && e.getY() < controls.getHeight()) {
+			if (e.getY() > controls.getHeight() - toolButtons.getHeight() && e.getY() < controls.getHeight()) {
 				fadeIn(toolsTransition, x -> {});
 			}
 		});
@@ -489,7 +504,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
                 e.acceptTransferModes(TransferMode.COPY_OR_MOVE);
             }
         });
-
+		
 		exportExecutor = Executors.newSingleThreadExecutor(threadFactory);
 		
 		runTimer(fractalCanvas, orbitCanvas, juliaCanvas, trapCanvas);
@@ -620,19 +635,23 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 	}
 	
 	private void fadeOut(FadeTransition transition, EventHandler<ActionEvent> handler) {
-		transition.stop();
-		transition.setFromValue(transition.getNode().getOpacity());
-		transition.setToValue(0);
-		transition.setOnFinished(handler);
-		transition.play();
+		if (transition.getNode().getOpacity() != 0) {
+			transition.stop();
+			transition.setFromValue(transition.getNode().getOpacity());
+			transition.setToValue(0);
+			transition.setOnFinished(handler);
+			transition.play();
+		}
 	}
 
 	private void fadeIn(FadeTransition transition, EventHandler<ActionEvent> handler) {
-		transition.stop();
-		transition.setFromValue(transition.getNode().getOpacity());
-		transition.setToValue(1);
-		transition.setOnFinished(handler);
-		transition.play();
+		if (transition.getNode().getOpacity() != 0.95) {
+			transition.stop();
+			transition.setFromValue(transition.getNode().getOpacity());
+			transition.setToValue(0.95);
+			transition.setOnFinished(handler);
+			transition.play();
+		}
 	}
 
 	private void loadFile(File file) {

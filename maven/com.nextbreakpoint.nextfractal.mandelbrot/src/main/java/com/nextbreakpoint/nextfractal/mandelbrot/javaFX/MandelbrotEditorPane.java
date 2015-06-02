@@ -26,7 +26,6 @@ package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
 
 import java.io.File;
 import java.io.InputStream;
-import java.time.Duration;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -39,12 +38,18 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javafx.animation.ScaleTransition;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener.Change;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
+import javafx.event.ActionEvent;
 import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.event.EventType;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
@@ -58,6 +63,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 import javafx.util.Callback;
+import javafx.util.Duration;
 
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
@@ -97,6 +103,7 @@ public class MandelbrotEditorPane extends BorderPane {
 	private ExecutorService historyExecutor;
 	private ExecutorService textExecutor;
 	private Pattern highlightingPattern;
+//	private ScaleTransition sourceTransition;
 
 	public MandelbrotEditorPane(Session session) {
 		this.session = session;
@@ -124,7 +131,7 @@ public class MandelbrotEditorPane extends BorderPane {
 		tabPane.getTabs().add(historyTab);
 		Tab jobsTab = new Tab();
 		jobsTab.setClosable(false);
-		jobsTab.setText("Export Queue");
+		jobsTab.setText("Export");
 		jobsTab.setTooltip(new Tooltip("Queue of active export tasks"));
 		tabPane.getTabs().add(jobsTab);
 		setCenter(tabPane);
@@ -141,11 +148,13 @@ public class MandelbrotEditorPane extends BorderPane {
 //		sourceButtons.getChildren().add(renderButton);
 		sourceButtons.getChildren().add(loadButton);
 		sourceButtons.getChildren().add(saveButton);
-		sourceButtons.getStyleClass().add("toolbar");
+		sourceButtons.getStyleClass().add("menubar");
 		sourcePane.setCenter(codeArea);
-		sourcePane.setBottom(sourceButtons);
+		sourcePane.setTop(sourceButtons);
 		sourceTab.setContent(sourcePane);
-
+//		sourceButtons.setScaleY(0.2);
+//		createSourceTransition(sourceButtons);
+		
 		BorderPane historyPane = new BorderPane();
 		ListView<MandelbrotData> historyList = new ListView<>();
 		historyList.setFixedCellSize(60);
@@ -160,9 +169,9 @@ public class MandelbrotEditorPane extends BorderPane {
 		Button clearButton = new Button("", createIconImage("/icon-clear.png"));
 		clearButton.setTooltip(new Tooltip("Remove all elements from history"));
 		historyButtons.getChildren().add(clearButton);
-		historyButtons.getStyleClass().add("toolbar");
+		historyButtons.getStyleClass().add("menubar");
 		historyPane.setCenter(historyList);
-		historyPane.setBottom(historyButtons);
+		historyPane.setTop(historyButtons);
 		historyTab.setContent(historyPane);
 
 		BorderPane jobsPane = new BorderPane();
@@ -188,9 +197,9 @@ public class MandelbrotEditorPane extends BorderPane {
 		jobsButtons.getChildren().add(suspendButton);
 		jobsButtons.getChildren().add(resumeButton);
 		jobsButtons.getChildren().add(removeButton);
-		jobsButtons.getStyleClass().add("toolbar");
+		jobsButtons.getStyleClass().add("menubar");
 		jobsPane.setCenter(jobsList);
-		jobsPane.setBottom(jobsButtons);
+		jobsPane.setTop(jobsButtons);
 		jobsTab.setContent(jobsPane);
 
 		initHighlightingPattern();
@@ -198,7 +207,7 @@ public class MandelbrotEditorPane extends BorderPane {
 		codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
         
 		EventStream<PlainTextChange> textChanges = codeArea.plainTextChanges();
-        textChanges.successionEnds(Duration.ofMillis(500))
+        textChanges.successionEnds(java.time.Duration.ofMillis(500))
                 .supplyTask(this::computeTaskAsync)
                 .awaitLatest(textChanges)
                 .map(Try::get)
@@ -368,7 +377,15 @@ public class MandelbrotEditorPane extends BorderPane {
 			addDataToHistory(historyList);
 		});
 		
-		historyList.setOnMouseClicked(e -> {
+//		historyList.setOnMouseClicked(e -> {
+//			int index = historyList.getSelectionModel().getSelectedIndex();
+//			MandelbrotData data = historyList.getItems().get(index);
+//			noHistory = true;
+//			getMandelbrotSession().setData(data);
+//			noHistory = false;
+//		});
+		
+		historyList.getSelectionModel().getSelectedItems().addListener((Change<? extends MandelbrotData> c) -> {
 			int index = historyList.getSelectionModel().getSelectedIndex();
 			MandelbrotData data = historyList.getItems().get(index);
 			noHistory = true;
@@ -376,6 +393,22 @@ public class MandelbrotEditorPane extends BorderPane {
 			noHistory = false;
 		});
 		
+//		sourceButtons.setOnMouseEntered(e -> {
+//			fadeOut(sourceTransition, x -> {});
+//		});
+
+		widthProperty().addListener(new ChangeListener<java.lang.Number>() {
+			@Override
+			public void changed(ObservableValue<? extends java.lang.Number> observable, java.lang.Number oldValue, java.lang.Number newValue) {
+			}
+		});
+		
+		heightProperty().addListener(new ChangeListener<java.lang.Number>() {
+			@Override
+			public void changed(ObservableValue<? extends java.lang.Number> observable, java.lang.Number oldValue, java.lang.Number newValue) {
+			}
+		});
+
 		historyExecutor = Executors.newSingleThreadExecutor(threadFactory);
 		
 		textExecutor = Executors.newSingleThreadExecutor(threadFactory);
@@ -396,6 +429,33 @@ public class MandelbrotEditorPane extends BorderPane {
 		super.finalize();
 	}
 	
+	private void createSourceTransition(Node node) {
+		ScaleTransition transition = new ScaleTransition();
+		transition.setNode(node);
+		transition.setDuration(Duration.seconds(0.5));
+		transition.play();
+	}
+	
+	private void fadeOut(ScaleTransition transition, EventHandler<ActionEvent> handler) {
+		if (transition.getNode().getOpacity() != 0) {
+			transition.stop();
+			transition.setFromY(transition.getNode().getScaleY());
+			transition.setToY(0.2);
+			transition.setOnFinished(handler);
+			transition.play();
+		}
+	}
+
+	private void fadeIn(ScaleTransition transition, EventHandler<ActionEvent> handler) {
+		if (transition.getNode().getOpacity() != 0.95) {
+			transition.stop();
+			transition.setFromY(transition.getNode().getScaleY());
+			transition.setToY(1);
+			transition.setOnFinished(handler);
+			transition.play();
+		}
+	}
+
 	private void shutdown() {
 		sessionsExecutor.shutdownNow();
 		historyExecutor.shutdownNow();

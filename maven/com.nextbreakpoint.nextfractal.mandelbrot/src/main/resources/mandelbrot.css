@@ -4,8 +4,30 @@
 }
 
 .application .mandelbrot .toolbar {
-	-fx-alignment: bottom-center;
-	-fx-padding: 10px;
+	-fx-alignment: center;
+	-fx-background-color: white;
+	-fx-min-height: 60px;
+	-fx-opacity: 0.95;
+}
+
+.application .mandelbrot .menubar {
+	-fx-alignment: center-right;
+	-fx-background-color: white;
+	-fx-min-height: 60px;
+	-fx-opacity: 0.95;
+	-fx-border-width: 0 0 1 0;
+	-fx-border-color: #f0f0f0;
+	-fx-padding: 0 10px 0 10px;
+}
+
+.application .mandelbrot .sidebar {
+	-fx-alignment: center;
+	-fx-background-color: #ffffff;
+	-fx-min-width: 70px;
+	-fx-opacity: 0.95;
+	-fx-padding: 10px 0 10px 0;
+	-fx-border-width: 0 0 0 1;
+	-fx-border-color: #f0f0f0;
 }
 
 .application .mandelbrot .source {
@@ -18,7 +40,7 @@
 	-fx-background-color: lightgray;
 	-fx-opacity: 0.98;
 	-fx-border-width: 0 0 1 0;
-	-fx-border-color: #444444;
+	-fx-border-color: #b0b0b0;
 }
 
 .application .mandelbrot .popup .title {
@@ -51,9 +73,11 @@
 }
 
 .application .mandelbrot .browse .buttons {
+	-fx-alignment: center-left;
 	-fx-background-color: white;
-	-fx-padding: 10px;
-	-fx-opacity: 0.8;
+	-fx-min-height: 60px;
+	-fx-opacity: 0.95;
+	-fx-padding: 0 20px 0 20px;
 }
 
 .application .mandelbrot .browse .grid-view {

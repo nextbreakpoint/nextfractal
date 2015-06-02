@@ -103,11 +103,11 @@ public class BrowsePane extends Pane {
 		this.tile = createSingleTile(size, size);
 		
 		Button closeButton = new Button("Close");
-		Button chooseButton = new Button("Choose");
+		Button chooseButton = new Button("Open...");
 
 		HBox buttons = new HBox(10);
-		buttons.getChildren().add(chooseButton);
 		buttons.getChildren().add(closeButton);
+		buttons.getChildren().add(chooseButton);
 		buttons.setAlignment(Pos.CENTER);
 		buttons.getStyleClass().add("buttons");
 
