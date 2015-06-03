@@ -34,6 +34,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.logging.Logger;
 import java.util.prefs.Preferences;
 
 import javafx.animation.AnimationTimer;
@@ -69,6 +70,7 @@ import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererCoordinator;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererView;
 
 public class BrowsePane extends Pane {
+	private static final Logger logger = Logger.getLogger(BrowsePane.class.getName());
 	private static final int FRAME_LENGTH_IN_MILLIS = 50;
 	private static final int SCROLL_BOUNCE_DELAY = 500;
 	private final DefaultThreadFactory threadFactory;
@@ -487,6 +489,7 @@ public class BrowsePane extends Pane {
 		String userDir = System.getProperty("user.dir");
 		defaultBrowserDir = defaultBrowserDir.replace("#[user.home]", userHome);
 		defaultBrowserDir = defaultBrowserDir.replace("#[user.dir]", userDir);
+		logger.info("defaultBrowserDir = " + defaultBrowserDir);
 		return defaultBrowserDir;
 	}
 }
