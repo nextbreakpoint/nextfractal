@@ -29,9 +29,19 @@ import java.nio.IntBuffer;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 
 public interface ImageGenerator {
+	/**
+	 * @param data
+	 * @return
+	 */
 	public IntBuffer renderImage(Object data);
 
+	/**
+	 * @return
+	 */
 	public RendererSize getSize();
 
+	/**
+	 * @return
+	 */
 	public boolean isInterrupted();
 }
