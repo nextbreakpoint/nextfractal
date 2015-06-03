@@ -43,4 +43,9 @@ public interface SessionListener {
 	 * @param exportSession
 	 */
 	public void sessionRemoved(Session session, ExportSession exportSession);
+
+	/**
+	 * @param session
+	 */
+	public void doExportAsImage(Session session);
 }

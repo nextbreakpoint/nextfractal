@@ -57,6 +57,8 @@ import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -181,14 +183,19 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 		controls.setPrefHeight(height);
 		
 		HBox toolButtons = new HBox(10);
+		ToggleButton zoominButton = new ToggleButton("", createIconImage("/icon-zoomin.png"));
+		ToggleButton zoomoutButton = new ToggleButton("", createIconImage("/icon-zoomout.png"));
+		ToggleButton moveButton = new ToggleButton("", createIconImage("/icon-move.png"));
+		ToggleButton pickButton = new ToggleButton("", createIconImage("/icon-pick.png"));
+		ToggleButton juliaButton = new ToggleButton("", createIconImage("/icon-julia.png"));
+		ToggleButton orbitButton = new ToggleButton("", createIconImage("/icon-orbit.png"));
+		ToggleGroup toolsGroup = new ToggleGroup();
+		toolsGroup.getToggles().add(zoominButton);
+		toolsGroup.getToggles().add(zoomoutButton);
+		toolsGroup.getToggles().add(moveButton);
+		toolsGroup.getToggles().add(pickButton);
 		Button browseButton = new Button("", createIconImage("/icon-load.png"));
-		Button zoominButton = new Button("", createIconImage("/icon-zoomin.png"));
-		Button zoomoutButton = new Button("", createIconImage("/icon-zoomout.png"));
-		Button moveButton = new Button("", createIconImage("/icon-move.png"));
 		Button homeButton = new Button("", createIconImage("/icon-home.png"));
-		Button pickButton = new Button("", createIconImage("/icon-pick.png"));
-		Button orbitButton = new Button("", createIconImage("/icon-orbit.png"));
-		Button juliaButton = new Button("", createIconImage("/icon-julia.png"));
 		Button exportButton = new Button("", createIconImage("/icon-export.png"));
 		zoominButton.setTooltip(new Tooltip("Select zoom in tool"));
 		zoomoutButton.setTooltip(new Tooltip("Select zoom out tool"));
@@ -372,6 +379,11 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 			@Override
 			public void sessionRemoved(Session session, ExportSession exportSession) {
 			}
+
+			@Override
+			public void doExportAsImage(Session session) {
+				exportAsImage(exportPane);
+			}
 		});
 		
 		StackPane stackPane = new StackPane();
@@ -410,10 +422,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 		});
 		
 		exportButton.setOnAction(e -> {
-			if (errorProperty.getValue() == null) {
-				exportData = getMandelbrotSession().getDataAsCopy();
-				exportPane.show();
-			}
+			exportAsImage(exportPane);
 		});
 
 		browseButton.setOnAction(e -> {
@@ -438,6 +447,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 			juliaCanvas.setVisible(false);
 			juliaProperty.setValue(!juliaProperty.getValue());
 			zoominButton.requestFocus();
+			zoominButton.setSelected(true);
 		});
 		
 		hideOrbitProperty.addListener((observable, oldValue, newValue) -> {
@@ -447,10 +457,10 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 		
 		juliaProperty.addListener((observable, oldValue, newValue) -> {
 			if (newValue) {
-				juliaButton.setGraphic(createIconImage("/icon-mandelbrot.png"));
+//				juliaButton.setGraphic(createIconImage("/icon-mandelbrot.png"));
 				setFractalJulia(true);
 			} else {
-				juliaButton.setGraphic(createIconImage("/icon-julia.png"));
+//				juliaButton.setGraphic(createIconImage("/icon-julia.png"));
 				setFractalJulia(false);
 			}
 			pickButton.setDisable(newValue);
@@ -549,6 +559,13 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 	protected void finalize() throws Throwable {
 		shutdown();
 		super.finalize();
+	}
+
+	private void exportAsImage(ExportPane exportPane) {
+		if (errorProperty.getValue() == null) {
+			exportData = getMandelbrotSession().getDataAsCopy();
+			exportPane.show();
+		}
 	}
 
 	private void watchLoop(Path dir) throws IOException {

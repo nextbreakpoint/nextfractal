@@ -82,4 +82,10 @@ public abstract class AbstractSession implements Session {
 			listener.sessionRemoved(this, session);
 		}
 	}
+
+	public void doExportAsImage() {
+		for (SessionListener listener : listeners) {
+			listener.doExportAsImage(this);
+		}
+	}
 }

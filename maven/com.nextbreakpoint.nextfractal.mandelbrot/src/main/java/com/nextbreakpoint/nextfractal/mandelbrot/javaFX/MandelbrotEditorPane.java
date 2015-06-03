@@ -139,15 +139,23 @@ public class MandelbrotEditorPane extends BorderPane {
 		BorderPane sourcePane = new BorderPane();
 		codeArea = new CodeArea();
 		codeArea.getStyleClass().add("source");
-		HBox sourceButtons = new HBox(10);
+		BorderPane sourceButtons = new BorderPane();
+		sourceButtons.getStyleClass().add("buttons");
+		HBox sourceButtonsLeft = new HBox(10);
+		HBox sourceButtonsRight = new HBox(10);
 //		Button renderButton = new Button("Render");
+		Button exportButton = new Button("", createIconImage("/icon-export.png"));
 		Button loadButton = new Button("", createIconImage("/icon-load.png"));
 		Button saveButton = new Button("", createIconImage("/icon-save.png"));
+		exportButton.setTooltip(new Tooltip("Export fractal as image"));
 		loadButton.setTooltip(new Tooltip("Load source from a file"));
 		saveButton.setTooltip(new Tooltip("Save source to a file"));
 //		sourceButtons.getChildren().add(renderButton);
-		sourceButtons.getChildren().add(loadButton);
-		sourceButtons.getChildren().add(saveButton);
+		sourceButtonsLeft.getChildren().add(exportButton);
+		sourceButtonsRight.getChildren().add(loadButton);
+		sourceButtonsRight.getChildren().add(saveButton);
+		sourceButtons.setLeft(sourceButtonsLeft);
+		sourceButtons.setRight(sourceButtonsRight);
 		sourceButtons.getStyleClass().add("menubar");
 		sourcePane.setCenter(codeArea);
 		sourcePane.setTop(sourceButtons);
@@ -287,6 +295,10 @@ public class MandelbrotEditorPane extends BorderPane {
 			public void sessionRemoved(Session session, ExportSession exportSession) {
 				jobsList.getItems().remove(exportSession);
 			}
+
+			@Override
+			public void doExportAsImage(Session session) {
+			}
 		});
 		
 		jobsList.getSelectionModel().getSelectedItems().addListener((Change<? extends ExportSession> c) -> {
@@ -347,6 +359,10 @@ public class MandelbrotEditorPane extends BorderPane {
 					//TODO display error
 				}
 			}
+		});
+
+		exportButton.setOnAction(e -> {
+			getMandelbrotSession().doExportAsImage();
 		});
 
 		suspendButton.setOnAction(e -> {

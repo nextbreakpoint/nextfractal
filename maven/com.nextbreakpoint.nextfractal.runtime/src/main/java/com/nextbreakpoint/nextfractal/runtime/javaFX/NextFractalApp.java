@@ -175,6 +175,10 @@ public class NextFractalApp extends Application {
 				@Override
 				public void sessionRemoved(Session session, ExportSession exportSession) {
 				}
+
+				@Override
+				public void doExportAsImage(Session session) {
+				}
 			});
 		}
     }
