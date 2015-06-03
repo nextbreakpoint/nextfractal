@@ -103,7 +103,6 @@ public class MandelbrotEditorPane extends BorderPane {
 	private ExecutorService historyExecutor;
 	private ExecutorService textExecutor;
 	private Pattern highlightingPattern;
-//	private ScaleTransition sourceTransition;
 
 	public MandelbrotEditorPane(Session session) {
 		this.session = session;
@@ -140,17 +139,17 @@ public class MandelbrotEditorPane extends BorderPane {
 		codeArea = new CodeArea();
 		codeArea.getStyleClass().add("source");
 		BorderPane sourceButtons = new BorderPane();
-		sourceButtons.getStyleClass().add("buttons");
-		HBox sourceButtonsLeft = new HBox(10);
-		HBox sourceButtonsRight = new HBox(10);
-//		Button renderButton = new Button("Render");
+		HBox sourceButtonsLeft = new HBox();
+		HBox sourceButtonsRight = new HBox();
+		Button renderButton = new Button("", createIconImage("/icon-render.png"));
 		Button exportButton = new Button("", createIconImage("/icon-export.png"));
 		Button loadButton = new Button("", createIconImage("/icon-load.png"));
 		Button saveButton = new Button("", createIconImage("/icon-save.png"));
+		renderButton.setTooltip(new Tooltip("Render fractal"));
 		exportButton.setTooltip(new Tooltip("Export fractal as image"));
 		loadButton.setTooltip(new Tooltip("Load source from a file"));
 		saveButton.setTooltip(new Tooltip("Save source to a file"));
-//		sourceButtons.getChildren().add(renderButton);
+		sourceButtonsLeft.getChildren().add(renderButton);
 		sourceButtonsLeft.getChildren().add(exportButton);
 		sourceButtonsRight.getChildren().add(loadButton);
 		sourceButtonsRight.getChildren().add(saveButton);
@@ -160,8 +159,6 @@ public class MandelbrotEditorPane extends BorderPane {
 		sourcePane.setCenter(codeArea);
 		sourcePane.setTop(sourceButtons);
 		sourceTab.setContent(sourcePane);
-//		sourceButtons.setScaleY(0.2);
-//		createSourceTransition(sourceButtons);
 		
 		BorderPane historyPane = new BorderPane();
 		ListView<MandelbrotData> historyList = new ListView<>();
@@ -173,7 +170,7 @@ public class MandelbrotEditorPane extends BorderPane {
 				return new HistoryListCell(generator.getSize(), generatorTile);
 			}
 		});
-		HBox historyButtons = new HBox(10);
+		HBox historyButtons = new HBox();
 		Button clearButton = new Button("", createIconImage("/icon-clear.png"));
 		clearButton.setTooltip(new Tooltip("Remove all elements from history"));
 		historyButtons.getChildren().add(clearButton);
@@ -192,7 +189,7 @@ public class MandelbrotEditorPane extends BorderPane {
 		});
 		jobsList.setFixedCellSize(60);
 		jobsList.getStyleClass().add("jobs");
-		HBox jobsButtons = new HBox(10);
+		HBox jobsButtons = new HBox();
 		Button suspendButton = new Button("", createIconImage("/icon-suspend.png"));
 		Button resumeButton = new Button("", createIconImage("/icon-resume.png"));
 		Button removeButton = new Button("", createIconImage("/icon-remove.png"));
@@ -313,9 +310,11 @@ public class MandelbrotEditorPane extends BorderPane {
 			}
 		});
 		
-//		renderButton.setOnAction(e -> {
-//			compileSource(sourceText.getText());
-//		});
+		renderButton.setOnAction(e -> {
+			Platform.runLater(() -> {
+				codeArea.replaceText(getMandelbrotSession().getSource());
+			});
+		});
 		
 		loadButton.setOnAction(e -> {
 			createFileChooser(".m");
@@ -393,14 +392,6 @@ public class MandelbrotEditorPane extends BorderPane {
 			addDataToHistory(historyList);
 		});
 		
-//		historyList.setOnMouseClicked(e -> {
-//			int index = historyList.getSelectionModel().getSelectedIndex();
-//			MandelbrotData data = historyList.getItems().get(index);
-//			noHistory = true;
-//			getMandelbrotSession().setData(data);
-//			noHistory = false;
-//		});
-		
 		historyList.getSelectionModel().getSelectedItems().addListener((Change<? extends MandelbrotData> c) -> {
 			int index = historyList.getSelectionModel().getSelectedIndex();
 			MandelbrotData data = historyList.getItems().get(index);
@@ -409,22 +400,6 @@ public class MandelbrotEditorPane extends BorderPane {
 			noHistory = false;
 		});
 		
-//		sourceButtons.setOnMouseEntered(e -> {
-//			fadeOut(sourceTransition, x -> {});
-//		});
-
-		widthProperty().addListener(new ChangeListener<java.lang.Number>() {
-			@Override
-			public void changed(ObservableValue<? extends java.lang.Number> observable, java.lang.Number oldValue, java.lang.Number newValue) {
-			}
-		});
-		
-		heightProperty().addListener(new ChangeListener<java.lang.Number>() {
-			@Override
-			public void changed(ObservableValue<? extends java.lang.Number> observable, java.lang.Number oldValue, java.lang.Number newValue) {
-			}
-		});
-
 		historyExecutor = Executors.newSingleThreadExecutor(threadFactory);
 		
 		textExecutor = Executors.newSingleThreadExecutor(threadFactory);
@@ -445,33 +420,6 @@ public class MandelbrotEditorPane extends BorderPane {
 		super.finalize();
 	}
 	
-	private void createSourceTransition(Node node) {
-		ScaleTransition transition = new ScaleTransition();
-		transition.setNode(node);
-		transition.setDuration(Duration.seconds(0.5));
-		transition.play();
-	}
-	
-	private void fadeOut(ScaleTransition transition, EventHandler<ActionEvent> handler) {
-		if (transition.getNode().getOpacity() != 0) {
-			transition.stop();
-			transition.setFromY(transition.getNode().getScaleY());
-			transition.setToY(0.2);
-			transition.setOnFinished(handler);
-			transition.play();
-		}
-	}
-
-	private void fadeIn(ScaleTransition transition, EventHandler<ActionEvent> handler) {
-		if (transition.getNode().getOpacity() != 0.95) {
-			transition.stop();
-			transition.setFromY(transition.getNode().getScaleY());
-			transition.setToY(1);
-			transition.setOnFinished(handler);
-			transition.play();
-		}
-	}
-
 	private void shutdown() {
 		sessionsExecutor.shutdownNow();
 		historyExecutor.shutdownNow();

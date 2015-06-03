@@ -39,16 +39,9 @@
 .application .mandelbrot .menubar {
 	-fx-alignment: center-right;
 	-fx-background-color: white;
-	-fx-min-height: 60px;
 	-fx-opacity: 0.95;
 	-fx-border-width: 0 0 1 0;
 	-fx-border-color: #f0f0f0;
-	-fx-padding: 0 10px 0 10px;
-}
-
-.application .mandelbrot .menubar .buttons {
-	-fx-background-color: red;
-	-fx-padding: 10px;
 }
 
 .application .mandelbrot .menubar .button {
@@ -59,27 +52,6 @@
 }
 
 .application .mandelbrot .menubar .button:armed {
-	-fx-background-color: lightgrey;
-}
-
-.application .mandelbrot .sidebar {
-	-fx-alignment: center;
-	-fx-background-color: #ffffff;
-	-fx-min-width: 70px;
-	-fx-opacity: 0.95;
-	-fx-padding: 10px 0 10px 0;
-	-fx-border-width: 0 0 0 1;
-	-fx-border-color: #f0f0f0;
-}
-
-.application .mandelbrot .sidebar .button {
-	-fx-background-color: transparent;
-	-fx-focus-color: transparent;
-	-fx-faint-focus-color: transparent;
-	-fx-border-width: 2;
-}
-
-.application .mandelbrot .sidebar .button:armed {
 	-fx-background-color: lightgrey;
 }
 
