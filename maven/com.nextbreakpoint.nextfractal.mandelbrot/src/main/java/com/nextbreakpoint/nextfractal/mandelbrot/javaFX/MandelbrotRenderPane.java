@@ -295,7 +295,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 		
 		controls.setOnMouseReleased(e -> {
 			pressed = false;
-			if (!pressed && e.getY() > controls.getHeight() - toolButtons.getHeight() && e.getY() < controls.getHeight()) {
+			if (e.getY() > controls.getHeight() - toolButtons.getHeight() && e.getY() < controls.getHeight()) {
 				fadeIn(toolsTransition, x -> {});
 			} else {
 				fadeOut(toolsTransition, x -> {});
@@ -635,8 +635,8 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 	}
 	
 	private void fadeOut(FadeTransition transition, EventHandler<ActionEvent> handler) {
+		transition.stop();
 		if (transition.getNode().getOpacity() != 0) {
-			transition.stop();
 			transition.setFromValue(transition.getNode().getOpacity());
 			transition.setToValue(0);
 			transition.setOnFinished(handler);
@@ -645,8 +645,8 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 	}
 
 	private void fadeIn(FadeTransition transition, EventHandler<ActionEvent> handler) {
+		transition.stop();
 		if (transition.getNode().getOpacity() != 0.95) {
-			transition.stop();
 			transition.setFromValue(transition.getNode().getOpacity());
 			transition.setToValue(0.95);
 			transition.setOnFinished(handler);
