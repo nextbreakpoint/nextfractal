@@ -397,7 +397,7 @@ public class BrowsePane extends Pane {
 		if (lastRow < grid.getData().length / numCols - 1) {
 			lastRow += 1;
 		}
-		int firstIndex = firstRow * numCols;
+		int firstIndex = Math.min(firstRow * numCols, items.size());
 		int lastIndex = lastRow * numCols + numCols;
 		for (int index = 0; index < firstIndex; index++) {
 			GridItem item = items.get(index);
