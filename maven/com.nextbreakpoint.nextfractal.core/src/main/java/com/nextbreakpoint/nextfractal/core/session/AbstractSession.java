@@ -88,4 +88,10 @@ public abstract class AbstractSession implements Session {
 			listener.doExportAsImage(this);
 		}
 	}
+
+	public void showBrowser() {
+		for (SessionListener listener : listeners) {
+			listener.showBrowser(this);
+		}
+	}
 }

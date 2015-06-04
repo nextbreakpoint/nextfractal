@@ -179,6 +179,10 @@ public class NextFractalApp extends Application {
 				@Override
 				public void doExportAsImage(Session session) {
 				}
+
+				@Override
+				public void showBrowser(Session session) {
+				}
 			});
 		}
     }

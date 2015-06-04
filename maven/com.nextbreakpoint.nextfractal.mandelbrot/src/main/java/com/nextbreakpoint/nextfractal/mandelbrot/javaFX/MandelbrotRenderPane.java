@@ -115,6 +115,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 	private AnimationTimer timer;
 	private FileChooser fileChooser;
 	private File currentExportFile;
+	private StringObservableValue fileProperty;
 	private StringObservableValue errorProperty;
 	private BooleanObservableValue hideOrbitProperty;
 	private BooleanObservableValue hideErrorsProperty;
@@ -145,6 +146,9 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 		this.height = height;
 		this.rows = rows;
 		this.columns = columns;
+
+		fileProperty = new StringObservableValue();
+		fileProperty.setValue(null);
 
 		errorProperty = new StringObservableValue();
 		errorProperty.setValue(null);
@@ -194,9 +198,9 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 		toolsGroup.getToggles().add(zoomoutButton);
 		toolsGroup.getToggles().add(moveButton);
 		toolsGroup.getToggles().add(pickButton);
-		Button browseButton = new Button("", createIconImage("/icon-load.png"));
+//		Button exportButton = new Button("", createIconImage("/icon-export.png"));
+//		Button browseButton = new Button("", createIconImage("/icon-load.png"));
 		Button homeButton = new Button("", createIconImage("/icon-home.png"));
-		Button exportButton = new Button("", createIconImage("/icon-export.png"));
 		zoominButton.setTooltip(new Tooltip("Select zoom in tool"));
 		zoomoutButton.setTooltip(new Tooltip("Select zoom out tool"));
 		moveButton.setTooltip(new Tooltip("Select move tool"));
@@ -204,9 +208,9 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 		homeButton.setTooltip(new Tooltip("Reset region to initial value"));
 		orbitButton.setTooltip(new Tooltip("Toggle orbit rendering"));
 		juliaButton.setTooltip(new Tooltip("Toggle Julia rendering"));
-		exportButton.setTooltip(new Tooltip("Export fractal as image"));
-		browseButton.setTooltip(new Tooltip("Browse fractals in folders"));
-		toolButtons.getChildren().add(browseButton);
+//		exportButton.setTooltip(new Tooltip("Export fractal as image"));
+//		browseButton.setTooltip(new Tooltip("Browse fractals in folders"));
+//		toolButtons.getChildren().add(browseButton);
 		toolButtons.getChildren().add(homeButton);
 		toolButtons.getChildren().add(zoominButton);
 		toolButtons.getChildren().add(zoomoutButton);
@@ -214,7 +218,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 		toolButtons.getChildren().add(pickButton);
 		toolButtons.getChildren().add(juliaButton);
 		toolButtons.getChildren().add(orbitButton);
-		toolButtons.getChildren().add(exportButton);
+//		toolButtons.getChildren().add(exportButton);
 		toolButtons.getStyleClass().add("toolbar");
 		toolButtons.setOpacity(0);
 		createToolsTransition(toolButtons);
@@ -280,6 +284,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
         juliaCanvas.setVisible(false);
 
 		currentTool = new MandelbrotZoom(this, true);
+		zoominButton.setSelected(true);
 		
 		controls.setOnMouseClicked(e -> {
 			if (!pressed && e.getY() > controls.getHeight() - toolButtons.getHeight() && e.getY() < controls.getHeight()) {
@@ -384,6 +389,11 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 			public void doExportAsImage(Session session) {
 				exportAsImage(exportPane);
 			}
+
+			@Override
+			public void showBrowser(Session session) {
+				browsePane.show();
+			}
 		});
 		
 		StackPane stackPane = new StackPane();
@@ -421,13 +431,13 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 			}
 		});
 		
-		exportButton.setOnAction(e -> {
-			exportAsImage(exportPane);
-		});
+//		exportButton.setOnAction(e -> {
+//			exportAsImage(exportPane);
+//		});
 
-		browseButton.setOnAction(e -> {
-			browsePane.show();
-		});
+//		browseButton.setOnAction(e -> {
+//			browsePane.show();
+//		});
 		
 		orbitButton.setOnAction(e -> {
 			if (!getMandelbrotSession().getDataAsCopy().isJulia()) {
@@ -493,6 +503,26 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 				});
 			}
 		});
+
+		fileProperty.addListener((observable, oldValue, newValue) -> {
+			try {
+				File file = new File(newValue);
+				MandelbrotDataStore service = new MandelbrotDataStore();
+				MandelbrotData data = service.loadFromFile(file);
+				getMandelbrotSession().setCurrentFile(file);
+				if (data.isJulia() && currentTool instanceof MandelbrotPick) {
+					currentTool = new MandelbrotZoom(this, true);
+					juliaCanvas.setVisible(false);
+					zoominButton.setSelected(true);
+				}
+				juliaButton.setSelected(data.isJulia());
+				getMandelbrotSession().setData(data);
+				logger.info(data.toString());
+			} catch (Exception x) {
+				logger.warning("Cannot read file " + newValue);
+				//TODO display error
+			}
+		});
 		
 		errorsButton.setOnAction(e -> {
 			fadeOut(alertsTransition, x -> { 
@@ -505,7 +535,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
         	List<File> files = e.getDragboard().getFiles();
         	if (files.size() > 0) {
         		File file = files.get(0);
-        		loadFile(file);
+        		fileProperty.setValue(file.getAbsolutePath());
         	}
         });
         
@@ -530,9 +560,9 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 	}
 
 	@Override
-	public void didSelectFile(BrowsePane source, File file) {
-		source.hide();
-		loadFile(file);
+	public void didSelectFile(BrowsePane browser, File file) {
+		browser.hide();
+		fileProperty.setValue(file.getAbsolutePath());
 	}
 
 	@Override
@@ -668,19 +698,6 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 			transition.setToValue(0.95);
 			transition.setOnFinished(handler);
 			transition.play();
-		}
-	}
-
-	private void loadFile(File file) {
-		try {
-			MandelbrotDataStore service = new MandelbrotDataStore();
-			MandelbrotData data = service.loadFromFile(file);
-			getMandelbrotSession().setCurrentFile(file);
-			logger.info(data.toString());
-			getMandelbrotSession().setData(data);
-		} catch (Exception x) {
-			logger.warning("Cannot read file " + file.getAbsolutePath());
-			//TODO display error
 		}
 	}
 

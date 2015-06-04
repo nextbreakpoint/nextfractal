@@ -48,4 +48,9 @@ public interface SessionListener {
 	 * @param session
 	 */
 	public void doExportAsImage(Session session);
+
+	/**
+	 * @param session
+	 */
+	public void showBrowser(Session session);
 }

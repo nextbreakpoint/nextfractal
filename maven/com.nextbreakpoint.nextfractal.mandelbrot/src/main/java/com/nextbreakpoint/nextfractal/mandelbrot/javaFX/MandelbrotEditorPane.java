@@ -141,16 +141,16 @@ public class MandelbrotEditorPane extends BorderPane {
 		BorderPane sourceButtons = new BorderPane();
 		HBox sourceButtonsLeft = new HBox();
 		HBox sourceButtonsRight = new HBox();
+		Button browseButton = new Button("", createIconImage("/icon-export.png"));
 		Button renderButton = new Button("", createIconImage("/icon-render.png"));
-		Button exportButton = new Button("", createIconImage("/icon-export.png"));
 		Button loadButton = new Button("", createIconImage("/icon-load.png"));
 		Button saveButton = new Button("", createIconImage("/icon-save.png"));
+		browseButton.setTooltip(new Tooltip("Browse fractals in folders"));
 		renderButton.setTooltip(new Tooltip("Render fractal"));
-		exportButton.setTooltip(new Tooltip("Export fractal as image"));
 		loadButton.setTooltip(new Tooltip("Load source from a file"));
 		saveButton.setTooltip(new Tooltip("Save source to a file"));
+		sourceButtonsLeft.getChildren().add(browseButton);
 		sourceButtonsLeft.getChildren().add(renderButton);
-		sourceButtonsLeft.getChildren().add(exportButton);
 		sourceButtonsRight.getChildren().add(loadButton);
 		sourceButtonsRight.getChildren().add(saveButton);
 		sourceButtons.setLeft(sourceButtonsLeft);
@@ -170,10 +170,10 @@ public class MandelbrotEditorPane extends BorderPane {
 				return new HistoryListCell(generator.getSize(), generatorTile);
 			}
 		});
-		HBox historyButtons = new HBox();
+		BorderPane historyButtons = new BorderPane();
 		Button clearButton = new Button("", createIconImage("/icon-clear.png"));
 		clearButton.setTooltip(new Tooltip("Remove all elements from history"));
-		historyButtons.getChildren().add(clearButton);
+		historyButtons.setRight(clearButton);
 		historyButtons.getStyleClass().add("menubar");
 		historyPane.setCenter(historyList);
 		historyPane.setTop(historyButtons);
@@ -189,19 +189,26 @@ public class MandelbrotEditorPane extends BorderPane {
 		});
 		jobsList.setFixedCellSize(60);
 		jobsList.getStyleClass().add("jobs");
-		HBox jobsButtons = new HBox();
+		BorderPane jobsButtons = new BorderPane();
+		HBox jobsButtonsLeft = new HBox();
+		HBox jobsButtonsRight = new HBox();
+		Button exportButton = new Button("", createIconImage("/icon-export.png"));
 		Button suspendButton = new Button("", createIconImage("/icon-suspend.png"));
 		Button resumeButton = new Button("", createIconImage("/icon-resume.png"));
 		Button removeButton = new Button("", createIconImage("/icon-remove.png"));
+		exportButton.setTooltip(new Tooltip("Export fractal as image"));
 		suspendButton.setTooltip(new Tooltip("Suspend selected export tasks"));
 		resumeButton.setTooltip(new Tooltip("Resume selected export tasks"));
 		removeButton.setTooltip(new Tooltip("Remove selected export tasks"));
 		suspendButton.setDisable(true);
 		resumeButton.setDisable(true);
 		removeButton.setDisable(true);
-		jobsButtons.getChildren().add(suspendButton);
-		jobsButtons.getChildren().add(resumeButton);
-		jobsButtons.getChildren().add(removeButton);
+		jobsButtonsLeft.getChildren().add(exportButton);
+		jobsButtonsRight.getChildren().add(suspendButton);
+		jobsButtonsRight.getChildren().add(resumeButton);
+		jobsButtonsRight.getChildren().add(removeButton);
+		jobsButtons.setLeft(jobsButtonsLeft);
+		jobsButtons.setRight(jobsButtonsRight);
 		jobsButtons.getStyleClass().add("menubar");
 		jobsPane.setCenter(jobsList);
 		jobsPane.setTop(jobsButtons);
@@ -296,6 +303,10 @@ public class MandelbrotEditorPane extends BorderPane {
 			@Override
 			public void doExportAsImage(Session session) {
 			}
+
+			@Override
+			public void showBrowser(Session session) {
+			}
 		});
 		
 		jobsList.getSelectionModel().getSelectedItems().addListener((Change<? extends ExportSession> c) -> {
@@ -364,6 +375,10 @@ public class MandelbrotEditorPane extends BorderPane {
 			getMandelbrotSession().doExportAsImage();
 		});
 
+		browseButton.setOnAction(e -> {
+			getMandelbrotSession().showBrowser();
+		});
+		
 		suspendButton.setOnAction(e -> {
 			for (ExportSession exportSession : jobsList.getSelectionModel().getSelectedItems()) {
 				if (!exportSession.isSuspended()) {
