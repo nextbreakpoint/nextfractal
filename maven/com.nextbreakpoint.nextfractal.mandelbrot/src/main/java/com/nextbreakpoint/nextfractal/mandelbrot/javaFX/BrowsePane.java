@@ -51,6 +51,7 @@ import javafx.scene.layout.Pane;
 import javafx.stage.DirectoryChooser;
 import javafx.util.Duration;
 
+import com.nextbreakpoint.nextfractal.core.javaFX.StringObservableValue;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererPoint;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
@@ -75,6 +76,7 @@ public class BrowsePane extends Pane {
 	private static final int SCROLL_BOUNCE_DELAY = 500;
 	private final DefaultThreadFactory threadFactory;
 	private final JavaFXRendererFactory renderFactory;
+	private StringObservableValue pathProperty;
 	private final int numRows = 3;
 	private final int numCols = 3;
 	private List<GridItem> items = new ArrayList<>();
@@ -96,6 +98,9 @@ public class BrowsePane extends Pane {
 		
 		renderFactory = new JavaFXRendererFactory();
 
+		pathProperty = new StringObservableValue();
+		pathProperty.setValue(null);
+
 		int size = width / numCols;
 		
 		int maxThreads = numCols;
@@ -105,10 +110,12 @@ public class BrowsePane extends Pane {
 		this.tile = createSingleTile(size, size);
 		
 		Button closeButton = new Button("Close");
+		Button reloadButton = new Button("Reload");
 		Button chooseButton = new Button("Open...");
 
 		HBox buttons = new HBox(10);
 		buttons.getChildren().add(closeButton);
+		buttons.getChildren().add(reloadButton);
 		buttons.getChildren().add(chooseButton);
 		buttons.setAlignment(Pos.CENTER);
 		buttons.getStyleClass().add("buttons");
@@ -148,6 +155,10 @@ public class BrowsePane extends Pane {
 			doChooseFolder(grid);
 		});
 		
+		reloadButton.setOnMouseClicked(e -> {
+			loadFiles(grid, currentFolder);
+		});
+		
 		getChildren().add(box);
 		
 		widthProperty().addListener(new ChangeListener<java.lang.Number>() {
@@ -165,9 +176,12 @@ public class BrowsePane extends Pane {
 			}
 		});
 		
+		pathProperty.addListener((observable, oldValue, newValue) -> {
+			File path = new File(newValue);
+			loadFiles(grid, path);
+		});
+
 		runTimer(grid);
-		
-		loadFiles(grid, defaultDir);
 	}
 
 	public void show() {
@@ -179,6 +193,7 @@ public class BrowsePane extends Pane {
 			@Override
 			public void handle(ActionEvent event) {
 				setDisable(false);
+				pathProperty.setValue(defaultDir.getAbsolutePath());
 			}
 		});
 		tt.play();
@@ -237,7 +252,7 @@ public class BrowsePane extends Pane {
 		}
 		File folder = directoryChooser.showDialog(null);
 		if (folder != null) {
-			loadFiles(grid, folder);
+			pathProperty.setValue(folder.getAbsolutePath());
 		}
 	}
 

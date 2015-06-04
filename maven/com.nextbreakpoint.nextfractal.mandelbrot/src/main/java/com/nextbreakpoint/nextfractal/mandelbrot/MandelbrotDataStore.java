@@ -27,6 +27,8 @@ package com.nextbreakpoint.nextfractal.mandelbrot;
 import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Reader;
+import java.io.Writer;
 
 import javax.xml.bind.JAXB;
 
@@ -44,6 +46,22 @@ public class MandelbrotDataStore {
 			JAXB.marshal(data, path);
 		} catch (Exception e) {
 			throw new Exception("Cannot save data to file " + path.getAbsolutePath());
+		}
+	}
+
+	public MandelbrotData loadFromReader(Reader reader) throws Exception {
+		try {
+			return JAXB.unmarshal(reader, MandelbrotData.class);
+		} catch (Exception e) {
+			throw new Exception("Cannot load data from reader");
+		}
+	}
+
+	public void saveToWriter(Writer writer, MandelbrotData data) throws Exception {
+		try {
+			JAXB.marshal(data, writer);
+		} catch (Exception e) {
+			throw new Exception("Cannot save data to writer");
 		}
 	}
 
