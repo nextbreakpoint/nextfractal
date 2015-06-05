@@ -22,12 +22,32 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.mandelbrot.compiler;
+package com.nextbreakpoint.nextfractal.mandelbrot.compiler.java;
 
-import java.util.List;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URI;
 
-public interface CompilerBuilder<T> {
-	public T build() throws InstantiationException, IllegalAccessException;
+import javax.tools.SimpleJavaFileObject;
 
-	public List<CompilerError> getErrors();
+public class ClassJavaFileObject extends SimpleJavaFileObject {
+	private ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+    public ClassJavaFileObject(String name) {
+        super(URI.create("string:///" + name.replace('.','/') + Kind.SOURCE.extension), Kind.CLASS);
+    }
+
+	@Override
+	public InputStream openInputStream() throws IOException {
+		return new ByteArrayInputStream(baos.toByteArray());
+	}
+
+	@Override
+	public OutputStream openOutputStream() throws IOException {
+		baos.reset();
+		return baos;
+	}
 }

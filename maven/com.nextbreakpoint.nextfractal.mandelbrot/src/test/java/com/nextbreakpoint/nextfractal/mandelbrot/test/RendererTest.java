@@ -99,6 +99,10 @@ public class RendererTest {
 	
 	private class TestColor extends Color {
 		@Override
+		public void init() {
+		}
+		
+		@Override
 		public void render() {
 		}
 

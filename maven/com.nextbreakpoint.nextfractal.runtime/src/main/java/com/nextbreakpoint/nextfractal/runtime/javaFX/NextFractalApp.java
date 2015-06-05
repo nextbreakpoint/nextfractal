@@ -24,8 +24,6 @@
  */
 package com.nextbreakpoint.nextfractal.runtime.javaFX;
 
-import java.awt.Desktop;
-import java.net.URI;
 import java.util.ServiceLoader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -33,14 +31,16 @@ import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+
+import javax.tools.JavaCompiler;
+import javax.tools.ToolProvider;
 
 import com.nextbreakpoint.nextfractal.core.FractalFactory;
 import com.nextbreakpoint.nextfractal.core.export.ExportRenderer;
@@ -53,7 +53,6 @@ import com.nextbreakpoint.nextfractal.core.utils.DefaultThreadFactory;
 import com.nextbreakpoint.nextfractal.runtime.export.SimpleExportRenderer;
 import com.nextbreakpoint.nextfractal.runtime.export.SimpleExportService;
 
-
 public class NextFractalApp extends Application {
 	private static Logger logger = Logger.getLogger(NextFractalApp.class.getName());
 	private BorderPane editorRootPane;
@@ -62,9 +61,40 @@ public class NextFractalApp extends Application {
 	public static void main(String[] args) {
 		launch(args); 
     }
-
+	
+	private static double getVersion() {
+		String version = System.getProperty("java.version");
+		int pos = version.indexOf('.');
+		pos = version.indexOf('.', pos + 1);
+		return Double.parseDouble(version.substring(0, pos));
+	}
+	
     @Override
     public void start(Stage primaryStage) {
+		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+
+		if (compiler == null) {
+			Alert alert = new Alert(AlertType.ERROR);
+			alert.setTitle("Error");
+			alert.setHeaderText("Cannot find Java Compiler!");
+			alert.setContentText("Did you launch the application using Java JRE?\nPlease use Java JDK 8 or later instead!\nInstall JDK not JRE in your system or add the proper java command to your execution path");
+			alert.showAndWait();
+			primaryStage.close();
+			System.exit(1);
+			return;
+		}
+		
+		if (getVersion() < 1.8) {
+			Alert alert = new Alert(AlertType.ERROR);
+			alert.setTitle("Error");
+			alert.setHeaderText("Invalid Java Version");
+			alert.setContentText("Please use Java JDK 8 or later to launch the application");
+			alert.showAndWait();
+			primaryStage.close();
+			System.exit(1);
+			return;
+		}
+		
 		int width = 600;
 		int height = 600;
 		int editorWidth = 424;
@@ -100,6 +130,7 @@ public class NextFractalApp extends Application {
 		ExportRenderer exportRenderer = new SimpleExportRenderer(renderThreadFactory, renderFactory);
         ExportService exportService = new SimpleExportService(exportThreadFactory, exportRenderer);
         printPlugins();
+        
         Session session = createFractalSession(pluginId);
         if (session != null) {
         	session.setExportService(exportService);

@@ -22,22 +22,27 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.mandelbrot.compiler;
+package com.nextbreakpoint.nextfractal.mandelbrot.compiler.java;
 
-import java.net.URI;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Logger;
 
-import javax.tools.SimpleJavaFileObject;
+public class CompilerClassLoader extends ClassLoader {
+	private static final Logger logger = Logger.getLogger(CompilerClassLoader.class.getName());
+	private static final AtomicInteger count = new AtomicInteger();
+	
+	public CompilerClassLoader() {
+		logger.fine("Create classloader (" + count.addAndGet(1) + ")");
+	}
+	
+	public void defineClassFromData(String name, byte[] data) {
+		Class<?> clazz = defineClass(name, data, 0, data.length);
+		super.resolveClass(clazz);
+	}
 
-public class SourceJavaFileObject extends SimpleJavaFileObject {
-    private final String code;
-
-    public SourceJavaFileObject(String name, String code) {
-        super(URI.create("string:///" + name.replace('.','/') + Kind.SOURCE.extension), Kind.SOURCE);
-        this.code = code;
-    }
-
-    @Override
-    public CharSequence getCharContent(boolean ignoreEncodingErrors) {
-        return code;
-    }
+	@Override
+	protected void finalize() throws Throwable {
+		logger.fine("Finalize classloader (" + count.addAndGet(-1) + ")");
+		super.finalize();
+	}
 }

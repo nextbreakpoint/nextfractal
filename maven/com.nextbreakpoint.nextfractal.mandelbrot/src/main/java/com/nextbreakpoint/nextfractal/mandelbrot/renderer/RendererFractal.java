@@ -44,6 +44,9 @@ public class RendererFractal {
 		if (orbit != null) {
 			orbit.init();
 		}
+		if (color != null) {
+			color.init();
+		}
 	}
 
 	/**

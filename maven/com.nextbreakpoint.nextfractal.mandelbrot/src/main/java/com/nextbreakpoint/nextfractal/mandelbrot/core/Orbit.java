@@ -27,7 +27,6 @@ package com.nextbreakpoint.nextfractal.mandelbrot.core;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public abstract class Orbit {
 	protected MutableNumber[] region = new MutableNumber[2];
 	protected MutableNumber point = new MutableNumber(0, 0);
@@ -42,9 +41,15 @@ public abstract class Orbit {
 	public Orbit() {
 		region[0] = new MutableNumber();
 		region[1] = new MutableNumber();
-		numbers = createNumbers(); 
-		for (int i = 0; i < numbers.length; i++) {
-			numbers[i] = new MutableNumber();
+		initializeStack();
+	}
+
+	protected void initializeStack() {
+		numbers = createNumbers();
+		if (numbers != null) {
+			for (int i = 0; i < numbers.length; i++) {
+				numbers[i] = new MutableNumber();
+			}
 		}
 	}
 

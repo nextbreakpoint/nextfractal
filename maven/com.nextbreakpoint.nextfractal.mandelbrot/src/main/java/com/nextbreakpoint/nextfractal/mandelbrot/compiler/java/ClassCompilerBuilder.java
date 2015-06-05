@@ -22,12 +22,27 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.mandelbrot.compiler;
+package com.nextbreakpoint.nextfractal.mandelbrot.compiler.java;
 
 import java.util.List;
 
-public interface CompilerBuilder<T> {
-	public T build() throws InstantiationException, IllegalAccessException;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerBuilder;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerError;
 
-	public List<CompilerError> getErrors();
+public class ClassCompilerBuilder<T> implements CompilerBuilder<T> {
+	private Class<T> clazz;
+	private List<CompilerError> errors;
+	
+	public ClassCompilerBuilder(Class<T> clazz, List<CompilerError> errors) {
+		this.clazz = clazz;
+		this.errors = errors;
+	}
+	
+	public T build() throws InstantiationException, IllegalAccessException {
+		return clazz.newInstance();
+	}
+
+	public List<CompilerError> getErrors() {
+		return errors;
+	}
 }

@@ -24,30 +24,27 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.compiler;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URI;
+import java.util.List;
 
-import javax.tools.SimpleJavaFileObject;
+import com.nextbreakpoint.nextfractal.mandelbrot.core.Orbit;
+import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTFractal;
 
-public class ClassJavaFileObject extends SimpleJavaFileObject {
-	private ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-    public ClassJavaFileObject(String name) {
-        super(URI.create("string:///" + name.replace('.','/') + Kind.SOURCE.extension), Kind.CLASS);
-    }
-
-	@Override
-	public InputStream openInputStream() throws IOException {
-		return new ByteArrayInputStream(baos.toByteArray());
+public class InterpreterOrbitBuilder implements CompilerBuilder<Orbit> {
+	private ASTFractal astFractal;
+	private ExpressionContext context;
+	private List<CompilerError> errors;
+	
+	public InterpreterOrbitBuilder(ASTFractal astFractal, ExpressionContext context, List<CompilerError> errors) {
+		this.astFractal = astFractal;
+		this.context = context;
+		this.errors = errors;
+	}
+	
+	public Orbit build() throws InstantiationException, IllegalAccessException {
+		return new InterpreterOrbit(astFractal, context);
 	}
 
-	@Override
-	public OutputStream openOutputStream() throws IOException {
-		baos.reset();
-		return baos;
+	public List<CompilerError> getErrors() {
+		return errors;
 	}
 }

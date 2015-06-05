@@ -22,12 +22,22 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.mandelbrot.compiler;
+package com.nextbreakpoint.nextfractal.mandelbrot.compiler.java;
 
-import java.util.List;
+import java.net.URI;
 
-public interface CompilerBuilder<T> {
-	public T build() throws InstantiationException, IllegalAccessException;
+import javax.tools.SimpleJavaFileObject;
 
-	public List<CompilerError> getErrors();
+public class SourceJavaFileObject extends SimpleJavaFileObject {
+    private final String code;
+
+    public SourceJavaFileObject(String name, String code) {
+        super(URI.create("string:///" + name.replace('.','/') + Kind.SOURCE.extension), Kind.SOURCE);
+        this.code = code;
+    }
+
+    @Override
+    public CharSequence getCharContent(boolean ignoreEncodingErrors) {
+        return code;
+    }
 }

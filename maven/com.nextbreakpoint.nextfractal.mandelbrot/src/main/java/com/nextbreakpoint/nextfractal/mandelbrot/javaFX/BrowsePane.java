@@ -342,7 +342,7 @@ public class BrowsePane extends Pane {
 				return;
 			}
 			Compiler compiler = new Compiler();
-			CompilerReport report = compiler.generateJavaSource(data.getSource());
+			CompilerReport report = compiler.generateSource(data.getSource());
 			if (report.getErrors().size() > 0) {
 				throw new RuntimeException("Failed to compile source");
 			}

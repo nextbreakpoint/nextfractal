@@ -22,7 +22,7 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.mandelbrot.compiler;
+package com.nextbreakpoint.nextfractal.mandelbrot.compiler.java;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -38,12 +38,10 @@ import javax.tools.JavaFileObject.Kind;
 public class CompilerJavaFileManager implements JavaFileManager {
 	private Map<String, JavaFileObject> files = new HashMap<>();
 	private JavaFileManager fileManager;
-	private final String orbitClassName;
-	private final String colorClassName;
+	private final String className;
 	
-	public CompilerJavaFileManager(JavaFileManager fileManager, String orbitClassName, String colorClassName) {
-		this.orbitClassName = orbitClassName;
-		this.colorClassName = colorClassName;
+	public CompilerJavaFileManager(JavaFileManager fileManager, String className) {
+		this.className = className;
 		this.fileManager = fileManager;
 	}
 
@@ -116,7 +114,7 @@ public class CompilerJavaFileManager implements JavaFileManager {
 	 */
 	@Override
 	public JavaFileObject getJavaFileForOutput(Location location, String className, Kind kind, FileObject sibling) throws IOException {
-		if (className.equals(orbitClassName) || className.equals(colorClassName)) {
+		if (className.equals(className)) {
 			JavaFileObject file = files.get(className);
 			if (file == null) {
 				file = new ClassJavaFileObject(className);

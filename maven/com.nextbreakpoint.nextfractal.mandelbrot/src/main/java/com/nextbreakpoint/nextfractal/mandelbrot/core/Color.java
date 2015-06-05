@@ -30,12 +30,18 @@ public abstract class Color {
 	protected Scope scope;
 
 	public Color() {
-		numbers = createNumbers(); 
-		for (int i = 0; i < numbers.length; i++) {
-			numbers[i] = new MutableNumber();
+		initializeStack();
+	}
+
+	protected void initializeStack() {
+		numbers = createNumbers();
+		if (numbers != null) {
+			for (int i = 0; i < numbers.length; i++) {
+				numbers[i] = new MutableNumber();
+			}
 		}
 	}
-	
+
 	public Scope getScope() {
 		return scope;
 	}
@@ -52,14 +58,14 @@ public abstract class Color {
 		return scope.getVariable(index).r();
 	}
 
-	protected float[] setColor(float[] color) {
+	public float[] setColor(float[] color) {
 		for (int i = 0; i < 4; i++) {
 			this.color[i] = (float)Math.min(1, Math.max(0, color[i]));
 		}
 		return color;
 	}
 	
-	protected float[] addColor(double opacity, float[] color) {
+	public float[] addColor(double opacity, float[] color) {
 		double a = opacity * color[0];
 		double q = 1 - a;
 		for (int i = 1; i < 4; i++) {
@@ -72,23 +78,23 @@ public abstract class Color {
 		return color;
 	}
 
-	protected Palette palette() {
+	public Palette palette() {
 		return new Palette();
 	}
 
-	protected PaletteElement element(float[] beginColor, float[] endColor, int steps, PaletteExpression expression) {
+	public PaletteElement element(float[] beginColor, float[] endColor, int steps, PaletteExpression expression) {
 		return new PaletteElement(beginColor, endColor, steps, expression);
 	}
 
-	protected float[] color(double x) {
+	public float[] color(double x) {
 		return new float[] { 1f, (float) x, (float) x, (float) x };
 	}
 
-	protected float[] color(double r, double g, double b) {
+	public float[] color(double r, double g, double b) {
 		return new float[] { 1f, (float) r, (float) g, (float) b };
 	}
 
-	protected float[] color(double a, double r, double g, double b) {
+	public float[] color(double a, double r, double g, double b) {
 		return new float[] { (float) a, (float) r, (float) g, (float) b };
 	}
 
@@ -102,6 +108,8 @@ public abstract class Color {
 	
 	public void reset() {
 	}
+	
+	public abstract void init();
 
 	public abstract void render();
 

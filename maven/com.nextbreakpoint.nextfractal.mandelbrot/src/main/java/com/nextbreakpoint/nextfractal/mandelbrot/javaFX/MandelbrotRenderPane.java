@@ -1100,7 +1100,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 			orbit.setX(orbit.getInitialPoint());
 			orbit.render(states);
 		} catch (Throwable e) {
-			logger.log(Level.WARNING, "Failed to render orbit");
+			logger.log(Level.WARNING, "Failed to render orbit", e);
 		}
 		return states;
 	}

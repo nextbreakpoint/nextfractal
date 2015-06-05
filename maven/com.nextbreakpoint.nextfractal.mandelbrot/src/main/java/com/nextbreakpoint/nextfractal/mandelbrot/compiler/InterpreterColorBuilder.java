@@ -26,8 +26,25 @@ package com.nextbreakpoint.nextfractal.mandelbrot.compiler;
 
 import java.util.List;
 
-public interface CompilerBuilder<T> {
-	public T build() throws InstantiationException, IllegalAccessException;
+import com.nextbreakpoint.nextfractal.mandelbrot.core.Color;
+import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTFractal;
 
-	public List<CompilerError> getErrors();
+public class InterpreterColorBuilder implements CompilerBuilder<Color> {
+	private ASTFractal astFractal;
+	private ExpressionContext context;
+	private List<CompilerError> errors;
+
+	public InterpreterColorBuilder(ASTFractal astFractal, ExpressionContext context, List<CompilerError> errors) {
+		this.astFractal = astFractal;
+		this.context = context;
+		this.errors = errors;
+	}
+	
+	public Color build() throws InstantiationException, IllegalAccessException {
+		return new InterpreterColor(astFractal, context);
+	}
+
+	public List<CompilerError> getErrors() {
+		return errors;
+	}
 }

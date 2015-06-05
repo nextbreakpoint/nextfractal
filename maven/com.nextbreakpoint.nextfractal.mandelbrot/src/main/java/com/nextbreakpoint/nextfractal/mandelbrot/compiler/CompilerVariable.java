@@ -24,10 +24,13 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.compiler;
 
+import com.nextbreakpoint.nextfractal.mandelbrot.core.MutableNumber;
+
 public class CompilerVariable {
 	private final String name;
 	private final boolean real;
 	private final boolean create;
+	private MutableNumber value = new MutableNumber();
 
 	public CompilerVariable(String name, boolean real, boolean create) {
 		this.name = name;
@@ -45,5 +48,17 @@ public class CompilerVariable {
 
 	public boolean isCreate() {
 		return create;
+	}
+
+	public MutableNumber getValue() {
+		return value;
+	}
+
+	public void setValue(MutableNumber value) {
+		this.value = value;
+	}
+
+	public double getRealValue() {
+		return value.r();
 	}
 }
