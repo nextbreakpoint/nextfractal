@@ -32,6 +32,7 @@ import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -185,7 +186,10 @@ public class NextFractalApp extends Application {
 			}
 		});
 		
+		primaryStage.setWidth(width + editorWidth);
+		primaryStage.setHeight(height);
 		primaryStage.setScene(scene);
+		primaryStage.sizeToScene();
         primaryStage.show();
 		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 			@Override
