@@ -26,6 +26,8 @@ package com.nextbreakpoint.nextfractal.mandelbrot.grammar;
 
 import org.antlr.v4.runtime.Token;
 
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledExpression;
+
 public class ASTFunction extends ASTExpression {
 	private String name;
 	private ASTExpression[] arguments;
@@ -64,8 +66,8 @@ public class ASTFunction extends ASTExpression {
 	}
 
 	@Override
-	public void compile(ASTExpressionCompiler compiler) {
-		compiler.compile(this);
+	public CompiledExpression compile(ASTExpressionCompiler compiler) {
+		return compiler.compile(this);
 	}
 
 	@Override

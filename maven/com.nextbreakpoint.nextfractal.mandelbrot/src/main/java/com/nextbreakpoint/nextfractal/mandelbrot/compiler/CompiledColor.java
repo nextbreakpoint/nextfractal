@@ -1,5 +1,7 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.compiler;
 
-public interface CompiledColor {
+import com.nextbreakpoint.nextfractal.mandelbrot.interpreter.InterpreterContext;
 
+public interface CompiledColor {
+	public float[] evaluate(InterpreterContext context);
 }

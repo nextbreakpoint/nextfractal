@@ -143,6 +143,10 @@ public class Expression {
 		return Math.abs(x);
 	}
 
+	public static double funcMod2(double x) {
+		return x * x;
+	}
+
 	public static double funcPha(double x) {
 		return 0;
 	}

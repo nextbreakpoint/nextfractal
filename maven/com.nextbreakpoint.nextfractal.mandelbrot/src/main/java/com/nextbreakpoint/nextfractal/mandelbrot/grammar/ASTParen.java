@@ -26,6 +26,8 @@ package com.nextbreakpoint.nextfractal.mandelbrot.grammar;
 
 import org.antlr.v4.runtime.Token;
 
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledExpression;
+
 public class ASTParen extends ASTExpression {
 	private ASTExpression exp;
 
@@ -48,8 +50,8 @@ public class ASTParen extends ASTExpression {
 	}
 
 	@Override
-	public void compile(ASTExpressionCompiler compiler) {
-		compiler.compile(this);
+	public CompiledExpression compile(ASTExpressionCompiler compiler) {
+		return compiler.compile(this);
 	}
 
 	public boolean isReal() {

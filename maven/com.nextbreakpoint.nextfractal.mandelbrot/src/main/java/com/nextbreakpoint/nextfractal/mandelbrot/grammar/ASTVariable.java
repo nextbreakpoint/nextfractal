@@ -26,6 +26,7 @@ package com.nextbreakpoint.nextfractal.mandelbrot.grammar;
 
 import org.antlr.v4.runtime.Token;
 
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledExpression;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
 
 public class ASTVariable extends ASTExpression {
@@ -51,7 +52,7 @@ public class ASTVariable extends ASTExpression {
 	}
 
 	@Override
-	public void compile(ASTExpressionCompiler compiler) {
-		compiler.compile(this);
+	public CompiledExpression compile(ASTExpressionCompiler compiler) {
+		return compiler.compile(this);
 	}
 }

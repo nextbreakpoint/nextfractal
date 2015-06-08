@@ -26,10 +26,12 @@ package com.nextbreakpoint.nextfractal.mandelbrot.grammar;
 
 import org.antlr.v4.runtime.Token;
 
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledCondition;
+
 public abstract class ASTRuleExpression extends ASTObject {
 	public ASTRuleExpression(Token location) {
 		super(location);
 	}
 
-	public abstract void compile(ASTExpressionCompiler compiler);
+	public abstract CompiledCondition compile(ASTExpressionCompiler compiler);
 }

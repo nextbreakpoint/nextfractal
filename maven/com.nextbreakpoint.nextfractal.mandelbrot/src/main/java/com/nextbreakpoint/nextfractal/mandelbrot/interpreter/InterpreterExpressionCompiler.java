@@ -24,14 +24,13 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.interpreter;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledColor;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledCondition;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledExpression;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledPalette;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledRule;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledStatement;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.ExpressionContext;
@@ -61,31 +60,19 @@ import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTStopStatement;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTVariable;
 
 public class InterpreterExpressionCompiler implements ASTExpressionCompiler {
-	private final Map<String, CompilerVariable> variables;
 	private final ExpressionContext context;
-	private final StringBuilder builder;
 	
 	public InterpreterExpressionCompiler(ExpressionContext context, Map<String, CompilerVariable> variables, StringBuilder builder) {
-		this.variables = variables;
 		this.context = context;
-		this.builder = builder;
 	}
 
 	@Override
 	public CompiledExpression compile(ASTNumber number) {
-		if (number.isReal()) {
-			return new InterpreterRealNumber(number.r());
-		} else {
-			return new InterpreterNumber(context.newNumberIndex(), number.r(), number.i());
-		}
+		return new InterpreterNumber(context, number.r(), number.i());
 	}
 
 	@Override
 	public CompiledExpression compile(ASTFunction function) {
-		builder.append("func");
-		builder.append(function.getName().toUpperCase().substring(0, 1));
-		builder.append(function.getName().substring(1));
-		builder.append("(");
 		switch (function.getName()) {
 			case "mod":
 			case "mod2":
@@ -106,11 +93,6 @@ public class InterpreterExpressionCompiler implements ASTExpressionCompiler {
 				if (function.getArguments().length != 1) {
 					throw new ASTException("Invalid number of arguments: " + function.getLocation().getText(), function.getLocation());
 				}	
-				if (!function.getArguments()[0].isReal()) {
-					builder.append("getNumber(");
-					builder.append(context.newNumberIndex());
-					builder.append("),");
-				}
 				break;
 
 			case "abs":
@@ -147,11 +129,6 @@ public class InterpreterExpressionCompiler implements ASTExpressionCompiler {
 				if (!function.getArguments()[1].isReal()) {
 					throw new ASTException("Invalid type of arguments: " + function.getLocation().getText(), function.getLocation());
 				}				
-				if (!function.getArguments()[0].isReal()) {
-					builder.append("getNumber(");
-					builder.append(context.newNumberIndex());
-					builder.append("),");
-				}
 				break;
 
 			case "sqrt":
@@ -159,25 +136,65 @@ public class InterpreterExpressionCompiler implements ASTExpressionCompiler {
 				if (function.getArguments().length != 1) {
 					throw new ASTException("Invalid number of arguments: " + function.getLocation().getText(), function.getLocation());
 				}				
-				if (!function.getArguments()[0].isReal()) {
-					builder.append("getNumber(");
-					builder.append(context.newNumberIndex());
-					builder.append("),");
-				}
 				break;
 				
 			default:
 				throw new ASTException("Unsupported function: " + function.getLocation().getText(), function.getLocation());
 		}
-		ASTExpression[] arguments = function.getArguments();
-		for (int i = 0; i < arguments.length; i++) {
-			arguments[i].compile(this);
-			if (i < arguments.length - 1) {
-				builder.append(",");
-			}
+		switch (function.getName()) {
+			case "mod":
+				return new InterpreterFuncMod(context, compileArguments(function.getArguments()));
+			case "mod2":
+				return new InterpreterFuncMod2(context, compileArguments(function.getArguments()));
+			case "pha":
+				return new InterpreterFuncPha(context, compileArguments(function.getArguments()));
+			case "re":
+				return new InterpreterFuncRe(context, compileArguments(function.getArguments()));
+			case "im":
+				return new InterpreterFuncIm(context, compileArguments(function.getArguments()));
+				
+			case "sin":
+				return new InterpreterFuncSin(context, compileArguments(function.getArguments()));
+			case "cos":
+				return new InterpreterFuncCos(context, compileArguments(function.getArguments()));
+			case "tan":
+				return new InterpreterFuncTan(context, compileArguments(function.getArguments()));
+			case "asin":
+				return new InterpreterFuncAsin(context, compileArguments(function.getArguments()));
+			case "acos":
+				return new InterpreterFuncAcos(context, compileArguments(function.getArguments()));
+			case "atan":
+				return new InterpreterFuncAtan(context, compileArguments(function.getArguments()));
+	
+			case "abs":
+				return new InterpreterFuncAbs(context, compileArguments(function.getArguments()));
+			case "ceil":
+				return new InterpreterFuncCeil(context, compileArguments(function.getArguments()));
+			case "floor":
+				return new InterpreterFuncFloor(context, compileArguments(function.getArguments()));
+			case "log":
+				return new InterpreterFuncLog(context, compileArguments(function.getArguments()));
+				
+			case "min":
+				return new InterpreterFuncMin(context, compileArguments(function.getArguments()));
+			case "max":
+				return new InterpreterFuncMax(context, compileArguments(function.getArguments()));
+			case "atan2":
+				return new InterpreterFuncAtan2(context, compileArguments(function.getArguments()));
+			case "hypot":
+				return new InterpreterFuncHypot(context, compileArguments(function.getArguments()));
+				
+			case "pow":
+				return new InterpreterFuncPow(context, compileArguments(function.getArguments()));
+	
+			case "sqrt":
+				return new InterpreterFuncSqrt(context, compileArguments(function.getArguments()));
+			case "exp":
+				return new InterpreterFuncExp(context, compileArguments(function.getArguments()));
+				
+			default:
 		}
-		builder.append(")");
-		return null;
+		throw new ASTException("Unsupported function: " + function.getLocation().getText(), function.getLocation());
 	}
 
 	@Override
@@ -187,158 +204,87 @@ public class InterpreterExpressionCompiler implements ASTExpressionCompiler {
 		if (exp2 == null) {
 			switch (operator.getOp()) {
 				case "-":
-					if (exp1.isReal()) {
-						builder.append("-");
-						exp1.compile(this);
-					} else {
-						builder.append("opNeg");
-						builder.append("(");
-						builder.append("getNumber(");
-						builder.append(context.newNumberIndex());
-						builder.append("),");
-						exp1.compile(this);
-						builder.append(")");
-					}
-					break;
+					return new InterpreterOperatorNeg(context, exp1.compile(this));
 				
 				case "+":
-					if (exp1.isReal()) {
-						exp1.compile(this);
-					} else {
-						builder.append("opPos");
-						builder.append("(");
-						builder.append("getNumber(");
-						builder.append(context.newNumberIndex());
-						builder.append("),");
-						exp1.compile(this);
-						builder.append(")");
-					}
-					break;
+					return new InterpreterOperatorPos(context, exp1.compile(this));
 				
 				default:
 					throw new ASTException("Unsupported operator: " + operator.getLocation().getText(), operator.getLocation());
 			}
 		} else {
 			if (exp1.isReal() && exp2.isReal()) {
-				if (operator.getOp().equals("^")) {
-					builder.append("opPow");
-				}
-				if (operator.getOp().equals("<>")) {
-					builder.append("getNumber(");
-					builder.append(context.newNumberIndex());
-					builder.append(").set");
-				}
-				builder.append("(");
-				exp1.compile(this);
 				switch (operator.getOp()) {
 					case "+":
-						builder.append("+");
-						break;
+						return new InterpreterOperatorAdd(context, exp1.compile(this), exp2.compile(this));
 					
 					case "-":
-						builder.append("-");
-						break;
+						return new InterpreterOperatorSub(context, exp1.compile(this), exp2.compile(this));
 						
 					case "*":
-						builder.append("*");
-						break;
+						return new InterpreterOperatorMul(context, exp1.compile(this), exp2.compile(this));
 						
 					case "/":
-						builder.append("/");
-						break;
+						return new InterpreterOperatorDiv(context, exp1.compile(this), exp2.compile(this));
 						
 					case "^":
-						builder.append(",");
-						break;
+						return new InterpreterOperatorPow(context, exp1.compile(this), exp2.compile(this));
 					
 					case "<>":
-						builder.append(",");
-						break;
+						return new InterpreterOperatorNumber(context, exp1.compile(this), exp2.compile(this));
 					
 					default:
 						throw new ASTException("Unsupported operator: " + operator.getLocation().getText(), operator.getLocation());
 				}
-				exp2.compile(this);
-				builder.append(")");
 			} else if (exp2.isReal()) {
 				switch (operator.getOp()) {
 					case "+":
-						builder.append("opAdd");
-						break;
+						return new InterpreterOperatorAdd(context, exp1.compile(this), exp2.compile(this));
 					
 					case "-":
-						builder.append("opSub");
-						break;
+						return new InterpreterOperatorSub(context, exp1.compile(this), exp2.compile(this));
 						
 					case "*":
-						builder.append("opMul");
-						break;
+						return new InterpreterOperatorMul(context, exp1.compile(this), exp2.compile(this));
 						
 					case "/":
-						builder.append("opDiv");
-						break;
+						return new InterpreterOperatorDiv(context, exp1.compile(this), exp2.compile(this));
 						
 					case "^":
-						builder.append("opPow");
-						break;
+						return new InterpreterOperatorPow(context, exp1.compile(this), exp2.compile(this));
 					
 					default:
 						throw new ASTException("Unsupported operator: " + operator.getLocation().getText(), operator.getLocation());
 				}
-				builder.append("(");
-				builder.append("getNumber(");
-				builder.append(context.newNumberIndex());
-				builder.append("),");
-				exp1.compile(this);
-				builder.append(",");
-				exp2.compile(this);
-				builder.append(")");
 			} else {
 				switch (operator.getOp()) {
 					case "+":
-						builder.append("opAdd");
-						break;
+						return new InterpreterOperatorAdd(context, exp1.compile(this), exp2.compile(this));
 					
 					case "-":
-						builder.append("opSub");
-						break;
+						return new InterpreterOperatorSub(context, exp1.compile(this), exp2.compile(this));
 						
 					case "*":
-						builder.append("opMul");
-						break;
+						return new InterpreterOperatorMul(context, exp1.compile(this), exp2.compile(this));
 						
 					case "/":
-						builder.append("opDiv");
-						break;
+						return new InterpreterOperatorDiv(context, exp1.compile(this), exp2.compile(this));
 						
 					default:
 						throw new ASTException("Unsupported operator: " + operator.getLocation().getText(), operator.getLocation());
 				}
-				builder.append("(");
-				builder.append("getNumber(");
-				builder.append(context.newNumberIndex());
-				builder.append("),");
-				exp1.compile(this);
-				builder.append(",");
-				exp2.compile(this);
-				builder.append(")");
 			}
 		}
-		return null;
 	}
 
 	@Override
 	public CompiledExpression compile(ASTParen paren) {
-		builder.append("(");
-		paren.getExp().compile(this);
-		builder.append(")");
-		return null;
+		return paren.getExp().compile(this);
 	}
 
 	@Override
 	public CompiledExpression compile(ASTVariable variable) {
-		builder.append(variable.getName());
-		return null;
+		return new InterpreterVariable(variable.getName(), variable.isReal());
 	}
 
 	@Override
@@ -346,277 +292,202 @@ public class InterpreterExpressionCompiler implements ASTExpressionCompiler {
 		ASTExpression exp1 = compareOp.getExp1();
 		ASTExpression exp2 = compareOp.getExp2();
 		if (exp1.isReal() && exp2.isReal()) {
-			builder.append("(");
 			exp1.compile(this);
 			switch (compareOp.getOp()) {
 				case ">":
-					builder.append(">");
-					break;
+					return new InterpreterLogicOperatorGreather(context, compileOperands(exp1, exp2));
 				
 				case "<":
-					builder.append("<");
-					break;
+					return new InterpreterLogicOperatorLesser(context, compileOperands(exp1, exp2));
 					
 				case ">=":
-					builder.append(">=");
-					break;
+					return new InterpreterLogicOperatorGreatherOrEquals(context, compileOperands(exp1, exp2));
 					
 				case "<=":
-					builder.append("<=");
-					break;
+					return new InterpreterLogicOperatorLesserOrEquals(context, compileOperands(exp1, exp2));
 					
 				case "=":
-					builder.append("==");
-					break;
+					return new InterpreterLogicOperatorEquals(context, compileOperands(exp1, exp2));
 					
 				case "<>":
-					builder.append("!=");
-					break;
+					return new InterpreterLogicOperatorNotEquals(context, compileOperands(exp1, exp2));
 				
 				default:
 					throw new ASTException("Unsupported operator: " + compareOp.getLocation().getText(), compareOp.getLocation());
 			}
-			exp2.compile(this);
-			builder.append(")");
 		} else {
 			throw new ASTException("Real expressions required: " + compareOp.getLocation().getText(), compareOp.getLocation());
 		}
-		return null;
 	}
 
 	@Override
 	public CompiledCondition compile(ASTConditionLogicOp logicOp) {
 		ASTConditionExpression exp1 = logicOp.getExp1();
 		ASTConditionExpression exp2 = logicOp.getExp2();
-		builder.append("(");
-		exp1.compile(this);
 		switch (logicOp.getOp()) {
 			case "&":
-				builder.append("&&");
-				break;
+				return new InterpreterLogicOperatorAnd(context, compileLogicOperands(exp1, exp2));
 			
 			case "|":
-				builder.append("||");
-				break;
+				return new InterpreterLogicOperatorOr(context, compileLogicOperands(exp1, exp2));
 				
 			case "^":
-				builder.append("^^");
-				break;
+				return new InterpreterLogicOperatorXor(context, compileLogicOperands(exp1, exp2));
 				
 			default:
 				throw new ASTException("Unsupported operator: " + logicOp.getLocation().getText(), logicOp.getLocation());
 		}
-		exp2.compile(this);
-		builder.append(")");
-		return null;
 	}
 
 	@Override
 	public CompiledCondition compile(ASTConditionTrap trap) {
-		if (!trap.isContains()) {
-			builder.append("!");
-		}
-		builder.append("trap");
-		builder.append(trap.getName().toUpperCase().substring(0, 1));
-		builder.append(trap.getName().substring(1));
-		builder.append(".contains(");
-		trap.getExp().compile(this);
-		builder.append(")");
-		return null;
+		return new InterpreterTrapCondition(trap.getName(), trap.getExp().compile(this));
 	}
 
 	@Override
-	public CompiledRule compile(ASTRuleLogicOp logicOp) {
+	public CompiledCondition compile(ASTRuleLogicOp logicOp) {
 		ASTRuleExpression exp1 = logicOp.getExp1();
 		ASTRuleExpression exp2 = logicOp.getExp2();
-		builder.append("(");
-		exp1.compile(this);
 		switch (logicOp.getOp()) {
 			case "&":
-				builder.append("&&");
-				break;
+				return new InterpreterLogicOperatorAnd(context, compileLogicOperands(exp1, exp2));
 			
 			case "|":
-				builder.append("||");
-				break;
+				return new InterpreterLogicOperatorOr(context, compileLogicOperands(exp1, exp2));
 				
 			case "^":
-				builder.append("^^");
-				break;
+				return new InterpreterLogicOperatorXor(context, compileLogicOperands(exp1, exp2));
 				
 			default:
 				throw new ASTException("Unsupported operator: " + logicOp.getLocation().getText(), logicOp.getLocation());
 		}
-		exp2.compile(this);
-		builder.append(")");
-		return null;
 	}
 
 	@Override
-	public CompiledRule compile(ASTRuleCompareOp compareOp) {
+	public CompiledCondition compile(ASTRuleCompareOp compareOp) {
 		ASTExpression exp1 = compareOp.getExp1();
 		ASTExpression exp2 = compareOp.getExp2();
 		if (exp1.isReal() && exp2.isReal()) {
-			builder.append("(");
-			exp1.compile(this);
 			switch (compareOp.getOp()) {
 				case ">":
-					builder.append(">");
-					break;
+					return new InterpreterLogicOperatorGreather(context, compileOperands(exp1, exp2));
 				
 				case "<":
-					builder.append("<");
-					break;
+					return new InterpreterLogicOperatorLesser(context, compileOperands(exp1, exp2));
 					
 				case ">=":
-					builder.append(">=");
-					break;
+					return new InterpreterLogicOperatorGreatherOrEquals(context, compileOperands(exp1, exp2));
 					
 				case "<=":
-					builder.append("<=");
-					break;
+					return new InterpreterLogicOperatorLesserOrEquals(context, compileOperands(exp1, exp2));
 					
 				case "=":
-					builder.append("==");
-					break;
+					return new InterpreterLogicOperatorEquals(context, compileOperands(exp1, exp2));
 					
 				case "<>":
-					builder.append("!=");
-					break;
+					return new InterpreterLogicOperatorNotEquals(context, compileOperands(exp1, exp2));
 				
 				default:
 					throw new ASTException("Unsupported operator: " + compareOp.getLocation().getText(), compareOp.getLocation());
 			}
-			exp2.compile(this);
-			builder.append(")");
 		} else {
 			throw new ASTException("Real expressions required: " + compareOp.getLocation().getText(), compareOp.getLocation());
 		}
-		return null;
 	}
 
 	@Override
-	public CompiledPalette compile(ASTColorPalette palette) {
-		builder.append("palette");
-		builder.append(palette.getName().toUpperCase().substring(0, 1));
-		builder.append(palette.getName().substring(1));
-		builder.append(".get(");
+	public CompiledColor compile(ASTColorPalette palette) {
 		if (palette.getExp().isReal()) {
-			palette.getExp().compile(this);
+			return new InterpreterPalette(palette.getName(), palette.getExp().compile(this));
 		} else {
 			throw new ASTException("Expression type not valid: " + palette.getLocation().getText(), palette.getLocation());
 		}
-		builder.append(")");
-		return null;
 	}
 
 	@Override
 	public CompiledColor compile(ASTColorComponent component) {
-		builder.append("color(");
-		component.getExp1().compile(this);
+		CompiledExpression exp1 = component.getExp1().compile(this);
+		CompiledExpression exp2 = null;
+		CompiledExpression exp3 = null;
+		CompiledExpression exp4 = null;
 		if (component.getExp2() != null) {
-			builder.append(",");
-			component.getExp2().compile(this);
+			exp2 = component.getExp2().compile(this);
 		}
 		if (component.getExp3() != null) {
-			builder.append(",");
-			component.getExp3().compile(this);
+			exp3 = component.getExp3().compile(this);
 		}
 		if (component.getExp4() != null) {
-			builder.append(",");
-			component.getExp4().compile(this);
+			exp4 = component.getExp4().compile(this);
 		}
-		builder.append(")");
-		return null;
+		return new InterpreterColorComponent(exp1, exp2, exp3, exp4);
 	}
 
 	@Override
 	public CompiledStatement compile(ASTConditionalStatement statement) {
-		builder.append("if (");
-		statement.getConditionExp().compile(this);
-		builder.append(") {\n");
-		Map<String, CompilerVariable> vars = new HashMap<String, CompilerVariable>(variables);
+		List<CompiledStatement> thenStatements = new ArrayList<>();
+		List<CompiledStatement> elseStatements = new ArrayList<>();
 		for (ASTStatement innerStatement : statement.getThenStatementList().getStatements()) {
-			innerStatement.compile(new InterpreterExpressionCompiler(context, vars, builder));
+			thenStatements.add(innerStatement.compile(this));
 		}
 		if (statement.getElseStatementList() != null) {
-			builder.append("} else {\n");
 			for (ASTStatement innerStatement : statement.getElseStatementList().getStatements()) {
-				innerStatement.compile(new InterpreterExpressionCompiler(context, vars, builder));
+				elseStatements.add(innerStatement.compile(this));
 			}
 		}
-		builder.append("}\n");
-		return null;
+		return new InterpreterConditionalStatement(statement.getConditionExp().compile(this), thenStatements, elseStatements);
 	}
 
 	@Override
 	public CompiledStatement compile(ASTAssignStatement statement) {
-		CompilerVariable var = variables.get(statement.getName());
-		if (var != null) {
-			if (var.isReal() && statement.getExp().isReal()) {
-				builder.append(statement.getName());
-				builder.append(" = real(");
-				statement.getExp().compile(this);
-				builder.append(");\n");
-			} else if (!var.isReal() && !statement.getExp().isReal()) {
-				builder.append(statement.getName());
-				builder.append(".set(");
-				statement.getExp().compile(this);
-				builder.append(");\n");
-			} else if (!var.isReal() && statement.getExp().isReal()) {
-				builder.append(statement.getName());
-				builder.append(".set(");
-				statement.getExp().compile(this);
-				builder.append(");\n");
-			} else if (var.isReal() && !statement.getExp().isReal()) {
-				throw new ASTException("Cannot assign expression: " + statement.getLocation().getText(), statement.getLocation());
-			}
-		} else {
-			var = new CompilerVariable(statement.getName(), statement.getExp().isReal(), false);
-			variables.put(statement.getName(), var);
-			if (var.isReal()) {
-				builder.append("double ");
-				builder.append(statement.getName());
-				builder.append(" = real(");
-				statement.getExp().compile(this);
-				builder.append(");\n");
-			} else {
-				builder.append("final MutableNumber ");
-				builder.append(statement.getName());
-				builder.append(" = getNumber(");
-				builder.append(context.newNumberIndex());
-				builder.append(").set(");
-				statement.getExp().compile(this);
-				builder.append(");\n");
-			}
-		}
-		return null;
+		return new InterpreterAssignStatement(statement.getName(), statement.getExp().compile(this));
 	}
 
 	@Override
 	public CompiledStatement compile(ASTStopStatement statement) {
-		builder.append("n = i;\nbreak;\n");
-		return null;
+		return new InterpreterStopStatement();
 	}
 
 	@Override
 	public CompiledCondition compile(ASTConditionJulia condition) {
-		builder.append("isJulia()");
-		return null;
+		return new IntrepreterJuliaCondition();
 	}
 
 	@Override
 	public CompiledCondition compile(ASTConditionParen condition) {
-		builder.append("(");
-		condition.getExp().compile(this);
-		builder.append(")");
-		return null;
+		return condition.getExp().compile(this);
 	}
 
 	@Override
 	public CompiledCondition compile(ASTConditionNeg condition) {
-		builder.append("!");
-		condition.getExp().compile(this);
-		return null;
+		return new InterpreterInvertedCondition(condition.getExp().compile(this)) ;
+	}
+
+	private CompiledExpression[] compileArguments(ASTExpression[] arguments) {
+		CompiledExpression[] args = new CompiledExpression[arguments.length];
+		for (int i = 0; i < arguments.length; i++) {
+			args[i] = arguments[i].compile(this);
+		}
+		return args;
+	}
+
+	private CompiledExpression[] compileOperands(ASTExpression exp1, ASTExpression exp2) {
+		CompiledExpression[] operands = new CompiledExpression[2];
+		operands[0] = exp1.compile(this);
+		operands[1] = exp2.compile(this);
+		return operands;
+	}
+
+	private CompiledCondition[] compileLogicOperands(ASTConditionExpression exp1, ASTConditionExpression exp2) {
+		CompiledCondition[] operands = new CompiledCondition[2];
+		operands[0] = exp1.compile(this);
+		operands[1] = exp2.compile(this);
+		return operands;
+	}
+
+	private CompiledCondition[] compileLogicOperands(ASTRuleExpression exp1, ASTRuleExpression exp2) {
+		CompiledCondition[] operands = new CompiledCondition[2];
+		operands[0] = exp1.compile(this);
+		operands[1] = exp2.compile(this);
+		return operands;
 	}
 }

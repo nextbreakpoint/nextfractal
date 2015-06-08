@@ -25,6 +25,7 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.compiler;
 
 import com.nextbreakpoint.nextfractal.mandelbrot.core.MutableNumber;
+import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 
 public class CompilerVariable {
 	private final String name;
@@ -56,6 +57,14 @@ public class CompilerVariable {
 
 	public void setValue(MutableNumber value) {
 		this.value = value;
+	}
+
+	public void setValue(Number value) {
+		this.value.set(value);
+	}
+
+	public void setValue(double value) {
+		this.value.set(value);
 	}
 
 	public double getRealValue() {

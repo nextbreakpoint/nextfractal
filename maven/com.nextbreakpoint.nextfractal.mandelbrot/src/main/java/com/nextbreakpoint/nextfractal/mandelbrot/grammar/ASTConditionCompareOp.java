@@ -26,6 +26,8 @@ package com.nextbreakpoint.nextfractal.mandelbrot.grammar;
 
 import org.antlr.v4.runtime.Token;
 
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledCondition;
+
 public class ASTConditionCompareOp extends ASTConditionExpression {
 	private String op;
 	private ASTExpression exp1;
@@ -61,7 +63,7 @@ public class ASTConditionCompareOp extends ASTConditionExpression {
 		return builder.toString();
 	}
 
-	public void compile(ASTExpressionCompiler compiler) {
-		compiler.compile(this);
+	public CompiledCondition compile(ASTExpressionCompiler compiler) {
+		return compiler.compile(this);
 	}
 }

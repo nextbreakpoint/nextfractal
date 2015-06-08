@@ -1,6 +1,7 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.compiler.javascript;
 
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledCondition;
+import com.nextbreakpoint.nextfractal.mandelbrot.interpreter.InterpreterContext;
 
 public class JavaScriptCompiledCondition implements CompiledCondition {
 	private String code;
@@ -12,5 +13,10 @@ public class JavaScriptCompiledCondition implements CompiledCondition {
 	@Override
 	public String toString() {
 		return code;
+	}
+
+	@Override
+	public boolean evaluate(InterpreterContext context) {
+		return false;
 	}
 }

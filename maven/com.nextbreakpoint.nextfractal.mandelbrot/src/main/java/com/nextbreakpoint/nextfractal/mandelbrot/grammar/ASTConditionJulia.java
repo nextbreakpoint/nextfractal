@@ -26,6 +26,8 @@ package com.nextbreakpoint.nextfractal.mandelbrot.grammar;
 
 import org.antlr.v4.runtime.Token;
 
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledCondition;
+
 public class ASTConditionJulia extends ASTConditionExpression {
 	public ASTConditionJulia(Token location) {
 		super(location);
@@ -38,7 +40,7 @@ public class ASTConditionJulia extends ASTConditionExpression {
 		return builder.toString();
 	}
 
-	public void compile(ASTExpressionCompiler compiler) {
-		compiler.compile(this);
+	public CompiledCondition compile(ASTExpressionCompiler compiler) {
+		return compiler.compile(this);
 	}
 }

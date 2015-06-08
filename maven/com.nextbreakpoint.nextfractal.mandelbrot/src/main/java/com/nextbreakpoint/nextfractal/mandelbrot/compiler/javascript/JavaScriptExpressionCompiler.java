@@ -30,8 +30,6 @@ import java.util.Map;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledColor;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledCondition;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledExpression;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledPalette;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledRule;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledStatement;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.ExpressionContext;
@@ -433,7 +431,7 @@ public class JavaScriptExpressionCompiler implements ASTExpressionCompiler {
 	}
 
 	@Override
-	public CompiledRule compile(ASTRuleLogicOp logicOp) {
+	public CompiledCondition compile(ASTRuleLogicOp logicOp) {
 		ASTRuleExpression exp1 = logicOp.getExp1();
 		ASTRuleExpression exp2 = logicOp.getExp2();
 		builder.append("(");
@@ -460,7 +458,7 @@ public class JavaScriptExpressionCompiler implements ASTExpressionCompiler {
 	}
 
 	@Override
-	public CompiledRule compile(ASTRuleCompareOp compareOp) {
+	public CompiledCondition compile(ASTRuleCompareOp compareOp) {
 		ASTExpression exp1 = compareOp.getExp1();
 		ASTExpression exp2 = compareOp.getExp2();
 		if (exp1.isReal() && exp2.isReal()) {
@@ -503,7 +501,7 @@ public class JavaScriptExpressionCompiler implements ASTExpressionCompiler {
 	}
 
 	@Override
-	public CompiledPalette compile(ASTColorPalette palette) {
+	public CompiledColor compile(ASTColorPalette palette) {
 		builder.append("palette");
 		builder.append(palette.getName().toUpperCase().substring(0, 1));
 		builder.append(palette.getName().substring(1));

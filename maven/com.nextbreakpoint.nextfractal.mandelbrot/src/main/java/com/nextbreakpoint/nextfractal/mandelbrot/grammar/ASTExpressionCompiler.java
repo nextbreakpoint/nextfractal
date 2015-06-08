@@ -27,8 +27,6 @@ package com.nextbreakpoint.nextfractal.mandelbrot.grammar;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledColor;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledCondition;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledExpression;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledPalette;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledRule;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledStatement;
 
 public interface ASTExpressionCompiler {
@@ -54,11 +52,11 @@ public interface ASTExpressionCompiler {
 
 	public CompiledCondition compile(ASTConditionNeg condition);
 
-	public CompiledRule compile(ASTRuleLogicOp logicOp);
+	public CompiledCondition compile(ASTRuleLogicOp logicOp);
 
-	public CompiledRule compile(ASTRuleCompareOp compareOp);
+	public CompiledCondition compile(ASTRuleCompareOp compareOp);
 
-	public CompiledPalette compile(ASTColorPalette palette);
+	public CompiledColor compile(ASTColorPalette palette);
 
 	public CompiledColor compile(ASTColorComponent component);
 
