@@ -152,8 +152,8 @@ public class GridView extends Pane {
 			if (prevOffsetX != offsetX || prevOffsetY != offsetY) {
 				prevOffsetY = offsetY;
 				prevOffsetX = offsetX;
-				updateRows();
 				layoutCells();
+				updateRows();
 			}
 		}
 	}
