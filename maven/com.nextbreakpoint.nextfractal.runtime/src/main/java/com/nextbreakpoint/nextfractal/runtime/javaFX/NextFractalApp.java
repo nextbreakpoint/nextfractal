@@ -29,6 +29,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -107,6 +109,8 @@ public class NextFractalApp extends Application {
         mainPane.setPrefHeight(height);
         mainPane.setMinWidth(width + editorWidth);
         mainPane.setMinHeight(height);
+        mainPane.setMaxWidth(width + editorWidth);
+        mainPane.setMaxHeight(height);
         editorRootPane = new BorderPane();
 		editorRootPane.setPrefWidth(editorWidth);
         editorRootPane.setPrefHeight(height);
@@ -191,9 +195,11 @@ public class NextFractalApp extends Application {
 				}
 			}
 		});
+
 //		quitItem.setOnAction(e -> {
 //			primaryStage.close();
 //		});
+		
 		if (session != null) {
 			session.addSessionListener(new SessionListener() {
 				@Override
