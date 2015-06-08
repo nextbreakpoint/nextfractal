@@ -22,29 +22,29 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.mandelbrot.compiler;
+package com.nextbreakpoint.nextfractal.mandelbrot.interpreter;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerBuilder;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerError;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerReport;
+import com.nextbreakpoint.nextfractal.mandelbrot.core.Color;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Orbit;
-import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTFractal;
 
-public class InterpreterOrbitBuilder implements CompilerBuilder<Orbit> {
-	private ASTFractal astFractal;
-	private ExpressionContext context;
-	private List<CompilerError> errors;
-	
-	public InterpreterOrbitBuilder(ASTFractal astFractal, ExpressionContext context, List<CompilerError> errors) {
-		this.astFractal = astFractal;
-		this.context = context;
-		this.errors = errors;
+public class InterpreterClassCompiler {
+	public InterpreterClassCompiler() {
 	}
 	
-	public Orbit build() throws InstantiationException, IllegalAccessException {
-		return new InterpreterOrbit(astFractal, context);
+	public CompilerBuilder<Orbit> compileOrbit(CompilerReport report) throws ClassNotFoundException, IOException {
+		List<CompilerError> errors = new ArrayList<>();
+		return new InterpreterOrbitBuilder(report.getAST(), report.getOrbitContext(), errors);
 	}
 
-	public List<CompilerError> getErrors() {
-		return errors;
+	public CompilerBuilder<Color> compileColor(CompilerReport report) throws ClassNotFoundException, IOException {
+		List<CompilerError> errors = new ArrayList<>();
+		return new InterpreterColorBuilder(report.getAST(), report.getColorContext(), errors);
 	}
-}
+}	

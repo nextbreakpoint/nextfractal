@@ -22,29 +22,40 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.mandelbrot.compiler;
+package com.nextbreakpoint.nextfractal.mandelbrot.interpreter;
 
-import java.util.List;
-
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.ExpressionContext;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Color;
+import com.nextbreakpoint.nextfractal.mandelbrot.core.MutableNumber;
+import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTColor;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTFractal;
 
-public class InterpreterColorBuilder implements CompilerBuilder<Color> {
+public class InterpreterColor extends Color {
 	private ASTFractal astFractal;
 	private ExpressionContext context;
-	private List<CompilerError> errors;
 
-	public InterpreterColorBuilder(ASTFractal astFractal, ExpressionContext context, List<CompilerError> errors) {
+	public InterpreterColor(ASTFractal astFractal, ExpressionContext context) {
 		this.astFractal = astFractal;
 		this.context = context;
-		this.errors = errors;
-	}
-	
-	public Color build() throws InstantiationException, IllegalAccessException {
-		return new InterpreterColor(astFractal, context);
 	}
 
-	public List<CompilerError> getErrors() {
-		return errors;
+	public void init() {
+	}
+
+	public void render() {
+		ASTColor astColor = astFractal.getColor();
+		final MutableNumber x = getVariable(0);
+		double n = getRealVariable(1);
+		setColor(color(1.0, 0.0, 0.0, 0.0));
+		if ((n == 0.0)) {
+			addColor(1.0, color(1.0, 0.0, 0.0, 0.0));
+		}
+		if ((n > 0.0)) {
+			addColor(1.0, color(1.0, 1.0, 1.0, 1.0));
+		}
+	}
+
+	protected MutableNumber[] createNumbers() {
+		return new MutableNumber[context.getNumberCount()];
 	}
 }

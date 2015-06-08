@@ -24,40 +24,47 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.grammar;
 
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledColor;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledCondition;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledExpression;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledPalette;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledRule;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledStatement;
+
 public interface ASTExpressionCompiler {
-	public void compile(ASTNumber number);
+	public CompiledExpression compile(ASTNumber number);
 
-	public void compile(ASTFunction function);
+	public CompiledExpression compile(ASTFunction function);
 
-	public void compile(ASTOperator operator);
+	public CompiledExpression compile(ASTOperator operator);
 
-	public void compile(ASTParen paren);
+	public CompiledExpression compile(ASTParen paren);
 
-	public void compile(ASTVariable variable);
+	public CompiledExpression compile(ASTVariable variable);
 
-	public void compile(ASTConditionCompareOp compareOp);
+	public CompiledCondition compile(ASTConditionCompareOp compareOp);
 
-	public void compile(ASTConditionLogicOp logicOp);
+	public CompiledCondition compile(ASTConditionLogicOp logicOp);
 
-	public void compile(ASTConditionTrap trap);
+	public CompiledCondition compile(ASTConditionTrap trap);
 
-	public void compile(ASTRuleLogicOp logicOp);
+	public CompiledCondition compile(ASTConditionJulia condition);
 
-	public void compile(ASTRuleCompareOp compareOp);
+	public CompiledCondition compile(ASTConditionParen condition);
 
-	public void compile(ASTColorPalette palette);
+	public CompiledCondition compile(ASTConditionNeg condition);
 
-	public void compile(ASTColorComponent component);
+	public CompiledRule compile(ASTRuleLogicOp logicOp);
 
-	public void compile(ASTConditionalStatement statement);
+	public CompiledRule compile(ASTRuleCompareOp compareOp);
 
-	public void compile(ASTAssignStatement statement);
+	public CompiledPalette compile(ASTColorPalette palette);
 
-	public void compile(ASTStopStatement statement);
+	public CompiledColor compile(ASTColorComponent component);
 
-	public void compile(ASTConditionJulia condition);
+	public CompiledStatement compile(ASTConditionalStatement statement);
 
-	public void compile(ASTConditionParen condition);
+	public CompiledStatement compile(ASTAssignStatement statement);
 
-	public void compile(ASTConditionNeg condition);
+	public CompiledStatement compile(ASTStopStatement statement);
 }

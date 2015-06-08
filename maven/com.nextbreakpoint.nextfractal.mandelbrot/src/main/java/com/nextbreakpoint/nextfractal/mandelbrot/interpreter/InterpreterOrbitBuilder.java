@@ -22,39 +22,32 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.mandelbrot.compiler;
+package com.nextbreakpoint.nextfractal.mandelbrot.interpreter;
 
-import com.nextbreakpoint.nextfractal.mandelbrot.core.Color;
-import com.nextbreakpoint.nextfractal.mandelbrot.core.MutableNumber;
-import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTColor;
+import java.util.List;
+
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerBuilder;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerError;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.ExpressionContext;
+import com.nextbreakpoint.nextfractal.mandelbrot.core.Orbit;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTFractal;
 
-public class InterpreterColor extends Color {
+public class InterpreterOrbitBuilder implements CompilerBuilder<Orbit> {
 	private ASTFractal astFractal;
 	private ExpressionContext context;
-
-	public InterpreterColor(ASTFractal astFractal, ExpressionContext context) {
+	private List<CompilerError> errors;
+	
+	public InterpreterOrbitBuilder(ASTFractal astFractal, ExpressionContext context, List<CompilerError> errors) {
 		this.astFractal = astFractal;
 		this.context = context;
+		this.errors = errors;
+	}
+	
+	public Orbit build() throws InstantiationException, IllegalAccessException {
+		return new InterpreterOrbit(astFractal, context);
 	}
 
-	public void init() {
-	}
-
-	public void render() {
-		ASTColor astColor = astFractal.getColor();
-		final MutableNumber x = getVariable(0);
-		double n = getRealVariable(1);
-		setColor(color(1.0, 0.0, 0.0, 0.0));
-		if ((n == 0.0)) {
-			addColor(1.0, color(1.0, 0.0, 0.0, 0.0));
-		}
-		if ((n > 0.0)) {
-			addColor(1.0, color(1.0, 1.0, 1.0, 1.0));
-		}
-	}
-
-	protected MutableNumber[] createNumbers() {
-		return new MutableNumber[context.getNumberCount()];
+	public List<CompilerError> getErrors() {
+		return errors;
 	}
 }

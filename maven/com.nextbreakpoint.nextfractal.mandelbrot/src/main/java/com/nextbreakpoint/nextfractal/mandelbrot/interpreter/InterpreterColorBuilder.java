@@ -22,60 +22,32 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.mandelbrot.compiler;
+package com.nextbreakpoint.nextfractal.mandelbrot.interpreter;
 
 import java.util.List;
 
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerBuilder;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerError;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.ExpressionContext;
+import com.nextbreakpoint.nextfractal.mandelbrot.core.Color;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTFractal;
 
-public class CompilerReport {
-	private ASTFractal ast;
-	private Type type;
-	private String orbitSource;
-	private String colorSource;
-	private ExpressionContext orbitContext;
-	private ExpressionContext colorContext;
+public class InterpreterColorBuilder implements CompilerBuilder<Color> {
+	private ASTFractal astFractal;
+	private ExpressionContext context;
 	private List<CompilerError> errors;
 
-	public CompilerReport(ASTFractal ast, Type type, String orbitSource, String colorSource, ExpressionContext orbitContext, ExpressionContext colorContext, List<CompilerError> errors) {
-		this.ast = ast;
-		this.type = type;
-		this.orbitSource = orbitSource;
-		this.colorSource = colorSource;
-		this.orbitContext = orbitContext;
-		this.colorContext = colorContext;
+	public InterpreterColorBuilder(ASTFractal astFractal, ExpressionContext context, List<CompilerError> errors) {
+		this.astFractal = astFractal;
+		this.context = context;
 		this.errors = errors;
 	}
-
-	public ASTFractal getAST() {
-		return ast;
-	}
-
-	public String getOrbitSource() {
-		return orbitSource;
-	}
-
-	public String getColorSource() {
-		return colorSource;
+	
+	public Color build() throws InstantiationException, IllegalAccessException {
+		return new InterpreterColor(astFractal, context);
 	}
 
 	public List<CompilerError> getErrors() {
 		return errors;
-	}
-
-	public ExpressionContext getOrbitContext() {
-		return orbitContext;
-	}
-
-	public ExpressionContext getColorContext() {
-		return colorContext;
-	}
-	
-	public Type getType() {
-		return type;
-	}
-
-	public enum Type {
-		JAVA, JAVASCRIPT, INTERPRETER
 	}
 }

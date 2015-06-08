@@ -27,6 +27,12 @@ package com.nextbreakpoint.nextfractal.mandelbrot.compiler.java;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledColor;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledCondition;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledExpression;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledPalette;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledRule;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledStatement;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.ExpressionContext;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTAssignStatement;
@@ -66,7 +72,7 @@ public class JavaExpressionCompiler implements ASTExpressionCompiler {
 	}
 
 	@Override
-	public void compile(ASTNumber number) {
+	public CompiledExpression compile(ASTNumber number) {
 		if (number.isReal()) {
 			builder.append(number.r());
 		} else {
@@ -78,10 +84,11 @@ public class JavaExpressionCompiler implements ASTExpressionCompiler {
 			builder.append(number.i());
 			builder.append(")");
 		}
+		return null;
 	}
 
 	@Override
-	public void compile(ASTFunction function) {
+	public CompiledExpression compile(ASTFunction function) {
 		builder.append("func");
 		builder.append(function.getName().toUpperCase().substring(0, 1));
 		builder.append(function.getName().substring(1));
@@ -177,10 +184,11 @@ public class JavaExpressionCompiler implements ASTExpressionCompiler {
 			}
 		}
 		builder.append(")");
+		return null;
 	}
 
 	@Override
-	public void compile(ASTOperator operator) {
+	public CompiledExpression compile(ASTOperator operator) {
 		ASTExpression exp1 = operator.getExp1();
 		ASTExpression exp2 = operator.getExp2();
 		if (exp2 == null) {
@@ -323,22 +331,25 @@ public class JavaExpressionCompiler implements ASTExpressionCompiler {
 				builder.append(")");
 			}
 		}
+		return null;
 	}
 
 	@Override
-	public void compile(ASTParen paren) {
+	public CompiledExpression compile(ASTParen paren) {
 		builder.append("(");
 		paren.getExp().compile(this);
 		builder.append(")");
+		return null;
 	}
 
 	@Override
-	public void compile(ASTVariable variable) {
+	public CompiledExpression compile(ASTVariable variable) {
 		builder.append(variable.getName());
+		return null;
 	}
 
 	@Override
-	public void compile(ASTConditionCompareOp compareOp) {
+	public CompiledCondition compile(ASTConditionCompareOp compareOp) {
 		ASTExpression exp1 = compareOp.getExp1();
 		ASTExpression exp2 = compareOp.getExp2();
 		if (exp1.isReal() && exp2.isReal()) {
@@ -377,10 +388,11 @@ public class JavaExpressionCompiler implements ASTExpressionCompiler {
 		} else {
 			throw new ASTException("Real expressions required: " + compareOp.getLocation().getText(), compareOp.getLocation());
 		}
+		return null;
 	}
 
 	@Override
-	public void compile(ASTConditionLogicOp logicOp) {
+	public CompiledCondition compile(ASTConditionLogicOp logicOp) {
 		ASTConditionExpression exp1 = logicOp.getExp1();
 		ASTConditionExpression exp2 = logicOp.getExp2();
 		builder.append("(");
@@ -403,10 +415,11 @@ public class JavaExpressionCompiler implements ASTExpressionCompiler {
 		}
 		exp2.compile(this);
 		builder.append(")");
+		return null;
 	}
 
 	@Override
-	public void compile(ASTConditionTrap trap) {
+	public CompiledCondition compile(ASTConditionTrap trap) {
 		if (!trap.isContains()) {
 			builder.append("!");
 		}
@@ -416,10 +429,11 @@ public class JavaExpressionCompiler implements ASTExpressionCompiler {
 		builder.append(".contains(");
 		trap.getExp().compile(this);
 		builder.append(")");
+		return null;
 	}
 
 	@Override
-	public void compile(ASTRuleLogicOp logicOp) {
+	public CompiledRule compile(ASTRuleLogicOp logicOp) {
 		ASTRuleExpression exp1 = logicOp.getExp1();
 		ASTRuleExpression exp2 = logicOp.getExp2();
 		builder.append("(");
@@ -442,10 +456,11 @@ public class JavaExpressionCompiler implements ASTExpressionCompiler {
 		}
 		exp2.compile(this);
 		builder.append(")");
+		return null;
 	}
 
 	@Override
-	public void compile(ASTRuleCompareOp compareOp) {
+	public CompiledRule compile(ASTRuleCompareOp compareOp) {
 		ASTExpression exp1 = compareOp.getExp1();
 		ASTExpression exp2 = compareOp.getExp2();
 		if (exp1.isReal() && exp2.isReal()) {
@@ -484,10 +499,11 @@ public class JavaExpressionCompiler implements ASTExpressionCompiler {
 		} else {
 			throw new ASTException("Real expressions required: " + compareOp.getLocation().getText(), compareOp.getLocation());
 		}
+		return null;
 	}
 
 	@Override
-	public void compile(ASTColorPalette palette) {
+	public CompiledPalette compile(ASTColorPalette palette) {
 		builder.append("palette");
 		builder.append(palette.getName().toUpperCase().substring(0, 1));
 		builder.append(palette.getName().substring(1));
@@ -498,10 +514,11 @@ public class JavaExpressionCompiler implements ASTExpressionCompiler {
 			throw new ASTException("Expression type not valid: " + palette.getLocation().getText(), palette.getLocation());
 		}
 		builder.append(")");
+		return null;
 	}
 
 	@Override
-	public void compile(ASTColorComponent component) {
+	public CompiledColor compile(ASTColorComponent component) {
 		builder.append("color(");
 		component.getExp1().compile(this);
 		if (component.getExp2() != null) {
@@ -517,10 +534,11 @@ public class JavaExpressionCompiler implements ASTExpressionCompiler {
 			component.getExp4().compile(this);
 		}
 		builder.append(")");
+		return null;
 	}
 
 	@Override
-	public void compile(ASTConditionalStatement statement) {
+	public CompiledStatement compile(ASTConditionalStatement statement) {
 		builder.append("if (");
 		statement.getConditionExp().compile(this);
 		builder.append(") {\n");
@@ -535,10 +553,11 @@ public class JavaExpressionCompiler implements ASTExpressionCompiler {
 			}
 		}
 		builder.append("}\n");
+		return null;
 	}
 
 	@Override
-	public void compile(ASTAssignStatement statement) {
+	public CompiledStatement compile(ASTAssignStatement statement) {
 		CompilerVariable var = variables.get(statement.getName());
 		if (var != null) {
 			if (var.isReal() && statement.getExp().isReal()) {
@@ -578,28 +597,33 @@ public class JavaExpressionCompiler implements ASTExpressionCompiler {
 				builder.append(");\n");
 			}
 		}
+		return null;
 	}
 
 	@Override
-	public void compile(ASTStopStatement statement) {
+	public CompiledStatement compile(ASTStopStatement statement) {
 		builder.append("n = i;\nbreak;\n");
+		return null;
 	}
 
 	@Override
-	public void compile(ASTConditionJulia condition) {
+	public CompiledCondition compile(ASTConditionJulia condition) {
 		builder.append("isJulia()");
+		return null;
 	}
 
 	@Override
-	public void compile(ASTConditionParen condition) {
+	public CompiledCondition compile(ASTConditionParen condition) {
 		builder.append("(");
 		condition.getExp().compile(this);
 		builder.append(")");
+		return null;
 	}
 
 	@Override
-	public void compile(ASTConditionNeg condition) {
+	public CompiledCondition compile(ASTConditionNeg condition) {
 		builder.append("!");
 		condition.getExp().compile(this);
+		return null;
 	}
 }

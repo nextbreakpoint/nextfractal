@@ -22,7 +22,7 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.mandelbrot.compiler.javascript;
+package com.nextbreakpoint.nextfractal.mandelbrot.interpreter;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -60,12 +60,12 @@ import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTStatement;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTStopStatement;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTVariable;
 
-public class JavaScriptExpressionCompiler implements ASTExpressionCompiler {
+public class InterpreterExpressionCompiler implements ASTExpressionCompiler {
 	private final Map<String, CompilerVariable> variables;
 	private final ExpressionContext context;
 	private final StringBuilder builder;
 	
-	public JavaScriptExpressionCompiler(ExpressionContext context, Map<String, CompilerVariable> variables, StringBuilder builder) {
+	public InterpreterExpressionCompiler(ExpressionContext context, Map<String, CompilerVariable> variables, StringBuilder builder) {
 		this.variables = variables;
 		this.context = context;
 		this.builder = builder;
@@ -74,22 +74,15 @@ public class JavaScriptExpressionCompiler implements ASTExpressionCompiler {
 	@Override
 	public CompiledExpression compile(ASTNumber number) {
 		if (number.isReal()) {
-			builder.append(number.r());
+			return new InterpreterRealNumber(number.r());
 		} else {
-			builder.append("orbit.getNumber(");
-			builder.append(context.newNumberIndex());
-			builder.append(").set(");
-			builder.append(number.r());
-			builder.append(",");
-			builder.append(number.i());
-			builder.append(")");
+			return new InterpreterNumber(context.newNumberIndex(), number.r(), number.i());
 		}
-		return null;
 	}
 
 	@Override
 	public CompiledExpression compile(ASTFunction function) {
-		builder.append("exp.func");
+		builder.append("func");
 		builder.append(function.getName().toUpperCase().substring(0, 1));
 		builder.append(function.getName().substring(1));
 		builder.append("(");
@@ -114,7 +107,7 @@ public class JavaScriptExpressionCompiler implements ASTExpressionCompiler {
 					throw new ASTException("Invalid number of arguments: " + function.getLocation().getText(), function.getLocation());
 				}	
 				if (!function.getArguments()[0].isReal()) {
-					builder.append("orbit.getNumber(");
+					builder.append("getNumber(");
 					builder.append(context.newNumberIndex());
 					builder.append("),");
 				}
@@ -155,7 +148,7 @@ public class JavaScriptExpressionCompiler implements ASTExpressionCompiler {
 					throw new ASTException("Invalid type of arguments: " + function.getLocation().getText(), function.getLocation());
 				}				
 				if (!function.getArguments()[0].isReal()) {
-					builder.append("orbit.getNumber(");
+					builder.append("getNumber(");
 					builder.append(context.newNumberIndex());
 					builder.append("),");
 				}
@@ -167,7 +160,7 @@ public class JavaScriptExpressionCompiler implements ASTExpressionCompiler {
 					throw new ASTException("Invalid number of arguments: " + function.getLocation().getText(), function.getLocation());
 				}				
 				if (!function.getArguments()[0].isReal()) {
-					builder.append("orbit.getNumber(");
+					builder.append("getNumber(");
 					builder.append(context.newNumberIndex());
 					builder.append("),");
 				}
@@ -198,9 +191,9 @@ public class JavaScriptExpressionCompiler implements ASTExpressionCompiler {
 						builder.append("-");
 						exp1.compile(this);
 					} else {
-						builder.append("exp.opNeg");
+						builder.append("opNeg");
 						builder.append("(");
-						builder.append("orbit.getNumber(");
+						builder.append("getNumber(");
 						builder.append(context.newNumberIndex());
 						builder.append("),");
 						exp1.compile(this);
@@ -212,9 +205,9 @@ public class JavaScriptExpressionCompiler implements ASTExpressionCompiler {
 					if (exp1.isReal()) {
 						exp1.compile(this);
 					} else {
-						builder.append("exp.opPos");
+						builder.append("opPos");
 						builder.append("(");
-						builder.append("orbit.getNumber(");
+						builder.append("getNumber(");
 						builder.append(context.newNumberIndex());
 						builder.append("),");
 						exp1.compile(this);
@@ -228,10 +221,10 @@ public class JavaScriptExpressionCompiler implements ASTExpressionCompiler {
 		} else {
 			if (exp1.isReal() && exp2.isReal()) {
 				if (operator.getOp().equals("^")) {
-					builder.append("exp.opPow");
+					builder.append("opPow");
 				}
 				if (operator.getOp().equals("<>")) {
-					builder.append("orbit.getNumber(");
+					builder.append("getNumber(");
 					builder.append(context.newNumberIndex());
 					builder.append(").set");
 				}
@@ -270,30 +263,30 @@ public class JavaScriptExpressionCompiler implements ASTExpressionCompiler {
 			} else if (exp2.isReal()) {
 				switch (operator.getOp()) {
 					case "+":
-						builder.append("exp.opAdd");
+						builder.append("opAdd");
 						break;
 					
 					case "-":
-						builder.append("exp.opSub");
+						builder.append("opSub");
 						break;
 						
 					case "*":
-						builder.append("exp.opMul");
+						builder.append("opMul");
 						break;
 						
 					case "/":
-						builder.append("exp.opDiv");
+						builder.append("opDiv");
 						break;
 						
 					case "^":
-						builder.append("exp.opPow");
+						builder.append("opPow");
 						break;
 					
 					default:
 						throw new ASTException("Unsupported operator: " + operator.getLocation().getText(), operator.getLocation());
 				}
 				builder.append("(");
-				builder.append("orbit.getNumber(");
+				builder.append("getNumber(");
 				builder.append(context.newNumberIndex());
 				builder.append("),");
 				exp1.compile(this);
@@ -303,26 +296,26 @@ public class JavaScriptExpressionCompiler implements ASTExpressionCompiler {
 			} else {
 				switch (operator.getOp()) {
 					case "+":
-						builder.append("exp.opAdd");
+						builder.append("opAdd");
 						break;
 					
 					case "-":
-						builder.append("exp.opSub");
+						builder.append("opSub");
 						break;
 						
 					case "*":
-						builder.append("exp.opMul");
+						builder.append("opMul");
 						break;
 						
 					case "/":
-						builder.append("exp.opDiv");
+						builder.append("opDiv");
 						break;
 						
 					default:
 						throw new ASTException("Unsupported operator: " + operator.getLocation().getText(), operator.getLocation());
 				}
 				builder.append("(");
-				builder.append("orbit.getNumber(");
+				builder.append("getNumber(");
 				builder.append(context.newNumberIndex());
 				builder.append("),");
 				exp1.compile(this);
@@ -519,7 +512,7 @@ public class JavaScriptExpressionCompiler implements ASTExpressionCompiler {
 
 	@Override
 	public CompiledColor compile(ASTColorComponent component) {
-		builder.append("color.color(");
+		builder.append("color(");
 		component.getExp1().compile(this);
 		if (component.getExp2() != null) {
 			builder.append(",");
@@ -544,12 +537,12 @@ public class JavaScriptExpressionCompiler implements ASTExpressionCompiler {
 		builder.append(") {\n");
 		Map<String, CompilerVariable> vars = new HashMap<String, CompilerVariable>(variables);
 		for (ASTStatement innerStatement : statement.getThenStatementList().getStatements()) {
-			innerStatement.compile(new JavaScriptExpressionCompiler(context, vars, builder));
+			innerStatement.compile(new InterpreterExpressionCompiler(context, vars, builder));
 		}
 		if (statement.getElseStatementList() != null) {
 			builder.append("} else {\n");
 			for (ASTStatement innerStatement : statement.getElseStatementList().getStatements()) {
-				innerStatement.compile(new JavaScriptExpressionCompiler(context, vars, builder));
+				innerStatement.compile(new InterpreterExpressionCompiler(context, vars, builder));
 			}
 		}
 		builder.append("}\n");
@@ -562,7 +555,7 @@ public class JavaScriptExpressionCompiler implements ASTExpressionCompiler {
 		if (var != null) {
 			if (var.isReal() && statement.getExp().isReal()) {
 				builder.append(statement.getName());
-				builder.append(" = exp.real(");
+				builder.append(" = real(");
 				statement.getExp().compile(this);
 				builder.append(");\n");
 			} else if (!var.isReal() && !statement.getExp().isReal()) {
@@ -582,15 +575,15 @@ public class JavaScriptExpressionCompiler implements ASTExpressionCompiler {
 			var = new CompilerVariable(statement.getName(), statement.getExp().isReal(), false);
 			variables.put(statement.getName(), var);
 			if (var.isReal()) {
-				builder.append("var ");
+				builder.append("double ");
 				builder.append(statement.getName());
-				builder.append(" = exp.real(");
+				builder.append(" = real(");
 				statement.getExp().compile(this);
 				builder.append(");\n");
 			} else {
-				builder.append("var ");
+				builder.append("final MutableNumber ");
 				builder.append(statement.getName());
-				builder.append(" = orbit.getNumber(");
+				builder.append(" = getNumber(");
 				builder.append(context.newNumberIndex());
 				builder.append(").set(");
 				statement.getExp().compile(this);
@@ -602,13 +595,13 @@ public class JavaScriptExpressionCompiler implements ASTExpressionCompiler {
 
 	@Override
 	public CompiledStatement compile(ASTStopStatement statement) {
-		builder.append("orbit.n = i;\nbreak;\n");
+		builder.append("n = i;\nbreak;\n");
 		return null;
 	}
 
 	@Override
 	public CompiledCondition compile(ASTConditionJulia condition) {
-		builder.append("orbit.isJulia()");
+		builder.append("isJulia()");
 		return null;
 	}
 

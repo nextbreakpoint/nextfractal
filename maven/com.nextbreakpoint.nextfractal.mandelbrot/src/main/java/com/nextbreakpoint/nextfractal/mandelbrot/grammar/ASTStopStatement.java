@@ -26,6 +26,8 @@ package com.nextbreakpoint.nextfractal.mandelbrot.grammar;
 
 import org.antlr.v4.runtime.Token;
 
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledStatement;
+
 public class ASTStopStatement extends ASTStatement {
 	public ASTStopStatement(Token location) {
 		super(location);
@@ -37,7 +39,7 @@ public class ASTStopStatement extends ASTStatement {
 	}
 
 	@Override
-	public void compile(ASTExpressionCompiler compiler) {
-		compiler.compile(this);
+	public CompiledStatement compile(ASTExpressionCompiler compiler) {
+		return compiler.compile(this);
 	}
 }

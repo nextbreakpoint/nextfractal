@@ -22,12 +22,9 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.mandelbrot.compiler;
+package com.nextbreakpoint.nextfractal.mandelbrot.interpreter;
 
-import static com.nextbreakpoint.nextfractal.mandelbrot.core.Expression.funcMod2;
-import static com.nextbreakpoint.nextfractal.mandelbrot.core.Expression.number;
-import static com.nextbreakpoint.nextfractal.mandelbrot.core.Expression.opAdd;
-import static com.nextbreakpoint.nextfractal.mandelbrot.core.Expression.opMul;
+import static com.nextbreakpoint.nextfractal.mandelbrot.core.Expression.*;
 
 import java.util.List;
 
@@ -35,6 +32,8 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.ExpressionContext;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.MutableNumber;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Orbit;
@@ -89,7 +88,11 @@ public class InterpreterOrbit extends Orbit {
 		if (states != null) {
 			saveState(states);
 		}
+		ExpressionContext context = new ExpressionContext();
 		for (int i = astOrbit.getLoop().getBegin() + 1; i <= astOrbit.getLoop().getEnd(); i++) {
+//			for (ASTStatement statement : astOrbit.getLoop().getStatements()) {
+//				statement.evaluate(context, scope);
+//			}
 			x.set(opAdd(getNumber(0), opMul(getNumber(1), x, x), w));
 			if ((funcMod2(x) > 4.0)) {
 				n = i;
