@@ -29,6 +29,8 @@ import java.util.List;
 
 import org.antlr.v4.runtime.Token;
 
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledTrap;
+
 public class ASTOrbitTrap extends ASTObject {
 	private String name;
 	private ASTNumber center;
@@ -78,5 +80,9 @@ public class ASTOrbitTrap extends ASTObject {
 		}
 		builder.append("]");
 		return builder.toString();
+	}
+
+	public CompiledTrap compile(ASTExpressionCompiler compiler) {
+		return compiler.compile(this);
 	}
 }

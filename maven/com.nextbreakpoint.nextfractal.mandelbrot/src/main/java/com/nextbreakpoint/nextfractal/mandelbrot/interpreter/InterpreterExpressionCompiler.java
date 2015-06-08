@@ -26,13 +26,14 @@ package com.nextbreakpoint.nextfractal.mandelbrot.interpreter;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
+import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledColor;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledCondition;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledExpression;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledStatement;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledTrap;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledTrapOp;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.ExpressionContext;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTAssignStatement;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTColorComponent;
@@ -51,6 +52,8 @@ import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTExpressionCompiler;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTFunction;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTNumber;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTOperator;
+import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTOrbitTrap;
+import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTOrbitTrapOp;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTParen;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTRuleCompareOp;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTRuleExpression;
@@ -62,7 +65,7 @@ import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTVariable;
 public class InterpreterExpressionCompiler implements ASTExpressionCompiler {
 	private final ExpressionContext context;
 	
-	public InterpreterExpressionCompiler(ExpressionContext context, Map<String, CompilerVariable> variables, StringBuilder builder) {
+	public InterpreterExpressionCompiler(ExpressionContext context) {
 		this.context = context;
 	}
 
@@ -460,6 +463,69 @@ public class InterpreterExpressionCompiler implements ASTExpressionCompiler {
 	@Override
 	public CompiledCondition compile(ASTConditionNeg condition) {
 		return new InterpreterInvertedCondition(condition.getExp().compile(this)) ;
+	}
+
+	@Override
+	public CompiledTrap compile(ASTOrbitTrap orbitTrap) {
+		CompiledTrap trap = new CompiledTrap();
+		trap.setName(orbitTrap.getName());
+		trap.setCenter(orbitTrap.getCenter());
+		List<CompiledTrapOp> operators = new ArrayList<>();
+		for (ASTOrbitTrapOp astTrapOp : orbitTrap.getOperators()) {
+			operators.add(astTrapOp.compile(this));
+		}
+		trap.setOperators(operators);
+		return trap;
+	}
+
+	@Override
+	public CompiledTrapOp compile(ASTOrbitTrapOp orbitTrapOp) {
+		Number c1 = null;
+		Number c2 = null;
+		Number c3 = null;
+		if (orbitTrapOp.getC1() != null) {
+			c1 = new Number(orbitTrapOp.getC1().r(), orbitTrapOp.getC1().i());
+		}
+		if (orbitTrapOp.getC2() != null) {
+			c2 = new Number(orbitTrapOp.getC2().r(), orbitTrapOp.getC2().i());
+		}
+		if (orbitTrapOp.getC3() != null) {
+			c3 = new Number(orbitTrapOp.getC3().r(), orbitTrapOp.getC3().i());
+		}
+		switch (orbitTrapOp.getOp()) {
+			case "MOVETO":
+				return new CompiledTrapOpMoveTo(c1);
+	
+			case "MOVETOREL":
+				return new CompiledTrapOpMoveToRel(c1);
+	
+			case "LINETO":
+				return new CompiledTrapOpLineTo(c1);
+	
+			case "LINETOREL":
+				return new CompiledTrapOpLineToRel(c1);
+	
+			case "ARCTO":
+				return new CompiledTrapOpArcTo(c1);
+	
+			case "ARCTOREL":
+				return new CompiledTrapOpArcToRel(c1);
+	
+			case "QUADTO":
+				return new CompiledTrapOpQuadTo(c1, c2);
+	
+			case "QUADTOREL":
+				return new CompiledTrapOpQuadToRel(c1, c2);
+	
+			case "CURVETO":
+				return new CompiledTrapOpCurveTo(c1, c2, c3);
+	
+			case "CURVETOREL":
+				return new CompiledTrapOpCurveToRel(c1, c2, c3);
+	
+			default:
+				throw new ASTException("Unsupported operator: " + orbitTrapOp.getLocation().getText(), orbitTrapOp.getLocation());
+		}		
 	}
 
 	private CompiledExpression[] compileArguments(ASTExpression[] arguments) {

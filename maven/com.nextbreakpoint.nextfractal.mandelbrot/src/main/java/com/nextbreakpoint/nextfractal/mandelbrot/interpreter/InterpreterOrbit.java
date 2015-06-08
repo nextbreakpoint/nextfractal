@@ -24,51 +24,35 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.interpreter;
 
-import static com.nextbreakpoint.nextfractal.mandelbrot.core.Expression.*;
+import static com.nextbreakpoint.nextfractal.mandelbrot.core.Expression.funcMod2;
+import static com.nextbreakpoint.nextfractal.mandelbrot.core.Expression.opAdd;
+import static com.nextbreakpoint.nextfractal.mandelbrot.core.Expression.opMul;
 
 import java.util.List;
-
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
 
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.ExpressionContext;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.MutableNumber;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Orbit;
-import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTFractal;
-import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTOrbit;
 
 public class InterpreterOrbit extends Orbit {
-	private ASTFractal astFractal;
+	private InterpreterCompiledOrbit orbit;
 	private ExpressionContext context;
 	private CompilerVariable[] orbitVars;
 	private CompilerVariable[] stateVars;
 
-	public InterpreterOrbit(ASTFractal astFractal, ExpressionContext context) {
-		this.astFractal = astFractal;
+	public InterpreterOrbit(InterpreterCompiledOrbit orbit, ExpressionContext context) {
+		this.orbit = orbit;
 		this.context = context;
-		ScriptEngineManager factory = new ScriptEngineManager();
-		ScriptEngine engine = factory.getEngineByName("JavaScript");
-		try {
-			engine.eval("print('Welocme to java worldddd')");
-		} catch (ScriptException ex) {
-			// TODO
-		}
 	}
 
 	public void init() {
-		ASTOrbit astOrbit = astFractal.getOrbit();
-		double ar = astOrbit.getRegion().getA().r();
-		double ai = astOrbit.getRegion().getA().i();
-		double br = astOrbit.getRegion().getB().r();
-		double bi = astOrbit.getRegion().getB().i();
-		setInitialRegion(number(ar, ai), number(br, bi));
-		orbitVars = new CompilerVariable[astFractal.getOrbitVariables().size()];
-		stateVars = new CompilerVariable[astFractal.getStateVariables().size()];
-		astFractal.getOrbitVariables().toArray(orbitVars);
-		astFractal.getStateVariables().toArray(stateVars);
+		setInitialRegion(orbit.getRegion()[0], orbit.getRegion()[1]);
+		orbitVars = new CompilerVariable[orbit.getOrbitVariables().size()];
+		stateVars = new CompilerVariable[orbit.getStateVariables().size()];
+		orbit.getOrbitVariables().toArray(orbitVars);
+		orbit.getStateVariables().toArray(stateVars);
 		addVariable(x);
 		addVariable(n);
 		for (int i = 0; i < stateVars.length; i++) {
@@ -83,13 +67,12 @@ public class InterpreterOrbit extends Orbit {
 	}
 
 	public void render(List<Number[]> states) {
-		ASTOrbit astOrbit = astFractal.getOrbit();
-		n = astOrbit.getLoop().getBegin();
+		n = orbit.getLoopBegin();
 		if (states != null) {
 			saveState(states);
 		}
 		ExpressionContext context = new ExpressionContext();
-		for (int i = astOrbit.getLoop().getBegin() + 1; i <= astOrbit.getLoop().getEnd(); i++) {
+		for (int i = orbit.getLoopBegin() + 1; i <= orbit.getLoopEnd(); i++) {
 //			for (ASTStatement statement : astOrbit.getLoop().getStatements()) {
 //				statement.evaluate(context, scope);
 //			}

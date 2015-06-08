@@ -26,6 +26,8 @@ package com.nextbreakpoint.nextfractal.mandelbrot.grammar;
 
 import org.antlr.v4.runtime.Token;
 
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledTrapOp;
+
 public class ASTOrbitTrapOp extends ASTObject {
 	private String op;
 	private ASTNumber c1;
@@ -88,5 +90,9 @@ public class ASTOrbitTrapOp extends ASTObject {
 		}
 		builder.append(")");
 		return builder.toString();
+	}
+
+	public CompiledTrapOp compile(ASTExpressionCompiler compiler) {
+		return compiler.compile(this);
 	}
 }

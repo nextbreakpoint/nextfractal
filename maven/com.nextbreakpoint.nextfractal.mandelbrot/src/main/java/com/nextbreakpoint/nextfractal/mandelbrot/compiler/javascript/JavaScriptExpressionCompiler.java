@@ -31,6 +31,8 @@ import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledColor;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledCondition;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledExpression;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledStatement;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledTrap;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledTrapOp;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.ExpressionContext;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTAssignStatement;
@@ -50,6 +52,8 @@ import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTExpressionCompiler;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTFunction;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTNumber;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTOperator;
+import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTOrbitTrap;
+import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTOrbitTrapOp;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTParen;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTRuleCompareOp;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTRuleExpression;
@@ -622,6 +626,18 @@ public class JavaScriptExpressionCompiler implements ASTExpressionCompiler {
 	public CompiledCondition compile(ASTConditionNeg condition) {
 		builder.append("!");
 		condition.getExp().compile(this);
+		return null;
+	}
+
+	@Override
+	public CompiledTrap compile(ASTOrbitTrap astOrbitTrap) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public CompiledTrapOp compile(ASTOrbitTrapOp astOrbitTrapOp) {
+		// TODO Auto-generated method stub
 		return null;
 	}
 }

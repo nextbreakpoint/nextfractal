@@ -24,13 +24,20 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.interpreter;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledStatement;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledTrap;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerBuilder;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerError;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.ExpressionContext;
+import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Orbit;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTFractal;
+import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTOrbit;
+import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTOrbitTrap;
+import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTStatement;
 
 public class InterpreterOrbitBuilder implements CompilerBuilder<Orbit> {
 	private ASTFractal astFractal;
@@ -44,7 +51,46 @@ public class InterpreterOrbitBuilder implements CompilerBuilder<Orbit> {
 	}
 	
 	public Orbit build() throws InstantiationException, IllegalAccessException {
-		return new InterpreterOrbit(astFractal, context);
+		InterpreterExpressionCompiler compiler = new InterpreterExpressionCompiler(context);  
+		ASTOrbit astOrbit = astFractal.getOrbit();
+		double ar = astOrbit.getRegion().getA().r();
+		double ai = astOrbit.getRegion().getA().i();
+		double br = astOrbit.getRegion().getB().r();
+		double bi = astOrbit.getRegion().getB().i();
+		InterpreterCompiledOrbit orbit = new InterpreterCompiledOrbit(astFractal.getOrbitVariables(), astFractal.getStateVariables());
+		orbit.setRegion(new Number[] { new Number(ar, ai), new Number(br, bi) });
+		List<CompiledStatement> beginStatements = new ArrayList<>();
+		List<CompiledStatement> loopStatements = new ArrayList<>();
+		List<CompiledStatement> endStatements = new ArrayList<>();
+		List<CompiledTrap> traps = new ArrayList<>();
+		if (astOrbit.getBegin() != null) {
+			for (ASTStatement astStatement : astOrbit.getBegin().getStatements()) {
+				beginStatements.add(astStatement.compile(compiler));
+			}
+		}
+		if (astOrbit.getLoop() != null) {
+			for (ASTStatement astStatement : astOrbit.getLoop().getStatements()) {
+				loopStatements.add(astStatement.compile(compiler));
+			}
+			orbit.setLoopCondition(astOrbit.getLoop().getExpression().compile(compiler));
+			orbit.setLoopBegin(astOrbit.getLoop().getBegin());
+			orbit.setLoopEnd(astOrbit.getLoop().getEnd());
+		}
+		if (astOrbit.getEnd() != null) {
+			for (ASTStatement astStatement : astOrbit.getEnd().getStatements()) {
+				endStatements.add(astStatement.compile(compiler));
+			}
+		}
+		if (astOrbit.getTraps() != null) {
+			for (ASTOrbitTrap astTrap : astOrbit.getTraps()) {
+				traps.add(astTrap.compile(compiler));
+			}
+		}
+		orbit.setBeginStatements(beginStatements);
+		orbit.setLoopStatements(loopStatements);
+		orbit.setEndStatements(endStatements);
+		orbit.setTraps(traps);
+		return new InterpreterOrbit(orbit, context);
 	}
 
 	public List<CompilerError> getErrors() {

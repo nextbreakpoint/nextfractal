@@ -28,6 +28,8 @@ import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledColor;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledCondition;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledExpression;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledStatement;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledTrap;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledTrapOp;
 
 public interface ASTExpressionCompiler {
 	public CompiledExpression compile(ASTNumber number);
@@ -65,4 +67,8 @@ public interface ASTExpressionCompiler {
 	public CompiledStatement compile(ASTAssignStatement statement);
 
 	public CompiledStatement compile(ASTStopStatement statement);
+
+	public CompiledTrap compile(ASTOrbitTrap astOrbitTrap);
+
+	public CompiledTrapOp compile(ASTOrbitTrapOp astOrbitTrapOp);
 }
