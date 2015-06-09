@@ -29,10 +29,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javafx.application.Application;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
-import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -75,27 +72,23 @@ public class NextFractalApp extends Application {
     @Override
     public void start(Stage primaryStage) {
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-
-		if (compiler == null) {
-			Alert alert = new Alert(AlertType.ERROR);
-			alert.setTitle("Error");
-			alert.setHeaderText("Cannot find Java Compiler!");
-			alert.setContentText("Did you launch the application using Java JRE?\nPlease use Java JDK 8 or later instead!\nInstall JDK not JRE in your system or add the proper java command to your execution path");
-			alert.showAndWait();
-			primaryStage.close();
-			System.exit(1);
-			return;
-		}
 		
 		if (getVersion() < 1.8) {
 			Alert alert = new Alert(AlertType.ERROR);
 			alert.setTitle("Error");
-			alert.setHeaderText("Invalid Java Version");
-			alert.setContentText("Please use Java JDK 8 or later to launch the application");
+			alert.setHeaderText("Invalid Java Version!");
+			alert.setContentText("Java JDK 8 or later is required to launch the application");
 			alert.showAndWait();
-			primaryStage.close();
 			System.exit(1);
 			return;
+		}
+
+		if (compiler == null) {
+			Alert alert = new Alert(AlertType.WARNING);
+			alert.setTitle("Warning");
+			alert.setHeaderText("Cannot find Java Compiler!");
+			alert.setContentText("Please install Java JDK 8 and add javac command to system path in order to reduce computation time");
+			alert.showAndWait();
 		}
 		
 		int width = 600;
