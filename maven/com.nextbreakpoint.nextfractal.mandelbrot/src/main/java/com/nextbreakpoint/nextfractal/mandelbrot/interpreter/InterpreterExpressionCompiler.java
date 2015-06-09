@@ -27,14 +27,26 @@ package com.nextbreakpoint.nextfractal.mandelbrot.interpreter;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledColor;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledColorExpression;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledCondition;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledExpression;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledPalette;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledPaletteElement;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledStatement;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledTrap;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledTrapOp;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledTrapOpArcTo;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledTrapOpArcToRel;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledTrapOpCurveTo;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledTrapOpCurveToRel;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledTrapOpLineTo;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledTrapOpLineToRel;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledTrapOpMoveTo;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledTrapOpMoveToRel;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledTrapOpQuadTo;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledTrapOpQuadToRel;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.ExpressionContext;
+import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTAssignStatement;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTColorComponent;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTColorPalette;
@@ -54,6 +66,8 @@ import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTNumber;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTOperator;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTOrbitTrap;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTOrbitTrapOp;
+import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTPalette;
+import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTPaletteElement;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTParen;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTRuleCompareOp;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTRuleExpression;
@@ -399,7 +413,7 @@ public class InterpreterExpressionCompiler implements ASTExpressionCompiler {
 	}
 
 	@Override
-	public CompiledColor compile(ASTColorPalette palette) {
+	public CompiledColorExpression compile(ASTColorPalette palette) {
 		if (palette.getExp().isReal()) {
 			return new InterpreterPalette(palette.getName(), palette.getExp().compile(this));
 		} else {
@@ -408,7 +422,7 @@ public class InterpreterExpressionCompiler implements ASTExpressionCompiler {
 	}
 
 	@Override
-	public CompiledColor compile(ASTColorComponent component) {
+	public CompiledColorExpression compile(ASTColorComponent component) {
 		CompiledExpression exp1 = component.getExp1().compile(this);
 		CompiledExpression exp2 = null;
 		CompiledExpression exp3 = null;
@@ -555,5 +569,20 @@ public class InterpreterExpressionCompiler implements ASTExpressionCompiler {
 		operands[0] = exp1.compile(this);
 		operands[1] = exp2.compile(this);
 		return operands;
+	}
+
+	public CompiledPalette compile(ASTPalette astPalette) {
+		CompiledPalette palette = new CompiledPalette();
+		palette.setName(astPalette.getName());
+		List<CompiledPaletteElement> elements = new ArrayList<>();
+		for (ASTPaletteElement astElement : astPalette.getElements()) {
+			elements.add(astElement.compile(this));
+		}
+		palette.setElements(elements);
+		return palette;
+	}
+
+	public CompiledPaletteElement compile(ASTPaletteElement astElement) {
+		return new CompiledPaletteElement(astElement.getBeginColor().getComponents(), astElement.getEndColor().getComponents(), astElement.getSteps(), astElement.getExp() != null ? astElement.getExp().compile(this) : null);
 	}
 }

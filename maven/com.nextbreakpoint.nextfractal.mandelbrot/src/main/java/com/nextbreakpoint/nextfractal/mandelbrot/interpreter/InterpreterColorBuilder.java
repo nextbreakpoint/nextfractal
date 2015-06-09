@@ -24,27 +24,70 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.interpreter;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledPalette;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledRule;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledStatement;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerBuilder;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerError;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.ExpressionContext;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Color;
+import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTColor;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTFractal;
+import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTPalette;
+import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTRule;
+import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTStatement;
 
 public class InterpreterColorBuilder implements CompilerBuilder<Color> {
 	private ASTFractal astFractal;
-	private ExpressionContext context;
 	private List<CompilerError> errors;
 
-	public InterpreterColorBuilder(ASTFractal astFractal, ExpressionContext context, List<CompilerError> errors) {
+	public InterpreterColorBuilder(ASTFractal astFractal, List<CompilerError> errors) {
 		this.astFractal = astFractal;
-		this.context = context;
 		this.errors = errors;
 	}
 	
 	public Color build() throws InstantiationException, IllegalAccessException {
-		return new InterpreterColor(astFractal, context);
+		ExpressionContext context = new ExpressionContext();
+		InterpreterExpressionCompiler compiler = new InterpreterExpressionCompiler(context);  
+		ASTColor astColor = astFractal.getColor();
+		List<CompilerVariable> colorVars = new ArrayList<>();
+		for (CompilerVariable var : astFractal.getColorVariables()) {
+			colorVars.add(var.copy());
+		}
+		List<CompilerVariable> stateVars = new ArrayList<>();
+		for (CompilerVariable var : astFractal.getStateVariables()) {
+			stateVars.add(var.copy());
+		}
+		InterpreterCompiledColor color = new InterpreterCompiledColor(colorVars, stateVars);
+		color.setBackgroundColor(astColor.getArgb().getComponents());
+		List<CompiledRule> rules = new ArrayList<>();
+		for (ASTRule astRule : astColor.getRules()) {
+			InterpreterCompiledRule rule = new InterpreterCompiledRule();
+			rule.setRuleCondition(astRule.getRuleExp().compile(compiler));
+			rule.setColorExp(astRule.getColorExp().compile(compiler));
+			rule.setOpacity(astRule.getOpacity());
+			rules.add(rule);
+		}
+		List<CompiledPalette> palettes = new ArrayList<>();
+		if (astColor.getPalettes() != null) {
+			for (ASTPalette astPalette : astColor.getPalettes()) {
+				palettes.add(astPalette.compile(compiler));
+			}
+		}
+		List<CompiledStatement> statements = new ArrayList<>();
+		if (astColor.getInit() != null) {
+			for (ASTStatement statement : astColor.getInit().getStatements()) {
+				statements.add(statement.compile(compiler));
+			}
+		}
+		color.setInitStatements(statements);
+		color.setPalettes(palettes);
+		color.setRules(rules);
+		return new InterpreterColor(color, context);
 	}
 
 	public List<CompilerError> getErrors() {

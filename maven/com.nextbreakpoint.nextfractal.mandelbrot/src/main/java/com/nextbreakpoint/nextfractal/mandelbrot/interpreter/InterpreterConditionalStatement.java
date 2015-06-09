@@ -7,6 +7,7 @@ import java.util.Map;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledCondition;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledStatement;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.InterpreterContext;
 
 public class InterpreterConditionalStatement implements CompiledStatement {
 	private CompiledCondition condition;

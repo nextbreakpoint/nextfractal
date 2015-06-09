@@ -27,14 +27,13 @@ package com.nextbreakpoint.nextfractal.mandelbrot.compiler;
 import java.io.IOException;
 
 import javax.tools.JavaCompiler;
-import javax.tools.ToolProvider;
 
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.java.JavaClassCompiler;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.java.JavaSourceCompiler;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.javascript.JavaScriptClassCompiler;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.javascript.JavaScriptSourceCompiler;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Color;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Orbit;
+import com.nextbreakpoint.nextfractal.mandelbrot.interpreter.InterpreterClassCompiler;
+import com.nextbreakpoint.nextfractal.mandelbrot.interpreter.InterpreterSourceCompiler;
 
 public class Compiler {
 	private final String packageName;
@@ -52,7 +51,7 @@ public class Compiler {
 	public CompilerReport generateSource(String source) throws IOException {
 		JavaCompiler javaCompiler = getJavaCompiler();
 		if (javaCompiler == null) {
-			JavaScriptSourceCompiler compiler = new JavaScriptSourceCompiler(packageName, className);
+			InterpreterSourceCompiler compiler = new InterpreterSourceCompiler();
 			return compiler.generateSource(source);
 		} else {
 			JavaSourceCompiler compiler = new JavaSourceCompiler(packageName, className);
@@ -63,7 +62,7 @@ public class Compiler {
 	public CompilerBuilder<Orbit> compileOrbit(CompilerReport report) throws ClassNotFoundException, IOException {
 		JavaCompiler javaCompiler = getJavaCompiler();
 		if (javaCompiler == null) {
-			JavaScriptClassCompiler compiler = new JavaScriptClassCompiler();
+			InterpreterClassCompiler compiler = new InterpreterClassCompiler();
 			return compiler.compileOrbit(report);
 		} else {
 			JavaClassCompiler compiler = new JavaClassCompiler(packageName, className);
@@ -74,7 +73,7 @@ public class Compiler {
 	public CompilerBuilder<Color> compileColor(CompilerReport report) throws ClassNotFoundException, IOException {
 		JavaCompiler javaCompiler = getJavaCompiler();
 		if (javaCompiler == null) {
-			JavaScriptClassCompiler compiler = new JavaScriptClassCompiler();
+			InterpreterClassCompiler compiler = new InterpreterClassCompiler();
 			return compiler.compileColor(report);
 		} else {
 			JavaClassCompiler compiler = new JavaClassCompiler(packageName, className);
@@ -83,6 +82,6 @@ public class Compiler {
 	}
 
 	public JavaCompiler getJavaCompiler() {
-		return ToolProvider.getSystemJavaCompiler();
+		return null;//ToolProvider.getSystemJavaCompiler();
 	}
 }	

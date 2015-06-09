@@ -267,6 +267,6 @@ public class RendererCoordinator implements RendererDelegate {
 	}
 
 	public void getPixels(IntBuffer pixels) {
-		renderer.getPixels(pixels);;
+		renderer.getPixels(pixels);
 	}
 }

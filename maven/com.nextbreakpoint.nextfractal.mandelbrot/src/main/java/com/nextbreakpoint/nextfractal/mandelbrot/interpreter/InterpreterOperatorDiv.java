@@ -7,6 +7,7 @@ import java.util.Map;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledExpression;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.ExpressionContext;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.InterpreterContext;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 
 public class InterpreterOperatorDiv implements CompiledExpression {
@@ -27,7 +28,7 @@ public class InterpreterOperatorDiv implements CompiledExpression {
 
 	@Override
 	public Number evaluate(InterpreterContext context, Map<String, CompilerVariable> scope) {
-		return opDiv(context.getNumber(index), exp1.evaluate(context, scope), exp2.evaluateReal(context, scope));
+		return opDiv(context.getNumber(index), exp1.evaluate(context, scope), exp2.evaluate(context, scope));
 	}
 
 	@Override

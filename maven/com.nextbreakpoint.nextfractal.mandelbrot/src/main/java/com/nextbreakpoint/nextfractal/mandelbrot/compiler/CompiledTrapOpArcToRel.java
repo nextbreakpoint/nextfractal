@@ -1,6 +1,5 @@
-package com.nextbreakpoint.nextfractal.mandelbrot.interpreter;
+package com.nextbreakpoint.nextfractal.mandelbrot.compiler;
 
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledTrapOp;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Trap;
 

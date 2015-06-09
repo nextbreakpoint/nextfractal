@@ -31,6 +31,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.nextbreakpoint.nextfractal.core.renderer.RendererFactory;
@@ -208,6 +209,7 @@ public final class XaosRenderer extends Renderer {
 			processReallocTable(continuous, refresh);
 			updatePositions();
 		} catch (Throwable e) {
+			logger.log(Level.WARNING, "Rendering error", e);
 		}
 	}
 

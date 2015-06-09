@@ -5,6 +5,7 @@ import java.util.Map;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledExpression;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledStatement;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.InterpreterContext;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTException;
 
 public class InterpreterAssignStatement implements CompiledStatement {
@@ -21,11 +22,11 @@ public class InterpreterAssignStatement implements CompiledStatement {
 		CompilerVariable var = scope.get(name);
 		if (var != null) {
 			if (var.isReal() && exp.isReal()) {
-				var.setValue(exp.evaluateReal(context, null));
+				var.setValue(exp.evaluateReal(context, scope));
 			} else if (!var.isReal() && !exp.isReal()) {
-				var.setValue(exp.evaluate(context, null));
+				var.setValue(exp.evaluate(context, scope));
 			} else if (!var.isReal() && exp.isReal()) {
-				var.setValue(exp.evaluate(context, null));
+				var.setValue(exp.evaluate(context, scope));
 			} else if (var.isReal() && !exp.isReal()) {
 				throw new ASTException("Cannot assign expression", null);
 			}
@@ -33,9 +34,9 @@ public class InterpreterAssignStatement implements CompiledStatement {
 			var = new CompilerVariable(name, exp.isReal(), false);
 			scope.put(name, var);
 			if (var.isReal()) {
-				var.setValue(exp.evaluateReal(context, null));
+				var.setValue(exp.evaluateReal(context, scope));
 			} else {
-				var.setValue(exp.evaluate(context, null));
+				var.setValue(exp.evaluate(context, scope));
 			}
 		}
 		return false;

@@ -33,17 +33,13 @@ public class CompilerReport {
 	private Type type;
 	private String orbitSource;
 	private String colorSource;
-	private ExpressionContext orbitContext;
-	private ExpressionContext colorContext;
 	private List<CompilerError> errors;
 
-	public CompilerReport(ASTFractal ast, Type type, String orbitSource, String colorSource, ExpressionContext orbitContext, ExpressionContext colorContext, List<CompilerError> errors) {
+	public CompilerReport(ASTFractal ast, Type type, String orbitSource, String colorSource, List<CompilerError> errors) {
 		this.ast = ast;
 		this.type = type;
 		this.orbitSource = orbitSource;
 		this.colorSource = colorSource;
-		this.orbitContext = orbitContext;
-		this.colorContext = colorContext;
 		this.errors = errors;
 	}
 
@@ -63,14 +59,6 @@ public class CompilerReport {
 		return errors;
 	}
 
-	public ExpressionContext getOrbitContext() {
-		return orbitContext;
-	}
-
-	public ExpressionContext getColorContext() {
-		return colorContext;
-	}
-	
 	public Type getType() {
 		return type;
 	}

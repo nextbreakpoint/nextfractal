@@ -26,10 +26,12 @@ package com.nextbreakpoint.nextfractal.mandelbrot.grammar;
 
 import org.antlr.v4.runtime.Token;
 
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledColorExpression;
+
 public abstract class ASTColorExpression extends ASTObject {
 	public ASTColorExpression(Token location) {
 		super(location);
 	}
 
-	public abstract void compile(ASTExpressionCompiler compiler);
+	public abstract CompiledColorExpression compile(ASTExpressionCompiler compiler);
 }

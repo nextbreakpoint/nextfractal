@@ -1,4 +1,4 @@
-package com.nextbreakpoint.nextfractal.mandelbrot.interpreter;
+package com.nextbreakpoint.nextfractal.mandelbrot.compiler;
 
 import com.nextbreakpoint.nextfractal.mandelbrot.core.MutableNumber;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Palette;

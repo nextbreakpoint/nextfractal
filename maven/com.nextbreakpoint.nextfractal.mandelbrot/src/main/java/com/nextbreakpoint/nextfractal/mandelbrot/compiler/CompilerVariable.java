@@ -39,6 +39,16 @@ public class CompilerVariable {
 		this.create = create;
 	}
 
+	public CompilerVariable(String name, boolean real, boolean create, Number value) {
+		this(name, real, create);
+		setValue(value);
+	}
+
+	public CompilerVariable(String name, boolean real, boolean create, double value) {
+		this(name, real, create);
+		setValue(value);
+	}
+
 	public String getName() {
 		return name;
 	}
@@ -56,7 +66,7 @@ public class CompilerVariable {
 	}
 
 	public void setValue(MutableNumber value) {
-		this.value = value;
+		this.value.set(value);
 	}
 
 	public void setValue(Number value) {
@@ -69,5 +79,9 @@ public class CompilerVariable {
 
 	public double getRealValue() {
 		return value.r();
+	}
+
+	public CompilerVariable copy() {
+		return new CompilerVariable(name, real, create, value);
 	}
 }

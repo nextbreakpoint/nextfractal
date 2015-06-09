@@ -10,7 +10,7 @@ import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 @XmlRootElement
 public class FractalSession {
 	private static final int BORDER_SIZE = 0;
-	private final RendererSize size = new RendererSize(64, 64);
+	private final RendererSize size = new RendererSize(512, 512);
 	private final int tileSize = 64;
 	private final String pluginId = "Mandelbrot";
 	private final float quality = 1;

@@ -45,16 +45,13 @@ import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTFractal;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.MandelbrotLexer;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.MandelbrotParser;
 
-public class InterpreterScriptSourceCompiler {
-	private static final Logger logger = Logger.getLogger(InterpreterScriptSourceCompiler.class.getName());
-	
-	public InterpreterScriptSourceCompiler() {
-	}
+public class InterpreterSourceCompiler {
+	private static final Logger logger = Logger.getLogger(InterpreterSourceCompiler.class.getName());
 	
 	public CompilerReport generateSource(String source) throws IOException {
 		List<CompilerError> errors = new ArrayList<>();
 		ASTFractal ast = parse(source, errors);
-		return new CompilerReport(ast, Type.INTERPRETER, null, null, null, null, errors);
+		return new CompilerReport(ast, Type.INTERPRETER, "", "", errors);
 	}
 	
 	private ASTFractal parse(String source, List<CompilerError> errors) throws IOException {

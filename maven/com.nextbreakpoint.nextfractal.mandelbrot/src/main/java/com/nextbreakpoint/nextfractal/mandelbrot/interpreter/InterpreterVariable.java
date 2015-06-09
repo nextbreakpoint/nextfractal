@@ -3,7 +3,7 @@ package com.nextbreakpoint.nextfractal.mandelbrot.interpreter;
 import java.util.Map;
 
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
-import com.nextbreakpoint.nextfractal.mandelbrot.core.MutableNumber;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.InterpreterContext;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 
 public class InterpreterVariable extends InterpreterCompiledExpression {

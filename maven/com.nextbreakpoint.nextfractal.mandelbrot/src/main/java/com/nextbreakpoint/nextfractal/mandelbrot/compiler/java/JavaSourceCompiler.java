@@ -91,9 +91,9 @@ public class JavaSourceCompiler {
 				logger.fine(orbitSource);
 				logger.fine(colorSource);
 			}
-			return new CompilerReport(ast, Type.JAVA, orbitSource, colorSource, orbitContext, colorContext, errors);
+			return new CompilerReport(ast, Type.JAVA, orbitSource, colorSource, errors);
 		}
-		return new CompilerReport(ast, Type.JAVA, "", "", null, null, errors);
+		return new CompilerReport(ast, Type.JAVA, "", "", errors);
 	}
 	
 	private ASTFractal parse(String source, List<CompilerError> errors) throws IOException {

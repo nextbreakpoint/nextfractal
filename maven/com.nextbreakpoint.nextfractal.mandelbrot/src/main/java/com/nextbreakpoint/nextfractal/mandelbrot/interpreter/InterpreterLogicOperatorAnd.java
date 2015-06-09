@@ -5,6 +5,7 @@ import java.util.Map;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledCondition;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.ExpressionContext;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.InterpreterContext;
 
 public class InterpreterLogicOperatorAnd implements CompiledCondition {
 	private CompiledCondition[] operands;

@@ -27,7 +27,7 @@ package com.nextbreakpoint.nextfractal.mandelbrot.compiler.java;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledColor;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledColorExpression;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledCondition;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledExpression;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledStatement;
@@ -505,7 +505,7 @@ public class JavaExpressionCompiler implements ASTExpressionCompiler {
 	}
 
 	@Override
-	public CompiledColor compile(ASTColorPalette palette) {
+	public CompiledColorExpression compile(ASTColorPalette palette) {
 		builder.append("palette");
 		builder.append(palette.getName().toUpperCase().substring(0, 1));
 		builder.append(palette.getName().substring(1));
@@ -520,7 +520,7 @@ public class JavaExpressionCompiler implements ASTExpressionCompiler {
 	}
 
 	@Override
-	public CompiledColor compile(ASTColorComponent component) {
+	public CompiledColorExpression compile(ASTColorComponent component) {
 		builder.append("color(");
 		component.getExp1().compile(this);
 		if (component.getExp2() != null) {

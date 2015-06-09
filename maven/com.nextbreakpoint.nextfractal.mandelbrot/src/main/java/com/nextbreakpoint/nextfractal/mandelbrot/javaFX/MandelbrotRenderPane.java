@@ -720,7 +720,6 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 				coordinators[row * columns + column] = new RendererCoordinator(threadFactory, renderFactory, createTile(row, column), hints);
 			}
 		}
-		juliaCoordinator = new RendererCoordinator(threadFactory, renderFactory, createSingleTile(200, 200), hints);
 	}
 
 	private void disposeCoordinators() {

@@ -2,11 +2,12 @@ package com.nextbreakpoint.nextfractal.mandelbrot.interpreter;
 
 import java.util.Map;
 
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledColor;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledColorExpression;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledExpression;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.InterpreterContext;
 
-public class InterpreterColorComponent implements CompiledColor {
+public class InterpreterColorComponent implements CompiledColorExpression {
 	private CompiledExpression exp1;
 	private CompiledExpression exp2;
 	private CompiledExpression exp3;
@@ -19,7 +20,6 @@ public class InterpreterColorComponent implements CompiledColor {
 		this.exp4 = exp4;
 	}
 
-	@Override
 	public float[] evaluate(InterpreterContext context, Map<String, CompilerVariable> scope) {
 		if (exp1 != null && exp2 != null && exp2 != null && exp4 != null) {
 			return new float[] { (float)exp1.evaluateReal(context, scope), (float)exp2.evaluateReal(context, scope), (float)exp3.evaluateReal(context, scope), (float)exp4.evaluateReal(context, scope) }; 

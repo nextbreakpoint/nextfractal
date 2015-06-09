@@ -4,7 +4,7 @@ import java.util.Map;
 
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledStatement;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
-import com.nextbreakpoint.nextfractal.mandelbrot.interpreter.InterpreterContext;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.InterpreterContext;
 
 public class JavaCompiledStatement implements CompiledStatement {
 	private String code;

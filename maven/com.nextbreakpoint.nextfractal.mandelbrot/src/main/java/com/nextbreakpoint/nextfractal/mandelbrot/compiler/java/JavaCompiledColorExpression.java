@@ -1,15 +1,14 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.compiler.java;
-
 import java.util.Map;
 
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledColor;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledColorExpression;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
-import com.nextbreakpoint.nextfractal.mandelbrot.interpreter.InterpreterContext;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.InterpreterContext;
 
-public class JavaCompiledColor implements CompiledColor {
+public class JavaCompiledColorExpression implements CompiledColorExpression {
 	private String code;
 
-	public JavaCompiledColor(String code) {
+	public JavaCompiledColorExpression(String code) {
 		this.code = code;
 	}
 

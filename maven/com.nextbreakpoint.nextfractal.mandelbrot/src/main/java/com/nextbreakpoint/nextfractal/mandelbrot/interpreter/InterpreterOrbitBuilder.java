@@ -31,6 +31,7 @@ import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledStatement;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledTrap;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerBuilder;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerError;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.ExpressionContext;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Orbit;
@@ -41,23 +42,30 @@ import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTStatement;
 
 public class InterpreterOrbitBuilder implements CompilerBuilder<Orbit> {
 	private ASTFractal astFractal;
-	private ExpressionContext context;
 	private List<CompilerError> errors;
 	
-	public InterpreterOrbitBuilder(ASTFractal astFractal, ExpressionContext context, List<CompilerError> errors) {
+	public InterpreterOrbitBuilder(ASTFractal astFractal, List<CompilerError> errors) {
 		this.astFractal = astFractal;
-		this.context = context;
 		this.errors = errors;
 	}
 	
 	public Orbit build() throws InstantiationException, IllegalAccessException {
-		InterpreterExpressionCompiler compiler = new InterpreterExpressionCompiler(context);  
+		ExpressionContext context = new ExpressionContext();
+		InterpreterExpressionCompiler compiler = new InterpreterExpressionCompiler(context);
 		ASTOrbit astOrbit = astFractal.getOrbit();
 		double ar = astOrbit.getRegion().getA().r();
 		double ai = astOrbit.getRegion().getA().i();
 		double br = astOrbit.getRegion().getB().r();
 		double bi = astOrbit.getRegion().getB().i();
-		InterpreterCompiledOrbit orbit = new InterpreterCompiledOrbit(astFractal.getOrbitVariables(), astFractal.getStateVariables());
+		List<CompilerVariable> orbitVars = new ArrayList<>();
+		for (CompilerVariable var : astFractal.getOrbitVariables()) {
+			orbitVars.add(var.copy());
+		}
+		List<CompilerVariable> stateVars = new ArrayList<>();
+		for (CompilerVariable var : astFractal.getStateVariables()) {
+			stateVars.add(var.copy());
+		}
+		InterpreterCompiledOrbit orbit = new InterpreterCompiledOrbit(orbitVars, stateVars);
 		orbit.setRegion(new Number[] { new Number(ar, ai), new Number(br, bi) });
 		List<CompiledStatement> beginStatements = new ArrayList<>();
 		List<CompiledStatement> loopStatements = new ArrayList<>();

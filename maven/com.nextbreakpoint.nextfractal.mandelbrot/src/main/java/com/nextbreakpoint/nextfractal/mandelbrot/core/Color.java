@@ -28,6 +28,7 @@ public abstract class Color {
 	protected final float[] color = new float[] { 1f, 0f, 0f, 0f };
 	protected MutableNumber[] numbers;
 	protected Scope scope;
+	protected boolean julia;
 
 	public Color() {
 		initializeStack();
@@ -107,6 +108,14 @@ public abstract class Color {
 	}
 	
 	public void reset() {
+	}
+
+	public boolean isJulia() {
+		return julia;
+	}
+
+	public void setJulia(boolean julia) {
+		this.julia = julia;
 	}
 	
 	public abstract void init();
