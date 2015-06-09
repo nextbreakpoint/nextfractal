@@ -358,7 +358,11 @@ public class InterpreterExpressionCompiler implements ASTExpressionCompiler {
 
 	@Override
 	public CompiledCondition compile(ASTConditionTrap trap) {
-		return new InterpreterTrapCondition(trap.getName(), trap.getExp().compile(this));
+		if (trap.isContains()) {
+			return new InterpreterTrapCondition(trap.getName(), trap.getExp().compile(this));
+		} else {
+			return new InterpreterInvertedTrapCondition(trap.getName(), trap.getExp().compile(this));
+		}
 	}
 
 	@Override

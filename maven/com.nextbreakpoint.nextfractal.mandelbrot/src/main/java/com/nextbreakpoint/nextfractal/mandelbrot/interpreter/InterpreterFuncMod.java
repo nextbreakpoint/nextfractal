@@ -21,7 +21,7 @@ public class InterpreterFuncMod implements CompiledExpression {
 
 	@Override
 	public double evaluateReal(InterpreterContext context, Map<String, CompilerVariable> scope) {
-		return funcMod(arguments[0].evaluateReal(context, scope));
+		return funcMod(arguments[0].evaluate(context, scope));
 	}
 
 	@Override

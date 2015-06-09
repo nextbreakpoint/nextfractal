@@ -21,7 +21,7 @@ public class InterpreterFuncRe implements CompiledExpression {
 
 	@Override
 	public double evaluateReal(InterpreterContext context, Map<String, CompilerVariable> scope) {
-		return funcRe(arguments[0].evaluateReal(context, scope));
+		return funcRe(arguments[0].evaluate(context, scope));
 	}
 
 	@Override

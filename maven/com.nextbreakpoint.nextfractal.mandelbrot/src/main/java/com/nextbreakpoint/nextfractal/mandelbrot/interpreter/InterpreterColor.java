@@ -77,13 +77,13 @@ public class InterpreterColor extends Color implements InterpreterContext {
 					};
 				} else {
 					expression = (start, end, step) -> {
-						return (step - start) / (end - start); 
+						return step / (end - start); 
 					};
 				}
 				PaletteElement element = new PaletteElement(cElement.getBeginColor(), cElement.getEndColor(), cElement.getSteps(), expression);
 				palette.add(element);
 			}
-			palettes.put(cPalette.getName(), palette);
+			palettes.put(cPalette.getName(), palette.build());
 		}
 	}
 
