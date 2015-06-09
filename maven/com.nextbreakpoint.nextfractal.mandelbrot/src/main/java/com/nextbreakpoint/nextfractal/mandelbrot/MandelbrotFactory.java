@@ -70,7 +70,7 @@ public class MandelbrotFactory implements FractalFactory {
 	 */
 	@Override
 	public Pane createRenderPane(Session session, int width, int height) {
-		return new MandelbrotRenderPane(session, width, height, Integer.getInteger("mandelbrot.rows", 1), Integer.getInteger("mandelbrot.cols", 1));
+		return new MandelbrotRenderPane(session, width, height, Integer.getInteger("mandelbrot.renderer.rows", 1), Integer.getInteger("mandelbrot.renderer.cols", 1));
 	}
 
 	/**

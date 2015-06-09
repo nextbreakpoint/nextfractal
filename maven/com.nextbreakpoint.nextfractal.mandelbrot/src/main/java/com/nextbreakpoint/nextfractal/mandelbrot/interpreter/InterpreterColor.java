@@ -88,6 +88,7 @@ public class InterpreterColor extends Color implements InterpreterContext {
 	}
 
 	public void render() {
+		updateStateVars();
 		Map<String, CompilerVariable> scope = new HashMap<>();
 		for (Iterator<CompilerVariable> s = color.getStateVariables().iterator(); s.hasNext();) {
 			CompilerVariable var = s.next();
@@ -97,7 +98,6 @@ public class InterpreterColor extends Color implements InterpreterContext {
 			CompilerVariable var = s.next();
 			scope.put(var.getName(), var.copy());
 		}
-		updateStateVars(scope);
 		setColor(color.getBackgroundColor());
 		for (CompiledStatement statement : color.getInitStatements()) {
 			statement.evaluate(this, scope);
@@ -109,9 +109,9 @@ public class InterpreterColor extends Color implements InterpreterContext {
 		}
 	}
 
-	public void updateStateVars(Map<String, CompilerVariable> scope) {
+	public void updateStateVars() {
 		int i = 0;
-		for (Iterator<CompilerVariable> s = scope.values().iterator(); s.hasNext();) {
+		for (Iterator<CompilerVariable> s = color.getStateVariables().iterator(); s.hasNext();) {
 			CompilerVariable var = s.next();
 			var.setValue(this.scope.getVariable(i));
 			i++;

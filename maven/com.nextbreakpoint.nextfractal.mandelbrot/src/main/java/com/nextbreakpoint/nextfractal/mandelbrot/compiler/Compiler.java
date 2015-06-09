@@ -27,6 +27,7 @@ package com.nextbreakpoint.nextfractal.mandelbrot.compiler;
 import java.io.IOException;
 
 import javax.tools.JavaCompiler;
+import javax.tools.ToolProvider;
 
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.java.JavaClassCompiler;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.java.JavaSourceCompiler;
@@ -82,6 +83,6 @@ public class Compiler {
 	}
 
 	public JavaCompiler getJavaCompiler() {
-		return null;//ToolProvider.getSystemJavaCompiler();
+		return !Boolean.getBoolean("mandelbrot.compiler.disabled") ? ToolProvider.getSystemJavaCompiler() : null;
 	}
 }	
