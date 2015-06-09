@@ -1,6 +1,9 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.compiler.java;
 
+import java.util.Map;
+
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledCondition;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
 import com.nextbreakpoint.nextfractal.mandelbrot.interpreter.InterpreterContext;
 
 public class JavaCompiledCondition implements CompiledCondition {
@@ -16,7 +19,7 @@ public class JavaCompiledCondition implements CompiledCondition {
 	}
 
 	@Override
-	public boolean evaluate(InterpreterContext context) {
+	public boolean evaluate(InterpreterContext context, Map<String, CompilerVariable> scope) {
 		return false;
 	}
 }

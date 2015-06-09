@@ -1,6 +1,9 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.interpreter;
 
+import java.util.Map;
+
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledCondition;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
 
 public class InterpreterInvertedCondition implements CompiledCondition {
 	private CompiledCondition condition;
@@ -10,7 +13,7 @@ public class InterpreterInvertedCondition implements CompiledCondition {
 	}
 
 	@Override
-	public boolean evaluate(InterpreterContext context) {
-		return !condition.evaluate(context);
+	public boolean evaluate(InterpreterContext context, Map<String, CompilerVariable> scope) {
+		return !condition.evaluate(context, scope);
 	}
 }

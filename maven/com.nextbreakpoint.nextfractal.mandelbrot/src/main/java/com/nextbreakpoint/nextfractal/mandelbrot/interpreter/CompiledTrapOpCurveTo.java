@@ -2,6 +2,7 @@ package com.nextbreakpoint.nextfractal.mandelbrot.interpreter;
 
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledTrapOp;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
+import com.nextbreakpoint.nextfractal.mandelbrot.core.Trap;
 
 public class CompiledTrapOpCurveTo implements CompiledTrapOp {
 	private Number c1;
@@ -12,5 +13,10 @@ public class CompiledTrapOpCurveTo implements CompiledTrapOp {
 		this.c1 = c1;
 		this.c2 = c2;
 		this.c3 = c3;
+	}
+
+	@Override
+	public void evaluate(Trap trap) {
+		trap.curveTo(c1, c2, c3);
 	}
 }

@@ -1,10 +1,12 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.interpreter;
 
+import static com.nextbreakpoint.nextfractal.mandelbrot.core.Expression.opNeg;
+
+import java.util.Map;
+
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledExpression;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.ExpressionContext;
-
-import static com.nextbreakpoint.nextfractal.mandelbrot.core.Expression.*;
-
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 
 public class InterpreterOperatorNeg implements CompiledExpression {
@@ -17,13 +19,13 @@ public class InterpreterOperatorNeg implements CompiledExpression {
 	}
 
 	@Override
-	public double evaluateReal(InterpreterContext context) {
-		return -exp.evaluateReal(context);
+	public double evaluateReal(InterpreterContext context, Map<String, CompilerVariable> scope) {
+		return -exp.evaluateReal(context, scope);
 	}
 
 	@Override
-	public Number evaluate(InterpreterContext context) {
-		return opNeg(context.getNumber(index), exp.evaluate(context));
+	public Number evaluate(InterpreterContext context, Map<String, CompilerVariable> scope) {
+		return opNeg(context.getNumber(index), exp.evaluate(context, scope));
 	}
 
 	@Override

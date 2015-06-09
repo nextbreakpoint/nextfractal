@@ -1,6 +1,9 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.compiler.javascript;
 
+import java.util.Map;
+
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledColor;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
 import com.nextbreakpoint.nextfractal.mandelbrot.interpreter.InterpreterContext;
 
 public class JavaScriptCompiledColor implements CompiledColor {
@@ -16,7 +19,7 @@ public class JavaScriptCompiledColor implements CompiledColor {
 	}
 
 	@Override
-	public float[] evaluate(InterpreterContext context) {
+	public float[] evaluate(InterpreterContext context, Map<String, CompilerVariable> scope) {
 		return null;
 	}
 }

@@ -17,15 +17,15 @@ public class InterpreterAssignStatement implements CompiledStatement {
 	}
 
 	@Override
-	public void evaluate(InterpreterContext context, Map<String, CompilerVariable> scope) {
+	public boolean evaluate(InterpreterContext context, Map<String, CompilerVariable> scope) {
 		CompilerVariable var = scope.get(name);
 		if (var != null) {
 			if (var.isReal() && exp.isReal()) {
-				var.setValue(exp.evaluateReal(context));
+				var.setValue(exp.evaluateReal(context, null));
 			} else if (!var.isReal() && !exp.isReal()) {
-				var.setValue(exp.evaluate(context));
+				var.setValue(exp.evaluate(context, null));
 			} else if (!var.isReal() && exp.isReal()) {
-				var.setValue(exp.evaluate(context));
+				var.setValue(exp.evaluate(context, null));
 			} else if (var.isReal() && !exp.isReal()) {
 				throw new ASTException("Cannot assign expression", null);
 			}
@@ -33,10 +33,11 @@ public class InterpreterAssignStatement implements CompiledStatement {
 			var = new CompilerVariable(name, exp.isReal(), false);
 			scope.put(name, var);
 			if (var.isReal()) {
-				var.setValue(exp.evaluateReal(context));
+				var.setValue(exp.evaluateReal(context, null));
 			} else {
-				var.setValue(exp.evaluate(context));
+				var.setValue(exp.evaluate(context, null));
 			}
 		}
+		return false;
 	}
 }

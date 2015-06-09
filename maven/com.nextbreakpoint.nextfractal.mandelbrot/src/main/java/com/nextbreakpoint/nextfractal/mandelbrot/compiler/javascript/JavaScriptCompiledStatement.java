@@ -19,6 +19,7 @@ public class JavaScriptCompiledStatement implements CompiledStatement {
 	}
 
 	@Override
-	public void evaluate(InterpreterContext context, Map<String, CompilerVariable> scope) {
+	public boolean evaluate(InterpreterContext context, Map<String, CompilerVariable> scope) {
+		return false;
 	}
 }

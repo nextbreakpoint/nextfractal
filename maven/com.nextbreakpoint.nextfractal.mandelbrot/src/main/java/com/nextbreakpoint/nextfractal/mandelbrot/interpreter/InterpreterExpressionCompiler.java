@@ -469,7 +469,7 @@ public class InterpreterExpressionCompiler implements ASTExpressionCompiler {
 	public CompiledTrap compile(ASTOrbitTrap orbitTrap) {
 		CompiledTrap trap = new CompiledTrap();
 		trap.setName(orbitTrap.getName());
-		trap.setCenter(orbitTrap.getCenter());
+		trap.setCenter(new Number(orbitTrap.getCenter().r(), orbitTrap.getCenter().i()));
 		List<CompiledTrapOp> operators = new ArrayList<>();
 		for (ASTOrbitTrapOp astTrapOp : orbitTrap.getOperators()) {
 			operators.add(astTrapOp.compile(this));
@@ -506,10 +506,10 @@ public class InterpreterExpressionCompiler implements ASTExpressionCompiler {
 				return new CompiledTrapOpLineToRel(c1);
 	
 			case "ARCTO":
-				return new CompiledTrapOpArcTo(c1);
+				return new CompiledTrapOpArcTo(c1, c2);
 	
 			case "ARCTOREL":
-				return new CompiledTrapOpArcToRel(c1);
+				return new CompiledTrapOpArcToRel(c1, c2);
 	
 			case "QUADTO":
 				return new CompiledTrapOpQuadTo(c1, c2);

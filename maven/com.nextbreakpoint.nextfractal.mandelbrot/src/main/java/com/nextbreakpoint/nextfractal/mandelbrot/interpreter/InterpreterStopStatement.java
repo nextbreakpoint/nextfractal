@@ -10,7 +10,7 @@ public class InterpreterStopStatement implements CompiledStatement {
 	}
 
 	@Override
-	public void evaluate(InterpreterContext context, Map<String, CompilerVariable> scope) {
-		context.stop();
+	public boolean evaluate(InterpreterContext context, Map<String, CompilerVariable> scope) {
+		return true;
 	}
 }

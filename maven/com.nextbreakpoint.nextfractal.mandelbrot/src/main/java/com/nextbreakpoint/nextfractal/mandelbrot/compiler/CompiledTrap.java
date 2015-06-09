@@ -2,23 +2,34 @@ package com.nextbreakpoint.nextfractal.mandelbrot.compiler;
 
 import java.util.List;
 
-import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTNumber;
+import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 
 public class CompiledTrap {
+	private String name;
+	private Number center;
+	private List<CompiledTrapOp> operators;
 
-	public void setName(String name) {
-		// TODO Auto-generated method stub
-		
+	public String getName() {
+		return name;
 	}
 
-	public void setCenter(ASTNumber center) {
-		// TODO Auto-generated method stub
-		
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public Number getCenter() {
+		return center;
+	}
+
+	public void setCenter(Number center) {
+		this.center = center;
+	}
+
+	public List<CompiledTrapOp> getOperators() {
+		return operators;
 	}
 
 	public void setOperators(List<CompiledTrapOp> operators) {
-		// TODO Auto-generated method stub
-		
+		this.operators = operators;
 	}
-
 }

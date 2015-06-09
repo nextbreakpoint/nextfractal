@@ -1,6 +1,9 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.compiler.javascript;
 
+import java.util.Map;
+
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledExpression;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 import com.nextbreakpoint.nextfractal.mandelbrot.interpreter.InterpreterContext;
 
@@ -17,12 +20,12 @@ public class JavaScriptCompiledExpression implements CompiledExpression {
 	}
 
 	@Override
-	public double evaluateReal(InterpreterContext context) {
+	public double evaluateReal(InterpreterContext context, Map<String, CompilerVariable> scope) {
 		return 0;
 	}
 
 	@Override
-	public Number evaluate(InterpreterContext context) {
+	public Number evaluate(InterpreterContext context, Map<String, CompilerVariable> scope) {
 		return null;
 	}
 

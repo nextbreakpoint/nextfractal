@@ -1,7 +1,10 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.interpreter;
 
+import java.util.Map;
+
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledCondition;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledExpression;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
 
 public class InterpreterTrapCondition implements CompiledCondition {
 	private String name;
@@ -13,7 +16,7 @@ public class InterpreterTrapCondition implements CompiledCondition {
 	}
 
 	@Override
-	public boolean evaluate(InterpreterContext context) {
-		return context.getTrap(name).contains(exp.evaluate(context));
+	public boolean evaluate(InterpreterContext context, Map<String, CompilerVariable> scope) {
+		return context.getTrap(name).contains(exp.evaluate(context, scope));
 	}
 }

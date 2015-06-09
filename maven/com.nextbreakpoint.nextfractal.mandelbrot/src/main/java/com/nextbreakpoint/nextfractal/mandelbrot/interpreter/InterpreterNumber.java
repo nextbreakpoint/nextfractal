@@ -1,5 +1,8 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.interpreter;
 
+import java.util.Map;
+
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.ExpressionContext;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.MutableNumber;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
@@ -16,12 +19,12 @@ public class InterpreterNumber extends InterpreterCompiledExpression {
 	}
 
 	@Override
-	public double evaluateReal(InterpreterContext context) {
+	public double evaluateReal(InterpreterContext context, Map<String, CompilerVariable> scope) {
 		return r;
 	}
 
 	@Override
-	public Number evaluate(InterpreterContext context) {
+	public Number evaluate(InterpreterContext context, Map<String, CompilerVariable> scope) {
 		MutableNumber number = context.getNumber(index);
 		number.set(r, i);
 		return number;

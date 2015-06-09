@@ -20,8 +20,8 @@ public class InterpreterConditionalStatement implements CompiledStatement {
 	}
 
 	@Override
-	public void evaluate(InterpreterContext context, Map<String, CompilerVariable> scope) {
-		if (condition.evaluate(context)) {
+	public boolean evaluate(InterpreterContext context, Map<String, CompilerVariable> scope) {
+		if (condition.evaluate(context, scope)) {
 			for (CompiledStatement statement : thenStatements) {
 				Map<String, CompilerVariable> newScope = new HashMap<String, CompilerVariable>(scope);
 				statement.evaluate(context, newScope);
@@ -32,5 +32,6 @@ public class InterpreterConditionalStatement implements CompiledStatement {
 				statement.evaluate(context, newScope);
 			}
 		}
+		return false;
 	}
 }

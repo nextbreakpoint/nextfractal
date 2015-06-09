@@ -24,23 +24,28 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.interpreter;
 
-import static com.nextbreakpoint.nextfractal.mandelbrot.core.Expression.funcMod2;
-import static com.nextbreakpoint.nextfractal.mandelbrot.core.Expression.opAdd;
-import static com.nextbreakpoint.nextfractal.mandelbrot.core.Expression.opMul;
-
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledStatement;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledTrap;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledTrapOp;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.ExpressionContext;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.MutableNumber;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Orbit;
+import com.nextbreakpoint.nextfractal.mandelbrot.core.Palette;
+import com.nextbreakpoint.nextfractal.mandelbrot.core.Trap;
 
-public class InterpreterOrbit extends Orbit {
+public class InterpreterOrbit extends Orbit implements InterpreterContext {
 	private InterpreterCompiledOrbit orbit;
 	private ExpressionContext context;
 	private CompilerVariable[] orbitVars;
 	private CompilerVariable[] stateVars;
+	private Map<String, Trap> traps = new HashMap<>();
+	private Map<String, Palette> palettes = new HashMap<>();
 
 	public InterpreterOrbit(InterpreterCompiledOrbit orbit, ExpressionContext context) {
 		this.orbit = orbit;
@@ -64,6 +69,13 @@ public class InterpreterOrbit extends Orbit {
 				}
 			}
 		}
+		for (CompiledTrap cTrap : orbit.getTraps()) {
+			Trap trap = new Trap(cTrap.getCenter());
+			for (CompiledTrapOp cTrapOp : cTrap.getOperators()) {
+				cTrapOp.evaluate(trap);
+			}
+			traps.put(cTrap.getName(), trap);
+		}
 	}
 
 	public void render(List<Number[]> states) {
@@ -71,13 +83,25 @@ public class InterpreterOrbit extends Orbit {
 		if (states != null) {
 			saveState(states);
 		}
-		ExpressionContext context = new ExpressionContext();
+		Map<String, CompilerVariable> scope = new HashMap<>();
+		for (int i = 0; i < stateVars.length; i++) {
+			scope.put(stateVars[i].getName(), stateVars[i]);
+		}
+		for (int i = 0; i < orbitVars.length; i++) {
+			scope.put(orbitVars[i].getName(), orbitVars[i]);
+		}
+		try {
+			for (CompiledStatement statement : orbit.getBeginStatements()) {
+				statement.evaluate(this, scope);
+			} 
+		} catch (RuntimeException e) {
+		}
+		boolean stop = false;
 		for (int i = orbit.getLoopBegin() + 1; i <= orbit.getLoopEnd(); i++) {
-//			for (ASTStatement statement : astOrbit.getLoop().getStatements()) {
-//				statement.evaluate(context, scope);
-//			}
-			x.set(opAdd(getNumber(0), opMul(getNumber(1), x, x), w));
-			if ((funcMod2(x) > 4.0)) {
+			for (CompiledStatement statement : orbit.getLoopStatements()) {
+				stop = statement.evaluate(this, scope);
+			} 
+			if (stop || orbit.getLoopCondition().evaluate(this, scope)) {
 				n = i;
 				break;
 			}
@@ -85,6 +109,9 @@ public class InterpreterOrbit extends Orbit {
 				saveState(states);
 			}
 		}
+		for (CompiledStatement statement : orbit.getEndStatements()) {
+			statement.evaluate(this, scope);
+		} 
 		if (states != null) {
 			saveState(states);
 		}
@@ -111,5 +138,15 @@ public class InterpreterOrbit extends Orbit {
 
 	protected MutableNumber[] createNumbers() {
 		return new MutableNumber[context.getNumberCount()];
+	}
+
+	@Override
+	public Palette getPalette(String name) {
+		return palettes.get(name);
+	}
+
+	@Override
+	public Trap getTrap(String name) {
+		return traps.get(name);
 	}
 }
