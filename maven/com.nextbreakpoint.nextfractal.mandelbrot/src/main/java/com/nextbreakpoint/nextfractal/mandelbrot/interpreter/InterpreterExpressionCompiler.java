@@ -85,7 +85,11 @@ public class InterpreterExpressionCompiler implements ASTExpressionCompiler {
 
 	@Override
 	public CompiledExpression compile(ASTNumber number) {
-		return new InterpreterNumber(context, number.r(), number.i());
+		if (number.isReal()) {
+			return new InterpreterNumber(context, number.r(), number.i());
+		} else {
+			return new InterpreterNumberZ(context, number.r(), number.i());
+		}
 	}
 
 	@Override
@@ -160,22 +164,42 @@ public class InterpreterExpressionCompiler implements ASTExpressionCompiler {
 		}
 		switch (function.getName()) {
 			case "mod":
-				return new InterpreterFuncMod(context, compileArguments(function.getArguments()));
+				if (function.getArguments()[0].isReal()) {
+					return new InterpreterFuncMod(context, compileArguments(function.getArguments()));
+				} else {
+					return new InterpreterFuncModZ(context, compileArguments(function.getArguments()));
+				}
 			case "mod2":
-				return new InterpreterFuncMod2(context, compileArguments(function.getArguments()));
+				if (function.getArguments()[0].isReal()) {
+					return new InterpreterFuncMod2(context, compileArguments(function.getArguments()));
+				} else {
+					return new InterpreterFuncModZ2(context, compileArguments(function.getArguments()));
+				}
 			case "pha":
-				return new InterpreterFuncPha(context, compileArguments(function.getArguments()));
+				return new InterpreterFuncPhaZ(context, compileArguments(function.getArguments()));
 			case "re":
-				return new InterpreterFuncRe(context, compileArguments(function.getArguments()));
+				return new InterpreterFuncReZ(context, compileArguments(function.getArguments()));
 			case "im":
-				return new InterpreterFuncIm(context, compileArguments(function.getArguments()));
+				return new InterpreterFuncImZ(context, compileArguments(function.getArguments()));
 				
 			case "sin":
-				return new InterpreterFuncSin(context, compileArguments(function.getArguments()));
+				if (function.getArguments()[0].isReal()) {
+					return new InterpreterFuncSin(context, compileArguments(function.getArguments()));
+				} else {
+					return new InterpreterFuncSinZ(context, compileArguments(function.getArguments()));
+				}
 			case "cos":
-				return new InterpreterFuncCos(context, compileArguments(function.getArguments()));
+				if (function.getArguments()[0].isReal()) {
+					return new InterpreterFuncCos(context, compileArguments(function.getArguments()));
+				} else {
+					return new InterpreterFuncCosZ(context, compileArguments(function.getArguments()));
+				}
 			case "tan":
-				return new InterpreterFuncTan(context, compileArguments(function.getArguments()));
+				if (function.getArguments()[0].isReal()) {
+					return new InterpreterFuncTan(context, compileArguments(function.getArguments()));
+				} else {
+					return new InterpreterFuncTanZ(context, compileArguments(function.getArguments()));
+				}
 			case "asin":
 				return new InterpreterFuncAsin(context, compileArguments(function.getArguments()));
 			case "acos":
@@ -202,12 +226,24 @@ public class InterpreterExpressionCompiler implements ASTExpressionCompiler {
 				return new InterpreterFuncHypot(context, compileArguments(function.getArguments()));
 				
 			case "pow":
-				return new InterpreterFuncPow(context, compileArguments(function.getArguments()));
+				if (function.getArguments()[0].isReal()) {
+					return new InterpreterFuncPow(context, compileArguments(function.getArguments()));
+				} else {
+					return new InterpreterFuncPowZ(context, compileArguments(function.getArguments()));
+				}
 	
 			case "sqrt":
-				return new InterpreterFuncSqrt(context, compileArguments(function.getArguments()));
+				if (function.getArguments()[0].isReal()) {
+					return new InterpreterFuncSqrt(context, compileArguments(function.getArguments()));
+				} else {
+					return new InterpreterFuncSqrtZ(context, compileArguments(function.getArguments()));
+				}
 			case "exp":
-				return new InterpreterFuncExp(context, compileArguments(function.getArguments()));
+				if (function.getArguments()[0].isReal()) {
+					return new InterpreterFuncExp(context, compileArguments(function.getArguments()));
+				} else {
+					return new InterpreterFuncExpZ(context, compileArguments(function.getArguments()));
+				}
 				
 			default:
 		}
@@ -221,10 +257,18 @@ public class InterpreterExpressionCompiler implements ASTExpressionCompiler {
 		if (exp2 == null) {
 			switch (operator.getOp()) {
 				case "-":
-					return new InterpreterOperatorNeg(context, exp1.compile(this));
+					if (exp1.isReal()) {
+						return new InterpreterOperatorNeg(context, exp1.compile(this));
+					} else {
+						return new InterpreterOperatorNegZ(context, exp1.compile(this));
+					}
 				
 				case "+":
-					return new InterpreterOperatorPos(context, exp1.compile(this));
+					if (exp1.isReal()) {
+						return new InterpreterOperatorPos(context, exp1.compile(this));
+					} else {
+						return new InterpreterOperatorPosZ(context, exp1.compile(this));
+					}
 				
 				default:
 					throw new ASTException("Unsupported operator: " + operator.getLocation().getText(), operator.getLocation());
@@ -256,19 +300,19 @@ public class InterpreterExpressionCompiler implements ASTExpressionCompiler {
 			} else if (exp2.isReal()) {
 				switch (operator.getOp()) {
 					case "+":
-						return new InterpreterOperatorAdd(context, exp1.compile(this), exp2.compile(this));
+						return new InterpreterOperatorAddZ(context, exp1.compile(this), exp2.compile(this));
 					
 					case "-":
-						return new InterpreterOperatorSub(context, exp1.compile(this), exp2.compile(this));
+						return new InterpreterOperatorSubZ(context, exp1.compile(this), exp2.compile(this));
 						
 					case "*":
-						return new InterpreterOperatorMul(context, exp1.compile(this), exp2.compile(this));
+						return new InterpreterOperatorMulZ(context, exp1.compile(this), exp2.compile(this));
 						
 					case "/":
-						return new InterpreterOperatorDiv(context, exp1.compile(this), exp2.compile(this));
+						return new InterpreterOperatorDivZ(context, exp1.compile(this), exp2.compile(this));
 						
 					case "^":
-						return new InterpreterOperatorPow(context, exp1.compile(this), exp2.compile(this));
+						return new InterpreterOperatorPowZ(context, exp1.compile(this), exp2.compile(this));
 					
 					default:
 						throw new ASTException("Unsupported operator: " + operator.getLocation().getText(), operator.getLocation());
@@ -276,16 +320,16 @@ public class InterpreterExpressionCompiler implements ASTExpressionCompiler {
 			} else {
 				switch (operator.getOp()) {
 					case "+":
-						return new InterpreterOperatorAdd(context, exp1.compile(this), exp2.compile(this));
+						return new InterpreterOperatorAddZ(context, exp1.compile(this), exp2.compile(this));
 					
 					case "-":
-						return new InterpreterOperatorSub(context, exp1.compile(this), exp2.compile(this));
+						return new InterpreterOperatorSubZ(context, exp1.compile(this), exp2.compile(this));
 						
 					case "*":
-						return new InterpreterOperatorMul(context, exp1.compile(this), exp2.compile(this));
+						return new InterpreterOperatorMulZ(context, exp1.compile(this), exp2.compile(this));
 						
 					case "/":
-						return new InterpreterOperatorDiv(context, exp1.compile(this), exp2.compile(this));
+						return new InterpreterOperatorDivZ(context, exp1.compile(this), exp2.compile(this));
 						
 					default:
 						throw new ASTException("Unsupported operator: " + operator.getLocation().getText(), operator.getLocation());
@@ -301,7 +345,11 @@ public class InterpreterExpressionCompiler implements ASTExpressionCompiler {
 
 	@Override
 	public CompiledExpression compile(ASTVariable variable) {
-		return new InterpreterVariable(variable.getName(), variable.isReal());
+		if (variable.isReal()) {
+			return new InterpreterVariable(context, variable.getName(), variable.isReal());
+		} else {
+			return new InterpreterVariableZ(context, variable.getName(), variable.isReal());
+		}
 	}
 
 	@Override
@@ -361,7 +409,7 @@ public class InterpreterExpressionCompiler implements ASTExpressionCompiler {
 		if (trap.isContains()) {
 			return new InterpreterTrapCondition(trap.getName(), trap.getExp().compile(this));
 		} else {
-			return new InterpreterInvertedTrapCondition(trap.getName(), trap.getExp().compile(this));
+			return new InterpreterTrapInvertedCondition(trap.getName(), trap.getExp().compile(this));
 		}
 	}
 

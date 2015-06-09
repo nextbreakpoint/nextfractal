@@ -112,13 +112,13 @@ public class InterpreterOrbit extends Orbit implements InterpreterContext {
 				saveState(states);
 			}
 		}
+		ensureVariable(scope, "n", n);
 		for (CompiledStatement statement : orbit.getEndStatements()) {
 			statement.evaluate(this, scope);
 		} 
 		if (states != null) {
 			saveState(states);
 		}
-		ensureVariable(scope, "n", n);
 		int i = 0;
 		for (Iterator<CompilerVariable> s = orbit.getStateVariables().iterator(); s.hasNext();) {
 			CompilerVariable var = s.next();

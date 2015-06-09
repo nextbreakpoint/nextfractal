@@ -1,6 +1,6 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.interpreter;
 
-import static com.nextbreakpoint.nextfractal.mandelbrot.core.Expression.opAdd;
+import static com.nextbreakpoint.nextfractal.mandelbrot.core.Expression.funcIm;
 
 import java.util.Map;
 
@@ -10,25 +10,23 @@ import com.nextbreakpoint.nextfractal.mandelbrot.compiler.ExpressionContext;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.InterpreterContext;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 
-public class InterpreterOperatorAdd implements CompiledExpression {
-	private CompiledExpression exp1;
-	private CompiledExpression exp2;
+public class InterpreterFuncImZ implements CompiledExpression {
+	private CompiledExpression[] arguments;
 	private int index;
 	
-	public InterpreterOperatorAdd(ExpressionContext context, CompiledExpression exp1, CompiledExpression exp2) {
+	public InterpreterFuncImZ(ExpressionContext context, CompiledExpression[] arguments) {
 		this.index = context.newNumberIndex();
-		this.exp1 = exp1;
-		this.exp2 = exp2;
+		this.arguments = arguments;
 	}
 
 	@Override
 	public double evaluateReal(InterpreterContext context, Map<String, CompilerVariable> scope) {
-		return opAdd(exp1.evaluateReal(context, scope), exp2.evaluateReal(context, scope));
+		return funcIm(arguments[0].evaluate(context, scope));
 	}
 
 	@Override
 	public Number evaluate(InterpreterContext context, Map<String, CompilerVariable> scope) {
-		return context.getNumber(index).set(opAdd(exp1.evaluateReal(context, scope), exp2.evaluateReal(context, scope)));
+		return context.getNumber(index).set(funcIm(arguments[0].evaluate(context, scope)));
 	}
 
 	@Override

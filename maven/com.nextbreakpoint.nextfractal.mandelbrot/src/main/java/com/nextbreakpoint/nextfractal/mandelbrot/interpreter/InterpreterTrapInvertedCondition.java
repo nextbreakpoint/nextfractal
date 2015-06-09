@@ -7,11 +7,11 @@ import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledExpression;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.InterpreterContext;
 
-public class InterpreterInvertedTrapCondition implements CompiledCondition {
+public class InterpreterTrapInvertedCondition implements CompiledCondition {
 	private String name;
 	private CompiledExpression exp;
 	
-	public InterpreterInvertedTrapCondition(String name, CompiledExpression exp) {
+	public InterpreterTrapInvertedCondition(String name, CompiledExpression exp) {
 		this.name = name;
 		this.exp = exp;
 	}

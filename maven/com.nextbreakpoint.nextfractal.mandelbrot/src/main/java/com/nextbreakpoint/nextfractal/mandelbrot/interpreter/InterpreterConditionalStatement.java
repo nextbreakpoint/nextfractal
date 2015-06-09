@@ -22,17 +22,24 @@ public class InterpreterConditionalStatement implements CompiledStatement {
 
 	@Override
 	public boolean evaluate(InterpreterContext context, Map<String, CompilerVariable> scope) {
+		boolean stop = false; 
 		if (condition.evaluate(context, scope)) {
+			Map<String, CompilerVariable> newScope = new HashMap<String, CompilerVariable>(scope);
 			for (CompiledStatement statement : thenStatements) {
-				Map<String, CompilerVariable> newScope = new HashMap<String, CompilerVariable>(scope);
-				statement.evaluate(context, newScope);
+				stop = statement.evaluate(context, newScope);
+				if (stop) {
+					break;
+				}
 			}
 		} else {
+			Map<String, CompilerVariable> newScope = new HashMap<String, CompilerVariable>(scope);
 			for (CompiledStatement statement : elseStatements) {
-				Map<String, CompilerVariable> newScope = new HashMap<String, CompilerVariable>(scope);
-				statement.evaluate(context, newScope);
+				stop = statement.evaluate(context, newScope);
+				if (stop) {
+					break;
+				}
 			}
 		}
-		return false;
+		return stop;
 	}
 }

@@ -26,7 +26,7 @@ public class InterpreterFuncSin implements CompiledExpression {
 
 	@Override
 	public Number evaluate(InterpreterContext context, Map<String, CompilerVariable> scope) {
-		return funcSin(context.getNumber(index), arguments[0].evaluate(context, scope));
+		return context.getNumber(index).set(funcSin(arguments[0].evaluateReal(context, scope)));
 	}
 
 	@Override

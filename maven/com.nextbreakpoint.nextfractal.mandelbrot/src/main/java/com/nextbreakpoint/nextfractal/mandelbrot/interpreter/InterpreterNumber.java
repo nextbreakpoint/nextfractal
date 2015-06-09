@@ -27,12 +27,12 @@ public class InterpreterNumber extends InterpreterCompiledExpression {
 	@Override
 	public Number evaluate(InterpreterContext context, Map<String, CompilerVariable> scope) {
 		MutableNumber number = context.getNumber(index);
-		number.set(r, i);
+		number.set(r, 0);
 		return number;
 	}
 
 	@Override
 	public boolean isReal() {
-		return i == 0;
+		return true;
 	}
 }

@@ -26,11 +26,11 @@ public class InterpreterFuncPow implements CompiledExpression {
 
 	@Override
 	public Number evaluate(InterpreterContext context, Map<String, CompilerVariable> scope) {
-		return funcPow(context.getNumber(index), arguments[0].evaluate(context, scope), arguments[1].evaluateReal(context, scope));
+		return context.getNumber(index).set(funcPow(arguments[0].evaluateReal(context, scope), arguments[1].evaluateReal(context, scope)));
 	}
 
 	@Override
 	public boolean isReal() {
-		return arguments[0].isReal();
+		return true;
 	}
 }

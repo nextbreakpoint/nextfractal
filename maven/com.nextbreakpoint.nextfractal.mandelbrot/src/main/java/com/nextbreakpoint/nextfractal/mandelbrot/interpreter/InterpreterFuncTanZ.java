@@ -1,6 +1,6 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.interpreter;
 
-import static com.nextbreakpoint.nextfractal.mandelbrot.core.Expression.funcPha;
+import static com.nextbreakpoint.nextfractal.mandelbrot.core.Expression.funcTan;
 
 import java.util.Map;
 
@@ -10,27 +10,27 @@ import com.nextbreakpoint.nextfractal.mandelbrot.compiler.ExpressionContext;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.InterpreterContext;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 
-public class InterpreterFuncPha implements CompiledExpression {
+public class InterpreterFuncTanZ implements CompiledExpression {
 	private CompiledExpression[] arguments;
 	private int index;
 	
-	public InterpreterFuncPha(ExpressionContext context, CompiledExpression[] arguments) {
+	public InterpreterFuncTanZ(ExpressionContext context, CompiledExpression[] arguments) {
 		this.index = context.newNumberIndex();
 		this.arguments = arguments;
 	}
 
 	@Override
 	public double evaluateReal(InterpreterContext context, Map<String, CompilerVariable> scope) {
-		return funcPha(arguments[0].evaluate(context, scope));
+		return 0;
 	}
 
 	@Override
 	public Number evaluate(InterpreterContext context, Map<String, CompilerVariable> scope) {
-		return context.getNumber(index).set(funcPha(arguments[0].evaluate(context, scope)));
+		return funcTan(context.getNumber(index), arguments[0].evaluate(context, scope));
 	}
 
 	@Override
 	public boolean isReal() {
-		return true;
+		return false;
 	}
 }

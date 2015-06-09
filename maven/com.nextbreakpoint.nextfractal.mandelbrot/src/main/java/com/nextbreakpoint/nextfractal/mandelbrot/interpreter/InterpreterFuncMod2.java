@@ -21,12 +21,12 @@ public class InterpreterFuncMod2 implements CompiledExpression {
 
 	@Override
 	public double evaluateReal(InterpreterContext context, Map<String, CompilerVariable> scope) {
-		return funcMod2(arguments[0].evaluate(context, scope));
+		return funcMod2(arguments[0].evaluateReal(context, scope));
 	}
 
 	@Override
 	public Number evaluate(InterpreterContext context, Map<String, CompilerVariable> scope) {
-		return context.getNumber(index).set(funcMod2(arguments[0].evaluate(context, scope)));
+		return context.getNumber(index).set(funcMod2(arguments[0].evaluateReal(context, scope)));
 	}
 
 	@Override

@@ -23,11 +23,11 @@ public class InterpreterColorComponent implements CompiledColorExpression {
 	public float[] evaluate(InterpreterContext context, Map<String, CompilerVariable> scope) {
 		if (exp1 != null && exp2 != null && exp2 != null && exp4 != null) {
 			return new float[] { (float)exp1.evaluateReal(context, scope), (float)exp2.evaluateReal(context, scope), (float)exp3.evaluateReal(context, scope), (float)exp4.evaluateReal(context, scope) }; 
-		} else if (exp1 != null && exp2 != null && exp2 != null) {
-			return new float[] { (float)exp1.evaluateReal(context, scope), (float)exp2.evaluateReal(context, scope), (float)exp3.evaluateReal(context, scope), 1 }; 
+		} else if (exp1 != null && exp2 != null && exp3 != null) {
+			return new float[] { 1, (float)exp1.evaluateReal(context, scope), (float)exp2.evaluateReal(context, scope), (float)exp3.evaluateReal(context, scope) }; 
 		} else if (exp1 != null) {
-			return new float[] { (float)exp1.evaluateReal(context, scope), (float)exp1.evaluateReal(context, scope), (float)exp1.evaluateReal(context, scope), 1 }; 
+			return new float[] { 1, (float)exp1.evaluateReal(context, scope), (float)exp1.evaluateReal(context, scope), (float)exp1.evaluateReal(context, scope) }; 
 		}
-		return new float[] { 0, 0, 0, 1 };
+		return new float[] { 1, 0, 0, 0 };
 	}
 }

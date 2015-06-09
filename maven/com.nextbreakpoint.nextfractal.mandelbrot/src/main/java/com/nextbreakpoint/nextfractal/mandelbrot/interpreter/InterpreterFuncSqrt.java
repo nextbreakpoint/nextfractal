@@ -26,11 +26,11 @@ public class InterpreterFuncSqrt implements CompiledExpression {
 
 	@Override
 	public Number evaluate(InterpreterContext context, Map<String, CompilerVariable> scope) {
-		return funcSqrt(context.getNumber(index), arguments[0].evaluate(context, scope));
+		return context.getNumber(index).set(funcSqrt(arguments[0].evaluateReal(context, scope)));
 	}
 
 	@Override
 	public boolean isReal() {
-		return arguments[0].isReal();
+		return true;
 	}
 }

@@ -1,7 +1,5 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.interpreter;
 
-import static com.nextbreakpoint.nextfractal.mandelbrot.core.Expression.opNeg;
-
 import java.util.Map;
 
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledExpression;
@@ -26,11 +24,11 @@ public class InterpreterOperatorNeg implements CompiledExpression {
 
 	@Override
 	public Number evaluate(InterpreterContext context, Map<String, CompilerVariable> scope) {
-		return opNeg(context.getNumber(index), exp.evaluate(context, scope));
+		return context.getNumber(index).set(-exp.evaluateReal(context, scope));
 	}
 
 	@Override
 	public boolean isReal() {
-		return exp.isReal();
+		return true;
 	}
 }

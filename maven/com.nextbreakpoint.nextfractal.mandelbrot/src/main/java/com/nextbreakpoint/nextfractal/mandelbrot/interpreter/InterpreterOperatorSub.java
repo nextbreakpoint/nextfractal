@@ -28,11 +28,11 @@ public class InterpreterOperatorSub implements CompiledExpression {
 
 	@Override
 	public Number evaluate(InterpreterContext context, Map<String, CompilerVariable> scope) {
-		return opSub(context.getNumber(index), exp1.evaluate(context, scope), exp2.evaluate(context, scope));
+		return context.getNumber(index).set(opSub(exp1.evaluateReal(context, scope), exp2.evaluateReal(context, scope)));
 	}
 
 	@Override
 	public boolean isReal() {
-		return exp1.isReal() && exp2.isReal();
+		return true;
 	}
 }

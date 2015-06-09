@@ -26,7 +26,7 @@ public class InterpreterFuncAsin implements CompiledExpression {
 
 	@Override
 	public Number evaluate(InterpreterContext context, Map<String, CompilerVariable> scope) {
-		return null;
+		return context.getNumber(index).set(funcAsin(arguments[0].evaluateReal(context, scope)));
 	}
 
 	@Override

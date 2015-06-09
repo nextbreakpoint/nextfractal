@@ -1,6 +1,6 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.interpreter;
 
-import static com.nextbreakpoint.nextfractal.mandelbrot.core.Expression.opAdd;
+import static com.nextbreakpoint.nextfractal.mandelbrot.core.Expression.funcCos;
 
 import java.util.Map;
 
@@ -10,29 +10,27 @@ import com.nextbreakpoint.nextfractal.mandelbrot.compiler.ExpressionContext;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.InterpreterContext;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 
-public class InterpreterOperatorAdd implements CompiledExpression {
-	private CompiledExpression exp1;
-	private CompiledExpression exp2;
+public class InterpreterFuncCosZ implements CompiledExpression {
+	private CompiledExpression[] arguments;
 	private int index;
 	
-	public InterpreterOperatorAdd(ExpressionContext context, CompiledExpression exp1, CompiledExpression exp2) {
+	public InterpreterFuncCosZ(ExpressionContext context, CompiledExpression[] arguments) {
 		this.index = context.newNumberIndex();
-		this.exp1 = exp1;
-		this.exp2 = exp2;
+		this.arguments = arguments;
 	}
 
 	@Override
 	public double evaluateReal(InterpreterContext context, Map<String, CompilerVariable> scope) {
-		return opAdd(exp1.evaluateReal(context, scope), exp2.evaluateReal(context, scope));
+		return 0;
 	}
 
 	@Override
 	public Number evaluate(InterpreterContext context, Map<String, CompilerVariable> scope) {
-		return context.getNumber(index).set(opAdd(exp1.evaluateReal(context, scope), exp2.evaluateReal(context, scope)));
+		return funcCos(context.getNumber(index), arguments[0].evaluate(context, scope));
 	}
 
 	@Override
 	public boolean isReal() {
-		return true;
+		return false;
 	}
 }
