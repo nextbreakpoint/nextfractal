@@ -66,27 +66,27 @@ public class NextFractalApp extends Application {
 		launch(args); 
     }
 	
-	private static double getVersion() {
-		String version = System.getProperty("java.version");
-		int pos = version.indexOf('.');
-		pos = version.indexOf('.', pos + 1);
-		return Double.parseDouble(version.substring(0, pos));
-	}
+//	private static double getVersion() {
+//		String version = System.getProperty("java.version");
+//		int pos = version.indexOf('.');
+//		pos = version.indexOf('.', pos + 1);
+//		return Double.parseDouble(version.substring(0, pos));
+//	}
 	
     @Override
     public void start(Stage primaryStage) {
-		if (getVersion() < 1.8) {
-			ButtonType exitButtonType = new ButtonType("Exit", ButtonData.FINISH);
-			Dialog<String> dialog = new Dialog<>();
-			dialog.getDialogPane().getButtonTypes().add(exitButtonType);
-			dialog.setGraphic(createIconImage("/icon-errors.png"));
-			dialog.setTitle("Error");
-			dialog.setHeaderText("NextFractal requires Java JDK 8 or later");
-			dialog.setContentText("Please install Java JDK 8 or later and add the command your_jdk_path/bin/java to your system's path variable.");
-			dialog.showAndWait();
-			System.exit(1);
-			return;
-		}
+//		if (getVersion() < 1.8) {
+//			ButtonType exitButtonType = new ButtonType("Exit", ButtonData.FINISH);
+//			Dialog<String> dialog = new Dialog<>();
+//			dialog.getDialogPane().getButtonTypes().add(exitButtonType);
+//			dialog.setGraphic(createIconImage("/icon-errors.png"));
+//			dialog.setTitle("Error");
+//			dialog.setHeaderText("NextFractal requires Java JDK 8 or later");
+//			dialog.setContentText("Please install Java JDK 8 or later and add the command your_jdk_path/bin/java to your system's path variable.");
+//			dialog.showAndWait();
+//			System.exit(1);
+//			return;
+//		}
 
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 		if (compiler == null) {
@@ -96,7 +96,7 @@ public class NextFractalApp extends Application {
 			dialog.setGraphic(createIconImage("/icon-errors.png"));
 			dialog.setTitle("Warning");
 			dialog.setHeaderText("Cannot find Java compiler in your classpath");
-			dialog.setContentText("Java compiler is required to reduce computation time. Please install Java JDK 8 or later and add the command your_jdk_path/bin/java to your system's path variable.");
+			dialog.setContentText("Java compiler is required to reduce computation time. Please install Java JDK 8 (>= 1.8.0_40) or later and add the command your_jdk_path/bin/java to your system's path variable.");
 			dialog.showAndWait();
 		}
 		
