@@ -1,5 +1,5 @@
 /*
- * NextFractal 1.0.5
+ * NextFractal 1.1.0
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015 Andrea Medeghini
@@ -95,7 +95,7 @@ public class NextFractalApp extends Application {
 		int height = 600;
 		int editorWidth = 424;
         String pluginId = "Mandelbrot";
-        primaryStage.setTitle("NextFractal 1.0.5");
+        primaryStage.setTitle("NextFractal 1.1.0");
         primaryStage.setResizable(false);
         StackPane root = new StackPane();
         Pane mainPane = new Pane();
