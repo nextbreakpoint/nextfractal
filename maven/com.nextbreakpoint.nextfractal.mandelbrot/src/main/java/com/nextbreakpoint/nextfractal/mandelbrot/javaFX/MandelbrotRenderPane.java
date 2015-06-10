@@ -505,6 +505,9 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 		});
 
 		fileProperty.addListener((observable, oldValue, newValue) -> {
+			if (newValue == null) {
+				return;
+			}
 			try {
 				File file = new File(newValue);
 				MandelbrotDataStore service = new MandelbrotDataStore();
@@ -562,6 +565,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 	@Override
 	public void didSelectFile(BrowsePane browser, File file) {
 		browser.hide();
+		fileProperty.setValue(null);
 		fileProperty.setValue(file.getAbsolutePath());
 	}
 
