@@ -76,8 +76,8 @@ public class NextFractalApp extends Application {
 		if (getVersion() < 1.8) {
 			Alert alert = new Alert(AlertType.ERROR);
 			alert.setTitle("Error");
-			alert.setHeaderText("Invalid Java Version!");
-			alert.setContentText("Java JDK 8 or later is required to launch the application");
+			alert.setHeaderText("NextFractal requires Java JDK 8 or later");
+			alert.setContentText("Please install Java JDK 8 or later and add your_jdk_path/bin/java to your command path");
 			alert.showAndWait();
 			System.exit(1);
 			return;
@@ -86,8 +86,8 @@ public class NextFractalApp extends Application {
 		if (compiler == null) {
 			Alert alert = new Alert(AlertType.WARNING);
 			alert.setTitle("Warning");
-			alert.setHeaderText("Cannot find Java Compiler!");
-			alert.setContentText("Please install Java JDK 8 and add javac command to system path in order to reduce computation time");
+			alert.setHeaderText("Cannot find Java compiler in your classpath");
+			alert.setContentText("Java compiler is required to reduce computation time and improve responsiveness. Please install Java JDK 8 or later and add your_jdk_path/bin/java to your command path.");
 			alert.showAndWait();
 		}
 		
