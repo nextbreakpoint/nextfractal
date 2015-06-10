@@ -19,19 +19,17 @@ public class CompiledAssignStatement implements CompiledStatement {
 	public boolean evaluate(InterpreterContext context, Map<String, CompilerVariable> scope) {
 		CompilerVariable var = scope.get(name);
 		if (var != null) {
-			if (var.isReal() && exp.isReal()) {
+			if (exp.isReal()) {
 				var.setValue(exp.evaluateReal(context, scope));
-			} else if (!var.isReal() && !exp.isReal()) {
+			} else if (!var.isReal()) {
 				var.setValue(exp.evaluate(context, scope));
-			} else if (!var.isReal() && exp.isReal()) {
-				var.setValue(exp.evaluate(context, scope));
-			} else if (var.isReal() && !exp.isReal()) {
+			} else {
 				throw new ASTException("Cannot assign expression", null);
 			}
 		} else {
 			var = new CompilerVariable(name, exp.isReal(), false);
 			scope.put(name, var);
-			if (var.isReal()) {
+			if (exp.isReal()) {
 				var.setValue(exp.evaluateReal(context, scope));
 			} else {
 				var.setValue(exp.evaluate(context, scope));

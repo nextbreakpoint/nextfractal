@@ -45,10 +45,10 @@ import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTFractal;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.MandelbrotLexer;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.MandelbrotParser;
 
-public class InterpreterSourceCompiler {
-	private static final Logger logger = Logger.getLogger(InterpreterSourceCompiler.class.getName());
+public class InterpreterReportCompiler {
+	private static final Logger logger = Logger.getLogger(InterpreterReportCompiler.class.getName());
 	
-	public CompilerReport generateSource(String source) throws IOException {
+	public CompilerReport generateReport(String source) throws IOException {
 		List<CompilerError> errors = new ArrayList<>();
 		ASTFractal ast = parse(source, errors);
 		return new CompilerReport(ast, Type.INTERPRETER, "", "", errors);

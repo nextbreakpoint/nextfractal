@@ -24,30 +24,25 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.compiler.java;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URI;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Logger;
 
-import javax.tools.SimpleJavaFileObject;
-
-public class ClassJavaFileObject extends SimpleJavaFileObject {
-	private ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-    public ClassJavaFileObject(String name) {
-        super(URI.create("string:///" + name.replace('.','/') + Kind.SOURCE.extension), Kind.CLASS);
-    }
-
-	@Override
-	public InputStream openInputStream() throws IOException {
-		return new ByteArrayInputStream(baos.toByteArray());
+public class JavaCompilerClassLoader extends ClassLoader {
+	private static final Logger logger = Logger.getLogger(JavaCompilerClassLoader.class.getName());
+	private static final AtomicInteger count = new AtomicInteger();
+	
+	public JavaCompilerClassLoader() {
+		logger.fine("Create classloader (" + count.addAndGet(1) + ")");
+	}
+	
+	public void defineClassFromData(String name, byte[] data) {
+		Class<?> clazz = defineClass(name, data, 0, data.length);
+		super.resolveClass(clazz);
 	}
 
 	@Override
-	public OutputStream openOutputStream() throws IOException {
-		baos.reset();
-		return baos;
+	protected void finalize() throws Throwable {
+		logger.fine("Finalize classloader (" + count.addAndGet(-1) + ")");
+		super.finalize();
 	}
 }

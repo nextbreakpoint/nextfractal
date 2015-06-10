@@ -79,12 +79,12 @@ import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTStatement;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTStopStatement;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTVariable;
 
-public class JavaExpressionCompiler implements ASTExpressionCompiler {
+public class JavaASTCompiler implements ASTExpressionCompiler {
 	private final Map<String, CompilerVariable> variables;
 	private final ExpressionContext context;
 	private final StringBuilder builder;
 	
-	public JavaExpressionCompiler(ExpressionContext context, Map<String, CompilerVariable> variables, StringBuilder builder) {
+	public JavaASTCompiler(ExpressionContext context, Map<String, CompilerVariable> variables, StringBuilder builder) {
 		this.variables = variables;
 		this.context = context;
 		this.builder = builder;
@@ -563,12 +563,12 @@ public class JavaExpressionCompiler implements ASTExpressionCompiler {
 		builder.append(") {\n");
 		Map<String, CompilerVariable> vars = new HashMap<String, CompilerVariable>(variables);
 		for (ASTStatement innerStatement : statement.getThenStatementList().getStatements()) {
-			innerStatement.compile(new JavaExpressionCompiler(context, vars, builder));
+			innerStatement.compile(new JavaASTCompiler(context, vars, builder));
 		}
 		if (statement.getElseStatementList() != null) {
 			builder.append("} else {\n");
 			for (ASTStatement innerStatement : statement.getElseStatementList().getStatements()) {
-				innerStatement.compile(new JavaExpressionCompiler(context, vars, builder));
+				innerStatement.compile(new JavaASTCompiler(context, vars, builder));
 			}
 		}
 		builder.append("}\n");

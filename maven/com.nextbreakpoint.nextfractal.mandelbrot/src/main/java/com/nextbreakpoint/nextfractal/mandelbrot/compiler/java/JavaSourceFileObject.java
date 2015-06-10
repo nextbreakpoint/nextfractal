@@ -24,25 +24,20 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.compiler.java;
 
-import java.util.List;
+import java.net.URI;
 
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerBuilder;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerError;
+import javax.tools.SimpleJavaFileObject;
 
-public class ClassCompilerBuilder<T> implements CompilerBuilder<T> {
-	private Class<T> clazz;
-	private List<CompilerError> errors;
-	
-	public ClassCompilerBuilder(Class<T> clazz, List<CompilerError> errors) {
-		this.clazz = clazz;
-		this.errors = errors;
-	}
-	
-	public T build() throws InstantiationException, IllegalAccessException {
-		return clazz.newInstance();
-	}
+public class JavaSourceFileObject extends SimpleJavaFileObject {
+    private final String code;
 
-	public List<CompilerError> getErrors() {
-		return errors;
-	}
+    public JavaSourceFileObject(String name, String code) {
+        super(URI.create("string:///" + name.replace('.','/') + Kind.SOURCE.extension), Kind.SOURCE);
+        this.code = code;
+    }
+
+    @Override
+    public CharSequence getCharContent(boolean ignoreEncodingErrors) {
+        return code;
+    }
 }

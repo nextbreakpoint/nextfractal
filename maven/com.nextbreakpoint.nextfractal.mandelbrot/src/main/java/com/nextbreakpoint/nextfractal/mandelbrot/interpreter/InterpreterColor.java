@@ -101,7 +101,7 @@ public class InterpreterColor extends Color implements InterpreterContext {
 		}
 	}
 
-	public void updateStateVars(Map<String, CompilerVariable> vars) {
+	private void updateStateVars(Map<String, CompilerVariable> vars) {
 		int i = 0;
 		for (Iterator<CompilerVariable> s = color.getStateVariables().iterator(); s.hasNext();) {
 			CompilerVariable var = s.next();

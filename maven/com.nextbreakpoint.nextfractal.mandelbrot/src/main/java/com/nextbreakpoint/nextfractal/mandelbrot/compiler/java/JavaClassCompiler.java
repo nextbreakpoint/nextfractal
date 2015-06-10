@@ -62,27 +62,27 @@ public class JavaClassCompiler {
 	public CompilerBuilder<Orbit> compileOrbit(CompilerReport report) throws ClassNotFoundException, IOException {
 		List<CompilerError> errors = new ArrayList<>();
 		Class<Orbit> clazz = compileToClass(report.getOrbitSource(), className + "Orbit", Orbit.class, errors);
-		return new ClassCompilerBuilder<Orbit>(clazz, errors);
+		return new JavaClassBuilder<Orbit>(clazz, errors);
 	}
 
 	public CompilerBuilder<Color> compileColor(CompilerReport report) throws ClassNotFoundException, IOException {
 		List<CompilerError> errors = new ArrayList<>();
 		Class<Color> clazz = compileToClass(report.getColorSource(), className + "Color", Color.class, errors);
-		return new ClassCompilerBuilder<Color>(clazz, errors);
+		return new JavaClassBuilder<Color>(clazz, errors);
 	}
 	
 	@SuppressWarnings("unchecked")
 	private <T> Class<T> compileToClass(String source, String className, Class<T> clazz, List<CompilerError> errors) throws IOException, ClassNotFoundException {
 		logger.log(Level.FINE, "Compile Java source:\n" + source);
 		List<SimpleJavaFileObject> compilationUnits = new ArrayList<>();
-		compilationUnits.add(new SourceJavaFileObject(className, source));
+		compilationUnits.add(new JavaSourceFileObject(className, source));
 		List<String> options = new ArrayList<>();
 //		options.addAll(Arrays.asList("-source", "1.8", "-target", "1.8", "-proc:none", "-Xdiags:verbose", "-classpath", System.getProperty("java.class.path")));
 		options.addAll(Arrays.asList("-proc:none", "-Xdiags:verbose", "-classpath", System.getProperty("java.class.path")));
 		DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 		String fullClassName = packageName + "." + className;
-		JavaFileManager fileManager = new CompilerJavaFileManager(compiler.getStandardFileManager(diagnostics, null, null), fullClassName);
+		JavaFileManager fileManager = new JavaCompilerFileManager(compiler.getStandardFileManager(diagnostics, null, null), fullClassName);
 		try {
 			compiler.getTask(null, fileManager, diagnostics, options, null, compilationUnits).call();
 			for (Diagnostic<? extends JavaFileObject> diagnostic : diagnostics.getDiagnostics()) {
@@ -91,7 +91,7 @@ public class JavaClassCompiler {
 				errors.add(error);
 			}
 			if (diagnostics.getDiagnostics().size() == 0) {
-				CompilerClassLoader loader = new CompilerClassLoader();
+				JavaCompilerClassLoader loader = new JavaCompilerClassLoader();
 				defineClasses(fileManager, loader, className);
 				Class<?> compiledClazz = loader.loadClass(packageName + "." + className);
 				logger.log(Level.FINE, compiledClazz.getCanonicalName());
@@ -108,7 +108,7 @@ public class JavaClassCompiler {
 		return null;
 	}
 
-	private void defineClasses(JavaFileManager fileManager, CompilerClassLoader loader, String className) throws IOException {
+	private void defineClasses(JavaFileManager fileManager, JavaCompilerClassLoader loader, String className) throws IOException {
 		String name = packageName + "." + className;
 		JavaFileObject file = fileManager.getJavaFileForOutput(StandardLocation.locationFor(name), name, Kind.CLASS, null);
 		byte[] fileData = loadBytes(file);

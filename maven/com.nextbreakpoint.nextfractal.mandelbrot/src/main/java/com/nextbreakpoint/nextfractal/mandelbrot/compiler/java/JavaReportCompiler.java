@@ -69,17 +69,17 @@ import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTStatement;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.MandelbrotLexer;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.MandelbrotParser;
 
-public class JavaSourceCompiler {
-	private static final Logger logger = Logger.getLogger(JavaSourceCompiler.class.getName());
+public class JavaReportCompiler {
+	private static final Logger logger = Logger.getLogger(JavaReportCompiler.class.getName());
 	private final String packageName;
 	private final String className;
 	
-	public JavaSourceCompiler(String packageName, String className) {
+	public JavaReportCompiler(String packageName, String className) {
 		this.packageName = packageName;
 		this.className = className;
 	}
 	
-	public CompilerReport generateSource(String source) throws IOException {
+	public CompilerReport generateReport(String source) throws IOException {
 		List<CompilerError> errors = new ArrayList<>();
 		ASTFractal ast = parse(source, errors);
 		if (errors.size() == 0) {
@@ -379,12 +379,12 @@ public class JavaSourceCompiler {
 
 	private void compile(ExpressionContext context, StringBuilder builder,	Map<String, CompilerVariable> variables, ASTRule rule) {
 		builder.append("if (");
-		rule.getRuleExp().compile(new JavaExpressionCompiler(context, variables, builder));
+		rule.getRuleExp().compile(new JavaASTCompiler(context, variables, builder));
 		builder.append(") {\n");
 		builder.append("addColor(");
 		builder.append(rule.getOpacity());
 		builder.append(",");
-		rule.getColorExp().compile(new JavaExpressionCompiler(context, variables, builder));
+		rule.getColorExp().compile(new JavaASTCompiler(context, variables, builder));
 		builder.append(");\n}\n");
 	}
 
@@ -411,7 +411,7 @@ public class JavaSourceCompiler {
 		builder.append(",(start, end, step) -> { return ");
 		if (element.getExp() != null) {
 			if (element.getExp().isReal()) {
-				element.getExp().compile(new JavaExpressionCompiler(context, variables, builder));
+				element.getExp().compile(new JavaASTCompiler(context, variables, builder));
 			} else {
 				throw new ASTException("Expression type not valid: " + element.getLocation().getText(), element.getLocation());
 			}
@@ -477,29 +477,29 @@ public class JavaSourceCompiler {
 			builder.append("(");
 			if (operator.getC1().isReal()) {
 				builder.append("number(");
-				operator.getC1().compile(new JavaExpressionCompiler(context, variables, builder));
+				operator.getC1().compile(new JavaASTCompiler(context, variables, builder));
 				builder.append(")");
 			} else {
-				operator.getC1().compile(new JavaExpressionCompiler(context, variables, builder));
+				operator.getC1().compile(new JavaASTCompiler(context, variables, builder));
 			}
 			if (operator.getC2() != null) {
 				builder.append(",");
 				if (operator.getC2().isReal()) {
 					builder.append("number(");
-					operator.getC2().compile(new JavaExpressionCompiler(context, variables, builder));
+					operator.getC2().compile(new JavaASTCompiler(context, variables, builder));
 					builder.append(")");
 				} else {
-					operator.getC2().compile(new JavaExpressionCompiler(context, variables, builder));
+					operator.getC2().compile(new JavaASTCompiler(context, variables, builder));
 				}
 			}
 			if (operator.getC3() != null) {
 				builder.append(",");
 				if (operator.getC3().isReal()) {
 					builder.append("number(");
-					operator.getC3().compile(new JavaExpressionCompiler(context, variables, builder));
+					operator.getC3().compile(new JavaASTCompiler(context, variables, builder));
 					builder.append(")");
 				} else {
-					operator.getC3().compile(new JavaExpressionCompiler(context, variables, builder));
+					operator.getC3().compile(new JavaASTCompiler(context, variables, builder));
 				}
 			}
 			builder.append(")");
@@ -551,7 +551,7 @@ public class JavaSourceCompiler {
 				compile(context, builder, variables, statement);
 			}
 			builder.append("if (");
-			loop.getExpression().compile(new JavaExpressionCompiler(context, variables, builder));
+			loop.getExpression().compile(new JavaASTCompiler(context, variables, builder));
 			builder.append(") { n = i; break; }\n");
 			builder.append("if (states != null) {\n");
 			builder.append("states.add(new Number[] { ");
@@ -587,7 +587,7 @@ public class JavaSourceCompiler {
 
 	private void compile(ExpressionContext context, StringBuilder builder, Map<String, CompilerVariable> variables, ASTStatement statement) {
 		if (statement != null) {
-			statement.compile(new JavaExpressionCompiler(context, variables, builder));
+			statement.compile(new JavaASTCompiler(context, variables, builder));
 		}		
 	}
 	

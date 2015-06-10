@@ -27,12 +27,12 @@ public class CompiledNumber implements CompiledExpression {
 	@Override
 	public Number evaluate(InterpreterContext context, Map<String, CompilerVariable> scope) {
 		MutableNumber number = context.getNumber(index);
-		number.set(r, 0);
+		number.set(r, i);
 		return number;
 	}
 
 	@Override
 	public boolean isReal() {
-		return true;
+		return i == 0;
 	}
 }

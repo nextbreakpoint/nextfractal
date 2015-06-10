@@ -53,7 +53,7 @@ public class InterpreterColorBuilder implements CompilerBuilder<Color> {
 	
 	public Color build() throws InstantiationException, IllegalAccessException {
 		ExpressionContext context = new ExpressionContext();
-		InterpreterExpressionCompiler compiler = new InterpreterExpressionCompiler(context);  
+		InterpreterASTCompiler compiler = new InterpreterASTCompiler(context);  
 		ASTColor astColor = astFractal.getColor();
 		List<CompilerVariable> colorVars = new ArrayList<>();
 		for (CompilerVariable var : astFractal.getColorVariables()) {

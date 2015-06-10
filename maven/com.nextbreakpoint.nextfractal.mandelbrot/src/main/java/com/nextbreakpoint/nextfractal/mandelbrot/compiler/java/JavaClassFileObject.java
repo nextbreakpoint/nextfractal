@@ -24,25 +24,30 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.compiler.java;
 
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.logging.Logger;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URI;
 
-public class CompilerClassLoader extends ClassLoader {
-	private static final Logger logger = Logger.getLogger(CompilerClassLoader.class.getName());
-	private static final AtomicInteger count = new AtomicInteger();
-	
-	public CompilerClassLoader() {
-		logger.fine("Create classloader (" + count.addAndGet(1) + ")");
-	}
-	
-	public void defineClassFromData(String name, byte[] data) {
-		Class<?> clazz = defineClass(name, data, 0, data.length);
-		super.resolveClass(clazz);
+import javax.tools.SimpleJavaFileObject;
+
+public class JavaClassFileObject extends SimpleJavaFileObject {
+	private ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+    public JavaClassFileObject(String name) {
+        super(URI.create("string:///" + name.replace('.','/') + Kind.SOURCE.extension), Kind.CLASS);
+    }
+
+	@Override
+	public InputStream openInputStream() throws IOException {
+		return new ByteArrayInputStream(baos.toByteArray());
 	}
 
 	@Override
-	protected void finalize() throws Throwable {
-		logger.fine("Finalize classloader (" + count.addAndGet(-1) + ")");
-		super.finalize();
+	public OutputStream openOutputStream() throws IOException {
+		baos.reset();
+		return baos;
 	}
 }

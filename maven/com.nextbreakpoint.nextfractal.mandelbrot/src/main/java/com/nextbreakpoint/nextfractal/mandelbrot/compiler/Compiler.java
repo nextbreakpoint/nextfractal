@@ -30,11 +30,11 @@ import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
 
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.java.JavaClassCompiler;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.java.JavaSourceCompiler;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.java.JavaReportCompiler;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Color;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Orbit;
 import com.nextbreakpoint.nextfractal.mandelbrot.interpreter.InterpreterClassCompiler;
-import com.nextbreakpoint.nextfractal.mandelbrot.interpreter.InterpreterSourceCompiler;
+import com.nextbreakpoint.nextfractal.mandelbrot.interpreter.InterpreterReportCompiler;
 
 public class Compiler {
 	private final String packageName;
@@ -52,11 +52,11 @@ public class Compiler {
 	public CompilerReport compileReport(String source) throws IOException {
 		JavaCompiler javaCompiler = getJavaCompiler();
 		if (javaCompiler == null) {
-			InterpreterSourceCompiler compiler = new InterpreterSourceCompiler();
-			return compiler.generateSource(source);
+			InterpreterReportCompiler compiler = new InterpreterReportCompiler();
+			return compiler.generateReport(source);
 		} else {
-			JavaSourceCompiler compiler = new JavaSourceCompiler(packageName, className);
-			return compiler.generateSource(source);
+			JavaReportCompiler compiler = new JavaReportCompiler(packageName, className);
+			return compiler.generateReport(source);
 		}
 	}
 	

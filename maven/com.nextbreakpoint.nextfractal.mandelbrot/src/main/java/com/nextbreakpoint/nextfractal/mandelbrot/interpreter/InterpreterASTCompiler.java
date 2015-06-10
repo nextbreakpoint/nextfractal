@@ -76,7 +76,6 @@ import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledLogicO
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledLogicOperatorOr;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledLogicOperatorXor;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledNumber;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledNumberZ;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledOperatorAdd;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledOperatorAddZ;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledOperatorDiv;
@@ -84,10 +83,8 @@ import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledOperat
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledOperatorMul;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledOperatorMulZ;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledOperatorNeg;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledOperatorNegZ;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledOperatorNumber;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledOperatorPos;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledOperatorPosZ;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledOperatorPow;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledOperatorPowZ;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledOperatorSub;
@@ -112,7 +109,6 @@ import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOp
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpQuadTo;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpQuadToRel;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledVariable;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledVariableZ;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTAssignStatement;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTColorComponent;
@@ -143,20 +139,16 @@ import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTStatement;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTStopStatement;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTVariable;
 
-public class InterpreterExpressionCompiler implements ASTExpressionCompiler {
+public class InterpreterASTCompiler implements ASTExpressionCompiler {
 	private final ExpressionContext context;
 	
-	public InterpreterExpressionCompiler(ExpressionContext context) {
+	public InterpreterASTCompiler(ExpressionContext context) {
 		this.context = context;
 	}
 
 	@Override
 	public CompiledExpression compile(ASTNumber number) {
-		if (number.isReal()) {
-			return new CompiledNumber(context, number.r(), number.i());
-		} else {
-			return new CompiledNumberZ(context, number.r(), number.i());
-		}
+		return new CompiledNumber(context, number.r(), number.i());
 	}
 
 	@Override
@@ -324,18 +316,10 @@ public class InterpreterExpressionCompiler implements ASTExpressionCompiler {
 		if (exp2 == null) {
 			switch (operator.getOp()) {
 				case "-":
-					if (exp1.isReal()) {
-						return new CompiledOperatorNeg(context, exp1.compile(this));
-					} else {
-						return new CompiledOperatorNegZ(context, exp1.compile(this));
-					}
+					return new CompiledOperatorNeg(context, exp1.compile(this));
 				
 				case "+":
-					if (exp1.isReal()) {
-						return new CompiledOperatorPos(context, exp1.compile(this));
-					} else {
-						return new CompiledOperatorPosZ(context, exp1.compile(this));
-					}
+					return new CompiledOperatorPos(context, exp1.compile(this));
 				
 				default:
 					throw new ASTException("Unsupported operator: " + operator.getLocation().getText(), operator.getLocation());
@@ -360,6 +344,26 @@ public class InterpreterExpressionCompiler implements ASTExpressionCompiler {
 					
 					case "<>":
 						return new CompiledOperatorNumber(context, exp1.compile(this), exp2.compile(this));
+					
+					default:
+						throw new ASTException("Unsupported operator: " + operator.getLocation().getText(), operator.getLocation());
+				}
+			} else if (exp1.isReal()) {
+				switch (operator.getOp()) {
+					case "+":
+						return new CompiledOperatorAddZ(context, exp1.compile(this), exp2.compile(this));
+					
+					case "-":
+						return new CompiledOperatorSubZ(context, exp1.compile(this), exp2.compile(this));
+						
+					case "*":
+						return new CompiledOperatorMulZ(context, exp1.compile(this), exp2.compile(this));
+						
+					case "/":
+						return new CompiledOperatorDivZ(context, exp1.compile(this), exp2.compile(this));
+						
+					case "^":
+						return new CompiledOperatorPowZ(context, exp1.compile(this), exp2.compile(this));
 					
 					default:
 						throw new ASTException("Unsupported operator: " + operator.getLocation().getText(), operator.getLocation());
@@ -412,11 +416,7 @@ public class InterpreterExpressionCompiler implements ASTExpressionCompiler {
 
 	@Override
 	public CompiledExpression compile(ASTVariable variable) {
-		if (variable.isReal()) {
-			return new CompiledVariable(context, variable.getName(), variable.isReal());
-		} else {
-			return new CompiledVariableZ(context, variable.getName(), variable.isReal());
-		}
+		return new CompiledVariable(context, variable.getName(), variable.isReal());
 	}
 
 	@Override

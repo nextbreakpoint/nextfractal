@@ -35,12 +35,12 @@ import javax.tools.JavaFileManager;
 import javax.tools.JavaFileObject;
 import javax.tools.JavaFileObject.Kind;
 
-public class CompilerJavaFileManager implements JavaFileManager {
+public class JavaCompilerFileManager implements JavaFileManager {
 	private Map<String, JavaFileObject> files = new HashMap<>();
 	private JavaFileManager fileManager;
 	private final String className;
 	
-	public CompilerJavaFileManager(JavaFileManager fileManager, String className) {
+	public JavaCompilerFileManager(JavaFileManager fileManager, String className) {
 		this.className = className;
 		this.fileManager = fileManager;
 	}
@@ -117,7 +117,7 @@ public class CompilerJavaFileManager implements JavaFileManager {
 		if (className.equals(className)) {
 			JavaFileObject file = files.get(className);
 			if (file == null) {
-				file = new ClassJavaFileObject(className);
+				file = new JavaClassFileObject(className);
 				files.put(className, file);
 			}
 			return file;

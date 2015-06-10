@@ -1,5 +1,7 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.compiler.support;
 
+import static com.nextbreakpoint.nextfractal.mandelbrot.core.Expression.opPos;
+
 import java.util.Map;
 
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
@@ -23,11 +25,11 @@ public class CompiledOperatorPos implements CompiledExpression {
 
 	@Override
 	public Number evaluate(InterpreterContext context, Map<String, CompilerVariable> scope) {
-		return context.getNumber(index).set(exp.evaluate(context, scope));
+		return opPos(context.getNumber(index), exp.evaluate(context, scope));
 	}
 
 	@Override
 	public boolean isReal() {
-		return true;
+		return exp.isReal();
 	}
 }

@@ -52,7 +52,7 @@ public class InterpreterOrbitBuilder implements CompilerBuilder<Orbit> {
 	
 	public Orbit build() throws InstantiationException, IllegalAccessException {
 		ExpressionContext context = new ExpressionContext();
-		InterpreterExpressionCompiler compiler = new InterpreterExpressionCompiler(context);
+		InterpreterASTCompiler compiler = new InterpreterASTCompiler(context);
 		ASTOrbit astOrbit = astFractal.getOrbit();
 		double ar = astOrbit.getRegion().getA().r();
 		double ai = astOrbit.getRegion().getA().i();

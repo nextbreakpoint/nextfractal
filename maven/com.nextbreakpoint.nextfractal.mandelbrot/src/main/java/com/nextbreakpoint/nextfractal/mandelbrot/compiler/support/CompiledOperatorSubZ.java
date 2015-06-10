@@ -8,6 +8,7 @@ import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.ExpressionContext;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.InterpreterContext;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
+import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTException;
 
 public class CompiledOperatorSubZ implements CompiledExpression {
 	private CompiledExpression exp1;
@@ -22,7 +23,7 @@ public class CompiledOperatorSubZ implements CompiledExpression {
 
 	@Override
 	public double evaluateReal(InterpreterContext context, Map<String, CompilerVariable> scope) {
-		return 0;
+		throw new ASTException("Cannot assign operator result to real number", null);
 	}
 
 	@Override

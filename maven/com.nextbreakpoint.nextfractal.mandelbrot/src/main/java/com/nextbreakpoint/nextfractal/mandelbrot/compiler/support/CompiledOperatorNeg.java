@@ -6,6 +6,7 @@ import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.ExpressionContext;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.InterpreterContext;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
+import static com.nextbreakpoint.nextfractal.mandelbrot.core.Expression.*;
 
 public class CompiledOperatorNeg implements CompiledExpression {
 	private CompiledExpression exp;
@@ -23,11 +24,11 @@ public class CompiledOperatorNeg implements CompiledExpression {
 
 	@Override
 	public Number evaluate(InterpreterContext context, Map<String, CompilerVariable> scope) {
-		return context.getNumber(index).set(-exp.evaluateReal(context, scope));
+		return opNeg(context.getNumber(index), exp.evaluate(context, scope));
 	}
 
 	@Override
 	public boolean isReal() {
-		return true;
+		return exp.isReal();
 	}
 }
