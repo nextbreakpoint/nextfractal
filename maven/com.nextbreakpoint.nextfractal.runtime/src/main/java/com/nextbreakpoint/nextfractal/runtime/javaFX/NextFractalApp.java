@@ -24,6 +24,7 @@
  */
 package com.nextbreakpoint.nextfractal.runtime.javaFX;
 
+import java.io.InputStream;
 import java.util.ServiceLoader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -31,8 +32,11 @@ import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -71,24 +75,29 @@ public class NextFractalApp extends Application {
 	
     @Override
     public void start(Stage primaryStage) {
-		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-		
 		if (getVersion() < 1.8) {
-			Alert alert = new Alert(AlertType.ERROR);
-			alert.setTitle("Error");
-			alert.setHeaderText("NextFractal requires Java JDK 8 or later");
-			alert.setContentText("Please install Java JDK 8 or later and add your_jdk_path/bin/java to your command path");
-			alert.showAndWait();
+			ButtonType exitButtonType = new ButtonType("Exit", ButtonData.FINISH);
+			Dialog<String> dialog = new Dialog<>();
+			dialog.getDialogPane().getButtonTypes().add(exitButtonType);
+			dialog.setGraphic(createIconImage("/icon-errors.png"));
+			dialog.setTitle("Error");
+			dialog.setHeaderText("NextFractal requires Java JDK 8 or later");
+			dialog.setContentText("Please install Java JDK 8 or later and add the command your_jdk_path/bin/java to your system's path variable.");
+			dialog.showAndWait();
 			System.exit(1);
 			return;
 		}
 
+		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 		if (compiler == null) {
-			Alert alert = new Alert(AlertType.WARNING);
-			alert.setTitle("Warning");
-			alert.setHeaderText("Cannot find Java compiler in your classpath");
-			alert.setContentText("Java compiler is required to reduce computation time and improve responsiveness. Please install Java JDK 8 or later and add your_jdk_path/bin/java to your command path.");
-			alert.showAndWait();
+			ButtonType exitButtonType = new ButtonType("Continue", ButtonData.OK_DONE);
+			Dialog<String> dialog = new Dialog<>();
+			dialog.getDialogPane().getButtonTypes().add(exitButtonType);
+			dialog.setGraphic(createIconImage("/icon-errors.png"));
+			dialog.setTitle("Warning");
+			dialog.setHeaderText("Cannot find Java compiler in your classpath");
+			dialog.setContentText("Java compiler is required to reduce computation time. Please install Java JDK 8 or later and add the command your_jdk_path/bin/java to your system's path variable.");
+			dialog.showAndWait();
 		}
 		
 		int width = 600;
@@ -297,5 +306,14 @@ public class NextFractalApp extends Application {
 		plugins.forEach(plugin -> {
 			logger.fine("Found plugin " + plugin.getId());
 		});
+	}
+
+	private ImageView createIconImage(String name) {
+		InputStream stream = getClass().getResourceAsStream(name);
+		ImageView image = new ImageView(new Image(stream));
+		image.setSmooth(true);
+		image.setFitWidth(32);
+		image.setFitHeight(32);
+		return image;
 	}
 }
