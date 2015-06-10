@@ -27,12 +27,13 @@ package com.nextbreakpoint.nextfractal.mandelbrot.interpreter;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledStatement;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledTrap;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerBuilder;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerError;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.ExpressionContext;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledOrbit;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledStatement;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrap;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Orbit;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTFractal;
@@ -65,7 +66,7 @@ public class InterpreterOrbitBuilder implements CompilerBuilder<Orbit> {
 		for (CompilerVariable var : astFractal.getStateVariables()) {
 			stateVars.add(var.copy());
 		}
-		InterpreterCompiledOrbit orbit = new InterpreterCompiledOrbit(orbitVars, stateVars);
+		CompiledOrbit orbit = new CompiledOrbit(orbitVars, stateVars);
 		orbit.setRegion(new Number[] { new Number(ar, ai), new Number(br, bi) });
 		List<CompiledStatement> beginStatements = new ArrayList<>();
 		List<CompiledStatement> loopStatements = new ArrayList<>();

@@ -35,7 +35,7 @@ public class CompilerTest2 extends BaseTest {
 	public void Compiler1() {
 		try {
 			Compiler compiler = new Compiler();
-			CompilerReport report = compiler.generateSource(getSource("/source2.m"));
+			CompilerReport report = compiler.compileReport(getSource("/source2.m"));
 			printErrors(report.getErrors());
 			Assert.assertEquals(1, report.getErrors().size());
 		} catch (Exception e) {

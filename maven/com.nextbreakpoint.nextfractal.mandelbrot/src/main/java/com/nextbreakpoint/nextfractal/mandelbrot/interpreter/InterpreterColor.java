@@ -28,13 +28,14 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledPalette;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledPaletteElement;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledRule;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledStatement;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.ExpressionContext;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.InterpreterContext;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledColor;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledPalette;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledPaletteElement;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledRule;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledStatement;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Color;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.MutableNumber;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Palette;
@@ -43,37 +44,37 @@ import com.nextbreakpoint.nextfractal.mandelbrot.core.PaletteExpression;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Trap;
 
 public class InterpreterColor extends Color implements InterpreterContext {
-	private InterpreterCompiledColor color;
+	private CompiledColor color;
 	private ExpressionContext context;
 	private Map<String, Trap> traps = new HashMap<>();
 	private Map<String, Palette> palettes = new HashMap<>();
+	private Map<String, CompilerVariable> vars = new HashMap<>();
 
-	public InterpreterColor(InterpreterCompiledColor color, ExpressionContext context) {
+	public InterpreterColor(CompiledColor color, ExpressionContext context) {
 		this.color = color;
 		this.context = context;
 		initializeStack();
 	}
 
 	public void init() {
+		for (Iterator<CompilerVariable> s = color.getStateVariables().iterator(); s.hasNext();) {
+			CompilerVariable var = s.next();
+			vars.put(var.getName(), var);
+		}
+		for (Iterator<CompilerVariable> s = color.getColorVariables().iterator(); s.hasNext();) {
+			CompilerVariable var = s.next();
+			vars.put(var.getName(), var);
+		}
 		for (CompiledPalette cPalette : color.getPalettes()) {
 			Palette palette = new Palette();
-			Map<String, CompilerVariable> scope = new HashMap<>();
-			for (Iterator<CompilerVariable> s = color.getStateVariables().iterator(); s.hasNext();) {
-				CompilerVariable var = s.next();
-				scope.put(var.getName(), var.copy());
-			}
-			for (Iterator<CompilerVariable> s = color.getColorVariables().iterator(); s.hasNext();) {
-				CompilerVariable var = s.next();
-				scope.put(var.getName(), var.copy());
-			}
 			for (CompiledPaletteElement cElement : cPalette.getElements()) {
 				PaletteExpression expression = null;
 				if (cElement.getExp() != null) {
 					expression = (start, end, step) -> {
-						scope.put("start", new CompilerVariable("start", true, false, start));
-						scope.put("end", new CompilerVariable("end", true, false, end));
-						scope.put("step", new CompilerVariable("step", true, false, step));
-						return cElement.getExp().evaluateReal(InterpreterColor.this, scope);
+						vars.put("start", new CompilerVariable("start", true, false, start));
+						vars.put("end", new CompilerVariable("end", true, false, end));
+						vars.put("step", new CompilerVariable("step", true, false, step));
+						return cElement.getExp().evaluateReal(InterpreterColor.this, vars);
 					};
 				} else {
 					expression = (start, end, step) -> {
@@ -88,32 +89,23 @@ public class InterpreterColor extends Color implements InterpreterContext {
 	}
 
 	public void render() {
-		updateStateVars();
-		Map<String, CompilerVariable> scope = new HashMap<>();
-		for (Iterator<CompilerVariable> s = color.getStateVariables().iterator(); s.hasNext();) {
-			CompilerVariable var = s.next();
-			scope.put(var.getName(), var.copy());
-		}
-		for (Iterator<CompilerVariable> s = color.getColorVariables().iterator(); s.hasNext();) {
-			CompilerVariable var = s.next();
-			scope.put(var.getName(), var.copy());
-		}
+		updateStateVars(vars);
 		setColor(color.getBackgroundColor());
 		for (CompiledStatement statement : color.getInitStatements()) {
-			statement.evaluate(this, scope);
+			statement.evaluate(this, vars);
 		} 
 		for (CompiledRule rule : color.getRules()) {
-			if ((rule.getRuleCondition().evaluate(this, scope))) {
-				addColor(rule.getOpacity(), rule.getColorExp().evaluate(this, scope));
+			if ((rule.getRuleCondition().evaluate(this, vars))) {
+				addColor(rule.getOpacity(), rule.getColorExp().evaluate(this, vars));
 			}
 		}
 	}
 
-	public void updateStateVars() {
+	public void updateStateVars(Map<String, CompilerVariable> vars) {
 		int i = 0;
 		for (Iterator<CompilerVariable> s = color.getStateVariables().iterator(); s.hasNext();) {
 			CompilerVariable var = s.next();
-			var.setValue(this.scope.getVariable(i));
+			vars.get(var.getName()).setValue(this.scope.getVariable(i));
 			i++;
 		}
 	}

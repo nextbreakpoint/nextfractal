@@ -27,25 +27,92 @@ package com.nextbreakpoint.nextfractal.mandelbrot.interpreter;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledColorExpression;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledCondition;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledExpression;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledPalette;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledPaletteElement;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledStatement;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledTrap;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledTrapOp;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledTrapOpArcTo;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledTrapOpArcToRel;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledTrapOpCurveTo;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledTrapOpCurveToRel;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledTrapOpLineTo;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledTrapOpLineToRel;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledTrapOpMoveTo;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledTrapOpMoveToRel;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledTrapOpQuadTo;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledTrapOpQuadToRel;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.ExpressionContext;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledAssignStatement;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledColorComponentExpression;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledColorExpression;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledCondition;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledConditionalStatement;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledExpression;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledFuncAbs;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledFuncAcos;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledFuncAsin;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledFuncAtan;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledFuncAtan2;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledFuncCeil;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledFuncCos;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledFuncCosZ;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledFuncExp;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledFuncExpZ;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledFuncFloor;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledFuncHypot;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledFuncImZ;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledFuncLog;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledFuncMax;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledFuncMin;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledFuncMod;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledFuncMod2;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledFuncModZ;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledFuncModZ2;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledFuncPhaZ;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledFuncPow;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledFuncPowZ;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledFuncReZ;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledFuncSin;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledFuncSinZ;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledFuncSqrt;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledFuncSqrtZ;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledFuncTan;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledFuncTanZ;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledInvertedCondition;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledJuliaCondition;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledLogicOperatorAnd;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledLogicOperatorEquals;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledLogicOperatorGreather;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledLogicOperatorGreatherOrEquals;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledLogicOperatorLesser;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledLogicOperatorLesserOrEquals;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledLogicOperatorNotEquals;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledLogicOperatorOr;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledLogicOperatorXor;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledNumber;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledNumberZ;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledOperatorAdd;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledOperatorAddZ;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledOperatorDiv;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledOperatorDivZ;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledOperatorMul;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledOperatorMulZ;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledOperatorNeg;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledOperatorNegZ;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledOperatorNumber;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledOperatorPos;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledOperatorPosZ;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledOperatorPow;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledOperatorPowZ;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledOperatorSub;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledOperatorSubZ;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledPalette;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledPaletteElement;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledPaletteExpression;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledStatement;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledStopStatement;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrap;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapCondition;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapInvertedCondition;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOp;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpArcTo;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpArcToRel;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpCurveTo;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpCurveToRel;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpLineTo;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpLineToRel;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpMoveTo;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpMoveToRel;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpQuadTo;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpQuadToRel;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledVariable;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledVariableZ;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTAssignStatement;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTColorComponent;
@@ -86,9 +153,9 @@ public class InterpreterExpressionCompiler implements ASTExpressionCompiler {
 	@Override
 	public CompiledExpression compile(ASTNumber number) {
 		if (number.isReal()) {
-			return new InterpreterNumber(context, number.r(), number.i());
+			return new CompiledNumber(context, number.r(), number.i());
 		} else {
-			return new InterpreterNumberZ(context, number.r(), number.i());
+			return new CompiledNumberZ(context, number.r(), number.i());
 		}
 	}
 
@@ -165,84 +232,84 @@ public class InterpreterExpressionCompiler implements ASTExpressionCompiler {
 		switch (function.getName()) {
 			case "mod":
 				if (function.getArguments()[0].isReal()) {
-					return new InterpreterFuncMod(context, compileArguments(function.getArguments()));
+					return new CompiledFuncMod(context, compileArguments(function.getArguments()));
 				} else {
-					return new InterpreterFuncModZ(context, compileArguments(function.getArguments()));
+					return new CompiledFuncModZ(context, compileArguments(function.getArguments()));
 				}
 			case "mod2":
 				if (function.getArguments()[0].isReal()) {
-					return new InterpreterFuncMod2(context, compileArguments(function.getArguments()));
+					return new CompiledFuncMod2(context, compileArguments(function.getArguments()));
 				} else {
-					return new InterpreterFuncModZ2(context, compileArguments(function.getArguments()));
+					return new CompiledFuncModZ2(context, compileArguments(function.getArguments()));
 				}
 			case "pha":
-				return new InterpreterFuncPhaZ(context, compileArguments(function.getArguments()));
+				return new CompiledFuncPhaZ(context, compileArguments(function.getArguments()));
 			case "re":
-				return new InterpreterFuncReZ(context, compileArguments(function.getArguments()));
+				return new CompiledFuncReZ(context, compileArguments(function.getArguments()));
 			case "im":
-				return new InterpreterFuncImZ(context, compileArguments(function.getArguments()));
+				return new CompiledFuncImZ(context, compileArguments(function.getArguments()));
 				
 			case "sin":
 				if (function.getArguments()[0].isReal()) {
-					return new InterpreterFuncSin(context, compileArguments(function.getArguments()));
+					return new CompiledFuncSin(context, compileArguments(function.getArguments()));
 				} else {
-					return new InterpreterFuncSinZ(context, compileArguments(function.getArguments()));
+					return new CompiledFuncSinZ(context, compileArguments(function.getArguments()));
 				}
 			case "cos":
 				if (function.getArguments()[0].isReal()) {
-					return new InterpreterFuncCos(context, compileArguments(function.getArguments()));
+					return new CompiledFuncCos(context, compileArguments(function.getArguments()));
 				} else {
-					return new InterpreterFuncCosZ(context, compileArguments(function.getArguments()));
+					return new CompiledFuncCosZ(context, compileArguments(function.getArguments()));
 				}
 			case "tan":
 				if (function.getArguments()[0].isReal()) {
-					return new InterpreterFuncTan(context, compileArguments(function.getArguments()));
+					return new CompiledFuncTan(context, compileArguments(function.getArguments()));
 				} else {
-					return new InterpreterFuncTanZ(context, compileArguments(function.getArguments()));
+					return new CompiledFuncTanZ(context, compileArguments(function.getArguments()));
 				}
 			case "asin":
-				return new InterpreterFuncAsin(context, compileArguments(function.getArguments()));
+				return new CompiledFuncAsin(context, compileArguments(function.getArguments()));
 			case "acos":
-				return new InterpreterFuncAcos(context, compileArguments(function.getArguments()));
+				return new CompiledFuncAcos(context, compileArguments(function.getArguments()));
 			case "atan":
-				return new InterpreterFuncAtan(context, compileArguments(function.getArguments()));
+				return new CompiledFuncAtan(context, compileArguments(function.getArguments()));
 	
 			case "abs":
-				return new InterpreterFuncAbs(context, compileArguments(function.getArguments()));
+				return new CompiledFuncAbs(context, compileArguments(function.getArguments()));
 			case "ceil":
-				return new InterpreterFuncCeil(context, compileArguments(function.getArguments()));
+				return new CompiledFuncCeil(context, compileArguments(function.getArguments()));
 			case "floor":
-				return new InterpreterFuncFloor(context, compileArguments(function.getArguments()));
+				return new CompiledFuncFloor(context, compileArguments(function.getArguments()));
 			case "log":
-				return new InterpreterFuncLog(context, compileArguments(function.getArguments()));
+				return new CompiledFuncLog(context, compileArguments(function.getArguments()));
 				
 			case "min":
-				return new InterpreterFuncMin(context, compileArguments(function.getArguments()));
+				return new CompiledFuncMin(context, compileArguments(function.getArguments()));
 			case "max":
-				return new InterpreterFuncMax(context, compileArguments(function.getArguments()));
+				return new CompiledFuncMax(context, compileArguments(function.getArguments()));
 			case "atan2":
-				return new InterpreterFuncAtan2(context, compileArguments(function.getArguments()));
+				return new CompiledFuncAtan2(context, compileArguments(function.getArguments()));
 			case "hypot":
-				return new InterpreterFuncHypot(context, compileArguments(function.getArguments()));
+				return new CompiledFuncHypot(context, compileArguments(function.getArguments()));
 				
 			case "pow":
 				if (function.getArguments()[0].isReal()) {
-					return new InterpreterFuncPow(context, compileArguments(function.getArguments()));
+					return new CompiledFuncPow(context, compileArguments(function.getArguments()));
 				} else {
-					return new InterpreterFuncPowZ(context, compileArguments(function.getArguments()));
+					return new CompiledFuncPowZ(context, compileArguments(function.getArguments()));
 				}
 	
 			case "sqrt":
 				if (function.getArguments()[0].isReal()) {
-					return new InterpreterFuncSqrt(context, compileArguments(function.getArguments()));
+					return new CompiledFuncSqrt(context, compileArguments(function.getArguments()));
 				} else {
-					return new InterpreterFuncSqrtZ(context, compileArguments(function.getArguments()));
+					return new CompiledFuncSqrtZ(context, compileArguments(function.getArguments()));
 				}
 			case "exp":
 				if (function.getArguments()[0].isReal()) {
-					return new InterpreterFuncExp(context, compileArguments(function.getArguments()));
+					return new CompiledFuncExp(context, compileArguments(function.getArguments()));
 				} else {
-					return new InterpreterFuncExpZ(context, compileArguments(function.getArguments()));
+					return new CompiledFuncExpZ(context, compileArguments(function.getArguments()));
 				}
 				
 			default:
@@ -258,16 +325,16 @@ public class InterpreterExpressionCompiler implements ASTExpressionCompiler {
 			switch (operator.getOp()) {
 				case "-":
 					if (exp1.isReal()) {
-						return new InterpreterOperatorNeg(context, exp1.compile(this));
+						return new CompiledOperatorNeg(context, exp1.compile(this));
 					} else {
-						return new InterpreterOperatorNegZ(context, exp1.compile(this));
+						return new CompiledOperatorNegZ(context, exp1.compile(this));
 					}
 				
 				case "+":
 					if (exp1.isReal()) {
-						return new InterpreterOperatorPos(context, exp1.compile(this));
+						return new CompiledOperatorPos(context, exp1.compile(this));
 					} else {
-						return new InterpreterOperatorPosZ(context, exp1.compile(this));
+						return new CompiledOperatorPosZ(context, exp1.compile(this));
 					}
 				
 				default:
@@ -277,22 +344,22 @@ public class InterpreterExpressionCompiler implements ASTExpressionCompiler {
 			if (exp1.isReal() && exp2.isReal()) {
 				switch (operator.getOp()) {
 					case "+":
-						return new InterpreterOperatorAdd(context, exp1.compile(this), exp2.compile(this));
+						return new CompiledOperatorAdd(context, exp1.compile(this), exp2.compile(this));
 					
 					case "-":
-						return new InterpreterOperatorSub(context, exp1.compile(this), exp2.compile(this));
+						return new CompiledOperatorSub(context, exp1.compile(this), exp2.compile(this));
 						
 					case "*":
-						return new InterpreterOperatorMul(context, exp1.compile(this), exp2.compile(this));
+						return new CompiledOperatorMul(context, exp1.compile(this), exp2.compile(this));
 						
 					case "/":
-						return new InterpreterOperatorDiv(context, exp1.compile(this), exp2.compile(this));
+						return new CompiledOperatorDiv(context, exp1.compile(this), exp2.compile(this));
 						
 					case "^":
-						return new InterpreterOperatorPow(context, exp1.compile(this), exp2.compile(this));
+						return new CompiledOperatorPow(context, exp1.compile(this), exp2.compile(this));
 					
 					case "<>":
-						return new InterpreterOperatorNumber(context, exp1.compile(this), exp2.compile(this));
+						return new CompiledOperatorNumber(context, exp1.compile(this), exp2.compile(this));
 					
 					default:
 						throw new ASTException("Unsupported operator: " + operator.getLocation().getText(), operator.getLocation());
@@ -300,19 +367,19 @@ public class InterpreterExpressionCompiler implements ASTExpressionCompiler {
 			} else if (exp2.isReal()) {
 				switch (operator.getOp()) {
 					case "+":
-						return new InterpreterOperatorAddZ(context, exp1.compile(this), exp2.compile(this));
+						return new CompiledOperatorAddZ(context, exp1.compile(this), exp2.compile(this));
 					
 					case "-":
-						return new InterpreterOperatorSubZ(context, exp1.compile(this), exp2.compile(this));
+						return new CompiledOperatorSubZ(context, exp1.compile(this), exp2.compile(this));
 						
 					case "*":
-						return new InterpreterOperatorMulZ(context, exp1.compile(this), exp2.compile(this));
+						return new CompiledOperatorMulZ(context, exp1.compile(this), exp2.compile(this));
 						
 					case "/":
-						return new InterpreterOperatorDivZ(context, exp1.compile(this), exp2.compile(this));
+						return new CompiledOperatorDivZ(context, exp1.compile(this), exp2.compile(this));
 						
 					case "^":
-						return new InterpreterOperatorPowZ(context, exp1.compile(this), exp2.compile(this));
+						return new CompiledOperatorPowZ(context, exp1.compile(this), exp2.compile(this));
 					
 					default:
 						throw new ASTException("Unsupported operator: " + operator.getLocation().getText(), operator.getLocation());
@@ -320,16 +387,16 @@ public class InterpreterExpressionCompiler implements ASTExpressionCompiler {
 			} else {
 				switch (operator.getOp()) {
 					case "+":
-						return new InterpreterOperatorAddZ(context, exp1.compile(this), exp2.compile(this));
+						return new CompiledOperatorAddZ(context, exp1.compile(this), exp2.compile(this));
 					
 					case "-":
-						return new InterpreterOperatorSubZ(context, exp1.compile(this), exp2.compile(this));
+						return new CompiledOperatorSubZ(context, exp1.compile(this), exp2.compile(this));
 						
 					case "*":
-						return new InterpreterOperatorMulZ(context, exp1.compile(this), exp2.compile(this));
+						return new CompiledOperatorMulZ(context, exp1.compile(this), exp2.compile(this));
 						
 					case "/":
-						return new InterpreterOperatorDivZ(context, exp1.compile(this), exp2.compile(this));
+						return new CompiledOperatorDivZ(context, exp1.compile(this), exp2.compile(this));
 						
 					default:
 						throw new ASTException("Unsupported operator: " + operator.getLocation().getText(), operator.getLocation());
@@ -346,9 +413,9 @@ public class InterpreterExpressionCompiler implements ASTExpressionCompiler {
 	@Override
 	public CompiledExpression compile(ASTVariable variable) {
 		if (variable.isReal()) {
-			return new InterpreterVariable(context, variable.getName(), variable.isReal());
+			return new CompiledVariable(context, variable.getName(), variable.isReal());
 		} else {
-			return new InterpreterVariableZ(context, variable.getName(), variable.isReal());
+			return new CompiledVariableZ(context, variable.getName(), variable.isReal());
 		}
 	}
 
@@ -360,22 +427,22 @@ public class InterpreterExpressionCompiler implements ASTExpressionCompiler {
 			exp1.compile(this);
 			switch (compareOp.getOp()) {
 				case ">":
-					return new InterpreterLogicOperatorGreather(context, compileOperands(exp1, exp2));
+					return new CompiledLogicOperatorGreather(context, compileOperands(exp1, exp2));
 				
 				case "<":
-					return new InterpreterLogicOperatorLesser(context, compileOperands(exp1, exp2));
+					return new CompiledLogicOperatorLesser(context, compileOperands(exp1, exp2));
 					
 				case ">=":
-					return new InterpreterLogicOperatorGreatherOrEquals(context, compileOperands(exp1, exp2));
+					return new CompiledLogicOperatorGreatherOrEquals(context, compileOperands(exp1, exp2));
 					
 				case "<=":
-					return new InterpreterLogicOperatorLesserOrEquals(context, compileOperands(exp1, exp2));
+					return new CompiledLogicOperatorLesserOrEquals(context, compileOperands(exp1, exp2));
 					
 				case "=":
-					return new InterpreterLogicOperatorEquals(context, compileOperands(exp1, exp2));
+					return new CompiledLogicOperatorEquals(context, compileOperands(exp1, exp2));
 					
 				case "<>":
-					return new InterpreterLogicOperatorNotEquals(context, compileOperands(exp1, exp2));
+					return new CompiledLogicOperatorNotEquals(context, compileOperands(exp1, exp2));
 				
 				default:
 					throw new ASTException("Unsupported operator: " + compareOp.getLocation().getText(), compareOp.getLocation());
@@ -391,13 +458,13 @@ public class InterpreterExpressionCompiler implements ASTExpressionCompiler {
 		ASTConditionExpression exp2 = logicOp.getExp2();
 		switch (logicOp.getOp()) {
 			case "&":
-				return new InterpreterLogicOperatorAnd(context, compileLogicOperands(exp1, exp2));
+				return new CompiledLogicOperatorAnd(context, compileLogicOperands(exp1, exp2));
 			
 			case "|":
-				return new InterpreterLogicOperatorOr(context, compileLogicOperands(exp1, exp2));
+				return new CompiledLogicOperatorOr(context, compileLogicOperands(exp1, exp2));
 				
 			case "^":
-				return new InterpreterLogicOperatorXor(context, compileLogicOperands(exp1, exp2));
+				return new CompiledLogicOperatorXor(context, compileLogicOperands(exp1, exp2));
 				
 			default:
 				throw new ASTException("Unsupported operator: " + logicOp.getLocation().getText(), logicOp.getLocation());
@@ -407,9 +474,9 @@ public class InterpreterExpressionCompiler implements ASTExpressionCompiler {
 	@Override
 	public CompiledCondition compile(ASTConditionTrap trap) {
 		if (trap.isContains()) {
-			return new InterpreterTrapCondition(trap.getName(), trap.getExp().compile(this));
+			return new CompiledTrapCondition(trap.getName(), trap.getExp().compile(this));
 		} else {
-			return new InterpreterTrapInvertedCondition(trap.getName(), trap.getExp().compile(this));
+			return new CompiledTrapInvertedCondition(trap.getName(), trap.getExp().compile(this));
 		}
 	}
 
@@ -419,13 +486,13 @@ public class InterpreterExpressionCompiler implements ASTExpressionCompiler {
 		ASTRuleExpression exp2 = logicOp.getExp2();
 		switch (logicOp.getOp()) {
 			case "&":
-				return new InterpreterLogicOperatorAnd(context, compileLogicOperands(exp1, exp2));
+				return new CompiledLogicOperatorAnd(context, compileLogicOperands(exp1, exp2));
 			
 			case "|":
-				return new InterpreterLogicOperatorOr(context, compileLogicOperands(exp1, exp2));
+				return new CompiledLogicOperatorOr(context, compileLogicOperands(exp1, exp2));
 				
 			case "^":
-				return new InterpreterLogicOperatorXor(context, compileLogicOperands(exp1, exp2));
+				return new CompiledLogicOperatorXor(context, compileLogicOperands(exp1, exp2));
 				
 			default:
 				throw new ASTException("Unsupported operator: " + logicOp.getLocation().getText(), logicOp.getLocation());
@@ -439,22 +506,22 @@ public class InterpreterExpressionCompiler implements ASTExpressionCompiler {
 		if (exp1.isReal() && exp2.isReal()) {
 			switch (compareOp.getOp()) {
 				case ">":
-					return new InterpreterLogicOperatorGreather(context, compileOperands(exp1, exp2));
+					return new CompiledLogicOperatorGreather(context, compileOperands(exp1, exp2));
 				
 				case "<":
-					return new InterpreterLogicOperatorLesser(context, compileOperands(exp1, exp2));
+					return new CompiledLogicOperatorLesser(context, compileOperands(exp1, exp2));
 					
 				case ">=":
-					return new InterpreterLogicOperatorGreatherOrEquals(context, compileOperands(exp1, exp2));
+					return new CompiledLogicOperatorGreatherOrEquals(context, compileOperands(exp1, exp2));
 					
 				case "<=":
-					return new InterpreterLogicOperatorLesserOrEquals(context, compileOperands(exp1, exp2));
+					return new CompiledLogicOperatorLesserOrEquals(context, compileOperands(exp1, exp2));
 					
 				case "=":
-					return new InterpreterLogicOperatorEquals(context, compileOperands(exp1, exp2));
+					return new CompiledLogicOperatorEquals(context, compileOperands(exp1, exp2));
 					
 				case "<>":
-					return new InterpreterLogicOperatorNotEquals(context, compileOperands(exp1, exp2));
+					return new CompiledLogicOperatorNotEquals(context, compileOperands(exp1, exp2));
 				
 				default:
 					throw new ASTException("Unsupported operator: " + compareOp.getLocation().getText(), compareOp.getLocation());
@@ -467,7 +534,7 @@ public class InterpreterExpressionCompiler implements ASTExpressionCompiler {
 	@Override
 	public CompiledColorExpression compile(ASTColorPalette palette) {
 		if (palette.getExp().isReal()) {
-			return new InterpreterPalette(palette.getName(), palette.getExp().compile(this));
+			return new CompiledPaletteExpression(palette.getName(), palette.getExp().compile(this));
 		} else {
 			throw new ASTException("Expression type not valid: " + palette.getLocation().getText(), palette.getLocation());
 		}
@@ -488,7 +555,7 @@ public class InterpreterExpressionCompiler implements ASTExpressionCompiler {
 		if (component.getExp4() != null) {
 			exp4 = component.getExp4().compile(this);
 		}
-		return new InterpreterColorComponent(exp1, exp2, exp3, exp4);
+		return new CompiledColorComponentExpression(exp1, exp2, exp3, exp4);
 	}
 
 	@Override
@@ -503,22 +570,22 @@ public class InterpreterExpressionCompiler implements ASTExpressionCompiler {
 				elseStatements.add(innerStatement.compile(this));
 			}
 		}
-		return new InterpreterConditionalStatement(statement.getConditionExp().compile(this), thenStatements, elseStatements);
+		return new CompiledConditionalStatement(statement.getConditionExp().compile(this), thenStatements, elseStatements);
 	}
 
 	@Override
 	public CompiledStatement compile(ASTAssignStatement statement) {
-		return new InterpreterAssignStatement(statement.getName(), statement.getExp().compile(this));
+		return new CompiledAssignStatement(statement.getName(), statement.getExp().compile(this));
 	}
 
 	@Override
 	public CompiledStatement compile(ASTStopStatement statement) {
-		return new InterpreterStopStatement();
+		return new CompiledStopStatement();
 	}
 
 	@Override
 	public CompiledCondition compile(ASTConditionJulia condition) {
-		return new IntrepreterJuliaCondition();
+		return new CompiledJuliaCondition();
 	}
 
 	@Override
@@ -528,7 +595,7 @@ public class InterpreterExpressionCompiler implements ASTExpressionCompiler {
 
 	@Override
 	public CompiledCondition compile(ASTConditionNeg condition) {
-		return new InterpreterInvertedCondition(condition.getExp().compile(this)) ;
+		return new CompiledInvertedCondition(condition.getExp().compile(this)) ;
 	}
 
 	@Override
@@ -594,6 +661,23 @@ public class InterpreterExpressionCompiler implements ASTExpressionCompiler {
 		}		
 	}
 
+	@Override
+	public CompiledPalette compile(ASTPalette astPalette) {
+		CompiledPalette palette = new CompiledPalette();
+		palette.setName(astPalette.getName());
+		List<CompiledPaletteElement> elements = new ArrayList<>();
+		for (ASTPaletteElement astElement : astPalette.getElements()) {
+			elements.add(astElement.compile(this));
+		}
+		palette.setElements(elements);
+		return palette;
+	}
+
+	@Override
+	public CompiledPaletteElement compile(ASTPaletteElement astElement) {
+		return new CompiledPaletteElement(astElement.getBeginColor().getComponents(), astElement.getEndColor().getComponents(), astElement.getSteps(), astElement.getExp() != null ? astElement.getExp().compile(this) : null);
+	}
+
 	private CompiledExpression[] compileArguments(ASTExpression[] arguments) {
 		CompiledExpression[] args = new CompiledExpression[arguments.length];
 		for (int i = 0; i < arguments.length; i++) {
@@ -621,20 +705,5 @@ public class InterpreterExpressionCompiler implements ASTExpressionCompiler {
 		operands[0] = exp1.compile(this);
 		operands[1] = exp2.compile(this);
 		return operands;
-	}
-
-	public CompiledPalette compile(ASTPalette astPalette) {
-		CompiledPalette palette = new CompiledPalette();
-		palette.setName(astPalette.getName());
-		List<CompiledPaletteElement> elements = new ArrayList<>();
-		for (ASTPaletteElement astElement : astPalette.getElements()) {
-			elements.add(astElement.compile(this));
-		}
-		palette.setElements(elements);
-		return palette;
-	}
-
-	public CompiledPaletteElement compile(ASTPaletteElement astElement) {
-		return new CompiledPaletteElement(astElement.getBeginColor().getComponents(), astElement.getEndColor().getComponents(), astElement.getSteps(), astElement.getExp() != null ? astElement.getExp().compile(this) : null);
 	}
 }

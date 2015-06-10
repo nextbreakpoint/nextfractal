@@ -26,7 +26,7 @@ package com.nextbreakpoint.nextfractal.mandelbrot.grammar;
 
 import org.antlr.v4.runtime.Token;
 
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledStatement;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledStatement;
 
 public class ASTAssignStatement extends ASTStatement {
 	private String name;

@@ -24,12 +24,14 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.grammar;
 
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledColorExpression;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledCondition;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledExpression;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledStatement;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledTrap;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledTrapOp;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledColorExpression;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledCondition;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledExpression;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledPalette;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledPaletteElement;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledStatement;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrap;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOp;
 
 public interface ASTExpressionCompiler {
 	public CompiledExpression compile(ASTNumber number);
@@ -71,4 +73,8 @@ public interface ASTExpressionCompiler {
 	public CompiledTrap compile(ASTOrbitTrap astOrbitTrap);
 
 	public CompiledTrapOp compile(ASTOrbitTrapOp astOrbitTrapOp);
+
+	public CompiledPalette compile(ASTPalette astPalette);
+
+	public CompiledPaletteElement compile(ASTPaletteElement astPaletteElement);
 }

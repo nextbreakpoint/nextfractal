@@ -29,8 +29,7 @@ import java.util.List;
 
 import org.antlr.v4.runtime.Token;
 
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledPalette;
-import com.nextbreakpoint.nextfractal.mandelbrot.interpreter.InterpreterExpressionCompiler;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledPalette;
 
 public class ASTPalette extends ASTObject {
 	private String name;
@@ -72,7 +71,7 @@ public class ASTPalette extends ASTObject {
 		return builder.toString();
 	}
 
-	public CompiledPalette compile(InterpreterExpressionCompiler compiler) {
+	public CompiledPalette compile(ASTExpressionCompiler compiler) {
 		return compiler.compile(this);
 	}
 }

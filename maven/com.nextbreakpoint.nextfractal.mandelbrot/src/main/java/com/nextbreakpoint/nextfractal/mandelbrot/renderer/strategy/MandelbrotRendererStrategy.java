@@ -44,6 +44,7 @@ public class MandelbrotRendererStrategy implements RendererStrategy {
 		public void prepare() {
 			rendererFractal.setPoint(rendererFractal.getOrbit().getInitialPoint());
 			rendererFractal.getOrbit().setJulia(false);
+			rendererFractal.getColor().setJulia(false);
 		}
 
 		/**

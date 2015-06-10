@@ -27,13 +27,14 @@ package com.nextbreakpoint.nextfractal.mandelbrot.interpreter;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledPalette;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledRule;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledStatement;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerBuilder;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerError;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.ExpressionContext;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledColor;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledPalette;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledRule;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledStatement;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Color;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTColor;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTFractal;
@@ -62,11 +63,11 @@ public class InterpreterColorBuilder implements CompilerBuilder<Color> {
 		for (CompilerVariable var : astFractal.getStateVariables()) {
 			stateVars.add(var.copy());
 		}
-		InterpreterCompiledColor color = new InterpreterCompiledColor(colorVars, stateVars);
+		CompiledColor color = new CompiledColor(colorVars, stateVars);
 		color.setBackgroundColor(astColor.getArgb().getComponents());
 		List<CompiledRule> rules = new ArrayList<>();
 		for (ASTRule astRule : astColor.getRules()) {
-			InterpreterCompiledRule rule = new InterpreterCompiledRule();
+			CompiledRule rule = new CompiledRule();
 			rule.setRuleCondition(astRule.getRuleExp().compile(compiler));
 			rule.setColorExp(astRule.getColorExp().compile(compiler));
 			rule.setOpacity(astRule.getOpacity());

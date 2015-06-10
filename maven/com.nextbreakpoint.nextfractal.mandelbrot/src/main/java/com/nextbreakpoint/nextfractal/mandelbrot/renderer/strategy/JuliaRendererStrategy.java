@@ -43,6 +43,7 @@ public class JuliaRendererStrategy implements RendererStrategy {
 	@Override
 	public void prepare() {
 		rendererFractal.getOrbit().setJulia(true);
+		rendererFractal.getColor().setJulia(true);
 	}
 
 	/**

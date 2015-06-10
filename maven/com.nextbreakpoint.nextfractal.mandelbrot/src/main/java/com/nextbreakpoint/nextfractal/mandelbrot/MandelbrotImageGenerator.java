@@ -61,7 +61,7 @@ public class MandelbrotImageGenerator implements ImageGenerator {
 		IntBuffer pixels = IntBuffer.allocate(suggestedSize.getWidth() * suggestedSize.getHeight());
 		try {
 			Compiler compiler = new Compiler();
-			CompilerReport report = compiler.generateSource(generatorData.getSource());
+			CompilerReport report = compiler.compileReport(generatorData.getSource());
 			if (report.getErrors().size() > 0) {
 				throw new RuntimeException("Failed to compile source");
 			}

@@ -29,7 +29,7 @@ import java.util.List;
 
 import org.antlr.v4.runtime.Token;
 
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledTrap;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrap;
 
 public class ASTOrbitTrap extends ASTObject {
 	private String name;

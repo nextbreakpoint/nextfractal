@@ -64,6 +64,6 @@ public class CompilerReport {
 	}
 
 	public enum Type {
-		JAVA, JAVASCRIPT, INTERPRETER
+		JAVA, INTERPRETER
 	}
 }

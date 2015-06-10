@@ -26,8 +26,7 @@ package com.nextbreakpoint.nextfractal.mandelbrot.grammar;
 
 import org.antlr.v4.runtime.Token;
 
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledPaletteElement;
-import com.nextbreakpoint.nextfractal.mandelbrot.interpreter.InterpreterExpressionCompiler;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledPaletteElement;
 
 public class ASTPaletteElement extends ASTObject {
 	private ASTColorARGB beginColor; 
@@ -74,7 +73,7 @@ public class ASTPaletteElement extends ASTObject {
 		return exp;
 	}
 
-	public CompiledPaletteElement compile(InterpreterExpressionCompiler compiler) {
+	public CompiledPaletteElement compile(ASTExpressionCompiler compiler) {
 		return compiler.compile(this);
 	}
 }

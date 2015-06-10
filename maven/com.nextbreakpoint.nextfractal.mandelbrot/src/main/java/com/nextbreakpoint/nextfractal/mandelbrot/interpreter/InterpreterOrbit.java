@@ -29,12 +29,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledStatement;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledTrap;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledTrapOp;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.ExpressionContext;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.InterpreterContext;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledOrbit;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledStatement;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrap;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOp;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.MutableNumber;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Orbit;
@@ -42,18 +43,27 @@ import com.nextbreakpoint.nextfractal.mandelbrot.core.Palette;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Trap;
 
 public class InterpreterOrbit extends Orbit implements InterpreterContext {
-	private InterpreterCompiledOrbit orbit;
+	private CompiledOrbit orbit;
 	private ExpressionContext context;
 	private Map<String, Trap> traps = new HashMap<>();
 	private Map<String, Palette> palettes = new HashMap<>();
+	private Map<String, CompilerVariable> vars = new HashMap<>();
 
-	public InterpreterOrbit(InterpreterCompiledOrbit orbit, ExpressionContext context) {
+	public InterpreterOrbit(CompiledOrbit orbit, ExpressionContext context) {
 		this.orbit = orbit;
 		this.context = context;
 		initializeStack();
 	}
 
 	public void init() {
+		for (Iterator<CompilerVariable> s = orbit.getStateVariables().iterator(); s.hasNext();) {
+			CompilerVariable var = s.next();
+			vars.put(var.getName(), var);
+		}
+		for (Iterator<CompilerVariable> s = orbit.getOrbitVariables().iterator(); s.hasNext();) {
+			CompilerVariable var = s.next();
+			vars.put(var.getName(), var);
+		}
 		setInitialRegion(orbit.getRegion()[0], orbit.getRegion()[1]);
 		for (Iterator<CompilerVariable> s = orbit.getStateVariables().iterator(); s.hasNext();) {
 			CompilerVariable var = s.next();
@@ -73,30 +83,21 @@ public class InterpreterOrbit extends Orbit implements InterpreterContext {
 	}
 
 	public void render(List<Number[]> states) {
-		Map<String, CompilerVariable> scope = new HashMap<>();
-		for (Iterator<CompilerVariable> s = orbit.getStateVariables().iterator(); s.hasNext();) {
-			CompilerVariable var = s.next();
-			scope.put(var.getName(), var.copy());
-		}
-		for (Iterator<CompilerVariable> s = orbit.getOrbitVariables().iterator(); s.hasNext();) {
-			CompilerVariable var = s.next();
-			scope.put(var.getName(), var.copy());
-		}
 		n = orbit.getLoopBegin();
-		ensureVariable(scope, "n", n);
-		ensureVariable(scope, "x", x);
-		ensureVariable(scope, "w", w);
+		ensureVariable(vars, "n", n);
+		ensureVariable(vars, "x", x);
+		ensureVariable(vars, "w", w);
 		if (states != null) {
 			saveState(states);
 		}
 		try {
 			for (CompiledStatement statement : orbit.getBeginStatements()) {
-				statement.evaluate(this, scope);
+				statement.evaluate(this, vars);
 			} 
 		} catch (RuntimeException e) {
 		}
 		boolean stop = false;
-		Map<String, CompilerVariable> newScope = new HashMap<>(scope);
+		Map<String, CompilerVariable> newScope = new HashMap<>(vars);
 		for (int i = orbit.getLoopBegin() + 1; i <= orbit.getLoopEnd(); i++) {
 			for (CompiledStatement statement : orbit.getLoopStatements()) {
 				stop = statement.evaluate(this, newScope);
@@ -112,9 +113,9 @@ public class InterpreterOrbit extends Orbit implements InterpreterContext {
 				saveState(states);
 			}
 		}
-		ensureVariable(scope, "n", n);
+		ensureVariable(vars, "n", n);
 		for (CompiledStatement statement : orbit.getEndStatements()) {
-			statement.evaluate(this, scope);
+			statement.evaluate(this, vars);
 		} 
 		if (states != null) {
 			saveState(states);
@@ -123,9 +124,9 @@ public class InterpreterOrbit extends Orbit implements InterpreterContext {
 		for (Iterator<CompilerVariable> s = orbit.getStateVariables().iterator(); s.hasNext();) {
 			CompilerVariable var = s.next();
 			if (var.isReal()) {
-				setVariable(i, scope.get(var.getName()).getRealValue());
+				setVariable(i, vars.get(var.getName()).getRealValue());
 			} else {
-				setVariable(i, scope.get(var.getName()).getValue());
+				setVariable(i, vars.get(var.getName()).getValue());
 			}
 			i++;
 		}

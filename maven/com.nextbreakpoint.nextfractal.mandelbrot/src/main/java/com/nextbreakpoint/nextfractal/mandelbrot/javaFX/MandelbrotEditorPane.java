@@ -464,7 +464,7 @@ public class MandelbrotEditorPane extends BorderPane {
 	
 	private CompilerReport generateReport(String text) throws Exception {
 		Compiler compiler = new Compiler();
-		CompilerReport report = compiler.generateSource(text);
+		CompilerReport report = compiler.compileReport(text);
 		return report;
 	}
 

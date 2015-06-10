@@ -89,8 +89,8 @@ import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotImageGenerator;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotListener;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotSession;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotView;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompileClassException;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompileSourceException;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerClassException;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerSourceException;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.Compiler;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerBuilder;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerError;
@@ -925,10 +925,10 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 				redrawOrbit = true;
 				logger.info("Orbit: point = " + Arrays.toString(point) + ", length = " + states.size());
 			}
-		} catch (CompileSourceException e) {
+		} catch (CompilerSourceException e) {
 			logger.log(Level.INFO, "Cannot render fractal: " + e.getMessage());
 			updateErrors(e.getMessage(), e.getErrors(), null);
-		} catch (CompileClassException e) {
+		} catch (CompilerClassException e) {
 			logger.log(Level.INFO, "Cannot render fractal: " + e.getMessage());
 			updateErrors(e.getMessage(), e.getErrors(), e.getSource());
 		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | IOException e) {
@@ -937,14 +937,14 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 		}
 	}
 
-	private boolean[] generateOrbitAndColor() throws CompileSourceException, CompileClassException, ClassNotFoundException, IOException {
+	private boolean[] generateOrbitAndColor() throws CompilerSourceException, CompilerClassException, ClassNotFoundException, IOException {
 		CompilerReport report = getMandelbrotSession().getReport();
 		if (report.getErrors().size() > 0) {
 			astOrbit = null;
 			astColor = null;
 			orbitBuilder = null;
 			colorBuilder = null;
-			throw new CompileSourceException("Failed to compile source", report.getErrors());
+			throw new CompilerSourceException("Failed to compile source", report.getErrors());
 		}
 		Compiler compiler = new Compiler();
 		boolean[] changed = new boolean[] { false, false };
@@ -954,7 +954,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 			astColor = null;
 			orbitBuilder = null;
 			colorBuilder = null;
-			throw new CompileClassException("Failed to compile Orbit subclass", report.getOrbitSource(), newOrbitBuilder.getErrors());
+			throw new CompilerClassException("Failed to compile Orbit subclass", report.getOrbitSource(), newOrbitBuilder.getErrors());
 		}
 		CompilerBuilder<Color> newColorBuilder = compiler.compileColor(report);
 		if (newColorBuilder.getErrors().size() > 0) {
@@ -962,7 +962,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 			astColor = null;
 			orbitBuilder = null;
 			colorBuilder = null;
-			throw new CompileClassException("Failed to compile Color subclass", report.getColorSource(), newColorBuilder.getErrors());
+			throw new CompilerClassException("Failed to compile Color subclass", report.getColorSource(), newColorBuilder.getErrors());
 		}
 		orbitBuilder = newOrbitBuilder;
 		String newASTOrbit = report.getAST().getOrbit().toString();

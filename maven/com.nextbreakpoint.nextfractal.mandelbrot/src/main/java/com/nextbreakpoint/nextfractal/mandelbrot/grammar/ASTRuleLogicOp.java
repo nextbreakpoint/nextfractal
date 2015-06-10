@@ -26,7 +26,7 @@ package com.nextbreakpoint.nextfractal.mandelbrot.grammar;
 
 import org.antlr.v4.runtime.Token;
 
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledCondition;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledCondition;
 
 public class ASTRuleLogicOp extends ASTRuleExpression {
 	private String op;

@@ -24,17 +24,32 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.compiler.java;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledColorExpression;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledCondition;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledExpression;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledStatement;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledTrap;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledTrapOp;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.ExpressionContext;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledColorExpression;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledCondition;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledExpression;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledPalette;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledPaletteElement;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledStatement;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrap;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOp;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpArcTo;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpArcToRel;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpCurveTo;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpCurveToRel;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpLineTo;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpLineToRel;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpMoveTo;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpMoveToRel;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpQuadTo;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpQuadToRel;
+import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTAssignStatement;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTColorComponent;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTColorPalette;
@@ -54,6 +69,8 @@ import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTNumber;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTOperator;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTOrbitTrap;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTOrbitTrapOp;
+import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTPalette;
+import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTPaletteElement;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTParen;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTRuleCompareOp;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTRuleExpression;
@@ -630,14 +647,82 @@ public class JavaExpressionCompiler implements ASTExpressionCompiler {
 	}
 
 	@Override
-	public CompiledTrap compile(ASTOrbitTrap astOrbitTrap) {
-		// TODO Auto-generated method stub
-		return null;
+	public CompiledTrap compile(ASTOrbitTrap orbitTrap) {
+		CompiledTrap trap = new CompiledTrap();
+		trap.setName(orbitTrap.getName());
+		trap.setCenter(new Number(orbitTrap.getCenter().r(), orbitTrap.getCenter().i()));
+		List<CompiledTrapOp> operators = new ArrayList<>();
+		for (ASTOrbitTrapOp astTrapOp : orbitTrap.getOperators()) {
+			operators.add(astTrapOp.compile(this));
+		}
+		trap.setOperators(operators);
+		return trap;
 	}
 
 	@Override
-	public CompiledTrapOp compile(ASTOrbitTrapOp astOrbitTrapOp) {
-		// TODO Auto-generated method stub
-		return null;
+	public CompiledTrapOp compile(ASTOrbitTrapOp orbitTrapOp) {
+		Number c1 = null;
+		Number c2 = null;
+		Number c3 = null;
+		if (orbitTrapOp.getC1() != null) {
+			c1 = new Number(orbitTrapOp.getC1().r(), orbitTrapOp.getC1().i());
+		}
+		if (orbitTrapOp.getC2() != null) {
+			c2 = new Number(orbitTrapOp.getC2().r(), orbitTrapOp.getC2().i());
+		}
+		if (orbitTrapOp.getC3() != null) {
+			c3 = new Number(orbitTrapOp.getC3().r(), orbitTrapOp.getC3().i());
+		}
+		switch (orbitTrapOp.getOp()) {
+			case "MOVETO":
+				return new CompiledTrapOpMoveTo(c1);
+	
+			case "MOVETOREL":
+				return new CompiledTrapOpMoveToRel(c1);
+	
+			case "LINETO":
+				return new CompiledTrapOpLineTo(c1);
+	
+			case "LINETOREL":
+				return new CompiledTrapOpLineToRel(c1);
+	
+			case "ARCTO":
+				return new CompiledTrapOpArcTo(c1, c2);
+	
+			case "ARCTOREL":
+				return new CompiledTrapOpArcToRel(c1, c2);
+	
+			case "QUADTO":
+				return new CompiledTrapOpQuadTo(c1, c2);
+	
+			case "QUADTOREL":
+				return new CompiledTrapOpQuadToRel(c1, c2);
+	
+			case "CURVETO":
+				return new CompiledTrapOpCurveTo(c1, c2, c3);
+	
+			case "CURVETOREL":
+				return new CompiledTrapOpCurveToRel(c1, c2, c3);
+	
+			default:
+				throw new ASTException("Unsupported operator: " + orbitTrapOp.getLocation().getText(), orbitTrapOp.getLocation());
+		}		
+	}
+
+	@Override
+	public CompiledPalette compile(ASTPalette astPalette) {
+		CompiledPalette palette = new CompiledPalette();
+		palette.setName(astPalette.getName());
+		List<CompiledPaletteElement> elements = new ArrayList<>();
+		for (ASTPaletteElement astElement : astPalette.getElements()) {
+			elements.add(astElement.compile(this));
+		}
+		palette.setElements(elements);
+		return palette;
+	}
+
+	@Override
+	public CompiledPaletteElement compile(ASTPaletteElement astElement) {
+		return new CompiledPaletteElement(astElement.getBeginColor().getComponents(), astElement.getEndColor().getComponents(), astElement.getSteps(), astElement.getExp() != null ? astElement.getExp().compile(this) : null);
 	}
 }

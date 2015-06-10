@@ -26,7 +26,7 @@ package com.nextbreakpoint.nextfractal.mandelbrot.grammar;
 
 import org.antlr.v4.runtime.Token;
 
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompiledTrapOp;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOp;
 
 public class ASTOrbitTrapOp extends ASTObject {
 	private String op;

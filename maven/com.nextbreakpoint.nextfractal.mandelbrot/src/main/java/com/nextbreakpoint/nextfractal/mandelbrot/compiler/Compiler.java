@@ -49,7 +49,7 @@ public class Compiler {
 		this.className = className;
 	}
 	
-	public CompilerReport generateSource(String source) throws IOException {
+	public CompilerReport compileReport(String source) throws IOException {
 		JavaCompiler javaCompiler = getJavaCompiler();
 		if (javaCompiler == null) {
 			InterpreterSourceCompiler compiler = new InterpreterSourceCompiler();
