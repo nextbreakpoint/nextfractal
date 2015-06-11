@@ -1152,7 +1152,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 			double dw = canvas.getWidth();
 			double dh = canvas.getHeight();
 			gc.clearRect(0, 0, (int)dw, (int)dh);
-			juliaCoordinator.drawImage(gc, 10, 10, 200, 200);
+			juliaCoordinator.drawImage(gc, 0, 0, 200, 200);
 			Number size = juliaCoordinator.getInitialSize();
 			Number center = juliaCoordinator.getInitialCenter();
 			gc.setStroke(renderFactory.createColor(1, 1, 0, 1));
