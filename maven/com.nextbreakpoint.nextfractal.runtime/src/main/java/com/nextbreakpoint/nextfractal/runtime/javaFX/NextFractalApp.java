@@ -96,7 +96,7 @@ public class NextFractalApp extends Application {
 			dialog.setGraphic(createIconImage("/icon-errors.png"));
 			dialog.setTitle("Warning");
 			dialog.setHeaderText("Cannot find Java compiler in your classpath");
-			dialog.setContentText("Java compiler is required to reduce computation time. Please install Java JDK 8 (>= 1.8.0_40) or later and add the command your_jdk_path/bin/java to your system's path variable.");
+			dialog.setContentText("Java compiler is required to reduce computation time. Please install Java JDK 8 (>= 1.8.0_40) or later and add directory your_jdk_path/bin to your system's path.");
 			dialog.showAndWait();
 		}
 		
@@ -131,8 +131,8 @@ public class NextFractalApp extends Application {
         mainPane.getChildren().add(editorRootPane);
         mainPane.getStyleClass().add("application");
         root.getChildren().add(mainPane);
-		DefaultThreadFactory renderThreadFactory = new DefaultThreadFactory("NextFractal Render", true, Thread.MIN_PRIORITY);
-		DefaultThreadFactory exportThreadFactory = new DefaultThreadFactory("NextFractal Export", true, Thread.MIN_PRIORITY);
+		DefaultThreadFactory renderThreadFactory = new DefaultThreadFactory("NextFractalRender", true, Thread.MIN_PRIORITY);
+		DefaultThreadFactory exportThreadFactory = new DefaultThreadFactory("NextFractalExport", true, Thread.MIN_PRIORITY);
 		JavaFXRendererFactory renderFactory = new JavaFXRendererFactory();
 		ExportRenderer exportRenderer = new SimpleExportRenderer(renderThreadFactory, renderFactory);
         ExportService exportService = new SimpleExportService(exportThreadFactory, exportRenderer);
