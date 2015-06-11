@@ -85,7 +85,6 @@ import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerReport;
 
 public class MandelbrotEditorPane extends BorderPane {
 	private static final Logger logger = Logger.getLogger(MandelbrotEditorPane.class.getName());
-	private final DefaultThreadFactory threadFactory;
 	private final JavaFXRendererFactory renderFactory;
 	private final MandelbrotImageGenerator generator;
 	private final Session session;
@@ -100,13 +99,12 @@ public class MandelbrotEditorPane extends BorderPane {
 	public MandelbrotEditorPane(Session session) {
 		this.session = session;
 		
-		threadFactory = new DefaultThreadFactory("MandelbrotEditorPane", true, Thread.MIN_PRIORITY);
-		
 		renderFactory = new JavaFXRendererFactory();
 
 		RendererTile generatorTile = createSingleTile(50, 50);
 		
-		generator = new MandelbrotImageGenerator(threadFactory, renderFactory, generatorTile);
+		DefaultThreadFactory generatorThreadFactory = new DefaultThreadFactory("MandelbrotHistoryImageGenerator", true, Thread.MIN_PRIORITY);
+		generator = new MandelbrotImageGenerator(generatorThreadFactory, renderFactory, generatorTile);
 		
 		getStyleClass().add("mandelbrot");
 
@@ -124,7 +122,7 @@ public class MandelbrotEditorPane extends BorderPane {
 		Tab jobsTab = new Tab();
 		jobsTab.setClosable(false);
 		jobsTab.setText("Export");
-		jobsTab.setTooltip(new Tooltip("Queue of active export tasks"));
+		jobsTab.setTooltip(new Tooltip("List of active export tasks"));
 		tabPane.getTabs().add(jobsTab);
 		setCenter(tabPane);
 
@@ -138,10 +136,10 @@ public class MandelbrotEditorPane extends BorderPane {
 		Button renderButton = new Button("", createIconImage("/icon-render.png"));
 		Button loadButton = new Button("", createIconImage("/icon-load.png"));
 		Button saveButton = new Button("", createIconImage("/icon-save.png"));
-		browseButton.setTooltip(new Tooltip("Browse fractals in folders"));
+		browseButton.setTooltip(new Tooltip("Browse fractals"));
 		renderButton.setTooltip(new Tooltip("Render fractal"));
-		loadButton.setTooltip(new Tooltip("Load source from a file"));
-		saveButton.setTooltip(new Tooltip("Save source to a file"));
+		loadButton.setTooltip(new Tooltip("Load fractal from file"));
+		saveButton.setTooltip(new Tooltip("Save fractal to file"));
 		sourceButtonsLeft.getChildren().add(browseButton);
 		sourceButtonsLeft.getChildren().add(renderButton);
 		sourceButtonsRight.getChildren().add(loadButton);
@@ -165,7 +163,7 @@ public class MandelbrotEditorPane extends BorderPane {
 		});
 		BorderPane historyButtons = new BorderPane();
 		Button clearButton = new Button("", createIconImage("/icon-clear.png"));
-		clearButton.setTooltip(new Tooltip("Remove all elements from history"));
+		clearButton.setTooltip(new Tooltip("Remove all elements"));
 		historyButtons.setRight(clearButton);
 		historyButtons.getStyleClass().add("menubar");
 		historyPane.setCenter(historyList);
@@ -190,9 +188,9 @@ public class MandelbrotEditorPane extends BorderPane {
 		Button resumeButton = new Button("", createIconImage("/icon-resume.png"));
 		Button removeButton = new Button("", createIconImage("/icon-remove.png"));
 		exportButton.setTooltip(new Tooltip("Export fractal as image"));
-		suspendButton.setTooltip(new Tooltip("Suspend selected export tasks"));
-		resumeButton.setTooltip(new Tooltip("Resume selected export tasks"));
-		removeButton.setTooltip(new Tooltip("Remove selected export tasks"));
+		suspendButton.setTooltip(new Tooltip("Suspend selected tasks"));
+		resumeButton.setTooltip(new Tooltip("Resume selected tasks"));
+		removeButton.setTooltip(new Tooltip("Remove selected tasks"));
 		suspendButton.setDisable(true);
 		resumeButton.setDisable(true);
 		removeButton.setDisable(true);
@@ -408,11 +406,14 @@ public class MandelbrotEditorPane extends BorderPane {
 			noHistory = false;
 		});
 		
-		historyExecutor = Executors.newSingleThreadExecutor(threadFactory);
+		DefaultThreadFactory historyThreadFactory = new DefaultThreadFactory("MandelbrotHistoryUpdate", true, Thread.MIN_PRIORITY);
+		historyExecutor = Executors.newSingleThreadExecutor(historyThreadFactory);
 		
-		textExecutor = Executors.newSingleThreadExecutor(threadFactory);
+		DefaultThreadFactory textThreadFactory = new DefaultThreadFactory("MandelbrotTextUpdate", true, Thread.MIN_PRIORITY + 1);
+		textExecutor = Executors.newSingleThreadExecutor(textThreadFactory);
 		
-		sessionsExecutor = Executors.newSingleThreadScheduledExecutor(threadFactory);
+		DefaultThreadFactory sessionsThreadFactory = new DefaultThreadFactory("MandelbrotSessionsUpdate", true, Thread.MIN_PRIORITY);
+		sessionsExecutor = Executors.newSingleThreadScheduledExecutor(sessionsThreadFactory);
 		sessionsExecutor.scheduleWithFixedDelay(() -> {	
 			Platform.runLater(() -> {
 				updateSessions(jobsList);

@@ -107,7 +107,8 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 	private static final int FRAME_LENGTH_IN_MILLIS = 20;
 	private static final Logger logger = Logger.getLogger(MandelbrotRenderPane.class.getName());
 	private final Session session;
-	private ThreadFactory threadFactory;
+	private ThreadFactory renderThreadFactory;
+	private ThreadFactory juliaRenderThreadFactory;
 	private JavaFXRendererFactory renderFactory;
 	private RendererCoordinator[] coordinators;
 	private RendererCoordinator juliaCoordinator;
@@ -162,11 +163,13 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 		hideErrorsProperty = new BooleanObservableValue();
 		hideErrorsProperty.setValue(true);
 		
-		threadFactory = new DefaultThreadFactory("MandelbrotRenderPane", true, Thread.MIN_PRIORITY);
+		renderThreadFactory = new DefaultThreadFactory("MandelbrotRendererCoordinator", true, Thread.MIN_PRIORITY + 2);
+		juliaRenderThreadFactory = new DefaultThreadFactory("MandelbrotJuliaRendererCoordinator", true, Thread.MIN_PRIORITY);
 		
 		renderFactory = new JavaFXRendererFactory();
 
-		generator = new MandelbrotImageGenerator(threadFactory, renderFactory, createSingleTile(50, 50));
+		DefaultThreadFactory generatorThreadFactory = new DefaultThreadFactory("MandelbrotExportImageGenerator", true, Thread.MIN_PRIORITY);
+		generator = new MandelbrotImageGenerator(generatorThreadFactory, renderFactory, createSingleTile(50, 50));
 
 		coordinators = new RendererCoordinator[rows * columns];
 		
@@ -206,10 +209,10 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 		moveButton.setTooltip(new Tooltip("Select move tool"));
 		pickButton.setTooltip(new Tooltip("Select pick tool"));
 		homeButton.setTooltip(new Tooltip("Reset region to initial value"));
-		orbitButton.setTooltip(new Tooltip("Toggle orbit rendering"));
-		juliaButton.setTooltip(new Tooltip("Toggle Julia rendering"));
+		orbitButton.setTooltip(new Tooltip("Toggle orbit and traps"));
+		juliaButton.setTooltip(new Tooltip("Toggle Julia mode"));
 //		exportButton.setTooltip(new Tooltip("Export fractal as image"));
-//		browseButton.setTooltip(new Tooltip("Browse fractals in folders"));
+//		browseButton.setTooltip(new Tooltip("Browse fractals"));
 //		toolButtons.getChildren().add(browseButton);
 		toolButtons.getChildren().add(homeButton);
 		toolButtons.getChildren().add(zoominButton);
@@ -548,7 +551,8 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
             }
         });
 		
-		exportExecutor = Executors.newSingleThreadExecutor(threadFactory);
+		DefaultThreadFactory exportThreadFactory = new DefaultThreadFactory("MandelbrotImageExport", true, Thread.MIN_PRIORITY);
+		exportExecutor = Executors.newSingleThreadExecutor(exportThreadFactory);
 		
 		runTimer(fractalCanvas, orbitCanvas, juliaCanvas, trapCanvas);
 		
@@ -721,7 +725,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 	private void createCoordinators(int rows, int columns, Map<String, Integer> hints) {
 		for (int row = 0; row < rows; row++) {
 			for (int column = 0; column < columns; column++) {
-				coordinators[row * columns + column] = new RendererCoordinator(threadFactory, renderFactory, createTile(row, column), hints);
+				coordinators[row * columns + column] = new RendererCoordinator(renderThreadFactory, renderFactory, createTile(row, column), hints);
 			}
 		}
 	}
@@ -750,7 +754,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 	}
 
 	private void createJuliaCoordinator(Map<String, Integer> hints) {
-		juliaCoordinator = new RendererCoordinator(threadFactory, renderFactory, createSingleTile(200, 200), hints);
+		juliaCoordinator = new RendererCoordinator(juliaRenderThreadFactory, renderFactory, createSingleTile(200, 200), hints);
 	}
 
 	private void disposeJuliaCoordinator() {

@@ -34,6 +34,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.ThreadFactory;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
 
@@ -74,7 +75,7 @@ public class BrowsePane extends Pane {
 	private static final Logger logger = Logger.getLogger(BrowsePane.class.getName());
 	private static final int FRAME_LENGTH_IN_MILLIS = 50;
 	private static final int SCROLL_BOUNCE_DELAY = 500;
-	private final DefaultThreadFactory threadFactory;
+	private final ThreadFactory threadFactory;
 	private final JavaFXRendererFactory renderFactory;
 	private StringObservableValue pathProperty;
 	private final int numRows = 3;
