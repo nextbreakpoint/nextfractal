@@ -286,7 +286,26 @@ public class Renderer {
 	 * @param pixels
 	 */
 	public void getPixels(IntBuffer pixels) {
-		buffer.getBuffer().getImage().getPixels(pixels);
+		int[] bufferPixels = rendererData.getPixels();
+		int tileWidth = buffer.getTile().getTileSize().getWidth();
+		int tileHeight = buffer.getTile().getTileSize().getHeight();
+		int offsetX = (buffer.getSize().getWidth() - tileWidth) / 2;
+		int offsetY = (buffer.getSize().getHeight() - tileHeight) / 2;
+		int offset = offsetY * buffer.getSize().getWidth() + offsetX;
+		int[] row = new int[tileWidth];
+		if (pixels.hasArray()) {
+			for (int y = 0; y < tileHeight; y++) {
+				System.arraycopy(bufferPixels, offset, pixels.array(), 0, tileWidth);
+				offset += buffer.getSize().getWidth();
+			}
+		} else {
+			for (int y = 0; y < tileHeight; y++) {
+				System.arraycopy(bufferPixels, offset, row, 0, tileWidth);
+				pixels.put(row, y * tileWidth, tileWidth);
+				offset += buffer.getSize().getWidth();
+			}
+		}
+//		buffer.getBuffer().getImage().getPixels(pixels);
 	}
 	
 	/**

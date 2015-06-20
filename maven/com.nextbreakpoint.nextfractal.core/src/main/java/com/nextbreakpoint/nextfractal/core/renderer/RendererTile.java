@@ -78,8 +78,9 @@ public class RendererTile {
 	 * @return the tileSize
 	 */
 	public RendererSize getSuggestedSize() {
-		int tileDim = computeDim(tileSize, borderSize);
-		return new RendererSize(tileDim, tileDim);
+//		int tileDim = computeDim(tileSize, borderSize);
+//		return new RendererSize(tileDim, tileDim);
+		return tileSize;
 	}
 
 	/**

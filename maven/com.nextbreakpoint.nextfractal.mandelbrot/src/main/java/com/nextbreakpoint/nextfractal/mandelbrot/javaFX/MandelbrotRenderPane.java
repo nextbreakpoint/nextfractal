@@ -193,6 +193,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 		ToggleButton zoominButton = new ToggleButton("", createIconImage("/icon-zoomin.png"));
 		ToggleButton zoomoutButton = new ToggleButton("", createIconImage("/icon-zoomout.png"));
 		ToggleButton moveButton = new ToggleButton("", createIconImage("/icon-move.png"));
+		ToggleButton rotateButton = new ToggleButton("", createIconImage("/icon-move.png"));
 		ToggleButton pickButton = new ToggleButton("", createIconImage("/icon-pick.png"));
 		ToggleButton juliaButton = new ToggleButton("", createIconImage("/icon-julia.png"));
 		ToggleButton orbitButton = new ToggleButton("", createIconImage("/icon-orbit.png"));
@@ -200,6 +201,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 		toolsGroup.getToggles().add(zoominButton);
 		toolsGroup.getToggles().add(zoomoutButton);
 		toolsGroup.getToggles().add(moveButton);
+		toolsGroup.getToggles().add(rotateButton);
 		toolsGroup.getToggles().add(pickButton);
 //		Button exportButton = new Button("", createIconImage("/icon-export.png"));
 //		Button browseButton = new Button("", createIconImage("/icon-load.png"));
@@ -207,6 +209,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 		zoominButton.setTooltip(new Tooltip("Select zoom in tool"));
 		zoomoutButton.setTooltip(new Tooltip("Select zoom out tool"));
 		moveButton.setTooltip(new Tooltip("Select move tool"));
+		rotateButton.setTooltip(new Tooltip("Select rotate tool"));
 		pickButton.setTooltip(new Tooltip("Select pick tool"));
 		homeButton.setTooltip(new Tooltip("Reset region to initial value"));
 		orbitButton.setTooltip(new Tooltip("Toggle orbit and traps"));
@@ -218,6 +221,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 		toolButtons.getChildren().add(zoominButton);
 		toolButtons.getChildren().add(zoomoutButton);
 		toolButtons.getChildren().add(moveButton);
+		toolButtons.getChildren().add(rotateButton);
 		toolButtons.getChildren().add(pickButton);
 		toolButtons.getChildren().add(juliaButton);
 		toolButtons.getChildren().add(orbitButton);
@@ -424,6 +428,11 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 		
 		moveButton.setOnAction(e -> {
 			currentTool = new MandelbrotMove(this);
+			juliaCanvas.setVisible(false);
+		});
+		
+		rotateButton.setOnAction(e -> {
+			currentTool = new MandelbrotRotate(this);
 			juliaCanvas.setVisible(false);
 		});
 		
