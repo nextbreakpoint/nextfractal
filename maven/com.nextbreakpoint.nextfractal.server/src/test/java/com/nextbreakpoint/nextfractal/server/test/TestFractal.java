@@ -30,6 +30,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -41,6 +42,7 @@ public class TestFractal {
 	private static final String URL = "http://localhost:8080/fractal";
 
 	@Test
+	@Ignore
 	public void renderFractal() {
 		try {
 			String xml = getResource("mandelbrot.m");
