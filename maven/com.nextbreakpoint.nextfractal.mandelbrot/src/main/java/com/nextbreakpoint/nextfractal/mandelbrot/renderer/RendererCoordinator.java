@@ -262,11 +262,17 @@ public class RendererCoordinator implements RendererDelegate {
 		}
 	}
 
+	/**
+	 * @return
+	 */
 	public List<Trap> getTraps() {
 		return renderer.getTraps();
 	}
 
-	public void getPixels(IntBuffer pixels) {
+	/**
+	 * @param pixels
+	 */
+	public void getPixels(int[] pixels) {
 		renderer.getPixels(pixels);
 	}
 }

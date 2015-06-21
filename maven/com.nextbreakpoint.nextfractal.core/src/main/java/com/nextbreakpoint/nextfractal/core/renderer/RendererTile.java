@@ -75,29 +75,6 @@ public class RendererTile {
 	}
 
 	/**
-	 * @return the tileSize
-	 */
-	public RendererSize getSuggestedSize() {
-//		int tileDim = computeDim(tileSize, borderSize);
-//		return new RendererSize(tileDim, tileDim);
-		return tileSize;
-	}
-
-	/**
-	 * @param tileSize
-	 * @param borderSize
-	 * @return
-	 */
-	protected int computeDim(RendererSize tileSize, RendererSize borderSize) {
-		int tw = tileSize.getWidth();
-		int bw = borderSize.getWidth();
-		int th = tileSize.getHeight();
-		int bh = borderSize.getHeight();
-		int tileDim = (int) Math.hypot(tw + bw * 2, th + bh * 2);
-		return tileDim;
-	}
-
-	/**
 	 * @see java.lang.Object#toString()
 	 */
 	@Override

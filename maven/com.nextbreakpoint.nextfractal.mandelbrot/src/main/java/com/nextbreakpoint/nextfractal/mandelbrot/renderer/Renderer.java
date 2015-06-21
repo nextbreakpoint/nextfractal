@@ -93,7 +93,7 @@ public class Renderer {
 		this.rendererFractal = new RendererFractal();
 		view = new RendererView();
 		buffer = new RendererSurface(); 
-		size = tile.getSuggestedSize();
+		size = computeOptimalBufferSize(tile);
 		buffer.setTile(tile);
 		buffer.setSize(size);
 		buffer.setAffine(createTransform(0));
@@ -285,27 +285,23 @@ public class Renderer {
 	/**
 	 * @param pixels
 	 */
-	public void getPixels(IntBuffer pixels) {
-		int[] bufferPixels = rendererData.getPixels();
+	public void getPixels(int[] pixels) {
+		int bufferWidth = buffer.getSize().getWidth();
+		int bufferHeight = buffer.getSize().getHeight();
+		int[] bufferPixels = new int[bufferWidth * bufferHeight];
+		IntBuffer tmpBuffer = IntBuffer.wrap(bufferPixels); 
+		buffer.getBuffer().getImage().getPixels(tmpBuffer);
 		int tileWidth = buffer.getTile().getTileSize().getWidth();
 		int tileHeight = buffer.getTile().getTileSize().getHeight();
-		int offsetX = (buffer.getSize().getWidth() - tileWidth) / 2;
-		int offsetY = (buffer.getSize().getHeight() - tileHeight) / 2;
-		int offset = offsetY * buffer.getSize().getWidth() + offsetX;
-		int[] row = new int[tileWidth];
-		if (pixels.hasArray()) {
-			for (int y = 0; y < tileHeight; y++) {
-				System.arraycopy(bufferPixels, offset, pixels.array(), 0, tileWidth);
-				offset += buffer.getSize().getWidth();
-			}
-		} else {
-			for (int y = 0; y < tileHeight; y++) {
-				System.arraycopy(bufferPixels, offset, row, 0, tileWidth);
-				pixels.put(row, y * tileWidth, tileWidth);
-				offset += buffer.getSize().getWidth();
-			}
+		int offsetX = (bufferWidth - tileWidth) / 2;
+		int offsetY = (bufferHeight - tileHeight) / 2;
+		int offset = offsetY * bufferWidth + offsetX;
+		int tileOffset = 0;
+		for (int y = 0; y < tileHeight; y++) {
+			System.arraycopy(bufferPixels, offset, pixels, tileOffset, tileWidth);
+			offset += bufferWidth;
+			tileOffset += tileWidth;
 		}
-//		buffer.getBuffer().getImage().getPixels(pixels);
 	}
 	
 	/**
@@ -368,6 +364,17 @@ public class Renderer {
 			gc.restore();
 		}
 		lock.unlock();
+	}
+
+	/**
+	 * @param tile
+	 * @return
+	 */
+	protected RendererSize computeOptimalBufferSize(RendererTile tile) {
+		RendererSize tileSize = tile.getTileSize();
+		RendererSize borderSize = tile.getBorderSize();
+		int tileDim = computeDim(tileSize, borderSize);
+		return new RendererSize(tileDim, tileDim);
 	}
 
 	/**

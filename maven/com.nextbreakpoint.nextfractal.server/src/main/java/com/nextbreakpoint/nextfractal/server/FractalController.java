@@ -128,9 +128,6 @@ public class FractalController {
 
 	private byte[] getImageAsPNG(RemoteProfile profile, RendererTile tile, IntBuffer pixels) {
 		try {
-			RendererSize size = tile.getSuggestedSize();
-			int width = size.getWidth();
-			int height = size.getHeight();
 			RendererSize tileSize = tile.getTileSize();
 			int tileWidth = tileSize.getWidth();
 			int tileHeight = tileSize.getHeight();
@@ -138,10 +135,7 @@ public class FractalController {
 			BufferedImage image =  new BufferedImage(tileWidth, tileHeight, BufferedImage.TYPE_INT_ARGB);
 			int[] buffer = ((DataBufferInt)image.getRaster().getDataBuffer()).getData();
 			int[] imagePixels = pixels.array();
-			for (int y = 0; y < tileHeight; y++) {
-				int offset = y * width + (height - tileHeight) / 2 * width + (width - tileWidth) / 2;
-				System.arraycopy(imagePixels, offset, buffer, y * tileWidth, tileWidth);
-			}
+			System.arraycopy(imagePixels, 0, buffer, 0, tileWidth * tileHeight);
 			ImageIO.write(image, "PNG", baos);
 			return baos.toByteArray();
 		} catch (Exception e) {

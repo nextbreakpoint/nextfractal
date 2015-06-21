@@ -57,8 +57,9 @@ public class MandelbrotImageGenerator implements ImageGenerator {
 	@Override
 	public IntBuffer renderImage(Object data) {
 		MandelbrotData generatorData = (MandelbrotData)data;
-		RendererSize suggestedSize = tile.getSuggestedSize();
-		IntBuffer pixels = IntBuffer.allocate(suggestedSize.getWidth() * suggestedSize.getHeight());
+		RendererSize suggestedSize = tile.getTileSize();
+		int[] pixels = new int[suggestedSize.getWidth() * suggestedSize.getHeight()];
+		IntBuffer buffer = IntBuffer.wrap(pixels);
 		try {
 			Compiler compiler = new Compiler();
 			CompilerReport report = compiler.compileReport(generatorData.getSource());
@@ -97,12 +98,12 @@ public class MandelbrotImageGenerator implements ImageGenerator {
 		} catch (Exception e) {
 			//TODO display errors
 		}
-		return pixels;
+		return buffer;
 	}
 
 	@Override
 	public RendererSize getSize() {
-		return tile.getSuggestedSize();
+		return tile.getTileSize();
 	}
 	
 	@Override
