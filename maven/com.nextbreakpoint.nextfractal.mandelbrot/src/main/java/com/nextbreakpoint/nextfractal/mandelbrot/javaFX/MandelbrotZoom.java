@@ -86,11 +86,10 @@ public class MandelbrotZoom implements MandelbrotTool {
 				double x = t[0];
 				double y = t[1];
 				double z = t[2];
-				double a = r[2] * Math.PI / 180;
 				double zs = (primary ? zoomin : !zoomin) ? 1 / context.getZoomSpeed() : context.getZoomSpeed();
 				Number size = context.getInitialSize();
-				x -= (zs - 1) * z * size.r() * (Math.cos(a) * x1 + Math.sin(a) * y1);
-				y -= (zs - 1) * z * size.i() * (Math.cos(a) * y1 - Math.sin(a) * x1);
+				x -= (zs - 1) * z * size.r() * x1;
+				y -= (zs - 1) * z * size.i() * y1;
 				z *= zs;
 				MandelbrotView view = new MandelbrotView(new double[] { x, y, z, t[3] }, new double[] { 0, 0, r[2], r[3] }, s, p, j);
 				context.getMandelbrotSession().setView(view, pressed);

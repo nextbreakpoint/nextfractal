@@ -84,10 +84,9 @@ public class MandelbrotMove implements MandelbrotTool {
 			double x = t[0];
 			double y = t[1];
 			double z = t[2];
-			double a = r[2] * Math.PI / 180;
 			Number size = context.getInitialSize();
-			x -= z * size.r() * (Math.cos(a) * (x1 - x0) + Math.sin(a) * (y1 - y0));
-			y -= z * size.i() * (Math.cos(a) * (y1 - y0) - Math.sin(a) * (x1 - x0));
+			x -= z * size.r() * (x1 - x0);
+			y -= z * size.i() * (y1 - y0);
 			x0 = x1;
 			y0 = y1;
 			MandelbrotView view = new MandelbrotView(new double[] { x, y, z, t[3] }, new double[] { 0, 0, r[2], r[3] }, s, p, j);
