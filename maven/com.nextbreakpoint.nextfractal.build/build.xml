@@ -25,6 +25,7 @@
 				</classpath>
 				<sysproperty key="classworlds.conf" value="${maven.home}/bin/m2.conf" />
 				<sysproperty key="maven.home" value="${maven.home}" />
+				<sysproperty key="maven.multiModuleProjectDirectory" value="true" />
 				<arg line="--batch-mode @{options} @{goal}" />
 			</java>
 		</sequential>

@@ -67,6 +67,7 @@ public class Renderer {
 	protected volatile boolean juliaChanged;
 	protected volatile boolean pointChanged;
 	protected volatile float progress;
+	protected volatile double rotation;
 	protected boolean julia;
 	protected Number point;
 	protected boolean multiThread;
@@ -74,7 +75,7 @@ public class Renderer {
 	protected boolean continuous;
 	protected RendererRegion region;
 	protected RendererRegion initialRegion;
-	protected final RendererSize size;
+	protected RendererSize size;
 	protected RendererView view;
 	private final RendererLock lock = new DummyRendererLock();
 	private final RenderRunnable renderTask = new RenderRunnable();
@@ -92,8 +93,8 @@ public class Renderer {
 		this.rendererData = createRendererData();
 		this.rendererFractal = new RendererFractal();
 		view = new RendererView();
-		buffer = new RendererSurface(); 
 		size = computeOptimalBufferSize(tile);
+		buffer = new RendererSurface(); 
 		buffer.setTile(tile);
 		buffer.setSize(size);
 		buffer.setAffine(createTransform(0));
@@ -271,8 +272,18 @@ public class Renderer {
 		setPoint(view.getPoint());
 		setContinuous(view.getState().getX() >= 1 || view.getState().getY() >= 1 || view.getState().getZ() >= 1 || view.getState().getW() >= 1);
 		lock.lock();
-		buffer.setAffine(createTransform(view.getRotation().getZ()));
+		if ((rotation == 0 && view.getRotation().getZ() != 0) || (rotation != 0 && view.getRotation().getZ() == 0)) {
+			ensureBufferSize();
+		}
+		rotation = view.getRotation().getZ();
+		buffer.setAffine(createTransform(rotation));
 		lock.unlock();
+	}
+
+	private void ensureBufferSize() {
+		size = computeOptimalBufferSize(buffer.getTile());
+		buffer.setSize(size);
+		buffer.setBuffer(renderFactory.createBuffer(size.getWidth(), size.getHeight()));
 	}
 
 	/**
@@ -534,8 +545,8 @@ public class Renderer {
 
 		final double gx = px + (qx - px) * ((imageDim - imageSize.getWidth()) / 2 + tileOffset.getX() + tileSize.getWidth() / 2) / imageDim;
 		final double gy = py + (qy - py) * ((imageDim - imageSize.getHeight()) / 2 + tileOffset.getY() + tileSize.getHeight() / 2) / imageDim;
-		final double fx = Math.cos(a) * (gx - cx) + Math.sin(a) * (gy - cx) + cx; 
-		final double fy = Math.cos(a) * (gy - cy) - Math.sin(a) * (gx - cx) + cy;
+		final double fx = gx;//Math.cos(a) * (gx - cx) + Math.sin(a) * (gy - cx) + cx; 
+		final double fy = gy;//Math.cos(a) * (gy - cy) - Math.sin(a) * (gx - cx) + cy;
 		final double sx = dx * (getSize().getWidth() / imageDim);
 		final double sy = dy * (getSize().getHeight() / imageDim);
 
