@@ -194,7 +194,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 		ToggleButton zoominButton = new ToggleButton("", createIconImage("/icon-zoomin.png"));
 		ToggleButton zoomoutButton = new ToggleButton("", createIconImage("/icon-zoomout.png"));
 		ToggleButton moveButton = new ToggleButton("", createIconImage("/icon-move.png"));
-		ToggleButton rotateButton = new ToggleButton("", createIconImage("/icon-move.png"));
+		ToggleButton rotateButton = new ToggleButton("", createIconImage("/icon-rotate.png"));
 		ToggleButton pickButton = new ToggleButton("", createIconImage("/icon-pick.png"));
 		ToggleButton juliaButton = new ToggleButton("", createIconImage("/icon-julia.png"));
 		ToggleButton orbitButton = new ToggleButton("", createIconImage("/icon-orbit.png"));
