@@ -26,74 +26,88 @@ package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
 
 import javafx.scene.input.MouseEvent;
 
+import com.nextbreakpoint.nextfractal.core.renderer.RendererGraphicsContext;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotView;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 
 public class MandelbrotZoom implements MandelbrotTool {
-		private MandelbrotToolContext context;
-		private volatile boolean pressed;
-		private volatile boolean changed;
-		private boolean primary;
-		private boolean zoomin;
-		private double x1;
-		private double y1;
+	private MandelbrotToolContext context;
+	private volatile boolean pressed;
+	private volatile boolean changed;
+	private boolean primary;
+	private boolean zoomin;
+	private double x1;
+	private double y1;
 
-		public MandelbrotZoom(MandelbrotToolContext context, boolean zoomin) {
-			this.context = context;
-			this.zoomin = zoomin;
-		}
-		
-		@Override
-		public void clicked(MouseEvent e) {
-		}
+	public MandelbrotZoom(MandelbrotToolContext context, boolean zoomin) {
+		this.context = context;
+		this.zoomin = zoomin;
+	}
+	
+	@Override
+	public void clicked(MouseEvent e) {
+	}
 
-		@Override
-		public void moved(MouseEvent e) {
-		}
+	@Override
+	public void moved(MouseEvent e) {
+	}
 
-		@Override
-		public void dragged(MouseEvent e) {
-			x1 = (e.getX() - context.getWidth() / 2) / context.getWidth();
-			y1 = (context.getHeight() / 2 - e.getY()) / context.getHeight();
-			changed = true;
-		}
+	@Override
+	public void dragged(MouseEvent e) {
+		x1 = (e.getX() - context.getWidth() / 2) / context.getWidth();
+		y1 = (context.getHeight() / 2 - e.getY()) / context.getHeight();
+		changed = true;
+	}
 
-		@Override
-		public void released(MouseEvent e) {
-			x1 = (e.getX() - context.getWidth() / 2) / context.getWidth();
-			y1 = (context.getHeight() / 2 - e.getY()) / context.getHeight();
-			pressed = false;
-			changed = true;
-		}
+	@Override
+	public void released(MouseEvent e) {
+		x1 = (e.getX() - context.getWidth() / 2) / context.getWidth();
+		y1 = (context.getHeight() / 2 - e.getY()) / context.getHeight();
+		pressed = false;
+		changed = true;
+	}
 
-		@Override
-		public void pressed(MouseEvent e) {
-			x1 = (e.getX() - context.getWidth() / 2) / context.getWidth();
-			y1 = (context.getHeight() / 2 - e.getY()) / context.getHeight();
-			primary = e.isPrimaryButtonDown(); 
-			pressed = true;
-		}
+	@Override
+	public void pressed(MouseEvent e) {
+		x1 = (e.getX() - context.getWidth() / 2) / context.getWidth();
+		y1 = (context.getHeight() / 2 - e.getY()) / context.getHeight();
+		primary = e.isPrimaryButtonDown(); 
+		pressed = true;
+	}
 
-		@Override
-		public void update(long time) {
-			if (pressed || changed) {
-				MandelbrotView oldView = context.getMandelbrotSession().getViewAsCopy();
-				double[] t = oldView.getTraslation();
-				double[] r = oldView.getRotation();
-				double[] s = oldView.getScale();
-				double[] p = oldView.getPoint();
-				boolean j = oldView.isJulia();
-				double x = t[0];
-				double y = t[1];
-				double z = t[2];
-				double zs = (primary ? zoomin : !zoomin) ? 1 / context.getZoomSpeed() : context.getZoomSpeed();
-				Number size = context.getInitialSize();
-				x -= (zs - 1) * z * size.r() * x1;
-				y -= (zs - 1) * z * size.i() * y1;
-				z *= zs;
-				MandelbrotView view = new MandelbrotView(new double[] { x, y, z, t[3] }, new double[] { 0, 0, r[2], r[3] }, s, p, j);
-				context.getMandelbrotSession().setView(view, pressed);
-				changed = false;
-			}
+	@Override
+	public void update(long time) {
+		if (pressed || changed) {
+			MandelbrotView oldView = context.getMandelbrotSession().getViewAsCopy();
+			double[] t = oldView.getTraslation();
+			double[] r = oldView.getRotation();
+			double[] s = oldView.getScale();
+			double[] p = oldView.getPoint();
+			boolean j = oldView.isJulia();
+			double x = t[0];
+			double y = t[1];
+			double z = t[2];
+			double a = r[2] * Math.PI / 180;
+			double zs = (primary ? zoomin : !zoomin) ? 1 / context.getZoomSpeed() : context.getZoomSpeed();
+			Number size = context.getInitialSize();
+			x -= (zs - 1) * z * size.r() * (Math.cos(a) * x1 + Math.sin(a) * y1);
+			y -= (zs - 1) * z * size.i() * (Math.cos(a) * y1 - Math.sin(a) * x1);
+			z *= zs;
+			MandelbrotView view = new MandelbrotView(new double[] { x, y, z, t[3] }, new double[] { 0, 0, r[2], r[3] }, s, p, j);
+			context.getMandelbrotSession().setView(view, pressed);
+			changed = false;
 		}
 	}
+
+	@Override
+	public boolean isChanged() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	
+	@Override
+	public void draw(RendererGraphicsContext gc) {
+		// TODO Auto-generated method stub
+		
+	}
+}

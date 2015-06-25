@@ -24,6 +24,8 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
 
+import com.nextbreakpoint.nextfractal.core.renderer.RendererGraphicsContext;
+
 import javafx.scene.input.MouseEvent;
 
 public interface MandelbrotTool {
@@ -38,4 +40,8 @@ public interface MandelbrotTool {
 	public void pressed(MouseEvent e);
 
 	public void update(long time);
+
+	public boolean isChanged();
+
+	public void draw(RendererGraphicsContext gc);
 }

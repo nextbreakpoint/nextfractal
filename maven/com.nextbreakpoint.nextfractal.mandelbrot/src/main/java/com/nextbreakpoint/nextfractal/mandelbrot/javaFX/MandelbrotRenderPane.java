@@ -89,12 +89,12 @@ import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotImageGenerator;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotListener;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotSession;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotView;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerClassException;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerSourceException;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.Compiler;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerBuilder;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerClassException;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerError;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerReport;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerSourceException;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Color;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Orbit;
@@ -128,6 +128,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 	private int columns;
 	private volatile boolean redrawTrap;
 	private volatile boolean redrawOrbit;
+	private volatile boolean redrawPoint;
 	private volatile boolean disableTool;
 	private String astOrbit;
 	private String astColor;
@@ -283,6 +284,17 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 		gcTrapCanvas.fillRect(0, 0, width, height);
 		trapCanvas.setVisible(false);
 
+		Canvas pointCanvas = new Canvas(width, height);
+		GraphicsContext gcPointCanvas = pointCanvas.getGraphicsContext2D();
+		gcPointCanvas.setFill(javafx.scene.paint.Color.TRANSPARENT);
+		gcPointCanvas.fillRect(0, 0, width, height);
+		pointCanvas.setVisible(false);
+
+		Canvas toolCanvas = new Canvas(width, height);
+		GraphicsContext gcToolCanvas = toolCanvas.getGraphicsContext2D();
+		gcToolCanvas.setFill(javafx.scene.paint.Color.TRANSPARENT);
+		gcToolCanvas.fillRect(0, 0, width, height);
+
         Canvas juliaCanvas = new Canvas(width, height);
         GraphicsContext gcJuliaCanvas = juliaCanvas.getGraphicsContext2D();
         gcJuliaCanvas.setFill(javafx.scene.paint.Color.TRANSPARENT);
@@ -407,7 +419,9 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 		stackPane.getChildren().add(fractalCanvas);
 		stackPane.getChildren().add(trapCanvas);
 		stackPane.getChildren().add(orbitCanvas);
+		stackPane.getChildren().add(pointCanvas);
 		stackPane.getChildren().add(juliaCanvas);
+		stackPane.getChildren().add(toolCanvas);
 		stackPane.getChildren().add(controls);
 		stackPane.getChildren().add(browsePane);
 		setCenter(stackPane);
@@ -419,27 +433,32 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 		zoominButton.setOnAction(e -> {
 			currentTool = new MandelbrotZoom(this, true);
 			juliaCanvas.setVisible(false);
+			pointCanvas.setVisible(false);
 		});
 		
 		zoomoutButton.setOnAction(e -> {
 			currentTool = new MandelbrotZoom(this, false);
 			juliaCanvas.setVisible(false);
+			pointCanvas.setVisible(false);
 		});
 		
 		moveButton.setOnAction(e -> {
 			currentTool = new MandelbrotMove(this);
 			juliaCanvas.setVisible(false);
+			pointCanvas.setVisible(false);
 		});
 		
 		rotateButton.setOnAction(e -> {
 			currentTool = new MandelbrotRotate(this);
 			juliaCanvas.setVisible(false);
+			pointCanvas.setVisible(false);
 		});
 		
 		pickButton.setOnAction(e -> {
 			if (!getMandelbrotSession().getDataAsCopy().isJulia()) {
 				currentTool = new MandelbrotPick(this);
 				juliaCanvas.setVisible(true);
+				pointCanvas.setVisible(true);
 			}
 		});
 		
@@ -455,10 +474,12 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 			if (!getMandelbrotSession().getDataAsCopy().isJulia()) {
 				currentTool = new MandelbrotPick(this);
 				juliaCanvas.setVisible(true);
+				pointCanvas.setVisible(true);
 				pickButton.requestFocus();
 			} else {
 				currentTool = new MandelbrotZoom(this, true);
 				juliaCanvas.setVisible(false);
+				pointCanvas.setVisible(false);
 				zoominButton.requestFocus();
 			}
 			toggleShowOrbit();
@@ -467,6 +488,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 		juliaButton.setOnAction(e -> {
 			currentTool = new MandelbrotZoom(this, true);
 			juliaCanvas.setVisible(false);
+			pointCanvas.setVisible(false);
 			juliaProperty.setValue(!juliaProperty.getValue());
 			zoominButton.requestFocus();
 			zoominButton.setSelected(true);
@@ -528,6 +550,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 				if (data.isJulia() && currentTool instanceof MandelbrotPick) {
 					currentTool = new MandelbrotZoom(this, true);
 					juliaCanvas.setVisible(false);
+					pointCanvas.setVisible(false);
 					zoominButton.setSelected(true);
 				}
 				juliaButton.setSelected(data.isJulia());
@@ -563,7 +586,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 		DefaultThreadFactory exportThreadFactory = new DefaultThreadFactory("MandelbrotImageExport", true, Thread.MIN_PRIORITY);
 		exportExecutor = Executors.newSingleThreadExecutor(exportThreadFactory);
 		
-		runTimer(fractalCanvas, orbitCanvas, juliaCanvas, trapCanvas);
+		runTimer(fractalCanvas, orbitCanvas, juliaCanvas, pointCanvas, trapCanvas, toolCanvas);
 		
 		exportPane.hide();
 		
@@ -777,7 +800,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 		}
 	}
 
-	private void runTimer(Canvas fractalCanvas, Canvas orbitCanvas, Canvas juliaCanvas, Canvas trapCanvas) {
+	private void runTimer(Canvas fractalCanvas, Canvas orbitCanvas, Canvas juliaCanvas, Canvas pointCanvas, Canvas trapCanvas, Canvas toolCanvas) {
 		timer = new AnimationTimer() {
 			private long last;
 
@@ -788,8 +811,10 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 					if (!disableTool) {
 						redrawIfPixelsChanged(fractalCanvas);
 						redrawIfJuliaPixelsChanged(juliaCanvas);
+						redrawIfPointChanged(pointCanvas);
 						redrawIfOrbitChanged(orbitCanvas);
 						redrawIfTrapChanged(trapCanvas);
+						redrawIfToolChanged(toolCanvas);
 						if (currentTool != null) {
 							currentTool.update(time);
 						}
@@ -940,6 +965,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 			if (!julia) {
 				states = renderOrbit(point);
 				redrawOrbit = true;
+				redrawPoint = true;
 				logger.info("Orbit: point = " + Arrays.toString(point) + ", length = " + states.size());
 			}
 		} catch (CompilerSourceException e) {
@@ -1059,6 +1085,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 			}
 			states = renderOrbit(point);
 			redrawOrbit = true;
+			redrawPoint = true;
 			if (logger.isLoggable(Level.FINE)) {
 				logger.fine("Orbit: point = " + Arrays.toString(point) + ", length = " + states.size());
 			}
@@ -1102,6 +1129,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 			juliaCoordinator.run();
 		}
 		redrawOrbit = true;
+		redrawPoint = true;
 		redrawTrap = true;
 	}
 
@@ -1169,30 +1197,46 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 			Number size = juliaCoordinator.getInitialSize();
 			Number center = juliaCoordinator.getInitialCenter();
 			gc.setStroke(renderFactory.createColor(1, 1, 0, 1));
-			double[] t = view.getTraslation();
-			double[] r = view.getRotation();
-			double tx = t[0];
-			double ty = t[1];
-			double tz = t[2];
-			double a = -r[2] * Math.PI / 180;
-			double[] point = view.getPoint();
-			double zx = point[0];
-			double zy = point[1];
-			double cx = dw / 2;
-			double cy = dh / 2;
-			double px = (zx - tx - center.r()) / (tz * size.r());
-			double py = (zy - ty - center.i()) / (tz * size.r());
-			double qx = Math.cos(a) * px + Math.sin(a) * py;
-			double qy = Math.cos(a) * py - Math.sin(a) * px;
-			int x = (int)Math.rint(qx * dw + cx);
-			int y = (int)Math.rint(cy - qy * dh);
-			gc.beginPath();
-			gc.moveTo(x - 2, y - 2);
-			gc.lineTo(x + 2, y - 2);
-			gc.lineTo(x + 2, y + 2);
-			gc.lineTo(x - 2, y + 2);
-			gc.lineTo(x - 2, y - 2);
-			gc.stroke();
+		}
+	}
+
+	private void redrawIfPointChanged(Canvas canvas) {
+		if (redrawPoint) {
+			redrawPoint = false;
+			Number size = coordinators[0].getInitialSize();
+			Number center = coordinators[0].getInitialCenter();
+			RendererGraphicsContext gc = renderFactory.createGraphicsContext(canvas.getGraphicsContext2D());
+			if (states.size() > 1) {
+				MandelbrotView view = getMandelbrotSession().getViewAsCopy();
+				double[] t = view.getTraslation();
+				double[] r = view.getRotation();
+				double tx = t[0];
+				double ty = t[1];
+				double tz = t[2];
+				double a = -r[2] * Math.PI / 180;
+				double dw = canvas.getWidth();
+				double dh = canvas.getHeight();
+				gc.clearRect(0, 0, (int)dw, (int)dh);
+				double cx = dw / 2;
+				double cy = dh / 2;
+				gc.setStroke(renderFactory.createColor(1, 1, 0, 1));
+				double[] point = view.getPoint();
+				double zx = point[0];
+				double zy = point[1];
+				double px = (zx - tx - center.r()) / (tz * size.r());
+				double py = (zy - ty - center.i()) / (tz * size.r());
+				double qx = Math.cos(a) * px + Math.sin(a) * py;
+				double qy = Math.cos(a) * py - Math.sin(a) * px;
+				int x = (int)Math.rint(qx * dw + cx);
+				int y = (int)Math.rint(cy - qy * dh);
+				gc.beginPath();
+				gc.moveTo(x - 2, y - 2);
+				gc.lineTo(x + 2, y - 2);
+				gc.lineTo(x + 2, y + 2);
+				gc.lineTo(x - 2, y + 2);
+				gc.lineTo(x - 2, y - 2);
+				gc.stroke();
+			}
 		}
 	}
 
@@ -1213,12 +1257,12 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 				double dw = canvas.getWidth();
 				double dh = canvas.getHeight();
 				gc.clearRect(0, 0, (int)dw, (int)dh);
+				double cx = dw / 2;
+				double cy = dh / 2;
 				gc.setStroke(renderFactory.createColor(1, 0, 0, 1));
 				Number[] state = states.get(0);
 				double zx = state[0].r();
 				double zy = state[0].i();
-				double cx = dw / 2;
-				double cy = dh / 2;
 				double px = (zx - tx - center.r()) / (tz * size.r());
 				double py = (zy - ty - center.i()) / (tz * size.r());
 				double qx = Math.cos(a) * px + Math.sin(a) * py;
@@ -1296,6 +1340,13 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 		}
 	}
 
+	private void redrawIfToolChanged(Canvas canvas) {
+		if (currentTool != null && currentTool.isChanged()) {
+			RendererGraphicsContext gc = renderFactory.createGraphicsContext(canvas.getGraphicsContext2D());
+			currentTool.draw(gc);
+		}
+	}
+	
 	private Encoder createEncoder(String format) {
 		final ServiceLoader<? extends Encoder> plugins = ServiceLoader.load(Encoder.class);
 		for (Encoder plugin : plugins) {

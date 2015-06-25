@@ -26,6 +26,7 @@ package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
 
 import javafx.scene.input.MouseEvent;
 
+import com.nextbreakpoint.nextfractal.core.renderer.RendererGraphicsContext;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotView;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 
@@ -80,11 +81,10 @@ public class MandelbrotRotate implements MandelbrotTool {
 			MandelbrotView oldView = context.getMandelbrotSession().getViewAsCopy();
 			double[] t = oldView.getTraslation();
 			double[] r = oldView.getRotation();
-//			double a = -r[2] * Math.PI / 180;
 			a0 = r[2] * Math.PI / 180;
-			a1 = a0 - Math.atan2(y1 - y0, x1 - x0);
-			r0 = t[0];//-(Math.cos(a) * t[0] + Math.sin(a) * t[1]);
-			i0 = t[1];//-(Math.cos(a) * t[1] - Math.sin(a) * t[0]);
+			a1 = Math.atan2(y1 - y0, x1 - x0);
+			r0 = t[0];
+			i0 = t[1];
 		} else {
 			x1 = x0 = (e.getX() - context.getWidth() / 2) / context.getWidth();
 			y1 = y0 = (context.getHeight() / 2 - e.getY()) / context.getHeight();
@@ -101,25 +101,37 @@ public class MandelbrotRotate implements MandelbrotTool {
 			double[] s = oldView.getScale();
 			double[] p = oldView.getPoint();
 			boolean j = oldView.isJulia();
-			double x = t[0];
-			double y = t[1];
 			double z = t[2];
-			double a = a1 + Math.atan2(y1 - y0, x1 - x0);
 			Number size = context.getInitialSize();
-			Number center = context.getInitialCenter();
-			double px = center.r() - x0 * z * size.r();
-			double py = center.i() - y0 * z * size.r();
-			System.out.println("1) " + px + "," + py);
-			double tpx = (Math.cos(a) * px + Math.sin(a) * py);
-			double tpy = (Math.cos(a) * py - Math.sin(a) * px);
-			System.out.println("2) " + tpx + "," + tpy);
-			x = r0 + tpx - px;
-			y = i0 + tpy - py;
-			a = a * 180 / Math.PI;
-			System.out.println("3) " + a);
+			double a2 = Math.atan2(y1 - y0, x1 - x0) - a1;
+			double tx = x0 * z * size.r(); 
+			double ty = y0 * z * size.r(); 
+			double qx = (Math.cos(a0) * tx + Math.sin(a0) * ty);
+			double qy = (Math.cos(a0) * ty - Math.sin(a0) * tx);
+			double px = - qx;
+			double py = - qy;
+			double gx = (Math.cos(a2) * px + Math.sin(a2) * py);
+			double gy = (Math.cos(a2) * py - Math.sin(a2) * px);
+			double dx = gx - px;
+			double dy = gy - py;
+			double x = r0 + dx;
+			double y = i0 + dy;
+			double a = (a0 + a2) * 180 / Math.PI;
 			MandelbrotView view = new MandelbrotView(new double[] { x, y, z, t[3] }, new double[] { 0, 0, a, r[3] }, s, p, j);
 			context.getMandelbrotSession().setView(view, pressed);
 			changed = false;
 		}
+	}
+
+	@Override
+	public boolean isChanged() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void draw(RendererGraphicsContext gc) {
+		// TODO Auto-generated method stub
+		
 	}
 }

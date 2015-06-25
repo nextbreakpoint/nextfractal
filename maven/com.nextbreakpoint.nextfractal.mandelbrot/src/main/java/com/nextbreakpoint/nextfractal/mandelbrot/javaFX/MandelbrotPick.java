@@ -26,6 +26,7 @@ package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
 
 import javafx.scene.input.MouseEvent;
 
+import com.nextbreakpoint.nextfractal.core.renderer.RendererGraphicsContext;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotView;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 
@@ -89,5 +90,17 @@ public class MandelbrotPick implements MandelbrotTool {
 			}
 			changed = false;
 		}
+	}
+
+	@Override
+	public boolean isChanged() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void draw(RendererGraphicsContext gc) {
+		// TODO Auto-generated method stub
+		
 	}
 }
