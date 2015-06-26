@@ -81,8 +81,6 @@ public class RendererData {
 			realloc(width, height);
 			this.width = width;
 			this.height = height;
-		}
-		if (this.depth != depth) {
 			newCache = new ArrayList<double[]>(depth);
 			oldCache = new ArrayList<double[]>(depth);
 			for (int i = 0; i < depth; i++) {
@@ -90,6 +88,16 @@ public class RendererData {
 				oldCache.add(new double[width * height * 2]);
 			}
 			this.depth = depth;
+		} else {
+			if (this.depth != depth) {
+				newCache = new ArrayList<double[]>(depth);
+				oldCache = new ArrayList<double[]>(depth);
+				for (int i = 0; i < depth; i++) {
+					newCache.add(new double[width * height * 2]);
+					oldCache.add(new double[width * height * 2]);
+				}
+				this.depth = depth;
+			}
 		}
 	}
 

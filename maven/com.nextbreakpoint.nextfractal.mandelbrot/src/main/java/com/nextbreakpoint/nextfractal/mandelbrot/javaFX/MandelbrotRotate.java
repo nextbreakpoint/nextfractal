@@ -34,6 +34,7 @@ public class MandelbrotRotate implements MandelbrotTool {
 	private MandelbrotToolContext context;
 	private volatile boolean pressed;
 	private volatile boolean changed;
+	private volatile boolean redraw;
 	private volatile boolean active;
 	private double x0;
 	private double y0;
@@ -62,6 +63,7 @@ public class MandelbrotRotate implements MandelbrotTool {
 		y1 = (context.getHeight() / 2 - e.getY()) / context.getHeight();
 		if (active) {
 			changed = true;
+			redraw = true;
 		}
 	}
 
@@ -70,6 +72,7 @@ public class MandelbrotRotate implements MandelbrotTool {
 		x1 = (e.getX() - context.getWidth() / 2) / context.getWidth();
 		y1 = (context.getHeight() / 2 - e.getY()) / context.getHeight();
 		pressed = false;
+		redraw = true;
 		active = !active;
 	}
 
@@ -125,13 +128,37 @@ public class MandelbrotRotate implements MandelbrotTool {
 
 	@Override
 	public boolean isChanged() {
-		// TODO Auto-generated method stub
-		return false;
+		boolean result = redraw;
+		redraw = false;
+		return result;
 	}
 
 	@Override
 	public void draw(RendererGraphicsContext gc) {
-		// TODO Auto-generated method stub
-		
+		double dw = context.getWidth();
+		double dh = context.getHeight();
+		gc.clearRect(0, 0, (int)dw, (int)dh);
+		if (active) {
+			gc.setStroke(context.getRendererFactory().createColor(1, 1, 0, 1));
+			double cx = dw / 2;
+			double cy = dh / 2;
+			int px = (int) Math.rint(cx + x0 * dw);
+			int py = (int) Math.rint(cy - y0 * dh);
+			gc.beginPath();
+			gc.moveTo(px - 4, py - 4);
+			gc.lineTo(px + 4, py + 4);
+			gc.moveTo(px - 4, py + 4);
+			gc.lineTo(px + 4, py - 4);
+			gc.stroke();
+			gc.setStroke(context.getRendererFactory().createColor(1, 1, 0, 1));
+			int qx = (int) Math.rint(cx + x1 * dw);
+			int qy = (int) Math.rint(cy - y1 * dh);
+			gc.beginPath();
+			gc.moveTo(qx - 4, qy - 4);
+			gc.lineTo(qx + 4, qy + 4);
+			gc.moveTo(qx - 4, qy + 4);
+			gc.lineTo(qx + 4, qy - 4);
+			gc.stroke();
+		}
 	}
 }

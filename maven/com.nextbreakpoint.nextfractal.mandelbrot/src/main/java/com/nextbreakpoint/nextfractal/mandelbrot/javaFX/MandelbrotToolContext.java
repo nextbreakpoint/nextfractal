@@ -24,6 +24,7 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
 
+import com.nextbreakpoint.nextfractal.core.renderer.RendererFactory;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotSession;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 
@@ -39,4 +40,6 @@ public interface MandelbrotToolContext {
 	public Number getInitialCenter();
 
 	public double getZoomSpeed();
+
+	public RendererFactory getRendererFactory();
 }

@@ -34,6 +34,7 @@ public class MandelbrotPick implements MandelbrotTool {
 	private MandelbrotToolContext context;
 	private volatile boolean pressed;
 	private volatile boolean changed;
+	private volatile boolean redraw;
 	private double x1;
 	private double y1;
 
@@ -54,6 +55,7 @@ public class MandelbrotPick implements MandelbrotTool {
 		x1 = (e.getX() - context.getWidth() / 2) / context.getWidth();
 		y1 = (context.getHeight() / 2 - e.getY()) / context.getHeight();
 		changed = true;
+		redraw = true;
 	}
 
 	@Override
@@ -62,6 +64,7 @@ public class MandelbrotPick implements MandelbrotTool {
 		y1 = (context.getHeight() / 2 - e.getY()) / context.getHeight();
 		pressed = false;
 		changed = true;
+		redraw = true;
 	}
 
 	@Override
@@ -69,6 +72,7 @@ public class MandelbrotPick implements MandelbrotTool {
 		x1 = (e.getX() - context.getWidth() / 2) / context.getWidth();
 		y1 = (context.getHeight() / 2 - e.getY()) / context.getHeight();
 		pressed = true;
+		redraw = true;
 	}
 
 	@Override
@@ -94,13 +98,28 @@ public class MandelbrotPick implements MandelbrotTool {
 
 	@Override
 	public boolean isChanged() {
-		// TODO Auto-generated method stub
-		return false;
+		boolean result = redraw;
+		redraw = false;
+		return result;
 	}
 
 	@Override
 	public void draw(RendererGraphicsContext gc) {
-		// TODO Auto-generated method stub
-		
+		double dw = context.getWidth();
+		double dh = context.getHeight();
+		gc.clearRect(0, 0, (int)dw, (int)dh);
+		if (pressed) {
+			gc.setStroke(context.getRendererFactory().createColor(1, 1, 0, 1));
+			double cx = dw / 2;
+			double cy = dh / 2;
+			int qx = (int) Math.rint(cx + x1 * dw);
+			int qy = (int) Math.rint(cy - y1 * dh);
+			gc.beginPath();
+			gc.moveTo(qx - 4, qy - 4);
+			gc.lineTo(qx + 4, qy + 4);
+			gc.moveTo(qx - 4, qy + 4);
+			gc.lineTo(qx + 4, qy - 4);
+			gc.stroke();
+		}
 	}
 }

@@ -73,6 +73,7 @@ import com.nextbreakpoint.nextfractal.core.encoder.Encoder;
 import com.nextbreakpoint.nextfractal.core.export.ExportSession;
 import com.nextbreakpoint.nextfractal.core.javaFX.BooleanObservableValue;
 import com.nextbreakpoint.nextfractal.core.javaFX.StringObservableValue;
+import com.nextbreakpoint.nextfractal.core.renderer.RendererFactory;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererGraphicsContext;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererPoint;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
@@ -429,6 +430,10 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 		homeButton.setOnAction(e -> {
 			resetView();
 		});
+		
+//		zoominButton.selectedProperty().addListener(() -> {
+//			
+//		});
 		
 		zoominButton.setOnAction(e -> {
 			currentTool = new MandelbrotZoom(this, true);
@@ -1396,5 +1401,10 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 				}
 			});
 		}
+	}
+
+	@Override
+	public RendererFactory getRendererFactory() {
+		return renderFactory;
 	}
 }
