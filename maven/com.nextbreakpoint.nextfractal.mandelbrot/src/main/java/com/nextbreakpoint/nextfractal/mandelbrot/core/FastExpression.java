@@ -26,8 +26,8 @@ package com.nextbreakpoint.nextfractal.mandelbrot.core;
 
 import org.apache.commons.math3.util.FastMath;
 
-public class Expression {
-	public Expression() {
+public class FastExpression {
+	public FastExpression() {
 	}
 
 	public static MutableNumber variable(Number x) {

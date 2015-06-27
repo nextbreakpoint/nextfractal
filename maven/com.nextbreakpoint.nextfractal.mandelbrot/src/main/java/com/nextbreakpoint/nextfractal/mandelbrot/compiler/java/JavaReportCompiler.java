@@ -46,6 +46,7 @@ import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.ExpressionContext;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Color;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Expression;
+import com.nextbreakpoint.nextfractal.mandelbrot.core.FastExpression;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.MutableNumber;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Orbit;
@@ -154,7 +155,11 @@ public class JavaReportCompiler {
 		builder.append(packageName);
 		builder.append(";\n");
 		builder.append("import static ");
-		builder.append(Expression.class.getCanonicalName());
+		if (Boolean.getBoolean("mandelbrot.expression.fastmath")) {
+			builder.append(FastExpression.class.getCanonicalName());
+		} else {
+			builder.append(Expression.class.getCanonicalName());
+		}
 		builder.append(".*;\n");
 		builder.append("import ");
 		builder.append(Number.class.getCanonicalName());
@@ -188,7 +193,11 @@ public class JavaReportCompiler {
 		builder.append(packageName);
 		builder.append(";\n");
 		builder.append("import static ");
-		builder.append(Expression.class.getCanonicalName());
+		if (Boolean.getBoolean("mandelbrot.expression.fastmath")) {
+			builder.append(FastExpression.class.getCanonicalName());
+		} else {
+			builder.append(Expression.class.getCanonicalName());
+		}
 		builder.append(".*;\n");
 		builder.append("import ");
 		builder.append(Number.class.getCanonicalName());
