@@ -51,6 +51,8 @@ import java.util.logging.Logger;
 import javafx.animation.AnimationTimer;
 import javafx.animation.FadeTransition;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -305,6 +307,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 
 		currentTool = new MandelbrotZoom(this, true);
 		zoominButton.setSelected(true);
+		zoominButton.setDisable(true);
 		
 		controls.setOnMouseClicked(e -> {
 			if (!pressed && e.getY() > controls.getHeight() - toolButtons.getHeight() && e.getY() < controls.getHeight()) {
@@ -431,9 +434,14 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 			resetView();
 		});
 		
-//		zoominButton.selectedProperty().addListener(() -> {
-//			
-//		});
+		toolsGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
+			if (oldValue != null) {
+				((ToggleButton)oldValue).setDisable(false);
+			}
+			if (newValue != null) {
+				((ToggleButton)newValue).setDisable(true);
+			}
+		});
 		
 		zoominButton.setOnAction(e -> {
 			currentTool = new MandelbrotZoom(this, true);
@@ -476,17 +484,17 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 //		});
 		
 		orbitButton.setOnAction(e -> {
-			if (!getMandelbrotSession().getDataAsCopy().isJulia()) {
-				currentTool = new MandelbrotPick(this);
-				juliaCanvas.setVisible(true);
-				pointCanvas.setVisible(true);
-				pickButton.requestFocus();
-			} else {
-				currentTool = new MandelbrotZoom(this, true);
-				juliaCanvas.setVisible(false);
-				pointCanvas.setVisible(false);
-				zoominButton.requestFocus();
-			}
+//			if (!getMandelbrotSession().getDataAsCopy().isJulia()) {
+//				currentTool = new MandelbrotPick(this);
+//				juliaCanvas.setVisible(true);
+//				pointCanvas.setVisible(true);
+//				pickButton.requestFocus();
+//			} else {
+//				currentTool = new MandelbrotZoom(this, true);
+//				juliaCanvas.setVisible(false);
+//				pointCanvas.setVisible(false);
+//				zoominButton.requestFocus();
+//			}
 			toggleShowOrbit();
 		});
 		

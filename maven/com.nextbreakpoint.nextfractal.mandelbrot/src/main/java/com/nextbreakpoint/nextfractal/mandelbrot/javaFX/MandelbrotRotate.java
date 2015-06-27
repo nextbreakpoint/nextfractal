@@ -73,6 +73,9 @@ public class MandelbrotRotate implements MandelbrotTool {
 		y1 = (context.getHeight() / 2 - e.getY()) / context.getHeight();
 		pressed = false;
 		redraw = true;
+		if (active) {
+			changed = true;
+		}
 		active = !active;
 	}
 

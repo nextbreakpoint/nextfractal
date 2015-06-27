@@ -58,6 +58,7 @@ public class Renderer {
 	protected final RendererData rendererData;
 	protected volatile RendererDelegate rendererDelegate;
 	protected volatile RendererStrategy rendererStrategy;
+	protected volatile RendererTransform transform;
 	protected volatile RendererSurface buffer;
 	protected volatile boolean aborted;
 	protected volatile boolean interrupted;
@@ -277,6 +278,10 @@ public class Renderer {
 		} else {
 			rotation = view.getRotation().getZ();
 		}
+		transform = new RendererTransform();
+		transform.traslate(view.getTraslation().getX(), view.getTraslation().getY());
+		transform.rotate(-rotation * Math.PI / 180);
+		transform.traslate(-view.getTraslation().getX(), -view.getTraslation().getY());
 		buffer.setAffine(createTransform(rotation));
 		setRegion(computeRegion());
 		setJulia(view.isJulia());
@@ -311,14 +316,16 @@ public class Renderer {
 		buffer.getBuffer().getImage().getPixels(tmpBuffer);
 		int tileWidth = buffer.getTile().getTileSize().getWidth();
 		int tileHeight = buffer.getTile().getTileSize().getHeight();
-		int offsetX = (bufferWidth - tileWidth) / 2;
-		int offsetY = (bufferHeight - tileHeight) / 2;
+		int borderWidth = buffer.getTile().getBorderSize().getWidth();
+		int borderHeight = buffer.getTile().getBorderSize().getHeight();
+		int offsetX = (bufferWidth - tileWidth - borderWidth * 2) / 2;
+		int offsetY = (bufferHeight - tileHeight - borderHeight * 2) / 2;
 		int offset = offsetY * bufferWidth + offsetX;
 		int tileOffset = 0;
 		for (int y = 0; y < tileHeight; y++) {
 			System.arraycopy(bufferPixels, offset, pixels, tileOffset, tileWidth);
 			offset += bufferWidth;
-			tileOffset += tileWidth;
+			tileOffset += tileWidth + borderWidth * 2;
 		}
 	}
 	
@@ -484,6 +491,7 @@ public class Renderer {
 				for (int x = 0; x < width; x++) {
 					px.set(rendererData.point());
 					pw.set(rendererData.positionX(x), rendererData.positionY(y));
+					transform.transform(pw);
 					if (redraw) {
 						c = rendererStrategy.renderPoint(p, px, pw);
 					} else {
