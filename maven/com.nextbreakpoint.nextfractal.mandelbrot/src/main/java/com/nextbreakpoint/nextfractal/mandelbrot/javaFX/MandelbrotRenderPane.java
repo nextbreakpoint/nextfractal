@@ -499,11 +499,11 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 		});
 		
 		juliaButton.setOnAction(e -> {
-			currentTool = new MandelbrotZoom(this, true);
 			juliaCanvas.setVisible(false);
 			pointCanvas.setVisible(false);
 			juliaProperty.setValue(!juliaProperty.getValue());
 			if (pickButton.isSelected()) {
+				currentTool = new MandelbrotZoom(this, true);
 				zoominButton.requestFocus();
 				zoominButton.setSelected(true);
 				pickButton.setDisable(juliaProperty.getValue());
