@@ -503,8 +503,11 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 			juliaCanvas.setVisible(false);
 			pointCanvas.setVisible(false);
 			juliaProperty.setValue(!juliaProperty.getValue());
-			zoominButton.requestFocus();
-			zoominButton.setSelected(true);
+			if (pickButton.isSelected()) {
+				zoominButton.requestFocus();
+				zoominButton.setSelected(true);
+				pickButton.setDisable(juliaProperty.getValue());
+			}
 		});
 		
 		hideOrbitProperty.addListener((observable, oldValue, newValue) -> {
