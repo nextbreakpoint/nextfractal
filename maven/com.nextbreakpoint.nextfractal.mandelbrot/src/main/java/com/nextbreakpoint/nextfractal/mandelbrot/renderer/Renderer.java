@@ -94,14 +94,10 @@ public class Renderer {
 		this.rendererData = createRendererData();
 		this.rendererFractal = new RendererFractal();
 		view = new RendererView();
-		RendererSize tileSize = tile.getTileSize();
-		RendererSize borderSize = tile.getBorderSize();
-		size = computeOptimalBufferSize(tileSize, borderSize, rotation);
 		buffer = new RendererSurface(); 
 		buffer.setTile(tile);
-		buffer.setSize(size);
+		ensureBufferAndSize();
 		buffer.setAffine(createTransform(0));
-		buffer.setBuffer(renderFactory.createBuffer(size.getWidth(), size.getHeight()));
 		executor = Executors.newSingleThreadExecutor(threadFactory);
 	}
 
@@ -273,7 +269,7 @@ public class Renderer {
 		lock.lock();
 		if ((rotation == 0 && view.getRotation().getZ() != 0) || (rotation != 0 && view.getRotation().getZ() == 0)) {
 			rotation = view.getRotation().getZ();
-			ensureBufferSize();
+			ensureBufferAndSize();
 			orbitChanged = true;
 		} else {
 			rotation = view.getRotation().getZ();
@@ -290,12 +286,11 @@ public class Renderer {
 		lock.unlock();
 	}
 
-	private void ensureBufferSize() {
-		RendererSize tileSize = buffer.getTile().getTileSize();
-		RendererSize borderSize = buffer.getTile().getBorderSize();
-		size = computeOptimalBufferSize(tileSize, borderSize, rotation);
+	private void ensureBufferAndSize() {
+		size = computeOptimalBufferSize(buffer.getTile(), rotation);
 		buffer.setSize(size);
 		buffer.setBuffer(renderFactory.createBuffer(size.getWidth(), size.getHeight()));
+		System.out.println(size);
 	}
 
 	/**
@@ -336,12 +331,15 @@ public class Renderer {
 		lock.lock();
 		if (buffer != null) {
 			gc.save();
-			RendererPoint tileOffset = buffer.getTile().getTileOffset();
 			RendererSize imageSize = buffer.getTile().getImageSize();
 			RendererSize tileSize = buffer.getTile().getTileSize();
-			gc.setClip(tileOffset.getX(), imageSize.getHeight() - tileSize.getHeight() - tileOffset.getY(), tileSize.getWidth(), tileSize.getHeight());
+			final int offsetX = (getSize().getWidth() - tileSize.getWidth()) / 2;
+			final int offsetY = (getSize().getHeight() - tileSize.getHeight()) / 2;
 			gc.setAffine(buffer.getAffine());
-			gc.drawImage(buffer.getBuffer().getImage(), tileOffset.getX(), tileOffset.getY() + tileSize.getHeight() - imageSize.getHeight());
+//			gc.setClip(-offsetX, -offsetY + tileSize.getHeight() - imageSize.getHeight(), getSize().getWidth(), getSize().getHeight());
+			gc.drawImage(buffer.getBuffer().getImage(), -offsetX, -offsetY + tileSize.getHeight() - imageSize.getHeight());
+			gc.setStroke(renderFactory.createColor(1, 0, 0, 1));
+			gc.strokeRect(0, tileSize.getHeight() - imageSize.getHeight(), tileSize.getWidth(), tileSize.getHeight());
 			gc.restore();
 		}
 		lock.unlock();
@@ -393,32 +391,49 @@ public class Renderer {
 
 	/**
 	 * @param tile
+	 * @param rotation
 	 * @return
 	 */
-	protected RendererSize computeOptimalBufferSize(RendererSize tileSize, RendererSize borderSize, double rotation) {
-		int tw = tileSize.getWidth();
-		int bw = borderSize.getWidth();
+	protected RendererSize computeOptimalBufferSize(RendererTile tile, double rotation) {
+		RendererSize tileSize = tile.getTileSize();
+		RendererSize imageSize = tile.getImageSize();
+		RendererSize borderSize = tile.getBorderSize();
+		int tw = tileSize .getWidth();
 		int th = tileSize.getHeight();
+		int bw = borderSize.getWidth();
 		int bh = borderSize.getHeight();
 		if (rotation == 0) {
 			return new RendererSize(tw + bw * 2, th + bh * 2);
 		} else {
-			int tileDim = (int) Math.hypot(tw + bw * 2, th + bh * 2);
-			return new RendererSize(tileDim, tileDim);
+			RendererSize maxSize = computeBufferSize(imageSize);
+			int hcells = (int) Math.rint(imageSize.getWidth() / (double)tileSize.getWidth());
+			int vcells = (int) Math.rint(imageSize.getHeight() / (double)tileSize.getHeight());
+			int width = (int) Math.rint(maxSize.getWidth() / (double)hcells) + bw * 2;
+			int height = (int) Math.rint(maxSize.getHeight() / (double)vcells) + bh * 2;
+			return new RendererSize(width, height);
 		}
 	}
-	
+
 	/**
 	 * @param tile
 	 * @return
 	 */
-	protected RendererSize computeMaxBufferSize(RendererSize tileSize, RendererSize borderSize) {
+	protected RendererSize computeBufferSize(RendererSize tileSize) {
 		int tw = tileSize.getWidth();
-		int bw = borderSize.getWidth();
 		int th = tileSize.getHeight();
-		int bh = borderSize.getHeight();
-		int tileDim = (int) Math.hypot(tw + bw * 2, th + bh * 2);
+		int tileDim = (int) Math.hypot(tw, th);
 		return new RendererSize(tileDim, tileDim);
+	}
+
+	/**
+	 * @param tile
+	 * @return
+	 */
+	protected RendererSize computeBufferSize(RendererSize tileSize, RendererSize borderSize) {
+		int bw = borderSize.getWidth();
+		int bh = borderSize.getHeight();
+		RendererSize size = computeBufferSize(tileSize);
+		return new RendererSize(size.getWidth() + bw * 2, size.getHeight() + bh * 2);
 	}
 
 	/**
@@ -547,7 +562,7 @@ public class Renderer {
 		final Number size = region.getSize();
 		final Number center = region.getCenter();
 
-		final RendererSize bufferSize = computeMaxBufferSize(imageSize, borderSize);
+		final RendererSize bufferSize = computeBufferSize(imageSize, borderSize);
 
 		final double dx = tz * size.r() * ((double)bufferSize.getWidth() / (double)imageSize.getWidth()) / 2;
 		final double dy = tz * size.i() * ((double)bufferSize.getHeight() / (double)imageSize.getWidth()) / 2;
@@ -577,22 +592,24 @@ public class Renderer {
 	 */
 	protected RendererAffine createTransform(double rotation) {
 		final RendererSize tileSize = buffer.getTile().getTileSize();
-		final RendererSize tileBorder = buffer.getTile().getBorderSize();
-		int width = getSize().getWidth();
-		int height = getSize().getHeight();
-		final int offsetX = (width - tileSize.getWidth() - tileBorder.getWidth() * 2) / 2;
-		final int offsetY = (height - tileSize.getHeight() - tileBorder.getHeight() * 2) / 2;
-		final int centerX = width / 2;
-		final int centerY = height / 2;
+		final RendererSize imageSize = buffer.getTile().getImageSize();
+		final RendererPoint tileOffset = buffer.getTile().getTileOffset();
+		RendererSize bufferSize = getSize();
+		final int offsetX = (bufferSize.getWidth() - tileSize.getWidth()) / 2;
+		final int offsetY = (bufferSize.getHeight() - tileSize.getHeight()) / 2;
+		final int centerX = bufferSize.getWidth() / 2 - offsetX;
+		final int centerY = bufferSize.getHeight() / 2 - offsetY;
+		final int rotCenterX = imageSize.getWidth() / 2 - tileOffset.getX();
+		final int rotCenterY = imageSize.getHeight() / 2 - tileSize.getHeight() - tileOffset.getY();
 		final RendererAffine affine = renderFactory.createAffine();
-		affine.append(renderFactory.createTranslateAffine(0, +centerY - offsetY));
+		affine.append(renderFactory.createTranslateAffine(0, +centerY));
 		affine.append(renderFactory.createScaleAffine(1, -1));
-		affine.append(renderFactory.createTranslateAffine(0, -centerY + offsetY));
-		affine.append(renderFactory.createTranslateAffine(-offsetX, -offsetY));
-		affine.append(renderFactory.createRotateAffine(rotation, centerX, centerY));
+		affine.append(renderFactory.createTranslateAffine(0, -centerY));
+		affine.append(renderFactory.createTranslateAffine(tileOffset.getX(), tileOffset.getY()));
+		affine.append(renderFactory.createRotateAffine(rotation, rotCenterX, rotCenterY));
 		return affine;
 	}
-
+	
 	/**
 	 * @param progress
 	 * @param pixels
