@@ -61,6 +61,7 @@ public final class XaosRenderer extends Renderer {
 		}
 	}
 	
+	private volatile boolean overlapping = false;
 	private boolean isSolidguessSupported;
 	private boolean isVerticalSymetrySupported;
 	private boolean isHorizontalSymetrySupported;
@@ -1713,19 +1714,22 @@ public final class XaosRenderer extends Renderer {
 			return new RendererTile(imageSize, tileSize, tileOffset, borderSize);
 		} else {
 			RendererSize newImageSize = computeBufferSize(imageSize);
-			int hcells = (int) Math.rint(imageSize.getWidth() / (double)tileSize.getWidth());
-			int vcells = (int) Math.rint(imageSize.getHeight() / (double)tileSize.getHeight());
-			int hpos = (int) Math.rint(tileOffset.getX() / (double)tileSize.getWidth());
-			int vpos = (int) Math.rint(tileOffset.getY() / (double)tileSize.getHeight());
-			int width = (int) Math.rint(newImageSize.getWidth() / (double)hcells);
-			int height = (int) Math.rint(newImageSize.getHeight() / (double)vcells);
-			RendererSize newTileSize = new RendererSize(width, height);
-			int offsetX = (int) Math.rint(newTileSize.getWidth() * hpos);
-			int offsetY = (int) Math.rint(newTileSize.getHeight() * vpos);
-			RendererPoint newTileOffset = new RendererPoint(offsetX, offsetY);
-			return new RendererTile(newImageSize, newTileSize, newTileOffset, borderSize);
-//			RendererSize newBorderSize = new RendererSize(width - tileSize.getWidth() / 2, height - tileSize.getHeight());
-//			return new RendererTile(imageSize, tileSize, tileOffset, newBorderSize);
+			if (overlapping) {
+				RendererSize newBorderSize = new RendererSize((newImageSize.getWidth() - imageSize.getWidth()) / 2, (newImageSize.getHeight() - imageSize.getHeight()) / 2);
+				return new RendererTile(imageSize, tileSize, tileOffset, newBorderSize);
+			} else {
+				int hcells = (int) Math.rint(imageSize.getWidth() / (double)tileSize.getWidth());
+				int vcells = (int) Math.rint(imageSize.getHeight() / (double)tileSize.getHeight());
+				int hpos = (int) Math.rint(tileOffset.getX() / (double)tileSize.getWidth());
+				int vpos = (int) Math.rint(tileOffset.getY() / (double)tileSize.getHeight());
+				int width = (int) Math.rint(newImageSize.getWidth() / (double)hcells);
+				int height = (int) Math.rint(newImageSize.getHeight() / (double)vcells);
+				RendererSize newTileSize = new RendererSize(width, height);
+				int offsetX = (int) Math.rint(newTileSize.getWidth() * hpos);
+				int offsetY = (int) Math.rint(newTileSize.getHeight() * vpos);
+				RendererPoint newTileOffset = new RendererPoint(offsetX, offsetY);
+				return new RendererTile(newImageSize, newTileSize, newTileOffset, borderSize);
+			}
 		}
 	}
 
@@ -1738,17 +1742,24 @@ public final class XaosRenderer extends Renderer {
 		RendererSize baseImageSize = tile.getImageSize();
 		final RendererSize tileSize = buffer.getTile().getTileSize();
 		final RendererSize imageSize = buffer.getTile().getImageSize();
+		final RendererSize borderSize = buffer.getTile().getBorderSize();
 		final RendererPoint tileOffset = buffer.getTile().getTileOffset();
+		int offsetX = (imageSize.getWidth() - baseImageSize.getWidth()) / 2;
+		int offsetY = -(imageSize.getHeight() - baseImageSize.getHeight()) / 2;
+		int rotCenterX = imageSize.getWidth() / 2 - tileOffset.getX();
+		int rotCenterY = imageSize.getHeight() / 2 + tileSize.getHeight() - imageSize.getHeight() - tileOffset.getY();
+		if (overlapping) {
+			offsetX = borderSize.getWidth();
+			offsetY = borderSize.getHeight();
+			rotCenterX = imageSize.getWidth() / 2 - tileOffset.getX() + offsetX;
+			rotCenterY = imageSize.getHeight() / 2 + tileSize.getHeight() - imageSize.getHeight() - tileOffset.getY() + offsetY;
+		}
 		final int centerY = tileSize.getHeight() / 2;
-		final int rotCenterX = imageSize.getWidth() / 2 - tileOffset.getX();
-		final int rotCenterY = imageSize.getHeight() / 2 + tileSize.getHeight() - imageSize.getHeight() - tileOffset.getY();
-		final int offsetX = (imageSize.getWidth() - baseImageSize.getWidth()) / 2;
-		final int offsetY = (imageSize.getHeight() - baseImageSize.getHeight()) / 2;
 		final RendererAffine affine = renderFactory.createAffine();
 		affine.append(renderFactory.createTranslateAffine(0, +centerY));
 		affine.append(renderFactory.createScaleAffine(1, -1));
 		affine.append(renderFactory.createTranslateAffine(0, -centerY));
-		affine.append(renderFactory.createTranslateAffine(tileOffset.getX() - offsetX, tileOffset.getY() + offsetY));
+		affine.append(renderFactory.createTranslateAffine(tileOffset.getX() - offsetX, tileOffset.getY() - offsetY));
 		affine.append(renderFactory.createRotateAffine(rotation, rotCenterX, rotCenterY));
 		return affine;
 	}

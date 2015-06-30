@@ -332,10 +332,10 @@ public class Renderer {
 			RendererSize imageSize = buffer.getTile().getImageSize();
 			RendererSize tileSize = buffer.getTile().getTileSize();
 			gc.setAffine(buffer.getAffine());
-			gc.setClip(0, tileSize.getHeight() - imageSize.getHeight(), getSize().getWidth(), getSize().getHeight());
+//			gc.setClip(-borderSize.getWidth(), -borderSize.getHeight() + tileSize.getHeight() - imageSize.getHeight(), getSize().getWidth(), getSize().getHeight());
 			gc.drawImage(buffer.getBuffer().getImage(), 0, tileSize.getHeight() - imageSize.getHeight());
-//			gc.setStroke(renderFactory.createColor(1, 0, 0, 1));
-//			gc.strokeRect(0, getSize().getHeight() - imageSize.getHeight(), getSize().getWidth(), getSize().getHeight());
+			gc.setStroke(renderFactory.createColor(1, 0, 0, 1));
+			gc.strokeRect(borderSize.getWidth(), -borderSize.getHeight() + getSize().getHeight() - imageSize.getHeight(), tileSize.getWidth(), tileSize.getHeight());
 			gc.restore();
 		}
 		lock.unlock();
@@ -586,18 +586,17 @@ public class Renderer {
 	 * @return
 	 */
 	protected RendererAffine createTransform(double rotation) {
-		RendererSize baseImageSize = tile.getImageSize();
 		final RendererSize tileSize = buffer.getTile().getTileSize();
-		final RendererSize imageSize = buffer.getTile().getImageSize();
+		final RendererSize borderSize = buffer.getTile().getBorderSize();
 		final RendererPoint tileOffset = buffer.getTile().getTileOffset();
 		final int centerY = tileSize.getHeight() / 2;
-		final int offsetX = (imageSize.getWidth() - baseImageSize.getWidth()) / 2;
-		final int offsetY = (imageSize.getHeight() - baseImageSize.getHeight()) / 2;
+		final int offsetX = borderSize.getWidth();
+		final int offsetY = borderSize.getHeight();
 		final RendererAffine affine = renderFactory.createAffine();
 		affine.append(renderFactory.createTranslateAffine(0, +centerY));
 		affine.append(renderFactory.createScaleAffine(1, -1));
 		affine.append(renderFactory.createTranslateAffine(0, -centerY));
-		affine.append(renderFactory.createTranslateAffine(tileOffset.getX() - offsetX, tileOffset.getY() + offsetY));
+		affine.append(renderFactory.createTranslateAffine(tileOffset.getX() - offsetX, tileOffset.getY() - offsetY));
 		return affine;
 	}
 	
