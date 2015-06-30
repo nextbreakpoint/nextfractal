@@ -334,8 +334,8 @@ public class Renderer {
 			gc.setAffine(buffer.getAffine());
 			gc.setClip(0, tileSize.getHeight() - imageSize.getHeight(), getSize().getWidth(), getSize().getHeight());
 			gc.drawImage(buffer.getBuffer().getImage(), 0, tileSize.getHeight() - imageSize.getHeight());
-			gc.setStroke(renderFactory.createColor(1, 0, 0, 1));
-			gc.strokeRect(0, getSize().getHeight() - imageSize.getHeight(), getSize().getWidth(), getSize().getHeight());
+//			gc.setStroke(renderFactory.createColor(1, 0, 0, 1));
+//			gc.strokeRect(0, getSize().getHeight() - imageSize.getHeight(), getSize().getWidth(), getSize().getHeight());
 			gc.restore();
 		}
 		lock.unlock();
@@ -570,11 +570,11 @@ public class Renderer {
 		final double qy = cy + dy + ty;
 
 		final double gx = px + (qx - px) * ((baseImageSize.getWidth() - imageSize.getWidth()) / 2.0 + tileOffset.getX() + tileSize.getWidth() / 2) / (double)baseImageSize.getWidth();
-		final double gy = py + (qy - py) * ((baseImageSize.getHeight() - imageSize.getHeight()) / 2.0 + tileOffset.getY() + tileSize.getHeight() / 2) / (double)baseImageSize.getHeight();
+		final double gy = py + (qy - py) * ((baseImageSize.getWidth() - imageSize.getHeight()) / 2.0 + tileOffset.getY() + tileSize.getHeight() / 2) / (double)baseImageSize.getWidth();
 		final double fx = gx;//Math.cos(a) * (gx - cx) + Math.sin(a) * (gy - cx) + cx; 
 		final double fy = gy;//Math.cos(a) * (gy - cy) - Math.sin(a) * (gx - cx) + cy;
 		final double sx = dx * (getSize().getWidth() / (double)baseImageSize.getWidth());
-		final double sy = dy * (getSize().getHeight() / (double)baseImageSize.getHeight());
+		final double sy = dy * (getSize().getHeight() / (double)baseImageSize.getWidth());
 
 		final RendererRegion newRegion = new RendererRegion(new Number(fx - sx, fy - sy), new Number(fx + sx, fy + sy));
 //		logger.info(newRegion.toString());

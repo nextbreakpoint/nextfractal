@@ -1725,7 +1725,7 @@ public final class XaosRenderer extends Renderer {
 			RendererPoint newTileOffset = new RendererPoint(offsetX, offsetY);
 			return new RendererTile(newImageSize, newTileSize, newTileOffset, borderSize);
 //			RendererSize newBorderSize = new RendererSize(width - tileSize.getWidth() / 2, height - tileSize.getHeight());
-//			return new RendererTile(newImageSize, tileSize, tileOffset, newBorderSize);
+//			return new RendererTile(imageSize, tileSize, tileOffset, newBorderSize);
 		}
 	}
 
