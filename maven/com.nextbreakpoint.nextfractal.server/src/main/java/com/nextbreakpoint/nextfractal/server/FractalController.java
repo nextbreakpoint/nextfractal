@@ -67,10 +67,13 @@ public class FractalController {
 	private static ExecutorService executor = Executors.newFixedThreadPool(200);
 	
     @RequestMapping(method=RequestMethod.POST)
-    public @ResponseBody RemoteFractal renderFractal(@RequestParam(value="xml", required=true) String xml) {
+    public @ResponseBody RemoteFractal renderFractal(@RequestParam(value="pluginId", required=true) String pluginId, @RequestParam(value="xml", required=true) String xml) {
     	RemoteFractal fractal = new RemoteFractal();
     	try {
-			FractalSession session = new FractalSession();
+    		if (!pluginId.equals("Mandelbrot")) {
+    			throw new RuntimeException("Unsupported plugin " + pluginId);
+    		}
+			FractalSession session = new FractalSession(pluginId);
 			fractal.setUUID(UUID.randomUUID().toString());
 			fractal.setTileSize(session.getTileSize());
 			fractal.setJobsCount(session.getJobsCount());
@@ -143,7 +146,7 @@ public class FractalController {
 		return null;
 	}
 
-	public class ProcessingTask implements Runnable {
+	private class ProcessingTask implements Runnable {
 		private DeferredResult<ResponseEntity<byte[]>> deferredResult;
 		private ResponseEntity<byte[]> response;
 		private RemoteFractal fractal;

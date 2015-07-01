@@ -30,8 +30,8 @@ import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
 
 public class RemoteProfile {
 	private float quality;
-	private float frameRate;
-	private int frameNumber;
+//	private float frameRate;
+//	private int frameNumber;
 	private int frameWidth;
 	private int frameHeight;
 	private int tileWidth;
@@ -40,32 +40,32 @@ public class RemoteProfile {
 	private int tileOffsetY;
 	private int borderWidth;
 	private int borderHeight;
-	private float startTime;
-	private float stopTime;
+//	private float startTime;
+//	private float stopTime;
 	private String pluginId;
 	private Object data;
 
-	public float getFrameRate() {
-		return frameRate;
-	}
+//	public float getFrameRate() {
+//		return frameRate;
+//	}
+//
+//	public void setFrameRate(float frameRate) {
+//		this.frameRate = frameRate;
+//	}
 
-	public void setFrameRate(float frameRate) {
-		this.frameRate = frameRate;
-	}
-
-	public int getFrameNumber() {
-		return frameNumber;
-	}
-
-	public void setFrameNumber(int frameNumber) {
-		this.frameNumber = frameNumber;
-	}
+//	public int getFrameNumber() {
+//		return frameNumber;
+//	}
+//
+//	public void setFrameNumber(int frameNumber) {
+//		this.frameNumber = frameNumber;
+//	}
 
 	public int getFrameWidth() {
 		return frameWidth;
 	}
 
-	public void setFrameWidth(int frameWidth) {
+	public void setImageWidth(int frameWidth) {
 		this.frameWidth = frameWidth;
 	}
 
@@ -73,7 +73,7 @@ public class RemoteProfile {
 		return frameHeight;
 	}
 
-	public void setFrameHeight(int frameHeight) {
+	public void setImageHeight(int frameHeight) {
 		this.frameHeight = frameHeight;
 	}
 
@@ -149,21 +149,21 @@ public class RemoteProfile {
 		this.data = data;
 	}
 
-	public float getStartTime() {
-		return startTime;
-	}
-
-	public void setStartTime(float startTime) {
-		this.startTime = startTime;
-	}
-
-	public float getStopTime() {
-		return stopTime;
-	}
-
-	public void setStopTime(float stopTime) {
-		this.stopTime = stopTime;
-	}
+//	public float getStartTime() {
+//		return startTime;
+//	}
+//
+//	public void setStartTime(float startTime) {
+//		this.startTime = startTime;
+//	}
+//
+//	public float getStopTime() {
+//		return stopTime;
+//	}
+//
+//	public void setStopTime(float stopTime) {
+//		this.stopTime = stopTime;
+//	}
 
 	public RendererTile createTile() {
 		RendererSize imageSize = new RendererSize(frameWidth, frameHeight);
@@ -176,7 +176,7 @@ public class RemoteProfile {
 
 	@Override
 	public String toString() {
-		return "[pluginId=" + pluginId + ", frameRate="	+ frameRate + ", frameNumber=" + frameNumber + ", frameWidth=" + frameWidth + ", frameHeight=" + frameHeight + ", tileWidth=" + tileWidth + ", tileHeight=" + tileHeight 
-				+ ", tileOffsetX=" + tileOffsetX + ", tileOffsetY=" + tileOffsetY + ", borderWidth=" + borderWidth + ", borderHeight=" + borderHeight + ", quality=" + quality + ", startTime=" + startTime + ", stopTime=" + stopTime + "]";
+		return "[pluginId=" + pluginId + ", frameWidth=" + frameWidth + ", frameHeight=" + frameHeight + ", tileWidth=" + tileWidth + ", tileHeight=" + tileHeight 
+				+ ", tileOffsetX=" + tileOffsetX + ", tileOffsetY=" + tileOffsetY + ", borderWidth=" + borderWidth + ", borderHeight=" + borderHeight + ", quality=" + quality + "]";
 	}
 }

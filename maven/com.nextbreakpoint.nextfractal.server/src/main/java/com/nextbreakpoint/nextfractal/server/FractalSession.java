@@ -33,79 +33,14 @@ import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 
 @XmlRootElement
 public class FractalSession {
-	private static final int BORDER_SIZE = 0;
-	private final RendererSize size = new RendererSize(512, 512);
+	private final RendererSize imageSize = new RendererSize(512, 512);
 	private final int tileSize = 64;
-	private final String pluginId = "Mandelbrot";
-	private final float quality = 1;
-	private final float frameRate = 0;
+	private final String pluginId;
 	private List<RemoteJob> jobs;
 
-	public FractalSession() {
+	public FractalSession(String pluginId) {
+		this.pluginId = pluginId;
 		createJobs(0);
-	}
-
-	public List<RemoteJob> getJobs() {
-		return jobs;
-	}
-
-	private void createJobs(int frameNumber) {
-		jobs = new ArrayList<RemoteJob>();
-		final int frameWidth = size.getWidth();
-		final int frameHeight = size.getHeight();
-		final int nx = frameWidth / tileSize;
-		final int ny = frameHeight / tileSize;
-		final int rx = frameWidth - tileSize * nx;
-		final int ry = frameHeight - tileSize * ny;
-		if ((nx > 0) && (ny > 0)) {
-			for (int tx = 0; tx < nx; tx++) {
-				for (int ty = 0; ty < ny; ty++) {
-					int tileOffsetX = tileSize * tx;
-					int tileOffsetY = tileSize * ty;
-					jobs.add(createJob(createProfile(frameNumber, frameWidth, frameHeight, tileOffsetX, tileOffsetY)));
-				}
-			}
-		}
-		if (rx > 0) {
-			for (int ty = 0; ty < ny; ty++) {
-				int tileOffsetX = tileSize * nx;
-				int tileOffsetY = tileSize * ty;
-				jobs.add(createJob(createProfile(frameNumber, frameWidth, frameHeight, tileOffsetX, tileOffsetY)));
-			}
-		}
-		if (ry > 0) {
-			for (int tx = 0; tx < nx; tx++) {
-				int tileOffsetX = tileSize * tx;
-				int tileOffsetY = tileSize * ny;
-				jobs.add(createJob(createProfile(frameNumber, frameWidth, frameHeight, tileOffsetX, tileOffsetY)));
-			}
-		}
-		if (rx > 0 && ry > 0) {
-			int tileOffsetX = tileSize * nx;
-			int tileOffsetY = tileSize * ny;
-			jobs.add(createJob(createProfile(frameNumber, frameWidth, frameHeight, tileOffsetX, tileOffsetY)));
-		}
-	}
-
-	private RemoteProfile createProfile(int frameNumber, final int frameWidth, final int frameHeight, int tileOffsetX, int tileOffsetY) {
-		final RemoteProfile profile = new RemoteProfile();
-		profile.setPluginId(pluginId);
-		profile.setQuality(quality);
-		profile.setFrameNumber(frameNumber);
-		profile.setFrameRate(frameRate);
-		profile.setFrameWidth(frameWidth);
-		profile.setFrameHeight(frameHeight);
-		profile.setTileWidth(tileSize);
-		profile.setTileHeight(tileSize);
-		profile.setTileOffsetX(tileOffsetX);
-		profile.setTileOffsetY(tileOffsetY);
-		profile.setBorderWidth(BORDER_SIZE);
-		profile.setBorderHeight(BORDER_SIZE);
-		return profile;
-	}
-
-	private RemoteJob createJob(RemoteProfile profile) {
-		return new RemoteJob(profile);
 	}
 
 	public int getTileSize() {
@@ -114,5 +49,66 @@ public class FractalSession {
 
 	public int getJobsCount() {
 		return jobs.size();
+	}
+
+	public List<RemoteJob> getJobs() {
+		return jobs;
+	}
+
+	private void createJobs(int frameNumber) {
+		jobs = new ArrayList<RemoteJob>();
+		final int imageWidth = imageSize.getWidth();
+		final int imageHeight = imageSize.getHeight();
+		final int nx = imageWidth / tileSize;
+		final int ny = imageHeight / tileSize;
+		final int rx = imageWidth - tileSize * nx;
+		final int ry = imageHeight - tileSize * ny;
+		if ((nx > 0) && (ny > 0)) {
+			for (int tx = 0; tx < nx; tx++) {
+				for (int ty = 0; ty < ny; ty++) {
+					int tileOffsetX = tileSize * tx;
+					int tileOffsetY = tileSize * ty;
+					jobs.add(createJob(createProfile(imageWidth, imageHeight, tileOffsetX, tileOffsetY)));
+				}
+			}
+		}
+		if (rx > 0) {
+			for (int ty = 0; ty < ny; ty++) {
+				int tileOffsetX = tileSize * nx;
+				int tileOffsetY = tileSize * ty;
+				jobs.add(createJob(createProfile(imageWidth, imageHeight, tileOffsetX, tileOffsetY)));
+			}
+		}
+		if (ry > 0) {
+			for (int tx = 0; tx < nx; tx++) {
+				int tileOffsetX = tileSize * tx;
+				int tileOffsetY = tileSize * ny;
+				jobs.add(createJob(createProfile(imageWidth, imageHeight, tileOffsetX, tileOffsetY)));
+			}
+		}
+		if (rx > 0 && ry > 0) {
+			int tileOffsetX = tileSize * nx;
+			int tileOffsetY = tileSize * ny;
+			jobs.add(createJob(createProfile(imageWidth, imageHeight, tileOffsetX, tileOffsetY)));
+		}
+	}
+
+	private RemoteProfile createProfile(final int imageWidth, final int imageHeight, int tileOffsetX, int tileOffsetY) {
+		final RemoteProfile profile = new RemoteProfile();
+		profile.setPluginId(pluginId);
+		profile.setQuality(1);
+		profile.setImageWidth(imageWidth);
+		profile.setImageHeight(imageHeight);
+		profile.setTileWidth(tileSize);
+		profile.setTileHeight(tileSize);
+		profile.setTileOffsetX(tileOffsetX);
+		profile.setTileOffsetY(tileOffsetY);
+		profile.setBorderWidth(0);
+		profile.setBorderHeight(0);
+		return profile;
+	}
+
+	private RemoteJob createJob(RemoteProfile profile) {
+		return new RemoteJob(profile);
 	}
 }
