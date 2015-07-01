@@ -1750,12 +1750,9 @@ public final class XaosRenderer extends Renderer {
 		final RendererPoint tileOffset = buffer.getTile().getTileOffset();
 		int offsetX = borderSize.getWidth();
 		int offsetY = borderSize.getHeight();
-		int rotCenterX = imageSize.getWidth() / 2 - tileOffset.getX();
-		int rotCenterY = imageSize.getHeight() / 2 + tileSize.getHeight() - imageSize.getHeight() - tileOffset.getY();
-		if (overlapping) {
-			rotCenterX += offsetX;
-			rotCenterY += offsetY;
-		} else {
+		int rotCenterX = offsetX + imageSize.getWidth() / 2 - tileOffset.getX();
+		int rotCenterY = offsetY + imageSize.getHeight() / 2 + tileSize.getHeight() - imageSize.getHeight() - tileOffset.getY();
+		if (!overlapping) {
 			offsetX += (imageSize.getWidth() - baseImageSize.getWidth()) / 2;
 			offsetY -= (imageSize.getHeight() - baseImageSize.getHeight()) / 2;
 		}

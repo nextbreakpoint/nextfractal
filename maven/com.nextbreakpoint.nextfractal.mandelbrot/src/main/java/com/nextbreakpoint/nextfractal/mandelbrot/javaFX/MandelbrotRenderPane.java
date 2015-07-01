@@ -858,7 +858,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 		int tileHeight = height / rows;
 		RendererSize imageSize = new RendererSize(width, height);
 		RendererSize tileSize = new RendererSize(tileWidth, tileHeight);
-		RendererSize tileBorder = new RendererSize(0, 0);//TODO border?
+		RendererSize tileBorder = new RendererSize(0, 0);
 		RendererPoint tileOffset = new RendererPoint(column * width / columns, row * height / rows);
 		RendererTile tile = new RendererTile(imageSize, tileSize, tileOffset, tileBorder);
 		return tile;

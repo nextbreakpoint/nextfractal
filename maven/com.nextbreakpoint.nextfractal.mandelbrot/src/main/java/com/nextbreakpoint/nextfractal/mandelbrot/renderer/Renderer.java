@@ -328,7 +328,7 @@ public class Renderer {
 		lock.lock();
 		if (buffer != null) {
 			gc.save();
-			RendererSize borderSize = buffer.getTile().getBorderSize();
+//			RendererSize borderSize = buffer.getTile().getBorderSize();
 			RendererSize imageSize = buffer.getTile().getImageSize();
 			RendererSize tileSize = buffer.getTile().getTileSize();
 			gc.setAffine(buffer.getAffine());
