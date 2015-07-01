@@ -27,11 +27,8 @@ package com.nextbreakpoint.nextfractal.server;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlRootElement;
-
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 
-@XmlRootElement
 public class FractalSession {
 	private final RendererSize imageSize = new RendererSize(512, 512);
 	private final int tileSize = 64;
@@ -68,7 +65,7 @@ public class FractalSession {
 				for (int ty = 0; ty < ny; ty++) {
 					int tileOffsetX = tileSize * tx;
 					int tileOffsetY = tileSize * ty;
-					jobs.add(createJob(createProfile(imageWidth, imageHeight, tileOffsetX, tileOffsetY)));
+					jobs.add(createJob(imageWidth, imageHeight, tileOffsetX, tileOffsetY));
 				}
 			}
 		}
@@ -76,39 +73,35 @@ public class FractalSession {
 			for (int ty = 0; ty < ny; ty++) {
 				int tileOffsetX = tileSize * nx;
 				int tileOffsetY = tileSize * ty;
-				jobs.add(createJob(createProfile(imageWidth, imageHeight, tileOffsetX, tileOffsetY)));
+				jobs.add(createJob(imageWidth, imageHeight, tileOffsetX, tileOffsetY));
 			}
 		}
 		if (ry > 0) {
 			for (int tx = 0; tx < nx; tx++) {
 				int tileOffsetX = tileSize * tx;
 				int tileOffsetY = tileSize * ny;
-				jobs.add(createJob(createProfile(imageWidth, imageHeight, tileOffsetX, tileOffsetY)));
+				jobs.add(createJob(imageWidth, imageHeight, tileOffsetX, tileOffsetY));
 			}
 		}
 		if (rx > 0 && ry > 0) {
 			int tileOffsetX = tileSize * nx;
 			int tileOffsetY = tileSize * ny;
-			jobs.add(createJob(createProfile(imageWidth, imageHeight, tileOffsetX, tileOffsetY)));
+			jobs.add(createJob(imageWidth, imageHeight, tileOffsetX, tileOffsetY));
 		}
 	}
 
-	private RemoteProfile createProfile(final int imageWidth, final int imageHeight, int tileOffsetX, int tileOffsetY) {
-		final RemoteProfile profile = new RemoteProfile();
-		profile.setPluginId(pluginId);
-		profile.setQuality(1);
-		profile.setImageWidth(imageWidth);
-		profile.setImageHeight(imageHeight);
-		profile.setTileWidth(tileSize);
-		profile.setTileHeight(tileSize);
-		profile.setTileOffsetX(tileOffsetX);
-		profile.setTileOffsetY(tileOffsetY);
-		profile.setBorderWidth(0);
-		profile.setBorderHeight(0);
-		return profile;
-	}
-
-	private RemoteJob createJob(RemoteProfile profile) {
-		return new RemoteJob(profile);
+	private RemoteJob createJob(final int imageWidth, final int imageHeight, int tileOffsetX, int tileOffsetY) {
+		final RemoteJob job = new RemoteJob();
+		job.setPluginId(pluginId);
+		job.setQuality(1);
+		job.setImageWidth(imageWidth);
+		job.setImageHeight(imageHeight);
+		job.setTileWidth(tileSize);
+		job.setTileHeight(tileSize);
+		job.setTileOffsetX(tileOffsetX);
+		job.setTileOffsetY(tileOffsetY);
+		job.setBorderWidth(0);
+		job.setBorderHeight(0);
+		return job;
 	}
 }

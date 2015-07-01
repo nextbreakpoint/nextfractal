@@ -24,36 +24,133 @@
  */
 package com.nextbreakpoint.nextfractal.server;
 
+import com.nextbreakpoint.nextfractal.core.renderer.RendererPoint;
+import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
 
 public class RemoteJob {
-	private RemoteProfile profile;
+	private float quality;
+	private int imageWidth;
+	private int imageHeight;
+	private int tileWidth;
+	private int tileHeight;
+	private int tileOffsetX;
+	private int tileOffsetY;
+	private int borderWidth;
+	private int borderHeight;
+	private String pluginId;
+	private Object data;
 	private volatile Throwable error;
 
 	public RemoteJob() {
 	}
 	
-	public RemoteJob(RemoteProfile profile) {
-		this.profile = profile;
-	}
-
-	public RemoteProfile getProfile() {
-		return profile;
-	}
-	
 	public RendererTile getTile() {
-		return profile.createTile();
+		return createTile();
 	}
 
 	public String getPluginId() {
-		return profile.getPluginId();
+		return pluginId;
 	}
-	
+
+	public void setPluginId(String pluginId) {
+		this.pluginId = pluginId;
+	}
+
 	public Throwable getError() {
 		return error;
 	}
 
 	public void setError(Throwable error) {
 		this.error = error;
+	}
+
+	public int getImageWidth() {
+		return imageWidth;
+	}
+
+	public void setImageWidth(int imageWidth) {
+		this.imageWidth = imageWidth;
+	}
+
+	public int getImageHeight() {
+		return imageHeight;
+	}
+
+	public void setImageHeight(int imageHeight) {
+		this.imageHeight = imageHeight;
+	}
+
+	public int getTileWidth() {
+		return tileWidth;
+	}
+
+	public void setTileWidth(int tileWidth) {
+		this.tileWidth = tileWidth;
+	}
+
+	public int getTileHeight() {
+		return tileHeight;
+	}
+
+	public void setTileHeight(int tileHeight) {
+		this.tileHeight = tileHeight;
+	}
+
+	public int getTileOffsetX() {
+		return tileOffsetX;
+	}
+
+	public void setTileOffsetX(int tileOffsetX) {
+		this.tileOffsetX = tileOffsetX;
+	}
+
+	public int getTileOffsetY() {
+		return tileOffsetY;
+	}
+
+	public void setTileOffsetY(int tileOffsetY) {
+		this.tileOffsetY = tileOffsetY;
+	}
+
+	public int getBorderWidth() {
+		return borderWidth;
+	}
+
+	public void setBorderWidth(int borderWidth) {
+		this.borderWidth = borderWidth;
+	}
+
+	public int getBorderHeight() {
+		return borderHeight;
+	}
+
+	public void setBorderHeight(int borderHeight) {
+		this.borderHeight = borderHeight;
+	}
+
+	public float getQuality() {
+		return quality;
+	}
+
+	public void setQuality(float quality) {
+		this.quality = quality;
+	}
+
+	public Object getData() {
+		return data;
+	}
+
+	public void setData(Object data) {
+		this.data = data;
+	}
+
+	public RendererTile createTile() {
+		RendererSize imageSize = new RendererSize(imageWidth, imageHeight);
+		RendererSize tileSize = new RendererSize(tileWidth, tileHeight);
+		RendererSize tileBorder = new RendererSize(borderWidth, borderHeight);
+		RendererPoint tileOffset = new RendererPoint(tileOffsetX, tileOffsetY);
+		RendererTile tile = new RendererTile(imageSize, tileSize, tileOffset, tileBorder);
+		return tile;
 	}
 }
