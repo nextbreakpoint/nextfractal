@@ -31,6 +31,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.nextbreakpoint.nextfractal.core.renderer.RendererAffine;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererFactory;
@@ -51,7 +53,7 @@ import com.nextbreakpoint.nextfractal.mandelbrot.renderer.strategy.MandelbrotRen
  * @author Andrea Medeghini
  */
 public class Renderer {
-//	private static final Logger logger = Logger.getLogger(Renderer.class.getName());
+	private static final Logger logger = Logger.getLogger(Renderer.class.getName());
 	protected final RendererFractal rendererFractal;
 	protected final ThreadFactory threadFactory;
 	protected final RendererFactory renderFactory;
@@ -95,6 +97,7 @@ public class Renderer {
 		this.rendererData = createRendererData();
 		this.rendererFractal = new RendererFractal();
 		this.tile = tile;
+		transform = new RendererTransform();
 		view = new RendererView();
 		buffer = new RendererSurface(); 
 		buffer.setTile(tile);
@@ -512,6 +515,7 @@ public class Renderer {
 			}
 			Thread.yield();
 		} catch (Throwable e) {
+			logger.log(Level.WARNING, "Cannot render fractal", e);
 		}
 	}
 
