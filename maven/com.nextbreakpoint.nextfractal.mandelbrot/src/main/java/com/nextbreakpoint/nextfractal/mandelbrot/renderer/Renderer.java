@@ -324,7 +324,7 @@ public class Renderer {
 	/**
 	 * @param gc
 	 */
-	public void drawImage(final RendererGraphicsContext gc) {
+	public void drawImage(final RendererGraphicsContext gc, final int x, final int y) {
 		lock.lock();
 		if (buffer != null) {
 			gc.save();
@@ -332,58 +332,37 @@ public class Renderer {
 			RendererSize imageSize = buffer.getTile().getImageSize();
 			RendererSize tileSize = buffer.getTile().getTileSize();
 			gc.setAffine(buffer.getAffine());
-//			gc.setClip(-borderSize.getWidth(), -borderSize.getHeight() + tileSize.getHeight() - imageSize.getHeight(), getSize().getWidth(), getSize().getHeight());
-			gc.drawImage(buffer.getBuffer().getImage(), 0, tileSize.getHeight() - imageSize.getHeight());
-			gc.setStroke(renderFactory.createColor(1, 0, 0, 1));
-			gc.strokeRect(borderSize.getWidth(), -borderSize.getHeight() + getSize().getHeight() - imageSize.getHeight(), tileSize.getWidth(), tileSize.getHeight());
-			gc.restore();
-		}
-		lock.unlock();
-	}
-
-	/**
-	 * @param gc
-	 * @param x
-	 * @param y
-	 */
-	public void drawImage(final RendererGraphicsContext gc, final int x, final int y) {
-		lock.lock();
-		if (buffer != null) {
-			gc.save();
-			RendererSize imageSize = buffer.getTile().getImageSize();
-			RendererSize tileSize = buffer.getTile().getTileSize();
-			gc.setAffine(buffer.getAffine());
-//			gc.setClip(x, y + tileSize.getHeight() - imageSize.getHeight(), tileSize.getWidth(), tileSize.getHeight());
 			gc.drawImage(buffer.getBuffer().getImage(), x, y + tileSize.getHeight() - imageSize.getHeight());
+//			gc.setStroke(renderFactory.createColor(1, 0, 0, 1));
+//			gc.strokeRect(x + borderSize.getWidth(), y + getSize().getHeight() - imageSize.getHeight() - borderSize.getHeight(), tileSize.getWidth(), tileSize.getHeight());
 			gc.restore();
 		}
 		lock.unlock();
 	}
 
-	/**
-	 * @param gc
-	 * @param x
-	 * @param y
-	 * @param w
-	 * @param h
-	 */
-	public void drawImage(final RendererGraphicsContext gc, final int x, final int y, final int w, final int h) {
-		lock.lock();
-		if (buffer != null) {
-			gc.save();
-			RendererSize imageSize = buffer.getTile().getImageSize();
-			RendererSize tileSize = buffer.getTile().getTileSize();
-			gc.setAffine(buffer.getAffine());
-			final double sx = w / (double) buffer.getTile().getTileSize().getWidth();
-			final double sy = h / (double) buffer.getTile().getTileSize().getHeight();
-			final int dw = (int) Math.rint(buffer.getSize().getWidth() * sx);
-			final int dh = (int) Math.rint(buffer.getSize().getHeight() * sy);
-//			gc.setClip(x, y + tileSize.getHeight() - imageSize.getHeight(), dw, dh);
-			gc.drawImage(buffer.getBuffer().getImage(), x, y + tileSize.getHeight() - imageSize.getHeight(), dw, dh);
-			gc.restore();
-		}
-		lock.unlock();
-	}
+//	/**
+//	 * @param gc
+//	 * @param x
+//	 * @param y
+//	 * @param w
+//	 * @param h
+//	 */
+//	public void drawImage(final RendererGraphicsContext gc, final int x, final int y, final int w, final int h) {
+//		lock.lock();
+//		if (buffer != null) {
+//			gc.save();
+//			RendererSize imageSize = buffer.getTile().getImageSize();
+//			RendererSize tileSize = buffer.getTile().getTileSize();
+//			gc.setAffine(buffer.getAffine());
+//			final double sx = w / (double) buffer.getTile().getTileSize().getWidth();
+//			final double sy = h / (double) buffer.getTile().getTileSize().getHeight();
+//			final int dw = (int) Math.rint(buffer.getSize().getWidth() * sx);
+//			final int dh = (int) Math.rint(buffer.getSize().getHeight() * sy);
+//			gc.drawImage(buffer.getBuffer().getImage(), x, y + tileSize.getHeight() - imageSize.getHeight(), dw, dh);
+//			gc.restore();
+//		}
+//		lock.unlock();
+//	}
 
 	private void ensureBufferAndSize() {
 		RendererTile newTile = computeOptimalBufferSize(tile, rotation);
@@ -642,14 +621,6 @@ public class Renderer {
 			executor.awaitTermination(5000, TimeUnit.MILLISECONDS);
 		} catch (InterruptedException e) {
 		}
-	}
-
-	/**
-	 * @param a
-	 * @return
-	 */
-	protected double convertDegToRad(final double a) {
-		return a * Math.PI / 180;
 	}
 
 	private class RenderRunnable implements Runnable {

@@ -71,7 +71,7 @@ public class GridViewCell extends BorderPane {
 			if (coordinator != null) {
 				if (redraw || coordinator.isPixelsChanged()) {
 					RendererGraphicsContext gc = renderFactory.createGraphicsContext(canvas.getGraphicsContext2D());
-					coordinator.drawImage(gc);
+					coordinator.drawImage(gc, 0, 0);
 					redraw = false;
 				}
 			} else {

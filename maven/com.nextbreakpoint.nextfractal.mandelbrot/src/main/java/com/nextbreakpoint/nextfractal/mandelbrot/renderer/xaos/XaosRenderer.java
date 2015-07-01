@@ -61,7 +61,7 @@ public final class XaosRenderer extends Renderer {
 		}
 	}
 	
-	private volatile boolean overlapping = false;
+	private boolean overlapping;
 	private boolean isSolidguessSupported;
 	private boolean isVerticalSymetrySupported;
 	private boolean isHorizontalSymetrySupported;
@@ -83,6 +83,9 @@ public final class XaosRenderer extends Renderer {
 		if (multiThread) {
 			executor = Executors.newSingleThreadExecutor(threadFactory);
 //			executor = Executors.newCachedThreadPool(threadFactory);
+		}
+		if (Boolean.getBoolean("mandelbrot.renderer.xaos.overlapping")) {
+			overlapping = true;
 		}
 	}
 	
@@ -112,7 +115,6 @@ public final class XaosRenderer extends Renderer {
 	/**
 	 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderer.Renderer#doRender(boolean, int)
 	 */
-	@SuppressWarnings("unused")
 	@Override
 	protected void doRender() {
 		try {
@@ -1715,7 +1717,9 @@ public final class XaosRenderer extends Renderer {
 		} else {
 			RendererSize newImageSize = computeBufferSize(imageSize);
 			if (overlapping) {
-				RendererSize newBorderSize = new RendererSize((newImageSize.getWidth() - imageSize.getWidth()) / 2, (newImageSize.getHeight() - imageSize.getHeight()) / 2);
+				int width = (newImageSize.getWidth() - imageSize.getWidth()) / 2;
+				int height = (newImageSize.getHeight() - imageSize.getHeight()) / 2;
+				RendererSize newBorderSize = new RendererSize(width, height);
 				return new RendererTile(imageSize, tileSize, tileOffset, newBorderSize);
 			} else {
 				int hcells = (int) Math.rint(imageSize.getWidth() / (double)tileSize.getWidth());
@@ -1744,15 +1748,16 @@ public final class XaosRenderer extends Renderer {
 		final RendererSize imageSize = buffer.getTile().getImageSize();
 		final RendererSize borderSize = buffer.getTile().getBorderSize();
 		final RendererPoint tileOffset = buffer.getTile().getTileOffset();
-		int offsetX = (imageSize.getWidth() - baseImageSize.getWidth()) / 2;
-		int offsetY = -(imageSize.getHeight() - baseImageSize.getHeight()) / 2;
+		int offsetX = borderSize.getWidth();
+		int offsetY = borderSize.getHeight();
 		int rotCenterX = imageSize.getWidth() / 2 - tileOffset.getX();
 		int rotCenterY = imageSize.getHeight() / 2 + tileSize.getHeight() - imageSize.getHeight() - tileOffset.getY();
 		if (overlapping) {
-			offsetX = borderSize.getWidth();
-			offsetY = borderSize.getHeight();
-			rotCenterX = imageSize.getWidth() / 2 - tileOffset.getX() + offsetX;
-			rotCenterY = imageSize.getHeight() / 2 + tileSize.getHeight() - imageSize.getHeight() - tileOffset.getY() + offsetY;
+			rotCenterX += offsetX;
+			rotCenterY += offsetY;
+		} else {
+			offsetX += (imageSize.getWidth() - baseImageSize.getWidth()) / 2;
+			offsetY -= (imageSize.getHeight() - baseImageSize.getHeight()) / 2;
 		}
 		final int centerY = tileSize.getHeight() / 2;
 		final RendererAffine affine = renderFactory.createAffine();

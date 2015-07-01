@@ -1197,7 +1197,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 			RendererCoordinator coordinator = coordinators[i];
 			if (coordinator != null && coordinator.isPixelsChanged()) {
 				RendererGraphicsContext gc = renderFactory.createGraphicsContext(canvas.getGraphicsContext2D());
-				coordinator.drawImage(gc);
+				coordinator.drawImage(gc, 0, 0);
 			}
 		}
 	}
@@ -1209,7 +1209,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 			double dw = canvas.getWidth();
 			double dh = canvas.getHeight();
 			gc.clearRect(0, 0, (int)dw, (int)dh);
-			juliaCoordinator.drawImage(gc, 0, 0, 200, 200);
+			juliaCoordinator.drawImage(gc, 0, 0);
 			Number size = juliaCoordinator.getInitialSize();
 			Number center = juliaCoordinator.getInitialCenter();
 			gc.setStroke(renderFactory.createColor(1, 1, 0, 1));

@@ -213,13 +213,6 @@ public class RendererCoordinator implements RendererDelegate {
 
 	/**
 	 * @param gc
-	 */
-	public void drawImage(final RendererGraphicsContext gc) {
-		renderer.drawImage(gc);
-	}
-
-	/**
-	 * @param gc
 	 * @param x
 	 * @param y
 	 */
@@ -227,16 +220,16 @@ public class RendererCoordinator implements RendererDelegate {
 		renderer.drawImage(gc, x, y);
 	}
 
-	/**
-	 * @param gc
-	 * @param x
-	 * @param y
-	 * @param w
-	 * @param h
-	 */
-	public void drawImage(final RendererGraphicsContext gc, final int x, final int y, final int w, final int h) {
-		renderer.drawImage(gc, x, y, w, h);
-	}
+//	/**
+//	 * @param gc
+//	 * @param x
+//	 * @param y
+//	 * @param w
+//	 * @param h
+//	 */
+//	public void drawImage(final RendererGraphicsContext gc, final int x, final int y, final int w, final int h) {
+//		renderer.drawImage(gc, x, y, w, h);
+//	}
 
 	/**
 	 * 
