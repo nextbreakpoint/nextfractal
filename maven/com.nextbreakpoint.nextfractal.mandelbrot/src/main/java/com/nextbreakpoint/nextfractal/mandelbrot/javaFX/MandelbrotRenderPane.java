@@ -978,10 +978,10 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 				juliaCoordinator.run();
 			}
 			redrawTrap = true;
+			redrawOrbit = true;
+			redrawPoint = true;
 			if (!julia) {
 				states = renderOrbit(point);
-				redrawOrbit = true;
-				redrawPoint = true;
 				logger.info("Orbit: point = " + Arrays.toString(point) + ", length = " + states.size());
 			}
 		} catch (CompilerSourceException e) {
