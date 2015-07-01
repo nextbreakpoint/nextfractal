@@ -59,9 +59,9 @@ public class MandelbrotRotate implements MandelbrotTool {
 
 	@Override
 	public void dragged(MouseEvent e) {
-		x1 = (e.getX() - context.getWidth() / 2) / context.getWidth();
-		y1 = (context.getHeight() / 2 - e.getY()) / context.getHeight();
 		if (active) {
+			x1 = (e.getX() - context.getWidth() / 2) / context.getWidth();
+			y1 = (context.getHeight() / 2 - e.getY()) / context.getHeight();
 			changed = true;
 			redraw = true;
 		}
@@ -69,11 +69,11 @@ public class MandelbrotRotate implements MandelbrotTool {
 
 	@Override
 	public void released(MouseEvent e) {
-		x1 = (e.getX() - context.getWidth() / 2) / context.getWidth();
-		y1 = (context.getHeight() / 2 - e.getY()) / context.getHeight();
 		pressed = false;
 		redraw = true;
 		if (active) {
+			x1 = (e.getX() - context.getWidth() / 2) / context.getWidth();
+			y1 = (context.getHeight() / 2 - e.getY()) / context.getHeight();
 			changed = true;
 		}
 		active = !active;
