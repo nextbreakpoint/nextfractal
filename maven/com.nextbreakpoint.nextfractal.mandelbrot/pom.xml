@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.nextbreakpoint.nextfractal</groupId>
 	<artifactId>com.nextbreakpoint.nextfractal.mandelbrot</artifactId>
-	<version>1.1.0</version>
+	<version>1.1.1</version>
 	<build>
 		<plugins>
 			<plugin>
@@ -47,7 +47,7 @@
 		<dependency>
 			<groupId>com.nextbreakpoint.nextfractal</groupId>
 			<artifactId>com.nextbreakpoint.nextfractal.core</artifactId>
-			<version>1.1.0</version>
+			<version>1.1.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.antlr</groupId>
