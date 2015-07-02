@@ -2,29 +2,16 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.nextbreakpoint.nextfractal</groupId>
-	<artifactId>com.nextbreakpoint.nextfractal.build</artifactId>
+	<artifactId>com.nextbreakpoint.nextfractal.main</artifactId>
 	<version>1.1.1</version>
-	<name>com.nextbreakpoint.nextfractal.build</name>
 	<packaging>pom</packaging>
-	<modules>
-		<module>../com.nextbreakpoint.nextfractal.core</module>
-		<module>../com.nextbreakpoint.nextfractal.mandelbrot</module>
-		<!-- 
-		<module>../com.nextbreakpoint.nextfractal.contextfree</module>
-		 -->
-		<module>../com.nextbreakpoint.nextfractal.runtime</module>
-	</modules>
+ 	<parent>
+        <groupId>com.nextbreakpoint.nextfractal</groupId>
+        <artifactId>com.nextbreakpoint.nextfractal.parent</artifactId>
+        <version>1.1.1</version>
+    </parent>
 	<build>
 		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.2</version>
-				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
-				</configuration>
-			</plugin>
 			<!-- 
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
@@ -126,6 +113,16 @@
 	</build>
 	<dependencies>
 		<dependency>
+			<groupId>net.sf.ffmpeg4java</groupId>
+			<artifactId>net.sf.ffmpeg4java</artifactId>
+			<version>0.1.2</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.freeimage4java</groupId>
+			<artifactId>net.sf.freeimage4java</artifactId>
+			<version>0.1.1</version>
+		</dependency>
+		<dependency>
 			<groupId>com.nextbreakpoint.nextfractal</groupId>
 			<artifactId>com.nextbreakpoint.nextfractal.core</artifactId>
 			<version>1.1.1</version>
@@ -147,16 +144,6 @@
 			<version>0.0.1</version>
 		</dependency>
 		 -->
-		<dependency>
-			<groupId>net.sf.ffmpeg4java</groupId>
-			<artifactId>net.sf.ffmpeg4java</artifactId>
-			<version>0.1.2</version>
-		</dependency>
-		<dependency>
-			<groupId>net.sf.freeimage4java</groupId>
-			<artifactId>net.sf.freeimage4java</artifactId>
-			<version>0.1.1</version>
-		</dependency>
 	</dependencies>
 	<profiles>
 		<profile>
@@ -211,7 +198,4 @@
 			</properties>
 		</profile>
 	</profiles>
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	</properties>
 </project>

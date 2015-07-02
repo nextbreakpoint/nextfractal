@@ -6,6 +6,7 @@
 	<property name="nextfractal.folder" value="NextFractal" />
 	<property name="ffmpeg4java.version" value="0.1.2" />
 	<property name="freeimage4java.version" value="0.1.1" />
+	<property name="mainmodule" value="com.nextbreakpoint.nextfractal.main" />
 	<macrodef name="maven">
 		<attribute name="options" default="" />
 		<attribute name="goal" />
@@ -42,31 +43,31 @@
 			<delete dir="@{basedir}/dist/@{os}_@{arch}" />
 			<mkdir dir="@{basedir}/dist/@{os}_@{arch}/${nextfractal.folder}/NextFractal"/>
 			<copy failonerror="true" todir="@{basedir}/dist/@{os}_@{arch}/${nextfractal.folder}" overwrite="true">
-				<fileset dir="@{basedir}/resources/exe/@{os}">
+				<fileset dir="@{basedir}/${mainmodule}/resources/exe/@{os}">
 					<include name="**/*" />
 				</fileset>
 			</copy>
 			<copy failonerror="true" todir="@{basedir}/dist/@{os}_@{arch}/${nextfractal.folder}/NextFractal" overwrite="true">
-				<fileset dir="@{basedir}/target/lib/@{os}/@{arch}">
+				<fileset dir="@{basedir}/${mainmodule}/target/lib/@{os}/@{arch}">
 					<include name="*" />
 				</fileset>
 			</copy>
 			<copy failonerror="true" todir="@{basedir}/dist/@{os}_@{arch}/${nextfractal.folder}/NextFractal" overwrite="true">
-				<fileset dir="@{basedir}/target/jars">
+				<fileset dir="@{basedir}/${mainmodule}/target/jars">
 					<include name="*" />
 				</fileset>
 			</copy>
 			<copy failonerror="true" todir="@{basedir}/dist/@{os}_@{arch}/${nextfractal.folder}" overwrite="true">
-				<fileset dir="@{basedir}/resources">
+				<fileset dir="@{basedir}/${mainmodule}/resources">
 					<include name="thirdparties/**/*" />
 				</fileset>
-				<fileset dir="@{basedir}/resources">
+				<fileset dir="@{basedir}/${mainmodule}/resources">
 					<include name="examples/**/*" />
 				</fileset>
-				<fileset dir="@{basedir}/resources">
+				<fileset dir="@{basedir}/${mainmodule}/resources">
 					<include name="*.html" />
 				</fileset>
-				<fileset dir="@{basedir}/resources">
+				<fileset dir="@{basedir}/${mainmodule}/resources">
 					<include name="*.txt" />
 				</fileset>
 			</copy>
@@ -146,7 +147,7 @@
 		<element name="args" implicit="true" optional="true" />
 		<sequential>
 			<zip destfile="@{basedir}/dist/@{name}.native-@{version}-@{os}_@{arch}.jar">
-				<fileset dir="@{basedir}/resources/libs/@{name}/@{os}/@{arch}">
+				<fileset dir="@{basedir}/${mainmodule}/resources/libs/@{name}/@{os}/@{arch}">
 					<include name="**/*" />
 					<exclude name="**/.DS_store" />
 				</fileset>
@@ -180,6 +181,23 @@
 	</condition>
 	<target name="clean">
 		<maven basedir="${basedir}" goal="clean" resultproperty="maven.build.result" />
+	</target>
+	<target name="update-version">
+		<replaceregexp match="NextFractal [0-9]\.[0-9]\.[0-9]" replace="NextFractal ${nextfractal.version}" flags="g" byline="true">
+		    <fileset dir="${basedir}/..">
+		    	<include name="**/*.md"/>
+		    	<include name="**/*.txt"/>
+		    	<include name="**/*.html"/>
+    			<include name="**/*.java"/>
+			</fileset>
+		</replaceregexp>
+		<replaceregexp match="com.nextbreakpoint.nextfractal.runtime-[0-9]\.[0-9]\.[0-9]" replace="com.nextbreakpoint.nextfractal.runtime-${nextfractal.version}" flags="g" byline="true">
+		    <fileset dir="${basedir}/..">
+    			<include name="**/*.wflow"/>
+		    	<include name="**/*.bat"/>
+		    	<include name="**/*.sh"/>
+			</fileset>
+		</replaceregexp>
 	</target>
 	<target name="build-macosx-32bit" if="is_macosx">
 		<!-- osx 32bit -->
@@ -223,7 +241,7 @@
 		<makelibjar basedir="${basedir}" name="net.sf.ffmpeg4java" os="linux" arch="x86" version="${ffmpeg4java.version}" resultproperty="ant.makelibjar.result" />
 		<makelibjar basedir="${basedir}" name="net.sf.ffmpeg4java" os="linux" arch="x86_64" version="${ffmpeg4java.version}" resultproperty="ant.makelibjar.result" />
 		<copy tofile="${basedir}/dist/net.sf.ffmpeg4java-${ffmpeg4java.version}.jar">
-			<fileset file="${basedir}/resources/libs/net.sf.ffmpeg4java/ffmpeg4java.jar" />
+			<fileset file="${basedir}/${mainmodule}/resources/libs/net.sf.ffmpeg4java/ffmpeg4java.jar" />
 		</copy>
 		<installjar basedir="${basedir}" name="net.sf.ffmpeg4java" version="${ffmpeg4java.version}" resultproperty="ant.installjar.result" />
 		<installlibjar basedir="${basedir}" name="net.sf.ffmpeg4java" os="macosx" arch="x86" version="${ffmpeg4java.version}" resultproperty="ant.installlibjar.result" />
@@ -241,7 +259,7 @@
 		<makelibjar basedir="${basedir}" name="net.sf.freeimage4java" os="linux" arch="x86" version="${freeimage4java.version}" resultproperty="ant.makelibjar.result" />
 		<makelibjar basedir="${basedir}" name="net.sf.freeimage4java" os="linux" arch="x86_64" version="${freeimage4java.version}" resultproperty="ant.makelibjar.result" />
 		<copy tofile="${basedir}/dist/net.sf.freeimage4java-${freeimage4java.version}.jar">
-			<fileset file="${basedir}/resources/libs/net.sf.freeimage4java/freeimage4java.jar" />
+			<fileset file="${basedir}/${mainmodule}/resources/libs/net.sf.freeimage4java/freeimage4java.jar" />
 		</copy>
 		<installjar basedir="${basedir}" name="net.sf.freeimage4java" version="${freeimage4java.version}" resultproperty="ant.installjar.result" />
 		<installlibjar basedir="${basedir}" name="net.sf.freeimage4java" os="macosx" arch="x86" version="${freeimage4java.version}" resultproperty="ant.installlibjar.result" />

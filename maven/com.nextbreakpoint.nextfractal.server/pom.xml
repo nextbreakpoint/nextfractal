@@ -4,17 +4,13 @@
 	<groupId>com.nextbreakpoint.nextfractal</groupId>
 	<artifactId>com.nextbreakpoint.nextfractal.server</artifactId>
 	<version>1.0.1</version>
+ 	<parent>
+        <groupId>com.nextbreakpoint.nextfractal</groupId>
+        <artifactId>com.nextbreakpoint.nextfractal.parent</artifactId>
+        <version>1.1.1</version>
+    </parent>
 	<build>
 		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.2</version>
-				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
-				</configuration>
-			</plugin>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
@@ -33,7 +29,7 @@
 						<configuration>
 							<includeGroupIds></includeGroupIds>
 							<excludeArtifactIds>net.sf.ffmpeg4java.native,net.sf.freeimage4java.native</excludeArtifactIds>
-							<outputDirectory>jars/</outputDirectory>
+							<outputDirectory>target/jars/</outputDirectory>
 						</configuration>
 					</execution>
 				</executions>
@@ -54,9 +50,6 @@
 			</plugin>
 		</plugins>
 	</build>
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>com.nextbreakpoint.nextfractal</groupId>

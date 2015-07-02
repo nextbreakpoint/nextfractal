@@ -2,13 +2,16 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.nextbreakpoint.nextfractal</groupId>
-	<artifactId>com.nextbreakpoint.nextfractal.core</artifactId>
+	<artifactId>com.nextbreakpoint.nextfractal.parent</artifactId>
 	<version>1.1.1</version>
- 	<parent>
-        <groupId>com.nextbreakpoint.nextfractal</groupId>
-        <artifactId>com.nextbreakpoint.nextfractal.parent</artifactId>
-        <version>1.1.1</version>
-    </parent>
+	<packaging>pom</packaging>
+	<modules>
+		<module>com.nextbreakpoint.nextfractal.core</module>
+		<module>com.nextbreakpoint.nextfractal.mandelbrot</module>
+		<module>com.nextbreakpoint.nextfractal.contextfree</module>
+		<module>com.nextbreakpoint.nextfractal.runtime</module>
+		<module>com.nextbreakpoint.nextfractal.main</module>
+	</modules>
 	<build>
 		<plugins>
 			<plugin>
@@ -27,6 +30,14 @@
 			</plugin>
 		</plugins>
 	</build>
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.11</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
