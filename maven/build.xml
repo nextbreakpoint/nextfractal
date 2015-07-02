@@ -176,6 +176,52 @@
 			<maven basedir="@{basedir}" options="-Dpackaging=jar -DgroupId=@{name} -DartifactId=@{name}.native -Dversion=@{version} -Dclassifier=@{os}_@{arch} -Dfile=@{basedir}/dist/@{name}.native-@{version}-@{os}_@{arch}.jar" goal="install:install-file" resultproperty="maven.installlibjar.result" />
 		</sequential>
 	</macrodef>
+	<macrodef name="changecopyright">
+		<attribute name="path" />
+		<attribute name="file" />
+		<attribute name="basedir" />
+		<attribute name="resultproperty" default="changecopyright.result" />
+		<element name="args" implicit="true" optional="true" />
+		<sequential>
+			<java classname="net.sf.jame.fileutility.ChangeCopyright">
+	         	<arg value="utils/@{file}"/>
+	         	<arg value="@{basedir}/@{path}"/>
+	         	<classpath>
+	           		<pathelement location="utils/FileUtility.jar"/>
+	         	</classpath>
+	       	</java>
+		</sequential>
+	</macrodef>	
+	<macrodef name="addcopyright">
+		<attribute name="path" />
+		<attribute name="file" />
+		<attribute name="basedir" />
+		<attribute name="resultproperty" default="addcopyright.result" />
+		<element name="args" implicit="true" optional="true" />
+		<sequential>
+			<java classname="net.sf.jame.fileutility.AddCopyright">
+	         	<arg value="utils/@{file}"/>
+	         	<arg value="@{basedir}/@{path}"/>
+	         	<classpath>
+	           		<pathelement location="utils/FileUtility.jar"/>
+	         	</classpath>
+	       	</java>
+		</sequential>
+	</macrodef>	
+	<macrodef name="linecount">
+		<attribute name="path" />
+		<attribute name="basedir" />
+		<attribute name="resultproperty" default="linecount.result" />
+		<element name="args" implicit="true" optional="true" />
+		<sequential>
+			<java classname="net.sf.jame.fileutility.LineCount">
+	         	<arg value="@{basedir}/@{path}"/>
+	         	<classpath>
+	           		<pathelement location="utils/FileUtility.jar"/>
+	         	</classpath>
+	       	</java>
+		</sequential>
+	</macrodef>	
 	<condition property="is_macosx">
 		<os family="mac" />
 	</condition>
@@ -198,6 +244,37 @@
 		    	<include name="**/*.sh"/>
 			</fileset>
 		</replaceregexp>
+	</target>
+	<target name="change-copyright">
+		<changecopyright basedir="${basedir}" path="com.nextbreakpoint.nextfractal.core/src/main/java" file="copyright.txt"/>
+		<changecopyright basedir="${basedir}" path="com.nextbreakpoint.nextfractal.mandelbrot/src/main/java" file="copyright.txt"/>
+		<changecopyright basedir="${basedir}" path="com.nextbreakpoint.nextfractal.contextfree/src/main/java" file="copyright.txt"/>
+		<changecopyright basedir="${basedir}" path="com.nextbreakpoint.nextfractal.runtime/src/main/java" file="copyright.txt"/>
+		<changecopyright basedir="${basedir}" path="com.nextbreakpoint.nextfractal.server/src/main/java" file="copyright.txt"/>
+		<changecopyright basedir="${basedir}" path="com.nextbreakpoint.nextfractal.mandelbrot/src/test/java" file="copyright.txt"/>
+		<changecopyright basedir="${basedir}" path="com.nextbreakpoint.nextfractal.mandelbrot/src/main/java/com/nextbreakpoint/nextfractal/mandelbrot/renderer/xaos/XaosRenderer.java" file="copyright-xaos.txt"/>
+	</target>
+	<target name="add-copyright">
+		<addcopyright basedir="${basedir}" path="com.nextbreakpoint.nextfractal.core/src/main/java" file="copyright.txt"/>
+		<addcopyright basedir="${basedir}" path="com.nextbreakpoint.nextfractal.mandelbrot/src/main/java" file="copyright.txt"/>
+		<addcopyright basedir="${basedir}" path="com.nextbreakpoint.nextfractal.contextfree/src/main/java" file="copyright.txt"/>
+		<addcopyright basedir="${basedir}" path="com.nextbreakpoint.nextfractal.runtime/src/main/java" file="copyright.txt"/>
+		<addcopyright basedir="${basedir}" path="com.nextbreakpoint.nextfractal.server/src/main/java" file="copyright.txt"/>
+		<addcopyright basedir="${basedir}" path="com.nextbreakpoint.nextfractal.mandelbrot/src/test/java" file="copyright.txt"/>
+		<addcopyright basedir="${basedir}" path="com.nextbreakpoint.nextfractal.mandelbrot/src/main/java/com/nextbreakpoint/nextfractal/mandelbrot/renderer/xaos/XaosRenderer.java" file="copyright-xaos.txt"/>
+	</target>
+	<target name="line-count">
+		<linecount basedir="${basedir}" path="."/>
+	</target>
+	<target name="javadocs">
+		<javadoc packagenames="com.nextbreakpoint.*" destdir="${basedir}/../docs" author="true" version="true" use="true" windowtitle="NextFractal" failonwarning="false" failonerror="false">
+			<fileset dir="${basedir}/com.nextbreakpoint.nextfractal.mandelbrot/src/main/java" defaultexcludes="yes">
+		    </fileset>
+			<fileset dir="${basedir}/com.nextbreakpoint.nextfractal.core/src/main/java" defaultexcludes="yes">
+		    </fileset>
+			<fileset dir="${basedir}/com.nextbreakpoint.nextfractal.runtime/src/main/java" defaultexcludes="yes">
+		    </fileset>
+	  	</javadoc>
 	</target>
 	<target name="build-macosx-32bit" if="is_macosx">
 		<!-- osx 32bit -->
@@ -272,7 +349,7 @@
 	<target name="build-macosx" depends="build-macosx-32bit, build-macosx-64bit" if="is_macosx" />
 	<target name="build-win32" depends="build-win32-32bit, build-win32-64bit" />
 	<target name="build-linux" depends="build-linux-32bit, build-linux-64bit" />
-	<target name="build" depends="build-macosx, build-win32, build-linux" />
+	<target name="build" depends="update-version, build-macosx, build-win32, build-linux" />
 	<target name="setup" depends="-clear, -ffmpeg4java, -freeimage4java" />
 	<target name="all" depends="setup, build" />
 </project>
