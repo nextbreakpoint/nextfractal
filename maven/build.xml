@@ -244,6 +244,8 @@
 		    	<include name="**/*.sh"/>
 			</fileset>
 		</replaceregexp>
+		<maven basedir="${basedir}" goal="versions:set" resultproperty="maven.build.result" options="-DnewVersion=${nextfractal.version}"/>
+		<maven basedir="${basedir}" goal="versions:commit" resultproperty="maven.build.result"/>
 	</target>
 	<target name="change-copyright">
 		<changecopyright basedir="${basedir}" path="com.nextbreakpoint.nextfractal.core/src/main/java" file="copyright.txt"/>
