@@ -10,6 +10,7 @@
 		<module>com.nextbreakpoint.nextfractal.mandelbrot</module>
 		<module>com.nextbreakpoint.nextfractal.contextfree</module>
 		<module>com.nextbreakpoint.nextfractal.runtime</module>
+		<module>com.nextbreakpoint.nextfractal.server</module>
 		<module>com.nextbreakpoint.nextfractal.main</module>
 	</modules>
 	<build>
@@ -30,15 +31,73 @@
 			</plugin>
 		</plugins>
 	</build>
+	<properties>
+		<antlr4.version>4.3</antlr4.version>
+		<richtext.version>0.6.4</richtext.version>
+		<commonmath3.version>3.5</commonmath3.version>
+		<awsdynamodb.version>1.10.2</awsdynamodb.version>
+		<ffmpeg4java.version>0.1.2</ffmpeg4java.version>
+		<freeimage4java.version>0.1.1</freeimage4java.version>
+		<springboot.version>1.2.3.RELEASE</springboot.version>
+		<junit4.version>4.11</junit4.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.antlr</groupId>
+				<artifactId>antlr4-runtime</artifactId>
+				<version>${antlr4.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.fxmisc.richtext</groupId>
+				<artifactId>richtextfx</artifactId>
+				<version>${richtext.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-math3</artifactId>
+				<version>${commonmath3.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-starter-web</artifactId>
+				<version>${springboot.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-starter-actuator</artifactId>
+				<version>${springboot.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-starter-test</artifactId>
+				<version>${springboot.version}</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.amazonaws</groupId>
+				<artifactId>aws-java-sdk-dynamodb</artifactId>
+				<version>${awsdynamodb.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>net.sf.ffmpeg4java</groupId>
+				<artifactId>net.sf.ffmpeg4java</artifactId>
+				<version>${ffmpeg4java.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>net.sf.freeimage4java</groupId>
+				<artifactId>net.sf.freeimage4java</artifactId>
+				<version>${freeimage4java.version}</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.11</version>
+			<version>${junit4.version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	</properties>
 </project>

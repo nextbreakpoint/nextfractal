@@ -1,14 +1,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.nextbreakpoint.nextfractal</groupId>
-	<artifactId>com.nextbreakpoint.nextfractal.mandelbrot</artifactId>
-	<version>1.1.1</version>
  	<parent>
         <groupId>com.nextbreakpoint.nextfractal</groupId>
         <artifactId>com.nextbreakpoint.nextfractal.parent</artifactId>
         <version>1.1.1</version>
     </parent>
+	<artifactId>com.nextbreakpoint.nextfractal.mandelbrot</artifactId>
 	<build>
 		<plugins>
 			<plugin>
@@ -40,22 +38,19 @@
 		<dependency>
 			<groupId>com.nextbreakpoint.nextfractal</groupId>
 			<artifactId>com.nextbreakpoint.nextfractal.core</artifactId>
-			<version>1.1.1</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.antlr</groupId>
 			<artifactId>antlr4-runtime</artifactId>
-			<version>4.3</version>
 		</dependency>
 		<dependency>
 			<groupId>org.fxmisc.richtext</groupId>
 			<artifactId>richtextfx</artifactId>
-			<version>0.6.4</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-math3</artifactId>
-			<version>3.5</version>
 		</dependency>
 	</dependencies>
 </project>
