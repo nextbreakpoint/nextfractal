@@ -88,6 +88,7 @@ public class InterpreterOrbit extends Orbit implements InterpreterContext {
 		ensureVariable(vars, "x", x);
 		ensureVariable(vars, "w", w);
 		if (states != null) {
+			updateState();
 			saveState(states);
 		}
 		try {
@@ -110,6 +111,7 @@ public class InterpreterOrbit extends Orbit implements InterpreterContext {
 				break;
 			}
 			if (states != null) {
+				updateState();
 				saveState(states);
 			}
 		}
@@ -117,18 +119,9 @@ public class InterpreterOrbit extends Orbit implements InterpreterContext {
 		for (CompiledStatement statement : orbit.getEndStatements()) {
 			statement.evaluate(this, vars);
 		} 
+		updateState();
 		if (states != null) {
 			saveState(states);
-		}
-		int i = 0;
-		for (Iterator<CompilerVariable> s = orbit.getStateVariables().iterator(); s.hasNext();) {
-			CompilerVariable var = s.next();
-			if (var.isReal()) {
-				setVariable(i, vars.get(var.getName()).getRealValue());
-			} else {
-				setVariable(i, vars.get(var.getName()).getValue());
-			}
-			i++;
 		}
 	}
 
@@ -157,6 +150,19 @@ public class InterpreterOrbit extends Orbit implements InterpreterContext {
 		}
 		scope.getState(state);
 		states.add(state);
+	}
+
+	private void updateState() {
+		int i = 0;
+		for (Iterator<CompilerVariable> s = orbit.getStateVariables().iterator(); s.hasNext();) {
+			CompilerVariable var = s.next();
+			if (var.isReal()) {
+				setVariable(i, vars.get(var.getName()).getRealValue());
+			} else {
+				setVariable(i, vars.get(var.getName()).getValue());
+			}
+			i++;
+		}
 	}
 
 	protected MutableNumber[] createNumbers() {
