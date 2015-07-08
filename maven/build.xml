@@ -308,6 +308,10 @@
 		<build basedir="${basedir}" os="linux" arch="x86_64" version="${nextfractal.version}" resultproperty="ant.build.result" />
 		<makezip basedir="${basedir}" os="linux" arch="x86_64" version="${nextfractal.version}" resultproperty="ant.makezip.result" />
 	</target>
+	<target name="build-linux-server-64bit">
+		<!-- linux server 64bit -->
+		<build basedir="${basedir}" os="linux" arch="x86_64" version="${nextfractal.version}" resultproperty="ant.build.result" />
+	</target>
 	<target name="-clear">
 		<delete dir="${basedir}/dist" />
 		<mkdir dir="${basedir}/dist" />
@@ -354,4 +358,5 @@
 	<target name="build" depends="update-version, build-macosx, build-win32, build-linux" />
 	<target name="setup" depends="-clear, -ffmpeg4java, -freeimage4java" />
 	<target name="all" depends="setup, build" />
+	<target name="server" depends="setup, update-version, build-linux-server-64bit" />
 </project>
