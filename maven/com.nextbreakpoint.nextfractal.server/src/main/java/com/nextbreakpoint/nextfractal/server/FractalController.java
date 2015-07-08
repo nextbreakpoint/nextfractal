@@ -72,7 +72,7 @@ import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotImageGenerator;
 @RequestMapping("/fractal")
 public class FractalController {
 	private static final Logger logger = Logger.getLogger(FractalController.class.getName());
-	private static ExecutorService executor = Executors.newFixedThreadPool(200);
+	private static ExecutorService executor = Executors.newFixedThreadPool(100);
 	
     @RequestMapping(method=RequestMethod.POST)
     public @ResponseBody RemoteFractal renderFractal(@RequestParam(value="pluginId", required=true) String pluginId, @RequestParam(value="xml", required=true) String xml) {

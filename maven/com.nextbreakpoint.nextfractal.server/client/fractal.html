@@ -45,7 +45,7 @@
 				$("#xml").val(xml);
 				$("#pluginId").val("Mandelbrot");
 				$("#form").submit(function() {
-					$.post("http://localhost:8080/fractal",
+					$.post("http://52.18.80.167/fractal",
 						$("#form").serialize(),
 						function(data) {
 							console.log(data.uuid);
@@ -54,7 +54,7 @@
 							for (var index = 0; index < data.jobsCount; index++) {
 								var left = data.jobs[index].tile.tileOffset.x;
 								var top = data.jobs[index].tile.tileOffset.y;
-								$("#canvas").append("<img style='position:absolute; left:" + left + "px; top:" + top + "px;' src='http://localhost:8080/fractal?UUID=" + data.uuid + "&index=" + index + "'/>");
+								$("#canvas").append("<img style='position:absolute; left:" + left + "px; top:" + top + "px;' src='http://52.18.80.167/fractal?UUID=" + data.uuid + "&index=" + index + "'/>");
 							}
 						}
 					);
@@ -64,7 +64,7 @@
 		</script>
 	</head>
 	<body>
-		<form id="form" action="http://localhost:8080/fractal" method="POST">
+		<form id="form" action="http://52.18.80.167/fractal" method="POST">
 			<textarea rows="30" cols="80" id="xml" name="xml"></textarea>
 			<br/>
 			<input id="pluginId" name="pluginId" type="hidden"></input>
