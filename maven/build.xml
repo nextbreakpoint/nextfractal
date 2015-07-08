@@ -316,47 +316,61 @@
 		<delete dir="${basedir}/dist" />
 		<mkdir dir="${basedir}/dist" />
 	</target>
-	<target name="-ffmpeg4java">
+	<target name="-ffmpeg4java-macosx">
 		<makelibjar basedir="${basedir}" name="net.sf.ffmpeg4java" os="macosx" arch="x86" version="${ffmpeg4java.version}" resultproperty="ant.makelibjar.result" />
 		<makelibjar basedir="${basedir}" name="net.sf.ffmpeg4java" os="macosx" arch="x86_64" version="${ffmpeg4java.version}" resultproperty="ant.makelibjar.result" />
+		<installlibjar basedir="${basedir}" name="net.sf.ffmpeg4java" os="macosx" arch="x86" version="${ffmpeg4java.version}" resultproperty="ant.installlibjar.result" />
+		<installlibjar basedir="${basedir}" name="net.sf.ffmpeg4java" os="macosx" arch="x86_64" version="${ffmpeg4java.version}" resultproperty="ant.installlibjar.result" />
+	</target>
+	<target name="-ffmpeg4java-win32">
 		<makelibjar basedir="${basedir}" name="net.sf.ffmpeg4java" os="win32" arch="x86" version="${ffmpeg4java.version}" resultproperty="ant.makelibjar.result" />
 		<makelibjar basedir="${basedir}" name="net.sf.ffmpeg4java" os="win32" arch="x86_64" version="${ffmpeg4java.version}" resultproperty="ant.makelibjar.result" />
+		<installlibjar basedir="${basedir}" name="net.sf.ffmpeg4java" os="win32" arch="x86" version="${ffmpeg4java.version}" resultproperty="ant.installlibjar.result" />
+		<installlibjar basedir="${basedir}" name="net.sf.ffmpeg4java" os="win32" arch="x86_64" version="${ffmpeg4java.version}" resultproperty="ant.installlibjar.result" />
+	</target>
+	<target name="-ffmpeg4java-linux">
 		<makelibjar basedir="${basedir}" name="net.sf.ffmpeg4java" os="linux" arch="x86" version="${ffmpeg4java.version}" resultproperty="ant.makelibjar.result" />
 		<makelibjar basedir="${basedir}" name="net.sf.ffmpeg4java" os="linux" arch="x86_64" version="${ffmpeg4java.version}" resultproperty="ant.makelibjar.result" />
+		<installlibjar basedir="${basedir}" name="net.sf.ffmpeg4java" os="linux" arch="x86" version="${ffmpeg4java.version}" resultproperty="ant.installlibjar.result" />
+		<installlibjar basedir="${basedir}" name="net.sf.ffmpeg4java" os="linux" arch="x86_64" version="${ffmpeg4java.version}" resultproperty="ant.installlibjar.result" />
+	</target>
+	<target name="-ffmpeg4java-lib">
 		<copy tofile="${basedir}/dist/net.sf.ffmpeg4java-${ffmpeg4java.version}.jar">
 			<fileset file="${basedir}/${mainmodule}/resources/libs/net.sf.ffmpeg4java/ffmpeg4java.jar" />
 		</copy>
 		<installjar basedir="${basedir}" name="net.sf.ffmpeg4java" version="${ffmpeg4java.version}" resultproperty="ant.installjar.result" />
-		<installlibjar basedir="${basedir}" name="net.sf.ffmpeg4java" os="macosx" arch="x86" version="${ffmpeg4java.version}" resultproperty="ant.installlibjar.result" />
-		<installlibjar basedir="${basedir}" name="net.sf.ffmpeg4java" os="macosx" arch="x86_64" version="${ffmpeg4java.version}" resultproperty="ant.installlibjar.result" />
-		<installlibjar basedir="${basedir}" name="net.sf.ffmpeg4java" os="win32" arch="x86" version="${ffmpeg4java.version}" resultproperty="ant.installlibjar.result" />
-		<installlibjar basedir="${basedir}" name="net.sf.ffmpeg4java" os="win32" arch="x86_64" version="${ffmpeg4java.version}" resultproperty="ant.installlibjar.result" />
-		<installlibjar basedir="${basedir}" name="net.sf.ffmpeg4java" os="linux" arch="x86" version="${ffmpeg4java.version}" resultproperty="ant.installlibjar.result" />
-		<installlibjar basedir="${basedir}" name="net.sf.ffmpeg4java" os="linux" arch="x86_64" version="${ffmpeg4java.version}" resultproperty="ant.installlibjar.result" />
 	</target>
-	<target name="-freeimage4java">
+	<target name="-freeimage4java-macosx">
 		<makelibjar basedir="${basedir}" name="net.sf.freeimage4java" os="macosx" arch="x86" version="${freeimage4java.version}" resultproperty="ant.makelibjar.result" />
 		<makelibjar basedir="${basedir}" name="net.sf.freeimage4java" os="macosx" arch="x86_64" version="${freeimage4java.version}" resultproperty="ant.makelibjar.result" />
+		<installlibjar basedir="${basedir}" name="net.sf.freeimage4java" os="macosx" arch="x86" version="${freeimage4java.version}" resultproperty="ant.installlibjar.result" />
+		<installlibjar basedir="${basedir}" name="net.sf.freeimage4java" os="macosx" arch="x86_64" version="${freeimage4java.version}" resultproperty="ant.installlibjar.result" />
+	</target>
+	<target name="-freeimage4java-win32">
 		<makelibjar basedir="${basedir}" name="net.sf.freeimage4java" os="win32" arch="x86" version="${freeimage4java.version}" resultproperty="ant.makelibjar.result" />
 		<makelibjar basedir="${basedir}" name="net.sf.freeimage4java" os="win32" arch="x86_64" version="${freeimage4java.version}" resultproperty="ant.makelibjar.result" />
+		<installlibjar basedir="${basedir}" name="net.sf.freeimage4java" os="win32" arch="x86" version="${freeimage4java.version}" resultproperty="ant.installlibjar.result" />
+		<installlibjar basedir="${basedir}" name="net.sf.freeimage4java" os="win32" arch="x86_64" version="${freeimage4java.version}" resultproperty="ant.installlibjar.result" />
+	</target>
+	<target name="-freeimage4java-linux">
 		<makelibjar basedir="${basedir}" name="net.sf.freeimage4java" os="linux" arch="x86" version="${freeimage4java.version}" resultproperty="ant.makelibjar.result" />
 		<makelibjar basedir="${basedir}" name="net.sf.freeimage4java" os="linux" arch="x86_64" version="${freeimage4java.version}" resultproperty="ant.makelibjar.result" />
+		<installlibjar basedir="${basedir}" name="net.sf.freeimage4java" os="linux" arch="x86" version="${freeimage4java.version}" resultproperty="ant.installlibjar.result" />
+		<installlibjar basedir="${basedir}" name="net.sf.freeimage4java" os="linux" arch="x86_64" version="${freeimage4java.version}" resultproperty="ant.installlibjar.result" />
+	</target>
+	<target name="-freeimage4java-lib">
 		<copy tofile="${basedir}/dist/net.sf.freeimage4java-${freeimage4java.version}.jar">
 			<fileset file="${basedir}/${mainmodule}/resources/libs/net.sf.freeimage4java/freeimage4java.jar" />
 		</copy>
 		<installjar basedir="${basedir}" name="net.sf.freeimage4java" version="${freeimage4java.version}" resultproperty="ant.installjar.result" />
-		<installlibjar basedir="${basedir}" name="net.sf.freeimage4java" os="macosx" arch="x86" version="${freeimage4java.version}" resultproperty="ant.installlibjar.result" />
-		<installlibjar basedir="${basedir}" name="net.sf.freeimage4java" os="macosx" arch="x86_64" version="${freeimage4java.version}" resultproperty="ant.installlibjar.result" />
-		<installlibjar basedir="${basedir}" name="net.sf.freeimage4java" os="win32" arch="x86" version="${freeimage4java.version}" resultproperty="ant.installlibjar.result" />
-		<installlibjar basedir="${basedir}" name="net.sf.freeimage4java" os="win32" arch="x86_64" version="${freeimage4java.version}" resultproperty="ant.installlibjar.result" />
-		<installlibjar basedir="${basedir}" name="net.sf.freeimage4java" os="linux" arch="x86" version="${freeimage4java.version}" resultproperty="ant.installlibjar.result" />
-		<installlibjar basedir="${basedir}" name="net.sf.freeimage4java" os="linux" arch="x86_64" version="${freeimage4java.version}" resultproperty="ant.installlibjar.result" />
 	</target>
+	<target name="-ffmpeg4java" depends="-ffmpeg4java-lib, -ffmpeg4java-macosx, -ffmpeg4java-win32, -ffmpeg4java-linux" />
+	<target name="-freeimage4java" depends="-freeimage4java-lib, -freeimage4java-macosx, -freeimage4java-win32, -freeimage4java-linux" />
 	<target name="build-macosx" depends="build-macosx-32bit, build-macosx-64bit" if="is_macosx" />
 	<target name="build-win32" depends="build-win32-32bit, build-win32-64bit" />
 	<target name="build-linux" depends="build-linux-32bit, build-linux-64bit" />
-	<target name="build" depends="update-version, build-macosx, build-win32, build-linux" />
+	<target name="build" depends="build-macosx, build-win32, build-linux" />
 	<target name="setup" depends="-clear, -ffmpeg4java, -freeimage4java" />
-	<target name="all" depends="setup, build" />
-	<target name="server" depends="setup, update-version, build-linux-server-64bit" />
+	<target name="all" depends="setup, update-version, build" />
+	<target name="server" depends="-clear, -ffmpeg4java-lib, -ffmpeg4java-linux, -freeimage4java-lib, -freeimage4java-linux, update-version, build-linux-server-64bit" />
 </project>
