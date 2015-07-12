@@ -24,58 +24,20 @@
  */
 package com.nextbreakpoint.nextfractal.server;
 
-import java.util.List;
-
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotData;
 
 @XmlRootElement
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class RemoteFractal {
-	private String source;
-	private String error;
-	private String UUID;
-	private int jobsCount;
+public class MandelbrotRequest {
+	private MandelbrotData mandelbrot;
 	private int tileSize;
-	private List<RemoteJob> jobs;
-	private long timestamp;
-
-	public RemoteFractal() {
-		timestamp = System.currentTimeMillis();
-	}
-
-	public String getSource() {
-		return source;
-	}
-
-	public void setSource(String source) {
-		this.source = source;
-	}
-
-	public String getError() {
-		return error;
-	}
-
-	public void setError(String error) {
-		this.error = error;
-	}
-
-	public int getJobsCount() {
-		return jobsCount;
-	}
-
-	public void setJobsCount(int jobsCount) {
-		this.jobsCount = jobsCount;
-	}
-
-	public String getUUID() {
-		return UUID;
-	}
-
-	public void setUUID(String UUID) {
-		this.UUID = UUID;
-	}
+	private int cols;
+	private int rows;
+	private int col;
+	private int row;
 
 	public int getTileSize() {
 		return tileSize;
@@ -85,15 +47,43 @@ public class RemoteFractal {
 		this.tileSize = tileSize;
 	}
 
-	public List<RemoteJob> getJobs() {
-		return jobs;
+	public int getCols() {
+		return cols;
 	}
 
-	public void setJobs(List<RemoteJob> jobs) {
-		this.jobs = jobs;
+	public void setCols(int cols) {
+		this.cols = cols;
 	}
 
-	public long getTimestamp() {
-		return timestamp;
+	public int getRows() {
+		return rows;
+	}
+
+	public void setRows(int rows) {
+		this.rows = rows;
+	}
+
+	public int getCol() {
+		return col;
+	}
+
+	public void setCol(int col) {
+		this.col = col;
+	}
+
+	public int getRow() {
+		return row;
+	}
+
+	public void setRow(int row) {
+		this.row = row;
+	}
+
+	public MandelbrotData getMandelbrot() {
+		return mandelbrot;
+	}
+
+	public void setMandelbrot(MandelbrotData mandelbrot) {
+		this.mandelbrot = mandelbrot;
 	}
 }

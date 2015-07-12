@@ -24,19 +24,12 @@
  */
 package com.nextbreakpoint.nextfractal.server.test;
 
-import static org.junit.Assert.fail;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
 import org.junit.Ignore;
 import org.junit.Test;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestTemplate;
-
-import com.nextbreakpoint.nextfractal.server.RemoteFractal;
 
 public class TestFractal {
 	private static final String URL = "http://localhost:8080/fractal";
@@ -44,21 +37,21 @@ public class TestFractal {
 	@Test
 	@Ignore
 	public void renderFractal() {
-		try {
-			String xml = getResource("mandelbrot.m");
-			RestTemplate restTemplate = new RestTemplate();
-			MultiValueMap<String, String> map = new LinkedMultiValueMap<String, String>();
-			map.add("xml", xml);
-			RemoteFractal fractal = restTemplate.postForObject(URL, map, RemoteFractal.class);
-			System.out.println(fractal.getUUID());
-			System.out.println(fractal.getSource());
-			System.out.println(fractal.getJobsCount());
-			byte[] pngImageData = restTemplate.getForObject(URL + "?UUID=" + fractal.getUUID() + "&index=0", byte[].class);
-			System.out.println(pngImageData.length);
-		} catch (IOException e) {
-			e.printStackTrace();
-			fail(e.getMessage());
-		}
+//		try {
+//			String xml = getResource("/mandelbrot.m");
+//			RestTemplate restTemplate = new RestTemplate();
+//			MultiValueMap<String, String> map = new LinkedMultiValueMap<String, String>();
+//			map.add("xml", xml);
+//			RemoteFractal fractal = restTemplate.postForObject(URL, map, RemoteFractal.class);
+//			System.out.println(fractal.getUUID());
+//			System.out.println(fractal.getSource());
+//			System.out.println(fractal.getJobsCount());
+//			byte[] pngImageData = restTemplate.getForObject(URL + "?UUID=" + fractal.getUUID() + "&index=0", byte[].class);
+//			System.out.println(pngImageData.length);
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//			fail(e.getMessage());
+//		}
 	}
 
 	protected String getResource(String name) throws IOException {
