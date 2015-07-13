@@ -29,7 +29,6 @@ import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
 
 public class RemoteJob<T> {
-	private String source;
 	private T data;
 	private float quality;
 	private int imageWidth;
@@ -40,30 +39,12 @@ public class RemoteJob<T> {
 	private int tileOffsetY;
 	private int borderWidth;
 	private int borderHeight;
-	private String pluginId;
-	private Throwable error;
 
 	public RemoteJob() {
 	}
 	
 	public RendererTile getTile() {
 		return createTile();
-	}
-
-	public String getPluginId() {
-		return pluginId;
-	}
-
-	public void setPluginId(String pluginId) {
-		this.pluginId = pluginId;
-	}
-
-	public Throwable getError() {
-		return error;
-	}
-
-	public void setError(Throwable error) {
-		this.error = error;
 	}
 
 	public int getImageWidth() {
@@ -146,14 +127,6 @@ public class RemoteJob<T> {
 		this.data = data;
 	}
 	
-	public String getSource() {
-		return source;
-	}
-	
-	public void setSource(String source) {
-		this.source = source;
-	}
-
 	public RendererTile createTile() {
 		RendererSize imageSize = new RendererSize(imageWidth, imageHeight);
 		RendererSize tileSize = new RendererSize(tileWidth, tileHeight);

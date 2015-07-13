@@ -43,7 +43,7 @@ public class PingController {
     public ResponseEntity<String> getStatus() {
     	HttpHeaders headers = new HttpHeaders();
     	headers.setContentType(MediaType.TEXT_PLAIN);
-    	logger.info("Server is running");
+    	logger.info("Ping");
 		return new ResponseEntity<>("OK", headers, HttpStatus.OK);
     }
 }
