@@ -24,15 +24,10 @@
  */
 package com.nextbreakpoint.nextfractal.server;
 
-import javax.xml.bind.annotation.XmlRootElement;
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotData;
 
-@XmlRootElement
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class MandelbrotRequest {
-	private MandelbrotData mandelbrot;
+	private MandelbrotData mandelbrotData;
 	private int tileSize;
 	private int cols;
 	private int rows;
@@ -79,11 +74,11 @@ public class MandelbrotRequest {
 		this.row = row;
 	}
 
-	public MandelbrotData getMandelbrot() {
-		return mandelbrot;
+	public MandelbrotData getMandelbrotData() {
+		return mandelbrotData;
 	}
 
-	public void setMandelbrot(MandelbrotData mandelbrot) {
-		this.mandelbrot = mandelbrot;
+	public void setMandelbrotData(MandelbrotData mandelbrot) {
+		this.mandelbrotData = mandelbrot;
 	}
 }

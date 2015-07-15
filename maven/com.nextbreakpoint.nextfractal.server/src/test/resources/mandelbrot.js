@@ -1,5 +1,5 @@
 $(function() {
-	var xml = '<mandelbrot>\n'
+	var xml = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><mandelbrot>\n'
 	+ '<timestamp>2015-06-04 11:20:30</timestamp>\n'
 	+ '<julia>false</julia>\n'
 	+ '<point>0.0</point>\n'
@@ -49,32 +49,12 @@ $(function() {
 
 				var data = $("#xml").val();
 				 
-				var request = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n'
-				+ '<mandelbrotrequest>\n'
-				+ data
-				+ '<tileSize>\n'
-				+ tileSize
-				+ '</tileSize>\n'
-				+ '<rows>\n'
-				+ rows
-				+ '</rows>\n'
-				+ '<cols>\n'
-				+ cols
-				+ '</cols>\n'
-				+ '<row>\n'
-				+ row
-				+ '</row>\n'
-				+ '<col>\n'
-				+ col
-				+ '</col>\n'
-				+ '</mandelbrotrequest>\n'
-				
-				var encodedRequest = encodeURIComponent(Base64.encode(request));
+				var encodedData = encodeURIComponent(Base64.encode(data));
 				
 				var left = col * tileSize;
 				var top = row * tileSize;
 				
-				$("#canvas").append("<img style='position:absolute; left:" + left + "px; top:" + top + "px;' src='http://localhost:8080/mandelbrot?request=" + encodedRequest + "'/>");
+				$("#canvas").append("<img style='position:absolute; left:" + left + "px; top:" + top + "px;' src='http://localhost:8080/mandelbrot?tileSize=" + tileSize + "&rows=" + rows + "&cols=" + cols + "&row=" + row + "&col=" + col + "&data=" + encodedData + "'/>");
 			}
 		}
 		return false;

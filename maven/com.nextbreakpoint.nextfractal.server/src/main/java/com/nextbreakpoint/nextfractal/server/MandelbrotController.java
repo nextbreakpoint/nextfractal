@@ -66,10 +66,17 @@ public class MandelbrotController {
 	private static ExecutorService executor = Executors.newFixedThreadPool(32);
 	
 	@RequestMapping(method=RequestMethod.GET)
-    public DeferredResult<ResponseEntity<byte[]>> createTile(@RequestParam(value="request", required=true) String data) {
+    public DeferredResult<ResponseEntity<byte[]>> createTile(@RequestParam(value="tileSize", required=true) Integer tileSize, @RequestParam(value="rows", required=true) Integer rows, @RequestParam(value="cols", required=true) Integer cols, @RequestParam(value="row", required=true) Integer row, @RequestParam(value="col", required=true) Integer col, @RequestParam(value="data", required=true) String encodedData) {
 		DeferredResult<ResponseEntity<byte[]>> deferredResult = new DeferredResult<>();
 		try {
-			MandelbrotRequest request = decodeData(data);
+			MandelbrotData data = decodeData(encodedData);
+			MandelbrotRequest request = new MandelbrotRequest();
+			request.setRows(rows);
+			request.setCols(cols);
+			request.setRow(row);
+			request.setCol(col);
+			request.setTileSize(tileSize);
+			request.setMandelbrotData(data);
 			validateRequest(request);
 			RemoteJob<MandelbrotData> job = createJob(request);
 		    ProcessingTask<MandelbrotData> task = new ProcessingTask<>(deferredResult, job);
@@ -88,22 +95,25 @@ public class MandelbrotController {
 
 	private void validateRequest(MandelbrotRequest request) {
 		if (request.getRows() < 0 || request.getRows() > 16) {
-			throw new ValidationException("Rows must be greather or equals to 0 and lesser or equals to 16");
+			throw new ValidationException("Invalid rows number");
 		}
 		if (request.getCols() < 0 || request.getCols() > 16) {
-			throw new ValidationException("Cols must be greather or equals to 0 and lesser or equals to 16");
-		}
-		if (request.getCol() < 0 || request.getCol() > request.getCols() - 1) {
-			throw new ValidationException("Col must be greather or equals to 0 and lesser than " + request.getCols());
+			throw new ValidationException("Invalid cols number");
 		}
 		if (request.getRow() < 0 || request.getRow() > request.getRows() - 1) {
-			throw new ValidationException("Row must be greather or equals to 0 and lesser than " + request.getRows());
+			throw new ValidationException("Invalid row index");
 		}
-		if (request.getTileSize() < 32 || request.getTileSize() > 256) {
-			throw new ValidationException("Tile size must be greather or equals to 32 and lesser or equals to 256");
+		if (request.getCol() < 0 || request.getCol() > request.getCols() - 1) {
+			throw new ValidationException("Invalid col index");
 		}
-		if (request.getMandelbrot() == null) {
-			throw new ValidationException("Mandelbrot data is missing");
+		if (request.getRows() == 1 && request.getCols() == 1 && (request.getTileSize() < 32 || request.getTileSize() > 1024)) {
+			throw new ValidationException("Invalid image size");
+		}
+		if ((request.getRows() > 1 || request.getCols() > 1) && (request.getTileSize() < 32 || request.getTileSize() > 256)) {
+			throw new ValidationException("Invalid image size");
+		}
+		if (request.getMandelbrotData() == null) {
+			throw new ValidationException("Invalid data");
 		}
 	}
 
@@ -136,12 +146,12 @@ public class MandelbrotController {
 		job.setTileOffsetY(tileSize * row);
 		job.setBorderWidth(0);
 		job.setBorderHeight(0);
-		job.setData(request.getMandelbrot());
+		job.setData(request.getMandelbrotData());
 		return job;
 	}
 
-	private MandelbrotRequest decodeData(String data) {
-		return JAXB.unmarshal(new ByteArrayInputStream(Base64.getDecoder().decode(data)), MandelbrotRequest.class);
+	private MandelbrotData decodeData(String encodedData) {
+		return JAXB.unmarshal(new ByteArrayInputStream(Base64.getDecoder().decode(encodedData)), MandelbrotData.class);
 	}
 
 	private byte[] getImageAsPNG(RendererSize tileSize, IntBuffer pixels) throws IOException {

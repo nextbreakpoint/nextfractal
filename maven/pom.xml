@@ -17,7 +17,6 @@
 		<antlr4.version>4.3</antlr4.version>
 		<richtext.version>0.6.4</richtext.version>
 		<commonmath3.version>3.5</commonmath3.version>
-		<awsdynamodb.version>1.10.2</awsdynamodb.version>
 		<ffmpeg4java.version>0.1.2</ffmpeg4java.version>
 		<freeimage4java.version>0.1.1</freeimage4java.version>
 		<springboot.version>1.2.3.RELEASE</springboot.version>
@@ -74,11 +73,6 @@
 				<artifactId>spring-boot-starter-test</artifactId>
 				<version>${springboot.version}</version>
 				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>com.amazonaws</groupId>
-				<artifactId>aws-java-sdk-dynamodb</artifactId>
-				<version>${awsdynamodb.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>net.sf.ffmpeg4java</groupId>
