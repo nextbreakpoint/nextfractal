@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <mandelbrot>
-    <timestamp>2015-04-28 21:41:18</timestamp>
+    <timestamp>2015-07-21 08:58:35</timestamp>
     <julia>false</julia>
     <point>0.0</point>
     <point>0.0</point>
@@ -19,10 +19,6 @@
 		}
 	}
 	color [#FFF0F0F0] {
-		palette gradient {
-			[#FFFFFFFF &gt; #FFFF0000, 20];
-			[#FFFF0000 &gt; #FF000000, 180];
-		}
 		rule (n = 0) [1] {
 			1,
 			(1 + sin(&lt;x&gt; * pi * 10)) / 2,
