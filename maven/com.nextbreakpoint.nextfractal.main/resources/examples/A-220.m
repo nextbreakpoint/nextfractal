@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <mandelbrot>
-    <timestamp>2015-04-30 19:15:36</timestamp>
+    <timestamp>2015-07-24 18:37:49</timestamp>
     <julia>false</julia>
     <point>0.3016666666666667</point>
     <point>0.025</point>
@@ -19,10 +19,6 @@
 		}
 	}
 	color [#FF000000] {
-		palette gradient {
-			[#FF000000 &gt; #FFFFFFFF, 100];
-			[#FFFFFFFF &gt; #FF000000, 100];
-		}
 		init {
 			z1 = mod2(x) / 1000;
 			z2 = n / 10;
