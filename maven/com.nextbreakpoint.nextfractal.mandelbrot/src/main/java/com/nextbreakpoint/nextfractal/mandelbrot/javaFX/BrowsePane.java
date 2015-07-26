@@ -85,7 +85,7 @@ public class BrowsePane extends Pane {
 	private BrowseDelegate delegate; 
 	private DirectoryChooser directoryChooser;
 	private File currentFolder;
-	private File defaultDir;
+	private File currentDir;
 	private ExecutorService executor;
 	private RendererTile tile;
 	private AnimationTimer timer;
@@ -93,7 +93,7 @@ public class BrowsePane extends Pane {
 	public BrowsePane(int width) {
 		Preferences prefs = Preferences.userNodeForPackage(MandelbrotRenderPane.class);
 		
-	    defaultDir = new File(prefs.get("mandelbrot.browser.default", getDefaultBrowserDir()));
+		currentDir = new File(prefs.get("mandelbrot.browser.default", getDefaultBrowserDir()));
 
 		threadFactory = new DefaultThreadFactory("BrowserPane", true, Thread.MIN_PRIORITY);
 		
@@ -179,6 +179,7 @@ public class BrowsePane extends Pane {
 		
 		pathProperty.addListener((observable, oldValue, newValue) -> {
 			File path = new File(newValue);
+			currentDir = path; 
 			loadFiles(grid, path);
 		});
 
@@ -194,7 +195,7 @@ public class BrowsePane extends Pane {
 			@Override
 			public void handle(ActionEvent event) {
 				setDisable(false);
-				pathProperty.setValue(defaultDir.getAbsolutePath());
+				pathProperty.setValue(currentDir.getAbsolutePath());
 			}
 		});
 		tt.play();
@@ -236,11 +237,10 @@ public class BrowsePane extends Pane {
 //		alert.showAndWait();
 		if (directoryChooser == null) {
 			directoryChooser = new DirectoryChooser();
-			if (defaultDir.exists()) {
-				directoryChooser.setInitialDirectory(defaultDir);
-			} else {
-				directoryChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+			if (!currentDir.exists()) {
+				currentDir = new File(System.getProperty("user.home"));
 			}
+			directoryChooser.setInitialDirectory(currentDir);
 		}
 	}
 
