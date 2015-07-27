@@ -51,6 +51,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.stage.DirectoryChooser;
 import javafx.util.Duration;
+import javafx.scene.control.Label;
 
 import com.nextbreakpoint.nextfractal.core.javaFX.StringObservableValue;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererPoint;
@@ -114,10 +115,13 @@ public class BrowsePane extends Pane {
 		Button reloadButton = new Button("Reload");
 		Button chooseButton = new Button("Open...");
 
+		Label statusLabel = new Label("Initializing");
+
 		HBox buttons = new HBox(10);
 		buttons.getChildren().add(closeButton);
 		buttons.getChildren().add(reloadButton);
 		buttons.getChildren().add(chooseButton);
+		buttons.getChildren().add(statusLabel);
 		buttons.setAlignment(Pos.CENTER);
 		buttons.getStyleClass().add("buttons");
 
@@ -157,7 +161,7 @@ public class BrowsePane extends Pane {
 		});
 		
 		reloadButton.setOnMouseClicked(e -> {
-			loadFiles(grid, currentFolder);
+			loadFiles(statusLabel, grid, currentFolder);
 		});
 		
 		getChildren().add(box);
@@ -180,7 +184,7 @@ public class BrowsePane extends Pane {
 		pathProperty.addListener((observable, oldValue, newValue) -> {
 			File path = new File(newValue);
 			currentDir = path; 
-			loadFiles(grid, path);
+			loadFiles(statusLabel, grid, path);
 		});
 
 		runTimer(grid);
@@ -268,12 +272,15 @@ public class BrowsePane extends Pane {
 		return tile;
 	}
 
-	private void loadFiles(GridView grid, File folder) {
+	private void loadFiles(Label statusLabel, GridView grid, File folder) {
 		currentFolder = folder;
 		removeItems();
 		File[] files = listFiles(folder);
-		if (files != null) {
+		if (files != null && files.length > 0) {
+			statusLabel.setText(files.length + " item" + (files.length > 1 ? "s" : "") + " found");
 			loadItems(grid, files);
+		} else {
+			statusLabel.setText("No items found");
 		}
 	}
 
