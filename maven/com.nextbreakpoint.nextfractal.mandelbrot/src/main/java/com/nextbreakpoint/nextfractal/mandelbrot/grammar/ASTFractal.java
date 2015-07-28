@@ -62,9 +62,13 @@ public class ASTFractal extends ASTObject {
 		this.color = color;
 	}
 
-	public void registerStateVariable(String varName, Token location) {
+	public void registerStateVariable(String varName, boolean real, Token location) {
 		if (orbitVars.get(varName) == null) {
-			registerOrbitVariable(varName, false, true, location);
+			registerOrbitVariable(varName, real, true, location);
+		} else {
+			if (orbitVars.get(varName).isReal() != real) {
+				throw new ASTException("Variable already defined: " + location.getText(), location);
+			}
 		}
 		if (stateVars.get(varName) == null) {
 			stateVars.put(varName, orbitVars.get(varName));

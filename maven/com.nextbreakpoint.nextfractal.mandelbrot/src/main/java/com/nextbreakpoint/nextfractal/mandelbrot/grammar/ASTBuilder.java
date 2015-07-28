@@ -137,8 +137,8 @@ public class ASTBuilder {
 		return Long.parseLong(text, base);
 	}
 
-	public void registerStateVariable(String name, Token location) {
-		fractal.registerStateVariable(name, location);
+	public void registerStateVariable(String name, boolean real, Token location) {
+		fractal.registerStateVariable(name, real, location);
 	}
 
 	public void registerVariable(String name, boolean real, Token location) {

@@ -46,6 +46,9 @@ public class ASTException extends RuntimeException {
 	
 	@Override
 	public String toString() {
-		return "[" + location.getLine() + ":" + location.getCharPositionInLine() + "] " + super.toString();
+		if (location != null) {
+			return "[" + location.getLine() + ":" + location.getCharPositionInLine() + "] " + super.toString();
+		}
+		return super.toString();
 	}
 }

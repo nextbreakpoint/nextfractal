@@ -409,7 +409,7 @@ public class MandelbrotEditorPane extends BorderPane {
 		DefaultThreadFactory historyThreadFactory = new DefaultThreadFactory("MandelbrotHistoryUpdate", true, Thread.MIN_PRIORITY);
 		historyExecutor = Executors.newSingleThreadExecutor(historyThreadFactory);
 		
-		DefaultThreadFactory textThreadFactory = new DefaultThreadFactory("MandelbrotTextUpdate", true, Thread.MIN_PRIORITY + 1);
+		DefaultThreadFactory textThreadFactory = new DefaultThreadFactory("MandelbrotTextUpdate", true, Thread.MIN_PRIORITY);
 		textExecutor = Executors.newSingleThreadExecutor(textThreadFactory);
 		
 		DefaultThreadFactory sessionsThreadFactory = new DefaultThreadFactory("MandelbrotSessionsUpdate", true, Thread.MIN_PRIORITY);
@@ -509,11 +509,16 @@ public class MandelbrotEditorPane extends BorderPane {
         Task<TaskResult> task = new Task<TaskResult>() {
             @Override
             protected TaskResult call() throws Exception {
-            	TaskResult result = new TaskResult();
-            	result.source = text;
-            	result.report = generateReport(text);
-            	result.highlighting = computeHighlighting(text);
-                return result;
+            	try {
+	            	TaskResult result = new TaskResult();
+	            	result.source = text;
+	            	result.report = generateReport(text);
+	            	result.highlighting = computeHighlighting(text);
+	            	return result;
+            	} catch (Throwable e) {
+            		logger.log(Level.WARNING, "Cannot parse source", e);
+	            	return null;
+            	}
             }
         };
         textExecutor.execute(task);
@@ -545,9 +550,11 @@ public class MandelbrotEditorPane extends BorderPane {
 	}
 	
     private void applyTaskResult(TaskResult result) {
-		updateReportAndSource(result.source, result.report);
-		codeArea.setStyleSpans(0, result.highlighting);
-    	displayErrors();
+    	if (result != null) {
+    		updateReportAndSource(result.source, result.report);
+    		codeArea.setStyleSpans(0, result.highlighting);
+    		displayErrors();
+    	}
     }
 
 	private StyleSpans<Collection<String>> computeHighlighting(String text) {

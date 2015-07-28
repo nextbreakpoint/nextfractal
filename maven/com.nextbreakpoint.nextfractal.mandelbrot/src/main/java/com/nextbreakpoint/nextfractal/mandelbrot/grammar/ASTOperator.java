@@ -76,6 +76,9 @@ public class ASTOperator extends ASTExpression {
 	}
 
 	public boolean isReal() {
+		if (op.equals("<>")) {
+			return false;
+		}
 		return exp1.isReal() && (exp2 == null || exp2.isReal());
 	}
 }

@@ -4,3 +4,5 @@
 /MandelbrotLexer.tokens
 /MandelbrotListener.java
 /MandelbrotParser.java
+/MandelbrotBaseVisitor.java
+/MandelbrotVisitor.java

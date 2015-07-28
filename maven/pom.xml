@@ -14,7 +14,7 @@
 		<module>com.nextbreakpoint.nextfractal.main</module>
 	</modules>
 	<properties>
-		<antlr4.version>4.3</antlr4.version>
+		<antlr4.version>4.5.1</antlr4.version>
 		<richtext.version>0.6.4</richtext.version>
 		<commonmath3.version>3.5</commonmath3.version>
 		<ffmpeg4java.version>0.1.2</ffmpeg4java.version>

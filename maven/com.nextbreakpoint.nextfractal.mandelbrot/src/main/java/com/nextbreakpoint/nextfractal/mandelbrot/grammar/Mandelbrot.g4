@@ -27,7 +27,7 @@ orbit
 	:
 	o=ORBIT '[' ra=complex ',' rb=complex ']' {
 		builder.setOrbit(new ASTOrbit($o, new ASTRegion($ra.result, $rb.result)));
-	} '[' v=variablelist ']' '{' trap* begin? loop end? '}'
+	} '[' statevariablelist ']' '{' trap* begin? loop end? '}'
 	;
 		
 color
@@ -146,17 +146,28 @@ statement
 	}
 	;
 		
-variablelist 
+statevariable
 	:
-	v=VARIABLE {
-		builder.registerStateVariable($v.text, $v);
-	}
+	'real' v=VARIABLE {
+		builder.registerStateVariable($v.text, true, $v);
+	} 
 	| 
-	vl=variablelist ',' v=VARIABLE {
-		builder.registerStateVariable($v.text, $v);
+	'complex' v=VARIABLE {
+		builder.registerStateVariable($v.text, false, $v);
+	} 
+	| 
+	v=VARIABLE {
+		builder.registerStateVariable($v.text, "n".equals($v.text), $v);
 	} 
 	;
-		
+	
+statevariablelist 
+	:
+	statevariable 
+	| 
+	statevariablelist ',' statevariable
+	;
+		 
 simpleconditionexp returns [ASTConditionExpression result]
 	:
 	e1=expression o=('=' | '<' | '>' | '<=' | '>=' | '<>') e2=expression {

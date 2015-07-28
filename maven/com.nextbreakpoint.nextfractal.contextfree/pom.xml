@@ -12,15 +12,17 @@
 			<plugin>
 				<groupId>org.antlr</groupId>
 				<artifactId>antlr4-maven-plugin</artifactId>
-				<version>4.3</version>
+				<version>${antlr4.version}</version>
 				<executions>
 					<execution>
+						<phase>generate-sources</phase>
 						<goals>
 							<goal>antlr4</goal>
 						</goals>
 					</execution>
 				</executions>
 				<configuration>
+					<sourceDirectory>src/main/java</sourceDirectory>
 					<outputDirectory>src/main/antlr4</outputDirectory>
 				</configuration>
 			</plugin>
