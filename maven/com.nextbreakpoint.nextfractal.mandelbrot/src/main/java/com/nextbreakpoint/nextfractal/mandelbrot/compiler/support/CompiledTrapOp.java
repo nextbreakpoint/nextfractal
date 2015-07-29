@@ -24,8 +24,20 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.compiler.support;
 
+import org.antlr.v4.runtime.Token;
+
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Trap;
 
-public interface CompiledTrapOp {
-	public void evaluate(Trap trap);
+public abstract class CompiledTrapOp {
+	protected Token location;
+
+	protected CompiledTrapOp(Token location) {
+		this.location = location;
+	}
+
+	public abstract void evaluate(Trap trap);
+
+	public Token getLocation() {
+		return location;
+	}
 }

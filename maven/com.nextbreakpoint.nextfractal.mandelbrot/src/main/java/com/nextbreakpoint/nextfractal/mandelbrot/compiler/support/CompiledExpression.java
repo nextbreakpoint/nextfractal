@@ -26,14 +26,32 @@ package com.nextbreakpoint.nextfractal.mandelbrot.compiler.support;
 
 import java.util.Map;
 
+import org.antlr.v4.runtime.Token;
+
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.InterpreterContext;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 
-public interface CompiledExpression {
-	public double evaluateReal(InterpreterContext context, Map<String, CompilerVariable> scope);
-	
-	public Number evaluate(InterpreterContext context, Map<String, CompilerVariable> scope);
+public abstract class CompiledExpression {
+	protected Token location;
+	protected int index;
 
-	public boolean isReal();
+	protected CompiledExpression(int index, Token location) {
+		this.location = location;
+		this.index = index;
+	}
+	
+	public abstract double evaluateReal(InterpreterContext context, Map<String, CompilerVariable> scope);
+	
+	public abstract Number evaluate(InterpreterContext context, Map<String, CompilerVariable> scope);
+
+	public abstract boolean isReal();
+
+	public Token getLocation() {
+		return location;
+	}
+
+	public int getIndex() {
+		return index;
+	}
 }

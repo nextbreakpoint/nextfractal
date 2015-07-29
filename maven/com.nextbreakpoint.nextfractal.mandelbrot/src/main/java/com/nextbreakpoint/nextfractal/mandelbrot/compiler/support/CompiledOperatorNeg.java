@@ -26,18 +26,20 @@ package com.nextbreakpoint.nextfractal.mandelbrot.compiler.support;
 
 import java.util.Map;
 
+import org.antlr.v4.runtime.Token;
+
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.ExpressionContext;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.InterpreterContext;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
+
 import static com.nextbreakpoint.nextfractal.mandelbrot.core.Expression.*;
 
-public class CompiledOperatorNeg implements CompiledExpression {
+public class CompiledOperatorNeg extends CompiledExpression {
 	private CompiledExpression exp;
-	private int index;
 	
-	public CompiledOperatorNeg(ExpressionContext context, CompiledExpression exp) {
-		this.index = context.newNumberIndex();
+	public CompiledOperatorNeg(ExpressionContext context, CompiledExpression exp, Token location) {
+		super(context.newNumberIndex(), location);
 		this.exp = exp;
 	}
 

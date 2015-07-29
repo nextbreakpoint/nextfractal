@@ -63,11 +63,11 @@ public class InterpreterColorBuilder implements CompilerBuilder<Color> {
 		for (CompilerVariable var : astFractal.getStateVariables()) {
 			stateVars.add(var.copy());
 		}
-		CompiledColor color = new CompiledColor(colorVars, stateVars);
+		CompiledColor color = new CompiledColor(colorVars, stateVars, astColor.getLocation());
 		color.setBackgroundColor(astColor.getArgb().getComponents());
 		List<CompiledRule> rules = new ArrayList<>();
 		for (ASTRule astRule : astColor.getRules()) {
-			CompiledRule rule = new CompiledRule();
+			CompiledRule rule = new CompiledRule(astRule.getLocation());
 			rule.setRuleCondition(astRule.getRuleExp().compile(compiler));
 			rule.setColorExp(astRule.getColorExp().compile(compiler));
 			rule.setOpacity(astRule.getOpacity());

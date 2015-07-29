@@ -26,9 +26,21 @@ package com.nextbreakpoint.nextfractal.mandelbrot.compiler.support;
 
 import java.util.Map;
 
+import org.antlr.v4.runtime.Token;
+
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.InterpreterContext;
 
-public interface CompiledCondition {
-	public boolean evaluate(InterpreterContext context, Map<String, CompilerVariable> scope);
+public abstract class CompiledCondition {
+	protected Token location;
+
+	protected CompiledCondition(Token location) {
+		this.location = location;
+	}
+	
+	public abstract boolean evaluate(InterpreterContext context, Map<String, CompilerVariable> scope);
+
+	public Token getLocation() {
+		return location;
+	}
 }

@@ -26,10 +26,16 @@ package com.nextbreakpoint.nextfractal.mandelbrot.compiler.support;
 
 import java.util.Map;
 
+import org.antlr.v4.runtime.Token;
+
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.InterpreterContext;
 
-public class CompiledStopStatement implements CompiledStatement {
+public class CompiledStopStatement extends CompiledStatement {
+	public CompiledStopStatement(Token location) {
+		super(location);
+	}
+
 	@Override
 	public boolean evaluate(InterpreterContext context, Map<String, CompilerVariable> scope) {
 		return true;

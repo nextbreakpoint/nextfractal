@@ -24,15 +24,18 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.compiler.support;
 
+import org.antlr.v4.runtime.Token;
+
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Trap;
 
-public class CompiledTrapOpCurveTo implements CompiledTrapOp {
+public class CompiledTrapOpCurveTo extends CompiledTrapOp {
 	private Number c1;
 	private Number c2;
 	private Number c3;
 	
-	public CompiledTrapOpCurveTo(Number c1, Number c2, Number c3) {
+	public CompiledTrapOpCurveTo(Number c1, Number c2, Number c3, Token location) {
+		super(location);
 		this.c1 = c1;
 		this.c2 = c2;
 		this.c3 = c3;

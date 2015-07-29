@@ -28,18 +28,19 @@ import static com.nextbreakpoint.nextfractal.mandelbrot.core.Expression.opPow;
 
 import java.util.Map;
 
+import org.antlr.v4.runtime.Token;
+
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.ExpressionContext;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.InterpreterContext;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 
-public class CompiledOperatorPow implements CompiledExpression {
+public class CompiledOperatorPow extends CompiledExpression {
 	private CompiledExpression exp1;
 	private CompiledExpression exp2;
-	private int index;
 	
-	public CompiledOperatorPow(ExpressionContext context, CompiledExpression exp1, CompiledExpression exp2) {
-		this.index = context.newNumberIndex();
+	public CompiledOperatorPow(ExpressionContext context, CompiledExpression exp1, CompiledExpression exp2, Token location) {
+		super(context.newNumberIndex(), location);
 		this.exp1 = exp1;
 		this.exp2 = exp2;
 	}

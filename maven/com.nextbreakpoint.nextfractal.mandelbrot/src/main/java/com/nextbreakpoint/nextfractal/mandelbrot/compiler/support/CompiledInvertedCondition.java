@@ -26,13 +26,16 @@ package com.nextbreakpoint.nextfractal.mandelbrot.compiler.support;
 
 import java.util.Map;
 
+import org.antlr.v4.runtime.Token;
+
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.InterpreterContext;
 
-public class CompiledInvertedCondition implements CompiledCondition {
+public class CompiledInvertedCondition extends CompiledCondition {
 	private CompiledCondition condition;
 	
-	public CompiledInvertedCondition(CompiledCondition condition) {
+	public CompiledInvertedCondition(CompiledCondition condition, Token location) {
+		super(location);
 		this.condition = condition;
 	}
 

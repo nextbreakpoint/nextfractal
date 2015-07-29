@@ -24,13 +24,17 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.compiler.support;
 
+import org.antlr.v4.runtime.Token;
+
 public class CompiledPaletteElement {
 	private float[] beginColor;
 	private float[] endColor;
 	private int steps;
 	private CompiledExpression exp;
+	private Token location;
 
-	public CompiledPaletteElement(float[] beginColor, float[] endColor,	int steps, CompiledExpression exp) {
+	public CompiledPaletteElement(float[] beginColor, float[] endColor,	int steps, CompiledExpression exp, Token location) {
+		this.location = location;
 		this.beginColor = beginColor;
 		this.endColor = endColor;
 		this.steps = steps;
@@ -51,5 +55,9 @@ public class CompiledPaletteElement {
 
 	public CompiledExpression getExp() {
 		return exp;
+	}
+
+	public Token getLocation() {
+		return location;
 	}
 }

@@ -22,26 +22,44 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.mandelbrot.compiler.support;
+package com.nextbreakpoint.nextfractal.mandelbrot.renderer;
 
-import java.util.Map;
+public class RendererError {
+	private long line;
+	private long charPositionInLine;
+	private long index;
+	private long length;
+	private String message;
 
-import org.antlr.v4.runtime.Token;
+	public RendererError(long line, long charPositionInLine, long index, long length, String message) {
+		this.line = line;
+		this.index = index;
+		this.charPositionInLine = charPositionInLine;
+		this.message = message;
+	}
 
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.ExpressionContext;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.InterpreterContext;
+	public long getLine() {
+		return line;
+	}
 
-public class CompiledLogicOperatorOr extends CompiledCondition {
-	private CompiledCondition[] operands;
+	public long getCharPositionInLine() {
+		return charPositionInLine;
+	}
+
+	public String getMessage() {
+		return message;
+	}
 	
-	public CompiledLogicOperatorOr(ExpressionContext context, CompiledCondition[] operands, Token location) {
-		super(location);
-		this.operands = operands;
+	public long getLength() {
+		return length;
+	}
+	
+	public long getIndex() {
+		return index;
 	}
 
 	@Override
-	public boolean evaluate(InterpreterContext context, Map<String, CompilerVariable> scope) {
-		return operands[0].evaluate(context, scope) || operands[1].evaluate(context, scope);
+	public String toString() {
+		return "[" + line + ":" + charPositionInLine + ":" + index + ":" + length + "] " + message;
 	}
 }

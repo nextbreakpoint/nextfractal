@@ -26,9 +26,16 @@ package com.nextbreakpoint.nextfractal.mandelbrot.compiler.support;
 
 import java.util.List;
 
+import org.antlr.v4.runtime.Token;
+
 public class CompiledPalette {
 	private String name;
 	private List<CompiledPaletteElement> elements;
+	private Token location;
+
+	public CompiledPalette(Token location) {
+		this.location = location;
+	}
 
 	public String getName() {
 		return name;
@@ -44,5 +51,9 @@ public class CompiledPalette {
 
 	public void setElements(List<CompiledPaletteElement> elements) {
 		this.elements = elements;
+	}
+
+	public Token getLocation() {
+		return location;
 	}
 }

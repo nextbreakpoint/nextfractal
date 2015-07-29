@@ -26,10 +26,16 @@ package com.nextbreakpoint.nextfractal.mandelbrot.compiler.support;
 
 import java.util.Map;
 
+import org.antlr.v4.runtime.Token;
+
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.InterpreterContext;
 
-public class CompiledJuliaCondition implements CompiledCondition {
+public class CompiledJuliaCondition extends CompiledCondition {
+	public CompiledJuliaCondition(Token location) {
+		super(location);
+	}
+
 	@Override
 	public boolean evaluate(InterpreterContext context, Map<String, CompilerVariable> scope) {
 		return context.isJulia();

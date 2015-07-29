@@ -26,9 +26,21 @@ package com.nextbreakpoint.nextfractal.mandelbrot.compiler.support;
 
 import java.util.Map;
 
+import org.antlr.v4.runtime.Token;
+
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.InterpreterContext;
 
-public interface CompiledColorExpression {
-	public float[] evaluate(InterpreterContext context, Map<String, CompilerVariable> scope);
+public abstract class CompiledColorExpression {
+	protected Token location;
+
+	protected CompiledColorExpression(Token location) {
+		this.location = location;
+	}
+	
+	public abstract float[] evaluate(InterpreterContext context, Map<String, CompilerVariable> scope);
+
+	public Token getLocation() {
+		return location;
+	}
 }

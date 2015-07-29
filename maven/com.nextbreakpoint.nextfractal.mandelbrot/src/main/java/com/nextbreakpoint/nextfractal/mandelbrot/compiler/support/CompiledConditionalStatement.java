@@ -28,16 +28,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.antlr.v4.runtime.Token;
+
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.InterpreterContext;
 
-public class CompiledConditionalStatement implements CompiledStatement {
+public class CompiledConditionalStatement extends CompiledStatement {
 	private CompiledCondition condition;
 	private List<CompiledStatement> thenStatements;
 	private List<CompiledStatement> elseStatements;
 	private Map<String, CompilerVariable> newScope;
 	
-	public CompiledConditionalStatement(CompiledCondition condition, List<CompiledStatement> thenStatements, List<CompiledStatement> elseStatements) {
+	public CompiledConditionalStatement(CompiledCondition condition, List<CompiledStatement> thenStatements, List<CompiledStatement> elseStatements, Token location) {
+		super(location);
 		this.condition = condition;
 		this.thenStatements = thenStatements;
 		this.elseStatements = elseStatements;

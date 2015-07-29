@@ -27,6 +27,8 @@ package com.nextbreakpoint.nextfractal.mandelbrot.compiler.support;
 import java.util.Collection;
 import java.util.List;
 
+import org.antlr.v4.runtime.Token;
+
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 
@@ -41,8 +43,10 @@ public class CompiledOrbit {
 	private CompiledCondition loopCondition;
 	private int loopBegin;
 	private int loopEnd;
-	
-	public CompiledOrbit(Collection<CompilerVariable> orbitVariables, Collection<CompilerVariable> stateVariables) {
+	private Token location;
+
+	public CompiledOrbit(Collection<CompilerVariable> orbitVariables, Collection<CompilerVariable> stateVariables, Token location) {
+		this.location = location;
 		this.orbitVariables = orbitVariables;
 		this.stateVariables = stateVariables;
 	}
@@ -117,5 +121,9 @@ public class CompiledOrbit {
 
 	public void setLoopEnd(int loopEnd) {
 		this.loopEnd = loopEnd;
+	}
+
+	public Token getLocation() {
+		return location;
 	}
 }

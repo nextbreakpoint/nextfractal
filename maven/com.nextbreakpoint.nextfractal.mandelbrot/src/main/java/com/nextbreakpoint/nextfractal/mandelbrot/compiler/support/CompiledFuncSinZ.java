@@ -28,24 +28,25 @@ import static com.nextbreakpoint.nextfractal.mandelbrot.core.Expression.funcSin;
 
 import java.util.Map;
 
+import org.antlr.v4.runtime.Token;
+
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.ExpressionContext;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.InterpreterContext;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTException;
 
-public class CompiledFuncSinZ implements CompiledExpression {
+public class CompiledFuncSinZ extends CompiledExpression {
 	private CompiledExpression[] arguments;
-	private int index;
 	
-	public CompiledFuncSinZ(ExpressionContext context, CompiledExpression[] arguments) {
-		this.index = context.newNumberIndex();
+	public CompiledFuncSinZ(ExpressionContext context, CompiledExpression[] arguments, Token location) {
+		super(context.newNumberIndex(), location);
 		this.arguments = arguments;
 	}
 
 	@Override
 	public double evaluateReal(InterpreterContext context, Map<String, CompilerVariable> scope) {
-		throw new ASTException("Cannot assign function output to real number", null);
+		throw new ASTException("Cannot assign function output to real number", getLocation());
 	}
 
 	@Override

@@ -51,8 +51,6 @@ import java.util.logging.Logger;
 import javafx.animation.AnimationTimer;
 import javafx.animation.FadeTransition;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -104,6 +102,7 @@ import com.nextbreakpoint.nextfractal.mandelbrot.core.Orbit;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Scope;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Trap;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererCoordinator;
+import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererError;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererView;
 
 public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, BrowseDelegate, MandelbrotToolContext {
@@ -825,6 +824,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 				long time = now / 1000000;
 				if (time - last > FRAME_LENGTH_IN_MILLIS) {
 					if (!disableTool) {
+						processCoordinatorErrors();
 						redrawIfPixelsChanged(fractalCanvas);
 						redrawIfJuliaPixelsChanged(juliaCanvas);
 						redrawIfPointChanged(pointCanvas);
@@ -1061,6 +1061,33 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 		});
 	}
 
+	private void updateRendererErrors(String message, List<RendererError> errors, String source) {
+		disableTool = message != null;
+		Platform.runLater(() -> {
+			errorProperty.setValue(null);
+			if (message != null) {
+				StringBuilder builder = new StringBuilder();
+				builder.append(message);
+				if (errors != null) {
+					builder.append("\n\n");
+					for (RendererError error : errors) {
+						builder.append("Line ");
+						builder.append(error.getLine());
+						builder.append(": ");
+						builder.append(error.getMessage());
+						builder.append("\n");
+					}
+				}
+				if (source != null) {
+					builder.append("\n\n");
+					builder.append(source);
+					builder.append("\n");
+				}
+				errorProperty.setValue(builder.toString());
+			}
+		});
+	}
+
 	private void updatePoint(boolean continuous) {
 		MandelbrotView oldView = getMandelbrotSession().getViewAsCopy();
 		boolean julia = oldView.isJulia();
@@ -1163,6 +1190,20 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 			logger.log(Level.WARNING, "Failed to render orbit", e);
 		}
 		return states;
+	}
+
+	private void processCoordinatorErrors() {
+		if (coordinators != null && coordinators.length > 0) {
+			RendererCoordinator coordinator = coordinators[0];
+			if (coordinator.isErrorsChanged()) {
+				List<RendererError> errors = coordinator.getErrors();
+				if (errors.size() > 0) {
+					updateRendererErrors("Cannot create image", errors, null);
+				} else {
+					updateRendererErrors(null, null, null);
+				}
+			}
+		}
 	}
 
 	private void abortCoordinators() {

@@ -148,7 +148,7 @@ public class InterpreterASTCompiler implements ASTExpressionCompiler {
 
 	@Override
 	public CompiledExpression compile(ASTNumber number) {
-		return new CompiledNumber(context, number.r(), number.i());
+		return new CompiledNumber(context, number.r(), number.i(), number.getLocation());
 	}
 
 	@Override
@@ -224,84 +224,84 @@ public class InterpreterASTCompiler implements ASTExpressionCompiler {
 		switch (function.getName()) {
 			case "mod":
 				if (function.getArguments()[0].isReal()) {
-					return new CompiledFuncMod(context, compileArguments(function.getArguments()));
+					return new CompiledFuncMod(context, compileArguments(function.getArguments()), function.getLocation());
 				} else {
-					return new CompiledFuncModZ(context, compileArguments(function.getArguments()));
+					return new CompiledFuncModZ(context, compileArguments(function.getArguments()), function.getLocation());
 				}
 			case "mod2":
 				if (function.getArguments()[0].isReal()) {
-					return new CompiledFuncMod2(context, compileArguments(function.getArguments()));
+					return new CompiledFuncMod2(context, compileArguments(function.getArguments()), function.getLocation());
 				} else {
-					return new CompiledFuncModZ2(context, compileArguments(function.getArguments()));
+					return new CompiledFuncModZ2(context, compileArguments(function.getArguments()), function.getLocation());
 				}
 			case "pha":
-				return new CompiledFuncPhaZ(context, compileArguments(function.getArguments()));
+				return new CompiledFuncPhaZ(context, compileArguments(function.getArguments()), function.getLocation());
 			case "re":
-				return new CompiledFuncReZ(context, compileArguments(function.getArguments()));
+				return new CompiledFuncReZ(context, compileArguments(function.getArguments()), function.getLocation());
 			case "im":
-				return new CompiledFuncImZ(context, compileArguments(function.getArguments()));
+				return new CompiledFuncImZ(context, compileArguments(function.getArguments()), function.getLocation());
 				
 			case "sin":
 				if (function.getArguments()[0].isReal()) {
-					return new CompiledFuncSin(context, compileArguments(function.getArguments()));
+					return new CompiledFuncSin(context, compileArguments(function.getArguments()), function.getLocation());
 				} else {
-					return new CompiledFuncSinZ(context, compileArguments(function.getArguments()));
+					return new CompiledFuncSinZ(context, compileArguments(function.getArguments()), function.getLocation());
 				}
 			case "cos":
 				if (function.getArguments()[0].isReal()) {
-					return new CompiledFuncCos(context, compileArguments(function.getArguments()));
+					return new CompiledFuncCos(context, compileArguments(function.getArguments()), function.getLocation());
 				} else {
-					return new CompiledFuncCosZ(context, compileArguments(function.getArguments()));
+					return new CompiledFuncCosZ(context, compileArguments(function.getArguments()), function.getLocation());
 				}
 			case "tan":
 				if (function.getArguments()[0].isReal()) {
-					return new CompiledFuncTan(context, compileArguments(function.getArguments()));
+					return new CompiledFuncTan(context, compileArguments(function.getArguments()), function.getLocation());
 				} else {
-					return new CompiledFuncTanZ(context, compileArguments(function.getArguments()));
+					return new CompiledFuncTanZ(context, compileArguments(function.getArguments()), function.getLocation());
 				}
 			case "asin":
-				return new CompiledFuncAsin(context, compileArguments(function.getArguments()));
+				return new CompiledFuncAsin(context, compileArguments(function.getArguments()), function.getLocation());
 			case "acos":
-				return new CompiledFuncAcos(context, compileArguments(function.getArguments()));
+				return new CompiledFuncAcos(context, compileArguments(function.getArguments()), function.getLocation());
 			case "atan":
-				return new CompiledFuncAtan(context, compileArguments(function.getArguments()));
+				return new CompiledFuncAtan(context, compileArguments(function.getArguments()), function.getLocation());
 	
 			case "abs":
-				return new CompiledFuncAbs(context, compileArguments(function.getArguments()));
+				return new CompiledFuncAbs(context, compileArguments(function.getArguments()), function.getLocation());
 			case "ceil":
-				return new CompiledFuncCeil(context, compileArguments(function.getArguments()));
+				return new CompiledFuncCeil(context, compileArguments(function.getArguments()), function.getLocation());
 			case "floor":
-				return new CompiledFuncFloor(context, compileArguments(function.getArguments()));
+				return new CompiledFuncFloor(context, compileArguments(function.getArguments()), function.getLocation());
 			case "log":
-				return new CompiledFuncLog(context, compileArguments(function.getArguments()));
+				return new CompiledFuncLog(context, compileArguments(function.getArguments()), function.getLocation());
 				
 			case "min":
-				return new CompiledFuncMin(context, compileArguments(function.getArguments()));
+				return new CompiledFuncMin(context, compileArguments(function.getArguments()), function.getLocation());
 			case "max":
-				return new CompiledFuncMax(context, compileArguments(function.getArguments()));
+				return new CompiledFuncMax(context, compileArguments(function.getArguments()), function.getLocation());
 			case "atan2":
-				return new CompiledFuncAtan2(context, compileArguments(function.getArguments()));
+				return new CompiledFuncAtan2(context, compileArguments(function.getArguments()), function.getLocation());
 			case "hypot":
-				return new CompiledFuncHypot(context, compileArguments(function.getArguments()));
+				return new CompiledFuncHypot(context, compileArguments(function.getArguments()), function.getLocation());
 				
 			case "pow":
 				if (function.getArguments()[0].isReal()) {
-					return new CompiledFuncPow(context, compileArguments(function.getArguments()));
+					return new CompiledFuncPow(context, compileArguments(function.getArguments()), function.getLocation());
 				} else {
-					return new CompiledFuncPowZ(context, compileArguments(function.getArguments()));
+					return new CompiledFuncPowZ(context, compileArguments(function.getArguments()), function.getLocation());
 				}
 	
 			case "sqrt":
 				if (function.getArguments()[0].isReal()) {
-					return new CompiledFuncSqrt(context, compileArguments(function.getArguments()));
+					return new CompiledFuncSqrt(context, compileArguments(function.getArguments()), function.getLocation());
 				} else {
-					return new CompiledFuncSqrtZ(context, compileArguments(function.getArguments()));
+					return new CompiledFuncSqrtZ(context, compileArguments(function.getArguments()), function.getLocation());
 				}
 			case "exp":
 				if (function.getArguments()[0].isReal()) {
-					return new CompiledFuncExp(context, compileArguments(function.getArguments()));
+					return new CompiledFuncExp(context, compileArguments(function.getArguments()), function.getLocation());
 				} else {
-					return new CompiledFuncExpZ(context, compileArguments(function.getArguments()));
+					return new CompiledFuncExpZ(context, compileArguments(function.getArguments()), function.getLocation());
 				}
 				
 			default:
@@ -316,10 +316,10 @@ public class InterpreterASTCompiler implements ASTExpressionCompiler {
 		if (exp2 == null) {
 			switch (operator.getOp()) {
 				case "-":
-					return new CompiledOperatorNeg(context, exp1.compile(this));
+					return new CompiledOperatorNeg(context, exp1.compile(this), operator.getLocation());
 				
 				case "+":
-					return new CompiledOperatorPos(context, exp1.compile(this));
+					return new CompiledOperatorPos(context, exp1.compile(this), operator.getLocation());
 				
 				default:
 					throw new ASTException("Unsupported operator: " + operator.getLocation().getText(), operator.getLocation());
@@ -328,22 +328,22 @@ public class InterpreterASTCompiler implements ASTExpressionCompiler {
 			if (exp1.isReal() && exp2.isReal()) {
 				switch (operator.getOp()) {
 					case "+":
-						return new CompiledOperatorAdd(context, exp1.compile(this), exp2.compile(this));
+						return new CompiledOperatorAdd(context, exp1.compile(this), exp2.compile(this), operator.getLocation());
 					
 					case "-":
-						return new CompiledOperatorSub(context, exp1.compile(this), exp2.compile(this));
+						return new CompiledOperatorSub(context, exp1.compile(this), exp2.compile(this), operator.getLocation());
 						
 					case "*":
-						return new CompiledOperatorMul(context, exp1.compile(this), exp2.compile(this));
+						return new CompiledOperatorMul(context, exp1.compile(this), exp2.compile(this), operator.getLocation());
 						
 					case "/":
-						return new CompiledOperatorDiv(context, exp1.compile(this), exp2.compile(this));
+						return new CompiledOperatorDiv(context, exp1.compile(this), exp2.compile(this), operator.getLocation());
 						
 					case "^":
-						return new CompiledOperatorPow(context, exp1.compile(this), exp2.compile(this));
+						return new CompiledOperatorPow(context, exp1.compile(this), exp2.compile(this), operator.getLocation());
 					
 					case "<>":
-						return new CompiledOperatorNumber(context, exp1.compile(this), exp2.compile(this));
+						return new CompiledOperatorNumber(context, exp1.compile(this), exp2.compile(this), operator.getLocation());
 					
 					default:
 						throw new ASTException("Unsupported operator: " + operator.getLocation().getText(), operator.getLocation());
@@ -351,19 +351,19 @@ public class InterpreterASTCompiler implements ASTExpressionCompiler {
 			} else if (exp1.isReal()) {
 				switch (operator.getOp()) {
 					case "+":
-						return new CompiledOperatorAddZ(context, exp1.compile(this), exp2.compile(this));
+						return new CompiledOperatorAddZ(context, exp1.compile(this), exp2.compile(this), operator.getLocation());
 					
 					case "-":
-						return new CompiledOperatorSubZ(context, exp1.compile(this), exp2.compile(this));
+						return new CompiledOperatorSubZ(context, exp1.compile(this), exp2.compile(this), operator.getLocation());
 						
 					case "*":
-						return new CompiledOperatorMulZ(context, exp1.compile(this), exp2.compile(this));
+						return new CompiledOperatorMulZ(context, exp1.compile(this), exp2.compile(this), operator.getLocation());
 						
 					case "/":
-						return new CompiledOperatorDivZ(context, exp1.compile(this), exp2.compile(this));
+						return new CompiledOperatorDivZ(context, exp1.compile(this), exp2.compile(this), operator.getLocation());
 						
 					case "^":
-						return new CompiledOperatorPowZ(context, exp1.compile(this), exp2.compile(this));
+						return new CompiledOperatorPowZ(context, exp1.compile(this), exp2.compile(this), operator.getLocation());
 					
 					default:
 						throw new ASTException("Unsupported operator: " + operator.getLocation().getText(), operator.getLocation());
@@ -371,19 +371,19 @@ public class InterpreterASTCompiler implements ASTExpressionCompiler {
 			} else if (exp2.isReal()) {
 				switch (operator.getOp()) {
 					case "+":
-						return new CompiledOperatorAddZ(context, exp1.compile(this), exp2.compile(this));
+						return new CompiledOperatorAddZ(context, exp1.compile(this), exp2.compile(this), operator.getLocation());
 					
 					case "-":
-						return new CompiledOperatorSubZ(context, exp1.compile(this), exp2.compile(this));
+						return new CompiledOperatorSubZ(context, exp1.compile(this), exp2.compile(this), operator.getLocation());
 						
 					case "*":
-						return new CompiledOperatorMulZ(context, exp1.compile(this), exp2.compile(this));
+						return new CompiledOperatorMulZ(context, exp1.compile(this), exp2.compile(this), operator.getLocation());
 						
 					case "/":
-						return new CompiledOperatorDivZ(context, exp1.compile(this), exp2.compile(this));
+						return new CompiledOperatorDivZ(context, exp1.compile(this), exp2.compile(this), operator.getLocation());
 						
 					case "^":
-						return new CompiledOperatorPowZ(context, exp1.compile(this), exp2.compile(this));
+						return new CompiledOperatorPowZ(context, exp1.compile(this), exp2.compile(this), operator.getLocation());
 					
 					default:
 						throw new ASTException("Unsupported operator: " + operator.getLocation().getText(), operator.getLocation());
@@ -391,16 +391,16 @@ public class InterpreterASTCompiler implements ASTExpressionCompiler {
 			} else {
 				switch (operator.getOp()) {
 					case "+":
-						return new CompiledOperatorAddZ(context, exp1.compile(this), exp2.compile(this));
+						return new CompiledOperatorAddZ(context, exp1.compile(this), exp2.compile(this), operator.getLocation());
 					
 					case "-":
-						return new CompiledOperatorSubZ(context, exp1.compile(this), exp2.compile(this));
+						return new CompiledOperatorSubZ(context, exp1.compile(this), exp2.compile(this), operator.getLocation());
 						
 					case "*":
-						return new CompiledOperatorMulZ(context, exp1.compile(this), exp2.compile(this));
+						return new CompiledOperatorMulZ(context, exp1.compile(this), exp2.compile(this), operator.getLocation());
 						
 					case "/":
-						return new CompiledOperatorDivZ(context, exp1.compile(this), exp2.compile(this));
+						return new CompiledOperatorDivZ(context, exp1.compile(this), exp2.compile(this), operator.getLocation());
 						
 					default:
 						throw new ASTException("Unsupported operator: " + operator.getLocation().getText(), operator.getLocation());
@@ -416,7 +416,7 @@ public class InterpreterASTCompiler implements ASTExpressionCompiler {
 
 	@Override
 	public CompiledExpression compile(ASTVariable variable) {
-		return new CompiledVariable(context, variable.getName(), variable.isReal());
+		return new CompiledVariable(context, variable.getName(), variable.isReal(), variable.getLocation());
 	}
 
 	@Override
@@ -427,22 +427,22 @@ public class InterpreterASTCompiler implements ASTExpressionCompiler {
 			exp1.compile(this);
 			switch (compareOp.getOp()) {
 				case ">":
-					return new CompiledLogicOperatorGreather(context, compileOperands(exp1, exp2));
+					return new CompiledLogicOperatorGreather(context, compileOperands(exp1, exp2), compareOp.getLocation());
 				
 				case "<":
-					return new CompiledLogicOperatorLesser(context, compileOperands(exp1, exp2));
+					return new CompiledLogicOperatorLesser(context, compileOperands(exp1, exp2), compareOp.getLocation());
 					
 				case ">=":
-					return new CompiledLogicOperatorGreatherOrEquals(context, compileOperands(exp1, exp2));
+					return new CompiledLogicOperatorGreatherOrEquals(context, compileOperands(exp1, exp2), compareOp.getLocation());
 					
 				case "<=":
-					return new CompiledLogicOperatorLesserOrEquals(context, compileOperands(exp1, exp2));
+					return new CompiledLogicOperatorLesserOrEquals(context, compileOperands(exp1, exp2), compareOp.getLocation());
 					
 				case "=":
-					return new CompiledLogicOperatorEquals(context, compileOperands(exp1, exp2));
+					return new CompiledLogicOperatorEquals(context, compileOperands(exp1, exp2), compareOp.getLocation());
 					
 				case "<>":
-					return new CompiledLogicOperatorNotEquals(context, compileOperands(exp1, exp2));
+					return new CompiledLogicOperatorNotEquals(context, compileOperands(exp1, exp2), compareOp.getLocation());
 				
 				default:
 					throw new ASTException("Unsupported operator: " + compareOp.getLocation().getText(), compareOp.getLocation());
@@ -458,13 +458,13 @@ public class InterpreterASTCompiler implements ASTExpressionCompiler {
 		ASTConditionExpression exp2 = logicOp.getExp2();
 		switch (logicOp.getOp()) {
 			case "&":
-				return new CompiledLogicOperatorAnd(context, compileLogicOperands(exp1, exp2));
+				return new CompiledLogicOperatorAnd(context, compileLogicOperands(exp1, exp2), logicOp.getLocation());
 			
 			case "|":
-				return new CompiledLogicOperatorOr(context, compileLogicOperands(exp1, exp2));
+				return new CompiledLogicOperatorOr(context, compileLogicOperands(exp1, exp2), logicOp.getLocation());
 				
 			case "^":
-				return new CompiledLogicOperatorXor(context, compileLogicOperands(exp1, exp2));
+				return new CompiledLogicOperatorXor(context, compileLogicOperands(exp1, exp2), logicOp.getLocation());
 				
 			default:
 				throw new ASTException("Unsupported operator: " + logicOp.getLocation().getText(), logicOp.getLocation());
@@ -474,9 +474,9 @@ public class InterpreterASTCompiler implements ASTExpressionCompiler {
 	@Override
 	public CompiledCondition compile(ASTConditionTrap trap) {
 		if (trap.isContains()) {
-			return new CompiledTrapCondition(trap.getName(), trap.getExp().compile(this));
+			return new CompiledTrapCondition(trap.getName(), trap.getExp().compile(this), trap.getLocation());
 		} else {
-			return new CompiledTrapInvertedCondition(trap.getName(), trap.getExp().compile(this));
+			return new CompiledTrapInvertedCondition(trap.getName(), trap.getExp().compile(this), trap.getLocation());
 		}
 	}
 
@@ -486,13 +486,13 @@ public class InterpreterASTCompiler implements ASTExpressionCompiler {
 		ASTRuleExpression exp2 = logicOp.getExp2();
 		switch (logicOp.getOp()) {
 			case "&":
-				return new CompiledLogicOperatorAnd(context, compileLogicOperands(exp1, exp2));
+				return new CompiledLogicOperatorAnd(context, compileLogicOperands(exp1, exp2), logicOp.getLocation());
 			
 			case "|":
-				return new CompiledLogicOperatorOr(context, compileLogicOperands(exp1, exp2));
+				return new CompiledLogicOperatorOr(context, compileLogicOperands(exp1, exp2), logicOp.getLocation());
 				
 			case "^":
-				return new CompiledLogicOperatorXor(context, compileLogicOperands(exp1, exp2));
+				return new CompiledLogicOperatorXor(context, compileLogicOperands(exp1, exp2), logicOp.getLocation());
 				
 			default:
 				throw new ASTException("Unsupported operator: " + logicOp.getLocation().getText(), logicOp.getLocation());
@@ -506,22 +506,22 @@ public class InterpreterASTCompiler implements ASTExpressionCompiler {
 		if (exp1.isReal() && exp2.isReal()) {
 			switch (compareOp.getOp()) {
 				case ">":
-					return new CompiledLogicOperatorGreather(context, compileOperands(exp1, exp2));
+					return new CompiledLogicOperatorGreather(context, compileOperands(exp1, exp2), compareOp.getLocation());
 				
 				case "<":
-					return new CompiledLogicOperatorLesser(context, compileOperands(exp1, exp2));
+					return new CompiledLogicOperatorLesser(context, compileOperands(exp1, exp2), compareOp.getLocation());
 					
 				case ">=":
-					return new CompiledLogicOperatorGreatherOrEquals(context, compileOperands(exp1, exp2));
+					return new CompiledLogicOperatorGreatherOrEquals(context, compileOperands(exp1, exp2), compareOp.getLocation());
 					
 				case "<=":
-					return new CompiledLogicOperatorLesserOrEquals(context, compileOperands(exp1, exp2));
+					return new CompiledLogicOperatorLesserOrEquals(context, compileOperands(exp1, exp2), compareOp.getLocation());
 					
 				case "=":
-					return new CompiledLogicOperatorEquals(context, compileOperands(exp1, exp2));
+					return new CompiledLogicOperatorEquals(context, compileOperands(exp1, exp2), compareOp.getLocation());
 					
 				case "<>":
-					return new CompiledLogicOperatorNotEquals(context, compileOperands(exp1, exp2));
+					return new CompiledLogicOperatorNotEquals(context, compileOperands(exp1, exp2), compareOp.getLocation());
 				
 				default:
 					throw new ASTException("Unsupported operator: " + compareOp.getLocation().getText(), compareOp.getLocation());
@@ -534,7 +534,7 @@ public class InterpreterASTCompiler implements ASTExpressionCompiler {
 	@Override
 	public CompiledColorExpression compile(ASTColorPalette palette) {
 		if (palette.getExp().isReal()) {
-			return new CompiledPaletteExpression(palette.getName(), palette.getExp().compile(this));
+			return new CompiledPaletteExpression(palette.getName(), palette.getExp().compile(this), palette.getLocation());
 		} else {
 			throw new ASTException("Expression type not valid: " + palette.getLocation().getText(), palette.getLocation());
 		}
@@ -555,7 +555,7 @@ public class InterpreterASTCompiler implements ASTExpressionCompiler {
 		if (component.getExp4() != null) {
 			exp4 = component.getExp4().compile(this);
 		}
-		return new CompiledColorComponentExpression(exp1, exp2, exp3, exp4);
+		return new CompiledColorComponentExpression(exp1, exp2, exp3, exp4, component.getLocation());
 	}
 
 	@Override
@@ -570,22 +570,22 @@ public class InterpreterASTCompiler implements ASTExpressionCompiler {
 				elseStatements.add(innerStatement.compile(this));
 			}
 		}
-		return new CompiledConditionalStatement(statement.getConditionExp().compile(this), thenStatements, elseStatements);
+		return new CompiledConditionalStatement(statement.getConditionExp().compile(this), thenStatements, elseStatements, statement.getLocation());
 	}
 
 	@Override
 	public CompiledStatement compile(ASTAssignStatement statement) {
-		return new CompiledAssignStatement(statement.getName(), statement.getExp().compile(this));
+		return new CompiledAssignStatement(statement.getName(), statement.getExp().compile(this), statement.getLocation());
 	}
 
 	@Override
 	public CompiledStatement compile(ASTStopStatement statement) {
-		return new CompiledStopStatement();
+		return new CompiledStopStatement(statement.getLocation());
 	}
 
 	@Override
 	public CompiledCondition compile(ASTConditionJulia condition) {
-		return new CompiledJuliaCondition();
+		return new CompiledJuliaCondition(condition.getLocation());
 	}
 
 	@Override
@@ -595,12 +595,12 @@ public class InterpreterASTCompiler implements ASTExpressionCompiler {
 
 	@Override
 	public CompiledCondition compile(ASTConditionNeg condition) {
-		return new CompiledInvertedCondition(condition.getExp().compile(this)) ;
+		return new CompiledInvertedCondition(condition.getExp().compile(this), condition.getLocation());
 	}
 
 	@Override
 	public CompiledTrap compile(ASTOrbitTrap orbitTrap) {
-		CompiledTrap trap = new CompiledTrap();
+		CompiledTrap trap = new CompiledTrap(orbitTrap.getLocation());
 		trap.setName(orbitTrap.getName());
 		trap.setCenter(new Number(orbitTrap.getCenter().r(), orbitTrap.getCenter().i()));
 		List<CompiledTrapOp> operators = new ArrayList<>();
@@ -627,34 +627,34 @@ public class InterpreterASTCompiler implements ASTExpressionCompiler {
 		}
 		switch (orbitTrapOp.getOp()) {
 			case "MOVETO":
-				return new CompiledTrapOpMoveTo(c1);
+				return new CompiledTrapOpMoveTo(c1, orbitTrapOp.getLocation());
 	
 			case "MOVETOREL":
-				return new CompiledTrapOpMoveToRel(c1);
+				return new CompiledTrapOpMoveToRel(c1, orbitTrapOp.getLocation());
 	
 			case "LINETO":
-				return new CompiledTrapOpLineTo(c1);
+				return new CompiledTrapOpLineTo(c1, orbitTrapOp.getLocation());
 	
 			case "LINETOREL":
-				return new CompiledTrapOpLineToRel(c1);
+				return new CompiledTrapOpLineToRel(c1, orbitTrapOp.getLocation());
 	
 			case "ARCTO":
-				return new CompiledTrapOpArcTo(c1, c2);
+				return new CompiledTrapOpArcTo(c1, c2, orbitTrapOp.getLocation());
 	
 			case "ARCTOREL":
-				return new CompiledTrapOpArcToRel(c1, c2);
+				return new CompiledTrapOpArcToRel(c1, c2, orbitTrapOp.getLocation());
 	
 			case "QUADTO":
-				return new CompiledTrapOpQuadTo(c1, c2);
+				return new CompiledTrapOpQuadTo(c1, c2, orbitTrapOp.getLocation());
 	
 			case "QUADTOREL":
-				return new CompiledTrapOpQuadToRel(c1, c2);
+				return new CompiledTrapOpQuadToRel(c1, c2, orbitTrapOp.getLocation());
 	
 			case "CURVETO":
-				return new CompiledTrapOpCurveTo(c1, c2, c3);
+				return new CompiledTrapOpCurveTo(c1, c2, c3, orbitTrapOp.getLocation());
 	
 			case "CURVETOREL":
-				return new CompiledTrapOpCurveToRel(c1, c2, c3);
+				return new CompiledTrapOpCurveToRel(c1, c2, c3, orbitTrapOp.getLocation());
 	
 			default:
 				throw new ASTException("Unsupported operator: " + orbitTrapOp.getLocation().getText(), orbitTrapOp.getLocation());
@@ -663,7 +663,7 @@ public class InterpreterASTCompiler implements ASTExpressionCompiler {
 
 	@Override
 	public CompiledPalette compile(ASTPalette astPalette) {
-		CompiledPalette palette = new CompiledPalette();
+		CompiledPalette palette = new CompiledPalette(astPalette.getLocation());
 		palette.setName(astPalette.getName());
 		List<CompiledPaletteElement> elements = new ArrayList<>();
 		for (ASTPaletteElement astElement : astPalette.getElements()) {
@@ -675,7 +675,7 @@ public class InterpreterASTCompiler implements ASTExpressionCompiler {
 
 	@Override
 	public CompiledPaletteElement compile(ASTPaletteElement astElement) {
-		return new CompiledPaletteElement(astElement.getBeginColor().getComponents(), astElement.getEndColor().getComponents(), astElement.getSteps(), astElement.getExp() != null ? astElement.getExp().compile(this) : null);
+		return new CompiledPaletteElement(astElement.getBeginColor().getComponents(), astElement.getEndColor().getComponents(), astElement.getSteps(), astElement.getExp() != null ? astElement.getExp().compile(this) : null, astElement.getLocation());
 	}
 
 	private CompiledExpression[] compileArguments(ASTExpression[] arguments) {

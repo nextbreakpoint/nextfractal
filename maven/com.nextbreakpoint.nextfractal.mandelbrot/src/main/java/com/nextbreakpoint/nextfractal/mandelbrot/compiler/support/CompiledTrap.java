@@ -26,12 +26,19 @@ package com.nextbreakpoint.nextfractal.mandelbrot.compiler.support;
 
 import java.util.List;
 
+import org.antlr.v4.runtime.Token;
+
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 
 public class CompiledTrap {
 	private String name;
 	private Number center;
 	private List<CompiledTrapOp> operators;
+	protected Token location;
+
+	public CompiledTrap(Token location) {
+		this.location = location;
+	}
 
 	public String getName() {
 		return name;
@@ -55,5 +62,9 @@ public class CompiledTrap {
 
 	public void setOperators(List<CompiledTrapOp> operators) {
 		this.operators = operators;
+	}
+
+	public Token getLocation() {
+		return location;
 	}
 }

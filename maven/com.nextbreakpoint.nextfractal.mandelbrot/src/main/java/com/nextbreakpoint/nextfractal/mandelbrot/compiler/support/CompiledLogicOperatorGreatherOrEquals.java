@@ -26,14 +26,17 @@ package com.nextbreakpoint.nextfractal.mandelbrot.compiler.support;
 
 import java.util.Map;
 
+import org.antlr.v4.runtime.Token;
+
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.ExpressionContext;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.InterpreterContext;
 
-public class CompiledLogicOperatorGreatherOrEquals implements CompiledCondition {
+public class CompiledLogicOperatorGreatherOrEquals extends CompiledCondition {
 	private CompiledExpression[] operands;
 	
-	public CompiledLogicOperatorGreatherOrEquals(ExpressionContext context, CompiledExpression[] operands) {
+	public CompiledLogicOperatorGreatherOrEquals(ExpressionContext context, CompiledExpression[] operands, Token location) {
+		super(location);
 		this.operands = operands;
 	}
 

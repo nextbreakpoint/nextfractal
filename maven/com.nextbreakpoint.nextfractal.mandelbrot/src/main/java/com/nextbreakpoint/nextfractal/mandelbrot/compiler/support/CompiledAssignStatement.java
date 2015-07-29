@@ -26,15 +26,18 @@ package com.nextbreakpoint.nextfractal.mandelbrot.compiler.support;
 
 import java.util.Map;
 
+import org.antlr.v4.runtime.Token;
+
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.InterpreterContext;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTException;
 
-public class CompiledAssignStatement implements CompiledStatement {
+public class CompiledAssignStatement extends CompiledStatement {
 	private String name;
 	private CompiledExpression exp;
 	
-	public CompiledAssignStatement(String name, CompiledExpression exp) {
+	public CompiledAssignStatement(String name, CompiledExpression exp, Token location) {
+		super(location);
 		this.name = name;
 		this.exp = exp;
 	}
@@ -48,7 +51,7 @@ public class CompiledAssignStatement implements CompiledStatement {
 			} else if (!var.isReal()) {
 				var.setValue(exp.evaluate(context, scope));
 			} else {
-				throw new ASTException("Cannot assign expression", null);
+				throw new ASTException("Cannot assign expression", getLocation());
 			}
 		} else {
 			var = new CompilerVariable(name, exp.isReal(), false);

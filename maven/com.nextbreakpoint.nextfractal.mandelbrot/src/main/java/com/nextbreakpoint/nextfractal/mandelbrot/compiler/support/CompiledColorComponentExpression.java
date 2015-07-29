@@ -26,16 +26,19 @@ package com.nextbreakpoint.nextfractal.mandelbrot.compiler.support;
 
 import java.util.Map;
 
+import org.antlr.v4.runtime.Token;
+
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.InterpreterContext;
 
-public class CompiledColorComponentExpression implements CompiledColorExpression {
+public class CompiledColorComponentExpression extends CompiledColorExpression {
 	private CompiledExpression exp1;
 	private CompiledExpression exp2;
 	private CompiledExpression exp3;
 	private CompiledExpression exp4;
 	
-	public CompiledColorComponentExpression(CompiledExpression exp1, CompiledExpression exp2, CompiledExpression exp3, CompiledExpression exp4) {
+	public CompiledColorComponentExpression(CompiledExpression exp1, CompiledExpression exp2, CompiledExpression exp3, CompiledExpression exp4, Token location) {
+		super(location);
 		this.exp1 = exp1;
 		this.exp2 = exp2;
 		this.exp3 = exp3;

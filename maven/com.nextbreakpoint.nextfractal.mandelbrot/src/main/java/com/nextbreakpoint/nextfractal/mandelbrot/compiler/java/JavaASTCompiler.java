@@ -648,7 +648,7 @@ public class JavaASTCompiler implements ASTExpressionCompiler {
 
 	@Override
 	public CompiledTrap compile(ASTOrbitTrap orbitTrap) {
-		CompiledTrap trap = new CompiledTrap();
+		CompiledTrap trap = new CompiledTrap(orbitTrap.getLocation());
 		trap.setName(orbitTrap.getName());
 		trap.setCenter(new Number(orbitTrap.getCenter().r(), orbitTrap.getCenter().i()));
 		List<CompiledTrapOp> operators = new ArrayList<>();
@@ -675,34 +675,34 @@ public class JavaASTCompiler implements ASTExpressionCompiler {
 		}
 		switch (orbitTrapOp.getOp()) {
 			case "MOVETO":
-				return new CompiledTrapOpMoveTo(c1);
+				return new CompiledTrapOpMoveTo(c1, orbitTrapOp.getLocation());
 	
 			case "MOVETOREL":
-				return new CompiledTrapOpMoveToRel(c1);
+				return new CompiledTrapOpMoveToRel(c1, orbitTrapOp.getLocation());
 	
 			case "LINETO":
-				return new CompiledTrapOpLineTo(c1);
+				return new CompiledTrapOpLineTo(c1, orbitTrapOp.getLocation());
 	
 			case "LINETOREL":
-				return new CompiledTrapOpLineToRel(c1);
+				return new CompiledTrapOpLineToRel(c1, orbitTrapOp.getLocation());
 	
 			case "ARCTO":
-				return new CompiledTrapOpArcTo(c1, c2);
+				return new CompiledTrapOpArcTo(c1, c2, orbitTrapOp.getLocation());
 	
 			case "ARCTOREL":
-				return new CompiledTrapOpArcToRel(c1, c2);
+				return new CompiledTrapOpArcToRel(c1, c2, orbitTrapOp.getLocation());
 	
 			case "QUADTO":
-				return new CompiledTrapOpQuadTo(c1, c2);
+				return new CompiledTrapOpQuadTo(c1, c2, orbitTrapOp.getLocation());
 	
 			case "QUADTOREL":
-				return new CompiledTrapOpQuadToRel(c1, c2);
+				return new CompiledTrapOpQuadToRel(c1, c2, orbitTrapOp.getLocation());
 	
 			case "CURVETO":
-				return new CompiledTrapOpCurveTo(c1, c2, c3);
+				return new CompiledTrapOpCurveTo(c1, c2, c3, orbitTrapOp.getLocation());
 	
 			case "CURVETOREL":
-				return new CompiledTrapOpCurveToRel(c1, c2, c3);
+				return new CompiledTrapOpCurveToRel(c1, c2, c3, orbitTrapOp.getLocation());
 	
 			default:
 				throw new ASTException("Unsupported operator: " + orbitTrapOp.getLocation().getText(), orbitTrapOp.getLocation());
@@ -711,7 +711,7 @@ public class JavaASTCompiler implements ASTExpressionCompiler {
 
 	@Override
 	public CompiledPalette compile(ASTPalette astPalette) {
-		CompiledPalette palette = new CompiledPalette();
+		CompiledPalette palette = new CompiledPalette(astPalette.getLocation());
 		palette.setName(astPalette.getName());
 		List<CompiledPaletteElement> elements = new ArrayList<>();
 		for (ASTPaletteElement astElement : astPalette.getElements()) {
@@ -723,6 +723,6 @@ public class JavaASTCompiler implements ASTExpressionCompiler {
 
 	@Override
 	public CompiledPaletteElement compile(ASTPaletteElement astElement) {
-		return new CompiledPaletteElement(astElement.getBeginColor().getComponents(), astElement.getEndColor().getComponents(), astElement.getSteps(), astElement.getExp() != null ? astElement.getExp().compile(this) : null);
+		return new CompiledPaletteElement(astElement.getBeginColor().getComponents(), astElement.getEndColor().getComponents(), astElement.getSteps(), astElement.getExp() != null ? astElement.getExp().compile(this) : null, astElement.getLocation());
 	}
 }

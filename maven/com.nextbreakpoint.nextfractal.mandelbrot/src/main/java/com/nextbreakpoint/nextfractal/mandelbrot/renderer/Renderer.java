@@ -25,6 +25,8 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.renderer;
 
 import java.nio.IntBuffer;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -46,6 +48,7 @@ import com.nextbreakpoint.nextfractal.mandelbrot.core.MutableNumber;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Orbit;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Trap;
+import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTException;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.strategy.JuliaRendererStrategy;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.strategy.MandelbrotRendererStrategy;
 
@@ -69,6 +72,7 @@ public class Renderer {
 	protected volatile boolean regionChanged;
 	protected volatile boolean juliaChanged;
 	protected volatile boolean pointChanged;
+	protected volatile boolean errorChanged;
 	protected volatile float progress;
 	protected volatile double rotation;
 	protected boolean julia;
@@ -81,6 +85,7 @@ public class Renderer {
 	protected RendererSize size;
 	protected RendererView view;
 	protected RendererTile tile;
+	protected final List<RendererError> errors = Collections.synchronizedList(new ArrayList<RendererError>());
 	private final RendererLock lock = new DummyRendererLock();
 	private final RenderRunnable renderTask = new RenderRunnable();
 	private ExecutorService executor;
@@ -420,6 +425,8 @@ public class Renderer {
 	 */
 	protected void doRender() {
 		try {
+			errors.clear();
+			errorChanged = true;
 //			if (isInterrupted()) {
 //				progress = 0;
 //				rendererData.swap();
@@ -514,8 +521,14 @@ public class Renderer {
 				didChanged(progress, rendererData.getPixels());
 			}
 			Thread.yield();
+		} catch (ASTException e) {
+			logger.log(Level.WARNING, "Rendering error", e);
+			errors.add(new RendererError(e.getLocation().getLine(), e.getLocation().getCharPositionInLine(), e.getLocation().getStartIndex(), e.getLocation().getStopIndex() - e.getLocation().getStartIndex(), e.getMessage()));
+			errorChanged = true;
 		} catch (Throwable e) {
 			logger.log(Level.WARNING, "Cannot render fractal", e);
+			errors.add(new RendererError(0, 0, 0, 0, e.getMessage()));
+			errorChanged = true;
 		}
 	}
 
@@ -636,5 +649,15 @@ public class Renderer {
 
 	public List<Trap> getTraps() {
 		return rendererFractal.getOrbit().getTraps();
+	}
+
+	public boolean isErrorsChanged() {
+		boolean value = errorChanged;
+		errorChanged = false;
+		return value;
+	}
+
+	public List<RendererError> getErrors() {
+		return errors;
 	}
 }

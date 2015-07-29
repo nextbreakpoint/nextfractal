@@ -26,19 +26,20 @@ package com.nextbreakpoint.nextfractal.mandelbrot.compiler.support;
 
 import java.util.Map;
 
+import org.antlr.v4.runtime.Token;
+
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.ExpressionContext;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.InterpreterContext;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.MutableNumber;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 
-public class CompiledNumber implements CompiledExpression {
+public class CompiledNumber extends CompiledExpression {
 	private double r;
 	private double i;
-	private int index;
 
-	public CompiledNumber(ExpressionContext context, double r, double i) {
-		this.index = context.newNumberIndex();
+	public CompiledNumber(ExpressionContext context, double r, double i, Token location) {
+		super(context.newNumberIndex(), location);
 		this.r = r;
 		this.i = i;
 	}

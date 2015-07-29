@@ -66,7 +66,7 @@ public class InterpreterOrbitBuilder implements CompilerBuilder<Orbit> {
 		for (CompilerVariable var : astFractal.getStateVariables()) {
 			stateVars.add(var.copy());
 		}
-		CompiledOrbit orbit = new CompiledOrbit(orbitVars, stateVars);
+		CompiledOrbit orbit = new CompiledOrbit(orbitVars, stateVars, astOrbit.getLocation());
 		orbit.setRegion(new Number[] { new Number(ar, ai), new Number(br, bi) });
 		List<CompiledStatement> beginStatements = new ArrayList<>();
 		List<CompiledStatement> loopStatements = new ArrayList<>();

@@ -27,6 +27,8 @@ package com.nextbreakpoint.nextfractal.mandelbrot.compiler.support;
 import java.util.Collection;
 import java.util.List;
 
+import org.antlr.v4.runtime.Token;
+
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
 
 public class CompiledColor {
@@ -37,8 +39,10 @@ public class CompiledColor {
 	private List<CompiledRule> rules;
 	private List<CompiledPalette> palettes;
 	private List<CompiledStatement> initStatements;
+	private Token location;
 	
-	public CompiledColor(Collection<CompilerVariable> colorVariables, Collection<CompilerVariable> stateVariables) {
+	public CompiledColor(Collection<CompilerVariable> colorVariables, Collection<CompilerVariable> stateVariables, Token location) {
+		this.location = location; 
 		this.colorVariables = colorVariables;
 		this.stateVariables = stateVariables;
 	}
@@ -89,5 +93,9 @@ public class CompiledColor {
 
 	public void setInitStatements(List<CompiledStatement> initStatements) {
 		this.initStatements = initStatements;
+	}
+
+	public Token getLocation() {
+		return location;
 	}
 }

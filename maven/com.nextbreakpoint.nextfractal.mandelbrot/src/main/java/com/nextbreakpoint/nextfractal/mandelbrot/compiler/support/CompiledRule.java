@@ -24,10 +24,17 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.compiler.support;
 
+import org.antlr.v4.runtime.Token;
+
 public class CompiledRule {
 	private CompiledCondition ruleCondition;
 	private CompiledColorExpression colorExp;
 	private double opacity;
+	private Token location;
+
+	public CompiledRule(Token location) {
+		this.location = location;
+	}
 
 	public CompiledCondition getRuleCondition() {
 		return ruleCondition;
@@ -51,5 +58,9 @@ public class CompiledRule {
 
 	public void setOpacity(double opacity) {
 		this.opacity = opacity;
+	}
+
+	public Token getLocation() {
+		return location;
 	}
 }

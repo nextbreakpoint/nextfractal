@@ -24,13 +24,16 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.compiler.support;
 
+import org.antlr.v4.runtime.Token;
+
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Trap;
 
-public class CompiledTrapOpMoveToRel implements CompiledTrapOp {
+public class CompiledTrapOpMoveToRel extends CompiledTrapOp {
 	private Number c1;
 	
-	public CompiledTrapOpMoveToRel(Number c1) {
+	public CompiledTrapOpMoveToRel(Number c1, Token location) {
+		super(location);
 		this.c1 = c1;
 	}
 

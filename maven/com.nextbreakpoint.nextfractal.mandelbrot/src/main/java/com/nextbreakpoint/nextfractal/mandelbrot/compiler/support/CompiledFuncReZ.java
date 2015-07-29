@@ -28,17 +28,18 @@ import static com.nextbreakpoint.nextfractal.mandelbrot.core.Expression.funcRe;
 
 import java.util.Map;
 
+import org.antlr.v4.runtime.Token;
+
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.ExpressionContext;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.InterpreterContext;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 
-public class CompiledFuncReZ implements CompiledExpression {
+public class CompiledFuncReZ extends CompiledExpression {
 	private CompiledExpression[] arguments;
-	private int index;
 	
-	public CompiledFuncReZ(ExpressionContext context, CompiledExpression[] arguments) {
-		this.index = context.newNumberIndex();
+	public CompiledFuncReZ(ExpressionContext context, CompiledExpression[] arguments, Token location) {
+		super(context.newNumberIndex(), location);
 		this.arguments = arguments;
 	}
 
