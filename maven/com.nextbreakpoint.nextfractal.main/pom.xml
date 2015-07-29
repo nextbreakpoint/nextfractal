@@ -4,7 +4,7 @@
  	<parent>
         <groupId>com.nextbreakpoint.nextfractal</groupId>
         <artifactId>com.nextbreakpoint.nextfractal.parent</artifactId>
-        <version>1.1.2</version>
+        <version>1.1.3</version>
     </parent>
 	<artifactId>com.nextbreakpoint.nextfractal.main</artifactId>
 	<packaging>pom</packaging>
