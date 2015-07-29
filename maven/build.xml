@@ -225,7 +225,7 @@
 	<condition property="is_macosx">
 		<os family="mac" />
 	</condition>
-	<target name="clean">
+	<target name="clean" depends="-clear">
 		<maven basedir="${basedir}" goal="clean" resultproperty="maven.build.result" />
 	</target>
 	<target name="update-version">

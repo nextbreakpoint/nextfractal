@@ -151,6 +151,16 @@ statement
 		builder.appendStatement(new ASTConditionalStatement($f, $c.result, thenList));
 	} 
 	|
+	f=IF '(' c=conditionexp ')' {
+		builder.pushScope();	
+		builder.pushStatementList();
+	} statement ';'? {
+		ASTStatementList thenList = builder.getStatementList();
+		builder.popScope();	
+		builder.popStatementList();
+		builder.appendStatement(new ASTConditionalStatement($f, $c.result, thenList));
+	} 
+	|
 	t=STOP ';'? {
 		builder.appendStatement(new ASTStopStatement($t));
 	}
@@ -317,8 +327,12 @@ expression returns [ASTExpression result]
 	e1=expression s='-' e2=expression2 {
 		$result = new ASTOperator($s, "-", $e1.result, $e2.result);		
 	}
+//	|
+//	d=conditionexp5 '?' el=expression ':' er=expression {
+//		$result = new ASTConditionalExpression($d.result.getLocation(), $d.result, $el.result, $er.result);
+//	}
 	;
-
+	
 expression2 returns [ASTExpression result]
 	:
 	e=simpleexpression {

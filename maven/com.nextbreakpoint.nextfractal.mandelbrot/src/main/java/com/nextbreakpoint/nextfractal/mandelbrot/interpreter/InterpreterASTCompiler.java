@@ -35,6 +35,7 @@ import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledAssign
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledColorComponentExpression;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledColorExpression;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledCondition;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledConditionalExpression;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledConditionalStatement;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledExpression;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledFuncAbs;
@@ -123,6 +124,7 @@ import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTConditionLogicOp;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTConditionNeg;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTConditionParen;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTConditionTrap;
+import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTConditionalExpression;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTConditionalStatement;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTException;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTExpression;
@@ -714,5 +716,10 @@ public class InterpreterASTCompiler implements ASTExpressionCompiler {
 		operands[0] = exp1.compile(this);
 		operands[1] = exp2.compile(this);
 		return operands;
+	}
+
+	@Override
+	public CompiledExpression compile(ASTConditionalExpression astConditionalExpression) {
+		return new CompiledConditionalExpression(context, astConditionalExpression.getConditionExp().compile(this), astConditionalExpression.getThenExp().compile(this), astConditionalExpression.getElseExp().compile(this), astConditionalExpression.getLocation());
 	}
 }

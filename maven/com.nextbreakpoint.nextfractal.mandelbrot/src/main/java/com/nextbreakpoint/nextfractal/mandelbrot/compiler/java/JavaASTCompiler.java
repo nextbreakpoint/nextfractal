@@ -60,6 +60,7 @@ import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTConditionLogicOp;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTConditionNeg;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTConditionParen;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTConditionTrap;
+import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTConditionalExpression;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTConditionalStatement;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTException;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTExpression;
@@ -724,5 +725,11 @@ public class JavaASTCompiler implements ASTExpressionCompiler {
 	@Override
 	public CompiledPaletteElement compile(ASTPaletteElement astElement) {
 		return new CompiledPaletteElement(astElement.getBeginColor().getComponents(), astElement.getEndColor().getComponents(), astElement.getSteps(), astElement.getExp() != null ? astElement.getExp().compile(this) : null, astElement.getLocation());
+	}
+
+	@Override
+	public CompiledExpression compile(ASTConditionalExpression astConditionalExpression) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

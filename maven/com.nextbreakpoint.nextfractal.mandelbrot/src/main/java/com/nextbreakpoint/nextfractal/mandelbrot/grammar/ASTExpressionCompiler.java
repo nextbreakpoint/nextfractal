@@ -77,4 +77,6 @@ public interface ASTExpressionCompiler {
 	public CompiledPalette compile(ASTPalette astPalette);
 
 	public CompiledPaletteElement compile(ASTPaletteElement astPaletteElement);
+
+	public CompiledExpression compile(ASTConditionalExpression astConditionalExpression);
 }
