@@ -37,11 +37,11 @@ import com.nextbreakpoint.nextfractal.mandelbrot.core.Orbit;
 public class InterpreterClassCompiler {
 	public CompilerBuilder<Orbit> compileOrbit(CompilerReport report) throws ClassNotFoundException, IOException {
 		List<CompilerError> errors = new ArrayList<>();
-		return new InterpreterOrbitBuilder(report.getAST(), errors);
+		return new InterpreterOrbitBuilder(report.getAST(), report.getOrbitSource(), errors);
 	}
 
 	public CompilerBuilder<Color> compileColor(CompilerReport report) throws ClassNotFoundException, IOException {
 		List<CompilerError> errors = new ArrayList<>();
-		return new InterpreterColorBuilder(report.getAST(), errors);
+		return new InterpreterColorBuilder(report.getAST(), report.getColorSource(), errors);
 	}
 }	

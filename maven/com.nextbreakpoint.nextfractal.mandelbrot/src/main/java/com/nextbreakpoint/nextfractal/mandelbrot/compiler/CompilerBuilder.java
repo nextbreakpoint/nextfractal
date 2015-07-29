@@ -27,7 +27,7 @@ package com.nextbreakpoint.nextfractal.mandelbrot.compiler;
 import java.util.List;
 
 public interface CompilerBuilder<T> {
-	public T build() throws InstantiationException, IllegalAccessException;
+	public T build() throws InstantiationException, IllegalAccessException, CompilerSourceException;
 
 	public List<CompilerError> getErrors();
 }

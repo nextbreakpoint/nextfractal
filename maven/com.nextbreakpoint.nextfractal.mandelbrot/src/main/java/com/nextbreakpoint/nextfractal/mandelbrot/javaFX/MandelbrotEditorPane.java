@@ -80,8 +80,13 @@ import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotImageGenerator;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotListener;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotSession;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.Compiler;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerBuilder;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerError;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerError.ErrorType;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerReport;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerSourceException;
+import com.nextbreakpoint.nextfractal.mandelbrot.core.Color;
+import com.nextbreakpoint.nextfractal.mandelbrot.core.Orbit;
 
 public class MandelbrotEditorPane extends BorderPane {
 	private static final Logger logger = Logger.getLogger(MandelbrotEditorPane.class.getName());
@@ -551,11 +556,29 @@ public class MandelbrotEditorPane extends BorderPane {
 	
     private void applyTaskResult(TaskResult result) {
     	if (result != null) {
+    		buildOrbitAndColor(result.report);
     		updateReportAndSource(result.source, result.report);
     		codeArea.setStyleSpans(0, result.highlighting);
     		displayErrors();
     	}
     }
+
+	private void buildOrbitAndColor(CompilerReport report) {
+		try {
+			Compiler compiler = new Compiler();
+			CompilerBuilder<Orbit> newOrbitBuilder = compiler.compileOrbit(report);
+			if (newOrbitBuilder.getErrors().size() == 0) {
+				newOrbitBuilder.build();
+			}
+			CompilerBuilder<Color> newColorBuilder = compiler.compileColor(report);
+			if (newColorBuilder.getErrors().size() == 0) {
+				newColorBuilder.build();
+			}
+		} catch (CompilerSourceException e) {
+			report.getErrors().addAll(e.getErrors());
+		} catch (Exception e) {
+		}
+	}
 
 	private StyleSpans<Collection<String>> computeHighlighting(String text) {
 		Matcher matcher = highlightingPattern.matcher(text);

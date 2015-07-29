@@ -24,8 +24,11 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.grammar;
 
+import java.util.Map;
+
 import org.antlr.v4.runtime.Token;
 
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledStatement;
 
 public class ASTAssignStatement extends ASTStatement {
@@ -56,7 +59,7 @@ public class ASTAssignStatement extends ASTStatement {
 	}
 
 	@Override
-	public CompiledStatement compile(ASTExpressionCompiler compiler) {
+	public CompiledStatement compile(ASTExpressionCompiler compiler, Map<String, CompilerVariable> scope) {
 		return compiler.compile(this);
 	}
 }

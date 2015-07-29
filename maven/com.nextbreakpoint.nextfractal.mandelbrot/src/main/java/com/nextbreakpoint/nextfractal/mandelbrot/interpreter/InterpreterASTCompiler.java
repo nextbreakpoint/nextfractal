@@ -25,8 +25,11 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.interpreter;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.ExpressionContext;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledAssignStatement;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledColorComponentExpression;
@@ -140,10 +143,12 @@ import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTStopStatement;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTVariable;
 
 public class InterpreterASTCompiler implements ASTExpressionCompiler {
+	private final Map<String, CompilerVariable> variables;
 	private final ExpressionContext context;
 	
-	public InterpreterASTCompiler(ExpressionContext context) {
+	public InterpreterASTCompiler(ExpressionContext context, Map<String, CompilerVariable> variables) {
 		this.context = context;
+		this.variables = variables;
 	}
 
 	@Override
@@ -560,14 +565,15 @@ public class InterpreterASTCompiler implements ASTExpressionCompiler {
 
 	@Override
 	public CompiledStatement compile(ASTConditionalStatement statement) {
+		Map<String, CompilerVariable> vars = new HashMap<String, CompilerVariable>(variables);
 		List<CompiledStatement> thenStatements = new ArrayList<>();
 		List<CompiledStatement> elseStatements = new ArrayList<>();
 		for (ASTStatement innerStatement : statement.getThenStatementList().getStatements()) {
-			thenStatements.add(innerStatement.compile(this));
+			thenStatements.add(innerStatement.compile(this, vars));
 		}
 		if (statement.getElseStatementList() != null) {
 			for (ASTStatement innerStatement : statement.getElseStatementList().getStatements()) {
-				elseStatements.add(innerStatement.compile(this));
+				elseStatements.add(innerStatement.compile(this, vars));
 			}
 		}
 		return new CompiledConditionalStatement(statement.getConditionExp().compile(this), thenStatements, elseStatements, statement.getLocation());
@@ -575,7 +581,7 @@ public class InterpreterASTCompiler implements ASTExpressionCompiler {
 
 	@Override
 	public CompiledStatement compile(ASTAssignStatement statement) {
-		return new CompiledAssignStatement(statement.getName(), statement.getExp().compile(this), statement.getLocation());
+		return new CompiledAssignStatement(statement.getName(), statement.getExp().compile(this), variables, statement.getLocation());
 	}
 
 	@Override

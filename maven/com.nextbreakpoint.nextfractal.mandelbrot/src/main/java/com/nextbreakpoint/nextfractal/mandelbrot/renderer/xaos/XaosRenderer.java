@@ -41,7 +41,6 @@ import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
 import com.nextbreakpoint.nextfractal.core.utils.Colors;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.MutableNumber;
-import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTException;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.Renderer;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererData;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererError;
@@ -120,8 +119,6 @@ public final class XaosRenderer extends Renderer {
 	@Override
 	protected void doRender() {
 		try {
-			errors.clear();
-			errorChanged = true;
 //			if (isInterrupted()) {
 //				progress = 0;
 //				rendererData.swap();
@@ -218,14 +215,9 @@ public final class XaosRenderer extends Renderer {
 			rendererData.swap();
 			processReallocTable(continuous, refresh);
 			updatePositions();
-		} catch (ASTException e) {
-			logger.log(Level.WARNING, "Rendering error", e);
-			errors.add(new RendererError(e.getLocation().getLine(), e.getLocation().getCharPositionInLine(), e.getLocation().getStartIndex(), e.getLocation().getStopIndex() - e.getLocation().getStartIndex(), e.getMessage()));
-			errorChanged = true;
 		} catch (Throwable e) {
 			logger.log(Level.WARNING, "Rendering error", e);
-			errors.add(new RendererError(0, 0, 0, 0, e.getMessage()));
-			errorChanged = true;
+			error = new RendererError(0, 0, 0, 0, e.getMessage());
 		}
 	}
 

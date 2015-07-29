@@ -268,11 +268,10 @@ public class RendererCoordinator implements RendererDelegate {
 		renderer.getPixels(pixels);
 	}
 
-	public boolean isErrorsChanged() {
-		return renderer.isErrorsChanged();
-	}
-	
-	public List<RendererError> getErrors() {
-		return renderer.getErrors();
+	/**
+	 * @return
+	 */
+	public RendererError getError() {
+		return renderer.getError();
 	}
 }

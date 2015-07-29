@@ -36,10 +36,16 @@ public class CompiledAssignStatement extends CompiledStatement {
 	private String name;
 	private CompiledExpression exp;
 	
-	public CompiledAssignStatement(String name, CompiledExpression exp, Token location) {
+	public CompiledAssignStatement(String name, CompiledExpression exp, Map<String, CompilerVariable> variables, Token location) {
 		super(location);
 		this.name = name;
 		this.exp = exp;
+		CompilerVariable var = variables.get(name);
+		if (var != null) {
+			if (var.isReal() && !exp.isReal()) {
+				throw new ASTException("Cannot assign expression", getLocation());
+			}
+		}
 	}
 
 	@Override

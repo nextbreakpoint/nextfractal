@@ -36,6 +36,7 @@ import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -1195,10 +1196,10 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 	private void processCoordinatorErrors() {
 		if (coordinators != null && coordinators.length > 0) {
 			RendererCoordinator coordinator = coordinators[0];
-			if (coordinator.isErrorsChanged()) {
-				List<RendererError> errors = coordinator.getErrors();
-				if (errors.size() > 0) {
-					updateRendererErrors("Cannot create image", errors, null);
+			if (coordinator != null) {
+				RendererError error = coordinator.getError();
+				if (error != null) {
+					updateRendererErrors("Cannot create image", Collections.singletonList(error), null);
 				} else {
 					updateRendererErrors(null, null, null);
 				}
