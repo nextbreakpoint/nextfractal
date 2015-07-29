@@ -24,14 +24,42 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.grammar;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.antlr.v4.runtime.Token;
 
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledStatement;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
 
-public abstract class ASTStatement extends ASTObject {
-	public ASTStatement(Token location) {
-		super(location);
+public class ASTScope {
+	private Map<String, CompilerVariable> vars = new HashMap<>();
+
+	public Map<String, CompilerVariable> getVariables() {
+		return vars;
 	}
 
-	public abstract CompiledStatement compile(ASTExpressionCompiler compiler);
+	public CompilerVariable getVariable(String name) {
+		return vars.get(name);
+	}
+	
+	public void putVariable(String varName, CompilerVariable variable) {
+		vars.put(varName, variable);
+	}
+
+	public void registerVariable(String name, boolean real, boolean create, Token location) {
+		CompilerVariable var = vars.get(name);
+		if (var == null) {
+			var = new CompilerVariable(name, real, create);
+			vars.put(var.getName(), var);
+		}
+	}
+
+	public Collection<CompilerVariable> values() {
+		return vars.values();
+	}
+
+	public void copy(ASTScope scope) {
+		vars.putAll(scope.getVariables());
+	}
 }

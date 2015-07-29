@@ -59,4 +59,9 @@ public class CompiledVariable extends CompiledExpression {
 	public boolean isReal() {
 		return real;
 	}
+
+	@Override
+	public String toString() {
+		return name + " [real=" + real + "]";
+	}
 }

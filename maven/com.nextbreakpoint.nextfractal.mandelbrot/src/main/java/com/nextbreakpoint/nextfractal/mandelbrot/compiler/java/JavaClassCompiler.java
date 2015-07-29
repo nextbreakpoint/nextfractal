@@ -45,6 +45,7 @@ import javax.tools.ToolProvider;
 
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerBuilder;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerError;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerError.ErrorType;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerReport;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Color;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Orbit;
@@ -61,14 +62,24 @@ public class JavaClassCompiler {
 	
 	public CompilerBuilder<Orbit> compileOrbit(CompilerReport report) throws ClassNotFoundException, IOException {
 		List<CompilerError> errors = new ArrayList<>();
-		Class<Orbit> clazz = compileToClass(report.getOrbitSource(), className + "Orbit", Orbit.class, errors);
-		return new JavaClassBuilder<Orbit>(clazz, errors);
+		try {
+			Class<Orbit> clazz = compileToClass(report.getOrbitSource(), className + "Orbit", Orbit.class, errors);
+			return new JavaClassBuilder<Orbit>(clazz, errors);
+		} catch (Throwable e) {
+			errors.add(new CompilerError(ErrorType.JAVA_COMPILER, 0, 0, 0, 0, e.getMessage()));
+			return new JavaClassBuilder<Orbit>(null, errors);
+		}
 	}
 
 	public CompilerBuilder<Color> compileColor(CompilerReport report) throws ClassNotFoundException, IOException {
 		List<CompilerError> errors = new ArrayList<>();
-		Class<Color> clazz = compileToClass(report.getColorSource(), className + "Color", Color.class, errors);
-		return new JavaClassBuilder<Color>(clazz, errors);
+		try {
+			Class<Color> clazz = compileToClass(report.getColorSource(), className + "Color", Color.class, errors);
+			return new JavaClassBuilder<Color>(clazz, errors);
+		} catch (Throwable e) {
+			errors.add(new CompilerError(ErrorType.JAVA_COMPILER, 0, 0, 0, 0, e.getMessage()));
+			return new JavaClassBuilder<Color>(null, errors);
+		}
 	}
 	
 	@SuppressWarnings("unchecked")

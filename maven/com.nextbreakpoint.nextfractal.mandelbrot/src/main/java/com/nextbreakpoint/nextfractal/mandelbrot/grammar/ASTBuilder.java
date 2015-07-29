@@ -174,6 +174,22 @@ public class ASTBuilder {
 		statementList = stack.pop();
 	}
 
+	public void pushScope() {
+		if (isColorContext) {
+			fractal.pushColorScope();
+		} else {
+			fractal.pushOrbitScope();
+		}
+	}
+
+	public void popScope() {
+		if (isColorContext) {
+			fractal.popColorScope();
+		} else {
+			fractal.popOrbitScope();
+		}
+	}
+
 	public ASTStatementList getStatementList() {
 		return statementList;
 	}

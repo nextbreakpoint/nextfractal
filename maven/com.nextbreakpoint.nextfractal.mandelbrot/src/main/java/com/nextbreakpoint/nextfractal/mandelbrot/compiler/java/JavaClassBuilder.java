@@ -39,6 +39,9 @@ public class JavaClassBuilder<T> implements CompilerBuilder<T> {
 	}
 	
 	public T build() throws InstantiationException, IllegalAccessException {
+		if (clazz == null) {
+			return null;
+		}
 		return clazz.newInstance();
 	}
 

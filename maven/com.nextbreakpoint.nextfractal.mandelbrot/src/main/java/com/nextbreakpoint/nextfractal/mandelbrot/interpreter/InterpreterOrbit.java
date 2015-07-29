@@ -91,12 +91,9 @@ public class InterpreterOrbit extends Orbit implements InterpreterContext {
 			updateState();
 			saveState(states);
 		}
-		try {
-			for (CompiledStatement statement : orbit.getBeginStatements()) {
-				statement.evaluate(this, vars);
-			} 
-		} catch (RuntimeException e) {
-		}
+		for (CompiledStatement statement : orbit.getBeginStatements()) {
+			statement.evaluate(this, vars);
+		} 
 		boolean stop = false;
 		Map<String, CompilerVariable> newScope = new HashMap<>(vars);
 		for (int i = orbit.getLoopBegin() + 1; i <= orbit.getLoopEnd(); i++) {

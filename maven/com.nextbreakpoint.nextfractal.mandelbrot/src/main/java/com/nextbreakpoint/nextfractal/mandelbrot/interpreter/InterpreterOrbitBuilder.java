@@ -93,12 +93,12 @@ public class InterpreterOrbitBuilder implements CompilerBuilder<Orbit> {
 			List<CompiledTrap> traps = new ArrayList<>();
 			if (astOrbit.getBegin() != null) {
 				for (ASTStatement astStatement : astOrbit.getBegin().getStatements()) {
-					beginStatements.add(astStatement.compile(compiler, newScope));
+					beginStatements.add(astStatement.compile(compiler));
 				}
 			}
 			if (astOrbit.getLoop() != null) {
 				for (ASTStatement astStatement : astOrbit.getLoop().getStatements()) {
-					loopStatements.add(astStatement.compile(compiler, newScope));
+					loopStatements.add(astStatement.compile(compiler));
 				}
 				orbit.setLoopCondition(astOrbit.getLoop().getExpression().compile(compiler));
 				orbit.setLoopBegin(astOrbit.getLoop().getBegin());
@@ -106,7 +106,7 @@ public class InterpreterOrbitBuilder implements CompilerBuilder<Orbit> {
 			}
 			if (astOrbit.getEnd() != null) {
 				for (ASTStatement astStatement : astOrbit.getEnd().getStatements()) {
-					endStatements.add(astStatement.compile(compiler, newScope));
+					endStatements.add(astStatement.compile(compiler));
 				}
 			}
 			if (astOrbit.getTraps() != null) {

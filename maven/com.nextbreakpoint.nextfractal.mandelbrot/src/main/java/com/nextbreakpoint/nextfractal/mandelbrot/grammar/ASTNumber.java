@@ -49,7 +49,11 @@ public class ASTNumber extends ASTExpression {
 
 	@Override
 	public String toString() {
-		return String.valueOf(r + "," + i);
+		if (real) {
+			return String.valueOf(r);
+		} else {
+			return String.valueOf(r + "," + i);
+		}
 	}
 
 	@Override

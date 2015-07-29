@@ -563,12 +563,12 @@ public class JavaASTCompiler implements ASTExpressionCompiler {
 		builder.append(") {\n");
 		Map<String, CompilerVariable> vars = new HashMap<String, CompilerVariable>(variables);
 		for (ASTStatement innerStatement : statement.getThenStatementList().getStatements()) {
-			innerStatement.compile(new JavaASTCompiler(context, vars, builder), vars);
+			innerStatement.compile(new JavaASTCompiler(context, vars, builder));
 		}
 		if (statement.getElseStatementList() != null) {
 			builder.append("} else {\n");
 			for (ASTStatement innerStatement : statement.getElseStatementList().getStatements()) {
-				innerStatement.compile(new JavaASTCompiler(context, vars, builder), vars);
+				innerStatement.compile(new JavaASTCompiler(context, vars, builder));
 			}
 		}
 		builder.append("}\n");

@@ -103,7 +103,7 @@ public class InterpreterColorBuilder implements CompilerBuilder<Color> {
 			List<CompiledStatement> statements = new ArrayList<>();
 			if (astColor.getInit() != null) {
 				for (ASTStatement statement : astColor.getInit().getStatements()) {
-					statements.add(statement.compile(compiler, newScope));
+					statements.add(statement.compile(compiler));
 				}
 			}
 			color.setInitStatements(statements);

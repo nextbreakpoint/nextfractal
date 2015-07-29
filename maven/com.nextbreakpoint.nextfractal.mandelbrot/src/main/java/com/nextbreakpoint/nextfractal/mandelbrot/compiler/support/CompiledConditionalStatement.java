@@ -37,7 +37,8 @@ public class CompiledConditionalStatement extends CompiledStatement {
 	private CompiledCondition condition;
 	private List<CompiledStatement> thenStatements;
 	private List<CompiledStatement> elseStatements;
-	private Map<String, CompilerVariable> newScope;
+	private Map<String, CompilerVariable> newThenScope;
+	private Map<String, CompilerVariable> newElseScope;
 	
 	public CompiledConditionalStatement(CompiledCondition condition, List<CompiledStatement> thenStatements, List<CompiledStatement> elseStatements, Token location) {
 		super(location);
@@ -49,19 +50,22 @@ public class CompiledConditionalStatement extends CompiledStatement {
 	@Override
 	public boolean evaluate(InterpreterContext context, Map<String, CompilerVariable> scope) {
 		boolean stop = false;
-		if (newScope == null) {
-			newScope = new HashMap<String, CompilerVariable>(scope);
+		if (newThenScope == null) {
+			newThenScope = new HashMap<String, CompilerVariable>(scope);
+		}
+		if (newElseScope == null) {
+			newElseScope = new HashMap<String, CompilerVariable>(scope);
 		}
 		if (condition.evaluate(context, scope)) {
 			for (CompiledStatement statement : thenStatements) {
-				stop = statement.evaluate(context, newScope);
+				stop = statement.evaluate(context, newThenScope);
 				if (stop) {
 					break;
 				}
 			}
 		} else {
 			for (CompiledStatement statement : elseStatements) {
-				stop = statement.evaluate(context, newScope);
+				stop = statement.evaluate(context, newElseScope);
 				if (stop) {
 					break;
 				}

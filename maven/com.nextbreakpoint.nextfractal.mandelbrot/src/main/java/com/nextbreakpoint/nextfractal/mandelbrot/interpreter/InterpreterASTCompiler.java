@@ -565,15 +565,18 @@ public class InterpreterASTCompiler implements ASTExpressionCompiler {
 
 	@Override
 	public CompiledStatement compile(ASTConditionalStatement statement) {
-		Map<String, CompilerVariable> vars = new HashMap<String, CompilerVariable>(variables);
 		List<CompiledStatement> thenStatements = new ArrayList<>();
 		List<CompiledStatement> elseStatements = new ArrayList<>();
+		HashMap<String, CompilerVariable> newThenScope = new HashMap<String, CompilerVariable>(variables);
+		InterpreterASTCompiler thenCompiler = new InterpreterASTCompiler(context, newThenScope);
 		for (ASTStatement innerStatement : statement.getThenStatementList().getStatements()) {
-			thenStatements.add(innerStatement.compile(this, vars));
+			thenStatements.add(innerStatement.compile(thenCompiler));
 		}
 		if (statement.getElseStatementList() != null) {
+			HashMap<String, CompilerVariable> newElseScope = new HashMap<String, CompilerVariable>(variables);
+			InterpreterASTCompiler elseCompiler = new InterpreterASTCompiler(context, newElseScope);
 			for (ASTStatement innerStatement : statement.getElseStatementList().getStatements()) {
-				elseStatements.add(innerStatement.compile(this, vars));
+				elseStatements.add(innerStatement.compile(elseCompiler));
 			}
 		}
 		return new CompiledConditionalStatement(statement.getConditionExp().compile(this), thenStatements, elseStatements, statement.getLocation());

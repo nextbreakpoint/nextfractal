@@ -82,7 +82,6 @@ import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotSession;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.Compiler;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerBuilder;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerError;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerError.ErrorType;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerReport;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerSourceException;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Color;

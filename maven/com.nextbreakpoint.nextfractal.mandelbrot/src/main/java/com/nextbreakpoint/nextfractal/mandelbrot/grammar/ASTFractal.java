@@ -25,22 +25,23 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.grammar;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Stack;
 
 import org.antlr.v4.runtime.Token;
 
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
 
 public class ASTFractal extends ASTObject {
-	private Map<String, CompilerVariable> stateVars = new HashMap<>();
-	private Map<String, CompilerVariable> colorVars = new HashMap<>();
-	private Map<String, CompilerVariable> orbitVars = new HashMap<>();
+	private ASTScope stateVars = new ASTScope();
+	private Stack<ASTScope> orbitVars = new Stack<>();
+	private Stack<ASTScope> colorVars = new Stack<>();
 	private ASTOrbit orbit;
 	private ASTColor color;
 
 	public ASTFractal(Token location) {
 		super(location);
+		orbitVars.push(new ASTScope());
+		colorVars.push(new ASTScope());
 		registerOrbitVariable("x", false, false, location);
 		registerOrbitVariable("w", false, false, location);
 		registerOrbitVariable("n", true, false, location);
@@ -63,36 +64,28 @@ public class ASTFractal extends ASTObject {
 	}
 
 	public void registerStateVariable(String varName, boolean real, Token location) {
-		if (orbitVars.get(varName) == null) {
+		CompilerVariable variable = orbitVars.peek().getVariable(varName);
+		if (variable == null) {
 			registerOrbitVariable(varName, real, true, location);
-		} else {
-			if (orbitVars.get(varName).isReal() != real) {
-				throw new ASTException("Variable already defined: " + location.getText(), location);
-			}
+		} else if (variable.isReal() != real) {
+			throw new ASTException("Variable already defined: " + location.getText(), location);
 		}
-		if (stateVars.get(varName) == null) {
-			stateVars.put(varName, orbitVars.get(varName));
+		if (stateVars.getVariable(varName) == null) {
+			variable = orbitVars.peek().getVariable(varName);
+			stateVars.putVariable(varName, variable);
 		}
 	}
 
 	public void registerOrbitVariable(String name, boolean real, boolean create, Token location) {
-		CompilerVariable var = orbitVars.get(name);
-		if (var == null) {
-			var = new CompilerVariable(name, real, create);
-			orbitVars.put(var.getName(), var);
-		}
+		orbitVars.peek().registerVariable(name, real, create, location);
 	}
 
 	public void registerColorVariable(String name, boolean real, boolean create, Token location) {
-		CompilerVariable var = colorVars.get(name);
-		if (var == null) {
-			var = new CompilerVariable(name, real, create);
-			colorVars.put(var.getName(), var);
-		}
+		colorVars.peek().registerVariable(name, real, create, location);
 	}
 
 	public CompilerVariable getOrbitVariable(String name, Token location) {
-		CompilerVariable var = orbitVars.get(name);
+		CompilerVariable var = orbitVars.peek().getVariable(name);
 		if (var == null) {
 			throw new ASTException("Variable not defined: " + location.getText(), location);
 		}
@@ -100,9 +93,9 @@ public class ASTFractal extends ASTObject {
 	}
 
 	public CompilerVariable getColorVariable(String name, Token location) {
-		CompilerVariable var = colorVars.get(name);
+		CompilerVariable var = colorVars.peek().getVariable(name);
 		if (var == null) {
-			var = orbitVars.get(name);
+			var = orbitVars.peek().getVariable(name);
 			if (var == null) {
 				throw new ASTException("Variable not defined: " + location.getText(), location);
 			}
@@ -115,11 +108,11 @@ public class ASTFractal extends ASTObject {
 	}
 
 	public Collection<CompilerVariable> getOrbitVariables() {
-		return orbitVars.values();
+		return orbitVars.peek().values();
 	}
 
 	public Collection<CompilerVariable> getColorVariables() {
-		return colorVars.values();
+		return colorVars.peek().values();
 	}
 
 	public String toString() {
@@ -130,5 +123,25 @@ public class ASTFractal extends ASTObject {
 		builder.append(color);
 		builder.append("}");
 		return builder.toString();
+	}
+
+	public void pushOrbitScope() {
+		ASTScope astScope = new ASTScope();
+		astScope.copy(orbitVars.peek());
+		orbitVars.push(astScope);
+	}
+
+	public void popOrbitScope() {
+		orbitVars.pop();
+	}
+
+	public void pushColorScope() {
+		ASTScope astScope = new ASTScope();
+		astScope.copy(colorVars.peek());
+		colorVars.push(astScope);
+	}
+
+	public void popColorScope() {
+		colorVars.pop();
 	}
 }

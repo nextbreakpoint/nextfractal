@@ -84,4 +84,9 @@ public class CompilerVariable {
 	public CompilerVariable copy() {
 		return new CompilerVariable(name, real, create, value);
 	}
+
+	@Override
+	public String toString() {
+		return "[name=" + name + ", real=" + real + ", create=" + create + ", value=" + value + "]";
+	}
 }

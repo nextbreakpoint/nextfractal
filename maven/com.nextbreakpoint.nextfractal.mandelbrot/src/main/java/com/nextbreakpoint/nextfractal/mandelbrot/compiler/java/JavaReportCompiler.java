@@ -596,7 +596,7 @@ public class JavaReportCompiler {
 
 	private void compile(ExpressionContext context, StringBuilder builder, Map<String, CompilerVariable> variables, ASTStatement statement) {
 		if (statement != null) {
-			statement.compile(new JavaASTCompiler(context, variables, builder), variables);
+			statement.compile(new JavaASTCompiler(context, variables, builder));
 		}		
 	}
 	

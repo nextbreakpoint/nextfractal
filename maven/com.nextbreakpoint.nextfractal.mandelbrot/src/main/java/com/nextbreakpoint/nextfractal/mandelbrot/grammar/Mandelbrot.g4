@@ -41,21 +41,21 @@ begin
 	:
 	b=BEGIN { 
 		builder.setOrbitBegin(new ASTOrbitBegin($b));
-	} '{' beginstatement* '}'
+	} '{' beginstatement '}'
 	;
 		
 loop
 	:
 	l=LOOP '[' lb=INTEGER ',' le=INTEGER ']' '(' e=conditionexp ')'{
 		builder.setOrbitLoop(new ASTOrbitLoop($l, builder.parseInt($lb.text), builder.parseInt($le.text), $e.result));
-	} '{' loopstatement* '}'
+	} '{' loopstatement '}'
 	;
 		
 end
 	:
 	e=END {
 		builder.setOrbitEnd(new ASTOrbitEnd($e));		
-	} '{' endstatement* '}'
+	} '{' endstatement '}'
 	;
 		
 trap
@@ -85,7 +85,7 @@ beginstatement
 	{
 		builder.pushStatementList();	
 	}
-	statement {
+	statement* {
 		builder.addBeginStatements(builder.getStatementList());
 		builder.popStatementList();	
 	}
@@ -94,10 +94,12 @@ beginstatement
 loopstatement
 	:
 	{
+		builder.pushScope();	
 		builder.pushStatementList();	
 	}
-	statement {
+	statement* {
 		builder.addLoopStatements(builder.getStatementList());
+		builder.popScope();	
 		builder.popStatementList();	
 	}
 	;
@@ -105,10 +107,12 @@ loopstatement
 endstatement 
 	:
 	{
+		builder.pushScope();	
 		builder.pushStatementList();	
 	}
-	statement {
+	statement* {
 		builder.addEndStatements(builder.getStatementList());
+		builder.popScope();	
 		builder.popStatementList();	
 	}
 	;
@@ -121,22 +125,28 @@ statement
 	}
 	|
 	f=IF '(' c=conditionexp ')' '{' {
+		builder.pushScope();	
 		builder.pushStatementList();
 	} statement* '}' {
 		ASTStatementList thenList = builder.getStatementList();
+		builder.popScope();	
 		builder.popStatementList();
 	} 'else' '{' {
+		builder.pushScope();	
 		builder.pushStatementList();
 	} statement* '}' {
 		ASTStatementList elseList = builder.getStatementList();
+		builder.popScope();	
 		builder.popStatementList();
 		builder.appendStatement(new ASTConditionalStatement($f, $c.result, thenList, elseList));
 	} 
 	|
 	f=IF '(' c=conditionexp ')' '{' {
+		builder.pushScope();	
 		builder.pushStatementList();
 	} statement* '}' {
 		ASTStatementList thenList = builder.getStatementList();
+		builder.popScope();	
 		builder.popStatementList();
 		builder.appendStatement(new ASTConditionalStatement($f, $c.result, thenList));
 	} 
@@ -488,7 +498,7 @@ colorinit
 	i=INIT {
 		builder.setColorContext(true);
 		builder.setColorInit(new ASTColorInit($i));
-	} '{' colorstatement* '}' 
+	} '{' colorstatement '}' 
 	;
 		
 colorstatement
@@ -496,7 +506,7 @@ colorstatement
 	{
 		builder.pushStatementList();	
 	}
-	statement {
+	statement* {
 		builder.addColorStatements(builder.getStatementList());
 		builder.popStatementList();	
 	}
