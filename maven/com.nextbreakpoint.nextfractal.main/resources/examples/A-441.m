@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <mandelbrot>
-    <timestamp>2015-05-21 17:20:53</timestamp>
+    <timestamp>2015-07-29 23:07:21</timestamp>
     <julia>true</julia>
     <point>-1.0202019953957754E-4</point>
     <point>-0.7226903606044558</point>
@@ -40,9 +40,8 @@
 		}
 		init {
 			m = atan2(re(x), im(x));
-			if (m &lt; 0) {
-				c = 0;
-			} else {
+			c = 0;
+			if (m &gt; 0) {
 				c = 1;
 			}
 		}
