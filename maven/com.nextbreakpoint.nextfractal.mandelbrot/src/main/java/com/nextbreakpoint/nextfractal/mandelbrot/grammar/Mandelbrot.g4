@@ -32,7 +32,7 @@ orbit
 		
 color
 	:
-	c=COLOR '[' argb=colorargb ']' { 
+	c=COLOR '[' argb=backgroundcolorargb ']' { 
 		builder.setColor(new ASTColor($c, $argb.result));
 	} '{' palette* colorinit? colorrule* '}'
 	;
@@ -569,8 +569,27 @@ colorargb returns [ASTColorARGB result]
 		$result = new ASTColorARGB(builder.parseFloat($a.text), builder.parseFloat($r.text), builder.parseFloat($g.text), builder.parseFloat($b.text));
 	}
 	|
-	'#' argb=ARGB {
-		$result = new ASTColorARGB((int)(0xFFFFFFFF & builder.parseLong($argb.text, 16)));
+	argb32=ARGB32 {
+		$result = new ASTColorARGB((int)(0xFFFFFFFF & builder.parseLong($argb32.text.substring(1), 16)));
+	}
+	|
+	argb24=ARGB24 {
+		$result = new ASTColorARGB((int)(0xFF000000 | (0xFFFFFFFF & builder.parseLong($argb24.text.substring(1), 16))));
+	}
+	;
+		
+backgroundcolorargb returns [ASTColorARGB result]
+	:
+	'(' a=(RATIONAL | INTEGER) ',' r=(RATIONAL | INTEGER) ',' g=(RATIONAL | INTEGER) ',' b=(RATIONAL | INTEGER) ')' {
+		$result = new ASTColorARGB(1f, builder.parseFloat($r.text), builder.parseFloat($g.text), builder.parseFloat($b.text));
+	}
+	|
+	argb32=ARGB32 {
+		$result = new ASTColorARGB((int)(0xFF000000 | (0xFFFFFFFF & builder.parseLong($argb32.text.substring(1), 16))));
+	}
+	|
+	argb24=ARGB24 {
+		$result = new ASTColorARGB((int)(0xFF000000 | (0xFFFFFFFF & builder.parseLong($argb24.text.substring(1), 16))));
 	}
 	;
 		
@@ -644,11 +663,14 @@ RULE
 	'rule'
 	;
 
-ARGB
+ARGB32
  	:
- 	('0'..'9' | 'a'..'f' | 'A'..'F')('0'..'9' | 'a'..'f' | 'A'..'F')('0'..'9' | 'a'..'f' | 'A'..'F')('0'..'9' | 'a'..'f' | 'A'..'F')('0'..'9' | 'a'..'f' | 'A'..'F')('0'..'9' | 'a'..'f' | 'A'..'F')('0'..'9' | 'a'..'f' | 'A'..'F')('0'..'9' | 'a'..'f' | 'A'..'F')
- 	|
- 	('0'..'9' | 'a'..'f' | 'A'..'F')('0'..'9' | 'a'..'f' | 'A'..'F')('0'..'9' | 'a'..'f' | 'A'..'F')('0'..'9' | 'a'..'f' | 'A'..'F')('0'..'9' | 'a'..'f' | 'A'..'F')('0'..'9' | 'a'..'f' | 'A'..'F')
+ 	'#' ('0'..'9' | 'a'..'f' | 'A'..'F')('0'..'9' | 'a'..'f' | 'A'..'F')('0'..'9' | 'a'..'f' | 'A'..'F')('0'..'9' | 'a'..'f' | 'A'..'F')('0'..'9' | 'a'..'f' | 'A'..'F')('0'..'9' | 'a'..'f' | 'A'..'F')('0'..'9' | 'a'..'f' | 'A'..'F')('0'..'9' | 'a'..'f' | 'A'..'F')
+ 	;
+ 	
+ARGB24
+ 	:
+ 	'#' ('0'..'9' | 'a'..'f' | 'A'..'F')('0'..'9' | 'a'..'f' | 'A'..'F')('0'..'9' | 'a'..'f' | 'A'..'F')('0'..'9' | 'a'..'f' | 'A'..'F')('0'..'9' | 'a'..'f' | 'A'..'F')('0'..'9' | 'a'..'f' | 'A'..'F')
  	;
  	
 RATIONAL

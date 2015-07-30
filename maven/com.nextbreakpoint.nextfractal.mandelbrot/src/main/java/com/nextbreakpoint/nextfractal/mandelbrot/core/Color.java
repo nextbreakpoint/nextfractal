@@ -63,7 +63,7 @@ public abstract class Color {
 		for (int i = 0; i < 4; i++) {
 			this.color[i] = (float)Math.min(1, Math.max(0, color[i]));
 		}
-		return color;
+		return this.color;
 	}
 	
 	public float[] addColor(double opacity, float[] color) {
@@ -72,7 +72,7 @@ public abstract class Color {
 		for (int i = 1; i < 4; i++) {
 			this.color[i] = (float)Math.min(1, Math.max(0, q * this.color[i] + color[i] * a));
 		}
-		return color;
+		return this.color;
 	}
 	
 	public float[] getColor() {

@@ -380,6 +380,16 @@ public interface MandelbrotListener extends ParseTreeListener {
 	 */
 	void exitColorargb(MandelbrotParser.ColorargbContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link MandelbrotParser#backgroundcolorargb}.
+	 * @param ctx the parse tree
+	 */
+	void enterBackgroundcolorargb(MandelbrotParser.BackgroundcolorargbContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link MandelbrotParser#backgroundcolorargb}.
+	 * @param ctx the parse tree
+	 */
+	void exitBackgroundcolorargb(MandelbrotParser.BackgroundcolorargbContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link MandelbrotParser#eof}.
 	 * @param ctx the parse tree
 	 */
