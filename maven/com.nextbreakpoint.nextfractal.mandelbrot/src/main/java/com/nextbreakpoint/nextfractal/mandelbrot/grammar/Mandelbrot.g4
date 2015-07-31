@@ -131,7 +131,7 @@ statement
 		ASTStatementList thenList = builder.getStatementList();
 		builder.popScope();	
 		builder.popStatementList();
-	} 'else' '{' {
+	} ELSE '{' {
 		builder.pushScope();	
 		builder.pushStatementList();
 	} statement* '}' {
@@ -154,7 +154,7 @@ statement
 	f=IF '(' c=conditionexp ')' {
 		builder.pushScope();	
 		builder.pushStatementList();
-	} statement ';'? {
+	} statement {
 		ASTStatementList thenList = builder.getStatementList();
 		builder.popScope();	
 		builder.popStatementList();
@@ -636,6 +636,11 @@ INIT
 IF 
 	:
 	'if'
+	;
+	
+ELSE
+	:
+	'else'
 	;
 	
 STOP 
