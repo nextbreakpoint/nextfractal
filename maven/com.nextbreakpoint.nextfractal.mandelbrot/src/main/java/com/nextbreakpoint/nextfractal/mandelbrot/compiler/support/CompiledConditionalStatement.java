@@ -50,13 +50,8 @@ public class CompiledConditionalStatement extends CompiledStatement {
 	@Override
 	public boolean evaluate(InterpreterContext context, Map<String, CompilerVariable> scope) {
 		boolean stop = false;
-		if (newThenScope == null) {
-			newThenScope = new HashMap<String, CompilerVariable>(scope);
-		}
-		if (newElseScope == null) {
-			newElseScope = new HashMap<String, CompilerVariable>(scope);
-		}
 		if (condition.evaluate(context, scope)) {
+			newThenScope = new HashMap<String, CompilerVariable>(scope);
 			for (CompiledStatement statement : thenStatements) {
 				stop = statement.evaluate(context, newThenScope);
 				if (stop) {
@@ -64,6 +59,7 @@ public class CompiledConditionalStatement extends CompiledStatement {
 				}
 			}
 		} else {
+			newElseScope = new HashMap<String, CompilerVariable>(scope);
 			for (CompiledStatement statement : elseStatements) {
 				stop = statement.evaluate(context, newElseScope);
 				if (stop) {

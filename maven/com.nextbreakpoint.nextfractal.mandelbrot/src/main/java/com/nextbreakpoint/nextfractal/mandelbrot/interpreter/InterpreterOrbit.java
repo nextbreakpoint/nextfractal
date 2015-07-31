@@ -98,7 +98,7 @@ public class InterpreterOrbit extends Orbit implements InterpreterContext {
 		Map<String, CompilerVariable> newScope = new HashMap<>(vars);
 		for (int i = orbit.getLoopBegin() + 1; i <= orbit.getLoopEnd(); i++) {
 			for (CompiledStatement statement : orbit.getLoopStatements()) {
-				stop = statement.evaluate(this, newScope);
+				stop = statement.evaluate(this, vars);
 				if (stop) {
 					break;
 				}
@@ -113,8 +113,9 @@ public class InterpreterOrbit extends Orbit implements InterpreterContext {
 			}
 		}
 		ensureVariable(vars, "n", n);
+		newScope = new HashMap<>(vars);
 		for (CompiledStatement statement : orbit.getEndStatements()) {
-			statement.evaluate(this, vars);
+			statement.evaluate(this, newScope);
 		} 
 		updateState();
 		if (states != null) {
