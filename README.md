@@ -1,4 +1,4 @@
-# NextFractal 1.1.4
+# NextFractal 1.1.5
 
 Copyright 2015 Andrea Medeghini
 
