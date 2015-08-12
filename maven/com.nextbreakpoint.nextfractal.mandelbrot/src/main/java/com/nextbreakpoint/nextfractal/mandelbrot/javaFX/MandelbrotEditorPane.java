@@ -42,7 +42,9 @@ import javafx.application.Platform;
 import javafx.collections.ListChangeListener.Change;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
+import javafx.event.ActionEvent;
 import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListCell;
@@ -118,6 +120,11 @@ public class MandelbrotEditorPane extends BorderPane {
 		sourceTab.setText("Source");
 		sourceTab.setTooltip(new Tooltip("Source code of current fractal"));
 		tabPane.getTabs().add(sourceTab);
+		Tab paramsTab = new Tab();
+		paramsTab.setClosable(false);
+		paramsTab.setText("Parameters");
+		paramsTab.setTooltip(new Tooltip("Parameters of current fractal"));
+		tabPane.getTabs().add(paramsTab);
 		Tab historyTab = new Tab();
 		historyTab.setClosable(false);
 		historyTab.setText("History");
@@ -209,6 +216,30 @@ public class MandelbrotEditorPane extends BorderPane {
 		jobsPane.setTop(jobsButtons);
 		jobsTab.setContent(jobsPane);
 
+		BorderPane paramsPane = new BorderPane();
+		BorderPane paramsButtons = new BorderPane();
+		MandelbrotParamsPane paramsPanel = new MandelbrotParamsPane(getMandelbrotSession()); 
+		HBox paramsButtonsLeft = new HBox();
+		HBox paramsButtonsRight = new HBox();
+		Button paramsBrowseButton = new Button("", createIconImage("/icon-export.png"));
+		Button paramsRenderButton = new Button("", createIconImage("/icon-render.png"));
+		Button paramsLoadButton = new Button("", createIconImage("/icon-load.png"));
+		Button paramsSaveButton = new Button("", createIconImage("/icon-save.png"));
+		paramsBrowseButton.setTooltip(new Tooltip("Browse fractals"));
+		paramsRenderButton.setTooltip(new Tooltip("Render fractal"));
+		paramsLoadButton.setTooltip(new Tooltip("Load fractal from file"));
+		paramsSaveButton.setTooltip(new Tooltip("Save fractal to file"));
+		paramsButtonsLeft.getChildren().add(paramsBrowseButton);
+		paramsButtonsLeft.getChildren().add(paramsRenderButton);
+		paramsButtonsRight.getChildren().add(paramsLoadButton);
+		paramsButtonsRight.getChildren().add(paramsSaveButton);
+		paramsButtons.setLeft(paramsButtonsLeft);
+		paramsButtons.setRight(paramsButtonsRight);
+		paramsButtons.getStyleClass().add("menubar");
+		paramsPane.setCenter(paramsPanel);
+		paramsPane.setTop(paramsButtons);
+		paramsTab.setContent(paramsPane);
+		
 		initHighlightingPattern();
 		
 		codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
@@ -316,13 +347,16 @@ public class MandelbrotEditorPane extends BorderPane {
 			}
 		});
 		
-		renderButton.setOnAction(e -> {
+		EventHandler<ActionEvent> renderEventHandler = e -> {
 			Platform.runLater(() -> {
 				codeArea.replaceText(getMandelbrotSession().getSource());
 			});
-		});
+		};
 		
-		loadButton.setOnAction(e -> {
+		renderButton.setOnAction(renderEventHandler);
+		paramsRenderButton.setOnAction(renderEventHandler);
+		
+		EventHandler<ActionEvent> loadEventHandler = e -> {
 			createFileChooser(".m");
 			fileChooser.setTitle("Load");
 			if (getMandelbrotSession().getCurrentFile() != null) {
@@ -342,9 +376,12 @@ public class MandelbrotEditorPane extends BorderPane {
 					//TODO display error
 				}
 			}
-		});
+		};
+
+		loadButton.setOnAction(loadEventHandler);
+		paramsLoadButton.setOnAction(loadEventHandler);
 		
-		saveButton.setOnAction(e -> {
+		EventHandler<ActionEvent> saveEventHandler = e -> {
 			createFileChooser(".m");
 			fileChooser.setTitle("Save");
 			if (getMandelbrotSession().getCurrentFile() != null) {
@@ -364,13 +401,20 @@ public class MandelbrotEditorPane extends BorderPane {
 					//TODO display error
 				}
 			}
-		});
+		};
+		
+		saveButton.setOnAction(saveEventHandler);
+		paramsSaveButton.setOnAction(saveEventHandler);
 
 		exportButton.setOnAction(e -> {
 			getMandelbrotSession().doExportAsImage();
 		});
 
 		browseButton.setOnAction(e -> {
+			getMandelbrotSession().showBrowser();
+		});
+		
+		paramsBrowseButton.setOnAction(e -> {
 			getMandelbrotSession().showBrowser();
 		});
 		

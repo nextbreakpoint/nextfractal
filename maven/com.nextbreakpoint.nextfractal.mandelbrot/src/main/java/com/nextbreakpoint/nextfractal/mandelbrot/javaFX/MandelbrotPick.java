@@ -71,6 +71,7 @@ public class MandelbrotPick implements MandelbrotTool {
 	public void pressed(MouseEvent e) {
 		x1 = (e.getX() - context.getWidth() / 2) / context.getWidth();
 		y1 = (context.getHeight() / 2 - e.getY()) / context.getHeight();
+		changed = true;
 		pressed = true;
 		redraw = true;
 	}

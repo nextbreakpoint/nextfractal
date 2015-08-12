@@ -385,6 +385,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 			
 			@Override
 			public void viewChanged(MandelbrotSession session, boolean continuous) {
+				juliaProperty.setValue(session.getDataAsCopy().isJulia());
 				updateView(continuous);
 			}
 
@@ -499,15 +500,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 		});
 		
 		juliaButton.setOnAction(e -> {
-			juliaCanvas.setVisible(false);
-			pointCanvas.setVisible(false);
 			juliaProperty.setValue(!juliaProperty.getValue());
-			if (pickButton.isSelected()) {
-				currentTool = new MandelbrotZoom(this, true);
-				zoominButton.requestFocus();
-				zoominButton.setSelected(true);
-				pickButton.setDisable(juliaProperty.getValue());
-			}
 		});
 		
 		hideOrbitProperty.addListener((observable, oldValue, newValue) -> {
@@ -523,6 +516,14 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 //				juliaButton.setGraphic(createIconImage("/icon-julia.png"));
 				setFractalJulia(false);
 			}
+			if (pickButton.isSelected()) {
+				currentTool = new MandelbrotZoom(this, true);
+				juliaCanvas.setVisible(false);
+				pointCanvas.setVisible(false);
+				zoominButton.requestFocus();
+				zoominButton.setSelected(true);
+			}
+			juliaButton.setSelected(newValue);
 			pickButton.setDisable(newValue);
 		});
 		
@@ -589,6 +590,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
         	List<File> files = e.getDragboard().getFiles();
         	if (files.size() > 0) {
         		File file = files.get(0);
+        		fileProperty.setValue(null);
         		fileProperty.setValue(file.getAbsolutePath());
         	}
         });
@@ -1175,6 +1177,10 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 		redrawOrbit = true;
 		redrawPoint = true;
 		redrawTrap = true;
+		if (!julia && !continuous) {
+			states = renderOrbit(point);
+			logger.info("Orbit: point = " + Arrays.toString(point) + ", length = " + states.size());
+		}
 	}
 
 	private List<Number[]> renderOrbit(double[] point) {

@@ -143,3 +143,28 @@
     -fx-fill: red;
     -fx-font-weight: bold;
 }
+
+.application .mandelbrot .params {
+	-fx-padding: 20px;
+}
+
+.application .mandelbrot .encoded {
+	-fx-border-width: 1 1 1 1;
+	-fx-border-color: #b0b0b0;
+	-fx-min-height: 300px;
+	-fx-border-radius: 5;
+}
+
+.application .mandelbrot .params .text-area {
+	-fx-background-color: #fbfbfb;
+}
+
+.application .mandelbrot .params .text-area:focused .content {
+	-fx-background-color: #fbfbfb #fbfbfb black black;
+	-fx-background-insets: 0, 0, 1, 2;
+}
+
+.application .mandelbrot .params .text-area .content {
+	-fx-background-color: #fbfbfb #fbfbfb black black;
+	-fx-background-insets: 0, 0, 1, 2;
+}

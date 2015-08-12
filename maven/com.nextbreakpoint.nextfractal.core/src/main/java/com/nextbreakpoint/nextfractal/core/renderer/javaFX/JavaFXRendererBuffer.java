@@ -35,8 +35,8 @@ public class JavaFXRendererBuffer implements RendererBuffer {
 	private WritableImage image;
 	private PixelWriter writer;
 	
-	public JavaFXRendererBuffer(int widh, int height) {
-		image = new WritableImage(widh, height);
+	public JavaFXRendererBuffer(int witdh, int height) {
+		image = new WritableImage(witdh, height);
 		writer = image.getPixelWriter();
 	}
 
