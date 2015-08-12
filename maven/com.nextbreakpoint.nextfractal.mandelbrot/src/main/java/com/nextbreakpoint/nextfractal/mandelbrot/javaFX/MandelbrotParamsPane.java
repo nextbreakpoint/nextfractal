@@ -1,6 +1,9 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
 
 import java.io.StringWriter;
+import java.net.URI;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.util.Base64;
 import java.util.function.Function;
 
@@ -306,6 +309,7 @@ public class MandelbrotParamsPane extends BorderPane {
 				service.saveToWriter(writer, data);
 				String plainData = writer.toString();
 				String encodedData = Base64.getEncoder().encodeToString(plainData.getBytes());
+				encodedData = URLEncoder.encode(encodedData, "UTF-8");
 				textArea.setText(encodedData);
 			} catch (Exception e) {
 			}
