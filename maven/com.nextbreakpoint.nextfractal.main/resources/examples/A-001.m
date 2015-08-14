@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <mandelbrot>
-    <timestamp>2015-04-28 18:34:22</timestamp>
+    <timestamp>2015-08-13 07:54:40</timestamp>
     <julia>true</julia>
     <point>0.3016666666666667</point>
     <point>-0.005</point>
@@ -32,16 +32,14 @@
 			[#FF0042A9 &gt; #FF000000, 80];
 		}
 		init {
-			z = atan2(re(x),im(x)) / 2pi;
-			if (z &lt; 0) {
-				z = z + 1;
+			p = atan2(re(x),im(x)) / 2pi;
+			if (p &lt; 0) {
+				p = p + 1;
 			}
-		}
-		rule (n = 0) [1] {
-			1,0,0,0
+			p = 179 * p;
 		}
 		rule (n &gt; 0) [1] {
-			gradient[179 * z]
+			gradient[p]
 		}
 	}
 }

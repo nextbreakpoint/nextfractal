@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <mandelbrot>
-    <timestamp>2015-04-28 22:05:49</timestamp>
-    <julia>true</julia>
+    <timestamp>2015-08-13 09:10:49</timestamp>
+    <julia>false</julia>
     <point>0.3016666666666667</point>
     <point>-0.005</point>
     <rotation>0.0</rotation>
@@ -13,7 +13,7 @@
     <scale>1.0</scale>
     <scale>1.0</scale>
     <source>fractal {
-	orbit [-1.5 - 1.5i,+1.5 + 1.5i] [x,n,m] {
+	orbit [-3.5 - 1.5i,-0.5 + 1.5i] [x,n,m] {
 		begin {
 			m = 0;
 		}		
@@ -32,23 +32,21 @@
 			[#FF0042A9 &gt; #FF000000, 80];
 		}
 		init {
-			z = atan2(re(m),im(m)) / 2pi;
-			if (z &lt; 0) {
-				z = z + 1;
+			p = atan2(re(m),im(m)) / 2pi;
+			if (p &lt; 0) {
+				p = p + 1;
 			}
-		}
-		rule (n = 0) [1] {
-			1,0,0,0
+			p = 179 * p;
 		}
 		rule (n &gt; 0) [1] {
-			gradient[179 * z]
+			gradient[p]
 		}
 	}
 }
 </source>
     <time>0.0</time>
-    <traslation>-0.07732499999999988</traslation>
-    <traslation>-0.010124999999999995</traslation>
-    <traslation>1.1024999999999998</traslation>
+    <traslation>0.0</traslation>
+    <traslation>0.0</traslation>
+    <traslation>1.0</traslation>
     <traslation>0.0</traslation>
 </mandelbrot>

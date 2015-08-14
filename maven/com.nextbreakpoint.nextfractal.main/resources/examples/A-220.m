@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <mandelbrot>
-    <timestamp>2015-07-24 18:37:49</timestamp>
+    <timestamp>2015-08-13 09:23:17</timestamp>
     <julia>false</julia>
     <point>0.3016666666666667</point>
     <point>0.025</point>
@@ -13,7 +13,7 @@
     <scale>1.0</scale>
     <scale>1.0</scale>
     <source>fractal {
-	orbit [-2.5 - 1.5i,+0.5 + 1.5i] [x,n] {		
+	orbit [-3.5 - 1.5i,-0.5 + 1.5i] [x,n] {		
 		loop [0, 200] (mod2(x) &gt; 40) {
 			x = x * x + w;
 		}
@@ -34,8 +34,8 @@
 }
 </source>
     <time>0.0</time>
-    <traslation>0.04987836858099255</traslation>
-    <traslation>0.10073493040451262</traslation>
-    <traslation>0.8227024747918819</traslation>
+    <traslation>0.0</traslation>
+    <traslation>0.0</traslation>
+    <traslation>1.0</traslation>
     <traslation>0.0</traslation>
 </mandelbrot>

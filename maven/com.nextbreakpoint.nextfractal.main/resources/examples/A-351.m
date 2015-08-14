@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <mandelbrot>
-    <timestamp>2015-05-12 09:05:50</timestamp>
+    <timestamp>2015-08-13 23:05:48</timestamp>
     <julia>false</julia>
     <point>0.8995848371619241</point>
     <point>-1.9145320739066554</point>
@@ -67,9 +67,6 @@
 			g = (n - 1) + (m - floor(m));
 			m = mod(z);
 			q = 199 * (m - floor(m));
-		}
-		rule (n = 0) [1] {
-			1,0,0,0
 		}
 		rule (n &gt; 0) [1] {
 			gradient1[n - 1]

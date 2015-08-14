@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <mandelbrot>
-    <timestamp>2015-04-28 18:57:58</timestamp>
+    <timestamp>2015-08-13 08:23:27</timestamp>
     <julia>true</julia>
     <point>0.0069487755678334095</point>
     <point>-0.672821434075229</point>
@@ -21,9 +21,6 @@
 	color [(1,0,0,0)] {
 		init {
 			z = log(re(x));
-		}
-		rule (n = 0) [1.0] {
-			1,0,0,0
 		}
 		rule (re(x) &gt; 1) [1.0] {
 			1,z,1,1

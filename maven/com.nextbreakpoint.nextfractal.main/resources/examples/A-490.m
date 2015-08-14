@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <mandelbrot>
-    <timestamp>2015-05-22 08:20:43</timestamp>
+    <timestamp>2015-08-13 23:14:07</timestamp>
     <julia>true</julia>
     <point>0.43499999999999994</point>
     <point>0.0</point>
@@ -29,9 +29,6 @@
 			if (m &lt; 0) {
 				m = m + 1;
 			}
-		}
-		rule (n = 0) [1] {
-			1,0,0,0
 		}
 		rule (n &gt; 0) [1] {
 			gradient[199 * m]

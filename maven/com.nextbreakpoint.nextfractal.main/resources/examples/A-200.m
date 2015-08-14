@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <mandelbrot>
-    <timestamp>2015-04-30 17:20:43</timestamp>
+    <timestamp>2015-08-13 09:22:14</timestamp>
     <julia>false</julia>
     <point>0.32500000000000007</point>
     <point>-0.035</point>
@@ -26,9 +26,6 @@
 			ratio = (2000 - 1) / 200;
 			m = |x|;
 			m = ratio * (n - 1 + (m - floor(m)));
-		}
-		rule (n = 0) [1.0] {
-			0
 		}
 		rule (n &gt; 0) [1.0] {
 			gradient[m]

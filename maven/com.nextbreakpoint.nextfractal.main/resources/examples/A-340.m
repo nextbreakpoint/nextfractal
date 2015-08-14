@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <mandelbrot>
-    <timestamp>2015-05-11 20:00:04</timestamp>
+    <timestamp>2015-08-13 23:04:31</timestamp>
     <julia>false</julia>
     <point>-0.065</point>
     <point>0.66</point>
@@ -91,8 +91,8 @@
 }
 </source>
     <time>0.0</time>
-    <traslation>-0.04315712717645475</traslation>
-    <traslation>-0.1888124313969895</traslation>
-    <traslation>2.0789281794113688</traslation>
+    <traslation>1.0037848355910233</traslation>
+    <traslation>-0.0975551841251634</traslation>
+    <traslation>1.6288946267774405</traslation>
     <traslation>0.0</traslation>
 </mandelbrot>

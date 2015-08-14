@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <mandelbrot>
-    <timestamp>2015-04-30 16:56:41</timestamp>
+    <timestamp>2015-08-13 09:21:06</timestamp>
     <julia>true</julia>
     <point>-0.7170243839996369</point>
     <point>0.3277528649298041</point>
@@ -25,9 +25,6 @@
 		init {
 			m = |x|;
 			m = (1 + sin((n + m - floor(m)) * 3 / 2pi)) / 2;
-		}
-		rule (n = 0) [1.0] {
-			0
 		}
 		rule (n &gt; 0) [1.0] {
 			gradient[199 * m]

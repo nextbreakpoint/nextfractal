@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <mandelbrot>
-    <timestamp>2015-04-30 16:48:32</timestamp>
+    <timestamp>2015-08-13 09:19:33</timestamp>
     <julia>true</julia>
     <point>0.2549999999999999</point>
     <point>0.495</point>
@@ -29,15 +29,12 @@
 		rule (n = 0) [1.0] {
 			m1,m2,m3
 		}
-		rule (n &gt; 0) [1.0] {
-			0
-		}
 	}
 }
 </source>
     <time>0.0</time>
-    <traslation>0.15708964441735282</traslation>
-    <traslation>-0.05077422325346456</traslation>
-    <traslation>1.2155062499999998</traslation>
+    <traslation>0.0</traslation>
+    <traslation>0.0</traslation>
+    <traslation>1.0</traslation>
     <traslation>0.0</traslation>
 </mandelbrot>

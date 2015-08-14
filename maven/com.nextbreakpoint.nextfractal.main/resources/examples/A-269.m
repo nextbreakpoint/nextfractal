@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <mandelbrot>
-    <timestamp>2015-05-10 23:12:17</timestamp>
+    <timestamp>2015-08-13 22:56:54</timestamp>
     <julia>true</julia>
     <point>0.30912914372098044</point>
     <point>-0.014606953892668001</point>
@@ -45,11 +45,6 @@
 			[#FFFF0A0A &gt; #FFFFFFFF, 20];
 			[#FFFFFFFF &gt; #FF0042A9, 60];
 			[#FF0042A9 &gt; #FF000000, 120];
-		}
-		init {
-		}
-		rule (n = 0) [1] {
-			1,0,0,0
 		}
 		rule (n &gt; 0) [1] {
 			gradient[n + re(m) * 10]

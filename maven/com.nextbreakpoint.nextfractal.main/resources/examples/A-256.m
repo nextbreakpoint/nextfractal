@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <mandelbrot>
-    <timestamp>2015-05-10 22:52:01</timestamp>
-    <julia>false</julia>
-    <point>0.0</point>
-    <point>0.0</point>
+    <timestamp>2015-08-13 22:52:35</timestamp>
+    <julia>true</julia>
+    <point>-0.735</point>
+    <point>-0.13</point>
     <rotation>0.0</rotation>
     <rotation>0.0</rotation>
     <rotation>0.0</rotation>
@@ -13,7 +13,7 @@
     <scale>1.0</scale>
     <scale>1.0</scale>
     <source>fractal {
-	orbit [-3.0 - 1.5i,+0.0 + 1.5i] [x,n,m] {
+	orbit [-1.5 - 1.5i,+1.5 + 1.5i] [x,n,m] {
 		trap circle0 [&lt;0,0&gt;] {
 			MOVETO(&lt;1,0&gt;);
 			ARCTO(&lt;1,1&gt;,&lt;0,1&gt;);
@@ -45,11 +45,6 @@
 			[#FFFF0A0A &gt; #FFFFFFFF, 20];
 			[#FFFFFFFF &gt; #FF0042A9, 60];
 			[#FF0042A9 &gt; #FF000000, 120];
-		}
-		init {
-		}
-		rule (n = 0) [1] {
-			1,0,0,0
 		}
 		rule (n &gt; 0) [1] {
 			gradient[199 * re(m)]

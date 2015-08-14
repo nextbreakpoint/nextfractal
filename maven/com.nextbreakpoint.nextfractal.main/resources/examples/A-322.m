@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <mandelbrot>
-    <timestamp>2015-05-11 19:19:52</timestamp>
+    <timestamp>2015-08-13 23:03:19</timestamp>
     <julia>true</julia>
     <point>-0.08877527496843475</point>
     <point>0.6504143745611664</point>
@@ -53,9 +53,6 @@
 			m = mod(x);
 			t = (n - 1) + (log(log(40)) - log (log(m))) / log(2);
 		}
-		rule (n = 0) [1] {
-			1,0,0,0
-		}
 		rule (n &gt; 0) [1] {
 			gradient0[t]
 		}
@@ -67,7 +64,7 @@
 </source>
     <time>0.0</time>
     <traslation>0.0</traslation>
-    <traslation>0.0</traslation>
-    <traslation>1.0</traslation>
+    <traslation>0.013958153184985495</traslation>
+    <traslation>0.7462153966366274</traslation>
     <traslation>0.0</traslation>
 </mandelbrot>

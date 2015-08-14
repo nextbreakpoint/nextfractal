@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <mandelbrot>
-    <timestamp>2015-05-21 08:42:18</timestamp>
+    <timestamp>2015-08-13 23:07:40</timestamp>
     <julia>true</julia>
     <point>-0.6604511975625676</point>
     <point>0.3389496449163029</point>
@@ -46,9 +46,6 @@
 		init {
 			m = mod(z);
 			q = 199 * (m - floor(m));
-		}
-		rule (n = 0) [1] {
-			1,0,0,0
 		}
 		rule (n &gt; 1) [1] {
 			gradient0[q]

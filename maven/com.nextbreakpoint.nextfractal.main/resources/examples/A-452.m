@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <mandelbrot>
-    <timestamp>2015-05-21 17:30:11</timestamp>
+    <timestamp>2015-08-13 23:11:41</timestamp>
     <julia>true</julia>
     <point>3.2474815226823885</point>
     <point>-1.2396201632186954</point>
@@ -33,9 +33,6 @@
 			zr = wr * te - wi * tf;
 			zi = wi * te + wr * tf;			
 			x = &lt;zr,zi&gt;;
-			if (mod2(x) &lt; 0.0000000001) {
-				stop;
-			}
 		}
 	}
 	color [(1,0,0,0)] {
@@ -50,9 +47,6 @@
 				m = m + 1;
 			}
 			c = m;
-		}
-		rule (n = 0) [1] {
-			1,0,0,0
 		}
 		rule (n &gt; 0) [1] {
 			gradient[n - 1]

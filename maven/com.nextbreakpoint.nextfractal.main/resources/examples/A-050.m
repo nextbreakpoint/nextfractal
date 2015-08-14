@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <mandelbrot>
-    <timestamp>2015-07-21 08:58:35</timestamp>
+    <timestamp>2015-08-13 08:48:11</timestamp>
     <julia>false</julia>
     <point>0.0</point>
     <point>0.0</point>
@@ -19,11 +19,14 @@
 		}
 	}
 	color [#FFF0F0F0] {
+		init {
+			m = (1 + sin(&lt;x&gt; * pi * 10)) / 2;
+		}
 		rule (n = 0) [1] {
 			1,
-			(1 + sin(&lt;x&gt; * pi * 10)) / 2,
-			(1 + sin(&lt;x&gt; * pi * 10)) / 2,
-			(1 + sin(&lt;x&gt; * pi * 10)) / 2
+			m,
+			m,
+			m
 		}
 	}
 }

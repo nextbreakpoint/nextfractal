@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <mandelbrot>
-    <timestamp>2015-07-20 23:52:54</timestamp>
+    <timestamp>2015-08-13 23:15:05</timestamp>
     <julia>false</julia>
     <point>0.42630508069430717</point>
     <point>0.2536917043616403</point>
@@ -22,9 +22,6 @@
 		}
 	}
 	color [(1,0,0,0)] {
-		rule (n = 0) [1.0] {
-			1,0,0,0
-		}
 		rule (n &gt; 0) [1.0] {
 			1,1,1,1
 		}
