@@ -52,10 +52,18 @@ public class ExportPane extends Pane {
 
 	public ExportPane() {
 		ComboBox<Integer[]> presets = new ComboBox<>();
+		presets.getItems().add(new Integer[] { 4096, 4096 });
+		presets.getItems().add(new Integer[] { 2048, 2048 });
+		presets.getItems().add(new Integer[] { 1900, 1900 });
 		presets.getItems().add(new Integer[] { 1900, 1080 });
+		presets.getItems().add(new Integer[] { 1650, 1650 });
 		presets.getItems().add(new Integer[] { 1650, 1050 });
+		presets.getItems().add(new Integer[] { 1024, 1024 });
 		presets.getItems().add(new Integer[] { 1024, 768 });
+		presets.getItems().add(new Integer[] { 640, 640 });
 		presets.getItems().add(new Integer[] { 640, 480 });
+		presets.getItems().add(new Integer[] { 512, 512 });
+		presets.getItems().add(new Integer[] { 256, 256 });
 		presets.getItems().add(new Integer[] { 0, 0 });
 		presets.setMinWidth(CONTROL_SIZE);
 		presets.setMaxWidth(CONTROL_SIZE);
