@@ -143,8 +143,8 @@ public class MandelbrotEditorPane extends BorderPane {
 		BorderPane sourceButtons = new BorderPane();
 		HBox sourceButtonsLeft = new HBox();
 		HBox sourceButtonsRight = new HBox();
-		Button browseButton = new Button("", createIconImage("/icon-export.png"));
-		Button renderButton = new Button("", createIconImage("/icon-render.png"));
+		Button browseButton = new Button("", createIconImage("/icon-folder.png"));
+		Button renderButton = new Button("", createIconImage("/icon-run.png"));
 		Button loadButton = new Button("", createIconImage("/icon-load.png"));
 		Button saveButton = new Button("", createIconImage("/icon-save.png"));
 		browseButton.setTooltip(new Tooltip("Browse fractals"));
@@ -221,8 +221,8 @@ public class MandelbrotEditorPane extends BorderPane {
 		MandelbrotParamsPane paramsPanel = new MandelbrotParamsPane(getMandelbrotSession()); 
 		HBox paramsButtonsLeft = new HBox();
 		HBox paramsButtonsRight = new HBox();
-		Button paramsBrowseButton = new Button("", createIconImage("/icon-export.png"));
-		Button paramsRenderButton = new Button("", createIconImage("/icon-render.png"));
+		Button paramsBrowseButton = new Button("", createIconImage("/icon-folder.png"));
+		Button paramsRenderButton = new Button("", createIconImage("/icon-run.png"));
 		Button paramsLoadButton = new Button("", createIconImage("/icon-load.png"));
 		Button paramsSaveButton = new Button("", createIconImage("/icon-save.png"));
 		paramsBrowseButton.setTooltip(new Tooltip("Browse fractals"));
