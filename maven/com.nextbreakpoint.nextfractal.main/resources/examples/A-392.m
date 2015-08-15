@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <mandelbrot>
-    <timestamp>2015-08-15 08:40:11</timestamp>
+    <timestamp>2015-08-15 08:42:48</timestamp>
     <julia>true</julia>
-    <point>0.5549999999999999</point>
-    <point>-0.02</point>
+    <point>0.16999999999999998</point>
+    <point>-0.75</point>
     <rotation>0.0</rotation>
     <rotation>0.0</rotation>
     <rotation>0.0</rotation>
@@ -27,7 +27,7 @@
 			mmax = 0;
 			z = 0;
 		}
-		loop [0, 200] (circle0 ~? x) {
+		loop [0, 400] (circle0 ~? x) {
 			x = x * x * x * x + w;
 			m = mod(x);
 			if (m &gt; mmax) {
@@ -38,10 +38,8 @@
 	}
 	color [(1,0,0,0)] {
 		palette gradient0 {
-			[#FF000000 &gt; #FFD30000, 20];
-			[#FFD30000 &gt; #FFFFFF00, 110];
-			[#FFFFFF00 &gt; #FFFFFFFF, 40];
-			[#FFFFFFFF &gt; #FF030062, 30];
+			[#FFFF9583 &gt; #FFD30000, 100];
+			[#FFD30000 &gt; #FFFF9583, 100];
 		}
 		init {
 			m = mod(z);
@@ -54,8 +52,8 @@
 }
 </source>
     <time>0.0</time>
-    <traslation>-0.4441513446521158</traslation>
-    <traslation>0.23892379138528977</traslation>
-    <traslation>0.005404369066649918</traslation>
+    <traslation>-0.0012689230168168631</traslation>
+    <traslation>0.0038067690504505892</traslation>
+    <traslation>0.7462153966366274</traslation>
     <traslation>0.0</traslation>
 </mandelbrot>
