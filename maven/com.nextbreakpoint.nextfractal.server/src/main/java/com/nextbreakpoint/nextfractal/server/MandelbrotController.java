@@ -31,6 +31,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.IntBuffer;
 import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
@@ -63,9 +66,10 @@ import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotImageGenerator;
 @RequestMapping("/mandelbrot")
 public class MandelbrotController {
 	private static final Logger logger = Logger.getLogger(MandelbrotController.class.getName());
-	private static ExecutorService executor = Executors.newFixedThreadPool(32);
+	private static final ExecutorService executor = Executors.newFixedThreadPool(32);
+	private static final Cache cache = new Cache();
 	
-	@RequestMapping(method=RequestMethod.GET)
+	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST })
     public DeferredResult<ResponseEntity<byte[]>> createTile(@RequestParam(value="tileSize", required=true) Integer tileSize, @RequestParam(value="rows", required=true) Integer rows, @RequestParam(value="cols", required=true) Integer cols, @RequestParam(value="row", required=true) Integer row, @RequestParam(value="col", required=true) Integer col, @RequestParam(value="data", required=true) String encodedData) {
 		DeferredResult<ResponseEntity<byte[]>> deferredResult = new DeferredResult<>();
 		try {
@@ -79,7 +83,8 @@ public class MandelbrotController {
 			request.setMandelbrotData(data);
 			validateRequest(request);
 			RemoteJob<MandelbrotData> job = createJob(request);
-		    ProcessingTask<MandelbrotData> task = new ProcessingTask<>(deferredResult, job);
+			String key = generateKey(tileSize, rows, cols, row, col, encodedData);
+		    ProcessingTask<MandelbrotData> task = new ProcessingTask<>(deferredResult, job, key);
 		    synchronized (executor) {
 		    	executor.execute(task);
 			}
@@ -92,6 +97,22 @@ public class MandelbrotController {
 		}
         return deferredResult;
     }
+
+	private String generateKey(Integer tileSize, Integer rows, Integer cols, Integer row, Integer col, String encodedData) {
+		StringBuilder builder = new StringBuilder();
+		builder.append(encodedData);
+		builder.append("-");
+		builder.append(tileSize);
+		builder.append("-");
+		builder.append(rows);
+		builder.append("-");
+		builder.append(cols);
+		builder.append("-");
+		builder.append(row);
+		builder.append("-");
+		builder.append(col);
+		return builder.toString();
+	}
 
 	private void validateRequest(MandelbrotRequest request) {
 		if (request.getRows() < 0 || request.getRows() > 16) {
@@ -179,17 +200,28 @@ public class MandelbrotController {
 	private class ProcessingTask<T> implements Runnable {
 		private DeferredResult<ResponseEntity<byte[]>> deferredResult;
 		private RemoteJob<T> job;
+		private String key;
 
-		public ProcessingTask(DeferredResult<ResponseEntity<byte[]>> deferredResult, RemoteJob<T> job) {
+		public ProcessingTask(DeferredResult<ResponseEntity<byte[]>> deferredResult, RemoteJob<T> job, String key) {
 			this.deferredResult = deferredResult;
 			this.job = job;
+			this.key = key;
 		}
 
 		@Override
 		public void run() {
 			try {
-				byte[] pngImage = createImage(job);
-				ResponseEntity<byte[]> response = createResponse(pngImage);
+				CacheEntry cacheEntry = cache.get(key);
+				if (cacheEntry == null) {
+					logger.log(Level.INFO, "Generate image [cache size = {0}]", new Object[] { cache.size() });
+					byte[] pngImage = createImage(job);
+					logger.log(Level.INFO, "Image size {0} bytes", pngImage.length);
+					cacheEntry = new CacheEntry(pngImage);
+					cache.put(key, cacheEntry);
+				} else {
+					logger.log(Level.INFO, "Cached image found [cache size = {0}]", new Object[] { cache.size() });
+				}
+				ResponseEntity<byte[]> response = createResponse(cacheEntry.getImage());
 				if (!deferredResult.isSetOrExpired()) {
 					deferredResult.setResult(response);
 				}
@@ -200,6 +232,53 @@ public class MandelbrotController {
 					deferredResult.setResult(response);
 				}
 			}
+		}
+	}
+
+	private static class Cache {
+		private static final int MAX_CACHE_SIZE = 50;
+		private Map<String, CacheEntry> map = new HashMap<>();
+
+		public synchronized void put(String key, CacheEntry entry) {
+			map.put(key, entry);
+			while (map.size() > MAX_CACHE_SIZE) {
+				Entry<String, CacheEntry> olderEntry = null;
+				for (Entry<String, CacheEntry> mapEntry : map.entrySet()) {
+					if (olderEntry == null || mapEntry.getValue().getTimestamp() < olderEntry.getValue().getTimestamp()) {
+						olderEntry = mapEntry;
+					}
+				}
+				if (olderEntry != entry) {
+					map.remove(olderEntry.getKey());
+				}
+			}
+		}
+
+		public synchronized int size() {
+			return map.size();
+		}
+
+		public synchronized CacheEntry get(String key) {
+			return map.get(key);
+		}
+	}
+	
+	private static class CacheEntry {
+		private volatile long timestamp;
+		private final byte[] pngImage;
+		
+		public CacheEntry(byte[] pngImage) {
+			this.timestamp = System.nanoTime();
+			this.pngImage = pngImage;
+		}
+		
+		public byte[] getImage() {
+			timestamp = System.nanoTime();
+			return pngImage;
+		}
+
+		public long getTimestamp() {
+			return timestamp;
 		}
 	}
 }
