@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <mandelbrot>
-    <timestamp>2015-08-16 11:35:35</timestamp>
+    <timestamp>2015-08-17 08:25:38</timestamp>
     <julia>true</julia>
     <point>-0.7433333333333333</point>
     <point>-0.185</point>
@@ -17,16 +17,17 @@
 		trap trap1 [&lt;0,0&gt;] {
 			MOVETO(&lt;-1.0,+0&gt;);
 			LINETO(&lt;1,4&gt;);
-			LINETO(&lt;2,5&gt;);
 			LINETO(&lt;3,-6&gt;);
 			LINETO(&lt;-4,0&gt;);
+			CLOSE;
 		}		
 		trap trap2 [&lt;0,0&gt;] {
 			MOVETO(&lt;-3.0,+0.25&gt;);
 			LINETO(&lt;-3.0,+0.25&gt;);
 			LINETO(&lt;+3.0,+0.45&gt;);
 			LINETO(&lt;+3.0,-0.45&gt;);
-			LINETO(&lt;-3.0,-0.2&gt;);
+			LINETO(&lt;-3.0,-0.25&gt;);
+			CLOSE;
 		}		
 		loop [0, 1000] (trap1 ~? x &amp; trap2 ~? x) {
 			x = x * x + w;

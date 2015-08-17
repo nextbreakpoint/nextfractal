@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <mandelbrot>
-    <timestamp>2015-08-17 08:28:34</timestamp>
+    <timestamp>2015-08-17 08:29:33</timestamp>
     <julia>true</julia>
-    <point>-0.4</point>
-    <point>0.63</point>
+    <point>-0.7750000000000001</point>
+    <point>0.13</point>
     <rotation>0.0</rotation>
     <rotation>0.0</rotation>
     <rotation>0.0</rotation>
