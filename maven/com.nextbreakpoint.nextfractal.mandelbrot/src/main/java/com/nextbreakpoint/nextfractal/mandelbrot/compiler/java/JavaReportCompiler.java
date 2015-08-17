@@ -480,16 +480,22 @@ public class JavaReportCompiler {
 					builder.append("curveToRel");
 					break;
 
+				case "CLOSE":
+					builder.append("close");
+					break;
+
 				default:
 					break;
 			}
 			builder.append("(");
-			if (operator.getC1().isReal()) {
-				builder.append("number(");
-				operator.getC1().compile(new JavaASTCompiler(context, variables, builder));
-				builder.append(")");
-			} else {
-				operator.getC1().compile(new JavaASTCompiler(context, variables, builder));
+			if (operator.getC1() != null) {
+				if (operator.getC1().isReal()) {
+					builder.append("number(");
+					operator.getC1().compile(new JavaASTCompiler(context, variables, builder));
+					builder.append(")");
+				} else {
+					operator.getC1().compile(new JavaASTCompiler(context, variables, builder));
+				}
 			}
 			if (operator.getC2() != null) {
 				builder.append(",");

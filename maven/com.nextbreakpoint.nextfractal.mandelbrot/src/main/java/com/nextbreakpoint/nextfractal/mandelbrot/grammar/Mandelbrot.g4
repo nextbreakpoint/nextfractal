@@ -67,6 +67,10 @@ trap
 		
 pathop
 	:
+	o=PATHOP_0POINTS ';' {
+		builder.addOrbitTrapOp(new ASTOrbitTrapOp($o, $o.text));
+	}
+	|
 	o=PATHOP_1POINTS '(' c=complex ')' ';' {
 		builder.addOrbitTrapOp(new ASTOrbitTrapOp($o, $o.text, $c.result));
 	}
@@ -687,6 +691,11 @@ INTEGER
 	: 
 	('0'..'9')+
 	; 
+
+PATHOP_0POINTS
+	: 
+	'CLOSE'
+	;
 
 PATHOP_1POINTS
 	: 

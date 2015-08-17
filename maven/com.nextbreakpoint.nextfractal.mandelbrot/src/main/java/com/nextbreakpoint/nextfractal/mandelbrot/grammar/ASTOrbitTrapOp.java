@@ -34,6 +34,14 @@ public class ASTOrbitTrapOp extends ASTObject {
 	private ASTNumber c2;
 	private ASTNumber c3;
 
+	public ASTOrbitTrapOp(Token location, String op) {
+		super(location);
+		this.op = op;
+		this.c1 = null;
+		this.c2 = null;
+		this.c3 = null;
+	}
+
 	public ASTOrbitTrapOp(Token location, String op, ASTNumber c) {
 		super(location);
 		this.op = op;
@@ -78,17 +86,20 @@ public class ASTOrbitTrapOp extends ASTObject {
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append(op);
-		builder.append("(");
-		builder.append(c1);
-		if (c2 != null) {
+		if (c1 != null) {
+			builder.append("(");
 			builder.append(",");
-			builder.append(c2);
+			builder.append(c1);
+			if (c2 != null) {
+				builder.append(",");
+				builder.append(c2);
+				if (c3 != null) {
+					builder.append(",");
+					builder.append(c3);
+				}
+			}
+			builder.append(")");
 		}
-		if (c3 != null) {
-			builder.append(",");
-			builder.append(c3);
-		}
-		builder.append(")");
 		return builder.toString();
 	}
 

@@ -92,6 +92,11 @@ public class Trap {
 		return this;
 	}
 
+	public Trap close() {
+		path2d.closePath();
+		return this;
+	}
+	
 	public boolean contains(Number x) {
 		return path2d.contains(x.r() - center.r(), x.i() - center.i());
 	}
@@ -109,6 +114,7 @@ public class Trap {
 					points.add(new Number(coords[0], coords[1]));
 					break;
 				case PathIterator.SEG_CLOSE:
+					points.add(new Number(points.get(0).r(), points.get(0).i()));
 					break;
 				default:
 					break;

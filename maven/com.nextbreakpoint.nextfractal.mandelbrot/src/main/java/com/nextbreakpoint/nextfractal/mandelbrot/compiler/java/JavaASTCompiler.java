@@ -41,6 +41,7 @@ import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrap;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOp;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpArcTo;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpArcToRel;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpClose;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpCurveTo;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpCurveToRel;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpLineTo;
@@ -704,6 +705,9 @@ public class JavaASTCompiler implements ASTExpressionCompiler {
 	
 			case "CURVETOREL":
 				return new CompiledTrapOpCurveToRel(c1, c2, c3, orbitTrapOp.getLocation());
+	
+			case "CLOSE":
+				return new CompiledTrapOpClose(orbitTrapOp.getLocation());
 	
 			default:
 				throw new ASTException("Unsupported operator: " + orbitTrapOp.getLocation().getText(), orbitTrapOp.getLocation());
