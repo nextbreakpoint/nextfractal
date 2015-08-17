@@ -46,12 +46,12 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.stage.DirectoryChooser;
 import javafx.util.Duration;
-import javafx.scene.control.Label;
 
 import com.nextbreakpoint.nextfractal.core.javaFX.StringObservableValue;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererPoint;
@@ -255,7 +255,7 @@ public class BrowsePane extends Pane {
 			currentFolder = currentFolder.exists() ? currentFolder : new File(System.getProperty("user.home"));
 			directoryChooser.setInitialDirectory(currentFolder);
 		}
-		File folder = directoryChooser.showDialog(null);
+		File folder = directoryChooser.showDialog(BrowsePane.this.getScene().getWindow());
 		if (folder != null) {
 			pathProperty.setValue(folder.getAbsolutePath());
 		}

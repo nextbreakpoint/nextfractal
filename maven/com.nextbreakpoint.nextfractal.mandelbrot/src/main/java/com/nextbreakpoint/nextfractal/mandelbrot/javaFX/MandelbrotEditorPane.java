@@ -363,7 +363,7 @@ public class MandelbrotEditorPane extends BorderPane {
 				fileChooser.setInitialDirectory(getMandelbrotSession().getCurrentFile().getParentFile());
 				fileChooser.setInitialFileName(getMandelbrotSession().getCurrentFile().getName());
 			}
-			File file = fileChooser.showOpenDialog(null);
+			File file = fileChooser.showOpenDialog(MandelbrotEditorPane.this.getScene().getWindow());
 			if (file != null) {
 				getMandelbrotSession().setCurrentFile(file);
 				try {
@@ -388,7 +388,7 @@ public class MandelbrotEditorPane extends BorderPane {
 				fileChooser.setInitialDirectory(getMandelbrotSession().getCurrentFile().getParentFile());
 				fileChooser.setInitialFileName(getMandelbrotSession().getCurrentFile().getName());
 			}
-			File file = fileChooser.showSaveDialog(null);
+			File file = fileChooser.showSaveDialog(MandelbrotEditorPane.this.getScene().getWindow());
 			if (file != null) {
 				getMandelbrotSession().setCurrentFile(file);
 				try {

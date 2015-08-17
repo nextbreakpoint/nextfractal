@@ -1434,7 +1434,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 			fileChooser.setInitialDirectory(currentExportFile.getParentFile());
 			fileChooser.setInitialFileName(currentExportFile.getName());
 		}
-		File file = fileChooser.showSaveDialog(null);
+		File file = fileChooser.showSaveDialog(MandelbrotRenderPane.this.getScene().getWindow());
 		if (file != null) {
 			currentExportFile = file;
 			MandelbrotData data = exportData; 
