@@ -173,7 +173,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 		renderFactory = new JavaFXRendererFactory();
 
 		DefaultThreadFactory generatorThreadFactory = new DefaultThreadFactory("MandelbrotExportImageGenerator", true, Thread.MIN_PRIORITY);
-		generator = new MandelbrotImageGenerator(generatorThreadFactory, renderFactory, createSingleTile(50, 50));
+		generator = new MandelbrotImageGenerator(generatorThreadFactory, renderFactory, createSingleTile(50, 50), true);
 
 		coordinators = new RendererCoordinator[rows * columns];
 		
@@ -1241,10 +1241,10 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 	}
 
 	private void redrawIfPixelsChanged(Canvas canvas) {
+		RendererGraphicsContext gc = renderFactory.createGraphicsContext(canvas.getGraphicsContext2D());
 		for (int i = 0; i < coordinators.length; i++) {
 			RendererCoordinator coordinator = coordinators[i];
 			if (coordinator != null && coordinator.isPixelsChanged()) {
-				RendererGraphicsContext gc = renderFactory.createGraphicsContext(canvas.getGraphicsContext2D());
 				coordinator.drawImage(gc, 0, 0);
 			}
 		}

@@ -67,7 +67,7 @@ public class SimpleExportRenderer implements ExportRenderer {
 		for (FractalFactory plugin : plugins) {
 			try {
 				if (job.getPluginId().equals(plugin.getId())) {
-					return plugin.createImageGenerator(threadFactory, renderFactory, job.getTile());
+					return plugin.createImageGenerator(threadFactory, renderFactory, job.getTile(), false);
 				}
 			} catch (Exception e) {
 			}

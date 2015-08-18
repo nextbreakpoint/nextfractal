@@ -462,18 +462,6 @@ public class MandelbrotBaseListener implements MandelbrotListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterBackgroundcolorargb(MandelbrotParser.BackgroundcolorargbContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitBackgroundcolorargb(MandelbrotParser.BackgroundcolorargbContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterEof(MandelbrotParser.EofContext ctx) { }
 	/**
 	 * {@inheritDoc}

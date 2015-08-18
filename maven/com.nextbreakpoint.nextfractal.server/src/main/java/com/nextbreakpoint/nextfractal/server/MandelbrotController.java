@@ -191,7 +191,7 @@ public class MandelbrotController {
 		RendererFactory renderFactory = new JavaFXRendererFactory();
 		RendererTile tile = job.getTile();
 		T data = job.getData();
-		ImageGenerator generator = new MandelbrotImageGenerator(threadFactory, renderFactory, tile);
+		ImageGenerator generator = new MandelbrotImageGenerator(threadFactory, renderFactory, tile, false);
 		IntBuffer pixels = generator.renderImage(data);
 		byte[] pngImageData = getImageAsPNG(tile.getTileSize(), pixels);
 		return pngImageData;

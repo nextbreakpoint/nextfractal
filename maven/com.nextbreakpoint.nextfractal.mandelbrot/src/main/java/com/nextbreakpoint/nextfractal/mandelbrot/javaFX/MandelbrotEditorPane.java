@@ -110,7 +110,7 @@ public class MandelbrotEditorPane extends BorderPane {
 		RendererTile generatorTile = createSingleTile(50, 50);
 		
 		DefaultThreadFactory generatorThreadFactory = new DefaultThreadFactory("MandelbrotHistoryImageGenerator", true, Thread.MIN_PRIORITY);
-		generator = new MandelbrotImageGenerator(generatorThreadFactory, renderFactory, generatorTile);
+		generator = new MandelbrotImageGenerator(generatorThreadFactory, renderFactory, generatorTile, true);
 		
 		getStyleClass().add("mandelbrot");
 

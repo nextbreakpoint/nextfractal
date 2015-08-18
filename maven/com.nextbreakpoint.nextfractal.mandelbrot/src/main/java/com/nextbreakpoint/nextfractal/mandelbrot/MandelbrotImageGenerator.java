@@ -44,12 +44,14 @@ import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererView;
 
 public class MandelbrotImageGenerator implements ImageGenerator {
 	private boolean aborted;
+	private boolean opaque;
 	private RendererTile tile;
 	private ThreadFactory threadFactory;
 	private RendererFactory renderFactory;
 
-	public MandelbrotImageGenerator(ThreadFactory threadFactory, RendererFactory renderFactory, RendererTile tile) {
+	public MandelbrotImageGenerator(ThreadFactory threadFactory, RendererFactory renderFactory, RendererTile tile, boolean opaque) {
 		this.tile = tile;
+		this.opaque = opaque;
 		this.threadFactory = threadFactory;
 		this.renderFactory = renderFactory;
 	}
@@ -75,6 +77,7 @@ public class MandelbrotImageGenerator implements ImageGenerator {
 				throw new RuntimeException("Failed to compile Color class");
 			}
 			Renderer renderer = new Renderer(threadFactory, renderFactory, tile);
+			renderer.setOpaque(opaque);
 			double[] traslation = generatorData.getTraslation();
 			double[] rotation = generatorData.getRotation();
 			double[] scale = generatorData.getScale();

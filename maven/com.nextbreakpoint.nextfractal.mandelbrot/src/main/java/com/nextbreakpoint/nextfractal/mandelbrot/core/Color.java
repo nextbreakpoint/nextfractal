@@ -69,7 +69,7 @@ public abstract class Color {
 	public float[] addColor(double opacity, float[] color) {
 		double a = opacity * color[0];
 		double q = 1 - a;
-		for (int i = 1; i < 4; i++) {
+		for (int i = 0; i < 4; i++) {
 			this.color[i] = (float)Math.min(1, Math.max(0, q * this.color[i] + color[i] * a));
 		}
 		return this.color;

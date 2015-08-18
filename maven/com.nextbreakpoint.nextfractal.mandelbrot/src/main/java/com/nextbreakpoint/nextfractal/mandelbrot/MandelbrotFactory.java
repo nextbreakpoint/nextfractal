@@ -74,16 +74,16 @@ public class MandelbrotFactory implements FractalFactory {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.FractalFactory#createImageGenerator(java.util.concurrent.ThreadFactory, com.nextbreakpoint.nextfractal.core.renderer.RendererFactory, com.nextbreakpoint.nextfractal.core.renderer.RendererTile)
+	 * @see com.nextbreakpoint.nextfractal.core.FractalFactory#createImageGenerator(java.util.concurrent.ThreadFactory, com.nextbreakpoint.nextfractal.core.renderer.RendererFactory, com.nextbreakpoint.nextfractal.core.renderer.RendererTile, boolean)
 	 */
 	@Override
-	public ImageGenerator createImageGenerator(ThreadFactory threadFactory,	RendererFactory renderFactory, RendererTile tile) {
-		return new MandelbrotImageGenerator(threadFactory, renderFactory, tile);
+	public ImageGenerator createImageGenerator(ThreadFactory threadFactory,	RendererFactory renderFactory, RendererTile tile, boolean opaque) {
+		return new MandelbrotImageGenerator(threadFactory, renderFactory, tile, opaque);
 	}
 
 	protected String getInitialSource() {
 		try {
-			return getSource("mandelbrot-default.m");
+			return getSource("/mandelbrot.txt");
 		} catch (IOException e) {
 		}
 		return "";

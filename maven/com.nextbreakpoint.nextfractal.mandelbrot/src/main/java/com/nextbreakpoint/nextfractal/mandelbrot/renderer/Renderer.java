@@ -73,6 +73,7 @@ public class Renderer {
 	protected volatile float progress;
 	protected volatile double rotation;
 	protected boolean julia;
+	protected boolean opaque;
 	protected Number point;
 	protected boolean multiThread;
 	protected boolean singlePass;
@@ -98,6 +99,7 @@ public class Renderer {
 		this.rendererData = createRendererData();
 		this.rendererFractal = new RendererFractal();
 		this.tile = tile;
+		this.opaque = true;
 		transform = new RendererTransform();
 		view = new RendererView();
 		buffer = new RendererSurface(); 
@@ -494,7 +496,7 @@ public class Renderer {
 						c = rendererStrategy.renderColor(p);
 					}
 					rendererData.setPoint(offset, p);
-					rendererData.setPixel(offset, c);
+					rendererData.setPixel(offset, opaque ? 0xFF000000 | c : c);
 					offset += 1;
 				}
 				if (isInterrupted()) {
@@ -644,5 +646,13 @@ public class Renderer {
 		RendererError result = error;
 		error = null;
 		return result;
+	}
+
+	public boolean isOpaque() {
+		return opaque;
+	}
+
+	public void setOpaque(boolean opaque) {
+		this.opaque = opaque;
 	}
 }

@@ -1397,7 +1397,7 @@ public final class XaosRenderer extends Renderer {
 					z.set(xaosRendererData.point());
 					w.set(reallocX[k].position, position);
 					c = rendererStrategy.renderPoint(p, z, w);
-					xaosRendererData.setPixel(offset, c);
+					xaosRendererData.setPixel(offset, opaque ? 0xFF000000 | c : c);
 					xaosRendererData.setPoint(offset, p);
 					if (XaosConstants.SHOW_CALCULATE) {
 						xaosRendererData.setPixel(offset, Colors.mixColors(xaosRendererData.getPixel(offset), 0xFFFFFF00, 127));
@@ -1448,7 +1448,7 @@ public final class XaosRenderer extends Renderer {
 							z.set(xaosRendererData.point());
 							w.set(reallocX[k].position, position);
 							c = rendererStrategy.renderPoint(p, z, w);
-							xaosRendererData.setPixel(offset, c);
+							xaosRendererData.setPixel(offset, opaque ? 0xFF000000 | c : c);
 							xaosRendererData.setPoint(offset, p);
 							if (XaosConstants.SHOW_CALCULATE) {
 								xaosRendererData.setPixel(offset, Colors.mixColors(xaosRendererData.getPixel(offset), 0xFFFFFF00, 127));
@@ -1459,7 +1459,7 @@ public final class XaosRenderer extends Renderer {
 						z.set(xaosRendererData.point());
 						w.set(reallocX[k].position, position);
 						c = rendererStrategy.renderPoint(p, z, w);
-						xaosRendererData.setPixel(offset, c);
+						xaosRendererData.setPixel(offset, opaque ? 0xFF000000 | c : c);
 						xaosRendererData.setPoint(offset, p);
 						if (XaosConstants.SHOW_CALCULATE) {
 							xaosRendererData.setPixel(offset, Colors.mixColors(xaosRendererData.getPixel(offset), 0xFFFFFF00, 127));
@@ -1531,7 +1531,7 @@ public final class XaosRenderer extends Renderer {
 					z.set(xaosRendererData.point());
 					w.set(position, reallocY[k].position);
 					c = rendererStrategy.renderPoint(p, z, w);
-					xaosRendererData.setPixel(offset, c);
+					xaosRendererData.setPixel(offset, opaque ? 0xFF000000 | c : c);
 					xaosRendererData.setPoint(offset, p);
 					if (XaosConstants.SHOW_CALCULATE) {
 						xaosRendererData.setPixel(offset, Colors.mixColors(xaosRendererData.getPixel(offset), 0xFFFFFF00, 127));
@@ -1584,7 +1584,7 @@ public final class XaosRenderer extends Renderer {
 							z.set(xaosRendererData.point());
 							w.set(position, reallocY[k].position);
 							c = rendererStrategy.renderPoint(p, z, w);
-							xaosRendererData.setPixel(offset, c);
+							xaosRendererData.setPixel(offset, opaque ? 0xFF000000 | c : c);
 							xaosRendererData.setPoint(offset, p);
 							if (XaosConstants.SHOW_CALCULATE) {
 								xaosRendererData.setPixel(offset, Colors.mixColors(xaosRendererData.getPixel(offset), 0xFFFFFF00, 127));
@@ -1595,7 +1595,7 @@ public final class XaosRenderer extends Renderer {
 						z.set(xaosRendererData.point());
 						w.set(position, reallocY[k].position);
 						c = rendererStrategy.renderPoint(p, z, w);
-						xaosRendererData.setPixel(offset, c);
+						xaosRendererData.setPixel(offset, opaque ? 0xFF000000 | c : c);
 						xaosRendererData.setPoint(offset, p);
 						if (XaosConstants.SHOW_CALCULATE) {
 							xaosRendererData.setPixel(offset, Colors.mixColors(xaosRendererData.getPixel(offset), 0xFFFFFF00, 127));
@@ -1629,7 +1629,7 @@ public final class XaosRenderer extends Renderer {
 				if (tmpRealloc.isCached && !tmpRealloc.refreshed) {
 					xaosRendererData.getPoint(offset, p);
 					c = rendererStrategy.renderColor(p);
-					xaosRendererData.setPixel(offset, c);
+					xaosRendererData.setPixel(offset, opaque ? 0xFF000000 | c : c);
 					if (XaosConstants.SHOW_REFRESH) {
 						xaosRendererData.setPixel(offset, Colors.mixColors(xaosRendererData.getPixel(offset), 0xFF0000FF, 127));
 					}
@@ -1653,7 +1653,7 @@ public final class XaosRenderer extends Renderer {
 				if (tmpRealloc.isCached && !tmpRealloc.refreshed) {
 					xaosRendererData.getPoint(offset, p);
 					c = rendererStrategy.renderColor(p);
-					xaosRendererData.setPixel(offset, c);
+					xaosRendererData.setPixel(offset, opaque ? 0xFF000000 | c : c);
 					if (XaosConstants.SHOW_REFRESH) {
 						xaosRendererData.setPixel(offset, Colors.mixColors(xaosRendererData.getPixel(offset), 0xFF0000FF, 127));
 					}

@@ -61,7 +61,8 @@ public interface FractalFactory {
 	 * @param threadFactory
 	 * @param renderFactory
 	 * @param tile
+	 * @param opaque
 	 * @return
 	 */
-	public ImageGenerator createImageGenerator(ThreadFactory threadFactory, RendererFactory renderFactory, RendererTile tile);
+	public ImageGenerator createImageGenerator(ThreadFactory threadFactory, RendererFactory renderFactory, RendererTile tile, boolean opaque);
 }

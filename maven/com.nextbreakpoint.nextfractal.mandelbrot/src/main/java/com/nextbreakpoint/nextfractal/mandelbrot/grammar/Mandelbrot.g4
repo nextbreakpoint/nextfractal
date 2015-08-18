@@ -32,7 +32,7 @@ orbit
 		
 color
 	:
-	c=COLOR '[' argb=backgroundcolorargb ']' { 
+	c=COLOR '[' argb=colorargb ']' { 
 		builder.setColor(new ASTColor($c, $argb.result));
 	} '{' palette* colorinit? colorrule* '}'
 	;
@@ -575,21 +575,6 @@ colorargb returns [ASTColorARGB result]
 	|
 	argb32=ARGB32 {
 		$result = new ASTColorARGB((int)(0xFFFFFFFF & builder.parseLong($argb32.text.substring(1), 16)));
-	}
-	|
-	argb24=ARGB24 {
-		$result = new ASTColorARGB((int)(0xFF000000 | (0xFFFFFFFF & builder.parseLong($argb24.text.substring(1), 16))));
-	}
-	;
-		
-backgroundcolorargb returns [ASTColorARGB result]
-	:
-	'(' a=(RATIONAL | INTEGER) ',' r=(RATIONAL | INTEGER) ',' g=(RATIONAL | INTEGER) ',' b=(RATIONAL | INTEGER) ')' {
-		$result = new ASTColorARGB(1f, builder.parseFloat($r.text), builder.parseFloat($g.text), builder.parseFloat($b.text));
-	}
-	|
-	argb32=ARGB32 {
-		$result = new ASTColorARGB((int)(0xFF000000 | (0xFFFFFFFF & builder.parseLong($argb32.text.substring(1), 16))));
 	}
 	|
 	argb24=ARGB24 {
