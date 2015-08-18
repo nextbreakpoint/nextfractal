@@ -52,6 +52,7 @@ public class ExportPane extends Pane {
 
 	public ExportPane() {
 		ComboBox<Integer[]> presets = new ComboBox<>();
+		presets.getItems().add(new Integer[] { 0, 0 });
 		presets.getItems().add(new Integer[] { 4096, 4096 });
 		presets.getItems().add(new Integer[] { 2048, 2048 });
 		presets.getItems().add(new Integer[] { 1900, 1900 });
@@ -64,11 +65,10 @@ public class ExportPane extends Pane {
 		presets.getItems().add(new Integer[] { 640, 480 });
 		presets.getItems().add(new Integer[] { 512, 512 });
 		presets.getItems().add(new Integer[] { 256, 256 });
-		presets.getItems().add(new Integer[] { 0, 0 });
 		presets.setMinWidth(CONTROL_SIZE);
 		presets.setMaxWidth(CONTROL_SIZE);
 		presets.setPrefWidth(CONTROL_SIZE);
-		presets.getSelectionModel().select(0);
+		presets.getSelectionModel().select(7);
 		Integer[] item0 = presets.getSelectionModel().getSelectedItem();
 		AdvancedTextField widthField = new AdvancedTextField();
 		widthField.setRestrict(getRestriction());
