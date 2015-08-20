@@ -582,8 +582,13 @@ public class MandelbrotEditorPane extends BorderPane {
 		        "re", "im", "mod", "pha", "log", "exp", "sqrt", "mod2", "abs", "ceil", "floor", "pow", "hypot", "atan2", "min", "max", "cos", "sin", "tan", "asin", "acos", "atan"
 		};
 		
+		String[] PATHOP = new String[] {
+		        "MOVETO", "MOVETOREL", "LINETO", "LINETOREL", "ARCTO", "ARCTOREL", "QUADTO", "QUADTOREL", "CURVETO", "CURVETOREL", "CLOSE"
+		};
+		
 		String KEYWORD_PATTERN = "\\b(" + String.join("|", KEYWORDS) + ")\\b";
 		String FUNCTION_PATTERN = "\\b(" + String.join("|", FUNCTIONS) + ")\\b";
+		String PATHOP_PATTERN = "\\b(" + String.join("|", PATHOP) + ")\\b";
 		String PAREN_PATTERN = "\\(|\\)";
 		String BRACE_PATTERN = "\\{|\\}";
 		String OPERATOR_PATTERN = "\\*|\\+|-|/|\\^|<|>|\\||&|=|#|;|\\[|\\]";
@@ -594,6 +599,7 @@ public class MandelbrotEditorPane extends BorderPane {
 		        + "|(?<PAREN>" + PAREN_PATTERN + ")"
 		        + "|(?<BRACE>" + BRACE_PATTERN + ")"
 		        + "|(?<OPERATOR>" + OPERATOR_PATTERN + ")"
+		        + "|(?<PATHOP>" + PATHOP_PATTERN + ")"
 		);
 	}
 	
@@ -633,7 +639,8 @@ public class MandelbrotEditorPane extends BorderPane {
 					.group("FUNCTION") != null ? "function" : matcher
 					.group("PAREN") != null ? "paren" : matcher
 					.group("BRACE") != null ? "brace" : matcher
-					.group("OPERATOR") != null ? "operator" : null;
+					.group("OPERATOR") != null ? "operator" : matcher
+					.group("PATHOP") != null ? "pathop" : null;
 			assert styleClass != null;
 			spansBuilder.add(Collections.singleton("code"), matcher.start() - lastKwEnd);
 			spansBuilder.add(Collections.singleton(styleClass), matcher.end() - matcher.start());

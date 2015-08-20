@@ -114,8 +114,13 @@
     -fx-font-weight: bold;
 }
 
+.application .mandelbrot .pathop {
+    -fx-fill: orange;
+    -fx-font-weight: bold;
+}
+
 .application .mandelbrot .operator {
-    -fx-fill: darkgreen;
+    -fx-fill: green;
     -fx-font-weight: bold;
 }
 
@@ -125,12 +130,12 @@
 }
 
 .application .mandelbrot .function {
-    -fx-fill: purple;
+    -fx-fill: brown;
     -fx-font-weight: bold;
 }
 
 .application .mandelbrot .brace {
-    -fx-fill: darkgreen;
+    -fx-fill: black;
     -fx-font-weight: bold;
 }
 
