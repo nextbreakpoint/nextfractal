@@ -24,8 +24,6 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
 
-import com.nextbreakpoint.nextfractal.core.javaFX.StringObservableValue;
-
 import javafx.animation.TranslateTransition;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -36,15 +34,25 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.layout.BorderPane;
 import javafx.util.Duration;
 
-public class ErrorPane extends Pane {
+import com.nextbreakpoint.nextfractal.core.javaFX.StringObservableValue;
+
+public class ErrorPane extends BorderPane {
 	private StringObservableValue messageProperty;
 	private VBox box = new VBox();
 
-	public ErrorPane() {
+	public ErrorPane(int width, int height) {
+		setMinWidth(width);
+		setMaxWidth(width);
+		setPrefWidth(width);
+		setMinHeight(height);
+		setMaxHeight(height);
+		setPrefHeight(height);
+		setLayoutY(-height);
+
 		messageProperty = new StringObservableValue();
 		
 		Button closeButton = new Button("Close");
@@ -70,26 +78,25 @@ public class ErrorPane extends Pane {
 		box.getChildren().add(controls);
 		box.getChildren().add(buttons);
 		box.getStyleClass().add("popup");
-		getChildren().add(box);
+		setCenter(box);
 
 		closeButton.setOnMouseClicked(e -> {
 			hide();
 		});
 
-		widthProperty().addListener(new ChangeListener<java.lang.Number>() {
-			@Override
-			public void changed(ObservableValue<? extends java.lang.Number> observable, java.lang.Number oldValue, java.lang.Number newValue) {
-				box.setPrefWidth(newValue.doubleValue());
-			}
-		});
-		
-		heightProperty().addListener(new ChangeListener<java.lang.Number>() {
-			@Override
-			public void changed(ObservableValue<? extends java.lang.Number> observable, java.lang.Number oldValue, java.lang.Number newValue) {
-				box.setPrefHeight(newValue.doubleValue());
-				box.setLayoutY(-newValue.doubleValue());
-			}
-		});
+//		widthProperty().addListener(new ChangeListener<java.lang.Number>() {
+//			@Override
+//			public void changed(ObservableValue<? extends java.lang.Number> observable, java.lang.Number oldValue, java.lang.Number newValue) {
+//				box.setPrefWidth(newValue.doubleValue());
+//			}
+//		});
+//		
+//		heightProperty().addListener(new ChangeListener<java.lang.Number>() {
+//			@Override
+//			public void changed(ObservableValue<? extends java.lang.Number> observable, java.lang.Number oldValue, java.lang.Number newValue) {
+//				box.setPrefHeight(newValue.doubleValue());
+//			}
+//		});
 		
 		messageProperty().addListener(new ChangeListener<String>() {
 			@Override
@@ -109,9 +116,9 @@ public class ErrorPane extends Pane {
 
 	public void show() {
 		TranslateTransition tt = new TranslateTransition(Duration.seconds(0.4));
-		tt.setFromY(box.getTranslateY());
-		tt.setToY(box.getHeight());
-		tt.setNode(box);
+		tt.setFromY(this.getTranslateY());
+		tt.setToY(this.getHeight());
+		tt.setNode(this);
 		tt.setOnFinished(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
@@ -123,9 +130,9 @@ public class ErrorPane extends Pane {
 	
 	public void hide() {
 		TranslateTransition tt = new TranslateTransition(Duration.seconds(0.4));
-		tt.setFromY(box.getTranslateY());
+		tt.setFromY(this.getTranslateY());
 		tt.setToY(0);
-		tt.setNode(box);
+		tt.setNode(this);
 		tt.setOnFinished(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {

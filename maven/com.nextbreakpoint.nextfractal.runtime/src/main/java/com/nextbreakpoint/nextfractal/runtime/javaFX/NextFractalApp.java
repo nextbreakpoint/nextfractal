@@ -31,6 +31,7 @@ import java.util.logging.Logger;
 
 import javafx.application.Application;
 import javafx.event.EventHandler;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
@@ -40,6 +41,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
@@ -100,31 +102,36 @@ public class NextFractalApp extends Application {
 			dialog.showAndWait();
 		}
 		
-		int width = 600;
-		int height = 600;
-		int editorWidth = 424;
+		Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
+		logger.info("DPI = " + Screen.getPrimary().getDpi());
+		logger.info("Screen Size = (" + primaryScreenBounds.getWidth() + "," + primaryScreenBounds.getHeight() + ")");
+		double baseWidth = Math.min(primaryScreenBounds.getWidth() * 0.75, 1400);
+		int editorWidth = (int)Math.rint(baseWidth * 0.4);
+		int renderWidth = (int)Math.rint(baseWidth) - editorWidth;
+		int width = renderWidth + editorWidth;
+		int height = renderWidth;
+		logger.info("Window Size = (" + width + "," + height + ")");
+		
         String pluginId = "Mandelbrot";
-        primaryStage.setTitle("NextFractal 1.1.5");
-        primaryStage.setResizable(false);
         StackPane root = new StackPane();
         Pane mainPane = new Pane();
-        mainPane.setPrefWidth(width + editorWidth);
+        mainPane.setPrefWidth(width);
         mainPane.setPrefHeight(height);
-        mainPane.setMinWidth(width + editorWidth);
+        mainPane.setMinWidth(width);
         mainPane.setMinHeight(height);
-        mainPane.setMaxWidth(width + editorWidth);
+        mainPane.setMaxWidth(width);
         mainPane.setMaxHeight(height);
         editorRootPane = new BorderPane();
 		editorRootPane.setPrefWidth(editorWidth);
         editorRootPane.setPrefHeight(height);
-        editorRootPane.setLayoutX(width);
+        editorRootPane.setLayoutX(renderWidth);
         editorRootPane.getStyleClass().add("editor");
         renderRootPane = new BorderPane();
-        renderRootPane.setPrefWidth(width);
+        renderRootPane.setPrefWidth(renderWidth);
         renderRootPane.setPrefHeight(height);
-        renderRootPane.setMinWidth(width);
+        renderRootPane.setMinWidth(renderWidth);
         renderRootPane.setMinHeight(height);
-        renderRootPane.setMaxWidth(width);
+        renderRootPane.setMaxWidth(renderWidth);
         renderRootPane.setMaxHeight(height);
         renderRootPane.getStyleClass().add("render");
         mainPane.getChildren().add(renderRootPane);
@@ -141,7 +148,7 @@ public class NextFractalApp extends Application {
         Session session = createFractalSession(pluginId);
         if (session != null) {
         	session.setExportService(exportService);
-        	Pane renderPane = createRenderPane(session, pluginId, width, height);
+        	Pane renderPane = createRenderPane(session, pluginId, renderWidth, height);
         	if (renderPane != null) {
         		renderRootPane.setCenter(renderPane);
         	}
@@ -151,7 +158,7 @@ public class NextFractalApp extends Application {
         	}
         }
 
-        Scene scene = new Scene(root);
+        Scene scene = new Scene(root, width, height);
         
 //        MenuBar menuBar = new MenuBar();
 ////        final Menu fileMenu = new Menu("File");
@@ -188,10 +195,10 @@ public class NextFractalApp extends Application {
 			}
 		});
 		
-		primaryStage.setWidth(width + editorWidth);
-		primaryStage.setHeight(height);
 		primaryStage.setScene(scene);
+		primaryStage.setResizable(false);
 		primaryStage.sizeToScene();
+		primaryStage.setTitle("NextFractal 1.1.5");
         primaryStage.show();
 		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 			@Override

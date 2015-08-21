@@ -36,8 +36,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
 import javafx.util.Callback;
 import javafx.util.Duration;
 import javafx.util.StringConverter;
@@ -45,12 +46,20 @@ import javafx.util.StringConverter;
 import com.nextbreakpoint.nextfractal.core.javaFX.AdvancedTextField;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 
-public class ExportPane extends Pane {
+public class ExportPane extends BorderPane {
 	private static final int CONTROL_SIZE = 250;
 	private VBox box = new VBox();
 	private ExportDelegate delegate; 
 
-	public ExportPane() {
+	public ExportPane(int width, int height) {
+		setMinWidth(width);
+		setMaxWidth(width);
+		setPrefWidth(width);
+		setMinHeight(height);
+		setMaxHeight(height);
+		setPrefHeight(height);
+		setLayoutY(-height);
+
 		ComboBox<Integer[]> presets = new ComboBox<>();
 		presets.getItems().add(new Integer[] { 0, 0 });
 		presets.getItems().add(new Integer[] { 4096, 4096 });
@@ -73,16 +82,16 @@ public class ExportPane extends Pane {
 		AdvancedTextField widthField = new AdvancedTextField();
 		widthField.setRestrict(getRestriction());
 		widthField.setEditable(false);
-		widthField.setMinWidth(CONTROL_SIZE);
-		widthField.setMaxWidth(CONTROL_SIZE);
-		widthField.setPrefWidth(CONTROL_SIZE);
+		widthField.setMinWidth(CONTROL_SIZE / 2);
+		widthField.setMaxWidth(CONTROL_SIZE / 2);
+		widthField.setPrefWidth(CONTROL_SIZE / 2);
 		widthField.setText(String.valueOf(item0[0]));
 		AdvancedTextField heightField = new AdvancedTextField();
 		heightField.setRestrict(getRestriction());
 		heightField.setEditable(false);
-		heightField.setMinWidth(CONTROL_SIZE);
-		heightField.setMaxWidth(CONTROL_SIZE);
-		heightField.setPrefWidth(CONTROL_SIZE);
+		heightField.setMinWidth(CONTROL_SIZE / 2);
+		heightField.setMaxWidth(CONTROL_SIZE / 2);
+		heightField.setPrefWidth(CONTROL_SIZE / 2);
 		heightField.setText(String.valueOf(item0[1]));
 		Button cancelButton = new Button("Cancel");
 		Button exportButton = new Button("Export...");
@@ -95,34 +104,26 @@ public class ExportPane extends Pane {
 
 		VBox dimensionBox = new VBox(5);
 		dimensionBox.setAlignment(Pos.CENTER);
-		dimensionBox.getChildren().add(new Label("Dimension"));
 		dimensionBox.getChildren().add(presets);
 		
-		VBox widthBox = new VBox(5);
-		widthBox.setAlignment(Pos.CENTER);
-		widthBox.getChildren().add(new Label("Width"));
-		widthBox.getChildren().add(widthField);
-		
-		VBox heightBox = new VBox(5);
-		heightBox.setAlignment(Pos.CENTER);
-		heightBox.getChildren().add(new Label("Height"));
-		heightBox.getChildren().add(heightField);
+		HBox sizeBox = new HBox(5);
+		sizeBox.setAlignment(Pos.CENTER);
+		sizeBox.getChildren().add(widthField);
+		sizeBox.getChildren().add(heightField);
 
 		VBox controls = new VBox(8);
 		controls.setAlignment(Pos.CENTER);
+		controls.getChildren().add(new Label("Choose image size"));
 		controls.getChildren().add(dimensionBox);
-		controls.getChildren().add(widthBox);
-		controls.getChildren().add(heightBox);
+		controls.getChildren().add(new Label("Size in pixels"));
+		controls.getChildren().add(sizeBox);
 		controls.getStyleClass().add("controls");
 
-		Label title = new Label("Export as PNG");
-		title.getStyleClass().add("title");
-		
 		box.setAlignment(Pos.TOP_CENTER);
-		box.getChildren().add(title);
 		box.getChildren().add(controls);
 		box.getChildren().add(buttons);
 		box.getStyleClass().add("popup");
+		setCenter(box);
 		
 		presets.setConverter(new StringConverter<Integer[]>() {
 			@Override
@@ -190,29 +191,26 @@ public class ExportPane extends Pane {
 		
 		exportButton.setOnMouseClicked(e -> {
 			hide();
-			int width = Integer.parseInt(widthField.getText());
-			int height = Integer.parseInt(heightField.getText());
+			int renderWidth = Integer.parseInt(widthField.getText());
+			int renderHeight = Integer.parseInt(heightField.getText());
 			if (delegate != null) {
-				delegate.exportSession(new RendererSize(width, height));
+				delegate.exportSession(new RendererSize(renderWidth, renderHeight));
 			}
 		});
 		
-		getChildren().add(box);
-		
-		widthProperty().addListener(new ChangeListener<java.lang.Number>() {
-			@Override
-			public void changed(ObservableValue<? extends java.lang.Number> observable, java.lang.Number oldValue, java.lang.Number newValue) {
-				box.setPrefWidth(newValue.doubleValue());
-			}
-		});
-		
-		heightProperty().addListener(new ChangeListener<java.lang.Number>() {
-			@Override
-			public void changed(ObservableValue<? extends java.lang.Number> observable, java.lang.Number oldValue, java.lang.Number newValue) {
-				box.setPrefHeight(newValue.doubleValue());
-				box.setLayoutY(-newValue.doubleValue());
-			}
-		});
+//		widthProperty().addListener(new ChangeListener<java.lang.Number>() {
+//			@Override
+//			public void changed(ObservableValue<? extends java.lang.Number> observable, java.lang.Number oldValue, java.lang.Number newValue) {
+//				box.setPrefWidth(newValue.doubleValue());
+//			}
+//		});
+//		
+//		heightProperty().addListener(new ChangeListener<java.lang.Number>() {
+//			@Override
+//			public void changed(ObservableValue<? extends java.lang.Number> observable, java.lang.Number oldValue, java.lang.Number newValue) {
+//				box.setPrefHeight(newValue.doubleValue());
+//			}
+//		});
 	}
 
 	protected String getRestriction() {
@@ -221,9 +219,9 @@ public class ExportPane extends Pane {
 	
 	public void show() {
 		TranslateTransition tt = new TranslateTransition(Duration.seconds(0.4));
-		tt.setFromY(box.getTranslateY());
-		tt.setToY(box.getHeight());
-		tt.setNode(box);
+		tt.setFromY(this.getTranslateY());
+		tt.setToY(this.getHeight());
+		tt.setNode(this);
 		tt.setOnFinished(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
@@ -235,9 +233,9 @@ public class ExportPane extends Pane {
 	
 	public void hide() {
 		TranslateTransition tt = new TranslateTransition(Duration.seconds(0.4));
-		tt.setFromY(box.getTranslateY());
+		tt.setFromY(this.getTranslateY());
 		tt.setToY(0);
-		tt.setNode(box);
+		tt.setNode(this);
 		tt.setOnFinished(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {

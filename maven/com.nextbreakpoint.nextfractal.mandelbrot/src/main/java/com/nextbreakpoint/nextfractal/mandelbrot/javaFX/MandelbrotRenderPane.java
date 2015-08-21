@@ -54,6 +54,7 @@ import javafx.animation.FadeTransition;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -66,7 +67,9 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import javafx.util.Duration;
 
@@ -189,11 +192,14 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 		getStyleClass().add("mandelbrot");
 
 		BorderPane controls = new BorderPane();
+		controls.setMinWidth(width);
+		controls.setMaxWidth(width);
+		controls.setPrefWidth(width);
 		controls.setMinHeight(height);
 		controls.setMaxHeight(height);
 		controls.setPrefHeight(height);
 		
-		HBox toolButtons = new HBox(10);
+		HBox toolButtons = new HBox(4);
 		ToggleButton zoominButton = new ToggleButton("", createIconImage("/icon-zoomin.png"));
 		ToggleButton zoomoutButton = new ToggleButton("", createIconImage("/icon-zoomout.png"));
 		ToggleButton moveButton = new ToggleButton("", createIconImage("/icon-move.png"));
@@ -234,41 +240,38 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 		toolButtons.setOpacity(0);
 		createToolsTransition(toolButtons);
 
-		HBox alertButtons = new HBox(10);
+		HBox warningPane = new HBox(10);
 		Button errorsButton = new Button("", createIconImage("/icon-errors.png"));
-		alertButtons.getChildren().add(errorsButton);
-		alertButtons.getStyleClass().add("alerts");
+		warningPane.getChildren().add(errorsButton);
+		warningPane.getStyleClass().add("alerts");
 
-		ExportPane exportPane = new ExportPane();
+		ExportPane exportPane = new ExportPane(width, height / 2);
 		exportPane.setDelegate(this);
 		exportPane.setDisable(true);
-		exportPane.setMinHeight(height / 2);
-		exportPane.setMaxHeight(height / 2);
-		exportPane.setPrefHeight(height / 2);
 		
-		BrowsePane browsePane = new BrowsePane(width);
+		ErrorPane errorPane = new ErrorPane(width, height / 2);
+		errorPane.setDisable(true);
+		
+		Pane othersPane = new Pane();
+		othersPane.setMinWidth(width);
+		othersPane.setMaxWidth(width);
+		othersPane.setPrefWidth(width);
+		othersPane.setMinHeight(height);
+		othersPane.setMaxHeight(height);
+		othersPane.setPrefHeight(height);
+		othersPane.getChildren().add(warningPane);
+		othersPane.getChildren().add(exportPane);
+		othersPane.getChildren().add(errorPane);
+		
+		BrowsePane browsePane = new BrowsePane(width, height);
 		browsePane.setDelegate(this);
 		browsePane.setDisable(true);
-		browsePane.setMinHeight(height);
-		browsePane.setMaxHeight(height);
-		browsePane.setPrefHeight(height);
 		
-		ErrorPane errorPane = new ErrorPane();
-		errorPane.setDisable(true);
-		errorPane.setMinHeight(height / 2);
-		errorPane.setMaxHeight(height / 2);
-		errorPane.setPrefHeight(height / 2);
-		
-		StackPane alertsPane = new StackPane();
-		alertsPane.getChildren().add(alertButtons);
-		alertsPane.getChildren().add(exportPane);
-		alertsPane.getChildren().add(errorPane);
-		
-		controls.setTop(alertsPane);
+		controls.setTop(othersPane);
 		controls.setBottom(toolButtons);
 
-		alertButtons.setVisible(false);
-		createAlertsTransition(alertButtons);
+		warningPane.setVisible(false);
+		createAlertsTransition(warningPane);
 		
         Canvas fractalCanvas = new Canvas(width, height);
         GraphicsContext gcFractalCanvas = fractalCanvas.getGraphicsContext2D();
@@ -420,7 +423,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 			}
 		});
 		
-		StackPane stackPane = new StackPane();
+		Pane stackPane = new Pane();
 		stackPane.getChildren().add(fractalCanvas);
 		stackPane.getChildren().add(trapCanvas);
 		stackPane.getChildren().add(orbitCanvas);
@@ -531,10 +534,10 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 			if (newValue) {
 				if (errorProperty.getValue() == null) {
 					fadeOut(alertsTransition, x -> { 
-						alertButtons.setVisible(false);
+						warningPane.setVisible(false);
 					});
 				} else {
-					alertButtons.setVisible(true);
+					warningPane.setVisible(true);
 					fadeIn(alertsTransition, x -> {
 					});
 				}
@@ -546,10 +549,10 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 			errorPane.setMessage(newValue);
 			if (newValue == null) {
 				fadeOut(alertsTransition, x -> { 
-					alertButtons.setVisible(false);
+					warningPane.setVisible(false);
 				});
 			} else if (hideErrorsProperty.getValue()) {
-				alertButtons.setVisible(true);
+				warningPane.setVisible(true);
 				fadeIn(alertsTransition, x -> {
 				});
 			}
@@ -581,7 +584,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 		
 		errorsButton.setOnAction(e -> {
 			fadeOut(alertsTransition, x -> { 
-				alertButtons.setVisible(false);
+				warningPane.setVisible(false);
 				errorPane.show();
 			});
 		});

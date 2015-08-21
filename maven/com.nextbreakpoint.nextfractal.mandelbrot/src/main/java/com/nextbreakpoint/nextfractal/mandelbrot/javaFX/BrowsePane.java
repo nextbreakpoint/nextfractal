@@ -72,7 +72,7 @@ import com.nextbreakpoint.nextfractal.mandelbrot.core.Orbit;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererCoordinator;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererView;
 
-public class BrowsePane extends Pane {
+public class BrowsePane extends BorderPane {
 	private static final Logger logger = Logger.getLogger(BrowsePane.class.getName());
 	private static final int FRAME_LENGTH_IN_MILLIS = 50;
 	private static final int SCROLL_BOUNCE_DELAY = 500;
@@ -91,7 +91,15 @@ public class BrowsePane extends Pane {
 	private RendererTile tile;
 	private AnimationTimer timer;
 
-	public BrowsePane(int width) {
+	public BrowsePane(int width, int height) {
+		setMinWidth(width);
+		setMaxWidth(width);
+		setPrefWidth(width);
+		setMinHeight(height);
+		setMaxHeight(height);
+		setPrefHeight(height);
+		setLayoutX(-width);
+
 		Preferences prefs = Preferences.userNodeForPackage(MandelbrotRenderPane.class);
 		
 		currentDir = new File(prefs.get("mandelbrot.browser.default", getDefaultBrowserDir()));
@@ -152,6 +160,8 @@ public class BrowsePane extends Pane {
 		box.setBottom(buttons);
 		box.getStyleClass().add("browse");
 		
+		setCenter(box);
+		
 		closeButton.setOnMouseClicked(e -> {
 			hide();
 		});
@@ -164,23 +174,20 @@ public class BrowsePane extends Pane {
 			loadFiles(statusLabel, grid, currentFolder);
 		});
 		
-		getChildren().add(box);
-		
-		widthProperty().addListener(new ChangeListener<java.lang.Number>() {
-			@Override
-			public void changed(ObservableValue<? extends java.lang.Number> observable, java.lang.Number oldValue, java.lang.Number newValue) {
-				box.setPrefWidth(newValue.doubleValue());
-				box.setLayoutX(-newValue.doubleValue());
-			}
-		});
-		
-		heightProperty().addListener(new ChangeListener<java.lang.Number>() {
-			@Override
-			public void changed(ObservableValue<? extends java.lang.Number> observable, java.lang.Number oldValue, java.lang.Number newValue) {
-				box.setPrefHeight(newValue.doubleValue());
-			}
-		});
-		
+//		widthProperty().addListener(new ChangeListener<java.lang.Number>() {
+//			@Override
+//			public void changed(ObservableValue<? extends java.lang.Number> observable, java.lang.Number oldValue, java.lang.Number newValue) {
+//				box.setPrefWidth(newValue.doubleValue());
+//			}
+//		});
+//		
+//		heightProperty().addListener(new ChangeListener<java.lang.Number>() {
+//			@Override
+//			public void changed(ObservableValue<? extends java.lang.Number> observable, java.lang.Number oldValue, java.lang.Number newValue) {
+//				box.setPrefHeight(newValue.doubleValue());
+//			}
+//		});
+
 		pathProperty.addListener((observable, oldValue, newValue) -> {
 			File path = new File(newValue);
 			currentDir = path; 
@@ -189,12 +196,12 @@ public class BrowsePane extends Pane {
 
 		runTimer(grid);
 	}
-
+	
 	public void show() {
 		TranslateTransition tt = new TranslateTransition(Duration.seconds(0.4));
-		tt.setFromX(box.getTranslateX());
-		tt.setToX(box.getWidth());
-		tt.setNode(box);
+		tt.setFromX(this.getTranslateX());
+		tt.setToX(this.getWidth());
+		tt.setNode(this);
 		tt.setOnFinished(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
@@ -207,9 +214,9 @@ public class BrowsePane extends Pane {
 	
 	public void hide() {
 		TranslateTransition tt = new TranslateTransition(Duration.seconds(0.4));
-		tt.setFromX(box.getTranslateX());
+		tt.setFromX(this.getTranslateX());
 		tt.setToX(0);
-		tt.setNode(box);
+		tt.setNode(this);
 		tt.setOnFinished(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
