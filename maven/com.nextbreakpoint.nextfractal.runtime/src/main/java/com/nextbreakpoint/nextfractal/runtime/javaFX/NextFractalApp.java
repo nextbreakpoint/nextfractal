@@ -1,5 +1,5 @@
 /*
- * NextFractal 1.1.5
+ * NextFractal 1.2
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015 Andrea Medeghini
@@ -198,7 +198,7 @@ public class NextFractalApp extends Application {
 		primaryStage.setScene(scene);
 		primaryStage.setResizable(false);
 		primaryStage.sizeToScene();
-		primaryStage.setTitle("NextFractal 1.1.5");
+		primaryStage.setTitle("NextFractal 1.2");
         primaryStage.show();
 		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 			@Override
