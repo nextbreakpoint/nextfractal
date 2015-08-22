@@ -138,7 +138,11 @@ public class BrowsePane extends BorderPane {
 		grid.setDelegate(new GridViewDelegate() {
 			@Override
 			public void didRangeChange(GridView source, int firstRow, int lastRow) {
-				grid.updateCells();
+			}
+			
+			@Override
+			public void didCellChange(GridView source, int row, int col) {
+				source.updateCell(row * numCols + col);
 			}
 
 			@Override
@@ -282,6 +286,7 @@ public class BrowsePane extends BorderPane {
 	private void loadFiles(Label statusLabel, GridView grid, File folder) {
 		currentFolder = folder;
 		removeItems();
+		grid.setData(new GridItem[0]);
 		File[] files = listFiles(folder);
 		if (files != null && files.length > 0) {
 			statusLabel.setText(files.length + " item" + (files.length > 1 ? "s" : "") + " found");

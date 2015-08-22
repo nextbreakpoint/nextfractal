@@ -55,8 +55,15 @@ public class GridView extends Pane {
 		cells = new GridViewCell[(numRows + numExtraRows) * numCols];
 
 		for (int i = 0; i < cells.length; i++) {
-			cells[i] = createCell(i);
-			getChildren().add(cells[i]);
+			GridViewCell cell = createCell(i);
+			cell.setMaxWidth(cellSize);
+			cell.setMaxHeight(cellSize);
+			cell.setMinWidth(cellSize);
+			cell.setMinHeight(cellSize);
+			cell.setPrefWidth(cellSize);
+			cell.setPrefHeight(cellSize);
+			getChildren().add(cell);
+			cells[i] = cell;
 		}
 		
 		addEventFilter(ScrollEvent.SCROLL_STARTED,
@@ -96,7 +103,6 @@ public class GridView extends Pane {
 			public void changed(ObservableValue<? extends java.lang.Number> observable, java.lang.Number oldValue, java.lang.Number newValue) {
 				resetScroll();
 				updateRows();
-				layoutCells();
 			}
 		});
 		
@@ -105,7 +111,6 @@ public class GridView extends Pane {
 			public void changed(ObservableValue<? extends java.lang.Number> observable, java.lang.Number oldValue, java.lang.Number newValue) {
 				resetScroll();
 				updateRows();
-				layoutCells();
 			}
 		});
 	}
@@ -115,11 +120,17 @@ public class GridView extends Pane {
 		int lastRow = firstRow + numRows;
 		for (int row = 0; row < numRows + numExtraRows; row++) {
 			for (int col = 0; col < numCols; col++) {
+				GridViewCell cell = cells[row * numCols + col];
+				cell.setLayoutY(row * cellSize + (offsetY - ((int)(offsetY / cellSize)) * cellSize));
+				cell.setLayoutX(col * cellSize + (offsetX - ((int)(offsetX / cellSize)) * cellSize));
 				int index = (firstRow + row) * numCols + col;
 				if (data != null && index < data.length) {
-					cells[row * numCols + col].setData(data[index]);
+					cell.setData(data[index]);
 				} else {
-					cells[row * numCols + col].setData(null);
+					cell.setData(null);
+				}
+				if (delegate != null) {
+					delegate.didCellChange(this, row, col);
 				}
 			}
 		}
@@ -128,21 +139,15 @@ public class GridView extends Pane {
 		}
 	}
 	
-	private void layoutCells() {
-		for (int row = 0; row < numRows + numExtraRows; row++) {
-			for (int col = 0; col < numCols; col++) {
-				GridViewCell cell = cells[row * numCols + col];
-				cell.setLayoutY(row * cellSize + (offsetY - ((int)(offsetY / cellSize)) * cellSize));
-				cell.setLayoutX(col * cellSize + (offsetX - ((int)(offsetX / cellSize)) * cellSize));
-				cell.setMaxWidth(cellSize);
-				cell.setMaxHeight(cellSize);
-				cell.setMinWidth(cellSize);
-				cell.setMinHeight(cellSize);
-				cell.setPrefWidth(cellSize);
-				cell.setPrefHeight(cellSize);
-			}
-		}
-	}
+//	private void layoutCells() {
+//		for (int row = 0; row < numRows + numExtraRows; row++) {
+//			for (int col = 0; col < numCols; col++) {
+//				GridViewCell cell = cells[row * numCols + col];
+//				cell.setLayoutY(row * cellSize + (offsetY - ((int)(offsetY / cellSize)) * cellSize));
+//				cell.setLayoutX(col * cellSize + (offsetX - ((int)(offsetX / cellSize)) * cellSize));
+//			}
+//		}
+//	}
 	
 	private void resetScroll() {
 		offsetX = 0;
@@ -176,7 +181,6 @@ public class GridView extends Pane {
 			if (prevOffsetX != offsetX || prevOffsetY != offsetY) {
 				prevOffsetY = offsetY;
 				prevOffsetX = offsetX;
-				layoutCells();
 				updateRows();
 			}
 		}
@@ -194,7 +198,6 @@ public class GridView extends Pane {
 		this.data = data;
 		resetScroll();
 		updateRows();
-		layoutCells();
 	}
 	
 	public GridViewDelegate getDelegate() {
@@ -220,6 +223,10 @@ public class GridView extends Pane {
 		for (int i = 0; i < cells.length; i++) {
 			cells[i].update();
 		}
+	}
+	
+	public void updateCell(int index) {
+		cells[index].update();
 	}
 	
 	public int getSelectedRow() {

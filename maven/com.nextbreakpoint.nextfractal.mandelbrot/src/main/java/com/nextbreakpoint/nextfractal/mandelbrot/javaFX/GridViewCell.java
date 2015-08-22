@@ -24,11 +24,14 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
 
+import java.time.format.TextStyle;
+
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.text.*;
 import javafx.scene.paint.Color;
 
 import com.nextbreakpoint.nextfractal.core.renderer.RendererGraphicsContext;
@@ -79,6 +82,9 @@ public class GridViewCell extends BorderPane {
 					GraphicsContext g2d = canvas.getGraphicsContext2D();
 					g2d.setFill(Color.WHITE);
 					g2d.fillRect(0, 0, getWidth(), getHeight());
+					g2d.setFill(Color.DARKGRAY);
+					g2d.setTextAlign(TextAlignment.CENTER);
+					g2d.fillText("Rendering...", getWidth() / 2, getHeight() / 2);
 					redraw = false;
 				}
 			}
