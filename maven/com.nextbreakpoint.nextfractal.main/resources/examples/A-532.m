@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <mandelbrot>
-    <timestamp>2015-10-14 17:02:42</timestamp>
+    <timestamp>2016-01-16 20:54:31</timestamp>
     <julia>true</julia>
-    <point>-0.3107142857142857</point>
-    <point>0.4571428571428572</point>
+    <point>0.35357142857142854</point>
+    <point>0.09285714285714286</point>
     <rotation>0.0</rotation>
     <rotation>0.0</rotation>
     <rotation>0.0</rotation>
@@ -13,49 +13,71 @@
     <scale>1.0</scale>
     <scale>1.0</scale>
     <source>fractal {
-	orbit [-1.5 - 1.5i,+1.5 + 1.5i] [x,n,z] {
-		trap circle0 [&lt;-0.1,-0.5&gt;] {
-			MOVETO(&lt;1,0.5&gt;);
-			LINETO(&lt;-1,0.5&gt;);
-			ARCTO(&lt;-1.5,0.5&gt;,&lt;-1.5,0&gt;);
-			ARCTO(&lt;-1.5,-0.5&gt;,&lt;-1,-0.5&gt;);
-			LINETO(&lt;1,-0.5&gt;);
-			ARCTO(&lt;1.5,-0.5&gt;,&lt;1.5,0&gt;);
-			ARCTO(&lt;1.5,0.5&gt;,&lt;1,0.5&gt;);
+	orbit [-1.5 - 1.5i,+1.5 + 1.5i] [x,n,m] {
+		trap circle0 [&lt;0,0&gt;] {
+			MOVETO(&lt;0.55,0&gt;);
+			ARCTO(&lt;0.55,0.55&gt;,&lt;0,0.55&gt;);
+			ARCTO(&lt;-0.55,0.55&gt;,&lt;-0.55,0&gt;);
+			ARCTO(&lt;-0.55,-0.55&gt;,&lt;0,-0.55&gt;);
+			ARCTO(&lt;0.55,-0.55&gt;,&lt;0.55,0&gt;);
+		}
+		trap circle1 [&lt;0,0&gt;] {
+			MOVETO(&lt;0.6,0&gt;);
+			ARCTO(&lt;0.6,0.6&gt;,&lt;0,0.6&gt;);
+			ARCTO(&lt;-0.6,0.6&gt;,&lt;-0.6,0&gt;);
+			ARCTO(&lt;-0.6,-0.6&gt;,&lt;0,-0.6&gt;);
+			ARCTO(&lt;0.6,-0.6&gt;,&lt;0.6,0&gt;);
+		}
+		trap circle2 [&lt;0.5,0&gt;] {
+			MOVETO(&lt;0.55,0&gt;);
+			ARCTO(&lt;0.55,0.55&gt;,&lt;0,0.55&gt;);
+			ARCTO(&lt;-0.55,0.55&gt;,&lt;-0.55,0&gt;);
+			ARCTO(&lt;-0.55,-0.55&gt;,&lt;0,-0.55&gt;);
+			ARCTO(&lt;0.55,-0.55&gt;,&lt;0.55,0&gt;);
+		}
+		trap circle3 [&lt;0.5,0&gt;] {
+			MOVETO(&lt;0.6,0&gt;);
+			ARCTO(&lt;0.6,0.6&gt;,&lt;0,0.6&gt;);
+			ARCTO(&lt;-0.6,0.6&gt;,&lt;-0.6,0&gt;);
+			ARCTO(&lt;-0.6,-0.6&gt;,&lt;0,-0.6&gt;);
+			ARCTO(&lt;0.6,-0.6&gt;,&lt;0.6,0&gt;);
 		}
 		begin {
-			mmax = 0;
-			z = 0;
+			dmax = 0;
+			m = 0;
 		}
-		loop [0, 200] (circle0 ? x) {
-			x = x * x * x * x + w;
-			m = mod(x);
-			if (m &gt; mmax) {
-				mmax = m;
-				z = x;
-			}
+		loop [0, 1000] (re(x) &gt; 1000 | im(x) &gt; 1000 | ((circle0 ~? x &amp; circle1 ? x) &amp; (circle2 ~? x &amp; circle3 ? x))) {
+			x = x * x + w;
+			dmax = max(dmax, mod2(x));
+		}
+		end {
+			m = dmax - floor(dmax);
 		}
 	}
 	color [(1,0,0,0)] {
-		palette gradient0 {
-			[#FF000000 &gt; #FFD30000, 20];
-			[#FFD30000 &gt; #FFFFFF00, 110];
-			[#FFFFFF00 &gt; #FFFFFFFF, 40];
-			[#FFFFFFFF &gt; #FF030062, 30];
+		palette gradient {
+			[#FFFF0A0A &gt; #FFFFFFFF, 20];
+			[#FFFFFFFF &gt; #FF0042A9, 60];
+			[#FF0042A9 &gt; #FF000000, 120];
 		}
 		init {
-			m = mod(z);
-			q = 199 * (m - floor(m));
+			p = atan2(re(x), im(x)) / 2pi;
+			if (p &lt; 0) {
+				p = p + 1;
+			}
 		}
-		rule (n &gt; 1) [1] {
-			gradient0[q]
+		rule (n &gt; 0) [1] {
+			gradient[n + re(m) * 2]
+		}
+		rule (n &gt; 0) [0.1] {
+			gradient[199 * p]
 		}
 	}
 }
 </source>
     <time>0.0</time>
-    <traslation>0.16059305684786054</traslation>
-    <traslation>-0.6566627549413813</traslation>
-    <traslation>0.14914796641529143</traslation>
+    <traslation>0.0</traslation>
+    <traslation>0.0</traslation>
+    <traslation>1.0</traslation>
     <traslation>0.0</traslation>
 </mandelbrot>

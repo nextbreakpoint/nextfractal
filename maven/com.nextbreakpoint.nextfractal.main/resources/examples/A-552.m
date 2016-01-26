@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <mandelbrot>
-    <timestamp>2016-01-16 20:52:22</timestamp>
+    <timestamp>2016-01-16 21:16:45</timestamp>
     <julia>true</julia>
-    <point>0.2642857142857143</point>
-    <point>-0.5178571428571428</point>
+    <point>-0.8</point>
+    <point>-0.07857142857142857</point>
     <rotation>0.0</rotation>
     <rotation>0.0</rotation>
     <rotation>0.0</rotation>
@@ -14,28 +14,14 @@
     <scale>1.0</scale>
     <source>fractal {
 	orbit [-1.5 - 1.5i,+1.5 + 1.5i] [x,n,m] {
-		trap circle0 [&lt;0,0&gt;] {
+		trap circle0 [&lt;0.3,0&gt;] {
 			MOVETO(&lt;0.55,0&gt;);
 			ARCTO(&lt;0.55,0.55&gt;,&lt;0,0.55&gt;);
 			ARCTO(&lt;-0.55,0.55&gt;,&lt;-0.55,0&gt;);
 			ARCTO(&lt;-0.55,-0.55&gt;,&lt;0,-0.55&gt;);
 			ARCTO(&lt;0.55,-0.55&gt;,&lt;0.55,0&gt;);
 		}
-		trap circle1 [&lt;0,0&gt;] {
-			MOVETO(&lt;0.6,0&gt;);
-			ARCTO(&lt;0.6,0.6&gt;,&lt;0,0.6&gt;);
-			ARCTO(&lt;-0.6,0.6&gt;,&lt;-0.6,0&gt;);
-			ARCTO(&lt;-0.6,-0.6&gt;,&lt;0,-0.6&gt;);
-			ARCTO(&lt;0.6,-0.6&gt;,&lt;0.6,0&gt;);
-		}
-		trap circle2 [&lt;0.5,0&gt;] {
-			MOVETO(&lt;0.55,0&gt;);
-			ARCTO(&lt;0.55,0.55&gt;,&lt;0,0.55&gt;);
-			ARCTO(&lt;-0.55,0.55&gt;,&lt;-0.55,0&gt;);
-			ARCTO(&lt;-0.55,-0.55&gt;,&lt;0,-0.55&gt;);
-			ARCTO(&lt;0.55,-0.55&gt;,&lt;0.55,0&gt;);
-		}
-		trap circle3 [&lt;0.5,0&gt;] {
+		trap circle1 [&lt;0.2,0&gt;] {
 			MOVETO(&lt;0.6,0&gt;);
 			ARCTO(&lt;0.6,0.6&gt;,&lt;0,0.6&gt;);
 			ARCTO(&lt;-0.6,0.6&gt;,&lt;-0.6,0&gt;);
@@ -46,12 +32,12 @@
 			dmax = 0;
 			m = 0;
 		}
-		loop [0, 1000] (re(x) &gt; 1000 | im(x) &gt; 1000 | ((circle0 ~? x &amp; circle1 ? x) &amp; (circle2 ~? x &amp; circle3 ? x))) {
-			x = x * x + w;
-			dmax = max(dmax, mod2(x));
+		loop [0, 200] (re(x) &gt; 100 | im(x) &gt; 100 | (circle0 ~? x &amp; circle1 ? x)) {
+			x = x * x * x * x + w;
+			dmax = dmax + mod2(x);
 		}
 		end {
-			m = dmax - floor(dmax);
+			m = dmax / n;
 		}
 	}
 	color [(1,0,0,0)] {
@@ -67,7 +53,7 @@
 			}
 		}
 		rule (n &gt; 0) [1] {
-			gradient[n + re(m) * 2]
+			gradient[n + re(m) * 50]
 		}
 		rule (n &gt; 0) [0.1] {
 			gradient[199 * p]
@@ -76,8 +62,8 @@
 }
 </source>
     <time>0.0</time>
-    <traslation>0.0</traslation>
-    <traslation>0.0</traslation>
-    <traslation>1.0</traslation>
+    <traslation>-0.10534526629330755</traslation>
+    <traslation>-0.6017595613151491</traslation>
+    <traslation>0.2429463210886506</traslation>
     <traslation>0.0</traslation>
 </mandelbrot>
