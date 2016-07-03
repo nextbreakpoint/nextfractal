@@ -62,7 +62,7 @@ public class Builder {
 	private boolean inPathContainer;
 
 	static List<String> globals = new ArrayList<String>();
-	{ 
+	static {
 		globals.add("CIRCLE");
 		globals.add("FILL");
 		globals.add("SQUARE");
