@@ -2,3 +2,7 @@ target
 .settings
 maven/dist
 docs
+
+maven/.idea
+
+*.iml
