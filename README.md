@@ -1,6 +1,6 @@
-# NextFractal 1.2
+# NextFractal 1.2.1
 
-Copyright 2015 Andrea Medeghini
+Copyright 2015-2016 Andrea Medeghini
 
 NextFractal is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 
@@ -18,7 +18,8 @@ NextFractal is the continuation of my old software for generating fractals which
 
 ## HOW TO INSTALL
 
-Unzip the archive in your preferred location. NextFractal requires Java SDK 8 or later. You can download the latest SDK from http://www.oracle.com/technetwork/java/javase/downloads.
+Unzip the archive in your preferred location. NextFractal requires Java SDK 8 or later. 
+You can download the latest SDK from http://www.oracle.com/technetwork/java/javase/downloads.
 
 
 ## HOW TO RUN
@@ -33,8 +34,7 @@ Please visit the official site http://nextfractal.nextbreakpoint.com.
 
 ## HOW TO BUILD
 
-Download Maven and Ant. Add mvn and ant to your command path and set environment variable M2_HOME to Maven path. Checkout or download the source code from https://github.com/nextbreakpoint/nextfractal.
-
-In your terminal change current directory to maven folder in NextFractal project and execute the command:
-
-**ant all**
+Download and install Maven and Ant. 
+Add mvn and ant to your command path and set environment variable M2_HOME to Maven path. 
+Checkout or download the source code from https://github.com/nextbreakpoint/nextfractal.
+Open a terminal and execute "ant" command in prohect folder.
