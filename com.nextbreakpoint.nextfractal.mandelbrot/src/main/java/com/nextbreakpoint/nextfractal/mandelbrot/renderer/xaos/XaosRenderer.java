@@ -1,8 +1,8 @@
 /*
- * NextFractal 1.2
+ * NextFractal 1.2.1
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015 Andrea Medeghini
+ * Copyright 2015-2016 Andrea Medeghini
  *
  * This file is based on code written by Jan Hubicka and Thomas Marsh (http://xaos.sf.net).
  *
