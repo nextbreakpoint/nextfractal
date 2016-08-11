@@ -37,4 +37,4 @@ Please visit the official site http://nextfractal.nextbreakpoint.com.
 Download and install Maven and Ant. 
 Add mvn and ant to your command path and set environment variable M2_HOME to Maven path. 
 Checkout or download the source code from https://github.com/nextbreakpoint/nextfractal.
-Open a terminal and execute "ant" command in prohect folder.
+Open a terminal and execute "ant" command in project's root folder.

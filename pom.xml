@@ -17,8 +17,8 @@
 		<antlr4.version>4.5.1</antlr4.version>
 		<richtext.version>0.6.10</richtext.version>
 		<commonmath3.version>3.5</commonmath3.version>
-		<ffmpeg4java.version>1.0.0</ffmpeg4java.version>
-		<freeimage4java.version>1.0.0</freeimage4java.version>
+		<ffmpeg4java.version>3.1.1-1.0</ffmpeg4java.version>
+		<freeimage4java.version>3.18.0-1.0</freeimage4java.version>
 		<springboot.version>1.2.3.RELEASE</springboot.version>
 		<junit4.version>4.11</junit4.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
