@@ -11,177 +11,177 @@ options
 } 
 
 @members {
-	private ASTBuilder builder = new ASTBuilder();
+	private ASTBuilder driver = new ASTBuilder();
 	
-	public ASTBuilder getBuilder() { return builder; }
+	public ASTBuilder getBuilder() { return driver; }
 } 
 
 fractal
 	:
 	f=FRACTAL {
-		builder.setFractal(new ASTFractal($f));
+		driver.setFractal(new ASTFractal($f));
 	} '{' orbit color '}' eof 
 	;
 		
 orbit
 	:
 	o=ORBIT '[' ra=complex ',' rb=complex ']' {
-		builder.setOrbit(new ASTOrbit($o, new ASTRegion($ra.result, $rb.result)));
+		driver.setOrbit(new ASTOrbit($o, new ASTRegion($ra.result, $rb.result)));
 	} '[' statevariablelist ']' '{' trap* begin? loop end? '}'
 	;
 		
 color
 	:
 	c=COLOR '[' argb=colorargb ']' { 
-		builder.setColor(new ASTColor($c, $argb.result));
+		driver.setColor(new ASTColor($c, $argb.result));
 	} '{' palette* colorinit? colorrule* '}'
 	;
 		
 begin
 	:
 	b=BEGIN { 
-		builder.setOrbitBegin(new ASTOrbitBegin($b));
+		driver.setOrbitBegin(new ASTOrbitBegin($b));
 	} '{' beginstatement '}'
 	;
 		
 loop
 	:
 	l=LOOP '[' lb=INTEGER ',' le=INTEGER ']' '(' e=conditionexp ')'{
-		builder.setOrbitLoop(new ASTOrbitLoop($l, builder.parseInt($lb.text), builder.parseInt($le.text), $e.result));
+		driver.setOrbitLoop(new ASTOrbitLoop($l, driver.parseInt($lb.text), driver.parseInt($le.text), $e.result));
 	} '{' loopstatement '}'
 	;
 		
 end
 	:
 	e=END {
-		builder.setOrbitEnd(new ASTOrbitEnd($e));		
+		driver.setOrbitEnd(new ASTOrbitEnd($e));
 	} '{' endstatement '}'
 	;
 		
 trap
 	:
 	t=TRAP n=VARIABLE '[' c=complex ']' {
-		builder.addOrbitTrap(new ASTOrbitTrap($t, $n.text, $c.result));
+		driver.addOrbitTrap(new ASTOrbitTrap($t, $n.text, $c.result));
 	} '{' pathop* '}'
 	;
 		
 pathop
 	:
 	o=PATHOP_0POINTS ';' {
-		builder.addOrbitTrapOp(new ASTOrbitTrapOp($o, $o.text));
+		driver.addOrbitTrapOp(new ASTOrbitTrapOp($o, $o.text));
 	}
 	|
 	o=PATHOP_1POINTS '(' c=complex ')' ';' {
-		builder.addOrbitTrapOp(new ASTOrbitTrapOp($o, $o.text, $c.result));
+		driver.addOrbitTrapOp(new ASTOrbitTrapOp($o, $o.text, $c.result));
 	}
 	|
 	o=PATHOP_2POINTS '(' c1=complex ',' c2=complex ')' ';' {
-		builder.addOrbitTrapOp(new ASTOrbitTrapOp($o, $o.text, $c1.result, $c2.result));
+		driver.addOrbitTrapOp(new ASTOrbitTrapOp($o, $o.text, $c1.result, $c2.result));
 	}
 	|
 	o=PATHOP_3POINTS '(' c1=complex ',' c2=complex ',' c3=complex ')' ';' {
-		builder.addOrbitTrapOp(new ASTOrbitTrapOp($o, $o.text, $c1.result, $c2.result, $c3.result));
+		driver.addOrbitTrapOp(new ASTOrbitTrapOp($o, $o.text, $c1.result, $c2.result, $c3.result));
 	}
 	;
 	
 beginstatement 
 	: 
 	{
-		builder.pushStatementList();	
+		driver.pushStatementList();
 	}
 	statement* {
-		builder.addBeginStatements(builder.getStatementList());
-		builder.popStatementList();	
+		driver.addBeginStatements(driver.getStatementList());
+		driver.popStatementList();
 	}
 	;
 		
 loopstatement
 	:
 	{
-		builder.pushScope();	
-		builder.pushStatementList();	
+		driver.pushScope();
+		driver.pushStatementList();
 	}
 	statement* {
-		builder.addLoopStatements(builder.getStatementList());
-		builder.popScope();	
-		builder.popStatementList();	
+		driver.addLoopStatements(driver.getStatementList());
+		driver.popScope();
+		driver.popStatementList();
 	}
 	;
 		
 endstatement 
 	:
 	{
-		builder.pushScope();	
-		builder.pushStatementList();	
+		driver.pushScope();
+		driver.pushStatementList();
 	}
 	statement* {
-		builder.addEndStatements(builder.getStatementList());
-		builder.popScope();	
-		builder.popStatementList();	
+		driver.addEndStatements(driver.getStatementList());
+		driver.popScope();
+		driver.popStatementList();
 	}
 	;
 		
 statement
 	:
 	v=VARIABLE '=' e=expression ';'? {
-		builder.registerVariable($v.text, $e.result.isReal(), $v);
-		builder.appendStatement(new ASTAssignStatement($v, $v.text, $e.result));
+		driver.registerVariable($v.text, $e.result.isReal(), $v);
+		driver.appendStatement(new ASTAssignStatement($v, $v.text, $e.result));
 	}
 	|
 	f=IF '(' c=conditionexp ')' '{' {
-		builder.pushScope();	
-		builder.pushStatementList();
+		driver.pushScope();
+		driver.pushStatementList();
 	} statement* '}' {
-		ASTStatementList thenList = builder.getStatementList();
-		builder.popScope();	
-		builder.popStatementList();
+		ASTStatementList thenList = driver.getStatementList();
+		driver.popScope();
+		driver.popStatementList();
 	} ELSE '{' {
-		builder.pushScope();	
-		builder.pushStatementList();
+		driver.pushScope();
+		driver.pushStatementList();
 	} statement* '}' {
-		ASTStatementList elseList = builder.getStatementList();
-		builder.popScope();	
-		builder.popStatementList();
-		builder.appendStatement(new ASTConditionalStatement($f, $c.result, thenList, elseList));
+		ASTStatementList elseList = driver.getStatementList();
+		driver.popScope();
+		driver.popStatementList();
+		driver.appendStatement(new ASTConditionalStatement($f, $c.result, thenList, elseList));
 	} 
 	|
 	f=IF '(' c=conditionexp ')' '{' {
-		builder.pushScope();	
-		builder.pushStatementList();
+		driver.pushScope();
+		driver.pushStatementList();
 	} statement* '}' {
-		ASTStatementList thenList = builder.getStatementList();
-		builder.popScope();	
-		builder.popStatementList();
-		builder.appendStatement(new ASTConditionalStatement($f, $c.result, thenList));
+		ASTStatementList thenList = driver.getStatementList();
+		driver.popScope();
+		driver.popStatementList();
+		driver.appendStatement(new ASTConditionalStatement($f, $c.result, thenList));
 	} 
 	|
 	f=IF '(' c=conditionexp ')' {
-		builder.pushScope();	
-		builder.pushStatementList();
+		driver.pushScope();
+		driver.pushStatementList();
 	} statement {
-		ASTStatementList thenList = builder.getStatementList();
-		builder.popScope();	
-		builder.popStatementList();
-		builder.appendStatement(new ASTConditionalStatement($f, $c.result, thenList));
+		ASTStatementList thenList = driver.getStatementList();
+		driver.popScope();
+		driver.popStatementList();
+		driver.appendStatement(new ASTConditionalStatement($f, $c.result, thenList));
 	} 
 	|
 	t=STOP ';'? {
-		builder.appendStatement(new ASTStopStatement($t));
+		driver.appendStatement(new ASTStopStatement($t));
 	}
 	;
 		
 statevariable
 	:
 	'real' v=VARIABLE {
-		builder.registerStateVariable($v.text, true, $v);
+		driver.registerStateVariable($v.text, true, $v);
 	} 
 	| 
 	'complex' v=VARIABLE {
-		builder.registerStateVariable($v.text, false, $v);
+		driver.registerStateVariable($v.text, false, $v);
 	} 
 	| 
 	v=VARIABLE {
-		builder.registerStateVariable($v.text, "n".equals($v.text), $v);
+		driver.registerStateVariable($v.text, "n".equals($v.text), $v);
 	} 
 	;
 	
@@ -431,61 +431,61 @@ constant returns [ASTNumber result]
 variable returns [ASTVariable result]
 	:
 	v=VARIABLE {
-		$result = new ASTVariable($v, builder.getVariable($v.text, $v));
+		$result = new ASTVariable($v, driver.getVariable($v.text, $v));
 	}
 	;
 	
 real returns [ASTNumber result] 
 	:
 	'+'? r=(RATIONAL | INTEGER) {
-		$result = new ASTNumber($r, builder.parseDouble($r.text));
+		$result = new ASTNumber($r, driver.parseDouble($r.text));
 	}
 	|
 	'-' r=(RATIONAL | INTEGER) {
-		$result = new ASTNumber($r, builder.parseDouble("-" + $r.text));
+		$result = new ASTNumber($r, driver.parseDouble("-" + $r.text));
 	}
 	; 
 	
 complex returns [ASTNumber result]
 	:
 	'<' '+'? r=(RATIONAL | INTEGER) ',' '+'? i=(RATIONAL | INTEGER) '>' {
-		$result = new ASTNumber($r, builder.parseDouble($r.text), builder.parseDouble("+" + $i.text));
+		$result = new ASTNumber($r, driver.parseDouble($r.text), driver.parseDouble("+" + $i.text));
 	}
 	|
 	'<' '+'? r=(RATIONAL | INTEGER) ',' '-' i=(RATIONAL | INTEGER) '>' {
-		$result = new ASTNumber($r, builder.parseDouble($r.text), builder.parseDouble("-" + $i.text));
+		$result = new ASTNumber($r, driver.parseDouble($r.text), driver.parseDouble("-" + $i.text));
 	}
 	|
 	'<' '-' r=(RATIONAL | INTEGER) ',' '+'? i=(RATIONAL | INTEGER) '>' {
-		$result = new ASTNumber($r, builder.parseDouble("-" + $r.text), builder.parseDouble("+" + $i.text));
+		$result = new ASTNumber($r, driver.parseDouble("-" + $r.text), driver.parseDouble("+" + $i.text));
 	}
 	|
 	'<' '-' r=(RATIONAL | INTEGER) ',' '-' i=(RATIONAL | INTEGER) '>' {
-		$result = new ASTNumber($r, builder.parseDouble("-" + $r.text), builder.parseDouble("-" + $i.text));
+		$result = new ASTNumber($r, driver.parseDouble("-" + $r.text), driver.parseDouble("-" + $i.text));
 	}
 	|
 	'+'? r=(RATIONAL | INTEGER) '+' i=(RATIONAL | INTEGER) 'i' {
-		$result = new ASTNumber($r, builder.parseDouble($r.text), builder.parseDouble("+" + $i.text));
+		$result = new ASTNumber($r, driver.parseDouble($r.text), driver.parseDouble("+" + $i.text));
 	}
 	|
 	'+'? r=(RATIONAL | INTEGER) '-' i=(RATIONAL | INTEGER) 'i' {
-		$result = new ASTNumber($r, builder.parseDouble($r.text), builder.parseDouble("-" + $i.text));
+		$result = new ASTNumber($r, driver.parseDouble($r.text), driver.parseDouble("-" + $i.text));
 	}
 	|
 	'+'? i=(RATIONAL | INTEGER) 'i' {
-		$result = new ASTNumber($i, 0.0, builder.parseDouble($i.text));
+		$result = new ASTNumber($i, 0.0, driver.parseDouble($i.text));
 	}
 	|
 	'-' r=(RATIONAL | INTEGER) '+' i=(RATIONAL | INTEGER) 'i' {
-		$result = new ASTNumber($r, builder.parseDouble("-" + $r.text), builder.parseDouble("+" + $i.text));
+		$result = new ASTNumber($r, driver.parseDouble("-" + $r.text), driver.parseDouble("+" + $i.text));
 	}
 	|
 	'-' r=(RATIONAL | INTEGER) '-' i=(RATIONAL | INTEGER) 'i' {
-		$result = new ASTNumber($r, builder.parseDouble("-" + $r.text), builder.parseDouble("-" + $i.text));
+		$result = new ASTNumber($r, driver.parseDouble("-" + $r.text), driver.parseDouble("-" + $i.text));
 	}
 	|
 	'-' i=(RATIONAL | INTEGER) 'i' {
-		$result = new ASTNumber($i, 0.0, builder.parseDouble("-" + $i.text));
+		$result = new ASTNumber($i, 0.0, driver.parseDouble("-" + $i.text));
 	}
 	|
 	rn=real {
@@ -496,44 +496,44 @@ complex returns [ASTNumber result]
 palette 
 	:
 	p=PALETTE v=VARIABLE {
-		builder.addPalette(new ASTPalette($p, $v.text)); 
+		driver.addPalette(new ASTPalette($p, $v.text));
 	} '{' paletteelement+ '}'
 	;
 		
 paletteelement 
 	:
 	t='[' bc=colorargb '>' ec=colorargb ',' s=INTEGER ',' e=expression ']' ';' {
-		builder.addPaletteElement(new ASTPaletteElement($t, $bc.result, $ec.result, builder.parseInt($s.text), $e.result));
+		driver.addPaletteElement(new ASTPaletteElement($t, $bc.result, $ec.result, driver.parseInt($s.text), $e.result));
 	}
 	|
 	t='[' bc=colorargb '>' ec=colorargb ',' s=INTEGER ']' ';' {
-		builder.addPaletteElement(new ASTPaletteElement($t, $bc.result, $ec.result, builder.parseInt($s.text), null));
+		driver.addPaletteElement(new ASTPaletteElement($t, $bc.result, $ec.result, driver.parseInt($s.text), null));
 	}  
 	;
 				
 colorinit 
 	:
 	i=INIT {
-		builder.setColorContext(true);
-		builder.setColorInit(new ASTColorInit($i));
+		driver.setColorContext(true);
+		driver.setColorInit(new ASTColorInit($i));
 	} '{' colorstatement '}' 
 	;
 		
 colorstatement
 	:
 	{
-		builder.pushStatementList();	
+		driver.pushStatementList();
 	}
 	statement* {
-		builder.addColorStatements(builder.getStatementList());
-		builder.popStatementList();	
+		driver.addColorStatements(driver.getStatementList());
+		driver.popStatementList();
 	}
 	;
 		
 colorrule 
 	:
 	t=RULE '(' r=ruleexp ')' '[' o=(RATIONAL | INTEGER) ']' '{' c=colorexp '}' {
-		builder.addRule(new ASTRule($t, builder.parseFloat($o.text), $r.result, $c.result));
+		driver.addRule(new ASTRule($t, driver.parseFloat($o.text), $r.result, $c.result));
 	} 
 	;
 		
@@ -570,15 +570,15 @@ colorexp returns [ASTColorExpression result]
 colorargb returns [ASTColorARGB result]
 	:
 	'(' a=(RATIONAL | INTEGER) ',' r=(RATIONAL | INTEGER) ',' g=(RATIONAL | INTEGER) ',' b=(RATIONAL | INTEGER) ')' {
-		$result = new ASTColorARGB(builder.parseFloat($a.text), builder.parseFloat($r.text), builder.parseFloat($g.text), builder.parseFloat($b.text));
+		$result = new ASTColorARGB(driver.parseFloat($a.text), driver.parseFloat($r.text), driver.parseFloat($g.text), driver.parseFloat($b.text));
 	}
 	|
 	argb32=ARGB32 {
-		$result = new ASTColorARGB((int)(0xFFFFFFFF & builder.parseLong($argb32.text.substring(1), 16)));
+		$result = new ASTColorARGB((int)(0xFFFFFFFF & driver.parseLong($argb32.text.substring(1), 16)));
 	}
 	|
 	argb24=ARGB24 {
-		$result = new ASTColorARGB((int)(0xFF000000 | (0xFFFFFFFF & builder.parseLong($argb24.text.substring(1), 16))));
+		$result = new ASTColorARGB((int)(0xFF000000 | (0xFFFFFFFF & driver.parseLong($argb24.text.substring(1), 16))));
 	}
 	;
 		

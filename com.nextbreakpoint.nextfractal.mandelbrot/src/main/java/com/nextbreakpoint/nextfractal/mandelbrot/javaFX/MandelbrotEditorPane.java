@@ -529,11 +529,11 @@ public class MandelbrotEditorPane extends BorderPane {
 				if (error.getType() == CompilerError.ErrorType.M_COMPILER) {
 					int lineEnd = (int)error.getIndex() + 1;
 					int lineBegin = (int)error.getIndex();
-					StyleSpansBuilder<Collection<String>> builder = new StyleSpansBuilder<>();
-					builder.add(Collections.singleton("error"), lineEnd - lineBegin);
+					StyleSpansBuilder<Collection<String>> driver = new StyleSpansBuilder<>();
+					driver.add(Collections.singleton("error"), lineEnd - lineBegin);
 					try {
 						if (lineBegin < codeArea.getLength()) {
-							codeArea.setStyleSpans(lineBegin, builder.create());
+							codeArea.setStyleSpans(lineBegin, driver.create());
 						} else {
 							logger.info("begin " + lineBegin + ", length " + (lineEnd - lineBegin));
 						}

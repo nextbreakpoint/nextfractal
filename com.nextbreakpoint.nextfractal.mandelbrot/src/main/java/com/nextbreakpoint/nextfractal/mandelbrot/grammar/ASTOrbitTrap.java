@@ -63,23 +63,23 @@ public class ASTOrbitTrap extends ASTObject {
 
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("name = ");
-		builder.append(name);
-		builder.append(",center = ");
-		builder.append(center);
-		builder.append(",operators = [");
+		StringBuilder driver = new StringBuilder();
+		driver.append("name = ");
+		driver.append(name);
+		driver.append(",center = ");
+		driver.append(center);
+		driver.append(",operators = [");
 		for (int i = 0; i < operators.size(); i++) {
 			ASTOrbitTrapOp statement = operators.get(i);
-			builder.append("{");
-			builder.append(statement);
-			builder.append("}");
+			driver.append("{");
+			driver.append(statement);
+			driver.append("}");
 			if (i < operators.size() - 1) {
-				builder.append(",");
+				driver.append(",");
 			}
 		}
-		builder.append("]");
-		return builder.toString();
+		driver.append("]");
+		return driver.toString();
 	}
 
 	public CompiledTrap compile(ASTExpressionCompiler compiler) {

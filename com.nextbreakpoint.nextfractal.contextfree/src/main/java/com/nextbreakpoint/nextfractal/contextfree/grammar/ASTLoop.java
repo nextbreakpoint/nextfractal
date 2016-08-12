@@ -30,13 +30,15 @@ class ASTLoop extends ASTReplacement {
 	private ASTExpression loopArgs;
 	private ASTModification loopModHolder;
 	private double[] loopData = new double[3];
-	private ASTRepContainer loopBody = new ASTRepContainer();
-	private ASTRepContainer finallyBody = new ASTRepContainer();
+	private ASTRepContainer loopBody;
+	private ASTRepContainer finallyBody;
 	private int loopIndexName;
 	private String loopName;
 	
-	public ASTLoop(int nameIndex, String name, ASTExpression args, ASTModification mods, Token location) {
-		super(mods, ERepElemType.empty, location);
+	public ASTLoop(CFDGDriver driver, int nameIndex, String name, ASTExpression args, ASTModification mods, Token location) {
+		super(driver, mods, ERepElemType.empty, location);
+		loopBody = new ASTRepContainer(driver);
+		finallyBody = new ASTRepContainer(driver);
 		this.loopArgs = args;
 		this.loopModHolder = null;
 		this.loopIndexName = nameIndex;

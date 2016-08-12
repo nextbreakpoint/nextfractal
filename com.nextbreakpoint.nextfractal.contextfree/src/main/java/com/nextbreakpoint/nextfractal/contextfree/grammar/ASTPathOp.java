@@ -34,16 +34,16 @@ class ASTPathOp extends ASTReplacement {
 	private int argCount;
 	private int flags;
 	
-	public ASTPathOp(String op, ASTModification args, Token location) {
-		super(op, location);
+	public ASTPathOp(CFDGDriver driver, String op, ASTModification args, Token location) {
+		super(driver, op, location);
 		this.arguments = null;
 		this.oldStyleArguments = args;
 		this.argCount = 0;
 		this.flags = 0;
 	}
 
-	public ASTPathOp(String op, ASTExpression args, Token location) {
-		super(op, location);
+	public ASTPathOp(CFDGDriver driver, String op, ASTExpression args, Token location) {
+		super(driver, op, location);
 		this.arguments = args;
 		this.oldStyleArguments = null;
 		this.argCount = 0;

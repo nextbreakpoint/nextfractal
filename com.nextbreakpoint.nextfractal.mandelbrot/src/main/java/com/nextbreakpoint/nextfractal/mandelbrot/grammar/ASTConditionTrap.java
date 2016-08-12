@@ -54,14 +54,14 @@ public class ASTConditionTrap extends ASTConditionExpression {
 	
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append(name);
-		builder.append("[");
-		builder.append(exp);
-		builder.append(",");
-		builder.append(contains);
-		builder.append("]");
-		return builder.toString();
+		StringBuilder driver = new StringBuilder();
+		driver.append(name);
+		driver.append("[");
+		driver.append(exp);
+		driver.append(",");
+		driver.append(contains);
+		driver.append("]");
+		return driver.toString();
 	}
 
 	public CompiledCondition compile(ASTExpressionCompiler compiler) {

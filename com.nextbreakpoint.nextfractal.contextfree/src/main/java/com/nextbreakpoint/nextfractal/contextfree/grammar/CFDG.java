@@ -223,4 +223,15 @@ public class CFDG {
 	protected void error(String message) {
 		System.err.println(message);
 	}
+
+	public void compile(ECompilePhase ph) {
+		for (ASTRule rule : rules) {
+			rule.compile(ph);
+		}
+	}
+
+	public void traverse(Shape shape, boolean tr, RTI rti) {
+		ASTRule rule = rules.iterator().next();
+		rule.traverse(shape, tr, rti);
+	}
 }

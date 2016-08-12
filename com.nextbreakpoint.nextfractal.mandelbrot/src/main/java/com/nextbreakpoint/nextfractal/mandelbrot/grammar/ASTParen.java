@@ -42,11 +42,11 @@ public class ASTParen extends ASTExpression {
 
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("(");
-		builder.append(exp);
-		builder.append(")");
-		return builder.toString();
+		StringBuilder driver = new StringBuilder();
+		driver.append("(");
+		driver.append(exp);
+		driver.append(")");
+		return driver.toString();
 	}
 
 	@Override

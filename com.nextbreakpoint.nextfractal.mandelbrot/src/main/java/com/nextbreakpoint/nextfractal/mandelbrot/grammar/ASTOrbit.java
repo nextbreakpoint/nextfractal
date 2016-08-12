@@ -86,59 +86,59 @@ public class ASTOrbit extends ASTObject {
 
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
+		StringBuilder driver = new StringBuilder();
 		String suffix = "";
 		if (region != null) {
-			builder.append("region = ");
-			builder.append(region);
+			driver.append("region = ");
+			driver.append(region);
 			suffix = ",";
 		}
 		if (begin != null) {
 			if (suffix.length() != 0) {
-				builder.append(suffix);
+				driver.append(suffix);
 			} else {
 				suffix = ",";
 			}
-			builder.append("begin = {");
-			builder.append(begin);
-			builder.append("}");
+			driver.append("begin = {");
+			driver.append(begin);
+			driver.append("}");
 		}
 		if (loop != null) {
 			if (suffix.length() != 0) {
-				builder.append(suffix);
+				driver.append(suffix);
 			} else {
 				suffix = ",";
 			}
-			builder.append("loop = {");
-			builder.append(loop);
-			builder.append("}");
+			driver.append("loop = {");
+			driver.append(loop);
+			driver.append("}");
 		}
 		if (end != null) {
 			if (suffix.length() != 0) {
-				builder.append(suffix);
+				driver.append(suffix);
 			} else {
 				suffix = ",";
 			}
-			builder.append("end = {");
-			builder.append(end);
-			builder.append("}");
+			driver.append("end = {");
+			driver.append(end);
+			driver.append("}");
 		}
 		if (suffix.length() != 0) {
-			builder.append(suffix);
+			driver.append(suffix);
 		} else {
 			suffix = ",";
 		}
-		builder.append("traps = [");
+		driver.append("traps = [");
 		for (int i = 0; i < traps.size(); i++) {
 			ASTOrbitTrap trap = traps.get(i);
-			builder.append("{");
-			builder.append(trap);
-			builder.append("}");
+			driver.append("{");
+			driver.append(trap);
+			driver.append("}");
 			if (i < traps.size() - 1) {
-				builder.append(",");
+				driver.append(",");
 			}
 		}
-		builder.append("]");
-		return builder.toString();
+		driver.append("]");
+		return driver.toString();
 	}
 }

@@ -39,15 +39,17 @@ class ASTDefine extends ASTReplacement {
 	private int stackCount;
 	private String name;
 	private int configDepth;
+	private CFDGDriver driver;
 	
-	public ASTDefine(String name, Token location) {
-		super(new ASTModification(location), ERepElemType.empty, location);
+	public ASTDefine(CFDGDriver driver, String name, Token location) {
+		super(driver, new ASTModification(driver, location), ERepElemType.empty, location);
 		this.defineType = EDefineType.StackDefine;
 		this.expType = EExpType.NoType;
 		this.isNatural = false;
 		this.stackCount = 0;
 		this.name = name;
 		this.configDepth = -1;
+		this.driver = driver;
 		int[] i = new int[1];
 		getChildChange().getModData().getRand64Seed().init();
 		getChildChange().getModData().getRand64Seed().xorString(name, i);
@@ -136,10 +138,10 @@ class ASTDefine extends ASTReplacement {
 	@Override
 	public void compile(ECompilePhase ph) {
 		if (defineType == EDefineType.FunctionDefine || defineType == EDefineType.LetDefine) {
-			ASTRepContainer tempCont = new ASTRepContainer();
+			ASTRepContainer tempCont = new ASTRepContainer(driver);
 			tempCont.setParameters(parameters);
 			tempCont.setStackCount(stackCount);
-			Builder.currentBuilder().pushRepContainer(tempCont);
+			driver.pushRepContainer(tempCont);
 			super.compile(ph);
 			if (exp != null) {
 				exp.compile(ph);
@@ -149,14 +151,14 @@ class ASTDefine extends ASTReplacement {
 					exp.simplify();
 				}
 			}
-			Builder.currentBuilder().popRepContainer(null);
+			driver.popRepContainer(null);
 		}
 		
 		switch (ph) {
 			case TypeCheck:
 				{
 					if (defineType == EDefineType.ConfigDefine) {
-						Builder.currentBuilder().makeConfig(this);
+						driver.makeConfig(this);
 						return;
 					}
 					
@@ -187,7 +189,7 @@ class ASTDefine extends ASTReplacement {
 							ASTDefine[] func = new ASTDefine[1];
 							@SuppressWarnings("unchecked")
 							List<ASTParameter>[] shapeParams = new List[1];
-							Builder.currentBuilder().getTypeInfo(getShapeSpecifier().getShapeType(), func, shapeParams);
+							driver.getTypeInfo(getShapeSpecifier().getShapeType(), func, shapeParams);
 							if (func[0] != null) {
 								error("Variable name is also the name of a function");
 								error(func[0].getLocation() + "   function definition is here");
@@ -206,11 +208,11 @@ class ASTDefine extends ASTReplacement {
 							defineType = EDefineType.ConstDefine;
 						}
 						isNatural = exp != null && exp.isNatural() && expType == EExpType.NumericType;
-						ASTParameter param = Builder.currentBuilder().getContainerStack().peek().addDefParameter(getShapeSpecifier().getShapeType(), this, getLocation());
+						ASTParameter param = driver.getContainerStack().peek().addDefParameter(getShapeSpecifier().getShapeType(), this, getLocation());
 						if (param.isParameter() || param.getDefinition() == null) {
-							param.setStackIndex(Builder.currentBuilder().getLocalStackDepth());
-							Builder.currentBuilder().getContainerStack().peek().setStackCount(Builder.currentBuilder().getContainerStack().peek().getStackCount() + param.getTupleSize());
-							Builder.currentBuilder().setLocalStackDepth(Builder.currentBuilder().getLocalStackDepth() + param.getTupleSize()); 
+							param.setStackIndex(driver.getLocalStackDepth());
+							driver.getContainerStack().peek().setStackCount(driver.getContainerStack().peek().getStackCount() + param.getTupleSize());
+							driver.setLocalStackDepth(driver.getLocalStackDepth() + param.getTupleSize());
 						}
 					}
 				}

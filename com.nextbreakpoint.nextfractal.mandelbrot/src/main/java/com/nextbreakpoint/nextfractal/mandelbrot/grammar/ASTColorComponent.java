@@ -76,21 +76,21 @@ public class ASTColorComponent extends ASTColorExpression {
 
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append(exp1);
+		StringBuilder driver = new StringBuilder();
+		driver.append(exp1);
 		if (exp2 != null) {
-			builder.append(',');
-			builder.append(exp2);
+			driver.append(',');
+			driver.append(exp2);
 		}
 		if (exp3 != null) {
-			builder.append(',');
-			builder.append(exp3);
+			driver.append(',');
+			driver.append(exp3);
 		}
 		if (exp4 != null) {
-			builder.append(',');
-			builder.append(exp4);
+			driver.append(',');
+			driver.append(exp4);
 		}
-		return builder.toString();
+		return driver.toString();
 	}
 
 	@Override

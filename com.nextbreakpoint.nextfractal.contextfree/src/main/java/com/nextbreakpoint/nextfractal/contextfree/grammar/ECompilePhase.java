@@ -24,6 +24,6 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.grammar;
 
-enum ECompilePhase { 
+public enum ECompilePhase {
 	TypeCheck, Simplify 
 }

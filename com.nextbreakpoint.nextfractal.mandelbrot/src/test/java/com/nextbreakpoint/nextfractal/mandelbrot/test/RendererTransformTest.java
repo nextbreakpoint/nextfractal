@@ -22,7 +22,7 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.runtime.test;
+package com.nextbreakpoint.nextfractal.mandelbrot.test;
 
 import static org.junit.Assert.assertEquals;
 
@@ -30,7 +30,7 @@ import org.junit.Test;
 
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererTransform;
 
-public class TestRendererTransform {
+public class RendererTransformTest {
 	@Test
 	public void given_new_transform_should_be_identity() {
 		RendererTransform t = new RendererTransform();

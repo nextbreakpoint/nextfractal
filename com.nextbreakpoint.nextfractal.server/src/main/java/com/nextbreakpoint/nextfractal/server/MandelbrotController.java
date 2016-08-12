@@ -99,19 +99,19 @@ public class MandelbrotController {
     }
 
 	private String generateKey(Integer tileSize, Integer rows, Integer cols, Integer row, Integer col, String encodedData) {
-		StringBuilder builder = new StringBuilder();
-		builder.append(encodedData);
-		builder.append("-");
-		builder.append(tileSize);
-		builder.append("-");
-		builder.append(rows);
-		builder.append("-");
-		builder.append(cols);
-		builder.append("-");
-		builder.append(row);
-		builder.append("-");
-		builder.append(col);
-		return builder.toString();
+		StringBuilder driver = new StringBuilder();
+		driver.append(encodedData);
+		driver.append("-");
+		driver.append(tileSize);
+		driver.append("-");
+		driver.append(rows);
+		driver.append("-");
+		driver.append(cols);
+		driver.append("-");
+		driver.append(row);
+		driver.append("-");
+		driver.append(col);
+		return driver.toString();
 	}
 
 	private void validateRequest(MandelbrotRequest request) {

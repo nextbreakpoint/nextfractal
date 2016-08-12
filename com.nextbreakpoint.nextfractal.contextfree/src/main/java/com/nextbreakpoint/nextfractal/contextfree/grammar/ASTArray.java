@@ -29,6 +29,7 @@ import java.util.List;
 import org.antlr.v4.runtime.Token;
 
 class ASTArray extends ASTExpression {
+	private CFDGDriver driver;
 	private int nameIndex;
 	private double[] data;
 	private ASTExpression args;
@@ -39,8 +40,9 @@ class ASTArray extends ASTExpression {
 	private boolean isParameter;
 	private String entropy;
 	
-	public ASTArray(int nameIndex, ASTExpression args, String entropy, Token location) {
+	public ASTArray(CFDGDriver driver, int nameIndex, ASTExpression args, String entropy, Token location) {
 		super(false, false, EExpType.NumericType, location);
+		this.driver = driver;
 		this.nameIndex = nameIndex;
 		this.data = null;
 		this.args = args;
@@ -130,14 +132,14 @@ class ASTArray extends ASTExpression {
 			case TypeCheck:
 				{
 					boolean isGlobal = false;
-					ASTParameter bound = Builder.currentBuilder().findExpression(nameIndex, isGlobal);
+					ASTParameter bound = driver.findExpression(nameIndex, isGlobal);
 					if (bound.getType() != EExpType.NumericType) {
 						error("Vectors can only have numeric components");
 						return null;
 					}
 					
 					isNatural = bound.isNatural();
-					stackIndex = bound.getStackIndex() - (isGlobal ? 0 : Builder.currentBuilder().getLocalStackDepth());
+					stackIndex = bound.getStackIndex() - (isGlobal ? 0 : driver.getLocalStackDepth());
 					count = bound.getTupleSize();
 					isParameter = bound.isParameter();
 					locality = bound.getLocality();

@@ -30,12 +30,13 @@ import java.util.List;
 import org.antlr.v4.runtime.Token;
 
 class ASTTransform extends ASTReplacement {
-	private ASTRepContainer body = new ASTRepContainer();
+	private ASTRepContainer body;
 	private ASTExpression expHolder;
 	private boolean clone;
 	
-	public ASTTransform(ASTExpression exp, Token location) {
-		super(null, ERepElemType.empty, location);
+	public ASTTransform(CFDGDriver driver, ASTExpression exp, Token location) {
+		super(driver, null, ERepElemType.empty, location);
+		body = new ASTRepContainer(driver);
 		this.expHolder = exp;
 		this.clone = false;
 	}

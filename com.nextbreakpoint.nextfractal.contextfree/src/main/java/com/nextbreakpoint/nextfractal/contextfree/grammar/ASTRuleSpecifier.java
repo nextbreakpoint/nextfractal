@@ -39,11 +39,14 @@ class ASTRuleSpecifier extends ASTExpression {
     	private int stackIndex;
     	private List<ASTParameter> typeSignature;
     	private List<ASTParameter> parentSignature;
-    	
-		public ASTRuleSpecifier(Token location) {
+	private CFDGDriver driver;
+
+	public ASTRuleSpecifier(CFDGDriver driver, Token location) {
 			super(false, false, EExpType.RuleType, location);
+			this.driver = driver;
 			this.shapeType = -1;
 			this.argSize = 0;
+			this.entropy = "";
 			this.argSource = EArgSource.NoArgs;
 			this.arguments = null;
 			this.simpleRule = null;
@@ -52,8 +55,9 @@ class ASTRuleSpecifier extends ASTExpression {
 			this.parentSignature = null;
 		}
 
-		public ASTRuleSpecifier(int nameIndex, String name, ASTExpression arguments, List<ASTParameter> parent, Token location) {
+		public ASTRuleSpecifier(CFDGDriver driver, int nameIndex, String name, ASTExpression arguments, List<ASTParameter> parent, Token location) {
 			super(arguments == null || arguments.isConstant(), false, EExpType.RuleType, location);
+			this.driver = driver;
 			this.shapeType = nameIndex;
 			this.entropy = name;
 			this.argSource = EArgSource.DynamicArgs;
@@ -67,8 +71,9 @@ class ASTRuleSpecifier extends ASTExpression {
 			}
 		}
 		
-		public ASTRuleSpecifier(int nameIndex, String name, Token location) {
+		public ASTRuleSpecifier(CFDGDriver driver, int nameIndex, String name, Token location) {
 			super(false, false, EExpType.RuleType, location);
+			this.driver = driver;
 			this.shapeType = nameIndex;
 			this.argSize = 0;
 			this.entropy = name;
@@ -80,8 +85,9 @@ class ASTRuleSpecifier extends ASTExpression {
 			this.parentSignature = null;
 		}
 		
-    	public ASTRuleSpecifier(ASTRuleSpecifier spec, Token location) {
+    	public ASTRuleSpecifier(CFDGDriver driver, ASTRuleSpecifier spec, Token location) {
     		super(spec.isConstant(), false, spec.getType(), location);
+			this.driver = driver;
     		this.argSize = spec.argSize;
     		this.entropy = spec.entropy;
     		this.argSource = spec.argSource;
@@ -93,11 +99,12 @@ class ASTRuleSpecifier extends ASTExpression {
     		spec.simpleRule = null;
     	}
 
-    	public ASTRuleSpecifier(ASTExpression args, Token location) {
+    	public ASTRuleSpecifier(CFDGDriver driver, ASTExpression args, Token location) {
     		super(false, false, EExpType.RuleType, location);
+			this.driver = driver;
     		this.shapeType = -1;
     		this.argSize = 0;
-    		this.entropy = null;
+    		this.entropy = "";
     		this.argSource = EArgSource.ShapeArgs;
     		this.arguments = args;
     		this.simpleRule = null;
@@ -223,7 +230,7 @@ class ASTRuleSpecifier extends ASTExpression {
 			}			
 			if (argSource == EArgSource.StackArgs) {
 				boolean isGlobal = false;
-				ASTParameter bound = Builder.currentBuilder().findExpression(shapeType, isGlobal);
+				ASTParameter bound = driver.findExpression(shapeType, isGlobal);
 				if (bound.getType() != EExpType.RuleType) {
 					return this;
 				}
@@ -281,7 +288,7 @@ class ASTRuleSpecifier extends ASTExpression {
 							case StackArgs:
 								{
 									boolean isGlobal = false;
-									ASTParameter bound = Builder.currentBuilder().findExpression(shapeType, isGlobal);
+									ASTParameter bound = driver.findExpression(shapeType, isGlobal);
 									if (bound.getType() != EExpType.RuleType) {
 										error("Shape name does not bind to a rule variable");
 										error(bound.getLocation() + "  this is what it binds to");
@@ -299,7 +306,7 @@ class ASTRuleSpecifier extends ASTExpression {
 											error("Error processing shape variable.");
 										}
 									} else {
-										stackIndex = bound.getStackIndex() - (isGlobal ? 0 : Builder.currentBuilder().getLocalStackDepth());
+										stackIndex = bound.getStackIndex() - (isGlobal ? 0 : driver.getLocalStackDepth());
 										isConstant = false;
 										locality = bound.getLocality();
 									}
@@ -325,7 +332,7 @@ class ASTRuleSpecifier extends ASTExpression {
 								{
 									ASTDefine[] func = new ASTDefine[1];
 									List<ASTParameter>[] signature = new List[1];
-									String name = Builder.currentBuilder().getTypeInfo(shapeType, func, signature);
+									String name = driver.getTypeInfo(shapeType, func, signature);
 									typeSignature = signature[0];
 									if (typeSignature != null && typeSignature.isEmpty()) {
 										typeSignature = null;
@@ -333,7 +340,7 @@ class ASTRuleSpecifier extends ASTExpression {
 									if (func[0] != null) {
 										if (func[0].getExpType() == EExpType.RuleType) {
 											argSource = EArgSource.ShapeArgs;
-											arguments = new ASTUserFunction(shapeType, arguments, func[0], location);
+											arguments = new ASTUserFunction(driver, shapeType, arguments, func[0], location);
 											arguments.compile(ph);
 											isConstant = false;
 											locality = arguments.getLocality();
@@ -348,7 +355,7 @@ class ASTRuleSpecifier extends ASTExpression {
 										return null;
 									}
 									boolean isGlobal = false;
-									ASTParameter bound = Builder.currentBuilder().findExpression(shapeType, isGlobal);
+									ASTParameter bound = driver.findExpression(shapeType, isGlobal);
 									if (bound != null && bound.getType() == EExpType.RuleType) {
 										argSource = EArgSource.StackArgs;
 										compile(ph);
@@ -393,7 +400,7 @@ class ASTRuleSpecifier extends ASTExpression {
 										if (arguments.isConstant()) {
 											simpleRule = evalArgs(null, null);
 											argSource = EArgSource.SimpleArgs;
-											Builder.currentBuilder().storeParams(simpleRule);
+											driver.storeParams(simpleRule);
 											isConstant = true;
 											locality = ELocality.PureLocal;
 										} else {
@@ -408,7 +415,7 @@ class ASTRuleSpecifier extends ASTExpression {
 										simpleRule = new StackRule(shapeType, 0, typeSignature);
 										isConstant = true;
 										locality = ELocality.PureLocal;
-										Builder.currentBuilder().storeParams(simpleRule);
+										driver.storeParams(simpleRule);
 									}
 								}
 								break;

@@ -27,7 +27,7 @@ package com.nextbreakpoint.nextfractal.contextfree.grammar;
 import java.util.Iterator;
 import java.util.List;
 
-class RTI {
+public class RTI {
 
 	public double getCurrentTime() {
 		// TODO Auto-generated method stub

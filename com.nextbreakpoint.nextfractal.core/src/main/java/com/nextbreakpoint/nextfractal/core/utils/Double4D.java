@@ -97,15 +97,15 @@ public class Double4D implements Serializable, Cloneable {
 	 */
 	@Override
 	public String toString() {
-		final StringBuilder builder = new StringBuilder();
-		builder.append(x);
-		builder.append(", ");
-		builder.append(y);
-		builder.append(", ");
-		builder.append(z);
-		builder.append(", ");
-		builder.append(w);
-		return builder.toString();
+		final StringBuilder driver = new StringBuilder();
+		driver.append(x);
+		driver.append(", ");
+		driver.append(y);
+		driver.append(", ");
+		driver.append(z);
+		driver.append(", ");
+		driver.append(w);
+		return driver.toString();
 	}
 
 	/**

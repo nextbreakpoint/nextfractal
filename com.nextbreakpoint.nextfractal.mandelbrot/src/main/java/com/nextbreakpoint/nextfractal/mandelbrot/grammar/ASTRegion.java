@@ -43,12 +43,12 @@ public class ASTRegion {
 
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("[");
-		builder.append(a);
-		builder.append(",");
-		builder.append(b);
-		builder.append("]");
-		return builder.toString();
+		StringBuilder driver = new StringBuilder();
+		driver.append("[");
+		driver.append(a);
+		driver.append(",");
+		driver.append(b);
+		driver.append("]");
+		return driver.toString();
 	}
 }

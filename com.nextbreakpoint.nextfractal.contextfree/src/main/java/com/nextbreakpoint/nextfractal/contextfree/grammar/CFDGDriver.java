@@ -36,13 +36,11 @@ import org.antlr.v4.runtime.ANTLRFileStream;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.Token;
 
-public class Builder {
-	private static Builder currentBuilder;
-
+public class CFDGDriver {
 	private CFDG cfdg = new CFDG();
 	private Rand64 seed;
 	private Stack<ASTRepContainer> containerStack = new Stack<ASTRepContainer>();
-	private ASTRepContainer paramDecls = new ASTRepContainer();
+	private ASTRepContainer paramDecls = new ASTRepContainer(this);
 	private Map<String, Integer> flagNames = new HashMap<String, Integer>();
 	private List<StackRule> longLivedParams = new ArrayList<StackRule>();
 	private Stack<String> fileNames = new Stack<String>();
@@ -69,8 +67,8 @@ public class Builder {
 		globals.add("TRIANGLE");
 	}
 	
-	public Builder() {
-		containerStack.add(new ASTRepContainer());
+	public CFDGDriver() {
+		containerStack.add(new ASTRepContainer(this));
 	}
 	
 	protected void warning(String message, Token location) {
@@ -231,7 +229,7 @@ public class Builder {
 				error("Configuration parameters must be at global scope", location);
 				return null;
 			}
-			ASTDefine def = new ASTDefine(name, location);
+			ASTDefine def = new ASTDefine(this, name, location);
 			def.setConfigDepth(includeDepth);
 			def.setDefineType(EDefineType.ConfigDefine);
 			return def;
@@ -247,7 +245,7 @@ public class Builder {
 			return null;
 		}
 		checkVariableName(nameIndex, false);
-		def = new ASTDefine(name, location);
+		def = new ASTDefine(this, name, location);
 		def.getShapeSpecifier().setShapeType(nameIndex);
 		if (isFunction) {
 			for (ASTParameter param : paramDecls.getParameters()) {
@@ -309,9 +307,9 @@ public class Builder {
 					break;
 			}
 			if (mod == null) {
-				mod = new ASTModification(cfg.getLocation());
+				mod = new ASTModification(this, cfg.getLocation());
 			}
-			cfg.setExp(new ASTStartSpecifier(rule, mod, cfg.getLocation()));
+			cfg.setExp(new ASTStartSpecifier(this, rule, mod, cfg.getLocation()));
 		}
 		ASTExpression current = cfg.getExp();
 		if (!cfdg.addParameter(cfg.getName(), cfg.getExp(), cfg.getConfigDepth())) {
@@ -362,9 +360,9 @@ public class Builder {
 		boolean isGlobal = false;
 		ASTParameter bound = findExpression(varNum, isGlobal);
 		if (bound == null) {
-			return new ASTRuleSpecifier(varNum, name, null, cfdg.getShapeParams(currentShape), location);
+			return new ASTRuleSpecifier(this, varNum, name, null, cfdg.getShapeParams(currentShape), location);
 		}
-		return new ASTVariable(varNum, name, location);
+		return new ASTVariable(this, varNum, name, location);
 	}
 
 	public ASTExpression makeArray(String name, ASTExpression args, Token location) {
@@ -378,16 +376,16 @@ public class Builder {
 		if (bound == null) {
 			return args;
 		}
-		return new ASTArray(varNum, args, "", location);
+		return new ASTArray(this, varNum, args, "", location);
 	}
 
 	public ASTExpression makeLet(ASTRepContainer vars, ASTExpression exp, Token location) {
 		int nameIndex = stringToShape("let", false, location);
-		ASTDefine def = new ASTDefine("let", location);
+		ASTDefine def = new ASTDefine(this, "let", location);
 		def.getShapeSpecifier().setShapeType(nameIndex);
 		def.setExp(exp);
 		def.setDefineType(EDefineType.LetDefine);
-		return new ASTLet(vars, def, location);
+		return new ASTLet(this, vars, def, location);
 	}
 
 	public ASTRuleSpecifier makeRuleSpec(String name, ASTExpression args, Token location) {
@@ -400,9 +398,9 @@ public class Builder {
 				args = new ASTSelect(args, false, location);
 			}
 			if (makeStart) {
-				return new ASTStartSpecifier(args, mod, location);
+				return new ASTStartSpecifier(this, args, mod, location);
 			} else {
-				return new ASTRuleSpecifier(args, location);
+				return new ASTRuleSpecifier(this, args, location);
 			}
 		}
 		int nameIndex = stringToShape(name, true, location);
@@ -412,14 +410,14 @@ public class Builder {
 			error("Shape name binds to global variable and current shape, using current shape", location);
 		}
 		if (bound != null && bound.isParameter() && bound.getType() == EExpType.RuleType) {
-			return new ASTRuleSpecifier(nameIndex, name, location);
+			return new ASTRuleSpecifier(this, nameIndex, name, location);
 		}
 		ASTRuleSpecifier ret = null;
 		cfdg.setShapeHasNoParam(nameIndex, args);
 		if (makeStart) {
-			ret = new ASTStartSpecifier(nameIndex, name, args, mod, location);
+			ret = new ASTStartSpecifier(this, nameIndex, name, args, mod, location);
 		} else {
-			ret = new ASTRuleSpecifier(nameIndex, name, args, cfdg.getShapeParams(currentShape), location);
+			ret = new ASTRuleSpecifier(this, nameIndex, name, args, cfdg.getShapeParams(currentShape), location);
 		}
 		if (ret.getArguments() != null && ret.getArguments().getType() == EExpType.ReuseType) {
 			if (makeStart) {
@@ -447,7 +445,7 @@ public class Builder {
 	
 	public ASTReplacement makeElement(String s, ASTModification mods, ASTExpression params, boolean subPath, Token location) {
 		if (inPathContainer && !subPath && (s.equals("FILL") || s.equals("STROKE"))) {
-			return new ASTPathCommand(s, mods, params, location);
+			return new ASTPathCommand(this, s, mods, params, location);
 		}
 		ASTRuleSpecifier r = makeRuleSpec(s, params, null, false, location);
 		ERepElemType t = ERepElemType.replacement;
@@ -475,7 +473,7 @@ public class Builder {
 				error("Subpath references must be to previously declared paths", location);
 			}
 		}
-		return new ASTReplacement(r, mods, t, location); 
+		return new ASTReplacement(this, r, mods, t, location);
 	}
 
 	public ASTExpression makeFunction(String name, ASTExpression args, Token location) {
@@ -502,7 +500,7 @@ public class Builder {
 		if (args != null && args.getType() == EExpType.ReuseType) {
 			return makeRuleSpec(name, args, null, false, location);
 		}
-		return new ASTUserFunction(nameIndex, args, null, location);
+		return new ASTUserFunction(this, nameIndex, args, null, location);
 	}
 	
 	public ASTModification makeModification(ASTModification mod, boolean canonial, Token location) {
@@ -712,10 +710,6 @@ public class Builder {
 		return paramDecls;
 	}
 
-	public static Builder currentBuilder() {
-		return currentBuilder;
-	}
-
 	public int getLocalStackDepth() {
 		return localStackDepth;
 	}
@@ -730,5 +724,9 @@ public class Builder {
 
 	public void setLocalStackDepth(int localStackDepth) {
 		this.localStackDepth = localStackDepth;
+	}
+
+	public CFDG getCFDG() {
+		return cfdg;
 	}
 }

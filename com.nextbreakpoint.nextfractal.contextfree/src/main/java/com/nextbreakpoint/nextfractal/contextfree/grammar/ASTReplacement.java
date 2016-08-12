@@ -32,26 +32,27 @@ class ASTReplacement {
 	private ERepElemType repType;
 	private EPathOp pathOp;
 	private Token location;
-	
-	public ASTReplacement(ASTRuleSpecifier shapeSpec, ASTModification childChange, ERepElemType repType, Token location) {
+	protected CFDGDriver driver;
+
+	public ASTReplacement(CFDGDriver driver, ASTRuleSpecifier shapeSpec, ASTModification childChange, ERepElemType repType, Token location) {
+		this.driver = driver;
 		this.repType = repType;
-		this.childChange = childChange;
 		this.shapeSpec = shapeSpec;
 		this.pathOp = EPathOp.UNKNOWN;
 		this.location = location;
-		childChange = new ASTModification(location);
+		this.childChange = new ASTModification(driver, location);
 	}
 
-	public ASTReplacement(ASTRuleSpecifier shapeSpec, ASTModification childChange, Token location) {
-		this(shapeSpec, childChange, ERepElemType.empty, location);
+	public ASTReplacement(CFDGDriver driver, ASTRuleSpecifier shapeSpec, ASTModification childChange, Token location) {
+		this(driver, shapeSpec, childChange, ERepElemType.empty, location);
 	}
 
-	public ASTReplacement(ASTModification childChange, ERepElemType repType, Token location) {
-		this(new ASTRuleSpecifier(location), childChange, repType, location);
+	public ASTReplacement(CFDGDriver driver, ASTModification childChange, ERepElemType repType, Token location) {
+		this(driver, new ASTRuleSpecifier(driver, location), childChange, repType, location);
 	}
 
-	public ASTReplacement(String name, Token location) {
-		this(new ASTRuleSpecifier(location), new ASTModification(location), ERepElemType.op, location);
+	public ASTReplacement(CFDGDriver driver, String name, Token location) {
+		this(driver, new ASTRuleSpecifier(driver, location), new ASTModification(driver, location), ERepElemType.op, location);
 		this.pathOp = EPathOp.pathOpTypeByName(name);
 		if (this.pathOp == EPathOp.UNKNOWN) {
 			error("Unknown path operation type");
@@ -91,13 +92,13 @@ class ASTReplacement {
 		switch (ph) {
 			case TypeCheck: 
 				childChange.addEntropy(shapeSpec.getEntropy());
-				if (Builder.currentBuilder().isInPathContainer()) {
+				if (driver.isInPathContainer()) {
 					// This is a subpath
 					if (shapeSpec.getArgSource() == EArgSource.ShapeArgs || shapeSpec.getArgSource() == EArgSource.StackArgs || PrimShape.isPrimShape(shapeSpec.getShapeType())) {
 						if (repType != ERepElemType.op) {
 							error("Error in subpath specification");
 						} else {
-							ASTRule rule = Builder.currentBuilder().getRule(shapeSpec.getShapeType());
+							ASTRule rule = driver.getRule(shapeSpec.getShapeType());
 							if (rule == null || rule.isPath()) {
 								error("Subpath can only refer to a path");
 							} else if (rule.getRuleBody().getRepType() != repType.getType()) {
@@ -147,7 +148,7 @@ class ASTReplacement {
 		Shape child = parent;
 		switch (repType) {
 		case replacement:
-			replace(child,  rti);
+			replace(child, rti);
 			child.getWorldState().setRand64Seed(rti.getCurrentSeed());
 			child.getWorldState().getRand64Seed().bump();
 			rti.processShape(child);

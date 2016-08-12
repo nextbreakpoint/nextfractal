@@ -52,14 +52,14 @@ public class ASTRule extends ASTObject {
 
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("opacity = ");
-		builder.append(opacity);
-		builder.append(",ruleExp = {");
-		builder.append(ruleExp);
-		builder.append("},colorExp = {");
-		builder.append(colorExp);
-		builder.append("}");
-		return builder.toString();
+		StringBuilder driver = new StringBuilder();
+		driver.append("opacity = ");
+		driver.append(opacity);
+		driver.append(",ruleExp = {");
+		driver.append(ruleExp);
+		driver.append("},colorExp = {");
+		driver.append(colorExp);
+		driver.append("}");
+		return driver.toString();
 	}
 }

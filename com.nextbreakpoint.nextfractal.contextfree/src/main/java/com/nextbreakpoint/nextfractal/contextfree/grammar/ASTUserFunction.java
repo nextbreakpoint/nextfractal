@@ -31,11 +31,13 @@ import org.antlr.v4.runtime.Token;
 class ASTUserFunction extends ASTExpression {
 	private ASTExpression arguments;
 	private ASTDefine definition;
+	private CFDGDriver driver;
 	private int nameIndex;
 	protected boolean isLet;
 
-	public ASTUserFunction(int nameIndex, ASTExpression arguments, ASTDefine definition, Token location) {
+	public ASTUserFunction(CFDGDriver driver, int nameIndex, ASTExpression arguments, ASTDefine definition, Token location) {
 		super(false, false, EExpType.NoType, location);
+		this.driver = driver;
 		this.nameIndex = nameIndex;
 		this.definition = definition;
 		this.arguments = arguments;
@@ -76,7 +78,7 @@ class ASTUserFunction extends ASTExpression {
 		}
 		if (rti == null) throw new DeferUntilRuntimeException();
 		if (rti.getRequestStop()/*TODO || Render.abortEverything*/) {
-			throw new CfdgException("Stopping");
+			throw new CFDGException("Stopping");
 		}
 		StackType oldStackType = setupStack(rti);
 		definition.getExp().evaluate(result, length, rti);
@@ -92,7 +94,7 @@ class ASTUserFunction extends ASTExpression {
 		}
 		if (rti == null) throw new DeferUntilRuntimeException();
 		if (rti.getRequestStop()/*TODO || Render.abortEverything*/) {
-			throw new CfdgException("Stopping");
+			throw new CFDGException("Stopping");
 		}
 		StackType oldStackType = setupStack(rti);
 		definition.getExp().evaluate(result, shapeDest, rti);
@@ -133,7 +135,7 @@ class ASTUserFunction extends ASTExpression {
 					ASTDefine[] def = new ASTDefine[1];
 					@SuppressWarnings("unchecked")
 					List<ASTParameter>[] p = new List[1];
-					String name = Builder.currentBuilder().getTypeInfo(nameIndex, def, p);
+					String name = driver.getTypeInfo(nameIndex, def, p);
 					if (def[0] != null && p[0] != null) {
 						error("Name matches both a function and a shape");
 						return null;
@@ -157,7 +159,7 @@ class ASTUserFunction extends ASTExpression {
 						}
 						return null;
 					}
-					ASTRuleSpecifier r = new ASTRuleSpecifier(nameIndex, name, arguments, null, location);
+					ASTRuleSpecifier r = new ASTRuleSpecifier(driver, nameIndex, name, arguments, null, location);
 					r.compile(ph);
 					return r;
 				}
@@ -179,7 +181,7 @@ class ASTUserFunction extends ASTExpression {
 		}
 		if (rti == null) throw new DeferUntilRuntimeException();
 		if (rti.getRequestStop()/*TODO || Render.abortEverything*/) {
-			throw new CfdgException("Stopping");
+			throw new CFDGException("Stopping");
 		}
 		StackType oldStackType = setupStack(rti);
 		StackRule ret = definition.getExp().evalArgs(rti, parent);

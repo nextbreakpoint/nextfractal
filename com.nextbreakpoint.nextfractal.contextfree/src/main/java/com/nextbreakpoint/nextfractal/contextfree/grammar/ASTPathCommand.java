@@ -32,16 +32,16 @@ class ASTPathCommand extends ASTReplacement {
 	private ASTExpression parameters;
 	private int flags;
 	
-	public ASTPathCommand(Token location) {
-		super(null, ERepElemType.command, location);//TODO da controllare
+	public ASTPathCommand(CFDGDriver driver, Token location) {
+		super(driver, null, ERepElemType.command, location);//TODO da controllare
 		this.miterLimit = 4.0;
 		this.strokeWidth = 0.1;
 		this.parameters = null;
 		this.flags = EFlagType.CF_MITER_JOIN.getType() + EFlagType.CF_BUTT_CAP.getType();
 	}
 
-	public ASTPathCommand(String s, ASTModification mods, ASTExpression params, Token location) {
-		super(mods, ERepElemType.command, location);
+	public ASTPathCommand(CFDGDriver driver, String s, ASTModification mods, ASTExpression params, Token location) {
+		super(driver, mods, ERepElemType.command, location);
 		this.miterLimit = 4.0;
 		this.strokeWidth = 0.1;
 		this.parameters = params;

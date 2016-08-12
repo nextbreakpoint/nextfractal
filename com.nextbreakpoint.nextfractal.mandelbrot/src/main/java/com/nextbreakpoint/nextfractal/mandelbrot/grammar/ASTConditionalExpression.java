@@ -42,13 +42,13 @@ public class ASTConditionalExpression extends ASTExpression {
 
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append(conditionExp);
-		builder.append(" ? ");
-		builder.append(thenExp);
-		builder.append(" : ");
-		builder.append(elseExp);
-		return builder.toString();
+		StringBuilder driver = new StringBuilder();
+		driver.append(conditionExp);
+		driver.append(" ? ");
+		driver.append(thenExp);
+		driver.append(" : ");
+		driver.append(elseExp);
+		return driver.toString();
 	}
 
 	@Override

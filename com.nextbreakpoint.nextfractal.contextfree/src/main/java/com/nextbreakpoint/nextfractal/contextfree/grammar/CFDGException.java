@@ -24,10 +24,10 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.grammar;
 
-public class CfdgException extends RuntimeException {
+public class CFDGException extends RuntimeException {
 	private static final long serialVersionUID = 1L;
 
-	public CfdgException(String message) {
+	public CFDGException(String message) {
 		super(message);
 	}
 }

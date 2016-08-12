@@ -1045,24 +1045,24 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 		Platform.runLater(() -> {
 			errorProperty.setValue(null);
 			if (message != null) {
-				StringBuilder builder = new StringBuilder();
-				builder.append(message);
+				StringBuilder driver = new StringBuilder();
+				driver.append(message);
 				if (errors != null) {
-					builder.append("\n\n");
+					driver.append("\n\n");
 					for (CompilerError error : errors) {
-						builder.append("Line ");
-						builder.append(error.getLine());
-						builder.append(": ");
-						builder.append(error.getMessage());
-						builder.append("\n");
+						driver.append("Line ");
+						driver.append(error.getLine());
+						driver.append(": ");
+						driver.append(error.getMessage());
+						driver.append("\n");
 					}
 				}
 				if (source != null) {
-					builder.append("\n\n");
-					builder.append(source);
-					builder.append("\n");
+					driver.append("\n\n");
+					driver.append(source);
+					driver.append("\n");
 				}
-				errorProperty.setValue(builder.toString());
+				errorProperty.setValue(driver.toString());
 			}
 		});
 	}
@@ -1072,24 +1072,24 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 		Platform.runLater(() -> {
 			errorProperty.setValue(null);
 			if (message != null) {
-				StringBuilder builder = new StringBuilder();
-				builder.append(message);
+				StringBuilder driver = new StringBuilder();
+				driver.append(message);
 				if (errors != null) {
-					builder.append("\n\n");
+					driver.append("\n\n");
 					for (RendererError error : errors) {
-						builder.append("Line ");
-						builder.append(error.getLine());
-						builder.append(": ");
-						builder.append(error.getMessage());
-						builder.append("\n");
+						driver.append("Line ");
+						driver.append(error.getLine());
+						driver.append(": ");
+						driver.append(error.getMessage());
+						driver.append("\n");
 					}
 				}
 				if (source != null) {
-					builder.append("\n\n");
-					builder.append(source);
-					builder.append("\n");
+					driver.append("\n\n");
+					driver.append(source);
+					driver.append("\n");
 				}
-				errorProperty.setValue(builder.toString());
+				errorProperty.setValue(driver.toString());
 			}
 		});
 	}

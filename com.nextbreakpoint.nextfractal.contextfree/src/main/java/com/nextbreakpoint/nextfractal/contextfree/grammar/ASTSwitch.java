@@ -31,11 +31,12 @@ import org.antlr.v4.runtime.Token;
 
 class ASTSwitch extends ASTReplacement {
 	private Map<Integer, ASTRepContainer> caseStatements = new HashMap<Integer, ASTRepContainer>();
-	private ASTRepContainer elseBody = new ASTRepContainer();
+	private ASTRepContainer elseBody;
 	private ASTExpression switchExp;
 	
-	public ASTSwitch(ASTExpression caseVal, Token location) {
-		super(null, ERepElemType.empty, location);
+	public ASTSwitch(CFDGDriver driver, ASTExpression caseVal, Token location) {
+		super(driver, null, ERepElemType.empty, location);
+		elseBody = new ASTRepContainer(driver);
 		this.switchExp = caseVal;
 	}
 

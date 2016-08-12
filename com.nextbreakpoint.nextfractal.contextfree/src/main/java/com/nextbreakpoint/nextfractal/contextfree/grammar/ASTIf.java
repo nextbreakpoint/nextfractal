@@ -28,11 +28,13 @@ import org.antlr.v4.runtime.Token;
 
 class ASTIf extends ASTReplacement {
 	private ASTExpression condition;
-	private ASTRepContainer thenBody = new ASTRepContainer();
-	private ASTRepContainer elseBody = new ASTRepContainer();
+	private ASTRepContainer thenBody;
+	private ASTRepContainer elseBody;
 	
-	public ASTIf(ASTExpression exp, Token location) {
-		super(null, ERepElemType.empty, location);
+	public ASTIf(CFDGDriver driver, ASTExpression exp, Token location) {
+		super(driver, null, ERepElemType.empty, location);
+		thenBody = new ASTRepContainer(driver);
+		elseBody = new ASTRepContainer(driver);
 		this.condition = exp;
 	}
 	

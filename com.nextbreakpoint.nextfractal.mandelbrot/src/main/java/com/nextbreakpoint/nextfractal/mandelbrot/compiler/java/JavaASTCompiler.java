@@ -84,36 +84,36 @@ import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTVariable;
 public class JavaASTCompiler implements ASTExpressionCompiler {
 	private final Map<String, CompilerVariable> variables;
 	private final ExpressionContext context;
-	private final StringBuilder builder;
+	private final StringBuilder driver;
 	
-	public JavaASTCompiler(ExpressionContext context, Map<String, CompilerVariable> variables, StringBuilder builder) {
+	public JavaASTCompiler(ExpressionContext context, Map<String, CompilerVariable> variables, StringBuilder driver) {
 		this.variables = variables;
 		this.context = context;
-		this.builder = builder;
+		this.driver = driver;
 	}
 
 	@Override
 	public CompiledExpression compile(ASTNumber number) {
 		if (number.isReal()) {
-			builder.append(number.r());
+			driver.append(number.r());
 		} else {
-			builder.append("getNumber(");
-			builder.append(context.newNumberIndex());
-			builder.append(").set(");
-			builder.append(number.r());
-			builder.append(",");
-			builder.append(number.i());
-			builder.append(")");
+			driver.append("getNumber(");
+			driver.append(context.newNumberIndex());
+			driver.append(").set(");
+			driver.append(number.r());
+			driver.append(",");
+			driver.append(number.i());
+			driver.append(")");
 		}
 		return null;
 	}
 
 	@Override
 	public CompiledExpression compile(ASTFunction function) {
-		builder.append("func");
-		builder.append(function.getName().toUpperCase().substring(0, 1));
-		builder.append(function.getName().substring(1));
-		builder.append("(");
+		driver.append("func");
+		driver.append(function.getName().toUpperCase().substring(0, 1));
+		driver.append(function.getName().substring(1));
+		driver.append("(");
 		switch (function.getName()) {
 			case "mod":
 			case "mod2":
@@ -135,9 +135,9 @@ public class JavaASTCompiler implements ASTExpressionCompiler {
 					throw new ASTException("Invalid number of arguments: " + function.getLocation().getText(), function.getLocation());
 				}	
 				if (!function.getArguments()[0].isReal()) {
-					builder.append("getNumber(");
-					builder.append(context.newNumberIndex());
-					builder.append("),");
+					driver.append("getNumber(");
+					driver.append(context.newNumberIndex());
+					driver.append("),");
 				}
 				break;
 
@@ -176,9 +176,9 @@ public class JavaASTCompiler implements ASTExpressionCompiler {
 					throw new ASTException("Invalid type of arguments: " + function.getLocation().getText(), function.getLocation());
 				}				
 				if (!function.getArguments()[0].isReal()) {
-					builder.append("getNumber(");
-					builder.append(context.newNumberIndex());
-					builder.append("),");
+					driver.append("getNumber(");
+					driver.append(context.newNumberIndex());
+					driver.append("),");
 				}
 				break;
 
@@ -188,9 +188,9 @@ public class JavaASTCompiler implements ASTExpressionCompiler {
 					throw new ASTException("Invalid number of arguments: " + function.getLocation().getText(), function.getLocation());
 				}				
 				if (!function.getArguments()[0].isReal()) {
-					builder.append("getNumber(");
-					builder.append(context.newNumberIndex());
-					builder.append("),");
+					driver.append("getNumber(");
+					driver.append(context.newNumberIndex());
+					driver.append("),");
 				}
 				break;
 				
@@ -201,10 +201,10 @@ public class JavaASTCompiler implements ASTExpressionCompiler {
 		for (int i = 0; i < arguments.length; i++) {
 			arguments[i].compile(this);
 			if (i < arguments.length - 1) {
-				builder.append(",");
+				driver.append(",");
 			}
 		}
-		builder.append(")");
+		driver.append(")");
 		return null;
 	}
 
@@ -216,16 +216,16 @@ public class JavaASTCompiler implements ASTExpressionCompiler {
 			switch (operator.getOp()) {
 				case "-":
 					if (exp1.isReal()) {
-						builder.append("-");
+						driver.append("-");
 						exp1.compile(this);
 					} else {
-						builder.append("opNeg");
-						builder.append("(");
-						builder.append("getNumber(");
-						builder.append(context.newNumberIndex());
-						builder.append("),");
+						driver.append("opNeg");
+						driver.append("(");
+						driver.append("getNumber(");
+						driver.append(context.newNumberIndex());
+						driver.append("),");
 						exp1.compile(this);
-						builder.append(")");
+						driver.append(")");
 					}
 					break;
 				
@@ -233,13 +233,13 @@ public class JavaASTCompiler implements ASTExpressionCompiler {
 					if (exp1.isReal()) {
 						exp1.compile(this);
 					} else {
-						builder.append("opPos");
-						builder.append("(");
-						builder.append("getNumber(");
-						builder.append(context.newNumberIndex());
-						builder.append("),");
+						driver.append("opPos");
+						driver.append("(");
+						driver.append("getNumber(");
+						driver.append(context.newNumberIndex());
+						driver.append("),");
 						exp1.compile(this);
-						builder.append(")");
+						driver.append(")");
 					}
 					break;
 				
@@ -249,107 +249,107 @@ public class JavaASTCompiler implements ASTExpressionCompiler {
 		} else {
 			if (exp1.isReal() && exp2.isReal()) {
 				if (operator.getOp().equals("^")) {
-					builder.append("opPow");
+					driver.append("opPow");
 				}
 				if (operator.getOp().equals("<>")) {
-					builder.append("getNumber(");
-					builder.append(context.newNumberIndex());
-					builder.append(").set");
+					driver.append("getNumber(");
+					driver.append(context.newNumberIndex());
+					driver.append(").set");
 				}
-				builder.append("(");
+				driver.append("(");
 				exp1.compile(this);
 				switch (operator.getOp()) {
 					case "+":
-						builder.append("+");
+						driver.append("+");
 						break;
 					
 					case "-":
-						builder.append("-");
+						driver.append("-");
 						break;
 						
 					case "*":
-						builder.append("*");
+						driver.append("*");
 						break;
 						
 					case "/":
-						builder.append("/");
+						driver.append("/");
 						break;
 						
 					case "^":
-						builder.append(",");
+						driver.append(",");
 						break;
 					
 					case "<>":
-						builder.append(",");
+						driver.append(",");
 						break;
 					
 					default:
 						throw new ASTException("Unsupported operator: " + operator.getLocation().getText(), operator.getLocation());
 				}
 				exp2.compile(this);
-				builder.append(")");
+				driver.append(")");
 			} else if (exp2.isReal()) {
 				switch (operator.getOp()) {
 					case "+":
-						builder.append("opAdd");
+						driver.append("opAdd");
 						break;
 					
 					case "-":
-						builder.append("opSub");
+						driver.append("opSub");
 						break;
 						
 					case "*":
-						builder.append("opMul");
+						driver.append("opMul");
 						break;
 						
 					case "/":
-						builder.append("opDiv");
+						driver.append("opDiv");
 						break;
 						
 					case "^":
-						builder.append("opPow");
+						driver.append("opPow");
 						break;
 					
 					default:
 						throw new ASTException("Unsupported operator: " + operator.getLocation().getText(), operator.getLocation());
 				}
-				builder.append("(");
-				builder.append("getNumber(");
-				builder.append(context.newNumberIndex());
-				builder.append("),");
+				driver.append("(");
+				driver.append("getNumber(");
+				driver.append(context.newNumberIndex());
+				driver.append("),");
 				exp1.compile(this);
-				builder.append(",");
+				driver.append(",");
 				exp2.compile(this);
-				builder.append(")");
+				driver.append(")");
 			} else {
 				switch (operator.getOp()) {
 					case "+":
-						builder.append("opAdd");
+						driver.append("opAdd");
 						break;
 					
 					case "-":
-						builder.append("opSub");
+						driver.append("opSub");
 						break;
 						
 					case "*":
-						builder.append("opMul");
+						driver.append("opMul");
 						break;
 						
 					case "/":
-						builder.append("opDiv");
+						driver.append("opDiv");
 						break;
 						
 					default:
 						throw new ASTException("Unsupported operator: " + operator.getLocation().getText(), operator.getLocation());
 				}
-				builder.append("(");
-				builder.append("getNumber(");
-				builder.append(context.newNumberIndex());
-				builder.append("),");
+				driver.append("(");
+				driver.append("getNumber(");
+				driver.append(context.newNumberIndex());
+				driver.append("),");
 				exp1.compile(this);
-				builder.append(",");
+				driver.append(",");
 				exp2.compile(this);
-				builder.append(")");
+				driver.append(")");
 			}
 		}
 		return null;
@@ -357,15 +357,15 @@ public class JavaASTCompiler implements ASTExpressionCompiler {
 
 	@Override
 	public CompiledExpression compile(ASTParen paren) {
-		builder.append("(");
+		driver.append("(");
 		paren.getExp().compile(this);
-		builder.append(")");
+		driver.append(")");
 		return null;
 	}
 
 	@Override
 	public CompiledExpression compile(ASTVariable variable) {
-		builder.append(variable.getName());
+		driver.append(variable.getName());
 		return null;
 	}
 
@@ -374,38 +374,38 @@ public class JavaASTCompiler implements ASTExpressionCompiler {
 		ASTExpression exp1 = compareOp.getExp1();
 		ASTExpression exp2 = compareOp.getExp2();
 		if (exp1.isReal() && exp2.isReal()) {
-			builder.append("(");
+			driver.append("(");
 			exp1.compile(this);
 			switch (compareOp.getOp()) {
 				case ">":
-					builder.append(">");
+					driver.append(">");
 					break;
 				
 				case "<":
-					builder.append("<");
+					driver.append("<");
 					break;
 					
 				case ">=":
-					builder.append(">=");
+					driver.append(">=");
 					break;
 					
 				case "<=":
-					builder.append("<=");
+					driver.append("<=");
 					break;
 					
 				case "=":
-					builder.append("==");
+					driver.append("==");
 					break;
 					
 				case "<>":
-					builder.append("!=");
+					driver.append("!=");
 					break;
 				
 				default:
 					throw new ASTException("Unsupported operator: " + compareOp.getLocation().getText(), compareOp.getLocation());
 			}
 			exp2.compile(this);
-			builder.append(")");
+			driver.append(")");
 		} else {
 			throw new ASTException("Real expressions required: " + compareOp.getLocation().getText(), compareOp.getLocation());
 		}
@@ -416,40 +416,40 @@ public class JavaASTCompiler implements ASTExpressionCompiler {
 	public CompiledCondition compile(ASTConditionLogicOp logicOp) {
 		ASTConditionExpression exp1 = logicOp.getExp1();
 		ASTConditionExpression exp2 = logicOp.getExp2();
-		builder.append("(");
+		driver.append("(");
 		exp1.compile(this);
 		switch (logicOp.getOp()) {
 			case "&":
-				builder.append("&&");
+				driver.append("&&");
 				break;
 			
 			case "|":
-				builder.append("||");
+				driver.append("||");
 				break;
 				
 			case "^":
-				builder.append("^^");
+				driver.append("^^");
 				break;
 				
 			default:
 				throw new ASTException("Unsupported operator: " + logicOp.getLocation().getText(), logicOp.getLocation());
 		}
 		exp2.compile(this);
-		builder.append(")");
+		driver.append(")");
 		return null;
 	}
 
 	@Override
 	public CompiledCondition compile(ASTConditionTrap trap) {
 		if (!trap.isContains()) {
-			builder.append("!");
+			driver.append("!");
 		}
-		builder.append("trap");
-		builder.append(trap.getName().toUpperCase().substring(0, 1));
-		builder.append(trap.getName().substring(1));
-		builder.append(".contains(");
+		driver.append("trap");
+		driver.append(trap.getName().toUpperCase().substring(0, 1));
+		driver.append(trap.getName().substring(1));
+		driver.append(".contains(");
 		trap.getExp().compile(this);
-		builder.append(")");
+		driver.append(")");
 		return null;
 	}
 
@@ -457,26 +457,26 @@ public class JavaASTCompiler implements ASTExpressionCompiler {
 	public CompiledCondition compile(ASTRuleLogicOp logicOp) {
 		ASTRuleExpression exp1 = logicOp.getExp1();
 		ASTRuleExpression exp2 = logicOp.getExp2();
-		builder.append("(");
+		driver.append("(");
 		exp1.compile(this);
 		switch (logicOp.getOp()) {
 			case "&":
-				builder.append("&&");
+				driver.append("&&");
 				break;
 			
 			case "|":
-				builder.append("||");
+				driver.append("||");
 				break;
 				
 			case "^":
-				builder.append("^^");
+				driver.append("^^");
 				break;
 				
 			default:
 				throw new ASTException("Unsupported operator: " + logicOp.getLocation().getText(), logicOp.getLocation());
 		}
 		exp2.compile(this);
-		builder.append(")");
+		driver.append(")");
 		return null;
 	}
 
@@ -485,38 +485,38 @@ public class JavaASTCompiler implements ASTExpressionCompiler {
 		ASTExpression exp1 = compareOp.getExp1();
 		ASTExpression exp2 = compareOp.getExp2();
 		if (exp1.isReal() && exp2.isReal()) {
-			builder.append("(");
+			driver.append("(");
 			exp1.compile(this);
 			switch (compareOp.getOp()) {
 				case ">":
-					builder.append(">");
+					driver.append(">");
 					break;
 				
 				case "<":
-					builder.append("<");
+					driver.append("<");
 					break;
 					
 				case ">=":
-					builder.append(">=");
+					driver.append(">=");
 					break;
 					
 				case "<=":
-					builder.append("<=");
+					driver.append("<=");
 					break;
 					
 				case "=":
-					builder.append("==");
+					driver.append("==");
 					break;
 					
 				case "<>":
-					builder.append("!=");
+					driver.append("!=");
 					break;
 				
 				default:
 					throw new ASTException("Unsupported operator: " + compareOp.getLocation().getText(), compareOp.getLocation());
 			}
 			exp2.compile(this);
-			builder.append(")");
+			driver.append(")");
 		} else {
 			throw new ASTException("Real expressions required: " + compareOp.getLocation().getText(), compareOp.getLocation());
 		}
@@ -525,55 +525,55 @@ public class JavaASTCompiler implements ASTExpressionCompiler {
 
 	@Override
 	public CompiledColorExpression compile(ASTColorPalette palette) {
-		builder.append("palette");
-		builder.append(palette.getName().toUpperCase().substring(0, 1));
-		builder.append(palette.getName().substring(1));
-		builder.append(".get(");
+		driver.append("palette");
+		driver.append(palette.getName().toUpperCase().substring(0, 1));
+		driver.append(palette.getName().substring(1));
+		driver.append(".get(");
 		if (palette.getExp().isReal()) {
 			palette.getExp().compile(this);
 		} else {
 			throw new ASTException("Expression type not valid: " + palette.getLocation().getText(), palette.getLocation());
 		}
-		builder.append(")");
+		driver.append(")");
 		return null;
 	}
 
 	@Override
 	public CompiledColorExpression compile(ASTColorComponent component) {
-		builder.append("color(");
+		driver.append("color(");
 		component.getExp1().compile(this);
 		if (component.getExp2() != null) {
-			builder.append(",");
+			driver.append(",");
 			component.getExp2().compile(this);
 		}
 		if (component.getExp3() != null) {
-			builder.append(",");
+			driver.append(",");
 			component.getExp3().compile(this);
 		}
 		if (component.getExp4() != null) {
-			builder.append(",");
+			driver.append(",");
 			component.getExp4().compile(this);
 		}
-		builder.append(")");
+		driver.append(")");
 		return null;
 	}
 
 	@Override
 	public CompiledStatement compile(ASTConditionalStatement statement) {
-		builder.append("if (");
+		driver.append("if (");
 		statement.getConditionExp().compile(this);
-		builder.append(") {\n");
+		driver.append(") {\n");
 		Map<String, CompilerVariable> vars = new HashMap<String, CompilerVariable>(variables);
 		for (ASTStatement innerStatement : statement.getThenStatementList().getStatements()) {
-			innerStatement.compile(new JavaASTCompiler(context, vars, builder));
+			innerStatement.compile(new JavaASTCompiler(context, vars, driver));
 		}
 		if (statement.getElseStatementList() != null) {
-			builder.append("} else {\n");
+			driver.append("} else {\n");
 			for (ASTStatement innerStatement : statement.getElseStatementList().getStatements()) {
-				innerStatement.compile(new JavaASTCompiler(context, vars, builder));
+				innerStatement.compile(new JavaASTCompiler(context, vars, driver));
 			}
 		}
-		builder.append("}\n");
+		driver.append("}\n");
 		return null;
 	}
 
@@ -582,20 +582,20 @@ public class JavaASTCompiler implements ASTExpressionCompiler {
 		CompilerVariable var = variables.get(statement.getName());
 		if (var != null) {
 			if (var.isReal() && statement.getExp().isReal()) {
-				builder.append(statement.getName());
-				builder.append(" = real(");
+				driver.append(statement.getName());
+				driver.append(" = real(");
 				statement.getExp().compile(this);
-				builder.append(");\n");
+				driver.append(");\n");
 			} else if (!var.isReal() && !statement.getExp().isReal()) {
-				builder.append(statement.getName());
-				builder.append(".set(");
+				driver.append(statement.getName());
+				driver.append(".set(");
 				statement.getExp().compile(this);
-				builder.append(");\n");
+				driver.append(");\n");
 			} else if (!var.isReal() && statement.getExp().isReal()) {
-				builder.append(statement.getName());
-				builder.append(".set(");
+				driver.append(statement.getName());
+				driver.append(".set(");
 				statement.getExp().compile(this);
-				builder.append(");\n");
+				driver.append(");\n");
 			} else if (var.isReal() && !statement.getExp().isReal()) {
 				throw new ASTException("Cannot assign expression: " + statement.getLocation().getText(), statement.getLocation());
 			}
@@ -603,19 +603,19 @@ public class JavaASTCompiler implements ASTExpressionCompiler {
 			var = new CompilerVariable(statement.getName(), statement.getExp().isReal(), false);
 			variables.put(statement.getName(), var);
 			if (var.isReal()) {
-				builder.append("double ");
-				builder.append(statement.getName());
-				builder.append(" = real(");
+				driver.append("double ");
+				driver.append(statement.getName());
+				driver.append(" = real(");
 				statement.getExp().compile(this);
-				builder.append(");\n");
+				driver.append(");\n");
 			} else {
-				builder.append("final MutableNumber ");
-				builder.append(statement.getName());
-				builder.append(" = getNumber(");
-				builder.append(context.newNumberIndex());
-				builder.append(").set(");
+				driver.append("final MutableNumber ");
+				driver.append(statement.getName());
+				driver.append(" = getNumber(");
+				driver.append(context.newNumberIndex());
+				driver.append(").set(");
 				statement.getExp().compile(this);
-				builder.append(");\n");
+				driver.append(");\n");
 			}
 		}
 		return null;
@@ -623,27 +623,27 @@ public class JavaASTCompiler implements ASTExpressionCompiler {
 
 	@Override
 	public CompiledStatement compile(ASTStopStatement statement) {
-		builder.append("n = i;\nbreak;\n");
+		driver.append("n = i;\nbreak;\n");
 		return null;
 	}
 
 	@Override
 	public CompiledCondition compile(ASTConditionJulia condition) {
-		builder.append("isJulia()");
+		driver.append("isJulia()");
 		return null;
 	}
 
 	@Override
 	public CompiledCondition compile(ASTConditionParen condition) {
-		builder.append("(");
+		driver.append("(");
 		condition.getExp().compile(this);
-		builder.append(")");
+		driver.append(")");
 		return null;
 	}
 
 	@Override
 	public CompiledCondition compile(ASTConditionNeg condition) {
-		builder.append("!");
+		driver.append("!");
 		condition.getExp().compile(this);
 		return null;
 	}

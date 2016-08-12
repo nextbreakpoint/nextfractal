@@ -249,15 +249,15 @@ public abstract class NodeObject {
 	 */
 	@Override
 	public String toString() {
-		final StringBuilder builder = new StringBuilder();
+		final StringBuilder driver = new StringBuilder();
 		if (isChanged()) {
-			builder.append("*");
+			driver.append("*");
 		}
-		builder.append(nodeId);
-		builder.append(" (");
-		builder.append(nodeClass != null ? nodeClass : "<no class>");
-		builder.append(")");
-		return builder.toString();
+		driver.append(nodeId);
+		driver.append(" (");
+		driver.append(nodeClass != null ? nodeClass : "<no class>");
+		driver.append(")");
+		return driver.toString();
 	}
 
 	/**
@@ -416,20 +416,20 @@ public abstract class NodeObject {
 	 * @return the label.
 	 */
 	public final String getLabel() {
-		final StringBuilder builder = new StringBuilder();
+		final StringBuilder driver = new StringBuilder();
 		if (isChanged()) {
-			builder.append("*");
+			driver.append("*");
 		}
-		addLabel(builder);
-		return builder.toString();
+		addLabel(driver);
+		return driver.toString();
 	}
 
 	/**
-	 * @param builder
+	 * @param driver
 	 */
-	protected void addLabel(final StringBuilder builder) {
+	protected void addLabel(final StringBuilder driver) {
 		if (nodeLabel != null) {
-			builder.append(nodeLabel);
+			driver.append(nodeLabel);
 		}
 	}
 
@@ -437,21 +437,21 @@ public abstract class NodeObject {
 	 * @return the description.
 	 */
 	public final String getDescription() {
-		final StringBuilder builder = new StringBuilder();
-		addDescription(builder);
+		final StringBuilder driver = new StringBuilder();
+		addDescription(driver);
 		if (parentNode != null) {
-			builder.append(" [");
-			builder.append(parentNode.getChildList().indexOf(this));
-			builder.append("]");
+			driver.append(" [");
+			driver.append(parentNode.getChildList().indexOf(this));
+			driver.append("]");
 		}
-		return builder.toString();
+		return driver.toString();
 	}
 
 	/**
-	 * @param builder
+	 * @param driver
 	 */
-	protected void addDescription(final StringBuilder builder) {
-		addLabel(builder);
+	protected void addDescription(final StringBuilder driver) {
+		addLabel(driver);
 	}
 
 	/**
@@ -485,36 +485,36 @@ public abstract class NodeObject {
 	 * @return
 	 */
 	public String dump() {
-		final StringBuilder builder = new StringBuilder();
-		dumpNode(builder, this, 0);
-		return builder.toString();
+		final StringBuilder driver = new StringBuilder();
+		dumpNode(driver, this, 0);
+		return driver.toString();
 	}
 
-	private void dumpNode(final StringBuilder builder, final NodeObject node, final int level) {
+	private void dumpNode(final StringBuilder driver, final NodeObject node, final int level) {
 		for (int i = 0; i < level; i++) {
-			builder.append(" ");
+			driver.append(" ");
 		}
-		builder.append(node);
+		driver.append(node);
 		if (node.getChildNodeCount() > 0) {
 			if (node.getParentNode() != null) {
-				builder.append(" path = [");
-				builder.append("]");
+				driver.append(" path = [");
+				driver.append("]");
 			}
-			builder.append(" {\n");
+			driver.append(" {\n");
 			for (int i = 0; i < node.getChildNodeCount(); i++) {
-				dumpNode(builder, node.getChildNode(i), level + 1);
+				dumpNode(driver, node.getChildNode(i), level + 1);
 			}
 			for (int i = 0; i < level; i++) {
-				builder.append(" ");
+				driver.append(" ");
 			}
-			builder.append("}\n");
+			driver.append("}\n");
 		}
 		else {
 			if (node.getParentNode() != null) {
-				builder.append(" path = [");
-				builder.append("]");
+				driver.append(" path = [");
+				driver.append("]");
 			}
-			builder.append("\n");
+			driver.append("\n");
 		}
 	}
 

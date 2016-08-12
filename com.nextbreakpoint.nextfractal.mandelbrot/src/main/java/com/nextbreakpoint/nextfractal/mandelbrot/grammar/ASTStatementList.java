@@ -40,11 +40,11 @@ public class ASTStatementList {
 
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
+		StringBuilder driver = new StringBuilder();
 		for (ASTStatement statement : statements) {
-			builder.append(statement);
-			builder.append("\n");
+			driver.append(statement);
+			driver.append("\n");
 		}
-		return builder.toString();
+		return driver.toString();
 	}
 }

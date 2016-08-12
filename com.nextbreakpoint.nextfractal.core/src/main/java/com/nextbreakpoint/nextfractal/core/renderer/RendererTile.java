@@ -79,14 +79,14 @@ public class RendererTile {
 	 */
 	@Override
 	public String toString() {
-		final StringBuilder builder = new StringBuilder();
-		builder.append(imageSize.toString());
-		builder.append(", ");
-		builder.append(tileSize.toString());
-		builder.append(", ");
-		builder.append(tileOffset.toString());
-		builder.append(", ");
-		builder.append(borderSize.toString());
-		return builder.toString();
+		final StringBuilder driver = new StringBuilder();
+		driver.append(imageSize.toString());
+		driver.append(", ");
+		driver.append(tileSize.toString());
+		driver.append(", ");
+		driver.append(tileOffset.toString());
+		driver.append(", ");
+		driver.append(borderSize.toString());
+		return driver.toString();
 	}
 }

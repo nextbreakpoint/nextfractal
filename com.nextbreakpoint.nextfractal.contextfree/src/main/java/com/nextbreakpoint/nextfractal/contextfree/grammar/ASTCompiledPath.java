@@ -39,10 +39,10 @@ public class ASTCompiledPath {
 	private StackRule parameters;
 	private Long pathUID;
 	
-	public ASTCompiledPath(Token location) {
+	public ASTCompiledPath(CFDGDriver driver, Token location) {
 		pathStorage = new PathStorage();
 		commandInfo = new ArrayDeque<CommandInfo>();
-		terminalCommand = new ASTPathCommand(location);
+		terminalCommand = new ASTPathCommand(driver, location);
 	}
 	
 	public StackRule getParameters() {

@@ -29,8 +29,8 @@ import org.antlr.v4.runtime.Token;
 class ASTLet extends ASTUserFunction {
 	private ASTRepContainer definitions;
 	
-	public ASTLet(ASTRepContainer args, ASTDefine func, Token location) {
-		super(-1, null, func, location);
+	public ASTLet(CFDGDriver driver, ASTRepContainer args, ASTDefine func, Token location) {
+		super(driver, -1, null, func, location);
 		this.definitions = args;
 		isLet = true;
 	}

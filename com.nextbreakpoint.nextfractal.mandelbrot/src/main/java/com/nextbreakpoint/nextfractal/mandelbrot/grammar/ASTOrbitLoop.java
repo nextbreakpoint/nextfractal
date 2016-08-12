@@ -68,27 +68,27 @@ public class ASTOrbitLoop extends ASTObject {
 
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("begin = ");
-		builder.append(begin);
-		builder.append(",");
-		builder.append("end = ");
-		builder.append(end);
-		builder.append(",");
-		builder.append("expression = [");
-		builder.append(expression);
-		builder.append("],");
-		builder.append("statements = [");
+		StringBuilder driver = new StringBuilder();
+		driver.append("begin = ");
+		driver.append(begin);
+		driver.append(",");
+		driver.append("end = ");
+		driver.append(end);
+		driver.append(",");
+		driver.append("expression = [");
+		driver.append(expression);
+		driver.append("],");
+		driver.append("statements = [");
 		for (int i = 0; i < statements.size(); i++) {
 			ASTStatement statement = statements.get(i);
-			builder.append("{");
-			builder.append(statement);
-			builder.append("}");
+			driver.append("{");
+			driver.append(statement);
+			driver.append("}");
 			if (i < statements.size() - 1) {
-				builder.append(",");
+				driver.append(",");
 			}
 		}
-		builder.append("]");
-		return builder.toString();
+		driver.append("]");
+		return driver.toString();
 	}
 }

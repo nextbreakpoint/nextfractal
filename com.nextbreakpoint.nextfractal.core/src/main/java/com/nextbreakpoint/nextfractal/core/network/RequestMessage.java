@@ -108,21 +108,21 @@ public class RequestMessage extends ServiceMessage {
 	 */
 	@Override
 	public String toString() {
-		final StringBuilder builder = new StringBuilder();
-		builder.append("[");
-		builder.append("messageId = ");
-		builder.append(getMessageId());
-		builder.append(", messageType = ");
-		builder.append(decodeMessageType(getMessageType()));
-		builder.append(", requestId = ");
-		builder.append(getRequestId());
-		builder.append(", requestType = ");
-		builder.append(decodeRequestType(getRequestType()));
-		builder.append(", userData = ");
-		builder.append("[");
-		builder.append(getUserData());
-		builder.append("]");
-		builder.append("]");
-		return builder.toString();
+		final StringBuilder driver = new StringBuilder();
+		driver.append("[");
+		driver.append("messageId = ");
+		driver.append(getMessageId());
+		driver.append(", messageType = ");
+		driver.append(decodeMessageType(getMessageType()));
+		driver.append(", requestId = ");
+		driver.append(getRequestId());
+		driver.append(", requestType = ");
+		driver.append(decodeRequestType(getRequestType()));
+		driver.append(", userData = ");
+		driver.append("[");
+		driver.append(getUserData());
+		driver.append("]");
+		driver.append("]");
+		return driver.toString();
 	}
 }

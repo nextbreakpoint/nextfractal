@@ -36,8 +36,10 @@ class ASTRepContainer {
 	private List<ASTParameter> parameters = new ArrayList<ASTParameter>();
 	private boolean isGlobal;
 	private int stackCount;
+	private CFDGDriver driver;
 
-	public ASTRepContainer() {
+	public ASTRepContainer(CFDGDriver driver) {
+		this.driver = driver;
 		pathOp = EPathOp.UNKNOWN;
 		repType = ERepElemType.empty.getType();
 		isGlobal = false;
@@ -45,6 +47,7 @@ class ASTRepContainer {
 	}
 	
 	public ASTRepContainer(ASTRepContainer repCont) {
+		driver = repCont.driver;
 		pathOp = repCont.pathOp;
 		repType = repCont.repType;
 		isGlobal = repCont.isGlobal;
@@ -124,7 +127,7 @@ class ASTRepContainer {
 				}
 			}
 			
-			Builder.currentBuilder().pushRepContainer(this);
+			driver.pushRepContainer(this);
 			if (loop != null) {
 				loop.compileLoopMod();
 			}
@@ -134,7 +137,7 @@ class ASTRepContainer {
 			if (def != null) {
 				def.compile(ph);
 			}
-			Builder.currentBuilder().popRepContainer(null);
+			driver.popRepContainer(null);
 		}
 	}
 	

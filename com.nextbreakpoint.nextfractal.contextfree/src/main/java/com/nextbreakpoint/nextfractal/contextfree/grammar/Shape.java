@@ -24,7 +24,7 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.grammar;
 
-class Shape {
+public class Shape {
 
 	public StackRule getParameters() {
 		// TODO Auto-generated method stub

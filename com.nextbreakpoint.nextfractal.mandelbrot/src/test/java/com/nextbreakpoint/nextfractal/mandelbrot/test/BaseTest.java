@@ -53,8 +53,8 @@ public abstract class BaseTest {
 		parser.addErrorListener(new CompilerErrorListener());
 		ParseTree fractalTree = parser.fractal();
         if (fractalTree != null) {
-        	ASTBuilder builder = parser.getBuilder();
-        	ASTFractal fractal = builder.getFractal();
+        	ASTBuilder driver = parser.getBuilder();
+        	ASTFractal fractal = driver.getFractal();
         	return fractal;
         }
         return null;

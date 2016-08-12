@@ -39,16 +39,19 @@ class ASTModification extends ASTExpression {
 	private List<ASTModTerm> modExp = new ArrayList<ASTModTerm>();
 	private int entropyIndex;
 	private boolean canonical;
-	
-	public ASTModification(Token location) {
+	private CFDGDriver driver;
+
+	public ASTModification(CFDGDriver driver, Token location) {
 		super(true, false, EExpType.ModType, location);
+		this.driver = driver;
 		this.modClass = EModClass.NotAClass;
 		this.entropyIndex = 0;
 		this.canonical = true;
 	}
 	
-	public ASTModification(ASTModification mod, Token location) {
+	public ASTModification(CFDGDriver driver, ASTModification mod, Token location) {
 		super(true, false, EExpType.ModType, location);
+		this.driver = driver;
 		if (mod != null) {
 			modData.getRand64Seed().setSeed(0);
 			grab(mod);
@@ -262,10 +265,10 @@ class ASTModification extends ASTExpression {
             if (!term.isConstant())
                 nonConstant |= mc.getType();
 			boolean keepThisOne = (mc.getType() & nonConstant) != 0;
-			if (Builder.currentBuilder().isInPathContainer() && (mc.getType() & EModClass.ZClass.getType()) != 0) {
+			if (driver.isInPathContainer() && (mc.getType() & EModClass.ZClass.getType()) != 0) {
 				error("Z changes are not supported within paths");
 			}
-			if (Builder.currentBuilder().isInPathContainer() && (mc.getType() & EModClass.TimeClass.getType()) != 0) {
+			if (driver.isInPathContainer() && (mc.getType() & EModClass.TimeClass.getType()) != 0) {
 				error("Time changes are not supported within paths");
 			}
 			try {

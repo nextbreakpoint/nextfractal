@@ -85,8 +85,8 @@ public class CompilerErrorStrategy extends DefaultErrorStrategy {
 	}
 
 	private String generateErrorMessage(String message, Parser recognizer) {
-		StringBuilder builder = new StringBuilder();
-		builder.append(message);
+		StringBuilder driver = new StringBuilder();
+		driver.append(message);
 		IntervalSet tokens = recognizer.getExpectedTokens();
 		boolean first = true;
 		for (Entry<String, Integer> entry : recognizer.getTokenTypeMap().entrySet()) {
@@ -94,15 +94,15 @@ public class CompilerErrorStrategy extends DefaultErrorStrategy {
 				if (first) {
 					first = false;
 					if (message.length() > 0 && !message.endsWith(".")) {
-						builder.append(". ");
+						driver.append(". ");
 					}
-					builder.append("Expected tokens: ");
+					driver.append("Expected tokens: ");
 				} else {
-					builder.append(", ");
+					driver.append(", ");
 				}
-				builder.append(entry.getKey());
+				driver.append(entry.getKey());
 			}
 		}
-		return builder.toString();
+		return driver.toString();
 	}
 }

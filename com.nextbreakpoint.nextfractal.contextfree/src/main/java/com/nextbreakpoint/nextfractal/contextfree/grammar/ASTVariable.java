@@ -28,13 +28,15 @@ import org.antlr.v4.runtime.Token;
 
 class ASTVariable extends ASTExpression {
 	private String text;
+	private CFDGDriver driver;
 	private int stringIndex;
 	private int stackIndex;
 	private int count;
 	private boolean isParameter;
 
-	public ASTVariable(int stringIndex, String text, Token location) {
+	public ASTVariable(CFDGDriver driver, int stringIndex, String text, Token location) {
 		super(location);
+		this.driver = driver;
 		this.stringIndex = stringIndex;
 		this.isParameter = false;
 		this.stackIndex = 0;
@@ -53,12 +55,12 @@ class ASTVariable extends ASTExpression {
 			case TypeCheck: 
 				{
 					boolean isGlobal = false;
-					ASTParameter bound = Builder.currentBuilder().findExpression(stringIndex, isGlobal);
+					ASTParameter bound = driver.findExpression(stringIndex, isGlobal);
 					if (bound == null) {
 						error("internal error.");
 						return null;
 					}
-					String name = Builder.currentBuilder().shapeToString(stringIndex);
+					String name = driver.shapeToString(stringIndex);
 					if (bound.getStackIndex() == -1) {
 						ASTExpression ret = bound.constCopy(name);
 						if (ret == null) {
@@ -67,12 +69,12 @@ class ASTVariable extends ASTExpression {
 						return ret;
 					} else {
 						if (bound.getType() == EExpType.RuleType) {
-							ASTRuleSpecifier ret = new ASTRuleSpecifier(stringIndex, name, location);
+							ASTRuleSpecifier ret = new ASTRuleSpecifier(driver, stringIndex, name, location);
 							ret.compile(ph);
 							return ret;
 						}
 						count = bound.getType() == EExpType.NumericType ? bound.getTupleSize() : 1;
-						stackIndex = bound.getStackIndex() - (isGlobal ? 0: Builder.currentBuilder().getLocalStackDepth());
+						stackIndex = bound.getStackIndex() - (isGlobal ? 0: driver.getLocalStackDepth());
 						type = bound.getType();
 						isNatural = bound.isNatural();
 						locality = bound.getLocality();
