@@ -128,7 +128,7 @@ class ASTModTerm extends ASTExpression {
 		double[] target = result[0].colorTarget().values();
 		int colorComp = 0;
 		boolean hue = true;
-		long mask = EAssignmentType.HueMask.ordinal();
+		int mask = EAssignmentType.HueMask.getType();
 
 		switch (modType) {
 		case x: {
@@ -280,11 +280,11 @@ class ASTModTerm extends ASTExpression {
 						 }
 					 }
 					 if (shapeDest) {
-						 color[colorComp] = hue ? HSBColor.adjustHue(color[colorComp], args[0], EAssignmentType.HueTarget, modArgs[1]) : HSBColor.adjust(color[colorComp], args[0], EAssignmentType.ColorTarget, args[1]);
+						 color[colorComp] = hue ? HSBColor.adjustHue(color[colorComp], args[0], EAssignmentType.HueTarget.getType(), modArgs[1]) : HSBColor.adjust(color[colorComp], args[0], EAssignmentType.ColorTarget.getType(), args[1]);
 					 } else {
 						 color[colorComp] = args[0];
 						 target[colorComp] = hue ? modArgs[1] : args[1];
-						 result[0].setColorAssignment(result[0].colorAssignment() | EAssignmentType.HSBA2Value.ordinal() & mask);
+						 result[0].setColorAssignment(result[0].colorAssignment() | EAssignmentType.HSBA2Value.getType() & mask);
 					 }
 				 }
 			}
@@ -306,10 +306,10 @@ class ASTModTerm extends ASTExpression {
 					 }
 				 }
 				 if (shapeDest) {
-					 color[colorComp] = hue ? HSBColor.adjustHue(color[colorComp], args[0], EAssignmentType.HueTarget, target[colorComp]) : HSBColor.adjust(color[colorComp], args[0], EAssignmentType.ColorTarget, target[colorComp]);
+					 color[colorComp] = hue ? HSBColor.adjustHue(color[colorComp], args[0], EAssignmentType.HueTarget.getType(), target[colorComp]) : HSBColor.adjust(color[colorComp], args[0], EAssignmentType.ColorTarget.getType(), target[colorComp]);
 				 } else {
 					 color[colorComp] = args[0];
-					 result[0].setColorAssignment(result[0].colorAssignment() | EAssignmentType.HSBATarget.ordinal() & mask);
+					 result[0].setColorAssignment(result[0].colorAssignment() | EAssignmentType.HSBATarget.getType() & mask);
 				 }
 			}
 			break;

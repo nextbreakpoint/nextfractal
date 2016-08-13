@@ -24,7 +24,11 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.grammar;
 
+import java.util.Arrays;
+
 public class HSBColor {
+	private static final double EQUALITY_THRESHOLD = 0.00001;
+
 	private double[] values = new double[4];
 	
 	public HSBColor(double h, double s, double b, double a) {
@@ -33,7 +37,64 @@ public class HSBColor {
 		this.values[2] = b;
 		this.values[3] = a;
 	}
-	
+
+	public HSBColor(double[] c) {
+		double min = myfmin(c[0], myfmin(c[1], c[2]));
+		double max = myfmax(c[0], myfmax(c[1], c[2]));
+		double delta = max - min;
+		values[2] = max;
+		if (delta < EQUALITY_THRESHOLD) {
+			values[0] = values[1] = 0.0;
+		} else {
+			values[1] = delta / values[2];  // hsb.b can't be zero here
+
+			// The == operator is normally useless for floats and doubles. But
+			// since max is always assigned from either c.r/g/b we will take
+			// a chance.
+			double temp;
+			if (c[0] == max) {
+				temp = (c[1] - c[2]) / (delta);
+			} else if (c[1] == max) {
+				temp = 2 + ((c[2] - c[0]) / (delta));
+			} else /* if (c[2] == max) */ {
+				temp = 4 + ((c[0] - c[1]) / (delta));
+			}
+
+			// compute hue in the interval [0,360)
+			temp *= 60;
+			values[0] = temp < 0.0 ? ((temp + 360.0) % 360.0) : (temp % 360.0);
+		}
+		values[3] = c[3];
+	}
+
+	private static double myfmin(double x, double y) { return x < y ? x : y; }
+	private static double myfmax(double x, double y) { return x > y ? x : y; }
+
+	public double[] mymodf(double x, double[] v) {
+		int intVal = (int)x;
+		double remainder = x - intVal;
+
+		v[0] = intVal;
+		v[1] = remainder;
+
+		return v;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		HSBColor hsbColor = (HSBColor) o;
+
+		return Arrays.equals(values, hsbColor.values);
+	}
+
+	@Override
+	public int hashCode() {
+		return Arrays.hashCode(values);
+	}
+
 	public double hue() {
 		return values[0];
 	}
@@ -49,28 +110,186 @@ public class HSBColor {
 	public double alpha() {
 		return values[3];
 	}
-	
+
+	public void setHue(double value) {
+		values[0] = value;
+	}
+
+	public void setBright(double value) {
+		values[1] = value;
+	}
+
+	public void setSat(double value) {
+		values[2] = value;
+	}
+
+	public void setAlpha(double value) {
+		values[3] = value;
+	}
+
+	public void addHue(double value) {
+		values[0] += value;
+	}
+
+	public void addBright(double value) {
+		values[1] += value;
+	}
+
+	public void addSat(double value) {
+		values[2] += value;
+	}
+
+	public void addAlpha(double value) {
+		values[3] += value;
+	}
+
 	public double[] values() {
 		return values;
 	}
 
 	public static double adjustHue(double base, double adjustment) {
-		// TODO Auto-generated method stub
-		return 0.0;
+		return adjustHue(base, adjustment, 0, 0);
 	}
 
 	public static double adjust(double base, double adjustment) {
-		// TODO Auto-generated method stub
-		return 0.0;
+		return adjust(base, adjustment, 0, 0);
 	}
 
-	public static double adjustHue(double base, double adjustment, EAssignmentType useTarget, double target) {
-		// TODO Auto-generated method stub
-		return 0.0;
+	public static double adjustHue(double base, double adjustment, int useTarget, double target) {
+		if (adjustment == 0.0) {
+			return base;
+		}
+
+		double h = 0;
+
+		if (useTarget != EAssignmentType.None.getType()) {
+			// decrease or increase toward target. If the target hue does not
+			// cooperate by being smaller (or larger) than the current hue then
+			// add/subtract 360 to make it so. This only works if all hues are
+			// within the interval [0,360).
+			double t = target;
+			if (adjustment < 0) {
+				if (t > base) t -= 360;
+				h = base + (base - t) * adjustment;
+			} else {
+				if (t < base) t += 360;
+				h = base + (t - base) * adjustment;
+			}
+		} else {
+			h = base + adjustment;
+		}
+
+		// Normalize result to the interval [0,360)
+		return h < 0.0 ? ((h + 360.0) % 360.0) : (h % 360.0);
 	}
 
-	public static double adjust(double base, double adjustment, EAssignmentType useTarget, double target) {
-		// TODO Auto-generated method stub
-		return 0.0;
+	public static double adjust(double base, double adjustment, int useTarget, double target) {
+		if (adjustment == 0.0) {
+			return base;
+		}
+
+		if (useTarget != EAssignmentType.None.getType()) {
+			// If we are really close to the target then don't change, even if
+			// the adjustment is negative (which way would we go?)
+			if (adjustment > 0 && Math.abs(base - target) < EQUALITY_THRESHOLD) {
+				return base;
+			}
+
+			// Otherwise move away from or toward the target
+			double edge = base < target ? 0 : 1;
+			if (adjustment < 0) {
+				return base + (base - edge) * adjustment;
+			} else {
+				return base + (target - base) * adjustment;
+			}
+		} else {
+			// Move toward 0 or toward 1
+			if (adjustment < 0) {
+				return base + base * adjustment;
+			} else {
+				return base + (1 - base) * adjustment;
+			}
+		}
+	}
+
+	public static void adjust(HSBColor dest, HSBColor destTarget, HSBColor adjustment, HSBColor adjustmentTarget, int assignment) {
+		int current = 0;
+		boolean twoValue = false;
+
+		current = assignment & EAssignmentType.HueMask.getType();
+		twoValue = current == EAssignmentType.Hue2Value.getType();
+		dest.setHue(adjustHue(dest.hue(), adjustment.hue(), current, twoValue ? adjustmentTarget.hue() : destTarget.hue()));
+		if (!twoValue) destTarget.setHue(adjustHue(destTarget.hue(), adjustmentTarget.hue()));
+
+		current = assignment & EAssignmentType.SaturationMask.getType();
+		twoValue = current == EAssignmentType.Saturation2Value.getType();
+		dest.setSat(adjust(dest.sat(), adjustment.sat(), current, twoValue ? adjustmentTarget.sat() : destTarget.sat()));
+		if (!twoValue) destTarget.setSat(adjust(destTarget.sat(), adjustmentTarget.sat()));
+
+		current = assignment & EAssignmentType.BrightnessMask.getType();
+		twoValue = current == EAssignmentType.Brightness2Value.getType();
+		dest.setBright(adjust(dest.bright(), adjustment.bright(), current, twoValue ? adjustmentTarget.bright() : destTarget.bright()));
+		if (!twoValue) destTarget.setBright(adjust(destTarget.bright(), adjustmentTarget.bright()));
+
+		current = assignment & EAssignmentType.AlphaMask.getType();
+		twoValue = current == EAssignmentType.Alpha2Value.getType();
+		dest.setAlpha(adjust(dest.alpha(), adjustment.alpha(), current, twoValue ? adjustmentTarget.alpha() : destTarget.alpha()));
+		if (!twoValue) destTarget.setAlpha(adjust(destTarget.alpha(), adjustmentTarget.alpha()));
+	}
+
+	public void getRGBA(double[] c) {
+		// Determine which facet of the HSB hexcone we are in and how far we are into this hextant.
+		double hue = values[0] / 60.0;;
+		double remainder = 0;
+		double[] hex = new double[] {0, 0};
+
+		for(int i = 0; i < 2; ++i) {
+			// try splitting the hue into an integer hextant in [0,6) and a real remainder in [0,1)
+			hex = mymodf(hue, hex);
+			remainder = hex[1];
+			if (hex[0] > -0.1 && hex[0] < 5.1 && remainder >= 0) {
+				break;
+			}
+
+			// We didn't get the ranges that we wanted. Adjust hue and try again.
+			hue = hue % 6.0;
+			if (hue < 0.0) {
+				hue += 6.0;
+			}
+		}
+
+		int hextant = (int)(hex[0] + 0.5); // guaranteed to be in 0..5
+
+		double b = values[1];
+		double p = values[1] * (1 - values[2]);
+		double q = values[1] * (1 - (values[2] * remainder));
+		double t = values[1] * (1 - (values[2] * (1 - remainder)));
+
+		c[3] = values[3];
+
+		switch (hextant) {
+			case 0:
+				c[0] = b; c[1] = t; c[2] = p;
+				return;
+			case 1:
+				c[0] = q; c[1] = b; c[2] = p;
+				return;
+			case 2:
+				c[0] = p; c[1] = b; c[2] = t;
+				return;
+			case 3:
+				c[0] = p; c[1] = q; c[2] = b;
+				return;
+			case 4:
+				c[0] = t; c[1] = p; c[2] = b;
+				return;
+			case 5:
+				c[0] = b; c[1] = p; c[2] = q;
+				return;
+			default:
+				// this should never happen
+				c[0] = 0; c[1] = 0; c[2] = 0; c[3] = 1;
+				return;
+		}
 	}
 }

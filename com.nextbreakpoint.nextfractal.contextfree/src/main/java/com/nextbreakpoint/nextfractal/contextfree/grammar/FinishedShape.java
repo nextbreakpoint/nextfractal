@@ -24,58 +24,22 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.grammar;
 
-public class Shape {
-	protected int shapeType;
-	protected Modification worldState;
-	protected double areaCache;
-	protected StackRule params;
+public class FinishedShape extends Shape implements Comparable<FinishedShape> {
+	private Bounds bounds;
 
-	public Shape() {
-		shapeType = -1;
-		worldState = new Modification();
-		areaCache = worldState.area();
-	}
-
-	public Shape(Shape shape) {
-		shapeType = shape.shapeType;
-		areaCache = shape.areaCache;
-		worldState = shape.worldState;
-		params = shape.params;
-	}
-
-	public StackRule getParameters() {
-		return params;
-	}
-
-	public void setParameters(StackRule params) {
-		this.params = params;
-	}
-
-	public int getShapeType() {
-		return shapeType;
-	}
-
-	public void setShapeType(int shapeType) {
-		this.shapeType = shapeType;
-	}
-
-	public Modification getWorldState() {
-		return worldState;
-	}
-
-	public void setWorldState(Modification worldState) {
-		this.worldState = worldState;
-	}
-
-	public double areaCache() {
-		return areaCache;
-	}
-
-	public void setAreaCache(double area) {
-		areaCache = area;
-	}
-
-	public void releaseParams() {
+	public FinishedShape(Shape shape, int order, Bounds bounds) {
 		// TODO completare
+		super(shape);
+		getWorldState().setColorAssignment(order);
+		this.bounds = bounds;
+	}
+
+	@Override
+	public int compareTo(FinishedShape o) {
+		if (worldState.getTransformZ().tz() == o.worldState.getTransformZ().tz()) {
+			return (int)(worldState.colorAssignment() - o.worldState.colorAssignment());
+		} else {
+			return worldState.getTransformZ().tz() - o.worldState.getTransformZ().tz() < 0 ? -1 : 1;
+		}
 	}
 }

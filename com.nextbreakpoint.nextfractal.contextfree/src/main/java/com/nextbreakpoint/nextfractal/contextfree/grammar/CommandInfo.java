@@ -24,6 +24,16 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.grammar;
 
-public class CommandInfo {
+import java.awt.geom.GeneralPath;
 
+public class CommandInfo {
+    private GeneralPath path;
+
+    public GeneralPath getPath() {
+        return path;
+    }
+
+    public void setPath(GeneralPath path) {
+        this.path = path;
+    }
 }

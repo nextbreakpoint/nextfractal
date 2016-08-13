@@ -33,6 +33,7 @@ class Modification {
 	private AffineTransformTime transformTime = new AffineTransformTime();
 	private HSBColor color;
 	private HSBColor colorTarget;
+	private int colorAssignment;
 
 	public Rand64 getRand64Seed() {
 		return rand64Seed;
@@ -42,33 +43,24 @@ class Modification {
 		this.rand64Seed = rand64Seed;
 	}
 
-	public void setSeed(int i) {
-		rand64Seed.setSeed(i);
-	}
-
-	public boolean merge(Modification mod) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
 	public AffineTransform getTransform() {
 		return transform;
+	}
+
+	public void setTransform(AffineTransform transform) {
+		this.transform = transform;
 	}
 
 	public AffineTransform1D getTransformZ() {
 		return transformZ;
 	}
 
-	public AffineTransformTime getTransformTime() {
-		return transformTime;
-	}
-
-	public void setTransform(AffineTransform transform) {
-		this.transform = transform;
-	}
-	
 	public void setTransformZ(AffineTransform1D transformZ) {
 		this.transformZ = transformZ;
+	}
+
+	public AffineTransformTime getTransformTime() {
+		return transformTime;
 	}
 
 	public void setTransformTime(AffineTransformTime transformTime) {
@@ -79,34 +71,81 @@ class Modification {
 		return color;
 	}
 
+	public void setColor(HSBColor color) {
+		this.color = color;
+	}
+
 	public HSBColor colorTarget() {
 		return colorTarget;
 	}
 
-	public long colorAssignment() {
-		// TODO Auto-generated method stub
-		return 0;
+	public void setColorTarget(HSBColor colorTarget) {
+		this.colorTarget = colorTarget;
 	}
 
-	public void setColorAssignment(long assignment) {
+	public int colorAssignment() {
+		return colorAssignment;
+	}
+
+	public void setColorAssignment(int colorAssignment) {
+		this.colorAssignment = colorAssignment;
 	}
 
 	public double getZ() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	public void setZ(double d) {
-		// TODO Auto-generated method stub
+		return transformZ.tz();
 	}
 
 	public double area() {
-		// TODO Auto-generated method stub
-		return 0.0;
+		return transform.getDeterminant();
 	}
 
-	public void concat(Modification modData) {
-		// TODO Auto-generated method stub
-		
+	public boolean isFinite() {
+		return Double.isFinite(transform.getScaleX()) && Double.isFinite(transform.getScaleY()) && Double.isFinite(transform.getShearX()) && Double.isFinite(transform.getShearY()) && Double.isFinite(transform.getTranslateX()) && Double.isFinite(transform.getTranslateY());
+	}
+
+	public void setSeed(int seed) {
+		rand64Seed.setSeed(seed);
+	}
+
+	public Modification concat(Modification modification) {
+		transform.preConcatenate(modification.getTransform());
+		transformZ.preConcatenate(modification.getTransformZ());
+		transformTime.preConcatenate(modification.getTransformTime());
+		HSBColor.adjust(color, colorTarget, modification.color(), modification.colorTarget(), modification.colorAssignment());
+		rand64Seed.add(modification.getRand64Seed());
+		return this;
+	}
+
+	public boolean merge(Modification modification) {
+		transform.preConcatenate(modification.getTransform());
+		transformZ.preConcatenate(modification.getTransformZ());
+		transformTime.preConcatenate(modification.getTransformTime());
+
+		HSBColor.adjust(color, colorTarget, modification.color(), modification.colorTarget(), modification.colorAssignment());
+
+		rand64Seed.add(modification.getRand64Seed());
+
+		// TODO rivedere
+
+		boolean conflict = (colorAssignment & modification.colorAssignment) != 0 ||
+				((modification.colorAssignment & EAssignmentType.HueMask.getType()) != 0 && color.hue() != 0.0) ||
+				((colorAssignment & EAssignmentType.HueMask.getType()) != 0 && modification.color.hue() != 0.0) ||
+				(color.bright() != 0.0 && modification.color.bright() != 0.0) ||
+				(color.sat() != 0.0 && modification.color.sat() != 0.0) ||
+				(color.alpha() != 0.0 && modification.color.alpha() != 0.0);
+
+		colorTarget.addHue(modification.colorTarget.hue());
+		colorTarget.addBright(modification.colorTarget.bright());
+		colorTarget.addSat(modification.colorTarget.sat());
+		colorTarget.addAlpha(modification.colorTarget.alpha());
+
+		color.addHue(modification.color.hue());
+		color.addBright(modification.color.bright());
+		color.addSat(modification.color.sat());
+		color.addAlpha(modification.color.alpha());
+
+		colorAssignment |= modification.colorAssignment;
+
+		return conflict;
 	}
 }

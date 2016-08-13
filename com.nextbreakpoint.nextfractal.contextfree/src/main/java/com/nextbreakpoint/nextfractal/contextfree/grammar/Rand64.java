@@ -80,6 +80,7 @@ class Rand64 {
 	}
     
     public void bump() {
+		// TODO Auto-generated method stub
 	}
 
 	public void add(Rand64 oldEntropy) {

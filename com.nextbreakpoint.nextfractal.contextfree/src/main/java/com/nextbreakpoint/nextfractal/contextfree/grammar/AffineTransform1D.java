@@ -29,6 +29,7 @@ public class AffineTransform1D {
 	private double tz;
 	
 	private AffineTransform1D(double sz, double tz) {
+		this.sz = sz;
 		this.tz = tz;
 	}
 
@@ -47,5 +48,13 @@ public class AffineTransform1D {
 	public void preConcatenate(AffineTransform1D t) {
 		this.sz = this.sz * t.sz;
 		this.tz = this.tz * t.sz + t.tz;
+	}
+
+	public double tz() {
+		return tz;
+	}
+
+	public double sz() {
+		return sz;
 	}
 }

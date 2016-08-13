@@ -24,6 +24,7 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.grammar;
 
+import java.awt.geom.Path2D;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,18 +32,21 @@ import java.util.Map;
 import java.util.Stack;
 
 public class CFDG {
+	private double[] backgroundColor;
+	private Shape initialShape;
+	private ASTRule needle;
+	private ASTRepContainer initShape;
 	private List<ShapeType> shapeTypes = new ArrayList<ShapeType>();
-	private Map<Integer, ASTDefine> functions = new HashMap<Integer, ASTDefine>();
 	private Stack<ASTRule> rules = new Stack<ASTRule>();
+	private Map<Integer, ASTDefine> functions = new HashMap<Integer, ASTDefine>();
 	private Map<ECFGParam, Integer> paramDepth = new HashMap<ECFGParam, Integer>();
 	private Map<ECFGParam, ASTExpression> paramExp = new HashMap<ECFGParam, ASTExpression>();
+	private Modification tileMod;
+	private Modification sizeMod;
+	private Modification timeMod;
+	private Path2D tileOffset;
 	private int parameters;
-	private boolean usesColor;
-	private boolean usesAlpha;
-	private boolean uses16bitColor;
-	private boolean usesTime;
-	private boolean usesFrameTime;
-	
+
 	public int encodeShapeName(String s) {
 		int i = tryEncodeShapeName(s);
 		if (i >= 0) return i;
@@ -215,9 +219,6 @@ public class CFDG {
 
 	public void addParameter(EParam param) {
 		parameters |= param.getType();
-	    usesColor = (parameters & EParam.Color.getType()) != 0;
-	    usesTime = (parameters & EParam.Time.getType()) != 0;
-	    usesFrameTime = (parameters & EParam.FrameTime.getType()) != 0;
 	}
 
 	protected void error(String message) {
