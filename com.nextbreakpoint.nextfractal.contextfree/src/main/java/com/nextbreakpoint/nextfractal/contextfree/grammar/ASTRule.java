@@ -31,7 +31,7 @@ import org.antlr.v4.runtime.Token;
 class ASTRule extends ASTReplacement implements Comparable<ASTRule> {
 	private ASTRepContainer ruleBody;
 	private ASTCompiledPath cachedPath;
-	private float weight;
+	private double weight;
 	private boolean isPath;
 	private int nameIndex;
 	private EWeightType weightType;
@@ -108,10 +108,14 @@ class ASTRule extends ASTReplacement implements Comparable<ASTRule> {
 		return ruleBody;
 	}
 	
-	public float getWeight() {
+	public double getWeight() {
 		return weight;
 	}
-	
+
+	public void setWeight(double weight) {
+		this.weight = weight;
+	}
+
 	public EWeightType getWeightType() {
 		return weightType;
 	}
@@ -194,5 +198,17 @@ class ASTRule extends ASTReplacement implements Comparable<ASTRule> {
 	@Override
 	public int compareTo(ASTRule o) {
 		return nameIndex == o.nameIndex ? (weight < o.weight ? -1 : weight == o.weight ? 0 : 1) : nameIndex - o.nameIndex;
+	}
+
+	public ASTCompiledPath getCachedPath() {
+		return cachedPath;
+	}
+
+	public void setCachedPath(ASTCompiledPath cachedPath) {
+		this.cachedPath = cachedPath;
+	}
+
+	public void resetCachedPath() {
+		this.cachedPath = null;
 	}
 }

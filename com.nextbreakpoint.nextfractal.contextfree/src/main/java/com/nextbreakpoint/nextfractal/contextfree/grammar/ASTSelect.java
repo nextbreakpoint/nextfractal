@@ -94,7 +94,7 @@ class ASTSelect extends ASTExpression {
 		}
 
 		@Override
-		public void evaluate(Modification[] modification, boolean shapeDest, RTI rti) {
+		public void evaluate(Modification modification, boolean shapeDest, RTI rti) {
 	        if (type != EExpType.ModType) {
 	            throw new RuntimeException("Evaluation of a non-adjustment select() in an adjustment context");
 	        }

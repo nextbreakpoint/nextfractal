@@ -52,4 +52,28 @@ public class AffineTransformTime {
 		this.begin = this.begin * t.step + t.begin;
 		this.end = this.end * t.step + t.end;
 	}
+
+	public double getStep() {
+		return step;
+	}
+
+	public void setStep(double step) {
+		this.step = step;
+	}
+
+	public double getBegin() {
+		return begin;
+	}
+
+	public void setBegin(double begin) {
+		this.begin = begin;
+	}
+
+	public double getEnd() {
+		return end;
+	}
+
+	public void setEnd(double end) {
+		this.end = end;
+	}
 }

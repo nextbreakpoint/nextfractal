@@ -108,9 +108,7 @@ class ASTTransform extends ASTReplacement {
 		for (int i = 0; i < totalLength; i++) {
 			Shape child = transChild;
 			if (i < modsLength) {
-				Modification[] mod = new Modification[1];
-				mods.get(i).evaluate(mod, true, rti);
-				child.setWorldState(mod[0]);
+				mods.get(i).evaluate(child.getWorldState(), true, rti);
 			} else {
 				child.getWorldState().getTransform().preConcatenate(transforms[0].get(i - modsLength));
 			}

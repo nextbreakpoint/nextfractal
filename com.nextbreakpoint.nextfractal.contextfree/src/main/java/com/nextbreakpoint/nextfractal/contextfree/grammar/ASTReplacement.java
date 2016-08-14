@@ -138,9 +138,7 @@ class ASTReplacement {
 		}
 		rti.getCurrentSeed().add(childChange.getModData().getRand64Seed());
 		rti.getCurrentSeed().bump();
-		Modification[] mod = new Modification[1];
-		childChange.evaluate(mod, true, rti);
-		s.setWorldState(mod[0]);
+		childChange.evaluate(s.getWorldState(), true, rti);
 		s.setAreaCache(s.getWorldState().area());
 	}
 

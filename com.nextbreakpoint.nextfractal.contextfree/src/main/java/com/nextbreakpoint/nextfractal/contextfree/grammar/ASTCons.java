@@ -93,7 +93,7 @@ class ASTCons extends ASTExpression {
 	}		
 
 	@Override
-	public void evaluate(Modification[] result, boolean shapeDest, RTI rti) {
+	public void evaluate(Modification result, boolean shapeDest, RTI rti) {
 		for (ASTExpression child : children) {
 			child.evaluate(result, shapeDest, rti);
 		}

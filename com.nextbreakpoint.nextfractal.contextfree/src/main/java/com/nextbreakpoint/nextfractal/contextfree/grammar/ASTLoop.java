@@ -216,9 +216,7 @@ class ASTLoop extends ASTReplacement {
 			}
 			loopBody.traverse(loopChild, tr || opsOnly, rti, false);
 			
-			Modification[] mod = new Modification[1];
-			getChildChange().evaluate(mod, true, rti);
-			loopChild.setWorldState(mod[0]);
+			getChildChange().evaluate(loopChild.getWorldState(), true, rti);
 			index.addNumber(data[2]);
 		}
 		finallyBody.traverse(loopChild, tr || opsOnly, rti, false);

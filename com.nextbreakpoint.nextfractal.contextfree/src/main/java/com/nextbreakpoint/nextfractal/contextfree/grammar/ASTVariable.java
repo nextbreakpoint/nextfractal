@@ -112,7 +112,7 @@ class ASTVariable extends ASTExpression {
 	}
 
 	@Override
-	public void evaluate(Modification[] result, boolean shapeDest, RTI rti) {
+	public void evaluate(Modification result, boolean shapeDest, RTI rti) {
 		if (type != EExpType.ModType) {
 			error("Non-adjustment variable referenced in an adjustment context");
         }
@@ -120,9 +120,9 @@ class ASTVariable extends ASTExpression {
         StackType stackItem = rti.stackItem(stackIndex);
         Modification mod = stackItem.modification();
         if (shapeDest) {
-        	result[0].concat(mod);
+        	result.concat(mod);
         } else {
-        	if (result[0].merge(mod)) {
+        	if (result.merge(mod)) {
     			rti.colorConflict();
         	}
         }

@@ -87,7 +87,7 @@ class ASTUserFunction extends ASTExpression {
 	}
 
 	@Override
-	public void evaluate(Modification[] result, boolean shapeDest, RTI rti) {
+	public void evaluate(Modification result, boolean shapeDest, RTI rti) {
 		if (type != EExpType.ModType) {
 			error("Function does not evaluate to an adjustment");
 			return;

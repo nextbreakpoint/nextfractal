@@ -49,7 +49,7 @@ class ASTParen extends ASTExpression {
 	}
 
 	@Override
-	public void evaluate(Modification[] result, boolean shapeDest, RTI rti) {
+	public void evaluate(Modification result, boolean shapeDest, RTI rti) {
         if (type != EExpType.ModType) {
             throw new RuntimeException("Expression does not evaluate to an adjustment");
         }

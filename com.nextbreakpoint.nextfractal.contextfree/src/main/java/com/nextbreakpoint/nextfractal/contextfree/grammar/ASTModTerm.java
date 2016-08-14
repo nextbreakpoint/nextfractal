@@ -101,7 +101,7 @@ class ASTModTerm extends ASTExpression {
 	}
 
 	@Override
-	public void evaluate(Modification[] result, boolean shapeDest, RTI rti) {
+	public void evaluate(Modification result, boolean shapeDest, RTI rti) {
 		double[] modArgs = new double[6];
 		int argcount = 0;
 
@@ -124,8 +124,8 @@ class ASTModTerm extends ASTExpression {
 			args[i] = Math.max(-1.0, Math.min(1.0, modArgs[i]));
 		}
 		
-		double[] color = result[0].color().values();
-		double[] target = result[0].colorTarget().values();
+		double[] color = result.color().values();
+		double[] target = result.colorTarget().values();
 		int colorComp = 0;
 		boolean hue = true;
 		int mask = EAssignmentType.HueMask.getType();
@@ -136,34 +136,34 @@ class ASTModTerm extends ASTExpression {
 				modArgs[1] = 0.0;
 			}
 			AffineTransform t2d = AffineTransform.getTranslateInstance(modArgs[0], modArgs[1]);
-			result[0].getTransform().preConcatenate(t2d);
+			result.getTransform().preConcatenate(t2d);
 			break;
 		}
 		case y: {
 			AffineTransform t2d = AffineTransform.getTranslateInstance(0.0, modArgs[0]);
-			result[0].getTransform().preConcatenate(t2d);
+			result.getTransform().preConcatenate(t2d);
 			break;
 		}
 		case z: {
 			AffineTransform1D t1d = AffineTransform1D.getTranslateInstance(modArgs[0]);
-			result[0].getTransformZ().preConcatenate(t1d);
+			result.getTransformZ().preConcatenate(t1d);
 			break;
 		}
 		case xyz: {
 			AffineTransform t2d = AffineTransform.getTranslateInstance(modArgs[0], modArgs[1]);
 			AffineTransform1D t1d = AffineTransform1D.getTranslateInstance(modArgs[0]);
-			result[0].getTransform().preConcatenate(t2d);
-			result[0].getTransformZ().preConcatenate(t1d);
+			result.getTransform().preConcatenate(t2d);
+			result.getTransformZ().preConcatenate(t1d);
 			break;
 		}
 		case time: {
 			AffineTransformTime tTime = AffineTransformTime.getTranslateInstance(modArgs[0], modArgs[1]);
-			result[0].getTransformTime().preConcatenate(tTime);
+			result.getTransformTime().preConcatenate(tTime);
 			break;
 		}
 		case timescale: {
 			AffineTransformTime tTime = AffineTransformTime.getScaleInstance(modArgs[0]);
-			result[0].getTransformTime().preConcatenate(tTime);
+			result.getTransformTime().preConcatenate(tTime);
 			break;
 		}
 		case transform: {
@@ -175,7 +175,7 @@ class ASTModTerm extends ASTExpression {
 							modArgs[1] = 0.0;
 						}
 						AffineTransform t2d = AffineTransform.getTranslateInstance(modArgs[0], modArgs[1]);
-						result[0].getTransform().preConcatenate(t2d);
+						result.getTransform().preConcatenate(t2d);
 					}
 					break;
 	
@@ -188,7 +188,7 @@ class ASTModTerm extends ASTExpression {
 						t2d.rotate(Math.atan2(dx, dy));
 						t2d.scale(s, s);
 						t2d.translate(modArgs[0], modArgs[1]);
-						result[0].getTransform().preConcatenate(t2d);
+						result.getTransform().preConcatenate(t2d);
 					}
 					break;
 					
@@ -200,7 +200,7 @@ class ASTModTerm extends ASTExpression {
 							par.shear(1, 0);
 							par.invert();
 							par.concatenate(t2d);
-							result[0].getTransform().preConcatenate(par);
+							result.getTransform().preConcatenate(par);
 						} catch (NoninvertibleTransformException e) {
 							error(e.getMessage());
 						}
@@ -217,29 +217,29 @@ class ASTModTerm extends ASTExpression {
 				modArgs[1] =  modArgs[0];
 			}
 			AffineTransform t2d = AffineTransform.getScaleInstance(modArgs[0], modArgs[1]);
-			result[0].getTransform().preConcatenate(t2d);
+			result.getTransform().preConcatenate(t2d);
 			break;
 		}
 		case sizexyz: {
 			AffineTransform t2d = AffineTransform.getScaleInstance(modArgs[0], modArgs[1]);
 			AffineTransform1D t1d = AffineTransform1D.getScaleInstance(modArgs[0]);
-			result[0].getTransform().preConcatenate(t2d);
-			result[0].getTransformZ().preConcatenate(t1d);
+			result.getTransform().preConcatenate(t2d);
+			result.getTransformZ().preConcatenate(t1d);
 			break;
 		}
 		case zsize: {
 			AffineTransform1D t1d = AffineTransform1D.getScaleInstance(modArgs[0]);
-			result[0].getTransformZ().preConcatenate(t1d);
+			result.getTransformZ().preConcatenate(t1d);
 			break;
 		}
 		case rot: {
 			AffineTransform t2d = AffineTransform.getRotateInstance(modArgs[0] * Math.PI / 180.0);
-			result[0].getTransform().preConcatenate(t2d);
+			result.getTransform().preConcatenate(t2d);
 			break;
 		}
 		case skew: {
 			AffineTransform t2d = AffineTransform.getShearInstance(modArgs[0] * Math.PI / 180.0, modArgs[1] * Math.PI / 180.0);
-			result[0].getTransform().preConcatenate(t2d);
+			result.getTransform().preConcatenate(t2d);
 			break;
 		}
 		case flip: {
@@ -247,7 +247,7 @@ class ASTModTerm extends ASTExpression {
 			double ux = Math.cos(a);
 			double uy = Math.cos(a);
 			AffineTransform t2d = new AffineTransform(2.0 * ux * ux - 1.0, 2.0 * ux * uy, 2.0 * ux * uy, 2.0 * uy * uy - 1.0, 0.0, 0.0);
-			result[0].getTransform().preConcatenate(t2d);
+			result.getTransform().preConcatenate(t2d);
 			break;
 		}
 		case alpha: 
@@ -261,7 +261,7 @@ class ASTModTerm extends ASTExpression {
 		case hue: 
 			{
 				 if (argcount == 1) {
-					 if ((result[0].colorAssignment() & mask) != 0 || (!hue && color[colorComp] != 0.0)) {
+					 if ((result.colorAssignment() & mask) != 0 || (!hue && color[colorComp] != 0.0)) {
 						 if (rti == null) throw new DeferUntilRuntimeException();
 						 if (!shapeDest) {
 							 rti.colorConflict();
@@ -273,7 +273,7 @@ class ASTModTerm extends ASTExpression {
 						 color[colorComp] = hue ? color[colorComp] + modArgs[0] : args[0];
 					 }
 				 } else {
-					 if ((result[0].colorAssignment() & mask) != 0 || (color[colorComp] != 0.0) || (!hue && target[colorComp] != 0.0)) {
+					 if ((result.colorAssignment() & mask) != 0 || (color[colorComp] != 0.0) || (!hue && target[colorComp] != 0.0)) {
 						 if (rti == null) throw new DeferUntilRuntimeException();
 						 if (!shapeDest) {
 							 rti.colorConflict();
@@ -284,7 +284,7 @@ class ASTModTerm extends ASTExpression {
 					 } else {
 						 color[colorComp] = args[0];
 						 target[colorComp] = hue ? modArgs[1] : args[1];
-						 result[0].setColorAssignment(result[0].colorAssignment() | EAssignmentType.HSBA2Value.getType() & mask);
+						 result.setColorAssignment(result.colorAssignment() | EAssignmentType.HSBA2Value.getType() & mask);
 					 }
 				 }
 			}
@@ -299,7 +299,7 @@ class ASTModTerm extends ASTExpression {
 			}
 		case hueTarg: 
 			{
-				 if ((result[0].colorAssignment() & mask) != 0 || (color[colorComp] != 0.0)) {
+				 if ((result.colorAssignment() & mask) != 0 || (color[colorComp] != 0.0)) {
 					 if (rti == null) throw new DeferUntilRuntimeException();
 					 if (!shapeDest) {
 						 rti.colorConflict();
@@ -309,7 +309,7 @@ class ASTModTerm extends ASTExpression {
 					 color[colorComp] = hue ? HSBColor.adjustHue(color[colorComp], args[0], EAssignmentType.HueTarget.getType(), target[colorComp]) : HSBColor.adjust(color[colorComp], args[0], EAssignmentType.ColorTarget.getType(), target[colorComp]);
 				 } else {
 					 color[colorComp] = args[0];
-					 result[0].setColorAssignment(result[0].colorAssignment() | EAssignmentType.HSBATarget.getType() & mask);
+					 result.setColorAssignment(result.colorAssignment() | EAssignmentType.HSBATarget.getType() & mask);
 				 }
 			}
 			break;

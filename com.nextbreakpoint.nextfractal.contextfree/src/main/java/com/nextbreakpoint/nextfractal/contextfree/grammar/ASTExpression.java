@@ -92,11 +92,11 @@ class ASTExpression {
 		return 0;
 	}
 
-	public void evaluate(Modification[] result, boolean shapeDest) {
+	public void evaluate(Modification result, boolean shapeDest) {
 		evaluate(result, shapeDest, null);
 	}
 
-	public void evaluate(Modification[] result, boolean shapeDest, RTI rti) {
+	public void evaluate(Modification result, boolean shapeDest, RTI rti) {
 		throw new RuntimeException("Cannot convert this expression into an adjustment"); 
 	}
 

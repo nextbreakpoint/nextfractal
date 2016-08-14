@@ -203,7 +203,7 @@ public class CFDGDriver {
 		if ((rule.isPath() && type == EShapeType.RuleType) || (!rule.isPath() && type == EShapeType.PathType)) {
 			error("Cannot mix rules and shapes with the same name", rule.getLocation());
 		}
-		boolean matchesShape = cfdg.addRuleShape(rule);
+		boolean matchesShape = cfdg.addRule(rule);
 		if (!isShapeItem && matchesShape) {
 			error("Rule/path name matches existing shape name", rule.getLocation());
 		}

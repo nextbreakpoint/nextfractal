@@ -193,7 +193,7 @@ class ASTModification extends ASTExpression {
 	public void setVal(Modification[] mod, RTI rti) {
         mod[0] = modData;
 		for (ASTModTerm term : modExp) {
-			term.evaluate(mod, false, rti);
+			term.evaluate(modData, false, rti);
 		}
 	}
 
@@ -204,11 +204,11 @@ class ASTModification extends ASTExpression {
 	}
 
 	@Override
-	public void evaluate(Modification[] result, boolean shapeDest, RTI rti) {
+	public void evaluate(Modification result, boolean shapeDest, RTI rti) {
 		if (shapeDest) {
-			result[0].concat(modData);
+			result.concat(modData);
 		} else {
-			if (result[0].merge(modData)) {
+			if (result.merge(modData)) {
 				if (rti != null) rti.colorConflict();
 			}
 		}
@@ -273,9 +273,7 @@ class ASTModification extends ASTExpression {
 			}
 			try {
 				if (!keepThisOne) {
-					Modification[] mod = new Modification[1];
-					term.evaluate(mod, false, null);
-					modData = mod[0];
+					term.evaluate(modData, false, null); //TODO controllare
 				}
 			} catch (DeferUntilRuntimeException e) {
 				keepThisOne = true;
