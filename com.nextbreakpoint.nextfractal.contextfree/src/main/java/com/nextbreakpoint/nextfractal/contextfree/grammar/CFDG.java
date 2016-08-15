@@ -33,6 +33,7 @@ public class CFDG {
 	private Shape initialShape;
 	private ASTRule needle;
 	private ASTReplacement initShape;
+	private ASTRepContainer cfdgContents;
 	private List<ShapeType> shapeTypes = new ArrayList<ShapeType>();
 	private Stack<ASTRule> rules = new Stack<ASTRule>();
 	private Map<Integer, ASTDefine> functions = new HashMap<Integer, ASTDefine>();
@@ -227,8 +228,82 @@ public class CFDG {
 		return true;
 	}
 
-	public void rulesLoaded() {
-		//TODO implementare
+	public void rulesLoaded(CFDGDriver driver) {
+		//TODO rivedere
+
+		double[] weightsums = new double[shapeTypes.size()];
+		double[] percentweightsums = new double[shapeTypes.size()];
+		double[] unitweightsums = new double[shapeTypes.size()];
+		int[] rulecounts = new int[shapeTypes.size()];
+		int[] weightTypes = new int[shapeTypes.size()];
+
+		for (ASTRule rule : rules) {
+			if (rule.getWeightType() == EWeightType.PercentWeight) {
+				percentweightsums[rule.getNameIndex()] += rule.getWeight();
+				if (percentweightsums[rule.getNameIndex()] > 1.0001) {
+					error("Percentages exceed 100%");
+				}
+			} else {
+				weightsums[rule.getNameIndex()] += rule.getWeight();
+			}
+			rulecounts[rule.getNameIndex()] += 1;
+			weightTypes[rule.getNameIndex()] |= rule.getWeightType().getType();
+		}
+
+		for (ASTRule rule : rules) {
+			double weight = rule.getWeight() / weightsums[rule.getNameIndex()];
+			if ((weightTypes[rule.getNameIndex()] & EWeightType.PercentWeight.getType()) != 0) {
+				if (rule.getWeightType() == EWeightType.PercentWeight) {
+					weight = rule.getWeight();
+				} else {
+					weight *= 1.0 - percentweightsums[rule.getNameIndex()];
+					if (percentweightsums[rule.getNameIndex()] > 0.9999) {
+						warning("Percentages sum to 100%, this rule has no weight");
+					}
+				}
+			}
+			if (weightTypes[rule.getNameIndex()] == EWeightType.PercentWeight.getType() && Math.abs(percentweightsums[rule.getNameIndex()] - 1.0) > 0.0001) {
+				warning("Percentages do not sum to 100%");
+			}
+			if (!Double.isFinite(weight)) {
+				weight = 0;
+			}
+			unitweightsums[rule.getNameIndex()] += weight;
+			if (rulecounts[rule.getNameIndex()] - 1 > 0) {
+				rule.setWeight(unitweightsums[rule.getNameIndex()]);
+			} else {
+				rule.setWeight(1.1);
+			}
+		}
+
+		Collections.sort(rules);
+		cfdgContents.compile(ECompilePhase.TypeCheck, null, null);
+		if (driver.errorOccured()) {
+			cfdgContents.compile(ECompilePhase.Simplify, null, null);
+		}
+
+		double[] value = new double[1];
+		uses16bitColor = hasParameter(ECFGParam.ColorDepth, value, null) && Math.floor(value[0]) == 16;
+
+		if (hasParameter(ECFGParam.Color, value, null)) {
+			usesColor = value[0] != 0;
+		}
+
+		if (hasParameter(ECFGParam.Alpha, value, null)) {
+			usesColor = value[0] != 0;
+		}
+
+		ASTExpression e = hasParameter(ECFGParam.Background);
+		if (e != null && e instanceof  ASTModification) {
+			ASTModification m = (ASTModification) e;
+			useAlpha = m.getModData().color().alpha() != 1.0;
+			for (ASTModTerm term : m.getModExp()) {
+				//TODO completare
+			}
+		}
+
+		driver.setLocalStackDepth(0);
+
 	}
 
 	public int numRules() {
@@ -322,15 +397,6 @@ public class CFDG {
 		return shapeTypes.get(nameIndex).getArgSize();
 	}
 
-//	public EShapeType getShapeType(String name) {
-//		for (int i = 0; i < shapeTypes.size(); i++) {
-//			if (shapeTypes.get(i).getName().equals(name)) {
-//				return shapeTypes.get(i).getShapeType();
-//			}
-//		}
-//		return EShapeType.NewShape;
-//	}
-
 	public int reportStackDepth(int size) {
 		if (size > stackSize) {
 			stackSize = size;
@@ -361,10 +427,68 @@ public class CFDG {
 		return null;
 	}
 
-	public RTI renderer(int width, int height, double minSize, int variation, double border) {
-		RTI rti = new RTI();
-		//TODO completare
-		return rti;
+	public RTI renderer(CFDGDriver driver, int width, int height, double minSize, int variation, double border) {
+		try {
+			ASTExpression startExp = paramExp.get(ECFGParam.StartShape);
+
+			if (startExp == null) {
+				error("No startshape found");
+				return null;
+			}
+
+			if (startExp instanceof ASTStartSpecifier) {
+				ASTStartSpecifier specStart = (ASTStartSpecifier)startExp;
+				initShape = new ASTReplacement(driver, specStart, specStart.getModification(), startExp.getLocation());
+				initShape.getChildChange().addEntropy(initShape.getShapeSpecifier().getEntropy());
+			} else {
+				error("Type error in startshape");
+				return null;
+			}
+
+			RTI rti = new RTI();
+
+			Modification tiled = null;
+			Modification sized = null;
+			Modification timed = null;
+
+			//TODO rivedere
+
+			double[] maxShape = new double[0];
+
+			if (hasParameter(ECFGParam.Tile, tiled, null)) {
+				tileMod = tiled;
+				AffineTransform transform = tileMod.getTransform();
+				tileOffset.setLocation(transform.getTranslateX(), transform.getTranslateY());
+				AffineTransform t = new AffineTransform(transform.getScaleX(), transform.getShearY(), transform.getShearX(), transform.getScaleY(), 0, 0);
+				tileMod.setTransform(t);
+			}
+
+			if (hasParameter(ECFGParam.Size, sized, null)) {
+				sizeMod = sized;
+				AffineTransform transform = sizeMod.getTransform();
+				tileOffset.setLocation(transform.getTranslateX(), transform.getTranslateY());
+				AffineTransform t = new AffineTransform(transform.getScaleX(), transform.getShearY(), transform.getShearX(), transform.getScaleY(), 0, 0);
+				tileMod.setTransform(t);
+			}
+
+			if (hasParameter(ECFGParam.Time, timed, null)) {
+				timeMod = timed;
+			}
+
+			if (hasParameter(ECFGParam.MaxShapes, maxShape, null)) {
+				if (maxShape[0] > 1) {
+					rti.setMaxShapes(maxShape[0]);
+				}
+			}
+
+			rti.initBounds();
+
+			return rti;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return null;
 	}
 
 	// TODO da rivedere
@@ -372,6 +496,10 @@ public class CFDG {
 	protected void error(String message) {
 		System.err.println(message);
 		throw new RuntimeException(message);
+	}
+
+	protected void warning(String message) {
+		System.err.println(message);
 	}
 
 	public void compile(ECompilePhase ph) {

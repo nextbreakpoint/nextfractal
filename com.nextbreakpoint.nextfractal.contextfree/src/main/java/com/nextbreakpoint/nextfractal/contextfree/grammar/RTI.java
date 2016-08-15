@@ -130,12 +130,17 @@ public class RTI {
 	}
 
 	public void setCurrentCommand(Iterator<CommandInfo> iterator) {
-		// TODO Auto-generated method stub
-		
+
 	}
 
 	public boolean isRandUsed() {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	public void setMaxShapes(double v) {
+	}
+
+	public void initBounds() {
 	}
 }

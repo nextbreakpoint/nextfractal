@@ -51,6 +51,10 @@ class ASTReplacement {
 		this(driver, new ASTRuleSpecifier(driver, location), childChange, repType, location);
 	}
 
+	public ASTReplacement(CFDGDriver driver, ASTModification childChange, Token location) {
+		this(driver, new ASTRuleSpecifier(driver, location), childChange, ERepElemType.replacement, location);
+	}
+
 	public ASTReplacement(CFDGDriver driver, String name, Token location) {
 		this(driver, new ASTRuleSpecifier(driver, location), new ASTModification(driver, location), ERepElemType.op, location);
 		this.pathOp = EPathOp.pathOpTypeByName(name);

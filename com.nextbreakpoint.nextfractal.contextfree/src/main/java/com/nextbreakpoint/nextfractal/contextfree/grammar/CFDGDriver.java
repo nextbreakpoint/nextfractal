@@ -729,4 +729,8 @@ public class CFDGDriver {
 	public CFDG getCFDG() {
 		return cfdg;
 	}
+
+	public boolean errorOccured() {
+		return false;
+	}
 }
