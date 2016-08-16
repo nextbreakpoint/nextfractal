@@ -24,10 +24,68 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.grammar;
 
+import org.antlr.v4.runtime.Token;
+
+import java.awt.geom.Point2D;
 import java.util.Iterator;
 import java.util.List;
 
 public class RTI {
+	private CFDG cfdg;
+	private int width;
+	private int height;
+	private double minSize;
+	private int variation;
+	private double border;
+	private Point2D.Double lastPoint;
+	private boolean stop;
+	private boolean closed;
+	private boolean wantMoveTo;
+	private boolean wantCommand;
+	private boolean opsOnly;
+	private int index;
+	private int nextIndex;
+	private int stackSize;
+
+	public RTI(CFDG cfdg, int width, int height, double minSize, int variation, double border) {
+		this.cfdg = cfdg;
+		this.width = width;
+		this.height = height;
+		this.minSize = minSize;
+		this.variation = variation;
+		this.border = border;
+	}
+
+	public void colorConflict(Token location) {
+		// TODO rivedere
+		warning(location, "Conflicting color change");
+	}
+
+	public void init() {
+		lastPoint = new Point2D.Double(0, 0);
+		stop = false;
+		closed = false;
+		wantMoveTo = true;
+		wantCommand = true;
+		opsOnly = false;
+		index = 0;
+		nextIndex = 0;
+	}
+
+	public boolean isNatual(double n) {
+		//TODO rivedere
+		return n >= 0 && n <= getMaxNatural() && n == Math.floor(n);
+	}
+
+	public void initStack(StackRule parameters) {
+		if (parameters != null && parameters.getParamCount() > 0) {
+			if (stackSize + parameters.getParamCount() > getCFStack().size()) {
+				throw new RuntimeException("Maximum stack size exceeded");
+			}
+			int oldSize = stackSize;
+			stackSize += parameters.getParamCount()
+		}
+	}
 
 	public double getCurrentTime() {
 		// TODO Auto-generated method stub
@@ -57,11 +115,6 @@ public class RTI {
 	public StackType stackItem(int stackIndex) {
 		// TODO Auto-generated method stub
 		return null;
-	}
-
-	public void colorConflict() {
-		// TODO Auto-generated method stub
-		
 	}
 
 	public StackType getLogicalStackTop() {
@@ -94,11 +147,6 @@ public class RTI {
 		
 	}
 
-	public void initStack(StackRule parameters) {
-		// TODO Auto-generated method stub
-		
-	}
-
 	public void unwindStack(int size, List<ASTParameter> parameters) {
 		// TODO Auto-generated method stub
 		
@@ -110,11 +158,6 @@ public class RTI {
 	}
 
 	public void processPrimShape(Shape parent, ASTRule astRule) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void init() {
 		// TODO Auto-generated method stub
 		
 	}
@@ -142,5 +185,10 @@ public class RTI {
 	}
 
 	public void initBounds() {
+	}
+
+	private void warning(Token location, String message) {
+		//TODO completare
+		System.out.println(message);
 	}
 }

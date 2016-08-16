@@ -76,4 +76,13 @@ enum EFlagType {
 	public int getType() {
 		return type;
 	}
+
+	public static EFlagType fromType(int type) {
+		for (EFlagType value : values()) {
+			if (value.getType() == type) {
+				return value;
+			}
+		}
+		return CF_NONE;
+	}
 }

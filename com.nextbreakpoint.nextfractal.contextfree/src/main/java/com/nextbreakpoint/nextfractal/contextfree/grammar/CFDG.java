@@ -24,11 +24,14 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.grammar;
 
+import org.antlr.v4.runtime.Token;
+
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.util.*;
 
 public class CFDG {
+	private static final double SQRT2 = Math.sqrt(2.0);
 	private double[] backgroundColor;
 	private Shape initialShape;
 	private ASTRule needle;
@@ -144,22 +147,135 @@ public class CFDG {
 	}
 
 	public boolean isTiled(AffineTransform transform, double[] point) {
-		//TODO completare
-		return false;
+		//TODO completare con location
+		if (!hasParameter(ECFGParam.Tile, EExpType.ModType)) {
+			return false;
+		}
+
+		if (tileMod.getTransform().getScaleX() == 0 || tileMod.getTransform().getScaleY() == 0) {
+			return false;
+		}
+
+		if (transform != null) {
+			transform.setTransform(new AffineTransform(tileMod.getTransform().getScaleX(), tileMod.getTransform().getShearY(), tileMod.getTransform().getShearX(), tileMod.getTransform().getScaleY(), 0, 0));
+		}
+
+		if (point != null && point.length == 2) {
+			double o_x = 0.0;
+			double o_y = 0.0;
+			double u_x = 1.0;
+			double u_y = 0.0;
+			double v_x = 0.0;
+			double v_y = 1.0;
+
+			Point2D o = new Point2D.Double(o_x, o_y);
+			Point2D u = new Point2D.Double(u_x, u_y);
+			Point2D v = new Point2D.Double(v_x, v_y);
+
+			tileMod.getTransform().transform(o, o);
+			tileMod.getTransform().transform(u, u);
+			tileMod.getTransform().transform(v, v);
+
+			if (Math.abs(u_y - o_y) >= 0.0001 && Math.abs(v_x - o_x) >= 0.0001) {
+				error("Tile must be aligned with the X or Y axis");
+			}
+
+			if (Math.abs(u_x - o_x) < 0.0 || Math.abs(v_y - o_y) < 0.0) {
+				error("Tile must be in the positive X/Y quadrant");
+			}
+
+			point[0] = u_x - o_x;
+			point[1] = u_y - o_y;
+		}
+
+		return true;
 	}
 
-	public boolean isFrieze(AffineTransform transform, double[] point) {
-		//TODO completare
-		return false;
+	public EFriezeType isFrieze(AffineTransform transform, double[] point) {
+		//TODO completare con location
+		if (!hasParameter(ECFGParam.Tile, EExpType.ModType)) {
+			return EFriezeType.NoFrieze;
+		}
+
+		if (tileMod.getTransform().getScaleX() != 0 && tileMod.getTransform().getScaleY() != 0) {
+			return EFriezeType.NoFrieze;
+		}
+
+		if (tileMod.getTransform().getScaleX() == 0 && tileMod.getTransform().getScaleY() == 0) {
+			return EFriezeType.NoFrieze;
+		}
+
+		if (transform != null) {
+			transform.setTransform(new AffineTransform(tileMod.getTransform().getScaleX(), tileMod.getTransform().getShearY(), tileMod.getTransform().getShearX(), tileMod.getTransform().getScaleY(), 0, 0));
+		}
+
+		if (point != null && point.length == 2) {
+			double o_x = 0.0;
+			double o_y = 0.0;
+			double u_x = 1.0;
+			double u_y = 0.0;
+			double v_x = 0.0;
+			double v_y = 1.0;
+
+			Point2D o = new Point2D.Double(o_x, o_y);
+			Point2D u = new Point2D.Double(u_x, u_y);
+			Point2D v = new Point2D.Double(v_x, v_y);
+
+			tileMod.getTransform().transform(o, o);
+			tileMod.getTransform().transform(u, u);
+			tileMod.getTransform().transform(v, v);
+
+			if (Math.abs(u_y - o_y) >= 0.0001 || Math.abs(v_x - o_x) >= 0.0001) {
+				error("Frieze must be aligned with the X and Y axis");
+			}
+
+			if (Math.abs(u_x - o_x) < 0.0 || Math.abs(v_y - o_y) < 0.0) {
+				error("Frieze must be in the positive X/Y quadrant");
+			}
+
+			point[0] = u_x - o_x;
+			point[1] = u_y - o_y;
+		}
+
+		return tileMod.getTransform().getScaleX() == 0.0 ? EFriezeType.FriezeY : EFriezeType.FriezeX;
 	}
 
 	public boolean isSized(double[] point) {
-		//TODO completare
+		//TODO completare con location
+		if (!hasParameter(ECFGParam.Size, EExpType.ModType)) {
+			return false;
+		}
+
+		//TODO da rivedere
+		if (point != null) {
+			point[0] = sizeMod.getTransform().getScaleX();
+			point[1] = sizeMod.getTransform().getScaleY();
+		}
+
+		if (sizeMod.getTransform().getShearX() != 0.0 || sizeMod.getTransform().getShearY() != 0.0) {
+			error("Size specification must not be rotated or skewed");
+		}
+
 		return false;
 	}
 
-	public boolean isTimed(AffineTransform transform) {
-		//TODO completare
+	public boolean isTimed(AffineTransformTime transform) {
+		//TODO completare con location
+		if (!hasParameter(ECFGParam.Time, EExpType.ModType)) {
+			return false;
+		}
+
+		//TODO da rivedere
+		if (transform != null) {
+			transform.setBegin(timeMod.getTransformTime().getBegin());
+			transform.setEnd(timeMod.getTransformTime().getEnd());
+			transform.setStep(timeMod.getTransformTime().getStep());
+		}
+
+		if (sizeMod.getTransformTime().getBegin() >= sizeMod.getTransformTime().getEnd()) {
+			error("Time specification must have positive duration");
+		}
+
 		return false;
 	}
 
@@ -167,10 +283,10 @@ public class CFDG {
 		// TODO controllare
 		syms.clear();
 		ASTExpression e = hasParameter(ECFGParam.Symmetry);
-//		List<ASTModification> left = getTransforms(e, syms, rti, isTiled(), tileMod.getTransform());
-//		if (!left.isEmpty()) {
-//			error("At least one term was invalid");
-//		}
+		List<ASTModification> left = getTransforms(e, syms, rti, isTiled(null, null), tileMod.getTransform());
+		if (!left.isEmpty()) {
+			error("At least one term was invalid");
+		}
 	}
 
 	public boolean hasParameter(ECFGParam p, double[] value, RTI rti) {
@@ -277,7 +393,11 @@ public class CFDG {
 		}
 
 		Collections.sort(rules);
+
+		driver.setLocalStackDepth(0);
+
 		cfdgContents.compile(ECompilePhase.TypeCheck, null, null);
+
 		if (driver.errorOccured()) {
 			cfdgContents.compile(ECompilePhase.Simplify, null, null);
 		}
@@ -298,12 +418,11 @@ public class CFDG {
 			ASTModification m = (ASTModification) e;
 			useAlpha = m.getModData().color().alpha() != 1.0;
 			for (ASTModTerm term : m.getModExp()) {
-				//TODO completare
+				if (term.getModType() == EModType.alpha || term.getModType() == EModType.alphaTarg) {
+					useAlpha = true;
+				}
 			}
 		}
-
-		driver.setLocalStackDepth(0);
-
 	}
 
 	public int numRules() {
@@ -445,7 +564,7 @@ public class CFDG {
 				return null;
 			}
 
-			RTI rti = new RTI();
+			RTI rti = new RTI(this, width, height, minSize, variation, border);
 
 			Modification tiled = null;
 			Modification sized = null;
@@ -489,6 +608,135 @@ public class CFDG {
 		}
 
 		return null;
+	}
+
+	private List<ASTModification> getTransforms(ASTExpression e, SymmList syms, RTI rti, boolean tiled, AffineTransform transform) {
+		List<ASTModification> result = new ArrayList<>();
+
+		syms.clear();
+
+		if (e == null) {
+			return result;
+		}
+
+		// TODO da rivedere
+
+		List<Double> symmSpec = new ArrayList<>();
+
+		for (int i = 0; i < e.size(); i++) {
+			ASTExpression cit = e.getChild(i);
+			switch (cit.getType()) {
+				case FlagType:
+					processSymmSpec(syms, transform, tiled, symmSpec, cit.getLocation());
+					break;
+				case NumericType:
+					if (symmSpec.isEmpty() && cit.getType() != EExpType.FlagType) {
+						error("Symmetry flag expected here");
+					}
+					int sz = cit.evaluate(null, 0);
+					if (sz < 1) {
+						error("Could not evaluate this");
+					} else {
+						double[] values = new double[sz];
+						if (cit.evaluate(values, values.length) != sz) {
+							error("Could not evaluate this");
+						} else {
+							for (double value : values) {
+								symmSpec.add(value);
+							}
+						}
+					}
+					break;
+				case ModType:
+					processSymmSpec(syms, transform, tiled, symmSpec, cit.getLocation());
+					if (cit instanceof ASTModification) {
+						ASTModification m = (ASTModification)cit;
+						if (m.getModClass() != null && m.getModClass().getType() == (EModClass.GeomClass.getType() | EModClass.PathOpClass.getType()) && (rti != null || m.isConstant())) {
+							Modification mod = new Modification();
+							cit.evaluate(mod, false, rti);
+							addUnique(syms, sizeMod.getTransform());
+						} else {
+							result.add(m);
+						}
+					} else {
+						error("Wrong type");
+					}
+					break;
+				default:
+					error("Wrong type");
+					break;
+			}
+		}
+
+		processSymmSpec(syms, transform, tiled, symmSpec, e.getLocation());
+
+		return result;
+	}
+
+	private void addUnique(SymmList syms, AffineTransform transform) {
+		if (syms.contains(transform)) {
+			syms.add(transform);
+		}
+	}
+
+	private void processSymmSpec(SymmList syms, AffineTransform transform, boolean tiled, List<Double> data, Token location) {
+		if (data == null) {
+			return;
+		}
+
+		int type = data.get(0).intValue();
+		EFlagType flag = EFlagType.fromType(type);
+
+		boolean frieze = (transform.getScaleX() != 0.0 || transform.getScaleY() != 0.0) && transform.getScaleX() * transform.getScaleY() == 0.0;
+		boolean rhombic = tiled && ((Math.abs(transform.getShearY()) <= 0.0000001 && Math.abs(transform.getShearX() / transform.getScaleX() - 0.5) < 0.0000001) || (Math.abs(transform.getShearX()) <= 0.0000001 && Math.abs(transform.getShearY() / transform.getScaleY() - 0.5) < 0.0000001));
+		boolean rectangular = tiled && transform.getShearX() == 0.0 && transform.getShearY() == 0.0;
+		boolean square = rectangular && transform.getScaleX() == transform.getScaleY();
+		boolean hexagonal = false;
+		boolean square45 = false;
+		double size45 = transform.getScaleX();
+
+		if (rhombic) {
+			double x1 = 1;
+			double y1 = 0;
+			Point2D.Double p1 = new Point2D.Double(x1, y1);
+			transform.transform(p1, p1);
+			x1 = p1.getX();
+			y1 = p1.getY();
+			double dist10 = Math.hypot(x1, y1);
+			double x2 = 0;
+			double y2 = 1;
+			Point2D.Double p2 = new Point2D.Double(x1, y1);
+			transform.transform(p2, p2);
+			x2 = p2.getX();
+			y2 = p2.getY();
+			double dist01 = Math.hypot(x2, y2);
+			hexagonal = Math.abs(dist10 / dist01 - 1.0) < 0.0000001;
+			square45 = Math.abs(dist10 / dist01 - SQRT2) < 0.0000001 || Math.abs(dist01 / dist10 - SQRT2) < 0.0000001;
+			size45 = Math.min(dist01, dist10);
+		}
+
+		if (type >= EFlagType.CF_P11G.getType() && type <= EFlagType.CF_P2MM.getType() && !frieze) {
+			error("Frieze symmetry only works in frieze designs");
+		}
+
+		if (type >= EFlagType.CF_PM.getType() && type <= EFlagType.CF_P6M.getType() && !tiled) {
+			error("Wallpaper symmetry only works in tiled designs");
+		}
+
+		if (type >= EFlagType.CF_P2.getType() && !frieze && !tiled) {
+			error("p2 symmetry only works in frieze or tiled designs");
+		}
+
+		//TODO completare
+
+		switch (flag) {
+			case CF_CYCLIC: {
+				break;
+			}
+			default: {
+				break;
+			}
+		}
 	}
 
 	// TODO da rivedere
