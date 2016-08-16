@@ -77,4 +77,8 @@ class StackRule {
 		// TODO Auto-generated method stub
 		
 	}
+
+	public void copyParams(int oldSize) {
+
+	}
 }

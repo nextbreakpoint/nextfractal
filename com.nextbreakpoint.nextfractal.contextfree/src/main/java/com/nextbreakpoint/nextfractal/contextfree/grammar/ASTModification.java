@@ -209,7 +209,7 @@ class ASTModification extends ASTExpression {
 			result.concat(modData);
 		} else {
 			if (result.merge(modData)) {
-				if (rti != null) rti.colorConflict();
+				if (rti != null) rti.colorConflict(getLocation());
 			}
 		}
 		for (ASTModTerm term : modExp) {

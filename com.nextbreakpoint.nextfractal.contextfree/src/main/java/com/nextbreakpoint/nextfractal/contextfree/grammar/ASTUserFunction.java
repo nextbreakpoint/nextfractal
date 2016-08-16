@@ -194,14 +194,14 @@ class ASTUserFunction extends ASTExpression {
 		if (definition.getStackCount() > 0) {
 			int size = rti.getCFStack().size();
 			rti.getCFStack().get(size).evalArgs(rti, arguments, definition.getParameters(), isLet);
-			rti.setLogicalStackTop(new StackType(size));
+			rti.setLogicalStackTop((int)new StackType(size).getNumber());
 		}
 		return stackType;
 	}
 
 	private void cleanupStack(RTI rti, StackType stackType) {
 		if (definition.getStackCount() > 0) {
-			rti.setLogicalStackTop(stackType);
+			rti.setLogicalStackTop((int)stackType.getNumber());
 		}
 	}
 }

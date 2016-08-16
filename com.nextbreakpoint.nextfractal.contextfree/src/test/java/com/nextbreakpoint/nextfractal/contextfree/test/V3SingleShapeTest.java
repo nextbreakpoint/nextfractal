@@ -75,6 +75,6 @@ public class V3SingleShapeTest extends AbstractBaseTest {
 	public void shouldTraverse() throws IOException {
 		CFDG cfdg = parseSource(RESOURCE_NAME);
 		cfdg.compile(Simplify);
-		cfdg.traverse(new Shape(), false, new RTI());
+//		cfdg.traverse(new Shape(), false, new RTI());
 	}
 }

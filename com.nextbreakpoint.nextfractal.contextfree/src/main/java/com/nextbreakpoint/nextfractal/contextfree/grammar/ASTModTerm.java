@@ -264,7 +264,7 @@ class ASTModTerm extends ASTExpression {
 					 if ((result.colorAssignment() & mask) != 0 || (!hue && color[colorComp] != 0.0)) {
 						 if (rti == null) throw new DeferUntilRuntimeException();
 						 if (!shapeDest) {
-							 rti.colorConflict();
+							 rti.colorConflict(getLocation());
 						 }
 					 }
 					 if (shapeDest) {
@@ -276,7 +276,7 @@ class ASTModTerm extends ASTExpression {
 					 if ((result.colorAssignment() & mask) != 0 || (color[colorComp] != 0.0) || (!hue && target[colorComp] != 0.0)) {
 						 if (rti == null) throw new DeferUntilRuntimeException();
 						 if (!shapeDest) {
-							 rti.colorConflict();
+							 rti.colorConflict(getLocation());
 						 }
 					 }
 					 if (shapeDest) {
@@ -302,7 +302,7 @@ class ASTModTerm extends ASTExpression {
 				 if ((result.colorAssignment() & mask) != 0 || (color[colorComp] != 0.0)) {
 					 if (rti == null) throw new DeferUntilRuntimeException();
 					 if (!shapeDest) {
-						 rti.colorConflict();
+						 rti.colorConflict(getLocation());
 					 }
 				 }
 				 if (shapeDest) {
@@ -322,7 +322,7 @@ class ASTModTerm extends ASTExpression {
 				if (target[colorComp] != 0.0) {
 					 if (rti == null) throw new DeferUntilRuntimeException();
 					 if (!shapeDest) {
-						 rti.colorConflict();
+						 rti.colorConflict(getLocation());
 					 }
 				}
 				 if (shapeDest) {

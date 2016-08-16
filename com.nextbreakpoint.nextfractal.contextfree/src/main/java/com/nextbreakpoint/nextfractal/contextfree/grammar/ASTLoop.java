@@ -200,7 +200,8 @@ class ASTLoop extends ASTReplacement {
 		rti.getCFStack().add(t);
 		StackType index = rti.getCFStack().get(rti.getCFStack().size() - 1);
 		index.addNumber(1);
-		rti.setLogicalStackTop(index);
+		//TODO controllare
+		rti.setLogicalStackTop((int)index.getNumber());
 		for (;;) {
 			if (rti.getRequestStop() /*TODO || Renderer.abortEverything()*/) {
 				throw new RuntimeException("Stopping");
@@ -221,7 +222,7 @@ class ASTLoop extends ASTReplacement {
 		}
 		finallyBody.traverse(loopChild, tr || opsOnly, rti, false);
 		rti.getCFStack().remove(rti.getCFStack().size() - 1);
-		rti.setLogicalStackTop(oldTop);
+		rti.setLogicalStackTop((int)oldTop.getNumber());
 	}
 	
 	private void setupLoop(double[] data, ASTExpression exp, RTI rti) {

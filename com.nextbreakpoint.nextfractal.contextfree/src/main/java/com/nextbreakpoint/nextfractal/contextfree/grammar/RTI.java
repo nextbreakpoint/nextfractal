@@ -78,13 +78,21 @@ public class RTI {
 	}
 
 	public void initStack(StackRule parameters) {
+		// TODO de rivedere totalmente
 		if (parameters != null && parameters.getParamCount() > 0) {
 			if (stackSize + parameters.getParamCount() > getCFStack().size()) {
 				throw new RuntimeException("Maximum stack size exceeded");
 			}
 			int oldSize = stackSize;
-			stackSize += parameters.getParamCount()
+			stackSize += parameters.getParamCount();
+			parameters.copyParams(oldSize);
 		}
+		setLogicalStackTop(stackSize);
+	}
+
+	public void unwindStack(int size, List<ASTParameter> parameters) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	public double getCurrentTime() {
@@ -127,9 +135,14 @@ public class RTI {
 		return null;
 	}
 
-	public void setLogicalStackTop(StackType stackType) {
+//	public void setLogicalStackTop(StackType stackType) {
+//		// TODO Auto-generated method stub
+//
+//	}
+
+	public void setLogicalStackTop(int stackSize) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public boolean getRequestStop() {
@@ -143,11 +156,6 @@ public class RTI {
 	}
 
 	public void processSubpath(Shape shape, boolean tr, ERepElemType repType) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void unwindStack(int size, List<ASTParameter> parameters) {
 		// TODO Auto-generated method stub
 		
 	}

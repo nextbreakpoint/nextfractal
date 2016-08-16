@@ -123,7 +123,7 @@ class ASTVariable extends ASTExpression {
         	result.concat(mod);
         } else {
         	if (result.merge(mod)) {
-    			rti.colorConflict();
+    			rti.colorConflict(getLocation());
         	}
         }
 	}
