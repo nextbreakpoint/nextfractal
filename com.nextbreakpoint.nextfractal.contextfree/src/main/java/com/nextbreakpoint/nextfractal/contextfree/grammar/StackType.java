@@ -36,6 +36,10 @@ class StackType {
 		// TODO Auto-generated constructor stub
 	}
 
+	public StackType(StackRule rule) {
+		// TODO Auto-generated constructor stub
+	}
+
 	public double getNumber() {
 		return number;
 	}

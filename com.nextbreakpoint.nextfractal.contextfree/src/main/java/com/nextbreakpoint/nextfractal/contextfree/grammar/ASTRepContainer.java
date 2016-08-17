@@ -142,13 +142,13 @@ class ASTRepContainer {
 	}
 	
 	public void traverse(Shape parent, boolean tr, RTI rti, boolean getParams) {
-		int s = rti.getCFStack().size();
+		int size = rti.getStackSize();
 		if (getParams && parent.getParameters() != null) {
 			rti.initStack(parent.getParameters());
 		}
 		for (ASTReplacement rep : body) {
 			rep.traverse(parent, tr, rti);
 		}
-		rti.unwindStack(s, getParameters());
+		rti.unwindStack(size, getParameters());
 	}
 }

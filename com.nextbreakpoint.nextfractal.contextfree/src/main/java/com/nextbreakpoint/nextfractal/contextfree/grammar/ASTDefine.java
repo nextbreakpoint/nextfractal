@@ -233,7 +233,7 @@ class ASTDefine extends ASTReplacement {
 		}
 
 		rti.getCurrentSeed().add(getChildChange().getModData().getRand64Seed());
-		StackType dest = rti.getCFStack().get(rti.getCFStack().size() - 1);
+		StackType dest = rti.stackItem(rti.getStackSize() - 1);
 		
 		switch (expType) {
 			case NumericType:

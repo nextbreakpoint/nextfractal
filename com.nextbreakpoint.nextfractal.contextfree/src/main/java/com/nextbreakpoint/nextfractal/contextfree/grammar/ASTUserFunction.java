@@ -77,12 +77,12 @@ class ASTUserFunction extends ASTExpression {
 			return definition.getTupleSize();
 		}
 		if (rti == null) throw new DeferUntilRuntimeException();
-		if (rti.getRequestStop()/*TODO || Render.abortEverything*/) {
+		if (rti.isRequestStop()/*TODO || Render.abortEverything*/) {
 			throw new CFDGException("Stopping");
 		}
-		StackType oldStackType = setupStack(rti);
+		int oldStackTop = setupStack(rti);
 		definition.getExp().evaluate(result, length, rti);
-		cleanupStack(rti, oldStackType);
+		cleanupStack(rti, oldStackTop);
 		return definition.getTupleSize();
 	}
 
@@ -93,12 +93,12 @@ class ASTUserFunction extends ASTExpression {
 			return;
 		}
 		if (rti == null) throw new DeferUntilRuntimeException();
-		if (rti.getRequestStop()/*TODO || Render.abortEverything*/) {
+		if (rti.isRequestStop()/*TODO || Render.abortEverything*/) {
 			throw new CFDGException("Stopping");
 		}
-		StackType oldStackType = setupStack(rti);
+		int oldStackTop = setupStack(rti);
 		definition.getExp().evaluate(result, shapeDest, rti);
-		cleanupStack(rti, oldStackType);
+		cleanupStack(rti, oldStackTop);
 	}
 
 	@Override
@@ -180,28 +180,28 @@ class ASTUserFunction extends ASTExpression {
 			return null;
 		}
 		if (rti == null) throw new DeferUntilRuntimeException();
-		if (rti.getRequestStop()/*TODO || Render.abortEverything*/) {
+		if (rti.isRequestStop()/*TODO || Render.abortEverything*/) {
 			throw new CFDGException("Stopping");
 		}
-		StackType oldStackType = setupStack(rti);
+		int oldStackType = setupStack(rti);
 		StackRule ret = definition.getExp().evalArgs(rti, parent);
 		cleanupStack(rti, oldStackType);
 		return ret;
 	}
 	
-	private StackType setupStack(RTI rti) {
-		StackType stackType = rti.getLogicalStackTop();
+	private int setupStack(RTI rti) {
+		int stackTop = rti.getLogicalStackTop();
 		if (definition.getStackCount() > 0) {
-			int size = rti.getCFStack().size();
-			rti.getCFStack().get(size).evalArgs(rti, arguments, definition.getParameters(), isLet);
-			rti.setLogicalStackTop((int)new StackType(size).getNumber());
+			int size = rti.getStackSize();
+			rti.stackItem(size - 1).evalArgs(rti, arguments, definition.getParameters(), isLet);
+			rti.setLogicalStackTop(size);
 		}
-		return stackType;
+		return stackTop;
 	}
 
-	private void cleanupStack(RTI rti, StackType stackType) {
+	private void cleanupStack(RTI rti, int stackTop) {
 		if (definition.getStackCount() > 0) {
-			rti.setLogicalStackTop((int)stackType.getNumber());
+			rti.setLogicalStackTop(stackTop);
 		}
 	}
 }

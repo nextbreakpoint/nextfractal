@@ -112,14 +112,15 @@ class ASTTransform extends ASTReplacement {
 			} else {
 				child.getWorldState().getTransform().preConcatenate(transforms[0].get(i - modsLength));
 			}
-			rti.getCurrentSeed().bump();int s = rti.getCFStack().size();
+			rti.getCurrentSeed().bump();
+			int size = rti.getStackSize();
 			for (ASTReplacement rep : body.getBody()) {
 				if (clone) {
 					rti.setCurrentSeed(cloneSeed);
 				}
 				rep.traverse(child, tr || opsOnly, rti);
 			}
-			rti.unwindStack(s, body.getParameters());
+			rti.unwindStack(size, body.getParameters());
 		}
 	}
 
