@@ -35,13 +35,13 @@ import java.util.Stack;
 import com.nextbreakpoint.nextfractal.contextfree.core.Rand64;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.*;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.*;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ShapeType;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ShapeClass;
 import org.antlr.v4.runtime.ANTLRFileStream;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.Token;
 
 public class CFDGDriver {
-	private CFDG cfdg = new CFDG();
+	private CFDG cfdg = new CFDG(this);
 	private Rand64 seed;
 	private Stack<ASTRepContainer> containerStack = new Stack<ASTRepContainer>();
 	private ASTRepContainer paramDecls = new ASTRepContainer(this);
@@ -203,8 +203,8 @@ public class CFDGDriver {
 		if (rule.getNameIndex() == -1) {
 			error("Shape rules/paths must follow a shape declaration", rule.getLocation());
 		}
-		ShapeType type = cfdg.getShapeType(rule.getNameIndex());
-		if ((rule.isPath() && type == ShapeType.RuleType) || (!rule.isPath() && type == ShapeType.PathType)) {
+		ShapeClass type = cfdg.getShapeType(rule.getNameIndex());
+		if ((rule.isPath() && type == ShapeClass.RuleType) || (!rule.isPath() && type == ShapeClass.PathType)) {
 			error("Cannot mix rules and shapes with the same name", rule.getLocation());
 		}
 		boolean matchesShape = cfdg.addRule(rule);
@@ -461,7 +461,7 @@ public class CFDGDriver {
 			} else if (r.getArgSource() == ArgSource.StackArgs || r.getArgSource() == ArgSource.ShapeArgs) {
 	            // Parameter subpaths must be all ops, but we must check at runtime
 				t = RepElemType.op;
-			} else if (cfdg.getShapeType(r.getShapeType()) == ShapeType.PathType) {
+			} else if (cfdg.getShapeType(r.getShapeType()) == ShapeClass.PathType) {
 				ASTRule rule = cfdg.findRule(r.getShapeType());
 				if (rule != null) {
 					t = RepElemType.fromType(rule.getRuleBody().getRepType());

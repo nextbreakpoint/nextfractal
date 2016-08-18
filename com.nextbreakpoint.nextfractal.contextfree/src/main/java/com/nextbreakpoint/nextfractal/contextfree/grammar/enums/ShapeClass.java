@@ -24,6 +24,6 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.grammar.enums;
 
-public enum ShapeType {
+public enum ShapeClass {
 	NewShape, RuleType, PathType;
 }

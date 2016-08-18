@@ -28,7 +28,7 @@ import java.awt.geom.PathIterator;
 
 import com.nextbreakpoint.nextfractal.contextfree.grammar.*;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.*;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.PrimShape;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.PrimShapeType;
 import org.antlr.v4.runtime.Token;
 
 public class ASTRule extends ASTReplacement implements Comparable<ASTRule> {
@@ -67,7 +67,7 @@ public class ASTRule extends ASTReplacement implements Comparable<ASTRule> {
 		this.weight = 1.0f;
 		this.weightType = WeightType.NoWeight;
 		this.cachedPath = null;
-		if (nameIndex != PrimShape.circleType.getType()) {
+		if (nameIndex != PrimShapeType.circleType.getType()) {
 			com.nextbreakpoint.nextfractal.contextfree.grammar.PrimShape shape = com.nextbreakpoint.nextfractal.contextfree.grammar.PrimShape.getShapeMap().get(nameIndex);
 			double[] coords = new double[6];
 			int cmd;

@@ -76,4 +76,8 @@ public class AffineTransformTime {
 	public void setEnd(double end) {
 		this.end = end;
 	}
+
+	public boolean overlaps(AffineTransformTime frameTimeBounds) {
+		return false;
+	}
 }

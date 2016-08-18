@@ -44,4 +44,8 @@ public class FinishedShape extends Shape implements Comparable<FinishedShape> {
 			return worldState.getTransformZ().tz() - o.worldState.getTransformZ().tz() < 0 ? -1 : 1;
 		}
 	}
+
+	public Bounds bounds() {
+		return bounds;
+	}
 }

@@ -24,12 +24,12 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.grammar.enums;
 
-public enum PrimShape {
-	circleType(0), squareType(1), triangleType(2), fillTypr(3);
+public enum PrimShapeType {
+	circleType(0), squareType(1), triangleType(2), fillType(3);
 	
 	private int type;
 
-	private PrimShape(int type) {
+	private PrimShapeType(int type) {
 		this.type = type;
 	}
 

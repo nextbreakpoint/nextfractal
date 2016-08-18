@@ -29,17 +29,17 @@ import com.nextbreakpoint.nextfractal.contextfree.core.Bounds;
 import com.nextbreakpoint.nextfractal.contextfree.core.Rand64;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.*;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.*;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.PrimShape;
 import org.antlr.v4.runtime.Token;
 
 import java.awt.geom.AffineTransform;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
 import java.util.*;
+import java.util.function.Function;
 
 public class RTI {
-	private static final double FIXED_BORDER = 1;
-	private static final double SHAPE_BORDER = 1;
+	private static final double FIXED_BORDER = 8.0;
+	private static final double SHAPE_BORDER = 1.0;
 
 	private int width;
 	private int height;
@@ -70,9 +70,10 @@ public class RTI {
 
 	private CFDG cfdg;
 	private Canvas canvas;
+	private TiledCanvas tiledCanvas;
 	private PathIterator iterator;
 	private boolean colorConflict;
-	private int maxShapes;
+	private int maxShapes = 500000000;
 	private boolean tiled;
 	private boolean sized;
 	private boolean timed;
@@ -86,8 +87,8 @@ public class RTI {
 
 	private double scaleArea;
 	private double scale;
-	private double fixedBoderX;
-	private double fixedBoderY;
+	private double fixedBorderX;
+	private double fixedBorderY;
 	private double shapeBorder;
 	private double totalArea;
 	private double currentArea;
@@ -95,18 +96,17 @@ public class RTI {
 	private double currArea;
 	private double minArea;
 	private double minSize;
-	private Bounds pathBounds;
 	private Bounds bounds;
+	private Bounds pathBounds;
+	private AffineTransform currTransform;
 	private AffineTransformTime timeBounds;
 	private AffineTransformTime frameTimeBounds;
-	private AffineTransform currTransform;
 	private int outputSoFar;
-	private List<AffineTransform> symetryOps;
 
-	private List<FinishedShape> finishedShapes = new ArrayList<>();
+	private List<CommandInfo> shapeMap = new ArrayList<>();
+	private List<AffineTransform> symmetryOps = new ArrayList<>();
 	private List<Shape> unfinishedShapes = new ArrayList<>();
-
-	private Map<CommandInfo, PrimShape> shapeMap = new HashMap<>();
+	private List<FinishedShape> finishedShapes = new ArrayList<>();
 
 	public RTI(CFDG cfdg, int width, int height, double minSize, int variation, double border) {
 		this.cfdg = cfdg;
@@ -117,6 +117,21 @@ public class RTI {
 		this.border = border;
 		cfStack = new StackType[8192];
 		cfStackSize = 0;
+		frameTimeBounds = AffineTransformTime.getTranslateInstance(Double.MIN_VALUE, Double.MAX_VALUE);
+
+		//TODO rivedere
+
+		for (PrimShape primShape : PrimShape.getShapeMap().values()) {
+			shapeMap.add(new CommandInfo(primShape));
+		}
+
+		double[] value = new double[1];
+		value[0] = 0;
+		cfdg.hasParameter(CFG.FrameTime, value, null);
+		currentTime = value[0];
+		value[0] = 0;
+		cfdg.hasParameter(CFG.Frame, value, null);
+		currentFrame = value[0];
 	}
 
 	public ASTCompiledPath getCurrentPath() {
@@ -183,12 +198,12 @@ public class RTI {
 		this.requestStop = requestStop;
 	}
 
-	public double getMaxShapes() {
-		return maxSteps;
+	public int getMaxShapes() {
+		return maxShapes;
 	}
 
-	public void setMaxShapes(double maxSteps) {
-		this.maxSteps = maxSteps;
+	public void setMaxShapes(int maxShapes) {
+		this.maxShapes = (maxShapes != 0) ? maxShapes : 400000000;
 	}
 
 	public Point2D.Double getLastPoint() {
@@ -302,8 +317,8 @@ public class RTI {
 			}
 		}
 
-		fixedBoderX = 0;
-		fixedBoderY = 0;
+		fixedBorderX = 0;
+		fixedBorderY = 0;
 		shapeBorder = 0;
 		totalArea = 0;
 		minArea = 0.3;
@@ -312,17 +327,17 @@ public class RTI {
 		cfdg.hasParameter(CFG.MinimumSize, value, this);
 		value[0] = (value[0] <= 0.0) ? 0.3 : value[0];
 		minArea = value[0] * value[0];
-		fixedBoderX = FIXED_BORDER * ((border <= 1.0) ? border : 1.0);
+		fixedBorderX = FIXED_BORDER * ((border <= 1.0) ? border : 1.0);
 		shapeBorder = SHAPE_BORDER * ((border <= 1.0) ? 1.0 : border);
 
 		cfdg.hasParameter(CFG.BorderFixed, value, this);
-		fixedBoderX = value[0];
+		fixedBorderX = value[0];
 
 		cfdg.hasParameter(CFG.BorderDynamic, value, this);
 		shapeBorder = value[0];
 
-		if (2 * (int)Math.abs(fixedBoderX) >= Math.min(width, height)) {
-			fixedBoderX = 0;
+		if (2 * (int)Math.abs(fixedBorderX) >= Math.min(width, height)) {
+			fixedBorderX = 0;
 		}
 
 		if (shapeBorder <= 0.0) {
@@ -339,6 +354,7 @@ public class RTI {
 		currentPath = new ASTCompiledPath(cfdg.getDriver(), null);
 
 		cfdg.getSymmetry(symmetryOps, this);
+
 		cfdg.setBackgroundColor(this);
 	}
 
@@ -433,27 +449,198 @@ public class RTI {
 	}
 
 	public void initBounds() {
-		// TODO Auto-generated method stub
+		init();
+
+		double[] vector = new double[2];
+
+		tiled = cfdg.isTiled(null, vector);
+		frieze = cfdg.isFrieze(null, vector);
+		sized = cfdg.isSized(vector);
+		timed = cfdg.isTimed(timeBounds);
+
+		double tileX = vector[0];
+		double tileY = vector[1];
+
+		if (tiled || sized) {
+			fixedBorderX = shapeBorder = 0.0;
+			bounds.setMinX(-tileX / 2.0);
+			bounds.setMinY(-tileY / 2.0);
+			bounds.setMaxX(tileX / 2.0);
+			bounds.setMaxY(tileY / 2.0);
+			rescaleOutput(width, height, true);
+			scaleArea = currArea;
+		}
+
+		if (frieze == FriezeType.FriezeX)
+			friezeSize = tileX / 2.0;
+		if (frieze == FriezeType.FriezeY)
+			friezeSize = tileY / 2.0;
+		if (frieze != FriezeType.FriezeY)
+			fixedBorderY = fixedBorderX;
+		if (frieze == FriezeType.FriezeX)
+			fixedBorderX = 0;
+	}
+
+	public void resetSize(int x, int y) {
+		this.width = x;
+		this.height = y;
+		if (tiled || sized) {
+			currScale = currArea = 0.0;
+			rescaleOutput(width, height, true);
+			scaleArea = currArea;
+		}
+	}
+
+	public void cleanup() {
+		// TODO rivedere
+
+//		for (FinishedShape shape : finishedShapes) {
+//			if (shape.isAbortEverything()) {
+//				break;
+//			}
+//		}
+
+		finishedShapes.clear();
+		unfinishedShapes.clear();
+
+		unwindStack(0, cfdg.getContents().getParameters());
+
+		currentPath = null;
+
+		cfdg.resetCachedPaths();
 	}
 
 	public void resetBounds() {
-		// TODO Auto-generated method stub
-	}
-
-	public void resetSize(int width, int height) {
-		// TODO Auto-generated method stub
+		bounds = new Bounds();
 	}
 
 	public void run(Canvas canvas) {
 		// TODO Auto-generated method stub
+
+
+
 	}
 
 	public void draw(Canvas canvas) {
-		// TODO Auto-generated method stub
+		frameTimeBounds = AffineTransformTime.getTranslateInstance(Double.MIN_VALUE, Double.MAX_VALUE);
+		outputPrep(canvas);
+		outputFinal();
+		outputStats();
 	}
 
 	public void animate(Canvas canvas) {
 		// TODO Auto-generated method stub
+	}
+
+	private void outputPrep(Canvas canvas) {
+		this.canvas = canvas;
+
+		if (canvas != null) {
+			width = canvas.getWidth();
+			height = canvas.getHeight();
+
+			if (tiled || frieze != FriezeType.NoFrieze) {
+				AffineTransform transform = new AffineTransform();
+				cfdg.isTiled(transform, null);
+				cfdg.isFrieze(transform, null);
+				tiledCanvas = new TiledCanvas(canvas, transform, frieze);
+				tiledCanvas.setScale(currScale);
+				canvas = tiledCanvas;
+			}
+
+			frameTimeBounds = AffineTransformTime.getTranslateInstance(Double.MIN_VALUE, Double.MAX_VALUE);
+		}
+
+		requestStop = false;
+		requestFinishUp = false;
+		requestUpdate = false;
+
+		// TODO aggiungere stats
+	}
+
+	private void outputFinal() {
+		// TODO Auto-generated method stub
+	}
+
+	private void outputStats() {
+		// TODO Auto-generated method stub
+		requestUpdate = false;
+	}
+
+	private void rescaleOutput(int width, int height, boolean finalStep) {
+		// TODO Auto-generated method stub
+	}
+
+	private void output(boolean finalStep) {
+		// TODO Auto-generated method stub
+	}
+
+	private void forEachShape(boolean finalStep, Function<FinishedShape, Void> shapeFunction) {
+		if (!finalStep) {
+			finishedShapes.stream().forEach(shape -> shapeFunction.apply(shape));
+			outputSoFar = finishedShapes.size();
+		} else {
+			//TODO rivedere
+			OutputMerge merger = new OutputMerge();
+			merger.addShapes(finishedShapes);
+			merger.merge(shapeFunction);
+		}
+	}
+
+	private void drawShape(FinishedShape shape) {
+		if (requestStop) {
+			throw new StopException();
+		}
+
+		if (!finalStep && requestFinishUp) {
+			throw new StopException();
+		}
+
+		if (requestUpdate) {
+			outputStats();
+		}
+
+		if (!shape.getWorldState().getTransformTime().overlaps(frameTimeBounds)) {
+			return;
+		}
+
+		AffineTransform transform = shape.getWorldState().getTransform();
+
+		transform.preConcatenate(currTransform);
+
+		double a = shape.getWorldState().getTransformZ().sz() + currArea;
+
+		if (!Double.isFinite(a) && shape.getShapeType() != PrimShapeType.fillType.getType()) {
+			Bounds b = shape.bounds();
+			Point2D.Double p1 = new Point2D.Double(b.getMinX(), b.getMinY());
+			currTransform.transform(p1, p1);
+			b.setMinX(p1.getX());
+			b.setMinY(p1.getY());
+			Point2D.Double p2 = new Point2D.Double(b.getMaxX(), b.getMaxY());
+			currTransform.transform(p2, p2);
+			b.setMaxX(p2.getX());
+			b.setMaxY(p2.getY());
+			tiledCanvas.tileTransform(b);
+		}
+
+		if (cfdg.getShapeType(shape.getShapeType()) == ShapeClass.PathType) {
+			ASTRule rule = cfdg.findRule(shape.getShapeType());
+			rule.traversePath(shape, this);
+		} else {
+			double[] color = cfdg.getColor(shape.getWorldState().color());
+			if (PrimShape.isPrimShape(shape.getShapeType())) {
+				canvas.primitive(shape.getShapeType(), color, transform);
+			} else {
+				error("Non drawable shape with no rules: " + cfdg.decodeShapeName(shape.getShapeType()));
+				requestStop = true;
+				throw new StopException();
+			}
+		}
+	}
+
+	private void error(String message) {
+		//TODO completare
+		System.out.println(message);
 	}
 
 	private void warning(Token location, String message) {

@@ -56,6 +56,15 @@ public class CFDG {
 	private boolean usesTime;
 	private boolean usesFrameTime;
 	private boolean uses16bitColor;
+	private CFDGDriver cfdgDriver;
+
+	public CFDG(CFDGDriver cfdgDriver) {
+		this.cfdgDriver = cfdgDriver;
+	}
+
+	public CFDGDriver getDriver() {
+		return cfdgDriver;
+	}
 
 	public Shape getInitialShape(RTI rti) {
 		Shape shape = new Shape();
@@ -125,8 +134,8 @@ public class CFDG {
 	public boolean addRule(ASTRule rule) {
 		rules.push(rule);
 		ShapeType type = shapeTypes.get(rule.getNameIndex());
-		if (type.getShapeType() == com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ShapeType.NewShape) {
-			type.setShapeType(rule.isPath() ? com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ShapeType.PathType : com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ShapeType.RuleType);
+		if (type.getShapeType() == ShapeClass.NewShape) {
+			type.setShapeType(rule.isPath() ? ShapeClass.PathType : ShapeClass.RuleType);
 		}
 		if (type.getParameters() != null && !type.getParameters().isEmpty()) {
 			rule.getRuleBody().getParameters().clear();
@@ -460,7 +469,7 @@ public class CFDG {
 		return shapeTypes.size() - 1;
 	}
 
-	public com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ShapeType getShapeType(int nameIndex) {
+	public ShapeClass getShapeType(int nameIndex) {
 		return shapeTypes.get(nameIndex).getShapeType();
 	}
 
@@ -490,7 +499,7 @@ public class CFDG {
 			if (p.getParameters().isEmpty()) {
 				return "Shape has already been declared. Parameter declaration must be on the first shape declaration only";
 			}
-			if (type.getShapeType() == com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ShapeType.PathType && !isPath) {
+			if (type.getShapeType() == ShapeClass.PathType && !isPath) {
 				return "Shape name already in use by another rule or path";
 			}
 			if (isPath) {
@@ -498,14 +507,14 @@ public class CFDG {
 			}
 			return null;
 		}
-		if (type.getShapeType() != com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ShapeType.NewShape) {
+		if (type.getShapeType() != ShapeClass.NewShape) {
 			return "Shape name already in use by another rule or path";
 		}
 		type.getParameters().clear();
 		type.getParameters().addAll(p.getParameters());
 		type.setIsShape(true);
 		type.setArgSize(argSize);
-		type.setShapeType(isPath ? com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ShapeType.PathType : com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ShapeType.NewShape);
+		type.setShapeType(isPath ? ShapeClass.PathType : ShapeClass.NewShape);
 		return null;
 	}
 
@@ -603,7 +612,7 @@ public class CFDG {
 
 			if (hasParameter(CFG.MaxShapes, maxShape, null)) {
 				if (maxShape[0] > 1) {
-					rti.setMaxShapes(maxShape[0]);
+					rti.setMaxShapes((int)maxShape[0]);
 				}
 			}
 
@@ -766,5 +775,9 @@ public class CFDG {
 	public void traverse(Shape shape, boolean tr, RTI rti) {
 		ASTRule rule = rules.iterator().next();
 		rule.traverse(shape, tr, rti);
+	}
+
+	public void getSymmetry(List<AffineTransform> symetryOps, RTI rti) {
+		// TODO da completare
 	}
 }

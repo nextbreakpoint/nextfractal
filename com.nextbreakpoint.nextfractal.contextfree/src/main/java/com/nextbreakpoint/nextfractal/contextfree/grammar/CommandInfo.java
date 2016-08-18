@@ -29,6 +29,10 @@ import java.awt.geom.GeneralPath;
 public class CommandInfo {
     private GeneralPath path;
 
+    public CommandInfo(PrimShape primShape) {
+        // TODO Auto-generated method stub
+    }
+
     public GeneralPath getPath() {
         return path;
     }
