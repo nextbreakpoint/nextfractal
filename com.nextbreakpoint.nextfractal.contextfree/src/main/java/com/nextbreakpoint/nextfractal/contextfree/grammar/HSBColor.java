@@ -24,6 +24,8 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.grammar;
 
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.AssignmentType;
+
 import java.util.Arrays;
 
 public class HSBColor {
@@ -162,7 +164,7 @@ public class HSBColor {
 
 		double h = 0;
 
-		if (useTarget != EAssignmentType.None.getType()) {
+		if (useTarget != AssignmentType.None.getType()) {
 			// decrease or increase toward target. If the target hue does not
 			// cooperate by being smaller (or larger) than the current hue then
 			// add/subtract 360 to make it so. This only works if all hues are
@@ -188,7 +190,7 @@ public class HSBColor {
 			return base;
 		}
 
-		if (useTarget != EAssignmentType.None.getType()) {
+		if (useTarget != 0) {
 			// If we are really close to the target then don't change, even if
 			// the adjustment is negative (which way would we go?)
 			if (adjustment > 0 && Math.abs(base - target) < EQUALITY_THRESHOLD) {
@@ -216,23 +218,23 @@ public class HSBColor {
 		int current = 0;
 		boolean twoValue = false;
 
-		current = assignment & EAssignmentType.HueMask.getType();
-		twoValue = current == EAssignmentType.Hue2Value.getType();
+		current = assignment & AssignmentType.HueMask.getType();
+		twoValue = current == AssignmentType.Hue2Value.getType();
 		dest.setHue(adjustHue(dest.hue(), adjustment.hue(), current, twoValue ? adjustmentTarget.hue() : destTarget.hue()));
 		if (!twoValue) destTarget.setHue(adjustHue(destTarget.hue(), adjustmentTarget.hue()));
 
-		current = assignment & EAssignmentType.SaturationMask.getType();
-		twoValue = current == EAssignmentType.Saturation2Value.getType();
+		current = assignment & AssignmentType.SaturationMask.getType();
+		twoValue = current == AssignmentType.Saturation2Value.getType();
 		dest.setSat(adjust(dest.sat(), adjustment.sat(), current, twoValue ? adjustmentTarget.sat() : destTarget.sat()));
 		if (!twoValue) destTarget.setSat(adjust(destTarget.sat(), adjustmentTarget.sat()));
 
-		current = assignment & EAssignmentType.BrightnessMask.getType();
-		twoValue = current == EAssignmentType.Brightness2Value.getType();
+		current = assignment & AssignmentType.BrightnessMask.getType();
+		twoValue = current == AssignmentType.Brightness2Value.getType();
 		dest.setBright(adjust(dest.bright(), adjustment.bright(), current, twoValue ? adjustmentTarget.bright() : destTarget.bright()));
 		if (!twoValue) destTarget.setBright(adjust(destTarget.bright(), adjustmentTarget.bright()));
 
-		current = assignment & EAssignmentType.AlphaMask.getType();
-		twoValue = current == EAssignmentType.Alpha2Value.getType();
+		current = assignment & AssignmentType.AlphaMask.getType();
+		twoValue = current == AssignmentType.Alpha2Value.getType();
 		dest.setAlpha(adjust(dest.alpha(), adjustment.alpha(), current, twoValue ? adjustmentTarget.alpha() : destTarget.alpha()));
 		if (!twoValue) destTarget.setAlpha(adjust(destTarget.alpha(), adjustmentTarget.alpha()));
 	}

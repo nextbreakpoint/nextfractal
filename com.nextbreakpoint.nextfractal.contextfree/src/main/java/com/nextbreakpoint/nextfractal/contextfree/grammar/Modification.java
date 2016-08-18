@@ -24,9 +24,14 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.grammar;
 
+import com.nextbreakpoint.nextfractal.contextfree.core.AffineTransform1D;
+import com.nextbreakpoint.nextfractal.contextfree.core.AffineTransformTime;
+import com.nextbreakpoint.nextfractal.contextfree.core.Rand64;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.AssignmentType;
+
 import java.awt.geom.AffineTransform;
 
-class Modification {
+public class Modification {
 	private Rand64 rand64Seed = new Rand64();
 	private AffineTransform transform = new AffineTransform();
 	private AffineTransform1D transformZ = new AffineTransform1D();
@@ -128,8 +133,8 @@ class Modification {
 		// TODO rivedere
 
 		boolean conflict = (colorAssignment & modification.colorAssignment) != 0 ||
-				((modification.colorAssignment & EAssignmentType.HueMask.getType()) != 0 && color.hue() != 0.0) ||
-				((colorAssignment & EAssignmentType.HueMask.getType()) != 0 && modification.color.hue() != 0.0) ||
+				((modification.colorAssignment & AssignmentType.HueMask.getType()) != 0 && color.hue() != 0.0) ||
+				((colorAssignment & AssignmentType.HueMask.getType()) != 0 && modification.color.hue() != 0.0) ||
 				(color.bright() != 0.0 && modification.color.bright() != 0.0) ||
 				(color.sat() != 0.0 && modification.color.sat() != 0.0) ||
 				(color.alpha() != 0.0 && modification.color.alpha() != 0.0);

@@ -22,8 +22,27 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.contextfree.grammar;
+package com.nextbreakpoint.nextfractal.contextfree.grammar.enums;
 
-public class DeferUntilRuntimeException extends RuntimeException {
-	private static final long serialVersionUID = 1L;
+public enum RepElemType {
+	rule(8), replacement(4), mixed(3), command(2), op(1), empty(0); 
+	
+	private int type;
+	
+	private RepElemType(int type) {
+		this.type = type;
+	}
+
+	public int getType() {
+		return type;
+	}
+
+	public static RepElemType fromType(int type) {
+		for (RepElemType value : RepElemType.values()) {
+			if (value.getType() == type) {
+				return value;
+			}
+		}
+		return empty;
+	}
 }

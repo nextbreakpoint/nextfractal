@@ -24,9 +24,12 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.grammar;
 
+import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTExpression;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTParameter;
+
 import java.util.List;
 
-class StackRule {
+public class StackRule {
     private int ruleName;
     private long refCount;
     private long paramCount;

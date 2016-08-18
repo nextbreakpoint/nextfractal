@@ -24,6 +24,8 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.grammar;
 
+import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTParameter;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,7 +33,7 @@ class ShapeType {
 	private String name;
 	private boolean hasRules;
 	private boolean isShape;
-	private EShapeType shapeType;
+	private com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ShapeType shapeType;
 	private List<ASTParameter> parameters = new ArrayList<ASTParameter>();
 	private int argSize;
 	private boolean shouldHaveNoParams;
@@ -40,7 +42,7 @@ class ShapeType {
 		this.name = name;
 		this.hasRules = false;
 		this.isShape = false;
-		this.shapeType = EShapeType.NewShape;
+		this.shapeType = com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ShapeType.NewShape;
 		this.argSize = 0;
 		this.shouldHaveNoParams = false;
 	}
@@ -69,11 +71,11 @@ class ShapeType {
 		this.isShape = isShape;
 	}
 
-	public EShapeType getShapeType() {
+	public com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ShapeType getShapeType() {
 		return shapeType;
 	}
 
-	public void setShapeType(EShapeType shapeType) {
+	public void setShapeType(com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ShapeType shapeType) {
 		this.shapeType = shapeType;
 	}
 

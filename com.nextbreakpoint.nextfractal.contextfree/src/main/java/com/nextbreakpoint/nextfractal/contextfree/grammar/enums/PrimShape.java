@@ -22,8 +22,18 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.contextfree.grammar;
+package com.nextbreakpoint.nextfractal.contextfree.grammar.enums;
 
-public class DeferUntilRuntimeException extends RuntimeException {
-	private static final long serialVersionUID = 1L;
+public enum PrimShape {
+	circleType(0), squareType(1), triangleType(2), fillTypr(3);
+	
+	private int type;
+
+	private PrimShape(int type) {
+		this.type = type;
+	}
+
+	public int getType() {
+		return type;
+	}
 }

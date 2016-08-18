@@ -22,8 +22,18 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.contextfree.grammar;
+package com.nextbreakpoint.nextfractal.contextfree.grammar.enums;
 
-public class DeferUntilRuntimeException extends RuntimeException {
-	private static final long serialVersionUID = 1L;
+public enum WeightType {
+	NoWeight(1), PercentWeight(2), ExplicitWeight(4);
+	
+	private int type;
+
+	private WeightType(int type) {
+		this.type = type;
+	}
+
+	public int getType() {
+		return type;
+	}
 }

@@ -22,8 +22,14 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.contextfree.grammar;
+package com.nextbreakpoint.nextfractal.contextfree.grammar.enums;
 
-public class DeferUntilRuntimeException extends RuntimeException {
-	private static final long serialVersionUID = 1L;
+public enum ArgSource {
+	NoArgs, // shapeType has no arguments
+	DynamicArgs, // shapeType has non-constant arguments
+	StackArgs, // not shapeType, StackRule* pointer to shape
+	SimpleArgs, // shapeType has constant arguments
+	ParentArgs, // reusing parent args, child shape may be different
+	SimpleParentArgs, // reusing shape args, child shape same as parent
+	ShapeArgs // not shapeType, evalArgs arguments (non-constant) to get shape
 }

@@ -24,6 +24,9 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.grammar;
 
+import com.nextbreakpoint.nextfractal.contextfree.core.AffineTransformTime;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.*;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.*;
 import org.antlr.v4.runtime.Token;
 
 import java.awt.geom.AffineTransform;
@@ -40,8 +43,8 @@ public class CFDG {
 	private List<ShapeType> shapeTypes = new ArrayList<ShapeType>();
 	private Stack<ASTRule> rules = new Stack<ASTRule>();
 	private Map<Integer, ASTDefine> functions = new HashMap<Integer, ASTDefine>();
-	private Map<ECFGParam, Integer> paramDepth = new HashMap<ECFGParam, Integer>();
-	private Map<ECFGParam, ASTExpression> paramExp = new HashMap<ECFGParam, ASTExpression>();
+	private Map<CFG, Integer> paramDepth = new HashMap<CFG, Integer>();
+	private Map<CFG, ASTExpression> paramExp = new HashMap<CFG, ASTExpression>();
 	private Modification tileMod;
 	private Modification sizeMod;
 	private Modification timeMod;
@@ -65,6 +68,10 @@ public class CFDG {
 		return initialShape;
 	}
 
+	public ASTRepContainer getContents() {
+		return cfdgContents;
+	}
+
 	public double[] getBackgroundColor(RTI rti) {
 		return backgroundColor;
 	}
@@ -72,7 +79,7 @@ public class CFDG {
 	public void setBackgroundColor(RTI rti) {
 		Modification white = new Modification();
 		white.setColor(new HSBColor(0.0, 0.0, 1.0, 1.0));
-		if (hasParameter(ECFGParam.Background, white, rti)) {
+		if (hasParameter(CFG.Background, white, rti)) {
 			white.color().getRGBA(backgroundColor);
 			if (!useAlpha) {
 				backgroundColor[3] = 1.0;
@@ -118,8 +125,8 @@ public class CFDG {
 	public boolean addRule(ASTRule rule) {
 		rules.push(rule);
 		ShapeType type = shapeTypes.get(rule.getNameIndex());
-		if (type.getShapeType() == EShapeType.NewShape) {
-			type.setShapeType(rule.isPath() ? EShapeType.PathType : EShapeType.RuleType);
+		if (type.getShapeType() == com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ShapeType.NewShape) {
+			type.setShapeType(rule.isPath() ? com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ShapeType.PathType : com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ShapeType.RuleType);
 		}
 		if (type.getParameters() != null && !type.getParameters().isEmpty()) {
 			rule.getRuleBody().getParameters().clear();
@@ -129,11 +136,11 @@ public class CFDG {
 		return type.isShape();
 	}
 
-	public void addParameter(EParam param) {
+	public void addParameter(Param param) {
 		parameters |= param.getType();
-		usesColor = (parameters & EParam.Color.getType()) != 0;
-		usesTime = (parameters & EParam.Time.getType()) != 0;
-		usesFrameTime = (parameters & EParam.FrameTime.getType()) != 0;
+		usesColor = (parameters & Param.Color.getType()) != 0;
+		usesTime = (parameters & Param.Time.getType()) != 0;
+		usesFrameTime = (parameters & Param.FrameTime.getType()) != 0;
 	}
 
 	public double[] getColor(HSBColor hsb) {
@@ -148,7 +155,7 @@ public class CFDG {
 
 	public boolean isTiled(AffineTransform transform, double[] point) {
 		//TODO completare con location
-		if (!hasParameter(ECFGParam.Tile, EExpType.ModType)) {
+		if (!hasParameter(CFG.Tile, ExpType.ModType)) {
 			return false;
 		}
 
@@ -191,18 +198,18 @@ public class CFDG {
 		return true;
 	}
 
-	public EFriezeType isFrieze(AffineTransform transform, double[] point) {
+	public FriezeType isFrieze(AffineTransform transform, double[] point) {
 		//TODO completare con location
-		if (!hasParameter(ECFGParam.Tile, EExpType.ModType)) {
-			return EFriezeType.NoFrieze;
+		if (!hasParameter(CFG.Tile, ExpType.ModType)) {
+			return FriezeType.NoFrieze;
 		}
 
 		if (tileMod.getTransform().getScaleX() != 0 && tileMod.getTransform().getScaleY() != 0) {
-			return EFriezeType.NoFrieze;
+			return FriezeType.NoFrieze;
 		}
 
 		if (tileMod.getTransform().getScaleX() == 0 && tileMod.getTransform().getScaleY() == 0) {
-			return EFriezeType.NoFrieze;
+			return FriezeType.NoFrieze;
 		}
 
 		if (transform != null) {
@@ -237,12 +244,12 @@ public class CFDG {
 			point[1] = u_y - o_y;
 		}
 
-		return tileMod.getTransform().getScaleX() == 0.0 ? EFriezeType.FriezeY : EFriezeType.FriezeX;
+		return tileMod.getTransform().getScaleX() == 0.0 ? FriezeType.FriezeY : FriezeType.FriezeX;
 	}
 
 	public boolean isSized(double[] point) {
 		//TODO completare con location
-		if (!hasParameter(ECFGParam.Size, EExpType.ModType)) {
+		if (!hasParameter(CFG.Size, ExpType.ModType)) {
 			return false;
 		}
 
@@ -261,7 +268,7 @@ public class CFDG {
 
 	public boolean isTimed(AffineTransformTime transform) {
 		//TODO completare con location
-		if (!hasParameter(ECFGParam.Time, EExpType.ModType)) {
+		if (!hasParameter(CFG.Time, ExpType.ModType)) {
 			return false;
 		}
 
@@ -282,16 +289,16 @@ public class CFDG {
 	public void getSummetry(SymmList syms, RTI rti) {
 		// TODO controllare
 		syms.clear();
-		ASTExpression e = hasParameter(ECFGParam.Symmetry);
+		ASTExpression e = hasParameter(CFG.Symmetry);
 		List<ASTModification> left = getTransforms(e, syms, rti, isTiled(null, null), tileMod.getTransform());
 		if (!left.isEmpty()) {
 			error("At least one term was invalid");
 		}
 	}
 
-	public boolean hasParameter(ECFGParam p, double[] value, RTI rti) {
+	public boolean hasParameter(CFG p, double[] value, RTI rti) {
 		ASTExpression exp = hasParameter(p);
-		if (exp == null || exp.getType() != EExpType.NumericType) {
+		if (exp == null || exp.getType() != ExpType.NumericType) {
 			return false;
 		}
 		if (!exp.isConstant() && rti != null) {
@@ -303,9 +310,9 @@ public class CFDG {
 		return true;
 	}
 
-	public boolean hasParameter(ECFGParam p, Modification value, RTI rti) {
+	public boolean hasParameter(CFG p, Modification value, RTI rti) {
 		ASTExpression exp = hasParameter(p);
-		if (exp == null || exp.getType() != EExpType.ModType) {
+		if (exp == null || exp.getType() != ExpType.ModType) {
 			return false;
 		}
 		if (!exp.isConstant() && rti != null) {
@@ -317,7 +324,7 @@ public class CFDG {
 		return true;
 	}
 
-	public boolean hasParameter(ECFGParam p, EExpType type) {
+	public boolean hasParameter(CFG p, ExpType type) {
 		ASTExpression exp = hasParameter(p);
 		if (exp == null || exp.getType() != type) {
 			return false;
@@ -325,7 +332,7 @@ public class CFDG {
 		return true;
 	}
 
-	public ASTExpression hasParameter(ECFGParam p) {
+	public ASTExpression hasParameter(CFG p) {
 		if (paramDepth.get(p).intValue() == -1) {
 			return null;
 		}
@@ -333,7 +340,7 @@ public class CFDG {
 	}
 
 	public boolean addParameter(String name, ASTExpression exp, int depth) {
-		ECFGParam p = ECFGParam.valueOf(name);
+		CFG p = CFG.valueOf(name);
 		if (p == null) {
 			return false;
 		}
@@ -354,7 +361,7 @@ public class CFDG {
 		int[] weightTypes = new int[shapeTypes.size()];
 
 		for (ASTRule rule : rules) {
-			if (rule.getWeightType() == EWeightType.PercentWeight) {
+			if (rule.getWeightType() == WeightType.PercentWeight) {
 				percentweightsums[rule.getNameIndex()] += rule.getWeight();
 				if (percentweightsums[rule.getNameIndex()] > 1.0001) {
 					error("Percentages exceed 100%");
@@ -368,8 +375,8 @@ public class CFDG {
 
 		for (ASTRule rule : rules) {
 			double weight = rule.getWeight() / weightsums[rule.getNameIndex()];
-			if ((weightTypes[rule.getNameIndex()] & EWeightType.PercentWeight.getType()) != 0) {
-				if (rule.getWeightType() == EWeightType.PercentWeight) {
+			if ((weightTypes[rule.getNameIndex()] & WeightType.PercentWeight.getType()) != 0) {
+				if (rule.getWeightType() == WeightType.PercentWeight) {
 					weight = rule.getWeight();
 				} else {
 					weight *= 1.0 - percentweightsums[rule.getNameIndex()];
@@ -378,7 +385,7 @@ public class CFDG {
 					}
 				}
 			}
-			if (weightTypes[rule.getNameIndex()] == EWeightType.PercentWeight.getType() && Math.abs(percentweightsums[rule.getNameIndex()] - 1.0) > 0.0001) {
+			if (weightTypes[rule.getNameIndex()] == WeightType.PercentWeight.getType() && Math.abs(percentweightsums[rule.getNameIndex()] - 1.0) > 0.0001) {
 				warning("Percentages do not sum to 100%");
 			}
 			if (!Double.isFinite(weight)) {
@@ -396,29 +403,29 @@ public class CFDG {
 
 		driver.setLocalStackDepth(0);
 
-		cfdgContents.compile(ECompilePhase.TypeCheck, null, null);
+		cfdgContents.compile(CompilePhase.TypeCheck, null, null);
 
 		if (driver.errorOccured()) {
-			cfdgContents.compile(ECompilePhase.Simplify, null, null);
+			cfdgContents.compile(CompilePhase.Simplify, null, null);
 		}
 
 		double[] value = new double[1];
-		uses16bitColor = hasParameter(ECFGParam.ColorDepth, value, null) && Math.floor(value[0]) == 16;
+		uses16bitColor = hasParameter(CFG.ColorDepth, value, null) && Math.floor(value[0]) == 16;
 
-		if (hasParameter(ECFGParam.Color, value, null)) {
+		if (hasParameter(CFG.Color, value, null)) {
 			usesColor = value[0] != 0;
 		}
 
-		if (hasParameter(ECFGParam.Alpha, value, null)) {
+		if (hasParameter(CFG.Alpha, value, null)) {
 			usesColor = value[0] != 0;
 		}
 
-		ASTExpression e = hasParameter(ECFGParam.Background);
-		if (e != null && e instanceof  ASTModification) {
+		ASTExpression e = hasParameter(CFG.Background);
+		if (e != null && e instanceof ASTModification) {
 			ASTModification m = (ASTModification) e;
 			useAlpha = m.getModData().color().alpha() != 1.0;
 			for (ASTModTerm term : m.getModExp()) {
-				if (term.getModType() == EModType.alpha || term.getModType() == EModType.alphaTarg) {
+				if (term.getModType() == ModType.alpha || term.getModType() == ModType.alphaTarg) {
 					useAlpha = true;
 				}
 			}
@@ -453,7 +460,7 @@ public class CFDG {
 		return shapeTypes.size() - 1;
 	}
 
-	public EShapeType getShapeType(int nameIndex) {
+	public com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ShapeType getShapeType(int nameIndex) {
 		return shapeTypes.get(nameIndex).getShapeType();
 	}
 
@@ -483,7 +490,7 @@ public class CFDG {
 			if (p.getParameters().isEmpty()) {
 				return "Shape has already been declared. Parameter declaration must be on the first shape declaration only";
 			}
-			if (type.getShapeType() == EShapeType.PathType && !isPath) {
+			if (type.getShapeType() == com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ShapeType.PathType && !isPath) {
 				return "Shape name already in use by another rule or path";
 			}
 			if (isPath) {
@@ -491,14 +498,14 @@ public class CFDG {
 			}
 			return null;
 		}
-		if (type.getShapeType() != EShapeType.NewShape) {
+		if (type.getShapeType() != com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ShapeType.NewShape) {
 			return "Shape name already in use by another rule or path";
 		}
 		type.getParameters().clear();
 		type.getParameters().addAll(p.getParameters());
 		type.setIsShape(true);
 		type.setArgSize(argSize);
-		type.setShapeType(isPath ? EShapeType.PathType : EShapeType.NewShape);
+		type.setShapeType(isPath ? com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ShapeType.PathType : com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ShapeType.NewShape);
 		return null;
 	}
 
@@ -548,7 +555,7 @@ public class CFDG {
 
 	public RTI renderer(CFDGDriver driver, int width, int height, double minSize, int variation, double border) {
 		try {
-			ASTExpression startExp = paramExp.get(ECFGParam.StartShape);
+			ASTExpression startExp = paramExp.get(CFG.StartShape);
 
 			if (startExp == null) {
 				error("No startshape found");
@@ -574,7 +581,7 @@ public class CFDG {
 
 			double[] maxShape = new double[0];
 
-			if (hasParameter(ECFGParam.Tile, tiled, null)) {
+			if (hasParameter(CFG.Tile, tiled, null)) {
 				tileMod = tiled;
 				AffineTransform transform = tileMod.getTransform();
 				tileOffset.setLocation(transform.getTranslateX(), transform.getTranslateY());
@@ -582,7 +589,7 @@ public class CFDG {
 				tileMod.setTransform(t);
 			}
 
-			if (hasParameter(ECFGParam.Size, sized, null)) {
+			if (hasParameter(CFG.Size, sized, null)) {
 				sizeMod = sized;
 				AffineTransform transform = sizeMod.getTransform();
 				tileOffset.setLocation(transform.getTranslateX(), transform.getTranslateY());
@@ -590,11 +597,11 @@ public class CFDG {
 				tileMod.setTransform(t);
 			}
 
-			if (hasParameter(ECFGParam.Time, timed, null)) {
+			if (hasParameter(CFG.Time, timed, null)) {
 				timeMod = timed;
 			}
 
-			if (hasParameter(ECFGParam.MaxShapes, maxShape, null)) {
+			if (hasParameter(CFG.MaxShapes, maxShape, null)) {
 				if (maxShape[0] > 1) {
 					rti.setMaxShapes(maxShape[0]);
 				}
@@ -630,7 +637,7 @@ public class CFDG {
 					processSymmSpec(syms, transform, tiled, symmSpec, cit.getLocation());
 					break;
 				case NumericType:
-					if (symmSpec.isEmpty() && cit.getType() != EExpType.FlagType) {
+					if (symmSpec.isEmpty() && cit.getType() != ExpType.FlagType) {
 						error("Symmetry flag expected here");
 					}
 					int sz = cit.evaluate(null, 0);
@@ -651,7 +658,7 @@ public class CFDG {
 					processSymmSpec(syms, transform, tiled, symmSpec, cit.getLocation());
 					if (cit instanceof ASTModification) {
 						ASTModification m = (ASTModification)cit;
-						if (m.getModClass() != null && m.getModClass().getType() == (EModClass.GeomClass.getType() | EModClass.PathOpClass.getType()) && (rti != null || m.isConstant())) {
+						if (m.getModClass() != null && m.getModClass().getType() == (ModClass.GeomClass.getType() | ModClass.PathOpClass.getType()) && (rti != null || m.isConstant())) {
 							Modification mod = new Modification();
 							cit.evaluate(mod, false, rti);
 							addUnique(syms, sizeMod.getTransform());
@@ -685,7 +692,7 @@ public class CFDG {
 		}
 
 		int type = data.get(0).intValue();
-		EFlagType flag = EFlagType.fromType(type);
+		FlagType flag = FlagType.fromMask(type);
 
 		boolean frieze = (transform.getScaleX() != 0.0 || transform.getScaleY() != 0.0) && transform.getScaleX() * transform.getScaleY() == 0.0;
 		boolean rhombic = tiled && ((Math.abs(transform.getShearY()) <= 0.0000001 && Math.abs(transform.getShearX() / transform.getScaleX() - 0.5) < 0.0000001) || (Math.abs(transform.getShearX()) <= 0.0000001 && Math.abs(transform.getShearY() / transform.getScaleY() - 0.5) < 0.0000001));
@@ -715,15 +722,15 @@ public class CFDG {
 			size45 = Math.min(dist01, dist10);
 		}
 
-		if (type >= EFlagType.CF_P11G.getType() && type <= EFlagType.CF_P2MM.getType() && !frieze) {
+		if (type >= FlagType.CF_P11G.getMask() && type <= FlagType.CF_P2MM.getMask() && !frieze) {
 			error("Frieze symmetry only works in frieze designs");
 		}
 
-		if (type >= EFlagType.CF_PM.getType() && type <= EFlagType.CF_P6M.getType() && !tiled) {
+		if (type >= FlagType.CF_PM.getMask() && type <= FlagType.CF_P6M.getMask() && !tiled) {
 			error("Wallpaper symmetry only works in tiled designs");
 		}
 
-		if (type >= EFlagType.CF_P2.getType() && !frieze && !tiled) {
+		if (type >= FlagType.CF_P2.getMask() && !frieze && !tiled) {
 			error("p2 symmetry only works in frieze or tiled designs");
 		}
 
@@ -750,7 +757,7 @@ public class CFDG {
 		System.err.println(message);
 	}
 
-	public void compile(ECompilePhase ph) {
+	public void compile(CompilePhase ph) {
 		for (ASTRule rule : rules) {
 			rule.compile(ph);
 		}

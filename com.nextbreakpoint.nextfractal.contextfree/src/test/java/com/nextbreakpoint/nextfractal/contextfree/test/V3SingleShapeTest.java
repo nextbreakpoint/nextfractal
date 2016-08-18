@@ -25,16 +25,13 @@
 package com.nextbreakpoint.nextfractal.contextfree.test;
 
 import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDG;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.RTI;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.Shape;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import java.io.IOException;
 
-import static com.nextbreakpoint.nextfractal.contextfree.grammar.ECompilePhase.*;
+import static com.nextbreakpoint.nextfractal.contextfree.grammar.enums.CompilePhase.*;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;

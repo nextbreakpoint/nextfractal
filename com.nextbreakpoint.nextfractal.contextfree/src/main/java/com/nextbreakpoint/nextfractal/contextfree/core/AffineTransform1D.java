@@ -22,8 +22,39 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.contextfree.grammar;
+package com.nextbreakpoint.nextfractal.contextfree.core;
 
-public class DeferUntilRuntimeException extends RuntimeException {
-	private static final long serialVersionUID = 1L;
+public class AffineTransform1D {
+	private double sz;
+	private double tz;
+	
+	private AffineTransform1D(double sz, double tz) {
+		this.sz = sz;
+		this.tz = tz;
+	}
+
+	public AffineTransform1D() {
+		this(1, 0);
+	}
+
+	public static AffineTransform1D getTranslateInstance(double tz) {
+		return new AffineTransform1D(1.0, tz);
+	}
+	
+	public static AffineTransform1D getScaleInstance(double sz) {
+		return new AffineTransform1D(sz, 0.0);
+	}
+
+	public void preConcatenate(AffineTransform1D t) {
+		this.sz = this.sz * t.sz;
+		this.tz = this.tz * t.sz + t.tz;
+	}
+
+	public double tz() {
+		return tz;
+	}
+
+	public double sz() {
+		return sz;
+	}
 }

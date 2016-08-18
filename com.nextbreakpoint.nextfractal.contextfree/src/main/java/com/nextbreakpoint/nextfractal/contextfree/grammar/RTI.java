@@ -24,19 +24,26 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.grammar;
 
+import com.nextbreakpoint.nextfractal.contextfree.core.AffineTransformTime;
+import com.nextbreakpoint.nextfractal.contextfree.core.Bounds;
+import com.nextbreakpoint.nextfractal.contextfree.core.Rand64;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.*;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.*;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.PrimShape;
 import org.antlr.v4.runtime.Token;
 
+import java.awt.geom.AffineTransform;
+import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 public class RTI {
-	private CFDG cfdg;
+	private static final double FIXED_BORDER = 1;
+	private static final double SHAPE_BORDER = 1;
+
 	private int width;
 	private int height;
-	private double minSize;
-	private int variation;
-	private double border;
+
 	private Point2D.Double lastPoint;
 	private boolean stop;
 	private boolean closed;
@@ -45,6 +52,7 @@ public class RTI {
 	private boolean opsOnly;
 	private int index;
 	private int nextIndex;
+
 	private int cfStackSize;
 	private int cfLogicalStackTop;
 	private StackType[] cfStack;
@@ -59,6 +67,46 @@ public class RTI {
 	private boolean requestStop;
 	private boolean requestFinishUp;
 	private boolean requestUpdate;
+
+	private CFDG cfdg;
+	private Canvas canvas;
+	private PathIterator iterator;
+	private boolean colorConflict;
+	private int maxShapes;
+	private boolean tiled;
+	private boolean sized;
+	private boolean timed;
+	private FriezeType frieze;
+	private double friezeSize;
+	private boolean drawingMode;
+	private boolean finalStep;
+
+	private int variation;
+	private double border;
+
+	private double scaleArea;
+	private double scale;
+	private double fixedBoderX;
+	private double fixedBoderY;
+	private double shapeBorder;
+	private double totalArea;
+	private double currentArea;
+	private double currScale;
+	private double currArea;
+	private double minArea;
+	private double minSize;
+	private Bounds pathBounds;
+	private Bounds bounds;
+	private AffineTransformTime timeBounds;
+	private AffineTransformTime frameTimeBounds;
+	private AffineTransform currTransform;
+	private int outputSoFar;
+	private List<AffineTransform> symetryOps;
+
+	private List<FinishedShape> finishedShapes = new ArrayList<>();
+	private List<Shape> unfinishedShapes = new ArrayList<>();
+
+	private Map<CommandInfo, PrimShape> shapeMap = new HashMap<>();
 
 	public RTI(CFDG cfdg, int width, int height, double minSize, int variation, double border) {
 		this.cfdg = cfdg;
@@ -240,6 +288,58 @@ public class RTI {
 		opsOnly = false;
 		index = 0;
 		nextIndex = 0;
+
+		currentSeed.setSeed(variation);
+		currentSeed.bump();
+
+		cfLogicalStackTop = 0;
+		cfStackSize = 0;
+
+		for (ASTReplacement rep : cfdg.getContents().getBody()) {
+			if (rep instanceof ASTDefine) {
+				ASTDefine def = (ASTDefine) rep;
+				def.traverse(new Shape(), false, this);
+			}
+		}
+
+		fixedBoderX = 0;
+		fixedBoderY = 0;
+		shapeBorder = 0;
+		totalArea = 0;
+		minArea = 0.3;
+		outputSoFar = 0;
+		double[] value = new double[1];
+		cfdg.hasParameter(CFG.MinimumSize, value, this);
+		value[0] = (value[0] <= 0.0) ? 0.3 : value[0];
+		minArea = value[0] * value[0];
+		fixedBoderX = FIXED_BORDER * ((border <= 1.0) ? border : 1.0);
+		shapeBorder = SHAPE_BORDER * ((border <= 1.0) ? 1.0 : border);
+
+		cfdg.hasParameter(CFG.BorderFixed, value, this);
+		fixedBoderX = value[0];
+
+		cfdg.hasParameter(CFG.BorderDynamic, value, this);
+		shapeBorder = value[0];
+
+		if (2 * (int)Math.abs(fixedBoderX) >= Math.min(width, height)) {
+			fixedBoderX = 0;
+		}
+
+		if (shapeBorder <= 0.0) {
+			shapeBorder = 1.0;
+		}
+
+		if (cfdg.hasParameter(CFG.MaxNatural, value, this) && (value[0] < 1.0 || (value[0] - 1.0) == value[0]))
+		{
+        	ASTExpression max = cfdg.hasParameter(CFG.MaxNatural);
+			//TODO rivedere
+			throw new RuntimeException((value[0] < 1.0) ? "CF::MaxNatural must be >= 1" : "CF::MaxNatural must be < 9007199254740992");
+		}
+
+		currentPath = new ASTCompiledPath(cfdg.getDriver(), null);
+
+		cfdg.getSymmetry(symmetryOps, this);
+		cfdg.setBackgroundColor(this);
 	}
 
 	public boolean isNatual(double n) {
@@ -271,7 +371,7 @@ public class RTI {
 			if (parameter.isLoopIndex() || parameter.getStackIndex() < 0) {
 				continue;
 			}
-			if (parameter.getType() == EExpType.RuleType) {
+			if (parameter.getType() == ExpType.RuleType) {
 				//TODO rivedere
 				cfStack[pos].getRule().setParamCount(0);
 			}
@@ -283,6 +383,10 @@ public class RTI {
 
 	public void colorConflict(Token location) {
 		// TODO rivedere
+		if (colorConflict) {
+			return;
+		}
+		colorConflict = true;
 		warning(location, "Conflicting color change");
 	}
 
@@ -290,7 +394,7 @@ public class RTI {
 		// TODO Auto-generated method stub
 	}
 
-	public void processSubpath(Shape shape, boolean tr, ERepElemType repType) {
+	public void processSubpath(Shape shape, boolean tr, RepElemType repType) {
 		// TODO Auto-generated method stub
 	}
 

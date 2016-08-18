@@ -22,8 +22,17 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.contextfree.grammar;
+package com.nextbreakpoint.nextfractal.contextfree.grammar.enums;
 
-public class DeferUntilRuntimeException extends RuntimeException {
-	private static final long serialVersionUID = 1L;
+public enum PathOp {
+	UNKNOWN, MOVETO, MOVEREL, LINETO, LINEREL, ARCTO, ARCREL, CURVETO, CURVEREL, CLOSEPOLY;
+
+	public static PathOp byName(String name) {
+		for (PathOp value : PathOp.values()) {
+			if (value.name().equals(name)) {
+				return value;
+			}
+		}
+		return UNKNOWN;
+	}
 }

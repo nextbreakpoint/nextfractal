@@ -32,6 +32,10 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Stack;
 
+import com.nextbreakpoint.nextfractal.contextfree.core.Rand64;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.*;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.*;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ShapeType;
 import org.antlr.v4.runtime.ANTLRFileStream;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.Token;
@@ -199,8 +203,8 @@ public class CFDGDriver {
 		if (rule.getNameIndex() == -1) {
 			error("Shape rules/paths must follow a shape declaration", rule.getLocation());
 		}
-		EShapeType type = cfdg.getShapeType(rule.getNameIndex());
-		if ((rule.isPath() && type == EShapeType.RuleType) || (!rule.isPath() && type == EShapeType.PathType)) {
+		ShapeType type = cfdg.getShapeType(rule.getNameIndex());
+		if ((rule.isPath() && type == ShapeType.RuleType) || (!rule.isPath() && type == ShapeType.PathType)) {
 			error("Cannot mix rules and shapes with the same name", rule.getLocation());
 		}
 		boolean matchesShape = cfdg.addRule(rule);
@@ -231,10 +235,10 @@ public class CFDGDriver {
 			}
 			ASTDefine def = new ASTDefine(this, name, location);
 			def.setConfigDepth(includeDepth);
-			def.setDefineType(EDefineType.ConfigDefine);
+			def.setDefineType(DefineType.ConfigDefine);
 			return def;
 		}
-		if (EFuncType.getFuncTypeByName(name) != EFuncType.NotAFunction) {
+		if (FuncType.byName(name) != FuncType.NotAFunction) {
 			error("Internal function names are reserved", location);
 			return null;
 		}
@@ -249,12 +253,12 @@ public class CFDGDriver {
 		def.getShapeSpecifier().setShapeType(nameIndex);
 		if (isFunction) {
 			for (ASTParameter param : paramDecls.getParameters()) {
-				param.setLocality(ELocality.PureNonlocal);
+				param.setLocality(Locality.PureNonlocal);
 			}
 			def.getParameters().clear();
 			def.getParameters().addAll(paramDecls.getParameters());
 			def.setStackCount(paramDecls.getStackCount());
-			def.setDefineType(EDefineType.FunctionDefine);
+			def.setDefineType(DefineType.FunctionDefine);
 			localStackDepth -= paramDecls.getStackCount();
 			paramDecls.setStackCount(0);
 			cfdg.declareFunction(nameIndex, def);
@@ -316,12 +320,12 @@ public class CFDGDriver {
 			error("Unknown configuration parameter", cfg.getLocation());
 		}
 		if (cfg.getName().equals("CF::MaxNatural")) {
-			ASTExpression max = cfdg.hasParameter(ECFGParam.MaxNatural);
+			ASTExpression max = cfdg.hasParameter(CFG.MaxNatural);
 			if (max != current) {
 				return;
 			}
 			double[] v = new double[] { -1.0 };
-			if (max == null || !max.isConstant() || max.getType() != EExpType.NumericType || max.evaluate(v, 1, null) != 1) {
+			if (max == null || !max.isConstant() || max.getType() != ExpType.NumericType || max.evaluate(v, 1, null) != 1) {
 				error("CF::MaxNatural requires a constant numeric expression", cfg.getLocation());
 			} else if (v[0] < 1.0 || v[0] > 9007199254740992.0) {
 				error(v[0] < 1.0 ? "CF::MaxNatural must be >= 1" : "CF::MaxNatural must be < 9007199254740992", cfg.getLocation());
@@ -345,14 +349,14 @@ public class CFDGDriver {
 		Integer flagItem = flagNames.get(name);
 		if (flagItem != null) {
 			ASTReal flag = new ASTReal(flagItem, location);
-			flag.setType(EExpType.FlagType);
+			flag.setType(ExpType.FlagType);
 			return flag;
 		}
 		if (name.startsWith("CF::")) {
 			error("Configuration parameter names are reserved", location);
 			return new ASTExpression(location);
 		}
-		if (EFuncType.getFuncTypeByName(name) != EFuncType.NotAFunction) {
+		if (FuncType.byName(name) != FuncType.NotAFunction) {
 			error("Internal function names are reserved", location);
 			return new ASTExpression(location);
 		}
@@ -384,7 +388,7 @@ public class CFDGDriver {
 		ASTDefine def = new ASTDefine(this, "let", location);
 		def.getShapeSpecifier().setShapeType(nameIndex);
 		def.setExp(exp);
-		def.setDefineType(EDefineType.LetDefine);
+		def.setDefineType(DefineType.LetDefine);
 		return new ASTLet(this, vars, def, location);
 	}
 
@@ -406,10 +410,10 @@ public class CFDGDriver {
 		int nameIndex = stringToShape(name, true, location);
 		boolean isGlobal = false;
 		ASTParameter bound = findExpression(nameIndex, isGlobal);
-		if (bound != null && args != null && args.getType() == EExpType.ReuseType && !makeStart && isGlobal && nameIndex == currentShape) {
+		if (bound != null && args != null && args.getType() == ExpType.ReuseType && !makeStart && isGlobal && nameIndex == currentShape) {
 			error("Shape name binds to global variable and current shape, using current shape", location);
 		}
-		if (bound != null && bound.isParameter() && bound.getType() == EExpType.RuleType) {
+		if (bound != null && bound.isParameter() && bound.getType() == ExpType.RuleType) {
 			return new ASTRuleSpecifier(this, nameIndex, name, location);
 		}
 		ASTRuleSpecifier ret = null;
@@ -419,11 +423,11 @@ public class CFDGDriver {
 		} else {
 			ret = new ASTRuleSpecifier(this, nameIndex, name, args, cfdg.getShapeParams(currentShape), location);
 		}
-		if (ret.getArguments() != null && ret.getArguments().getType() == EExpType.ReuseType) {
+		if (ret.getArguments() != null && ret.getArguments().getType() == ExpType.ReuseType) {
 			if (makeStart) {
 				error("Startshape cannot reuse parameters", location);
 			} else if (nameIndex == currentShape)  {
-				ret.setArgSouce(EArgSource.SimpleArgs);
+				ret.setArgSouce(ArgSource.SimpleArgs);
 				ret.setTypeSignature(ret.getTypeSignature());
 			}
 		}
@@ -434,10 +438,10 @@ public class CFDGDriver {
 		if (t == null) {
 			return;
 		}
-		if (t.getModType() == EModType.time) {
+		if (t.getModType() == ModType.time) {
 			timeWise();
 		}
-		if (t.getModType() == EModType.sat || t.getModType() == EModType.satTarg) {
+		if (t.getModType() == ModType.sat || t.getModType() == ModType.satTarg) {
 			inColor();
 		}
 		dest.concat(t);
@@ -448,27 +452,27 @@ public class CFDGDriver {
 			return new ASTPathCommand(this, s, mods, params, location);
 		}
 		ASTRuleSpecifier r = makeRuleSpec(s, params, null, false, location);
-		ERepElemType t = ERepElemType.replacement;
+		RepElemType t = RepElemType.replacement;
 		if (inPathContainer) {
 			boolean isGlobal = false;
 			ASTParameter bound = findExpression(r.getShapeType(), isGlobal);
 			if (!subPath) {
 				error("Replacements are not allowed in paths", location);
-			} else if (r.getArgSource() == EArgSource.StackArgs || r.getArgSource() == EArgSource.ShapeArgs) {
+			} else if (r.getArgSource() == ArgSource.StackArgs || r.getArgSource() == ArgSource.ShapeArgs) {
 	            // Parameter subpaths must be all ops, but we must check at runtime
-				t = ERepElemType.op;
-			} else if (cfdg.getShapeType(r.getShapeType()) == EShapeType.PathType) {
+				t = RepElemType.op;
+			} else if (cfdg.getShapeType(r.getShapeType()) == ShapeType.PathType) {
 				ASTRule rule = cfdg.findRule(r.getShapeType());
 				if (rule != null) {
-					t = ERepElemType.typeByOrdinal(rule.getRuleBody().getRepType());
+					t = RepElemType.fromType(rule.getRuleBody().getRepType());
 				} else {
 					error("Subpath references must be to previously declared paths", location);
 				}
 			} else if (bound != null) {
 	            // Variable subpaths must be all ops, but we must check at runtime
-				t = ERepElemType.op;
+				t = RepElemType.op;
 			} else if (isPrimeShape(r.getShapeType())) {
-				t = ERepElemType.op;
+				t = RepElemType.op;
 			} else {
 				error("Subpath references must be to previously declared paths", location);
 			}
@@ -493,11 +497,11 @@ public class CFDGDriver {
 		if (name.equals("select") || name.equals("if")) {
 			return new ASTSelect(args, name.equals("if"), location);
 		}
-		EFuncType t = EFuncType.getFuncTypeByName(name);
-		if (t == EFuncType.NotAFunction) {
+		FuncType t = FuncType.byName(name);
+		if (t == FuncType.NotAFunction) {
 			return new ASTFunction(name, args, seed, location);
 		}
-		if (args != null && args.getType() == EExpType.ReuseType) {
+		if (args != null && args.getType() == ExpType.ReuseType) {
 			return makeRuleSpec(name, args, null, false, location);
 		}
 		return new ASTUserFunction(this, nameIndex, args, null, location);
@@ -542,8 +546,8 @@ public class CFDGDriver {
 		ASTRepContainer lastContainer = containerStack.lastElement();
 		localStackDepth -= lastContainer.getStackCount();
 		if (r != null) {
-			r.setRepType(ERepElemType.typeByOrdinal(r.getRepType().ordinal() | lastContainer.getRepType()));
-			if (r.getPathOp() == EPathOp.UNKNOWN) {
+			r.setRepType(RepElemType.fromType(r.getRepType().ordinal() | lastContainer.getRepType()));
+			if (r.getPathOp() == PathOp.UNKNOWN) {
 				r.setPathOp(lastContainer.getPathOp());
 			}
 		}
@@ -551,7 +555,7 @@ public class CFDGDriver {
 	}
 
 	private boolean badContainer(int containerType) {
-		return (containerType & (ERepElemType.op.ordinal() | ERepElemType.replacement.ordinal())) == (ERepElemType.op.ordinal() | ERepElemType.replacement.ordinal());
+		return (containerType & (RepElemType.op.ordinal() | RepElemType.replacement.ordinal())) == (RepElemType.op.ordinal() | RepElemType.replacement.ordinal());
 	}
 	
 	public void pushRep(ASTReplacement r, boolean global) {
@@ -563,7 +567,7 @@ public class CFDGDriver {
 			container.getBody().remove(container.getBody().size() - 1);
 		}
 		container.getBody().add(r);
-		if (container.getPathOp() == EPathOp.UNKNOWN) {
+		if (container.getPathOp() == PathOp.UNKNOWN) {
 			container.setPathOp(r.getPathOp());
 		}
 		int oldType = container.getRepType();
@@ -634,11 +638,11 @@ public class CFDGDriver {
 	}
 	
 	public void inColor() {
-		cfdg.addParameter(EParam.Color);
+		cfdg.addParameter(Param.Color);
 	}
 
 	public void timeWise() {
-		cfdg.addParameter(EParam.Time);
+		cfdg.addParameter(Param.Time);
 	}
 
 	public void storeParams(StackRule p) {
@@ -654,23 +658,23 @@ public class CFDGDriver {
 		this.maybeVersion = maybeVersion;
 	}
 
-	public EExpType decodeType(String typeName, int[] tupleSize, boolean[] isNatural, Token location) {
-		EExpType type;
+	public ExpType decodeType(String typeName, int[] tupleSize, boolean[] isNatural, Token location) {
+		ExpType type;
 		tupleSize[0] = 1;
         isNatural[0] = false;
         
         if (typeName.equals("number")) {
-            type = EExpType.NumericType;
+            type = ExpType.NumericType;
         } else if (typeName.equals("natural")) {
-            type = EExpType.NumericType;
+            type = ExpType.NumericType;
             isNatural[0] = true;
         } else if (typeName == "adjustment") {
-            type = EExpType.ModType;
+            type = ExpType.ModType;
             tupleSize[0] = 6;
         } else if (typeName == "shape") {
-            type = EExpType.RuleType;
+            type = ExpType.RuleType;
         } else if (typeName.startsWith("vector")) {
-        	type = EExpType.NumericType;
+        	type = ExpType.NumericType;
         	if (typeName.matches("vector[0-9]+")) {
                 tupleSize[0] = Integer.parseInt(typeName.substring(6));
                 if (tupleSize[0] <= 1 || tupleSize[0] > 99) {
@@ -680,7 +684,7 @@ public class CFDGDriver {
         		error("Illegal vector type specification", location);
         	}
         } else {
-            type = EExpType.NoType;
+            type = ExpType.NoType;
             error("Unrecognized type name", location);
         }
         return type;
