@@ -71,7 +71,6 @@ public class RTI {
 	private CFDG cfdg;
 	private Canvas canvas;
 	private TiledCanvas tiledCanvas;
-	private PathIterator iterator;
 	private boolean colorConflict;
 	private int maxShapes = 500000000;
 	private boolean tiled;
@@ -102,6 +101,9 @@ public class RTI {
 	private AffineTransformTime timeBounds;
 	private AffineTransformTime frameTimeBounds;
 	private int outputSoFar;
+	private int shapeCount;
+	private int todoCount;
+	private boolean animating;
 
 	private List<CommandInfo> shapeMap = new ArrayList<>();
 	private List<AffineTransform> symmetryOps = new ArrayList<>();
@@ -514,11 +516,99 @@ public class RTI {
 		bounds = new Bounds();
 	}
 
-	public void run(Canvas canvas) {
-		// TODO Auto-generated method stub
+	public double run(Canvas canvas, boolean partialDraw) {
+		if (!animating) {
+			outputPrep(canvas);
+		}
 
+		int reportAt = 250;
 
+		{
+			Shape initShape = cfdg.getInitialShape(this);
 
+			initShape.getWorldState().setRand64Seed(currentSeed);
+
+			if (!timed) {
+				timeBounds = initShape.getWorldState().getTransformTime();
+			}
+
+			try {
+				processShape(initShape);
+			} catch (CFDGException e) {
+				requestStop = true;
+				error(e.getMessage());
+			} catch (Exception e) {
+				//TODO rivedere
+				requestStop = true;
+				error(e.getMessage());
+			}
+		}
+
+		for (;;) {
+			if (requestStop) {
+				break;
+			}
+
+			if (requestFinishUp) {
+				break;
+			}
+
+			if (unfinishedShapes.isEmpty()) {
+				break;
+			}
+
+			if (shapeCount + todoCount > maxShapes) {
+				break;
+			}
+
+			Shape shape = unfinishedShapes.remove(0);
+
+			todoCount -= 1;
+
+			try {
+				ASTRule rule = cfdg.findRule(shape.getShapeType(), shape.getWorldState().getRand64Seed().getDouble());
+				drawingMode = false;
+				rule.traverse(shape, false, this);
+			} catch (CFDGException e) {
+				requestStop = true;
+				error(e.getMessage());
+				break;
+			} catch (Exception e) {
+				//TODO rivedere
+				requestStop = true;
+				error(e.getMessage());
+				break;
+			}
+
+			if (requestUpdate || shapeCount > reportAt) {
+				if (partialDraw) {
+					outputPartial();
+				}
+				outputStats();
+				reportAt = 2 * shapeCount;
+			}
+		}
+
+		if (cfdg.usesTime() || !timed) {
+			timeBounds = AffineTransformTime.getTranslateInstance(0.0, totalArea);
+		}
+
+		if (!requestStop) {
+			outputFinal();
+		}
+
+		if (!requestStop) {
+			outputStats();
+			if (canvas != null) {
+				info("Done.");
+			}
+		}
+
+		if (canvas != null && frieze != FriezeType.NoFrieze) {
+			rescaleOutput(width, height, true);
+		}
+
+		return currScale;
 	}
 
 	public void draw(Canvas canvas) {
@@ -528,8 +618,102 @@ public class RTI {
 		outputStats();
 	}
 
-	public void animate(Canvas canvas) {
-		// TODO Auto-generated method stub
+	public void animate(Canvas canvas, int frames, boolean zoom) {
+		outputPrep(canvas);
+
+		boolean ftime = cfdg.usesFrameTime();
+
+		zoom = zoom && !ftime;
+
+		if (ftime) {
+			cleanup();
+		}
+
+		int currWidth = width;
+		int currHeight = height;
+		rescaleOutput(currWidth, currHeight, true);
+
+		canvas.start(true, cfdg.getBackgroundColor(null), currWidth, currHeight);
+
+		canvas.end();
+
+		double framInc = (timeBounds.getEnd() - timeBounds.getBegin()) / frames;
+
+		OutputBounds outputBounds = new OutputBounds(frames, timeBounds, currWidth, currHeight, this);
+
+		if (zoom) {
+			info("Computing zoom");
+
+			try {
+				forEachShape(true, shape -> {
+					outputBounds.apply(shape);
+					return null;
+				});
+			} catch (StopException e) {
+				return;
+			} catch (Exception e) {
+				//TODO rivedere
+				error(e.getMessage());
+				return;
+			}
+		}
+
+		shapeCount = 0;
+		animating = true;
+
+		frameTimeBounds.setEnd(timeBounds.getBegin());
+
+		Bounds savedBounds = bounds;
+
+		for (int frameCount = 1; frameCount <= frames; frameCount++) {
+			info(String.format("Generating frame %d of %d", frameCount, frames));
+
+			if (zoom) {
+				bounds = outputBounds.frameBounds(frameCount - 1);
+			}
+
+			shapeCount += outputBounds.frameCount(frameCount - 1);
+
+			frameTimeBounds.setBegin(frameTimeBounds.getEnd());
+			frameTimeBounds.setEnd(timeBounds.getBegin() + framInc * frameCount);
+
+			if (ftime) {
+				currentTime = (frameTimeBounds.getBegin() + frameTimeBounds.getEnd()) * 0.5;
+				currentFrame = (frameCount - 1.0) / (frames - 1.0);
+
+				//TODO rivedere
+
+				try {
+					init();
+				} catch (Exception e) {
+					error(e.getMessage());
+					cleanup();
+					bounds = savedBounds;
+					animating = false;
+					outputStats();
+					return;
+				}
+				run(canvas, false);
+				this.canvas = canvas;
+			} else {
+				outputFinal();
+				outputStats();
+			}
+
+			if (!ftime) {
+				cleanup();
+			}
+
+			if (requestStop || requestFinishUp) {
+				break;
+			}
+		}
+
+		bounds = savedBounds;
+		animating = false;
+		outputStats();
+
+		info(String.format("Animation of %d frames complete", frames));
 	}
 
 	private void outputPrep(Canvas canvas) {
@@ -555,7 +739,8 @@ public class RTI {
 		requestFinishUp = false;
 		requestUpdate = false;
 
-		// TODO aggiungere stats
+		animating = false;
+		// TODO aggiungere stats?
 	}
 
 	private void outputFinal() {
@@ -622,6 +807,8 @@ public class RTI {
 		//TODO rivedere
 
 		canvas.start(outputSoFar == 0, cfdg.getBackgroundColor(null), currWidth, currHeight);
+
+		drawingMode = true;
 
 		try {
 			forEachShape(finalStep, shape -> {

@@ -84,11 +84,49 @@ public class OutputBounds {
         }
 
         Bounds[] backFrameBounds = frameBounds;
+
         frameBounds = new Bounds[frames + window - 1];
         System.arraycopy(backFrameBounds, 0, frameBounds, 0, frames);
+        for (int i = 0; i < window; i++) {
+            frameBounds[frames + i] = frameBounds[frames - 1];
+        }
 
         double factor = 1.0 - window;
 
-        //TODO completare
+        Bounds accum = new Bounds();
+
+        for (int i = 0; i < window; i++) {
+            accum.gather(frameBounds[i], factor);
+        }
+
+        //TODO rivedere
+
+        int i = 0;
+        int j = window;
+        for (;;) {
+            Bounds old = frameBounds[i];
+
+            frameBounds[i++] = accum;
+
+            accum.gather(old, -factor);
+
+            if (j == frameBounds.length) {
+                break;
+            }
+
+            accum.gather(frameBounds[j++], factor);
+        }
+
+        backFrameBounds = frameBounds;
+        frameBounds = new Bounds[frames];
+        System.arraycopy(backFrameBounds, 0, frameBounds, 0, frames);
+    }
+
+    public Bounds frameBounds(int index) {
+        return frameBounds[index];
+    }
+
+    public int frameCount(int index) {
+        return frameCounts[index];
     }
 }

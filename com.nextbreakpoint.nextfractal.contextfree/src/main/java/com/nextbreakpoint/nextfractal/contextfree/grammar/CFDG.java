@@ -780,4 +780,12 @@ public class CFDG {
 	public void getSymmetry(List<AffineTransform> symetryOps, RTI rti) {
 		// TODO da completare
 	}
+
+	public boolean usesTime() {
+		return usesTime;
+	}
+
+	public boolean usesFrameTime() {
+		return usesFrameTime;
+	}
 }
