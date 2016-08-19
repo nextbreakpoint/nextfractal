@@ -559,23 +559,84 @@ public class RTI {
 	}
 
 	private void outputFinal() {
-		// TODO Auto-generated method stub
+		output(true);
+	}
+
+	private void outputPartial() {
+		output(false);
 	}
 
 	private void outputStats() {
-		// TODO Auto-generated method stub
+		// TODO rivedere
 		requestUpdate = false;
 	}
 
 	private void rescaleOutput(int width, int height, boolean finalStep) {
-		// TODO Auto-generated method stub
+		if (!bounds.valid()) {
+			return;
+		}
+
+		int[] currWidth = new int[1];
+		int[] currHeight = new int[1];
+
+		AffineTransform transform = new AffineTransform();
+
+		double scale = bounds.computeScale(currWidth, currHeight, fixedBorderX, fixedBorderY, true, transform, tiled || sized || frieze != FriezeType.NoFrieze);
+
+		//TODO rivedere
+
+		if (finalStep || currScale == 0.0 || currScale * 0.9 > scale) {
+			currScale = scale;
+			currArea = scale * scale;
+			if (tiledCanvas != null) {
+				tiledCanvas.setScale(scale);
+			}
+			currTransform = transform;
+			outputSoFar = 0;
+		}
 	}
 
 	private void output(boolean finalStep) {
-		// TODO Auto-generated method stub
+		if (canvas == null) {
+			return;
+		}
+
+		if (!finalStep) {
+			return;
+		}
+
+		this.finalStep = finalStep;
+
+		int currWidth = width;
+		int currHeight = height;
+
+		rescaleOutput(currWidth, currHeight, finalStep);
+
+		if (finalStep) {
+			if (finishedShapes.size() > 10000) {
+				info("Sorting shapes...");
+			}
+			Collections.sort(finishedShapes);
+		}
+
+		//TODO rivedere
+
+		canvas.start(outputSoFar == 0, cfdg.getBackgroundColor(null), currWidth, currHeight);
+
+		try {
+			forEachShape(finalStep, shape -> {
+				drawShape(shape);
+				return null;
+			});
+		} catch (StopException e) {
+		} catch (Exception e) {
+			error(e.getMessage());
+		}
+
+		canvas.end();
 	}
 
-	private void forEachShape(boolean finalStep, Function<FinishedShape, Void> shapeFunction) {
+	private Object forEachShape(boolean finalStep, Function<FinishedShape, Object> shapeFunction) {
 		if (!finalStep) {
 			finishedShapes.stream().forEach(shape -> shapeFunction.apply(shape));
 			outputSoFar = finishedShapes.size();
@@ -585,6 +646,7 @@ public class RTI {
 			merger.addShapes(finishedShapes);
 			merger.merge(shapeFunction);
 		}
+		return null;
 	}
 
 	private void drawShape(FinishedShape shape) {
@@ -636,6 +698,11 @@ public class RTI {
 				throw new StopException();
 			}
 		}
+	}
+
+	private void info(String message) {
+		//TODO completare
+		System.out.println(message);
 	}
 
 	private void error(String message) {

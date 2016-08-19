@@ -80,4 +80,10 @@ public class AffineTransformTime {
 	public boolean overlaps(AffineTransformTime frameTimeBounds) {
 		return false;
 	}
+
+    public void translate(double value) {
+    }
+
+	public void scale(double frameScale) {
+	}
 }

@@ -16,4 +16,12 @@ public class Canvas {
 
     public void primitive(int shapeType, double[] color, AffineTransform transform) {
     }
+
+    public void start(boolean first, double[] backgroundColor, int currWidth, int currHeight) {
+
+    }
+
+    public void end() {
+
+    }
 }

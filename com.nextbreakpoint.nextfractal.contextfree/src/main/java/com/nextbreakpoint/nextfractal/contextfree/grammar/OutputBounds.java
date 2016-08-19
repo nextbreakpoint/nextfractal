@@ -2,7 +2,8 @@ package com.nextbreakpoint.nextfractal.contextfree.grammar;
 
 import com.nextbreakpoint.nextfractal.contextfree.core.AffineTransformTime;
 import com.nextbreakpoint.nextfractal.contextfree.core.Bounds;
-import java.util.List;
+
+import java.util.*;
 import java.util.stream.IntStream;
 
 public class OutputBounds {
@@ -32,22 +33,62 @@ public class OutputBounds {
     }
 
     public void apply(FinishedShape shape) {
-        // TODO Auto-generated method stub
+        if (rti.isRequestStop() || rti.isRequestFinishUp()) {
+            throw  new StopException();
+        }
+
+        if (scale == 0.0) {
+            scale = (width + height) / Math.sqrt(Math.abs(shape.getWorldState().getTransform().getDeterminant()));
+        }
+
+        // TODO rivedere
+
+        AffineTransformTime frameTime = shape.getWorldState().getTransformTime();
+
+        frameTime.translate(-timeBounds.getBegin());
+        frameTime.scale(frameScale);
+
+        int begin = frameTime.getBegin() < frames ? (int)Math.floor(frameTime.getBegin()) : (frames - 1);
+        int end = frameTime.getEnd() < frames ? (int)Math.floor(frameTime.getEnd()) : (frames - 1);
+
+        for (int frame = begin; frame <= end; frame++) {
+            frameBounds[frame].merge(shape.bounds());
+        }
+
+        frameCounts[begin] += 1;
     }
 
     public void finalAccumulate() {
-        // TODO Auto-generated method stub
     }
 
     public void backwardFilter(double framesToHalf) {
-        // TODO Auto-generated method stub
+        // TODO rivedere
+        int frames = frameBounds.length;
+        if (frames == 0) {
+            return;
+        }
+        double alpha = Math.pow(0.5, 1.0 / framesToHalf);
+        Bounds prev = frameBounds[frameBounds.length - 1];
+        for (int i = frameBounds.length - 2; i >= 0; i--) {
+            Bounds curr = frameBounds[i];
+            frameBounds[i] = curr.interpolate(prev, alpha);
+            prev = curr;
+        }
     }
 
     public void smooth(int window) {
-        // TODO Auto-generated method stub
-    }
+        int frames = frameBounds.length;
 
-    public void animate(Canvas canvas, int frames, boolean zoom) {
-        // TODO Auto-generated method stub
+        if (frames == 0) {
+            return;
+        }
+
+        Bounds[] backFrameBounds = frameBounds;
+        frameBounds = new Bounds[frames + window - 1];
+        System.arraycopy(backFrameBounds, 0, frameBounds, 0, frames);
+
+        double factor = 1.0 - window;
+
+        //TODO completare
     }
 }

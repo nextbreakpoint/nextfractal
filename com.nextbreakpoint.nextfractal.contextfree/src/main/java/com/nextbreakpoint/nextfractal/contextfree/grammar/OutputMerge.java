@@ -10,7 +10,7 @@ public class OutputMerge {
         this.finishedShapes = finishedShapes;
     }
 
-    public void merge(Function<FinishedShape, Void> shapeFunction) {
+    public void merge(Function<FinishedShape, Object> shapeFunction) {
         finishedShapes.stream().forEach(shape -> shapeFunction.apply(shape));
     }
 }
