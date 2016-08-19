@@ -32,7 +32,7 @@ import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.*;
 import org.antlr.v4.runtime.Token;
 
 import java.awt.geom.AffineTransform;
-import java.awt.geom.PathIterator;
+import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
 import java.util.*;
 import java.util.function.Function;
@@ -105,8 +105,11 @@ public class RTI {
 	private int todoCount;
 	private boolean animating;
 
+	private GeneralPath pathIter = new GeneralPath();
+
+	private SymmList symmetryOps = new SymmList();
+
 	private List<CommandInfo> shapeMap = new ArrayList<>();
-	private List<AffineTransform> symmetryOps = new ArrayList<>();
 	private List<Shape> unfinishedShapes = new ArrayList<>();
 	private List<FinishedShape> finishedShapes = new ArrayList<>();
 
@@ -355,7 +358,7 @@ public class RTI {
 
 		currentPath = new ASTCompiledPath(cfdg.getDriver(), null);
 
-		cfdg.getSymmetry(symmetryOps, this);
+		cfdg.getSummetry(symmetryOps, this);
 
 		cfdg.setBackgroundColor(this);
 	}
@@ -409,19 +412,156 @@ public class RTI {
 	}
 
 	public void processShape(Shape shape) {
-		// TODO Auto-generated method stub
-	}
+		double area = shape.getArea();
+		if (!Double.isFinite(area)) {
+			requestStop = true;
+			error("A shape got too big.");
+			return;
+		}
 
-	public void processSubpath(Shape shape, boolean tr, RepElemType repType) {
-		// TODO Auto-generated method stub
+		if (shape.getWorldState().getTransformTime().getBegin() > shape.getWorldState().getTransformTime().getEnd()) {
+			return;
+		}
+
+		if (cfdg.getShapeType(shape.getShapeType()) == ShapeClass.RuleType && cfdg.shapeHasRules(shape.getShapeType())) {
+			if (!bounds.valid() || area * scaleArea >= minArea) {
+				todoCount += 1;
+				unfinishedShapes.add(shape);
+			}
+		} else if (cfdg.getShapeType(shape.getShapeType()) == ShapeClass.PathType) {
+			ASTRule rule = cfdg.findRule(shape.getShapeType(), 0.0);
+			processPrimShape(shape, rule);
+		} else if (PrimShape.isPrimShape(shape.getShapeType())) {
+			processPrimShape(shape, null);
+		} else {
+			// TODO rivedere
+			requestStop = true;
+			error(String.format("Shape with no rules encountered: %s.", cfdg.decodeShapeName(shape.getShapeType())));
+		}
 	}
 
 	public void processPrimShape(Shape shape, ASTRule rule) {
-		// TODO Auto-generated method stub
+		int num = symmetryOps.size();
+		if (num == 0 || cfdg.getShapeType(shape.getShapeType()) == ShapeClass.FillType) {
+			Shape copy = new Shape(shape);
+			processPrimShapeSiblings(copy, rule);
+		} else {
+			for (int i = 0; i < num; i++) {
+				Shape sym = new Shape(shape);
+				sym.getWorldState().getTransform().preConcatenate(symmetryOps.getTransform(i));
+				processPrimShapeSiblings(sym, rule);
+			}
+		}
+	}
+
+	public void processPrimShapeSiblings(Shape shape, ASTRule rule) {
+		shapeCount += 1;
+
+		if (scale == 0.0) {
+			scale = (width + height) / Math.sqrt(Math.abs(shape.getWorldState().getTransform().getDeterminant()));
+		}
+
+		if (rule != null || cfdg.getShapeType(shape.getShapeType()) != ShapeClass.FillType) {
+			currentArea = 0.0;
+			pathBounds.invalidate();
+			drawingMode = false;
+			if (rule != null) {
+				opsOnly = false;
+				rule.traverse(shape, false, this);
+			} else {
+				CommandInfo attr = null;
+				if (shape.getShapeType() < 3) {
+					attr = shapeMap.get(shape.getShapeType());
+					processPathCommand(shape, attr);
+				}
+			}
+			totalArea += currentArea;
+			if (!tiled && !sized) {
+				bounds.merge(pathBounds.dilate(shapeBorder));
+				if (frieze == FriezeType.FriezeX) {
+					bounds.setMinX(-friezeSize);
+					bounds.setMaxX(+friezeSize);
+				}
+				if (frieze == FriezeType.FriezeY) {
+					bounds.setMinY(-friezeSize);
+					bounds.setMaxY(+friezeSize);
+				}
+
+				int[] currWidth = new int[1];
+				int[] curreHeight = new int[1];
+				scale = bounds.computeScale(currWidth, curreHeight, fixedBorderX, fixedBorderY, false, null, false);
+				width = currWidth[0];
+				height = curreHeight[0];
+				scaleArea = scale * scale;
+			}
+		} else {
+			currentArea = 1.0;
+		}
+
+		FinishedShape finishedShape = new FinishedShape(shape, shapeCount, pathBounds);
+		finishedShape.getWorldState().getTransformZ().setSz(currentArea);
+
+		if (!cfdg.usesTime()) {
+			finishedShape.getWorldState().getTransformTime().setBegin(totalArea);
+			finishedShape.getWorldState().getTransformTime().setEnd(Double.MAX_VALUE);
+		}
+
+		if (finishedShape.getWorldState().getTransformTime().getBegin() < timeBounds.getBegin() && Double.isFinite(finishedShape.getWorldState().getTransformTime().getBegin()) && !timed) {
+			timeBounds.setBegin(finishedShape.getWorldState().getTransformTime().getBegin());
+		}
+		if (finishedShape.getWorldState().getTransformTime().getBegin() > timeBounds.getEnd() && Double.isFinite(finishedShape.getWorldState().getTransformTime().getBegin()) && !timed) {
+			timeBounds.setEnd(finishedShape.getWorldState().getTransformTime().getBegin());
+		}
+		if (finishedShape.getWorldState().getTransformTime().getEnd() > timeBounds.getEnd() && Double.isFinite(finishedShape.getWorldState().getTransformTime().getEnd()) && !timed) {
+			timeBounds.setEnd(finishedShape.getWorldState().getTransformTime().getEnd());
+		}
+		if (finishedShape.getWorldState().getTransformTime().getEnd() < timeBounds.getBegin() && Double.isFinite(finishedShape.getWorldState().getTransformTime().getEnd()) && !timed) {
+			timeBounds.setBegin(finishedShape.getWorldState().getTransformTime().getEnd());
+		}
+
+		if (!finishedShape.getWorldState().isFinite()) {
+			requestStop = true;
+			error("A shape got too big.");
+			return;
+		}
+
+		finishedShapes.add(finishedShape);
+	}
+
+	public void processSubpath(Shape shape, boolean tr, RepElemType expectedType) {
+		ASTRule rule = null;
+		if (cfdg.getShapeType(shape.getShapeType()) != ShapeClass.PathType && PrimShape.isPrimShape(shape.getShapeType()) && expectedType == RepElemType.op) {
+			// TODO da completare ????
+//			rule = PrimShape.getShapeMap().get(shape.getShapeType());
+		} else {
+			rule = cfdg.findRule(shape.getShapeType(), 0.0);
+		}
+		if (rule.getRuleBody().getRepType() != expectedType.getType()) {
+			// TODO da completare con location
+			throw  new CFDGException("Subpath is not of the expected type (path ops/commands)");
+		}
+		boolean saveOpsOnly = opsOnly;
+		opsOnly = opsOnly || (expectedType == RepElemType.op);
+		rule.getRuleBody().traverse(shape, tr, this, true);
+		opsOnly = saveOpsOnly;
 	}
 
 	public void processPathCommand(Shape shape, CommandInfo attr) {
-		// TODO Auto-generated method stub
+		if (drawingMode) {
+			if (canvas != null && attr != null) {
+				double[] color = cfdg.getColor(shape.getWorldState().color());
+				AffineTransform tr = shape.getWorldState().getTransform();
+				tr.preConcatenate(currTransform);
+				// TODO da rivedere
+				canvas.path(color, tr, attr);
+			}
+		} else {
+			if (attr != null) {
+				// TODO da rivedere
+				pathBounds.update(shape.getWorldState().getTransform(), pathIter, scale, attr);
+				currentArea = Math.abs((pathBounds.getMaxX() - pathBounds.getMinX()) * (pathBounds.getMaxY() - pathBounds.getMinY()));
+			}
+		}
 	}
 
 	public StackType stackItem(int stackIndex) {

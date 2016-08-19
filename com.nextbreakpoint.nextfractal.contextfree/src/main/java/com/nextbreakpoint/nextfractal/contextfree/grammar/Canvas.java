@@ -24,4 +24,8 @@ public class Canvas {
     public void end() {
 
     }
+
+    public void path(double[] color, AffineTransform tr, CommandInfo attr) {
+
+    }
 }

@@ -18,4 +18,12 @@ public class SymmList {
     public void add(AffineTransform transform) {
         syms.add(transform);
     }
+
+    public int size() {
+        return syms.size();
+    }
+
+    public AffineTransform getTransform(int index) {
+        return syms.get(index);
+    }
 }

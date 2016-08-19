@@ -777,10 +777,6 @@ public class CFDG {
 		rule.traverse(shape, tr, rti);
 	}
 
-	public void getSymmetry(List<AffineTransform> symetryOps, RTI rti) {
-		// TODO da completare
-	}
-
 	public boolean usesTime() {
 		return usesTime;
 	}

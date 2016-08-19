@@ -54,7 +54,15 @@ public class AffineTransform1D {
 		return tz;
 	}
 
+	public void setTz(double tz) {
+		this.tz = tz;
+	}
+
 	public double sz() {
 		return sz;
+	}
+
+	public void setSz(double sz) {
+		this.sz = sz;
 	}
 }

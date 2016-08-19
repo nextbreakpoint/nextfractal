@@ -67,11 +67,11 @@ public class Shape {
 		this.worldState = worldState;
 	}
 
-	public double areaCache() {
+	public double getArea() {
 		return areaCache;
 	}
 
-	public void setAreaCache(double area) {
+	public void setArea(double area) {
 		areaCache = area;
 	}
 

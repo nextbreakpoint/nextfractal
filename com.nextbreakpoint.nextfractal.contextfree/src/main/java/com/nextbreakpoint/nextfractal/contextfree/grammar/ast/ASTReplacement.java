@@ -151,7 +151,7 @@ public class ASTReplacement {
 		rti.getCurrentSeed().add(childChange.getModData().getRand64Seed());
 		rti.getCurrentSeed().bump();
 		childChange.evaluate(s.getWorldState(), true, rti);
-		s.setAreaCache(s.getWorldState().area());
+		s.setArea(s.getWorldState().area());
 	}
 
 	public void traverse(Shape parent, boolean tr, RTI rti) {
