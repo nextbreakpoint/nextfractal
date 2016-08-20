@@ -27,11 +27,22 @@ package com.nextbreakpoint.nextfractal.contextfree.grammar;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.PathIterator;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class PrimShape {
 	private GeneralPath path = new GeneralPath(GeneralPath.WIND_NON_ZERO);
-	
+
+	private static List<String> shapeNames = new ArrayList<String>();
+
+	static {
+		shapeNames.add("CIRCLE");
+		shapeNames.add("FILL");
+		shapeNames.add("SQUARE");
+		shapeNames.add("TRIANGLE");
+	}
+
 	public static boolean isPrimShape(int shapeType) {
 		return shapeType < 4;
 	}
@@ -48,5 +59,9 @@ public class PrimShape {
 
 	public PathIterator getPathIterator() {
 		return path.getPathIterator(new AffineTransform());
+	}
+
+	public static List<String> getShapeNames() {
+		return shapeNames;
 	}
 }

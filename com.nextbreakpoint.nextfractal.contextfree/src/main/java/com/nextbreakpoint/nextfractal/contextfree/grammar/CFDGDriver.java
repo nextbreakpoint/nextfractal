@@ -42,7 +42,6 @@ import org.antlr.v4.runtime.Token;
 
 public class CFDGDriver {
 	private CFDG cfdg = new CFDG(this);
-	private Rand64 seed;
 	private Stack<ASTRepContainer> containerStack = new Stack<ASTRepContainer>();
 	private ASTRepContainer paramDecls = new ASTRepContainer(this);
 	private Map<String, Integer> flagNames = new HashMap<String, Integer>();
@@ -56,23 +55,19 @@ public class CFDGDriver {
 	private String currentPath;
 	private String maybeVersion;
 	private int currentShape;
-	private int pathCount;
 	private int includeDepth;
 	private int localStackDepth;
-	private double maxNatual;
 	private boolean allowOverlap;
 	private boolean inPathContainer;
+	private Rand64 seed = new Rand64();
+	private boolean errorOccured;
+	private double maxNatual = 1000.0;
+	private int pathCount = -1;
 
-	static List<String> globals = new ArrayList<String>();
-	static {
-		globals.add("CIRCLE");
-		globals.add("FILL");
-		globals.add("SQUARE");
-		globals.add("TRIANGLE");
-	}
-	
 	public CFDGDriver() {
 		containerStack.add(new ASTRepContainer(this));
+		currentShape = -1;
+		pathCount = 1;
 	}
 	
 	protected void warning(String message, Token location) {
@@ -92,7 +87,7 @@ public class CFDGDriver {
 		if (currentNameSpace.length() == 0) {
 			return cfdg.encodeShapeName(name);
 		}
-		int index = Collections.binarySearch(globals, name);
+		int index = Collections.binarySearch(PrimShape.getShapeNames(), name);
 		String n = currentNameSpace + name;
 		if (index != -1 && cfdg.tryEncodeShapeName(n) == -1) {
 			return cfdg.encodeShapeName(name);
@@ -105,29 +100,6 @@ public class CFDGDriver {
 		return cfdg.decodeShapeName(shape);
 	}
 
-	public void checkName(String name, boolean colonsAllowed, Token location) {
-		int pos = name.indexOf(":");
-		if (pos == -1) {
-			return;
-		}
-		if (!colonsAllowed) {
-			error("namespace specification not allowed in this context", location);
-			return;
-		}
-		if (pos == 0) {
-			error("improper namespace specification", location);
-			return;
-		}
-		for (;;) {
-			if (pos == name.length() - 1 || name.charAt(pos + 1) != ':') break;
-			int next = name.indexOf(":", pos + 2);
-			if (next == -1) return;
-			if (next == pos + 2) break;
-			pos = next;
-		}
-		error("improper namespace specification", location);
-	}
-	
 	public void includeFile(String fileName, Token location) {
 		try {
 			String path = relativeFilePath(currentPath, fileName);
@@ -148,8 +120,8 @@ public class CFDGDriver {
 	}
 	
 	public boolean endInclude(Token location) {
+		boolean endOfInput = includeDepth == 0;
 		try {
-			boolean endOfInput = includeDepth == 0;
 			setShape(null, false, location);
 			includeDepth--;
 			if (filesToLoad.isEmpty()) {
@@ -162,11 +134,10 @@ public class CFDGDriver {
 			filesToLoad.pop();
 			includeNamespace.pop();
 			currentPath = filesToLoad.isEmpty() ? null : filesToLoad.peek();
-			return endOfInput;
 		} catch (Exception e) {
 			error(e.getMessage(), location);
-			return false;
 		}
+		return endOfInput;
 	}
 	
 	public void setShape(String name, Token location) {
@@ -186,6 +157,7 @@ public class CFDGDriver {
 		}
 		String err = cfdg.setShapeParams(currentShape, paramDecls, paramDecls.getStackCount(), isPath);
 		if (err != null) {
+			errorOccured = true;
 			error("cannot set shape params: " + err, location);
 		}
 		localStackDepth -= paramDecls.getStackCount();
@@ -215,7 +187,7 @@ public class CFDGDriver {
 
 	public void nextParameterDecl(String type, String name, Token location) {
 		int nameIndex = stringToShape(name, false, location);
-		checkVariableName(nameIndex, true);
+		checkVariableName(nameIndex, true, location);
 		paramDecls.addParameter(type, nameIndex, location);
 		ASTParameter param = paramDecls.getParameters().get(paramDecls.getParameters().size() - 1);
 		param.setStackIndex(localStackDepth);
@@ -248,7 +220,7 @@ public class CFDGDriver {
 			error("Definition with same name as user function: " + def.getLocation(), location);
 			return null;
 		}
-		checkVariableName(nameIndex, false);
+		checkVariableName(nameIndex, false, location);
 		def = new ASTDefine(this, name, location);
 		def.getShapeSpecifier().setShapeType(nameIndex);
 		if (isFunction) {
@@ -444,6 +416,9 @@ public class CFDGDriver {
 		if (t.getModType() == ModType.sat || t.getModType() == ModType.satTarg) {
 			inColor();
 		}
+		if (getMaybeVersion().equals("CFDG3") && t.getModType().getType() >= ModType.hueTarg.getType() && t.getModType().getType() <= ModType.alphaTarg.getType()) {
+			error("Color target feature unavailable in v3 syntax", dest.getLocation());
+		}
 		dest.concat(t);
 	}
 	
@@ -466,7 +441,8 @@ public class CFDGDriver {
 				if (rule != null) {
 					t = RepElemType.fromType(rule.getRuleBody().getRepType());
 				} else {
-					error("Subpath references must be to previously declared paths", location);
+					// Recursive calls must be all ops, check at runtime
+					t = RepElemType.op;
 				}
 			} else if (bound != null) {
 	            // Variable subpaths must be all ops, but we must check at runtime
@@ -474,7 +450,8 @@ public class CFDGDriver {
 			} else if (isPrimeShape(r.getShapeType())) {
 				t = RepElemType.op;
 			} else {
-				error("Subpath references must be to previously declared paths", location);
+				// Forward calls must be all ops, check at runtime
+				t = RepElemType.op;
 			}
 		}
 		return new ASTReplacement(this, r, mods, t, location);
@@ -498,6 +475,9 @@ public class CFDGDriver {
 			return new ASTSelect(args, name.equals("if"), location);
 		}
 		FuncType t = FuncType.byName(name);
+		if (t == FuncType.Ftime || t == FuncType.Frame) {
+			cfdg.addParameter(Param.FrameTime);
+		}
 		if (t == FuncType.NotAFunction) {
 			return new ASTFunction(name, args, seed, location);
 		}
@@ -591,7 +571,7 @@ public class CFDGDriver {
 		return null;
 	}
 	
-	protected void checkVariableName(int nameIndex, boolean param) {
+	protected void checkVariableName(int nameIndex, boolean param, Token location) {
 		if (allowOverlap && !param) {
 			return;
 		}
@@ -599,9 +579,33 @@ public class CFDGDriver {
 		for (ListIterator<ASTParameter> i = repCont.getParameters().listIterator(); i.hasPrevious();) {
 			ASTParameter p = i.previous();
 			if (p.getNameIndex() == nameIndex) {
-				error("Scope of name overlaps variable/parameter with same name", p.getLocation());
+				warning("Scope of name overlaps variable/parameter with same name", location);
+				warning("Previous variable/parameter declared here", p.getLocation());
 			}
 		}
+	}
+
+	public void checkName(String name, boolean colonsAllowed, Token location) {
+		int pos = name.indexOf(":");
+		if (pos == -1) {
+			return;
+		}
+		if (!colonsAllowed) {
+			error("namespace specification not allowed in this context", location);
+			return;
+		}
+		if (pos == 0) {
+			error("improper namespace specification", location);
+			return;
+		}
+		for (;;) {
+			if (pos == name.length() - 1 || name.charAt(pos + 1) != ':') break;
+			int next = name.indexOf(":", pos + 2);
+			if (next == -1) return;
+			if (next == pos + 2) break;
+			pos = next;
+		}
+		error("improper namespace specification", location);
 	}
 
 	protected String relativeFilePath(String base, String rel) {
@@ -690,20 +694,20 @@ public class CFDGDriver {
         return type;
 	}
 
+	public CFDG getCFDG() {
+		return cfdg;
+	}
+
+	public boolean errorOccured() {
+		return errorOccured;
+	}
+
+	public boolean isInPathContainer() {
+		return this.inPathContainer ;
+	}
+
 	public void setInPathContainer(boolean inPathContainer) {
 		this.inPathContainer = inPathContainer;
-	}
-
-	public Stack<ASTSwitch> getSwitchStack() {
-		return switchStack;
-	}
-
-	public void incSwitchStack() {
-		localStackDepth--;
-	}
-
-	public void decSwitchStack() {
-		localStackDepth++;
 	}
 
 	public Rand64 getSeed() {
@@ -714,27 +718,27 @@ public class CFDGDriver {
 		return paramDecls;
 	}
 
-	public int getLocalStackDepth() {
-		return localStackDepth;
-	}
-
-	public boolean isInPathContainer() {
-		return this.inPathContainer ;
+	public Stack<ASTSwitch> getSwitchStack() {
+		return switchStack;
 	}
 
 	public Stack<ASTRepContainer> getContainerStack() {
 		return containerStack;
 	}
 
+	public void incSwitchStack() {
+		localStackDepth--;
+	}
+
+	public void decSwitchStack() {
+		localStackDepth++;
+	}
+
+	public int getLocalStackDepth() {
+		return localStackDepth;
+	}
+
 	public void setLocalStackDepth(int localStackDepth) {
 		this.localStackDepth = localStackDepth;
-	}
-
-	public CFDG getCFDG() {
-		return cfdg;
-	}
-
-	public boolean errorOccured() {
-		return false;
 	}
 }
