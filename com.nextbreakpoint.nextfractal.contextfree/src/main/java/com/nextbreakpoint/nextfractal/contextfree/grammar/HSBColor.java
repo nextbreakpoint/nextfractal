@@ -40,9 +40,9 @@ public class HSBColor {
 		this.values[3] = a;
 	}
 
-	public HSBColor(double[] c) {
-		double min = myfmin(c[0], myfmin(c[1], c[2]));
-		double max = myfmax(c[0], myfmax(c[1], c[2]));
+	public HSBColor(double[] rgb) {
+		double min = myfmin(rgb[0], myfmin(rgb[1], rgb[2]));
+		double max = myfmax(rgb[0], myfmax(rgb[1], rgb[2]));
 		double delta = max - min;
 		values[2] = max;
 		if (delta < EQUALITY_THRESHOLD) {
@@ -51,22 +51,22 @@ public class HSBColor {
 			values[1] = delta / values[2];  // hsb.b can't be zero here
 
 			// The == operator is normally useless for floats and doubles. But
-			// since max is always assigned from either c.r/g/b we will take
+			// since max is always assigned from either rgb.r/g/b we will take
 			// a chance.
 			double temp;
-			if (c[0] == max) {
-				temp = (c[1] - c[2]) / (delta);
-			} else if (c[1] == max) {
-				temp = 2 + ((c[2] - c[0]) / (delta));
-			} else /* if (c[2] == max) */ {
-				temp = 4 + ((c[0] - c[1]) / (delta));
+			if (rgb[0] == max) {
+				temp = (rgb[1] - rgb[2]) / (delta);
+			} else if (rgb[1] == max) {
+				temp = 2 + ((rgb[2] - rgb[0]) / (delta));
+			} else /* if (rgb[2] == max) */ {
+				temp = 4 + ((rgb[0] - rgb[1]) / (delta));
 			}
 
 			// compute hue in the interval [0,360)
 			temp *= 60;
 			values[0] = temp < 0.0 ? ((temp + 360.0) % 360.0) : (temp % 360.0);
 		}
-		values[3] = c[3];
+		values[3] = rgb[3];
 	}
 
 	private static double myfmin(double x, double y) { return x < y ? x : y; }

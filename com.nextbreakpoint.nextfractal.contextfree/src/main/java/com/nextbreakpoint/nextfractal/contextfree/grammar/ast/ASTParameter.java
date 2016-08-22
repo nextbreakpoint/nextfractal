@@ -26,7 +26,7 @@ package com.nextbreakpoint.nextfractal.contextfree.grammar.ast;
 
 import java.util.List;
 
-import com.nextbreakpoint.nextfractal.contextfree.grammar.Log;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.Logger;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.DefineType;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ExpType;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.Locality;
@@ -98,7 +98,7 @@ public class ASTParameter {
 				tupleSize = 1;
 			}
 			if (tupleSize < 1 || tupleSize > 1000000000) {
-				Log.error("Illegal vector size (<1 or >99)", location);
+				Logger.error("Illegal vector size (<1 or >99)", location);
 			}
 			this.nameIndex = nameIndex;
 			if (definition.getDefineType() == DefineType.ConstDefine) {
@@ -134,11 +134,11 @@ public class ASTParameter {
 			return 0;
 		}
 		if (types == null || types.isEmpty()) {
-			Log.error("Arguments are not expected.", args.getLocation());
+			Logger.error("Arguments are not expected.", args.getLocation());
 			return -1;
 		}
 		if (args == null) {
-			Log.error("Arguments are expected.", null);
+			Logger.error("Arguments are expected.", null);
 			return -1;
 		}
 
@@ -155,35 +155,35 @@ public class ASTParameter {
 				continue;
 			}
 			if (count >= expect) {
-				Log.error("Not enough arguments", args.getLocation());
+				Logger.error("Not enough arguments", args.getLocation());
 				return -1;
 			}
 			ASTExpression arg = args.getChild(count);
 			if (param.getType() != arg.getType()) {
-				Log.error("Incorrect argument type", arg.getLocation());
-				Log.error("This is the expected type", param.getLocation());
+				Logger.error("Incorrect argument type", arg.getLocation());
+				Logger.error("This is the expected type", param.getLocation());
 				return -1;
 			}
 			if (param.isNatural() && !arg.isNatural() && !Impure) {
-				Log.error("This expression does not satisfy the natural number requirement", arg.getLocation());
+				Logger.error("This expression does not satisfy the natural number requirement", arg.getLocation());
 			}
 			if (param.getType() == ExpType.NumericType && param.getTupleSize() != arg.evaluate(null, 0)) {
 				if (param.getTupleSize() == 1) {
-					Log.error("This argument should be scalar", arg.getLocation());
+					Logger.error("This argument should be scalar", arg.getLocation());
 				} else {
-					Log.error("This argument should be a vector", arg.getLocation());
-					Log.error("This is the expected type", param.getLocation());
+					Logger.error("This argument should be a vector", arg.getLocation());
+					Logger.error("This is the expected type", param.getLocation());
 				}
 				return -1;
 			}
 			if (arg.getLocality() != Locality.PureLocal && arg.getLocality() != Locality.PureNonlocal && param.getType() == ExpType.NumericType && !param.isNatural() && !Impure && checkNumber) {
-				Log.error("This expression does not satisfy the number parameter requirement", arg.getLocation());
+				Logger.error("This expression does not satisfy the number parameter requirement", arg.getLocation());
 				return -1;
 			}
 		}
 
 		if (count < expect) {
-			Log.error("Too many arguments", args.getChild(count).getLocation());
+			Logger.error("Too many arguments", args.getChild(count).getLocation());
 			return -1;
 		}
 
@@ -197,7 +197,7 @@ public class ASTParameter {
 				boolean natural = isNatural;
 				int valCount = definition.getExp().evaluate(data, tupleSize);
 				if (valCount != tupleSize) {
-					Log.error("Unexpected compile error", getLocation());
+					Logger.error("Unexpected compile error", getLocation());
 				}
 				ASTReal top = new ASTReal(data[0], definition.getExp().getLocation());
 				top.setText(entropy);
@@ -228,7 +228,7 @@ public class ASTParameter {
 					ret.setLocality(locality);
 					return ret;
 				} else {
-					Log.error("Internal error computing bound rule specifier", getLocation());
+					Logger.error("Internal error computing bound rule specifier", getLocation());
 				}
 				break;
 			}

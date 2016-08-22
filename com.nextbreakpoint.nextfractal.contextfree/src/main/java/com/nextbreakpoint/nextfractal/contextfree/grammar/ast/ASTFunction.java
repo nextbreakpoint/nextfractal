@@ -26,7 +26,8 @@ package com.nextbreakpoint.nextfractal.contextfree.grammar.ast;
 
 import com.nextbreakpoint.nextfractal.contextfree.core.Rand64;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.DeferUntilRuntimeException;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.Log;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.HSBColor;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.Logger;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.RTI;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.CompilePhase;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ExpType;
@@ -34,73 +35,40 @@ import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.FuncType;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.Locality;
 import org.antlr.v4.runtime.Token;
 
+import static com.nextbreakpoint.nextfractal.contextfree.grammar.ast.AST.MAX_VECTOR_SIZE;
+import static com.nextbreakpoint.nextfractal.contextfree.grammar.enums.FuncType.*;
+
 public class ASTFunction extends ASTExpression {
 	private ASTExpression arguments;
 	private FuncType funcType;
-	private Rand64 random;
+	private double random;
 
-	public ASTFunction(String name, ASTExpression arguments, Token location) {
-		this(name, arguments, null, location);
-	}
+	public static final FuncType[] MUST_BE_NATURAL = new FuncType[]{
+            Factorial, Sg, IsNatural, Div, Divides
+    };
+	public static final FuncType[] MIGHT_BE_NATURAL = new FuncType[]{
+            Mod, Abs, Min, Max, BitNot, BitOr, BitAnd, BitXOR, BitLeft, BitRight, RandInt
+    };
 
 	public ASTFunction(String name, ASTExpression arguments, Rand64 seed, Token location) {
-		super(arguments != null ? arguments.isConstant() : true, false, ExpType.NumericType, location);
+		super(true, false, ExpType.NumericType, location);
 		this.funcType = FuncType.NotAFunction;
 		this.arguments = arguments;
 
-		if (name == null || name.trim().length() == 0) {
-			throw new RuntimeException("Invalid function name");
+		if (name.isEmpty()) {
+			Logger.error("Bad function call", location);
+			return;
 		}
-
-		int argcount = arguments != null ? arguments.evaluate((double[])null, 0, null) : 0;
 
 		funcType = FuncType.byName(name);
 
 		if (funcType == FuncType.NotAFunction) {
-			throw new RuntimeException("Unknown function");
+			Logger.error("Unknown function", location);
+			return;
 		}
 
-		if (funcType == FuncType.Infinity && argcount == 0) {
-			arguments = new ASTReal(1.0f, location);
-		}
-
-		if (funcType.ordinal() >= FuncType.Rand_Static.ordinal() && funcType.ordinal() <= FuncType.RandInt.ordinal()) {
-			if (funcType == FuncType.Rand_Static) {
-				random = seed;
-			} else {
-				isConstant = false;
-			}
-
-			switch (argcount) {
-				case 0:
-					arguments = new ASTCons(location, new ASTReal(0.0f, location), new ASTReal(1.0f, location));
-					break;
-				case 1:
-					arguments = new ASTCons(location, new ASTReal(0.0f, location), arguments);
-					break;
-				case 2:
-					break;
-				default:
-					throw new RuntimeException("Illegal argument(s) for random function");
-			}
-
-			if (!isConstant && funcType == FuncType.Rand_Static) {
-				throw new RuntimeException("Argument(s) for rand_static() must be constant");
-			}
-
-			this.arguments = arguments;
-		} else {
-			if (funcType.ordinal() < FuncType.Atan2.ordinal()) {
-				if (argcount != 1) {
-					throw new RuntimeException(funcType == FuncType.Infinity ? "Function takes zero or one arguments" : "Function takes one argument");
-				}
-			} else {
-				if (argcount != 2) {
-					throw new RuntimeException("Function takes two arguments");
-				}
-			}
-
-			this.arguments = arguments;
+		if (funcType == FuncType.RandStatic) {
+			random = seed.getDouble();
 		}
 	}
 
@@ -118,12 +86,92 @@ public class ASTFunction extends ASTExpression {
 		   throw new RuntimeException("Non-numeric expression in a numeric context");
 		}
 
-		if (result != null && length < 1)
-			return -1;
+		int destLength = (funcType.getType() >= FuncType.Cross.getType() && funcType.getType() <= FuncType.Rgb2Hsb.getType()) ? 3 : funcType == FuncType.Vec ? (int)Math.floor(random) : 1;
 
 		if (result == null)
-			return 1;
+			return destLength;
 
+		if (length < destLength)
+			return -1;
+
+		switch (funcType) {
+			case Min:
+			case Max: {
+				result[0] = minMax(arguments, rti, funcType == FuncType.Min);
+				return 1;
+			}
+			case Dot: {
+				double[] l = new double[MAX_VECTOR_SIZE];
+				double[] r = new double[MAX_VECTOR_SIZE];
+				int lc = arguments.getChild(0).evaluate(l, MAX_VECTOR_SIZE, rti);
+				int rc = arguments.getChild(1).evaluate(r, MAX_VECTOR_SIZE, rti);
+				if (lc == rc && lc > 1) {
+					result[0] = 0.0;
+					for (int i = 0; i < lc; i++) {
+						result[0] += l[i] * r[i];
+					}
+				}
+				return 1;
+			}
+			case Cross: {
+				double[] l = new double[3];
+				double[] r = new double[3];
+				int lc = arguments.getChild(0).evaluate(l, 3, rti);
+				int rc = arguments.getChild(1).evaluate(r, 3, rti);
+				if (lc == rc && lc == 3) {
+					result[0] = l[1] * r[2] - l[2] * r[1];
+					result[1] = l[2] * r[0] - l[0] * r[2];
+					result[2] = l[0] * r[1] - l[1] * r[0];
+				}
+				return 3;
+			}
+			case Vec: {
+				double[] v = new double[MAX_VECTOR_SIZE];
+				int lv = arguments.getChild(0).evaluate(v, MAX_VECTOR_SIZE, rti);
+				if (lv >= 1) {
+					for (int i = 0; i < destLength; i++) {
+						result[i] = v[i % lv];
+					}
+				}
+				return destLength;
+			}
+			case Hsb2Rgb: {
+				double[] c = new double[3];
+				int l = arguments.evaluate(c, 3, rti);
+				if (l == 3) {
+					double[] rgb = new double[4];
+					HSBColor color = new HSBColor(c[0], c[1], c[2], 1.0);
+					color.getRGBA(rgb);
+					result[0] = rgb[0];
+					result[1] = rgb[2];
+					result[2] = rgb[3];
+				}
+				return 3;
+			}
+			case Rgb2Hsb: {
+				double[] c = new double[3];
+				int l = arguments.evaluate(c, 3, rti);
+				if (l == 3) {
+					double[] rgb = new double[] { c[0], c[1], c[2], 1.0 };
+					HSBColor color = new HSBColor(rgb);
+					result[0] = color.hue();
+					result[1] = color.bright();
+					result[2] = color.sat();
+				}
+				return 3;
+			}
+			case RandIntDiscrete: {
+				double[] w = new double[MAX_VECTOR_SIZE];
+				int lw = arguments.evaluate(w, MAX_VECTOR_SIZE, rti);
+				if (lw  >= 1) {
+					result[0] = rti.getCurrentSeed().getDiscrete(lw, w);
+				}
+				return 1;
+			}
+			default: {
+				break;
+			}
+		}
 
 		double[] a = new double[2];
 		int count = arguments.evaluate(a, 2, rti);
@@ -133,34 +181,34 @@ public class ASTFunction extends ASTExpression {
 		if (count < 0) return 1;
 
 		switch (funcType) {
-			case  Cos:
+			case Cos:
 				result[0] = Math.cos(a[0] * 0.0174532925199);
 				break;
-			case  Sin:
+			case Sin:
 				result[0] = Math.sin(a[0] * 0.0174532925199);
 				break;
-			case  Tan:
+			case Tan:
 				result[0] = Math.tan(a[0] * 0.0174532925199);
 				break;
-			case  Cot:
+			case Cot:
 				result[0] = 1.0 / Math.tan(a[0] * 0.0174532925199);
 				break;
 			case  Acos:
 				result[0] = Math.acos(a[0]) * 57.29577951308;
 				break;
-			case  Asin:
+			case Asin:
 				result[0] = Math.asin(a[0]) * 57.29577951308;
 				break;
-			case  Atan:
+			case Atan:
 				result[0] = Math.atan(a[0]) * 57.29577951308;
 				break;
-			case  Acot:
+			case Acot:
 				result[0] = Math.atan(1.0 / a[0]) * 57.29577951308;
 				break;
-			case  Cosh:
+			case Cosh:
 				result[0] = Math.cosh(a[0]);
 				break;
-			case  Sinh:
+			case Sinh:
 				result[0] = Math.sinh(a[0]);
 				break;
 			case Tanh:
@@ -197,11 +245,20 @@ public class ASTFunction extends ASTExpression {
 			case Infinity:
 				result[0] = a[0] < 0.0 ? Double.NEGATIVE_INFINITY : Double.POSITIVE_INFINITY;
 				break;
+			case Factorial:
+				if (a[0] < 0.0 || a[0] > 18.0 || a[0] != Math.floor(a[0])) {
+					Logger.fail("Illegal argument for factorial", location);
+				}
+				result[0] = 1.0;
+				for (double v = 1.0; v <= a[0]; v += 1.0) {
+					result[0] *= v;
+				}
+				break;
 			case Sg:
 				result[0] = a[0] == 0.0 ? 0.0 : 1.0;
 				break;
 			case IsNatural:
-				result[0] = evalIsNatural(rti, a[0]) ? 1 : 0;
+				result[0] = isNatural(rti, a[0]) ? 1 : 0;
 				break;
 			case BitNot:
 				result[0] = (~((long)a[0])) & 0xFFFFFFFF;
@@ -228,7 +285,7 @@ public class ASTFunction extends ASTExpression {
 				if (arguments.isNatural()) {
 					result[0] = ((long)a[0]) % ((long)a[1]);
 				} else {
-					result[0] = Math.IEEEremainder(a[0], a[1]);
+					result[0] = a[0] % a[1];
 				}
 				break;
 			case Divides:
@@ -238,8 +295,10 @@ public class ASTFunction extends ASTExpression {
 				result[0] = ((long)a[0]) / ((long)a[1]);
 				break;
 			case Floor:
-				if (rti == null) throw new DeferUntilRuntimeException();
 				result[0] = Math.floor(a[0]);
+				break;
+			case Ceiling:
+				result[0] = Math.ceil(a[0]);
 				break;
 			case Ftime:
 				if (rti == null) throw new DeferUntilRuntimeException();
@@ -249,8 +308,8 @@ public class ASTFunction extends ASTExpression {
 				if (rti == null) throw new DeferUntilRuntimeException();
 				result[0] = rti.getCurrentFrame();
 				break;
-			case Rand_Static:
-				result[0] = random.getDouble() * Math.abs(a[1] - a[0]) + Math.min(a[0], a[1]);
+			case RandStatic:
+				result[0] = random * Math.abs(a[1] - a[0]) + Math.min(a[0], a[1]);
 				break;
 			case Rand:
 				if (rti == null) throw new DeferUntilRuntimeException();
@@ -262,30 +321,120 @@ public class ASTFunction extends ASTExpression {
 				rti.setRandUsed(true);
 				result[0] = (rti.getCurrentSeed().getDouble() * 2.0 - 1.0) * a[1] + a[0];
 				break;
+			case RandExponential:
+				if (rti == null) throw new DeferUntilRuntimeException();
+				rti.setRandUsed(true);
+				result[0] = rti.getCurrentSeed().getExponential(a[0]);
+				break;
+			case RandGamma:
+				if (rti == null) throw new DeferUntilRuntimeException();
+				rti.setRandUsed(true);
+				result[0] = rti.getCurrentSeed().getGamma(a[0], a[1]);
+				break;
+			case RandWeibull:
+				if (rti == null) throw new DeferUntilRuntimeException();
+				rti.setRandUsed(true);
+				result[0] = rti.getCurrentSeed().getWeibull(a[0], a[1]);
+				break;
+			case RandExtremeValue:
+				if (rti == null) throw new DeferUntilRuntimeException();
+				rti.setRandUsed(true);
+				result[0] = rti.getCurrentSeed().getExtremeValue(a[0], a[1]);
+				break;
+			case RandNormal:
+				if (rti == null) throw new DeferUntilRuntimeException();
+				rti.setRandUsed(true);
+				result[0] = rti.getCurrentSeed().getNormal(a[0], a[1]);
+				break;
+			case RandLogNormal:
+				if (rti == null) throw new DeferUntilRuntimeException();
+				rti.setRandUsed(true);
+				result[0] = rti.getCurrentSeed().getLogNormal(a[0], a[1]);
+				break;
+			case RandChiSquared:
+				if (rti == null) throw new DeferUntilRuntimeException();
+				rti.setRandUsed(true);
+				result[0] = rti.getCurrentSeed().getChiSquared(a[0], a[1]);
+				break;
+			case RandCauchy:
+				if (rti == null) throw new DeferUntilRuntimeException();
+				rti.setRandUsed(true);
+				result[0] = rti.getCurrentSeed().getCauchy(a[0], a[1]);
+				break;
+			case RandFisherF:
+				if (rti == null) throw new DeferUntilRuntimeException();
+				rti.setRandUsed(true);
+				result[0] = rti.getCurrentSeed().getFisherF(a[0], a[1]);
+				break;
+			case RandStudentT:
+				if (rti == null) throw new DeferUntilRuntimeException();
+				rti.setRandUsed(true);
+				result[0] = rti.getCurrentSeed().getStudentT(a[0], a[1]);
+				break;
 			case RandInt:
 				if (rti == null) throw new DeferUntilRuntimeException();
 				rti.setRandUsed(true);
 				result[0] = Math.floor(rti.getCurrentSeed().getDouble() * Math.abs(a[1] - a[0]) + Math.min(a[0], a[1]));
 				break;
-			case NotAFunction:
-			case Min:
-			case Max:
-				return -1;
+			case RandIntBernoulli:
+				if (rti == null) throw new DeferUntilRuntimeException();
+				rti.setRandUsed(true);
+				result[0] = rti.getCurrentSeed().getBernoulli(a[0]) != 0.0 ? 1.0 : 0.0;
+				break;
+			case RandIntBinomial:
+				if (rti == null) throw new DeferUntilRuntimeException();
+				rti.setRandUsed(true);
+				result[0] = Math.floor(rti.getCurrentSeed().getBinomial(a[0], a[1]));
+				break;
+			case RandIntNegBinomial:
+				if (rti == null) throw new DeferUntilRuntimeException();
+				rti.setRandUsed(true);
+				result[0] = Math.floor(rti.getCurrentSeed().getNegativeBinomial(a[0], a[1]));
+				break;
+			case RandIntPoisson:
+				if (rti == null) throw new DeferUntilRuntimeException();
+				rti.setRandUsed(true);
+				result[0] = Math.floor(rti.getCurrentSeed().getPoisson(a[0]));
+				break;
+			case RandIntGeometric:
+				if (rti == null) throw new DeferUntilRuntimeException();
+				rti.setRandUsed(true);
+				result[0] = Math.floor(rti.getCurrentSeed().getGeometric(a[0]));
+				break;
+
 			default:
-			   break;
+				return -1;
 		}
 
 		return 1;
 	}
 
-	private boolean evalIsNatural(RTI rti, double n) {
+	private static double minMax(ASTExpression e, RTI rti, boolean isMin) {
+		double[] res = new double[] { 0.0 };
+		if (e.getChild(0).evaluate(res, 1, rti) != 1) {
+			Logger.fail("Error computing min/max here", e.getChild(0).getLocation());
+		}
+		for (int i = 1; i < e.size(); ++i) {
+			double[] val = new double[] { 0.0 };
+			if (e.getChild(i).evaluate(val, 1, rti) != 1) {
+				Logger.fail("Error computing min/max here", e.getChild(i).getLocation());
+			}
+			boolean leftMin = res[0] < val[0];
+			res[0] = ((isMin && leftMin) || (!isMin && !leftMin)) ? res[0] : val[0];
+		}
+		return res[0];
+	}
+
+	private boolean isNatural(RTI rti, double n) {
 		return n >= 0 && n <= (rti != null ? rti.getMaxNatural() : Integer.MAX_VALUE) && n == Math.floor(n);
 	}
 
 	@Override
-	public void entropy(StringBuilder e) {
-		arguments.entropy(e);
-		e.append(funcType.getEntropy());
+	public void entropy(StringBuilder ent) {
+		if (arguments != null) {
+			arguments.entropy(ent);
+		}
+		ent.append(funcType.getEntropy());
 	}
 
 	@Override
@@ -299,38 +448,197 @@ public class ASTFunction extends ASTExpression {
 					isConstant = true;
 					locality = Locality.PureLocal;
 					int argcount = 0;
+					int argnum = 0;
 					if (arguments != null) {
+						argnum = arguments.size();
 						isConstant = arguments.isConstant();
 						locality = arguments.getLocality();
 						if (locality == Locality.PureNonlocal) {
 							locality = Locality.ImpureNonlocal;
 						}
 						if (arguments.getType() == ExpType.NumericType) {
-							argcount = arguments.evaluate((double[])null, 0);
+							argcount = arguments.evaluate(null, 0);
 						} else {
-							Log.error("function arguments must be numeric", null);
+							Logger.error("Function arguments must be numeric", arguments.getLocation());
 						}
 					}
+					switch (funcType) {
+						case Abs:
+							if (argcount < 1 || argcount > 2) {
+								Logger.error("Function takes one or two arguments", arguments.getLocation());
+							}
+							break;
+						case Infinity:
+							if (argcount == 0) {
+								arguments = new ASTReal(1.0, arguments.getLocation());
+								argcount = 1;
+							}
+							break;
+						case Cos:
+						case Sin:
+						case Tan:
+						case Cot:
+						case Acos:
+						case Atan:
+						case Acot:
+						case Cosh:
+						case Sinh:
+						case Tanh:
+						case Acosh:
+						case Asinh:
+						case Atanh:
+						case Log:
+						case Log10:
+						case Sqrt:
+						case Exp:
+						case Floor:
+						case Ceiling:
+						case BitNot:
+						case Factorial:
+						case Sg:
+						case IsNatural:
+							if (argcount != 1) {
+								Logger.error("Function takes one argument", arguments.getLocation());
+							}
+							break;
+						case BitOr:
+						case BitAnd:
+						case BitXOR:
+						case BitLeft:
+						case BitRight:
+						case Atan2:
+						case Mod:
+						case Divides:
+						case Div:
+							if (argcount != 2) {
+								Logger.error("Function takes two arguments", arguments.getLocation());
+							}
+							break;
+						case Dot:
+						case Cross:
+							if (argnum != 2) {
+								Logger.error("Dot/cross product takes two vectors", arguments.getLocation());
+							} else {
+								int l = arguments.getChild(0).evaluate(null, 0);
+								int r = arguments.getChild(0).evaluate(null, 0);
+								if (funcType == FuncType.Dot && (l != r || l < 2)) {
+									Logger.error("Dot product takes two vectors of the same length", arguments.getLocation());
+								}
+								if (funcType == FuncType.Cross && (l != 3 || r != 3)) {
+									Logger.error("Cross product takes two vector3s", arguments.getLocation());
+								}
+							}
+							break;
+						case Hsb2Rgb:
+						case Rgb2Hsb:
+							if (argcount != 3) {
+								Logger.error("RGB/HSB conversion function takes 3 arguments", arguments.getLocation());
+							}
+							break;
+						case Vec:
+							double[] value = new double[1];
+							if (argnum != 2) {
+								Logger.error("Vec function takes two arguments", arguments.getLocation());
+							} else if (!arguments.getChild(1).isConstant() || !arguments.getChild(1).isNatural() || arguments.getChild(1).evaluate(value, 1) != 1) {
+								Logger.error("Vec function length argument must be a scalar constant", arguments.getLocation());
+							} else if ((int)Math.floor(value[0]) < 2 || (int)Math.floor(value[0]) > AST.MAX_VECTOR_SIZE) {
+								Logger.error( "Vec function length argument must be >= 2 and <= 99", arguments.getLocation());
+							}
+							break;
+						case Ftime:
+						case Frame:
+							if (arguments != null) {
+								Logger.error("ftime/frame functions takes no arguments", arguments.getLocation());
+							}
+							isConstant = false;
+							arguments = new ASTReal(1.0, arguments.getLocation());
+							break;
+						case Rand:
+						case Rand2:
+						case RandInt:
+							isConstant = false;
+						case RandStatic:
+							switch (argcount) {
+								case 0:
+									arguments = new ASTCons(arguments.getLocation(), new ASTReal(0.0, arguments.getLocation()), new ASTReal(funcType == FuncType.RandInt ? 2.0 : 1.0, arguments.getLocation()));
+									break;
+								case 1:
+									arguments = new ASTCons(arguments.getLocation(), new ASTReal(0.0, arguments.getLocation()));
+									break;
+								case 2:
+									break;
+								default:
+									Logger.error("Illegal argument(s) for random function", arguments.getLocation());
+									break;
+							}
+							if (!isConstant && funcType == FuncType.RandStatic) {
+								Logger.error("Argument(s) for rand_static() must be constant", arguments.getLocation());
+							}
+							break;
+						case RandIntDiscrete:
+							isConstant = false;
+							isNatural = isNatural(null, argcount);
+							if (argcount < 1) {
+								Logger.error("Function takes at least one argument", arguments.getLocation());
+							}
+							break;
+						case RandIntBernoulli:
+						case RandIntGeometric:
+						case RandIntPoisson:
+						case RandExponential:
+						case RandChiSquared:
+						case RandStudentT:
+							isConstant = false;
+							if (argcount != 1) {
+								Logger.error("Function takes one argument", arguments.getLocation());
+							}
+							break;
+						case RandIntBinomial:
+						case RandIntNegBinomial:
+							isNatural = arguments != null && arguments.size() == 2 && arguments.getChild(0).isNatural();
+						case RandCauchy:
+						case RandExtremeValue:
+						case RandFisherF:
+						case RandGamma:
+						case RandLogNormal:
+						case RandNormal:
+						case RandWeibull:
+							isConstant = false;
+							if (argcount != 2) {
+								Logger.error("Function takes two arguments", arguments.getLocation());
+							}
+							break;
+						case Min:
+						case Max:
+							if (argcount != 2) {
+								Logger.error("Function takes at least two arguments", arguments.getLocation());
+							}
+							break;
+						case NotAFunction:
+							Logger.error("Unknown function", arguments.getLocation());
+							break;
+					}
+
 					if (funcType == FuncType.Infinity && argcount == 0) {
 						arguments = new ASTReal(1.0, location);
 						return null;
 					}
 					if (funcType == FuncType.Ftime) {
 						if (arguments != null) {
-							Log.error("ftime() function takes no arguments", null);
+							Logger.error("ftime() function takes no arguments", null);
 						}
 						isConstant = false;
 						arguments = new ASTReal(1.0, location);
 					}
 					if (funcType == FuncType.Frame) {
 						if (arguments != null) {
-							Log.error("time() function takes no arguments", null);
+							Logger.error("time() function takes no arguments", null);
 						}
 						isConstant = false;
 						arguments = new ASTReal(1.0, location);
 					}
-					if (funcType.ordinal() >= FuncType.Rand_Static.ordinal() && funcType.ordinal() <= FuncType.RandInt.ordinal()) {
-						if (funcType != FuncType.Rand_Static) {
+					if (funcType.ordinal() >= FuncType.RandStatic.ordinal() && funcType.ordinal() <= FuncType.RandInt.ordinal()) {
+						if (funcType != FuncType.RandStatic) {
 							isConstant = false;
 						}
 						switch (argcount) {
@@ -346,11 +654,11 @@ public class ASTFunction extends ASTExpression {
 							break;
 
 						default:
-							Log.error("Illegal argument(s) for random function", null);
+							Logger.error("Illegal argument(s) for random function", null);
 							break;
 						}
-						if (!isConstant && funcType == FuncType.Rand_Static) {
-							Log.error("Argument(s) for rand_static() must be constant", null);
+						if (!isConstant && funcType == FuncType.RandStatic) {
+							Logger.error("Argument(s) for rand_static() must be constant", null);
 						}
 						if (funcType == FuncType.RandInt && arguments != null) {
 							isNatural = arguments.isNatural();
@@ -358,38 +666,21 @@ public class ASTFunction extends ASTExpression {
 						return null;
 					}
 
-					if (funcType == FuncType.Abs) {
-						if (argcount < 1 || argcount > 2) {
-							Log.error("function takes one or two arguments", null);
+					for (FuncType t : MIGHT_BE_NATURAL) {
+						if (t == funcType) {
+							isNatural = arguments != null && arguments.isNatural();
+							break;
 						}
-					} else if (funcType.ordinal() < FuncType.BitOr.ordinal()) {
-						if (argcount != 1) {
-							if (funcType == FuncType.Infinity) {
-								Log.error("function takes zero or one arguments", null);
-							} else {
-								Log.error("function takes one argument", null);
+					}
+
+					for (FuncType t : MUST_BE_NATURAL) {
+						if (t == funcType) {
+							if (arguments != null && !arguments.isNatural() && !ASTParameter.Impure) {
+								Logger.error("Function is defined over natural numbers only", null);
 							}
+							isNatural = true;
+							break;
 						}
-
-					} else if (funcType.ordinal() < FuncType.Min.ordinal()) {
-						if (argcount != 2) {
-							Log.error("function takes two arguments", null);
-						}
-
-					} else if (funcType.ordinal() < FuncType.BitOr.ordinal()) {
-						if (argcount < 2) {
-							Log.error("function takes at least two arguments", null);
-						}
-					}
-
-					if (funcType == FuncType.Mod || funcType == FuncType.Abs || funcType == FuncType.Min || funcType == FuncType.Max || (funcType.ordinal() >= FuncType.BitNot.ordinal() && funcType.ordinal() <= FuncType.BitRight.ordinal())) {
-						isNatural = arguments == null || arguments.isNatural();
-					}
-					if (funcType == FuncType.Factorial || funcType == FuncType.Sg || funcType == FuncType.IsNatural || funcType == FuncType.Div || funcType == FuncType.Divides) {
-						if (arguments != null && !arguments.isNatural()) {
-							Log.error("function is defined over natural numbers only", null);
-						}
-						isNatural = true;
 					}
 				}
 				break;
@@ -405,18 +696,17 @@ public class ASTFunction extends ASTExpression {
 
 	@Override
 	public ASTExpression simplify() {
+		if (arguments != null) {
+			arguments = arguments.simplify();
+		}
 		if (isConstant) {
-			double[] result = new double[1];
-			if (evaluate(result, 1, null) != 1) {
+			double[] result = new double[MAX_VECTOR_SIZE];
+			int len = evaluate(result, MAX_VECTOR_SIZE, null);
+			if (len < 0) {
 				return this;
 			}
-			ASTReal r = new ASTReal(result[0], location);
-			r.setIsNatural(isNatural);
+			ASTExpression r = AST.makeResult(result[0], len, this);
 			return r;
-		} else {
-			if (arguments != null) {
-				arguments = arguments.simplify();
-			}
 		}
 		return this;
 	}

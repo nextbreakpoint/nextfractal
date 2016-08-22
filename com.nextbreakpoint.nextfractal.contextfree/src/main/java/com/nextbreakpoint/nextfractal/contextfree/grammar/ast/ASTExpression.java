@@ -24,10 +24,7 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.grammar.ast;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.nextbreakpoint.nextfractal.contextfree.grammar.Log;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.Logger;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.Modification;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.RTI;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.StackRule;
@@ -140,7 +137,7 @@ public class ASTExpression {
 	
 	public ASTExpression getChild(int i) {
 		if (i > 0) {
-			Log.error("Expression list bounds exceeded", location);
+			Logger.error("Expression list bounds exceeded", location);
 		}
 		return this;
 	}

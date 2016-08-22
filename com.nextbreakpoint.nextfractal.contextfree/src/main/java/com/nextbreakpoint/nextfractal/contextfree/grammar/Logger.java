@@ -2,7 +2,7 @@ package com.nextbreakpoint.nextfractal.contextfree.grammar;
 
 import org.antlr.v4.runtime.Token;
 
-public class Log {
+public class Logger {
     public static void error(String message, Token location) {
         // TODO da completare
         System.out.println(message);

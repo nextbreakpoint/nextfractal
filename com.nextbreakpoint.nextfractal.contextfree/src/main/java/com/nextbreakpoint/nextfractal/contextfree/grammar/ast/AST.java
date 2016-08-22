@@ -14,6 +14,7 @@ import java.util.List;
 
 public class AST {
     public static final double SQRT2 = Math.sqrt(2.0);
+    public static final int MAX_VECTOR_SIZE = 99;
 
     public static ExpType decodeType(String typeName, int[] tupleSize, boolean[] isNatural, Token location) {
         ExpType type;
@@ -35,14 +36,14 @@ public class AST {
             if (typeName.matches("vector[0-9]+")) {
                 tupleSize[0] = Integer.parseInt(typeName.substring(6));
                 if (tupleSize[0] <= 1 || tupleSize[0] > 99) {
-                    Log.error("Illegal vector size (<=1 or >99)", location);
+                    Logger.error("Illegal vector size (<=1 or >99)", location);
                 }
             } else {
-                Log.error("Illegal vector type specification", location);
+                Logger.error("Illegal vector type specification", location);
             }
         } else {
             type = ExpType.NoType;
-            Log.error("Unrecognized type name", location);
+            Logger.error("Unrecognized type name", location);
         }
         return type;
     }
@@ -68,15 +69,15 @@ public class AST {
                     break;
                 case NumericType:
                     if (symmSpec.isEmpty() && cit.getType() != ExpType.FlagType) {
-                        Log.fail("Symmetry flag expected here", cit.getLocation());
+                        Logger.fail("Symmetry flag expected here", cit.getLocation());
                     }
                     int sz = cit.evaluate(null, 0);
                     if (sz < 1) {
-                        Log.fail("Could not evaluate this", cit.getLocation());
+                        Logger.fail("Could not evaluate this", cit.getLocation());
                     } else {
                         double[] values = new double[sz];
                         if (cit.evaluate(values, values.length) != sz) {
-                            Log.fail("Could not evaluate this", cit.getLocation());
+                            Logger.fail("Could not evaluate this", cit.getLocation());
                         } else {
                             for (double value : values) {
                                 symmSpec.add(value);
@@ -96,11 +97,11 @@ public class AST {
                             result.add(m);
                         }
                     } else {
-                        Log.fail("Wrong type", cit.getLocation());
+                        Logger.fail("Wrong type", cit.getLocation());
                     }
                     break;
                 default:
-                    Log.fail("Wrong type", cit.getLocation());
+                    Logger.fail("Wrong type", cit.getLocation());
                     break;
             }
         }
@@ -157,15 +158,15 @@ public class AST {
         }
 
         if (type >= FlagType.CF_P11G.getMask() && type <= FlagType.CF_P2MM.getMask() && !frieze) {
-            Log.fail("Frieze symmetry only works in frieze designs", location);
+            Logger.fail("Frieze symmetry only works in frieze designs", location);
         }
 
         if (type >= FlagType.CF_PM.getMask() && type <= FlagType.CF_P6M.getMask() && !tiled) {
-            Log.fail("Wallpaper symmetry only works in tiled designs", location);
+            Logger.fail("Wallpaper symmetry only works in tiled designs", location);
         }
 
         if (type >= FlagType.CF_P2.getMask() && !frieze && !tiled) {
-            Log.fail("p2 symmetry only works in frieze or tiled designs", location);
+            Logger.fail("p2 symmetry only works in frieze or tiled designs", location);
         }
 
         //TODO completare
@@ -192,5 +193,10 @@ public class AST {
             ret.add(exp);
             return ret;
         }
+    }
+
+    public static ASTExpression makeResult(double result, int lenght, ASTFunction from) {
+        //TODO completare
+        return null;
     }
 }

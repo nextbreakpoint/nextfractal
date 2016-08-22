@@ -71,7 +71,7 @@ public class ASTUserFunction extends ASTExpression {
 	@Override
 	public int evaluate(double[] result, int length, RTI rti) {
 		if (type != ExpType.NumericType) {
-			Log.error("Function does not evaluate to a number", null);
+			Logger.error("Function does not evaluate to a number", null);
 			return -1;
 		}
 		if (result != null && length < definition.getTupleSize()) {
@@ -93,7 +93,7 @@ public class ASTUserFunction extends ASTExpression {
 	@Override
 	public void evaluate(Modification result, boolean shapeDest, RTI rti) {
 		if (type != ExpType.ModType) {
-			Log.error("Function does not evaluate to an adjustment", null);
+			Logger.error("Function does not evaluate to an adjustment", null);
 			return;
 		}
 		if (rti == null) throw new DeferUntilRuntimeException();
@@ -141,11 +141,11 @@ public class ASTUserFunction extends ASTExpression {
 					List<ASTParameter>[] p = new List[1];
 					String name = driver.getTypeInfo(nameIndex, def, p);
 					if (def[0] != null && p[0] != null) {
-						Log.error("Name matches both a function and a shape", null);
+						Logger.error("Name matches both a function and a shape", null);
 						return null;
 					}
 					if (def[0] == null && p[0] == null) {
-						Log.error("Name does not match shape name or function name", null);
+						Logger.error("Name does not match shape name or function name", null);
 						return null;
 					}
 					if (def[0] != null) {
@@ -180,7 +180,7 @@ public class ASTUserFunction extends ASTExpression {
 	@Override
 	public StackRule evalArgs(RTI rti, StackRule parent) {
 		if (type != ExpType.RuleType) {
-			Log.error("Function does not evaluate to a shape", null);
+			Logger.error("Function does not evaluate to a shape", null);
 			return null;
 		}
 		if (rti == null) throw new DeferUntilRuntimeException();

@@ -202,7 +202,7 @@ public class ASTModification extends ASTExpression {
 
 	@Override
 	public int evaluate(double[] result, int length, RTI rti) {
-		Log.error("Improper evaluation of an adjustment expression", null);
+		Logger.error("Improper evaluation of an adjustment expression", null);
 		return -1;
 	}
 
@@ -269,10 +269,10 @@ public class ASTModification extends ASTExpression {
                 nonConstant |= mc.getType();
 			boolean keepThisOne = (mc.getType() & nonConstant) != 0;
 			if (driver.isInPathContainer() && (mc.getType() & ModClass.ZClass.getType()) != 0) {
-				Log.error("Z changes are not supported within paths", null);
+				Logger.error("Z changes are not supported within paths", null);
 			}
 			if (driver.isInPathContainer() && (mc.getType() & ModClass.TimeClass.getType()) != 0) {
-				Log.error("Time changes are not supported within paths", null);
+				Logger.error("Time changes are not supported within paths", null);
 			}
 			try {
 				if (!keepThisOne) {

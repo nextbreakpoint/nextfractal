@@ -108,7 +108,7 @@ public class CFDG {
 		needle.setWeight(weight);
 		int first = lowerBound(rules, 0, rules.size() - 1, needle);
 		if (first == rules.size() || rules.get(first).getNameIndex() != nameIndex) {
-			Log.fail("Cannot find a rule for a shape (very helpful I know)", null);
+			Logger.fail("Cannot find a rule for a shape (very helpful I know)", null);
 		}
 		return rules.get(first);
 	}
@@ -191,11 +191,11 @@ public class CFDG {
 			tileMod.getTransform().transform(v, v);
 
 			if (Math.abs(u_y - o_y) >= 0.0001 && Math.abs(v_x - o_x) >= 0.0001) {
-				Log.fail("Tile must be aligned with the X or Y axis", null);
+				Logger.fail("Tile must be aligned with the X or Y axis", null);
 			}
 
 			if (Math.abs(u_x - o_x) < 0.0 || Math.abs(v_y - o_y) < 0.0) {
-				Log.fail("Tile must be in the positive X/Y quadrant", null);
+				Logger.fail("Tile must be in the positive X/Y quadrant", null);
 			}
 
 			point[0] = u_x - o_x;
@@ -240,11 +240,11 @@ public class CFDG {
 			tileMod.getTransform().transform(v, v);
 
 			if (Math.abs(u_y - o_y) >= 0.0001 || Math.abs(v_x - o_x) >= 0.0001) {
-				Log.fail("Frieze must be aligned with the X and Y axis", null);
+				Logger.fail("Frieze must be aligned with the X and Y axis", null);
 			}
 
 			if (Math.abs(u_x - o_x) < 0.0 || Math.abs(v_y - o_y) < 0.0) {
-				Log.fail("Frieze must be in the positive X/Y quadrant", null);
+				Logger.fail("Frieze must be in the positive X/Y quadrant", null);
 			}
 
 			point[0] = u_x - o_x;
@@ -267,7 +267,7 @@ public class CFDG {
 		}
 
 		if (sizeMod.getTransform().getShearX() != 0.0 || sizeMod.getTransform().getShearY() != 0.0) {
-			Log.fail("Size specification must not be rotated or skewed", null);
+			Logger.fail("Size specification must not be rotated or skewed", null);
 		}
 
 		return false;
@@ -287,7 +287,7 @@ public class CFDG {
 		}
 
 		if (sizeMod.getTransformTime().getBegin() >= sizeMod.getTransformTime().getEnd()) {
-			Log.fail("Time specification must have positive duration", null);
+			Logger.fail("Time specification must have positive duration", null);
 		}
 
 		return false;
@@ -299,7 +299,7 @@ public class CFDG {
 		ASTExpression exp = hasParameter(CFG.Symmetry);
 		List<ASTModification> left = AST.getTransforms(exp, syms, rti, isTiled(null, null), tileMod.getTransform());
 		if (!left.isEmpty()) {
-			Log.fail("At least one term was invalid", exp.getLocation());
+			Logger.fail("At least one term was invalid", exp.getLocation());
 		}
 	}
 
@@ -309,7 +309,7 @@ public class CFDG {
 			return false;
 		}
 		if (!exp.isConstant() && rti != null) {
-			Log.fail("This expression must be constant", exp.getLocation());
+			Logger.fail("This expression must be constant", exp.getLocation());
 			return false;
 		} else {
 			exp.evaluate(value, 1, rti);
@@ -323,7 +323,7 @@ public class CFDG {
 			return false;
 		}
 		if (!exp.isConstant() && rti != null) {
-			Log.fail("This expression must be constant", exp.getLocation());
+			Logger.fail("This expression must be constant", exp.getLocation());
 			return false;
 		} else {
 			exp.evaluate(value, true, rti);//TODO controllare
@@ -371,7 +371,7 @@ public class CFDG {
 			if (rule.getWeightType() == WeightType.PercentWeight) {
 				percentweightsums[rule.getNameIndex()] += rule.getWeight();
 				if (percentweightsums[rule.getNameIndex()] > 1.0001) {
-					Log.fail("Percentages exceed 100%", rule.getLocation());
+					Logger.fail("Percentages exceed 100%", rule.getLocation());
 				}
 			} else {
 				weightsums[rule.getNameIndex()] += rule.getWeight();
@@ -388,12 +388,12 @@ public class CFDG {
 				} else {
 					weight *= 1.0 - percentweightsums[rule.getNameIndex()];
 					if (percentweightsums[rule.getNameIndex()] > 0.9999) {
-						Log.warning("Percentages sum to 100%, this rule has no weight", rule.getLocation());
+						Logger.warning("Percentages sum to 100%, this rule has no weight", rule.getLocation());
 					}
 				}
 			}
 			if (weightTypes[rule.getNameIndex()] == WeightType.PercentWeight.getType() && Math.abs(percentweightsums[rule.getNameIndex()] - 1.0) > 0.0001) {
-				Log.warning("Percentages do not sum to 100%", rule.getLocation());
+				Logger.warning("Percentages do not sum to 100%", rule.getLocation());
 			}
 			if (!Double.isFinite(weight)) {
 				weight = 0;
@@ -565,7 +565,7 @@ public class CFDG {
 			ASTExpression startExp = paramExp.get(CFG.StartShape);
 
 			if (startExp == null) {
-				Log.fail("No startshape found", null);
+				Logger.fail("No startshape found", null);
 				return null;
 			}
 
@@ -574,7 +574,7 @@ public class CFDG {
 				initShape = new ASTReplacement(driver, specStart, specStart.getModification(), startExp.getLocation());
 				initShape.getChildChange().addEntropy(initShape.getShapeSpecifier().getEntropy());
 			} else {
-				Log.fail("Type error in startshape", startExp.getLocation());
+				Logger.fail("Type error in startshape", startExp.getLocation());
 				return null;
 			}
 

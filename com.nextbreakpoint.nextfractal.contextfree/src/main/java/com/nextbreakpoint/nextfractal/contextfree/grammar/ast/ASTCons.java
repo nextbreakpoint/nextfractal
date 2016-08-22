@@ -27,7 +27,7 @@ package com.nextbreakpoint.nextfractal.contextfree.grammar.ast;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.nextbreakpoint.nextfractal.contextfree.grammar.Log;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.Logger;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.Modification;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.RTI;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.CompilePhase;
@@ -80,7 +80,7 @@ public class ASTCons extends ASTExpression {
 	@Override
 	public int evaluate(double[] result, int length, RTI rti) {
 		if ((type.ordinal() & (ExpType.NumericType.ordinal() | ExpType.FlagType.ordinal())) == 0 || (type.ordinal() & (ExpType.ModType.ordinal() | ExpType.RuleType.ordinal())) != 0) {
-			Log.error("Non-numeric expression in a numeric context", null);
+			Logger.error("Non-numeric expression in a numeric context", null);
 			return -1;
 		}
 		int count = 0;
@@ -135,7 +135,7 @@ public class ASTCons extends ASTExpression {
 	@Override
 	public ASTExpression getChild(int i) {
 		if (i >= children.size()) {
-			Log.error("Expression list bounds exceeded", null);
+			Logger.error("Expression list bounds exceeded", null);
 		}
 		return children.get(i);
 	}

@@ -24,7 +24,7 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.grammar.ast;
 
-import com.nextbreakpoint.nextfractal.contextfree.grammar.Log;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.Logger;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.RTI;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.CompilePhase;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ExpType;
@@ -42,14 +42,14 @@ public class ASTOperator extends ASTExpression {
 		this.right = right;
 		int index = "NP!+-*/^_<>LG=n&|X".indexOf(""+op);
 		if (index == -1) {
-            Log.error("Unknown operator", null);
+            Logger.error("Unknown operator", null);
         } else if (index < 3) {
 			if (right != null) {
-                Log.error("Operator takes only one operand", null);
+                Logger.error("Operator takes only one operand", null);
             }
 		} else {
 			if (right != null) {
-                Log.error("Operator takes two operands", null);
+                Logger.error("Operator takes two operands", null);
             }
 		}
 	}
@@ -205,12 +205,12 @@ public class ASTOperator extends ASTExpression {
 		}
 
 		if (type != ExpType.NumericType) {
-            Log.error("Non-numeric expression in a numeric context", null);
+            Logger.error("Non-numeric expression in a numeric context", null);
             return -1;
 		}
 
 		if (left.evaluate(result != null ? l : null, 1, rti) != 1) {
-            Log.error("illegal operand", null);
+            Logger.error("illegal operand", null);
             return -1;
 		}
 
@@ -248,7 +248,7 @@ public class ASTOperator extends ASTExpression {
 		}
 
 		if (rightnum != 1) {
-            Log.error("illegal operand", null);
+            Logger.error("illegal operand", null);
             return -1;
 		}
 
@@ -426,15 +426,15 @@ public class ASTOperator extends ASTExpression {
 					}
 					if (op == '+') {
 						if (type == ExpType.FlagType && type != ExpType.NumericType) {
-                            Log.error("Operands must be numeric or flags", null);
+                            Logger.error("Operands must be numeric or flags", null);
                         }
 					} else {
 						if (type != ExpType.NumericType) {
-                            Log.error("Operand(s) must be numeric", null);
+                            Logger.error("Operand(s) must be numeric", null);
                         }
 					}
 					if (op == '_' && !isNatural()) {
-                        Log.error("Proper subtraction operands must be natural", null);
+                        Logger.error("Proper subtraction operands must be natural", null);
                     }
 				}
 				break;

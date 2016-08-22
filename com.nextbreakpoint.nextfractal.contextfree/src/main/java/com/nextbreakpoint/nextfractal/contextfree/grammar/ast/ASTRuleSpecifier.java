@@ -254,7 +254,7 @@ public class ASTRuleSpecifier extends ASTExpression {
 						isConstant = true;
 						locality = Locality.PureLocal;
 					} else {
-						Log.error("Error processing shape variable.", null);
+						Logger.error("Error processing shape variable.", null);
 					}
 				}
 			}
@@ -273,7 +273,7 @@ public class ASTRuleSpecifier extends ASTExpression {
 							case ShapeArgs:
 								{
 									if (arguments.getType() == ExpType.RuleType) {
-										Log.error("Expression does not return a shape", null);
+										Logger.error("Expression does not return a shape", null);
 									}
 									isConstant = true;
 									locality = arguments.getLocality();
@@ -295,12 +295,12 @@ public class ASTRuleSpecifier extends ASTExpression {
 									boolean isGlobal = false;
 									ASTParameter bound = driver.findExpression(shapeType, isGlobal);
 									if (bound.getType() != ExpType.RuleType) {
-										Log.error("Shape name does not bind to a rule variable", null);
-										Log.error(bound.getLocation() + "  this is what it binds to", null);
+										Logger.error("Shape name does not bind to a rule variable", null);
+										Logger.error(bound.getLocation() + "  this is what it binds to", null);
 									}
 									if (bound.getStackIndex() == -1) {
 										if (bound.getDefinition() == null || bound.getDefinition().getExp() == null) {
-											Log.error("Error processing shape variable.", null);
+											Logger.error("Error processing shape variable.", null);
 											return null;
 										}
 										if (bound.getDefinition().getExp() instanceof ASTRuleSpecifier) {
@@ -308,7 +308,7 @@ public class ASTRuleSpecifier extends ASTExpression {
 											grab(r);
 											locality = Locality.PureLocal;
 										} else {
-											Log.error("Error processing shape variable.", null);
+											Logger.error("Error processing shape variable.", null);
 										}
 									} else {
 										stackIndex = bound.getStackIndex() - (isGlobal ? 0 : driver.getLocalStackDepth());
@@ -316,7 +316,7 @@ public class ASTRuleSpecifier extends ASTExpression {
 										locality = bound.getLocality();
 									}
 									if (arguments != null && arguments.getType() != ExpType.NoType) {
-										Log.error("Cannot bind parameters twice", null);
+										Logger.error("Cannot bind parameters twice", null);
 									}
 									return null;
 								}
@@ -350,7 +350,7 @@ public class ASTRuleSpecifier extends ASTExpression {
 											isConstant = false;
 											locality = arguments.getLocality();
 										} else {
-											Log.error("Function does not return a shape", null);
+											Logger.error("Function does not return a shape", null);
 										}
 										if (arguments != null) {
 											StringBuilder ent = new StringBuilder();
@@ -377,19 +377,19 @@ public class ASTRuleSpecifier extends ASTExpression {
 												param = paramIt.next();
 												parent = parentIt.next();
 												if (param != parent) {
-													Log.error("Parameter reuse only allowed when type signature is identical.", null);
-													Log.error(param.getLocation() + "    target shape parameter type", null);
-													Log.error(parent.getLocation() + "    does not equal source shape parameter type", null);
+													Logger.error("Parameter reuse only allowed when type signature is identical.", null);
+													Logger.error(param.getLocation() + "    target shape parameter type", null);
+													Logger.error(parent.getLocation() + "    does not equal source shape parameter type", null);
 													break;
 												}
 											}
 											if (!paramIt.hasNext() && parentIt.hasNext()) {
-												Log.error("Source shape has more parameters than target shape.", null);
-												Log.error(parent.getLocation() + "    extra source parameters start here", null);
+												Logger.error("Source shape has more parameters than target shape.", null);
+												Logger.error(parent.getLocation() + "    extra source parameters start here", null);
 											}
 											if (paramIt.hasNext() && !parentIt.hasNext()) {
-												Log.error("Target shape has more parameters than source shape.", null);
-												Log.error(param.getLocation() + "    extra target parameters start here", null);
+												Logger.error("Target shape has more parameters than source shape.", null);
+												Logger.error(param.getLocation() + "    extra target parameters start here", null);
 											}
 										}
 										isConstant = true;

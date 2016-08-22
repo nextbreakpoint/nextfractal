@@ -26,7 +26,7 @@ package com.nextbreakpoint.nextfractal.contextfree.grammar.ast;
 
 import java.util.List;
 
-import com.nextbreakpoint.nextfractal.contextfree.grammar.Log;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.Logger;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.Modification;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.RTI;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.StackRule;
@@ -51,7 +51,7 @@ public class ASTSelect extends ASTExpression {
 			isConstant = false;
 			isSelect = asIf;
 			if (selector == null || selector.size() < 3) {
-                Log.error("select()/if() function requires arguments", null);
+                Logger.error("select()/if() function requires arguments", null);
             }
 		}
 
@@ -134,12 +134,12 @@ public class ASTSelect extends ASTExpression {
 						arguments.remove(0);
 						
 						if (selector.getType() != ExpType.NumericType || selector.evaluate(null, 0) != 1) {
-                            Log.error("if()/select() selector must be a numeric scalar", null);
+                            Logger.error("if()/select() selector must be a numeric scalar", null);
                             return null;
 						}
 						
 						if (arguments.size() < 2) {
-                            Log.error("if()/select() selector must have at least two arguments", null);
+                            Logger.error("if()/select() selector must have at least two arguments", null);
                             return null;
 						}
 						
@@ -148,9 +148,9 @@ public class ASTSelect extends ASTExpression {
 						tupleSize = type == ExpType.NumericType ? arguments.get(0).evaluate(null, 0) : 1;
 						for (int i = 1; i < arguments.size(); i++) {
 							if (type != arguments.get(i).getType()) {
-                                Log.error("select()/if() choices must be of same type", null);
+                                Logger.error("select()/if() choices must be of same type", null);
                             } else if (type == ExpType.NumericType && tupleSize != -1 && arguments.get(0).evaluate(null, 0)  != tupleSize) {
-                                Log.error("select()/if() choices must be of same length", null);
+                                Logger.error("select()/if() choices must be of same length", null);
                                 tupleSize = -1;
 							}
 							isNatural = isNatural && arguments.get(i).isNatural();

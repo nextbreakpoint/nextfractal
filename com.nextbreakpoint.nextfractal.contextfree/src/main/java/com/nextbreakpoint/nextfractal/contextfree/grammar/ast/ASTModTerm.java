@@ -100,7 +100,7 @@ public class ASTModTerm extends ASTExpression {
 
 	@Override
 	public int evaluate(double[] result, int length, RTI rti) {
-        Log.error("Improper evaluation of an adjustment expression", null);
+        Logger.error("Improper evaluation of an adjustment expression", null);
         return -1;
 	}
 
@@ -113,13 +113,13 @@ public class ASTModTerm extends ASTExpression {
 			if (modType != ModType.modification && args.type == ExpType.NumericType) {
 				argcount = args.evaluate(modArgs, 6, rti);
 			} else if (modType == ModType.modification && args.type != ExpType.ModType) {
-                Log.error("Adjustments require numeric arguments", null);
+                Logger.error("Adjustments require numeric arguments", null);
                 return;
 			}
 		}
 
 		if (argcount != argCount) {
-            Log.error("Error evaluating arguments", null);
+            Logger.error("Error evaluating arguments", null);
             return;
 		}
 		
@@ -206,7 +206,7 @@ public class ASTModTerm extends ASTExpression {
 							par.concatenate(t2d);
 							result.getTransform().preConcatenate(par);
 						} catch (NoninvertibleTransformException e) {
-                            Log.error(e.getMessage(), null);
+                            Logger.error(e.getMessage(), null);
                         }
 					}
 					break;
@@ -342,11 +342,11 @@ public class ASTModTerm extends ASTExpression {
 			}
 			break;
 		case param: {
-            Log.error("Cannot provide a parameter in this context", null);
+            Logger.error("Cannot provide a parameter in this context", null);
             break;
 		}
 		case stroke: {
-            Log.error("Cannot provide a stroke width in this context", null);
+            Logger.error("Cannot provide a stroke width in this context", null);
             break;
 		}
 		case modification: {
@@ -381,7 +381,7 @@ public class ASTModTerm extends ASTExpression {
 		}
 		if (args == null) {
 			if (modType == ModType.param) {
-                Log.error("Illegal expression in shape adjustment", null);
+                Logger.error("Illegal expression in shape adjustment", null);
                 return null;
 			}
 		}
@@ -445,7 +445,7 @@ public class ASTModTerm extends ASTExpression {
 									case transform:
 										maxCount = 6;
 										if (argCount != 1 && argCount != 2 && argCount != 4 && argCount != 6) {
-                                            Log.error("transform adjustment takes 1, 2, 4, or 6 parameters", null);
+                                            Logger.error("transform adjustment takes 1, 2, 4, or 6 parameters", null);
                                         }
 										break;
 										
@@ -461,10 +461,10 @@ public class ASTModTerm extends ASTExpression {
 								}
 								
 		                        if (argCount < minCount) {
-                                    Log.error("Not enough adjustment parameters", null);
+                                    Logger.error("Not enough adjustment parameters", null);
                                 }
 		                        if (argCount > maxCount) {
-                                    Log.error("Too many adjustment parameters", null);
+                                    Logger.error("Too many adjustment parameters", null);
                                 }
 							}
 							break;
@@ -472,7 +472,7 @@ public class ASTModTerm extends ASTExpression {
 						case ModType: 
 							{
 								if (modType != ModType.transform) {
-                                    Log.error("Cannot accept a transform expression here", null);
+                                    Logger.error("Cannot accept a transform expression here", null);
                                 } else {
 									modType = ModType.modification;
 								}
@@ -480,7 +480,7 @@ public class ASTModTerm extends ASTExpression {
 							break;
 							
 						default:
-                            Log.error("Illegal expression in shape adjustment", null);
+                            Logger.error("Illegal expression in shape adjustment", null);
                             break;
 					}
 				}
