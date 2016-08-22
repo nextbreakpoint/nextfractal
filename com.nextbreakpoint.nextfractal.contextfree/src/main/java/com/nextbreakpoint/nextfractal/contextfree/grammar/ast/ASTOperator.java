@@ -24,6 +24,7 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.grammar.ast;
 
+import com.nextbreakpoint.nextfractal.contextfree.grammar.Log;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.RTI;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.CompilePhase;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ExpType;
@@ -41,15 +42,15 @@ public class ASTOperator extends ASTExpression {
 		this.right = right;
 		int index = "NP!+-*/^_<>LG=n&|X".indexOf(""+op);
 		if (index == -1) {
-			error("Unknown operator");
-		} else if (index < 3) {
+            Log.error("Unknown operator", null);
+        } else if (index < 3) {
 			if (right != null) {
-				error("Operator takes only one operand");
-			}
+                Log.error("Operator takes only one operand", null);
+            }
 		} else {
 			if (right != null) {
-				error("Operator takes two operands");
-			}
+                Log.error("Operator takes two operands", null);
+            }
 		}
 	}
 
@@ -204,13 +205,13 @@ public class ASTOperator extends ASTExpression {
 		}
 
 		if (type != ExpType.NumericType) {
-			error("Non-numeric expression in a numeric context");
-			return -1;
+            Log.error("Non-numeric expression in a numeric context", null);
+            return -1;
 		}
 
 		if (left.evaluate(result != null ? l : null, 1, rti) != 1) {
-			error("illegal operand");
-			return -1;
+            Log.error("illegal operand", null);
+            return -1;
 		}
 
 		// short-circuit evaluate && and ||
@@ -247,8 +248,8 @@ public class ASTOperator extends ASTExpression {
 		}
 
 		if (rightnum != 1) {
-			error("illegal operand");
-			return -1;
+            Log.error("illegal operand", null);
+            return -1;
 		}
 
 		if (result != null) {
@@ -418,23 +419,23 @@ public class ASTOperator extends ASTExpression {
 			case TypeCheck:
 				{
 					isConstant = left.isConstant() && (right == null || right.isConstant());
-					locality = right != null ? combineLocality(left.getLocality(), right.getLocality()) : left.getLocality();
+					locality = right != null ? AST.combineLocality(left.getLocality(), right.getLocality()) : left.getLocality();
 					type = right != null ? ExpType.fromType(left.getType().ordinal() | right.getType().ordinal()) : left.getType();
 					if ("+_*<>LG=n&|X^!".indexOf(""+op) != -1) {
 						isNatural = left.isNatural() && (right == null || right.isNatural());
 					}
 					if (op == '+') {
 						if (type == ExpType.FlagType && type != ExpType.NumericType) {
-							error("Operands must be numeric or flags");
-						}
+                            Log.error("Operands must be numeric or flags", null);
+                        }
 					} else {
 						if (type != ExpType.NumericType) {
-							error("Operand(s) must be numeric");
-						}
+                            Log.error("Operand(s) must be numeric", null);
+                        }
 					}
 					if (op == '_' && !isNatural()) {
-						error("Proper subtraction operands must be natural");
-					}
+                        Log.error("Proper subtraction operands must be natural", null);
+                    }
 				}
 				break;
 	

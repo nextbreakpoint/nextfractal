@@ -264,4 +264,8 @@ public class ASTDefine extends ASTReplacement {
 				break;
 		}
 	}
+
+	public CFDGDriver getDriver() {
+		return driver;
+	}
 }

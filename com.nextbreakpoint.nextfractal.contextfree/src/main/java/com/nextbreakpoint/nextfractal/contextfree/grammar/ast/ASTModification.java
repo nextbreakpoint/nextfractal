@@ -31,10 +31,7 @@ import java.util.ListIterator;
 import java.util.Map;
 
 import com.nextbreakpoint.nextfractal.contextfree.core.Rand64;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGDriver;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.DeferUntilRuntimeException;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.Modification;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.RTI;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.*;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.*;
 import org.antlr.v4.runtime.Token;
 
@@ -205,7 +202,7 @@ public class ASTModification extends ASTExpression {
 
 	@Override
 	public int evaluate(double[] result, int length, RTI rti) {
-		error("Improper evaluation of an adjustment expression");
+		Log.error("Improper evaluation of an adjustment expression", null);
 		return -1;
 	}
 
@@ -272,10 +269,10 @@ public class ASTModification extends ASTExpression {
                 nonConstant |= mc.getType();
 			boolean keepThisOne = (mc.getType() & nonConstant) != 0;
 			if (driver.isInPathContainer() && (mc.getType() & ModClass.ZClass.getType()) != 0) {
-				error("Z changes are not supported within paths");
+				Log.error("Z changes are not supported within paths", null);
 			}
 			if (driver.isInPathContainer() && (mc.getType() & ModClass.TimeClass.getType()) != 0) {
-				error("Time changes are not supported within paths");
+				Log.error("Time changes are not supported within paths", null);
 			}
 			try {
 				if (!keepThisOne) {
@@ -362,7 +359,7 @@ public class ASTModification extends ASTExpression {
 										continue;
 									}
 									
-									List<ASTExpression> xyzargs = extract(term.getArguments());
+									List<ASTExpression> xyzargs = AST.extract(term.getArguments());
 									ASTExpression xyargs = null;
 									ASTExpression zargs = null;
 									
@@ -410,7 +407,7 @@ public class ASTModification extends ASTExpression {
 					locality = Locality.PureLocal;
 					for (ASTModTerm term : modExp) {
 						isConstant = isConstant && term.isConstant();
-						locality = combineLocality(locality, term.getLocality());
+						locality = AST.combineLocality(locality, term.getLocality());
 						StringBuilder ent = new StringBuilder();
 						term.entropy(ent);
 						addEntropy(ent.toString());

@@ -29,10 +29,7 @@ import java.awt.geom.NoninvertibleTransformException;
 
 import com.nextbreakpoint.nextfractal.contextfree.core.AffineTransform1D;
 import com.nextbreakpoint.nextfractal.contextfree.core.AffineTransformTime;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.DeferUntilRuntimeException;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.HSBColor;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.Modification;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.RTI;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.*;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.*;
 import org.antlr.v4.runtime.Token;
 
@@ -103,8 +100,8 @@ public class ASTModTerm extends ASTExpression {
 
 	@Override
 	public int evaluate(double[] result, int length, RTI rti) {
-		error("Improper evaluation of an adjustment expression");
-		return -1;
+        Log.error("Improper evaluation of an adjustment expression", null);
+        return -1;
 	}
 
 	@Override
@@ -116,14 +113,14 @@ public class ASTModTerm extends ASTExpression {
 			if (modType != ModType.modification && args.type == ExpType.NumericType) {
 				argcount = args.evaluate(modArgs, 6, rti);
 			} else if (modType == ModType.modification && args.type != ExpType.ModType) {
-				error("Adjustments require numeric arguments");
-				return;
+                Log.error("Adjustments require numeric arguments", null);
+                return;
 			}
 		}
 
 		if (argcount != argCount) {
-			error("Error evaluating arguments");
-			return;
+            Log.error("Error evaluating arguments", null);
+            return;
 		}
 		
 		double[] args = new double[6];
@@ -209,8 +206,8 @@ public class ASTModTerm extends ASTExpression {
 							par.concatenate(t2d);
 							result.getTransform().preConcatenate(par);
 						} catch (NoninvertibleTransformException e) {
-							error(e.getMessage());
-						}
+                            Log.error(e.getMessage(), null);
+                        }
 					}
 					break;
 					
@@ -345,12 +342,12 @@ public class ASTModTerm extends ASTExpression {
 			}
 			break;
 		case param: {
-			error("Cannot provide a parameter in this context");
-			break;
+            Log.error("Cannot provide a parameter in this context", null);
+            break;
 		}
 		case stroke: {
-			error("Cannot provide a stroke width in this context");
-			break;
+            Log.error("Cannot provide a stroke width in this context", null);
+            break;
 		}
 		case modification: {
 			if (rti == null) {
@@ -384,8 +381,8 @@ public class ASTModTerm extends ASTExpression {
 		}
 		if (args == null) {
 			if (modType == ModType.param) {
-				error("Illegal expression in shape adjustment");
-				return null;
+                Log.error("Illegal expression in shape adjustment", null);
+                return null;
 			}
 		}
 		
@@ -448,8 +445,8 @@ public class ASTModTerm extends ASTExpression {
 									case transform:
 										maxCount = 6;
 										if (argCount != 1 && argCount != 2 && argCount != 4 && argCount != 6) {
-											error("transform adjustment takes 1, 2, 4, or 6 parameters");
-										}
+                                            Log.error("transform adjustment takes 1, 2, 4, or 6 parameters", null);
+                                        }
 										break;
 										
 									case param:
@@ -464,27 +461,27 @@ public class ASTModTerm extends ASTExpression {
 								}
 								
 		                        if (argCount < minCount) {
-		                        	error("Not enough adjustment parameters");
-		                        }
+                                    Log.error("Not enough adjustment parameters", null);
+                                }
 		                        if (argCount > maxCount) {
-		                        	error("Too many adjustment parameters");
-		                        }
+                                    Log.error("Too many adjustment parameters", null);
+                                }
 							}
 							break;
 	
 						case ModType: 
 							{
 								if (modType != ModType.transform) {
-									error("Cannot accept a transform expression here");
-								} else {
+                                    Log.error("Cannot accept a transform expression here", null);
+                                } else {
 									modType = ModType.modification;
 								}
 							}
 							break;
 							
 						default:
-							error("Illegal expression in shape adjustment");
-							break;
+                            Log.error("Illegal expression in shape adjustment", null);
+                            break;
 					}
 				}
 				break;

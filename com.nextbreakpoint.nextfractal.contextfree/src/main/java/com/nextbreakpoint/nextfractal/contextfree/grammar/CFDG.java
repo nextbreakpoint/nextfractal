@@ -27,14 +27,12 @@ package com.nextbreakpoint.nextfractal.contextfree.grammar;
 import com.nextbreakpoint.nextfractal.contextfree.core.AffineTransformTime;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.*;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.*;
-import org.antlr.v4.runtime.Token;
 
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.util.*;
 
 public class CFDG {
-	private static final double SQRT2 = Math.sqrt(2.0);
 	private double[] backgroundColor;
 	private Shape initialShape;
 	private ASTRule needle;
@@ -110,7 +108,7 @@ public class CFDG {
 		needle.setWeight(weight);
 		int first = lowerBound(rules, 0, rules.size() - 1, needle);
 		if (first == rules.size() || rules.get(first).getNameIndex() != nameIndex) {
-			error("Cannot find a rule for a shape (very helpful I know)");
+			Log.fail("Cannot find a rule for a shape (very helpful I know)", null);
 		}
 		return rules.get(first);
 	}
@@ -193,11 +191,11 @@ public class CFDG {
 			tileMod.getTransform().transform(v, v);
 
 			if (Math.abs(u_y - o_y) >= 0.0001 && Math.abs(v_x - o_x) >= 0.0001) {
-				error("Tile must be aligned with the X or Y axis");
+				Log.fail("Tile must be aligned with the X or Y axis", null);
 			}
 
 			if (Math.abs(u_x - o_x) < 0.0 || Math.abs(v_y - o_y) < 0.0) {
-				error("Tile must be in the positive X/Y quadrant");
+				Log.fail("Tile must be in the positive X/Y quadrant", null);
 			}
 
 			point[0] = u_x - o_x;
@@ -242,11 +240,11 @@ public class CFDG {
 			tileMod.getTransform().transform(v, v);
 
 			if (Math.abs(u_y - o_y) >= 0.0001 || Math.abs(v_x - o_x) >= 0.0001) {
-				error("Frieze must be aligned with the X and Y axis");
+				Log.fail("Frieze must be aligned with the X and Y axis", null);
 			}
 
 			if (Math.abs(u_x - o_x) < 0.0 || Math.abs(v_y - o_y) < 0.0) {
-				error("Frieze must be in the positive X/Y quadrant");
+				Log.fail("Frieze must be in the positive X/Y quadrant", null);
 			}
 
 			point[0] = u_x - o_x;
@@ -269,7 +267,7 @@ public class CFDG {
 		}
 
 		if (sizeMod.getTransform().getShearX() != 0.0 || sizeMod.getTransform().getShearY() != 0.0) {
-			error("Size specification must not be rotated or skewed");
+			Log.fail("Size specification must not be rotated or skewed", null);
 		}
 
 		return false;
@@ -289,7 +287,7 @@ public class CFDG {
 		}
 
 		if (sizeMod.getTransformTime().getBegin() >= sizeMod.getTransformTime().getEnd()) {
-			error("Time specification must have positive duration");
+			Log.fail("Time specification must have positive duration", null);
 		}
 
 		return false;
@@ -298,10 +296,10 @@ public class CFDG {
 	public void getSummetry(SymmList syms, RTI rti) {
 		// TODO controllare
 		syms.clear();
-		ASTExpression e = hasParameter(CFG.Symmetry);
-		List<ASTModification> left = getTransforms(e, syms, rti, isTiled(null, null), tileMod.getTransform());
+		ASTExpression exp = hasParameter(CFG.Symmetry);
+		List<ASTModification> left = AST.getTransforms(exp, syms, rti, isTiled(null, null), tileMod.getTransform());
 		if (!left.isEmpty()) {
-			error("At least one term was invalid");
+			Log.fail("At least one term was invalid", exp.getLocation());
 		}
 	}
 
@@ -311,7 +309,7 @@ public class CFDG {
 			return false;
 		}
 		if (!exp.isConstant() && rti != null) {
-			error("This expression must be constant");
+			Log.fail("This expression must be constant", exp.getLocation());
 			return false;
 		} else {
 			exp.evaluate(value, 1, rti);
@@ -325,7 +323,7 @@ public class CFDG {
 			return false;
 		}
 		if (!exp.isConstant() && rti != null) {
-			error("This expression must be constant");
+			Log.fail("This expression must be constant", exp.getLocation());
 			return false;
 		} else {
 			exp.evaluate(value, true, rti);//TODO controllare
@@ -373,7 +371,7 @@ public class CFDG {
 			if (rule.getWeightType() == WeightType.PercentWeight) {
 				percentweightsums[rule.getNameIndex()] += rule.getWeight();
 				if (percentweightsums[rule.getNameIndex()] > 1.0001) {
-					error("Percentages exceed 100%");
+					Log.fail("Percentages exceed 100%", rule.getLocation());
 				}
 			} else {
 				weightsums[rule.getNameIndex()] += rule.getWeight();
@@ -390,12 +388,12 @@ public class CFDG {
 				} else {
 					weight *= 1.0 - percentweightsums[rule.getNameIndex()];
 					if (percentweightsums[rule.getNameIndex()] > 0.9999) {
-						warning("Percentages sum to 100%, this rule has no weight");
+						Log.warning("Percentages sum to 100%, this rule has no weight", rule.getLocation());
 					}
 				}
 			}
 			if (weightTypes[rule.getNameIndex()] == WeightType.PercentWeight.getType() && Math.abs(percentweightsums[rule.getNameIndex()] - 1.0) > 0.0001) {
-				warning("Percentages do not sum to 100%");
+				Log.warning("Percentages do not sum to 100%", rule.getLocation());
 			}
 			if (!Double.isFinite(weight)) {
 				weight = 0;
@@ -567,7 +565,7 @@ public class CFDG {
 			ASTExpression startExp = paramExp.get(CFG.StartShape);
 
 			if (startExp == null) {
-				error("No startshape found");
+				Log.fail("No startshape found", null);
 				return null;
 			}
 
@@ -576,7 +574,7 @@ public class CFDG {
 				initShape = new ASTReplacement(driver, specStart, specStart.getModification(), startExp.getLocation());
 				initShape.getChildChange().addEntropy(initShape.getShapeSpecifier().getEntropy());
 			} else {
-				error("Type error in startshape");
+				Log.fail("Type error in startshape", startExp.getLocation());
 				return null;
 			}
 
@@ -626,145 +624,7 @@ public class CFDG {
 		return null;
 	}
 
-	private List<ASTModification> getTransforms(ASTExpression e, SymmList syms, RTI rti, boolean tiled, AffineTransform transform) {
-		List<ASTModification> result = new ArrayList<>();
-
-		syms.clear();
-
-		if (e == null) {
-			return result;
-		}
-
-		// TODO da rivedere
-
-		List<Double> symmSpec = new ArrayList<>();
-
-		for (int i = 0; i < e.size(); i++) {
-			ASTExpression cit = e.getChild(i);
-			switch (cit.getType()) {
-				case FlagType:
-					processSymmSpec(syms, transform, tiled, symmSpec, cit.getLocation());
-					break;
-				case NumericType:
-					if (symmSpec.isEmpty() && cit.getType() != ExpType.FlagType) {
-						error("Symmetry flag expected here");
-					}
-					int sz = cit.evaluate(null, 0);
-					if (sz < 1) {
-						error("Could not evaluate this");
-					} else {
-						double[] values = new double[sz];
-						if (cit.evaluate(values, values.length) != sz) {
-							error("Could not evaluate this");
-						} else {
-							for (double value : values) {
-								symmSpec.add(value);
-							}
-						}
-					}
-					break;
-				case ModType:
-					processSymmSpec(syms, transform, tiled, symmSpec, cit.getLocation());
-					if (cit instanceof ASTModification) {
-						ASTModification m = (ASTModification)cit;
-						if (m.getModClass() != null && m.getModClass().getType() == (ModClass.GeomClass.getType() | ModClass.PathOpClass.getType()) && (rti != null || m.isConstant())) {
-							Modification mod = new Modification();
-							cit.evaluate(mod, false, rti);
-							addUnique(syms, sizeMod.getTransform());
-						} else {
-							result.add(m);
-						}
-					} else {
-						error("Wrong type");
-					}
-					break;
-				default:
-					error("Wrong type");
-					break;
-			}
-		}
-
-		processSymmSpec(syms, transform, tiled, symmSpec, e.getLocation());
-
-		return result;
-	}
-
-	private void addUnique(SymmList syms, AffineTransform transform) {
-		if (syms.contains(transform)) {
-			syms.add(transform);
-		}
-	}
-
-	private void processSymmSpec(SymmList syms, AffineTransform transform, boolean tiled, List<Double> data, Token location) {
-		if (data == null) {
-			return;
-		}
-
-		int type = data.get(0).intValue();
-		FlagType flag = FlagType.fromMask(type);
-
-		boolean frieze = (transform.getScaleX() != 0.0 || transform.getScaleY() != 0.0) && transform.getScaleX() * transform.getScaleY() == 0.0;
-		boolean rhombic = tiled && ((Math.abs(transform.getShearY()) <= 0.0000001 && Math.abs(transform.getShearX() / transform.getScaleX() - 0.5) < 0.0000001) || (Math.abs(transform.getShearX()) <= 0.0000001 && Math.abs(transform.getShearY() / transform.getScaleY() - 0.5) < 0.0000001));
-		boolean rectangular = tiled && transform.getShearX() == 0.0 && transform.getShearY() == 0.0;
-		boolean square = rectangular && transform.getScaleX() == transform.getScaleY();
-		boolean hexagonal = false;
-		boolean square45 = false;
-		double size45 = transform.getScaleX();
-
-		if (rhombic) {
-			double x1 = 1;
-			double y1 = 0;
-			Point2D.Double p1 = new Point2D.Double(x1, y1);
-			transform.transform(p1, p1);
-			x1 = p1.getX();
-			y1 = p1.getY();
-			double dist10 = Math.hypot(x1, y1);
-			double x2 = 0;
-			double y2 = 1;
-			Point2D.Double p2 = new Point2D.Double(x1, y1);
-			transform.transform(p2, p2);
-			x2 = p2.getX();
-			y2 = p2.getY();
-			double dist01 = Math.hypot(x2, y2);
-			hexagonal = Math.abs(dist10 / dist01 - 1.0) < 0.0000001;
-			square45 = Math.abs(dist10 / dist01 - SQRT2) < 0.0000001 || Math.abs(dist01 / dist10 - SQRT2) < 0.0000001;
-			size45 = Math.min(dist01, dist10);
-		}
-
-		if (type >= FlagType.CF_P11G.getMask() && type <= FlagType.CF_P2MM.getMask() && !frieze) {
-			error("Frieze symmetry only works in frieze designs");
-		}
-
-		if (type >= FlagType.CF_PM.getMask() && type <= FlagType.CF_P6M.getMask() && !tiled) {
-			error("Wallpaper symmetry only works in tiled designs");
-		}
-
-		if (type >= FlagType.CF_P2.getMask() && !frieze && !tiled) {
-			error("p2 symmetry only works in frieze or tiled designs");
-		}
-
-		//TODO completare
-
-		switch (flag) {
-			case CF_CYCLIC: {
-				break;
-			}
-			default: {
-				break;
-			}
-		}
-	}
-
 	// TODO da rivedere
-
-	protected void error(String message) {
-		System.err.println(message);
-		throw new RuntimeException(message);
-	}
-
-	protected void warning(String message) {
-		System.err.println(message);
-	}
 
 	public void compile(CompilePhase ph) {
 		for (ASTRule rule : rules) {

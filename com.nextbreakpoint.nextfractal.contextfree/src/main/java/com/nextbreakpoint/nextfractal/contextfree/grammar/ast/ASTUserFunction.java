@@ -71,7 +71,7 @@ public class ASTUserFunction extends ASTExpression {
 	@Override
 	public int evaluate(double[] result, int length, RTI rti) {
 		if (type != ExpType.NumericType) {
-			error("Function does not evaluate to a number");
+			Log.error("Function does not evaluate to a number", null);
 			return -1;
 		}
 		if (result != null && length < definition.getTupleSize()) {
@@ -93,7 +93,7 @@ public class ASTUserFunction extends ASTExpression {
 	@Override
 	public void evaluate(Modification result, boolean shapeDest, RTI rti) {
 		if (type != ExpType.ModType) {
-			error("Function does not evaluate to an adjustment");
+			Log.error("Function does not evaluate to an adjustment", null);
 			return;
 		}
 		if (rti == null) throw new DeferUntilRuntimeException();
@@ -135,17 +135,17 @@ public class ASTUserFunction extends ASTExpression {
 				{
 	                // Function calls and shape specifications are ambiguous at parse
 	                // time so the parser always chooses a function call. During
-	                // type check we may need to convert to a shape spec.
+	                // type checkParam we may need to convert to a shape spec.
 					ASTDefine[] def = new ASTDefine[1];
 					@SuppressWarnings("unchecked")
 					List<ASTParameter>[] p = new List[1];
 					String name = driver.getTypeInfo(nameIndex, def, p);
 					if (def[0] != null && p[0] != null) {
-						error("Name matches both a function and a shape");
+						Log.error("Name matches both a function and a shape", null);
 						return null;
 					}
 					if (def[0] == null && p[0] == null) {
-						error("Name does not match shape name or function name");
+						Log.error("Name does not match shape name or function name", null);
 						return null;
 					}
 					if (def[0] != null) {
@@ -180,7 +180,7 @@ public class ASTUserFunction extends ASTExpression {
 	@Override
 	public StackRule evalArgs(RTI rti, StackRule parent) {
 		if (type != ExpType.RuleType) {
-			error("Function does not evaluate to a shape");
+			Log.error("Function does not evaluate to a shape", null);
 			return null;
 		}
 		if (rti == null) throw new DeferUntilRuntimeException();

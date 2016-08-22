@@ -1225,7 +1225,7 @@ function_definition_header returns [ASTDefine result]
             if ($result != null) {
             	int[] tupleSize = new int[1];
             	boolean[] isNatural = new boolean[1];
-                $result.setExpType(driver.decodeType(type, tupleSize, isNatural, $t));
+                $result.setExpType(AST.decodeType(type, tupleSize, isNatural, $t));
                 $result.setTupleSize(tupleSize[0]);
                 $result.setIsNatural(isNatural[0]); 
             }

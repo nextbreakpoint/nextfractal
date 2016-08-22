@@ -408,14 +408,14 @@ public class RTI {
 			return;
 		}
 		colorConflict = true;
-		warning(location, "Conflicting color change");
+		Log.warning("Conflicting color change", null);
 	}
 
 	public void processShape(Shape shape) {
 		double area = shape.getArea();
 		if (!Double.isFinite(area)) {
 			requestStop = true;
-			error("A shape got too big.");
+			Log.error("A shape got too big.", null);
 			return;
 		}
 
@@ -436,7 +436,7 @@ public class RTI {
 		} else {
 			// TODO rivedere
 			requestStop = true;
-			error(String.format("Shape with no rules encountered: %s.", cfdg.decodeShapeName(shape.getShapeType())));
+			Log.error(String.format("Shape with no rules encountered: %s.", cfdg.decodeShapeName(shape.getShapeType())), null);
 		}
 	}
 
@@ -521,7 +521,7 @@ public class RTI {
 
 		if (!finishedShape.getWorldState().isFinite()) {
 			requestStop = true;
-			error("A shape got too big.");
+			Log.error("A shape got too big.", null);
 			return;
 		}
 
@@ -676,11 +676,11 @@ public class RTI {
 				processShape(initShape);
 			} catch (CFDGException e) {
 				requestStop = true;
-				error(e.getMessage());
+				Log.error(e.getMessage(), null);
 			} catch (Exception e) {
 				//TODO rivedere
 				requestStop = true;
-				error(e.getMessage());
+				Log.error(e.getMessage(), null);
 			}
 		}
 
@@ -711,12 +711,12 @@ public class RTI {
 				rule.traverse(shape, false, this);
 			} catch (CFDGException e) {
 				requestStop = true;
-				error(e.getMessage());
+				Log.error(e.getMessage(), null);
 				break;
 			} catch (Exception e) {
 				//TODO rivedere
 				requestStop = true;
-				error(e.getMessage());
+				Log.error(e.getMessage(), null);
 				break;
 			}
 
@@ -740,7 +740,7 @@ public class RTI {
 		if (!requestStop) {
 			outputStats();
 			if (canvas != null) {
-				info("Done.");
+				Log.info("Done.", null);
 			}
 		}
 
@@ -782,7 +782,7 @@ public class RTI {
 		OutputBounds outputBounds = new OutputBounds(frames, timeBounds, currWidth, currHeight, this);
 
 		if (zoom) {
-			info("Computing zoom");
+			Log.info("Computing zoom", null);
 
 			try {
 				forEachShape(true, shape -> {
@@ -793,7 +793,7 @@ public class RTI {
 				return;
 			} catch (Exception e) {
 				//TODO rivedere
-				error(e.getMessage());
+				Log.error(e.getMessage(), null);
 				return;
 			}
 		}
@@ -806,7 +806,7 @@ public class RTI {
 		Bounds savedBounds = bounds;
 
 		for (int frameCount = 1; frameCount <= frames; frameCount++) {
-			info(String.format("Generating frame %d of %d", frameCount, frames));
+			Log.info(String.format("Generating frame %d of %d", frameCount, frames), null);
 
 			if (zoom) {
 				bounds = outputBounds.frameBounds(frameCount - 1);
@@ -826,7 +826,7 @@ public class RTI {
 				try {
 					init();
 				} catch (Exception e) {
-					error(e.getMessage());
+					Log.error(e.getMessage(), null);
 					cleanup();
 					bounds = savedBounds;
 					animating = false;
@@ -853,7 +853,7 @@ public class RTI {
 		animating = false;
 		outputStats();
 
-		info(String.format("Animation of %d frames complete", frames));
+		Log.info(String.format("Animation of %d frames complete", frames), null);
 	}
 
 	private void outputPrep(Canvas canvas) {
@@ -939,7 +939,7 @@ public class RTI {
 
 		if (finalStep) {
 			if (finishedShapes.size() > 10000) {
-				info("Sorting shapes...");
+				Log.info("Sorting shapes...", null);
 			}
 			Collections.sort(finishedShapes);
 		}
@@ -957,7 +957,7 @@ public class RTI {
 			});
 		} catch (StopException e) {
 		} catch (Exception e) {
-			error(e.getMessage());
+			Log.error(e.getMessage(), null);
 		}
 
 		canvas.end();
@@ -1020,25 +1020,10 @@ public class RTI {
 			if (PrimShape.isPrimShape(shape.getShapeType())) {
 				canvas.primitive(shape.getShapeType(), color, transform);
 			} else {
-				error("Non drawable shape with no rules: " + cfdg.decodeShapeName(shape.getShapeType()));
+				Log.error("Non drawable shape with no rules: " + cfdg.decodeShapeName(shape.getShapeType()), null);
 				requestStop = true;
 				throw new StopException();
 			}
 		}
-	}
-
-	private void info(String message) {
-		//TODO completare
-		System.out.println(message);
-	}
-
-	private void error(String message) {
-		//TODO completare
-		System.out.println(message);
-	}
-
-	private void warning(Token location, String message) {
-		//TODO completare
-		System.out.println(message);
 	}
 }

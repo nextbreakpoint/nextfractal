@@ -27,6 +27,7 @@ package com.nextbreakpoint.nextfractal.contextfree.grammar.ast;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.nextbreakpoint.nextfractal.contextfree.grammar.Log;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.Modification;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.RTI;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.StackRule;
@@ -63,10 +64,15 @@ public class ASTExpression {
 		this.isNatural = isNatural;
 		this.locality = locality;
 		this.type = type;
+		this.location = location;
 	}
 
 	public boolean isConstant() {
 		return isConstant;
+	}
+
+	public void setIsConstant(boolean isConstant) {
+		this.isConstant = isConstant;
 	}
 
 	public boolean isNatural() {
@@ -80,7 +86,11 @@ public class ASTExpression {
 	public Locality getLocality() {
 		return locality;
 	}
-	
+
+	public void setLocality(Locality locality) {
+		this.locality = locality;
+	}
+
 	public ExpType getType() {
 		return type;
 	}
@@ -88,7 +98,23 @@ public class ASTExpression {
 	public void setType(ExpType type) {
 		this.type = type;
 	}
-	
+
+	public Token getLocation() {
+		return location;
+	}
+
+	public void setLocation(Token location) {
+		this.location = location;
+	}
+
+	public ASTExpression simplify() {
+		return this;
+	}
+
+	public ASTExpression compile(CompilePhase ph) {
+		return null;
+	}
+
 	public int evaluate(double[] result, int length) {
 		return evaluate(result, length, null);
 	}
@@ -112,13 +138,9 @@ public class ASTExpression {
 	public void entropy(StringBuilder e) {
 	}
 	
-	public ASTExpression simplify() {
-		return this;
-	}
-	
 	public ASTExpression getChild(int i) {
 		if (i > 0) {
-			error("Expression list bounds exceeded");
+			Log.error("Expression list bounds exceeded", location);
 		}
 		return this;
 	}
@@ -127,25 +149,7 @@ public class ASTExpression {
 		return 1;
 	}
 
-	public ASTExpression append(ASTExpression e) {
-		return null;
-	}
-
-	public ASTExpression compile(CompilePhase ph) {
-		switch (ph) {
-			case TypeCheck: 
-				break;
-	
-			case Simplify: 
-				break;
-
-			default:
-				break;
-		}
-		return null;
-	}
-
-	// Always returns nullptr except during type check in the following cases:
+	// Always returns nullptr except during type checkParam in the following cases:
 	// * An ASTvariable bound to a constant returns a copy of the constant
 	// * An ASTvariable bound to a rule spec returns an ASTruleSpec that
 	//   acts as a stack variable
@@ -154,35 +158,14 @@ public class ASTExpression {
 	//
 	// It is safe to ignore the return value if you can guarantee that none
 	// of these conditions is possible. Otherwise you must replace the object
-	// with the returned object. Using the original object after type check
+	// with the returned object. Using the original object after type checkParam
 	// will fail.
 	public static ASTExpression append(ASTExpression le, ASTExpression re) {
-		return null;
-	}
-	
-	protected final void error(String message) {
-		System.out.println(message);
+		if (le != null && re != null) le.append(re);
+		return le != null ? le : re;
 	}
 
-	protected Locality combineLocality(Locality locality1, Locality locality2) {
-		return Locality.fromType(locality1.ordinal() | locality2.ordinal());
-	}
-	
-	protected List<ASTExpression> extract(ASTExpression exp) {
-		if (exp instanceof ASTCons) {
-			return ((ASTCons)exp).getChildren();
-		} else {
-			List<ASTExpression> ret = new ArrayList<ASTExpression>();
-			ret.add(exp);
-			return ret;
-		}
-	}
-
-	public Token getLocation() {
-		return location;
-	}
-
-	public void setLocation(Token location) {
-		this.location = location;
+	public ASTExpression append(ASTExpression sib) {
+		return sib != null ? new ASTCons(location, this, sib) : this;
 	}
 }

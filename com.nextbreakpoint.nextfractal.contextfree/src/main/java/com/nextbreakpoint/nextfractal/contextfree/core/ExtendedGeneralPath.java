@@ -128,7 +128,7 @@ public class ExtendedGeneralPath implements ExtendedShape, Cloneable {
             return;
         }
 
-        checkMoveTo();  // check if prev command was moveto
+        checkMoveTo();  // checkParam if prev command was moveto
 
         // Get the current (x, y) coordinates of the path
         double x0 = cx;
@@ -198,7 +198,7 @@ public class ExtendedGeneralPath implements ExtendedShape, Cloneable {
         double Pry = ry * ry;
         double Px1 = x1 * x1;
         double Py1 = y1 * y1;
-        // check that radii are large enough
+        // checkParam that radii are large enough
         double radiiCheck = Px1/Prx + Py1/Pry;
         if (radiiCheck > 1) {
             rx = Math.sqrt(radiiCheck) * rx;
@@ -282,7 +282,7 @@ public class ExtendedGeneralPath implements ExtendedShape, Cloneable {
      * Delegates to the enclosed <code>GeneralPath</code>.
      */
     public synchronized void lineTo(float x, float y) {
-        checkMoveTo();  // check if prev command was moveto
+        checkMoveTo();  // checkParam if prev command was moveto
         path.lineTo(x, y);
 
         makeRoom(2);
@@ -295,7 +295,7 @@ public class ExtendedGeneralPath implements ExtendedShape, Cloneable {
      * Delegates to the enclosed <code>GeneralPath</code>.
      */
     public synchronized void quadTo(float x1, float y1, float x2, float y2) {
-        checkMoveTo();  // check if prev command was moveto
+        checkMoveTo();  // checkParam if prev command was moveto
         path.quadTo(x1, y1, x2, y2);
 
         makeRoom(4);
@@ -312,7 +312,7 @@ public class ExtendedGeneralPath implements ExtendedShape, Cloneable {
     public synchronized void curveTo(float x1, float y1,
                                      float x2, float y2,
                                      float x3, float y3) {
-        checkMoveTo();   // check if prev command was moveto
+        checkMoveTo();   // checkParam if prev command was moveto
         path.curveTo(x1, y1, x2, y2, x3, y3);
 
         makeRoom(6);

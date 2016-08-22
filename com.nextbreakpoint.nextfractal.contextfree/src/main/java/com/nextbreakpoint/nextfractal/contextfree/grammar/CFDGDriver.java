@@ -434,23 +434,23 @@ public class CFDGDriver {
 			if (!subPath) {
 				error("Replacements are not allowed in paths", location);
 			} else if (r.getArgSource() == ArgSource.StackArgs || r.getArgSource() == ArgSource.ShapeArgs) {
-	            // Parameter subpaths must be all ops, but we must check at runtime
+	            // Parameter subpaths must be all ops, but we must checkParam at runtime
 				t = RepElemType.op;
 			} else if (cfdg.getShapeType(r.getShapeType()) == ShapeClass.PathType) {
 				ASTRule rule = cfdg.findRule(r.getShapeType());
 				if (rule != null) {
 					t = RepElemType.fromType(rule.getRuleBody().getRepType());
 				} else {
-					// Recursive calls must be all ops, check at runtime
+					// Recursive calls must be all ops, checkParam at runtime
 					t = RepElemType.op;
 				}
 			} else if (bound != null) {
-	            // Variable subpaths must be all ops, but we must check at runtime
+	            // Variable subpaths must be all ops, but we must checkParam at runtime
 				t = RepElemType.op;
 			} else if (isPrimeShape(r.getShapeType())) {
 				t = RepElemType.op;
 			} else {
-				// Forward calls must be all ops, check at runtime
+				// Forward calls must be all ops, checkParam at runtime
 				t = RepElemType.op;
 			}
 		}
@@ -660,38 +660,6 @@ public class CFDGDriver {
 
 	public void setMaybeVersion(String maybeVersion) {
 		this.maybeVersion = maybeVersion;
-	}
-
-	public ExpType decodeType(String typeName, int[] tupleSize, boolean[] isNatural, Token location) {
-		ExpType type;
-		tupleSize[0] = 1;
-        isNatural[0] = false;
-        
-        if (typeName.equals("number")) {
-            type = ExpType.NumericType;
-        } else if (typeName.equals("natural")) {
-            type = ExpType.NumericType;
-            isNatural[0] = true;
-        } else if (typeName == "adjustment") {
-            type = ExpType.ModType;
-            tupleSize[0] = 6;
-        } else if (typeName == "shape") {
-            type = ExpType.RuleType;
-        } else if (typeName.startsWith("vector")) {
-        	type = ExpType.NumericType;
-        	if (typeName.matches("vector[0-9]+")) {
-                tupleSize[0] = Integer.parseInt(typeName.substring(6));
-                if (tupleSize[0] <= 1 || tupleSize[0] > 99) {
-                	error("Illegal vector size (<=1 or >99)", location);
-                }
-        	} else {
-        		error("Illegal vector type specification", location);
-        	}
-        } else {
-            type = ExpType.NoType;
-            error("Unrecognized type name", location);
-        }
-        return type;
 	}
 
 	public CFDG getCFDG() {

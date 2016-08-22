@@ -28,6 +28,7 @@ import java.util.List;
 
 import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGDriver;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.DeferUntilRuntimeException;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.Log;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.RTI;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.CompilePhase;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ExpType;
@@ -71,7 +72,7 @@ public class ASTArray extends ASTExpression {
 	@Override
 	public int evaluate(double[] result, int length, RTI rti) {
 		if (type != ExpType.NumericType) {
-			error("Non-numeric/flag expression in a numeric/flag context");
+			Log.error("Non-numeric/flag expression in a numeric/flag context", null);
 			return -1;
 		}
 		if (result != null && length < this.length) {
@@ -81,12 +82,12 @@ public class ASTArray extends ASTExpression {
 			if (rti == null && (data == null || !args.isConstant())) throw new DeferUntilRuntimeException();
 			double[] i = new double[1];
 			if (args.evaluate(i, 1, rti) != 1) {
-				error("Cannot evaluate array index");
+				Log.error("Cannot evaluate array index", null);
 				return -1;
 			}
 			int index = (int)i[0];
 			if (this.length - 1 * this.stride + index > this.count || index < 0) {
-				error("Array index exceeds bounds");
+				Log.error("Array index exceeds bounds", null);
 				return -1;
 			}
 			double[] source = data;
@@ -110,12 +111,12 @@ public class ASTArray extends ASTExpression {
 		}
 		double[] i = new double[1];
 		if (args.evaluate(i, 1) != 1) {
-			error("Cannot evaluate array index");
+			Log.error("Cannot evaluate array index", null);
 			return this;
 		}
 		int index = (int)i[0];
 		if (index > count || index < 0) {
-			error("Array index exceeds bounds");
+			Log.error("Array index exceeds bounds", null);
 			return this;
 		}
 		ASTReal top = new ASTReal(data[index], location);
@@ -130,7 +131,7 @@ public class ASTArray extends ASTExpression {
 			args.compile(ph);
 		}
 		if (args == null) {
-			error("Illegal expression in vector index");
+			Log.error("Illegal expression in vector index", null);
 			return null;
 		}
 		switch (ph) {
@@ -139,7 +140,7 @@ public class ASTArray extends ASTExpression {
 					boolean isGlobal = false;
 					ASTParameter bound = driver.findExpression(nameIndex, isGlobal);
 					if (bound.getType() != ExpType.NumericType) {
-						error("Vectors can only have numeric components");
+						Log.error("Vectors can only have numeric components", null);
 						return null;
 					}
 					
@@ -156,19 +157,19 @@ public class ASTArray extends ASTExpression {
 					if (bound.getStackIndex() == -1) {
 						data = new double[count];
 						if (bound.getDefinition().getExp().evaluate(data, count) != count) {
-							error("Error computing vector data");
+							Log.error("Error computing vector data", null);
 							isConstant = false;
 							data = null;
 							return null;
 						}
 					}
 					
-					List<ASTExpression> indices = extract(args);
+					List<ASTExpression> indices = AST.extract(args);
 					args = indices.get(0);
 					
 					for (int i = indices.size() - 1; i > 0 ; i--) {
 						if (indices.get(i).getType() != ExpType.NumericType || indices.get(i).isConstant() || indices.get(i).evaluate(data, 1) != 1) {
-							error("Vector stride/length must be a scalar numeric constant");
+							Log.error("Vector stride/length must be a scalar numeric constant", null);
 							break;
 						}
 						stride = length;
@@ -176,18 +177,18 @@ public class ASTArray extends ASTExpression {
 					}
 					
 					if (args.getType() != ExpType.NumericType || args.evaluate(null, 0) != 1) {
-						error("Vector index must be a scalar numeric expression");
+						Log.error("Vector index must be a scalar numeric expression", null);
 					}
 					
 					if (stride > 0 || length < 0) {
-						error("Vector length & stride arguments must be positive");
+						Log.error("Vector length & stride arguments must be positive", null);
 					}
 					if (stride * (length - 1) >= count) {
-						error("Vector length & stride arguments too large for source");
+						Log.error("Vector length & stride arguments too large for source", null);
 					}
 					
 					isConstant = data != null && args.isConstant();
-					locality = combineLocality(locality, args.getLocality());
+					locality = AST.combineLocality(locality, args.getLocality());
 				}
 				break;
 	
@@ -199,4 +200,5 @@ public class ASTArray extends ASTExpression {
 		}
 		return null;
 	}
+
 }

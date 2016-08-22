@@ -27,6 +27,7 @@ package com.nextbreakpoint.nextfractal.contextfree.grammar.ast;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.nextbreakpoint.nextfractal.contextfree.grammar.Log;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.Modification;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.RTI;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.CompilePhase;
@@ -79,7 +80,7 @@ public class ASTCons extends ASTExpression {
 	@Override
 	public int evaluate(double[] result, int length, RTI rti) {
 		if ((type.ordinal() & (ExpType.NumericType.ordinal() | ExpType.FlagType.ordinal())) == 0 || (type.ordinal() & (ExpType.ModType.ordinal() | ExpType.RuleType.ordinal())) != 0) {
-			error("Non-numeric expression in a numeric context");
+			Log.error("Non-numeric expression in a numeric context", null);
 			return -1;
 		}
 		int count = 0;
@@ -116,7 +117,7 @@ public class ASTCons extends ASTExpression {
 						child.compile(ph);
 						isConstant = isConstant && child.isConstant();
 						isNatural = isNatural && child.isNatural();
-						locality = combineLocality(locality, child.getLocality());
+						locality = AST.combineLocality(locality, child.getLocality());
 						type = ExpType.fromType(type.ordinal() | child.getType().ordinal());
 					}
 				}
@@ -134,7 +135,7 @@ public class ASTCons extends ASTExpression {
 	@Override
 	public ASTExpression getChild(int i) {
 		if (i >= children.size()) {
-			error("Expression list bounds exceeded");
+			Log.error("Expression list bounds exceeded", null);
 		}
 		return children.get(i);
 	}
@@ -144,7 +145,7 @@ public class ASTCons extends ASTExpression {
         if (e == null) return this;
         isConstant = isConstant && e.isConstant();
         isNatural = isNatural && e.isNatural();
-        locality = combineLocality(locality, e.getLocality());
+		locality = AST.combineLocality(locality, e.getLocality());
         type = ExpType.fromType(type.ordinal() | e.getType().ordinal());
         
         // Cannot insert an ASTcons into children, it will be flattened away.

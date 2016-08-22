@@ -60,15 +60,15 @@ public class ASTVariable extends ASTExpression {
 					boolean isGlobal = false;
 					ASTParameter bound = driver.findExpression(stringIndex, isGlobal);
 					if (bound == null) {
-						error("internal error.");
-						return null;
+                        Log.error("internal error.", null);
+                        return null;
 					}
 					String name = driver.shapeToString(stringIndex);
 					if (bound.getStackIndex() == -1) {
 						ASTExpression ret = bound.constCopy(name);
 						if (ret == null) {
-							error("internal error.");
-						}
+                            Log.error("internal error.", null);
+                        }
 						return ret;
 					} else {
 						if (bound.getType() == ExpType.RuleType) {
@@ -98,8 +98,8 @@ public class ASTVariable extends ASTExpression {
 	@Override
 	public int evaluate(double[] result, int length, RTI rti) {
 		if (type != ExpType.NumericType) {
-			error("Non-numeric variable in a numeric context");
-			return -1;
+            Log.error("Non-numeric variable in a numeric context", null);
+            return -1;
         }
 		if (result != null && length < count) {
 			return -1;
@@ -117,7 +117,7 @@ public class ASTVariable extends ASTExpression {
 	@Override
 	public void evaluate(Modification result, boolean shapeDest, RTI rti) {
 		if (type != ExpType.ModType) {
-			error("Non-adjustment variable referenced in an adjustment context");
+            Log.error("Non-adjustment variable referenced in an adjustment context", null);
         }
 		if (rti == null) throw new DeferUntilRuntimeException();
         StackType stackItem = rti.stackItem(stackIndex);
