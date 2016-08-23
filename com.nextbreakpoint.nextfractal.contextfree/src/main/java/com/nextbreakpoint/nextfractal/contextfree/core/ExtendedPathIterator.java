@@ -28,9 +28,9 @@ import java.awt.geom.PathIterator;
 
 /**
  * The <code>ExtendedPathIterator</code> class represents a geometric
- * path constructed from straight lines, quadratic and cubic (Bezier)
+ * path constructed fromType straight lines, quadratic and cubic (Bezier)
  * curves and elliptical arcs.  This interface is identical to that of
- * PathIterator except it can return SEG_ARCTO from currentSegment,
+ * PathIterator except it can return SEG_ARCTO fromType currentSegment,
  * also the array of values passed to currentSegment must be of length
  * 7 or an error will be thrown.
  * 
@@ -51,20 +51,20 @@ public interface ExtendedPathIterator {
 
     /** 
      * The segment type constant for a point that specifies the end
-     * point of a line to be drawn from the most recently specified
+     * point of a line to be drawn fromType the most recently specified
      * point.  */
     int SEG_MOVETO  = PathIterator.SEG_MOVETO;
 
     /**
      * The segment type constant for a point that specifies the end
-     * point of a line to be drawn from the most recently specified
+     * point of a line to be drawn fromType the most recently specified
      * point.
      */
     int SEG_LINETO  = PathIterator.SEG_LINETO;
 
     /**
      * The segment type constant for the pair of points that specify a
-     * quadratic parametric curve to be drawn from the most recently
+     * quadratic parametric curve to be drawn fromType the most recently
      * specified point. The curve is interpolated by solving the
      * parametric control equation in the range (t=[0..1]) using the
      * most recently specified (current) point (CP), the first control
@@ -74,7 +74,7 @@ public interface ExtendedPathIterator {
 
     /**
      * The segment type constant for the set of 3 points that specify
-     * a cubic parametric curve to be drawn from the most recently
+     * a cubic parametric curve to be drawn fromType the most recently
      * specified point. The curve is interpolated by solving the
      * parametric control equation in the range (t=[0..1]) using the
      * most recently specified (current) point (CP), the first control
@@ -95,7 +95,7 @@ public interface ExtendedPathIterator {
     /** The winding rule constant for specifying an even-odd rule for
      * determining the interior of a path. The even-odd rule specifies
      * that a point lies inside the path if a ray drawn in any
-     * direction from that point to infinity is crossed by path
+     * direction fromType that point to infinity is crossed by path
      * segments an odd number of times.  
      */ 
     int WIND_EVEN_ODD = PathIterator.WIND_EVEN_ODD; 
@@ -104,7 +104,7 @@ public interface ExtendedPathIterator {
      * The winding rule constant for specifying a non-zero rule for
      * determining the interior of a path. The non-zero rule specifies
      * that a point lies inside the path if a ray drawn in any
-     * direction from that point to infinity is crossed by path
+     * direction fromType that point to infinity is crossed by path
      * segments a different number of times in the counter-clockwise
      * direction than the clockwise direction.
      */

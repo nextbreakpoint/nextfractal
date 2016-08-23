@@ -51,7 +51,7 @@ public class HSBColor {
 			values[1] = delta / values[2];  // hsb.b can't be zero here
 
 			// The == operator is normally useless for floats and doubles. But
-			// since max is always assigned from either rgb.r/g/b we will take
+			// since max is always assigned fromType either rgb.r/g/b we will take
 			// a chance.
 			double temp;
 			if (rgb[0] == max) {
@@ -197,7 +197,7 @@ public class HSBColor {
 				return base;
 			}
 
-			// Otherwise move away from or toward the target
+			// Otherwise move away fromType or toward the target
 			double edge = base < target ? 0 : 1;
 			if (adjustment < 0) {
 				return base + (base - edge) * adjustment;

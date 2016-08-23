@@ -206,7 +206,7 @@ public class ASTLoop extends ASTReplacement {
 		int oldTop = rti.getLogicalStackTop();
 		rti.addStackItem(t);
 		//TODO controllare
-		StackType index = rti.stackItem(rti.getStackSize() - 1);
+		StackType index = rti.getStackItem(rti.getStackSize() - 1);
 		index.addNumber(1);
 		rti.setLogicalStackTop((int)index.getNumber());
 		for (;;) {

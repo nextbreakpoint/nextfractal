@@ -52,7 +52,7 @@ public enum ModClass {
 		return type;
 	}
 
-	public static ModClass classByOrdinal(int type) {
+	public static ModClass fromType(int type) {
 		for (ModClass value : ModClass.values()) {
 			if (value.getType() == type) {
 				return value;

@@ -55,31 +55,23 @@ public class ASTCons extends ASTExpression {
 	}
 
 	@Override
-	public void entropy(StringBuilder e) {
-		for (ASTExpression child : children) {
-			child.entropy(e);
-		}
-        e.append("\u00C5\u0060\u00A5\u00C5\u00C8\u0074");
-	}
-
-	public List<ASTExpression> getChildren() {
-		return children;
-	}
-	
-	@Override
 	public ASTExpression simplify() {
 		if (children.size() == 1) {
+			//TODO controllare
 			return children.get(0).simplify();
 		}
-		for (ASTExpression child : children) {
-			child.simplify();
+		for (int i = 0; i < children.size(); i++) {
+			ASTExpression element = children.get(i).simplify();
+			if (element != null) {
+				children.set(i, element);
+			}
 		}
         return this;
 	}
 
 	@Override
 	public int evaluate(double[] result, int length, RTI rti) {
-		if ((type.ordinal() & (ExpType.NumericType.ordinal() | ExpType.FlagType.ordinal())) == 0 || (type.ordinal() & (ExpType.ModType.ordinal() | ExpType.RuleType.ordinal())) != 0) {
+		if ((type.getType() & (ExpType.NumericType.getType() | ExpType.FlagType.getType())) == 0 || (type.getType() & (ExpType.ModType.getType() | ExpType.RuleType.getType())) != 0) {
 			Logger.error("Non-numeric expression in a numeric context", null);
 			return -1;
 		}
@@ -106,23 +98,31 @@ public class ASTCons extends ASTExpression {
 	}
 
 	@Override
+	public void entropy(StringBuilder e) {
+		for (ASTExpression child : children) {
+			child.entropy(e);
+		}
+		e.append("\u00C5\u0060\u00A5\u00C5\u00C8\u0074");
+	}
+
+	@Override
 	public ASTExpression compile(CompilePhase ph) {
 		switch (ph) {
-			case TypeCheck:
-				{
-					isConstant = isNatural = false;
-					locality = Locality.PureLocal;
-					type = ExpType.NoType;
-					for (ASTExpression child : children) {
-						child.compile(ph);
-						isConstant = isConstant && child.isConstant();
-						isNatural = isNatural && child.isNatural();
-						locality = AST.combineLocality(locality, child.getLocality());
-						type = ExpType.fromType(type.ordinal() | child.getType().ordinal());
-					}
+			case TypeCheck: {
+				isConstant = isNatural = false;
+				locality = Locality.PureLocal;
+				type = ExpType.NoType;
+				for (int i = 0; i < children.size(); i++) {
+					ASTExpression child = children.get(i).compile(ph);
+					children.set(i, child);
+					isConstant = isConstant && child.isConstant();
+					isNatural = isNatural && child.isNatural();
+					locality = AST.combineLocality(locality, child.getLocality());
+					type = ExpType.fromType(type.getType() | child.getType().getType());
 				}
 				break;
-				
+			}
+
 			case Simplify:
 				break;
 
@@ -131,7 +131,11 @@ public class ASTCons extends ASTExpression {
 		}
 		return null;
 	}
-	
+
+	public List<ASTExpression> getChildren() {
+		return children;
+	}
+
 	@Override
 	public ASTExpression getChild(int i) {
 		if (i >= children.size()) {
@@ -140,13 +144,20 @@ public class ASTCons extends ASTExpression {
 		return children.get(i);
 	}
 
+	public void setChild(int i, ASTExpression exp) {
+		if (i >= children.size()) {
+			Logger.error("Expression list bounds exceeded", null);
+		}
+		children.set(i, exp);
+	}
+
 	@Override
 	public ASTExpression append(ASTExpression e) {
         if (e == null) return this;
         isConstant = isConstant && e.isConstant();
         isNatural = isNatural && e.isNatural();
 		locality = AST.combineLocality(locality, e.getLocality());
-        type = ExpType.fromType(type.ordinal() | e.getType().ordinal());
+        type = ExpType.fromType(type.getType() | e.getType().getType());
         
         // Cannot insert an ASTcons into children, it will be flattened away.
         // You must wrap the ASTcons in an ASTparen in order to insert it whole.

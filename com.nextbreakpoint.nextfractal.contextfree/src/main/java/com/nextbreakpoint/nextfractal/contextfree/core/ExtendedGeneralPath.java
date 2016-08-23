@@ -36,7 +36,7 @@ import java.util.Arrays;
 
 /**
  * The <code>ExtendedGeneralPath</code> class represents a geometric
- * path constructed from straight lines, quadratic and cubic (Bezier)
+ * path constructed fromType straight lines, quadratic and cubic (Bezier)
  * curves and elliptical arc. This class delegates lines and curves to
  * an enclosed <code>GeneralPath</code>. Elliptical arc is implemented
  * using an <code>Arc2D</code> in float precision.
@@ -85,7 +85,7 @@ public class ExtendedGeneralPath implements ExtendedShape, Cloneable {
     }
 
     /**
-     * Constructs a new <code>ExtendedGeneralPath</code> object from
+     * Constructs a new <code>ExtendedGeneralPath</code> object fromType
      * an arbitrary <code>Shape</code> object.
      */
     public ExtendedGeneralPath(Shape s) {
@@ -94,7 +94,7 @@ public class ExtendedGeneralPath implements ExtendedShape, Cloneable {
     }
 
     /**
-     * Adds an elliptical arc, defined by two radii, an angle from the
+     * Adds an elliptical arc, defined by two radii, an angle fromType the
      * x-axis, a flag to choose the large arc or not, a flag to
      * indicate if we increase or decrease the angles and the final
      * point of the arc.
@@ -102,7 +102,7 @@ public class ExtendedGeneralPath implements ExtendedShape, Cloneable {
      * @param rx the x radius of the ellipse
      * @param ry the y radius of the ellipse
      *
-     * @param angle the angle from the x-axis of the current
+     * @param angle the angle fromType the x-axis of the current
      * coordinate system to the x-axis of the ellipse in degrees.
      *
      * @param largeArcFlag the large arc flag. If true the arc
@@ -161,7 +161,7 @@ public class ExtendedGeneralPath implements ExtendedShape, Cloneable {
 
 
     /**
-     * This constructs an unrotated Arc2D from the SVG specification of an
+     * This constructs an unrotated Arc2D fromType the SVG specification of an
      * Elliptical arc.  To get the final arc you need to apply a rotation
      * transform such as:
      *
@@ -181,7 +181,7 @@ public class ExtendedGeneralPath implements ExtendedShape, Cloneable {
         // Compute the half distance between the current and the final point
         double dx2 = (x0 - x) / 2.0;
         double dy2 = (y0 - y) / 2.0;
-        // Convert angle from degrees to radians
+        // Convert angle fromType degrees to radians
         angle = Math.toRadians(angle % 360.0);
         double cosAngle = Math.cos(angle);
         double sinAngle = Math.sin(angle);
@@ -218,7 +218,7 @@ public class ExtendedGeneralPath implements ExtendedShape, Cloneable {
         double cy1 = coef * -((ry * x1) / rx);
 
         //
-        // Step 3 : Compute (cx, cy) from (cx1, cy1)
+        // Step 3 : Compute (cx, cy) fromType (cx1, cy1)
         //
         double sx2 = (x0 + x) / 2.0;
         double sy2 = (y0 + y) / 2.0;

@@ -59,34 +59,33 @@ public class ASTLet extends ASTUserFunction {
 	@Override
 	public ASTExpression compile(CompilePhase ph) {
 		switch (ph) {
-			case TypeCheck: 
-				{
-					definitions.compile(ph, null, getDefinition());
-					ASTExpression args = null;
-					for (ASTReplacement rep : definitions.getBody()) {
-						if (rep instanceof ASTDefine) {
-							ASTDefine def = (ASTDefine)rep;
-							if (def.getDefineType() == DefineType.StackDefine) {
-								getDefinition().incStackCount(def.getTupleSize());
-								args = ASTExpression.append(args, def.getExp());
-							}
+			case TypeCheck: {
+				definitions.compile(ph, null, getDefinition());
+				ASTExpression args = null;
+				for (ASTReplacement rep : definitions.getBody()) {
+					if (rep instanceof ASTDefine) {
+						ASTDefine def = (ASTDefine)rep;
+						if (def.getDefineType() == DefineType.StackDefine) {
+							getDefinition().incStackCount(def.getTupleSize());
+							args = ASTExpression.append(args, def.getExp());
 						}
 					}
-					definitions.getParameters().remove(definitions.getParameters().size() - 1);
-					for (ASTParameter param : definitions.getParameters()) {
-						if (param.getDefinition() != null) {
-							getDefinition().getParameters().add(param);
-						}
-					}
-					definitions = null;//TODO controllare
-					setArguments(args);
-					isConstant = getArguments() == null && getDefinition().getExp().isConstant();
-					isNatural = getDefinition().isNatural();
-					locality = getDefinition().getExp() != null ? getDefinition().getExp().getLocality() : getDefinition().getChildChange().getLocality();
-					type = getDefinition().getExpType();
 				}
+				definitions.getParameters().remove(definitions.getParameters().size() - 1);
+				for (ASTParameter param : definitions.getParameters()) {
+					if (param.getDefinition() != null) {
+						getDefinition().getParameters().add(param);
+					}
+				}
+				definitions = null;//TODO controllare
+				setArguments(args);
+				isConstant = getArguments() == null && getDefinition().getExp().isConstant();
+				isNatural = getDefinition().isNatural();
+				locality = getDefinition().getExp() != null ? getDefinition().getExp().getLocality() : getDefinition().getChildChange().getLocality();
+				type = getDefinition().getExpType();
 				break;
-	
+			}
+
 			case Simplify: 
 				break;
 	

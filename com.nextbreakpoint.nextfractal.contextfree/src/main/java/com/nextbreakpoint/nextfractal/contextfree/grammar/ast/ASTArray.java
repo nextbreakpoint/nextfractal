@@ -60,19 +60,28 @@ public class ASTArray extends ASTExpression {
 		this.entropy = entropy;
 	}
 
+	public ASTArray(ASTArray array) {
+		super(false, false, ExpType.NumericType, array.getLocation());
+		this.driver = array.driver;
+		this.nameIndex = array.nameIndex;
+		this.data = array.data;
+		this.args = array.args;
+		this.length = array.length;
+		this.stride = array.stride;
+		this.stackIndex = array.stackIndex;
+		this.count = array.count;
+		this.isParameter = array.isParameter;
+		this.entropy = array.entropy;
+	}
+
 	public boolean isParameter() {
 		return isParameter;
 	}
 
 	@Override
-	public void entropy(StringBuilder e) {
-        e.append(entropy);
-	}
-
-	@Override
 	public int evaluate(double[] result, int length, RTI rti) {
 		if (type != ExpType.NumericType) {
-			Logger.error("Non-numeric/flag expression in a numeric/flag context", null);
+			Logger.error("Non-numeric/flag expression in a numeric/flag context", location);
 			return -1;
 		}
 		if (result != null && length < this.length) {
@@ -82,17 +91,17 @@ public class ASTArray extends ASTExpression {
 			if (rti == null && (data == null || !args.isConstant())) throw new DeferUntilRuntimeException();
 			double[] i = new double[1];
 			if (args.evaluate(i, 1, rti) != 1) {
-				Logger.error("Cannot evaluate array index", null);
+				Logger.error("Cannot evaluate array index", location);
 				return -1;
 			}
 			int index = (int)i[0];
 			if (this.length - 1 * this.stride + index > this.count || index < 0) {
-				Logger.error("Array index exceeds bounds", null);
+				Logger.error("Array index exceeds bounds", location);
 				return -1;
 			}
 			double[] source = data;
 			if (source == null) {
-				source = rti.stackItem(stackIndex).getArray();
+				source = rti.getStackItem(stackIndex).getArray();
 			}
 			for (int j = 0; j < this.length; j++) {
 				result[j] = source[j * this.stride + index];
@@ -102,21 +111,26 @@ public class ASTArray extends ASTExpression {
 	}
 
 	@Override
+	public void entropy(StringBuilder e) {
+		e.append(entropy);
+	}
+
+	@Override
 	public ASTExpression simplify() {
 		if (data == null || !isConstant || length > 1) {
 			if (args != null) {
-				args.simplify();
+				args = args.simplify();
 				return this;
 			}
 		}
 		double[] i = new double[1];
 		if (args.evaluate(i, 1) != 1) {
-			Logger.error("Cannot evaluate array index", null);
+			Logger.error("Cannot evaluate array index", location);
 			return this;
 		}
 		int index = (int)i[0];
 		if (index > count || index < 0) {
-			Logger.error("Array index exceeds bounds", null);
+			Logger.error("Array index exceeds bounds", location);
 			return this;
 		}
 		ASTReal top = new ASTReal(data[index], location);
@@ -131,67 +145,66 @@ public class ASTArray extends ASTExpression {
 			args.compile(ph);
 		}
 		if (args == null) {
-			Logger.error("Illegal expression in vector index", null);
+			Logger.error("Illegal expression in vector index", location);
 			return null;
 		}
 		switch (ph) {
-			case TypeCheck:
-				{
-					boolean isGlobal = false;
-					ASTParameter bound = driver.findExpression(nameIndex, isGlobal);
-					if (bound.getType() != ExpType.NumericType) {
-						Logger.error("Vectors can only have numeric components", null);
+			case TypeCheck: {
+				boolean isGlobal = false;
+				ASTParameter bound = driver.findExpression(nameIndex, isGlobal);
+				if (bound.getType() != ExpType.NumericType) {
+					Logger.error("Vectors can only have numeric components", location);
+					return null;
+				}
+
+				isNatural = bound.isNatural();
+				stackIndex = bound.getStackIndex() - (isGlobal ? 0 : driver.getLocalStackDepth());
+				count = bound.getTupleSize();
+				isParameter = bound.isParameter();
+				locality = bound.getLocality();
+
+				StringBuilder ent = new StringBuilder();
+				args.entropy(ent);
+				entropy = ent.toString();
+
+				if (bound.getStackIndex() == -1) {
+					data = new double[count];
+					if (bound.getDefinition().getExp().evaluate(data, count) != count) {
+						Logger.error("Error computing vector data", location);
+						isConstant = false;
+						data = null;
 						return null;
 					}
-					
-					isNatural = bound.isNatural();
-					stackIndex = bound.getStackIndex() - (isGlobal ? 0 : driver.getLocalStackDepth());
-					count = bound.getTupleSize();
-					isParameter = bound.isParameter();
-					locality = bound.getLocality();
-					
-					StringBuilder ent = new StringBuilder();
-					args.entropy(ent);
-					entropy = ent.toString();
-					
-					if (bound.getStackIndex() == -1) {
-						data = new double[count];
-						if (bound.getDefinition().getExp().evaluate(data, count) != count) {
-							Logger.error("Error computing vector data", null);
-							isConstant = false;
-							data = null;
-							return null;
-						}
-					}
-					
-					List<ASTExpression> indices = AST.extract(args);
-					args = indices.get(0);
-					
-					for (int i = indices.size() - 1; i > 0 ; i--) {
-						if (indices.get(i).getType() != ExpType.NumericType || indices.get(i).isConstant() || indices.get(i).evaluate(data, 1) != 1) {
-							Logger.error("Vector stride/length must be a scalar numeric constant", null);
-							break;
-						}
-						stride = length;
-						length = (int)data[0];
-					}
-					
-					if (args.getType() != ExpType.NumericType || args.evaluate(null, 0) != 1) {
-						Logger.error("Vector index must be a scalar numeric expression", null);
-					}
-					
-					if (stride > 0 || length < 0) {
-						Logger.error("Vector length & stride arguments must be positive", null);
-					}
-					if (stride * (length - 1) >= count) {
-						Logger.error("Vector length & stride arguments too large for source", null);
-					}
-					
-					isConstant = data != null && args.isConstant();
-					locality = AST.combineLocality(locality, args.getLocality());
 				}
+
+				List<ASTExpression> indices = AST.extract(args);
+				args = indices.get(0);
+
+				for (int i = indices.size() - 1; i > 0 ; i--) {
+					if (indices.get(i).getType() != ExpType.NumericType || indices.get(i).isConstant() || indices.get(i).evaluate(data, 1) != 1) {
+						Logger.error("Vector stride/length must be a scalar numeric constant", location);
+						break;
+					}
+					stride = length;
+					length = (int)data[0];
+				}
+
+				if (args.getType() != ExpType.NumericType || args.evaluate(null, 0) != 1) {
+					Logger.error("Vector index must be a scalar numeric expression", location);
+				}
+
+				if (stride > 0 || length < 0) {
+					Logger.error("Vector length & stride arguments must be positive", location);
+				}
+				if (stride * (length - 1) >= count) {
+					Logger.error("Vector length & stride arguments too large for source", location);
+				}
+
+				isConstant = data != null && args.isConstant();
+				locality = AST.combineLocality(locality, args.getLocality());
 				break;
-	
+			}
+
 			case Simplify: 
 				break;
 

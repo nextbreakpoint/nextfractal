@@ -195,7 +195,7 @@ public class AST {
         }
     }
 
-    public static ASTExpression makeResult(double result, int lenght, ASTFunction from) {
+    public static ASTExpression makeResult(double result, int lenght, ASTExpression from) {
         //TODO completare
         return null;
     }

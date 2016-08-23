@@ -430,11 +430,11 @@ public class ASTFunction extends ASTExpression {
 	}
 
 	@Override
-	public void entropy(StringBuilder ent) {
+	public void entropy(StringBuilder e) {
 		if (arguments != null) {
-			arguments.entropy(ent);
+			arguments.entropy(e);
 		}
-		ent.append(funcType.getEntropy());
+		e.append(funcType.getEntropy());
 	}
 
 	@Override

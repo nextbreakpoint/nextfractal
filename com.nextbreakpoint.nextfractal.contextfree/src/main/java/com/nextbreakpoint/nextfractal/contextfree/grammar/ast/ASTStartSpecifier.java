@@ -41,13 +41,13 @@ public class ASTStartSpecifier extends ASTRuleSpecifier {
 		this.modification = mod;
 	}
 	
-	public ASTStartSpecifier(CFDGDriver driver, ASTRuleSpecifier rule, ASTModification mod, Token location) {
-		super(driver, rule, location);
+	public ASTStartSpecifier(CFDGDriver driver, ASTExpression exp, ASTModification mod, Token location) {
+		super(driver, exp, location);
 		this.modification = mod;
 	}
 
-	public ASTStartSpecifier(CFDGDriver driver, ASTExpression exp, ASTModification mod, Token location) {
-		super(driver, exp, location);
+	public ASTStartSpecifier(CFDGDriver driver, ASTRuleSpecifier rule, ASTModification mod) {
+		super(driver, rule);
 		this.modification = mod;
 	}
 
@@ -56,29 +56,31 @@ public class ASTStartSpecifier extends ASTRuleSpecifier {
 	}
 
 	@Override
+	public void entropy(StringBuilder e) {
+		e.append(getEntropy());
+		if (modification != null) {
+			modification.entropy(e);
+		}
+	}
+
+	@Override
 	public ASTExpression simplify() {
 		super.simplify();
 		if (modification != null) {
-			ASTExpression m = modification.simplify();
-			assert(m == modification);
+			modification = (ASTModification)modification.simplify();
 		}
 		return this;
 	}
 
 	@Override
 	public ASTExpression compile(CompilePhase ph) {
+		//TODO controllare
+		String name = getEntropy();
 		super.compile(ph);
+		setEntropy(name);
 		if (modification != null) {
-			modification.compile(ph);
+			modification = (ASTModification)modification.compile(ph);
 		}
 		return null;
-	}
-
-	@Override
-	public void entropy(StringBuilder e) {
-		e.append(getEntropy());
-		if (modification != null) {
-			modification.entropy(e);
-		}
 	}
 }

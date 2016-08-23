@@ -112,6 +112,7 @@ public class RTI {
 	private List<CommandInfo> shapeMap = new ArrayList<>();
 	private List<Shape> unfinishedShapes = new ArrayList<>();
 	private List<FinishedShape> finishedShapes = new ArrayList<>();
+	private int stackSize;
 
 	public RTI(CFDG cfdg, int width, int height, double minSize, int variation, double border) {
 		this.cfdg = cfdg;
@@ -297,6 +298,40 @@ public class RTI {
 
 	public void setRequestUpdate(boolean requestUpdate) {
 		this.requestUpdate = requestUpdate;
+	}
+
+	public StackType getStackItem(int stackIndex) {
+		return cfStack[stackIndex];
+	}
+
+	public void setStackItem(int stackIndex, StackType item) {
+		cfStack[stackIndex] = item;
+	}
+
+	public void addStackItem(StackType stackType) {
+		//TODO rivedere
+		cfStack[cfLogicalStackTop] = stackType;
+	}
+
+	public void removeStackItem(int index) {
+		//TODO rivedere
+		cfStack[cfLogicalStackTop] = null;
+	}
+
+	public int getStackSize() {
+		return cfStackSize;
+	}
+
+	public void setStackSize(int stackSize) {
+		this.stackSize = stackSize;
+	}
+
+	public int getLogicalStackTop() {
+		return cfLogicalStackTop;
+	}
+
+	public void setLogicalStackTop(int cfLogicalStackTop) {
+		this.cfLogicalStackTop = cfLogicalStackTop;
 	}
 
 	public void init() {
@@ -562,32 +597,6 @@ public class RTI {
 				currentArea = Math.abs((pathBounds.getMaxX() - pathBounds.getMinX()) * (pathBounds.getMaxY() - pathBounds.getMinY()));
 			}
 		}
-	}
-
-	public StackType stackItem(int stackIndex) {
-		return cfStack[stackIndex];
-	}
-
-	public void addStackItem(StackType stackType) {
-		//TODO rivedere
-		cfStack[cfLogicalStackTop] = stackType;
-	}
-
-	public void removeStackItem(int index) {
-		//TODO rivedere
-		cfStack[cfLogicalStackTop] = null;
-	}
-
-	public int getStackSize() {
-		return cfStackSize;
-	}
-
-	public int getLogicalStackTop() {
-		return cfLogicalStackTop;
-	}
-
-	public void setLogicalStackTop(int cfLogicalStackTop) {
-		this.cfLogicalStackTop = cfLogicalStackTop;
 	}
 
 	public void initBounds() {
@@ -1025,5 +1034,10 @@ public class RTI {
 				throw new StopException();
 			}
 		}
+	}
+
+	public static boolean abortEverything() {
+		//TODO completare
+		return false;
 	}
 }

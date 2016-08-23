@@ -24,6 +24,7 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.grammar.ast;
 
+import com.nextbreakpoint.nextfractal.contextfree.grammar.Logger;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.Modification;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.RTI;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.StackRule;
@@ -40,15 +41,10 @@ public class ASTParen extends ASTExpression {
 	}
 
 	@Override
-	public void entropy(StringBuilder e) {
-        expression.entropy(e);
-        e.append("\u00E8\u00E9\u00F6\u007E\u001A\u00F1");
-	}
-
-	@Override
 	public int evaluate(double[] result, int length, RTI rti) {
         if (type != ExpType.NumericType) {
-            throw new RuntimeException("Non-numeric/flag expression in a numeric/flag context");
+			Logger.error("Non-numeric/flag expression in a numeric/flag context", location);
+			return -1;
         }
         return expression.evaluate(result, length, rti);
 	}
@@ -56,41 +52,40 @@ public class ASTParen extends ASTExpression {
 	@Override
 	public void evaluate(Modification result, boolean shapeDest, RTI rti) {
         if (type != ExpType.ModType) {
-            throw new RuntimeException("Expression does not evaluate to an adjustment");
+			Logger.error("Expression does not evaluate to an adjustment", location);
+			return;
         }
 		super.evaluate(result, shapeDest, rti);
 	}
-	
+
 	@Override
-	public StackRule evalArgs(RTI rti, StackRule parent) {
-		if (type != ExpType.RuleType) {
-			throw new RuntimeException("Evaluation of a non-shape expression in a shape context");
+	public void entropy(StringBuilder e) {
+		if (expression != null) {
+			expression.entropy(e);
 		}
-		return expression.evalArgs(rti, parent);
+		e.append("\u00E8\u00E9\u00F6\u007E\u001A\u00F1");
 	}
-	
+
 	@Override
 	public ASTExpression simplify() {
-		ASTExpression e = expression.simplify();
-		return e;
+		return expression.simplify();
 	}
 
 	@Override
 	public ASTExpression compile(CompilePhase ph) {
 		if (expression == null) return null;
-		
-		expression.compile(ph);
+
+		expression = expression.compile(ph);
 		
 		switch (ph) {
-			case TypeCheck:
-				{
-					isConstant = expression.isConstant();
-					isNatural = expression.isNatural();
-					locality = expression.getLocality();
-					type = expression.getType();
-				}
+			case TypeCheck: {
+				isConstant = expression.isConstant();
+				isNatural = expression.isNatural();
+				locality = expression.getLocality();
+				type = expression.getType();
 				break;
-	
+			}
+
 			case Simplify: 
 				break;
 
@@ -98,5 +93,14 @@ public class ASTParen extends ASTExpression {
 				break;
 		}
 		return null;
+	}
+
+	@Override
+	public StackRule evalArgs(RTI rti, StackRule parent) {
+		if (type != ExpType.RuleType) {
+			Logger.error("Evaluation of a non-shape expression in a shape context", location);
+			return null;
+		}
+		return expression.evalArgs(rti, parent);
 	}
 }

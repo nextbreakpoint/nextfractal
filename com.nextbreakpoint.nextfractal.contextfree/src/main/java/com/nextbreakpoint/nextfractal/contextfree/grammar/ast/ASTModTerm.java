@@ -26,6 +26,8 @@ package com.nextbreakpoint.nextfractal.contextfree.grammar.ast;
 
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.nextbreakpoint.nextfractal.contextfree.core.AffineTransform1D;
 import com.nextbreakpoint.nextfractal.contextfree.core.AffineTransformTime;
@@ -38,32 +40,47 @@ public class ASTModTerm extends ASTExpression {
 	private ModType modType;
 	private ASTExpression args;
 
-	public ASTModTerm(ModType modType, ASTExpression args, Token location) {
+	public ASTModTerm(ModType modType, String paramStrings, Token location) {
 		super(true, false, ExpType.ModType, location);
-
 		this.modType = modType;
-		this.args = args;
+		this.args = null;
 		this.argCount = 0;
 
-		if (args.type == ExpType.RuleType)
-			throw new RuntimeException("Illegal expression in shape adjustment");
+		Map<String, Integer> paramMap = new HashMap<>();
+		paramMap.put("evenodd", FlagType.CF_EVEN_ODD.getMask());
+		paramMap.put("iso", FlagType.CF_ISO_WIDTH.getMask());
+		paramMap.put("miterjoin", FlagType.CF_MITER_JOIN.getMask());
+		paramMap.put("roundjoin", FlagType.CF_ROUND_JOIN.getMask());
+		paramMap.put("beveljoin", FlagType.CF_BEVEL_JOIN.getMask());
+		paramMap.put("buttcap", FlagType.CF_BUTT_CAP.getMask());
+		paramMap.put("squarecap", FlagType.CF_SQUARE_CAP.getMask());
+		paramMap.put("roundcap", FlagType.CF_ROUND_CAP.getMask());
+		paramMap.put("large", FlagType.CF_ARC_LARGE.getMask());
+		paramMap.put("cw", FlagType.CF_ARC_CW.getMask());
+		paramMap.put("align", FlagType.CF_ALIGN.getMask());
 
-		if (args.type == ExpType.ModType) {
-			if (modType != ModType.transform)
-				throw new RuntimeException(
-						"Cannot accept a transform expression here");
-			modType = ModType.modification;
+		//TODO controllare
+
+		for (String paramString : paramStrings.split(" ")) {
+			Integer count = paramMap.get(paramString);
+			if (count != null) {
+				argCount |= count;
+			}
 		}
 	}
 
-	public ASTModTerm(ModType param, String entropy, Token location) {
-		super(true, false, ExpType.ModType, location);
-		// TODO Auto-generated constructor stub
+	public ASTModTerm(ModType modType, ASTExpression args, Token location) {
+		super(args.isConstant(), false, ExpType.ModType, location);
+		this.modType = modType;
+		this.args = args;
+		this.argCount = 0;
 	}
 
-	public ASTModTerm(ModType param, Token location) {
+	public ASTModTerm(ModType modType, Token location) {
 		super(true, false, ExpType.ModType, location);
-		// TODO Auto-generated constructor stub
+		this.modType = modType;
+		this.args = null;
+		this.argCount = 0;
 	}
 
 	public ModType getModType() {
@@ -89,18 +106,10 @@ public class ASTModTerm extends ASTExpression {
 	public void setArgumentsCount(int argCount) {
 		this.argCount = argCount;
 	}
-	
-	@Override
-	public void entropy(StringBuilder e) {
-		if (args != null) {
-			args.entropy(e);
-		}
-		e.append(modType.getEntropy());
-	}
 
 	@Override
 	public int evaluate(double[] result, int length, RTI rti) {
-        Logger.error("Improper evaluation of an adjustment expression", null);
+        Logger.error("Improper evaluation of an adjustment expression", location);
         return -1;
 	}
 
@@ -113,13 +122,13 @@ public class ASTModTerm extends ASTExpression {
 			if (modType != ModType.modification && args.type == ExpType.NumericType) {
 				argcount = args.evaluate(modArgs, 6, rti);
 			} else if (modType == ModType.modification && args.type != ExpType.ModType) {
-                Logger.error("Adjustments require numeric arguments", null);
+                Logger.error("Adjustments require numeric arguments", location);
                 return;
 			}
 		}
 
 		if (argcount != argCount) {
-            Logger.error("Error evaluating arguments", null);
+            Logger.error("Error evaluating arguments", location);
             return;
 		}
 		
@@ -131,60 +140,58 @@ public class ASTModTerm extends ASTExpression {
 		double[] color = result.color().values();
 		double[] target = result.colorTarget().values();
 		int colorComp = 0;
+		int targetComp = 0;
 		boolean hue = true;
 		int mask = AssignmentType.HueMask.getType();
 
 		switch (modType) {
-		case x: {
-			if (argcount == 1) {
-				modArgs[1] = 0.0;
+			case x: {
+				if (argcount == 1) {
+					modArgs[1] = 0.0;
+				}
+				AffineTransform t2d = AffineTransform.getTranslateInstance(modArgs[0], modArgs[1]);
+				result.getTransform().preConcatenate(t2d);
+				break;
 			}
-			AffineTransform t2d = AffineTransform.getTranslateInstance(modArgs[0], modArgs[1]);
-			result.getTransform().preConcatenate(t2d);
-			break;
-		}
-		case y: {
-			AffineTransform t2d = AffineTransform.getTranslateInstance(0.0, modArgs[0]);
-			result.getTransform().preConcatenate(t2d);
-			break;
-		}
-		case z: {
-			AffineTransform1D t1d = AffineTransform1D.getTranslateInstance(modArgs[0]);
-			result.getTransformZ().preConcatenate(t1d);
-			break;
-		}
-		case xyz: {
-			AffineTransform t2d = AffineTransform.getTranslateInstance(modArgs[0], modArgs[1]);
-			AffineTransform1D t1d = AffineTransform1D.getTranslateInstance(modArgs[0]);
-			result.getTransform().preConcatenate(t2d);
-			result.getTransformZ().preConcatenate(t1d);
-			break;
-		}
-		case time: {
-			AffineTransformTime tTime = AffineTransformTime.getTranslateInstance(modArgs[0], modArgs[1]);
-			result.getTransformTime().preConcatenate(tTime);
-			break;
-		}
-		case timescale: {
-			AffineTransformTime tTime = AffineTransformTime.getScaleInstance(modArgs[0]);
-			result.getTransformTime().preConcatenate(tTime);
-			break;
-		}
-		case transform: {
-			switch (argcount) {
-				case 2:
-				case 1:
-					{
+			case y: {
+				AffineTransform t2d = AffineTransform.getTranslateInstance(0.0, modArgs[0]);
+				result.getTransform().preConcatenate(t2d);
+				break;
+			}
+			case z: {
+				AffineTransform1D t1d = AffineTransform1D.getTranslateInstance(modArgs[0]);
+				result.getTransformZ().preConcatenate(t1d);
+				break;
+			}
+			case xyz: {
+				AffineTransform t2d = AffineTransform.getTranslateInstance(modArgs[0], modArgs[1]);
+				AffineTransform1D t1d = AffineTransform1D.getTranslateInstance(modArgs[0]);
+				result.getTransform().preConcatenate(t2d);
+				result.getTransformZ().preConcatenate(t1d);
+				break;
+			}
+			case time: {
+				AffineTransformTime tTime = AffineTransformTime.getTranslateInstance(modArgs[0], modArgs[1]);
+				result.getTransformTime().preConcatenate(tTime);
+				break;
+			}
+			case timescale: {
+				AffineTransformTime tTime = AffineTransformTime.getScaleInstance(modArgs[0]);
+				result.getTransformTime().preConcatenate(tTime);
+				break;
+			}
+			case transform: {
+				switch (argcount) {
+					case 2:
+					case 1: {
 						if (argcount == 1) {
 							modArgs[1] = 0.0;
 						}
 						AffineTransform t2d = AffineTransform.getTranslateInstance(modArgs[0], modArgs[1]);
 						result.getTransform().preConcatenate(t2d);
+						break;
 					}
-					break;
-	
-				case 4:
-					{
+					case 4: {
 						AffineTransform t2d = new AffineTransform();
 						double dx = modArgs[2] - modArgs[0];
 						double dy = modArgs[3] - modArgs[1];
@@ -193,11 +200,9 @@ public class ASTModTerm extends ASTExpression {
 						t2d.scale(s, s);
 						t2d.translate(modArgs[0], modArgs[1]);
 						result.getTransform().preConcatenate(t2d);
+						break;
 					}
-					break;
-					
-				case 6:
-					{
+					case 6: {
 						try {
 							AffineTransform t2d = new AffineTransform(modArgs[2] - modArgs[0], modArgs[3] - modArgs[1], modArgs[4] - modArgs[0], modArgs[5] - modArgs[1], modArgs[0], modArgs[1]);
 							AffineTransform par = new AffineTransform();
@@ -206,103 +211,105 @@ public class ASTModTerm extends ASTExpression {
 							par.concatenate(t2d);
 							result.getTransform().preConcatenate(par);
 						} catch (NoninvertibleTransformException e) {
-                            Logger.error(e.getMessage(), null);
-                        }
+							Logger.error(e.getMessage(), null);
+						}
+						break;
 					}
-					break;
-					
-				default:
-					break;
+					default:
+						break;
+				}
+				break;
 			}
-			break;
-		}
-		case size: {
-			if (argcount == 1) {
-				modArgs[1] =  modArgs[0];
+			case size: {
+				if (argcount == 1) {
+					modArgs[1] =  modArgs[0];
+				}
+				AffineTransform t2d = AffineTransform.getScaleInstance(modArgs[0], modArgs[1]);
+				result.getTransform().preConcatenate(t2d);
+				break;
 			}
-			AffineTransform t2d = AffineTransform.getScaleInstance(modArgs[0], modArgs[1]);
-			result.getTransform().preConcatenate(t2d);
-			break;
-		}
-		case sizexyz: {
-			AffineTransform t2d = AffineTransform.getScaleInstance(modArgs[0], modArgs[1]);
-			AffineTransform1D t1d = AffineTransform1D.getScaleInstance(modArgs[0]);
-			result.getTransform().preConcatenate(t2d);
-			result.getTransformZ().preConcatenate(t1d);
-			break;
-		}
-		case zsize: {
-			AffineTransform1D t1d = AffineTransform1D.getScaleInstance(modArgs[0]);
-			result.getTransformZ().preConcatenate(t1d);
-			break;
-		}
-		case rot: {
-			AffineTransform t2d = AffineTransform.getRotateInstance(modArgs[0] * Math.PI / 180.0);
-			result.getTransform().preConcatenate(t2d);
-			break;
-		}
-		case skew: {
-			AffineTransform t2d = AffineTransform.getShearInstance(modArgs[0] * Math.PI / 180.0, modArgs[1] * Math.PI / 180.0);
-			result.getTransform().preConcatenate(t2d);
-			break;
-		}
-		case flip: {
-			double a = modArgs[0] * Math.PI / 180.0;
-			double ux = Math.cos(a);
-			double uy = Math.cos(a);
-			AffineTransform t2d = new AffineTransform(2.0 * ux * ux - 1.0, 2.0 * ux * uy, 2.0 * ux * uy, 2.0 * uy * uy - 1.0, 0.0, 0.0);
-			result.getTransform().preConcatenate(t2d);
-			break;
-		}
-		case alpha: 
-		case bright: 
-		case sat: 
-			{
-				colorComp += modType.ordinal() - ModType.hue.ordinal();
-				mask <<= 2 * modType.ordinal() - ModType.hue.ordinal();
+			case sizexyz: {
+				AffineTransform t2d = AffineTransform.getScaleInstance(modArgs[0], modArgs[1]);
+				AffineTransform1D t1d = AffineTransform1D.getScaleInstance(modArgs[0]);
+				result.getTransform().preConcatenate(t2d);
+				result.getTransformZ().preConcatenate(t1d);
+				break;
+			}
+			case zsize: {
+				AffineTransform1D t1d = AffineTransform1D.getScaleInstance(modArgs[0]);
+				result.getTransformZ().preConcatenate(t1d);
+				break;
+			}
+			case rot: {
+				AffineTransform t2d = AffineTransform.getRotateInstance(modArgs[0] * Math.PI / 180.0);
+				result.getTransform().preConcatenate(t2d);
+				break;
+			}
+			case skew: {
+				AffineTransform t2d = AffineTransform.getShearInstance(modArgs[0] * Math.PI / 180.0, modArgs[1] * Math.PI / 180.0);
+				result.getTransform().preConcatenate(t2d);
+				break;
+			}
+			case flip: {
+				double a = modArgs[0] * Math.PI / 180.0;
+				double ux = Math.cos(a);
+				double uy = Math.cos(a);
+				AffineTransform t2d = new AffineTransform(2.0 * ux * ux - 1.0, 2.0 * ux * uy, 2.0 * ux * uy, 2.0 * uy * uy - 1.0, 0.0, 0.0);
+				result.getTransform().preConcatenate(t2d);
+				break;
+			}
+			case alpha:
+			case bright:
+			case sat: {
+				colorComp += modType.getType() - ModType.hue.getType();
+				targetComp += modType.getType() - ModType.hue.getType();
+				mask <<= 2 * (modType.getType() - ModType.hue.getType());
 				hue = false;
 			}
-		case hue: 
-			{
-				 if (argcount == 1) {
-					 if ((result.colorAssignment() & mask) != 0 || (!hue && color[colorComp] != 0.0)) {
-						 if (rti == null) throw new DeferUntilRuntimeException();
-						 if (!shapeDest) {
-							 rti.colorConflict(getLocation());
+			case hue: {
+				 if (argcount != 2) {
+				 	 for (int i = 0; i < argcount; i++) {
+						 if ((result.colorAssignment() & mask) != 0 || (!hue && color[colorComp] != 0.0)) {
+							 if (rti == null) throw new DeferUntilRuntimeException();
+							 if (!shapeDest) {
+								 rti.colorConflict(getLocation());
+							 }
 						 }
-					 }
-					 if (shapeDest) {
-						 color[colorComp] = hue ? HSBColor.adjustHue(color[colorComp], modArgs[0]) : HSBColor.adjust(color[colorComp], modArgs[0]);
-					 } else {
-						 color[colorComp] = hue ? color[colorComp] + modArgs[0] : args[0];
+						 if (shapeDest) {
+							 color[colorComp] = hue ? HSBColor.adjustHue(color[colorComp], modArgs[i]) : HSBColor.adjust(color[colorComp], modArgs[i]);
+						 } else {
+							 color[colorComp] = hue ? color[colorComp] + modArgs[0] : args[0];
+						 }
+						 mask <<= 2;
+						 hue = false;
+						 colorComp += 1;
 					 }
 				 } else {
-					 if ((result.colorAssignment() & mask) != 0 || (color[colorComp] != 0.0) || (!hue && target[colorComp] != 0.0)) {
+					 if ((result.colorAssignment() & mask) != 0 || (color[colorComp] != 0.0) || (!hue && target[targetComp] != 0.0)) {
 						 if (rti == null) throw new DeferUntilRuntimeException();
 						 if (!shapeDest) {
 							 rti.colorConflict(getLocation());
 						 }
 					 }
 					 if (shapeDest) {
-						 color[colorComp] = hue ? HSBColor.adjustHue(color[colorComp], args[0], AssignmentType.HueTarget.getType(), modArgs[1]) : HSBColor.adjust(color[colorComp], args[0], AssignmentType.ColorTarget.getType(), args[1]);
+						 color[colorComp] = hue ? HSBColor.adjustHue(color[colorComp], args[0], AssignmentType.HueTarget.getType(), modArgs[1]) : HSBColor.adjust(color[colorComp], args[0], 1, args[1]);
 					 } else {
 						 color[colorComp] = args[0];
-						 target[colorComp] = hue ? modArgs[1] : args[1];
+						 target[targetComp] = hue ? modArgs[1] : args[1];
 						 result.setColorAssignment(result.colorAssignment() | AssignmentType.HSBA2Value.getType() & mask);
 					 }
 				 }
+				 break;
 			}
-			break;
-		case alphaTarg: 
-		case brightTarg: 
-		case satTarg: 
-			{
-				colorComp += modType.ordinal() - ModType.hueTarg.ordinal();
-				mask <<= 2 * modType.ordinal() - ModType.hueTarg.ordinal();
+			case alphaTarg:
+			case brightTarg:
+			case satTarg: {
+				colorComp += modType.getType() - ModType.hueTarg.getType();
+				targetComp += modType.getType() - ModType.hueTarg.getType();
+				mask <<= 2 * (modType.getType() - ModType.hueTarg.getType());
 				hue = false;
 			}
-		case hueTarg: 
-			{
+			case hueTarg: {
 				 if ((result.colorAssignment() & mask) != 0 || (color[colorComp] != 0.0)) {
 					 if (rti == null) throw new DeferUntilRuntimeException();
 					 if (!shapeDest) {
@@ -310,60 +317,79 @@ public class ASTModTerm extends ASTExpression {
 					 }
 				 }
 				 if (shapeDest) {
-					 color[colorComp] = hue ? HSBColor.adjustHue(color[colorComp], args[0], AssignmentType.HueTarget.getType(), target[colorComp]) : HSBColor.adjust(color[colorComp], args[0], AssignmentType.ColorTarget.getType(), target[colorComp]);
+					 color[colorComp] = hue ? HSBColor.adjustHue(color[colorComp], args[0], AssignmentType.HueTarget.getType(), target[targetComp]) : HSBColor.adjust(color[colorComp], args[0], 1, target[targetComp]);
 				 } else {
 					 color[colorComp] = args[0];
 					 result.setColorAssignment(result.colorAssignment() | AssignmentType.HSBATarget.getType() & mask);
 				 }
+				break;
 			}
-			break;
-		case targAlpha: 
-		case targBright: 
-		case targSat: 
-			{
-				colorComp += modType.ordinal() - ModType.targHue.ordinal();
-				mask <<= 2 * modType.ordinal() - ModType.targHue.ordinal();
-				if (target[colorComp] != 0.0) {
+			case targAlpha:
+			case targBright:
+			case targSat: {
+				targetComp += modType.getType() - ModType.hueTarg.getType();
+				if (target[targetComp] != 0.0) {
 					 if (rti == null) throw new DeferUntilRuntimeException();
 					 if (!shapeDest) {
 						 rti.colorConflict(getLocation());
 					 }
 				}
 				 if (shapeDest) {
-					 target[colorComp] = HSBColor.adjust(target[colorComp], args[0]);
+					 target[targetComp] = HSBColor.adjust(target[targetComp], args[0]);
 				 } else {
-					 target[colorComp] = args[0];
+					 target[targetComp] = args[0];
 				 }
+				break;
 			}
-			break;
-		case targHue: 
-			{
+			case targHue:
 				 target[0] += modArgs[0];
+				break;
+			case stroke: {
+				Logger.error("Cannot provide a stroke width in this context", location);
+				break;
 			}
-			break;
-		case param: {
-            Logger.error("Cannot provide a parameter in this context", null);
-            break;
-		}
-		case stroke: {
-            Logger.error("Cannot provide a stroke width in this context", null);
-            break;
-		}
-		case modification: {
-			if (rti == null) {
-				if (args != null && getArguments() instanceof ASTModification) {
-					ASTModification mod = (ASTModification)getArguments();
-					if ((mod.getModClass().ordinal() & (ModClass.HueClass.ordinal() | ModClass.HueTargetClass.ordinal() | ModClass.BrightClass.ordinal() | ModClass.BrightTargetClass.ordinal() | ModClass.SatClass.ordinal() | ModClass.SatTargetClass.ordinal() | ModClass.AlphaClass.ordinal() | ModClass.AlphaTargetClass.ordinal())) != 0) {
-						throw new DeferUntilRuntimeException();
+			case x1:
+			case y1:
+			case x2:
+			case y2:
+			case xrad:
+			case yrad: {
+				Logger.error("Cannot provide a path operation term in this context", location);
+				break;
+			}
+			case param: {
+				Logger.error("Cannot provide a parameter in this context", location);
+				break;
+			}
+			case unknown: {
+				Logger.error("Unrecognized adjustment type", location);
+				break;
+			}
+			case modification: {
+				if (rti == null) {
+					if (args != null && getArguments() instanceof ASTModification) {
+						ASTModification mod = (ASTModification)getArguments();
+						if (mod == null || (mod.getModClass().getType() & (ModClass.HueClass.getType() | ModClass.HueTargetClass.getType() | ModClass.BrightClass.getType() | ModClass.BrightTargetClass.getType() | ModClass.SatClass.getType() | ModClass.SatTargetClass.getType() | ModClass.AlphaClass.getType() | ModClass.AlphaTargetClass.getType())) != 0) {
+							throw new DeferUntilRuntimeException();
+						}
 					}
 				}
+				getArguments().evaluate(result, shapeDest, rti);
+				break;
 			}
-			getArguments().evaluate(result, shapeDest, rti);
-			break;
+			default:
+				break;
 		}
-		default:
-			break;
+//		result.setColor(new HSBColor(color[0], color[1], color[2], color[3]));
+//		result.setColorTarget(new HSBColor(target[0], target[1], target[2], target[3]));
+	}
+
+	@Override
+	public void entropy(StringBuilder e) {
+		if (args != null) {
+			args.entropy(e);
 		}
+		e.append(modType.getEntropy());
 	}
 
 	@Override
@@ -381,117 +407,109 @@ public class ASTModTerm extends ASTExpression {
 		}
 		if (args == null) {
 			if (modType == ModType.param) {
-                Logger.error("Illegal expression in shape adjustment", null);
+                Logger.error("Illegal expression in shape adjustment", location);
                 return null;
 			}
 		}
 		
 		switch (ph) {
-			case TypeCheck:
-				{
-					isConstant = args.isConstant();
-					locality = args.getLocality();
-					switch (args.getType()) {
-						case NumericType:
-							{
-								argCount = args.evaluate(null, 0);
-								int minCount = 1;
-								int maxCount = 1;
-								
-								if (argCount == 3 && modType == ModType.x) {
-									modType = ModType.xyz;
+			case TypeCheck: {
+				isConstant = args.isConstant();
+				locality = args.getLocality();
+				switch (args.getType()) {
+					case NumericType: {
+						argCount = args.evaluate(null, 0);
+						int minCount = 1;
+						int maxCount = 1;
+
+						if (argCount == 3 && modType == ModType.x) {
+							modType = ModType.xyz;
+						}
+						if (argCount == 3 && modType == ModType.size) {
+							modType = ModType.sizexyz;
+						}
+
+						switch (modType) {
+							case hue:
+								maxCount = 4;
+								break;
+							case x:
+							case size:
+							case sat:
+							case bright:
+							case alpha:
+								maxCount = 2;
+								break;
+							case y:
+							case z:
+							case timescale:
+							case zsize:
+							case rot:
+							case flip:
+							case hueTarg:
+							case satTarg:
+							case brightTarg:
+							case alphaTarg:
+							case targHue:
+							case targSat:
+							case targBright:
+							case targAlpha:
+							case stroke:
+								break;
+							case xyz:
+							case sizexyz:
+								minCount = maxCount = 3;
+								break;
+							case time:
+							case skew:
+								minCount = maxCount = 2;
+								break;
+							case transform:
+								maxCount = 6;
+								if (argCount != 1 && argCount != 2 && argCount != 4 && argCount != 6) {
+									Logger.error("transform adjustment takes 1, 2, 4, or 6 parameters", location);
 								}
-								if (argCount == 3 && modType == ModType.size) {
-									modType = ModType.sizexyz;
-								}
-								
-								switch (modType) {
-									case x:
-									case size:
-									case hue:
-									case sat:
-									case bright:
-									case alpha:
-										maxCount = 2;
-										break;
-	
-									case y:
-									case z:
-									case timescale:
-									case zsize:
-									case rot:
-									case flip:
-									case hueTarg:
-									case satTarg:
-									case brightTarg:
-									case alphaTarg:
-									case targHue:
-									case targSat:
-									case targBright:
-									case targAlpha:
-									case stroke:
-										break;
-										
-									case xyz:
-									case sizexyz:
-										minCount = maxCount = 3;
-										break;
-										
-									case time:
-									case skew:
-										minCount = maxCount = 2;
-										break;
-										
-									case transform:
-										maxCount = 6;
-										if (argCount != 1 && argCount != 2 && argCount != 4 && argCount != 6) {
-                                            Logger.error("transform adjustment takes 1, 2, 4, or 6 parameters", null);
-                                        }
-										break;
-										
-									case param:
-										minCount = maxCount = 0;
-										break;
-										
-									case modification:
-										break;
-										
-									default:
-										break;
-								}
-								
-		                        if (argCount < minCount) {
-                                    Logger.error("Not enough adjustment parameters", null);
-                                }
-		                        if (argCount > maxCount) {
-                                    Logger.error("Too many adjustment parameters", null);
-                                }
-							}
-							break;
-	
-						case ModType: 
-							{
-								if (modType != ModType.transform) {
-                                    Logger.error("Cannot accept a transform expression here", null);
-                                } else {
-									modType = ModType.modification;
-								}
-							}
-							break;
-							
-						default:
-                            Logger.error("Illegal expression in shape adjustment", null);
-                            break;
+								break;
+							case param:
+								minCount = maxCount = 0;
+								break;
+							case modification:
+								break;
+							default:
+								break;
+						}
+
+						if (argCount < minCount) {
+							Logger.error("Not enough adjustment parameters", location);
+						}
+						if (argCount > maxCount) {
+							Logger.error("Too many adjustment parameters", location);
+						}
+						break;
 					}
+
+					case ModType: {
+						if (modType != ModType.transform) {
+							Logger.error("Cannot accept a transform expression here", location);
+						} else {
+							modType = ModType.modification;
+						}
+						break;
+					}
+
+					default:
+						Logger.error("Illegal expression in shape adjustment", location);
+						break;
 				}
 				break;
-	
+			}
+
 			case Simplify:
 				break;
-	
+
 			default:
 				break;
-			}
+		}
 		return null;
 	}
 }

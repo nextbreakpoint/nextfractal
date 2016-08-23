@@ -28,7 +28,7 @@ import java.awt.Shape;
 
 /**
  * The <code>ExtendedShape</code> class represents a geometric
- * path constructed from straight lines, quadratic and cubic (Bezier)
+ * path constructed fromType straight lines, quadratic and cubic (Bezier)
  * curves and elliptical arcs.
  * @author <a href="mailto:deweese@apache.org">Thomas DeWeese</a>
  * @version $Id$

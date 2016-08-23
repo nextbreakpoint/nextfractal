@@ -53,6 +53,10 @@ public class ASTReal extends ASTExpression {
 		locality = Locality.PureLocal;
 	}
 
+	public double getValue() {
+		return value;
+	}
+
 	public String getText() {
 		return text;
 	}
@@ -61,10 +65,6 @@ public class ASTReal extends ASTExpression {
 		this.text = text;
 	}
 	
-	public double getValue() {
-		return value;
-	}
-
 	@Override
 	public void entropy(StringBuilder e) {
 		e.append(text);

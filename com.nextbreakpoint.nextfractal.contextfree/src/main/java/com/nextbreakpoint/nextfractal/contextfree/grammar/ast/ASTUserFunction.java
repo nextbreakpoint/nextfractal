@@ -35,9 +35,11 @@ import org.antlr.v4.runtime.Token;
 public class ASTUserFunction extends ASTExpression {
 	private ASTExpression arguments;
 	private ASTDefine definition;
-	private CFDGDriver driver;
 	private int nameIndex;
 	protected boolean isLet;
+	private CFDGDriver driver;
+	private int oldTop;
+	private int oldSize;
 
 	public ASTUserFunction(CFDGDriver driver, int nameIndex, ASTExpression arguments, ASTDefine definition, Token location) {
 		super(false, false, ExpType.NoType, location);
@@ -71,7 +73,7 @@ public class ASTUserFunction extends ASTExpression {
 	@Override
 	public int evaluate(double[] result, int length, RTI rti) {
 		if (type != ExpType.NumericType) {
-			Logger.error("Function does not evaluate to a number", null);
+			Logger.error("Function does not evaluate to a number", location);
 			return -1;
 		}
 		if (result != null && length < definition.getTupleSize()) {
@@ -81,28 +83,30 @@ public class ASTUserFunction extends ASTExpression {
 			return definition.getTupleSize();
 		}
 		if (rti == null) throw new DeferUntilRuntimeException();
-		if (rti.isRequestStop()/*TODO || Render.abortEverything*/) {
+		if (rti.isRequestStop() || RTI.abortEverything()) {
 			throw new CFDGException("Stopping");
 		}
-		int oldStackTop = setupStack(rti);
-		definition.getExp().evaluate(result, length, rti);
-		cleanupStack(rti, oldStackTop);
+		setupStack(rti);
+		if (definition.getExp().evaluate(result, length, rti) != definition.getTupleSize()) {
+			Logger.error("Error evaluating function", location);
+		};
+		cleanupStack(rti);
 		return definition.getTupleSize();
 	}
 
 	@Override
 	public void evaluate(Modification result, boolean shapeDest, RTI rti) {
 		if (type != ExpType.ModType) {
-			Logger.error("Function does not evaluate to an adjustment", null);
+			Logger.error("Function does not evaluate to an adjustment", location);
 			return;
 		}
 		if (rti == null) throw new DeferUntilRuntimeException();
-		if (rti.isRequestStop()/*TODO || Render.abortEverything*/) {
+		if (rti.isRequestStop() || RTI.abortEverything()) {
 			throw new CFDGException("Stopping");
 		}
-		int oldStackTop = setupStack(rti);
+		setupStack(rti);
 		definition.getExp().evaluate(result, shapeDest, rti);
-		cleanupStack(rti, oldStackTop);
+		cleanupStack(rti);
 	}
 
 	@Override
@@ -117,12 +121,12 @@ public class ASTUserFunction extends ASTExpression {
 	public ASTExpression simplify() {
 		if (arguments != null) {
 			if (arguments instanceof ASTCons) {
-				ASTCons c = (ASTCons)arguments;
-				for (ASTExpression e : c.getChildren()) {
-					e.simplify();
+				ASTCons carg = (ASTCons)arguments;
+				for (int i = 0; i < carg.getChildren().size(); i++) {
+					carg.setChild(i, carg.getChild(i).simplify());
 				}
 			} else {
-				arguments.simplify();
+				arguments = arguments.simplify();
 			}
 		}
 		return this;
@@ -131,42 +135,41 @@ public class ASTUserFunction extends ASTExpression {
 	@Override
 	public ASTExpression compile(CompilePhase ph) {
 		switch (ph) {
-			case TypeCheck:
-				{
-	                // Function calls and shape specifications are ambiguous at parse
-	                // time so the parser always chooses a function call. During
-	                // type checkParam we may need to convert to a shape spec.
-					ASTDefine[] def = new ASTDefine[1];
-					@SuppressWarnings("unchecked")
-					List<ASTParameter>[] p = new List[1];
-					String name = driver.getTypeInfo(nameIndex, def, p);
-					if (def[0] != null && p[0] != null) {
-						Logger.error("Name matches both a function and a shape", null);
-						return null;
-					}
-					if (def[0] == null && p[0] == null) {
-						Logger.error("Name does not match shape name or function name", null);
-						return null;
-					}
-					if (def[0] != null) {
-						if (arguments != null) {
-							arguments.compile(ph);
-						}
-						definition = def[0];
-						ASTParameter.checkType(def[0].getParameters(), arguments, false);
-						isConstant = false;
-						isNatural = definition.isNatural();
-						type = definition.getExpType();
-						locality = arguments != null ? arguments.getLocality() : Locality.PureLocal;
-						if (definition.getExp() != null && definition.getExp().getLocality() == Locality.ImpureNonlocal && locality == Locality.PureNonlocal) {
-							locality = Locality.ImpureNonlocal;
-						}
-						return null;
-					}
-					ASTRuleSpecifier r = new ASTRuleSpecifier(driver, nameIndex, name, arguments, null, location);
-					r.compile(ph);
-					return r;
+			case TypeCheck: {
+				// Function calls and shape specifications are ambiguous at parse
+				// time so the parser always chooses a function call. During
+				// type checkParam we may need to convert to a shape spec.
+				ASTDefine[] def = new ASTDefine[1];
+				@SuppressWarnings("unchecked")
+				List<ASTParameter>[] p = new List[1];
+				String name = driver.getTypeInfo(nameIndex, def, p);
+				if (def[0] != null && p[0] != null) {
+					Logger.error("Name matches both a function and a shape", location);
+					return null;
 				}
+				if (def[0] == null && p[0] == null) {
+					Logger.error("Name does not match shape name or function name", location);
+					return null;
+				}
+				if (def[0] != null) {
+					if (arguments != null) {
+						arguments = arguments.compile(ph);
+					}
+					definition = def[0];
+					ASTParameter.checkType(def[0].getParameters(), arguments, false);
+					isConstant = false;
+					isNatural = definition.isNatural();
+					type = definition.getExpType();
+					locality = arguments != null ? arguments.getLocality() : Locality.PureLocal;
+					if (definition.getExp() != null && definition.getExp().getLocality() == Locality.ImpureNonlocal && locality == Locality.PureNonlocal) {
+						locality = Locality.ImpureNonlocal;
+					}
+					return null;
+				}
+				ASTRuleSpecifier r = new ASTRuleSpecifier(driver, nameIndex, name, arguments, null, location);
+				r.compile(ph);
+				return r;
+			}
 	
 			case Simplify: 
 				break;
@@ -180,32 +183,38 @@ public class ASTUserFunction extends ASTExpression {
 	@Override
 	public StackRule evalArgs(RTI rti, StackRule parent) {
 		if (type != ExpType.RuleType) {
-			Logger.error("Function does not evaluate to a shape", null);
+			Logger.error("Function does not evaluate to a shape", location);
 			return null;
 		}
 		if (rti == null) throw new DeferUntilRuntimeException();
-		if (rti.isRequestStop()/*TODO || Render.abortEverything*/) {
+		if (rti.isRequestStop() || RTI.abortEverything()) {
 			throw new CFDGException("Stopping");
 		}
-		int oldStackType = setupStack(rti);
+		//TODO da controllare
+		setupStack(rti);
 		StackRule ret = definition.getExp().evalArgs(rti, parent);
-		cleanupStack(rti, oldStackType);
+		cleanupStack(rti);
 		return ret;
 	}
 	
-	private int setupStack(RTI rti) {
-		int stackTop = rti.getLogicalStackTop();
+	private void setupStack(RTI rti) {
+		oldTop = rti.getLogicalStackTop();
+		oldSize = rti.getStackSize();
 		if (definition.getStackCount() > 0) {
-			int size = rti.getStackSize();
-			rti.stackItem(size - 1).evalArgs(rti, arguments, definition.getParameters(), isLet);
-			rti.setLogicalStackTop(size);
+			if (oldSize + definition.getStackCount() > rti.getStackSize()) {
+				Logger.error("Maximum stack size exceeded", location);
+			}
+			rti.setStackSize(oldSize + definition.getStackCount());
+			rti.getStackItem(oldSize).evalArgs(rti, arguments, definition.getParameters(), isLet);
+			rti.setLogicalStackTop(rti.getStackSize());
 		}
-		return stackTop;
 	}
 
-	private void cleanupStack(RTI rti, int stackTop) {
+	private void cleanupStack(RTI rti) {
 		if (definition.getStackCount() > 0) {
-			rti.setLogicalStackTop(stackTop);
+			rti.setStackItem(oldSize, null);
+			rti.setLogicalStackTop(oldTop);
+			rti.setStackSize(oldSize);
 		}
 	}
 }

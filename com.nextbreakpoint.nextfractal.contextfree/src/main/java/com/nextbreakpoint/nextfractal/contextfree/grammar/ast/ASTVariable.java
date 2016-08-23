@@ -31,11 +31,11 @@ import org.antlr.v4.runtime.Token;
 
 public class ASTVariable extends ASTExpression {
 	private String text;
-	private CFDGDriver driver;
 	private int stringIndex;
 	private int stackIndex;
 	private int count;
 	private boolean isParameter;
+	private CFDGDriver driver;
 
 	public ASTVariable(CFDGDriver driver, int stringIndex, String text, Token location) {
 		super(location);
@@ -45,90 +45,6 @@ public class ASTVariable extends ASTExpression {
 		this.stackIndex = 0;
 		this.text = text;
 		this.count = 0;
-	}
-
-	@Override
-	public void entropy(StringBuilder e) {
-		e.append(text);
-	}
-	
-	@Override
-	public ASTExpression compile(CompilePhase ph) {
-		switch (ph) {
-			case TypeCheck: 
-				{
-					boolean isGlobal = false;
-					ASTParameter bound = driver.findExpression(stringIndex, isGlobal);
-					if (bound == null) {
-                        Logger.error("internal error.", null);
-                        return null;
-					}
-					String name = driver.shapeToString(stringIndex);
-					if (bound.getStackIndex() == -1) {
-						ASTExpression ret = bound.constCopy(name);
-						if (ret == null) {
-                            Logger.error("internal error.", null);
-                        }
-						return ret;
-					} else {
-						if (bound.getType() == ExpType.RuleType) {
-							ASTRuleSpecifier ret = new ASTRuleSpecifier(driver, stringIndex, name, location);
-							ret.compile(ph);
-							return ret;
-						}
-						count = bound.getType() == ExpType.NumericType ? bound.getTupleSize() : 1;
-						stackIndex = bound.getStackIndex() - (isGlobal ? 0: driver.getLocalStackDepth());
-						type = bound.getType();
-						isNatural = bound.isNatural();
-						locality = bound.getLocality();
-						isParameter = bound.isParameter();
-					}
-				}
-				break;
-	
-			case Simplify: 
-				break;
-
-			default:
-				break;
-		}
-		return null;
-	}
-	
-	@Override
-	public int evaluate(double[] result, int length, RTI rti) {
-		if (type != ExpType.NumericType) {
-            Logger.error("Non-numeric variable in a numeric context", null);
-            return -1;
-        }
-		if (result != null && length < count) {
-			return -1;
-		}
-        if (result != null) {
-            if (rti == null) throw new DeferUntilRuntimeException();
-            StackType stackItem = rti.stackItem(stackIndex);
-            for (int i = 0; i < count; ++i) {
-				result[i] = stackItem.getNumber();
-            }
-        }
-        return count;
-	}
-
-	@Override
-	public void evaluate(Modification result, boolean shapeDest, RTI rti) {
-		if (type != ExpType.ModType) {
-            Logger.error("Non-adjustment variable referenced in an adjustment context", null);
-        }
-		if (rti == null) throw new DeferUntilRuntimeException();
-        StackType stackItem = rti.stackItem(stackIndex);
-        Modification mod = stackItem.modification();
-        if (shapeDest) {
-        	result.concat(mod);
-        } else {
-        	if (result.merge(mod)) {
-    			rti.colorConflict(getLocation());
-        	}
-        }
 	}
 
 	public String getText() {
@@ -149,5 +65,88 @@ public class ASTVariable extends ASTExpression {
 
 	public boolean isParameter() {
 		return isParameter;
+	}
+
+	@Override
+	public int evaluate(double[] result, int length, RTI rti) {
+		if (type != ExpType.NumericType) {
+            Logger.error("Non-numeric variable in a numeric context", location);
+            return -1;
+        }
+		if (result != null && length < count) {
+			return -1;
+		}
+        if (result != null) {
+            if (rti == null) throw new DeferUntilRuntimeException();
+            StackType stackItem = rti.getStackItem(stackIndex);
+            for (int i = 0; i < count; ++i) {
+				result[i] = stackItem.getNumber();
+            }
+        }
+        return count;
+	}
+
+	@Override
+	public void evaluate(Modification result, boolean shapeDest, RTI rti) {
+		if (type != ExpType.ModType) {
+            Logger.error("Non-adjustment variable referenced in an adjustment context", location);
+        }
+		if (rti == null) throw new DeferUntilRuntimeException();
+        StackType stackItem = rti.getStackItem(stackIndex);
+        Modification mod = stackItem.modification();
+        if (shapeDest) {
+        	result.concat(mod);
+        } else {
+        	if (result.merge(mod)) {
+    			rti.colorConflict(getLocation());
+        	}
+        }
+	}
+
+	@Override
+	public void entropy(StringBuilder e) {
+		e.append(text);
+	}
+
+	@Override
+	public ASTExpression compile(CompilePhase ph) {
+		switch (ph) {
+			case TypeCheck: {
+				boolean isGlobal = false;
+				ASTParameter bound = driver.findExpression(stringIndex, isGlobal);
+				if (bound == null) {
+					Logger.error("internal error", location);
+					return null;
+				}
+				String name = driver.shapeToString(stringIndex);
+				if (bound.getStackIndex() == -1) {
+					ASTExpression ret = bound.constCopy(name);
+					if (ret == null) {
+						Logger.error("internal error", location);
+					}
+					return ret;
+				} else {
+					if (bound.getType() == ExpType.RuleType) {
+						ASTRuleSpecifier ret = new ASTRuleSpecifier(driver, stringIndex, name, location);
+						ret.compile(ph);
+						return ret;
+					}
+					count = bound.getType() == ExpType.NumericType ? bound.getTupleSize() : 1;
+					stackIndex = bound.getStackIndex() - (isGlobal ? 0: driver.getLocalStackDepth());
+					type = bound.getType();
+					isNatural = bound.isNatural();
+					locality = bound.getLocality();
+					isParameter = bound.isParameter();
+				}
+				break;
+			}
+
+			case Simplify:
+				break;
+
+			default:
+				break;
+		}
+		return null;
 	}
 }

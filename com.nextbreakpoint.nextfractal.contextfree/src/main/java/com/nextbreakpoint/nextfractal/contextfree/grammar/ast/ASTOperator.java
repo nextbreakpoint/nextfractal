@@ -28,10 +28,12 @@ import com.nextbreakpoint.nextfractal.contextfree.grammar.Logger;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.RTI;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.CompilePhase;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ExpType;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.Locality;
 import org.antlr.v4.runtime.Token;
 
 public class ASTOperator extends ASTExpression {
 	private char op;
+	private int tupleSize;
 	private ASTExpression left;
 	private ASTExpression right;
 
@@ -40,16 +42,17 @@ public class ASTOperator extends ASTExpression {
 		this.op = op;
 		this.left = left;
 		this.right = right;
-		int index = "NP!+-*/^_<>LG=n&|X".indexOf(""+op);
+		this.tupleSize = 1;
+		int index = "NP!+-*/^_<>LG=n&|X".indexOf(String.valueOf(op));
 		if (index == -1) {
-            Logger.error("Unknown operator", null);
+            Logger.error("Unknown operator", location);
         } else if (index < 3) {
 			if (right != null) {
-                Logger.error("Operator takes only one operand", null);
+                Logger.error("Operator takes only one operand", location);
             }
 		} else {
 			if (right != null) {
-                Logger.error("Operator takes two operands", null);
+                Logger.error("Operator takes two operands", location);
             }
 		}
 	}
@@ -62,6 +65,10 @@ public class ASTOperator extends ASTExpression {
 		return op;
 	}
 
+	public int getTupleSize() {
+		return tupleSize;
+	}
+
 	public ASTExpression getLeft() {
 		return left;
 	}
@@ -70,7 +77,7 @@ public class ASTOperator extends ASTExpression {
 		return right;
 	}
 
-//	public static ASTExpression makeCanonical(List<ASTExpression> temp) {
+//TODO remove	public static ASTExpression makeCanonical(List<ASTExpression> temp) {
 //		// Receive a vector of modification terms and return an ASTexpression 
 //		// with those terms rearranged into TRSSF canonical order. 
 //		// Duplicate terms are left in the input vector.
@@ -205,7 +212,7 @@ public class ASTOperator extends ASTExpression {
 		}
 
 		if (type != ExpType.NumericType) {
-            Logger.error("Non-numeric expression in a numeric context", null);
+            Logger.error("Non-numeric expression in a numeric context", location);
             return -1;
 		}
 
@@ -248,7 +255,7 @@ public class ASTOperator extends ASTExpression {
 		}
 
 		if (rightnum != 1) {
-            Logger.error("illegal operand", null);
+            Logger.error("illegal operand", location);
             return -1;
 		}
 
@@ -318,14 +325,18 @@ public class ASTOperator extends ASTExpression {
 				return -1;
 		}
 
-		return 1;
+		return tupleSize;
 	}
 
 	@Override
 	public void entropy(StringBuilder e) {
-		left.entropy(e);
-		if (right != null)
+		if (left != null) {
+			left.entropy(e);
+		}
+
+		if (right != null) {
 			right.entropy(e);
+		}
 
 		switch (op) {
 			case '*':
@@ -389,9 +400,13 @@ public class ASTOperator extends ASTExpression {
 
 	@Override
 	public ASTExpression simplify() {
-		left = left.simplify();
-		if (right != null)
+		if (left != null) {
+			left = left.simplify();
+		}
+
+		if (right != null) {
 			right = right.simplify();
+		}
 
 		if (isConstant && (type == ExpType.NumericType || type == ExpType.FlagType)) {
 			double[] result = new double[1];
@@ -399,9 +414,7 @@ public class ASTOperator extends ASTExpression {
 				return null;
 			}
 
-			ASTReal r = new ASTReal(result[0], location);
-			r.setType(type);
-			r.setIsNatural(isNatural);
+			ASTExpression r = AST.makeResult(result[0], tupleSize, this);
 			return r;
 		}
 
@@ -410,35 +423,78 @@ public class ASTOperator extends ASTExpression {
 
 	@Override
 	public ASTExpression compile(CompilePhase ph) {
-		if (left != null)
+		if (left != null) {
 			left = left.compile(ph);
-		if (right != null)
+		}
+
+		if (right != null) {
 			right = right.compile(ph);
+		}
 		
 		switch (ph) {
-			case TypeCheck:
-				{
-					isConstant = left.isConstant() && (right == null || right.isConstant());
-					locality = right != null ? AST.combineLocality(left.getLocality(), right.getLocality()) : left.getLocality();
-					type = right != null ? ExpType.fromType(left.getType().ordinal() | right.getType().ordinal()) : left.getType();
-					if ("+_*<>LG=n&|X^!".indexOf(""+op) != -1) {
-						isNatural = left.isNatural() && (right == null || right.isNatural());
+			case TypeCheck: {
+				isConstant = left.isConstant() && (right == null || right.isConstant());
+				locality = right != null ? AST.combineLocality(left.getLocality(), right.getLocality()) : left.getLocality();
+				if (locality == Locality.PureNonlocal) {
+					locality = Locality.ImpureNonlocal;
+				}
+				type = right != null ? ExpType.fromType(left.getType().getType() | right.getType().getType()) : left.getType();
+				if (type == ExpType.NumericType) {
+					int ls = left != null ? left.evaluate(null, 0) : 0;
+					int rs = right != null ? right.evaluate(null, 0) : 0;
+					switch (op) {
+						case 'N':
+						case 'P':
+							tupleSize = ls;
+							if (rs != 0) {
+								Logger.error("Unitary operators must have only one operand", location);
+							}
+							break;
+						case '!':
+							if (rs != 0 || ls != 1) {
+								Logger.error("Unitary operators must have only one scalar operand", location);
+							}
+							break;
+						case '+':
+						case '-':
+						case '_':
+						case '/':
+						case '*':
+							tupleSize = ls;
+						case '=':
+						case 'n':
+							if (ls != rs) {
+								Logger.error("Operands must have the same length", location);
+							}
+							if (ls < 1 || rs < 1) {
+								Logger.error("Binary operators must have two operands", location);
+							}
+							break;
+						default:
+							if (ls != 1 || rs != 1) {
+								Logger.error("Binary operators must have two scalar operands", location);
+							}
+							break;
 					}
-					if (op == '+') {
-						if (type == ExpType.FlagType && type != ExpType.NumericType) {
-                            Logger.error("Operands must be numeric or flags", null);
-                        }
-					} else {
-						if (type != ExpType.NumericType) {
-                            Logger.error("Operand(s) must be numeric", null);
-                        }
+				}
+				if ("+_*<>LG=n&|X^!".indexOf(String.valueOf(op)) != -1) {
+					isNatural = left.isNatural() && (right == null || right.isNatural());
+				}
+				if (op == '+') {
+					if (type == ExpType.FlagType && type != ExpType.NumericType) {
+						Logger.error("Operands must be numeric or flags", location);
 					}
-					if (op == '_' && !isNatural()) {
-                        Logger.error("Proper subtraction operands must be natural", null);
-                    }
+				} else {
+					if (type != ExpType.NumericType) {
+						Logger.error("Operand(s) must be numeric", location);
+					}
+				}
+				if (op == '_' && !isNatural() && !ASTParameter.Impure) {
+					Logger.error("Proper subtraction operands must be natural", location);
 				}
 				break;
-	
+			}
+
 			case Simplify: 
 				break;
 	

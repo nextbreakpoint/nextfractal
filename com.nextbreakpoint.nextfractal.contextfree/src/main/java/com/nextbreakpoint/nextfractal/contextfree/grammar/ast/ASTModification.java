@@ -28,7 +28,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Map;
 
 import com.nextbreakpoint.nextfractal.contextfree.core.Rand64;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.*;
@@ -36,13 +35,50 @@ import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.*;
 import org.antlr.v4.runtime.Token;
 
 public class ASTModification extends ASTExpression {
-	public static final int SIZE = 9;
 	private ModClass modClass;
 	private Modification modData = new Modification();
 	private List<ASTModTerm> modExp = new ArrayList<ASTModTerm>();
 	private int entropyIndex;
 	private boolean canonical;
 	private CFDGDriver driver;
+
+	private static HashMap<ModType, ModClass> evalMap = new HashMap<>();
+	static {
+		evalMap.put(ModType.unknown, ModClass.fromType(ModClass.NotAClass.getType()));
+		evalMap.put(ModType.x, ModClass.fromType(ModClass.GeomClass.getType() | ModClass.PathOpClass.getType()));
+		evalMap.put(ModType.y, ModClass.fromType(ModClass.GeomClass.getType() | ModClass.PathOpClass.getType()));
+		evalMap.put(ModType.z, ModClass.ZClass);
+		evalMap.put(ModType.xyz, ModClass.fromType(ModClass.NotAClass.getType()));
+		evalMap.put(ModType.transform, ModClass.GeomClass);
+		evalMap.put(ModType.size, ModClass.GeomClass);
+		evalMap.put(ModType.sizexyz, ModClass.fromType(ModClass.GeomClass.getType() | ModClass.ZClass.getType()));
+		evalMap.put(ModType.rot, ModClass.fromType(ModClass.GeomClass.getType() | ModClass.PathOpClass.getType()));
+		evalMap.put(ModType.skew, ModClass.GeomClass);
+		evalMap.put(ModType.flip, ModClass.GeomClass);
+		evalMap.put(ModType.zsize, ModClass.ZClass);
+		evalMap.put(ModType.hue, ModClass.HueClass);
+		evalMap.put(ModType.sat, ModClass.SatClass);
+		evalMap.put(ModType.bright, ModClass.BrightClass);
+		evalMap.put(ModType.alpha, ModClass.AlphaClass);
+		evalMap.put(ModType.hueTarg, ModClass.HueClass);
+		evalMap.put(ModType.satTarg, ModClass.SatClass);
+		evalMap.put(ModType.brightTarg, ModClass.BrightClass);
+		evalMap.put(ModType.alphaTarg, ModClass.AlphaClass);
+		evalMap.put(ModType.targHue, ModClass.HueTargetClass);
+		evalMap.put(ModType.targSat, ModClass.SatTargetClass);
+		evalMap.put(ModType.targBright, ModClass.BrightTargetClass);
+		evalMap.put(ModType.targAlpha, ModClass.AlphaTargetClass);
+		evalMap.put(ModType.time, ModClass.TimeClass);
+		evalMap.put(ModType.timescale, ModClass.TimeClass);
+		evalMap.put(ModType.param, ModClass.ParamClass);
+		evalMap.put(ModType.x1, ModClass.PathOpClass);
+		evalMap.put(ModType.y1, ModClass.PathOpClass);
+		evalMap.put(ModType.x2, ModClass.PathOpClass);
+		evalMap.put(ModType.y2, ModClass.PathOpClass);
+		evalMap.put(ModType.xrad, ModClass.PathOpClass);
+		evalMap.put(ModType.yrad, ModClass.PathOpClass);
+		evalMap.put(ModType.modification, ModClass.InvalidClass);
+	}
 
 	public ASTModification(CFDGDriver driver, Token location) {
 		super(true, false, ExpType.ModType, location);
@@ -65,25 +101,26 @@ public class ASTModification extends ASTExpression {
 
 	public ASTModification(ASTModification mod) {
 		super(true, false, ExpType.ModType, mod.getLocation());
+		this.driver = mod.driver;
 		this.modClass = mod.modClass;
 		this.entropyIndex = mod.entropyIndex;
 		this.canonical = mod.canonical;
-	}
-
-	public Modification getModData() {
-		return modData;
 	}
 
 	public ModClass getModClass() {
 		return modClass;
 	}
 
+	public Modification getModData() {
+		return modData;
+	}
+
 	public List<ASTModTerm> getModExp() {
 		return modExp;
 	}
 
-	public void setIsConstant(boolean isConstant) {
-		this.isConstant = isConstant;
+	public boolean isCanonial() {
+		return canonical;
 	}
 
 	public void setCanonical(boolean canonical) {
@@ -98,10 +135,6 @@ public class ASTModification extends ASTExpression {
 		this.entropyIndex = entropyIndex;
 	}
 
-	public boolean isCanonial() {
-		return canonical;
-	}
-	
 	public void grab(ASTModification mod) {
 		Rand64 oldEntropy = modData.getRand64Seed();
 		modData = mod.getModData();
@@ -187,22 +220,9 @@ public class ASTModification extends ASTExpression {
 		if (xform != null) modExp.add(xform); 
 	}
 
-	public void addEntropy(String name) {
-		int[] index = new int[1];
-		modData.getRand64Seed().xorString(name, index);
-		entropyIndex = index[0];
-	}
-
-	public void setVal(Modification[] mod, RTI rti) {
-        mod[0] = modData;
-		for (ASTModTerm term : modExp) {
-			term.evaluate(modData, false, rti);
-		}
-	}
-
 	@Override
 	public int evaluate(double[] result, int length, RTI rti) {
-		Logger.error("Improper evaluation of an adjustment expression", null);
+		Logger.error("Improper evaluation of an adjustment expression", location);
 		return -1;
 	}
 
@@ -220,73 +240,10 @@ public class ASTModification extends ASTExpression {
 		}
 	}
 
-	protected void evalConst() {
-		Map<ModType, ModClass> map = new HashMap<ModType, ModClass>();
-		map.put(ModType.unknown, ModClass.classByOrdinal(ModClass.NotAClass.getType()));
-		map.put(ModType.x, ModClass.classByOrdinal(ModClass.GeomClass.getType() | ModClass.PathOpClass.getType()));
-		map.put(ModType.y, ModClass.classByOrdinal(ModClass.GeomClass.getType() | ModClass.PathOpClass.getType()));
-		map.put(ModType.z, ModClass.ZClass);
-		map.put(ModType.xyz, ModClass.classByOrdinal(ModClass.NotAClass.getType()));
-		map.put(ModType.transform, ModClass.GeomClass);
-		map.put(ModType.size, ModClass.GeomClass);
-		map.put(ModType.sizexyz, ModClass.classByOrdinal(ModClass.GeomClass.getType() | ModClass.ZClass.getType()));
-		map.put(ModType.rot, ModClass.classByOrdinal(ModClass.GeomClass.getType() | ModClass.PathOpClass.getType()));
-		map.put(ModType.skew, ModClass.GeomClass);
-		map.put(ModType.flip, ModClass.GeomClass);
-		map.put(ModType.zsize, ModClass.ZClass);
-		map.put(ModType.hue, ModClass.HueClass);
-		map.put(ModType.sat, ModClass.SatClass);
-		map.put(ModType.bright, ModClass.BrightClass);
-		map.put(ModType.alpha, ModClass.AlphaClass);
-		map.put(ModType.hueTarg, ModClass.HueClass);
-		map.put(ModType.satTarg, ModClass.SatClass);
-		map.put(ModType.brightTarg, ModClass.BrightClass);
-		map.put(ModType.alphaTarg, ModClass.AlphaClass);
-		map.put(ModType.targHue, ModClass.HueTargetClass);
-		map.put(ModType.targSat, ModClass.SatTargetClass);
-		map.put(ModType.targBright, ModClass.BrightTargetClass);
-		map.put(ModType.targAlpha, ModClass.AlphaTargetClass);
-		map.put(ModType.time, ModClass.TimeClass);
-		map.put(ModType.timescale, ModClass.TimeClass);
-		map.put(ModType.param, ModClass.ParamClass);
-		map.put(ModType.x1, ModClass.PathOpClass);
-		map.put(ModType.y1, ModClass.PathOpClass);
-		map.put(ModType.x2, ModClass.PathOpClass);
-		map.put(ModType.y2, ModClass.PathOpClass);
-		map.put(ModType.xrad, ModClass.PathOpClass);
-		map.put(ModType.yrad, ModClass.PathOpClass);
-		map.put(ModType.modification, ModClass.InvalidClass);
-		
-		int nonConstant = 0;
-		
-		List<ASTModTerm> temp = new ArrayList<ASTModTerm>(modExp);
-		modExp.clear();
-
-		for (ASTModTerm term : temp) {
-			ModClass mc = map.get(term.getModType());
-			modClass = ModClass.classByOrdinal(modClass.getType() | mc.getType());
-            if (!term.isConstant())
-                nonConstant |= mc.getType();
-			boolean keepThisOne = (mc.getType() & nonConstant) != 0;
-			if (driver.isInPathContainer() && (mc.getType() & ModClass.ZClass.getType()) != 0) {
-				Logger.error("Z changes are not supported within paths", null);
-			}
-			if (driver.isInPathContainer() && (mc.getType() & ModClass.TimeClass.getType()) != 0) {
-				Logger.error("Time changes are not supported within paths", null);
-			}
-			try {
-				if (!keepThisOne) {
-					term.evaluate(modData, false, null); //TODO controllare
-				}
-			} catch (DeferUntilRuntimeException e) {
-				keepThisOne = true;
-			}
-			if (keepThisOne) {
-				if (term.getArguments() != null) {
-					term.getArguments().simplify();
-				}
-				modExp.add(term);
-			}
+	public void setVal(Modification[] mod, RTI rti) {
+		mod[0] = modData;
+		for (ASTModTerm term : modExp) {
+			term.evaluate(modData, false, rti);
 		}
 	}
 
@@ -303,122 +260,119 @@ public class ASTModification extends ASTExpression {
 		}
 		
 		switch (ph) {
-			case TypeCheck:
-				{
-					List<ASTModTerm> temp = new ArrayList<ASTModTerm>(modExp);
-					modExp.clear();
+			case TypeCheck: {
+				List<ASTModTerm> temp = new ArrayList<ASTModTerm>(modExp);
+				modExp.clear();
 
-					for (ListIterator<ASTModTerm> iterm = temp.listIterator(); iterm.hasNext();) {
-						ASTModTerm term = iterm.next();
-						if (term.getArguments() == null || term.getArguments().getType() != ExpType.NumericType) {
-							modExp.add(term);
-						}
-						int argcount = term.getArguments().evaluate(null, 0);
-						switch (term.getModType()) {
-							case x:
-							case y:
-								{
-									if (!iterm.hasNext()) {
-										break;
-									}
-									ASTModTerm next = iterm.next();
-									if (term.getModType() == ModType.x && next.getModType() == ModType.y && argcount == 1) {
-										term.setArguments(term.getArguments().append(next));
-										term.setArgumentsCount(2);
-										modExp.add(term);
-										continue;
-									}
-								}
-								break;
-
-	                            // Try to split the XYZ term into an XY term and a Z term. Drop the XY term
-	                            // if it is the identity. First try an all-constant route, then try to tease
-	                            // apart the arguments.
-							case xyz:
-							case sizexyz:
-								{
-									double[] d = new double[3];
-									if (term.getArguments().isConstant() && term.getArguments().evaluate(d, 3) != 3) {
-										term.setArguments(new ASTCons(location, new ASTReal(d[0], location), new ASTReal(d[1], location)));
-										term.setModType(term.getModType() == ModType.xyz ? ModType.x : ModType.size);
-										term.setArgumentsCount(2);
-										
-		                                // Check if xy part is the identity transform and only save it if it is not
-										ModType ztype = term.getModType() == ModType.size ? ModType.zsize : ModType.z;
-										ASTModTerm zmod = new ASTModTerm(ztype, new ASTReal(d[2], location), location);
-										zmod.setArgumentsCount(1);
-										
-										if (d[0] == 1.0 && d[1] == 1.0 && term.getModType() == ModType.size) {
-		                                    // Drop xy term and just save z term if xy term
-		                                    // is the identity transform
-											term.setArguments(zmod);
-										} else {
-											modExp.add(zmod);
-										}
-										modExp.add(term);
-										continue;
-									}
-									
-									List<ASTExpression> xyzargs = AST.extract(term.getArguments());
-									ASTExpression xyargs = null;
-									ASTExpression zargs = null;
-									
-									for (ASTExpression arg : xyzargs) {
-										if (xyargs == null || xyargs.evaluate(null, 0) < 2) {
-											xyargs = append(xyargs, arg);
-										} else {
-											zargs = append(zargs, arg);
-										}
-									}
-									
-									if (xyargs != null && zargs != null && xyargs.evaluate(null, 0) == 2) {
-		                                // We have successfully split the 3-tuple into a 2-tuple and a scalar
-										term.setArguments(xyargs);
-										term.setModType(term.getModType() == ModType.xyz ? ModType.x : ModType.size);
-										term.setArgumentsCount(2);
-										
-										ModType ztype = term.getModType() == ModType.size ? ModType.zsize : ModType.z;
-										ASTModTerm zmod = new ASTModTerm(ztype, new ASTReal(d[2], location), location);
-										zmod.setArgumentsCount(1);
-										
-										if (term.getModType() == ModType.size && xyargs.isConstant() && xyargs.evaluate(d, 2) == 2 && d[0] == 1.0 && d[1] == 1.0) {
-		                                    // Drop xy term and just save z term if xy term
-		                                    // is the identity transform
-											term.setArguments(zmod);
-										} else {
-											modExp.add(zmod);
-										}
-									} else {
-										// No dice, put it all back
-										xyargs = append(xyargs, zargs);
-										term.setArguments(xyargs);
-									}
-									modExp.add(term);
-								}
-								continue;
-								
-							default:
-								break;
-						}
+				for (ListIterator<ASTModTerm> iterm = temp.listIterator(); iterm.hasNext();) {
+					ASTModTerm term = iterm.next();
+					if (term.getArguments() == null || term.getArguments().getType() != ExpType.NumericType) {
 						modExp.add(term);
 					}
-					
-					isConstant = true;
-					locality = Locality.PureLocal;
-					for (ASTModTerm term : modExp) {
-						isConstant = isConstant && term.isConstant();
-						locality = AST.combineLocality(locality, term.getLocality());
-						StringBuilder ent = new StringBuilder();
-						term.entropy(ent);
-						addEntropy(ent.toString());
+					int argcount = term.getArguments().evaluate(null, 0);
+					switch (term.getModType()) {
+						case x:
+						case y: {
+							if (!iterm.hasNext()) {
+								break;
+							}
+							ASTModTerm next = iterm.next();
+							if (term.getModType() == ModType.x && next.getModType() == ModType.y && argcount == 1) {
+								term.setArguments(term.getArguments().append(next));
+								term.setArgumentsCount(2);
+								modExp.add(term);
+								continue;
+							}
+							break;
+						}
+
+						// Try to split the XYZ term into an XY term and a Z term. Drop the XY term
+						// if it is the identity. First try an all-constant route, then try to tease
+						// apart the arguments.
+						case xyz:
+						case sizexyz: {
+							double[] d = new double[3];
+							if (term.getArguments().isConstant() && term.getArguments().evaluate(d, 3) != 3) {
+								term.setArguments(new ASTCons(location, new ASTReal(d[0], location), new ASTReal(d[1], location)));
+								term.setModType(term.getModType() == ModType.xyz ? ModType.x : ModType.size);
+								term.setArgumentsCount(2);
+
+								ModType ztype = term.getModType() == ModType.size ? ModType.zsize : ModType.z;
+								ASTModTerm zmod = new ASTModTerm(ztype, new ASTReal(d[2], location), location);
+								zmod.setArgumentsCount(1);
+
+								// Check if xy part is the identity transform and only save it if it is not
+								if (d[0] == 1.0 && d[1] == 1.0 && term.getModType() == ModType.size) {
+									// Drop xy term and just save z term if xy term
+									// is the identity transform
+									term.setArguments(zmod);
+								} else {
+									modExp.add(zmod);
+								}
+								modExp.add(term);
+								continue;
+							}
+
+							List<ASTExpression> xyzargs = AST.extract(term.getArguments());
+							ASTExpression xyargs = null;
+							ASTExpression zargs = null;
+
+							for (ASTExpression arg : xyzargs) {
+								if (xyargs == null || xyargs.evaluate(null, 0) < 2) {
+									xyargs = append(xyargs, arg);
+								} else {
+									zargs = append(zargs, arg);
+								}
+							}
+
+							if (xyargs != null && zargs != null && xyargs.evaluate(null, 0) == 2) {
+								// We have successfully split the 3-tuple into a 2-tuple and a scalar
+								term.setArguments(xyargs);
+								term.setModType(term.getModType() == ModType.xyz ? ModType.x : ModType.size);
+								term.setArgumentsCount(2);
+
+								ModType ztype = term.getModType() == ModType.size ? ModType.zsize : ModType.z;
+								ASTModTerm zmod = new ASTModTerm(ztype, new ASTReal(d[2], location), location);
+								zmod.setArgumentsCount(1);
+
+								if (term.getModType() == ModType.size && xyargs.isConstant() && xyargs.evaluate(d, 2) == 2 && d[0] == 1.0 && d[1] == 1.0) {
+									// Drop xy term and just save z term if xy term
+									// is the identity transform
+									term.setArguments(zmod);
+								} else {
+									modExp.add(zmod);
+								}
+							} else {
+								// No dice, put it all back
+								xyargs = append(xyargs, zargs);
+								term.setArguments(xyargs);
+							}
+							modExp.add(term);
+							continue;
+						}
+
+						default:
+							break;
 					}
-					
-					if (canonical) {
-						makeCanonial();
-					}
+					modExp.add(term);
+				}
+
+				isConstant = true;
+				locality = Locality.PureLocal;
+				for (ASTModTerm term : modExp) {
+					isConstant = isConstant && term.isConstant();
+					locality = AST.combineLocality(locality, term.getLocality());
+					StringBuilder ent = new StringBuilder();
+					term.entropy(ent);
+					addEntropy(ent.toString());
+				}
+
+				if (canonical) {
+					makeCanonial();
 				}
 				break;
-	
+			}
+
 			case Simplify: 
 				break;
 
@@ -428,8 +382,49 @@ public class ASTModification extends ASTExpression {
 		return null;
 	}
 
+	protected void evalConst() {
+		int nonConstant = 0;
+
+		List<ASTModTerm> temp = new ArrayList<ASTModTerm>(modExp);
+		modExp.clear();
+
+		for (ASTModTerm term : temp) {
+			ModClass mc = evalMap.get(term.getModType());
+			modClass = ModClass.fromType(modClass.getType() | mc.getType());
+			if (!term.isConstant()) {
+				nonConstant |= mc.getType();
+			}
+			boolean keepThisOne = (mc.getType() & nonConstant) != 0;
+			if (driver.isInPathContainer() && (mc.getType() & ModClass.ZClass.getType()) != 0) {
+				Logger.error("Z changes are not supported within paths", term.getLocation());
+			}
+			if (driver.isInPathContainer() && (mc.getType() & ModClass.TimeClass.getType()) != 0) {
+				Logger.error("Time changes are not supported within paths", term.getLocation());
+			}
+			try {
+				if (!keepThisOne) {
+					term.evaluate(modData, false, null);
+				}
+			} catch (DeferUntilRuntimeException e) {
+				keepThisOne = true;
+			}
+			if (keepThisOne) {
+				if (term.getArguments() != null) {
+					term.setArguments(term.getArguments().simplify());
+				}
+				modExp.add(term);
+			}
+		}
+	}
+
+	public void addEntropy(String name) {
+		int[] index = new int[1];
+		modData.getRand64Seed().xorString(name, index);
+		entropyIndex = index[0];
+	}
+
 	public void concat(ASTModTerm t) {
 		// TODO Auto-generated method stub
-		
+
 	}
 }
