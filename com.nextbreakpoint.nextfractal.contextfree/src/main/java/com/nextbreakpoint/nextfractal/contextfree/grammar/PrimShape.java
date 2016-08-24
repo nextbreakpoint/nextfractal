@@ -54,11 +54,6 @@ public class PrimShape {
 		return null;
 	}
 
-	public int vertex(double[] x, double[] y) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
 	public PathIterator getPathIterator() {
 		return path.getPathIterator(new AffineTransform());
 	}

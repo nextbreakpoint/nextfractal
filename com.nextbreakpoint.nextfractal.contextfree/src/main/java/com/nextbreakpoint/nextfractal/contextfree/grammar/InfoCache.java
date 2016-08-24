@@ -3,6 +3,8 @@ package com.nextbreakpoint.nextfractal.contextfree.grammar;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTCompiledPath;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTPathCommand;
 
+import java.util.Iterator;
+
 public class InfoCache {
     public void pushBack(CommandInfo infoCache) {
         //TODO da completare
@@ -20,5 +22,14 @@ public class InfoCache {
     public CommandInfo end() {
         //TODO da completare
         return null;
+    }
+
+    public Iterator<CommandInfo> iterator() {
+        //TODO da completare
+        return null;
+    }
+
+    public void clear() {
+        //TODO da completare
     }
 }

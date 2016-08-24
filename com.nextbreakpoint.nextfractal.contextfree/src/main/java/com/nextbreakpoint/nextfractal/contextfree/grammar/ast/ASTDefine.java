@@ -280,4 +280,8 @@ public class ASTDefine extends ASTReplacement {
 
 		rti.setLogicalStackTop(rti.getStackSize());
 	}
+
+	public CFDGDriver getDriver() {
+		return driver;
+	}
 }

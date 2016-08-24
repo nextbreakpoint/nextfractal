@@ -52,7 +52,7 @@ public class ASTRule extends ASTReplacement implements Comparable<ASTRule> {
 		}
 	}
 
-	protected ASTRule(CFDGDriver driver, int nameIndex, Token location) {
+	public ASTRule(CFDGDriver driver, int nameIndex, Token location) {
 		super(driver, null, RepElemType.rule, location);
 		ruleBody = new ASTRepContainer(driver);
 		this.nameIndex = nameIndex;
