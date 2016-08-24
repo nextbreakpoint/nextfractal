@@ -24,10 +24,13 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.grammar.ast;
 
-import java.util.ArrayDeque;
-import java.util.Queue;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.NoninvertibleTransformException;
+import java.awt.geom.Point2D;
 
 import com.nextbreakpoint.nextfractal.contextfree.grammar.*;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.FlagType;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.PathOp;
 import org.antlr.v4.runtime.Token;
 
 public class ASTCompiledPath {
@@ -107,185 +110,162 @@ public class ASTCompiledPath {
 		return globalPathUID = new Long(globalPathUID.longValue() + 1);
 	}
 
-	public void finish(boolean b, RTI rti) {
-		// TODO da copletare
-//		// Close and end the last path sequence if it wasn't already closed and ended
-//		if (!r->mClosed) {
-//			mPath.end_poly(0);
-//			r->mClosed = true;
-//		}
-//
-//		if (!r->mStop) {
-//			mPath.start_new_path();
-//			r->mStop = true;
-//		}
-//
-//		r->mWantMoveTo = true;
-//		r->mNextIndex = mPath.total_vertices();
-//
-//		// If setAttr is true then make sure that the last path sequence has a path
-//		// attribute associated with it.
-//		if (setAttr && r->mWantCommand) {
-//			mUseTerminal = true;
-//			r->mWantCommand = false;
-//		}
+	public void finish(boolean setAttr, RTI rti) {
+		if (!rti.isClosed()) {
+			getPath().endPoly(0);
+			rti.setClosed(true);
+		}
+		if (!rti.isStop()) {
+			getPath().startNewPath();
+			rti.setClosed(true);
+		}
+		rti.setWantMoveTo(true);
+		rti.setIndex(getPath().getTotalVertices());
+		if (setAttr && rti.isWantCommand()) {
+			useTerminal = true;
+			rti.setWantCommand(false);
+		}
 	}
 
-	public void addPathOp(ASTPathOp pathOp, double[] opData, Shape parent, boolean tr, RTI rti) {
-		// TODO da copletare
-//		// Process the parameters for ARCTO/ARCREL
-//		double radius_x = 0.0, radius_y = 0.0, angle = 0.0;
-//		bool sweep = (pop->mFlags & CF_ARC_CW) == 0;
-//		bool largeArc = (pop->mFlags & CF_ARC_LARGE) != 0;
-//		if (pop->mPathOp == ARCTO || pop->mPathOp == ARCREL) {
-//			if (pop->mArgCount == 5) {
-//				// If the radii are specified then use the ellipse ARCxx form
-//				radius_x = data[2];
-//				radius_y = data[3];
-//				angle = data[4] * 0.0174532925199;
-//			} else {
-//				// Otherwise use the circle ARCxx form
-//				radius_x = radius_y = data[2];
-//				angle = 0.0;
-//			}
-//			if (radius_x < 0.0 || radius_y < 0.0) {
-//				radius_x = fabs(radius_x);
-//				radius_y = fabs(radius_y);
-//				sweep = !sweep;
-//			}
-//		} else if (tr) {
-//			s.mWorldState.m_transform.transform(data + 0, data + 1);
-//			s.mWorldState.m_transform.transform(data + 2, data + 3);
-//			s.mWorldState.m_transform.transform(data + 4, data + 5);
-//		}
-//
-//		// If this is the first path operation following a path command then set the
-//		// path index used by subsequent path commands to the path sequence that the
-//		// current path operation is part of.
-//		// If this is not the first path operation following a path command then this
-//		// line does nothing.
-//		r->mIndex = r->mNextIndex;
-//
-//		// If the op is anything other than a CLOSEPOLY then we are opening up a
-//		// new path sequence.
-//		r->mClosed = false;
-//		r->mStop = false;
-//
-//		// This new path op needs to be covered by a command, either from the cfdg
-//		// file or default.
-//		r->mWantCommand = true;
-//
-//		if (pop->mPathOp == CLOSEPOLY) {
-//			if (mPath.total_vertices() > 1 &&
-//					agg::is_drawing(mPath.vertices().last_command()))
-//			{
-//				// Find the MOVETO/MOVEREL that is the start of the current path sequence
-//				// and reset LastPoint to that.
-//				unsigned last = mPath.total_vertices() - 1;
-//				unsigned cmd = agg::path_cmd_stop;
-//				for (unsigned i = last - 1;
-//					 i < last && agg::is_vertex(cmd = mPath.command(i));
-//				--i)
-//				{
-//					if (agg::is_move_to(cmd)) {
-//					mPath.vertex(i, &(r->mLastPoint.x), &(r->mLastPoint.y));
-//					break;
-//				}
-//				}
-//
-//				if (!agg::is_move_to(cmd))
-//				CfdgError::Error(pop->mLocation, "CLOSEPOLY: Unable to find a MOVETO/MOVEREL for start of path.");
-//
-//				// If this is an aligning CLOSEPOLY then change the last vertex to
-//				// exactly match the first vertex in the path sequence
-//				if (pop->mFlags & CF_ALIGN) {
-//					mPath.modify_vertex(last, r->mLastPoint.x, r->mLastPoint.y);
-//				}
-//			} else if (pop->mFlags & CF_ALIGN) {
-//				CfdgError::Error(pop->mLocation, "Nothing to align to.");
-//			}
-//			mPath.close_polygon();
-//			r->mClosed = true;
-//			r->mWantMoveTo = true;
-//			return;
-//		}
-//
-//		// Insert an implicit MOVETO unless the pathOp is a MOVETO/MOVEREL
-//		if (r->mWantMoveTo && pop->mPathOp > MOVEREL) {
-//			r->mWantMoveTo = false;
-//			mPath.move_to(r->mLastPoint.x, r->mLastPoint.y);
-//		}
-//
-//		switch (pop->mPathOp) {
-//			case MOVEREL:
-//				mPath.rel_to_abs(data + 0, data + 1);
-//			case MOVETO:
-//				mPath.move_to(data[0], data[1]);
-//				r->mWantMoveTo = false;
-//				break;
-//			case LINEREL:
-//				mPath.rel_to_abs(data + 0, data + 1);
-//			case LINETO:
-//				mPath.line_to(data[0], data[1]);
-//				break;
-//			case ARCREL:
-//				mPath.rel_to_abs(data + 0, data + 1);
-//			case ARCTO: {
-//				if (!agg::is_vertex(mPath.last_vertex(data + 2, data + 3)) ||
-//						(tr && s.mWorldState.m_transform.determinant() < 1e-10))
-//				{
-//					break;
-//				}
-//
-//				// Transforming an arc as they are parameterized by AGG is VERY HARD.
-//				// So instead we insert the arc and then transform the bezier curves
-//				// that are used to approximate the arc. But first we have to inverse
-//				// transform the starting point to match the untransformed arc.
-//				// Afterwards the starting point is restored to its original value.
-//				if (tr) {
-//					unsigned start = mPath.total_vertices() - 1;
-//					agg::trans_affine inverseTr = ~s.mWorldState.m_transform;
-//					mPath.transform(inverseTr, start);
-//					mPath.arc_to(radius_x, radius_y, angle, largeArc, sweep, data[0], data[1]);
-//					mPath.modify_vertex(start, data[2], data[3]);
-//					mPath.transform(s.mWorldState.m_transform, start + 1);
-//				} else {
-//					mPath.arc_to(radius_x, radius_y, angle, largeArc, sweep, data[0], data[1]);
-//				}
-//				break;
-//			}
-//			case CURVEREL:
-//				mPath.rel_to_abs(data + 0, data + 1);
-//				mPath.rel_to_abs(data + 2, data + 3);
-//				mPath.rel_to_abs(data + 4, data + 5);
-//			case CURVETO:
-//				if ((pop->mFlags & CF_CONTINUOUS) &&
-//						!agg::is_curve(mPath.last_vertex(data + 4, data + 5)))
-//			{
-//				CfdgError::Error(pop->mLocation, "Smooth curve operations must be preceded by another curve operation.");
-//				break;
-//			}
-//			switch (pop->mArgCount) {
-//				case 2:
-//					mPath.curve3(data[0], data[1]);
-//					break;
-//				case 4:
-//					if (pop->mFlags & CF_CONTINUOUS)
-//						mPath.curve4(data[2], data[3], data[0], data[1]);
-//					else
-//						mPath.curve3(data[2], data[3], data[0], data[1]);
-//					break;
-//				case 6:
-//					mPath.curve4(data[2], data[3], data[4], data[5], data[0], data[1]);
-//					break;
-//				default:
-//					break;
-//			}
-//			break;
-//			default:
-//				break;
-//		}
-//
-//		mPath.last_vertex(&(r->mLastPoint.x), &(r->mLastPoint.y));
+	public void addPathOp(ASTPathOp pathOp, double[] data, Shape parent, boolean tr, RTI rti) {
+		// Process the parameters for ARCTO/ARCREL
+		double radiusX = 0.0, radiusY = 0.0, angle = 0.0;
+		boolean sweep = (pathOp.getFlags() & FlagType.CF_ARC_CW.getMask()) == 0;
+		boolean largeArc = (pathOp.getFlags() & FlagType.CF_ARC_LARGE.getMask()) != 0;
+		if (pathOp.getPathOp() == PathOp.ARCTO || pathOp.getPathOp() == PathOp.ARCREL) {
+			if (pathOp.getArgCount() == 5) {
+				radiusX = data[2];
+				radiusY = data[3];
+				angle = data[4] * 0.0174532925199;
+			} else {
+				radiusX = data[2];
+				radiusY = data[2];
+				angle = 0.0;
+			}
+			if (radiusX < 0.0 || radiusY < 0.0) {
+				radiusX = Math.abs(radiusX);
+				radiusY = Math.abs(radiusY);
+				sweep = !sweep;
+			}
+		} else if (tr) {
+			// TODO da completare
+//			parent.getWorldState().getTransform().transform(data[0], data[1]);
+//			parent.getWorldState().getTransform().transform(data[2], data[3]);
+//			parent.getWorldState().getTransform().transform(data[4], data[5]);
+		}
+
+		// If this is the first path operation following a path command then set the
+		// path index used by subsequent path commands to the path sequence that the
+		// current path operation is part of.
+		// If this is not the first path operation following a path command then this
+		// line does nothing.
+		rti.setIndex(rti.getNextIndex());
+
+		// If the op is anything other than a CLOSEPOLY then we are opening up a new path sequence.
+		rti.setClosed(false);
+		rti.setStop(false);
+
+		// This new path op needs to be covered by a command, either from the cfdg file or default.
+		rti.setWantCommand(true);
+
+		if (pathOp.getPathOp() == PathOp.CLOSEPOLY) {
+			if (getPath().getTotalVertices() > 1 && getPath().isDrawing()) {
+				// Find the MOVETO/MOVEREL that is the start of the current path sequence
+				// and reset LastPoint to that.
+				int last = getPath().getTotalVertices() - 1;
+				int cmd = 0;
+				for (int i = last - 1; i < last && getPath().isVertex(cmd = getPath().command(i)); i--) {
+					if (cmd == 1) {
+						getPath().vertex(rti.getLastPoint());
+						break;
+					}
+				}
+
+				if (cmd != 1) {
+					Logger.error("CLOSEPOLY: Unable to find a MOVETO/MOVEREL for start of path", pathOp.getLocation());
+				}
+			}
+
+			getPath().closePolygon();
+			rti.setClosed(true);
+			rti.setWantMoveTo(true);
+			return;
+		}
+
+		// Insert an implicit MOVETO unless the pathOp is a MOVETO/MOVEREL
+		if (rti.isWantMoveTo() && pathOp.getPathOp().ordinal() > PathOp.MOVEREL.ordinal()) {
+			rti.setWantMoveTo(false);
+			getPath().moveTo(rti.getLastPoint());
+		}
+
+		// TODO rivedere
+
+		switch (pathOp.getPathOp()) {
+			case MOVEREL:
+				getPath().relToAbs(new Point2D.Double(data[0], data[1]));
+			case MOVETO:
+				getPath().moveTo(new Point2D.Double(data[0], data[1]));
+				rti.setWantMoveTo(false);
+				break;
+			case LINEREL:
+				getPath().relToAbs(new Point2D.Double(data[0], data[1]));
+			case LINETO:
+				getPath().lineTo(new Point2D.Double(data[0], data[1]));
+				break;
+			case ARCREL:
+				getPath().relToAbs(new Point2D.Double(data[0], data[1]));
+			case ARCTO:
+				if (getPath().isVertex(getPath().lastVertex(new Point2D.Double(data[2], data[3]))) || (tr && parent.getWorldState().getTransform().getDeterminant() < 1e-10)) {
+					break;
+				}
+				// Transforming an arc as they are parameterized by AGG is VERY HARD.
+				// So instead we insert the arc and then transform the bezier curves
+				// that are used to approximate the arc. But first we have to inverse
+				// transform the starting point to match the untransformed arc.
+				// Afterwards the starting point is restored to its original value.
+				if (tr) {
+					int start = getPath().getTotalVertices() - 1;
+					try {
+						AffineTransform inverseTr = parent.getWorldState().getTransform().createInverse();
+						getPath().transform(inverseTr, start);
+						getPath().arcTo(radiusX, radiusY, angle, largeArc, sweep, new Point2D.Double(data[0], data[1]));
+						getPath().modifyVertex(start, new Point2D.Double(data[2], data[3]));
+						getPath().transform(parent.getWorldState().getTransform(), start + 1);
+					} catch (NoninvertibleTransformException e) {
+						Logger.fail("Cannot invert transform", pathOp.getLocation());
+					}
+				} else {
+					getPath().arcTo(radiusX, radiusY, angle, largeArc, sweep, new Point2D.Double(data[0], data[1]));
+				}
+			case CURVEREL:
+				getPath().relToAbs(new Point2D.Double(data[0], data[1]));
+				getPath().relToAbs(new Point2D.Double(data[2], data[3]));
+				getPath().relToAbs(new Point2D.Double(data[4], data[5]));
+			case CURVETO:
+				if ((pathOp.getFlags() & FlagType.CF_CONTINUOUS.getMask()) != 0 && getPath().isCurve(getPath().lastVertex(new Point2D.Double(data[4], data[5]))) ) {
+					Logger.error("Smooth curve operations must be preceded by another curve operation", pathOp.getLocation());
+					break;
+				}
+				switch (pathOp.getArgCount()) {
+					case 2:
+						getPath().curve3(new Point2D.Double(data[0], data[1]));
+						break;
+					case 4:
+						if ((pathOp.getFlags() & FlagType.CF_CONTINUOUS.getMask()) != 0) {
+							getPath().curve4(new Point2D.Double(data[2], data[3]), new Point2D.Double(data[0], data[1]));
+						} else {
+							getPath().curve3(new Point2D.Double(data[2], data[3]), new Point2D.Double(data[0], data[1]));
+						}
+						break;
+					case 6:
+						getPath().curve4(new Point2D.Double(data[2], data[3]), new Point2D.Double(data[4], data[5]), new Point2D.Double(data[0], data[1]));
+						break;
+				}
+				break;
+			default:
+				break;
+		}
+
+		getPath().lastVertex(rti.getLastPoint());
 	}
 }

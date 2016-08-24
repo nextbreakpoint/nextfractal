@@ -31,7 +31,9 @@ import com.nextbreakpoint.nextfractal.contextfree.grammar.Logger;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.RTI;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.Shape;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.CompilePhase;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ExpType;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.FlagType;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.PathOp;
 import org.antlr.v4.runtime.Token;
 
 public class ASTPathOp extends ASTReplacement {
@@ -215,117 +217,167 @@ public class ASTPathOp extends ASTReplacement {
 		ASTExpression arx = null;
 		ASTExpression ary = null;
 		ASTExpression ar = null;
-		// TODO da completare
 
-//		for (term_ptr& mod: mOldStyleArguments->modExp) {
-//			if (!mod)
-//				continue;
-//			switch (mod->modType) {
-//				case ASTmodTerm::x:
-//					acquireTerm(ax, mod);
-//					break;
-//				case ASTmodTerm::y:
-//					acquireTerm(ay, mod);
-//					break;
-//				case ASTmodTerm::x1:
-//					acquireTerm(ax1, mod);
-//					break;
-//				case ASTmodTerm::y1:
-//					acquireTerm(ay1, mod);
-//					break;
-//				case ASTmodTerm::x2:
-//					acquireTerm(ax2, mod);
-//					break;
-//				case ASTmodTerm::y2:
-//					acquireTerm(ay2, mod);
-//					break;
-//				case ASTmodTerm::xrad:
-//					acquireTerm(arx, mod);
-//					break;
-//				case ASTmodTerm::yrad:
-//					acquireTerm(ary, mod);
-//					break;
-//				case ASTmodTerm::rot:
-//					acquireTerm(ar, mod);
-//					break;
-//				case ASTmodTerm::z:
-//				case ASTmodTerm::zsize:
-//					CfdgError::Error(mod->where, "Z changes are not permitted in paths");
-//					break;
-//				case ASTmodTerm::unknownType:
-//				default:
-//					CfdgError::Error(mod->where, "Unrecognized element in a path operation");
-//					break;
-//			}
-//		}
-//
-//		ASTexpression* xy = nullptr;
-//		if (mPathOp != CLOSEPOLY) {
-//			xy = parseXY(std::move(ax), std::move(ay), 0.0, mLocation);
-//		}
-//
-//		switch (mPathOp) {
-//			case LINETO:
-//			case LINEREL:
-//			case MOVETO:
-//			case MOVEREL:
-//				mArguments.reset(xy);
-//				break;
-//			case ARCTO:
-//			case ARCREL:
-//				if (arx || ary) {
-//					ASTexpression* rxy = parseXY(std::move(arx), std::move(ary), 1.0, mLocation);
-//					ASTexpression* angle = ar.release();
-//					if (!angle)
-//						angle = new ASTreal(0.0, mLocation);
-//
-//					if (angle->mType != NumericType || angle->evaluate(nullptr, 0) != 1)
-//						CfdgError(angle->where, "Arc angle must be a scalar value");
-//
-//					mArguments.reset(xy->append(rxy)->append(angle));
-//				} else {
-//					ASTexpression* radius = ar.release();
-//					if (!radius)
-//						radius = new ASTreal(1.0, mLocation);
-//
-//					if (radius->mType != NumericType || radius->evaluate(nullptr, 0) != 1)
-//						CfdgError::Error(radius->where, "Arc radius must be a scalar value");
-//
-//					mArguments.reset(xy->append(radius));
-//				}
-//				break;
-//			case CURVETO:
-//			case CURVEREL: {
-//				ASTexpression *xy1 = nullptr, *xy2 = nullptr;
-//				if (ax1 || ay1) {
-//					xy1 = parseXY(std::move(ax1), std::move(ay1), 0.0, mLocation);
-//				} else {
-//					mFlags |= CF_CONTINUOUS;
-//				}
-//				if (ax2 || ay2) {
-//					xy2 = parseXY(std::move(ax2), std::move(ay2), 0.0, mLocation);
-//				}
-//
-//				mArguments.reset(xy->append(xy1)->append(xy2));
-//				break;
-//			}
-//			case CLOSEPOLY:
-//				break;
-//			default:
-//				break;
-//		}
-//
-//		rejectTerm(ax);
-//		rejectTerm(ay);
-//		rejectTerm(ar);
-//		rejectTerm(arx);
-//		rejectTerm(ary);
-//		rejectTerm(ax1);
-//		rejectTerm(ay1);
-//		rejectTerm(ax2);
-//		rejectTerm(ay2);
-//
-//		mArgCount = mArguments ? mArguments->evaluate(nullptr, 0) : 0;
-//		mOldStyleArguments.reset();
+		for (ASTModTerm term : oldStyleArguments.getModExp()) {
+			switch (term.getModType()) {
+				case x:
+					ax = acquireTerm(ax, term);
+					break;
+				case y:
+					ay = acquireTerm(ay, term);
+					break;
+				case x1:
+					ax1 = acquireTerm(ax1, term);
+					break;
+				case y1:
+					ay1 = acquireTerm(ay1, term);
+					break;
+				case x2:
+					ax2 = acquireTerm(ax2, term);
+					break;
+				case y2:
+					ay2 = acquireTerm(ay2, term);
+					break;
+				case xrad:
+					arx = acquireTerm(arx, term);
+					break;
+				case yrad:
+					ary = acquireTerm(ary, term);
+					break;
+				case rot:
+					ar = acquireTerm(ar, term);
+					break;
+				case z:
+				case zsize:
+					Logger.error("Z changes are not permitted in paths", term.getLocation());
+					break;
+				case unknown:
+					Logger.error("Unrecognized element in a path operation", term.getLocation());
+					break;
+				default:
+					Logger.error("Unrecognized element in a path operation", term.getLocation());
+					break;
+			}
+		}
+
+		ASTExpression xy = null;
+		if (getPathOp() == PathOp.CLOSEPOLY) {
+			xy = parseXY(ax, ay, 0.0, location);
+			ax = null;
+			ay = null;
+		}
+
+		// TODO controllare
+
+		switch (getPathOp()) {
+			case LINETO:
+			case LINEREL:
+			case MOVETO:
+			case MOVEREL:
+				arguments = xy;
+				break;
+			case ARCTO:
+			case ARCREL:
+				if (arx != null && ary != null) {
+					ASTExpression rxy = parseXY(arx, ary, 1.0, location);
+					arx = null;
+					ary = null;
+					ASTExpression angle = ar;
+					if (angle == null) {
+						angle = new ASTReal(0.0, location);
+					}
+					if (angle.getType() != ExpType.NumericType || angle.evaluate(null , 0) != 1) {
+						Logger.error("Arc angle must be a scalar value", angle.getLocation());
+					}
+					arguments = xy.append(rxy).append(angle);
+				} else {
+					ASTExpression radius = ar;
+					ar = null;
+					if (radius == null) {
+						radius = new ASTReal(1.0, location);
+					}
+					if (radius.getType() != ExpType.NumericType || radius.evaluate(null , 0) != 1) {
+						Logger.error("Arc radius must be a scalar value", radius.getLocation());
+					}
+					arguments = xy.append(radius);
+				}
+				break;
+			case CURVETO:
+			case CURVEREL:
+				ASTExpression xy1 = null;
+				ASTExpression xy2 = null;
+				if (ax1 != null || ay1 != null) {
+					xy1 = parseXY(ax1, ay1, 0.0, location);
+				} else {
+					flags |= FlagType.CF_CONTINUOUS.getMask();
+				}
+				if (ax2 != null || ay2 != null) {
+					xy2 = parseXY(ax2, ay2, 0.0, location);
+				}
+				ax1 = null;
+				ay1 = null;
+				ax2 = null;
+				ay2 = null;
+				arguments = xy.append(xy1).append(xy2);
+				break;
+			case CLOSEPOLY:
+				break;
+			default:
+				break;
+		}
+
+		rejectTerm(ax);
+		rejectTerm(ay);
+		rejectTerm(ar);
+		rejectTerm(arx);
+		rejectTerm(ary);
+		rejectTerm(ax1);
+		rejectTerm(ay1);
+		rejectTerm(ax2);
+		rejectTerm(ay2);
+
+		argCount = arguments != null ? arguments.evaluate(null, 0) : 0;
+		oldStyleArguments = null;
+	}
+
+	private ASTExpression acquireTerm(ASTExpression exp, ASTModTerm term) {
+		if (exp != null) {
+			Logger.error("Duplicate argument", exp.getLocation());
+			Logger.error("Conflicts with this argument", term.getLocation());
+		}
+		return term.getArguments();
+	}
+
+	private void rejectTerm(ASTExpression exp) {
+		if (exp != null) {
+			Logger.error("Illegal argument", exp.getLocation());
+		}
+	}
+
+	private ASTExpression parseXY(ASTExpression ax, ASTExpression ay, double def, Token location) {
+		// TODO controllare
+		if (ax == null) {
+			ax = new ASTReal(def, location);
+		}
+		int sz = 0;
+		if (ax.getType() == ExpType.NumericType) {
+			sz = ax.evaluate(null, 0);
+		} else {
+			Logger.error("Path argument must be a scalar value", ax.getLocation());
+		}
+		if (sz == 1 && ay == null) {
+			ay = new ASTReal(def, location);
+		}
+		if (ay != null && sz >= 0) {
+			if (ay.getType() == ExpType.NumericType) {
+				sz += ay.evaluate(null, 0);
+			} else {
+				Logger.error("Path argument must be a scalar value", ay.getLocation());
+			}
+		}
+		if (sz != 2) {
+			Logger.error("Error parsing path operation arguments", location);
+		}
+		return ax.append(ay);
 	}
 }
