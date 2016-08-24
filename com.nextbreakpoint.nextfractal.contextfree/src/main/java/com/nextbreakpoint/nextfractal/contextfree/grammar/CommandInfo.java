@@ -35,11 +35,11 @@ public class CommandInfo {
     private int index;
 
     public CommandInfo() {
-        // TODO Auto-generated method stub
+        // TODO completare
     }
 
     public CommandInfo(PrimShape primShape) {
-        // TODO Auto-generated method stub
+        // TODO completare
     }
 
     public GeneralPath getPath() {
@@ -51,6 +51,7 @@ public class CommandInfo {
     }
 
     public void tryInit(int index, ASTCompiledPath currentPath, double width, ASTPathCommand astPathCommand) {
+        // TODO completare
     }
 
     public Long getPathUID() {

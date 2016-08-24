@@ -169,7 +169,7 @@ public class AST {
             Logger.fail("p2 symmetry only works in frieze or tiled designs", location);
         }
 
-        //TODO completare
+        //TODO completare symmetry
 
         switch (flag) {
             case CF_CYCLIC: {

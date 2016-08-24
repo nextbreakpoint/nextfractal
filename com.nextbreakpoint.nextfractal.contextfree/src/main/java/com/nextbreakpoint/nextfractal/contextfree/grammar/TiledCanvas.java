@@ -26,6 +26,6 @@ public class TiledCanvas extends Canvas {
     }
 
     public void tileTransform(Bounds bounds) {
-
+        // TODO completare
     }
 }

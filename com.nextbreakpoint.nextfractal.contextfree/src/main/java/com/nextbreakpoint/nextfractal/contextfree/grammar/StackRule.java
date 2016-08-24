@@ -40,11 +40,11 @@ public class StackRule {
 	}
 
 	public StackRule(StackRule parent) {
-		// TODO Auto-generated constructor stub
+		// TODO completare
 	}
 
 	public StackRule(int shapeType, int argSize, List<ASTParameter> typeSignature) {
-		// TODO Auto-generated constructor stub
+		// TODO completare
 	}
 
 	public int getRuleName() {
@@ -72,16 +72,10 @@ public class StackRule {
 	}
 
 	public void evalArgs(RTI rti, ASTExpression arguments, StackRule parent) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void retain(RTI rti) {
-		// TODO Auto-generated method stub
-		
+		// TODO completare
 	}
 
 	public void copyParams(StackType[] stack, int size) {
-		// TODO Auto-generated method stub
+		// TODO completare
 	}
 }

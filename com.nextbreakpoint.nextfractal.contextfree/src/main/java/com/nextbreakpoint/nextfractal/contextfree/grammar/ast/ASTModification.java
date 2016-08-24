@@ -422,9 +422,4 @@ public class ASTModification extends ASTExpression {
 		modData.getRand64Seed().xorString(name, index);
 		entropyIndex = index[0];
 	}
-
-	public void concat(ASTModTerm t) {
-		// TODO Auto-generated method stub
-
-	}
 }

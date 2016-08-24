@@ -77,7 +77,8 @@ public class ASTLet extends ASTUserFunction {
 						getDefinition().getParameters().add(param);
 					}
 				}
-				definitions = null;//TODO controllare
+				definitions = null;
+				//TODO controllare
 				setArguments(args);
 				isConstant = getArguments() == null && getDefinition().getExp().isConstant();
 				isNatural = getDefinition().isNatural();

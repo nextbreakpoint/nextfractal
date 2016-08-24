@@ -419,7 +419,7 @@ public class CFDGDriver {
 		if (getMaybeVersion().equals("CFDG3") && t.getModType().getType() >= ModType.hueTarg.getType() && t.getModType().getType() <= ModType.alphaTarg.getType()) {
 			error("Color target feature unavailable in v3 syntax", dest.getLocation());
 		}
-		dest.concat(t);
+		dest.getModExp().add(t);
 	}
 	
 	public ASTReplacement makeElement(String s, ASTModification mods, ASTExpression params, boolean subPath, Token location) {

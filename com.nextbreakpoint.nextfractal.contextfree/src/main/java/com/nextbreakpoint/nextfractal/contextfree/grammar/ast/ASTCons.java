@@ -47,7 +47,8 @@ public class ASTCons extends ASTExpression {
 	}
 
 	public ASTCons(Token location, ASTExpression... args) {
-		super(true, true, ExpType.NoType, location);//TODO da controllare
+		super(true, true, ExpType.NoType, location);
+		//TODO da controllare
 		locality = Locality.PureLocal;
 		for (ASTExpression arg : args) {
 			children.add(arg);

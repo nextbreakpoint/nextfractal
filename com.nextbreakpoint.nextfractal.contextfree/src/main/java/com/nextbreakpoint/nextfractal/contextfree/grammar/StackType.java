@@ -36,11 +36,11 @@ public class StackType {
 	private List<ASTParameter> typeInfo;
 
 	public StackType(double number) {
-		// TODO Auto-generated constructor stub
+		// TODO completare
 	}
 
 	public StackType(StackRule rule) {
-		// TODO Auto-generated constructor stub
+		// TODO completare
 	}
 
 	public double getNumber() {
@@ -60,17 +60,16 @@ public class StackType {
 	}
 
 	public void evalArgs(RTI rti, ASTExpression arguments, List<ASTParameter> parameters, boolean sequential) {
-		// TODO Auto-generated method stub
-
+		// TODO completare
 	}
 
 	public double[] getArray() {
-		// TODO Auto-generated method stub
+		// TODO completare
 		return null;
 	}
 
 	public Modification modification() {
-		// TODO Auto-generated method stub
+		// TODO completare
 		return null;
 	}
 
@@ -79,17 +78,14 @@ public class StackType {
 	}
 
 	public void setNumber(double value) {
-		// TODO Auto-generated method stub
-		
+		// TODO completare
 	}
 
 	public void setModification(Modification modification) {
-		// TODO Auto-generated method stub
-		
+		// TODO completare
 	}
 
 	public void setRule(StackRule rule) {
-		// TODO Auto-generated method stub
-		
+		// TODO completare
 	}
 }
