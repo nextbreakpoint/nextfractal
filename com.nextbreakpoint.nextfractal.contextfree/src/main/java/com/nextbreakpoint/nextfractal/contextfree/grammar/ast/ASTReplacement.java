@@ -24,10 +24,7 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.grammar.ast;
 
-import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGDriver;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.PrimShape;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.RTI;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.Shape;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.*;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ArgSource;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.CompilePhase;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.PathOp;
@@ -39,7 +36,7 @@ public class ASTReplacement {
 	private ASTModification childChange;
 	private RepElemType repType;
 	private PathOp pathOp;
-	private Token location;
+	protected Token location;
 	protected CFDGDriver driver;
 
 	public ASTReplacement(CFDGDriver driver, ASTRuleSpecifier shapeSpec, ASTModification childChange, RepElemType repType, Token location) {
@@ -67,12 +64,20 @@ public class ASTReplacement {
 		this(driver, new ASTRuleSpecifier(driver, location), new ASTModification(driver, location), RepElemType.op, location);
 		this.pathOp = PathOp.byName(name);
 		if (this.pathOp == PathOp.UNKNOWN) {
-			error("Unknown path operation type");
+			Logger.error("Unknown path operation type", location);
 		}
+	}
+
+	public Token getLocation() {
+		return location;
 	}
 
 	public ASTRuleSpecifier getShapeSpecifier() {
 		return shapeSpec;
+	}
+
+	public ASTModification getChildChange() {
+		return childChange;
 	}
 
 	public RepElemType getRepType() {
@@ -89,48 +94,6 @@ public class ASTReplacement {
 
 	public void setPathOp(PathOp pathOp) {
 		this.pathOp = pathOp;
-	}
-
-	public ASTModification getChildChange() {
-		return childChange;
-	}
-
-	public void compile(CompilePhase ph) {
-		ASTExpression r = shapeSpec.compile(ph);
-		assert(r == null);
-		r = childChange.compile(ph);
-		assert(r == null);
-		
-		switch (ph) {
-			case TypeCheck: 
-				childChange.addEntropy(shapeSpec.getEntropy());
-				if (driver.isInPathContainer()) {
-					// This is a subpath
-					if (shapeSpec.getArgSource() == ArgSource.ShapeArgs || shapeSpec.getArgSource() == ArgSource.StackArgs || PrimShape.isPrimShape(shapeSpec.getShapeType())) {
-						if (repType != RepElemType.op) {
-							error("Error in subpath specification");
-						} else {
-							ASTRule rule = driver.getRule(shapeSpec.getShapeType());
-							if (rule == null || rule.isPath()) {
-								error("Subpath can only refer to a path");
-							} else if (rule.getRuleBody().getRepType() != repType.getType()) {
-								error("Subpath type mismatch error");
-							}
-						}
-					}
-				}
-				break;
-	
-			case Simplify: 
-				r = shapeSpec.simplify();
-				assert(r == shapeSpec);
-				r = childChange.simplify();
-				assert(r == childChange);
-				break;
-	
-			default:
-				break;
-		}
 	}
 
 	public void replace(Shape s, RTI rti) {
@@ -157,31 +120,60 @@ public class ASTReplacement {
 	public void traverse(Shape parent, boolean tr, RTI rti) {
 		Shape child = parent;
 		switch (repType) {
-		case replacement:
-			replace(child, rti);
-			child.getWorldState().setRand64Seed(rti.getCurrentSeed());
-			child.getWorldState().getRand64Seed().bump();
-			rti.processShape(child);
-			break;
+			case replacement:
+				replace(child, rti);
+				child.getWorldState().setRand64Seed(rti.getCurrentSeed());
+				child.getWorldState().getRand64Seed().bump();
+				rti.processShape(child);
+				break;
 
-		case op:
-			if (!tr) child.getWorldState().setTransform(null);
-		case mixed:
-		case command:
-			replace(child, rti);
-			rti.processSubpath(child, tr || repType == RepElemType.op, repType);
-			break;
-
-		default:
-			throw new RuntimeException("Subpaths must be all path operation or all path command");
+			case op:
+				if (!tr) child.getWorldState().setTransform(null);
+			case mixed:
+			case command:
+				replace(child, rti);
+				rti.processSubpath(child, tr || repType == RepElemType.op, repType);
+				break;
+			default:
+				Logger.fail("Subpaths must be all path operation or all path command", location);
 		}
 	}
 
-	protected void error(String message) {
-		System.out.println(message);
-	}
+	public void compile(CompilePhase ph) {
+		ASTExpression r = shapeSpec.compile(ph);
+		assert(r == shapeSpec);
+		r = childChange.compile(ph);
+		assert(r == childChange);
 
-	public Token getLocation() {
-		return location;
+		switch (ph) {
+			case TypeCheck: 
+				childChange.addEntropy(shapeSpec.getEntropy());
+				if (driver.isInPathContainer()) {
+					// This is a subpath
+					if (shapeSpec.getArgSource() == ArgSource.ShapeArgs || shapeSpec.getArgSource() == ArgSource.StackArgs || PrimShape.isPrimShape(shapeSpec.getShapeType())) {
+						if (repType != RepElemType.op) {
+							Logger.error("Error in subpath specification", location);
+						} else {
+							ASTRule rule = driver.getRule(shapeSpec.getShapeType());
+							if (rule == null || rule.isPath()) {
+								Logger.error("Subpath can only refer to a path", location);
+							} else if (rule.getRuleBody().getRepType() != repType.getType()) {
+								Logger.error("Subpath type mismatch error", location);
+							}
+						}
+					}
+				}
+				break;
+	
+			case Simplify: 
+				r = shapeSpec.simplify();
+				assert(r == shapeSpec);
+				r = childChange.simplify();
+				assert(r == childChange);
+				break;
+	
+			default:
+				break;
+		}
 	}
 }

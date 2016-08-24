@@ -100,22 +100,22 @@ public class ASTRepContainer {
 		return stackCount;
 	}
 
-	public void addParameter(String type, int nameIndex, Token location) {
-		parameters.add(new ASTParameter(type, nameIndex, location));
+	public void addParameter(String type, int nameIndex, Token nameLocation) {
+		parameters.add(new ASTParameter(type, nameIndex, nameLocation));
 		ASTParameter param = parameters.get(parameters.size() - 1);
-		//TODO param.setIsParameter(true);
+		param.setIsParameter(true);
 		param.checkParam();
 	}
 
-	public ASTParameter addDefParameter(int nameIndex, ASTDefine def, Token location) {
-		parameters.add(new ASTParameter(nameIndex, def));
+	public ASTParameter addDefParameter(int nameIndex, ASTDefine def, Token nameLocation) {
+		parameters.add(new ASTParameter(nameIndex, def, nameLocation));
 		ASTParameter param = parameters.get(parameters.size() - 1);
 		param.checkParam();
 		return param;
 	}
 
-	public void addLoopParameter(int nameIndex, boolean natural, boolean local, Token location) {
-		parameters.add(new ASTParameter(nameIndex, natural, local, location));
+	public void addLoopParameter(int nameIndex, boolean natural, boolean local, Token nameLocation) {
+		parameters.add(new ASTParameter(nameIndex, natural, local, nameLocation));
 		ASTParameter param = parameters.get(parameters.size() - 1);
 		param.checkParam();
 		stackCount += param.getTupleSize();

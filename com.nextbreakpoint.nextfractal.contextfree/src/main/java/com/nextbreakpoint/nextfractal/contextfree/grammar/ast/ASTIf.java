@@ -25,6 +25,7 @@
 package com.nextbreakpoint.nextfractal.contextfree.grammar.ast;
 
 import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGDriver;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.Logger;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.RTI;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.Shape;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.CompilePhase;
@@ -37,11 +38,11 @@ public class ASTIf extends ASTReplacement {
 	private ASTRepContainer thenBody;
 	private ASTRepContainer elseBody;
 	
-	public ASTIf(CFDGDriver driver, ASTExpression exp, Token location) {
+	public ASTIf(CFDGDriver driver, ASTExpression condition, Token location) {
 		super(driver, null, RepElemType.empty, location);
 		thenBody = new ASTRepContainer(driver);
 		elseBody = new ASTRepContainer(driver);
-		this.condition = exp;
+		this.condition = condition;
 	}
 	
 	public ASTRepContainer getThenBody() {
@@ -56,7 +57,7 @@ public class ASTIf extends ASTReplacement {
 	public void compile(CompilePhase ph) {
 		super.compile(ph);
 		if (condition != null) {
-			condition.compile(ph);
+			condition = condition.compile(ph);
 		}
 		thenBody.compile(ph, null, null);
 		elseBody.compile(ph, null, null);
@@ -64,13 +65,13 @@ public class ASTIf extends ASTReplacement {
 		switch (ph) {
 			case TypeCheck:
 				if (condition.getType() != ExpType.NumericType || condition.evaluate(null, 0) != 1) {
-					error("If condition must be a numeric scalar");
+					Logger.error("If condition must be a numeric scalar", condition.getLocation());
 				}
 				break;
 	
 			case Simplify:
 				if (condition != null) {
-					condition.simplify();
+					condition = condition.simplify();
 				}
 				break;
 	
@@ -83,7 +84,7 @@ public class ASTIf extends ASTReplacement {
 	public void traverse(Shape parent, boolean tr, RTI rti) {
 		double[] cond = new double[1];
 		if (condition.evaluate(cond, 1) != 1) {
-			error("Error evaluating if condition");
+			Logger.error("Error evaluating if condition", location);
 			return;
 		}
 		if (cond[0] != 0) {

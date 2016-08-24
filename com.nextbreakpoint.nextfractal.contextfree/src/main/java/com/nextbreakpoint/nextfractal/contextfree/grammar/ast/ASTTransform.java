@@ -28,9 +28,7 @@ import java.awt.geom.AffineTransform;
 import java.util.List;
 
 import com.nextbreakpoint.nextfractal.contextfree.core.Rand64;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGDriver;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.RTI;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.Shape;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.*;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.CompilePhase;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.RepElemType;
 import org.antlr.v4.runtime.Token;
@@ -75,20 +73,20 @@ public class ASTTransform extends ASTReplacement {
 			ret = expHolder.compile(ph);
 		}
 		if (ret != null) {
-			error("Error analyzing transform list");
+			Logger.error("Error analyzing transform list", location);
 		}
 		body.compile(ph, null, null);
 		
 		switch (ph) {
 			case TypeCheck: 
 				if (clone && !ASTParameter.Impure) {
-					error("Shape cloning only permitted in impure mode");
+					Logger.error("Shape cloning only permitted in impure mode", location);
 				}
 				break;
 	
 			case Simplify:
 				if (expHolder != null) {
-					expHolder.simplify();
+					expHolder = expHolder.simplify();
 				}
 				break;
 	
@@ -99,10 +97,10 @@ public class ASTTransform extends ASTReplacement {
 
 	@Override
 	public void traverse(Shape parent, boolean tr, RTI rti) {
-		AffineTransform[] dummy = new AffineTransform[1];
+		AffineTransform dummy = new AffineTransform();
 		@SuppressWarnings("unchecked")
-		List<AffineTransform>[] transforms = new List[1];
-		List<ASTModification> mods = getTransforms(expHolder, transforms, rti, false, dummy);
+		SymmList transforms = new SymmList();
+		List<ASTModification> mods = AST.getTransforms(expHolder, transforms, rti, false, dummy);
 		Rand64 cloneSeed = rti.getCurrentSeed();
 		Shape transChild = parent;
 		boolean opsOnly = body.getRepType() == RepElemType.op.getType();
@@ -110,13 +108,13 @@ public class ASTTransform extends ASTReplacement {
 			transChild.getWorldState().setTransform(null);
 		}
 		int modsLength = mods.size();
-		int totalLength = modsLength + transforms[0].size();
+		int totalLength = modsLength + transforms.size();
 		for (int i = 0; i < totalLength; i++) {
 			Shape child = transChild;
 			if (i < modsLength) {
 				mods.get(i).evaluate(child.getWorldState(), true, rti);
 			} else {
-				child.getWorldState().getTransform().preConcatenate(transforms[0].get(i - modsLength));
+				child.getWorldState().getTransform().preConcatenate(transforms.getTransform(i - modsLength));
 			}
 			rti.getCurrentSeed().bump();
 			int size = rti.getStackSize();
@@ -128,10 +126,5 @@ public class ASTTransform extends ASTReplacement {
 			}
 			rti.unwindStack(size, body.getParameters());
 		}
-	}
-
-	private List<ASTModification> getTransforms(ASTExpression exp, List<AffineTransform>[] syms, RTI rti, boolean tiled, AffineTransform[] tile) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 }

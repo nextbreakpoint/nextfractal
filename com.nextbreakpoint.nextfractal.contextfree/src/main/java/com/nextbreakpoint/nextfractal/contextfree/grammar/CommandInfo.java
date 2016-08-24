@@ -24,10 +24,19 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.grammar;
 
+import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTCompiledPath;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTPathCommand;
+
 import java.awt.geom.GeneralPath;
 
 public class CommandInfo {
     private GeneralPath path;
+    private Long pathUID;
+    private int index;
+
+    public CommandInfo() {
+        // TODO Auto-generated method stub
+    }
 
     public CommandInfo(PrimShape primShape) {
         // TODO Auto-generated method stub
@@ -39,5 +48,20 @@ public class CommandInfo {
 
     public void setPath(GeneralPath path) {
         this.path = path;
+    }
+
+    public void tryInit(int index, ASTCompiledPath currentPath, double width, ASTPathCommand astPathCommand) {
+    }
+
+    public Long getPathUID() {
+        return pathUID;
+    }
+
+    public void setPathUID(Long pathUID) {
+        this.pathUID = pathUID;
+    }
+
+    public int getIndex() {
+        return index;
     }
 }

@@ -9,7 +9,7 @@ public class Logger {
     }
 
     public static void warning(String message, Token location) {
-        // TODO da completare
+//        "[" + location.getLine() + ":" + location.getCharPositionInLine() + "]        // TODO da completare
         System.out.println(message);
     }
 

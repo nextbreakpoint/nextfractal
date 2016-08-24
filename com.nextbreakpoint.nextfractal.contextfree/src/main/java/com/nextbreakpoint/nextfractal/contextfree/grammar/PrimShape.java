@@ -43,6 +43,8 @@ public class PrimShape {
 		shapeNames.add("TRIANGLE");
 	}
 
+	private int totalVertices;
+
 	public static boolean isPrimShape(int shapeType) {
 		return shapeType < 4;
 	}
@@ -63,5 +65,9 @@ public class PrimShape {
 
 	public static List<String> getShapeNames() {
 		return shapeNames;
+	}
+
+	public int getTotalVertices() {
+		return totalVertices;
 	}
 }

@@ -71,11 +71,11 @@ public class CFDGDriver {
 	}
 	
 	protected void warning(String message, Token location) {
-		System.out.println("[" + location.getLine() + ":" + location.getCharPositionInLine() + "] : " + message);
+		Logger.warning(message, location);
 	}
 	
 	protected void error(String message, Token location) {
-		System.err.println("[" + location.getLine() + ":" + location.getCharPositionInLine() + "] : " + message);
+		Logger.error(message, location);
 	}
 	
 	protected boolean isPrimeShape(int nameIndex) {

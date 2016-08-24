@@ -55,7 +55,8 @@ public class ASTParameter {
 		init(type, nameIndex);
 	}
 
-	public ASTParameter(int nameIndex, ASTDefine definition) {
+	public ASTParameter(int nameIndex, ASTDefine definition, Token location) {
+		this.location = location;
 		init(nameIndex, definition);
 	}
 
@@ -243,10 +244,6 @@ public class ASTParameter {
 		return type;
 	}
 
-	public boolean isParameter() {
-		return isParameter;
-	}
-
 	public boolean isLoopIndex() {
 		return isLoopIndex;
 	}
@@ -291,7 +288,15 @@ public class ASTParameter {
 		return isNatural;
 	}
 
-	public void setIsNatural(boolean natural) {
-		this.isNatural = natural;
+	public void setIsNatural(boolean isNatural) {
+		this.isNatural = isNatural;
+	}
+
+	public boolean isParameter() {
+		return isParameter;
+	}
+
+	public void setIsParameter(boolean isParameter) {
+		this.isParameter = isParameter;
 	}
 }

@@ -38,7 +38,7 @@ public class ASTRule extends ASTReplacement implements Comparable<ASTRule> {
 	private boolean isPath;
 	private int nameIndex;
 	private WeightType weightType;
-	
+
 	public ASTRule(CFDGDriver driver, int nameIndex, float weight, boolean percent, Token location) {
 		super(driver, null, RepElemType.rule, location);
 		ruleBody = new ASTRepContainer(driver);
@@ -47,19 +47,12 @@ public class ASTRule extends ASTReplacement implements Comparable<ASTRule> {
 		this.weight = weight <= 0.0 ? 1.0f : weight;
 		this.weightType = percent ? WeightType.PercentWeight : WeightType.ExplicitWeight;
 		this.cachedPath = null;
+		if (weight <= 0.0) {
+			Logger.warning("Rule weight coerced to 1.0", location);
+		}
 	}
 
-	public ASTRule(CFDGDriver driver, int nameIndex, Token location) {
-		super(driver, null, RepElemType.rule, location);
-		ruleBody = new ASTRepContainer(driver);
-		this.nameIndex = nameIndex;
-		this.isPath = false;
-		this.weight = 1.0f;
-		this.weightType = WeightType.NoWeight;
-		this.cachedPath = null;
-	}
-
-	protected ASTRule(CFDGDriver driver, int nameIndex, Token location, boolean dummy) {
+	protected ASTRule(CFDGDriver driver, int nameIndex, Token location) {
 		super(driver, null, RepElemType.rule, location);
 		ruleBody = new ASTRepContainer(driver);
 		this.nameIndex = nameIndex;
@@ -67,34 +60,37 @@ public class ASTRule extends ASTReplacement implements Comparable<ASTRule> {
 		this.weight = 1.0f;
 		this.weightType = WeightType.NoWeight;
 		this.cachedPath = null;
-		if (nameIndex != PrimShapeType.circleType.getType()) {
-			com.nextbreakpoint.nextfractal.contextfree.grammar.PrimShape shape = com.nextbreakpoint.nextfractal.contextfree.grammar.PrimShape.getShapeMap().get(nameIndex);
-			double[] coords = new double[6];
-			int cmd;
-			PathIterator iterator = shape.getPathIterator();
-			while (!isStop(cmd = iterator.currentSegment(coords))) {
-				if (isVertex(cmd)) {
-					ASTExpression a = new ASTCons(location, new ASTReal(coords[0], location), new ASTReal(coords[1], location));
-					ASTPathOp op = new ASTPathOp(driver, isMoveTo(cmd) ? PathOp.MOVETO.name() : PathOp.LINETO.name(), a, location);
-					getRuleBody().getBody().add(op);
+
+		PrimShape shape = PrimShape.getShapeMap().get(nameIndex);
+		if (shape.getTotalVertices() > 0) {
+			if (nameIndex != PrimShapeType.circleType.getType()) {
+				double[] coords = new double[6];
+				int cmd;
+				PathIterator iterator = shape.getPathIterator();
+				while (!isStop(cmd = iterator.currentSegment(coords))) {
+					if (isVertex(cmd)) {
+						ASTExpression a = new ASTCons(location, new ASTReal(coords[0], location), new ASTReal(coords[1], location));
+						ASTPathOp op = new ASTPathOp(driver, isMoveTo(cmd) ? PathOp.MOVETO.name() : PathOp.LINETO.name(), a, location);
+						getRuleBody().getBody().add(op);
+					}
 				}
+			} else {
+				ASTExpression a = new ASTCons(location, new ASTReal(0.5, location), new ASTReal(0.0, location));
+				ASTPathOp op = new ASTPathOp(driver, PathOp.MOVETO.name(), a, location);
+				getRuleBody().getBody().add(op);
+				a = new ASTCons(location, new ASTReal(-0.5, location), new ASTReal(0.0, location), new ASTReal(0.5, location));
+				op = new ASTPathOp(driver, PathOp.ARCTO.name(), a, location);
+				getRuleBody().getBody().add(op);
+				a = new ASTCons(location, new ASTReal(0.5, location), new ASTReal(0.0, location), new ASTReal(0.5, location));
+				op = new ASTPathOp(driver, PathOp.ARCTO.name(), a, location);
+				getRuleBody().getBody().add(op);
 			}
-		} else {
-			ASTExpression a = new ASTCons(location, new ASTReal(0.5, location), new ASTReal(0.0, location));
-			ASTPathOp op = new ASTPathOp(driver, PathOp.MOVETO.name(), a, location);
-			getRuleBody().getBody().add(op);
-			a = new ASTCons(location, new ASTReal(-0.5, location), new ASTReal(0.0, location), new ASTReal(0.5, location));
-			op = new ASTPathOp(driver, PathOp.ARCTO.name(), a, location);
-			getRuleBody().getBody().add(op);
-			a = new ASTCons(location, new ASTReal(0.5, location), new ASTReal(0.0, location), new ASTReal(0.5, location));
-			op = new ASTPathOp(driver, PathOp.ARCTO.name(), a, location);
-			getRuleBody().getBody().add(op);
+			getRuleBody().getBody().add(new ASTPathOp(driver, PathOp.CLOSEPOLY.name(), null, location));
+			getRuleBody().setRepType(RepElemType.op.getType());
+			getRuleBody().setPathOp(PathOp.MOVETO);
 		}
-		getRuleBody().getBody().add(new ASTPathOp(driver, PathOp.CLOSEPOLY.name(), null, location));
-		getRuleBody().setRepType(RepElemType.op.getType());
-		getRuleBody().setPathOp(PathOp.MOVETO);
 	}
-	
+
 	private boolean isMoveTo(int cmd) {
 		return cmd == PathIterator.SEG_MOVETO;
 	}
@@ -110,7 +106,7 @@ public class ASTRule extends ASTReplacement implements Comparable<ASTRule> {
 	public ASTRepContainer getRuleBody() {
 		return ruleBody;
 	}
-	
+
 	public double getWeight() {
 		return weight;
 	}
@@ -122,11 +118,11 @@ public class ASTRule extends ASTReplacement implements Comparable<ASTRule> {
 	public WeightType getWeightType() {
 		return weightType;
 	}
-	
+
 	public boolean isPath() {
 		return isPath;
 	}
-	
+
 	public void setPath(boolean isPath) {
 		this.isPath = isPath;
 	}
@@ -139,11 +135,16 @@ public class ASTRule extends ASTReplacement implements Comparable<ASTRule> {
 		this.nameIndex = nameIndex;
 	}
 
-	@Override
-	public void compile(CompilePhase ph) {
-		driver.setInPathContainer(isPath);
-		super.compile(ph);
-		ruleBody.compile(ph, null, null);
+	public ASTCompiledPath getCachedPath() {
+		return cachedPath;
+	}
+
+	public void setCachedPath(ASTCompiledPath cachedPath) {
+		this.cachedPath = cachedPath;
+	}
+
+	public void resetCachedPath() {
+		this.cachedPath = null;
 	}
 
 	@Override
@@ -199,19 +200,14 @@ public class ASTRule extends ASTReplacement implements Comparable<ASTRule> {
 	}
 
 	@Override
+	public void compile(CompilePhase ph) {
+		driver.setInPathContainer(isPath);
+		super.compile(ph);
+		ruleBody.compile(ph, null, null);
+	}
+
+	@Override
 	public int compareTo(ASTRule o) {
 		return nameIndex == o.nameIndex ? (weight < o.weight ? -1 : weight == o.weight ? 0 : 1) : nameIndex - o.nameIndex;
-	}
-
-	public ASTCompiledPath getCachedPath() {
-		return cachedPath;
-	}
-
-	public void setCachedPath(ASTCompiledPath cachedPath) {
-		this.cachedPath = cachedPath;
-	}
-
-	public void resetCachedPath() {
-		this.cachedPath = null;
 	}
 }

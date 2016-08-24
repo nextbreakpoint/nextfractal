@@ -322,6 +322,10 @@ public class RTI {
 		return cfStackSize;
 	}
 
+	public int getMaxStackSize() {
+		return cfStack.length;
+	}
+
 	public void setStackSize(int stackSize) {
 		this.stackSize = stackSize;
 	}

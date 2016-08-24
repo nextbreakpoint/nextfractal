@@ -199,4 +199,9 @@ public class AST {
         //TODO completare
         return null;
     }
+
+    public static ASTExpression getFlagsAndStroke(List<ASTModTerm> modExp, int flags) {
+        //TODO completare
+        return null;
+    }
 }

@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGDriver;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.Logger;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.RTI;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.Shape;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.CompilePhase;
@@ -37,33 +38,33 @@ import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.RepElemType;
 import org.antlr.v4.runtime.Token;
 
 public class ASTSwitch extends ASTReplacement {
-	private Map<Integer, ASTRepContainer> caseStatements = new HashMap<Integer, ASTRepContainer>();
+	private Map<Integer, ASTRepContainer> caseStatements = new HashMap<>();
 	private ASTRepContainer elseBody;
 	private ASTExpression switchExp;
 	
-	public ASTSwitch(CFDGDriver driver, ASTExpression caseVal, Token location) {
+	public ASTSwitch(CFDGDriver driver, ASTExpression switchExp, Token location) {
 		super(driver, null, RepElemType.empty, location);
 		elseBody = new ASTRepContainer(driver);
-		this.switchExp = caseVal;
+		this.switchExp = switchExp;
 	}
 
 	public ASTRepContainer getElseBody() {
 		return elseBody;
 	}
 
+	public ASTExpression getSwitchExp() {
+		return switchExp;
+	}
+
 	public Map<Integer, ASTRepContainer> getCaseStatements() {
 		return caseStatements;
 	}
 
-	public ASTExpression getSwitchExp() {
-		return switchExp;
-	}
-	
 	@Override
 	public void compile(CompilePhase ph) {
 		super.compile(ph);
 		if (switchExp != null) {
-			switchExp.compile(ph);
+			switchExp = switchExp.compile(ph);
 		}
 		for (ASTRepContainer caseVal : caseStatements.values()) {
 			caseVal.compile(ph, null, null);
@@ -73,13 +74,13 @@ public class ASTSwitch extends ASTReplacement {
 		switch (ph) {
 			case TypeCheck:
 				if (switchExp.getType() != ExpType.NumericType || switchExp.evaluate(null, 0) != 1) {
-					error("Switch selector must be a numeric scalar");
+					Logger.error("Switch selector must be a numeric scalar", location);
 				}
 				break;
 	
 			case Simplify:
 				if (switchExp != null) {
-					switchExp.simplify();
+					switchExp = switchExp.simplify();
 				}
 				break;
 	
@@ -92,7 +93,7 @@ public class ASTSwitch extends ASTReplacement {
 	public void traverse(Shape parent, boolean tr, RTI rti) {
 		double[] caveValue = new double[1];
 		if (switchExp.evaluate(caveValue, 1) != 1) {
-			error("Error evaluating switch selector");
+			Logger.error("Error evaluating switch selector", location);
 			return;
 		}
 		

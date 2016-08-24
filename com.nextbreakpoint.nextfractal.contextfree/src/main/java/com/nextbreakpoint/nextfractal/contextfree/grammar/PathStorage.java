@@ -26,9 +26,13 @@ package com.nextbreakpoint.nextfractal.contextfree.grammar;
 
 public class PathStorage {
 
+	private int totalVertices;
+
 	public void clear() {
 		// TODO Auto-generated method stub
-		
 	}
 
+	public int getTotalVertices() {
+		return totalVertices;
+	}
 }
