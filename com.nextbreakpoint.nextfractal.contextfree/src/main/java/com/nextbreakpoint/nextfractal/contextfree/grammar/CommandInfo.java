@@ -24,23 +24,64 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.grammar;
 
-import com.nextbreakpoint.nextfractal.contextfree.core.ExtendedGeneralPath;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTCompiledPath;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTPathCommand;
 
-import java.awt.geom.GeneralPath;
+import java.util.concurrent.atomic.AtomicLong;
+
+import static com.nextbreakpoint.nextfractal.contextfree.grammar.enums.FlagType.CF_BUTT_CAP;
+import static com.nextbreakpoint.nextfractal.contextfree.grammar.enums.FlagType.CF_FILL;
+import static com.nextbreakpoint.nextfractal.contextfree.grammar.enums.FlagType.CF_MITER_JOIN;
 
 public class CommandInfo {
-    private ExtendedGeneralPath path;
+    private static AtomicLong lastPathUID = new AtomicLong(0);
     private Long pathUID;
     private int index;
+    private int flags;
+    private double miterLimit;
+    private double strokeWidth;
+    private PathStorage pathStorage;
+
+    public static final CommandInfo DEFAULT_COMMAND_INFO = new CommandInfo(0, null);
+    public static final Long DEFAULT_PATH_UID = new Long(Long.MAX_VALUE);
 
     public CommandInfo() {
-        //TODO completare
+        index = 0;
+        flags = 0;
+        miterLimit = 4.0;
+        strokeWidth = 0.1;
+        pathUID = DEFAULT_PATH_UID;
+        pathStorage = null;
     }
 
-    public CommandInfo(PrimShape primShape) {
-        //TODO completare
+    public CommandInfo(CommandInfo info) {
+        this.index = info.index;
+        this.flags = info.flags;
+        this.miterLimit = info.miterLimit;
+        this.strokeWidth = info.strokeWidth;
+        this.pathUID = info.pathUID;
+        this.pathStorage = info.pathStorage;
+    }
+
+    public CommandInfo(int index, ASTCompiledPath path, double width, ASTPathCommand pathCommand) {
+        init(index, path, width, pathCommand);
+    }
+
+    public CommandInfo(PathStorage pathStorage) {
+        this(0, pathStorage);
+    }
+
+    private CommandInfo(int index, PathStorage pathStorage) {
+        flags = CF_MITER_JOIN.getMask() + CF_BUTT_CAP.getMask() + CF_FILL.getMask();
+        miterLimit = 4.0;
+        strokeWidth = 0.1;
+        pathUID = 0L;
+        this.index = index;
+        this.pathStorage = pathStorage;
+    }
+
+    public int getIndex() {
+        return index;
     }
 
     public Long getPathUID() {
@@ -51,19 +92,37 @@ public class CommandInfo {
         this.pathUID = pathUID;
     }
 
-    public ExtendedGeneralPath getPath() {
-        return path;
+    public PathStorage getPath() {
+        return pathStorage;
     }
 
-    public void setPath(ExtendedGeneralPath path) {
-        this.path = path;
+    public void setPath(PathStorage pathStorage) {
+        this.pathStorage = pathStorage;
     }
 
-    public void tryInit(int index, ASTCompiledPath currentPath, double width, ASTPathCommand pathCommand) {
-        //TODO completare
+    private void init(int index, ASTCompiledPath path, double width, ASTPathCommand pathCommand) {
+        if (pathUID != path.getPathUID() || this.index != index) {
+            if (pathCommand != null) {
+                flags = pathCommand.getFlags();
+                miterLimit = pathCommand.getMiterLimit();
+            } else {
+                flags =  CF_MITER_JOIN.getMask() + CF_BUTT_CAP.getMask() + CF_FILL.getMask();
+                miterLimit = 4.0;
+            }
+            this.index = index;
+            //TODO rivedere
+            this.pathStorage = path;
+            pathUID = path.getPathUID();
+            strokeWidth = width;
+        }
     }
 
-    public int getIndex() {
-        return index;
+    public void tryInit(int index, ASTCompiledPath path, double width, ASTPathCommand pathCommand) {
+        // Try to change the path UID from the default value to a value that is
+        // guaranteed to not be in use. If successful then perform initialization
+        pathUID = lastPathUID.incrementAndGet();
+        if (pathUID < DEFAULT_PATH_UID) {
+            init(index, path, width, pathCommand);
+        }
     }
 }

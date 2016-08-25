@@ -10,6 +10,7 @@ import org.antlr.v4.runtime.Token;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class AST {
@@ -235,5 +236,9 @@ public class AST {
             }
         }
         return ret;
+    }
+
+    public static void evalArgs(CFDGRenderer renderer, StackRule parent, Iterator<ASTParameter> params, ASTExpression arguments, boolean sequential) {
+        //TODO completare evalArgs
     }
 }

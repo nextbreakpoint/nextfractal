@@ -24,45 +24,63 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.grammar;
 
-import java.awt.geom.AffineTransform;
-import java.awt.geom.GeneralPath;
-import java.awt.geom.PathIterator;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class PrimShape {
-	private GeneralPath path = new GeneralPath(GeneralPath.WIND_NON_ZERO);
-
-	private static List<String> shapeNames = new ArrayList<String>();
+public class PrimShape extends PathStorage {
+	private static List<String> shapeNames = new ArrayList<>();
+	private static Map<Integer, PrimShape> shapeMap = new HashMap<>();
 
 	static {
 		shapeNames.add("CIRCLE");
-		shapeNames.add("FILL");
 		shapeNames.add("SQUARE");
 		shapeNames.add("TRIANGLE");
-	}
+		shapeNames.add("FILL");
 
-	private int totalVertices;
+		double h = 0.5 / Math.cos(Math.PI/6.0);
+		double hp = h;
+		double hn = -h / 2.0;
+		double t = Math.sqrt(2.0) / 4.0;
+
+		PrimShape circle = new PrimShape();
+		PrimShape square = new PrimShape();
+		PrimShape triangle = new PrimShape();
+
+		circle.vertex(new Point2D.Double(0.5, 0.0));
+		circle.vertex(new Point2D.Double(t, t));
+		circle.vertex(new Point2D.Double(0.0, 0.5));
+		circle.vertex(new Point2D.Double(-t, t));
+		circle.vertex(new Point2D.Double(-0.5, 0.0));
+		circle.vertex(new Point2D.Double(-t, -t));
+		circle.vertex(new Point2D.Double(0.0, -0.5));
+		circle.vertex(new Point2D.Double(t, -t));
+
+		square.vertex(new Point2D.Double(0.5, 0.5));
+		square.vertex(new Point2D.Double(-0.5, 0.5));
+		square.vertex(new Point2D.Double(-0.5, -0.5));
+		square.vertex(new Point2D.Double(0.5, -0.5));
+
+		triangle.vertex(new Point2D.Double(0.0, hp));
+		triangle.vertex(new Point2D.Double(-0.5, hn));
+		triangle.vertex(new Point2D.Double(0.5, hn));
+
+		shapeMap.put(0, circle);
+		shapeMap.put(1, square);
+		shapeMap.put(2, triangle);
+	}
 
 	public static boolean isPrimShape(int shapeType) {
 		return shapeType < 4;
 	}
 
 	public static Map<Integer, PrimShape> getShapeMap() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public PathIterator getPathIterator() {
-		return path.getPathIterator(new AffineTransform());
+		return shapeMap;
 	}
 
 	public static List<String> getShapeNames() {
 		return shapeNames;
-	}
-
-	public int getTotalVertices() {
-		return totalVertices;
 	}
 }

@@ -24,6 +24,7 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.grammar;
 
+import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.AST;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTExpression;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTParameter;
 
@@ -31,46 +32,35 @@ import java.util.List;
 
 public class StackElement {
 	private double number;
+	private double[] array;
 	private StackRule rule;
-	private StackRule ruleHeader;
+	private Modification modification;
 	private List<ASTParameter> typeInfo;
 
+	//TODO rivedere
+
 	public StackElement(double number) {
-		//TODO completare
+		this.number = number;
 	}
 
 	public StackElement(StackRule rule) {
-		//TODO completare
+		this.rule = rule;
+	}
+
+	public StackElement(double[] array) {
+		this.array = array;
+	}
+
+	public StackElement(Modification modification) {
+		this.modification = modification;
+	}
+
+	public StackElement(List<ASTParameter> typeInfo) {
+		this.typeInfo = typeInfo;
 	}
 
 	public double getNumber() {
 		return number;
-	}
-
-	public StackRule getRule() {
-		return rule;
-	}
-
-	public StackRule getRuleHeader() {
-		return ruleHeader;
-	}
-
-	public List<ASTParameter> getTypeInfo() {
-		return typeInfo;
-	}
-
-	public void evalArgs(CFDGRenderer renderer, ASTExpression arguments, List<ASTParameter> parameters, boolean sequential) {
-		//TODO completare
-	}
-
-	public double[] getArray() {
-		//TODO completare
-		return null;
-	}
-
-	public Modification modification() {
-		//TODO completare
-		return null;
 	}
 
 	public void addNumber(double value) {
@@ -78,14 +68,42 @@ public class StackElement {
 	}
 
 	public void setNumber(double value) {
-		//TODO completare
+		this.number = value;
+	}
+
+	public Modification modification() {
+		return modification;
 	}
 
 	public void setModification(Modification modification) {
-		//TODO completare
+		this.modification = modification;
+	}
+
+	public StackRule getRule() {
+		return rule;
 	}
 
 	public void setRule(StackRule rule) {
-		//TODO completare
+		this.rule = rule;
+	}
+
+	public double[] getArray() {
+		return array;
+	}
+
+	public void setArray(double[] array) {
+		this.array = array;
+	}
+
+	public List<ASTParameter> getTypeInfo() {
+		return typeInfo;
+	}
+
+	public void setTypeInfo(List<ASTParameter> typeInfo) {
+		this.typeInfo = typeInfo;
+	}
+
+	public void evalArgs(CFDGRenderer renderer, ASTExpression arguments, List<ASTParameter> parameters, boolean sequential) {
+		AST.evalArgs(renderer, null, parameters.iterator(), arguments, sequential);
 	}
 }

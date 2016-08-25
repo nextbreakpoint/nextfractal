@@ -33,7 +33,7 @@ import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.FlagType;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.PathOp;
 import org.antlr.v4.runtime.Token;
 
-public class ASTCompiledPath {
+public class ASTCompiledPath extends PathStorage {
 	private static Long globalPathUID = new Long(100);
 	private boolean complete;
 	private PathStorage pathStorage;

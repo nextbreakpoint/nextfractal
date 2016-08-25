@@ -119,7 +119,7 @@ public class ASTPathCommand extends ASTReplacement {
 			if (infoCache.getPathUID() == renderer.getCurrentPath().getPathUID() && infoCache.getIndex() == renderer.getIndex()) {
 				renderer.getCurrentPath().getCommandInfo().pushBack(infoCache);
 			} else {
-				renderer.getCurrentPath().getCommandInfo().emplaceBack(renderer.getIndex(), renderer.getCurrentPath(), width, this);
+				renderer.getCurrentPath().getCommandInfo().add(new CommandInfo(renderer.getIndex(), renderer.getCurrentPath(), width, this));
 			}
 			info = renderer.getCurrentPath().getCommandInfo().back();
 		}

@@ -24,11 +24,14 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.grammar;
 
+import com.nextbreakpoint.nextfractal.contextfree.core.ExtendedGeneralPath;
+
 import java.awt.geom.AffineTransform;
+import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
 
 public class PathStorage {
-	private int totalVertices;
+	private ExtendedGeneralPath generalPath = new ExtendedGeneralPath();
 	private boolean drawing;
 
 	public boolean isDrawing() {
@@ -44,7 +47,8 @@ public class PathStorage {
 	}
 
 	public int getTotalVertices() {
-		return totalVertices;
+		//TODO completare
+		return 0;
 	}
 
 	public void endPoly(int flag) {
@@ -129,5 +133,9 @@ public class PathStorage {
 
 	public void curve4(Point2D.Double a, Point2D.Double b, Point2D.Double point) {
 		//TODO completare
+	}
+
+	public PathIterator getPathIterator() {
+		return generalPath.getPathIterator(new AffineTransform());
 	}
 }
