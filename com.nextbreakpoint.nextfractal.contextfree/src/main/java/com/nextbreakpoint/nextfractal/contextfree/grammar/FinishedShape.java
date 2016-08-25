@@ -30,7 +30,6 @@ public class FinishedShape extends Shape implements Comparable<FinishedShape> {
 	private Bounds bounds;
 
 	public FinishedShape(Shape shape, int order, Bounds bounds) {
-		//TODO completare
 		super(shape);
 		getWorldState().setColorAssignment(order);
 		this.bounds = bounds;

@@ -137,7 +137,9 @@ public class ASTPathCommand extends ASTReplacement {
 		switch (ph) {
 			case TypeCheck: {
 				getChildChange().addEntropy((flags & CF_FILL.getMask()) != 0 ? "FILL" : "STROKE");
-				ASTExpression w = AST.getFlagsAndStroke(getChildChange().getModExp(), flags);
+				int[] flagValue = new int[1];
+				ASTExpression w = AST.getFlagsAndStroke(getChildChange().getModExp(), flagValue);
+				flags = flagValue[0];
 				if (w != null) {
 					if (parameters != null) {
 						Logger.error("Cannot have a stroke adjustment in a v3 path command", w.getLocation());

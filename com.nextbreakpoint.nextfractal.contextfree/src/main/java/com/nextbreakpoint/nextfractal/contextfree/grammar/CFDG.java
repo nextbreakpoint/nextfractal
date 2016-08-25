@@ -293,7 +293,7 @@ public class CFDG {
 		return false;
 	}
 
-	public void getSummetry(SymmList syms, CFDGRenderer renderer) {
+	public void getSummetry(List<AffineTransform> syms, CFDGRenderer renderer) {
 		//TODO controllare
 		syms.clear();
 		ASTExpression exp = hasParameter(CFG.Symmetry);

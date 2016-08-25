@@ -74,8 +74,4 @@ public class Shape {
 	public void setArea(double area) {
 		areaCache = area;
 	}
-
-	public void releaseParams() {
-		//TODO completare
-	}
 }

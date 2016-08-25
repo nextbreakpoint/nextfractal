@@ -48,7 +48,7 @@ public class AST {
         return type;
     }
 
-    public static List<ASTModification> getTransforms(ASTExpression e, SymmList syms, CFDGRenderer renderer, boolean tiled, AffineTransform transform) {
+    public static List<ASTModification> getTransforms(ASTExpression e, List<AffineTransform> syms, CFDGRenderer renderer, boolean tiled, AffineTransform transform) {
         List<ASTModification> result = new ArrayList<>();
 
         syms.clear();
@@ -111,17 +111,17 @@ public class AST {
         return result;
     }
 
-    public static void addUnique(SymmList syms, AffineTransform transform) {
+    public static void addUnique(List<AffineTransform> syms, AffineTransform transform) {
         if (syms.contains(transform)) {
             syms.add(transform);
         }
     }
 
-    public static void processDihedral(SymmList syms, double order, double x, double y, boolean dihedral, double angle, Token location) {
+    public static void processDihedral(List<AffineTransform> syms, double order, double x, double y, boolean dihedral, double angle, Token location) {
         //TODO completare symmetry
     }
 
-    public static void processSymmSpec(SymmList syms, AffineTransform transform, boolean tiled, List<Double> data, Token location) {
+    public static void processSymmSpec(List<AffineTransform> syms, AffineTransform transform, boolean tiled, List<Double> data, Token location) {
         if (data == null) {
             return;
         }
@@ -196,12 +196,44 @@ public class AST {
     }
 
     public static ASTExpression makeResult(double result, int lenght, ASTExpression from) {
-        //TODO completare makeResult
-        return null;
+        ASTReal r = new ASTReal(result, from.getLocation());
+        r.setType(from.getType());
+        r.setIsNatural(from.isNatural());
+        if (lenght > 1) {
+            ASTCons l = new ASTCons(from.getLocation(), r);
+            for (int i = 1; i< lenght; i++) {
+                r = new ASTReal(result, from.getLocation());
+                r.setType(from.getType());
+                r.setIsNatural(from.isNatural());
+                l.append(r);
+            }
+            return l;
+        }
+        return r;
     }
 
-    public static ASTExpression getFlagsAndStroke(List<ASTModTerm> modExp, int flags) {
-        //TODO completare getFlagsAndStroke
-        return null;
+    public static ASTExpression getFlagsAndStroke(List<ASTModTerm> terms, int[] flags) {
+        List<ASTModTerm> temp = new ArrayList<>(terms);
+        terms.clear();
+        ASTExpression ret = null;
+        for (ASTModTerm term : temp) {
+            switch (term.getModType()) {
+                case param:
+                    flags[0] |= term.getArgumentsCount();
+                    break;
+                case stroke:
+                    if (ret != null) {
+                        Logger.error("Only one stroke width term is allowed", term.getLocation());
+                    }
+                    ret = term.getArguments();
+                    //TODO rivedere
+                    term.setArguments(null);
+                    break;
+                default:
+                    terms.add(term);
+                    break;
+            }
+        }
+        return ret;
     }
 }

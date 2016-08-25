@@ -132,6 +132,9 @@ public class ASTCompiledPath {
 		double radiusX = 0.0, radiusY = 0.0, angle = 0.0;
 		boolean sweep = (pathOp.getFlags() & FlagType.CF_ARC_CW.getMask()) == 0;
 		boolean largeArc = (pathOp.getFlags() & FlagType.CF_ARC_LARGE.getMask()) != 0;
+		Point2D.Double p0 = new Point2D.Double(data[0], data[1]);
+		Point2D.Double p1 = new Point2D.Double(data[2], data[3]);
+		Point2D.Double p2 = new Point2D.Double(data[4], data[4]);
 		if (pathOp.getPathOp() == PathOp.ARCTO || pathOp.getPathOp() == PathOp.ARCREL) {
 			if (pathOp.getArgCount() == 5) {
 				radiusX = data[2];
@@ -148,10 +151,9 @@ public class ASTCompiledPath {
 				sweep = !sweep;
 			}
 		} else if (tr) {
-			//TODO completare addPathOp !!!
-//			parent.getWorldState().getTransform().transform(data[0], data[1]);
-//			parent.getWorldState().getTransform().transform(data[2], data[3]);
-//			parent.getWorldState().getTransform().transform(data[4], data[5]);
+			parent.getWorldState().getTransform().transform(p0, p0);
+			parent.getWorldState().getTransform().transform(p1, p1);
+			parent.getWorldState().getTransform().transform(p2, p2);
 		}
 
 		// If this is the first path operation following a path command then set the
@@ -202,20 +204,20 @@ public class ASTCompiledPath {
 
 		switch (pathOp.getPathOp()) {
 			case MOVEREL:
-				getPath().relToAbs(new Point2D.Double(data[0], data[1]));
+				getPath().relToAbs(p0);
 			case MOVETO:
-				getPath().moveTo(new Point2D.Double(data[0], data[1]));
+				getPath().moveTo(p0);
 				renderer.setWantMoveTo(false);
 				break;
 			case LINEREL:
-				getPath().relToAbs(new Point2D.Double(data[0], data[1]));
+				getPath().relToAbs(p0);
 			case LINETO:
-				getPath().lineTo(new Point2D.Double(data[0], data[1]));
+				getPath().lineTo(p0);
 				break;
 			case ARCREL:
-				getPath().relToAbs(new Point2D.Double(data[0], data[1]));
+				getPath().relToAbs(p0);
 			case ARCTO:
-				if (getPath().isVertex(getPath().lastVertex(new Point2D.Double(data[2], data[3]))) || (tr && parent.getWorldState().getTransform().getDeterminant() < 1e-10)) {
+				if (getPath().isVertex(getPath().lastVertex(p1)) || (tr && parent.getWorldState().getTransform().getDeterminant() < 1e-10)) {
 					break;
 				}
 				// Transforming an arc as they are parameterized by AGG is VERY HARD.
@@ -228,37 +230,37 @@ public class ASTCompiledPath {
 					try {
 						AffineTransform inverseTr = parent.getWorldState().getTransform().createInverse();
 						getPath().transform(inverseTr, start);
-						getPath().arcTo(radiusX, radiusY, angle, largeArc, sweep, new Point2D.Double(data[0], data[1]));
-						getPath().modifyVertex(start, new Point2D.Double(data[2], data[3]));
+						getPath().arcTo(radiusX, radiusY, angle, largeArc, sweep, p0);
+						getPath().modifyVertex(start, p1);
 						getPath().transform(parent.getWorldState().getTransform(), start + 1);
 					} catch (NoninvertibleTransformException e) {
 						Logger.fail("Cannot invert transform", pathOp.getLocation());
 					}
 				} else {
-					getPath().arcTo(radiusX, radiusY, angle, largeArc, sweep, new Point2D.Double(data[0], data[1]));
+					getPath().arcTo(radiusX, radiusY, angle, largeArc, sweep, p0);
 				}
 			case CURVEREL:
-				getPath().relToAbs(new Point2D.Double(data[0], data[1]));
-				getPath().relToAbs(new Point2D.Double(data[2], data[3]));
-				getPath().relToAbs(new Point2D.Double(data[4], data[5]));
+				getPath().relToAbs(p0);
+				getPath().relToAbs(p1);
+				getPath().relToAbs(p2);
 			case CURVETO:
-				if ((pathOp.getFlags() & FlagType.CF_CONTINUOUS.getMask()) != 0 && getPath().isCurve(getPath().lastVertex(new Point2D.Double(data[4], data[5]))) ) {
+				if ((pathOp.getFlags() & FlagType.CF_CONTINUOUS.getMask()) != 0 && getPath().isCurve(getPath().lastVertex(p2)) ) {
 					Logger.error("Smooth curve operations must be preceded by another curve operation", pathOp.getLocation());
 					break;
 				}
 				switch (pathOp.getArgCount()) {
 					case 2:
-						getPath().curve3(new Point2D.Double(data[0], data[1]));
+						getPath().curve3(p0);
 						break;
 					case 4:
 						if ((pathOp.getFlags() & FlagType.CF_CONTINUOUS.getMask()) != 0) {
-							getPath().curve4(new Point2D.Double(data[2], data[3]), new Point2D.Double(data[0], data[1]));
+							getPath().curve4(p1, p0);
 						} else {
-							getPath().curve3(new Point2D.Double(data[2], data[3]), new Point2D.Double(data[0], data[1]));
+							getPath().curve3(p1, p0);
 						}
 						break;
 					case 6:
-						getPath().curve4(new Point2D.Double(data[2], data[3]), new Point2D.Double(data[4], data[5]), new Point2D.Double(data[0], data[1]));
+						getPath().curve4(p1, p2, p0);
 						break;
 				}
 				break;

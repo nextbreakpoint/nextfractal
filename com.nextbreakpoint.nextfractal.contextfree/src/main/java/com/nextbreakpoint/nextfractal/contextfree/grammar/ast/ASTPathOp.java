@@ -203,7 +203,9 @@ public class ASTPathOp extends ASTReplacement {
 	}
 
 	private void makePositional() {
-		ASTExpression w = AST.getFlagsAndStroke(oldStyleArguments.getModExp(), flags);
+		int[] value = new int[1];
+		ASTExpression w = AST.getFlagsAndStroke(oldStyleArguments.getModExp(), value);
+		flags = value[0];
 		if (w != null) {
 			Logger.error("Stroke width not allowed in a path operation", w.getLocation());
 		}

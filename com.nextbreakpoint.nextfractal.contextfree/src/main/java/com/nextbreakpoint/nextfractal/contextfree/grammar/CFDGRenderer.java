@@ -109,12 +109,13 @@ public class CFDGRenderer {
 
 	private GeneralPath pathIter = new GeneralPath();
 
-	private SymmList symmetryOps = new SymmList();
+	private List<AffineTransform> symmetryOps = new ArrayList<>();
 
 	private List<CommandInfo> shapeMap = new ArrayList<>();
 	private List<Shape> unfinishedShapes = new ArrayList<>();
 	private List<FinishedShape> finishedShapes = new ArrayList<>();
-	private int stackSize;
+
+	private ASTRule[] primitivePaths;
 
 	public CFDGRenderer(CFDG cfdg, int width, int height, double minSize, int variation, double border) {
 		this.cfdg = cfdg;
@@ -126,6 +127,12 @@ public class CFDGRenderer {
 		cfStack = new StackElement[8192];
 		cfStackSize = 0;
 		frameTimeBounds = AffineTransformTime.getTranslateInstance(Double.MIN_VALUE, Double.MAX_VALUE);
+
+		primitivePaths = new ASTRule[PrimShape.getShapeNames().size()];
+
+		for (int i = 0; i < primitivePaths.length; i++) {
+			primitivePaths[i] = new ASTRule(cfdg.getDriver(), i, null);
+		}
 
 		//TODO rivedere
 
@@ -329,7 +336,7 @@ public class CFDGRenderer {
 	}
 
 	public void setStackSize(int stackSize) {
-		this.stackSize = stackSize;
+		this.cfStackSize = stackSize;
 	}
 
 	public int getLogicalStackTop() {
@@ -489,7 +496,7 @@ public class CFDGRenderer {
 		} else {
 			for (int i = 0; i < num; i++) {
 				Shape sym = new Shape(shape);
-				sym.getWorldState().getTransform().preConcatenate(symmetryOps.getTransform(i));
+				sym.getWorldState().getTransform().preConcatenate(symmetryOps.get(i));
 				processPrimShapeSiblings(sym, rule);
 			}
 		}
@@ -572,14 +579,13 @@ public class CFDGRenderer {
 	public void processSubpath(Shape shape, boolean tr, RepElemType expectedType) {
 		ASTRule rule = null;
 		if (cfdg.getShapeType(shape.getShapeType()) != ShapeType.PathType && PrimShape.isPrimShape(shape.getShapeType()) && expectedType == RepElemType.op) {
-			//TODO completare processSubpath !!!
-//			rule = PrimShape.getShapeMap().get(shape.getShapeType());
+			rule = primitivePaths[shape.getShapeType()];
 		} else {
 			rule = cfdg.findRule(shape.getShapeType(), 0.0);
 		}
 		if (rule.getRuleBody().getRepType() != expectedType.getType()) {
 			//TODO completare con location
-			throw  new CFDGException("Subpath is not of the expected type (path ops/commands)");
+			throw new CFDGException("Subpath is not of the expected type (path ops/commands)");
 		}
 		boolean saveOpsOnly = opsOnly;
 		opsOnly = opsOnly || (expectedType == RepElemType.op);

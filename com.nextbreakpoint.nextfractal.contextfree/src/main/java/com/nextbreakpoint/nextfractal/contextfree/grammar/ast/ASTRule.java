@@ -154,7 +154,6 @@ public class ASTRule extends ASTReplacement implements Comparable<ASTRule> {
 			renderer.processPrimShape(parent, this);
 		} else {
 			ruleBody.traverse(parent, tr, renderer, true);
-			parent.releaseParams();
 		}
 	}
 	

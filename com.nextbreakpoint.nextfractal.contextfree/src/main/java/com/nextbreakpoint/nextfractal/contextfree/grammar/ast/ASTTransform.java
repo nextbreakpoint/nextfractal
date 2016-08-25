@@ -25,6 +25,7 @@
 package com.nextbreakpoint.nextfractal.contextfree.grammar.ast;
 
 import java.awt.geom.AffineTransform;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.nextbreakpoint.nextfractal.contextfree.core.Rand64;
@@ -99,7 +100,7 @@ public class ASTTransform extends ASTReplacement {
 	public void traverse(Shape parent, boolean tr, CFDGRenderer renderer) {
 		AffineTransform dummy = new AffineTransform();
 		@SuppressWarnings("unchecked")
-		SymmList transforms = new SymmList();
+		List<AffineTransform> transforms = new ArrayList<>();
 		List<ASTModification> mods = AST.getTransforms(expHolder, transforms, renderer, false, dummy);
 		Rand64 cloneSeed = renderer.getCurrentSeed();
 		Shape transChild = parent;
@@ -114,7 +115,7 @@ public class ASTTransform extends ASTReplacement {
 			if (i < modsLength) {
 				mods.get(i).evaluate(child.getWorldState(), true, renderer);
 			} else {
-				child.getWorldState().getTransform().preConcatenate(transforms.getTransform(i - modsLength));
+				child.getWorldState().getTransform().preConcatenate(transforms.get(i - modsLength));
 			}
 			renderer.getCurrentSeed().bump();
 			int size = renderer.getStackSize();

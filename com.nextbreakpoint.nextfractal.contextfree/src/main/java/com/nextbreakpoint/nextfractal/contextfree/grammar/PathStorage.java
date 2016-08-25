@@ -55,12 +55,12 @@ public class PathStorage {
 		//TODO completare
 	}
 
-	public int command(int i) {
+	public int command(int index) {
 		//TODO completare
 		return 0;
 	}
 
-	public boolean isVertex(int i) {
+	public boolean isVertex(int index) {
 		//TODO completare
 		return false;
 	}
@@ -94,11 +94,11 @@ public class PathStorage {
 		//TODO completare
 	}
 
-	public void transform(AffineTransform inverseTr, int start) {
+	public void transform(AffineTransform t, int index) {
 		//TODO completare
 	}
 
-	public void modifyVertex(int start, Point2D.Double point) {
+	public void modifyVertex(int index, Point2D.Double point) {
 		//TODO completare
 	}
 
