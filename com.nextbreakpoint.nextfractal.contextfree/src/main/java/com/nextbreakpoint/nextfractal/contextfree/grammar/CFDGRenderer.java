@@ -572,7 +572,7 @@ public class CFDGRenderer {
 	public void processSubpath(Shape shape, boolean tr, RepElemType expectedType) {
 		ASTRule rule = null;
 		if (cfdg.getShapeType(shape.getShapeType()) != ShapeType.PathType && PrimShape.isPrimShape(shape.getShapeType()) && expectedType == RepElemType.op) {
-			//TODO completare ????
+			//TODO completare processSubpath !!!
 //			rule = PrimShape.getShapeMap().get(shape.getShapeType());
 		} else {
 			rule = cfdg.findRule(shape.getShapeType(), 0.0);

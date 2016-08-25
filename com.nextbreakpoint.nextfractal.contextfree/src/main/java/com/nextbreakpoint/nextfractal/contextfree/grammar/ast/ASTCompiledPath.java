@@ -148,7 +148,7 @@ public class ASTCompiledPath {
 				sweep = !sweep;
 			}
 		} else if (tr) {
-			//TODO completare!!!
+			//TODO completare addPathOp !!!
 //			parent.getWorldState().getTransform().transform(data[0], data[1]);
 //			parent.getWorldState().getTransform().transform(data[2], data[3]);
 //			parent.getWorldState().getTransform().transform(data[4], data[5]);

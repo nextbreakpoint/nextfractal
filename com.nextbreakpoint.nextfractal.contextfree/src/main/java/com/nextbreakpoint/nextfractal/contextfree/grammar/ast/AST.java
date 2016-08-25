@@ -118,7 +118,7 @@ public class AST {
     }
 
     public static void processDihedral(SymmList syms, double order, double x, double y, boolean dihedral, double angle, Token location) {
-        //TODO completare
+        //TODO completare symmetry
     }
 
     public static void processSymmSpec(SymmList syms, AffineTransform transform, boolean tiled, List<Double> data, Token location) {
@@ -196,12 +196,12 @@ public class AST {
     }
 
     public static ASTExpression makeResult(double result, int lenght, ASTExpression from) {
-        //TODO completare
+        //TODO completare makeResult
         return null;
     }
 
     public static ASTExpression getFlagsAndStroke(List<ASTModTerm> modExp, int flags) {
-        //TODO completare
+        //TODO completare getFlagsAndStroke
         return null;
     }
 }
