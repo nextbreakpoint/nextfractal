@@ -130,7 +130,7 @@ public class Modification {
 
 		rand64Seed.add(modification.getRand64Seed());
 
-		// TODO rivedere
+		//TODO rivedere
 
 		boolean conflict = (colorAssignment & modification.colorAssignment) != 0 ||
 				((modification.colorAssignment & AssignmentType.HueMask.getType()) != 0 && color.hue() != 0.0) ||

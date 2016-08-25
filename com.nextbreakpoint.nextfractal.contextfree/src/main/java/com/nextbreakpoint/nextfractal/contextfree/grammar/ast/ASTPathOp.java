@@ -267,7 +267,7 @@ public class ASTPathOp extends ASTReplacement {
 			ay = null;
 		}
 
-		// TODO controllare
+		//TODO controllare
 
 		switch (getPathOp()) {
 			case LINETO:
@@ -355,7 +355,7 @@ public class ASTPathOp extends ASTReplacement {
 	}
 
 	private ASTExpression parseXY(ASTExpression ax, ASTExpression ay, double def, Token location) {
-		// TODO controllare
+		//TODO controllare
 		if (ax == null) {
 			ax = new ASTReal(def, location);
 		}

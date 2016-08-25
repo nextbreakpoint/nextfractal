@@ -48,7 +48,7 @@ public class ASTCons extends ASTExpression {
 
 	public ASTCons(Token location, ASTExpression... args) {
 		super(true, true, ExpType.NoType, location);
-		//TODO da controllare
+		//TODO controllare
 		locality = Locality.PureLocal;
 		for (ASTExpression arg : args) {
 			children.add(arg);
@@ -162,7 +162,6 @@ public class ASTCons extends ASTExpression {
         
         // Cannot insert an ASTcons into children, it will be flattened away.
         // You must wrap the ASTcons in an ASTparen in order to insert it whole.
-        
         if (e instanceof ASTCons) {
         	ASTCons c = (ASTCons)e;
         	children.addAll(c.getChildren());

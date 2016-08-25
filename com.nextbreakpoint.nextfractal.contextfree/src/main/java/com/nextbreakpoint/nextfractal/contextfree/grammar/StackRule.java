@@ -40,11 +40,11 @@ public class StackRule {
 	}
 
 	public StackRule(StackRule parent) {
-		// TODO completare
+		//TODO completare
 	}
 
 	public StackRule(int shapeType, int argSize, List<ASTParameter> typeSignature) {
-		// TODO completare
+		//TODO completare
 	}
 
 	public int getRuleName() {
@@ -72,10 +72,10 @@ public class StackRule {
 	}
 
 	public void evalArgs(CFDGRenderer renderer, ASTExpression arguments, StackRule parent) {
-		// TODO completare
+		//TODO completare
 	}
 
 	public void copyParams(StackElement[] stack, int size) {
-		// TODO completare
+		//TODO completare
 	}
 }

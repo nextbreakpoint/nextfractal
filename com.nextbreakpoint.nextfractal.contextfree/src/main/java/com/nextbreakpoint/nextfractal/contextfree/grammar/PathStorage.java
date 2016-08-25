@@ -40,7 +40,7 @@ public class PathStorage {
 	}
 
 	public void clear() {
-		// TODO completare
+		//TODO completare
 	}
 
 	public int getTotalVertices() {
@@ -48,86 +48,86 @@ public class PathStorage {
 	}
 
 	public void endPoly(int flag) {
-		// TODO completare
+		//TODO completare
 	}
 
 	public void startNewPath() {
-		// TODO completare
+		//TODO completare
 	}
 
 	public int command(int i) {
-		// TODO completare
+		//TODO completare
 		return 0;
 	}
 
 	public boolean isVertex(int i) {
-		// TODO completare
+		//TODO completare
 		return false;
 	}
 
 	public void vertex(Point2D.Double point) {
-		// TODO completare
+		//TODO completare
 	}
 
 	public void closePolygon() {
-		// TODO completare
+		//TODO completare
 	}
 
 	public void moveTo(Point2D.Double point) {
-		// TODO completare
+		//TODO completare
 	}
 
 	public void relToAbs(Point2D.Double point) {
-		// TODO completare
+		//TODO completare
 	}
 
 	public void lineTo(Point2D.Double point) {
-		// TODO completare
+		//TODO completare
 	}
 
 	public int lastVertex(Point2D.Double point) {
-		// TODO completare
+		//TODO completare
 		return 0;
 	}
 
 	public void arcTo(double radiusX, double radiusY, double angle, boolean largeArc, boolean sweep, Point2D.Double point) {
-		// TODO completare
+		//TODO completare
 	}
 
 	public void transform(AffineTransform inverseTr, int start) {
-		// TODO completare
+		//TODO completare
 	}
 
 	public void modifyVertex(int start, Point2D.Double point) {
-		// TODO completare
+		//TODO completare
 	}
 
 	public boolean isCurve(int i) {
-		// TODO completare
+		//TODO completare
 		return false;
 	}
 
 	public void curve3(Point2D.Double point) {
-		// TODO completare
+		//TODO completare
 	}
 
 	public void curve4(Point2D.Double point) {
-		// TODO completare
+		//TODO completare
 	}
 
 	public void curve3(Point2D.Double a, Point2D.Double point) {
-		// TODO completare
+		//TODO completare
 	}
 
 	public void curve3(Point2D.Double a, Point2D.Double b, Point2D.Double point) {
-		// TODO completare
+		//TODO completare
 	}
 
 	public void curve4(Point2D.Double a, Point2D.Double point) {
-		// TODO completare
+		//TODO completare
 	}
 
 	public void curve4(Point2D.Double a, Point2D.Double b, Point2D.Double point) {
-		// TODO completare
+		//TODO completare
 	}
 }

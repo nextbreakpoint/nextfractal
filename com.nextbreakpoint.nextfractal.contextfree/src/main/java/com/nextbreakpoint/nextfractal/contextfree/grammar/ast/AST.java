@@ -57,7 +57,7 @@ public class AST {
             return result;
         }
 
-        // TODO da rivedere
+        //TODO rivedere
 
         List<Double> symmSpec = new ArrayList<>();
 

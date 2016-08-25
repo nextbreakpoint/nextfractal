@@ -41,7 +41,7 @@ public class OutputBounds {
             scale = (width + height) / Math.sqrt(Math.abs(shape.getWorldState().getTransform().getDeterminant()));
         }
 
-        // TODO rivedere
+        //TODO rivedere
 
         AffineTransformTime frameTime = shape.getWorldState().getTransformTime();
 
@@ -62,7 +62,7 @@ public class OutputBounds {
     }
 
     public void backwardFilter(double framesToHalf) {
-        // TODO rivedere
+        //TODO rivedere
         int frames = frameBounds.length;
         if (frames == 0) {
             return;

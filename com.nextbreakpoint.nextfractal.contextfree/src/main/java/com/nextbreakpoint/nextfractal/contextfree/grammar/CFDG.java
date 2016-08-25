@@ -154,7 +154,7 @@ public class CFDG {
 		double[] c = new double[4];
 		hsb.getRGBA(c);
 		if (uses16bitColor) {
-			return c; //TODO completare
+			return c; //TODO completare uses16bitColor
 		} else {
 			return c;
 		}
@@ -260,7 +260,7 @@ public class CFDG {
 			return false;
 		}
 
-		//TODO da rivedere
+		//TODO rivedere
 		if (point != null) {
 			point[0] = sizeMod.getTransform().getScaleX();
 			point[1] = sizeMod.getTransform().getScaleY();
@@ -279,7 +279,7 @@ public class CFDG {
 			return false;
 		}
 
-		//TODO da rivedere
+		//TODO rivedere
 		if (transform != null) {
 			transform.setBegin(timeMod.getTransformTime().getBegin());
 			transform.setEnd(timeMod.getTransformTime().getEnd());
@@ -294,7 +294,7 @@ public class CFDG {
 	}
 
 	public void getSummetry(SymmList syms, CFDGRenderer renderer) {
-		// TODO controllare
+		//TODO controllare
 		syms.clear();
 		ASTExpression exp = hasParameter(CFG.Symmetry);
 		List<ASTModification> left = AST.getTransforms(exp, syms, renderer, isTiled(null, null), tileMod.getTransform());
@@ -624,7 +624,7 @@ public class CFDG {
 		return null;
 	}
 
-	// TODO da rivedere
+	//TODO rivedere
 
 	public void compile(CompilePhase ph) {
 		for (ASTRule rule : rules) {

@@ -56,7 +56,7 @@ public class ASTUserFunction extends ASTExpression {
 		return arguments;
 	}
 
-	protected void setArguments(ASTExpression arguments) {
+	public void setArguments(ASTExpression arguments) {
 		this.arguments = arguments;
 	}
 
@@ -192,7 +192,7 @@ public class ASTUserFunction extends ASTExpression {
 		if (renderer.isRequestStop() || CFDGRenderer.abortEverything()) {
 			throw new CFDGException("Stopping");
 		}
-		//TODO da controllare
+		//TODO controllare
 		setupStack(renderer);
 		StackRule ret = definition.getExp().evalArgs(renderer, parent);
 		cleanupStack(renderer);

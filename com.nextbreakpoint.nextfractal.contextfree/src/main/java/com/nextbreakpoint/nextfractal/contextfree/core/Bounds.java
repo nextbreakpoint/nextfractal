@@ -30,7 +30,7 @@ public class Bounds {
 
         double pathScale = Math.sqrt(Math.abs(transform.getDeterminant()));
 
-        // TODO completare
+        //TODO completare
 
         minX = bounds.getMinX();
         minY = bounds.getMinY();

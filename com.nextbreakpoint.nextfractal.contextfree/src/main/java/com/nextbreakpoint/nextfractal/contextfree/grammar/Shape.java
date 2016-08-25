@@ -76,6 +76,6 @@ public class Shape {
 	}
 
 	public void releaseParams() {
-		// TODO completare
+		//TODO completare
 	}
 }

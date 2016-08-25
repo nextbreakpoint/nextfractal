@@ -36,11 +36,11 @@ public class CommandInfo {
     private int index;
 
     public CommandInfo() {
-        // TODO completare
+        //TODO completare
     }
 
     public CommandInfo(PrimShape primShape) {
-        // TODO completare
+        //TODO completare
     }
 
     public Long getPathUID() {
@@ -60,7 +60,7 @@ public class CommandInfo {
     }
 
     public void tryInit(int index, ASTCompiledPath currentPath, double width, ASTPathCommand pathCommand) {
-        // TODO completare
+        //TODO completare
     }
 
     public int getIndex() {

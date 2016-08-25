@@ -36,11 +36,11 @@ public class StackElement {
 	private List<ASTParameter> typeInfo;
 
 	public StackElement(double number) {
-		// TODO completare
+		//TODO completare
 	}
 
 	public StackElement(StackRule rule) {
-		// TODO completare
+		//TODO completare
 	}
 
 	public double getNumber() {
@@ -60,16 +60,16 @@ public class StackElement {
 	}
 
 	public void evalArgs(CFDGRenderer renderer, ASTExpression arguments, List<ASTParameter> parameters, boolean sequential) {
-		// TODO completare
+		//TODO completare
 	}
 
 	public double[] getArray() {
-		// TODO completare
+		//TODO completare
 		return null;
 	}
 
 	public Modification modification() {
-		// TODO completare
+		//TODO completare
 		return null;
 	}
 
@@ -78,14 +78,14 @@ public class StackElement {
 	}
 
 	public void setNumber(double value) {
-		// TODO completare
+		//TODO completare
 	}
 
 	public void setModification(Modification modification) {
-		// TODO completare
+		//TODO completare
 	}
 
 	public void setRule(StackRule rule) {
-		// TODO completare
+		//TODO completare
 	}
 }

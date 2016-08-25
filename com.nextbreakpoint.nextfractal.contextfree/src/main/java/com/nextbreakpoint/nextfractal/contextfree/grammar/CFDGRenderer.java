@@ -444,7 +444,7 @@ public class CFDGRenderer {
 	}
 
 	public void colorConflict(Token location) {
-		// TODO rivedere
+		//TODO rivedere
 		if (colorConflict) {
 			return;
 		}
@@ -475,7 +475,7 @@ public class CFDGRenderer {
 		} else if (PrimShape.isPrimShape(shape.getShapeType())) {
 			processPrimShape(shape, null);
 		} else {
-			// TODO rivedere
+			//TODO rivedere
 			requestStop = true;
 			Logger.error(String.format("Shape with no rules encountered: %s.", cfdg.decodeShapeName(shape.getShapeType())), null);
 		}
@@ -572,13 +572,13 @@ public class CFDGRenderer {
 	public void processSubpath(Shape shape, boolean tr, RepElemType expectedType) {
 		ASTRule rule = null;
 		if (cfdg.getShapeType(shape.getShapeType()) != ShapeType.PathType && PrimShape.isPrimShape(shape.getShapeType()) && expectedType == RepElemType.op) {
-			// TODO da completare ????
+			//TODO completare ????
 //			rule = PrimShape.getShapeMap().get(shape.getShapeType());
 		} else {
 			rule = cfdg.findRule(shape.getShapeType(), 0.0);
 		}
 		if (rule.getRuleBody().getRepType() != expectedType.getType()) {
-			// TODO da completare con location
+			//TODO completare con location
 			throw  new CFDGException("Subpath is not of the expected type (path ops/commands)");
 		}
 		boolean saveOpsOnly = opsOnly;
@@ -593,12 +593,12 @@ public class CFDGRenderer {
 				double[] color = cfdg.getColor(shape.getWorldState().color());
 				AffineTransform tr = shape.getWorldState().getTransform();
 				tr.preConcatenate(currTransform);
-				// TODO da rivedere
+				//TODO rivedere
 				canvas.path(color, tr, attr);
 			}
 		} else {
 			if (attr != null) {
-				// TODO da rivedere
+				//TODO rivedere
 				pathBounds.update(shape.getWorldState().getTransform(), pathIter, scale, attr);
 				currentArea = Math.abs((pathBounds.getMaxX() - pathBounds.getMinX()) * (pathBounds.getMaxY() - pathBounds.getMinY()));
 			}
@@ -649,7 +649,7 @@ public class CFDGRenderer {
 	}
 
 	public void cleanup() {
-		// TODO rivedere
+		//TODO rivedere
 
 //		for (FinishedShape shape : finishedShapes) {
 //			if (shape.isAbortEverything()) {
@@ -907,7 +907,7 @@ public class CFDGRenderer {
 	}
 
 	private void outputStats() {
-		// TODO rivedere
+		//TODO rivedere
 		requestUpdate = false;
 	}
 
@@ -1043,7 +1043,7 @@ public class CFDGRenderer {
 	}
 
 	public static boolean abortEverything() {
-		//TODO completare
+		//TODO completare abortEverything
 		return false;
 	}
 }

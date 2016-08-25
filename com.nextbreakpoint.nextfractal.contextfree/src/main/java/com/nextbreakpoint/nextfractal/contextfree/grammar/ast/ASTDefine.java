@@ -215,7 +215,7 @@ public class ASTDefine extends ASTReplacement {
 
 					tupleSize = sz;
 					expType = t;
-					//TODO da controllare
+					//TODO controllare
 					if (t.getType() != (t.getType() & (-t.getType())) || t.getType() == 0) {
 						Logger.error("Expression can only have one type", location);
 					}

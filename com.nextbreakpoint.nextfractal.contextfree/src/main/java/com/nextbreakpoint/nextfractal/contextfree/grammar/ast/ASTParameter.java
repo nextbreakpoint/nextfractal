@@ -78,6 +78,66 @@ public class ASTParameter {
 		this.location = param.getLocation();
 	}
 
+	public ExpType getType() {
+		return type;
+	}
+
+	public boolean isLoopIndex() {
+		return isLoopIndex;
+	}
+
+	public ASTDefine getDefinition() {
+		return definition;
+	}
+
+	public int getNameIndex() {
+		return nameIndex;
+	}
+
+	public int getStackIndex() {
+		return stackIndex;
+	}
+
+	public int getTupleSize() {
+		return tupleSize;
+	}
+
+	public void setStackIndex(int stackIndex) {
+		this.stackIndex = stackIndex;
+	}
+
+	public Locality getLocality() {
+		return locality;
+	}
+
+	public void setLocality(Locality locality) {
+		this.locality = locality;
+	}
+
+	public Token getLocation() {
+		return location;
+	}
+
+	public void setLocation(Token location) {
+		this.location = location;
+	}
+
+	public boolean isNatural() {
+		return isNatural;
+	}
+
+	public void setIsNatural(boolean isNatural) {
+		this.isNatural = isNatural;
+	}
+
+	public boolean isParameter() {
+		return isParameter;
+	}
+
+	public void setIsParameter(boolean isParameter) {
+		this.isParameter = isParameter;
+	}
+
 	public void init(String type, int nameIndex) {
 		locality = Locality.PureNonlocal;
 		int[] tupleSizeVal = new int[1];
@@ -238,65 +298,5 @@ public class ASTParameter {
 			}
 		}
 		return null;
-	}
-
-	public ExpType getType() {
-		return type;
-	}
-
-	public boolean isLoopIndex() {
-		return isLoopIndex;
-	}
-
-	public ASTDefine getDefinition() {
-		return definition;
-	}
-
-	public int getNameIndex() {
-		return nameIndex;
-	}
-
-	public int getStackIndex() {
-		return stackIndex;
-	}
-
-	public int getTupleSize() {
-		return tupleSize;
-	}
-
-	public void setStackIndex(int stackIndex) {
-		this.stackIndex = stackIndex;
-	}
-
-	public Locality getLocality() {
-		return locality;
-	}
-
-	public void setLocality(Locality locality) {
-		this.locality = locality;
-	}
-
-	public Token getLocation() {
-		return location;
-	}
-
-	public void setLocation(Token location) {
-		this.location = location;
-	}
-
-	public boolean isNatural() {
-		return isNatural;
-	}
-
-	public void setIsNatural(boolean isNatural) {
-		this.isNatural = isNatural;
-	}
-
-	public boolean isParameter() {
-		return isParameter;
-	}
-
-	public void setIsParameter(boolean isParameter) {
-		this.isParameter = isParameter;
 	}
 }

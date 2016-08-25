@@ -148,7 +148,7 @@ public class ASTCompiledPath {
 				sweep = !sweep;
 			}
 		} else if (tr) {
-			// TODO da completare
+			//TODO completare!!!
 //			parent.getWorldState().getTransform().transform(data[0], data[1]);
 //			parent.getWorldState().getTransform().transform(data[2], data[3]);
 //			parent.getWorldState().getTransform().transform(data[4], data[5]);
@@ -198,7 +198,7 @@ public class ASTCompiledPath {
 			getPath().moveTo(renderer.getLastPoint());
 		}
 
-		// TODO rivedere
+		//TODO rivedere
 
 		switch (pathOp.getPathOp()) {
 			case MOVEREL:
