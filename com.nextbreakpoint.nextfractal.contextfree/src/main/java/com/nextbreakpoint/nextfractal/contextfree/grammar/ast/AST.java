@@ -48,7 +48,7 @@ public class AST {
         return type;
     }
 
-    public static List<ASTModification> getTransforms(ASTExpression e, SymmList syms, RTI rti, boolean tiled, AffineTransform transform) {
+    public static List<ASTModification> getTransforms(ASTExpression e, SymmList syms, CFDGRenderer renderer, boolean tiled, AffineTransform transform) {
         List<ASTModification> result = new ArrayList<>();
 
         syms.clear();
@@ -89,9 +89,9 @@ public class AST {
                     processSymmSpec(syms, transform, tiled, symmSpec, cit.getLocation());
                     if (cit instanceof ASTModification) {
                         ASTModification m = (ASTModification)cit;
-                        if (m.getModClass() != null && m.getModClass().getType() == (ModClass.GeomClass.getType() | ModClass.PathOpClass.getType()) && (rti != null || m.isConstant())) {
+                        if (m.getModClass() != null && m.getModClass().getType() == (ModClass.GeomClass.getType() | ModClass.PathOpClass.getType()) && (renderer != null || m.isConstant())) {
                             Modification mod = new Modification();
-                            cit.evaluate(mod, false, rti);
+                            cit.evaluate(mod, false, renderer);
                             addUnique(syms, mod.getTransform());
                         } else {
                             result.add(m);

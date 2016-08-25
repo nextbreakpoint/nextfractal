@@ -5,13 +5,13 @@ import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.FriezeType;
 
 import java.awt.geom.AffineTransform;
 
-public class TiledCanvas extends Canvas {
-    private Canvas canvas;
+public class TiledCanvas extends SimpleCanvas {
+    private SimpleCanvas canvas;
     private AffineTransform transform;
     private FriezeType frieze;
     private double scale;
 
-    public TiledCanvas(Canvas canvas, AffineTransform transform, FriezeType frieze) {
+    public TiledCanvas(SimpleCanvas canvas, AffineTransform transform, FriezeType frieze) {
         this.canvas = canvas;
         this.transform = transform;
         this.frieze = frieze;

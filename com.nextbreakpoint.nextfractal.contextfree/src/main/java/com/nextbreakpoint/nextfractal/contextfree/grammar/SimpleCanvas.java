@@ -2,7 +2,7 @@ package com.nextbreakpoint.nextfractal.contextfree.grammar;
 
 import java.awt.geom.AffineTransform;
 
-public class Canvas {
+public class SimpleCanvas {
     private int width;
     private int height;
 

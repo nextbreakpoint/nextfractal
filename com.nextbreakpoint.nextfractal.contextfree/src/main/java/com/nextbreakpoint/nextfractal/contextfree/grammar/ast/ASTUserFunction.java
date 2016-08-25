@@ -30,6 +30,8 @@ import com.nextbreakpoint.nextfractal.contextfree.grammar.*;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.CompilePhase;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ExpType;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.Locality;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.exceptions.CFDGException;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.exceptions.DeferUntilRuntimeException;
 import org.antlr.v4.runtime.Token;
 
 public class ASTUserFunction extends ASTExpression {
@@ -71,7 +73,7 @@ public class ASTUserFunction extends ASTExpression {
 	}
 
 	@Override
-	public int evaluate(double[] result, int length, RTI rti) {
+	public int evaluate(double[] result, int length, CFDGRenderer renderer) {
 		if (type != ExpType.NumericType) {
 			Logger.error("Function does not evaluate to a number", location);
 			return -1;
@@ -82,31 +84,31 @@ public class ASTUserFunction extends ASTExpression {
 		if (result == null) {
 			return definition.getTupleSize();
 		}
-		if (rti == null) throw new DeferUntilRuntimeException();
-		if (rti.isRequestStop() || RTI.abortEverything()) {
+		if (renderer == null) throw new DeferUntilRuntimeException();
+		if (renderer.isRequestStop() || CFDGRenderer.abortEverything()) {
 			throw new CFDGException("Stopping");
 		}
-		setupStack(rti);
-		if (definition.getExp().evaluate(result, length, rti) != definition.getTupleSize()) {
+		setupStack(renderer);
+		if (definition.getExp().evaluate(result, length, renderer) != definition.getTupleSize()) {
 			Logger.error("Error evaluating function", location);
 		};
-		cleanupStack(rti);
+		cleanupStack(renderer);
 		return definition.getTupleSize();
 	}
 
 	@Override
-	public void evaluate(Modification result, boolean shapeDest, RTI rti) {
+	public void evaluate(Modification result, boolean shapeDest, CFDGRenderer renderer) {
 		if (type != ExpType.ModType) {
 			Logger.error("Function does not evaluate to an adjustment", location);
 			return;
 		}
-		if (rti == null) throw new DeferUntilRuntimeException();
-		if (rti.isRequestStop() || RTI.abortEverything()) {
+		if (renderer == null) throw new DeferUntilRuntimeException();
+		if (renderer.isRequestStop() || CFDGRenderer.abortEverything()) {
 			throw new CFDGException("Stopping");
 		}
-		setupStack(rti);
-		definition.getExp().evaluate(result, shapeDest, rti);
-		cleanupStack(rti);
+		setupStack(renderer);
+		definition.getExp().evaluate(result, shapeDest, renderer);
+		cleanupStack(renderer);
 	}
 
 	@Override
@@ -181,40 +183,40 @@ public class ASTUserFunction extends ASTExpression {
 	}
 
 	@Override
-	public StackRule evalArgs(RTI rti, StackRule parent) {
+	public StackRule evalArgs(CFDGRenderer renderer, StackRule parent) {
 		if (type != ExpType.RuleType) {
 			Logger.error("Function does not evaluate to a shape", location);
 			return null;
 		}
-		if (rti == null) throw new DeferUntilRuntimeException();
-		if (rti.isRequestStop() || RTI.abortEverything()) {
+		if (renderer == null) throw new DeferUntilRuntimeException();
+		if (renderer.isRequestStop() || CFDGRenderer.abortEverything()) {
 			throw new CFDGException("Stopping");
 		}
 		//TODO da controllare
-		setupStack(rti);
-		StackRule ret = definition.getExp().evalArgs(rti, parent);
-		cleanupStack(rti);
+		setupStack(renderer);
+		StackRule ret = definition.getExp().evalArgs(renderer, parent);
+		cleanupStack(renderer);
 		return ret;
 	}
 	
-	private void setupStack(RTI rti) {
-		oldTop = rti.getLogicalStackTop();
-		oldSize = rti.getStackSize();
+	private void setupStack(CFDGRenderer renderer) {
+		oldTop = renderer.getLogicalStackTop();
+		oldSize = renderer.getStackSize();
 		if (definition.getStackCount() > 0) {
-			if (oldSize + definition.getStackCount() > rti.getStackSize()) {
+			if (oldSize + definition.getStackCount() > renderer.getStackSize()) {
 				Logger.error("Maximum stack size exceeded", location);
 			}
-			rti.setStackSize(oldSize + definition.getStackCount());
-			rti.getStackItem(oldSize).evalArgs(rti, arguments, definition.getParameters(), isLet);
-			rti.setLogicalStackTop(rti.getStackSize());
+			renderer.setStackSize(oldSize + definition.getStackCount());
+			renderer.getStackItem(oldSize).evalArgs(renderer, arguments, definition.getParameters(), isLet);
+			renderer.setLogicalStackTop(renderer.getStackSize());
 		}
 	}
 
-	private void cleanupStack(RTI rti) {
+	private void cleanupStack(CFDGRenderer renderer) {
 		if (definition.getStackCount() > 0) {
-			rti.setStackItem(oldSize, null);
-			rti.setLogicalStackTop(oldTop);
-			rti.setStackSize(oldSize);
+			renderer.setStackItem(oldSize, null);
+			renderer.setLogicalStackTop(oldTop);
+			renderer.setStackSize(oldSize);
 		}
 	}
 }

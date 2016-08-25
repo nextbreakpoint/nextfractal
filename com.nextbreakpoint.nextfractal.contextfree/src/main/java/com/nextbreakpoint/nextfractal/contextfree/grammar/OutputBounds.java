@@ -2,8 +2,8 @@ package com.nextbreakpoint.nextfractal.contextfree.grammar;
 
 import com.nextbreakpoint.nextfractal.contextfree.core.AffineTransformTime;
 import com.nextbreakpoint.nextfractal.contextfree.core.Bounds;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.exceptions.StopException;
 
-import java.util.*;
 import java.util.stream.IntStream;
 
 public class OutputBounds {
@@ -15,14 +15,14 @@ public class OutputBounds {
     private int width;
     private int height;
     private int frames;
-    private RTI rti;
+    private CFDGRenderer renderer;
 
-    public OutputBounds(int frames, AffineTransformTime timeBounds, int width, int height, RTI rti) {
+    public OutputBounds(int frames, AffineTransformTime timeBounds, int width, int height, CFDGRenderer renderer) {
         this.frames = frames;
         this.timeBounds = timeBounds;
         this.width = width;
         this.height = height;
-        this.rti = rti;
+        this.renderer = renderer;
 
         frameScale = (double)frames / (timeBounds.getEnd() / timeBounds.getBegin());
         frameBounds = new Bounds[frames];
@@ -33,7 +33,7 @@ public class OutputBounds {
     }
 
     public void apply(FinishedShape shape) {
-        if (rti.isRequestStop() || rti.isRequestFinishUp()) {
+        if (renderer.isRequestStop() || renderer.isRequestFinishUp()) {
             throw  new StopException();
         }
 

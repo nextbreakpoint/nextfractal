@@ -27,6 +27,7 @@ package com.nextbreakpoint.nextfractal.contextfree.grammar.ast;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.*;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.CompilePhase;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ExpType;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.exceptions.DeferUntilRuntimeException;
 import org.antlr.v4.runtime.Token;
 
 public class ASTVariable extends ASTExpression {
@@ -68,7 +69,7 @@ public class ASTVariable extends ASTExpression {
 	}
 
 	@Override
-	public int evaluate(double[] result, int length, RTI rti) {
+	public int evaluate(double[] result, int length, CFDGRenderer renderer) {
 		if (type != ExpType.NumericType) {
             Logger.error("Non-numeric variable in a numeric context", location);
             return -1;
@@ -77,8 +78,8 @@ public class ASTVariable extends ASTExpression {
 			return -1;
 		}
         if (result != null) {
-            if (rti == null) throw new DeferUntilRuntimeException();
-            StackType stackItem = rti.getStackItem(stackIndex);
+            if (renderer == null) throw new DeferUntilRuntimeException();
+            StackElement stackItem = renderer.getStackItem(stackIndex);
             for (int i = 0; i < count; ++i) {
 				result[i] = stackItem.getNumber();
             }
@@ -87,18 +88,18 @@ public class ASTVariable extends ASTExpression {
 	}
 
 	@Override
-	public void evaluate(Modification result, boolean shapeDest, RTI rti) {
+	public void evaluate(Modification result, boolean shapeDest, CFDGRenderer renderer) {
 		if (type != ExpType.ModType) {
             Logger.error("Non-adjustment variable referenced in an adjustment context", location);
         }
-		if (rti == null) throw new DeferUntilRuntimeException();
-        StackType stackItem = rti.getStackItem(stackIndex);
+		if (renderer == null) throw new DeferUntilRuntimeException();
+        StackElement stackItem = renderer.getStackItem(stackIndex);
         Modification mod = stackItem.modification();
         if (shapeDest) {
         	result.concat(mod);
         } else {
         	if (result.merge(mod)) {
-    			rti.colorConflict(getLocation());
+    			renderer.colorConflict(getLocation());
         	}
         }
 	}

@@ -26,9 +26,9 @@ package com.nextbreakpoint.nextfractal.contextfree.grammar.ast;
 
 import java.util.List;
 
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGRenderer;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.Logger;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.Modification;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.RTI;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.StackRule;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.CompilePhase;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ExpType;
@@ -60,15 +60,15 @@ public class ASTSelect extends ASTExpression {
 	}
 
 	@Override
-	public StackRule evalArgs(RTI rti, StackRule parent) {
+	public StackRule evalArgs(CFDGRenderer renderer, StackRule parent) {
 		if (type != ExpType.RuleType) {
 			Logger.error("Evaluation of a non-shape select() in a shape context", location);
 		}
-		return arguments.get(getIndex(rti)).evalArgs(rti, parent);
+		return arguments.get(getIndex(renderer)).evalArgs(renderer, parent);
 	}
 
 	@Override
-	public int evaluate(double[] result, int length, RTI rti) {
+	public int evaluate(double[] result, int length, CFDGRenderer renderer) {
 		if (type != ExpType.NumericType) {
 			Logger.error("Evaluation of a non-shape select() in a numeric context", location);
 			return -1;
@@ -77,17 +77,17 @@ public class ASTSelect extends ASTExpression {
 		if (result == null)
 			return tupleSize;
 
-		return arguments.get(getIndex(rti)).evaluate(result, length, rti);
+		return arguments.get(getIndex(renderer)).evaluate(result, length, renderer);
 	}
 
 	@Override
-	public void evaluate(Modification modification, boolean shapeDest, RTI rti) {
+	public void evaluate(Modification modification, boolean shapeDest, CFDGRenderer renderer) {
 		if (type != ExpType.ModType) {
 			Logger.error("Evaluation of a non-adjustment select() in an adjustment context", location);
 			return;
 		}
 
-		arguments.get(getIndex(rti)).evaluate(modification, shapeDest, rti);
+		arguments.get(getIndex(renderer)).evaluate(modification, shapeDest, renderer);
 	}
 
 	@Override
@@ -174,13 +174,13 @@ public class ASTSelect extends ASTExpression {
 		return null;
 	}
 
-	public int getIndex(RTI rti) {
+	public int getIndex(CFDGRenderer renderer) {
 		if (indexCache != NOT_CACHED) {
 			return indexCache;
 		}
 
 		double select[] = new double[] { 0.0 };
-		selector.evaluate(select, 1, rti);
+		selector.evaluate(select, 1, renderer);
 
 		if (isSelect) {
 			return select[0] != 0 ? 0 : 1;

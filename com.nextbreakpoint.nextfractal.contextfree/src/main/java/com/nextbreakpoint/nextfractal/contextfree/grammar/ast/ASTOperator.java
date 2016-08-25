@@ -24,8 +24,8 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.grammar.ast;
 
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGRenderer;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.Logger;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.RTI;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.CompilePhase;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ExpType;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.Locality;
@@ -78,7 +78,7 @@ public class ASTOperator extends ASTExpression {
 	}
 
 	@Override
-	public int evaluate(double[] result, int length, RTI rti) {
+	public int evaluate(double[] result, int length, CFDGRenderer renderer) {
 		double[] l = new double[] { 0.0 };
 		double[] r = new double[] { 0.0 };
 
@@ -86,9 +86,9 @@ public class ASTOperator extends ASTExpression {
 			return -1;
 
 		if (type == ExpType.FlagType && op == '+') {
-			if (left.evaluate(result != null ? l : null, 1, rti) != 1)
+			if (left.evaluate(result != null ? l : null, 1, renderer) != 1)
 				return -1;
-			if (right == null || right.evaluate(result != null ? r : null, 1, rti) != 1)
+			if (right == null || right.evaluate(result != null ? r : null, 1, renderer) != 1)
 				return -1;
 			int f = (int) l[0] | (int) r[0];
 			if (result != null)
@@ -101,7 +101,7 @@ public class ASTOperator extends ASTExpression {
             return -1;
 		}
 
-		if (left.evaluate(result != null ? l : null, 1, rti) != 1) {
+		if (left.evaluate(result != null ? l : null, 1, renderer) != 1) {
             Logger.error("illegal operand", null);
             return -1;
 		}
@@ -118,7 +118,7 @@ public class ASTOperator extends ASTExpression {
             }
         }
         
-		int rightnum = right != null ? right.evaluate(result != null ? r : null, 1, rti) : 0;
+		int rightnum = right != null ? right.evaluate(result != null ? r : null, 1, renderer) : 0;
 
 		if (rightnum == 0 && (op == 'N' || op == 'P' || op == '!')) {
 			if (result != null) {

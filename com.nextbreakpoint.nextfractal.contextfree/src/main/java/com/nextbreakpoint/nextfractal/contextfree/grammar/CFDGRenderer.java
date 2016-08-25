@@ -29,6 +29,8 @@ import com.nextbreakpoint.nextfractal.contextfree.core.Bounds;
 import com.nextbreakpoint.nextfractal.contextfree.core.Rand64;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.*;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.*;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.exceptions.CFDGException;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.exceptions.StopException;
 import org.antlr.v4.runtime.Token;
 
 import java.awt.geom.AffineTransform;
@@ -37,7 +39,7 @@ import java.awt.geom.Point2D;
 import java.util.*;
 import java.util.function.Function;
 
-public class RTI {
+public class CFDGRenderer {
 	private static final double FIXED_BORDER = 8.0;
 	private static final double SHAPE_BORDER = 1.0;
 
@@ -55,7 +57,7 @@ public class RTI {
 
 	private int cfStackSize;
 	private int cfLogicalStackTop;
-	private StackType[] cfStack;
+	private StackElement[] cfStack;
 	private ASTCompiledPath currentPath;
 	private Iterator<CommandInfo> currentCommand;
 	private double currentTime;
@@ -69,7 +71,7 @@ public class RTI {
 	private boolean requestUpdate;
 
 	private CFDG cfdg;
-	private Canvas canvas;
+	private SimpleCanvas canvas;
 	private TiledCanvas tiledCanvas;
 	private boolean colorConflict;
 	private int maxShapes = 500000000;
@@ -114,14 +116,14 @@ public class RTI {
 	private List<FinishedShape> finishedShapes = new ArrayList<>();
 	private int stackSize;
 
-	public RTI(CFDG cfdg, int width, int height, double minSize, int variation, double border) {
+	public CFDGRenderer(CFDG cfdg, int width, int height, double minSize, int variation, double border) {
 		this.cfdg = cfdg;
 		this.width = width;
 		this.height = height;
 		this.minSize = minSize;
 		this.variation = variation;
 		this.border = border;
-		cfStack = new StackType[8192];
+		cfStack = new StackElement[8192];
 		cfStackSize = 0;
 		frameTimeBounds = AffineTransformTime.getTranslateInstance(Double.MIN_VALUE, Double.MAX_VALUE);
 
@@ -300,15 +302,15 @@ public class RTI {
 		this.requestUpdate = requestUpdate;
 	}
 
-	public StackType getStackItem(int stackIndex) {
+	public StackElement getStackItem(int stackIndex) {
 		return cfStack[stackIndex];
 	}
 
-	public void setStackItem(int stackIndex, StackType item) {
+	public void setStackItem(int stackIndex, StackElement item) {
 		cfStack[stackIndex] = item;
 	}
 
-	public void addStackItem(StackType stackType) {
+	public void addStackItem(StackElement stackType) {
 		//TODO rivedere
 		cfStack[cfLogicalStackTop] = stackType;
 	}
@@ -462,12 +464,12 @@ public class RTI {
 			return;
 		}
 
-		if (cfdg.getShapeType(shape.getShapeType()) == ShapeClass.RuleType && cfdg.shapeHasRules(shape.getShapeType())) {
+		if (cfdg.getShapeType(shape.getShapeType()) == ShapeType.RuleType && cfdg.shapeHasRules(shape.getShapeType())) {
 			if (!bounds.valid() || area * scaleArea >= minArea) {
 				todoCount += 1;
 				unfinishedShapes.add(shape);
 			}
-		} else if (cfdg.getShapeType(shape.getShapeType()) == ShapeClass.PathType) {
+		} else if (cfdg.getShapeType(shape.getShapeType()) == ShapeType.PathType) {
 			ASTRule rule = cfdg.findRule(shape.getShapeType(), 0.0);
 			processPrimShape(shape, rule);
 		} else if (PrimShape.isPrimShape(shape.getShapeType())) {
@@ -481,7 +483,7 @@ public class RTI {
 
 	public void processPrimShape(Shape shape, ASTRule rule) {
 		int num = symmetryOps.size();
-		if (num == 0 || cfdg.getShapeType(shape.getShapeType()) == ShapeClass.FillType) {
+		if (num == 0 || cfdg.getShapeType(shape.getShapeType()) == ShapeType.FillType) {
 			Shape copy = new Shape(shape);
 			processPrimShapeSiblings(copy, rule);
 		} else {
@@ -500,7 +502,7 @@ public class RTI {
 			scale = (width + height) / Math.sqrt(Math.abs(shape.getWorldState().getTransform().getDeterminant()));
 		}
 
-		if (rule != null || cfdg.getShapeType(shape.getShapeType()) != ShapeClass.FillType) {
+		if (rule != null || cfdg.getShapeType(shape.getShapeType()) != ShapeType.FillType) {
 			currentArea = 0.0;
 			pathBounds.invalidate();
 			drawingMode = false;
@@ -569,7 +571,7 @@ public class RTI {
 
 	public void processSubpath(Shape shape, boolean tr, RepElemType expectedType) {
 		ASTRule rule = null;
-		if (cfdg.getShapeType(shape.getShapeType()) != ShapeClass.PathType && PrimShape.isPrimShape(shape.getShapeType()) && expectedType == RepElemType.op) {
+		if (cfdg.getShapeType(shape.getShapeType()) != ShapeType.PathType && PrimShape.isPrimShape(shape.getShapeType()) && expectedType == RepElemType.op) {
 			// TODO da completare ????
 //			rule = PrimShape.getShapeMap().get(shape.getShapeType());
 		} else {
@@ -669,7 +671,7 @@ public class RTI {
 		bounds = new Bounds();
 	}
 
-	public double run(Canvas canvas, boolean partialDraw) {
+	public double run(SimpleCanvas canvas, boolean partialDraw) {
 		if (!animating) {
 			outputPrep(canvas);
 		}
@@ -764,14 +766,14 @@ public class RTI {
 		return currScale;
 	}
 
-	public void draw(Canvas canvas) {
+	public void draw(SimpleCanvas canvas) {
 		frameTimeBounds = AffineTransformTime.getTranslateInstance(Double.MIN_VALUE, Double.MAX_VALUE);
 		outputPrep(canvas);
 		outputFinal();
 		outputStats();
 	}
 
-	public void animate(Canvas canvas, int frames, boolean zoom) {
+	public void animate(SimpleCanvas canvas, int frames, boolean zoom) {
 		outputPrep(canvas);
 
 		boolean ftime = cfdg.usesFrameTime();
@@ -869,7 +871,7 @@ public class RTI {
 		Logger.info(String.format("Animation of %d frames complete", frames), null);
 	}
 
-	private void outputPrep(Canvas canvas) {
+	private void outputPrep(SimpleCanvas canvas) {
 		this.canvas = canvas;
 
 		if (canvas != null) {
@@ -1025,7 +1027,7 @@ public class RTI {
 			tiledCanvas.tileTransform(b);
 		}
 
-		if (cfdg.getShapeType(shape.getShapeType()) == ShapeClass.PathType) {
+		if (cfdg.getShapeType(shape.getShapeType()) == ShapeType.PathType) {
 			ASTRule rule = cfdg.findRule(shape.getShapeType());
 			rule.traversePath(shape, this);
 		} else {

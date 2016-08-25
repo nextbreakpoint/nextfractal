@@ -22,8 +22,20 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.contextfree.grammar.enums;
+package com.nextbreakpoint.nextfractal.contextfree;
 
-public enum ShapeClass {
-	NewShape, RuleType, PathType, FillType;
+public class ContextFreeException extends Exception {
+	private static final long serialVersionUID = 1L;
+
+	public ContextFreeException(String message) {
+		super(message);
+	}
+
+	public ContextFreeException(Throwable cause) {
+		super(cause);
+	}
+
+	public ContextFreeException(String message, Throwable cause) {
+		super(message, cause);
+	}
 }

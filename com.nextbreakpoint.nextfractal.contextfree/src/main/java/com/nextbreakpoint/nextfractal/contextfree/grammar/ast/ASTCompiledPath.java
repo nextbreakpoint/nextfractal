@@ -110,24 +110,24 @@ public class ASTCompiledPath {
 		return globalPathUID = new Long(globalPathUID.longValue() + 1);
 	}
 
-	public void finish(boolean setAttr, RTI rti) {
-		if (!rti.isClosed()) {
+	public void finish(boolean setAttr, CFDGRenderer renderer) {
+		if (!renderer.isClosed()) {
 			getPath().endPoly(0);
-			rti.setClosed(true);
+			renderer.setClosed(true);
 		}
-		if (!rti.isStop()) {
+		if (!renderer.isStop()) {
 			getPath().startNewPath();
-			rti.setClosed(true);
+			renderer.setClosed(true);
 		}
-		rti.setWantMoveTo(true);
-		rti.setIndex(getPath().getTotalVertices());
-		if (setAttr && rti.isWantCommand()) {
+		renderer.setWantMoveTo(true);
+		renderer.setIndex(getPath().getTotalVertices());
+		if (setAttr && renderer.isWantCommand()) {
 			useTerminal = true;
-			rti.setWantCommand(false);
+			renderer.setWantCommand(false);
 		}
 	}
 
-	public void addPathOp(ASTPathOp pathOp, double[] data, Shape parent, boolean tr, RTI rti) {
+	public void addPathOp(ASTPathOp pathOp, double[] data, Shape parent, boolean tr, CFDGRenderer renderer) {
 		// Process the parameters for ARCTO/ARCREL
 		double radiusX = 0.0, radiusY = 0.0, angle = 0.0;
 		boolean sweep = (pathOp.getFlags() & FlagType.CF_ARC_CW.getMask()) == 0;
@@ -159,14 +159,14 @@ public class ASTCompiledPath {
 		// current path operation is part of.
 		// If this is not the first path operation following a path command then this
 		// line does nothing.
-		rti.setIndex(rti.getNextIndex());
+		renderer.setIndex(renderer.getNextIndex());
 
 		// If the op is anything other than a CLOSEPOLY then we are opening up a new path sequence.
-		rti.setClosed(false);
-		rti.setStop(false);
+		renderer.setClosed(false);
+		renderer.setStop(false);
 
 		// This new path op needs to be covered by a command, either from the cfdg file or default.
-		rti.setWantCommand(true);
+		renderer.setWantCommand(true);
 
 		if (pathOp.getPathOp() == PathOp.CLOSEPOLY) {
 			if (getPath().getTotalVertices() > 1 && getPath().isDrawing()) {
@@ -176,7 +176,7 @@ public class ASTCompiledPath {
 				int cmd = 0;
 				for (int i = last - 1; i < last && getPath().isVertex(cmd = getPath().command(i)); i--) {
 					if (cmd == 1) {
-						getPath().vertex(rti.getLastPoint());
+						getPath().vertex(renderer.getLastPoint());
 						break;
 					}
 				}
@@ -187,15 +187,15 @@ public class ASTCompiledPath {
 			}
 
 			getPath().closePolygon();
-			rti.setClosed(true);
-			rti.setWantMoveTo(true);
+			renderer.setClosed(true);
+			renderer.setWantMoveTo(true);
 			return;
 		}
 
 		// Insert an implicit MOVETO unless the pathOp is a MOVETO/MOVEREL
-		if (rti.isWantMoveTo() && pathOp.getPathOp().ordinal() > PathOp.MOVEREL.ordinal()) {
-			rti.setWantMoveTo(false);
-			getPath().moveTo(rti.getLastPoint());
+		if (renderer.isWantMoveTo() && pathOp.getPathOp().ordinal() > PathOp.MOVEREL.ordinal()) {
+			renderer.setWantMoveTo(false);
+			getPath().moveTo(renderer.getLastPoint());
 		}
 
 		// TODO rivedere
@@ -205,7 +205,7 @@ public class ASTCompiledPath {
 				getPath().relToAbs(new Point2D.Double(data[0], data[1]));
 			case MOVETO:
 				getPath().moveTo(new Point2D.Double(data[0], data[1]));
-				rti.setWantMoveTo(false);
+				renderer.setWantMoveTo(false);
 				break;
 			case LINEREL:
 				getPath().relToAbs(new Point2D.Double(data[0], data[1]));
@@ -266,6 +266,6 @@ public class ASTCompiledPath {
 				break;
 		}
 
-		getPath().lastVertex(rti.getLastPoint());
+		getPath().lastVertex(renderer.getLastPoint());
 	}
 }

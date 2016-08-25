@@ -186,14 +186,14 @@ public class ASTRuleSpecifier extends ASTExpression {
 	}
 
 	@Override
-	public StackRule evalArgs(RTI rti, StackRule parent) {
+	public StackRule evalArgs(CFDGRenderer renderer, StackRule parent) {
 		switch (argSource) {
 			case NoArgs:
 			case SimpleArgs: {
 				return simpleRule;
 			}
 			case StackArgs: {
-				StackType stackItem = rti.getStackItem(stackIndex);
+				StackElement stackItem = renderer.getStackItem(stackIndex);
 				return stackItem.getRule();
 			}
 			case ParentArgs: {
@@ -211,11 +211,11 @@ public class ASTRuleSpecifier extends ASTExpression {
 			}
 			case DynamicArgs: {
 				StackRule ret = new StackRule(shapeType, argSize, typeSignature);
-				ret.evalArgs(rti, arguments, parent);
+				ret.evalArgs(renderer, arguments, parent);
 				return ret;
 			}
 			case ShapeArgs: {
-				return arguments.evalArgs(rti, parent);
+				return arguments.evalArgs(renderer, parent);
 			}
 			default: {
 				return null;
@@ -224,7 +224,7 @@ public class ASTRuleSpecifier extends ASTExpression {
 	}
 
 	@Override
-	public int evaluate(double[] result, int length, RTI rti) {
+	public int evaluate(double[] result, int length, CFDGRenderer renderer) {
 		Logger.error("Improper evaluation of a rule specifier", location);
 		return -1;
 	}

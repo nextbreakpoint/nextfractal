@@ -27,9 +27,9 @@ package com.nextbreakpoint.nextfractal.contextfree.grammar.ast;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGRenderer;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.Logger;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.Modification;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.RTI;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.CompilePhase;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ExpType;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.Locality;
@@ -71,14 +71,14 @@ public class ASTCons extends ASTExpression {
 	}
 
 	@Override
-	public int evaluate(double[] result, int length, RTI rti) {
+	public int evaluate(double[] result, int length, CFDGRenderer renderer) {
 		if ((type.getType() & (ExpType.NumericType.getType() | ExpType.FlagType.getType())) == 0 || (type.getType() & (ExpType.ModType.getType() | ExpType.RuleType.getType())) != 0) {
 			Logger.error("Non-numeric expression in a numeric context", null);
 			return -1;
 		}
 		int count = 0;
 		for (ASTExpression child : children) {
-			int num = child.evaluate(result, length, rti);
+			int num = child.evaluate(result, length, renderer);
 			if (num < 0) {
 				return -1;
 			}
@@ -92,9 +92,9 @@ public class ASTCons extends ASTExpression {
 	}		
 
 	@Override
-	public void evaluate(Modification result, boolean shapeDest, RTI rti) {
+	public void evaluate(Modification result, boolean shapeDest, CFDGRenderer renderer) {
 		for (ASTExpression child : children) {
-			child.evaluate(result, shapeDest, rti);
+			child.evaluate(result, shapeDest, renderer);
 		}
 	}
 

@@ -28,7 +28,7 @@ import java.awt.geom.AffineTransform;
 
 import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGDriver;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.Logger;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.RTI;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGRenderer;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.Shape;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.CompilePhase;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ExpType;
@@ -71,13 +71,13 @@ public class ASTPathOp extends ASTReplacement {
 	}
 
 	@Override
-	public void traverse(Shape parent, boolean tr, RTI rti) {
-		if (rti.getCurrentPath().isComplete()) {
+	public void traverse(Shape parent, boolean tr, CFDGRenderer renderer) {
+		if (renderer.getCurrentPath().isComplete()) {
 			return;
 		}
 		double[] opData = new double[7];
-		pushData(opData, rti);
-		rti.getCurrentPath().addPathOp(this, opData, parent, tr, rti);
+		pushData(opData, renderer);
+		renderer.getCurrentPath().addPathOp(this, opData, parent, tr, renderer);
 	}
 
 	@Override
@@ -110,9 +110,9 @@ public class ASTPathOp extends ASTReplacement {
 		}
 	}
 
-	private void pushData(double[] opData, RTI rti) {
+	private void pushData(double[] opData, CFDGRenderer renderer) {
 		if (arguments != null) {
-			if (arguments.evaluate(opData, 7, rti) < 0) {
+			if (arguments.evaluate(opData, 7, renderer) < 0) {
 				Logger.error("Cannot evaluate arguments", location);
 			}
 		} else {

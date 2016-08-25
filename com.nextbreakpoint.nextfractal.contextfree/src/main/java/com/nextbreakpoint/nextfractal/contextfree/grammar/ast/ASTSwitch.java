@@ -28,8 +28,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGDriver;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGRenderer;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.Logger;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.RTI;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.Shape;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.CompilePhase;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ExpType;
@@ -90,7 +90,7 @@ public class ASTSwitch extends ASTReplacement {
 	}
 
 	@Override
-	public void traverse(Shape parent, boolean tr, RTI rti) {
+	public void traverse(Shape parent, boolean tr, CFDGRenderer renderer) {
 		double[] caveValue = new double[1];
 		if (switchExp.evaluate(caveValue, 1) != 1) {
 			Logger.error("Error evaluating switch selector", location);
@@ -99,9 +99,9 @@ public class ASTSwitch extends ASTReplacement {
 		
 		ASTRepContainer caseVal = caseStatements.get((int)Math.floor(caveValue[0]));
 		if (caseVal != null) {
-			caseVal.traverse(parent, tr, rti, false);
+			caseVal.traverse(parent, tr, renderer, false);
 		} else {
-			elseBody.traverse(parent, tr, rti, false);
+			elseBody.traverse(parent, tr, renderer, false);
 		}
 	}
 	

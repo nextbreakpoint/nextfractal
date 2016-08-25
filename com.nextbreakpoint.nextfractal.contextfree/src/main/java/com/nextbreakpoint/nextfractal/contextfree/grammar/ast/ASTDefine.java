@@ -242,22 +242,22 @@ public class ASTDefine extends ASTReplacement {
 	}
 
 	@Override
-	public void traverse(Shape parent, boolean tr, RTI rti) {
+	public void traverse(Shape parent, boolean tr, CFDGRenderer renderer) {
 		if (defineType != DefineType.StackDefine) {
 			return;
 		}
-		if (rti.getStackSize() + tupleSize > rti.getMaxStackSize()) {
+		if (renderer.getStackSize() + tupleSize > renderer.getMaxStackSize()) {
 			Logger.error("Maximum stack depth exceeded", location);
 		}
 
-		rti.setStackSize(rti.getStackSize() + tupleSize);
-		rti.getCurrentSeed().add(getChildChange().getModData().getRand64Seed());
-		StackType dest = rti.getStackItem(rti.getStackSize() - 1);
+		renderer.setStackSize(renderer.getStackSize() + tupleSize);
+		renderer.getCurrentSeed().add(getChildChange().getModData().getRand64Seed());
+		StackElement dest = renderer.getStackItem(renderer.getStackSize() - 1);
 		
 		switch (expType) {
 			case NumericType:
 				double[] result = new double[1];
-				if (exp.evaluate(result, tupleSize, rti) != tupleSize) {
+				if (exp.evaluate(result, tupleSize, renderer) != tupleSize) {
 					Logger.error("Error evaluating parameters (too many or not enough)", null);
 				}
 				dest.setNumber(result[0]);
@@ -265,12 +265,12 @@ public class ASTDefine extends ASTReplacement {
 	
 			case ModType:
 				Modification[] mod = new Modification[1];
-				getChildChange().setVal(mod, rti);
+				getChildChange().setVal(mod, renderer);
 				dest.setModification(mod[0]);
 				break;
 	
 			case RuleType:
-				dest.setRule(exp.evalArgs(rti, parent.getParameters()));
+				dest.setRule(exp.evalArgs(renderer, parent.getParameters()));
 				break;
 	
 			default:
@@ -278,7 +278,7 @@ public class ASTDefine extends ASTReplacement {
 				break;
 		}
 
-		rti.setLogicalStackTop(rti.getStackSize());
+		renderer.setLogicalStackTop(renderer.getStackSize());
 	}
 
 	public CFDGDriver getDriver() {

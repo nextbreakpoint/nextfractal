@@ -33,6 +33,7 @@ import com.nextbreakpoint.nextfractal.contextfree.core.AffineTransform1D;
 import com.nextbreakpoint.nextfractal.contextfree.core.AffineTransformTime;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.*;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.*;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.exceptions.DeferUntilRuntimeException;
 import org.antlr.v4.runtime.Token;
 
 public class ASTModTerm extends ASTExpression {
@@ -108,19 +109,19 @@ public class ASTModTerm extends ASTExpression {
 	}
 
 	@Override
-	public int evaluate(double[] result, int length, RTI rti) {
+	public int evaluate(double[] result, int length, CFDGRenderer renderer) {
         Logger.error("Improper evaluation of an adjustment expression", location);
         return -1;
 	}
 
 	@Override
-	public void evaluate(Modification result, boolean shapeDest, RTI rti) {
+	public void evaluate(Modification result, boolean shapeDest, CFDGRenderer renderer) {
 		double[] modArgs = new double[6];
 		int argcount = 0;
 
 		if (args != null) {
 			if (modType != ModType.modification && args.type == ExpType.NumericType) {
-				argcount = args.evaluate(modArgs, 6, rti);
+				argcount = args.evaluate(modArgs, 6, renderer);
 			} else if (modType == ModType.modification && args.type != ExpType.ModType) {
                 Logger.error("Adjustments require numeric arguments", location);
                 return;
@@ -270,9 +271,9 @@ public class ASTModTerm extends ASTExpression {
 				 if (argcount != 2) {
 				 	 for (int i = 0; i < argcount; i++) {
 						 if ((result.colorAssignment() & mask) != 0 || (!hue && color[colorComp] != 0.0)) {
-							 if (rti == null) throw new DeferUntilRuntimeException();
+							 if (renderer == null) throw new DeferUntilRuntimeException();
 							 if (!shapeDest) {
-								 rti.colorConflict(getLocation());
+								 renderer.colorConflict(getLocation());
 							 }
 						 }
 						 if (shapeDest) {
@@ -286,9 +287,9 @@ public class ASTModTerm extends ASTExpression {
 					 }
 				 } else {
 					 if ((result.colorAssignment() & mask) != 0 || (color[colorComp] != 0.0) || (!hue && target[targetComp] != 0.0)) {
-						 if (rti == null) throw new DeferUntilRuntimeException();
+						 if (renderer == null) throw new DeferUntilRuntimeException();
 						 if (!shapeDest) {
-							 rti.colorConflict(getLocation());
+							 renderer.colorConflict(getLocation());
 						 }
 					 }
 					 if (shapeDest) {
@@ -311,9 +312,9 @@ public class ASTModTerm extends ASTExpression {
 			}
 			case hueTarg: {
 				 if ((result.colorAssignment() & mask) != 0 || (color[colorComp] != 0.0)) {
-					 if (rti == null) throw new DeferUntilRuntimeException();
+					 if (renderer == null) throw new DeferUntilRuntimeException();
 					 if (!shapeDest) {
-						 rti.colorConflict(getLocation());
+						 renderer.colorConflict(getLocation());
 					 }
 				 }
 				 if (shapeDest) {
@@ -329,9 +330,9 @@ public class ASTModTerm extends ASTExpression {
 			case targSat: {
 				targetComp += modType.getType() - ModType.hueTarg.getType();
 				if (target[targetComp] != 0.0) {
-					 if (rti == null) throw new DeferUntilRuntimeException();
+					 if (renderer == null) throw new DeferUntilRuntimeException();
 					 if (!shapeDest) {
-						 rti.colorConflict(getLocation());
+						 renderer.colorConflict(getLocation());
 					 }
 				}
 				 if (shapeDest) {
@@ -366,7 +367,7 @@ public class ASTModTerm extends ASTExpression {
 				break;
 			}
 			case modification: {
-				if (rti == null) {
+				if (renderer == null) {
 					if (args != null && getArguments() instanceof ASTModification) {
 						ASTModification mod = (ASTModification)getArguments();
 						if (mod == null || (mod.getModClass().getType() & (ModClass.HueClass.getType() | ModClass.HueTargetClass.getType() | ModClass.BrightClass.getType() | ModClass.BrightTargetClass.getType() | ModClass.SatClass.getType() | ModClass.SatTargetClass.getType() | ModClass.AlphaClass.getType() | ModClass.AlphaTargetClass.getType())) != 0) {
@@ -374,7 +375,7 @@ public class ASTModTerm extends ASTExpression {
 						}
 					}
 				}
-				getArguments().evaluate(result, shapeDest, rti);
+				getArguments().evaluate(result, shapeDest, renderer);
 				break;
 			}
 			default:

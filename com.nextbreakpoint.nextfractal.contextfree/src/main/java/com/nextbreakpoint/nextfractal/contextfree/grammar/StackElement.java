@@ -29,17 +29,17 @@ import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTParameter;
 
 import java.util.List;
 
-public class StackType {
+public class StackElement {
 	private double number;
 	private StackRule rule;
 	private StackRule ruleHeader;
 	private List<ASTParameter> typeInfo;
 
-	public StackType(double number) {
+	public StackElement(double number) {
 		// TODO completare
 	}
 
-	public StackType(StackRule rule) {
+	public StackElement(StackRule rule) {
 		// TODO completare
 	}
 
@@ -59,7 +59,7 @@ public class StackType {
 		return typeInfo;
 	}
 
-	public void evalArgs(RTI rti, ASTExpression arguments, List<ASTParameter> parameters, boolean sequential) {
+	public void evalArgs(CFDGRenderer renderer, ASTExpression arguments, List<ASTParameter> parameters, boolean sequential) {
 		// TODO completare
 	}
 

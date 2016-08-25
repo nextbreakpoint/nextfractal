@@ -24,7 +24,7 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.grammar.ast;
 
-import com.nextbreakpoint.nextfractal.contextfree.grammar.RTI;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGRenderer;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ExpType;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.Locality;
 import org.antlr.v4.runtime.Token;
@@ -71,7 +71,7 @@ public class ASTReal extends ASTExpression {
 	}
 
 	@Override
-	public int evaluate(double[] result, int length, RTI rti) {
+	public int evaluate(double[] result, int length, CFDGRenderer renderer) {
 		if (result != null && length < 1) {
 			return -1;
 		}

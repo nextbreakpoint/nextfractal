@@ -96,12 +96,12 @@ public class ASTTransform extends ASTReplacement {
 	}
 
 	@Override
-	public void traverse(Shape parent, boolean tr, RTI rti) {
+	public void traverse(Shape parent, boolean tr, CFDGRenderer renderer) {
 		AffineTransform dummy = new AffineTransform();
 		@SuppressWarnings("unchecked")
 		SymmList transforms = new SymmList();
-		List<ASTModification> mods = AST.getTransforms(expHolder, transforms, rti, false, dummy);
-		Rand64 cloneSeed = rti.getCurrentSeed();
+		List<ASTModification> mods = AST.getTransforms(expHolder, transforms, renderer, false, dummy);
+		Rand64 cloneSeed = renderer.getCurrentSeed();
 		Shape transChild = parent;
 		boolean opsOnly = body.getRepType() == RepElemType.op.getType();
 		if (opsOnly && !tr) {
@@ -112,19 +112,19 @@ public class ASTTransform extends ASTReplacement {
 		for (int i = 0; i < totalLength; i++) {
 			Shape child = transChild;
 			if (i < modsLength) {
-				mods.get(i).evaluate(child.getWorldState(), true, rti);
+				mods.get(i).evaluate(child.getWorldState(), true, renderer);
 			} else {
 				child.getWorldState().getTransform().preConcatenate(transforms.getTransform(i - modsLength));
 			}
-			rti.getCurrentSeed().bump();
-			int size = rti.getStackSize();
+			renderer.getCurrentSeed().bump();
+			int size = renderer.getStackSize();
 			for (ASTReplacement rep : body.getBody()) {
 				if (clone) {
-					rti.setCurrentSeed(cloneSeed);
+					renderer.setCurrentSeed(cloneSeed);
 				}
-				rep.traverse(child, tr || opsOnly, rti);
+				rep.traverse(child, tr || opsOnly, renderer);
 			}
-			rti.unwindStack(size, body.getParameters());
+			renderer.unwindStack(size, body.getParameters());
 		}
 	}
 }

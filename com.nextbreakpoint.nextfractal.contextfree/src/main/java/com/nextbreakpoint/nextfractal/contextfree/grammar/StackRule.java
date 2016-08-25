@@ -71,11 +71,11 @@ public class StackRule {
 		this.refCount = refCount;
 	}
 
-	public void evalArgs(RTI rti, ASTExpression arguments, StackRule parent) {
+	public void evalArgs(CFDGRenderer renderer, ASTExpression arguments, StackRule parent) {
 		// TODO completare
 	}
 
-	public void copyParams(StackType[] stack, int size) {
+	public void copyParams(StackElement[] stack, int size) {
 		// TODO completare
 	}
 }

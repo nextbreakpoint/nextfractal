@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGDriver;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.RTI;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGRenderer;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.Shape;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.CompilePhase;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.PathOp;
@@ -147,14 +147,14 @@ public class ASTRepContainer {
 		}
 	}
 	
-	public void traverse(Shape parent, boolean tr, RTI rti, boolean getParams) {
-		int size = rti.getStackSize();
+	public void traverse(Shape parent, boolean tr, CFDGRenderer renderer, boolean getParams) {
+		int size = renderer.getStackSize();
 		if (getParams && parent.getParameters() != null) {
-			rti.initStack(parent.getParameters());
+			renderer.initStack(parent.getParameters());
 		}
 		for (ASTReplacement rep : body) {
-			rep.traverse(parent, tr, rti);
+			rep.traverse(parent, tr, renderer);
 		}
-		rti.unwindStack(size, getParameters());
+		renderer.unwindStack(size, getParameters());
 	}
 }

@@ -83,48 +83,48 @@ public class ASTPathCommand extends ASTReplacement {
 	}
 
 	@Override
-	public void traverse(Shape parent, boolean tr, RTI rti) {
-		if (rti.isOpsOnly()) {
+	public void traverse(Shape parent, boolean tr, CFDGRenderer renderer) {
+		if (renderer.isOpsOnly()) {
 			Logger.error("Path commands not allowed at this point", location);
 		}
 
 		Shape child = new Shape(parent);
 		double width = strokeWidth;
-		replace(child, rti);
+		replace(child, renderer);
 
 		double[] value = new double[1];
-		if (parameters != null && parameters.evaluate(value, 1, rti) != 1) {
+		if (parameters != null && parameters.evaluate(value, 1, renderer) != 1) {
 			Logger.error("Error computing stroke width", location);
 		}
 		width = value[0];
 
 		CommandInfo info = null;
 
-		if (rti.getCurrentPath().isCached()) {
-			CommandInfo next = rti.getCurrentCommand().next();
-			if (next == rti.getCurrentPath().getCommandInfo().end()) {
+		if (renderer.getCurrentPath().isCached()) {
+			CommandInfo next = renderer.getCurrentCommand().next();
+			if (next == renderer.getCurrentPath().getCommandInfo().end()) {
 				Logger.error("Not enough path commands in cache", location);
 			}
 			info = next;
 		} else {
-			if (rti.getCurrentPath().getPath().getTotalVertices() == 0) {
+			if (renderer.getCurrentPath().getPath().getTotalVertices() == 0) {
 				Logger.error("Path commands must be preceeded by at least one path operation", location);
 			}
-			rti.setWantCommand(false);
-			rti.getCurrentPath().finish(false, rti);
+			renderer.setWantCommand(false);
+			renderer.getCurrentPath().finish(false, renderer);
 
 			//TODO controllare
 
-			infoCache.tryInit(rti.getIndex(), rti.getCurrentPath(), width, this);
-			if (infoCache.getPathUID() == rti.getCurrentPath().getPathUID() && infoCache.getIndex() == rti.getIndex()) {
-				rti.getCurrentPath().getCommandInfo().pushBack(infoCache);
+			infoCache.tryInit(renderer.getIndex(), renderer.getCurrentPath(), width, this);
+			if (infoCache.getPathUID() == renderer.getCurrentPath().getPathUID() && infoCache.getIndex() == renderer.getIndex()) {
+				renderer.getCurrentPath().getCommandInfo().pushBack(infoCache);
 			} else {
-				rti.getCurrentPath().getCommandInfo().emplaceBack(rti.getIndex(), rti.getCurrentPath(), width, this);
+				renderer.getCurrentPath().getCommandInfo().emplaceBack(renderer.getIndex(), renderer.getCurrentPath(), width, this);
 			}
-			info = rti.getCurrentPath().getCommandInfo().back();
+			info = renderer.getCurrentPath().getCommandInfo().back();
 		}
 
-		rti.processPathCommand(child, info);
+		renderer.processPathCommand(child, info);
 	}
 
 	@Override

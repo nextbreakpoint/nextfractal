@@ -24,13 +24,14 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.grammar;
 
+import com.nextbreakpoint.nextfractal.contextfree.core.ExtendedGeneralPath;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTCompiledPath;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTPathCommand;
 
 import java.awt.geom.GeneralPath;
 
 public class CommandInfo {
-    private GeneralPath path;
+    private ExtendedGeneralPath path;
     private Long pathUID;
     private int index;
 
@@ -42,24 +43,24 @@ public class CommandInfo {
         // TODO completare
     }
 
-    public GeneralPath getPath() {
-        return path;
-    }
-
-    public void setPath(GeneralPath path) {
-        this.path = path;
-    }
-
-    public void tryInit(int index, ASTCompiledPath currentPath, double width, ASTPathCommand astPathCommand) {
-        // TODO completare
-    }
-
     public Long getPathUID() {
         return pathUID;
     }
 
     public void setPathUID(Long pathUID) {
         this.pathUID = pathUID;
+    }
+
+    public ExtendedGeneralPath getPath() {
+        return path;
+    }
+
+    public void setPath(ExtendedGeneralPath path) {
+        this.path = path;
+    }
+
+    public void tryInit(int index, ASTCompiledPath currentPath, double width, ASTPathCommand pathCommand) {
+        // TODO completare
     }
 
     public int getIndex() {

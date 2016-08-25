@@ -148,52 +148,52 @@ public class ASTRule extends ASTReplacement implements Comparable<ASTRule> {
 	}
 
 	@Override
-	public void traverse(Shape parent, boolean tr, RTI rti) {
-		rti.setCurrentSeed(parent.getWorldState().getRand64Seed());
+	public void traverse(Shape parent, boolean tr, CFDGRenderer renderer) {
+		renderer.setCurrentSeed(parent.getWorldState().getRand64Seed());
 		if (isPath) {
-			rti.processPrimShape(parent, this);
+			renderer.processPrimShape(parent, this);
 		} else {
-			ruleBody.traverse(parent, tr, rti, true);
+			ruleBody.traverse(parent, tr, renderer, true);
 			parent.releaseParams();
 		}
 	}
 	
-	public void traversePath(Shape parent, RTI rti) {
-		rti.init();
-		rti.setCurrentSeed(parent.getWorldState().getRand64Seed());
-		rti.setRandUsed(false);
+	public void traversePath(Shape parent, CFDGRenderer renderer) {
+		renderer.init();
+		renderer.setCurrentSeed(parent.getWorldState().getRand64Seed());
+		renderer.setRandUsed(false);
 		
 		ASTCompiledPath savedPath = null;
 		
 		if (cachedPath != null && cachedPath.getParameters().equals(parent.getParameters())) {
-			savedPath = rti.getCurrentPath();
-			rti.setCurrentPath(cachedPath);
-			rti.setCurrentCommand(cachedPath.getCommandInfo().iterator());
+			savedPath = renderer.getCurrentPath();
+			renderer.setCurrentPath(cachedPath);
+			renderer.setCurrentCommand(cachedPath.getCommandInfo().iterator());
 		}
 		
-		ruleBody.traverse(parent, false, rti, true);
-		if (!rti.getCurrentPath().isComplete()) {
-			rti.getCurrentPath().finish(true, rti);
+		ruleBody.traverse(parent, false, renderer, true);
+		if (!renderer.getCurrentPath().isComplete()) {
+			renderer.getCurrentPath().finish(true, renderer);
 		}
-		if (rti.getCurrentPath().useTerminal()) {
-			rti.getCurrentPath().getTerminalCommand().traverse(parent, false, rti);
+		if (renderer.getCurrentPath().useTerminal()) {
+			renderer.getCurrentPath().getTerminalCommand().traverse(parent, false, renderer);
 		}
 		
 		if (savedPath != null) {
-			rti.setCurrentPath(savedPath);
+			renderer.setCurrentPath(savedPath);
 		} else {
-			if (rti.isRandUsed() && cachedPath == null) {
-				cachedPath = rti.getCurrentPath();
+			if (renderer.isRandUsed() && cachedPath == null) {
+				cachedPath = renderer.getCurrentPath();
 				cachedPath.setIsComplete(true);
 				cachedPath.setParameters(new StackRule(parent.getParameters()));
-				rti.setCurrentPath(new ASTCompiledPath(driver, getLocation()));
+				renderer.setCurrentPath(new ASTCompiledPath(driver, getLocation()));
 			} else {
-				rti.getCurrentPath().getPath().clear();
-				rti.getCurrentPath().getCommandInfo().clear();
-				rti.getCurrentPath().setUseTerminal(false);
-				rti.getCurrentPath().setPathUID(ASTCompiledPath.nextPathUID());
-				if (rti.getCurrentPath().getParameters() != null) {
-					rti.getCurrentPath().setParameters(null);
+				renderer.getCurrentPath().getPath().clear();
+				renderer.getCurrentPath().getCommandInfo().clear();
+				renderer.getCurrentPath().setUseTerminal(false);
+				renderer.getCurrentPath().setPathUID(ASTCompiledPath.nextPathUID());
+				if (renderer.getCurrentPath().getParameters() != null) {
+					renderer.getCurrentPath().setParameters(null);
 				}
 			}
 		}

@@ -38,7 +38,7 @@ public class CFDG {
 	private ASTRule needle;
 	private ASTReplacement initShape;
 	private ASTRepContainer cfdgContents;
-	private List<ShapeType> shapeTypes = new ArrayList<ShapeType>();
+	private List<ShapeElement> shapeTypes = new ArrayList<ShapeElement>();
 	private Stack<ASTRule> rules = new Stack<ASTRule>();
 	private Map<Integer, ASTDefine> functions = new HashMap<Integer, ASTDefine>();
 	private Map<CFG, Integer> paramDepth = new HashMap<CFG, Integer>();
@@ -64,12 +64,12 @@ public class CFDG {
 		return cfdgDriver;
 	}
 
-	public Shape getInitialShape(RTI rti) {
+	public Shape getInitialShape(CFDGRenderer renderer) {
 		Shape shape = new Shape();
 		shape.worldState.setColor(new HSBColor(0,0,0,1));
 		shape.worldState.setColorTarget(new HSBColor(0,0,0,1));
 		shape.worldState.getTransformTime().setEnd(1);
-		initShape.replace(shape, rti);
+		initShape.replace(shape, renderer);
 		shape.worldState.getTransform().translate(tileOffset.getX(), tileOffset.getY());
 		initialShape = shape;
 		return initialShape;
@@ -79,14 +79,14 @@ public class CFDG {
 		return cfdgContents;
 	}
 
-	public double[] getBackgroundColor(RTI rti) {
+	public double[] getBackgroundColor(CFDGRenderer renderer) {
 		return backgroundColor;
 	}
 
-	public void setBackgroundColor(RTI rti) {
+	public void setBackgroundColor(CFDGRenderer renderer) {
 		Modification white = new Modification();
 		white.setColor(new HSBColor(0.0, 0.0, 1.0, 1.0));
-		if (hasParameter(CFG.Background, white, rti)) {
+		if (hasParameter(CFG.Background, white, renderer)) {
 			white.color().getRGBA(backgroundColor);
 			if (!useAlpha) {
 				backgroundColor[3] = 1.0;
@@ -131,9 +131,9 @@ public class CFDG {
 
 	public boolean addRule(ASTRule rule) {
 		rules.push(rule);
-		ShapeType type = shapeTypes.get(rule.getNameIndex());
-		if (type.getShapeType() == ShapeClass.NewShape) {
-			type.setShapeType(rule.isPath() ? ShapeClass.PathType : ShapeClass.RuleType);
+		ShapeElement type = shapeTypes.get(rule.getNameIndex());
+		if (type.getShapeType() == ShapeType.NewShape) {
+			type.setShapeType(rule.isPath() ? ShapeType.PathType : ShapeType.RuleType);
 		}
 		if (type.getParameters() != null && !type.getParameters().isEmpty()) {
 			rule.getRuleBody().getParameters().clear();
@@ -293,40 +293,40 @@ public class CFDG {
 		return false;
 	}
 
-	public void getSummetry(SymmList syms, RTI rti) {
+	public void getSummetry(SymmList syms, CFDGRenderer renderer) {
 		// TODO controllare
 		syms.clear();
 		ASTExpression exp = hasParameter(CFG.Symmetry);
-		List<ASTModification> left = AST.getTransforms(exp, syms, rti, isTiled(null, null), tileMod.getTransform());
+		List<ASTModification> left = AST.getTransforms(exp, syms, renderer, isTiled(null, null), tileMod.getTransform());
 		if (!left.isEmpty()) {
 			Logger.fail("At least one term was invalid", exp.getLocation());
 		}
 	}
 
-	public boolean hasParameter(CFG p, double[] value, RTI rti) {
+	public boolean hasParameter(CFG p, double[] value, CFDGRenderer renderer) {
 		ASTExpression exp = hasParameter(p);
 		if (exp == null || exp.getType() != ExpType.NumericType) {
 			return false;
 		}
-		if (!exp.isConstant() && rti != null) {
+		if (!exp.isConstant() && renderer != null) {
 			Logger.fail("This expression must be constant", exp.getLocation());
 			return false;
 		} else {
-			exp.evaluate(value, 1, rti);
+			exp.evaluate(value, 1, renderer);
 		}
 		return true;
 	}
 
-	public boolean hasParameter(CFG p, Modification value, RTI rti) {
+	public boolean hasParameter(CFG p, Modification value, CFDGRenderer renderer) {
 		ASTExpression exp = hasParameter(p);
 		if (exp == null || exp.getType() != ExpType.ModType) {
 			return false;
 		}
-		if (!exp.isConstant() && rti != null) {
+		if (!exp.isConstant() && renderer != null) {
 			Logger.fail("This expression must be constant", exp.getLocation());
 			return false;
 		} else {
-			exp.evaluate(value, true, rti);//TODO controllare
+			exp.evaluate(value, true, renderer);//TODO controllare
 		}
 		return true;
 	}
@@ -463,11 +463,11 @@ public class CFDG {
 	public int encodeShapeName(String s) {
 		int i = tryEncodeShapeName(s);
 		if (i >= 0) return i;
-		shapeTypes.add(new ShapeType(s));
+		shapeTypes.add(new ShapeElement(s));
 		return shapeTypes.size() - 1;
 	}
 
-	public ShapeClass getShapeType(int nameIndex) {
+	public ShapeType getShapeType(int nameIndex) {
 		return shapeTypes.get(nameIndex).getShapeType();
 	}
 
@@ -492,12 +492,12 @@ public class CFDG {
 	}
 
 	public String setShapeParams(int nameIndex, ASTRepContainer p, int argSize, boolean isPath) {
-		ShapeType type = shapeTypes.get(nameIndex);
+		ShapeElement type = shapeTypes.get(nameIndex);
 		if (type.isShape()) {
 			if (p.getParameters().isEmpty()) {
 				return "Shape has already been declared. Parameter declaration must be on the first shape declaration only";
 			}
-			if (type.getShapeType() == ShapeClass.PathType && !isPath) {
+			if (type.getShapeType() == ShapeType.PathType && !isPath) {
 				return "Shape name already in use by another rule or path";
 			}
 			if (isPath) {
@@ -505,14 +505,14 @@ public class CFDG {
 			}
 			return null;
 		}
-		if (type.getShapeType() != ShapeClass.NewShape) {
+		if (type.getShapeType() != ShapeType.NewShape) {
 			return "Shape name already in use by another rule or path";
 		}
 		type.getParameters().clear();
 		type.getParameters().addAll(p.getParameters());
 		type.setIsShape(true);
 		type.setArgSize(argSize);
-		type.setShapeType(isPath ? ShapeClass.PathType : ShapeClass.NewShape);
+		type.setShapeType(isPath ? ShapeType.PathType : ShapeType.NewShape);
 		return null;
 	}
 
@@ -560,7 +560,7 @@ public class CFDG {
 		return null;
 	}
 
-	public RTI renderer(CFDGDriver driver, int width, int height, double minSize, int variation, double border) {
+	public CFDGRenderer renderer(CFDGDriver driver, int width, int height, double minSize, int variation, double border) {
 		try {
 			ASTExpression startExp = paramExp.get(CFG.StartShape);
 
@@ -578,7 +578,7 @@ public class CFDG {
 				return null;
 			}
 
-			RTI rti = new RTI(this, width, height, minSize, variation, border);
+			CFDGRenderer renderer = new CFDGRenderer(this, width, height, minSize, variation, border);
 
 			Modification tiled = null;
 			Modification sized = null;
@@ -610,13 +610,13 @@ public class CFDG {
 
 			if (hasParameter(CFG.MaxShapes, maxShape, null)) {
 				if (maxShape[0] > 1) {
-					rti.setMaxShapes((int)maxShape[0]);
+					renderer.setMaxShapes((int)maxShape[0]);
 				}
 			}
 
-			rti.initBounds();
+			renderer.initBounds();
 
-			return rti;
+			return renderer;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -632,9 +632,9 @@ public class CFDG {
 		}
 	}
 
-	public void traverse(Shape shape, boolean tr, RTI rti) {
+	public void traverse(Shape shape, boolean tr, CFDGRenderer renderer) {
 		ASTRule rule = rules.iterator().next();
-		rule.traverse(shape, tr, rti);
+		rule.traverse(shape, tr, renderer);
 	}
 
 	public boolean usesTime() {

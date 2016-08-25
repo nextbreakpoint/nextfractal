@@ -186,30 +186,30 @@ public class ASTLoop extends ASTReplacement {
 	}
 
 	@Override
-	public void traverse(Shape parent, boolean tr, RTI rti) {
+	public void traverse(Shape parent, boolean tr, CFDGRenderer renderer) {
 		Shape loopChild = parent;
 		boolean opsOnly = (loopBody.getRepType() | finallyBody.getRepType()) == RepElemType.op.getType();
 		if (opsOnly && !tr) {
 			loopChild.getWorldState().setTransform(null);
 		}
 		double[] data = new double[2];
-		rti.getCurrentSeed().add(getChildChange().getModData().getRand64Seed());
+		renderer.getCurrentSeed().add(getChildChange().getModData().getRand64Seed());
 		if (loopArgs != null) {
-			setupLoop(data, loopArgs, rti);
+			setupLoop(data, loopArgs, renderer);
 		} else {
 			data[0] = loopData[0];
 			data[1] = loopData[1];
 			data[2] = loopData[2];
 		}
-		int oldTop = rti.getLogicalStackTop();
+		int oldTop = renderer.getLogicalStackTop();
 		//TODO controllare
-		StackType index = rti.getStackItem(rti.getStackSize() - 1);
+		StackElement index = renderer.getStackItem(renderer.getStackSize() - 1);
 		index.setNumber(data[0]);
-		rti.addStackItem(new StackType(data[0]));
-		rti.setStackSize(rti.getStackSize() + 1);
-		rti.setLogicalStackTop((int)index.getNumber());
+		renderer.addStackItem(new StackElement(data[0]));
+		renderer.setStackSize(renderer.getStackSize() + 1);
+		renderer.setLogicalStackTop((int)index.getNumber());
 		for (;;) {
-			if (rti.isRequestStop() || RTI.abortEverything()) {
+			if (renderer.isRequestStop() || CFDGRenderer.abortEverything()) {
 				throw new RuntimeException("Stopping");
 			}
 			if (data[2] > 0.0) {
@@ -221,19 +221,19 @@ public class ASTLoop extends ASTReplacement {
 					break;
 				}
 			}
-			loopBody.traverse(loopChild, tr || opsOnly, rti, false);
-			getChildChange().evaluate(loopChild.getWorldState(), true, rti);
+			loopBody.traverse(loopChild, tr || opsOnly, renderer, false);
+			getChildChange().evaluate(loopChild.getWorldState(), true, renderer);
 			index.addNumber(data[2]);
 		}
-		finallyBody.traverse(loopChild, tr || opsOnly, rti, false);
+		finallyBody.traverse(loopChild, tr || opsOnly, renderer, false);
 		//TODO controllare
-		rti.removeStackItem(rti.getStackSize() - 1);
-		rti.setStackSize(rti.getStackSize() - 1);
-		rti.setLogicalStackTop(oldTop);
+		renderer.removeStackItem(renderer.getStackSize() - 1);
+		renderer.setStackSize(renderer.getStackSize() - 1);
+		renderer.setLogicalStackTop(oldTop);
 	}
 	
-	private void setupLoop(double[] data, ASTExpression exp, RTI rti) {
-		switch (exp.evaluate(data, 3, rti)) {
+	private void setupLoop(double[] data, ASTExpression exp, CFDGRenderer renderer) {
+		switch (exp.evaluate(data, 3, renderer)) {
 			case 1:
 				data[1] = data[0];
 				data[0] = 0.0;

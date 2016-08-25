@@ -96,12 +96,12 @@ public class ASTReplacement {
 		this.pathOp = pathOp;
 	}
 
-	public void replace(Shape s, RTI rti) {
+	public void replace(Shape s, CFDGRenderer renderer) {
 		if (shapeSpec.getArgSource() == ArgSource.NoArgs) {
 			s.setShapeType(shapeSpec.getShapeType());
 			s.setParameters(null);
 		} else {
-			s.setParameters(shapeSpec.evalArgs(rti, s.getParameters()));
+			s.setParameters(shapeSpec.evalArgs(renderer, s.getParameters()));
 			if (shapeSpec.getArgSource() == ArgSource.SimpleParentArgs) {
 				s.setShapeType(shapeSpec.getShapeType());
 			} else {
@@ -111,28 +111,28 @@ public class ASTReplacement {
 				s.setParameters(null);
 			}
 		}
-		rti.getCurrentSeed().add(childChange.getModData().getRand64Seed());
-		rti.getCurrentSeed().bump();
-		childChange.evaluate(s.getWorldState(), true, rti);
+		renderer.getCurrentSeed().add(childChange.getModData().getRand64Seed());
+		renderer.getCurrentSeed().bump();
+		childChange.evaluate(s.getWorldState(), true, renderer);
 		s.setArea(s.getWorldState().area());
 	}
 
-	public void traverse(Shape parent, boolean tr, RTI rti) {
+	public void traverse(Shape parent, boolean tr, CFDGRenderer renderer) {
 		Shape child = parent;
 		switch (repType) {
 			case replacement:
-				replace(child, rti);
-				child.getWorldState().setRand64Seed(rti.getCurrentSeed());
+				replace(child, renderer);
+				child.getWorldState().setRand64Seed(renderer.getCurrentSeed());
 				child.getWorldState().getRand64Seed().bump();
-				rti.processShape(child);
+				renderer.processShape(child);
 				break;
 
 			case op:
 				if (!tr) child.getWorldState().setTransform(null);
 			case mixed:
 			case command:
-				replace(child, rti);
-				rti.processSubpath(child, tr || repType == RepElemType.op, repType);
+				replace(child, renderer);
+				renderer.processSubpath(child, tr || repType == RepElemType.op, repType);
 				break;
 			default:
 				Logger.fail("Subpaths must be all path operation or all path command", location);

@@ -27,9 +27,9 @@ package com.nextbreakpoint.nextfractal.contextfree.grammar.ast;
 import java.util.List;
 
 import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGDriver;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.DeferUntilRuntimeException;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.exceptions.DeferUntilRuntimeException;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.Logger;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.RTI;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGRenderer;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.CompilePhase;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ExpType;
 import org.antlr.v4.runtime.Token;
@@ -79,7 +79,7 @@ public class ASTArray extends ASTExpression {
 	}
 
 	@Override
-	public int evaluate(double[] result, int length, RTI rti) {
+	public int evaluate(double[] result, int length, CFDGRenderer renderer) {
 		if (type != ExpType.NumericType) {
 			Logger.error("Non-numeric/flag expression in a numeric/flag context", location);
 			return -1;
@@ -88,9 +88,9 @@ public class ASTArray extends ASTExpression {
 			return -1;
 		}
 		if (result != null) {
-			if (rti == null && (data == null || !args.isConstant())) throw new DeferUntilRuntimeException();
+			if (renderer == null && (data == null || !args.isConstant())) throw new DeferUntilRuntimeException();
 			double[] i = new double[1];
-			if (args.evaluate(i, 1, rti) != 1) {
+			if (args.evaluate(i, 1, renderer) != 1) {
 				Logger.error("Cannot evaluate array index", location);
 				return -1;
 			}
@@ -101,7 +101,7 @@ public class ASTArray extends ASTExpression {
 			}
 			double[] source = data;
 			if (source == null) {
-				source = rti.getStackItem(stackIndex).getArray();
+				source = renderer.getStackItem(stackIndex).getArray();
 			}
 			for (int j = 0; j < this.length; j++) {
 				result[j] = source[j * this.stride + index];

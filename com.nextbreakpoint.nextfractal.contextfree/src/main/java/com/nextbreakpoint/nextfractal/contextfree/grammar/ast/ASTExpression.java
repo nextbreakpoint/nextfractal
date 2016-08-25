@@ -26,7 +26,7 @@ package com.nextbreakpoint.nextfractal.contextfree.grammar.ast;
 
 import com.nextbreakpoint.nextfractal.contextfree.grammar.Logger;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.Modification;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.RTI;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGRenderer;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.StackRule;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.CompilePhase;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ExpType;
@@ -116,7 +116,7 @@ public class ASTExpression {
 		return evaluate(result, length, null);
 	}
 
-	public int evaluate(double[] result, int length, RTI rti) {
+	public int evaluate(double[] result, int length, CFDGRenderer renderer) {
 		return 0;
 	}
 
@@ -124,11 +124,11 @@ public class ASTExpression {
 		evaluate(result, shapeDest, null);
 	}
 
-	public void evaluate(Modification result, boolean shapeDest, RTI rti) {
+	public void evaluate(Modification result, boolean shapeDest, CFDGRenderer renderer) {
 		throw new RuntimeException("Cannot convert this expression into an adjustment"); 
 	}
 
-	public StackRule evalArgs(RTI rti, StackRule parent) {
+	public StackRule evalArgs(CFDGRenderer renderer, StackRule parent) {
 		throw new RuntimeException("Cannot convert this expression into a shape"); 
 	}
 	

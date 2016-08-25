@@ -9,6 +9,7 @@ options
 
 @parser::header {
 import java.util.Map;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.exceptions.*;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.*;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.*;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.*;

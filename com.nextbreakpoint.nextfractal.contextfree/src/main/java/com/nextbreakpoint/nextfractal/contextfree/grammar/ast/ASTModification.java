@@ -32,6 +32,7 @@ import java.util.ListIterator;
 import com.nextbreakpoint.nextfractal.contextfree.core.Rand64;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.*;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.*;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.exceptions.DeferUntilRuntimeException;
 import org.antlr.v4.runtime.Token;
 
 public class ASTModification extends ASTExpression {
@@ -221,29 +222,29 @@ public class ASTModification extends ASTExpression {
 	}
 
 	@Override
-	public int evaluate(double[] result, int length, RTI rti) {
+	public int evaluate(double[] result, int length, CFDGRenderer renderer) {
 		Logger.error("Improper evaluation of an adjustment expression", location);
 		return -1;
 	}
 
 	@Override
-	public void evaluate(Modification result, boolean shapeDest, RTI rti) {
+	public void evaluate(Modification result, boolean shapeDest, CFDGRenderer renderer) {
 		if (shapeDest) {
 			result.concat(modData);
 		} else {
 			if (result.merge(modData)) {
-				if (rti != null) rti.colorConflict(getLocation());
+				if (renderer != null) renderer.colorConflict(getLocation());
 			}
 		}
 		for (ASTModTerm term : modExp) {
-			term.evaluate(result, shapeDest, rti);
+			term.evaluate(result, shapeDest, renderer);
 		}
 	}
 
-	public void setVal(Modification[] mod, RTI rti) {
+	public void setVal(Modification[] mod, CFDGRenderer renderer) {
 		mod[0] = modData;
 		for (ASTModTerm term : modExp) {
-			term.evaluate(modData, false, rti);
+			term.evaluate(modData, false, renderer);
 		}
 	}
 

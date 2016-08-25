@@ -25,10 +25,10 @@
 package com.nextbreakpoint.nextfractal.contextfree.grammar.ast;
 
 import com.nextbreakpoint.nextfractal.contextfree.core.Rand64;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.DeferUntilRuntimeException;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGRenderer;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.exceptions.DeferUntilRuntimeException;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.HSBColor;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.Logger;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.RTI;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.CompilePhase;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ExpType;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.FuncType;
@@ -81,7 +81,7 @@ public class ASTFunction extends ASTExpression {
 	}
 
 	@Override
-	public int evaluate(double[] result, int length, RTI rti) {
+	public int evaluate(double[] result, int length, CFDGRenderer renderer) {
 		if (type != ExpType.NumericType) {
 		   throw new RuntimeException("Non-numeric expression in a numeric context");
 		}
@@ -97,14 +97,14 @@ public class ASTFunction extends ASTExpression {
 		switch (funcType) {
 			case Min:
 			case Max: {
-				result[0] = minMax(arguments, rti, funcType == FuncType.Min);
+				result[0] = minMax(arguments, renderer, funcType == FuncType.Min);
 				return 1;
 			}
 			case Dot: {
 				double[] l = new double[MAX_VECTOR_SIZE];
 				double[] r = new double[MAX_VECTOR_SIZE];
-				int lc = arguments.getChild(0).evaluate(l, MAX_VECTOR_SIZE, rti);
-				int rc = arguments.getChild(1).evaluate(r, MAX_VECTOR_SIZE, rti);
+				int lc = arguments.getChild(0).evaluate(l, MAX_VECTOR_SIZE, renderer);
+				int rc = arguments.getChild(1).evaluate(r, MAX_VECTOR_SIZE, renderer);
 				if (lc == rc && lc > 1) {
 					result[0] = 0.0;
 					for (int i = 0; i < lc; i++) {
@@ -116,8 +116,8 @@ public class ASTFunction extends ASTExpression {
 			case Cross: {
 				double[] l = new double[3];
 				double[] r = new double[3];
-				int lc = arguments.getChild(0).evaluate(l, 3, rti);
-				int rc = arguments.getChild(1).evaluate(r, 3, rti);
+				int lc = arguments.getChild(0).evaluate(l, 3, renderer);
+				int rc = arguments.getChild(1).evaluate(r, 3, renderer);
 				if (lc == rc && lc == 3) {
 					result[0] = l[1] * r[2] - l[2] * r[1];
 					result[1] = l[2] * r[0] - l[0] * r[2];
@@ -127,7 +127,7 @@ public class ASTFunction extends ASTExpression {
 			}
 			case Vec: {
 				double[] v = new double[MAX_VECTOR_SIZE];
-				int lv = arguments.getChild(0).evaluate(v, MAX_VECTOR_SIZE, rti);
+				int lv = arguments.getChild(0).evaluate(v, MAX_VECTOR_SIZE, renderer);
 				if (lv >= 1) {
 					for (int i = 0; i < destLength; i++) {
 						result[i] = v[i % lv];
@@ -137,7 +137,7 @@ public class ASTFunction extends ASTExpression {
 			}
 			case Hsb2Rgb: {
 				double[] c = new double[3];
-				int l = arguments.evaluate(c, 3, rti);
+				int l = arguments.evaluate(c, 3, renderer);
 				if (l == 3) {
 					double[] rgb = new double[4];
 					HSBColor color = new HSBColor(c[0], c[1], c[2], 1.0);
@@ -150,7 +150,7 @@ public class ASTFunction extends ASTExpression {
 			}
 			case Rgb2Hsb: {
 				double[] c = new double[3];
-				int l = arguments.evaluate(c, 3, rti);
+				int l = arguments.evaluate(c, 3, renderer);
 				if (l == 3) {
 					double[] rgb = new double[] { c[0], c[1], c[2], 1.0 };
 					HSBColor color = new HSBColor(rgb);
@@ -162,9 +162,9 @@ public class ASTFunction extends ASTExpression {
 			}
 			case RandIntDiscrete: {
 				double[] w = new double[MAX_VECTOR_SIZE];
-				int lw = arguments.evaluate(w, MAX_VECTOR_SIZE, rti);
+				int lw = arguments.evaluate(w, MAX_VECTOR_SIZE, renderer);
 				if (lw  >= 1) {
-					result[0] = rti.getCurrentSeed().getDiscrete(lw, w);
+					result[0] = renderer.getCurrentSeed().getDiscrete(lw, w);
 				}
 				return 1;
 			}
@@ -174,7 +174,7 @@ public class ASTFunction extends ASTExpression {
 		}
 
 		double[] a = new double[2];
-		int count = arguments.evaluate(a, 2, rti);
+		int count = arguments.evaluate(a, 2, renderer);
 		// no need to checkParam the argument count, the constructor already checked it
 
 		// But checkParam it anyway to make valgrind happy
@@ -258,7 +258,7 @@ public class ASTFunction extends ASTExpression {
 				result[0] = a[0] == 0.0 ? 0.0 : 1.0;
 				break;
 			case IsNatural:
-				result[0] = isNatural(rti, a[0]) ? 1 : 0;
+				result[0] = isNatural(renderer, a[0]) ? 1 : 0;
 				break;
 			case BitNot:
 				result[0] = (~((long)a[0])) & 0xFFFFFFFF;
@@ -301,105 +301,105 @@ public class ASTFunction extends ASTExpression {
 				result[0] = Math.ceil(a[0]);
 				break;
 			case Ftime:
-				if (rti == null) throw new DeferUntilRuntimeException();
-				result[0] = rti.getCurrentTime();
+				if (renderer == null) throw new DeferUntilRuntimeException();
+				result[0] = renderer.getCurrentTime();
 				break;
 			case Frame:
-				if (rti == null) throw new DeferUntilRuntimeException();
-				result[0] = rti.getCurrentFrame();
+				if (renderer == null) throw new DeferUntilRuntimeException();
+				result[0] = renderer.getCurrentFrame();
 				break;
 			case RandStatic:
 				result[0] = random * Math.abs(a[1] - a[0]) + Math.min(a[0], a[1]);
 				break;
 			case Rand:
-				if (rti == null) throw new DeferUntilRuntimeException();
-				rti.setRandUsed(true);
-				result[0] = rti.getCurrentSeed().getDouble() * Math.abs(a[1] - a[0]) + Math.min(a[0], a[1]);
+				if (renderer == null) throw new DeferUntilRuntimeException();
+				renderer.setRandUsed(true);
+				result[0] = renderer.getCurrentSeed().getDouble() * Math.abs(a[1] - a[0]) + Math.min(a[0], a[1]);
 				break;
 			case Rand2:
-				if (rti == null) throw new DeferUntilRuntimeException();
-				rti.setRandUsed(true);
-				result[0] = (rti.getCurrentSeed().getDouble() * 2.0 - 1.0) * a[1] + a[0];
+				if (renderer == null) throw new DeferUntilRuntimeException();
+				renderer.setRandUsed(true);
+				result[0] = (renderer.getCurrentSeed().getDouble() * 2.0 - 1.0) * a[1] + a[0];
 				break;
 			case RandExponential:
-				if (rti == null) throw new DeferUntilRuntimeException();
-				rti.setRandUsed(true);
-				result[0] = rti.getCurrentSeed().getExponential(a[0]);
+				if (renderer == null) throw new DeferUntilRuntimeException();
+				renderer.setRandUsed(true);
+				result[0] = renderer.getCurrentSeed().getExponential(a[0]);
 				break;
 			case RandGamma:
-				if (rti == null) throw new DeferUntilRuntimeException();
-				rti.setRandUsed(true);
-				result[0] = rti.getCurrentSeed().getGamma(a[0], a[1]);
+				if (renderer == null) throw new DeferUntilRuntimeException();
+				renderer.setRandUsed(true);
+				result[0] = renderer.getCurrentSeed().getGamma(a[0], a[1]);
 				break;
 			case RandWeibull:
-				if (rti == null) throw new DeferUntilRuntimeException();
-				rti.setRandUsed(true);
-				result[0] = rti.getCurrentSeed().getWeibull(a[0], a[1]);
+				if (renderer == null) throw new DeferUntilRuntimeException();
+				renderer.setRandUsed(true);
+				result[0] = renderer.getCurrentSeed().getWeibull(a[0], a[1]);
 				break;
 			case RandExtremeValue:
-				if (rti == null) throw new DeferUntilRuntimeException();
-				rti.setRandUsed(true);
-				result[0] = rti.getCurrentSeed().getExtremeValue(a[0], a[1]);
+				if (renderer == null) throw new DeferUntilRuntimeException();
+				renderer.setRandUsed(true);
+				result[0] = renderer.getCurrentSeed().getExtremeValue(a[0], a[1]);
 				break;
 			case RandNormal:
-				if (rti == null) throw new DeferUntilRuntimeException();
-				rti.setRandUsed(true);
-				result[0] = rti.getCurrentSeed().getNormal(a[0], a[1]);
+				if (renderer == null) throw new DeferUntilRuntimeException();
+				renderer.setRandUsed(true);
+				result[0] = renderer.getCurrentSeed().getNormal(a[0], a[1]);
 				break;
 			case RandLogNormal:
-				if (rti == null) throw new DeferUntilRuntimeException();
-				rti.setRandUsed(true);
-				result[0] = rti.getCurrentSeed().getLogNormal(a[0], a[1]);
+				if (renderer == null) throw new DeferUntilRuntimeException();
+				renderer.setRandUsed(true);
+				result[0] = renderer.getCurrentSeed().getLogNormal(a[0], a[1]);
 				break;
 			case RandChiSquared:
-				if (rti == null) throw new DeferUntilRuntimeException();
-				rti.setRandUsed(true);
-				result[0] = rti.getCurrentSeed().getChiSquared(a[0], a[1]);
+				if (renderer == null) throw new DeferUntilRuntimeException();
+				renderer.setRandUsed(true);
+				result[0] = renderer.getCurrentSeed().getChiSquared(a[0], a[1]);
 				break;
 			case RandCauchy:
-				if (rti == null) throw new DeferUntilRuntimeException();
-				rti.setRandUsed(true);
-				result[0] = rti.getCurrentSeed().getCauchy(a[0], a[1]);
+				if (renderer == null) throw new DeferUntilRuntimeException();
+				renderer.setRandUsed(true);
+				result[0] = renderer.getCurrentSeed().getCauchy(a[0], a[1]);
 				break;
 			case RandFisherF:
-				if (rti == null) throw new DeferUntilRuntimeException();
-				rti.setRandUsed(true);
-				result[0] = rti.getCurrentSeed().getFisherF(a[0], a[1]);
+				if (renderer == null) throw new DeferUntilRuntimeException();
+				renderer.setRandUsed(true);
+				result[0] = renderer.getCurrentSeed().getFisherF(a[0], a[1]);
 				break;
 			case RandStudentT:
-				if (rti == null) throw new DeferUntilRuntimeException();
-				rti.setRandUsed(true);
-				result[0] = rti.getCurrentSeed().getStudentT(a[0], a[1]);
+				if (renderer == null) throw new DeferUntilRuntimeException();
+				renderer.setRandUsed(true);
+				result[0] = renderer.getCurrentSeed().getStudentT(a[0], a[1]);
 				break;
 			case RandInt:
-				if (rti == null) throw new DeferUntilRuntimeException();
-				rti.setRandUsed(true);
-				result[0] = Math.floor(rti.getCurrentSeed().getDouble() * Math.abs(a[1] - a[0]) + Math.min(a[0], a[1]));
+				if (renderer == null) throw new DeferUntilRuntimeException();
+				renderer.setRandUsed(true);
+				result[0] = Math.floor(renderer.getCurrentSeed().getDouble() * Math.abs(a[1] - a[0]) + Math.min(a[0], a[1]));
 				break;
 			case RandIntBernoulli:
-				if (rti == null) throw new DeferUntilRuntimeException();
-				rti.setRandUsed(true);
-				result[0] = rti.getCurrentSeed().getBernoulli(a[0]) != 0.0 ? 1.0 : 0.0;
+				if (renderer == null) throw new DeferUntilRuntimeException();
+				renderer.setRandUsed(true);
+				result[0] = renderer.getCurrentSeed().getBernoulli(a[0]) != 0.0 ? 1.0 : 0.0;
 				break;
 			case RandIntBinomial:
-				if (rti == null) throw new DeferUntilRuntimeException();
-				rti.setRandUsed(true);
-				result[0] = Math.floor(rti.getCurrentSeed().getBinomial(a[0], a[1]));
+				if (renderer == null) throw new DeferUntilRuntimeException();
+				renderer.setRandUsed(true);
+				result[0] = Math.floor(renderer.getCurrentSeed().getBinomial(a[0], a[1]));
 				break;
 			case RandIntNegBinomial:
-				if (rti == null) throw new DeferUntilRuntimeException();
-				rti.setRandUsed(true);
-				result[0] = Math.floor(rti.getCurrentSeed().getNegativeBinomial(a[0], a[1]));
+				if (renderer == null) throw new DeferUntilRuntimeException();
+				renderer.setRandUsed(true);
+				result[0] = Math.floor(renderer.getCurrentSeed().getNegativeBinomial(a[0], a[1]));
 				break;
 			case RandIntPoisson:
-				if (rti == null) throw new DeferUntilRuntimeException();
-				rti.setRandUsed(true);
-				result[0] = Math.floor(rti.getCurrentSeed().getPoisson(a[0]));
+				if (renderer == null) throw new DeferUntilRuntimeException();
+				renderer.setRandUsed(true);
+				result[0] = Math.floor(renderer.getCurrentSeed().getPoisson(a[0]));
 				break;
 			case RandIntGeometric:
-				if (rti == null) throw new DeferUntilRuntimeException();
-				rti.setRandUsed(true);
-				result[0] = Math.floor(rti.getCurrentSeed().getGeometric(a[0]));
+				if (renderer == null) throw new DeferUntilRuntimeException();
+				renderer.setRandUsed(true);
+				result[0] = Math.floor(renderer.getCurrentSeed().getGeometric(a[0]));
 				break;
 
 			default:
@@ -409,14 +409,14 @@ public class ASTFunction extends ASTExpression {
 		return 1;
 	}
 
-	private static double minMax(ASTExpression e, RTI rti, boolean isMin) {
+	private static double minMax(ASTExpression e, CFDGRenderer renderer, boolean isMin) {
 		double[] res = new double[] { 0.0 };
-		if (e.getChild(0).evaluate(res, 1, rti) != 1) {
+		if (e.getChild(0).evaluate(res, 1, renderer) != 1) {
 			Logger.fail("Error computing min/max here", e.getChild(0).getLocation());
 		}
 		for (int i = 1; i < e.size(); ++i) {
 			double[] val = new double[] { 0.0 };
-			if (e.getChild(i).evaluate(val, 1, rti) != 1) {
+			if (e.getChild(i).evaluate(val, 1, renderer) != 1) {
 				Logger.fail("Error computing min/max here", e.getChild(i).getLocation());
 			}
 			boolean leftMin = res[0] < val[0];
@@ -425,8 +425,8 @@ public class ASTFunction extends ASTExpression {
 		return res[0];
 	}
 
-	private boolean isNatural(RTI rti, double n) {
-		return n >= 0 && n <= (rti != null ? rti.getMaxNatural() : Integer.MAX_VALUE) && n == Math.floor(n);
+	private boolean isNatural(CFDGRenderer renderer, double n) {
+		return n >= 0 && n <= (renderer != null ? renderer.getMaxNatural() : Integer.MAX_VALUE) && n == Math.floor(n);
 	}
 
 	@Override
