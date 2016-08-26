@@ -112,7 +112,7 @@ public class ASTCompiledPath extends PathStorage {
 
 	public void finish(boolean setAttr, CFDGRenderer renderer) {
 		if (!renderer.isClosed()) {
-			getPath().endPoly(0);
+			getPath().closePolygon();
 			renderer.setClosed(true);
 		}
 		if (!renderer.isStop()) {

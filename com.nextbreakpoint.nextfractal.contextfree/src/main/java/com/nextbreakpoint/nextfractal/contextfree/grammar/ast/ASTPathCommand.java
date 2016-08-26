@@ -39,7 +39,7 @@ public class ASTPathCommand extends ASTReplacement {
 	private double miterLimit;
 	private double strokeWidth;
 	private ASTExpression parameters;
-	private CommandInfo infoCache;
+	private CommandInfo commandInfo;
 	private int flags;
 
 	public ASTPathCommand(CFDGDriver driver, Token location) {
@@ -47,7 +47,7 @@ public class ASTPathCommand extends ASTReplacement {
 		this.miterLimit = 4.0;
 		this.strokeWidth = 0.1;
 		this.parameters = null;
-		this.infoCache = new CommandInfo();
+		this.commandInfo = new CommandInfo();
 		this.flags = FlagType.CF_MITER_JOIN.getMask() + FlagType.CF_BUTT_CAP.getMask() + CF_FILL.getMask();
 	}
 
@@ -56,7 +56,7 @@ public class ASTPathCommand extends ASTReplacement {
 		this.miterLimit = 4.0;
 		this.strokeWidth = 0.1;
 		this.parameters = params;
-		this.infoCache = new CommandInfo();
+		this.commandInfo = new CommandInfo();
 		this.flags = FlagType.CF_MITER_JOIN.getMask() + FlagType.CF_BUTT_CAP.getMask();
 		//TODO controllare
 		if (s.equals("FILL")) {
@@ -102,7 +102,7 @@ public class ASTPathCommand extends ASTReplacement {
 
 		if (renderer.getCurrentPath().isCached()) {
 			CommandInfo next = renderer.getCurrentCommand().next();
-			if (next == renderer.getCurrentPath().getCommandInfo().end()) {
+			if (next == renderer.getCurrentPath().getCommandInfo().last()) {
 				Logger.error("Not enough path commands in cache", location);
 			}
 			info = next;
@@ -115,11 +115,11 @@ public class ASTPathCommand extends ASTReplacement {
 
 			//TODO controllare
 
-			infoCache.tryInit(renderer.getIndex(), renderer.getCurrentPath(), width, this);
-			if (infoCache.getPathUID() == renderer.getCurrentPath().getPathUID() && infoCache.getIndex() == renderer.getIndex()) {
-				renderer.getCurrentPath().getCommandInfo().pushBack(infoCache);
+			commandInfo.tryInit(renderer.getIndex(), renderer.getCurrentPath(), width, this);
+			if (commandInfo.getPathUID() == renderer.getCurrentPath().getPathUID() && commandInfo.getIndex() == renderer.getIndex()) {
+				renderer.getCurrentPath().getCommandInfo().pushBack(commandInfo);
 			} else {
-				renderer.getCurrentPath().getCommandInfo().add(new CommandInfo(renderer.getIndex(), renderer.getCurrentPath(), width, this));
+				renderer.getCurrentPath().getCommandInfo().pushBack(new CommandInfo(renderer.getIndex(), renderer.getCurrentPath(), width, this));
 			}
 			info = renderer.getCurrentPath().getCommandInfo().back();
 		}

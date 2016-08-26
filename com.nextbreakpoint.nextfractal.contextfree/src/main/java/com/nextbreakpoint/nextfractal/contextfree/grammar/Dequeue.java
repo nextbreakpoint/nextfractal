@@ -1,32 +1,38 @@
 package com.nextbreakpoint.nextfractal.contextfree.grammar;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import java.util.Iterator;
 
 public class Dequeue {
-    public void pushBack(CommandInfo infoCache) {
-        //TODO completare
+    private List<CommandInfo> commands = new ArrayList<>();
+
+    public void pushBack(CommandInfo commandInfo) {
+        //TODO rivedere
+        commands.add(0, commandInfo);
     }
 
     public CommandInfo back() {
-        //TODO completare
-        return null;
+        //TODO rivedere
+        return commands.get(0);
     }
 
-    public CommandInfo end() {
-        //TODO completare
-        return null;
+    public CommandInfo last() {
+        //TODO rivedere
+        return commands.get(commands.size() - 1);
     }
 
     public Iterator<CommandInfo> iterator() {
-        //TODO completare
-        return null;
+        return commands.iterator();
     }
 
     public void clear() {
-        //TODO completare
+        commands.clear();
     }
 
     public void add(CommandInfo commandInfo) {
-        //TODO completare
+        //TODO rivedere
+        commands.add(commandInfo);
     }
 }

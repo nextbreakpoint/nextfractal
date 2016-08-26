@@ -50,13 +50,13 @@ public interface ExtendedPathIterator {
     int SEG_CLOSE   = PathIterator.SEG_CLOSE;
 
     /** 
-     * The segment type constant for a point that specifies the end
+     * The segment type constant for a point that specifies the last
      * point of a line to be drawn fromType the most recently specified
      * point.  */
     int SEG_MOVETO  = PathIterator.SEG_MOVETO;
 
     /**
-     * The segment type constant for a point that specifies the end
+     * The segment type constant for a point that specifies the last
      * point of a line to be drawn fromType the most recently specified
      * point.
      */

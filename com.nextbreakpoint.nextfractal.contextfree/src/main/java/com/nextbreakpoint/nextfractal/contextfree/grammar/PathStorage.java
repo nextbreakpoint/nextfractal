@@ -33,6 +33,8 @@ import java.awt.geom.Point2D;
 public class PathStorage {
 	private ExtendedGeneralPath generalPath = new ExtendedGeneralPath();
 	private boolean drawing;
+	private int totalVerices;
+	private Point2D.Double center = new Point2D.Double(0, 0);
 
 	public boolean isDrawing() {
 		return drawing;
@@ -43,25 +45,42 @@ public class PathStorage {
 	}
 
 	public void clear() {
-		//TODO completare
-	}
-
-	public int getTotalVertices() {
-		//TODO completare
-		return 0;
-	}
-
-	public void endPoly(int flag) {
-		//TODO completare
+		generalPath.reset();
 	}
 
 	public void startNewPath() {
-		//TODO completare
+		generalPath = new ExtendedGeneralPath();
+	}
+
+	public void closePolygon() {
+		generalPath.closePath();
+	}
+
+	public void moveTo(Point2D.Double point) {
+		center.setLocation(point.getX(), point.getY());
+		generalPath.moveTo((float)point.getX(), (float)point.getY());
+	}
+
+	public void lineTo(Point2D.Double point) {
+		generalPath.lineTo((float)point.getX(), (float)point.getY());
+	}
+
+	public void arcTo(double radiusX, double radiusY, double angle, boolean largeArc, boolean sweep, Point2D.Double point) {
+		generalPath.arcTo((float)radiusX, (float)radiusY, (float)angle, largeArc, sweep, (float)point.getX(), (float)point.getY());
+	}
+
+	public void relToAbs(Point2D.Double point) {
+		point.setLocation(point.getX() + center.getX(), point.getY() + center.getY());
 	}
 
 	public int command(int index) {
 		//TODO completare
 		return 0;
+	}
+
+	public int getTotalVertices() {
+		//TODO controllare
+		return totalVerices;
 	}
 
 	public boolean isVertex(int index) {
@@ -73,36 +92,16 @@ public class PathStorage {
 		//TODO completare
 	}
 
-	public void closePolygon() {
-		//TODO completare
-	}
-
-	public void moveTo(Point2D.Double point) {
-		//TODO completare
-	}
-
-	public void relToAbs(Point2D.Double point) {
-		//TODO completare
-	}
-
-	public void lineTo(Point2D.Double point) {
-		//TODO completare
-	}
-
 	public int lastVertex(Point2D.Double point) {
 		//TODO completare
 		return 0;
 	}
 
-	public void arcTo(double radiusX, double radiusY, double angle, boolean largeArc, boolean sweep, Point2D.Double point) {
+	public void modifyVertex(int index, Point2D.Double point) {
 		//TODO completare
 	}
 
 	public void transform(AffineTransform t, int index) {
-		//TODO completare
-	}
-
-	public void modifyVertex(int index, Point2D.Double point) {
 		//TODO completare
 	}
 

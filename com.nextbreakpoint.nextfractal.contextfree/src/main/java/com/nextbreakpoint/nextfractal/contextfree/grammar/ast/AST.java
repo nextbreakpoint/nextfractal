@@ -240,5 +240,34 @@ public class AST {
 
     public static void evalArgs(CFDGRenderer renderer, CFDGStack parent, Iterator<ASTParameter> params, ASTExpression arguments, boolean sequential) {
         //TODO completare evalArgs
+//        for (size_t i = 0; i < arguments->size(); ++i, ++dest) {
+//            assert(dest != end);
+//            if (onStack)
+//                rti->mLogicalStackTop = &(*dest);
+//        const AST::ASTexpression* arg = arguments->getChild(i);
+//            switch (arg->mType) {
+//                case AST::NumericType: {
+//                    int num = arg->evaluate(&(dest->number), dest.type().mTuplesize, rti);
+//                    if (!AST::ASTparameter::Impure && dest.type().isNatural && !RendererAST::isNatural(rti, dest->number))
+//                    CfdgError::Error(arg->where, "Expression does not evaluate to a legal natural number");
+//                    if (num != dest.type().mTuplesize)
+//                        CfdgError::Error(arg->where, "Expression does not evaluate to the correct size");
+//                    break;
+//                }
+//                case AST::ModType: {
+//                    static const Modification zeroMod;
+//                    Modification& m = reinterpret_cast<Modification&> (dest->number);
+//                    m = zeroMod;
+//                    arg->evaluate(m, false, rti);
+//                    break;
+//                }
+//                case AST::RuleType: {
+//                    new (&(dest->rule)) param_ptr(arg->evalArgs(rti, parent));
+//                    break;
+//                }
+//                default:
+//                    break;
+//            }
+//        }
     }
 }
