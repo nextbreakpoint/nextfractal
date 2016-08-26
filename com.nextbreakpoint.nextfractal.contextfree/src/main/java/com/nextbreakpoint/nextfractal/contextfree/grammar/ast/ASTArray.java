@@ -101,7 +101,7 @@ public class ASTArray extends ASTExpression {
 			}
 			double[] source = data;
 			if (source == null) {
-				source = renderer.getStackItem(stackIndex).getArray();
+				source[0] = (Double)renderer.getStackItem(stackIndex);
 			}
 			for (int j = 0; j < this.length; j++) {
 				result[j] = source[j * this.stride + index];

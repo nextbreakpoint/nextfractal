@@ -32,7 +32,7 @@ choose
 		)
 		eof
 		;
-		 
+
 cfdg2
         :
         cfdg2 r=statement_v2 {

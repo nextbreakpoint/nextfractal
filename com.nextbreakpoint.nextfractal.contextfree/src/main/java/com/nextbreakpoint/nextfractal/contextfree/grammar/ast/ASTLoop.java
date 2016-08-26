@@ -203,27 +203,29 @@ public class ASTLoop extends ASTReplacement {
 		}
 		int oldTop = renderer.getLogicalStackTop();
 		//TODO controllare
-		StackElement index = renderer.getStackItem(renderer.getStackSize() - 1);
-		index.setNumber(data[0]);
-		renderer.addStackItem(new StackElement(data[0]));
+		Double index = (Double) renderer.getStackItem(renderer.getStackSize() - 1);
+		renderer.setStackItem(renderer.getStackSize() - 1, data[0]);
+		renderer.addStackItem(data[0]);
 		renderer.setStackSize(renderer.getStackSize() + 1);
-		renderer.setLogicalStackTop((int)index.getNumber());
+		renderer.setLogicalStackTop(index.intValue());
 		for (;;) {
 			if (renderer.isRequestStop() || CFDGRenderer.abortEverything()) {
 				throw new RuntimeException("Stopping");
 			}
 			if (data[2] > 0.0) {
-				if (index.getNumber() >= data[1]) {
+				if (index.intValue() >= data[1]) {
 					break;
 				}
 			} else {
-				if (index.getNumber() <= data[1]) {
+				if (index.intValue() <= data[1]) {
 					break;
 				}
 			}
 			loopBody.traverse(loopChild, tr || opsOnly, renderer, false);
 			getChildChange().evaluate(loopChild.getWorldState(), true, renderer);
-			index.addNumber(data[2]);
+			index += data[2];
+			//TODO controllare
+			renderer.setStackItem(renderer.getStackSize() - 1, index);
 		}
 		finallyBody.traverse(loopChild, tr || opsOnly, renderer, false);
 		//TODO controllare

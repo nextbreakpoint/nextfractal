@@ -27,7 +27,7 @@ package com.nextbreakpoint.nextfractal.contextfree.grammar.ast;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGRenderer;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.Logger;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.Modification;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.StackRule;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGStack;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.CompilePhase;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ExpType;
 import org.antlr.v4.runtime.Token;
@@ -96,7 +96,7 @@ public class ASTParen extends ASTExpression {
 	}
 
 	@Override
-	public StackRule evalArgs(CFDGRenderer renderer, StackRule parent) {
+	public CFDGStack evalArgs(CFDGRenderer renderer, CFDGStack parent) {
 		if (type != ExpType.RuleType) {
 			Logger.error("Evaluation of a non-shape expression in a shape context", location);
 			return null;

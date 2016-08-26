@@ -79,9 +79,9 @@ public class ASTVariable extends ASTExpression {
 		}
         if (result != null) {
             if (renderer == null) throw new DeferUntilRuntimeException();
-            StackElement stackItem = renderer.getStackItem(stackIndex);
+            double stackItem = (Double)renderer.getStackItem(stackIndex);
             for (int i = 0; i < count; ++i) {
-				result[i] = stackItem.getNumber();
+				result[i] = stackItem;
             }
         }
         return count;
@@ -93,8 +93,7 @@ public class ASTVariable extends ASTExpression {
             Logger.error("Non-adjustment variable referenced in an adjustment context", location);
         }
 		if (renderer == null) throw new DeferUntilRuntimeException();
-        StackElement stackItem = renderer.getStackItem(stackIndex);
-        Modification mod = stackItem.modification();
+        Modification mod = (Modification)renderer.getStackItem(stackIndex);
         if (shapeDest) {
         	result.concat(mod);
         } else {

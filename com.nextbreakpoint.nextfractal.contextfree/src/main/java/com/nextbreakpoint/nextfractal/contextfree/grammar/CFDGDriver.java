@@ -24,13 +24,7 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.grammar;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.Stack;
+import java.util.*;
 
 import com.nextbreakpoint.nextfractal.contextfree.core.Rand64;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.*;
@@ -42,15 +36,15 @@ import org.antlr.v4.runtime.Token;
 
 public class CFDGDriver {
 	private CFDG cfdg = new CFDG(this);
-	private Stack<ASTRepContainer> containerStack = new Stack<ASTRepContainer>();
+	private Stack<ASTRepContainer> containerStack = new Stack<>();
 	private ASTRepContainer paramDecls = new ASTRepContainer(this);
 	private Map<String, Integer> flagNames = new HashMap<String, Integer>();
-	private List<StackRule> longLivedParams = new ArrayList<StackRule>();
-	private Stack<String> fileNames = new Stack<String>();
-	private Stack<String> filesToLoad = new Stack<String>();
-	private Stack<CharStream> streamsToLoad = new Stack<CharStream>();
-	private Stack<Boolean> includeNamespace = new Stack<Boolean>();
-	private Stack<ASTSwitch> switchStack = new Stack<ASTSwitch>();
+	private List<CFDGStack> longLivedParams = new ArrayList<CFDGStack>();
+	private Stack<String> fileNames = new Stack<>();
+	private Stack<String> filesToLoad = new Stack<>();
+	private Stack<CharStream> streamsToLoad = new Stack<>();
+	private Stack<Boolean> includeNamespace = new Stack<>();
+	private Stack<ASTSwitch> switchStack = new Stack<>();
 	private String currentNameSpace = "";
 	private String currentPath;
 	private String maybeVersion;
@@ -649,8 +643,7 @@ public class CFDGDriver {
 		cfdg.addParameter(Param.Time);
 	}
 
-	public void storeParams(StackRule p) {
-		p.setRefCount(Integer.MAX_VALUE);
+	public void storeParams(CFDGStack p) {
 		longLivedParams.add(p);
 	}
 

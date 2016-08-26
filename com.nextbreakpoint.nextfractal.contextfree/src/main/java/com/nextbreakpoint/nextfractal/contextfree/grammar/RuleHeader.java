@@ -24,54 +24,28 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.grammar;
 
-public class Shape {
-	protected int shapeType;
-	protected Modification worldState;
-	protected double areaCache;
-	protected CFDGStack params;
+public class RuleHeader {
+	private int ruleName;
+	private int paramCount;
 
-	public Shape() {
-		shapeType = -1;
-		worldState = new Modification();
-		areaCache = worldState.area();
+	public RuleHeader(int ruleName, int paramCount) {
+		this.ruleName = ruleName;
+		this.paramCount = paramCount;
 	}
 
-	public Shape(Shape shape) {
-		shapeType = shape.shapeType;
-		areaCache = shape.areaCache;
-		worldState = shape.worldState;
-		params = shape.params;
+	public int getRuleName() {
+		return ruleName;
 	}
 
-	public CFDGStack getParameters() {
-		return params;
+	public void setRuleName(int ruleName) {
+		this.ruleName = ruleName;
 	}
 
-	public void setParameters(CFDGStack params) {
-		this.params = params;
+	public int getParamCount() {
+		return paramCount;
 	}
 
-	public int getShapeType() {
-		return shapeType;
-	}
-
-	public void setShapeType(int shapeType) {
-		this.shapeType = shapeType;
-	}
-
-	public Modification getWorldState() {
-		return worldState;
-	}
-
-	public void setWorldState(Modification worldState) {
-		this.worldState = worldState;
-	}
-
-	public double getArea() {
-		return areaCache;
-	}
-
-	public void setArea(double area) {
-		areaCache = area;
+	public void setParamCount(int paramCount) {
+		this.paramCount = paramCount;
 	}
 }

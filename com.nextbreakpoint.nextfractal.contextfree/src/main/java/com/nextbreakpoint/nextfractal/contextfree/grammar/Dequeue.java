@@ -2,7 +2,7 @@ package com.nextbreakpoint.nextfractal.contextfree.grammar;
 
 import java.util.Iterator;
 
-public class InfoCache {
+public class Dequeue {
     public void pushBack(CommandInfo infoCache) {
         //TODO completare
     }

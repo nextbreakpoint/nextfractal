@@ -40,7 +40,7 @@ public class ASTRuleSpecifier extends ASTExpression {
 	private String entropy;
 	private ArgSource argSource;
 	private ASTExpression arguments;
-	private StackRule simpleRule;
+	private CFDGStack simpleRule;
 	private int stackIndex;
 	private List<ASTParameter> typeSignature;
 	private List<ASTParameter> parentSignature;
@@ -165,7 +165,7 @@ public class ASTRuleSpecifier extends ASTExpression {
 		return arguments;
 	}
 
-	public StackRule getSimpleRule() {
+	public CFDGStack getSimpleRule() {
 		return simpleRule;
 	}
 
@@ -186,23 +186,22 @@ public class ASTRuleSpecifier extends ASTExpression {
 	}
 
 	@Override
-	public StackRule evalArgs(CFDGRenderer renderer, StackRule parent) {
+	public CFDGStack evalArgs(CFDGRenderer renderer, CFDGStack parent) {
 		switch (argSource) {
 			case NoArgs:
 			case SimpleArgs: {
 				return simpleRule;
 			}
 			case StackArgs: {
-				StackElement stackItem = renderer.getStackItem(stackIndex);
-				return stackItem.getRule();
+				return new CFDGStack(parent.getStack());
 			}
 			case ParentArgs: {
-				if (shapeType != parent.getRuleName()) {
+				if (shapeType != ((RuleHeader)parent.getStack()[0]).getRuleName()) {
 					// Child shape is different fromType parent, even though parameters are reused,
 					// and we can't finesse it in ASTreplacement::traverse(). Just
 					// copy the parameters with the correct shape type.
-					StackRule ret = new StackRule(parent);
-					ret.setRuleName(shapeType);
+					CFDGStack ret = new CFDGStack(parent.getStack());
+					((RuleHeader)ret.getStack()[0]).setRuleName(shapeType);
 					return ret;
 				}
 			}
@@ -210,8 +209,9 @@ public class ASTRuleSpecifier extends ASTExpression {
 				return parent;
 			}
 			case DynamicArgs: {
-				StackRule ret = new StackRule(shapeType, argSize, typeSignature);
-				ret.evalArgs(renderer, arguments, parent);
+				//TODO controllare
+				CFDGStack ret = CFDGStack.createStackRule(shapeType, argSize, typeSignature);
+				AST.evalArgs(renderer, ret, typeSignature.iterator(), arguments, false);
 				return ret;
 			}
 			case ShapeArgs: {
@@ -429,7 +429,7 @@ public class ASTRuleSpecifier extends ASTExpression {
 							entropy = ent.toString();
 						} else {
 							argSource = ArgSource.NoArgs;
-							simpleRule = new StackRule(shapeType, 0, typeSignature);
+							simpleRule = CFDGStack.createStackRule(shapeType, 0, typeSignature);
 							isConstant = true;
 							locality = Locality.PureLocal;
 							driver.storeParams(simpleRule);

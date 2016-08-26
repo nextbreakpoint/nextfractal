@@ -27,7 +27,7 @@ package com.nextbreakpoint.nextfractal.contextfree.grammar.ast;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.Logger;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.Modification;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGRenderer;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.StackRule;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGStack;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.CompilePhase;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ExpType;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.Locality;
@@ -128,7 +128,7 @@ public class ASTExpression {
 		throw new RuntimeException("Cannot convert this expression into an adjustment"); 
 	}
 
-	public StackRule evalArgs(CFDGRenderer renderer, StackRule parent) {
+	public CFDGStack evalArgs(CFDGRenderer renderer, CFDGStack parent) {
 		throw new RuntimeException("Cannot convert this expression into a shape"); 
 	}
 	
@@ -164,5 +164,10 @@ public class ASTExpression {
 
 	public ASTExpression append(ASTExpression sib) {
 		return sib != null ? new ASTCons(location, this, sib) : this;
+	}
+
+	public int getTupleSize() {
+		//TODO completare
+		return 1;
 	}
 }

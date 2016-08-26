@@ -252,25 +252,24 @@ public class ASTDefine extends ASTReplacement {
 
 		renderer.setStackSize(renderer.getStackSize() + tupleSize);
 		renderer.getCurrentSeed().add(getChildChange().getModData().getRand64Seed());
-		StackElement dest = renderer.getStackItem(renderer.getStackSize() - 1);
-		
+
 		switch (expType) {
 			case NumericType:
 				double[] result = new double[1];
 				if (exp.evaluate(result, tupleSize, renderer) != tupleSize) {
 					Logger.error("Error evaluating parameters (too many or not enough)", null);
 				}
-				dest.setNumber(result[0]);
+				renderer.setStackItem(renderer.getStackSize() - 1, result[0]);
 				break;
 	
 			case ModType:
 				Modification[] mod = new Modification[1];
 				getChildChange().setVal(mod, renderer);
-				dest.setModification(mod[0]);
+				renderer.setStackItem(renderer.getStackSize() - 1, mod[0]);
 				break;
 	
 			case RuleType:
-				dest.setRule(exp.evalArgs(renderer, parent.getParameters()));
+				renderer.setStackItem(renderer.getStackSize() - 1, exp.evalArgs(renderer, parent.getParameters()));
 				break;
 	
 			default:

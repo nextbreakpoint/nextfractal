@@ -105,9 +105,9 @@ public class ASTReplacement {
 			if (shapeSpec.getArgSource() == ArgSource.SimpleParentArgs) {
 				s.setShapeType(shapeSpec.getShapeType());
 			} else {
-				s.setShapeType(s.getParameters().getRuleName());
+				s.setShapeType(((RuleHeader)s.getParameters().getStack()[0]).getRuleName());
 			}
-			if (s.getParameters().getParamCount() == 0) {
+			if (((RuleHeader)s.getParameters().getStack()[0]).getParamCount() == 0) {
 				s.setParameters(null);
 			}
 		}

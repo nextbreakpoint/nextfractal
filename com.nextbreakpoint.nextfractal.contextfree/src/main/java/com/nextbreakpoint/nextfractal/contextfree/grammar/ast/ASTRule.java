@@ -184,7 +184,7 @@ public class ASTRule extends ASTReplacement implements Comparable<ASTRule> {
 			if (renderer.isRandUsed() && cachedPath == null) {
 				cachedPath = renderer.getCurrentPath();
 				cachedPath.setIsComplete(true);
-				cachedPath.setParameters(new StackRule(parent.getParameters()));
+				cachedPath.setParameters(new CFDGStack(parent.getParameters().getStack()));
 				renderer.setCurrentPath(new ASTCompiledPath(driver, getLocation()));
 			} else {
 				renderer.getCurrentPath().getPath().clear();

@@ -37,16 +37,16 @@ public class ASTCompiledPath extends PathStorage {
 	private static Long globalPathUID = new Long(100);
 	private boolean complete;
 	private PathStorage pathStorage;
-	private InfoCache commandInfo;
+	private Dequeue commandInfo;
 	private ASTPathCommand terminalCommand;
 	private boolean cached;
 	private boolean useTerminal;
-	private StackRule parameters;
+	private CFDGStack parameters;
 	private Long pathUID;
 	
 	public ASTCompiledPath(CFDGDriver driver, Token location) {
 		pathStorage = new PathStorage();
-		commandInfo = new InfoCache();
+		commandInfo = new Dequeue();
 		terminalCommand = new ASTPathCommand(driver, location);
 		parameters = null;
 		cached = false;
@@ -54,7 +54,7 @@ public class ASTCompiledPath extends PathStorage {
 		pathUID = nextPathUID();
 	}
 
-	public InfoCache getCommandInfo() {
+	public Dequeue getCommandInfo() {
 		return commandInfo;
 	}
 
@@ -62,11 +62,11 @@ public class ASTCompiledPath extends PathStorage {
 		return terminalCommand;
 	}
 
-	public StackRule getParameters() {
+	public CFDGStack getParameters() {
 		return parameters;
 	}
 
-	public void setParameters(StackRule parameters) {
+	public void setParameters(CFDGStack parameters) {
 		this.parameters = parameters;
 	}
 

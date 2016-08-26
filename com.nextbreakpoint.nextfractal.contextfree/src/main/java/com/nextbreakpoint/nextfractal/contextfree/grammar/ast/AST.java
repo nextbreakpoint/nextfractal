@@ -238,7 +238,7 @@ public class AST {
         return ret;
     }
 
-    public static void evalArgs(CFDGRenderer renderer, StackRule parent, Iterator<ASTParameter> params, ASTExpression arguments, boolean sequential) {
+    public static void evalArgs(CFDGRenderer renderer, CFDGStack parent, Iterator<ASTParameter> params, ASTExpression arguments, boolean sequential) {
         //TODO completare evalArgs
     }
 }
