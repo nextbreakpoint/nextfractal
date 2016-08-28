@@ -208,7 +208,7 @@ public class ASTUserFunction extends ASTExpression {
 			}
 			renderer.setStackSize(oldSize + definition.getStackCount());
 			//TODO rivedere
-			AST.evalArgs(renderer, null, definition.getParameters().iterator(), arguments, isLet);
+			AST.evalArgs(renderer, null, definition.getParameters().toArray(), arguments, isLet);
 			renderer.setLogicalStackTop(renderer.getStackSize());
 		}
 	}

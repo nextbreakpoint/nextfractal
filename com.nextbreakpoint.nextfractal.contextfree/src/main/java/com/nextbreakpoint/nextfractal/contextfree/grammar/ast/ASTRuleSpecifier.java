@@ -211,7 +211,7 @@ public class ASTRuleSpecifier extends ASTExpression {
 			case DynamicArgs: {
 				//TODO controllare
 				CFDGStack ret = CFDGStack.createStackRule(shapeType, argSize, typeSignature);
-				AST.evalArgs(renderer, ret, typeSignature.iterator(), arguments, false);
+				AST.evalArgs(renderer, ret, typeSignature.toArray(), arguments, false);
 				return ret;
 			}
 			case ShapeArgs: {

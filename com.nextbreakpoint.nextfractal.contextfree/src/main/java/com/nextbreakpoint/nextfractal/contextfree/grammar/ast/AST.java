@@ -238,34 +238,34 @@ public class AST {
         return ret;
     }
 
-    public static void evalArgs(CFDGRenderer renderer, CFDGStack dest, Iterator<ASTParameter> params, ASTExpression arguments, boolean sequential) {
+    public static void evalArgs(CFDGRenderer renderer, CFDGStack parent, Object[] dest, ASTExpression arguments, boolean onStack) {
         //TODO rivedere evalArgs
         for (int i = 0; i < arguments.size(); i++) {
-            if (sequential) {
+            if (onStack) {
                 renderer.setLogicalStackTop(0);
-//                renderer.setLogicalStack(dest);
+                renderer.setLogicalStack(dest);
             }
             ASTExpression arg = arguments.getChild(i);
             switch (arg.getType()) {
                 case NumericType: {
                     double[] value = new double[1];
-                    int num = arg.evaluate(value, ((ASTExpression) dest.getStack()[0]).getTupleSize(), renderer);
-                    dest.getStack()[0] = value[0];
-                    if (!ASTParameter.Impure && ((ASTExpression) dest.getStack()[0]).isNatural() && renderer.isNatual(value[0])) {
+                    int num = arg.evaluate(value, ((ASTExpression) dest[0]).getTupleSize(), renderer);
+                    dest[0] = value[0];
+                    if (!ASTParameter.Impure && ((ASTExpression) dest[0]).isNatural() && renderer.isNatual(value[0])) {
                         Logger.error("Expression does not evaluate to a legal natural number", arg.getLocation());
                     }
-                    if (num != ((ASTExpression) dest.getStack()[0]).getTupleSize()) {
+                    if (num != ((ASTExpression) dest[0]).getTupleSize()) {
                         Logger.error("Expression does not evaluate to the correct size", arg.getLocation());
                     }
                     break;
                 }
                 case ModType: {
-                    dest.getStack()[0] = new Modification();
-                    arg.evaluate((Modification)dest.getStack()[0], false, renderer);
+                    dest[0] = new Modification();
+                    arg.evaluate((Modification)dest[0], false, renderer);
                     break;
                 }
                 case RuleType: {
-                    dest.getStack()[0] = arg.evalArgs(renderer, dest);
+                    dest[0] = arg.evalArgs(renderer, parent);
                     break;
                 }
                 default:

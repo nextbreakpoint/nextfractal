@@ -118,6 +118,7 @@ public class CFDGRenderer {
 	private List<FinishedShape> finishedShapes = new ArrayList<>();
 
 	private ASTRule[] primitivePaths;
+	private Iterator<ASTParameter> logicalStack;
 
 	public CFDGRenderer(CFDG cfdg, int width, int height, double minSize, int variation, double border) {
 		this.cfdg = cfdg;
@@ -347,6 +348,10 @@ public class CFDGRenderer {
 
 	public void setLogicalStackTop(int cfLogicalStackTop) {
 		this.cfLogicalStackTop = cfLogicalStackTop;
+	}
+
+	public void setLogicalStack(Object[] logicalStack) {
+		this.cfStack.setStack(logicalStack);
 	}
 
 	public void init() {

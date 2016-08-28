@@ -40,6 +40,10 @@ public class CFDGStack {
 		return stack;
 	}
 
+	public void setStack(Object[] stack) {
+		this.stack = stack;
+	}
+
 	public static CFDGStack createStackRule(CFDGStack from) {
 		//TODO controllare createStackRule
 		Object[] fromStack = from.getStack();
