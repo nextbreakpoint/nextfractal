@@ -65,8 +65,7 @@ public class CFDGStack {
 		//TODO controllare createStackRule
 		CFDGRenderer.paramCount++;
 		Object[] newStack = new Object[paramCount > 0 ? paramCount + 2 : 1];
-		((RuleHeader)newStack[0]).setRuleName(nameIndex);
-		((RuleHeader)newStack[0]).setParamCount(paramCount);
+		newStack[0] = new RuleHeader(nameIndex, paramCount);
 		if (paramCount > 0) {
 			newStack[1] = typeInfo;
 		}

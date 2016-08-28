@@ -141,9 +141,9 @@ public class ASTReplacement {
 
 	public void compile(CompilePhase ph) {
 		ASTExpression r = shapeSpec.compile(ph);
-		assert(r == shapeSpec);
+//		assert(r == shapeSpec);
 		r = childChange.compile(ph);
-		assert(r == childChange);
+//		assert(r == childChange);
 
 		switch (ph) {
 			case TypeCheck: 

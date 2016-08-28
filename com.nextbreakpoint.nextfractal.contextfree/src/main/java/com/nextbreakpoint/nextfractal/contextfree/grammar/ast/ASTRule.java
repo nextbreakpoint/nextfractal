@@ -60,6 +60,16 @@ public class ASTRule extends ASTReplacement implements Comparable<ASTRule> {
 		this.weight = 1.0f;
 		this.weightType = WeightType.NoWeight;
 		this.cachedPath = null;
+	}
+
+	public ASTRule(CFDGDriver driver, int nameIndex) {
+		super(driver, null, RepElemType.rule, null);
+		ruleBody = new ASTRepContainer(driver);
+		this.nameIndex = nameIndex;
+		this.isPath = true;
+		this.weight = 1.0f;
+		this.weightType = WeightType.NoWeight;
+		this.cachedPath = null;
 
 		PrimShape shape = PrimShape.getShapeMap().get(nameIndex);
 		if (shape.getTotalVertices() > 0) {
