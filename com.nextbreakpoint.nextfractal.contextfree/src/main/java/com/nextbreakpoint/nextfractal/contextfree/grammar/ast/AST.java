@@ -238,36 +238,39 @@ public class AST {
         return ret;
     }
 
-    public static void evalArgs(CFDGRenderer renderer, CFDGStack parent, Iterator<ASTParameter> params, ASTExpression arguments, boolean sequential) {
-        //TODO completare evalArgs
-//        for (size_t i = 0; i < arguments->size(); ++i, ++dest) {
-//            assert(dest != end);
-//            if (onStack)
-//                rti->mLogicalStackTop = &(*dest);
-//        const AST::ASTexpression* arg = arguments->getChild(i);
-//            switch (arg->mType) {
-//                case AST::NumericType: {
-//                    int num = arg->evaluate(&(dest->number), dest.type().mTuplesize, rti);
-//                    if (!AST::ASTparameter::Impure && dest.type().isNatural && !RendererAST::isNatural(rti, dest->number))
-//                    CfdgError::Error(arg->where, "Expression does not evaluate to a legal natural number");
-//                    if (num != dest.type().mTuplesize)
-//                        CfdgError::Error(arg->where, "Expression does not evaluate to the correct size");
-//                    break;
-//                }
-//                case AST::ModType: {
-//                    static const Modification zeroMod;
-//                    Modification& m = reinterpret_cast<Modification&> (dest->number);
-//                    m = zeroMod;
-//                    arg->evaluate(m, false, rti);
-//                    break;
-//                }
-//                case AST::RuleType: {
-//                    new (&(dest->rule)) param_ptr(arg->evalArgs(rti, parent));
-//                    break;
-//                }
-//                default:
-//                    break;
-//            }
-//        }
+    public static void evalArgs(CFDGRenderer renderer, CFDGStack dest, Iterator<ASTParameter> params, ASTExpression arguments, boolean sequential) {
+        //TODO rivedere evalArgs
+        for (int i = 0; i < arguments.size(); i++) {
+            if (sequential) {
+                renderer.setLogicalStackTop(0);
+//                renderer.setLogicalStack(dest);
+            }
+            ASTExpression arg = arguments.getChild(i);
+            switch (arg.getType()) {
+                case NumericType: {
+                    double[] value = new double[1];
+                    int num = arg.evaluate(value, ((ASTExpression) dest.getStack()[0]).getTupleSize(), renderer);
+                    dest.getStack()[0] = value[0];
+                    if (!ASTParameter.Impure && ((ASTExpression) dest.getStack()[0]).isNatural() && renderer.isNatual(value[0])) {
+                        Logger.error("Expression does not evaluate to a legal natural number", arg.getLocation());
+                    }
+                    if (num != ((ASTExpression) dest.getStack()[0]).getTupleSize()) {
+                        Logger.error("Expression does not evaluate to the correct size", arg.getLocation());
+                    }
+                    break;
+                }
+                case ModType: {
+                    dest.getStack()[0] = new Modification();
+                    arg.evaluate((Modification)dest.getStack()[0], false, renderer);
+                    break;
+                }
+                case RuleType: {
+                    dest.getStack()[0] = arg.evalArgs(renderer, dest);
+                    break;
+                }
+                default:
+                    break;
+            }
+        }
     }
 }
