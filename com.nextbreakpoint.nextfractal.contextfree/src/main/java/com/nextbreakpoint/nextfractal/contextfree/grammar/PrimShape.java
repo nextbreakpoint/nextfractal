@@ -49,23 +49,23 @@ public class PrimShape extends PathStorage {
 		PrimShape square = new PrimShape();
 		PrimShape triangle = new PrimShape();
 
-		circle.vertex(new Point2D.Double(0.5, 0.0));
-		circle.vertex(new Point2D.Double(t, t));
-		circle.vertex(new Point2D.Double(0.0, 0.5));
-		circle.vertex(new Point2D.Double(-t, t));
-		circle.vertex(new Point2D.Double(-0.5, 0.0));
-		circle.vertex(new Point2D.Double(-t, -t));
-		circle.vertex(new Point2D.Double(0.0, -0.5));
-		circle.vertex(new Point2D.Double(t, -t));
+		circle.moveTo(new Point2D.Double(0.5, 0.0));
+		circle.addVertex(new Point2D.Double(t, t));
+		circle.addVertex(new Point2D.Double(0.0, 0.5));
+		circle.addVertex(new Point2D.Double(-t, t));
+		circle.addVertex(new Point2D.Double(-0.5, 0.0));
+		circle.addVertex(new Point2D.Double(-t, -t));
+		circle.addVertex(new Point2D.Double(0.0, -0.5));
+		circle.addVertex(new Point2D.Double(t, -t));
 
-		square.vertex(new Point2D.Double(0.5, 0.5));
-		square.vertex(new Point2D.Double(-0.5, 0.5));
-		square.vertex(new Point2D.Double(-0.5, -0.5));
-		square.vertex(new Point2D.Double(0.5, -0.5));
+		square.moveTo(new Point2D.Double(0.5, 0.5));
+		square.addVertex(new Point2D.Double(-0.5, 0.5));
+		square.addVertex(new Point2D.Double(-0.5, -0.5));
+		square.addVertex(new Point2D.Double(0.5, -0.5));
 
-		triangle.vertex(new Point2D.Double(0.0, hp));
-		triangle.vertex(new Point2D.Double(-0.5, hn));
-		triangle.vertex(new Point2D.Double(0.5, hn));
+		triangle.moveTo(new Point2D.Double(0.0, hp));
+		triangle.addVertex(new Point2D.Double(-0.5, hn));
+		triangle.addVertex(new Point2D.Double(0.5, hn));
 
 		shapeMap.put(0, circle);
 		shapeMap.put(1, square);

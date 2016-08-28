@@ -178,7 +178,7 @@ public class ASTCompiledPath extends PathStorage {
 				int cmd = 0;
 				for (int i = last - 1; i < last && getPath().isVertex(cmd = getPath().command(i)); i--) {
 					if (cmd == 1) {
-						getPath().vertex(renderer.getLastPoint());
+						getPath().addVertex(renderer.getLastPoint());
 						break;
 					}
 				}
