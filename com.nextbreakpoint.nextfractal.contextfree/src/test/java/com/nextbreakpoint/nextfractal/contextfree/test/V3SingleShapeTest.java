@@ -60,11 +60,10 @@ public class V3SingleShapeTest extends AbstractBaseTest {
 	public void shouldReloadRules() throws IOException {
 		CFDG cfdg = parseSource(RESOURCE_NAME);
 		cfdg.rulesLoaded();
-		assertThat(cfdg.getContents().getBody().size(), is(equalTo(1)));
+		assertThat(cfdg.getContents().getBody().size(), is(equalTo(2)));
 	}
 
 	@Test
-
 	public void shouldCreateRenderer() throws IOException {
 		CFDG cfdg = parseSource(RESOURCE_NAME);
 		cfdg.rulesLoaded();
