@@ -25,6 +25,8 @@
 package com.nextbreakpoint.nextfractal.contextfree.test;
 
 import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDG;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGRenderer;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.Shape;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -65,13 +67,15 @@ public class V3SingleShapeTest extends AbstractBaseTest {
 	@Test
 	public void shouldCompleteSimplify() throws IOException {
 		CFDG cfdg = parseSource(RESOURCE_NAME);
+		cfdg.compile(TypeCheck);
 		cfdg.compile(Simplify);
 	}
 
 	@Test
 	public void shouldTraverse() throws IOException {
 		CFDG cfdg = parseSource(RESOURCE_NAME);
+		cfdg.compile(TypeCheck);
 		cfdg.compile(Simplify);
-//		cfdg.traverse(new Shape(), false, new CFDGRenderer());
+		cfdg.traverse(new Shape(), false, new CFDGRenderer(cfdg, 200, 200, 1, 0, 0.1));
 	}
 }

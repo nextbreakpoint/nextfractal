@@ -56,7 +56,7 @@ public class ASTRule extends ASTReplacement implements Comparable<ASTRule> {
 		super(driver, null, RepElemType.rule, location);
 		ruleBody = new ASTRepContainer(driver);
 		this.nameIndex = nameIndex;
-		this.isPath = true;
+		this.isPath = false;
 		this.weight = 1.0f;
 		this.weightType = WeightType.NoWeight;
 		this.cachedPath = null;

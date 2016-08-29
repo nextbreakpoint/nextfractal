@@ -24,6 +24,7 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.grammar.ast;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -211,7 +212,7 @@ public class ASTRuleSpecifier extends ASTExpression {
 			case DynamicArgs: {
 				//TODO controllare
 				CFDGStack ret = CFDGStack.createStackRule(shapeType, argSize, typeSignature);
-				AST.evalArgs(renderer, ret, typeSignature.toArray(), arguments, false);
+				AST.evalArgs(renderer, ret, new Object[] { null }, arguments, false);
 				return ret;
 			}
 			case ShapeArgs: {

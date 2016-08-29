@@ -58,25 +58,21 @@ public class PathStorage {
 	}
 
 	public void closePolygon() {
-		//TODO controllare
 		generalPath.closePath();
 	}
 
 	public void moveTo(Point2D.Double point) {
-		//TODO controllare
 		vertices.add(new Vertex(point, 1));
 		center.setLocation(point.getX(), point.getY());
 		generalPath.moveTo((float)point.getX(), (float)point.getY());
 	}
 
 	public void lineTo(Point2D.Double point) {
-		//TODO controllare
 		vertices.add(new Vertex(point, 2));
 		generalPath.lineTo((float)point.getX(), (float)point.getY());
 	}
 
 	public void arcTo(double radiusX, double radiusY, double angle, boolean largeArc, boolean sweep, Point2D.Double point) {
-		//TODO controllare
 		vertices.add(new Vertex(point, 3));
 		generalPath.arcTo((float)radiusX, (float)radiusY, (float)angle, largeArc, sweep, (float)point.getX(), (float)point.getY());
 	}
@@ -110,14 +106,12 @@ public class PathStorage {
 	}
 
 	public int lastVertex(Point2D.Double point) {
-		//TODO controllare
 		Vertex vertex = vertices.get(vertices.size() - 1);
 		point.setLocation(vertex.point.getX(), vertex.point.getY());
 		return vertex.command;
 	}
 
 	public void modifyVertex(int index, Point2D.Double point) {
-		//TODO controllare
 		Vertex vertex = vertices.get(vertices.size() - 1);
 		vertex.point.setLocation(point.getX(), point.getY());
 	}

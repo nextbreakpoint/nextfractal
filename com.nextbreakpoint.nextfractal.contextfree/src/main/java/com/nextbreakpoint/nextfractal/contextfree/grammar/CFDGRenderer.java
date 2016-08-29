@@ -99,11 +99,11 @@ public class CFDGRenderer {
 	private double currArea;
 	private double minArea;
 	private double minSize;
-	private Bounds bounds;
-	private Bounds pathBounds;
-	private AffineTransform currTransform;
-	private AffineTransformTime timeBounds;
-	private AffineTransformTime frameTimeBounds;
+	private Bounds bounds = new Bounds();
+	private Bounds pathBounds = new Bounds();
+	private AffineTransform currTransform = new AffineTransform();
+	private AffineTransformTime timeBounds = new AffineTransformTime();
+	private AffineTransformTime frameTimeBounds = new AffineTransformTime();
 	private int outputSoFar;
 	private int shapeCount;
 	private int todoCount;
@@ -522,7 +522,7 @@ public class CFDGRenderer {
 			drawingMode = false;
 			if (rule != null) {
 				opsOnly = false;
-				rule.traverse(shape, false, this);
+				rule.traversePath(shape, this);
 			} else {
 				CommandInfo attr = null;
 				if (shape.getShapeType() < 3) {

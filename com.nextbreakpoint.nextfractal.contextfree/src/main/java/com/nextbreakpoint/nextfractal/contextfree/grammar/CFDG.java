@@ -33,7 +33,7 @@ import java.awt.geom.Point2D;
 import java.util.*;
 
 public class CFDG {
-	private double[] backgroundColor;
+	private double[] backgroundColor = new double[] { 1, 1, 1, 1 };
 	private Shape initialShape;
 	private ASTRule needle;
 	private ASTReplacement initShape;
@@ -43,13 +43,13 @@ public class CFDG {
 	private Map<Integer, ASTDefine> functions = new HashMap<Integer, ASTDefine>();
 	private Map<CFG, Integer> paramDepth = new HashMap<CFG, Integer>();
 	private Map<CFG, ASTExpression> paramExp = new HashMap<CFG, ASTExpression>();
-	private Modification tileMod;
-	private Modification sizeMod;
-	private Modification timeMod;
-	private Point2D tileOffset;
+	private Modification tileMod = new Modification();
+	private Modification sizeMod = new Modification();
+	private Modification timeMod = new Modification();
+	private Point2D tileOffset = new Point2D.Double(0, 0);
 	private int parameters;
 	private int stackSize;
-	private boolean useAlpha;
+	private boolean usesAlpha;
 	private boolean usesColor;
 	private boolean usesTime;
 	private boolean usesFrameTime;
@@ -58,6 +58,8 @@ public class CFDG {
 
 	public CFDG(CFDGDriver cfdgDriver) {
 		this.cfdgDriver = cfdgDriver;
+		cfdgContents = new ASTRepContainer(cfdgDriver);
+		needle = new ASTRule(cfdgDriver, -1, null);
 	}
 
 	public CFDGDriver getDriver() {
@@ -88,10 +90,26 @@ public class CFDG {
 		white.setColor(new HSBColor(0.0, 0.0, 1.0, 1.0));
 		if (hasParameter(CFG.Background, white, renderer)) {
 			white.color().getRGBA(backgroundColor);
-			if (!useAlpha) {
+			if (!usesAlpha) {
 				backgroundColor[3] = 1.0;
 			}
 		}
+	}
+
+	public boolean usesAlpha() {
+		return usesAlpha;
+	}
+
+	public boolean usesColor() {
+		return usesColor;
+	}
+
+	public boolean usesTime() {
+		return usesTime;
+	}
+
+	public boolean usesFrameTime() {
+		return usesFrameTime;
 	}
 
 	public ASTRule findRule(int nameIndex) {
@@ -340,9 +358,6 @@ public class CFDG {
 	}
 
 	public ASTExpression hasParameter(CFG p) {
-		if (paramDepth.get(p).intValue() == -1) {
-			return null;
-		}
 		return paramExp.get(p);
 	}
 
@@ -430,10 +445,10 @@ public class CFDG {
 		ASTExpression e = hasParameter(CFG.Background);
 		if (e != null && e instanceof ASTModification) {
 			ASTModification m = (ASTModification) e;
-			useAlpha = m.getModData().color().alpha() != 1.0;
+			usesAlpha = m.getModData().color().alpha() != 1.0;
 			for (ASTModTerm term : m.getModExp()) {
 				if (term.getModType() == ModType.alpha || term.getModType() == ModType.alphaTarg) {
-					useAlpha = true;
+					usesAlpha = true;
 				}
 			}
 		}
@@ -633,15 +648,7 @@ public class CFDG {
 	}
 
 	public void traverse(Shape shape, boolean tr, CFDGRenderer renderer) {
-		ASTRule rule = rules.iterator().next();
+		ASTRule rule = rules.peek();
 		rule.traverse(shape, tr, renderer);
-	}
-
-	public boolean usesTime() {
-		return usesTime;
-	}
-
-	public boolean usesFrameTime() {
-		return usesFrameTime;
 	}
 }
