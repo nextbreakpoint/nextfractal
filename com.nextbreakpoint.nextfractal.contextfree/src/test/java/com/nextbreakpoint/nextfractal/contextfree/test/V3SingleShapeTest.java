@@ -80,9 +80,10 @@ public class V3SingleShapeTest extends AbstractBaseTest {
 		CFDGRenderer renderer = cfdg.renderer(200, 200, 1, 0, 0.1);
 		assertThat(renderer, is(notNullValue()));
 		double scale = renderer.run(canvas, false);
+		assertThat(scale, is(equalTo(198.4)));
 		AffineTransform transform = new AffineTransform();
-		transform.translate(66466.66666666667, 66466.66666666667);
-		transform.scale(664.6666666666667, 664.6666666666667);
+		transform.translate(100.0, 100.0);
+		transform.scale(198.4, 198.4);
 		verify(canvas, times(1)).primitive(1, new double[] { 0, 0, 0, 1 }, transform);
 	}
 

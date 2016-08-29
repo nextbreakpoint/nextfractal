@@ -377,20 +377,22 @@ public class CFDGRenderer {
 
 		fixedBorderX = 0;
 		fixedBorderY = 0;
-		shapeBorder = 0;
+		shapeBorder = 1;
 		totalArea = 0;
 		minArea = 0.3;
 		outputSoFar = 0;
-		double[] value = new double[1];
+		double[] value = new double[] { minArea };
 		cfdg.hasParameter(CFG.MinimumSize, value, this);
 		value[0] = (value[0] <= 0.0) ? 0.3 : value[0];
 		minArea = value[0] * value[0];
 		fixedBorderX = FIXED_BORDER * ((border <= 1.0) ? border : 1.0);
 		shapeBorder = SHAPE_BORDER * ((border <= 1.0) ? 1.0 : border);
 
+		value[0] = fixedBorderX;
 		cfdg.hasParameter(CFG.BorderFixed, value, this);
 		fixedBorderX = value[0];
 
+		value[0] = shapeBorder;
 		cfdg.hasParameter(CFG.BorderDynamic, value, this);
 		shapeBorder = value[0];
 
@@ -402,9 +404,9 @@ public class CFDGRenderer {
 			shapeBorder = 1.0;
 		}
 
-		if (cfdg.hasParameter(CFG.MaxNatural, value, this) && (value[0] < 1.0 || (value[0] - 1.0) == value[0]))
+		if (cfdg.hasParameter(CFG.MaxNatural, value, this) && (value[0] < 1.0 || value[0] > 9007199254740992.0))
 		{
-        	ASTExpression max = cfdg.hasParameter(CFG.MaxNatural);
+        	maxNatural = value[0];
 			//TODO rivedere
 			throw new RuntimeException((value[0] < 1.0) ? "CF::MaxNatural must be >= 1" : "CF::MaxNatural must be < 9007199254740992");
 		}

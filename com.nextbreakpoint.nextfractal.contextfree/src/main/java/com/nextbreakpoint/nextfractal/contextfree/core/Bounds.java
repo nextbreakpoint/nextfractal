@@ -184,7 +184,7 @@ public class Bounds {
             double offsetX = scale * (maxX + minX) / 2.0 - newWidth / 2.0;
             double offsetY = scale * (maxY + minY) / 2.0 - newHeight / 2.0;
             transform.setToScale(scale, scale);
-            transform.translate(-offsetX, -offsetY);
+            transform.preConcatenate(AffineTransform.getTranslateInstance(-offsetX, -offsetY));
         }
 
         return scale;
