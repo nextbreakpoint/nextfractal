@@ -149,7 +149,10 @@ public class ASTDefine extends ASTReplacement {
 			driver.pushRepContainer(tempCont);
 			super.compile(ph);
 			if (exp != null) {
-				exp = exp.compile(ph);
+				ASTExpression tmpExp = exp.compile(ph);
+				if (tmpExp != null) {
+					exp = tmpExp;
+				}
 			}
 			if (ph == CompilePhase.Simplify) {
 				if (exp != null) {
@@ -160,7 +163,10 @@ public class ASTDefine extends ASTReplacement {
 		} else {
 			super.compile(ph);
 			if (exp != null) {
-				exp = exp.compile(ph);
+				ASTExpression tmpExp = exp.compile(ph);
+				if (tmpExp != null) {
+					exp = tmpExp;
+				}
 			}
 			if (ph == CompilePhase.Simplify) {
 				if (exp != null) {

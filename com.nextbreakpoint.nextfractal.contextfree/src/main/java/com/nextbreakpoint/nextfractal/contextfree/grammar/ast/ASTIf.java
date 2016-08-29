@@ -56,9 +56,7 @@ public class ASTIf extends ASTReplacement {
 	@Override
 	public void compile(CompilePhase ph) {
 		super.compile(ph);
-		if (condition != null) {
-			condition = condition.compile(ph);
-		}
+		condition = compile(condition, ph);
 		thenBody.compile(ph, null, null);
 		elseBody.compile(ph, null, null);
 		

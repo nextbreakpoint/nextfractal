@@ -439,9 +439,7 @@ public class ASTFunction extends ASTExpression {
 
 	@Override
 	public ASTExpression compile(CompilePhase ph) {
-		if (arguments != null) {
-			arguments = arguments.compile(ph);
-		}
+		arguments = compile(arguments, ph);
 		switch (ph) {
 			case TypeCheck:
 				{
@@ -637,7 +635,7 @@ public class ASTFunction extends ASTExpression {
 						isConstant = false;
 						arguments = new ASTReal(1.0, location);
 					}
-					if (funcType.ordinal() >= FuncType.RandStatic.ordinal() && funcType.ordinal() <= FuncType.RandInt.ordinal()) {
+					if (funcType.getType() >= FuncType.RandStatic.getType() && funcType.getType() <= FuncType.RandInt.getType()) {
 						if (funcType != FuncType.RandStatic) {
 							isConstant = false;
 						}
@@ -696,9 +694,7 @@ public class ASTFunction extends ASTExpression {
 
 	@Override
 	public ASTExpression simplify() {
-		if (arguments != null) {
-			arguments = arguments.simplify();
-		}
+		arguments = simplify(arguments);
 		if (isConstant) {
 			double[] result = new double[MAX_VECTOR_SIZE];
 			int len = evaluate(result, MAX_VECTOR_SIZE, null);

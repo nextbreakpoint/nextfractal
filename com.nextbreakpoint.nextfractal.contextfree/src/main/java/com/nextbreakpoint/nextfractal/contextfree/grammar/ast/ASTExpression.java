@@ -170,4 +170,22 @@ public class ASTExpression {
 		//TODO completare
 		return 1;
 	}
+
+	protected ASTExpression compile(ASTExpression exp, CompilePhase ph) {
+		if (exp == null) {
+			return null;
+		}
+		ASTExpression tmpExp = exp.compile(ph);
+		if (tmpExp != null) {
+			return tmpExp;
+		}
+		return exp;
+	}
+
+	protected ASTExpression simplify(ASTExpression exp) {
+		if (exp == null) {
+			return null;
+		}
+		return exp.simplify();
+	}
 }

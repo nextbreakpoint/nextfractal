@@ -114,11 +114,9 @@ public class ASTSelect extends ASTExpression {
 			return null;
 		}
 		for (int i  = 0; i < arguments.size(); i++) {
-			arguments.set(i, arguments.get(i).compile(ph));
+			arguments.set(i, compile(arguments.get(i), ph));
 		}
-		if (selector != null) {
-			selector = selector.compile(ph);
-		}
+		selector = compile(selector, ph);
 
 		switch (ph) {
 			case TypeCheck: {

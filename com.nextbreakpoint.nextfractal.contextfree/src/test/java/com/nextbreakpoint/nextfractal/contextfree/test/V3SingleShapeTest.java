@@ -26,14 +26,12 @@ package com.nextbreakpoint.nextfractal.contextfree.test;
 
 import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDG;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGRenderer;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.Shape;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import java.io.IOException;
 
-import static com.nextbreakpoint.nextfractal.contextfree.grammar.enums.CompilePhase.*;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -59,23 +57,18 @@ public class V3SingleShapeTest extends AbstractBaseTest {
 	}
 
 	@Test
-	public void shouldCompleteTypeCheck() throws IOException {
+	public void shouldReloadRules() throws IOException {
 		CFDG cfdg = parseSource(RESOURCE_NAME);
-		cfdg.compile(TypeCheck);
+		cfdg.rulesLoaded();
+		assertThat(cfdg.getContents().getBody().size(), is(equalTo(1)));
 	}
 
 	@Test
-	public void shouldCompleteSimplify() throws IOException {
-		CFDG cfdg = parseSource(RESOURCE_NAME);
-		cfdg.compile(TypeCheck);
-		cfdg.compile(Simplify);
-	}
 
-	@Test
-	public void shouldTraverse() throws IOException {
+	public void shouldCreateRenderer() throws IOException {
 		CFDG cfdg = parseSource(RESOURCE_NAME);
-		cfdg.compile(TypeCheck);
-		cfdg.compile(Simplify);
-		cfdg.traverse(new Shape(), false, new CFDGRenderer(cfdg, 200, 200, 1, 0, 0.1));
+		cfdg.rulesLoaded();
+		CFDGRenderer renderer = cfdg.renderer(200, 200, 1, 0, 0.1);
+		assertThat(renderer, is(notNullValue()));
 	}
 }

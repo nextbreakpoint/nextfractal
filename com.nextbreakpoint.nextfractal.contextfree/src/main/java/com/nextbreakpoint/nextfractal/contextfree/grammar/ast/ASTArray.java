@@ -118,10 +118,8 @@ public class ASTArray extends ASTExpression {
 	@Override
 	public ASTExpression simplify() {
 		if (data == null || !isConstant || length > 1) {
-			if (args != null) {
-				args = args.simplify();
-				return this;
-			}
+			args = simplify(args);
+			return this;
 		}
 		double[] i = new double[1];
 		if (args.evaluate(i, 1) != 1) {
@@ -141,9 +139,7 @@ public class ASTArray extends ASTExpression {
 
 	@Override
 	public ASTExpression compile(CompilePhase ph) {
-		if (args != null) {
-			args.compile(ph);
-		}
+		args = compile(args, ph);
 		if (args == null) {
 			Logger.error("Illegal expression in vector index", location);
 			return null;

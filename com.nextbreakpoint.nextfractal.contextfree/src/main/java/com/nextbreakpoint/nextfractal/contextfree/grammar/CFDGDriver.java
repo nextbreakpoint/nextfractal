@@ -235,7 +235,7 @@ public class CFDGDriver {
 	}
 	
 	public void makeConfig(ASTDefine cfg) {
-		if (cfg.getName().equals("CF::Impure")) {
+		if (cfg.getName().equals(CFG.Impure.getName())) {
 			double[] v = new double[] { 0.0 };
 			if (cfg.getExp() != null || cfg.getExp().isConstant() || cfg.getExp().evaluate(v, 1, null) != 1) {
 				error("CF::Impure requires a constant numeric expression", cfg.getLocation());
@@ -243,7 +243,7 @@ public class CFDGDriver {
 				ASTParameter.Impure = v[0] != 0.0;
 			}
 		}
-		if (cfg.getName().equals("CF::AllowOverlap")) {
+		if (cfg.getName().equals(CFG.AllowOverlap.getName())) {
 			double[] v = new double[] { 0.0 };
 			if (cfg.getExp() != null || cfg.getExp().isConstant() || cfg.getExp().evaluate(v, 1, null) != 1) {
 				error("CF::AllowOverlap requires a constant numeric expression", cfg.getLocation());
@@ -251,7 +251,7 @@ public class CFDGDriver {
 				allowOverlap = v[0] != 0.0;
 			}
 		}
-		if (cfg.getName().equals("CF::StartShape") && cfg.getExp() != null && (cfg.getExp() instanceof ASTStartSpecifier)) {
+		if (cfg.getName().equals(CFG.StartShape.getName()) && cfg.getExp() != null && !(cfg.getExp() instanceof ASTStartSpecifier)) {
 			ASTRuleSpecifier rule = null;
 			ASTModification mod = null;
 			List<ASTExpression> specAndMod = extract(cfg.getExp());
@@ -285,7 +285,7 @@ public class CFDGDriver {
 		if (!cfdg.addParameter(cfg.getName(), cfg.getExp(), cfg.getConfigDepth())) {
 			error("Unknown configuration parameter", cfg.getLocation());
 		}
-		if (cfg.getName().equals("CF::MaxNatural")) {
+		if (cfg.getName().equals(CFG.MaxNatural.getName())) {
 			ASTExpression max = cfdg.hasParameter(CFG.MaxNatural);
 			if (max != current) {
 				return;
@@ -520,7 +520,7 @@ public class CFDGDriver {
 		ASTRepContainer lastContainer = containerStack.lastElement();
 		localStackDepth -= lastContainer.getStackCount();
 		if (r != null) {
-			r.setRepType(RepElemType.fromType(r.getRepType().ordinal() | lastContainer.getRepType()));
+			r.setRepType(RepElemType.fromType(r.getRepType().getType() | lastContainer.getRepType()));
 			if (r.getPathOp() == PathOp.UNKNOWN) {
 				r.setPathOp(lastContainer.getPathOp());
 			}
@@ -529,7 +529,7 @@ public class CFDGDriver {
 	}
 
 	private boolean badContainer(int containerType) {
-		return (containerType & (RepElemType.op.ordinal() | RepElemType.replacement.ordinal())) == (RepElemType.op.ordinal() | RepElemType.replacement.ordinal());
+		return (containerType & (RepElemType.op.getType() | RepElemType.replacement.getType())) == (RepElemType.op.getType() | RepElemType.replacement.getType());
 	}
 	
 	public void pushRep(ASTReplacement r, boolean global) {
@@ -537,15 +537,12 @@ public class CFDGDriver {
 			return;
 		}
 		ASTRepContainer container = containerStack.lastElement();
-		if (container.getBody().size() > 0) {
-			container.getBody().remove(container.getBody().size() - 1);
-		}
 		container.getBody().add(r);
 		if (container.getPathOp() == PathOp.UNKNOWN) {
 			container.setPathOp(r.getPathOp());
 		}
 		int oldType = container.getRepType();
-		container.setRepType(oldType | r.getRepType().ordinal());
+		container.setRepType(oldType | r.getRepType().getType());
 		if (badContainer(container.getRepType()) && !badContainer(oldType) && !global) {
 			error("Cannot mix path elements and replacements in the same container", r.getLocation());
 		}
@@ -701,5 +698,9 @@ public class CFDGDriver {
 
 	public void setLocalStackDepth(int localStackDepth) {
 		this.localStackDepth = localStackDepth;
+	}
+
+	public ASTRepContainer getCFDGContent() {
+		return cfdg.getContents();
 	}
 }

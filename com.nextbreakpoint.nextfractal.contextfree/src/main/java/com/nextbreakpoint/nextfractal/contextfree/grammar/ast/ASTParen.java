@@ -75,7 +75,7 @@ public class ASTParen extends ASTExpression {
 	public ASTExpression compile(CompilePhase ph) {
 		if (expression == null) return null;
 
-		expression = expression.compile(ph);
+		expression = compile(expression, ph);
 		
 		switch (ph) {
 			case TypeCheck: {

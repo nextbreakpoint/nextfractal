@@ -24,12 +24,16 @@ public CFDG getCFDG() {
 }
 
 choose
-		:
+		: {
+            driver.pushRepContainer(driver.getCFDGContent());
+		}
 		(
 		CFDG2 cfdg2
 		|
 		CFDG3 cfdg3
-		)
+		) {
+            driver.popRepContainer(null);
+		}
 		eof
 		;
 
@@ -55,13 +59,21 @@ cfdg3
         
 statement_v2 returns [ASTReplacement result]
         : 
-        initialization_v2
-        | directive_v2  
+        initialization_v2 {
+            $result = $initialization_v2.result;
+        }
+        | directive_v2 {
+            $result = $directive_v2.result;
+        }
         | inclusion_v2 { 
         	$result = null;
         }
-        | rule_v2
-        | path_v2
+        | rule_v2 {
+            $result = $rule_v2.result;
+        }
+        | path_v2 {
+            $result = $path_v2.result;
+        }
         | v3clues .*? {
         	if (driver.getMaybeVersion().equals("CFDG2")) {
         		driver.error("Illegal mixture of old and new elements", $v3clues.start);
@@ -74,18 +86,26 @@ statement_v2 returns [ASTReplacement result]
         
 statement_v3 returns [ASTReplacement result]
         : 
-        initialization_v3
-        | import_v3 { 
+        initialization_v3 {
+            $result = $initialization_v3.result;
+        }
+        | import_v3 {
         	$result = null;
         }
-        | rule_v3
-        | path
-        | r=shape { 
+        | rule_v3 {
+            $result = $rule_v3.result;
+        }
+        | path {
+            $result = $path.result;
+        }
+        | shape {
         	$result = null;
         }
-        | shape_singleton
-        | d=global_definition { 
-        	$result = $d.result;
+        | shape_singleton {
+            $result = $shape_singleton.result;
+        }
+        | global_definition {
+        	$result = $global_definition.result;
         }
         | v2stuff .*? {
         	driver.error("Illegal mixture of old and new elements", $v2stuff.start);

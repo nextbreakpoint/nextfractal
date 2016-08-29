@@ -183,7 +183,7 @@ public class AST {
     }
 
     public static Locality combineLocality(Locality locality1, Locality locality2) {
-        return Locality.fromType(locality1.ordinal() | locality2.ordinal());
+        return Locality.fromType(locality1.getType() | locality2.getType());
     }
 
     public static List<ASTExpression> extract(ASTExpression exp) {

@@ -285,13 +285,9 @@ public class ASTOperator extends ASTExpression {
 
 	@Override
 	public ASTExpression simplify() {
-		if (left != null) {
-			left = left.simplify();
-		}
+		left = left.simplify(left);
 
-		if (right != null) {
-			right = right.simplify();
-		}
+		right = right.simplify(right);
 
 		if (isConstant && (type == ExpType.NumericType || type == ExpType.FlagType)) {
 			double[] result = new double[1];
@@ -308,14 +304,10 @@ public class ASTOperator extends ASTExpression {
 
 	@Override
 	public ASTExpression compile(CompilePhase ph) {
-		if (left != null) {
-			left = left.compile(ph);
-		}
+		left = compile(left, ph);
 
-		if (right != null) {
-			right = right.compile(ph);
-		}
-		
+		right = compile(right, ph);
+
 		switch (ph) {
 			case TypeCheck: {
 				isConstant = left.isConstant() && (right == null || right.isConstant());

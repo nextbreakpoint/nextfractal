@@ -97,10 +97,8 @@ public class ASTLoop extends ASTReplacement {
 
 	@Override
 	public void compile(CompilePhase ph) {
-		if (loopArgs != null) {
-			loopArgs.compile(ph);
-		}
-		
+		loopArgs = compile(loopArgs, ph);
+
 		switch (ph) {
 			case TypeCheck: {
 				if (loopArgs == null) {

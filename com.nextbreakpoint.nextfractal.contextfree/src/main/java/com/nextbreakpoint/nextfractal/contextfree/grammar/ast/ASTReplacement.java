@@ -45,7 +45,10 @@ public class ASTReplacement {
 		this.shapeSpec = shapeSpec;
 		this.pathOp = PathOp.UNKNOWN;
 		this.location = location;
-		this.childChange = new ASTModification(driver, location);
+		this.childChange = childChange;
+		if (this.childChange == null) {
+			this.childChange = new ASTModification(driver, location);
+		}
 	}
 
 	public ASTReplacement(CFDGDriver driver, ASTRuleSpecifier shapeSpec, ASTModification childChange, Token location) {
@@ -66,6 +69,11 @@ public class ASTReplacement {
 		if (this.pathOp == PathOp.UNKNOWN) {
 			Logger.error("Unknown path operation type", location);
 		}
+	}
+
+	public ASTReplacement(ASTReplacement replacement) {
+		this(replacement.driver, replacement.getShapeSpecifier(), replacement.getChildChange(), replacement.getRepType(), replacement.getLocation());
+		this.pathOp = replacement.getPathOp();
 	}
 
 	public Token getLocation() {
@@ -141,9 +149,9 @@ public class ASTReplacement {
 
 	public void compile(CompilePhase ph) {
 		ASTExpression r = shapeSpec.compile(ph);
-//		assert(r == shapeSpec);
+		assert(r == null);
 		r = childChange.compile(ph);
-//		assert(r == childChange);
+		assert(r == null);
 
 		switch (ph) {
 			case TypeCheck: 
@@ -175,5 +183,23 @@ public class ASTReplacement {
 			default:
 				break;
 		}
+	}
+
+	protected ASTExpression compile(ASTExpression exp, CompilePhase ph) {
+		if (exp == null) {
+			return null;
+		}
+		ASTExpression tmpExp = exp.compile(ph);
+		if (tmpExp != null) {
+			return tmpExp;
+		}
+		return exp;
+	}
+
+	protected ASTExpression simplify(ASTExpression exp) {
+		if (exp == null) {
+			return null;
+		}
+		return exp.simplify();
 	}
 }

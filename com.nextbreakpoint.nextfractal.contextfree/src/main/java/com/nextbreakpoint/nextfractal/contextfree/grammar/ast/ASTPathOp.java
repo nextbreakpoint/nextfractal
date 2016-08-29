@@ -83,9 +83,8 @@ public class ASTPathOp extends ASTReplacement {
 	@Override
 	public void compile(CompilePhase ph) {
 		super.compile(ph);
-		if (arguments != null) {
-			arguments = arguments.compile(ph);
-		}
+		arguments = compile(arguments, ph);
+
 		if (oldStyleArguments != null) {
 			oldStyleArguments.compile(ph);
 		}

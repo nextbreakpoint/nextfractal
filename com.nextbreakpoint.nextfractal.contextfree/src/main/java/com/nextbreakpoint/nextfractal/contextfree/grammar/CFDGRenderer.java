@@ -64,7 +64,7 @@ public class CFDGRenderer {
 	private Iterator<CommandInfo> currentCommand;
 	private double currentTime;
 	private double currentFrame;
-	private Rand64 currentSeed;
+	private Rand64 currentSeed = new Rand64();
 	private boolean randUsed;
 	private double maxNatural;
 	private double maxSteps;

@@ -24,7 +24,6 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.grammar.ast;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -241,13 +240,10 @@ public class ASTRuleSpecifier extends ASTExpression {
 			if (arguments instanceof ASTCons) {
 				ASTCons cargs = (ASTCons)arguments;
 				for (int i = 0; i < cargs.getChildren().size(); i++) {
-					ASTExpression expression = cargs.getChild(i).simplify();
-					if (expression != null) {
-						cargs.setChild(i, expression);
-					}
+					cargs.setChild(i, simplify(cargs.getChild(i)));
 				}
 			} else {
-				arguments = arguments.simplify();
+				arguments = simplify(arguments);
 			}
 		}
 		if (argSource == ArgSource.StackArgs) {
@@ -280,9 +276,7 @@ public class ASTRuleSpecifier extends ASTExpression {
 
 	@Override
 	public ASTExpression compile(CompilePhase ph) {
-		if (arguments != null) {
-			arguments = arguments.compile(ph);
-		}
+		arguments = compile(arguments, ph);
 		switch (ph) {
 			case TypeCheck: {
 				switch (argSource) {

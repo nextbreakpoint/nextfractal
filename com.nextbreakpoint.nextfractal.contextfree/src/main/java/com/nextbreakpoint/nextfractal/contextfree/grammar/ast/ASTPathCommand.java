@@ -130,9 +130,7 @@ public class ASTPathCommand extends ASTReplacement {
 	@Override
 	public void compile(CompilePhase ph) {
 		super.compile(ph);
-		if (parameters != null) {
-			parameters = parameters.compile(ph);
-		}
+		parameters = compile(parameters, ph);
 
 		switch (ph) {
 			case TypeCheck: {

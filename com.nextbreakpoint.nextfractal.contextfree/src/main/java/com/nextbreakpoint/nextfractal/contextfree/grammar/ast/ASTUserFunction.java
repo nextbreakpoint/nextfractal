@@ -125,10 +125,10 @@ public class ASTUserFunction extends ASTExpression {
 			if (arguments instanceof ASTCons) {
 				ASTCons carg = (ASTCons)arguments;
 				for (int i = 0; i < carg.getChildren().size(); i++) {
-					carg.setChild(i, carg.getChild(i).simplify());
+					carg.setChild(i, simplify(carg.getChild(i)));
 				}
 			} else {
-				arguments = arguments.simplify();
+				arguments = simplify(arguments);
 			}
 		}
 		return this;

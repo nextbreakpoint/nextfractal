@@ -362,18 +362,19 @@ public class CFDG {
 	}
 
 	public boolean addParameter(String name, ASTExpression exp, int depth) {
-		CFG p = CFG.valueOf(name);
+		CFG p = CFG.byName(name);
 		if (p == null) {
 			return false;
 		}
-		if (depth < paramDepth.get(p)) {
+		Integer oldDepth = paramDepth.get(p);
+		if (oldDepth == null || depth < oldDepth) {
 			paramDepth.put(p, depth);
 			paramExp.put(p, exp);
 		}
 		return true;
 	}
 
-	public void rulesLoaded(CFDGDriver driver) {
+	public void rulesLoaded() {
 		//TODO rivedere
 
 		double[] weightsums = new double[shapeTypes.size()];
@@ -423,11 +424,11 @@ public class CFDG {
 
 		Collections.sort(rules);
 
-		driver.setLocalStackDepth(0);
+		cfdgDriver.setLocalStackDepth(0);
 
 		cfdgContents.compile(CompilePhase.TypeCheck, null, null);
 
-		if (driver.errorOccured()) {
+		if (!cfdgDriver.errorOccured()) {
 			cfdgContents.compile(CompilePhase.Simplify, null, null);
 		}
 
@@ -575,7 +576,7 @@ public class CFDG {
 		return null;
 	}
 
-	public CFDGRenderer renderer(CFDGDriver driver, int width, int height, double minSize, int variation, double border) {
+	public CFDGRenderer renderer(int width, int height, double minSize, int variation, double border) {
 		try {
 			ASTExpression startExp = paramExp.get(CFG.StartShape);
 
@@ -586,7 +587,7 @@ public class CFDG {
 
 			if (startExp instanceof ASTStartSpecifier) {
 				ASTStartSpecifier specStart = (ASTStartSpecifier)startExp;
-				initShape = new ASTReplacement(driver, specStart, specStart.getModification(), startExp.getLocation());
+				initShape = new ASTReplacement(cfdgDriver, specStart, specStart.getModification(), startExp.getLocation());
 				initShape.getChildChange().addEntropy(initShape.getShapeSpecifier().getEntropy());
 			} else {
 				Logger.fail("Type error in startshape", startExp.getLocation());
@@ -637,18 +638,5 @@ public class CFDG {
 		}
 
 		return null;
-	}
-
-	//TODO rivedere
-
-	public void compile(CompilePhase ph) {
-		for (ASTRule rule : rules) {
-			rule.compile(ph);
-		}
-	}
-
-	public void traverse(Shape shape, boolean tr, CFDGRenderer renderer) {
-		ASTRule rule = rules.peek();
-		rule.traverse(shape, tr, renderer);
 	}
 }

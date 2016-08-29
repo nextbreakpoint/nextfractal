@@ -43,6 +43,15 @@ public enum CFG {
 		return "CF::" + name().toUpperCase();
 	}
 
+	public static CFG byName(String name) {
+		for (CFG value : CFG.values()) {
+			if (value.getName().equals(name)) {
+				return value;
+			}
+		}
+		throw new RuntimeException("unknown parameter " + name);
+	}
+
 	public static CFG fromOrdinal(int ordinal) {
 		switch (ordinal) {
 			case 0:

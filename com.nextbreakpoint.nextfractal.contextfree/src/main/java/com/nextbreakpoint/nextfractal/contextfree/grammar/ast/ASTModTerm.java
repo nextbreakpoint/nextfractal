@@ -395,17 +395,14 @@ public class ASTModTerm extends ASTExpression {
 
 	@Override
 	public ASTExpression simplify() {
-		if (args != null) {
-			args = args.simplify();
-		}
+		args = simplify(args);
 		return this;
 	}
 
 	@Override
 	public ASTExpression compile(CompilePhase ph) {
-		if (args != null) {
-			args = args.compile(ph);
-		}
+		args = compile(args, ph);
+
 		if (args == null) {
 			if (modType == ModType.param) {
                 Logger.error("Illegal expression in shape adjustment", location);

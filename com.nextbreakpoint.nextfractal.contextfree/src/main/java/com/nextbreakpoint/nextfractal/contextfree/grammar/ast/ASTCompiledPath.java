@@ -195,6 +195,7 @@ public class ASTCompiledPath extends PathStorage {
 		}
 
 		// Insert an implicit MOVETO unless the pathOp is a MOVETO/MOVEREL
+		//TODO completare replace ordinal()
 		if (renderer.isWantMoveTo() && pathOp.getPathOp().ordinal() > PathOp.MOVEREL.ordinal()) {
 			renderer.setWantMoveTo(false);
 			getPath().moveTo(renderer.getLastPoint());

@@ -63,9 +63,7 @@ public class ASTSwitch extends ASTReplacement {
 	@Override
 	public void compile(CompilePhase ph) {
 		super.compile(ph);
-		if (switchExp != null) {
-			switchExp = switchExp.compile(ph);
-		}
+		switchExp = compile(switchExp, ph);
 		for (ASTRepContainer caseVal : caseStatements.values()) {
 			caseVal.compile(ph, null, null);
 		}
