@@ -109,8 +109,6 @@ public class CFDGRenderer {
 	private int todoCount;
 	private boolean animating;
 
-	private GeneralPath pathIter = new GeneralPath();
-
 	private List<AffineTransform> symmetryOps = new ArrayList<>();
 
 	private List<CommandInfo> shapeMap = new ArrayList<>();
@@ -542,8 +540,8 @@ public class CFDGRenderer {
 					bounds.setMaxY(+friezeSize);
 				}
 
-				int[] currWidth = new int[1];
-				int[] curreHeight = new int[1];
+				int[] currWidth = new int[] { width };
+				int[] curreHeight = new int[] { height };
 				scale = bounds.computeScale(currWidth, curreHeight, fixedBorderX, fixedBorderY, false, null, false);
 				width = currWidth[0];
 				height = curreHeight[0];
@@ -612,7 +610,7 @@ public class CFDGRenderer {
 		} else {
 			if (attr != null) {
 				//TODO rivedere
-				pathBounds.update(shape.getWorldState().getTransform(), pathIter, scale, attr);
+				pathBounds.update(shape.getWorldState().getTransform(), scale, attr);
 				currentArea = Math.abs((pathBounds.getMaxX() - pathBounds.getMinX()) * (pathBounds.getMaxY() - pathBounds.getMinY()));
 			}
 		}
@@ -637,7 +635,11 @@ public class CFDGRenderer {
 			bounds.setMinY(-tileY / 2.0);
 			bounds.setMaxX(tileX / 2.0);
 			bounds.setMaxY(tileY / 2.0);
-			rescaleOutput(width, height, true);
+			int[] currWidth = new int[] { width };
+			int[] currHeight = new int[] { height };
+			rescaleOutput(currWidth, currHeight, true);
+			width = currWidth[0];
+			height = currHeight[0];
 			scaleArea = currArea;
 		}
 
@@ -656,7 +658,11 @@ public class CFDGRenderer {
 		this.height = y;
 		if (tiled || sized) {
 			currScale = currArea = 0.0;
-			rescaleOutput(width, height, true);
+			int[] currWidth = new int[] { width };
+			int[] currHeight = new int[] { height };
+			rescaleOutput(currWidth, currHeight, true);
+			width = currWidth[0];
+			height = currHeight[0];
 			scaleArea = currArea;
 		}
 	}
@@ -773,7 +779,11 @@ public class CFDGRenderer {
 		}
 
 		if (canvas != null && frieze != FriezeType.NoFrieze) {
-			rescaleOutput(width, height, true);
+			int[] currWidth = new int[] { width };
+			int[] currHeight = new int[] { height };
+			rescaleOutput(currWidth, currHeight, true);
+			width = currWidth[0];
+			height = currHeight[0];
 		}
 
 		return currScale;
@@ -797,17 +807,17 @@ public class CFDGRenderer {
 			cleanup();
 		}
 
-		int currWidth = width;
-		int currHeight = height;
+		int[] currWidth = new int[] { width };
+		int[] currHeight = new int[] { height };
 		rescaleOutput(currWidth, currHeight, true);
 
-		canvas.start(true, cfdg.getBackgroundColor(null), currWidth, currHeight);
+		canvas.start(true, cfdg.getBackgroundColor(null), currWidth[0], currHeight[0]);
 
 		canvas.end();
 
 		double framInc = (timeBounds.getEnd() - timeBounds.getBegin()) / frames;
 
-		OutputBounds outputBounds = new OutputBounds(frames, timeBounds, currWidth, currHeight, this);
+		OutputBounds outputBounds = new OutputBounds(frames, timeBounds, currWidth[0], currHeight[0], this);
 
 		if (zoom) {
 			Logger.info("Computing zoom", null);
@@ -924,17 +934,14 @@ public class CFDGRenderer {
 		requestUpdate = false;
 	}
 
-	private void rescaleOutput(int width, int height, boolean finalStep) {
+	private void rescaleOutput(int[] width, int[] height, boolean finalStep) {
 		if (!bounds.valid()) {
 			return;
 		}
 
-		int[] currWidth = new int[1];
-		int[] currHeight = new int[1];
-
 		AffineTransform transform = new AffineTransform();
 
-		double scale = bounds.computeScale(currWidth, currHeight, fixedBorderX, fixedBorderY, true, transform, tiled || sized || frieze != FriezeType.NoFrieze);
+		double scale = bounds.computeScale(width, height, fixedBorderX, fixedBorderY, true, transform, tiled || sized || frieze != FriezeType.NoFrieze);
 
 		//TODO rivedere
 
@@ -960,9 +967,8 @@ public class CFDGRenderer {
 
 		this.finalStep = finalStep;
 
-		int currWidth = width;
-		int currHeight = height;
-
+		int[] currWidth = new int[] { width };
+		int[] currHeight = new int[] { height };
 		rescaleOutput(currWidth, currHeight, finalStep);
 
 		if (finalStep) {
@@ -974,7 +980,7 @@ public class CFDGRenderer {
 
 		//TODO rivedere
 
-		canvas.start(outputSoFar == 0, cfdg.getBackgroundColor(null), currWidth, currHeight);
+		canvas.start(outputSoFar == 0, cfdg.getBackgroundColor(null), currWidth[0], currHeight[0]);
 
 		drawingMode = true;
 

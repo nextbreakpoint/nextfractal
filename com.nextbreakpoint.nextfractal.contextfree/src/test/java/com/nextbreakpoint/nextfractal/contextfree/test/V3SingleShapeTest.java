@@ -26,16 +26,20 @@ package com.nextbreakpoint.nextfractal.contextfree.test;
 
 import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDG;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGRenderer;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.SimpleCanvas;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import java.awt.geom.AffineTransform;
 import java.io.IOException;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.*;
 
 public class V3SingleShapeTest extends AbstractBaseTest {
 	public static final String RESOURCE_NAME = "/v3-single-shape.cfdg";
@@ -59,15 +63,32 @@ public class V3SingleShapeTest extends AbstractBaseTest {
 	@Test
 	public void shouldReloadRules() throws IOException {
 		CFDG cfdg = parseSource(RESOURCE_NAME);
-		cfdg.rulesLoaded();
 		assertThat(cfdg.getContents().getBody().size(), is(equalTo(2)));
+		assertThat(cfdg.getRulesCount(), is(equalTo(1)));
+		assertThat(cfdg.getRule(0).getWeight(), is(equalTo(1.0)));
+		cfdg.rulesLoaded();
+		assertThat(cfdg.getRule(0).getWeight(), is(equalTo(1.1)));
 	}
 
 	@Test
-	public void shouldCreateRenderer() throws IOException {
+	public void shouldRunRenderer() throws IOException {
+		SimpleCanvas canvas = mock(SimpleCanvas.class);
+		when(canvas.getWidth()).thenReturn(200);
+		when(canvas.getHeight()).thenReturn(200);
 		CFDG cfdg = parseSource(RESOURCE_NAME);
 		cfdg.rulesLoaded();
 		CFDGRenderer renderer = cfdg.renderer(200, 200, 1, 0, 0.1);
 		assertThat(renderer, is(notNullValue()));
+		double scale = renderer.run(canvas, false);
+		AffineTransform transform = new AffineTransform();
+		transform.translate(66466.66666666667, 66466.66666666667);
+		transform.scale(664.6666666666667, 664.6666666666667);
+		verify(canvas, times(1)).primitive(1, new double[] { 0, 0, 0, 1 }, transform);
 	}
+
+//	private class TestCanvas extends SimpleCanvas {
+//		private TestCanvas(int width, int height) {
+//			super(width, height);
+//		}
+//	}
 }

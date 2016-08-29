@@ -26,6 +26,7 @@ package com.nextbreakpoint.nextfractal.contextfree.grammar;
 
 import com.nextbreakpoint.nextfractal.contextfree.core.ExtendedGeneralPath;
 
+import java.awt.geom.GeneralPath;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,6 +39,7 @@ public class PathStorage {
 	private List<Vertex> vertices = new ArrayList<>();
 	private Point2D.Double center = new Point2D.Double(0, 0);
 	private boolean drawing = false;
+	private GeneralPath path;
 
 	public boolean isDrawing() {
 		return drawing;
@@ -152,7 +154,11 @@ public class PathStorage {
 		return generalPath.getPathIterator(new AffineTransform());
 	}
 
-	private class Vertex {
+	public ExtendedGeneralPath getGeneralPath() {
+		return generalPath;
+	}
+
+    private class Vertex {
 		Point2D point;
 		int command;
 

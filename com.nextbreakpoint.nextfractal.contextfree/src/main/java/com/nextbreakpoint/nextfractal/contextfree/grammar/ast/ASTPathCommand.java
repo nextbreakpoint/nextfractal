@@ -107,7 +107,7 @@ public class ASTPathCommand extends ASTReplacement {
 			}
 			info = next;
 		} else {
-			if (renderer.getCurrentPath().getPath().getTotalVertices() == 0) {
+			if (renderer.getCurrentPath().getPathStorage().getTotalVertices() == 0) {
 				Logger.error("Path commands must be preceeded by at least one path operation", location);
 			}
 			renderer.setWantCommand(false);

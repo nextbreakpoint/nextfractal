@@ -77,14 +77,20 @@ public class AffineTransformTime {
 		this.end = end;
 	}
 
-	public boolean overlaps(AffineTransformTime frameTimeBounds) {
-		return false;
+	public boolean overlaps(AffineTransformTime bounds) {
+		return !(bounds.begin > end || bounds.end < begin);
 	}
 
-    public void translate(double value) {
+    public AffineTransformTime translate(double value) {
+		begin += value;
+		end += value;
+		return this;
     }
 
-	public void scale(double frameScale) {
-
+	public AffineTransformTime scale(double value) {
+		step *= value;
+		begin *= value;
+		end *= value;
+		return this;
 	}
 }

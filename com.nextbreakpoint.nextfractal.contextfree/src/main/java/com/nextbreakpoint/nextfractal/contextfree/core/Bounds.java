@@ -15,13 +15,13 @@ public class Bounds {
         minY = Double.POSITIVE_INFINITY;
     }
 
-    public Bounds(AffineTransform transform, GeneralPath path, double scale, CommandInfo info) {
+    public Bounds(AffineTransform transform, ExtendedGeneralPath path, double scale, CommandInfo info) {
         if (!boundingRect(transform, path, scale)) {
             invalidate();
         }
     }
 
-    private boolean boundingRect(AffineTransform transform, GeneralPath path, double scale) {
+    private boolean boundingRect(AffineTransform transform, ExtendedGeneralPath path, double scale) {
         java.awt.Shape shape = path.createTransformedShape(transform);
 
         Rectangle2D bounds = shape.getBounds2D();
@@ -190,8 +190,8 @@ public class Bounds {
         return scale;
     }
 
-    public void update(AffineTransform transform, GeneralPath path, double scale, CommandInfo info) {
-        merge(new Bounds(transform, path, scale, info));
+    public void update(AffineTransform transform, double scale, CommandInfo info) {
+        merge(new Bounds(transform, info.getPathStorage().getGeneralPath(), scale, info));
     }
 
     public void merge(Bounds bounds) {

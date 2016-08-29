@@ -92,11 +92,11 @@ public class CommandInfo {
         this.pathUID = pathUID;
     }
 
-    public PathStorage getPath() {
+    public PathStorage getPathStorage() {
         return pathStorage;
     }
 
-    public void setPath(PathStorage pathStorage) {
+    public void setPathStorage(PathStorage pathStorage) {
         this.pathStorage = pathStorage;
     }
 

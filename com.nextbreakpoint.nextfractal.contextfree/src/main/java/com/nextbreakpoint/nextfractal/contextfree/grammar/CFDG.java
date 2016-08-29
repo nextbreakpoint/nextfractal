@@ -639,4 +639,12 @@ public class CFDG {
 
 		return null;
 	}
+
+	public int getRulesCount() {
+		return rules.size();
+	}
+
+	public ASTRule getRule(int index) {
+		return rules.get(index);
+	}
 }

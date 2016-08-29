@@ -12,6 +12,8 @@ public class TiledCanvas extends SimpleCanvas {
     private double scale;
 
     public TiledCanvas(SimpleCanvas canvas, AffineTransform transform, FriezeType frieze) {
+        //TODO rivedere
+        super(canvas.getWidth(), canvas.getHeight());
         this.canvas = canvas;
         this.transform = transform;
         this.frieze = frieze;
