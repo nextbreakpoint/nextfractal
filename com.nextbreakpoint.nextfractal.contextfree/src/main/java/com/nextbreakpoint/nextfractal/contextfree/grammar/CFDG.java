@@ -60,6 +60,7 @@ public class CFDG {
 		this.cfdgDriver = cfdgDriver;
 		cfdgContents = new ASTRepContainer(cfdgDriver);
 		needle = new ASTRule(cfdgDriver, -1, null);
+		PrimShape.getShapeNames().forEach(s -> encodeShapeName(s));
 	}
 
 	public CFDGDriver getDriver() {

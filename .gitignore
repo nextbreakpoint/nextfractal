@@ -5,3 +5,5 @@ docs
 **/.idea
 *.iml
 dist
+**/tmp
+

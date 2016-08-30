@@ -24,6 +24,8 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.grammar;
 
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,9 +47,25 @@ public class PrimShape extends PathStorage {
 		double hn = -h / 2.0;
 		double t = Math.sqrt(2.0) / 4.0;
 
-		PrimShape circle = new PrimShape();
-		PrimShape square = new PrimShape();
-		PrimShape triangle = new PrimShape();
+		GeneralPath squarePath = new GeneralPath();
+		squarePath.moveTo(0.5, 0.5);
+		squarePath.lineTo(-0.5, 0.5);
+		squarePath.lineTo(-0.5, -0.5);
+		squarePath.lineTo(0.5, -0.5);
+		squarePath.closePath();
+
+		GeneralPath trianglePath = new GeneralPath();
+		trianglePath.moveTo(0.0, hp);
+		trianglePath.lineTo(-0.5, hn);
+		trianglePath.lineTo(0.5, hn);
+		trianglePath.closePath();
+
+		GeneralPath circlePath = new GeneralPath();
+		circlePath.append(new Ellipse2D.Double(-0.5, -0.5, 1.0, 1.0), false);
+
+		PrimShape circle = new PrimShape(circlePath);
+		PrimShape square = new PrimShape(squarePath);
+		PrimShape triangle = new PrimShape(trianglePath);
 
 		circle.moveTo(new Point2D.Double(0.5, 0.0));
 		circle.addVertex(new Point2D.Double(t, t));
@@ -72,6 +90,12 @@ public class PrimShape extends PathStorage {
 		shapeMap.put(2, triangle);
 	}
 
+	private GeneralPath path;
+
+	public PrimShape(GeneralPath path) {
+		this.path = path;
+	}
+
 	public static boolean isPrimShape(int shapeType) {
 		return shapeType < 4;
 	}
@@ -82,5 +106,9 @@ public class PrimShape extends PathStorage {
 
 	public static List<String> getShapeNames() {
 		return shapeNames;
+	}
+
+	public GeneralPath getPath() {
+		return path;
 	}
 }

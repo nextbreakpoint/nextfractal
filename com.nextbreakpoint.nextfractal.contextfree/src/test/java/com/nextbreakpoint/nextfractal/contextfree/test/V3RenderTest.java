@@ -24,10 +24,7 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.test;
 
-import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDG;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGRenderer;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.CommandInfo;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.SimpleCanvas;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.*;
 
 import java.awt.*;
 import java.awt.geom.GeneralPath;
@@ -54,6 +51,9 @@ public class V3RenderTest extends AbstractBaseTest {
 	public static Iterable<Object[]> parameters() {
 		List<Object[]> params = new ArrayList<>();
 		params.add(new Object[] { "/v3-single-shape.cfdg", "/v3-single-shape.png" });
+		params.add(new Object[] { "/v3-square-shape.cfdg", "/v3-square-shape.png" });
+		params.add(new Object[] { "/v3-triangle-shape.cfdg", "/v3-triangle-shape.png" });
+		params.add(new Object[] { "/v3-circle-shape.cfdg", "/v3-circle-shape.png" });
 		return params;
 	}
 
@@ -118,6 +118,7 @@ public class V3RenderTest extends AbstractBaseTest {
 	}
 
 	private class TestCanvas extends SimpleCanvas {
+		private AffineTransform currTransform = new AffineTransform();
 		private BufferedImage image;
 		private Graphics2D g2d;
 
@@ -129,18 +130,14 @@ public class V3RenderTest extends AbstractBaseTest {
 		public void primitive(int shapeType, double[] color, AffineTransform transform) {
 			g2d.setColor(new Color((float)color[0], (float)color[1], (float)color[2], (float)color[3]));
 			AffineTransform oldTransform = g2d.getTransform();
-			g2d.setTransform(transform);
-			switch (shapeType) {
-				case 1:
-					GeneralPath path = new GeneralPath();
-					path.moveTo(-0.5, -0.5);
-					path.lineTo(0.5, -0.5);
-					path.lineTo(0.5, 0.5);
-					path.lineTo(-0.5, 0.5);
-					path.lineTo(-0.5, -0.5);
-					path.closePath();
-					g2d.fill(path);
-
+			AffineTransform t = new AffineTransform(currTransform);
+			t.concatenate(transform);
+			g2d.setTransform(t);
+			PrimShape primShape = PrimShape.getShapeMap().get(shapeType);
+			if (primShape != null) {
+				g2d.fill(primShape.getPath());
+			} else {
+				throw new RuntimeException("Unexpected shape " + shapeType);
 			}
 			g2d.setTransform(oldTransform);
 		}
@@ -148,7 +145,10 @@ public class V3RenderTest extends AbstractBaseTest {
 		public void start(boolean first, double[] backgroundColor, int currWidth, int currHeight) {
 			g2d = image.createGraphics();
 			g2d.setColor(new Color((float)backgroundColor[0], (float)backgroundColor[1], (float)backgroundColor[2], (float)backgroundColor[3]));
-			g2d.fillRect(0, 0, currWidth, currHeight);
+			g2d.fillRect(0, 0, getWidth(), getHeight());
+			currTransform = AffineTransform.getTranslateInstance(0, getHeight());
+			currTransform.scale(1, -1);
+			currTransform.translate(-(currWidth - getWidth()) / 2, -(currHeight - getHeight()) / 2);
 		}
 
 		public void end() {
