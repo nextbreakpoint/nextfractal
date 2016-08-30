@@ -71,7 +71,7 @@ public class V3SingleShapeTest extends AbstractBaseTest {
 	}
 
 	@Test
-	public void shouldRunRenderer() throws IOException {
+	public void shouldReturnScale() throws IOException {
 		SimpleCanvas canvas = mock(SimpleCanvas.class);
 		when(canvas.getWidth()).thenReturn(200);
 		when(canvas.getHeight()).thenReturn(200);
@@ -81,6 +81,18 @@ public class V3SingleShapeTest extends AbstractBaseTest {
 		assertThat(renderer, is(notNullValue()));
 		double scale = renderer.run(canvas, false);
 		assertThat(scale, is(equalTo(198.4)));
+	}
+
+	@Test
+	public void shouldCallPrimitive() throws IOException {
+		SimpleCanvas canvas = mock(SimpleCanvas.class);
+		when(canvas.getWidth()).thenReturn(200);
+		when(canvas.getHeight()).thenReturn(200);
+		CFDG cfdg = parseSource(RESOURCE_NAME);
+		cfdg.rulesLoaded();
+		CFDGRenderer renderer = cfdg.renderer(200, 200, 1, 0, 0.1);
+		assertThat(renderer, is(notNullValue()));
+		renderer.run(canvas, false);
 		AffineTransform transform = new AffineTransform();
 		transform.translate(100.0, 100.0);
 		transform.scale(198.4, 198.4);
