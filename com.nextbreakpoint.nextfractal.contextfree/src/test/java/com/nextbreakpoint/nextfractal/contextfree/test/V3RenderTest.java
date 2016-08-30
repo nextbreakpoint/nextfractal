@@ -50,10 +50,10 @@ public class V3RenderTest extends AbstractBaseTest {
 	@Parameterized.Parameters
 	public static Iterable<Object[]> parameters() {
 		List<Object[]> params = new ArrayList<>();
-		params.add(new Object[] { "/v3-single-shape.cfdg", "/v3-single-shape.png" });
-		params.add(new Object[] { "/v3-square-shape.cfdg", "/v3-square-shape.png" });
-		params.add(new Object[] { "/v3-triangle-shape.cfdg", "/v3-triangle-shape.png" });
-		params.add(new Object[] { "/v3-circle-shape.cfdg", "/v3-circle-shape.png" });
+		params.add(new Object[] { "/v3-shape-square.cfdg", "/v3-shape-square.png" });
+		params.add(new Object[] { "/v3-shape-triangle.cfdg", "/v3-shape-triangle.png" });
+		params.add(new Object[] { "/v3-shape-circle.cfdg", "/v3-shape-circle.png" });
+		params.add(new Object[] { "/v3-shape-transform.cfdg", "/v3-shape-transform.png" });
 		return params;
 	}
 

@@ -1,0 +1,6 @@
+startshape Foo
+
+shape Foo  {
+    SQUARE []
+	Foo[x 0.8 size 0.8 rotate 40.0 y 0.8]
+}

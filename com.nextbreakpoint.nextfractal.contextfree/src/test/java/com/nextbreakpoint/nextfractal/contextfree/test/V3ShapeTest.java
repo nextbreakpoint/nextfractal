@@ -41,8 +41,8 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
-public class V3SingleShapeTest extends AbstractBaseTest {
-	public static final String RESOURCE_NAME = "/v3-single-shape.cfdg";
+public class V3ShapeTest extends AbstractBaseTest {
+	public static final String RESOURCE_NAME = "/v3-shape-single-rule.cfdg";
 
 	@Rule
 	public ExpectedException exception = ExpectedException.none();
@@ -56,8 +56,10 @@ public class V3SingleShapeTest extends AbstractBaseTest {
 	@Test
 	public void shouldHaveTwoShapes() throws IOException {
 		CFDG cfdg = parseSource(RESOURCE_NAME);
-		assertThat(cfdg.tryEncodeShapeName("Foo"), is(equalTo(0)));
+		assertThat(cfdg.tryEncodeShapeName("Foo"), is(equalTo(4)));
+		assertThat(cfdg.tryEncodeShapeName("CIRCLE"), is(equalTo(0)));
 		assertThat(cfdg.tryEncodeShapeName("SQUARE"), is(equalTo(1)));
+		assertThat(cfdg.tryEncodeShapeName("TRIANGLE"), is(equalTo(2)));
 	}
 
 	@Test
@@ -98,10 +100,4 @@ public class V3SingleShapeTest extends AbstractBaseTest {
 		transform.scale(198.4, 198.4);
 		verify(canvas, times(1)).primitive(1, new double[] { 0, 0, 0, 1 }, transform);
 	}
-
-//	private class TestCanvas extends SimpleCanvas {
-//		private TestCanvas(int width, int height) {
-//			super(width, height);
-//		}
-//	}
 }
