@@ -113,7 +113,7 @@ public class Modification implements Cloneable {
 	}
 
 	public Modification concat(Modification modification) {
-		transform.preConcatenate(modification.getTransform());
+		transform.concatenate(modification.getTransform());
 		transformZ.concatenate(modification.getTransformZ());
 		transformTime.concatenate(modification.getTransformTime());
 		HSBColor.adjust(color, colorTarget, modification.color(), modification.colorTarget(), modification.colorAssignment());
@@ -122,7 +122,7 @@ public class Modification implements Cloneable {
 	}
 
 	public boolean merge(Modification modification) {
-		transform.preConcatenate(modification.getTransform());
+		transform.concatenate(modification.getTransform());
 		transformZ.concatenate(modification.getTransformZ());
 		transformTime.concatenate(modification.getTransformTime());
 

@@ -241,7 +241,7 @@ public class HSBColor implements Cloneable {
 
 	public void getRGBA(double[] c) {
 		// Determine which facet of the HSB hexcone we are in and how far we are into this hextant.
-		double hue = values[0] / 60.0;;
+		double hue = values[0] / 60.0;
 		double remainder = 0;
 		double[] hex = new double[] {0, 0};
 
@@ -262,10 +262,10 @@ public class HSBColor implements Cloneable {
 
 		int hextant = (int)(hex[0] + 0.5); // guaranteed to be in 0..5
 
-		double b = values[1];
-		double p = values[1] * (1 - values[2]);
-		double q = values[1] * (1 - (values[2] * remainder));
-		double t = values[1] * (1 - (values[2] * (1 - remainder)));
+		double b = values[2];
+		double p = values[2] * (1 - values[1]);
+		double q = values[2] * (1 - (values[1] * remainder));
+		double t = values[2] * (1 - (values[1] * (1 - remainder)));
 
 		c[3] = values[3];
 

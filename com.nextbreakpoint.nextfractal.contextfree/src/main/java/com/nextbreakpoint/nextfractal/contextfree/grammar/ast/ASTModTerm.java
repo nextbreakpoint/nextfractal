@@ -381,8 +381,8 @@ public class ASTModTerm extends ASTExpression {
 			default:
 				break;
 		}
-//		result.setColor(new HSBColor(color[0], color[1], color[2], color[3]));
-//		result.setColorTarget(new HSBColor(target[0], target[1], target[2], target[3]));
+		result.setColor(new HSBColor(color[0], color[1], color[2], color[3]));
+		result.setColorTarget(new HSBColor(target[0], target[1], target[2], target[3]));
 	}
 
 	@Override
