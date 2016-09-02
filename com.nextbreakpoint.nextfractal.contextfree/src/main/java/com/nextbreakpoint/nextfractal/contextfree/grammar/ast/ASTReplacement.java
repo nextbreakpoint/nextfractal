@@ -122,7 +122,7 @@ public class ASTReplacement {
 		renderer.getCurrentSeed().add(childChange.getModData().getRand64Seed());
 		renderer.getCurrentSeed().bump();
 		childChange.evaluate(s.getWorldState(), true, renderer);
-		s.setArea(s.getWorldState().area());
+		s.setAreaCache(s.getWorldState().area());
 	}
 
 	public void traverse(Shape parent, boolean tr, CFDGRenderer renderer) {

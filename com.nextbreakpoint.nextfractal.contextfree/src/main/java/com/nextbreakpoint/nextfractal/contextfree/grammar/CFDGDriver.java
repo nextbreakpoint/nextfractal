@@ -410,7 +410,7 @@ public class CFDGDriver {
 		if (t.getModType() == ModType.sat || t.getModType() == ModType.satTarg) {
 			inColor();
 		}
-		if (getMaybeVersion().equals("CFDG3") && t.getModType().getType() >= ModType.hueTarg.getType() && t.getModType().getType() <= ModType.alphaTarg.getType()) {
+		if ("CFDG3".equals(getMaybeVersion()) && t.getModType().getType() >= ModType.hueTarg.getType() && t.getModType().getType() <= ModType.alphaTarg.getType()) {
 			error("Color target feature unavailable in v3 syntax", dest.getLocation());
 		}
 		dest.getModExp().add(t);

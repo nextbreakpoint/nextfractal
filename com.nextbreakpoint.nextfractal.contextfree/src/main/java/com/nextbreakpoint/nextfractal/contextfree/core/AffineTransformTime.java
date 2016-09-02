@@ -24,7 +24,7 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.core;
 
-public class AffineTransformTime {
+public class AffineTransformTime implements Cloneable {
 	private double step;
 	private double begin;
 	private double end;
@@ -47,7 +47,7 @@ public class AffineTransformTime {
 		return new AffineTransformTime(step, 0.0, 0.0);
 	}
 
-	public void preConcatenate(AffineTransformTime t) {
+	public void concatenate(AffineTransformTime t) {
 		this.step = this.step * t.step;
 		this.begin = this.begin * t.step + t.begin;
 		this.end = this.end * t.step + t.end;
@@ -92,5 +92,14 @@ public class AffineTransformTime {
 		begin *= value;
 		end *= value;
 		return this;
+	}
+
+	public Object clone() {
+		try {
+			return super.clone();
+		} catch (CloneNotSupportedException e) {
+			// this shouldn't happen, since we are Cloneable
+			throw new InternalError(e);
+		}
 	}
 }

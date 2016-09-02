@@ -53,7 +53,7 @@ public class ASTModification extends ASTExpression {
 		evalMap.put(ModType.transform, ModClass.GeomClass);
 		evalMap.put(ModType.size, ModClass.GeomClass);
 		evalMap.put(ModType.sizexyz, ModClass.fromType(ModClass.GeomClass.getType() | ModClass.ZClass.getType()));
-		evalMap.put(ModType.rot, ModClass.fromType(ModClass.GeomClass.getType() | ModClass.PathOpClass.getType()));
+		evalMap.put(ModType.rotate, ModClass.fromType(ModClass.GeomClass.getType() | ModClass.PathOpClass.getType()));
 		evalMap.put(ModType.skew, ModClass.GeomClass);
 		evalMap.put(ModType.flip, ModClass.GeomClass);
 		evalMap.put(ModType.zsize, ModClass.ZClass);
@@ -148,17 +148,17 @@ public class ASTModification extends ASTExpression {
 		canonical = mod.isCanonial();
 	}
 
-	public void makeCanonial() {
+	public void makeCanonical() {
 	    // Receive a vector of modification terms and return an ASTexpression with
 	    // those terms rearranged into TRSSF canonical order. Duplicate terms are
 	    // deleted with a warning.
-		List<ASTModTerm> temp = new ArrayList<ASTModTerm>(modExp);
+		List<ASTModTerm> temp = new ArrayList<>(modExp);
 		modExp.clear();
 		
 		ASTModTerm x = null;
 		ASTModTerm y = null;
 		ASTModTerm z = null;
-		ASTModTerm rot = null;
+		ASTModTerm rotate = null;
 		ASTModTerm skew = null;
 		ASTModTerm size = null;
 		ASTModTerm zsize = null;
@@ -184,8 +184,8 @@ public class ASTModification extends ASTExpression {
 					xform = term;
 					break;
 	
-				case rot:
-					rot = term;
+				case rotate:
+					rotate = term;
 					break;
 	
 				case size:
@@ -213,7 +213,7 @@ public class ASTModification extends ASTExpression {
 		if (x != null) modExp.add(x); 
 		if (y != null) modExp.add(y); 
 		if (z != null) modExp.add(z); 
-		if (rot != null) modExp.add(rot); 
+		if (rotate != null) modExp.add(rotate);
 		if (size != null) modExp.add(size); 
 		if (zsize != null) modExp.add(zsize); 
 		if (skew != null) modExp.add(skew); 
@@ -262,11 +262,11 @@ public class ASTModification extends ASTExpression {
 		
 		switch (ph) {
 			case TypeCheck: {
-				List<ASTModTerm> temp = new ArrayList<ASTModTerm>(modExp);
+				List<ASTModTerm> temp = new ArrayList<>(modExp);
 				modExp.clear();
 
-				for (ListIterator<ASTModTerm> iterm = temp.listIterator(); iterm.hasNext();) {
-					ASTModTerm term = iterm.next();
+				for (int i = 0; i < temp.size(); i++) {
+					ASTModTerm term = temp.get(i);
 					if (term.getArguments() == null || term.getArguments().getType() != ExpType.NumericType) {
 						modExp.add(term);
 					}
@@ -274,10 +274,10 @@ public class ASTModification extends ASTExpression {
 					switch (term.getModType()) {
 						case x:
 						case y: {
-							if (!iterm.hasNext()) {
+							if (i >= temp.size() - 1) {
 								break;
 							}
-							ASTModTerm next = iterm.next();
+							ASTModTerm next = temp.get(i + 1);
 							if (term.getModType() == ModType.x && next.getModType() == ModType.y && argcount == 1) {
 								term.setArguments(term.getArguments().append(next));
 								term.setArgumentsCount(2);
@@ -369,7 +369,7 @@ public class ASTModification extends ASTExpression {
 				}
 
 				if (canonical) {
-					makeCanonial();
+					makeCanonical();
 				}
 				break;
 			}

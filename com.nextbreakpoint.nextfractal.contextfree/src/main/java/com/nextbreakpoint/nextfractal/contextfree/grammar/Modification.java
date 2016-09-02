@@ -31,7 +31,7 @@ import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.AssignmentType;
 
 import java.awt.geom.AffineTransform;
 
-public class Modification {
+public class Modification implements Cloneable {
 	private Rand64 rand64Seed = new Rand64();
 	private AffineTransform transform = new AffineTransform();
 	private AffineTransform1D transformZ = new AffineTransform1D();
@@ -101,7 +101,7 @@ public class Modification {
 	}
 
 	public double area() {
-		return transform.getDeterminant();
+		return Math.abs(transform.getDeterminant());
 	}
 
 	public boolean isFinite() {
@@ -114,8 +114,8 @@ public class Modification {
 
 	public Modification concat(Modification modification) {
 		transform.preConcatenate(modification.getTransform());
-		transformZ.preConcatenate(modification.getTransformZ());
-		transformTime.preConcatenate(modification.getTransformTime());
+		transformZ.concatenate(modification.getTransformZ());
+		transformTime.concatenate(modification.getTransformTime());
 		HSBColor.adjust(color, colorTarget, modification.color(), modification.colorTarget(), modification.colorAssignment());
 		rand64Seed.add(modification.getRand64Seed());
 		return this;
@@ -123,8 +123,8 @@ public class Modification {
 
 	public boolean merge(Modification modification) {
 		transform.preConcatenate(modification.getTransform());
-		transformZ.preConcatenate(modification.getTransformZ());
-		transformTime.preConcatenate(modification.getTransformTime());
+		transformZ.concatenate(modification.getTransformZ());
+		transformTime.concatenate(modification.getTransformTime());
 
 		HSBColor.adjust(color, colorTarget, modification.color(), modification.colorTarget(), modification.colorAssignment());
 
@@ -152,5 +152,17 @@ public class Modification {
 		colorAssignment |= modification.colorAssignment;
 
 		return conflict;
+	}
+
+	public Object clone() {
+		Modification modification = new Modification();
+		modification.rand64Seed = (Rand64)rand64Seed.clone();
+		modification.transform = (AffineTransform)transform.clone();
+		modification.transformZ = (AffineTransform1D)transformZ.clone();
+		modification.transformTime = (AffineTransformTime)transformTime.clone();
+		modification.color = (HSBColor)color.clone();
+		modification.colorTarget = (HSBColor)colorTarget.clone();
+		modification.colorAssignment = colorAssignment;
+		return modification;
 	}
 }

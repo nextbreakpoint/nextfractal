@@ -28,7 +28,7 @@ import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.AssignmentType;
 
 import java.util.Arrays;
 
-public class HSBColor {
+public class HSBColor implements Cloneable {
 	private static final double EQUALITY_THRESHOLD = 0.00001;
 
 	private double[] values = new double[4];
@@ -292,6 +292,15 @@ public class HSBColor {
 				// this should never happen
 				c[0] = 0; c[1] = 0; c[2] = 0; c[3] = 1;
 				return;
+		}
+	}
+
+	public Object clone() {
+		try {
+			return super.clone();
+		} catch (CloneNotSupportedException e) {
+			// this shouldn't happen, since we are Cloneable
+			throw new InternalError(e);
 		}
 	}
 }

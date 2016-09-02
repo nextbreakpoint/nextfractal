@@ -151,34 +151,34 @@ public class ASTModTerm extends ASTExpression {
 					modArgs[1] = 0.0;
 				}
 				AffineTransform t2d = AffineTransform.getTranslateInstance(modArgs[0], modArgs[1]);
-				result.getTransform().preConcatenate(t2d);
+				result.getTransform().concatenate(t2d);
 				break;
 			}
 			case y: {
 				AffineTransform t2d = AffineTransform.getTranslateInstance(0.0, modArgs[0]);
-				result.getTransform().preConcatenate(t2d);
+				result.getTransform().concatenate(t2d);
 				break;
 			}
 			case z: {
 				AffineTransform1D t1d = AffineTransform1D.getTranslateInstance(modArgs[0]);
-				result.getTransformZ().preConcatenate(t1d);
+				result.getTransformZ().concatenate(t1d);
 				break;
 			}
 			case xyz: {
 				AffineTransform t2d = AffineTransform.getTranslateInstance(modArgs[0], modArgs[1]);
 				AffineTransform1D t1d = AffineTransform1D.getTranslateInstance(modArgs[0]);
-				result.getTransform().preConcatenate(t2d);
-				result.getTransformZ().preConcatenate(t1d);
+				result.getTransform().concatenate(t2d);
+				result.getTransformZ().concatenate(t1d);
 				break;
 			}
 			case time: {
 				AffineTransformTime tTime = AffineTransformTime.getTranslateInstance(modArgs[0], modArgs[1]);
-				result.getTransformTime().preConcatenate(tTime);
+				result.getTransformTime().concatenate(tTime);
 				break;
 			}
 			case timescale: {
 				AffineTransformTime tTime = AffineTransformTime.getScaleInstance(modArgs[0]);
-				result.getTransformTime().preConcatenate(tTime);
+				result.getTransformTime().concatenate(tTime);
 				break;
 			}
 			case transform: {
@@ -189,7 +189,7 @@ public class ASTModTerm extends ASTExpression {
 							modArgs[1] = 0.0;
 						}
 						AffineTransform t2d = AffineTransform.getTranslateInstance(modArgs[0], modArgs[1]);
-						result.getTransform().preConcatenate(t2d);
+						result.getTransform().concatenate(t2d);
 						break;
 					}
 					case 4: {
@@ -200,7 +200,7 @@ public class ASTModTerm extends ASTExpression {
 						t2d.rotate(Math.atan2(dx, dy));
 						t2d.scale(s, s);
 						t2d.translate(modArgs[0], modArgs[1]);
-						result.getTransform().preConcatenate(t2d);
+						result.getTransform().concatenate(t2d);
 						break;
 					}
 					case 6: {
@@ -210,7 +210,7 @@ public class ASTModTerm extends ASTExpression {
 							par.shear(1, 0);
 							par.invert();
 							par.concatenate(t2d);
-							result.getTransform().preConcatenate(par);
+							result.getTransform().concatenate(par);
 						} catch (NoninvertibleTransformException e) {
 							Logger.error(e.getMessage(), null);
 						}
@@ -226,29 +226,29 @@ public class ASTModTerm extends ASTExpression {
 					modArgs[1] =  modArgs[0];
 				}
 				AffineTransform t2d = AffineTransform.getScaleInstance(modArgs[0], modArgs[1]);
-				result.getTransform().preConcatenate(t2d);
+				result.getTransform().concatenate(t2d);
 				break;
 			}
 			case sizexyz: {
 				AffineTransform t2d = AffineTransform.getScaleInstance(modArgs[0], modArgs[1]);
 				AffineTransform1D t1d = AffineTransform1D.getScaleInstance(modArgs[0]);
-				result.getTransform().preConcatenate(t2d);
-				result.getTransformZ().preConcatenate(t1d);
+				result.getTransform().concatenate(t2d);
+				result.getTransformZ().concatenate(t1d);
 				break;
 			}
 			case zsize: {
 				AffineTransform1D t1d = AffineTransform1D.getScaleInstance(modArgs[0]);
-				result.getTransformZ().preConcatenate(t1d);
+				result.getTransformZ().concatenate(t1d);
 				break;
 			}
-			case rot: {
+			case rotate: {
 				AffineTransform t2d = AffineTransform.getRotateInstance(modArgs[0] * Math.PI / 180.0);
-				result.getTransform().preConcatenate(t2d);
+				result.getTransform().concatenate(t2d);
 				break;
 			}
 			case skew: {
 				AffineTransform t2d = AffineTransform.getShearInstance(modArgs[0] * Math.PI / 180.0, modArgs[1] * Math.PI / 180.0);
-				result.getTransform().preConcatenate(t2d);
+				result.getTransform().concatenate(t2d);
 				break;
 			}
 			case flip: {
@@ -256,7 +256,7 @@ public class ASTModTerm extends ASTExpression {
 				double ux = Math.cos(a);
 				double uy = Math.cos(a);
 				AffineTransform t2d = new AffineTransform(2.0 * ux * ux - 1.0, 2.0 * ux * uy, 2.0 * ux * uy, 2.0 * uy * uy - 1.0, 0.0, 0.0);
-				result.getTransform().preConcatenate(t2d);
+				result.getTransform().concatenate(t2d);
 				break;
 			}
 			case alpha:
@@ -442,7 +442,7 @@ public class ASTModTerm extends ASTExpression {
 							case z:
 							case timescale:
 							case zsize:
-							case rot:
+							case rotate:
 							case flip:
 							case hueTarg:
 							case satTarg:

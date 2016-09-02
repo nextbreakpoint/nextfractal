@@ -34,7 +34,6 @@ import com.nextbreakpoint.nextfractal.contextfree.grammar.exceptions.StopExcepti
 import org.antlr.v4.runtime.Token;
 
 import java.awt.geom.AffineTransform;
-import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
 import java.util.*;
 import java.util.function.Function;
@@ -467,10 +466,10 @@ public class CFDGRenderer {
 	}
 
 	public void processShape(Shape shape) {
-		double area = shape.getArea();
+		double area = shape.getAreaCache();
 		if (!Double.isFinite(area)) {
 			requestStop = true;
-			Logger.error("A shape got too big.", null);
+			Logger.error("A shape got too big", null);
 			return;
 		}
 
@@ -491,7 +490,7 @@ public class CFDGRenderer {
 		} else {
 			//TODO rivedere
 			requestStop = true;
-			Logger.error(String.format("Shape with no rules encountered: %s.", cfdg.decodeShapeName(shape.getShapeType())), null);
+			Logger.error(String.format("Shape with no rules encountered: %s", cfdg.decodeShapeName(shape.getShapeType())), null);
 		}
 	}
 
@@ -502,8 +501,8 @@ public class CFDGRenderer {
 			processPrimShapeSiblings(copy, rule);
 		} else {
 			for (int i = 0; i < num; i++) {
-				Shape sym = new Shape(shape);
-				sym.getWorldState().getTransform().preConcatenate(symmetryOps.get(i));
+				Shape sym = (Shape)shape.clone();
+				sym.getWorldState().getTransform().concatenate(symmetryOps.get(i));
 				processPrimShapeSiblings(sym, rule);
 			}
 		}
@@ -553,7 +552,7 @@ public class CFDGRenderer {
 			currentArea = 1.0;
 		}
 
-		FinishedShape finishedShape = new FinishedShape(shape, shapeCount, pathBounds);
+		FinishedShape finishedShape = new FinishedShape((Shape)shape.clone(), shapeCount, pathBounds);
 		finishedShape.getWorldState().getTransformZ().setSz(currentArea);
 
 		if (!cfdg.usesTime()) {
@@ -605,7 +604,7 @@ public class CFDGRenderer {
 			if (canvas != null && attr != null) {
 				double[] color = cfdg.getColor(shape.getWorldState().color());
 				AffineTransform tr = shape.getWorldState().getTransform();
-				tr.preConcatenate(currTransform);
+				tr.concatenate(currTransform);
 				//TODO rivedere
 				canvas.path(color, tr, attr);
 			}
@@ -737,7 +736,7 @@ public class CFDGRenderer {
 				break;
 			}
 
-			Shape shape = unfinishedShapes.remove(0);
+			Shape shape = new Shape(unfinishedShapes.remove(0));
 
 			todoCount -= 1;
 

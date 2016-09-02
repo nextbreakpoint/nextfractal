@@ -24,7 +24,7 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.grammar;
 
-public class Shape {
+public class Shape implements Cloneable {
 	protected int shapeType;
 	protected Modification worldState;
 	protected double areaCache;
@@ -67,11 +67,20 @@ public class Shape {
 		this.worldState = worldState;
 	}
 
-	public double getArea() {
+	public double getAreaCache() {
 		return areaCache;
 	}
 
-	public void setArea(double area) {
-		areaCache = area;
+	public void setAreaCache(double areaCache) {
+		this.areaCache = areaCache;
+	}
+
+	public Object clone() {
+		Shape shape = new Shape();
+		shape.shapeType = shapeType;
+		shape.areaCache = areaCache;
+		shape.worldState = (Modification)worldState.clone();
+		shape.params = params;
+		return shape;
 	}
 }

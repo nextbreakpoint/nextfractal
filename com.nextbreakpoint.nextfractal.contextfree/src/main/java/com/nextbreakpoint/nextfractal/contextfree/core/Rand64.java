@@ -26,7 +26,7 @@ package com.nextbreakpoint.nextfractal.contextfree.core;
 
 import java.util.Random;
 
-public class Rand64 {
+public class Rand64 implements Cloneable {
 	private static long RAND64_SEED  = 0x3DF41234;
 
     private long seed;
@@ -166,5 +166,16 @@ public class Rand64 {
 	public double getGeometric(double v1) {
 		// TODO Auto-generated method stub
 		return 0;
+	}
+
+	public Object clone() {
+		try {
+			Object clone = super.clone();
+			((Rand64)clone).init();
+			return clone;
+		} catch (CloneNotSupportedException e) {
+			// this shouldn't happen, since we are Cloneable
+			throw new InternalError(e);
+		}
 	}
 }

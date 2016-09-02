@@ -38,7 +38,7 @@ public class FinishedShape extends Shape implements Comparable<FinishedShape> {
 	@Override
 	public int compareTo(FinishedShape o) {
 		if (worldState.getTransformZ().tz() == o.worldState.getTransformZ().tz()) {
-			return (int)(worldState.colorAssignment() - o.worldState.colorAssignment());
+			return worldState.colorAssignment() - o.worldState.colorAssignment();
 		} else {
 			return worldState.getTransformZ().tz() - o.worldState.getTransformZ().tz() < 0 ? -1 : 1;
 		}

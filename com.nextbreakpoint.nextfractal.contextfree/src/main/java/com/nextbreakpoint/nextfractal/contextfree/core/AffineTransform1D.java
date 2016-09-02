@@ -24,7 +24,7 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.core;
 
-public class AffineTransform1D {
+public class AffineTransform1D implements Cloneable {
 	private double sz;
 	private double tz;
 	
@@ -45,7 +45,7 @@ public class AffineTransform1D {
 		return new AffineTransform1D(sz, 0.0);
 	}
 
-	public void preConcatenate(AffineTransform1D t) {
+	public void concatenate(AffineTransform1D t) {
 		this.sz = this.sz * t.sz;
 		this.tz = this.tz * t.sz + t.tz;
 	}
@@ -64,5 +64,14 @@ public class AffineTransform1D {
 
 	public void setSz(double sz) {
 		this.sz = sz;
+	}
+
+	public Object clone() {
+		try {
+			return super.clone();
+		} catch (CloneNotSupportedException e) {
+			// this shouldn't happen, since we are Cloneable
+			throw new InternalError(e);
+		}
 	}
 }

@@ -59,13 +59,10 @@ public class ASTCons extends ASTExpression {
 	public ASTExpression simplify() {
 		if (children.size() == 1) {
 			//TODO controllare
-			return children.get(0).simplify();
+			return simplify(children.get(0));
 		}
 		for (int i = 0; i < children.size(); i++) {
-			ASTExpression element = children.get(i).simplify();
-			if (element != null) {
-				children.set(i, element);
-			}
+			children.set(i, simplify(children.get(i)));
 		}
         return this;
 	}
@@ -114,8 +111,8 @@ public class ASTCons extends ASTExpression {
 				locality = Locality.PureLocal;
 				type = ExpType.NoType;
 				for (int i = 0; i < children.size(); i++) {
-					ASTExpression child = children.get(i).compile(ph);
-					children.set(i, child);
+					children.set(i, compile(children.get(i), ph));
+					ASTExpression child = children.get(i);
 					isConstant = isConstant && child.isConstant();
 					isNatural = isNatural && child.isNatural();
 					locality = AST.combineLocality(locality, child.getLocality());

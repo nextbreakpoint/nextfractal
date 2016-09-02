@@ -245,7 +245,7 @@ public class ASTPathOp extends ASTReplacement {
 				case yrad:
 					ary = acquireTerm(ary, term);
 					break;
-				case rot:
+				case rotate:
 					ar = acquireTerm(ar, term);
 					break;
 				case z:

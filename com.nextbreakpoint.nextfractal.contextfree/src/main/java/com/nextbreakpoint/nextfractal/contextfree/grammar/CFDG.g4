@@ -116,7 +116,7 @@ statement_v3 returns [ASTReplacement result]
 v3clues
 		:
         USER_STRING BECOMES
-        | MODTYPE BECOMES
+        | modtype BECOMES
         | PARAM BECOMES
         | USER_STRING '('
         | USER_STRING USER_STRING '('
@@ -132,7 +132,7 @@ v2stuff
 		:
         BACKGROUND modification_v2
         | TILE modification_v2
-        | MODTYPE modification_v2
+        | modtype modification_v2
         | INCLUDE fileString
         | rule_header_v2
         ;
@@ -263,14 +263,14 @@ directive_string returns [String result]
         	$result = CFG.Tile.getName();
         }
         |
-        t=MODTYPE {
-        	if (ModType.size.name().equals($t.getText())) {
+        t=modtype {
+        	if (ModType.size.name().equals($t.result)) {
                 $result = CFG.Size.getName();
-        	} else if (ModType.time.name().equals($t.getText())) {
+        	} else if (ModType.time.name().equals($t.result)) {
                 $result = CFG.Time.getName();
         	} else {
                 $result = CFG.Size.getName();
-                driver.error("Syntax error", $t);
+                driver.error("Syntax error", $t.start);
         	} 
         }
         ;
@@ -415,11 +415,11 @@ parameter
 			driver.nextParameterDecl("shape", var, $SHAPE);
         }
         |
-        v=USER_STRING MODTYPE {
+        v=USER_STRING modtype {
         	driver.error("Reserved keyword: adjustment", $v);
         }
         |
-        SHAPE MODTYPE {
+        SHAPE modtype {
         	driver.error("Reserved keyword: adjustment", $SHAPE);
         }
         |
@@ -428,8 +428,8 @@ parameter
 			driver.nextParameterDecl("number", var, $v);
         }
         |
-        MODTYPE {
-        	driver.error("Reserved keyword: adjustment", $MODTYPE);
+        modtype {
+        	driver.error("Reserved keyword: adjustment", $modtype.start);
         }
         ;
 
@@ -680,9 +680,9 @@ pathOp_v3clues
         | PATH
         | LOOP
         | USER_STRING BECOMES
-        | MODTYPE BECOMES
+        | modtype BECOMES
         | IF
-        | MODTYPE
+        | modtype
         | SWITCH
         ;
 
@@ -761,7 +761,7 @@ loopHeader returns [ASTLoop result]
         	driver.pushRepContainer($result.getLoopBody());
         }
         |
-        LOOP MODTYPE BECOMES c=exp2 {
+        LOOP modtype BECOMES c=exp2 {
         	ASTExpression index = $c.result;
             String dummyvar = "~~inaccessiblevar~~";
         	$result = new ASTLoop(driver, driver.stringToShape(dummyvar, false, $LOOP), dummyvar, index, null, $LOOP);
@@ -796,12 +796,12 @@ ifElseHeader returns [ASTIf result]
 
 transHeader returns [ASTTransform result]
         : 
-        t=MODTYPE e=exp2 {
+        t=modtype e=exp2 {
         	ASTExpression exp = $e.result;
-        	if (!$t.getText().equals(ModType.transform.name())) {
-        		driver.error("Syntax error", $t);
+        	if (!$t.result.equals(ModType.transform.name())) {
+        		driver.error("Syntax error", $t.start);
         	} 
-        	$result = new ASTTransform(driver, exp, $t);
+        	$result = new ASTTransform(driver, exp, $t.start);
         	driver.pushRepContainer($result.getBody());
         }
         |
@@ -894,17 +894,17 @@ buncha_adjustments returns [ASTModification result]
 
 adjustment returns [ASTModTerm result]
         : 
-        t=MODTYPE el=explist {
-        	$result = new ASTModTerm(ModType.byName($t.getText()), $el.result, $t);
+        t=modtype el=explist {
+        	$result = new ASTModTerm(ModType.byName($t.result), $el.result, $t.start);
         }
         |
-        t=MODTYPE e=exp '|' {
-        	ModType type = ModType.byName($t.getText());
+        t=modtype e=exp '|' {
+        	ModType type = ModType.byName($t.result);
         	if (type.getType() < ModType.hue.getType() || type.getType() > ModType.alpha.getType()) {
-        		driver.error("The target operator can only be applied to color adjustments", $t);
+        		driver.error("The target operator can only be applied to color adjustments", $t.start);
         		$result = null;
         	} else {
-	        	$result = new ASTModTerm(ModType.fromType(type.getType() + 4), $e.result, $t);
+	        	$result = new ASTModTerm(ModType.fromType(type.getType() + 4), $e.result, $t.start);
         	}
         }
         |
@@ -1252,17 +1252,17 @@ function_definition_header returns [ASTDefine result]
             }
         }
         |
-        SHAPE MODTYPE p=function_parameter_list BECOMES {
+        SHAPE modtype p=function_parameter_list BECOMES {
             driver.error("Reserved keyword: adjustment", $SHAPE);
             $result = null;
         }
         |
-        MODTYPE p=function_parameter_list BECOMES {
-            driver.error("Reserved keyword: adjustment", $MODTYPE);
+        modtype p=function_parameter_list BECOMES {
+            driver.error("Reserved keyword: adjustment", $modtype.start);
             $result = null;
         }
         |
-        t=USER_STRING MODTYPE p=function_parameter_list BECOMES {
+        t=USER_STRING modtype p=function_parameter_list BECOMES {
             driver.error("Reserved keyword: adjustment", $t);
             $result = null;
         }
@@ -1293,8 +1293,8 @@ definition_header returns [ASTDefine result]
         	String name = $n.getText();
             $result = driver.makeDefinition(name, false, $n);
         }
-        | MODTYPE BECOMES {
-            driver.error("Reserved keyword: adjustment", $MODTYPE);
+        | modtype BECOMES {
+            driver.error("Reserved keyword: adjustment", $modtype.start);
             $result = null;
         }
         ;
@@ -1319,6 +1319,13 @@ definition returns [ASTDefine result]
         }
         ;
 	
+modtype returns [String result]
+	:
+	t=(TIME | TIMESCALE | X | Y | Z | ROTATE | SIZE | SKEW | FLIP | HUE | SATURATION | BRIGHTNESS | ALPHA | TARGETHUE | TARGETSATURATION | TARGETBRIGHTNESS | TARGETALPHA | X1 | X2 | Y1 | Y2 | RX | RY | WIDTH) {
+	    $result = $t.getText();
+	}
+	;
+
 CFDG2
 	: 
 	'CFDG2' 
@@ -1635,12 +1642,7 @@ LET
 	'LET'
 	;
 	
-MODTYPE
-	:
-	TIME | TIMESCALE | X | Y | Z | ROTATE | SIZE | SKEW | FLIP | HUE | SATURATION | BRIGHTNESS | ALPHA | TARGETHUE | TARGETSATURATION | TARGETBRIGHTNESS | TARGETALPHA | X1 | X2 | Y1 | Y2 | RX | RY | WIDTH
-	;
-		
-USER_STRING 
+USER_STRING
 	: 
 	('a'..'z'|'A'..'Z'|'_'|'\u0200'..'\u0301'|'\u0303'..'\u0377') (('a'..'z'|'A'..'Z'|':'|'0'..'9'|'_'|'\u0200'..'\u0301'|'\u0303'..'\u0377')|('\u0302'('\u0200'..'\u0260'|'\u0262'..'\u0377')))* 
 	;
