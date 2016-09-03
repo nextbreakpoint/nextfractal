@@ -126,7 +126,7 @@ public class ASTReplacement {
 	}
 
 	public void traverse(Shape parent, boolean tr, CFDGRenderer renderer) {
-		Shape child = parent;
+		Shape child = (Shape)parent.clone();
 		switch (repType) {
 			case replacement:
 				replace(child, renderer);
@@ -134,7 +134,6 @@ public class ASTReplacement {
 				child.getWorldState().getRand64Seed().bump();
 				renderer.processShape(child);
 				break;
-
 			case op:
 				if (!tr) child.getWorldState().setTransform(null);
 			case mixed:

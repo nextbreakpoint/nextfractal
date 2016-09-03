@@ -115,7 +115,7 @@ public class ASTTransform extends ASTReplacement {
 			if (i < modsLength) {
 				mods.get(i).evaluate(child.getWorldState(), true, renderer);
 			} else {
-				child.getWorldState().getTransform().preConcatenate(transforms.get(i - modsLength));
+				child.getWorldState().getTransform().concatenate(transforms.get(i - modsLength));
 			}
 			renderer.getCurrentSeed().bump();
 			int size = renderer.getStackSize();

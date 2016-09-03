@@ -497,7 +497,7 @@ public class CFDGRenderer {
 	public void processPrimShape(Shape shape, ASTRule rule) {
 		int num = symmetryOps.size();
 		if (num == 0 || cfdg.getShapeType(shape.getShapeType()) == ShapeType.FillType) {
-			Shape copy = new Shape(shape);
+			Shape copy = (Shape)shape.clone();
 			processPrimShapeSiblings(copy, rule);
 		} else {
 			for (int i = 0; i < num; i++) {
@@ -736,7 +736,7 @@ public class CFDGRenderer {
 				break;
 			}
 
-			Shape shape = new Shape(unfinishedShapes.remove(0));
+			Shape shape = (Shape)unfinishedShapes.remove(0).clone();
 
 			todoCount -= 1;
 
