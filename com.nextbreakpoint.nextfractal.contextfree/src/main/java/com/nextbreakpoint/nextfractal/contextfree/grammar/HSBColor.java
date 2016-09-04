@@ -296,11 +296,6 @@ public class HSBColor implements Cloneable {
 	}
 
 	public Object clone() {
-		try {
-			return super.clone();
-		} catch (CloneNotSupportedException e) {
-			// this shouldn't happen, since we are Cloneable
-			throw new InternalError(e);
-		}
+		return new HSBColor(values[0], values[1], values[2], values[3]);
 	}
 }

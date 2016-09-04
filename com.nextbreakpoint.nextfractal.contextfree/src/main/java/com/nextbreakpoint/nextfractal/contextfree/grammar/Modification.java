@@ -126,8 +126,6 @@ public class Modification implements Cloneable {
 		transformZ.concatenate(modification.getTransformZ());
 		transformTime.concatenate(modification.getTransformTime());
 
-		HSBColor.adjust(color, colorTarget, modification.color(), modification.colorTarget(), modification.colorAssignment());
-
 		rand64Seed.add(modification.getRand64Seed());
 
 		//TODO rivedere

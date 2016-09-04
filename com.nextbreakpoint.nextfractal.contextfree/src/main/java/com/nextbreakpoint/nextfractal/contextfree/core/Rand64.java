@@ -169,13 +169,8 @@ public class Rand64 implements Cloneable {
 	}
 
 	public Object clone() {
-		try {
-			Object clone = super.clone();
-			((Rand64)clone).init();
-			return clone;
-		} catch (CloneNotSupportedException e) {
-			// this shouldn't happen, since we are Cloneable
-			throw new InternalError(e);
-		}
+		Rand64 rand = new Rand64(seed);
+		rand.init();
+		return rand;
 	}
 }
