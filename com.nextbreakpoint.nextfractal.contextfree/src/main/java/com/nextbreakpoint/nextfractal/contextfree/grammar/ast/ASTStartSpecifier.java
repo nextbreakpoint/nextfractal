@@ -66,9 +66,7 @@ public class ASTStartSpecifier extends ASTRuleSpecifier {
 	@Override
 	public ASTExpression simplify() {
 		super.simplify();
-		if (modification != null) {
-			modification = (ASTModification)modification.simplify();
-		}
+		modification = (ASTModification) simplify(modification);
 		return this;
 	}
 
@@ -78,9 +76,7 @@ public class ASTStartSpecifier extends ASTRuleSpecifier {
 		String name = getEntropy();
 		super.compile(ph);
 		setEntropy(name);
-		if (modification != null) {
-			modification = (ASTModification)modification.compile(ph);
-		}
+		modification = (ASTModification) compile(modification, ph);
 		return null;
 	}
 }

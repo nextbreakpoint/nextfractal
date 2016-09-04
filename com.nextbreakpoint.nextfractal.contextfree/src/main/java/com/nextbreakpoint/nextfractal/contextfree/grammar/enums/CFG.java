@@ -40,7 +40,7 @@ public enum CFG {
 	}
 
 	public String getName() {
-		return "CF::" + name().toUpperCase();
+		return "CF::" + name();
 	}
 
 	public static CFG byName(String name) {
