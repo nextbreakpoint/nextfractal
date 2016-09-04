@@ -164,7 +164,7 @@ public class HSBColor implements Cloneable {
 
 		double h = 0;
 
-		if (useTarget != AssignmentType.None.getType()) {
+		if (useTarget != 0) {
 			// decrease or increase toward target. If the target hue does not
 			// cooperate by being smaller (or larger) than the current hue then
 			// add/subtract 360 to make it so. This only works if all hues are

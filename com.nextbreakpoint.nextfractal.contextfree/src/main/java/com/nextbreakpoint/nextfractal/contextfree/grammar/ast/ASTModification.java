@@ -279,9 +279,10 @@ public class ASTModification extends ASTExpression {
 							}
 							ASTModTerm next = temp.get(i + 1);
 							if (term.getModType() == ModType.x && next.getModType() == ModType.y && argcount == 1) {
-								term.setArguments(term.getArguments().append(next));
+								term.setArguments(term.getArguments().append(next.getArguments()));
 								term.setArgumentsCount(2);
 								modExp.add(term);
+								i += 1;
 								continue;
 							}
 							break;

@@ -254,7 +254,7 @@ public class ASTModTerm extends ASTExpression {
 			case flip: {
 				double a = modArgs[0] * Math.PI / 180.0;
 				double ux = Math.cos(a);
-				double uy = Math.cos(a);
+				double uy = Math.sin(a);
 				AffineTransform t2d = new AffineTransform(2.0 * ux * ux - 1.0, 2.0 * ux * uy, 2.0 * ux * uy, 2.0 * uy * uy - 1.0, 0.0, 0.0);
 				result.getTransform().concatenate(t2d);
 				break;
@@ -293,7 +293,7 @@ public class ASTModTerm extends ASTExpression {
 						 }
 					 }
 					 if (shapeDest) {
-						 color[colorComp] = hue ? HSBColor.adjustHue(color[colorComp], args[0], AssignmentType.HueTarget.getType(), modArgs[1]) : HSBColor.adjust(color[colorComp], args[0], 1, args[1]);
+						 color[colorComp] = hue ? HSBColor.adjustHue(color[colorComp], args[0], 1, modArgs[1]) : HSBColor.adjust(color[colorComp], args[0], 1, args[1]);
 					 } else {
 						 color[colorComp] = args[0];
 						 target[targetComp] = hue ? modArgs[1] : args[1];
@@ -318,7 +318,7 @@ public class ASTModTerm extends ASTExpression {
 					 }
 				 }
 				 if (shapeDest) {
-					 color[colorComp] = hue ? HSBColor.adjustHue(color[colorComp], args[0], AssignmentType.HueTarget.getType(), target[targetComp]) : HSBColor.adjust(color[colorComp], args[0], 1, target[targetComp]);
+					 color[colorComp] = hue ? HSBColor.adjustHue(color[colorComp], args[0], 1, target[targetComp]) : HSBColor.adjust(color[colorComp], args[0], 1, target[targetComp]);
 				 } else {
 					 color[colorComp] = args[0];
 					 result.setColorAssignment(result.colorAssignment() | AssignmentType.HSBATarget.getType() & mask);

@@ -27,9 +27,7 @@ package com.nextbreakpoint.nextfractal.contextfree.test;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.*;
 
 import java.awt.*;
-import java.awt.geom.GeneralPath;
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferInt;
 import java.io.File;
 import java.util.*;
 
@@ -50,13 +48,15 @@ public class V3RenderTest extends AbstractBaseTest {
 	@Parameterized.Parameters
 	public static Iterable<Object[]> parameters() {
 		List<Object[]> params = new ArrayList<>();
-		params.add(new Object[] { "/v3-shape-square.cfdg", "/v3-shape-square.png" });
-		params.add(new Object[] { "/v3-shape-triangle.cfdg", "/v3-shape-triangle.png" });
-		params.add(new Object[] { "/v3-shape-circle.cfdg", "/v3-shape-circle.png" });
-		params.add(new Object[] { "/v3-shape-transform.cfdg", "/v3-shape-transform.png" });
-		params.add(new Object[] { "/v3-shape-multiple-primitives.cfdg", "/v3-shape-multiple-primitives.png" });
-		params.add(new Object[] { "/v3-shape-initial-adjustment.cfdg", "/v3-shape-initial-adjustment.png" });
-		params.add(new Object[] { "/v3-shape-options.cfdg", "/v3-shape-options.png" });
+//		params.add(new Object[] { "/v3-shape-square.cfdg", "/v3-shape-square.png" });
+//		params.add(new Object[] { "/v3-shape-triangle.cfdg", "/v3-shape-triangle.png" });
+//		params.add(new Object[] { "/v3-shape-circle.cfdg", "/v3-shape-circle.png" });
+//		params.add(new Object[] { "/v3-shape-transform.cfdg", "/v3-shape-transform.png" });
+//		params.add(new Object[] { "/v3-shape-multiple-primitives.cfdg", "/v3-shape-multiple-primitives.png" });
+//		params.add(new Object[] { "/v3-shape-initial-adjustment.cfdg", "/v3-shape-initial-adjustment.png" });
+//		params.add(new Object[] { "/v3-shape-options.cfdg", "/v3-shape-options.png" });
+//		params.add(new Object[] { "/v3-shapes-blah.cfdg", "/v3-shapes-blah.png" });
+		params.add(new Object[] { "/v3-shapes-blah-random.cfdg", "/v3-shapes-blah-random.png" });
 		return params;
 	}
 

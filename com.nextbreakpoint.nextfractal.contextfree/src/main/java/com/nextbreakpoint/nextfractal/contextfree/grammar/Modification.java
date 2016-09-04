@@ -36,8 +36,8 @@ public class Modification implements Cloneable {
 	private AffineTransform transform = new AffineTransform();
 	private AffineTransform1D transformZ = new AffineTransform1D();
 	private AffineTransformTime transformTime = new AffineTransformTime();
-	private HSBColor color = new HSBColor(0, 0, 0, 1);
-	private HSBColor colorTarget = new HSBColor(0, 0, 0, 1);
+	private HSBColor color = new HSBColor(0, 0, 0, 0);
+	private HSBColor colorTarget = new HSBColor(0, 0, 0, 0);
 	private int colorAssignment;
 
 	public Rand64 getRand64Seed() {

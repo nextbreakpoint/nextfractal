@@ -51,7 +51,7 @@ public class ASTCons extends ASTExpression {
 		//TODO controllare
 		locality = Locality.PureLocal;
 		for (ASTExpression arg : args) {
-			children.add(arg);
+			append(arg);
 		}
 	}
 
@@ -75,13 +75,14 @@ public class ASTCons extends ASTExpression {
 		}
 		int count = 0;
 		for (ASTExpression child : children) {
-			int num = child.evaluate(result, length, renderer);
+			double[] value = new double[] { 0 };
+			int num = child.evaluate(value, length, renderer);
 			if (num < 0) {
 				return -1;
 			}
+			result[count] = value[0];
 			count += num;
 			if (result != null) {
-				result[0] += num;
 				length -= num;
 			}
 		}
