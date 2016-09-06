@@ -312,11 +312,12 @@ rule_header_v2 returns [ASTRule result]
         	driver.pushRepContainer($result.getRuleBody());
         }
         |
-        RULE s=USER_STRING w=USER_RATIONAL {
+        RULE s=USER_STRING w=user_rational {
         	String name = $s.getText();
-        	String weight = $w.getText();
+        	Float weight = $w.result.getValue();
+        	Boolean percentage = $w.result.isPercentage();
         	driver.setShape(null, $RULE);
-        	$result = new ASTRule(driver, driver.stringToShape(name, false, $RULE), Float.parseFloat(weight), weight.indexOf("\u0025") != -1, $RULE);
+        	$result = new ASTRule(driver, driver.stringToShape(name, false, $RULE), weight, percentage, $RULE);
         	driver.addRule($result);
         	driver.pushRepContainer($result.getRuleBody());
         }
@@ -340,10 +341,11 @@ rule_header returns [ASTRule result]
         	driver.pushRepContainer($result.getRuleBody());
         }
         |
-        RULE w=USER_RATIONAL {
+        RULE w=user_rational {
         	driver.setInPathContainer(false);
-        	String weight = $w.getText();
-        	$result = new ASTRule(driver, -1, Float.parseFloat(weight), weight.indexOf("\u0025") != -1, $RULE);
+        	Float weight = $w.result.getValue();
+        	Boolean percentage = $w.result.isPercentage();
+        	$result = new ASTRule(driver, -1, weight, percentage, $RULE);
         	driver.addRule($result);
         	driver.pushRepContainer($result.getRuleBody());
         }
@@ -645,7 +647,7 @@ element returns [ASTReplacement result]
 
 element_v2clue
 		:
-        USER_RATIONAL '*'
+        user_rational '*'
         | USER_STRING '{'
         | USER_PATHOP '{'
         ;
@@ -739,10 +741,10 @@ replacement_v2 returns [ASTReplacement result]
 
 loopHeader_v2 returns [ASTLoop result]
         : 
-        r=USER_RATIONAL '*' { 
+        r=user_rational '*' {
         	driver.incSwitchStack();
         } m=modification_v2 {
-        	ASTExpression count = new ASTReal(Float.parseFloat($r.getText()), $r);
+        	ASTExpression count = new ASTReal($r.result.getValue(), $r.start);
         	ASTModification mod = $m.result;
         	driver.decSwitchStack();
             driver.setMaybeVersion("CFDG2");
@@ -959,20 +961,20 @@ explist returns [ASTExpression result]
 
 arglist returns [ASTExpression result]
         : 
-        e2=explist e1=exp3 {
+        e2=arglist e1=exp3 {
         	$result = $e2.result.append($e1.result);
         }
-        | 
-        e=exp3 { 
+        |
+        e=exp3 {
         	$result = new ASTCons($e.start, new ASTParen($e.result, $e.start));
         }
         ;
 
 exp returns [ASTExpression result]
-        : 
+        :
         (
-        n=USER_RATIONAL { 
-			$result = new ASTReal(Float.parseFloat($n.getText()), $n); 
+        n=user_rational {
+			$result = new ASTReal($n.result.getValue(), $n.start);
         }
         |
         CF_INFINITY { 
@@ -987,10 +989,10 @@ exp returns [ASTExpression result]
 			$result = $f.result; 
         }
         |
-        n=USER_STRING '(' a=arglist ')' {
-        	String func = $n.getText();
+        s=USER_STRING '(' a=arglist ')' {
+        	String func = $s.getText();
         	ASTExpression args = $a.result;
-        	$result = driver.makeFunction(func, args, $n);
+        	$result = driver.makeFunction(func, args, $s);
         }
         |
         t='-' e=exp { 
@@ -1026,10 +1028,10 @@ exp2 returns [ASTExpression result]
         ;
 
 exp3 returns [ASTExpression result]	
-        : 
+        :
         (
-        n=USER_RATIONAL { 
-        	$result = new ASTReal(Float.parseFloat($n.getText()), $n); 
+        n=user_rational {
+			$result = new ASTReal($n.result.getValue(), $n.start);
         }
         |
         CF_INFINITY { 
@@ -1040,10 +1042,10 @@ exp3 returns [ASTExpression result]
         	$result = $f.result;
         }
         |
-        n=USER_STRING '(' a=arglist ')' {
-        	String func = $n.getText();
+        s=USER_STRING '(' a=arglist ')' {
+        	String func = $s.getText();
         	ASTExpression args = $a.result;
-        	$result = driver.makeFunction(func, args, $n);
+        	$result = driver.makeFunction(func, args, $s);
         }
         |
         t='-' e=exp3 { 
@@ -1318,13 +1320,20 @@ definition returns [ASTDefine result]
         	}
         }
         ;
-	
+
 modtype returns [String result]
 	:
 	t=(TIME | TIMESCALE | X | Y | Z | ROTATE | SIZE | SKEW | FLIP | HUE | SATURATION | BRIGHTNESS | ALPHA | TARGETHUE | TARGETSATURATION | TARGETBRIGHTNESS | TARGETALPHA | X1 | X2 | Y1 | Y2 | RX | RY | WIDTH) {
 	    $result = $t.getText();
 	}
 	;
+
+user_rational returns [ASTValue result]
+    :
+    t=(INTEGER | RATIONAL | FLOAT) {
+        $result = new ASTValue($t.getText());
+    }
+    ;
 
 CFDG2
 	: 
@@ -1334,11 +1343,6 @@ CFDG2
 CFDG3
 	: 
 	'CFDG3' 
-	;
-	
-USER_RATIONAL
-	: 
-	('0'..'9')+ '%'? | ('0'..'9')+ '.' ('0'..'9')* '%'? | '.' ('0'..'9')+ '%'? | '0'..'9'+ '%' '.' '.'? ('0'..'9')+ '.' ('0'..'9')* ('e'|'E') ('+|-')? ('0'..'9')+ '%'? | '.' ('0'..'9')+ ('e'|'E') ('+|-')? ('0'..'9')+ '%'? | ('0'..'9')+ ('e'|'E') ('+|-')? ('0'..'9')+ '%'?
 	;
 
 STARTSHAPE
@@ -1412,8 +1416,8 @@ CASE
 	;
 
 RANGE
-	: 
-	'..' 
+	:
+	'..' | '\u2026'
 	;
 
 PLUSMINUS
@@ -1608,7 +1612,7 @@ XOR
 
 CF_INFINITY
 	: 
-	'CF_INFINITY' 
+	'CF_INFINITY' | '\u221E'
 	;
 	
 USER_PATHOP
@@ -1642,6 +1646,21 @@ LET
 	'LET'
 	;
 	
+INTEGER
+	:
+	('0'..'9')+ '%'?
+	;
+
+RATIONAL
+	:
+	('0'..'9')+ '.' ('0'..'9')+ '%'? | '.' ('0'..'9')+ '%'?
+	;
+
+FLOAT
+	:
+	('0'..'9')+ '.' ('0'..'9')+ ('e'|'E') ('+|-')? ('0'..'9')+ '%'? | '.' ('0'..'9')+ ('e'|'E') ('+|-')? ('0'..'9')+ '%'? | ('0'..'9')+ ('e'|'E') ('+|-')? ('0'..'9')+ '%'?
+	;
+
 USER_STRING
 	: 
 	('a'..'z'|'A'..'Z'|'_'|'\u0200'..'\u0301'|'\u0303'..'\u0377') (('a'..'z'|'A'..'Z'|':'|'0'..'9'|'_'|'\u0200'..'\u0301'|'\u0303'..'\u0377')|('\u0302'('\u0200'..'\u0260'|'\u0262'..'\u0377')))* 
@@ -1669,6 +1688,6 @@ COMMENT
 
 WHITESPACE  
 	: 
-	( ' ' | '\t' | '\r' | '\n' ) -> skip 
+	( ' ' | '\t' | '\r' | '\n' ) -> skip
 	;
 	
