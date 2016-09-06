@@ -42,6 +42,11 @@ public class Rand64 implements Cloneable {
 		random.setSeed(seed);
 	}
 
+	public Rand64(long seed, Random random) {
+		this.seed = seed;
+		this.random = random;
+	}
+
 	public double getDouble() {
 		return random.nextDouble();
 	}
@@ -169,8 +174,6 @@ public class Rand64 implements Cloneable {
 	}
 
 	public Object clone() {
-		Rand64 rand = new Rand64(seed);
-		rand.init();
-		return rand;
+		return new Rand64(seed, random);
 	}
 }

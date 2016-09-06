@@ -75,12 +75,17 @@ public class ASTCons extends ASTExpression {
 		}
 		int count = 0;
 		for (ASTExpression child : children) {
-			double[] value = new double[] { 0 };
+			double[] value = null;
+			if (result != null) {
+				value = new double[] { 0 };
+			}
 			int num = child.evaluate(value, length, renderer);
 			if (num < 0) {
 				return -1;
 			}
-			result[count] = value[0];
+			if (result != null) {
+				result[count] = value[0];
+			}
 			count += num;
 			if (result != null) {
 				length -= num;

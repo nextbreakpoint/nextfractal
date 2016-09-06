@@ -14,5 +14,5 @@ shape blah {
 
 shape blah2 {
  TRIANGLE []
- blah2 [alpha 0.001 r 7..8 x 1 s 0.9995]
+ blah2 [alpha 0.001 r 8..9 x 1 s 0.9995]
 }

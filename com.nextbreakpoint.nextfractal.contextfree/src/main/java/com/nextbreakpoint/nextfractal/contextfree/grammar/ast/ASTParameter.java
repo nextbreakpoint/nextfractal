@@ -161,10 +161,10 @@ public class ASTParameter {
 			if (tupleSize < 1 || tupleSize > 1000000000) {
 				Logger.error("Illegal vector size (<1 or >99)", location);
 			}
-			this.nameIndex = nameIndex;
-			if (definition.getDefineType() == DefineType.ConstDefine) {
-				this.definition = definition;
-			}
+		}
+		this.nameIndex = nameIndex;
+		if (definition.getDefineType() == DefineType.ConstDefine) {
+			this.definition = definition;
 		}
 	}
 

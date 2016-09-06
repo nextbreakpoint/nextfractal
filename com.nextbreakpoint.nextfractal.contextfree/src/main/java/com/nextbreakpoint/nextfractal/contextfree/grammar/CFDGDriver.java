@@ -30,6 +30,7 @@ import com.nextbreakpoint.nextfractal.contextfree.core.Rand64;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.*;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.*;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ShapeType;
+import com.sun.xml.internal.xsom.impl.scd.Iterators;
 import org.antlr.v4.runtime.ANTLRFileStream;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.Token;
@@ -549,13 +550,17 @@ public class CFDGDriver {
 	}
 	
 	public ASTParameter findExpression(int nameIndex, boolean isGlobal) {
-		for (ListIterator<ASTRepContainer> i = containerStack.listIterator(); i.hasPrevious();) {
-			ASTRepContainer repCont = i.previous();
-			for (ListIterator<ASTParameter> p = repCont.getParameters().listIterator(); i.hasPrevious();) {
-				ASTParameter param = p.previous();
-				if (param.getNameIndex() == nameIndex) {
-					isGlobal = repCont.isGlobal();
-					return param;
+		if (containerStack.size() > 0) {
+			for (ListIterator<ASTRepContainer> i = containerStack.listIterator(containerStack.size()); i.hasPrevious();) {
+				ASTRepContainer repCont = i.previous();
+				if (repCont.getParameters().size() > 0) {
+					for (ListIterator<ASTParameter> p = repCont.getParameters().listIterator(repCont.getParameters().size()); p.hasPrevious();) {
+						ASTParameter param = p.previous();
+						if (param.getNameIndex() == nameIndex) {
+							isGlobal = repCont.isGlobal();
+							return param;
+						}
+					}
 				}
 			}
 		}
@@ -566,12 +571,16 @@ public class CFDGDriver {
 		if (allowOverlap && !param) {
 			return;
 		}
-		ASTRepContainer repCont = param ? paramDecls : containerStack.lastElement();
-		for (ListIterator<ASTParameter> i = repCont.getParameters().listIterator(); i.hasPrevious();) {
-			ASTParameter p = i.previous();
-			if (p.getNameIndex() == nameIndex) {
-				warning("Scope of name overlaps variable/parameter with same name", location);
-				warning("Previous variable/parameter declared here", p.getLocation());
+		if (containerStack.size() > 0) {
+			ASTRepContainer repCont = param ? paramDecls : containerStack.lastElement();
+			if (repCont.getParameters().size() > 0) {
+				for (ListIterator<ASTParameter> i = repCont.getParameters().listIterator(repCont.getParameters().size()); i.hasPrevious(); ) {
+					ASTParameter p = i.previous();
+					if (p.getNameIndex() == nameIndex) {
+						warning("Scope of name overlaps variable/parameter with same name", location);
+						warning("Previous variable/parameter declared here", p.getLocation());
+					}
+				}
 			}
 		}
 	}

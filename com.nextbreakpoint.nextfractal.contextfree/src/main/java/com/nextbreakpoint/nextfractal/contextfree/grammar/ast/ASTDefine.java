@@ -44,8 +44,7 @@ public class ASTDefine extends ASTReplacement {
 	private int stackCount;
 	private String name;
 	private int configDepth;
-	private CFDGDriver driver;
-	
+
 	public ASTDefine(CFDGDriver driver, String name, Token location) {
 		super(driver, new ASTModification(driver, location), RepElemType.empty, location);
 		this.defineType = DefineType.StackDefine;
@@ -54,7 +53,6 @@ public class ASTDefine extends ASTReplacement {
 		this.stackCount = 0;
 		this.name = name;
 		this.configDepth = -1;
-		this.driver = driver;
 		int[] i = new int[1];
 		getChildChange().getModData().getRand64Seed().init();
 		getChildChange().getModData().getRand64Seed().xorString(name, i);
