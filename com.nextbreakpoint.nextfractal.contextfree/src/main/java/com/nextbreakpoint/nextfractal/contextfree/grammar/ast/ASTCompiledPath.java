@@ -41,7 +41,7 @@ public class ASTCompiledPath extends PathStorage {
 	private ASTPathCommand terminalCommand;
 	private boolean cached;
 	private boolean useTerminal;
-	private CFDGStack parameters;
+	private CFStack parameters;
 	private Long pathUID;
 	
 	public ASTCompiledPath(CFDGDriver driver, Token location) {
@@ -62,11 +62,11 @@ public class ASTCompiledPath extends PathStorage {
 		return terminalCommand;
 	}
 
-	public CFDGStack getParameters() {
+	public CFStack getParameters() {
 		return parameters;
 	}
 
-	public void setParameters(CFDGStack parameters) {
+	public void setParameters(CFStack parameters) {
 		this.parameters = parameters;
 	}
 

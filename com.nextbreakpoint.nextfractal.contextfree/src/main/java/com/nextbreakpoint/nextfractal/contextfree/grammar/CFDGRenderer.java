@@ -42,8 +42,6 @@ public class CFDGRenderer {
 	private static final double FIXED_BORDER = 8.0;
 	private static final double SHAPE_BORDER = 1.0;
 
-	public static int paramCount = 0;//TODO rivedere ????
-
     private int width;
 	private int height;
 
@@ -58,7 +56,7 @@ public class CFDGRenderer {
 
 	private int cfStackSize;
 	private int cfLogicalStackTop;
-	private CFDGStack cfStack;
+	private CFStack cfStack;
 	private ASTCompiledPath currentPath;
 	private Iterator<CommandInfo> currentCommand;
 	private double currentTime;
@@ -116,6 +114,7 @@ public class CFDGRenderer {
 
 	private ASTRule[] primitivePaths;
 	private Iterator<ASTParameter> logicalStack;
+	private CFStack stack;
 
 	public CFDGRenderer(CFDG cfdg, int width, int height, double minSize, int variation, double border) {
 		this.cfdg = cfdg;
@@ -124,8 +123,10 @@ public class CFDGRenderer {
 		this.minSize = minSize;
 		this.variation = variation;
 		this.border = border;
-		cfStack = new CFDGStack(new Object[8192]);
+
+		cfStack = null;
 		cfStackSize = 0;
+
 		frameTimeBounds = AffineTransformTime.getTranslateInstance(Double.MIN_VALUE, Double.MAX_VALUE);
 
 		primitivePaths = new ASTRule[PrimShape.getShapeNames().size()];
@@ -309,22 +310,22 @@ public class CFDGRenderer {
 		this.requestUpdate = requestUpdate;
 	}
 
-	public Object getStackItem(int stackIndex) {
-		return cfStack.getStack()[stackIndex];
+	public CFStackItem getStackItem(int stackIndex) {
+		return cfStack.getItem(stackIndex < 0 ? cfLogicalStackTop + stackIndex : stackIndex);
 	}
 
-	public void setStackItem(int stackIndex, Object item) {
-		cfStack.getStack()[stackIndex] = item;
+	public void setStackItem(int stackIndex, CFStackItem item) {
+		cfStack.setItem(index, item);
 	}
 
-	public void addStackItem(Object stackType) {
+	public void addStackItem(CFStackItem stackType) {
 		//TODO rivedere
-		cfStack.getStack()[cfLogicalStackTop] = stackType;
+		cfStack.setItem(cfStackSize, stackType);
 	}
 
 	public void removeStackItem(int index) {
 		//TODO rivedere
-		cfStack.getStack()[cfLogicalStackTop] = null;
+		cfStack.setItem(index, null);
 	}
 
 	public int getStackSize() {
@@ -332,7 +333,7 @@ public class CFDGRenderer {
 	}
 
 	public int getMaxStackSize() {
-		return cfStack.getStack().length;
+		return cfStack.size();
 	}
 
 	public void setStackSize(int stackSize) {
@@ -347,9 +348,9 @@ public class CFDGRenderer {
 		this.cfLogicalStackTop = cfLogicalStackTop;
 	}
 
-	public void setLogicalStack(Object[] logicalStack) {
-		this.cfStack.setStack(logicalStack);
-	}
+//	public void setLogicalStack(CFStackItem[] logicalStack) {
+//		this.cfStack.setStack(logicalStack);
+//	}
 
 	public void init() {
 		lastPoint = new Point2D.Double(0, 0);
@@ -366,6 +367,7 @@ public class CFDGRenderer {
 
 		cfLogicalStackTop = 0;
 		cfStackSize = 0;
+		cfStack = new CFStack(new CFStackItem[8192]);
 
 		for (ASTReplacement rep : cfdg.getContents().getBody()) {
 			if (rep instanceof ASTDefine) {
@@ -422,14 +424,15 @@ public class CFDGRenderer {
 		return n >= 0 && n <= getMaxNatural() && n == Math.floor(n);
 	}
 
-	public void initStack(CFDGStack parameters) {
-		if (parameters != null && ((RuleHeader)parameters.getStack()[0]).getParamCount() > 0) {
-			if (cfStackSize + ((RuleHeader)parameters.getStack()[0]).getParamCount() > cfStack.getStack().length) {
+	public void initStack(CFStack parameters) {
+		CFStackRule stackRule = (CFStackRule) parameters.getItem(0);
+		if (parameters != null && stackRule.getParamCount() > 0) {
+			if (cfStackSize + stackRule.getParamCount() > cfStack.size()) {
 				throw new RuntimeException("Maximum stack size exceeded");
 			}
 			int oldSize = cfStackSize;
-			cfStackSize += ((RuleHeader)parameters.getStack()[0]).getParamCount();
-			parameters.copyParams(cfStack.getStack(), oldSize);
+			cfStackSize += stackRule.getParamCount();
+			parameters.copyItems(cfStack, oldSize);
 		}
 		setLogicalStackTop(cfStackSize);
 	}
@@ -448,7 +451,7 @@ public class CFDGRenderer {
 			}
 			if (parameter.getType() == ExpType.RuleType) {
 				//TODO rivedere
-				((RuleHeader)cfStack.getStack()[pos]).setParamCount(0);
+				((CFStackRule)cfStack.getItem(pos)).setParamCount(0);
 			}
 			pos += parameter.getTupleSize();
 		}
@@ -745,10 +748,12 @@ public class CFDGRenderer {
 				drawingMode = false;
 				rule.traverse(shape, false, this);
 			} catch (CFDGException e) {
+				e.printStackTrace();
 				requestStop = true;
 				Logger.error(e.getMessage(), null);
 				break;
 			} catch (Exception e) {
+				e.printStackTrace();
 				//TODO rivedere
 				requestStop = true;
 				Logger.error(e.getMessage(), null);
@@ -1065,5 +1070,9 @@ public class CFDGRenderer {
 	public static boolean abortEverything() {
 		//TODO completare abortEverything
 		return false;
+	}
+
+	public CFStack getStack() {
+		return stack;
 	}
 }

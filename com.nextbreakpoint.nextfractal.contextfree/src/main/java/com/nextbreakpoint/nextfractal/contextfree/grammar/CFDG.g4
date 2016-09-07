@@ -949,25 +949,31 @@ letVariable returns [ASTDefine result]
         ;
         
 explist returns [ASTExpression result]
-        : 
-        e2=explist e1=exp {
-        	$result = $e2.result.append($e1.result);
-        }
-        | 
-        e=exp { 
+        :
+        (
+        e=exp {
         	$result = $e.result;
         }
+        )
+        (
+        e2=explist {
+            $result = $e2.result.append($result);
+        }
+        )?
         ;
 
 arglist returns [ASTExpression result]
-        : 
-        e2=arglist e1=exp3 {
-        	$result = $e2.result.append($e1.result);
-        }
-        |
+        :
+        (
         e=exp3 {
         	$result = new ASTCons($e.start, new ASTParen($e.result, $e.start));
         }
+        )
+        (
+        e2=arglist {
+            $result = $e2.result.append($result);
+        }
+        )?
         ;
 
 exp returns [ASTExpression result]
@@ -981,21 +987,21 @@ exp returns [ASTExpression result]
 			$result = new ASTReal(Float.MAX_VALUE, $CF_INFINITY); 
         }
         |
-        t='(' x=exp2 ')' { 
-			$result = new ASTParen($x.result, $t); 
-        }
-        | 
-        f=expfunc { 
-			$result = $f.result; 
-        }
-        |
         s=USER_STRING '(' a=arglist ')' {
         	String func = $s.getText();
         	ASTExpression args = $a.result;
         	$result = driver.makeFunction(func, args, $s);
         }
         |
-        t='-' e=exp { 
+        f=expfunc {
+			$result = $f.result; 
+        }
+        |
+        t='(' x=exp2 ')' {
+			$result = new ASTParen($x.result, $t);
+        }
+        |
+        t='-' e=exp {
 			$result = new ASTOperator('N', $e.result, $t); 
         }
         |
@@ -1038,17 +1044,21 @@ exp3 returns [ASTExpression result]
 			$result = new ASTReal(Float.MAX_VALUE, $CF_INFINITY); 
         }
         |
-        f=expfunc {
-        	$result = $f.result;
-        }
-        |
         s=USER_STRING '(' a=arglist ')' {
         	String func = $s.getText();
         	ASTExpression args = $a.result;
         	$result = driver.makeFunction(func, args, $s);
         }
         |
-        t='-' e=exp3 { 
+        f=expfunc {
+        	$result = $f.result;
+        }
+        |
+        t='(' x=exp2 ')' {
+			$result = new ASTParen($x.result, $t);
+        }
+        |
+        t='-' e=exp3 {
 			$result = new ASTOperator('N', $e.result, $t); 
         }
         |
@@ -1058,10 +1068,6 @@ exp3 returns [ASTExpression result]
         |
         t=NOT e=exp3 { 
 			$result = new ASTOperator('!', $e.result, $t); 
-        }
-        |
-        t='(' x=exp2 ')' { 
-			$result = new ASTParen($x.result, $t); 
         }
         |
         m=modification {

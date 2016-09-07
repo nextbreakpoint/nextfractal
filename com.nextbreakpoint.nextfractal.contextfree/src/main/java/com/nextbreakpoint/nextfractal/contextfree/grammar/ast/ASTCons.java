@@ -143,14 +143,14 @@ public class ASTCons extends ASTExpression {
 	@Override
 	public ASTExpression getChild(int i) {
 		if (i >= children.size()) {
-			Logger.error("Expression list bounds exceeded", null);
+			Logger.error("Expression list bounds exceeded", getLocation());
 		}
 		return children.get(i);
 	}
 
 	public void setChild(int i, ASTExpression exp) {
 		if (i >= children.size()) {
-			Logger.error("Expression list bounds exceeded", null);
+			Logger.error("Expression list bounds exceeded", getLocation());
 		}
 		children.set(i, exp);
 	}

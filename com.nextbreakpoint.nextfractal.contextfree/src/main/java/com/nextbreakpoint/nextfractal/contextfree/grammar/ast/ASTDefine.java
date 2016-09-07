@@ -146,30 +146,16 @@ public class ASTDefine extends ASTReplacement {
 			tempCont.setStackCount(stackCount);
 			driver.pushRepContainer(tempCont);
 			super.compile(ph);
-			if (exp != null) {
-				ASTExpression tmpExp = exp.compile(ph);
-				if (tmpExp != null) {
-					exp = tmpExp;
-				}
-			}
+			exp = compile(exp, ph);
 			if (ph == CompilePhase.Simplify) {
-				if (exp != null) {
-					exp = exp.simplify();
-				}
+				exp = simplify(exp);
 			}
 			driver.popRepContainer(null);
 		} else {
 			super.compile(ph);
-			if (exp != null) {
-				ASTExpression tmpExp = exp.compile(ph);
-				if (tmpExp != null) {
-					exp = tmpExp;
-				}
-			}
+			exp = compile(exp, ph);
 			if (ph == CompilePhase.Simplify) {
-				if (exp != null) {
-					exp = exp.simplify();
-				}
+				exp = simplify(exp);
 			}
 		}
 		
@@ -263,17 +249,17 @@ public class ASTDefine extends ASTReplacement {
 				if (exp.evaluate(result, tupleSize, renderer) != tupleSize) {
 					Logger.error("Error evaluating parameters (too many or not enough)", null);
 				}
-				renderer.setStackItem(renderer.getStackSize() - 1, result[0]);
+				renderer.setStackItem(renderer.getStackSize() - 1, new CFStackNumber(result[0]));
 				break;
 	
 			case ModType:
 				Modification[] mod = new Modification[1];
 				getChildChange().setVal(mod, renderer);
-				renderer.setStackItem(renderer.getStackSize() - 1, mod[0]);
+				renderer.setStackItem(renderer.getStackSize() - 1, new CFStackModification(mod[0]));
 				break;
 	
 			case RuleType:
-				renderer.setStackItem(renderer.getStackSize() - 1, exp.evalArgs(renderer, parent.getParameters()));
+				renderer.setStackItem(renderer.getStackSize() - 1, exp.evalArgs(renderer, parent.getParameters()).getItem(0));
 				break;
 	
 			default:

@@ -30,7 +30,6 @@ import com.nextbreakpoint.nextfractal.contextfree.core.Rand64;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.*;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.*;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ShapeType;
-import com.sun.xml.internal.xsom.impl.scd.Iterators;
 import org.antlr.v4.runtime.ANTLRFileStream;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.Token;
@@ -40,7 +39,7 @@ public class CFDGDriver {
 	private Stack<ASTRepContainer> containerStack = new Stack<>();
 	private ASTRepContainer paramDecls = new ASTRepContainer(this);
 	private Map<String, Integer> flagNames = new HashMap<String, Integer>();
-	private List<CFDGStack> longLivedParams = new ArrayList<CFDGStack>();
+	private List<CFStackRule> longLivedParams = new ArrayList<>();
 	private Stack<String> fileNames = new Stack<>();
 	private Stack<String> filesToLoad = new Stack<>();
 	private Stack<CharStream> streamsToLoad = new Stack<>();
@@ -473,7 +472,7 @@ public class CFDGDriver {
 		if (t == FuncType.Ftime || t == FuncType.Frame) {
 			cfdg.addParameter(Param.FrameTime);
 		}
-		if (t == FuncType.NotAFunction) {
+		if (t != FuncType.NotAFunction) {
 			return new ASTFunction(name, args, seed, location);
 		}
 		if (args != null && args.getType() == ExpType.ReuseType) {
@@ -649,7 +648,7 @@ public class CFDGDriver {
 		cfdg.addParameter(Param.Time);
 	}
 
-	public void storeParams(CFDGStack p) {
+	public void storeParams(CFStackRule p) {
 		longLivedParams.add(p);
 	}
 

@@ -195,11 +195,11 @@ public class ASTParameter {
 			return 0;
 		}
 		if (types == null || types.isEmpty()) {
-			Logger.error("Arguments are not expected.", args.getLocation());
+			Logger.error("Arguments are not expected", args.getLocation());
 			return -1;
 		}
 		if (args == null) {
-			Logger.error("Arguments are expected.", null);
+			Logger.error("Arguments are expected", null);
 			return -1;
 		}
 
@@ -215,11 +215,11 @@ public class ASTParameter {
 			if (justCount) {
 				continue;
 			}
-			if (count >= expect) {
+			if (count > expect) {
 				Logger.error("Not enough arguments", args.getLocation());
 				return -1;
 			}
-			ASTExpression arg = args.getChild(count);
+			ASTExpression arg = args.getChild(count - 1);
 			if (param.getType() != arg.getType()) {
 				Logger.error("Incorrect argument type", arg.getLocation());
 				Logger.error("This is the expected type", param.getLocation());

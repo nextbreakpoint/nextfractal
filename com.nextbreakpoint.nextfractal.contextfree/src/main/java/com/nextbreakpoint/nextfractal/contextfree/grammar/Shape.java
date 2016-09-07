@@ -28,7 +28,7 @@ public class Shape implements Cloneable {
 	protected int shapeType;
 	protected Modification worldState;
 	protected double areaCache;
-	protected CFDGStack params;
+	protected CFStack params;
 
 	public Shape() {
 		shapeType = -1;
@@ -43,11 +43,11 @@ public class Shape implements Cloneable {
 		params = shape.params;
 	}
 
-	public CFDGStack getParameters() {
+	public CFStack getParameters() {
 		return params;
 	}
 
-	public void setParameters(CFDGStack params) {
+	public void setParameters(CFStack params) {
 		this.params = params;
 	}
 

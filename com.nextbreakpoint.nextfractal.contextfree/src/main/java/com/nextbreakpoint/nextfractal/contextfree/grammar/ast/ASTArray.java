@@ -26,10 +26,8 @@ package com.nextbreakpoint.nextfractal.contextfree.grammar.ast;
 
 import java.util.List;
 
-import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGDriver;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.*;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.exceptions.DeferUntilRuntimeException;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.Logger;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGRenderer;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.CompilePhase;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ExpType;
 import org.antlr.v4.runtime.Token;
@@ -101,7 +99,7 @@ public class ASTArray extends ASTExpression {
 			}
 			double[] source = data;
 			if (source == null) {
-				source[0] = (Double)renderer.getStackItem(stackIndex);
+				source[0] = ((CFStackNumber)renderer.getStackItem(stackIndex)).getNumber();
 			}
 			for (int j = 0; j < this.length; j++) {
 				result[j] = source[j * this.stride + index];

@@ -24,10 +24,7 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.grammar.ast;
 
-import com.nextbreakpoint.nextfractal.contextfree.grammar.Logger;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.Modification;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGRenderer;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGStack;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.*;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.CompilePhase;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ExpType;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.Locality;
@@ -128,7 +125,7 @@ public class ASTExpression {
 		throw new RuntimeException("Cannot convert this expression into an adjustment"); 
 	}
 
-	public CFDGStack evalArgs(CFDGRenderer renderer, CFDGStack parent) {
+	public CFStack evalArgs(CFDGRenderer renderer, CFStack parent) {
 		throw new RuntimeException("Cannot convert this expression into a shape"); 
 	}
 	

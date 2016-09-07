@@ -109,13 +109,14 @@ public class ASTReplacement {
 			s.setShapeType(shapeSpec.getShapeType());
 			s.setParameters(null);
 		} else {
+			CFStackRule stackRule = (CFStackRule) s.getParameters().getItem(0);
 			s.setParameters(shapeSpec.evalArgs(renderer, s.getParameters()));
 			if (shapeSpec.getArgSource() == ArgSource.SimpleParentArgs) {
 				s.setShapeType(shapeSpec.getShapeType());
 			} else {
-				s.setShapeType(((RuleHeader)s.getParameters().getStack()[0]).getRuleName());
+				s.setShapeType(stackRule.getRuleName());
 			}
-			if (((RuleHeader)s.getParameters().getStack()[0]).getParamCount() == 0) {
+			if (stackRule.getParamCount() == 0) {
 				s.setParameters(null);
 			}
 		}

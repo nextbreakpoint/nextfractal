@@ -57,7 +57,8 @@ public class V3RenderTest extends AbstractBaseTest {
 //		params.add(new Object[] { "/v3-shape-options.cfdg", "/v3-shape-options.png" });
 //		params.add(new Object[] { "/v3-shapes-blah.cfdg", "/v3-shapes-blah.png" });
 //		params.add(new Object[] { "/v3-shapes-blah-random.cfdg", "/v3-shapes-blah-random.png" });
-		params.add(new Object[] { "/v3-shape-variable.cfdg", "/v3-shape-variable.png" });
+//		params.add(new Object[] { "/v3-shape-variable.cfdg", "/v3-shape-variable.png" });
+		params.add(new Object[] { "/v3-shape-function.cfdg", "/v3-shape-function.png" });
 		return params;
 	}
 

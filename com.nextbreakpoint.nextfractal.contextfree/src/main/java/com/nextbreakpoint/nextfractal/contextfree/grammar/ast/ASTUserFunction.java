@@ -49,7 +49,7 @@ public class ASTUserFunction extends ASTExpression {
 		this.nameIndex = nameIndex;
 		this.definition = definition;
 		this.arguments = arguments;
-		isLet = false;
+		this.isLet = false;
 	}
 
 	public ASTExpression getArguments() {
@@ -154,9 +154,7 @@ public class ASTUserFunction extends ASTExpression {
 					return null;
 				}
 				if (def[0] != null) {
-					if (arguments != null) {
-						arguments = arguments.compile(ph);
-					}
+					arguments = compile(arguments, ph);
 					definition = def[0];
 					ASTParameter.checkType(def[0].getParameters(), arguments, false);
 					isConstant = false;
@@ -183,7 +181,7 @@ public class ASTUserFunction extends ASTExpression {
 	}
 
 	@Override
-	public CFDGStack evalArgs(CFDGRenderer renderer, CFDGStack parent) {
+	public CFStack evalArgs(CFDGRenderer renderer, CFStack parent) {
 		if (type != ExpType.RuleType) {
 			Logger.error("Function does not evaluate to a shape", location);
 			return null;
@@ -194,7 +192,7 @@ public class ASTUserFunction extends ASTExpression {
 		}
 		//TODO controllare
 		setupStack(renderer);
-		CFDGStack ret = definition.getExp().evalArgs(renderer, parent);
+		CFStack ret = definition.getExp().evalArgs(renderer, parent);
 		cleanupStack(renderer);
 		return ret;
 	}
@@ -203,12 +201,13 @@ public class ASTUserFunction extends ASTExpression {
 		oldTop = renderer.getLogicalStackTop();
 		oldSize = renderer.getStackSize();
 		if (definition.getStackCount() > 0) {
-			if (oldSize + definition.getStackCount() > renderer.getStackSize()) {
+			if (oldSize + definition.getStackCount() > renderer.getMaxStackSize()) {
 				Logger.error("Maximum stack size exceeded", location);
 			}
 			renderer.setStackSize(oldSize + definition.getStackCount());
-			//TODO rivedere
-			AST.evalArgs(renderer, null, definition.getParameters().toArray(), arguments, isLet);
+			//TODO completare setupstack
+			List<ASTParameter> params = definition.getParameters();
+			AST.evalArgs(renderer, renderer.getStack(), new CFStackItem[1], arguments, isLet);
 			renderer.setLogicalStackTop(renderer.getStackSize());
 		}
 	}

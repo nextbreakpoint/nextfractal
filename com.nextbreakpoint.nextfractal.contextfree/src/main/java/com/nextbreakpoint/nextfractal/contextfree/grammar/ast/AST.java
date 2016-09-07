@@ -10,7 +10,6 @@ import org.antlr.v4.runtime.Token;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 public class AST {
@@ -238,34 +237,36 @@ public class AST {
         return ret;
     }
 
-    public static void evalArgs(CFDGRenderer renderer, CFDGStack parent, Object[] dest, ASTExpression arguments, boolean onStack) {
+    public static void evalArgs(CFDGRenderer renderer, CFStack parent, CFStackItem[] dest, ASTExpression arguments, boolean onStack) {
         //TODO rivedere evalArgs
         for (int i = 0; i < arguments.size(); i++) {
             if (onStack) {
                 renderer.setLogicalStackTop(0);
-                renderer.setLogicalStack(dest);
+                //TODO completare evalArgs
+//                renderer.setLogicalStack(dest);
             }
             ASTExpression arg = arguments.getChild(i);
             switch (arg.getType()) {
                 case NumericType: {
                     double[] value = new double[1];
-                    int num = arg.evaluate(value, ((ASTExpression) dest[0]).getTupleSize(), renderer);
-                    dest[0] = value[0];
-                    if (!ASTParameter.Impure && ((ASTExpression) dest[0]).isNatural() && renderer.isNatual(value[0])) {
+                    int num = arg.evaluate(value, arg.getTupleSize(), renderer);
+                    if (!ASTParameter.Impure && arg.isNatural() && renderer.isNatual(value[0])) {
                         Logger.error("Expression does not evaluate to a legal natural number", arg.getLocation());
                     }
-                    if (num != ((ASTExpression) dest[0]).getTupleSize()) {
+                    if (num != arg.getTupleSize()) {
                         Logger.error("Expression does not evaluate to the correct size", arg.getLocation());
                     }
+                    dest[0] = new CFStackNumber(value[0]);
                     break;
                 }
                 case ModType: {
-                    dest[0] = new Modification();
-                    arg.evaluate((Modification)dest[0], false, renderer);
+                    Modification modification = new Modification();
+                    arg.evaluate(modification, false, renderer);
+                    dest[0] = new CFStackModification(modification);
                     break;
                 }
                 case RuleType: {
-                    dest[0] = arg.evalArgs(renderer, parent);
+                    dest[0] = arg.evalArgs(renderer, parent).getItem(0);
                     break;
                 }
                 default:

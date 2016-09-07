@@ -79,9 +79,9 @@ public class ASTVariable extends ASTExpression {
 		}
         if (result != null) {
             if (renderer == null) throw new DeferUntilRuntimeException();
-            double stackItem = (Double)renderer.getStackItem(stackIndex);
+			Double stackItem = ((CFStackNumber)renderer.getStackItem(stackIndex)).getNumber();
             for (int i = 0; i < count; ++i) {
-				result[i] = stackItem;
+				result[i] = stackItem == null ? new Double(0) : stackItem;
             }
         }
         return count;
@@ -132,7 +132,7 @@ public class ASTVariable extends ASTExpression {
 						return ret;
 					}
 					count = bound.getType() == ExpType.NumericType ? bound.getTupleSize() : 1;
-					stackIndex = bound.getStackIndex() - (isGlobal ? 0: driver.getLocalStackDepth());
+					stackIndex = bound.getStackIndex() - (isGlobal ? 0 : driver.getLocalStackDepth());
 					type = bound.getType();
 					isNatural = bound.isNatural();
 					locality = bound.getLocality();

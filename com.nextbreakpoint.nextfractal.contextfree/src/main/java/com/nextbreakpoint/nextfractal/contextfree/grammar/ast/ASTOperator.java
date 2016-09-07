@@ -51,7 +51,7 @@ public class ASTOperator extends ASTExpression {
                 Logger.error("Operator takes only one operand", location);
             }
 		} else {
-			if (right != null) {
+			if (right == null) {
                 Logger.error("Operator takes two operands", location);
             }
 		}
@@ -101,7 +101,7 @@ public class ASTOperator extends ASTExpression {
             return -1;
 		}
 
-		if (left.evaluate(result != null ? l : null, 1, renderer) != 1) {
+		if (left.evaluate(result != null ? l : null, result != null ? 1 : 0, renderer) != 1) {
             Logger.error("illegal operand", null);
             return -1;
 		}
@@ -118,7 +118,7 @@ public class ASTOperator extends ASTExpression {
             }
         }
         
-		int rightnum = right != null ? right.evaluate(result != null ? r : null, 1, renderer) : 0;
+		int rightnum = right != null ? right.evaluate(result != null ? r : null, result != null ? 1 : 0, renderer) : 0;
 
 		if (rightnum == 0 && (op == 'N' || op == 'P' || op == '!')) {
 			if (result != null) {
