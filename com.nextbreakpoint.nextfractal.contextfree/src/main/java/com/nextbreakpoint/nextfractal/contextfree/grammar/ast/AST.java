@@ -258,6 +258,7 @@ public class AST {
                     }
                     for (int j = 0; j < dest.getType().getTupleSize(); j++) {
                         dest.setItem(j, new CFStackNumber(renderer.getStack(), value[j]));
+                    }
                     break;
                 }
                 case ModType: {
