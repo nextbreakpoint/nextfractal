@@ -181,7 +181,7 @@ public class ASTUserFunction extends ASTExpression {
 	}
 
 	@Override
-	public CFStack evalArgs(CFDGRenderer renderer, CFStack parent) {
+	public CFStackRule evalArgs(CFDGRenderer renderer, CFStackRule parent) {
 		if (type != ExpType.RuleType) {
 			Logger.error("Function does not evaluate to a shape", location);
 			return null;
@@ -192,7 +192,7 @@ public class ASTUserFunction extends ASTExpression {
 		}
 		//TODO controllare
 		setupStack(renderer);
-		CFStack ret = definition.getExp().evalArgs(renderer, parent);
+		CFStackRule ret = definition.getExp().evalArgs(renderer, parent);
 		cleanupStack(renderer);
 		return ret;
 	}
@@ -202,12 +202,11 @@ public class ASTUserFunction extends ASTExpression {
 		oldSize = renderer.getStackSize();
 		if (definition.getStackCount() > 0) {
 			if (oldSize + definition.getStackCount() > renderer.getMaxStackSize()) {
-				Logger.error("Maximum stack size exceeded", location);
+				Logger.error("Maximum stack getMaxStackSize exceeded", location);
 			}
 			renderer.setStackSize(oldSize + definition.getStackCount());
-			//TODO completare setupstack
-			List<ASTParameter> params = definition.getParameters();
-			AST.evalArgs(renderer, renderer.getStack(), new CFStackItem[1], arguments, isLet);
+			renderer.setStackItem(oldSize, new CFStackNumber(renderer.getStack(), 0));
+			renderer.getStackItem(oldSize).evalArgs(renderer, arguments, definition.getParameters(), isLet);
 			renderer.setLogicalStackTop(renderer.getStackSize());
 		}
 	}

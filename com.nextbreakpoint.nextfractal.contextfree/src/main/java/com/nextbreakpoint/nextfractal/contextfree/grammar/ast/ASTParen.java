@@ -93,7 +93,7 @@ public class ASTParen extends ASTExpression {
 	}
 
 	@Override
-	public CFStack evalArgs(CFDGRenderer renderer, CFStack parent) {
+	public CFStackRule evalArgs(CFDGRenderer renderer, CFStackRule parent) {
 		if (type != ExpType.RuleType) {
 			Logger.error("Evaluation of a non-shape expression in a shape context", location);
 			return null;

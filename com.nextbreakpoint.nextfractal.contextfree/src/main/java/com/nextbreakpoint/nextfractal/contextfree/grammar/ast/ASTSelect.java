@@ -57,7 +57,7 @@ public class ASTSelect extends ASTExpression {
 	}
 
 	@Override
-	public CFStack evalArgs(CFDGRenderer renderer, CFStack parent) {
+	public CFStackRule evalArgs(CFDGRenderer renderer, CFStackRule parent) {
 		if (type != ExpType.RuleType) {
 			Logger.error("Evaluation of a non-shape select() in a shape context", location);
 		}

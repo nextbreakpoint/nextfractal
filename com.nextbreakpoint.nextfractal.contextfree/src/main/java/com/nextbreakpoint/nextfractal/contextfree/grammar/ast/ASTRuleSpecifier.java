@@ -186,22 +186,22 @@ public class ASTRuleSpecifier extends ASTExpression {
 	}
 
 	@Override
-	public CFStack evalArgs(CFDGRenderer renderer, CFStack parent) {
+	public CFStackRule evalArgs(CFDGRenderer renderer, CFStackRule parent) {
 		switch (argSource) {
 			case NoArgs:
 			case SimpleArgs: {
-				return new CFStack(simpleRule);
+				return simpleRule;
 			}
 			case StackArgs: {
-				return new CFStack(parent);
+				return new CFStackRule(parent);
 			}
 			case ParentArgs: {
-				if (shapeType != ((CFStackRule)parent.getItem(0)).getRuleName()) {
+				if (shapeType != parent.getRuleName()) {
 					// Child shape is different fromType parent, even though parameters are reused,
 					// and we can't finesse it in ASTreplacement::traverse(). Just
 					// copy the parameters with the correct shape type.
-					CFStack ret = new CFStack(parent);
-					((CFStackRule)ret.getItem(0)).setRuleName(shapeType);
+					CFStackRule ret = CFStack.createStackRule(parent);
+					ret.setRuleName(shapeType);
 					return ret;
 				}
 			}
@@ -210,8 +210,8 @@ public class ASTRuleSpecifier extends ASTExpression {
 			}
 			case DynamicArgs: {
 				//TODO controllare
-				CFStack ret = new CFStack(new CFStackRule(shapeType, argSize, typeSignature));
-				AST.evalArgs(renderer, ret, new CFStackItem[1], arguments, false);
+				CFStackRule ret = CFStack.createStackRule(shapeType, argSize, typeSignature);
+				ret.evalArgs(renderer, arguments, typeSignature, false);
 				return ret;
 			}
 			case ShapeArgs: {
@@ -411,7 +411,7 @@ public class ASTRuleSpecifier extends ASTExpression {
 						}
 						if (arguments != null && arguments.getType() != ExpType.NoType) {
 							if (arguments.isConstant()) {
-								simpleRule = (CFStackRule) evalArgs(null, null).getItem(0);
+								simpleRule = evalArgs(null, null);
 								argSource = ArgSource.SimpleArgs;
 								driver.storeParams(simpleRule);
 								isConstant = true;
@@ -425,7 +425,7 @@ public class ASTRuleSpecifier extends ASTExpression {
 							entropy = ent.toString();
 						} else {
 							argSource = ArgSource.NoArgs;
-							simpleRule = new CFStackRule(shapeType, 0, typeSignature);
+							simpleRule = CFStack.createStackRule(shapeType, 0, null);
 							isConstant = true;
 							locality = Locality.PureLocal;
 							driver.storeParams(simpleRule);

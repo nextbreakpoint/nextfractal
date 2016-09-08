@@ -125,7 +125,7 @@ public class ASTExpression {
 		throw new RuntimeException("Cannot convert this expression into an adjustment"); 
 	}
 
-	public CFStack evalArgs(CFDGRenderer renderer, CFStack parent) {
+	public CFStackRule evalArgs(CFDGRenderer renderer, CFStackRule parent) {
 		throw new RuntimeException("Cannot convert this expression into a shape"); 
 	}
 	

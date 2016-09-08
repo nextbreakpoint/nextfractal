@@ -54,9 +54,6 @@ public class CFDGRenderer {
 	private int index;
 	private int nextIndex;
 
-	private int cfStackSize;
-	private int cfLogicalStackTop;
-	private CFStack cfStack;
 	private ASTCompiledPath currentPath;
 	private Iterator<CommandInfo> currentCommand;
 	private double currentTime;
@@ -113,8 +110,8 @@ public class CFDGRenderer {
 	private List<FinishedShape> finishedShapes = new ArrayList<>();
 
 	private ASTRule[] primitivePaths;
-	private Iterator<ASTParameter> logicalStack;
-	private CFStack stack;
+
+	private CFStack cfStack;
 
 	public CFDGRenderer(CFDG cfdg, int width, int height, double minSize, int variation, double border) {
 		this.cfdg = cfdg;
@@ -123,9 +120,6 @@ public class CFDGRenderer {
 		this.minSize = minSize;
 		this.variation = variation;
 		this.border = border;
-
-		cfStack = null;
-		cfStackSize = 0;
 
 		frameTimeBounds = AffineTransformTime.getTranslateInstance(Double.MIN_VALUE, Double.MAX_VALUE);
 
@@ -311,46 +305,46 @@ public class CFDGRenderer {
 	}
 
 	public CFStackItem getStackItem(int stackIndex) {
-		return cfStack.getItem(stackIndex < 0 ? cfLogicalStackTop + stackIndex : stackIndex);
+		return getStack().getStackItem(stackIndex);
 	}
 
 	public void setStackItem(int stackIndex, CFStackItem item) {
-		cfStack.setItem(index, item);
+		getStack().setStackItem(stackIndex, item);
 	}
 
 	public void addStackItem(CFStackItem stackType) {
 		//TODO rivedere
-		cfStack.setItem(cfStackSize, stackType);
+		getStack().setStackItem(cfStack.getStackSize(), stackType);
 	}
 
 	public void removeStackItem(int index) {
 		//TODO rivedere
-		cfStack.setItem(index, null);
+		getStack().setStackItem(index, null);
 	}
 
 	public int getStackSize() {
-		return cfStackSize;
+		return getStack().getStackSize();
 	}
 
 	public int getMaxStackSize() {
-		return cfStack.size();
+		return getStack().getMaxStackSize();
 	}
 
 	public void setStackSize(int stackSize) {
-		this.cfStackSize = stackSize;
+		this.getStack().setStackSize(stackSize);
 	}
 
 	public int getLogicalStackTop() {
-		return cfLogicalStackTop;
+		return getStack().getStackTop();
 	}
 
 	public void setLogicalStackTop(int cfLogicalStackTop) {
-		this.cfLogicalStackTop = cfLogicalStackTop;
+		this.getStack().setStackTop(cfLogicalStackTop);
 	}
 
-//	public void setLogicalStack(CFStackItem[] logicalStack) {
-//		this.cfStack.setStack(logicalStack);
-//	}
+	public CFStack getStack() {
+		return cfStack;
+	}
 
 	public void init() {
 		lastPoint = new Point2D.Double(0, 0);
@@ -365,8 +359,6 @@ public class CFDGRenderer {
 		currentSeed.setSeed(variation);
 		currentSeed.bump();
 
-		cfLogicalStackTop = 0;
-		cfStackSize = 0;
 		cfStack = new CFStack(new CFStackItem[8192]);
 
 		for (ASTReplacement rep : cfdg.getContents().getBody()) {
@@ -424,26 +416,25 @@ public class CFDGRenderer {
 		return n >= 0 && n <= getMaxNatural() && n == Math.floor(n);
 	}
 
-	public void initStack(CFStack parameters) {
-		CFStackRule stackRule = (CFStackRule) parameters.getItem(0);
-		if (parameters != null && stackRule.getParamCount() > 0) {
-			if (cfStackSize + stackRule.getParamCount() > cfStack.size()) {
-				throw new RuntimeException("Maximum stack size exceeded");
+	public void initStack(CFStackRule stackRule) {
+		if (stackRule != null && stackRule.getParamCount() > 0) {
+			if (cfStack.getStackSize() + stackRule.getParamCount() > cfStack.getMaxStackSize()) {
+				throw new RuntimeException("Maximum stack getMaxStackSize exceeded");
 			}
-			int oldSize = cfStackSize;
-			cfStackSize += stackRule.getParamCount();
-			parameters.copyItems(cfStack, oldSize);
+			int oldSize = cfStack.getStackSize();
+			cfStack.setStackSize(cfStack.getStackSize() + stackRule.getParamCount());
+			stackRule.copyItems(cfStack.getStackItems(), oldSize);
 		}
-		setLogicalStackTop(cfStackSize);
+		setLogicalStackTop(cfStack.getStackSize());
 	}
 
 	public void unwindStack(int oldSize, List<ASTParameter> parameters) {
-		if (oldSize == cfStackSize) {
+		if (oldSize == cfStack.getStackSize()) {
 			return;
 		}
 		int pos = oldSize;
 		for (ASTParameter parameter : parameters) {
-			if (pos >= cfStackSize) {
+			if (pos >= cfStack.getStackSize()) {
 				break;
 			}
 			if (parameter.isLoopIndex() || parameter.getStackIndex() < 0) {
@@ -451,12 +442,12 @@ public class CFDGRenderer {
 			}
 			if (parameter.getType() == ExpType.RuleType) {
 				//TODO rivedere
-				((CFStackRule)cfStack.getItem(pos)).setParamCount(0);
+				((CFStackRule)cfStack.getStackItem(pos)).setParamCount(0);
 			}
 			pos += parameter.getTupleSize();
 		}
-		cfStackSize = oldSize;
-		cfLogicalStackTop = cfStackSize;
+		cfStack.setStackSize(oldSize);
+		cfStack.setStackTop(cfStack.getStackSize());
 	}
 
 	public void colorConflict(Token location) {
@@ -1070,9 +1061,5 @@ public class CFDGRenderer {
 	public static boolean abortEverything() {
 		//TODO completare abortEverything
 		return false;
-	}
-
-	public CFStack getStack() {
-		return stack;
 	}
 }

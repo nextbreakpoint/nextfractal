@@ -48,16 +48,16 @@ public class V3RenderTest extends AbstractBaseTest {
 	@Parameterized.Parameters
 	public static Iterable<Object[]> parameters() {
 		List<Object[]> params = new ArrayList<>();
-//		params.add(new Object[] { "/v3-shape-square.cfdg", "/v3-shape-square.png" });
-//		params.add(new Object[] { "/v3-shape-triangle.cfdg", "/v3-shape-triangle.png" });
-//		params.add(new Object[] { "/v3-shape-circle.cfdg", "/v3-shape-circle.png" });
-//		params.add(new Object[] { "/v3-shape-transform.cfdg", "/v3-shape-transform.png" });
-//		params.add(new Object[] { "/v3-shape-multiple-primitives.cfdg", "/v3-shape-multiple-primitives.png" });
-//		params.add(new Object[] { "/v3-shape-initial-adjustment.cfdg", "/v3-shape-initial-adjustment.png" });
-//		params.add(new Object[] { "/v3-shape-options.cfdg", "/v3-shape-options.png" });
-//		params.add(new Object[] { "/v3-shapes-blah.cfdg", "/v3-shapes-blah.png" });
-//		params.add(new Object[] { "/v3-shapes-blah-random.cfdg", "/v3-shapes-blah-random.png" });
-//		params.add(new Object[] { "/v3-shape-variable.cfdg", "/v3-shape-variable.png" });
+		params.add(new Object[] { "/v3-shape-square.cfdg", "/v3-shape-square.png" });
+		params.add(new Object[] { "/v3-shape-triangle.cfdg", "/v3-shape-triangle.png" });
+		params.add(new Object[] { "/v3-shape-circle.cfdg", "/v3-shape-circle.png" });
+		params.add(new Object[] { "/v3-shape-transform.cfdg", "/v3-shape-transform.png" });
+		params.add(new Object[] { "/v3-shape-multiple-primitives.cfdg", "/v3-shape-multiple-primitives.png" });
+		params.add(new Object[] { "/v3-shape-initial-adjustment.cfdg", "/v3-shape-initial-adjustment.png" });
+		params.add(new Object[] { "/v3-shape-options.cfdg", "/v3-shape-options.png" });
+		params.add(new Object[] { "/v3-shapes-blah.cfdg", "/v3-shapes-blah.png" });
+		params.add(new Object[] { "/v3-shapes-blah-random.cfdg", "/v3-shapes-blah-random.png" });
+		params.add(new Object[] { "/v3-shape-variable.cfdg", "/v3-shape-variable.png" });
 		params.add(new Object[] { "/v3-shape-function.cfdg", "/v3-shape-function.png" });
 		return params;
 	}

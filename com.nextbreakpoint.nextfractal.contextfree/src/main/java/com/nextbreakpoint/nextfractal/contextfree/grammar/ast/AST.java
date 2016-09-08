@@ -237,9 +237,9 @@ public class AST {
         return ret;
     }
 
-    public static void evalArgs(CFDGRenderer renderer, CFStack parent, CFStackItem[] dest, ASTExpression arguments, boolean onStack) {
+    public static void evalArgs(CFDGRenderer renderer, CFStackRule parent, CFStackIterator dest, ASTExpression arguments, boolean onStack) {
         //TODO rivedere evalArgs
-        for (int i = 0; i < arguments.size(); i++) {
+        for (int i = 0; i < arguments.size(); i++, dest.next()) {
             if (onStack) {
                 renderer.setLogicalStackTop(0);
                 //TODO completare evalArgs
@@ -248,25 +248,26 @@ public class AST {
             ASTExpression arg = arguments.getChild(i);
             switch (arg.getType()) {
                 case NumericType: {
-                    double[] value = new double[1];
-                    int num = arg.evaluate(value, arg.getTupleSize(), renderer);
-                    if (!ASTParameter.Impure && arg.isNatural() && renderer.isNatual(value[0])) {
+                    double[] value = new double[dest.getType().getTupleSize()];
+                    int num = arg.evaluate(value, dest.getType().getTupleSize(), renderer);
+                    if (!ASTParameter.Impure && dest.getType().isNatural() && !renderer.isNatual(value[0])) {
                         Logger.error("Expression does not evaluate to a legal natural number", arg.getLocation());
                     }
-                    if (num != arg.getTupleSize()) {
+                    if (num != dest.getType().getTupleSize()) {
                         Logger.error("Expression does not evaluate to the correct size", arg.getLocation());
                     }
-                    dest[0] = new CFStackNumber(value[0]);
+                    for (int j = 0; j < dest.getType().getTupleSize(); j++) {
+                        dest.setItem(j, new CFStackNumber(renderer.getStack(), value[j]));
                     break;
                 }
                 case ModType: {
                     Modification modification = new Modification();
                     arg.evaluate(modification, false, renderer);
-                    dest[0] = new CFStackModification(modification);
+                    dest.setItem(0, new CFStackModification(renderer.getStack(), modification));
                     break;
                 }
                 case RuleType: {
-                    dest[0] = arg.evalArgs(renderer, parent).getItem(0);
+                    dest.setItem(0, arg.evalArgs(renderer, parent));
                     break;
                 }
                 default:

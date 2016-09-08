@@ -1,26 +1,36 @@
 package com.nextbreakpoint.nextfractal.contextfree.grammar;
 
+import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.AST;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTExpression;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTParameter;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ExpType;
 
 import java.util.List;
 
-public class CFStackRule implements CFStackItem {
+public class CFStackRule extends CFStackItem {
     private int ruleName;
     private int paramCount;
-    private List<ASTParameter> params;
 
-    public CFStackRule(int ruleName, int paramCount, List<ASTParameter> params) {
+    public CFStackRule(CFStack stack, int ruleName, int paramCount) {
+        super(stack);
         this.ruleName = ruleName;
         this.paramCount = paramCount;
-        this.params = params;
     }
 
     public CFStackRule(CFStackRule rule) {
+        super(rule.getStack());
         this.ruleName = rule.ruleName;
         this.paramCount = rule.paramCount;
-        this.params = rule.params;
+    }
+
+    @Override
+    public ExpType getType() {
+        return ExpType.RuleType;
+    }
+
+    @Override
+    public int getTupleSize() {
+        return 1;
     }
 
     public int getRuleName() {
@@ -39,26 +49,36 @@ public class CFStackRule implements CFStackItem {
         this.paramCount = paramCount;
     }
 
-    public List<ASTParameter> getParams() {
-        return params;
-    }
-
-    public void setParams(List<ASTParameter> params) {
-        this.params = params;
+    @Override
+    public void evalArgs(CFDGRenderer renderer, ASTExpression arguments, List<ASTParameter> parameters, boolean sequential) {
+        AST.evalArgs(renderer, (CFStackRule)stack.getStackItem(stack.getStackTop()), iterator(), arguments, false);
     }
 
     @Override
-    public void evalArgs(CFDGRenderer renderer, CFStackRule parent, CFStackItem[] dest, ASTExpression arguments, boolean onStack) {
-
+    protected CFStackIterator iterator() {
+        if (paramCount > 0) {
+            return iterator(((CFStackParams)stack.getStackItem(stack.getStackTop() + 1)).getParams());
+        }
+        return super.iterator();
     }
 
-    @Override
-    public ExpType getType() {
-        return ExpType.RuleType;
-    }
-
-    @Override
-    public int getTupleSize() {
-        return 1;
+    public void copyItems(CFStackItem[] items, int headerSize) {
+        //TODO completare copyItems
+        int destIndex = 0;
+        for (int srcIndex = headerSize; srcIndex < items.length;) {
+            switch (items[srcIndex].getType()) {
+                case NumericType:
+                case FlagType:
+                case ModType:
+                    System.arraycopy(items, srcIndex, stack.getStackItems(), destIndex, items[srcIndex].getTupleSize());
+                    break;
+                case RuleType:
+                    stack.getStackItems()[destIndex] = items[srcIndex];
+                    break;
+                default:
+                    break;
+            }
+            destIndex += items[srcIndex].getTupleSize();
+        }
     }
 }

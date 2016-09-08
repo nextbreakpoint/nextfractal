@@ -109,7 +109,7 @@ public class ASTReplacement {
 			s.setShapeType(shapeSpec.getShapeType());
 			s.setParameters(null);
 		} else {
-			CFStackRule stackRule = (CFStackRule) s.getParameters().getItem(0);
+			CFStackRule stackRule = s.getParameters();
 			s.setParameters(shapeSpec.evalArgs(renderer, s.getParameters()));
 			if (shapeSpec.getArgSource() == ArgSource.SimpleParentArgs) {
 				s.setShapeType(shapeSpec.getShapeType());

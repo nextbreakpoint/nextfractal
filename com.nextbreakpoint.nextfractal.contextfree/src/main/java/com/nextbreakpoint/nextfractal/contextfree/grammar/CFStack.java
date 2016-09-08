@@ -29,80 +29,75 @@ import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTParameter;
 import java.util.List;
 
 public class CFStack {
-	private CFStackItem[] items;
+	private CFStackItem[] stackItems;
+	private int stackSize;
+	private int stackTop;
 
-	public CFStack(CFStackItem[] items) {
-		this.items = items;
+	public CFStack(CFStackItem[] stackItems) {
+		this.stackItems = stackItems;
+		this.stackSize = 0;
+		this.stackTop = 0;
 	}
 
-	public CFStack(CFStackItem item) {
-		this.items = new CFStackItem[] { item };
+	public int getStackSize() {
+		return stackSize;
 	}
 
-	public CFStack(CFStack parameters) {
-		this(parameters.items);
+	public void setStackSize(int stackSize) {
+		this.stackSize = stackSize;
 	}
 
-	public static CFStack createStack(CFStack stack) {
-		//TODO controllare createStack
-		CFStackItem[] srcItems = stack.items;
-		if (srcItems[0] == null) {
+	public int getStackTop() {
+		return stackTop;
+	}
+
+	public void setStackTop(int stackTop) {
+		this.stackTop = stackTop;
+	}
+
+	public int getMaxStackSize() {
+		return stackItems.length;
+	}
+
+	public CFStackItem getStackItem(int index) {
+		return stackItems[index < 0 ? stackTop + index : index];
+	}
+
+	public void setStackItem(int index, CFStackItem item) {
+		stackItems[index] = item;
+	}
+
+	public CFStackItem[] getStackItems() {
+		return stackItems;
+	}
+
+	public static CFStackRule createStackRule(CFStackRule rule) {
+		//TODO completare createStackRule
+		CFStackItem srcItem = rule.getStack().getStackItem(0);
+		if (srcItem == null) {
 			return null;
 		}
-		CFStackRule stackRule = (CFStackRule) srcItems[0];
-		CFStackParams typeInfo = stackRule.getParamCount() > 0 ? (CFStackParams) srcItems[1] : null;
+		CFStackRule stackRule = (CFStackRule) rule.getStack().getStackItem(0);
+		CFStackParams typeInfo = stackRule.getParamCount() > 0 ? (CFStackParams) rule.getStack().getStackItem(1) : null;
 		CFStackItem[] newItems = new CFStackItem[2 + stackRule.getParamCount()];
-		newItems[0] = stackRule;
+		CFStackRule newRule = new CFStackRule(stackRule);
+		newItems[0] = newRule;
 		if (stackRule.getParamCount() > 0) {
 			newItems[1] = typeInfo;
-			stack.copyItems(newItems, 2);
+			stackRule.copyItems(newItems, 2);
 		}
-		return new CFStack(newItems);
+		return newRule;
 	}
 
-	public static CFStack createStack(int nameIndex, int paramCount, List<ASTParameter> params) {
-		//TODO controllare createStack
+	public static CFStackRule createStackRule(int nameIndex, int paramCount, List<ASTParameter> params) {
+		//TODO completare createStackRule
 		CFStackItem[] newItems = new CFStackItem[paramCount > 0 ? paramCount + 2 : 1];
-		newItems[0] = new CFStackRule(nameIndex, paramCount, params);
+		CFStack newStack = new CFStack(newItems);
+		CFStackRule stackRule = new CFStackRule(newStack, nameIndex, paramCount);
+		newItems[0] = stackRule;
 		if (paramCount > 0) {
-			newItems[1] = new CFStackParams(params);
+			newItems[1] = new CFStackParams(newStack, params);
 		}
-		return new CFStack(newItems);
-	}
-
-	private void copyItems(CFStackItem[] destItems, int headerSize) {
-		//TODO controllare copyItems
-		int destIndex = 0;
-		for (int srcIndex = headerSize; srcIndex < items.length;) {
-			switch (items[srcIndex].getType()) {
-				case NumericType:
-				case FlagType:
-				case ModType:
-					System.arraycopy(items, srcIndex, destItems, destIndex, items[srcIndex].getTupleSize());
-					break;
-				case RuleType:
-					destItems[destIndex] = items[srcIndex];
-					break;
-				default:
-					break;
-			}
-			destIndex += items[srcIndex].getTupleSize();
-		}
-	}
-
-	public int size() {
-		return items.length;
-	}
-
-	public CFStackItem getItem(int index) {
-		return items[index];
-	}
-
-	public void setItem(int index, CFStackItem item) {
-		items[index] = item;
-	}
-
-	public void copyItems(CFStack stack, int headerSize) {
-		copyItems(stack.items, headerSize);
+		return stackRule;
 	}
 }
