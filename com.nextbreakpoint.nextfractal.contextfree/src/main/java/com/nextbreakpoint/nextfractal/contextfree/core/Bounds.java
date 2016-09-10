@@ -1,8 +1,13 @@
 package com.nextbreakpoint.nextfractal.contextfree.core;
 
 import com.nextbreakpoint.nextfractal.contextfree.grammar.CommandInfo;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.FlagType;
 
 import java.awt.geom.*;
+
+import static java.awt.geom.PathIterator.SEG_CLOSE;
+import static java.awt.geom.PathIterator.SEG_LINETO;
+import static java.awt.geom.PathIterator.SEG_MOVETO;
 
 public class Bounds {
     private double minX;
@@ -16,28 +21,63 @@ public class Bounds {
     }
 
     public Bounds(AffineTransform transform, ExtendedGeneralPath path, double scale, CommandInfo info) {
-        if (!boundingRect(transform, path, scale)) {
+        if (!boundingRect(transform, path, scale, info)) {
             invalidate();
         }
     }
 
-    private boolean boundingRect(AffineTransform transform, ExtendedGeneralPath path, double scale) {
-        java.awt.Shape shape = path.createTransformedShape(transform);
-
-        Rectangle2D bounds = shape.getBounds2D();
-
+    private boolean boundingRect(AffineTransform transform, ExtendedGeneralPath path, double scale, CommandInfo info) {
         double accuracy = scale * 0.1;
 
-        double pathScale = Math.sqrt(Math.abs(transform.getDeterminant()));
+        Rectangle2D bounds = getRectangle2D(transform, path, accuracy);
 
         //TODO completare boundingRect
 
-        minX = bounds.getMinX();
-        minY = bounds.getMinY();
-        maxX = bounds.getMaxX();
-        maxY = bounds.getMaxY();
+        if ((info.getFlags() & FlagType.CF_FILL.getMask()) != 0) {
+            minX = bounds.getMinX();
+            minY = bounds.getMinY();
+            maxX = bounds.getMaxX();
+            maxY = bounds.getMaxY();
+        } else if ((info.getFlags() & FlagType.CF_ISO_WIDTH.getMask()) != 0) {
+            double pathScale = Math.sqrt(Math.abs(transform.getDeterminant()));
+            double v = info.getStrokeWidth() * pathScale / 2;
+            minX = bounds.getMinX() - v;
+            minY = bounds.getMinY() - v;
+            maxX = bounds.getMaxX() + v;
+            maxY = bounds.getMaxY() + v;
+        } else {
+            double v = info.getStrokeWidth() / 2;
+            minX = bounds.getMinX() - v;
+            minY = bounds.getMinY() - v;
+            maxX = bounds.getMaxX() + v;
+            maxY = bounds.getMaxY() + v;
+        }
 
         return minX <= maxX && minY <= maxY;
+    }
+
+    private Rectangle2D getRectangle2D(AffineTransform transform, ExtendedGeneralPath path, double accuracy) {
+        double scale = Math.sqrt(Math.abs(transform.getDeterminant()));
+
+        double[] coords = new double[2];
+
+        GeneralPath transformedPath = new GeneralPath();
+
+        for (PathIterator iterator = path.getPathIterator(transform, accuracy * scale); !iterator.isDone(); iterator.next()) {
+            switch (iterator.currentSegment(coords)) {
+                case SEG_MOVETO:
+                    transformedPath.moveTo(coords[0] ,coords[1]);
+                    break;
+                case SEG_LINETO:
+                    transformedPath.lineTo(coords[0] ,coords[1]);
+                    break;
+                case SEG_CLOSE:
+                    transformedPath.closePath();
+                    break;
+            }
+        }
+
+        return transformedPath.getBounds2D();
     }
 
     public double getMinX() {
