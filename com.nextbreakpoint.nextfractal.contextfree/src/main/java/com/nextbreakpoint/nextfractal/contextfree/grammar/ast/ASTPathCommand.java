@@ -92,7 +92,7 @@ public class ASTPathCommand extends ASTReplacement {
 		double width = strokeWidth;
 		replace(child, renderer);
 
-		double[] value = new double[1];
+		double[] value = new double[] { width };
 		if (parameters != null && parameters.evaluate(value, 1, renderer) != 1) {
 			Logger.error("Error computing stroke width", location);
 		}
@@ -107,7 +107,7 @@ public class ASTPathCommand extends ASTReplacement {
 			}
 			info = next;
 		} else {
-			if (renderer.getCurrentPath().getPathStorage().getTotalVertices() == 0) {
+			if (renderer.getCurrentPath().getTotalVertices() == 0) {
 				Logger.error("Path commands must be preceeded by at least one path operation", location);
 			}
 			renderer.setWantCommand(false);
@@ -135,7 +135,7 @@ public class ASTPathCommand extends ASTReplacement {
 		switch (ph) {
 			case TypeCheck: {
 				getChildChange().addEntropy((flags & CF_FILL.getMask()) != 0 ? "FILL" : "STROKE");
-				int[] flagValue = new int[1];
+				int[] flagValue = new int[] { flags };
 				ASTExpression w = AST.getFlagsAndStroke(getChildChange().getModExp(), flagValue);
 				flags = flagValue[0];
 				if (w != null) {
@@ -216,9 +216,7 @@ public class ASTPathCommand extends ASTReplacement {
 			}
 
 			case Simplify: {
-				if (parameters != null) {
-					parameters = parameters.simplify();
-				}
+				parameters = simplify(parameters);
 				break;
 			}
 

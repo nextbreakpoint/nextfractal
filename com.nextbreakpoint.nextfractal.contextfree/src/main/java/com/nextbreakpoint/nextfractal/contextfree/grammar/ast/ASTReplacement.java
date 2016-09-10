@@ -156,7 +156,7 @@ public class ASTReplacement {
 		switch (ph) {
 			case TypeCheck: 
 				childChange.addEntropy(shapeSpec.getEntropy());
-				if (driver.isInPathContainer()) {
+				if (getClass() == ASTReplacement.class && driver.isInPathContainer()) {
 					// This is a subpath
 					if (shapeSpec.getArgSource() == ArgSource.ShapeArgs || shapeSpec.getArgSource() == ArgSource.StackArgs || PrimShape.isPrimShape(shapeSpec.getShapeType())) {
 						if (repType != RepElemType.op) {

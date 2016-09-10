@@ -60,11 +60,11 @@ public class CFStack {
 	}
 
 	public CFStackItem getStackItem(int index) {
-		return stackItems[index < 0 ? stackTop + index : index];
+		return stackItems[stackTop + index];
 	}
 
 	public void setStackItem(int index, CFStackItem item) {
-		stackItems[index] = item;
+		stackItems[stackTop + index] = item;
 	}
 
 	public CFStackItem[] getStackItems() {

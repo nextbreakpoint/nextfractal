@@ -416,39 +416,39 @@ public class CFDGDriver {
 		dest.getModExp().add(t);
 	}
 	
-	public ASTReplacement makeElement(String s, ASTModification mods, ASTExpression params, boolean subPath, Token location) {
-		if (inPathContainer && !subPath && (s.equals("FILL") || s.equals("STROKE"))) {
-			return new ASTPathCommand(this, s, mods, params, location);
+	public ASTReplacement makeElement(String command, ASTModification mods, ASTExpression params, boolean subPath, Token location) {
+		if (inPathContainer && !subPath && (command.equals("FILL") || command.equals("STROKE"))) {
+			return new ASTPathCommand(this, command, mods, params, location);
 		}
-		ASTRuleSpecifier r = makeRuleSpec(s, params, null, false, location);
-		RepElemType t = RepElemType.replacement;
+		ASTRuleSpecifier ruleSpecifier = makeRuleSpec(command, params, null, false, location);
+		RepElemType elemType = RepElemType.replacement;
 		if (inPathContainer) {
 			boolean isGlobal = false;
-			ASTParameter bound = findExpression(r.getShapeType(), isGlobal);
+			ASTParameter bound = findExpression(ruleSpecifier.getShapeType(), isGlobal);
 			if (!subPath) {
 				error("Replacements are not allowed in paths", location);
-			} else if (r.getArgSource() == ArgSource.StackArgs || r.getArgSource() == ArgSource.ShapeArgs) {
+			} else if (ruleSpecifier.getArgSource() == ArgSource.StackArgs || ruleSpecifier.getArgSource() == ArgSource.ShapeArgs) {
 	            // Parameter subpaths must be all ops, but we must checkParam at runtime
-				t = RepElemType.op;
-			} else if (cfdg.getShapeType(r.getShapeType()) == ShapeType.PathType) {
-				ASTRule rule = cfdg.findRule(r.getShapeType());
+				elemType = RepElemType.op;
+			} else if (cfdg.getShapeType(ruleSpecifier.getShapeType()) == ShapeType.PathType) {
+				ASTRule rule = cfdg.findRule(ruleSpecifier.getShapeType());
 				if (rule != null) {
-					t = RepElemType.fromType(rule.getRuleBody().getRepType());
+					elemType = RepElemType.fromType(rule.getRuleBody().getRepType());
 				} else {
 					// Recursive calls must be all ops, checkParam at runtime
-					t = RepElemType.op;
+					elemType = RepElemType.op;
 				}
 			} else if (bound != null) {
 	            // Variable subpaths must be all ops, but we must checkParam at runtime
-				t = RepElemType.op;
-			} else if (isPrimeShape(r.getShapeType())) {
-				t = RepElemType.op;
+				elemType = RepElemType.op;
+			} else if (isPrimeShape(ruleSpecifier.getShapeType())) {
+				elemType = RepElemType.op;
 			} else {
 				// Forward calls must be all ops, checkParam at runtime
-				t = RepElemType.op;
+				elemType = RepElemType.op;
 			}
 		}
-		return new ASTReplacement(this, r, mods, t, location);
+		return new ASTReplacement(this, ruleSpecifier, mods, elemType, location);
 	}
 
 	public ASTExpression makeFunction(String name, ASTExpression args, Token location) {

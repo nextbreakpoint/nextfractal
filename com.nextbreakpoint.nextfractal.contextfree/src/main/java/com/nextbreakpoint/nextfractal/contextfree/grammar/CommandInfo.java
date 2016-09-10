@@ -84,20 +84,24 @@ public class CommandInfo {
         return index;
     }
 
+    public int getFlags() {
+        return flags;
+    }
+
+    public double getMiterLimit() {
+        return miterLimit;
+    }
+
+    public double getStrokeWidth() {
+        return strokeWidth;
+    }
+
     public Long getPathUID() {
         return pathUID;
     }
 
-    public void setPathUID(Long pathUID) {
-        this.pathUID = pathUID;
-    }
-
     public PathStorage getPathStorage() {
         return pathStorage;
-    }
-
-    public void setPathStorage(PathStorage pathStorage) {
-        this.pathStorage = pathStorage;
     }
 
     private void init(int index, ASTCompiledPath path, double width, ASTPathCommand pathCommand) {

@@ -141,6 +141,11 @@ public class ASTCons extends ASTExpression {
 	}
 
 	@Override
+	public int size() {
+		return children.size();
+	}
+
+	@Override
 	public ASTExpression getChild(int i) {
 		if (i >= children.size()) {
 			Logger.error("Expression list bounds exceeded", getLocation());

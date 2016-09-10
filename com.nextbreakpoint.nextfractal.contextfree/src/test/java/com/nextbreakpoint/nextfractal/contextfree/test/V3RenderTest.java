@@ -24,6 +24,7 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.test;
 
+import com.nextbreakpoint.nextfractal.contextfree.core.ExtendedGeneralPath;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.*;
 
 import java.awt.*;
@@ -31,6 +32,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.*;
 
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.FlagType;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -48,17 +50,18 @@ public class V3RenderTest extends AbstractBaseTest {
 	@Parameterized.Parameters
 	public static Iterable<Object[]> parameters() {
 		List<Object[]> params = new ArrayList<>();
-		params.add(new Object[] { "/v3-shape-square.cfdg", "/v3-shape-square.png" });
-		params.add(new Object[] { "/v3-shape-triangle.cfdg", "/v3-shape-triangle.png" });
-		params.add(new Object[] { "/v3-shape-circle.cfdg", "/v3-shape-circle.png" });
-		params.add(new Object[] { "/v3-shape-transform.cfdg", "/v3-shape-transform.png" });
-		params.add(new Object[] { "/v3-shape-multiple-primitives.cfdg", "/v3-shape-multiple-primitives.png" });
-		params.add(new Object[] { "/v3-shape-initial-adjustment.cfdg", "/v3-shape-initial-adjustment.png" });
-		params.add(new Object[] { "/v3-shape-options.cfdg", "/v3-shape-options.png" });
-		params.add(new Object[] { "/v3-shapes-blah.cfdg", "/v3-shapes-blah.png" });
-		params.add(new Object[] { "/v3-shapes-blah-random.cfdg", "/v3-shapes-blah-random.png" });
-		params.add(new Object[] { "/v3-shape-variable.cfdg", "/v3-shape-variable.png" });
-		params.add(new Object[] { "/v3-shape-function.cfdg", "/v3-shape-function.png" });
+//		params.add(new Object[] { "/v3-shape-square.cfdg", "/v3-shape-square.png" });
+//		params.add(new Object[] { "/v3-shape-triangle.cfdg", "/v3-shape-triangle.png" });
+//		params.add(new Object[] { "/v3-shape-circle.cfdg", "/v3-shape-circle.png" });
+//		params.add(new Object[] { "/v3-shape-transform.cfdg", "/v3-shape-transform.png" });
+//		params.add(new Object[] { "/v3-shape-multiple-primitives.cfdg", "/v3-shape-multiple-primitives.png" });
+//		params.add(new Object[] { "/v3-shape-initial-adjustment.cfdg", "/v3-shape-initial-adjustment.png" });
+//		params.add(new Object[] { "/v3-shape-options.cfdg", "/v3-shape-options.png" });
+//		params.add(new Object[] { "/v3-shapes-blah.cfdg", "/v3-shapes-blah.png" });
+//		params.add(new Object[] { "/v3-shapes-blah-random.cfdg", "/v3-shapes-blah-random.png" });
+//		params.add(new Object[] { "/v3-shape-variable.cfdg", "/v3-shape-variable.png" });
+//		params.add(new Object[] { "/v3-shape-function.cfdg", "/v3-shape-function.png" });
+		params.add(new Object[] { "/v3-shape-path.cfdg", "/v3-shape-path.png" });
 		return params;
 	}
 
@@ -148,6 +151,46 @@ public class V3RenderTest extends AbstractBaseTest {
 			g2d.setTransform(oldTransform);
 		}
 
+		public void path(double[] color, AffineTransform transform, CommandInfo attr) {
+			g2d.setColor(new Color((float)color[0], (float)color[1], (float)color[2], (float)color[3]));
+			AffineTransform oldTransform = g2d.getTransform();
+			AffineTransform t = new AffineTransform(currTransform);
+			t.concatenate(transform);
+			g2d.setTransform(t);
+			g2d.setStroke(new BasicStroke((float)attr.getStrokeWidth(), mapToCap(attr.getFlags()), mapToJoin(attr.getFlags()), (float)attr.getMiterLimit()));
+			ExtendedGeneralPath path = attr.getPathStorage().getGeneralPath();
+			if ((attr.getFlags() & FlagType.CF_FILL.getMask()) != 0) {
+				g2d.fill(path);
+			} else {
+				g2d.draw(path);
+			}
+			g2d.setTransform(oldTransform);
+		}
+
+		private int mapToJoin(int flags) {
+			if ((flags & FlagType.CF_MITER_JOIN.getMask()) != 0) {
+				return BasicStroke.JOIN_MITER;
+			} else if ((flags & FlagType.CF_ROUND_JOIN.getMask()) != 0) {
+				return BasicStroke.JOIN_ROUND;
+			} else if ((flags & FlagType.CF_BEVEL_JOIN.getMask()) != 0) {
+				return BasicStroke.JOIN_BEVEL;
+			} else {
+				throw new RuntimeException("Invalid flags " + flags);
+			}
+		}
+
+		private int mapToCap(int flags) {
+			if ((flags & FlagType.CF_BUTT_CAP.getMask()) != 0) {
+				return BasicStroke.CAP_BUTT;
+			} else if ((flags & FlagType.CF_ROUND_CAP.getMask()) != 0) {
+				return BasicStroke.CAP_ROUND;
+			} else if ((flags & FlagType.CF_SQUARE_CAP.getMask()) != 0) {
+				return BasicStroke.CAP_SQUARE;
+			} else {
+				throw new RuntimeException("Invalid flags " + flags);
+			}
+		}
+
 		public void start(boolean first, double[] backgroundColor, int currWidth, int currHeight) {
 			g2d = image.createGraphics();
 			g2d.setColor(new Color((float)backgroundColor[0], (float)backgroundColor[1], (float)backgroundColor[2], (float)backgroundColor[3]));
@@ -159,9 +202,6 @@ public class V3RenderTest extends AbstractBaseTest {
 
 		public void end() {
 			g2d.dispose();
-		}
-
-		public void path(double[] color, AffineTransform tr, CommandInfo attr) {
 		}
 
 		public BufferedImage getImage() {

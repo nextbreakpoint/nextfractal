@@ -99,9 +99,7 @@ public class ASTPathOp extends ASTReplacement {
 	
 			case Simplify:
 				pathDataConst();
-				if (arguments != null) {
-					arguments = arguments.simplify();
-				}
+				arguments = simplify(arguments);
 				break;
 	
 			default:

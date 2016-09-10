@@ -1,5 +1,7 @@
 package com.nextbreakpoint.nextfractal.contextfree.grammar;
 
+import com.nextbreakpoint.nextfractal.contextfree.core.Bounds;
+
 import java.awt.geom.AffineTransform;
 
 public class SimpleCanvas {
@@ -23,6 +25,10 @@ public class SimpleCanvas {
         //TODO completare
     }
 
+    public void path(double[] color, AffineTransform tr, CommandInfo attr) {
+        //TODO completare
+    }
+
     public void start(boolean first, double[] backgroundColor, int currWidth, int currHeight) {
         //TODO completare
     }
@@ -31,7 +37,7 @@ public class SimpleCanvas {
         //TODO completare
     }
 
-    public void path(double[] color, AffineTransform tr, CommandInfo attr) {
-        //TODO completare
+    public void tileTransform(Bounds bounds) {
+
     }
 }

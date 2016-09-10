@@ -598,13 +598,10 @@ public class CFDGRenderer {
 			if (canvas != null && attr != null) {
 				double[] color = cfdg.getColor(shape.getWorldState().color());
 				AffineTransform tr = shape.getWorldState().getTransform();
-				tr.concatenate(currTransform);
-				//TODO rivedere
 				canvas.path(color, tr, attr);
 			}
 		} else {
 			if (attr != null) {
-				//TODO rivedere
 				pathBounds.update(shape.getWorldState().getTransform(), scale, attr);
 				currentArea = Math.abs((pathBounds.getMaxX() - pathBounds.getMinX()) * (pathBounds.getMaxY() - pathBounds.getMinY()));
 			}
@@ -904,7 +901,7 @@ public class CFDGRenderer {
 				cfdg.isFrieze(transform, null);
 				tiledCanvas = new TiledCanvas(canvas, transform, frieze);
 				tiledCanvas.setScale(currScale);
-				canvas = tiledCanvas;
+				this.canvas = tiledCanvas;
 			}
 
 			frameTimeBounds = AffineTransformTime.getTranslateInstance(Double.MIN_VALUE, Double.MAX_VALUE);
@@ -962,18 +959,16 @@ public class CFDGRenderer {
 			return;
 		}
 
-		this.finalStep = finalStep;
+		this.finalStep = true;
 
 		int[] currWidth = new int[] { width };
 		int[] currHeight = new int[] { height };
-		rescaleOutput(currWidth, currHeight, finalStep);
+		rescaleOutput(currWidth, currHeight, true);
 
-		if (finalStep) {
-			if (finishedShapes.size() > 10000) {
-				Logger.info("Sorting shapes...", null);
-			}
-			Collections.sort(finishedShapes);
+		if (finishedShapes.size() > 10000) {
+			Logger.info("Sorting shapes...", null);
 		}
+		Collections.sort(finishedShapes);
 
 		//TODO rivedere
 
@@ -982,10 +977,7 @@ public class CFDGRenderer {
 		drawingMode = true;
 
 		try {
-			forEachShape(finalStep, shape -> {
-				drawShape(shape);
-				return null;
-			});
+			forEachShape(true, this::drawShape);
 		} catch (StopException e) {
 		} catch (Exception e) {
 			Logger.error(e.getMessage(), null);
@@ -996,7 +988,7 @@ public class CFDGRenderer {
 
 	private Object forEachShape(boolean finalStep, Function<FinishedShape, Object> shapeFunction) {
 		if (!finalStep) {
-			finishedShapes.stream().forEach(shape -> shapeFunction.apply(shape));
+			finishedShapes.forEach(shapeFunction::apply);
 			outputSoFar = finishedShapes.size();
 		} else {
 			//TODO rivedere
@@ -1007,7 +999,7 @@ public class CFDGRenderer {
 		return null;
 	}
 
-	private void drawShape(FinishedShape shape) {
+	private Object drawShape(FinishedShape shape) {
 		if (requestStop) {
 			throw new StopException();
 		}
@@ -1021,14 +1013,14 @@ public class CFDGRenderer {
 		}
 
 		if (!shape.getWorldState().getTransformTime().overlaps(frameTimeBounds)) {
-			return;
+			return null;
 		}
 
 		AffineTransform transform = shape.getWorldState().getTransform();
 
 		transform.preConcatenate(currTransform);
 
-		double a = shape.getWorldState().getTransformZ().sz() + currArea;
+		double a = shape.getWorldState().getTransform().getDeterminant() + currArea;
 
 		if (!Double.isFinite(a) && shape.getShapeType() != PrimShapeType.fillType.getType()) {
 			Bounds b = shape.bounds();
@@ -1040,7 +1032,7 @@ public class CFDGRenderer {
 			currTransform.transform(p2, p2);
 			b.setMaxX(p2.getX());
 			b.setMaxY(p2.getY());
-			tiledCanvas.tileTransform(b);
+			canvas.tileTransform(b);
 		}
 
 		if (cfdg.getShapeType(shape.getShapeType()) == ShapeType.PathType) {
@@ -1056,6 +1048,8 @@ public class CFDGRenderer {
 				throw new StopException();
 			}
 		}
+
+		return null;
 	}
 
 	public static boolean abortEverything() {

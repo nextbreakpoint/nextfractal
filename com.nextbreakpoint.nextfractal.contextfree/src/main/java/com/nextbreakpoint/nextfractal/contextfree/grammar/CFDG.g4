@@ -950,30 +950,24 @@ letVariable returns [ASTDefine result]
         
 explist returns [ASTExpression result]
         :
-        (
+        el=explist e=exp {
+            $result = $el.result.append($e.result);
+        }
+        |
         e=exp {
         	$result = $e.result;
         }
-        )
-        (
-        e2=explist {
-            $result = $e2.result.append($result);
-        }
-        )?
         ;
 
 arglist returns [ASTExpression result]
         :
-        (
+        el=arglist ',' e=exp3 {
+            $result = $el.result.append($e.result);
+        }
+        |
         e=exp3 {
         	$result = new ASTCons($e.start, new ASTParen($e.result, $e.start));
         }
-        )
-        (
-        e2=arglist {
-            $result = $e2.result.append($result);
-        }
-        )?
         ;
 
 exp returns [ASTExpression result]
