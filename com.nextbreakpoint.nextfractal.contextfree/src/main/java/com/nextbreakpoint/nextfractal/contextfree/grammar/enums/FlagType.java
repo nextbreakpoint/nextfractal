@@ -85,4 +85,14 @@ public enum FlagType {
 		}
 		return CF_NONE;
 	}
+
+	public static FlagType byName(String name) {
+		String normalizedName = name.replace(":","_").toUpperCase();
+		for (FlagType value : FlagType.values()) {
+			if (value.name() == normalizedName) {
+				return value;
+			}
+		}
+		return CF_NONE;
+	}
 }

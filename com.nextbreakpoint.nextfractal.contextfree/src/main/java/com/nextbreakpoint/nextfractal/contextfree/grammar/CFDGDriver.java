@@ -62,6 +62,43 @@ public class CFDGDriver {
 		containerStack.add(new ASTRepContainer(this));
 		currentShape = -1;
 		pathCount = 1;
+		flagNames.put("CF::None",        FlagType.CF_NONE.getMask());
+		flagNames.put("CF::MiterJoin",   FlagType.CF_MITER_JOIN.getMask() | FlagType.CF_JOIN_PRESENT.getMask());
+		flagNames.put("CF::RoundJoin",   FlagType.CF_ROUND_JOIN.getMask() | FlagType.CF_JOIN_PRESENT.getMask());
+		flagNames.put("CF::BevelJoin",   FlagType.CF_BEVEL_JOIN.getMask() | FlagType.CF_JOIN_PRESENT.getMask());
+		flagNames.put("CF::ButtCap",     FlagType.CF_BUTT_CAP.getMask() | FlagType.CF_CAP_PRESENT.getMask());
+		flagNames.put("CF::RoundCap",    FlagType.CF_ROUND_CAP.getMask() | FlagType.CF_CAP_PRESENT.getMask());
+		flagNames.put("CF::SquareCap",   FlagType.CF_SQUARE_CAP.getMask() | FlagType.CF_CAP_PRESENT.getMask());
+		flagNames.put("CF::ArcCW",       FlagType.CF_ARC_CW.getMask());
+		flagNames.put("CF::ArcLarge",    FlagType.CF_ARC_LARGE.getMask());
+		flagNames.put("CF::Continuous",  FlagType.CF_CONTINUOUS.getMask());
+		flagNames.put("CF::Align",       FlagType.CF_ALIGN.getMask());
+		flagNames.put("CF::EvenOdd",     FlagType.CF_EVEN_ODD.getMask());
+		flagNames.put("CF::IsoWidth",    FlagType.CF_ISO_WIDTH.getMask());
+		flagNames.put("~~CF_FILL~~",     FlagType.CF_FILL.getMask());
+		flagNames.put("CF::Cyclic",      FlagType.CF_CYCLIC.getMask());
+		flagNames.put("CF::Dihedral",    FlagType.CF_DIHEDRAL.getMask());
+		flagNames.put("CF::p11g",        FlagType.CF_P11G.getMask());
+		flagNames.put("CF::p11m",        FlagType.CF_P11M.getMask());
+		flagNames.put("CF::p1m1",        FlagType.CF_P1M1.getMask());
+		flagNames.put("CF::p2",          FlagType.CF_P2.getMask());
+		flagNames.put("CF::p2mg",        FlagType.CF_P2MG.getMask());
+		flagNames.put("CF::p2mm",        FlagType.CF_P2MM.getMask());
+		flagNames.put("CF::pm",          FlagType.CF_PM.getMask());
+		flagNames.put("CF::pg",          FlagType.CF_PG.getMask());
+		flagNames.put("CF::cm",          FlagType.CF_CM.getMask());
+		flagNames.put("CF::pmm",         FlagType.CF_PMM.getMask());
+		flagNames.put("CF::pmg",         FlagType.CF_PMG.getMask());
+		flagNames.put("CF::pgg",         FlagType.CF_PGG.getMask());
+		flagNames.put("CF::cmm",         FlagType.CF_CMM.getMask());
+		flagNames.put("CF::p4",          FlagType.CF_P4.getMask());
+		flagNames.put("CF::p4m",         FlagType.CF_P4M.getMask());
+		flagNames.put("CF::p4g",         FlagType.CF_P4G.getMask());
+		flagNames.put("CF::p3",          FlagType.CF_P3.getMask());
+		flagNames.put("CF::p3m1",        FlagType.CF_P3M1.getMask());
+		flagNames.put("CF::p31m",        FlagType.CF_P31M.getMask());
+		flagNames.put("CF::p6",          FlagType.CF_P6.getMask());
+		flagNames.put("CF::p6m",         FlagType.CF_P6M.getMask());
 	}
 	
 	protected void warning(String message, Token location) {
@@ -416,12 +453,12 @@ public class CFDGDriver {
 		dest.getModExp().add(t);
 	}
 	
-	public ASTReplacement makeElement(String command, ASTModification mods, ASTExpression params, boolean subPath, Token location) {
-		if (inPathContainer && !subPath && (command.equals("FILL") || command.equals("STROKE"))) {
-			return new ASTPathCommand(this, command, mods, params, location);
+	public ASTReplacement makeElement(String name, ASTModification mods, ASTExpression params, boolean subPath, Token location) {
+		if (inPathContainer && !subPath && (name.equals("FILL") || name.equals("STROKE"))) {
+			return new ASTPathCommand(this, name, mods, params, location);
 		}
-		ASTRuleSpecifier ruleSpecifier = makeRuleSpec(command, params, null, false, location);
-		RepElemType elemType = RepElemType.replacement;
+		ASTRuleSpecifier ruleSpecifier = makeRuleSpec(name, params, null, false, location);
+		RepElemType t = RepElemType.replacement;
 		if (inPathContainer) {
 			boolean isGlobal = false;
 			ASTParameter bound = findExpression(ruleSpecifier.getShapeType(), isGlobal);
@@ -429,26 +466,26 @@ public class CFDGDriver {
 				error("Replacements are not allowed in paths", location);
 			} else if (ruleSpecifier.getArgSource() == ArgSource.StackArgs || ruleSpecifier.getArgSource() == ArgSource.ShapeArgs) {
 	            // Parameter subpaths must be all ops, but we must checkParam at runtime
-				elemType = RepElemType.op;
+				t = RepElemType.op;
 			} else if (cfdg.getShapeType(ruleSpecifier.getShapeType()) == ShapeType.PathType) {
 				ASTRule rule = cfdg.findRule(ruleSpecifier.getShapeType());
 				if (rule != null) {
-					elemType = RepElemType.fromType(rule.getRuleBody().getRepType());
+					t = RepElemType.fromType(rule.getRuleBody().getRepType());
 				} else {
 					// Recursive calls must be all ops, checkParam at runtime
-					elemType = RepElemType.op;
+					t = RepElemType.op;
 				}
 			} else if (bound != null) {
 	            // Variable subpaths must be all ops, but we must checkParam at runtime
-				elemType = RepElemType.op;
+				t = RepElemType.op;
 			} else if (isPrimeShape(ruleSpecifier.getShapeType())) {
-				elemType = RepElemType.op;
+				t = RepElemType.op;
 			} else {
 				// Forward calls must be all ops, checkParam at runtime
-				elemType = RepElemType.op;
+				t = RepElemType.op;
 			}
 		}
-		return new ASTReplacement(this, ruleSpecifier, mods, elemType, location);
+		return new ASTReplacement(this, ruleSpecifier, mods, t, location);
 	}
 
 	public ASTExpression makeFunction(String name, ASTExpression args, Token location) {

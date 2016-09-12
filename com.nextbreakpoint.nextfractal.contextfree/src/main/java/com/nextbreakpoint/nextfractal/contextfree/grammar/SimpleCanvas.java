@@ -6,6 +6,7 @@ import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.FlagType;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.GeneralPath;
 import java.awt.image.BufferedImage;
 
 public class SimpleCanvas {
@@ -59,6 +60,12 @@ public class SimpleCanvas {
         AffineTransform t = new AffineTransform(currTransform);
 
         java.awt.Shape shape = null;
+
+        if ((info.getFlags() & FlagType.CF_EVEN_ODD.getMask()) != 0) {
+            info.getPathStorage().getGeneralPath().setWindingRule(GeneralPath.WIND_EVEN_ODD);
+        } else {
+            info.getPathStorage().getGeneralPath().setWindingRule(GeneralPath.WIND_NON_ZERO);
+        }
 
         if ((info.getFlags() & FlagType.CF_FILL.getMask()) != 0) {
             shape = info.getPathStorage().getGeneralPath();

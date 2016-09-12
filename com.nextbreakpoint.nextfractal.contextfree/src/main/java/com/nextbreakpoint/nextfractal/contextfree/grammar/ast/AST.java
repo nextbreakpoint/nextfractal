@@ -226,7 +226,6 @@ public class AST {
                         Logger.error("Only one stroke width term is allowed", term.getLocation());
                     }
                     ret = term.getArguments();
-                    //TODO rivedere
                     term.setArguments(null);
                     break;
                 default:

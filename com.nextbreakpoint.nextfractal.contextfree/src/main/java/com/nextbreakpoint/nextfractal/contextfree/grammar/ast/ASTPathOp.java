@@ -72,7 +72,7 @@ public class ASTPathOp extends ASTReplacement {
 
 	@Override
 	public void traverse(Shape parent, boolean tr, CFDGRenderer renderer) {
-		if (renderer.getCurrentPath().isComplete()) {
+		if (renderer.getCurrentPath().isCached()) {
 			return;
 		}
 		double[] opData = new double[7];

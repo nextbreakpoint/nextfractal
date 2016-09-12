@@ -23,8 +23,8 @@ public class Dequeue {
         return commands.get(commands.size() - 1);
     }
 
-    public Iterator<CommandInfo> iterator() {
-        return commands.iterator();
+    public CommandIterator iterator() {
+        return new CommandIterator(commands);
     }
 
     public void clear() {

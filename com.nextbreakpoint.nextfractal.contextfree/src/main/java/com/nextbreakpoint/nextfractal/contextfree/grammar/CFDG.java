@@ -140,7 +140,7 @@ public class CFDG {
 			int offset = first + step;
 			if (rules.get(offset).compareTo(val) < 0) {
 				first = first + 1;
-				count -= step + 1;
+				count = step + 1;
 			} else {
 				count = step;
 			}

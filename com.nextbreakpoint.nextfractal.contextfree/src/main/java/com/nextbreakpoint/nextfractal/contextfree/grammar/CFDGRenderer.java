@@ -55,7 +55,7 @@ public class CFDGRenderer {
 	private int nextIndex;
 
 	private ASTCompiledPath currentPath;
-	private Iterator<CommandInfo> currentCommand;
+	private CommandIterator currentCommand;
 	private double currentTime;
 	private double currentFrame;
 	private Rand64 currentSeed = new Rand64();
@@ -152,11 +152,11 @@ public class CFDGRenderer {
 		this.currentPath = currentPath;
 	}
 
-	public Iterator<CommandInfo> getCurrentCommand() {
+	public CommandIterator getCurrentCommand() {
 		return currentCommand;
 	}
 
-	public void setCurrentCommand(Iterator<CommandInfo> iterator) {
+	public void setCurrentCommand(CommandIterator iterator) {
 		this.currentCommand = iterator;
 	}
 
@@ -315,11 +315,15 @@ public class CFDGRenderer {
 	public void addStackItem(CFStackItem stackType) {
 		//TODO rivedere
 		getStack().setStackItem(cfStack.getStackSize(), stackType);
+		getStack().setStackTop(cfStack.getStackSize() + 1);
+		getStack().setStackSize(cfStack.getStackSize() + 1);
 	}
 
-	public void removeStackItem(int index) {
+	public void removeStackItem() {
 		//TODO rivedere
-		getStack().setStackItem(index, null);
+		getStack().setStackItem(cfStack.getStackSize(), null);
+		getStack().setStackTop(cfStack.getStackSize() - 1);
+		getStack().setStackSize(cfStack.getStackSize() - 1);
 	}
 
 	public int getStackSize() {
@@ -347,14 +351,7 @@ public class CFDGRenderer {
 	}
 
 	public void init() {
-		lastPoint = new Point2D.Double(0, 0);
-		stop = false;
-		closed = false;
-		wantMoveTo = true;
-		wantCommand = true;
-		opsOnly = false;
-		index = 0;
-		nextIndex = 0;
+		initTraverse();
 
 		currentSeed.setSeed(variation);
 		currentSeed.bump();
@@ -409,6 +406,17 @@ public class CFDGRenderer {
 		cfdg.getSummetry(symmetryOps, this);
 
 		cfdg.setBackgroundColor(this);
+	}
+
+	public void initTraverse() {
+		lastPoint = new Point2D.Double(0, 0);
+		stop = false;
+		closed = false;
+		wantMoveTo = true;
+		wantCommand = true;
+		opsOnly = false;
+		index = 0;
+		nextIndex = 0;
 	}
 
 	public boolean isNatual(double n) {

@@ -101,13 +101,13 @@ public class ASTPathCommand extends ASTReplacement {
 		CommandInfo info = null;
 
 		if (renderer.getCurrentPath().isCached()) {
-			CommandInfo next = renderer.getCurrentCommand().next();
-			if (next == renderer.getCurrentPath().getCommandInfo().last()) {
+			if (renderer.getCurrentCommand().current() == null) {
 				Logger.error("Not enough path commands in cache", location);
 			}
-			info = next;
+			info = renderer.getCurrentCommand().current();
+			renderer.getCurrentCommand().next();
 		} else {
-			if (renderer.getCurrentPath().getTotalVertices() == 0) {
+			if (renderer.getCurrentPath().getPathStorage().getTotalVertices() == 0) {
 				Logger.error("Path commands must be preceeded by at least one path operation", location);
 			}
 			renderer.setWantCommand(false);
@@ -154,6 +154,7 @@ public class ASTPathCommand extends ASTReplacement {
 				ASTExpression stroke = null;
 				ASTExpression flags = null;
 				List<ASTExpression> pcmdParams = AST.extract(parameters);
+				parameters = null;
 				switch (pcmdParams.size()) {
 					case 2: {
 						stroke = pcmdParams.get(0);
@@ -161,7 +162,7 @@ public class ASTPathCommand extends ASTReplacement {
 						break;
 					}
 					case 1: {
-						flags = pcmdParams.get(1);
+						flags = pcmdParams.get(0);
 						break;
 					}
 					default: {
@@ -189,9 +190,7 @@ public class ASTPathCommand extends ASTReplacement {
 						Logger.error("Unexpected argument in path command", flags.getLocation());
 						return;
 					}
-					if (flags != null) {
-						flags = flags.simplify();
-					}
+					flags = simplify(flags);
 
 					//TODO controllare
 

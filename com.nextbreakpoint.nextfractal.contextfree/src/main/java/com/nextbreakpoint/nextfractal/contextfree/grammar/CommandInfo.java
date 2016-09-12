@@ -115,7 +115,7 @@ public class CommandInfo {
             }
             this.index = index;
             //TODO rivedere
-            this.pathStorage = path;
+            this.pathStorage = path.getPathStorage();
             pathUID = path.getPathUID();
             strokeWidth = width;
         }

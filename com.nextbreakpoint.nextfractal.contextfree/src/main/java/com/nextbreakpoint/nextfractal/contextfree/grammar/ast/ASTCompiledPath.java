@@ -33,9 +33,9 @@ import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.FlagType;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.PathOp;
 import org.antlr.v4.runtime.Token;
 
-public class ASTCompiledPath extends PathStorage {
+public class ASTCompiledPath {
 	private static Long globalPathUID = new Long(100);
-	private boolean complete;
+	private final PathStorage pathStorage = new PathStorage();
 	private Dequeue commandInfo;
 	private ASTPathCommand terminalCommand;
 	private boolean cached;
@@ -68,19 +68,11 @@ public class ASTCompiledPath extends PathStorage {
 		this.parameters = parameters;
 	}
 
-	public boolean isComplete() {
-		return complete;
-	}
-
-	public void setIsComplete(boolean complete) {
-		this.complete = complete;
-	}
-
 	public boolean isCached() {
 		return cached;
 	}
 
-	public void setIsCached(boolean cached) {
+	public void setCached(boolean cached) {
 		this.cached = cached;
 	}
 
@@ -106,15 +98,15 @@ public class ASTCompiledPath extends PathStorage {
 
 	public void finish(boolean setAttr, CFDGRenderer renderer) {
 		if (!renderer.isClosed()) {
-			this.closePolygon();
+			pathStorage.closePolygon();
 			renderer.setClosed(true);
 		}
 		if (renderer.isStop()) {
-			this.startNewPath();
+			pathStorage.startNewPath();
 			renderer.setClosed(true);
 		}
 		renderer.setWantMoveTo(true);
-		renderer.setIndex(this.getTotalVertices());
+		renderer.setIndex(pathStorage.getTotalVertices());
 		if (setAttr && renderer.isWantCommand()) {
 			useTerminal = true;
 			renderer.setWantCommand(false);
@@ -165,14 +157,14 @@ public class ASTCompiledPath extends PathStorage {
 		renderer.setWantCommand(true);
 
 		if (pathOp.getPathOp() == PathOp.CLOSEPOLY) {
-			if (this.getTotalVertices() > 1 && this.isDrawing()) {
+			if (pathStorage.getTotalVertices() > 1 && pathStorage.isDrawing()) {
 				// Find the MOVETO/MOVEREL that is the start of the current path sequence
 				// and reset LastPoint to that.
-				int last = this.getTotalVertices() - 1;
+				int last = pathStorage.getTotalVertices() - 1;
 				int cmd = 0;
-				for (int i = last - 1; i < last && this.isVertex(cmd = this.command(i)); i--) {
+				for (int i = last - 1; i < last && pathStorage.isVertex(cmd = pathStorage.command(i)); i--) {
 					if (cmd == 1) {
-						this.addVertex(renderer.getLastPoint());
+						pathStorage.addVertex(renderer.getLastPoint());
 						break;
 					}
 				}
@@ -182,7 +174,7 @@ public class ASTCompiledPath extends PathStorage {
 				}
 			}
 
-			this.closePolygon();
+			pathStorage.closePolygon();
 			renderer.setClosed(true);
 			renderer.setWantMoveTo(true);
 			return;
@@ -192,27 +184,27 @@ public class ASTCompiledPath extends PathStorage {
 		//TODO completare replace ordinal()
 		if (renderer.isWantMoveTo() && pathOp.getPathOp().ordinal() > PathOp.MOVEREL.ordinal()) {
 			renderer.setWantMoveTo(false);
-			this.moveTo(renderer.getLastPoint());
+			pathStorage.moveTo(renderer.getLastPoint());
 		}
 
 		//TODO rivedere
 
 		switch (pathOp.getPathOp()) {
 			case MOVEREL:
-				this.relToAbs(p0);
+				pathStorage.relToAbs(p0);
 			case MOVETO:
-				this.moveTo(p0);
+				pathStorage.moveTo(p0);
 				renderer.setWantMoveTo(false);
 				break;
 			case LINEREL:
-				this.relToAbs(p0);
+				pathStorage.relToAbs(p0);
 			case LINETO:
-				this.lineTo(p0);
+				pathStorage.lineTo(p0);
 				break;
 			case ARCREL:
-				this.relToAbs(p0);
+				pathStorage.relToAbs(p0);
 			case ARCTO:
-				if (this.isVertex(this.lastVertex(p1)) || (tr && parent.getWorldState().getTransform().getDeterminant() < 1e-10)) {
+				if (pathStorage.isVertex(pathStorage.lastVertex(p1)) || (tr && parent.getWorldState().getTransform().getDeterminant() < 1e-10)) {
 					break;
 				}
 				// Transforming an arc as they are parameterized by AGG is VERY HARD.
@@ -221,41 +213,41 @@ public class ASTCompiledPath extends PathStorage {
 				// transform the starting point to match the untransformed arc.
 				// Afterwards the starting point is restored to its original value.
 				if (tr) {
-					int start = this.getTotalVertices() - 1;
+					int start = pathStorage.getTotalVertices() - 1;
 					try {
 						AffineTransform inverseTr = parent.getWorldState().getTransform().createInverse();
-						this.transform(inverseTr, start);
-						this.arcTo(radiusX, radiusY, angle, largeArc, sweep, p0);
-						this.modifyVertex(start, p1);
-						this.transform(parent.getWorldState().getTransform(), start + 1);
+						pathStorage.transform(inverseTr, start);
+						pathStorage.arcTo(radiusX, radiusY, angle, largeArc, sweep, p0);
+						pathStorage.modifyVertex(start, p1);
+						pathStorage.transform(parent.getWorldState().getTransform(), start + 1);
 					} catch (NoninvertibleTransformException e) {
 						Logger.fail("Cannot invert transform", pathOp.getLocation());
 					}
 				} else {
-					this.arcTo(radiusX, radiusY, angle, largeArc, sweep, p0);
+					pathStorage.arcTo(radiusX, radiusY, angle, largeArc, sweep, p0);
 				}
 			case CURVEREL:
-				this.relToAbs(p0);
-				this.relToAbs(p1);
-				this.relToAbs(p2);
+				pathStorage.relToAbs(p0);
+				pathStorage.relToAbs(p1);
+				pathStorage.relToAbs(p2);
 			case CURVETO:
-				if ((pathOp.getFlags() & FlagType.CF_CONTINUOUS.getMask()) != 0 && this.isCurve(this.lastVertex(p2)) ) {
+				if ((pathOp.getFlags() & FlagType.CF_CONTINUOUS.getMask()) != 0 && pathStorage.isCurve(pathStorage.lastVertex(p2)) ) {
 					Logger.error("Smooth curve operations must be preceded by another curve operation", pathOp.getLocation());
 					break;
 				}
 				switch (pathOp.getArgCount()) {
 					case 2:
-						this.curve3(p0);
+						pathStorage.curve3(p0);
 						break;
 					case 4:
 						if ((pathOp.getFlags() & FlagType.CF_CONTINUOUS.getMask()) != 0) {
-							this.curve4(p1, p0);
+							pathStorage.curve4(p1, p0);
 						} else {
-							this.curve3(p1, p0);
+							pathStorage.curve3(p1, p0);
 						}
 						break;
 					case 6:
-						this.curve4(p1, p2, p0);
+						pathStorage.curve4(p1, p2, p0);
 						break;
 				}
 				break;
@@ -263,6 +255,10 @@ public class ASTCompiledPath extends PathStorage {
 				break;
 		}
 
-		this.lastVertex(renderer.getLastPoint());
+		pathStorage.lastVertex(renderer.getLastPoint());
+	}
+
+	public PathStorage getPathStorage() {
+		return pathStorage;
 	}
 }

@@ -168,20 +168,21 @@ public class ASTRule extends ASTReplacement implements Comparable<ASTRule> {
 	}
 	
 	public void traversePath(Shape parent, CFDGRenderer renderer) {
-		renderer.init();
+		renderer.initTraverse();
 		renderer.setCurrentSeed(parent.getWorldState().getRand64Seed());
 		renderer.setRandUsed(false);
 		
 		ASTCompiledPath savedPath = null;
 		
-		if (cachedPath != null && cachedPath.getParameters().equals(parent.getParameters())) {
+		if (cachedPath != null && cachedPath.getParameters() == parent.getParameters()) {
 			savedPath = renderer.getCurrentPath();
 			renderer.setCurrentPath(cachedPath);
-			renderer.setCurrentCommand(cachedPath.getCommandInfo().iterator());
+			cachedPath = null;
+			renderer.setCurrentCommand(renderer.getCurrentPath().getCommandInfo().iterator());
 		}
 		
 		ruleBody.traverse(parent, false, renderer, true);
-		if (!renderer.getCurrentPath().isComplete()) {
+		if (!renderer.getCurrentPath().isCached()) {
 			renderer.getCurrentPath().finish(true, renderer);
 		}
 		if (renderer.getCurrentPath().useTerminal()) {
@@ -189,21 +190,20 @@ public class ASTRule extends ASTReplacement implements Comparable<ASTRule> {
 		}
 		
 		if (savedPath != null) {
+			cachedPath = renderer.getCurrentPath();
 			renderer.setCurrentPath(savedPath);
 		} else {
-			if (renderer.isRandUsed() && cachedPath == null) {
+			if (!renderer.isRandUsed() && cachedPath == null) {
 				cachedPath = renderer.getCurrentPath();
-				cachedPath.setIsComplete(true);
-				cachedPath.setParameters(new CFStackRule(parent.getParameters()));
+				cachedPath.setCached(true);
+				cachedPath.setParameters(parent.getParameters());
 				renderer.setCurrentPath(new ASTCompiledPath(driver, getLocation()));
 			} else {
-//				renderer.getCurrentPath().getPathStorage().clear();
+				renderer.getCurrentPath().getPathStorage().clear();
 				renderer.getCurrentPath().getCommandInfo().clear();
 				renderer.getCurrentPath().setUseTerminal(false);
 				renderer.getCurrentPath().setPathUID(ASTCompiledPath.nextPathUID());
-				if (renderer.getCurrentPath().getParameters() != null) {
-					renderer.getCurrentPath().setParameters(null);
-				}
+				renderer.getCurrentPath().setParameters(null);
 			}
 		}
 	}

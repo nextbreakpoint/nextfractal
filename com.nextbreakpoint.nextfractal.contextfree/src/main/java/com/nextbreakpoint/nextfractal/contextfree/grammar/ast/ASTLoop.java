@@ -30,6 +30,8 @@ import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.Locality;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.RepElemType;
 import org.antlr.v4.runtime.Token;
 
+import java.awt.geom.AffineTransform;
+
 public class ASTLoop extends ASTReplacement {
 	private ASTExpression loopArgs;
 	private ASTModification loopModHolder;
@@ -185,12 +187,12 @@ public class ASTLoop extends ASTReplacement {
 
 	@Override
 	public void traverse(Shape parent, boolean tr, CFDGRenderer renderer) {
-		Shape loopChild = parent;
+		Shape loopChild = new Shape(parent);
 		boolean opsOnly = (loopBody.getRepType() | finallyBody.getRepType()) == RepElemType.op.getType();
 		if (opsOnly && !tr) {
-			loopChild.getWorldState().setTransform(null);
+//			loopChild.getWorldState().setTransform((AffineTransform)parent.getWorldState().getTransform().clone());
 		}
-		double[] data = new double[2];
+		double[] data = new double[3];
 		renderer.getCurrentSeed().add(getChildChange().getModData().getRand64Seed());
 		if (loopArgs != null) {
 			setupLoop(data, loopArgs, renderer);
@@ -199,36 +201,29 @@ public class ASTLoop extends ASTReplacement {
 			data[1] = loopData[1];
 			data[2] = loopData[2];
 		}
-		int oldTop = renderer.getLogicalStackTop();
 		//TODO controllare
-		Double index = ((CFStackNumber)renderer.getStackItem(renderer.getStackSize() - 1)).getNumber();
 		renderer.addStackItem(new CFStackNumber(renderer.getStack(), data[0]));
-		renderer.setStackSize(renderer.getStackSize() + 1);
-		renderer.setLogicalStackTop(index.intValue());
+		int index = (int)((CFStackNumber)renderer.getStackItem(-1)).getNumber();
 		for (;;) {
 			if (renderer.isRequestStop() || CFDGRenderer.abortEverything()) {
 				throw new RuntimeException("Stopping");
 			}
 			if (data[2] > 0.0) {
-				if (index.intValue() >= data[1]) {
+				if (index >= data[1]) {
 					break;
 				}
 			} else {
-				if (index.intValue() <= data[1]) {
+				if (index <= data[1]) {
 					break;
 				}
 			}
 			loopBody.traverse(loopChild, tr || opsOnly, renderer, false);
 			getChildChange().evaluate(loopChild.getWorldState(), true, renderer);
-			index += data[2];
-			//TODO controllare
-			renderer.setStackItem(renderer.getStackSize() - 1, new CFStackNumber(renderer.getStack(), index));
+			index += (int)data[2];
+			renderer.setStackItem(-1, new CFStackNumber(renderer.getStack(), index));
 		}
 		finallyBody.traverse(loopChild, tr || opsOnly, renderer, false);
-		//TODO controllare
-		renderer.removeStackItem(renderer.getStackSize() - 1);
-		renderer.setStackSize(renderer.getStackSize() - 1);
-		renderer.setLogicalStackTop(oldTop);
+		renderer.removeStackItem();
 	}
 	
 	private void setupLoop(double[] data, ASTExpression exp, CFDGRenderer renderer) {
@@ -236,15 +231,11 @@ public class ASTLoop extends ASTReplacement {
 			case 1:
 				data[1] = data[0];
 				data[0] = 0.0;
-				break;
-	
 			case 2:
 				data[2] = 1.0;
 				break;
-	
 			case 3:
 				break;
-			
 			default:
 				Logger.error("A loop must have one to three index parameters", location);
 				break;

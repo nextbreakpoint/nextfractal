@@ -39,7 +39,6 @@ public class PathStorage {
 	private List<Vertex> vertices = new ArrayList<>();
 	private Point2D.Double center = new Point2D.Double(0, 0);
 	private boolean drawing = false;
-	private GeneralPath path;
 
 	public boolean isDrawing() {
 		return drawing;
@@ -52,6 +51,7 @@ public class PathStorage {
 
 	public void clear() {
 		generalPath.reset();
+		vertices.clear();
 	}
 
 	public void startNewPath() {
