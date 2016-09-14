@@ -39,7 +39,7 @@ public class Shape implements Cloneable {
 	public Shape(Shape shape) {
 		shapeType = shape.shapeType;
 		areaCache = shape.areaCache;
-		worldState = shape.worldState;
+		worldState = (Modification) shape.worldState.clone();
 		params = shape.params;
 	}
 

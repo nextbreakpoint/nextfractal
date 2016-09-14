@@ -607,7 +607,6 @@ public class CFDGRenderer {
 			if (canvas != null && info != null) {
 				double[] color = cfdg.getColor(shape.getWorldState().color());
 				AffineTransform tr = shape.getWorldState().getTransform();
-				tr.preConcatenate(currTransform);
 				canvas.path(color, tr, info);
 			}
 		} else {

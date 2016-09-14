@@ -185,7 +185,7 @@ public class ASTLoop extends ASTReplacement {
 
 	@Override
 	public void traverse(Shape parent, boolean tr, CFDGRenderer renderer) {
-		Shape loopChild = new Shape(parent);
+		Shape loopChild = (Shape) parent.clone();
 		boolean opsOnly = (loopBody.getRepType() | finallyBody.getRepType()) == RepElemType.op.getType();
 		if (opsOnly && !tr) {
 			loopChild.getWorldState().getTransform().setToIdentity();

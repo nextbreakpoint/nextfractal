@@ -1,7 +1,6 @@
 package com.nextbreakpoint.nextfractal.contextfree.grammar;
 
 import com.nextbreakpoint.nextfractal.contextfree.core.Bounds;
-import com.nextbreakpoint.nextfractal.contextfree.core.ExtendedGeneralPath;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.FlagType;
 
 import java.awt.*;
@@ -12,7 +11,7 @@ import java.awt.image.BufferedImage;
 public class SimpleCanvas {
     private int width;
     private int height;
-    private AffineTransform currTransform = new AffineTransform();
+    private AffineTransform normTransform = new AffineTransform();
     private BufferedImage image;
     private Graphics2D g2d;
 
@@ -35,7 +34,7 @@ public class SimpleCanvas {
 
         AffineTransform oldTransform = g2d.getTransform();
 
-        AffineTransform t = new AffineTransform(currTransform);
+        AffineTransform t = new AffineTransform(normTransform);
 
         t.concatenate(transform);
 
@@ -57,7 +56,7 @@ public class SimpleCanvas {
 
         AffineTransform oldTransform = g2d.getTransform();
 
-        AffineTransform t = new AffineTransform(currTransform);
+        AffineTransform t = new AffineTransform(normTransform);
 
         java.awt.Shape shape = null;
 
@@ -119,9 +118,9 @@ public class SimpleCanvas {
         g2d = image.createGraphics();
         g2d.setColor(new Color((float)backgroundColor[0], (float)backgroundColor[1], (float)backgroundColor[2], (float)backgroundColor[3]));
         g2d.fillRect(0, 0, getWidth(), getHeight());
-        currTransform = AffineTransform.getTranslateInstance(0, getHeight());
-        currTransform.scale(1, -1);
-        currTransform.translate(-(currWidth - getWidth()) / 2, -(currHeight - getHeight()) / 2);
+        normTransform = AffineTransform.getTranslateInstance(0, getHeight());
+        normTransform.scale(1, -1);
+        normTransform.translate(-(currWidth - getWidth()) / 2, -(currHeight - getHeight()) / 2);
     }
 
     public void end() {
