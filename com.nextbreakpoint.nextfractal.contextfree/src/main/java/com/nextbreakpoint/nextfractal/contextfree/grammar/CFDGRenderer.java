@@ -36,6 +36,7 @@ import org.antlr.v4.runtime.Token;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
 public class CFDGRenderer {
@@ -314,14 +315,14 @@ public class CFDGRenderer {
 
 	public void addStackItem(CFStackItem stackType) {
 		//TODO rivedere
-		getStack().setStackItem(cfStack.getStackSize(), stackType);
+		getStack().setStackItem(0, stackType);
 		getStack().setStackTop(cfStack.getStackSize() + 1);
 		getStack().setStackSize(cfStack.getStackSize() + 1);
 	}
 
 	public void removeStackItem() {
 		//TODO rivedere
-		getStack().setStackItem(cfStack.getStackSize(), null);
+		getStack().setStackItem(0, null);
 		getStack().setStackTop(cfStack.getStackSize() - 1);
 		getStack().setStackSize(cfStack.getStackSize() - 1);
 	}
@@ -431,7 +432,7 @@ public class CFDGRenderer {
 			}
 			int oldSize = cfStack.getStackSize();
 			cfStack.setStackSize(cfStack.getStackSize() + stackRule.getParamCount());
-			stackRule.copyItems(cfStack.getStackItems(), oldSize);
+			stackRule.copyTo(cfStack.getStackItems(), oldSize + cfStack.getStackTop());
 		}
 		setLogicalStackTop(cfStack.getStackSize());
 	}
@@ -601,16 +602,17 @@ public class CFDGRenderer {
 		opsOnly = saveOpsOnly;
 	}
 
-	public void processPathCommand(Shape shape, CommandInfo attr) {
+	public void processPathCommand(Shape shape, CommandInfo info) {
 		if (drawingMode) {
-			if (canvas != null && attr != null) {
+			if (canvas != null && info != null) {
 				double[] color = cfdg.getColor(shape.getWorldState().color());
 				AffineTransform tr = shape.getWorldState().getTransform();
-				canvas.path(color, tr, attr);
+				tr.preConcatenate(currTransform);
+				canvas.path(color, tr, info);
 			}
 		} else {
-			if (attr != null) {
-				pathBounds.update(shape.getWorldState().getTransform(), scale, attr);
+			if (info != null) {
+				pathBounds.update(shape.getWorldState().getTransform(), scale, info);
 				currentArea = Math.abs((pathBounds.getMaxX() - pathBounds.getMinX()) * (pathBounds.getMaxY() - pathBounds.getMinY()));
 			}
 		}

@@ -26,7 +26,6 @@ package com.nextbreakpoint.nextfractal.contextfree.grammar;
 
 import com.nextbreakpoint.nextfractal.contextfree.core.ExtendedGeneralPath;
 
-import java.awt.geom.GeneralPath;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,7 +49,7 @@ public class PathStorage {
 	}
 
 	public void clear() {
-		generalPath.reset();
+		generalPath = new ExtendedGeneralPath();
 		vertices.clear();
 	}
 
@@ -59,8 +58,11 @@ public class PathStorage {
 		vertices.clear();
 	}
 
-	public void closePolygon() {
+	public void closePath() {
 		generalPath.closePath();
+	}
+
+	public void endPath() {
 	}
 
 	public void moveTo(Point2D.Double point) {
@@ -71,11 +73,13 @@ public class PathStorage {
 
 	public void lineTo(Point2D.Double point) {
 		vertices.add(new Vertex(point, 2));
+		center.setLocation(point.getX(), point.getY());
 		generalPath.lineTo((float)point.getX(), (float)point.getY());
 	}
 
 	public void arcTo(double radiusX, double radiusY, double angle, boolean largeArc, boolean sweep, Point2D.Double point) {
 		vertices.add(new Vertex(point, 3));
+		center.setLocation(point.getX(), point.getY());
 		generalPath.arcTo((float)radiusX, (float)radiusY, (float)angle, largeArc, sweep, (float)point.getX(), (float)point.getY());
 	}
 
@@ -92,15 +96,6 @@ public class PathStorage {
 		return vertices.size();
 	}
 
-	public boolean isVertex(int index) {
-		//TODO controllare
-		return vertices.get(index).command == 2;
-	}
-
-	public void addVertex(Point2D.Double point) {
-		lineTo(point);
-	}
-
 	public int vertex(int index, Point2D.Double point) {
 		Vertex vertex = vertices.get(index);
 		point.setLocation(vertex.point.getX(), vertex.point.getY());
@@ -114,7 +109,7 @@ public class PathStorage {
 	}
 
 	public void modifyVertex(int index, Point2D.Double point) {
-		Vertex vertex = vertices.get(vertices.size() - 1);
+		Vertex vertex = vertices.get(index);
 		vertex.point.setLocation(point.getX(), point.getY());
 	}
 
@@ -122,8 +117,12 @@ public class PathStorage {
 		//TODO completare
 	}
 
-	public boolean isCurve(int index) {
-		return vertices.get(index).command == 3;
+	public boolean isVertex(int command) {
+		return command == 2;
+	}
+
+	public boolean isCurve(int command) {
+		return command == 3;
 	}
 
 	public void curve3(Point2D.Double point) {

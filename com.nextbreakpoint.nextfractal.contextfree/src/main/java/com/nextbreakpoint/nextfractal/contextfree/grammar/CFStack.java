@@ -84,7 +84,7 @@ public class CFStack {
 		newItems[0] = newRule;
 		if (stackRule.getParamCount() > 0) {
 			newItems[1] = typeInfo;
-			stackRule.copyItems(newItems, 2);
+			stackRule.copyTo(newItems, 2);
 		}
 		return newRule;
 	}
@@ -95,8 +95,10 @@ public class CFStack {
 		CFStack newStack = new CFStack(newItems);
 		CFStackRule stackRule = new CFStackRule(newStack, nameIndex, paramCount);
 		newItems[0] = stackRule;
+		newStack.setStackSize(1);
 		if (paramCount > 0) {
 			newItems[1] = new CFStackParams(newStack, params);
+			newStack.setStackSize(2);
 		}
 		return stackRule;
 	}

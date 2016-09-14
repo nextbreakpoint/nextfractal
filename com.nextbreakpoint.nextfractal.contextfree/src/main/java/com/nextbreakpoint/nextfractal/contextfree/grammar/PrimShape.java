@@ -68,22 +68,22 @@ public class PrimShape extends PathStorage {
 		PrimShape triangle = new PrimShape(trianglePath);
 
 		circle.moveTo(new Point2D.Double(0.5, 0.0));
-		circle.addVertex(new Point2D.Double(t, t));
-		circle.addVertex(new Point2D.Double(0.0, 0.5));
-		circle.addVertex(new Point2D.Double(-t, t));
-		circle.addVertex(new Point2D.Double(-0.5, 0.0));
-		circle.addVertex(new Point2D.Double(-t, -t));
-		circle.addVertex(new Point2D.Double(0.0, -0.5));
-		circle.addVertex(new Point2D.Double(t, -t));
+		circle.lineTo(new Point2D.Double(t, t));
+		circle.lineTo(new Point2D.Double(0.0, 0.5));
+		circle.lineTo(new Point2D.Double(-t, t));
+		circle.lineTo(new Point2D.Double(-0.5, 0.0));
+		circle.lineTo(new Point2D.Double(-t, -t));
+		circle.lineTo(new Point2D.Double(0.0, -0.5));
+		circle.lineTo(new Point2D.Double(t, -t));
 
 		square.moveTo(new Point2D.Double(0.5, 0.5));
-		square.addVertex(new Point2D.Double(-0.5, 0.5));
-		square.addVertex(new Point2D.Double(-0.5, -0.5));
-		square.addVertex(new Point2D.Double(0.5, -0.5));
+		square.lineTo(new Point2D.Double(-0.5, 0.5));
+		square.lineTo(new Point2D.Double(-0.5, -0.5));
+		square.lineTo(new Point2D.Double(0.5, -0.5));
 
 		triangle.moveTo(new Point2D.Double(0.0, hp));
-		triangle.addVertex(new Point2D.Double(-0.5, hn));
-		triangle.addVertex(new Point2D.Double(0.5, hn));
+		triangle.lineTo(new Point2D.Double(-0.5, hn));
+		triangle.lineTo(new Point2D.Double(0.5, hn));
 
 		shapeMap.put(0, circle);
 		shapeMap.put(1, square);

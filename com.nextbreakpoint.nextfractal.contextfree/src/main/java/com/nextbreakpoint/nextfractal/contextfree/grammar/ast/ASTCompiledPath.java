@@ -35,7 +35,7 @@ import org.antlr.v4.runtime.Token;
 
 public class ASTCompiledPath {
 	private static Long globalPathUID = new Long(100);
-	private final PathStorage pathStorage = new PathStorage();
+	private PathStorage pathStorage = new PathStorage();
 	private Dequeue commandInfo;
 	private ASTPathCommand terminalCommand;
 	private boolean cached;
@@ -98,7 +98,7 @@ public class ASTCompiledPath {
 
 	public void finish(boolean setAttr, CFDGRenderer renderer) {
 		if (!renderer.isClosed()) {
-			pathStorage.closePolygon();
+			pathStorage.endPath();
 			renderer.setClosed(true);
 		}
 		if (renderer.isStop()) {
@@ -106,7 +106,7 @@ public class ASTCompiledPath {
 			renderer.setClosed(true);
 		}
 		renderer.setWantMoveTo(true);
-		renderer.setIndex(pathStorage.getTotalVertices());
+		renderer.setNextIndex(pathStorage.getTotalVertices());
 		if (setAttr && renderer.isWantCommand()) {
 			useTerminal = true;
 			renderer.setWantCommand(false);
@@ -120,7 +120,7 @@ public class ASTCompiledPath {
 		boolean largeArc = (pathOp.getFlags() & FlagType.CF_ARC_LARGE.getMask()) != 0;
 		Point2D.Double p0 = new Point2D.Double(data[0], data[1]);
 		Point2D.Double p1 = new Point2D.Double(data[2], data[3]);
-		Point2D.Double p2 = new Point2D.Double(data[4], data[4]);
+		Point2D.Double p2 = new Point2D.Double(data[4], data[5]);
 		if (pathOp.getPathOp() == PathOp.ARCTO || pathOp.getPathOp() == PathOp.ARCREL) {
 			if (pathOp.getArgCount() == 5) {
 				radiusX = data[2];
@@ -162,9 +162,10 @@ public class ASTCompiledPath {
 				// and reset LastPoint to that.
 				int last = pathStorage.getTotalVertices() - 1;
 				int cmd = 0;
-				for (int i = last - 1; i < last && pathStorage.isVertex(cmd = pathStorage.command(i)); i--) {
+				for (int i = last - 1; i >= 0; i--) {
+					cmd = pathStorage.command(i);
 					if (cmd == 1) {
-						pathStorage.addVertex(renderer.getLastPoint());
+						pathStorage.vertex(i, renderer.getLastPoint());
 						break;
 					}
 				}
@@ -174,7 +175,7 @@ public class ASTCompiledPath {
 				}
 			}
 
-			pathStorage.closePolygon();
+			pathStorage.closePath();
 			renderer.setClosed(true);
 			renderer.setWantMoveTo(true);
 			return;
@@ -260,5 +261,9 @@ public class ASTCompiledPath {
 
 	public PathStorage getPathStorage() {
 		return pathStorage;
+	}
+
+	public void setPathStorage(PathStorage pathStorage) {
+		this.pathStorage = pathStorage;
 	}
 }

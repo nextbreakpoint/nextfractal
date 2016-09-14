@@ -62,23 +62,23 @@ public class CFStackRule extends CFStackItem {
         return super.iterator();
     }
 
-    public void copyItems(CFStackItem[] items, int headerSize) {
+    public void copyTo(CFStackItem[] dest, int destOffset) {
         //TODO completare copyItems
-        int destIndex = 0;
-        for (int srcIndex = headerSize; srcIndex < items.length;) {
-            switch (items[srcIndex].getType()) {
+        int destIndex = destOffset;
+        for (int srcIndex = 0; srcIndex < paramCount; srcIndex++) {
+            switch (stack.getStackItem(srcIndex).getType()) {
                 case NumericType:
                 case FlagType:
                 case ModType:
-                    System.arraycopy(items, srcIndex, stack.getStackItems(), destIndex, items[srcIndex].getTupleSize());
+                    System.arraycopy(stack.getStackItems(), srcIndex, dest, destIndex, stack.getStackItem(srcIndex).getTupleSize());
                     break;
                 case RuleType:
-                    stack.getStackItems()[destIndex] = items[srcIndex];
+                    dest[destIndex] = stack.getStackItem(srcIndex);
                     break;
                 default:
                     break;
             }
-            destIndex += items[srcIndex].getTupleSize();
+            destIndex += stack.getStackItem(srcIndex).getTupleSize();
         }
     }
 }

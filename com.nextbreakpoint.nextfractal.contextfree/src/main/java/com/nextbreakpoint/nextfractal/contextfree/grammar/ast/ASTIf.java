@@ -68,9 +68,7 @@ public class ASTIf extends ASTReplacement {
 				break;
 	
 			case Simplify:
-				if (condition != null) {
-					condition = condition.simplify();
-				}
+				condition = simplify(condition);
 				break;
 	
 			default:
@@ -81,7 +79,7 @@ public class ASTIf extends ASTReplacement {
 	@Override
 	public void traverse(Shape parent, boolean tr, CFDGRenderer renderer) {
 		double[] cond = new double[1];
-		if (condition.evaluate(cond, 1) != 1) {
+		if (condition.evaluate(cond, 1, renderer) != 1) {
 			Logger.error("Error evaluating if condition", location);
 			return;
 		}

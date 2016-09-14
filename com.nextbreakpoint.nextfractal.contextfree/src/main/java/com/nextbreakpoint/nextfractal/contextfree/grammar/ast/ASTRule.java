@@ -145,14 +145,6 @@ public class ASTRule extends ASTReplacement implements Comparable<ASTRule> {
 		this.nameIndex = nameIndex;
 	}
 
-	public ASTCompiledPath getCachedPath() {
-		return cachedPath;
-	}
-
-	public void setCachedPath(ASTCompiledPath cachedPath) {
-		this.cachedPath = cachedPath;
-	}
-
 	public void resetCachedPath() {
 		this.cachedPath = null;
 	}
@@ -199,7 +191,7 @@ public class ASTRule extends ASTReplacement implements Comparable<ASTRule> {
 				cachedPath.setParameters(parent.getParameters());
 				renderer.setCurrentPath(new ASTCompiledPath(driver, getLocation()));
 			} else {
-				renderer.getCurrentPath().getPathStorage().clear();
+				renderer.getCurrentPath().setPathStorage(new PathStorage());
 				renderer.getCurrentPath().getCommandInfo().clear();
 				renderer.getCurrentPath().setUseTerminal(false);
 				renderer.getCurrentPath().setPathUID(ASTCompiledPath.nextPathUID());

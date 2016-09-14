@@ -173,9 +173,7 @@ public class ASTLoop extends ASTReplacement {
 			}
 
 			case Simplify:
-				if (loopArgs != null) {
-					loopArgs.simplify();
-				}
+				loopArgs = simplify(loopArgs);
 				loopBody.compile(ph, null, null);
 				finallyBody.compile(ph, null, null);
 				break;
@@ -190,7 +188,7 @@ public class ASTLoop extends ASTReplacement {
 		Shape loopChild = new Shape(parent);
 		boolean opsOnly = (loopBody.getRepType() | finallyBody.getRepType()) == RepElemType.op.getType();
 		if (opsOnly && !tr) {
-//			loopChild.getWorldState().setTransform((AffineTransform)parent.getWorldState().getTransform().clone());
+			loopChild.getWorldState().getTransform().setToIdentity();
 		}
 		double[] data = new double[3];
 		renderer.getCurrentSeed().add(getChildChange().getModData().getRand64Seed());

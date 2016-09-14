@@ -1,0 +1,29 @@
+CFDG3
+
+startshape Foo
+
+path heptstar(number filled)
+{
+    MOVETO(cos (90 - 720 / 7), sin(90 - 720 / 7))
+    loop 6 [r (720/7)]
+        LINETO(0, 1)
+    CLOSEPOLY()
+    if (filled) FILL[a -0.5]
+    STROKE[]
+}
+
+path box(number filled)
+{
+	//MOVETO(1,0)
+    loop 4 [r (90)]
+        LINETO(0, 1)
+    CLOSEPOLY()
+    if (filled) FILL[a -0.5]
+    STROKE[]
+}
+
+shape Foo {
+    box (1) [rotate 10]
+    //heptstar (0) []
+	//Foo [x 0.8 size 0.8 rotate 40.0 y 0.8 b 0.2 h 0.1 sat 0.1]
+}

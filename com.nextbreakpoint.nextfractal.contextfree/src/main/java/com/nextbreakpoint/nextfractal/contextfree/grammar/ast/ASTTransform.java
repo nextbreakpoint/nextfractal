@@ -106,7 +106,7 @@ public class ASTTransform extends ASTReplacement {
 		Shape transChild = parent;
 		boolean opsOnly = body.getRepType() == RepElemType.op.getType();
 		if (opsOnly && !tr) {
-			transChild.getWorldState().setTransform(null);
+			transChild.getWorldState().getTransform().setToIdentity();
 		}
 		int modsLength = mods.size();
 		int totalLength = modsLength + transforms.size();
