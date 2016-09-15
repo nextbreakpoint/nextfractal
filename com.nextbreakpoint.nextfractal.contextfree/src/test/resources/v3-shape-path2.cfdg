@@ -7,7 +7,7 @@ path flower(number petals)
   MOVETO(cos(-180/petals), sin(-180/petals))
   loop petals [r (360/petals)]
     ARCTO(cos(180/petals), sin(180/petals), 0.4, 0.4 + 0.2 * (petals - 5), 90)
-  CLOSEPOLY(CF::Align)
+  CLOSEPOLY()
   MOVETO(0.65, 0)
   ARCTO(-0.65, 0, 0.65)
   ARCTO( 0.65, 0, 0.65)

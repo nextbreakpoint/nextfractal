@@ -60,15 +60,28 @@ public class CFStack {
 	}
 
 	public CFStackItem getStackItem(int index) {
-		return stackItems[stackTop + index];
+		return stackItems[index < 0 ? stackTop + index : index];
 	}
 
 	public void setStackItem(int index, CFStackItem item) {
-		stackItems[stackTop + index] = item;
+		stackItems[index < 0 ? stackTop + index : index] = item;
 	}
 
 	public CFStackItem[] getStackItems() {
 		return stackItems;
+	}
+
+	public void addStackItem(CFStackItem stackType) {
+		//TODO rivedere
+		setStackItem(stackSize, stackType);
+		setStackTop(stackSize + 1);
+		setStackSize(stackSize + 1);
+	}
+
+	public void removeStackItem() {
+		//TODO rivedere
+		setStackTop(stackSize - 1);
+		setStackSize(stackSize - 1);
 	}
 
 	public static CFStackRule createStackRule(CFStackRule rule) {

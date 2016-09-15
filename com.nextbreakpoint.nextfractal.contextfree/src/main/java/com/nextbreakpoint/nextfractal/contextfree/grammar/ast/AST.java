@@ -240,9 +240,9 @@ public class AST {
         //TODO rivedere evalArgs
         for (int i = 0; i < arguments.size(); i++, dest.next()) {
             if (onStack) {
-                renderer.setLogicalStackTop(0);
                 //TODO completare evalArgs
-//                renderer.setLogicalStack(dest);
+                renderer.setLogicalStack(dest.getStack());
+                renderer.setLogicalStackTop(0);
             }
             ASTExpression arg = arguments.getChild(i);
             switch (arg.getType()) {

@@ -15,14 +15,14 @@ public class CFStackIterator {
         this.stack = stack;
         this.params = new ArrayList<>(parameters);
         this.paramPos = 0;
-        this.stackPos = 0;
+        this.stackPos = stack.getStackTop();
     }
 
     public CFStackIterator(CFStack stack) {
         this.stack = stack;
         this.params = new ArrayList<>();
         this.paramPos = 0;
-        this.stackPos = 0;
+        this.stackPos = stack.getStackTop();
     }
 
     public CFStackIterator(CFStackIterator iterator) {
@@ -52,5 +52,9 @@ public class CFStackIterator {
         stackPos += next.getTupleSize();
         paramPos += 1;
         return this;
+    }
+
+    public CFStack getStack() {
+        return stack;
     }
 }

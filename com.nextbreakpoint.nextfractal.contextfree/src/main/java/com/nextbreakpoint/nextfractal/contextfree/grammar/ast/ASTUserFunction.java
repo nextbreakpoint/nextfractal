@@ -213,6 +213,7 @@ public class ASTUserFunction extends ASTExpression {
 
 	private void cleanupStack(CFDGRenderer renderer) {
 		if (definition.getStackCount() > 0) {
+			//TODO competare cleanupStack
 			renderer.setStackItem(oldSize, null);
 			renderer.setLogicalStackTop(oldTop);
 			renderer.setStackSize(oldSize);

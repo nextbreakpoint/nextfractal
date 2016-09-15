@@ -38,6 +38,7 @@ import java.awt.geom.Point2D;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
+import java.util.stream.IntStream;
 
 public class CFDGRenderer {
 	private static final double FIXED_BORDER = 8.0;
@@ -314,17 +315,11 @@ public class CFDGRenderer {
 	}
 
 	public void addStackItem(CFStackItem stackType) {
-		//TODO rivedere
-		getStack().setStackItem(0, stackType);
-		getStack().setStackTop(cfStack.getStackSize() + 1);
-		getStack().setStackSize(cfStack.getStackSize() + 1);
+		getStack().addStackItem(stackType);
 	}
 
 	public void removeStackItem() {
-		//TODO rivedere
-		getStack().setStackItem(0, null);
-		getStack().setStackTop(cfStack.getStackSize() - 1);
-		getStack().setStackSize(cfStack.getStackSize() - 1);
+		getStack().removeStackItem();
 	}
 
 	public int getStackSize() {
@@ -432,7 +427,7 @@ public class CFDGRenderer {
 			}
 			int oldSize = cfStack.getStackSize();
 			cfStack.setStackSize(cfStack.getStackSize() + stackRule.getParamCount());
-			stackRule.copyTo(cfStack.getStackItems(), oldSize + cfStack.getStackTop());
+			stackRule.copyTo(cfStack.getStackItems(), oldSize);
 		}
 		setLogicalStackTop(cfStack.getStackSize());
 	}
@@ -453,10 +448,11 @@ public class CFDGRenderer {
 				//TODO rivedere
 				((CFStackRule)cfStack.getStackItem(pos)).setParamCount(0);
 			}
+			IntStream.range(0, parameter.getTupleSize()).forEach(i -> cfStack.setStackItem(i, null));
 			pos += parameter.getTupleSize();
 		}
 		cfStack.setStackSize(oldSize);
-		cfStack.setStackTop(cfStack.getStackSize());
+		cfStack.setStackTop(oldSize);
 	}
 
 	public void colorConflict(Token location) {
@@ -1064,5 +1060,9 @@ public class CFDGRenderer {
 	public static boolean abortEverything() {
 		//TODO completare abortEverything
 		return false;
+	}
+
+	public void setLogicalStack(CFStack logicalStack) {
+		this.cfStack = logicalStack;
 	}
 }
