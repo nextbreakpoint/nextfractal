@@ -24,11 +24,11 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.grammar.ast;
 
-import java.awt.geom.AffineTransform;
-import java.awt.geom.NoninvertibleTransformException;
-import java.awt.geom.Point2D;
+import java.awt.geom.*;
 
+import com.nextbreakpoint.nextfractal.contextfree.core.ExtendedGeneralPath;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.*;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.Shape;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.FlagType;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.PathOp;
 import org.antlr.v4.runtime.Token;
@@ -157,7 +157,7 @@ public class ASTCompiledPath {
 		renderer.setWantCommand(true);
 
 		if (pathOp.getPathOp() == PathOp.CLOSEPOLY) {
-			if (pathStorage.getTotalVertices() > 1 && pathStorage.isDrawing()) {
+			if (pathStorage.getTotalVertices() > 1 && pathStorage.isDrawing(pathStorage.lastCommnand())) {
 				// Find the MOVETO/MOVEREL that is the start of the current path sequence
 				// and reset LastPoint to that.
 				int last = pathStorage.getTotalVertices() - 1;
@@ -173,6 +173,14 @@ public class ASTCompiledPath {
 				if (cmd != 1) {
 					Logger.error("CLOSEPOLY: Unable to find a MOVETO/MOVEREL for start of path", pathOp.getLocation());
 				}
+
+				// If this is an aligning CLOSEPOLY then change the last vertex to
+				// exactly match the first vertex in the path sequence
+				if ((pathOp.getFlags() & FlagType.CF_ALIGN.getMask()) != 0)  {
+					pathStorage.modifyVertex(last, renderer.getLastPoint());
+				}
+			} else if ((pathOp.getFlags() & FlagType.CF_ALIGN.getMask()) != 0)  {
+				Logger.error("Nothing to align to", pathOp.getLocation());
 			}
 
 			pathStorage.closePath();
@@ -205,7 +213,7 @@ public class ASTCompiledPath {
 			case ARCREL:
 				pathStorage.relToAbs(p0);
 			case ARCTO:
-				if (pathStorage.isVertex(pathStorage.lastVertex(p1)) || (tr && parent.getWorldState().getTransform().getDeterminant() < 1e-10)) {
+				if (!pathStorage.isVertex(pathStorage.lastVertex(p1)) || (tr && parent.getWorldState().getTransform().getDeterminant() < 1e-10)) {
 					break;
 				}
 				// Transforming an arc as they are parameterized by AGG is VERY HARD.
@@ -214,19 +222,28 @@ public class ASTCompiledPath {
 				// transform the starting point to match the untransformed arc.
 				// Afterwards the starting point is restored to its original value.
 				if (tr) {
-					int start = pathStorage.getTotalVertices() - 1;
 					try {
-						AffineTransform inverseTr = parent.getWorldState().getTransform().createInverse();
-						pathStorage.transform(inverseTr, start);
-						pathStorage.arcTo(radiusX, radiusY, angle, largeArc, sweep, p0);
-						pathStorage.modifyVertex(start, p1);
-						pathStorage.transform(parent.getWorldState().getTransform(), start + 1);
+						AffineTransform transform = parent.getWorldState().getTransform();
+						AffineTransform inverseTr = transform.createInverse();
+						inverseTr.transform(p1, p1);
+
+						Arc2D arc = ExtendedGeneralPath.computeArc(p1.x, p1.y, radiusX, radiusY, angle, largeArc, sweep, p0.x, p0.y);
+						if (arc == null) {
+							Logger.fail("Cannot create arc", pathOp.getLocation());
+						}
+						AffineTransform t = AffineTransform.getRotateInstance(Math.toRadians(angle), arc.getCenterX(), arc.getCenterY());
+						t.concatenate(transform);
+						java.awt.Shape s = t.createTransformedShape(arc);
+
+						transform.transform(p0, p0);
+						pathStorage.append(s, p0);
 					} catch (NoninvertibleTransformException e) {
 						Logger.fail("Cannot invert transform", pathOp.getLocation());
 					}
 				} else {
 					pathStorage.arcTo(radiusX, radiusY, angle, largeArc, sweep, p0);
 				}
+				break;
 			case CURVEREL:
 				pathStorage.relToAbs(p0);
 				pathStorage.relToAbs(p1);

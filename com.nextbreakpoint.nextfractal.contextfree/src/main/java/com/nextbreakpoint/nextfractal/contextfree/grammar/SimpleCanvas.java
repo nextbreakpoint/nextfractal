@@ -1,6 +1,7 @@
 package com.nextbreakpoint.nextfractal.contextfree.grammar;
 
 import com.nextbreakpoint.nextfractal.contextfree.core.Bounds;
+import com.nextbreakpoint.nextfractal.contextfree.core.ExtendedGeneralPath;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.FlagType;
 
 import java.awt.*;
@@ -58,25 +59,27 @@ public class SimpleCanvas {
 
         AffineTransform t = new AffineTransform(normTransform);
 
-        java.awt.Shape shape = null;
+        java.awt.Shape shape;
 
-        if ((info.getFlags() & FlagType.CF_EVEN_ODD.getMask()) != 0) {
-            info.getPathStorage().getGeneralPath().setWindingRule(GeneralPath.WIND_EVEN_ODD);
+        GeneralPath path = info.getPathStorage().getGeneralPath();
+
+        if ((info.getFlags() & (FlagType.CF_EVEN_ODD.getMask() | FlagType.CF_FILL.getMask())) == (FlagType.CF_EVEN_ODD.getMask() | FlagType.CF_FILL.getMask())) {
+            path.setWindingRule(GeneralPath.WIND_EVEN_ODD);
         } else {
-            info.getPathStorage().getGeneralPath().setWindingRule(GeneralPath.WIND_NON_ZERO);
+            path.setWindingRule(GeneralPath.WIND_NON_ZERO);
         }
 
         if ((info.getFlags() & FlagType.CF_FILL.getMask()) != 0) {
-            shape = info.getPathStorage().getGeneralPath();
+            shape = path;
             t.concatenate(transform);
         } else if ((info.getFlags() & FlagType.CF_ISO_WIDTH.getMask()) != 0) {
             double scale = Math.sqrt(Math.abs(transform.getDeterminant()));
             g2d.setStroke(new BasicStroke((float)(info.getStrokeWidth() * scale), mapToCap(info.getFlags()), mapToJoin(info.getFlags()), (float)info.getMiterLimit()));
-            shape = info.getPathStorage().getGeneralPath();
+            shape = path;
             t.concatenate(transform);
         } else {
             g2d.setStroke(new BasicStroke((float)info.getStrokeWidth(), mapToCap(info.getFlags()), mapToJoin(info.getFlags()), (float)info.getMiterLimit()));
-            shape = info.getPathStorage().getGeneralPath().createTransformedShape(transform);
+            shape = path.createTransformedShape(transform);
         }
 
         g2d.setTransform(t);

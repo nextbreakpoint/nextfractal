@@ -26,6 +26,8 @@ package com.nextbreakpoint.nextfractal.contextfree.grammar;
 
 import com.nextbreakpoint.nextfractal.contextfree.core.ExtendedGeneralPath;
 
+import java.awt.Shape;
+import java.awt.geom.GeneralPath;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,58 +36,57 @@ import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
 
 public class PathStorage {
-	private ExtendedGeneralPath generalPath = new ExtendedGeneralPath();
+	private List<ExtendedGeneralPath> generalPaths = new ArrayList<>();
+	private ExtendedGeneralPath currentPath = new ExtendedGeneralPath();
 	private List<Vertex> vertices = new ArrayList<>();
-	private Point2D.Double center = new Point2D.Double(0, 0);
-	private boolean drawing = false;
 
-	public boolean isDrawing() {
-		return drawing;
-	}
-
-	public void setDrawing(boolean drawing) {
-		//TODO controllare
-		this.drawing = drawing;
+	public PathStorage() {
+		generalPaths.add(currentPath);
 	}
 
 	public void clear() {
-		generalPath = new ExtendedGeneralPath();
+		currentPath = new ExtendedGeneralPath();
+		generalPaths.clear();
+		generalPaths.add(currentPath);
 		vertices.clear();
 	}
 
 	public void startNewPath() {
-		generalPath = new ExtendedGeneralPath();
+		currentPath = new ExtendedGeneralPath();
+		generalPaths.add(currentPath);
 		vertices.clear();
 	}
 
 	public void closePath() {
-		generalPath.closePath();
+		currentPath.closePath();
+		currentPath = new ExtendedGeneralPath();
+		generalPaths.add(currentPath);
 	}
 
 	public void endPath() {
+		currentPath.closePath();
+		currentPath = new ExtendedGeneralPath();
+		generalPaths.add(currentPath);
 	}
 
 	public void moveTo(Point2D.Double point) {
 		vertices.add(new Vertex(point, 1));
-		center.setLocation(point.getX(), point.getY());
-		generalPath.moveTo((float)point.getX(), (float)point.getY());
+		currentPath.moveTo((float)point.getX(), (float)point.getY());
 	}
 
 	public void lineTo(Point2D.Double point) {
 		vertices.add(new Vertex(point, 2));
-		center.setLocation(point.getX(), point.getY());
-		generalPath.lineTo((float)point.getX(), (float)point.getY());
+		currentPath.lineTo((float)point.getX(), (float)point.getY());
 	}
 
 	public void arcTo(double radiusX, double radiusY, double angle, boolean largeArc, boolean sweep, Point2D.Double point) {
 		vertices.add(new Vertex(point, 3));
-		center.setLocation(point.getX(), point.getY());
-		generalPath.arcTo((float)radiusX, (float)radiusY, (float)angle, largeArc, sweep, (float)point.getX(), (float)point.getY());
+		currentPath.arcTo((float)radiusX, (float)radiusY, (float)angle, largeArc, sweep, (float)point.getX(), (float)point.getY());
 	}
 
 	public void relToAbs(Point2D.Double point) {
 		//TODO controllare
-		point.setLocation(point.getX() + center.getX(), point.getY() + center.getY());
+//		point.setLocation(point.getX() + center.getX(), point.getY() + center.getY());
 	}
 
 	public int command(int index) {
@@ -113,12 +114,12 @@ public class PathStorage {
 		vertex.point.setLocation(point.getX(), point.getY());
 	}
 
-	public void transform(AffineTransform t, int index) {
-		//TODO completare
+	public boolean isDrawing(int command) {
+		return command >= 2 && command <= 3;
 	}
 
 	public boolean isVertex(int command) {
-		return command == 2;
+		return command >= 1 && command <= 3;
 	}
 
 	public boolean isCurve(int command) {
@@ -150,14 +151,28 @@ public class PathStorage {
 	}
 
 	public PathIterator getPathIterator() {
-		return generalPath.getPathIterator(new AffineTransform());
+		return getGeneralPath().getPathIterator(new AffineTransform());
 	}
 
-	public ExtendedGeneralPath getGeneralPath() {
-		return generalPath;
+	public GeneralPath getGeneralPath() {
+		GeneralPath finalPath = new GeneralPath();
+		generalPaths.forEach(p -> finalPath.append(p, false));
+		return finalPath;
 	}
 
-    private class Vertex {
+	public void append(Shape shape, Point2D.Double point) {
+		vertices.add(new Vertex(point, 3));
+		currentPath.append(shape, true);
+	}
+
+	public int lastCommnand() {
+		if (vertices.size() == 0) {
+			return 0;
+		}
+		return vertices.get(vertices.size() - 1).command;
+	}
+
+	private class Vertex {
 		Point2D point;
 		int command;
 

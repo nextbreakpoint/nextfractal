@@ -20,13 +20,13 @@ public class Bounds {
         minY = Double.POSITIVE_INFINITY;
     }
 
-    public Bounds(AffineTransform transform, ExtendedGeneralPath path, double scale, CommandInfo info) {
+    public Bounds(AffineTransform transform, GeneralPath path, double scale, CommandInfo info) {
         if (!boundingRect(transform, path, scale, info)) {
             invalidate();
         }
     }
 
-    private boolean boundingRect(AffineTransform transform, ExtendedGeneralPath path, double scale, CommandInfo info) {
+    private boolean boundingRect(AffineTransform transform, GeneralPath path, double scale, CommandInfo info) {
         double accuracy = scale * 0.1;
 
         Rectangle2D bounds = getRectangle2D(transform, path, accuracy);
@@ -56,28 +56,48 @@ public class Bounds {
         return minX <= maxX && minY <= maxY;
     }
 
-    private Rectangle2D getRectangle2D(AffineTransform transform, ExtendedGeneralPath path, double accuracy) {
+    private Rectangle2D getRectangle2D(AffineTransform transform, GeneralPath path, double accuracy) {
         double scale = Math.sqrt(Math.abs(transform.getDeterminant()));
 
-        double[] coords = new double[2];
+        double minX = 1;
+        double minY = 1;
+        double maxX = 0;
+        double maxY = 0;
+        boolean first = true;
 
-        GeneralPath transformedPath = new GeneralPath();
+        double[] coords = new double[2];
 
         for (PathIterator iterator = path.getPathIterator(transform, accuracy * scale); !iterator.isDone(); iterator.next()) {
             switch (iterator.currentSegment(coords)) {
                 case SEG_MOVETO:
-                    transformedPath.moveTo(coords[0] ,coords[1]);
-                    break;
                 case SEG_LINETO:
-                    transformedPath.lineTo(coords[0] ,coords[1]);
+                    if (first) {
+                        minX = coords[0];
+                        maxX = coords[0];
+                        minY = coords[1];
+                        maxY = coords[1];
+                        first = false;
+                    } else {
+                        if (coords[0] < minX) {
+                            minX = coords[0];
+                        }
+                        if (coords[1] < minY) {
+                            minY = coords[1];
+                        }
+                        if (coords[0] > maxX) {
+                            maxX = coords[0];
+                        }
+                        if (coords[1] > maxY) {
+                            maxY = coords[1];
+                        }
+                    }
                     break;
                 case SEG_CLOSE:
-                    transformedPath.closePath();
                     break;
             }
         }
 
-        return transformedPath.getBounds2D();
+        return new Rectangle2D.Double(minX, minY, maxX - minX, maxY - minY);
     }
 
     public double getMinX() {
