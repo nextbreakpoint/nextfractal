@@ -149,6 +149,10 @@ public class ASTCompiledPath {
 		// line does nothing.
 		renderer.setIndex(renderer.getNextIndex());
 
+		if (renderer.getIndex() == pathStorage.getTotalVertices()) {
+			pathStorage.startNewPath();
+		}
+
 		// If the op is anything other than a CLOSEPOLY then we are opening up a new path sequence.
 		renderer.setClosed(false);
 		renderer.setStop(false);

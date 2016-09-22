@@ -110,22 +110,26 @@ public class ASTPathCommand extends ASTReplacement {
 			if (renderer.getCurrentPath().getPathStorage().getTotalVertices() == 0) {
 				Logger.error("Path commands must be preceeded by at least one path operation", location);
 			}
+
 			renderer.setWantCommand(false);
 			renderer.getCurrentPath().finish(false, renderer);
 
 			//TODO controllare
 
 			commandInfo.tryInit(renderer.getIndex(), renderer.getCurrentPath(), width, this);
-			renderer.getCurrentPath().getPathStorage().startNewPath();
+
 			if (commandInfo.getPathUID() == renderer.getCurrentPath().getPathUID() && commandInfo.getIndex() == renderer.getIndex()) {
 				renderer.getCurrentPath().getCommandInfo().pushBack(commandInfo);
 			} else {
 				renderer.getCurrentPath().getCommandInfo().pushBack(new CommandInfo(renderer.getIndex(), renderer.getCurrentPath(), width, this));
 			}
+
 			info = renderer.getCurrentPath().getCommandInfo().back();
 		}
 
 		renderer.processPathCommand(child, info);
+
+
 	}
 
 	@Override
