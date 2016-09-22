@@ -3,6 +3,7 @@ package com.nextbreakpoint.nextfractal.contextfree.core;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.CommandInfo;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.FlagType;
 
+import java.awt.*;
 import java.awt.geom.*;
 
 import static java.awt.geom.PathIterator.SEG_CLOSE;
@@ -20,13 +21,13 @@ public class Bounds {
         minY = Double.POSITIVE_INFINITY;
     }
 
-    public Bounds(AffineTransform transform, GeneralPath path, double scale, CommandInfo info) {
+    public Bounds(AffineTransform transform, Shape path, double scale, CommandInfo info) {
         if (!boundingRect(transform, path, scale, info)) {
             invalidate();
         }
     }
 
-    private boolean boundingRect(AffineTransform transform, GeneralPath path, double scale, CommandInfo info) {
+    private boolean boundingRect(AffineTransform transform, Shape path, double scale, CommandInfo info) {
         double accuracy = scale * 0.1;
 
         Rectangle2D bounds = getRectangle2D(transform, path, accuracy);
@@ -56,7 +57,7 @@ public class Bounds {
         return minX <= maxX && minY <= maxY;
     }
 
-    private Rectangle2D getRectangle2D(AffineTransform transform, GeneralPath path, double accuracy) {
+    private Rectangle2D getRectangle2D(AffineTransform transform, Shape path, double accuracy) {
         double scale = Math.sqrt(Math.abs(transform.getDeterminant()));
 
         double minX = 1;

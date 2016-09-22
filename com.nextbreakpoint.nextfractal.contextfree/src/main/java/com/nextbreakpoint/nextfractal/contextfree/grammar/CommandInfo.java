@@ -42,7 +42,7 @@ public class CommandInfo {
     private double strokeWidth;
     private PathStorage pathStorage;
 
-    public static final CommandInfo DEFAULT_COMMAND_INFO = new CommandInfo(0, null);
+//    public static final CommandInfo DEFAULT_COMMAND_INFO = new CommandInfo(0, null);
     public static final Long DEFAULT_PATH_UID = new Long(Long.MAX_VALUE);
 
     public CommandInfo() {
@@ -54,14 +54,14 @@ public class CommandInfo {
         pathStorage = null;
     }
 
-    public CommandInfo(CommandInfo info) {
-        this.index = info.index;
-        this.flags = info.flags;
-        this.miterLimit = info.miterLimit;
-        this.strokeWidth = info.strokeWidth;
-        this.pathUID = info.pathUID;
-        this.pathStorage = info.pathStorage;
-    }
+//    public CommandInfo(CommandInfo info) {
+//        this.index = info.index;
+//        this.flags = info.flags;
+//        this.miterLimit = info.miterLimit;
+//        this.strokeWidth = info.strokeWidth;
+//        this.pathUID = info.pathUID;
+//        this.pathStorage = info.pathStorage;
+//    }
 
     public CommandInfo(int index, ASTCompiledPath path, double width, ASTPathCommand pathCommand) {
         init(index, path, width, pathCommand);
@@ -115,7 +115,7 @@ public class CommandInfo {
             }
             this.index = index;
             //TODO rivedere
-            this.pathStorage = path.getPathStorage();
+            pathStorage = (PathStorage) path.getPathStorage().clone();
             pathUID = path.getPathUID();
             strokeWidth = width;
         }

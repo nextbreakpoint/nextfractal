@@ -61,7 +61,7 @@ public class SimpleCanvas {
 
         java.awt.Shape shape;
 
-        GeneralPath path = info.getPathStorage().getGeneralPath();
+        ExtendedGeneralPath path = info.getPathStorage().getGeneralPath();
 
         if ((info.getFlags() & (FlagType.CF_EVEN_ODD.getMask() | FlagType.CF_FILL.getMask())) == (FlagType.CF_EVEN_ODD.getMask() | FlagType.CF_FILL.getMask())) {
             path.setWindingRule(GeneralPath.WIND_EVEN_ODD);

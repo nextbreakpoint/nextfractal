@@ -35,38 +35,21 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
 
-public class PathStorage {
-	private List<ExtendedGeneralPath> generalPaths = new ArrayList<>();
+public class PathStorage implements Cloneable {
 	private ExtendedGeneralPath currentPath = new ExtendedGeneralPath();
 	private List<Vertex> vertices = new ArrayList<>();
 
-	public PathStorage() {
-		generalPaths.add(currentPath);
-	}
-
-	public void clear() {
-		currentPath = new ExtendedGeneralPath();
-		generalPaths.clear();
-		generalPaths.add(currentPath);
-		vertices.clear();
-	}
-
 	public void startNewPath() {
 		currentPath = new ExtendedGeneralPath();
-		generalPaths.add(currentPath);
 		vertices.clear();
 	}
 
 	public void closePath() {
 		currentPath.closePath();
-		currentPath = new ExtendedGeneralPath();
-		generalPaths.add(currentPath);
 	}
 
 	public void endPath() {
 		currentPath.closePath();
-		currentPath = new ExtendedGeneralPath();
-		generalPaths.add(currentPath);
 	}
 
 	public void moveTo(Point2D.Double point) {
@@ -154,10 +137,8 @@ public class PathStorage {
 		return getGeneralPath().getPathIterator(new AffineTransform());
 	}
 
-	public GeneralPath getGeneralPath() {
-		GeneralPath finalPath = new GeneralPath();
-		generalPaths.forEach(p -> finalPath.append(p, false));
-		return finalPath;
+	public ExtendedGeneralPath getGeneralPath() {
+		return currentPath;
 	}
 
 	public void append(Shape shape, Point2D.Double point) {
@@ -170,6 +151,12 @@ public class PathStorage {
 			return 0;
 		}
 		return vertices.get(vertices.size() - 1).command;
+	}
+
+	public Object clone() {
+		PathStorage storage = new PathStorage();
+		storage.currentPath = (ExtendedGeneralPath) currentPath.clone();
+		return storage;
 	}
 
 	private class Vertex {
