@@ -136,7 +136,7 @@ public class ASTReplacement {
 				renderer.processShape(child);
 				break;
 			case op:
-				if (!tr) child.getWorldState().setTransform(null);
+				if (!tr) child.getWorldState().getTransform().setToIdentity();
 			case mixed:
 			case command:
 				replace(child, renderer);
@@ -161,13 +161,13 @@ public class ASTReplacement {
 					if (shapeSpec.getArgSource() == ArgSource.ShapeArgs || shapeSpec.getArgSource() == ArgSource.StackArgs || PrimShape.isPrimShape(shapeSpec.getShapeType())) {
 						if (repType != RepElemType.op) {
 							Logger.error("Error in subpath specification", location);
-						} else {
-							ASTRule rule = driver.getRule(shapeSpec.getShapeType());
-							if (rule == null || rule.isPath()) {
-								Logger.error("Subpath can only refer to a path", location);
-							} else if (rule.getRuleBody().getRepType() != repType.getType()) {
-								Logger.error("Subpath type mismatch error", location);
-							}
+						}
+					} else {
+						ASTRule rule = driver.getRule(shapeSpec.getShapeType());
+						if (rule == null || rule.isPath()) {
+							Logger.error("Subpath can only refer to a path", location);
+						} else if (rule.getRuleBody().getRepType() != repType.getType()) {
+							Logger.error("Subpath type mismatch error", location);
 						}
 					}
 				}

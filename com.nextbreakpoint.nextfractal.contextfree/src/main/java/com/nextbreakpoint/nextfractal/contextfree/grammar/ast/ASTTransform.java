@@ -103,7 +103,7 @@ public class ASTTransform extends ASTReplacement {
 		List<AffineTransform> transforms = new ArrayList<>();
 		List<ASTModification> mods = AST.getTransforms(expHolder, transforms, renderer, false, dummy);
 		Rand64 cloneSeed = renderer.getCurrentSeed();
-		Shape transChild = parent;
+		Shape transChild = (Shape)parent.clone();
 		boolean opsOnly = body.getRepType() == RepElemType.op.getType();
 		if (opsOnly && !tr) {
 			transChild.getWorldState().getTransform().setToIdentity();

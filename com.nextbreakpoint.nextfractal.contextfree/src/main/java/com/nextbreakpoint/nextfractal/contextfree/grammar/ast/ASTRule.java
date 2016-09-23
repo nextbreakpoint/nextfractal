@@ -60,25 +60,14 @@ public class ASTRule extends ASTReplacement implements Comparable<ASTRule> {
 		this.weight = 1.0f;
 		this.weightType = WeightType.NoWeight;
 		this.cachedPath = null;
-	}
-
-	public ASTRule(CFDGDriver driver, int nameIndex) {
-		super(driver, null, RepElemType.rule, null);
-		ruleBody = new ASTRepContainer(driver);
-		this.nameIndex = nameIndex;
-		this.isPath = true;
-		this.weight = 1.0f;
-		this.weightType = WeightType.NoWeight;
-		this.cachedPath = null;
 
 		PrimShape shape = PrimShape.getShapeMap().get(nameIndex);
-		if (shape.getTotalVertices() > 0) {
+		if (shape != null && shape.getTotalVertices() > 0) {
 			if (nameIndex != PrimShapeType.circleType.getType()) {
 				double[] coords = new double[6];
 				int cmd;
-				PathIterator iterator = shape.getPathIterator();
-				while (!isStop(cmd = iterator.currentSegment(coords))) {
-					if (isVertex(cmd)) {
+				for (PathIterator iterator = shape.getPathIterator(); !iterator.isDone(); iterator.next()) {
+					if (isVertex(cmd = iterator.currentSegment(coords))) {
 						ASTExpression a = new ASTCons(location, new ASTReal(coords[0], location), new ASTReal(coords[1], location));
 						ASTPathOp op = new ASTPathOp(driver, isMoveTo(cmd) ? PathOp.MOVETO.name() : PathOp.LINETO.name(), a, location);
 						getRuleBody().getBody().add(op);
@@ -107,10 +96,6 @@ public class ASTRule extends ASTReplacement implements Comparable<ASTRule> {
 
 	private boolean isVertex(int cmd) {
 		return cmd >= PathIterator.SEG_MOVETO && cmd < PathIterator.SEG_CLOSE;
-	}
-
-	private boolean isStop(int cmd) {
-		return cmd == PathIterator.SEG_CLOSE;
 	}
 
 	public ASTRepContainer getRuleBody() {

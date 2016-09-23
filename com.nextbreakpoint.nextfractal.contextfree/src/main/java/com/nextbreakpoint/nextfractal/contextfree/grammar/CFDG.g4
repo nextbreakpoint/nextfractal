@@ -807,9 +807,9 @@ transHeader returns [ASTTransform result]
         	driver.pushRepContainer($result.getBody());
         }
         |
-        CLONE e=exp2 {
+        c=clone e=exp2 {
         	ASTExpression exp = $e.result;
-        	$result = new ASTTransform(driver, exp, $CLONE);
+        	$result = new ASTTransform(driver, exp, $c.start);
         	driver.pushRepContainer($result.getBody());
         	$result.setClone(true);
         }
@@ -1323,7 +1323,14 @@ definition returns [ASTDefine result]
 
 modtype returns [String result]
 	:
-	t=(TIME | TIMESCALE | X | Y | Z | ROTATE | SIZE | SKEW | FLIP | HUE | SATURATION | BRIGHTNESS | ALPHA | TARGETHUE | TARGETSATURATION | TARGETBRIGHTNESS | TARGETALPHA | X1 | X2 | Y1 | Y2 | RX | RY | WIDTH) {
+	t=(TIME | TIMESCALE | X | Y | Z | ROTATE | SIZE | SKEW | FLIP | HUE | SATURATION | BRIGHTNESS | ALPHA | TARGETHUE | TARGETSATURATION | TARGETBRIGHTNESS | TARGETALPHA | X1 | X2 | Y1 | Y2 | RX | RY | WIDTH | TRANSFORM) {
+	    $result = $t.getText();
+	}
+	;
+
+clone returns [String result]
+	:
+	t=CLONE {
 	    $result = $t.getText();
 	}
 	;
@@ -1638,7 +1645,7 @@ USER_PATHOP
 
 CLONE 
 	:
-	'CLONE'
+	'clone'
 	;
 
 LET 
@@ -1663,7 +1670,7 @@ FLOAT
 
 USER_STRING
 	: 
-	('a'..'z'|'A'..'Z'|'_'|'\u0200'..'\u0301'|'\u0303'..'\u0377') (('a'..'z'|'A'..'Z'|':'|'0'..'9'|'_'|'\u0200'..'\u0301'|'\u0303'..'\u0377')|('\u0302'('\u0200'..'\u0260'|'\u0262'..'\u0377')))* 
+	('a'..'z'|'A'..'Z'|'_'|'\u0200'..'\u0301'|'\u0303'..'\u0377') (('a'..'z'|'A'..'Z'|'0'..'9'|'_'|'::'|'\u0200'..'\u0301'|'\u0303'..'\u0377') | ('\u0302'('\u0200'..'\u0260'|'\u0262'..'\u0377')))*
 	;
 
 USER_QSTRING	
@@ -1678,7 +1685,7 @@ USER_FILENAME
 
 USER_ARRAYNAME 
 	: 
-	('a'..'z'|'A'..'Z'|'_'|'\u0200'..'\u0301'|'\u0303'..'\u0377') (('a'..'z'|'A'..'Z'|'0'..'9'|'_'|'\u0200'..'\u0301'|'\u0303'..'\u0377')|('\u0302'('\u0200'..'\u0260'|'\u0262'..'\u0377')))* 
+	('a'..'z'|'A'..'Z'|'_'|'\u0200'..'\u0301'|'\u0303'..'\u0377') (('a'..'z'|'A'..'Z'|'0'..'9'|'_'|'\u0200'..'\u0301'|'\u0303'..'\u0377') | ('\u0302'('\u0200'..'\u0260'|'\u0262'..'\u0377')))*
 	;
 
 COMMENT

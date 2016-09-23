@@ -122,7 +122,7 @@ public class AST {
     }
 
     public static void processSymmSpec(List<AffineTransform> syms, AffineTransform transform, boolean tiled, List<Double> data, Token location) {
-        if (data == null) {
+        if (data == null || data.size() == 0) {
             return;
         }
 

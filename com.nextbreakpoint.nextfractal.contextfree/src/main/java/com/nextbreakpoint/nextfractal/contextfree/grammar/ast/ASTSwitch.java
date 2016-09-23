@@ -90,7 +90,7 @@ public class ASTSwitch extends ASTReplacement {
 	@Override
 	public void traverse(Shape parent, boolean tr, CFDGRenderer renderer) {
 		double[] caveValue = new double[1];
-		if (switchExp.evaluate(caveValue, 1) != 1) {
+		if (switchExp.evaluate(caveValue, 1, renderer) != 1) {
 			Logger.error("Error evaluating switch selector", location);
 			return;
 		}

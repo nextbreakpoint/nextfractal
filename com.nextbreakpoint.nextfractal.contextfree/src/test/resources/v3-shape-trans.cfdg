@@ -1,0 +1,17 @@
+CFDG3
+
+startshape Foo
+
+path allenKey {
+  path CIRCLE[]
+  transform [s 0.35] {
+    MOVETO(cos(30), sin(30))
+    loop 5 [r 60] LINETO(0, 1)
+  }
+  FILL (CF::EvenOdd) []
+}
+
+shape Foo {
+    allenKey []
+	Foo [x 0.8 size 0.8 rotate 40.0 y 0.8 b 0.2 h 0.1 sat 0.1]
+}
