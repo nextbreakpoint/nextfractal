@@ -106,7 +106,7 @@ public class NextFractalApp extends Application {
 
 		printPlugins();
 
-		Try<Session, Exception> maybeSession = createFractalSession(initialPluginId).onSuccess(this::sessionCreated).execute();
+		Try<Session, Exception> maybeSession = createSession(initialPluginId).onSuccess(this::sessionCreated).execute();
 
 		maybeSession.ifPresent(session -> session.setExportService(exportService));
 
@@ -251,11 +251,7 @@ public class NextFractalApp extends Application {
 	}
 
 	private void sessionCreated(Optional<Object> session) {
-		logger.fine("Session created");
-	}
-
-	private void handleException(Exception e) {
-		e.printStackTrace();
+		logger.info("Session created");
 	}
 
 	private void loadStyleSheets(Scene scene) {
@@ -266,7 +262,7 @@ public class NextFractalApp extends Application {
 	}
 
 	private Try<String, Exception> tryLoadStyleSheet(String resourceName) {
-		return Try.of(() -> getClass().getResource(resourceName).toExternalForm()).onFailure(this::handleException);
+		return Try.of(() -> getClass().getResource(resourceName).toExternalForm()).onFailure(e -> logger.log(Level.WARNING, "Cannot load style sheet " + resourceName, e));
 	}
 
 //	private void setup() {
@@ -323,7 +319,7 @@ public class NextFractalApp extends Application {
 				.onFailure(e -> logger.log(Level.WARNING, "Cannot create renderer panel with pluginId " + pluginId, e));
 	}
 
-	private Try<Session, Exception> createFractalSession(String pluginId) {
+	private Try<Session, Exception> createSession(String pluginId) {
 		return selectPlugin(pluginId, plugin -> Objects.requireNonNull(plugin.createSession()))
 				.onFailure(e -> logger.log(Level.WARNING, "Cannot create session with pluginId " + pluginId, e));
 	}
