@@ -51,5 +51,9 @@
 			<groupId>com.nextbreakpoint</groupId>
 			<artifactId>com.nextbreakpoint.freeimage4java</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.nextbreakpoint</groupId>
+			<artifactId>com.nextbreakpoint.try</artifactId>
+		</dependency>
 	</dependencies>
 </project>

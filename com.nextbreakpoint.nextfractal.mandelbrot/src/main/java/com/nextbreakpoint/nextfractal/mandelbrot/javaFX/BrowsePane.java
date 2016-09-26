@@ -519,7 +519,7 @@ public class BrowsePane extends BorderPane {
 	}
 
 	private String getDefaultBrowserDir() {
-		String defaultBrowserDir = System.getProperty("mandelbrot.browser.default", "#[user.home]}");
+		String defaultBrowserDir = System.getProperty("mandelbrot.browser.default", "#[user.home]");
 		String userHome = System.getProperty("user.home");
 		String userDir = System.getProperty("user.dir");
 		defaultBrowserDir = defaultBrowserDir.replace("#[user.home]", userHome);

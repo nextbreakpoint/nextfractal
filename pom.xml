@@ -19,6 +19,7 @@
 		<commonmath3.version>3.5</commonmath3.version>
 		<ffmpeg4java.version>3.1.1-1.0</ffmpeg4java.version>
 		<freeimage4java.version>3.18.0-1.0</freeimage4java.version>
+		<try.version>2.0.3</try.version>
 		<springboot.version>1.2.3.RELEASE</springboot.version>
 		<junit4.version>4.11</junit4.version>
 		<mockito.version>1.9.5</mockito.version>
@@ -84,6 +85,11 @@
 				<groupId>com.nextbreakpoint</groupId>
 				<artifactId>com.nextbreakpoint.freeimage4java</artifactId>
 				<version>${freeimage4java.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.nextbreakpoint</groupId>
+				<artifactId>com.nextbreakpoint.try</artifactId>
+				<version>${try.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.mockito</groupId>
