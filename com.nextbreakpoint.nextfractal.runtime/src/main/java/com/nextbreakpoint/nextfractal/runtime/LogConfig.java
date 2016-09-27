@@ -24,15 +24,12 @@
  */
 package com.nextbreakpoint.nextfractal.runtime;
 
-import java.io.IOException;
+import com.nextbreakpoint.Try;
+
 import java.util.logging.LogManager;
 
 public class LogConfig {
 	public LogConfig() {
-		try {
-			LogManager.getLogManager().readConfiguration(getClass().getResourceAsStream("/logging.properties"));
-		} catch (SecurityException | IOException e) {
-			e.printStackTrace(System.err);
-		}
+		Try.of(() -> LogManager.getLogManager().readConfiguration(getClass().getResourceAsStream("/logging.properties")), null).ifFailure(e -> e.printStackTrace(System.err));
 	}
 }

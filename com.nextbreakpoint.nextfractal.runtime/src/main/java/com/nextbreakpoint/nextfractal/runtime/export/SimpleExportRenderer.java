@@ -24,8 +24,9 @@
  */
 package com.nextbreakpoint.nextfractal.runtime.export;
 
+import java.io.IOException;
 import java.nio.IntBuffer;
-import java.util.ServiceLoader;
+import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.Executors;
@@ -34,73 +35,69 @@ import java.util.concurrent.ThreadFactory;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.nextbreakpoint.nextfractal.core.FractalFactory;
+import com.nextbreakpoint.Try;
 import com.nextbreakpoint.nextfractal.core.ImageGenerator;
 import com.nextbreakpoint.nextfractal.core.export.ExportJob;
 import com.nextbreakpoint.nextfractal.core.export.ExportJobState;
 import com.nextbreakpoint.nextfractal.core.export.ExportRenderer;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererFactory;
 
+import static com.nextbreakpoint.nextfractal.runtime.Plugins.selectPlugin;
+
 public class SimpleExportRenderer implements ExportRenderer {
 	private static final Logger logger = Logger.getLogger(SimpleExportRenderer.class.getName());
-	private ExecutorCompletionService<ExportJob> service;
-	private ThreadFactory threadFactory;
-	private RendererFactory renderFactory;
-	
-	/**
-	 * @param threadFactory
-	 * @param renderFactory
-	 */
+
+	private static final int MAX_THREADS = 5;
+
+	private final ThreadFactory threadFactory;
+	private final RendererFactory renderFactory;
+
+	private final ExecutorCompletionService<ExportJob> service;
+
 	public SimpleExportRenderer(ThreadFactory threadFactory, RendererFactory renderFactory) {
-		this.threadFactory = threadFactory;
-		this.renderFactory = renderFactory;
-		service = new ExecutorCompletionService<>(Executors.newFixedThreadPool(5, threadFactory));
+		this.threadFactory = Objects.requireNonNull(threadFactory);
+		this.renderFactory = Objects.requireNonNull(renderFactory);
+		service = new ExecutorCompletionService<>(Executors.newFixedThreadPool(MAX_THREADS, threadFactory));
 	}
 	
 	@Override
 	public Future<ExportJob> dispatch(ExportJob job) {
-		return service.submit(new ProcessJobCallable(job));
+		return service.submit(new ProcessExportJob(job));
 	}
 	
 	private ImageGenerator createImageGenerator(ExportJob job) {
-		final ServiceLoader<? extends FractalFactory> plugins = ServiceLoader.load(FractalFactory.class);
-		for (FractalFactory plugin : plugins) {
-			try {
-				if (job.getPluginId().equals(plugin.getId())) {
-					return plugin.createImageGenerator(threadFactory, renderFactory, job.getTile(), false);
-				}
-			} catch (Exception e) {
-			}
-		}
-		return null;
+		return selectPlugin(job.getPluginId(), plugin -> plugin.createImageGenerator(threadFactory, renderFactory, job.getTile(), false)).orElse(null);
 	}
 
-	private class ProcessJobCallable implements Callable<ExportJob> {
-		private ExportJob job;
+	private class ProcessExportJob implements Callable<ExportJob> {
+		private final ExportJob job;
 		
-		public ProcessJobCallable(ExportJob job) {
-			this.job = job;
+		public ProcessExportJob(ExportJob job) {
+			this.job = Objects.requireNonNull(job);
 		}
 
 		@Override
 		public ExportJob call() throws Exception {
-			try {
-				logger.fine(job.toString());
-				ImageGenerator generator = createImageGenerator(job);
-				Object data = job.getProfile().getData();
-				IntBuffer pixels = generator.renderImage(data);
-				if (generator.isInterrupted()) {
-					job.setState(ExportJobState.INTERRUPTED);
-				} else {
-					job.writePixels(generator.getSize(), pixels);
-					job.setState(ExportJobState.COMPLETED);
-				}
-			} catch (Throwable e) {
-				logger.log(Level.WARNING, "Failed to render tile", e);
-				job.setError(e);
-				job.setState(ExportJobState.INTERRUPTED);
-			}
-			return job;
+			return Try.of(() -> processJob(), job).onFailure(e -> processError(e)).get();
+		}
+
+		private void processError(Throwable e) {
+			logger.log(Level.WARNING, "Failed to render tile", e);
+			job.setError(e);
+			job.setState(ExportJobState.INTERRUPTED);
+		}
+
+		private void processJob() throws IOException {
+			logger.fine(job.toString());
+			Object data = job.getProfile().getData();
+			ImageGenerator generator = createImageGenerator(job);
+			IntBuffer pixels = generator.renderImage(data);
+			if (generator.isInterrupted()) {
+                job.setState(ExportJobState.INTERRUPTED);
+            } else {
+                job.writePixels(generator.getSize(), pixels);
+                job.setState(ExportJobState.COMPLETED);
+            }
 		}
 	}
 }

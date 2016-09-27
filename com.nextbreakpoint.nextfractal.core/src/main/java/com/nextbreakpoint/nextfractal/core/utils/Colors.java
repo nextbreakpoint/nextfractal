@@ -35,7 +35,7 @@ public class Colors {
 	/**
 	 * Extracts the alpha component.
 	 * 
-	 * @param rgb the color in rgb format.
+	 * @param argb the color in argb format.
 	 * @return the alpha component.
 	 */
 	public static int getAlpha(final int argb) {

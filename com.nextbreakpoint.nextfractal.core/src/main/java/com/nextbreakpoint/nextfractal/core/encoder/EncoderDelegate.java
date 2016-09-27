@@ -36,5 +36,5 @@ public interface EncoderDelegate {
 	/**
 	 * @param progress
 	 */
-	public void didProgressChanged(float i);
+	public void didProgressChanged(float progress);
 }

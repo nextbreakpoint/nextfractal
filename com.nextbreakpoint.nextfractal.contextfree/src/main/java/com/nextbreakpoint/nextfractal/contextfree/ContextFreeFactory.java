@@ -43,7 +43,7 @@ public class ContextFreeFactory implements FractalFactory {
 	}
 	
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.FractalFactory#createSession(com.nextbreakpoint.nextfractal.ExportService)
+	 * @see com.nextbreakpoint.nextfractal.core.FractalFactory#createSession()
 	 */
 	@Override
 	public Session createSession() {

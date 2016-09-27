@@ -184,7 +184,7 @@ public abstract class NodeObject {
 	/**
 	 * Sets the nodeClass.
 	 * 
-	 * @param the nodeClass.
+	 * @param nodeClass
 	 */
 	protected void setNodeClass(final String nodeClass) {
 		this.nodeClass = nodeClass;
@@ -200,9 +200,9 @@ public abstract class NodeObject {
 	}
 
 	/**
-	 * Sets the nodeClass.
+	 * Sets the nodeLabel.
 	 * 
-	 * @param the nodeClass.
+	 * @param nodeLabel
 	 */
 	protected void setNodeLabel(final String nodeLabel) {
 		this.nodeLabel = nodeLabel;
@@ -290,9 +290,9 @@ public abstract class NodeObject {
 	 * 
 	 * @param index the child to remove.
 	 */
-	public void removeChildNode(final int nodeIndex) {
-		final NodeObject node = getChildList().get(nodeIndex);
-		getChildList().remove(nodeIndex);
+	public void removeChildNode(final int index) {
+		final NodeObject node = getChildList().get(index);
+		getChildList().remove(index);
 		node.nodeRemoved();
 		node.setParentNode(null);
 	}

@@ -26,6 +26,7 @@ package com.nextbreakpoint.nextfractal.core.export;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
@@ -40,10 +41,8 @@ public abstract class AbstractExportService implements ExportService {
 	private final ScheduledExecutorService executor;
 	
 	public AbstractExportService(ThreadFactory threadFactory) {
-		executor = Executors.newSingleThreadScheduledExecutor(threadFactory);
-		executor.scheduleWithFixedDelay(() -> {
-			lockAndUpdateSessions();
-		}, 1000, 1000, TimeUnit.MILLISECONDS);
+		executor = Executors.newSingleThreadScheduledExecutor(Objects.requireNonNull(threadFactory));
+		executor.scheduleWithFixedDelay(() -> lockAndUpdateSessions(), 1000, 1000, TimeUnit.MILLISECONDS);
 	}
 
 //	public void shutdown() {

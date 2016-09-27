@@ -30,7 +30,7 @@ import com.nextbreakpoint.nextfractal.core.session.SessionState;
 
 public class ExportSessionHolder {
 	private static final Logger logger = Logger.getLogger(ExportSessionHolder.class.getName());
-	private ExportSession session;
+	private final ExportSession session;
 
 	protected ExportSessionHolder(ExportSession session) {
 		this.session = session;

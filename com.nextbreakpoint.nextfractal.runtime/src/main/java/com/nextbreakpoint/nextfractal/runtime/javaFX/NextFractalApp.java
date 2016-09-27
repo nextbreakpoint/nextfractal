@@ -27,12 +27,8 @@ package com.nextbreakpoint.nextfractal.runtime.javaFX;
 import java.io.InputStream;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.ServiceLoader;
-import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 import com.nextbreakpoint.Try;
 import javafx.application.Application;
@@ -61,6 +57,9 @@ import com.nextbreakpoint.nextfractal.core.session.SessionListener;
 import com.nextbreakpoint.nextfractal.core.utils.DefaultThreadFactory;
 import com.nextbreakpoint.nextfractal.runtime.export.SimpleExportRenderer;
 import com.nextbreakpoint.nextfractal.runtime.export.SimpleExportService;
+
+import static com.nextbreakpoint.nextfractal.runtime.Plugins.pluginsStream;
+import static com.nextbreakpoint.nextfractal.runtime.Plugins.selectPlugin;
 
 public class NextFractalApp extends Application {
 	private static Logger logger = Logger.getLogger(NextFractalApp.class.getName());
@@ -292,21 +291,8 @@ public class NextFractalApp extends Application {
 //		usrPathsField.set(null, newPaths);
 //	}
 
-	private ServiceLoader<FractalFactory> loadPlugins() {
-		return ServiceLoader.load(FractalFactory.class);
-	}
-
-	private Stream<? extends FractalFactory> pluginsStream() {
-		return StreamSupport.stream(loadPlugins().spliterator(), false);
-	}
-
 	private void printPlugins() {
-		loadPlugins().forEach(plugin -> logger.fine("Found plugin " + plugin.getId()));
-	}
-
-	private <T> Try<T, Exception> selectPlugin(String pluginId, Function<FractalFactory, T> action) {
-		return pluginsStream().filter(plugin -> pluginId.equals(plugin.getId())).findFirst()
-				.map(plugin -> Try.of(() -> action.apply(plugin))).orElse(Try.failure(new Exception("Plugin not found")));
+		pluginsStream().forEach(plugin -> logger.fine("Found plugin " + plugin.getId()));
 	}
 
 	private Try<Pane, Exception> createEditorPane(Session session, String pluginId) {

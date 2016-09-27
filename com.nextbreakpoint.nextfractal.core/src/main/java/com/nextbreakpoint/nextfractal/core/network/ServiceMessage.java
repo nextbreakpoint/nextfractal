@@ -63,7 +63,7 @@ public abstract class ServiceMessage implements Serializable {
 	}
 
 	/**
-	 * @param messageTpe
+	 * @param messageType
 	 * @return
 	 */
 	public static final String decodeMessageType(final int messageType) {
