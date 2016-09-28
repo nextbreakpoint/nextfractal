@@ -25,11 +25,21 @@
 package com.nextbreakpoint.nextfractal.runtime;
 
 import com.nextbreakpoint.Try;
+import com.nextbreakpoint.nextfractal.core.utils.Block;
 
+import java.io.InputStream;
 import java.util.logging.LogManager;
 
 public class LogConfig {
 	public LogConfig() {
-		Try.of(() -> LogManager.getLogManager().readConfiguration(getClass().getResourceAsStream("/logging.properties")), null).ifFailure(e -> e.printStackTrace(System.err));
+		Try.of(readConfiguration().asCallable(null)).ifFailure(e -> e.printStackTrace(System.err));
+	}
+
+	private Block readConfiguration() {
+		return () -> LogManager.getLogManager().readConfiguration(getResourceAsStream());
+	}
+
+	private InputStream getResourceAsStream() {
+		return getClass().getResourceAsStream("/logging.properties");
 	}
 }

@@ -74,11 +74,12 @@ public class SimpleExportRenderer implements ExportRenderer {
 		
 		public ProcessExportJob(ExportJob job) {
 			this.job = Objects.requireNonNull(job);
+			job.setState(ExportJobState.READY);
 		}
 
 		@Override
 		public ExportJob call() throws Exception {
-			return Try.of(() -> processJob(), job).onFailure(e -> processError(e)).get();
+			return Try.of(() -> processJob(job)).onFailure(e -> processError(e)).get();
 		}
 
 		private void processError(Throwable e) {
@@ -87,7 +88,7 @@ public class SimpleExportRenderer implements ExportRenderer {
 			job.setState(ExportJobState.INTERRUPTED);
 		}
 
-		private void processJob() throws IOException {
+		private ExportJob processJob(ExportJob job) throws IOException {
 			logger.fine(job.toString());
 			Object data = job.getProfile().getData();
 			ImageGenerator generator = createImageGenerator(job);
@@ -98,6 +99,7 @@ public class SimpleExportRenderer implements ExportRenderer {
                 job.writePixels(generator.getSize(), pixels);
                 job.setState(ExportJobState.COMPLETED);
             }
+            return job;
 		}
 	}
 }

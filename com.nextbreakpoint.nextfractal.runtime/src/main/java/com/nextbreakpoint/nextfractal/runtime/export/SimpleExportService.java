@@ -76,7 +76,8 @@ public class SimpleExportService extends AbstractExportService {
 				holder.setState(SessionState.STOPPED);
 			}
 		} else {
-			getTasks(session).map(tasks -> removeTerminatedTasks(tasks)).filter(tasks -> tasks.isEmpty()).ifPresent(tasks -> updateTerminatedSession(holder, session));
+			getTasks(session).map(tasks -> removeTerminatedTasks(tasks))
+					.filter(tasks -> tasks.isEmpty()).ifPresent(tasks -> updateTerminatedSession(holder, session));
 		}
 		session.updateProgress();
 	}
@@ -92,8 +93,8 @@ public class SimpleExportService extends AbstractExportService {
 	}
 
 	private void updateCompletedSession(ExportSessionHolder holder, ExportSession session) {
-		Try.of(() -> encodeData(session), null)
-                .onSuccess(v -> holder.setState(SessionState.COMPLETED))
+		Try.of(() -> encodeData(session))
+                .onSuccess(s -> holder.setState(SessionState.COMPLETED))
                 .onFailure(e -> holder.setState(SessionState.FAILED))
                 .execute();
 	}
@@ -116,10 +117,13 @@ public class SimpleExportService extends AbstractExportService {
 	}
 
 	private void dispatchJob(ExportSession session, ExportJob job) {
-		job.setState(ExportJobState.READY);
-		List<Future<ExportJob>> tasks = getOrCreateTasks(session);
-		futures.put(session.getSessionId(), tasks);
+		List<Future<ExportJob>> tasks = getTasks(session).orElse(new ArrayList<>());
+		updateTasks(session, tasks);
 		tasks.add(exportRenderer.dispatch(job));
+	}
+
+	private void updateTasks(ExportSession session, List<Future<ExportJob>> tasks) {
+		futures.put(session.getSessionId(), tasks);
 	}
 
 	private void removeTasks(ExportSession session) {
@@ -130,11 +134,7 @@ public class SimpleExportService extends AbstractExportService {
 		return Optional.ofNullable(futures.get(session.getSessionId()));
 	}
 
-	private List<Future<ExportJob>> getOrCreateTasks(ExportSession session) {
-		return getTasks(session).orElse(new ArrayList<>());
-	}
-
-	private void encodeData(ExportSession session) throws IOException, EncoderException {
+	private ExportSession encodeData(ExportSession session) throws IOException, EncoderException {
 		try (RandomAccessFile raf = new RandomAccessFile(session.getTmpFile(), "r")) {
 			final int frameRate = (int)Math.rint(1 / session.getFrameRate());
 			final int imageWidth = session.getSize().getWidth();
@@ -142,9 +142,11 @@ public class SimpleExportService extends AbstractExportService {
 			final double stopTime = session.getStopTime();
 			final double startTime = session.getStartTime();
 			final int frameCount = (int) Math.floor((stopTime - startTime) * frameRate);
-			session.getEncoder().encode(new RAFEncoderContext(raf, imageWidth, imageHeight, frameRate, frameCount), session.getFile());
+			RAFEncoderContext context = new RAFEncoderContext(raf, imageWidth, imageHeight, frameRate, frameCount);
+			session.getEncoder().encode(context, session.getFile());
 		} finally {
 			session.getTmpFile().delete();
 		}
+		return session;
 	}
 }

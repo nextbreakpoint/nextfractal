@@ -70,7 +70,7 @@ public abstract class AbstractImageEncoder implements Encoder {
 		FIBITMAP dib = null;
 		try {
 			if (AbstractImageEncoder.logger.isLoggable(Level.FINE)) {
-				AbstractImageEncoder.logger.fine("Starting encoding...");
+				AbstractImageEncoder.logger.fine("Start encoding...");
 			}
 			long time = System.currentTimeMillis();
 			int channels = isAlphaSupported() ? 4 : 3;
@@ -100,7 +100,7 @@ public abstract class AbstractImageEncoder implements Encoder {
 				FreeImage4Java.FreeImage_Save(getFormat(getFormatName()), dib, path.getAbsolutePath(), 0);
 				time = System.currentTimeMillis() - time;
 				if (AbstractImageEncoder.logger.isLoggable(Level.INFO)) {
-					AbstractImageEncoder.logger.info("Profile exported: elapsed time " + String.format("%3.2f", time / 1000.0d) + "s");
+					AbstractImageEncoder.logger.info("Image exported: elapsed time " + String.format("%3.2f", time / 1000.0d) + "s");
 				}
 				if (delegate != null) {
 					delegate.didProgressChanged(100f);

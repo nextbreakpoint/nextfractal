@@ -74,7 +74,7 @@ public abstract class AbstractVideoEncoder implements Encoder {
 		SWIGTYPE_p_SwsContext sws_context = null;
 		try {
 			if (AbstractVideoEncoder.logger.isLoggable(Level.FINE)) {
-				AbstractVideoEncoder.logger.fine("Starting encoding...");
+				AbstractVideoEncoder.logger.fine("Start encoding...");
 			}
 			long time = System.currentTimeMillis();
 			int fps = context.getFrameRate();
@@ -223,7 +223,7 @@ public abstract class AbstractVideoEncoder implements Encoder {
 				}
 				time = System.currentTimeMillis() - time;
 				if (AbstractVideoEncoder.logger.isLoggable(Level.INFO)) {
-					AbstractVideoEncoder.logger.info("Profile exported: elapsed time " + String.format("%3.2f", time / 1000.0d) + "s");
+					AbstractVideoEncoder.logger.info("Video exported: elapsed time " + String.format("%3.2f", time / 1000.0d) + "s");
 				}
 				if (delegate != null) {
 					delegate.didProgressChanged(100f);
