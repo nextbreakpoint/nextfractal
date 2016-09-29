@@ -24,9 +24,6 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.Pane;
@@ -67,52 +64,32 @@ public class GridView extends Pane {
 		}
 		
 		addEventFilter(ScrollEvent.SCROLL_STARTED,
-			new EventHandler<ScrollEvent>() {	
-				public void handle(final ScrollEvent scrollEvent) {
-					scrollCells(scrollEvent.getDeltaX(), scrollEvent.getDeltaY());
-				}
-			});
+				scrollEvent -> scrollCells(scrollEvent.getDeltaX(), scrollEvent.getDeltaY()));
 		
 		addEventFilter(ScrollEvent.SCROLL_FINISHED,
-			new EventHandler<ScrollEvent>() {
-				public void handle(final ScrollEvent scrollEvent) {
-					scrollCells(scrollEvent.getDeltaX(), scrollEvent.getDeltaY());
-				}
-			});
+				scrollEvent -> scrollCells(scrollEvent.getDeltaX(), scrollEvent.getDeltaY()));
 		
 		addEventFilter(ScrollEvent.SCROLL,
-			new EventHandler<ScrollEvent>() {
-				public void handle(final ScrollEvent scrollEvent) {
-					scrollCells(scrollEvent.getDeltaX(), scrollEvent.getDeltaY());
-				}
-			});
+				scrollEvent -> scrollCells(scrollEvent.getDeltaX(), scrollEvent.getDeltaY()));
 
 		addEventFilter(MouseEvent.MOUSE_CLICKED,
-				new EventHandler<MouseEvent>() {
-					public void handle(final MouseEvent mouseEvent) {
-						selectedCol = (int)Math.abs((mouseEvent.getX() - offsetX) / cellSize);
-						selectedRow = (int)Math.abs((mouseEvent.getY() - offsetY) / cellSize);
-						if (delegate != null) {
-							delegate.didSelectionChange(GridView.this, selectedRow, selectedCol);
-						}
-					}
-				});
+				mouseEvent -> {
+                    selectedCol = (int)Math.abs((mouseEvent.getX() - offsetX) / cellSize);
+                    selectedRow = (int)Math.abs((mouseEvent.getY() - offsetY) / cellSize);
+                    if (delegate != null) {
+                        delegate.didSelectionChange(GridView.this, selectedRow, selectedCol);
+                    }
+                });
 
-		widthProperty().addListener(new ChangeListener<java.lang.Number>() {
-			@Override
-			public void changed(ObservableValue<? extends java.lang.Number> observable, java.lang.Number oldValue, java.lang.Number newValue) {
-				resetScroll();
-				updateRows();
-			}
-		});
+		widthProperty().addListener((observable, oldValue, newValue) -> {
+            resetScroll();
+            updateRows();
+        });
 		
-		heightProperty().addListener(new ChangeListener<java.lang.Number>() {
-			@Override
-			public void changed(ObservableValue<? extends java.lang.Number> observable, java.lang.Number oldValue, java.lang.Number newValue) {
-				resetScroll();
-				updateRows();
-			}
-		});
+		heightProperty().addListener((observable, oldValue, newValue) -> {
+            resetScroll();
+            updateRows();
+        });
 	}
 	
 	private void updateRows() {

@@ -25,7 +25,6 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -40,16 +39,11 @@ import java.util.prefs.Preferences;
 
 import javafx.animation.AnimationTimer;
 import javafx.animation.TranslateTransition;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.stage.DirectoryChooser;
 import javafx.util.Duration;
 
@@ -166,17 +160,11 @@ public class BrowsePane extends BorderPane {
 		
 		setCenter(box);
 		
-		closeButton.setOnMouseClicked(e -> {
-			hide();
-		});
+		closeButton.setOnMouseClicked(e -> hide());
 		
-		chooseButton.setOnMouseClicked(e -> {
-			doChooseFolder(grid);
-		});
+		chooseButton.setOnMouseClicked(e -> doChooseFolder(grid));
 		
-		reloadButton.setOnMouseClicked(e -> {
-			loadFiles(statusLabel, grid, currentFolder);
-		});
+		reloadButton.setOnMouseClicked(e -> loadFiles(statusLabel, grid, currentFolder));
 		
 //		widthProperty().addListener(new ChangeListener<java.lang.Number>() {
 //			@Override
@@ -206,13 +194,10 @@ public class BrowsePane extends BorderPane {
 		tt.setFromX(this.getTranslateX());
 		tt.setToX(this.getWidth());
 		tt.setNode(this);
-		tt.setOnFinished(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent event) {
-				setDisable(false);
-				pathProperty.setValue(currentDir.getAbsolutePath());
-			}
-		});
+		tt.setOnFinished(event -> {
+            setDisable(false);
+            pathProperty.setValue(currentDir.getAbsolutePath());
+        });
 		tt.play();
 	}
 	
@@ -221,12 +206,7 @@ public class BrowsePane extends BorderPane {
 		tt.setFromX(this.getTranslateX());
 		tt.setToX(0);
 		tt.setNode(this);
-		tt.setOnFinished(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent event) {
-				setDisable(true);
-			}
-		});
+		tt.setOnFinished(event -> setDisable(true));
 		tt.play();
 	}
 
@@ -311,12 +291,7 @@ public class BrowsePane extends BorderPane {
 
 		prefs.put("mandelbrot.browser.default", folder.getAbsolutePath()); 
 		
-		File[] files = folder.listFiles(new FilenameFilter() {
-			@Override
-			public boolean accept(File dir, String name) {
-				return name.endsWith(".m");
-			}
-		});
+		File[] files = folder.listFiles((dir, name) -> name.endsWith(".m"));
 		return files;
 	}
 

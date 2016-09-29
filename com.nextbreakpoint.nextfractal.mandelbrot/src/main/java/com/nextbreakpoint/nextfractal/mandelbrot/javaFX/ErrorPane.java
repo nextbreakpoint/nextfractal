@@ -25,10 +25,7 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
 
 import javafx.animation.TranslateTransition;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -98,12 +95,7 @@ public class ErrorPane extends BorderPane {
 //			}
 //		});
 		
-		messageProperty().addListener(new ChangeListener<String>() {
-			@Override
-			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-				message.setText(newValue);
-			}
-		});
+		messageProperty().addListener((observable, oldValue, newValue) -> message.setText(newValue));
 	}
 
 	public void setMessage(String message) {
@@ -119,12 +111,7 @@ public class ErrorPane extends BorderPane {
 		tt.setFromY(this.getTranslateY());
 		tt.setToY(this.getHeight());
 		tt.setNode(this);
-		tt.setOnFinished(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent event) {
-				setDisable(false);
-			}
-		});
+		tt.setOnFinished(event -> setDisable(false));
 		tt.play();
 	}
 	
@@ -133,12 +120,7 @@ public class ErrorPane extends BorderPane {
 		tt.setFromY(this.getTranslateY());
 		tt.setToY(0);
 		tt.setNode(this);
-		tt.setOnFinished(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent event) {
-				setDisable(true);
-			}
-		});
+		tt.setOnFinished(event -> setDisable(true));
 		tt.play();
 	}
 }

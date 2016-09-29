@@ -49,26 +49,21 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.nextbreakpoint.nextfractal.core.utils.Block;
 import javafx.animation.AnimationTimer;
 import javafx.animation.FadeTransition;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Button;
-import javafx.scene.control.ToggleButton;
-import javafx.scene.control.ToggleGroup;
-import javafx.scene.control.Tooltip;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import javafx.util.Duration;
@@ -434,9 +429,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 		stackPane.getChildren().add(browsePane);
 		setCenter(stackPane);
         
-		homeButton.setOnAction(e -> {
-			resetView();
-		});
+		homeButton.setOnAction(e -> resetView());
 		
 		toolsGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
 			if (oldValue != null) {
@@ -533,13 +526,10 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 		errorPane.disabledProperty().addListener((observable, oldValue, newValue) -> {
 			if (newValue) {
 				if (errorProperty.getValue() == null) {
-					fadeOut(alertsTransition, x -> { 
-						warningPane.setVisible(false);
-					});
+					fadeOut(alertsTransition, x -> warningPane.setVisible(false));
 				} else {
 					warningPane.setVisible(true);
-					fadeIn(alertsTransition, x -> {
-					});
+					fadeIn(alertsTransition, x -> {});
 				}
 			}
 		});
@@ -548,13 +538,10 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 			exportPane.hide();
 			errorPane.setMessage(newValue);
 			if (newValue == null) {
-				fadeOut(alertsTransition, x -> { 
-					warningPane.setVisible(false);
-				});
+				fadeOut(alertsTransition, x -> warningPane.setVisible(false));
 			} else if (hideErrorsProperty.getValue()) {
 				warningPane.setVisible(true);
-				fadeIn(alertsTransition, x -> {
-				});
+				fadeIn(alertsTransition, x -> {});
 			}
 		});
 
@@ -767,7 +754,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 		getMandelbrotSession().setView(view, false);
 	}
 
-	private void createFileChooser(String suffix) {
+	private void ensureFileChooser(String suffix) {
 		if (fileChooser == null) {
 			fileChooser = new FileChooser();
 			fileChooser.setInitialFileName("image" + suffix);
@@ -1431,7 +1418,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 			//TODO display error
 			return;
 		}
-		createFileChooser(encoder.getSuffix());
+		ensureFileChooser(encoder.getSuffix());
 		fileChooser.setTitle("Export");
 		if (currentExportFile != null) {
 			fileChooser.setInitialDirectory(currentExportFile.getParentFile());
@@ -1440,29 +1427,23 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 		File file = fileChooser.showSaveDialog(MandelbrotRenderPane.this.getScene().getWindow());
 		if (file != null) {
 			currentExportFile = file;
-			MandelbrotData data = exportData; 
-			exportExecutor.submit(new Runnable() {
-				@Override
-				public void run() {
-					data.setPixels(generator.renderImage(data));
-					Platform.runLater(new Runnable() {
-						@Override
-						public void run() {
-							try {
-								File tmpFile = File.createTempFile("nextfractal-profile-", ".dat");
-								ExportSession exportSession = new ExportSession("Mandelbrot", data, file, tmpFile, rendererSize, 200, encoder);
-								logger.info("Export session created: " + exportSession.getSessionId());
-								session.addExportSession(exportSession);
-								session.getExportService().startSession(exportSession);
-							} catch (Exception e) {
-								logger.log(Level.WARNING, "Cannot export data to file " + file.getAbsolutePath(), e);
-								//TODO display error
-							}
-						}
-					});
-				}
-			});
+			MandelbrotData data = exportData;
+			exportExecutor.submit(Block.create().andThen(() -> data.setPixels(generator.renderImage(data)))
+					.andThen(() -> Platform.runLater(() -> createExportSession(rendererSize, encoder, file, data))).asCallable(null));
 		}
+	}
+
+	private void createExportSession(RendererSize rendererSize, Encoder encoder, File file, MandelbrotData data) {
+		try {
+            File tmpFile = File.createTempFile("nextfractal-profile-", ".dat");
+            ExportSession exportSession = new ExportSession("Mandelbrot", data, file, tmpFile, rendererSize, 200, encoder);
+            logger.info("Export session created: " + exportSession.getSessionId());
+            session.addExportSession(exportSession);
+            session.getExportService().startSession(exportSession);
+        } catch (Exception e) {
+            logger.log(Level.WARNING, "Cannot export data to file " + file.getAbsolutePath(), e);
+            //TODO display error
+        }
 	}
 
 	@Override

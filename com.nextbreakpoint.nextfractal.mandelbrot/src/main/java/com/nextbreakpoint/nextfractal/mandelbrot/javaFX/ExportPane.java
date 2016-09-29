@@ -25,10 +25,6 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
 
 import javafx.animation.TranslateTransition;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -38,7 +34,6 @@ import javafx.scene.control.ListView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
 import javafx.util.Callback;
 import javafx.util.Duration;
 import javafx.util.StringConverter;
@@ -168,26 +163,21 @@ public class ExportPane extends BorderPane {
 			}
 		});
 
-		presets.valueProperty().addListener(new ChangeListener<Integer[]>() {
-	        @Override 
-	        public void changed(ObservableValue<? extends Integer[]> value, Integer[] oldItem, Integer[] newItem) {
-				if (newItem[0] == 0 || newItem[1] == 0) {
-					widthField.setEditable(true);
-					heightField.setEditable(true);
-					widthField.setText("1024");
-					heightField.setText("768");
-				} else {
-					widthField.setEditable(false);
-					heightField.setEditable(false);
-					widthField.setText(String.valueOf(newItem[0]));
-					heightField.setText(String.valueOf(newItem[1]));
-				}
-	        }    
-	    });
+		presets.valueProperty().addListener((value, oldItem, newItem) -> {
+            if (newItem[0] == 0 || newItem[1] == 0) {
+                widthField.setEditable(true);
+                heightField.setEditable(true);
+                widthField.setText("1024");
+                heightField.setText("768");
+            } else {
+                widthField.setEditable(false);
+                heightField.setEditable(false);
+                widthField.setText(String.valueOf(newItem[0]));
+                heightField.setText(String.valueOf(newItem[1]));
+            }
+        });
 		
-		cancelButton.setOnMouseClicked(e -> {
-			hide();
-		});
+		cancelButton.setOnMouseClicked(e -> hide());
 		
 		exportButton.setOnMouseClicked(e -> {
 			hide();
@@ -222,12 +212,7 @@ public class ExportPane extends BorderPane {
 		tt.setFromY(this.getTranslateY());
 		tt.setToY(this.getHeight());
 		tt.setNode(this);
-		tt.setOnFinished(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent event) {
-				setDisable(false);
-			}
-		});
+		tt.setOnFinished(event -> setDisable(false));
 		tt.play();
 	}
 	
@@ -236,12 +221,7 @@ public class ExportPane extends BorderPane {
 		tt.setFromY(this.getTranslateY());
 		tt.setToY(0);
 		tt.setNode(this);
-		tt.setOnFinished(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent event) {
-				setDisable(true);
-			}
-		});
+		tt.setOnFinished(event -> setDisable(true));
 		tt.play();
 	}
 

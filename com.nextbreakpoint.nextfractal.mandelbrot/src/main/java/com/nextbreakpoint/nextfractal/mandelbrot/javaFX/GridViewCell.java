@@ -24,10 +24,6 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
 
-import java.time.format.TextStyle;
-
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.BorderPane;
@@ -52,19 +48,9 @@ public class GridViewCell extends BorderPane {
 		
 		setCenter(canvas);
 		
-		widthProperty().addListener(new ChangeListener<java.lang.Number>() {
-			@Override
-			public void changed(ObservableValue<? extends java.lang.Number> observable, java.lang.Number oldValue, java.lang.Number newValue) {
-				update();
-			}
-		});
+		widthProperty().addListener((observable, oldValue, newValue) -> update());
 		
-		heightProperty().addListener(new ChangeListener<java.lang.Number>() {
-			@Override
-			public void changed(ObservableValue<? extends java.lang.Number> observable, java.lang.Number oldValue, java.lang.Number newValue) {
-				update();
-			}
-		});
+		heightProperty().addListener((observable, oldValue, newValue) -> update());
 	}
 
 	public void update() {

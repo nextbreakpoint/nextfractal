@@ -25,15 +25,11 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
 
 import java.io.StringWriter;
-import java.net.URI;
-import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Base64;
 import java.util.function.Function;
 
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -135,19 +131,13 @@ public class MandelbrotParamsPane extends BorderPane {
 		setCenter(new ScrollPane(box));
 		getStyleClass().add("params");
 		
-		widthProperty().addListener(new ChangeListener<java.lang.Number>() {
-			@Override
-			public void changed(ObservableValue<? extends java.lang.Number> observable, java.lang.Number oldValue, java.lang.Number newValue) {
-				box.setPrefWidth(newValue.doubleValue() - getInsets().getLeft() - getInsets().getRight() - 5);
-				algorithmCombobox.setPrefWidth(newValue.doubleValue() - getInsets().getLeft() - getInsets().getRight() - 5);
-			}
-		});
+		widthProperty().addListener((observable, oldValue, newValue) -> {
+            box.setPrefWidth(newValue.doubleValue() - getInsets().getLeft() - getInsets().getRight() - 5);
+            algorithmCombobox.setPrefWidth(newValue.doubleValue() - getInsets().getLeft() - getInsets().getRight() - 5);
+        });
 		
-		heightProperty().addListener(new ChangeListener<java.lang.Number>() {
-			@Override
-			public void changed(ObservableValue<? extends java.lang.Number> observable, java.lang.Number oldValue, java.lang.Number newValue) {
-				box.setPrefHeight(newValue.doubleValue() - getInsets().getTop() - getInsets().getBottom() - 5);
-			}
+		heightProperty().addListener((observable, oldValue, newValue) -> {
+			box.setPrefHeight(newValue.doubleValue() - getInsets().getTop() - getInsets().getBottom() - 5);
 		});
 
 		Function<MandelbrotSession, Object> updateAll = (t) -> {
@@ -174,9 +164,7 @@ public class MandelbrotParamsPane extends BorderPane {
 			return null;
 		};
 		
-		cancelButton.setOnAction((e) -> {
-			updateAll.apply(session);
-		});
+		cancelButton.setOnAction(e -> updateAll.apply(session));
 		
 		applyButton.setOnAction((e) -> {
 			double[] traslation = new double[3];

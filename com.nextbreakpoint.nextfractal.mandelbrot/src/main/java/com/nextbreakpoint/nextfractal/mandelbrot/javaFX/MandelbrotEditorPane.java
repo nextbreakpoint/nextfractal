@@ -29,15 +29,14 @@ import java.io.InputStream;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.nextbreakpoint.Try;
+import com.nextbreakpoint.nextfractal.core.utils.Block;
 import javafx.application.Platform;
 import javafx.collections.ListChangeListener.Change;
 import javafx.collections.ObservableList;
@@ -47,7 +46,6 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.scene.control.Button;
-import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -58,7 +56,6 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
-import javafx.util.Callback;
 
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
@@ -66,7 +63,6 @@ import org.fxmisc.richtext.PlainTextChange;
 import org.fxmisc.richtext.StyleSpans;
 import org.fxmisc.richtext.StyleSpansBuilder;
 import org.reactfx.EventStream;
-import org.reactfx.util.Try;
 
 import com.nextbreakpoint.nextfractal.core.export.ExportSession;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererPoint;
@@ -166,12 +162,7 @@ public class MandelbrotEditorPane extends BorderPane {
 		ListView<MandelbrotData> historyList = new ListView<>();
 		historyList.setFixedCellSize(60);
 		historyList.getStyleClass().add("history");
-		historyList.setCellFactory(new Callback<ListView<MandelbrotData>, ListCell<MandelbrotData>>() {
-			@Override
-			public ListCell<MandelbrotData> call(ListView<MandelbrotData> listView) {
-				return new HistoryListCell(generator.getSize(), generatorTile);
-			}
-		});
+		historyList.setCellFactory(listView -> new HistoryListCell(generator.getSize(), generatorTile));
 		BorderPane historyButtons = new BorderPane();
 		Button clearButton = new Button("", createIconImage("/icon-clear.png"));
 		clearButton.setTooltip(new Tooltip("Remove all elements"));
@@ -183,12 +174,7 @@ public class MandelbrotEditorPane extends BorderPane {
 
 		BorderPane jobsPane = new BorderPane();
 		ListView<ExportSession> jobsList = new ListView<>();
-		jobsList.setCellFactory(new Callback<ListView<ExportSession>, ListCell<ExportSession>>() {
-			@Override
-			public ListCell<ExportSession> call(ListView<ExportSession> listView) {
-				return new ExportListCell(generator.getSize(), generatorTile);
-			}
-		});
+		jobsList.setCellFactory(listView -> new ExportListCell(generator.getSize(), generatorTile));
 		jobsList.setFixedCellSize(60);
 		jobsList.getStyleClass().add("jobs");
 		BorderPane jobsButtons = new BorderPane();
@@ -248,7 +234,7 @@ public class MandelbrotEditorPane extends BorderPane {
         textChanges.successionEnds(java.time.Duration.ofMillis(500))
                 .supplyTask(this::computeTaskAsync)
                 .awaitLatest(textChanges)
-                .map(Try::get)
+                .map(org.reactfx.util.Try::get)
                 .subscribe(this::applyTaskResult);
         
         codeArea.replaceText(getMandelbrotSession().getSource());
@@ -280,9 +266,7 @@ public class MandelbrotEditorPane extends BorderPane {
 			@Override
 			public void dataChanged(MandelbrotSession session) {
 				addDataToHistory(historyList);
-				Platform.runLater(() -> {
-					codeArea.replaceText(getMandelbrotSession().getSource());
-				});
+				Platform.runLater(() -> codeArea.replaceText(getMandelbrotSession().getSource()));
 			}
 			
 			@Override
@@ -348,16 +332,14 @@ public class MandelbrotEditorPane extends BorderPane {
 		});
 		
 		EventHandler<ActionEvent> renderEventHandler = e -> {
-			Platform.runLater(() -> {
-				codeArea.replaceText(getMandelbrotSession().getSource());
-			});
+			Platform.runLater(() -> codeArea.replaceText(getMandelbrotSession().getSource()));
 		};
 		
 		renderButton.setOnAction(renderEventHandler);
 		paramsRenderButton.setOnAction(renderEventHandler);
 		
 		EventHandler<ActionEvent> loadEventHandler = e -> {
-			createFileChooser(".m");
+			ensureFileChooser(".m");
 			fileChooser.setTitle("Load");
 			if (getMandelbrotSession().getCurrentFile() != null) {
 				fileChooser.setInitialDirectory(getMandelbrotSession().getCurrentFile().getParentFile());
@@ -382,7 +364,7 @@ public class MandelbrotEditorPane extends BorderPane {
 		paramsLoadButton.setOnAction(loadEventHandler);
 		
 		EventHandler<ActionEvent> saveEventHandler = e -> {
-			createFileChooser(".m");
+			ensureFileChooser(".m");
 			fileChooser.setTitle("Save");
 			if (getMandelbrotSession().getCurrentFile() != null) {
 				fileChooser.setInitialDirectory(getMandelbrotSession().getCurrentFile().getParentFile());
@@ -406,17 +388,11 @@ public class MandelbrotEditorPane extends BorderPane {
 		saveButton.setOnAction(saveEventHandler);
 		paramsSaveButton.setOnAction(saveEventHandler);
 
-		exportButton.setOnAction(e -> {
-			getMandelbrotSession().doExportAsImage();
-		});
+		exportButton.setOnAction(e -> getMandelbrotSession().doExportAsImage());
 
-		browseButton.setOnAction(e -> {
-			getMandelbrotSession().showBrowser();
-		});
+		browseButton.setOnAction(e -> getMandelbrotSession().showBrowser());
 		
-		paramsBrowseButton.setOnAction(e -> {
-			getMandelbrotSession().showBrowser();
-		});
+		paramsBrowseButton.setOnAction(e -> getMandelbrotSession().showBrowser());
 		
 		suspendButton.setOnAction(e -> {
 			for (ExportSession exportSession : jobsList.getSelectionModel().getSelectedItems()) {
@@ -462,11 +438,7 @@ public class MandelbrotEditorPane extends BorderPane {
 		
 		DefaultThreadFactory sessionsThreadFactory = new DefaultThreadFactory("MandelbrotSessionsUpdate", true, Thread.MIN_PRIORITY);
 		sessionsExecutor = Executors.newSingleThreadScheduledExecutor(sessionsThreadFactory);
-		sessionsExecutor.scheduleWithFixedDelay(() -> {	
-			Platform.runLater(() -> {
-				updateSessions(jobsList);
-			});
-		}, 500, 500, TimeUnit.MILLISECONDS);
+		sessionsExecutor.scheduleWithFixedDelay(() -> Platform.runLater(() -> updateJobList(jobsList)), 500, 500, TimeUnit.MILLISECONDS);
 		
 		addDataToHistory(historyList);
 	}
@@ -481,18 +453,13 @@ public class MandelbrotEditorPane extends BorderPane {
 		sessionsExecutor.shutdownNow();
 		historyExecutor.shutdownNow();
 		textExecutor.shutdownNow();
-		try {
-			sessionsExecutor.awaitTermination(5000, TimeUnit.MILLISECONDS);
-		} catch (InterruptedException e) {
-		}
-		try {
-			historyExecutor.awaitTermination(5000, TimeUnit.MILLISECONDS);
-		} catch (InterruptedException e) {
-		}
-		try {
-			textExecutor.awaitTermination(5000, TimeUnit.MILLISECONDS);
-		} catch (InterruptedException e) {
-		}
+		Try.of(() -> await(sessionsExecutor).asCallable(null)).execute();
+		Try.of(() -> await(historyExecutor).asCallable(null)).execute();
+		Try.of(() -> await(textExecutor).asCallable(null)).execute();
+	}
+
+	private Block<InterruptedException> await(ExecutorService executor) {
+		return () -> executor.awaitTermination(5000, TimeUnit.MILLISECONDS);
 	}
 
 	private ImageView createIconImage(String name) {
@@ -513,17 +480,13 @@ public class MandelbrotEditorPane extends BorderPane {
 	
 	private CompilerReport generateReport(String text) throws Exception {
 		Compiler compiler = new Compiler();
-		CompilerReport report = compiler.compileReport(text);
-		return report;
+		return compiler.compileReport(text);
 	}
 
 	private void displayErrors() {
 		List<CompilerError> errors = getMandelbrotSession().getReport().getErrors();
 		if (errors.size() > 0) {
-			Collections.sort(errors, (o1, o2) -> {
-				long index = o2.getIndex() - o1.getIndex();
-				return index == 0 ? 0 : index > 0 ? +1 : -1;
-			});
+			Collections.sort(errors, (o1, o2) -> o2.getIndex() < o1.getIndex() ? -1 : 1);
 			for (CompilerError error : errors) {
 				logger.info(error.toString());
 				if (error.getType() == CompilerError.ErrorType.M_COMPILER) {
@@ -604,12 +567,13 @@ public class MandelbrotEditorPane extends BorderPane {
 	}
 	
     private void applyTaskResult(TaskResult result) {
-    	if (result != null) {
-    		buildOrbitAndColor(result.report);
-    		updateReportAndSource(result.source, result.report);
-    		codeArea.setStyleSpans(0, result.highlighting);
-    		displayErrors();
-    	}
+    	if (result == null) {
+			return;
+		}
+		buildOrbitAndColor(result.report);
+		updateReportAndSource(result.source, result.report);
+		codeArea.setStyleSpans(0, result.highlighting);
+		displayErrors();
     }
 
 	private void buildOrbitAndColor(CompilerReport report) {
@@ -655,20 +619,18 @@ public class MandelbrotEditorPane extends BorderPane {
 			return;
 		}
 		MandelbrotData data = getMandelbrotSession().getDataAsCopy();
-		historyExecutor.submit(new Runnable() {
-			@Override
-			public void run() {
-				data.setPixels(generator.renderImage(data));
-				Platform.runLater(new Runnable() {
-					@Override
-					public void run() {
-						historyList.getItems().add(0, data);
-					}
-				});
-			}
-		});
+		historyExecutor.submit(() -> {
+            data.setPixels(generator.renderImage(data));
+            Platform.runLater(() -> addHistoryItem(historyList, data));
+        });
+//		historyExecutor.submit(Block.create().andThen(() -> data.setPixels(generator.renderImage(data)))
+//				.andThen(() -> Platform.runLater(() -> addHistoryItem(historyList, data))).asCallable(null));
 	}
-	
+
+	private void addHistoryItem(ListView<MandelbrotData> historyList, MandelbrotData data) {
+		historyList.getItems().add(0, data);
+	}
+
 	private void clearHistory(ListView<MandelbrotData> historyList) {
 		historyList.getItems().clear();
 	}
@@ -677,7 +639,7 @@ public class MandelbrotEditorPane extends BorderPane {
 		return (MandelbrotSession) session;
 	}
 
-	private void createFileChooser(String suffix) {
+	private void ensureFileChooser(String suffix) {
 		if (fileChooser == null) {
 			fileChooser = new FileChooser();
 			fileChooser.setInitialFileName("mandel" + suffix);
@@ -686,17 +648,14 @@ public class MandelbrotEditorPane extends BorderPane {
 	}
 
 	private RendererTile createSingleTile(int width, int height) {
-		int tileWidth = width;
-		int tileHeight = height;
 		RendererSize imageSize = new RendererSize(width, height);
-		RendererSize tileSize = new RendererSize(tileWidth, tileHeight);
+		RendererSize tileSize = new RendererSize(width, height);
 		RendererSize tileBorder = new RendererSize(0, 0);
 		RendererPoint tileOffset = new RendererPoint(0, 0);
-		RendererTile tile = new RendererTile(imageSize, tileSize, tileOffset, tileBorder);
-		return tile;
+		return new RendererTile(imageSize, tileSize, tileOffset, tileBorder);
 	}
 	
-	private void updateSessions(ListView<ExportSession> jobsList) {
+	private void updateJobList(ListView<ExportSession> jobsList) {
 		ObservableList<ExportSession> items = jobsList.getItems();
 		for (int i = items.size() - 1; i >= 0; i--) {
 			ExportSession session = items.get(i);

@@ -35,7 +35,7 @@ public class LogConfig {
 		Try.of(readConfiguration().asCallable(null)).ifFailure(e -> e.printStackTrace(System.err));
 	}
 
-	private Block readConfiguration() {
+	private Block<Exception> readConfiguration() {
 		return () -> LogManager.getLogManager().readConfiguration(getResourceAsStream());
 	}
 
