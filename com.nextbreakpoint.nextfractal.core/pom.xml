@@ -7,4 +7,10 @@
         <version>1.2.1</version>
     </parent>
 	<artifactId>com.nextbreakpoint.nextfractal.core</artifactId>
+    <dependencies>
+        <dependency>
+            <groupId>com.nextbreakpoint</groupId>
+            <artifactId>com.nextbreakpoint.try</artifactId>
+        </dependency>
+    </dependencies>
 </project>

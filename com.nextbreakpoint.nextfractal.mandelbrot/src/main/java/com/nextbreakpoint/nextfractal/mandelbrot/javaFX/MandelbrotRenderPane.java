@@ -46,9 +46,15 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
+import com.nextbreakpoint.Try;
+import com.nextbreakpoint.nextfractal.core.FractalFactory;
 import com.nextbreakpoint.nextfractal.core.utils.Block;
 import javafx.animation.AnimationTimer;
 import javafx.animation.FadeTransition;
@@ -637,6 +643,11 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 	protected void finalize() throws Throwable {
 		shutdown();
 		super.finalize();
+	}
+
+	@Override
+	public RendererFactory getRendererFactory() {
+		return renderFactory;
 	}
 
 	private void exportAsImage(ExportPane exportPane) {
@@ -1396,19 +1407,25 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 
 	private void redrawIfToolChanged(Canvas canvas) {
 		if (currentTool != null && currentTool.isChanged()) {
-			RendererGraphicsContext gc = renderFactory.createGraphicsContext(canvas.getGraphicsContext2D());
-			currentTool.draw(gc);
+			currentTool.draw(renderFactory.createGraphicsContext(canvas.getGraphicsContext2D()));
 		}
 	}
-	
+
+	private static ServiceLoader<Encoder> loadPlugins() {
+		return ServiceLoader.load(Encoder.class);
+	}
+
+	private static Stream<? extends Encoder> pluginsStream() {
+		return StreamSupport.stream(loadPlugins().spliterator(), false);
+	}
+
+	private static <T> Try<T, Exception> selectPlugin(String pluginId, Function<Encoder, T> action) {
+		return pluginsStream().filter(plugin -> pluginId.equals(plugin.getId())).findFirst()
+				.map(plugin -> Try.of(() -> action.apply(plugin))).orElse(Try.failure(new Exception("Plugin not found")));
+	}
+
 	private Encoder createEncoder(String format) {
-		final ServiceLoader<? extends Encoder> plugins = ServiceLoader.load(Encoder.class);
-		for (Encoder plugin : plugins) {
-			if (format.equals(plugin.getId())) {
-				return plugin;
-			}
-		}
-		return null;
+		return selectPlugin(format, plugin -> plugin).orElse(null);
 	}
 
 	private void doExportSession(RendererSize rendererSize) {
@@ -1427,9 +1444,11 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 		File file = fileChooser.showSaveDialog(MandelbrotRenderPane.this.getScene().getWindow());
 		if (file != null) {
 			currentExportFile = file;
-			MandelbrotData data = exportData;
-			exportExecutor.submit(Block.create().andThen(() -> data.setPixels(generator.renderImage(data)))
-					.andThen(() -> Platform.runLater(() -> createExportSession(rendererSize, encoder, file, data))).asCallable(null));
+			Consumer<MandelbrotData> consumer = data -> createExportSession(rendererSize, encoder, file, data);
+			exportExecutor.submit(Block.create(MandelbrotData.class)
+					.andThen(data -> data.setPixels(generator.renderImage(data)))
+					.andThen(data -> Platform.runLater(() -> consumer.accept(data)))
+					.toCallable(exportData));
 		}
 	}
 
@@ -1444,10 +1463,5 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
             logger.log(Level.WARNING, "Cannot export data to file " + file.getAbsolutePath(), e);
             //TODO display error
         }
-	}
-
-	@Override
-	public RendererFactory getRendererFactory() {
-		return renderFactory;
 	}
 }
