@@ -34,27 +34,20 @@ import java.nio.file.StandardWatchEventKinds;
 import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.ServiceLoader;
-import java.util.Stack;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import com.nextbreakpoint.Try;
-import com.nextbreakpoint.nextfractal.core.FractalFactory;
 import com.nextbreakpoint.nextfractal.core.utils.Block;
 import javafx.animation.AnimationTimer;
 import javafx.animation.FadeTransition;
@@ -114,21 +107,23 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 	private static final int FRAME_LENGTH_IN_MILLIS = 20;
 	private static final Logger logger = Logger.getLogger(MandelbrotRenderPane.class.getName());
 	private final Session session;
-	private ThreadFactory renderThreadFactory;
-	private ThreadFactory juliaRenderThreadFactory;
-	private JavaFXRendererFactory renderFactory;
-	private RendererCoordinator[] coordinators;
+	private final ThreadFactory renderThreadFactory;
+	private final ThreadFactory juliaRenderThreadFactory;
+	private final JavaFXRendererFactory renderFactory;
+	private final MandelbrotImageGenerator generator;
+	private final ExecutorService exportExecutor;
+	private final Stack<MandelbrotView> views = new Stack<>();
+	private final StringObservableValue fileProperty;
+	private final StringObservableValue errorProperty;
+	private final BooleanObservableValue hideOrbitProperty;
+	private final BooleanObservableValue hideErrorsProperty;
+	private final BooleanObservableValue juliaProperty;
+	private final RendererCoordinator[] coordinators;
 	private RendererCoordinator juliaCoordinator;
-	private MandelbrotImageGenerator generator;
 	private AnimationTimer timer;
 	private FileChooser fileChooser;
 	private File currentExportFile;
-	private StringObservableValue fileProperty;
-	private StringObservableValue errorProperty;
-	private BooleanObservableValue hideOrbitProperty;
-	private BooleanObservableValue hideErrorsProperty;
-	private BooleanObservableValue juliaProperty;
-	private boolean pressed; 
+	private boolean pressed;
 	private int width;
 	private int height;
 	private int rows;
@@ -141,8 +136,6 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 	private String astColor;
 	private MandelbrotTool currentTool;
 	private MandelbrotData exportData;
-	private ExecutorService exportExecutor;
-	private Stack<MandelbrotView> views = new Stack<>();
 	private CompilerBuilder<Orbit> orbitBuilder;
 	private CompilerBuilder<Color> colorBuilder;
 	private List<Number[]> states;
@@ -181,14 +174,14 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 
 		coordinators = new RendererCoordinator[rows * columns];
 		
-		Map<String, Integer> hints = new HashMap<String, Integer>();
+		Map<String, Integer> hints = new HashMap<>();
 		hints.put(RendererCoordinator.KEY_TYPE, RendererCoordinator.VALUE_REALTIME);
 		createCoordinators(rows, columns, hints);
 		
-		Map<String, Integer> juliaHints = new HashMap<String, Integer>();
+		Map<String, Integer> juliaHints = new HashMap<>();
 		juliaHints.put(RendererCoordinator.KEY_TYPE, RendererCoordinator.VALUE_REALTIME);
 //		juliaHints.put(RendererCoordinator.KEY_PROGRESS, RendererCoordinator.VALUE_SINGLE_PASS);
-		createJuliaCoordinator(juliaHints);
+		juliaCoordinator = createJuliaCoordinator(juliaHints);
 		
 		getStyleClass().add("mandelbrot");
 
@@ -368,9 +361,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 			}
 		});
 		
-		controls.setOnMouseExited(e -> {
-			fadeOut(toolsTransition, x -> {});
-		});
+		controls.setOnMouseExited(e -> fadeOut(toolsTransition, x -> {}));
 		
 		getMandelbrotSession().addMandelbrotListener(new MandelbrotListener() {
 			@Override
@@ -395,6 +386,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 
 			@Override
 			public void reportChanged(MandelbrotSession session) {
+				browsePane.hide();
 				updateFractal(session);
 			}
 		});
@@ -501,9 +493,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 			toggleShowOrbit();
 		});
 		
-		juliaButton.setOnAction(e -> {
-			juliaProperty.setValue(!juliaProperty.getValue());
-		});
+		juliaButton.setOnAction(e -> juliaProperty.setValue(!juliaProperty.getValue()));
 		
 		hideOrbitProperty.addListener((observable, oldValue, newValue) -> {
 			orbitCanvas.setVisible(!newValue);
@@ -551,51 +541,29 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 			}
 		});
 
-		fileProperty.addListener((observable, oldValue, newValue) -> {
-			if (newValue == null) {
-				return;
+		Block<MandelbrotData, Exception> updateJulia = data -> {
+			if (data.isJulia() && currentTool instanceof MandelbrotPick) {
+				currentTool = new MandelbrotZoom(this, true);
+				juliaCanvas.setVisible(false);
+				pointCanvas.setVisible(false);
+				zoominButton.setSelected(true);
 			}
-			try {
-				File file = new File(newValue);
-				MandelbrotDataStore service = new MandelbrotDataStore();
-				MandelbrotData data = service.loadFromFile(file);
-				getMandelbrotSession().setCurrentFile(file);
-				if (data.isJulia() && currentTool instanceof MandelbrotPick) {
-					currentTool = new MandelbrotZoom(this, true);
-					juliaCanvas.setVisible(false);
-					pointCanvas.setVisible(false);
-					zoominButton.setSelected(true);
-				}
-				juliaButton.setSelected(data.isJulia());
-				getMandelbrotSession().setData(data);
-				logger.info(data.toString());
-			} catch (Exception x) {
-				logger.warning("Cannot read file " + newValue);
-				//TODO display error
-			}
-		});
+			juliaButton.setSelected(data.isJulia());
+		};
+
+		fileProperty.addListener((observable, oldValue, newValue) -> loadFractalFromFile(updateJulia, newValue));
 		
 		errorsButton.setOnAction(e -> {
-			fadeOut(alertsTransition, x -> { 
+			fadeOut(alertsTransition, x -> {
 				warningPane.setVisible(false);
 				errorPane.show();
 			});
 		});
 		
-		stackPane.setOnDragDropped(e -> {
-        	List<File> files = e.getDragboard().getFiles();
-        	if (files.size() > 0) {
-        		File file = files.get(0);
-        		fileProperty.setValue(null);
-        		fileProperty.setValue(file.getAbsolutePath());
-        	}
-        });
+		stackPane.setOnDragDropped(e -> e.getDragboard().getFiles().stream().findFirst().ifPresent(file -> updateFile(file)));
         
-		stackPane.setOnDragOver(e -> {
-        	if (e.getGestureSource() != stackPane && e.getDragboard().hasFiles()) {
-                e.acceptTransferModes(TransferMode.COPY_OR_MOVE);
-            }
-        });
+		stackPane.setOnDragOver(x -> Optional.of(x).filter(e -> e.getGestureSource() != stackPane)
+				.filter(e -> e.getDragboard().hasFiles()).ifPresent(e -> e.acceptTransferModes(TransferMode.COPY_OR_MOVE)));
 		
 		DefaultThreadFactory exportThreadFactory = new DefaultThreadFactory("MandelbrotImageExport", true, Thread.MIN_PRIORITY);
 		exportExecutor = Executors.newSingleThreadExecutor(exportThreadFactory);
@@ -608,13 +576,22 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 	}
 
 	@Override
+	protected void finalize() throws Throwable {
+		shutdown();
+		super.finalize();
+	}
+
+	@Override
 	public void exportSession(RendererSize rendererSize) {
 		doExportSession(rendererSize);
 	}
 
 	@Override
 	public void didSelectFile(BrowsePane browser, File file) {
-		browser.hide();
+		updateFile(file);
+	}
+
+	private void updateFile(File file) {
 		fileProperty.setValue(null);
 		fileProperty.setValue(file.getAbsolutePath());
 	}
@@ -640,12 +617,6 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 	}
 
 	@Override
-	protected void finalize() throws Throwable {
-		shutdown();
-		super.finalize();
-	}
-
-	@Override
 	public RendererFactory getRendererFactory() {
 		return renderFactory;
 	}
@@ -657,59 +628,9 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 		}
 	}
 
-	private void watchLoop(Path dir) throws IOException {
-		WatchService watcher = FileSystems.getDefault().newWatchService();
-
-		try {
-		    WatchKey key = dir.register(watcher, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_DELETE, StandardWatchEventKinds.ENTRY_MODIFY);
-		} catch (IOException x) {
-		    System.err.println(x);
-		}
-		
-		try {
-			for (;;) {
-				WatchKey key = watcher.take();
-	
-			    for (WatchEvent<?> event: key.pollEvents()) {
-			        WatchEvent.Kind<?> kind = event.kind();
-	
-			        if (kind == StandardWatchEventKinds.OVERFLOW) {
-			            continue;
-			        }
-	
-			        WatchEvent<Path> ev = (WatchEvent<Path>)event;
-	
-			        Path filename = ev.context();
-	
-			        try {
-			            Path child = dir.resolve(filename);
-			            if (!Files.probeContentType(child).equals("text/plain")) {
-			                System.err.format("New file '%s' is not a plain text file.%n", filename);
-			                continue;
-			            }
-			        } catch (IOException x) {
-			            System.err.println(x);
-			            continue;
-			        }
-	
-			        //Details left to reader....
-			    }
-	
-			    boolean valid = key.reset();
-			    if (!valid) {
-			        break;
-			    }
-			}
-		} catch (InterruptedException x) {
-		}
-	}
-	
 	private void shutdown() {
 		exportExecutor.shutdownNow();
-		try {
-			exportExecutor.awaitTermination(5000, TimeUnit.MILLISECONDS);
-		} catch (InterruptedException e) {
-		}
+		Block.create(ExecutorService.class).andThen(executor -> executor.awaitTermination(5000, TimeUnit.MILLISECONDS)).tryExecute(exportExecutor);
 	}
 	
 	private void dispose() {
@@ -760,8 +681,30 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 		}
 	}
 
+	private void loadFractalFromFile(Block<MandelbrotData, Exception> updateJulia, String filename) {
+		if (filename == null) {
+			return;
+		}
+		try {
+			File file = new File(filename);
+			MandelbrotDataStore service = new MandelbrotDataStore();
+			MandelbrotData data = service.loadFromFile(file);
+			getMandelbrotSession().setCurrentFile(file);
+			updateJulia.execute(data);
+			getMandelbrotSession().setData(data);
+			logger.info(data.toString());
+		} catch (Exception x) {
+			logger.warning("Cannot read file " + filename);
+			//TODO display error
+		}
+	}
+
 	private void resetView() {
-		MandelbrotView view = new MandelbrotView(new double[] { 0, 0, 1, 0 }, new double[] { 0, 0, 0, 0 }, new double[] { 1, 1, 1, 1 }, getMandelbrotSession().getViewAsCopy().getPoint(), getMandelbrotSession().getViewAsCopy().isJulia());
+		MandelbrotView viewAsCopy = getMandelbrotSession().getViewAsCopy();
+		double[] traslation = {0, 0, 1, 0};
+		double[] rotation = {0, 0, 0, 0};
+		double[] scale = {1, 1, 1, 1};
+		MandelbrotView view = new MandelbrotView(traslation, rotation, scale, viewAsCopy.getPoint(), viewAsCopy.isJulia());
 		getMandelbrotSession().setView(view, false);
 	}
 
@@ -781,14 +724,18 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 		}
 	}
 
+	private RendererCoordinator createJuliaCoordinator(Map<String, Integer> hints) {
+		return new RendererCoordinator(juliaRenderThreadFactory, renderFactory, createSingleTile(200, 200), hints);
+	}
+
 	private void disposeCoordinators() {
 		for (int i = 0; i < coordinators.length; i++) {
 			if (coordinators[i] != null) {
 				coordinators[i].abort();
 			}
-			if (juliaCoordinator != null) {
-				juliaCoordinator.abort();
-			}
+		}
+		if (juliaCoordinator != null) {
+			juliaCoordinator.abort();
 		}
 		for (int i = 0; i < coordinators.length; i++) {
 			if (coordinators[i] != null) {
@@ -796,16 +743,12 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 				coordinators[i].dispose();
 				coordinators[i] = null;
 			}
-			if (juliaCoordinator != null) {
-				juliaCoordinator.waitFor();
-				juliaCoordinator.dispose();
-				juliaCoordinator = null;
-			}
 		}
-	}
-
-	private void createJuliaCoordinator(Map<String, Integer> hints) {
-		juliaCoordinator = new RendererCoordinator(juliaRenderThreadFactory, renderFactory, createSingleTile(200, 200), hints);
+		if (juliaCoordinator != null) {
+			juliaCoordinator.waitFor();
+			juliaCoordinator.dispose();
+			juliaCoordinator = null;
+		}
 	}
 
 	private void disposeJuliaCoordinator() {
@@ -828,7 +771,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 				long time = now / 1000000;
 				if (time - last > FRAME_LENGTH_IN_MILLIS) {
 					if (!disableTool) {
-						processCoordinatorErrors();
+						processRenderErrors();
 						redrawIfPixelsChanged(fractalCanvas);
 						redrawIfJuliaPixelsChanged(juliaCanvas);
 						redrawIfPointChanged(pointCanvas);
@@ -906,8 +849,8 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 	
 	private void updateFractal(Session session) {
 		try {
-			boolean[] changed = generateOrbitAndColor();
-			updateErrors(null, null, null);
+			boolean[] changed = createOrbitAndColor();
+			updateCompilerErrors(null, null, null);
 			boolean orbitChanged = changed[0];
 			boolean colorChanged = changed[1];
 			if (orbitChanged) {
@@ -990,17 +933,17 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 			}
 		} catch (CompilerSourceException e) {
 			logger.log(Level.INFO, "Cannot render fractal: " + e.getMessage());
-			updateErrors(e.getMessage(), e.getErrors(), null);
+			updateCompilerErrors(e.getMessage(), e.getErrors(), null);
 		} catch (CompilerClassException e) {
 			logger.log(Level.INFO, "Cannot render fractal: " + e.getMessage());
-			updateErrors(e.getMessage(), e.getErrors(), e.getSource());
+			updateCompilerErrors(e.getMessage(), e.getErrors(), e.getSource());
 		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | IOException e) {
 			logger.log(Level.INFO, "Cannot render fractal: " + e.getMessage());
-			updateErrors(e.getMessage(), null, null);
+			updateCompilerErrors(e.getMessage(), null, null);
 		}
 	}
 
-	private boolean[] generateOrbitAndColor() throws CompilerSourceException, CompilerClassException, ClassNotFoundException, IOException {
+	private boolean[] createOrbitAndColor() throws CompilerSourceException, CompilerClassException, ClassNotFoundException, IOException {
 		CompilerReport report = getMandelbrotSession().getReport();
 		if (report.getErrors().size() > 0) {
 			astOrbit = null;
@@ -1038,7 +981,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 		return changed;
 	}
 
-	private void updateErrors(String message, List<CompilerError> errors, String source) {
+	private void updateCompilerErrors(String message, List<CompilerError> errors, String source) {
 		disableTool = message != null;
 		Platform.runLater(() -> {
 			errorProperty.setValue(null);
@@ -1200,7 +1143,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 		return states;
 	}
 
-	private void processCoordinatorErrors() {
+	private void processRenderErrors() {
 		if (coordinators != null && coordinators.length > 0) {
 			RendererCoordinator coordinator = coordinators[0];
 			if (coordinator != null) {
@@ -1215,38 +1158,26 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 	}
 
 	private void abortCoordinators() {
-		for (int i = 0; i < coordinators.length; i++) {
-			RendererCoordinator coordinator = coordinators[i];
-			if (coordinator != null) {
-				coordinator.abort();
-			}
-		}
+		visitCoordinators(coordinator -> true, coordinator -> coordinator.abort());
 	}
 
 	private void joinCoordinators() {
-		for (int i = 0; i < coordinators.length; i++) {
-			RendererCoordinator coordinator = coordinators[i];
-			if (coordinator != null) {
-				coordinator.waitFor();
-			}
-		}
+		visitCoordinators(coordinator -> true, coordinator -> coordinator.waitFor());
 	}
 
 	private void startCoordinators() {
-		for (int i = 0; i < coordinators.length; i++) {
-			RendererCoordinator coordinator = coordinators[i];
-			if (coordinator != null) {
-				coordinator.run();
-			}
-		}
+		visitCoordinators(coordinator -> true, coordinator -> coordinator.run());
 	}
 
 	private void redrawIfPixelsChanged(Canvas canvas) {
 		RendererGraphicsContext gc = renderFactory.createGraphicsContext(canvas.getGraphicsContext2D());
+		visitCoordinators(coordinator -> coordinator.isPixelsChanged(), coordinator -> coordinator.drawImage(gc, 0, 0));
+	}
+
+	private void visitCoordinators(Predicate<RendererCoordinator> predicate, Consumer<RendererCoordinator> consumer) {
 		for (int i = 0; i < coordinators.length; i++) {
-			RendererCoordinator coordinator = coordinators[i];
-			if (coordinator != null && coordinator.isPixelsChanged()) {
-				coordinator.drawImage(gc, 0, 0);
+			if (coordinators[i] != null && predicate.test(coordinators[i])) {
+				consumer.accept(coordinators[i]);
 			}
 		}
 	}
@@ -1406,9 +1337,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 	}
 
 	private void redrawIfToolChanged(Canvas canvas) {
-		if (currentTool != null && currentTool.isChanged()) {
-			currentTool.draw(renderFactory.createGraphicsContext(canvas.getGraphicsContext2D()));
-		}
+		Optional.ofNullable(currentTool).filter(tool -> tool.isChanged()).ifPresent(tool -> tool.draw(renderFactory.createGraphicsContext(canvas.getGraphicsContext2D())));
 	}
 
 	private static ServiceLoader<Encoder> loadPlugins() {
@@ -1424,31 +1353,31 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 				.map(plugin -> Try.of(() -> action.apply(plugin))).orElse(Try.failure(new Exception("Plugin not found")));
 	}
 
-	private Encoder createEncoder(String format) {
-		return selectPlugin(format, plugin -> plugin).orElse(null);
+	private Optional<Encoder> createEncoder(String format) {
+		return selectPlugin(format, plugin -> plugin).onFailure(e -> logger.warning("Cannot find encoder for PNG format")).value();
 	}
 
 	private void doExportSession(RendererSize rendererSize) {
-		Encoder encoder = createEncoder("PNG");
-		if (encoder == null) {
-			logger.warning("Cannot find encoder for PNG format");
-			//TODO display error
-			return;
-		}
-		ensureFileChooser(encoder.getSuffix());
+		createEncoder("PNG").ifPresent(encoder -> Block.create(Encoder.class)
+				.andThen(e -> showExportFileChooser(e.getSuffix())).andThen(e -> selectFileAndExport(rendererSize, encoder)).tryExecute());
+	}
+
+	private void selectFileAndExport(RendererSize rendererSize, Encoder encoder) {
+		Optional.ofNullable(fileChooser.showSaveDialog(MandelbrotRenderPane.this.getScene().getWindow())).ifPresent(file -> createExportSession(rendererSize, encoder, file));
+	}
+
+	private void createExportSession(RendererSize rendererSize, Encoder encoder, File file) {
+		currentExportFile = file;
+		exportExecutor.submit(Block.create(MandelbrotData.class).andThen(data -> data.setPixels(generator.renderImage(data)))
+                .andThen(data -> Platform.runLater(() -> createExportSession(rendererSize, encoder, file, data))).toCallable(exportData));
+	}
+
+	private void showExportFileChooser(String suffix) {
+		ensureFileChooser(suffix);
 		fileChooser.setTitle("Export");
 		if (currentExportFile != null) {
 			fileChooser.setInitialDirectory(currentExportFile.getParentFile());
 			fileChooser.setInitialFileName(currentExportFile.getName());
-		}
-		File file = fileChooser.showSaveDialog(MandelbrotRenderPane.this.getScene().getWindow());
-		if (file != null) {
-			currentExportFile = file;
-			Consumer<MandelbrotData> consumer = data -> createExportSession(rendererSize, encoder, file, data);
-			exportExecutor.submit(Block.create(MandelbrotData.class)
-					.andThen(data -> data.setPixels(generator.renderImage(data)))
-					.andThen(data -> Platform.runLater(() -> consumer.accept(data)))
-					.toCallable(exportData));
 		}
 	}
 
@@ -1463,5 +1392,52 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
             logger.log(Level.WARNING, "Cannot export data to file " + file.getAbsolutePath(), e);
             //TODO display error
         }
+	}
+
+	private void watchLoop(Path dir) throws IOException {
+		WatchService watcher = FileSystems.getDefault().newWatchService();
+
+		try {
+			WatchKey key = dir.register(watcher, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_DELETE, StandardWatchEventKinds.ENTRY_MODIFY);
+		} catch (IOException x) {
+			System.err.println(x);
+		}
+
+		try {
+			for (;;) {
+				WatchKey key = watcher.take();
+
+				for (WatchEvent<?> event: key.pollEvents()) {
+					WatchEvent.Kind<?> kind = event.kind();
+
+					if (kind == StandardWatchEventKinds.OVERFLOW) {
+						continue;
+					}
+
+					WatchEvent<Path> ev = (WatchEvent<Path>)event;
+
+					Path filename = ev.context();
+
+					try {
+						Path child = dir.resolve(filename);
+						if (!Files.probeContentType(child).equals("text/plain")) {
+							System.err.format("New file '%s' is not a plain text file.%n", filename);
+							continue;
+						}
+					} catch (IOException x) {
+						System.err.println(x);
+						continue;
+					}
+
+					//Details left to reader....
+				}
+
+				boolean valid = key.reset();
+				if (!valid) {
+					break;
+				}
+			}
+		} catch (InterruptedException x) {
+		}
 	}
 }
