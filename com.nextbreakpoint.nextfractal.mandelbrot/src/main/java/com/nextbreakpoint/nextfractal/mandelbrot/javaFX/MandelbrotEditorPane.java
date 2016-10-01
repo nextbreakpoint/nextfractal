@@ -407,9 +407,9 @@ public class MandelbrotEditorPane extends BorderPane {
 
 	private void loadDataFromFile(File file) {
 		try {
-            getMandelbrotSession().setCurrentFile(file);
             MandelbrotDataStore service = new MandelbrotDataStore();
-            MandelbrotData data = service.loadFromFile(getMandelbrotSession().getCurrentFile());
+			MandelbrotData data = service.loadFromFile(file);
+            getMandelbrotSession().setCurrentFile(file);
             logger.info(data.toString());
             getMandelbrotSession().setData(data);
         } catch (Exception x) {

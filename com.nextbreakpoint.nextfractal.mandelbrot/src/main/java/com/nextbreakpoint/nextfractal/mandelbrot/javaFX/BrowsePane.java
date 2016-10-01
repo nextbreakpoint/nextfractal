@@ -25,10 +25,7 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -37,6 +34,7 @@ import java.util.concurrent.ThreadFactory;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
 
+import com.nextbreakpoint.nextfractal.core.utils.Block;
 import javafx.animation.AnimationTimer;
 import javafx.animation.TranslateTransition;
 import javafx.geometry.Pos;
@@ -224,7 +222,7 @@ public class BrowsePane extends BorderPane {
 		super.finalize();
 	}
 
-	private void createDirectoryChooser() {
+	private void ensureDirectoryChooser() {
 //		Alert alert = new Alert(AlertType.INFORMATION);
 //		alert.setTitle("Dialog");
 //		alert.setHeaderText("Path");
@@ -240,16 +238,24 @@ public class BrowsePane extends BorderPane {
 	}
 
 	private void doChooseFolder(GridView grid) {
-		createDirectoryChooser();
+		Block.create(a -> prepareDirectoryChooser()).andThen(a -> doSelectFolder()).tryExecute();
+	}
+
+	private void doSelectFolder() {
+		Optional.ofNullable(directoryChooser.showDialog(BrowsePane.this.getScene().getWindow())).ifPresent(folder -> pathProperty.setValue(folder.getAbsolutePath()));
+	}
+
+	private void prepareDirectoryChooser() {
+		ensureDirectoryChooser();
 		directoryChooser.setTitle("Choose");
 		if (currentFolder != null) {
-			currentFolder = currentFolder.exists() ? currentFolder : new File(System.getProperty("user.home"));
+			ensureValidFolder();
 			directoryChooser.setInitialDirectory(currentFolder);
 		}
-		File folder = directoryChooser.showDialog(BrowsePane.this.getScene().getWindow());
-		if (folder != null) {
-			pathProperty.setValue(folder.getAbsolutePath());
-		}
+	}
+
+	private void ensureValidFolder() {
+		currentFolder = Optional.ofNullable(currentFolder).filter(folder -> folder.exists()).orElseGet(() -> new File(System.getProperty("user.home")));
 	}
 
 	private RendererTile createSingleTile(int width, int height) {
@@ -288,11 +294,8 @@ public class BrowsePane extends BorderPane {
 
 	private File[] listFiles(File folder) {
 		Preferences prefs = Preferences.userNodeForPackage(MandelbrotRenderPane.class);
-
-		prefs.put("mandelbrot.browser.default", folder.getAbsolutePath()); 
-		
-		File[] files = folder.listFiles((dir, name) -> name.endsWith(".m"));
-		return files;
+		prefs.put("mandelbrot.browser.default", folder.getAbsolutePath());
+		return folder.listFiles((dir, name) -> name.endsWith(".m"));
 	}
 
 	private void removeItems() {
@@ -478,7 +481,7 @@ public class BrowsePane extends BorderPane {
 			coordinator.setOrbitAndColor(item.getOrbitBuilder().build(), item.getColorBuilder().build());
 			coordinator.init();
 			RendererView view = new RendererView();
-			view.setTraslation(new Double4D(data.getTraslation()));
+			view.setTraslation(new Double4D(data.getTranslation()));
 			view.setRotation(new Double4D(data.getRotation()));
 			view.setScale(new Double4D(data.getScale()));
 			view.setState(new Integer4D(0, 0, 0, 0));

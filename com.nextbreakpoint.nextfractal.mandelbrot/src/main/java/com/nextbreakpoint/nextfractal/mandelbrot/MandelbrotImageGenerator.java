@@ -78,7 +78,7 @@ public class MandelbrotImageGenerator implements ImageGenerator {
 			}
 			Renderer renderer = new Renderer(threadFactory, renderFactory, tile);
 			renderer.setOpaque(opaque);
-			double[] traslation = generatorData.getTraslation();
+			double[] traslation = generatorData.getTranslation();
 			double[] rotation = generatorData.getRotation();
 			double[] scale = generatorData.getScale();
 			double[] constant = generatorData.getPoint();

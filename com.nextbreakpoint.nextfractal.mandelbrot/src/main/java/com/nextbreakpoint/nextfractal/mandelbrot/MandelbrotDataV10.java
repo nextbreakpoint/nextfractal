@@ -24,18 +24,18 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot;
 
+import com.nextbreakpoint.nextfractal.core.utils.DateAdapter;
+
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.nio.IntBuffer;
 import java.util.Arrays;
 import java.util.Date;
 
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
-import com.nextbreakpoint.nextfractal.core.utils.DateAdapter;
-
 @XmlRootElement(name="mandelbrot")
-public class MandelbrotData {
-	private final static String version = "1.1";
+public class MandelbrotDataV10 {
+	private final static String version = "1.0";
 	private double[] translation = new double[] { 0, 0, 1, 0 };
 	private double[] rotation = new double[] { 0, 0, 0, 0 };
 	private double[] scale = new double[] { 1, 1, 1, 1 };
@@ -84,6 +84,7 @@ public class MandelbrotData {
 		this.point = constant;
 	}
 
+	@XmlElement(name = "traslation")
 	public double[] getTranslation() {
 		return translation;
 	}
@@ -131,5 +132,19 @@ public class MandelbrotData {
 
 	public void setColor(float[] color) {
 		this.color = color;
+	}
+
+	public MandelbrotData toMandelbrotData() {
+		MandelbrotData data = new MandelbrotData();
+		data.setSource(source);
+		data.setTranslation(translation);
+		data.setRotation(rotation);
+		data.setScale(scale);
+		data.setPoint(point);
+		data.setJulia(julia);
+		data.setColor(color);
+		data.setTime(time);
+		data.setPixels(pixels);
+		return data;
 	}
 }

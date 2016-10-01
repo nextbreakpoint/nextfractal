@@ -24,60 +24,49 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot;
 
+import com.nextbreakpoint.Try;
+import com.nextbreakpoint.nextfractal.core.utils.Block;
+
 import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
 
-import javax.xml.bind.JAXB;
+import static javax.xml.bind.JAXB.marshal;
+import static javax.xml.bind.JAXB.unmarshal;
 
 public class MandelbrotDataStore {
 	public MandelbrotData loadFromFile(File path) throws Exception {
-		try {
-			return JAXB.unmarshal(path, MandelbrotData.class);
-		} catch (Exception e) {
-			throw new Exception("Cannot load data from file " + path.getAbsolutePath());
-		}
+		return Try.of(() -> unmarshal(path, MandelbrotData.class))
+				.or(() -> unmarshal(path, MandelbrotDataV10.class).toMandelbrotData())
+				.mapper(e -> new Exception("Cannot load data from file " + path.getAbsolutePath())).orThrow();
 	}
 
 	public void saveToFile(File path, MandelbrotData data) throws Exception {
-		try {
-			JAXB.marshal(data, path);
-		} catch (Exception e) {
-			throw new Exception("Cannot save data to file " + path.getAbsolutePath());
-		}
+		Block.create(MandelbrotData.class).andThen(d -> marshal(d, path)).tryExecute()
+				.mapper(e -> new Exception("Cannot save data to file " + path.getAbsolutePath())).orThrow();
 	}
 
 	public MandelbrotData loadFromReader(Reader reader) throws Exception {
-		try {
-			return JAXB.unmarshal(reader, MandelbrotData.class);
-		} catch (Exception e) {
-			throw new Exception("Cannot load data from reader");
-		}
+		return Try.of(() -> unmarshal(reader, MandelbrotData.class))
+				.or(() -> unmarshal(reader, MandelbrotDataV10.class).toMandelbrotData())
+				.mapper(e -> new Exception("Cannot load data from reader")).orThrow();
 	}
 
 	public void saveToWriter(Writer writer, MandelbrotData data) throws Exception {
-		try {
-			JAXB.marshal(data, writer);
-		} catch (Exception e) {
-			throw new Exception("Cannot save data to writer");
-		}
+		Block.create(MandelbrotData.class).andThen(d -> marshal(d, writer)).tryExecute()
+				.mapper(e -> new Exception("Cannot save data to writer")).orThrow();
 	}
 
-	public MandelbrotData loadFromStream(InputStream is) throws Exception {
-		try {
-			return JAXB.unmarshal(is, MandelbrotData.class);
-		} catch (Exception e) {
-			throw new Exception("Cannot load data from stream");
-		}
+	public MandelbrotData loadFromStream(InputStream stream) throws Exception {
+		return Try.of(() -> unmarshal(stream, MandelbrotData.class))
+				.or(() -> unmarshal(stream, MandelbrotDataV10.class).toMandelbrotData())
+				.mapper(e -> new Exception("Cannot load data from stream")).orThrow();
 	}
 
-	public void saveToStream(OutputStream os, MandelbrotData data) throws Exception {
-		try {
-			JAXB.marshal(data, os);
-		} catch (Exception e) {
-			throw new Exception("Cannot save data to stream");
-		}
+	public void saveToStream(OutputStream stream, MandelbrotData data) throws Exception {
+		Block.create(MandelbrotData.class).andThen(d -> marshal(d, stream)).tryExecute()
+				.mapper(e -> new Exception("Cannot save data to stream")).orThrow();
 	}
 }

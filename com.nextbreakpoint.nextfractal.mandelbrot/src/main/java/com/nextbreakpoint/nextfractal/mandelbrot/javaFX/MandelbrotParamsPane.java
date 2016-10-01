@@ -142,7 +142,7 @@ public class MandelbrotParamsPane extends BorderPane {
 
 		Function<MandelbrotSession, Object> updateAll = (t) -> {
 			MandelbrotData data = t.getDataAsCopy();
-			double[] traslation = data.getTraslation();
+			double[] traslation = data.getTranslation();
 			double[] rotation = data.getRotation();
 			double[] point = data.getPoint();
 			xTraslationField.setText(String.valueOf(traslation[0]));
@@ -215,7 +215,7 @@ public class MandelbrotParamsPane extends BorderPane {
 			public void viewChanged(MandelbrotSession session, boolean continuous) {
 				if (!continuous) {
 					MandelbrotData data = session.getDataAsCopy();
-					double[] traslation = data.getTraslation();
+					double[] traslation = data.getTranslation();
 					double[] rotation = data.getRotation();
 					xTraslationField.setText(String.valueOf(traslation[0]));
 					yTraslationField.setText(String.valueOf(traslation[1]));

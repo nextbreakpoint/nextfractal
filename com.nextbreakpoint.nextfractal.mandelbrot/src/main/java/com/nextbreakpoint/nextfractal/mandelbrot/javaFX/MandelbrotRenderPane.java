@@ -685,8 +685,8 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 		if (filename == null) {
 			return;
 		}
+		File file = new File(filename);
 		try {
-			File file = new File(filename);
 			MandelbrotDataStore service = new MandelbrotDataStore();
 			MandelbrotData data = service.loadFromFile(file);
 			getMandelbrotSession().setCurrentFile(file);
@@ -694,7 +694,7 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 			getMandelbrotSession().setData(data);
 			logger.info(data.toString());
 		} catch (Exception x) {
-			logger.warning("Cannot read file " + filename);
+			logger.warning("Cannot read file " + file.getAbsolutePath());
 			//TODO display error
 		}
 	}
