@@ -53,8 +53,8 @@
 }
 </source>
     <time>0.0</time>
-    <traslation>0.5035750342943545</traslation>
-    <traslation>-0.9664881727646156</traslation>
-    <traslation>0.22035947491033994</traslation>
-    <traslation>0.0</traslation>
+    <translation>0.5035750342943545</translation>
+    <translation>-0.9664881727646156</translation>
+    <translation>0.22035947491033994</translation>
+    <translation>0.0</translation>
 </mandelbrot>
