@@ -29,10 +29,10 @@ $(function() {
 	+ '}\n'
 	+ '</source>\n'
 	+ '<time>0.0</time>\n'
-	+ '<traslation>0.0</traslation>\n'
-	+ '<traslation>0.0</traslation>\n'
-	+ '<traslation>1.0</traslation>\n'
-	+ '<traslation>0.0</traslation>\n'
+	+ '<translation>0.0</translation>\n'
+	+ '<translation>0.0</translation>\n'
+	+ '<translation>1.0</translation>\n'
+	+ '<translation>0.0</translation>\n'
 	+ '</mandelbrot>\n';
 
 	$("#xml").val(xml);

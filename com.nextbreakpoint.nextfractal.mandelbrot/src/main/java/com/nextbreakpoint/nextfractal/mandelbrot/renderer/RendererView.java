@@ -30,7 +30,7 @@ import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotView;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 
 public class RendererView {
-	private Double4D traslation;
+	private Double4D translation;
 	private Double4D rotation;
 	private Double4D scale;
 	private Integer4D state;
@@ -38,7 +38,7 @@ public class RendererView {
 	private boolean julia;
 	
 	public RendererView() {
-		traslation = new Double4D(0, 0, 1, 0);
+		translation = new Double4D(0, 0, 1, 0);
 		rotation = new Double4D(0, 0, 0, 0);
 		scale = new Double4D(1, 1, 1, 1);
 		state = new Integer4D(0, 0, 0, 0);
@@ -46,7 +46,7 @@ public class RendererView {
 	}
 
 	public RendererView(MandelbrotView view) {
-		traslation = new Double4D(view.getTraslation());
+		translation = new Double4D(view.getTraslation());
 		rotation = new Double4D(view.getRotation());
 		scale = new Double4D(view.getScale());
 		state = new Integer4D(0, 0, 0, 0);
@@ -54,11 +54,11 @@ public class RendererView {
 	}
 	
 	public Double4D getTraslation() {
-		return traslation;
+		return translation;
 	}
 
 	public void setTraslation(Double4D translation) {
-		this.traslation = translation;
+		this.translation = translation;
 	}
 
 	public Double4D getRotation() {

@@ -52,4 +52,9 @@ public interface MandelbrotListener {
 	 * @param continuous 
 	 */
 	public void viewChanged(MandelbrotSession session, boolean continuous);
+
+	/**
+	 * @param session
+	 */
+    public void statusChanged(MandelbrotSession session);
 }

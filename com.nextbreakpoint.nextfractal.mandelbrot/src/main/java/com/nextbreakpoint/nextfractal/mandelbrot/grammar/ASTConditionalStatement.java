@@ -58,17 +58,17 @@ public class ASTConditionalStatement extends ASTStatement {
 
 	@Override
 	public String toString() {
-		StringBuilder driver = new StringBuilder();
-		driver.append("if (");
-		driver.append(conditionExp);
-		driver.append(") {\n");
-		driver.append(thenStatementList);
+		StringBuilder builder = new StringBuilder();
+		builder.append("if (");
+		builder.append(conditionExp);
+		builder.append(") {\n");
+		builder.append(thenStatementList);
 		if (elseStatementList != null) {
-			driver.append("} else {\n");
-			driver.append(elseStatementList);
+			builder.append("} else {\n");
+			builder.append(elseStatementList);
 		}
-		driver.append("}");
-		return driver.toString();
+		builder.append("}");
+		return builder.toString();
 	}
 
 	@Override

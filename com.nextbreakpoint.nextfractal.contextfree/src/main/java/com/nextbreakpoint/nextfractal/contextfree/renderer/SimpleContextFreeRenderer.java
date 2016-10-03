@@ -51,10 +51,10 @@ public final class SimpleContextFreeRenderer extends DefaultContextFreeRenderer 
 ////		String startshape = cfdgRuntime.getStartshape();
 ////		String variation = cfdgRuntime.getVariation();
 ////		CFContext context = new CFContext();
-////		CFBuilder driver = new CFBuilder(context);
+////		CFBuilder builder = new CFBuilder(context);
 ////		for (int i = 0; i < cfdgRuntime.getFigureElementCount(); i++) {
 ////			FigureRuntimeElement figure = cfdgRuntime.getFigureElement(i);
-////			figure.process(driver);
+////			figure.process(builder);
 ////		}
 ////		context.reloadRules();
 ////		int initialShapeType = context.encodeShapeName(startshape);

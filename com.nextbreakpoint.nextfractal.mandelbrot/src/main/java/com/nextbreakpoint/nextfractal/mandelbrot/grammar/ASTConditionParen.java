@@ -42,11 +42,11 @@ public class ASTConditionParen extends ASTConditionExpression {
 
 	@Override
 	public String toString() {
-		StringBuilder driver = new StringBuilder();
-		driver.append("(");
-		driver.append(exp);
-		driver.append(")");
-		return driver.toString();
+		StringBuilder builder = new StringBuilder();
+		builder.append("(");
+		builder.append(exp);
+		builder.append(")");
+		return builder.toString();
 	}
 
 	public CompiledCondition compile(ASTExpressionCompiler compiler) {

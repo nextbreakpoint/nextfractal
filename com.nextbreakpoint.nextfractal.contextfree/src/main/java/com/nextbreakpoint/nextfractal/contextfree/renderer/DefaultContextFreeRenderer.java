@@ -58,10 +58,10 @@ public class DefaultContextFreeRenderer extends AbstractContextFreeRenderer {
 //			tileTransform.scale(cfdgRuntime.getWidth(), cfdgRuntime.getHeight());
 //			context.setTiled(tileTransform, cfdgRuntime.getTileWidth(), cfdgRuntime.getTileHeight(), cfdgRuntime.isUseTile(), cfdgRuntime.isUseSize());
 //		}
-//		CFBuilder driver = new CFBuilder(context);
+//		CFBuilder builder = new CFBuilder(context);
 //		for (int i = 0; i < cfdgRuntime.getFigureElementCount(); i++) {
 //			FigureRuntimeElement figure = cfdgRuntime.getFigureElement(i);
-//			figure.process(driver);
+//			figure.process(builder);
 //		}
 //		context.reloadRules();
 //		int initialShapeType = context.encodeShapeName(startshape);

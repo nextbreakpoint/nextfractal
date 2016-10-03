@@ -48,12 +48,12 @@ public class ASTColorPalette extends ASTColorExpression {
 
 	@Override
 	public String toString() {
-		StringBuilder driver = new StringBuilder();
-		driver.append(name);
-		driver.append("[");
-		driver.append(exp);
-		driver.append("]");
-		return driver.toString();
+		StringBuilder builder = new StringBuilder();
+		builder.append(name);
+		builder.append("[");
+		builder.append(exp);
+		builder.append("]");
+		return builder.toString();
 	}
 
 	@Override

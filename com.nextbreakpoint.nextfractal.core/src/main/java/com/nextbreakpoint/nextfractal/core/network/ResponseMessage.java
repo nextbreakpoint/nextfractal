@@ -125,23 +125,23 @@ public class ResponseMessage extends ServiceMessage {
 	 */
 	@Override
 	public String toString() {
-		final StringBuilder driver = new StringBuilder();
-		driver.append("[");
-		driver.append("messageId = ");
-		driver.append(getMessageId());
-		driver.append(", messageType = ");
-		driver.append(decodeMessageType(getMessageType()));
-		driver.append(", requestId = ");
-		driver.append(getRequestId());
-		driver.append(", responseType = ");
-		driver.append(decodeResponseType(getResponseType()));
-		driver.append(", returnCode = ");
-		driver.append(getReturnCode() == 0 ? "OK" : ("ERROR " + getReturnCode()));
-		driver.append(", userData = ");
-		driver.append("[");
-		driver.append(getUserData());
-		driver.append("]");
-		driver.append("]");
-		return driver.toString();
+		final StringBuilder builder = new StringBuilder();
+		builder.append("[");
+		builder.append("messageId = ");
+		builder.append(getMessageId());
+		builder.append(", messageType = ");
+		builder.append(decodeMessageType(getMessageType()));
+		builder.append(", requestId = ");
+		builder.append(getRequestId());
+		builder.append(", responseType = ");
+		builder.append(decodeResponseType(getResponseType()));
+		builder.append(", returnCode = ");
+		builder.append(getReturnCode() == 0 ? "OK" : ("ERROR " + getReturnCode()));
+		builder.append(", userData = ");
+		builder.append("[");
+		builder.append(getUserData());
+		builder.append("]");
+		builder.append("]");
+		return builder.toString();
 	}
 }

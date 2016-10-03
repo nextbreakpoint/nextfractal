@@ -52,17 +52,17 @@ public class ASTFunction extends ASTExpression {
 
 	@Override
 	public String toString() {
-		StringBuilder driver = new StringBuilder();
-		driver.append(name);
-		driver.append("(");
+		StringBuilder builder = new StringBuilder();
+		builder.append(name);
+		builder.append("(");
 		for (int i = 0; i < arguments.length; i++) {
-			driver.append(arguments[i]);
+			builder.append(arguments[i]);
 			if (i < arguments.length - 1) {
-				driver.append(",");
+				builder.append(",");
 			}
 		}
-		driver.append(")");
-		return driver.toString();
+		builder.append(")");
+		return builder.toString();
 	}
 
 	@Override

@@ -42,10 +42,10 @@ public class ASTConditionNeg extends ASTConditionExpression {
 
 	@Override
 	public String toString() {
-		StringBuilder driver = new StringBuilder();
-		driver.append("~");
-		driver.append(exp);
-		return driver.toString();
+		StringBuilder builder = new StringBuilder();
+		builder.append("~");
+		builder.append(exp);
+		return builder.toString();
 	}
 
 	public CompiledCondition compile(ASTExpressionCompiler compiler) {

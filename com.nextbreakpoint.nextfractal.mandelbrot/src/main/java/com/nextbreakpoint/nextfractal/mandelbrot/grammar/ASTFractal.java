@@ -116,13 +116,13 @@ public class ASTFractal extends ASTObject {
 	}
 
 	public String toString() {
-		StringBuilder driver = new StringBuilder();
-		driver.append("orbit = {");
-		driver.append(orbit);
-		driver.append("},color = {");
-		driver.append(color);
-		driver.append("}");
-		return driver.toString();
+		StringBuilder builder = new StringBuilder();
+		builder.append("orbit = {");
+		builder.append(orbit);
+		builder.append("},color = {");
+		builder.append(color);
+		builder.append("}");
+		return builder.toString();
 	}
 
 	public void pushOrbitScope() {

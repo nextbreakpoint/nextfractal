@@ -36,7 +36,8 @@ public class MandelbrotSession extends AbstractSession {
 	private MandelbrotData data = new MandelbrotData();
 	private CompilerReport report;
 	private File currentFile;
-	
+	private String status;
+
 	public void addMandelbrotListener(MandelbrotListener listener) {
 		listeners.add(listener);
 	}
@@ -93,6 +94,15 @@ public class MandelbrotSession extends AbstractSession {
 	public void setPoint(double[] point, boolean continuous) {
 		data.setPoint(point);
 		firePointChanged(continuous);
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+		fireStatusChanged();
 	}
 
 	public MandelbrotView getViewAsCopy() {
@@ -158,6 +168,12 @@ public class MandelbrotSession extends AbstractSession {
 	protected void fireViewChanged(boolean continuous) {
 		for (MandelbrotListener listener : listeners) {
 			listener.viewChanged(this, continuous);
+		}
+	}
+
+	protected void fireStatusChanged() {
+		for (MandelbrotListener listener : listeners) {
+			listener.statusChanged(this);
 		}
 	}
 }

@@ -407,11 +407,11 @@ public abstract class ElementGridPane<T extends Serializable> extends BorderPane
 			if (name != null) {
 				Pattern pattern = Pattern.compile("([A-Z])[a-z ]*", 0);
 				Matcher matcher = pattern.matcher(name);
-				StringBuilder driver = new StringBuilder();
+				StringBuilder builder = new StringBuilder();
 				while (matcher.find()) {
-					driver.append(matcher.group(1));
+					builder.append(matcher.group(1));
 				}
-				return driver.toString();
+				return builder.toString();
 			}
 			return "?";
 		}

@@ -74,36 +74,36 @@ public class ASTColor extends ASTObject {
 
 	@Override
 	public String toString() {
-		StringBuilder driver = new StringBuilder();
-		driver.append("argb = ");
-		driver.append(argb);
-		driver.append(",palettes = [");
+		StringBuilder builder = new StringBuilder();
+		builder.append("argb = ");
+		builder.append(argb);
+		builder.append(",palettes = [");
 		for (int i = 0; i < palettes.size(); i++) {
 			ASTPalette palette = palettes.get(i);
-			driver.append("{");
-			driver.append(palette);
-			driver.append("}");
+			builder.append("{");
+			builder.append(palette);
+			builder.append("}");
 			if (i < palettes.size() - 1) {
-				driver.append(",");
+				builder.append(",");
 			}
 		}
-		driver.append("]");
-		driver.append(",init = {");
+		builder.append("]");
+		builder.append(",init = {");
 		if (colorInit != null) {
-			driver.append(colorInit);
+			builder.append(colorInit);
 		}
-		driver.append("}");
-		driver.append(",rules = [");
+		builder.append("}");
+		builder.append(",rules = [");
 		for (int i = 0; i < rules.size(); i++) {
 			ASTRule rule = rules.get(i);
-			driver.append("{");
-			driver.append(rule);
-			driver.append("}");
+			builder.append("{");
+			builder.append(rule);
+			builder.append("}");
 			if (i < rules.size() - 1) {
-				driver.append(",");
+				builder.append(",");
 			}
 		}
-		driver.append("]");
-		return driver.toString();
+		builder.append("]");
+		return builder.toString();
 	}
 }

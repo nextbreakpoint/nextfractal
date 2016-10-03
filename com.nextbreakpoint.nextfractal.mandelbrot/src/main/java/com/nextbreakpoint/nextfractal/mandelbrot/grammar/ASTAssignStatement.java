@@ -48,11 +48,11 @@ public class ASTAssignStatement extends ASTStatement {
 
 	@Override
 	public String toString() {
-		StringBuilder driver = new StringBuilder();
-		driver.append(name);
-		driver.append(" = ");
-		driver.append(exp);
-		return driver.toString();
+		StringBuilder builder = new StringBuilder();
+		builder.append(name);
+		builder.append(" = ");
+		builder.append(exp);
+		return builder.toString();
 	}
 
 	@Override

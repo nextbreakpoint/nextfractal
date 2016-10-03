@@ -84,23 +84,23 @@ public class ASTOrbitTrapOp extends ASTObject {
 
 	@Override
 	public String toString() {
-		StringBuilder driver = new StringBuilder();
-		driver.append(op);
+		StringBuilder builder = new StringBuilder();
+		builder.append(op);
 		if (c1 != null) {
-			driver.append("(");
-			driver.append(",");
-			driver.append(c1);
+			builder.append("(");
+			builder.append(",");
+			builder.append(c1);
 			if (c2 != null) {
-				driver.append(",");
-				driver.append(c2);
+				builder.append(",");
+				builder.append(c2);
 				if (c3 != null) {
-					driver.append(",");
-					driver.append(c3);
+					builder.append(",");
+					builder.append(c3);
 				}
 			}
-			driver.append(")");
+			builder.append(")");
 		}
-		return driver.toString();
+		return builder.toString();
 	}
 
 	public CompiledTrapOp compile(ASTExpressionCompiler compiler) {

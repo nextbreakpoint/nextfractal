@@ -41,7 +41,6 @@
 }
 
 .application .mandelbrot .menubar {
-	-fx-alignment: center-right;
 	-fx-background-color: white;
 	-fx-opacity: 0.95;
 	-fx-border-width: 0 0 1 0;
@@ -57,10 +56,6 @@
 
 .application .mandelbrot .menubar .button:armed {
 	-fx-background-color: lightgrey;
-}
-
-.application .mandelbrot .source {
-	-fx-border-width: 0;
 }
 
 .application .mandelbrot .popup {
@@ -113,8 +108,53 @@
 	-fx-background-color: white;
 }
 
+.application .mandelbrot .params {
+	-fx-padding: 8px;
+	-fx-border-width: 0 0 0 1;
+	-fx-border-color: #f0f0f0;
+}
+
+.application .mandelbrot .params .encoded {
+	-fx-border-width: 1 1 1 1;
+	-fx-border-color: #b0b0b0;
+	-fx-border-radius: 3;
+}
+
+.application .mandelbrot .params .text-area {
+	-fx-background-color: #fbfbfb;
+}
+
+.application .mandelbrot .params .text-area:focused .content {
+	-fx-background-color: #fbfbfb #fbfbfb black black;
+	-fx-background-insets: 0, 0, 1, 2;
+}
+
+.application .mandelbrot .params .text-area .content {
+	-fx-background-color: #fbfbfb #fbfbfb black black;
+	-fx-background-insets: 0, 0, 1, 2;
+}
+
+.application .mandelbrot .source {
+	-fx-border-width: 0;
+}
+
+.application .mandelbrot .status {
+	-fx-border-width: 1 0 0 0;
+	-fx-border-color: #f0f0f0;
+}
+
+.application .mandelbrot .errors {
+	-fx-border-width: 2 2 2 2;
+	-fx-border-color: red;
+}
+
 .application .mandelbrot .keyword {
     -fx-fill: blue;
+    -fx-font-weight: bold;
+}
+
+.application .mandelbrot .error {
+    -fx-fill: red;
     -fx-font-weight: bold;
 }
 
@@ -148,32 +188,8 @@
     -fx-font-weight: bold;
 }
 
-.application .mandelbrot .error {
-    -fx-fill: red;
-    -fx-font-weight: bold;
+.application .mandelbrot .tab {
+	-fx-background-color: grey;
+	-fx-opacity: 0.2;
 }
 
-.application .mandelbrot .params {
-	-fx-padding: 20px;
-}
-
-.application .mandelbrot .encoded {
-	-fx-border-width: 1 1 1 1;
-	-fx-border-color: #b0b0b0;
-	-fx-min-height: 300px;
-	-fx-border-radius: 5;
-}
-
-.application .mandelbrot .params .text-area {
-	-fx-background-color: #fbfbfb;
-}
-
-.application .mandelbrot .params .text-area:focused .content {
-	-fx-background-color: #fbfbfb #fbfbfb black black;
-	-fx-background-insets: 0, 0, 1, 2;
-}
-
-.application .mandelbrot .params .text-area .content {
-	-fx-background-color: #fbfbfb #fbfbfb black black;
-	-fx-background-insets: 0, 0, 1, 2;
-}

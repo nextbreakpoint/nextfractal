@@ -46,18 +46,18 @@ public class ASTColorInit extends ASTObject {
 
 	@Override
 	public String toString() {
-		StringBuilder driver = new StringBuilder();
-		driver.append("statements = [");
+		StringBuilder builder = new StringBuilder();
+		builder.append("statements = [");
 		for (int i = 0; i < statements.size(); i++) {
 			ASTStatement statement = statements.get(i);
-			driver.append("{");
-			driver.append(statement);
-			driver.append("}");
+			builder.append("{");
+			builder.append(statement);
+			builder.append("}");
 			if (i < statements.size() - 1) {
-				driver.append(",");
+				builder.append(",");
 			}
 		}
-		driver.append("]");
-		return driver.toString();
+		builder.append("]");
+		return builder.toString();
 	}
 }

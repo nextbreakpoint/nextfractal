@@ -61,13 +61,13 @@ public class ASTOperator extends ASTExpression {
 
 	@Override
 	public String toString() {
-		StringBuilder driver = new StringBuilder();
-		driver.append(exp1);
-		driver.append(op);
+		StringBuilder builder = new StringBuilder();
+		builder.append(exp1);
+		builder.append(op);
 		if (exp2 != null) {
-			driver.append(exp2);
+			builder.append(exp2);
 		}
-		return driver.toString();
+		return builder.toString();
 	}
 
 	@Override

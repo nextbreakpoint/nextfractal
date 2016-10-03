@@ -50,7 +50,7 @@ public class TestFractal {
 //			System.out.println(pngImageData.length);
 //		} catch (IOException e) {
 //			e.printStackTrace();
-//			fail(e.getMessage());
+//			fail(e.getStatus());
 //		}
 	}
 

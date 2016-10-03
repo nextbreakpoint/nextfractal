@@ -54,21 +54,21 @@ public class ASTPalette extends ASTObject {
 
 	@Override
 	public String toString() {
-		StringBuilder driver = new StringBuilder();
-		driver.append("name = ");
-		driver.append(name);
-		driver.append(",elements = [");
+		StringBuilder builder = new StringBuilder();
+		builder.append("name = ");
+		builder.append(name);
+		builder.append(",elements = [");
 		for (int i = 0; i < elements.size(); i++) {
 			ASTPaletteElement statement = elements.get(i);
-			driver.append("{");
-			driver.append(statement);
-			driver.append("}");
+			builder.append("{");
+			builder.append(statement);
+			builder.append("}");
 			if (i < elements.size() - 1) {
-				driver.append(",");
+				builder.append(",");
 			}
 		}
-		driver.append("]");
-		return driver.toString();
+		builder.append("]");
+		return builder.toString();
 	}
 
 	public CompiledPalette compile(ASTExpressionCompiler compiler) {

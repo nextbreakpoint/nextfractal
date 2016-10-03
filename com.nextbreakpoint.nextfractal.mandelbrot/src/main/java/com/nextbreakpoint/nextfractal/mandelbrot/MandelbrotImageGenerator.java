@@ -78,7 +78,7 @@ public class MandelbrotImageGenerator implements ImageGenerator {
 			}
 			Renderer renderer = new Renderer(threadFactory, renderFactory, tile);
 			renderer.setOpaque(opaque);
-			double[] traslation = generatorData.getTranslation();
+			double[] translation = generatorData.getTranslation();
 			double[] rotation = generatorData.getRotation();
 			double[] scale = generatorData.getScale();
 			double[] constant = generatorData.getPoint();
@@ -87,7 +87,7 @@ public class MandelbrotImageGenerator implements ImageGenerator {
 			renderer.setColor(colorBuilder.build());
 			renderer.init();
 			RendererView view = new RendererView();
-			view .setTraslation(new Double4D(traslation));
+			view .setTraslation(new Double4D(translation));
 			view.setRotation(new Double4D(rotation));
 			view.setScale(new Double4D(scale));
 			view.setState(new Integer4D(0, 0, 0, 0));

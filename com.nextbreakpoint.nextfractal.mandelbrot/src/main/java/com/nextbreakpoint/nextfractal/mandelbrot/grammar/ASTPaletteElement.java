@@ -44,17 +44,17 @@ public class ASTPaletteElement extends ASTObject {
 	
 	@Override
 	public String toString() {
-		StringBuilder driver = new StringBuilder();
-		driver.append("beginColor = ");
-		driver.append(beginColor);
-		driver.append(",endColor = ");
-		driver.append(endColor);
-		driver.append(",steps = ");
-		driver.append(steps);
-		driver.append(",exp = {");
-		driver.append(exp);
-		driver.append("}");
-		return driver.toString();
+		StringBuilder builder = new StringBuilder();
+		builder.append("beginColor = ");
+		builder.append(beginColor);
+		builder.append(",endColor = ");
+		builder.append(endColor);
+		builder.append(",steps = ");
+		builder.append(steps);
+		builder.append(",exp = {");
+		builder.append(exp);
+		builder.append("}");
+		return builder.toString();
 	}
 
 	public int getSteps() {

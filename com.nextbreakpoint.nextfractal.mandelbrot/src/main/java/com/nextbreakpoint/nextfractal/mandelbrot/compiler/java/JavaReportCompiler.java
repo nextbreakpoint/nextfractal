@@ -106,8 +106,8 @@ public class JavaReportCompiler {
 			parser.setErrorHandler(new CompilerErrorStrategy(errors));
 			ParseTree fractalTree = parser.fractal();
             if (fractalTree != null) {
-            	ASTBuilder driver = parser.getBuilder();
-            	ASTFractal fractal = driver.getFractal();
+            	ASTBuilder builder = parser.getBuilder();
+            	ASTFractal fractal = builder.getFractal();
             	return fractal;
             }
 		} catch (ASTException e) {
@@ -124,10 +124,10 @@ public class JavaReportCompiler {
 
 	private String buildOrbit(ExpressionContext context, ASTFractal fractal, List<CompilerError> errors) {
 		try {
-			StringBuilder driver = new StringBuilder();
+			StringBuilder builder = new StringBuilder();
 			Map<String, CompilerVariable> variables = new HashMap<>();
-			compileOrbit(context, driver, variables, fractal);
-			return driver.toString();
+			compileOrbit(context, builder, variables, fractal);
+			return builder.toString();
 		} catch (ASTException e) {
 			CompilerError error = new CompilerError(CompilerError.ErrorType.M_COMPILER, e.getLocation().getLine(), e.getLocation().getCharPositionInLine(), e.getLocation().getStartIndex(), e.getLocation().getStopIndex() - e.getLocation().getStartIndex(), e.getMessage());
 			logger.log(Level.FINE, error.toString(), e);
@@ -138,10 +138,10 @@ public class JavaReportCompiler {
 	
 	private String buildColor(ExpressionContext context, ASTFractal fractal, List<CompilerError> errors) {
 		try {
-			StringBuilder driver = new StringBuilder();
+			StringBuilder builder = new StringBuilder();
 			Map<String, CompilerVariable> variables = new HashMap<>();
-			compileColor(context, driver, variables, fractal);
-			return driver.toString();
+			compileColor(context, builder, variables, fractal);
+			return builder.toString();
 		} catch (ASTException e) {
 			CompilerError error = new CompilerError(CompilerError.ErrorType.M_COMPILER, e.getLocation().getLine(), e.getLocation().getCharPositionInLine(), e.getLocation().getStartIndex(), e.getLocation().getStopIndex() - e.getLocation().getStartIndex(), e.getMessage());
 			logger.log(Level.FINE, error.toString(), e);
@@ -150,80 +150,80 @@ public class JavaReportCompiler {
 		return "";
 	}
 	
-	private String compileOrbit(ExpressionContext context, StringBuilder driver, Map<String, CompilerVariable> variables, ASTFractal fractal) {
-		driver.append("package ");
-		driver.append(packageName);
-		driver.append(";\n");
-		driver.append("import static ");
+	private String compileOrbit(ExpressionContext context, StringBuilder builder, Map<String, CompilerVariable> variables, ASTFractal fractal) {
+		builder.append("package ");
+		builder.append(packageName);
+		builder.append(";\n");
+		builder.append("import static ");
 		if (Boolean.getBoolean("mandelbrot.expression.fastmath")) {
-			driver.append(FastExpression.class.getCanonicalName());
+			builder.append(FastExpression.class.getCanonicalName());
 		} else {
-			driver.append(Expression.class.getCanonicalName());
+			builder.append(Expression.class.getCanonicalName());
 		}
-		driver.append(".*;\n");
-		driver.append("import ");
-		driver.append(Number.class.getCanonicalName());
-		driver.append(";\n");
-		driver.append("import ");
-		driver.append(MutableNumber.class.getCanonicalName());
-		driver.append(";\n");
-		driver.append("import ");
-		driver.append(Trap.class.getCanonicalName());
-		driver.append(";\n");
-		driver.append("import ");
-		driver.append(Orbit.class.getCanonicalName());
-		driver.append(";\n");
-		driver.append("import ");
-		driver.append(Scope.class.getCanonicalName());
-		driver.append(";\n");
-		driver.append("import ");
-		driver.append(List.class.getCanonicalName());
-		driver.append(";\n");
-		driver.append("@SuppressWarnings(value=\"unused\")\n");
-		driver.append("public class ");
-		driver.append(className);
-		driver.append("Orbit extends Orbit {\n");
-		buildOrbit(context, driver, variables, fractal);
-		driver.append("}\n");
-		return driver.toString();
+		builder.append(".*;\n");
+		builder.append("import ");
+		builder.append(Number.class.getCanonicalName());
+		builder.append(";\n");
+		builder.append("import ");
+		builder.append(MutableNumber.class.getCanonicalName());
+		builder.append(";\n");
+		builder.append("import ");
+		builder.append(Trap.class.getCanonicalName());
+		builder.append(";\n");
+		builder.append("import ");
+		builder.append(Orbit.class.getCanonicalName());
+		builder.append(";\n");
+		builder.append("import ");
+		builder.append(Scope.class.getCanonicalName());
+		builder.append(";\n");
+		builder.append("import ");
+		builder.append(List.class.getCanonicalName());
+		builder.append(";\n");
+		builder.append("@SuppressWarnings(value=\"unused\")\n");
+		builder.append("public class ");
+		builder.append(className);
+		builder.append("Orbit extends Orbit {\n");
+		buildOrbit(context, builder, variables, fractal);
+		builder.append("}\n");
+		return builder.toString();
 	}
 
-	private String compileColor(ExpressionContext context, StringBuilder driver, Map<String, CompilerVariable> variables, ASTFractal fractal) {
-		driver.append("package ");
-		driver.append(packageName);
-		driver.append(";\n");
-		driver.append("import static ");
+	private String compileColor(ExpressionContext context, StringBuilder builder, Map<String, CompilerVariable> variables, ASTFractal fractal) {
+		builder.append("package ");
+		builder.append(packageName);
+		builder.append(";\n");
+		builder.append("import static ");
 		if (Boolean.getBoolean("mandelbrot.expression.fastmath")) {
-			driver.append(FastExpression.class.getCanonicalName());
+			builder.append(FastExpression.class.getCanonicalName());
 		} else {
-			driver.append(Expression.class.getCanonicalName());
+			builder.append(Expression.class.getCanonicalName());
 		}
-		driver.append(".*;\n");
-		driver.append("import ");
-		driver.append(Number.class.getCanonicalName());
-		driver.append(";\n");
-		driver.append("import ");
-		driver.append(MutableNumber.class.getCanonicalName());
-		driver.append(";\n");
-		driver.append("import ");
-		driver.append(Palette.class.getCanonicalName());
-		driver.append(";\n");
-		driver.append("import ");
-		driver.append(Color.class.getCanonicalName());
-		driver.append(";\n");
-		driver.append("import ");
-		driver.append(Scope.class.getCanonicalName());
-		driver.append(";\n");
-		driver.append("@SuppressWarnings(value=\"unused\")\n");
-		driver.append("public class ");
-		driver.append(className);
-		driver.append("Color extends Color {\n");
-		buildColor(context, driver, variables, fractal);
-		driver.append("}\n");
-		return driver.toString();
+		builder.append(".*;\n");
+		builder.append("import ");
+		builder.append(Number.class.getCanonicalName());
+		builder.append(";\n");
+		builder.append("import ");
+		builder.append(MutableNumber.class.getCanonicalName());
+		builder.append(";\n");
+		builder.append("import ");
+		builder.append(Palette.class.getCanonicalName());
+		builder.append(";\n");
+		builder.append("import ");
+		builder.append(Color.class.getCanonicalName());
+		builder.append(";\n");
+		builder.append("import ");
+		builder.append(Scope.class.getCanonicalName());
+		builder.append(";\n");
+		builder.append("@SuppressWarnings(value=\"unused\")\n");
+		builder.append("public class ");
+		builder.append(className);
+		builder.append("Color extends Color {\n");
+		buildColor(context, builder, variables, fractal);
+		builder.append("}\n");
+		return builder.toString();
 	}
 
-	private void buildOrbit(ExpressionContext context, StringBuilder driver, Map<String, CompilerVariable> scope, ASTFractal fractal) {
+	private void buildOrbit(ExpressionContext context, StringBuilder builder, Map<String, CompilerVariable> scope, ASTFractal fractal) {
 		if (fractal != null) {
 			for (CompilerVariable var : fractal.getOrbitVariables()) {
 				scope.put(var.getName(),  var);
@@ -231,11 +231,11 @@ public class JavaReportCompiler {
 			for (CompilerVariable var : fractal.getStateVariables()) {
 				scope.put(var.getName(),  var);
 			}
-			compile(context, driver, scope, fractal.getStateVariables(), fractal.getOrbit());
+			compile(context, builder, scope, fractal.getStateVariables(), fractal.getOrbit());
 		}
 	}
 
-	private void buildColor(ExpressionContext context, StringBuilder driver, Map<String, CompilerVariable> scope, ASTFractal fractal) {
+	private void buildColor(ExpressionContext context, StringBuilder builder, Map<String, CompilerVariable> scope, ASTFractal fractal) {
 		if (fractal != null) {
 			for (CompilerVariable var : fractal.getColorVariables()) {
 				scope.put(var.getName(),  var);
@@ -243,366 +243,366 @@ public class JavaReportCompiler {
 			for (CompilerVariable var : fractal.getStateVariables()) {
 				scope.put(var.getName(),  var);
 			}
-			compile(context, driver, scope, fractal.getStateVariables(), fractal.getColor());
+			compile(context, builder, scope, fractal.getStateVariables(), fractal.getColor());
 		}
 	}
 
-	private void compile(ExpressionContext context, StringBuilder driver, Map<String, CompilerVariable> scope, Collection<CompilerVariable> stateVariables, ASTOrbit orbit) {
-		driver.append("public void init() {\n");
+	private void compile(ExpressionContext context, StringBuilder builder, Map<String, CompilerVariable> scope, Collection<CompilerVariable> stateVariables, ASTOrbit orbit) {
+		builder.append("public void init() {\n");
 		if (orbit != null) {
-			driver.append("setInitialRegion(");
-			driver.append("number(");
-			driver.append(orbit.getRegion().getA());
-			driver.append("),number(");
-			driver.append(orbit.getRegion().getB());
-			driver.append("));\n");
+			builder.append("setInitialRegion(");
+			builder.append("number(");
+			builder.append(orbit.getRegion().getA());
+			builder.append("),number(");
+			builder.append(orbit.getRegion().getB());
+			builder.append("));\n");
 			for (CompilerVariable var : stateVariables) {
-				driver.append("addVariable(");
-				driver.append(var.getName());
-				driver.append(");\n");
+				builder.append("addVariable(");
+				builder.append(var.getName());
+				builder.append(");\n");
 			}
 			for (ASTOrbitTrap trap : orbit.getTraps()) {
-				driver.append("addTrap(trap");
-				driver.append(trap.getName().toUpperCase().substring(0, 1));
-				driver.append(trap.getName().substring(1));
-				driver.append(");\n");
+				builder.append("addTrap(trap");
+				builder.append(trap.getName().toUpperCase().substring(0, 1));
+				builder.append(trap.getName().substring(1));
+				builder.append(");\n");
 			}
 		}
-		driver.append("}\n");
+		builder.append("}\n");
 		for (CompilerVariable var : scope.values()) {
 			scope.put(var.getName(), var);
 			if (var.isCreate()) {
 				if (var.isReal()) {
-					driver.append("private double ");
-					driver.append(var.getName());
-					driver.append(" = 0.0;\n");
+					builder.append("private double ");
+					builder.append(var.getName());
+					builder.append(" = 0.0;\n");
 				} else {
-					driver.append("private final MutableNumber ");
-					driver.append(var.getName());
-					driver.append(" = getNumber(");
-					driver.append(context.newNumberIndex());
-					driver.append(").set(0.0,0.0);\n");
+					builder.append("private final MutableNumber ");
+					builder.append(var.getName());
+					builder.append(" = getNumber(");
+					builder.append(context.newNumberIndex());
+					builder.append(").set(0.0,0.0);\n");
 				}
 			}
 		}
 		if (orbit != null) {
 			for (ASTOrbitTrap trap : orbit.getTraps()) {
-				compile(context, driver, scope, trap);
+				compile(context, builder, scope, trap);
 			}
 		}
-		driver.append("public void render(List<Number[]> states) {\n");
+		builder.append("public void render(List<Number[]> states) {\n");
 		if (orbit != null) {
-			compile(context, driver, scope, orbit.getBegin(), stateVariables);
+			compile(context, builder, scope, orbit.getBegin(), stateVariables);
 			Map<String, CompilerVariable> vars = new HashMap<String, CompilerVariable>(scope);
-			compile(context, driver, vars, orbit.getLoop(), stateVariables);
-			compile(context, driver, scope, orbit.getEnd(), stateVariables);
+			compile(context, builder, vars, orbit.getLoop(), stateVariables);
+			compile(context, builder, scope, orbit.getEnd(), stateVariables);
 		}
 		int i = 0;
 		for (CompilerVariable var : stateVariables) {
-			driver.append("setVariable(");
-			driver.append(i++);
-			driver.append(",");
-			driver.append(var.getName());
-			driver.append(");\n");
+			builder.append("setVariable(");
+			builder.append(i++);
+			builder.append(",");
+			builder.append(var.getName());
+			builder.append(");\n");
 		}
-		driver.append("}\n");
-		driver.append("protected MutableNumber[] createNumbers() {\n");
-		driver.append("return new MutableNumber[");
-		driver.append(context.getNumberCount());
-		driver.append("];\n");
-		driver.append("}\n");
+		builder.append("}\n");
+		builder.append("protected MutableNumber[] createNumbers() {\n");
+		builder.append("return new MutableNumber[");
+		builder.append(context.getNumberCount());
+		builder.append("];\n");
+		builder.append("}\n");
 	}
 
-	private void compile(ExpressionContext context, StringBuilder driver, Map<String, CompilerVariable> scope, Collection<CompilerVariable> stateVariables, ASTColor color) {
-		driver.append("public void init() {\n");
+	private void compile(ExpressionContext context, StringBuilder builder, Map<String, CompilerVariable> scope, Collection<CompilerVariable> stateVariables, ASTColor color) {
+		builder.append("public void init() {\n");
 		if (color != null) {
 		}
-		driver.append("}\n");
+		builder.append("}\n");
 		for (CompilerVariable var : stateVariables) {
 			scope.put(var.getName(), var);
 		}
 		if (color != null) {
 			for (ASTPalette palette : color.getPalettes()) {
-				compile(context, driver, scope, palette);
+				compile(context, builder, scope, palette);
 			}
 		}
-		driver.append("public void render() {\n");
+		builder.append("public void render() {\n");
 		int i = 0;
 		for (CompilerVariable var : stateVariables) {
 			if (var.isReal()) {
-				driver.append("double ");
-				driver.append(var.getName());
-				driver.append(" = getRealVariable(");
-				driver.append(i++);
-				driver.append(");\n");
+				builder.append("double ");
+				builder.append(var.getName());
+				builder.append(" = getRealVariable(");
+				builder.append(i++);
+				builder.append(");\n");
 			} else {
-				driver.append("final MutableNumber ");
-				driver.append(var.getName());
-				driver.append(" = getVariable(");
-				driver.append(i++);
-				driver.append(");\n");
+				builder.append("final MutableNumber ");
+				builder.append(var.getName());
+				builder.append(" = getVariable(");
+				builder.append(i++);
+				builder.append(");\n");
 			}
 		}
 		i = 0;
 		for (CompilerVariable var : scope.values()) {
 			if (!stateVariables.contains(var)) {
 				if (var.isReal()) {
-					driver.append("double ");
-					driver.append(var.getName());
-					driver.append(" = 0;\n");
+					builder.append("double ");
+					builder.append(var.getName());
+					builder.append(" = 0;\n");
 				} else {
-					driver.append("final MutableNumber ");
-					driver.append(var.getName());
-					driver.append(" = getNumber(");
-					driver.append(i++);
-					driver.append(");\n");
+					builder.append("final MutableNumber ");
+					builder.append(var.getName());
+					builder.append(" = getNumber(");
+					builder.append(i++);
+					builder.append(");\n");
 				}
 			}
 		}
 		if (color != null) {
-			driver.append("setColor(color(");
-			driver.append(color.getArgb().getComponents()[0]);
-			driver.append(",");
-			driver.append(color.getArgb().getComponents()[1]);
-			driver.append(",");
-			driver.append(color.getArgb().getComponents()[2]);
-			driver.append(",");
-			driver.append(color.getArgb().getComponents()[3]);
-			driver.append("));\n");
+			builder.append("setColor(color(");
+			builder.append(color.getArgb().getComponents()[0]);
+			builder.append(",");
+			builder.append(color.getArgb().getComponents()[1]);
+			builder.append(",");
+			builder.append(color.getArgb().getComponents()[2]);
+			builder.append(",");
+			builder.append(color.getArgb().getComponents()[3]);
+			builder.append("));\n");
 			if (color.getInit() != null) {
 				for (ASTStatement statement : color.getInit().getStatements()) {
-					compile(context, driver, scope, statement);
+					compile(context, builder, scope, statement);
 				}
 			}
 			for (ASTRule rule : color.getRules()) {
-				compile(context, driver, scope, rule);
+				compile(context, builder, scope, rule);
 			}
 		}
-		driver.append("}\n");
-		driver.append("protected MutableNumber[] createNumbers() {\n");
-		driver.append("return new MutableNumber[");
-		driver.append(context.getNumberCount());
-		driver.append("];\n");
-		driver.append("}\n");
+		builder.append("}\n");
+		builder.append("protected MutableNumber[] createNumbers() {\n");
+		builder.append("return new MutableNumber[");
+		builder.append(context.getNumberCount());
+		builder.append("];\n");
+		builder.append("}\n");
 	}
 
-	private void compile(ExpressionContext context, StringBuilder driver,	Map<String, CompilerVariable> variables, ASTRule rule) {
-		driver.append("if (");
-		rule.getRuleExp().compile(new JavaASTCompiler(context, variables, driver));
-		driver.append(") {\n");
-		driver.append("addColor(");
-		driver.append(rule.getOpacity());
-		driver.append(",");
-		rule.getColorExp().compile(new JavaASTCompiler(context, variables, driver));
-		driver.append(");\n}\n");
+	private void compile(ExpressionContext context, StringBuilder builder,	Map<String, CompilerVariable> variables, ASTRule rule) {
+		builder.append("if (");
+		rule.getRuleExp().compile(new JavaASTCompiler(context, variables, builder));
+		builder.append(") {\n");
+		builder.append("addColor(");
+		builder.append(rule.getOpacity());
+		builder.append(",");
+		rule.getColorExp().compile(new JavaASTCompiler(context, variables, builder));
+		builder.append(");\n}\n");
 	}
 
-	private void compile(ExpressionContext context, StringBuilder driver, Map<String, CompilerVariable> variables, ASTPalette palette) {
-		driver.append("private Palette palette");
-		driver.append(palette.getName().toUpperCase().substring(0, 1));
-		driver.append(palette.getName().substring(1));
-		driver.append(" = palette()");
+	private void compile(ExpressionContext context, StringBuilder builder, Map<String, CompilerVariable> variables, ASTPalette palette) {
+		builder.append("private Palette palette");
+		builder.append(palette.getName().toUpperCase().substring(0, 1));
+		builder.append(palette.getName().substring(1));
+		builder.append(" = palette()");
 		for (ASTPaletteElement element : palette.getElements()) {
-			driver.append(".add(");
-			compile(context, driver, variables, element);
-			driver.append(")");
+			builder.append(".add(");
+			compile(context, builder, variables, element);
+			builder.append(")");
 		}
-		driver.append(".build();\n");
+		builder.append(".build();\n");
 	}
 
-	private void compile(ExpressionContext context, StringBuilder driver, Map<String, CompilerVariable> variables, ASTPaletteElement element) {
-		driver.append("element(");
-		driver.append(createArray(element.getBeginColor().getComponents()));
-		driver.append(",");
-		driver.append(createArray(element.getEndColor().getComponents()));
-		driver.append(",");
-		driver.append(element.getSteps());
-		driver.append(",(start, end, step) -> { return ");
+	private void compile(ExpressionContext context, StringBuilder builder, Map<String, CompilerVariable> variables, ASTPaletteElement element) {
+		builder.append("element(");
+		builder.append(createArray(element.getBeginColor().getComponents()));
+		builder.append(",");
+		builder.append(createArray(element.getEndColor().getComponents()));
+		builder.append(",");
+		builder.append(element.getSteps());
+		builder.append(",(start, end, step) -> { return ");
 		if (element.getExp() != null) {
 			if (element.getExp().isReal()) {
-				element.getExp().compile(new JavaASTCompiler(context, variables, driver));
+				element.getExp().compile(new JavaASTCompiler(context, variables, builder));
 			} else {
 				throw new ASTException("Expression type not valid: " + element.getLocation().getText(), element.getLocation());
 			}
 		} else {
-			driver.append("step / (end - start)");
+			builder.append("step / (end - start)");
 		}
-		driver.append(";})");
+		builder.append(";})");
 	}
 
-	private void compile(ExpressionContext context, StringBuilder driver,	Map<String, CompilerVariable> variables, ASTOrbitTrap trap) {
-		driver.append("private Trap trap");
-		driver.append(trap.getName().toUpperCase().substring(0, 1));
-		driver.append(trap.getName().substring(1));
-		driver.append(" = trap(number(");
-		driver.append(trap.getCenter());
-		driver.append("))");
+	private void compile(ExpressionContext context, StringBuilder builder,	Map<String, CompilerVariable> variables, ASTOrbitTrap trap) {
+		builder.append("private Trap trap");
+		builder.append(trap.getName().toUpperCase().substring(0, 1));
+		builder.append(trap.getName().substring(1));
+		builder.append(" = trap(number(");
+		builder.append(trap.getCenter());
+		builder.append("))");
 		for (ASTOrbitTrapOp operator : trap.getOperators()) {
-			driver.append(".");
+			builder.append(".");
 			switch (operator.getOp()) {
 				case "MOVETO":
-					driver.append("moveTo");
+					builder.append("moveTo");
 					break;
 
 				case "MOVETOREL":
-					driver.append("moveToRel");
+					builder.append("moveToRel");
 					break;
 
 				case "LINETO":
-					driver.append("lineTo");
+					builder.append("lineTo");
 					break;
 
 				case "LINETOREL":
-					driver.append("lineToRel");
+					builder.append("lineToRel");
 					break;
 
 				case "ARCTO":
-					driver.append("arcTo");
+					builder.append("arcTo");
 					break;
 
 				case "ARCTOREL":
-					driver.append("arcToRel");
+					builder.append("arcToRel");
 					break;
 
 				case "QUADTO":
-					driver.append("quadTo");
+					builder.append("quadTo");
 					break;
 
 				case "QUADTOREL":
-					driver.append("quadToRel");
+					builder.append("quadToRel");
 					break;
 
 				case "CURVETO":
-					driver.append("curveTo");
+					builder.append("curveTo");
 					break;
 
 				case "CURVETOREL":
-					driver.append("curveToRel");
+					builder.append("curveToRel");
 					break;
 
 				case "CLOSE":
-					driver.append("close");
+					builder.append("close");
 					break;
 
 				default:
 					break;
 			}
-			driver.append("(");
+			builder.append("(");
 			if (operator.getC1() != null) {
 				if (operator.getC1().isReal()) {
-					driver.append("number(");
-					operator.getC1().compile(new JavaASTCompiler(context, variables, driver));
-					driver.append(")");
+					builder.append("number(");
+					operator.getC1().compile(new JavaASTCompiler(context, variables, builder));
+					builder.append(")");
 				} else {
-					operator.getC1().compile(new JavaASTCompiler(context, variables, driver));
+					operator.getC1().compile(new JavaASTCompiler(context, variables, builder));
 				}
 			}
 			if (operator.getC2() != null) {
-				driver.append(",");
+				builder.append(",");
 				if (operator.getC2().isReal()) {
-					driver.append("number(");
-					operator.getC2().compile(new JavaASTCompiler(context, variables, driver));
-					driver.append(")");
+					builder.append("number(");
+					operator.getC2().compile(new JavaASTCompiler(context, variables, builder));
+					builder.append(")");
 				} else {
-					operator.getC2().compile(new JavaASTCompiler(context, variables, driver));
+					operator.getC2().compile(new JavaASTCompiler(context, variables, builder));
 				}
 			}
 			if (operator.getC3() != null) {
-				driver.append(",");
+				builder.append(",");
 				if (operator.getC3().isReal()) {
-					driver.append("number(");
-					operator.getC3().compile(new JavaASTCompiler(context, variables, driver));
-					driver.append(")");
+					builder.append("number(");
+					operator.getC3().compile(new JavaASTCompiler(context, variables, builder));
+					builder.append(")");
 				} else {
-					operator.getC3().compile(new JavaASTCompiler(context, variables, driver));
+					operator.getC3().compile(new JavaASTCompiler(context, variables, builder));
 				}
 			}
-			driver.append(")");
+			builder.append(")");
 		}
-		driver.append(";\n");
+		builder.append(";\n");
 	}
 
-	private void compile(ExpressionContext context, StringBuilder driver, Map<String, CompilerVariable> variables, ASTOrbitBegin begin, Collection<CompilerVariable> stateVariables) {
+	private void compile(ExpressionContext context, StringBuilder builder, Map<String, CompilerVariable> variables, ASTOrbitBegin begin, Collection<CompilerVariable> stateVariables) {
 		if (begin != null) {
 			for (ASTStatement statement : begin.getStatements()) {
-				compile(context, driver, variables, statement);
+				compile(context, builder, variables, statement);
 			}
 		}
 	}
 
-	private void compile(ExpressionContext context, StringBuilder driver, Map<String, CompilerVariable> variables, ASTOrbitEnd end, Collection<CompilerVariable> stateVariables) {
+	private void compile(ExpressionContext context, StringBuilder builder, Map<String, CompilerVariable> variables, ASTOrbitEnd end, Collection<CompilerVariable> stateVariables) {
 		if (end != null) {
 			for (ASTStatement statement : end.getStatements()) {
-				compile(context, driver, variables, statement);
+				compile(context, builder, variables, statement);
 			}
 		}
 	}
 
-	private void compile(ExpressionContext context, StringBuilder driver, Map<String, CompilerVariable> variables, ASTOrbitLoop loop, Collection<CompilerVariable> stateVariables) {
+	private void compile(ExpressionContext context, StringBuilder builder, Map<String, CompilerVariable> variables, ASTOrbitLoop loop, Collection<CompilerVariable> stateVariables) {
 		if (loop != null) {
-			driver.append("n = ");
-			driver.append(loop.getBegin());
-			driver.append(";\n");
-			driver.append("if (states != null) {\n");
-			driver.append("states.add(new Number[] { ");
+			builder.append("n = ");
+			builder.append(loop.getBegin());
+			builder.append(";\n");
+			builder.append("if (states != null) {\n");
+			builder.append("states.add(new Number[] { ");
 			int i = 0;
 			for (CompilerVariable var : stateVariables) {
 				if (i > 0) {
-					driver.append(", ");
+					builder.append(", ");
 				}
-				driver.append("number(");
-				driver.append(var.getName());
-				driver.append(")");
+				builder.append("number(");
+				builder.append(var.getName());
+				builder.append(")");
 				i += 1;
 			}
-			driver.append(" });\n");
-			driver.append("}\n");
-			driver.append("for (int i = ");
-			driver.append(loop.getBegin());
-			driver.append(" + 1; i <= ");
-			driver.append(loop.getEnd());
-			driver.append("; i++) {\n");
+			builder.append(" });\n");
+			builder.append("}\n");
+			builder.append("for (int i = ");
+			builder.append(loop.getBegin());
+			builder.append(" + 1; i <= ");
+			builder.append(loop.getEnd());
+			builder.append("; i++) {\n");
 			for (ASTStatement statement : loop.getStatements()) {
-				compile(context, driver, variables, statement);
+				compile(context, builder, variables, statement);
 			}
-			driver.append("if (");
-			loop.getExpression().compile(new JavaASTCompiler(context, variables, driver));
-			driver.append(") { n = i; break; }\n");
-			driver.append("if (states != null) {\n");
-			driver.append("states.add(new Number[] { ");
+			builder.append("if (");
+			loop.getExpression().compile(new JavaASTCompiler(context, variables, builder));
+			builder.append(") { n = i; break; }\n");
+			builder.append("if (states != null) {\n");
+			builder.append("states.add(new Number[] { ");
 			i = 0;
 			for (CompilerVariable var : stateVariables) {
 				if (i > 0) {
-					driver.append(", ");
+					builder.append(", ");
 				}
-				driver.append("number(");
-				driver.append(var.getName());
-				driver.append(")");
+				builder.append("number(");
+				builder.append(var.getName());
+				builder.append(")");
 				i += 1;
 			}
-			driver.append(" });\n");
-			driver.append("}\n");
-			driver.append("}\n");
-			driver.append("if (states != null) {\n");
-			driver.append("states.add(new Number[] { ");
+			builder.append(" });\n");
+			builder.append("}\n");
+			builder.append("}\n");
+			builder.append("if (states != null) {\n");
+			builder.append("states.add(new Number[] { ");
 			i = 0;
 			for (CompilerVariable var : stateVariables) {
 				if (i > 0) {
-					driver.append(", ");
+					builder.append(", ");
 				}
-				driver.append("number(");
-				driver.append(var.getName());
-				driver.append(")");
+				builder.append("number(");
+				builder.append(var.getName());
+				builder.append(")");
 				i += 1;
 			}
-			driver.append(" });\n");
-			driver.append("}\n");
+			builder.append(" });\n");
+			builder.append("}\n");
 		}
 	}
 
-	private void compile(ExpressionContext context, StringBuilder driver, Map<String, CompilerVariable> variables, ASTStatement statement) {
+	private void compile(ExpressionContext context, StringBuilder builder, Map<String, CompilerVariable> variables, ASTStatement statement) {
 		if (statement != null) {
-			statement.compile(new JavaASTCompiler(context, variables, driver));
+			statement.compile(new JavaASTCompiler(context, variables, builder));
 		}		
 	}
 	

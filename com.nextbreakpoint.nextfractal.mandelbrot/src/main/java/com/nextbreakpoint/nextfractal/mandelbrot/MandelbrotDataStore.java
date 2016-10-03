@@ -44,7 +44,7 @@ public class MandelbrotDataStore {
 	}
 
 	public void saveToFile(File path, MandelbrotData data) throws Exception {
-		Block.create(MandelbrotData.class).andThen(d -> marshal(d, path)).tryExecute()
+		Block.create(MandelbrotData.class).andThen(d -> marshal(d, path)).tryExecute(data)
 				.mapper(e -> new Exception("Cannot save data to file " + path.getAbsolutePath())).orThrow();
 	}
 
@@ -55,7 +55,7 @@ public class MandelbrotDataStore {
 	}
 
 	public void saveToWriter(Writer writer, MandelbrotData data) throws Exception {
-		Block.create(MandelbrotData.class).andThen(d -> marshal(d, writer)).tryExecute()
+		Block.create(MandelbrotData.class).andThen(d -> marshal(d, writer)).tryExecute(data)
 				.mapper(e -> new Exception("Cannot save data to writer")).orThrow();
 	}
 
@@ -66,7 +66,7 @@ public class MandelbrotDataStore {
 	}
 
 	public void saveToStream(OutputStream stream, MandelbrotData data) throws Exception {
-		Block.create(MandelbrotData.class).andThen(d -> marshal(d, stream)).tryExecute()
+		Block.create(MandelbrotData.class).andThen(d -> marshal(d, stream)).tryExecute(data)
 				.mapper(e -> new Exception("Cannot save data to stream")).orThrow();
 	}
 }
