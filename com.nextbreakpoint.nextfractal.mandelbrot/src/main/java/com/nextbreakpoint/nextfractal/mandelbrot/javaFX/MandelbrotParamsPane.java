@@ -27,17 +27,19 @@ package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
 import java.io.StringWriter;
 import java.net.URLEncoder;
 import java.util.Base64;
+import java.util.Optional;
 import java.util.function.Function;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javafx.application.Platform;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
 
@@ -48,23 +50,25 @@ import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotListener;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotSession;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotView;
 
-public class MandelbrotParamsPane extends BorderPane {
+public class MandelbrotParamsPane extends Pane {
+	private static final Logger logger = Logger.getLogger(MandelbrotParamsPane.class.getName());
 	private static final int SPACING = 5;
 
 	public MandelbrotParamsPane(MandelbrotSession session) {
 		VBox box = new VBox(SPACING * 2);
-		Label traslationLabel = new Label("Region traslation (x,y,z)");
+		box.getStyleClass().add("params");
+		Label translationLabel = new Label("Region translation");
 		AdvancedTextField xTraslationField = new AdvancedTextField();
 		AdvancedTextField yTraslationField = new AdvancedTextField();
 		AdvancedTextField zTraslationField = new AdvancedTextField();
 		xTraslationField.setRestrict(getRestriction());
 		yTraslationField.setRestrict(getRestriction());
 		zTraslationField.setRestrict(getRestriction());
-		VBox traslationPane = new VBox(SPACING);
-		traslationPane.getChildren().add(traslationLabel);
-		traslationPane.getChildren().add(xTraslationField);
-		traslationPane.getChildren().add(yTraslationField);
-		traslationPane.getChildren().add(zTraslationField);
+		VBox translationPane = new VBox(SPACING);
+		translationPane.getChildren().add(translationLabel);
+		translationPane.getChildren().add(xTraslationField);
+		translationPane.getChildren().add(yTraslationField);
+		translationPane.getChildren().add(zTraslationField);
 		Label rotationLabel = new Label("Region rotation");
 		AdvancedTextField zRotationField = new AdvancedTextField();
 		zRotationField.setRestrict(getRestriction());
@@ -72,16 +76,18 @@ public class MandelbrotParamsPane extends BorderPane {
 		rotationPane.getChildren().add(rotationLabel);
 		rotationPane.getChildren().add(zRotationField);
 		Label algorithmLabel = new Label("Algorithm variant");
-		Label wLabel = new Label("Initial value of w = wr + wi * i");
+		Label wLabel = new Label("Initial value of w");
 		AdvancedTextField wReField = new AdvancedTextField();
 		AdvancedTextField wImField = new AdvancedTextField();
 		wReField.setRestrict(getRestriction());
 		wImField.setRestrict(getRestriction());
-		VBox wPane = new VBox(SPACING); 
+		VBox wPane = new VBox(SPACING);
 		wPane.getChildren().add(wLabel);
-		wPane.getChildren().add(wReField);
-		wPane.getChildren().add(wImField);
-		Label xLabel = new Label("Initial value of x = xr + xi * i");
+		HBox whPane = new HBox(SPACING);
+		whPane.getChildren().add(wReField);
+		whPane.getChildren().add(wImField);
+		wPane.getChildren().add(whPane);
+		Label xLabel = new Label("Initial value of x");
 		AdvancedTextField xReField = new AdvancedTextField();
 		AdvancedTextField xImField = new AdvancedTextField();
 		xReField.setRestrict(getRestriction());
@@ -90,21 +96,23 @@ public class MandelbrotParamsPane extends BorderPane {
 		xImField.setEditable(false);
 		VBox xPane = new VBox(SPACING);
 		xPane.getChildren().add(xLabel);
-		xPane.getChildren().add(xReField);
-		xPane.getChildren().add(xImField);
-		VBox algorithmPane = new VBox(SPACING); 
+		HBox xhPane = new HBox(SPACING);
+		xhPane.getChildren().add(xReField);
+		xhPane.getChildren().add(xImField);
+		xPane.getChildren().add(xhPane);
+		VBox algorithmPane = new VBox(SPACING);
 		algorithmPane.getChildren().add(algorithmLabel);
 		ComboBox<String> algorithmCombobox = new ComboBox<>();
 		algorithmCombobox.getItems().add("Mandelbrot");
 		algorithmCombobox.getItems().add("Julia/Fatou");
 		algorithmPane.getChildren().add(algorithmCombobox);
 		box.getChildren().add(algorithmPane);
-		box.getChildren().add(traslationPane);
+		box.getChildren().add(translationPane);
 		box.getChildren().add(rotationPane);
 		box.getChildren().add(wPane);
 		box.getChildren().add(xPane);
 		HBox buttons = new HBox(10);
-		Button applyButton = new Button("Apply"); 
+		Button applyButton = new Button("Apply");
 		Button cancelButton = new Button("Cancel"); 
 		buttons.getChildren().add(applyButton);
 		buttons.getChildren().add(cancelButton);
@@ -128,26 +136,26 @@ public class MandelbrotParamsPane extends BorderPane {
 		} else {
 			encodeTextArea = null;
 		}
-		setCenter(new ScrollPane(box));
-		getStyleClass().add("params");
-		
+
+		getChildren().add(box);
+
 		widthProperty().addListener((observable, oldValue, newValue) -> {
-            box.setPrefWidth(newValue.doubleValue() - getInsets().getLeft() - getInsets().getRight() - 5);
-            algorithmCombobox.setPrefWidth(newValue.doubleValue() - getInsets().getLeft() - getInsets().getRight() - 5);
+			box.setPrefWidth(newValue.doubleValue() - getInsets().getLeft() - getInsets().getRight());
+            algorithmCombobox.setPrefWidth(newValue.doubleValue() - getInsets().getLeft() - getInsets().getRight());
         });
 		
 		heightProperty().addListener((observable, oldValue, newValue) -> {
-			box.setPrefHeight(newValue.doubleValue() - getInsets().getTop() - getInsets().getBottom() - 5);
+			box.setPrefHeight(newValue.doubleValue() - getInsets().getTop() - getInsets().getBottom());
 		});
 
 		Function<MandelbrotSession, Object> updateAll = (t) -> {
 			MandelbrotData data = t.getDataAsCopy();
-			double[] traslation = data.getTranslation();
+			double[] translation = data.getTranslation();
 			double[] rotation = data.getRotation();
 			double[] point = data.getPoint();
-			xTraslationField.setText(String.valueOf(traslation[0]));
-			yTraslationField.setText(String.valueOf(traslation[1]));
-			zTraslationField.setText(String.valueOf(traslation[2]));
+			xTraslationField.setText(String.valueOf(translation[0]));
+			yTraslationField.setText(String.valueOf(translation[1]));
+			zTraslationField.setText(String.valueOf(translation[2]));
 			zRotationField.setText(String.valueOf(rotation[2]));
 			wReField.setText(String.valueOf(point[0]));
 			wImField.setText(String.valueOf(point[1]));
@@ -167,19 +175,19 @@ public class MandelbrotParamsPane extends BorderPane {
 		cancelButton.setOnAction(e -> updateAll.apply(session));
 		
 		applyButton.setOnAction((e) -> {
-			double[] traslation = new double[3];
-			traslation[0] = Double.parseDouble(xTraslationField.getText());
-			traslation[1] = Double.parseDouble(yTraslationField.getText());
-			traslation[2] = Double.parseDouble(zTraslationField.getText());
+			double[] translation = new double[3];
+			translation[0] = Double.parseDouble(xTraslationField.getText());
+			translation[1] = Double.parseDouble(yTraslationField.getText());
+			translation[2] = Double.parseDouble(zTraslationField.getText());
 			double rotation = Double.parseDouble(zRotationField.getText());
 			double[] point = new double[3];
 			point[0] = Double.parseDouble(wReField.getText());
 			point[1] = Double.parseDouble(wImField.getText());
 			Platform.runLater(() -> {
 				MandelbrotView view = session.getViewAsCopy();
-				view.getTraslation()[0] = traslation[0];
-				view.getTraslation()[1] = traslation[1];
-				view.getTraslation()[2] = traslation[2];
+				view.getTraslation()[0] = translation[0];
+				view.getTraslation()[1] = translation[1];
+				view.getTraslation()[2] = translation[2];
 				view.getRotation()[2] = rotation;
 				view.getPoint()[0] = point[0];
 				view.getPoint()[1] = point[1];
@@ -215,11 +223,11 @@ public class MandelbrotParamsPane extends BorderPane {
 			public void viewChanged(MandelbrotSession session, boolean continuous) {
 				if (!continuous) {
 					MandelbrotData data = session.getDataAsCopy();
-					double[] traslation = data.getTranslation();
+					double[] translation = data.getTranslation();
 					double[] rotation = data.getRotation();
-					xTraslationField.setText(String.valueOf(traslation[0]));
-					yTraslationField.setText(String.valueOf(traslation[1]));
-					zTraslationField.setText(String.valueOf(traslation[2]));
+					xTraslationField.setText(String.valueOf(translation[0]));
+					yTraslationField.setText(String.valueOf(translation[1]));
+					zTraslationField.setText(String.valueOf(translation[2]));
 					zRotationField.setText(String.valueOf(rotation[2]));
 					if (data.isJulia()) {
 						algorithmCombobox.getSelectionModel().select("Julia/Fatou");
@@ -233,11 +241,18 @@ public class MandelbrotParamsPane extends BorderPane {
 			}
 
 			@Override
+			public void statusChanged(MandelbrotSession session) {
+			}
+
+			@Override
 			public void sourceChanged(MandelbrotSession session) {
 			}
 
 			@Override
 			public void reportChanged(MandelbrotSession session) {
+				if (encodeTextArea != null) {
+					updateEncodedData(encodeTextArea, session);
+				}
 			}
 		});
 		
@@ -322,11 +337,14 @@ public class MandelbrotParamsPane extends BorderPane {
 				String plainData = writer.toString();
 				String encodedData = Base64.getEncoder().encodeToString(plainData.getBytes());
 				encodedData = URLEncoder.encode(encodedData, "UTF-8");
+				logger.info("Update encoded data");
 				textArea.setText(encodedData);
 			} catch (Exception e) {
+				logger.log(Level.FINE, "Cannot encode data", e);
 			}
 		}		
 	}
+
 
 	protected String getRestriction() {
 		return "-?\\d*\\.?\\d*";

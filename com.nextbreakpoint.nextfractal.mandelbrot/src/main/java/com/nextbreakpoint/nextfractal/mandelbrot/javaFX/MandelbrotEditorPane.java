@@ -24,43 +24,8 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.time.Duration;
-import java.util.*;
-import java.util.concurrent.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Stream;
-
 import com.nextbreakpoint.Try;
-import com.nextbreakpoint.nextfractal.core.utils.Block;
-import javafx.application.Platform;
-import javafx.collections.ListChangeListener.Change;
-import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.scene.control.Button;
-import javafx.scene.control.ListView;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
-import javafx.scene.control.Tooltip;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.TransferMode;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.stage.FileChooser;
-
-import org.fxmisc.richtext.CodeArea;
-import org.fxmisc.richtext.LineNumberFactory;
-import org.fxmisc.richtext.StyleSpans;
-import org.fxmisc.richtext.StyleSpansBuilder;
-
+import com.nextbreakpoint.nextfractal.core.encoder.Encoder;
 import com.nextbreakpoint.nextfractal.core.export.ExportSession;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererPoint;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
@@ -68,16 +33,52 @@ import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
 import com.nextbreakpoint.nextfractal.core.renderer.javaFX.JavaFXRendererFactory;
 import com.nextbreakpoint.nextfractal.core.session.Session;
 import com.nextbreakpoint.nextfractal.core.session.SessionListener;
+import com.nextbreakpoint.nextfractal.core.utils.Block;
 import com.nextbreakpoint.nextfractal.core.utils.DefaultThreadFactory;
-import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotData;
-import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotDataStore;
-import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotImageGenerator;
-import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotListener;
-import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotSession;
+import com.nextbreakpoint.nextfractal.mandelbrot.*;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.Compiler;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerError;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerReport;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerSourceException;
+import javafx.animation.TranslateTransition;
+import javafx.application.Platform;
+import javafx.collections.ListChangeListener.Change;
+import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
+import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.TransferMode;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
+import javafx.stage.FileChooser;
+import org.fxmisc.richtext.CodeArea;
+import org.fxmisc.richtext.LineNumberFactory;
+import org.fxmisc.richtext.StyleSpans;
+import org.fxmisc.richtext.StyleSpansBuilder;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.time.Duration;
+import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 public class MandelbrotEditorPane extends BorderPane {
 	private static final Logger logger = Logger.getLogger(MandelbrotEditorPane.class.getName());
@@ -87,9 +88,12 @@ public class MandelbrotEditorPane extends BorderPane {
 	private final ExecutorService textExecutor;
 	private final Session session;
 	private final CodeArea codeArea;
+	private final ExecutorService exportExecutor;
 	private Pattern highlightingPattern;
 	private FileChooser fileChooser;
 	private volatile boolean noHistory;
+	private File currentExportFile;
+	private MandelbrotData exportData;
 
 	public MandelbrotEditorPane(Session session) {
 		this.session = session;
@@ -104,71 +108,37 @@ public class MandelbrotEditorPane extends BorderPane {
 		codeArea = new CodeArea();
 		codeArea.getStyleClass().add("source");
 
-		TabPane tabPane = new TabPane();
-		Tab sourceTab = new Tab();
-		sourceTab.setClosable(false);
-		sourceTab.setText("Source");
-		sourceTab.setTooltip(new Tooltip("Source code of current fractal"));
-		tabPane.getTabs().add(sourceTab);
-		Tab paramsTab = new Tab();
-		paramsTab.setClosable(false);
-		paramsTab.setText("Parameters");
-		paramsTab.setTooltip(new Tooltip("Parameters of current fractal"));
-		tabPane.getTabs().add(paramsTab);
-		Tab historyTab = new Tab();
-		historyTab.setClosable(false);
-		historyTab.setText("History");
-		historyTab.setTooltip(new Tooltip("History of generated fractals"));
-		tabPane.getTabs().add(historyTab);
-		Tab jobsTab = new Tab();
-		jobsTab.setClosable(false);
-		jobsTab.setText("Export");
-		jobsTab.setTooltip(new Tooltip("List of active export tasks"));
-		tabPane.getTabs().add(jobsTab);
-		setCenter(tabPane);
+		EventHandler<ActionEvent> renderEventHandler = e -> Platform.runLater(() -> codeArea.replaceText(getMandelbrotSession().getSource()));
 
-		BorderPane sourcePane = new BorderPane();
-		BorderPane sourceButtons = new BorderPane();
-		HBox sourceButtonsLeft = new HBox();
-		HBox sourceButtonsRight = new HBox();
-		Button browseButton = new Button("", createIconImage("/icon-folder.png"));
-		Button renderButton = new Button("", createIconImage("/icon-run.png"));
-		Button loadButton = new Button("", createIconImage("/icon-load.png"));
-		Button saveButton = new Button("", createIconImage("/icon-save.png"));
-		browseButton.setTooltip(new Tooltip("Browse fractals"));
-		renderButton.setTooltip(new Tooltip("Render fractal"));
-		loadButton.setTooltip(new Tooltip("Load fractal from file"));
-		saveButton.setTooltip(new Tooltip("Save fractal to file"));
-		sourceButtonsLeft.getChildren().add(browseButton);
-		sourceButtonsLeft.getChildren().add(renderButton);
-		sourceButtonsRight.getChildren().add(loadButton);
-		sourceButtonsRight.getChildren().add(saveButton);
-		sourceButtons.setLeft(sourceButtonsLeft);
-		sourceButtons.setRight(sourceButtonsRight);
-		sourceButtons.getStyleClass().add("menubar");
-		sourcePane.setCenter(codeArea);
-		sourcePane.setTop(sourceButtons);
-		sourceTab.setContent(sourcePane);
-		
-		BorderPane historyPane = new BorderPane();
+		EventHandler<ActionEvent> loadEventHandler = e -> Optional.ofNullable(showLoadFileChooser())
+				.map(fileChooser -> fileChooser.showOpenDialog(MandelbrotEditorPane.this.getScene().getWindow())).ifPresent(file -> loadDataFromFile(file));
+
+		EventHandler<ActionEvent> saveEventHandler = e -> Optional.ofNullable(showSaveFileChooser())
+				.map(fileChooser -> fileChooser.showSaveDialog(MandelbrotEditorPane.this.getScene().getWindow())).ifPresent(file -> saveDataToFile(file));
+
 		ListView<MandelbrotData> historyList = new ListView<>();
 		historyList.setFixedCellSize(60);
 		historyList.getStyleClass().add("history");
 		historyList.setCellFactory(listView -> new HistoryListCell(generator.getSize(), generatorTile));
+
+		ListView<ExportSession> jobsList = new ListView<>();
+		jobsList.setFixedCellSize(60);
+		jobsList.getStyleClass().add("jobs");
+		jobsList.setCellFactory(listView -> new ExportListCell(generator.getSize(), generatorTile));
+
+		BorderPane historyPane = new BorderPane();
 		BorderPane historyButtons = new BorderPane();
 		Button clearButton = new Button("", createIconImage("/icon-clear.png"));
 		clearButton.setTooltip(new Tooltip("Remove all elements"));
 		historyButtons.setRight(clearButton);
 		historyButtons.getStyleClass().add("menubar");
 		historyPane.setCenter(historyList);
-		historyPane.setTop(historyButtons);
-		historyTab.setContent(historyPane);
+		historyPane.setBottom(historyButtons);
+		historyList.getSelectionModel().getSelectedItems().addListener((Change<? extends MandelbrotData> c) -> historyItemSelected(historyList));
+		clearButton.setOnAction(e -> Block.create((Block<ListView<MandelbrotData>,Exception>)(list -> logger.info("Clear history")))
+				.andThen(list -> historyRemoveAllItems(list)).andThen(list -> addDataToHistory(list)).tryExecute(historyList));
 
 		BorderPane jobsPane = new BorderPane();
-		ListView<ExportSession> jobsList = new ListView<>();
-		jobsList.setCellFactory(listView -> new ExportListCell(generator.getSize(), generatorTile));
-		jobsList.setFixedCellSize(60);
-		jobsList.getStyleClass().add("jobs");
 		BorderPane jobsButtons = new BorderPane();
 		HBox jobsButtonsLeft = new HBox();
 		HBox jobsButtonsRight = new HBox();
@@ -191,35 +161,135 @@ public class MandelbrotEditorPane extends BorderPane {
 		jobsButtons.setRight(jobsButtonsRight);
 		jobsButtons.getStyleClass().add("menubar");
 		jobsPane.setCenter(jobsList);
-		jobsPane.setTop(jobsButtons);
-		jobsTab.setContent(jobsPane);
+		jobsPane.setBottom(jobsButtons);
+		List<Button> buttons = Arrays.asList(suspendButton, resumeButton, removeButton);
+		jobsList.getSelectionModel().getSelectedItems().addListener((Change<? extends ExportSession> c) -> updateButtons(buttons, c.getList().size() == 0));
+		suspendButton.setOnAction(e -> selectedItems(jobsList).filter(exportSession -> !exportSession.isSuspended()).forEach(exportSession -> session.getExportService().suspendSession(exportSession)));
+		resumeButton.setOnAction(e -> selectedItems(jobsList).filter(exportSession -> exportSession.isSuspended()).forEach(exportSession -> session.getExportService().resumeSession(exportSession)));
+		removeButton.setOnAction(e -> selectedItems(jobsList).forEach(exportSession -> session.getExportService().stopSession(exportSession)));
+		exportButton.setOnAction(e -> getMandelbrotSession().doExportAsImage());
 
-		BorderPane paramsPane = new BorderPane();
-		BorderPane paramsButtons = new BorderPane();
-		MandelbrotParamsPane paramsPanel = new MandelbrotParamsPane(getMandelbrotSession()); 
-		HBox paramsButtonsLeft = new HBox();
-		HBox paramsButtonsRight = new HBox();
-		Button paramsBrowseButton = new Button("", createIconImage("/icon-folder.png"));
-		Button paramsRenderButton = new Button("", createIconImage("/icon-run.png"));
-		Button paramsLoadButton = new Button("", createIconImage("/icon-load.png"));
-		Button paramsSaveButton = new Button("", createIconImage("/icon-save.png"));
-		paramsBrowseButton.setTooltip(new Tooltip("Browse fractals"));
-		paramsRenderButton.setTooltip(new Tooltip("Render fractal"));
-		paramsLoadButton.setTooltip(new Tooltip("Load fractal from file"));
-		paramsSaveButton.setTooltip(new Tooltip("Save fractal to file"));
-		paramsButtonsLeft.getChildren().add(paramsBrowseButton);
-		paramsButtonsLeft.getChildren().add(paramsRenderButton);
-		paramsButtonsRight.getChildren().add(paramsLoadButton);
-		paramsButtonsRight.getChildren().add(paramsSaveButton);
-		paramsButtons.setLeft(paramsButtonsLeft);
-		paramsButtons.setRight(paramsButtonsRight);
-		paramsButtons.getStyleClass().add("menubar");
-		paramsPane.setCenter(paramsPanel);
-		paramsPane.setTop(paramsButtons);
-		paramsTab.setContent(paramsPane);
-		
+		MandelbrotParamsPane paramsPane = new MandelbrotParamsPane(getMandelbrotSession());
+
+		Pane sidePane = new Pane();
+		sidePane.getChildren().add(historyPane);
+		sidePane.getChildren().add(jobsPane);
+		sidePane.getChildren().add(paramsPane);
+
+		historyPane.getStyleClass().add("sidebar");
+		paramsPane.getStyleClass().add("sidebar");
+		jobsPane.getStyleClass().add("sidebar");
+
+		ScrollPane codePane = new ScrollPane();
+		codePane.setContent(codeArea);
+		codePane.setFitToWidth(true);
+		codePane.setFitToHeight(true);
+		codePane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+		codePane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+
+		StatusPane statusPane = new StatusPane();
+
+		Pane sourcePane = new Pane();
+		HBox sourceButtons = new HBox();
+		sourceButtons.setAlignment(Pos.CENTER);
+		Button renderButton = new Button("", createIconImage("/icon-run.png"));
+		Button loadButton = new Button("", createIconImage("/icon-load.png"));
+		Button saveButton = new Button("", createIconImage("/icon-save.png"));
+		ToggleButton paramsButton = new ToggleButton("", createIconImage("/icon-folder.png"));
+		ToggleButton historyButton = new ToggleButton("", createIconImage("/icon-folder.png"));
+		ToggleButton jobsButton = new ToggleButton("", createIconImage("/icon-folder.png"));
+		ToggleButton statusButton = new ToggleButton("", createIconImage("/icon-folder.png"));
+		renderButton.setTooltip(new Tooltip("Render fractal"));
+		loadButton.setTooltip(new Tooltip("Load fractal from file"));
+		saveButton.setTooltip(new Tooltip("Save fractal to file"));
+		paramsButton.setTooltip(new Tooltip("Show/hide parameters"));
+		historyButton.setTooltip(new Tooltip("Show/hide history"));
+		jobsButton.setTooltip(new Tooltip("Show/hide jobs"));
+		statusButton.setTooltip(new Tooltip("Show/hide status"));
+		sourceButtons.getChildren().add(renderButton);
+		sourceButtons.getChildren().add(loadButton);
+		sourceButtons.getChildren().add(saveButton);
+		sourceButtons.getChildren().add(paramsButton);
+		sourceButtons.getChildren().add(historyButton);
+		sourceButtons.getChildren().add(jobsButton);
+		sourceButtons.getChildren().add(statusButton);
+		sourceButtons.getStyleClass().add("menubar");
+		sourcePane.getChildren().add(codePane);
+		sourcePane.getChildren().add(sourceButtons);
+		sourcePane.getChildren().add(statusPane);
+		sourcePane.getChildren().add(sidePane);
+		renderButton.setOnAction(renderEventHandler);
+		loadButton.setOnAction(loadEventHandler);
+		saveButton.setOnAction(saveEventHandler);
+
+		TranslateTransition sidebarTransition = createTranslateTransition(sidePane);
+
+		TranslateTransition statusTransition = createTranslateTransition(statusPane);
+
+		paramsButton.setSelected(true);
+		statusButton.setSelected(true);
+
+		ToggleGroup viewGroup = new ToggleGroup();
+		viewGroup.getToggles().add(historyButton);
+		viewGroup.getToggles().add(paramsButton);
+		viewGroup.getToggles().add(jobsButton);
+
+		historyButton.selectedProperty().addListener((source, oldValue, newValue) -> {
+			if (newValue) {
+				sidePane.getChildren().remove(historyPane);
+				sidePane.getChildren().add(historyPane);
+			}
+		});
+
+		paramsButton.selectedProperty().addListener((source, oldValue, newValue) -> {
+			if (newValue) {
+				sidePane.getChildren().remove(paramsPane);
+				sidePane.getChildren().add(paramsPane);
+			}
+		});
+
+		jobsButton.selectedProperty().addListener((source, oldValue, newValue) -> {
+			if (newValue) {
+				sidePane.getChildren().remove(jobsPane);
+				sidePane.getChildren().add(jobsPane);
+			}
+		});
+
+		viewGroup.selectedToggleProperty().addListener((source, oldValue, newValue) -> {
+			if (newValue != null) {
+				showSidebar(sidebarTransition, a -> {});
+			} else {
+				hideSidebar(sidebarTransition, a -> {});
+			}
+		});
+
+		statusButton.selectedProperty().addListener((source, oldValue, newValue) -> {
+			if (newValue) {
+				showStatus(statusTransition, a -> {});
+			} else {
+				hideStatus(statusTransition, a -> {});
+			}
+		});
+
+		sidePane.translateXProperty().addListener((source, oldValue, newValue) -> {
+			codePane.prefWidthProperty().setValue(getWidth() - sidePane.getWidth() + newValue.doubleValue());
+		});
+
+		statusPane.translateYProperty().addListener((source, oldValue, newValue) -> {
+			codePane.prefHeightProperty().setValue(getHeight() - statusPane.getHeight() - sourceButtons.getHeight() + newValue.doubleValue());
+			sidePane.prefHeightProperty().setValue(getHeight() - statusPane.getHeight() - sourceButtons.getHeight() + newValue.doubleValue());
+		});
+
+		ExportPane exportPane = new ExportPane(200, 200);
+//		exportPane.setParamsDelegate(this);
+		exportPane.setDisable(true);
+
+		StackPane rootPane = new StackPane();
+		rootPane.getChildren().add(sourcePane);
+		setCenter(rootPane);
+
 		initHighlightingPattern();
-		
+
 		codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
 
 		codeArea.plainTextChanges().successionEnds(Duration.ofMillis(500)).supplyTask(this::computeTaskAsync)
@@ -231,7 +301,7 @@ public class MandelbrotEditorPane extends BorderPane {
         
         codeArea.setOnDragOver(e -> Optional.of(e).filter(q -> q.getGestureSource() != codeArea
 				&& q.getDragboard().hasFiles()).ifPresent(q -> q.acceptTransferModes(TransferMode.COPY_OR_MOVE)));
-        
+
 		getMandelbrotSession().addMandelbrotListener(new MandelbrotListener() {
 			@Override
 			public void dataChanged(MandelbrotSession session) {
@@ -254,6 +324,11 @@ public class MandelbrotEditorPane extends BorderPane {
 			}
 
 			@Override
+			public void statusChanged(MandelbrotSession session) {
+				statusPane.setMessage(session.getStatus());
+			}
+
+			@Override
 			public void sourceChanged(MandelbrotSession session) {
 				addDataToHistory(historyList);
 			}
@@ -272,7 +347,6 @@ public class MandelbrotEditorPane extends BorderPane {
 			@Override
 			public void sessionAdded(Session session, ExportSession exportSession) {
 				jobsList.getItems().add(exportSession);
-				tabPane.getSelectionModel().select(jobsTab);
 			}
 
 			@Override
@@ -282,52 +356,51 @@ public class MandelbrotEditorPane extends BorderPane {
 
 			@Override
 			public void doExportAsImage(Session session) {
+				exportAsImage(exportPane);
 			}
 
 			@Override
 			public void showBrowser(Session session) {
 			}
 		});
-		
-		List<Button> buttons = Arrays.asList(suspendButton, resumeButton, removeButton);
 
-		jobsList.getSelectionModel().getSelectedItems().addListener((Change<? extends ExportSession> c) -> updateButtons(buttons, c.getList().size() == 0));
-		
-		EventHandler<ActionEvent> renderEventHandler = e -> Platform.runLater(() -> codeArea.replaceText(getMandelbrotSession().getSource()));
-		
-		renderButton.setOnAction(renderEventHandler);
-		paramsRenderButton.setOnAction(renderEventHandler);
-		
-		EventHandler<ActionEvent> loadEventHandler = e -> Optional.ofNullable(showLoadFileChooser())
-				.map(fileChooser -> fileChooser.showOpenDialog(MandelbrotEditorPane.this.getScene().getWindow())).ifPresent(file -> loadDataFromFile(file));
+		widthProperty().addListener((observable, oldValue, newValue) -> {
+			double width = newValue.doubleValue();
+			sourceButtons.setPrefWidth(width);
+			codePane.setPrefWidth(width * 0.7);
+			sidePane.setPrefWidth(width * 0.3);
+			statusPane.setPrefWidth(width);
+			sourceButtons.setLayoutX(0);
+			codePane.setLayoutX(0);
+			sidePane.setLayoutX(width * 0.7);
+			statusPane.setLayoutX(0);
+        });
 
-		loadButton.setOnAction(loadEventHandler);
-		paramsLoadButton.setOnAction(loadEventHandler);
-		
-		EventHandler<ActionEvent> saveEventHandler = e -> Optional.ofNullable(showSaveFileChooser())
-				.map(fileChooser -> fileChooser.showSaveDialog(MandelbrotEditorPane.this.getScene().getWindow())).ifPresent(file -> saveDataToFile(file));
-		
-		saveButton.setOnAction(saveEventHandler);
-		paramsSaveButton.setOnAction(saveEventHandler);
+		heightProperty().addListener((observable, oldValue, newValue) -> {
+			double height = newValue.doubleValue();
+			sourceButtons.setPrefHeight(height * 0.07);
+			codePane.setPrefHeight(height * 0.7);
+			sidePane.setPrefHeight(height * 0.7);
+			statusPane.setPrefHeight(height * 0.23);
+			sourceButtons.setLayoutY(0);
+			codePane.setLayoutY(height * 0.07);
+			sidePane.setLayoutY(height * 0.07);
+			statusPane.setLayoutY(height * 0.77);
+        });
 
-		exportButton.setOnAction(e -> getMandelbrotSession().doExportAsImage());
+		sidePane.widthProperty().addListener((observable, oldValue, newValue) -> {
+			double width = newValue.doubleValue();
+			paramsPane.setPrefWidth(width);
+			historyPane.setPrefWidth(width);
+			jobsPane.setPrefWidth(width);
+		});
 
-		browseButton.setOnAction(e -> getMandelbrotSession().showBrowser());
-		
-		paramsBrowseButton.setOnAction(e -> getMandelbrotSession().showBrowser());
-		
-		suspendButton.setOnAction(e -> selectedItems(jobsList)
-				.filter(exportSession -> !exportSession.isSuspended()).forEach(exportSession -> session.getExportService().suspendSession(exportSession)));
-
-		resumeButton.setOnAction(e -> selectedItems(jobsList)
-				.filter(exportSession -> exportSession.isSuspended()).forEach(exportSession -> session.getExportService().resumeSession(exportSession)));
-
-		removeButton.setOnAction(e -> selectedItems(jobsList).forEach(exportSession -> session.getExportService().stopSession(exportSession)));
-
-		clearButton.setOnAction(e -> Block.create((Block<ListView<MandelbrotData>,Exception>)(list -> logger.info("Clear history")))
-				.andThen(list -> historyRemoveAllItems(list)).andThen(list -> addDataToHistory(list)).tryExecute(historyList));
-
-		historyList.getSelectionModel().getSelectedItems().addListener((Change<? extends MandelbrotData> c) -> historyItemSelected(historyList));
+		sidePane.heightProperty().addListener((observable, oldValue, newValue) -> {
+			double height = newValue.doubleValue();
+			paramsPane.setPrefHeight(height);
+			historyPane.setPrefHeight(height);
+			jobsPane.setPrefHeight(height);
+		});
 
 		textExecutor = Executors.newSingleThreadExecutor(new DefaultThreadFactory("MandelbrotTextUpdate", true, Thread.MIN_PRIORITY));
 
@@ -336,7 +409,10 @@ public class MandelbrotEditorPane extends BorderPane {
 		sessionsExecutor = Executors.newSingleThreadScheduledExecutor(new DefaultThreadFactory("MandelbrotSessionsUpdate", true, Thread.MIN_PRIORITY));
 
 		sessionsExecutor.scheduleWithFixedDelay(() -> Platform.runLater(() -> updateJobList(jobsList)), 500, 500, TimeUnit.MILLISECONDS);
-		
+
+		DefaultThreadFactory exportThreadFactory = new DefaultThreadFactory("MandelbrotImageExport", true, Thread.MIN_PRIORITY);
+		exportExecutor = Executors.newSingleThreadExecutor(exportThreadFactory);
+
 		addDataToHistory(historyList);
 	}
 
@@ -346,8 +422,63 @@ public class MandelbrotEditorPane extends BorderPane {
 		super.finalize();
 	}
 
+	private void exportAsImage(ExportPane exportPane) {
+//		if (errorProperty.getValue() == null) {
+			MandelbrotSession mandelbrotSession = getMandelbrotSession();
+			exportData = mandelbrotSession.getDataAsCopy();
+			exportPane.show();
+//		}
+	}
+
+	private TranslateTransition createTranslateTransition(Node node) {
+		TranslateTransition transition = new TranslateTransition();
+		transition.setNode(node);
+		transition.setDuration(javafx.util.Duration.seconds(0.5));
+		return transition;
+	}
+
+	private void showSidebar(TranslateTransition transition, EventHandler<ActionEvent> handler) {
+		transition.stop();
+		if (transition.getNode().getTranslateX() != 0) {
+			transition.setFromX(transition.getNode().getTranslateX());
+			transition.setToX(0);
+			transition.setOnFinished(handler);
+			transition.play();
+		}
+	}
+
+	private void hideSidebar(TranslateTransition transition, EventHandler<ActionEvent> handler) {
+		transition.stop();
+		if (transition.getNode().getTranslateX() != ((Pane)transition.getNode()).getWidth()) {
+			transition.setFromX(transition.getNode().getTranslateX());
+			transition.setToX(((Pane)transition.getNode()).getWidth());
+			transition.setOnFinished(handler);
+			transition.play();
+		}
+	}
+
+	private void showStatus(TranslateTransition transition, EventHandler<ActionEvent> handler) {
+		transition.stop();
+		if (transition.getNode().getTranslateY() != 0) {
+			transition.setFromY(transition.getNode().getTranslateY());
+			transition.setToY(0);
+			transition.setOnFinished(handler);
+			transition.play();
+		}
+	}
+
+	private void hideStatus(TranslateTransition transition, EventHandler<ActionEvent> handler) {
+		transition.stop();
+		if (transition.getNode().getTranslateY() != ((Pane)transition.getNode()).getHeight()) {
+			transition.setFromY(transition.getNode().getTranslateY());
+			transition.setToY(((Pane)transition.getNode()).getHeight());
+			transition.setOnFinished(handler);
+			transition.play();
+		}
+	}
+
 	private void shutdown() {
-		List<ExecutorService> executors = Arrays.asList(sessionsExecutor, historyExecutor, textExecutor);
+		List<ExecutorService> executors = Arrays.asList(sessionsExecutor, historyExecutor, textExecutor, exportExecutor);
 		executors.forEach(executor -> executor.shutdownNow());
 		executors.forEach(executor -> Block.create(ExecutorService.class).andThen(e -> await(e)).tryExecute(executor));
 	}
@@ -362,10 +493,12 @@ public class MandelbrotEditorPane extends BorderPane {
 
 	private void historyItemSelected(ListView<MandelbrotData> historyList) {
 		int index = historyList.getSelectionModel().getSelectedIndex();
-		MandelbrotData data = historyList.getItems().get(index);
-		noHistory = true;
-		getMandelbrotSession().setData(data);
-		noHistory = false;
+		if (index >= 0) {
+			MandelbrotData data = historyList.getItems().get(index);
+			noHistory = true;
+			getMandelbrotSession().setData(data);
+			noHistory = false;
+		}
 	}
 
 	private Stream<ExportSession> selectedItems(ListView<ExportSession> jobsList) {
@@ -445,11 +578,11 @@ public class MandelbrotEditorPane extends BorderPane {
 				if (error.getType() == CompilerError.ErrorType.M_COMPILER) {
 					int lineEnd = (int)error.getIndex() + 1;
 					int lineBegin = (int)error.getIndex();
-					StyleSpansBuilder<Collection<String>> driver = new StyleSpansBuilder<>();
-					driver.add(Collections.singleton("error"), lineEnd - lineBegin);
+					StyleSpansBuilder<Collection<String>> builder = new StyleSpansBuilder<>();
+					builder.add(Collections.singleton("error"), lineEnd - lineBegin);
 					try {
 						if (lineBegin < codeArea.getLength()) {
-							codeArea.setStyleSpans(lineBegin, driver.create());
+							codeArea.setStyleSpans(lineBegin, builder.create());
 						} else {
 							logger.info("begin " + lineBegin + ", length " + (lineEnd - lineBegin));
 						}
@@ -623,4 +756,57 @@ public class MandelbrotEditorPane extends BorderPane {
 	private <T> void triggerUpdate(ListView<T> listView, T newValue, int index) {
 		listView.fireEvent(new ListView.EditEvent<>(listView, ListView.editCommitEvent(), newValue, index));
     }
+	private static ServiceLoader<Encoder> loadPlugins() {
+		return ServiceLoader.load(Encoder.class);
+	}
+
+	private static Stream<? extends Encoder> pluginsStream() {
+		return StreamSupport.stream(loadPlugins().spliterator(), false);
+	}
+
+	private static <T> Try<T, Exception> selectPlugin(String pluginId, Function<Encoder, T> action) {
+		return pluginsStream().filter(plugin -> pluginId.equals(plugin.getId())).findFirst()
+				.map(plugin -> Try.of(() -> action.apply(plugin))).orElse(Try.failure(new Exception("Plugin not found")));
+	}
+
+	private Optional<Encoder> createEncoder(String format) {
+		return selectPlugin(format, plugin -> plugin).onFailure(e -> logger.warning("Cannot find encoder for PNG format")).value();
+	}
+
+	private void doExportSession(RendererSize rendererSize) {
+		createEncoder("PNG").ifPresent(encoder -> Block.create(Encoder.class)
+				.andThen(e -> prepareExportFileChooser(e.getSuffix())).andThen(e -> selectFileAndExport(rendererSize, encoder)).tryExecute(encoder));
+	}
+
+	private void selectFileAndExport(RendererSize rendererSize, Encoder encoder) {
+		Optional.ofNullable(fileChooser.showSaveDialog(MandelbrotEditorPane.this.getScene().getWindow())).ifPresent(file -> createExportSession(rendererSize, encoder, file));
+	}
+
+	private void createExportSession(RendererSize rendererSize, Encoder encoder, File file) {
+		currentExportFile = file;
+		exportExecutor.submit(Block.create(MandelbrotData.class).andThen(data -> data.setPixels(generator.renderImage(data)))
+				.andThen(data -> Platform.runLater(() -> createExportSession(rendererSize, encoder, file, data))).toCallable(exportData));
+	}
+
+	private void prepareExportFileChooser(String suffix) {
+		ensureFileChooser(suffix);
+		fileChooser.setTitle("Export");
+		if (currentExportFile != null) {
+			fileChooser.setInitialDirectory(currentExportFile.getParentFile());
+			fileChooser.setInitialFileName(currentExportFile.getName());
+		}
+	}
+
+	private void createExportSession(RendererSize rendererSize, Encoder encoder, File file, MandelbrotData data) {
+		try {
+			File tmpFile = File.createTempFile("nextfractal-profile-", ".dat");
+			ExportSession exportSession = new ExportSession("Mandelbrot", data, file, tmpFile, rendererSize, 200, encoder);
+			logger.info("Export session created: " + exportSession.getSessionId());
+			session.addExportSession(exportSession);
+			session.getExportService().startSession(exportSession);
+		} catch (Exception e) {
+			logger.log(Level.WARNING, "Cannot export data to file " + file.getAbsolutePath(), e);
+			//TODO display error
+		}
+	}
 }

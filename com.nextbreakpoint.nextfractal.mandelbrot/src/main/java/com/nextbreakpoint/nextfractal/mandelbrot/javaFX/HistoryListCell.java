@@ -40,7 +40,6 @@ import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotData;
 
 public class HistoryListCell extends ListCell<MandelbrotData> {
-	private static final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	private BorderPane pane;
 	private Canvas canvas;
 	private Label label;
@@ -76,6 +75,7 @@ public class HistoryListCell extends ListCell<MandelbrotData> {
 				g2d.setTransform(affine);
 				g2d.drawImage(image, x, y);
 			}
+			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			label.setText(df.format(data.getTimestamp()));
 			this.setGraphic(pane);
 		}
