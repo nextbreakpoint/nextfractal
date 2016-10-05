@@ -197,3 +197,20 @@
 	-fx-border-color: #f0f0f0;
 	-fx-background-color: white;
 }
+
+.application .mandelbrot .translucent {
+	-fx-background-color: white;
+	-fx-opacity: 0.9;
+}
+
+.application .mandelbrot .tab {
+	-fx-border-width: 0 1 1 0;
+	-fx-border-color: #f0f0f0;
+}
+
+.application .mandelbrot .tab .toggle-button {
+	-fx-background-color: transparent;
+	-fx-focus-color: transparent;
+	-fx-faint-focus-color: transparent;
+	-fx-border-width: 2;
+}

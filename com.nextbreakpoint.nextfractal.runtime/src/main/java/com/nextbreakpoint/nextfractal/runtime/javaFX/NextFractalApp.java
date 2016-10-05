@@ -191,8 +191,8 @@ public class NextFractalApp extends Application {
 		mainPane.setMaxHeight(height);
 		createEditorPane(editorWidth, renderWidth, height);
 		createRenderPane(renderWidth, height);
-		mainPane.getChildren().add(renderRootPane);
 		mainPane.getChildren().add(editorRootPane);
+		mainPane.getChildren().add(renderRootPane);
 		mainPane.getStyleClass().add("application");
 		return mainPane;
 	}

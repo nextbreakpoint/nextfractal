@@ -45,6 +45,7 @@ import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererError;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererView;
 import javafx.animation.AnimationTimer;
 import javafx.animation.FadeTransition;
+import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -61,7 +62,6 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import javafx.stage.FileChooser;
 import javafx.util.Duration;
 
 import java.io.File;
@@ -75,7 +75,7 @@ import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class MandelbrotRenderPane extends BorderPane implements BrowseDelegate, MandelbrotToolContext {
+public class MandelbrotRenderPane extends BorderPane implements MandelbrotToolContext {
 	private static final int FRAME_LENGTH_IN_MILLIS = 20;
 	private static final Logger logger = Logger.getLogger(MandelbrotRenderPane.class.getName());
 	private final Session session;
@@ -92,7 +92,6 @@ public class MandelbrotRenderPane extends BorderPane implements BrowseDelegate, 
 	private final RendererCoordinator[] coordinators;
 	private RendererCoordinator juliaCoordinator;
 	private AnimationTimer timer;
-	private FileChooser fileChooser;
 	private int width;
 	private int height;
 	private int rows;
@@ -107,7 +106,6 @@ public class MandelbrotRenderPane extends BorderPane implements BrowseDelegate, 
 	private CompilerBuilder<Orbit> orbitBuilder;
 	private CompilerBuilder<Color> colorBuilder;
 	private List<Number[]> states;
-	private FadeTransition toolsTransition;
 
 	public MandelbrotRenderPane(Session session, int width, int height, int rows, int columns) {
 		this.session = session;
@@ -202,23 +200,47 @@ public class MandelbrotRenderPane extends BorderPane implements BrowseDelegate, 
 		toolButtons.getChildren().add(juliaButton);
 		toolButtons.getChildren().add(orbitButton);
 		toolButtons.getStyleClass().add("toolbar");
-		toolButtons.setOpacity(0);
-
-		HBox cornerButtons = new HBox(4);
-		Button browseButton = new Button("", createIconImage("/icon-folder.png"));
-		browseButton.setTooltip(new Tooltip("Show fractals browser"));
-		cornerButtons.getChildren().add(browseButton);
-		cornerButtons.getStyleClass().add("toolbar");
-
-		createToolsTransition(controls);
 
 		BrowsePane browsePane = new BrowsePane(width, height);
-		browsePane.setDelegate(this);
-		browsePane.setDisable(true);
-		
-		controls.setTop(cornerButtons);
+		browsePane.setTranslateX(-width);
+
+		HBox cornerButtons = new HBox(4);
+		ToggleButton browseButton = new ToggleButton("", createIconImage("/icon-folder.png"));
+		browseButton.setTooltip(new Tooltip("Show fractals browser"));
+		cornerButtons.getChildren().add(browseButton);
+		cornerButtons.getStyleClass().add("tab");
+		cornerButtons.getStyleClass().add("translucent");
+		cornerButtons.setTranslateX(-width);
+		cornerButtons.setLayoutX(width);
+
+		TranslateTransition browserTransition = createTranslateTransition(browsePane);
+
+		browseButton.selectedProperty().addListener((observable, oldValue, newValue) -> {
+			if (newValue) {
+				showBrowser(browserTransition, a -> {});
+				browsePane.reload();
+			} else {
+				hideBrowser(browserTransition, a -> {});
+			}
+		});
+
+		browsePane.setDelegate(new BrowseDelegate() {
+			@Override
+			public void didSelectFile(BrowsePane source, File file) {
+				browseButton.setSelected(false);
+				updateFile(file);
+			}
+
+			@Override
+			public void show() {
+			}
+
+			@Override
+			public void hide() {
+			}
+		});
+
 		controls.setBottom(toolButtons);
-		cornerButtons.setOpacity(0.9);
 		toolButtons.setOpacity(0.9);
 
         Canvas fractalCanvas = new Canvas(width, height);
@@ -259,7 +281,9 @@ public class MandelbrotRenderPane extends BorderPane implements BrowseDelegate, 
 		currentTool = new MandelbrotZoom(this, true);
 		zoominButton.setSelected(true);
 		zoominButton.setDisable(true);
-		
+
+		FadeTransition toolsTransition = createFadeTransition(controls);
+
 		controls.setOnMouseClicked(e -> {
 			if (currentTool != null) {
 				currentTool.clicked(e);
@@ -325,7 +349,6 @@ public class MandelbrotRenderPane extends BorderPane implements BrowseDelegate, 
 
 			@Override
 			public void reportChanged(MandelbrotSession session) {
-				browsePane.hide();
 				updateFractal(session);
 			}
 		});
@@ -355,10 +378,15 @@ public class MandelbrotRenderPane extends BorderPane implements BrowseDelegate, 
 		stackPane.getChildren().add(controls);
 		stackPane.getChildren().add(errors);
 		stackPane.getChildren().add(browsePane);
+		stackPane.getChildren().add(cornerButtons);
 		setCenter(stackPane);
 
 		homeButton.setOnAction(e -> resetView());
-		
+
+		browsePane.translateXProperty().addListener((observable, oldValue, newValue) -> {
+			cornerButtons.setTranslateX(newValue.doubleValue());
+		});
+
 		toolsGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
 			if (oldValue != null) {
 				((ToggleButton)oldValue).setDisable(false);
@@ -417,8 +445,6 @@ public class MandelbrotRenderPane extends BorderPane implements BrowseDelegate, 
 		
 		juliaButton.setOnAction(e -> juliaProperty.setValue(!juliaProperty.getValue()));
 
-		browseButton.setOnAction(e -> browsePane.show());
-
 		hideOrbitProperty.addListener((observable, oldValue, newValue) -> {
 			orbitCanvas.setVisible(!newValue);
 			trapCanvas.setVisible(!newValue);
@@ -461,7 +487,6 @@ public class MandelbrotRenderPane extends BorderPane implements BrowseDelegate, 
 
 		heightProperty().addListener((observable, oldValue, newValue) -> {
 			toolButtons.setPrefHeight(newValue.doubleValue() * 0.07);
-			cornerButtons.setPrefHeight(newValue.doubleValue() * 0.07);
 		});
 
 		stackPane.setOnDragDropped(e -> e.getDragboard().getFiles().stream().findFirst().ifPresent(file -> updateFile(file)));
@@ -470,13 +495,6 @@ public class MandelbrotRenderPane extends BorderPane implements BrowseDelegate, 
 				.filter(e -> e.getDragboard().hasFiles()).ifPresent(e -> e.acceptTransferModes(TransferMode.COPY_OR_MOVE)));
 		
 		runTimer(fractalCanvas, orbitCanvas, juliaCanvas, pointCanvas, trapCanvas, toolCanvas);
-
-		browsePane.hide();
-	}
-
-	@Override
-	public void didSelectFile(BrowsePane browser, File file) {
-		updateFile(file);
 	}
 
 	private void updateFile(File file) {
@@ -527,12 +545,40 @@ public class MandelbrotRenderPane extends BorderPane implements BrowseDelegate, 
 		return image;
 	}
 
-	private void createToolsTransition(Node node) {
-		toolsTransition = new FadeTransition();
-		toolsTransition.setNode(node);
-		toolsTransition.setDuration(Duration.seconds(0.5));
+	private FadeTransition createFadeTransition(Node node) {
+		FadeTransition transition = new FadeTransition();
+		transition.setNode(node);
+		transition.setDuration(Duration.seconds(0.5));
+		return transition;
 	}
-	
+
+	private TranslateTransition createTranslateTransition(Node node) {
+		TranslateTransition transition = new TranslateTransition();
+		transition.setNode(node);
+		transition.setDuration(Duration.seconds(0.5));
+		return transition;
+	}
+
+	private void showBrowser(TranslateTransition transition, EventHandler<ActionEvent> handler) {
+		transition.stop();
+		if (transition.getNode().getTranslateX() != 0) {
+			transition.setFromX(transition.getNode().getTranslateX());
+			transition.setToX(0);
+			transition.setOnFinished(handler);
+			transition.play();
+		}
+	}
+
+	private void hideBrowser(TranslateTransition transition, EventHandler<ActionEvent> handler) {
+		transition.stop();
+		if (transition.getNode().getTranslateX() != -((Pane)transition.getNode()).getWidth()) {
+			transition.setFromX(transition.getNode().getTranslateX());
+			transition.setToX(-((Pane)transition.getNode()).getWidth());
+			transition.setOnFinished(handler);
+			transition.play();
+		}
+	}
+
 	private void fadeOut(FadeTransition transition, EventHandler<ActionEvent> handler) {
 		transition.stop();
 		if (transition.getNode().getOpacity() != 0) {
@@ -578,14 +624,6 @@ public class MandelbrotRenderPane extends BorderPane implements BrowseDelegate, 
 		double[] scale = {1, 1, 1, 1};
 		MandelbrotView view = new MandelbrotView(translation, rotation, scale, viewAsCopy.getPoint(), viewAsCopy.isJulia());
 		getMandelbrotSession().setView(view, false);
-	}
-
-	private void ensureFileChooser(String suffix) {
-		if (fileChooser == null) {
-			fileChooser = new FileChooser();
-			fileChooser.setInitialFileName("image" + suffix);
-			fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
-		}
 	}
 
 	private void createCoordinators(int rows, int columns, Map<String, Integer> hints) {

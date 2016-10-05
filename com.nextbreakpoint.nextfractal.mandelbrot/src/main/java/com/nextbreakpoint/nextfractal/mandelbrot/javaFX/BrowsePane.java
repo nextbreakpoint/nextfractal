@@ -25,6 +25,7 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -37,11 +38,18 @@ import java.util.prefs.Preferences;
 import com.nextbreakpoint.nextfractal.core.utils.Block;
 import javafx.animation.AnimationTimer;
 import javafx.animation.TranslateTransition;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.stage.DirectoryChooser;
 import javafx.util.Duration;
 
@@ -74,8 +82,7 @@ public class BrowsePane extends BorderPane {
 	private final int numRows = 3;
 	private final int numCols = 3;
 	private List<GridItem> items = new ArrayList<>();
-	private BorderPane box = new BorderPane();
-	private BrowseDelegate delegate; 
+	private BrowseDelegate delegate;
 	private DirectoryChooser directoryChooser;
 	private File currentFolder;
 	private File currentDir;
@@ -90,7 +97,6 @@ public class BrowsePane extends BorderPane {
 		setMinHeight(height);
 		setMaxHeight(height);
 		setPrefHeight(height);
-		setLayoutX(-width);
 
 		Preferences prefs = Preferences.userNodeForPackage(MandelbrotRenderPane.class);
 		
@@ -111,19 +117,18 @@ public class BrowsePane extends BorderPane {
 		
 		tile = createSingleTile(size, size);
 		
-		Button closeButton = new Button("Close");
 		Button reloadButton = new Button("Reload");
 		Button chooseButton = new Button("Location...");
 
 		Label statusLabel = new Label("Initializing");
 
-		HBox buttons = new HBox(10);
-		buttons.getChildren().add(closeButton);
-		buttons.getChildren().add(reloadButton);
-		buttons.getChildren().add(chooseButton);
-		buttons.getChildren().add(statusLabel);
-		buttons.setAlignment(Pos.CENTER);
-		buttons.getStyleClass().add("buttons");
+		HBox toolbarButtons = new HBox(10);
+		toolbarButtons.getChildren().add(reloadButton);
+		toolbarButtons.getChildren().add(chooseButton);
+		toolbarButtons.getChildren().add(statusLabel);
+		toolbarButtons.setAlignment(Pos.CENTER);
+		toolbarButtons.getStyleClass().add("toolbar");
+		toolbarButtons.getStyleClass().add("translucent");
 
 		GridView grid = new GridView(numRows, numCols, size);
 		
@@ -151,32 +156,17 @@ public class BrowsePane extends BorderPane {
 				}
 			}
 		});
-		
+
+		BorderPane box = new BorderPane();
 		box.setCenter(grid);
-		box.setBottom(buttons);
+		box.setBottom(toolbarButtons);
 		box.getStyleClass().add("browse");
 		
 		setCenter(box);
 		
-		closeButton.setOnMouseClicked(e -> hide());
-		
 		chooseButton.setOnMouseClicked(e -> doChooseFolder(grid));
 		
 		reloadButton.setOnMouseClicked(e -> loadFiles(statusLabel, grid, currentFolder));
-		
-//		widthProperty().addListener(new ChangeListener<java.lang.Number>() {
-//			@Override
-//			public void changed(ObservableValue<? extends java.lang.Number> observable, java.lang.Number oldValue, java.lang.Number newValue) {
-//				box.setPrefWidth(newValue.doubleValue());
-//			}
-//		});
-//		
-//		heightProperty().addListener(new ChangeListener<java.lang.Number>() {
-//			@Override
-//			public void changed(ObservableValue<? extends java.lang.Number> observable, java.lang.Number oldValue, java.lang.Number newValue) {
-//				box.setPrefHeight(newValue.doubleValue());
-//			}
-//		});
 
 		pathProperty.addListener((observable, oldValue, newValue) -> {
 			File path = new File(newValue);
@@ -186,28 +176,11 @@ public class BrowsePane extends BorderPane {
 
 		runTimer(grid);
 	}
-	
-	public void show() {
-		TranslateTransition tt = new TranslateTransition(Duration.seconds(0.4));
-		tt.setFromX(this.getTranslateX());
-		tt.setToX(this.getWidth());
-		tt.setNode(this);
-		tt.setOnFinished(event -> {
-            setDisable(false);
-            pathProperty.setValue(currentDir.getAbsolutePath());
-        });
-		tt.play();
-	}
-	
-	public void hide() {
-		TranslateTransition tt = new TranslateTransition(Duration.seconds(0.4));
-		tt.setFromX(this.getTranslateX());
-		tt.setToX(0);
-		tt.setNode(this);
-		tt.setOnFinished(event -> setDisable(true));
-		tt.play();
-	}
 
+	public void reload() {
+		pathProperty.setValue(currentDir.getAbsolutePath());
+	}
+	
 	public void setDelegate(BrowseDelegate delegate) {
 		this.delegate = delegate;
 	}
