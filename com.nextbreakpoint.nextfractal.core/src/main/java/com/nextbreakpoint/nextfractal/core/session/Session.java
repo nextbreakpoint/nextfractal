@@ -41,8 +41,4 @@ public interface Session {
 	public void addSessionListener(SessionListener sessionListener);
 
 	public void removeSessionListener(SessionListener sessionListener);
-
-	public void doExportAsImage();
-
-	public void showBrowser();
 }

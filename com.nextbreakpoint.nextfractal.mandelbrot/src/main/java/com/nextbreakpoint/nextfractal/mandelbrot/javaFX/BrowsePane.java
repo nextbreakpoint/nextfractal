@@ -109,11 +109,11 @@ public class BrowsePane extends BorderPane {
 		
 		executor = Executors.newFixedThreadPool(maxThreads, threadFactory);
 		
-		this.tile = createSingleTile(size, size);
+		tile = createSingleTile(size, size);
 		
 		Button closeButton = new Button("Close");
 		Button reloadButton = new Button("Reload");
-		Button chooseButton = new Button("Open...");
+		Button chooseButton = new Button("Location...");
 
 		Label statusLabel = new Label("Initializing");
 
@@ -206,10 +206,6 @@ public class BrowsePane extends BorderPane {
 		tt.setNode(this);
 		tt.setOnFinished(event -> setDisable(true));
 		tt.play();
-	}
-
-	public BrowseDelegate getDelegate() {
-		return delegate;
 	}
 
 	public void setDelegate(BrowseDelegate delegate) {

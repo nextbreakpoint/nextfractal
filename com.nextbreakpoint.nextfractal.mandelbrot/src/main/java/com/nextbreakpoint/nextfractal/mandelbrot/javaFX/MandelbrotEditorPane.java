@@ -127,16 +127,16 @@ public class MandelbrotEditorPane extends BorderPane {
 		jobsList.setCellFactory(listView -> new ExportListCell(generator.getSize(), generatorTile));
 
 		BorderPane historyPane = new BorderPane();
-		BorderPane historyButtons = new BorderPane();
-		Button clearButton = new Button("", createIconImage("/icon-clear.png"));
-		clearButton.setTooltip(new Tooltip("Remove all elements"));
-		historyButtons.setRight(clearButton);
-		historyButtons.getStyleClass().add("menubar");
+//		BorderPane historyButtons = new BorderPane();
+//		Button clearButton = new Button("", createIconImage("/icon-clear.png"));
+//		clearButton.setTooltip(new Tooltip("Remove all elements"));
+//		historyButtons.setRight(clearButton);
+//		historyButtons.getStyleClass().add("menubar");
 		historyPane.setCenter(historyList);
-		historyPane.setBottom(historyButtons);
+//		historyPane.setBottom(historyButtons);
 		historyList.getSelectionModel().getSelectedItems().addListener((Change<? extends MandelbrotData> c) -> historyItemSelected(historyList));
-		clearButton.setOnAction(e -> Block.create((Block<ListView<MandelbrotData>,Exception>)(list -> logger.info("Clear history")))
-				.andThen(list -> historyRemoveAllItems(list)).andThen(list -> addDataToHistory(list)).tryExecute(historyList));
+//		clearButton.setOnAction(e -> Block.create((Block<ListView<MandelbrotData>,Exception>)(list -> logger.info("Clear history")))
+//				.andThen(list -> historyRemoveAllItems(list)).andThen(list -> addDataToHistory(list)).tryExecute(historyList));
 
 		BorderPane jobsPane = new BorderPane();
 		BorderPane jobsButtons = new BorderPane();
@@ -167,13 +167,18 @@ public class MandelbrotEditorPane extends BorderPane {
 		suspendButton.setOnAction(e -> selectedItems(jobsList).filter(exportSession -> !exportSession.isSuspended()).forEach(exportSession -> session.getExportService().suspendSession(exportSession)));
 		resumeButton.setOnAction(e -> selectedItems(jobsList).filter(exportSession -> exportSession.isSuspended()).forEach(exportSession -> session.getExportService().resumeSession(exportSession)));
 		removeButton.setOnAction(e -> selectedItems(jobsList).forEach(exportSession -> session.getExportService().stopSession(exportSession)));
-		exportButton.setOnAction(e -> getMandelbrotSession().doExportAsImage());
 
 		MandelbrotParamsPane paramsPane = new MandelbrotParamsPane(getMandelbrotSession());
 
+		ExportPane exportPane = new ExportPane();
+
+		Pane exportJobsPane = new Pane();
+		exportJobsPane.getChildren().add(jobsPane);
+		exportJobsPane.getChildren().add(exportPane);
+
 		Pane sidePane = new Pane();
+		sidePane.getChildren().add(exportJobsPane);
 		sidePane.getChildren().add(historyPane);
-		sidePane.getChildren().add(jobsPane);
 		sidePane.getChildren().add(paramsPane);
 
 		historyPane.getStyleClass().add("sidebar");
@@ -223,8 +228,8 @@ public class MandelbrotEditorPane extends BorderPane {
 		saveButton.setOnAction(saveEventHandler);
 
 		TranslateTransition sidebarTransition = createTranslateTransition(sidePane);
-
 		TranslateTransition statusTransition = createTranslateTransition(statusPane);
+		TranslateTransition exportTransition = createTranslateTransition(exportPane);
 
 		paramsButton.setSelected(true);
 		statusButton.setSelected(true);
@@ -233,6 +238,26 @@ public class MandelbrotEditorPane extends BorderPane {
 		viewGroup.getToggles().add(historyButton);
 		viewGroup.getToggles().add(paramsButton);
 		viewGroup.getToggles().add(jobsButton);
+
+		exportButton.setOnAction(e -> {
+			//		if (errorProperty.getValue() == null) {
+			MandelbrotSession mandelbrotSession = getMandelbrotSession();
+			exportData = mandelbrotSession.getDataAsCopy();
+			showPanel(exportTransition, a -> {});
+		});
+
+		exportPane.setExportDelegate(new ExportDelegate() {
+			@Override
+			public void createSession(RendererSize rendererSize) {
+				doExportSession(rendererSize);
+				hidePanel(exportTransition, a -> {});
+			}
+
+			@Override
+			public void cancel() {
+				hidePanel(exportTransition, a -> {});
+			}
+		});
 
 		historyButton.selectedProperty().addListener((source, oldValue, newValue) -> {
 			if (newValue) {
@@ -250,8 +275,8 @@ public class MandelbrotEditorPane extends BorderPane {
 
 		jobsButton.selectedProperty().addListener((source, oldValue, newValue) -> {
 			if (newValue) {
-				sidePane.getChildren().remove(jobsPane);
-				sidePane.getChildren().add(jobsPane);
+				sidePane.getChildren().remove(exportJobsPane);
+				sidePane.getChildren().add(exportJobsPane);
 			}
 		});
 
@@ -279,10 +304,6 @@ public class MandelbrotEditorPane extends BorderPane {
 			codePane.prefHeightProperty().setValue(getHeight() - statusPane.getHeight() - sourceButtons.getHeight() + newValue.doubleValue());
 			sidePane.prefHeightProperty().setValue(getHeight() - statusPane.getHeight() - sourceButtons.getHeight() + newValue.doubleValue());
 		});
-
-		ExportPane exportPane = new ExportPane(200, 200);
-//		exportPane.setParamsDelegate(this);
-		exportPane.setDisable(true);
 
 		StackPane rootPane = new StackPane();
 		rootPane.getChildren().add(sourcePane);
@@ -353,15 +374,6 @@ public class MandelbrotEditorPane extends BorderPane {
 			public void sessionRemoved(Session session, ExportSession exportSession) {
 				jobsList.getItems().remove(exportSession);
 			}
-
-			@Override
-			public void doExportAsImage(Session session) {
-				exportAsImage(exportPane);
-			}
-
-			@Override
-			public void showBrowser(Session session) {
-			}
 		});
 
 		widthProperty().addListener((observable, oldValue, newValue) -> {
@@ -392,14 +404,27 @@ public class MandelbrotEditorPane extends BorderPane {
 			double width = newValue.doubleValue();
 			paramsPane.setPrefWidth(width);
 			historyPane.setPrefWidth(width);
-			jobsPane.setPrefWidth(width);
+			exportJobsPane.setPrefWidth(width);
 		});
 
 		sidePane.heightProperty().addListener((observable, oldValue, newValue) -> {
 			double height = newValue.doubleValue();
 			paramsPane.setPrefHeight(height);
 			historyPane.setPrefHeight(height);
+			exportJobsPane.setPrefHeight(height);
+		});
+
+		exportJobsPane.widthProperty().addListener((observable, oldValue, newValue) -> {
+			double width = newValue.doubleValue();
+			jobsPane.setPrefWidth(width);
+			exportPane.setPrefWidth(width);
+			exportPane.setLayoutX(width);
+		});
+
+		exportJobsPane.heightProperty().addListener((observable, oldValue, newValue) -> {
+			double height = newValue.doubleValue();
 			jobsPane.setPrefHeight(height);
+			exportPane.setPrefHeight(height);
 		});
 
 		textExecutor = Executors.newSingleThreadExecutor(new DefaultThreadFactory("MandelbrotTextUpdate", true, Thread.MIN_PRIORITY));
@@ -420,14 +445,6 @@ public class MandelbrotEditorPane extends BorderPane {
 	protected void finalize() throws Throwable {
 		shutdown();
 		super.finalize();
-	}
-
-	private void exportAsImage(ExportPane exportPane) {
-//		if (errorProperty.getValue() == null) {
-			MandelbrotSession mandelbrotSession = getMandelbrotSession();
-			exportData = mandelbrotSession.getDataAsCopy();
-			exportPane.show();
-//		}
 	}
 
 	private TranslateTransition createTranslateTransition(Node node) {
@@ -472,6 +489,26 @@ public class MandelbrotEditorPane extends BorderPane {
 		if (transition.getNode().getTranslateY() != ((Pane)transition.getNode()).getHeight()) {
 			transition.setFromY(transition.getNode().getTranslateY());
 			transition.setToY(((Pane)transition.getNode()).getHeight());
+			transition.setOnFinished(handler);
+			transition.play();
+		}
+	}
+
+	private void showPanel(TranslateTransition transition, EventHandler<ActionEvent> handler) {
+		transition.stop();
+		if (transition.getNode().getTranslateX() != -((Pane)transition.getNode()).getWidth()) {
+			transition.setFromX(transition.getNode().getTranslateX());
+			transition.setToX(-((Pane)transition.getNode()).getWidth());
+			transition.setOnFinished(handler);
+			transition.play();
+		}
+	}
+
+	private void hidePanel(TranslateTransition transition, EventHandler<ActionEvent> handler) {
+		transition.stop();
+		if (transition.getNode().getTranslateX() != 0) {
+			transition.setFromX(transition.getNode().getTranslateX());
+			transition.setToX(0);
 			transition.setOnFinished(handler);
 			transition.play();
 		}
@@ -756,6 +793,7 @@ public class MandelbrotEditorPane extends BorderPane {
 	private <T> void triggerUpdate(ListView<T> listView, T newValue, int index) {
 		listView.fireEvent(new ListView.EditEvent<>(listView, ListView.editCommitEvent(), newValue, index));
     }
+
 	private static ServiceLoader<Encoder> loadPlugins() {
 		return ServiceLoader.load(Encoder.class);
 	}

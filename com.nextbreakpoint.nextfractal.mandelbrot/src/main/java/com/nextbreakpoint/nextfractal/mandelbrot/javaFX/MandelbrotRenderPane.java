@@ -75,7 +75,7 @@ import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, BrowseDelegate, MandelbrotToolContext {
+public class MandelbrotRenderPane extends BorderPane implements BrowseDelegate, MandelbrotToolContext {
 	private static final int FRAME_LENGTH_IN_MILLIS = 20;
 	private static final Logger logger = Logger.getLogger(MandelbrotRenderPane.class.getName());
 	private final Session session;
@@ -343,15 +343,6 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 			@Override
 			public void sessionRemoved(Session session, ExportSession exportSession) {
 			}
-
-			@Override
-			public void doExportAsImage(Session session) {
-			}
-
-			@Override
-			public void showBrowser(Session session) {
-				browsePane.show();
-			}
 		});
 		
 		Pane stackPane = new Pane();
@@ -481,10 +472,6 @@ public class MandelbrotRenderPane extends BorderPane implements ExportDelegate, 
 		runTimer(fractalCanvas, orbitCanvas, juliaCanvas, pointCanvas, trapCanvas, toolCanvas);
 
 		browsePane.hide();
-	}
-
-	@Override
-	public void exportSession(RendererSize rendererSize) {
 	}
 
 	@Override

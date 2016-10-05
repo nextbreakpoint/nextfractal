@@ -24,7 +24,6 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
 
-import javafx.animation.TranslateTransition;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -35,26 +34,15 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.BorderPane;
 import javafx.util.Callback;
-import javafx.util.Duration;
 import javafx.util.StringConverter;
 
 import com.nextbreakpoint.nextfractal.core.javaFX.AdvancedTextField;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 
 public class ExportPane extends BorderPane {
-	private static final int CONTROL_SIZE = 250;
-	private VBox box = new VBox();
-	private ExportDelegate delegate; 
+	private ExportDelegate delegate;
 
-	public ExportPane(int width, int height) {
-		setMinWidth(width);
-		setMaxWidth(width);
-		setPrefWidth(width);
-		setMinHeight(height);
-		setMaxHeight(height);
-		setPrefHeight(height);
-		setLayoutY(-height);
-
+	public ExportPane() {
 		ComboBox<Integer[]> presets = new ComboBox<>();
 		presets.getItems().add(new Integer[] { 0, 0 });
 		presets.getItems().add(new Integer[] { 4096, 4096 });
@@ -69,39 +57,29 @@ public class ExportPane extends BorderPane {
 		presets.getItems().add(new Integer[] { 640, 480 });
 		presets.getItems().add(new Integer[] { 512, 512 });
 		presets.getItems().add(new Integer[] { 256, 256 });
-		presets.setMinWidth(CONTROL_SIZE);
-		presets.setMaxWidth(CONTROL_SIZE);
-		presets.setPrefWidth(CONTROL_SIZE);
 		presets.getSelectionModel().select(7);
 		Integer[] item0 = presets.getSelectionModel().getSelectedItem();
 		AdvancedTextField widthField = new AdvancedTextField();
 		widthField.setRestrict(getRestriction());
 		widthField.setEditable(false);
-		widthField.setMinWidth(CONTROL_SIZE / 2);
-		widthField.setMaxWidth(CONTROL_SIZE / 2);
-		widthField.setPrefWidth(CONTROL_SIZE / 2);
 		widthField.setText(String.valueOf(item0[0]));
 		AdvancedTextField heightField = new AdvancedTextField();
 		heightField.setRestrict(getRestriction());
 		heightField.setEditable(false);
-		heightField.setMinWidth(CONTROL_SIZE / 2);
-		heightField.setMaxWidth(CONTROL_SIZE / 2);
-		heightField.setPrefWidth(CONTROL_SIZE / 2);
 		heightField.setText(String.valueOf(item0[1]));
 		Button cancelButton = new Button("Cancel");
 		Button exportButton = new Button("Export...");
 
-		HBox buttons = new HBox(10);
-		buttons.getChildren().add(cancelButton);
-		buttons.getChildren().add(exportButton);
-		buttons.setAlignment(Pos.CENTER);
+		BorderPane buttons = new BorderPane();
+		buttons.setLeft(cancelButton);
+		buttons.setRight(exportButton);
 		buttons.getStyleClass().add("buttons");
 
 		VBox dimensionBox = new VBox(5);
 		dimensionBox.setAlignment(Pos.CENTER);
 		dimensionBox.getChildren().add(presets);
-		
-		HBox sizeBox = new HBox(5);
+
+		VBox sizeBox = new VBox(5);
 		sizeBox.setAlignment(Pos.CENTER);
 		sizeBox.getChildren().add(widthField);
 		sizeBox.getChildren().add(heightField);
@@ -114,6 +92,7 @@ public class ExportPane extends BorderPane {
 		controls.getChildren().add(sizeBox);
 		controls.getStyleClass().add("controls");
 
+		VBox box = new VBox();
 		box.setAlignment(Pos.TOP_CENTER);
 		box.getChildren().add(controls);
 		box.getChildren().add(buttons);
@@ -177,59 +156,33 @@ public class ExportPane extends BorderPane {
             }
         });
 		
-		cancelButton.setOnMouseClicked(e -> hide());
-		
-		exportButton.setOnMouseClicked(e -> {
-			hide();
-			int renderWidth = Integer.parseInt(widthField.getText());
-			int renderHeight = Integer.parseInt(heightField.getText());
+		cancelButton.setOnMouseClicked(e -> {
 			if (delegate != null) {
-				delegate.exportSession(new RendererSize(renderWidth, renderHeight));
+				delegate.cancel();
 			}
 		});
 		
-//		widthProperty().addListener(new ChangeListener<java.lang.Number>() {
-//			@Override
-//			public void changed(ObservableValue<? extends java.lang.Number> observable, java.lang.Number oldValue, java.lang.Number newValue) {
-//				box.setPrefWidth(newValue.doubleValue());
-//			}
-//		});
-//		
-//		heightProperty().addListener(new ChangeListener<java.lang.Number>() {
-//			@Override
-//			public void changed(ObservableValue<? extends java.lang.Number> observable, java.lang.Number oldValue, java.lang.Number newValue) {
-//				box.setPrefHeight(newValue.doubleValue());
-//			}
-//		});
+		exportButton.setOnMouseClicked(e -> {
+			if (delegate != null) {
+				int renderWidth = Integer.parseInt(widthField.getText());
+				int renderHeight = Integer.parseInt(heightField.getText());
+				delegate.createSession(new RendererSize(renderWidth, renderHeight));
+			}
+		});
+
+		widthProperty().addListener((observable, oldValue, newValue) -> {
+			double width = newValue.doubleValue();
+			presets.setPrefWidth(width);
+			widthField.setPrefWidth(width);
+			heightField.setPrefWidth(width);
+		});
 	}
 
 	protected String getRestriction() {
 		return "-?\\d*\\.?\\d*";
 	}
 	
-	public void show() {
-		TranslateTransition tt = new TranslateTransition(Duration.seconds(0.4));
-		tt.setFromY(this.getTranslateY());
-		tt.setToY(this.getHeight());
-		tt.setNode(this);
-		tt.setOnFinished(event -> setDisable(false));
-		tt.play();
-	}
-	
-	public void hide() {
-		TranslateTransition tt = new TranslateTransition(Duration.seconds(0.4));
-		tt.setFromY(this.getTranslateY());
-		tt.setToY(0);
-		tt.setNode(this);
-		tt.setOnFinished(event -> setDisable(true));
-		tt.play();
-	}
-
-	public ExportDelegate getDelegate() {
-		return delegate;
-	}
-
-	public void setDelegate(ExportDelegate delegate) {
+	public void setExportDelegate(ExportDelegate delegate) {
 		this.delegate = delegate;
 	}
 }
