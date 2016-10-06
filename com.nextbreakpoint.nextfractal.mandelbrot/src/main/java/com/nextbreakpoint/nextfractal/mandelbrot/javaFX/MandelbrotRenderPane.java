@@ -62,6 +62,7 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 
 import java.io.File;
@@ -204,7 +205,7 @@ public class MandelbrotRenderPane extends BorderPane implements MandelbrotToolCo
 		BrowsePane browsePane = new BrowsePane(width, height);
 		browsePane.setTranslateX(-width);
 
-		HBox cornerButtons = new HBox(4);
+		VBox cornerButtons = new VBox(4);
 		ToggleButton browseButton = new ToggleButton("", createIconImage("/icon-folder.png"));
 		browseButton.setTooltip(new Tooltip("Show fractals browser"));
 		cornerButtons.getChildren().add(browseButton);
@@ -212,6 +213,7 @@ public class MandelbrotRenderPane extends BorderPane implements MandelbrotToolCo
 		cornerButtons.getStyleClass().add("translucent");
 		cornerButtons.setTranslateX(-width);
 		cornerButtons.setLayoutX(width);
+		cornerButtons.setPrefHeight(height * 0.07);
 
 		TranslateTransition browserTransition = createTranslateTransition(browsePane);
 
@@ -316,11 +318,9 @@ public class MandelbrotRenderPane extends BorderPane implements MandelbrotToolCo
 			}
 		});
 		
-		controls.setOnMouseEntered(e -> {
-			fadeIn(toolsTransition, x -> {});
-		});
+		this.setOnMouseEntered(e -> fadeIn(toolsTransition, x -> {}));
 		
-		controls.setOnMouseExited(e -> fadeOut(toolsTransition, x -> {}));
+		this.setOnMouseExited(e -> fadeOut(toolsTransition, x -> {}));
 		
 		getMandelbrotSession().addMandelbrotListener(new MandelbrotListener() {
 			@Override
@@ -383,9 +383,9 @@ public class MandelbrotRenderPane extends BorderPane implements MandelbrotToolCo
 
 		homeButton.setOnAction(e -> resetView());
 
-		browsePane.translateXProperty().addListener((observable, oldValue, newValue) -> {
-			cornerButtons.setTranslateX(newValue.doubleValue());
-		});
+		browsePane.translateXProperty().addListener((observable, oldValue, newValue) -> cornerButtons.setTranslateX(newValue.doubleValue()));
+
+		controls.opacityProperty().addListener((observable, oldValue, newValue) -> cornerButtons.setOpacity(newValue.doubleValue()));
 
 		toolsGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
 			if (oldValue != null) {

@@ -129,6 +129,7 @@ public class BrowsePane extends BorderPane {
 		toolbarButtons.setAlignment(Pos.CENTER);
 		toolbarButtons.getStyleClass().add("toolbar");
 		toolbarButtons.getStyleClass().add("translucent");
+		toolbarButtons.setPrefHeight(height * 0.07);
 
 		GridView grid = new GridView(numRows, numCols, size);
 		

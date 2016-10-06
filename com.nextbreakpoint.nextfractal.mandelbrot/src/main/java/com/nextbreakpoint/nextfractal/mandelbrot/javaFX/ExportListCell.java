@@ -24,12 +24,9 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
 
-import java.text.SimpleDateFormat;
-
 import javafx.geometry.Pos;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.image.PixelFormat;
@@ -46,7 +43,6 @@ public class ExportListCell extends ListCell<ExportSession> {
 	private BorderPane pane;
 	private ProgressBar progress;
 	private Canvas canvas;
-	private Label label;
 	private RendererSize size;
 	private RendererTile tile;
 
@@ -55,12 +51,9 @@ public class ExportListCell extends ListCell<ExportSession> {
 		this.tile = tile;
 		canvas = new Canvas(tile.getTileSize().getWidth(), tile.getTileSize().getHeight());
 		progress = new ProgressBar();
-		label = new Label();
 		pane = new BorderPane();
 		pane.setLeft(canvas);
-		pane.setCenter(label);
 		pane.setRight(progress);
-		BorderPane.setAlignment(label, Pos.CENTER);
 		BorderPane.setAlignment(canvas, Pos.CENTER);
 		BorderPane.setAlignment(progress, Pos.CENTER);
 	}
@@ -86,8 +79,6 @@ public class ExportListCell extends ListCell<ExportSession> {
 				g2d.drawImage(image, x, y);
 			}
 			progress.setProgress(session.getProgress());
-			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			label.setText(df.format(data.getTimestamp()));
 			this.setGraphic(pane);
 		}
 	}
