@@ -201,7 +201,7 @@ public class MandelbrotEditorPane extends BorderPane {
 		Button loadButton = new Button("", createIconImage("/icon-load.png"));
 		Button saveButton = new Button("", createIconImage("/icon-save.png"));
 		ToggleButton paramsButton = new ToggleButton("", createIconImage("/icon-folder.png"));
-		ToggleButton historyButton = new ToggleButton("", createIconImage("/icon-folder.png"));
+		ToggleButton historyButton = new ToggleButton("", createIconImage("/icon-time.png"));
 		ToggleButton jobsButton = new ToggleButton("", createIconImage("/icon-folder.png"));
 		ToggleButton statusButton = new ToggleButton("", createIconImage("/icon-folder.png"));
 		renderButton.setTooltip(new Tooltip("Render fractal"));

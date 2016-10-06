@@ -204,8 +204,8 @@
 }
 
 .application .mandelbrot .tab {
-	-fx-border-width: 0 1 1 0;
-	-fx-border-color: #f0f0f0;
+	//-fx-border-width: 0 1 1 0;
+	//-fx-border-color: #f0f0f0;
 }
 
 .application .mandelbrot .tab .toggle-button {

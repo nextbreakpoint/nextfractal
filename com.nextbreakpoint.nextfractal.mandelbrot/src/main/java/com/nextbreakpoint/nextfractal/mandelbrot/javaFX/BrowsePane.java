@@ -116,16 +116,18 @@ public class BrowsePane extends BorderPane {
 		executor = Executors.newFixedThreadPool(maxThreads, threadFactory);
 		
 		tile = createSingleTile(size, size);
-		
-		Button reloadButton = new Button("Reload");
-		Button chooseButton = new Button("Location...");
+
+		Button reloadButton = new Button("", createIconImage("/icon-reload.png"));
+		Button chooseButton = new Button("", createIconImage("/icon-folder.png"));
+		reloadButton.setTooltip(new Tooltip("Reload all fractals"));
+		chooseButton.setTooltip(new Tooltip("Select location of fractals"));
 
 		Label statusLabel = new Label("Initializing");
 
 		HBox toolbarButtons = new HBox(10);
-		toolbarButtons.getChildren().add(reloadButton);
 		toolbarButtons.getChildren().add(chooseButton);
 		toolbarButtons.getChildren().add(statusLabel);
+		toolbarButtons.getChildren().add(reloadButton);
 		toolbarButtons.setAlignment(Pos.CENTER);
 		toolbarButtons.getStyleClass().add("toolbar");
 		toolbarButtons.getStyleClass().add("translucent");
@@ -190,6 +192,15 @@ public class BrowsePane extends BorderPane {
 	protected void finalize() throws Throwable {
 		removeItems();
 		super.finalize();
+	}
+
+	private ImageView createIconImage(String name) {
+		InputStream stream = getClass().getResourceAsStream(name);
+		ImageView image = new ImageView(new Image(stream));
+		image.setSmooth(true);
+		image.setFitWidth(32);
+		image.setFitHeight(32);
+		return image;
 	}
 
 	private void ensureDirectoryChooser() {

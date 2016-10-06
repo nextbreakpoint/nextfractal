@@ -206,11 +206,10 @@ public class MandelbrotRenderPane extends BorderPane implements MandelbrotToolCo
 		browsePane.setTranslateX(-width);
 
 		VBox cornerButtons = new VBox(4);
-		ToggleButton browseButton = new ToggleButton("", createIconImage("/icon-folder.png"));
+		ToggleButton browseButton = new ToggleButton("", createIconImage("/icon-grid.png"));
 		browseButton.setTooltip(new Tooltip("Show fractals browser"));
 		cornerButtons.getChildren().add(browseButton);
 		cornerButtons.getStyleClass().add("tab");
-		cornerButtons.getStyleClass().add("translucent");
 		cornerButtons.setTranslateX(-width);
 		cornerButtons.setLayoutX(width);
 		cornerButtons.setPrefHeight(height * 0.07);
