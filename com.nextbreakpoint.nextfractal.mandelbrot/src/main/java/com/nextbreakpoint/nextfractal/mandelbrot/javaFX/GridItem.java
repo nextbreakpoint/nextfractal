@@ -24,14 +24,14 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
 
-import java.io.File;
-import java.util.concurrent.Future;
-
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotData;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerBuilder;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Color;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Orbit;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererCoordinator;
+
+import java.io.File;
+import java.util.concurrent.Future;
 
 public class GridItem {
 	private volatile long lastChanged;

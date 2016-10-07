@@ -24,6 +24,9 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
 
+import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
+import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
+import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotData;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.ListCell;
@@ -31,10 +34,6 @@ import javafx.scene.image.PixelFormat;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.HBox;
 import javafx.scene.transform.Affine;
-
-import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
-import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
-import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotData;
 
 public class BrowseListCell extends ListCell<MandelbrotData[]> {
 	private HBox pane;

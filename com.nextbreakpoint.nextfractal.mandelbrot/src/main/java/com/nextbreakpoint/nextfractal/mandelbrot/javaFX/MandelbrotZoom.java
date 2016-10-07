@@ -24,11 +24,10 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
 
-import javafx.scene.input.MouseEvent;
-
 import com.nextbreakpoint.nextfractal.core.renderer.RendererGraphicsContext;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotView;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
+import javafx.scene.input.MouseEvent;
 
 public class MandelbrotZoom implements MandelbrotTool {
 	private MandelbrotToolContext context;

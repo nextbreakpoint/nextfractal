@@ -24,13 +24,12 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
 
+import com.nextbreakpoint.nextfractal.core.javaFX.StringObservableValue;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Pos;
 import javafx.scene.control.TextArea;
-import javafx.scene.layout.VBox;
 import javafx.scene.layout.BorderPane;
-
-import com.nextbreakpoint.nextfractal.core.javaFX.StringObservableValue;
+import javafx.scene.layout.VBox;
 
 public class StatusPane extends BorderPane {
 	private StringObservableValue messageProperty;

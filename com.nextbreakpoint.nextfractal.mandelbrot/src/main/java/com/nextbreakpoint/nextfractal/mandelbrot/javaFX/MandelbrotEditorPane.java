@@ -27,6 +27,7 @@ package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
 import com.nextbreakpoint.Try;
 import com.nextbreakpoint.nextfractal.core.encoder.Encoder;
 import com.nextbreakpoint.nextfractal.core.export.ExportSession;
+import com.nextbreakpoint.nextfractal.core.javaFX.StringObservableValue;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererPoint;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
@@ -89,6 +90,7 @@ public class MandelbrotEditorPane extends BorderPane {
 	private final Session session;
 	private final CodeArea codeArea;
 	private final ExecutorService exportExecutor;
+	private final StringObservableValue errorProperty;
 	private Pattern highlightingPattern;
 	private FileChooser fileChooser;
 	private volatile boolean noHistory;
@@ -97,6 +99,9 @@ public class MandelbrotEditorPane extends BorderPane {
 
 	public MandelbrotEditorPane(Session session) {
 		this.session = session;
+
+		errorProperty = new StringObservableValue();
+		errorProperty.setValue(null);
 
 		RendererTile generatorTile = createSingleTile(32, 32);
 		
@@ -236,10 +241,11 @@ public class MandelbrotEditorPane extends BorderPane {
 		viewGroup.getToggles().add(paramsButton);
 
 		exportButton.setOnAction(e -> {
-			//		if (errorProperty.getValue() == null) {
-			MandelbrotSession mandelbrotSession = getMandelbrotSession();
-			exportData = mandelbrotSession.getDataAsCopy();
-			showPanel(exportTransition, a -> {});
+			if (errorProperty.getValue() == null) {
+				MandelbrotSession mandelbrotSession = getMandelbrotSession();
+				exportData = mandelbrotSession.getDataAsCopy();
+				showPanel(exportTransition, a -> {});
+			}
 		});
 
 		exportPane.setExportDelegate(new ExportDelegate() {
@@ -253,6 +259,11 @@ public class MandelbrotEditorPane extends BorderPane {
 			public void cancel() {
 				hidePanel(exportTransition, a -> {});
 			}
+		});
+
+		errorProperty.addListener((source, oldValue, newValue) -> {
+			exportButton.setDisable(newValue != null);
+			hidePanel(exportTransition, a -> {});
 		});
 
 		historyButton.selectedProperty().addListener((source, oldValue, newValue) -> {
@@ -343,6 +354,11 @@ public class MandelbrotEditorPane extends BorderPane {
 			@Override
 			public void statusChanged(MandelbrotSession session) {
 				statusPane.setMessage(session.getStatus());
+			}
+
+			@Override
+			public void errorChanged(MandelbrotSession session) {
+				errorProperty.setValue(session.getError());
 			}
 
 			@Override

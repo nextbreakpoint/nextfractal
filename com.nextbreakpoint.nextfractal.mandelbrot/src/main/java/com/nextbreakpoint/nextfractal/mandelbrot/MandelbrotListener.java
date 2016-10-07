@@ -57,4 +57,9 @@ public interface MandelbrotListener {
 	 * @param session
 	 */
     public void statusChanged(MandelbrotSession session);
+
+	/**
+	 * @param session
+	 */
+	public void errorChanged(MandelbrotSession session);
 }

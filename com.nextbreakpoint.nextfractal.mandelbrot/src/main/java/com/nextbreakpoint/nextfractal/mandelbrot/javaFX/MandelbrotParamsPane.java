@@ -24,14 +24,8 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
 
-import java.io.StringWriter;
-import java.net.URLEncoder;
-import java.util.Base64;
-import java.util.Optional;
-import java.util.function.Function;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
+import com.nextbreakpoint.nextfractal.core.javaFX.AdvancedTextField;
+import com.nextbreakpoint.nextfractal.mandelbrot.*;
 import javafx.application.Platform;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -39,16 +33,16 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import javafx.scene.layout.HBox;
 
-import com.nextbreakpoint.nextfractal.core.javaFX.AdvancedTextField;
-import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotData;
-import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotDataStore;
-import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotListener;
-import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotSession;
-import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotView;
+import java.io.StringWriter;
+import java.net.URLEncoder;
+import java.util.Base64;
+import java.util.function.Function;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class MandelbrotParamsPane extends Pane {
 	private static final Logger logger = Logger.getLogger(MandelbrotParamsPane.class.getName());
@@ -242,6 +236,10 @@ public class MandelbrotParamsPane extends Pane {
 
 			@Override
 			public void statusChanged(MandelbrotSession session) {
+			}
+
+			@Override
+			public void errorChanged(MandelbrotSession session) {
 			}
 
 			@Override

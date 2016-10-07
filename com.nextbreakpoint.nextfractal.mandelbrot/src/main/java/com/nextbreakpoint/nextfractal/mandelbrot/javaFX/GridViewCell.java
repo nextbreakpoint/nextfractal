@@ -24,15 +24,14 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
 
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.text.*;
-import javafx.scene.paint.Color;
-
 import com.nextbreakpoint.nextfractal.core.renderer.RendererGraphicsContext;
 import com.nextbreakpoint.nextfractal.core.renderer.javaFX.JavaFXRendererFactory;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererCoordinator;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.paint.Color;
+import javafx.scene.text.TextAlignment;
 
 public class GridViewCell extends BorderPane {
 	private JavaFXRendererFactory renderFactory = new JavaFXRendererFactory();

@@ -217,3 +217,7 @@
 .application .mandelbrot .text-small {
     -fx-font-size: 7pt;
 }
+
+.application .mandelbrot .spacing {
+    -fx-padding: 0 20px 0 10px;
+}

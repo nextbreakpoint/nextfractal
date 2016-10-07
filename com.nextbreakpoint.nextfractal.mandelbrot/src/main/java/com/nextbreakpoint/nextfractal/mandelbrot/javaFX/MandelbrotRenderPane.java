@@ -346,6 +346,10 @@ public class MandelbrotRenderPane extends BorderPane implements MandelbrotToolCo
 			}
 
 			@Override
+			public void errorChanged(MandelbrotSession session) {
+			}
+
+			@Override
 			public void reportChanged(MandelbrotSession session) {
 				updateFractal(session);
 			}
@@ -527,6 +531,7 @@ public class MandelbrotRenderPane extends BorderPane implements MandelbrotToolCo
 
 	private void updateErrors(Pane panel, String error) {
 		panel.setVisible(error != null);
+		getMandelbrotSession().setError(error);
 	}
 
 	private void dispose() {

@@ -24,20 +24,14 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
 
-import javafx.geometry.Pos;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.scene.layout.BorderPane;
-import javafx.util.Callback;
-import javafx.util.StringConverter;
-
 import com.nextbreakpoint.nextfractal.core.javaFX.AdvancedTextField;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
+import javafx.geometry.Pos;
+import javafx.scene.control.*;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
+import javafx.util.Callback;
+import javafx.util.StringConverter;
 
 public class ExportPane extends BorderPane {
 	private ExportDelegate delegate;

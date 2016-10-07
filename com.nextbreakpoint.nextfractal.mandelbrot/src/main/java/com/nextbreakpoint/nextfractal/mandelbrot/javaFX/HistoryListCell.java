@@ -24,8 +24,9 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
 
-import java.text.SimpleDateFormat;
-
+import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
+import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
+import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotData;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
@@ -35,9 +36,7 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.transform.Affine;
 
-import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
-import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
-import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotData;
+import java.text.SimpleDateFormat;
 
 public class HistoryListCell extends ListCell<MandelbrotData> {
 	private BorderPane pane;

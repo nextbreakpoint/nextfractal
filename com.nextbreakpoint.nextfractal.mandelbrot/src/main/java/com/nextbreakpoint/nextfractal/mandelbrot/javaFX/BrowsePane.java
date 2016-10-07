@@ -24,40 +24,12 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
 
-import java.io.File;
-import java.io.InputStream;
-import java.util.*;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.ThreadFactory;
-import java.util.logging.Logger;
-import java.util.prefs.Preferences;
-
-import com.nextbreakpoint.nextfractal.core.utils.Block;
-import javafx.animation.AnimationTimer;
-import javafx.animation.TranslateTransition;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.geometry.Pos;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ToggleButton;
-import javafx.scene.control.Tooltip;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.stage.DirectoryChooser;
-import javafx.util.Duration;
-
 import com.nextbreakpoint.nextfractal.core.javaFX.StringObservableValue;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererPoint;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
 import com.nextbreakpoint.nextfractal.core.renderer.javaFX.JavaFXRendererFactory;
+import com.nextbreakpoint.nextfractal.core.utils.Block;
 import com.nextbreakpoint.nextfractal.core.utils.DefaultThreadFactory;
 import com.nextbreakpoint.nextfractal.core.utils.Double4D;
 import com.nextbreakpoint.nextfractal.core.utils.Integer4D;
@@ -71,6 +43,23 @@ import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Orbit;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererCoordinator;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererView;
+import javafx.animation.AnimationTimer;
+import javafx.geometry.Pos;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.stage.DirectoryChooser;
+
+import java.io.File;
+import java.io.InputStream;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.logging.Logger;
+import java.util.prefs.Preferences;
 
 public class BrowsePane extends BorderPane {
 	private static final Logger logger = Logger.getLogger(BrowsePane.class.getName());
@@ -117,7 +106,7 @@ public class BrowsePane extends BorderPane {
 		
 		tile = createSingleTile(size, size);
 
-		Button closeButton = new Button("", createIconImage("/icon-clear.png"));
+		Button closeButton = new Button("", createIconImage("/icon-back.png"));
 		Button reloadButton = new Button("", createIconImage("/icon-reload.png"));
 		Button chooseButton = new Button("", createIconImage("/icon-folder.png"));
 		closeButton.setTooltip(new Tooltip("Close browser"));
@@ -125,8 +114,9 @@ public class BrowsePane extends BorderPane {
 		chooseButton.setTooltip(new Tooltip("Select location of fractals"));
 
 		Label statusLabel = new Label("Initializing");
+		statusLabel.getStyleClass().add("spacing");
 
-		HBox toolbarButtons = new HBox(10);
+		HBox toolbarButtons = new HBox(4);
 		toolbarButtons.getChildren().add(closeButton);
 		toolbarButtons.getChildren().add(chooseButton);
 		toolbarButtons.getChildren().add(statusLabel);
