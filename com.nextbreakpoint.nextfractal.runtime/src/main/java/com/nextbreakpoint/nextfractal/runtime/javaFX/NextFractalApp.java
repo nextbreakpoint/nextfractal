@@ -86,7 +86,7 @@ public class NextFractalApp extends Application {
 		logger.info("Screen Size = (" + primaryScreenBounds.getWidth() + "," + primaryScreenBounds.getHeight() + ")");
 
 		double baseWidth = Math.min(primaryScreenBounds.getWidth() * 0.75, 1400);
-		int editorWidth = (int)Math.rint(baseWidth * 0.5);
+		int editorWidth = (int)Math.rint(baseWidth * 0.4);
 		int renderWidth = (int)Math.rint(baseWidth) - editorWidth;
 		int sceneWidth = renderWidth + editorWidth;
 		int sceneHeight = renderWidth;

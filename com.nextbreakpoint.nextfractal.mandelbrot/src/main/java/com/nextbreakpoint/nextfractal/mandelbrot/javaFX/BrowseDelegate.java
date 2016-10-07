@@ -29,7 +29,5 @@ import java.io.File;
 public interface BrowseDelegate {
 	public void didSelectFile(BrowsePane source, File file);
 
-	public void show();
-
-	public void hide();
+	public void didClose(BrowsePane source);
 }

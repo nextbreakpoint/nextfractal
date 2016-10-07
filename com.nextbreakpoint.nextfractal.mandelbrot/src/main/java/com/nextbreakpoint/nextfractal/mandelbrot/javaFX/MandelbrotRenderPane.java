@@ -49,6 +49,7 @@ import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -206,6 +207,7 @@ public class MandelbrotRenderPane extends BorderPane implements MandelbrotToolCo
 		browsePane.setTranslateX(-width);
 
 		VBox cornerButtons = new VBox(4);
+		cornerButtons.setAlignment(Pos.CENTER);
 		ToggleButton browseButton = new ToggleButton("", createIconImage("/icon-grid.png"));
 		browseButton.setTooltip(new Tooltip("Show fractals browser"));
 		cornerButtons.getChildren().add(browseButton);
@@ -233,11 +235,8 @@ public class MandelbrotRenderPane extends BorderPane implements MandelbrotToolCo
 			}
 
 			@Override
-			public void show() {
-			}
-
-			@Override
-			public void hide() {
+			public void didClose(BrowsePane source) {
+				browseButton.setSelected(false);
 			}
 		});
 

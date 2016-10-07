@@ -85,7 +85,7 @@ public class ExportPane extends BorderPane {
 		sizeBox.getChildren().add(heightField);
 
 		VBox controls = new VBox(8);
-		controls.setAlignment(Pos.CENTER);
+		controls.setAlignment(Pos.CENTER_LEFT);
 		controls.getChildren().add(new Label("Choose image size"));
 		controls.getChildren().add(dimensionBox);
 		controls.getChildren().add(new Label("Size in pixels"));

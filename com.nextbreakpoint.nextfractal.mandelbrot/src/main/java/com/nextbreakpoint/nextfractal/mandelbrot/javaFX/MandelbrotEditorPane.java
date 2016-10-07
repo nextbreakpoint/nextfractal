@@ -98,7 +98,7 @@ public class MandelbrotEditorPane extends BorderPane {
 	public MandelbrotEditorPane(Session session) {
 		this.session = session;
 
-		RendererTile generatorTile = createSingleTile(50, 50);
+		RendererTile generatorTile = createSingleTile(32, 32);
 		
 		DefaultThreadFactory generatorThreadFactory = new DefaultThreadFactory("MandelbrotHistoryImageGenerator", true, Thread.MIN_PRIORITY);
 		generator = new MandelbrotImageGenerator(generatorThreadFactory, new JavaFXRendererFactory(), generatorTile, true);
@@ -117,12 +117,12 @@ public class MandelbrotEditorPane extends BorderPane {
 				.map(fileChooser -> fileChooser.showSaveDialog(MandelbrotEditorPane.this.getScene().getWindow())).ifPresent(file -> saveDataToFile(file));
 
 		ListView<MandelbrotData> historyList = new ListView<>();
-		historyList.setFixedCellSize(60);
+		historyList.setFixedCellSize(40);
 		historyList.getStyleClass().add("history");
 		historyList.setCellFactory(listView -> new HistoryListCell(generator.getSize(), generatorTile));
 
 		ListView<ExportSession> jobsList = new ListView<>();
-		jobsList.setFixedCellSize(60);
+		jobsList.setFixedCellSize(40);
 		jobsList.getStyleClass().add("jobs");
 		jobsList.setCellFactory(listView -> new ExportListCell(generator.getSize(), generatorTile));
 
@@ -142,10 +142,10 @@ public class MandelbrotEditorPane extends BorderPane {
 		BorderPane jobsButtons = new BorderPane();
 		HBox jobsButtonsLeft = new HBox();
 		HBox jobsButtonsRight = new HBox();
-		Button exportButton = new Button("", createIconImage("/icon-export.png"));
-		Button suspendButton = new Button("", createIconImage("/icon-suspend.png"));
-		Button resumeButton = new Button("", createIconImage("/icon-resume.png"));
-		Button removeButton = new Button("", createIconImage("/icon-remove.png"));
+		Button exportButton = new Button("", createIconImage("/icon-export.png", 24));
+		Button suspendButton = new Button("", createIconImage("/icon-suspend.png", 24));
+		Button resumeButton = new Button("", createIconImage("/icon-resume.png", 24));
+		Button removeButton = new Button("", createIconImage("/icon-remove.png", 24));
 		exportButton.setTooltip(new Tooltip("Export fractal as image"));
 		suspendButton.setTooltip(new Tooltip("Suspend selected tasks"));
 		resumeButton.setTooltip(new Tooltip("Resume selected tasks"));
@@ -588,13 +588,17 @@ public class MandelbrotEditorPane extends BorderPane {
         }
 	}
 
-	private ImageView createIconImage(String name) {
+	private ImageView createIconImage(String name, int size) {
 		InputStream stream = getClass().getResourceAsStream(name);
 		ImageView image = new ImageView(new Image(stream));
 		image.setSmooth(true);
-		image.setFitWidth(32);
-		image.setFitHeight(32);
+		image.setFitWidth(size);
+		image.setFitHeight(size);
 		return image;
+	}
+
+	private ImageView createIconImage(String name) {
+		return createIconImage(name, 32);
 	}
 
 	private void updateReportAndSource(String text, CompilerReport report) {

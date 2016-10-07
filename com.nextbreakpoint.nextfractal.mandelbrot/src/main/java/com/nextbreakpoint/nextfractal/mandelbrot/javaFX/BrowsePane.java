@@ -117,14 +117,17 @@ public class BrowsePane extends BorderPane {
 		
 		tile = createSingleTile(size, size);
 
+		Button closeButton = new Button("", createIconImage("/icon-clear.png"));
 		Button reloadButton = new Button("", createIconImage("/icon-reload.png"));
 		Button chooseButton = new Button("", createIconImage("/icon-folder.png"));
+		closeButton.setTooltip(new Tooltip("Close browser"));
 		reloadButton.setTooltip(new Tooltip("Reload all fractals"));
 		chooseButton.setTooltip(new Tooltip("Select location of fractals"));
 
 		Label statusLabel = new Label("Initializing");
 
 		HBox toolbarButtons = new HBox(10);
+		toolbarButtons.getChildren().add(closeButton);
 		toolbarButtons.getChildren().add(chooseButton);
 		toolbarButtons.getChildren().add(statusLabel);
 		toolbarButtons.getChildren().add(reloadButton);
@@ -166,7 +169,9 @@ public class BrowsePane extends BorderPane {
 		box.getStyleClass().add("browse");
 		
 		setCenter(box);
-		
+
+		closeButton.setOnMouseClicked(e -> doClose(grid));
+
 		chooseButton.setOnMouseClicked(e -> doChooseFolder(grid));
 		
 		reloadButton.setOnMouseClicked(e -> loadFiles(statusLabel, grid, currentFolder));
@@ -216,6 +221,10 @@ public class BrowsePane extends BorderPane {
 			}
 			directoryChooser.setInitialDirectory(currentDir);
 		}
+	}
+
+	private void doClose(GridView grid) {
+		delegate.didClose(this);
 	}
 
 	private void doChooseFolder(GridView grid) {

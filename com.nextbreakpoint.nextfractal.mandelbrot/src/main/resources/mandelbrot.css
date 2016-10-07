@@ -209,3 +209,7 @@
 	-fx-faint-focus-color: transparent;
 	-fx-border-width: 2;
 }
+
+.application .mandelbrot .text-small {
+    -fx-font-size: 7pt;
+}
