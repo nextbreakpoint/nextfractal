@@ -12,26 +12,28 @@
 	-fx-background-color: transparent;
 	-fx-focus-color: transparent;
 	-fx-faint-focus-color: transparent;
-	-fx-border-width: 2;
+	-fx-border-width: 0;
+	-fx-opacity: 1.0;
 }
 
 .application .mandelbrot .toolbar .button:armed {
-	-fx-background-color: lightgrey;
+	-fx-opacity: 0.5;
 }
 
 .application .mandelbrot .toolbar .toggle-button {
 	-fx-background-color: transparent;
 	-fx-focus-color: transparent;
 	-fx-faint-focus-color: transparent;
-	-fx-border-width: 2;
+	-fx-border-width: 0;
+	-fx-opacity: 0.5;
 }
 
 .application .mandelbrot .toolbar .toggle-button:armed {
-	-fx-background-color: lightgrey;
+	-fx-opacity: 1.0;
 }
 
 .application .mandelbrot .toolbar .toggle-button:selected {
-	-fx-background-color: lightgrey;
+	-fx-opacity: 1.0;
 }
 
 .application .mandelbrot .menubar {
@@ -44,26 +46,28 @@
 	-fx-background-color: transparent;
 	-fx-focus-color: transparent;
 	-fx-faint-focus-color: transparent;
-	-fx-border-width: 2;
+	-fx-border-width: 0;
+	-fx-opacity: 1.0;
 }
 
 .application .mandelbrot .menubar .button:armed {
-	-fx-background-color: lightgrey;
+	-fx-opacity: 0.5;
 }
 
 .application .mandelbrot .menubar .toggle-button {
 	-fx-background-color: transparent;
 	-fx-focus-color: transparent;
 	-fx-faint-focus-color: transparent;
-	-fx-border-width: 2;
+	-fx-border-width: 0;
+	-fx-opacity: 0.5;
 }
 
 .application .mandelbrot .menubar .toggle-button:armed {
-	-fx-background-color: lightgrey;
+	-fx-opacity: 1.0;
 }
 
 .application .mandelbrot .menubar .toggle-button:selected {
-	-fx-background-color: lightgrey;
+	-fx-opacity: 1.0;
 }
 
 .application .mandelbrot .popup {

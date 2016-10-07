@@ -139,9 +139,7 @@ public class MandelbrotEditorPane extends BorderPane {
 //				.andThen(list -> historyRemoveAllItems(list)).andThen(list -> addDataToHistory(list)).tryExecute(historyList));
 
 		BorderPane jobsPane = new BorderPane();
-		BorderPane jobsButtons = new BorderPane();
-		HBox jobsButtonsLeft = new HBox();
-		HBox jobsButtonsRight = new HBox();
+		HBox jobsButtons = new HBox();
 		Button exportButton = new Button("", createIconImage("/icon-export.png", 24));
 		Button suspendButton = new Button("", createIconImage("/icon-suspend.png", 24));
 		Button resumeButton = new Button("", createIconImage("/icon-resume.png", 24));
@@ -153,12 +151,10 @@ public class MandelbrotEditorPane extends BorderPane {
 		suspendButton.setDisable(true);
 		resumeButton.setDisable(true);
 		removeButton.setDisable(true);
-		jobsButtonsLeft.getChildren().add(exportButton);
-		jobsButtonsRight.getChildren().add(suspendButton);
-		jobsButtonsRight.getChildren().add(resumeButton);
-		jobsButtonsRight.getChildren().add(removeButton);
-		jobsButtons.setLeft(jobsButtonsLeft);
-		jobsButtons.setRight(jobsButtonsRight);
+		jobsButtons.getChildren().add(exportButton);
+		jobsButtons.getChildren().add(suspendButton);
+		jobsButtons.getChildren().add(resumeButton);
+		jobsButtons.getChildren().add(removeButton);
 		jobsButtons.getStyleClass().add("menubar");
 		jobsPane.setCenter(jobsList);
 		jobsPane.setBottom(jobsButtons);
@@ -195,7 +191,7 @@ public class MandelbrotEditorPane extends BorderPane {
 		StatusPane statusPane = new StatusPane();
 
 		Pane sourcePane = new Pane();
-		HBox sourceButtons = new HBox();
+		HBox sourceButtons = new HBox(4);
 		sourceButtons.setAlignment(Pos.CENTER);
 		Button renderButton = new Button("", createIconImage("/icon-run.png"));
 		Button loadButton = new Button("", createIconImage("/icon-load.png"));
@@ -231,13 +227,13 @@ public class MandelbrotEditorPane extends BorderPane {
 		TranslateTransition statusTransition = createTranslateTransition(statusPane);
 		TranslateTransition exportTransition = createTranslateTransition(exportPane);
 
-		paramsButton.setSelected(true);
+//		paramsButton.setSelected(true);
 		statusButton.setSelected(true);
 
 		ToggleGroup viewGroup = new ToggleGroup();
 		viewGroup.getToggles().add(historyButton);
-		viewGroup.getToggles().add(paramsButton);
 		viewGroup.getToggles().add(jobsButton);
+		viewGroup.getToggles().add(paramsButton);
 
 		exportButton.setOnAction(e -> {
 			//		if (errorProperty.getValue() == null) {
@@ -386,6 +382,7 @@ public class MandelbrotEditorPane extends BorderPane {
 			codePane.setLayoutX(0);
 			sidePane.setLayoutX(width * 0.7);
 			statusPane.setLayoutX(0);
+			sidePane.setTranslateX(width * 0.3);
         });
 
 		heightProperty().addListener((observable, oldValue, newValue) -> {
