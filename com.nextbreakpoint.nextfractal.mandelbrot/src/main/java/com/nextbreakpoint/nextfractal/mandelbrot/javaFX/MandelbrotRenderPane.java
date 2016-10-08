@@ -24,6 +24,7 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
 
+import com.nextbreakpoint.Try;
 import com.nextbreakpoint.nextfractal.core.export.ExportSession;
 import com.nextbreakpoint.nextfractal.core.javaFX.BooleanObservableValue;
 import com.nextbreakpoint.nextfractal.core.javaFX.StringObservableValue;
@@ -71,6 +72,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.*;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.ThreadFactory;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -92,6 +96,7 @@ public class MandelbrotRenderPane extends BorderPane implements MandelbrotToolCo
 	private final BooleanObservableValue hideErrorsProperty;
 	private final BooleanObservableValue juliaProperty;
 	private final RendererCoordinator[] coordinators;
+	private final ExecutorService watcherExecutor;
 	private RendererCoordinator juliaCoordinator;
 	private AnimationTimer timer;
 	private int width;
@@ -231,7 +236,7 @@ public class MandelbrotRenderPane extends BorderPane implements MandelbrotToolCo
 			@Override
 			public void didSelectFile(BrowsePane source, File file) {
 				browseButton.setSelected(false);
-				updateFile(file);
+				updateFile(browsePane, file);
 			}
 
 			@Override
@@ -491,15 +496,17 @@ public class MandelbrotRenderPane extends BorderPane implements MandelbrotToolCo
 			toolButtons.setPrefHeight(newValue.doubleValue() * 0.07);
 		});
 
-		stackPane.setOnDragDropped(e -> e.getDragboard().getFiles().stream().findFirst().ifPresent(file -> updateFile(file)));
+		stackPane.setOnDragDropped(e -> e.getDragboard().getFiles().stream().findFirst().ifPresent(file -> updateFile(browsePane, file)));
 
 		stackPane.setOnDragOver(x -> Optional.of(x).filter(e -> e.getGestureSource() != stackPane)
 				.filter(e -> e.getDragboard().hasFiles()).ifPresent(e -> e.acceptTransferModes(TransferMode.COPY_OR_MOVE)));
-		
+
+		watcherExecutor = Executors.newSingleThreadExecutor(new DefaultThreadFactory("MandelbrotWatcher", true, Thread.MIN_PRIORITY));
+
 		runTimer(fractalCanvas, orbitCanvas, juliaCanvas, pointCanvas, trapCanvas, toolCanvas);
 	}
 
-	private void updateFile(File file) {
+	private void updateFile(BrowsePane pane, File file) {
 		fileProperty.setValue(null);
 		fileProperty.setValue(file.getAbsolutePath());
 	}
@@ -1261,50 +1268,62 @@ public class MandelbrotRenderPane extends BorderPane implements MandelbrotToolCo
 		Optional.ofNullable(currentTool).filter(tool -> tool.isChanged()).ifPresent(tool -> tool.draw(renderFactory.createGraphicsContext(canvas.getGraphicsContext2D())));
 	}
 
-	private void watchLoop(Path dir) throws IOException {
+	private void watchFolder(BrowsePane pane, File file) {
+		Future<?> future = watcherExecutor.submit(() -> Block.create(a -> watchLoop(pane, file.toPath()))
+				.tryExecute().ifFailure(e -> logger.log(Level.WARNING, "Can't create watcher for location {}", file.getAbsolutePath())));
+	}
+
+	private void watchLoop(BrowsePane pane, Path dir) throws IOException {
 		WatchService watcher = FileSystems.getDefault().newWatchService();
 
-		try {
-			WatchKey key = dir.register(watcher, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_DELETE, StandardWatchEventKinds.ENTRY_MODIFY);
-		} catch (IOException x) {
-			System.err.println(x);
-		}
+		WatchKey watchKey = null;
 
 		try {
-			for (;;) {
-				WatchKey key = watcher.take();
+			watchKey = dir.register(watcher, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_DELETE, StandardWatchEventKinds.ENTRY_MODIFY);
+			try {
+				for (;;) {
+					WatchKey key = watcher.take();
 
-				for (WatchEvent<?> event: key.pollEvents()) {
-					WatchEvent.Kind<?> kind = event.kind();
+					for (WatchEvent<?> event: key.pollEvents()) {
+						WatchEvent.Kind<?> kind = event.kind();
 
-					if (kind == StandardWatchEventKinds.OVERFLOW) {
-						continue;
-					}
-
-					WatchEvent<Path> ev = (WatchEvent<Path>)event;
-
-					Path filename = ev.context();
-
-					try {
-						Path child = dir.resolve(filename);
-						if (!Files.probeContentType(child).equals("text/plain")) {
-							System.err.format("New file '%s' is not a plain text file.%n", filename);
+						if (kind == StandardWatchEventKinds.OVERFLOW) {
 							continue;
 						}
-					} catch (IOException x) {
-						System.err.println(x);
-						continue;
+
+						WatchEvent<Path> ev = (WatchEvent<Path>)event;
+
+						Path filename = ev.context();
+
+						try {
+							Path child = dir.resolve(filename);
+							if (!Files.probeContentType(child).equals("text/plain")) {
+								logger.log(Level.WARNING, "New file {} is not a plain text file", filename);
+								continue;
+							}
+						} catch (IOException x) {
+							logger.log(Level.WARNING, "Can't resolve file {}", filename);
+							continue;
+						}
+
+						Platform.runLater(() -> pane.reload());
 					}
 
-					//Details left to reader....
+					boolean valid = key.reset();
+					if (!valid) {
+						break;
+					}
 				}
-
-				boolean valid = key.reset();
-				if (!valid) {
-					break;
-				}
+			} catch (InterruptedException x) {
 			}
-		} catch (InterruptedException x) {
+		} catch (IOException x) {
+			logger.log(Level.WARNING, "Can't register watcher on directory {}", dir.getFileName());
+		} finally {
+			if (watchKey != null) {
+				watchKey.cancel();
+			}
+
+			watcher.close();
 		}
 	}
 }
