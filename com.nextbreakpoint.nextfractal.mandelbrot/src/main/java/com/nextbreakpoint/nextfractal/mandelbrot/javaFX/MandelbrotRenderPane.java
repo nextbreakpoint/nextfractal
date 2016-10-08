@@ -176,6 +176,7 @@ public class MandelbrotRenderPane extends BorderPane implements MandelbrotToolCo
 		errors.setVisible(false);
 
 		HBox toolButtons = new HBox(4);
+		Button browseButton = new Button("", createIconImage("/icon-grid.png"));
 		ToggleButton zoominButton = new ToggleButton("", createIconImage("/icon-zoomin.png"));
 		ToggleButton zoomoutButton = new ToggleButton("", createIconImage("/icon-zoomout.png"));
 		ToggleButton moveButton = new ToggleButton("", createIconImage("/icon-move.png"));
@@ -190,6 +191,7 @@ public class MandelbrotRenderPane extends BorderPane implements MandelbrotToolCo
 		toolsGroup.getToggles().add(rotateButton);
 		toolsGroup.getToggles().add(pickButton);
 		Button homeButton = new Button("", createIconImage("/icon-home.png"));
+		browseButton.setTooltip(new Tooltip("Show fractals browser"));
 		zoominButton.setTooltip(new Tooltip("Select zoom in tool"));
 		zoomoutButton.setTooltip(new Tooltip("Select zoom out tool"));
 		moveButton.setTooltip(new Tooltip("Select move tool"));
@@ -198,6 +200,7 @@ public class MandelbrotRenderPane extends BorderPane implements MandelbrotToolCo
 		homeButton.setTooltip(new Tooltip("Reset region to initial value"));
 		orbitButton.setTooltip(new Tooltip("Toggle orbit and traps"));
 		juliaButton.setTooltip(new Tooltip("Toggle Julia mode"));
+		toolButtons.getChildren().add(browseButton);
 		toolButtons.getChildren().add(homeButton);
 		toolButtons.getChildren().add(zoominButton);
 		toolButtons.getChildren().add(zoomoutButton);
@@ -211,37 +214,23 @@ public class MandelbrotRenderPane extends BorderPane implements MandelbrotToolCo
 		BrowsePane browsePane = new BrowsePane(width, height);
 		browsePane.setTranslateX(-width);
 
-		VBox cornerButtons = new VBox(4);
-		cornerButtons.setAlignment(Pos.CENTER);
-		ToggleButton browseButton = new ToggleButton("", createIconImage("/icon-grid.png"));
-		browseButton.setTooltip(new Tooltip("Show fractals browser"));
-		cornerButtons.getChildren().add(browseButton);
-		cornerButtons.getStyleClass().add("tab");
-		cornerButtons.setTranslateX(-width);
-		cornerButtons.setLayoutX(width);
-		cornerButtons.setPrefHeight(height * 0.07);
-
 		TranslateTransition browserTransition = createTranslateTransition(browsePane);
 
-		browseButton.selectedProperty().addListener((observable, oldValue, newValue) -> {
-			if (newValue) {
-				showBrowser(browserTransition, a -> {});
-				browsePane.reload();
-			} else {
-				hideBrowser(browserTransition, a -> {});
-			}
+		browseButton.setOnAction(e -> {
+			showBrowser(browserTransition, a -> {});
+			browsePane.reload();
 		});
 
 		browsePane.setDelegate(new BrowseDelegate() {
 			@Override
 			public void didSelectFile(BrowsePane source, File file) {
-				browseButton.setSelected(false);
 				updateFile(browsePane, file);
+				hideBrowser(browserTransition, a -> {});
 			}
 
 			@Override
 			public void didClose(BrowsePane source) {
-				browseButton.setSelected(false);
+				hideBrowser(browserTransition, a -> {});
 			}
 		});
 
@@ -385,14 +374,9 @@ public class MandelbrotRenderPane extends BorderPane implements MandelbrotToolCo
 		stackPane.getChildren().add(controls);
 		stackPane.getChildren().add(errors);
 		stackPane.getChildren().add(browsePane);
-		stackPane.getChildren().add(cornerButtons);
 		setCenter(stackPane);
 
 		homeButton.setOnAction(e -> resetView());
-
-		browsePane.translateXProperty().addListener((observable, oldValue, newValue) -> cornerButtons.setTranslateX(newValue.doubleValue()));
-
-		controls.opacityProperty().addListener((observable, oldValue, newValue) -> cornerButtons.setOpacity(newValue.doubleValue()));
 
 		toolsGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
 			if (oldValue != null) {

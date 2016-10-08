@@ -1,12 +1,24 @@
 fractal {
-	orbit [<-2,-2>,<2,2>] [x,n] {
-		loop [0, 200] (mod2(x) > 4) {
+	orbit [-3.0 - 1.5i,+0 + 1.5i] [x,n] {
+		begin {
+			if (julia) {
+				x = x + 0.5;
+			}
+		}
+		loop [0, 200] (mod2(x) > 40) {
 			x = x * x + w;
 		}
 	}
-	color [(1,0,0,0)] {
-		rule (n > 0) [1.0] {
-			1,1,1,1
+	color [#FF000000] {
+		palette gradient {
+			[#FFFFFFFF > #FF000000, 100];
+			[#FF000000 > #FFFFFFFF, 100];
+		}
+		init {
+			m = 100 * (1 + sin(mod(x) * 0.2 / pi));
+		}
+		rule (n > 0) [1] {
+			gradient[m - 1]
 		}
 	}
 }
