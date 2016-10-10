@@ -25,5 +25,5 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
 
 public interface ParamsDelegate {
-	public void tabClicked(MandelbrotParamsPane mandelbrotParamsPane);
+	public void tabClicked(ParamsPane mandelbrotParamsPane);
 }

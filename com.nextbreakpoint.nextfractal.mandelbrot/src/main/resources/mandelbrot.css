@@ -70,26 +70,6 @@
 	-fx-opacity: 1.0;
 }
 
-.application .mandelbrot .popup {
-	-fx-alignment: center;
-	-fx-background-color: white;
-	-fx-border-width: 0 0 0 1;
-	-fx-border-color: #f0f0f0;
-}
-
-.application .mandelbrot .popup .title {
-    -fx-font-weight: bold;
-	-fx-padding: 15px;
-}
-
-.application .mandelbrot .popup .controls {
-	-fx-padding: 10px;
-}
-
-.application .mandelbrot .popup .buttons {
-	-fx-padding: 10px;
-}
-
 .application .mandelbrot .browse {
 	-fx-alignment: center;
 	-fx-padding: 0px;
@@ -140,6 +120,10 @@
 .application .mandelbrot .params .text-area .content {
 	-fx-background-color: #fbfbfb #fbfbfb black black;
 	-fx-background-insets: 0, 0, 1, 2;
+}
+
+.application .mandelbrot .export {
+	-fx-background-color: white;
 }
 
 .application .mandelbrot .source {
@@ -207,24 +191,15 @@
 	-fx-opacity: 0.9;
 }
 
-.application .mandelbrot .tab .toggle-button {
-	-fx-background-color: transparent;
-	-fx-focus-color: transparent;
-	-fx-faint-focus-color: transparent;
-	-fx-border-width: 2;
-	-fx-opacity: 0.5;
-}
-
-.application .mandelbrot .tab .toggle-button:armed {
-	-fx-opacity: 1.0;
-}
-
-.application .mandelbrot .tab .toggle-button:select {
-	-fx-opacity: 1.0;
+.application .mandelbrot .opaque {
+	-fx-background-color: white;
 }
 
 .application .mandelbrot .text-small {
-    -fx-font-size: 7pt;
+    -fx-font-size: 8pt;
+}
+
+.application .mandelbrot .text-center {
 }
 
 .application .mandelbrot .spacing {

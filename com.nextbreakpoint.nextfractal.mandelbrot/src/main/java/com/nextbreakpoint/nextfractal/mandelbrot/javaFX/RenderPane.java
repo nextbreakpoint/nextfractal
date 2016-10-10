@@ -24,7 +24,6 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
 
-import com.nextbreakpoint.Try;
 import com.nextbreakpoint.nextfractal.core.export.ExportSession;
 import com.nextbreakpoint.nextfractal.core.javaFX.BooleanObservableValue;
 import com.nextbreakpoint.nextfractal.core.javaFX.StringObservableValue;
@@ -50,7 +49,6 @@ import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -64,7 +62,7 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
+import javafx.stage.Screen;
 import javafx.util.Duration;
 
 import java.io.File;
@@ -81,9 +79,9 @@ import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class MandelbrotRenderPane extends BorderPane implements MandelbrotToolContext {
+public class RenderPane extends BorderPane implements MandelbrotToolContext {
 	private static final int FRAME_LENGTH_IN_MILLIS = 20;
-	private static final Logger logger = Logger.getLogger(MandelbrotRenderPane.class.getName());
+	private static final Logger logger = Logger.getLogger(RenderPane.class.getName());
 	private final Session session;
 	private final ThreadFactory renderThreadFactory;
 	private final ThreadFactory juliaRenderThreadFactory;
@@ -114,7 +112,7 @@ public class MandelbrotRenderPane extends BorderPane implements MandelbrotToolCo
 	private CompilerBuilder<Color> colorBuilder;
 	private List<Number[]> states;
 
-	public MandelbrotRenderPane(Session session, int width, int height, int rows, int columns) {
+	public RenderPane(Session session, int width, int height, int rows, int columns) {
 		this.session = session;
 		this.width = width;
 		this.height = height;
@@ -530,13 +528,18 @@ public class MandelbrotRenderPane extends BorderPane implements MandelbrotToolCo
 		disposeJuliaCoordinator();
 	}
 
-	private ImageView createIconImage(String name) {
+	private ImageView createIconImage(String name, double percentage) {
+		int size = (int)Math.rint(Screen.getPrimary().getVisualBounds().getWidth() * percentage);
 		InputStream stream = getClass().getResourceAsStream(name);
 		ImageView image = new ImageView(new Image(stream));
 		image.setSmooth(true);
-		image.setFitWidth(32);
-		image.setFitHeight(32);
+		image.setFitWidth(size);
+		image.setFitHeight(size);
 		return image;
+	}
+
+	private ImageView createIconImage(String name) {
+		return createIconImage(name, 0.02);
 	}
 
 	private FadeTransition createFadeTransition(Node node) {

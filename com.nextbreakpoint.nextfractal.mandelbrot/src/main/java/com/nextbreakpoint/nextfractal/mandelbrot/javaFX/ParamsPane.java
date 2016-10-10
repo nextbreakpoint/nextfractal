@@ -27,10 +27,7 @@ package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
 import com.nextbreakpoint.nextfractal.core.javaFX.AdvancedTextField;
 import com.nextbreakpoint.nextfractal.mandelbrot.*;
 import javafx.application.Platform;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.HBox;
@@ -44,11 +41,11 @@ import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class MandelbrotParamsPane extends Pane {
-	private static final Logger logger = Logger.getLogger(MandelbrotParamsPane.class.getName());
+public class ParamsPane extends Pane {
+	private static final Logger logger = Logger.getLogger(ParamsPane.class.getName());
 	private static final int SPACING = 5;
 
-	public MandelbrotParamsPane(MandelbrotSession session) {
+	public ParamsPane(MandelbrotSession session) {
 		VBox box = new VBox(SPACING * 2);
 		box.getStyleClass().add("params");
 		Label translationLabel = new Label("Region translation");
@@ -131,15 +128,20 @@ public class MandelbrotParamsPane extends Pane {
 			encodeTextArea = null;
 		}
 
-		getChildren().add(box);
+		ScrollPane scrollPane = new ScrollPane(box);
+		scrollPane.setFitToWidth(true);
+		scrollPane.setFitToHeight(true);
+		getChildren().add(scrollPane);
 
 		widthProperty().addListener((observable, oldValue, newValue) -> {
 			box.setPrefWidth(newValue.doubleValue() - getInsets().getLeft() - getInsets().getRight());
             algorithmCombobox.setPrefWidth(newValue.doubleValue() - getInsets().getLeft() - getInsets().getRight());
+			scrollPane.setPrefWidth(newValue.doubleValue());
         });
 		
 		heightProperty().addListener((observable, oldValue, newValue) -> {
 			box.setPrefHeight(newValue.doubleValue() - getInsets().getTop() - getInsets().getBottom());
+			scrollPane.setPrefHeight(newValue.doubleValue());
 		});
 
 		Function<MandelbrotSession, Object> updateAll = (t) -> {

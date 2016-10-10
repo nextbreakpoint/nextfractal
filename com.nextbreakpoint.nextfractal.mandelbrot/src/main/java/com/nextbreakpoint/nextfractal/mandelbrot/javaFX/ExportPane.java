@@ -61,12 +61,10 @@ public class ExportPane extends BorderPane {
 		heightField.setRestrict(getRestriction());
 		heightField.setEditable(false);
 		heightField.setText(String.valueOf(item0[1]));
-		Button cancelButton = new Button("Cancel");
-		Button exportButton = new Button("Export...");
+		Button exportButton = new Button("Export");
 
-		BorderPane buttons = new BorderPane();
-		buttons.setLeft(cancelButton);
-		buttons.setRight(exportButton);
+		VBox buttons = new VBox(4);
+		buttons.getChildren().add(exportButton);
 		buttons.getStyleClass().add("buttons");
 
 		VBox dimensionBox = new VBox(5);
@@ -84,14 +82,14 @@ public class ExportPane extends BorderPane {
 		controls.getChildren().add(dimensionBox);
 		controls.getChildren().add(new Label("Size in pixels"));
 		controls.getChildren().add(sizeBox);
-		controls.getStyleClass().add("controls");
 
-		VBox box = new VBox();
-		box.setAlignment(Pos.TOP_CENTER);
+		VBox box = new VBox(8);
+		box.setAlignment(Pos.CENTER);
 		box.getChildren().add(controls);
 		box.getChildren().add(buttons);
-		box.getStyleClass().add("popup");
 		setCenter(box);
+
+		getStyleClass().add("export");
 		
 		presets.setConverter(new StringConverter<Integer[]>() {
 			@Override
@@ -150,12 +148,6 @@ public class ExportPane extends BorderPane {
             }
         });
 		
-		cancelButton.setOnMouseClicked(e -> {
-			if (delegate != null) {
-				delegate.cancel();
-			}
-		});
-		
 		exportButton.setOnMouseClicked(e -> {
 			if (delegate != null) {
 				int renderWidth = Integer.parseInt(widthField.getText());
@@ -165,10 +157,11 @@ public class ExportPane extends BorderPane {
 		});
 
 		widthProperty().addListener((observable, oldValue, newValue) -> {
-			double width = newValue.doubleValue();
+			double width = newValue.doubleValue() * 0.9;
 			presets.setPrefWidth(width);
-			widthField.setPrefWidth(width);
-			heightField.setPrefWidth(width);
+			box.setPrefWidth(width);
+			box.setMaxWidth(width);
+			exportButton.setPrefWidth(width);
 		});
 	}
 

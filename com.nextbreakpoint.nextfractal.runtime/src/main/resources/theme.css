@@ -10,6 +10,11 @@
 	-fx-background-color: transparent;
 	-fx-hbar-policy: never;
 	-fx-vbar-policy: never;
+	-fx-border-width: 0 0 0 0;
+}
+
+.scroll-pane .content {
+	-fx-border-width: 0 0 0 0;
 }
 
 .scroll-pane > .viewport {

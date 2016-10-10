@@ -85,9 +85,10 @@ public class NextFractalApp extends Application {
 
 		logger.info("Screen Size = (" + primaryScreenBounds.getWidth() + "," + primaryScreenBounds.getHeight() + ")");
 
-		double baseWidth = Math.min(primaryScreenBounds.getWidth() * 0.75, 1400);
-		int editorWidth = (int)Math.rint(baseWidth * 0.4);
-		int renderWidth = (int)Math.rint(baseWidth) - editorWidth;
+		double baseWidth = primaryScreenBounds.getWidth() * 0.7;
+		double imageWidth = Math.min(baseWidth * 0.6, 1024);
+		int renderWidth = (int)Math.rint(imageWidth);
+		int editorWidth = (int)Math.rint(imageWidth * 0.7);
 		int sceneWidth = renderWidth + editorWidth;
 		int sceneHeight = renderWidth;
 
@@ -189,30 +190,30 @@ public class NextFractalApp extends Application {
 		mainPane.setMinHeight(height);
 		mainPane.setMaxWidth(width);
 		mainPane.setMaxHeight(height);
-		createEditorPane(editorWidth, renderWidth, height);
+		createEditorPane(editorWidth, height);
 		createRenderPane(renderWidth, height);
-		mainPane.getChildren().add(editorRootPane);
 		mainPane.getChildren().add(renderRootPane);
+		mainPane.getChildren().add(editorRootPane);
 		mainPane.getStyleClass().add("application");
+		editorRootPane.setLayoutX(renderWidth);
 		return mainPane;
 	}
 
-	private void createRenderPane(int renderWidth, int height) {
+	private void createRenderPane(int width, int height) {
 		renderRootPane = new BorderPane();
-		renderRootPane.setPrefWidth(renderWidth);
+		renderRootPane.setPrefWidth(width);
 		renderRootPane.setPrefHeight(height);
-		renderRootPane.setMinWidth(renderWidth);
+		renderRootPane.setMinWidth(width);
 		renderRootPane.setMinHeight(height);
-		renderRootPane.setMaxWidth(renderWidth);
+		renderRootPane.setMaxWidth(width);
 		renderRootPane.setMaxHeight(height);
 		renderRootPane.getStyleClass().add("render");
 	}
 
-	private void createEditorPane(int editorWidth, int renderWidth, int height) {
+	private void createEditorPane(int width, int height) {
 		editorRootPane = new BorderPane();
-		editorRootPane.setPrefWidth(editorWidth);
+		editorRootPane.setPrefWidth(width);
 		editorRootPane.setPrefHeight(height);
-		editorRootPane.setLayoutX(renderWidth);
 		editorRootPane.getStyleClass().add("editor");
 	}
 

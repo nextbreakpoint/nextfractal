@@ -28,6 +28,4 @@ import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 
 public interface ExportDelegate {
 	public void createSession(RendererSize rendererSize);
-
-    public void cancel();
 }

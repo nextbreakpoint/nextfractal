@@ -53,6 +53,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.DirectoryChooser;
+import javafx.stage.Screen;
 
 import java.io.File;
 import java.io.InputStream;
@@ -87,7 +88,7 @@ public class BrowsePane extends BorderPane {
 		setMaxHeight(height);
 		setPrefHeight(height);
 
-		Preferences prefs = Preferences.userNodeForPackage(MandelbrotRenderPane.class);
+		Preferences prefs = Preferences.userNodeForPackage(RenderPane.class);
 		
 		currentDir = new File(prefs.get("mandelbrot.browser.default", getDefaultBrowserDir()));
 
@@ -189,13 +190,18 @@ public class BrowsePane extends BorderPane {
 		super.finalize();
 	}
 
-	private ImageView createIconImage(String name) {
+	private ImageView createIconImage(String name, double percentage) {
+		int size = (int)Math.rint(Screen.getPrimary().getVisualBounds().getWidth() * percentage);
 		InputStream stream = getClass().getResourceAsStream(name);
 		ImageView image = new ImageView(new Image(stream));
 		image.setSmooth(true);
-		image.setFitWidth(32);
-		image.setFitHeight(32);
+		image.setFitWidth(size);
+		image.setFitHeight(size);
 		return image;
+	}
+
+	private ImageView createIconImage(String name) {
+		return createIconImage(name, 0.02);
 	}
 
 	private void ensureDirectoryChooser() {
@@ -273,7 +279,7 @@ public class BrowsePane extends BorderPane {
 	}
 
 	private File[] listFiles(File folder) {
-		Preferences prefs = Preferences.userNodeForPackage(MandelbrotRenderPane.class);
+		Preferences prefs = Preferences.userNodeForPackage(RenderPane.class);
 		prefs.put("mandelbrot.browser.default", folder.getAbsolutePath());
 		return folder.listFiles((dir, name) -> name.endsWith(".m"));
 	}

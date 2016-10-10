@@ -27,6 +27,7 @@ package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotData;
+import javafx.geometry.Pos;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
@@ -34,6 +35,8 @@ import javafx.scene.control.ListCell;
 import javafx.scene.image.PixelFormat;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.TextAlignment;
 import javafx.scene.transform.Affine;
 
 import java.text.SimpleDateFormat;
@@ -41,7 +44,8 @@ import java.text.SimpleDateFormat;
 public class HistoryListCell extends ListCell<MandelbrotData> {
 	private BorderPane pane;
 	private Canvas canvas;
-	private Label label;
+	private Label label1;
+	private Label label2;
 	private RendererSize size;
 	private RendererTile tile;
 
@@ -49,11 +53,19 @@ public class HistoryListCell extends ListCell<MandelbrotData> {
 		this.size = size;
 		this.tile = tile;
 		canvas = new Canvas(tile.getTileSize().getWidth(), tile.getTileSize().getHeight());
-		label = new Label();
-		label.getStyleClass().add("text-small");
+		label1 = new Label();
+		label1.getStyleClass().add("text-center");
+		label1.getStyleClass().add("text-small");
+		label2 = new Label();
+		label1.getStyleClass().add("text-center");
+		label2.getStyleClass().add("text-small");
 		pane = new BorderPane();
 		pane.setLeft(canvas);
-		pane.setCenter(label);
+		VBox labels = new VBox(4);
+		labels.setAlignment(Pos.CENTER);
+		labels.getChildren().add(label1);
+		labels.getChildren().add(label2);
+		pane.setCenter(labels);
 	}
 
 	@Override
@@ -75,8 +87,10 @@ public class HistoryListCell extends ListCell<MandelbrotData> {
 				g2d.setTransform(affine);
 				g2d.drawImage(image, x, y);
 			}
-			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			label.setText(df.format(data.getTimestamp()));
+			SimpleDateFormat df1 = new SimpleDateFormat("yyyy-MM-dd");
+			SimpleDateFormat df2 = new SimpleDateFormat("HH:mm:ss");
+			label1.setText(df1.format(data.getTimestamp()));
+			label2.setText(df2.format(data.getTimestamp()));
 			this.setGraphic(pane);
 		}
 	}

@@ -36,8 +36,8 @@ import com.nextbreakpoint.nextfractal.core.ImageGenerator;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererFactory;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
 import com.nextbreakpoint.nextfractal.core.session.Session;
-import com.nextbreakpoint.nextfractal.mandelbrot.javaFX.MandelbrotEditorPane;
-import com.nextbreakpoint.nextfractal.mandelbrot.javaFX.MandelbrotRenderPane;
+import com.nextbreakpoint.nextfractal.mandelbrot.javaFX.EditorPane;
+import com.nextbreakpoint.nextfractal.mandelbrot.javaFX.RenderPane;
 
 public class MandelbrotFactory implements FractalFactory {
 	/**
@@ -62,7 +62,7 @@ public class MandelbrotFactory implements FractalFactory {
 	 */
 	@Override
 	public Pane createEditorPane(Session session) {
-		return new MandelbrotEditorPane(session);
+		return new EditorPane(session);
 	}
 
 	/**
@@ -70,7 +70,7 @@ public class MandelbrotFactory implements FractalFactory {
 	 */
 	@Override
 	public Pane createRenderPane(Session session, int width, int height) {
-		return new MandelbrotRenderPane(session, width, height, Integer.getInteger("mandelbrot.renderer.rows", 1), Integer.getInteger("mandelbrot.renderer.cols", 1));
+		return new RenderPane(session, width, height, Integer.getInteger("mandelbrot.renderer.rows", 1), Integer.getInteger("mandelbrot.renderer.cols", 1));
 	}
 
 	/**
