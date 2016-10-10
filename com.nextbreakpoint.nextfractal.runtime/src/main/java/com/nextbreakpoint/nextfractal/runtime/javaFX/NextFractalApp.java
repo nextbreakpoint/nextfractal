@@ -218,11 +218,11 @@ public class NextFractalApp extends Application {
 	}
 
 	private String getApplicationName() {
-		return "NextFractal 1.2";
+		return "NextFractal 1.3.0";
 	}
 
 	private String getNoticeMessage() {
-		return "\n\nNextFratal 1.2\n\n" +
+		return "\n\nNextFratal 1.3.0\n\n" +
 				"https://github.com/nextbreakpoint/nextfractal\n\n" +
 				"Copyright 2015-2016 Andrea Medeghini\n\n" +
 				"NextFractal is an application for creating fractals and other graphics artifacts.\n\n" +
