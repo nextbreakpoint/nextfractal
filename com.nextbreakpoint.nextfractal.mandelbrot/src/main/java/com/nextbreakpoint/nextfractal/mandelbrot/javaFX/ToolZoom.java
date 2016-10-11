@@ -29,16 +29,19 @@ import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotView;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 import javafx.scene.input.MouseEvent;
 
-public class MandelbrotPick implements MandelbrotTool {
-	private MandelbrotToolContext context;
+public class ToolZoom implements Tool {
+	private ToolContext context;
 	private volatile boolean pressed;
 	private volatile boolean changed;
 	private volatile boolean redraw;
+	private boolean primary;
+	private boolean zoomin;
 	private double x1;
 	private double y1;
 
-	public MandelbrotPick(MandelbrotToolContext context) {
+	public ToolZoom(ToolContext context, boolean zoomin) {
 		this.context = context;
+		this.zoomin = zoomin;
 	}
 	
 	@Override
@@ -70,28 +73,31 @@ public class MandelbrotPick implements MandelbrotTool {
 	public void pressed(MouseEvent e) {
 		x1 = (e.getX() - context.getWidth() / 2) / context.getWidth();
 		y1 = (context.getHeight() / 2 - e.getY()) / context.getHeight();
-		changed = true;
+		primary = e.isPrimaryButtonDown(); 
 		pressed = true;
 		redraw = true;
 	}
 
 	@Override
 	public void update(long time) {
-		if (changed) {
-			MandelbrotView view = context.getMandelbrotSession().getViewAsCopy();
-			if (!view.isJulia()) {
-				double[] t = view.getTraslation();
-				double[] r = view.getRotation();
-				double x = t[0];
-				double y = t[1];
-				double z = t[2];
-				double a = r[2] * Math.PI / 180;
-				Number size = context.getInitialSize();
-				Number center = context.getInitialCenter();
-				x += center.r() + z * size.r() * (Math.cos(a) * x1 + Math.sin(a) * y1);
-				y += center.i() + z * size.i() * (Math.cos(a) * y1 - Math.sin(a) * x1);
-				context.getMandelbrotSession().setPoint(new double[] { x, y }, pressed);
-			}
+		if (pressed || changed) {
+			MandelbrotView oldView = context.getMandelbrotSession().getViewAsCopy();
+			double[] t = oldView.getTraslation();
+			double[] r = oldView.getRotation();
+			double[] s = oldView.getScale();
+			double[] p = oldView.getPoint();
+			boolean j = oldView.isJulia();
+			double x = t[0];
+			double y = t[1];
+			double z = t[2];
+			double a = r[2] * Math.PI / 180;
+			double zs = (primary ? zoomin : !zoomin) ? 1 / context.getZoomSpeed() : context.getZoomSpeed();
+			Number size = context.getInitialSize();
+			x -= (zs - 1) * z * size.r() * (Math.cos(a) * x1 + Math.sin(a) * y1);
+			y -= (zs - 1) * z * size.i() * (Math.cos(a) * y1 - Math.sin(a) * x1);
+			z *= zs;
+			MandelbrotView view = new MandelbrotView(new double[] { x, y, z, t[3] }, new double[] { 0, 0, r[2], r[3] }, s, p, j);
+			context.getMandelbrotSession().setView(view, pressed);
 			changed = false;
 		}
 	}

@@ -115,7 +115,7 @@ public class BrowsePane extends BorderPane {
 		chooseButton.setTooltip(new Tooltip("Select location of fractals"));
 
 		Label statusLabel = new Label("Initializing");
-		statusLabel.getStyleClass().add("spacing");
+		statusLabel.getStyleClass().add("status");
 
 		HBox toolbarButtons = new HBox(4);
 		toolbarButtons.getChildren().add(closeButton);

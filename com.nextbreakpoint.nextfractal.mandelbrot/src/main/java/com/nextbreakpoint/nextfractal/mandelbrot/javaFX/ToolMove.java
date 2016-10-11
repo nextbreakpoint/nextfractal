@@ -29,22 +29,17 @@ import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotView;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 import javafx.scene.input.MouseEvent;
 
-public class MandelbrotRotate implements MandelbrotTool {
-	private MandelbrotToolContext context;
+public class ToolMove implements Tool {
+	private ToolContext context;
 	private volatile boolean pressed;
 	private volatile boolean changed;
 	private volatile boolean redraw;
-	private volatile boolean active;
 	private double x0;
 	private double y0;
 	private double x1;
 	private double y1;
-	private double a0;
-	private double a1;
-	private double r0;
-	private double i0;
 
-	public MandelbrotRotate(MandelbrotToolContext context) {
+	public ToolMove(ToolContext context) {
 		this.context = context;
 	}
 	
@@ -58,43 +53,27 @@ public class MandelbrotRotate implements MandelbrotTool {
 
 	@Override
 	public void dragged(MouseEvent e) {
-		if (active) {
-			x1 = (e.getX() - context.getWidth() / 2) / context.getWidth();
-			y1 = (context.getHeight() / 2 - e.getY()) / context.getHeight();
-			changed = true;
-			redraw = true;
-		}
+		x1 = (e.getX() - context.getWidth() / 2) / context.getWidth();
+		y1 = (context.getHeight() / 2 - e.getY()) / context.getHeight();
+		changed = true;
+		redraw = true;
 	}
 
 	@Override
 	public void released(MouseEvent e) {
+		x1 = (e.getX() - context.getWidth() / 2) / context.getWidth();
+		y1 = (context.getHeight() / 2 - e.getY()) / context.getHeight();
 		pressed = false;
+		changed = true;
 		redraw = true;
-		if (active) {
-			x1 = (e.getX() - context.getWidth() / 2) / context.getWidth();
-			y1 = (context.getHeight() / 2 - e.getY()) / context.getHeight();
-			changed = true;
-		}
-		active = !active;
 	}
 
 	@Override
 	public void pressed(MouseEvent e) {
-		if (active) {
-			x1 = (e.getX() - context.getWidth() / 2) / context.getWidth();
-			y1 = (context.getHeight() / 2 - e.getY()) / context.getHeight();
-			MandelbrotView oldView = context.getMandelbrotSession().getViewAsCopy();
-			double[] t = oldView.getTraslation();
-			double[] r = oldView.getRotation();
-			a0 = r[2] * Math.PI / 180;
-			a1 = Math.atan2(y1 - y0, x1 - x0);
-			r0 = t[0];
-			i0 = t[1];
-		} else {
-			x1 = x0 = (e.getX() - context.getWidth() / 2) / context.getWidth();
-			y1 = y0 = (context.getHeight() / 2 - e.getY()) / context.getHeight();
-		}
+		x1 = x0 = (e.getX() - context.getWidth() / 2) / context.getWidth();
+		y1 = y0 = (context.getHeight() / 2 - e.getY()) / context.getHeight();
 		pressed = true;
+		redraw = true;
 	}
 
 	@Override
@@ -106,23 +85,18 @@ public class MandelbrotRotate implements MandelbrotTool {
 			double[] s = oldView.getScale();
 			double[] p = oldView.getPoint();
 			boolean j = oldView.isJulia();
+			double x = t[0];
+			double y = t[1];
 			double z = t[2];
+			double a = r[2] * Math.PI / 180;
 			Number size = context.getInitialSize();
-			double a2 = Math.atan2(y1 - y0, x1 - x0) - a1;
-			double tx = x0 * z * size.r(); 
-			double ty = y0 * z * size.r(); 
-			double qx = (Math.cos(a0) * tx + Math.sin(a0) * ty);
-			double qy = (Math.cos(a0) * ty - Math.sin(a0) * tx);
-			double px = - qx;
-			double py = - qy;
-			double gx = (Math.cos(a2) * px + Math.sin(a2) * py);
-			double gy = (Math.cos(a2) * py - Math.sin(a2) * px);
-			double dx = gx - px;
-			double dy = gy - py;
-			double x = r0 + dx;
-			double y = i0 + dy;
-			double a = (a0 + a2) * 180 / Math.PI;
-			MandelbrotView view = new MandelbrotView(new double[] { x, y, z, t[3] }, new double[] { 0, 0, a, r[3] }, s, p, j);
+			double dx = x1 - x0;
+			double dy = y1 - y0;
+			x -= z * size.r() * (Math.cos(a) * dx + Math.sin(a) * dy);
+			y -= z * size.i() * (Math.cos(a) * dy - Math.sin(a) * dx);
+			x0 = x1;
+			y0 = y1;
+			MandelbrotView view = new MandelbrotView(new double[] { x, y, z, t[3] }, new double[] { 0, 0, r[2], r[3] }, s, p, j);
 			context.getMandelbrotSession().setView(view, pressed);
 			changed = false;
 		}
@@ -140,19 +114,10 @@ public class MandelbrotRotate implements MandelbrotTool {
 		double dw = context.getWidth();
 		double dh = context.getHeight();
 		gc.clearRect(0, 0, (int)dw, (int)dh);
-		if (active) {
+		if (pressed) {
 			gc.setStroke(context.getRendererFactory().createColor(1, 1, 0, 1));
 			double cx = dw / 2;
 			double cy = dh / 2;
-			int px = (int) Math.rint(cx + x0 * dw);
-			int py = (int) Math.rint(cy - y0 * dh);
-			gc.beginPath();
-			gc.moveTo(px - 4, py - 4);
-			gc.lineTo(px + 4, py + 4);
-			gc.moveTo(px - 4, py + 4);
-			gc.lineTo(px + 4, py - 4);
-			gc.stroke();
-			gc.setStroke(context.getRendererFactory().createColor(1, 1, 0, 1));
 			int qx = (int) Math.rint(cx + x1 * dw);
 			int qy = (int) Math.rint(cy - y1 * dh);
 			gc.beginPath();

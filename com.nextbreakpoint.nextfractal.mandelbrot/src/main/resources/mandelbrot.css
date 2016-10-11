@@ -71,6 +71,10 @@
 	-fx-background-color: white;
 }
 
+.application .mandelbrot .browse .status {
+    -fx-padding: 0 20px 0 10px;
+}
+
 .application .mandelbrot .params {
 	-fx-padding: 8px;
     -fx-font-size: 9pt;
@@ -175,8 +179,4 @@
 
 .application .mandelbrot .text-large {
     -fx-font-size: 11pt;
-}
-
-.application .mandelbrot .spacing {
-    -fx-padding: 0 20px 0 10px;
 }

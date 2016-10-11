@@ -24,6 +24,23 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
 
-public interface ParamsDelegate {
-	public void tabClicked(ParamsPane mandelbrotParamsPane);
+import com.nextbreakpoint.nextfractal.core.renderer.RendererGraphicsContext;
+import javafx.scene.input.MouseEvent;
+
+public interface Tool {
+	public void clicked(MouseEvent e);
+
+	public void moved(MouseEvent e);
+
+	public void dragged(MouseEvent e);
+
+	public void released(MouseEvent e);
+
+	public void pressed(MouseEvent e);
+
+	public void update(long time);
+
+	public boolean isChanged();
+
+	public void draw(RendererGraphicsContext gc);
 }

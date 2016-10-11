@@ -79,7 +79,7 @@ import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class RenderPane extends BorderPane implements MandelbrotToolContext {
+public class RenderPane extends BorderPane implements ToolContext {
 	private static final int FRAME_LENGTH_IN_MILLIS = 20;
 	private static final Logger logger = Logger.getLogger(RenderPane.class.getName());
 	private final Session session;
@@ -107,7 +107,7 @@ public class RenderPane extends BorderPane implements MandelbrotToolContext {
 	private volatile boolean disableTool;
 	private String astOrbit;
 	private String astColor;
-	private MandelbrotTool currentTool;
+	private Tool currentTool;
 	private CompilerBuilder<Orbit> orbitBuilder;
 	private CompilerBuilder<Color> colorBuilder;
 	private List<Number[]> states;
@@ -270,7 +270,7 @@ public class RenderPane extends BorderPane implements MandelbrotToolContext {
         juliaCanvas.setOpacity(0.8);
         juliaCanvas.setVisible(false);
 
-		currentTool = new MandelbrotZoom(this, true);
+		currentTool = new ToolZoom(this, true);
 		zoominButton.setSelected(true);
 		zoominButton.setDisable(true);
 
@@ -386,32 +386,32 @@ public class RenderPane extends BorderPane implements MandelbrotToolContext {
 		});
 		
 		zoominButton.setOnAction(e -> {
-			currentTool = new MandelbrotZoom(this, true);
+			currentTool = new ToolZoom(this, true);
 			juliaCanvas.setVisible(false);
 			pointCanvas.setVisible(false);
 		});
 		
 		zoomoutButton.setOnAction(e -> {
-			currentTool = new MandelbrotZoom(this, false);
+			currentTool = new ToolZoom(this, false);
 			juliaCanvas.setVisible(false);
 			pointCanvas.setVisible(false);
 		});
 		
 		moveButton.setOnAction(e -> {
-			currentTool = new MandelbrotMove(this);
+			currentTool = new ToolMove(this);
 			juliaCanvas.setVisible(false);
 			pointCanvas.setVisible(false);
 		});
 		
 		rotateButton.setOnAction(e -> {
-			currentTool = new MandelbrotRotate(this);
+			currentTool = new ToolRotate(this);
 			juliaCanvas.setVisible(false);
 			pointCanvas.setVisible(false);
 		});
 		
 		pickButton.setOnAction(e -> {
 			if (!getMandelbrotSession().getDataAsCopy().isJulia()) {
-				currentTool = new MandelbrotPick(this);
+				currentTool = new ToolPick(this);
 				juliaCanvas.setVisible(true);
 				pointCanvas.setVisible(true);
 			}
@@ -419,12 +419,12 @@ public class RenderPane extends BorderPane implements MandelbrotToolContext {
 		
 		orbitButton.setOnAction(e -> {
 //			if (!getMandelbrotSession().getDataAsCopy().isJulia()) {
-//				currentTool = new MandelbrotPick(this);
+//				currentTool = new ToolPick(this);
 //				juliaCanvas.setVisible(true);
 //				pointCanvas.setVisible(true);
 //				pickButton.requestFocus();
 //			} else {
-//				currentTool = new MandelbrotZoom(this, true);
+//				currentTool = new ToolZoom(this, true);
 //				juliaCanvas.setVisible(false);
 //				pointCanvas.setVisible(false);
 //				zoominButton.requestFocus();
@@ -448,7 +448,7 @@ public class RenderPane extends BorderPane implements MandelbrotToolContext {
 				setFractalJulia(false);
 			}
 			if (pickButton.isSelected()) {
-				currentTool = new MandelbrotZoom(this, true);
+				currentTool = new ToolZoom(this, true);
 				juliaCanvas.setVisible(false);
 				pointCanvas.setVisible(false);
 				zoominButton.requestFocus();
@@ -463,8 +463,8 @@ public class RenderPane extends BorderPane implements MandelbrotToolContext {
 		statusProperty.addListener((observable, oldValue, newValue) -> getMandelbrotSession().setStatus(newValue));
 
 		Block<MandelbrotData, Exception> updateJulia = data -> {
-			if (data.isJulia() && currentTool instanceof MandelbrotPick) {
-				currentTool = new MandelbrotZoom(this, true);
+			if (data.isJulia() && currentTool instanceof ToolPick) {
+				currentTool = new ToolZoom(this, true);
 				juliaCanvas.setVisible(false);
 				pointCanvas.setVisible(false);
 				zoominButton.setSelected(true);

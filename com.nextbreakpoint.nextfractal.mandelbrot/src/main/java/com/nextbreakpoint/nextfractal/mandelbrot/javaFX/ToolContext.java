@@ -28,7 +28,7 @@ import com.nextbreakpoint.nextfractal.core.renderer.RendererFactory;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotSession;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 
-public interface MandelbrotToolContext {
+public interface ToolContext {
 	public double getWidth();
 
 	public double getHeight();

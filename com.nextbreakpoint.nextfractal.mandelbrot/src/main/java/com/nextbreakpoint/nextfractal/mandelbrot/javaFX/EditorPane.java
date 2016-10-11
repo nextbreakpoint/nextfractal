@@ -609,7 +609,7 @@ public class EditorPane extends BorderPane {
 	}
 
 	private ImageView createIconImage(String name) {
-		return createIconImage(name, 0.02);
+		return createIconImage(name, 0.018);
 	}
 
 	private void updateReportAndSource(String text, CompilerReport report) {
