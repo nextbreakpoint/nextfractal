@@ -74,6 +74,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -219,6 +220,7 @@ public class EditorPane extends BorderPane {
 		sourceButtons.getChildren().add(exportButton);
 		sourceButtons.getChildren().add(jobsButton);
 		sourceButtons.getChildren().add(statusButton);
+		sourceButtons.getStyleClass().add("toolbar");
 		sourceButtons.getStyleClass().add("menubar");
 		sourcePane.getChildren().add(codePane);
 		sourcePane.getChildren().add(sourceButtons);
@@ -245,8 +247,7 @@ public class EditorPane extends BorderPane {
 				if (errorProperty.getValue() == null) {
 					MandelbrotSession mandelbrotSession = getMandelbrotSession();
 					exportData = mandelbrotSession.getDataAsCopy();
-					doExportSession(rendererSize);
-					jobsButton.setSelected(true);
+					doExportSession(rendererSize, a -> jobsButton.setSelected(true));
 				}
 			}
 		});
@@ -414,6 +415,10 @@ public class EditorPane extends BorderPane {
 			paramsPane.setPrefWidth(width);
 			exportPane.setPrefWidth(width);
 			jobsPane.setPrefWidth(width);
+			historyPane.setMaxWidth(width);
+			paramsPane.setMaxWidth(width);
+			exportPane.setMaxWidth(width);
+			jobsPane.setMaxWidth(width);
 		});
 
 		sidePane.heightProperty().addListener((observable, oldValue, newValue) -> {
@@ -422,6 +427,10 @@ public class EditorPane extends BorderPane {
 			paramsPane.setPrefHeight(height);
 			exportPane.setPrefHeight(height);
 			jobsPane.setPrefHeight(height);
+			historyPane.setMaxHeight(height);
+			paramsPane.setMaxHeight(height);
+			exportPane.setMaxHeight(height);
+			jobsPane.setMaxHeight(height);
 		});
 
 		textExecutor = Executors.newSingleThreadExecutor(new DefaultThreadFactory("MandelbrotTextUpdate", true, Thread.MIN_PRIORITY));
@@ -817,13 +826,14 @@ public class EditorPane extends BorderPane {
 		return selectPlugin(format, plugin -> plugin).onFailure(e -> logger.warning("Cannot find encoder for PNG format")).value();
 	}
 
-	private void doExportSession(RendererSize rendererSize) {
+	private void doExportSession(RendererSize rendererSize, Consumer<File> consumer) {
 		createEncoder("PNG").ifPresent(encoder -> Block.create(Encoder.class)
-				.andThen(e -> prepareExportFileChooser(e.getSuffix())).andThen(e -> selectFileAndExport(rendererSize, encoder)).tryExecute(encoder));
+				.andThen(e -> prepareExportFileChooser(e.getSuffix())).andThen(e -> selectFileAndExport(rendererSize, encoder, consumer)).tryExecute(encoder));
 	}
 
-	private void selectFileAndExport(RendererSize rendererSize, Encoder encoder) {
-		Optional.ofNullable(fileChooser.showSaveDialog(EditorPane.this.getScene().getWindow())).ifPresent(file -> createExportSession(rendererSize, encoder, file));
+	private void selectFileAndExport(RendererSize rendererSize, Encoder encoder, Consumer<File> consumer) {
+		Consumer<File> fileConsumer = file -> createExportSession(rendererSize, encoder, file);
+		Optional.ofNullable(fileChooser.showSaveDialog(EditorPane.this.getScene().getWindow())).ifPresent(fileConsumer.andThen(consumer));
 	}
 
 	private void createExportSession(RendererSize rendererSize, Encoder encoder, File file) {

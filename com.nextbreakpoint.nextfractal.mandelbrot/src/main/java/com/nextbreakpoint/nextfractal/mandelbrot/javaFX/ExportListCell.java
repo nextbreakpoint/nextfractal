@@ -31,8 +31,8 @@ import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotData;
 import javafx.geometry.Pos;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
-import javafx.scene.control.ProgressBar;
 import javafx.scene.image.PixelFormat;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.BorderPane;
@@ -40,7 +40,7 @@ import javafx.scene.transform.Affine;
 
 public class ExportListCell extends ListCell<ExportSession> {
 	private BorderPane pane;
-	private ProgressBar progress;
+	private Label label;
 	private Canvas canvas;
 	private RendererSize size;
 	private RendererTile tile;
@@ -49,12 +49,12 @@ public class ExportListCell extends ListCell<ExportSession> {
 		this.size = size;
 		this.tile = tile;
 		canvas = new Canvas(tile.getTileSize().getWidth(), tile.getTileSize().getHeight());
-		progress = new ProgressBar();
+		label = new Label();
 		pane = new BorderPane();
 		pane.setLeft(canvas);
-		pane.setRight(progress);
+		pane.setRight(label);
 		BorderPane.setAlignment(canvas, Pos.CENTER);
-		BorderPane.setAlignment(progress, Pos.CENTER);
+		BorderPane.setAlignment(label, Pos.CENTER);
 	}
 
 	@Override
@@ -77,7 +77,7 @@ public class ExportListCell extends ListCell<ExportSession> {
 				g2d.setTransform(affine);
 				g2d.drawImage(image, x, y);
 			}
-			progress.setProgress(session.getProgress());
+			label.setText(String.format("%d%%", (int)Math.rint(session.getProgress() * 100)));
 			this.setGraphic(pane);
 		}
 	}

@@ -2,19 +2,10 @@
 	-fx-background-color: #444444;
 }
 
-.root.popup {
-    -fx-background-color: transparent;
-}
-
 .scroll-pane {
 	-fx-background-color: transparent;
 	-fx-hbar-policy: never;
 	-fx-vbar-policy: never;
-	-fx-border-width: 0 0 0 0;
-}
-
-.scroll-pane .content {
-	-fx-border-width: 0 0 0 0;
 }
 
 .scroll-pane > .viewport {
@@ -47,9 +38,12 @@
 	-fx-border-width: 0 0 0 0;
 }
 
-.application .editor {
+.application .editor-pane {
 	-fx-background-color: #FFFFFF;
 	-fx-border-width: 0 0 0 1;
 	-fx-border-color: #b0b0b0;
 }
 
+.application .render-pane {
+	-fx-background-color: #FFFFFF;
+}

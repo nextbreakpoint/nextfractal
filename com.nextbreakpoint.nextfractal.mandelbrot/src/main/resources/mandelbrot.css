@@ -37,32 +37,10 @@
 	-fx-border-color: #f0f0f0;
 }
 
-.application .mandelbrot .menubar .button {
-	-fx-background-color: transparent;
-	-fx-focus-color: transparent;
-	-fx-faint-focus-color: transparent;
-	-fx-border-width: 0;
-	-fx-opacity: 1.0;
-}
-
-.application .mandelbrot .menubar .button:armed {
-	-fx-opacity: 0.5;
-}
-
-.application .mandelbrot .menubar .toggle-button {
-	-fx-background-color: transparent;
-	-fx-focus-color: transparent;
-	-fx-faint-focus-color: transparent;
-	-fx-border-width: 0;
-	-fx-opacity: 0.5;
-}
-
-.application .mandelbrot .menubar .toggle-button:armed {
-	-fx-opacity: 1.0;
-}
-
-.application .mandelbrot .menubar .toggle-button:selected {
-	-fx-opacity: 1.0;
+.application .mandelbrot .sidebar {
+	-fx-border-width: 0 0 0 1;
+	-fx-border-color: #f0f0f0;
+	-fx-background-color: white;
 }
 
 .application .mandelbrot .browse {
@@ -108,12 +86,12 @@
 	-fx-background-color: #fbfbfb;
 }
 
-.application .mandelbrot .params .text-area:focused .content {
+.application .mandelbrot .params .text-area .content {
 	-fx-background-color: #fbfbfb #fbfbfb black black;
 	-fx-background-insets: 0, 0, 1, 2;
 }
 
-.application .mandelbrot .params .text-area .content {
+.application .mandelbrot .params .text-area:focused .content {
 	-fx-background-color: #fbfbfb #fbfbfb black black;
 	-fx-background-insets: 0, 0, 1, 2;
 }
@@ -178,12 +156,6 @@
     -fx-font-weight: bold;
 }
 
-.application .mandelbrot .sidebar {
-	-fx-border-width: 0 0 0 1;
-	-fx-border-color: #f0f0f0;
-	-fx-background-color: white;
-}
-
 .application .mandelbrot .translucent {
 	-fx-background-color: white;
 	-fx-opacity: 0.9;
@@ -203,9 +175,6 @@
 
 .application .mandelbrot .text-large {
     -fx-font-size: 11pt;
-}
-
-.application .mandelbrot .text-center {
 }
 
 .application .mandelbrot .spacing {

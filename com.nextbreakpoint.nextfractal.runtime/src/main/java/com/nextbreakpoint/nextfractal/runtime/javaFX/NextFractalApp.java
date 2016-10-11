@@ -62,6 +62,7 @@ import static com.nextbreakpoint.nextfractal.runtime.Plugins.pluginsStream;
 import static com.nextbreakpoint.nextfractal.runtime.Plugins.selectPlugin;
 
 public class NextFractalApp extends Application {
+	private static final String DEFAULT_PLUGIN_ID = "Mandelbrot";
 	private static Logger logger = Logger.getLogger(NextFractalApp.class.getName());
 
 	private BorderPane editorRootPane;
@@ -94,7 +95,7 @@ public class NextFractalApp extends Application {
 
 		logger.info("Scene Size = (" + sceneWidth + "," + sceneHeight + ")");
 		
-        String initialPluginId = "Mandelbrot";
+        String initialPluginId = DEFAULT_PLUGIN_ID;
 
         StackPane rootPane = new StackPane();
 
@@ -207,14 +208,14 @@ public class NextFractalApp extends Application {
 		renderRootPane.setMinHeight(height);
 		renderRootPane.setMaxWidth(width);
 		renderRootPane.setMaxHeight(height);
-		renderRootPane.getStyleClass().add("render");
+		renderRootPane.getStyleClass().add("render-pane");
 	}
 
 	private void createEditorPane(int width, int height) {
 		editorRootPane = new BorderPane();
 		editorRootPane.setPrefWidth(width);
 		editorRootPane.setPrefHeight(height);
-		editorRootPane.getStyleClass().add("editor");
+		editorRootPane.getStyleClass().add("editor-pane");
 	}
 
 	private String getApplicationName() {
