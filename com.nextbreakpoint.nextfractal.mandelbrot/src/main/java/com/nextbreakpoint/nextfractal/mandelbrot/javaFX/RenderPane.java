@@ -173,7 +173,7 @@ public class RenderPane extends BorderPane implements MandelbrotToolContext {
 		errors.getStyleClass().add("errors");
 		errors.setVisible(false);
 
-		HBox toolButtons = new HBox(4);
+		HBox toolButtons = new HBox(0);
 		Button browseButton = new Button("", createIconImage("/icon-grid.png"));
 		ToggleButton zoominButton = new ToggleButton("", createIconImage("/icon-zoomin.png"));
 		ToggleButton zoomoutButton = new ToggleButton("", createIconImage("/icon-zoomout.png"));

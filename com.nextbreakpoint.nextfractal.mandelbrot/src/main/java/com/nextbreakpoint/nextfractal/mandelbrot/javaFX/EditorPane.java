@@ -147,7 +147,7 @@ public class EditorPane extends BorderPane {
 //				.andThen(list -> historyRemoveAllItems(list)).andThen(list -> addDataToHistory(list)).tryExecute(historyList));
 
 		BorderPane jobsPane = new BorderPane();
-		HBox jobsButtons = new HBox(4);
+		HBox jobsButtons = new HBox(0);
 		jobsButtons.setAlignment(Pos.CENTER);
 		Button suspendButton = new Button("", createIconImage("/icon-suspend.png", 0.015));
 		Button resumeButton = new Button("", createIconImage("/icon-resume.png", 0.015));
@@ -161,7 +161,7 @@ public class EditorPane extends BorderPane {
 		jobsButtons.getChildren().add(suspendButton);
 		jobsButtons.getChildren().add(resumeButton);
 		jobsButtons.getChildren().add(removeButton);
-		jobsButtons.getStyleClass().add("menubar");
+		jobsButtons.getStyleClass().add("toolbar");
 		jobsPane.setCenter(jobsList);
 		jobsPane.setBottom(jobsButtons);
 		List<Button> buttons = Arrays.asList(suspendButton, resumeButton, removeButton);
@@ -193,7 +193,7 @@ public class EditorPane extends BorderPane {
 		StatusPane statusPane = new StatusPane();
 
 		Pane sourcePane = new Pane();
-		HBox sourceButtons = new HBox(4);
+		HBox sourceButtons = new HBox(0);
 		sourceButtons.setAlignment(Pos.CENTER);
 		Button renderButton = new Button("", createIconImage("/icon-run.png"));
 		Button loadButton = new Button("", createIconImage("/icon-load.png"));
@@ -214,9 +214,9 @@ public class EditorPane extends BorderPane {
 		sourceButtons.getChildren().add(renderButton);
 		sourceButtons.getChildren().add(loadButton);
 		sourceButtons.getChildren().add(saveButton);
-		sourceButtons.getChildren().add(exportButton);
 		sourceButtons.getChildren().add(paramsButton);
 		sourceButtons.getChildren().add(historyButton);
+		sourceButtons.getChildren().add(exportButton);
 		sourceButtons.getChildren().add(jobsButton);
 		sourceButtons.getChildren().add(statusButton);
 		sourceButtons.getStyleClass().add("menubar");
@@ -300,7 +300,7 @@ public class EditorPane extends BorderPane {
 		});
 
 		sidePane.translateXProperty().addListener((source, oldValue, newValue) -> {
-			codePane.prefWidthProperty().setValue(getWidth() - sidePane.getWidth() + newValue.doubleValue());
+			codePane.prefWidthProperty().setValue(getWidth() + newValue.doubleValue());
 		});
 
 		statusPane.translateYProperty().addListener((source, oldValue, newValue) -> {
@@ -387,14 +387,13 @@ public class EditorPane extends BorderPane {
 		widthProperty().addListener((observable, oldValue, newValue) -> {
 			double width = newValue.doubleValue();
 			sourceButtons.setPrefWidth(width);
-			codePane.setPrefWidth(width * 0.6);
+			codePane.setPrefWidth(width);
 			sidePane.setPrefWidth(width * 0.4);
 			statusPane.setPrefWidth(width);
 			sourceButtons.setLayoutX(0);
 			codePane.setLayoutX(0);
-			sidePane.setLayoutX(width * 0.6);
+			sidePane.setLayoutX(width);
 			statusPane.setLayoutX(0);
-			sidePane.setTranslateX(width * 0.4);
         });
 
 		heightProperty().addListener((observable, oldValue, newValue) -> {
@@ -419,10 +418,10 @@ public class EditorPane extends BorderPane {
 
 		sidePane.heightProperty().addListener((observable, oldValue, newValue) -> {
 			double height = newValue.doubleValue();
-			historyPane.setMinHeight(height);
-			paramsPane.setMinHeight(height);
-			exportPane.setMinHeight(height);
-			jobsPane.setMinHeight(height);
+			historyPane.setPrefHeight(height);
+			paramsPane.setPrefHeight(height);
+			exportPane.setPrefHeight(height);
+			jobsPane.setPrefHeight(height);
 		});
 
 		textExecutor = Executors.newSingleThreadExecutor(new DefaultThreadFactory("MandelbrotTextUpdate", true, Thread.MIN_PRIORITY));
@@ -454,9 +453,9 @@ public class EditorPane extends BorderPane {
 
 	private void showSidebar(TranslateTransition transition, EventHandler<ActionEvent> handler) {
 		transition.stop();
-		if (transition.getNode().getTranslateX() != 0) {
+		if (transition.getNode().getTranslateX() != -((Pane)transition.getNode()).getWidth()) {
 			transition.setFromX(transition.getNode().getTranslateX());
-			transition.setToX(0);
+			transition.setToX(-((Pane)transition.getNode()).getWidth());
 			transition.setOnFinished(handler);
 			transition.play();
 		}
@@ -464,9 +463,9 @@ public class EditorPane extends BorderPane {
 
 	private void hideSidebar(TranslateTransition transition, EventHandler<ActionEvent> handler) {
 		transition.stop();
-		if (transition.getNode().getTranslateX() != ((Pane)transition.getNode()).getWidth()) {
+		if (transition.getNode().getTranslateX() != 0) {
 			transition.setFromX(transition.getNode().getTranslateX());
-			transition.setToX(((Pane)transition.getNode()).getWidth());
+			transition.setToX(0);
 			transition.setOnFinished(handler);
 			transition.play();
 		}

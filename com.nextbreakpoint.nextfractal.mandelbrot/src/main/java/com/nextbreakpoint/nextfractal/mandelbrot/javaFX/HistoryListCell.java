@@ -60,7 +60,10 @@ public class HistoryListCell extends ListCell<MandelbrotData> {
 		label1.getStyleClass().add("text-center");
 		label2.getStyleClass().add("text-small");
 		pane = new BorderPane();
-		pane.setLeft(canvas);
+		VBox image = new VBox(4);
+		image.setAlignment(Pos.CENTER);
+		image.getChildren().add(canvas);
+		pane.setLeft(image);
 		VBox labels = new VBox(4);
 		labels.setAlignment(Pos.CENTER);
 		labels.getChildren().add(label1);

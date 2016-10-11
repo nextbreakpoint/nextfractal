@@ -1,8 +1,3 @@
-.application .mandelbrot .alerts {
-	-fx-alignment: top-left;
-	-fx-padding: 10px;
-}
-
 .application .mandelbrot .toolbar {
 	-fx-alignment: center;
 	-fx-background-color: white;
@@ -100,6 +95,7 @@
 
 .application .mandelbrot .params {
 	-fx-padding: 8px;
+    -fx-font-size: 9pt;
 }
 
 .application .mandelbrot .params .encoded {
@@ -124,6 +120,8 @@
 
 .application .mandelbrot .export {
 	-fx-background-color: white;
+	-fx-padding: 8px;
+    -fx-font-size: 9pt;
 }
 
 .application .mandelbrot .source {
@@ -196,7 +194,15 @@
 }
 
 .application .mandelbrot .text-small {
-    -fx-font-size: 8pt;
+    -fx-font-size: 7pt;
+}
+
+.application .mandelbrot .text-medium {
+    -fx-font-size: 9pt;
+}
+
+.application .mandelbrot .text-large {
+    -fx-font-size: 11pt;
 }
 
 .application .mandelbrot .text-center {

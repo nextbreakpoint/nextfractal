@@ -84,7 +84,7 @@ public class ExportPane extends BorderPane {
 		controls.getChildren().add(sizeBox);
 
 		VBox box = new VBox(8);
-		box.setAlignment(Pos.CENTER);
+		box.setAlignment(Pos.TOP_CENTER);
 		box.getChildren().add(controls);
 		box.getChildren().add(buttons);
 		setCenter(box);
@@ -157,7 +157,7 @@ public class ExportPane extends BorderPane {
 		});
 
 		widthProperty().addListener((observable, oldValue, newValue) -> {
-			double width = newValue.doubleValue() * 0.9;
+			double width = newValue.doubleValue() - getInsets().getLeft() - getInsets().getRight();
 			presets.setPrefWidth(width);
 			box.setPrefWidth(width);
 			box.setMaxWidth(width);

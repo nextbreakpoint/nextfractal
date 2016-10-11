@@ -102,12 +102,13 @@ public class ParamsPane extends Pane {
 		box.getChildren().add(rotationPane);
 		box.getChildren().add(wPane);
 		box.getChildren().add(xPane);
-		HBox buttons = new HBox(10);
+		VBox buttons = new VBox(4);
 		Button applyButton = new Button("Apply");
 		Button cancelButton = new Button("Cancel"); 
 		buttons.getChildren().add(applyButton);
 		buttons.getChildren().add(cancelButton);
 		box.getChildren().add(buttons);
+		Button encodeCopyButton = new Button("Copy");
 		TextArea encodeTextArea;
 		if (Boolean.getBoolean("mandelbrot.encode.data")) {
 			encodeTextArea = new TextArea();
@@ -115,7 +116,6 @@ public class ParamsPane extends Pane {
 			encodeTextArea.setWrapText(true);
 			encodeTextArea.setEditable(false);
 			box.getChildren().add(encodeTextArea);
-			Button encodeCopyButton = new Button("Copy"); 
 			box.getChildren().add(encodeCopyButton);
 			encodeCopyButton.setOnAction((e) -> {
 				String text = encodeTextArea.getText();
@@ -134,9 +134,13 @@ public class ParamsPane extends Pane {
 		getChildren().add(scrollPane);
 
 		widthProperty().addListener((observable, oldValue, newValue) -> {
-			box.setPrefWidth(newValue.doubleValue() - getInsets().getLeft() - getInsets().getRight());
-            algorithmCombobox.setPrefWidth(newValue.doubleValue() - getInsets().getLeft() - getInsets().getRight());
+			double width = newValue.doubleValue() - getInsets().getLeft() - getInsets().getRight();
+			box.setPrefWidth(width);
+            algorithmCombobox.setPrefWidth(width);
 			scrollPane.setPrefWidth(newValue.doubleValue());
+			applyButton.setPrefWidth(newValue.doubleValue());
+			cancelButton.setPrefWidth(newValue.doubleValue());
+			encodeCopyButton.setPrefWidth(newValue.doubleValue());
         });
 		
 		heightProperty().addListener((observable, oldValue, newValue) -> {
