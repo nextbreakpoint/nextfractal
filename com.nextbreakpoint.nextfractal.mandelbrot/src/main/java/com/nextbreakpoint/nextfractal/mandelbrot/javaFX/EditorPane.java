@@ -254,6 +254,7 @@ public class EditorPane extends BorderPane {
 
 		errorProperty.addListener((source, oldValue, newValue) -> {
 			exportPane.setDisable(newValue != null);
+			paramsPane.setDisable(newValue != null);
 		});
 
 		historyButton.selectedProperty().addListener((source, oldValue, newValue) -> {

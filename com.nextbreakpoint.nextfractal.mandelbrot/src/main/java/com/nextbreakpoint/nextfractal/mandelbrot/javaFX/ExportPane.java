@@ -39,6 +39,7 @@ public class ExportPane extends BorderPane {
 	public ExportPane() {
 		ComboBox<Integer[]> presets = new ComboBox<>();
 		presets.getItems().add(new Integer[] { 0, 0 });
+		presets.getItems().add(new Integer[] { 8192, 8192 });
 		presets.getItems().add(new Integer[] { 4096, 4096 });
 		presets.getItems().add(new Integer[] { 2048, 2048 });
 		presets.getItems().add(new Integer[] { 1900, 1900 });
