@@ -94,10 +94,10 @@ public class EditorPane extends BorderPane {
 	private final ExecutorService exportExecutor;
 	private final StringObservableValue errorProperty;
 	private Pattern highlightingPattern;
-	private FileChooser fileChooser;
+	private FileChooser exportFileChooser;
+	private FileChooser grammarFileChooser;
 	private volatile boolean noHistory;
 	private File currentExportFile;
-	private MandelbrotData exportData;
 
 	public EditorPane(Session session) {
 		this.session = session;
@@ -245,9 +245,7 @@ public class EditorPane extends BorderPane {
 			@Override
 			public void createSession(RendererSize rendererSize) {
 				if (errorProperty.getValue() == null) {
-					MandelbrotSession mandelbrotSession = getMandelbrotSession();
-					exportData = mandelbrotSession.getDataAsCopy();
-					doExportSession(rendererSize, a -> jobsButton.setSelected(true));
+					doExportSession(rendererSize, getMandelbrotSession().getDataAsCopy(), a -> jobsButton.setSelected(true));
 				}
 			}
 		});
@@ -550,23 +548,23 @@ public class EditorPane extends BorderPane {
 	}
 
 	private FileChooser showSaveFileChooser() {
-		ensureFileChooser(".m");
-		fileChooser.setTitle("Save");
+		ensureGrammarFileChooser(".m");
+		grammarFileChooser.setTitle("Save");
 		if (getMandelbrotSession().getCurrentFile() != null) {
-            fileChooser.setInitialDirectory(getMandelbrotSession().getCurrentFile().getParentFile());
-            fileChooser.setInitialFileName(getMandelbrotSession().getCurrentFile().getName());
+			grammarFileChooser.setInitialDirectory(getMandelbrotSession().getCurrentFile().getParentFile());
+			grammarFileChooser.setInitialFileName(getMandelbrotSession().getCurrentFile().getName());
         }
-		return fileChooser;
+		return grammarFileChooser;
 	}
 
 	private FileChooser showLoadFileChooser() {
-		ensureFileChooser(".m");
-		fileChooser.setTitle("Load");
+		ensureGrammarFileChooser(".m");
+		grammarFileChooser.setTitle("Load");
 		if (getMandelbrotSession().getCurrentFile() != null) {
-            fileChooser.setInitialDirectory(getMandelbrotSession().getCurrentFile().getParentFile());
-            fileChooser.setInitialFileName(getMandelbrotSession().getCurrentFile().getName());
+			grammarFileChooser.setInitialDirectory(getMandelbrotSession().getCurrentFile().getParentFile());
+			grammarFileChooser.setInitialFileName(getMandelbrotSession().getCurrentFile().getName());
         }
-        return fileChooser;
+        return grammarFileChooser;
 	}
 
 	private void saveDataToFile(File file) {
@@ -773,11 +771,19 @@ public class EditorPane extends BorderPane {
 		return (MandelbrotSession) session;
 	}
 
-	private void ensureFileChooser(String suffix) {
-		if (fileChooser == null) {
-			fileChooser = new FileChooser();
-			fileChooser.setInitialFileName("mandel" + suffix);
-			fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+	private void ensureExportFileChooser(String suffix) {
+		if (exportFileChooser == null) {
+			exportFileChooser = new FileChooser();
+			exportFileChooser.setInitialFileName("mandel" + suffix);
+			exportFileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+		}
+	}
+
+	private void ensureGrammarFileChooser(String suffix) {
+		if (grammarFileChooser == null) {
+			grammarFileChooser = new FileChooser();
+			grammarFileChooser.setInitialFileName("mandel" + suffix);
+			grammarFileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
 		}
 	}
 
@@ -827,32 +833,32 @@ public class EditorPane extends BorderPane {
 		return selectPlugin(format, plugin -> plugin).onFailure(e -> logger.warning("Cannot find encoder for PNG format")).value();
 	}
 
-	private void doExportSession(RendererSize rendererSize, Consumer<File> consumer) {
+	private void doExportSession(RendererSize rendererSize, MandelbrotData data, Consumer<File> consumer) {
 		createEncoder("PNG").ifPresent(encoder -> Block.create(Encoder.class)
-				.andThen(e -> prepareExportFileChooser(e.getSuffix())).andThen(e -> selectFileAndExport(rendererSize, encoder, consumer)).tryExecute(encoder));
+				.andThen(e -> prepareExportFileChooser(e.getSuffix())).andThen(e -> selectFileAndExport(rendererSize, encoder, data, consumer)).tryExecute(encoder));
 	}
 
-	private void selectFileAndExport(RendererSize rendererSize, Encoder encoder, Consumer<File> consumer) {
-		Consumer<File> fileConsumer = file -> createExportSession(rendererSize, encoder, file);
-		Optional.ofNullable(fileChooser.showSaveDialog(EditorPane.this.getScene().getWindow())).ifPresent(fileConsumer.andThen(consumer));
-	}
-
-	private void createExportSession(RendererSize rendererSize, Encoder encoder, File file) {
-		currentExportFile = file;
-		exportExecutor.submit(Block.create(MandelbrotData.class).andThen(data -> data.setPixels(generator.renderImage(data)))
-				.andThen(data -> Platform.runLater(() -> createExportSession(rendererSize, encoder, file, data))).toCallable(exportData));
-	}
-
-	private void prepareExportFileChooser(String suffix) {
-		ensureFileChooser(suffix);
-		fileChooser.setTitle("Export");
-		if (currentExportFile != null) {
-			fileChooser.setInitialDirectory(currentExportFile.getParentFile());
-			fileChooser.setInitialFileName(currentExportFile.getName());
-		}
+	private void selectFileAndExport(RendererSize rendererSize, Encoder encoder, MandelbrotData data, Consumer<File> consumer) {
+		Consumer<File> fileConsumer = file -> createExportSession(rendererSize, encoder, file, data);
+		Consumer<File> consumers = fileConsumer.andThen(file -> currentExportFile = file).andThen(consumer);
+		Optional.ofNullable(exportFileChooser.showSaveDialog(EditorPane.this.getScene().getWindow())).ifPresent(consumers);
 	}
 
 	private void createExportSession(RendererSize rendererSize, Encoder encoder, File file, MandelbrotData data) {
+		exportExecutor.submit(Block.create(MandelbrotData.class).andThen(d -> data.setPixels(generator.renderImage(data)))
+				.andThen(d -> Platform.runLater(() -> startExportSession(rendererSize, encoder, file, d))).toCallable(data));
+	}
+
+	private void prepareExportFileChooser(String suffix) {
+		ensureExportFileChooser(suffix);
+		exportFileChooser.setTitle("Export");
+		if (currentExportFile != null) {
+			exportFileChooser.setInitialDirectory(currentExportFile.getParentFile());
+			exportFileChooser.setInitialFileName(currentExportFile.getName());
+		}
+	}
+
+	private void startExportSession(RendererSize rendererSize, Encoder encoder, File file, MandelbrotData data) {
 		try {
 			File tmpFile = File.createTempFile("nextfractal-profile-", ".dat");
 			ExportSession exportSession = new ExportSession("Mandelbrot", data, file, tmpFile, rendererSize, 200, encoder);
