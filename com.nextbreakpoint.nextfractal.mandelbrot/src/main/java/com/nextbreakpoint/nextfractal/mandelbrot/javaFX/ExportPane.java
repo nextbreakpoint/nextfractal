@@ -37,23 +37,24 @@ public class ExportPane extends BorderPane {
 	private ExportDelegate delegate;
 
 	public ExportPane() {
-		ComboBox<Integer[]> presets = new ComboBox<>();
-		presets.getItems().add(new Integer[] { 0, 0 });
-		presets.getItems().add(new Integer[] { 8192, 8192 });
-		presets.getItems().add(new Integer[] { 4096, 4096 });
-		presets.getItems().add(new Integer[] { 2048, 2048 });
-		presets.getItems().add(new Integer[] { 1900, 1900 });
-		presets.getItems().add(new Integer[] { 1900, 1080 });
-		presets.getItems().add(new Integer[] { 1650, 1650 });
-		presets.getItems().add(new Integer[] { 1650, 1050 });
-		presets.getItems().add(new Integer[] { 1024, 1024 });
-		presets.getItems().add(new Integer[] { 1024, 768 });
-		presets.getItems().add(new Integer[] { 640, 640 });
-		presets.getItems().add(new Integer[] { 640, 480 });
-		presets.getItems().add(new Integer[] { 512, 512 });
-		presets.getItems().add(new Integer[] { 256, 256 });
-		presets.getSelectionModel().select(7);
-		Integer[] item0 = presets.getSelectionModel().getSelectedItem();
+		ComboBox<Integer[]> presetsCombobox = new ComboBox<>();
+		presetsCombobox.getItems().add(new Integer[] { 0, 0 });
+		presetsCombobox.getItems().add(new Integer[] { 8192, 8192 });
+		presetsCombobox.getItems().add(new Integer[] { 4096, 4096 });
+		presetsCombobox.getItems().add(new Integer[] { 2048, 2048 });
+		presetsCombobox.getItems().add(new Integer[] { 1900, 1900 });
+		presetsCombobox.getItems().add(new Integer[] { 1900, 1080 });
+		presetsCombobox.getItems().add(new Integer[] { 1650, 1650 });
+		presetsCombobox.getItems().add(new Integer[] { 1650, 1050 });
+		presetsCombobox.getItems().add(new Integer[] { 1024, 1024 });
+		presetsCombobox.getItems().add(new Integer[] { 1024, 768 });
+		presetsCombobox.getItems().add(new Integer[] { 640, 640 });
+		presetsCombobox.getItems().add(new Integer[] { 640, 480 });
+		presetsCombobox.getItems().add(new Integer[] { 512, 512 });
+		presetsCombobox.getItems().add(new Integer[] { 256, 256 });
+		presetsCombobox.getSelectionModel().select(7);
+		presetsCombobox.getStyleClass().add("text-small");
+		Integer[] item0 = presetsCombobox.getSelectionModel().getSelectedItem();
 		AdvancedTextField widthField = new AdvancedTextField();
 		widthField.setRestrict(getRestriction());
 		widthField.setEditable(false);
@@ -70,7 +71,7 @@ public class ExportPane extends BorderPane {
 
 		VBox dimensionBox = new VBox(5);
 		dimensionBox.setAlignment(Pos.CENTER);
-		dimensionBox.getChildren().add(presets);
+		dimensionBox.getChildren().add(presetsCombobox);
 
 		VBox sizeBox = new VBox(5);
 		sizeBox.setAlignment(Pos.CENTER);
@@ -92,7 +93,7 @@ public class ExportPane extends BorderPane {
 
 		getStyleClass().add("export");
 		
-		presets.setConverter(new StringConverter<Integer[]>() {
+		presetsCombobox.setConverter(new StringConverter<Integer[]>() {
 			@Override
 			public String toString(Integer[] item) {
 				if (item == null) {
@@ -112,7 +113,7 @@ public class ExportPane extends BorderPane {
 			}
 		});
 		
-		presets.setCellFactory(new Callback<ListView<Integer[]>, ListCell<Integer[]>>() {
+		presetsCombobox.setCellFactory(new Callback<ListView<Integer[]>, ListCell<Integer[]>>() {
 			@Override
 			public ListCell<Integer[]> call(ListView<Integer[]> p) {
 				return new ListCell<Integer[]>() {
@@ -127,7 +128,7 @@ public class ExportPane extends BorderPane {
 						if (item == null || empty) {
 							setGraphic(null);
 						} else {
-							label.setText(presets.getConverter().toString(item));
+							label.setText(presetsCombobox.getConverter().toString(item));
 							setGraphic(label);
 						}
 					}
@@ -135,7 +136,7 @@ public class ExportPane extends BorderPane {
 			}
 		});
 
-		presets.valueProperty().addListener((value, oldItem, newItem) -> {
+		presetsCombobox.valueProperty().addListener((value, oldItem, newItem) -> {
             if (newItem[0] == 0 || newItem[1] == 0) {
                 widthField.setEditable(true);
                 heightField.setEditable(true);
@@ -159,7 +160,7 @@ public class ExportPane extends BorderPane {
 
 		widthProperty().addListener((observable, oldValue, newValue) -> {
 			double width = newValue.doubleValue() - getInsets().getLeft() - getInsets().getRight();
-			presets.setPrefWidth(width);
+			presetsCombobox.setPrefWidth(width);
 			box.setPrefWidth(width);
 			box.setMaxWidth(width);
 			exportButton.setPrefWidth(width);

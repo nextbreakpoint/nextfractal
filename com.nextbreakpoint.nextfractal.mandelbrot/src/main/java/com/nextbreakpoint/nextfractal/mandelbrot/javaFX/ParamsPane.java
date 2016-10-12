@@ -96,6 +96,7 @@ public class ParamsPane extends Pane {
 		ComboBox<String> algorithmCombobox = new ComboBox<>();
 		algorithmCombobox.getItems().add("Mandelbrot");
 		algorithmCombobox.getItems().add("Julia/Fatou");
+		algorithmCombobox.getStyleClass().add("text-small");
 		algorithmPane.getChildren().add(algorithmCombobox);
 		box.getChildren().add(algorithmPane);
 		box.getChildren().add(translationPane);

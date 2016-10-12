@@ -71,13 +71,13 @@
 	-fx-background-color: white;
 }
 
-.application .mandelbrot .browse .status {
+.application .mandelbrot .browse .items-label {
     -fx-padding: 0 20px 0 10px;
 }
 
 .application .mandelbrot .params {
 	-fx-padding: 8px;
-    -fx-font-size: 9pt;
+    -fx-font-size: 11px;
 }
 
 .application .mandelbrot .params .encoded {
@@ -103,7 +103,7 @@
 .application .mandelbrot .export {
 	-fx-background-color: white;
 	-fx-padding: 8px;
-    -fx-font-size: 9pt;
+    -fx-font-size: 11px;
 }
 
 .application .mandelbrot .source {
@@ -113,6 +113,7 @@
 .application .mandelbrot .status {
 	-fx-border-width: 1 0 0 0;
 	-fx-border-color: #f0f0f0;
+    -fx-font-size: 11px;
 }
 
 .application .mandelbrot .errors {
@@ -170,13 +171,5 @@
 }
 
 .application .mandelbrot .text-small {
-    -fx-font-size: 7pt;
-}
-
-.application .mandelbrot .text-medium {
-    -fx-font-size: 9pt;
-}
-
-.application .mandelbrot .text-large {
-    -fx-font-size: 11pt;
+    -fx-font-size: 9px;
 }
