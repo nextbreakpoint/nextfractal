@@ -67,6 +67,7 @@ public class ParamsPane extends Pane {
 		rotationPane.getChildren().add(rotationLabel);
 		rotationPane.getChildren().add(zRotationField);
 		Label algorithmLabel = new Label("Algorithm variant");
+		Label grammarLabel = new Label("Grammar");
 		Label wLabel = new Label("Initial value of w");
 		AdvancedTextField wReField = new AdvancedTextField();
 		AdvancedTextField wImField = new AdvancedTextField();
@@ -91,6 +92,12 @@ public class ParamsPane extends Pane {
 		xhPane.getChildren().add(xReField);
 		xhPane.getChildren().add(xImField);
 		xPane.getChildren().add(xhPane);
+		VBox grammarPane = new VBox(SPACING);
+		grammarPane.getChildren().add(grammarLabel);
+		ComboBox<String> grammarCombobox = new ComboBox<>();
+		session.listGrammars().forEach(grammar -> grammarCombobox.getItems().add(grammar));
+		grammarCombobox.getStyleClass().add("text-small");
+		grammarPane.getChildren().add(grammarCombobox);
 		VBox algorithmPane = new VBox(SPACING);
 		algorithmPane.getChildren().add(algorithmLabel);
 		ComboBox<String> algorithmCombobox = new ComboBox<>();
@@ -98,6 +105,7 @@ public class ParamsPane extends Pane {
 		algorithmCombobox.getItems().add("Julia/Fatou");
 		algorithmCombobox.getStyleClass().add("text-small");
 		algorithmPane.getChildren().add(algorithmCombobox);
+		box.getChildren().add(grammarPane);
 		box.getChildren().add(algorithmPane);
 		box.getChildren().add(translationPane);
 		box.getChildren().add(rotationPane);
@@ -129,6 +137,8 @@ public class ParamsPane extends Pane {
 			encodeTextArea = null;
 		}
 
+		grammarCombobox.getSelectionModel().select(session.getGrammar());
+
 		ScrollPane scrollPane = new ScrollPane(box);
 		scrollPane.setFitToWidth(true);
 		scrollPane.setFitToHeight(true);
@@ -137,6 +147,7 @@ public class ParamsPane extends Pane {
 		widthProperty().addListener((observable, oldValue, newValue) -> {
 			double width = newValue.doubleValue() - getInsets().getLeft() - getInsets().getRight();
 			box.setPrefWidth(width);
+			grammarCombobox.setPrefWidth(width);
             algorithmCombobox.setPrefWidth(width);
 			scrollPane.setPrefWidth(newValue.doubleValue());
 			applyButton.setPrefWidth(newValue.doubleValue());
@@ -261,7 +272,7 @@ public class ParamsPane extends Pane {
 			}
 		});
 		
-		xTraslationField.setOnAction((e) -> {
+		xTraslationField.setOnAction(e -> {
 			double value = Double.parseDouble(xTraslationField.getText());
 			Platform.runLater(() -> {
 				MandelbrotView view = session.getViewAsCopy();
@@ -270,7 +281,7 @@ public class ParamsPane extends Pane {
 			});
 		});
 		
-		yTraslationField.setOnAction((e) -> {
+		yTraslationField.setOnAction(e -> {
 			double value = Double.parseDouble(yTraslationField.getText());
 			Platform.runLater(() -> {
 				MandelbrotView view = session.getViewAsCopy();
@@ -279,7 +290,7 @@ public class ParamsPane extends Pane {
 			});
 		});
 		
-		zTraslationField.setOnAction((e) -> {
+		zTraslationField.setOnAction(e -> {
 			double value = Double.parseDouble(zTraslationField.getText());
 			Platform.runLater(() -> {
 				MandelbrotView view = session.getViewAsCopy();
@@ -288,7 +299,7 @@ public class ParamsPane extends Pane {
 			});
 		});
 		
-		zRotationField.setOnAction((e) -> {
+		zRotationField.setOnAction(e -> {
 			double value = Double.parseDouble(zRotationField.getText());
 			Platform.runLater(() -> {
 				MandelbrotView view = session.getViewAsCopy();
@@ -297,7 +308,7 @@ public class ParamsPane extends Pane {
 			});
 		});
 		
-		wReField.setOnAction((e) -> {
+		wReField.setOnAction(e -> {
 			double value = Double.parseDouble(wReField.getText());
 			Platform.runLater(() -> {
 				double[] wPoint = session.getPoint();
@@ -306,7 +317,7 @@ public class ParamsPane extends Pane {
 			});
 		});
 		
-		wImField.setOnAction((e) -> {
+		wImField.setOnAction(e -> {
 			double value = Double.parseDouble(wImField.getText());
 			Platform.runLater(() -> {
 				double[] wPoint = session.getPoint();
@@ -315,7 +326,7 @@ public class ParamsPane extends Pane {
 			});
 		});
 		
-		algorithmCombobox.setOnAction((e) -> {
+		algorithmCombobox.setOnAction(e -> {
 			boolean isJuliaView = session.getViewAsCopy().isJulia();
 			boolean isMandelbrotAlgorithm = algorithmCombobox.getSelectionModel().getSelectedItem().equals("Mandelbrot");
 			if (isMandelbrotAlgorithm && isJuliaView) {
@@ -328,6 +339,12 @@ public class ParamsPane extends Pane {
 					MandelbrotView view = session.getViewAsCopy();
 					session.setView(new MandelbrotView(view.getTraslation(), view.getRotation(), view.getScale(), view.getPoint(), true), false);
 				});
+			}
+		});
+
+		grammarCombobox.setOnAction(e -> {
+			if (!grammarCombobox.getSelectionModel().isEmpty() && !grammarCombobox.getSelectionModel().getSelectedItem().equals(session.getGrammar())) {
+				session.selectGrammar(grammarCombobox.getSelectionModel().getSelectedItem());
 			}
 		});
 	}

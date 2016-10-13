@@ -57,6 +57,10 @@
 			<artifactId>antlr4-runtime</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>org.fxmisc.richtext</groupId>
+			<artifactId>richtextfx</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-all</artifactId>
 			<scope>test</scope>

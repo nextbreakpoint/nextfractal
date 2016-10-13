@@ -26,6 +26,8 @@ package com.nextbreakpoint.nextfractal.contextfree;
 
 import java.util.concurrent.ThreadFactory;
 
+import com.nextbreakpoint.nextfractal.contextfree.javaFX.EditorPane;
+import com.nextbreakpoint.nextfractal.contextfree.javaFX.RenderPane;
 import javafx.scene.layout.Pane;
 
 import com.nextbreakpoint.nextfractal.core.FractalFactory;
@@ -47,10 +49,9 @@ public class ContextFreeFactory implements FractalFactory {
 	 */
 	@Override
 	public Session createSession() {
-//		MandelbrotSession session = new MandelbrotSession();
-//        session.setSource(getInitialSource());
-//		return session;
-		return null;
+		ContextFreeSession session = new ContextFreeSession();
+        session.setSource(getInitialSource());
+		return session;
 	}
 	
 	/**
@@ -58,7 +59,7 @@ public class ContextFreeFactory implements FractalFactory {
 	 */
 	@Override
 	public Pane createEditorPane(Session session) {
-		return null;//new MandelbrotEditorPane(session);
+		return new EditorPane(session);
 	}
 
 	/**
@@ -66,7 +67,7 @@ public class ContextFreeFactory implements FractalFactory {
 	 */
 	@Override
 	public Pane createRenderPane(Session session, int width, int height) {
-		return null;//new MandelbrotRenderPane(session, width, height, 1, 1);
+		return new RenderPane(session, width, height, 1, 1);
 	}
 
 	protected String getInitialSource() {
@@ -79,6 +80,6 @@ public class ContextFreeFactory implements FractalFactory {
 	 */
 	@Override
 	public ImageGenerator createImageGenerator(ThreadFactory threadFactory,	RendererFactory renderFactory, RendererTile tile, boolean opaque) {
-		return null;//new MandelbrotImageGenerator(threadFactory, renderFactory, tile);
+		return new ContextFreeImageGenerator(threadFactory, renderFactory, tile, opaque);
 	}
 }

@@ -33,6 +33,7 @@ import com.nextbreakpoint.nextfractal.core.export.ExportSession;
 public abstract class AbstractSession implements Session {
 	private final List<SessionListener> listeners = new ArrayList<>();
 	private final List<ExportSession> sessions = new ArrayList<>();
+	private final List<String> grammars = new ArrayList<>();
 	private ExportService exportService;
 
 	public void addSessionListener(SessionListener listener) {
@@ -53,6 +54,14 @@ public abstract class AbstractSession implements Session {
 
 	public void terminate() {
 		fireTerminate();
+	}
+
+	public void addGrammars(List<String> grammars) {
+		this.grammars.addAll(grammars);
+	}
+
+	public List<String> listGrammars() {
+		return grammars;
 	}
 
 	public void addExportSession(ExportSession exportSession) {
@@ -80,6 +89,13 @@ public abstract class AbstractSession implements Session {
 	protected void fireSessionRemoved(ExportSession session) {
 		for (SessionListener listener : listeners) {
 			listener.sessionRemoved(this, session);
+		}
+	}
+
+	@Override
+	public void selectGrammar(String grammar) {
+		for (SessionListener listener : listeners) {
+			listener.selectGrammar(this, grammar);
 		}
 	}
 }

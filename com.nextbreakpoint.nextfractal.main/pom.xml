@@ -122,13 +122,11 @@
 			<artifactId>com.nextbreakpoint.nextfractal.mandelbrot</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		<!-- 
 		<dependency>
 			<groupId>com.nextbreakpoint.nextfractal</groupId>
 			<artifactId>com.nextbreakpoint.nextfractal.contextfree</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		 -->
 		<dependency>
 			<groupId>com.nextbreakpoint</groupId>
 			<artifactId>com.nextbreakpoint.ffmpeg4java</artifactId>

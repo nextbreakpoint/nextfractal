@@ -22,33 +22,31 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.core.session;
+package com.nextbreakpoint.nextfractal.contextfree;
 
-import com.nextbreakpoint.nextfractal.core.export.ExportService;
-import com.nextbreakpoint.nextfractal.core.export.ExportSession;
+public interface ContextFreeListener {
+	/**
+	 * @param session
+	 */
+	public void dataChanged(ContextFreeSession session);
 
-import java.util.List;
+	/**
+	 * @param session
+	 */
+	public void sourceChanged(ContextFreeSession session);
 
-public interface Session {
-	public void terminate();
+	/**
+	 * @param session
+	 */
+	public void reportChanged(ContextFreeSession session);
 
-	public ExportService getExportService();
+	/**
+	 * @param session
+	 */
+    public void statusChanged(ContextFreeSession session);
 
-	public void setExportService(ExportService exportService);
-
-	public void addExportSession(ExportSession exportSession);
-
-	public void removeExportSession(ExportSession exportSession);
-
-	public void addSessionListener(SessionListener sessionListener);
-
-	public void removeSessionListener(SessionListener sessionListener);
-
-    public void selectGrammar(String grammar);
-
-	public void addGrammars(List<String> grammars);
-
-	public List<String> listGrammars();
-
-	public String getGrammar();
+	/**
+	 * @param session
+	 */
+	public void errorChanged(ContextFreeSession session);
 }

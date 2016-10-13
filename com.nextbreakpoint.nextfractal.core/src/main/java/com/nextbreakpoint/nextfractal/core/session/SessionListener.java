@@ -43,4 +43,10 @@ public interface SessionListener {
 	 * @param exportSession
 	 */
 	public void sessionRemoved(Session session, ExportSession exportSession);
+
+	/**
+	 * @param session
+	 * @param grammar
+	 */
+    public void selectGrammar(Session session, String grammar);
 }

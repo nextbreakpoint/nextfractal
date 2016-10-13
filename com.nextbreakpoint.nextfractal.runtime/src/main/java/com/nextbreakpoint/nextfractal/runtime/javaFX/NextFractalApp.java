@@ -25,13 +25,20 @@
 package com.nextbreakpoint.nextfractal.runtime.javaFX;
 
 import java.io.InputStream;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import com.nextbreakpoint.Try;
+import com.nextbreakpoint.nextfractal.runtime.Plugins;
 import javafx.application.Application;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.ButtonBar.ButtonData;
@@ -95,11 +102,7 @@ public class NextFractalApp extends Application {
 
 		logger.info("Scene Size = (" + sceneWidth + "," + sceneHeight + ")");
 		
-        String initialPluginId = DEFAULT_PLUGIN_ID;
-
         StackPane rootPane = new StackPane();
-
-		rootPane.getChildren().add(createMainPane(editorWidth, renderWidth, sceneHeight));
 
 		ExportRenderer exportRenderer = new SimpleExportRenderer(createDefaultThreadFactory("NextFractalRender"), new JavaFXRendererFactory());
 
@@ -107,29 +110,61 @@ public class NextFractalApp extends Application {
 
 		printPlugins();
 
-		Try<Session, Exception> maybeSession = createSession(initialPluginId).onSuccess(this::sessionCreated).execute();
-
-		maybeSession.ifPresent(session -> session.setExportService(exportService));
-
-		maybeSession.flatMap(session -> createRenderPane(session, initialPluginId, renderWidth, sceneHeight)).ifPresent(renderRootPane::setCenter);
-
-		maybeSession.flatMap(session -> createEditorPane(session, initialPluginId)).ifPresent(editorRootPane::setCenter);
+		rootPane.getChildren().add(createMainPane(editorWidth, renderWidth, sceneHeight));
 
         Scene scene = new Scene(rootPane, sceneWidth, sceneHeight);
 
 		createMenuBar();
 
 		loadStyleSheets(scene);
-		
+
+		DoubleProperty fontSize = new SimpleDoubleProperty(Screen.getPrimary().getDpi() > 100 ? 12 : 8); // font size in pt
+		rootPane.styleProperty().bind(Bindings.format("-fx-font-size: %.2fpt;", fontSize));
+
 		primaryStage.setScene(scene);
 		primaryStage.setResizable(false);
 		primaryStage.sizeToScene();
 		primaryStage.setTitle(getApplicationName());
-        primaryStage.show();
-		primaryStage.setOnCloseRequest(e -> maybeSession.ifPresent(Session::terminate));
 
-		maybeSession.ifPresent(session -> session.addSessionListener(new DefaultSessionListener(exportService)));
-    }
+		createPanels(DEFAULT_PLUGIN_ID, renderWidth, sceneHeight, exportService, primaryStage);
+
+		primaryStage.show();
+	}
+
+	private void createPanels(String pluginId, int renderWidth, int renderHeight, ExportService exportService, Stage primaryStage) {
+		logger.info("Create user interface for plugin " + pluginId);
+
+		disposePanels();
+
+		primaryStage.setOnCloseRequest(e -> {});
+
+		Try<Session, Exception> maybeSession = createSession(pluginId).onSuccess(this::sessionCreated).execute();
+
+		maybeSession.ifPresent(session -> session.addGrammars(listGrammars()));
+
+		maybeSession.ifPresent(session -> session.setExportService(exportService));
+
+		maybeSession.flatMap(session -> createRenderPane(session, pluginId, renderWidth, renderHeight)).ifPresent(renderRootPane::setCenter);
+
+		maybeSession.flatMap(session -> createEditorPane(session, pluginId)).ifPresent(editorRootPane::setCenter);
+
+		maybeSession.ifPresent(session -> session.addSessionListener(new DefaultSessionListener(pluginId, renderWidth, renderHeight, exportService, primaryStage)));
+
+		Consumer<Session> terminate = session -> session.terminate();
+
+		Consumer<Session> dispose = session -> disposePanels();
+
+		primaryStage.setOnCloseRequest(e -> maybeSession.ifPresent(terminate.andThen(dispose)));
+	}
+
+	private void disposePanels() {
+		renderRootPane.setCenter(null);
+		editorRootPane.setCenter(null);
+	}
+
+	private List<String> listGrammars() {
+		return Plugins.pluginsStream().map(plugin -> plugin.createSession().getGrammar()).sorted().collect(Collectors.toList());
+	}
 
 	private DefaultThreadFactory createDefaultThreadFactory(String name) {
 		return new DefaultThreadFactory(name, true, Thread.MIN_PRIORITY);
@@ -321,11 +356,19 @@ public class NextFractalApp extends Application {
 		return image;
 	}
 
-	private static class DefaultSessionListener implements SessionListener {
+	private class DefaultSessionListener implements SessionListener {
 		private final ExportService exportService;
+		private String pluginId;
+		private int renderWidth;
+		private int renderHeight;
+		private Stage primaryStage;
 
-		public DefaultSessionListener(ExportService exportService) {
+		public DefaultSessionListener(String pluginId, int renderWidth, int renderHeight, ExportService exportService, Stage primaryStage) {
 			this.exportService = exportService;
+			this.pluginId = pluginId;
+			this.renderWidth = renderWidth;
+			this.renderHeight = renderHeight;
+			this.primaryStage = primaryStage;
 		}
 
 		@Override
@@ -340,5 +383,11 @@ public class NextFractalApp extends Application {
 		@Override
         public void sessionRemoved(Session session, ExportSession exportSession) {
         }
+
+		@Override
+		public void selectGrammar(Session session, String grammar) {
+			Plugins.pluginsStream().filter(plugin -> plugin.createSession().getGrammar().equals(grammar)).findFirst()
+					.ifPresent(plugin -> createPanels(plugin.getId(), renderWidth, renderHeight, exportService, primaryStage));
+		}
 	}
 }

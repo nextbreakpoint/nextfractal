@@ -22,33 +22,20 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.core.session;
-
-import com.nextbreakpoint.nextfractal.core.export.ExportService;
-import com.nextbreakpoint.nextfractal.core.export.ExportSession;
+package com.nextbreakpoint.nextfractal.contextfree.compiler;
 
 import java.util.List;
 
-public interface Session {
-	public void terminate();
+public class CompilerSourceException extends Exception {
+	private static final long serialVersionUID = 1L;
+	private List<CompilerError> errors;
 
-	public ExportService getExportService();
-
-	public void setExportService(ExportService exportService);
-
-	public void addExportSession(ExportSession exportSession);
-
-	public void removeExportSession(ExportSession exportSession);
-
-	public void addSessionListener(SessionListener sessionListener);
-
-	public void removeSessionListener(SessionListener sessionListener);
-
-    public void selectGrammar(String grammar);
-
-	public void addGrammars(List<String> grammars);
-
-	public List<String> listGrammars();
-
-	public String getGrammar();
+	public CompilerSourceException(String message, List<CompilerError> errors) {
+		super(message);
+		this.errors = errors;
+	}
+	
+	public List<CompilerError> getErrors() {
+		return errors;
+	}
 }

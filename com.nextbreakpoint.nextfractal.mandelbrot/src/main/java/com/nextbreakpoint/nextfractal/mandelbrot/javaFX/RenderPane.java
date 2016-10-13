@@ -360,6 +360,10 @@ public class RenderPane extends BorderPane implements ToolContext {
 			@Override
 			public void sessionRemoved(Session session, ExportSession exportSession) {
 			}
+
+			@Override
+			public void selectGrammar(Session session, String grammar) {
+			}
 		});
 		
 		Pane stackPane = new Pane();
@@ -516,6 +520,12 @@ public class RenderPane extends BorderPane implements ToolContext {
 	@Override
 	public RendererFactory getRendererFactory() {
 		return renderFactory;
+	}
+
+	@Override
+	protected void finalize() throws Throwable {
+		dispose();
+		super.finalize();
 	}
 
 	private void updateErrors(Pane panel, String error) {
@@ -679,8 +689,8 @@ public class RenderPane extends BorderPane implements ToolContext {
 				if (time - last > FRAME_LENGTH_IN_MILLIS) {
 					if (!disableTool) {
 						processRenderErrors();
-						redrawIfPixelsChanged(fractalCanvas);
-						redrawIfJuliaPixelsChanged(juliaCanvas);
+//						redrawIfPixelsChanged(fractalCanvas);
+//						redrawIfJuliaPixelsChanged(juliaCanvas);
 						redrawIfPointChanged(pointCanvas);
 						redrawIfOrbitChanged(orbitCanvas);
 						redrawIfTrapChanged(trapCanvas);

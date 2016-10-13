@@ -1,9 +1,9 @@
-.application .mandelbrot .toolbar {
+.application .contextfree .toolbar {
 	-fx-alignment: center;
 	-fx-background-color: white;
 }
 
-.application .mandelbrot .toolbar .button {
+.application .contextfree .toolbar .button {
 	-fx-background-color: transparent;
 	-fx-focus-color: transparent;
 	-fx-faint-focus-color: transparent;
@@ -11,11 +11,11 @@
 	-fx-opacity: 1.0;
 }
 
-.application .mandelbrot .toolbar .button:armed {
+.application .contextfree .toolbar .button:armed {
 	-fx-opacity: 0.5;
 }
 
-.application .mandelbrot .toolbar .toggle-button {
+.application .contextfree .toolbar .toggle-button {
 	-fx-background-color: transparent;
 	-fx-focus-color: transparent;
 	-fx-faint-focus-color: transparent;
@@ -23,43 +23,43 @@
 	-fx-opacity: 0.5;
 }
 
-.application .mandelbrot .toolbar .toggle-button:armed {
+.application .contextfree .toolbar .toggle-button:armed {
 	-fx-opacity: 1.0;
 }
 
-.application .mandelbrot .toolbar .toggle-button:selected {
+.application .contextfree .toolbar .toggle-button:selected {
 	-fx-opacity: 1.0;
 }
 
-.application .mandelbrot .menubar {
+.application .contextfree .menubar {
 	-fx-background-color: white;
 	-fx-border-width: 0 0 1 0;
 	-fx-border-color: #f0f0f0;
 }
 
-.application .mandelbrot .sidebar {
+.application .contextfree .sidebar {
 	-fx-border-width: 0 0 0 1;
 	-fx-border-color: #f0f0f0;
 	-fx-background-color: white;
 }
 
-.application .mandelbrot .browse {
+.application .contextfree .browse {
 	-fx-alignment: center;
 	-fx-padding: 0px;
 	-fx-background-color: lightgray;
 	-fx-opacity: 1;
 }
 
-.application .mandelbrot .browse .title {
+.application .contextfree .browse .title {
     -fx-font-weight: bold;
 	-fx-padding: 15px;
 }
 
-.application .mandelbrot .browse .controls {
+.application .contextfree .browse .controls {
 	-fx-padding: 10px;
 }
 
-.application .mandelbrot .browse .buttons {
+.application .contextfree .browse .buttons {
 	-fx-alignment: center-left;
 	-fx-background-color: white;
 	-fx-min-height: 60px;
@@ -67,106 +67,106 @@
 	-fx-padding: 0 20px 0 20px;
 }
 
-.application .mandelbrot .browse .grid-view {
+.application .contextfree .browse .grid-view {
 	-fx-background-color: white;
 }
 
-.application .mandelbrot .browse .items-label {
+.application .contextfree .browse .items-label {
     -fx-padding: 0 20px 0 10px;
 }
 
-.application .mandelbrot .params {
+.application .contextfree .params {
 	-fx-padding: 8px;
 }
 
-.application .mandelbrot .params .encoded {
+.application .contextfree .params .encoded {
 	-fx-border-width: 1 1 1 1;
 	-fx-border-color: #b0b0b0;
 	-fx-border-radius: 3;
 }
 
-.application .mandelbrot .params .text-area {
+.application .contextfree .params .text-area {
 	-fx-background-color: #fbfbfb;
 }
 
-.application .mandelbrot .params .text-area .content {
+.application .contextfree .params .text-area .content {
 	-fx-background-color: #fbfbfb #fbfbfb black black;
 	-fx-background-insets: 0, 0, 1, 2;
 }
 
-.application .mandelbrot .params .text-area:focused .content {
+.application .contextfree .params .text-area:focused .content {
 	-fx-background-color: #fbfbfb #fbfbfb black black;
 	-fx-background-insets: 0, 0, 1, 2;
 }
 
-.application .mandelbrot .export {
+.application .contextfree .export {
 	-fx-background-color: white;
 	-fx-padding: 8px;
 }
 
-.application .mandelbrot .source {
+.application .contextfree .source {
 	-fx-border-width: 0;
 }
 
-.application .mandelbrot .status {
+.application .contextfree .status {
 	-fx-border-width: 1 0 0 0;
 	-fx-border-color: #f0f0f0;
 }
 
-.application .mandelbrot .errors {
+.application .contextfree .errors {
 	-fx-border-width: 2 2 2 2;
 	-fx-border-color: red;
 }
 
-.application .mandelbrot .keyword {
+.application .contextfree .keyword {
     -fx-fill: blue;
     -fx-font-weight: bold;
 }
 
-.application .mandelbrot .error {
+.application .contextfree .error {
     -fx-fill: red;
     -fx-font-weight: bold;
 }
 
-.application .mandelbrot .pathop {
+.application .contextfree .pathop {
     -fx-fill: orange;
     -fx-font-weight: bold;
 }
 
-.application .mandelbrot .operator {
+.application .contextfree .operator {
     -fx-fill: green;
     -fx-font-weight: bold;
 }
 
-.application .mandelbrot .paren {
+.application .contextfree .paren {
     -fx-fill: purple;
     -fx-font-weight: bold;
 }
 
-.application .mandelbrot .function {
+.application .contextfree .function {
     -fx-fill: brown;
     -fx-font-weight: bold;
 }
 
-.application .mandelbrot .brace {
+.application .contextfree .brace {
     -fx-fill: black;
     -fx-font-weight: bold;
 }
 
-.application .mandelbrot .code {
+.application .contextfree .code {
     -fx-fill: #808080;
     -fx-font-weight: bold;
 }
 
-.application .mandelbrot .translucent {
+.application .contextfree .translucent {
 	-fx-background-color: white;
 	-fx-opacity: 0.9;
 }
 
-.application .mandelbrot .opaque {
+.application .contextfree .opaque {
 	-fx-background-color: white;
 }
 
-.application .mandelbrot .text-small {
+.application .contextfree .text-small {
     -fx-font-size: 0.8em;
 }

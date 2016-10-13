@@ -22,7 +22,7 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
+package com.nextbreakpoint.nextfractal.contextfree.javaFX;
 
 import com.nextbreakpoint.nextfractal.core.javaFX.AdvancedTextField;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;

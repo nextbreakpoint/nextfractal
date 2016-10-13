@@ -186,8 +186,19 @@ public class BrowsePane extends BorderPane {
 
 	@Override
 	protected void finalize() throws Throwable {
+		shutdown();
 		removeItems();
 		super.finalize();
+	}
+
+	private void shutdown() {
+		List<ExecutorService> executors = Arrays.asList(executor);
+		executors.forEach(executor -> executor.shutdownNow());
+		executors.forEach(executor -> Block.create(ExecutorService.class).andThen(e -> await(e)).tryExecute(executor));
+	}
+
+	private void await(ExecutorService executor) throws InterruptedException {
+		executor.awaitTermination(5000, TimeUnit.MILLISECONDS);
 	}
 
 	private ImageView createIconImage(String name, double percentage) {

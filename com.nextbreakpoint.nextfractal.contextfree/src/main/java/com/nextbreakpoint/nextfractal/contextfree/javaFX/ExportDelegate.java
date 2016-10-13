@@ -22,33 +22,10 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.core.session;
+package com.nextbreakpoint.nextfractal.contextfree.javaFX;
 
-import com.nextbreakpoint.nextfractal.core.export.ExportService;
-import com.nextbreakpoint.nextfractal.core.export.ExportSession;
+import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 
-import java.util.List;
-
-public interface Session {
-	public void terminate();
-
-	public ExportService getExportService();
-
-	public void setExportService(ExportService exportService);
-
-	public void addExportSession(ExportSession exportSession);
-
-	public void removeExportSession(ExportSession exportSession);
-
-	public void addSessionListener(SessionListener sessionListener);
-
-	public void removeSessionListener(SessionListener sessionListener);
-
-    public void selectGrammar(String grammar);
-
-	public void addGrammars(List<String> grammars);
-
-	public List<String> listGrammars();
-
-	public String getGrammar();
+public interface ExportDelegate {
+	public void createSession(RendererSize rendererSize);
 }

@@ -22,33 +22,44 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.core.session;
+package com.nextbreakpoint.nextfractal.contextfree.core;
 
-import com.nextbreakpoint.nextfractal.core.export.ExportService;
-import com.nextbreakpoint.nextfractal.core.export.ExportSession;
+public class RendererError {
+	private long line;
+	private long charPositionInLine;
+	private long index;
+	private long length;
+	private String message;
 
-import java.util.List;
+	public RendererError(long line, long charPositionInLine, long index, long length, String message) {
+		this.line = line;
+		this.index = index;
+		this.charPositionInLine = charPositionInLine;
+		this.message = message;
+	}
 
-public interface Session {
-	public void terminate();
+	public long getLine() {
+		return line;
+	}
 
-	public ExportService getExportService();
+	public long getCharPositionInLine() {
+		return charPositionInLine;
+	}
 
-	public void setExportService(ExportService exportService);
+	public String getMessage() {
+		return message;
+	}
+	
+	public long getLength() {
+		return length;
+	}
+	
+	public long getIndex() {
+		return index;
+	}
 
-	public void addExportSession(ExportSession exportSession);
-
-	public void removeExportSession(ExportSession exportSession);
-
-	public void addSessionListener(SessionListener sessionListener);
-
-	public void removeSessionListener(SessionListener sessionListener);
-
-    public void selectGrammar(String grammar);
-
-	public void addGrammars(List<String> grammars);
-
-	public List<String> listGrammars();
-
-	public String getGrammar();
+	@Override
+	public String toString() {
+		return "[" + line + ":" + charPositionInLine + ":" + index + ":" + length + "] " + message;
+	}
 }

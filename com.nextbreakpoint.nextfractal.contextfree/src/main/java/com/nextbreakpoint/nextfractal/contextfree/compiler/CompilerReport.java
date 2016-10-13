@@ -22,33 +22,48 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.core.session;
+package com.nextbreakpoint.nextfractal.contextfree.compiler;
 
-import com.nextbreakpoint.nextfractal.core.export.ExportService;
-import com.nextbreakpoint.nextfractal.core.export.ExportSession;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDG;
 
 import java.util.List;
 
-public interface Session {
-	public void terminate();
+public class CompilerReport {
+	private CFDG ast;
+	private Type type;
+	private String orbitSource;
+	private String colorSource;
+	private List<CompilerError> errors;
 
-	public ExportService getExportService();
+	public CompilerReport(CFDG ast, Type type, String orbitSource, String colorSource, List<CompilerError> errors) {
+		this.ast = ast;
+		this.type = type;
+		this.orbitSource = orbitSource;
+		this.colorSource = colorSource;
+		this.errors = errors;
+	}
 
-	public void setExportService(ExportService exportService);
+	public CFDG getAST() {
+		return ast;
+	}
 
-	public void addExportSession(ExportSession exportSession);
+	public String getOrbitSource() {
+		return orbitSource;
+	}
 
-	public void removeExportSession(ExportSession exportSession);
+	public String getColorSource() {
+		return colorSource;
+	}
 
-	public void addSessionListener(SessionListener sessionListener);
+	public List<CompilerError> getErrors() {
+		return errors;
+	}
 
-	public void removeSessionListener(SessionListener sessionListener);
+	public Type getType() {
+		return type;
+	}
 
-    public void selectGrammar(String grammar);
-
-	public void addGrammars(List<String> grammars);
-
-	public List<String> listGrammars();
-
-	public String getGrammar();
+	public enum Type {
+		JAVA, INTERPRETER
+	}
 }
