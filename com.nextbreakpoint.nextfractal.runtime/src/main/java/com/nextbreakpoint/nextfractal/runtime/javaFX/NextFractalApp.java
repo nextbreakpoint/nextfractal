@@ -114,9 +114,9 @@ public class NextFractalApp extends Application {
 
         Scene scene = new Scene(rootPane, sceneWidth, sceneHeight);
 
-		createMenuBar();
-
 		loadStyleSheets(scene);
+
+		createMenuBar();
 
 		DoubleProperty fontSize = new SimpleDoubleProperty(Screen.getPrimary().getDpi() > 100 ? 12 : 8); // font size in pt
 		rootPane.styleProperty().bind(Bindings.format("-fx-font-size: %.2fpt;", fontSize));

@@ -68,6 +68,7 @@ import org.fxmisc.richtext.StyleSpansBuilder;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
@@ -775,10 +776,15 @@ public class EditorPane extends BorderPane {
 		return (MandelbrotSession) session;
 	}
 
+	private String createFileName() {
+		SimpleDateFormat df = new SimpleDateFormat("YYYY-MM-DD_HH-mm-ss");
+		return df.format(new Date());
+	}
+
 	private void ensureExportFileChooser(String suffix) {
 		if (exportFileChooser == null) {
 			exportFileChooser = new FileChooser();
-			exportFileChooser.setInitialFileName("mandel" + suffix);
+			exportFileChooser.setInitialFileName(createFileName() + suffix);
 			exportFileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
 		}
 	}
@@ -786,7 +792,7 @@ public class EditorPane extends BorderPane {
 	private void ensureGrammarFileChooser(String suffix) {
 		if (grammarFileChooser == null) {
 			grammarFileChooser = new FileChooser();
-			grammarFileChooser.setInitialFileName("mandel" + suffix);
+			grammarFileChooser.setInitialFileName(createFileName() + suffix);
 			grammarFileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
 		}
 	}

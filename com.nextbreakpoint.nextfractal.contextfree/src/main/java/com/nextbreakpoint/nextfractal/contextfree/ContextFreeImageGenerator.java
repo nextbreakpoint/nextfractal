@@ -51,6 +51,7 @@ public class ContextFreeImageGenerator implements ImageGenerator {
 		ContextFreeData generatorData = (ContextFreeData)data;
 		RendererSize suggestedSize = tile.getTileSize();
 		int[] pixels = new int[suggestedSize.getWidth() * suggestedSize.getHeight()];
+		for (int i = 0; i < pixels.length; i++) pixels[i] = 0xFF000000;
 		IntBuffer buffer = IntBuffer.wrap(pixels);
 		try {
 //			Compiler compiler = new Compiler();

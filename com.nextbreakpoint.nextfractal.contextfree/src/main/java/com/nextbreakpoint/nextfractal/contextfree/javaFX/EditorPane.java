@@ -41,6 +41,7 @@ import com.nextbreakpoint.nextfractal.core.session.SessionListener;
 import com.nextbreakpoint.nextfractal.core.utils.Block;
 import com.nextbreakpoint.nextfractal.core.utils.DefaultThreadFactory;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import com.nextbreakpoint.nextfractal.contextfree.compiler.Compiler;
@@ -139,16 +140,8 @@ public class EditorPane extends BorderPane {
 		jobsList.setCellFactory(listView -> new ExportListCell(generator.getSize(), generatorTile));
 
 		BorderPane historyPane = new BorderPane();
-//		BorderPane historyButtons = new BorderPane();
-//		Button clearButton = new Button("", createIconImage("/icon-clear.png"));
-//		clearButton.setTooltip(new Tooltip("Remove all elements"));
-//		historyButtons.setRight(clearButton);
-//		historyButtons.getStyleClass().add("menubar");
 		historyPane.setCenter(historyList);
-//		historyPane.setBottom(historyButtons);
 		historyList.getSelectionModel().getSelectedItems().addListener((Change<? extends ContextFreeData> c) -> historyItemSelected(historyList));
-//		clearButton.setOnAction(e -> Block.create((Block<ListView<ContextFreeData>,Exception>)(list -> logger.info("Clear history")))
-//				.andThen(list -> historyRemoveAllItems(list)).andThen(list -> addDataToHistory(list)).tryExecute(historyList));
 
 		BorderPane jobsPane = new BorderPane();
 		HBox jobsButtons = new HBox(0);
@@ -174,7 +167,7 @@ public class EditorPane extends BorderPane {
 		resumeButton.setOnAction(e -> selectedItems(jobsList).filter(exportSession -> exportSession.isSuspended()).forEach(exportSession -> session.getExportService().resumeSession(exportSession)));
 		removeButton.setOnAction(e -> selectedItems(jobsList).forEach(exportSession -> session.getExportService().stopSession(exportSession)));
 
-//		ParamsPane paramsPane = new ParamsPane(getContextFreeSession());
+		ParamsPane paramsPane = new ParamsPane(getContextFreeSession());
 
 		ExportPane exportPane = new ExportPane();
 
@@ -182,10 +175,10 @@ public class EditorPane extends BorderPane {
 		sidePane.getChildren().add(jobsPane);
 		sidePane.getChildren().add(historyPane);
 		sidePane.getChildren().add(exportPane);
-//		sidePane.getChildren().add(paramsPane);
+		sidePane.getChildren().add(paramsPane);
 
 		historyPane.getStyleClass().add("sidebar");
-//		paramsPane.getStyleClass().add("sidebar");
+		paramsPane.getStyleClass().add("sidebar");
 		exportPane.getStyleClass().add("sidebar");
 		jobsPane.getStyleClass().add("sidebar");
 
@@ -255,7 +248,7 @@ public class EditorPane extends BorderPane {
 
 		errorProperty.addListener((source, oldValue, newValue) -> {
 			exportPane.setDisable(newValue != null);
-//			paramsPane.setDisable(newValue != null);
+			paramsPane.setDisable(newValue != null);
 		});
 
 		historyButton.selectedProperty().addListener((source, oldValue, newValue) -> {
@@ -265,12 +258,12 @@ public class EditorPane extends BorderPane {
 			}
 		});
 
-//		paramsButton.selectedProperty().addListener((source, oldValue, newValue) -> {
-//			if (newValue) {
-//				sidePane.getChildren().remove(paramsPane);
-//				sidePane.getChildren().add(paramsPane);
-//			}
-//		});
+		paramsButton.selectedProperty().addListener((source, oldValue, newValue) -> {
+			if (newValue) {
+				sidePane.getChildren().remove(paramsPane);
+				sidePane.getChildren().add(paramsPane);
+			}
+		});
 
 		jobsButton.selectedProperty().addListener((source, oldValue, newValue) -> {
 			if (newValue) {
@@ -404,11 +397,11 @@ public class EditorPane extends BorderPane {
 		sidePane.widthProperty().addListener((observable, oldValue, newValue) -> {
 			double width = newValue.doubleValue();
 			historyPane.setPrefWidth(width);
-//			paramsPane.setPrefWidth(width);
+			paramsPane.setPrefWidth(width);
 			exportPane.setPrefWidth(width);
 			jobsPane.setPrefWidth(width);
 			historyPane.setMaxWidth(width);
-//			paramsPane.setMaxWidth(width);
+			paramsPane.setMaxWidth(width);
 			exportPane.setMaxWidth(width);
 			jobsPane.setMaxWidth(width);
 		});
@@ -416,11 +409,11 @@ public class EditorPane extends BorderPane {
 		sidePane.heightProperty().addListener((observable, oldValue, newValue) -> {
 			double height = newValue.doubleValue();
 			historyPane.setPrefHeight(height);
-//			paramsPane.setPrefHeight(height);
+			paramsPane.setPrefHeight(height);
 			exportPane.setPrefHeight(height);
 			jobsPane.setPrefHeight(height);
 			historyPane.setMaxHeight(height);
-//			paramsPane.setMaxHeight(height);
+			paramsPane.setMaxHeight(height);
 			exportPane.setMaxHeight(height);
 			jobsPane.setMaxHeight(height);
 		});
@@ -665,11 +658,11 @@ public class EditorPane extends BorderPane {
 
 	private void initHighlightingPattern() {
 		String[] KEYWORDS = new String[] {
-	        "fractal", "orbit", "color", "begin", "loop", "end", "rule", "trap", "palette", "if", "else", "stop", "init"
+	        "cfdg"
 		};
 		
 		String[] FUNCTIONS = new String[] {
-		        "re", "im", "mod", "pha", "log", "exp", "sqrt", "mod2", "abs", "ceil", "floor", "pow", "hypot", "atan2", "min", "max", "cos", "sin", "tan", "asin", "acos", "atan"
+		        "log"
 		};
 		
 		String[] PATHOP = new String[] {
@@ -756,18 +749,19 @@ public class EditorPane extends BorderPane {
 		historyList.getItems().add(0, data);
 	}
 
-	private void historyRemoveAllItems(ListView<ContextFreeData> historyList) {
-		historyList.getItems().clear();
-	}
-	
 	private ContextFreeSession getContextFreeSession() {
 		return (ContextFreeSession) session;
+	}
+
+	private String createFileName() {
+		SimpleDateFormat df = new SimpleDateFormat("YYYY-MM-DD_HH-mm-ss");
+		return df.format(new Date());
 	}
 
 	private void ensureExportFileChooser(String suffix) {
 		if (exportFileChooser == null) {
 			exportFileChooser = new FileChooser();
-			exportFileChooser.setInitialFileName("cfdg" + suffix);
+			exportFileChooser.setInitialFileName(createFileName() + suffix);
 			exportFileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
 		}
 	}
@@ -775,7 +769,7 @@ public class EditorPane extends BorderPane {
 	private void ensureGrammarFileChooser(String suffix) {
 		if (grammarFileChooser == null) {
 			grammarFileChooser = new FileChooser();
-			grammarFileChooser.setInitialFileName("cfdg" + suffix);
+			grammarFileChooser.setInitialFileName(createFileName() + suffix);
 			grammarFileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
 		}
 	}
