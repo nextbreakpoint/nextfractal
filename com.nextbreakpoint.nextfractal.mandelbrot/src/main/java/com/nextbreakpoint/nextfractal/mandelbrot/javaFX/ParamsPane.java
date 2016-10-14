@@ -105,7 +105,9 @@ public class ParamsPane extends Pane {
 		algorithmCombobox.getItems().add("Julia/Fatou");
 		algorithmCombobox.getStyleClass().add("text-small");
 		algorithmPane.getChildren().add(algorithmCombobox);
-		box.getChildren().add(grammarPane);
+		if (grammarCombobox.getItems().size() > 1) {
+			box.getChildren().add(grammarPane);
+		}
 		box.getChildren().add(algorithmPane);
 		box.getChildren().add(translationPane);
 		box.getChildren().add(rotationPane);

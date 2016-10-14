@@ -59,7 +59,9 @@ public class ParamsPane extends Pane {
 		session.listGrammars().forEach(grammar -> grammarCombobox.getItems().add(grammar));
 		grammarCombobox.getStyleClass().add("text-small");
 		grammarPane.getChildren().add(grammarCombobox);
-		box.getChildren().add(grammarPane);
+		if (grammarCombobox.getItems().size() > 1) {
+			box.getChildren().add(grammarPane);
+		}
 		VBox buttons = new VBox(4);
 		Button applyButton = new Button("Apply");
 		Button cancelButton = new Button("Cancel"); 
