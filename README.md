@@ -13,8 +13,6 @@ You should have received a copy of the GNU General Public License along with Nex
 
 NextFractal is an application for creating fractals. Fractals are created processing a script written in M language which is a DSL designed to define Mandelbrot or Julia sets. NextFractal supports also continuous zooming of Mandelbrot and Julia sets and it supports exporting of images as PNG.
 
-NextFractal is the continuation of my old software for generating fractals which I started in 2000. I aim to continue delivering free software which everybody can use to enjoy fractals.
-
 
 ## HOW TO INSTALL
 
@@ -24,17 +22,17 @@ You can download the latest SDK from http://www.oracle.com/technetwork/java/java
 
 ## HOW TO RUN
 
-For Mac OS X click on the app. For Windows click on NextFractal.bat. For Linux run script NextFractal.sh.
+For Mac OS X click on NextFractal app. For Windows click on NextFractal.bat. For Linux run script NextFractal.sh.
 
 
 ## HOW TO USE
 
-Please visit the official site http://nextfractal.nextbreakpoint.com.
+Please visit the official site http://nextbreakpoint.com/nextfractal.
 
 
 ## HOW TO BUILD
 
-Download and install Maven and Ant. 
+Download and install Apache Maven and Apache Ant. 
 Add mvn and ant to your command path and set environment variable M2_HOME to Maven path. 
 Checkout or download the source code from https://github.com/nextbreakpoint/nextfractal.
 Open a terminal and execute "ant" command in project's root folder.
