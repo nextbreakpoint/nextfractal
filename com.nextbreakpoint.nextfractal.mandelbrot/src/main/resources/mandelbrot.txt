@@ -1,10 +1,5 @@
 fractal {
-	orbit [-3.0 - 1.5i,+0 + 1.5i] [x,n] {
-		begin {
-			if (julia) {
-				x = x + 0.5;
-			}
-		}
+	orbit [-2.0 - 2.0i,+2.0 + 2.0i] [x,n] {
 		loop [0, 200] (mod2(x) > 40) {
 			x = x * x + w;
 		}
