@@ -44,16 +44,12 @@ public class Compiler {
 	public CompilerReport compileReport(String source) throws IOException {
 //		JavaCompiler javaCompiler = getJavaCompiler();
 //		if (javaCompiler == null) {
-//			InterpreterReportCompiler compiler = new InterpreterReportCompiler();
-//			return compiler.generateReport(source);
+			InterpreterReportCompiler compiler = new InterpreterReportCompiler();
+			return compiler.generateReport(source);
 //		} else {
 //			JavaReportCompiler compiler = new JavaReportCompiler(packageName, className);
 //			return compiler.generateReport(source);
 //		}
-		return null;
+//		return null;
 	}
-	
-	public JavaCompiler getJavaCompiler() {
-		return !Boolean.getBoolean("contextfree.compiler.disabled") ? ToolProvider.getSystemJavaCompiler() : null;
-	}
-}	
+}

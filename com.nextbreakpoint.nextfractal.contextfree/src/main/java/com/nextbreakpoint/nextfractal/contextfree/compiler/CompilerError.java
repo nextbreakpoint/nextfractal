@@ -70,6 +70,6 @@ public class CompilerError {
 	}
 
 	public static enum ErrorType {
-		M_COMPILER, JAVA_COMPILER;
+		CFDG_COMPILER;
 	}
 }

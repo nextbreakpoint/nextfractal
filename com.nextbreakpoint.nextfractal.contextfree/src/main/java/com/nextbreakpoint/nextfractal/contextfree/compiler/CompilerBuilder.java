@@ -24,46 +24,10 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.compiler;
 
-import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDG;
-
 import java.util.List;
 
-public class CompilerReport {
-	private CFDG ast;
-	private Type type;
-	private String orbitSource;
-	private String colorSource;
-	private List<CompilerError> errors;
+public interface CompilerBuilder<T> {
+	public T build() throws InstantiationException, IllegalAccessException, CompilerSourceException;
 
-	public CompilerReport(CFDG ast, Type type, String orbitSource, String colorSource, List<CompilerError> errors) {
-		this.ast = ast;
-		this.type = type;
-		this.orbitSource = orbitSource;
-		this.colorSource = colorSource;
-		this.errors = errors;
-	}
-
-	public CFDG getAST() {
-		return ast;
-	}
-
-	public String getOrbitSource() {
-		return orbitSource;
-	}
-
-	public String getColorSource() {
-		return colorSource;
-	}
-
-	public List<CompilerError> getErrors() {
-		return errors;
-	}
-
-	public Type getType() {
-		return type;
-	}
-
-	public enum Type {
-		INTERPRETER
-	}
+	public List<CompilerError> getErrors();
 }

@@ -71,7 +71,6 @@ import org.fxmisc.richtext.StyleSpans;
 import org.fxmisc.richtext.StyleSpansBuilder;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.time.Duration;
 import java.util.concurrent.ExecutorService;
@@ -612,7 +611,7 @@ public class EditorPane extends BorderPane {
 			Collections.sort(errors, (o1, o2) -> o2.getIndex() < o1.getIndex() ? -1 : 1);
 			for (CompilerError error : errors) {
 				logger.info(error.toString());
-				if (error.getType() == CompilerError.ErrorType.M_COMPILER) {
+				if (error.getType() == CompilerError.ErrorType.CFDG_COMPILER) {
 					int lineEnd = (int)error.getIndex() + 1;
 					int lineBegin = (int)error.getIndex();
 					StyleSpansBuilder<Collection<String>> builder = new StyleSpansBuilder<>();
