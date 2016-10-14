@@ -689,8 +689,8 @@ public class RenderPane extends BorderPane implements ToolContext {
 				if (time - last > FRAME_LENGTH_IN_MILLIS) {
 					if (!disableTool) {
 						processRenderErrors();
-//						redrawIfPixelsChanged(fractalCanvas);
-//						redrawIfJuliaPixelsChanged(juliaCanvas);
+						redrawIfPixelsChanged(fractalCanvas);
+						redrawIfJuliaPixelsChanged(juliaCanvas);
 						redrawIfPointChanged(pointCanvas);
 						redrawIfOrbitChanged(orbitCanvas);
 						redrawIfTrapChanged(trapCanvas);

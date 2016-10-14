@@ -118,7 +118,7 @@ public class NextFractalApp extends Application {
 
 		createMenuBar();
 
-		DoubleProperty fontSize = new SimpleDoubleProperty(Screen.getPrimary().getDpi() > 100 ? 12 : 8); // font size in pt
+		DoubleProperty fontSize = new SimpleDoubleProperty(computeOptimalFontSize()); // font size in pt
 		rootPane.styleProperty().bind(Bindings.format("-fx-font-size: %.2fpt;", fontSize));
 
 		primaryStage.setScene(scene);
@@ -129,6 +129,22 @@ public class NextFractalApp extends Application {
 		createPanels(DEFAULT_PLUGIN_ID, renderWidth, sceneHeight, exportService, primaryStage);
 
 		primaryStage.show();
+	}
+
+	private int computeOptimalFontSize() {
+		int size = 8;
+
+		Screen screen = Screen.getPrimary();
+
+		if (screen.getDpi() > 100 || screen.getVisualBounds().getWidth() > 1200) {
+			size = 12;
+		}
+
+		if (screen.getDpi() > 200 || screen.getVisualBounds().getWidth() > 2400) {
+			size = 16;
+		}
+
+		return size;
 	}
 
 	private void createPanels(String pluginId, int renderWidth, int renderHeight, ExportService exportService, Stage primaryStage) {
