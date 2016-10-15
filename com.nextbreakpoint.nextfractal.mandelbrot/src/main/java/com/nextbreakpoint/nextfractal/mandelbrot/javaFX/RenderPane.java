@@ -196,8 +196,8 @@ public class RenderPane extends BorderPane implements ToolContext {
 		rotateButton.setTooltip(new Tooltip("Select rotate tool"));
 		pickButton.setTooltip(new Tooltip("Select pick tool"));
 		homeButton.setTooltip(new Tooltip("Reset region to initial value"));
-		orbitButton.setTooltip(new Tooltip("Toggle orbit and traps"));
-		juliaButton.setTooltip(new Tooltip("Toggle Julia mode"));
+		orbitButton.setTooltip(new Tooltip("Show/hide orbit and traps"));
+		juliaButton.setTooltip(new Tooltip("Enable/disable Julia mode"));
 		toolButtons.getChildren().add(browseButton);
 		toolButtons.getChildren().add(homeButton);
 		toolButtons.getChildren().add(zoominButton);

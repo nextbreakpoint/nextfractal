@@ -110,9 +110,9 @@ public class BrowsePane extends BorderPane {
 		Button closeButton = new Button("", createIconImage("/icon-back.png"));
 		Button reloadButton = new Button("", createIconImage("/icon-reload.png"));
 		Button chooseButton = new Button("", createIconImage("/icon-folder.png"));
-		closeButton.setTooltip(new Tooltip("Close browser"));
+		closeButton.setTooltip(new Tooltip("Close fractals browser"));
 		reloadButton.setTooltip(new Tooltip("Reload all fractals"));
-		chooseButton.setTooltip(new Tooltip("Select location of fractals"));
+		chooseButton.setTooltip(new Tooltip("Select source folder location"));
 
 		Label statusLabel = new Label("Initializing");
 		statusLabel.getStyleClass().add("items-label");

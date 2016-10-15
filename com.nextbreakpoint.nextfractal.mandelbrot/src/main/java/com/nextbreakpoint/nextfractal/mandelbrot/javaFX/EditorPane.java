@@ -212,7 +212,7 @@ public class EditorPane extends BorderPane {
 		paramsButton.setTooltip(new Tooltip("Show/hide parameters"));
 		exportButton.setTooltip(new Tooltip("Export fractal as image"));
 		historyButton.setTooltip(new Tooltip("Show/hide history"));
-		statusButton.setTooltip(new Tooltip("Show/hide status"));
+		statusButton.setTooltip(new Tooltip("Show/hide console"));
 		sourceButtons.getChildren().add(renderButton);
 		sourceButtons.getChildren().add(loadButton);
 		sourceButtons.getChildren().add(saveButton);
