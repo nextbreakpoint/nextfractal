@@ -200,7 +200,7 @@
 							<tag>v${project.version}</tag>
 							<fileSets>
 								<fileSet>
-									<directory>${project.build.directory}/../dist/</directory>
+									<directory>dist/</directory>
 									<includes>
 										<include>nextfractal_*.zip</include>
 										<include>nextfractal_*.dmg</include>
