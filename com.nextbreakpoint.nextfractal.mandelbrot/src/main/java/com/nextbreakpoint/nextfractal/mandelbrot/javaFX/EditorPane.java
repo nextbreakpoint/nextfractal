@@ -317,10 +317,8 @@ public class EditorPane extends BorderPane {
 
 		codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
 
-		codeArea.plainTextChanges().successionEnds(Duration.ofMillis(500)).supplyTask(this::computeTaskAsync)
+		codeArea.richChanges().successionEnds(Duration.ofMillis(500)).supplyTask(this::computeTaskAsync)
 				.awaitLatest().map(org.reactfx.util.Try::get).subscribe(this::applyTaskResult);
-        
-        codeArea.replaceText(getMandelbrotSession().getSource());
         
         codeArea.setOnDragDropped(e -> e.getDragboard().getFiles().stream().findFirst().ifPresent(file -> loadDataFromFile(file)));
         
@@ -449,6 +447,8 @@ public class EditorPane extends BorderPane {
 		exportExecutor = Executors.newSingleThreadExecutor(exportThreadFactory);
 
 		addDataToHistory(historyList);
+
+		Platform.runLater(() -> codeArea.replaceText(getMandelbrotSession().getSource()));
 	}
 
 	@Override
