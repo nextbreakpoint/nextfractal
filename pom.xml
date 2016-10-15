@@ -196,7 +196,7 @@
 						<artifactId>github-release-plugin</artifactId>
 						<version>1.1.1</version>
 						<configuration>
-							<releaseName>${project.name} ${project.version}</releaseName>
+							<releaseName>NextFractal ${project.version}</releaseName>
 							<tag>v${project.version}</tag>
 							<fileSets>
 								<fileSet>
@@ -232,7 +232,7 @@
 							<oauthConsumerSecret>${consumerSecret}</oauthConsumerSecret>
 							<oauthAccessToken>${accessToken}</oauthAccessToken>
 							<oauthAccessTokenSecret>${accessTokenSecret}</oauthAccessTokenSecret>
-							<status>Version ${project.version} of ${project.name} has been released! ${project.url}</status>
+							<status>Version ${project.version} of NextFractal has been released! ${project.url}</status>
 						</configuration>
 					</plugin>
 				</plugins>
