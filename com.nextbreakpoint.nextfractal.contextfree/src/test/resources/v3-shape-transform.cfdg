@@ -1,0 +1,8 @@
+CFDG3
+
+startshape Foo
+
+shape Foo {
+    SQUARE []
+	Foo [x 0.8 size 0.8 rotate 40.0 y 0.8 b 0.2 h 0.1 sat 0.1]
+}

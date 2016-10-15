@@ -1,0 +1,24 @@
+CFDG3
+
+startshape Foo
+
+shape myshape(number n) {
+  switch (n) {
+    case 0:
+      SQUARE []
+    case 1:
+      TRIANGLE []
+    case 2: {
+      CIRCLE []
+    }
+    else:
+      FILL []  // never happens
+  }
+}
+
+shape Foo {
+    myshape(0) [b 0.1 s 1.0]
+    myshape(1) [b 0.4 s 0.8]
+    myshape(2) [b 0.8 s 0.4]
+	Foo [x 0.8 size 0.8 rotate 40.0 y 0.8 b 0.2 h 0.1 sat 0.1]
+}

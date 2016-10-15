@@ -1,0 +1,16 @@
+CFDG3
+
+startshape Foo
+
+path heptstar {
+    MOVETO(cos (90 - 720 / 7), sin(90 - 720 / 7))
+    loop 6 [r (720/7)]
+        LINETO(0, 1)
+    CLOSEPOLY()
+    FILL(CF::EvenOdd)[]
+}
+
+shape Foo {
+    heptstar []
+	Foo [x 0.8 size 0.8 rotate 40.0 y 0.8 b 0.2 h 0.1 sat 0.1]
+}

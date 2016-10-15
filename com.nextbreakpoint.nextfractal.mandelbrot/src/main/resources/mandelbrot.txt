@@ -1,0 +1,19 @@
+fractal {
+	orbit [-2.0 - 2.0i,+2.0 + 2.0i] [x,n] {
+		loop [0, 200] (mod2(x) > 40) {
+			x = x * x + w;
+		}
+	}
+	color [#FF000000] {
+		palette gradient {
+			[#FFFFFFFF > #FF000000, 100];
+			[#FF000000 > #FFFFFFFF, 100];
+		}
+		init {
+			m = 100 * (1 + sin(mod(x) * 0.2 / pi));
+		}
+		rule (n > 0) [1] {
+			gradient[m - 1]
+		}
+	}
+}
