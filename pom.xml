@@ -21,7 +21,7 @@
 	<scm>
 		<connection>scm:git:git@github.com:nextbreakpoint/nextfractal.git</connection>
 		<developerConnection>scm:git:git@github.com:nextbreakpoint/nextfractal.git</developerConnection>
-		<url>git@github.com:nextbreakpoint/nextfractal.git</url>
+		<url>https://github.com/nextbreakpoint/nextfractal</url>
 	</scm>
 	<modules>
 		<module>com.nextbreakpoint.nextfractal.core</module>
