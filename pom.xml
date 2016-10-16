@@ -21,7 +21,7 @@
 	<scm>
 		<connection>scm:git:git@github.com:nextbreakpoint/nextfractal.git</connection>
 		<developerConnection>scm:git:git@github.com:nextbreakpoint/nextfractal.git</developerConnection>
-		<url>https://github.com/nextbreakpoint/nextfractal</url>
+		<url>scm:git:git@github.com:nextbreakpoint/nextfractal.git</url>
 	</scm>
 	<modules>
 		<module>com.nextbreakpoint.nextfractal.core</module>
@@ -180,37 +180,6 @@
 				<arch.type>x86_64</arch.type>
 				<os.type>macos</os.type>
 			</properties>
-		</profile>
-		<profile>
-			<id>github</id>
-			<activation>
-				<property>
-					<name>channel</name>
-					<value>github</value>
-				</property>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>de.jutzig</groupId>
-						<artifactId>github-release-plugin</artifactId>
-						<version>1.1.1</version>
-						<configuration>
-							<releaseName>NextFractal ${project.version}</releaseName>
-							<tag>v${project.version}</tag>
-							<fileSets>
-								<fileSet>
-									<directory>dist/</directory>
-									<includes>
-										<include>nextfractal_*.zip</include>
-										<include>nextfractal_*.dmg</include>
-									</includes>
-								</fileSet>
-							</fileSets>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
 		</profile>
 	</profiles>
 </project>
