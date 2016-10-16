@@ -136,4 +136,32 @@
 			<artifactId>com.nextbreakpoint.freeimage4java</artifactId>
 		</dependency>
 	</dependencies>
+	<profiles>
+		<profile>
+			<id>twitter</id>
+			<activation>
+				<property>
+					<name>channel</name>
+					<value>twitter</value>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>com.nextbreakpoint</groupId>
+						<artifactId>twitter-maven-plugin</artifactId>
+						<version>1.0.1</version>
+						<configuration>
+							<debug>false</debug>
+							<oauthConsumerKey>${consumerKey}</oauthConsumerKey>
+							<oauthConsumerSecret>${consumerSecret}</oauthConsumerSecret>
+							<oauthAccessToken>${accessToken}</oauthAccessToken>
+							<oauthAccessTokenSecret>${accessTokenSecret}</oauthAccessTokenSecret>
+							<status>Version ${project.version} of NextFractal has been released! ${project.url}</status>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>
