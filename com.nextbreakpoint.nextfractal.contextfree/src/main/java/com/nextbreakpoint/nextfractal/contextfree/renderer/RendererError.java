@@ -22,20 +22,44 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.mandelbrot.renderer;
+package com.nextbreakpoint.nextfractal.contextfree.renderer;
 
-import java.util.concurrent.locks.ReentrantLock;
+public class RendererError {
+	private long line;
+	private long charPositionInLine;
+	private long index;
+	private long length;
+	private String message;
 
-public class DummyRendererLock implements RendererLock {
-	private ReentrantLock lock = new ReentrantLock();
+	public RendererError(long line, long charPositionInLine, long index, long length, String message) {
+		this.line = line;
+		this.index = index;
+		this.charPositionInLine = charPositionInLine;
+		this.message = message;
+	}
+
+	public long getLine() {
+		return line;
+	}
+
+	public long getCharPositionInLine() {
+		return charPositionInLine;
+	}
+
+	public String getMessage() {
+		return message;
+	}
 	
-	@Override
-	public void lock() {
-		lock.lock();
+	public long getLength() {
+		return length;
+	}
+	
+	public long getIndex() {
+		return index;
 	}
 
 	@Override
-	public void unlock() {
-		lock.unlock();
+	public String toString() {
+		return "[" + line + ":" + charPositionInLine + ":" + index + ":" + length + "] " + message;
 	}
 }

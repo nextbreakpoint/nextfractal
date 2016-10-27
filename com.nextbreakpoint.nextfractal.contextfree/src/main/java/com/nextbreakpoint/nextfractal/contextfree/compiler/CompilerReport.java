@@ -29,30 +29,24 @@ import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDG;
 import java.util.List;
 
 public class CompilerReport {
-	private CFDG ast;
+	private CFDG cfdg;
 	private Type type;
-	private String orbitSource;
-	private String colorSource;
+	private String source;
 	private List<CompilerError> errors;
 
-	public CompilerReport(CFDG ast, Type type, String orbitSource, String colorSource, List<CompilerError> errors) {
-		this.ast = ast;
+	public CompilerReport(CFDG cfdg, Type type, String source, List<CompilerError> errors) {
+		this.cfdg = cfdg;
 		this.type = type;
-		this.orbitSource = orbitSource;
-		this.colorSource = colorSource;
+		this.source = source;
 		this.errors = errors;
 	}
 
-	public CFDG getAST() {
-		return ast;
+	public CFDG getCFDG() {
+		return cfdg;
 	}
 
-	public String getOrbitSource() {
-		return orbitSource;
-	}
-
-	public String getColorSource() {
-		return colorSource;
+	public String getSource() {
+		return source;
 	}
 
 	public List<CompilerError> getErrors() {

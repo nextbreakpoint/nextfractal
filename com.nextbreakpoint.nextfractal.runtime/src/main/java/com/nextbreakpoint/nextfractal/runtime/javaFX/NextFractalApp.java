@@ -126,7 +126,9 @@ public class NextFractalApp extends Application {
 		primaryStage.sizeToScene();
 		primaryStage.setTitle(getApplicationName());
 
-		createPanels(DEFAULT_PLUGIN_ID, renderWidth, sceneHeight, exportService, primaryStage);
+		String defaultPluginId = System.getProperty("initialPluginId", DEFAULT_PLUGIN_ID);
+
+		createPanels(defaultPluginId, renderWidth, sceneHeight, exportService, primaryStage);
 
 		primaryStage.show();
 	}

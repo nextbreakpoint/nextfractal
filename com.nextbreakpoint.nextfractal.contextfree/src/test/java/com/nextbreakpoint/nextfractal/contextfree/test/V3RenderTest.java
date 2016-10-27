@@ -24,25 +24,22 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.test;
 
-import com.nextbreakpoint.nextfractal.contextfree.core.ExtendedGeneralPath;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.*;
-
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.util.*;
-
-import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.FlagType;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDG;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGRenderer;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.SimpleCanvas;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 import javax.imageio.ImageIO;
-import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 @RunWith(Parameterized.class)

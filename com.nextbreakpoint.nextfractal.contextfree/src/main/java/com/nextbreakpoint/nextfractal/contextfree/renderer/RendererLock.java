@@ -22,25 +22,12 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.mandelbrot.renderer;
+package com.nextbreakpoint.nextfractal.contextfree.renderer;
 
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-
-public class ReentrantRendererLock extends RendererLock {
-	private Lock lock = createLock();
-
-	protected Lock createLock() {
-		return new ReentrantLock();
-	}
-
-	@Override
+public class RendererLock {
 	public void lock() {
-		lock.lock();
 	}
 
-	@Override
 	public void unlock() {
-		lock.unlock();
 	}
 }

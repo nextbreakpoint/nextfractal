@@ -83,7 +83,7 @@ public class Renderer {
 	protected RendererSize size;
 	protected RendererView view;
 	protected RendererTile tile;
-	private final RendererLock lock = new DummyRendererLock();
+	private final RendererLock lock = new ReentrantRendererLock();
 	private final RenderRunnable renderTask = new RenderRunnable();
 	private ExecutorService executor;
 	private volatile Future<?> future;

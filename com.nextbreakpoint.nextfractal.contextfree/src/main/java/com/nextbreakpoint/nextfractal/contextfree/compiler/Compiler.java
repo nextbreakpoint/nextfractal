@@ -24,32 +24,14 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.compiler;
 
-import javax.tools.JavaCompiler;
-import javax.tools.ToolProvider;
 import java.io.IOException;
 
 public class Compiler {
-	private final String packageName;
-	private final String className;
-	
 	public Compiler() {
-		this(Compiler.class.getPackage().getName(), Compiler.class.getSimpleName());
-	}
-	
-	public Compiler(String packageName, String className) {
-		this.packageName = packageName;
-		this.className = className;
 	}
 	
 	public CompilerReport compileReport(String source) throws IOException {
-//		JavaCompiler javaCompiler = getJavaCompiler();
-//		if (javaCompiler == null) {
-			InterpreterReportCompiler compiler = new InterpreterReportCompiler();
-			return compiler.generateReport(source);
-//		} else {
-//			JavaReportCompiler compiler = new JavaReportCompiler(packageName, className);
-//			return compiler.generateReport(source);
-//		}
-//		return null;
+		InterpreterReportCompiler compiler = new InterpreterReportCompiler();
+		return compiler.generateReport(source);
 	}
 }

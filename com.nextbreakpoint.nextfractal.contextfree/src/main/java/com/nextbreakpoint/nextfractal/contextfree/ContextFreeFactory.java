@@ -24,6 +24,9 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.concurrent.ThreadFactory;
 
 import com.nextbreakpoint.nextfractal.contextfree.javaFX.EditorPane;
@@ -70,16 +73,33 @@ public class ContextFreeFactory implements FractalFactory {
 		return new RenderPane(session, width, height, 1, 1);
 	}
 
-	protected String getInitialSource() {
-		String source = "";
-		return source;
-	}
-
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.FractalFactory#createImageGenerator(java.util.concurrent.ThreadFactory, com.nextbreakpoint.nextfractal.core.renderer.RendererFactory, com.nextbreakpoint.nextfractal.core.renderer.RendererTile, boolean)
 	 */
 	@Override
 	public ImageGenerator createImageGenerator(ThreadFactory threadFactory,	RendererFactory renderFactory, RendererTile tile, boolean opaque) {
 		return new ContextFreeImageGenerator(threadFactory, renderFactory, tile, opaque);
+	}
+
+	protected String getInitialSource() {
+		try {
+			return getSource("/contextfree.txt");
+		} catch (IOException e) {
+		}
+		return "";
+	}
+
+	protected String getSource(String name) throws IOException {
+		InputStream is = getClass().getResourceAsStream(name);
+		if (is != null) {
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			byte[] buffer = new byte[4096];
+			int length = 0;
+			while ((length = is.read(buffer)) > 0) {
+				baos.write(buffer, 0, length);
+			}
+			return baos.toString();
+		}
+		return "";
 	}
 }

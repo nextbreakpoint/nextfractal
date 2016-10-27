@@ -657,15 +657,15 @@ public class EditorPane extends BorderPane {
 
 	private void initHighlightingPattern() {
 		String[] KEYWORDS = new String[] {
-	        "cfdg"
+	        "startshape", "rule", "shape", "path"
 		};
 		
 		String[] FUNCTIONS = new String[] {
-		        "log"
+			"log"
 		};
 		
 		String[] PATHOP = new String[] {
-		        "MOVETO", "MOVETOREL", "LINETO", "LINETOREL", "ARCTO", "ARCTOREL", "QUADTO", "QUADTOREL", "CURVETO", "CURVETOREL", "CLOSE"
+			"MOVETO", "LINETO", "ARCTO", "QUADTO", "CURVETO", "CLOSEPOLY"
 		};
 		
 		String KEYWORD_PATTERN = "\\b(" + String.join("|", KEYWORDS) + ")\\b";
@@ -687,14 +687,14 @@ public class EditorPane extends BorderPane {
 	
     private void applyTaskResult(Optional<TaskResult> result) {
 		result.ifPresent(value -> Block.create(TaskResult.class)
-				.andThen(r -> compileOrbitAndColor(r.report))
+				.andThen(r -> compileReport(r.report))
 				.andThen(r -> updateReportAndSource(r.source, r.report))
 				.andThen(r -> codeArea.setStyleSpans(0, r.highlighting))
 				.andThen(r -> displayErrors()).tryExecute(value));
     }
 
-	private void compileOrbitAndColor(CompilerReport report) {
-//		Block.create(CompilerReport.class).andThen(this::compileOrbit).andThen(this::compileColor).tryExecute(report).ifFailure(e -> processCompilerErrors(report, e));
+	private void compileReport(CompilerReport report) {
+		Block.create(CompilerReport.class).andThen(this::compileCFDG).tryExecute(report).ifFailure(e -> processCompilerErrors(report, e));
 	}
 
 	private void processCompilerErrors(CompilerReport report, Exception e) {
@@ -705,13 +705,8 @@ public class EditorPane extends BorderPane {
 		}
 	}
 
-//	private void compileOrbit(CompilerReport report) throws ClassNotFoundException, IOException, InstantiationException, IllegalAccessException, CompilerSourceException {
-//		Optional.of(new Compiler().compileOrbit(report)).filter(builder -> builder.getErrors().size() == 0).ifPresent(builder -> Try.of(() -> builder.build()).execute());
-//	}
-//
-//	private void compileColor(CompilerReport report) throws ClassNotFoundException, IOException, InstantiationException, IllegalAccessException, CompilerSourceException {
-//		Optional.of(new Compiler().compileColor(report)).filter(builder -> builder.getErrors().size() == 0).ifPresent(builder -> Try.of(() -> builder.build()).execute());
-//	}
+	private void compileCFDG(CompilerReport report) {
+	}
 
 	private StyleSpans<Collection<String>> computeHighlighting(String text) {
 		Matcher matcher = highlightingPattern.matcher(text);

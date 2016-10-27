@@ -22,33 +22,22 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.mandelbrot.renderer;
+package com.nextbreakpoint.nextfractal.contextfree.renderer;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ThreadFactory;
-
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDG;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererFactory;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererGraphicsContext;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
-import com.nextbreakpoint.nextfractal.mandelbrot.core.Color;
-import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
-import com.nextbreakpoint.nextfractal.mandelbrot.core.Orbit;
-import com.nextbreakpoint.nextfractal.mandelbrot.core.Trap;
-import com.nextbreakpoint.nextfractal.mandelbrot.renderer.xaos.XaosRenderer;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ThreadFactory;
 
 /**
  * @author Andrea Medeghini
  */
 public class RendererCoordinator implements RendererDelegate {
-	public static final String KEY_TYPE = "TYPE";
-	public static final Integer VALUE_REALTIME = 1;
-	public static final String KEY_PROGRESS = "PROGRESS";
-	public static final Integer VALUE_SINGLE_PASS = 1;
-	public static final String KEY_MULTITHREAD = "MULTITHREAD";
-	public static final Integer VALUE_SINGLE_THREAD = 1;
 	private final HashMap<String, Integer> hints = new HashMap<>();
 	private final ThreadFactory threadFactory;
 	private final RendererFactory renderFactory;
@@ -68,17 +57,10 @@ public class RendererCoordinator implements RendererDelegate {
 		this.hints.putAll(hints);
 		renderer = createRenderer(tile);
 		renderer.setRendererDelegate(this);
-		renderer.setMultiThread(true);
-		if (hints.get(KEY_PROGRESS) != null && hints.get(KEY_PROGRESS) == VALUE_SINGLE_PASS) {
-			renderer.setSinglePass(true);
-		}
-		if (hints.get(KEY_MULTITHREAD) != null && hints.get(KEY_MULTITHREAD) == VALUE_SINGLE_THREAD) {
-			renderer.setMultiThread(false);
-		}
 	}
 
 	/**
-	 * @see java.lang.Object#finalize()
+	 * @see Object#finalize()
 	 */
 	@Override
 	public void finalize() throws Throwable {
@@ -115,7 +97,7 @@ public class RendererCoordinator implements RendererDelegate {
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererDelegate#updateImageInBackground(float)
+	 * @see com.nextbreakpoint.nextfractal.contextfree.renderer.RendererDelegate#updateImageInBackground(float)
 	 */
 	@Override
 	public void updateImageInBackground(float progress) {
@@ -147,33 +129,10 @@ public class RendererCoordinator implements RendererDelegate {
 	}
 
 	/**
-	 * @param point
+	 * @param cfdg
 	 */
-	public void setPoint(Number point) {
-		renderer.setPoint(point);
-	}
-
-	/**
-	 * @param julia
-	 */
-	public void setJulia(final boolean julia) {
-		renderer.setJulia(julia);
-	}
-
-	/**
-	 * @param orbit
-	 * @param color
-	 */
-	public void setOrbitAndColor(Orbit orbit, Color color) {
-		renderer.setOrbit(orbit);
-		renderer.setColor(color);
-	}
-
-	/**
-	 * @param color
-	 */
-	public void setColor(Color color) {
-		renderer.setColor(color);
+	public void setCFDG(CFDG cfdg) {
+		renderer.setCFDG(cfdg);
 	}
 
 	/**
@@ -188,27 +147,6 @@ public class RendererCoordinator implements RendererDelegate {
 	 */
 	public boolean isTileSupported() {
 		return true;
-	}
-
-	/**
-	 * @return
-	 */
-	public Number getInitialCenter() {
-		return renderer.getInitialRegion().getCenter();
-	}
-
-	/**
-	 * @return
-	 */
-	public Number getInitialSize() {
-		return renderer.getInitialRegion().getSize();
-	}
-
-	/**
-	 * @param view
-	 */
-	public void setView(RendererView view) {
-		renderer.setView(view);
 	}
 
 	/**
@@ -246,19 +184,7 @@ public class RendererCoordinator implements RendererDelegate {
 	 * @return
 	 */
 	protected Renderer createRenderer(RendererTile tile) {
-		Integer type = hints.get(KEY_TYPE);
-		if (type != null && type.equals(VALUE_REALTIME)) {
-			return new XaosRenderer(threadFactory, renderFactory, tile);
-		} else {
-			return new Renderer(threadFactory, renderFactory, tile);
-		}
-	}
-
-	/**
-	 * @return
-	 */
-	public List<Trap> getTraps() {
-		return renderer.getTraps();
+		return new Renderer(threadFactory, renderFactory, tile);
 	}
 
 	/**

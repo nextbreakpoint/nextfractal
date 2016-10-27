@@ -34,11 +34,8 @@ import org.junit.rules.ExpectedException;
 import java.awt.geom.AffineTransform;
 import java.io.IOException;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 public class V3ShapeTest extends AbstractBaseTest {

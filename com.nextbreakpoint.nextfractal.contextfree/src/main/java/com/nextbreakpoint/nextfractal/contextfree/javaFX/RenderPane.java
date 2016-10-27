@@ -28,8 +28,10 @@ import com.nextbreakpoint.nextfractal.contextfree.ContextFreeData;
 import com.nextbreakpoint.nextfractal.contextfree.ContextFreeDataStore;
 import com.nextbreakpoint.nextfractal.contextfree.ContextFreeListener;
 import com.nextbreakpoint.nextfractal.contextfree.ContextFreeSession;
-import com.nextbreakpoint.nextfractal.contextfree.compiler.CompilerError;
-import com.nextbreakpoint.nextfractal.contextfree.core.RendererError;
+import com.nextbreakpoint.nextfractal.contextfree.compiler.*;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDG;
+import com.nextbreakpoint.nextfractal.contextfree.renderer.RendererCoordinator;
+import com.nextbreakpoint.nextfractal.contextfree.renderer.RendererError;
 import com.nextbreakpoint.nextfractal.core.export.ExportSession;
 import com.nextbreakpoint.nextfractal.core.javaFX.BooleanObservableValue;
 import com.nextbreakpoint.nextfractal.core.javaFX.StringObservableValue;
@@ -62,9 +64,15 @@ import javafx.stage.Screen;
 import javafx.util.Duration;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ThreadFactory;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class RenderPane extends BorderPane {
@@ -77,13 +85,15 @@ public class RenderPane extends BorderPane {
 	private final StringObservableValue errorProperty;
 	private final StringObservableValue statusProperty;
 	private final BooleanObservableValue hideErrorsProperty;
+	private RendererCoordinator coordinator;
 	private AnimationTimer timer;
 	private int width;
 	private int height;
 	private int rows;
 	private int columns;
+	private CFDG cfdg;
+	private String cfdgSource = "";
 	private volatile boolean disableTool;
-	private String cfdg;
 
 	public RenderPane(Session session, int width, int height, int rows, int columns) {
 		this.session = session;
@@ -107,6 +117,9 @@ public class RenderPane extends BorderPane {
 		renderThreadFactory = new DefaultThreadFactory("ContextFreeRendererCoordinator", true, Thread.MIN_PRIORITY + 2);
 
 		renderFactory = new JavaFXRendererFactory();
+
+		Map<String, Integer> hints = new HashMap<>();
+		coordinator = createCoordinator(hints, width, height);
 
 		getStyleClass().add("contextfree");
 
@@ -134,34 +147,23 @@ public class RenderPane extends BorderPane {
 //		ToggleButton zoomoutButton = new ToggleButton("", createIconImage("/icon-zoomout.png"));
 //		ToggleButton moveButton = new ToggleButton("", createIconImage("/icon-move.png"));
 //		ToggleButton rotateButton = new ToggleButton("", createIconImage("/icon-rotate.png"));
-//		ToggleButton pickButton = new ToggleButton("", createIconImage("/icon-pick.png"));
-//		ToggleButton juliaButton = new ToggleButton("", createIconImage("/icon-julia.png"));
-//		ToggleButton orbitButton = new ToggleButton("", createIconImage("/icon-orbit.png"));
 		ToggleGroup toolsGroup = new ToggleGroup();
 //		toolsGroup.getToggles().add(zoominButton);
 //		toolsGroup.getToggles().add(zoomoutButton);
 //		toolsGroup.getToggles().add(moveButton);
 //		toolsGroup.getToggles().add(rotateButton);
-//		toolsGroup.getToggles().add(pickButton);
 //		Button homeButton = new Button("", createIconImage("/icon-home.png"));
 		browseButton.setTooltip(new Tooltip("Show fractals browser"));
 //		zoominButton.setTooltip(new Tooltip("Select zoom in tool"));
 //		zoomoutButton.setTooltip(new Tooltip("Select zoom out tool"));
 //		moveButton.setTooltip(new Tooltip("Select move tool"));
 //		rotateButton.setTooltip(new Tooltip("Select rotate tool"));
-//		pickButton.setTooltip(new Tooltip("Select pick tool"));
-//		homeButton.setTooltip(new Tooltip("Reset region to initial value"));
-//		orbitButton.setTooltip(new Tooltip("Toggle orbit and traps"));
-//		juliaButton.setTooltip(new Tooltip("Toggle Julia mode"));
 		toolButtons.getChildren().add(browseButton);
 //		toolButtons.getChildren().add(homeButton);
 //		toolButtons.getChildren().add(zoominButton);
 //		toolButtons.getChildren().add(zoomoutButton);
 //		toolButtons.getChildren().add(moveButton);
 //		toolButtons.getChildren().add(rotateButton);
-//		toolButtons.getChildren().add(pickButton);
-//		toolButtons.getChildren().add(juliaButton);
-//		toolButtons.getChildren().add(orbitButton);
 		toolButtons.getStyleClass().add("toolbar");
 
 //		BrowsePane browsePane = new BrowsePane(width, height);
@@ -229,6 +231,7 @@ public class RenderPane extends BorderPane {
 
 			@Override
 			public void reportChanged(ContextFreeSession session) {
+				updateFractal(session);
 			}
 		});
 
@@ -292,6 +295,10 @@ public class RenderPane extends BorderPane {
 	private void updateFile(File file) {
 		fileProperty.setValue(null);
 		fileProperty.setValue(file.getAbsolutePath());
+	}
+
+	private RendererCoordinator createCoordinator(Map<String, Integer> hints, int width, int height) {
+		return new RendererCoordinator(renderThreadFactory, renderFactory, createSingleTile(width, height), hints);
 	}
 
 	public ContextFreeSession getContextFreeSession() {
@@ -412,7 +419,7 @@ public class RenderPane extends BorderPane {
 				if (time - last > FRAME_LENGTH_IN_MILLIS) {
 					if (!disableTool) {
 						processRenderErrors();
-//						redrawIfPixelsChanged(fractalCanvas);
+						redrawIfPixelsChanged(fractalCanvas);
 //						if (currentTool != null) {
 //							currentTool.update(time);
 //						}
@@ -508,22 +515,67 @@ public class RenderPane extends BorderPane {
 		});
 	}
 
+	private void updateFractal(Session session) {
+		try {
+			boolean[] changed = createCFDG();
+			updateCompilerErrors(null, null, null);
+			boolean cfdgChanged = changed[0];
+			if (cfdgChanged) {
+				logger.info("Color algorithm is changed");
+			}
+			if (coordinator != null) {
+				coordinator.abort();
+			}
+			if (coordinator != null) {
+				coordinator.waitFor();
+			}
+			if (coordinator != null) {
+				if (cfdgChanged) {
+					coordinator.setCFDG(cfdg);
+				}
+				coordinator.init();
+			}
+			if (coordinator != null) {
+				coordinator.run();
+			}
+		} catch (CompilerSourceException e) {
+			logger.log(Level.INFO, "Cannot render fractal: " + e.getMessage());
+			updateCompilerErrors(e.getMessage(), e.getErrors(), null);
+		} catch (CompilerClassException e) {
+			logger.log(Level.INFO, "Cannot render fractal: " + e.getMessage());
+			updateCompilerErrors(e.getMessage(), e.getErrors(), e.getSource());
+		}
+	}
+
+	private boolean[] createCFDG() throws CompilerSourceException, CompilerClassException {
+		CompilerReport report = getContextFreeSession().getReport();
+		if (report.getErrors().size() > 0) {
+			cfdgSource = null;
+			throw new CompilerSourceException("Failed to compile source", report.getErrors());
+		}
+		boolean[] changed = new boolean[] { false, false };
+		String newCFDG = report.getSource();
+		changed[0] = !newCFDG.equals(cfdgSource);
+		cfdgSource = newCFDG;
+		cfdg = report.getCFDG();
+		return changed;
+	}
+
 	private void processRenderErrors() {
-//		if (coordinators != null && coordinators.length > 0) {
-//			RendererCoordinator coordinator = coordinators[0];
-//			if (coordinator != null) {
-//				RendererError error = coordinator.getError();
-//				if (error != null) {
-//					updateRendererErrors("Error", Collections.singletonList(error), null);
-//				} else {
-//					updateRendererErrors(null, null, null);
-//				}
-//			}
-//		}
+		if (coordinator != null) {
+			RendererError error = coordinator.getError();
+			if (error != null) {
+				updateRendererErrors("Error", Collections.singletonList(error), null);
+			} else {
+				updateRendererErrors(null, null, null);
+			}
+		}
 	}
 
 	private void redrawIfPixelsChanged(Canvas canvas) {
-		RendererGraphicsContext gc = renderFactory.createGraphicsContext(canvas.getGraphicsContext2D());
-//		visitCoordinators(coordinator -> coordinator.isPixelsChanged(), coordinator -> coordinator.drawImage(gc, 0, 0));
+		if (coordinator.isPixelsChanged()) {
+			RendererGraphicsContext gc = renderFactory.createGraphicsContext(canvas.getGraphicsContext2D());
+			coordinator.drawImage(gc, 0, 0);
+		}
 	}
 }

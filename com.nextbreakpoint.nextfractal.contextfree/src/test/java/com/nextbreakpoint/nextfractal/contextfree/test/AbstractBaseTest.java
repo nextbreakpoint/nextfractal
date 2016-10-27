@@ -74,7 +74,7 @@ public abstract class AbstractBaseTest {
         }
 	}
 
-	public void renderImage() throws Exception {
+//	public void renderImage() throws Exception {
 //		ContextFreeRuntime runtime = new ContextFreeRuntime(config);
 //		ContextFreeRenderer renderer = new DefaultContextFreeRenderer(Thread.MIN_PRIORITY);
 //		IntegerVector2D imageSize = new IntegerVector2D(IMAGE_WIDTH, IMAGE_HEIGHT);
@@ -103,5 +103,5 @@ public abstract class AbstractBaseTest {
 //		runtime.dispose();
 //		config.dispose();
 //		surface.dispose();
-	}
+//	}
 }

@@ -27,9 +27,9 @@ package com.nextbreakpoint.nextfractal.contextfree.compiler;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDG;
 import com.nextbreakpoint.nextfractal.contextfree.compiler.CompilerReport.Type;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.*;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.exceptions.CFDGException;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.tree.ParseTree;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -43,32 +43,29 @@ public class InterpreterReportCompiler {
 	
 	public CompilerReport generateReport(String source) throws IOException {
 		List<CompilerError> errors = new ArrayList<>();
-		CFDG ast = parse(source, errors);
-		return new CompilerReport(ast, Type.INTERPRETER, "", "", errors);
+		CFDG cfdg = parse(source, errors);
+		return new CompilerReport(cfdg, Type.INTERPRETER, source, errors);
 	}
 	
 	private CFDG parse(String source, List<CompilerError> errors) throws IOException {
-//		try {
-//			ANTLRInputStream is = new ANTLRInputStream(new StringReader(source));
-//			MandelbrotLexer lexer = new MandelbrotLexer(is);
-//			CommonTokenStream tokens = new CommonTokenStream(lexer);
-//			MandelbrotParser parser = new MandelbrotParser(tokens);
-//			parser.setErrorHandler(new CompilerErrorStrategy(errors));
-//			ParseTree fractalTree = parser.fractal();
-//            if (fractalTree != null) {
-//            	ASTBuilder builder = parser.getBuilder();
-//            	ASTFractal fractal = builder.getFractal();
-//            	return fractal;
-//            }
-//		} catch (ASTException e) {
-//			CompilerError error = new CompilerError(CompilerError.ErrorType.M_COMPILER, e.getLocation().getLine(), e.getLocation().getCharPositionInLine(), e.getLocation().getStartIndex(), e.getLocation().getStopIndex() - e.getLocation().getStartIndex(), e.getMessage());
+		try {
+			ANTLRInputStream is = new ANTLRInputStream(new StringReader(source));
+			CFDGLexer lexer = new CFDGLexer(is);
+			CommonTokenStream tokens = new CommonTokenStream(lexer);
+			CFDGParser parser = new CFDGParser(tokens);
+			parser.setErrorHandler(new CompilerErrorStrategy(errors));
+			if (parser.choose() != null) {
+				return parser.getCFDG();
+			}
+//		} catch (CFDGException e) {
+//			CompilerError error = new CompilerError(CompilerError.ErrorType.CFDG_COMPILER, e.getLocation().getLine(), e.getLocation().getCharPositionInLine(), e.getLocation().getStartIndex(), e.getLocation().getStopIndex() - e.getLocation().getStartIndex(), e.getMessage());
 //			logger.log(Level.FINE, error.toString(), e);
 //			errors.add(error);
-//		} catch (Exception e) {
-//			CompilerError error = new CompilerError(CompilerError.ErrorType.M_COMPILER, 0L, 0L, 0L, 0L, e.getMessage());
-//			logger.log(Level.FINE, error.toString(), e);
-//			errors.add(error);
-//		}
+		} catch (Exception e) {
+			CompilerError error = new CompilerError(CompilerError.ErrorType.CFDG_COMPILER, 0L, 0L, 0L, 0L, e.getMessage());
+			logger.log(Level.FINE, error.toString(), e);
+			errors.add(error);
+		}
 		return null;
 	}
 }	
