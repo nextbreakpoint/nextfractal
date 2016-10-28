@@ -120,7 +120,7 @@ public class EditorPane extends BorderPane {
 		codeArea = new CodeArea();
 		codeArea.getStyleClass().add("source");
 
-		EventHandler<ActionEvent> renderEventHandler = e -> Platform.runLater(() -> codeArea.replaceText(getContextFreeSession().getSource()));
+		EventHandler<ActionEvent> renderEventHandler = e -> Platform.runLater(() -> updateSource());
 
 		EventHandler<ActionEvent> loadEventHandler = e -> Optional.ofNullable(showLoadFileChooser())
 				.map(fileChooser -> fileChooser.showOpenDialog(EditorPane.this.getScene().getWindow())).ifPresent(file -> loadDataFromFile(file));
@@ -314,8 +314,6 @@ public class EditorPane extends BorderPane {
 		codeArea.plainTextChanges().successionEnds(Duration.ofMillis(500)).supplyTask(this::computeTaskAsync)
 				.awaitLatest().map(org.reactfx.util.Try::get).subscribe(this::applyTaskResult);
         
-        codeArea.replaceText(getContextFreeSession().getSource());
-        
         codeArea.setOnDragDropped(e -> e.getDragboard().getFiles().stream().findFirst().ifPresent(file -> loadDataFromFile(file)));
         
         codeArea.setOnDragOver(e -> Optional.of(e).filter(q -> q.getGestureSource() != codeArea
@@ -325,7 +323,7 @@ public class EditorPane extends BorderPane {
 			@Override
 			public void dataChanged(ContextFreeSession session) {
 				addDataToHistory(historyList);
-				Platform.runLater(() -> codeArea.replaceText(getContextFreeSession().getSource()));
+				Platform.runLater(() -> updateSource());
 			}
 			
 			@Override
@@ -429,6 +427,13 @@ public class EditorPane extends BorderPane {
 		exportExecutor = Executors.newSingleThreadExecutor(exportThreadFactory);
 
 		addDataToHistory(historyList);
+
+		Platform.runLater(() -> updateSource());
+	}
+
+	private void updateSource() {
+		codeArea.replaceText("");
+		codeArea.replaceText(getContextFreeSession().getSource());
 	}
 
 	@Override
@@ -657,15 +662,15 @@ public class EditorPane extends BorderPane {
 
 	private void initHighlightingPattern() {
 		String[] KEYWORDS = new String[] {
-	        "startshape", "rule", "shape", "path"
+	        "startshape", "background", "include", "import", "tile", "rule", "path", "shape", "loop", "finally", "if", "switch", "case", "CF_INFINITY", "\u221E", "LET"
 		};
 		
 		String[] FUNCTIONS = new String[] {
-			"log"
+			"..", "\u2026", "\\+/-",  "\u00b1", "time", "timescale", "x", "y", "z", "rotate", "r", "size", "s", "skew", "flip", "f", "hue", "h", "saturation", "sat", "brightness", "b", "alpha", "a", "x1", "x2", "y1", "y2", "rx", "ry", "width", "transform", "trans", "param", "p", "clone"
 		};
 		
 		String[] PATHOP = new String[] {
-			"MOVETO", "LINETO", "ARCTO", "QUADTO", "CURVETO", "CLOSEPOLY"
+			"CIRCLE", "SQUARE", "TRIANGLE", "FILL", "MOVETO", "LINETO", "ARCTO", "CURVETO", "MOVEREL", "LINEREL", "ARCREL", "CURVEREL", "CLOSEPOLY"
 		};
 		
 		String KEYWORD_PATTERN = "\\b(" + String.join("|", KEYWORDS) + ")\\b";

@@ -264,7 +264,6 @@ public class Renderer {
 	 */
 	protected void doRender() {
 		try {
-			final boolean redraw = cfdgChanged;
 			cfdgChanged = false;
 			aborted = false;
 			progress = 0;

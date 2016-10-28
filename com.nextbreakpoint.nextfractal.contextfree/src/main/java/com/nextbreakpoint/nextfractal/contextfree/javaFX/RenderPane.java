@@ -521,21 +521,15 @@ public class RenderPane extends BorderPane {
 			updateCompilerErrors(null, null, null);
 			boolean cfdgChanged = changed[0];
 			if (cfdgChanged) {
-				logger.info("Color algorithm is changed");
+				logger.info("CFDG is changed");
 			}
 			if (coordinator != null) {
 				coordinator.abort();
-			}
-			if (coordinator != null) {
 				coordinator.waitFor();
-			}
-			if (coordinator != null) {
 				if (cfdgChanged) {
 					coordinator.setCFDG(cfdg);
 				}
 				coordinator.init();
-			}
-			if (coordinator != null) {
 				coordinator.run();
 			}
 		} catch (CompilerSourceException e) {
