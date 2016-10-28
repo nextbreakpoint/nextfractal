@@ -118,7 +118,7 @@ public class EditorPane extends BorderPane {
 		codeArea = new CodeArea();
 		codeArea.getStyleClass().add("source");
 
-		EventHandler<ActionEvent> renderEventHandler = e -> Platform.runLater(() -> codeArea.replaceText(getMandelbrotSession().getSource()));
+		EventHandler<ActionEvent> renderEventHandler = e -> Platform.runLater(() -> updateSource());
 
 		EventHandler<ActionEvent> loadEventHandler = e -> Optional.ofNullable(showLoadFileChooser())
 				.map(fileChooser -> fileChooser.showOpenDialog(EditorPane.this.getScene().getWindow())).ifPresent(file -> loadDataFromFile(file));
@@ -317,7 +317,7 @@ public class EditorPane extends BorderPane {
 
 		codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
 
-		codeArea.richChanges().successionEnds(Duration.ofMillis(500)).supplyTask(this::computeTaskAsync)
+		codeArea.plainTextChanges().successionEnds(Duration.ofMillis(500)).supplyTask(this::computeTaskAsync)
 				.awaitLatest().map(org.reactfx.util.Try::get).subscribe(this::applyTaskResult);
         
         codeArea.setOnDragDropped(e -> e.getDragboard().getFiles().stream().findFirst().ifPresent(file -> loadDataFromFile(file)));
@@ -329,7 +329,7 @@ public class EditorPane extends BorderPane {
 			@Override
 			public void dataChanged(MandelbrotSession session) {
 				addDataToHistory(historyList);
-				Platform.runLater(() -> codeArea.replaceText(getMandelbrotSession().getSource()));
+				Platform.runLater(() -> updateSource());
 			}
 			
 			@Override
@@ -448,7 +448,12 @@ public class EditorPane extends BorderPane {
 
 		addDataToHistory(historyList);
 
-		Platform.runLater(() -> codeArea.replaceText(getMandelbrotSession().getSource()));
+		Platform.runLater(() -> updateSource());
+	}
+
+	private void updateSource() {
+		codeArea.replaceText("");
+		codeArea.replaceText(getMandelbrotSession().getSource());
 	}
 
 	@Override
