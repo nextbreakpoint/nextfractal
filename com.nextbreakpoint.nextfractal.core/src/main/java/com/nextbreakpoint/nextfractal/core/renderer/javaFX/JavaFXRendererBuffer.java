@@ -40,16 +40,10 @@ public class JavaFXRendererBuffer implements RendererBuffer {
 		writer = image.getPixelWriter();
 	}
 
-	/**
-	 * @see com.nextbreakpoint.nextfractal.RendererBuffer.renderer.RenderBuffer#dispose()
-	 */
 	@Override
 	public void dispose() {
 	}
 
-	/**
-	 * @see com.nextbreakpoint.nextfractal.RendererBuffer.renderer.RenderBuffer#clear()
-	 */
 	@Override
 	public void clear() {
 //		int[] pixels = new int[getWidth() * getHeight()];
@@ -64,9 +58,6 @@ public class JavaFXRendererBuffer implements RendererBuffer {
 		}
 	}
 
-	/**
-	 * @see com.nextbreakpoint.nextfractal.RendererBuffer.renderer.RenderBuffer#update(int[])
-	 */
 	@Override
 	public void update(int[] pixels) {
 		if (pixels.length <= getWidth() * getHeight()) {
@@ -74,25 +65,16 @@ public class JavaFXRendererBuffer implements RendererBuffer {
 		}
 	}
 
-	/**
-	 * @see com.nextbreakpoint.nextfractal.RendererBuffer.renderer.RenderBuffer#getWidth()
-	 */
 	@Override
 	public int getWidth() {
 		return (int)image.getWidth();
 	}
 	
-	/**
-	 * @see com.nextbreakpoint.nextfractal.RendererBuffer.renderer.RenderBuffer#getHeight()
-	 */
 	@Override
 	public int getHeight() {
 		return (int)image.getHeight();
 	}
 
-	/**
-	 * @see com.nextbreakpoint.nextfractal.RendererBuffer.renderer.RenderBuffer#getImage()
-	 */
 	@Override
 	public RendererImage getImage() {
 		return new JavaFXRendererImage(image);

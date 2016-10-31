@@ -28,8 +28,11 @@ import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDG;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGRenderer;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.SimpleCanvas;
 import com.nextbreakpoint.nextfractal.core.renderer.*;
+import com.nextbreakpoint.nextfractal.core.renderer.java2D.Java2DRendererFactory;
 
+import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferInt;
 import java.nio.IntBuffer;
 import java.util.concurrent.*;
 import java.util.logging.Level;
@@ -44,12 +47,11 @@ public class Renderer {
 	protected final RendererFactory renderFactory;
 	protected volatile RendererDelegate rendererDelegate;
 	protected volatile RendererSurface buffer;
+	protected volatile RendererError error;
 	protected volatile boolean aborted;
 	protected volatile boolean interrupted;
 	protected volatile boolean cfdgChanged;
-	protected volatile RendererError error;
 	protected volatile float progress;
-	protected volatile double rotation;
 	protected boolean opaque;
 	protected RendererSize size;
 	protected RendererTile tile;
@@ -61,7 +63,6 @@ public class Renderer {
 
 	/**
 	 * @param threadFactory
-	 * @param renderFactory
 	 * @param tile
 	 */
 	public Renderer(ThreadFactory threadFactory, RendererFactory renderFactory, RendererTile tile) {
@@ -237,7 +238,7 @@ public class Renderer {
 //	}
 
 	private void ensureBufferAndSize() {
-		RendererTile newTile = computeOptimalBufferSize(tile, rotation);
+		RendererTile newTile = computeOptimalBufferSize(tile, 0);
 		int width = newTile.getTileSize().getWidth() + newTile.getBorderSize().getWidth() * 2;
 		int height = newTile.getTileSize().getHeight() + newTile.getBorderSize().getHeight() * 2;
 		size = new RendererSize(width, height);
@@ -269,16 +270,16 @@ public class Renderer {
 			progress = 0;
 			int width = getSize().getWidth();
 			int height = getSize().getHeight();
-			int[] pixels = new int[width * height];
+			RendererFactory factory = new Java2DRendererFactory();
+			BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+			int[] pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
+			Graphics2D g2d = image.createGraphics();
 			if (cfdg != null) {
 				cfdg.rulesLoaded();
 				CFDGRenderer renderer = cfdg.renderer(width, height, 1, 0, 0.1);
 				if (renderer != null) {
-					SimpleCanvas canvas = new SimpleCanvas(width, height);
-					renderer.run(canvas, false);
-					BufferedImage actualImage = canvas.getImage();
-					actualImage.getRGB(0, 0, width, height, pixels, 0, width);
-					buffer.getBuffer().update(pixels);
+					renderer.run(new RendererCanvas(factory, g2d, width, height), false);
+//					renderer.run(new SimpleCanvas(g2d, width, height), false);
 				}
 			}
 //			for (;;) {
@@ -292,6 +293,7 @@ public class Renderer {
 				progress = 1f;
 				didChanged(progress, pixels);
 			}
+			g2d.dispose();
 			Thread.yield();
 		} catch (Throwable e) {
 			logger.log(Level.WARNING, "Cannot render fractal", e);

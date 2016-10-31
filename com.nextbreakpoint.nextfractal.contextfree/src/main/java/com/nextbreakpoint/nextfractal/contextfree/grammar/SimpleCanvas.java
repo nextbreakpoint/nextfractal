@@ -1,25 +1,22 @@
 package com.nextbreakpoint.nextfractal.contextfree.grammar;
 
 import com.nextbreakpoint.nextfractal.contextfree.core.Bounds;
-import com.nextbreakpoint.nextfractal.contextfree.core.ExtendedGeneralPath;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.FlagType;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
-import java.awt.image.BufferedImage;
 
-public class SimpleCanvas {
+public class SimpleCanvas implements CFCanvas {
+    private Graphics2D g2d;
     private int width;
     private int height;
-    private AffineTransform normTransform = new AffineTransform();
-    private BufferedImage image;
-    private Graphics2D g2d;
+    private AffineTransform normTransform;
 
-    public SimpleCanvas(int width, int height) {
+    public SimpleCanvas(Graphics2D g2d, int width, int height) {
+        this.g2d = g2d;
         this.width = width;
         this.height = height;
-        image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
     }
 
     public int getWidth() {
@@ -61,7 +58,7 @@ public class SimpleCanvas {
 
         java.awt.Shape shape;
 
-        ExtendedGeneralPath path = info.getPathStorage().getGeneralPath();
+        GeneralPath path = info.getPathStorage().getGeneralPath();
 
         if ((info.getFlags() & (FlagType.CF_EVEN_ODD.getMask() | FlagType.CF_FILL.getMask())) == (FlagType.CF_EVEN_ODD.getMask() | FlagType.CF_FILL.getMask())) {
             path.setWindingRule(GeneralPath.WIND_EVEN_ODD);
@@ -118,7 +115,6 @@ public class SimpleCanvas {
     }
 
     public void start(boolean first, double[] backgroundColor, int currWidth, int currHeight) {
-        g2d = image.createGraphics();
         g2d.setColor(new Color((float)backgroundColor[0], (float)backgroundColor[1], (float)backgroundColor[2], (float)backgroundColor[3]));
         g2d.fillRect(0, 0, getWidth(), getHeight());
         normTransform = AffineTransform.getTranslateInstance(0, getHeight());
@@ -128,10 +124,6 @@ public class SimpleCanvas {
 
     public void end() {
         g2d.dispose();
-    }
-
-    public BufferedImage getImage() {
-        return image;
     }
 
     public void tileTransform(Bounds bounds) {

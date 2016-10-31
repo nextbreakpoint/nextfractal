@@ -666,7 +666,7 @@ public class EditorPane extends BorderPane {
 		};
 		
 		String[] FUNCTIONS = new String[] {
-			"..", "\u2026", "\\+/-",  "\u00b1", "time", "timescale", "x", "y", "z", "rotate", "r", "size", "s", "skew", "flip", "f", "hue", "h", "saturation", "sat", "brightness", "b", "alpha", "a", "x1", "x2", "y1", "y2", "rx", "ry", "width", "transform", "trans", "param", "p", "clone"
+			"time", "timescale", "x", "y", "z", "rotate", "r", "size", "s", "skew", "flip", "f", "hue", "h", "saturation", "sat", "brightness", "b", "alpha", "a", "x1", "x2", "y1", "y2", "rx", "ry", "width", "transform", "trans", "param", "p", "clone"
 		};
 		
 		String[] PATHOP = new String[] {
@@ -676,9 +676,9 @@ public class EditorPane extends BorderPane {
 		String KEYWORD_PATTERN = "\\b(" + String.join("|", KEYWORDS) + ")\\b";
 		String FUNCTION_PATTERN = "\\b(" + String.join("|", FUNCTIONS) + ")\\b";
 		String PATHOP_PATTERN = "\\b(" + String.join("|", PATHOP) + ")\\b";
-		String PAREN_PATTERN = "\\(|\\)";
+		String PAREN_PATTERN = "\\(|\\)|\\[|\\]";
 		String BRACE_PATTERN = "\\{|\\}";
-		String OPERATOR_PATTERN = "\\*|\\+|-|/|\\^|<|>|\\||&|=|#|;|\\[|\\]";
+		String OPERATOR_PATTERN = "\\.\\.|\\u2026|\\+/-|\\u00b1";
 		
 		highlightingPattern = Pattern.compile(
 		        "(?<KEYWORD>" + KEYWORD_PATTERN + ")"

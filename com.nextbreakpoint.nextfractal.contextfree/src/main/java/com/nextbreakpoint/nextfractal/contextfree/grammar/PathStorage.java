@@ -36,11 +36,11 @@ import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
 
 public class PathStorage implements Cloneable {
-	private ExtendedGeneralPath currentPath = new ExtendedGeneralPath();
+	private GeneralPath currentPath = new GeneralPath();
 	private List<Vertex> vertices = new ArrayList<>();
 
 	public void startNewPath() {
-		currentPath = new ExtendedGeneralPath();
+		currentPath = new GeneralPath();
 		vertices.clear();
 	}
 
@@ -62,10 +62,10 @@ public class PathStorage implements Cloneable {
 		currentPath.lineTo((float)point.getX(), (float)point.getY());
 	}
 
-	public void arcTo(double radiusX, double radiusY, double angle, boolean largeArc, boolean sweep, Point2D.Double point) {
-		vertices.add(new Vertex(point, 3));
-		currentPath.arcTo((float)radiusX, (float)radiusY, (float)angle, largeArc, sweep, (float)point.getX(), (float)point.getY());
-	}
+//	public void arcTo(double radiusX, double radiusY, double angle, boolean largeArc, boolean sweep, Point2D.Double point) {
+//		vertices.add(new Vertex(point, 3));
+//		currentPath.arcTo((float)radiusX, (float)radiusY, (float)angle, largeArc, sweep, (float)point.getX(), (float)point.getY());
+//	}
 
 	public void relToAbs(Point2D.Double point) {
 		//TODO controllare
@@ -137,7 +137,7 @@ public class PathStorage implements Cloneable {
 		return getGeneralPath().getPathIterator(new AffineTransform());
 	}
 
-	public ExtendedGeneralPath getGeneralPath() {
+	public GeneralPath getGeneralPath() {
 		return currentPath;
 	}
 
@@ -155,7 +155,7 @@ public class PathStorage implements Cloneable {
 
 	public Object clone() {
 		PathStorage storage = new PathStorage();
-		storage.currentPath = (ExtendedGeneralPath) currentPath.clone();
+		storage.currentPath = (GeneralPath) currentPath.clone();
 		return storage;
 	}
 

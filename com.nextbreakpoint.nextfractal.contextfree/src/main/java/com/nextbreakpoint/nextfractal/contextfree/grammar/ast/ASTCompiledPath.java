@@ -245,7 +245,9 @@ public class ASTCompiledPath {
 						Logger.fail("Cannot invert transform", pathOp.getLocation());
 					}
 				} else {
-					pathStorage.arcTo(radiusX, radiusY, angle, largeArc, sweep, p0);
+					Arc2D arc = ExtendedGeneralPath.computeArc(p1.x, p1.y, radiusX, radiusY, angle, largeArc, sweep, p0.x, p0.y);
+					pathStorage.append(arc, p0);
+//					pathStorage.arcTo(radiusX, radiusY, angle, largeArc, sweep, p0);
 				}
 				break;
 			case CURVEREL:

@@ -77,12 +77,12 @@ public class V3RenderTest extends AbstractBaseTest {
 	@Test
 	public void shouldRenderImage() throws IOException {
 		System.out.println(sourceName);
-		TestCanvas canvas = new TestCanvas(200, 200);
+		BufferedImage actualImage = new BufferedImage(200, 200, BufferedImage.TYPE_INT_ARGB);
+		SimpleCanvas canvas = new SimpleCanvas(actualImage.createGraphics(), 200, 200);
 		CFDG cfdg = parseSource(sourceName);
 		cfdg.rulesLoaded();
 		CFDGRenderer renderer = cfdg.renderer(200, 200, 1, 0, 0.1);
 		renderer.run(canvas, false);
-		BufferedImage actualImage = canvas.getImage();
 		saveImage("tmp" + imageName, actualImage);
 		BufferedImage expectedImage = loadImage(imageName);
 		assertThat(compareImages(expectedImage, actualImage), is(equalTo(0.0)));
@@ -127,11 +127,5 @@ public class V3RenderTest extends AbstractBaseTest {
 
 	private BufferedImage loadImage(String imageName) throws IOException {
 		return ImageIO.read(getResourceAsStream(imageName));
-	}
-
-	private class TestCanvas extends SimpleCanvas {
-		private TestCanvas(int width, int height) {
-			super(width, height);
-		}
 	}
 }

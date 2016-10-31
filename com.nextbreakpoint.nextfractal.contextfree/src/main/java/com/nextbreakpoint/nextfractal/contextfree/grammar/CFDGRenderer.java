@@ -69,7 +69,7 @@ public class CFDGRenderer {
 	private boolean requestUpdate;
 
 	private CFDG cfdg;
-	private SimpleCanvas canvas;
+	private CFCanvas canvas;
 	private TiledCanvas tiledCanvas;
 	private boolean colorConflict;
 	private int maxShapes = 500000000;
@@ -687,7 +687,7 @@ public class CFDGRenderer {
 		bounds = new Bounds();
 	}
 
-	public double run(SimpleCanvas canvas, boolean partialDraw) {
+	public double run(CFCanvas canvas, boolean partialDraw) {
 		if (!animating) {
 			outputPrep(canvas);
 		}
@@ -893,7 +893,7 @@ public class CFDGRenderer {
 		Logger.info(String.format("Animation of %d frames complete", frames), null);
 	}
 
-	private void outputPrep(SimpleCanvas canvas) {
+	private void outputPrep(CFCanvas canvas) {
 		this.canvas = canvas;
 
 		if (canvas != null) {
@@ -904,8 +904,9 @@ public class CFDGRenderer {
 				AffineTransform transform = new AffineTransform();
 				cfdg.isTiled(transform, null);
 				cfdg.isFrieze(transform, null);
-				tiledCanvas = new TiledCanvas(canvas, transform, frieze);
-				tiledCanvas.setScale(currScale);
+//				tiledCanvas = new TiledCanvas(canvas, transform, frieze);
+//				tiledCanvas.setScale(currScale);
+				//TODO completare
 				this.canvas = tiledCanvas;
 			}
 
@@ -1037,7 +1038,8 @@ public class CFDGRenderer {
 			currTransform.transform(p2, p2);
 			b.setMaxX(p2.getX());
 			b.setMaxY(p2.getY());
-			canvas.tileTransform(b);
+//			canvas.tileTransform(b);
+			//TODO completare
 		}
 
 		if (cfdg.getShapeType(shape.getShapeType()) == ShapeType.PathType) {

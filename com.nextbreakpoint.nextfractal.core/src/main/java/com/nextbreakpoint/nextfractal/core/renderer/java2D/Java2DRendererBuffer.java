@@ -48,9 +48,6 @@ public class Java2DRendererBuffer implements RendererBuffer {
 		super.finalize();
 	}
 	
-	/**
-	 * @see com.nextbreakpoint.nextfractal.RendererBuffer.renderer.RenderBuffer#dispose()
-	 */
 	@Override
 	public void dispose() {
 		if (g2d != null) {
@@ -58,17 +55,11 @@ public class Java2DRendererBuffer implements RendererBuffer {
 		}
 	}
 
-	/**
-	 * @see com.nextbreakpoint.nextfractal.RendererBuffer.renderer.RenderBuffer#clear()
-	 */
 	@Override
 	public void clear() {
 		g2d.clearRect(0, 0, image.getWidth(), image.getHeight());
 	}
 
-	/**
-	 * @see com.nextbreakpoint.nextfractal.RendererBuffer.renderer.RenderBuffer#update(int[])
-	 */
 	@Override
 	public void update(int[] pixels) {
 		if (pixels.length <= getWidth() * getHeight()) {
@@ -76,25 +67,16 @@ public class Java2DRendererBuffer implements RendererBuffer {
 		}
 	}
 
-	/**
-	 * @see com.nextbreakpoint.nextfractal.RendererBuffer.renderer.RenderBuffer#getWidth()
-	 */
 	@Override
 	public int getWidth() {
 		return image.getWidth();
 	}
 	
-	/**
-	 * @see com.nextbreakpoint.nextfractal.RendererBuffer.renderer.RenderBuffer#getHeight()
-	 */
 	@Override
 	public int getHeight() {
 		return image.getHeight();
 	}
 
-	/**
-	 * @see com.nextbreakpoint.nextfractal.RendererBuffer.renderer.RenderBuffer#getImage()
-	 */
 	@Override
 	public RendererImage getImage() {
 		return new Java2DRendererImage(image);
