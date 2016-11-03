@@ -2,6 +2,9 @@ package com.nextbreakpoint.nextfractal.contextfree.grammar;
 
 import com.nextbreakpoint.nextfractal.contextfree.core.Bounds;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.FlagType;
+import com.nextbreakpoint.nextfractal.core.renderer.RendererPoint;
+import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
+import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -9,22 +12,26 @@ import java.awt.geom.GeneralPath;
 
 public class SimpleCanvas implements CFCanvas {
     private Graphics2D g2d;
-    private int width;
-    private int height;
+    private RendererTile tile;
+    private RendererSize size;
     private AffineTransform normTransform;
 
-    public SimpleCanvas(Graphics2D g2d, int width, int height) {
+    public SimpleCanvas(Graphics2D g2d, RendererTile tile) {
         this.g2d = g2d;
-        this.width = width;
-        this.height = height;
+        this.tile = tile;
+        final RendererSize tileSize = tile.getTileSize();
+        final RendererSize borderSize = tile.getBorderSize();
+        final int width = tileSize.getWidth() + borderSize.getWidth() * 2;
+        final int height = tileSize.getHeight() + borderSize.getHeight() * 2;
+        size = new RendererSize(width, height);
     }
 
     public int getWidth() {
-        return width;
+        return size.getWidth();
     }
 
     public int getHeight() {
-        return height;
+        return size.getHeight();
     }
 
     public void primitive(int shapeType, double[] color, AffineTransform transform) {
@@ -56,9 +63,9 @@ public class SimpleCanvas implements CFCanvas {
 
         AffineTransform t = new AffineTransform(normTransform);
 
-        java.awt.Shape shape;
-
         GeneralPath path = info.getPathStorage().getGeneralPath();
+
+        java.awt.Shape shape = path;
 
         if ((info.getFlags() & (FlagType.CF_EVEN_ODD.getMask() | FlagType.CF_FILL.getMask())) == (FlagType.CF_EVEN_ODD.getMask() | FlagType.CF_FILL.getMask())) {
             path.setWindingRule(GeneralPath.WIND_EVEN_ODD);
@@ -67,12 +74,10 @@ public class SimpleCanvas implements CFCanvas {
         }
 
         if ((info.getFlags() & FlagType.CF_FILL.getMask()) != 0) {
-            shape = path;
             t.concatenate(transform);
         } else if ((info.getFlags() & FlagType.CF_ISO_WIDTH.getMask()) != 0) {
             double scale = Math.sqrt(Math.abs(transform.getDeterminant()));
             g2d.setStroke(new BasicStroke((float)(info.getStrokeWidth() * scale), mapToCap(info.getFlags()), mapToJoin(info.getFlags()), (float)info.getMiterLimit()));
-            shape = path;
             t.concatenate(transform);
         } else {
             g2d.setStroke(new BasicStroke((float)info.getStrokeWidth(), mapToCap(info.getFlags()), mapToJoin(info.getFlags()), (float)info.getMiterLimit()));
@@ -117,9 +122,17 @@ public class SimpleCanvas implements CFCanvas {
     public void start(boolean first, double[] backgroundColor, int currWidth, int currHeight) {
         g2d.setColor(new Color((float)backgroundColor[0], (float)backgroundColor[1], (float)backgroundColor[2], (float)backgroundColor[3]));
         g2d.fillRect(0, 0, getWidth(), getHeight());
-        normTransform = AffineTransform.getTranslateInstance(0, getHeight());
-        normTransform.scale(1, -1);
-        normTransform.translate(-(currWidth - getWidth()) / 2, -(currHeight - getHeight()) / 2);
+        final RendererSize imageSize = tile.getImageSize();
+        final RendererSize borderSize = tile.getBorderSize();
+        final RendererPoint tileOffset = tile.getTileOffset();
+        normTransform = new AffineTransform();
+//        normTransform.translate(0, imageSize.getHeight());
+//        normTransform.scale(1, -1);
+        normTransform.translate(-tileOffset.getX() + borderSize.getWidth(), -tileOffset.getY() + borderSize.getHeight());
+        normTransform.translate(-(currWidth - imageSize.getWidth()) / 2, -(currHeight - imageSize.getHeight()) / 2);
+//        normTransform.translate(0, imageSize.getHeight() / 2);
+//        normTransform.scale(1, -1);
+//        normTransform.translate(0, -imageSize.getHeight() / 2);
     }
 
     public void end() {

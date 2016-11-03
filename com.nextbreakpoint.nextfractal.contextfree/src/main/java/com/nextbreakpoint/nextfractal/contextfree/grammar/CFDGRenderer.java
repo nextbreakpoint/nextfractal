@@ -114,6 +114,7 @@ public class CFDGRenderer {
 	private ASTRule[] primitivePaths;
 
 	private CFStack cfStack;
+	private AffineTransform tileTransform;
 
 	public CFDGRenderer(CFDG cfdg, int width, int height, double minSize, int variation, double border) {
 		this.cfdg = cfdg;
@@ -897,8 +898,8 @@ public class CFDGRenderer {
 		this.canvas = canvas;
 
 		if (canvas != null) {
-			width = canvas.getWidth();
-			height = canvas.getHeight();
+//			width = canvas.getWidth();
+//			height = canvas.getHeight();
 
 			if (tiled || frieze != FriezeType.NoFrieze) {
 				AffineTransform transform = new AffineTransform();

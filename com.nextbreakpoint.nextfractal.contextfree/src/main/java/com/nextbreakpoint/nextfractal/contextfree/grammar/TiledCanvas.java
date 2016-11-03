@@ -2,19 +2,17 @@ package com.nextbreakpoint.nextfractal.contextfree.grammar;
 
 import com.nextbreakpoint.nextfractal.contextfree.core.Bounds;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.FriezeType;
+import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
 
 import java.awt.*;
-import java.awt.geom.AffineTransform;
 
 public class TiledCanvas extends SimpleCanvas {
-    private AffineTransform transform;
     private FriezeType frieze;
     private double scale;
 
-    public TiledCanvas(Graphics2D g2d, int width, int height, AffineTransform transform, FriezeType frieze) {
+    public TiledCanvas(Graphics2D g2d, RendererTile tile, FriezeType frieze) {
         //TODO rivedere
-        super(g2d, width, height);
-        this.transform = transform;
+        super(g2d, tile);
         this.frieze = frieze;
     }
 

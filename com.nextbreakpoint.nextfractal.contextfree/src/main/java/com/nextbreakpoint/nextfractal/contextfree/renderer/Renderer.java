@@ -31,6 +31,7 @@ import com.nextbreakpoint.nextfractal.core.renderer.*;
 import com.nextbreakpoint.nextfractal.core.renderer.java2D.Java2DRendererFactory;
 
 import java.awt.*;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.nio.IntBuffer;
@@ -270,16 +271,16 @@ public class Renderer {
 			progress = 0;
 			int width = getSize().getWidth();
 			int height = getSize().getHeight();
-			RendererFactory factory = new Java2DRendererFactory();
 			BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 			int[] pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
 			Graphics2D g2d = image.createGraphics();
 			if (cfdg != null) {
 				cfdg.rulesLoaded();
-				CFDGRenderer renderer = cfdg.renderer(width, height, 1, 0, 0.1);
+				CFDGRenderer renderer = cfdg.renderer(tile.getImageSize().getWidth(), tile.getImageSize().getHeight(), 1, 0, 0.1);
 				if (renderer != null) {
-					renderer.run(new RendererCanvas(factory, g2d, width, height), false);
-//					renderer.run(new SimpleCanvas(g2d, width, height), false);
+//					RendererFactory factory = new Java2DRendererFactory();
+//					renderer.run(new RendererCanvas(factory, g2d, width, height), false);
+					renderer.run(new SimpleCanvas(g2d, buffer.getTile()), false);
 				}
 			}
 //			for (;;) {
@@ -319,7 +320,23 @@ public class Renderer {
 		affine.append(renderFactory.createTranslateAffine(tileOffset.getX() - offsetX, tileOffset.getY() - offsetY));
 		return affine;
 	}
-	
+
+//	/**
+//	 * @return
+//	 */
+//	protected AffineTransform createTileTransform() {
+//		final RendererSize tileSize = buffer.getTile().getTileSize();
+//		final RendererSize imageSize = buffer.getTile().getImageSize();
+//		final RendererSize borderSize = buffer.getTile().getBorderSize();
+//		final RendererPoint tileOffset = buffer.getTile().getTileOffset();
+//		final int offsetX = borderSize.getWidth();
+//		final int offsetY = borderSize.getHeight();
+//		final AffineTransform affine = new AffineTransform();
+//		affine.translate(-tileOffset.getX() + offsetX, -tileOffset.getY() + offsetY);
+//		affine.scale(imageSize.getWidth() / tileSize.getWidth(), imageSize.getHeight() / tileSize.getHeight());
+//		return affine;
+//	}
+
 	/**
 	 * @param progress
 	 * @param pixels

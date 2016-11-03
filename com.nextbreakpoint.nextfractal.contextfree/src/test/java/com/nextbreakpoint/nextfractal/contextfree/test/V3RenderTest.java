@@ -27,11 +27,15 @@ package com.nextbreakpoint.nextfractal.contextfree.test;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDG;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGRenderer;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.SimpleCanvas;
+import com.nextbreakpoint.nextfractal.core.renderer.RendererPoint;
+import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
+import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 import javax.imageio.ImageIO;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -78,7 +82,8 @@ public class V3RenderTest extends AbstractBaseTest {
 	public void shouldRenderImage() throws IOException {
 		System.out.println(sourceName);
 		BufferedImage actualImage = new BufferedImage(200, 200, BufferedImage.TYPE_INT_ARGB);
-		SimpleCanvas canvas = new SimpleCanvas(actualImage.createGraphics(), 200, 200);
+		RendererTile tile = new RendererTile(new RendererSize(200, 200), new RendererSize(200, 200), new RendererPoint(0, 0), new RendererSize(0, 0));
+		SimpleCanvas canvas = new SimpleCanvas(actualImage.createGraphics(), tile);
 		CFDG cfdg = parseSource(sourceName);
 		cfdg.rulesLoaded();
 		CFDGRenderer renderer = cfdg.renderer(200, 200, 1, 0, 0.1);
