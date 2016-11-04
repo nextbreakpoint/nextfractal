@@ -30,6 +30,9 @@ import com.nextbreakpoint.nextfractal.contextfree.grammar.SimpleCanvas;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererPoint;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
+import com.nextbreakpoint.nextfractal.contextfree.renderer.Renderer;
+import com.nextbreakpoint.nextfractal.core.renderer.java2D.Java2DRendererFactory;
+import com.nextbreakpoint.nextfractal.core.utils.DefaultThreadFactory;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -81,14 +84,27 @@ public class V3RenderTest extends AbstractBaseTest {
 	@Test
 	public void shouldRenderImage() throws IOException {
 		System.out.println(sourceName);
+
 		BufferedImage actualImage = new BufferedImage(200, 200, BufferedImage.TYPE_INT_ARGB);
+
+		DefaultThreadFactory threadFactory = new DefaultThreadFactory("ContextFreeHistoryImageGenerator", true, Thread.MIN_PRIORITY);
+		Java2DRendererFactory rendererFactory = new Java2DRendererFactory();
+
 		RendererTile tile = new RendererTile(new RendererSize(200, 200), new RendererSize(200, 200), new RendererPoint(0, 0), new RendererSize(0, 0));
-		SimpleCanvas canvas = new SimpleCanvas(actualImage.createGraphics(), tile);
+		Renderer renderer = new Renderer(threadFactory, rendererFactory, tile);
+
 		CFDG cfdg = parseSource(sourceName);
-		cfdg.rulesLoaded();
-		CFDGRenderer renderer = cfdg.renderer(200, 200, 1, 0, 0.1);
-		renderer.run(canvas, false);
+
+		renderer.setOpaque(true);
+		renderer.setCFDG(cfdg);
+		renderer.init();
+		renderer.runTask();
+		renderer.waitForTasks();
+
+		renderer.drawImage(rendererFactory.createGraphicsContext(actualImage.createGraphics()), 0, 0);
+
 		saveImage("tmp" + imageName, actualImage);
+
 		BufferedImage expectedImage = loadImage(imageName);
 		assertThat(compareImages(expectedImage, actualImage), is(equalTo(0.0)));
 	}
