@@ -222,7 +222,7 @@ public class RenderPane extends BorderPane implements ToolContext {
 		browsePane.setDelegate(new BrowseDelegate() {
 			@Override
 			public void didSelectFile(BrowsePane source, File file) {
-				updateFile(browsePane, file);
+				updateFile(file);
 				hideBrowser(browserTransition, a -> {});
 			}
 
@@ -482,7 +482,7 @@ public class RenderPane extends BorderPane implements ToolContext {
 			toolButtons.setPrefHeight(newValue.doubleValue() * 0.07);
 		});
 
-		stackPane.setOnDragDropped(e -> e.getDragboard().getFiles().stream().findFirst().ifPresent(file -> updateFile(browsePane, file)));
+		stackPane.setOnDragDropped(e -> e.getDragboard().getFiles().stream().findFirst().ifPresent(file -> updateFile(file)));
 
 		stackPane.setOnDragOver(x -> Optional.of(x).filter(e -> e.getGestureSource() != stackPane)
 				.filter(e -> e.getDragboard().hasFiles()).ifPresent(e -> e.acceptTransferModes(TransferMode.COPY_OR_MOVE)));
@@ -492,7 +492,7 @@ public class RenderPane extends BorderPane implements ToolContext {
 		runTimer(fractalCanvas, orbitCanvas, juliaCanvas, pointCanvas, trapCanvas, toolCanvas);
 	}
 
-	private void updateFile(BrowsePane pane, File file) {
+	private void updateFile(File file) {
 		fileProperty.setValue(null);
 		fileProperty.setValue(file.getAbsolutePath());
 	}

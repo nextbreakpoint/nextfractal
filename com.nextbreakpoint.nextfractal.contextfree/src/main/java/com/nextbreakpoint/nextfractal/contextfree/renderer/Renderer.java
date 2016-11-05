@@ -274,6 +274,11 @@ public class Renderer {
 			BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 			int[] pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
 			Graphics2D g2d = image.createGraphics();
+			g2d.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
+			g2d.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY);
+			g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 			if (cfdg != null) {
 				cfdg.rulesLoaded();
 				CFDGRenderer renderer = cfdg.renderer(tile.getImageSize().getWidth(), tile.getImageSize().getHeight(), 1, 0, 0.1);

@@ -44,7 +44,7 @@ public class ASTPathCommand extends ASTReplacement {
 
 	public ASTPathCommand(CFDGDriver driver, Token location) {
 		super(driver, null, RepElemType.command, location);
-		this.miterLimit = 4.0;
+		this.miterLimit = 1.0;
 		this.strokeWidth = 0.1;
 		this.parameters = null;
 		this.commandInfo = new CommandInfo();
@@ -53,7 +53,7 @@ public class ASTPathCommand extends ASTReplacement {
 
 	public ASTPathCommand(CFDGDriver driver, String s, ASTModification mods, ASTExpression params, Token location) {
 		super(driver, mods, RepElemType.command, location);
-		this.miterLimit = 4.0;
+		this.miterLimit = 1.0;
 		this.strokeWidth = 0.1;
 		this.parameters = params;
 		this.commandInfo = new CommandInfo();

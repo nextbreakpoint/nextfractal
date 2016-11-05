@@ -22,8 +22,13 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
+package com.nextbreakpoint.nextfractal.contextfree.javaFX;
 
+import com.nextbreakpoint.nextfractal.contextfree.ContextFreeData;
+import com.nextbreakpoint.nextfractal.contextfree.ContextFreeDataStore;
+import com.nextbreakpoint.nextfractal.contextfree.compiler.CompilerReport;
+import com.nextbreakpoint.nextfractal.contextfree.renderer.RendererCoordinator;
+import com.nextbreakpoint.nextfractal.contextfree.compiler.Compiler;
 import com.nextbreakpoint.nextfractal.core.javaFX.StringObservableValue;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererPoint;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
@@ -31,18 +36,6 @@ import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
 import com.nextbreakpoint.nextfractal.core.renderer.javaFX.JavaFXRendererFactory;
 import com.nextbreakpoint.nextfractal.core.utils.Block;
 import com.nextbreakpoint.nextfractal.core.utils.DefaultThreadFactory;
-import com.nextbreakpoint.nextfractal.core.utils.Double4D;
-import com.nextbreakpoint.nextfractal.core.utils.Integer4D;
-import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotData;
-import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotDataStore;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.Compiler;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerBuilder;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerReport;
-import com.nextbreakpoint.nextfractal.mandelbrot.core.Color;
-import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
-import com.nextbreakpoint.nextfractal.mandelbrot.core.Orbit;
-import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererCoordinator;
-import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererView;
 import javafx.animation.AnimationTimer;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -63,7 +56,7 @@ import java.util.logging.Logger;
 import java.util.prefs.Preferences;
 
 public class BrowsePane extends BorderPane {
-	public static final String BROWSER_DEFAULT_LOCATION = "browser.default.location";
+	private static final String BROWSER_DEFAULT_LOCATION = "browser.default.location";
 	private static final Logger logger = Logger.getLogger(BrowsePane.class.getName());
 	private static final int FRAME_LENGTH_IN_MILLIS = 50;
 	private static final int SCROLL_BOUNCE_DELAY = 500;
@@ -293,7 +286,7 @@ public class BrowsePane extends BorderPane {
 	private File[] listFiles(File folder) {
 		Preferences prefs = Preferences.userNodeForPackage(RenderPane.class);
 		prefs.put(BROWSER_DEFAULT_LOCATION, folder.getAbsolutePath());
-		return folder.listFiles((dir, name) -> name.endsWith(".m"));
+		return folder.listFiles((dir, name) -> name.endsWith(".cf"));
 	}
 
 	private void removeItems() {
@@ -332,8 +325,8 @@ public class BrowsePane extends BorderPane {
 
 	private void loadItem(GridItem item) {
 		try {
-			MandelbrotDataStore service = new MandelbrotDataStore();
-			MandelbrotData data = service.loadFromFile(item.getFile());
+			ContextFreeDataStore service = new ContextFreeDataStore();
+			ContextFreeData data = service.loadFromFile(item.getFile());
 			if (Thread.currentThread().isInterrupted()) {
 				return;
 			}
@@ -345,20 +338,8 @@ public class BrowsePane extends BorderPane {
 			if (Thread.currentThread().isInterrupted()) {
 				return;
 			}
-			CompilerBuilder<Orbit> orbitBuilder = compiler.compileOrbit(report);
-			if (orbitBuilder.getErrors().size() > 0) {
-				throw new RuntimeException("Failed to compile Orbit class");
-			}
-			if (Thread.currentThread().isInterrupted()) {
-				return;
-			}
-			CompilerBuilder<Color> colorBuilder = compiler.compileColor(report);
-			if (colorBuilder.getErrors().size() > 0) {
-				throw new RuntimeException("Failed to compile Color class");
-			}
-			item.setOrbitBuilder(orbitBuilder);
-			item.setColorBuilder(colorBuilder);
 			item.setData(data);
+			item.setCFDG(report.getCFDG());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -451,7 +432,7 @@ public class BrowsePane extends BorderPane {
 		}
 		for (int index = firstIndex; index < Math.min(lastIndex, items.size()); index++) {
 			GridItem item = items.get(index);
-			MandelbrotData data = item.getData();
+			ContextFreeData data = item.getData();
 			long time = System.currentTimeMillis();
 			if (data == null && time - item.getLastChanged() > SCROLL_BOUNCE_DELAY && item.getFuture() == null) {
 				Future<GridItem> task = executor.submit(new Callable<GridItem>() {
@@ -470,22 +451,12 @@ public class BrowsePane extends BorderPane {
 		grid.updateCells();
 	}
 
-	private void initItem(GridItem item, MandelbrotData data) {
+	private void initItem(GridItem item, ContextFreeData data) {
 		try {
 			Map<String, Integer> hints = new HashMap<String, Integer>();
-			hints.put(RendererCoordinator.KEY_TYPE, RendererCoordinator.VALUE_REALTIME);
-			hints.put(RendererCoordinator.KEY_MULTITHREAD, RendererCoordinator.VALUE_SINGLE_THREAD);
 			RendererCoordinator coordinator = new RendererCoordinator(threadFactory, renderFactory, tile, hints);
-			coordinator.setOrbitAndColor(item.getOrbitBuilder().build(), item.getColorBuilder().build());
+			coordinator.setCFDG(item.getCFDG());
 			coordinator.init();
-			RendererView view = new RendererView();
-			view.setTraslation(new Double4D(data.getTranslation()));
-			view.setRotation(new Double4D(data.getRotation()));
-			view.setScale(new Double4D(data.getScale()));
-			view.setState(new Integer4D(0, 0, 0, 0));
-			view.setPoint(new Number(data.getPoint()));
-			view.setJulia(data.isJulia());
-			coordinator.setView(view);
 			coordinator.run();
 			item.setCoordinator(coordinator);
 		} catch (Exception e) {

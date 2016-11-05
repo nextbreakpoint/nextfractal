@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<contextfree>
+    <timestamp>2016-11-05 11:08:35</timestamp>
+    <source>CFDG3
+
+startshape Foo
+
+shape Foo {
+    CIRCLE []
+}
+</source>
+    <time>0.0</time>
+</contextfree>

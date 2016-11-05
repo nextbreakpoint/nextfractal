@@ -166,28 +166,28 @@ public class RenderPane extends BorderPane {
 //		toolButtons.getChildren().add(rotateButton);
 		toolButtons.getStyleClass().add("toolbar");
 
-//		BrowsePane browsePane = new BrowsePane(width, height);
-//		browsePane.setTranslateX(-width);
+		BrowsePane browsePane = new BrowsePane(width, height);
+		browsePane.setTranslateX(-width);
 
-//		TranslateTransition browserTransition = createTranslateTransition(browsePane);
+		TranslateTransition browserTransition = createTranslateTransition(browsePane);
 
 		browseButton.setOnAction(e -> {
-//			showBrowser(browserTransition, a -> {});
-//			browsePane.reload();
+			showBrowser(browserTransition, a -> {});
+			browsePane.reload();
 		});
 
-//		browsePane.setDelegate(new BrowseDelegate() {
-//			@Override
-//			public void didSelectFile(BrowsePane source, File file) {
-//				updateFile(browsePane, file);
-//				hideBrowser(browserTransition, a -> {});
-//			}
-//
-//			@Override
-//			public void didClose(BrowsePane source) {
-//				hideBrowser(browserTransition, a -> {});
-//			}
-//		});
+		browsePane.setDelegate(new BrowseDelegate() {
+			@Override
+			public void didSelectFile(BrowsePane source, File file) {
+				updateFile(file);
+				hideBrowser(browserTransition, a -> {});
+			}
+
+			@Override
+			public void didClose(BrowsePane source) {
+				hideBrowser(browserTransition, a -> {});
+			}
+		});
 
 		controls.setBottom(toolButtons);
 		toolButtons.setOpacity(0.9);
@@ -259,7 +259,7 @@ public class RenderPane extends BorderPane {
 		stackPane.getChildren().add(toolCanvas);
 		stackPane.getChildren().add(controls);
 		stackPane.getChildren().add(errors);
-//		stackPane.getChildren().add(browsePane);
+		stackPane.getChildren().add(browsePane);
 		setCenter(stackPane);
 
 		toolsGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {

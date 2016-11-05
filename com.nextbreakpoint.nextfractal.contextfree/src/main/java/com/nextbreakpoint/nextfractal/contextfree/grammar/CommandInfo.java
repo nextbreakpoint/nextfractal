@@ -29,9 +29,7 @@ import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTPathCommand;
 
 import java.util.concurrent.atomic.AtomicLong;
 
-import static com.nextbreakpoint.nextfractal.contextfree.grammar.enums.FlagType.CF_BUTT_CAP;
-import static com.nextbreakpoint.nextfractal.contextfree.grammar.enums.FlagType.CF_FILL;
-import static com.nextbreakpoint.nextfractal.contextfree.grammar.enums.FlagType.CF_MITER_JOIN;
+import static com.nextbreakpoint.nextfractal.contextfree.grammar.enums.FlagType.*;
 
 public class CommandInfo {
     private static AtomicLong lastPathUID = new AtomicLong(0);
@@ -48,7 +46,7 @@ public class CommandInfo {
     public CommandInfo() {
         index = 0;
         flags = 0;
-        miterLimit = 4.0;
+        miterLimit = 1.0;
         strokeWidth = 0.1;
         pathUID = DEFAULT_PATH_UID;
         pathStorage = null;
@@ -72,8 +70,8 @@ public class CommandInfo {
     }
 
     private CommandInfo(int index, PathStorage pathStorage) {
-        flags = CF_MITER_JOIN.getMask() + CF_BUTT_CAP.getMask() + CF_FILL.getMask();
-        miterLimit = 4.0;
+        flags = CF_MITER_JOIN.getMask() | CF_BUTT_CAP.getMask() | CF_FILL.getMask();
+        miterLimit = 1.0;
         strokeWidth = 0.1;
         pathUID = 0L;
         this.index = index;
@@ -110,8 +108,8 @@ public class CommandInfo {
                 flags = pathCommand.getFlags();
                 miterLimit = pathCommand.getMiterLimit();
             } else {
-                flags =  CF_MITER_JOIN.getMask() + CF_BUTT_CAP.getMask() + CF_FILL.getMask();
-                miterLimit = 4.0;
+                flags =  CF_MITER_JOIN.getMask() | CF_BUTT_CAP.getMask() | CF_FILL.getMask();
+                miterLimit = 1.0;
             }
             this.index = index;
             //TODO rivedere

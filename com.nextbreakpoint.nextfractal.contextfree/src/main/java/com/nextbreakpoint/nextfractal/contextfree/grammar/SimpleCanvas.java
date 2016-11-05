@@ -80,7 +80,8 @@ public class SimpleCanvas implements CFCanvas {
             g2d.setStroke(new BasicStroke((float)(info.getStrokeWidth() * scale), mapToCap(info.getFlags()), mapToJoin(info.getFlags()), (float)info.getMiterLimit()));
             t.concatenate(transform);
         } else {
-            g2d.setStroke(new BasicStroke((float)info.getStrokeWidth(), mapToCap(info.getFlags()), mapToJoin(info.getFlags()), (float)info.getMiterLimit()));
+            double scale = Math.sqrt(Math.abs(transform.getDeterminant()));
+            g2d.setStroke(new BasicStroke((float)(info.getStrokeWidth() * scale), mapToCap(info.getFlags()), mapToJoin(info.getFlags()), (float)info.getMiterLimit()));
             shape = path.createTransformedShape(transform);
         }
 
