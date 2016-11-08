@@ -538,7 +538,7 @@ public class EditorPane extends BorderPane {
 	}
 
 	private FileChooser showSaveFileChooser() {
-		ensureGrammarFileChooser(".cfdg");
+		ensureGrammarFileChooser(".cf");
 		grammarFileChooser.setTitle("Save");
 		if (getContextFreeSession().getCurrentFile() != null) {
 			grammarFileChooser.setInitialDirectory(getContextFreeSession().getCurrentFile().getParentFile());
@@ -548,7 +548,7 @@ public class EditorPane extends BorderPane {
 	}
 
 	private FileChooser showLoadFileChooser() {
-		ensureGrammarFileChooser(".cfdg");
+		ensureGrammarFileChooser(".cf");
 		grammarFileChooser.setTitle("Load");
 		if (getContextFreeSession().getCurrentFile() != null) {
 			grammarFileChooser.setInitialDirectory(getContextFreeSession().getCurrentFile().getParentFile());
