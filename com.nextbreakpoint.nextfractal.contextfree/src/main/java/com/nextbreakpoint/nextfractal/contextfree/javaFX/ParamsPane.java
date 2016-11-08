@@ -33,7 +33,6 @@ import javafx.application.Platform;
 import javafx.scene.control.*;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
@@ -51,8 +50,14 @@ public class ParamsPane extends Pane {
 	public ParamsPane(ContextFreeSession session) {
 		VBox box = new VBox(SPACING * 2);
 		box.getStyleClass().add("params");
+		Label seedLabel = new Label("Seed");
+		AdvancedTextField seedField = new AdvancedTextField();
+		seedField.setRestrict(getRestriction());
+		seedField.setTransform(t -> t.toUpperCase());
+		VBox seedPane = new VBox(SPACING);
+		seedPane.getChildren().add(seedLabel);
+		seedPane.getChildren().add(seedField);
 		Label grammarLabel = new Label("Grammar");
-		Label wLabel = new Label("Initial value of w");
 		VBox grammarPane = new VBox(SPACING);
 		grammarPane.getChildren().add(grammarLabel);
 		ComboBox<String> grammarCombobox = new ComboBox<>();
@@ -62,6 +67,7 @@ public class ParamsPane extends Pane {
 		if (grammarCombobox.getItems().size() > 1) {
 			box.getChildren().add(grammarPane);
 		}
+		box.getChildren().add(seedPane);
 		VBox buttons = new VBox(4);
 		Button applyButton = new Button("Apply");
 		Button cancelButton = new Button("Cancel"); 
@@ -121,9 +127,15 @@ public class ParamsPane extends Pane {
 		cancelButton.setOnAction(e -> updateAll.apply(session));
 		
 		applyButton.setOnAction((e) -> {
+			String seed = seedField.getText();
 			Platform.runLater(() -> {
+				ContextFreeData data = session.getDataAsCopy();
+				data.setSeed(seed);
+				session.setData(data);
 			});
 		});
+
+		seedField.setText(session.getDataAsCopy().getSeed());
 		
 		updateAll.apply(session);
 		
@@ -180,6 +192,6 @@ public class ParamsPane extends Pane {
 
 
 	protected String getRestriction() {
-		return "-?\\d*\\.?\\d*";
+		return "[A-Z]*";
 	}
 }

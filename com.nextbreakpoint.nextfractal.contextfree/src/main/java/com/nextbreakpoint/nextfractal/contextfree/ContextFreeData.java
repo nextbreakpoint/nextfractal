@@ -37,6 +37,7 @@ public class ContextFreeData {
 	@XmlJavaTypeAdapter(DateAdapter.class)
 	private Date timestamp = new Date();
 	private String source = "";
+	private String seed = "ABCD";
 	private double time;
 	private IntBuffer pixels;
 	private float[] color;
@@ -84,5 +85,13 @@ public class ContextFreeData {
 
 	public void setColor(float[] color) {
 		this.color = color;
+	}
+
+	public String getSeed() {
+		return seed;
+	}
+
+	public void setSeed(String seed) {
+		this.seed = seed;
 	}
 }
