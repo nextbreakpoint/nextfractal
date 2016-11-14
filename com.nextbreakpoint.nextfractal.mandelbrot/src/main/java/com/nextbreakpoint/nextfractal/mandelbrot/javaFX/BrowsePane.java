@@ -63,7 +63,7 @@ import java.util.logging.Logger;
 import java.util.prefs.Preferences;
 
 public class BrowsePane extends BorderPane {
-	public static final String BROWSER_DEFAULT_LOCATION = "browser.default.location";
+	public static final String BROWSER_DEFAULT_LOCATION = "browser.location";
 	private static final Logger logger = Logger.getLogger(BrowsePane.class.getName());
 	private static final int FRAME_LENGTH_IN_MILLIS = 50;
 	private static final int SCROLL_BOUNCE_DELAY = 500;
@@ -91,7 +91,7 @@ public class BrowsePane extends BorderPane {
 
 		Preferences prefs = Preferences.userNodeForPackage(RenderPane.class);
 		
-		currentDir = new File(prefs.get(BROWSER_DEFAULT_LOCATION, getDefaultBrowserDir()));
+		currentDir = getCurrentDir(prefs);
 
 		threadFactory = new DefaultThreadFactory("BrowserPane", true, Thread.MIN_PRIORITY);
 		
@@ -494,12 +494,26 @@ public class BrowsePane extends BorderPane {
 		}
 	}
 
+	private File getCurrentDir(Preferences prefs) {
+		File currentDir = new File(prefs.get(BROWSER_DEFAULT_LOCATION, getDefaultBrowserDir()));
+		if (!currentDir.exists() || !currentDir.canWrite()) {
+			currentDir = new File(getDefaultBrowserDir());
+		}
+		if (!currentDir.exists() || !currentDir.canWrite()) {
+			currentDir = new File(System.getProperty("user.home"));
+		}
+		logger.info("currentBrowserDir = " + currentDir.getAbsolutePath());
+		return currentDir;
+	}
+
 	private String getDefaultBrowserDir() {
-		String defaultBrowserDir = System.getProperty(BROWSER_DEFAULT_LOCATION, "#[user.home]");
+		String defaultBrowserDir = System.getProperty(BROWSER_DEFAULT_LOCATION, "[user.home]");
 		String userHome = System.getProperty("user.home");
 		String userDir = System.getProperty("user.dir");
-		defaultBrowserDir = defaultBrowserDir.replace("#[user.home]", userHome);
-		defaultBrowserDir = defaultBrowserDir.replace("#[user.dir]", userDir);
+		String currentDir = new File(".").getAbsoluteFile().getParent();
+		defaultBrowserDir = defaultBrowserDir.replace("[current.path]", currentDir);
+		defaultBrowserDir = defaultBrowserDir.replace("[user.home]", userHome);
+		defaultBrowserDir = defaultBrowserDir.replace("[user.dir]", userDir);
 		logger.info("defaultBrowserDir = " + defaultBrowserDir);
 		return defaultBrowserDir;
 	}

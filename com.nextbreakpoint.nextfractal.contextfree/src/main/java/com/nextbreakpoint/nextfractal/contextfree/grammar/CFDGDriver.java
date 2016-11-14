@@ -183,7 +183,7 @@ public class CFDGDriver {
 		currentShape = stringToShape(name, false, location);
 		ASTDefine def = cfdg.findFunction(currentShape);
 		if (def != null) {
-			error("There is a function with the same name as this shape: " + def.getLocation(), location);
+			error("There is a function with the same name as this shape: " + def.getName(), location);
 			return;
 		}
 		String err = cfdg.setShapeParams(currentShape, paramDecls, paramDecls.getStackCount(), isPath);

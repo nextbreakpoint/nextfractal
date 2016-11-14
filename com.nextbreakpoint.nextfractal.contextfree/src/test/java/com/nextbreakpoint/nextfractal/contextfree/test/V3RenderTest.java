@@ -25,8 +25,6 @@
 package com.nextbreakpoint.nextfractal.contextfree.test;
 
 import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDG;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGRenderer;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.SimpleCanvas;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererPoint;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
@@ -38,7 +36,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 import javax.imageio.ImageIO;
-import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
