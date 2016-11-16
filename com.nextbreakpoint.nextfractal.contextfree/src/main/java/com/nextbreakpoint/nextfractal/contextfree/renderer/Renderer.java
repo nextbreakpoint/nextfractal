@@ -34,7 +34,6 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.nio.IntBuffer;
-import java.util.Collections;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.concurrent.*;
@@ -63,6 +62,7 @@ public class Renderer {
 	private final RenderRunnable renderTask = new RenderRunnable();
 	private ExecutorService executor;
 	private volatile Future<?> future;
+	private CFDGRenderer renderer;
 
 	/**
 	 * @param threadFactory
@@ -107,6 +107,9 @@ public class Renderer {
 	 */
 	public void abortTasks() {
 		interrupted = true;
+		if (renderer != null) {
+			renderer.setRequestStop(interrupted);
+		}
 //		if (future != null) {
 //			future.cancel(true);
 //		}
@@ -123,6 +126,9 @@ public class Renderer {
 			}
 		} catch (Exception e) {
 			interrupted = true;
+			if (renderer != null) {
+				renderer.setRequestStop(interrupted);
+			}
 //			e.printStackTrace();
 		}
 	}
@@ -269,7 +275,6 @@ public class Renderer {
 	protected void doRender() {
 		try {
 			cfdgChanged = false;
-			aborted = false;
 			progress = 0;
 			int width = getSize().getWidth();
 			int height = getSize().getHeight();
@@ -285,27 +290,19 @@ public class Renderer {
 				CFDGLogger logger = new CFDGLogger();
 				cfdg.getDriver().setLogger(logger);
 				cfdg.rulesLoaded();
-				CFDGRenderer renderer = cfdg.renderer(tile.getImageSize().getWidth(), tile.getImageSize().getHeight(), 1, 0, 0.1);
+				renderer = cfdg.renderer(tile.getImageSize().getWidth(), tile.getImageSize().getHeight(), 1, 0, 0.1);
 				if (renderer != null) {
 //					RendererFactory factory = new Java2DRendererFactory();
 //					renderer.run(new RendererCanvas(factory, g2d, width, height), false);
-					renderer.run(new SimpleCanvas(g2d, buffer.getTile()), false);
+					renderer.run(new SimpleCanvas(g2d, buffer.getTile()), true);
 				}
 				errors.addAll(logger.getErrors());
 			}
-//			for (;;) {
-//				if (isInterrupted()) {
-//					aborted = true;
-//					break;
-//				}
-//				Thread.yield();
-//			}
-			if (!aborted) {
+			if (!isInterrupted()) {
 				progress = 1f;
 				didChanged(progress, pixels);
 			}
 			g2d.dispose();
-			Thread.yield();
 		} catch (Throwable e) {
 			logger.log(Level.WARNING, "Cannot render fractal", e);
 			errors.add(new RendererError(0, 0, 0, 0, e.getMessage()));

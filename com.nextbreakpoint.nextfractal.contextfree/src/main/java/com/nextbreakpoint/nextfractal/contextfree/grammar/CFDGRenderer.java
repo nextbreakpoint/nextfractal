@@ -64,15 +64,15 @@ public class CFDGRenderer {
 	private boolean randUsed;
 	private double maxNatural;
 	private double maxSteps;
-	private boolean requestStop;
-	private boolean requestFinishUp;
-	private boolean requestUpdate;
+	private volatile boolean requestStop;
+	private volatile boolean requestFinishUp;
+	private volatile boolean requestUpdate;
 
 	private CFDG cfdg;
 	private CFCanvas canvas;
 	private TiledCanvas tiledCanvas;
 	private boolean colorConflict;
-	private int maxShapes = 5000;
+	private int maxShapes = 5000000;
 	private boolean tiled;
 	private boolean sized;
 	private boolean timed;
@@ -760,6 +760,8 @@ public class CFDGRenderer {
 				outputStats();
 				reportAt = 2 * shapeCount;
 			}
+
+			Thread.yield();
 		}
 
 		if (cfdg.usesTime() || !timed) {
