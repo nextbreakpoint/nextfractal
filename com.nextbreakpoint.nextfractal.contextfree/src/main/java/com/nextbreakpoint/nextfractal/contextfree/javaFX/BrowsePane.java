@@ -467,7 +467,7 @@ public class BrowsePane extends BorderPane {
 
 	private File getCurrentDir(Preferences prefs) {
 		File currentDir = new File(prefs.get(BROWSER_DEFAULT_LOCATION, getDefaultBrowserDir()));
-		if (!currentDir.exists() || !currentDir.canWrite()) {
+		if (!currentDir.exists() || !currentDir.canWrite() || Boolean.getBoolean("ignore.location")) {
 			currentDir = new File(getDefaultBrowserDir());
 		}
 		if (!currentDir.exists() || !currentDir.canWrite()) {
