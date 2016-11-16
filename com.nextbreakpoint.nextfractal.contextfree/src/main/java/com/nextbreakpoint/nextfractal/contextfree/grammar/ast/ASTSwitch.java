@@ -29,7 +29,6 @@ import java.util.Map;
 
 import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGDriver;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGRenderer;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.Logger;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.Shape;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.CompilePhase;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ExpType;
@@ -72,7 +71,7 @@ public class ASTSwitch extends ASTReplacement {
 		switch (ph) {
 			case TypeCheck:
 				if (switchExp.getType() != ExpType.NumericType || switchExp.evaluate(null, 0) != 1) {
-					Logger.error("Switch selector must be a numeric scalar", location);
+					driver.error("Switch selector must be a numeric scalar", location);
 				}
 				break;
 	
@@ -91,7 +90,7 @@ public class ASTSwitch extends ASTReplacement {
 	public void traverse(Shape parent, boolean tr, CFDGRenderer renderer) {
 		double[] caveValue = new double[1];
 		if (switchExp.evaluate(caveValue, 1, renderer) != 1) {
-			Logger.error("Error evaluating switch selector", location);
+			driver.error("Error evaluating switch selector", location);
 			return;
 		}
 		

@@ -24,10 +24,19 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.grammar.exceptions;
 
+import org.antlr.v4.runtime.Token;
+
 public class CFDGException extends RuntimeException {
 	private static final long serialVersionUID = 1L;
 
-	public CFDGException(String message) {
+	private Token location;
+
+	public CFDGException(String message, Token location) {
 		super(message);
+		this.location = location;
+	}
+
+	public Token getLocation() {
+		return location;
 	}
 }

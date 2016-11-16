@@ -48,7 +48,7 @@ public class ASTRule extends ASTReplacement implements Comparable<ASTRule> {
 		this.weightType = percent ? WeightType.PercentWeight : WeightType.ExplicitWeight;
 		this.cachedPath = null;
 		if (weight <= 0.0) {
-			Logger.warning("Rule weight coerced to 1.0", location);
+			driver.warning("Rule weight coerced to 1.0", location);
 		}
 	}
 
@@ -68,19 +68,19 @@ public class ASTRule extends ASTReplacement implements Comparable<ASTRule> {
 				int cmd;
 				for (PathIterator iterator = shape.getPathIterator(); !iterator.isDone(); iterator.next()) {
 					if (isVertex(cmd = iterator.currentSegment(coords))) {
-						ASTExpression a = new ASTCons(location, new ASTReal(coords[0], location), new ASTReal(coords[1], location));
+						ASTExpression a = new ASTCons(driver, location, new ASTReal(driver, coords[0], location), new ASTReal(driver, coords[1], location));
 						ASTPathOp op = new ASTPathOp(driver, isMoveTo(cmd) ? PathOp.MOVETO.name() : PathOp.LINETO.name(), a, location);
 						getRuleBody().getBody().add(op);
 					}
 				}
 			} else {
-				ASTExpression a = new ASTCons(location, new ASTReal(0.5, location), new ASTReal(0.0, location));
+				ASTExpression a = new ASTCons(driver, location, new ASTReal(driver, 0.5, location), new ASTReal(driver, 0.0, location));
 				ASTPathOp op = new ASTPathOp(driver, PathOp.MOVETO.name(), a, location);
 				getRuleBody().getBody().add(op);
-				a = new ASTCons(location, new ASTReal(-0.5, location), new ASTReal(0.0, location), new ASTReal(0.5, location));
+				a = new ASTCons(driver, location, new ASTReal(driver, -0.5, location), new ASTReal(driver, 0.0, location), new ASTReal(driver, 0.5, location));
 				op = new ASTPathOp(driver, PathOp.ARCTO.name(), a, location);
 				getRuleBody().getBody().add(op);
-				a = new ASTCons(location, new ASTReal(0.5, location), new ASTReal(0.0, location), new ASTReal(0.5, location));
+				a = new ASTCons(driver, location, new ASTReal(driver, 0.5, location), new ASTReal(driver, 0.0, location), new ASTReal(driver, 0.5, location));
 				op = new ASTPathOp(driver, PathOp.ARCTO.name(), a, location);
 				getRuleBody().getBody().add(op);
 			}

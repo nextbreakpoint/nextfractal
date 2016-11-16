@@ -101,21 +101,21 @@ public class ASTRepContainer {
 	}
 
 	public void addParameter(String type, int nameIndex, Token nameLocation) {
-		parameters.add(new ASTParameter(type, nameIndex, nameLocation));
+		parameters.add(new ASTParameter(driver, type, nameIndex, nameLocation));
 		ASTParameter param = parameters.get(parameters.size() - 1);
 		param.setIsParameter(true);
 		param.checkParam();
 	}
 
 	public ASTParameter addDefParameter(int nameIndex, ASTDefine def, Token nameLocation) {
-		parameters.add(new ASTParameter(nameIndex, def, nameLocation));
+		parameters.add(new ASTParameter(driver, nameIndex, def, nameLocation));
 		ASTParameter param = parameters.get(parameters.size() - 1);
 		param.checkParam();
 		return param;
 	}
 
 	public void addLoopParameter(int nameIndex, boolean natural, boolean local, Token nameLocation) {
-		parameters.add(new ASTParameter(nameIndex, natural, local, nameLocation));
+		parameters.add(new ASTParameter(driver, nameIndex, natural, local, nameLocation));
 		ASTParameter param = parameters.get(parameters.size() - 1);
 		param.checkParam();
 		stackCount += param.getTupleSize();

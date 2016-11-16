@@ -27,7 +27,6 @@ package com.nextbreakpoint.nextfractal.contextfree.grammar.ast;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.ListIterator;
 
 import com.nextbreakpoint.nextfractal.contextfree.core.Rand64;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.*;
@@ -82,7 +81,7 @@ public class ASTModification extends ASTExpression {
 	}
 
 	public ASTModification(CFDGDriver driver, Token location) {
-		super(true, false, ExpType.ModType, location);
+		super(driver, true, false, ExpType.ModType, location);
 		this.driver = driver;
 		this.modClass = ModClass.NotAClass;
 		this.entropyIndex = 0;
@@ -90,7 +89,7 @@ public class ASTModification extends ASTExpression {
 	}
 	
 	public ASTModification(CFDGDriver driver, ASTModification mod, Token location) {
-		super(true, false, ExpType.ModType, location);
+		super(driver, true, false, ExpType.ModType, location);
 		this.driver = driver;
 		if (mod != null) {
 			modData.getRand64Seed().setSeed(0);
@@ -101,7 +100,7 @@ public class ASTModification extends ASTExpression {
 	}
 
 	public ASTModification(ASTModification mod) {
-		super(true, false, ExpType.ModType, mod.getLocation());
+		super(mod.driver, true, false, ExpType.ModType, mod.getLocation());
 		this.driver = mod.driver;
 		this.modClass = mod.modClass;
 		this.entropyIndex = mod.entropyIndex;
@@ -223,7 +222,7 @@ public class ASTModification extends ASTExpression {
 
 	@Override
 	public int evaluate(double[] result, int length, CFDGRenderer renderer) {
-		Logger.error("Improper evaluation of an adjustment expression", location);
+		driver.error("Improper evaluation of an adjustment expression", location);
 		return -1;
 	}
 
@@ -295,12 +294,12 @@ public class ASTModification extends ASTExpression {
 						case sizexyz: {
 							double[] d = new double[3];
 							if (term.getArguments().isConstant() && term.getArguments().evaluate(d, 3) != 3) {
-								term.setArguments(new ASTCons(location, new ASTReal(d[0], location), new ASTReal(d[1], location)));
+								term.setArguments(new ASTCons(driver, location, new ASTReal(driver, d[0], location), new ASTReal(driver, d[1], location)));
 								term.setModType(term.getModType() == ModType.xyz ? ModType.x : ModType.size);
 								term.setArgumentsCount(2);
 
 								ModType ztype = term.getModType() == ModType.size ? ModType.zsize : ModType.z;
-								ASTModTerm zmod = new ASTModTerm(ztype, new ASTReal(d[2], location), location);
+								ASTModTerm zmod = new ASTModTerm(driver, ztype, new ASTReal(driver, d[2], location), location);
 								zmod.setArgumentsCount(1);
 
 								// Check if xy part is the identity transform and only save it if it is not
@@ -334,7 +333,7 @@ public class ASTModification extends ASTExpression {
 								term.setArgumentsCount(2);
 
 								ModType ztype = term.getModType() == ModType.size ? ModType.zsize : ModType.z;
-								ASTModTerm zmod = new ASTModTerm(ztype, new ASTReal(d[2], location), location);
+								ASTModTerm zmod = new ASTModTerm(driver, ztype, new ASTReal(driver, d[2], location), location);
 								zmod.setArgumentsCount(1);
 
 								if (term.getModType() == ModType.size && xyargs.isConstant() && xyargs.evaluate(d, 2) == 2 && d[0] == 1.0 && d[1] == 1.0) {
@@ -398,10 +397,10 @@ public class ASTModification extends ASTExpression {
 			}
 			boolean keepThisOne = (mc.getType() & nonConstant) != 0;
 			if (driver.isInPathContainer() && (mc.getType() & ModClass.ZClass.getType()) != 0) {
-				Logger.error("Z changes are not supported within paths", term.getLocation());
+				driver.error("Z changes are not supported within paths", term.getLocation());
 			}
 			if (driver.isInPathContainer() && (mc.getType() & ModClass.TimeClass.getType()) != 0) {
-				Logger.error("Time changes are not supported within paths", term.getLocation());
+				driver.error("Time changes are not supported within paths", term.getLocation());
 			}
 			try {
 				if (!keepThisOne) {

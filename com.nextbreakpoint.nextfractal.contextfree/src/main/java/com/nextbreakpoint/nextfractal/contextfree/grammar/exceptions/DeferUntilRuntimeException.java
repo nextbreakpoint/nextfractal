@@ -24,6 +24,18 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.grammar.exceptions;
 
+import org.antlr.v4.runtime.Token;
+
 public class DeferUntilRuntimeException extends RuntimeException {
 	private static final long serialVersionUID = 1L;
+
+	private Token location;
+
+	public DeferUntilRuntimeException(Token location) {
+		this.location = location;
+	}
+
+	public Token getLocation() {
+		return location;
+	}
 }

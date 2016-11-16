@@ -34,7 +34,7 @@ public class OutputBounds {
 
     public void apply(FinishedShape shape) {
         if (renderer.isRequestStop() || renderer.isRequestFinishUp()) {
-            throw  new StopException();
+            throw new StopException();
         }
 
         if (scale == 0.0) {

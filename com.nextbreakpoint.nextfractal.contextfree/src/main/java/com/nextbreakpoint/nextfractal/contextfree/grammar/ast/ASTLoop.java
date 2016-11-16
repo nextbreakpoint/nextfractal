@@ -104,7 +104,7 @@ public class ASTLoop extends ASTReplacement {
 		switch (ph) {
 			case TypeCheck: {
 				if (loopArgs == null) {
-					Logger.error("A loop must have one to three index parameters", location);
+					driver.error("A loop must have one to three index parameters", location);
 					return;
 				}
 				StringBuilder ent = new StringBuilder();
@@ -126,7 +126,7 @@ public class ASTLoop extends ASTReplacement {
 				} else {
 					int c = loopArgs.evaluate(null, 0);
 					if (c < 1 || c > 3) {
-						Logger.error("A loop must have one to three index parameters", location);
+						driver.error("A loop must have one to three index parameters", location);
 					}
 
 					for (int i = 0, count = 0; i < loopArgs.size(); i++) {
@@ -235,7 +235,7 @@ public class ASTLoop extends ASTReplacement {
 			case 3:
 				break;
 			default:
-				Logger.error("A loop must have one to three index parameters", location);
+				driver.error("A loop must have one to three index parameters", location);
 				break;
 		}
 	}

@@ -27,8 +27,8 @@ package com.nextbreakpoint.nextfractal.contextfree.grammar.ast;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGDriver;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGRenderer;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.Logger;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.Modification;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.CompilePhase;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ExpType;
@@ -38,16 +38,16 @@ import org.antlr.v4.runtime.Token;
 public class ASTCons extends ASTExpression {
 	private List<ASTExpression> children = new ArrayList<ASTExpression>();
 
-	public ASTCons(List<ASTExpression> kids, Token location) {
-		super(true, true, ExpType.NoType, location);
+	public ASTCons(CFDGDriver driver, List<ASTExpression> kids, Token location) {
+		super(driver, true, true, ExpType.NoType, location);
 		locality = Locality.PureLocal;
 		for (ASTExpression kid : kids) {
 			append(kid);
 		}
 	}
 
-	public ASTCons(Token location, ASTExpression... args) {
-		super(true, true, ExpType.NoType, location);
+	public ASTCons(CFDGDriver driver, Token location, ASTExpression... args) {
+		super(driver, true, true, ExpType.NoType, location);
 		//TODO controllare
 		locality = Locality.PureLocal;
 		for (ASTExpression arg : args) {
@@ -70,7 +70,7 @@ public class ASTCons extends ASTExpression {
 	@Override
 	public int evaluate(double[] result, int length, CFDGRenderer renderer) {
 		if ((type.getType() & (ExpType.NumericType.getType() | ExpType.FlagType.getType())) == 0 || (type.getType() & (ExpType.ModType.getType() | ExpType.RuleType.getType())) != 0) {
-			Logger.error("Non-numeric expression in a numeric context", null);
+			driver.error("Non-numeric expression in a numeric context", null);
 			return -1;
 		}
 		int count = 0;
@@ -148,14 +148,14 @@ public class ASTCons extends ASTExpression {
 	@Override
 	public ASTExpression getChild(int i) {
 		if (i >= children.size()) {
-			Logger.error("Expression list bounds exceeded", getLocation());
+			driver.error("Expression list bounds exceeded", getLocation());
 		}
 		return children.get(i);
 	}
 
 	public void setChild(int i, ASTExpression exp) {
 		if (i >= children.size()) {
-			Logger.error("Expression list bounds exceeded", getLocation());
+			driver.error("Expression list bounds exceeded", getLocation());
 		}
 		children.set(i, exp);
 	}

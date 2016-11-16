@@ -45,6 +45,7 @@ public class CFDGDriver {
 	private Stack<CharStream> streamsToLoad = new Stack<>();
 	private Stack<Boolean> includeNamespace = new Stack<>();
 	private Stack<ASTSwitch> switchStack = new Stack<>();
+	private Logger logger = new Logger();
 	private String currentNameSpace = "";
 	private String currentPath;
 	private String maybeVersion;
@@ -100,15 +101,31 @@ public class CFDGDriver {
 		flagNames.put("CF::p6",          FlagType.CF_P6.getMask());
 		flagNames.put("CF::p6m",         FlagType.CF_P6M.getMask());
 	}
-	
-	protected void warning(String message, Token location) {
-		Logger.warning(message, location);
+
+	public Logger getLogger() {
+		return logger;
 	}
-	
-	protected void error(String message, Token location) {
-		Logger.error(message, location);
+
+	public void setLogger(Logger logger) {
+		this.logger = logger;
 	}
-	
+
+	public void warning(String message, Token location) {
+		logger.warning(message, location);
+	}
+
+	public void error(String message, Token location) {
+		logger.error(message, location);
+	}
+
+	public void fail(String message, Token location) {
+		logger.fail(message, location);
+	}
+
+	public void info(String message, Token location) {
+		logger.info(message, location);
+	}
+
 	protected boolean isPrimeShape(int nameIndex) {
 		return nameIndex < 4;
 	}
@@ -351,17 +368,17 @@ public class CFDGDriver {
 	public ASTExpression makeVariable(String name, Token location) {
 		Integer flagItem = flagNames.get(name);
 		if (flagItem != null) {
-			ASTReal flag = new ASTReal(flagItem, location);
+			ASTReal flag = new ASTReal(this, flagItem, location);
 			flag.setType(ExpType.FlagType);
 			return flag;
 		}
 		if (name.startsWith("CF::")) {
 			error("Configuration parameter names are reserved", location);
-			return new ASTExpression(location);
+			return new ASTExpression(this, location);
 		}
 		if (FuncType.byName(name) != FuncType.NotAFunction) {
 			error("Internal function names are reserved", location);
-			return new ASTExpression(location);
+			return new ASTExpression(this, location);
 		}
 		int varNum = stringToShape(name, true, location);
 		boolean isGlobal = false;
@@ -402,7 +419,7 @@ public class CFDGDriver {
 	public ASTRuleSpecifier makeRuleSpec(String name, ASTExpression args, ASTModification mod, boolean makeStart, Token location) {
 		if (name.equals("if") || name.equals("let") || name.equals("select")) {
 			if (name.equals("select")) {
-				args = new ASTSelect(args, false, location);
+				args = new ASTSelect(this, args, false, location);
 			}
 			if (makeStart) {
 				return new ASTStartSpecifier(this, args, mod, location);
@@ -503,14 +520,14 @@ public class CFDGDriver {
 			return makeVariable(name, location).append(args); 
 		}
 		if (name.equals("select") || name.equals("if")) {
-			return new ASTSelect(args, name.equals("if"), location);
+			return new ASTSelect(this, args, name.equals("if"), location);
 		}
 		FuncType t = FuncType.byName(name);
 		if (t == FuncType.Ftime || t == FuncType.Frame) {
 			cfdg.addParameter(Param.FrameTime);
 		}
 		if (t != FuncType.NotAFunction) {
-			return new ASTFunction(name, args, seed, location);
+			return new ASTFunction(this, name, args, seed, location);
 		}
 		if (args != null && args.getType() == ExpType.ReuseType) {
 			return makeRuleSpec(name, args, null, false, location);

@@ -33,8 +33,9 @@ public class RendererError {
 
 	public RendererError(long line, long charPositionInLine, long index, long length, String message) {
 		this.line = line;
-		this.index = index;
 		this.charPositionInLine = charPositionInLine;
+		this.index = index;
+		this.length = length;
 		this.message = message;
 	}
 

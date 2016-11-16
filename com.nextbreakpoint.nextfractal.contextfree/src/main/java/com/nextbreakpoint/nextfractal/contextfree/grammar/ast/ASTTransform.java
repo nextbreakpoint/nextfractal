@@ -74,14 +74,14 @@ public class ASTTransform extends ASTReplacement {
 			ret = expHolder.compile(ph);
 		}
 		if (ret != null) {
-			Logger.error("Error analyzing transform list", location);
+			driver.error("Error analyzing transform list", location);
 		}
 		body.compile(ph, null, null);
 		
 		switch (ph) {
 			case TypeCheck: 
 				if (clone && !ASTParameter.Impure) {
-					Logger.error("Shape cloning only permitted in impure mode", location);
+					driver.error("Shape cloning only permitted in impure mode", location);
 				}
 				break;
 	
@@ -101,7 +101,7 @@ public class ASTTransform extends ASTReplacement {
 		AffineTransform dummy = new AffineTransform();
 		@SuppressWarnings("unchecked")
 		List<AffineTransform> transforms = new ArrayList<>();
-		List<ASTModification> mods = AST.getTransforms(expHolder, transforms, renderer, false, dummy);
+		List<ASTModification> mods = AST.getTransforms(driver, expHolder, transforms, renderer, false, dummy);
 		Rand64 cloneSeed = renderer.getCurrentSeed();
 		Shape transChild = (Shape)parent.clone();
 		boolean opsOnly = body.getRepType() == RepElemType.op.getType();

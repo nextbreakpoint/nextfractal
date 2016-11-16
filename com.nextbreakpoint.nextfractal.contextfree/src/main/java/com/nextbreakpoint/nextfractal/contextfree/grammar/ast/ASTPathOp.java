@@ -27,7 +27,6 @@ package com.nextbreakpoint.nextfractal.contextfree.grammar.ast;
 import java.awt.geom.AffineTransform;
 
 import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGDriver;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.Logger;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGRenderer;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.Shape;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.CompilePhase;
@@ -110,7 +109,7 @@ public class ASTPathOp extends ASTReplacement {
 	private void pushData(double[] opData, CFDGRenderer renderer) {
 		if (arguments != null) {
 			if (arguments.evaluate(opData, 7, renderer) < 0) {
-				Logger.error("Cannot evaluate arguments", location);
+				driver.error("Cannot evaluate arguments", location);
 			}
 		} else {
 			getChildChange().getModData().getTransform().getMatrix(opData);
@@ -121,7 +120,7 @@ public class ASTPathOp extends ASTReplacement {
 		if (arguments != null && arguments.isConstant()) {
 			double[] data = new double[7];
 			if (arguments.evaluate(data, 7) < 0) {
-				Logger.error("Cannot evaluate arguments", location);
+				driver.error("Cannot evaluate arguments", location);
 			}
 			arguments = null;
 			getChildChange().getModData().setTransform(new AffineTransform(data));
@@ -138,13 +137,13 @@ public class ASTPathOp extends ASTReplacement {
 			switch (temp.getType()) {
 				case FlagType:
 					if (i != arguments.size() - 1) {
-						Logger.error("Flags must be the last argument", location);
+						driver.error("Flags must be the last argument", location);
 					}
 					if (temp instanceof ASTReal) {
 						ASTReal rf = (ASTReal)temp;
 						flags |= (int)rf.getValue();
 					} else {
-						Logger.error("Flag expressions must be constant", location);
+						driver.error("Flag expressions must be constant", location);
 					}
 					argCount--;
 					break;
@@ -153,7 +152,7 @@ public class ASTPathOp extends ASTReplacement {
 					break;
 					
 				default:
-					Logger.error("Path operation arguments must be numeric expressions or flags", location);
+					driver.error("Path operation arguments must be numeric expressions or flags", location);
 					break;
 			}
 		}
@@ -164,14 +163,14 @@ public class ASTPathOp extends ASTReplacement {
 			case MOVETO:
 			case MOVEREL:
 				if (argCount != 2) {
-					Logger.error("Move/line path operation requires two arguments", location);
+					driver.error("Move/line path operation requires two arguments", location);
 				}
 				break;
 	
 			case ARCTO:
 			case ARCREL:
 				if (argCount != 3 && argCount != 5) {
-					Logger.error("Arc path operations require three or five arguments", location);
+					driver.error("Arc path operations require three or five arguments", location);
 				}
 				break;
 				
@@ -179,18 +178,18 @@ public class ASTPathOp extends ASTReplacement {
 			case CURVEREL:
 				if ((flags & FlagType.CF_CONTINUOUS.getMask()) != 0) {
 					if (argCount != 2 && argCount != 4) {
-						Logger.error("Continuous curve path operations require two or four arguments", location);
+						driver.error("Continuous curve path operations require two or four arguments", location);
 					}
 				} else {
 					if (argCount != 4 && argCount != 6) {
-						Logger.error("Non-continuous curve path operations require four or six arguments", location);
+						driver.error("Non-continuous curve path operations require four or six arguments", location);
 					}
 				}
 				break;
 				
 			case CLOSEPOLY:
 				if (argCount > 0) {
-					Logger.error("CLOSEPOLY takes no arguments, only flags", location);
+					driver.error("CLOSEPOLY takes no arguments, only flags", location);
 				}
 				break;
 				
@@ -201,10 +200,10 @@ public class ASTPathOp extends ASTReplacement {
 
 	private void makePositional() {
 		int[] value = new int[1];
-		ASTExpression w = AST.getFlagsAndStroke(oldStyleArguments.getModExp(), value);
+		ASTExpression w = AST.getFlagsAndStroke(driver, oldStyleArguments.getModExp(), value);
 		flags = value[0];
 		if (w != null) {
-			Logger.error("Stroke width not allowed in a path operation", w.getLocation());
+			driver.error("Stroke width not allowed in a path operation", w.getLocation());
 		}
 
 		ASTExpression ax = null;
@@ -248,13 +247,13 @@ public class ASTPathOp extends ASTReplacement {
 					break;
 				case z:
 				case zsize:
-					Logger.error("Z changes are not permitted in paths", term.getLocation());
+					driver.error("Z changes are not permitted in paths", term.getLocation());
 					break;
 				case unknown:
-					Logger.error("Unrecognized element in a path operation", term.getLocation());
+					driver.error("Unrecognized element in a path operation", term.getLocation());
 					break;
 				default:
-					Logger.error("Unrecognized element in a path operation", term.getLocation());
+					driver.error("Unrecognized element in a path operation", term.getLocation());
 					break;
 			}
 		}
@@ -283,20 +282,20 @@ public class ASTPathOp extends ASTReplacement {
 					ary = null;
 					ASTExpression angle = ar;
 					if (angle == null) {
-						angle = new ASTReal(0.0, location);
+						angle = new ASTReal(driver, 0.0, location);
 					}
 					if (angle.getType() != ExpType.NumericType || angle.evaluate(null , 0) != 1) {
-						Logger.error("Arc angle must be a scalar value", angle.getLocation());
+						driver.error("Arc angle must be a scalar value", angle.getLocation());
 					}
 					arguments = xy.append(rxy).append(angle);
 				} else {
 					ASTExpression radius = ar;
 					ar = null;
 					if (radius == null) {
-						radius = new ASTReal(1.0, location);
+						radius = new ASTReal(driver, 1.0, location);
 					}
 					if (radius.getType() != ExpType.NumericType || radius.evaluate(null , 0) != 1) {
-						Logger.error("Arc radius must be a scalar value", radius.getLocation());
+						driver.error("Arc radius must be a scalar value", radius.getLocation());
 					}
 					arguments = xy.append(radius);
 				}
@@ -341,41 +340,41 @@ public class ASTPathOp extends ASTReplacement {
 
 	private ASTExpression acquireTerm(ASTExpression exp, ASTModTerm term) {
 		if (exp != null) {
-			Logger.error("Duplicate argument", exp.getLocation());
-			Logger.error("Conflicts with this argument", term.getLocation());
+			driver.error("Duplicate argument", exp.getLocation());
+			driver.error("Conflicts with this argument", term.getLocation());
 		}
 		return term.getArguments();
 	}
 
 	private void rejectTerm(ASTExpression exp) {
 		if (exp != null) {
-			Logger.error("Illegal argument", exp.getLocation());
+			driver.error("Illegal argument", exp.getLocation());
 		}
 	}
 
 	private ASTExpression parseXY(ASTExpression ax, ASTExpression ay, double def, Token location) {
 		//TODO controllare
 		if (ax == null) {
-			ax = new ASTReal(def, location);
+			ax = new ASTReal(driver, def, location);
 		}
 		int sz = 0;
 		if (ax.getType() == ExpType.NumericType) {
 			sz = ax.evaluate(null, 0);
 		} else {
-			Logger.error("Path argument must be a scalar value", ax.getLocation());
+			driver.error("Path argument must be a scalar value", ax.getLocation());
 		}
 		if (sz == 1 && ay == null) {
-			ay = new ASTReal(def, location);
+			ay = new ASTReal(driver, def, location);
 		}
 		if (ay != null && sz >= 0) {
 			if (ay.getType() == ExpType.NumericType) {
 				sz += ay.evaluate(null, 0);
 			} else {
-				Logger.error("Path argument must be a scalar value", ay.getLocation());
+				driver.error("Path argument must be a scalar value", ay.getLocation());
 			}
 		}
 		if (sz != 2) {
-			Logger.error("Error parsing path operation arguments", location);
+			driver.error("Error parsing path operation arguments", location);
 		}
 		return ax.append(ay);
 	}

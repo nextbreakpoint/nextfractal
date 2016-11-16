@@ -16,7 +16,7 @@ public class AST {
     public static final double SQRT2 = Math.sqrt(2.0);
     public static final int MAX_VECTOR_SIZE = 99;
 
-    public static ExpType decodeType(String typeName, int[] tupleSize, boolean[] isNatural, Token location) {
+    public static ExpType decodeType(CFDGDriver driver, String typeName, int[] tupleSize, boolean[] isNatural, Token location) {
         ExpType type;
         tupleSize[0] = 1;
         isNatural[0] = false;
@@ -36,19 +36,19 @@ public class AST {
             if (typeName.matches("vector[0-9]+")) {
                 tupleSize[0] = Integer.parseInt(typeName.substring(6));
                 if (tupleSize[0] <= 1 || tupleSize[0] > 99) {
-                    Logger.error("Illegal vector size (<=1 or >99)", location);
+                    driver.error("Illegal vector size (<=1 or >99)", location);
                 }
             } else {
-                Logger.error("Illegal vector type specification", location);
+                driver.error("Illegal vector type specification", location);
             }
         } else {
             type = ExpType.NoType;
-            Logger.error("Unrecognized type name", location);
+            driver.error("Unrecognized type name", location);
         }
         return type;
     }
 
-    public static List<ASTModification> getTransforms(ASTExpression e, List<AffineTransform> syms, CFDGRenderer renderer, boolean tiled, AffineTransform transform) {
+    public static List<ASTModification> getTransforms(CFDGDriver driver, ASTExpression e, List<AffineTransform> syms, CFDGRenderer renderer, boolean tiled, AffineTransform transform) {
         List<ASTModification> result = new ArrayList<>();
 
         syms.clear();
@@ -65,19 +65,19 @@ public class AST {
             ASTExpression cit = e.getChild(i);
             switch (cit.getType()) {
                 case FlagType:
-                    processSymmSpec(syms, transform, tiled, symmSpec, cit.getLocation());
+                    processSymmSpec(driver, syms, transform, tiled, symmSpec, cit.getLocation());
                     break;
                 case NumericType:
                     if (symmSpec.isEmpty() && cit.getType() != ExpType.FlagType) {
-                        Logger.fail("Symmetry flag expected here", cit.getLocation());
+                        driver.fail("Symmetry flag expected here", cit.getLocation());
                     }
                     int sz = cit.evaluate(null, 0);
                     if (sz < 1) {
-                        Logger.fail("Could not evaluate this", cit.getLocation());
+                        driver.fail("Could not evaluate this", cit.getLocation());
                     } else {
                         double[] values = new double[sz];
                         if (cit.evaluate(values, values.length) != sz) {
-                            Logger.fail("Could not evaluate this", cit.getLocation());
+                            driver.fail("Could not evaluate this", cit.getLocation());
                         } else {
                             for (double value : values) {
                                 symmSpec.add(value);
@@ -86,7 +86,7 @@ public class AST {
                     }
                     break;
                 case ModType:
-                    processSymmSpec(syms, transform, tiled, symmSpec, cit.getLocation());
+                    processSymmSpec(driver, syms, transform, tiled, symmSpec, cit.getLocation());
                     if (cit instanceof ASTModification) {
                         ASTModification m = (ASTModification)cit;
                         if (m.getModClass() != null && m.getModClass().getType() == (ModClass.GeomClass.getType() | ModClass.PathOpClass.getType()) && (renderer != null || m.isConstant())) {
@@ -97,16 +97,16 @@ public class AST {
                             result.add(m);
                         }
                     } else {
-                        Logger.fail("Wrong type", cit.getLocation());
+                        driver.fail("Wrong type", cit.getLocation());
                     }
                     break;
                 default:
-                    Logger.fail("Wrong type", cit.getLocation());
+                    driver.fail("Wrong type", cit.getLocation());
                     break;
             }
         }
 
-        processSymmSpec(syms, transform, tiled, symmSpec, e.getLocation());
+        processSymmSpec(driver, syms, transform, tiled, symmSpec, e.getLocation());
 
         return result;
     }
@@ -121,7 +121,7 @@ public class AST {
         //TODO completare symmetry
     }
 
-    public static void processSymmSpec(List<AffineTransform> syms, AffineTransform transform, boolean tiled, List<Double> data, Token location) {
+    public static void processSymmSpec(CFDGDriver driver, List<AffineTransform> syms, AffineTransform transform, boolean tiled, List<Double> data, Token location) {
         if (data == null || data.size() == 0) {
             return;
         }
@@ -158,15 +158,15 @@ public class AST {
         }
 
         if (type >= FlagType.CF_P11G.getMask() && type <= FlagType.CF_P2MM.getMask() && !frieze) {
-            Logger.fail("Frieze symmetry only works in frieze designs", location);
+            driver.fail("Frieze symmetry only works in frieze designs", location);
         }
 
         if (type >= FlagType.CF_PM.getMask() && type <= FlagType.CF_P6M.getMask() && !tiled) {
-            Logger.fail("Wallpaper symmetry only works in tiled designs", location);
+            driver.fail("Wallpaper symmetry only works in tiled designs", location);
         }
 
         if (type >= FlagType.CF_P2.getMask() && !frieze && !tiled) {
-            Logger.fail("p2 symmetry only works in frieze or tiled designs", location);
+            driver.fail("p2 symmetry only works in frieze or tiled designs", location);
         }
 
         //TODO completare symmetry
@@ -195,14 +195,14 @@ public class AST {
         }
     }
 
-    public static ASTExpression makeResult(double result, int lenght, ASTExpression from) {
-        ASTReal r = new ASTReal(result, from.getLocation());
+    public static ASTExpression makeResult(CFDGDriver driver, double result, int lenght, ASTExpression from) {
+        ASTReal r = new ASTReal(driver, result, from.getLocation());
         r.setType(from.getType());
         r.setIsNatural(from.isNatural());
         if (lenght > 1) {
-            ASTCons l = new ASTCons(from.getLocation(), r);
+            ASTCons l = new ASTCons(driver, from.getLocation(), r);
             for (int i = 1; i< lenght; i++) {
-                r = new ASTReal(result, from.getLocation());
+                r = new ASTReal(driver, result, from.getLocation());
                 r.setType(from.getType());
                 r.setIsNatural(from.isNatural());
                 l.append(r);
@@ -212,7 +212,7 @@ public class AST {
         return r;
     }
 
-    public static ASTExpression getFlagsAndStroke(List<ASTModTerm> terms, int[] flags) {
+    public static ASTExpression getFlagsAndStroke(CFDGDriver driver, List<ASTModTerm> terms, int[] flags) {
         List<ASTModTerm> temp = new ArrayList<>(terms);
         terms.clear();
         ASTExpression ret = null;
@@ -223,7 +223,7 @@ public class AST {
                     break;
                 case stroke:
                     if (ret != null) {
-                        Logger.error("Only one stroke width term is allowed", term.getLocation());
+                        driver.error("Only one stroke width term is allowed", term.getLocation());
                     }
                     ret = term.getArguments();
                     term.setArguments(null);
@@ -250,10 +250,10 @@ public class AST {
                     double[] value = new double[dest.getType().getTupleSize()];
                     int num = arg.evaluate(value, dest.getType().getTupleSize(), renderer);
                     if (!ASTParameter.Impure && dest.getType().isNatural() && !renderer.isNatual(value[0])) {
-                        Logger.error("Expression does not evaluate to a legal natural number", arg.getLocation());
+                        renderer.getDriver().error("Expression does not evaluate to a legal natural number", arg.getLocation());
                     }
                     if (num != dest.getType().getTupleSize()) {
-                        Logger.error("Expression does not evaluate to the correct size", arg.getLocation());
+                        renderer.getDriver().error("Expression does not evaluate to the correct size", arg.getLocation());
                     }
                     for (int j = 0; j < dest.getType().getTupleSize(); j++) {
                         dest.setItem(j, new CFStackNumber(renderer.getStack(), value[j]));

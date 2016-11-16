@@ -35,8 +35,9 @@ public class CompilerError {
 	public CompilerError(ErrorType type, long line, long charPositionInLine, long index, long length, String message) {
 		this.type = type;
 		this.line = line;
-		this.index = index;
 		this.charPositionInLine = charPositionInLine;
+		this.index = index;
+		this.length = length;
 		this.message = message;
 	}
 
@@ -69,7 +70,7 @@ public class CompilerError {
 		return "[" + line + ":" + charPositionInLine + ":" + index + ":" + length + "] " + message;
 	}
 
-	public static enum ErrorType {
-		CFDG_COMPILER;
+	public enum ErrorType {
+		CFDG_COMPILER, CFDG_RUNTIME;
 	}
 }

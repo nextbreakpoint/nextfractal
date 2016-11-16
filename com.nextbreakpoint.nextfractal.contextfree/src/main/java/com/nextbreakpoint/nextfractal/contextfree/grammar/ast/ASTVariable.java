@@ -39,7 +39,7 @@ public class ASTVariable extends ASTExpression {
 	private CFDGDriver driver;
 
 	public ASTVariable(CFDGDriver driver, int stringIndex, String text, Token location) {
-		super(location);
+		super(driver, location);
 		this.driver = driver;
 		this.stringIndex = stringIndex;
 		this.isParameter = false;
@@ -71,14 +71,14 @@ public class ASTVariable extends ASTExpression {
 	@Override
 	public int evaluate(double[] result, int length, CFDGRenderer renderer) {
 		if (type != ExpType.NumericType) {
-            Logger.error("Non-numeric variable in a numeric context", location);
+            driver.error("Non-numeric variable in a numeric context", location);
             return -1;
         }
 		if (result != null && length < count) {
 			return -1;
 		}
         if (result != null) {
-            if (renderer == null) throw new DeferUntilRuntimeException();
+            if (renderer == null) throw new DeferUntilRuntimeException(location);
             for (int i = 0; i < count; ++i) {
 				result[i] = ((CFStackNumber)renderer.getStackItem(stackIndex + i)).getNumber();
             }
@@ -89,9 +89,9 @@ public class ASTVariable extends ASTExpression {
 	@Override
 	public void evaluate(Modification result, boolean shapeDest, CFDGRenderer renderer) {
 		if (type != ExpType.ModType) {
-            Logger.error("Non-adjustment variable referenced in an adjustment context", location);
+            driver.error("Non-adjustment variable referenced in an adjustment context", location);
         }
-		if (renderer == null) throw new DeferUntilRuntimeException();
+		if (renderer == null) throw new DeferUntilRuntimeException(location);
         Modification mod = ((CFStackModification)renderer.getStackItem(stackIndex)).getModification();
         if (shapeDest) {
         	result.concat(mod);
@@ -114,14 +114,14 @@ public class ASTVariable extends ASTExpression {
 				boolean isGlobal = false;
 				ASTParameter bound = driver.findExpression(stringIndex, isGlobal);
 				if (bound == null) {
-					Logger.error("internal error", location);
+					driver.error("internal error", location);
 					return null;
 				}
 				String name = driver.shapeToString(stringIndex);
 				if (bound.getStackIndex() == -1) {
 					ASTExpression ret = bound.constCopy(name);
 					if (ret == null) {
-						Logger.error("internal error", location);
+						driver.error("internal error", location);
 					}
 					return ret;
 				} else {

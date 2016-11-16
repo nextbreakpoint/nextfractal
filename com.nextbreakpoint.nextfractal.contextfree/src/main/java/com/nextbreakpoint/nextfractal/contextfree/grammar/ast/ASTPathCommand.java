@@ -62,7 +62,7 @@ public class ASTPathCommand extends ASTReplacement {
 		if (s.equals("FILL")) {
 			this.flags |= CF_FILL.getMask();
 		} else if (!s.equals("STROKE")) {
-			Logger.error("Unknown path command/operation", location);
+			driver.error("Unknown path command/operation", location);
 		}
 	}
 
@@ -85,7 +85,7 @@ public class ASTPathCommand extends ASTReplacement {
 	@Override
 	public void traverse(Shape parent, boolean tr, CFDGRenderer renderer) {
 		if (renderer.isOpsOnly()) {
-			Logger.error("Path commands not allowed at this point", location);
+			driver.error("Path commands not allowed at this point", location);
 		}
 
 		Shape child = new Shape(parent);
@@ -94,7 +94,7 @@ public class ASTPathCommand extends ASTReplacement {
 
 		double[] value = new double[] { width };
 		if (parameters != null && parameters.evaluate(value, 1, renderer) != 1) {
-			Logger.error("Error computing stroke width", location);
+			driver.error("Error computing stroke width", location);
 		}
 		width = value[0];
 
@@ -102,13 +102,13 @@ public class ASTPathCommand extends ASTReplacement {
 
 		if (renderer.getCurrentPath().isCached()) {
 			if (renderer.getCurrentCommand().current() == null) {
-				Logger.error("Not enough path commands in cache", location);
+				driver.error("Not enough path commands in cache", location);
 			}
 			info = renderer.getCurrentCommand().current();
 			renderer.getCurrentCommand().next();
 		} else {
 			if (renderer.getCurrentPath().getPathStorage().getTotalVertices() == 0) {
-				Logger.error("Path commands must be preceeded by at least one path operation", location);
+				driver.error("Path commands must be preceeded by at least one path operation", location);
 			}
 
 			renderer.setWantCommand(false);
@@ -141,13 +141,13 @@ public class ASTPathCommand extends ASTReplacement {
 			case TypeCheck: {
 				getChildChange().addEntropy((flags & CF_FILL.getMask()) != 0 ? "FILL" : "STROKE");
 				int[] flagValue = new int[] { flags };
-				ASTExpression w = AST.getFlagsAndStroke(getChildChange().getModExp(), flagValue);
+				ASTExpression w = AST.getFlagsAndStroke(driver, getChildChange().getModExp(), flagValue);
 				flags = flagValue[0];
 				if (w != null) {
 					if (parameters != null) {
-						Logger.error("Cannot have a stroke adjustment in a v3 path command", w.getLocation());
+						driver.error("Cannot have a stroke adjustment in a v3 path command", w.getLocation());
 					} else if (w.size() != 1 || w.getType() != ExpType.NumericType || w.evaluate(null, 0) != 1) {
-						Logger.error("Stroke adjustment is ill-formed", w.getLocation());
+						driver.error("Stroke adjustment is ill-formed", w.getLocation());
 					}
 					parameters = w;
 				}
@@ -171,19 +171,19 @@ public class ASTPathCommand extends ASTReplacement {
 						break;
 					}
 					default: {
-						Logger.error("Bad expression type in path command parameters", location);
+						driver.error("Bad expression type in path command parameters", location);
 						return;
 					}
 				}
 
 				if (stroke != null) {
 					if ((this.flags & CF_FILL.getMask()) != 0) {
-						Logger.warning("Stroke width only useful for STROKE commands", stroke.getLocation());
+						driver.warning("Stroke width only useful for STROKE commands", stroke.getLocation());
 					}
 					double[] value = new double[1];
 					value[0] = strokeWidth;
 					if (stroke.getType() != ExpType.NumericType || stroke.evaluate(null, 0) != 1) {
-						Logger.error("Stroke width expression must be numeric scalar", stroke.getLocation());
+						driver.error("Stroke width expression must be numeric scalar", stroke.getLocation());
 					} else if (!stroke.isConstant() || stroke.evaluate(value, 1) != 1) {
 						parameters = stroke;
 					}
@@ -192,7 +192,7 @@ public class ASTPathCommand extends ASTReplacement {
 
 				if (flags != null) {
 					if (flags.getType() != ExpType.FlagType) {
-						Logger.error("Unexpected argument in path command", flags.getLocation());
+						driver.error("Unexpected argument in path command", flags.getLocation());
 						return;
 					}
 					flags = simplify(flags);
@@ -209,10 +209,10 @@ public class ASTPathCommand extends ASTReplacement {
 						}
 						this.flags |= f;
 						if ((this.flags & CF_FILL.getMask()) != 0 && (this.flags & (CF_JOIN_PRESENT.getMask() | CF_CAP_PRESENT.getMask())) != 0) {
-							Logger.warning("Stroke flags only useful for STROKE commands", flags.getLocation());
+							driver.warning("Stroke flags only useful for STROKE commands", flags.getLocation());
 						}
 					} else {
-						Logger.error("Flag expressions must be constant", flags.getLocation());
+						driver.error("Flag expressions must be constant", flags.getLocation());
 					}
 				}
 

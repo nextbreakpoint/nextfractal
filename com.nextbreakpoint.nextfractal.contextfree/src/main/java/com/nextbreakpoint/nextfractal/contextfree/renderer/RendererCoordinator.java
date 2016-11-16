@@ -31,6 +31,7 @@ import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ThreadFactory;
 
@@ -197,7 +198,7 @@ public class RendererCoordinator implements RendererDelegate {
 	/**
 	 * @return
 	 */
-	public RendererError getError() {
-		return renderer.getError();
+	public List<RendererError> getErrors() {
+		return renderer.getErrors();
 	}
 }

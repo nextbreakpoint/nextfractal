@@ -67,7 +67,7 @@ public class ASTReplacement {
 		this(driver, new ASTRuleSpecifier(driver, location), new ASTModification(driver, location), RepElemType.op, location);
 		this.pathOp = PathOp.byName(name);
 		if (this.pathOp == PathOp.UNKNOWN) {
-			Logger.error("Unknown path operation type", location);
+			driver.error("Unknown path operation type", location);
 		}
 	}
 
@@ -143,7 +143,7 @@ public class ASTReplacement {
 				renderer.processSubpath(child, tr || repType == RepElemType.op, repType);
 				break;
 			default:
-				Logger.fail("Subpaths must be all path operation or all path command", location);
+				driver.fail("Subpaths must be all path operation or all path command", location);
 		}
 	}
 
@@ -160,14 +160,14 @@ public class ASTReplacement {
 					// This is a subpath
 					if (shapeSpec.getArgSource() == ArgSource.ShapeArgs || shapeSpec.getArgSource() == ArgSource.StackArgs || PrimShape.isPrimShape(shapeSpec.getShapeType())) {
 						if (repType != RepElemType.op) {
-							Logger.error("Error in subpath specification", location);
+							driver.error("Error in subpath specification", location);
 						}
 					} else {
 						ASTRule rule = driver.getRule(shapeSpec.getShapeType());
 						if (rule == null || rule.isPath()) {
-							Logger.error("Subpath can only refer to a path", location);
+							driver.error("Subpath can only refer to a path", location);
 						} else if (rule.getRuleBody().getRepType() != repType.getType()) {
-							Logger.error("Subpath type mismatch error", location);
+							driver.error("Subpath type mismatch error", location);
 						}
 					}
 				}

@@ -72,7 +72,7 @@ public class CFDGRenderer {
 	private CFCanvas canvas;
 	private TiledCanvas tiledCanvas;
 	private boolean colorConflict;
-	private int maxShapes = 500000000;
+	private int maxShapes = 5000;
 	private boolean tiled;
 	private boolean sized;
 	private boolean timed;
@@ -462,14 +462,14 @@ public class CFDGRenderer {
 			return;
 		}
 		colorConflict = true;
-		Logger.warning("Conflicting color change", null);
+		cfdg.getDriver().warning("Conflicting color change", null);
 	}
 
 	public void processShape(Shape shape) {
 		double area = shape.getAreaCache();
 		if (!Double.isFinite(area)) {
 			requestStop = true;
-			Logger.error("A shape got too big", null);
+			cfdg.getDriver().error("A shape got too big", null);
 			return;
 		}
 
@@ -490,7 +490,7 @@ public class CFDGRenderer {
 		} else {
 			//TODO rivedere
 			requestStop = true;
-			Logger.error(String.format("Shape with no rules encountered: %s", cfdg.decodeShapeName(shape.getShapeType())), null);
+			cfdg.getDriver().error(String.format("Shape with no rules encountered: %s", cfdg.decodeShapeName(shape.getShapeType())), null);
 		}
 	}
 
@@ -575,7 +575,7 @@ public class CFDGRenderer {
 
 		if (!finishedShape.getWorldState().isFinite()) {
 			requestStop = true;
-			Logger.error("A shape got too big.", null);
+			cfdg.getDriver().error("A shape got too big.", null);
 			return;
 		}
 
@@ -590,8 +590,7 @@ public class CFDGRenderer {
 			rule = cfdg.findRule(shape.getShapeType(), 0.0);
 		}
 		if (rule.getRuleBody().getRepType() != expectedType.getType()) {
-			//TODO completare con location
-			throw new CFDGException("Subpath is not of the expected type (path ops/commands)");
+			throw new CFDGException("Subpath is not of the expected type (path ops/commands)", rule.getLocation());
 		}
 		boolean saveOpsOnly = opsOnly;
 		opsOnly = opsOnly || (expectedType == RepElemType.op);
@@ -708,11 +707,11 @@ public class CFDGRenderer {
 				processShape(initShape);
 			} catch (CFDGException e) {
 				requestStop = true;
-				Logger.error(e.getMessage(), null);
+				cfdg.getDriver().error(e.getMessage(), e.getLocation());
 			} catch (Exception e) {
 				//TODO rivedere
 				requestStop = true;
-				Logger.error(e.getMessage(), null);
+				cfdg.getDriver().error(e.getMessage(), null);
 			}
 		}
 
@@ -744,13 +743,13 @@ public class CFDGRenderer {
 			} catch (CFDGException e) {
 				e.printStackTrace();
 				requestStop = true;
-				Logger.error(e.getMessage(), null);
+				cfdg.getDriver().error(e.getMessage(), e.getLocation());
 				break;
 			} catch (Exception e) {
 				e.printStackTrace();
 				//TODO rivedere
 				requestStop = true;
-				Logger.error(e.getMessage(), null);
+				cfdg.getDriver().error(e.getMessage(), null);
 				break;
 			}
 
@@ -774,7 +773,7 @@ public class CFDGRenderer {
 		if (!requestStop) {
 			outputStats();
 			if (canvas != null) {
-				Logger.info("Done.", null);
+				cfdg.getDriver().info("Done.", null);
 			}
 		}
 
@@ -820,7 +819,7 @@ public class CFDGRenderer {
 		OutputBounds outputBounds = new OutputBounds(frames, timeBounds, currWidth[0], currHeight[0], this);
 
 		if (zoom) {
-			Logger.info("Computing zoom", null);
+			cfdg.getDriver().info("Computing zoom", null);
 
 			try {
 				forEachShape(true, shape -> {
@@ -831,7 +830,7 @@ public class CFDGRenderer {
 				return;
 			} catch (Exception e) {
 				//TODO rivedere
-				Logger.error(e.getMessage(), null);
+				cfdg.getDriver().error(e.getMessage(), null);
 				return;
 			}
 		}
@@ -844,7 +843,7 @@ public class CFDGRenderer {
 		Bounds savedBounds = bounds;
 
 		for (int frameCount = 1; frameCount <= frames; frameCount++) {
-			Logger.info(String.format("Generating frame %d of %d", frameCount, frames), null);
+			cfdg.getDriver().info(String.format("Generating frame %d of %d", frameCount, frames), null);
 
 			if (zoom) {
 				bounds = outputBounds.frameBounds(frameCount - 1);
@@ -864,7 +863,7 @@ public class CFDGRenderer {
 				try {
 					init();
 				} catch (Exception e) {
-					Logger.error(e.getMessage(), null);
+					cfdg.getDriver().error(e.getMessage(), null);
 					cleanup();
 					bounds = savedBounds;
 					animating = false;
@@ -891,7 +890,7 @@ public class CFDGRenderer {
 		animating = false;
 		outputStats();
 
-		Logger.info(String.format("Animation of %d frames complete", frames), null);
+		cfdg.getDriver().info(String.format("Animation of %d frames complete", frames), null);
 	}
 
 	private void outputPrep(CFCanvas canvas) {
@@ -973,7 +972,7 @@ public class CFDGRenderer {
 		rescaleOutput(currWidth, currHeight, true);
 
 		if (finishedShapes.size() > 10000) {
-			Logger.info("Sorting shapes...", null);
+			cfdg.getDriver().info("Sorting shapes...", null);
 		}
 		Collections.sort(finishedShapes);
 
@@ -987,7 +986,7 @@ public class CFDGRenderer {
 			forEachShape(true, this::drawShape);
 		} catch (StopException e) {
 		} catch (Exception e) {
-			Logger.error(e.getMessage(), null);
+			cfdg.getDriver().error(e.getMessage(), null);
 		}
 
 		canvas.end();
@@ -1051,7 +1050,7 @@ public class CFDGRenderer {
 			if (PrimShape.isPrimShape(shape.getShapeType())) {
 				canvas.primitive(shape.getShapeType(), color, transform);
 			} else {
-				Logger.error("Non drawable shape with no rules: " + cfdg.decodeShapeName(shape.getShapeType()), null);
+				cfdg.getDriver().error("Non drawable shape with no rules: " + cfdg.decodeShapeName(shape.getShapeType()), null);
 				requestStop = true;
 				throw new StopException();
 			}
@@ -1068,4 +1067,8 @@ public class CFDGRenderer {
 	public void setLogicalStack(CFStack logicalStack) {
 		this.cfStack = logicalStack;
 	}
+
+    public CFDGDriver getDriver() {
+        return cfdg.getDriver();
+    }
 }

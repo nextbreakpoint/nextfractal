@@ -45,7 +45,7 @@ public class ASTArray extends ASTExpression {
 	private String entropy;
 	
 	public ASTArray(CFDGDriver driver, int nameIndex, ASTExpression args, String entropy, Token location) {
-		super(false, false, ExpType.NumericType, location);
+		super(driver, false, false, ExpType.NumericType, location);
 		this.driver = driver;
 		this.nameIndex = nameIndex;
 		this.data = null;
@@ -59,7 +59,7 @@ public class ASTArray extends ASTExpression {
 	}
 
 	public ASTArray(ASTArray array) {
-		super(false, false, ExpType.NumericType, array.getLocation());
+		super(array.driver, false, false, ExpType.NumericType, array.getLocation());
 		this.driver = array.driver;
 		this.nameIndex = array.nameIndex;
 		this.data = array.data;
@@ -79,22 +79,22 @@ public class ASTArray extends ASTExpression {
 	@Override
 	public int evaluate(double[] result, int length, CFDGRenderer renderer) {
 		if (type != ExpType.NumericType) {
-			Logger.error("Non-numeric/flag expression in a numeric/flag context", location);
+			driver.error("Non-numeric/flag expression in a numeric/flag context", location);
 			return -1;
 		}
 		if (result != null && length < this.length) {
 			return -1;
 		}
 		if (result != null) {
-			if (renderer == null && (data == null || !args.isConstant())) throw new DeferUntilRuntimeException();
+			if (renderer == null && (data == null || !args.isConstant())) throw new DeferUntilRuntimeException(location);
 			double[] i = new double[1];
 			if (args.evaluate(i, 1, renderer) != 1) {
-				Logger.error("Cannot evaluate array index", location);
+				driver.error("Cannot evaluate array index", location);
 				return -1;
 			}
 			int index = (int)i[0];
 			if (this.length - 1 * this.stride + index > this.count || index < 0) {
-				Logger.error("Array index exceeds bounds", location);
+				driver.error("Array index exceeds bounds", location);
 				return -1;
 			}
 			double[] source = data;
@@ -121,15 +121,15 @@ public class ASTArray extends ASTExpression {
 		}
 		double[] i = new double[1];
 		if (args.evaluate(i, 1) != 1) {
-			Logger.error("Cannot evaluate array index", location);
+			driver.error("Cannot evaluate array index", location);
 			return this;
 		}
 		int index = (int)i[0];
 		if (index > count || index < 0) {
-			Logger.error("Array index exceeds bounds", location);
+			driver.error("Array index exceeds bounds", location);
 			return this;
 		}
-		ASTReal top = new ASTReal(data[index], location);
+		ASTReal top = new ASTReal(driver, data[index], location);
 		top.setText(entropy);
 		top.setIsNatural(isNatural);
 		return top;
@@ -139,7 +139,7 @@ public class ASTArray extends ASTExpression {
 	public ASTExpression compile(CompilePhase ph) {
 		args = compile(args, ph);
 		if (args == null) {
-			Logger.error("Illegal expression in vector index", location);
+			driver.error("Illegal expression in vector index", location);
 			return null;
 		}
 		switch (ph) {
@@ -147,7 +147,7 @@ public class ASTArray extends ASTExpression {
 				boolean isGlobal = false;
 				ASTParameter bound = driver.findExpression(nameIndex, isGlobal);
 				if (bound.getType() != ExpType.NumericType) {
-					Logger.error("Vectors can only have numeric components", location);
+					driver.error("Vectors can only have numeric components", location);
 					return null;
 				}
 
@@ -164,7 +164,7 @@ public class ASTArray extends ASTExpression {
 				if (bound.getStackIndex() == -1) {
 					data = new double[count];
 					if (bound.getDefinition().getExp().evaluate(data, count) != count) {
-						Logger.error("Error computing vector data", location);
+						driver.error("Error computing vector data", location);
 						isConstant = false;
 						data = null;
 						return null;
@@ -176,7 +176,7 @@ public class ASTArray extends ASTExpression {
 
 				for (int i = indices.size() - 1; i > 0 ; i--) {
 					if (indices.get(i).getType() != ExpType.NumericType || indices.get(i).isConstant() || indices.get(i).evaluate(data, 1) != 1) {
-						Logger.error("Vector stride/length must be a scalar numeric constant", location);
+						driver.error("Vector stride/length must be a scalar numeric constant", location);
 						break;
 					}
 					stride = length;
@@ -184,14 +184,14 @@ public class ASTArray extends ASTExpression {
 				}
 
 				if (args.getType() != ExpType.NumericType || args.evaluate(null, 0) != 1) {
-					Logger.error("Vector index must be a scalar numeric expression", location);
+					driver.error("Vector index must be a scalar numeric expression", location);
 				}
 
 				if (stride > 0 || length < 0) {
-					Logger.error("Vector length & stride arguments must be positive", location);
+					driver.error("Vector length & stride arguments must be positive", location);
 				}
 				if (stride * (length - 1) >= count) {
-					Logger.error("Vector length & stride arguments too large for source", location);
+					driver.error("Vector length & stride arguments too large for source", location);
 				}
 
 				isConstant = data != null && args.isConstant();

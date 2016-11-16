@@ -25,16 +25,18 @@
 package com.nextbreakpoint.nextfractal.contextfree.renderer;
 
 import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDG;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGLogger;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGRenderer;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.SimpleCanvas;
 import com.nextbreakpoint.nextfractal.core.renderer.*;
-import com.nextbreakpoint.nextfractal.core.renderer.java2D.Java2DRendererFactory;
 
 import java.awt.*;
-import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.nio.IntBuffer;
+import java.util.Collections;
+import java.util.List;
+import java.util.ArrayList;
 import java.util.concurrent.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -48,7 +50,7 @@ public class Renderer {
 	protected final RendererFactory renderFactory;
 	protected volatile RendererDelegate rendererDelegate;
 	protected volatile RendererSurface buffer;
-	protected volatile RendererError error;
+	protected volatile List<RendererError> errors = new ArrayList<>();
 	protected volatile boolean aborted;
 	protected volatile boolean interrupted;
 	protected volatile boolean cfdgChanged;
@@ -280,6 +282,8 @@ public class Renderer {
 			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 			g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 			if (cfdg != null) {
+				CFDGLogger logger = new CFDGLogger();
+				cfdg.getDriver().setLogger(logger);
 				cfdg.rulesLoaded();
 				CFDGRenderer renderer = cfdg.renderer(tile.getImageSize().getWidth(), tile.getImageSize().getHeight(), 1, 0, 0.1);
 				if (renderer != null) {
@@ -287,6 +291,7 @@ public class Renderer {
 //					renderer.run(new RendererCanvas(factory, g2d, width, height), false);
 					renderer.run(new SimpleCanvas(g2d, buffer.getTile()), false);
 				}
+				errors.addAll(logger.getErrors());
 			}
 //			for (;;) {
 //				if (isInterrupted()) {
@@ -303,7 +308,7 @@ public class Renderer {
 			Thread.yield();
 		} catch (Throwable e) {
 			logger.log(Level.WARNING, "Cannot render fractal", e);
-			error = new RendererError(0, 0, 0, 0, e.getMessage());
+			errors.add(new RendererError(0, 0, 0, 0, e.getMessage()));
 		}
 	}
 
@@ -385,9 +390,9 @@ public class Renderer {
 		}
 	}
 
-	public RendererError getError() {
-		RendererError result = error;
-		error = null;
+	public List<RendererError> getErrors() {
+		List<RendererError> result = new ArrayList<>(errors);
+		errors.clear();
 		return result;
 	}
 

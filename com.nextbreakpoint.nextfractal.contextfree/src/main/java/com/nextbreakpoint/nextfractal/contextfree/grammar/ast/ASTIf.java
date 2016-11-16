@@ -63,7 +63,7 @@ public class ASTIf extends ASTReplacement {
 		switch (ph) {
 			case TypeCheck:
 				if (condition.getType() != ExpType.NumericType || condition.evaluate(null, 0) != 1) {
-					Logger.error("If condition must be a numeric scalar", condition.getLocation());
+					driver.error("If condition must be a numeric scalar", condition.getLocation());
 				}
 				break;
 	
@@ -80,7 +80,7 @@ public class ASTIf extends ASTReplacement {
 	public void traverse(Shape parent, boolean tr, CFDGRenderer renderer) {
 		double[] cond = new double[1];
 		if (condition.evaluate(cond, 1, renderer) != 1) {
-			Logger.error("Error evaluating if condition", location);
+			driver.error("Error evaluating if condition", location);
 			return;
 		}
 		if (cond[0] != 0) {

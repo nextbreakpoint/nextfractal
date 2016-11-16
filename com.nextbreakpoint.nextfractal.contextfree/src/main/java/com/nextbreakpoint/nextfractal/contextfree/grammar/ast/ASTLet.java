@@ -44,7 +44,7 @@ public class ASTLet extends ASTUserFunction {
 		if (isConstant()) {
 			StringBuilder e = new StringBuilder();
 			entropy(e);
-			ASTParameter p = new ASTParameter(-1, getDefinition(), location);
+			ASTParameter p = new ASTParameter(driver, -1, getDefinition(), location);
 			ASTExpression ret = p.constCopy(e.toString());
 			if (ret != null) {
 				return ret;

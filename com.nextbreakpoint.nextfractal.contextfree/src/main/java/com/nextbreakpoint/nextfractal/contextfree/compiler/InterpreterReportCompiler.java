@@ -57,12 +57,12 @@ public class InterpreterReportCompiler {
 			if (parser.choose() != null) {
 				return parser.getCFDG();
 			}
-//		} catch (CFDGException e) {
-//			CompilerError error = new CompilerError(CompilerError.ErrorType.CFDG_COMPILER, e.getLocation().getLine(), e.getLocation().getCharPositionInLine(), e.getLocation().getStartIndex(), e.getLocation().getStopIndex() - e.getLocation().getStartIndex(), e.getMessage());
-//			logger.log(Level.FINE, error.toString(), e);
-//			errors.add(error);
+		} catch (CFDGException e) {
+			CompilerError error = new CompilerError(CompilerError.ErrorType.CFDG_COMPILER, e.getLocation().getLine(), e.getLocation().getCharPositionInLine(), e.getLocation().getStartIndex(), e.getLocation().getStopIndex() - e.getLocation().getStartIndex(), e.getMessage());
+			logger.log(Level.FINE, error.toString(), e);
+			errors.add(error);
 		} catch (Exception e) {
-			CompilerError error = new CompilerError(CompilerError.ErrorType.CFDG_COMPILER, 0L, 0L, 0L, 0L, e.getMessage());
+			CompilerError error = new CompilerError(CompilerError.ErrorType.CFDG_RUNTIME, 0L, 0L, 0L, 0L, e.getMessage());
 			logger.log(Level.FINE, error.toString(), e);
 			errors.add(error);
 		}

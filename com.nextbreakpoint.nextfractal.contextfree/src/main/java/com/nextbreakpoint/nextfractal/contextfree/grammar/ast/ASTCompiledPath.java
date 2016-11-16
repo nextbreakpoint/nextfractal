@@ -42,8 +42,10 @@ public class ASTCompiledPath {
 	private boolean useTerminal;
 	private CFStackRule parameters;
 	private Long pathUID;
-	
+	private CFDGDriver driver;
+
 	public ASTCompiledPath(CFDGDriver driver, Token location) {
+		this.driver = driver;
 		commandInfo = new Dequeue();
 		terminalCommand = new ASTPathCommand(driver, location);
 		parameters = null;
@@ -175,7 +177,7 @@ public class ASTCompiledPath {
 				}
 
 				if (cmd != 1) {
-					Logger.error("CLOSEPOLY: Unable to find a MOVETO/MOVEREL for start of path", pathOp.getLocation());
+					driver.error("CLOSEPOLY: Unable to find a MOVETO/MOVEREL for start of path", pathOp.getLocation());
 				}
 
 				// If this is an aligning CLOSEPOLY then change the last vertex to
@@ -184,7 +186,7 @@ public class ASTCompiledPath {
 					pathStorage.modifyVertex(last, renderer.getLastPoint());
 				}
 			} else if ((pathOp.getFlags() & FlagType.CF_ALIGN.getMask()) != 0)  {
-				Logger.error("Nothing to align to", pathOp.getLocation());
+				driver.error("Nothing to align to", pathOp.getLocation());
 			}
 
 			pathStorage.closePath();
@@ -233,7 +235,7 @@ public class ASTCompiledPath {
 
 						Arc2D arc = ExtendedGeneralPath.computeArc(p1.x, p1.y, radiusX, radiusY, angle, largeArc, sweep, p0.x, p0.y);
 						if (arc == null) {
-							Logger.fail("Cannot create arc", pathOp.getLocation());
+							driver.fail("Cannot create arc", pathOp.getLocation());
 						}
 						AffineTransform t = AffineTransform.getRotateInstance(Math.toRadians(angle), arc.getCenterX(), arc.getCenterY());
 						t.concatenate(transform);
@@ -242,7 +244,7 @@ public class ASTCompiledPath {
 						transform.transform(p0, p0);
 						pathStorage.append(s, p0);
 					} catch (NoninvertibleTransformException e) {
-						Logger.fail("Cannot invert transform", pathOp.getLocation());
+						driver.fail("Cannot invert transform", pathOp.getLocation());
 					}
 				} else {
 					Arc2D arc = ExtendedGeneralPath.computeArc(p1.x, p1.y, radiusX, radiusY, angle, largeArc, sweep, p0.x, p0.y);
@@ -256,7 +258,7 @@ public class ASTCompiledPath {
 				pathStorage.relToAbs(p2);
 			case CURVETO:
 				if ((pathOp.getFlags() & FlagType.CF_CONTINUOUS.getMask()) != 0 && pathStorage.isCurve(pathStorage.lastVertex(p2)) ) {
-					Logger.error("Smooth curve operations must be preceded by another curve operation", pathOp.getLocation());
+					driver.error("Smooth curve operations must be preceded by another curve operation", pathOp.getLocation());
 					break;
 				}
 				switch (pathOp.getArgCount()) {

@@ -24,8 +24,8 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.grammar.ast;
 
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGDriver;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGRenderer;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.Logger;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.CompilePhase;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ExpType;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.Locality;
@@ -37,28 +37,28 @@ public class ASTOperator extends ASTExpression {
 	private ASTExpression left;
 	private ASTExpression right;
 
-	public ASTOperator(char op, ASTExpression left,	ASTExpression right, Token location) {
-		super(location);
+	public ASTOperator(CFDGDriver driver, char op, ASTExpression left, ASTExpression right, Token location) {
+		super(driver, location);
 		this.op = op;
 		this.left = left;
 		this.right = right;
 		this.tupleSize = 1;
 		int index = "NP!+-*/^_<>LG=n&|X".indexOf(String.valueOf(op));
 		if (index == -1) {
-            Logger.error("Unknown operator", location);
+            this.driver.error("Unknown operator", location);
         } else if (index < 3) {
 			if (right != null) {
-                Logger.error("Operator takes only one operand", location);
+                this.driver.error("Operator takes only one operand", location);
             }
 		} else {
 			if (right == null) {
-                Logger.error("Operator takes two operands", location);
+                this.driver.error("Operator takes two operands", location);
             }
 		}
 	}
 
-	public ASTOperator(char op, ASTExpression left, Token location) {
-		this(op, left, null, location);
+	public ASTOperator(CFDGDriver driver, char op, ASTExpression left, Token location) {
+		this(driver, op, left, null, location);
 	}
 
 	public char getOp() {
@@ -97,12 +97,12 @@ public class ASTOperator extends ASTExpression {
 		}
 
 		if (type != ExpType.NumericType) {
-            Logger.error("Non-numeric expression in a numeric context", location);
+            driver.error("Non-numeric expression in a numeric context", location);
             return -1;
 		}
 
 		if (left.evaluate(result != null ? l : null, result != null ? 1 : 0, renderer) != 1) {
-            Logger.error("illegal operand", null);
+            driver.error("illegal operand", null);
             return -1;
 		}
 
@@ -140,7 +140,7 @@ public class ASTOperator extends ASTExpression {
 		}
 
 		if (rightnum != 1) {
-            Logger.error("illegal operand", location);
+            driver.error("illegal operand", location);
             return -1;
 		}
 
@@ -295,7 +295,7 @@ public class ASTOperator extends ASTExpression {
 				return null;
 			}
 
-			ASTExpression r = AST.makeResult(result[0], tupleSize, this);
+			ASTExpression r = AST.makeResult(driver, result[0], tupleSize, this);
 			return r;
 		}
 
@@ -324,12 +324,12 @@ public class ASTOperator extends ASTExpression {
 						case 'P':
 							tupleSize = ls;
 							if (rs != 0) {
-								Logger.error("Unitary operators must have only one operand", location);
+								driver.error("Unitary operators must have only one operand", location);
 							}
 							break;
 						case '!':
 							if (rs != 0 || ls != 1) {
-								Logger.error("Unitary operators must have only one scalar operand", location);
+								driver.error("Unitary operators must have only one scalar operand", location);
 							}
 							break;
 						case '+':
@@ -341,15 +341,15 @@ public class ASTOperator extends ASTExpression {
 						case '=':
 						case 'n':
 							if (ls != rs) {
-								Logger.error("Operands must have the same length", location);
+								driver.error("Operands must have the same length", location);
 							}
 							if (ls < 1 || rs < 1) {
-								Logger.error("Binary operators must have two operands", location);
+								driver.error("Binary operators must have two operands", location);
 							}
 							break;
 						default:
 							if (ls != 1 || rs != 1) {
-								Logger.error("Binary operators must have two scalar operands", location);
+								driver.error("Binary operators must have two scalar operands", location);
 							}
 							break;
 					}
@@ -359,15 +359,15 @@ public class ASTOperator extends ASTExpression {
 				}
 				if (op == '+') {
 					if (type == ExpType.FlagType && type != ExpType.NumericType) {
-						Logger.error("Operands must be numeric or flags", location);
+						driver.error("Operands must be numeric or flags", location);
 					}
 				} else {
 					if (type != ExpType.NumericType) {
-						Logger.error("Operand(s) must be numeric", location);
+						driver.error("Operand(s) must be numeric", location);
 					}
 				}
 				if (op == '_' && !isNatural() && !ASTParameter.Impure) {
-					Logger.error("Proper subtraction operands must be natural", location);
+					driver.error("Proper subtraction operands must be natural", location);
 				}
 				break;
 			}

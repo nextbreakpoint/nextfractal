@@ -64,9 +64,7 @@ import javafx.stage.Screen;
 import javafx.util.Duration;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -521,7 +519,7 @@ public class RenderPane extends BorderPane {
 			updateCompilerErrors(null, null, null);
 			boolean cfdgChanged = changed[0];
 			if (cfdgChanged) {
-				logger.info("CFDG is changed");
+				RenderPane.logger.info("CFDG is changed");
 			}
 			if (coordinator != null) {
 				coordinator.abort();
@@ -533,10 +531,10 @@ public class RenderPane extends BorderPane {
 				coordinator.run();
 			}
 		} catch (CompilerSourceException e) {
-			logger.log(Level.INFO, "Cannot render fractal: " + e.getMessage());
+			logger.log(Level.INFO, "Cannot render image: " + e.getMessage());
 			updateCompilerErrors(e.getMessage(), e.getErrors(), null);
 		} catch (CompilerClassException e) {
-			logger.log(Level.INFO, "Cannot render fractal: " + e.getMessage());
+			logger.log(Level.INFO, "Cannot render image: " + e.getMessage());
 			updateCompilerErrors(e.getMessage(), e.getErrors(), e.getSource());
 		}
 	}
@@ -557,11 +555,11 @@ public class RenderPane extends BorderPane {
 
 	private void processRenderErrors() {
 		if (coordinator != null) {
-			RendererError error = coordinator.getError();
-			if (error != null) {
-				updateRendererErrors("Error", Collections.singletonList(error), null);
-			} else {
+			List<RendererError> errors = coordinator.getErrors();
+			if (errors.isEmpty()) {
 				updateRendererErrors(null, null, null);
+			} else {
+				updateRendererErrors("Error", errors, null);
 			}
 		}
 	}

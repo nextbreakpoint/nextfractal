@@ -24,6 +24,7 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.grammar.ast;
 
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGDriver;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGRenderer;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ExpType;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.Locality;
@@ -33,15 +34,15 @@ public class ASTReal extends ASTExpression {
 	private double value;
 	private String text;
 
-	public ASTReal(double value, Token location) {
-		super(true, false, ExpType.NumericType, location);
+	public ASTReal(CFDGDriver driver, double value, Token location) {
+		super(driver, true, false, ExpType.NumericType, location);
 		this.value = value;
 		isNatural = Math.floor(value) == value && value >= 0 && value < 9007199254740992.0;
 		locality = Locality.PureLocal;
 	}
 
-	public ASTReal(String text, boolean negative, Token location) {
-		super(true, false, ExpType.NumericType, location);
+	public ASTReal(CFDGDriver driver, String text, boolean negative, Token location) {
+		super(driver, true, false, ExpType.NumericType, location);
 		if (negative) {
 			this.text = "-" + text;
 			this.value = Double.parseDouble(text);
