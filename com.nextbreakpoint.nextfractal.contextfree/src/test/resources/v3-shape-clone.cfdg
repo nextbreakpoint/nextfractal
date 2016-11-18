@@ -1,5 +1,7 @@
 CFDG3
 
+CF::Impure = 1
+
 startshape Foo
 
 shape flake {

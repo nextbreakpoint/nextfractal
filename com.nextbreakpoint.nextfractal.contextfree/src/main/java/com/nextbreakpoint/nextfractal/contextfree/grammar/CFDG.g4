@@ -16,11 +16,17 @@ import com.nextbreakpoint.nextfractal.contextfree.grammar.*;
 }
 
 @members {
-CFDGDriver driver = new CFDGDriver();
 
-public CFDG getCFDG() {
-    return driver.getCFDG();
+private CFDGDriver driver = null;
+
+public void setDriver(CFDGDriver driver) {
+    this.driver = driver;
 }
+
+public CFDGDriver getDriver() {
+    return driver;
+}
+
 }
 
 choose

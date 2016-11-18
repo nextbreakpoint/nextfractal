@@ -31,6 +31,7 @@ import com.nextbreakpoint.nextfractal.contextfree.grammar.exceptions.CFDGExcepti
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -40,7 +41,8 @@ import java.util.logging.Logger;
 
 public class InterpreterReportCompiler {
 	private static final Logger logger = Logger.getLogger(InterpreterReportCompiler.class.getName());
-	
+	private static final String INCLUDE_LOCATION = "include.location";
+
 	public CompilerReport generateReport(String source) throws IOException {
 		List<CompilerError> errors = new ArrayList<>();
 		CFDG cfdg = parse(source, errors);
@@ -53,9 +55,11 @@ public class InterpreterReportCompiler {
 			CFDGLexer lexer = new CFDGLexer(is);
 			CommonTokenStream tokens = new CommonTokenStream(lexer);
 			CFDGParser parser = new CFDGParser(tokens);
+			parser.setDriver(new CFDGDriver());
 			parser.setErrorHandler(new CompilerErrorStrategy(errors));
+			parser.getDriver().setCurrentPath(getIncludeDir());
 			if (parser.choose() != null) {
-				return parser.getCFDG();
+				return parser.getDriver().getCFDG();
 			}
 		} catch (CFDGException e) {
 			CompilerError error = new CompilerError(CompilerError.ErrorType.CFDG_COMPILER, e.getLocation().getLine(), e.getLocation().getCharPositionInLine(), e.getLocation().getStartIndex(), e.getLocation().getStopIndex() - e.getLocation().getStartIndex(), e.getMessage());
@@ -68,4 +72,16 @@ public class InterpreterReportCompiler {
 		}
 		return null;
 	}
-}	
+
+	private String getIncludeDir() {
+		String defaultBrowserDir = System.getProperty(INCLUDE_LOCATION, "[user.home]");
+		String userHome = System.getProperty("user.home");
+		String userDir = System.getProperty("user.dir");
+		String currentDir = new File(".").getAbsoluteFile().getParent();
+		defaultBrowserDir = defaultBrowserDir.replace("[current.path]", currentDir);
+		defaultBrowserDir = defaultBrowserDir.replace("[user.home]", userHome);
+		defaultBrowserDir = defaultBrowserDir.replace("[user.dir]", userDir);
+		logger.info("includeDir = " + defaultBrowserDir);
+		return defaultBrowserDir;
+	}
+}

@@ -32,7 +32,10 @@ import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.*;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ShapeType;
 import org.antlr.v4.runtime.ANTLRFileStream;
 import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Token;
+import org.antlr.v4.runtime.tree.ParseTreeWalker;
+import org.antlr.v4.runtime.tree.TerminalNode;
 
 public class CFDGDriver {
 	private CFDG cfdg = new CFDG(this);
@@ -102,6 +105,14 @@ public class CFDGDriver {
 		flagNames.put("CF::p6m",         FlagType.CF_P6M.getMask());
 	}
 
+	public String getCurrentPath() {
+		return currentPath;
+	}
+
+	public void setCurrentPath(String currentPath) {
+		this.currentPath = currentPath;
+	}
+
 	public Logger getLogger() {
 		return logger;
 	}
@@ -137,7 +148,7 @@ public class CFDGDriver {
 		}
 		int index = Collections.binarySearch(PrimShape.getShapeNames(), name);
 		String n = currentNameSpace + name;
-		if (index != -1 && cfdg.tryEncodeShapeName(n) == -1) {
+		if (index >= 0 && cfdg.tryEncodeShapeName(n) == -1) {
 			return cfdg.encodeShapeName(name);
 		} else {
 			return cfdg.encodeShapeName(n);
@@ -161,9 +172,9 @@ public class CFDGDriver {
 			includeDepth++;
 			currentShape = -1;
 			setShape(null, false, location);
-			warning("Reading rules file " + path, location);
+			info("Reading rules file " + path, location);
 		} catch (Exception e) {
-			error(e.getMessage(), location);
+			fail(e.getMessage(), location);
 		}
 	}
 	
@@ -447,7 +458,7 @@ public class CFDGDriver {
 			if (makeStart) {
 				error("Startshape cannot reuse parameters", location);
 			} else if (nameIndex == currentShape)  {
-				ret.setArgSouce(ArgSource.SimpleArgs);
+				ret.setArgSouce(ArgSource.SimpleParentArgs);
 				ret.setTypeSignature(ret.getTypeSignature());
 			}
 		}
@@ -662,11 +673,7 @@ public class CFDGDriver {
 	}
 
 	protected String relativeFilePath(String base, String rel) {
-		int i = base.lastIndexOf("/");
-		if (i == -1) {
-			return rel;
-		}
-		return base.substring(0, i) + rel;
+		return base + "/" + rel;
 	}
 	
 	protected void popNameSpace() {
@@ -692,6 +699,10 @@ public class CFDGDriver {
 		includeNamespace.pop();
 		includeNamespace.push(Boolean.TRUE);
 		currentNameSpace = currentNameSpace + n + "::";
+
+		CFDGParser parser = new CFDGParser(new CommonTokenStream(new CFDGLexer(streamsToLoad.peek())));
+		parser.setDriver(this);
+		parser.choose();
 	}
 	
 	public void inColor() {

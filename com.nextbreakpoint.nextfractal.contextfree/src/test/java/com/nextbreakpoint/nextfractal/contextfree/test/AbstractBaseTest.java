@@ -25,6 +25,7 @@
 package com.nextbreakpoint.nextfractal.contextfree.test;
 
 import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDG;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGDriver;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGLexer;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGParser;
 import org.antlr.v4.runtime.ANTLRInputStream;
@@ -42,6 +43,8 @@ public abstract class AbstractBaseTest {
 	protected CFDG parseSource(String resourceName) throws IOException {
 		ANTLRInputStream is = new ANTLRInputStream(getResourceAsStream(resourceName));
 		CFDGParser parser = new CFDGParser(new CommonTokenStream(new CFDGLexer(is)));
+		parser.setDriver(new CFDGDriver());
+		parser.getDriver().setCurrentPath("src/test/resources");
 		ParseTreeWalker walker = new ParseTreeWalker();
 		walker.walk(new DefaultParseTreeListener() {
 			@Override
@@ -49,7 +52,7 @@ public abstract class AbstractBaseTest {
 				System.out.println(node.getText() + " " + node.getSymbol());
 			}
 		}, parser.choose());
-		return parser.getCFDG();
+		return parser.getDriver().getCFDG();
 	}
 
 	protected InputStream getResourceAsStream(String resourceName) {
