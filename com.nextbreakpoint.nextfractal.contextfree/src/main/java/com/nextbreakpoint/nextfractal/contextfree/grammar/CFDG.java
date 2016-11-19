@@ -289,7 +289,7 @@ public class CFDG {
 			driver.fail("Size specification must not be rotated or skewed", null);
 		}
 
-		return false;
+		return true;
 	}
 
 	public boolean isTimed(AffineTransformTime transform) {
@@ -309,7 +309,7 @@ public class CFDG {
 			driver.fail("Time specification must have positive duration", null);
 		}
 
-		return false;
+		return true;
 	}
 
 	public void getSummetry(List<AffineTransform> syms, CFDGRenderer renderer) {
