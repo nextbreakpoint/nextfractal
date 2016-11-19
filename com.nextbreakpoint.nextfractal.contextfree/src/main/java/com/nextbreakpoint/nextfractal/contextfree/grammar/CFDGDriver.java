@@ -302,7 +302,7 @@ public class CFDGDriver {
 	public void makeConfig(ASTDefine cfg) {
 		if (cfg.getName().equals(CFG.Impure.getName())) {
 			double[] v = new double[] { 0.0 };
-			if (cfg.getExp() != null || cfg.getExp().isConstant() || cfg.getExp().evaluate(v, 1, null) != 1) {
+			if (cfg.getExp() == null || !cfg.getExp().isConstant() || cfg.getExp().evaluate(v, 1, null) != 1) {
 				error("CF::Impure requires a constant numeric expression", cfg.getLocation());
 			} else {
 				ASTParameter.Impure = v[0] != 0.0;
