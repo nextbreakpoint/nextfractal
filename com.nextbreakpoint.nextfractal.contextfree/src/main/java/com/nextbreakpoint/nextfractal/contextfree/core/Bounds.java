@@ -21,6 +21,20 @@ public class Bounds {
         minY = Double.POSITIVE_INFINITY;
     }
 
+    public Bounds(Bounds bounds) {
+        minX = bounds.minX;
+        minY = bounds.minY;
+        maxX = bounds.maxX;
+        maxY = bounds.maxY;
+    }
+
+    public Bounds(double minX, double minY, double maxX, double maxY) {
+        this.minX = minX;
+        this.minY = minY;
+        this.maxX = maxX;
+        this.maxY = maxY;
+    }
+
     public Bounds(AffineTransform transform, Shape path, double scale, CommandInfo info) {
         if (!boundingRect(transform, path, scale, info)) {
             invalidate();
@@ -283,5 +297,9 @@ public class Bounds {
 
     public void merge(Point2D point) {
         merge(point.getX(), point.getY());
+    }
+
+    public boolean overlaps(Bounds bounds) {
+        return !(bounds.minX > maxX || bounds.maxX < minX || bounds.minY > maxY || bounds.maxY < minY);
     }
 }

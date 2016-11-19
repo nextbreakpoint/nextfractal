@@ -36,7 +36,6 @@ import org.antlr.v4.runtime.Token;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.IntStream;
 
@@ -552,7 +551,7 @@ public class CFDGRenderer {
 			currentArea = 1.0;
 		}
 
-		FinishedShape finishedShape = new FinishedShape((Shape)shape.clone(), shapeCount, pathBounds);
+		FinishedShape finishedShape = new FinishedShape((Shape)shape.clone(), shapeCount, new Bounds(pathBounds));
 		finishedShape.getWorldState().getTransformZ().setSz(currentArea);
 
 		if (!cfdg.usesTime()) {
@@ -906,9 +905,8 @@ public class CFDGRenderer {
 				AffineTransform transform = new AffineTransform();
 				cfdg.isTiled(transform, null);
 				cfdg.isFrieze(transform, null);
-//				tiledCanvas = new TiledCanvas(canvas, transform, frieze);
-//				tiledCanvas.setScale(currScale);
-				//TODO completare
+				tiledCanvas = new TiledCanvas(canvas, transform, frieze);
+				tiledCanvas.setScale(currScale);
 				this.canvas = tiledCanvas;
 			}
 
@@ -1028,20 +1026,24 @@ public class CFDGRenderer {
 
 		transform.preConcatenate(currTransform);
 
-		double a = shape.getWorldState().getTransform().getDeterminant() + currArea;
+		double a = shape.getWorldState().getTransformZ().sz() * currArea;
 
-		if (!Double.isFinite(a) && shape.getShapeType() != PrimShapeType.fillType.getType()) {
+		if ((!Double.isFinite(a) && shape.getShapeType() != PrimShapeType.fillType.getType()) || a < minArea) {
+			return null;
+		}
+
+		if (tiledCanvas != null && shape.getShapeType() != PrimShapeType.fillType.getType()) {
 			Bounds b = shape.bounds();
 			Point2D.Double p1 = new Point2D.Double(b.getMinX(), b.getMinY());
+			Point2D.Double p2 = new Point2D.Double(b.getMaxX(), b.getMaxY());
 			currTransform.transform(p1, p1);
+			currTransform.transform(p2, p2);
+			b = new Bounds();
 			b.setMinX(p1.getX());
 			b.setMinY(p1.getY());
-			Point2D.Double p2 = new Point2D.Double(b.getMaxX(), b.getMaxY());
-			currTransform.transform(p2, p2);
 			b.setMaxX(p2.getX());
 			b.setMaxY(p2.getY());
-//			canvas.tileTransform(b);
-			//TODO completare
+			canvas.tileTransform(b);
 		}
 
 		if (cfdg.getShapeType(shape.getShapeType()) == ShapeType.PathType) {

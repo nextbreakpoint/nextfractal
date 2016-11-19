@@ -141,6 +141,5 @@ public class SimpleCanvas implements CFCanvas {
     }
 
     public void tileTransform(Bounds bounds) {
-        //TODO implementare tileTransform
     }
 }

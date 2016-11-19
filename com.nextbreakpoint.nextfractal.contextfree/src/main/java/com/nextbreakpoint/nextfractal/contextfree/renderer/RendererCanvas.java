@@ -1,5 +1,6 @@
 package com.nextbreakpoint.nextfractal.contextfree.renderer;
 
+import com.nextbreakpoint.nextfractal.contextfree.core.Bounds;
 import com.nextbreakpoint.nextfractal.contextfree.core.ExtendedGeneralPath;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.CFCanvas;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.CommandInfo;
@@ -193,5 +194,9 @@ public class RendererCanvas implements CFCanvas {
     }
 
     public void end() {
+    }
+
+    @Override
+    public void tileTransform(Bounds bounds) {
     }
 }

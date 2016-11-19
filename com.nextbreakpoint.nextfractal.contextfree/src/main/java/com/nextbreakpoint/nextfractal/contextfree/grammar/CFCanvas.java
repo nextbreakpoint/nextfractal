@@ -1,5 +1,7 @@
 package com.nextbreakpoint.nextfractal.contextfree.grammar;
 
+import com.nextbreakpoint.nextfractal.contextfree.core.Bounds;
+
 import java.awt.geom.AffineTransform;
 
 public interface CFCanvas {
@@ -14,4 +16,6 @@ public interface CFCanvas {
     public void start(boolean first, double[] backgroundColor, int currWidth, int currHeight);
 
     public void end();
+
+    public void tileTransform(Bounds bounds);
 }

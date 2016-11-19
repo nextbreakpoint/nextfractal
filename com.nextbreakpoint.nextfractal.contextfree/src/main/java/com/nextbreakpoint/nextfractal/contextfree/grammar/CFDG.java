@@ -201,24 +201,24 @@ public class CFDG {
 			double v_x = 0.0;
 			double v_y = 1.0;
 
-			Point2D o = new Point2D.Double(o_x, o_y);
-			Point2D u = new Point2D.Double(u_x, u_y);
-			Point2D v = new Point2D.Double(v_x, v_y);
+			Point2D.Double o = new Point2D.Double(o_x, o_y);
+			Point2D.Double u = new Point2D.Double(u_x, u_y);
+			Point2D.Double v = new Point2D.Double(v_x, v_y);
 
 			tileMod.getTransform().transform(o, o);
 			tileMod.getTransform().transform(u, u);
 			tileMod.getTransform().transform(v, v);
 
-			if (Math.abs(u_y - o_y) >= 0.0001 && Math.abs(v_x - o_x) >= 0.0001) {
+			if (Math.abs(u.y - o.y) >= 0.0001 && Math.abs(v.x - o.x) >= 0.0001) {
 				driver.fail("Tile must be aligned with the X or Y axis", null);
 			}
 
-			if (Math.abs(u_x - o_x) < 0.0 || Math.abs(v_y - o_y) < 0.0) {
+			if (Math.abs(u.x - o.x) < 0.0 || Math.abs(v.y - o.y) < 0.0) {
 				driver.fail("Tile must be in the positive X/Y quadrant", null);
 			}
 
-			point[0] = u_x - o_x;
-			point[1] = u_y - o_y;
+			point[0] = u.x - o.x;
+			point[1] = v.y - o.y;
 		}
 
 		return true;
@@ -597,9 +597,9 @@ public class CFDG {
 
 			CFDGRenderer renderer = new CFDGRenderer(this, width, height, minSize, variation, border);
 
-			Modification tiled = null;
-			Modification sized = null;
-			Modification timed = null;
+			Modification tiled = new Modification();
+			Modification sized = new Modification();
+			Modification timed = new Modification();
 
 			//TODO rivedere
 
