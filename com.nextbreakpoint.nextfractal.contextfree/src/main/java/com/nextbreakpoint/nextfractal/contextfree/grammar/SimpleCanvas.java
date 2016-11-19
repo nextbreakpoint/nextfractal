@@ -96,7 +96,7 @@ public class SimpleCanvas implements CFCanvas {
         g2d.setTransform(oldTransform);
     }
 
-    private int mapToJoin(int flags) {
+    private int mapToJoin(long flags) {
         if ((flags & FlagType.CF_MITER_JOIN.getMask()) != 0) {
             return BasicStroke.JOIN_MITER;
         } else if ((flags & FlagType.CF_ROUND_JOIN.getMask()) != 0) {
@@ -108,7 +108,7 @@ public class SimpleCanvas implements CFCanvas {
         }
     }
 
-    private int mapToCap(int flags) {
+    private int mapToCap(long flags) {
         if ((flags & FlagType.CF_BUTT_CAP.getMask()) != 0) {
             return BasicStroke.CAP_BUTT;
         } else if ((flags & FlagType.CF_ROUND_CAP.getMask()) != 0) {

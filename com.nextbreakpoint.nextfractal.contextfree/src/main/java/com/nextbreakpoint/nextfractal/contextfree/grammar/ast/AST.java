@@ -111,8 +111,8 @@ public class AST {
     }
 
     public static void addUnique(List<AffineTransform> syms, AffineTransform transform) {
-        if (syms.contains(transform)) {
-            syms.add(transform);
+        if (!syms.contains(transform)) {
+            syms.add((AffineTransform) transform.clone());
         }
     }
 
@@ -138,11 +138,16 @@ public class AST {
     }
 
     private static AffineTransform getMirrorTransform(double angle) {
-        AffineTransform mirror = new AffineTransform();
-        double ca = Math.cos(angle);
-        double sa = Math.sin(angle);
-        double d = Math.hypot(ca, sa);
-        mirror.scale(ca / d, sa / d);
+        return getMirrorTransform(Math.cos(angle), Math.sin(angle));
+    }
+
+    private static AffineTransform getMirrorTransform(double ux, double uy) {
+        AffineTransform mirror = new AffineTransform(
+                2.0 * ux * ux - 1.0,
+                2.0 * ux * uy,
+                2.0 * ux * uy,
+                2.0 * uy * uy - 1.0,
+                0.0, 0.0);
         return mirror;
     }
 
@@ -172,7 +177,7 @@ public class AST {
             double dist10 = Math.hypot(x1, y1);
             double x2 = 0;
             double y2 = 1;
-            Point2D.Double p2 = new Point2D.Double(x1, y1);
+            Point2D.Double p2 = new Point2D.Double(x2, y2);
             tile.transform(p2, p2);
             x2 = p2.getX();
             y2 = p2.getY();
@@ -190,7 +195,7 @@ public class AST {
             driver.fail("Wallpaper symmetry only works in tiled designs", location);
         }
 
-        if (type >= FlagType.CF_P2.getMask() && !frieze && !tiled) {
+        if (type == FlagType.CF_P2.getMask() && !frieze && !tiled) {
             driver.fail("p2 symmetry only works in frieze or tiled designs", location);
         }
 
@@ -247,105 +252,104 @@ public class AST {
                 processDihedral(driver, syms, order, x, y, true, angle, location);
                 break;
             }
-//            case CF_P11G: {
-//                double mirrorx = 0.0, mirrory = 0.0;
-//                if (data.size() == 2) {
-//                    if (tile.sx != 0.0)
-//                        mirrory = data.get(1);
-//                    else
-//                        mirrorx = data.get(1);
-//                } else if (data.size() > 2) {
-//                    driver.fail("p11g symmetry takes no arguments or an optional glide axis position argument", location);
-//                }
-//                agg::trans_affine tr;
-//                addUnique(syms, tr);
-//                tr.translate(-mirrorx, -mirrory);
-//                if (tile.sx != 0.0)
-//                    tr.flip_y();
-//                else
-//                    tr.flip_x();
-//                tr.translate(tile.sx * 0.5 + mirrorx, tile.sy * 0.5 + mirrory);
-//                addUnique(syms, tr);
-//                break;
-//            }
-//            case CF_P11M: {
-//                double mirrorx = 0.0, mirrory = 0.0;
-//                if (data.size() == 2) {
-//                    if (tile.sx != 0.0)
-//                        mirrory = data.get(1);
-//                    else
-//                        mirrorx = data.get(1);
-//                } else if (data.size() > 2) {
-//                    driver.fail("p11m symmetry takes no arguments or an optional mirror axis position argument", location);
-//                }
-//                agg::trans_affine tr;
-//                addUnique(syms, tr);
-//                tr.translate(-mirrorx, -mirrory);
-//                if (tile.sx != 0.0)
-//                    tr.flip_y();
-//                else
-//                    tr.flip_x();
-//                tr.translate(mirrorx, mirrory);
-//                addUnique(syms, tr);
-//                break;
-//            }
-//            case CF_P1M1: {
-//                double mirrorx = 0.0, mirrory = 0.0;
-//                if (data.size() == 2) {
-//                    if (tile.sx != 0.0)
-//                        mirrorx = data.get(1);
-//                    else
-//                        mirrory = data.get(1);
-//                } else if (data.size() > 2) {
-//                    driver.fail("p1m1 symmetry takes no arguments or an optional mirror axis position argument", location);
-//                }
-//                agg::trans_affine tr;
-//                addUnique(syms, tr);
-//                tr.translate(-mirrorx, -mirrory);
-//                if (tile.sx != 0.0)
-//                    tr.flip_x();
-//                else
-//                    tr.flip_y();
-//                tr.translate(mirrorx, mirrory);
-//                addUnique(syms, tr);
-//                break;
-//            }
-//            case CF_P2: {
-//                double mirrorx = 0.0, mirrory = 0.0;
-//                if (data.size() == 3) {
-//                    mirrorx = data.get(1);
-//                    mirrory = data.get(2);
-//                } else if (data.size() != 1) {
-//                    driver.fail("p2 symmetry takes no arguments or a center of rotation", location);
-//                }
-//                processDihedral(driver, syms, 2.0, mirrorx, mirrory, false, 0.0, location);
-//                break;
-//            }
-//            case CF_P2MG: {
-//                double mirrorx = 0.0, mirrory = 0.0;
-//                if (data.size() == 3) {
-//                    mirrorx = data.get(1);
-//                    mirrory = data.get(2);
-//                } else if (data.size() != 1) {
-//                    driver.fail("p2mg symmetry takes no arguments or a center of rotation", location);
-//                }
-//                agg::trans_affine tr1;
-//                agg::trans_affine_translation tr2(-mirrorx, -mirrory);
-//                agg::trans_affine_translation tr3(-mirrorx, -mirrory);
-//                agg::trans_affine_translation tr4(-mirrorx, -mirrory);
-//                tr2.flip_x();
-//                tr3.flip_x();
-//                tr3.flip_y();
-//                tr4.flip_y();
-//                tr2.translate(tile.sx * 0.5 + mirrorx, tile.sy * 0.5 + mirrory);
-//                tr3.translate(mirrorx, mirrory);
-//                tr4.translate(tile.sx * 0.5 + mirrorx, tile.sy * 0.5 + mirrory);
-//                addUnique(syms, tr1);
-//                addUnique(syms, tr2);
-//                addUnique(syms, tr3);
-//                addUnique(syms, tr4);
-//                break;
-//            }
+            case CF_P11G: {
+                double mirrorx = 0.0, mirrory = 0.0;
+                if (data.size() == 2) {
+                    if (tile.getScaleX() != 0.0)
+                        mirrory = data.get(1);
+                    else
+                        mirrorx = data.get(1);
+                } else if (data.size() > 2) {
+                    driver.fail("p11g symmetry takes no arguments or an optional glide axis position argument", location);
+                }
+                AffineTransform tr = new AffineTransform();
+                addUnique(syms, tr);
+                tr.translate(-mirrorx, -mirrory);
+                if (tile.getScaleX() != 0.0)
+                    tr.scale(1, -1);
+                else
+                    tr.scale(-1, 1);
+                tr.translate(tile.getScaleX() * 0.5 + mirrorx, tile.getScaleY() * 0.5 + mirrory);
+                addUnique(syms, tr);
+                break;
+            }
+            case CF_P11M: {
+                double mirrorx = 0.0, mirrory = 0.0;
+                if (data.size() == 2) {
+                    if (tile.getScaleX() != 0.0)
+                        mirrory = data.get(1);
+                    else
+                        mirrorx = data.get(1);
+                } else if (data.size() > 2) {
+                    driver.fail("p11m symmetry takes no arguments or an optional mirror axis position argument", location);
+                }
+                AffineTransform tr = new AffineTransform();
+                addUnique(syms, tr);
+                tr.translate(-mirrorx, -mirrory);
+                if (tile.getScaleX() != 0.0)
+                    tr.scale(1, -1);
+                else
+                    tr.scale(-1, 1);
+                tr.translate(mirrorx, mirrory);
+                addUnique(syms, tr);
+                break;
+            }
+            case CF_P1M1: {
+                double mirrorx = 0.0, mirrory = 0.0;
+                if (data.size() == 2) {
+                    if (tile.getScaleX() != 0.0)
+                        mirrorx = data.get(1);
+                    else
+                        mirrory = data.get(1);
+                } else if (data.size() > 2) {
+                    driver.fail("p1m1 symmetry takes no arguments or an optional mirror axis position argument", location);
+                }
+                AffineTransform tr = new AffineTransform();
+                addUnique(syms, tr);
+                tr.translate(-mirrorx, -mirrory);
+                if (tile.getScaleX() != 0.0)
+                    tr.scale(-1, 1);
+                else
+                    tr.scale(1, -1);
+                tr.translate(mirrorx, mirrory);
+                addUnique(syms, tr);
+                break;
+            }
+            case CF_P2: {
+                double mirrorx = 0.0, mirrory = 0.0;
+                if (data.size() == 3) {
+                    mirrorx = data.get(1);
+                    mirrory = data.get(2);
+                } else if (data.size() != 1) {
+                    driver.fail("p2 symmetry takes no arguments or a center of rotation", location);
+                }
+                processDihedral(driver, syms, 2.0, mirrorx, mirrory, false, 0.0, location);
+                break;
+            }
+            case CF_P2MG: {
+                double mirrorx = 0.0, mirrory = 0.0;
+                if (data.size() == 3) {
+                    mirrorx = data.get(1);
+                    mirrory = data.get(2);
+                } else if (data.size() != 1) {
+                    driver.fail("p2mg symmetry takes no arguments or a center of rotation", location);
+                }
+                AffineTransform tr1 = new AffineTransform();
+                AffineTransform tr2 = AffineTransform.getTranslateInstance(-mirrorx, -mirrory);
+                AffineTransform tr3 = AffineTransform.getTranslateInstance(-mirrorx, -mirrory);
+                AffineTransform tr4 = AffineTransform.getTranslateInstance(-mirrorx, -mirrory);
+                tr2.setToScale(-1, 1);
+                tr3.setToScale(-1, -1);
+                tr4.setToScale(1, -1);
+                tr2.translate(tile.getScaleX() * 0.5 + mirrorx, tile.getScaleY() * 0.5 + mirrory);
+                tr3.translate(mirrorx, mirrory);
+                tr4.translate(tile.getScaleX() * 0.5 + mirrorx, tile.getScaleY() * 0.5 + mirrory);
+                addUnique(syms, tr1);
+                addUnique(syms, tr2);
+                addUnique(syms, tr3);
+                addUnique(syms, tr4);
+                break;
+            }
 //            case CF_P2MM: {
 //                double mirrorx = 0.0, mirrory = 0.0;
 //                if (data.size() == 3) {
@@ -856,7 +860,7 @@ public class AST {
         return r;
     }
 
-    public static ASTExpression getFlagsAndStroke(CFDGDriver driver, List<ASTModTerm> terms, int[] flags) {
+    public static ASTExpression getFlagsAndStroke(CFDGDriver driver, List<ASTModTerm> terms, long[] flags) {
         List<ASTModTerm> temp = new ArrayList<>(terms);
         terms.clear();
         ASTExpression ret = null;

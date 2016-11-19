@@ -40,7 +40,7 @@ public class ASTPathCommand extends ASTReplacement {
 	private double strokeWidth;
 	private ASTExpression parameters;
 	private CommandInfo commandInfo;
-	private int flags;
+	private long flags;
 
 	public ASTPathCommand(CFDGDriver driver, Token location) {
 		super(driver, null, RepElemType.command, location);
@@ -78,7 +78,7 @@ public class ASTPathCommand extends ASTReplacement {
 		return parameters;
 	}
 
-	public int getFlags() {
+	public long getFlags() {
 		return flags;
 	}
 
@@ -140,7 +140,7 @@ public class ASTPathCommand extends ASTReplacement {
 		switch (ph) {
 			case TypeCheck: {
 				getChildChange().addEntropy((flags & CF_FILL.getMask()) != 0 ? "FILL" : "STROKE");
-				int[] flagValue = new int[] { flags };
+				long[] flagValue = new long[] { flags };
 				ASTExpression w = AST.getFlagsAndStroke(driver, getChildChange().getModExp(), flagValue);
 				flags = flagValue[0];
 				if (w != null) {

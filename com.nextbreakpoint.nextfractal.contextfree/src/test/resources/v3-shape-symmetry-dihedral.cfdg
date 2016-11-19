@@ -1,0 +1,9 @@
+CFDG3
+
+CF::Symmetry = CF::Dihedral, 6
+
+startshape flake
+
+shape flake {
+    TRIANGLE []
+}

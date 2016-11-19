@@ -1,0 +1,11 @@
+CFDG3
+
+CF::Tile = [s 0.8 0]
+
+CF::Symmetry = CF::p2mg
+
+startshape flake
+
+shape flake {
+    TRIANGLE []
+}

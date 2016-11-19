@@ -39,7 +39,7 @@ public class ASTPathOp extends ASTReplacement {
 	private ASTExpression arguments;
 	private ASTModification oldStyleArguments;
 	private int argCount;
-	private int flags;
+	private long flags;
 	
 	public ASTPathOp(CFDGDriver driver, String op, ASTModification args, Token location) {
 		super(driver, op, location);
@@ -65,7 +65,7 @@ public class ASTPathOp extends ASTReplacement {
 		return argCount;
 	}
 	
-	public int getFlags() {
+	public long getFlags() {
 		return flags;
 	}
 
@@ -199,7 +199,7 @@ public class ASTPathOp extends ASTReplacement {
 	}
 
 	private void makePositional() {
-		int[] value = new int[1];
+		long[] value = new long[1];
 		ASTExpression w = AST.getFlagsAndStroke(driver, oldStyleArguments.getModExp(), value);
 		flags = value[0];
 		if (w != null) {

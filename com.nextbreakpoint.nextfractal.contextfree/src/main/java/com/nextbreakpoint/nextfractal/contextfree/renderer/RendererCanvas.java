@@ -160,7 +160,7 @@ public class RendererCanvas implements CFCanvas {
         }
     }
 
-    private int mapToJoin(int flags) {
+    private int mapToJoin(long flags) {
         if ((flags & FlagType.CF_MITER_JOIN.getMask()) != 0) {
             return RendererGraphicsContext.JOIN_MITER;
         } else if ((flags & FlagType.CF_ROUND_JOIN.getMask()) != 0) {
@@ -172,7 +172,7 @@ public class RendererCanvas implements CFCanvas {
         }
     }
 
-    private int mapToCap(int flags) {
+    private int mapToCap(long flags) {
         if ((flags & FlagType.CF_BUTT_CAP.getMask()) != 0) {
             return RendererGraphicsContext.CAP_BUTT;
         } else if ((flags & FlagType.CF_ROUND_CAP.getMask()) != 0) {

@@ -35,7 +35,7 @@ public class CommandInfo {
     private static AtomicLong lastPathUID = new AtomicLong(0);
     private Long pathUID;
     private int index;
-    private int flags;
+    private long flags;
     private double miterLimit;
     private double strokeWidth;
     private PathStorage pathStorage;
@@ -82,7 +82,7 @@ public class CommandInfo {
         return index;
     }
 
-    public int getFlags() {
+    public long getFlags() {
         return flags;
     }
 

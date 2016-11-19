@@ -50,8 +50,8 @@ public enum FlagType {
 	CF_P1M1(4 << 15), 
 	CF_P2(30 << 15), 
 	CF_P2MG(6 << 15), 
-	CF_P2MM(7 << 14),
-	CF_PM(8 << 5), 
+	CF_P2MM(7 << 15),
+	CF_PM(8 << 15),
 	CF_PG(9 << 15), 
 	CF_CM(10 << 15), 
 	CF_PMM(11 << 15), 
@@ -67,17 +67,17 @@ public enum FlagType {
 	CF_P6(21 << 15), 
 	CF_P6M(22 << 15); 
 	
-	private int mask;
+	private long mask;
 
-	private FlagType(int mask) {
+	private FlagType(long mask) {
 		this.mask = mask;
 	}
 
-	public int getMask() {
+	public long getMask() {
 		return mask;
 	}
 
-	public static FlagType fromMask(int mask) {
+	public static FlagType fromMask(long mask) {
 		for (FlagType value : FlagType.values()) {
 			if (value.getMask() == mask) {
 				return value;

@@ -41,7 +41,7 @@ public class CFDGDriver {
 	private CFDG cfdg = new CFDG(this);
 	private Stack<ASTRepContainer> containerStack = new Stack<>();
 	private ASTRepContainer paramDecls = new ASTRepContainer(this);
-	private Map<String, Integer> flagNames = new HashMap<String, Integer>();
+	private Map<String, Long> flagNames = new HashMap<>();
 	private List<CFStackRule> longLivedParams = new ArrayList<>();
 	private Stack<String> fileNames = new Stack<>();
 	private Stack<String> filesToLoad = new Stack<>();
@@ -377,7 +377,7 @@ public class CFDGDriver {
 	}
 
 	public ASTExpression makeVariable(String name, Token location) {
-		Integer flagItem = flagNames.get(name);
+		Long flagItem = flagNames.get(name);
 		if (flagItem != null) {
 			ASTReal flag = new ASTReal(this, flagItem, location);
 			flag.setType(ExpType.FlagType);

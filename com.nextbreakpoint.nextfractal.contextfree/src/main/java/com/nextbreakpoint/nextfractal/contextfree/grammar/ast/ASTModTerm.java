@@ -47,7 +47,7 @@ public class ASTModTerm extends ASTExpression {
 		this.args = null;
 		this.argCount = 0;
 
-		Map<String, Integer> paramMap = new HashMap<>();
+		Map<String, Long> paramMap = new HashMap<>();
 		paramMap.put("evenodd", FlagType.CF_EVEN_ODD.getMask());
 		paramMap.put("iso", FlagType.CF_ISO_WIDTH.getMask());
 		paramMap.put("miterjoin", FlagType.CF_MITER_JOIN.getMask());
@@ -63,7 +63,7 @@ public class ASTModTerm extends ASTExpression {
 		//TODO controllare
 
 		for (String paramString : paramStrings.split(" ")) {
-			Integer count = paramMap.get(paramString);
+			Long count = paramMap.get(paramString);
 			if (count != null) {
 				argCount |= count;
 			}
