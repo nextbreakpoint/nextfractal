@@ -687,141 +687,142 @@ public class AST {
                 addUnique(syms, tr2);
                 break;
             }
-//            case CF_CMM: {
-//                if (!rhombic && !square) {
-//                    driver.fail("cmm symmetry requires diamond tiling", location);
-//                }
-//                double centerx = 0.0, centery = 0.0;
-//                switch (data.size()) {
-//                    case 1:
-//                        break;
-//                    case 3:
-//                        centerx = data.get(1);
-//                        centery = data.get(2);
-//                        break;
-//                    default:
-//                        driver.fail("cmm symmetry takes no arguments or a center of reflection", location);
-//                }
-//                processDihedral(driver, syms, 2.0, centerx, centery, true, square45 ? M_PI_4 : 0.0, location);
-//                break;
-//            }
-//            case CF_P4:
-//            case CF_P4M: {
-//                if (!square && !square45) {
-//                    driver.fail("p4 & p4m symmetry requires square tiling", location);
-//                }
-//                double x = 0.0, y = 0.0;
-//                switch (data.size()) {
-//                    case 1:
-//                        break;
-//                    case 3:
-//                        x = data.get(1);
-//                        y = data.get(2);
-//                        break;
-//                    default:
-//                        driver.fail("p4 & p4m symmetry takes no arguments or a center of rotation", location);
-//                }
-//                processDihedral(driver, syms, 4.0, x, y, type == FlagType.CF_P4M.getMask(), square ? M_PI_4 : 0.0, location);
-//                break;
-//            }
-//            case CF_P4G: {
-//                if (!square && !square45) {
-//                    driver.fail("p4g symmetry requires square tiling", location);
-//                }
-//                double centerx = 0.0, centery = 0.0;
-//                switch (data.size()) {
-//                    case 1:
-//                        break;
-//                    case 3:
-//                        centerx = data.get(1);
-//                        centery = data.get(2);
-//                        break;
-//                    default:
-//                        driver.fail("p4g symmetry takes no arguments or a center of rotation", location);
-//                }
-//                agg::trans_affine reg;
-//                reg.translate(-centerx, -centery);
-//                agg::trans_affine glide(reg);
-//                if (square45) {
-//                    glide.translate(-size45 * 0.25 * M_SQRT1_2, -size45 * 0.25 * M_SQRT1_2);
-//                    glide *= ref135;
-//                    glide.translate(-size45 * 0.25 * M_SQRT1_2,  size45 * 0.75 * M_SQRT1_2);
-//                } else {
-//                    glide.translate(tile.getScaleX() * 0.25, 0.0);
-//                    glide.scale(-1, 1);
-//                    glide.translate(-tile.getScaleX() * 0.25, tile.getScaleY() * 0.5);
-//                }
-//                for (int i = 0; i < 4; ++i) {
-//                    agg::trans_affine tr(reg), tr2(glide);
-//                    if (i) {
-//                        tr.rotate(i * M_PI_2);
-//                        tr2.rotate(i * M_PI_2);
-//                    }
-//                    tr.translate(centerx, centery);
-//                    tr2.translate(centerx, centery);
-//                    addUnique(syms, tr);
-//                    addUnique(syms, tr2);
-//                }
-//                break;
-//            }
-//            case CF_P3: {
-//                if (!hexagonal) {
-//                    driver.fail("p3 symmetry requires hexagonal tiling", location);
-//                }
-//                double x = 0.0, y = 0.0;
-//                switch (data.size()) {
-//                    case 1:
-//                        break;
-//                    case 3:
-//                        x = data.get(1);
-//                        y = data.get(2);
-//                        break;
-//                    default:
-//                        driver.fail("p3 symmetry takes no arguments or a center of rotation", location);
-//                }
-//                processDihedral(driver, syms, 3.0, x, y, false, 0.0, location);
-//                break;
-//            }
-//            case CF_P3M1:
-//            case CF_P31M: {
-//                if (!hexagonal) {
-//                    driver.fail("p3m1 & p31m symmetry requires hexagonal tiling", location);
-//                }
-//                double x = 0.0, y = 0.0;
-//                switch (data.size()) {
-//                    case 1:
-//                        break;
-//                    case 3:
-//                        x = data.get(1);
-//                        y = data.get(2);
-//                        break;
-//                    default:
-//                        driver.fail("p3m1 & p31m symmetry takes no arguments or a center of rotation", location);
-//                }
-//                boolean deg30 = (Math.abs(tile.shx) <= 0.000001) != (type == FlagType.CF_P3M1.getMask());
-//                double angle = M_PI / (deg30 ? 6.0 : 3.0);
-//                processDihedral(driver, syms, 3.0, x, y, true, angle, location);
-//                break;
-//            }
-//            case CF_P6:
-//            case CF_P6M: {
-//                if (!hexagonal) {
-//                    driver.fail("p6 & p6m symmetry requires hexagonal tiling", location);
-//                }
-//                double x = 0.0, y = 0.0;
-//                switch (data.size()) {
-//                    case 1:
-//                        break;
-//                    case 3:
-//                        x = data.get(1);
-//                        y = data.get(2);
-//                        break;
-//                    default:
-//                        driver.fail("p6 & p6m symmetry takes no arguments or a center of rotation", location);
-//                }
-//                processDihedral(driver, syms, 6.0, x, y, type == FlagType.CF_P6M.getMask(), 0.0, location);
-//                break;
-//            }
+            case CF_CMM: {
+                if (!rhombic && !square) {
+                    driver.fail("cmm symmetry requires diamond tiling", location);
+                }
+                double centerx = 0.0, centery = 0.0;
+                switch (data.size()) {
+                    case 1:
+                        break;
+                    case 3:
+                        centerx = data.get(1);
+                        centery = data.get(2);
+                        break;
+                    default:
+                        driver.fail("cmm symmetry takes no arguments or a center of reflection", location);
+                }
+                processDihedral(driver, syms, 2.0, centerx, centery, true, square45 ? M_PI_4 : 0.0, location);
+                break;
+            }
+            case CF_P4:
+            case CF_P4M: {
+                if (!square && !square45) {
+                    driver.fail("p4 & p4m symmetry requires square tiling", location);
+                }
+                double x = 0.0, y = 0.0;
+                switch (data.size()) {
+                    case 1:
+                        break;
+                    case 3:
+                        x = data.get(1);
+                        y = data.get(2);
+                        break;
+                    default:
+                        driver.fail("p4 & p4m symmetry takes no arguments or a center of rotation", location);
+                }
+                processDihedral(driver, syms, 4.0, x, y, type == FlagType.CF_P4M.getMask(), square ? M_PI_4 : 0.0, location);
+                break;
+            }
+            case CF_P4G: {
+                if (!square && !square45) {
+                    driver.fail("p4g symmetry requires square tiling", location);
+                }
+                double centerx = 0.0, centery = 0.0;
+                switch (data.size()) {
+                    case 1:
+                        break;
+                    case 3:
+                        centerx = data.get(1);
+                        centery = data.get(2);
+                        break;
+                    default:
+                        driver.fail("p4g symmetry takes no arguments or a center of rotation", location);
+                }
+                AffineTransform reg = new AffineTransform();
+                reg.translate(-centerx, -centery);
+                AffineTransform glide = new AffineTransform(reg);
+                if (square45) {
+                    glide.translate(-size45 * 0.25 * M_SQRT1_2, -size45 * 0.25 * M_SQRT1_2);
+                    glide.concatenate(ref135);
+                    glide.translate(-size45 * 0.25 * M_SQRT1_2,  size45 * 0.75 * M_SQRT1_2);
+                } else {
+                    glide.translate(tile.getScaleX() * 0.25, 0.0);
+                    glide.scale(-1, 1);
+                    glide.translate(-tile.getScaleX() * 0.25, tile.getScaleY() * 0.5);
+                }
+                for (int i = 0; i < 4; ++i) {
+                    AffineTransform tr = new AffineTransform(reg);
+                    AffineTransform tr2 = new AffineTransform(glide);
+                    if (i != 0) {
+                        tr.rotate(i * M_PI_2);
+                        tr2.rotate(i * M_PI_2);
+                    }
+                    tr.translate(centerx, centery);
+                    tr2.translate(centerx, centery);
+                    addUnique(syms, tr);
+                    addUnique(syms, tr2);
+                }
+                break;
+            }
+            case CF_P3: {
+                if (!hexagonal) {
+                    driver.fail("p3 symmetry requires hexagonal tiling", location);
+                }
+                double x = 0.0, y = 0.0;
+                switch (data.size()) {
+                    case 1:
+                        break;
+                    case 3:
+                        x = data.get(1);
+                        y = data.get(2);
+                        break;
+                    default:
+                        driver.fail("p3 symmetry takes no arguments or a center of rotation", location);
+                }
+                processDihedral(driver, syms, 3.0, x, y, false, 0.0, location);
+                break;
+            }
+            case CF_P3M1:
+            case CF_P31M: {
+                if (!hexagonal) {
+                    driver.fail("p3m1 & p31m symmetry requires hexagonal tiling", location);
+                }
+                double x = 0.0, y = 0.0;
+                switch (data.size()) {
+                    case 1:
+                        break;
+                    case 3:
+                        x = data.get(1);
+                        y = data.get(2);
+                        break;
+                    default:
+                        driver.fail("p3m1 & p31m symmetry takes no arguments or a center of rotation", location);
+                }
+                boolean deg30 = (Math.abs(tile.getShearX()) <= 0.000001) != (type == FlagType.CF_P3M1.getMask());
+                double angle = M_PI / (deg30 ? 6.0 : 3.0);
+                processDihedral(driver, syms, 3.0, x, y, true, angle, location);
+                break;
+            }
+            case CF_P6:
+            case CF_P6M: {
+                if (!hexagonal) {
+                    driver.fail("p6 & p6m symmetry requires hexagonal tiling", location);
+                }
+                double x = 0.0, y = 0.0;
+                switch (data.size()) {
+                    case 1:
+                        break;
+                    case 3:
+                        x = data.get(1);
+                        y = data.get(2);
+                        break;
+                    default:
+                        driver.fail("p6 & p6m symmetry takes no arguments or a center of rotation", location);
+                }
+                processDihedral(driver, syms, 6.0, x, y, type == FlagType.CF_P6M.getMask(), 0.0, location);
+                break;
+            }
             default:
                 driver.fail("Unknown symmetry type", location);
                 break;  // never gets here
