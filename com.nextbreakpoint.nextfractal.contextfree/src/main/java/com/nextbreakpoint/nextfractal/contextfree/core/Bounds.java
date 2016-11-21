@@ -46,8 +46,6 @@ public class Bounds {
 
         Rectangle2D bounds = getRectangle2D(transform, path, accuracy);
 
-        //TODO completare boundingRect
-
         if ((info.getFlags() & FlagType.CF_FILL.getMask()) != 0) {
             minX = bounds.getMinX();
             minY = bounds.getMinY();

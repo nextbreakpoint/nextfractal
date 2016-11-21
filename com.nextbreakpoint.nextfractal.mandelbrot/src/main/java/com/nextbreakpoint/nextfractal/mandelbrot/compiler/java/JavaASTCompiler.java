@@ -33,6 +33,7 @@ import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.ExpressionContext;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledColorExpression;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledCondition;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledConditionalExpression;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledExpression;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledPalette;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledPaletteElement;
@@ -733,7 +734,6 @@ public class JavaASTCompiler implements ASTExpressionCompiler {
 
 	@Override
 	public CompiledExpression compile(ASTConditionalExpression astConditionalExpression) {
-		// TODO Auto-generated method stub
-		return null;
+		return new CompiledConditionalExpression(context, astConditionalExpression.getConditionExp().compile(this), astConditionalExpression.getThenExp().compile(this), astConditionalExpression.getElseExp().compile(this), , astConditionalExpression.getLocation());
 	}
 }

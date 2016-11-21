@@ -131,8 +131,6 @@ public class CFDGRenderer {
 			primitivePaths[i] = new ASTRule(cfdg.getDriver(), i, null);
 		}
 
-		//TODO rivedere
-
 		for (PrimShape primShape : PrimShape.getShapeMap().values()) {
 			shapeMap.add(new CommandInfo(primShape));
 		}
@@ -461,7 +459,7 @@ public class CFDGRenderer {
 			return;
 		}
 		colorConflict = true;
-		cfdg.getDriver().warning("Conflicting color change", null);
+		cfdg.getDriver().warning("Conflicting color change", location);
 	}
 
 	public void processShape(Shape shape) {
@@ -997,7 +995,6 @@ public class CFDGRenderer {
 			finishedShapes.forEach(shapeFunction::apply);
 			outputSoFar = finishedShapes.size();
 		} else {
-			//TODO rivedere
 			OutputMerge merger = new OutputMerge();
 			merger.addShapes(finishedShapes);
 			merger.merge(shapeFunction);

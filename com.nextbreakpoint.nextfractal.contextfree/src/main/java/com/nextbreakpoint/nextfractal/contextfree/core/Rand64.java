@@ -85,91 +85,91 @@ public class Rand64 implements Cloneable {
 	}
     
     public void bump() {
-		// TODO Auto-generated method stub
+		// TODO completare
 	}
 
 	public void add(Rand64 oldEntropy) {
-		// TODO Auto-generated method stub
+		// TODO completare
 		
 	}
 
     public double getDiscrete(int lw, double[] w) {
-		// TODO Auto-generated method stub
+		// TODO completare random
     	return 0;
     }
 
 	public double getExponential(double v) {
-		// TODO Auto-generated method stub
+		// TODO completare random
 		return 0;
 	}
 
 	public double getGamma(double v1, double v2) {
-		// TODO Auto-generated method stub
+		// TODO completare random
 		return 0;
 	}
 
 	public double getWeibull(double v1, double v2) {
-		// TODO Auto-generated method stub
+		// TODO completare random
 		return 0;
 	}
 
 	public double getExtremeValue(double v1, double v2) {
-		// TODO Auto-generated method stub
+		// TODO completare random
 		return 0;
 	}
 
 	public double getNormal(double v1, double v2) {
-		// TODO Auto-generated method stub
+		// TODO completare random
 		return 0;
 	}
 
 	public double getLogNormal(double v1, double v2) {
-		// TODO Auto-generated method stub
+		// TODO completare random
 		return 0;
 	}
 
 	public double getChiSquared(double v1, double v2) {
-		// TODO Auto-generated method stub
+		// TODO completare random
 		return 0;
 	}
 
 	public double getCauchy(double v1, double v2) {
-		// TODO Auto-generated method stub
+		// TODO completare random
 		return 0;
 	}
 
 	public double getFisherF(double v1, double v2) {
-		// TODO Auto-generated method stub
+		// TODO completare random
 		return 0;
 	}
 
 	public double getStudentT(double v1, double v2) {
-		// TODO Auto-generated method stub
+		// TODO completare random
 		return 0;
 	}
 
 	public double getBernoulli(double v1) {
-		// TODO Auto-generated method stub
+		// TODO completare random
 		return 0;
 	}
 
 	public double getBinomial(double v1, double v2) {
-		// TODO Auto-generated method stub
+		// TODO completare random
 		return 0;
 	}
 
 	public double getNegativeBinomial(double v1, double v2) {
-		// TODO Auto-generated method stub
+		// TODO completare random
 		return 0;
 	}
 
 	public double getPoisson(double v1) {
-		// TODO Auto-generated method stub
+		// TODO completare random
 		return 0;
 	}
 
 	public double getGeometric(double v1) {
-		// TODO Auto-generated method stub
+		// TODO completare random
 		return 0;
 	}
 

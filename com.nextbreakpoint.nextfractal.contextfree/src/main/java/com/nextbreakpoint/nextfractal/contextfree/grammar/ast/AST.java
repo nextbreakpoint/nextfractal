@@ -206,7 +206,7 @@ public class AST {
         AffineTransform ref45 = getMirrorTransform(M_PI_4);
         AffineTransform ref135 = getMirrorTransform(-M_PI_4);
 
-        //TODO completare symmetry
+        //TODO controllare symmetry
 
         switch (flag) {
             case CF_CYCLIC: {
@@ -890,7 +890,7 @@ public class AST {
         //TODO rivedere evalArgs
         for (int i = 0; i < arguments.size(); i++, dest.next()) {
             if (onStack) {
-                //TODO completare evalArgs
+                //TODO controllare evalArgs
                 renderer.setLogicalStack(dest.getStack());
                 renderer.setLogicalStackTop(0);
             }

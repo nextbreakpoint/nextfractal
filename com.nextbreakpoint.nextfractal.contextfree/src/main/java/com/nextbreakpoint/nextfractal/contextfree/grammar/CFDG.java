@@ -180,7 +180,6 @@ public class CFDG {
 	}
 
 	public boolean isTiled(AffineTransform transform, double[] point) {
-		//TODO completare con location
 		if (!hasParameter(CFG.Tile, ExpType.ModType)) {
 			return false;
 		}
@@ -225,7 +224,6 @@ public class CFDG {
 	}
 
 	public FriezeType isFrieze(AffineTransform transform, double[] point) {
-		//TODO completare con location
 		if (!hasParameter(CFG.Tile, ExpType.ModType)) {
 			return FriezeType.NoFrieze;
 		}
@@ -274,12 +272,10 @@ public class CFDG {
 	}
 
 	public boolean isSized(double[] point) {
-		//TODO completare con location
 		if (!hasParameter(CFG.Size, ExpType.ModType)) {
 			return false;
 		}
 
-		//TODO rivedere
 		if (point != null) {
 			point[0] = sizeMod.getTransform().getScaleX();
 			point[1] = sizeMod.getTransform().getScaleY();
@@ -293,12 +289,10 @@ public class CFDG {
 	}
 
 	public boolean isTimed(AffineTransformTime transform) {
-		//TODO completare con location
 		if (!hasParameter(CFG.Time, ExpType.ModType)) {
 			return false;
 		}
 
-		//TODO rivedere
 		if (transform != null) {
 			transform.setBegin(timeMod.getTransformTime().getBegin());
 			transform.setEnd(timeMod.getTransformTime().getEnd());
@@ -313,7 +307,6 @@ public class CFDG {
 	}
 
 	public void getSummetry(List<AffineTransform> syms, CFDGRenderer renderer) {
-		//TODO controllare
 		syms.clear();
 		ASTExpression exp = hasParameter(CFG.Symmetry);
 		List<ASTModification> left = AST.getTransforms(driver, exp, syms, renderer, isTiled(null, null), tileMod.getTransform());
@@ -345,7 +338,7 @@ public class CFDG {
 			driver.fail("This expression must be constant", exp.getLocation());
 			return false;
 		} else {
-			exp.evaluate(value, true, renderer);//TODO controllare
+			exp.evaluate(value, true, renderer);
 		}
 		return true;
 	}
@@ -376,8 +369,6 @@ public class CFDG {
 	}
 
 	public void rulesLoaded() {
-		//TODO rivedere
-
 		double[] weightsums = new double[shapeTypes.size()];
 		double[] percentweightsums = new double[shapeTypes.size()];
 		double[] unitweightsums = new double[shapeTypes.size()];
@@ -600,8 +591,6 @@ public class CFDG {
 			Modification tiled = new Modification();
 			Modification sized = new Modification();
 			Modification timed = new Modification();
-
-			//TODO rivedere
 
 			double[] maxShape = new double[0];
 

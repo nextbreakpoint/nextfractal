@@ -166,7 +166,6 @@ public class ASTExpression {
 	}
 
 	public int getTupleSize() {
-		//TODO completare
 		return 1;
 	}
 

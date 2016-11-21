@@ -12,7 +12,6 @@ public class Dequeue {
     }
 
     public CommandInfo back() {
-        //TODO rivedere
         return commands.get(commands.size() - 1);
     }
 

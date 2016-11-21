@@ -112,7 +112,6 @@ public class CommandInfo {
                 miterLimit = 1.0;
             }
             this.index = index;
-            //TODO rivedere
             pathStorage = (PathStorage) path.getPathStorage().clone();
             pathUID = path.getPathUID();
             strokeWidth = width;

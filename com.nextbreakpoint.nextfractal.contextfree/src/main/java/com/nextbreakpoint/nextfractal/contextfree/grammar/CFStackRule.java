@@ -63,7 +63,6 @@ public class CFStackRule extends CFStackItem {
     }
 
     public void copyTo(CFStackItem[] dest, int destOffset) {
-        //TODO completare copyItems
         int destIndex = destOffset;
         for (int srcIndex = 0; srcIndex < paramCount; srcIndex++) {
             switch (stack.getStackItem(srcIndex).getType()) {
