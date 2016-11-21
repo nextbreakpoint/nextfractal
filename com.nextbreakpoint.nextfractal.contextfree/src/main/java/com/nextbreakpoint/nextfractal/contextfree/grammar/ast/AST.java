@@ -61,8 +61,6 @@ public class AST {
             return result;
         }
 
-        //TODO rivedere
-
         List<Double> symmSpec = new ArrayList<>();
 
         for (int i = 0; i < e.size(); i++) {
@@ -206,7 +204,7 @@ public class AST {
         AffineTransform ref45 = getMirrorTransform(M_PI_4);
         AffineTransform ref135 = getMirrorTransform(-M_PI_4);
 
-        //TODO controllare symmetry
+        //TODO rivedere symmetry
 
         switch (flag) {
             case CF_CYCLIC: {
@@ -887,10 +885,9 @@ public class AST {
     }
 
     public static void evalArgs(CFDGRenderer renderer, CFStackRule parent, CFStackIterator dest, ASTExpression arguments, boolean onStack) {
-        //TODO rivedere evalArgs
         for (int i = 0; i < arguments.size(); i++, dest.next()) {
             if (onStack) {
-                //TODO controllare evalArgs
+                //TODO rivedere evalArgs
                 renderer.setLogicalStack(dest.getStack());
                 renderer.setLogicalStackTop(0);
             }

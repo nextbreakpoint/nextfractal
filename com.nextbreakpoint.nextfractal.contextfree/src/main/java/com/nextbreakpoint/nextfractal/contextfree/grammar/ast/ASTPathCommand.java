@@ -58,7 +58,6 @@ public class ASTPathCommand extends ASTReplacement {
 		this.parameters = params;
 		this.commandInfo = new CommandInfo();
 		this.flags = FlagType.CF_MITER_JOIN.getMask() + FlagType.CF_BUTT_CAP.getMask();
-		//TODO controllare
 		if (s.equals("FILL")) {
 			this.flags |= CF_FILL.getMask();
 		} else if (!s.equals("STROKE")) {
@@ -196,8 +195,6 @@ public class ASTPathCommand extends ASTReplacement {
 						return;
 					}
 					flags = simplify(flags);
-
-					//TODO controllare
 
 					if (flags instanceof ASTReal) {
 						int f = (int)((ASTReal)flags).getValue();

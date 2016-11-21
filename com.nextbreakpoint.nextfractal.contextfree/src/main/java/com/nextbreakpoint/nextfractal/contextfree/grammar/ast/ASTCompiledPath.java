@@ -201,8 +201,6 @@ public class ASTCompiledPath {
 			pathStorage.moveTo(renderer.getLastPoint());
 		}
 
-		//TODO rivedere
-
 		switch (pathOp.getPathOp()) {
 			case MOVEREL:
 				pathStorage.relToAbs(p0);
