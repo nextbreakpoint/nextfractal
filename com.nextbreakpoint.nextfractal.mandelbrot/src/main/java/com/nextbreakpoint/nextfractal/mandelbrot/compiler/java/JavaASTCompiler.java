@@ -734,6 +734,6 @@ public class JavaASTCompiler implements ASTExpressionCompiler {
 
 	@Override
 	public CompiledExpression compile(ASTConditionalExpression astConditionalExpression) {
-		return new CompiledConditionalExpression(context, astConditionalExpression.getConditionExp().compile(this), astConditionalExpression.getThenExp().compile(this), astConditionalExpression.getElseExp().compile(this), , astConditionalExpression.getLocation());
+		return new CompiledConditionalExpression(context, astConditionalExpression.getConditionExp().compile(this), astConditionalExpression.getThenExp().compile(this), astConditionalExpression.getElseExp().compile(this), astConditionalExpression.getLocation());
 	}
 }
