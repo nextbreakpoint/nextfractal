@@ -39,7 +39,12 @@ public class ContextFreeSession extends AbstractSession {
 	private String status;
 	private String error;
 
-	@Override
+    @Override
+    public String getPluginId() {
+        return "ContextFree";
+    }
+
+    @Override
 	public String getGrammar() {
 		return "ContextFree";
 	}

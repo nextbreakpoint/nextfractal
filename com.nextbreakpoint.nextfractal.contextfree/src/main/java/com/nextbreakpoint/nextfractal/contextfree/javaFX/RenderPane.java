@@ -32,6 +32,7 @@ import com.nextbreakpoint.nextfractal.contextfree.compiler.*;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDG;
 import com.nextbreakpoint.nextfractal.contextfree.renderer.RendererCoordinator;
 import com.nextbreakpoint.nextfractal.contextfree.renderer.RendererError;
+import com.nextbreakpoint.nextfractal.core.EventBus;
 import com.nextbreakpoint.nextfractal.core.export.ExportSession;
 import com.nextbreakpoint.nextfractal.core.javaFX.BooleanObservableValue;
 import com.nextbreakpoint.nextfractal.core.javaFX.StringObservableValue;
@@ -85,6 +86,7 @@ public class RenderPane extends BorderPane {
 	private final BooleanObservableValue hideErrorsProperty;
 	private RendererCoordinator coordinator;
 	private AnimationTimer timer;
+	private EventBus eventBus;
 	private int width;
 	private int height;
 	private int rows;
@@ -93,8 +95,9 @@ public class RenderPane extends BorderPane {
 	private String cfdgSource = "";
 	private volatile boolean disableTool;
 
-	public RenderPane(Session session, int width, int height, int rows, int columns) {
+	public RenderPane(Session session, EventBus eventBus, int width, int height, int rows, int columns) {
 		this.session = session;
+		this.eventBus = eventBus;
 		this.width = width;
 		this.height = height;
 		this.rows = rows;

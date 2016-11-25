@@ -27,14 +27,18 @@ package com.nextbreakpoint.nextfractal.runtime.javaFX;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
-import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import com.nextbreakpoint.Try;
-import com.nextbreakpoint.nextfractal.runtime.Plugins;
+import com.nextbreakpoint.nextfractal.core.EventBus;
+import com.nextbreakpoint.nextfractal.core.export.ExportRenderer;
+import com.nextbreakpoint.nextfractal.core.export.ExportService;
+import com.nextbreakpoint.nextfractal.core.renderer.javaFX.JavaFXRendererFactory;
+import com.nextbreakpoint.nextfractal.core.utils.DefaultThreadFactory;
+import com.nextbreakpoint.nextfractal.runtime.export.SimpleExportRenderer;
+import com.nextbreakpoint.nextfractal.runtime.export.SimpleExportService;
 import javafx.application.Application;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
@@ -46,7 +50,6 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Screen;
@@ -55,25 +58,15 @@ import javafx.stage.Stage;
 import javax.tools.ToolProvider;
 
 import com.nextbreakpoint.nextfractal.core.FractalFactory;
-import com.nextbreakpoint.nextfractal.core.export.ExportRenderer;
-import com.nextbreakpoint.nextfractal.core.export.ExportService;
-import com.nextbreakpoint.nextfractal.core.export.ExportSession;
-import com.nextbreakpoint.nextfractal.core.renderer.javaFX.JavaFXRendererFactory;
 import com.nextbreakpoint.nextfractal.core.session.Session;
-import com.nextbreakpoint.nextfractal.core.session.SessionListener;
-import com.nextbreakpoint.nextfractal.core.utils.DefaultThreadFactory;
-import com.nextbreakpoint.nextfractal.runtime.export.SimpleExportRenderer;
-import com.nextbreakpoint.nextfractal.runtime.export.SimpleExportService;
 
 import static com.nextbreakpoint.nextfractal.runtime.Plugins.pluginsStream;
-import static com.nextbreakpoint.nextfractal.runtime.Plugins.selectPlugin;
+import static com.nextbreakpoint.nextfractal.runtime.Plugins.tryPlugin;
 
 public class NextFractalApp extends Application {
-	private static final String DEFAULT_PLUGIN_ID = "Mandelbrot";
 	private static Logger logger = Logger.getLogger(NextFractalApp.class.getName());
 
-	private BorderPane editorRootPane;
-	private BorderPane renderRootPane;
+	private static final String DEFAULT_PLUGIN_ID = "Mandelbrot";
 
 	public static void main(String[] args) {
 		launch(args); 
@@ -82,6 +75,8 @@ public class NextFractalApp extends Application {
     @Override
     public void start(Stage primaryStage) {
 		checkJavaVersion();
+
+		EventBus eventBus = new EventBus();
 
 		Try.of(() -> Objects.requireNonNull(ToolProvider.getSystemJavaCompiler())).ifFailure(e -> showCompilerAlert());
 
@@ -104,13 +99,16 @@ public class NextFractalApp extends Application {
 		
         StackPane rootPane = new StackPane();
 
-		ExportRenderer exportRenderer = new SimpleExportRenderer(createDefaultThreadFactory("NextFractalRender"), new JavaFXRendererFactory());
-
-		ExportService exportService = new SimpleExportService(createDefaultThreadFactory("NextFractalExport"), exportRenderer);
-
 		printPlugins();
 
-		rootPane.getChildren().add(createMainPane(editorWidth, renderWidth, sceneHeight));
+		ExportRenderer exportRenderer = new SimpleExportRenderer(createDefaultThreadFactory("NextFractalRender"), new JavaFXRendererFactory());
+		ExportService exportService = new SimpleExportService(createDefaultThreadFactory("NextFractalExport"), exportRenderer);
+
+		eventBus.subscribe("grammar-selected", event -> handleGrammarSelected((String)event, eventBus));
+		eventBus.subscribe("session-changed", event -> handleSessionChanged((Session)event, primaryStage, exportService));
+		eventBus.subscribe("session-terminated", event -> handleSessionTerminate((Session)event));
+
+		rootPane.getChildren().add(createMainPane(eventBus, editorWidth, renderWidth, sceneHeight));
 
         Scene scene = new Scene(rootPane, sceneWidth, sceneHeight);
 
@@ -127,10 +125,33 @@ public class NextFractalApp extends Application {
 		primaryStage.setTitle(getApplicationName());
 
 		String defaultPluginId = System.getProperty("initialPluginId", DEFAULT_PLUGIN_ID);
-
-		createPanels(defaultPluginId, renderWidth, sceneHeight, exportService, primaryStage);
+		tryPlugin(defaultPluginId).ifPresent(factory -> createSession(eventBus, factory));
 
 		primaryStage.show();
+	}
+
+	private void handleGrammarSelected(String grammar, EventBus eventBus) {
+		pluginsStream().filter(plugin -> plugin.createSession().getGrammar().equals(grammar)).findFirst().ifPresent(plugin -> createSession(eventBus, plugin));
+	}
+
+	private void handleSessionChanged(Session session, Stage primaryStage, ExportService exportService) {
+		session.addGrammars(listGrammars());
+		session.setExportService(exportService);
+
+		primaryStage.setOnCloseRequest(e -> session.terminate());
+	}
+
+	private void handleSessionTerminate(Session session) {
+		logger.info("Terminating export service...");
+		session.getExportService().shutdown();
+	}
+
+	private void createSession(EventBus eventBus, FractalFactory factory) {
+		tryCreateSession(factory).ifPresent(session -> eventBus.postEvent("session-changed", session));
+	}
+
+	private DefaultThreadFactory createDefaultThreadFactory(String name) {
+		return new DefaultThreadFactory(name, true, Thread.MIN_PRIORITY);
 	}
 
 	private int computeOptimalFontSize() {
@@ -147,45 +168,6 @@ public class NextFractalApp extends Application {
 		}
 
 		return size;
-	}
-
-	private void createPanels(String pluginId, int renderWidth, int renderHeight, ExportService exportService, Stage primaryStage) {
-		logger.info("Create user interface for plugin " + pluginId);
-
-		disposePanels();
-
-		primaryStage.setOnCloseRequest(e -> {});
-
-		Try<Session, Exception> maybeSession = createSession(pluginId).onSuccess(this::sessionCreated).execute();
-
-		maybeSession.ifPresent(session -> session.addGrammars(listGrammars()));
-
-		maybeSession.ifPresent(session -> session.setExportService(exportService));
-
-		maybeSession.flatMap(session -> createRenderPane(session, pluginId, renderWidth, renderHeight)).ifPresent(renderRootPane::setCenter);
-
-		maybeSession.flatMap(session -> createEditorPane(session, pluginId)).ifPresent(editorRootPane::setCenter);
-
-		maybeSession.ifPresent(session -> session.addSessionListener(new DefaultSessionListener(pluginId, renderWidth, renderHeight, exportService, primaryStage)));
-
-		Consumer<Session> terminate = session -> session.terminate();
-
-		Consumer<Session> dispose = session -> disposePanels();
-
-		primaryStage.setOnCloseRequest(e -> maybeSession.ifPresent(terminate.andThen(dispose)));
-	}
-
-	private void disposePanels() {
-		renderRootPane.setCenter(null);
-		editorRootPane.setCenter(null);
-	}
-
-	private List<String> listGrammars() {
-		return Plugins.pluginsStream().map(plugin -> plugin.createSession().getGrammar()).sorted().collect(Collectors.toList());
-	}
-
-	private DefaultThreadFactory createDefaultThreadFactory(String name) {
-		return new DefaultThreadFactory(name, true, Thread.MIN_PRIORITY);
 	}
 
 //	private static double getVersion() {
@@ -235,7 +217,7 @@ public class NextFractalApp extends Application {
 //		quitItem.setOnAction(e -> primaryStage.close());
 	}
 
-	private Pane createMainPane(int editorWidth, int renderWidth, int height) {
+	private Pane createMainPane(EventBus eventBus, int editorWidth, int renderWidth, int height) {
 		int width = renderWidth + editorWidth;
 		Pane mainPane = new Pane();
 		mainPane.setPrefWidth(width);
@@ -244,8 +226,8 @@ public class NextFractalApp extends Application {
 		mainPane.setMinHeight(height);
 		mainPane.setMaxWidth(width);
 		mainPane.setMaxHeight(height);
-		createEditorPane(editorWidth, height);
-		createRenderPane(renderWidth, height);
+		Pane editorRootPane = createEditorPane(eventBus, editorWidth, height);
+		Pane renderRootPane = createRenderPane(eventBus, renderWidth, height);
 		mainPane.getChildren().add(renderRootPane);
 		mainPane.getChildren().add(editorRootPane);
 		mainPane.getStyleClass().add("application");
@@ -253,8 +235,8 @@ public class NextFractalApp extends Application {
 		return mainPane;
 	}
 
-	private void createRenderPane(int width, int height) {
-		renderRootPane = new BorderPane();
+	private Pane createRenderPane(EventBus eventBus, int width, int height) {
+		MainRenderPane renderRootPane = new MainRenderPane(eventBus, width, height);
 		renderRootPane.setPrefWidth(width);
 		renderRootPane.setPrefHeight(height);
 		renderRootPane.setMinWidth(width);
@@ -262,13 +244,24 @@ public class NextFractalApp extends Application {
 		renderRootPane.setMaxWidth(width);
 		renderRootPane.setMaxHeight(height);
 		renderRootPane.getStyleClass().add("render-pane");
+		return renderRootPane;
 	}
 
-	private void createEditorPane(int width, int height) {
-		editorRootPane = new BorderPane();
+	private MainEditorPane createEditorPane(EventBus eventBus, int width, int height) {
+		MainEditorPane editorRootPane = new MainEditorPane(eventBus);
 		editorRootPane.setPrefWidth(width);
 		editorRootPane.setPrefHeight(height);
 		editorRootPane.getStyleClass().add("editor-pane");
+		return editorRootPane;
+	}
+
+	private ImageView createIconImage(String name) {
+		InputStream stream = getClass().getResourceAsStream(name);
+		ImageView image = new ImageView(new Image(stream));
+		image.setSmooth(true);
+		image.setFitWidth(32);
+		image.setFitHeight(32);
+		return image;
 	}
 
 	private String getApplicationName() {
@@ -304,19 +297,27 @@ public class NextFractalApp extends Application {
 		return null;
 	}
 
-	private void sessionCreated(Optional<Object> session) {
-		logger.info("Session created");
-	}
-
 	private void loadStyleSheets(Scene scene) {
 		tryLoadStyleSheet("/theme.css").ifPresent(resourceURL -> scene.getStylesheets().add((resourceURL)));
 
 		pluginsStream().map(FractalFactory::getId).map(name -> "/" + name.toLowerCase() + ".css")
-				.map(resourceName -> tryLoadStyleSheet(resourceName)).forEach(maybe -> maybe.ifPresent(resourceURL -> scene.getStylesheets().add((resourceURL))));
+				.map(resourceName -> tryLoadStyleSheet(resourceName)).forEach(maybeURL -> maybeURL.ifPresent(resourceURL -> scene.getStylesheets().add((resourceURL))));
 	}
 
 	private Try<String, Exception> tryLoadStyleSheet(String resourceName) {
 		return Try.of(() -> getClass().getResource(resourceName).toExternalForm()).onFailure(e -> logger.log(Level.WARNING, "Cannot load style sheet " + resourceName, e));
+	}
+
+	private Try<Session, Exception> tryCreateSession(FractalFactory factory) {
+		return Try.of(() -> Objects.requireNonNull(factory.createSession())).onFailure(e -> logger.log(Level.WARNING, "Cannot create session for " + factory.getId(), e));
+	}
+
+	private List<String> listGrammars() {
+		return pluginsStream().map(plugin -> plugin.createSession().getGrammar()).sorted().collect(Collectors.toList());
+	}
+
+	private void printPlugins() {
+		pluginsStream().forEach(plugin -> logger.fine("Found plugin " + plugin.getId()));
 	}
 
 //	private void setup() {
@@ -345,67 +346,4 @@ public class NextFractalApp extends Application {
 //		newPaths[newPaths.length - 1] = pathToAdd;
 //		usrPathsField.set(null, newPaths);
 //	}
-
-	private void printPlugins() {
-		pluginsStream().forEach(plugin -> logger.fine("Found plugin " + plugin.getId()));
-	}
-
-	private Try<Pane, Exception> createEditorPane(Session session, String pluginId) {
-		return selectPlugin(pluginId, plugin -> Objects.requireNonNull(plugin.createEditorPane(session)))
-				.onFailure(e -> logger.log(Level.WARNING, "Cannot create editor panel with pluginId " + pluginId, e));
-	}
-
-	private Try<Pane, Exception> createRenderPane(Session session, String pluginId, int width, int height) {
-		return selectPlugin(pluginId, plugin -> Objects.requireNonNull(plugin.createRenderPane(session, width, height)))
-				.onFailure(e -> logger.log(Level.WARNING, "Cannot create renderer panel with pluginId " + pluginId, e));
-	}
-
-	private Try<Session, Exception> createSession(String pluginId) {
-		return selectPlugin(pluginId, plugin -> Objects.requireNonNull(plugin.createSession()))
-				.onFailure(e -> logger.log(Level.WARNING, "Cannot create session with pluginId " + pluginId, e));
-	}
-
-	private ImageView createIconImage(String name) {
-		InputStream stream = getClass().getResourceAsStream(name);
-		ImageView image = new ImageView(new Image(stream));
-		image.setSmooth(true);
-		image.setFitWidth(32);
-		image.setFitHeight(32);
-		return image;
-	}
-
-	private class DefaultSessionListener implements SessionListener {
-		private final ExportService exportService;
-		private String pluginId;
-		private int renderWidth;
-		private int renderHeight;
-		private Stage primaryStage;
-
-		public DefaultSessionListener(String pluginId, int renderWidth, int renderHeight, ExportService exportService, Stage primaryStage) {
-			this.exportService = exportService;
-			this.pluginId = pluginId;
-			this.renderWidth = renderWidth;
-			this.renderHeight = renderHeight;
-			this.primaryStage = primaryStage;
-		}
-
-		@Override
-        public void terminate(Session session) {
-            exportService.shutdown();
-        }
-
-		@Override
-        public void sessionAdded(Session session, ExportSession exportSession) {
-        }
-
-		@Override
-        public void sessionRemoved(Session session, ExportSession exportSession) {
-        }
-
-		@Override
-		public void selectGrammar(Session session, String grammar) {
-			Plugins.pluginsStream().filter(plugin -> plugin.createSession().getGrammar().equals(grammar)).findFirst()
-					.ifPresent(plugin -> createPanels(plugin.getId(), renderWidth, renderHeight, exportService, primaryStage));
-		}
-	}
 }

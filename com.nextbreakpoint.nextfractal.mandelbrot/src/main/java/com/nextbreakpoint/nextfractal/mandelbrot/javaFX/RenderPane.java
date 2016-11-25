@@ -24,6 +24,7 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
 
+import com.nextbreakpoint.nextfractal.core.EventBus;
 import com.nextbreakpoint.nextfractal.core.export.ExportSession;
 import com.nextbreakpoint.nextfractal.core.javaFX.BooleanObservableValue;
 import com.nextbreakpoint.nextfractal.core.javaFX.StringObservableValue;
@@ -97,6 +98,7 @@ public class RenderPane extends BorderPane implements ToolContext {
 	private final ExecutorService watcherExecutor;
 	private RendererCoordinator juliaCoordinator;
 	private AnimationTimer timer;
+	private EventBus eventBus;
 	private int width;
 	private int height;
 	private int rows;
@@ -112,8 +114,9 @@ public class RenderPane extends BorderPane implements ToolContext {
 	private CompilerBuilder<Color> colorBuilder;
 	private List<Number[]> states;
 
-	public RenderPane(Session session, int width, int height, int rows, int columns) {
+	public RenderPane(Session session, EventBus eventBus, int width, int height, int rows, int columns) {
 		this.session = session;
+		this.eventBus = eventBus;
 		this.width = width;
 		this.height = height;
 		this.rows = rows;
@@ -535,7 +538,6 @@ public class RenderPane extends BorderPane implements ToolContext {
 
 	private void dispose() {
 		disposeCoordinators();
-		disposeJuliaCoordinator();
 	}
 
 	private ImageView createIconImage(String name, double percentage) {
@@ -660,17 +662,6 @@ public class RenderPane extends BorderPane implements ToolContext {
 				coordinators[i].dispose();
 				coordinators[i] = null;
 			}
-		}
-		if (juliaCoordinator != null) {
-			juliaCoordinator.waitFor();
-			juliaCoordinator.dispose();
-			juliaCoordinator = null;
-		}
-	}
-
-	private void disposeJuliaCoordinator() {
-		if (juliaCoordinator != null) {
-			juliaCoordinator.abort();
 		}
 		if (juliaCoordinator != null) {
 			juliaCoordinator.waitFor();
@@ -1314,7 +1305,7 @@ public class RenderPane extends BorderPane implements ToolContext {
 			} catch (InterruptedException x) {
 			}
 		} catch (IOException x) {
-			logger.log(Level.WARNING, "Can't register watcher on directory {}", dir.getFileName());
+			logger.log(Level.WARNING, "Can't subscribe watcher on directory {}", dir.getFileName());
 		} finally {
 			if (watchKey != null) {
 				watchKey.cancel();

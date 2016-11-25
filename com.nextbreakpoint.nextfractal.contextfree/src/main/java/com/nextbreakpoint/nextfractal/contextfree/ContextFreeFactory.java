@@ -31,6 +31,7 @@ import java.util.concurrent.ThreadFactory;
 
 import com.nextbreakpoint.nextfractal.contextfree.javaFX.EditorPane;
 import com.nextbreakpoint.nextfractal.contextfree.javaFX.RenderPane;
+import com.nextbreakpoint.nextfractal.core.EventBus;
 import javafx.scene.layout.Pane;
 
 import com.nextbreakpoint.nextfractal.core.FractalFactory;
@@ -58,19 +59,19 @@ public class ContextFreeFactory implements FractalFactory {
 	}
 	
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.FractalFactory#createEditorPane(com.nextbreakpoint.nextfractal.core.session.Session)
+	 * @see FractalFactory#createEditorPane(Session, EventBus)
 	 */
 	@Override
-	public Pane createEditorPane(Session session) {
-		return new EditorPane(session);
+	public Pane createEditorPane(Session session, EventBus eventBus) {
+		return new EditorPane(session, eventBus);
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.FractalFactory#createRenderPane(com.nextbreakpoint.nextfractal.core.session.Session, int, int)
+	 * @see FractalFactory#createRenderPane(Session, EventBus, int, int)
 	 */
 	@Override
-	public Pane createRenderPane(Session session, int width, int height) {
-		return new RenderPane(session, width, height, 1, 1);
+	public Pane createRenderPane(Session session, EventBus eventBus, int width, int height) {
+		return new RenderPane(session, eventBus, width, height, 1, 1);
 	}
 
 	/**

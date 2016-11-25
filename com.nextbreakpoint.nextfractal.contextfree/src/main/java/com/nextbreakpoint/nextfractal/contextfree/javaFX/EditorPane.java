@@ -29,6 +29,7 @@ import com.nextbreakpoint.nextfractal.contextfree.*;
 import com.nextbreakpoint.nextfractal.contextfree.compiler.CompilerError;
 import com.nextbreakpoint.nextfractal.contextfree.compiler.CompilerReport;
 import com.nextbreakpoint.nextfractal.contextfree.compiler.CompilerSourceException;
+import com.nextbreakpoint.nextfractal.core.EventBus;
 import com.nextbreakpoint.nextfractal.core.encoder.Encoder;
 import com.nextbreakpoint.nextfractal.core.export.ExportSession;
 import com.nextbreakpoint.nextfractal.core.javaFX.StringObservableValue;
@@ -93,6 +94,7 @@ public class EditorPane extends BorderPane {
 	private final ExecutorService historyExecutor;
 	private final ExecutorService textExecutor;
 	private final Session session;
+	private EventBus eventBus;
 	private final CodeArea codeArea;
 	private final ExecutorService exportExecutor;
 	private final StringObservableValue errorProperty;
@@ -102,8 +104,9 @@ public class EditorPane extends BorderPane {
 	private volatile boolean noHistory;
 	private File currentExportFile;
 
-	public EditorPane(Session session) {
+	public EditorPane(Session session, EventBus eventBus) {
 		this.session = session;
+		this.eventBus = eventBus;
 
 		errorProperty = new StringObservableValue();
 		errorProperty.setValue(null);
@@ -364,6 +367,7 @@ public class EditorPane extends BorderPane {
 
 			@Override
 			public void selectGrammar(Session session, String grammar) {
+				eventBus.postEvent("grammar-selected", grammar);
 			}
 		});
 

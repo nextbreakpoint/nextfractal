@@ -30,6 +30,8 @@ import com.nextbreakpoint.nextfractal.core.export.ExportSession;
 import java.util.List;
 
 public interface Session {
+	public String getPluginId();
+
 	public void terminate();
 
 	public ExportService getExportService();

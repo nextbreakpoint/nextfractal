@@ -42,7 +42,7 @@ import com.nextbreakpoint.nextfractal.core.export.ExportJobState;
 import com.nextbreakpoint.nextfractal.core.export.ExportRenderer;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererFactory;
 
-import static com.nextbreakpoint.nextfractal.runtime.Plugins.selectPlugin;
+import static com.nextbreakpoint.nextfractal.runtime.Plugins.tryPlugin;
 
 public class SimpleExportRenderer implements ExportRenderer {
 	private static final Logger logger = Logger.getLogger(SimpleExportRenderer.class.getName());
@@ -66,7 +66,7 @@ public class SimpleExportRenderer implements ExportRenderer {
 	}
 	
 	private ImageGenerator createImageGenerator(ExportJob job) {
-		return selectPlugin(job.getPluginId(), plugin -> plugin.createImageGenerator(threadFactory, renderFactory, job.getTile(), false)).orElse(null);
+		return tryPlugin(job.getPluginId(), plugin -> plugin.createImageGenerator(threadFactory, renderFactory, job.getTile(), false)).orElse(null);
 	}
 
 	private class ProcessExportJob implements Callable<ExportJob> {

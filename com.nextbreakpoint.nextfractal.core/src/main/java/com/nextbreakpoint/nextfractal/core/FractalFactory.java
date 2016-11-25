@@ -45,17 +45,18 @@ public interface FractalFactory {
 	
 	/**
 	 * @param session
-	 * @return
+	 * @param eventBus
+     * @return
 	 */
-	public Pane createEditorPane(Session session);
+	public Pane createEditorPane(Session session, EventBus eventBus);
 
 	/**
 	 * @param session
-	 * @param width
-	 * @param height
-	 * @return
+	 * @param eventBus
+	 *@param width
+	 * @param height   @return
 	 */
-	public Pane createRenderPane(Session session, int width, int height);
+	public Pane createRenderPane(Session session, EventBus eventBus, int width, int height);
 
 	/**
 	 * @param threadFactory

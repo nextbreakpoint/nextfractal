@@ -39,7 +39,12 @@ public class MandelbrotSession extends AbstractSession {
 	private String status;
 	private String error;
 
-	public String getGrammar() {
+    @Override
+    public String getPluginId() {
+        return "Mandelbrot";
+    }
+
+    public String getGrammar() {
 		return "Mandelbrot";
 	}
 

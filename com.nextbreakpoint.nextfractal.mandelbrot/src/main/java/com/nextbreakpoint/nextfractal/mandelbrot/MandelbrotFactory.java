@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.ThreadFactory;
 
+import com.nextbreakpoint.nextfractal.core.EventBus;
 import javafx.scene.layout.Pane;
 
 import com.nextbreakpoint.nextfractal.core.FractalFactory;
@@ -58,19 +59,19 @@ public class MandelbrotFactory implements FractalFactory {
 	}
 	
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.FractalFactory#createEditorPane(com.nextbreakpoint.nextfractal.core.session.Session)
+	 * @see FractalFactory#createEditorPane(Session, EventBus)
 	 */
 	@Override
-	public Pane createEditorPane(Session session) {
-		return new EditorPane(session);
+	public Pane createEditorPane(Session session, EventBus eventBus) {
+		return new EditorPane(session, eventBus);
 	}
 
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.FractalFactory#createRenderPane(com.nextbreakpoint.nextfractal.core.session.Session, int, int)
+	 * @see FractalFactory#createRenderPane(Session, EventBus, int, int)
 	 */
 	@Override
-	public Pane createRenderPane(Session session, int width, int height) {
-		return new RenderPane(session, width, height, Integer.getInteger("mandelbrot.renderer.rows", 1), Integer.getInteger("mandelbrot.renderer.cols", 1));
+	public Pane createRenderPane(Session session, EventBus eventBus, int width, int height) {
+		return new RenderPane(session, eventBus, width, height, Integer.getInteger("mandelbrot.renderer.rows", 1), Integer.getInteger("mandelbrot.renderer.cols", 1));
 	}
 
 	/**
