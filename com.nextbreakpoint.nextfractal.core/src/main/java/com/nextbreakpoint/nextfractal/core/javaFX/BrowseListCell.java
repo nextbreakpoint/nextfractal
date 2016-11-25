@@ -22,11 +22,10 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
+package com.nextbreakpoint.nextfractal.core.javaFX;
 
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
-import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotData;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.ListCell;
@@ -35,7 +34,7 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.layout.HBox;
 import javafx.scene.transform.Affine;
 
-public class BrowseListCell extends ListCell<MandelbrotData[]> {
+public class BrowseListCell extends ListCell<Bitmap[]> {
 	private HBox pane;
 	private Canvas[] canvas;
 	private RendererSize size;
@@ -55,24 +54,24 @@ public class BrowseListCell extends ListCell<MandelbrotData[]> {
 	}
 
 	@Override
-	public void updateItem(MandelbrotData[] files, boolean empty) {
-		super.updateItem(files, empty);
+	public void updateItem(Bitmap[] bitmaps, boolean empty) {
+		super.updateItem(bitmaps, empty);
 		if (empty) {
 			setGraphic(null);
 		} else {
 			for (int i = 0 ; i < numOfColumns; i++) {
-				MandelbrotData data = files[i];
-				if (data != null && data.getPixels() != null) {
-					renderFractal(canvas[i].getGraphicsContext2D(), data);
+				Bitmap bitmap = bitmaps[i];
+				if (bitmap != null && bitmap.getPixels() != null) {
+					renderFractal(canvas[i].getGraphicsContext2D(), bitmap);
 				}
 			}
 			this.setGraphic(pane);
 		}
 	}
 
-	private void renderFractal(GraphicsContext g2d, MandelbrotData data) {
+	private void renderFractal(GraphicsContext g2d, Bitmap bitmap) {
 		WritableImage image = new WritableImage(size.getWidth(), size.getHeight());
-		image.getPixelWriter().setPixels(0, 0, (int)image.getWidth(), (int)image.getHeight(), PixelFormat.getIntArgbInstance(), data.getPixels(), (int)image.getWidth());
+		image.getPixelWriter().setPixels(0, 0, (int)image.getWidth(), (int)image.getHeight(), PixelFormat.getIntArgbInstance(), bitmap.getPixels(), (int)image.getWidth());
 		Affine affine = new Affine();
 		int x = (tile.getTileSize().getWidth() - size.getWidth()) / 2;
 		int y = (tile.getTileSize().getHeight() - size.getHeight()) / 2;

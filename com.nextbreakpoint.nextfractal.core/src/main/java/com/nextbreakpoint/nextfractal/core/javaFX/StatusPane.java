@@ -22,9 +22,8 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.contextfree.javaFX;
+package com.nextbreakpoint.nextfractal.core.javaFX;
 
-import com.nextbreakpoint.nextfractal.core.javaFX.StringObservableValue;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Pos;
 import javafx.scene.control.TextArea;

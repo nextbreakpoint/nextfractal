@@ -29,12 +29,18 @@ import com.nextbreakpoint.nextfractal.contextfree.ContextFreeDataStore;
 import com.nextbreakpoint.nextfractal.contextfree.ContextFreeListener;
 import com.nextbreakpoint.nextfractal.contextfree.ContextFreeSession;
 import com.nextbreakpoint.nextfractal.contextfree.compiler.*;
+import com.nextbreakpoint.nextfractal.contextfree.compiler.Compiler;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDG;
 import com.nextbreakpoint.nextfractal.contextfree.renderer.RendererCoordinator;
 import com.nextbreakpoint.nextfractal.contextfree.renderer.RendererError;
 import com.nextbreakpoint.nextfractal.core.EventBus;
 import com.nextbreakpoint.nextfractal.core.export.ExportSession;
+import com.nextbreakpoint.nextfractal.core.javaFX.Bitmap;
 import com.nextbreakpoint.nextfractal.core.javaFX.BooleanObservableValue;
+import com.nextbreakpoint.nextfractal.core.javaFX.BrowseBitmap;
+import com.nextbreakpoint.nextfractal.core.javaFX.BrowseDelegate;
+import com.nextbreakpoint.nextfractal.core.javaFX.BrowsePane;
+import com.nextbreakpoint.nextfractal.core.javaFX.GridItemRenderer;
 import com.nextbreakpoint.nextfractal.core.javaFX.StringObservableValue;
 import com.nextbreakpoint.nextfractal.core.renderer.*;
 import com.nextbreakpoint.nextfractal.core.renderer.javaFX.JavaFXRendererFactory;
@@ -187,6 +193,21 @@ public class RenderPane extends BorderPane {
 			@Override
 			public void didClose(BrowsePane source) {
 				hideBrowser(browserTransition, a -> {});
+			}
+
+			@Override
+			public GridItemRenderer createRenderer(Bitmap bitmap) throws Exception {
+				return RenderPane.this.createRenderer(bitmap);
+			}
+
+			@Override
+			public BrowseBitmap createBitmap(File file, RendererSize size) throws Exception {
+				return RenderPane.this.createBitmap(file, size);
+			}
+
+			@Override
+			public String getFileExtension() {
+				return ".cf";
 			}
 		});
 
@@ -571,6 +592,71 @@ public class RenderPane extends BorderPane {
 		if (coordinator.isPixelsChanged()) {
 			RendererGraphicsContext gc = renderFactory.createGraphicsContext(canvas.getGraphicsContext2D());
 			coordinator.drawImage(gc, 0, 0);
+		}
+	}
+
+	private GridItemRenderer createRenderer(Bitmap bitmap) throws Exception {
+		Map<String, Integer> hints = new HashMap<String, Integer>();
+		RendererTile tile = createSingleTile(bitmap.getWidth(), bitmap.getHeight());
+		DefaultThreadFactory threadFactory = new DefaultThreadFactory("BrowserPane", true, Thread.MIN_PRIORITY);
+		RendererCoordinator coordinator = new RendererCoordinator(threadFactory, new JavaFXRendererFactory(), tile, hints);
+		CFDG cfdg = (CFDG)bitmap.getProperty("cfdg");
+		coordinator.setCFDG(cfdg);
+		coordinator.init();
+		coordinator.run();
+		return new GridItemRendererAdapter(coordinator);
+	}
+
+	private BrowseBitmap createBitmap(File file, RendererSize size) throws Exception {
+		ContextFreeDataStore service = new ContextFreeDataStore();
+		ContextFreeData data = service.loadFromFile(file);
+		if (Thread.currentThread().isInterrupted()) {
+			return null;
+		}
+		Compiler compiler = new Compiler();
+		CompilerReport report = compiler.compileReport(data.getSource());
+		if (report.getErrors().size() > 0) {
+			throw new RuntimeException("Failed to compile source");
+		}
+		if (Thread.currentThread().isInterrupted()) {
+			return null;
+		}
+		BrowseBitmap bitmap = new BrowseBitmap(size.getWidth(), size.getHeight(), null);
+		bitmap.setProperty("cfdg", report.getCFDG());
+		bitmap.setProperty("data", data);
+		return bitmap;
+	}
+
+	private class GridItemRendererAdapter implements GridItemRenderer {
+		private RendererCoordinator coordinator;
+
+		public GridItemRendererAdapter(RendererCoordinator coordinator) {
+			this.coordinator = coordinator;
+		}
+
+		@Override
+		public void abort() {
+			coordinator.abort();
+		}
+
+		@Override
+		public void waitFor() {
+			coordinator.waitFor();
+		}
+
+		@Override
+		public void dispose() {
+			coordinator.dispose();
+		}
+
+		@Override
+		public boolean isPixelsChanged() {
+			return coordinator.isPixelsChanged();
+		}
+
+		@Override
+		public void drawImage(RendererGraphicsContext gc, int x, int y) {
+			coordinator.drawImage(gc, x, y);
 		}
 	}
 }

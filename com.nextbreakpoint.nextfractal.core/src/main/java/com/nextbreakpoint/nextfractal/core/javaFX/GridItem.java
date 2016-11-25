@@ -22,13 +22,7 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
-
-import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotData;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerBuilder;
-import com.nextbreakpoint.nextfractal.mandelbrot.core.Color;
-import com.nextbreakpoint.nextfractal.mandelbrot.core.Orbit;
-import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererCoordinator;
+package com.nextbreakpoint.nextfractal.core.javaFX;
 
 import java.io.File;
 import java.util.concurrent.Future;
@@ -36,10 +30,8 @@ import java.util.concurrent.Future;
 public class GridItem {
 	private volatile long lastChanged;
 	private volatile File file;
-	private volatile MandelbrotData data;
-	private volatile CompilerBuilder<Color> colorBuilder;
-	private volatile CompilerBuilder<Orbit> orbitBuilder;
-	private volatile RendererCoordinator coordinator;
+	private volatile BrowseBitmap bitmap;
+	private volatile GridItemRenderer coordinator;
 	private volatile Future<GridItem> future;
 
 	public File getFile() {
@@ -51,38 +43,20 @@ public class GridItem {
 		this.file = file;
 	}
 
-	public MandelbrotData getData() {
-		return data;
+	public BrowseBitmap getBitmap() {
+		return bitmap;
 	}
 
-	public void setData(MandelbrotData data) {
+	public void setBitmap(BrowseBitmap bitmap) {
 		lastChanged = System.currentTimeMillis();
-		this.data = data;
+		this.bitmap = bitmap;
 	}
 
-	public CompilerBuilder<Color> getColorBuilder() {
-		return colorBuilder;
-	}
-
-	public void setColorBuilder(CompilerBuilder<Color> colorBuilder) {
-		lastChanged = System.currentTimeMillis();
-		this.colorBuilder = colorBuilder;
-	}
-
-	public CompilerBuilder<Orbit> getOrbitBuilder() {
-		return orbitBuilder;
-	}
-
-	public void setOrbitBuilder(CompilerBuilder<Orbit> orbitBuilder) {
-		lastChanged = System.currentTimeMillis();
-		this.orbitBuilder = orbitBuilder;
-	}
-
-	public RendererCoordinator getCoordinator() {
+	public GridItemRenderer getRenderer() {
 		return coordinator;
 	}
 
-	public void setCoordinator(RendererCoordinator coordinator) {
+	public void setRenderer(GridItemRenderer coordinator) {
 		lastChanged = System.currentTimeMillis();
 		this.coordinator = coordinator;
 	}

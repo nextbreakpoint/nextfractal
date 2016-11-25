@@ -22,11 +22,10 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
+package com.nextbreakpoint.nextfractal.core.javaFX;
 
 import com.nextbreakpoint.nextfractal.core.renderer.RendererGraphicsContext;
 import com.nextbreakpoint.nextfractal.core.renderer.javaFX.JavaFXRendererFactory;
-import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererCoordinator;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.BorderPane;
@@ -48,18 +47,17 @@ public class GridViewCell extends BorderPane {
 		setCenter(canvas);
 		
 		widthProperty().addListener((observable, oldValue, newValue) -> update());
-		
 		heightProperty().addListener((observable, oldValue, newValue) -> update());
 	}
 
 	public void update() {
 		if (data != null) {
 			GridItem item = (GridItem)data;
-			RendererCoordinator coordinator = item.getCoordinator();
-			if (coordinator != null) {
-				if (redraw || coordinator.isPixelsChanged()) {
+			GridItemRenderer renderer = item.getRenderer();
+			if (renderer != null) {
+				if (redraw || renderer.isPixelsChanged()) {
 					RendererGraphicsContext gc = renderFactory.createGraphicsContext(canvas.getGraphicsContext2D());
-					coordinator.drawImage(gc, 0, 0);
+					renderer.drawImage(gc, 0, 0);
 					redraw = false;
 				}
 			} else {

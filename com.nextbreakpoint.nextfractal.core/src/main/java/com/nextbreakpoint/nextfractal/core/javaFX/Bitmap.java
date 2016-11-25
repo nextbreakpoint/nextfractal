@@ -22,12 +22,25 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
+package com.nextbreakpoint.nextfractal.core.javaFX;
 
-public interface GridViewDelegate {
-	public void didCellChange(GridView source, int row, int col);
+import java.nio.IntBuffer;
+import java.util.Date;
 
-	public void didRangeChange(GridView source, int firstRow, int lastRow);
+public interface Bitmap {
+	public IntBuffer getPixels();
 
-	public void didSelectionChange(GridView source, int selectedRow, int selectedCol);
+	public int getWidth();
+
+	public int getHeight();
+
+	public Object getProperty(String key);
+
+	public void setProperty(String key, Object value);
+
+	public Date getTimestamp();
+
+	public double getProgress();
+
+	public void setProgress(double progress);
 }

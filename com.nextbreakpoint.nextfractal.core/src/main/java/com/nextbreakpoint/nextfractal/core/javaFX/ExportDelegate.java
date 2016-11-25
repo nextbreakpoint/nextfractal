@@ -22,12 +22,10 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
+package com.nextbreakpoint.nextfractal.core.javaFX;
 
-import java.io.File;
+import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 
-public interface BrowseDelegate {
-	public void didSelectFile(BrowsePane source, File file);
-
-	public void didClose(BrowsePane source);
+public interface ExportDelegate {
+	public void createSession(RendererSize rendererSize);
 }

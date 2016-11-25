@@ -26,7 +26,12 @@ package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
 
 import com.nextbreakpoint.nextfractal.core.EventBus;
 import com.nextbreakpoint.nextfractal.core.export.ExportSession;
+import com.nextbreakpoint.nextfractal.core.javaFX.Bitmap;
 import com.nextbreakpoint.nextfractal.core.javaFX.BooleanObservableValue;
+import com.nextbreakpoint.nextfractal.core.javaFX.BrowseBitmap;
+import com.nextbreakpoint.nextfractal.core.javaFX.BrowseDelegate;
+import com.nextbreakpoint.nextfractal.core.javaFX.BrowsePane;
+import com.nextbreakpoint.nextfractal.core.javaFX.GridItemRenderer;
 import com.nextbreakpoint.nextfractal.core.javaFX.StringObservableValue;
 import com.nextbreakpoint.nextfractal.core.renderer.*;
 import com.nextbreakpoint.nextfractal.core.renderer.javaFX.JavaFXRendererFactory;
@@ -232,6 +237,21 @@ public class RenderPane extends BorderPane implements ToolContext {
 			@Override
 			public void didClose(BrowsePane source) {
 				hideBrowser(browserTransition, a -> {});
+			}
+
+			@Override
+			public GridItemRenderer createRenderer(Bitmap bitmap) throws Exception {
+				return RenderPane.this.createRenderer(bitmap);
+			}
+
+			@Override
+			public BrowseBitmap createBitmap(File file, RendererSize size) throws Exception {
+				return RenderPane.this.createBitmap(file, size);
+			}
+
+			@Override
+			public String getFileExtension() {
+				return ".m";
 			}
 		});
 
@@ -1254,6 +1274,95 @@ public class RenderPane extends BorderPane implements ToolContext {
 
 	private void redrawIfToolChanged(Canvas canvas) {
 		Optional.ofNullable(currentTool).filter(tool -> tool.isChanged()).ifPresent(tool -> tool.draw(renderFactory.createGraphicsContext(canvas.getGraphicsContext2D())));
+	}
+
+	private GridItemRenderer createRenderer(Bitmap bitmap) throws Exception {
+		Map<String, Integer> hints = new HashMap<>();
+		hints.put(RendererCoordinator.KEY_TYPE, RendererCoordinator.VALUE_REALTIME);
+		hints.put(RendererCoordinator.KEY_MULTITHREAD, RendererCoordinator.VALUE_SINGLE_THREAD);
+		RendererTile tile = createSingleTile(bitmap.getWidth(), bitmap.getHeight());
+		DefaultThreadFactory threadFactory = new DefaultThreadFactory("BrowserPane", true, Thread.MIN_PRIORITY);
+		RendererCoordinator coordinator = new RendererCoordinator(threadFactory, new JavaFXRendererFactory(), tile, hints);
+		CompilerBuilder<Orbit> orbitBuilder = (CompilerBuilder<Orbit>)bitmap.getProperty("orbit");
+		CompilerBuilder<Color> colorBuilder = (CompilerBuilder<Color>)bitmap.getProperty("color");
+		MandelbrotData data = (MandelbrotData)bitmap.getProperty("data");
+		coordinator.setOrbitAndColor(orbitBuilder.build(), colorBuilder.build());
+		coordinator.init();
+		RendererView view = new RendererView();
+		view.setTraslation(new Double4D(data.getTranslation()));
+		view.setRotation(new Double4D(data.getRotation()));
+		view.setScale(new Double4D(data.getScale()));
+		view.setState(new Integer4D(0, 0, 0, 0));
+		view.setPoint(new Number(data.getPoint()));
+		view.setJulia(data.isJulia());
+		coordinator.setView(view);
+		coordinator.run();
+		return new GridItemRendererAdapter(coordinator);
+	}
+
+	private BrowseBitmap createBitmap(File file, RendererSize size) throws Exception {
+		MandelbrotDataStore service = new MandelbrotDataStore();
+		MandelbrotData data = service.loadFromFile(file);
+		if (Thread.currentThread().isInterrupted()) {
+			return null;
+		}
+		Compiler compiler = new Compiler();
+		CompilerReport report = compiler.compileReport(data.getSource());
+		if (report.getErrors().size() > 0) {
+			throw new RuntimeException("Failed to compile source");
+		}
+		if (Thread.currentThread().isInterrupted()) {
+			return null;
+		}
+		CompilerBuilder<Orbit> orbitBuilder = compiler.compileOrbit(report);
+		if (orbitBuilder.getErrors().size() > 0) {
+			throw new RuntimeException("Failed to compile Orbit class");
+		}
+		if (Thread.currentThread().isInterrupted()) {
+			return null;
+		}
+		CompilerBuilder<Color> colorBuilder = compiler.compileColor(report);
+		if (colorBuilder.getErrors().size() > 0) {
+			throw new RuntimeException("Failed to compile Color class");
+		}
+		BrowseBitmap bitmap = new BrowseBitmap(size.getWidth(), size.getHeight(), null);
+		bitmap.setProperty("orbit", orbitBuilder);
+		bitmap.setProperty("color", colorBuilder);
+		bitmap.setProperty("data", data);
+		return bitmap;
+	}
+
+	private class GridItemRendererAdapter implements GridItemRenderer {
+		private RendererCoordinator coordinator;
+
+		public GridItemRendererAdapter(RendererCoordinator coordinator) {
+			this.coordinator = coordinator;
+		}
+
+		@Override
+		public void abort() {
+			coordinator.abort();
+		}
+
+		@Override
+		public void waitFor() {
+			coordinator.waitFor();
+		}
+
+		@Override
+		public void dispose() {
+			coordinator.dispose();
+		}
+
+		@Override
+		public boolean isPixelsChanged() {
+			return coordinator.isPixelsChanged();
+		}
+
+		@Override
+		public void drawImage(RendererGraphicsContext gc, int x, int y) {
+			coordinator.drawImage(gc, x, y);
+		}
 	}
 
 	private void watchFolder(BrowsePane pane, File file) {

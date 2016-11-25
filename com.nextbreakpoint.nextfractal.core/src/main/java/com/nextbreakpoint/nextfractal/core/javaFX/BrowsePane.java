@@ -22,9 +22,9 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
+package com.nextbreakpoint.nextfractal.core.javaFX;
 
-import com.nextbreakpoint.nextfractal.core.javaFX.StringObservableValue;
+import com.nextbreakpoint.Try;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererPoint;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
@@ -33,16 +33,6 @@ import com.nextbreakpoint.nextfractal.core.utils.Block;
 import com.nextbreakpoint.nextfractal.core.utils.DefaultThreadFactory;
 import com.nextbreakpoint.nextfractal.core.utils.Double4D;
 import com.nextbreakpoint.nextfractal.core.utils.Integer4D;
-import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotData;
-import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotDataStore;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.Compiler;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerBuilder;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerReport;
-import com.nextbreakpoint.nextfractal.mandelbrot.core.Color;
-import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
-import com.nextbreakpoint.nextfractal.mandelbrot.core.Orbit;
-import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererCoordinator;
-import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererView;
 import javafx.animation.AnimationTimer;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -57,8 +47,18 @@ import javafx.stage.Screen;
 
 import java.io.File;
 import java.io.InputStream;
-import java.util.*;
-import java.util.concurrent.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
 
@@ -89,7 +89,7 @@ public class BrowsePane extends BorderPane {
 		setMaxHeight(height);
 		setPrefHeight(height);
 
-		Preferences prefs = Preferences.userNodeForPackage(RenderPane.class);
+		Preferences prefs = Preferences.userNodeForPackage(BrowsePane.class);
 		
 		currentDir = getCurrentDir(prefs);
 
@@ -195,11 +195,11 @@ public class BrowsePane extends BorderPane {
 	private void shutdown() {
 		List<ExecutorService> executors = Arrays.asList(executor);
 		executors.forEach(executor -> executor.shutdownNow());
-		executors.forEach(executor -> Block.create(ExecutorService.class).andThen(e -> await(e)).tryExecute(executor));
+		executors.forEach(executor -> await(executor));
 	}
 
-	private void await(ExecutorService executor) throws InterruptedException {
-		executor.awaitTermination(5000, TimeUnit.MILLISECONDS);
+	private void await(ExecutorService executor) {
+		Try.of(() -> executor.awaitTermination(5000, TimeUnit.MILLISECONDS)).onFailure(e -> logger.warning("Await termination timeout")).execute();
 	}
 
 	private ImageView createIconImage(String name, double percentage) {
@@ -291,9 +291,13 @@ public class BrowsePane extends BorderPane {
 	}
 
 	private File[] listFiles(File folder) {
-		Preferences prefs = Preferences.userNodeForPackage(RenderPane.class);
+		Preferences prefs = Preferences.userNodeForPackage(BrowsePane.class);
 		prefs.put(BROWSER_DEFAULT_LOCATION, folder.getAbsolutePath());
-		return folder.listFiles((dir, name) -> name.endsWith(".m"));
+		if (delegate != null) {
+			return folder.listFiles((dir, name) -> name.endsWith(delegate.getFileExtension()));
+		} else {
+			return new File[0];
+		}
 	}
 
 	private void removeItems() {
@@ -306,24 +310,24 @@ public class BrowsePane extends BorderPane {
 
 		for (int index = 0; index < items.size(); index++) {
 			GridItem item = items.get(index);
-			if (item.getCoordinator() != null) {
-				item.getCoordinator().abort();
+			if (item.getRenderer() != null) {
+				item.getRenderer().abort();
 			}
 		}
 		
 //		for (int index = 0; index < items.size(); index++) {
 //			GridItem item = items.get(index);
-//			if (item.getCoordinator() != null) {
-//				item.getCoordinator().waitFor();
+//			if (item.getRenderer() != null) {
+//				item.getRenderer().waitFor();
 //			}
 //		}
 
 		for (int index = 0; index < items.size(); index++) {
 			GridItem item = items.get(index);
-			if (item.getCoordinator() != null) {
-//				RendererCoordinator coordinator = item.getCoordinator();
-				item.setCoordinator(null);
-//				coordinator.dispose();
+			if (item.getRenderer() != null) {
+//				GridItemRenderer renderer = item.getRenderer();
+				item.setRenderer(null);
+//				renderer.dispose();
 			}
 		}
 
@@ -332,33 +336,9 @@ public class BrowsePane extends BorderPane {
 
 	private void loadItem(GridItem item) {
 		try {
-			MandelbrotDataStore service = new MandelbrotDataStore();
-			MandelbrotData data = service.loadFromFile(item.getFile());
-			if (Thread.currentThread().isInterrupted()) {
-				return;
+			if (delegate != null) {
+				item.setBitmap(delegate.createBitmap(item.getFile(), tile.getTileSize()));
 			}
-			Compiler compiler = new Compiler();
-			CompilerReport report = compiler.compileReport(data.getSource());
-			if (report.getErrors().size() > 0) {
-				throw new RuntimeException("Failed to compile source");
-			}
-			if (Thread.currentThread().isInterrupted()) {
-				return;
-			}
-			CompilerBuilder<Orbit> orbitBuilder = compiler.compileOrbit(report);
-			if (orbitBuilder.getErrors().size() > 0) {
-				throw new RuntimeException("Failed to compile Orbit class");
-			}
-			if (Thread.currentThread().isInterrupted()) {
-				return;
-			}
-			CompilerBuilder<Color> colorBuilder = compiler.compileColor(report);
-			if (colorBuilder.getErrors().size() > 0) {
-				throw new RuntimeException("Failed to compile Color class");
-			}
-			item.setOrbitBuilder(orbitBuilder);
-			item.setColorBuilder(colorBuilder);
-			item.setData(data);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -411,49 +391,49 @@ public class BrowsePane extends BorderPane {
 		}
 		for (int index = 0; index < firstIndex; index++) {
 			GridItem item = items.get(index);
-			if (item.getCoordinator() != null) {
-				item.getCoordinator().abort();
+			if (item.getRenderer() != null) {
+				item.getRenderer().abort();
 			}
 		}
 		for (int index = lastIndex; index < items.size(); index++) {
 			GridItem item = items.get(index);
-			if (item.getCoordinator() != null) {
-				item.getCoordinator().abort();
+			if (item.getRenderer() != null) {
+				item.getRenderer().abort();
 			}
 		}
 		for (int index = 0; index < firstIndex; index++) {
 			GridItem item = items.get(index);
-			if (item.getCoordinator() != null) {
-				item.getCoordinator().waitFor();
+			if (item.getRenderer() != null) {
+				item.getRenderer().waitFor();
 			}
 		}
 		for (int index = lastIndex; index < items.size(); index++) {
 			GridItem item = items.get(index);
-			if (item.getCoordinator() != null) {
-				item.getCoordinator().waitFor();
+			if (item.getRenderer() != null) {
+				item.getRenderer().waitFor();
 			}
 		}
 		for (int index = 0; index < firstIndex; index++) {
 			GridItem item = items.get(index);
-			if (item.getCoordinator() != null) {
-				RendererCoordinator coordinator = item.getCoordinator();
-				item.setCoordinator(null);
-				coordinator.dispose();
+			if (item.getRenderer() != null) {
+				GridItemRenderer renderer = item.getRenderer();
+				item.setRenderer(null);
+				renderer.dispose();
 			}
 		}
 		for (int index = lastIndex; index < items.size(); index++) {
 			GridItem item = items.get(index);
-			if (item.getCoordinator() != null) {
-				RendererCoordinator coordinator = item.getCoordinator();
-				item.setCoordinator(null);
-				coordinator.dispose();
+			if (item.getRenderer() != null) {
+				GridItemRenderer renderer = item.getRenderer();
+				item.setRenderer(null);
+				renderer.dispose();
 			}
 		}
 		for (int index = firstIndex; index < Math.min(lastIndex, items.size()); index++) {
 			GridItem item = items.get(index);
-			MandelbrotData data = item.getData();
+			BrowseBitmap bitmap = item.getBitmap();
 			long time = System.currentTimeMillis();
-			if (data == null && time - item.getLastChanged() > SCROLL_BOUNCE_DELAY && item.getFuture() == null) {
+			if (bitmap == null && time - item.getLastChanged() > SCROLL_BOUNCE_DELAY && item.getFuture() == null) {
 				Future<GridItem> task = executor.submit(new Callable<GridItem>() {
 					@Override
 					public GridItem call() throws Exception {
@@ -463,31 +443,18 @@ public class BrowsePane extends BorderPane {
 				});
 				item.setFuture(task);
 			}  
-			if (data != null && time - item.getLastChanged() > SCROLL_BOUNCE_DELAY && item.getCoordinator() == null) {
-				initItem(item, data);
+			if (bitmap != null && time - item.getLastChanged() > SCROLL_BOUNCE_DELAY && item.getRenderer() == null) {
+				initItem(item, bitmap);
 			}
 		}
 		grid.updateCells();
 	}
 
-	private void initItem(GridItem item, MandelbrotData data) {
+	private void initItem(GridItem item, BrowseBitmap bitmap) {
 		try {
-			Map<String, Integer> hints = new HashMap<String, Integer>();
-			hints.put(RendererCoordinator.KEY_TYPE, RendererCoordinator.VALUE_REALTIME);
-			hints.put(RendererCoordinator.KEY_MULTITHREAD, RendererCoordinator.VALUE_SINGLE_THREAD);
-			RendererCoordinator coordinator = new RendererCoordinator(threadFactory, renderFactory, tile, hints);
-			coordinator.setOrbitAndColor(item.getOrbitBuilder().build(), item.getColorBuilder().build());
-			coordinator.init();
-			RendererView view = new RendererView();
-			view.setTraslation(new Double4D(data.getTranslation()));
-			view.setRotation(new Double4D(data.getRotation()));
-			view.setScale(new Double4D(data.getScale()));
-			view.setState(new Integer4D(0, 0, 0, 0));
-			view.setPoint(new Number(data.getPoint()));
-			view.setJulia(data.isJulia());
-			coordinator.setView(view);
-			coordinator.run();
-			item.setCoordinator(coordinator);
+			if (delegate != null) {
+				item.setRenderer(delegate.createRenderer(bitmap));
+			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

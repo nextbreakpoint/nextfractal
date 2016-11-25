@@ -22,12 +22,20 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.contextfree.javaFX;
+package com.nextbreakpoint.nextfractal.core.javaFX;
+
+import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 
 import java.io.File;
 
 public interface BrowseDelegate {
-	public void didSelectFile(BrowsePane source, File file);
+	void didSelectFile(BrowsePane source, File file);
 
-	public void didClose(BrowsePane source);
+	void didClose(BrowsePane source);
+
+	GridItemRenderer createRenderer(Bitmap bitmap) throws Exception;
+
+	BrowseBitmap createBitmap(File file, RendererSize size) throws Exception;
+
+	String getFileExtension();
 }

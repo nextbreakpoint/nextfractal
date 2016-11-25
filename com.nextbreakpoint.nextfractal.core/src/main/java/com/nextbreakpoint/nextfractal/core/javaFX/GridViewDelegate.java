@@ -22,7 +22,7 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.contextfree.javaFX;
+package com.nextbreakpoint.nextfractal.core.javaFX;
 
 public interface GridViewDelegate {
 	public void didCellChange(GridView source, int row, int col);
