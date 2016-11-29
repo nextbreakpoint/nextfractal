@@ -79,8 +79,8 @@ public class ToolMove implements Tool {
 	@Override
 	public void update(long time) {
 		if (changed) {
-			MandelbrotView oldView = context.getMandelbrotSession().getViewAsCopy();
-			double[] t = oldView.getTraslation();
+			MandelbrotView oldView = context.getViewAsCopy();
+			double[] t = oldView.getTranslation();
 			double[] r = oldView.getRotation();
 			double[] s = oldView.getScale();
 			double[] p = oldView.getPoint();
@@ -97,7 +97,7 @@ public class ToolMove implements Tool {
 			x0 = x1;
 			y0 = y1;
 			MandelbrotView view = new MandelbrotView(new double[] { x, y, z, t[3] }, new double[] { 0, 0, r[2], r[3] }, s, p, j);
-			context.getMandelbrotSession().setView(view, pressed);
+			context.setView(view, pressed);
 			changed = false;
 		}
 	}

@@ -31,8 +31,6 @@ import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
 import com.nextbreakpoint.nextfractal.core.renderer.javaFX.JavaFXRendererFactory;
 import com.nextbreakpoint.nextfractal.core.utils.Block;
 import com.nextbreakpoint.nextfractal.core.utils.DefaultThreadFactory;
-import com.nextbreakpoint.nextfractal.core.utils.Double4D;
-import com.nextbreakpoint.nextfractal.core.utils.Integer4D;
 import javafx.animation.AnimationTimer;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -49,9 +47,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -236,7 +232,7 @@ public class BrowsePane extends BorderPane {
 	}
 
 	private void doChooseFolder(GridView grid) {
-		Block.create(a -> prepareDirectoryChooser()).andThen(a -> doSelectFolder()).tryExecute();
+		Block.create(a -> prepareDirectoryChooser()).andThen(a -> doSelectFolder()).tryExecute().execute();
 	}
 
 	private void doSelectFolder() {

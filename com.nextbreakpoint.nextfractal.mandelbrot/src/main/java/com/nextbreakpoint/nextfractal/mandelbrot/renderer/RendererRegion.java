@@ -35,6 +35,7 @@ public class RendererRegion {
 	private Number size;
 
 	public RendererRegion() {
+		setPoints(new Number(0,0), new Number(0,0));
 	}
 	
 	public RendererRegion(Number a, Number b) {

@@ -25,6 +25,7 @@
 package com.nextbreakpoint.nextfractal.core.export;
 
 import java.io.File;
+import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -53,6 +54,7 @@ public final class ExportSession {
 	private volatile float progress;
 	private volatile boolean cancelled;
 	private volatile SessionState state = SessionState.SUSPENDED;
+	private IntBuffer pixels;
 
 	public ExportSession(String pluginId, Object data, File file, File tmpFile, RendererSize size, int tileSize, Encoder encoder) {
 		this.pluginId = pluginId;
@@ -255,5 +257,13 @@ public final class ExportSession {
 
 	private ExportJob createJob(ExportProfile profile) {
 		return new ExportJob(this, profile);
+	}
+
+	public IntBuffer getPixels() {
+		return pixels;
+	}
+
+	public void setPixels(IntBuffer pixels) {
+		this.pixels = pixels;
 	}
 }

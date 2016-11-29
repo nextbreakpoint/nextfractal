@@ -41,6 +41,11 @@ public interface FractalFactory {
 	/**
 	 * @return
 	 */
+	public String getGrammar();
+
+	/**
+	 * @return
+	 */
 	public Session createSession();
 	
 	/**
@@ -53,10 +58,18 @@ public interface FractalFactory {
 	/**
 	 * @param session
 	 * @param eventBus
-	 *@param width
-	 * @param height   @return
+	 * @param width
+	 * @param height
+	 * @return
 	 */
 	public Pane createRenderPane(Session session, EventBus eventBus, int width, int height);
+
+	/**
+	 * @param session
+	 * @param eventBus
+	 * @return
+	 */
+	public Pane createParamsPane(Session session, EventBus eventBus);
 
 	/**
 	 * @param threadFactory

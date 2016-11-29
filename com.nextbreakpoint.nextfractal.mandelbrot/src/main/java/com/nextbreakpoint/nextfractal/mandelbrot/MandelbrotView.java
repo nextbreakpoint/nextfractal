@@ -34,10 +34,10 @@ public class MandelbrotView {
 	private final boolean julia;
 
 	public MandelbrotView(double[] translation, double[] rotation, double[] scale, double[] point, boolean julia) {
-		this.translation = translation;
-		this.rotation = rotation;
-		this.scale = scale;
-		this.point = point;
+		this.translation = translation.clone();
+		this.rotation = rotation.clone();
+		this.scale = scale.clone();
+		this.point = point.clone();
 		this.julia = julia;
 	}
 
@@ -48,8 +48,12 @@ public class MandelbrotView {
 	public MandelbrotView(double[] translation, double[] rotation, double[] scale) {
 		this(translation, rotation, scale, new double[] { 0, 0 }, false);
 	}
-	
-	public double[] getTraslation() {
+
+	public MandelbrotView(MandelbrotView otherView) {
+		this(otherView.getTranslation(), otherView.getRotation(), otherView.getScale(), otherView.getPoint(), otherView.isJulia());
+	}
+
+	public double[] getTranslation() {
 		return translation;
 	}
 
@@ -72,5 +76,13 @@ public class MandelbrotView {
 	@Override
 	public String toString() {
 		return "[translation=" + Arrays.toString(translation)	+ ", rotation=" + Arrays.toString(rotation) + ", scale=" + Arrays.toString(scale) + ", point=" + Arrays.toString(point) + ", julia=" + julia + "]";
+	}
+
+	public MandelbrotView butWithPoint(double[] point) {
+		return new MandelbrotView(translation, rotation, scale, point, julia);
+	}
+
+	public MandelbrotView butWithJulia(boolean julia) {
+		return new MandelbrotView(translation, rotation, scale, point, julia);
 	}
 }

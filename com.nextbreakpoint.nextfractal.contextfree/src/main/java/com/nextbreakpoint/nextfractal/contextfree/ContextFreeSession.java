@@ -26,20 +26,22 @@ package com.nextbreakpoint.nextfractal.contextfree;
 
 import com.nextbreakpoint.nextfractal.contextfree.compiler.CompilerReport;
 import com.nextbreakpoint.nextfractal.core.session.AbstractSession;
-import java.util.List;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.util.ArrayList;
+import java.io.IOException;
+import java.io.InputStream;
 
 public class ContextFreeSession extends AbstractSession {
-	private final List<ContextFreeListener> listeners = new ArrayList<>();
 	private ContextFreeData data = new ContextFreeData();
 	private CompilerReport report;
 	private File currentFile;
-	private String status;
-	private String error;
 
-    @Override
+	public ContextFreeSession() {
+		data.setSource(getInitialSource());
+	}
+
+	@Override
     public String getPluginId() {
         return "ContextFree";
     }
@@ -47,14 +49,6 @@ public class ContextFreeSession extends AbstractSession {
     @Override
 	public String getGrammar() {
 		return "ContextFree";
-	}
-
-	public void addContextFreeListener(ContextFreeListener listener) {
-		listeners.add(listener);
-	}
-
-	public void removeContextFreeListener(ContextFreeListener listener) {
-		listeners.remove(listener);
 	}
 
 	public String getVersion() {
@@ -73,89 +67,59 @@ public class ContextFreeSession extends AbstractSession {
 		return data.getSource();
 	}
 
-	public void setSource(String source) {
-		if (!data.getSource().equals(source)) {
-			data.setSource(source);
-			fireSourceChanged();
-		}
+	private void setSource(String source) {
+		data.setSource(source);
 	}
 
 	public CompilerReport getReport() {
 		return report;
 	}
 
-	public void setReport(CompilerReport report) {
+	private void setReport(CompilerReport report) {
 		this.report = report;
-		fireReportChanged();
 	}
 
 	public double getTime() {
 		return data.getTime();
 	}
 
-	public void setTime(double time) {
+	private void setTime(double time) {
 		data.setTime(time);
-		fireDataChanged();
-	}
-
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
-		fireStatusChanged();
-	}
-
-	public String getError() {
-		return error;
-	}
-
-	public void setError(String error) {
-		this.error = error;
-		fireErrorChanged();
 	}
 
 	public ContextFreeData getDataAsCopy() {
 		ContextFreeData data = new ContextFreeData();
 		data.setSource(this.data.getSource());
 		data.setTime(this.data.getTime());
+		data.setSeed(this.data.getSeed());
 		return data;
 	}
 
-	public void setData(ContextFreeData data) {
+	private void setData(ContextFreeData data) {
 		this.data.setSource(data.getSource());
 		this.data.setTime(data.getTime());
-		fireDataChanged();
+		this.data.setSeed(data.getSeed());
 	}
 
-	protected void fireDataChanged() {
-		for (ContextFreeListener listener : listeners) {
-			listener.dataChanged(this);
+	private String getInitialSource() {
+		try {
+			return readResource("/contextfree.txt");
+		} catch (IOException e) {
 		}
+		return "";
 	}
 
-	protected void fireSourceChanged() {
-		for (ContextFreeListener listener : listeners) {
-			listener.sourceChanged(this);
+	protected String readResource(String name) throws IOException {
+		InputStream is = getClass().getResourceAsStream(name);
+		if (is != null) {
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			byte[] buffer = new byte[4096];
+			int length = 0;
+			while ((length = is.read(buffer)) > 0) {
+				baos.write(buffer, 0, length);
+			}
+			return baos.toString();
 		}
-	}
-
-	protected void fireReportChanged() {
-		for (ContextFreeListener listener : listeners) {
-			listener.reportChanged(this);
-		}
-	}
-
-	protected void fireStatusChanged() {
-		for (ContextFreeListener listener : listeners) {
-			listener.statusChanged(this);
-		}
-	}
-
-	protected void fireErrorChanged() {
-		for (ContextFreeListener listener : listeners) {
-			listener.errorChanged(this);
-		}
+		return "";
 	}
 }

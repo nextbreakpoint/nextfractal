@@ -25,11 +25,9 @@
 package com.nextbreakpoint.nextfractal.runtime.javaFX;
 
 import java.io.InputStream;
-import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 import com.nextbreakpoint.Try;
 import com.nextbreakpoint.nextfractal.core.EventBus;
@@ -61,6 +59,7 @@ import com.nextbreakpoint.nextfractal.core.FractalFactory;
 import com.nextbreakpoint.nextfractal.core.session.Session;
 
 import static com.nextbreakpoint.nextfractal.runtime.Plugins.pluginsStream;
+import static com.nextbreakpoint.nextfractal.runtime.Plugins.tryGrammar;
 import static com.nextbreakpoint.nextfractal.runtime.Plugins.tryPlugin;
 
 public class NextFractalApp extends Application {
@@ -104,7 +103,8 @@ public class NextFractalApp extends Application {
 		ExportRenderer exportRenderer = new SimpleExportRenderer(createDefaultThreadFactory("NextFractalRender"), new JavaFXRendererFactory());
 		ExportService exportService = new SimpleExportService(createDefaultThreadFactory("NextFractalExport"), exportRenderer);
 
-		eventBus.subscribe("grammar-selected", event -> handleGrammarSelected((String)event, eventBus));
+		eventBus.subscribe("editor-grammar-changed", event -> tryGrammar((String) event).ifPresent(factory -> createSession(eventBus, factory)));
+
 		eventBus.subscribe("session-changed", event -> handleSessionChanged((Session)event, primaryStage, exportService));
 		eventBus.subscribe("session-terminated", event -> handleSessionTerminate((Session)event));
 
@@ -130,12 +130,7 @@ public class NextFractalApp extends Application {
 		primaryStage.show();
 	}
 
-	private void handleGrammarSelected(String grammar, EventBus eventBus) {
-		pluginsStream().filter(plugin -> plugin.createSession().getGrammar().equals(grammar)).findFirst().ifPresent(plugin -> createSession(eventBus, plugin));
-	}
-
 	private void handleSessionChanged(Session session, Stage primaryStage, ExportService exportService) {
-		session.addGrammars(listGrammars());
 		session.setExportService(exportService);
 
 		primaryStage.setOnCloseRequest(e -> session.terminate());
@@ -147,7 +142,7 @@ public class NextFractalApp extends Application {
 	}
 
 	private void createSession(EventBus eventBus, FractalFactory factory) {
-		tryCreateSession(factory).ifPresent(session -> eventBus.postEvent("session-changed", session));
+		tryCreateSession(factory, eventBus).ifPresent(session -> eventBus.postEvent("session-changed", session));
 	}
 
 	private DefaultThreadFactory createDefaultThreadFactory(String name) {
@@ -308,12 +303,8 @@ public class NextFractalApp extends Application {
 		return Try.of(() -> getClass().getResource(resourceName).toExternalForm()).onFailure(e -> logger.log(Level.WARNING, "Cannot load style sheet " + resourceName, e));
 	}
 
-	private Try<Session, Exception> tryCreateSession(FractalFactory factory) {
+	private Try<Session, Exception> tryCreateSession(FractalFactory factory, EventBus eventBus) {
 		return Try.of(() -> Objects.requireNonNull(factory.createSession())).onFailure(e -> logger.log(Level.WARNING, "Cannot create session for " + factory.getId(), e));
-	}
-
-	private List<String> listGrammars() {
-		return pluginsStream().map(plugin -> plugin.createSession().getGrammar()).sorted().collect(Collectors.toList());
 	}
 
 	private void printPlugins() {

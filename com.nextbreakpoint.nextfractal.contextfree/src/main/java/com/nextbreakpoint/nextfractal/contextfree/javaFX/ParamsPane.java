@@ -26,8 +26,8 @@ package com.nextbreakpoint.nextfractal.contextfree.javaFX;
 
 import com.nextbreakpoint.nextfractal.contextfree.ContextFreeData;
 import com.nextbreakpoint.nextfractal.contextfree.ContextFreeDataStore;
-import com.nextbreakpoint.nextfractal.contextfree.ContextFreeListener;
 import com.nextbreakpoint.nextfractal.contextfree.ContextFreeSession;
+import com.nextbreakpoint.nextfractal.core.EventBus;
 import com.nextbreakpoint.nextfractal.core.javaFX.AdvancedTextField;
 import javafx.application.Platform;
 import javafx.scene.control.*;
@@ -47,9 +47,10 @@ public class ParamsPane extends Pane {
 	private static final Logger logger = Logger.getLogger(ParamsPane.class.getName());
 	private static final int SPACING = 5;
 
-	public ParamsPane(ContextFreeSession session) {
+	private ContextFreeData contextFreeData;
+
+	public ParamsPane(ContextFreeSession session, EventBus eventBus) {
 		VBox box = new VBox(SPACING * 2);
-		box.getStyleClass().add("params");
 		Label seedLabel = new Label("Seed");
 		AdvancedTextField seedField = new AdvancedTextField();
 		seedField.setRestrict(getRestriction());
@@ -57,119 +58,69 @@ public class ParamsPane extends Pane {
 		VBox seedPane = new VBox(SPACING);
 		seedPane.getChildren().add(seedLabel);
 		seedPane.getChildren().add(seedField);
-		Label grammarLabel = new Label("Grammar");
-		VBox grammarPane = new VBox(SPACING);
-		grammarPane.getChildren().add(grammarLabel);
-		ComboBox<String> grammarCombobox = new ComboBox<>();
-		session.listGrammars().forEach(grammar -> grammarCombobox.getItems().add(grammar));
-		grammarCombobox.getStyleClass().add("text-small");
-		grammarPane.getChildren().add(grammarCombobox);
-		if (grammarCombobox.getItems().size() > 1) {
-			box.getChildren().add(grammarPane);
-		}
 		box.getChildren().add(seedPane);
-		VBox buttons = new VBox(4);
-		Button applyButton = new Button("Apply");
-		Button cancelButton = new Button("Cancel"); 
-		buttons.getChildren().add(applyButton);
-		buttons.getChildren().add(cancelButton);
-		box.getChildren().add(buttons);
-		Button encodeCopyButton = new Button("Copy");
-		TextArea encodeTextArea;
-		if (Boolean.getBoolean("contextfree.encode.data")) {
-			encodeTextArea = new TextArea();
-			encodeTextArea.getStyleClass().add("encoded");
-			encodeTextArea.setWrapText(true);
-			encodeTextArea.setEditable(false);
-			box.getChildren().add(encodeTextArea);
-			box.getChildren().add(encodeCopyButton);
-			encodeCopyButton.setOnAction((e) -> {
-				String text = encodeTextArea.getText();
-				Clipboard clipboard = Clipboard.getSystemClipboard();
-				ClipboardContent content = new ClipboardContent();
-				content.putString(text);
-				clipboard.setContent(content);
-			});
-		} else {
-			encodeTextArea = null;
-		}
+//		Button encodeCopyButton = new Button("Copy");
+//		TextArea encodeTextArea;
+//		if (Boolean.getBoolean("contextfree.encode.data")) {
+//			encodeTextArea = new TextArea();
+//			encodeTextArea.getStyleClass().add("encoded");
+//			encodeTextArea.setWrapText(true);
+//			encodeTextArea.setEditable(false);
+//			box.getChildren().add(encodeTextArea);
+//			box.getChildren().add(encodeCopyButton);
+//			encodeCopyButton.setOnAction((e) -> {
+//				String text = encodeTextArea.getText();
+//				Clipboard clipboard = Clipboard.getSystemClipboard();
+//				ClipboardContent content = new ClipboardContent();
+//				content.putString(text);
+//				clipboard.setContent(content);
+//			});
+//		} else {
+//			encodeTextArea = null;
+//		}
 
-		grammarCombobox.getSelectionModel().select(session.getGrammar());
-
-		ScrollPane scrollPane = new ScrollPane(box);
-		scrollPane.setFitToWidth(true);
-		scrollPane.setFitToHeight(true);
-		getChildren().add(scrollPane);
+		getChildren().add(box);
 
 		widthProperty().addListener((observable, oldValue, newValue) -> {
 			double width = newValue.doubleValue() - getInsets().getLeft() - getInsets().getRight();
 			box.setPrefWidth(width);
-			grammarCombobox.setPrefWidth(width);
-			scrollPane.setPrefWidth(newValue.doubleValue());
-			applyButton.setPrefWidth(newValue.doubleValue());
-			cancelButton.setPrefWidth(newValue.doubleValue());
-			encodeCopyButton.setPrefWidth(newValue.doubleValue());
         });
 		
 		heightProperty().addListener((observable, oldValue, newValue) -> {
 			box.setPrefHeight(newValue.doubleValue() - getInsets().getTop() - getInsets().getBottom());
-			scrollPane.setPrefHeight(newValue.doubleValue());
 		});
 
-		Function<ContextFreeSession, Object> updateAll = (t) -> {
-			ContextFreeData data = t.getDataAsCopy();
-			if (encodeTextArea != null) {
-				updateEncodedData(encodeTextArea, t);
-			}
+		contextFreeData = session.getDataAsCopy();
+
+		Function<ContextFreeData, Object> updateAll = (data) -> {
+			seedField.setText(data.getSeed());
+//			if (encodeTextArea != null) {
+//				updateEncodedData(encodeTextArea, data);
+//			}
 			return null;
 		};
-		
-		cancelButton.setOnAction(e -> updateAll.apply(session));
-		
-		applyButton.setOnAction((e) -> {
+
+		Function<ContextFreeData, Object> notifyAll = (data) -> {
+			ContextFreeData newData = new ContextFreeData(data);
 			String seed = seedField.getText();
-			Platform.runLater(() -> {
-				ContextFreeData data = session.getDataAsCopy();
-				data.setSeed(seed);
-				session.setData(data);
-			});
+			newData.setSeed(seed);
+			Platform.runLater(() -> eventBus.postEvent("editor-data-changed", newData));
+			return null;
+		};
+
+		eventBus.subscribe("editor-params-action", event -> {
+			if (event.equals("cancel")) updateAll.apply(contextFreeData);
+			if (event.equals("apply")) notifyAll.apply(contextFreeData);
 		});
 
-		seedField.setText(session.getDataAsCopy().getSeed());
-		
-		updateAll.apply(session);
-		
-		session.addContextFreeListener(new ContextFreeListener() {
-			@Override
-			public void dataChanged(ContextFreeSession session) {
-				updateAll.apply(session);
-			}
-			
-			@Override
-			public void statusChanged(ContextFreeSession session) {
-			}
-
-			@Override
-			public void errorChanged(ContextFreeSession session) {
-			}
-
-			@Override
-			public void sourceChanged(ContextFreeSession session) {
-			}
-
-			@Override
-			public void reportChanged(ContextFreeSession session) {
-				if (encodeTextArea != null) {
-					updateEncodedData(encodeTextArea, session);
-				}
-			}
+		eventBus.subscribe("session-data-changed", event -> {
+			contextFreeData = (ContextFreeData) event;
+			updateAll.apply(contextFreeData);
 		});
+
+		updateAll.apply(contextFreeData);
 		
-		grammarCombobox.setOnAction(e -> {
-			if (!grammarCombobox.getSelectionModel().isEmpty() && !grammarCombobox.getSelectionModel().getSelectedItem().equals(session.getGrammar())) {
-				session.selectGrammar(grammarCombobox.getSelectionModel().getSelectedItem());
-			}
-		});
+		seedField.setOnAction(e -> notifyAll.apply(contextFreeData));
 	}
 
 	protected void updateEncodedData(TextArea textArea, ContextFreeSession session) {
@@ -189,7 +140,6 @@ public class ParamsPane extends Pane {
 			}
 		}		
 	}
-
 
 	protected String getRestriction() {
 		return "[A-Z]*";

@@ -24,12 +24,11 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.concurrent.ThreadFactory;
 
 import com.nextbreakpoint.nextfractal.core.EventBus;
+import com.nextbreakpoint.nextfractal.mandelbrot.javaFX.CodeEditorPane;
+import com.nextbreakpoint.nextfractal.mandelbrot.javaFX.ParamsPane;
 import javafx.scene.layout.Pane;
 
 import com.nextbreakpoint.nextfractal.core.FractalFactory;
@@ -37,7 +36,6 @@ import com.nextbreakpoint.nextfractal.core.ImageGenerator;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererFactory;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
 import com.nextbreakpoint.nextfractal.core.session.Session;
-import com.nextbreakpoint.nextfractal.mandelbrot.javaFX.EditorPane;
 import com.nextbreakpoint.nextfractal.mandelbrot.javaFX.RenderPane;
 
 public class MandelbrotFactory implements FractalFactory {
@@ -48,14 +46,16 @@ public class MandelbrotFactory implements FractalFactory {
 		return "Mandelbrot";
 	}
 
+	public String getGrammar() {
+		return "Mandelbrot";
+	}
+
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.FractalFactory#createSession()
+	 * @see FractalFactory#createSession()
 	 */
 	@Override
 	public Session createSession() {
-		MandelbrotSession session = new MandelbrotSession();
-        session.setSource(getInitialSource());
-		return session;
+		return new MandelbrotSession();
 	}
 	
 	/**
@@ -63,7 +63,7 @@ public class MandelbrotFactory implements FractalFactory {
 	 */
 	@Override
 	public Pane createEditorPane(Session session, EventBus eventBus) {
-		return new EditorPane(session, eventBus);
+		return new CodeEditorPane(eventBus);
 	}
 
 	/**
@@ -82,25 +82,8 @@ public class MandelbrotFactory implements FractalFactory {
 		return new MandelbrotImageGenerator(threadFactory, renderFactory, tile, opaque);
 	}
 
-	protected String getInitialSource() {
-		try {
-			return getSource("/mandelbrot.txt");
-		} catch (IOException e) {
-		}
-		return "";
-	}
-
-	protected String getSource(String name) throws IOException {
-		InputStream is = getClass().getResourceAsStream(name);
-		if (is != null) {
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			byte[] buffer = new byte[4096];
-			int length = 0;
-			while ((length = is.read(buffer)) > 0) {
-				baos.write(buffer, 0, length);
-			}
-			return baos.toString();
-		}
-		return "";
+	@Override
+	public Pane createParamsPane(Session session, EventBus eventBus) {
+		return new ParamsPane((MandelbrotSession) session, eventBus);
 	}
 }

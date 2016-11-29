@@ -25,15 +25,13 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
 
 import com.nextbreakpoint.nextfractal.core.renderer.RendererFactory;
-import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotSession;
+import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotView;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 
 public interface ToolContext {
 	public double getWidth();
 
 	public double getHeight();
-
-	public MandelbrotSession getMandelbrotSession();
 
 	public Number getInitialSize();
 
@@ -42,4 +40,10 @@ public interface ToolContext {
 	public double getZoomSpeed();
 
 	public RendererFactory getRendererFactory();
+
+	public MandelbrotView getViewAsCopy();
+
+	public void setView(MandelbrotView view, boolean continuous);
+
+	public void setPoint(double[] doubles, boolean continuous);
 }

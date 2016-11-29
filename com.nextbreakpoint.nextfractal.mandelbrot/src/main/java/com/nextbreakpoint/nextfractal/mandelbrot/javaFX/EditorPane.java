@@ -28,6 +28,12 @@ import com.nextbreakpoint.Try;
 import com.nextbreakpoint.nextfractal.core.EventBus;
 import com.nextbreakpoint.nextfractal.core.encoder.Encoder;
 import com.nextbreakpoint.nextfractal.core.export.ExportSession;
+import com.nextbreakpoint.nextfractal.core.javaFX.Bitmap;
+import com.nextbreakpoint.nextfractal.core.javaFX.BrowseBitmap;
+import com.nextbreakpoint.nextfractal.core.javaFX.ExportDelegate;
+import com.nextbreakpoint.nextfractal.core.javaFX.ExportListCell;
+import com.nextbreakpoint.nextfractal.core.javaFX.ExportPane;
+import com.nextbreakpoint.nextfractal.core.javaFX.HistoryListCell;
 import com.nextbreakpoint.nextfractal.core.javaFX.StatusPane;
 import com.nextbreakpoint.nextfractal.core.javaFX.StringObservableValue;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererPoint;
@@ -85,9 +91,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.concurrent.ExecutorService;
@@ -110,7 +114,6 @@ public class EditorPane extends BorderPane {
 	private final ExecutorService historyExecutor;
 	private final ExecutorService textExecutor;
 	private final Session session;
-	private EventBus eventBus;
 	private final CodeArea codeArea;
 	private final ExecutorService exportExecutor;
 	private final StringObservableValue errorProperty;
@@ -122,7 +125,6 @@ public class EditorPane extends BorderPane {
 
 	public EditorPane(Session session, EventBus eventBus) {
 		this.session = session;
-		this.eventBus = eventBus;
 
 		errorProperty = new StringObservableValue();
 		errorProperty.setValue(null);
@@ -147,15 +149,15 @@ public class EditorPane extends BorderPane {
 		EventHandler<ActionEvent> saveEventHandler = e -> Optional.ofNullable(showSaveFileChooser())
 				.map(fileChooser -> fileChooser.showSaveDialog(EditorPane.this.getScene().getWindow())).ifPresent(file -> saveDataToFile(file));
 
-		ListView<MandelbrotData> historyList = new ListView<>();
-		historyList.setFixedCellSize(tileSize + 8);
-		historyList.getStyleClass().add("history");
-		historyList.setCellFactory(listView -> new HistoryListCell(generator.getSize(), generatorTile));
-
 		ListView<ExportSession> jobsList = new ListView<>();
 		jobsList.setFixedCellSize(tileSize + 8);
 		jobsList.getStyleClass().add("jobs");
 		jobsList.setCellFactory(listView -> new ExportListCell(generator.getSize(), generatorTile));
+
+		ListView<Bitmap> historyList = new ListView<>();
+		historyList.setFixedCellSize(tileSize + 8);
+		historyList.getStyleClass().add("history");
+		historyList.setCellFactory(listView -> new HistoryListCell(generator.getSize(), generatorTile));
 
 		BorderPane historyPane = new BorderPane();
 //		BorderPane historyButtons = new BorderPane();
@@ -165,7 +167,7 @@ public class EditorPane extends BorderPane {
 //		historyButtons.getStyleClass().add("menubar");
 		historyPane.setCenter(historyList);
 //		historyPane.setBottom(historyButtons);
-		historyList.getSelectionModel().getSelectedItems().addListener((Change<? extends MandelbrotData> c) -> historyItemSelected(historyList));
+		historyList.getSelectionModel().getSelectedItems().addListener((Change<? extends Bitmap> c) -> historyItemSelected(historyList));
 //		clearButton.setOnAction(e -> Block.create((Block<ListView<MandelbrotData>,Exception>)(list -> logger.info("Clear history")))
 //				.andThen(list -> historyRemoveAllItems(list)).andThen(list -> addDataToHistory(list)).tryExecute(historyList));
 
@@ -193,7 +195,7 @@ public class EditorPane extends BorderPane {
 		resumeButton.setOnAction(e -> selectedItems(jobsList).filter(exportSession -> exportSession.isSuspended()).forEach(exportSession -> session.getExportService().resumeSession(exportSession)));
 		removeButton.setOnAction(e -> selectedItems(jobsList).forEach(exportSession -> session.getExportService().stopSession(exportSession)));
 
-		ParamsPane paramsPane = new ParamsPane(getMandelbrotSession());
+		ParamsPane paramsPane = new ParamsPane(getMandelbrotSession(), eventBus);
 
 		ExportPane exportPane = new ExportPane();
 
@@ -346,46 +348,46 @@ public class EditorPane extends BorderPane {
         codeArea.setOnDragOver(e -> Optional.of(e).filter(q -> q.getGestureSource() != codeArea
 				&& q.getDragboard().hasFiles()).ifPresent(q -> q.acceptTransferModes(TransferMode.COPY_OR_MOVE)));
 
-		getMandelbrotSession().addMandelbrotListener(new MandelbrotListener() {
-			@Override
-			public void dataChanged(MandelbrotSession session) {
-				addDataToHistory(historyList);
-				Platform.runLater(() -> updateSource());
-			}
-			
-			@Override
-			public void pointChanged(MandelbrotSession session, boolean continuous) {
-				if (!continuous) {
-					addDataToHistory(historyList);
-				}
-			}
-
-			@Override
-			public void viewChanged(MandelbrotSession session, boolean continuous) {
-				if (!continuous) {
-					addDataToHistory(historyList);
-				}
-			}
-
-			@Override
-			public void statusChanged(MandelbrotSession session) {
-				statusPane.setMessage(session.getStatus());
-			}
-
-			@Override
-			public void errorChanged(MandelbrotSession session) {
-				errorProperty.setValue(session.getError());
-			}
-
-			@Override
-			public void sourceChanged(MandelbrotSession session) {
-				addDataToHistory(historyList);
-			}
-
-			@Override
-			public void reportChanged(MandelbrotSession session) {
-			}
-		});
+//		getMandelbrotSession().addMandelbrotListener(new MandelbrotListener() {
+//			@Override
+//			public void dataChanged(MandelbrotSession session) {
+//				addDataToHistory(historyList);
+//				Platform.runLater(() -> updateSource());
+//			}
+//
+//			@Override
+//			public void pointChanged(MandelbrotSession session, boolean continuous) {
+//				if (!continuous) {
+//					addDataToHistory(historyList);
+//				}
+//			}
+//
+//			@Override
+//			public void viewChanged(MandelbrotSession session, boolean continuous) {
+//				if (!continuous) {
+//					addDataToHistory(historyList);
+//				}
+//			}
+//
+//			@Override
+//			public void statusChanged(MandelbrotSession session) {
+//				statusPane.setMessage(session.getStatus());
+//			}
+//
+//			@Override
+//			public void errorChanged(MandelbrotSession session) {
+//				errorProperty.setValue(session.getError());
+//			}
+//
+//			@Override
+//			public void sourceChanged(MandelbrotSession session) {
+//				addDataToHistory(historyList);
+//			}
+//
+//			@Override
+//			public void reportChanged(MandelbrotSession session) {
+//			}
+//		});
 
 		session.addSessionListener(new SessionListener() {
 			@Override
@@ -405,7 +407,7 @@ public class EditorPane extends BorderPane {
 
 			@Override
 			public void selectGrammar(Session session, String grammar) {
-				eventBus.postEvent("grammar-selected", grammar);
+//				eventBus.postEvent("grammar-selected", grammar);
 			}
 		});
 
@@ -554,7 +556,7 @@ public class EditorPane extends BorderPane {
 	private void shutdown() {
 		List<ExecutorService> executors = Arrays.asList(sessionsExecutor, historyExecutor, textExecutor, exportExecutor);
 		executors.forEach(executor -> executor.shutdownNow());
-		executors.forEach(executor -> Block.create(ExecutorService.class).andThen(e -> await(e)).tryExecute(executor));
+		executors.forEach(executor -> Block.create(ExecutorService.class).andThen(e -> await(e)).tryExecute(executor).execute());
 	}
 
 	private void await(ExecutorService executor) throws InterruptedException {
@@ -565,12 +567,13 @@ public class EditorPane extends BorderPane {
 		buttons.stream().forEach(button -> button.setDisable(disabled));
 	}
 
-	private void historyItemSelected(ListView<MandelbrotData> historyList) {
+	private void historyItemSelected(ListView<Bitmap> historyList) {
 		int index = historyList.getSelectionModel().getSelectedIndex();
 		if (index >= 0) {
-			MandelbrotData data = historyList.getItems().get(index);
+			Bitmap bitmap = historyList.getItems().get(index);
 			noHistory = true;
-			getMandelbrotSession().setData(data);
+			MandelbrotData data = (MandelbrotData) bitmap.getProperty("data");
+//			getMandelbrotSession().setData(data);
 			noHistory = false;
 		}
 	}
@@ -618,7 +621,7 @@ public class EditorPane extends BorderPane {
 			MandelbrotData data = service.loadFromFile(file);
             getMandelbrotSession().setCurrentFile(file);
             logger.info(data.toString());
-            getMandelbrotSession().setData(data);
+//            getMandelbrotSession().setData(data);
         } catch (Exception x) {
             logger.warning("Cannot read file " + file.getAbsolutePath());
             //TODO display error
@@ -644,8 +647,8 @@ public class EditorPane extends BorderPane {
 	}
 
 	private void updateReportAndSource(String text, CompilerReport report) {
-		Block.create(CompilerReport.class).andThen(r -> getMandelbrotSession().setReport(r)).tryExecute(report)
-				.filter(r -> ((CompilerReport)r).getErrors().size() == 0).ifPresent(r -> getMandelbrotSession().setSource(text));
+//		Block.create(CompilerReport.class).andThen(r -> getMandelbrotSession().setReport(r)).tryExecute(report)
+//				.filter(r -> ((CompilerReport)r).getErrors().size() == 0).ifPresent(r -> getMandelbrotSession().setSource(text));
 	}
 	
 	private CompilerReport generateReport(String text) throws Exception {
@@ -781,7 +784,7 @@ public class EditorPane extends BorderPane {
 		return spansBuilder.create();
 	}
 
-	private void addDataToHistory(ListView<MandelbrotData> historyList) {
+	private void addDataToHistory(ListView<Bitmap> historyList) {
 		if (noHistory) {
 			return;
 		}
@@ -791,8 +794,10 @@ public class EditorPane extends BorderPane {
 				.toCallable(getMandelbrotSession().getDataAsCopy()));
 	}
 
-	private void historyAddItem(ListView<MandelbrotData> historyList, MandelbrotData data) {
-		historyList.getItems().add(0, data);
+	private void historyAddItem(ListView<Bitmap> historyList, MandelbrotData data) {
+		BrowseBitmap bitmap = new BrowseBitmap(generator.getSize().getWidth(), generator.getSize().getHeight(), data.getPixels());
+		bitmap.setProperty("data", data);
+		historyList.getItems().add(0, bitmap);
 	}
 
 	private void historyRemoveAllItems(ListView<MandelbrotData> historyList) {
@@ -872,7 +877,7 @@ public class EditorPane extends BorderPane {
 
 	private void doExportSession(RendererSize rendererSize, MandelbrotData data, Consumer<File> consumer) {
 		createEncoder("PNG").ifPresent(encoder -> Block.create(Encoder.class)
-				.andThen(e -> prepareExportFileChooser(e.getSuffix())).andThen(e -> selectFileAndExport(rendererSize, encoder, data, consumer)).tryExecute(encoder));
+				.andThen(e -> prepareExportFileChooser(e.getSuffix())).andThen(e -> selectFileAndExport(rendererSize, encoder, data, consumer)).tryExecute(encoder).execute());
 	}
 
 	private void selectFileAndExport(RendererSize rendererSize, Encoder encoder, MandelbrotData data, Consumer<File> consumer) {
@@ -900,6 +905,7 @@ public class EditorPane extends BorderPane {
 			File tmpFile = File.createTempFile("nextfractal-profile-", ".dat");
 			ExportSession exportSession = new ExportSession("Mandelbrot", data, file, tmpFile, rendererSize, 200, encoder);
 			logger.info("Export session created: " + exportSession.getSessionId());
+			exportSession.setPixels(data.getPixels());
 			session.addExportSession(exportSession);
 			session.getExportService().startSession(exportSession);
 		} catch (Exception e) {

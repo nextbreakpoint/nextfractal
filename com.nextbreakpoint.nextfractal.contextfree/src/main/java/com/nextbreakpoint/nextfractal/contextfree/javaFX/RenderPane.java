@@ -26,7 +26,6 @@ package com.nextbreakpoint.nextfractal.contextfree.javaFX;
 
 import com.nextbreakpoint.nextfractal.contextfree.ContextFreeData;
 import com.nextbreakpoint.nextfractal.contextfree.ContextFreeDataStore;
-import com.nextbreakpoint.nextfractal.contextfree.ContextFreeListener;
 import com.nextbreakpoint.nextfractal.contextfree.ContextFreeSession;
 import com.nextbreakpoint.nextfractal.contextfree.compiler.*;
 import com.nextbreakpoint.nextfractal.contextfree.compiler.Compiler;
@@ -34,7 +33,6 @@ import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDG;
 import com.nextbreakpoint.nextfractal.contextfree.renderer.RendererCoordinator;
 import com.nextbreakpoint.nextfractal.contextfree.renderer.RendererError;
 import com.nextbreakpoint.nextfractal.core.EventBus;
-import com.nextbreakpoint.nextfractal.core.export.ExportSession;
 import com.nextbreakpoint.nextfractal.core.javaFX.Bitmap;
 import com.nextbreakpoint.nextfractal.core.javaFX.BooleanObservableValue;
 import com.nextbreakpoint.nextfractal.core.javaFX.BrowseBitmap;
@@ -45,7 +43,6 @@ import com.nextbreakpoint.nextfractal.core.javaFX.StringObservableValue;
 import com.nextbreakpoint.nextfractal.core.renderer.*;
 import com.nextbreakpoint.nextfractal.core.renderer.javaFX.JavaFXRendererFactory;
 import com.nextbreakpoint.nextfractal.core.session.Session;
-import com.nextbreakpoint.nextfractal.core.session.SessionListener;
 import com.nextbreakpoint.nextfractal.core.utils.Block;
 import com.nextbreakpoint.nextfractal.core.utils.DefaultThreadFactory;
 import javafx.animation.AnimationTimer;
@@ -83,7 +80,6 @@ import java.util.logging.Logger;
 public class RenderPane extends BorderPane {
 	private static final int FRAME_LENGTH_IN_MILLIS = 20;
 	private static final Logger logger = Logger.getLogger(RenderPane.class.getName());
-	private final Session session;
 	private final ThreadFactory renderThreadFactory;
 	private final JavaFXRendererFactory renderFactory;
 	private final StringObservableValue fileProperty;
@@ -92,7 +88,6 @@ public class RenderPane extends BorderPane {
 	private final BooleanObservableValue hideErrorsProperty;
 	private RendererCoordinator coordinator;
 	private AnimationTimer timer;
-	private EventBus eventBus;
 	private int width;
 	private int height;
 	private int rows;
@@ -102,8 +97,6 @@ public class RenderPane extends BorderPane {
 	private volatile boolean disableTool;
 
 	public RenderPane(Session session, EventBus eventBus, int width, int height, int rows, int columns) {
-		this.session = session;
-		this.eventBus = eventBus;
 		this.width = width;
 		this.height = height;
 		this.rows = rows;
@@ -234,48 +227,6 @@ public class RenderPane extends BorderPane {
 		
 		this.setOnMouseExited(e -> fadeOut(toolsTransition, x -> {}));
 		
-		getContextFreeSession().addContextFreeListener(new ContextFreeListener() {
-			@Override
-			public void dataChanged(ContextFreeSession session) {
-			}
-			
-			@Override
-			public void sourceChanged(ContextFreeSession session) {
-			}
-			
-			@Override
-			public void statusChanged(ContextFreeSession session) {
-			}
-
-			@Override
-			public void errorChanged(ContextFreeSession session) {
-			}
-
-			@Override
-			public void reportChanged(ContextFreeSession session) {
-				updateFractal(session);
-			}
-		});
-
-		session.addSessionListener(new SessionListener() {
-			@Override
-			public void terminate(Session session) {
-				dispose();
-			}
-
-			@Override
-			public void sessionAdded(Session session, ExportSession exportSession) {
-			}
-
-			@Override
-			public void sessionRemoved(Session session, ExportSession exportSession) {
-			}
-
-			@Override
-			public void selectGrammar(Session session, String grammar) {
-			}
-		});
-		
 		Pane stackPane = new Pane();
 		stackPane.getChildren().add(fractalCanvas);
 		stackPane.getChildren().add(toolCanvas);
@@ -293,9 +244,14 @@ public class RenderPane extends BorderPane {
 			}
 		});
 		
-		errorProperty.addListener((observable, oldValue, newValue) -> updateErrors(errors, newValue));
+		errorProperty.addListener((observable, oldValue, newValue) -> {
+			errors.setVisible(newValue != null);
+			eventBus.postEvent("render-error-changed", newValue);
+		});
 
-		statusProperty.addListener((observable, oldValue, newValue) -> getContextFreeSession().setStatus(newValue));
+		statusProperty.addListener((observable, oldValue, newValue) -> {
+			eventBus.postEvent("render-status-changed", newValue);
+		});
 
 		Block<ContextFreeData, Exception> updateUI = data -> {
 		};
@@ -312,6 +268,26 @@ public class RenderPane extends BorderPane {
 				.filter(e -> e.getDragboard().hasFiles()).ifPresent(e -> e.acceptTransferModes(TransferMode.COPY_OR_MOVE)));
 
 		runTimer(fractalCanvas, toolCanvas);
+
+		eventBus.subscribe("editor-report-changed", event -> updateFractal((CompilerReport) event));
+
+		eventBus.subscribe("session-terminated", event -> dispose());
+
+		eventBus.subscribe("session-data-changed", event -> {
+//			ContextFree data = (ContextFree) ((Object[]) event)[0];
+		});
+
+		eventBus.subscribe("render-data-changed", event -> {
+			eventBus.postEvent("session-data-changed", event);
+		});
+
+		eventBus.subscribe("render-status-changed", event -> {
+			eventBus.postEvent("session-status-changed", event);
+		});
+
+		eventBus.subscribe("render-error-changed", event -> {
+			eventBus.postEvent("session-error-changed", event);
+		});
 	}
 
 	private void updateFile(File file) {
@@ -323,23 +299,10 @@ public class RenderPane extends BorderPane {
 		return new RendererCoordinator(renderThreadFactory, renderFactory, createSingleTile(width, height), hints);
 	}
 
-	public ContextFreeSession getContextFreeSession() {
-		return (ContextFreeSession) session;
-	}
-
-	public RendererFactory getRendererFactory() {
-		return renderFactory;
-	}
-
 	@Override
 	protected void finalize() throws Throwable {
 		dispose();
 		super.finalize();
-	}
-
-	private void updateErrors(Pane panel, String error) {
-		panel.setVisible(error != null);
-		getContextFreeSession().setError(error);
 	}
 
 	private void dispose() {
@@ -421,9 +384,9 @@ public class RenderPane extends BorderPane {
 		try {
 			ContextFreeDataStore service = new ContextFreeDataStore();
 			ContextFreeData data = service.loadFromFile(file);
-			getContextFreeSession().setCurrentFile(file);
+//			getContextFreeSession().setCurrentFile(file);
 			updateJulia.execute(data);
-			getContextFreeSession().setData(data);
+//			getContextFreeSession().setData(data);
 			logger.info(data.toString());
 		} catch (Exception x) {
 			logger.warning("Cannot read file " + file.getAbsolutePath());
@@ -439,7 +402,7 @@ public class RenderPane extends BorderPane {
 			public void handle(long now) {
 				long time = now / 1000000;
 				if (time - last > FRAME_LENGTH_IN_MILLIS) {
-					if (!disableTool) {
+					if (!disableTool && coordinator != null && coordinator.isInitialized()) {
 						processRenderErrors();
 						redrawIfPixelsChanged(fractalCanvas);
 //						if (currentTool != null) {
@@ -501,7 +464,7 @@ public class RenderPane extends BorderPane {
 				errorProperty.setValue(builder.toString());
 				statusProperty.setValue(builder.toString());
 			} else {
-				statusProperty.setValue("Source compiled");
+//				statusProperty.setValue("Source compiled");
 			}
 		});
 	}
@@ -532,14 +495,14 @@ public class RenderPane extends BorderPane {
 				errorProperty.setValue(builder.toString());
 				statusProperty.setValue(builder.toString());
 			} else {
-				statusProperty.setValue("Rendering completed");
+//				statusProperty.setValue("Rendering completed");
 			}
 		});
 	}
 
-	private void updateFractal(Session session) {
+	private void updateFractal(CompilerReport report) {
 		try {
-			boolean[] changed = createCFDG();
+			boolean[] changed = createCFDG(report);
 			updateCompilerErrors(null, null, null);
 			boolean cfdgChanged = changed[0];
 			if (cfdgChanged) {
@@ -563,8 +526,7 @@ public class RenderPane extends BorderPane {
 		}
 	}
 
-	private boolean[] createCFDG() throws CompilerSourceException, CompilerClassException {
-		CompilerReport report = getContextFreeSession().getReport();
+	private boolean[] createCFDG(CompilerReport report) throws CompilerSourceException, CompilerClassException {
 		if (report.getErrors().size() > 0) {
 			cfdgSource = null;
 			throw new CompilerSourceException("Failed to compile source", report.getErrors());

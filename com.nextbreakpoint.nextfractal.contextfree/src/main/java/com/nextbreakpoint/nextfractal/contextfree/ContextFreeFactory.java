@@ -24,12 +24,10 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.concurrent.ThreadFactory;
 
-import com.nextbreakpoint.nextfractal.contextfree.javaFX.EditorPane;
+import com.nextbreakpoint.nextfractal.contextfree.javaFX.CodeEditorPane;
+import com.nextbreakpoint.nextfractal.contextfree.javaFX.ParamsPane;
 import com.nextbreakpoint.nextfractal.contextfree.javaFX.RenderPane;
 import com.nextbreakpoint.nextfractal.core.EventBus;
 import javafx.scene.layout.Pane;
@@ -47,15 +45,17 @@ public class ContextFreeFactory implements FractalFactory {
 	public String getId() {
 		return "ContextFree";
 	}
-	
+
+	public String getGrammar() {
+		return "ContextFree";
+	}
+
 	/**
-	 * @see com.nextbreakpoint.nextfractal.core.FractalFactory#createSession()
-	 */
+	 * @see FractalFactory#createSession()
+     */
 	@Override
 	public Session createSession() {
-		ContextFreeSession session = new ContextFreeSession();
-        session.setSource(getInitialSource());
-		return session;
+		return new ContextFreeSession();
 	}
 	
 	/**
@@ -63,7 +63,7 @@ public class ContextFreeFactory implements FractalFactory {
 	 */
 	@Override
 	public Pane createEditorPane(Session session, EventBus eventBus) {
-		return new EditorPane(session, eventBus);
+		return new CodeEditorPane(eventBus);
 	}
 
 	/**
@@ -82,25 +82,8 @@ public class ContextFreeFactory implements FractalFactory {
 		return new ContextFreeImageGenerator(threadFactory, renderFactory, tile, opaque);
 	}
 
-	protected String getInitialSource() {
-		try {
-			return getSource("/contextfree.txt");
-		} catch (IOException e) {
-		}
-		return "";
-	}
-
-	protected String getSource(String name) throws IOException {
-		InputStream is = getClass().getResourceAsStream(name);
-		if (is != null) {
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			byte[] buffer = new byte[4096];
-			int length = 0;
-			while ((length = is.read(buffer)) > 0) {
-				baos.write(buffer, 0, length);
-			}
-			return baos.toString();
-		}
-		return "";
+	@Override
+	public Pane createParamsPane(Session session, EventBus eventBus) {
+		return new ParamsPane((ContextFreeSession) session, eventBus);
 	}
 }

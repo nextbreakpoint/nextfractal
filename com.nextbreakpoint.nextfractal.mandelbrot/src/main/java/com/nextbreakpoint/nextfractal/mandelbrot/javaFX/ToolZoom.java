@@ -81,8 +81,8 @@ public class ToolZoom implements Tool {
 	@Override
 	public void update(long time) {
 		if (pressed || changed) {
-			MandelbrotView oldView = context.getMandelbrotSession().getViewAsCopy();
-			double[] t = oldView.getTraslation();
+			MandelbrotView oldView = context.getViewAsCopy();
+			double[] t = oldView.getTranslation();
 			double[] r = oldView.getRotation();
 			double[] s = oldView.getScale();
 			double[] p = oldView.getPoint();
@@ -97,7 +97,7 @@ public class ToolZoom implements Tool {
 			y -= (zs - 1) * z * size.i() * (Math.cos(a) * y1 - Math.sin(a) * x1);
 			z *= zs;
 			MandelbrotView view = new MandelbrotView(new double[] { x, y, z, t[3] }, new double[] { 0, 0, r[2], r[3] }, s, p, j);
-			context.getMandelbrotSession().setView(view, pressed);
+			context.setView(view, pressed);
 			changed = false;
 		}
 	}

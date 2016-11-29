@@ -63,6 +63,7 @@ public class Renderer {
 	private ExecutorService executor;
 	private volatile Future<?> future;
 	private CFDGRenderer renderer;
+	private boolean initialized;
 
 	/**
 	 * @param threadFactory
@@ -168,6 +169,7 @@ public class Renderer {
 	 * 
 	 */
 	public void init() {
+		initialized = true;
 //		rendererFractal.initialize();
 	}
 
@@ -383,7 +385,9 @@ public class Renderer {
 	private class RenderRunnable implements Runnable {
 		@Override
 		public void run() {
-			doRender();
+			if (initialized) {
+				doRender();
+			}
 		}
 	}
 
@@ -399,5 +403,9 @@ public class Renderer {
 
 	public void setOpaque(boolean opaque) {
 		this.opaque = opaque;
+	}
+
+	public boolean isInitialized() {
+		return initialized;
 	}
 }

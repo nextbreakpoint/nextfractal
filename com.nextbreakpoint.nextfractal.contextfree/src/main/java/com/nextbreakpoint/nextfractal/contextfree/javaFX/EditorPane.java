@@ -32,6 +32,12 @@ import com.nextbreakpoint.nextfractal.contextfree.compiler.CompilerSourceExcepti
 import com.nextbreakpoint.nextfractal.core.EventBus;
 import com.nextbreakpoint.nextfractal.core.encoder.Encoder;
 import com.nextbreakpoint.nextfractal.core.export.ExportSession;
+import com.nextbreakpoint.nextfractal.core.javaFX.Bitmap;
+import com.nextbreakpoint.nextfractal.core.javaFX.BrowseBitmap;
+import com.nextbreakpoint.nextfractal.core.javaFX.ExportDelegate;
+import com.nextbreakpoint.nextfractal.core.javaFX.ExportListCell;
+import com.nextbreakpoint.nextfractal.core.javaFX.ExportPane;
+import com.nextbreakpoint.nextfractal.core.javaFX.HistoryListCell;
 import com.nextbreakpoint.nextfractal.core.javaFX.StatusPane;
 import com.nextbreakpoint.nextfractal.core.javaFX.StringObservableValue;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererPoint;
@@ -95,7 +101,6 @@ public class EditorPane extends BorderPane {
 	private final ExecutorService historyExecutor;
 	private final ExecutorService textExecutor;
 	private final Session session;
-	private EventBus eventBus;
 	private final CodeArea codeArea;
 	private final ExecutorService exportExecutor;
 	private final StringObservableValue errorProperty;
@@ -107,7 +112,6 @@ public class EditorPane extends BorderPane {
 
 	public EditorPane(Session session, EventBus eventBus) {
 		this.session = session;
-		this.eventBus = eventBus;
 
 		errorProperty = new StringObservableValue();
 		errorProperty.setValue(null);
@@ -132,7 +136,7 @@ public class EditorPane extends BorderPane {
 		EventHandler<ActionEvent> saveEventHandler = e -> Optional.ofNullable(showSaveFileChooser())
 				.map(fileChooser -> fileChooser.showSaveDialog(EditorPane.this.getScene().getWindow())).ifPresent(file -> saveDataToFile(file));
 
-		ListView<ContextFreeData> historyList = new ListView<>();
+		ListView<Bitmap> historyList = new ListView<>();
 		historyList.setFixedCellSize(tileSize + 8);
 		historyList.getStyleClass().add("history");
 		historyList.setCellFactory(listView -> new HistoryListCell(generator.getSize(), generatorTile));
@@ -144,7 +148,7 @@ public class EditorPane extends BorderPane {
 
 		BorderPane historyPane = new BorderPane();
 		historyPane.setCenter(historyList);
-		historyList.getSelectionModel().getSelectedItems().addListener((Change<? extends ContextFreeData> c) -> historyItemSelected(historyList));
+		historyList.getSelectionModel().getSelectedItems().addListener((Change<? extends Bitmap> c) -> historyItemSelected(historyList));
 
 		BorderPane jobsPane = new BorderPane();
 		HBox jobsButtons = new HBox(0);
@@ -170,7 +174,7 @@ public class EditorPane extends BorderPane {
 		resumeButton.setOnAction(e -> selectedItems(jobsList).filter(exportSession -> exportSession.isSuspended()).forEach(exportSession -> session.getExportService().resumeSession(exportSession)));
 		removeButton.setOnAction(e -> selectedItems(jobsList).forEach(exportSession -> session.getExportService().stopSession(exportSession)));
 
-		ParamsPane paramsPane = new ParamsPane(getContextFreeSession());
+		ParamsPane paramsPane = new ParamsPane(getContextFreeSession(), eventBus);
 
 		ExportPane exportPane = new ExportPane();
 
@@ -323,32 +327,32 @@ public class EditorPane extends BorderPane {
         codeArea.setOnDragOver(e -> Optional.of(e).filter(q -> q.getGestureSource() != codeArea
 				&& q.getDragboard().hasFiles()).ifPresent(q -> q.acceptTransferModes(TransferMode.COPY_OR_MOVE)));
 
-		getContextFreeSession().addContextFreeListener(new ContextFreeListener() {
-			@Override
-			public void dataChanged(ContextFreeSession session) {
-				addDataToHistory(historyList);
-				Platform.runLater(() -> updateSource());
-			}
-			
-			@Override
-			public void statusChanged(ContextFreeSession session) {
-				statusPane.setMessage(session.getStatus());
-			}
-
-			@Override
-			public void errorChanged(ContextFreeSession session) {
-				errorProperty.setValue(session.getError());
-			}
-
-			@Override
-			public void sourceChanged(ContextFreeSession session) {
-				addDataToHistory(historyList);
-			}
-
-			@Override
-			public void reportChanged(ContextFreeSession session) {
-			}
-		});
+//		getContextFreeSession().addContextFreeListener(new ContextFreeListener() {
+//			@Override
+//			public void dataChanged(ContextFreeSession session) {
+//				addDataToHistory(historyList);
+//				Platform.runLater(() -> updateSource());
+//			}
+//
+//			@Override
+//			public void statusChanged(ContextFreeSession session) {
+//				statusPane.setMessage(session.getStatus());
+//			}
+//
+//			@Override
+//			public void errorChanged(ContextFreeSession session) {
+//				errorProperty.setValue(session.getError());
+//			}
+//
+//			@Override
+//			public void sourceChanged(ContextFreeSession session) {
+//				addDataToHistory(historyList);
+//			}
+//
+//			@Override
+//			public void reportChanged(ContextFreeSession session) {
+//			}
+//		});
 
 		session.addSessionListener(new SessionListener() {
 			@Override
@@ -368,7 +372,7 @@ public class EditorPane extends BorderPane {
 
 			@Override
 			public void selectGrammar(Session session, String grammar) {
-				eventBus.postEvent("grammar-selected", grammar);
+//				eventBus.postEvent("grammar-selected", grammar);
 			}
 		});
 
@@ -517,7 +521,7 @@ public class EditorPane extends BorderPane {
 	private void shutdown() {
 		List<ExecutorService> executors = Arrays.asList(sessionsExecutor, historyExecutor, textExecutor, exportExecutor);
 		executors.forEach(executor -> executor.shutdownNow());
-		executors.forEach(executor -> Block.create(ExecutorService.class).andThen(e -> await(e)).tryExecute(executor));
+		executors.forEach(executor -> Block.create(ExecutorService.class).andThen(e -> await(e)).tryExecute(executor).execute());
 	}
 
 	private void await(ExecutorService executor) throws InterruptedException {
@@ -528,12 +532,13 @@ public class EditorPane extends BorderPane {
 		buttons.stream().forEach(button -> button.setDisable(disabled));
 	}
 
-	private void historyItemSelected(ListView<ContextFreeData> historyList) {
+	private void historyItemSelected(ListView<Bitmap> historyList) {
 		int index = historyList.getSelectionModel().getSelectedIndex();
 		if (index >= 0) {
-			ContextFreeData data = historyList.getItems().get(index);
+			Bitmap bitmap = historyList.getItems().get(index);
 			noHistory = true;
-			getContextFreeSession().setData(data);
+			ContextFreeData data = (ContextFreeData) bitmap.getProperty("data");
+//			getContextFreeSession().setData(data);
 			noHistory = false;
 		}
 	}
@@ -581,7 +586,7 @@ public class EditorPane extends BorderPane {
 			ContextFreeData data = service.loadFromFile(file);
             getContextFreeSession().setCurrentFile(file);
             logger.info(data.toString());
-            getContextFreeSession().setData(data);
+//            getContextFreeSession().setData(data);
         } catch (Exception x) {
             logger.warning("Cannot read file " + file.getAbsolutePath());
             //TODO display error
@@ -607,8 +612,8 @@ public class EditorPane extends BorderPane {
 	}
 
 	private void updateReportAndSource(String text, CompilerReport report) {
-		Block.create(CompilerReport.class).andThen(r -> getContextFreeSession().setReport(r)).tryExecute(report)
-				.filter(r -> ((CompilerReport)r).getErrors().size() == 0).ifPresent(r -> getContextFreeSession().setSource(text));
+//		Block.create(CompilerReport.class).andThen(r -> getContextFreeSession().setReport(r)).tryExecute(report)
+//				.filter(r -> ((CompilerReport)r).getErrors().size() == 0).ifPresent(r -> getContextFreeSession().setSource(text));
 	}
 	
 	private CompilerReport generateReport(String text) throws Exception {
@@ -697,11 +702,13 @@ public class EditorPane extends BorderPane {
 	
     private void applyTaskResult(Optional<TaskResult> result) {
 		result.ifPresent(value -> Block.create(TaskResult.class)
-				.andThen(r -> compileReport(r.report))
-				.andThen(r -> updateReportAndSource(r.source, r.report))
-				.andThen(r -> codeArea.setStyleSpans(0, r.highlighting))
-				.andThen(r -> displayErrors()).tryExecute(value));
-    }
+			.andThen(r -> compileReport(r.report))
+			.andThen(r -> updateReportAndSource(r.source, r.report))
+			.andThen(r -> codeArea.setStyleSpans(0, r.highlighting))
+			.andThen(r -> displayErrors())
+			.tryExecute(value)
+			.ifFailure(e -> logger.log(Level.WARNING, "Cannot process source", e)));
+	}
 
 	private void compileReport(CompilerReport report) {
 		Block.create(CompilerReport.class).andThen(this::compileCFDG).tryExecute(report).ifFailure(e -> processCompilerErrors(report, e));
@@ -739,7 +746,7 @@ public class EditorPane extends BorderPane {
 		return spansBuilder.create();
 	}
 
-	private void addDataToHistory(ListView<ContextFreeData> historyList) {
+	private void addDataToHistory(ListView<Bitmap> historyList) {
 		if (noHistory) {
 			return;
 		}
@@ -749,8 +756,10 @@ public class EditorPane extends BorderPane {
 				.toCallable(getContextFreeSession().getDataAsCopy()));
 	}
 
-	private void historyAddItem(ListView<ContextFreeData> historyList, ContextFreeData data) {
-		historyList.getItems().add(0, data);
+	private void historyAddItem(ListView<Bitmap> historyList, ContextFreeData data) {
+		BrowseBitmap bitmap = new BrowseBitmap(generator.getSize().getWidth(), generator.getSize().getHeight(), data.getPixels());
+		bitmap.setProperty("data", data);
+		historyList.getItems().add(0, bitmap);
 	}
 
 	private ContextFreeSession getContextFreeSession() {
@@ -826,7 +835,7 @@ public class EditorPane extends BorderPane {
 
 	private void doExportSession(RendererSize rendererSize, ContextFreeData data, Consumer<File> consumer) {
 		createEncoder("PNG").ifPresent(encoder -> Block.create(Encoder.class)
-				.andThen(e -> prepareExportFileChooser(e.getSuffix())).andThen(e -> selectFileAndExport(rendererSize, encoder, data, consumer)).tryExecute(encoder));
+				.andThen(e -> prepareExportFileChooser(e.getSuffix())).andThen(e -> selectFileAndExport(rendererSize, encoder, data, consumer)).tryExecute(encoder).execute());
 	}
 
 	private void selectFileAndExport(RendererSize rendererSize, Encoder encoder, ContextFreeData data, Consumer<File> consumer) {
@@ -854,6 +863,7 @@ public class EditorPane extends BorderPane {
 			File tmpFile = File.createTempFile("nextfractal-profile-", ".dat");
 			ExportSession exportSession = new ExportSession("ContextFree", data, file, tmpFile, rendererSize, 200, encoder);
 			logger.info("Export session created: " + exportSession.getSessionId());
+			exportSession.setPixels(data.getPixels());
 			session.addExportSession(exportSession);
 			session.getExportService().startSession(exportSession);
 		} catch (Exception e) {

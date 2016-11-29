@@ -53,4 +53,6 @@ public interface Session {
 	public List<String> listGrammars();
 
 	public String getGrammar();
+
+	public String getSource();
 }

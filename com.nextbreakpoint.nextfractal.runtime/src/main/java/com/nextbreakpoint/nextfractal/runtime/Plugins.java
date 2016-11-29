@@ -24,6 +24,14 @@ public class Plugins {
         return pluginsStream().filter(plugin -> pluginId.equals(plugin.getId())).findFirst();
     }
 
+    public static Optional<? extends FractalFactory> findGrammar(String grammar) {
+        return pluginsStream().filter(factory -> factory.getGrammar().equals(grammar)).findFirst();
+    }
+
+    public static Try<? extends FractalFactory, Exception> tryGrammar(String grammar) {
+        return findGrammar(grammar).map(plugin -> Try.of(() -> plugin)).orElse(Try.failure(new Exception("Grammar not found")));
+    }
+
     public static Try<? extends FractalFactory, Exception> tryPlugin(String pluginId) {
         return findPlugin(pluginId).map(plugin -> Try.of(() -> plugin)).orElse(Try.failure(new Exception("Plugin not found")));
     }

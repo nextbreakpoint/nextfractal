@@ -46,7 +46,7 @@ public class RendererView {
 	}
 
 	public RendererView(MandelbrotView view) {
-		translation = new Double4D(view.getTraslation());
+		translation = new Double4D(view.getTranslation());
 		rotation = new Double4D(view.getRotation());
 		scale = new Double4D(view.getScale());
 		state = new Integer4D(0, 0, 0, 0);

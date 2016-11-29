@@ -24,11 +24,11 @@ public interface Block<V, E extends Exception> {
         return block;
     }
 
-    default Try<V, E> tryExecute() {
-        return Try.of(this.toCallable(null)).mapper(e -> (E)e).execute();
+    default Try<V, Exception> tryExecute() {
+        return Try.of(this.toCallable(null));
     }
 
-    default Try<V, E> tryExecute(V accumulator) {
-        return Try.of(this.toCallable(accumulator)).mapper(e -> (E)e).execute();
+    default Try<V, Exception> tryExecute(V accumulator) {
+        return Try.of(this.toCallable(accumulator));
     }
 }

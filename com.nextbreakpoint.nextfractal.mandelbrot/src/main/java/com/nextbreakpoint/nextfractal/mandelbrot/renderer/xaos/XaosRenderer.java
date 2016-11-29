@@ -217,7 +217,7 @@ public final class XaosRenderer extends Renderer {
 			updatePositions();
 		} catch (Throwable e) {
 			logger.log(Level.WARNING, "Rendering error", e);
-			error = new RendererError(0, 0, 0, 0, e.getMessage());
+			errors.add(new RendererError(0, 0, 0, 0, e.getMessage()));
 		}
 	}
 

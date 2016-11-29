@@ -201,4 +201,8 @@ public class RendererCoordinator implements RendererDelegate {
 	public List<RendererError> getErrors() {
 		return renderer.getErrors();
 	}
+
+    public boolean isInitialized() {
+		return renderer.isInitialized();
+    }
 }

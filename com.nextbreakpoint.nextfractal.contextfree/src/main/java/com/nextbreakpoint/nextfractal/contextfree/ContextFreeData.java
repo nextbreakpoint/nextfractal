@@ -42,6 +42,17 @@ public class ContextFreeData {
 	private IntBuffer pixels;
 	private float[] color;
 
+	public ContextFreeData() {
+	}
+
+	public ContextFreeData(ContextFreeData data) {
+		seed = data.seed;
+		time = data.time;
+//		color = data.color.clone();
+		source = data.source;
+		timestamp = data.timestamp;
+	}
+
 	public String getSource() {
 		return source;
 	}

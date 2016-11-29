@@ -25,6 +25,7 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.renderer;
 
 import java.nio.IntBuffer;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -64,12 +65,13 @@ public class Renderer {
 	protected volatile RendererSurface buffer;
 	protected volatile boolean aborted;
 	protected volatile boolean interrupted;
+	protected volatile boolean initialized;
 	protected volatile boolean orbitChanged;
 	protected volatile boolean colorChanged;
 	protected volatile boolean regionChanged;
 	protected volatile boolean juliaChanged;
 	protected volatile boolean pointChanged;
-	protected volatile RendererError error;
+	protected volatile List<RendererError> errors = new ArrayList<>();
 	protected volatile float progress;
 	protected volatile double rotation;
 	protected boolean julia;
@@ -79,7 +81,7 @@ public class Renderer {
 	protected boolean singlePass;
 	protected boolean continuous;
 	protected RendererRegion region;
-	protected RendererRegion initialRegion;
+	protected RendererRegion initialRegion = new RendererRegion();
 	protected RendererSize size;
 	protected RendererView view;
 	protected RendererTile tile;
@@ -191,6 +193,7 @@ public class Renderer {
 	 * 
 	 */
 	public void init() {
+		initialized = true;
 		rendererFractal.initialize();
 		initialRegion = new RendererRegion(rendererFractal.getOrbit().getInitialRegion());
 	}
@@ -519,7 +522,7 @@ public class Renderer {
 			Thread.yield();
 		} catch (Throwable e) {
 			logger.log(Level.WARNING, "Cannot render fractal", e);
-			error = new RendererError(0, 0, 0, 0, e.getMessage());
+			errors.add(new RendererError(0, 0, 0, 0, e.getMessage()));
 		}
 	}
 
@@ -634,7 +637,9 @@ public class Renderer {
 	private class RenderRunnable implements Runnable {
 		@Override
 		public void run() {
-			doRender();
+			if (initialized) {
+				doRender();
+			}
 		}
 	}
 
@@ -642,9 +647,9 @@ public class Renderer {
 		return rendererFractal.getOrbit().getTraps();
 	}
 
-	public RendererError getError() {
-		RendererError result = error;
-		error = null;
+	public List<RendererError> getErrors() {
+		List<RendererError> result = new ArrayList<>(errors);
+		errors.clear();
 		return result;
 	}
 
@@ -654,5 +659,9 @@ public class Renderer {
 
 	public void setOpaque(boolean opaque) {
 		this.opaque = opaque;
+	}
+
+	public boolean isInitialized() {
+		return initialized;
 	}
 }

@@ -78,9 +78,9 @@ public class ToolPick implements Tool {
 	@Override
 	public void update(long time) {
 		if (changed) {
-			MandelbrotView view = context.getMandelbrotSession().getViewAsCopy();
+			MandelbrotView view = context.getViewAsCopy();
 			if (!view.isJulia()) {
-				double[] t = view.getTraslation();
+				double[] t = view.getTranslation();
 				double[] r = view.getRotation();
 				double x = t[0];
 				double y = t[1];
@@ -90,7 +90,7 @@ public class ToolPick implements Tool {
 				Number center = context.getInitialCenter();
 				x += center.r() + z * size.r() * (Math.cos(a) * x1 + Math.sin(a) * y1);
 				y += center.i() + z * size.i() * (Math.cos(a) * y1 - Math.sin(a) * x1);
-				context.getMandelbrotSession().setPoint(new double[] { x, y }, pressed);
+				context.setPoint(new double[] { x, y }, pressed);
 			}
 			changed = false;
 		}

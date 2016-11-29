@@ -24,20 +24,22 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.IOException;
+import java.io.InputStream;
 
 import com.nextbreakpoint.nextfractal.core.session.AbstractSession;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerReport;
 
 public class MandelbrotSession extends AbstractSession {
-	private final List<MandelbrotListener> listeners = new ArrayList<>();
 	private MandelbrotData data = new MandelbrotData();
 	private CompilerReport report;
 	private File currentFile;
-	private String status;
-	private String error;
+
+	public MandelbrotSession() {
+		data.setSource(getInitialSource());
+	}
 
     @Override
     public String getPluginId() {
@@ -46,14 +48,6 @@ public class MandelbrotSession extends AbstractSession {
 
     public String getGrammar() {
 		return "Mandelbrot";
-	}
-
-	public void addMandelbrotListener(MandelbrotListener listener) {
-		listeners.add(listener);
-	}
-
-	public void removeMandelbrotListener(MandelbrotListener listener) {
-		listeners.remove(listener);
 	}
 
 	public String getVersion() {
@@ -72,69 +66,44 @@ public class MandelbrotSession extends AbstractSession {
 		return data.getSource();
 	}
 	
-	public void setSource(String source) {
-		if (!data.getSource().equals(source)) {
-			data.setSource(source);
-			fireSourceChanged();
-		}
+	private void setSource(String source) {
+		data.setSource(source);
 	}
-	
+
 	public CompilerReport getReport() {
 		return report;
 	}
 
-	public void setReport(CompilerReport report) {
+	private void setReport(CompilerReport report) {
 		this.report = report;
-		fireReportChanged();
 	}
 
 	public double getTime() {
 		return data.getTime();
 	}
 
-	public void setTime(double time) {
+	private void setTime(double time) {
 		data.setTime(time);
-		fireDataChanged();
 	}
 
 	public double[] getPoint() {
 		return data.getPoint();
 	}
-	
-	public void setPoint(double[] point, boolean continuous) {
+
+	private void setPoint(double[] point) {
 		data.setPoint(point);
-		firePointChanged(continuous);
-	}
-
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
-		fireStatusChanged();
-	}
-
-	public String getError() {
-		return error;
-	}
-
-	public void setError(String error) {
-		this.error = error;
-		fireErrorChanged();
 	}
 
 	public MandelbrotView getViewAsCopy() {
 		return new MandelbrotView(data.getTranslation(), data.getRotation(), data.getScale(), data.getPoint(), data.isJulia());
 	}
-	
-	public void setView(MandelbrotView view, boolean continuous) {
-		this.data.setTranslation(view.getTraslation());
+
+	private void setView(MandelbrotView view) {
+		this.data.setTranslation(view.getTranslation());
 		this.data.setRotation(view.getRotation());
 		this.data.setScale(view.getScale());
 		this.data.setPoint(view.getPoint());
 		this.data.setJulia(view.isJulia());
-		fireViewChanged(continuous);
 	}
 	
 	public MandelbrotData getDataAsCopy() {
@@ -149,7 +118,7 @@ public class MandelbrotSession extends AbstractSession {
 		return data;
 	}
 
-	public void setData(MandelbrotData data) {
+	private void setData(MandelbrotData data) {
 		this.data.setSource(data.getSource());
 		this.data.setTranslation(data.getTranslation());
 		this.data.setRotation(data.getRotation());
@@ -157,48 +126,27 @@ public class MandelbrotSession extends AbstractSession {
 		this.data.setTime(data.getTime());
 		this.data.setPoint(data.getPoint());
 		this.data.setJulia(data.isJulia());
-		fireDataChanged();
 	}
 
-	protected void fireDataChanged() {
-		for (MandelbrotListener listener : listeners) {
-			listener.dataChanged(this);
+	private String getInitialSource() {
+		try {
+			return readResource("/mandelbrot.txt");
+		} catch (IOException e) {
 		}
+		return "";
 	}
 
-	protected void fireSourceChanged() {
-		for (MandelbrotListener listener : listeners) {
-			listener.sourceChanged(this);
+	protected String readResource(String name) throws IOException {
+		InputStream is = getClass().getResourceAsStream(name);
+		if (is != null) {
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			byte[] buffer = new byte[4096];
+			int length = 0;
+			while ((length = is.read(buffer)) > 0) {
+				baos.write(buffer, 0, length);
+			}
+			return baos.toString();
 		}
-	}
-
-	protected void fireReportChanged() {
-		for (MandelbrotListener listener : listeners) {
-			listener.reportChanged(this);
-		}
-	}
-
-	protected void firePointChanged(boolean continuous) {
-		for (MandelbrotListener listener : listeners) {
-			listener.pointChanged(this, continuous);
-		}
-	}
-
-	protected void fireViewChanged(boolean continuous) {
-		for (MandelbrotListener listener : listeners) {
-			listener.viewChanged(this, continuous);
-		}
-	}
-
-	protected void fireStatusChanged() {
-		for (MandelbrotListener listener : listeners) {
-			listener.statusChanged(this);
-		}
-	}
-
-	protected void fireErrorChanged() {
-		for (MandelbrotListener listener : listeners) {
-			listener.errorChanged(this);
-		}
+		return "";
 	}
 }

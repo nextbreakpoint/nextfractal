@@ -83,8 +83,8 @@ public class ToolRotate implements Tool {
 		if (active) {
 			x1 = (e.getX() - context.getWidth() / 2) / context.getWidth();
 			y1 = (context.getHeight() / 2 - e.getY()) / context.getHeight();
-			MandelbrotView oldView = context.getMandelbrotSession().getViewAsCopy();
-			double[] t = oldView.getTraslation();
+			MandelbrotView oldView = context.getViewAsCopy();
+			double[] t = oldView.getTranslation();
 			double[] r = oldView.getRotation();
 			a0 = r[2] * Math.PI / 180;
 			a1 = Math.atan2(y1 - y0, x1 - x0);
@@ -100,8 +100,8 @@ public class ToolRotate implements Tool {
 	@Override
 	public void update(long time) {
 		if (changed) {
-			MandelbrotView oldView = context.getMandelbrotSession().getViewAsCopy();
-			double[] t = oldView.getTraslation();
+			MandelbrotView oldView = context.getViewAsCopy();
+			double[] t = oldView.getTranslation();
 			double[] r = oldView.getRotation();
 			double[] s = oldView.getScale();
 			double[] p = oldView.getPoint();
@@ -123,7 +123,7 @@ public class ToolRotate implements Tool {
 			double y = i0 + dy;
 			double a = (a0 + a2) * 180 / Math.PI;
 			MandelbrotView view = new MandelbrotView(new double[] { x, y, z, t[3] }, new double[] { 0, 0, a, r[3] }, s, p, j);
-			context.getMandelbrotSession().setView(view, pressed);
+			context.setView(view, pressed);
 			changed = false;
 		}
 	}
