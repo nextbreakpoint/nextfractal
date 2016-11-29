@@ -25,7 +25,6 @@
 package com.nextbreakpoint.nextfractal.mandelbrot;
 
 import java.nio.IntBuffer;
-import java.util.Arrays;
 import java.util.Date;
 
 import javax.xml.bind.annotation.XmlRootElement;
@@ -44,9 +43,7 @@ public class MandelbrotData {
 	private Date timestamp = new Date();
 	private String source = "";
 	private boolean julia;
-	private double time;
 	private IntBuffer pixels;
-	private float[] color;
 
 	public boolean isJulia() {
 		return julia;
@@ -62,14 +59,6 @@ public class MandelbrotData {
 
 	public void setSource(String source) {
 		this.source = source;
-	}
-
-	public double getTime() {
-		return time;
-	}
-
-	public void setTime(double time) {
-		this.time = time;
 	}
 
 	public String getVersion() {
@@ -118,18 +107,5 @@ public class MandelbrotData {
 
 	public Date getTimestamp() {
 		return timestamp;
-	}
-
-	@Override
-	public String toString() {
-		return "[translation=" + Arrays.toString(translation)	+ ", rotation=" + Arrays.toString(rotation) + ", scale=" + Arrays.toString(scale) + ", julia=" + julia + ", point=" + Arrays.toString(point) + ", time=" + time + "]";
-	}
-
-	public float[] getColor() {
-		return color;
-	}
-
-	public void setColor(float[] color) {
-		this.color = color;
 	}
 }

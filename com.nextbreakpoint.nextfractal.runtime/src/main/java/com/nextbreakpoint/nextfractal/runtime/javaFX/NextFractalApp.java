@@ -105,8 +105,8 @@ public class NextFractalApp extends Application {
 
 		eventBus.subscribe("editor-grammar-changed", event -> tryGrammar((String) event).ifPresent(factory -> createSession(eventBus, factory)));
 
-		eventBus.subscribe("session-changed", event -> handleSessionChanged((Session)event, primaryStage, exportService));
-		eventBus.subscribe("session-terminated", event -> handleSessionTerminate((Session)event));
+		eventBus.subscribe("session-changed", event -> handleSessionChanged(eventBus, primaryStage));
+		eventBus.subscribe("session-terminated", event -> handleSessionTerminate(exportService));
 
 		rootPane.getChildren().add(createMainPane(eventBus, editorWidth, renderWidth, sceneHeight));
 
@@ -130,15 +130,13 @@ public class NextFractalApp extends Application {
 		primaryStage.show();
 	}
 
-	private void handleSessionChanged(Session session, Stage primaryStage, ExportService exportService) {
-		session.setExportService(exportService);
-
-		primaryStage.setOnCloseRequest(e -> session.terminate());
+	private void handleSessionChanged(EventBus eventBus, Stage primaryStage) {
+		primaryStage.setOnCloseRequest(e -> eventBus.postEvent("session-terminated", ""));
 	}
 
-	private void handleSessionTerminate(Session session) {
+	private void handleSessionTerminate(ExportService exportService) {
 		logger.info("Terminating export service...");
-		session.getExportService().shutdown();
+		exportService.shutdown();
 	}
 
 	private void createSession(EventBus eventBus, FractalFactory factory) {

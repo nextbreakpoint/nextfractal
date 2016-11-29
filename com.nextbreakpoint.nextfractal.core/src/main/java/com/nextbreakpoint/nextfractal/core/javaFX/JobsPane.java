@@ -1,7 +1,6 @@
 package com.nextbreakpoint.nextfractal.core.javaFX;
 
 import com.nextbreakpoint.nextfractal.core.ImageGenerator;
-import com.nextbreakpoint.nextfractal.core.export.ExportService;
 import com.nextbreakpoint.nextfractal.core.export.ExportSession;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
 import com.nextbreakpoint.nextfractal.core.utils.DefaultThreadFactory;
@@ -31,7 +30,7 @@ public class JobsPane extends BorderPane {
 
     private final ScheduledExecutorService sessionsExecutor;
 
-    public JobsPane(ImageGenerator generator, RendererTile tile, ExportService exportSerivce) {
+    public JobsPane(ImageGenerator generator, RendererTile tile) {
         ListView<ExportSession> listView = new ListView<>();
         listView.setFixedCellSize(tile.getTileSize().getHeight() + PADDING);
         listView.getStyleClass().add("jobs");
@@ -59,9 +58,9 @@ public class JobsPane extends BorderPane {
         List<Button> buttonsList = Arrays.asList(suspendButton, resumeButton, removeButton);
         listView.getSelectionModel().getSelectedItems().addListener((ListChangeListener.Change<? extends ExportSession> c) -> updateButtons(buttonsList, c.getList().size() == 0));
 
-        suspendButton.setOnAction(e -> selectedItems(listView).filter(exportSession -> !exportSession.isSuspended()).forEach(exportSession -> exportSerivce.suspendSession(exportSession)));
-        resumeButton.setOnAction(e -> selectedItems(listView).filter(exportSession -> exportSession.isSuspended()).forEach(exportSession -> exportSerivce.resumeSession(exportSession)));
-        removeButton.setOnAction(e -> selectedItems(listView).forEach(exportSession -> exportSerivce.stopSession(exportSession)));
+//        suspendButton.setOnAction(e -> selectedItems(listView).filter(exportSession -> !exportSession.isSuspended()).forEach(exportSession -> exportSerivce.suspendSession(exportSession)));
+//        resumeButton.setOnAction(e -> selectedItems(listView).filter(exportSession -> exportSession.isSuspended()).forEach(exportSession -> exportSerivce.resumeSession(exportSession)));
+//        removeButton.setOnAction(e -> selectedItems(listView).forEach(exportSession -> exportSerivce.stopSession(exportSession)));
 
         sessionsExecutor = Executors.newSingleThreadScheduledExecutor(new DefaultThreadFactory("Jobs", true, Thread.MIN_PRIORITY));
         sessionsExecutor.scheduleWithFixedDelay(() -> Platform.runLater(() -> updateJobList(listView)), 500, 500, TimeUnit.MILLISECONDS);

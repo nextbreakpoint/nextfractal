@@ -38,17 +38,13 @@ public class ContextFreeData {
 	private Date timestamp = new Date();
 	private String source = "";
 	private String seed = "ABCD";
-	private double time;
 	private IntBuffer pixels;
-	private float[] color;
 
 	public ContextFreeData() {
 	}
 
 	public ContextFreeData(ContextFreeData data) {
 		seed = data.seed;
-		time = data.time;
-//		color = data.color.clone();
 		source = data.source;
 		timestamp = data.timestamp;
 	}
@@ -59,14 +55,6 @@ public class ContextFreeData {
 
 	public void setSource(String source) {
 		this.source = source;
-	}
-
-	public double getTime() {
-		return time;
-	}
-
-	public void setTime(double time) {
-		this.time = time;
 	}
 
 	public String getVersion() {
@@ -83,19 +71,6 @@ public class ContextFreeData {
 
 	public Date getTimestamp() {
 		return timestamp;
-	}
-
-	@Override
-	public String toString() {
-		return "[time=" + time + "]";
-	}
-
-	public float[] getColor() {
-		return color;
-	}
-
-	public void setColor(float[] color) {
-		this.color = color;
 	}
 
 	public String getSeed() {

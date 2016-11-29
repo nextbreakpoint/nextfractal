@@ -26,7 +26,7 @@ package com.nextbreakpoint.nextfractal.contextfree;
 
 import java.util.concurrent.ThreadFactory;
 
-import com.nextbreakpoint.nextfractal.contextfree.javaFX.CodeEditorPane;
+import com.nextbreakpoint.nextfractal.contextfree.javaFX.EditorPane;
 import com.nextbreakpoint.nextfractal.contextfree.javaFX.ParamsPane;
 import com.nextbreakpoint.nextfractal.contextfree.javaFX.RenderPane;
 import com.nextbreakpoint.nextfractal.core.EventBus;
@@ -63,7 +63,7 @@ public class ContextFreeFactory implements FractalFactory {
 	 */
 	@Override
 	public Pane createEditorPane(Session session, EventBus eventBus) {
-		return new CodeEditorPane(eventBus);
+		return new EditorPane(eventBus);
 	}
 
 	/**

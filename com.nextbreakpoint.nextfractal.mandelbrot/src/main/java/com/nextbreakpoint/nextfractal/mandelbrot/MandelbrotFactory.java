@@ -27,7 +27,7 @@ package com.nextbreakpoint.nextfractal.mandelbrot;
 import java.util.concurrent.ThreadFactory;
 
 import com.nextbreakpoint.nextfractal.core.EventBus;
-import com.nextbreakpoint.nextfractal.mandelbrot.javaFX.CodeEditorPane;
+import com.nextbreakpoint.nextfractal.mandelbrot.javaFX.EditorPane;
 import com.nextbreakpoint.nextfractal.mandelbrot.javaFX.ParamsPane;
 import javafx.scene.layout.Pane;
 
@@ -63,7 +63,7 @@ public class MandelbrotFactory implements FractalFactory {
 	 */
 	@Override
 	public Pane createEditorPane(Session session, EventBus eventBus) {
-		return new CodeEditorPane(eventBus);
+		return new EditorPane(eventBus);
 	}
 
 	/**

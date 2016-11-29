@@ -24,78 +24,22 @@
  */
 package com.nextbreakpoint.nextfractal.core.session;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.nextbreakpoint.nextfractal.core.export.ExportService;
-import com.nextbreakpoint.nextfractal.core.export.ExportSession;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 public abstract class AbstractSession implements Session {
-	private final List<SessionListener> listeners = new ArrayList<>();
-	private final List<ExportSession> sessions = new ArrayList<>();
-	private final List<String> grammars = new ArrayList<>();
-	private ExportService exportService;
-
-	public void addSessionListener(SessionListener listener) {
-		listeners.add(listener);
-	}
-
-	public void removeSessionListener(SessionListener listener) {
-		listeners.remove(listener);
-	}
-
-	public ExportService getExportService() {
-		return exportService;
-	}
-
-	public void setExportService(ExportService exportService) {
-		this.exportService = exportService;
-	}
-
-	public void terminate() {
-		fireTerminate();
-	}
-
-	public void addGrammars(List<String> grammars) {
-		this.grammars.addAll(grammars);
-	}
-
-	public List<String> listGrammars() {
-		return grammars;
-	}
-
-	public void addExportSession(ExportSession exportSession) {
-		sessions.add(exportSession);
-		fireSessionAdded(exportSession);
-	}
-
-	public void removeExportSession(ExportSession exportSession) {
-		sessions.remove(exportSession);
-		fireSessionRemoved(exportSession);
-	}
-	
-	protected void fireTerminate() {
-		for (SessionListener listener : listeners) {
-			listener.terminate(this);
+	protected String readResource(String name) throws IOException {
+		InputStream is = getClass().getResourceAsStream(name);
+		if (is != null) {
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			byte[] buffer = new byte[4096];
+			int length = 0;
+			while ((length = is.read(buffer)) > 0) {
+				baos.write(buffer, 0, length);
+			}
+			return baos.toString();
 		}
-	}
-
-	protected void fireSessionAdded(ExportSession session) {
-		for (SessionListener listener : listeners) {
-			listener.sessionAdded(this, session);
-		}
-	}
-	
-	protected void fireSessionRemoved(ExportSession session) {
-		for (SessionListener listener : listeners) {
-			listener.sessionRemoved(this, session);
-		}
-	}
-
-	@Override
-	public void selectGrammar(String grammar) {
-		for (SessionListener listener : listeners) {
-			listener.selectGrammar(this, grammar);
-		}
+		return "";
 	}
 }

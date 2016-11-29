@@ -24,18 +24,12 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 
 import com.nextbreakpoint.nextfractal.core.session.AbstractSession;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerReport;
 
 public class MandelbrotSession extends AbstractSession {
 	private MandelbrotData data = new MandelbrotData();
-	private CompilerReport report;
-	private File currentFile;
 
 	public MandelbrotSession() {
 		data.setSource(getInitialSource());
@@ -46,106 +40,21 @@ public class MandelbrotSession extends AbstractSession {
         return "Mandelbrot";
     }
 
-    public String getGrammar() {
-		return "Mandelbrot";
-	}
-
-	public String getVersion() {
-		return data.getVersion();
-	}
-
-	public File getCurrentFile() {
-		return currentFile;
-	}
-
-	public void setCurrentFile(File currentFile) {
-		this.currentFile = currentFile;
-	}
-
-	public String getSource() {
-		return data.getSource();
-	}
-	
-	private void setSource(String source) {
-		data.setSource(source);
-	}
-
-	public CompilerReport getReport() {
-		return report;
-	}
-
-	private void setReport(CompilerReport report) {
-		this.report = report;
-	}
-
-	public double getTime() {
-		return data.getTime();
-	}
-
-	private void setTime(double time) {
-		data.setTime(time);
-	}
-
-	public double[] getPoint() {
-		return data.getPoint();
-	}
-
-	private void setPoint(double[] point) {
-		data.setPoint(point);
-	}
-
-	public MandelbrotView getViewAsCopy() {
-		return new MandelbrotView(data.getTranslation(), data.getRotation(), data.getScale(), data.getPoint(), data.isJulia());
-	}
-
-	private void setView(MandelbrotView view) {
-		this.data.setTranslation(view.getTranslation());
-		this.data.setRotation(view.getRotation());
-		this.data.setScale(view.getScale());
-		this.data.setPoint(view.getPoint());
-		this.data.setJulia(view.isJulia());
-	}
-	
 	public MandelbrotData getDataAsCopy() {
 		MandelbrotData data = new MandelbrotData();
 		data.setSource(this.data.getSource());
 		data.setTranslation(this.data.getTranslation());
 		data.setRotation(this.data.getRotation());
 		data.setScale(this.data.getScale());
-		data.setTime(this.data.getTime());
 		data.setPoint(this.data.getPoint());
 		data.setJulia(this.data.isJulia());
 		return data;
-	}
-
-	private void setData(MandelbrotData data) {
-		this.data.setSource(data.getSource());
-		this.data.setTranslation(data.getTranslation());
-		this.data.setRotation(data.getRotation());
-		this.data.setScale(data.getScale());
-		this.data.setTime(data.getTime());
-		this.data.setPoint(data.getPoint());
-		this.data.setJulia(data.isJulia());
 	}
 
 	private String getInitialSource() {
 		try {
 			return readResource("/mandelbrot.txt");
 		} catch (IOException e) {
-		}
-		return "";
-	}
-
-	protected String readResource(String name) throws IOException {
-		InputStream is = getClass().getResourceAsStream(name);
-		if (is != null) {
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			byte[] buffer = new byte[4096];
-			int length = 0;
-			while ((length = is.read(buffer)) > 0) {
-				baos.write(buffer, 0, length);
-			}
-			return baos.toString();
 		}
 		return "";
 	}

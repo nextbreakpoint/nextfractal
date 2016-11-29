@@ -33,7 +33,6 @@ import javafx.stage.Screen;
 
 import java.io.InputStream;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -73,7 +72,7 @@ public class MainEditorPane extends BorderPane {
 
         Pane historyPane = createGenerator(session, tile).map(generator -> new HistoryPane(generator, tile)).orElse(null);
 
-        Pane jobsPane = createGenerator(session, tile).map(generator -> new JobsPane(generator, tile, session.getExportService())).orElse(null);
+        Pane jobsPane = createGenerator(session, tile).map(generator -> new JobsPane(generator, tile)).orElse(null);
 
         Pane editorPane = createEditorPane(session, eventBus).orElse(null);
 
@@ -275,7 +274,7 @@ public class MainEditorPane extends BorderPane {
 
         eventBus.subscribe("session-status-changed", event -> statusPane.setMessage((String)event));
 
-        eventBus.postEvent("editor-source-loaded", session.getSource());
+        eventBus.postEvent("editor-source-loaded", session);
 
         eventBus.postEvent("editor-params-changed", session);
 
