@@ -24,11 +24,11 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot;
 
+import com.nextbreakpoint.nextfractal.core.session.Session;
+
 import java.io.IOException;
 
-import com.nextbreakpoint.nextfractal.core.session.AbstractSession;
-
-public class MandelbrotSession extends AbstractSession {
+public class MandelbrotSession extends Session {
 	private MandelbrotData data = new MandelbrotData();
 
 	public MandelbrotSession() {

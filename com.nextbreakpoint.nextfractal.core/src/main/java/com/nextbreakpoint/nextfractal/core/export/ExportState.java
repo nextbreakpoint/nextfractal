@@ -22,31 +22,8 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.core.session;
+package com.nextbreakpoint.nextfractal.core.export;
 
-import com.nextbreakpoint.nextfractal.core.export.ExportSession;
-
-public interface SessionListener {
-	/**
-	 * @param session
-	 */
-	public void terminate(Session session);
-	
-	/**
-	 * @param session
-	 * @param exportSession
-	 */
-	public void sessionAdded(Session session, ExportSession exportSession);
-
-	/**
-	 * @param session
-	 * @param exportSession
-	 */
-	public void sessionRemoved(Session session, ExportSession exportSession);
-
-	/**
-	 * @param session
-	 * @param grammar
-	 */
-    public void selectGrammar(Session session, String grammar);
+public enum ExportState {
+	STARTED, DISPATCHED, INTERRUPTED, SUSPENDED, COMPLETED, STOPPED, FAILED
 }

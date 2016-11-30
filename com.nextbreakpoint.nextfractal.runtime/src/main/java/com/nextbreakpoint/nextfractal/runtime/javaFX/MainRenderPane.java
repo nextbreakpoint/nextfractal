@@ -38,7 +38,7 @@ public class MainRenderPane extends BorderPane {
     }
 
     private static Try<Pane, Exception> createRenderPane(Session session, EventBus eventBus, int width, int height) {
-        return tryPlugin(session.getPluginId(), plugin -> Objects.requireNonNull(plugin.createRenderPane(session, eventBus, width, height)))
+        return tryPlugin(session.getPluginId(), plugin -> Objects.requireNonNull(plugin.createRenderPane(eventBus, session, width, height)))
                 .onFailure(e -> logger.log(Level.WARNING, "Cannot create render panel with pluginId " + session.getPluginId(), e));
     }
 }

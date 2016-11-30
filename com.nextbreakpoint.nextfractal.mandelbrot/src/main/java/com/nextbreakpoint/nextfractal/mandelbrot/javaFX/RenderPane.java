@@ -144,8 +144,8 @@ public class RenderPane extends BorderPane {
 		hideErrorsProperty = new BooleanObservableValue();
 		hideErrorsProperty.setValue(true);
 		
-		renderThreadFactory = new DefaultThreadFactory("MandelbrotRendererCoordinator", true, Thread.MIN_PRIORITY + 2);
-		juliaRenderThreadFactory = new DefaultThreadFactory("MandelbrotJuliaRendererCoordinator", true, Thread.MIN_PRIORITY);
+		renderThreadFactory = new DefaultThreadFactory("MandelbrotCoordinator", true, Thread.MIN_PRIORITY + 2);
+		juliaRenderThreadFactory = new DefaultThreadFactory("JuliaCoordinator", true, Thread.MIN_PRIORITY);
 		
 		renderFactory = new JavaFXRendererFactory();
 
@@ -525,6 +525,7 @@ public class RenderPane extends BorderPane {
 		eventBus.subscribe("session-data-changed", event -> {
 			MandelbrotData data = (MandelbrotData) ((Object[]) event)[0];
 			mandelbrotView = new MandelbrotView(data.getTranslation(), data.getRotation(), data.getScale(), data.getPoint(), data.isJulia());
+			updateView(mandelbrotView, (Boolean)((Object[])event)[1]);
 			juliaProperty.setValue(mandelbrotView.isJulia());
 		});
 

@@ -33,7 +33,6 @@ import java.util.UUID;
 
 import com.nextbreakpoint.nextfractal.core.encoder.Encoder;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
-import com.nextbreakpoint.nextfractal.core.session.SessionState;
 
 public final class ExportSession {
 	private static final int BORDER_SIZE = 0;
@@ -53,7 +52,7 @@ public final class ExportSession {
 	private volatile int frameNumber;
 	private volatile float progress;
 	private volatile boolean cancelled;
-	private volatile SessionState state = SessionState.SUSPENDED;
+	private volatile ExportState state = ExportState.SUSPENDED;
 	private IntBuffer pixels;
 
 	public ExportSession(String pluginId, Object data, File file, File tmpFile, RendererSize size, int tileSize, Encoder encoder) {
@@ -125,34 +124,34 @@ public final class ExportSession {
 	}
 
 	public boolean isStopped() {
-		return state == SessionState.STOPPED;
+		return state == ExportState.STOPPED;
 	}
 
 	public boolean isDispatched() {
-		return state == SessionState.DISPATCHED;
+		return state == ExportState.DISPATCHED;
 	}
 
 	public boolean isStarted() {
-		return state == SessionState.STARTED;
+		return state == ExportState.STARTED;
 	}
 
 	public boolean isSuspended() {
-		return state == SessionState.SUSPENDED;
+		return state == ExportState.SUSPENDED;
 	}
 
 	public boolean isInterrupted() {
-		return state == SessionState.INTERRUPTED;
+		return state == ExportState.INTERRUPTED;
 	}
 
 	public boolean isCompleted() {
-		return state == SessionState.COMPLETED;
+		return state == ExportState.COMPLETED;
 	}
 
 	public boolean isFailed() {
-		return state == SessionState.FAILED;
+		return state == ExportState.FAILED;
 	}
 
-	public SessionState getState() {
+	public ExportState getState() {
 		return state;
 	}
 
@@ -194,7 +193,7 @@ public final class ExportSession {
 		this.cancelled = cancelled;
 	}
 
-	protected void setState(SessionState state) {
+	protected void setState(ExportState state) {
 		this.state = state;
 	}
 

@@ -24,11 +24,11 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree;
 
-import com.nextbreakpoint.nextfractal.core.session.AbstractSession;
+import com.nextbreakpoint.nextfractal.core.session.Session;
 
 import java.io.IOException;
 
-public class ContextFreeSession extends AbstractSession {
+public class ContextFreeSession extends Session {
 	private ContextFreeData data = new ContextFreeData();
 
 	public ContextFreeSession() {

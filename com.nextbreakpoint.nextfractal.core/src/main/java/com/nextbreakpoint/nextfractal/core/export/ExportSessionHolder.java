@@ -26,8 +26,6 @@ package com.nextbreakpoint.nextfractal.core.export;
 
 import java.util.logging.Logger;
 
-import com.nextbreakpoint.nextfractal.core.session.SessionState;
-
 public class ExportSessionHolder {
 	private static final Logger logger = Logger.getLogger(ExportSessionHolder.class.getName());
 	private final ExportSession session;
@@ -40,7 +38,7 @@ public class ExportSessionHolder {
 		return session;
 	}
 
-	public void setState(SessionState state) {
+	public void setState(ExportState state) {
 		session.setState(state);
 		logger.fine(session.getSessionId() + " -> state = " + state);
 	}

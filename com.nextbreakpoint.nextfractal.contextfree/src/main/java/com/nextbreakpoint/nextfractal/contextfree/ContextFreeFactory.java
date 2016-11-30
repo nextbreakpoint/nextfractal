@@ -59,18 +59,18 @@ public class ContextFreeFactory implements FractalFactory {
 	}
 	
 	/**
-	 * @see FractalFactory#createEditorPane(Session, EventBus)
+	 * @see FractalFactory#createEditorPane(EventBus, Session)
 	 */
 	@Override
-	public Pane createEditorPane(Session session, EventBus eventBus) {
+	public Pane createEditorPane(EventBus eventBus, Session session) {
 		return new EditorPane(eventBus);
 	}
 
 	/**
-	 * @see FractalFactory#createRenderPane(Session, EventBus, int, int)
+	 * @see FractalFactory#createRenderPane(EventBus, Session, int, int)
 	 */
 	@Override
-	public Pane createRenderPane(Session session, EventBus eventBus, int width, int height) {
+	public Pane createRenderPane(EventBus eventBus, Session session, int width, int height) {
 		return new RenderPane(session, eventBus, width, height, 1, 1);
 	}
 
@@ -83,7 +83,7 @@ public class ContextFreeFactory implements FractalFactory {
 	}
 
 	@Override
-	public Pane createParamsPane(Session session, EventBus eventBus) {
+	public Pane createParamsPane(EventBus eventBus, Session session) {
 		return new ParamsPane((ContextFreeSession) session, eventBus);
 	}
 }

@@ -103,7 +103,7 @@ public class MainParamsPane extends Pane {
 			findPlugin(session.getPluginId()).ifPresent(factory -> {
 				grammar = factory.getGrammar();
 				grammarCombobox.getSelectionModel().select(grammar);
-				paramsPane.setCenter(Try.of(() -> factory.createParamsPane(session, eventBus)).orElse(null));
+				paramsPane.setCenter(Try.of(() -> factory.createParamsPane(eventBus, session)).orElse(null));
 			});
 		};
 

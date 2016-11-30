@@ -33,8 +33,6 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
-import com.nextbreakpoint.nextfractal.core.session.SessionState;
-
 public abstract class AbstractExportService implements ExportService {
 	private final List<ExportSessionHolder> holders = new ArrayList<>();
 	private final ReentrantLock lock = new ReentrantLock();
@@ -68,10 +66,10 @@ public abstract class AbstractExportService implements ExportService {
 	public final void startSession(ExportSession session) {
 		try {
 			lock.lock();
-			if (session.getState() != SessionState.SUSPENDED) {
+			if (session.getState() != ExportState.SUSPENDED) {
 				throw new IllegalStateException("Session is not suspended");
 			}
-			session.setState(SessionState.STARTED);
+			session.setState(ExportState.STARTED);
 			session.setCancelled(false);
 			holders.add(new ExportSessionHolder(session));
 		} finally {
@@ -102,10 +100,10 @@ public abstract class AbstractExportService implements ExportService {
 	public final void resumeSession(ExportSession session) {
 		try {
 			lock.lock();
-			if (session.getState() != SessionState.SUSPENDED) {
+			if (session.getState() != ExportState.SUSPENDED) {
 				throw new IllegalStateException("Session is not suspended");
 			}
-			session.setState(SessionState.STARTED);
+			session.setState(ExportState.STARTED);
 			session.setCancelled(false);
 		} finally {
 			lock.unlock();

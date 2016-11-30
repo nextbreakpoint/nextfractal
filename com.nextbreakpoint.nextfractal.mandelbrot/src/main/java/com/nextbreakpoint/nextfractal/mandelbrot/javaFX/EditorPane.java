@@ -38,6 +38,8 @@ public class EditorPane extends BorderPane {
     private final Pattern highlightingPattern;
     private final CodeArea codeArea;
 
+    private String source = "";
+
     public EditorPane(EventBus eventBus) {
         codeArea = new CodeArea();
         codeArea.getStyleClass().add("mandelbrot");
@@ -63,7 +65,7 @@ public class EditorPane extends BorderPane {
 
         textExecutor = Executors.newSingleThreadExecutor(new DefaultThreadFactory("Editor", true, Thread.MIN_PRIORITY));
 
-        eventBus.subscribe("editor-source-loaded", event -> updateSource((MandelbrotSession)event));
+        eventBus.subscribe("editor-source-loaded", event -> updateSource(((MandelbrotSession)event).getDataAsCopy().getSource()));
 
         eventBus.subscribe("editor-view-changed", event -> {
             eventBus.postEvent("session-view-changed", event);
@@ -86,13 +88,18 @@ public class EditorPane extends BorderPane {
         });
 
         eventBus.subscribe("editor-source-changed", event -> {
+            source = (String)event;
             eventBus.postEvent("session-source-changed", event);
+        });
+
+        eventBus.subscribe("editor-action", event -> {
+            if (event.equals("reload")) updateSource(source);
         });
     }
 
-    private void updateSource(MandelbrotSession session) {
+    private void updateSource(String source) {
         codeArea.replaceText("");
-        codeArea.replaceText(session.getDataAsCopy().getSource());
+        codeArea.replaceText(source);
     }
 
     private class TaskResult {

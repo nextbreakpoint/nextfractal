@@ -27,7 +27,7 @@ package com.nextbreakpoint.nextfractal.runtime.export;
 import com.nextbreakpoint.Try;
 import com.nextbreakpoint.nextfractal.core.encoder.EncoderException;
 import com.nextbreakpoint.nextfractal.core.export.*;
-import com.nextbreakpoint.nextfractal.core.session.SessionState;
+import com.nextbreakpoint.nextfractal.core.export.ExportState;
 import com.nextbreakpoint.nextfractal.runtime.encoder.RAFEncoderContext;
 
 import java.io.IOException;
@@ -66,14 +66,14 @@ public class SimpleExportService extends AbstractExportService {
 		ExportSession session = holder.getSession();
 		if (session.isStarted()) {
 			dispatchJobs(session);
-			holder.setState(SessionState.DISPATCHED);
+			holder.setState(ExportState.DISPATCHED);
 		} else if (session.isInterrupted()) {
-			holder.setState(SessionState.STOPPED);
+			holder.setState(ExportState.STOPPED);
 		} else if (session.isCompleted()) {
-			holder.setState(SessionState.STOPPED);
+			holder.setState(ExportState.STOPPED);
 		} else if (session.isFailed()) {
 			if (session.isCancelled()) {
-				holder.setState(SessionState.STOPPED);
+				holder.setState(ExportState.STOPPED);
 			}
 		} else {
 			getTasks(session).map(tasks -> removeTerminatedTasks(tasks))
@@ -84,18 +84,18 @@ public class SimpleExportService extends AbstractExportService {
 
 	private void updateTerminatedSession(ExportSessionHolder holder, ExportSession session) {
 		if (session.isCancelled()) {
-            holder.setState(SessionState.INTERRUPTED);
+            holder.setState(ExportState.INTERRUPTED);
         } else if (isSessionCompleted(session)) {
 			updateCompletedSession(holder, session);
 		} else {
-            holder.setState(SessionState.SUSPENDED);
+            holder.setState(ExportState.SUSPENDED);
         }
 	}
 
 	private void updateCompletedSession(ExportSessionHolder holder, ExportSession session) {
 		Try.of(() -> encodeData(session))
-                .onSuccess(s -> holder.setState(SessionState.COMPLETED))
-                .onFailure(e -> holder.setState(SessionState.FAILED))
+                .onSuccess(s -> holder.setState(ExportState.COMPLETED))
+                .onFailure(e -> holder.setState(ExportState.FAILED))
                 .execute();
 	}
 

@@ -15,6 +15,7 @@ import com.nextbreakpoint.nextfractal.core.renderer.javaFX.JavaFXRendererFactory
 import com.nextbreakpoint.nextfractal.core.session.Session;
 import com.nextbreakpoint.nextfractal.core.utils.DefaultThreadFactory;
 import javafx.animation.TranslateTransition;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -33,6 +34,7 @@ import javafx.stage.Screen;
 
 import java.io.InputStream;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -93,13 +95,11 @@ public class MainEditorPane extends BorderPane {
         sidePane.getChildren().add(exportPane);
         sidePane.getChildren().add(paramsPane);
 
-//        EventHandler<ActionEvent> renderEventHandler = e -> Platform.runLater(() -> updateSource());
-
 //        EventHandler<ActionEvent> loadEventHandler = e -> Optional.ofNullable(showLoadFileChooser())
-//                .map(fileChooser -> fileChooser.showOpenDialog(EditorPane.this.getScene().getWindow())).ifPresent(file -> loadDataFromFile(file));
+//            .map(fileChooser -> fileChooser.showOpenDialog(MainEditorPane.this.getScene().getWindow())).ifPresent(file -> loadDataFromFile(file));
 //
 //        EventHandler<ActionEvent> saveEventHandler = e -> Optional.ofNullable(showSaveFileChooser())
-//                .map(fileChooser -> fileChooser.showSaveDialog(EditorPane.this.getScene().getWindow())).ifPresent(file -> saveDataToFile(file));
+//            .map(fileChooser -> fileChooser.showSaveDialog(MainEditorPane.this.getScene().getWindow())).ifPresent(file -> saveDataToFile(file));
 
         Pane sourcePane = new Pane();
         HBox sourceButtons = new HBox(0);
@@ -134,7 +134,7 @@ public class MainEditorPane extends BorderPane {
         sourcePane.getChildren().add(sourceButtons);
         sourcePane.getChildren().add(statusPane);
         sourcePane.getChildren().add(sidePane);
-//        renderButton.setOnAction(renderEventHandler);
+        renderButton.setOnAction(e -> eventBus.postEvent("editor-action", "reload"));
 //        loadButton.setOnAction(loadEventHandler);
 //        saveButton.setOnAction(saveEventHandler);
 
@@ -355,7 +355,7 @@ public class MainEditorPane extends BorderPane {
     }
 
     private static Try<Pane, Exception> createEditorPane(Session session, EventBus eventBus) {
-        return tryPlugin(session.getPluginId(), plugin -> Objects.requireNonNull(plugin.createEditorPane(session, eventBus)))
+        return tryPlugin(session.getPluginId(), plugin -> Objects.requireNonNull(plugin.createEditorPane(eventBus, session)))
                 .onFailure(e -> logger.log(Level.WARNING, "Cannot create editor with pluginId " + session.getPluginId(), e));
     }
 

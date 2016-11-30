@@ -59,18 +59,18 @@ public class MandelbrotFactory implements FractalFactory {
 	}
 	
 	/**
-	 * @see FractalFactory#createEditorPane(Session, EventBus)
+	 * @see FractalFactory#createEditorPane(EventBus, Session)
 	 */
 	@Override
-	public Pane createEditorPane(Session session, EventBus eventBus) {
+	public Pane createEditorPane(EventBus eventBus, Session session) {
 		return new EditorPane(eventBus);
 	}
 
 	/**
-	 * @see FractalFactory#createRenderPane(Session, EventBus, int, int)
+	 * @see FractalFactory#createRenderPane(EventBus, Session, int, int)
 	 */
 	@Override
-	public Pane createRenderPane(Session session, EventBus eventBus, int width, int height) {
+	public Pane createRenderPane(EventBus eventBus, Session session, int width, int height) {
 		return new RenderPane(session, eventBus, width, height, Integer.getInteger("mandelbrot.renderer.rows", 1), Integer.getInteger("mandelbrot.renderer.cols", 1));
 	}
 
@@ -83,7 +83,7 @@ public class MandelbrotFactory implements FractalFactory {
 	}
 
 	@Override
-	public Pane createParamsPane(Session session, EventBus eventBus) {
+	public Pane createParamsPane(EventBus eventBus, Session session) {
 		return new ParamsPane((MandelbrotSession) session, eventBus);
 	}
 }

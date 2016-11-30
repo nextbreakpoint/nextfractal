@@ -24,6 +24,24 @@
  */
 package com.nextbreakpoint.nextfractal.core.session;
 
-public interface Session {
-	String getPluginId();
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
+public abstract class Session {
+	public abstract String getPluginId();
+
+	protected String readResource(String name) throws IOException {
+		InputStream is = getClass().getResourceAsStream(name);
+		if (is != null) {
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			byte[] buffer = new byte[4096];
+			int length = 0;
+			while ((length = is.read(buffer)) > 0) {
+				baos.write(buffer, 0, length);
+			}
+			return baos.toString();
+		}
+		return "";
+	}
 }

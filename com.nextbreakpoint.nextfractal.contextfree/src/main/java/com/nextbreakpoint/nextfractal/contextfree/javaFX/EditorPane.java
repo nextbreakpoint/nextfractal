@@ -37,6 +37,8 @@ public class EditorPane extends BorderPane {
     private final Pattern highlightingPattern;
     private final CodeArea codeArea;
 
+    private String source = "";
+
     public EditorPane(EventBus eventBus) {
         codeArea = new CodeArea();
         codeArea.getStyleClass().add("contextfree");
@@ -62,7 +64,7 @@ public class EditorPane extends BorderPane {
 
         textExecutor = Executors.newSingleThreadExecutor(new DefaultThreadFactory("Editor", true, Thread.MIN_PRIORITY));
 
-        eventBus.subscribe("editor-source-loaded", event -> updateSource((ContextFreeSession)event));
+        eventBus.subscribe("editor-source-loaded", event -> updateSource((((ContextFreeSession)event)).getDataAsCopy().getSource()));
 
         eventBus.subscribe("editor-data-changed", event -> {
             eventBus.postEvent("session-data-changed", event);
@@ -73,13 +75,18 @@ public class EditorPane extends BorderPane {
 		});
 
 		eventBus.subscribe("editor-source-changed", event -> {
+            source = (String)event;
 			eventBus.postEvent("session-source-changed", event);
 		});
+
+        eventBus.subscribe("editor-action", event -> {
+            if (event.equals("reload")) updateSource(source);
+        });
     }
 
-    private void updateSource(ContextFreeSession source) {
+    private void updateSource(String source) {
         codeArea.replaceText("");
-        codeArea.replaceText(source.getDataAsCopy().getSource());
+        codeArea.replaceText(source);
     }
 
     private class TaskResult {

@@ -114,7 +114,7 @@ public class RenderPane extends BorderPane {
 		hideErrorsProperty = new BooleanObservableValue();
 		hideErrorsProperty.setValue(true);
 		
-		renderThreadFactory = new DefaultThreadFactory("ContextFreeRendererCoordinator", true, Thread.MIN_PRIORITY + 2);
+		renderThreadFactory = new DefaultThreadFactory("ContextFreeCoordinator", true, Thread.MIN_PRIORITY + 2);
 
 		renderFactory = new JavaFXRendererFactory();
 

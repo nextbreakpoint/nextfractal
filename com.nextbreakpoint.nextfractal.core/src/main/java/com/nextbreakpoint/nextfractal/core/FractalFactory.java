@@ -49,27 +49,27 @@ public interface FractalFactory {
 	public Session createSession();
 	
 	/**
-	 * @param session
 	 * @param eventBus
+     * @param session
      * @return
 	 */
-	public Pane createEditorPane(Session session, EventBus eventBus);
+	public Pane createEditorPane(EventBus eventBus, Session session);
 
 	/**
-	 * @param session
 	 * @param eventBus
+	 * @param session
 	 * @param width
 	 * @param height
 	 * @return
 	 */
-	public Pane createRenderPane(Session session, EventBus eventBus, int width, int height);
+	public Pane createRenderPane(EventBus eventBus, Session session, int width, int height);
 
 	/**
-	 * @param session
 	 * @param eventBus
+	 * @param session
 	 * @return
 	 */
-	public Pane createParamsPane(Session session, EventBus eventBus);
+	public Pane createParamsPane(EventBus eventBus, Session session);
 
 	/**
 	 * @param threadFactory
