@@ -8,6 +8,7 @@ import com.nextbreakpoint.nextfractal.core.javaFX.ExportPane;
 import com.nextbreakpoint.nextfractal.core.javaFX.HistoryPane;
 import com.nextbreakpoint.nextfractal.core.javaFX.JobsPane;
 import com.nextbreakpoint.nextfractal.core.javaFX.StatusPane;
+import com.nextbreakpoint.nextfractal.core.javaFX.StringObservableValue;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererPoint;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
@@ -15,7 +16,6 @@ import com.nextbreakpoint.nextfractal.core.renderer.javaFX.JavaFXRendererFactory
 import com.nextbreakpoint.nextfractal.core.session.Session;
 import com.nextbreakpoint.nextfractal.core.utils.DefaultThreadFactory;
 import javafx.animation.TranslateTransition;
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -30,8 +30,10 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.stage.FileChooser;
 import javafx.stage.Screen;
 
+import java.io.File;
 import java.io.InputStream;
 import java.util.Objects;
 import java.util.Optional;
@@ -41,19 +43,32 @@ import java.util.logging.Logger;
 import static com.nextbreakpoint.nextfractal.runtime.Plugins.tryPlugin;
 
 public class MainEditorPane extends BorderPane {
+    public static final String FILE_EXTENSION = ".nfz";
     private static Logger logger = Logger.getLogger(MainEditorPane.class.getName());
 
     private EventBus localEventBus;
+    private FileChooser fileChooser;
+    private File currentFile;
 
     public MainEditorPane(EventBus eventBus) {
 //        widthProperty().addListener((observable, oldValue, newValue) -> Optional.ofNullable(rootPane).ifPresent(pane -> pane.setPrefWidth(newValue.doubleValue())));
 //        heightProperty().addListener((observable, oldValue, newValue) -> Optional.ofNullable(rootPane).ifPresent(pane -> pane.setPrefHeight(newValue.doubleValue())));
 
-        eventBus.subscribe("session-changed", event -> handleSessionChanged(eventBus, (Session) event));
+        EventHandler<ActionEvent> loadEventHandler = e -> Optional.ofNullable(showLoadFileChooser())
+                .map(fileChooser -> fileChooser.showOpenDialog(MainEditorPane.this.getScene().getWindow())).ifPresent(file -> eventBus.postEvent("editor-load-file", file));
+
+        EventHandler<ActionEvent> saveEventHandler = e -> Optional.ofNullable(showSaveFileChooser())
+                .map(fileChooser -> fileChooser.showSaveDialog(MainEditorPane.this.getScene().getWindow())).ifPresent(file -> eventBus.postEvent("editor-save-file", file));
+
+        eventBus.subscribe("session-changed", event -> handleSessionChanged(eventBus, (Session) event, loadEventHandler, saveEventHandler));
+
+        eventBus.subscribe("session-file-loaded", event -> setCurrentFile((File)event));
+
+        eventBus.subscribe("session-file-saved", event -> setCurrentFile((File)event));
     }
 
-    private void handleSessionChanged(EventBus eventBus, Session session) {
-        setCenter(createRootPane(session, getLocalEventBus(eventBus)));
+    private void handleSessionChanged(EventBus eventBus, Session session, EventHandler<ActionEvent> loadEventHandler, EventHandler<ActionEvent> saveEventHandler) {
+        setCenter(createRootPane(session, getLocalEventBus(eventBus), loadEventHandler, saveEventHandler));
     }
 
     private EventBus getLocalEventBus(EventBus eventBus) {
@@ -64,9 +79,9 @@ public class MainEditorPane extends BorderPane {
         return localEventBus;
     }
 
-    private static Pane createRootPane(Session session, EventBus eventBus) {
-//        errorProperty = new StringObservableValue();
-//        errorProperty.setValue(null);
+    private static Pane createRootPane(Session session, EventBus eventBus, EventHandler<ActionEvent> loadEventHandler, EventHandler<ActionEvent> saveEventHandler) {
+        StringObservableValue errorProperty = new StringObservableValue();
+        errorProperty.setValue(null);
 
         int tileSize = computePercentage(0.02);
 
@@ -91,15 +106,9 @@ public class MainEditorPane extends BorderPane {
 
         StackPane sidePane = new StackPane();
         sidePane.getChildren().add(jobsPane);
-		sidePane.getChildren().add(historyPane);
+        sidePane.getChildren().add(historyPane);
         sidePane.getChildren().add(exportPane);
         sidePane.getChildren().add(paramsPane);
-
-//        EventHandler<ActionEvent> loadEventHandler = e -> Optional.ofNullable(showLoadFileChooser())
-//            .map(fileChooser -> fileChooser.showOpenDialog(MainEditorPane.this.getScene().getWindow())).ifPresent(file -> loadDataFromFile(file));
-//
-//        EventHandler<ActionEvent> saveEventHandler = e -> Optional.ofNullable(showSaveFileChooser())
-//            .map(fileChooser -> fileChooser.showSaveDialog(MainEditorPane.this.getScene().getWindow())).ifPresent(file -> saveDataToFile(file));
 
         Pane sourcePane = new Pane();
         HBox sourceButtons = new HBox(0);
@@ -135,8 +144,8 @@ public class MainEditorPane extends BorderPane {
         sourcePane.getChildren().add(statusPane);
         sourcePane.getChildren().add(sidePane);
         renderButton.setOnAction(e -> eventBus.postEvent("editor-action", "reload"));
-//        loadButton.setOnAction(loadEventHandler);
-//        saveButton.setOnAction(saveEventHandler);
+        loadButton.setOnAction(loadEventHandler);
+        saveButton.setOnAction(saveEventHandler);
 
         TranslateTransition sidebarTransition = createTranslateTransition(sidePane);
         TranslateTransition statusTransition = createTranslateTransition(statusPane);
@@ -155,9 +164,9 @@ public class MainEditorPane extends BorderPane {
         exportPane.setExportDelegate(new ExportDelegate() {
             @Override
             public void createSession(RendererSize rendererSize) {
-//                if (errorProperty.getValue() == null) {
+                if (errorProperty.getValue() == null) {
 //                    doExportSession(rendererSize, getMandelbrotSession().getDataAsCopy(), a -> jobsButton.setSelected(true));
-//                }
+                }
             }
         });
 
@@ -244,17 +253,21 @@ public class MainEditorPane extends BorderPane {
 
         viewGroup.selectedToggleProperty().addListener((source, oldValue, newValue) -> {
             if (newValue != null) {
-                showSidebar(sidebarTransition, a -> {});
+                showSidebar(sidebarTransition, a -> {
+                });
             } else {
-                hideSidebar(sidebarTransition, a -> {});
+                hideSidebar(sidebarTransition, a -> {
+                });
             }
         });
 
         statusButton.selectedProperty().addListener((source, oldValue, newValue) -> {
             if (newValue) {
-                showStatus(statusTransition, a -> {});
+                showStatus(statusTransition, a -> {
+                });
             } else {
-                hideStatus(statusTransition, a -> {});
+                hideStatus(statusTransition, a -> {
+                });
             }
         });
 
@@ -274,6 +287,8 @@ public class MainEditorPane extends BorderPane {
 
         eventBus.subscribe("session-status-changed", event -> statusPane.setMessage((String)event));
 
+        eventBus.subscribe("session-error-changed", event -> errorProperty.setValue((String)event));
+
         eventBus.postEvent("editor-source-loaded", session);
 
         eventBus.postEvent("editor-params-changed", session);
@@ -290,9 +305,9 @@ public class MainEditorPane extends BorderPane {
 
     private static void showSidebar(TranslateTransition transition, EventHandler<ActionEvent> handler) {
         transition.stop();
-        if (transition.getNode().getTranslateX() != -((Pane)transition.getNode()).getWidth()) {
+        if (transition.getNode().getTranslateX() != -((Pane) transition.getNode()).getWidth()) {
             transition.setFromX(transition.getNode().getTranslateX());
-            transition.setToX(-((Pane)transition.getNode()).getWidth());
+            transition.setToX(-((Pane) transition.getNode()).getWidth());
             transition.setOnFinished(handler);
             transition.play();
         }
@@ -320,9 +335,9 @@ public class MainEditorPane extends BorderPane {
 
     private static void hideStatus(TranslateTransition transition, EventHandler<ActionEvent> handler) {
         transition.stop();
-        if (transition.getNode().getTranslateY() != ((Pane)transition.getNode()).getHeight()) {
+        if (transition.getNode().getTranslateY() != ((Pane) transition.getNode()).getHeight()) {
             transition.setFromY(transition.getNode().getTranslateY());
-            transition.setToY(((Pane)transition.getNode()).getHeight());
+            transition.setToY(((Pane) transition.getNode()).getHeight());
             transition.setOnFinished(handler);
             transition.play();
         }
@@ -330,9 +345,9 @@ public class MainEditorPane extends BorderPane {
 
     private static void showPanel(TranslateTransition transition, EventHandler<ActionEvent> handler) {
         transition.stop();
-        if (transition.getNode().getTranslateX() != -((Pane)transition.getNode()).getWidth()) {
+        if (transition.getNode().getTranslateX() != -((Pane) transition.getNode()).getWidth()) {
             transition.setFromX(transition.getNode().getTranslateX());
-            transition.setToX(-((Pane)transition.getNode()).getWidth());
+            transition.setToX(-((Pane) transition.getNode()).getWidth());
             transition.setOnFinished(handler);
             transition.play();
         }
@@ -360,7 +375,7 @@ public class MainEditorPane extends BorderPane {
     }
 
     private static int computePercentage(double percentage) {
-        return (int)Math.rint(Screen.getPrimary().getVisualBounds().getWidth() * percentage);
+        return (int) Math.rint(Screen.getPrimary().getVisualBounds().getWidth() * percentage);
     }
 
     private static RendererTile createSingleTile(int width, int height) {
@@ -383,5 +398,67 @@ public class MainEditorPane extends BorderPane {
 
     private static ImageView createIconImage(String name) {
         return createIconImage(name, 0.018);
+    }
+
+    private void ensureFileChooser(String suffix) {
+        if (fileChooser == null) {
+            fileChooser = new FileChooser();
+//            fileChooser.setInitialFileName(createFileName() + suffix);
+            fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+        }
+    }
+
+    private FileChooser showSaveFileChooser() {
+        ensureFileChooser(".nfz");
+        fileChooser.setTitle("Save");
+        if (getCurrentFile() != null) {
+            fileChooser.setInitialDirectory(getCurrentFile().getParentFile());
+            fileChooser.setInitialFileName(getCurrentFile().getName());
+        }
+        return fileChooser;
+    }
+
+    private FileChooser showLoadFileChooser() {
+        ensureFileChooser(FILE_EXTENSION);
+        fileChooser.setTitle("Load");
+        if (getCurrentFile() != null) {
+            fileChooser.setInitialDirectory(getCurrentFile().getParentFile());
+            fileChooser.setInitialFileName(getCurrentFile().getName());
+        }
+        return fileChooser;
+    }
+
+//    private void saveDataToFile(File file) {
+//        try {
+//            setCurrentFile(file);
+//            MandelbrotDataStore service = new MandelbrotDataStore();
+//            MandelbrotData data = getMandelbrotSession().getDataAsCopy();
+//            logger.info(data.toString());
+//            service.saveToFile(getCurrentFile(), data);
+//        } catch (Exception x) {
+//            logger.warning("Cannot save file " + file.getAbsolutePath());
+//            //TODO display error
+//        }
+//    }
+//
+//    private void loadDataFromFile(File file) {
+//        try {
+//            MandelbrotDataStore service = new MandelbrotDataStore();
+//            MandelbrotData data = service.loadFromFile(file);
+//            setCurrentFile(file);
+//            logger.info(data.toString());
+//            getMandelbrotSession().setData(data);
+//        } catch (Exception x) {
+//            logger.warning("Cannot read file " + file.getAbsolutePath());
+//            //TODO display error
+//        }
+//    }
+
+    private File getCurrentFile() {
+        return currentFile;
+    }
+
+    private void setCurrentFile(File currentFile) {
+        this.currentFile = currentFile;
     }
 }
