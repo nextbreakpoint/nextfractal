@@ -27,18 +27,30 @@ package com.nextbreakpoint.nextfractal.mandelbrot;
 import com.nextbreakpoint.nextfractal.core.session.Session;
 
 import java.io.IOException;
+import java.util.Objects;
 
 public class MandelbrotSession extends Session {
-	private MandelbrotData data = new MandelbrotData();
+	private final MandelbrotData data;
 
 	public MandelbrotSession() {
+		this(new MandelbrotData());
 		data.setSource(getInitialSource());
 	}
 
-    @Override
+	public MandelbrotSession(MandelbrotData data) {
+		Objects.requireNonNull(data);
+		this.data = data;
+	}
+
+	@Override
     public String getPluginId() {
         return "Mandelbrot";
     }
+
+	@Override
+	public Object getData() {
+		return data;
+	}
 
 	public MandelbrotData getDataAsCopy() {
 		MandelbrotData data = new MandelbrotData();

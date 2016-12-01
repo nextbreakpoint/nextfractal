@@ -29,14 +29,14 @@ public class Plugins {
     }
 
     public static Try<? extends FractalFactory, Exception> tryGrammar(String grammar) {
-        return findGrammar(grammar).map(plugin -> Try.of(() -> plugin)).orElse(Try.failure(new Exception("Grammar not found")));
+        return findGrammar(grammar).map(plugin -> Try.of(() -> plugin)).orElse(Try.failure(new Exception("Grammar not found " + grammar)));
     }
 
     public static Try<? extends FractalFactory, Exception> tryPlugin(String pluginId) {
-        return findPlugin(pluginId).map(plugin -> Try.of(() -> plugin)).orElse(Try.failure(new Exception("Plugin not found")));
+        return findPlugin(pluginId).map(plugin -> Try.of(() -> plugin)).orElse(Try.failure(new Exception("Plugin not found " + pluginId)));
     }
 
     public static <T> Try<T, Exception> tryPlugin(String pluginId, Function<FractalFactory, T> action) {
-        return findPlugin(pluginId).map(plugin -> Try.of(() -> action.apply(plugin))).orElse(Try.failure(new Exception("Plugin not found")));
+        return findPlugin(pluginId).map(plugin -> Try.of(() -> action.apply(plugin))).orElse(Try.failure(new Exception("Plugin not found " + pluginId)));
     }
 }

@@ -114,7 +114,7 @@ public class RenderPane extends BorderPane {
 	private CompilerBuilder<Orbit> orbitBuilder;
 	private CompilerBuilder<Color> colorBuilder;
 	private List<Number[]> states = new ArrayList<>();
-	private MandelbrotView mandelbrotView;
+	private MandelbrotData mandelbrotData;
 
 	public RenderPane(Session session, EventBus eventBus, int width, int height, int rows, int columns) {
 		this.width = width;
@@ -122,9 +122,7 @@ public class RenderPane extends BorderPane {
 		this.rows = rows;
 		this.columns = columns;
 
-		MandelbrotData sessiondData = ((MandelbrotSession)session).getDataAsCopy();
-
-		mandelbrotView = new MandelbrotView(sessiondData.getTranslation(), sessiondData.getRotation(), sessiondData.getScale(), sessiondData.getPoint(), sessiondData.isJulia());
+		mandelbrotData = ((MandelbrotSession)session).getDataAsCopy();
 
 		fileProperty = new StringObservableValue();
 		fileProperty.setValue(null);
@@ -321,7 +319,7 @@ public class RenderPane extends BorderPane {
 
 			@Override
 			public MandelbrotView getViewAsCopy() {
-				return mandelbrotView;
+				return mandelbrotData.getView();
 			}
 
 			@Override
@@ -425,7 +423,7 @@ public class RenderPane extends BorderPane {
 		});
 		
 		pickButton.setOnAction(e -> {
-			if (!mandelbrotView.isJulia()) {
+			if (!mandelbrotData.isJulia()) {
 				currentTool = new ToolPick(context);
 				juliaCanvas.setVisible(true);
 				pointCanvas.setVisible(true);
@@ -511,44 +509,44 @@ public class RenderPane extends BorderPane {
 
 		eventBus.subscribe("session-terminated", event -> dispose());
 
-		eventBus.subscribe("session-mode-changed", event -> {
-			mandelbrotView = mandelbrotView.butWithJulia((boolean) ((Object[]) event)[0]);
-			juliaProperty.setValue(mandelbrotView.isJulia());
-			updateMode(mandelbrotView.isJulia(), (Boolean)((Object[])event)[1]);
+		eventBus.subscribe("editor-data-changed", event -> {
+			updateData((Object[]) event);
+			eventBus.postEvent("session-data-changed", mandelbrotData);
 		});
 
-		eventBus.subscribe("session-point-changed", event -> {
-			mandelbrotView = mandelbrotView.butWithPoint((double[]) ((Object[]) event)[0]);
-			updatePoint(mandelbrotView.getPoint(), (Boolean)((Object[])event)[1]);
+		eventBus.subscribe("editor-view-changed", event -> {
+			updateView((Object[]) event);
+			eventBus.postEvent("session-data-changed", mandelbrotData);
 		});
 
-		eventBus.subscribe("session-data-changed", event -> {
-			MandelbrotData data = (MandelbrotData) ((Object[]) event)[0];
-			mandelbrotView = new MandelbrotView(data.getTranslation(), data.getRotation(), data.getScale(), data.getPoint(), data.isJulia());
-			updateView(mandelbrotView, (Boolean)((Object[])event)[1]);
-			juliaProperty.setValue(mandelbrotView.isJulia());
+		eventBus.subscribe("editor-point-changed", event -> {
+			updatePoint((Object[]) event);
+			eventBus.postEvent("session-data-changed", mandelbrotData);
 		});
 
-		eventBus.subscribe("session-view-changed", event -> {
-			mandelbrotView = (MandelbrotView) ((Object[]) event)[0];
-			updateView(mandelbrotView, (Boolean)((Object[])event)[1]);
-			juliaProperty.setValue(mandelbrotView.isJulia());
-		});
-
-		eventBus.subscribe("render-view-changed", event -> {
-			eventBus.postEvent("session-view-changed", event);
-		});
-
-		eventBus.subscribe("render-mode-changed", event -> {
-			eventBus.postEvent("session-mode-changed", event);
+		eventBus.subscribe("editor-mode-changed", event -> {
+			updateMode((Object[]) event);
+			eventBus.postEvent("session-data-changed", mandelbrotData);
 		});
 
 		eventBus.subscribe("render-data-changed", event -> {
-			eventBus.postEvent("session-data-changed", event);
+			updateData((Object[]) event);
+			eventBus.postEvent("session-data-changed", mandelbrotData);
+		});
+
+		eventBus.subscribe("render-view-changed", event -> {
+			updateView((Object[]) event);
+			eventBus.postEvent("session-data-changed", mandelbrotData);
 		});
 
 		eventBus.subscribe("render-point-changed", event -> {
-			eventBus.postEvent("session-point-changed", event);
+			updatePoint((Object[]) event);
+			eventBus.postEvent("session-data-changed", mandelbrotData);
+		});
+
+		eventBus.subscribe("render-mode-changed", event -> {
+			updateMode((Object[]) event);
+			eventBus.postEvent("session-data-changed", mandelbrotData);
 		});
 
 		eventBus.subscribe("render-status-changed", event -> {
@@ -558,6 +556,28 @@ public class RenderPane extends BorderPane {
 		eventBus.subscribe("render-error-changed", event -> {
 			eventBus.postEvent("session-error-changed", event);
 		});
+	}
+
+	private void updateData(Object[] event) {
+		mandelbrotData.setView(mandelbrotData.getView().butWithPoint((double[]) event[0]));
+		updatePoint(mandelbrotData.getPoint(), (Boolean) event[1]);
+	}
+
+	private void updateView(Object[] event) {
+		mandelbrotData.setView((MandelbrotView) event[0]);
+		updateView(mandelbrotData.getView(), (Boolean) event[1]);
+		juliaProperty.setValue(mandelbrotData.isJulia());
+	}
+
+	private void updatePoint(Object[] event) {
+		mandelbrotData.setView(mandelbrotData.getView().butWithPoint((double[]) event[0]));
+		updatePoint(mandelbrotData.getPoint(), (Boolean) event[1]);
+	}
+
+	private void updateMode(Object[] event) {
+		mandelbrotData.setView(mandelbrotData.getView().butWithJulia((boolean) event[0]));
+		juliaProperty.setValue(mandelbrotData.isJulia());
+		updateMode(mandelbrotData.isJulia(), (Boolean) event[1]);
 	}
 
 	private void updateFile(File file) {
@@ -671,7 +691,7 @@ public class RenderPane extends BorderPane {
 	}
 
 	private MandelbrotView getViewAsCopy() {
-		return new MandelbrotView(mandelbrotView);
+		return mandelbrotData.getView();
 	}
 
 	private void createCoordinators(int rows, int columns, Map<String, Integer> hints) {

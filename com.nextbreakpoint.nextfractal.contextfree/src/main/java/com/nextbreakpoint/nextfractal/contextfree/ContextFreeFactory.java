@@ -30,6 +30,7 @@ import com.nextbreakpoint.nextfractal.contextfree.javaFX.EditorPane;
 import com.nextbreakpoint.nextfractal.contextfree.javaFX.ParamsPane;
 import com.nextbreakpoint.nextfractal.contextfree.javaFX.RenderPane;
 import com.nextbreakpoint.nextfractal.core.EventBus;
+import com.nextbreakpoint.nextfractal.core.FileManager;
 import javafx.scene.layout.Pane;
 
 import com.nextbreakpoint.nextfractal.core.FractalFactory;
@@ -39,11 +40,13 @@ import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
 import com.nextbreakpoint.nextfractal.core.session.Session;
 
 public class ContextFreeFactory implements FractalFactory {
+	public static final String PLUGIN_ID = "ContextFree";
+
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.FractalFactory#getId()
 	 */
 	public String getId() {
-		return "ContextFree";
+		return PLUGIN_ID;
 	}
 
 	public String getGrammar() {
@@ -80,6 +83,11 @@ public class ContextFreeFactory implements FractalFactory {
 	@Override
 	public ImageGenerator createImageGenerator(ThreadFactory threadFactory,	RendererFactory renderFactory, RendererTile tile, boolean opaque) {
 		return new ContextFreeImageGenerator(threadFactory, renderFactory, tile, opaque);
+	}
+
+	@Override
+	public FileManager createFileManager() {
+		return new ContextFreeFileManager();
 	}
 
 	@Override

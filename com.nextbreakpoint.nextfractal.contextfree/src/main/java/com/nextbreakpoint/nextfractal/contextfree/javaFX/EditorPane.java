@@ -66,10 +66,6 @@ public class EditorPane extends BorderPane {
 
         eventBus.subscribe("editor-source-loaded", event -> updateSource((((ContextFreeSession)event)).getDataAsCopy().getSource()));
 
-        eventBus.subscribe("editor-data-changed", event -> {
-            eventBus.postEvent("session-data-changed", event);
-        });
-
 		eventBus.subscribe("editor-report-changed", event -> {
 			eventBus.postEvent("session-report-changed", event);
 		});

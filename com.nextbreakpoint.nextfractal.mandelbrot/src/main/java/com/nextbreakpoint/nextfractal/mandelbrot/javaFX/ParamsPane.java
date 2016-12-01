@@ -187,30 +187,17 @@ public class ParamsPane extends Pane {
 			if (event.equals("apply")) notifyAll.apply(mandelbrotView);
 		});
 
-		eventBus.subscribe("session-view-changed", event -> {
-			mandelbrotView = (MandelbrotView) ((Object[])event)[0];
-			if (((Object[])event)[1] == Boolean.FALSE) {
-				updateAll.apply(mandelbrotView);
-			}
-		});
+		eventBus.subscribe("editor-view-changed", event -> updateView(updateAll, (Object[]) event));
 
-		eventBus.subscribe("session-data-changed", event -> {
-			mandelbrotData = (MandelbrotData) ((Object[])event)[0];
-			mandelbrotView = createMandelbrotView(mandelbrotData);
-			if (((Object[])event)[1] == Boolean.FALSE) {
-				updateAll.apply(mandelbrotView);
-			}
-		});
+		eventBus.subscribe("editor-data-changed", event -> updateData(updateAll, (Object[]) event));
 
-		eventBus.subscribe("session-point-changed", event -> {
-			double[] point = (double[])((Object[])event)[0];
-			mandelbrotView = createMandelbrotView(mandelbrotData);
-			mandelbrotView.getPoint()[0] = point[0];
-			mandelbrotView.getPoint()[1] = point[1];
-			if (((Object[])event)[1] == Boolean.FALSE) {
-				updateAll.apply(mandelbrotView);
-			}
-		});
+		eventBus.subscribe("editor-point-changed", event -> updatePoint(updateAll, (Object[]) event));
+
+		eventBus.subscribe("render-view-changed", event -> updateView(updateAll, (Object[]) event));
+
+		eventBus.subscribe("render-data-changed", event -> updateData(updateAll, (Object[]) event));
+
+		eventBus.subscribe("render-point-changed", event -> updatePoint(updateAll, (Object[]) event));
 
 		updateAll.apply(mandelbrotView);
 		
@@ -287,6 +274,31 @@ public class ParamsPane extends Pane {
 				});
 			}
 		});
+	}
+
+	private void updatePoint(Function<MandelbrotView, Object> updateAll, Object[] event) {
+		double[] point = (double[]) event[0];
+		mandelbrotView = createMandelbrotView(mandelbrotData);
+		mandelbrotView.getPoint()[0] = point[0];
+		mandelbrotView.getPoint()[1] = point[1];
+		if (event[1] == Boolean.FALSE) {
+            updateAll.apply(mandelbrotView);
+        }
+	}
+
+	private void updateData(Function<MandelbrotView, Object> updateAll, Object[] event) {
+		mandelbrotData = (MandelbrotData) event[0];
+		mandelbrotView = createMandelbrotView(mandelbrotData);
+		if (event[1] == Boolean.FALSE) {
+            updateAll.apply(mandelbrotView);
+        }
+	}
+
+	private void updateView(Function<MandelbrotView, Object> updateAll, Object[] event) {
+		mandelbrotView = (MandelbrotView) event[0];
+		if (event[1] == Boolean.FALSE) {
+            updateAll.apply(mandelbrotView);
+        }
 	}
 
 	private MandelbrotView createMandelbrotView(MandelbrotData data) {

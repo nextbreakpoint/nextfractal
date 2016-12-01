@@ -45,6 +45,18 @@ public class MandelbrotData {
 	private boolean julia;
 	private IntBuffer pixels;
 
+	public MandelbrotData() {
+	}
+
+	public MandelbrotData(MandelbrotData otherData) {
+		translation = otherData.translation.clone();
+		rotation = otherData.rotation.clone();
+		scale = otherData.scale.clone();
+		point = otherData.point.clone();
+		julia = otherData.julia;
+		source = otherData.source;
+	}
+
 	public boolean isJulia() {
 		return julia;
 	}
@@ -107,5 +119,17 @@ public class MandelbrotData {
 
 	public Date getTimestamp() {
 		return timestamp;
+	}
+
+	public MandelbrotView getView() {
+		return new MandelbrotView(translation, rotation, scale, point, julia);
+	}
+
+	public void setView(MandelbrotView view) {
+		setTranslation(view.getTranslation());
+		setRotation(view.getRotation());
+		setScale(view.getScale());
+		setPoint(view.getPoint());
+		setJulia(view.isJulia());
 	}
 }

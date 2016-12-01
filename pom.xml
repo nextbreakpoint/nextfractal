@@ -39,6 +39,7 @@
 		<freeimage4java.version>3.18.0-1.1</freeimage4java.version>
 		<try.version>2.0.3</try.version>
 		<springboot.version>1.2.3.RELEASE</springboot.version>
+		<jackson.version>2.6.3</jackson.version>
 		<junit4.version>4.11</junit4.version>
 		<mockito.version>1.9.5</mockito.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -136,6 +137,11 @@
 				<groupId>com.nextbreakpoint</groupId>
 				<artifactId>com.nextbreakpoint.try</artifactId>
 				<version>${try.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.fasterxml.jackson.core</groupId>
+				<artifactId>jackson-databind</artifactId>
+				<version>${jackson.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.mockito</groupId>

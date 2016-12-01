@@ -67,22 +67,6 @@ public class EditorPane extends BorderPane {
 
         eventBus.subscribe("editor-source-loaded", event -> updateSource(((MandelbrotSession)event).getDataAsCopy().getSource()));
 
-        eventBus.subscribe("editor-view-changed", event -> {
-            eventBus.postEvent("session-view-changed", event);
-        });
-
-        eventBus.subscribe("editor-mode-changed", event -> {
-            eventBus.postEvent("session-mode-changed", event);
-        });
-
-        eventBus.subscribe("editor-data-changed", event -> {
-            eventBus.postEvent("session-data-changed", event);
-        });
-
-        eventBus.subscribe("editor-point-changed", event -> {
-            eventBus.postEvent("session-point-changed", event);
-        });
-
         eventBus.subscribe("editor-report-changed", event -> {
             eventBus.postEvent("session-report-changed", event);
         });

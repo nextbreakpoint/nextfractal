@@ -79,4 +79,9 @@ public interface FractalFactory {
 	 * @return
 	 */
 	public ImageGenerator createImageGenerator(ThreadFactory threadFactory, RendererFactory renderFactory, RendererTile tile, boolean opaque);
+
+	/**
+	 * @return
+	 */
+	public FileManager createFileManager();
 }

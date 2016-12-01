@@ -113,14 +113,18 @@ public class ParamsPane extends Pane {
 			if (event.equals("apply")) notifyAll.apply(contextFreeData);
 		});
 
-		eventBus.subscribe("session-data-changed", event -> {
-			contextFreeData = (ContextFreeData) event;
-			updateAll.apply(contextFreeData);
-		});
+		eventBus.subscribe("editor-data-changed", event -> updateData(updateAll, (ContextFreeData) event));
+
+		eventBus.subscribe("render-data-changed", event -> updateData(updateAll, (ContextFreeData) event));
 
 		updateAll.apply(contextFreeData);
 		
 		seedField.setOnAction(e -> notifyAll.apply(contextFreeData));
+	}
+
+	private void updateData(Function<ContextFreeData, Object> updateAll, ContextFreeData event) {
+		contextFreeData = event;
+		updateAll.apply(contextFreeData);
 	}
 
 	protected void updateEncodedData(TextArea textArea, ContextFreeSession session) {

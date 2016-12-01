@@ -53,6 +53,10 @@ public class MandelbrotView {
 		this(otherView.getTranslation(), otherView.getRotation(), otherView.getScale(), otherView.getPoint(), otherView.isJulia());
 	}
 
+	public MandelbrotView() {
+		this(new double[4], new double[4], new double[4], new double[2], false);
+	}
+
 	public double[] getTranslation() {
 		return translation;
 	}

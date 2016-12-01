@@ -273,11 +273,13 @@ public class RenderPane extends BorderPane {
 
 		eventBus.subscribe("session-terminated", event -> dispose());
 
-		eventBus.subscribe("session-data-changed", event -> {
+		eventBus.subscribe("editor-data-changed", event -> {
 //			ContextFree data = (ContextFree) ((Object[]) event)[0];
+			eventBus.postEvent("session-data-changed", event);
 		});
 
 		eventBus.subscribe("render-data-changed", event -> {
+//			ContextFree data = (ContextFree) ((Object[]) event)[0];
 			eventBus.postEvent("session-data-changed", event);
 		});
 

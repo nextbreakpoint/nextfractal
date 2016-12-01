@@ -35,6 +35,8 @@ import javafx.stage.Screen;
 
 import java.io.File;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.logging.Level;
@@ -62,9 +64,7 @@ public class MainEditorPane extends BorderPane {
 
         eventBus.subscribe("session-changed", event -> handleSessionChanged(eventBus, (Session) event, loadEventHandler, saveEventHandler));
 
-        eventBus.subscribe("session-file-loaded", event -> setCurrentFile((File)event));
-
-        eventBus.subscribe("session-file-saved", event -> setCurrentFile((File)event));
+        eventBus.subscribe("current-file-changed", event -> setCurrentFile((File)event));
     }
 
     private void handleSessionChanged(EventBus eventBus, Session session, EventHandler<ActionEvent> loadEventHandler, EventHandler<ActionEvent> saveEventHandler) {
@@ -400,10 +400,15 @@ public class MainEditorPane extends BorderPane {
         return createIconImage(name, 0.018);
     }
 
+    private String createFileName() {
+        SimpleDateFormat df = new SimpleDateFormat("YYYY-MM-dd--HH-mm-ss");
+        return df.format(new Date());
+    }
+
     private void ensureFileChooser(String suffix) {
         if (fileChooser == null) {
             fileChooser = new FileChooser();
-//            fileChooser.setInitialFileName(createFileName() + suffix);
+            fileChooser.setInitialFileName(createFileName() + suffix);
             fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
         }
     }
@@ -427,32 +432,6 @@ public class MainEditorPane extends BorderPane {
         }
         return fileChooser;
     }
-
-//    private void saveDataToFile(File file) {
-//        try {
-//            setCurrentFile(file);
-//            MandelbrotDataStore service = new MandelbrotDataStore();
-//            MandelbrotData data = getMandelbrotSession().getDataAsCopy();
-//            logger.info(data.toString());
-//            service.saveToFile(getCurrentFile(), data);
-//        } catch (Exception x) {
-//            logger.warning("Cannot save file " + file.getAbsolutePath());
-//            //TODO display error
-//        }
-//    }
-//
-//    private void loadDataFromFile(File file) {
-//        try {
-//            MandelbrotDataStore service = new MandelbrotDataStore();
-//            MandelbrotData data = service.loadFromFile(file);
-//            setCurrentFile(file);
-//            logger.info(data.toString());
-//            getMandelbrotSession().setData(data);
-//        } catch (Exception x) {
-//            logger.warning("Cannot read file " + file.getAbsolutePath());
-//            //TODO display error
-//        }
-//    }
 
     private File getCurrentFile() {
         return currentFile;

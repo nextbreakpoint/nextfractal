@@ -27,6 +27,7 @@ package com.nextbreakpoint.nextfractal.mandelbrot;
 import java.util.concurrent.ThreadFactory;
 
 import com.nextbreakpoint.nextfractal.core.EventBus;
+import com.nextbreakpoint.nextfractal.core.FileManager;
 import com.nextbreakpoint.nextfractal.mandelbrot.javaFX.EditorPane;
 import com.nextbreakpoint.nextfractal.mandelbrot.javaFX.ParamsPane;
 import javafx.scene.layout.Pane;
@@ -39,11 +40,13 @@ import com.nextbreakpoint.nextfractal.core.session.Session;
 import com.nextbreakpoint.nextfractal.mandelbrot.javaFX.RenderPane;
 
 public class MandelbrotFactory implements FractalFactory {
+	public static final String PLUGIN_ID = "Mandelbrot";
+
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.FractalFactory#getId()
 	 */
 	public String getId() {
-		return "Mandelbrot";
+		return PLUGIN_ID;
 	}
 
 	public String getGrammar() {
@@ -80,6 +83,11 @@ public class MandelbrotFactory implements FractalFactory {
 	@Override
 	public ImageGenerator createImageGenerator(ThreadFactory threadFactory,	RendererFactory renderFactory, RendererTile tile, boolean opaque) {
 		return new MandelbrotImageGenerator(threadFactory, renderFactory, tile, opaque);
+	}
+
+	@Override
+	public FileManager createFileManager() {
+		return new MandelbrotFileManager();
 	}
 
 	@Override

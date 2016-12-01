@@ -27,18 +27,30 @@ package com.nextbreakpoint.nextfractal.contextfree;
 import com.nextbreakpoint.nextfractal.core.session.Session;
 
 import java.io.IOException;
+import java.util.Objects;
 
 public class ContextFreeSession extends Session {
-	private ContextFreeData data = new ContextFreeData();
+	private final ContextFreeData data;
 
 	public ContextFreeSession() {
+		this(new ContextFreeData());
 		data.setSource(getInitialSource());
+	}
+
+	public ContextFreeSession(ContextFreeData data) {
+		Objects.requireNonNull(data);
+		this.data = data;
 	}
 
 	@Override
     public String getPluginId() {
         return "ContextFree";
     }
+
+	@Override
+	public Object getData() {
+		return data;
+	}
 
 	public ContextFreeData getDataAsCopy() {
 		ContextFreeData data = new ContextFreeData();
