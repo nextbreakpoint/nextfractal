@@ -24,18 +24,25 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree;
 
-public class ContextFreeException extends Exception {
-	private static final long serialVersionUID = 1L;
+import java.util.Objects;
 
-	public ContextFreeException(String message) {
-		super(message);
+public class ContextFreeMetadata {
+	private final String seed;
+
+	public ContextFreeMetadata() {
+		this.seed = "ABCD";
 	}
 
-	public ContextFreeException(Throwable cause) {
-		super(cause);
+	public ContextFreeMetadata(String seed) {
+		Objects.requireNonNull(seed);
+		this.seed = seed;
 	}
 
-	public ContextFreeException(String message, Throwable cause) {
-		super(message, cause);
+	public ContextFreeMetadata(ContextFreeMetadata data) {
+		seed = data.seed;
+	}
+
+	public String getSeed() {
+		return seed;
 	}
 }

@@ -24,11 +24,13 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.javaFX;
 
-import com.nextbreakpoint.nextfractal.contextfree.ContextFreeData;
-import com.nextbreakpoint.nextfractal.contextfree.ContextFreeDataStore;
+import com.nextbreakpoint.nextfractal.contextfree.ContextFreeMetadata;
 import com.nextbreakpoint.nextfractal.contextfree.ContextFreeSession;
-import com.nextbreakpoint.nextfractal.contextfree.compiler.*;
 import com.nextbreakpoint.nextfractal.contextfree.compiler.Compiler;
+import com.nextbreakpoint.nextfractal.contextfree.compiler.CompilerClassException;
+import com.nextbreakpoint.nextfractal.contextfree.compiler.CompilerError;
+import com.nextbreakpoint.nextfractal.contextfree.compiler.CompilerReport;
+import com.nextbreakpoint.nextfractal.contextfree.compiler.CompilerSourceException;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDG;
 import com.nextbreakpoint.nextfractal.contextfree.renderer.RendererCoordinator;
 import com.nextbreakpoint.nextfractal.contextfree.renderer.RendererError;
@@ -82,7 +84,7 @@ public class RenderPane extends BorderPane {
 	private static final Logger logger = Logger.getLogger(RenderPane.class.getName());
 	private final ThreadFactory renderThreadFactory;
 	private final JavaFXRendererFactory renderFactory;
-	private final StringObservableValue fileProperty;
+//	private final StringObservableValue fileProperty;
 	private final StringObservableValue errorProperty;
 	private final StringObservableValue statusProperty;
 	private final BooleanObservableValue hideErrorsProperty;
@@ -95,7 +97,7 @@ public class RenderPane extends BorderPane {
 	private CFDG cfdg;
 	private String cfdgSource = "";
 	private volatile boolean disableTool;
-	private ContextFreeData contextFreeData;
+	private ContextFreeSession contextFreeSession;
 
 	public RenderPane(Session session, EventBus eventBus, int width, int height, int rows, int columns) {
 		this.width = width;
@@ -103,8 +105,10 @@ public class RenderPane extends BorderPane {
 		this.rows = rows;
 		this.columns = columns;
 
-		fileProperty = new StringObservableValue();
-		fileProperty.setValue(null);
+		contextFreeSession = (ContextFreeSession) session;
+
+//		fileProperty = new StringObservableValue();
+//		fileProperty.setValue(null);
 
 		errorProperty = new StringObservableValue();
 		errorProperty.setValue(null);
@@ -115,7 +119,7 @@ public class RenderPane extends BorderPane {
 		hideErrorsProperty = new BooleanObservableValue();
 		hideErrorsProperty.setValue(true);
 		
-		renderThreadFactory = new DefaultThreadFactory("ContextFreeCoordinator", true, Thread.MIN_PRIORITY + 2);
+		renderThreadFactory = new DefaultThreadFactory("ContextFree Coordinator", true, Thread.MIN_PRIORITY + 2);
 
 		renderFactory = new JavaFXRendererFactory();
 
@@ -180,7 +184,7 @@ public class RenderPane extends BorderPane {
 		browsePane.setDelegate(new BrowseDelegate() {
 			@Override
 			public void didSelectFile(BrowsePane source, File file) {
-				updateFile(file);
+				eventBus.postEvent("editor-load-file", file);
 				hideBrowser(browserTransition, a -> {});
 			}
 
@@ -254,10 +258,9 @@ public class RenderPane extends BorderPane {
 			eventBus.postEvent("render-status-changed", newValue);
 		});
 
-		Block<ContextFreeData, Exception> updateUI = data -> {
-		};
+		Block<ContextFreeMetadata, Exception> updateUI = data -> {};
 
-		fileProperty.addListener((observable, oldValue, newValue) -> loadFractalFromFile(updateUI, newValue));
+//		fileProperty.addListener((observable, oldValue, newValue) -> loadFractalFromFile(updateUI, newValue));
 
 		heightProperty().addListener((observable, oldValue, newValue) -> {
 			toolButtons.setPrefHeight(newValue.doubleValue() * 0.07);
@@ -270,13 +273,10 @@ public class RenderPane extends BorderPane {
 
 		runTimer(fractalCanvas, toolCanvas);
 
-		contextFreeData = (ContextFreeData) session.getData();
-
 		eventBus.subscribe("editor-report-changed", event -> updateReport((CompilerReport) event));
 
         eventBus.subscribe("editor-source-changed", event -> {
-            contextFreeData = new ContextFreeData(contextFreeData);
-            contextFreeData.setSource((String) event);
+            contextFreeSession = new ContextFreeSession((ContextFreeMetadata) contextFreeSession.getMetadata(), (String) event);
             notifySessionChanged(eventBus, false, true);
         });
 
@@ -285,13 +285,15 @@ public class RenderPane extends BorderPane {
 		eventBus.subscribe("editor-data-changed", event -> {
 			updateData((Object[]) event);
 			Boolean continuous = (Boolean) ((Object[]) event)[1];
-			notifySessionChanged(eventBus, continuous, !continuous);
+			Boolean appendHistory = (Boolean) ((Object[]) event)[2];
+			notifySessionChanged(eventBus, continuous, appendHistory && !continuous);
 		});
 
 		eventBus.subscribe("render-data-changed", event -> {
             updateData((Object[]) event);
 			Boolean continuous = (Boolean) ((Object[]) event)[1];
-			notifySessionChanged(eventBus, continuous, !continuous);
+			Boolean appendHistory = (Boolean) ((Object[]) event)[2];
+			notifySessionChanged(eventBus, continuous, appendHistory && !continuous);
 		});
 
 		eventBus.subscribe("render-status-changed", event -> {
@@ -304,19 +306,19 @@ public class RenderPane extends BorderPane {
 	}
 
 	private void updateData(Object[] event) {
-		contextFreeData = ((ContextFreeSession) event[0]).getDataAsCopy();
+		contextFreeSession = (ContextFreeSession) event[0];
 	}
 
 	private void notifySessionChanged(EventBus eventBus, boolean continuous, boolean historyAppend) {
-		eventBus.postEvent("session-data-changed", new Object[] { new ContextFreeSession(contextFreeData), continuous });
+		eventBus.postEvent("session-data-changed", new Object[] { contextFreeSession, continuous, false });
 		if (historyAppend) {
-			eventBus.postEvent("history-add-session", new ContextFreeSession(contextFreeData));
+			eventBus.postEvent("history-add-session", contextFreeSession);
 		}
 	}
 
 	private void updateFile(File file) {
-		fileProperty.setValue(null);
-		fileProperty.setValue(file.getAbsolutePath());
+//		fileProperty.setValue(null);
+//		fileProperty.setValue(file.getAbsolutePath());
 	}
 
 	private RendererCoordinator createCoordinator(Map<String, Integer> hints, int width, int height) {
@@ -400,23 +402,23 @@ public class RenderPane extends BorderPane {
 		}
 	}
 
-	private void loadFractalFromFile(Block<ContextFreeData, Exception> updateJulia, String filename) {
-		if (filename == null) {
-			return;
-		}
-		File file = new File(filename);
-		try {
-			ContextFreeDataStore service = new ContextFreeDataStore();
-			ContextFreeData data = service.loadFromFile(file);
-//			getContextFreeSession().setCurrentFile(file);
-			updateJulia.execute(data);
-//			getContextFreeSession().setData(data);
-			logger.info(data.toString());
-		} catch (Exception x) {
-			logger.warning("Cannot read file " + file.getAbsolutePath());
-			//TODO display error
-		}
-	}
+//	private void loadFractalFromFile(Block<ContextFreeMetadata, Exception> updateJulia, String filename) {
+//		if (filename == null) {
+//			return;
+//		}
+//		File file = new File(filename);
+//		try {
+//			ContextFreeDataStore service = new ContextFreeDataStore();
+//			ContextFreeData data = service.loadFromFile(file);
+////			getContextFreeSession().setCurrentFile(file);
+//			updateJulia.execute(data);
+////			getContextFreeSession().setData(data);
+//			logger.info(data.toString());
+//		} catch (Exception x) {
+//			logger.warning("Cannot read file " + file.getAbsolutePath());
+//			//TODO display error
+//		}
+//	}
 
 	private void runTimer(Canvas fractalCanvas, Canvas toolCanvas) {
 		timer = new AnimationTimer() {
@@ -584,7 +586,7 @@ public class RenderPane extends BorderPane {
 	private GridItemRenderer createRenderer(Bitmap bitmap) throws Exception {
 		Map<String, Integer> hints = new HashMap<String, Integer>();
 		RendererTile tile = createSingleTile(bitmap.getWidth(), bitmap.getHeight());
-		DefaultThreadFactory threadFactory = new DefaultThreadFactory("BrowserPane", true, Thread.MIN_PRIORITY);
+		DefaultThreadFactory threadFactory = new DefaultThreadFactory("Browser", true, Thread.MIN_PRIORITY);
 		RendererCoordinator coordinator = new RendererCoordinator(threadFactory, new JavaFXRendererFactory(), tile, hints);
 		CFDG cfdg = (CFDG)bitmap.getProperty("cfdg");
 		coordinator.setCFDG(cfdg);
@@ -594,22 +596,22 @@ public class RenderPane extends BorderPane {
 	}
 
 	private BrowseBitmap createBitmap(File file, RendererSize size) throws Exception {
-		ContextFreeDataStore service = new ContextFreeDataStore();
-		ContextFreeData data = service.loadFromFile(file);
-		if (Thread.currentThread().isInterrupted()) {
-			return null;
-		}
-		Compiler compiler = new Compiler();
-		CompilerReport report = compiler.compileReport(data.getSource());
-		if (report.getErrors().size() > 0) {
-			throw new RuntimeException("Failed to compile source");
-		}
-		if (Thread.currentThread().isInterrupted()) {
-			return null;
-		}
+//		ContextFreeDataStore service = new ContextFreeDataStore();
+//		ContextFreeData data = service.loadFromFile(file);
+//		if (Thread.currentThread().isInterrupted()) {
+//			return null;
+//		}
+//		Compiler compiler = new Compiler();
+//		CompilerReport report = compiler.compileReport(data.getSource());
+//		if (report.getErrors().size() > 0) {
+//			throw new RuntimeException("Failed to compile source");
+//		}
+//		if (Thread.currentThread().isInterrupted()) {
+//			return null;
+//		}
 		BrowseBitmap bitmap = new BrowseBitmap(size.getWidth(), size.getHeight(), null);
-		bitmap.setProperty("cfdg", report.getCFDG());
-		bitmap.setProperty("data", data);
+//		bitmap.setProperty("cfdg", report.getCFDG());
+//		bitmap.setProperty("data", data);
 		return bitmap;
 	}
 

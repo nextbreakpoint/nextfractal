@@ -111,7 +111,7 @@ public class NextFractalApp extends Application {
 
 		eventBus.subscribe("session-data-changed", event -> session = (Session) ((Object[])event)[0]);
 
-		eventBus.subscribe("session-changed", event -> eventBus.postEvent("session-data-changed", new Object[] { session, false }));
+		eventBus.subscribe("session-changed", event -> eventBus.postEvent("session-data-changed", new Object[] { session, false, true }));
 
 		eventBus.subscribe("session-terminated", event -> handleSessionTerminate(exportService));
 

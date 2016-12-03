@@ -24,30 +24,21 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.javaFX;
 
-import com.nextbreakpoint.nextfractal.contextfree.ContextFreeData;
-import com.nextbreakpoint.nextfractal.contextfree.ContextFreeDataStore;
+import com.nextbreakpoint.nextfractal.contextfree.ContextFreeMetadata;
 import com.nextbreakpoint.nextfractal.contextfree.ContextFreeSession;
 import com.nextbreakpoint.nextfractal.core.EventBus;
 import com.nextbreakpoint.nextfractal.core.javaFX.AdvancedTextField;
 import javafx.application.Platform;
 import javafx.scene.control.*;
-import javafx.scene.input.Clipboard;
-import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
-import java.io.StringWriter;
-import java.net.URLEncoder;
-import java.util.Base64;
 import java.util.function.Function;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class ParamsPane extends Pane {
-	private static final Logger logger = Logger.getLogger(ParamsPane.class.getName());
 	private static final int SPACING = 5;
 
-	private ContextFreeData contextFreeData;
+	private ContextFreeSession contextFreeSession;
 
 	public ParamsPane(ContextFreeSession session, EventBus eventBus) {
 		VBox box = new VBox(SPACING * 2);
@@ -90,59 +81,39 @@ public class ParamsPane extends Pane {
 			box.setPrefHeight(newValue.doubleValue() - getInsets().getTop() - getInsets().getBottom());
 		});
 
-		contextFreeData = session.getDataAsCopy();
-
-		Function<ContextFreeData, Object> updateAll = (data) -> {
-			seedField.setText(data.getSeed());
+		Function<ContextFreeMetadata, Object> updateAll = (metadata) -> {
+			seedField.setText(metadata.getSeed());
 //			if (encodeTextArea != null) {
 //				updateEncodedData(encodeTextArea, data);
 //			}
 			return null;
 		};
 
-		Function<ContextFreeData, Object> notifyAll = (data) -> {
-			ContextFreeData newData = new ContextFreeData(data);
+		Function<ContextFreeMetadata, Object> notifyAll = (metadata) -> {
 			String seed = seedField.getText();
-			newData.setSeed(seed);
-			Platform.runLater(() -> eventBus.postEvent("editor-data-changed", new Object[] { newData, false }));
+			ContextFreeMetadata newMetadata = new ContextFreeMetadata(seed);
+			ContextFreeSession newSession = new ContextFreeSession(newMetadata, contextFreeSession.getScript());
+			Platform.runLater(() -> eventBus.postEvent("editor-data-changed", new Object[] { newSession, false, true }));
 			return null;
 		};
 
 		eventBus.subscribe("editor-params-action", event -> {
-			if (event.equals("cancel")) updateAll.apply(contextFreeData);
-			if (event.equals("apply")) notifyAll.apply(contextFreeData);
+			if (event.equals("cancel")) updateAll.apply((ContextFreeMetadata) contextFreeSession.getMetadata());
+			if (event.equals("apply")) notifyAll.apply((ContextFreeMetadata) contextFreeSession.getMetadata());
 		});
 
 		eventBus.subscribe("editor-data-changed", event -> updateData(updateAll, (Object[]) event));
 
 		eventBus.subscribe("render-data-changed", event -> updateData(updateAll, (Object[]) event));
 
-		updateAll.apply(contextFreeData);
+		updateAll.apply((ContextFreeMetadata) contextFreeSession.getMetadata());
 		
-		seedField.setOnAction(e -> notifyAll.apply(contextFreeData));
+		seedField.setOnAction(e -> notifyAll.apply((ContextFreeMetadata) contextFreeSession.getMetadata()));
 	}
 
-	private void updateData(Function<ContextFreeData, Object> updateAll, Object[] event) {
-		contextFreeData = (ContextFreeData) ((ContextFreeSession) event[0]).getData();
-		updateAll.apply(contextFreeData);
-	}
-
-	protected void updateEncodedData(TextArea textArea, ContextFreeSession session) {
-		if (Boolean.getBoolean("ContextFree.encode.data")) {
-			try {
-				ContextFreeDataStore service = new ContextFreeDataStore();
-				ContextFreeData data = session.getDataAsCopy();
-				StringWriter writer = new StringWriter();
-				service.saveToWriter(writer, data);
-				String plainData = writer.toString();
-				String encodedData = Base64.getEncoder().encodeToString(plainData.getBytes());
-				encodedData = URLEncoder.encode(encodedData, "UTF-8");
-				logger.info("Update encoded data");
-				textArea.setText(encodedData);
-			} catch (Exception e) {
-				logger.log(Level.FINE, "Cannot encode data", e);
-			}
-		}		
+	private void updateData(Function<ContextFreeMetadata, Object> updateAll, Object[] event) {
+		contextFreeSession = (ContextFreeSession) event[0];
+		updateAll.apply((ContextFreeMetadata) contextFreeSession.getMetadata());
 	}
 
 	protected String getRestriction() {

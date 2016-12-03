@@ -31,12 +31,12 @@ import java.io.InputStream;
 public abstract class Session {
 	public abstract String getPluginId();
 
-	public abstract String getSource();
+	public abstract String getScript();
 
-	public abstract Object getData();
+	public abstract Object getMetadata();
 
-	protected String readResource(String name) throws IOException {
-		InputStream is = getClass().getResourceAsStream(name);
+	protected static String readResource(String name) throws IOException {
+		InputStream is = Session.class.getResourceAsStream(name);
 		if (is != null) {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			byte[] buffer = new byte[4096];

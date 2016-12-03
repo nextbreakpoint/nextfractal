@@ -25,7 +25,7 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
 
 import com.nextbreakpoint.nextfractal.core.renderer.RendererGraphicsContext;
-import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotView;
+import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotMetadata;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 import javafx.scene.input.MouseEvent;
 
@@ -81,12 +81,12 @@ public class ToolZoom implements Tool {
 	@Override
 	public void update(long time) {
 		if (pressed || changed) {
-			MandelbrotView oldView = context.getViewAsCopy();
-			double[] t = oldView.getTranslation();
-			double[] r = oldView.getRotation();
-			double[] s = oldView.getScale();
-			double[] p = oldView.getPoint();
-			boolean j = oldView.isJulia();
+			MandelbrotMetadata oldMetadata = context.getMetadata();
+			double[] t = oldMetadata.getTranslation().toArray();
+			double[] r = oldMetadata.getRotation().toArray();
+			double[] s = oldMetadata.getScale().toArray();
+			double[] p = oldMetadata.getPoint().toArray();
+			boolean j = oldMetadata.isJulia();
 			double x = t[0];
 			double y = t[1];
 			double z = t[2];
@@ -96,8 +96,8 @@ public class ToolZoom implements Tool {
 			x -= (zs - 1) * z * size.r() * (Math.cos(a) * x1 + Math.sin(a) * y1);
 			y -= (zs - 1) * z * size.i() * (Math.cos(a) * y1 - Math.sin(a) * x1);
 			z *= zs;
-			MandelbrotView view = new MandelbrotView(new double[] { x, y, z, t[3] }, new double[] { 0, 0, r[2], r[3] }, s, p, j);
-			context.setView(view, pressed);
+			MandelbrotMetadata newMetadata = new MandelbrotMetadata(new double[] { x, y, z, t[3] }, new double[] { 0, 0, r[2], r[3] }, s, p, j);
+			context.setView(newMetadata, pressed);
 			changed = false;
 		}
 	}

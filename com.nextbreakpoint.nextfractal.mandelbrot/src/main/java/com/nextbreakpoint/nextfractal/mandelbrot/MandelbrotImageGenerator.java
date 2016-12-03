@@ -31,6 +31,7 @@ import com.nextbreakpoint.nextfractal.core.ImageGenerator;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererFactory;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
+import com.nextbreakpoint.nextfractal.core.utils.Double2D;
 import com.nextbreakpoint.nextfractal.core.utils.Double4D;
 import com.nextbreakpoint.nextfractal.core.utils.Integer4D;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.Compiler;
@@ -58,13 +59,14 @@ public class MandelbrotImageGenerator implements ImageGenerator {
 
 	@Override
 	public IntBuffer renderImage(Object data) {
-		MandelbrotData generatorData = (MandelbrotData)data;
+		MandelbrotSession session = (MandelbrotSession)data;
+		MandelbrotMetadata metadata = (MandelbrotMetadata) session.getMetadata();
 		RendererSize suggestedSize = tile.getTileSize();
 		int[] pixels = new int[suggestedSize.getWidth() * suggestedSize.getHeight()];
 		IntBuffer buffer = IntBuffer.wrap(pixels);
 		try {
 			Compiler compiler = new Compiler();
-			CompilerReport report = compiler.compileReport(generatorData.getSource());
+			CompilerReport report = compiler.compileReport(session.getScript());
 			if (report.getErrors().size() > 0) {
 				throw new RuntimeException("Failed to compile source");
 			}
@@ -78,21 +80,21 @@ public class MandelbrotImageGenerator implements ImageGenerator {
 			}
 			Renderer renderer = new Renderer(threadFactory, renderFactory, tile);
 			renderer.setOpaque(opaque);
-			double[] translation = generatorData.getTranslation();
-			double[] rotation = generatorData.getRotation();
-			double[] scale = generatorData.getScale();
-			double[] constant = generatorData.getPoint();
-			boolean julia = generatorData.isJulia();
+			Double4D translation = metadata.getTranslation();
+			Double4D rotation = metadata.getRotation();
+			Double4D scale = metadata.getScale();
+			Double2D constant = metadata.getPoint();
+			boolean julia = metadata.isJulia();
 			renderer.setOrbit(orbitBuilder.build());
 			renderer.setColor(colorBuilder.build());
 			renderer.init();
 			RendererView view = new RendererView();
-			view .setTraslation(new Double4D(translation));
-			view.setRotation(new Double4D(rotation));
-			view.setScale(new Double4D(scale));
+			view .setTraslation(translation);
+			view.setRotation(rotation);
+			view.setScale(scale);
 			view.setState(new Integer4D(0, 0, 0, 0));
 			view.setJulia(julia);
-			view.setPoint(new Number(constant));
+			view.setPoint(new Number(constant.getX(), constant.getY()));
 			renderer.setView(view);
 			renderer.runTask();
 			renderer.waitForTasks();

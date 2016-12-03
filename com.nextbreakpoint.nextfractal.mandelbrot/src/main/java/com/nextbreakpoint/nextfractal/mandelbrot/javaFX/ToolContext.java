@@ -25,7 +25,7 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
 
 import com.nextbreakpoint.nextfractal.core.renderer.RendererFactory;
-import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotView;
+import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotMetadata;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 
 public interface ToolContext {
@@ -41,9 +41,9 @@ public interface ToolContext {
 
 	public RendererFactory getRendererFactory();
 
-	public MandelbrotView getViewAsCopy();
+	public MandelbrotMetadata getMetadata();
 
-	public void setView(MandelbrotView view, boolean continuous);
+	public void setView(MandelbrotMetadata view, boolean continuous);
 
-	public void setPoint(double[] doubles, boolean continuous);
+	public void setPoint(MandelbrotMetadata view, boolean continuous);
 }

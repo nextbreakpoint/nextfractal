@@ -82,6 +82,8 @@ public class MainEditorPane extends BorderPane {
         JobsPane jobsPane = new JobsPane(tile);
         jobsPane.getStyleClass().add("sidebar");
 
+        eventBus.subscribe("session-data-changed", event -> session = (Session) ((Object[])event)[0]);
+
         eventBus.subscribe("session-changed", event -> handleSessionChanged(getLocalEventBus(eventBus), (Session) event, loadEventHandler, saveEventHandler, historyPane, jobsPane));
 
         eventBus.subscribe("history-session-selected", event -> notifyHistoryItemSelected(eventBus, event));
@@ -96,7 +98,7 @@ public class MainEditorPane extends BorderPane {
             eventBus.postEvent("session-changed", event);
         } else {
 //            eventBus.postEvent("editor-source-reloaded", event);
-            eventBus.postEvent("editor-data-changed", new Object[] { event, false });
+            eventBus.postEvent("editor-data-changed", new Object[] { event, false, false });
         }
     }
 

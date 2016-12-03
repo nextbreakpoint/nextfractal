@@ -30,16 +30,18 @@ import java.io.IOException;
 import java.util.Objects;
 
 public class ContextFreeSession extends Session {
-	private final ContextFreeData data;
+	private final ContextFreeMetadata metadata;
+	private final String script;
 
 	public ContextFreeSession() {
-		this(new ContextFreeData());
-		data.setSource(getInitialSource());
+		this(new ContextFreeMetadata(), getInitialSource());
 	}
 
-	public ContextFreeSession(ContextFreeData data) {
-		Objects.requireNonNull(data);
-		this.data = (ContextFreeData) data.clone();
+	public ContextFreeSession(ContextFreeMetadata metadata, String script) {
+		Objects.requireNonNull(metadata);
+		Objects.requireNonNull(script);
+		this.metadata = metadata;
+		this.script = script;
 	}
 
 	@Override
@@ -48,23 +50,16 @@ public class ContextFreeSession extends Session {
     }
 
 	@Override
-	public String getSource() {
-		return data.getSource();
+	public String getScript() {
+		return script;
 	}
 
 	@Override
-	public Object getData() {
-		return data;
+	public Object getMetadata() {
+		return metadata;
 	}
 
-	public ContextFreeData getDataAsCopy() {
-		ContextFreeData data = new ContextFreeData();
-		data.setSource(this.data.getSource());
-		data.setSeed(this.data.getSeed());
-		return data;
-	}
-
-	private String getInitialSource() {
+	private static String getInitialSource() {
 		try {
 			return readResource("/contextfree.txt");
 		} catch (IOException e) {

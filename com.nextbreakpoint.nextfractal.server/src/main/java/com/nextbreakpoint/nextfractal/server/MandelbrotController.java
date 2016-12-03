@@ -44,6 +44,7 @@ import javax.imageio.ImageIO;
 import javax.validation.ValidationException;
 import javax.xml.bind.JAXB;
 
+import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotSession;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -59,7 +60,6 @@ import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
 import com.nextbreakpoint.nextfractal.core.renderer.javaFX.JavaFXRendererFactory;
 import com.nextbreakpoint.nextfractal.core.utils.DefaultThreadFactory;
-import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotData;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotImageGenerator;
 
 @Controller
@@ -73,18 +73,18 @@ public class MandelbrotController {
     public DeferredResult<ResponseEntity<byte[]>> createTile(@RequestParam(value="tileSize", required=true) Integer tileSize, @RequestParam(value="rows", required=true) Integer rows, @RequestParam(value="cols", required=true) Integer cols, @RequestParam(value="row", required=true) Integer row, @RequestParam(value="col", required=true) Integer col, @RequestParam(value="data", required=true) String encodedData) {
 		DeferredResult<ResponseEntity<byte[]>> deferredResult = new DeferredResult<>();
 		try {
-			MandelbrotData data = decodeData(encodedData);
+			MandelbrotSession data = decodeData(encodedData);
 			MandelbrotRequest request = new MandelbrotRequest();
 			request.setRows(rows);
 			request.setCols(cols);
 			request.setRow(row);
 			request.setCol(col);
 			request.setTileSize(tileSize);
-			request.setMandelbrotData(data);
+			request.setSession(data);
 			validateRequest(request);
-			RemoteJob<MandelbrotData> job = createJob(request);
+			RemoteJob<MandelbrotSession> job = createJob(request);
 			String key = generateKey(tileSize, rows, cols, row, col, encodedData);
-		    ProcessingTask<MandelbrotData> task = new ProcessingTask<>(deferredResult, job, key);
+		    ProcessingTask<MandelbrotSession> task = new ProcessingTask<>(deferredResult, job, key);
 		    synchronized (executor) {
 		    	executor.execute(task);
 			}
@@ -133,7 +133,7 @@ public class MandelbrotController {
 		if ((request.getRows() > 1 || request.getCols() > 1) && (request.getTileSize() < 32 || request.getTileSize() > 256)) {
 			throw new ValidationException("Invalid image size");
 		}
-		if (request.getMandelbrotData() == null) {
+		if (request.getSession() == null) {
 			throw new ValidationException("Invalid data");
 		}
 	}
@@ -151,8 +151,8 @@ public class MandelbrotController {
 		return new ResponseEntity<>(pngImage, headers, HttpStatus.OK);
 	}
 
-	private RemoteJob<MandelbrotData> createJob(MandelbrotRequest request) {
-		final RemoteJob<MandelbrotData> job = new RemoteJob<>();
+	private RemoteJob<MandelbrotSession> createJob(MandelbrotRequest request) {
+		final RemoteJob<MandelbrotSession> job = new RemoteJob<>();
 		final int tileSize = request.getTileSize();
 		final int rows = request.getRows();
 		final int cols = request.getCols();
@@ -167,12 +167,12 @@ public class MandelbrotController {
 		job.setTileOffsetY(tileSize * row);
 		job.setBorderWidth(0);
 		job.setBorderHeight(0);
-		job.setData(request.getMandelbrotData());
+		job.setData(request.getSession());
 		return job;
 	}
 
-	private MandelbrotData decodeData(String encodedData) {
-		return JAXB.unmarshal(new ByteArrayInputStream(Base64.getDecoder().decode(encodedData)), MandelbrotData.class);
+	private MandelbrotSession decodeData(String encodedData) {
+		return JAXB.unmarshal(new ByteArrayInputStream(Base64.getDecoder().decode(encodedData)), MandelbrotSession.class);
 	}
 
 	private byte[] getImageAsPNG(RendererSize tileSize, IntBuffer pixels) throws IOException {

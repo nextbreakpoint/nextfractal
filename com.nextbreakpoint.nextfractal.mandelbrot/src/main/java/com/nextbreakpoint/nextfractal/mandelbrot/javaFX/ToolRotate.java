@@ -25,7 +25,7 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
 
 import com.nextbreakpoint.nextfractal.core.renderer.RendererGraphicsContext;
-import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotView;
+import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotMetadata;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 import javafx.scene.input.MouseEvent;
 
@@ -83,9 +83,9 @@ public class ToolRotate implements Tool {
 		if (active) {
 			x1 = (e.getX() - context.getWidth() / 2) / context.getWidth();
 			y1 = (context.getHeight() / 2 - e.getY()) / context.getHeight();
-			MandelbrotView oldView = context.getViewAsCopy();
-			double[] t = oldView.getTranslation();
-			double[] r = oldView.getRotation();
+			MandelbrotMetadata oldView = context.getMetadata();
+			double[] t = oldView.getTranslation().toArray();
+			double[] r = oldView.getRotation().toArray();
 			a0 = r[2] * Math.PI / 180;
 			a1 = Math.atan2(y1 - y0, x1 - x0);
 			r0 = t[0];
@@ -100,12 +100,12 @@ public class ToolRotate implements Tool {
 	@Override
 	public void update(long time) {
 		if (changed) {
-			MandelbrotView oldView = context.getViewAsCopy();
-			double[] t = oldView.getTranslation();
-			double[] r = oldView.getRotation();
-			double[] s = oldView.getScale();
-			double[] p = oldView.getPoint();
-			boolean j = oldView.isJulia();
+			MandelbrotMetadata oldMetadata = context.getMetadata();
+			double[] t = oldMetadata.getTranslation().toArray();
+			double[] r = oldMetadata.getRotation().toArray();
+			double[] s = oldMetadata.getScale().toArray();
+			double[] p = oldMetadata.getPoint().toArray();
+			boolean j = oldMetadata.isJulia();
 			double z = t[2];
 			Number size = context.getInitialSize();
 			double a2 = Math.atan2(y1 - y0, x1 - x0) - a1;
@@ -122,8 +122,8 @@ public class ToolRotate implements Tool {
 			double x = r0 + dx;
 			double y = i0 + dy;
 			double a = (a0 + a2) * 180 / Math.PI;
-			MandelbrotView view = new MandelbrotView(new double[] { x, y, z, t[3] }, new double[] { 0, 0, a, r[3] }, s, p, j);
-			context.setView(view, pressed);
+			MandelbrotMetadata newMetadata = new MandelbrotMetadata(new double[] { x, y, z, t[3] }, new double[] { 0, 0, a, r[3] }, s, p, j);
+			context.setView(newMetadata, pressed);
 			changed = false;
 		}
 	}

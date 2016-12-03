@@ -25,7 +25,6 @@ import java.nio.IntBuffer;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -141,7 +140,7 @@ public class JobsPane extends BorderPane {
     }
 
     private void submitItem(String uuid, Session session, ImageGenerator generator) {
-        executor.submit(() -> Try.of(() -> generator.renderImage(session.getData()))
+        executor.submit(() -> Try.of(() -> generator.renderImage(session))
             .ifPresent(pixels -> Platform.runLater(() -> addItem(listView, uuid, session, pixels, generator.getSize()))));
     }
 

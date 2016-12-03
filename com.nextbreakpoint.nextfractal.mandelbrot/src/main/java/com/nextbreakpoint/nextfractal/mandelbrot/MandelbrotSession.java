@@ -25,21 +25,25 @@
 package com.nextbreakpoint.nextfractal.mandelbrot;
 
 import com.nextbreakpoint.nextfractal.core.session.Session;
+import com.nextbreakpoint.nextfractal.core.utils.Double2D;
+import com.nextbreakpoint.nextfractal.core.utils.Double4D;
 
 import java.io.IOException;
 import java.util.Objects;
 
 public class MandelbrotSession extends Session {
-	private final MandelbrotData data;
+	private final MandelbrotMetadata metadata;
+	private final String script;
 
 	public MandelbrotSession() {
-		this(new MandelbrotData());
-		data.setSource(getInitialSource());
+		this(new MandelbrotMetadata(new Double4D(0, 0, 1,0), new Double4D(0, 0, 0,0), new Double4D(1, 1, 1,1), new Double2D(0, 0), false), getInitialScript());
 	}
 
-	public MandelbrotSession(MandelbrotData data) {
-		Objects.requireNonNull(data);
-		this.data = (MandelbrotData) data.clone();
+	public MandelbrotSession(MandelbrotMetadata metadata, String script) {
+		Objects.requireNonNull(metadata);
+		Objects.requireNonNull(script);
+		this.metadata = metadata;
+		this.script = script;
 	}
 
 	@Override
@@ -48,27 +52,16 @@ public class MandelbrotSession extends Session {
     }
 
 	@Override
-	public String getSource() {
-		return data.getSource();
+	public String getScript() {
+		return script;
 	}
 
 	@Override
-	public Object getData() {
-		return data;
+	public Object getMetadata() {
+		return metadata;
 	}
 
-	public MandelbrotData getDataAsCopy() {
-		MandelbrotData data = new MandelbrotData();
-		data.setSource(this.data.getSource());
-		data.setTranslation(this.data.getTranslation());
-		data.setRotation(this.data.getRotation());
-		data.setScale(this.data.getScale());
-		data.setPoint(this.data.getPoint());
-		data.setJulia(this.data.isJulia());
-		return data;
-	}
-
-	private String getInitialSource() {
+	private static String getInitialScript() {
 		try {
 			return readResource("/mandelbrot.txt");
 		} catch (IOException e) {

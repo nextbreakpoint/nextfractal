@@ -1,4 +1,4 @@
-package com.nextbreakpoint.nextfractal.mandelbrot;
+package com.nextbreakpoint.nextfractal.core;
 
 public class FileManifest {
     private String pluginId;

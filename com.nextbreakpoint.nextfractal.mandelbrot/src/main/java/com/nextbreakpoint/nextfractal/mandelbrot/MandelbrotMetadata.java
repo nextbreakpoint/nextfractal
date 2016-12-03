@@ -24,16 +24,17 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot;
 
-import java.util.Arrays;
+import com.nextbreakpoint.nextfractal.core.utils.Double2D;
+import com.nextbreakpoint.nextfractal.core.utils.Double4D;
 
-public class MandelbrotView {
-	private final double[] translation;
-	private final double[] rotation;
-	private final double[] scale;
-	private final double[] point;
+public class MandelbrotMetadata {
+	private final Double4D translation;
+	private final Double4D rotation;
+	private final Double4D scale;
+	private final Double2D point;
 	private final boolean julia;
 
-	public MandelbrotView(double[] translation, double[] rotation, double[] scale, double[] point, boolean julia) {
+	public MandelbrotMetadata(Double4D translation, Double4D rotation, Double4D scale, Double2D point, boolean julia) {
 		this.translation = translation.clone();
 		this.rotation = rotation.clone();
 		this.scale = scale.clone();
@@ -41,52 +42,52 @@ public class MandelbrotView {
 		this.julia = julia;
 	}
 
-	public MandelbrotView(double[] translation, double[] rotation, double[] scale, boolean julia) {
-		this(translation, rotation, scale, new double[] { 0, 0 }, julia);
+	public MandelbrotMetadata(double[] translation, double[] rotation, double[] scale, double[] point, boolean julia) {
+		this.translation = new Double4D(translation);
+		this.rotation = new Double4D(rotation);
+		this.scale = new Double4D(scale);
+		this.point = new Double2D(point);
+		this.julia = julia;
 	}
 
-	public MandelbrotView(double[] translation, double[] rotation, double[] scale) {
-		this(translation, rotation, scale, new double[] { 0, 0 }, false);
-	}
-
-	public MandelbrotView(MandelbrotView otherView) {
+	public MandelbrotMetadata(MandelbrotMetadata otherView) {
 		this(otherView.getTranslation(), otherView.getRotation(), otherView.getScale(), otherView.getPoint(), otherView.isJulia());
 	}
 
-	public MandelbrotView() {
+	public MandelbrotMetadata() {
 		this(new double[4], new double[4], new double[4], new double[2], false);
 	}
 
-	public double[] getTranslation() {
+	public Double4D getTranslation() {
 		return translation;
 	}
 
-	public double[] getRotation() {
+	public Double4D getRotation() {
 		return rotation;
 	}
 
-	public double[] getScale() {
+	public Double4D getScale() {
 		return scale;
 	}
-	
+
+	public Double2D getPoint() {
+		return point;
+	}
+
 	public boolean isJulia() {
 		return julia;
 	}
 	
-	public double[] getPoint() {
-		return point;
-	}
-
 	@Override
 	public String toString() {
-		return "[translation=" + Arrays.toString(translation)	+ ", rotation=" + Arrays.toString(rotation) + ", scale=" + Arrays.toString(scale) + ", point=" + Arrays.toString(point) + ", julia=" + julia + "]";
+		return "[translation=" + translation + ", rotation=" + rotation + ", scale=" + scale + ", point=" + point + ", julia=" + julia + "]";
 	}
 
-	public MandelbrotView butWithPoint(double[] point) {
-		return new MandelbrotView(translation, rotation, scale, point, julia);
+	public MandelbrotMetadata butWithPoint(double[] point) {
+		return new MandelbrotMetadata(translation, rotation, scale, new Double2D(point), julia);
 	}
 
-	public MandelbrotView butWithJulia(boolean julia) {
-		return new MandelbrotView(translation, rotation, scale, point, julia);
+	public MandelbrotMetadata butWithJulia(boolean julia) {
+		return new MandelbrotMetadata(translation, rotation, scale, point, julia);
 	}
 }

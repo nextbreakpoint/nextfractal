@@ -26,7 +26,7 @@ package com.nextbreakpoint.nextfractal.mandelbrot.renderer;
 
 import com.nextbreakpoint.nextfractal.core.utils.Double4D;
 import com.nextbreakpoint.nextfractal.core.utils.Integer4D;
-import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotView;
+import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotMetadata;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 
 public class RendererView {
@@ -45,14 +45,6 @@ public class RendererView {
 		point = new Number(0, 0);
 	}
 
-	public RendererView(MandelbrotView view) {
-		translation = new Double4D(view.getTranslation());
-		rotation = new Double4D(view.getRotation());
-		scale = new Double4D(view.getScale());
-		state = new Integer4D(0, 0, 0, 0);
-		point = new Number(0, 0);
-	}
-	
 	public Double4D getTraslation() {
 		return translation;
 	}

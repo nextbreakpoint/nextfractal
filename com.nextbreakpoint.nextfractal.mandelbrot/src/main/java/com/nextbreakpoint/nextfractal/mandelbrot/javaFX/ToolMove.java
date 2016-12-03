@@ -25,7 +25,7 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
 
 import com.nextbreakpoint.nextfractal.core.renderer.RendererGraphicsContext;
-import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotView;
+import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotMetadata;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 import javafx.scene.input.MouseEvent;
 
@@ -79,12 +79,12 @@ public class ToolMove implements Tool {
 	@Override
 	public void update(long time) {
 		if (changed) {
-			MandelbrotView oldView = context.getViewAsCopy();
-			double[] t = oldView.getTranslation();
-			double[] r = oldView.getRotation();
-			double[] s = oldView.getScale();
-			double[] p = oldView.getPoint();
-			boolean j = oldView.isJulia();
+			MandelbrotMetadata oldMetadata = context.getMetadata();
+			double[] t = oldMetadata.getTranslation().toArray();
+			double[] r = oldMetadata.getRotation().toArray();
+			double[] s = oldMetadata.getScale().toArray();
+			double[] p = oldMetadata.getPoint().toArray();
+			boolean j = oldMetadata.isJulia();
 			double x = t[0];
 			double y = t[1];
 			double z = t[2];
@@ -96,8 +96,8 @@ public class ToolMove implements Tool {
 			y -= z * size.i() * (Math.cos(a) * dy - Math.sin(a) * dx);
 			x0 = x1;
 			y0 = y1;
-			MandelbrotView view = new MandelbrotView(new double[] { x, y, z, t[3] }, new double[] { 0, 0, r[2], r[3] }, s, p, j);
-			context.setView(view, pressed);
+			MandelbrotMetadata newMetadata = new MandelbrotMetadata(new double[] { x, y, z, t[3] }, new double[] { 0, 0, r[2], r[3] }, s, p, j);
+			context.setView(newMetadata, pressed);
 			changed = false;
 		}
 	}

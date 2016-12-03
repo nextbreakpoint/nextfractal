@@ -39,6 +39,7 @@ import com.nextbreakpoint.nextfractal.core.renderer.javaFX.JavaFXRendererFactory
 import com.nextbreakpoint.nextfractal.core.session.Session;
 import com.nextbreakpoint.nextfractal.core.utils.Block;
 import com.nextbreakpoint.nextfractal.core.utils.DefaultThreadFactory;
+import com.nextbreakpoint.nextfractal.core.utils.Double2D;
 import com.nextbreakpoint.nextfractal.core.utils.Double4D;
 import com.nextbreakpoint.nextfractal.core.utils.Integer4D;
 import com.nextbreakpoint.nextfractal.mandelbrot.*;
@@ -91,8 +92,8 @@ public class RenderPane extends BorderPane {
 	private final ThreadFactory renderThreadFactory;
 	private final ThreadFactory juliaRenderThreadFactory;
 	private final JavaFXRendererFactory renderFactory;
-	private final Stack<MandelbrotView> views = new Stack<>();
-	private final StringObservableValue fileProperty;
+	private final Stack<MandelbrotMetadata> views = new Stack<>();
+//	private final StringObservableValue fileProperty;
 	private final StringObservableValue errorProperty;
 	private final StringObservableValue statusProperty;
 	private final BooleanObservableValue hideOrbitProperty;
@@ -116,7 +117,7 @@ public class RenderPane extends BorderPane {
 	private CompilerBuilder<Orbit> orbitBuilder;
 	private CompilerBuilder<Color> colorBuilder;
 	private List<Number[]> states = new ArrayList<>();
-	private MandelbrotData mandelbrotData;
+	private MandelbrotSession mandelbrotSession;
 
 	public RenderPane(Session session, EventBus eventBus, int width, int height, int rows, int columns) {
 		this.width = width;
@@ -124,10 +125,10 @@ public class RenderPane extends BorderPane {
 		this.rows = rows;
 		this.columns = columns;
 
-		mandelbrotData = ((MandelbrotSession)session).getDataAsCopy();
+		mandelbrotSession = (MandelbrotSession)session;
 
-		fileProperty = new StringObservableValue();
-		fileProperty.setValue(null);
+//		fileProperty = new StringObservableValue();
+//		fileProperty.setValue(null);
 
 		errorProperty = new StringObservableValue();
 		errorProperty.setValue(null);
@@ -144,8 +145,8 @@ public class RenderPane extends BorderPane {
 		hideErrorsProperty = new BooleanObservableValue();
 		hideErrorsProperty.setValue(true);
 		
-		renderThreadFactory = new DefaultThreadFactory("MandelbrotCoordinator", true, Thread.MIN_PRIORITY + 2);
-		juliaRenderThreadFactory = new DefaultThreadFactory("JuliaCoordinator", true, Thread.MIN_PRIORITY);
+		renderThreadFactory = new DefaultThreadFactory("Mandelbrot Coordinator", true, Thread.MIN_PRIORITY + 2);
+		juliaRenderThreadFactory = new DefaultThreadFactory("Julia Coordinator", true, Thread.MIN_PRIORITY);
 		
 		renderFactory = new JavaFXRendererFactory();
 
@@ -229,7 +230,7 @@ public class RenderPane extends BorderPane {
 		browsePane.setDelegate(new BrowseDelegate() {
 			@Override
 			public void didSelectFile(BrowsePane source, File file) {
-				updateFile(file);
+				eventBus.postEvent("editor-load-file", file);
 				hideBrowser(browserTransition, a -> {});
 			}
 
@@ -320,18 +321,18 @@ public class RenderPane extends BorderPane {
 			}
 
 			@Override
-			public MandelbrotView getViewAsCopy() {
-				return mandelbrotData.getView();
+			public MandelbrotMetadata getMetadata() {
+				return (MandelbrotMetadata) mandelbrotSession.getMetadata();
 			}
 
 			@Override
-			public void setView(MandelbrotView view, boolean continuous) {
-				eventBus.postEvent("render-view-changed", new Object[] { new MandelbrotView(view), continuous });
+			public void setView(MandelbrotMetadata metadata, boolean continuous) {
+				eventBus.postEvent("render-view-changed", new Object[] { new MandelbrotSession(metadata, mandelbrotSession.getScript()), continuous, true });
 			}
 
 			@Override
-			public void setPoint(double[] point, boolean continuous) {
-				eventBus.postEvent("render-point-changed", new Object[] { point.clone(), continuous });
+			public void setPoint(MandelbrotMetadata metadata, boolean continuous) {
+				eventBus.postEvent("render-point-changed", new Object[] { new MandelbrotSession(metadata, mandelbrotSession.getScript()), continuous, true });
 			}
 		};
 
@@ -425,7 +426,7 @@ public class RenderPane extends BorderPane {
 		});
 		
 		pickButton.setOnAction(e -> {
-			if (!mandelbrotData.isJulia()) {
+			if (!((MandelbrotMetadata) mandelbrotSession.getMetadata()).isJulia()) {
 				currentTool = new ToolPick(context);
 				juliaCanvas.setVisible(true);
 				pointCanvas.setVisible(true);
@@ -482,17 +483,17 @@ public class RenderPane extends BorderPane {
 			eventBus.postEvent("render-status-changed", newValue);
 		});
 
-		Block<MandelbrotData, Exception> updateJulia = data -> {
-			if (data.isJulia() && currentTool instanceof ToolPick) {
+		Block<MandelbrotMetadata, Exception> updateJulia = metadata -> {
+			if (metadata.isJulia() && currentTool instanceof ToolPick) {
 				currentTool = new ToolZoom(context, true);
 				juliaCanvas.setVisible(false);
 				pointCanvas.setVisible(false);
 				zoominButton.setSelected(true);
 			}
-			juliaButton.setSelected(data.isJulia());
+			juliaButton.setSelected(metadata.isJulia());
 		};
 
-		fileProperty.addListener((observable, oldValue, newValue) -> loadFractalFromFile(eventBus, newValue));
+//		fileProperty.addListener((observable, oldValue, newValue) -> loadFractalFromFile(eventBus, newValue));
 
 		heightProperty().addListener((observable, oldValue, newValue) -> {
 			toolButtons.setPrefHeight(newValue.doubleValue() * 0.07);
@@ -503,15 +504,14 @@ public class RenderPane extends BorderPane {
 		stackPane.setOnDragOver(x -> Optional.of(x).filter(e -> e.getGestureSource() != stackPane)
 				.filter(e -> e.getDragboard().hasFiles()).ifPresent(e -> e.acceptTransferModes(TransferMode.COPY_OR_MOVE)));
 
-		watcherExecutor = Executors.newSingleThreadExecutor(new DefaultThreadFactory("MandelbrotWatcher", true, Thread.MIN_PRIORITY));
+		watcherExecutor = Executors.newSingleThreadExecutor(new DefaultThreadFactory("Watcher", true, Thread.MIN_PRIORITY));
 
 		runTimer(fractalCanvas, orbitCanvas, juliaCanvas, pointCanvas, trapCanvas, toolCanvas);
 
 		eventBus.subscribe("editor-report-changed", event -> updateReport((CompilerReport) event));
 
         eventBus.subscribe("editor-source-changed", event -> {
-            mandelbrotData = new MandelbrotData(mandelbrotData);
-            mandelbrotData.setSource((String) event);
+            mandelbrotSession = new MandelbrotSession((MandelbrotMetadata) mandelbrotSession.getMetadata(), (String) event);
             notifySessionChanged(eventBus, false, true);
         });
 
@@ -520,49 +520,57 @@ public class RenderPane extends BorderPane {
 		eventBus.subscribe("editor-data-changed", event -> {
 			updateData((Object[]) event);
 			Boolean continuous = (Boolean) ((Object[]) event)[1];
-			notifySessionChanged(eventBus, continuous, !continuous);
+			Boolean appendHistory = (Boolean) ((Object[]) event)[2];
+			notifySessionChanged(eventBus, continuous, appendHistory && !continuous);
         });
 
 		eventBus.subscribe("editor-view-changed", event -> {
 			updateView((Object[]) event);
 			Boolean continuous = (Boolean) ((Object[]) event)[1];
-			notifySessionChanged(eventBus, continuous, !continuous);
+			Boolean appendHistory = (Boolean) ((Object[]) event)[2];
+			notifySessionChanged(eventBus, continuous, appendHistory && !continuous);
 		});
 
 		eventBus.subscribe("editor-point-changed", event -> {
 			updatePoint((Object[]) event);
 			Boolean continuous = (Boolean) ((Object[]) event)[1];
-			notifySessionChanged(eventBus, continuous, !continuous && mandelbrotData.isJulia());
+			Boolean appendHistory = (Boolean) ((Object[]) event)[2];
+			notifySessionChanged(eventBus, continuous, appendHistory && !continuous && ((MandelbrotMetadata) mandelbrotSession.getMetadata()).isJulia());
 		});
 
 		eventBus.subscribe("editor-mode-changed", event -> {
 			updateMode((Object[]) event);
 			Boolean continuous = (Boolean) ((Object[]) event)[1];
-			notifySessionChanged(eventBus, continuous, !continuous);
+			Boolean appendHistory = (Boolean) ((Object[]) event)[2];
+			notifySessionChanged(eventBus, continuous, appendHistory && !continuous);
 		});
 
 		eventBus.subscribe("render-data-changed", event -> {
 			updateData((Object[]) event);
 			Boolean continuous = (Boolean) ((Object[]) event)[1];
-			notifySessionChanged(eventBus, continuous, !continuous);
+			Boolean appendHistory = (Boolean) ((Object[]) event)[2];
+			notifySessionChanged(eventBus, continuous, appendHistory && !continuous);
 		});
 
 		eventBus.subscribe("render-view-changed", event -> {
 			updateView((Object[]) event);
 			Boolean continuous = (Boolean) ((Object[]) event)[1];
-			notifySessionChanged(eventBus, continuous, !continuous);
+			Boolean appendHistory = (Boolean) ((Object[]) event)[2];
+			notifySessionChanged(eventBus, continuous, appendHistory && !continuous);
 		});
 
 		eventBus.subscribe("render-point-changed", event -> {
 			updatePoint((Object[]) event);
 			Boolean continuous = (Boolean) ((Object[]) event)[1];
-			notifySessionChanged(eventBus, continuous, !continuous && mandelbrotData.isJulia());
+			Boolean appendHistory = (Boolean) ((Object[]) event)[2];
+			notifySessionChanged(eventBus, continuous, appendHistory && !continuous && ((MandelbrotMetadata) mandelbrotSession.getMetadata()).isJulia());
 		});
 
 		eventBus.subscribe("render-mode-changed", event -> {
 			updateMode((Object[]) event);
 			Boolean continuous = (Boolean) ((Object[]) event)[1];
-			notifySessionChanged(eventBus, continuous, !continuous);
+			Boolean appendHistory = (Boolean) ((Object[]) event)[2];
+			notifySessionChanged(eventBus, continuous, appendHistory && !continuous);
 		});
 
 		eventBus.subscribe("render-status-changed", event -> {
@@ -575,37 +583,37 @@ public class RenderPane extends BorderPane {
 	}
 
     private void notifySessionChanged(EventBus eventBus, boolean continuous, boolean historyAppend) {
-        eventBus.postEvent("session-data-changed", new Object[] { new MandelbrotSession(mandelbrotData), continuous });
+        eventBus.postEvent("session-data-changed", new Object[] { mandelbrotSession, continuous, false });
 		if (historyAppend) {
-			eventBus.postEvent("history-add-session", new MandelbrotSession(mandelbrotData));
+			eventBus.postEvent("history-add-session", mandelbrotSession);
 		}
     }
 
     private void updateData(Object[] event) {
-		mandelbrotData = ((MandelbrotSession) event[0]).getDataAsCopy();
-        updateView(mandelbrotData.getView(), (Boolean) event[1]);
+		mandelbrotSession = (MandelbrotSession) event[0];
+        updateView(mandelbrotSession, (Boolean) event[1]);
 	}
 
 	private void updateView(Object[] event) {
-		mandelbrotData.setView((MandelbrotView) event[0]);
-		updateView(mandelbrotData.getView(), (Boolean) event[1]);
-		juliaProperty.setValue(mandelbrotData.isJulia());
+		mandelbrotSession = (MandelbrotSession) event[0];
+		updateView(mandelbrotSession, (Boolean) event[1]);
+		juliaProperty.setValue(((MandelbrotMetadata) mandelbrotSession.getMetadata()).isJulia());
 	}
 
 	private void updatePoint(Object[] event) {
-		mandelbrotData.setView(mandelbrotData.getView().butWithPoint((double[]) event[0]));
-		updatePoint(mandelbrotData.getPoint(), (Boolean) event[1]);
+		mandelbrotSession = (MandelbrotSession) event[0];
+		updatePoint(mandelbrotSession, (Boolean) event[1]);
 	}
 
 	private void updateMode(Object[] event) {
-		mandelbrotData.setView(mandelbrotData.getView().butWithJulia((boolean) event[0]));
-		juliaProperty.setValue(mandelbrotData.isJulia());
-		updateMode(mandelbrotData.isJulia(), (Boolean) event[1]);
+		mandelbrotSession = (MandelbrotSession) event[0];
+		updateMode(mandelbrotSession, (Boolean) event[1]);
+		juliaProperty.setValue(((MandelbrotMetadata) mandelbrotSession.getMetadata()).isJulia());
 	}
 
 	private void updateFile(File file) {
-		fileProperty.setValue(null);
-		fileProperty.setValue(file.getAbsolutePath());
+//		fileProperty.setValue(null);
+//		fileProperty.setValue(file.getAbsolutePath());
 	}
 
 	@Override
@@ -686,36 +694,32 @@ public class RenderPane extends BorderPane {
 		}
 	}
 
-	private void loadFractalFromFile(EventBus eventBus, String filename) {
-		if (filename == null) {
-			return;
-		}
-		File file = new File(filename);
-		eventBus.postEvent("editor-load-file", file);
-//		try {
-//			MandelbrotDataStore service = new MandelbrotDataStore();
-//			MandelbrotData data = service.loadFromFile(file);
-////			getMandelbrotSession().setCurrentFile(file);
-//			updateJulia.execute(data);
-////			getMandelbrotSession().setData(data);
-//			logger.info(data.toString());
-//		} catch (Exception x) {
-//			logger.warning("Cannot read file " + file.getAbsolutePath());
-//			//TODO display error
+//	private void loadFractalFromFile(EventBus eventBus, String filename) {
+//		if (filename == null) {
+//			return;
 //		}
-	}
+//		File file = new File(filename);
+//		eventBus.postEvent("editor-load-file", file);
+////		try {
+////			MandelbrotDataStore service = new MandelbrotDataStore();
+////			MandelbrotData data = service.loadFromFile(file);
+//////			getMandelbrotSession().setCurrentFile(file);
+////			updateJulia.execute(data);
+//////			getMandelbrotSession().setData(data);
+////			logger.info(data.toString());
+////		} catch (Exception x) {
+////			logger.warning("Cannot read file " + file.getAbsolutePath());
+////			//TODO display error
+////		}
+//	}
 
 	private void resetView(EventBus eventBus) {
-		MandelbrotView viewAsCopy = getViewAsCopy();
+		MandelbrotMetadata metadata = (MandelbrotMetadata) mandelbrotSession.getMetadata();
 		double[] translation = {0, 0, 1, 0};
 		double[] rotation = {0, 0, 0, 0};
 		double[] scale = {1, 1, 1, 1};
-		MandelbrotView view = new MandelbrotView(translation, rotation, scale, viewAsCopy.getPoint(), viewAsCopy.isJulia());
-		eventBus.postEvent("render-view-changed", new Object[] { view, false });
-	}
-
-	private MandelbrotView getViewAsCopy() {
-		return mandelbrotData.getView();
+		MandelbrotMetadata newMetadata = new MandelbrotMetadata(translation, rotation, scale, metadata.getPoint().toArray(), metadata.isJulia());
+		eventBus.postEvent("render-view-changed", new Object[] { new MandelbrotSession(newMetadata, mandelbrotSession.getScript()), false, true });
 	}
 
 	private void createCoordinators(int rows, int columns, Map<String, Integer> hints) {
@@ -781,10 +785,10 @@ public class RenderPane extends BorderPane {
 	}
 	
 	private void pushView() {
-		views.push(getViewAsCopy());
+		views.push((MandelbrotMetadata) mandelbrotSession.getMetadata());
 	}
 
-	private MandelbrotView popView() {
+	private MandelbrotMetadata popView() {
 		if (views.size() > 0) {
 			return views.pop();
 		}
@@ -817,17 +821,17 @@ public class RenderPane extends BorderPane {
 		if (disableTool) {
 			return;
 		}
-		MandelbrotView currentView = getViewAsCopy();
-		if (!julia && currentView.isJulia()) {
-			MandelbrotView oldView = popView();
+		MandelbrotMetadata metadata = (MandelbrotMetadata) mandelbrotSession.getMetadata();
+		if (!julia && metadata.isJulia()) {
+			MandelbrotMetadata oldMetadata = popView();
 			pushView();
-			MandelbrotView view = new MandelbrotView(oldView != null ? oldView.getTranslation() : new double[] { 0, 0, 1, 0 }, oldView != null ? oldView.getRotation() : new double[] { 0, 0, 0, 0 }, oldView != null ? oldView.getScale() : new double[] { 1, 1, 1, 1 }, currentView.getPoint(), false);
-			eventBus.postEvent("render-view-changed", new Object[] { view, false });
-		} else if (julia && !currentView.isJulia()) {
-			MandelbrotView oldView = popView();
+			MandelbrotMetadata newMetadata = new MandelbrotMetadata(oldMetadata != null ? oldMetadata.getTranslation() : new Double4D(0, 0, 1, 0), oldMetadata != null ? oldMetadata.getRotation() : new Double4D(0, 0, 0, 0), oldMetadata != null ? oldMetadata.getScale() : new Double4D(1, 1, 1, 1), metadata.getPoint(), false);
+			eventBus.postEvent("render-view-changed", new Object[] { new MandelbrotSession(newMetadata, mandelbrotSession.getScript()), false, true });
+		} else if (julia && !metadata.isJulia()) {
+			MandelbrotMetadata oldMetadata = popView();
 			pushView();
-			MandelbrotView view = new MandelbrotView(oldView != null ? oldView.getTranslation() : new double[] { 0, 0, 1, 0 }, oldView != null ? oldView.getRotation() : new double[] { 0, 0, 0, 0 }, oldView != null ? oldView.getScale() : new double[] { 1, 1, 1, 1 }, currentView.getPoint(), true);
-			eventBus.postEvent("render-view-changed", new Object[] { view, false });
+			MandelbrotMetadata newMetadata = new MandelbrotMetadata(oldMetadata != null ? oldMetadata.getTranslation() : new Double4D(0, 0, 1, 0), oldMetadata != null ? oldMetadata.getRotation() : new Double4D(0, 0, 0, 0), oldMetadata != null ? oldMetadata.getScale() : new Double4D(1, 1, 1, 1), metadata.getPoint(), true);
+			eventBus.postEvent("render-view-changed", new Object[] { new MandelbrotSession(newMetadata, mandelbrotSession.getScript()), false, true });
 		}
 	}
 
@@ -854,12 +858,12 @@ public class RenderPane extends BorderPane {
 //				logger.info("Orbit or color algorithms are not changed");
 //				return;
 //			}
-			MandelbrotView oldView = getViewAsCopy();
-			double[] translation = oldView.getTranslation();
-			double[] rotation = oldView.getRotation();
-			double[] scale = oldView.getScale();
-			double[] point = oldView.getPoint();
-			boolean julia = oldView.isJulia();
+			MandelbrotMetadata oldMetadata = (MandelbrotMetadata) mandelbrotSession.getMetadata();
+			Double4D translation = oldMetadata.getTranslation();
+			Double4D rotation = oldMetadata.getRotation();
+			Double4D scale = oldMetadata.getScale();
+			Double2D point = oldMetadata.getPoint();
+			boolean julia = oldMetadata.isJulia();
 			abortCoordinators();
 			if (juliaCoordinator != null) {
 				juliaCoordinator.abort();
@@ -882,12 +886,12 @@ public class RenderPane extends BorderPane {
 					}
 					coordinator.init();
 					RendererView view = new RendererView();
-					view.setTraslation(new Double4D(translation));
-					view.setRotation(new Double4D(rotation));
-					view.setScale(new Double4D(scale));
+					view.setTraslation(translation);
+					view.setRotation(rotation);
+					view.setScale(scale);
 					view.setState(new Integer4D(0, 0, 0, 0));
 					view.setJulia(julia);
-					view.setPoint(new Number(point));
+					view.setPoint(new Number(point.getX(), point.getY()));
 					coordinator.setView(view);
 				}
 			}
@@ -903,12 +907,12 @@ public class RenderPane extends BorderPane {
 				}
 				juliaCoordinator.init();
 				RendererView view = new RendererView();
-				view.setTraslation(new Double4D(translation));
-				view.setRotation(new Double4D(rotation));
-				view.setScale(new Double4D(scale));
+				view.setTraslation(translation);
+				view.setRotation(rotation);
+				view.setScale(scale);
 				view.setState(new Integer4D(0, 0, 0, 0));
 				view.setJulia(true);
-				view.setPoint(new Number(point));
+				view.setPoint(new Number(point.getX(), point.getY()));
 				juliaCoordinator.setView(view);
 			}
 			startCoordinators();
@@ -920,7 +924,7 @@ public class RenderPane extends BorderPane {
 			redrawPoint = true;
 			if (!julia) {
 				states = renderOrbit(point);
-				logger.info("Orbit: point = " + Arrays.toString(point) + ", length = " + states.size());
+				logger.info("Orbit: point = " + point + ", length = " + states.size());
 			}
 		} catch (CompilerSourceException e) {
 			logger.log(Level.INFO, "Cannot render fractal: " + e.getMessage());
@@ -1033,25 +1037,26 @@ public class RenderPane extends BorderPane {
 		});
 	}
 
-	private void updatePoint(double[] point, boolean continuous) {
-		MandelbrotView oldView = getViewAsCopy();
-		boolean julia = oldView.isJulia();
+	private void updatePoint(MandelbrotSession session, boolean continuous) {
+		MandelbrotMetadata metadata = (MandelbrotMetadata) session.getMetadata();
+		Double2D point = metadata.getPoint();
+		boolean julia = metadata.isJulia();
 		if (julia) {
 			abortCoordinators();
 			joinCoordinators();
-			double[] translation = oldView.getTranslation();
-			double[] rotation = oldView.getRotation();
-			double[] scale = oldView.getScale();
+			Double4D translation = metadata.getTranslation();
+			Double4D rotation = metadata.getRotation();
+			Double4D scale = metadata.getScale();
 			for (int i = 0; i < coordinators.length; i++) {
 				RendererCoordinator coordinator = coordinators[i];
 				if (coordinator != null) {
 					RendererView view = new RendererView();
-					view.setTraslation(new Double4D(translation));
-					view.setRotation(new Double4D(rotation));
-					view.setScale(new Double4D(scale));
+					view.setTraslation(translation);
+					view.setRotation(rotation);
+					view.setScale(scale);
 					view.setState(new Integer4D(0, 0, continuous ? 1 : 0, 0));
 					view.setJulia(julia);
-					view.setPoint(new Number(point));
+					view.setPoint(new Number(point.getX(), point.getY()));
 					coordinator.setView(view);
 				}
 			}
@@ -1066,7 +1071,7 @@ public class RenderPane extends BorderPane {
 				view.setScale(new Double4D(new double[] { 1, 1, 1, 1 }));
 				view.setState(new Integer4D(0, 0, continuous ? 1 : 0, 0));
 				view.setJulia(true);
-				view.setPoint(new Number(point));
+				view.setPoint(new Number(point.getX(), point.getY()));
 				juliaCoordinator.setView(view);
 				juliaCoordinator.run();
 			}
@@ -1074,29 +1079,30 @@ public class RenderPane extends BorderPane {
 			redrawOrbit = true;
 			redrawPoint = true;
 			if (logger.isLoggable(Level.FINE)) {
-				logger.fine("Orbit: point = " + Arrays.toString(point) + ", length = " + states.size());
+				logger.fine("Orbit: point = " + point + ", length = " + states.size());
 			}
 		}
 	}
 
-	private void updateView(MandelbrotView newView, boolean continuous) {
-		double[] translation = newView.getTranslation();
-		double[] rotation = newView.getRotation();
-		double[] scale = newView.getScale();
-		double[] point = newView.getPoint();
-		boolean julia = newView.isJulia();
+	private void updateView(MandelbrotSession session, boolean continuous) {
+		MandelbrotMetadata metadata = (MandelbrotMetadata) session.getMetadata();
+		Double4D translation = metadata.getTranslation();
+		Double4D rotation = metadata.getRotation();
+		Double4D scale = metadata.getScale();
+		Double2D point = metadata.getPoint();
+		boolean julia = metadata.isJulia();
 		abortCoordinators();
 		joinCoordinators();
 		for (int i = 0; i < coordinators.length; i++) {
 			RendererCoordinator coordinator = coordinators[i];
 			if (coordinator != null) {
 				RendererView view = new RendererView();
-				view.setTraslation(new Double4D(translation));
-				view.setRotation(new Double4D(rotation));
-				view.setScale(new Double4D(scale));
+				view.setTraslation(translation);
+				view.setRotation(rotation);
+				view.setScale(scale);
 				view.setState(new Integer4D(0, 0, continuous ? 1 : 0, 0));
 				view.setJulia(julia);
-				view.setPoint(new Number(point));
+				view.setPoint(new Number(point.getX(), point.getY()));
 				coordinator.setView(view);
 			}
 		}
@@ -1110,7 +1116,7 @@ public class RenderPane extends BorderPane {
 			view.setScale(new Double4D(new double[] { 1, 1, 1, 1 }));
 			view.setState(new Integer4D(0, 0, continuous ? 1 : 0, 0));
 			view.setJulia(true);
-			view.setPoint(new Number(point));
+			view.setPoint(new Number(point.getX(), point.getY()));
 			juliaCoordinator.setView(view);
 			juliaCoordinator.run();
 		}
@@ -1119,28 +1125,29 @@ public class RenderPane extends BorderPane {
 		redrawTrap = true;
 		if (!julia && !continuous) {
 			states = renderOrbit(point);
-			logger.info("Orbit: point = " + Arrays.toString(point) + ", length = " + states.size());
+			logger.info("Orbit: point = " + point + ", length = " + states.size());
 		}
 	}
 
-	private void updateMode(boolean julia, boolean continuous) {
-		MandelbrotView oldView = getViewAsCopy();
-		double[] translation = oldView.getTranslation();
-		double[] rotation = oldView.getRotation();
-		double[] scale = oldView.getScale();
-		double[] point = oldView.getPoint();
+	private void updateMode(MandelbrotSession session, boolean continuous) {
+		MandelbrotMetadata metadata = (MandelbrotMetadata) session.getMetadata();
+		Double4D translation = metadata.getTranslation();
+		Double4D rotation = metadata.getRotation();
+		Double4D scale = metadata.getScale();
+		Double2D point = metadata.getPoint();
+		boolean julia = metadata.isJulia();
 		abortCoordinators();
 		joinCoordinators();
 		for (int i = 0; i < coordinators.length; i++) {
 			RendererCoordinator coordinator = coordinators[i];
 			if (coordinator != null) {
 				RendererView view = new RendererView();
-				view.setTraslation(new Double4D(translation));
-				view.setRotation(new Double4D(rotation));
-				view.setScale(new Double4D(scale));
+				view.setTraslation(translation);
+				view.setRotation(rotation);
+				view.setScale(scale);
 				view.setState(new Integer4D(0, 0, continuous ? 1 : 0, 0));
 				view.setJulia(julia);
-				view.setPoint(new Number(point));
+				view.setPoint(new Number(point.getX(), point.getY()));
 				coordinator.setView(view);
 			}
 		}
@@ -1154,7 +1161,7 @@ public class RenderPane extends BorderPane {
 			view.setScale(new Double4D(new double[] { 1, 1, 1, 1 }));
 			view.setState(new Integer4D(0, 0, continuous ? 1 : 0, 0));
 			view.setJulia(true);
-			view.setPoint(new Number(point));
+			view.setPoint(new Number(point.getX(), point.getY()));
 			juliaCoordinator.setView(view);
 			juliaCoordinator.run();
 		}
@@ -1163,11 +1170,11 @@ public class RenderPane extends BorderPane {
 		redrawTrap = true;
 		if (!julia && !continuous) {
 			states = renderOrbit(point);
-			logger.info("Orbit: point = " + Arrays.toString(point) + ", length = " + states.size());
+			logger.info("Orbit: point = " + point + ", length = " + states.size());
 		}
 	}
 
-	private List<Number[]> renderOrbit(double[] point) {
+	private List<Number[]> renderOrbit(Double2D point) {
 		List<Number[]> states = new ArrayList<>(); 
 		try {
 			if (orbitBuilder != null) {
@@ -1175,7 +1182,7 @@ public class RenderPane extends BorderPane {
 				Scope scope = new Scope();
 				orbit.setScope(scope);
 				orbit.init();
-				orbit.setW(new Number(point));
+				orbit.setW(new Number(point.getX(), point.getY()));
 				orbit.setX(orbit.getInitialPoint());
 				orbit.render(states);
 			}
@@ -1225,8 +1232,8 @@ public class RenderPane extends BorderPane {
 	}
 
 	private void redrawIfJuliaPixelsChanged(Canvas canvas) {
-		MandelbrotView view = getViewAsCopy();
-		if (!view.isJulia() && juliaCoordinator != null && juliaCoordinator.isPixelsChanged()) {
+		MandelbrotMetadata metadata = (MandelbrotMetadata) mandelbrotSession.getMetadata();
+		if (!metadata.isJulia() && juliaCoordinator != null && juliaCoordinator.isPixelsChanged()) {
 			RendererGraphicsContext gc = renderFactory.createGraphicsContext(canvas.getGraphicsContext2D());
 			double dw = canvas.getWidth();
 			double dh = canvas.getHeight();
@@ -1245,9 +1252,9 @@ public class RenderPane extends BorderPane {
 			Number center = coordinators[0].getInitialCenter();
 			RendererGraphicsContext gc = renderFactory.createGraphicsContext(canvas.getGraphicsContext2D());
 			if (states.size() > 1) {
-				MandelbrotView view = getViewAsCopy();
-				double[] t = view.getTranslation();
-				double[] r = view.getRotation();
+				MandelbrotMetadata metadata = (MandelbrotMetadata) mandelbrotSession.getMetadata();
+				double[] t = metadata.getTranslation().toArray();
+				double[] r = metadata.getRotation().toArray();
 				double tx = t[0];
 				double ty = t[1];
 				double tz = t[2];
@@ -1258,7 +1265,7 @@ public class RenderPane extends BorderPane {
 				double cx = dw / 2;
 				double cy = dh / 2;
 				gc.setStroke(renderFactory.createColor(1, 1, 0, 1));
-				double[] point = view.getPoint();
+				double[] point = metadata.getPoint().toArray();
 				double zx = point[0];
 				double zy = point[1];
 				double px = (zx - tx - center.r()) / (tz * size.r());
@@ -1285,9 +1292,9 @@ public class RenderPane extends BorderPane {
 			Number center = coordinators[0].getInitialCenter();
 			RendererGraphicsContext gc = renderFactory.createGraphicsContext(canvas.getGraphicsContext2D());
 			if (states.size() > 1) {
-				MandelbrotView view = getViewAsCopy();
-				double[] t = view.getTranslation();
-				double[] r = view.getRotation();
+				MandelbrotMetadata metadata = (MandelbrotMetadata) mandelbrotSession.getMetadata();
+				double[] t = metadata.getTranslation().toArray();
+				double[] r = metadata.getRotation().toArray();
 				double tx = t[0];
 				double ty = t[1];
 				double tz = t[2];
@@ -1333,9 +1340,9 @@ public class RenderPane extends BorderPane {
 			Number center = coordinators[0].getInitialCenter();
 			RendererGraphicsContext gc = renderFactory.createGraphicsContext(canvas.getGraphicsContext2D());
 			if (states.size() > 1) {
-				MandelbrotView view = getViewAsCopy();
-				double[] t = view.getTranslation();
-				double[] r = view.getRotation();
+				MandelbrotMetadata metadata = (MandelbrotMetadata) mandelbrotSession.getMetadata();
+				double[] t = metadata.getTranslation().toArray();
+				double[] r = metadata.getRotation().toArray();
 				double tx = t[0];
 				double ty = t[1];
 				double tz = t[2];
@@ -1394,13 +1401,13 @@ public class RenderPane extends BorderPane {
 		MandelbrotSession session = (MandelbrotSession)bitmap.getProperty("session");
 		coordinator.setOrbitAndColor(orbitBuilder.build(), colorBuilder.build());
 		coordinator.init();
-		MandelbrotData data = (MandelbrotData) session.getData();
+		MandelbrotMetadata data = (MandelbrotMetadata) session.getMetadata();
 		RendererView view = new RendererView();
-		view.setTraslation(new Double4D(data.getTranslation()));
-		view.setRotation(new Double4D(data.getRotation()));
-		view.setScale(new Double4D(data.getScale()));
+		view.setTraslation(data.getTranslation());
+		view.setRotation(data.getRotation());
+		view.setScale(data.getScale());
 		view.setState(new Integer4D(0, 0, 0, 0));
-		view.setPoint(new Number(data.getPoint()));
+		view.setPoint(new Number(data.getPoint().getX(), data.getPoint().getY()));
 		view.setJulia(data.isJulia());
 		coordinator.setView(view);
 		coordinator.run();
@@ -1415,7 +1422,7 @@ public class RenderPane extends BorderPane {
 		if (Thread.currentThread().isInterrupted()) {
 			return null;
 		}
-		String source = session.get().getSource();
+		String source = session.get().getScript();
 		Compiler compiler = new Compiler();
 		CompilerReport report = compiler.compileReport(source);
 		if (report.getErrors().size() > 0) {

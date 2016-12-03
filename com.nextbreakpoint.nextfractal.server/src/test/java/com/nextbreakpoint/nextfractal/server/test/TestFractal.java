@@ -44,7 +44,7 @@ public class TestFractal {
 //			map.add("xml", xml);
 //			RemoteFractal fractal = restTemplate.postForObject(URL, map, RemoteFractal.class);
 //			System.out.println(fractal.getUUID());
-//			System.out.println(fractal.getSource());
+//			System.out.println(fractal.getScript());
 //			System.out.println(fractal.getJobsCount());
 //			byte[] pngImageData = restTemplate.getForObject(URL + "?UUID=" + fractal.getUUID() + "&index=0", byte[].class);
 //			System.out.println(pngImageData.length);

@@ -24,16 +24,15 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot;
 
-import java.nio.IntBuffer;
-import java.util.Date;
+import com.nextbreakpoint.nextfractal.core.utils.DateAdapter;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
-import com.nextbreakpoint.nextfractal.core.utils.DateAdapter;
+import java.nio.IntBuffer;
+import java.util.Date;
 
 @XmlRootElement(name="mandelbrot")
-public class MandelbrotData implements Cloneable {
+public class MandelbrotDataV11 implements Cloneable {
 	private final static String version = "1.1";
 	private double[] translation = new double[] { 0, 0, 1, 0 };
 	private double[] rotation = new double[] { 0, 0, 0, 0 };
@@ -45,10 +44,10 @@ public class MandelbrotData implements Cloneable {
 	private boolean julia;
 	private IntBuffer pixels;
 
-	public MandelbrotData() {
+	public MandelbrotDataV11() {
 	}
 
-	public MandelbrotData(MandelbrotData otherData) {
+	public MandelbrotDataV11(MandelbrotDataV11 otherData) {
 		translation = otherData.translation.clone();
 		rotation = otherData.rotation.clone();
 		scale = otherData.scale.clone();
@@ -121,19 +120,19 @@ public class MandelbrotData implements Cloneable {
 		return timestamp;
 	}
 
-	public MandelbrotView getView() {
-		return new MandelbrotView(translation, rotation, scale, point, julia);
+	public MandelbrotMetadata getView() {
+		return new MandelbrotMetadata(translation, rotation, scale, point, julia);
 	}
 
-	public void setView(MandelbrotView view) {
-		setTranslation(view.getTranslation());
-		setRotation(view.getRotation());
-		setScale(view.getScale());
-		setPoint(view.getPoint());
+	public void setView(MandelbrotMetadata view) {
+		setTranslation(view.getTranslation().toArray());
+		setRotation(view.getRotation().toArray());
+		setScale(view.getScale().toArray());
+		setPoint(view.getPoint().toArray());
 		setJulia(view.isJulia());
 	}
 
 	public Object clone() {
-		return new MandelbrotData(this);
+		return new MandelbrotDataV11(this);
 	}
 }
