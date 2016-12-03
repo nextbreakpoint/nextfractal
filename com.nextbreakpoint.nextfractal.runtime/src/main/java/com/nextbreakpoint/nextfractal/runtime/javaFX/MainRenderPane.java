@@ -10,7 +10,7 @@ import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static com.nextbreakpoint.nextfractal.runtime.Plugins.tryPlugin;
+import static com.nextbreakpoint.nextfractal.core.Plugins.tryPlugin;
 
 public class MainRenderPane extends BorderPane {
     private static Logger logger = Logger.getLogger(MainRenderPane.class.getName());

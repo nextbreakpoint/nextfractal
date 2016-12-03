@@ -32,7 +32,7 @@ import java.nio.IntBuffer;
 import java.util.Date;
 
 @XmlRootElement(name="contextfree")
-public class ContextFreeData {
+public class ContextFreeData implements Cloneable {
 	private final static String version = "1.0";
 	@XmlJavaTypeAdapter(DateAdapter.class)
 	private Date timestamp = new Date();
@@ -79,5 +79,9 @@ public class ContextFreeData {
 
 	public void setSeed(String seed) {
 		this.seed = seed;
+	}
+
+	public Object clone() {
+		return new ContextFreeData(this);
 	}
 }

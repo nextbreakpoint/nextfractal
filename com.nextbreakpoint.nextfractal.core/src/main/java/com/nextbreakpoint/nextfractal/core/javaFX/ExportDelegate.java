@@ -27,5 +27,5 @@ package com.nextbreakpoint.nextfractal.core.javaFX;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 
 public interface ExportDelegate {
-	public void createSession(RendererSize rendererSize);
+	void createSession(RendererSize rendererSize);
 }

@@ -42,7 +42,7 @@ import com.nextbreakpoint.nextfractal.core.export.ExportJobState;
 import com.nextbreakpoint.nextfractal.core.export.ExportRenderer;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererFactory;
 
-import static com.nextbreakpoint.nextfractal.runtime.Plugins.tryPlugin;
+import static com.nextbreakpoint.nextfractal.core.Plugins.tryPlugin;
 
 public class SimpleExportRenderer implements ExportRenderer {
 	private static final Logger logger = Logger.getLogger(SimpleExportRenderer.class.getName());

@@ -39,13 +39,18 @@ public class ContextFreeSession extends Session {
 
 	public ContextFreeSession(ContextFreeData data) {
 		Objects.requireNonNull(data);
-		this.data = data;
+		this.data = (ContextFreeData) data.clone();
 	}
 
 	@Override
     public String getPluginId() {
         return "ContextFree";
     }
+
+	@Override
+	public String getSource() {
+		return data.getSource();
+	}
 
 	@Override
 	public Object getData() {

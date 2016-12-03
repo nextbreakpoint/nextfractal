@@ -287,7 +287,7 @@ public class ParamsPane extends Pane {
 	}
 
 	private void updateData(Function<MandelbrotView, Object> updateAll, Object[] event) {
-		mandelbrotData = (MandelbrotData) event[0];
+		mandelbrotData = (MandelbrotData) ((MandelbrotSession) event[0]).getData();
 		mandelbrotView = createMandelbrotView(mandelbrotData);
 		if (event[1] == Boolean.FALSE) {
             updateAll.apply(mandelbrotView);

@@ -39,8 +39,8 @@ import javafx.scene.layout.VBox;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.nextbreakpoint.nextfractal.runtime.Plugins.findPlugin;
-import static com.nextbreakpoint.nextfractal.runtime.Plugins.pluginsStream;
+import static com.nextbreakpoint.nextfractal.core.Plugins.findPlugin;
+import static com.nextbreakpoint.nextfractal.core.Plugins.pluginsStream;
 
 public class MainParamsPane extends Pane {
 	private static final int SPACING = 5;

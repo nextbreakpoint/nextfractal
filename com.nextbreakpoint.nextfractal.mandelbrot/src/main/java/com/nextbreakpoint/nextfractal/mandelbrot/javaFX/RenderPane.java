@@ -324,12 +324,12 @@ public class RenderPane extends BorderPane {
 
 			@Override
 			public void setView(MandelbrotView view, boolean continuous) {
-				eventBus.postEvent("render-view-changed", new Object[] { view, continuous });
+				eventBus.postEvent("render-view-changed", new Object[] { new MandelbrotView(view), continuous });
 			}
 
 			@Override
 			public void setPoint(double[] point, boolean continuous) {
-				eventBus.postEvent("render-point-changed", new Object[] { point, continuous });
+				eventBus.postEvent("render-point-changed", new Object[] { point.clone(), continuous });
 			}
 		};
 
@@ -505,48 +505,62 @@ public class RenderPane extends BorderPane {
 
 		runTimer(fractalCanvas, orbitCanvas, juliaCanvas, pointCanvas, trapCanvas, toolCanvas);
 
-		eventBus.subscribe("editor-report-changed", event -> updateFractal((CompilerReport) event));
+		eventBus.subscribe("editor-report-changed", event -> updateReport((CompilerReport) event));
 
-		eventBus.subscribe("session-terminated", event -> dispose());
+        eventBus.subscribe("editor-source-changed", event -> {
+            mandelbrotData = new MandelbrotData(mandelbrotData);
+            mandelbrotData.setSource((String) event);
+            notifySessionChanged(eventBus, false, true);
+        });
+
+        eventBus.subscribe("session-terminated", event -> dispose());
 
 		eventBus.subscribe("editor-data-changed", event -> {
 			updateData((Object[]) event);
-			eventBus.postEvent("session-data-changed", mandelbrotData);
-		});
+			Boolean continuous = (Boolean) ((Object[]) event)[1];
+			notifySessionChanged(eventBus, continuous, !continuous);
+        });
 
 		eventBus.subscribe("editor-view-changed", event -> {
 			updateView((Object[]) event);
-			eventBus.postEvent("session-data-changed", mandelbrotData);
+			Boolean continuous = (Boolean) ((Object[]) event)[1];
+			notifySessionChanged(eventBus, continuous, !continuous);
 		});
 
 		eventBus.subscribe("editor-point-changed", event -> {
 			updatePoint((Object[]) event);
-			eventBus.postEvent("session-data-changed", mandelbrotData);
+			Boolean continuous = (Boolean) ((Object[]) event)[1];
+			notifySessionChanged(eventBus, continuous, !continuous && mandelbrotData.isJulia());
 		});
 
 		eventBus.subscribe("editor-mode-changed", event -> {
 			updateMode((Object[]) event);
-			eventBus.postEvent("session-data-changed", mandelbrotData);
+			Boolean continuous = (Boolean) ((Object[]) event)[1];
+			notifySessionChanged(eventBus, continuous, !continuous);
 		});
 
 		eventBus.subscribe("render-data-changed", event -> {
 			updateData((Object[]) event);
-			eventBus.postEvent("session-data-changed", mandelbrotData);
+			Boolean continuous = (Boolean) ((Object[]) event)[1];
+			notifySessionChanged(eventBus, continuous, !continuous);
 		});
 
 		eventBus.subscribe("render-view-changed", event -> {
 			updateView((Object[]) event);
-			eventBus.postEvent("session-data-changed", mandelbrotData);
+			Boolean continuous = (Boolean) ((Object[]) event)[1];
+			notifySessionChanged(eventBus, continuous, !continuous);
 		});
 
 		eventBus.subscribe("render-point-changed", event -> {
 			updatePoint((Object[]) event);
-			eventBus.postEvent("session-data-changed", mandelbrotData);
+			Boolean continuous = (Boolean) ((Object[]) event)[1];
+			notifySessionChanged(eventBus, continuous, !continuous && mandelbrotData.isJulia());
 		});
 
 		eventBus.subscribe("render-mode-changed", event -> {
 			updateMode((Object[]) event);
-			eventBus.postEvent("session-data-changed", mandelbrotData);
+			Boolean continuous = (Boolean) ((Object[]) event)[1];
+			notifySessionChanged(eventBus, continuous, !continuous);
 		});
 
 		eventBus.subscribe("render-status-changed", event -> {
@@ -558,9 +572,16 @@ public class RenderPane extends BorderPane {
 		});
 	}
 
-	private void updateData(Object[] event) {
-		mandelbrotData.setView(mandelbrotData.getView().butWithPoint((double[]) event[0]));
-		updatePoint(mandelbrotData.getPoint(), (Boolean) event[1]);
+    private void notifySessionChanged(EventBus eventBus, boolean continuous, boolean historyAppend) {
+        eventBus.postEvent("session-data-changed", new Object[] { new MandelbrotSession(mandelbrotData), continuous });
+		if (historyAppend) {
+			eventBus.postEvent("history-add-session", new MandelbrotSession(mandelbrotData));
+		}
+    }
+
+    private void updateData(Object[] event) {
+		mandelbrotData = ((MandelbrotSession) event[0]).getDataAsCopy();
+        updateView(mandelbrotData.getView(), (Boolean) event[1]);
 	}
 
 	private void updateView(Object[] event) {
@@ -814,7 +835,7 @@ public class RenderPane extends BorderPane {
 		hideOrbitProperty.setValue(!hideOrbitProperty.getValue());
 	}
 	
-	private void updateFractal(CompilerReport report) {
+	private void updateReport(CompilerReport report) {
 		try {
 			boolean[] changed = createOrbitAndColor(report);
 			updateCompilerErrors(null, null, null);

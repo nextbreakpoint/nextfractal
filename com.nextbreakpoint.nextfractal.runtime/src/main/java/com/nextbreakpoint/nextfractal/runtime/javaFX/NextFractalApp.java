@@ -45,10 +45,10 @@ import com.nextbreakpoint.nextfractal.core.EventBus;
 import com.nextbreakpoint.nextfractal.core.FileManagerEntry;
 import com.nextbreakpoint.nextfractal.core.export.ExportRenderer;
 import com.nextbreakpoint.nextfractal.core.export.ExportService;
+import com.nextbreakpoint.nextfractal.core.export.ExportSession;
 import com.nextbreakpoint.nextfractal.core.renderer.javaFX.JavaFXRendererFactory;
 import com.nextbreakpoint.nextfractal.core.utils.DefaultThreadFactory;
-import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotData;
-import com.nextbreakpoint.nextfractal.runtime.Plugins;
+import com.nextbreakpoint.nextfractal.core.Plugins;
 import com.nextbreakpoint.nextfractal.runtime.export.SimpleExportRenderer;
 import com.nextbreakpoint.nextfractal.runtime.export.SimpleExportService;
 import javafx.application.Application;
@@ -72,9 +72,9 @@ import javax.tools.ToolProvider;
 import com.nextbreakpoint.nextfractal.core.FractalFactory;
 import com.nextbreakpoint.nextfractal.core.session.Session;
 
-import static com.nextbreakpoint.nextfractal.runtime.Plugins.pluginsStream;
-import static com.nextbreakpoint.nextfractal.runtime.Plugins.tryGrammar;
-import static com.nextbreakpoint.nextfractal.runtime.Plugins.tryPlugin;
+import static com.nextbreakpoint.nextfractal.core.Plugins.pluginsStream;
+import static com.nextbreakpoint.nextfractal.core.Plugins.tryGrammar;
+import static com.nextbreakpoint.nextfractal.core.Plugins.tryPlugin;
 
 public class NextFractalApp extends Application {
 	private static Logger logger = Logger.getLogger(NextFractalApp.class.getName());
@@ -82,7 +82,6 @@ public class NextFractalApp extends Application {
 	private static final String DEFAULT_PLUGIN_ID = "Mandelbrot";
 
 	private Session session;
-	private Object sessionData;
 
 	public static void main(String[] args) {
 		launch(args); 
@@ -122,14 +121,13 @@ public class NextFractalApp extends Application {
 
 		eventBus.subscribe("editor-grammar-changed", event -> tryGrammar((String) event).ifPresent(factory -> createSession(eventBus, factory)));
 
-		eventBus.subscribe("session-data-changed", event -> sessionData = event);
+		eventBus.subscribe("session-data-changed", event -> session = (Session) ((Object[])event)[0]);
 
-		eventBus.subscribe("session-changed", event -> {
-			this.session = (Session) event;
-			eventBus.postEvent("session-data-changed", new Object[] { session.getData(), false });
-		});
+		eventBus.subscribe("session-changed", event -> eventBus.postEvent("session-data-changed", new Object[] { session, false }));
 
 		eventBus.subscribe("session-terminated", event -> handleSessionTerminate(exportService));
+
+		eventBus.subscribe("session-export", event -> handleSessionExport(exportService));
 
 		eventBus.subscribe("editor-load-file", event -> handleLoadFile(eventBus, (File)event));
 
@@ -163,12 +161,23 @@ public class NextFractalApp extends Application {
 		try (ZipInputStream is = new ZipInputStream(new FileInputStream(file))) {
 
 			tryLoadingSession(readEntries(is))
-					.onFailure(e -> logger.log(Level.WARNING, "Cannot load data from " + file.getAbsolutePath(), e))
-					.onSuccess(session -> eventBus.postEvent("current-file-changed", file))
-					.ifPresent(session -> eventBus.postEvent("session-changed", session));
+				.onSuccess(session -> eventBus.postEvent("current-file-changed", file))
+				.ifPresentOrThrow(session -> eventBus.postEvent("session-changed", session));
 
 		} catch (Exception e) {
 			logger.log(Level.WARNING, "Cannot load data from " + file.getAbsolutePath(), e);
+			eventBus.postEvent("session-status-changed", "Cannot read from file " + file.getName() + ": " + e.getMessage());
+		}
+	}
+
+	private void handleSaveFile(EventBus eventBus, File file) {
+		try (ZipOutputStream os = new ZipOutputStream(new FileOutputStream(file))) {
+
+			trySavingSession(os, session.getData()).onSuccess(x -> eventBus.postEvent("current-file-changed", file)).orThrow();
+
+		} catch (Exception e) {
+			logger.log(Level.WARNING, "Cannot save data to " + file.getAbsolutePath(), e);
+			eventBus.postEvent("session-status-changed", "Cannot write into file " + file.getName() + ": " + e.getMessage());
 		}
 	}
 
@@ -185,18 +194,6 @@ public class NextFractalApp extends Application {
 			.orElseGet(() -> Try.failure(new Exception("Manifest is required")));
 	}
 
-	private void handleSaveFile(EventBus eventBus, File file) {
-		try (ZipOutputStream os = new ZipOutputStream(new FileOutputStream(file))) {
-
-			trySavingSession(os, sessionData)
-				.onFailure(e -> logger.log(Level.WARNING, "Cannot save data to " + file.getAbsolutePath(), e))
-				.ifSuccess(x -> eventBus.postEvent("current-file-changed", file));
-
-		} catch (Exception e) {
-			logger.log(Level.WARNING, "Cannot save data to " + file.getAbsolutePath(), e);
-		}
-	}
-
 	private Try<Object, Exception> trySavingSession(ZipOutputStream os, Object data) {
 		return tryPlugin(session.getPluginId())
             .map(factory -> factory.createFileManager())
@@ -205,7 +202,8 @@ public class NextFractalApp extends Application {
 	}
 
 	private Try<Object, Exception> putEntries(ZipOutputStream os, List<FileManagerEntry> entries) {
-		return entries.stream().map(entry -> Try.of(() -> putEntry(os, entry))).filter(result -> result.isFailure()).findFirst().orElse(Try.success(null));
+		return entries.stream().map(entry -> Try.of(() -> putEntry(os, entry)))
+			.filter(result -> result.isFailure()).findFirst().orElse(Try.success(entries));
 	}
 
 	private Object putEntry(ZipOutputStream os, FileManagerEntry entry) throws IOException {
@@ -239,6 +237,11 @@ public class NextFractalApp extends Application {
 	private void handleSessionTerminate(ExportService exportService) {
 		logger.info("Terminating services...");
 		exportService.shutdown();
+	}
+
+	private void handleSessionExport(ExportService exportService) {
+//		ExportSession session = new ExportSession();
+//		exportService.startSession(session);
 	}
 
 	private void createSession(EventBus eventBus, FractalFactory factory) {

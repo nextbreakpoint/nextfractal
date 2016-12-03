@@ -31,6 +31,8 @@ import java.io.InputStream;
 public abstract class Session {
 	public abstract String getPluginId();
 
+	public abstract String getSource();
+
 	public abstract Object getData();
 
 	protected String readResource(String name) throws IOException {

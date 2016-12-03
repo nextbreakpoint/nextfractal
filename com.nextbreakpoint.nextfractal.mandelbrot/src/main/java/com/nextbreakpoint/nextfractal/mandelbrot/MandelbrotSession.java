@@ -39,13 +39,18 @@ public class MandelbrotSession extends Session {
 
 	public MandelbrotSession(MandelbrotData data) {
 		Objects.requireNonNull(data);
-		this.data = data;
+		this.data = (MandelbrotData) data.clone();
 	}
 
 	@Override
     public String getPluginId() {
         return "Mandelbrot";
     }
+
+	@Override
+	public String getSource() {
+		return data.getSource();
+	}
 
 	@Override
 	public Object getData() {

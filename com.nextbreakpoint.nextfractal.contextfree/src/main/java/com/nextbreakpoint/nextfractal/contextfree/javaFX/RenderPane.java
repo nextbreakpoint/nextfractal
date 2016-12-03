@@ -95,6 +95,7 @@ public class RenderPane extends BorderPane {
 	private CFDG cfdg;
 	private String cfdgSource = "";
 	private volatile boolean disableTool;
+	private ContextFreeData contextFreeData;
 
 	public RenderPane(Session session, EventBus eventBus, int width, int height, int rows, int columns) {
 		this.width = width;
@@ -269,18 +270,28 @@ public class RenderPane extends BorderPane {
 
 		runTimer(fractalCanvas, toolCanvas);
 
-		eventBus.subscribe("editor-report-changed", event -> updateFractal((CompilerReport) event));
+		contextFreeData = (ContextFreeData) session.getData();
 
-		eventBus.subscribe("session-terminated", event -> dispose());
+		eventBus.subscribe("editor-report-changed", event -> updateReport((CompilerReport) event));
+
+        eventBus.subscribe("editor-source-changed", event -> {
+            contextFreeData = new ContextFreeData(contextFreeData);
+            contextFreeData.setSource((String) event);
+            notifySessionChanged(eventBus, false, true);
+        });
+
+        eventBus.subscribe("session-terminated", event -> dispose());
 
 		eventBus.subscribe("editor-data-changed", event -> {
-//			ContextFree data = (ContextFree) ((Object[]) event)[0];
-			eventBus.postEvent("session-data-changed", event);
+			updateData((Object[]) event);
+			Boolean continuous = (Boolean) ((Object[]) event)[1];
+			notifySessionChanged(eventBus, continuous, !continuous);
 		});
 
 		eventBus.subscribe("render-data-changed", event -> {
-//			ContextFree data = (ContextFree) ((Object[]) event)[0];
-			eventBus.postEvent("session-data-changed", event);
+            updateData((Object[]) event);
+			Boolean continuous = (Boolean) ((Object[]) event)[1];
+			notifySessionChanged(eventBus, continuous, !continuous);
 		});
 
 		eventBus.subscribe("render-status-changed", event -> {
@@ -290,6 +301,17 @@ public class RenderPane extends BorderPane {
 		eventBus.subscribe("render-error-changed", event -> {
 			eventBus.postEvent("session-error-changed", event);
 		});
+	}
+
+	private void updateData(Object[] event) {
+		contextFreeData = ((ContextFreeSession) event[0]).getDataAsCopy();
+	}
+
+	private void notifySessionChanged(EventBus eventBus, boolean continuous, boolean historyAppend) {
+		eventBus.postEvent("session-data-changed", new Object[] { new ContextFreeSession(contextFreeData), continuous });
+		if (historyAppend) {
+			eventBus.postEvent("history-add-session", new ContextFreeSession(contextFreeData));
+		}
 	}
 
 	private void updateFile(File file) {
@@ -502,7 +524,7 @@ public class RenderPane extends BorderPane {
 		});
 	}
 
-	private void updateFractal(CompilerReport report) {
+	private void updateReport(CompilerReport report) {
 		try {
 			boolean[] changed = createCFDG(report);
 			updateCompilerErrors(null, null, null);

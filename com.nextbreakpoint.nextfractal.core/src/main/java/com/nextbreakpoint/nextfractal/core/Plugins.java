@@ -1,4 +1,4 @@
-package com.nextbreakpoint.nextfractal.runtime;
+package com.nextbreakpoint.nextfractal.core;
 
 import com.nextbreakpoint.Try;
 import com.nextbreakpoint.nextfractal.core.FractalFactory;

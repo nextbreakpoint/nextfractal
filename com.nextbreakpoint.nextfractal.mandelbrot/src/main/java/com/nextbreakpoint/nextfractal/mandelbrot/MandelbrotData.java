@@ -33,7 +33,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import com.nextbreakpoint.nextfractal.core.utils.DateAdapter;
 
 @XmlRootElement(name="mandelbrot")
-public class MandelbrotData {
+public class MandelbrotData implements Cloneable {
 	private final static String version = "1.1";
 	private double[] translation = new double[] { 0, 0, 1, 0 };
 	private double[] rotation = new double[] { 0, 0, 0, 0 };
@@ -131,5 +131,9 @@ public class MandelbrotData {
 		setScale(view.getScale());
 		setPoint(view.getPoint());
 		setJulia(view.isJulia());
+	}
+
+	public Object clone() {
+		return new MandelbrotData(this);
 	}
 }

@@ -5,6 +5,7 @@ import com.nextbreakpoint.nextfractal.core.EventBus;
 import com.nextbreakpoint.nextfractal.core.ImageGenerator;
 import com.nextbreakpoint.nextfractal.core.javaFX.ExportDelegate;
 import com.nextbreakpoint.nextfractal.core.javaFX.ExportPane;
+import com.nextbreakpoint.nextfractal.core.javaFX.HistoryDelegate;
 import com.nextbreakpoint.nextfractal.core.javaFX.HistoryPane;
 import com.nextbreakpoint.nextfractal.core.javaFX.JobsPane;
 import com.nextbreakpoint.nextfractal.core.javaFX.StatusPane;
@@ -16,6 +17,7 @@ import com.nextbreakpoint.nextfractal.core.renderer.javaFX.JavaFXRendererFactory
 import com.nextbreakpoint.nextfractal.core.session.Session;
 import com.nextbreakpoint.nextfractal.core.utils.DefaultThreadFactory;
 import javafx.animation.TranslateTransition;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -42,15 +44,16 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static com.nextbreakpoint.nextfractal.runtime.Plugins.tryPlugin;
+import static com.nextbreakpoint.nextfractal.core.Plugins.tryPlugin;
 
 public class MainEditorPane extends BorderPane {
-    public static final String FILE_EXTENSION = ".nfz";
+    public static final String FILE_EXTENSION = ".nf.zip";
     private static Logger logger = Logger.getLogger(MainEditorPane.class.getName());
 
     private EventBus localEventBus;
     private FileChooser fileChooser;
     private File currentFile;
+    private Session session;
 
     public MainEditorPane(EventBus eventBus) {
 //        widthProperty().addListener((observable, oldValue, newValue) -> Optional.ofNullable(rootPane).ifPresent(pane -> pane.setPrefWidth(newValue.doubleValue())));
@@ -64,10 +67,23 @@ public class MainEditorPane extends BorderPane {
 
         eventBus.subscribe("session-changed", event -> handleSessionChanged(eventBus, (Session) event, loadEventHandler, saveEventHandler));
 
+        eventBus.subscribe("history-session-selected", event -> notifyHistoryItemSelected(eventBus, event));
+
         eventBus.subscribe("current-file-changed", event -> setCurrentFile((File)event));
     }
 
+    private void notifyHistoryItemSelected(EventBus eventBus, Object event) {
+        if (session == null || !session.getPluginId().equals(((Session)event).getPluginId())) {
+            eventBus.postEvent("session-changed", event);
+        } else {
+//            eventBus.postEvent("editor-source-reloaded", event);
+            eventBus.postEvent("editor-data-changed", new Object[] { event, false });
+        }
+    }
+
     private void handleSessionChanged(EventBus eventBus, Session session, EventHandler<ActionEvent> loadEventHandler, EventHandler<ActionEvent> saveEventHandler) {
+        this.session = session;
+
         setCenter(createRootPane(session, getLocalEventBus(eventBus), loadEventHandler, saveEventHandler));
     }
 
@@ -81,15 +97,16 @@ public class MainEditorPane extends BorderPane {
 
     private static Pane createRootPane(Session session, EventBus eventBus, EventHandler<ActionEvent> loadEventHandler, EventHandler<ActionEvent> saveEventHandler) {
         StringObservableValue errorProperty = new StringObservableValue();
+
         errorProperty.setValue(null);
 
         int tileSize = computePercentage(0.02);
 
         RendererTile tile = createSingleTile(tileSize, tileSize);
 
-        Pane historyPane = createGenerator(session, tile).map(generator -> new HistoryPane(generator, tile)).orElse(null);
+        HistoryPane historyPane = createGenerator(session, tile).map(generator -> new HistoryPane(tile)).orElse(null);
 
-        Pane jobsPane = createGenerator(session, tile).map(generator -> new JobsPane(generator, tile)).orElse(null);
+        JobsPane jobsPane = createGenerator(session, tile).map(generator -> new JobsPane(generator, tile)).orElse(null);
 
         Pane editorPane = createEditorPane(session, eventBus).orElse(null);
 
@@ -165,7 +182,8 @@ public class MainEditorPane extends BorderPane {
             @Override
             public void createSession(RendererSize rendererSize) {
                 if (errorProperty.getValue() == null) {
-//                    doExportSession(rendererSize, getMandelbrotSession().getDataAsCopy(), a -> jobsButton.setSelected(true));
+                    eventBus.postEvent("session-export", rendererSize);
+                    Platform.runLater(() -> jobsButton.setSelected(true));
                 }
             }
         });
@@ -280,14 +298,25 @@ public class MainEditorPane extends BorderPane {
             sidePane.prefHeightProperty().setValue(rootPane.getHeight() - statusPane.getHeight() - sourceButtons.getHeight() + newValue.doubleValue());
         });
 
+        errorProperty.addListener((source, oldValue, newValue) -> {
+            exportPane.setDisable(newValue != null);
+        });
+
 //        DefaultThreadFactory exportThreadFactory = new DefaultThreadFactory("Export", true, Thread.MIN_PRIORITY);
 //        exportExecutor = Executors.newSingleThreadExecutor(exportThreadFactory);
 
-//        addDataToHistory(historyList);
+        historyPane.setDelegate(new HistoryDelegate() {
+            @Override
+            public void sessionChanged(Session session) {
+                eventBus.postEvent("history-session-selected", session);
+            }
+        });
 
-        eventBus.subscribe("session-status-changed", event -> statusPane.setMessage((String)event));
+        eventBus.subscribe("session-status-changed", event -> statusPane.setMessage((String) event));
 
-        eventBus.subscribe("session-error-changed", event -> errorProperty.setValue((String)event));
+        eventBus.subscribe("session-error-changed", event -> errorProperty.setValue((String) event));
+
+        eventBus.subscribe("history-add-session", event -> historyPane.appendSession((Session) event));
 
         eventBus.postEvent("editor-source-loaded", session);
 
@@ -401,7 +430,7 @@ public class MainEditorPane extends BorderPane {
     }
 
     private String createFileName() {
-        SimpleDateFormat df = new SimpleDateFormat("YYYY-MM-dd--HH-mm-ss");
+        SimpleDateFormat df = new SimpleDateFormat("YYYYMMdd-HHmmss");
         return df.format(new Date());
     }
 
@@ -414,7 +443,7 @@ public class MainEditorPane extends BorderPane {
     }
 
     private FileChooser showSaveFileChooser() {
-        ensureFileChooser(".nfz");
+        ensureFileChooser(FILE_EXTENSION);
         fileChooser.setTitle("Save");
         if (getCurrentFile() != null) {
             fileChooser.setInitialDirectory(getCurrentFile().getParentFile());

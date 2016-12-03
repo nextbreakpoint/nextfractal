@@ -104,7 +104,7 @@ public class ParamsPane extends Pane {
 			ContextFreeData newData = new ContextFreeData(data);
 			String seed = seedField.getText();
 			newData.setSeed(seed);
-			Platform.runLater(() -> eventBus.postEvent("editor-data-changed", newData));
+			Platform.runLater(() -> eventBus.postEvent("editor-data-changed", new Object[] { newData, false }));
 			return null;
 		};
 
@@ -113,17 +113,17 @@ public class ParamsPane extends Pane {
 			if (event.equals("apply")) notifyAll.apply(contextFreeData);
 		});
 
-		eventBus.subscribe("editor-data-changed", event -> updateData(updateAll, (ContextFreeData) event));
+		eventBus.subscribe("editor-data-changed", event -> updateData(updateAll, (Object[]) event));
 
-		eventBus.subscribe("render-data-changed", event -> updateData(updateAll, (ContextFreeData) event));
+		eventBus.subscribe("render-data-changed", event -> updateData(updateAll, (Object[]) event));
 
 		updateAll.apply(contextFreeData);
 		
 		seedField.setOnAction(e -> notifyAll.apply(contextFreeData));
 	}
 
-	private void updateData(Function<ContextFreeData, Object> updateAll, ContextFreeData event) {
-		contextFreeData = event;
+	private void updateData(Function<ContextFreeData, Object> updateAll, Object[] event) {
+		contextFreeData = (ContextFreeData) ((ContextFreeSession) event[0]).getData();
 		updateAll.apply(contextFreeData);
 	}
 
