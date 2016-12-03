@@ -2,7 +2,6 @@ package com.nextbreakpoint.nextfractal.core.javaFX;
 
 import com.nextbreakpoint.Try;
 import com.nextbreakpoint.nextfractal.core.ImageGenerator;
-import com.nextbreakpoint.nextfractal.core.renderer.RendererPoint;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
 import com.nextbreakpoint.nextfractal.core.renderer.javaFX.JavaFXRendererFactory;
@@ -12,47 +11,45 @@ import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.BorderPane;
-import javafx.stage.Screen;
 
 import java.nio.IntBuffer;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 
-import static com.nextbreakpoint.nextfractal.core.Plugins.tryPlugin;
+import static com.nextbreakpoint.nextfractal.core.Plugins.tryFindFactory;
 
 public class HistoryPane extends BorderPane {
     private static final int PADDING = 8;
 
-    private final ThreadFactory threadFactory = new DefaultThreadFactory("History", true, Thread.MIN_PRIORITY);
-    private final ExecutorService historyExecutor;
-    private ListView<Bitmap> historyListView;
+    private final ThreadFactory threadFactory = new DefaultThreadFactory("History Renderer", true, Thread.MIN_PRIORITY);
+    private final ExecutorService executor;
+    private ListView<Bitmap> listView;
     private HistoryDelegate delegate;
-    private volatile boolean noHistory;
     private RendererTile tile;
-    private RendererSize size;
+    private volatile boolean noHistory;
 
     public HistoryPane(RendererTile tile) {
         this.tile = tile;
 
-        historyListView = new ListView<>();
-        historyListView.setFixedCellSize(tile.getTileSize().getHeight() + PADDING);
-        historyListView.getStyleClass().add("history");
-        historyListView.setCellFactory(view -> new HistoryListCell(tile));
+        listView = new ListView<>();
+        listView.setFixedCellSize(tile.getTileSize().getHeight() + PADDING);
+        listView.getStyleClass().add("history");
+        listView.setCellFactory(view -> new HistoryListCell(tile));
 
-        setCenter(historyListView);
+        setCenter(listView);
 
-        historyListView.getSelectionModel().getSelectedItems().addListener((ListChangeListener.Change<? extends Bitmap> c) -> historyItemSelected(historyListView));
+        listView.getSelectionModel().getSelectedItems().addListener((ListChangeListener.Change<? extends Bitmap> c) -> itemSelected(listView));
 
-        historyExecutor = Executors.newSingleThreadExecutor(new DefaultThreadFactory("History", true, Thread.MIN_PRIORITY));
+        executor = Executors.newSingleThreadExecutor(new DefaultThreadFactory("History Generator", true, Thread.MIN_PRIORITY));
     }
 
-    private void historyItemSelected(ListView<Bitmap> historyList) {
-        int index = historyList.getSelectionModel().getSelectedIndex();
+    private void itemSelected(ListView<Bitmap> listView) {
+        int index = listView.getSelectionModel().getSelectedIndex();
         if (index >= 0) {
             noHistory = true;
             if (delegate != null) {
-                Bitmap bitmap = historyList.getItems().get(index);
+                Bitmap bitmap = listView.getItems().get(index);
                 Session session = (Session) bitmap.getProperty("session");
                 delegate.sessionChanged(session);
             }
@@ -61,14 +58,14 @@ public class HistoryPane extends BorderPane {
     }
 
     private void submitItem(Session session, ImageGenerator generator) {
-        historyExecutor.submit(() -> Try.of(() -> generator.renderImage(session.getData()))
-            .ifPresent(pixels -> Platform.runLater(() -> historyAddItem(historyListView, session, pixels, generator.getSize()))));
+        executor.submit(() -> Try.of(() -> generator.renderImage(session.getData()))
+            .ifPresent(pixels -> Platform.runLater(() -> addItem(listView, session, pixels, generator.getSize()))));
     }
 
-    private void historyAddItem(ListView<Bitmap> historyList, Session session, IntBuffer pixels, RendererSize size) {
+    private void addItem(ListView<Bitmap> listView, Session session, IntBuffer pixels, RendererSize size) {
         BrowseBitmap bitmap = new BrowseBitmap(size.getWidth(), size.getHeight(), pixels);
         bitmap.setProperty("session", session);
-        historyList.getItems().add(0, bitmap);
+        listView.getItems().add(0, bitmap);
     }
 
     public void appendSession(Session session) {
@@ -76,12 +73,8 @@ public class HistoryPane extends BorderPane {
             return;
         }
 
-        tryPlugin(session.getPluginId()).map(factory -> factory.createImageGenerator(threadFactory,
+        tryFindFactory(session.getPluginId()).map(factory -> factory.createImageGenerator(threadFactory,
             new JavaFXRendererFactory(), tile, true)).ifPresent(generator -> submitItem(session, generator));
-    }
-
-    public HistoryDelegate getDelegate() {
-        return delegate;
     }
 
     public void setDelegate(HistoryDelegate delegate) {

@@ -3,6 +3,8 @@ package com.nextbreakpoint.nextfractal.runtime.javaFX;
 import com.nextbreakpoint.Try;
 import com.nextbreakpoint.nextfractal.core.EventBus;
 import com.nextbreakpoint.nextfractal.core.ImageGenerator;
+import com.nextbreakpoint.nextfractal.core.encoder.Encoder;
+import com.nextbreakpoint.nextfractal.core.export.ExportSession;
 import com.nextbreakpoint.nextfractal.core.javaFX.ExportDelegate;
 import com.nextbreakpoint.nextfractal.core.javaFX.ExportPane;
 import com.nextbreakpoint.nextfractal.core.javaFX.HistoryDelegate;
@@ -41,10 +43,13 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static com.nextbreakpoint.nextfractal.core.Plugins.tryPlugin;
+import static com.nextbreakpoint.nextfractal.core.Plugins.tryFindEncoder;
+import static com.nextbreakpoint.nextfractal.core.Plugins.tryFindFactory;
 
 public class MainEditorPane extends BorderPane {
     public static final String FILE_EXTENSION = ".nf.zip";
@@ -53,7 +58,10 @@ public class MainEditorPane extends BorderPane {
     private EventBus localEventBus;
     private FileChooser fileChooser;
     private File currentFile;
+    private FileChooser exportFileChooser;
+    private File exportCurrentFile;
     private Session session;
+    private Pane rootPane;
 
     public MainEditorPane(EventBus eventBus) {
 //        widthProperty().addListener((observable, oldValue, newValue) -> Optional.ofNullable(rootPane).ifPresent(pane -> pane.setPrefWidth(newValue.doubleValue())));
@@ -65,9 +73,21 @@ public class MainEditorPane extends BorderPane {
         EventHandler<ActionEvent> saveEventHandler = e -> Optional.ofNullable(showSaveFileChooser())
                 .map(fileChooser -> fileChooser.showSaveDialog(MainEditorPane.this.getScene().getWindow())).ifPresent(file -> eventBus.postEvent("editor-save-file", file));
 
-        eventBus.subscribe("session-changed", event -> handleSessionChanged(eventBus, (Session) event, loadEventHandler, saveEventHandler));
+        int tileSize = computePercentage(0.02);
+
+        RendererTile tile = createSingleTile(tileSize, tileSize);
+
+        HistoryPane historyPane = new HistoryPane(tile);
+        historyPane.getStyleClass().add("sidebar");
+
+        JobsPane jobsPane = new JobsPane(tile);
+        jobsPane.getStyleClass().add("sidebar");
+
+        eventBus.subscribe("session-changed", event -> handleSessionChanged(getLocalEventBus(eventBus), (Session) event, loadEventHandler, saveEventHandler, historyPane, jobsPane));
 
         eventBus.subscribe("history-session-selected", event -> notifyHistoryItemSelected(eventBus, event));
+
+        eventBus.subscribe("session-export", event -> handleExportSession(eventBus, jobsPane, (RendererSize) event, session, file -> exportCurrentFile = file));
 
         eventBus.subscribe("current-file-changed", event -> setCurrentFile((File)event));
     }
@@ -81,10 +101,19 @@ public class MainEditorPane extends BorderPane {
         }
     }
 
-    private void handleSessionChanged(EventBus eventBus, Session session, EventHandler<ActionEvent> loadEventHandler, EventHandler<ActionEvent> saveEventHandler) {
+    private void handleSessionChanged(EventBus eventBus, Session session, EventHandler<ActionEvent> loadEventHandler, EventHandler<ActionEvent> saveEventHandler, HistoryPane historyPane, JobsPane jobsPane) {
         this.session = session;
 
-        setCenter(createRootPane(session, getLocalEventBus(eventBus), loadEventHandler, saveEventHandler));
+        setCenter(null);
+
+        if (rootPane != null) {
+            rootPane.getChildren().remove(historyPane);
+            rootPane.getChildren().remove(jobsPane);
+        }
+
+        rootPane = createRootPane(session, eventBus, loadEventHandler, saveEventHandler, historyPane, jobsPane);
+
+        setCenter(rootPane);
     }
 
     private EventBus getLocalEventBus(EventBus eventBus) {
@@ -95,18 +124,10 @@ public class MainEditorPane extends BorderPane {
         return localEventBus;
     }
 
-    private static Pane createRootPane(Session session, EventBus eventBus, EventHandler<ActionEvent> loadEventHandler, EventHandler<ActionEvent> saveEventHandler) {
+    private static Pane createRootPane(Session session, EventBus eventBus, EventHandler<ActionEvent> loadEventHandler, EventHandler<ActionEvent> saveEventHandler, HistoryPane historyPane, JobsPane jobsPane) {
         StringObservableValue errorProperty = new StringObservableValue();
 
         errorProperty.setValue(null);
-
-        int tileSize = computePercentage(0.02);
-
-        RendererTile tile = createSingleTile(tileSize, tileSize);
-
-        HistoryPane historyPane = createGenerator(session, tile).map(generator -> new HistoryPane(tile)).orElse(null);
-
-        JobsPane jobsPane = createGenerator(session, tile).map(generator -> new JobsPane(generator, tile)).orElse(null);
 
         Pane editorPane = createEditorPane(session, eventBus).orElse(null);
 
@@ -116,10 +137,8 @@ public class MainEditorPane extends BorderPane {
 
         ExportPane exportPane = new ExportPane();
 
-        historyPane.getStyleClass().add("sidebar");
         paramsPane.getStyleClass().add("sidebar");
         exportPane.getStyleClass().add("sidebar");
-        jobsPane.getStyleClass().add("sidebar");
 
         StackPane sidePane = new StackPane();
         sidePane.getChildren().add(jobsPane);
@@ -183,7 +202,6 @@ public class MainEditorPane extends BorderPane {
             public void createSession(RendererSize rendererSize) {
                 if (errorProperty.getValue() == null) {
                     eventBus.postEvent("session-export", rendererSize);
-                    Platform.runLater(() -> jobsButton.setSelected(true));
                 }
             }
         });
@@ -236,10 +254,10 @@ public class MainEditorPane extends BorderPane {
             jobsPane.setMaxHeight(height);
         });
 
-//        errorProperty.addListener((source, oldValue, newValue) -> {
-//            exportPane.setDisable(newValue != null);
-//            paramsPane.setDisable(newValue != null);
-//        });
+        errorProperty.addListener((source, oldValue, newValue) -> {
+            exportPane.setDisable(newValue != null);
+            paramsPane.setDisable(newValue != null);
+        });
 
         historyButton.selectedProperty().addListener((source, oldValue, newValue) -> {
             if (newValue) {
@@ -298,13 +316,6 @@ public class MainEditorPane extends BorderPane {
             sidePane.prefHeightProperty().setValue(rootPane.getHeight() - statusPane.getHeight() - sourceButtons.getHeight() + newValue.doubleValue());
         });
 
-        errorProperty.addListener((source, oldValue, newValue) -> {
-            exportPane.setDisable(newValue != null);
-        });
-
-//        DefaultThreadFactory exportThreadFactory = new DefaultThreadFactory("Export", true, Thread.MIN_PRIORITY);
-//        exportExecutor = Executors.newSingleThreadExecutor(exportThreadFactory);
-
         historyPane.setDelegate(new HistoryDelegate() {
             @Override
             public void sessionChanged(Session session) {
@@ -321,6 +332,8 @@ public class MainEditorPane extends BorderPane {
         eventBus.postEvent("editor-source-loaded", session);
 
         eventBus.postEvent("editor-params-changed", session);
+
+        eventBus.subscribe("export-session-created", event -> jobsButton.setSelected(true));
 
         return rootPane;
     }
@@ -393,14 +406,14 @@ public class MainEditorPane extends BorderPane {
     }
 
     private static Try<ImageGenerator, Exception> createGenerator(Session session, RendererTile tile) {
-        DefaultThreadFactory threadFactory = new DefaultThreadFactory("MandelbrotHistoryImageGenerator", true, Thread.MIN_PRIORITY);
-        return tryPlugin(session.getPluginId(), plugin -> Objects.requireNonNull(plugin.createImageGenerator(threadFactory, new JavaFXRendererFactory(), tile, true)))
-                .onFailure(e -> logger.log(Level.WARNING, "Cannot create image generator with pluginId " + session.getPluginId(), e));
+        DefaultThreadFactory threadFactory = new DefaultThreadFactory("Export", true, Thread.MIN_PRIORITY);
+        return tryFindFactory(session.getPluginId()).map(plugin -> Objects.requireNonNull(plugin.createImageGenerator(threadFactory, new JavaFXRendererFactory(), tile, true)))
+            .onFailure(e -> logger.log(Level.WARNING, "Cannot create image generator with pluginId " + session.getPluginId(), e));
     }
 
     private static Try<Pane, Exception> createEditorPane(Session session, EventBus eventBus) {
-        return tryPlugin(session.getPluginId(), plugin -> Objects.requireNonNull(plugin.createEditorPane(eventBus, session)))
-                .onFailure(e -> logger.log(Level.WARNING, "Cannot create editor with pluginId " + session.getPluginId(), e));
+        return tryFindFactory(session.getPluginId()).map(plugin -> Objects.requireNonNull(plugin.createEditorPane(eventBus, session)))
+            .onFailure(e -> logger.log(Level.WARNING, "Cannot create editor with pluginId " + session.getPluginId(), e));
     }
 
     private static int computePercentage(double percentage) {
@@ -468,5 +481,54 @@ public class MainEditorPane extends BorderPane {
 
     private void setCurrentFile(File currentFile) {
         this.currentFile = currentFile;
+    }
+
+    private void handleExportSession(EventBus eventBus, JobsPane jobsPane, RendererSize rendererSize, Session session, Consumer<File> consumer) {
+        createEncoder("PNG").ifPresent(encoder -> selectFileAndExport(eventBus, jobsPane, rendererSize, encoder, session, consumer));
+    }
+
+    private Optional<? extends Encoder> createEncoder(String format) {
+        return tryFindEncoder(format).onFailure(e -> logger.warning("Cannot find encoder for PNG format")).value();
+    }
+
+    private void selectFileAndExport(EventBus eventBus, JobsPane jobsPane, RendererSize rendererSize, Encoder encoder, Session session, Consumer<File> consumer) {
+        Consumer<File> fileConsumer = file -> createExportSession(eventBus, jobsPane, rendererSize, encoder, file, session);
+        Optional.ofNullable(prepareExportFileChooser(encoder.getSuffix()).showSaveDialog(MainEditorPane.this.getScene().getWindow())).ifPresent(fileConsumer.andThen(consumer));
+    }
+
+    private void createExportSession(EventBus eventBus, JobsPane jobsPane, RendererSize rendererSize, Encoder encoder, File file, Session session) {
+        String uuid = UUID.randomUUID().toString();
+        jobsPane.appendSession(uuid, session);
+        startExportSession(eventBus, uuid, rendererSize, encoder, file, session);
+    }
+
+    private FileChooser prepareExportFileChooser(String suffix) {
+        ensureExportFileChooser(suffix);
+        exportFileChooser.setTitle("Export");
+        if (exportCurrentFile != null) {
+            exportFileChooser.setInitialDirectory(exportCurrentFile.getParentFile());
+            exportFileChooser.setInitialFileName(exportCurrentFile.getName());
+        }
+        return exportFileChooser;
+    }
+
+    private void startExportSession(EventBus eventBus, String uuid, RendererSize rendererSize, Encoder encoder, File file, Object data) {
+        try {
+            File tmpFile = File.createTempFile("export-" + uuid, ".dat");
+            ExportSession exportSession = new ExportSession(uuid, data, file, tmpFile, rendererSize, 200, encoder);
+            logger.info("Export session created: " + exportSession.getSessionId());
+            eventBus.postEvent("export-session-created", exportSession);
+        } catch (Exception e) {
+            logger.log(Level.WARNING, "Cannot export data to file " + file.getAbsolutePath(), e);
+            //TODO display error
+        }
+    }
+
+    private void ensureExportFileChooser(String suffix) {
+        if (exportFileChooser == null) {
+            exportFileChooser = new FileChooser();
+            exportFileChooser.setInitialFileName(createFileName() + suffix);
+            exportFileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+        }
     }
 }

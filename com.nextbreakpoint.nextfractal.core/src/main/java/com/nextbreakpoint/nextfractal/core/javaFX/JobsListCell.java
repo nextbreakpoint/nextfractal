@@ -24,8 +24,6 @@
  */
 package com.nextbreakpoint.nextfractal.core.javaFX;
 
-import com.nextbreakpoint.nextfractal.core.export.ExportSession;
-import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
 import javafx.geometry.Pos;
 import javafx.scene.canvas.Canvas;
@@ -37,15 +35,13 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.transform.Affine;
 
-public class ExportListCell extends ListCell<ExportSession> {
+public class JobsListCell extends ListCell<Bitmap> {
 	private BorderPane pane;
 	private Label label;
 	private Canvas canvas;
-	private RendererSize size;
 	private RendererTile tile;
 
-	public ExportListCell(RendererSize size, RendererTile tile) {
-		this.size = size;
+	public JobsListCell(RendererTile tile) {
 		this.tile = tile;
 		canvas = new Canvas(tile.getTileSize().getWidth(), tile.getTileSize().getHeight());
 		label = new Label();
@@ -57,25 +53,25 @@ public class ExportListCell extends ListCell<ExportSession> {
 	}
 
 	@Override
-	public void updateItem(ExportSession session, boolean empty) {
-		super.updateItem(session, empty);
+	public void updateItem(Bitmap bitmap, boolean empty) {
+		super.updateItem(bitmap, empty);
 		if (empty) {
 			setGraphic(null);
 		} else {
-			if (session.getPixels() != null) {
-				WritableImage image = new WritableImage(size.getWidth(), size.getHeight());
-				image.getPixelWriter().setPixels(0, 0, (int)image.getWidth(), (int)image.getHeight(), PixelFormat.getIntArgbInstance(), session.getPixels(), (int)image.getWidth());
+			if (bitmap.getPixels() != null) {
+				WritableImage image = new WritableImage(bitmap.getWidth(), bitmap.getHeight());
+				image.getPixelWriter().setPixels(0, 0, (int)image.getWidth(), (int)image.getHeight(), PixelFormat.getIntArgbInstance(), bitmap.getPixels(), (int)image.getWidth());
 				GraphicsContext g2d = canvas.getGraphicsContext2D();
 				Affine affine = new Affine();
-				int x = (tile.getTileSize().getWidth() - size.getWidth()) / 2;
-				int y = (tile.getTileSize().getHeight() - size.getHeight()) / 2;
+				int x = (tile.getTileSize().getWidth() - bitmap.getWidth()) / 2;
+				int y = (tile.getTileSize().getHeight() - bitmap.getHeight()) / 2;
 				affine.append(Affine.translate(0, +image.getHeight() / 2 + y));
 				affine.append(Affine.scale(1, -1));
 				affine.append(Affine.translate(0, -image.getHeight() / 2 - y));
 				g2d.setTransform(affine);
 				g2d.drawImage(image, x, y);
 			}
-			label.setText(String.format("%d%%", (int)Math.rint(session.getProgress() * 100)));
+			label.setText(String.format("%d%%", (int)Math.rint(bitmap.getProgress() * 100)));
 			this.setGraphic(pane);
 		}
 	}

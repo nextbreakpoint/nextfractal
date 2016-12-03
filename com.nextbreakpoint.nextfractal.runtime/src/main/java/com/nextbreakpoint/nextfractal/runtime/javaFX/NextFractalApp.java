@@ -72,9 +72,8 @@ import javax.tools.ToolProvider;
 import com.nextbreakpoint.nextfractal.core.FractalFactory;
 import com.nextbreakpoint.nextfractal.core.session.Session;
 
-import static com.nextbreakpoint.nextfractal.core.Plugins.pluginsStream;
-import static com.nextbreakpoint.nextfractal.core.Plugins.tryGrammar;
-import static com.nextbreakpoint.nextfractal.core.Plugins.tryPlugin;
+import static com.nextbreakpoint.nextfractal.core.Plugins.factories;
+import static com.nextbreakpoint.nextfractal.core.Plugins.tryFindFactoryByGrammar;
 
 public class NextFractalApp extends Application {
 	private static Logger logger = Logger.getLogger(NextFractalApp.class.getName());
@@ -119,7 +118,7 @@ public class NextFractalApp extends Application {
 		ExportRenderer exportRenderer = new SimpleExportRenderer(createDefaultThreadFactory("NextFractalRender"), new JavaFXRendererFactory());
 		ExportService exportService = new SimpleExportService(createDefaultThreadFactory("NextFractalExport"), exportRenderer);
 
-		eventBus.subscribe("editor-grammar-changed", event -> tryGrammar((String) event).ifPresent(factory -> createSession(eventBus, factory)));
+		eventBus.subscribe("editor-grammar-changed", event -> tryFindFactoryByGrammar((String) event).ifPresent(factory -> createSession(eventBus, factory)));
 
 		eventBus.subscribe("session-data-changed", event -> session = (Session) ((Object[])event)[0]);
 
@@ -127,7 +126,7 @@ public class NextFractalApp extends Application {
 
 		eventBus.subscribe("session-terminated", event -> handleSessionTerminate(exportService));
 
-		eventBus.subscribe("session-export", event -> handleSessionExport(exportService));
+		eventBus.subscribe("export-session-created", event -> handleSessionExport(exportService, (ExportSession) event));
 
 		eventBus.subscribe("editor-load-file", event -> handleLoadFile(eventBus, (File)event));
 
@@ -152,7 +151,7 @@ public class NextFractalApp extends Application {
 		primaryStage.setTitle(getApplicationName());
 
 		String defaultPluginId = System.getProperty("initialPluginId", DEFAULT_PLUGIN_ID);
-		tryPlugin(defaultPluginId).ifPresent(factory -> createSession(eventBus, factory));
+		Plugins.tryFindFactory(defaultPluginId).ifPresent(factory -> createSession(eventBus, factory));
 
 		primaryStage.show();
 	}
@@ -183,7 +182,7 @@ public class NextFractalApp extends Application {
 
 	private Try<Session, Exception> tryLoadingSession(List<FileManagerEntry> entries) {
 		return readManifest(entries)
-			.flatMap(Plugins::tryPlugin)
+			.flatMap(Plugins::tryFindFactory)
 			.map(factory -> factory.createFileManager())
 			.flatMap(manager -> manager.readEntries(entries));
 	}
@@ -195,7 +194,7 @@ public class NextFractalApp extends Application {
 	}
 
 	private Try<Object, Exception> trySavingSession(ZipOutputStream os, Object data) {
-		return tryPlugin(session.getPluginId())
+		return Plugins.tryFindFactory(session.getPluginId())
             .map(factory -> factory.createFileManager())
             .flatMap(manager -> manager.writeEntries(data))
             .flatMap(entries -> putEntries(os, entries));
@@ -239,8 +238,8 @@ public class NextFractalApp extends Application {
 		exportService.shutdown();
 	}
 
-	private void handleSessionExport(ExportService exportService) {
-//		ExportSession session = new ExportSession();
+	private void handleSessionExport(ExportService exportService, ExportSession exportSession) {
+		System.out.println(exportSession.getSessionId());
 //		exportService.startSession(session);
 	}
 
@@ -398,8 +397,8 @@ public class NextFractalApp extends Application {
 	private void loadStyleSheets(Scene scene) {
 		tryLoadStyleSheet("/theme.css").ifPresent(resourceURL -> scene.getStylesheets().add((resourceURL)));
 
-		pluginsStream().map(FractalFactory::getId).map(name -> "/" + name.toLowerCase() + ".css")
-				.map(resourceName -> tryLoadStyleSheet(resourceName)).forEach(maybeURL -> maybeURL.ifPresent(resourceURL -> scene.getStylesheets().add((resourceURL))));
+		factories().map(FractalFactory::getId).map(name -> "/" + name.toLowerCase() + ".css")
+			.map(resourceName -> tryLoadStyleSheet(resourceName)).forEach(maybeURL -> maybeURL.ifPresent(resourceURL -> scene.getStylesheets().add((resourceURL))));
 	}
 
 	private Try<String, Exception> tryLoadStyleSheet(String resourceName) {
@@ -411,7 +410,7 @@ public class NextFractalApp extends Application {
 	}
 
 	private void printPlugins() {
-		pluginsStream().forEach(plugin -> logger.fine("Found plugin " + plugin.getId()));
+		factories().forEach(plugin -> logger.fine("Found plugin " + plugin.getId()));
 	}
 
 //	private void setup() {

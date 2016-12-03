@@ -36,11 +36,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static com.nextbreakpoint.nextfractal.core.Plugins.findPlugin;
-import static com.nextbreakpoint.nextfractal.core.Plugins.pluginsStream;
+import static com.nextbreakpoint.nextfractal.core.Plugins.findFactory;
+import static com.nextbreakpoint.nextfractal.core.Plugins.listGrammars;
 
 public class MainParamsPane extends Pane {
 	private static final int SPACING = 5;
@@ -100,7 +97,7 @@ public class MainParamsPane extends Pane {
 
 		EventListener paramsChangedAction = event -> {
 			Session session = (Session) event;
-			findPlugin(session.getPluginId()).ifPresent(factory -> {
+			findFactory(session.getPluginId()).ifPresent(factory -> {
 				grammar = factory.getGrammar();
 				grammarCombobox.getSelectionModel().select(grammar);
 				paramsPane.setCenter(Try.of(() -> factory.createParamsPane(eventBus, session)).orElse(null));
@@ -114,9 +111,5 @@ public class MainParamsPane extends Pane {
 				eventBus.postEvent("editor-grammar-changed", grammarCombobox.getSelectionModel().getSelectedItem());
 			}
 		});
-	}
-
-	private static List<String> listGrammars() {
-		return pluginsStream().map(factory -> factory.getGrammar()).sorted().collect(Collectors.toList());
 	}
 }

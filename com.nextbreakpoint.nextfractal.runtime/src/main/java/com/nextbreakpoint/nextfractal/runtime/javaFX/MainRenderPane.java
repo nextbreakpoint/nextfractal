@@ -10,7 +10,7 @@ import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static com.nextbreakpoint.nextfractal.core.Plugins.tryPlugin;
+import static com.nextbreakpoint.nextfractal.core.Plugins.tryFindFactory;
 
 public class MainRenderPane extends BorderPane {
     private static Logger logger = Logger.getLogger(MainRenderPane.class.getName());
@@ -38,7 +38,7 @@ public class MainRenderPane extends BorderPane {
     }
 
     private static Try<Pane, Exception> createRenderPane(Session session, EventBus eventBus, int width, int height) {
-        return tryPlugin(session.getPluginId(), plugin -> Objects.requireNonNull(plugin.createRenderPane(eventBus, session, width, height)))
+        return tryFindFactory(session.getPluginId()).map(plugin -> Objects.requireNonNull(plugin.createRenderPane(eventBus, session, width, height)))
                 .onFailure(e -> logger.log(Level.WARNING, "Cannot create render panel with pluginId " + session.getPluginId(), e));
     }
 }
