@@ -7,29 +7,25 @@ import com.nextbreakpoint.nextfractal.core.FileManager;
 import com.nextbreakpoint.nextfractal.core.FileManagerEntry;
 import com.nextbreakpoint.nextfractal.core.session.Session;
 
+import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
 
-public class MandelbrotFileManager implements FileManager {
-//    public Session load(File file) throws Exception {
-//        MandelbrotDataStore service = new MandelbrotDataStore();
-//        MandelbrotData data = service.loadFromFile(file);
-//        return new MandelbrotSession(data);
-//    }
-//
-//    public Session save(File file, Object data) throws Exception {
-//        MandelbrotDataStore service = new MandelbrotDataStore();
-//        service.saveToFile(file, ((MandelbrotData) data));
-//        return new MandelbrotSession((MandelbrotData) data);
-//    }
-
+public class MandelbrotFileManager extends FileManager {
     @Override
-    public Try<List<FileManagerEntry>, Exception> writeEntries(Object data) {
-        return Try.of(() -> createEntries((MandelbrotData) data));
+    protected Try<List<FileManagerEntry>, Exception> saveEntries(Session session) {
+        return Try.of(() -> createEntries((MandelbrotData) session.getData()));
     }
 
     @Override
-    public Try<Session, Exception> readEntries(List<FileManagerEntry> entries) {
+    protected Try<Session, Exception> loadEntries(List<FileManagerEntry> entries) {
+        return entries.stream().filter(entry -> entry.getName().equals("m-script")).findFirst()
+            .map(entry -> Try.of(() -> loadMscript(new FileInputStream(new String(entry.getData()))))).orElseGet(() -> createSession(entries));
+    }
+
+    private Try<Session, Exception> createSession(List<FileManagerEntry> entries) {
         ObjectMapper mapper = new ObjectMapper();
 
         Try<String, Exception> source = entries.stream().filter(entry -> entry.getName().equals("script"))
@@ -53,10 +49,18 @@ public class MandelbrotFileManager implements FileManager {
 
         List<FileManagerEntry> entries = new LinkedList<>();
 
-        entries.add(new FileManagerEntry("manifest", MandelbrotFactory.PLUGIN_ID.getBytes()));
+        FileManifest manifest = new FileManifest(MandelbrotFactory.PLUGIN_ID);
+
+        entries.add(new FileManagerEntry("manifest", mapper.writeValueAsBytes(manifest)));
         entries.add(new FileManagerEntry("metadata", mapper.writeValueAsBytes(data.getView())));
         entries.add(new FileManagerEntry("script", data.getSource().getBytes()));
 
         return entries;
+    }
+
+    private Session loadMscript(InputStream is) throws Exception {
+        MandelbrotDataStore service = new MandelbrotDataStore();
+        MandelbrotData data = service.loadFromStream(is);
+        return new MandelbrotSession(data);
     }
 }

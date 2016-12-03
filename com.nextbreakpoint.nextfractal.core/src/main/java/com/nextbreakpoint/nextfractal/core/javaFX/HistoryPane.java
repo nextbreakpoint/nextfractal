@@ -15,14 +15,12 @@ import javafx.scene.layout.BorderPane;
 import java.nio.IntBuffer;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
 
 import static com.nextbreakpoint.nextfractal.core.Plugins.tryFindFactory;
 
 public class HistoryPane extends BorderPane {
     private static final int PADDING = 8;
 
-    private final ThreadFactory threadFactory = new DefaultThreadFactory("History Renderer", true, Thread.MIN_PRIORITY);
     private final ExecutorService executor;
     private ListView<Bitmap> listView;
     private HistoryDelegate delegate;
@@ -42,6 +40,10 @@ public class HistoryPane extends BorderPane {
         listView.getSelectionModel().getSelectedItems().addListener((ListChangeListener.Change<? extends Bitmap> c) -> itemSelected(listView));
 
         executor = Executors.newSingleThreadExecutor(new DefaultThreadFactory("History Generator", true, Thread.MIN_PRIORITY));
+    }
+
+    private DefaultThreadFactory createThreadFactory(String name) {
+        return new DefaultThreadFactory(name, true, Thread.MIN_PRIORITY);
     }
 
     private void itemSelected(ListView<Bitmap> listView) {
@@ -73,7 +75,7 @@ public class HistoryPane extends BorderPane {
             return;
         }
 
-        tryFindFactory(session.getPluginId()).map(factory -> factory.createImageGenerator(threadFactory,
+        tryFindFactory(session.getPluginId()).map(factory -> factory.createImageGenerator(createThreadFactory("History Renderer"),
             new JavaFXRendererFactory(), tile, true)).ifPresent(generator -> submitItem(session, generator));
     }
 

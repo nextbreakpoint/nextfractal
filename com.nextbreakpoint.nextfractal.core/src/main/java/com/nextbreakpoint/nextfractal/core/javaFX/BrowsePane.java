@@ -25,13 +25,14 @@
 package com.nextbreakpoint.nextfractal.core.javaFX;
 
 import com.nextbreakpoint.Try;
+import com.nextbreakpoint.nextfractal.core.FileManager;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererPoint;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
-import com.nextbreakpoint.nextfractal.core.renderer.javaFX.JavaFXRendererFactory;
 import com.nextbreakpoint.nextfractal.core.utils.Block;
 import com.nextbreakpoint.nextfractal.core.utils.DefaultThreadFactory;
 import javafx.animation.AnimationTimer;
+import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -64,14 +65,16 @@ public class BrowsePane extends BorderPane {
 	private static final int FRAME_LENGTH_IN_MILLIS = 50;
 	private static final int SCROLL_BOUNCE_DELAY = 500;
 	private final ThreadFactory threadFactory;
-	private final JavaFXRendererFactory renderFactory;
-	private StringObservableValue pathProperty;
+	private StringObservableValue sourcePathProperty;
+	private StringObservableValue importPathProperty;
 	private final int numRows = 3;
 	private final int numCols = 3;
 	private List<GridItem> items = new ArrayList<>();
 	private BrowseDelegate delegate;
-	private DirectoryChooser directoryChooser;
-	private File currentFolder;
+	private DirectoryChooser sourceDirectoryChooser;
+	private File sourceCurrentFolder;
+	private DirectoryChooser importDirectoryChooser;
+	private File importCurrentFolder;
 	private File currentDir;
 	private ExecutorService executor;
 	private RendererTile tile;
@@ -89,12 +92,15 @@ public class BrowsePane extends BorderPane {
 		
 		currentDir = getCurrentDir(prefs);
 
-		threadFactory = new DefaultThreadFactory("BrowserPane", true, Thread.MIN_PRIORITY);
+		threadFactory = createThreadFactory("Browser");
 		
-		renderFactory = new JavaFXRendererFactory();
+		sourcePathProperty = new StringObservableValue();
 
-		pathProperty = new StringObservableValue();
-		pathProperty.setValue(null);
+		sourcePathProperty.setValue(null);
+
+		importPathProperty = new StringObservableValue();
+
+		importPathProperty.setValue(null);
 
 		int size = width / numCols;
 		
@@ -107,9 +113,11 @@ public class BrowsePane extends BorderPane {
 		Button closeButton = new Button("", createIconImage("/icon-back.png"));
 		Button reloadButton = new Button("", createIconImage("/icon-reload.png"));
 		Button chooseButton = new Button("", createIconImage("/icon-folder.png"));
+		Button importButton = new Button("", createIconImage("/icon-import.png"));
 		closeButton.setTooltip(new Tooltip("Close fractals browser"));
 		reloadButton.setTooltip(new Tooltip("Reload all fractals"));
 		chooseButton.setTooltip(new Tooltip("Select source folder location"));
+		importButton.setTooltip(new Tooltip("Select a folder from where to import fractals"));
 
 		Label statusLabel = new Label("Initializing");
 		statusLabel.getStyleClass().add("items-label");
@@ -119,6 +127,7 @@ public class BrowsePane extends BorderPane {
 		toolbarButtons.getChildren().add(chooseButton);
 		toolbarButtons.getChildren().add(statusLabel);
 		toolbarButtons.getChildren().add(reloadButton);
+		toolbarButtons.getChildren().add(importButton);
 		toolbarButtons.setAlignment(Pos.CENTER);
 		toolbarButtons.getStyleClass().add("toolbar");
 		toolbarButtons.getStyleClass().add("translucent");
@@ -160,21 +169,33 @@ public class BrowsePane extends BorderPane {
 
 		closeButton.setOnMouseClicked(e -> doClose(grid));
 
-		chooseButton.setOnMouseClicked(e -> doChooseFolder(grid));
-		
-		reloadButton.setOnMouseClicked(e -> loadFiles(statusLabel, grid, currentFolder));
+		chooseButton.setOnMouseClicked(e -> doChooseSourceFolder(grid));
 
-		pathProperty.addListener((observable, oldValue, newValue) -> {
+		importButton.setOnMouseClicked(e -> doChooseImportFolder(grid));
+
+		reloadButton.setOnMouseClicked(e -> loadFiles(statusLabel, grid, sourceCurrentFolder));
+
+		sourcePathProperty.addListener((observable, oldValue, newValue) -> {
 			File path = new File(newValue);
 			currentDir = path; 
 			loadFiles(statusLabel, grid, path);
 		});
 
+		importPathProperty.addListener((observable, oldValue, newValue) -> {
+			File path = new File(newValue);
+			currentDir = path;
+			importFiles(statusLabel, grid, path);
+		});
+
 		runTimer(grid);
 	}
 
+	private DefaultThreadFactory createThreadFactory(String name) {
+		return new DefaultThreadFactory(name, true, Thread.MIN_PRIORITY);
+	}
+
 	public void reload() {
-		pathProperty.setValue(currentDir.getAbsolutePath());
+		sourcePathProperty.setValue(currentDir.getAbsolutePath());
 	}
 	
 	public void setDelegate(BrowseDelegate delegate) {
@@ -212,18 +233,33 @@ public class BrowsePane extends BorderPane {
 		return createIconImage(name, 0.02);
 	}
 
-	private void ensureDirectoryChooser() {
+	private void ensureSourceDirectoryChooser() {
 //		Alert alert = new Alert(AlertType.INFORMATION);
 //		alert.setTitle("Dialog");
 //		alert.setHeaderText("Path");
 //		alert.setContentText(defaultDir.getAbsolutePath());
 //		alert.showAndWait();
-		if (directoryChooser == null) {
-			directoryChooser = new DirectoryChooser();
+		if (sourceDirectoryChooser == null) {
+			sourceDirectoryChooser = new DirectoryChooser();
 			if (!currentDir.exists()) {
 				currentDir = new File(System.getProperty("user.home"));
 			}
-			directoryChooser.setInitialDirectory(currentDir);
+			sourceDirectoryChooser.setInitialDirectory(currentDir);
+		}
+	}
+
+	private void ensureImportDirectoryChooser() {
+//		Alert alert = new Alert(AlertType.INFORMATION);
+//		alert.setTitle("Dialog");
+//		alert.setHeaderText("Path");
+//		alert.setContentText(defaultDir.getAbsolutePath());
+//		alert.showAndWait();
+		if (importDirectoryChooser == null) {
+			importDirectoryChooser = new DirectoryChooser();
+			if (!currentDir.exists()) {
+				currentDir = new File(System.getProperty("user.home"));
+			}
+			importDirectoryChooser.setInitialDirectory(currentDir);
 		}
 	}
 
@@ -231,25 +267,42 @@ public class BrowsePane extends BorderPane {
 		delegate.didClose(this);
 	}
 
-	private void doChooseFolder(GridView grid) {
-		Block.create(a -> prepareDirectoryChooser()).andThen(a -> doSelectFolder()).tryExecute().execute();
+	private void doChooseSourceFolder(GridView grid) {
+		Block.create(a -> prepareSourceDirectoryChooser()).andThen(a -> doSelectSourceFolder()).tryExecute().execute();
 	}
 
-	private void doSelectFolder() {
-		Optional.ofNullable(directoryChooser.showDialog(BrowsePane.this.getScene().getWindow())).ifPresent(folder -> pathProperty.setValue(folder.getAbsolutePath()));
+	private void doChooseImportFolder(GridView grid) {
+		Block.create(a -> prepareImportDirectoryChooser()).andThen(a -> doSelectImportFolder()).tryExecute().execute();
 	}
 
-	private void prepareDirectoryChooser() {
-		ensureDirectoryChooser();
-		directoryChooser.setTitle("Choose");
-		if (currentFolder != null) {
-			ensureValidFolder();
-			directoryChooser.setInitialDirectory(currentFolder);
+	private void doSelectSourceFolder() {
+		Optional.ofNullable(sourceDirectoryChooser.showDialog(BrowsePane.this.getScene().getWindow())).ifPresent(folder -> sourcePathProperty.setValue(folder.getAbsolutePath()));
+	}
+
+	private void prepareSourceDirectoryChooser() {
+		ensureSourceDirectoryChooser();
+		sourceDirectoryChooser.setTitle("Choose source folrder");
+		if (sourceCurrentFolder != null) {
+			sourceCurrentFolder = ensureValidFolder(sourceCurrentFolder);
+			sourceDirectoryChooser.setInitialDirectory(sourceCurrentFolder);
 		}
 	}
 
-	private void ensureValidFolder() {
-		currentFolder = Optional.ofNullable(currentFolder).filter(folder -> folder.exists()).orElseGet(() -> new File(System.getProperty("user.home")));
+	private void doSelectImportFolder() {
+		Optional.ofNullable(importDirectoryChooser.showDialog(BrowsePane.this.getScene().getWindow())).ifPresent(folder -> importPathProperty.setValue(folder.getAbsolutePath()));
+	}
+
+	private void prepareImportDirectoryChooser() {
+		ensureImportDirectoryChooser();
+		importDirectoryChooser.setTitle("Choose import folder");
+		if (importCurrentFolder != null) {
+			importCurrentFolder = ensureValidFolder(importCurrentFolder);
+			importDirectoryChooser.setInitialDirectory(importCurrentFolder);
+		}
+	}
+
+	private File ensureValidFolder(File folder) {
+		return Optional.ofNullable(folder).filter(d -> d.exists()).orElseGet(() -> new File(System.getProperty("user.home")));
 	}
 
 	private RendererTile createSingleTile(int width, int height) {
@@ -264,7 +317,7 @@ public class BrowsePane extends BorderPane {
 	}
 
 	private void loadFiles(Label statusLabel, GridView grid, File folder) {
-		currentFolder = folder;
+		sourceCurrentFolder = folder;
 		removeItems();
 		grid.setData(new GridItem[0]);
 		File[] files = listFiles(folder);
@@ -274,6 +327,50 @@ public class BrowsePane extends BorderPane {
 		} else {
 			statusLabel.setText("No items found");
 		}
+	}
+
+	private void importFiles(Label statusLabel, GridView grid, File folder) {
+		importCurrentFolder = folder;
+		File[] files = listAllFiles(folder);
+		if (files != null && files.length > 0) {
+			executor.submit(() -> copyFiles(statusLabel, grid, files, sourceCurrentFolder));
+		}
+	}
+
+	private void copyFiles(Label statusLabel, GridView grid, File[] files, File location) {
+		Platform.runLater(() -> {
+			grid.setDisable(true);
+		});
+
+		for (File file : files) {
+			Platform.runLater(() -> {
+				statusLabel.setText("Importing " + files.length + " files...");
+			});
+
+			copyFile(statusLabel, grid, file, location);
+		}
+
+		Platform.runLater(() -> {
+			grid.setDisable(false);
+		});
+
+		Platform.runLater(() -> {
+			loadFiles(statusLabel, grid, sourceCurrentFolder);
+		});
+	}
+
+	private void copyFile(Label statusLabel, GridView grid, File file, File location) {
+		File outFile = createFileName(file, location);
+		FileManager.loadFile(file).ifPresent(session -> FileManager.saveFile(outFile, session));
+	}
+
+	private File createFileName(File file, File location) {
+		File tmpFile = new File(location, file.getName().substring(0, file.getName().indexOf(".")) + ".nf.zip");
+		int i = 0;
+		while (tmpFile.exists()) {
+			tmpFile = new File(location, file.getName().substring(0, file.getName().indexOf(".")) + "-" + (i++) + ".nf.zip");
+		}
+		return tmpFile;
 	}
 
 	private void loadItems(GridView grid, File[] files) {
@@ -286,11 +383,21 @@ public class BrowsePane extends BorderPane {
 		grid.setData(items);
 	}
 
+	private File[] listAllFiles(File folder) {
+		Preferences prefs = Preferences.userNodeForPackage(BrowsePane.class);
+		prefs.put(BROWSER_DEFAULT_LOCATION, folder.getAbsolutePath());
+		if (delegate != null) {
+			return folder.listFiles((dir, name) -> name.endsWith(".m") || name.endsWith(".nf.zip"));
+		} else {
+			return new File[0];
+		}
+	}
+
 	private File[] listFiles(File folder) {
 		Preferences prefs = Preferences.userNodeForPackage(BrowsePane.class);
 		prefs.put(BROWSER_DEFAULT_LOCATION, folder.getAbsolutePath());
 		if (delegate != null) {
-			return folder.listFiles((dir, name) -> name.endsWith(delegate.getFileExtension()));
+			return folder.listFiles((dir, name) -> name.endsWith(".nf.zip"));
 		} else {
 			return new File[0];
 		}

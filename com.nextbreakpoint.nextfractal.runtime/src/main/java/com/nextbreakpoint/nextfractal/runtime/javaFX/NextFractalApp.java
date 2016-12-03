@@ -24,31 +24,19 @@
  */
 package com.nextbreakpoint.nextfractal.runtime.javaFX;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-import java.util.zip.ZipOutputStream;
 
 import com.nextbreakpoint.Try;
 import com.nextbreakpoint.nextfractal.core.EventBus;
-import com.nextbreakpoint.nextfractal.core.FileManagerEntry;
 import com.nextbreakpoint.nextfractal.core.export.ExportRenderer;
 import com.nextbreakpoint.nextfractal.core.export.ExportService;
 import com.nextbreakpoint.nextfractal.core.export.ExportSession;
 import com.nextbreakpoint.nextfractal.core.renderer.javaFX.JavaFXRendererFactory;
 import com.nextbreakpoint.nextfractal.core.utils.DefaultThreadFactory;
-import com.nextbreakpoint.nextfractal.core.Plugins;
 import com.nextbreakpoint.nextfractal.runtime.export.SimpleExportRenderer;
 import com.nextbreakpoint.nextfractal.runtime.export.SimpleExportService;
 import javafx.application.Application;
@@ -73,6 +61,7 @@ import com.nextbreakpoint.nextfractal.core.FractalFactory;
 import com.nextbreakpoint.nextfractal.core.session.Session;
 
 import static com.nextbreakpoint.nextfractal.core.Plugins.factories;
+import static com.nextbreakpoint.nextfractal.core.Plugins.tryFindFactory;
 import static com.nextbreakpoint.nextfractal.core.Plugins.tryFindFactoryByGrammar;
 
 public class NextFractalApp extends Application {
@@ -115,8 +104,8 @@ public class NextFractalApp extends Application {
 
 		printPlugins();
 
-		ExportRenderer exportRenderer = new SimpleExportRenderer(createDefaultThreadFactory("NextFractalRender"), new JavaFXRendererFactory());
-		ExportService exportService = new SimpleExportService(createDefaultThreadFactory("NextFractalExport"), exportRenderer);
+		ExportRenderer exportRenderer = new SimpleExportRenderer(createThreadFactory("NextFractalRender"), new JavaFXRendererFactory());
+		ExportService exportService = new SimpleExportService(createThreadFactory("NextFractalExport"), exportRenderer);
 
 		eventBus.subscribe("editor-grammar-changed", event -> tryFindFactoryByGrammar((String) event).ifPresent(factory -> createSession(eventBus, factory)));
 
@@ -151,86 +140,40 @@ public class NextFractalApp extends Application {
 		primaryStage.setTitle(getApplicationName());
 
 		String defaultPluginId = System.getProperty("initialPluginId", DEFAULT_PLUGIN_ID);
-		Plugins.tryFindFactory(defaultPluginId).ifPresent(factory -> createSession(eventBus, factory));
+		tryFindFactory(defaultPluginId).ifPresent(factory -> createSession(eventBus, factory));
 
 		primaryStage.show();
 	}
 
 	private void handleLoadFile(EventBus eventBus, File file) {
-		try (ZipInputStream is = new ZipInputStream(new FileInputStream(file))) {
-
-			tryLoadingSession(readEntries(is))
-				.onSuccess(session -> eventBus.postEvent("current-file-changed", file))
-				.ifPresentOrThrow(session -> eventBus.postEvent("session-changed", session));
-
-		} catch (Exception e) {
-			logger.log(Level.WARNING, "Cannot load data from " + file.getAbsolutePath(), e);
-			eventBus.postEvent("session-status-changed", "Cannot read from file " + file.getName() + ": " + e.getMessage());
-		}
+		tryLoadingSession(file)
+			.onSuccess(session -> eventBus.postEvent("current-file-changed", file))
+			.onFailure(e -> showLoadError(eventBus, file, e))
+			.ifPresent(session -> eventBus.postEvent("session-changed", session));
 	}
 
 	private void handleSaveFile(EventBus eventBus, File file) {
-		try (ZipOutputStream os = new ZipOutputStream(new FileOutputStream(file))) {
-
-			trySavingSession(os, session.getData()).onSuccess(x -> eventBus.postEvent("current-file-changed", file)).orThrow();
-
-		} catch (Exception e) {
-			logger.log(Level.WARNING, "Cannot save data to " + file.getAbsolutePath(), e);
-			eventBus.postEvent("session-status-changed", "Cannot write into file " + file.getName() + ": " + e.getMessage());
-		}
+		trySavingSession(file)
+			.onSuccess(session -> eventBus.postEvent("current-file-changed", file))
+			.ifFailure(e -> showSaveError(eventBus, file, e));
 	}
 
-	private Try<Session, Exception> tryLoadingSession(List<FileManagerEntry> entries) {
-		return readManifest(entries)
-			.flatMap(Plugins::tryFindFactory)
-			.map(factory -> factory.createFileManager())
-			.flatMap(manager -> manager.readEntries(entries));
+	private void showLoadError(EventBus eventBus, File file, Exception e) {
+		logger.log(Level.WARNING, "Cannot load file " + file.getAbsolutePath(), e);
+		eventBus.postEvent("session-status-changed", "Cannot load file " + file.getName());
 	}
 
-	private Try<String, Exception> readManifest(List<FileManagerEntry> entries) {
-		return entries.stream().filter(entry -> entry.getName().equals("manifest"))
-			.findFirst().map(manifest -> Try.success(new String(manifest.getData())))
-			.orElseGet(() -> Try.failure(new Exception("Manifest is required")));
+	private void showSaveError(EventBus eventBus, File file, Exception e) {
+		logger.log(Level.WARNING, "Cannot save file " + file.getAbsolutePath(), e);
+		eventBus.postEvent("session-status-changed", "Cannot save file " + file.getName());
 	}
 
-	private Try<Object, Exception> trySavingSession(ZipOutputStream os, Object data) {
-		return Plugins.tryFindFactory(session.getPluginId())
-            .map(factory -> factory.createFileManager())
-            .flatMap(manager -> manager.writeEntries(data))
-            .flatMap(entries -> putEntries(os, entries));
+	private Try<Session, Exception> tryLoadingSession(File file) {
+		return tryFindFactory(session.getPluginId()).map(factory -> factory.createFileManager()).flatMap(manager -> manager.loadFile(file));
 	}
 
-	private Try<Object, Exception> putEntries(ZipOutputStream os, List<FileManagerEntry> entries) {
-		return entries.stream().map(entry -> Try.of(() -> putEntry(os, entry)))
-			.filter(result -> result.isFailure()).findFirst().orElse(Try.success(entries));
-	}
-
-	private Object putEntry(ZipOutputStream os, FileManagerEntry entry) throws IOException {
-		ZipEntry zipEntry = new ZipEntry(entry.getName());
-		os.putNextEntry(zipEntry);
-		os.write(entry.getData());
-		os.closeEntry();
-		return entry;
-	}
-
-	private List<FileManagerEntry> readEntries(ZipInputStream is) throws IOException {
-		LinkedList<FileManagerEntry> entries = new LinkedList<>();
-		for (ZipEntry entry = is.getNextEntry(); entry != null; entry = is.getNextEntry()) entries.add(readEntry(is, entry));
-		return entries;
-	}
-
-	private FileManagerEntry readEntry(ZipInputStream is, ZipEntry entry) throws IOException {
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		copyBytes(is, baos);
-		return new FileManagerEntry(entry.getName(), baos.toByteArray());
-	}
-
-	private void copyBytes(InputStream is, OutputStream os) throws IOException {
-		byte[] data = new byte[4096];
-		int length = 0;
-		while ((length = is.read(data)) > 0) {
-			os.write(data, 0, length);
-		}
+	private Try<Session, Exception> trySavingSession(File file) {
+		return tryFindFactory(session.getPluginId()).map(factory -> factory.createFileManager()).flatMap(manager -> manager.saveFile(file, session));
 	}
 
 	private void handleSessionTerminate(ExportService exportService) {
@@ -247,7 +190,7 @@ public class NextFractalApp extends Application {
 		tryLoadingSession(factory, eventBus).ifPresent(session -> eventBus.postEvent("session-changed", session));
 	}
 
-	private DefaultThreadFactory createDefaultThreadFactory(String name) {
+	private DefaultThreadFactory createThreadFactory(String name) {
 		return new DefaultThreadFactory(name, true, Thread.MIN_PRIORITY);
 	}
 

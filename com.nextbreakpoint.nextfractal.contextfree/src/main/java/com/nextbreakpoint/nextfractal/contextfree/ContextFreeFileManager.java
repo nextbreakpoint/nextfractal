@@ -7,26 +7,14 @@ import com.nextbreakpoint.nextfractal.core.session.Session;
 
 import java.util.List;
 
-public class ContextFreeFileManager implements FileManager {
-//    public Session load(File file) throws Exception {
-//        ContextFreeDataStore service = new ContextFreeDataStore();
-//        ContextFreeData data = service.loadFromFile(file);
-//        return new ContextFreeSession(data);
-//    }
-//
-//    public Session save(File file, Object data) throws Exception {
-//        ContextFreeDataStore service = new ContextFreeDataStore();
-//        service.saveToFile(file, ((ContextFreeData) data));
-//        return new ContextFreeSession((ContextFreeData) data);
-//    }
-
+public class ContextFreeFileManager extends FileManager {
     @Override
-    public Try<List<FileManagerEntry>, Exception> writeEntries(Object data) {
+    protected Try<List<FileManagerEntry>, Exception> saveEntries(Session data) {
         return null;
     }
 
     @Override
-    public Try<Session, Exception> readEntries(List<FileManagerEntry> entries) {
+    protected Try<Session, Exception> loadEntries(List<FileManagerEntry> entries) {
         return null;
     }
 }

@@ -28,7 +28,6 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
@@ -36,8 +35,6 @@ import static com.nextbreakpoint.nextfractal.core.Plugins.tryFindFactory;
 
 public class JobsPane extends BorderPane {
     private static final int PADDING = 8;
-
-    private final ThreadFactory threadFactory = new DefaultThreadFactory("Jobs Renderer", true, Thread.MIN_PRIORITY);
 
     private final ScheduledExecutorService executor;
     private final ListView<Bitmap> listView;
@@ -83,8 +80,12 @@ public class JobsPane extends BorderPane {
         removeButton.setOnAction(e -> selectedItems(listView)
             .forEach(bitmap -> Optional.ofNullable(delegate).ifPresent(delegate -> delegate.sessionStopped((Session) bitmap.getProperty("session")))));
 
-        executor = Executors.newSingleThreadScheduledExecutor(new DefaultThreadFactory("Jobs List", true, Thread.MIN_PRIORITY));
+        executor = Executors.newSingleThreadScheduledExecutor(createThreadFactory("Jobs List"));
         executor.scheduleWithFixedDelay(() -> Platform.runLater(() -> updateJobList(listView)), 500, 500, TimeUnit.MILLISECONDS);
+    }
+
+    private DefaultThreadFactory createThreadFactory(String name) {
+        return new DefaultThreadFactory(name, true, Thread.MIN_PRIORITY);
     }
 
     private void updateButtons(List<Button> buttons, boolean disabled) {
@@ -153,7 +154,7 @@ public class JobsPane extends BorderPane {
     }
 
     public void appendSession(String uuid, Session session) {
-        tryFindFactory(session.getPluginId()).map(factory -> factory.createImageGenerator(threadFactory,
+        tryFindFactory(session.getPluginId()).map(factory -> factory.createImageGenerator(createThreadFactory("Jobs Renderer"),
             new JavaFXRendererFactory(), tile, true)).ifPresent(generator -> submitItem(uuid, session, generator));
     }
 

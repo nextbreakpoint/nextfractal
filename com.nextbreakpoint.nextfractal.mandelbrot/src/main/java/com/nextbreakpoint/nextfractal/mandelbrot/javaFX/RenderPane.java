@@ -24,7 +24,9 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
 
+import com.nextbreakpoint.Try;
 import com.nextbreakpoint.nextfractal.core.EventBus;
+import com.nextbreakpoint.nextfractal.core.FileManager;
 import com.nextbreakpoint.nextfractal.core.javaFX.Bitmap;
 import com.nextbreakpoint.nextfractal.core.javaFX.BooleanObservableValue;
 import com.nextbreakpoint.nextfractal.core.javaFX.BrowseBitmap;
@@ -490,7 +492,7 @@ public class RenderPane extends BorderPane {
 			juliaButton.setSelected(data.isJulia());
 		};
 
-		fileProperty.addListener((observable, oldValue, newValue) -> loadFractalFromFile(updateJulia, newValue));
+		fileProperty.addListener((observable, oldValue, newValue) -> loadFractalFromFile(eventBus, newValue));
 
 		heightProperty().addListener((observable, oldValue, newValue) -> {
 			toolButtons.setPrefHeight(newValue.doubleValue() * 0.07);
@@ -684,22 +686,23 @@ public class RenderPane extends BorderPane {
 		}
 	}
 
-	private void loadFractalFromFile(Block<MandelbrotData, Exception> updateJulia, String filename) {
+	private void loadFractalFromFile(EventBus eventBus, String filename) {
 		if (filename == null) {
 			return;
 		}
 		File file = new File(filename);
-		try {
-			MandelbrotDataStore service = new MandelbrotDataStore();
-			MandelbrotData data = service.loadFromFile(file);
-//			getMandelbrotSession().setCurrentFile(file);
-			updateJulia.execute(data);
-//			getMandelbrotSession().setData(data);
-			logger.info(data.toString());
-		} catch (Exception x) {
-			logger.warning("Cannot read file " + file.getAbsolutePath());
-			//TODO display error
-		}
+		eventBus.postEvent("editor-load-file", file);
+//		try {
+//			MandelbrotDataStore service = new MandelbrotDataStore();
+//			MandelbrotData data = service.loadFromFile(file);
+////			getMandelbrotSession().setCurrentFile(file);
+//			updateJulia.execute(data);
+////			getMandelbrotSession().setData(data);
+//			logger.info(data.toString());
+//		} catch (Exception x) {
+//			logger.warning("Cannot read file " + file.getAbsolutePath());
+//			//TODO display error
+//		}
 	}
 
 	private void resetView(EventBus eventBus) {
@@ -1384,13 +1387,14 @@ public class RenderPane extends BorderPane {
 		hints.put(RendererCoordinator.KEY_TYPE, RendererCoordinator.VALUE_REALTIME);
 		hints.put(RendererCoordinator.KEY_MULTITHREAD, RendererCoordinator.VALUE_SINGLE_THREAD);
 		RendererTile tile = createSingleTile(bitmap.getWidth(), bitmap.getHeight());
-		DefaultThreadFactory threadFactory = new DefaultThreadFactory("BrowserPane", true, Thread.MIN_PRIORITY);
+		DefaultThreadFactory threadFactory = new DefaultThreadFactory("Browser Renderer", true, Thread.MIN_PRIORITY);
 		RendererCoordinator coordinator = new RendererCoordinator(threadFactory, new JavaFXRendererFactory(), tile, hints);
 		CompilerBuilder<Orbit> orbitBuilder = (CompilerBuilder<Orbit>)bitmap.getProperty("orbit");
 		CompilerBuilder<Color> colorBuilder = (CompilerBuilder<Color>)bitmap.getProperty("color");
-		MandelbrotData data = (MandelbrotData)bitmap.getProperty("data");
+		MandelbrotSession session = (MandelbrotSession)bitmap.getProperty("session");
 		coordinator.setOrbitAndColor(orbitBuilder.build(), colorBuilder.build());
 		coordinator.init();
+		MandelbrotData data = (MandelbrotData) session.getData();
 		RendererView view = new RendererView();
 		view.setTraslation(new Double4D(data.getTranslation()));
 		view.setRotation(new Double4D(data.getRotation()));
@@ -1404,13 +1408,16 @@ public class RenderPane extends BorderPane {
 	}
 
 	private BrowseBitmap createBitmap(File file, RendererSize size) throws Exception {
-		MandelbrotDataStore service = new MandelbrotDataStore();
-		MandelbrotData data = service.loadFromFile(file);
+		Try<Session, Exception> session = FileManager.loadFile(file);
+		if (session.isFailure()) {
+			return null;
+		}
 		if (Thread.currentThread().isInterrupted()) {
 			return null;
 		}
+		String source = session.get().getSource();
 		Compiler compiler = new Compiler();
-		CompilerReport report = compiler.compileReport(data.getSource());
+		CompilerReport report = compiler.compileReport(source);
 		if (report.getErrors().size() > 0) {
 			throw new RuntimeException("Failed to compile source");
 		}
@@ -1431,7 +1438,7 @@ public class RenderPane extends BorderPane {
 		BrowseBitmap bitmap = new BrowseBitmap(size.getWidth(), size.getHeight(), null);
 		bitmap.setProperty("orbit", orbitBuilder);
 		bitmap.setProperty("color", colorBuilder);
-		bitmap.setProperty("data", data);
+		bitmap.setProperty("session", session.get());
 		return bitmap;
 	}
 
