@@ -181,8 +181,8 @@ public class ParamsPane extends Pane {
 		};
 
 		eventBus.subscribe("editor-params-action", event -> {
-			if (event.equals("cancel")) updateAll.apply((MandelbrotMetadata) mandelbrotSession.getMetadata());
-			if (event.equals("apply")) notifyAll.apply((MandelbrotMetadata) mandelbrotSession.getMetadata());
+			if (mandelbrotSession != null && event.equals("cancel")) updateAll.apply((MandelbrotMetadata) mandelbrotSession.getMetadata());
+			if (mandelbrotSession != null && event.equals("apply")) notifyAll.apply((MandelbrotMetadata) mandelbrotSession.getMetadata());
 		});
 
 		eventBus.subscribe("session-data-changed", event -> updateData(updateAll, (Object[]) event));

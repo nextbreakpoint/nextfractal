@@ -88,7 +88,6 @@ public class MainSidePane extends BorderPane {
         RendererTile tile = createSingleTile(tileSize, tileSize);
 
         StringObservableValue errorProperty = new StringObservableValue();
-
         errorProperty.setValue(null);
 
         MainEditorPane editorPane = new MainEditorPane(eventBus);
@@ -223,8 +222,9 @@ public class MainSidePane extends BorderPane {
         });
 
         errorProperty.addListener((source, oldValue, newValue) -> {
+            saveButton.setDisable(newValue != null);
             exportPane.setDisable(newValue != null);
-            paramsPane.setDisable(newValue != null);
+            paramsPane.setParamsDisable(newValue != null);
         });
 
         historyButton.selectedProperty().addListener((source, oldValue, newValue) -> {
@@ -302,6 +302,7 @@ public class MainSidePane extends BorderPane {
         eventBus.subscribe("export-session-created", event -> jobsPane.appendSession(((ExportSession)event).getSessionId(), (Session)((ExportSession)event).getData()));
 
         eventBus.subscribe("session-data-changed", event -> {
+            errorProperty.setValue(null);
             boolean continuous = (Boolean) ((Object[])event)[1];
             if (!continuous) {
                 eventBus.postEvent("editor-params-changed", (Session) ((Object[])event)[0]);

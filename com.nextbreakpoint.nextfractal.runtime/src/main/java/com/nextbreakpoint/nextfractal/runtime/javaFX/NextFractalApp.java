@@ -33,6 +33,7 @@ import java.util.logging.Logger;
 
 import com.nextbreakpoint.Try;
 import com.nextbreakpoint.nextfractal.core.EventBus;
+import com.nextbreakpoint.nextfractal.core.FileManager;
 import com.nextbreakpoint.nextfractal.core.export.ExportRenderer;
 import com.nextbreakpoint.nextfractal.core.export.ExportService;
 import com.nextbreakpoint.nextfractal.core.export.ExportSession;
@@ -72,6 +73,7 @@ public class NextFractalApp extends Application {
 	private static final String DEFAULT_PLUGIN_ID = "Mandelbrot";
 
 	private Session session;
+	private String error;
 
 	public static void main(String[] args) {
 		launch(args); 
@@ -121,6 +123,8 @@ public class NextFractalApp extends Application {
 
 		eventBus.subscribe("editor-save-file", event -> handleSaveFile(eventBus, (File)event));
 
+		eventBus.subscribe("session-error-changed", event -> handleErrorChanged((String)event));
+
 		rootPane.getChildren().add(createMainPane(eventBus, editorWidth, renderWidth, sceneHeight));
 
         Scene scene = new Scene(rootPane, sceneWidth, sceneHeight);
@@ -150,15 +154,18 @@ public class NextFractalApp extends Application {
 		});
 	}
 
+	private void handleErrorChanged(String error) {
+	}
+
 	private void handleLoadFile(EventBus eventBus, File file) {
-		tryLoadingSession(file)
+		FileManager.loadFile(file)
 			.onSuccess(session -> eventBus.postEvent("current-file-changed", file))
 			.onFailure(e -> showLoadError(eventBus, file, e))
 			.ifPresent(session -> eventBus.postEvent("session-data-loaded", new Object[] { session, false, true }));
 	}
 
 	private void handleSaveFile(EventBus eventBus, File file) {
-		trySavingSession(file)
+		FileManager.saveFile(file, session)
 			.onSuccess(session -> eventBus.postEvent("current-file-changed", file))
 			.ifFailure(e -> showSaveError(eventBus, file, e));
 	}
@@ -171,14 +178,6 @@ public class NextFractalApp extends Application {
 	private void showSaveError(EventBus eventBus, File file, Exception e) {
 		logger.log(Level.WARNING, "Cannot save file " + file.getAbsolutePath(), e);
 		eventBus.postEvent("session-status-changed", "Cannot save file " + file.getName());
-	}
-
-	private Try<Session, Exception> tryLoadingSession(File file) {
-		return tryFindFactory(session.getPluginId()).map(factory -> factory.createFileManager()).flatMap(manager -> manager.loadFile(file));
-	}
-
-	private Try<Session, Exception> trySavingSession(File file) {
-		return tryFindFactory(session.getPluginId()).map(factory -> factory.createFileManager()).flatMap(manager -> manager.saveFile(file, session));
 	}
 
 	private void handleSessionTerminate(ExportService exportService) {
@@ -281,7 +280,7 @@ public class NextFractalApp extends Application {
 	}
 
 	private Pane createRenderPane(EventBus eventBus, int width, int height) {
-		MainRenderPane renderRootPane = new MainRenderPane(eventBus, width, height);
+		MainCentralPane renderRootPane = new MainCentralPane(eventBus, width, height);
 		renderRootPane.setPrefWidth(width);
 		renderRootPane.setPrefHeight(height);
 		renderRootPane.setMinWidth(width);

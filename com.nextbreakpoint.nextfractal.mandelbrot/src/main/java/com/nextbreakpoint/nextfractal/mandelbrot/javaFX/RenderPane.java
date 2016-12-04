@@ -24,15 +24,8 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
 
-import com.nextbreakpoint.Try;
 import com.nextbreakpoint.nextfractal.core.EventBus;
-import com.nextbreakpoint.nextfractal.core.FileManager;
-import com.nextbreakpoint.nextfractal.core.javaFX.Bitmap;
 import com.nextbreakpoint.nextfractal.core.javaFX.BooleanObservableValue;
-import com.nextbreakpoint.nextfractal.core.javaFX.BrowseBitmap;
-import com.nextbreakpoint.nextfractal.core.javaFX.BrowseDelegate;
-import com.nextbreakpoint.nextfractal.core.javaFX.BrowsePane;
-import com.nextbreakpoint.nextfractal.core.javaFX.GridItemRenderer;
 import com.nextbreakpoint.nextfractal.core.javaFX.StringObservableValue;
 import com.nextbreakpoint.nextfractal.core.renderer.*;
 import com.nextbreakpoint.nextfractal.core.renderer.javaFX.JavaFXRendererFactory;
@@ -52,7 +45,6 @@ import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererError;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererView;
 import javafx.animation.AnimationTimer;
 import javafx.animation.FadeTransition;
-import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -72,21 +64,14 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Screen;
 import javafx.util.Duration;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.*;
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.concurrent.ThreadFactory;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import static com.nextbreakpoint.nextfractal.core.Plugins.tryFindFactory;
 
 public class RenderPane extends BorderPane {
 	private static final int FRAME_LENGTH_IN_MILLIS = 20;
@@ -101,7 +86,6 @@ public class RenderPane extends BorderPane {
 	private final BooleanObservableValue hideErrorsProperty;
 	private final BooleanObservableValue juliaProperty;
 	private final RendererCoordinator[] coordinators;
-	private final ExecutorService watcherExecutor;
 	private RendererCoordinator juliaCoordinator;
 	private AnimationTimer timer;
 	private int width;
@@ -180,7 +164,6 @@ public class RenderPane extends BorderPane {
 		errors.setVisible(false);
 
 		HBox toolButtons = new HBox(0);
-		Button browseButton = new Button("", createIconImage("/icon-grid.png"));
 		ToggleButton zoominButton = new ToggleButton("", createIconImage("/icon-zoomin.png"));
 		ToggleButton zoomoutButton = new ToggleButton("", createIconImage("/icon-zoomout.png"));
 		ToggleButton moveButton = new ToggleButton("", createIconImage("/icon-move.png"));
@@ -195,7 +178,6 @@ public class RenderPane extends BorderPane {
 		toolsGroup.getToggles().add(rotateButton);
 		toolsGroup.getToggles().add(pickButton);
 		Button homeButton = new Button("", createIconImage("/icon-home.png"));
-		browseButton.setTooltip(new Tooltip("Show fractals browser"));
 		zoominButton.setTooltip(new Tooltip("Select zoom in tool"));
 		zoomoutButton.setTooltip(new Tooltip("Select zoom out tool"));
 		moveButton.setTooltip(new Tooltip("Select move tool"));
@@ -204,7 +186,6 @@ public class RenderPane extends BorderPane {
 		homeButton.setTooltip(new Tooltip("Reset region to initial value"));
 		orbitButton.setTooltip(new Tooltip("Show/hide orbit and traps"));
 		juliaButton.setTooltip(new Tooltip("Enable/disable Julia mode"));
-		toolButtons.getChildren().add(browseButton);
 		toolButtons.getChildren().add(homeButton);
 		toolButtons.getChildren().add(zoominButton);
 		toolButtons.getChildren().add(zoomoutButton);
@@ -214,46 +195,6 @@ public class RenderPane extends BorderPane {
 		toolButtons.getChildren().add(juliaButton);
 		toolButtons.getChildren().add(orbitButton);
 		toolButtons.getStyleClass().add("toolbar");
-
-		BrowsePane browsePane = new BrowsePane(width, height);
-		browsePane.setTranslateX(-width);
-
-		TranslateTransition browserTransition = createTranslateTransition(browsePane);
-
-		browseButton.setOnAction(e -> {
-			showBrowser(browserTransition, a -> {});
-			browsePane.reload();
-		});
-
-		browsePane.setDelegate(new BrowseDelegate() {
-			@Override
-			public void didSelectFile(BrowsePane source, File file) {
-				eventBus.postEvent("editor-load-file", file);
-				hideBrowser(browserTransition, a -> {});
-			}
-
-			@Override
-			public void didClose(BrowsePane source) {
-				hideBrowser(browserTransition, a -> {});
-			}
-
-			@Override
-			public GridItemRenderer createRenderer(Bitmap bitmap) throws Exception {
-				return tryFindFactory(((Session) bitmap.getProperty("session")).getPluginId())
-					.flatMap(factory -> Try.of(() -> factory.createRenderer(bitmap))).orThrow();
-			}
-
-			@Override
-			public BrowseBitmap createBitmap(File file, RendererSize size) throws Exception {
-				return FileManager.loadFile(file).flatMap(session -> tryFindFactory(session.getPluginId())
-					.flatMap(factory -> Try.of(() -> factory.createBitmap(session, size)))).orThrow();
-			}
-
-			@Override
-			public String getFileExtension() {
-				return ".nf.zip";
-			}
-		});
 
 		controls.setBottom(toolButtons);
 		toolButtons.setOpacity(0.9);
@@ -387,7 +328,6 @@ public class RenderPane extends BorderPane {
 		stackPane.getChildren().add(toolCanvas);
 		stackPane.getChildren().add(controls);
 		stackPane.getChildren().add(errors);
-		stackPane.getChildren().add(browsePane);
 		setCenter(stackPane);
 
 		homeButton.setOnAction(e -> resetView(eventBus));
@@ -502,8 +442,6 @@ public class RenderPane extends BorderPane {
 
 		stackPane.setOnDragOver(x -> Optional.of(x).filter(e -> e.getGestureSource() != stackPane)
 			.filter(e -> e.getDragboard().hasFiles()).ifPresent(e -> e.acceptTransferModes(TransferMode.COPY_OR_MOVE)));
-
-		watcherExecutor = Executors.newSingleThreadExecutor(new DefaultThreadFactory("Watcher", true, Thread.MIN_PRIORITY));
 
 		runTimer(fractalCanvas, orbitCanvas, juliaCanvas, pointCanvas, trapCanvas, toolCanvas);
 
@@ -625,33 +563,6 @@ public class RenderPane extends BorderPane {
 		transition.setNode(node);
 		transition.setDuration(Duration.seconds(0.5));
 		return transition;
-	}
-
-	private TranslateTransition createTranslateTransition(Node node) {
-		TranslateTransition transition = new TranslateTransition();
-		transition.setNode(node);
-		transition.setDuration(Duration.seconds(0.5));
-		return transition;
-	}
-
-	private void showBrowser(TranslateTransition transition, EventHandler<ActionEvent> handler) {
-		transition.stop();
-		if (transition.getNode().getTranslateX() != 0) {
-			transition.setFromX(transition.getNode().getTranslateX());
-			transition.setToX(0);
-			transition.setOnFinished(handler);
-			transition.play();
-		}
-	}
-
-	private void hideBrowser(TranslateTransition transition, EventHandler<ActionEvent> handler) {
-		transition.stop();
-		if (transition.getNode().getTranslateX() != -((Pane)transition.getNode()).getWidth()) {
-			transition.setFromX(transition.getNode().getTranslateX());
-			transition.setToX(-((Pane)transition.getNode()).getWidth());
-			transition.setOnFinished(handler);
-			transition.play();
-		}
 	}
 
 	private void fadeOut(FadeTransition transition, EventHandler<ActionEvent> handler) {
@@ -1349,64 +1260,5 @@ public class RenderPane extends BorderPane {
 
 	private void redrawIfToolChanged(Canvas canvas) {
 		Optional.ofNullable(currentTool).filter(tool -> tool.isChanged()).ifPresent(tool -> tool.draw(renderFactory.createGraphicsContext(canvas.getGraphicsContext2D())));
-	}
-
-	private void watchFolder(BrowsePane pane, File file) {
-		Future<?> future = watcherExecutor.submit(() -> Block.create(a -> watchLoop(pane, file.toPath()))
-				.tryExecute().ifFailure(e -> logger.log(Level.WARNING, "Can't create watcher for location {}", file.getAbsolutePath())));
-	}
-
-	private void watchLoop(BrowsePane pane, Path dir) throws IOException {
-		WatchService watcher = FileSystems.getDefault().newWatchService();
-
-		WatchKey watchKey = null;
-
-		try {
-			watchKey = dir.register(watcher, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_DELETE, StandardWatchEventKinds.ENTRY_MODIFY);
-			try {
-				for (;;) {
-					WatchKey key = watcher.take();
-
-					for (WatchEvent<?> event: key.pollEvents()) {
-						WatchEvent.Kind<?> kind = event.kind();
-
-						if (kind == StandardWatchEventKinds.OVERFLOW) {
-							continue;
-						}
-
-						WatchEvent<Path> ev = (WatchEvent<Path>)event;
-
-						Path filename = ev.context();
-
-						try {
-							Path child = dir.resolve(filename);
-							if (!Files.probeContentType(child).equals("text/plain")) {
-								logger.log(Level.WARNING, "New file {} is not a plain text file", filename);
-								continue;
-							}
-						} catch (IOException x) {
-							logger.log(Level.WARNING, "Can't resolve file {}", filename);
-							continue;
-						}
-
-						Platform.runLater(() -> pane.reload());
-					}
-
-					boolean valid = key.reset();
-					if (!valid) {
-						break;
-					}
-				}
-			} catch (InterruptedException x) {
-			}
-		} catch (IOException x) {
-			logger.log(Level.WARNING, "Can't subscribe watcher on directory {}", dir.getFileName());
-		} finally {
-			if (watchKey != null) {
-				watchKey.cancel();
-			}
-
-			watcher.close();
-		}
 	}
 }

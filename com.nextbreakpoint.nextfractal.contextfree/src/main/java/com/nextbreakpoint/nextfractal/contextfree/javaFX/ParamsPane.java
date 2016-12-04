@@ -100,8 +100,8 @@ public class ParamsPane extends Pane {
 		};
 
 		eventBus.subscribe("editor-params-action", event -> {
-			if (event.equals("cancel")) updateAll.apply((ContextFreeMetadata) contextFreeSession.getMetadata());
-			if (event.equals("apply")) notifyAll.apply((ContextFreeMetadata) contextFreeSession.getMetadata());
+			if (contextFreeSession != null && event.equals("cancel")) updateAll.apply((ContextFreeMetadata) contextFreeSession.getMetadata());
+			if (contextFreeSession != null && event.equals("apply")) notifyAll.apply((ContextFreeMetadata) contextFreeSession.getMetadata());
 		});
 
 		eventBus.subscribe("session-data-changed", event -> updateData(updateAll, (Object[]) event));

@@ -98,7 +98,7 @@ public class EditorPane extends BorderPane {
         });
 
         eventBus.subscribe("editor-action", event -> {
-            if (event.equals("reload")) eventBus.postEvent("session-data-loaded", new Object[] { session, false, false });
+            if (session != null && event.equals("reload")) eventBus.postEvent("session-data-loaded", new Object[] { session, false, false });
         });
     }
 

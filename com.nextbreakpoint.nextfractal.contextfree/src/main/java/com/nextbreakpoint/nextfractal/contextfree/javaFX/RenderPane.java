@@ -24,7 +24,6 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.javaFX;
 
-import com.nextbreakpoint.Try;
 import com.nextbreakpoint.nextfractal.contextfree.ContextFreeMetadata;
 import com.nextbreakpoint.nextfractal.contextfree.ContextFreeSession;
 import com.nextbreakpoint.nextfractal.contextfree.compiler.CompilerClassException;
@@ -35,13 +34,7 @@ import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDG;
 import com.nextbreakpoint.nextfractal.contextfree.renderer.RendererCoordinator;
 import com.nextbreakpoint.nextfractal.contextfree.renderer.RendererError;
 import com.nextbreakpoint.nextfractal.core.EventBus;
-import com.nextbreakpoint.nextfractal.core.FileManager;
-import com.nextbreakpoint.nextfractal.core.javaFX.Bitmap;
 import com.nextbreakpoint.nextfractal.core.javaFX.BooleanObservableValue;
-import com.nextbreakpoint.nextfractal.core.javaFX.BrowseBitmap;
-import com.nextbreakpoint.nextfractal.core.javaFX.BrowseDelegate;
-import com.nextbreakpoint.nextfractal.core.javaFX.BrowsePane;
-import com.nextbreakpoint.nextfractal.core.javaFX.GridItemRenderer;
 import com.nextbreakpoint.nextfractal.core.javaFX.StringObservableValue;
 import com.nextbreakpoint.nextfractal.core.renderer.*;
 import com.nextbreakpoint.nextfractal.core.renderer.javaFX.JavaFXRendererFactory;
@@ -50,17 +43,14 @@ import com.nextbreakpoint.nextfractal.core.utils.Block;
 import com.nextbreakpoint.nextfractal.core.utils.DefaultThreadFactory;
 import javafx.animation.AnimationTimer;
 import javafx.animation.FadeTransition;
-import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Button;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.TransferMode;
@@ -70,7 +60,6 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Screen;
 import javafx.util.Duration;
 
-import java.io.File;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
@@ -79,8 +68,6 @@ import java.util.Optional;
 import java.util.concurrent.ThreadFactory;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import static com.nextbreakpoint.nextfractal.core.Plugins.tryFindFactory;
 
 public class RenderPane extends BorderPane {
 	private static final int FRAME_LENGTH_IN_MILLIS = 20;
@@ -146,7 +133,6 @@ public class RenderPane extends BorderPane {
 		errors.setVisible(false);
 
 		HBox toolButtons = new HBox(0);
-		Button browseButton = new Button("", createIconImage("/icon-grid.png"));
 //		ToggleButton zoominButton = new ToggleButton("", createIconImage("/icon-zoomin.png"));
 //		ToggleButton zoomoutButton = new ToggleButton("", createIconImage("/icon-zoomout.png"));
 //		ToggleButton moveButton = new ToggleButton("", createIconImage("/icon-move.png"));
@@ -157,58 +143,16 @@ public class RenderPane extends BorderPane {
 //		toolsGroup.getToggles().add(moveButton);
 //		toolsGroup.getToggles().add(rotateButton);
 //		Button homeButton = new Button("", createIconImage("/icon-home.png"));
-		browseButton.setTooltip(new Tooltip("Show fractals browser"));
 //		zoominButton.setTooltip(new Tooltip("Select zoom in tool"));
 //		zoomoutButton.setTooltip(new Tooltip("Select zoom out tool"));
 //		moveButton.setTooltip(new Tooltip("Select move tool"));
 //		rotateButton.setTooltip(new Tooltip("Select rotate tool"));
-		toolButtons.getChildren().add(browseButton);
 //		toolButtons.getChildren().add(homeButton);
 //		toolButtons.getChildren().add(zoominButton);
 //		toolButtons.getChildren().add(zoomoutButton);
 //		toolButtons.getChildren().add(moveButton);
 //		toolButtons.getChildren().add(rotateButton);
 		toolButtons.getStyleClass().add("toolbar");
-
-		BrowsePane browsePane = new BrowsePane(width, height);
-		browsePane.setTranslateX(-width);
-
-		TranslateTransition browserTransition = createTranslateTransition(browsePane);
-
-		browseButton.setOnAction(e -> {
-			showBrowser(browserTransition, a -> {});
-			browsePane.reload();
-		});
-
-		browsePane.setDelegate(new BrowseDelegate() {
-			@Override
-			public void didSelectFile(BrowsePane source, File file) {
-				eventBus.postEvent("editor-load-file", file);
-				hideBrowser(browserTransition, a -> {});
-			}
-
-			@Override
-			public void didClose(BrowsePane source) {
-				hideBrowser(browserTransition, a -> {});
-			}
-
-			@Override
-			public GridItemRenderer createRenderer(Bitmap bitmap) throws Exception {
-				return tryFindFactory(((Session) bitmap.getProperty("session")).getPluginId())
-					.flatMap(factory -> Try.of(() -> factory.createRenderer(bitmap))).orThrow();
-			}
-
-			@Override
-			public BrowseBitmap createBitmap(File file, RendererSize size) throws Exception {
-				return FileManager.loadFile(file).flatMap(session -> tryFindFactory(session.getPluginId())
-					.flatMap(factory -> Try.of(() -> factory.createBitmap(session, size)))).orThrow();
-			}
-
-			@Override
-			public String getFileExtension() {
-				return ".nf.zip";
-			}
-		});
 
 		controls.setBottom(toolButtons);
 		toolButtons.setOpacity(0.9);
@@ -238,7 +182,6 @@ public class RenderPane extends BorderPane {
 		stackPane.getChildren().add(toolCanvas);
 		stackPane.getChildren().add(controls);
 		stackPane.getChildren().add(errors);
-		stackPane.getChildren().add(browsePane);
 		setCenter(stackPane);
 
 		toolsGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
@@ -350,33 +293,6 @@ public class RenderPane extends BorderPane {
 		transition.setNode(node);
 		transition.setDuration(Duration.seconds(0.5));
 		return transition;
-	}
-
-	private TranslateTransition createTranslateTransition(Node node) {
-		TranslateTransition transition = new TranslateTransition();
-		transition.setNode(node);
-		transition.setDuration(Duration.seconds(0.5));
-		return transition;
-	}
-
-	private void showBrowser(TranslateTransition transition, EventHandler<ActionEvent> handler) {
-		transition.stop();
-		if (transition.getNode().getTranslateX() != 0) {
-			transition.setFromX(transition.getNode().getTranslateX());
-			transition.setToX(0);
-			transition.setOnFinished(handler);
-			transition.play();
-		}
-	}
-
-	private void hideBrowser(TranslateTransition transition, EventHandler<ActionEvent> handler) {
-		transition.stop();
-		if (transition.getNode().getTranslateX() != -((Pane)transition.getNode()).getWidth()) {
-			transition.setFromX(transition.getNode().getTranslateX());
-			transition.setToX(-((Pane)transition.getNode()).getWidth());
-			transition.setOnFinished(handler);
-			transition.play();
-		}
 	}
 
 	private void fadeOut(FadeTransition transition, EventHandler<ActionEvent> handler) {
