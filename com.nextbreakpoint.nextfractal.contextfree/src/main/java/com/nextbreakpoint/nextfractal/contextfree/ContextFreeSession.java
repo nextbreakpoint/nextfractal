@@ -50,6 +50,11 @@ public class ContextFreeSession extends Session {
     }
 
 	@Override
+	public String getGrammar() {
+		return "ContextFree";
+	}
+
+	@Override
 	public String getScript() {
 		return script;
 	}

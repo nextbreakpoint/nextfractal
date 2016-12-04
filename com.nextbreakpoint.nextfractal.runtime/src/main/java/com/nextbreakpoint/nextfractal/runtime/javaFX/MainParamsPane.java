@@ -28,6 +28,7 @@ import com.nextbreakpoint.Try;
 import com.nextbreakpoint.nextfractal.core.EventBus;
 import com.nextbreakpoint.nextfractal.core.EventListener;
 import com.nextbreakpoint.nextfractal.core.session.Session;
+import javafx.application.Platform;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -42,7 +43,9 @@ import static com.nextbreakpoint.nextfractal.core.Plugins.listGrammars;
 public class MainParamsPane extends Pane {
 	private static final int SPACING = 5;
 
-	private String grammar;
+	private EventBus localEventBus;
+
+	private Session session;
 
 	public MainParamsPane(EventBus eventBus) {
 		VBox box = new VBox(SPACING * 2);
@@ -95,21 +98,33 @@ public class MainParamsPane extends Pane {
 		
 		applyButton.setOnAction((e) -> eventBus.postEvent("editor-params-action", "apply"));
 
-		EventListener paramsChangedAction = event -> {
-			Session session = (Session) event;
-			findFactory(session.getPluginId()).ifPresent(factory -> {
-				grammar = factory.getGrammar();
-				grammarCombobox.getSelectionModel().select(grammar);
-				paramsPane.setCenter(Try.of(() -> factory.createParamsPane(eventBus, session)).orElse(null));
-			});
+		EventListener updateUI = event -> {
+			Session session = (Session) ((Object[])event)[0];
+			if (this.session == null || !this.session.getPluginId().equals(session.getPluginId())) {
+				paramsPane.setCenter(createParamsPane(eventBus, session));
+			}
+			this.session = session;
+			grammarCombobox.getSelectionModel().select(session.getGrammar());
 		};
 
-		eventBus.subscribe("editor-params-changed", paramsChangedAction);
+		eventBus.subscribe("session-data-loaded", updateUI);
 
 		grammarCombobox.setOnAction(e -> {
-			if (!grammarCombobox.getSelectionModel().isEmpty() && !grammarCombobox.getSelectionModel().getSelectedItem().equals(grammar)) {
+			if (session != null && !grammarCombobox.getSelectionModel().isEmpty() && !grammarCombobox.getSelectionModel().getSelectedItem().equals(session.getGrammar())) {
 				eventBus.postEvent("editor-grammar-changed", grammarCombobox.getSelectionModel().getSelectedItem());
 			}
 		});
+	}
+
+	private Pane createParamsPane(EventBus eventBus, Session session) {
+		return findFactory(session.getPluginId()).map(factory -> factory.createParamsPane(getLocalEventBus(eventBus), session)).orElse(null);
+	}
+
+	private EventBus getLocalEventBus(EventBus eventBus) {
+		if (localEventBus != null) {
+			localEventBus.detach();
+		}
+		localEventBus = new EventBus(eventBus);
+		return localEventBus;
 	}
 }

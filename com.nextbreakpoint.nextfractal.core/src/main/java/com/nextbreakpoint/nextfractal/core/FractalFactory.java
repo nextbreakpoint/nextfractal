@@ -24,8 +24,13 @@
  */
 package com.nextbreakpoint.nextfractal.core;
 
+import java.io.File;
 import java.util.concurrent.ThreadFactory;
 
+import com.nextbreakpoint.nextfractal.core.javaFX.Bitmap;
+import com.nextbreakpoint.nextfractal.core.javaFX.BrowseBitmap;
+import com.nextbreakpoint.nextfractal.core.javaFX.GridItemRenderer;
+import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 import javafx.scene.layout.Pane;
 
 import com.nextbreakpoint.nextfractal.core.renderer.RendererFactory;
@@ -84,4 +89,8 @@ public interface FractalFactory {
 	 * @return
 	 */
 	public FileManager createFileManager();
+
+	public GridItemRenderer createRenderer(Bitmap bitmap) throws Exception;
+
+	public BrowseBitmap createBitmap(Session session, RendererSize size) throws Exception;
 }

@@ -52,6 +52,11 @@ public class MandelbrotSession extends Session {
     }
 
 	@Override
+	public String getGrammar() {
+		return "Mandelbrot";
+	}
+
+	@Override
 	public String getScript() {
 		return script;
 	}

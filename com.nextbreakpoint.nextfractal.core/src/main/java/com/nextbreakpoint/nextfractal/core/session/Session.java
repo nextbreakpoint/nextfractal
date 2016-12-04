@@ -31,6 +31,8 @@ import java.io.InputStream;
 public abstract class Session {
 	public abstract String getPluginId();
 
+	public abstract String getGrammar();
+
 	public abstract String getScript();
 
 	public abstract Object getMetadata();

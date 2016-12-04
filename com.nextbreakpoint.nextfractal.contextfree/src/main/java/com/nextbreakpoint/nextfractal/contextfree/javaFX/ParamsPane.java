@@ -70,6 +70,8 @@ public class ParamsPane extends Pane {
 //			encodeTextArea = null;
 //		}
 
+		contextFreeSession = session;
+
 		getChildren().add(box);
 
 		widthProperty().addListener((observable, oldValue, newValue) -> {
@@ -102,12 +104,8 @@ public class ParamsPane extends Pane {
 			if (event.equals("apply")) notifyAll.apply((ContextFreeMetadata) contextFreeSession.getMetadata());
 		});
 
-		eventBus.subscribe("editor-data-changed", event -> updateData(updateAll, (Object[]) event));
+		eventBus.subscribe("session-data-changed", event -> updateData(updateAll, (Object[]) event));
 
-		eventBus.subscribe("render-data-changed", event -> updateData(updateAll, (Object[]) event));
-
-		updateAll.apply((ContextFreeMetadata) contextFreeSession.getMetadata());
-		
 		seedField.setOnAction(e -> notifyAll.apply((ContextFreeMetadata) contextFreeSession.getMetadata()));
 	}
 

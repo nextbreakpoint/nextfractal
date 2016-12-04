@@ -24,9 +24,9 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.javaFX;
 
+import com.nextbreakpoint.Try;
 import com.nextbreakpoint.nextfractal.contextfree.ContextFreeMetadata;
 import com.nextbreakpoint.nextfractal.contextfree.ContextFreeSession;
-import com.nextbreakpoint.nextfractal.contextfree.compiler.Compiler;
 import com.nextbreakpoint.nextfractal.contextfree.compiler.CompilerClassException;
 import com.nextbreakpoint.nextfractal.contextfree.compiler.CompilerError;
 import com.nextbreakpoint.nextfractal.contextfree.compiler.CompilerReport;
@@ -35,6 +35,7 @@ import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDG;
 import com.nextbreakpoint.nextfractal.contextfree.renderer.RendererCoordinator;
 import com.nextbreakpoint.nextfractal.contextfree.renderer.RendererError;
 import com.nextbreakpoint.nextfractal.core.EventBus;
+import com.nextbreakpoint.nextfractal.core.FileManager;
 import com.nextbreakpoint.nextfractal.core.javaFX.Bitmap;
 import com.nextbreakpoint.nextfractal.core.javaFX.BooleanObservableValue;
 import com.nextbreakpoint.nextfractal.core.javaFX.BrowseBitmap;
@@ -79,12 +80,13 @@ import java.util.concurrent.ThreadFactory;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static com.nextbreakpoint.nextfractal.core.Plugins.tryFindFactory;
+
 public class RenderPane extends BorderPane {
 	private static final int FRAME_LENGTH_IN_MILLIS = 20;
 	private static final Logger logger = Logger.getLogger(RenderPane.class.getName());
 	private final ThreadFactory renderThreadFactory;
 	private final JavaFXRendererFactory renderFactory;
-//	private final StringObservableValue fileProperty;
 	private final StringObservableValue errorProperty;
 	private final StringObservableValue statusProperty;
 	private final BooleanObservableValue hideErrorsProperty;
@@ -106,9 +108,6 @@ public class RenderPane extends BorderPane {
 		this.columns = columns;
 
 		contextFreeSession = (ContextFreeSession) session;
-
-//		fileProperty = new StringObservableValue();
-//		fileProperty.setValue(null);
 
 		errorProperty = new StringObservableValue();
 		errorProperty.setValue(null);
@@ -195,17 +194,19 @@ public class RenderPane extends BorderPane {
 
 			@Override
 			public GridItemRenderer createRenderer(Bitmap bitmap) throws Exception {
-				return RenderPane.this.createRenderer(bitmap);
+				return tryFindFactory(((Session) bitmap.getProperty("session")).getPluginId())
+					.flatMap(factory -> Try.of(() -> factory.createRenderer(bitmap))).orThrow();
 			}
 
 			@Override
 			public BrowseBitmap createBitmap(File file, RendererSize size) throws Exception {
-				return RenderPane.this.createBitmap(file, size);
+				return FileManager.loadFile(file).flatMap(session -> tryFindFactory(session.getPluginId())
+					.flatMap(factory -> Try.of(() -> factory.createBitmap(session, size)))).orThrow();
 			}
 
 			@Override
 			public String getFileExtension() {
-				return ".cf";
+				return ".nf.zip";
 			}
 		});
 
@@ -260,40 +261,41 @@ public class RenderPane extends BorderPane {
 
 		Block<ContextFreeMetadata, Exception> updateUI = data -> {};
 
-//		fileProperty.addListener((observable, oldValue, newValue) -> loadFractalFromFile(updateUI, newValue));
-
 		heightProperty().addListener((observable, oldValue, newValue) -> {
 			toolButtons.setPrefHeight(newValue.doubleValue() * 0.07);
 		});
 
-		stackPane.setOnDragDropped(e -> e.getDragboard().getFiles().stream().findFirst().ifPresent(file -> updateFile(file)));
+		stackPane.setOnDragDropped(e -> e.getDragboard().getFiles().stream().findFirst()
+			.ifPresent(file -> eventBus.postEvent("editor-load-file", file)));
 
 		stackPane.setOnDragOver(x -> Optional.of(x).filter(e -> e.getGestureSource() != stackPane)
-				.filter(e -> e.getDragboard().hasFiles()).ifPresent(e -> e.acceptTransferModes(TransferMode.COPY_OR_MOVE)));
+			.filter(e -> e.getDragboard().hasFiles()).ifPresent(e -> e.acceptTransferModes(TransferMode.COPY_OR_MOVE)));
 
 		runTimer(fractalCanvas, toolCanvas);
 
-		eventBus.subscribe("editor-report-changed", event -> updateReport((CompilerReport) event));
+		eventBus.subscribe("session-terminated", event -> dispose());
 
-        eventBus.subscribe("editor-source-changed", event -> {
-            contextFreeSession = new ContextFreeSession((ContextFreeMetadata) contextFreeSession.getMetadata(), (String) event);
-            notifySessionChanged(eventBus, false, true);
+		eventBus.subscribe("session-report-changed", event -> updateReport((CompilerReport) event));
+
+		eventBus.subscribe("session-data-changed", event -> updateData((Object[]) event));
+
+		eventBus.subscribe("editor-source-changed", event -> {
+			ContextFreeSession newSession = new ContextFreeSession((ContextFreeMetadata) contextFreeSession.getMetadata(), (String) event);
+            notifySessionChanged(eventBus, newSession, false, true);
         });
 
-        eventBus.subscribe("session-terminated", event -> dispose());
-
 		eventBus.subscribe("editor-data-changed", event -> {
-			updateData((Object[]) event);
+			ContextFreeSession newSession = (ContextFreeSession) ((Object[]) event)[0];
 			Boolean continuous = (Boolean) ((Object[]) event)[1];
 			Boolean appendHistory = (Boolean) ((Object[]) event)[2];
-			notifySessionChanged(eventBus, continuous, appendHistory && !continuous);
+			notifySessionChanged(eventBus, newSession, continuous, appendHistory && !continuous);
 		});
 
 		eventBus.subscribe("render-data-changed", event -> {
-            updateData((Object[]) event);
+			ContextFreeSession newSession = (ContextFreeSession) ((Object[]) event)[0];
 			Boolean continuous = (Boolean) ((Object[]) event)[1];
 			Boolean appendHistory = (Boolean) ((Object[]) event)[2];
-			notifySessionChanged(eventBus, continuous, appendHistory && !continuous);
+			notifySessionChanged(eventBus, newSession, continuous, appendHistory && !continuous);
 		});
 
 		eventBus.subscribe("render-status-changed", event -> {
@@ -309,16 +311,11 @@ public class RenderPane extends BorderPane {
 		contextFreeSession = (ContextFreeSession) event[0];
 	}
 
-	private void notifySessionChanged(EventBus eventBus, boolean continuous, boolean historyAppend) {
-		eventBus.postEvent("session-data-changed", new Object[] { contextFreeSession, continuous, false });
+	private void notifySessionChanged(EventBus eventBus, ContextFreeSession newSession, boolean continuous, boolean historyAppend) {
+		eventBus.postEvent("session-data-changed", new Object[] { newSession, continuous, false });
 		if (historyAppend) {
-			eventBus.postEvent("history-add-session", contextFreeSession);
+			eventBus.postEvent("history-add-session", newSession);
 		}
-	}
-
-	private void updateFile(File file) {
-//		fileProperty.setValue(null);
-//		fileProperty.setValue(file.getAbsolutePath());
 	}
 
 	private RendererCoordinator createCoordinator(Map<String, Integer> hints, int width, int height) {
@@ -401,24 +398,6 @@ public class RenderPane extends BorderPane {
 			transition.play();
 		}
 	}
-
-//	private void loadFractalFromFile(Block<ContextFreeMetadata, Exception> updateJulia, String filename) {
-//		if (filename == null) {
-//			return;
-//		}
-//		File file = new File(filename);
-//		try {
-//			ContextFreeDataStore service = new ContextFreeDataStore();
-//			ContextFreeData data = service.loadFromFile(file);
-////			getContextFreeSession().setCurrentFile(file);
-//			updateJulia.execute(data);
-////			getContextFreeSession().setData(data);
-//			logger.info(data.toString());
-//		} catch (Exception x) {
-//			logger.warning("Cannot read file " + file.getAbsolutePath());
-//			//TODO display error
-//		}
-//	}
 
 	private void runTimer(Canvas fractalCanvas, Canvas toolCanvas) {
 		timer = new AnimationTimer() {
@@ -580,71 +559,6 @@ public class RenderPane extends BorderPane {
 		if (coordinator.isPixelsChanged()) {
 			RendererGraphicsContext gc = renderFactory.createGraphicsContext(canvas.getGraphicsContext2D());
 			coordinator.drawImage(gc, 0, 0);
-		}
-	}
-
-	private GridItemRenderer createRenderer(Bitmap bitmap) throws Exception {
-		Map<String, Integer> hints = new HashMap<String, Integer>();
-		RendererTile tile = createSingleTile(bitmap.getWidth(), bitmap.getHeight());
-		DefaultThreadFactory threadFactory = new DefaultThreadFactory("Browser", true, Thread.MIN_PRIORITY);
-		RendererCoordinator coordinator = new RendererCoordinator(threadFactory, new JavaFXRendererFactory(), tile, hints);
-		CFDG cfdg = (CFDG)bitmap.getProperty("cfdg");
-		coordinator.setCFDG(cfdg);
-		coordinator.init();
-		coordinator.run();
-		return new GridItemRendererAdapter(coordinator);
-	}
-
-	private BrowseBitmap createBitmap(File file, RendererSize size) throws Exception {
-//		ContextFreeDataStore service = new ContextFreeDataStore();
-//		ContextFreeData data = service.loadFromFile(file);
-//		if (Thread.currentThread().isInterrupted()) {
-//			return null;
-//		}
-//		Compiler compiler = new Compiler();
-//		CompilerReport report = compiler.compileReport(data.getSource());
-//		if (report.getErrors().size() > 0) {
-//			throw new RuntimeException("Failed to compile source");
-//		}
-//		if (Thread.currentThread().isInterrupted()) {
-//			return null;
-//		}
-		BrowseBitmap bitmap = new BrowseBitmap(size.getWidth(), size.getHeight(), null);
-//		bitmap.setProperty("cfdg", report.getCFDG());
-//		bitmap.setProperty("data", data);
-		return bitmap;
-	}
-
-	private class GridItemRendererAdapter implements GridItemRenderer {
-		private RendererCoordinator coordinator;
-
-		public GridItemRendererAdapter(RendererCoordinator coordinator) {
-			this.coordinator = coordinator;
-		}
-
-		@Override
-		public void abort() {
-			coordinator.abort();
-		}
-
-		@Override
-		public void waitFor() {
-			coordinator.waitFor();
-		}
-
-		@Override
-		public void dispose() {
-			coordinator.dispose();
-		}
-
-		@Override
-		public boolean isPixelsChanged() {
-			return coordinator.isPixelsChanged();
-		}
-
-		@Override
-		public void drawImage(RendererGraphicsContext gc, int x, int y) {
-			coordinator.drawImage(gc, x, y);
 		}
 	}
 }

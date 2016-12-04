@@ -2,8 +2,10 @@ package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
 
 import com.nextbreakpoint.Try;
 import com.nextbreakpoint.nextfractal.core.EventBus;
+import com.nextbreakpoint.nextfractal.core.javaFX.BooleanObservableValue;
 import com.nextbreakpoint.nextfractal.core.utils.Block;
 import com.nextbreakpoint.nextfractal.core.utils.DefaultThreadFactory;
+import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotMetadata;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotSession;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.Compiler;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerError;
@@ -34,15 +36,19 @@ import java.util.regex.Pattern;
 public class EditorPane extends BorderPane {
     private static final Logger logger = Logger.getLogger(EditorPane.class.getName());
 
+    private final BooleanObservableValue internalSource;
     private final ExecutorService textExecutor;
     private final Pattern highlightingPattern;
     private final CodeArea codeArea;
 
-    private String source = "";
+    private MandelbrotSession session;
 
     public EditorPane(EventBus eventBus) {
         codeArea = new CodeArea();
         codeArea.getStyleClass().add("mandelbrot");
+
+        internalSource = new BooleanObservableValue();
+        internalSource.setValue(true);
 
         ScrollPane codePane = new ScrollPane();
         codePane.setContent(codeArea);
@@ -55,35 +61,56 @@ public class EditorPane extends BorderPane {
 
         codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
 
-        codeArea.plainTextChanges().successionEnds(Duration.ofMillis(500)).supplyTask(this::computeTaskAsync)
-                .awaitLatest().map(org.reactfx.util.Try::get).subscribe(result -> applyTaskResult(eventBus, result));
+        codeArea.plainTextChanges().suppressible().suppressWhen(internalSource).successionEnds(Duration.ofMillis(500)).supplyTask(this::computeTaskAsync)
+            .awaitLatest().map(org.reactfx.util.Try::get).map(this::applyTaskResult).subscribe(result -> notifyTaskResult(eventBus, result));
 
-//        codeArea.setOnDragDropped(e -> e.getDragboard().getFiles().stream().findFirst().ifPresent(file -> loadDataFromFile(file)));
+        codeArea.setOnDragDropped(e -> e.getDragboard().getFiles().stream().findFirst()
+            .ifPresent(file -> eventBus.postEvent("editor-load-file", file)));
 
         codeArea.setOnDragOver(e -> Optional.of(e).filter(q -> q.getGestureSource() != codeArea
-                && q.getDragboard().hasFiles()).ifPresent(q -> q.acceptTransferModes(TransferMode.COPY_OR_MOVE)));
+            && q.getDragboard().hasFiles()).ifPresent(q -> q.acceptTransferModes(TransferMode.COPY_OR_MOVE)));
 
         textExecutor = Executors.newSingleThreadExecutor(new DefaultThreadFactory("Editor", true, Thread.MIN_PRIORITY));
 
-        eventBus.subscribe("editor-source-loaded", event -> updateSource(((MandelbrotSession)event).getScript()));
+        eventBus.subscribe("session-data-changed", event -> session = (MandelbrotSession) ((Object[]) event)[0]);
+
+        eventBus.subscribe("session-data-loaded", event -> {
+            MandelbrotSession session = (MandelbrotSession) ((Object[]) event)[0];
+            updateSource(session.getScript()).ifPresent(result -> {
+                eventBus.postEvent("session-report-changed", result.report);
+                eventBus.postEvent("session-data-changed", event);
+                MandelbrotSession newSession = (MandelbrotSession) ((Object[]) event)[0];
+                Boolean continuous = (Boolean) ((Object[]) event)[1];
+                Boolean appendHistory = (Boolean) ((Object[]) event)[2];
+                if (!continuous && appendHistory) {
+                    eventBus.postEvent("history-add-session", newSession);
+                }
+            });
+        });
 
         eventBus.subscribe("editor-report-changed", event -> {
             eventBus.postEvent("session-report-changed", event);
+            notifySourceIfRequired(eventBus, (CompilerReport)event);
         });
 
         eventBus.subscribe("editor-source-changed", event -> {
-            source = (String)event;
-            eventBus.postEvent("session-source-changed", event);
+            MandelbrotSession newSession = new MandelbrotSession((MandelbrotMetadata) session.getMetadata(), (String) event);
+            eventBus.postEvent("session-data-changed", new Object[] { newSession, false, true });
         });
 
         eventBus.subscribe("editor-action", event -> {
-            if (event.equals("reload")) updateSource(source);
+            if (event.equals("reload")) eventBus.postEvent("session-data-loaded", new Object[] { session, false, false });
         });
     }
 
-    private void updateSource(String source) {
+    private Try<TaskResult, Exception> updateSource(String source) {
+        internalSource.setValue(true);
         codeArea.replaceText("");
         codeArea.replaceText(source);
+        Try<TaskResult, Exception> result = Try.of(() -> generateReport(source))
+            .map(report -> new TaskResult(source, report, computeHighlighting(source))).map(task -> updateTextStyles(task));
+        internalSource.setValue(false);
+        return result;
     }
 
     private class TaskResult {
@@ -99,11 +126,13 @@ public class EditorPane extends BorderPane {
     }
 
     private Task<Optional<TaskResult>> computeTaskAsync() {
+        logger.info("Compute task..." + internalSource.getValue());
         String text = codeArea.getText();
         Task<Optional<TaskResult>> task = new Task<Optional<TaskResult>>() {
             @Override
             protected Optional<TaskResult> call() throws Exception {
-                return Try.of(() -> new TaskResult(text, generateReport(text), computeHighlighting(text))).onFailure(e -> logger.log(Level.WARNING, "Cannot parse source", e)).value();
+                return Try.of(() -> new TaskResult(text, generateReport(text), computeHighlighting(text)))
+                    .onFailure(e -> logger.log(Level.WARNING, "Cannot parse source", e)).value();
             }
         };
         textExecutor.execute(task);
@@ -165,24 +194,17 @@ public class EditorPane extends BorderPane {
         );
     }
 
-    private void applyTaskResult(EventBus eventBus, Optional<TaskResult> result) {
-        result.ifPresent(value -> Block.create(TaskResult.class)
-            .andThen(task -> compileOrbitAndColor(task.report))
-            .andThen(task -> eventBus.postEvent("editor-report-changed", task.report))
-            .andThen(task -> updateSourceIfRequired(eventBus, task))
-            .andThen(task -> codeArea.setStyleSpans(0, task.highlighting))
-            .andThen(task -> displayErrors(task.report))
-            .tryExecute(value)
-            .ifFailure(e -> logger.log(Level.WARNING, "Cannot process source", e))
-        );
+    private Try<TaskResult, Exception> applyTaskResult(Optional<TaskResult> result) {
+        return Try.of(() -> result.orElse(null)).flatMap(task -> compileOrbitAndColor(task)).map(task -> updateTextStyles(task));
     }
 
-    private void updateSourceIfRequired(EventBus eventBus, TaskResult task) {
-        Optional.of(task.report).filter(report -> report.getErrors().size() == 0).ifPresent(report -> eventBus.postEvent("editor-source-changed", task.source));
+    private void notifyTaskResult(EventBus eventBus, Try<TaskResult, Exception> result) {
+        result.map(task -> task.report).ifPresent(report -> eventBus.postEvent("editor-report-changed", report));
     }
 
-    private void compileOrbitAndColor(CompilerReport report) {
-        Block.create(CompilerReport.class).andThen(this::compileOrbit).andThen(this::compileColor).tryExecute(report).ifFailure(e -> processCompilerErrors(report, e));
+    private Try<TaskResult, Exception> compileOrbitAndColor(TaskResult task) {
+        return Block.create(CompilerReport.class).andThen(this::compileOrbit).andThen(this::compileColor)
+            .tryExecute(task.report).onFailure(e -> processCompilerErrors(task.report, e)).map(x -> task);
     }
 
     private void compileOrbit(CompilerReport report) throws ClassNotFoundException, IOException, InstantiationException, IllegalAccessException, CompilerSourceException {
@@ -193,6 +215,10 @@ public class EditorPane extends BorderPane {
         Optional.of(new Compiler().compileColor(report)).filter(builder -> builder.getErrors().size() == 0).ifPresent(builder -> Try.of(() -> builder.build()).execute());
     }
 
+    private void notifySourceIfRequired(EventBus eventBus, CompilerReport result) {
+        Optional.of(result).filter(report -> report.getErrors().size() == 0).ifPresent(report -> eventBus.postEvent("editor-source-changed", result.getSource()));
+    }
+
     private void processCompilerErrors(CompilerReport report, Exception e) {
         if (e instanceof CompilerSourceException) {
             report.getErrors().addAll(((CompilerSourceException)e).getErrors());
@@ -201,8 +227,9 @@ public class EditorPane extends BorderPane {
         }
     }
 
-    private void displayErrors(CompilerReport report) {
-        List<CompilerError> errors = report.getErrors();
+    private TaskResult updateTextStyles(TaskResult task) {
+        codeArea.setStyleSpans(0, task.highlighting);
+        List<CompilerError> errors = task.report.getErrors();
         if (errors.size() > 0) {
             Collections.sort(errors, (o1, o2) -> o2.getIndex() < o1.getIndex() ? -1 : 1);
             for (CompilerError error : errors) {
@@ -225,5 +252,6 @@ public class EditorPane extends BorderPane {
                 }
             }
         }
+        return task;
     }
 }

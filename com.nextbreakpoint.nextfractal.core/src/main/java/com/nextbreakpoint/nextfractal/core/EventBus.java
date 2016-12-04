@@ -5,11 +5,15 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 public class EventBus {
+    private static Logger logger = Logger.getLogger(EventBus.class.getName());
+
     private Map<String, List<EventListener>> listeners = new HashMap<>();
     private List<EventBus> children = new LinkedList<>();
     private EventBus parent;
+    private boolean detached;
 
     public EventBus() {
         this(null);
@@ -42,14 +46,17 @@ public class EventBus {
     }
 
     public void postEvent(String eventClass, Object event) {
+        if (detached) return;
         if (parent != null) {
             parent.postEvent(eventClass, event);
         } else {
+            logger.info(eventClass);
             postChildren(eventClass, event);
         }
     }
 
     private void postChildren(String eventClass, Object event) {
+        if (detached) return;
         List<EventListener> l = listeners.get(eventClass);
         if (l != null) {
             List<EventListener> copy = new ArrayList<>(l.size());
@@ -64,5 +71,7 @@ public class EventBus {
             parent.children.remove(this);
             parent = null;
         }
+        children.clear();
+        detached = true;
     }
 }

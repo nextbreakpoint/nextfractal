@@ -92,9 +92,9 @@ public class JavaReportCompiler {
 				logger.fine(orbitSource);
 				logger.fine(colorSource);
 			}
-			return new CompilerReport(ast, Type.JAVA, orbitSource, colorSource, errors);
+			return new CompilerReport(ast, Type.JAVA, source, orbitSource, colorSource, errors);
 		}
-		return new CompilerReport(ast, Type.JAVA, "", "", errors);
+		return new CompilerReport(ast, Type.JAVA, source, "", "", errors);
 	}
 	
 	private ASTFractal parse(String source, List<CompilerError> errors) throws IOException {

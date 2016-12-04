@@ -24,6 +24,7 @@
  */
 package com.nextbreakpoint.nextfractal.runtime.javaFX;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.InputStream;
 import java.util.Objects;
@@ -40,6 +41,7 @@ import com.nextbreakpoint.nextfractal.core.utils.DefaultThreadFactory;
 import com.nextbreakpoint.nextfractal.runtime.export.SimpleExportRenderer;
 import com.nextbreakpoint.nextfractal.runtime.export.SimpleExportService;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -111,8 +113,6 @@ public class NextFractalApp extends Application {
 
 		eventBus.subscribe("session-data-changed", event -> session = (Session) ((Object[])event)[0]);
 
-		eventBus.subscribe("session-changed", event -> eventBus.postEvent("session-data-changed", new Object[] { session, false, true }));
-
 		eventBus.subscribe("session-terminated", event -> handleSessionTerminate(exportService));
 
 		eventBus.subscribe("export-session-created", event -> handleSessionExport(exportService, (ExportSession) event));
@@ -139,17 +139,22 @@ public class NextFractalApp extends Application {
 		primaryStage.sizeToScene();
 		primaryStage.setTitle(getApplicationName());
 
-		String defaultPluginId = System.getProperty("initialPluginId", DEFAULT_PLUGIN_ID);
-		tryFindFactory(defaultPluginId).ifPresent(factory -> createSession(eventBus, factory));
-
 		primaryStage.show();
+
+		BufferedImage image = new BufferedImage(10, 10, BufferedImage.TYPE_INT_ARGB);
+		Objects.requireNonNull(image.createGraphics());
+
+		Platform.runLater(() -> {
+			String defaultPluginId = System.getProperty("initialPluginId", DEFAULT_PLUGIN_ID);
+			tryFindFactory(defaultPluginId).ifPresent(factory -> createSession(eventBus, factory));
+		});
 	}
 
 	private void handleLoadFile(EventBus eventBus, File file) {
 		tryLoadingSession(file)
 			.onSuccess(session -> eventBus.postEvent("current-file-changed", file))
 			.onFailure(e -> showLoadError(eventBus, file, e))
-			.ifPresent(session -> eventBus.postEvent("session-changed", session));
+			.ifPresent(session -> eventBus.postEvent("session-data-loaded", new Object[] { session, false, true }));
 	}
 
 	private void handleSaveFile(EventBus eventBus, File file) {
@@ -187,7 +192,7 @@ public class NextFractalApp extends Application {
 	}
 
 	private void createSession(EventBus eventBus, FractalFactory factory) {
-		tryLoadingSession(factory, eventBus).ifPresent(session -> eventBus.postEvent("session-changed", session));
+		tryCreateSession(factory).ifPresent(session -> eventBus.postEvent("session-data-loaded", new Object[] { session, false, true }));
 	}
 
 	private DefaultThreadFactory createThreadFactory(String name) {
@@ -266,7 +271,7 @@ public class NextFractalApp extends Application {
 		mainPane.setMinHeight(height);
 		mainPane.setMaxWidth(width);
 		mainPane.setMaxHeight(height);
-		Pane editorRootPane = createEditorPane(eventBus, editorWidth, height);
+		Pane editorRootPane = createSidePane(eventBus, editorWidth, height);
 		Pane renderRootPane = createRenderPane(eventBus, renderWidth, height);
 		mainPane.getChildren().add(renderRootPane);
 		mainPane.getChildren().add(editorRootPane);
@@ -287,12 +292,12 @@ public class NextFractalApp extends Application {
 		return renderRootPane;
 	}
 
-	private MainEditorPane createEditorPane(EventBus eventBus, int width, int height) {
-		MainEditorPane editorRootPane = new MainEditorPane(eventBus);
-		editorRootPane.setPrefWidth(width);
-		editorRootPane.setPrefHeight(height);
-		editorRootPane.getStyleClass().add("editor-pane");
-		return editorRootPane;
+	private MainSidePane createSidePane(EventBus eventBus, int width, int height) {
+		MainSidePane sideRootPane = new MainSidePane(eventBus);
+		sideRootPane.setPrefWidth(width);
+		sideRootPane.setPrefHeight(height);
+		sideRootPane.getStyleClass().add("editor-pane");
+		return sideRootPane;
 	}
 
 	private ImageView createIconImage(String name) {
@@ -348,7 +353,7 @@ public class NextFractalApp extends Application {
 		return Try.of(() -> getClass().getResource(resourceName).toExternalForm()).onFailure(e -> logger.log(Level.WARNING, "Cannot load style sheet " + resourceName, e));
 	}
 
-	private Try<Session, Exception> tryLoadingSession(FractalFactory factory, EventBus eventBus) {
+	private Try<Session, Exception> tryCreateSession(FractalFactory factory) {
 		return Try.of(() -> Objects.requireNonNull(factory.createSession())).onFailure(e -> logger.log(Level.WARNING, "Cannot create session for " + factory.getId(), e));
 	}
 

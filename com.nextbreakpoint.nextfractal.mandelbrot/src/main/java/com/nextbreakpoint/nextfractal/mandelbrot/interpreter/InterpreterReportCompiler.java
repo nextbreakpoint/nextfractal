@@ -51,7 +51,7 @@ public class InterpreterReportCompiler {
 	public CompilerReport generateReport(String source) throws IOException {
 		List<CompilerError> errors = new ArrayList<>();
 		ASTFractal ast = parse(source, errors);
-		return new CompilerReport(ast, Type.INTERPRETER, "", "", errors);
+		return new CompilerReport(ast, Type.INTERPRETER, source, "", "", errors);
 	}
 	
 	private ASTFractal parse(String source, List<CompilerError> errors) throws IOException {

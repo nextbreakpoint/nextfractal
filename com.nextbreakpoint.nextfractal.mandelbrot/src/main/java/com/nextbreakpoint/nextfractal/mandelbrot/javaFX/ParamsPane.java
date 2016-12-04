@@ -185,20 +185,8 @@ public class ParamsPane extends Pane {
 			if (event.equals("apply")) notifyAll.apply((MandelbrotMetadata) mandelbrotSession.getMetadata());
 		});
 
-		eventBus.subscribe("editor-view-changed", event -> updateView(updateAll, (Object[]) event));
+		eventBus.subscribe("session-data-changed", event -> updateData(updateAll, (Object[]) event));
 
-		eventBus.subscribe("editor-data-changed", event -> updateData(updateAll, (Object[]) event));
-
-		eventBus.subscribe("editor-point-changed", event -> updatePoint(updateAll, (Object[]) event));
-
-		eventBus.subscribe("render-view-changed", event -> updateView(updateAll, (Object[]) event));
-
-		eventBus.subscribe("render-data-changed", event -> updateData(updateAll, (Object[]) event));
-
-		eventBus.subscribe("render-point-changed", event -> updatePoint(updateAll, (Object[]) event));
-
-		updateAll.apply((MandelbrotMetadata) mandelbrotSession.getMetadata());
-		
 		xTraslationField.setOnAction(e -> {
 			double value = Double.parseDouble(xTraslationField.getText());
 			Platform.runLater(() -> {
@@ -281,20 +269,6 @@ public class ParamsPane extends Pane {
 				});
 			}
 		});
-	}
-
-	private void updatePoint(Function<MandelbrotMetadata, Object> updateAll, Object[] event) {
-		mandelbrotSession = (MandelbrotSession) event[0];
-		if (event[1] == Boolean.FALSE) {
-            updateAll.apply((MandelbrotMetadata) mandelbrotSession.getMetadata());
-        }
-	}
-
-	private void updateView(Function<MandelbrotMetadata, Object> updateAll, Object[] event) {
-		mandelbrotSession = (MandelbrotSession) event[0];
-		if (event[1] == Boolean.FALSE) {
-			updateAll.apply((MandelbrotMetadata) mandelbrotSession.getMetadata());
-		}
 	}
 
 	private void updateData(Function<MandelbrotMetadata, Object> updateAll, Object[] event) {

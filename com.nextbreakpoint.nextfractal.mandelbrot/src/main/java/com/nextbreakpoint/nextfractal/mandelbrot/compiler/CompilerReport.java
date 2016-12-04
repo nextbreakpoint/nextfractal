@@ -34,10 +34,12 @@ public class CompilerReport {
 	private String orbitSource;
 	private String colorSource;
 	private List<CompilerError> errors;
+	private String source;
 
-	public CompilerReport(ASTFractal ast, Type type, String orbitSource, String colorSource, List<CompilerError> errors) {
+	public CompilerReport(ASTFractal ast, Type type, String source, String orbitSource, String colorSource, List<CompilerError> errors) {
 		this.ast = ast;
 		this.type = type;
+		this.source = source;
 		this.orbitSource = orbitSource;
 		this.colorSource = colorSource;
 		this.errors = errors;
@@ -61,6 +63,10 @@ public class CompilerReport {
 
 	public Type getType() {
 		return type;
+	}
+
+	public String getSource() {
+		return source;
 	}
 
 	public enum Type {
