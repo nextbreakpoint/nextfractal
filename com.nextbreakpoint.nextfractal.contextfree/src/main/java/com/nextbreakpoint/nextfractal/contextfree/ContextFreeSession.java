@@ -24,7 +24,7 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree;
 
-import com.nextbreakpoint.nextfractal.core.session.Session;
+import com.nextbreakpoint.nextfractal.core.Session;
 
 import java.io.IOException;
 import java.util.Objects;

@@ -5,7 +5,7 @@ import com.nextbreakpoint.nextfractal.core.ImageGenerator;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
 import com.nextbreakpoint.nextfractal.core.renderer.javaFX.JavaFXRendererFactory;
-import com.nextbreakpoint.nextfractal.core.session.Session;
+import com.nextbreakpoint.nextfractal.core.Session;
 import com.nextbreakpoint.nextfractal.core.utils.DefaultThreadFactory;
 import javafx.application.Platform;
 import javafx.collections.ListChangeListener;

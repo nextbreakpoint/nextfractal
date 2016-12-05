@@ -1,6 +1,6 @@
 package com.nextbreakpoint.nextfractal.core.javaFX;
 
-import com.nextbreakpoint.nextfractal.core.session.Session;
+import com.nextbreakpoint.nextfractal.core.Session;
 
 public interface HistoryDelegate {
     void sessionChanged(Session session);

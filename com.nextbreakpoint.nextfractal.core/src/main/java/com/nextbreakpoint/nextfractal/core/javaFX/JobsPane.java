@@ -2,10 +2,11 @@ package com.nextbreakpoint.nextfractal.core.javaFX;
 
 import com.nextbreakpoint.Try;
 import com.nextbreakpoint.nextfractal.core.ImageGenerator;
+import com.nextbreakpoint.nextfractal.core.export.ExportSession;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
 import com.nextbreakpoint.nextfractal.core.renderer.javaFX.JavaFXRendererFactory;
-import com.nextbreakpoint.nextfractal.core.session.Session;
+import com.nextbreakpoint.nextfractal.core.Session;
 import com.nextbreakpoint.nextfractal.core.utils.DefaultThreadFactory;
 import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
@@ -70,14 +71,14 @@ public class JobsPane extends BorderPane {
         List<Button> buttonsList = Arrays.asList(suspendButton, resumeButton, removeButton);
         listView.getSelectionModel().getSelectedItems().addListener((ListChangeListener.Change<? extends Bitmap> c) -> updateButtons(buttonsList, c.getList().size() == 0));
 
-        suspendButton.setOnAction(e -> selectedItems(listView).filter(bitmap -> bitmap.getProperty("paused") == Boolean.FALSE)
-            .forEach(bitmap -> Optional.ofNullable(delegate).ifPresent(delegate -> delegate.sessionSuspended((Session) bitmap.getProperty("session")))));
+        suspendButton.setOnAction(e -> selectedItems(listView).filter(bitmap -> !((ExportSession) bitmap.getProperty("exportSession")).isSuspended())
+            .forEach(bitmap -> Optional.ofNullable(delegate).ifPresent(delegate -> delegate.sessionSuspended((ExportSession) bitmap.getProperty("exportSession")))));
 
-        resumeButton.setOnAction(e -> selectedItems(listView).filter(bitmap -> bitmap.getProperty("paused") == Boolean.TRUE)
-            .forEach(bitmap -> Optional.ofNullable(delegate).ifPresent(delegate -> delegate.sessionResumed((Session) bitmap.getProperty("session")))));
+        resumeButton.setOnAction(e -> selectedItems(listView).filter(bitmap -> ((ExportSession) bitmap.getProperty("exportSession")).isSuspended())
+            .forEach(bitmap -> Optional.ofNullable(delegate).ifPresent(delegate -> delegate.sessionResumed((ExportSession) bitmap.getProperty("exportSession")))));
 
         removeButton.setOnAction(e -> selectedItems(listView)
-            .forEach(bitmap -> Optional.ofNullable(delegate).ifPresent(delegate -> delegate.sessionStopped((Session) bitmap.getProperty("session")))));
+            .forEach(bitmap -> Optional.ofNullable(delegate).ifPresent(delegate -> delegate.sessionStopped((ExportSession) bitmap.getProperty("exportSession")))));
 
         executor = Executors.newSingleThreadScheduledExecutor(createThreadFactory("Jobs List"));
         executor.scheduleWithFixedDelay(() -> Platform.runLater(() -> updateJobList(listView)), 500, 500, TimeUnit.MILLISECONDS);
@@ -113,12 +114,11 @@ public class JobsPane extends BorderPane {
         ObservableList<Bitmap> bitmaps = jobsList.getItems();
         for (int i = bitmaps.size() - 1; i >= 0; i--) {
             Bitmap bitmap = bitmaps.get(i);
-            Session session = (Session) bitmap.getProperty("session");
-            Boolean paused = (Boolean) bitmap.getProperty("paused");
-            String uuid = (String) bitmap.getProperty("uuid");
-            if (paused) {
+            ExportSession session = (ExportSession) bitmap.getProperty("exportSession");
+            if (session.isStopped()) {
                 bitmaps.remove(i);
             } else {
+                bitmap.setProgress(session.getProgress());
                 if (jobsList.getSelectionModel().isSelected(i)) {
                     triggerUpdate(jobsList, bitmap, i);
                     jobsList.getSelectionModel().select(i);
@@ -139,22 +139,22 @@ public class JobsPane extends BorderPane {
         }
     }
 
-    private void submitItem(String uuid, Session session, ImageGenerator generator) {
-        executor.submit(() -> Try.of(() -> generator.renderImage(session))
-            .ifPresent(pixels -> Platform.runLater(() -> addItem(listView, uuid, session, pixels, generator.getSize()))));
+    private void submitItem(ExportSession session, ImageGenerator generator) {
+        executor.submit(() -> Try.of(() -> generator.renderImage(session.getSession()))
+            .ifPresent(pixels -> Platform.runLater(() -> addItem(listView, session, pixels, generator.getSize()))));
     }
 
-    private void addItem(ListView<Bitmap> listView, String uuid, Session session, IntBuffer pixels, RendererSize size) {
+    private void addItem(ListView<Bitmap> listView, ExportSession session, IntBuffer pixels, RendererSize size) {
         BrowseBitmap bitmap = new BrowseBitmap(size.getWidth(), size.getHeight(), pixels);
-        bitmap.setProperty("session", session);
-        bitmap.setProperty("paused", false);
-        bitmap.setProperty("uuid", uuid);
+        bitmap.setProperty("exportSession", session);
+        bitmap.setProperty("session", session.getSession());
         listView.getItems().add(0, bitmap);
     }
 
-    public void appendSession(String uuid, Session session) {
+
+    public void appendSession(ExportSession session) {
         tryFindFactory(session.getPluginId()).map(factory -> factory.createImageGenerator(createThreadFactory("Jobs Renderer"),
-            new JavaFXRendererFactory(), tile, true)).ifPresent(generator -> submitItem(uuid, session, generator));
+            new JavaFXRendererFactory(), tile, true)).ifPresent(generator -> submitItem(session, generator));
     }
 
     public void setDelegate(JobsDelegate delegate) {

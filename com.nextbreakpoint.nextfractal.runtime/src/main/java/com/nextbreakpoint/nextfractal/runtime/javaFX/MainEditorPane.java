@@ -2,7 +2,7 @@ package com.nextbreakpoint.nextfractal.runtime.javaFX;
 
 import com.nextbreakpoint.Try;
 import com.nextbreakpoint.nextfractal.core.EventBus;
-import com.nextbreakpoint.nextfractal.core.session.Session;
+import com.nextbreakpoint.nextfractal.core.Session;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 

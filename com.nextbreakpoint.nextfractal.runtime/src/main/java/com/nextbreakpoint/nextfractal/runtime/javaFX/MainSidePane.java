@@ -9,6 +9,7 @@ import com.nextbreakpoint.nextfractal.core.javaFX.ExportDelegate;
 import com.nextbreakpoint.nextfractal.core.javaFX.ExportPane;
 import com.nextbreakpoint.nextfractal.core.javaFX.HistoryDelegate;
 import com.nextbreakpoint.nextfractal.core.javaFX.HistoryPane;
+import com.nextbreakpoint.nextfractal.core.javaFX.JobsDelegate;
 import com.nextbreakpoint.nextfractal.core.javaFX.JobsPane;
 import com.nextbreakpoint.nextfractal.core.javaFX.StatusPane;
 import com.nextbreakpoint.nextfractal.core.javaFX.StringObservableValue;
@@ -16,7 +17,7 @@ import com.nextbreakpoint.nextfractal.core.renderer.RendererPoint;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
 import com.nextbreakpoint.nextfractal.core.renderer.javaFX.JavaFXRendererFactory;
-import com.nextbreakpoint.nextfractal.core.session.Session;
+import com.nextbreakpoint.nextfractal.core.Session;
 import com.nextbreakpoint.nextfractal.core.utils.DefaultThreadFactory;
 import javafx.animation.TranslateTransition;
 import javafx.event.ActionEvent;
@@ -173,6 +174,23 @@ public class MainSidePane extends BorderPane {
             }
         });
 
+        jobsPane.setDelegate(new JobsDelegate() {
+            @Override
+            public void sessionSuspended(ExportSession session) {
+                eventBus.postEvent("export-session-suspended", session);
+            }
+
+            @Override
+            public void sessionResumed(ExportSession session) {
+                eventBus.postEvent("export-session-resumed", session);
+            }
+
+            @Override
+            public void sessionStopped(ExportSession session) {
+                eventBus.postEvent("export-session-stopped", session);
+            }
+        });
+
         rootPane.widthProperty().addListener((observable, oldValue, newValue) -> {
             double width = newValue.doubleValue();
             sourceButtons.setPrefWidth(width);
@@ -299,7 +317,7 @@ public class MainSidePane extends BorderPane {
 
         eventBus.subscribe("export-session-created", event -> jobsButton.setSelected(true));
 
-        eventBus.subscribe("export-session-created", event -> jobsPane.appendSession(((ExportSession)event).getSessionId(), (Session)((ExportSession)event).getData()));
+        eventBus.subscribe("export-session-created", event -> jobsPane.appendSession((ExportSession)event));
 
         eventBus.subscribe("session-data-changed", event -> {
             errorProperty.setValue(null);
@@ -307,6 +325,11 @@ public class MainSidePane extends BorderPane {
             if (!continuous) {
                 eventBus.postEvent("editor-params-changed", (Session) ((Object[])event)[0]);
             }
+        });
+
+        eventBus.subscribe("export-session-updated", event -> {
+            ExportSession exportSession = (ExportSession) event;
+            logger.info("Export session " + exportSession.getSessionId() + " -> state " + exportSession.getState());
         });
 
         return rootPane;
@@ -479,10 +502,10 @@ public class MainSidePane extends BorderPane {
         return exportFileChooser;
     }
 
-    private void startExportSession(EventBus eventBus, String uuid, RendererSize rendererSize, Encoder encoder, File file, Object data) {
+    private void startExportSession(EventBus eventBus, String uuid, RendererSize rendererSize, Encoder encoder, File file, Session session) {
         try {
             File tmpFile = File.createTempFile("export-" + uuid, ".dat");
-            ExportSession exportSession = new ExportSession(uuid, data, file, tmpFile, rendererSize, 200, encoder);
+            ExportSession exportSession = new ExportSession(uuid, session, file, tmpFile, rendererSize, 200, encoder);
             logger.info("Export session created: " + exportSession.getSessionId());
             eventBus.postEvent("export-session-created", exportSession);
         } catch (Exception e) {

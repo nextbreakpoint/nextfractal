@@ -49,7 +49,7 @@ import com.nextbreakpoint.nextfractal.core.FractalFactory;
 import com.nextbreakpoint.nextfractal.core.ImageGenerator;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererFactory;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
-import com.nextbreakpoint.nextfractal.core.session.Session;
+import com.nextbreakpoint.nextfractal.core.Session;
 
 public class ContextFreeFactory implements FractalFactory {
 	public static final String PLUGIN_ID = "ContextFree";

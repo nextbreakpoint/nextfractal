@@ -2,7 +2,6 @@ package com.nextbreakpoint.nextfractal.core;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nextbreakpoint.Try;
-import com.nextbreakpoint.nextfractal.core.session.Session;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;

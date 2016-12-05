@@ -38,7 +38,7 @@ import com.nextbreakpoint.nextfractal.core.javaFX.BooleanObservableValue;
 import com.nextbreakpoint.nextfractal.core.javaFX.StringObservableValue;
 import com.nextbreakpoint.nextfractal.core.renderer.*;
 import com.nextbreakpoint.nextfractal.core.renderer.javaFX.JavaFXRendererFactory;
-import com.nextbreakpoint.nextfractal.core.session.Session;
+import com.nextbreakpoint.nextfractal.core.Session;
 import com.nextbreakpoint.nextfractal.core.utils.Block;
 import com.nextbreakpoint.nextfractal.core.utils.DefaultThreadFactory;
 import javafx.animation.AnimationTimer;

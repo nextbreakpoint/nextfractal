@@ -25,10 +25,12 @@
 package com.nextbreakpoint.nextfractal.runtime.export;
 
 import com.nextbreakpoint.Try;
+import com.nextbreakpoint.nextfractal.core.EventBus;
 import com.nextbreakpoint.nextfractal.core.encoder.EncoderException;
 import com.nextbreakpoint.nextfractal.core.export.*;
 import com.nextbreakpoint.nextfractal.core.export.ExportState;
 import com.nextbreakpoint.nextfractal.runtime.encoder.RAFEncoderContext;
+import javafx.application.Platform;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -40,20 +42,22 @@ import java.util.stream.Collectors;
 public class SimpleExportService extends AbstractExportService {
 	private final Map<String, List<Future<ExportJob>>> futures = new HashMap<>();
 
+	private EventBus eventBus;
 	private final ExportRenderer exportRenderer;
 
-	public SimpleExportService(ThreadFactory threadFactory, ExportRenderer exportRenderer) {
+	public SimpleExportService(EventBus eventBus, ThreadFactory threadFactory, ExportRenderer exportRenderer) {
 		super(threadFactory);
+		this.eventBus = Objects.requireNonNull(eventBus);
 		this.exportRenderer = Objects.requireNonNull(exportRenderer);
 	}
 
 	@Override
 	protected void updateSessionsInBackground(List<ExportSessionHolder> holders) {
 		List<ExportSessionHolder> completedHolders = holders.stream()
-				.peek(holder -> updateSession(holder))
-				.filter(holder -> holder.getSession().isStopped())
-				.peek(holder -> removeTasks(holder.getSession()))
-				.collect(Collectors.toList());
+			.peek(holder -> updateSession(holder))
+			.filter(holder -> holder.getSession().isStopped())
+			.peek(holder -> removeTasks(holder.getSession()))
+			.collect(Collectors.toList());
 		holders.removeAll(completedHolders);
 	}
 
@@ -77,9 +81,10 @@ public class SimpleExportService extends AbstractExportService {
 			}
 		} else {
 			getTasks(session).map(tasks -> removeTerminatedTasks(tasks))
-					.filter(tasks -> tasks.isEmpty()).ifPresent(tasks -> updateTerminatedSession(holder, session));
+				.filter(tasks -> tasks.isEmpty()).ifPresent(tasks -> updateTerminatedSession(holder, session));
 		}
 		session.updateProgress();
+		Platform.runLater(() -> eventBus.postEvent("export-session-updated", session));
 	}
 
 	private void updateTerminatedSession(ExportSessionHolder holder, ExportSession session) {
@@ -94,9 +99,9 @@ public class SimpleExportService extends AbstractExportService {
 
 	private void updateCompletedSession(ExportSessionHolder holder, ExportSession session) {
 		Try.of(() -> encodeData(session))
-                .onSuccess(s -> holder.setState(ExportState.COMPLETED))
-                .onFailure(e -> holder.setState(ExportState.FAILED))
-                .execute();
+			.onSuccess(s -> holder.setState(ExportState.COMPLETED))
+			.onFailure(e -> holder.setState(ExportState.FAILED))
+			.execute();
 	}
 
 	private List<Future<ExportJob>> removeTerminatedTasks(List<Future<ExportJob>> tasks) {

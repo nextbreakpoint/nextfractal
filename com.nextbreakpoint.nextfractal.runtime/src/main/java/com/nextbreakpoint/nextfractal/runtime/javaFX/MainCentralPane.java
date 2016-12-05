@@ -10,7 +10,7 @@ import com.nextbreakpoint.nextfractal.core.javaFX.BrowsePane;
 import com.nextbreakpoint.nextfractal.core.javaFX.GridItemRenderer;
 import com.nextbreakpoint.nextfractal.core.javaFX.TabPane;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
-import com.nextbreakpoint.nextfractal.core.session.Session;
+import com.nextbreakpoint.nextfractal.core.Session;
 import com.nextbreakpoint.nextfractal.core.utils.Block;
 import javafx.animation.FadeTransition;
 import javafx.animation.TranslateTransition;

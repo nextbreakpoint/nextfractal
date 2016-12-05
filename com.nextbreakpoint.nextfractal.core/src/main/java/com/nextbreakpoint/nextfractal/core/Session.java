@@ -22,7 +22,7 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.core.session;
+package com.nextbreakpoint.nextfractal.core;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

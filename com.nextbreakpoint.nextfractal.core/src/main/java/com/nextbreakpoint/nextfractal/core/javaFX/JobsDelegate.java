@@ -1,13 +1,11 @@
 package com.nextbreakpoint.nextfractal.core.javaFX;
 
-import com.nextbreakpoint.nextfractal.core.session.Session;
+import com.nextbreakpoint.nextfractal.core.export.ExportSession;
 
 public interface JobsDelegate {
-    void sessionStarted(Session session);
+    void sessionSuspended(ExportSession session);
 
-    void sessionStopped(Session session);
+    void sessionResumed(ExportSession session);
 
-    void sessionSuspended(Session session);
-
-    void sessionResumed(Session session);
+    void sessionStopped(ExportSession session);
 }

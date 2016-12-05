@@ -61,7 +61,7 @@ import javafx.stage.Stage;
 import javax.tools.ToolProvider;
 
 import com.nextbreakpoint.nextfractal.core.FractalFactory;
-import com.nextbreakpoint.nextfractal.core.session.Session;
+import com.nextbreakpoint.nextfractal.core.Session;
 
 import static com.nextbreakpoint.nextfractal.core.Plugins.factories;
 import static com.nextbreakpoint.nextfractal.core.Plugins.tryFindFactory;
@@ -108,8 +108,8 @@ public class NextFractalApp extends Application {
 
 		printPlugins();
 
-		ExportRenderer exportRenderer = new SimpleExportRenderer(createThreadFactory("NextFractalRender"), new JavaFXRendererFactory());
-		ExportService exportService = new SimpleExportService(createThreadFactory("NextFractalExport"), exportRenderer);
+		ExportRenderer exportRenderer = new SimpleExportRenderer(createThreadFactory("Export Render"), new JavaFXRendererFactory());
+		ExportService exportService = new SimpleExportService(eventBus, createThreadFactory("Export Service"), exportRenderer);
 
 		eventBus.subscribe("editor-grammar-changed", event -> tryFindFactoryByGrammar((String) event).ifPresent(factory -> createSession(eventBus, factory)));
 
@@ -117,7 +117,13 @@ public class NextFractalApp extends Application {
 
 		eventBus.subscribe("session-terminated", event -> handleSessionTerminate(exportService));
 
-		eventBus.subscribe("export-session-created", event -> handleSessionExport(exportService, (ExportSession) event));
+		eventBus.subscribe("export-session-created", event -> handleExportSessionCreated(exportService, (ExportSession) event));
+
+		eventBus.subscribe("export-session-stopped", event -> handleExportSessionStopped(exportService, (ExportSession) event));
+
+		eventBus.subscribe("export-session-resumed", event -> handleExportSessionResumed(exportService, (ExportSession) event));
+
+		eventBus.subscribe("export-session-suspended", event -> handleExportSessionSuspended(exportService, (ExportSession) event));
 
 		eventBus.subscribe("editor-load-file", event -> handleLoadFile(eventBus, (File)event));
 
@@ -185,9 +191,20 @@ public class NextFractalApp extends Application {
 		exportService.shutdown();
 	}
 
-	private void handleSessionExport(ExportService exportService, ExportSession exportSession) {
-		System.out.println(exportSession.getSessionId());
-//		exportService.startSession(session);
+	private void handleExportSessionCreated(ExportService exportService, ExportSession exportSession) {
+		exportService.startSession(exportSession);
+	}
+
+	private void handleExportSessionStopped(ExportService exportService, ExportSession exportSession) {
+		exportService.stopSession(exportSession);
+	}
+
+	private void handleExportSessionResumed(ExportService exportService, ExportSession exportSession) {
+		exportService.resumeSession(exportSession);
+	}
+
+	private void handleExportSessionSuspended(ExportService exportService, ExportSession exportSession) {
+		exportService.suspendSession(exportSession);
 	}
 
 	private void createSession(EventBus eventBus, FractalFactory factory) {

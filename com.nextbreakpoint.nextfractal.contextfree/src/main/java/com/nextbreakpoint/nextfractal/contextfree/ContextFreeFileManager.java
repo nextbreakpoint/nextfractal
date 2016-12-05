@@ -3,7 +3,7 @@ package com.nextbreakpoint.nextfractal.contextfree;
 import com.nextbreakpoint.Try;
 import com.nextbreakpoint.nextfractal.core.FileManager;
 import com.nextbreakpoint.nextfractal.core.FileManagerEntry;
-import com.nextbreakpoint.nextfractal.core.session.Session;
+import com.nextbreakpoint.nextfractal.core.Session;
 
 import java.util.List;
 

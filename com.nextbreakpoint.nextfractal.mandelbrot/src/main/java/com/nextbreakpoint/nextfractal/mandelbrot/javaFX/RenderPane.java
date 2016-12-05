@@ -29,7 +29,7 @@ import com.nextbreakpoint.nextfractal.core.javaFX.BooleanObservableValue;
 import com.nextbreakpoint.nextfractal.core.javaFX.StringObservableValue;
 import com.nextbreakpoint.nextfractal.core.renderer.*;
 import com.nextbreakpoint.nextfractal.core.renderer.javaFX.JavaFXRendererFactory;
-import com.nextbreakpoint.nextfractal.core.session.Session;
+import com.nextbreakpoint.nextfractal.core.Session;
 import com.nextbreakpoint.nextfractal.core.utils.Block;
 import com.nextbreakpoint.nextfractal.core.utils.DefaultThreadFactory;
 import com.nextbreakpoint.nextfractal.core.utils.Double2D;
@@ -981,7 +981,7 @@ public class RenderPane extends BorderPane {
 			}
 		}
 		startCoordinators();
-		if (!continuous && !julia && juliaCoordinator != null) {
+		if ((!continuous || currentTool instanceof ToolPick) && !julia && juliaCoordinator != null) {
 			juliaCoordinator.abort();
 			juliaCoordinator.waitFor();
 			RendererView view = new RendererView();

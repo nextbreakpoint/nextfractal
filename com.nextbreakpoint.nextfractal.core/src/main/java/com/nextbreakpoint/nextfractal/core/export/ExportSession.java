@@ -29,8 +29,8 @@ import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
 
+import com.nextbreakpoint.nextfractal.core.Session;
 import com.nextbreakpoint.nextfractal.core.encoder.Encoder;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 
@@ -40,8 +40,7 @@ public final class ExportSession {
 	private final String sessioinId;
 	private final Encoder encoder;
 	private final RendererSize size;
-	private final String pluginId;
-	private final Object data;
+	private final Session session;
 	private final File tmpFile;
 	private final File file;
 	private final int tileSize;
@@ -55,11 +54,10 @@ public final class ExportSession {
 	private volatile ExportState state = ExportState.SUSPENDED;
 	private IntBuffer pixels;
 
-	public ExportSession(String pluginId, Object data, File file, File tmpFile, RendererSize size, int tileSize, Encoder encoder) {
-		this.pluginId = pluginId;
+	public ExportSession(String sessionId, Session session, File file, File tmpFile, RendererSize size, int tileSize, Encoder encoder) {
+		this.session = session;
 		this.tmpFile = tmpFile;
 		this.file = file;
-		this.data = data;
 		this.size = size;
 		this.encoder = encoder;
 		this.tileSize = tileSize;
@@ -67,7 +65,7 @@ public final class ExportSession {
 		this.frameRate = 1.0f / 24.0f;
 		this.startTime = 0;
 		this.stopTime = 0;
-		sessioinId = UUID.randomUUID().toString();
+		sessioinId = sessionId;
 		jobs.addAll(createJobs(0));
 	}
 	
@@ -76,11 +74,11 @@ public final class ExportSession {
 	}
 
 	public String getPluginId() {
-		return pluginId;
+		return session.getPluginId();
 	}
 
-	public Object getData() {
-		return data;
+	public Session getSession() {
+		return session;
 	}
 
 	public RendererSize getSize() {
@@ -238,7 +236,7 @@ public final class ExportSession {
 
 	private ExportProfile createProfile(int frameNumber, final int frameWidth, final int frameHeight, int tileOffsetX, int tileOffsetY) {
 		final ExportProfile profile = new ExportProfile();
-		profile.setPluginId(pluginId);
+		profile.setPluginId(session.getPluginId());
 		profile.setQuality(quality);
 		profile.setFrameNumber(frameNumber);
 		profile.setFrameRate(frameRate);
@@ -250,7 +248,7 @@ public final class ExportSession {
 		profile.setTileOffsetY(tileOffsetY);
 		profile.setBorderWidth(BORDER_SIZE);
 		profile.setBorderHeight(BORDER_SIZE);
-		profile.setData(data);
+		profile.setData(session);
 		return profile;
 	}
 
