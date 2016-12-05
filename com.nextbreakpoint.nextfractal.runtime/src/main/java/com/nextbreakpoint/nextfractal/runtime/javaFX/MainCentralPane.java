@@ -8,6 +8,7 @@ import com.nextbreakpoint.nextfractal.core.javaFX.BrowseBitmap;
 import com.nextbreakpoint.nextfractal.core.javaFX.BrowseDelegate;
 import com.nextbreakpoint.nextfractal.core.javaFX.BrowsePane;
 import com.nextbreakpoint.nextfractal.core.javaFX.GridItemRenderer;
+import com.nextbreakpoint.nextfractal.core.javaFX.TabPane;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 import com.nextbreakpoint.nextfractal.core.session.Session;
 import com.nextbreakpoint.nextfractal.core.utils.Block;
@@ -17,12 +18,9 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Screen;
@@ -53,24 +51,22 @@ public class MainCentralPane extends BorderPane {
     public MainCentralPane(EventBus eventBus, int width, int height) {
         MainRenderPane renderPane = new MainRenderPane(eventBus, width, height);
 
-        HBox toolButtons = new HBox(0);
-        Button browseButton = new Button("", createIconImage("/icon-grid.png"));
-        browseButton.setTooltip(new Tooltip("Show fractals browser"));
-        toolButtons.getChildren().add(browseButton);
-        toolButtons.getStyleClass().add("toolbar");
+        TabPane tab = new TabPane(createIconImage("/icon-grid.png"));
 
         BrowsePane browsePane = new BrowsePane(width, height);
         browsePane.setClip(new Rectangle(0, 0, width, height));
 
-        FadeTransition toolsTransition = createFadeTransition(toolButtons);
+        FadeTransition toolsTransition = createFadeTransition(tab);
 
         this.setOnMouseEntered(e -> fadeIn(toolsTransition, x -> {}));
 
         this.setOnMouseExited(e -> fadeOut(toolsTransition, x -> {}));
 
+        FadeTransition tabTransition = createFadeTransition(tab);
+
         TranslateTransition browserTransition = createTranslateTransition(browsePane);
 
-        browseButton.setOnAction(e -> {
+        tab.setOnAction(e -> {
 			showBrowser(browserTransition, a -> {});
 			browsePane.reload();
         });
@@ -107,7 +103,7 @@ public class MainCentralPane extends BorderPane {
 
         Pane stackPane = new Pane();
         stackPane.getChildren().add(renderPane);
-        stackPane.getChildren().add(toolButtons);
+        stackPane.getChildren().add(tab);
         stackPane.getChildren().add(browsePane);
 
         setCenter(stackPane);
@@ -115,19 +111,28 @@ public class MainCentralPane extends BorderPane {
         browsePane.setTranslateY(-height);
 
         widthProperty().addListener((observable, oldValue, newValue) -> {
-            toolButtons.setPrefWidth(newValue.doubleValue() * 0.07);
+            tab.setPrefWidth(newValue.doubleValue() * 0.1);
             renderPane.setPrefWidth(newValue.doubleValue());
             browsePane.setPrefWidth(newValue.doubleValue());
-            toolButtons.setTranslateX((newValue.doubleValue() - newValue.doubleValue() * 0.07) / 2);
+            tab.setTranslateX((newValue.doubleValue() - newValue.doubleValue() * 0.1) / 2);
         });
 
         heightProperty().addListener((observable, oldValue, newValue) -> {
-            toolButtons.setPrefHeight(newValue.doubleValue() * 0.07);
+            tab.setPrefHeight(newValue.doubleValue() * 0.05);
             renderPane.setPrefHeight(newValue.doubleValue());
             browsePane.setPrefHeight(newValue.doubleValue());
         });
 
+        eventBus.subscribe("hide-controls", event -> handleHideControls(tabTransition, (Boolean)event));
 //        watcherExecutor = Executors.newSingleThreadExecutor(new DefaultThreadFactory("Watcher", true, Thread.MIN_PRIORITY));
+    }
+
+    private void handleHideControls(FadeTransition tab, Boolean hide) {
+        if (hide) {
+            fadeOut(tab, x -> {});
+        } else {
+            fadeIn(tab, x -> {});
+        }
     }
 
     private FadeTransition createFadeTransition(Node node) {

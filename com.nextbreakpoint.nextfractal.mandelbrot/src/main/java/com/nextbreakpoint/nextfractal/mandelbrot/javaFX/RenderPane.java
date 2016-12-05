@@ -291,6 +291,7 @@ public class RenderPane extends BorderPane {
 		
 		controls.setOnMousePressed(e -> {
 			fadeOut(toolsTransition, x -> {});
+			eventBus.postEvent("hide-controls", true);
 			if (currentTool != null) {
 				currentTool.pressed(e);
 			}
@@ -298,6 +299,7 @@ public class RenderPane extends BorderPane {
 		
 		controls.setOnMouseReleased(e -> {
 			fadeIn(toolsTransition, x -> {});
+			eventBus.postEvent("hide-controls", false);
 			if (currentTool != null) {
 				currentTool.released(e);
 			}
