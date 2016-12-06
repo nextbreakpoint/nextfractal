@@ -124,6 +124,9 @@ public class MainCentralPane extends BorderPane {
         });
 
         eventBus.subscribe("hide-controls", event -> handleHideControls(tabTransition, (Boolean)event));
+
+        eventBus.subscribe("session-terminated", event -> browsePane.dispose());
+
 //        watcherExecutor = Executors.newSingleThreadExecutor(new DefaultThreadFactory("Watcher", true, Thread.MIN_PRIORITY));
     }
 

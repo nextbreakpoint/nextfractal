@@ -327,10 +327,13 @@ public class MainSidePane extends BorderPane {
             }
         });
 
-        eventBus.subscribe("export-session-updated", event -> {
-            ExportSession exportSession = (ExportSession) event;
-            logger.info("Export session " + exportSession.getSessionId() + " -> state " + exportSession.getState());
+        eventBus.subscribe("export-sessions-updated", event -> {
+            jobsPane.updateSessions();
         });
+
+        eventBus.subscribe("session-terminated", event -> jobsPane.dispose());
+
+        eventBus.subscribe("session-terminated", event -> historyPane.dispose());
 
         return rootPane;
     }

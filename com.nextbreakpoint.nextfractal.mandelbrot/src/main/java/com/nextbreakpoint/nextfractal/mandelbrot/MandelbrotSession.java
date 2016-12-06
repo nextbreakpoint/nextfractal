@@ -48,12 +48,12 @@ public class MandelbrotSession extends Session {
 
 	@Override
     public String getPluginId() {
-        return "Mandelbrot";
+        return MandelbrotFactory.PLUGIN_ID;
     }
 
 	@Override
 	public String getGrammar() {
-		return "Mandelbrot";
+		return MandelbrotFactory.GRAMMAR;
 	}
 
 	@Override

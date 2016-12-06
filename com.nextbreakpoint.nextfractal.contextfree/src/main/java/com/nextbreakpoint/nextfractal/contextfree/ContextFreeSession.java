@@ -46,12 +46,12 @@ public class ContextFreeSession extends Session {
 
 	@Override
     public String getPluginId() {
-        return "ContextFree";
+        return ContextFreeFactory.PLUGIN_ID;
     }
 
 	@Override
 	public String getGrammar() {
-		return "ContextFree";
+		return ContextFreeFactory.GRAMMAR;
 	}
 
 	@Override

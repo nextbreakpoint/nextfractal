@@ -183,7 +183,6 @@ public class BrowsePane extends BorderPane {
 
 		importPathProperty.addListener((observable, oldValue, newValue) -> {
 			File path = new File(newValue);
-			currentDir = path;
 			importFiles(statusLabel, grid, path);
 		});
 
@@ -204,15 +203,15 @@ public class BrowsePane extends BorderPane {
 
 	@Override
 	protected void finalize() throws Throwable {
-		shutdown();
-		removeItems();
+		dispose();
 		super.finalize();
 	}
 
-	private void shutdown() {
+	public void dispose() {
 		List<ExecutorService> executors = Arrays.asList(executor);
 		executors.forEach(executor -> executor.shutdownNow());
 		executors.forEach(executor -> await(executor));
+		removeItems();
 	}
 
 	private void await(ExecutorService executor) {

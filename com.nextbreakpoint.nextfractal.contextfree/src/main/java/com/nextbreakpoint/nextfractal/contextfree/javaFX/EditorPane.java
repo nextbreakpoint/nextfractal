@@ -21,12 +21,14 @@ import org.fxmisc.richtext.StyleSpans;
 import org.fxmisc.richtext.StyleSpansBuilder;
 
 import java.time.Duration;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -100,6 +102,8 @@ public class EditorPane extends BorderPane {
         eventBus.subscribe("editor-action", event -> {
             if (session != null && event.equals("reload")) eventBus.postEvent("session-data-loaded", new Object[] { session, false, false });
         });
+
+        eventBus.subscribe("session-terminated", event -> dispose());
     }
 
     private Try<TaskResult, Exception> updateSource(String source) {
@@ -242,5 +246,21 @@ public class EditorPane extends BorderPane {
             }
         }
         return task;
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        dispose();
+        super.finalize();
+    }
+
+    public void dispose() {
+        List<ExecutorService> executors = Arrays.asList(textExecutor);
+        executors.forEach(executor -> executor.shutdownNow());
+        executors.forEach(executor -> await(executor));
+    }
+
+    private void await(ExecutorService executor) {
+        Try.of(() -> executor.awaitTermination(5000, TimeUnit.MILLISECONDS)).onFailure(e -> logger.warning("Await termination timeout")).execute();
     }
 }

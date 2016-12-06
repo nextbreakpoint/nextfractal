@@ -28,6 +28,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ThreadFactory;
 
+import com.nextbreakpoint.nextfractal.contextfree.compiler.Compiler;
+import com.nextbreakpoint.nextfractal.contextfree.compiler.CompilerReport;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDG;
 import com.nextbreakpoint.nextfractal.contextfree.javaFX.EditorPane;
 import com.nextbreakpoint.nextfractal.contextfree.javaFX.ParamsPane;
@@ -53,6 +55,7 @@ import com.nextbreakpoint.nextfractal.core.Session;
 
 public class ContextFreeFactory implements FractalFactory {
 	public static final String PLUGIN_ID = "ContextFree";
+	public static final String GRAMMAR = "ContextFree";
 
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.FractalFactory#getId()
@@ -62,7 +65,7 @@ public class ContextFreeFactory implements FractalFactory {
 	}
 
 	public String getGrammar() {
-		return "ContextFree";
+		return GRAMMAR;
 	}
 
 	/**
@@ -122,22 +125,13 @@ public class ContextFreeFactory implements FractalFactory {
 
 	@Override
 	public BrowseBitmap createBitmap(Session session, RendererSize size) throws Exception {
-//		ContextFreeDataStore service = new ContextFreeDataStore();
-//		ContextFreeData data = service.loadFromFile(file);
-//		if (Thread.currentThread().isInterrupted()) {
-//			return null;
-//		}
-//		Compiler compiler = new Compiler();
-//		CompilerReport report = compiler.compileReport(data.getSource());
-//		if (report.getErrors().size() > 0) {
-//			throw new RuntimeException("Failed to compile source");
-//		}
-//		if (Thread.currentThread().isInterrupted()) {
-//			return null;
-//		}
+		Compiler compiler = new Compiler();
+		CompilerReport report = compiler.compileReport(session.getScript());
+		if (report.getErrors().size() > 0) {
+			throw new RuntimeException("Failed to compile source");
+		}
 		BrowseBitmap bitmap = new BrowseBitmap(size.getWidth(), size.getHeight(), null);
-//		bitmap.setProperty("cfdg", report.getCFDG());
-//		bitmap.setProperty("data", data);
+		bitmap.setProperty("cfdg", report.getCFDG());
 		bitmap.setProperty("session", session);
 		return bitmap;
 	}

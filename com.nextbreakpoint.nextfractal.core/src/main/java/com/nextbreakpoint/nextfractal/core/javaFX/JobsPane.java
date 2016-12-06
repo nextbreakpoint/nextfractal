@@ -6,7 +6,6 @@ import com.nextbreakpoint.nextfractal.core.export.ExportSession;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
 import com.nextbreakpoint.nextfractal.core.renderer.javaFX.JavaFXRendererFactory;
-import com.nextbreakpoint.nextfractal.core.Session;
 import com.nextbreakpoint.nextfractal.core.utils.DefaultThreadFactory;
 import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
@@ -26,14 +25,17 @@ import java.nio.IntBuffer;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 import static com.nextbreakpoint.nextfractal.core.Plugins.tryFindFactory;
 
 public class JobsPane extends BorderPane {
+    private static Logger logger = Logger.getLogger(JobsPane.class.getName());
     private static final int PADDING = 8;
 
     private final ScheduledExecutorService executor;
@@ -81,7 +83,6 @@ public class JobsPane extends BorderPane {
             .forEach(bitmap -> Optional.ofNullable(delegate).ifPresent(delegate -> delegate.sessionStopped((ExportSession) bitmap.getProperty("exportSession")))));
 
         executor = Executors.newSingleThreadScheduledExecutor(createThreadFactory("Jobs List"));
-        executor.scheduleWithFixedDelay(() -> Platform.runLater(() -> updateJobList(listView)), 500, 500, TimeUnit.MILLISECONDS);
     }
 
     private DefaultThreadFactory createThreadFactory(String name) {
@@ -159,5 +160,25 @@ public class JobsPane extends BorderPane {
 
     public void setDelegate(JobsDelegate delegate) {
         this.delegate = delegate;
+    }
+
+    public void updateSessions() {
+        updateJobList(listView);
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        dispose();
+        super.finalize();
+    }
+
+    public void dispose() {
+        List<ExecutorService> executors = Arrays.asList(executor);
+        executors.forEach(executor -> executor.shutdownNow());
+        executors.forEach(executor -> await(executor));
+    }
+
+    private void await(ExecutorService executor) {
+        Try.of(() -> executor.awaitTermination(5000, TimeUnit.MILLISECONDS)).onFailure(e -> logger.warning("Await termination timeout")).execute();
     }
 }

@@ -60,6 +60,7 @@ import com.nextbreakpoint.nextfractal.mandelbrot.javaFX.RenderPane;
 
 public class MandelbrotFactory implements FractalFactory {
 	public static final String PLUGIN_ID = "Mandelbrot";
+	public static final String GRAMMAR = "Mandelbrot";
 
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.FractalFactory#getId()
@@ -69,7 +70,7 @@ public class MandelbrotFactory implements FractalFactory {
 	}
 
 	public String getGrammar() {
-		return "Mandelbrot";
+		return GRAMMAR;
 	}
 
 	/**
@@ -142,24 +143,15 @@ public class MandelbrotFactory implements FractalFactory {
 
 	@Override
 	public BrowseBitmap createBitmap(Session session, RendererSize size) throws Exception {
-		if (Thread.currentThread().isInterrupted()) {
-			return null;
-		}
 		String source = session.getScript();
 		Compiler compiler = new Compiler();
 		CompilerReport report = compiler.compileReport(source);
 		if (report.getErrors().size() > 0) {
 			throw new RuntimeException("Failed to compile source");
 		}
-		if (Thread.currentThread().isInterrupted()) {
-			return null;
-		}
 		CompilerBuilder<Orbit> orbitBuilder = compiler.compileOrbit(report);
 		if (orbitBuilder.getErrors().size() > 0) {
 			throw new RuntimeException("Failed to compile Orbit class");
-		}
-		if (Thread.currentThread().isInterrupted()) {
-			return null;
 		}
 		CompilerBuilder<Color> colorBuilder = compiler.compileColor(report);
 		if (colorBuilder.getErrors().size() > 0) {

@@ -127,6 +127,9 @@ public class MainParamsPane extends Pane {
 
 		eventBus.subscribe("session-data-loaded", updateUI);
 
+		eventBus.subscribe("session-terminated", event -> buses.clear());
+		eventBus.subscribe("session-terminated", event -> panels.clear());
+
 		grammarCombobox.setOnAction(e -> {
 			if (session != null && !grammarCombobox.getSelectionModel().isEmpty() && !grammarCombobox.getSelectionModel().getSelectedItem().equals(session.getGrammar())) {
 				eventBus.postEvent("editor-grammar-changed", grammarCombobox.getSelectionModel().getSelectedItem());

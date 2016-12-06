@@ -13,12 +13,17 @@ import javafx.scene.control.ListView;
 import javafx.scene.layout.BorderPane;
 
 import java.nio.IntBuffer;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 
 import static com.nextbreakpoint.nextfractal.core.Plugins.tryFindFactory;
 
 public class HistoryPane extends BorderPane {
+    private static Logger logger = Logger.getLogger(HistoryPane.class.getName());
     private static final int PADDING = 8;
 
     private final ExecutorService executor;
@@ -81,5 +86,21 @@ public class HistoryPane extends BorderPane {
 
     public void setDelegate(HistoryDelegate delegate) {
         this.delegate = delegate;
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        dispose();
+        super.finalize();
+    }
+
+    public void dispose() {
+        List<ExecutorService> executors = Arrays.asList(executor);
+        executors.forEach(executor -> executor.shutdownNow());
+        executors.forEach(executor -> await(executor));
+    }
+
+    private void await(ExecutorService executor) {
+        Try.of(() -> executor.awaitTermination(5000, TimeUnit.MILLISECONDS)).onFailure(e -> logger.warning("Await termination timeout")).execute();
     }
 }

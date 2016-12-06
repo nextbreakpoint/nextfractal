@@ -24,6 +24,9 @@ public class MainEditorPane extends BorderPane {
 
     public MainEditorPane(EventBus eventBus) {
         eventBus.subscribe("session-data-loaded", event -> handleSessionChanged(eventBus, (Session) ((Object[])event)[0]));
+
+        eventBus.subscribe("session-terminated", event -> buses.clear());
+        eventBus.subscribe("session-terminated", event -> panels.clear());
     }
 
     private void handleSessionChanged(EventBus eventBus, Session session) {

@@ -59,6 +59,7 @@ public class SimpleExportService extends AbstractExportService {
 			.peek(holder -> removeTasks(holder.getSession()))
 			.collect(Collectors.toList());
 		holders.removeAll(completedHolders);
+		Platform.runLater(() -> eventBus.postEvent("export-sessions-updated", holders.size()));
 	}
 
 	@Override
@@ -84,7 +85,6 @@ public class SimpleExportService extends AbstractExportService {
 				.filter(tasks -> tasks.isEmpty()).ifPresent(tasks -> updateTerminatedSession(holder, session));
 		}
 		session.updateProgress();
-		Platform.runLater(() -> eventBus.postEvent("export-session-updated", session));
 	}
 
 	private void updateTerminatedSession(ExportSessionHolder holder, ExportSession session) {

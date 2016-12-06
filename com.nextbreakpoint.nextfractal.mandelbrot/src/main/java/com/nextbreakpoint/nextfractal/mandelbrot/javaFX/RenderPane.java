@@ -447,8 +447,6 @@ public class RenderPane extends BorderPane {
 
 		runTimer(fractalCanvas, orbitCanvas, juliaCanvas, pointCanvas, trapCanvas, toolCanvas);
 
-		eventBus.subscribe("session-terminated", event -> dispose());
-
 		eventBus.subscribe("session-report-changed", event -> updateReport((CompilerReport) event));
 
 		eventBus.subscribe("session-data-changed", event -> updateData((Object[]) event));
@@ -521,6 +519,8 @@ public class RenderPane extends BorderPane {
 		eventBus.subscribe("render-error-changed", event -> {
 			eventBus.postEvent("session-error-changed", event);
 		});
+
+		eventBus.subscribe("session-terminated", event -> dispose());
 	}
 
     private void notifySessionChanged(EventBus eventBus, MandelbrotSession newSession, boolean continuous, boolean historyAppend) {
