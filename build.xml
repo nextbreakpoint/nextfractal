@@ -89,7 +89,7 @@
 		<element name="args" implicit="true" optional="true" />
 		<sequential>
 			<build basedir="@{basedir}" os="@{os}" arch="@{arch}" version="@{version}" resultproperty="build.result" />
-			<move failonerror="true" todir="@{basedir}/dist/@{os}_@{arch}/${nextfractal.folder}/NextFractal.app/Contents/MacOS">
+			<move failonerror="true" todir="@{basedir}/dist/@{os}_@{arch}/${nextfractal.folder}/NextFractal.app/Contents/Resources/NextFractal">
 				<fileset dir="@{basedir}/dist/@{os}_@{arch}/${nextfractal.folder}/NextFractal">
 					<filename name="*.jnilib"/>
 				</fileset>
@@ -97,7 +97,7 @@
 					<filename name="*.jar"/>
 				</fileset>
 			</move>
-			<chmod failonerror="true" perm="aug+x" file="@{basedir}/dist/@{os}_@{arch}/${nextfractal.folder}/NextFractal.app/Contents/MacOS/Application Stub" />
+			<chmod failonerror="true" perm="aug+x" file="@{basedir}/dist/@{os}_@{arch}/${nextfractal.folder}/NextFractal.app/Contents/MacOS/NextFractal" />
 			<delete failonerror="true" dir="@{basedir}/dist/@{os}_@{arch}/${nextfractal.folder}/NextFractal" />
 		</sequential>
 	</macrodef>

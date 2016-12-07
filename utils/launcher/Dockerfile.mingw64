@@ -1,0 +1,11 @@
+FROM nextfractal-repo:latest
+
+RUN apt-get update && apt-get -y install make mingw-w64
+
+COPY win32 win32
+
+COPY build-mingw64.sh build-mingw64.sh
+
+RUN chmod 700 build-mingw64.sh
+
+CMD ["sh", "-c", "/build-mingw64.sh"]
