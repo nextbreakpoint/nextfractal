@@ -1,6 +1,6 @@
 JAVA_VERSION?=8
 
-JHOME:=$(shell /usr/libexec/java_home -v 1.$(JAVA_VERSION))
+JHOME:=$(shell $(dirname $(dirname $(readlink -e /usr/bin/javac))))
 SYSTEM:=$(shell uname -s)
 
 CPPFLAGS += -DJAVA_VERSION=$(JAVA_VERSION)
