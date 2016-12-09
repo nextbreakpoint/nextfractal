@@ -8,3 +8,5 @@ cp linux/* $BUILD_DIR/linux
 cd $BUILD_DIR/linux
 
 make
+
+readelf -d NextFractal | grep 'NEEDED'

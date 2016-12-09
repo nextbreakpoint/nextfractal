@@ -8,3 +8,5 @@ cp macos/* $BUILD_DIR/macos
 cd $BUILD_DIR/macos
 
 make
+
+otool -L NextFractal

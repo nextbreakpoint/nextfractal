@@ -1,7 +1,7 @@
 JAVA_VERSION?=8
 
 JHOME:=$(shell /usr/libexec/java_home -v 1.$(JAVA_VERSION))
-SYSTEM:=$(shell uname -s)
+SYSTEM:=darwin
 
 CPPFLAGS += -DJAVA_VERSION=$(JAVA_VERSION)
 CXXFLAGS += -g

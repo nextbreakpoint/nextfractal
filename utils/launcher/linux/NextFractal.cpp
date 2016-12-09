@@ -1,4 +1,5 @@
 #include <jni.h>
+#include <unistd.h>
 #include <string.h>
 #include <stdlib.h>
 #include <dirent.h>
@@ -113,7 +114,7 @@ void * start_java(void *start_args) {
     return (0);
 }
 
-std::string getClasspath(const char* path) {
+std::string GetClasspath(const char* path) {
    std::string s = std::string();
    DIR* dirFile = opendir(path);
    if (dirFile) {
@@ -140,12 +141,18 @@ std::string getClasspath(const char* path) {
    return s;
 }
 
+std::string GetExePath() {
+  char result[PATH_MAX];
+  ssize_t count = readlink("/proc/self/exe", result, PATH_MAX);
+  return std::string(result, (count > 0) ? count : 0);
+}
+
 int main(int argc, char **argv) {
-    std::string argv_str(argv[0]);
+    std::string argv_str = GetExePath();
     std::string base = argv_str.substr(0, argv_str.find_last_of("/"));
     printf("Base directory %s\n", base.c_str());
     std::string jarPath = base + "/NextFractal";
-    std::string classpathArg = "-Djava.class.path=" + getClasspath(jarPath.c_str());
+    std::string classpathArg = "-Djava.class.path=" + GetClasspath(jarPath.c_str());
     std::string libPathArg = "-Djava.library.path=" + base + "/NextFractal";
     std::string locPathArg = "-Dbrowser.location=" + base + "/examples";
     const char *vm_arglist[] = { 
