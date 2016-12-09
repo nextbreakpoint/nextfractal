@@ -9,9 +9,9 @@ LD = ld
 CPPFLAGS += -DJAVA_VERSION=$(JAVA_VERSION)
 CXXFLAGS += -g
 VM_DIR=$(JHOME)/jre/lib
-LDFLAGS += -L$(VM_DIR)/amd64/server
+LDFLAGS += 
 CXXFLAGS += -I$(JHOME)/include -I$(JHOME)/include/$(SYSTEM)
-LDLIBS += -lstdc++ -ljvm
+LDLIBS += -lstdc++ -ldl
 
 all: NextFractal
 

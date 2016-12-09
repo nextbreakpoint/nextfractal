@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <dirent.h>
 #include <iostream>
+#include <dlfcn.h>
 
 struct start_args {
     JavaVMInitArgs vm_args;
@@ -80,13 +81,45 @@ struct start_args {
     }
 };
 
+std::string exec(const char* cmd) {
+    char buffer[128];
+    std::string result = "";
+    FILE * pipe = popen(cmd, "r"), pclose;
+    if (!pipe) exit(1);
+    while (!feof(pipe)) {
+        if (fgets(buffer, 128, pipe) != NULL)
+            result += buffer;
+    }
+    return result;
+}
+
+typedef int (JNICALL * JNICreateJavaVM)(JavaVM** jvm, JNIEnv** env, JavaVMInitArgs* initargs);
+
 void * start_java(void *start_args) {
     struct start_args *args = (struct start_args *)start_args;
+
+    std::string path = exec("type -p javac|xargs readlink -f|xargs dirname|xargs dirname");
+    //path.erase(std::remove(path.begin(), path.end(), '\n'), path.end());
+
+    printf("Found java home \"%s\"\n", path.c_str());
+
+    std::string libPath = path + "/jre/lib/server/libjvm.so";
+    void* lib_handle = dlopen(libPath.c_str(), RTLD_LOCAL|RTLD_LAZY);
+    if (!lib_handle) {
+        exit(1);
+    }
+
+    JNICreateJavaVM createJavaJVM = (JNICreateJavaVM)dlsym(lib_handle, "JNI_CreateJavaVM");
+    if (!createJavaJVM) {
+        dlclose(lib_handle);
+        exit(1);
+    }
+
     int res;
     JavaVM *jvm;
     JNIEnv *env;
 
-    res = JNI_CreateJavaVM(&jvm, (void**)&env, &args->vm_args);
+    res = createJavaJVM(&jvm, &env, &args->vm_args);
     if (res < 0) exit(1);
     /* load the launch class */
     jclass main_class;

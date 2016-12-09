@@ -4,7 +4,7 @@
 #else
 #include <jni.h>
 #endif
-#include <stdlib.h>
+#include <dlfcn.h>
 #include <dirent.h>
 #include <iostream>
 #include <mach-o/dyld.h>
@@ -85,13 +85,45 @@ struct start_args {
     }
 };
 
+std::string exec(const char* cmd) {
+    char buffer[128];
+    std::string result = "";
+    std::shared_ptr<FILE> pipe(popen(cmd, "r"), pclose);
+    if (!pipe) throw std::runtime_error("popen() failed!");
+    while (!feof(pipe.get())) {
+        if (fgets(buffer, 128, pipe.get()) != NULL)
+            result += buffer;
+    }
+    return result;
+}
+
+typedef int (JNICALL * JNICreateJavaVM)(JavaVM** jvm, JNIEnv** env, JavaVMInitArgs* initargs);
+
 void * start_java(void *start_args) {
     struct start_args *args = (struct start_args *)start_args;
+
+    std::string path = exec("/usr/libexec/java_home -v 1.8");
+    path.erase(std::remove(path.begin(), path.end(), '\n'), path.end());
+
+    printf("Found java home \"%s\"\n", path.c_str());
+
+    std::string libPath = path + "/jre/lib/server/libjvm.dylib";
+    void* lib_handle = dlopen(libPath.c_str(), RTLD_LOCAL|RTLD_LAZY);
+    if (!lib_handle) {
+        exit(1);
+    }
+
+    JNICreateJavaVM createJavaJVM = (JNICreateJavaVM)dlsym(lib_handle, "JNI_CreateJavaVM");
+    if (!createJavaJVM) {
+        dlclose(lib_handle);
+        exit(1);
+    }
+
     int res;
     JavaVM *jvm;
     JNIEnv *env;
 
-    res = JNI_CreateJavaVM(&jvm, (void**)&env, &args->vm_args);
+    res = createJavaJVM(&jvm, &env, &args->vm_args);
     if (res < 0) exit(1);
     /* load the launch class */
     jclass main_class;
@@ -100,6 +132,7 @@ void * start_java(void *start_args) {
     if (main_class == NULL) {
         printf("Cannot find class\n");
         jvm->DestroyJavaVM();
+        dlclose(lib_handle);
         exit(1);
     }
     /* get main method */
@@ -107,6 +140,7 @@ void * start_java(void *start_args) {
     if (main_method_id == NULL) {
         printf("Cannot find method\n");
         jvm->DestroyJavaVM();
+        dlclose(lib_handle);
         exit(1);
 
     }
@@ -116,6 +150,7 @@ void * start_java(void *start_args) {
     env->CallStaticVoidMethod(main_class, main_method_id, empty_args);
     /* Don't forget to destroy the JVM at the end */
     jvm->DestroyJavaVM();
+    dlclose(lib_handle);
     return (0);
 }
 
