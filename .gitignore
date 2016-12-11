@@ -8,4 +8,4 @@ dist
 **/tmp
 
 
-utils/launcher/build
+launcher/build

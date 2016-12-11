@@ -209,9 +209,9 @@ int main(int argc, char **argv) {
     try {
         std::string basePath = GetBasePath(GetExePath());
         std::cout << "Base path " << basePath << std::endl;
-        std::string jarsPath = basePath + "/NextFractal";
+        std::string jarsPath = basePath + "/resources";
         std::string classpathArg = "-Djava.class.path=" + GetClasspath(jarsPath);
-        std::string libPathArg = "-Djava.library.path=" + basePath + "/NextFractal";
+        std::string libPathArg = "-Djava.library.path=" + basePath + "/resources";
         std::string locPathArg = "-Dbrowser.location=" + basePath + "/examples";
         const char *vm_arglist[] = {
             "-Xmx1g",
