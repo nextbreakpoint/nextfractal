@@ -1,6 +1,6 @@
 FROM nextfractal-base:latest
 
-RUN apt-get update && apt-get -y install make gcc g++
+RUN apt-get update && apt-get -y install make gcc-4.9 g++-4.9
 
 RUN apt-get install libqt4-dev -y
 

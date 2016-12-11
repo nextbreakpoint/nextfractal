@@ -5,6 +5,7 @@ SYSTEM:=linux
 
 CC = /usr/bin/x86_64-w64-mingw32-gcc
 LD = /usr/bin/x86_64-w64-mingw32-ld
+RC = /usr/bin/x86_64-w64-mingw32-windres
 
 CPPFLAGS += -DJAVA_VERSION=$(JAVA_VERSION)
 CXXFLAGS += -g 
@@ -16,8 +17,9 @@ LDLIBS += -lstdc++
 all: NextFractal
 
 NextFractal:
-	$(CC) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -o NextFractal NextFractal.cpp $(LDLIBS) 
-	/usr/bin/x86_64-w64-mingw32-objdump -p NextFractal | grep 'DLL Name'
+	$(RC) NextFractal.rc resources.o
+	$(CC) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -o NextFractal.exe NextFractal.cpp resources.o $(LDLIBS)
+	/usr/bin/x86_64-w64-mingw32-objdump -p NextFractal.exe | grep 'DLL Name'
 
 clean:
 	rm -rf NextFractal

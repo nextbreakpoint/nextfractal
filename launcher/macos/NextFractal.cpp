@@ -110,10 +110,10 @@ void * start_java(void *start_args) {
 
         std::string path = ExecuteCommand("/usr/libexec/java_home -v 1.8");
         path.erase(std::remove(path.begin(), path.end(), '\n'), path.end());
+        std::cout << "Found java \"" << path << "\"" << std::endl;
 
         std::string libPath = path + "/jre/lib/server/libjvm.dylib";
-
-        std::cout << "Found jvm library \"" << libPath << "\"" << std::endl;
+        std::cout << "Use library \"" << libPath << "\"" << std::endl;
 
         void* lib_handle = dlopen(libPath.c_str(), RTLD_LOCAL | RTLD_LAZY);
         if (!lib_handle) {

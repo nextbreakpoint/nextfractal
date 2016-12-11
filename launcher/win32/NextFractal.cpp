@@ -104,28 +104,29 @@ void * start_java(void *start_args) {
         throw std::runtime_error("Key value not found: CurrentVersion");
     }
 
-    TCHAR* dllpath = new TCHAR[512];
+    TCHAR pathString[512];
     bufsize = 512 * sizeof(TCHAR);
-    if (retval = RegGetValue(jKey, versionString, TEXT("RuntimeLib"), RRF_RT_REG_SZ, NULL, dllpath, &bufsize)) {
-        delete[] dllpath;
+    if (retval = RegGetValue(jKey, versionString, TEXT("JavaHome"), RRF_RT_REG_SZ, NULL, pathString, &bufsize)) {
         RegCloseKey(jKey);
-        throw std::runtime_error("Key value not found: RuntimeLib");
+        throw std::runtime_error("Key value not found: JavaHome");
     }
 
-    std::cout << "Found jvm library \"" << dllpath << "\"" << std::endl;
+    std::string path = std::string(pathString);
+    std::cout << "Found java \"" << path << "\"" << std::endl;
 
     RegCloseKey(jKey);
 
-    HMODULE jniModule = LoadLibrary(dllpath);
+    std::string libPath = path + "/jre/bin/server/jvm.dll";
+    std::cout << "Use library \"" << libPath << "\"" << std::endl;
+
+    HMODULE jniModule = LoadLibrary(libPath.c_str());
     if (NULL == jniModule) {
-        delete[] dllpath;
         throw std::runtime_error("Failed to open library");
     }
 
     JNICreateJavaVM createJavaVM = (JNICreateJavaVM)GetProcAddress(jniModule, "JNI_CreateJavaVM");
     if (NULL == createJavaVM) {
         FreeLibrary(jniModule);
-        delete[] dllpath;
         throw std::runtime_error("Function JNI_CreateJavaVM not found");
     }
 
@@ -136,7 +137,6 @@ void * start_java(void *start_args) {
     res = createJavaVM(&jvm, &env, &args->vm_args);
     if (res != JNI_OK) {
         FreeLibrary(jniModule);
-        delete[] dllpath;
         throw std::runtime_error("Failed to create jvm");
     }
     /* load the launch class */
@@ -147,7 +147,6 @@ void * start_java(void *start_args) {
         printf("Cannot find class\n");
         jvm->DestroyJavaVM();
         FreeLibrary(jniModule);
-        delete[] dllpath;
         throw std::runtime_error("Main class not found");
     }
     /* get main method */
@@ -156,7 +155,6 @@ void * start_java(void *start_args) {
         printf("Cannot find method\n");
         jvm->DestroyJavaVM();
         FreeLibrary(jniModule);
-        delete[] dllpath;
         throw std::runtime_error("Method main not found");
     }
     /* make the initial argument */
@@ -167,8 +165,6 @@ void * start_java(void *start_args) {
     jvm->DestroyJavaVM();
 
     FreeLibrary(jniModule);
-
-    delete[] dllpath;
 
     return (0);
 }
@@ -205,8 +201,9 @@ std::string GetBasePath(std::string exePath) {
     return exePath.substr(0, exePath.find_last_of("\\"));
 }
 
-int main(int argc, char **argv) {
+int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCmdShow) {
     try {
+        FreeConsole();
         std::string basePath = GetBasePath(GetExePath());
         std::cout << "Base path " << basePath << std::endl;
         std::string jarsPath = basePath + "/resources";
@@ -227,4 +224,5 @@ int main(int argc, char **argv) {
         ShowAlert("Did you install Java JDK 8 or later?", e);
         exit(-1);
     }
+    return 0;
 }

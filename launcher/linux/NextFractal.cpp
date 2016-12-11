@@ -1,3 +1,4 @@
+#include <Qt/qapplication.h>
 #include <Qt/qmessagebox.h>
 #include <jni.h>
 #include <unistd.h>
@@ -6,6 +7,7 @@
 #include <dirent.h>
 #include <dlfcn.h>
 #include <iostream>
+#include <stdexcept>
 
 struct start_args {
     JavaVMInitArgs vm_args;
@@ -104,12 +106,12 @@ typedef int (JNICALL * JNICreateJavaVM)(JavaVM** jvm, JNIEnv** env, JavaVMInitAr
 void * start_java(void *start_args) {
     struct start_args *args = (struct start_args *)start_args;
 
-    std::string path = exec("type -p javac | xargs readlink -f | xargs dirname | xargs dirname");
+    std::string path = exec("readlink -f /etc/alternatives/javac | xargs dirname | xargs dirname");
     path.erase(std::remove(path.begin(), path.end(), '\n'), path.end());
+    std::cout << "Found java \"" << path << "\"" << std::endl;
 
     std::string libPath = path + "/jre/lib/server/libjvm.so";
-
-    std::cout << "Found jvm library \"" << libPath << "\"" << std::endl;
+    std::cout << "Use library \"" << libPath << "\"" << std::endl;
 
     void* lib_handle = dlopen(libPath.c_str(), RTLD_LOCAL|RTLD_LAZY);
     if (!lib_handle) {
@@ -192,6 +194,7 @@ std::string GetBasePath(std::string exePath) {
 
 int main(int argc, char **argv) {
     try {
+        QApplication app(argc, argv);
         std::string basePath = GetBasePath(GetExePath());
         std::cout << "Base path " << basePath << std::endl;
         std::string jarsPath = basePath + "/resources";

@@ -235,7 +235,7 @@
 		<makedmg basedir="${basedir}" os="macos" arch="x86_64" version="${nextfractal.version}" resultproperty="ant.makedmg.result" />
 	</target>
 	<target name="build-win32-64bit">
-		<build basedir="${basedir}" os="win32" arch="x86_64" version="${nextfractal.version}" executable="NextFractal" resourcesdir="resources" resultproperty="ant.build.result" />
+		<build basedir="${basedir}" os="win32" arch="x86_64" version="${nextfractal.version}" executable="NextFractal.exe" resourcesdir="resources" resultproperty="ant.build.result" />
 		<makezip basedir="${basedir}" os="win32" arch="x86_64" version="${nextfractal.version}" resultproperty="ant.makezip.result" />
 	</target>
 	<target name="build-linux-64bit">
