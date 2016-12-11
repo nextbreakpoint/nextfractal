@@ -1,5 +1,4 @@
-#include <Qt/qapplication.h>
-#include <Qt/qmessagebox.h>
+#include <gtk/gtk.h>
 #include <jni.h>
 #include <unistd.h>
 #include <string.h>
@@ -86,7 +85,17 @@ struct start_args {
 
 void ShowAlert(const std::string message, const std::runtime_error& error) {
     std::string alertMessage = std::string(message).append("\n\nCause: ").append(error.what());
-    QMessageBox::critical(NULL, "Oops something is wrong...", alertMessage.c_str(), QMessageBox::Discard, QMessageBox::Discard);
+
+    if (!gtk_init_check(0, NULL)) {
+        return;
+    }
+
+    GtkWidget *dialog = gtk_message_dialog_new(NULL, GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, "%s", alertMessage.c_str());
+    gtk_window_set_title(GTK_WINDOW(dialog), "Oops something is wrong...");
+    gtk_dialog_run(GTK_DIALOG(dialog));
+    gtk_widget_destroy(GTK_WIDGET(dialog));
+
+    while (g_main_context_iteration(NULL, false));
 }
 
 std::string exec(const char* cmd) {
@@ -107,10 +116,11 @@ void * start_java(void *start_args) {
     struct start_args *args = (struct start_args *)start_args;
 
     std::string path = exec("readlink -f /etc/alternatives/javac | xargs dirname | xargs dirname");
-    path.erase(std::remove(path.begin(), path.end(), '\n'), path.end());
+    path.erase(path.find("\n"), 1);
+//    path.erase(std::remove(path.begin(), path.end(), '\n'), path.end());
     std::cout << "Found java \"" << path << "\"" << std::endl;
 
-    std::string libPath = path + "/jre/lib/server/libjvm.so";
+    std::string libPath = path + "/jre/lib/amd64/server/libjvm.so";
     std::cout << "Use library \"" << libPath << "\"" << std::endl;
 
     void* lib_handle = dlopen(libPath.c_str(), RTLD_LOCAL|RTLD_LAZY);
@@ -164,7 +174,6 @@ std::string GetClasspath(std::string path) {
    DIR* dirFile = opendir(path.c_str());
    if (dirFile) {
       struct dirent* hFile;
-      int errno = 0;
       while ((hFile = readdir(dirFile)) != NULL) {
          if (!strcmp(hFile->d_name, "." )) continue;
          if (!strcmp(hFile->d_name, "..")) continue;
@@ -194,7 +203,6 @@ std::string GetBasePath(std::string exePath) {
 
 int main(int argc, char **argv) {
     try {
-        QApplication app(argc, argv);
         std::string basePath = GetBasePath(GetExePath());
         std::cout << "Base path " << basePath << std::endl;
         std::string jarsPath = basePath + "/resources";

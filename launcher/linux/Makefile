@@ -10,13 +10,13 @@ CPPFLAGS += -DJAVA_VERSION=$(JAVA_VERSION)
 CXXFLAGS += -g
 VM_DIR=$(JHOME)/jre/lib
 LDFLAGS +=
-CXXFLAGS += -I/usr/include/qt4 -I$(JHOME)/include -I$(JHOME)/include/$(SYSTEM)
-LDLIBS += -lstdc++ -ldl -lQtCore -lQtGui
+CXXFLAGS += -I$(JHOME)/include -I$(JHOME)/include/$(SYSTEM)
+LDLIBS += -lstdc++ -ldl
 
 all: NextFractal
 
 NextFractal:
-	$(CC) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -o NextFractal NextFractal.cpp $(LDLIBS) 
+	$(CC) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -o NextFractal NextFractal.cpp $(LDLIBS) $(shell pkg-config --libs --cflags gtk+-2.0)
 	readelf -d NextFractal | grep 'NEEDED'
 
 clean:
