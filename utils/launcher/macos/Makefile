@@ -15,7 +15,7 @@ LDLIBS += -lstdc++
 
 all: NextFractal
 
-NextFractal: 
+NextFractal:
 	$(CC) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -o NextFractal NextFractal.cpp $(LDLIBS) 
 	otool -L NextFractal
 

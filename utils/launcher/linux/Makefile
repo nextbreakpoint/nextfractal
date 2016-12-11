@@ -10,12 +10,12 @@ CPPFLAGS += -DJAVA_VERSION=$(JAVA_VERSION)
 CXXFLAGS += -g
 VM_DIR=$(JHOME)/jre/lib
 LDFLAGS += 
-CXXFLAGS += -I$(JHOME)/include -I$(JHOME)/include/$(SYSTEM)
-LDLIBS += -lstdc++ -ldl
+CXXFLAGS += -I/usr/include/qt4 -I$(JHOME)/include -I$(JHOME)/include/$(SYSTEM)
+LDLIBS += -lstdc++ -ldl -lQtCore -lQtGui
 
 all: NextFractal
 
-NextFractal: 
+NextFractal:
 	$(CC) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -o NextFractal NextFractal.cpp $(LDLIBS) 
 	readelf -d NextFractal | grep 'NEEDED'
 

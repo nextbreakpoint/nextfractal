@@ -15,7 +15,7 @@ LDLIBS += -lstdc++
 
 all: NextFractal
 
-NextFractal: 
+NextFractal:
 	$(CC) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -o NextFractal NextFractal.cpp $(LDLIBS) 
 	/usr/bin/x86_64-w64-mingw32-objdump -p NextFractal | grep 'DLL Name'
 

@@ -2,6 +2,8 @@ FROM nextfractal-base:latest
 
 RUN apt-get update && apt-get -y install make gcc g++
 
+RUN apt-get install libqt4-dev -y
+
 COPY linux linux
 
 COPY build-linux.sh build-linux.sh

@@ -1,10 +1,11 @@
+#include <Qt/qmessagebox.h>
 #include <jni.h>
 #include <unistd.h>
 #include <string.h>
 #include <stdlib.h>
 #include <dirent.h>
-#include <iostream>
 #include <dlfcn.h>
+#include <iostream>
 
 struct start_args {
     JavaVMInitArgs vm_args;
@@ -81,6 +82,11 @@ struct start_args {
     }
 };
 
+void ShowAlert(const std::string message, const std::runtime_error& error) {
+    std::string alertMessage = std::string(message).append("\n\nCause: ").append(error.what());
+    QMessageBox::critical(NULL, "Oops something is wrong...", alertMessage.c_str(), QMessageBox::Discard, QMessageBox::Discard);
+}
+
 std::string exec(const char* cmd) {
     char buffer[128];
     std::string result = "";
@@ -98,21 +104,22 @@ typedef int (JNICALL * JNICreateJavaVM)(JavaVM** jvm, JNIEnv** env, JavaVMInitAr
 void * start_java(void *start_args) {
     struct start_args *args = (struct start_args *)start_args;
 
-    std::string path = exec("type -p javac|xargs readlink -f|xargs dirname|xargs dirname");
-    //path.erase(std::remove(path.begin(), path.end(), '\n'), path.end());
-
-    printf("Found java home \"%s\"\n", path.c_str());
+    std::string path = exec("type -p javac | xargs readlink -f | xargs dirname | xargs dirname");
+    path.erase(std::remove(path.begin(), path.end(), '\n'), path.end());
 
     std::string libPath = path + "/jre/lib/server/libjvm.so";
+
+    std::cout << "Found jvm library \"" << libPath << "\"" << std::endl;
+
     void* lib_handle = dlopen(libPath.c_str(), RTLD_LOCAL|RTLD_LAZY);
     if (!lib_handle) {
-        exit(1);
+        throw std::runtime_error("Failed to open library");
     }
 
     JNICreateJavaVM createJavaJVM = (JNICreateJavaVM)dlsym(lib_handle, "JNI_CreateJavaVM");
     if (!createJavaJVM) {
         dlclose(lib_handle);
-        exit(1);
+        throw std::runtime_error("Function JNI_CreateJavaVM not found");
     }
 
     int res;
@@ -120,23 +127,23 @@ void * start_java(void *start_args) {
     JNIEnv *env;
 
     res = createJavaJVM(&jvm, &env, &args->vm_args);
-    if (res < 0) exit(1);
+    if (res < 0) {
+        dlclose(lib_handle);
+        throw std::runtime_error("Failed to create jvm");
+    }
     /* load the launch class */
     jclass main_class;
     jmethodID main_method_id;
     main_class = env->FindClass(args->launch_class);
     if (main_class == NULL) {
-        printf("Cannot find class\n");
         jvm->DestroyJavaVM();
-        exit(1);
+        throw std::runtime_error("Main class not found");
     }
     /* get main method */
     main_method_id = env->GetStaticMethodID(main_class, "main", "([Ljava/lang/String;)V");
     if (main_method_id == NULL) {
-        printf("Cannot find method\n");
         jvm->DestroyJavaVM();
-        exit(1);
-
+        throw std::runtime_error("Method main not found");
     }
     /* make the initial argument */
     jobject empty_args = env->NewObjectArray(0, env->FindClass("java/lang/String"), NULL);
@@ -144,24 +151,23 @@ void * start_java(void *start_args) {
     env->CallStaticVoidMethod(main_class, main_method_id, empty_args);
     /* Don't forget to destroy the JVM at the end */
     jvm->DestroyJavaVM();
+
+    dlclose(lib_handle);
+
     return (0);
 }
 
-std::string GetClasspath(const char* path) {
+std::string GetClasspath(std::string path) {
    std::string s = std::string();
-   DIR* dirFile = opendir(path);
+   DIR* dirFile = opendir(path.c_str());
    if (dirFile) {
       struct dirent* hFile;
       int errno = 0;
       while ((hFile = readdir(dirFile)) != NULL) {
          if (!strcmp(hFile->d_name, "." )) continue;
          if (!strcmp(hFile->d_name, "..")) continue;
-
-         // in linux hidden files all start with '.'
          if (hFile->d_name[0] == '.') continue;
-
          if (strstr(hFile->d_name, ".jar")) {
-            //printf("%s\n", hFile->d_name);
             s.append(path);
             s.append("/");
             s.append(hFile->d_name);
@@ -180,22 +186,29 @@ std::string GetExePath() {
   return std::string(result, (count > 0) ? count : 0);
 }
 
+std::string GetBasePath(std::string exePath) {
+    return exePath.substr(0, exePath.find_last_of("/"));
+}
+
 int main(int argc, char **argv) {
-    std::string argv_str = GetExePath();
-    std::string base = argv_str.substr(0, argv_str.find_last_of("/"));
-    printf("Base directory %s\n", base.c_str());
-    std::string jarPath = base + "/NextFractal";
-    std::string classpathArg = "-Djava.class.path=" + GetClasspath(jarPath.c_str());
-    std::string libPathArg = "-Djava.library.path=" + base + "/NextFractal";
-    std::string locPathArg = "-Dbrowser.location=" + base + "/examples";
-    const char *vm_arglist[] = { 
-        "-Xmx1g", 
-        "-Djava.util.logging.config=com.nextbreakpoint.nextfractal.runtime.LogConfig", 
-        classpathArg.c_str(), 
-        libPathArg.c_str(), 
-        locPathArg.c_str(), 
-        0 
-    };
-    struct start_args args(vm_arglist, "com/nextbreakpoint/nextfractal/runtime/javaFX/NextFractalApp");
-    start_java((void*)&args);
+    try {
+        std::string basePath = GetBasePath(GetExePath());
+        std::cout << "Base path " << basePath << std::endl;
+        std::string jarsPath = basePath + "/NextFractal";
+        std::string classpathArg = "-Djava.class.path=" + GetClasspath(jarsPath);
+        std::string libPathArg = "-Djava.library.path=" + basePath + "/NextFractal";
+        std::string locPathArg = "-Dbrowser.location=" + basePath + "/examples";
+        const char *vm_arglist[] = {
+            "-Xmx1g",
+            "-Djava.util.logging.config=com.nextbreakpoint.nextfractal.runtime.LogConfig",
+            classpathArg.c_str(),
+            libPathArg.c_str(),
+            locPathArg.c_str(),
+            0
+        };
+        struct start_args args(vm_arglist, "com/nextbreakpoint/nextfractal/runtime/javaFX/NextFractalApp");
+        start_java((void*)&args);
+    } catch (const std::runtime_error& e) {
+        ShowAlert("Did you install Java JDK 8 or later?", e);
+    }
 }

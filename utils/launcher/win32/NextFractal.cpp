@@ -2,6 +2,7 @@
 #include <jni.h>
 #include <stdlib.h>
 #include <dirent.h>
+#include <string.h>
 #include <iostream>
 
 struct start_args {
@@ -79,47 +80,53 @@ struct start_args {
     }
 };
 
+void ShowAlert(const std::string message, const std::runtime_error& error) {
+    std::string alertMessage = std::string(message).append("\n\nCause: ").append(error.what());
+    MessageBox(NULL, (LPCSTR)alertMessage.c_str(), (LPCSTR)"Oops something is wrong...", MB_ICONERROR | MB_OK | MB_DEFBUTTON2);
+}
+
 typedef int (JNICALL * JNICreateJavaVM)(JavaVM** jvm, JNIEnv** env, JavaVMInitArgs* initargs);
 
 void * start_java(void *start_args) {
     struct start_args *args = (struct start_args *)start_args;
 
     DWORD retval;
-    // fetch jvm.dll path from registry
     HKEY jKey;
-
     if (retval = RegOpenKeyEx(HKEY_LOCAL_MACHINE, TEXT("SOFTWARE\\JavaSoft\\Java Development Kit"), 0, KEY_READ, &jKey)) {
         RegCloseKey(jKey);
-        exit(1);        
+        throw std::runtime_error("Registry key not found");
     }
 
     TCHAR versionString[16]; // version numbers shouldn't be longer than 16 chars
     DWORD bufsize = 16 * sizeof(TCHAR);
     if (retval = RegGetValue(jKey, NULL, TEXT("CurrentVersion"), RRF_RT_REG_SZ, NULL, versionString, &bufsize)) {
         RegCloseKey(jKey);
-        exit(1);        
+        throw std::runtime_error("Key value not found: CurrentVersion");
     }
 
     TCHAR* dllpath = new TCHAR[512];
     bufsize = 512 * sizeof(TCHAR);
-    retval = RegGetValue(jKey, versionString, TEXT("RuntimeLib"), RRF_RT_REG_SZ, NULL, dllpath, &bufsize);
-    RegCloseKey(jKey);
-    if (retval) {
+    if (retval = RegGetValue(jKey, versionString, TEXT("RuntimeLib"), RRF_RT_REG_SZ, NULL, dllpath, &bufsize)) {
         delete[] dllpath;
-        exit(1);        
+        RegCloseKey(jKey);
+        throw std::runtime_error("Key value not found: RuntimeLib");
     }
+
+    std::cout << "Found jvm library \"" << dllpath << "\"" << std::endl;
+
+    RegCloseKey(jKey);
 
     HMODULE jniModule = LoadLibrary(dllpath);
     if (NULL == jniModule) {
         delete[] dllpath;
-        exit(1);        
+        throw std::runtime_error("Failed to open library");
     }
 
     JNICreateJavaVM createJavaVM = (JNICreateJavaVM)GetProcAddress(jniModule, "JNI_CreateJavaVM");
     if (NULL == createJavaVM) {
         FreeLibrary(jniModule);
         delete[] dllpath;
-        exit(1);        
+        throw std::runtime_error("Function JNI_CreateJavaVM not found");
     }
 
     int res;
@@ -130,7 +137,7 @@ void * start_java(void *start_args) {
     if (res != JNI_OK) {
         FreeLibrary(jniModule);
         delete[] dllpath;
-        exit(1);
+        throw std::runtime_error("Failed to create jvm");
     }
     /* load the launch class */
     jclass main_class;
@@ -141,7 +148,7 @@ void * start_java(void *start_args) {
         jvm->DestroyJavaVM();
         FreeLibrary(jniModule);
         delete[] dllpath;
-        exit(1);
+        throw std::runtime_error("Main class not found");
     }
     /* get main method */
     main_method_id = env->GetStaticMethodID(main_class, "main", "([Ljava/lang/String;)V");
@@ -150,8 +157,7 @@ void * start_java(void *start_args) {
         jvm->DestroyJavaVM();
         FreeLibrary(jniModule);
         delete[] dllpath;
-        exit(1);
-
+        throw std::runtime_error("Method main not found");
     }
     /* make the initial argument */
     jobject empty_args = env->NewObjectArray(0, env->FindClass("java/lang/String"), NULL);
@@ -159,26 +165,24 @@ void * start_java(void *start_args) {
     env->CallStaticVoidMethod(main_class, main_method_id, empty_args);
     /* Don't forget to destroy the JVM at the end */
     jvm->DestroyJavaVM();
+
     FreeLibrary(jniModule);
+
     delete[] dllpath;
+
     return (0);
 }
 
-std::string GetClasspath(const char* path) {
+std::string GetClasspath(std::string path) {
    std::string s = std::string();
-   DIR* dirFile = opendir(path);
+   DIR* dirFile = opendir(path.c_str());
    if (dirFile) {
       struct dirent* hFile;
-      errno = 0;
       while ((hFile = readdir(dirFile)) != NULL) {
          if (!strcmp(hFile->d_name, "." )) continue;
          if (!strcmp(hFile->d_name, "..")) continue;
-
-         // in linux hidden files all start with '.'
          if (hFile->d_name[0] == '.') continue;
-
          if (strstr(hFile->d_name, ".jar")) {
-            //printf("%s\n", hFile->d_name);
             s.append(path);
             s.append("/");
             s.append(hFile->d_name);
@@ -197,21 +201,30 @@ std::string GetExePath() {
   return std::string(buffer);
 }
 
+std::string GetBasePath(std::string exePath) {
+    return exePath.substr(0, exePath.find_last_of("\\"));
+}
+
 int main(int argc, char **argv) {
-    std::string argv_str = GetExePath();
-    std::string base = argv_str.substr(0, argv_str.find_last_of("/"));
-    std::string jarPath = base + "/NextFractal";
-    std::string classpathArg = "-Djava.class.path=" + GetClasspath(jarPath.c_str());
-    std::string libPathArg = "-Djava.library.path=" + base + "/NextFractal";
-    std::string locPathArg = "-Dbrowser.location=" + base + "/examples";
-    const char *vm_arglist[] = {
-        "-Xmx1g",
-        "-Djava.util.logging.config=com.nextbreakpoint.nextfractal.runtime.LogConfig",
-        classpathArg.c_str(),
-        libPathArg.c_str(),
-        locPathArg.c_str(),
-        0
-    };
-    struct start_args args(vm_arglist, "com/nextbreakpoint/nextfractal/runtime/javaFX/NextFractalApp");
-    start_java((void *)&args);
+    try {
+        std::string basePath = GetBasePath(GetExePath());
+        std::cout << "Base path " << basePath << std::endl;
+        std::string jarsPath = basePath + "/NextFractal";
+        std::string classpathArg = "-Djava.class.path=" + GetClasspath(jarsPath);
+        std::string libPathArg = "-Djava.library.path=" + basePath + "/NextFractal";
+        std::string locPathArg = "-Dbrowser.location=" + basePath + "/examples";
+        const char *vm_arglist[] = {
+            "-Xmx1g",
+            "-Djava.util.logging.config=com.nextbreakpoint.nextfractal.runtime.LogConfig",
+            classpathArg.c_str(),
+            libPathArg.c_str(),
+            locPathArg.c_str(),
+            0
+        };
+        struct start_args args(vm_arglist, "com/nextbreakpoint/nextfractal/runtime/javaFX/NextFractalApp");
+        start_java((void *)&args);
+    } catch (const std::runtime_error& e) {
+        ShowAlert("Did you install Java JDK 8 or later?", e);
+        exit(-1);
+    }
 }
