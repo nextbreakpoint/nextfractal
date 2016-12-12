@@ -4,11 +4,11 @@ import com.nextbreakpoint.Try;
 import com.nextbreakpoint.nextfractal.core.EventBus;
 import com.nextbreakpoint.nextfractal.core.FileManager;
 import com.nextbreakpoint.nextfractal.core.javaFX.Bitmap;
+import com.nextbreakpoint.nextfractal.core.javaFX.BooleanObservableValue;
 import com.nextbreakpoint.nextfractal.core.javaFX.BrowseBitmap;
 import com.nextbreakpoint.nextfractal.core.javaFX.BrowseDelegate;
 import com.nextbreakpoint.nextfractal.core.javaFX.BrowsePane;
 import com.nextbreakpoint.nextfractal.core.javaFX.GridItemRenderer;
-import com.nextbreakpoint.nextfractal.core.javaFX.TabPane;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 import com.nextbreakpoint.nextfractal.core.Session;
 import com.nextbreakpoint.nextfractal.core.utils.Block;
@@ -51,36 +51,34 @@ public class MainCentralPane extends BorderPane {
     public MainCentralPane(EventBus eventBus, int width, int height) {
         MainRenderPane renderPane = new MainRenderPane(eventBus, width, height);
 
-        TabPane tab = new TabPane(createIconImage("/icon-grid.png"));
+        BooleanObservableValue toggleProperty = new BooleanObservableValue();
+        toggleProperty.setValue(false);
+
+//        TabPane tab = new TabPane(createIconImage("/icon-grid.png"));
 
         BrowsePane browsePane = new BrowsePane(width, height);
         browsePane.setClip(new Rectangle(0, 0, width, height));
 
-        FadeTransition toolsTransition = createFadeTransition(tab);
+//        FadeTransition tabTransition = createFadeTransition(tab);
 
-        this.setOnMouseEntered(e -> fadeIn(toolsTransition, x -> {}));
+//        this.setOnMouseEntered(e -> fadeIn(tabTransition, x -> {}));
 
-        this.setOnMouseExited(e -> fadeOut(toolsTransition, x -> {}));
-
-        FadeTransition tabTransition = createFadeTransition(tab);
+//        this.setOnMouseExited(e -> fadeOut(tabTransition, x -> {}));
 
         TranslateTransition browserTransition = createTranslateTransition(browsePane);
 
-        tab.setOnAction(e -> {
-			showBrowser(browserTransition, a -> {});
-			browsePane.reload();
-        });
+//        tab.setOnAction(e -> eventBus.postEvent("toggle-browser", ""));
 
 		browsePane.setDelegate(new BrowseDelegate() {
 			@Override
 			public void didSelectFile(BrowsePane source, File file) {
 				eventBus.postEvent("editor-load-file", file);
-				hideBrowser(browserTransition, a -> {});
+                eventBus.postEvent("toggle-browser", "");
 			}
 
 			@Override
 			public void didClose(BrowsePane source) {
-				hideBrowser(browserTransition, a -> {});
+                eventBus.postEvent("toggle-browser", "");
 			}
 
 			@Override
@@ -103,7 +101,7 @@ public class MainCentralPane extends BorderPane {
 
         Pane stackPane = new Pane();
         stackPane.getChildren().add(renderPane);
-        stackPane.getChildren().add(tab);
+//        stackPane.getChildren().add(tab);
         stackPane.getChildren().add(browsePane);
 
         setCenter(stackPane);
@@ -111,30 +109,43 @@ public class MainCentralPane extends BorderPane {
         browsePane.setTranslateY(-height);
 
         widthProperty().addListener((observable, oldValue, newValue) -> {
-            tab.setPrefWidth(newValue.doubleValue() * 0.1);
+//            tab.setPrefWidth(newValue.doubleValue() * 0.1);
             renderPane.setPrefWidth(newValue.doubleValue());
             browsePane.setPrefWidth(newValue.doubleValue());
-            tab.setTranslateX((newValue.doubleValue() - newValue.doubleValue() * 0.1) / 2);
+//            tab.setTranslateX((newValue.doubleValue() - newValue.doubleValue() * 0.1) / 2);
         });
 
         heightProperty().addListener((observable, oldValue, newValue) -> {
-            tab.setPrefHeight(newValue.doubleValue() * 0.05);
+//            tab.setPrefHeight(newValue.doubleValue() * 0.05);
             renderPane.setPrefHeight(newValue.doubleValue());
             browsePane.setPrefHeight(newValue.doubleValue());
         });
 
-        eventBus.subscribe("hide-controls", event -> handleHideControls(tabTransition, (Boolean)event));
+//        eventBus.subscribe("hide-controls", event -> handleHideControls(tabTransition, (Boolean)event));
 
         eventBus.subscribe("session-terminated", event -> browsePane.dispose());
+
+        toggleProperty.addListener((source, oldValue, newValue) -> {
+            if (newValue) {
+                showBrowser(browserTransition, a -> {});
+                browsePane.reload();
+            } else {
+                hideBrowser(browserTransition, a -> {});
+            }
+        });
+
+        eventBus.subscribe("toggle-browser", event -> {
+            toggleProperty.setValue(!toggleProperty.getValue());
+        });
 
 //        watcherExecutor = Executors.newSingleThreadExecutor(new DefaultThreadFactory("Watcher", true, Thread.MIN_PRIORITY));
     }
 
-    private void handleHideControls(FadeTransition tab, Boolean hide) {
+    private void handleHideControls(FadeTransition transition, Boolean hide) {
         if (hide) {
-            fadeOut(tab, x -> {});
+            fadeOut(transition, x -> {});
         } else {
-            fadeIn(tab, x -> {});
+            fadeIn(transition, x -> {});
         }
     }
 

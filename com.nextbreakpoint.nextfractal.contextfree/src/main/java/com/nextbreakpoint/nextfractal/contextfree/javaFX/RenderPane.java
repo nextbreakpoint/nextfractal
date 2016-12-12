@@ -114,13 +114,13 @@ public class RenderPane extends BorderPane {
 
 		getStyleClass().add("contextfree");
 
-		BorderPane controls = new BorderPane();
-		controls.setMinWidth(width);
-		controls.setMaxWidth(width);
-		controls.setPrefWidth(width);
-		controls.setMinHeight(height);
-		controls.setMaxHeight(height);
-		controls.setPrefHeight(height);
+//		BorderPane controls = new BorderPane();
+//		controls.setMinWidth(width);
+//		controls.setMaxWidth(width);
+//		controls.setPrefWidth(width);
+//		controls.setMinHeight(height);
+//		controls.setMaxHeight(height);
+//		controls.setPrefHeight(height);
 
 		BorderPane errors = new BorderPane();
 		errors.setMinWidth(width);
@@ -132,12 +132,12 @@ public class RenderPane extends BorderPane {
 		errors.getStyleClass().add("errors");
 		errors.setVisible(false);
 
-		HBox toolButtons = new HBox(0);
+//		HBox toolButtons = new HBox(0);
 //		ToggleButton zoominButton = new ToggleButton("", createIconImage("/icon-zoomin.png"));
 //		ToggleButton zoomoutButton = new ToggleButton("", createIconImage("/icon-zoomout.png"));
 //		ToggleButton moveButton = new ToggleButton("", createIconImage("/icon-move.png"));
 //		ToggleButton rotateButton = new ToggleButton("", createIconImage("/icon-rotate.png"));
-		ToggleGroup toolsGroup = new ToggleGroup();
+//		ToggleGroup toolsGroup = new ToggleGroup();
 //		toolsGroup.getToggles().add(zoominButton);
 //		toolsGroup.getToggles().add(zoomoutButton);
 //		toolsGroup.getToggles().add(moveButton);
@@ -152,10 +152,10 @@ public class RenderPane extends BorderPane {
 //		toolButtons.getChildren().add(zoomoutButton);
 //		toolButtons.getChildren().add(moveButton);
 //		toolButtons.getChildren().add(rotateButton);
-		toolButtons.getStyleClass().add("toolbar");
+//		toolButtons.getStyleClass().add("toolbar");
 
-		controls.setBottom(toolButtons);
-		toolButtons.setOpacity(0.9);
+//		controls.setBottom(toolButtons);
+//		toolButtons.setOpacity(0.9);
 
         Canvas fractalCanvas = new Canvas(width, height);
         GraphicsContext gcFractalCanvas = fractalCanvas.getGraphicsContext2D();
@@ -171,27 +171,27 @@ public class RenderPane extends BorderPane {
 //		zoominButton.setSelected(true);
 //		zoominButton.setDisable(true);
 
-		FadeTransition toolsTransition = createFadeTransition(controls);
+//		FadeTransition toolsTransition = createFadeTransition(controls);
 
-		this.setOnMouseEntered(e -> fadeIn(toolsTransition, x -> {}));
+//		this.setOnMouseEntered(e -> fadeIn(toolsTransition, x -> {}));
 		
-		this.setOnMouseExited(e -> fadeOut(toolsTransition, x -> {}));
+//		this.setOnMouseExited(e -> fadeOut(toolsTransition, x -> {}));
 		
 		Pane stackPane = new Pane();
 		stackPane.getChildren().add(fractalCanvas);
 		stackPane.getChildren().add(toolCanvas);
-		stackPane.getChildren().add(controls);
+//		stackPane.getChildren().add(controls);
 		stackPane.getChildren().add(errors);
 		setCenter(stackPane);
 
-		toolsGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
-			if (oldValue != null) {
-				((ToggleButton)oldValue).setDisable(false);
-			}
-			if (newValue != null) {
-				((ToggleButton)newValue).setDisable(true);
-			}
-		});
+//		toolsGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
+//			if (oldValue != null) {
+//				((ToggleButton)oldValue).setDisable(false);
+//			}
+//			if (newValue != null) {
+//				((ToggleButton)newValue).setDisable(true);
+//			}
+//		});
 		
 		errorProperty.addListener((observable, oldValue, newValue) -> {
 			errors.setVisible(newValue != null);
@@ -204,9 +204,9 @@ public class RenderPane extends BorderPane {
 
 		Block<ContextFreeMetadata, Exception> updateUI = data -> {};
 
-		heightProperty().addListener((observable, oldValue, newValue) -> {
-			toolButtons.setPrefHeight(newValue.doubleValue() * 0.07);
-		});
+//		heightProperty().addListener((observable, oldValue, newValue) -> {
+//			toolButtons.setPrefHeight(newValue.doubleValue() * 0.07);
+//		});
 
 		stackPane.setOnDragDropped(e -> e.getDragboard().getFiles().stream().findFirst()
 			.ifPresent(file -> eventBus.postEvent("editor-load-file", file)));

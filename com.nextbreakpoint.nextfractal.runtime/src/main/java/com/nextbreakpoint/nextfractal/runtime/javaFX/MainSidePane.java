@@ -28,8 +28,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -38,7 +36,6 @@ import javafx.stage.FileChooser;
 import javafx.stage.Screen;
 
 import java.io.File;
-import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Objects;
@@ -50,6 +47,7 @@ import java.util.logging.Logger;
 
 import static com.nextbreakpoint.nextfractal.core.Plugins.tryFindEncoder;
 import static com.nextbreakpoint.nextfractal.core.Plugins.tryFindFactory;
+import static com.nextbreakpoint.nextfractal.core.javaFX.Icons.createIconImage;
 
 public class MainSidePane extends BorderPane {
     public static final String FILE_EXTENSION = ".nf.zip";
@@ -83,7 +81,7 @@ public class MainSidePane extends BorderPane {
         eventBus.postEvent("session-data-loaded", new Object[] { event, false, false });
     }
 
-    private static Pane createRootPane(EventBus eventBus, EventHandler<ActionEvent> loadEventHandler, EventHandler<ActionEvent> saveEventHandler) {
+    private Pane createRootPane(EventBus eventBus, EventHandler<ActionEvent> loadEventHandler, EventHandler<ActionEvent> saveEventHandler) {
         int tileSize = computePercentage(0.02);
 
         RendererTile tile = createSingleTile(tileSize, tileSize);
@@ -117,14 +115,16 @@ public class MainSidePane extends BorderPane {
         Pane sourcePane = new Pane();
         HBox sourceButtons = new HBox(0);
         sourceButtons.setAlignment(Pos.CENTER);
-        Button renderButton = new Button("", createIconImage("/icon-run.png"));
-        Button loadButton = new Button("", createIconImage("/icon-load.png"));
-        Button saveButton = new Button("", createIconImage("/icon-save.png"));
-        ToggleButton jobsButton = new ToggleButton("", createIconImage("/icon-tool.png"));
-        ToggleButton paramsButton = new ToggleButton("", createIconImage("/icon-edit.png"));
-        ToggleButton exportButton = new ToggleButton("", createIconImage("/icon-export.png"));
-        ToggleButton historyButton = new ToggleButton("", createIconImage("/icon-time.png"));
-        ToggleButton statusButton = new ToggleButton("", createIconImage("/icon-warn.png"));
+        Button browseButton = new Button("", createIconImage(getClass(),"/icon-grid.png"));
+        Button renderButton = new Button("", createIconImage(getClass(),"/icon-run.png"));
+        Button loadButton = new Button("", createIconImage(getClass(), "/icon-load.png"));
+        Button saveButton = new Button("", createIconImage(getClass(), "/icon-save.png"));
+        ToggleButton jobsButton = new ToggleButton("", createIconImage(getClass(), "/icon-tool.png"));
+        ToggleButton paramsButton = new ToggleButton("", createIconImage(getClass(), "/icon-edit.png"));
+        ToggleButton exportButton = new ToggleButton("", createIconImage(getClass(), "/icon-export.png"));
+        ToggleButton historyButton = new ToggleButton("", createIconImage(getClass(), "/icon-time.png"));
+        ToggleButton statusButton = new ToggleButton("", createIconImage(getClass(), "/icon-warn.png"));
+        browseButton.setTooltip(new Tooltip("Show/hide fractals browser"));
         renderButton.setTooltip(new Tooltip("Render fractal"));
         loadButton.setTooltip(new Tooltip("Load fractal from file"));
         saveButton.setTooltip(new Tooltip("Save fractal to file"));
@@ -133,6 +133,7 @@ public class MainSidePane extends BorderPane {
         exportButton.setTooltip(new Tooltip("Export fractal as image"));
         historyButton.setTooltip(new Tooltip("Show/hide history"));
         statusButton.setTooltip(new Tooltip("Show/hide console"));
+        sourceButtons.getChildren().add(browseButton);
         sourceButtons.getChildren().add(renderButton);
         sourceButtons.getChildren().add(loadButton);
         sourceButtons.getChildren().add(saveButton);
@@ -147,6 +148,7 @@ public class MainSidePane extends BorderPane {
         sourcePane.getChildren().add(sourceButtons);
         sourcePane.getChildren().add(statusPane);
         sourcePane.getChildren().add(sidePane);
+        browseButton.setOnAction(e -> eventBus.postEvent("toggle-browser", ""));
         renderButton.setOnAction(e -> eventBus.postEvent("editor-action", "reload"));
         loadButton.setOnAction(loadEventHandler);
         saveButton.setOnAction(saveEventHandler);
@@ -421,20 +423,6 @@ public class MainSidePane extends BorderPane {
         RendererSize tileBorder = new RendererSize(0, 0);
         RendererPoint tileOffset = new RendererPoint(0, 0);
         return new RendererTile(imageSize, tileSize, tileOffset, tileBorder);
-    }
-
-    private static ImageView createIconImage(String name, double percentage) {
-        int size = computePercentage(percentage);
-        InputStream stream = MainSidePane.class.getResourceAsStream(name);
-        ImageView image = new ImageView(new Image(stream));
-        image.setSmooth(true);
-        image.setFitWidth(size);
-        image.setFitHeight(size);
-        return image;
-    }
-
-    private static ImageView createIconImage(String name) {
-        return createIconImage(name, 0.018);
     }
 
     private String createFileName() {

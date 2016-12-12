@@ -304,7 +304,7 @@ public class NextFractalApp extends Application {
 		renderRootPane.setMinHeight(height);
 		renderRootPane.setMaxWidth(width);
 		renderRootPane.setMaxHeight(height);
-		renderRootPane.getStyleClass().add("render-pane");
+		renderRootPane.getStyleClass().add("central-pane");
 		return renderRootPane;
 	}
 
@@ -312,7 +312,7 @@ public class NextFractalApp extends Application {
 		MainSidePane sideRootPane = new MainSidePane(eventBus);
 		sideRootPane.setPrefWidth(width);
 		sideRootPane.setPrefHeight(height);
-		sideRootPane.getStyleClass().add("editor-pane");
+		sideRootPane.getStyleClass().add("side-pane");
 		return sideRootPane;
 	}
 

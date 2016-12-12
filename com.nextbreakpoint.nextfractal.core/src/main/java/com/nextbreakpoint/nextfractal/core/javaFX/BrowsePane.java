@@ -37,15 +37,11 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.DirectoryChooser;
-import javafx.stage.Screen;
 
 import java.io.File;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -58,6 +54,8 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
+
+import static com.nextbreakpoint.nextfractal.core.javaFX.Icons.createIconImage;
 
 public class BrowsePane extends BorderPane {
 	public static final String BROWSER_DEFAULT_LOCATION = "browser.location";
@@ -110,10 +108,10 @@ public class BrowsePane extends BorderPane {
 		
 		tile = createSingleTile(size, size);
 
-		Button closeButton = new Button("", createIconImage("/icon-back.png"));
-		Button reloadButton = new Button("", createIconImage("/icon-reload.png"));
-		Button chooseButton = new Button("", createIconImage("/icon-folder.png"));
-		Button importButton = new Button("", createIconImage("/icon-import.png"));
+		Button closeButton = new Button("", createIconImage(getClass(), "/icon-back.png"));
+		Button reloadButton = new Button("", createIconImage(getClass(), "/icon-reload.png"));
+		Button chooseButton = new Button("", createIconImage(getClass(), "/icon-folder.png"));
+		Button importButton = new Button("", createIconImage(getClass(), "/icon-import.png"));
 		closeButton.setTooltip(new Tooltip("Close fractals browser"));
 		reloadButton.setTooltip(new Tooltip("Reload all fractals"));
 		chooseButton.setTooltip(new Tooltip("Select source folder location"));
@@ -216,20 +214,6 @@ public class BrowsePane extends BorderPane {
 
 	private void await(ExecutorService executor) {
 		Try.of(() -> executor.awaitTermination(5000, TimeUnit.MILLISECONDS)).onFailure(e -> logger.warning("Await termination timeout")).execute();
-	}
-
-	private ImageView createIconImage(String name, double percentage) {
-		int size = (int)Math.rint(Screen.getPrimary().getVisualBounds().getWidth() * percentage);
-		InputStream stream = getClass().getResourceAsStream(name);
-		ImageView image = new ImageView(new Image(stream));
-		image.setSmooth(true);
-		image.setFitWidth(size);
-		image.setFitHeight(size);
-		return image;
-	}
-
-	private ImageView createIconImage(String name) {
-		return createIconImage(name, 0.02);
 	}
 
 	private void ensureSourceDirectoryChooser() {

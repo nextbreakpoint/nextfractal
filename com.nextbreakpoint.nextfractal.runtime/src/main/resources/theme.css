@@ -38,13 +38,13 @@
 	-fx-border-width: 0 0 0 0;
 }
 
-.application .editor-pane {
+.application .side-pane {
 	-fx-background-color: #FFFFFF;
 	-fx-border-width: 0 0 0 1;
 	-fx-border-color: #b0b0b0;
 }
 
-.application .render-pane {
+.application .central-pane {
 	-fx-background-color: #FFFFFF;
 }
 

@@ -55,23 +55,22 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import javafx.stage.Screen;
 import javafx.util.Duration;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.*;
 import java.util.concurrent.ThreadFactory;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import static com.nextbreakpoint.nextfractal.core.javaFX.Icons.computeOptimalLargeIconPercentage;
+import static com.nextbreakpoint.nextfractal.core.javaFX.Icons.createIconImage;
 
 public class RenderPane extends BorderPane {
 	private static final int FRAME_LENGTH_IN_MILLIS = 20;
@@ -164,20 +163,20 @@ public class RenderPane extends BorderPane {
 		errors.setVisible(false);
 
 		HBox toolButtons = new HBox(0);
-		ToggleButton zoominButton = new ToggleButton("", createIconImage("/icon-zoomin.png"));
-		ToggleButton zoomoutButton = new ToggleButton("", createIconImage("/icon-zoomout.png"));
-		ToggleButton moveButton = new ToggleButton("", createIconImage("/icon-move.png"));
-		ToggleButton rotateButton = new ToggleButton("", createIconImage("/icon-rotate.png"));
-		ToggleButton pickButton = new ToggleButton("", createIconImage("/icon-pick.png"));
-		ToggleButton juliaButton = new ToggleButton("", createIconImage("/icon-julia.png"));
-		ToggleButton orbitButton = new ToggleButton("", createIconImage("/icon-orbit.png"));
+		ToggleButton zoominButton = new ToggleButton("", createIconImage(getClass(), "/icon-zoomin.png", computeOptimalLargeIconPercentage()));
+		ToggleButton zoomoutButton = new ToggleButton("", createIconImage(getClass(), "/icon-zoomout.png", computeOptimalLargeIconPercentage()));
+		ToggleButton moveButton = new ToggleButton("", createIconImage(getClass(), "/icon-move.png", computeOptimalLargeIconPercentage()));
+		ToggleButton rotateButton = new ToggleButton("", createIconImage(getClass(), "/icon-rotate.png", computeOptimalLargeIconPercentage()));
+		ToggleButton pickButton = new ToggleButton("", createIconImage(getClass(), "/icon-pick.png", computeOptimalLargeIconPercentage()));
+		ToggleButton juliaButton = new ToggleButton("", createIconImage(getClass(), "/icon-julia.png", computeOptimalLargeIconPercentage()));
+		ToggleButton orbitButton = new ToggleButton("", createIconImage(getClass(), "/icon-orbit.png", computeOptimalLargeIconPercentage()));
 		ToggleGroup toolsGroup = new ToggleGroup();
 		toolsGroup.getToggles().add(zoominButton);
 		toolsGroup.getToggles().add(zoomoutButton);
 		toolsGroup.getToggles().add(moveButton);
 		toolsGroup.getToggles().add(rotateButton);
 		toolsGroup.getToggles().add(pickButton);
-		Button homeButton = new Button("", createIconImage("/icon-home.png"));
+		Button homeButton = new Button("", createIconImage(getClass(), "/icon-home.png", computeOptimalLargeIconPercentage()));
 		zoominButton.setTooltip(new Tooltip("Select zoom in tool"));
 		zoomoutButton.setTooltip(new Tooltip("Select zoom out tool"));
 		moveButton.setTooltip(new Tooltip("Select move tool"));
@@ -544,20 +543,6 @@ public class RenderPane extends BorderPane {
 
 	private void dispose() {
 		disposeCoordinators();
-	}
-
-	private ImageView createIconImage(String name, double percentage) {
-		int size = (int)Math.rint(Screen.getPrimary().getVisualBounds().getWidth() * percentage);
-		InputStream stream = getClass().getResourceAsStream(name);
-		ImageView image = new ImageView(new Image(stream));
-		image.setSmooth(true);
-		image.setFitWidth(size);
-		image.setFitHeight(size);
-		return image;
-	}
-
-	private ImageView createIconImage(String name) {
-		return createIconImage(name, 0.02);
 	}
 
 	private FadeTransition createFadeTransition(Node node) {
