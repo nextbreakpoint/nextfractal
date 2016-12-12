@@ -35,42 +35,23 @@ import com.nextbreakpoint.nextfractal.core.javaFX.BrowsePane;
 import com.nextbreakpoint.nextfractal.core.javaFX.GridItemRenderer;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 import com.nextbreakpoint.nextfractal.core.Session;
-import com.nextbreakpoint.nextfractal.core.utils.Block;
 import javafx.animation.FadeTransition;
 import javafx.animation.TranslateTransition;
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Rectangle;
-import javafx.stage.Screen;
 import javafx.util.Duration;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardWatchEventKinds;
-import java.nio.file.WatchEvent;
-import java.nio.file.WatchKey;
-import java.nio.file.WatchService;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static com.nextbreakpoint.nextfractal.core.Plugins.tryFindFactory;
 
 public class MainCentralPane extends BorderPane {
     private static Logger logger = Logger.getLogger(MainCentralPane.class.getName());
-
-    private ExecutorService watcherExecutor;
 
     public MainCentralPane(EventBus eventBus, int width, int height) {
         MainRenderPane renderPane = new MainRenderPane(eventBus, width, height);
@@ -161,8 +142,6 @@ public class MainCentralPane extends BorderPane {
         eventBus.subscribe("toggle-browser", event -> {
             toggleProperty.setValue(!toggleProperty.getValue());
         });
-
-//        watcherExecutor = Executors.newSingleThreadExecutor(new DefaultThreadFactory("Watcher", true, Thread.MIN_PRIORITY));
     }
 
     private void handleHideControls(FadeTransition transition, Boolean hide) {
@@ -225,78 +204,5 @@ public class MainCentralPane extends BorderPane {
         transition.setNode(node);
         transition.setDuration(Duration.seconds(0.5));
         return transition;
-    }
-
-    private ImageView createIconImage(String name, double percentage) {
-        int size = (int)Math.rint(Screen.getPrimary().getVisualBounds().getWidth() * percentage);
-        InputStream stream = getClass().getResourceAsStream(name);
-        ImageView image = new ImageView(new Image(stream));
-        image.setSmooth(true);
-        image.setFitWidth(size);
-        image.setFitHeight(size);
-        return image;
-    }
-
-    private ImageView createIconImage(String name) {
-        return createIconImage(name, 0.02);
-    }
-
-    private void watchFolder(BrowsePane pane, File file) {
-        Future<?> future = watcherExecutor.submit(() -> Block.create(a -> watchLoop(pane, file.toPath()))
-            .tryExecute().ifFailure(e -> logger.log(Level.WARNING, "Can't create watcher for location {}", file.getAbsolutePath())));
-    }
-
-    private void watchLoop(BrowsePane pane, Path dir) throws IOException {
-        WatchService watcher = FileSystems.getDefault().newWatchService();
-
-        WatchKey watchKey = null;
-
-        try {
-            watchKey = dir.register(watcher, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_DELETE, StandardWatchEventKinds.ENTRY_MODIFY);
-            try {
-                for (;;) {
-                    WatchKey key = watcher.take();
-
-                    for (WatchEvent<?> event: key.pollEvents()) {
-                        WatchEvent.Kind<?> kind = event.kind();
-
-                        if (kind == StandardWatchEventKinds.OVERFLOW) {
-                            continue;
-                        }
-
-                        WatchEvent<Path> ev = (WatchEvent<Path>)event;
-
-                        Path filename = ev.context();
-
-                        try {
-                            Path child = dir.resolve(filename);
-                            if (!Files.probeContentType(child).equals("text/plain")) {
-                                logger.log(Level.WARNING, "New file {} is not a plain text file", filename);
-                                continue;
-                            }
-                        } catch (IOException x) {
-                            logger.log(Level.WARNING, "Can't resolve file {}", filename);
-                            continue;
-                        }
-
-                        Platform.runLater(() -> pane.reload());
-                    }
-
-                    boolean valid = key.reset();
-                    if (!valid) {
-                        break;
-                    }
-                }
-            } catch (InterruptedException x) {
-            }
-        } catch (IOException x) {
-            logger.log(Level.WARNING, "Can't subscribe watcher on directory {}", dir.getFileName());
-        } finally {
-            if (watchKey != null) {
-                watchKey.cancel();
-            }
-
-            watcher.close();
-        }
     }
 }
