@@ -42,6 +42,14 @@ import javafx.scene.layout.HBox;
 import javafx.stage.DirectoryChooser;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardWatchEventKinds;
+import java.nio.file.WatchEvent;
+import java.nio.file.WatchKey;
+import java.nio.file.WatchService;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -50,8 +58,8 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
 
@@ -62,7 +70,7 @@ public class BrowsePane extends BorderPane {
 	private static final Logger logger = Logger.getLogger(BrowsePane.class.getName());
 	private static final int FRAME_LENGTH_IN_MILLIS = 50;
 	private static final int SCROLL_BOUNCE_DELAY = 500;
-	private final ThreadFactory threadFactory;
+	private final ExecutorService browserExecutor;
 	private StringObservableValue sourcePathProperty;
 	private StringObservableValue importPathProperty;
 	private final int numRows = 3;
@@ -74,9 +82,10 @@ public class BrowsePane extends BorderPane {
 	private DirectoryChooser importDirectoryChooser;
 	private File importCurrentFolder;
 	private File currentDir;
-	private ExecutorService executor;
 	private RendererTile tile;
 	private AnimationTimer timer;
+//	private WatchService watcher;
+	private Thread thread;
 
 	public BrowsePane(int width, int height) {
 		setMinWidth(width);
@@ -90,8 +99,6 @@ public class BrowsePane extends BorderPane {
 		
 		currentDir = getCurrentDir(prefs);
 
-		threadFactory = createThreadFactory("Browser");
-		
 		sourcePathProperty = new StringObservableValue();
 
 		sourcePathProperty.setValue(null);
@@ -104,11 +111,18 @@ public class BrowsePane extends BorderPane {
 		
 		int maxThreads = numCols;
 		
-		executor = Executors.newFixedThreadPool(maxThreads, threadFactory);
-		
 		tile = createSingleTile(size, size);
 
-		Button closeButton = new Button("", createIconImage(getClass(), "/icon-back.png"));
+		HBox toolbar1 = new HBox(2);
+		toolbar1.setAlignment(Pos.CENTER_LEFT);
+
+		HBox toolbar2 = new HBox(2);
+		toolbar2.setAlignment(Pos.CENTER);
+
+		HBox toolbar3 = new HBox(2);
+		toolbar3.setAlignment(Pos.CENTER_RIGHT);
+
+		Button closeButton = new Button("", createIconImage(getClass(), "/icon-close.png"));
 		Button reloadButton = new Button("", createIconImage(getClass(), "/icon-reload.png"));
 		Button chooseButton = new Button("", createIconImage(getClass(), "/icon-folder.png"));
 		Button importButton = new Button("", createIconImage(getClass(), "/icon-import.png"));
@@ -118,18 +132,20 @@ public class BrowsePane extends BorderPane {
 		importButton.setTooltip(new Tooltip("Select a folder from where to import fractals"));
 
 		Label statusLabel = new Label("Initializing");
-		statusLabel.getStyleClass().add("items-label");
 
-		HBox toolbarButtons = new HBox(4);
-		toolbarButtons.getChildren().add(closeButton);
-		toolbarButtons.getChildren().add(chooseButton);
-		toolbarButtons.getChildren().add(statusLabel);
-		toolbarButtons.getChildren().add(reloadButton);
-		toolbarButtons.getChildren().add(importButton);
-		toolbarButtons.setAlignment(Pos.CENTER);
-		toolbarButtons.getStyleClass().add("toolbar");
-		toolbarButtons.getStyleClass().add("translucent");
-		toolbarButtons.setPrefHeight(height * 0.07);
+		toolbar1.getChildren().add(chooseButton);
+		toolbar1.getChildren().add(statusLabel);
+		toolbar3.getChildren().add(importButton);
+		toolbar3.getChildren().add(reloadButton);
+		toolbar3.getChildren().add(closeButton);
+
+		BorderPane toolbar = new BorderPane();
+		toolbar.getStyleClass().add("toolbar");
+		toolbar.getStyleClass().add("translucent");
+		toolbar.setPrefHeight(height * 0.07);
+		toolbar.setLeft(toolbar1);
+		toolbar.setCenter(toolbar2);
+		toolbar.setRight(toolbar3);
 
 		GridView grid = new GridView(numRows, numCols, size);
 		
@@ -160,7 +176,7 @@ public class BrowsePane extends BorderPane {
 
 		BorderPane box = new BorderPane();
 		box.setCenter(grid);
-		box.setBottom(toolbarButtons);
+		box.setBottom(toolbar);
 		box.getStyleClass().add("browse");
 		
 		setCenter(box);
@@ -174,15 +190,25 @@ public class BrowsePane extends BorderPane {
 		reloadButton.setOnMouseClicked(e -> loadFiles(statusLabel, grid, sourceCurrentFolder));
 
 		sourcePathProperty.addListener((observable, oldValue, newValue) -> {
-			File path = new File(newValue);
-			currentDir = path; 
-			loadFiles(statusLabel, grid, path);
+			if (newValue != null) {
+				File path = new File(newValue);
+				currentDir = path;
+				loadFiles(statusLabel, grid, path);
+			}
 		});
 
 		importPathProperty.addListener((observable, oldValue, newValue) -> {
 			File path = new File(newValue);
 			importFiles(statusLabel, grid, path);
 		});
+
+		widthProperty().addListener((observable, oldValue, newValue) -> {
+			toolbar1.setPrefWidth(newValue.doubleValue() / 3);
+			toolbar2.setPrefWidth(newValue.doubleValue() / 3);
+			toolbar3.setPrefWidth(newValue.doubleValue() / 3);
+		});
+
+		browserExecutor = Executors.newFixedThreadPool(maxThreads, createThreadFactory("Browser"));
 
 		runTimer(grid);
 	}
@@ -192,6 +218,7 @@ public class BrowsePane extends BorderPane {
 	}
 
 	public void reload() {
+		sourcePathProperty.setValue(null);
 		sourcePathProperty.setValue(currentDir.getAbsolutePath());
 	}
 	
@@ -206,9 +233,10 @@ public class BrowsePane extends BorderPane {
 	}
 
 	public void dispose() {
-		List<ExecutorService> executors = Arrays.asList(executor);
+		List<ExecutorService> executors = Arrays.asList(browserExecutor);
 		executors.forEach(executor -> executor.shutdownNow());
 		executors.forEach(executor -> await(executor));
+		stopWatching();
 		removeItems();
 	}
 
@@ -301,6 +329,8 @@ public class BrowsePane extends BorderPane {
 
 	private void loadFiles(Label statusLabel, GridView grid, File folder) {
 		sourceCurrentFolder = folder;
+		stopWatching();
+		startWatching();
 		removeItems();
 		grid.setData(new GridItem[0]);
 		File[] files = listFiles(folder);
@@ -316,7 +346,7 @@ public class BrowsePane extends BorderPane {
 		importCurrentFolder = folder;
 		File[] files = listAllFiles(folder);
 		if (files != null && files.length > 0) {
-			executor.submit(() -> copyFiles(statusLabel, grid, files, sourceCurrentFolder));
+			browserExecutor.submit(() -> copyFiles(statusLabel, grid, files, sourceCurrentFolder));
 		}
 	}
 
@@ -520,7 +550,7 @@ public class BrowsePane extends BorderPane {
 			BrowseBitmap bitmap = item.getBitmap();
 			long time = System.currentTimeMillis();
 			if (bitmap == null && time - item.getLastChanged() > SCROLL_BOUNCE_DELAY && item.getFuture() == null) {
-				Future<GridItem> task = executor.submit(new Callable<GridItem>() {
+				Future<GridItem> task = browserExecutor.submit(new Callable<GridItem>() {
 					@Override
 					public GridItem call() throws Exception {
 						loadItem(item);
@@ -569,5 +599,90 @@ public class BrowsePane extends BorderPane {
 		defaultBrowserDir = defaultBrowserDir.replace("[user.dir]", userDir);
 		logger.info("defaultBrowserDir = " + defaultBrowserDir);
 		return defaultBrowserDir;
+	}
+
+	private void stopWatching() {
+		if (thread != null) {
+//		try {
+//			watcher.close();
+//		} catch (IOException e) {
+//		}
+			thread.interrupt();
+			try {
+				thread.join();
+			} catch (InterruptedException e) {
+			}
+			thread = null;
+		}
+	}
+
+	private void startWatching() {
+		if (thread == null) {
+			thread = createThreadFactory("Watcher").newThread(() -> {
+				try {
+					watchLoop(this, new File(sourcePathProperty.getValue()).toPath());
+				} catch (IOException e) {
+					logger.log(Level.WARNING, "Cannot watch folder " + sourcePathProperty.getValue(), e);
+				}
+			});
+			thread.start();
+		}
+	}
+
+	private void watchLoop(BrowsePane browsePane, Path dir) throws IOException {
+		WatchService watcher = FileSystems.getDefault().newWatchService();
+
+		WatchKey watchKey = null;
+
+		try {
+			watchKey = dir.register(watcher, new WatchEvent.Kind[]{ StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_DELETE, StandardWatchEventKinds.ENTRY_MODIFY });
+			try {
+				for (;;) {
+					WatchKey key = watcher.take();
+
+					for (WatchEvent<?> event: key.pollEvents()) {
+						WatchEvent.Kind<?> kind = event.kind();
+
+						if (kind == StandardWatchEventKinds.OVERFLOW) {
+							continue;
+						}
+
+						WatchEvent<Path> ev = (WatchEvent<Path>)event;
+
+						Path filename = ev.context();
+
+//						try {
+							Path child = dir.resolve(filename);
+							if (!child.getFileName().toFile().getName().endsWith(".nf.zip")) {
+								continue;
+							}
+//							if (!Files.probeContentType(child).equals("text/plain")) {
+//								logger.log(Level.WARNING, "New file {} is not a plain text file", filename);
+//								continue;
+//							}
+//						} catch (IOException x) {
+//							logger.log(Level.WARNING, "Can't resolve file {}", filename);
+//							continue;
+//						}
+
+						Platform.runLater(() -> browsePane.reload());
+					}
+
+					boolean valid = key.reset();
+					if (!valid) {
+						break;
+					}
+				}
+			} catch (InterruptedException x) {
+			}
+		} catch (IOException x) {
+			logger.log(Level.WARNING, "Can't subscribe watcher on directory {}", dir.getFileName());
+		} finally {
+			if (watchKey != null) {
+				watchKey.cancel();
+			}
+
+			watcher.close();
+		}
 	}
 }
