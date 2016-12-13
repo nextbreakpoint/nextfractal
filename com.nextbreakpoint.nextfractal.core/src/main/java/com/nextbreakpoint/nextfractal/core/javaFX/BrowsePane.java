@@ -59,6 +59,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
@@ -456,8 +457,7 @@ public class BrowsePane extends BorderPane {
 				item.setBitmap(delegate.createBitmap(item.getFile(), tile.getTileSize()));
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.log(Level.WARNING, "Can't create bitmap", e);
 		}
 	}
 
@@ -572,8 +572,7 @@ public class BrowsePane extends BorderPane {
 				item.setRenderer(delegate.createRenderer(bitmap));
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.log(Level.WARNING, "Can't initialize renderer", e);
 		}
 	}
 
@@ -603,10 +602,6 @@ public class BrowsePane extends BorderPane {
 
 	private void stopWatching() {
 		if (thread != null) {
-//		try {
-//			watcher.close();
-//		} catch (IOException e) {
-//		}
 			thread.interrupt();
 			try {
 				thread.join();
@@ -620,22 +615,23 @@ public class BrowsePane extends BorderPane {
 		if (thread == null) {
 			thread = createThreadFactory("Watcher").newThread(() -> {
 				try {
-					watchLoop(this, new File(sourcePathProperty.getValue()).toPath());
+					watchLoop(new File(sourcePathProperty.getValue()).toPath(), path -> Platform.runLater(() -> this.reload()));
 				} catch (IOException e) {
-					logger.log(Level.WARNING, "Cannot watch folder " + sourcePathProperty.getValue(), e);
+					logger.log(Level.WARNING, "Can't watch folder " + sourcePathProperty.getValue(), e);
 				}
 			});
 			thread.start();
 		}
 	}
 
-	private void watchLoop(BrowsePane browsePane, Path dir) throws IOException {
+	private void watchLoop(Path dir, Consumer<Path> consumer) throws IOException {
 		WatchService watcher = FileSystems.getDefault().newWatchService();
 
 		WatchKey watchKey = null;
 
 		try {
 			watchKey = dir.register(watcher, new WatchEvent.Kind[]{ StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_DELETE, StandardWatchEventKinds.ENTRY_MODIFY });
+
 			try {
 				for (;;) {
 					WatchKey key = watcher.take();
@@ -651,21 +647,13 @@ public class BrowsePane extends BorderPane {
 
 						Path filename = ev.context();
 
-//						try {
-							Path child = dir.resolve(filename);
-							if (!child.getFileName().toFile().getName().endsWith(".nf.zip")) {
-								continue;
-							}
-//							if (!Files.probeContentType(child).equals("text/plain")) {
-//								logger.log(Level.WARNING, "New file {} is not a plain text file", filename);
-//								continue;
-//							}
-//						} catch (IOException x) {
-//							logger.log(Level.WARNING, "Can't resolve file {}", filename);
-//							continue;
-//						}
+						Path child = dir.resolve(filename);
 
-						Platform.runLater(() -> browsePane.reload());
+						if (!child.getFileName().toString().endsWith(".nf.zip")) {
+							continue;
+						}
+
+						consumer.accept(filename);
 					}
 
 					boolean valid = key.reset();

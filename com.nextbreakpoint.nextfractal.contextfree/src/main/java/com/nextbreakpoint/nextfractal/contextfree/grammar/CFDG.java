@@ -31,8 +31,10 @@ import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.util.*;
+import java.util.logging.Level;
 
 public class CFDG {
+	private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(CFDG.class.getName());
 	private double[] backgroundColor = new double[] { 1, 1, 1, 1 };
 	private Shape initialShape;
 	private ASTRule needle;
@@ -624,7 +626,7 @@ public class CFDG {
 
 			return renderer;
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.log(Level.WARNING, "Can't create CFDG renderer", e);
 		}
 
 		return null;

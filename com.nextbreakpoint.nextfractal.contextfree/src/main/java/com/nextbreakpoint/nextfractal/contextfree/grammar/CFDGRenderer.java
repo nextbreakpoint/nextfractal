@@ -37,9 +37,12 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.util.*;
 import java.util.function.Function;
+import java.util.logging.Level;
 import java.util.stream.IntStream;
 
 public class CFDGRenderer {
+	private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(CFDG.class.getName());
+
 	private static final double FIXED_BORDER = 8.0;
 	private static final double SHAPE_BORDER = 1.0;
 
@@ -738,12 +741,12 @@ public class CFDGRenderer {
 				drawingMode = false;
 				rule.traverse(shape, false, this);
 			} catch (CFDGException e) {
-				e.printStackTrace();
+				logger.log(Level.WARNING, "Can't render CFDG image", e);
 				requestStop = true;
 				cfdg.getDriver().error(e.getMessage(), e.getLocation());
 				break;
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.log(Level.WARNING, "Can't render CFDG image", e);
 				//TODO rivedere
 				requestStop = true;
 				cfdg.getDriver().error(e.getMessage(), null);

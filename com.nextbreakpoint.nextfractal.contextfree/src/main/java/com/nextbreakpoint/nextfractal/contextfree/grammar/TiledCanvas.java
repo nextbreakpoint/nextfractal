@@ -31,12 +31,14 @@ import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ShapeType;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.logging.Level;
 
 public class TiledCanvas implements CFCanvas {
+    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(CFDG.class.getName());
+
     private List<Point2D.Double> tileList;
     private AffineTransform transform;
     private AffineTransform transformInvert;
@@ -115,7 +117,7 @@ public class TiledCanvas implements CFCanvas {
             try {
                 transformInvert.invert();
             } catch (NoninvertibleTransformException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, "Can't invert transform", e);
             }
         }
     }
