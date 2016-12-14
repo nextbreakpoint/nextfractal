@@ -27,6 +27,7 @@ package com.nextbreakpoint.nextfractal.runtime.javaFX;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.InputStream;
+import java.util.Date;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -37,6 +38,7 @@ import com.nextbreakpoint.nextfractal.core.FileManager;
 import com.nextbreakpoint.nextfractal.core.export.ExportRenderer;
 import com.nextbreakpoint.nextfractal.core.export.ExportService;
 import com.nextbreakpoint.nextfractal.core.export.ExportSession;
+import com.nextbreakpoint.nextfractal.core.Clip;
 import com.nextbreakpoint.nextfractal.core.renderer.javaFX.JavaFXRendererFactory;
 import com.nextbreakpoint.nextfractal.core.utils.DefaultThreadFactory;
 import com.nextbreakpoint.nextfractal.runtime.export.SimpleExportRenderer;
@@ -73,7 +75,8 @@ public class NextFractalApp extends Application {
 	private static final String DEFAULT_PLUGIN_ID = "Mandelbrot";
 
 	private Session session;
-	private String error;
+	private boolean capture;
+	private Clip clip;
 
 	public static void main(String[] args) {
 		launch(args); 
@@ -115,6 +118,8 @@ public class NextFractalApp extends Application {
 
 		eventBus.subscribe("session-data-changed", event -> session = (Session) ((Object[])event)[0]);
 
+		eventBus.subscribe("session-data-changed", event -> handleSessionChanged((Session) ((Object[])event)[0]));
+
 		eventBus.subscribe("session-terminated", event -> handleSessionTerminate(exportService));
 
 		eventBus.subscribe("export-session-created", event -> handleExportSessionCreated(exportService, (ExportSession) event));
@@ -130,6 +135,8 @@ public class NextFractalApp extends Application {
 		eventBus.subscribe("editor-save-file", event -> handleSaveFile(eventBus, (File)event));
 
 		eventBus.subscribe("session-error-changed", event -> handleErrorChanged((String)event));
+
+		eventBus.subscribe("capture-session", event -> handleCaptureSession(eventBus, (String)event));
 
 		rootPane.getChildren().add(createMainPane(eventBus, editorWidth, renderWidth, sceneHeight));
 
@@ -158,6 +165,34 @@ public class NextFractalApp extends Application {
 			String defaultPluginId = System.getProperty("initialPluginId", DEFAULT_PLUGIN_ID);
 			tryFindFactory(defaultPluginId).ifPresent(factory -> createSession(eventBus, factory));
 		});
+	}
+
+	private void handleCaptureSession(EventBus eventBus, String action) {
+		if (action.equals("start")) startCapture(eventBus);
+		if (action.equals("stop")) stopCapture(eventBus);
+	}
+
+	private void startCapture(EventBus eventBus) {
+		capture = true;
+		clip = new Clip();
+		if (session != null) {
+			clip.append(new Date(), session.getPluginId(), session.getScript(), session.getMetadata());
+		}
+		eventBus.postEvent("capture-session-started", clip);
+	}
+
+	private void stopCapture(EventBus eventBus) {
+		capture = false;
+		if (session != null) {
+			clip.append(new Date(), session.getPluginId(), session.getScript(), session.getMetadata());
+		}
+		eventBus.postEvent("capture-session-stopped", clip);
+	}
+
+	private void handleSessionChanged(Session session) {
+		if (capture) {
+			clip.append(new Date(), session.getPluginId(), session.getScript(), session.getMetadata());
+		}
 	}
 
 	private void handleErrorChanged(String error) {
@@ -326,7 +361,7 @@ public class NextFractalApp extends Application {
 	}
 
 	private String getApplicationName() {
-		return "NextFractal 2.0.0";
+		return "NextFractal 2.0.0 - Created by Andrea Medeghini";
 	}
 
 	private String getNoticeMessage() {

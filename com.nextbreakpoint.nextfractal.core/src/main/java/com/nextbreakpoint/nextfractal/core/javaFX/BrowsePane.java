@@ -44,7 +44,6 @@ import javafx.stage.DirectoryChooser;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileSystems;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardWatchEventKinds;
 import java.nio.file.WatchEvent;
@@ -72,8 +71,8 @@ public class BrowsePane extends BorderPane {
 	private static final int FRAME_LENGTH_IN_MILLIS = 50;
 	private static final int SCROLL_BOUNCE_DELAY = 500;
 	private final ExecutorService browserExecutor;
-	private StringObservableValue sourcePathProperty;
-	private StringObservableValue importPathProperty;
+	private final StringObservableValue sourcePathProperty;
+	private final StringObservableValue importPathProperty;
 	private final int numRows = 3;
 	private final int numCols = 3;
 	private List<GridItem> items = new ArrayList<>();
@@ -85,7 +84,6 @@ public class BrowsePane extends BorderPane {
 	private File currentDir;
 	private RendererTile tile;
 	private AnimationTimer timer;
-//	private WatchService watcher;
 	private Thread thread;
 
 	public BrowsePane(int width, int height) {

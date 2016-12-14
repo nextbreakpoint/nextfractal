@@ -80,9 +80,9 @@ public class JobsPane extends BorderPane {
         Button suspendButton = new Button("", createIconImage("/icon-suspend.png", 0.015));
         Button resumeButton = new Button("", createIconImage("/icon-resume.png", 0.015));
         Button removeButton = new Button("", createIconImage("/icon-remove.png", 0.015));
-        suspendButton.setTooltip(new Tooltip("Suspend selected tasks"));
-        resumeButton.setTooltip(new Tooltip("Resume selected tasks"));
-        removeButton.setTooltip(new Tooltip("Remove selected tasks"));
+        suspendButton.setTooltip(new Tooltip("Suspend selected jobs"));
+        resumeButton.setTooltip(new Tooltip("Resume selected jobs"));
+        removeButton.setTooltip(new Tooltip("Remove selected jobs"));
         suspendButton.setDisable(true);
         resumeButton.setDisable(true);
         removeButton.setDisable(true);
@@ -165,7 +165,7 @@ public class JobsPane extends BorderPane {
     }
 
     private void submitItem(ExportSession session, ImageGenerator generator) {
-        executor.submit(() -> Try.of(() -> generator.renderImage(session.getSession()))
+        executor.submit(() -> Try.of(() -> generator.renderImage(session.getSession().getScript(), session.getSession().getMetadata()))
             .ifPresent(pixels -> Platform.runLater(() -> addItem(listView, session, pixels, generator.getSize()))));
     }
 

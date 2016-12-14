@@ -89,7 +89,7 @@ public class HistoryPane extends BorderPane {
     }
 
     private void submitItem(Session session, ImageGenerator generator) {
-        executor.submit(() -> Try.of(() -> generator.renderImage(session))
+        executor.submit(() -> Try.of(() -> generator.renderImage(session.getScript(), session.getMetadata()))
             .ifPresent(pixels -> Platform.runLater(() -> addItem(listView, session, pixels, generator.getSize()))));
     }
 
@@ -100,10 +100,6 @@ public class HistoryPane extends BorderPane {
     }
 
     public void appendSession(Session session) {
-//        if (noHistory) {
-//            return;
-//        }
-
         tryFindFactory(session.getPluginId()).map(factory -> factory.createImageGenerator(createThreadFactory("History Renderer"),
             new JavaFXRendererFactory(), tile, true)).ifPresent(generator -> submitItem(session, generator));
     }

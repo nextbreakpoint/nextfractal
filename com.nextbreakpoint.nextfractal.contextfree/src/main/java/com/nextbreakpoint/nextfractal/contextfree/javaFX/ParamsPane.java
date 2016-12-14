@@ -44,6 +44,7 @@ public class ParamsPane extends Pane {
 		VBox box = new VBox(SPACING * 2);
 		Label seedLabel = new Label("Seed");
 		AdvancedTextField seedField = new AdvancedTextField();
+		seedField.setTooltip(new Tooltip("Seed for generating random numbers"));
 		seedField.setRestrict(getRestriction());
 		seedField.setTransform(t -> t.toUpperCase());
 		VBox seedPane = new VBox(SPACING);

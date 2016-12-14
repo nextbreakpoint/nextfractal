@@ -51,6 +51,9 @@ public class ParamsPane extends Pane {
 		xTraslationField.setRestrict(getRestriction());
 		yTraslationField.setRestrict(getRestriction());
 		zTraslationField.setRestrict(getRestriction());
+		xTraslationField.setTooltip(new Tooltip("Horizontal translation"));
+		yTraslationField.setTooltip(new Tooltip("Vertical translation"));
+		zTraslationField.setTooltip(new Tooltip("Distance from the plane"));
 		VBox translationPane = new VBox(SPACING);
 		translationPane.getChildren().add(translationLabel);
 		translationPane.getChildren().add(xTraslationField);
@@ -58,6 +61,7 @@ public class ParamsPane extends Pane {
 		translationPane.getChildren().add(zTraslationField);
 		Label rotationLabel = new Label("Region rotation");
 		AdvancedTextField zRotationField = new AdvancedTextField();
+		zRotationField.setTooltip(new Tooltip("Rotation in degrees"));
 		zRotationField.setRestrict(getRestriction());
 		VBox rotationPane = new VBox(SPACING); 
 		rotationPane.getChildren().add(rotationLabel);
@@ -66,6 +70,8 @@ public class ParamsPane extends Pane {
 		Label wLabel = new Label("Initial value of w");
 		AdvancedTextField wReField = new AdvancedTextField();
 		AdvancedTextField wImField = new AdvancedTextField();
+		wReField.setTooltip(new Tooltip("Value of real part"));
+		wImField.setTooltip(new Tooltip("Value of imaginary part"));
 		wReField.setRestrict(getRestriction());
 		wImField.setRestrict(getRestriction());
 		VBox wPane = new VBox(SPACING);
@@ -77,6 +83,8 @@ public class ParamsPane extends Pane {
 		Label xLabel = new Label("Initial value of x");
 		AdvancedTextField xReField = new AdvancedTextField();
 		AdvancedTextField xImField = new AdvancedTextField();
+		xReField.setTooltip(new Tooltip("Value of real part"));
+		xImField.setTooltip(new Tooltip("Value of imaginary part"));
 		xReField.setRestrict(getRestriction());
 		xImField.setRestrict(getRestriction());
 		xReField.setEditable(false);
@@ -93,6 +101,7 @@ public class ParamsPane extends Pane {
 		algorithmCombobox.getItems().add("Mandelbrot");
 		algorithmCombobox.getItems().add("Julia/Fatou");
 		algorithmCombobox.getStyleClass().add("text-small");
+		algorithmCombobox.setTooltip(new Tooltip("Select algorithm mode"));
 		algorithmPane.getChildren().add(algorithmCombobox);
 		box.getChildren().add(algorithmPane);
 		box.getChildren().add(translationPane);

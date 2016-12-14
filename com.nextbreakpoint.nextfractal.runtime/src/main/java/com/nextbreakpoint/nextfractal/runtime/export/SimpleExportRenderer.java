@@ -37,6 +37,7 @@ import java.util.logging.Logger;
 
 import com.nextbreakpoint.Try;
 import com.nextbreakpoint.nextfractal.core.ImageGenerator;
+import com.nextbreakpoint.nextfractal.core.Session;
 import com.nextbreakpoint.nextfractal.core.export.ExportJob;
 import com.nextbreakpoint.nextfractal.core.export.ExportJobState;
 import com.nextbreakpoint.nextfractal.core.export.ExportRenderer;
@@ -90,9 +91,9 @@ public class SimpleExportRenderer implements ExportRenderer {
 
 		private ExportJob processJob(ExportJob job) throws IOException {
 			logger.fine(job.toString());
-			Object data = job.getProfile().getData();
+			Session session = (Session) job.getProfile().getData();
 			ImageGenerator generator = createImageGenerator(job);
-			IntBuffer pixels = generator.renderImage(data);
+			IntBuffer pixels = generator.renderImage(session.getScript(), session.getMetadata());
 			if (generator.isInterrupted()) {
                 job.setState(ExportJobState.INTERRUPTED);
             } else {

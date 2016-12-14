@@ -25,6 +25,7 @@
 package com.nextbreakpoint.nextfractal.runtime.javaFX;
 
 import com.nextbreakpoint.Try;
+import com.nextbreakpoint.nextfractal.core.Clip;
 import com.nextbreakpoint.nextfractal.core.EventBus;
 import com.nextbreakpoint.nextfractal.core.ImageGenerator;
 import com.nextbreakpoint.nextfractal.core.encoder.Encoder;
@@ -62,6 +63,7 @@ import javafx.stage.Screen;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -119,7 +121,7 @@ public class MainSidePane extends BorderPane {
 
         StatusPane statusPane = new StatusPane();
 
-        ExportPane exportPane = new ExportPane();
+        ExportPane exportPane = new ExportPane(tile);
 
         paramsPane.getStyleClass().add("sidebar");
         exportPane.getStyleClass().add("sidebar");
@@ -196,6 +198,27 @@ public class MainSidePane extends BorderPane {
             public void createSession(RendererSize rendererSize) {
                 if (errorProperty.getValue() == null) {
                     eventBus.postEvent("session-export", rendererSize);
+                }
+            }
+
+            @Override
+            public void startCaptureSession() {
+                if (errorProperty.getValue() == null) {
+                    eventBus.postEvent("capture-session", "start");
+                }
+            }
+
+            @Override
+            public void stopCaptureSession() {
+                if (errorProperty.getValue() == null) {
+                    eventBus.postEvent("capture-session", "stop");
+                }
+            }
+
+            @Override
+            public void showVideoPreview(List<Clip> clips) {
+                if (errorProperty.getValue() == null) {
+                    eventBus.postEvent("preview-video", clips);
                 }
             }
         });
@@ -345,6 +368,8 @@ public class MainSidePane extends BorderPane {
 
         eventBus.subscribe("export-session-created", event -> jobsPane.appendSession((ExportSession)event));
 
+        eventBus.subscribe("capture-session-stopped", event -> handleAppendClip(exportPane, (Clip) event));
+
         eventBus.subscribe("session-data-changed", event -> {
             errorProperty.setValue(null);
             boolean continuous = (Boolean) ((Object[])event)[1];
@@ -362,6 +387,10 @@ public class MainSidePane extends BorderPane {
         eventBus.subscribe("session-terminated", event -> historyPane.dispose());
 
         return rootPane;
+    }
+
+    private void handleAppendClip(ExportPane exportPane, Clip clip) {
+        if (!clip.isEmpty()) exportPane.appendClip(clip);
     }
 
     private static TranslateTransition createTranslateTransition(Node node) {

@@ -30,10 +30,11 @@ import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 
 public interface ImageGenerator {
 	/**
-	 * @param data
+	 * @param script
+	 * @param metadata
 	 * @return
 	 */
-	public IntBuffer renderImage(Object data);
+	public IntBuffer renderImage(String script, Object metadata);
 
 	/**
 	 * @return

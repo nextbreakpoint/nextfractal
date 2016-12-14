@@ -31,7 +31,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
@@ -62,6 +64,7 @@ public class MainParamsPane extends Pane {
 		ComboBox<String> grammarCombobox = new ComboBox<>();
 		grammarCombobox.getItems().addAll(listGrammars());
 		grammarCombobox.getStyleClass().add("text-small");
+		grammarCombobox.setTooltip(new Tooltip("Select active grammar"));
 		grammarPane.getChildren().add(grammarCombobox);
 
 		if (grammarCombobox.getItems().size() > 1) {
@@ -73,11 +76,16 @@ public class MainParamsPane extends Pane {
 		BorderPane paramsPane = new BorderPane();
 		paramsBox.getChildren().add(paramsPane);
 
-		VBox buttons = new VBox(4);
+		HBox buttons = new HBox(4);
 		Button applyButton = new Button("Apply");
 		Button cancelButton = new Button("Cancel");
+		applyButton.setTooltip(new Tooltip("Apply parameters"));
+		cancelButton.setTooltip(new Tooltip("Revert parameters"));
 		buttons.getChildren().add(applyButton);
 		buttons.getChildren().add(cancelButton);
+		buttons.getStyleClass().add("buttons");
+		buttons.getStyleClass().add("text-small");
+
 		paramsBox.getChildren().add(buttons);
 
 		box.getChildren().add(paramsBox);

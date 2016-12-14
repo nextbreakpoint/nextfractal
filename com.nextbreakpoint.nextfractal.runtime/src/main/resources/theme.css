@@ -127,6 +127,7 @@
 
 .application .params {
 	-fx-padding: 8px;
+    -fx-font-size: 0.9em;
 }
 
 .application .params .encoded {
@@ -147,6 +148,10 @@
 .application .params .text-area:focused .content {
 	-fx-background-color: #fbfbfb #fbfbfb black black;
 	-fx-background-insets: 0, 0, 1, 2;
+}
+
+.application .params .buttons {
+	-fx-padding: 5px 0 0 0;
 }
 
 .application .export {
@@ -178,5 +183,11 @@
 }
 
 .application .text-small {
-    -fx-font-size: 0.8em;
+    -fx-font-size: 0.9em;
+}
+
+.application .clips {
+	-fx-border-width: 1 1 1 1;
+	-fx-border-color: #f0f0f0;
+	-fx-border-radius: 3;
 }

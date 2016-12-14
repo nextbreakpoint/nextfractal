@@ -51,20 +51,21 @@ public class ContextFreeImageGenerator implements ImageGenerator {
 	}
 
 	@Override
-	public IntBuffer renderImage(Object data) {
-		ContextFreeSession session = (ContextFreeSession)data;
+	public IntBuffer renderImage(String script, Object data) {
+		ContextFreeMetadata metadata = (ContextFreeMetadata)data;
 		RendererSize suggestedSize = tile.getTileSize();
 		int[] pixels = new int[suggestedSize.getWidth() * suggestedSize.getHeight()];
 		for (int i = 0; i < pixels.length; i++) pixels[i] = 0xFF000000;
 		IntBuffer buffer = IntBuffer.wrap(pixels);
 		try {
 			Compiler compiler = new Compiler();
-			CompilerReport report = compiler.compileReport(session.getScript());
+			CompilerReport report = compiler.compileReport(script);
 			if (report.getErrors().size() > 0) {
 				throw new RuntimeException("Failed to compile source");
 			}
 			CFDG cfdg = report.getCFDG();
 			Renderer renderer = new Renderer(threadFactory, renderFactory, tile);
+			renderer.setSeed(metadata.getSeed());
 			renderer.setOpaque(opaque);
 			renderer.setCFDG(cfdg);
 			renderer.init();

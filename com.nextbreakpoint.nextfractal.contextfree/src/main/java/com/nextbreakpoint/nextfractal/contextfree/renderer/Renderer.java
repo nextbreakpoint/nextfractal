@@ -64,6 +64,7 @@ public class Renderer {
 	private volatile Future<?> future;
 	private CFDGRenderer renderer;
 	private boolean initialized;
+	private String seed;
 
 	/**
 	 * @param threadFactory
@@ -380,6 +381,15 @@ public class Renderer {
 			executor.awaitTermination(5000, TimeUnit.MILLISECONDS);
 		} catch (InterruptedException e) {
 		}
+	}
+
+	public void setSeed(String seed) {
+		//TODO use seed
+		this.seed = seed;
+	}
+
+	public String getSeed() {
+		return seed;
 	}
 
 	private class RenderRunnable implements Runnable {

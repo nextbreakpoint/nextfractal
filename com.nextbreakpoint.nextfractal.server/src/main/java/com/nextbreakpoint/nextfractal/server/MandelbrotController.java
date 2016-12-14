@@ -54,6 +54,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.async.DeferredResult;
 
+import com.nextbreakpoint.nextfractal.core.Session;
 import com.nextbreakpoint.nextfractal.core.ImageGenerator;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererFactory;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
@@ -84,7 +85,7 @@ public class MandelbrotController {
 			validateRequest(request);
 			RemoteJob<MandelbrotSession> job = createJob(request);
 			String key = generateKey(tileSize, rows, cols, row, col, encodedData);
-		    ProcessingTask<MandelbrotSession> task = new ProcessingTask<>(deferredResult, job, key);
+		    ProcessingTask task = new ProcessingTask(deferredResult, job, key);
 		    synchronized (executor) {
 		    	executor.execute(task);
 			}
@@ -186,23 +187,23 @@ public class MandelbrotController {
 		return baos.toByteArray();
 	}
 
-	private <T> byte[] createImage(RemoteJob<T> job) throws IOException {
+	private byte[] createImage(RemoteJob<? extends Session> job) throws IOException {
 		ThreadFactory threadFactory = new DefaultThreadFactory(MandelbrotController.class.getName(), true, Thread.MIN_PRIORITY);
 		RendererFactory renderFactory = new JavaFXRendererFactory();
 		RendererTile tile = job.getTile();
-		T data = job.getData();
+		Session session = job.getData();
 		ImageGenerator generator = new MandelbrotImageGenerator(threadFactory, renderFactory, tile, false);
-		IntBuffer pixels = generator.renderImage(data);
+		IntBuffer pixels = generator.renderImage(session.getScript(), session.getMetadata());
 		byte[] pngImageData = getImageAsPNG(tile.getTileSize(), pixels);
 		return pngImageData;
 	}
 
-	private class ProcessingTask<T> implements Runnable {
+	private class ProcessingTask implements Runnable {
 		private DeferredResult<ResponseEntity<byte[]>> deferredResult;
-		private RemoteJob<T> job;
+		private RemoteJob<? extends Session> job;
 		private String key;
 
-		public ProcessingTask(DeferredResult<ResponseEntity<byte[]>> deferredResult, RemoteJob<T> job, String key) {
+		public ProcessingTask(DeferredResult<ResponseEntity<byte[]>> deferredResult, RemoteJob<? extends Session> job, String key) {
 			this.deferredResult = deferredResult;
 			this.job = job;
 			this.key = key;

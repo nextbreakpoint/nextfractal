@@ -58,15 +58,14 @@ public class MandelbrotImageGenerator implements ImageGenerator {
 	}
 
 	@Override
-	public IntBuffer renderImage(Object data) {
-		MandelbrotSession session = (MandelbrotSession)data;
-		MandelbrotMetadata metadata = (MandelbrotMetadata) session.getMetadata();
+	public IntBuffer renderImage(String script, Object data) {
+		MandelbrotMetadata metadata = (MandelbrotMetadata) data;
 		RendererSize suggestedSize = tile.getTileSize();
 		int[] pixels = new int[suggestedSize.getWidth() * suggestedSize.getHeight()];
 		IntBuffer buffer = IntBuffer.wrap(pixels);
 		try {
 			Compiler compiler = new Compiler();
-			CompilerReport report = compiler.compileReport(session.getScript());
+			CompilerReport report = compiler.compileReport(script);
 			if (report.getErrors().size() > 0) {
 				throw new RuntimeException("Failed to compile source");
 			}
