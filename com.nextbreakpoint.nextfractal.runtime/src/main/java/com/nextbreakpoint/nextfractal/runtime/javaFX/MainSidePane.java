@@ -62,6 +62,7 @@ import javafx.stage.Screen;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -79,6 +80,7 @@ public class MainSidePane extends BorderPane {
     public static final String FILE_EXTENSION = ".nf.zip";
     private static Logger logger = Logger.getLogger(MainSidePane.class.getName());
 
+    private List<Clip> clips = new ArrayList<>();
     private FileChooser fileChooser;
     private File currentFile;
     private FileChooser exportFileChooser;
@@ -100,7 +102,39 @@ public class MainSidePane extends BorderPane {
 
         eventBus.subscribe("history-session-selected", event -> notifyHistoryItemSelected(eventBus, event));
 
-        eventBus.subscribe("session-export", event -> handleExportSession(eventBus, (RendererSize) event, session, file -> exportCurrentFile = file));
+        eventBus.subscribe("session-export", event -> handleExportSession(eventBus, (RendererSize) ((Object[])event)[0], (String) ((Object[])event)[1], session, clips, file -> exportCurrentFile = file));
+
+        eventBus.subscribe("capture-clip-added", event -> handleClipAdded((Clip)event));
+
+        eventBus.subscribe("capture-clip-removed", event -> handleClipRemoved((Clip)event));
+
+        eventBus.subscribe("capture-clip-moved-up", event -> handleClipMovedUp((Clip)event));
+
+        eventBus.subscribe("capture-clip-moved-down", event -> handleClipMovedDown((Clip)event));
+    }
+
+    private void handleClipAdded(Clip clip) {
+        clips.add(clip);
+    }
+
+    private void handleClipRemoved(Clip clip) {
+        clips.remove(clip);
+    }
+
+    private void handleClipMovedUp(Clip clip) {
+        int index = clips.indexOf(clip);
+        if (index > 0) {
+            clips.remove(index);
+            clips.add(index - 1, clip);
+        }
+    }
+
+    private void handleClipMovedDown(Clip clip) {
+        int index = clips.indexOf(clip);
+        if (index < clips.size() - 1) {
+            clips.remove(index);
+            clips.add(index, clip);
+        }
     }
 
     private void notifyHistoryItemSelected(EventBus eventBus, Object event) {
@@ -195,9 +229,9 @@ public class MainSidePane extends BorderPane {
 
         exportPane.setExportDelegate(new ExportDelegate() {
             @Override
-            public void createSession(RendererSize rendererSize) {
+            public void createSession(RendererSize size, String format) {
                 if (errorProperty.getValue() == null) {
-                    eventBus.postEvent("session-export", rendererSize);
+                    eventBus.postEvent("session-export", new Object[] { size, format });
                 }
             }
 
@@ -220,6 +254,26 @@ public class MainSidePane extends BorderPane {
                 if (errorProperty.getValue() == null) {
                     eventBus.postEvent("preview-video", clips);
                 }
+            }
+
+            @Override
+            public void captureSessionAdded(Clip clip) {
+                eventBus.postEvent("capture-clip-added", clip);
+            }
+
+            @Override
+            public void captureSessionRemoved(Clip clip) {
+                eventBus.postEvent("capture-clip-removed", clip);
+            }
+
+            @Override
+            public void captureSessionMovedUp(Clip clip) {
+                eventBus.postEvent("capture-clip-moved-up", clip);
+            }
+
+            @Override
+            public void captureSessionMovedDown(Clip clip) {
+                eventBus.postEvent("capture-clip-moved-down", clip);
             }
         });
 
@@ -519,21 +573,21 @@ public class MainSidePane extends BorderPane {
         this.currentFile = currentFile;
     }
 
-    private void handleExportSession(EventBus eventBus, RendererSize rendererSize, Session session, Consumer<File> consumer) {
-        createEncoder("PNG").ifPresent(encoder -> selectFileAndExport(eventBus, rendererSize, encoder, session, consumer));
+    private void handleExportSession(EventBus eventBus, RendererSize size, String format, Session session, List<Clip> clips, Consumer<File> consumer) {
+        createEncoder(format).ifPresent(encoder -> selectFileAndExport(eventBus, size, encoder, session, clips, consumer));
     }
 
     private Optional<? extends Encoder> createEncoder(String format) {
-        return tryFindEncoder(format).onFailure(e -> logger.warning("Cannot find encoder for PNG format")).value();
+        return tryFindEncoder(format).onFailure(e -> logger.warning("Cannot find encoder for format " + format)).value();
     }
 
-    private void selectFileAndExport(EventBus eventBus, RendererSize rendererSize, Encoder encoder, Session session, Consumer<File> consumer) {
-        Consumer<File> fileConsumer = file -> createExportSession(eventBus, rendererSize, encoder, file, session);
+    private void selectFileAndExport(EventBus eventBus, RendererSize size, Encoder encoder, Session session, List<Clip> clips, Consumer<File> consumer) {
+        Consumer<File> fileConsumer = file -> createExportSession(eventBus, size, encoder, file, session, clips);
         Optional.ofNullable(prepareExportFileChooser(encoder.getSuffix()).showSaveDialog(MainSidePane.this.getScene().getWindow())).ifPresent(fileConsumer.andThen(consumer));
     }
 
-    private void createExportSession(EventBus eventBus, RendererSize rendererSize, Encoder encoder, File file, Session session) {
-        startExportSession(eventBus, UUID.randomUUID().toString(), rendererSize, encoder, file, session);
+    private void createExportSession(EventBus eventBus, RendererSize size, Encoder encoder, File file, Session session, List<Clip> clips) {
+        startExportSession(eventBus, UUID.randomUUID().toString(), size, encoder, file, session, clips);
     }
 
     private FileChooser prepareExportFileChooser(String suffix) {
@@ -546,10 +600,10 @@ public class MainSidePane extends BorderPane {
         return exportFileChooser;
     }
 
-    private void startExportSession(EventBus eventBus, String uuid, RendererSize rendererSize, Encoder encoder, File file, Session session) {
+    private void startExportSession(EventBus eventBus, String uuid, RendererSize size, Encoder encoder, File file, Session session, List<Clip> clips) {
         try {
             File tmpFile = File.createTempFile("export-" + uuid, ".dat");
-            ExportSession exportSession = new ExportSession(uuid, session, file, tmpFile, rendererSize, 200, encoder);
+            ExportSession exportSession = new ExportSession(uuid, session, clips, file, tmpFile, size, 200, encoder);
             logger.info("Export session created: " + exportSession.getSessionId());
             eventBus.postEvent("export-session-created", exportSession);
         } catch (Exception e) {

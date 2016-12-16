@@ -91,7 +91,7 @@ public class SimpleExportRenderer implements ExportRenderer {
 
 		private ExportJob processJob(ExportJob job) throws IOException {
 			logger.fine(job.toString());
-			Session session = (Session) job.getProfile().getData();
+			Session session = job.getProfile().getSession();
 			ImageGenerator generator = createImageGenerator(job);
 			IntBuffer pixels = generator.renderImage(session.getScript(), session.getMetadata());
 			if (generator.isInterrupted()) {

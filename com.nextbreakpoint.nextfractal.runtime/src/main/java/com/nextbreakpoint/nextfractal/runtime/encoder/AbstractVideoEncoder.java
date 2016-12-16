@@ -82,6 +82,7 @@ public abstract class AbstractVideoEncoder implements Encoder {
 			int frame_width = context.getImageWidth();
 			int frame_height = context.getImageHeight();
 			format_context = FFmpeg4Java.avformat_alloc_context();
+			output_format = FFmpeg4Java.av_guess_format(null, path.getAbsolutePath(), null);
 			if (format_context != null && output_format != null && !output_format.getVideo_codec().equals(AVCodecID.AV_CODEC_ID_NONE)) {
 				AbstractVideoEncoder.logger.fine("Format is " + output_format.getLong_name());
 				format_context.setOformat(output_format);

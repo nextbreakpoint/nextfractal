@@ -30,11 +30,19 @@ import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 import java.util.List;
 
 public interface ExportDelegate {
-	void createSession(RendererSize rendererSize);
+	void createSession(RendererSize size, String format);
 
     void startCaptureSession();
 
     void stopCaptureSession();
 
     void showVideoPreview(List<Clip> clips);
+
+    void captureSessionAdded(Clip clip);
+
+    void captureSessionRemoved(Clip clip);
+
+    void captureSessionMovedUp(Clip clip);
+
+    void captureSessionMovedDown(Clip clip);
 }

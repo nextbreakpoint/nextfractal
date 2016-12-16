@@ -24,6 +24,7 @@
  */
 package com.nextbreakpoint.nextfractal.core.export;
 
+import com.nextbreakpoint.nextfractal.core.Session;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererPoint;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
@@ -43,7 +44,7 @@ public class ExportProfile {
 	private float startTime;
 	private float stopTime;
 	private String pluginId;
-	private Object data;
+	private Session session;
 
 	public float getFrameRate() {
 		return frameRate;
@@ -141,12 +142,12 @@ public class ExportProfile {
 		this.pluginId = pluginId;
 	}
 
-	public Object getData() {
-		return data;
+	public Session getSession() {
+		return session;
 	}
 
-	public void setData(Object data) {
-		this.data = data;
+	public void setSession(Session session) {
+		this.session = session;
 	}
 
 	public float getStartTime() {

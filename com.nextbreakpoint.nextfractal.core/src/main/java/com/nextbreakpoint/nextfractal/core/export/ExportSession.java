@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.nextbreakpoint.nextfractal.core.Clip;
 import com.nextbreakpoint.nextfractal.core.Session;
 import com.nextbreakpoint.nextfractal.core.encoder.Encoder;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
@@ -41,6 +42,7 @@ public final class ExportSession {
 	private final Encoder encoder;
 	private final RendererSize size;
 	private final Session session;
+	private List<Clip> clips;
 	private final File tmpFile;
 	private final File file;
 	private final int tileSize;
@@ -54,8 +56,9 @@ public final class ExportSession {
 	private volatile ExportState state = ExportState.SUSPENDED;
 	private IntBuffer pixels;
 
-	public ExportSession(String sessionId, Session session, File file, File tmpFile, RendererSize size, int tileSize, Encoder encoder) {
+	public ExportSession(String sessionId, Session session, List<Clip> clips, File file, File tmpFile, RendererSize size, int tileSize, Encoder encoder) {
 		this.session = session;
+		this.clips = clips;
 		this.tmpFile = tmpFile;
 		this.file = file;
 		this.size = size;
@@ -248,7 +251,7 @@ public final class ExportSession {
 		profile.setTileOffsetY(tileOffsetY);
 		profile.setBorderWidth(BORDER_SIZE);
 		profile.setBorderHeight(BORDER_SIZE);
-		profile.setData(session);
+		profile.setSession(session);
 		return profile;
 	}
 
