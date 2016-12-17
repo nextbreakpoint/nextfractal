@@ -114,7 +114,7 @@ public class SimpleExportService extends AbstractExportService {
 	}
 
 	private boolean isSessionCompleted(ExportSession session) {
-		return session.getCompletedJobsCount() == session.getJobsCount();
+		return session.getFrameNumber() == session.getFrameCount() && session.getCompletedJobsCount() == session.getJobsCount();
 	}
 
 	private void dispatchJobs(ExportSession session) {

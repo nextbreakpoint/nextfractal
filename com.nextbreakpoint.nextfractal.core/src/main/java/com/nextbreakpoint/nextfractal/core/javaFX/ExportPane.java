@@ -339,7 +339,7 @@ public class ExportPane extends BorderPane {
 			previewButton.setPrefWidth(width);
 		});
 
-		executor = Executors.newSingleThreadExecutor(new DefaultThreadFactory("Export Generator", true, Thread.MIN_PRIORITY));
+		executor = Executors.newSingleThreadExecutor(createThreadFactory("Export Generator"));
 	}
 
 	private void loadImagePresets(ComboBox<Integer[]> presetsCombobox) {

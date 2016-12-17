@@ -42,6 +42,7 @@ public final class ExportSession {
 	private final Encoder encoder;
 	private final RendererSize size;
 	private final Session session;
+	private final int frameCount;
 	private List<Clip> clips;
 	private final File tmpFile;
 	private final File file;
@@ -69,6 +70,8 @@ public final class ExportSession {
 		this.startTime = 0;
 		this.stopTime = 0;
 		sessioinId = sessionId;
+		this.frameNumber = 1;
+		this.frameCount = computeFrameCount(startTime, stopTime, frameRate) + 1;
 		jobs.addAll(createJobs(0));
 	}
 	
@@ -156,6 +159,10 @@ public final class ExportSession {
 		return state;
 	}
 
+	public int getFrameCount() {
+		return frameCount;
+	}
+
 	public int getJobsCount() {
 		return jobs.size();
 	}
@@ -165,17 +172,11 @@ public final class ExportSession {
 	}
 
 	public void updateProgress() {
-		setProgress((float)getCompletedJobsCount() / (float)jobs.size());
+		setProgress((float)Math.rint((getFrameNumber() / (float)getFrameCount()) / 10f) * 10f + (getCompletedJobsCount() / (float)jobs.size()));
 	}
 
 	public int getCompletedJobsCount() {
-		int count = 0;
-		for (ExportJob job : jobs) {
-			if (job.isCompleted()) {
-				count += 1;
-			}
-		}
-		return count;
+		return jobs.stream().filter(job -> job.isCompleted()).mapToInt(job -> 1).sum();
 	}
 
 	public void dispose() {
@@ -257,6 +258,10 @@ public final class ExportSession {
 
 	private ExportJob createJob(ExportProfile profile) {
 		return new ExportJob(this, profile);
+	}
+
+	private int computeFrameCount(double startTime, double stopTime, float frameRate) {
+		return (int) Math.floor((stopTime - startTime) * frameRate);
 	}
 
 	public IntBuffer getPixels() {

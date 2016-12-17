@@ -62,7 +62,7 @@ public class JobsPane extends BorderPane {
     private static Logger logger = Logger.getLogger(JobsPane.class.getName());
     private static final int PADDING = 8;
 
-    private final ScheduledExecutorService executor;
+    private final ExecutorService executor;
     private final ListView<Bitmap> listView;
     private JobsDelegate delegate;
     private RendererTile tile;
@@ -106,7 +106,7 @@ public class JobsPane extends BorderPane {
         removeButton.setOnAction(e -> selectedItems(listView)
             .forEach(bitmap -> Optional.ofNullable(delegate).ifPresent(delegate -> delegate.sessionStopped((ExportSession) bitmap.getProperty("exportSession")))));
 
-        executor = Executors.newSingleThreadScheduledExecutor(createThreadFactory("Jobs List"));
+        executor = Executors.newSingleThreadExecutor(createThreadFactory("Jobs List"));
     }
 
     private DefaultThreadFactory createThreadFactory(String name) {
