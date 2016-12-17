@@ -24,10 +24,10 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.grammar;
 
+import org.antlr.v4.runtime.Token;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import org.antlr.v4.runtime.Token;
 
 public class ASTOrbitEnd extends ASTObject {
 	private List<ASTStatement> statements = new ArrayList<>(); 

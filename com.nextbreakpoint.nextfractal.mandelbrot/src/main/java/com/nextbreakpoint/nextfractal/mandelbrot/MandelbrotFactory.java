@@ -24,18 +24,19 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ThreadFactory;
-
 import com.nextbreakpoint.nextfractal.core.EventBus;
 import com.nextbreakpoint.nextfractal.core.FileManager;
+import com.nextbreakpoint.nextfractal.core.FractalFactory;
+import com.nextbreakpoint.nextfractal.core.ImageGenerator;
+import com.nextbreakpoint.nextfractal.core.Session;
 import com.nextbreakpoint.nextfractal.core.javaFX.Bitmap;
 import com.nextbreakpoint.nextfractal.core.javaFX.BrowseBitmap;
 import com.nextbreakpoint.nextfractal.core.javaFX.GridItemRenderer;
+import com.nextbreakpoint.nextfractal.core.renderer.RendererFactory;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererGraphicsContext;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererPoint;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
+import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
 import com.nextbreakpoint.nextfractal.core.renderer.javaFX.JavaFXRendererFactory;
 import com.nextbreakpoint.nextfractal.core.utils.DefaultThreadFactory;
 import com.nextbreakpoint.nextfractal.core.utils.Integer4D;
@@ -47,16 +48,14 @@ import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Orbit;
 import com.nextbreakpoint.nextfractal.mandelbrot.javaFX.EditorPane;
 import com.nextbreakpoint.nextfractal.mandelbrot.javaFX.ParamsPane;
+import com.nextbreakpoint.nextfractal.mandelbrot.javaFX.RenderPane;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererCoordinator;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererView;
 import javafx.scene.layout.Pane;
 
-import com.nextbreakpoint.nextfractal.core.FractalFactory;
-import com.nextbreakpoint.nextfractal.core.ImageGenerator;
-import com.nextbreakpoint.nextfractal.core.renderer.RendererFactory;
-import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
-import com.nextbreakpoint.nextfractal.core.Session;
-import com.nextbreakpoint.nextfractal.mandelbrot.javaFX.RenderPane;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ThreadFactory;
 
 public class MandelbrotFactory implements FractalFactory {
 	public static final String PLUGIN_ID = "Mandelbrot";

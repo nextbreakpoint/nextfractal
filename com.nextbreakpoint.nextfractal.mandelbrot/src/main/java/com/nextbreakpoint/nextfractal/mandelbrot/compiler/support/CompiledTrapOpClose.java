@@ -24,9 +24,8 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.compiler.support;
 
-import org.antlr.v4.runtime.Token;
-
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Trap;
+import org.antlr.v4.runtime.Token;
 
 public class CompiledTrapOpClose extends CompiledTrapOp {
 	

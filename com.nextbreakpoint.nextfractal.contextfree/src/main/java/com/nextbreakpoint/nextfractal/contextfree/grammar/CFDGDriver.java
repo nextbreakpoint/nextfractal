@@ -24,16 +24,51 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.grammar;
 
-import java.util.*;
-
 import com.nextbreakpoint.nextfractal.contextfree.core.Rand64;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.*;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.*;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTArray;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTCons;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTDefine;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTExpression;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTFunction;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTLet;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTModTerm;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTModification;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTParameter;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTPathCommand;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTReal;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTRepContainer;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTReplacement;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTRule;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTRuleSpecifier;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTSelect;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTStartSpecifier;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTSwitch;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTUserFunction;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTVariable;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ArgSource;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.CFG;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.DefineType;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ExpType;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.FlagType;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.FuncType;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.Locality;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ModType;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.Param;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.PathOp;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.RepElemType;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ShapeType;
 import org.antlr.v4.runtime.ANTLRFileStream;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Token;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
+import java.util.Stack;
 
 public class CFDGDriver {
 	private CFDG cfdg = new CFDG(this);

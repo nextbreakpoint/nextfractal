@@ -24,10 +24,6 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.interpreter;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.ExpressionContext;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.InterpreterContext;
@@ -42,6 +38,10 @@ import com.nextbreakpoint.nextfractal.mandelbrot.core.Palette;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.PaletteElement;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.PaletteExpression;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Trap;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 public class InterpreterColor extends Color implements InterpreterContext {
 	private CompiledColor color;

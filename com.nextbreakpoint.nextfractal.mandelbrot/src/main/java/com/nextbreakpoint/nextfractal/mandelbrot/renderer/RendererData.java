@@ -24,11 +24,11 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.renderer;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.nextbreakpoint.nextfractal.mandelbrot.core.MutableNumber;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class RendererData {
 	protected double[] positionX;

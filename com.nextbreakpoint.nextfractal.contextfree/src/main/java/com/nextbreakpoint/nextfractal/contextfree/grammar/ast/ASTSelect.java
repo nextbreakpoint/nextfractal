@@ -24,12 +24,15 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.grammar.ast;
 
-import java.util.List;
-
-import com.nextbreakpoint.nextfractal.contextfree.grammar.*;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGDriver;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGRenderer;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFStackRule;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.Modification;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.CompilePhase;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ExpType;
 import org.antlr.v4.runtime.Token;
+
+import java.util.List;
 
 public class ASTSelect extends ASTExpression {
 	private static final int NOT_CACHED = -1;

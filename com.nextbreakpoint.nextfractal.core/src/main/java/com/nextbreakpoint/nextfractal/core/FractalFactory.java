@@ -24,16 +24,15 @@
  */
 package com.nextbreakpoint.nextfractal.core;
 
-import java.util.concurrent.ThreadFactory;
-
 import com.nextbreakpoint.nextfractal.core.javaFX.Bitmap;
 import com.nextbreakpoint.nextfractal.core.javaFX.BrowseBitmap;
 import com.nextbreakpoint.nextfractal.core.javaFX.GridItemRenderer;
+import com.nextbreakpoint.nextfractal.core.renderer.RendererFactory;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
+import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
 import javafx.scene.layout.Pane;
 
-import com.nextbreakpoint.nextfractal.core.renderer.RendererFactory;
-import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
+import java.util.concurrent.ThreadFactory;
 
 public interface FractalFactory {
 	/**

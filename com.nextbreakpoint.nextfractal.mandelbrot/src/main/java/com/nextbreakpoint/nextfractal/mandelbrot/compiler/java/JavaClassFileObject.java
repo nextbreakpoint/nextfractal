@@ -24,14 +24,13 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.compiler.java;
 
+import javax.tools.SimpleJavaFileObject;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
-
-import javax.tools.SimpleJavaFileObject;
 
 public class JavaClassFileObject extends SimpleJavaFileObject {
 	private ByteArrayOutputStream baos = new ByteArrayOutputStream();

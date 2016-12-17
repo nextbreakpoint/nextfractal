@@ -24,12 +24,11 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.grammar;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledPalette;
 import org.antlr.v4.runtime.Token;
 
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledPalette;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ASTPalette extends ASTObject {
 	private String name;

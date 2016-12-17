@@ -27,16 +27,31 @@ package com.nextbreakpoint.nextfractal.contextfree.grammar.ast;
 import com.nextbreakpoint.nextfractal.contextfree.core.Rand64;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGDriver;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGRenderer;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.exceptions.DeferUntilRuntimeException;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.HSBColor;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.CompilePhase;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ExpType;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.FuncType;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.Locality;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.exceptions.DeferUntilRuntimeException;
 import org.antlr.v4.runtime.Token;
 
 import static com.nextbreakpoint.nextfractal.contextfree.grammar.ast.AST.MAX_VECTOR_SIZE;
-import static com.nextbreakpoint.nextfractal.contextfree.grammar.enums.FuncType.*;
+import static com.nextbreakpoint.nextfractal.contextfree.grammar.enums.FuncType.Abs;
+import static com.nextbreakpoint.nextfractal.contextfree.grammar.enums.FuncType.BitAnd;
+import static com.nextbreakpoint.nextfractal.contextfree.grammar.enums.FuncType.BitLeft;
+import static com.nextbreakpoint.nextfractal.contextfree.grammar.enums.FuncType.BitNot;
+import static com.nextbreakpoint.nextfractal.contextfree.grammar.enums.FuncType.BitOr;
+import static com.nextbreakpoint.nextfractal.contextfree.grammar.enums.FuncType.BitRight;
+import static com.nextbreakpoint.nextfractal.contextfree.grammar.enums.FuncType.BitXOR;
+import static com.nextbreakpoint.nextfractal.contextfree.grammar.enums.FuncType.Div;
+import static com.nextbreakpoint.nextfractal.contextfree.grammar.enums.FuncType.Divides;
+import static com.nextbreakpoint.nextfractal.contextfree.grammar.enums.FuncType.Factorial;
+import static com.nextbreakpoint.nextfractal.contextfree.grammar.enums.FuncType.IsNatural;
+import static com.nextbreakpoint.nextfractal.contextfree.grammar.enums.FuncType.Max;
+import static com.nextbreakpoint.nextfractal.contextfree.grammar.enums.FuncType.Min;
+import static com.nextbreakpoint.nextfractal.contextfree.grammar.enums.FuncType.Mod;
+import static com.nextbreakpoint.nextfractal.contextfree.grammar.enums.FuncType.RandInt;
+import static com.nextbreakpoint.nextfractal.contextfree.grammar.enums.FuncType.Sg;
 
 public class ASTFunction extends ASTExpression {
 	private ASTExpression arguments;

@@ -24,9 +24,8 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.grammar;
 
-import org.antlr.v4.runtime.Token;
-
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledColorExpression;
+import org.antlr.v4.runtime.Token;
 
 public abstract class ASTColorExpression extends ASTObject {
 	public ASTColorExpression(Token location) {

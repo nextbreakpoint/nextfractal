@@ -24,10 +24,10 @@
  */
 package com.nextbreakpoint.nextfractal.runtime.encoder;
 
+import com.nextbreakpoint.nextfractal.core.encoder.EncoderContext;
+
 import java.io.IOException;
 import java.io.RandomAccessFile;
-
-import com.nextbreakpoint.nextfractal.core.encoder.EncoderContext;
 
 /**
  * @author Andrea Medeghini

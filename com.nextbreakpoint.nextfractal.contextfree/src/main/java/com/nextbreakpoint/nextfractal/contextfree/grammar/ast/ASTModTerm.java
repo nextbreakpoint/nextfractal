@@ -24,17 +24,25 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.grammar.ast;
 
+import com.nextbreakpoint.nextfractal.contextfree.core.AffineTransform1D;
+import com.nextbreakpoint.nextfractal.contextfree.core.AffineTransformTime;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGDriver;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGRenderer;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.HSBColor;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.Modification;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.AssignmentType;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.CompilePhase;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ExpType;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.FlagType;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ModClass;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ModType;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.exceptions.DeferUntilRuntimeException;
+import org.antlr.v4.runtime.Token;
+
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.util.HashMap;
 import java.util.Map;
-
-import com.nextbreakpoint.nextfractal.contextfree.core.AffineTransform1D;
-import com.nextbreakpoint.nextfractal.contextfree.core.AffineTransformTime;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.*;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.*;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.exceptions.DeferUntilRuntimeException;
-import org.antlr.v4.runtime.Token;
 
 public class ASTModTerm extends ASTExpression {
 	private int argCount;

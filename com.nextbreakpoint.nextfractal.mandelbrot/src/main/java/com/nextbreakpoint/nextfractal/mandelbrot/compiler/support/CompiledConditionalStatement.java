@@ -24,14 +24,13 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.compiler.support;
 
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.InterpreterContext;
+import org.antlr.v4.runtime.Token;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.antlr.v4.runtime.Token;
-
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.InterpreterContext;
 
 public class CompiledConditionalStatement extends CompiledStatement {
 	private CompiledCondition condition;

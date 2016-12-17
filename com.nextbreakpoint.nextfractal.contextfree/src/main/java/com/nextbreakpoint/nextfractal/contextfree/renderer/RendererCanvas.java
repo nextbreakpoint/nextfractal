@@ -25,19 +25,25 @@
 package com.nextbreakpoint.nextfractal.contextfree.renderer;
 
 import com.nextbreakpoint.nextfractal.contextfree.core.Bounds;
-import com.nextbreakpoint.nextfractal.contextfree.core.ExtendedGeneralPath;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.CFCanvas;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.CommandInfo;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.PrimShape;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.FlagType;
-import com.nextbreakpoint.nextfractal.core.renderer.*;
+import com.nextbreakpoint.nextfractal.core.renderer.RendererAffine;
+import com.nextbreakpoint.nextfractal.core.renderer.RendererColor;
+import com.nextbreakpoint.nextfractal.core.renderer.RendererFactory;
+import com.nextbreakpoint.nextfractal.core.renderer.RendererGraphicsContext;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.PathIterator;
 
-import static com.nextbreakpoint.nextfractal.contextfree.core.ExtendedPathIterator.*;
+import static com.nextbreakpoint.nextfractal.contextfree.core.ExtendedPathIterator.SEG_CLOSE;
+import static com.nextbreakpoint.nextfractal.contextfree.core.ExtendedPathIterator.SEG_CUBICTO;
+import static com.nextbreakpoint.nextfractal.contextfree.core.ExtendedPathIterator.SEG_LINETO;
+import static com.nextbreakpoint.nextfractal.contextfree.core.ExtendedPathIterator.SEG_MOVETO;
+import static com.nextbreakpoint.nextfractal.contextfree.core.ExtendedPathIterator.SEG_QUADTO;
 
 public class RendererCanvas implements CFCanvas {
     private RendererGraphicsContext context;

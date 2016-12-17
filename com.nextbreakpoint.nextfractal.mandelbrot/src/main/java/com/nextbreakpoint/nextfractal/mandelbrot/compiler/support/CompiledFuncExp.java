@@ -24,16 +24,15 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.compiler.support;
 
-import static com.nextbreakpoint.nextfractal.mandelbrot.core.Expression.funcExp;
-
-import java.util.Map;
-
-import org.antlr.v4.runtime.Token;
-
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.ExpressionContext;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.InterpreterContext;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
+import org.antlr.v4.runtime.Token;
+
+import java.util.Map;
+
+import static com.nextbreakpoint.nextfractal.mandelbrot.core.Expression.funcExp;
 
 public class CompiledFuncExp extends CompiledExpression {
 	private CompiledExpression[] arguments;

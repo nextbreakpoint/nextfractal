@@ -24,12 +24,19 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.grammar.ast;
 
-import java.awt.geom.PathIterator;
-
-import com.nextbreakpoint.nextfractal.contextfree.grammar.*;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.*;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGDriver;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGRenderer;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.PathStorage;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.PrimShape;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.Shape;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.CompilePhase;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.PathOp;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.PrimShapeType;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.RepElemType;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.WeightType;
 import org.antlr.v4.runtime.Token;
+
+import java.awt.geom.PathIterator;
 
 public class ASTRule extends ASTReplacement implements Comparable<ASTRule> {
 	private ASTRepContainer ruleBody;

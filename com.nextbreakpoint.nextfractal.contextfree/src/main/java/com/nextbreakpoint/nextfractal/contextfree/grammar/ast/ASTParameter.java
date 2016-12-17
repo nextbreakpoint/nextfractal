@@ -24,13 +24,13 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.grammar.ast;
 
-import java.util.List;
-
 import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGDriver;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.DefineType;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ExpType;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.Locality;
 import org.antlr.v4.runtime.Token;
+
+import java.util.List;
 
 public class ASTParameter {
 	public static boolean Impure = false;

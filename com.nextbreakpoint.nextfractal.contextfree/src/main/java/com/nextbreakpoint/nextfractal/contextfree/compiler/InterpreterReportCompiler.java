@@ -24,9 +24,11 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.compiler;
 
-import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDG;
 import com.nextbreakpoint.nextfractal.contextfree.compiler.CompilerReport.Type;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.*;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDG;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGDriver;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGLexer;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGParser;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.exceptions.CFDGException;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;

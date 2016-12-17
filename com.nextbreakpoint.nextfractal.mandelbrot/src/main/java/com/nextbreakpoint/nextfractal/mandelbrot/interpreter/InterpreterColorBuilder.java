@@ -24,12 +24,6 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.interpreter;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerBuilder;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerError;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerError.ErrorType;
@@ -47,6 +41,12 @@ import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTFractal;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTPalette;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTRule;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTStatement;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 public class InterpreterColorBuilder implements CompilerBuilder<Color> {
 	private ASTFractal astFractal;

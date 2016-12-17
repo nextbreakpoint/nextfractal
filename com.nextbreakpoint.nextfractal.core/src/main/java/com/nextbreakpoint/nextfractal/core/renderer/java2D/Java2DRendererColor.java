@@ -24,10 +24,10 @@
  */
 package com.nextbreakpoint.nextfractal.core.renderer.java2D;
 
-import java.awt.Color;
-
 import com.nextbreakpoint.nextfractal.core.renderer.RendererColor;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererGraphicsContext;
+
+import java.awt.*;
 
 public class Java2DRendererColor implements RendererColor {
 	private Color color;

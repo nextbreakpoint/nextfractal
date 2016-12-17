@@ -24,11 +24,10 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.grammar;
 
-import java.util.Stack;
-
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
 import org.antlr.v4.runtime.Token;
 
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
+import java.util.Stack;
 
 public class ASTBuilder {
 	private ASTFractal fractal;

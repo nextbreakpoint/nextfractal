@@ -24,15 +24,21 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.grammar.ast;
 
+import com.nextbreakpoint.nextfractal.contextfree.core.Rand64;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGDriver;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGRenderer;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.Modification;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.CompilePhase;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ExpType;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.Locality;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ModClass;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ModType;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.exceptions.DeferUntilRuntimeException;
+import org.antlr.v4.runtime.Token;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-import com.nextbreakpoint.nextfractal.contextfree.core.Rand64;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.*;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.*;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.exceptions.DeferUntilRuntimeException;
-import org.antlr.v4.runtime.Token;
 
 public class ASTModification extends ASTExpression {
 	private ModClass modClass;

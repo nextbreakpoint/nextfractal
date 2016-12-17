@@ -24,16 +24,13 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.grammar;
 
-import com.nextbreakpoint.nextfractal.contextfree.core.ExtendedGeneralPath;
-
 import java.awt.Shape;
-import java.awt.geom.GeneralPath;
-import java.util.ArrayList;
-import java.util.List;
-
 import java.awt.geom.AffineTransform;
+import java.awt.geom.GeneralPath;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PathStorage implements Cloneable {
 	private GeneralPath currentPath = new GeneralPath();

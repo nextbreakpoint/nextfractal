@@ -24,15 +24,17 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.grammar.ast;
 
-import java.awt.geom.AffineTransform;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.nextbreakpoint.nextfractal.contextfree.core.Rand64;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.*;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGDriver;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGRenderer;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.Shape;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.CompilePhase;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.RepElemType;
 import org.antlr.v4.runtime.Token;
+
+import java.awt.geom.AffineTransform;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ASTTransform extends ASTReplacement {
 	private ASTRepContainer body;

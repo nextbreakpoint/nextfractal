@@ -24,7 +24,6 @@
  */
 package com.nextbreakpoint.nextfractal.core.javaFX;
 
-import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
 import javafx.geometry.Pos;
 import javafx.scene.canvas.Canvas;

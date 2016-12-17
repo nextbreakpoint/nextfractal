@@ -24,9 +24,9 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.compiler;
 
-import java.util.List;
-
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTFractal;
+
+import java.util.List;
 
 public class CompilerReport {
 	private ASTFractal ast;

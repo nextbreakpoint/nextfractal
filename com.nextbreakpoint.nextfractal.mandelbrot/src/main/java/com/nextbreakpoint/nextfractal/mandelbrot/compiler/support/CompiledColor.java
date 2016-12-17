@@ -24,12 +24,11 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.compiler.support;
 
-import java.util.Collection;
-import java.util.List;
-
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
 import org.antlr.v4.runtime.Token;
 
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
+import java.util.Collection;
+import java.util.List;
 
 public class CompiledColor {
 	private Collection<CompilerVariable> colorVariables; 

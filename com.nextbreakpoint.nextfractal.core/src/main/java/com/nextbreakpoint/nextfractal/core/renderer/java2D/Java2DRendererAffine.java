@@ -24,10 +24,10 @@
  */
 package com.nextbreakpoint.nextfractal.core.renderer.java2D;
 
-import java.awt.geom.AffineTransform;
-
 import com.nextbreakpoint.nextfractal.core.renderer.RendererAffine;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererGraphicsContext;
+
+import java.awt.geom.AffineTransform;
 
 public class Java2DRendererAffine implements RendererAffine {
 	private AffineTransform affine = new AffineTransform();

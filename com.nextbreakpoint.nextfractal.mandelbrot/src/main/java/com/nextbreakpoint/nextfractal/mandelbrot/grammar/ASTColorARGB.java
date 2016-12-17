@@ -24,9 +24,9 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.grammar;
 
-import java.text.DecimalFormat;
-
 import com.nextbreakpoint.nextfractal.core.utils.Colors;
+
+import java.text.DecimalFormat;
 
 public class ASTColorARGB {
 	private static final DecimalFormat format = new DecimalFormat("0.##");

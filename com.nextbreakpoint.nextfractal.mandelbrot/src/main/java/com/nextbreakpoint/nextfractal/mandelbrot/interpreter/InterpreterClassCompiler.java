@@ -24,15 +24,15 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.interpreter;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerBuilder;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerError;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerReport;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Color;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Orbit;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class InterpreterClassCompiler {
 	public CompilerBuilder<Orbit> compileOrbit(CompilerReport report) throws ClassNotFoundException, IOException {

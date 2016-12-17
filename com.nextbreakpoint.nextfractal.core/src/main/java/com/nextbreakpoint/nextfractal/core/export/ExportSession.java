@@ -24,16 +24,16 @@
  */
 package com.nextbreakpoint.nextfractal.core.export;
 
+import com.nextbreakpoint.nextfractal.core.Clip;
+import com.nextbreakpoint.nextfractal.core.Session;
+import com.nextbreakpoint.nextfractal.core.encoder.Encoder;
+import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
+
 import java.io.File;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import com.nextbreakpoint.nextfractal.core.Clip;
-import com.nextbreakpoint.nextfractal.core.Session;
-import com.nextbreakpoint.nextfractal.core.encoder.Encoder;
-import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 
 public final class ExportSession {
 	private static final int BORDER_SIZE = 0;

@@ -24,20 +24,19 @@
  */
 package com.nextbreakpoint.nextfractal.runtime.encoder;
 
-import java.io.File;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import com.nextbreakpoint.freeimage4java.FIBITMAP;
 import com.nextbreakpoint.freeimage4java.FREE_IMAGE_FORMAT;
 import com.nextbreakpoint.freeimage4java.FreeImage4Java;
 import com.nextbreakpoint.freeimage4java.FreeImage4JavaConstants;
 import com.nextbreakpoint.freeimage4java.RGBQUAD;
-
 import com.nextbreakpoint.nextfractal.core.encoder.Encoder;
 import com.nextbreakpoint.nextfractal.core.encoder.EncoderContext;
 import com.nextbreakpoint.nextfractal.core.encoder.EncoderDelegate;
 import com.nextbreakpoint.nextfractal.core.encoder.EncoderException;
+
+import java.io.File;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author Andrea Medeghini

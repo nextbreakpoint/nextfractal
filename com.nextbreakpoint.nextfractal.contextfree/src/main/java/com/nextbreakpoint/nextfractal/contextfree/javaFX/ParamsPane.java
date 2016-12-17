@@ -29,7 +29,8 @@ import com.nextbreakpoint.nextfractal.contextfree.ContextFreeSession;
 import com.nextbreakpoint.nextfractal.core.EventBus;
 import com.nextbreakpoint.nextfractal.core.javaFX.AdvancedTextField;
 import javafx.application.Platform;
-import javafx.scene.control.*;
+import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 

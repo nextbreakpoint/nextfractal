@@ -24,9 +24,6 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.grammar.ast;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGDriver;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGRenderer;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.Modification;
@@ -34,6 +31,9 @@ import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.CompilePhase;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ExpType;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.Locality;
 import org.antlr.v4.runtime.Token;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ASTCons extends ASTExpression {
 	private List<ASTExpression> children = new ArrayList<ASTExpression>();

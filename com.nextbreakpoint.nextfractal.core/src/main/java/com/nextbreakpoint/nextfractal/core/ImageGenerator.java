@@ -24,9 +24,9 @@
  */
 package com.nextbreakpoint.nextfractal.core;
 
-import java.nio.IntBuffer;
-
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
+
+import java.nio.IntBuffer;
 
 public interface ImageGenerator {
 	/**

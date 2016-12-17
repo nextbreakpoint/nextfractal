@@ -24,13 +24,12 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.grammar;
 
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
+import org.antlr.v4.runtime.Token;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.antlr.v4.runtime.Token;
-
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
 
 public class ASTScope {
 	private Map<String, CompilerVariable> vars = new HashMap<>();

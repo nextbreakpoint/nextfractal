@@ -24,10 +24,10 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.compiler.java;
 
-import java.util.List;
-
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerBuilder;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerError;
+
+import java.util.List;
 
 public class JavaClassBuilder<T> implements CompilerBuilder<T> {
 	private Class<T> clazz;

@@ -24,11 +24,10 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.test;
 
-import static org.junit.Assert.assertEquals;
-
+import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererTransform;
 import org.junit.Test;
 
-import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererTransform;
+import static org.junit.Assert.assertEquals;
 
 public class RendererTransformTest {
 	@Test

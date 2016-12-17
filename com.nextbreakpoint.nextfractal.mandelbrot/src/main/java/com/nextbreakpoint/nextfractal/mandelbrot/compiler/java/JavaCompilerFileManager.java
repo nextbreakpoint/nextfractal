@@ -24,16 +24,15 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.compiler.java;
 
+import javax.tools.FileObject;
+import javax.tools.JavaFileManager;
+import javax.tools.JavaFileObject;
+import javax.tools.JavaFileObject.Kind;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-
-import javax.tools.FileObject;
-import javax.tools.JavaFileManager;
-import javax.tools.JavaFileObject;
-import javax.tools.JavaFileObject.Kind;
 
 public class JavaCompilerFileManager implements JavaFileManager {
 	private Map<String, JavaFileObject> files = new HashMap<>();

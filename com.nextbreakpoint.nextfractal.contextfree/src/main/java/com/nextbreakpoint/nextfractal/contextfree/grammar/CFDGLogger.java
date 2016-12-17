@@ -24,11 +24,11 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.grammar;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.nextbreakpoint.nextfractal.contextfree.renderer.RendererError;
 import org.antlr.v4.runtime.Token;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class CFDGLogger extends Logger {
     private List<RendererError> errors = new ArrayList<>();

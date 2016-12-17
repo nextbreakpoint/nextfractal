@@ -24,12 +24,11 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.test;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringReader;
-import java.util.List;
-
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerError;
+import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTBuilder;
+import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTFractal;
+import com.nextbreakpoint.nextfractal.mandelbrot.grammar.MandelbrotLexer;
+import com.nextbreakpoint.nextfractal.mandelbrot.grammar.MandelbrotParser;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.DiagnosticErrorListener;
@@ -37,11 +36,11 @@ import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.Recognizer;
 import org.antlr.v4.runtime.tree.ParseTree;
 
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerError;
-import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTBuilder;
-import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTFractal;
-import com.nextbreakpoint.nextfractal.mandelbrot.grammar.MandelbrotLexer;
-import com.nextbreakpoint.nextfractal.mandelbrot.grammar.MandelbrotParser;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringReader;
+import java.util.List;
 
 public abstract class BaseTest {
 	protected ASTFractal parse(String source) throws Exception {

@@ -24,9 +24,6 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot;
 
-import java.nio.IntBuffer;
-import java.util.concurrent.ThreadFactory;
-
 import com.nextbreakpoint.nextfractal.core.ImageGenerator;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererFactory;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
@@ -42,6 +39,9 @@ import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Orbit;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.Renderer;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererView;
+
+import java.nio.IntBuffer;
+import java.util.concurrent.ThreadFactory;
 
 public class MandelbrotImageGenerator implements ImageGenerator {
 	private boolean aborted;

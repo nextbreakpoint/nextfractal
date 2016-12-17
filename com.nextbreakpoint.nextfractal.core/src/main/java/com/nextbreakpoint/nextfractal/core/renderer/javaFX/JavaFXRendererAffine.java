@@ -24,10 +24,9 @@
  */
 package com.nextbreakpoint.nextfractal.core.renderer.javaFX;
 
-import javafx.scene.transform.Affine;
-
 import com.nextbreakpoint.nextfractal.core.renderer.RendererAffine;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererGraphicsContext;
+import javafx.scene.transform.Affine;
 
 public class JavaFXRendererAffine implements RendererAffine {
 	private Affine affine = new Affine();

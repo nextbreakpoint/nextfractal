@@ -24,15 +24,20 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.grammar.ast;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.nextbreakpoint.nextfractal.contextfree.grammar.*;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGDriver;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGRenderer;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFStackModification;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFStackNumber;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.Modification;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.Shape;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.CompilePhase;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.DefineType;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ExpType;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.RepElemType;
 import org.antlr.v4.runtime.Token;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ASTDefine extends ASTReplacement {
 	private DefineType defineType;

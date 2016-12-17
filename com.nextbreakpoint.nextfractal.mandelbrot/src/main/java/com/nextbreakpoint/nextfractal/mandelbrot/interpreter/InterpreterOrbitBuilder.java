@@ -24,12 +24,6 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.interpreter;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerBuilder;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerError;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerError.ErrorType;
@@ -46,6 +40,12 @@ import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTFractal;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTOrbit;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTOrbitTrap;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTStatement;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 public class InterpreterOrbitBuilder implements CompilerBuilder<Orbit> {
 	private ASTFractal astFractal;

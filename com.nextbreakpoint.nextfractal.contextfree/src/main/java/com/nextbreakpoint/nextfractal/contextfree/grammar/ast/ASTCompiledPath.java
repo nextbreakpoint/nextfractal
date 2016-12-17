@@ -24,14 +24,21 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.grammar.ast;
 
-import java.awt.geom.*;
-
 import com.nextbreakpoint.nextfractal.contextfree.core.ExtendedGeneralPath;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.*;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGDriver;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGRenderer;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFStackRule;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.Dequeue;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.PathStorage;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.Shape;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.FlagType;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.PathOp;
 import org.antlr.v4.runtime.Token;
+
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Arc2D;
+import java.awt.geom.NoninvertibleTransformException;
+import java.awt.geom.Point2D;
 
 public class ASTCompiledPath {
 	private static Long globalPathUID = new Long(100);

@@ -24,13 +24,12 @@
  */
 package com.nextbreakpoint.nextfractal.core.renderer.javaFX;
 
-import javafx.scene.canvas.GraphicsContext;
-
 import com.nextbreakpoint.nextfractal.core.renderer.RendererAffine;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererColor;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererFont;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererGraphicsContext;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererImage;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.shape.FillRule;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.shape.StrokeLineJoin;

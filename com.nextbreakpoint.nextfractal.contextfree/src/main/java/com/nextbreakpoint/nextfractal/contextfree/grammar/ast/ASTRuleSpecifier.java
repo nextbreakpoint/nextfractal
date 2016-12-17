@@ -24,15 +24,18 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.grammar.ast;
 
-import java.util.Iterator;
-import java.util.List;
-
-import com.nextbreakpoint.nextfractal.contextfree.grammar.*;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGDriver;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGRenderer;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFStack;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFStackRule;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ArgSource;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.CompilePhase;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ExpType;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.Locality;
 import org.antlr.v4.runtime.Token;
+
+import java.util.Iterator;
+import java.util.List;
 
 public class ASTRuleSpecifier extends ASTExpression {
 	private int shapeType;

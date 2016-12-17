@@ -24,15 +24,34 @@
  */
 package com.nextbreakpoint.nextfractal.runtime.encoder;
 
-import java.io.File;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import com.nextbreakpoint.ffmpeg4java.*;
+import com.nextbreakpoint.ffmpeg4java.AVCPBProperties;
+import com.nextbreakpoint.ffmpeg4java.AVCodec;
+import com.nextbreakpoint.ffmpeg4java.AVCodecContext;
+import com.nextbreakpoint.ffmpeg4java.AVCodecID;
+import com.nextbreakpoint.ffmpeg4java.AVCodecParameters;
+import com.nextbreakpoint.ffmpeg4java.AVFormatContext;
+import com.nextbreakpoint.ffmpeg4java.AVFrame;
+import com.nextbreakpoint.ffmpeg4java.AVIOContext;
+import com.nextbreakpoint.ffmpeg4java.AVMediaType;
+import com.nextbreakpoint.ffmpeg4java.AVOutputFormat;
+import com.nextbreakpoint.ffmpeg4java.AVPacket;
+import com.nextbreakpoint.ffmpeg4java.AVPacketSideDataType;
+import com.nextbreakpoint.ffmpeg4java.AVPixelFormat;
+import com.nextbreakpoint.ffmpeg4java.AVRational;
+import com.nextbreakpoint.ffmpeg4java.AVStream;
+import com.nextbreakpoint.ffmpeg4java.FFmpeg4Java;
+import com.nextbreakpoint.ffmpeg4java.SWIGTYPE_p_SwsContext;
+import com.nextbreakpoint.ffmpeg4java.SWIGTYPE_p_p_AVIOContext;
+import com.nextbreakpoint.ffmpeg4java.SWIGTYPE_p_p_void;
+import com.nextbreakpoint.ffmpeg4java.SWIGTYPE_p_uint8_t;
 import com.nextbreakpoint.nextfractal.core.encoder.Encoder;
 import com.nextbreakpoint.nextfractal.core.encoder.EncoderContext;
 import com.nextbreakpoint.nextfractal.core.encoder.EncoderDelegate;
 import com.nextbreakpoint.nextfractal.core.encoder.EncoderException;
+
+import java.io.File;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author Andrea Medeghini

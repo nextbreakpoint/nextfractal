@@ -24,10 +24,9 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.test;
 
+import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTFractal;
 import org.junit.Assert;
 import org.junit.Test;
-
-import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTFractal;
 
 public class GrammarTest1 extends BaseTest {
 	@Test

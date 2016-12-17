@@ -29,7 +29,9 @@ import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTPathCommand;
 
 import java.util.concurrent.atomic.AtomicLong;
 
-import static com.nextbreakpoint.nextfractal.contextfree.grammar.enums.FlagType.*;
+import static com.nextbreakpoint.nextfractal.contextfree.grammar.enums.FlagType.CF_BUTT_CAP;
+import static com.nextbreakpoint.nextfractal.contextfree.grammar.enums.FlagType.CF_FILL;
+import static com.nextbreakpoint.nextfractal.contextfree.grammar.enums.FlagType.CF_MITER_JOIN;
 
 public class CommandInfo {
     private static AtomicLong lastPathUID = new AtomicLong(0);

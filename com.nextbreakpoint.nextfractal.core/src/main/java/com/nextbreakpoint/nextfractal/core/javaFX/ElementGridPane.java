@@ -24,10 +24,6 @@
  */
 package com.nextbreakpoint.nextfractal.core.javaFX;
 
-import java.io.Serializable;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import javafx.event.EventHandler;
 import javafx.geometry.Dimension2D;
 import javafx.geometry.Pos;
@@ -39,6 +35,10 @@ import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
+
+import java.io.Serializable;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public abstract class ElementGridPane<T extends Serializable> extends BorderPane {
 //	private SelectionDelegate<NodeObject> delegate;

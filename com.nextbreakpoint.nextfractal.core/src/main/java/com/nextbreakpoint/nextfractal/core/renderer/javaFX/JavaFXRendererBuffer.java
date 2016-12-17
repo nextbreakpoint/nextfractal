@@ -24,12 +24,11 @@
  */
 package com.nextbreakpoint.nextfractal.core.renderer.javaFX;
 
+import com.nextbreakpoint.nextfractal.core.renderer.RendererBuffer;
+import com.nextbreakpoint.nextfractal.core.renderer.RendererImage;
 import javafx.scene.image.PixelFormat;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
-
-import com.nextbreakpoint.nextfractal.core.renderer.RendererBuffer;
-import com.nextbreakpoint.nextfractal.core.renderer.RendererImage;
 
 public class JavaFXRendererBuffer implements RendererBuffer {
 	private WritableImage image;

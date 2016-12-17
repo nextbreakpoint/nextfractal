@@ -24,7 +24,10 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.grammar.ast;
 
-import com.nextbreakpoint.nextfractal.contextfree.grammar.*;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGDriver;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGRenderer;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CommandInfo;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.Shape;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.CompilePhase;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ExpType;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.FlagType;
@@ -33,7 +36,11 @@ import org.antlr.v4.runtime.Token;
 
 import java.util.List;
 
-import static com.nextbreakpoint.nextfractal.contextfree.grammar.enums.FlagType.*;
+import static com.nextbreakpoint.nextfractal.contextfree.grammar.enums.FlagType.CF_CAP_MASK;
+import static com.nextbreakpoint.nextfractal.contextfree.grammar.enums.FlagType.CF_CAP_PRESENT;
+import static com.nextbreakpoint.nextfractal.contextfree.grammar.enums.FlagType.CF_FILL;
+import static com.nextbreakpoint.nextfractal.contextfree.grammar.enums.FlagType.CF_JOIN_MASK;
+import static com.nextbreakpoint.nextfractal.contextfree.grammar.enums.FlagType.CF_JOIN_PRESENT;
 
 public class ASTPathCommand extends ASTReplacement {
 	private double miterLimit;

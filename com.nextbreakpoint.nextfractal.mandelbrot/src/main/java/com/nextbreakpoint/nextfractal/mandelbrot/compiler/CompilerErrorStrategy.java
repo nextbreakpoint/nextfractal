@@ -24,17 +24,17 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.compiler;
 
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import org.antlr.v4.runtime.DefaultErrorStrategy;
 import org.antlr.v4.runtime.FailedPredicateException;
 import org.antlr.v4.runtime.InputMismatchException;
 import org.antlr.v4.runtime.Parser;
 import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.misc.IntervalSet;
+
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class CompilerErrorStrategy extends DefaultErrorStrategy {
 	private static final Logger logger = Logger.getLogger(CompilerErrorStrategy.class.getName());

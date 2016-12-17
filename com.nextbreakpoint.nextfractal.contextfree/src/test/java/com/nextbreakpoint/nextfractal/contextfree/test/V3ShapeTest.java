@@ -34,9 +34,14 @@ import org.junit.rules.ExpectedException;
 import java.awt.geom.AffineTransform;
 import java.io.IOException;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class V3ShapeTest extends AbstractBaseTest {
 	public static final String RESOURCE_NAME = "/v3-shape-single-rule.cfdg";

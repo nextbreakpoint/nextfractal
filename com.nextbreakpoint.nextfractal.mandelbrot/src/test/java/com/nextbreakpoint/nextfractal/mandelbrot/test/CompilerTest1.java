@@ -24,9 +24,6 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.test;
 
-import org.junit.Assert;
-import org.junit.Test;
-
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.Compiler;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerBuilder;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerReport;
@@ -34,6 +31,8 @@ import com.nextbreakpoint.nextfractal.mandelbrot.core.Color;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Orbit;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Scope;
+import org.junit.Assert;
+import org.junit.Test;
 
 public class CompilerTest1 extends BaseTest {
 	@Test

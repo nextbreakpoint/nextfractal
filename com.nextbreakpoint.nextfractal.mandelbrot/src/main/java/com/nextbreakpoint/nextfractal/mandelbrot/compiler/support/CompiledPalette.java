@@ -24,9 +24,9 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.compiler.support;
 
-import java.util.List;
-
 import org.antlr.v4.runtime.Token;
+
+import java.util.List;
 
 public class CompiledPalette {
 	private String name;

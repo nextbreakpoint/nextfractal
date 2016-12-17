@@ -24,10 +24,10 @@
  */
 package com.nextbreakpoint.nextfractal.core.renderer.java2D;
 
-import java.awt.Font;
-
 import com.nextbreakpoint.nextfractal.core.renderer.RendererFont;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererGraphicsContext;
+
+import java.awt.*;
 
 public class Java2DRendererFont implements RendererFont {
 	private Font font;

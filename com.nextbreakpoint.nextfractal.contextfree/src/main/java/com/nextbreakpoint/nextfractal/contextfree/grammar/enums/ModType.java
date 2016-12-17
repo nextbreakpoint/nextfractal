@@ -24,7 +24,6 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.grammar.enums;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 

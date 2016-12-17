@@ -24,10 +24,9 @@
  */
 package com.nextbreakpoint.nextfractal.core.renderer.javaFX;
 
-import javafx.scene.paint.Color;
-
 import com.nextbreakpoint.nextfractal.core.renderer.RendererColor;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererGraphicsContext;
+import javafx.scene.paint.Color;
 
 public class JavaFXRendererColor implements RendererColor {
 	private Color color;

@@ -25,12 +25,33 @@
 package com.nextbreakpoint.nextfractal.contextfree.grammar;
 
 import com.nextbreakpoint.nextfractal.contextfree.core.AffineTransformTime;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.*;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.*;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.AST;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTDefine;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTExpression;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTModTerm;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTModification;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTParameter;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTRepContainer;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTReplacement;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTRule;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTStartSpecifier;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.CFG;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.CompilePhase;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ExpType;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.FriezeType;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ModType;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.Param;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ShapeType;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.WeightType;
 
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Stack;
 import java.util.logging.Level;
 
 public class CFDG {

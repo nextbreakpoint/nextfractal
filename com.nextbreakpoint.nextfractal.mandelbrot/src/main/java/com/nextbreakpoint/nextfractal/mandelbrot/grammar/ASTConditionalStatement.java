@@ -24,9 +24,8 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.grammar;
 
-import org.antlr.v4.runtime.Token;
-
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledStatement;
+import org.antlr.v4.runtime.Token;
 
 public class ASTConditionalStatement extends ASTStatement {
 	private ASTConditionExpression conditionExp;

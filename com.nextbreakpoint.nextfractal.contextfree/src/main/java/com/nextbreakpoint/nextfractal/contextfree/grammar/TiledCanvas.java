@@ -31,9 +31,9 @@ import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ShapeType;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.ArrayList;
 import java.util.logging.Level;
 
 public class TiledCanvas implements CFCanvas {

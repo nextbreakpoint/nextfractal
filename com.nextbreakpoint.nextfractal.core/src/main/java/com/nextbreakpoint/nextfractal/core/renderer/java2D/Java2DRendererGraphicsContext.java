@@ -24,18 +24,18 @@
  */
 package com.nextbreakpoint.nextfractal.core.renderer.java2D;
 
+import com.nextbreakpoint.nextfractal.core.renderer.RendererAffine;
+import com.nextbreakpoint.nextfractal.core.renderer.RendererColor;
+import com.nextbreakpoint.nextfractal.core.renderer.RendererFont;
+import com.nextbreakpoint.nextfractal.core.renderer.RendererGraphicsContext;
+import com.nextbreakpoint.nextfractal.core.renderer.RendererImage;
+
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Stack;
-
-import com.nextbreakpoint.nextfractal.core.renderer.RendererAffine;
-import com.nextbreakpoint.nextfractal.core.renderer.RendererColor;
-import com.nextbreakpoint.nextfractal.core.renderer.RendererFont;
-import com.nextbreakpoint.nextfractal.core.renderer.RendererGraphicsContext;
-import com.nextbreakpoint.nextfractal.core.renderer.RendererImage;
 
 public class Java2DRendererGraphicsContext implements RendererGraphicsContext {
 	private Graphics2D g2d;

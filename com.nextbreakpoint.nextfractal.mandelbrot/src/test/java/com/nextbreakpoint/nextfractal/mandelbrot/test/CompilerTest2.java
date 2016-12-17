@@ -24,11 +24,10 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.test;
 
-import org.junit.Assert;
-import org.junit.Test;
-
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.Compiler;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerReport;
+import org.junit.Assert;
+import org.junit.Test;
 
 public class CompilerTest2 extends BaseTest {
 	@Test

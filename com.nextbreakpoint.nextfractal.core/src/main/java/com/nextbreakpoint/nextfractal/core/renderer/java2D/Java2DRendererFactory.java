@@ -24,14 +24,14 @@
  */
 package com.nextbreakpoint.nextfractal.core.renderer.java2D;
 
-import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
-
 import com.nextbreakpoint.nextfractal.core.renderer.RendererAffine;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererBuffer;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererColor;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererFactory;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererGraphicsContext;
+
+import java.awt.*;
+import java.awt.geom.AffineTransform;
 
 public class Java2DRendererFactory implements RendererFactory {
 	@Override

@@ -24,12 +24,12 @@
  */
 package com.nextbreakpoint.nextfractal.server.test;
 
+import org.junit.Ignore;
+import org.junit.Test;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-
-import org.junit.Ignore;
-import org.junit.Test;
 
 public class TestFractal {
 	private static final String URL = "http://localhost:8080/fractal";

@@ -24,12 +24,12 @@
  */
 package com.nextbreakpoint.nextfractal.core.renderer.java2D;
 
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferInt;
-
 import com.nextbreakpoint.nextfractal.core.renderer.RendererBuffer;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererImage;
+
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferInt;
 
 public class Java2DRendererBuffer implements RendererBuffer {
 	private final BufferedImage image;

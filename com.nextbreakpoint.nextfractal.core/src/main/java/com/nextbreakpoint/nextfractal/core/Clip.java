@@ -1,9 +1,9 @@
 package com.nextbreakpoint.nextfractal.core;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.stream.Stream;
 
 public class Clip {

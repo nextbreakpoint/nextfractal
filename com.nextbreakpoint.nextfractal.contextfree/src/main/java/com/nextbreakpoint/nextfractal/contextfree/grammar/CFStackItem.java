@@ -28,6 +28,7 @@ import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.AST;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTExpression;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTParameter;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ExpType;
+
 import java.util.List;
 
 public abstract class CFStackItem {

@@ -24,13 +24,12 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.compiler.support;
 
-import java.util.Collection;
-import java.util.List;
-
-import org.antlr.v4.runtime.Token;
-
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
+import org.antlr.v4.runtime.Token;
+
+import java.util.Collection;
+import java.util.List;
 
 public class CompiledOrbit {
 	private Number[] region;

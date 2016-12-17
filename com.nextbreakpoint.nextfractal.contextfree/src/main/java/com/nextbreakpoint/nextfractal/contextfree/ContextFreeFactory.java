@@ -24,10 +24,6 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ThreadFactory;
-
 import com.nextbreakpoint.nextfractal.contextfree.compiler.Compiler;
 import com.nextbreakpoint.nextfractal.contextfree.compiler.CompilerReport;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDG;
@@ -37,21 +33,24 @@ import com.nextbreakpoint.nextfractal.contextfree.javaFX.RenderPane;
 import com.nextbreakpoint.nextfractal.contextfree.renderer.RendererCoordinator;
 import com.nextbreakpoint.nextfractal.core.EventBus;
 import com.nextbreakpoint.nextfractal.core.FileManager;
+import com.nextbreakpoint.nextfractal.core.FractalFactory;
+import com.nextbreakpoint.nextfractal.core.ImageGenerator;
+import com.nextbreakpoint.nextfractal.core.Session;
 import com.nextbreakpoint.nextfractal.core.javaFX.Bitmap;
 import com.nextbreakpoint.nextfractal.core.javaFX.BrowseBitmap;
 import com.nextbreakpoint.nextfractal.core.javaFX.GridItemRenderer;
+import com.nextbreakpoint.nextfractal.core.renderer.RendererFactory;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererGraphicsContext;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererPoint;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
+import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
 import com.nextbreakpoint.nextfractal.core.renderer.javaFX.JavaFXRendererFactory;
 import com.nextbreakpoint.nextfractal.core.utils.DefaultThreadFactory;
 import javafx.scene.layout.Pane;
 
-import com.nextbreakpoint.nextfractal.core.FractalFactory;
-import com.nextbreakpoint.nextfractal.core.ImageGenerator;
-import com.nextbreakpoint.nextfractal.core.renderer.RendererFactory;
-import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
-import com.nextbreakpoint.nextfractal.core.Session;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ThreadFactory;
 
 public class ContextFreeFactory implements FractalFactory {
 	public static final String PLUGIN_ID = "ContextFree";
