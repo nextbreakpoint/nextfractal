@@ -106,7 +106,7 @@ public class V3RenderTest extends AbstractBaseTest {
 
 		BufferedImage actualImage = new BufferedImage(200, 200, BufferedImage.TYPE_INT_ARGB);
 
-		DefaultThreadFactory threadFactory = new DefaultThreadFactory("ContextFreeHistoryImageGenerator", true, Thread.MIN_PRIORITY);
+		DefaultThreadFactory threadFactory = new DefaultThreadFactory("Generator", true, Thread.MIN_PRIORITY);
 		Java2DRendererFactory rendererFactory = new Java2DRendererFactory();
 
 		RendererTile tile = new RendererTile(new RendererSize(200, 200), new RendererSize(200, 200), new RendererPoint(0, 0), new RendererSize(0, 0));

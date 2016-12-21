@@ -27,5 +27,5 @@ package com.nextbreakpoint.nextfractal.core.export;
 import java.util.concurrent.Future;
 
 public interface ExportRenderer {
-	Future<ExportJob> dispatch(ExportJob job);
+	Future<ExportJobHandle> dispatch(ExportJobHandle job);
 }

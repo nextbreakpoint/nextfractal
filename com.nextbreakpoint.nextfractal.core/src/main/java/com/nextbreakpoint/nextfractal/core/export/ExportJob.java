@@ -35,8 +35,6 @@ import java.nio.IntBuffer;
 public class ExportJob {
 	private final ExportSession session;
 	private final ExportProfile profile;
-	private volatile Throwable error;
-	private volatile ExportJobState state = ExportJobState.READY;
 
 	public ExportJob(ExportSession session, ExportProfile profile) {
 		this.session = session;
@@ -46,49 +44,17 @@ public class ExportJob {
 	public ExportProfile getProfile() {
 		return profile;
 	}
-	
+
 	public RendererTile getTile() {
 		return profile.createTile();
 	}
 
-	public String getPluginId() {
-		return profile.getPluginId();
-	}
-	
 	public File getFile() {
 		return session.getFile();
 	}
 
 	public File getTmpFile() {
 		return session.getTmpFile();
-	}
-
-	public boolean isInterrupted() {
-		return state == ExportJobState.INTERRUPTED;
-	}
-
-	public boolean isCompleted() {
-		return state == ExportJobState.COMPLETED;
-	}
-
-	public boolean isReady() {
-		return state == ExportJobState.READY;
-	}
-
-	public Throwable getError() {
-		return error;
-	}
-
-	public void setError(Throwable error) {
-		this.error = error;
-	}
-
-	public ExportJobState getState() {
-		return state;
-	}
-
-	public void setState(ExportJobState state) {
-		this.state = state;
 	}
 
 	public void writePixels(RendererSize size, IntBuffer pixels) throws IOException {

@@ -24,7 +24,6 @@
  */
 package com.nextbreakpoint.nextfractal.core.export;
 
-import com.nextbreakpoint.nextfractal.core.Session;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererPoint;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
@@ -44,126 +43,90 @@ public class ExportProfile {
 	private float startTime;
 	private float stopTime;
 	private String pluginId;
-	private Session session;
+	private String script;
+	private Object metadata;
 
-	public float getFrameRate() {
-		return frameRate;
-	}
-
-	public void setFrameRate(float frameRate) {
+	ExportProfile(float quality, float frameRate, int frameNumber, int frameWidth, int frameHeight, int tileWidth, int tileHeight, int tileOffsetX, int tileOffsetY, int borderWidth, int borderHeight, float startTime, float stopTime, String pluginId, String script, Object metadata) {
+		this.quality = quality;
 		this.frameRate = frameRate;
-	}
-
-	public int getFrameNumber() {
-		return frameNumber;
-	}
-
-	public void setFrameNumber(int frameNumber) {
 		this.frameNumber = frameNumber;
-	}
-
-	public int getFrameWidth() {
-		return frameWidth;
-	}
-
-	public void setFrameWidth(int frameWidth) {
 		this.frameWidth = frameWidth;
-	}
-
-	public int getFrameHeight() {
-		return frameHeight;
-	}
-
-	public void setFrameHeight(int frameHeight) {
 		this.frameHeight = frameHeight;
-	}
-
-	public int getTileWidth() {
-		return tileWidth;
-	}
-
-	public void setTileWidth(int tileWidth) {
 		this.tileWidth = tileWidth;
-	}
-
-	public int getTileHeight() {
-		return tileHeight;
-	}
-
-	public void setTileHeight(int tileHeight) {
 		this.tileHeight = tileHeight;
-	}
-
-	public int getTileOffsetX() {
-		return tileOffsetX;
-	}
-
-	public void setTileOffsetX(int tileOffsetX) {
 		this.tileOffsetX = tileOffsetX;
-	}
-
-	public int getTileOffsetY() {
-		return tileOffsetY;
-	}
-
-	public void setTileOffsetY(int tileOffsetY) {
 		this.tileOffsetY = tileOffsetY;
-	}
-
-	public int getBorderWidth() {
-		return borderWidth;
-	}
-
-	public void setBorderWidth(int borderWidth) {
 		this.borderWidth = borderWidth;
-	}
-
-	public int getBorderHeight() {
-		return borderHeight;
-	}
-
-	public void setBorderHeight(int borderHeight) {
 		this.borderHeight = borderHeight;
+		this.startTime = startTime;
+		this.stopTime = stopTime;
+		this.pluginId = pluginId;
+		this.script = script;
+		this.metadata = metadata;
 	}
 
 	public float getQuality() {
 		return quality;
 	}
 
-	public void setQuality(float quality) {
-		this.quality = quality;
+	public float getFrameRate() {
+		return frameRate;
 	}
 
-	public String getPluginId() {
-		return pluginId;
+	public int getFrameNumber() {
+		return frameNumber;
 	}
 
-	public void setPluginId(String pluginId) {
-		this.pluginId = pluginId;
+	public int getFrameWidth() {
+		return frameWidth;
 	}
 
-	public Session getSession() {
-		return session;
+	public int getFrameHeight() {
+		return frameHeight;
 	}
 
-	public void setSession(Session session) {
-		this.session = session;
+	public int getTileWidth() {
+		return tileWidth;
+	}
+
+	public int getTileHeight() {
+		return tileHeight;
+	}
+
+	public int getTileOffsetX() {
+		return tileOffsetX;
+	}
+
+	public int getTileOffsetY() {
+		return tileOffsetY;
+	}
+
+	public int getBorderWidth() {
+		return borderWidth;
+	}
+
+	public int getBorderHeight() {
+		return borderHeight;
 	}
 
 	public float getStartTime() {
 		return startTime;
 	}
 
-	public void setStartTime(float startTime) {
-		this.startTime = startTime;
-	}
-
 	public float getStopTime() {
 		return stopTime;
 	}
 
-	public void setStopTime(float stopTime) {
-		this.stopTime = stopTime;
+	public String getPluginId() {
+		return pluginId;
+	}
+
+	public String getScript() {
+		return script;
+	}
+
+	public Object getMetadata() {
+		return metadata;
 	}
 
 	public RendererTile createTile() {
@@ -171,13 +134,12 @@ public class ExportProfile {
 		RendererSize tileSize = new RendererSize(tileWidth, tileHeight);
 		RendererSize tileBorder = new RendererSize(borderWidth, borderHeight);
 		RendererPoint tileOffset = new RendererPoint(tileOffsetX, tileOffsetY);
-		RendererTile tile = new RendererTile(imageSize, tileSize, tileOffset, tileBorder);
-		return tile;
+		return new RendererTile(imageSize, tileSize, tileOffset, tileBorder);
 	}
 
 	@Override
 	public String toString() {
-		return "[pluginId=" + pluginId + ", frameRate="	+ frameRate + ", frameNumber=" + frameNumber + ", frameWidth=" + frameWidth + ", frameHeight=" + frameHeight + ", tileWidth=" + tileWidth + ", tileHeight=" + tileHeight 
+		return "[pluginId=" + pluginId + ", frameRate=" + frameRate + ", frameNumber=" + frameNumber + ", frameWidth=" + frameWidth + ", frameHeight=" + frameHeight + ", tileWidth=" + tileWidth + ", tileHeight=" + tileHeight
 				+ ", tileOffsetX=" + tileOffsetX + ", tileOffsetY=" + tileOffsetY + ", borderWidth=" + borderWidth + ", borderHeight=" + borderHeight + ", quality=" + quality + ", startTime=" + startTime + ", stopTime=" + stopTime + "]";
 	}
 }

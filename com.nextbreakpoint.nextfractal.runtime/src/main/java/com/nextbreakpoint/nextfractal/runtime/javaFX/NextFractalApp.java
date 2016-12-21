@@ -109,7 +109,7 @@ public class NextFractalApp extends Application {
 
 		printPlugins();
 
-		ExportRenderer exportRenderer = new SimpleExportRenderer(createThreadFactory("Export Render"), new JavaFXRendererFactory());
+		ExportRenderer exportRenderer = new SimpleExportRenderer(createThreadFactory("Export Renderer"), new JavaFXRendererFactory());
 		ExportService exportService = new SimpleExportService(eventBus, createThreadFactory("Export Service"), exportRenderer);
 
 		eventBus.subscribe("editor-grammar-changed", event -> tryFindFactoryByGrammar((String) event).ifPresent(factory -> createSession(eventBus, factory)));

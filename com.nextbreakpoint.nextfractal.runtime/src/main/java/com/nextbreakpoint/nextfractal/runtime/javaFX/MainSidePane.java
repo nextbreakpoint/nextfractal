@@ -31,6 +31,7 @@ import com.nextbreakpoint.nextfractal.core.ImageGenerator;
 import com.nextbreakpoint.nextfractal.core.Session;
 import com.nextbreakpoint.nextfractal.core.encoder.Encoder;
 import com.nextbreakpoint.nextfractal.core.export.ExportSession;
+import com.nextbreakpoint.nextfractal.core.export.ExportState;
 import com.nextbreakpoint.nextfractal.core.javaFX.ExportDelegate;
 import com.nextbreakpoint.nextfractal.core.javaFX.ExportPane;
 import com.nextbreakpoint.nextfractal.core.javaFX.HistoryDelegate;
@@ -64,7 +65,9 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -432,7 +435,7 @@ public class MainSidePane extends BorderPane {
             }
         });
 
-        eventBus.subscribe("export-sessions-updated", event -> {
+        eventBus.subscribe("export-exportEntries-updated", event -> {
             jobsPane.updateSessions();
         });
 
@@ -440,7 +443,24 @@ public class MainSidePane extends BorderPane {
 
         eventBus.subscribe("session-terminated", event -> historyPane.dispose());
 
+        eventBus.subscribe("export-session-state-changed", event -> handleExportSessionStateChanged(jobsPane, (ExportSession)((Object[])event)[0], (ExportState) ((Object[])event)[1], (Float)((Object[])event)[2]));
+
+        eventBus.subscribe("export-sessions-updated", event -> handleExportSessionsUpdated(jobsPane));
+
         return rootPane;
+    }
+
+    private void handleExportSessionsUpdated(JobsPane jobsPane) {
+        jobsPane.updateSessions();
+    }
+
+    private void handleExportSessionStateChanged(JobsPane jobsPane, ExportSession exportSession, ExportState state, Float progress) {
+        logger.info("Session state changed " + exportSession.getSessionId() + " -> " + state.name());
+        if (state == ExportState.FINISHED) {
+            jobsPane.removeSession(exportSession);
+        } else {
+            jobsPane.updateSession(exportSession, state, progress);
+        }
     }
 
     private void handleAppendClip(ExportPane exportPane, Clip clip) {
@@ -514,11 +534,11 @@ public class MainSidePane extends BorderPane {
         }
     }
 
-    private static Try<ImageGenerator, Exception> createGenerator(Session session, RendererTile tile) {
-        DefaultThreadFactory threadFactory = new DefaultThreadFactory("Export", true, Thread.MIN_PRIORITY);
-        return tryFindFactory(session.getPluginId()).map(plugin -> Objects.requireNonNull(plugin.createImageGenerator(threadFactory, new JavaFXRendererFactory(), tile, true)))
-            .onFailure(e -> logger.log(Level.WARNING, "Cannot create image generator with pluginId " + session.getPluginId(), e));
-    }
+//    private static Try<ImageGenerator, Exception> createGenerator(Session session, RendererTile tile) {
+//        DefaultThreadFactory threadFactory = new DefaultThreadFactory("Export", true, Thread.MIN_PRIORITY);
+//        return tryFindFactory(session.getPluginId()).map(plugin -> Objects.requireNonNull(plugin.createImageGenerator(threadFactory, new JavaFXRendererFactory(), tile, true)))
+//            .onFailure(e -> logger.log(Level.WARNING, "Cannot create image generator with pluginId " + session.getPluginId(), e));
+//    }
 
     private static int computePercentage(double percentage) {
         return (int) Math.rint(Screen.getPrimary().getVisualBounds().getWidth() * percentage);
@@ -603,7 +623,7 @@ public class MainSidePane extends BorderPane {
     private void startExportSession(EventBus eventBus, String uuid, RendererSize size, Encoder encoder, File file, Session session, List<Clip> clips) {
         try {
             File tmpFile = File.createTempFile("export-" + uuid, ".dat");
-            ExportSession exportSession = new ExportSession(uuid, session, clips, file, tmpFile, size, 200, encoder);
+            ExportSession exportSession = new ExportSession(uuid, session, clips, file, tmpFile, size, 400, encoder);
             logger.info("Export session created: " + exportSession.getSessionId());
             eventBus.postEvent("export-session-created", exportSession);
         } catch (Exception e) {

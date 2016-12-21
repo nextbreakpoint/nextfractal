@@ -24,8 +24,13 @@
  */
 package com.nextbreakpoint.nextfractal.core.export;
 
-import java.util.ArrayList;
+import javafx.application.Platform;
+
 import java.util.List;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.Objects;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -34,26 +39,16 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
 public abstract class AbstractExportService implements ExportService {
-	private final List<ExportSessionHolder> holders = new ArrayList<>();
+	private final HashMap<String, ExportHandle> sessions = new LinkedHashMap<>();
+	private final List<ExportHandle> finishedSessions = new LinkedList<>();
 	private final ReentrantLock lock = new ReentrantLock();
 	private final ScheduledExecutorService executor;
 	
 	public AbstractExportService(ThreadFactory threadFactory) {
 		executor = Executors.newSingleThreadScheduledExecutor(Objects.requireNonNull(threadFactory));
-		executor.scheduleWithFixedDelay(() -> lockAndUpdateSessions(), 1000, 100, TimeUnit.MILLISECONDS);
+		executor.scheduleAtFixedRate(() -> lockAndUpdateSessions(), 1000, 100, TimeUnit.MILLISECONDS);
+		executor.scheduleWithFixedDelay(() -> notifyUpdateSessions(), 1000, 1000, TimeUnit.MILLISECONDS);
 	}
-
-//	public void shutdown() {
-//		executor.shutdown(); 
-//		try {
-//			if (!executor.awaitTermination(5, TimeUnit.SECONDS)) {
-//				executor.shutdownNow(); 
-//			}
-//		} catch (InterruptedException x) {
-//			executor.shutdownNow();
-//			Thread.currentThread().interrupt();
-//		}
-//	}
 
 	public final void shutdown() {
 		executor.shutdownNow();
@@ -66,12 +61,16 @@ public abstract class AbstractExportService implements ExportService {
 	public final void startSession(ExportSession session) {
 		try {
 			lock.lock();
-			if (session.getState() != ExportState.SUSPENDED) {
+			ExportHandle exportHandle = sessions.get(session.getSessionId());
+			if (exportHandle == null) {
+				exportHandle = new ExportHandle(session);
+			}
+			if (exportHandle.getState() != ExportState.SUSPENDED) {
 				throw new IllegalStateException("Session is not suspended");
 			}
-			session.setState(ExportState.STARTED);
-			session.setCancelled(false);
-			holders.add(new ExportSessionHolder(session));
+			exportHandle.setState(ExportState.READY);
+			exportHandle.setCancelled(false);
+			sessions.put(session.getSessionId(), exportHandle);
 		} finally {
 			lock.unlock();
 		}
@@ -80,8 +79,11 @@ public abstract class AbstractExportService implements ExportService {
 	public final void stopSession(ExportSession session) {
 		try {
 			lock.lock();
-			session.setCancelled(true);
-			cancelJobs(session);
+			ExportHandle exportHandle = sessions.get(session.getSessionId());
+			if (exportHandle != null) {
+				exportHandle.setCancelled(true);
+				cancelTasks(exportHandle);
+			}
 		} finally {
 			lock.unlock();
 		}
@@ -90,8 +92,11 @@ public abstract class AbstractExportService implements ExportService {
 	public final void suspendSession(ExportSession session) {
 		try {
 			lock.lock();
-			session.setCancelled(false);
-			cancelJobs(session);
+			ExportHandle exportHandle = sessions.get(session.getSessionId());
+			if (exportHandle != null) {
+				exportHandle.setCancelled(false);
+				cancelTasks(exportHandle);
+			}
 		} finally {
 			lock.unlock();
 		}
@@ -100,26 +105,57 @@ public abstract class AbstractExportService implements ExportService {
 	public final void resumeSession(ExportSession session) {
 		try {
 			lock.lock();
-			if (session.getState() != ExportState.SUSPENDED) {
-				throw new IllegalStateException("Session is not suspended");
+			ExportHandle exportHandle = sessions.get(session.getSessionId());
+			if (exportHandle != null) {
+				if (exportHandle.getState() != ExportState.SUSPENDED) {
+					throw new IllegalStateException("Session is not suspended");
+				}
+				exportHandle.setState(ExportState.DISPATCHED);
+				exportHandle.setCancelled(false);
+				resumeTasks(exportHandle);
 			}
-			session.setState(ExportState.STARTED);
-			session.setCancelled(false);
 		} finally {
 			lock.unlock();
 		}
 	}
 
 	private void lockAndUpdateSessions() {
+		LinkedList<ExportHandle> copyOfSessions = new LinkedList<>();
 		try {
 			lock.lock();
-			updateSessionsInBackground(holders);
+			copyOfSessions.addAll(sessions.values());
+		} finally {
+			lock.unlock();
+		}
+		Collection<ExportHandle> finished = updateInBackground(sessions.values());
+		try {
+			lock.lock();
+			finishedSessions.addAll(finished);
 		} finally {
 			lock.unlock();
 		}
 	}
 
-	protected abstract void updateSessionsInBackground(List<ExportSessionHolder> holders);
+	private void notifyUpdateSessions() {
+		Platform.runLater(() -> {
+			LinkedList<ExportHandle> copyOfSessions = new LinkedList<>();
+			try {
+				lock.lock();
+				copyOfSessions.addAll(sessions.values());
+				finishedSessions.forEach(session -> sessions.remove(session.getSessionId()));
+				finishedSessions.clear();
+			} finally {
+				lock.unlock();
+			}
+			notifyUpdate(copyOfSessions);
+		});
+	}
 
-	protected abstract void cancelJobs(ExportSession session);
+	protected abstract Collection<ExportHandle> updateInBackground(Collection<ExportHandle> holders);
+
+	protected abstract void notifyUpdate(Collection<ExportHandle> holders);
+
+	protected abstract void resumeTasks(ExportHandle exportHandle);
+
+	protected abstract void cancelTasks(ExportHandle exportHandle);
 }

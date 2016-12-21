@@ -25,25 +25,28 @@
 package com.nextbreakpoint.nextfractal.core.export;
 
 import com.nextbreakpoint.nextfractal.core.Clip;
+import com.nextbreakpoint.nextfractal.core.ClipProcessor;
+import com.nextbreakpoint.nextfractal.core.Frame;
 import com.nextbreakpoint.nextfractal.core.Session;
 import com.nextbreakpoint.nextfractal.core.encoder.Encoder;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 
 import java.io.File;
-import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Logger;
 
 public final class ExportSession {
+	private static final Logger logger = Logger.getLogger(ExportSession.class.getName());
 	private static final int BORDER_SIZE = 0;
+
 	private final List<ExportJob> jobs = new ArrayList<>();
-	private final String sessioinId;
+	private final List<Frame> frames = new ArrayList<>();
+	private final String sessionId;
 	private final Encoder encoder;
 	private final RendererSize size;
-	private final Session session;
 	private final int frameCount;
-	private List<Clip> clips;
 	private final File tmpFile;
 	private final File file;
 	private final int tileSize;
@@ -51,15 +54,11 @@ public final class ExportSession {
 	private final float frameRate;
 	private final float startTime;
 	private final float stopTime;
-	private volatile int frameNumber;
-	private volatile float progress;
-	private volatile boolean cancelled;
-	private volatile ExportState state = ExportState.SUSPENDED;
-	private IntBuffer pixels;
+	private final Session session;
 
 	public ExportSession(String sessionId, Session session, List<Clip> clips, File file, File tmpFile, RendererSize size, int tileSize, Encoder encoder) {
+		this.sessionId = sessionId;
 		this.session = session;
-		this.clips = clips;
 		this.tmpFile = tmpFile;
 		this.file = file;
 		this.size = size;
@@ -67,24 +66,26 @@ public final class ExportSession {
 		this.tileSize = tileSize;
 		this.quality = 1;
 		this.frameRate = 1.0f / 24.0f;
-		this.startTime = 0;
-		this.stopTime = 0;
-		sessioinId = sessionId;
-		this.frameNumber = 1;
-		this.frameCount = computeFrameCount(startTime, stopTime, frameRate) + 1;
+		if (clips.size() > 0 && clips.get(0).getEvents().size() > 1) {
+			Clip firstClip = clips.get(0);
+			long baseTime = firstClip.getEvents().get(0).getDate().getTime();
+			Clip lastClip = clips.get(clips.size() - 1);
+			this.startTime = 0;
+			this.stopTime = (lastClip.getEvents().get(lastClip.getEvents().size() - 1).getDate().getTime() - baseTime) / 1000f;
+			this.frameCount = computeFrameCount(startTime, stopTime, frameRate);
+			ClipProcessor processor = new ClipProcessor(clips, frameCount, frameRate);
+			this.frames.addAll(processor.generateFrames());
+		} else {
+			this.startTime = 0;
+			this.stopTime = 0;
+			this.frameCount = computeFrameCount(startTime, stopTime, frameRate);
+			frames.add(new Frame(session.getPluginId(), session.getScript(), session.getMetadata()));
+		}
 		jobs.addAll(createJobs(0));
 	}
-	
+
 	public String getSessionId() {
-		return sessioinId;
-	}
-
-	public String getPluginId() {
-		return session.getPluginId();
-	}
-
-	public Session getSession() {
-		return session;
+		return sessionId;
 	}
 
 	public RendererSize getSize() {
@@ -107,96 +108,16 @@ public final class ExportSession {
 		return frameRate;
 	}
 
-	public float getStartTime() {
-		return startTime;
-	}
-
-	public float getStopTime() {
-		return stopTime;
-	}
-
-	public int getFrameNumber() {
-		return frameNumber;
-	}
-
-	public float getProgress() {
-		return progress;
-	}
-
-	public boolean isCancelled() {
-		return cancelled;
-	}
-
-	public boolean isStopped() {
-		return state == ExportState.STOPPED;
-	}
-
-	public boolean isDispatched() {
-		return state == ExportState.DISPATCHED;
-	}
-
-	public boolean isStarted() {
-		return state == ExportState.STARTED;
-	}
-
-	public boolean isSuspended() {
-		return state == ExportState.SUSPENDED;
-	}
-
-	public boolean isInterrupted() {
-		return state == ExportState.INTERRUPTED;
-	}
-
-	public boolean isCompleted() {
-		return state == ExportState.COMPLETED;
-	}
-
-	public boolean isFailed() {
-		return state == ExportState.FAILED;
-	}
-
-	public ExportState getState() {
-		return state;
-	}
-
 	public int getFrameCount() {
 		return frameCount;
-	}
-
-	public int getJobsCount() {
-		return jobs.size();
 	}
 
 	public List<ExportJob> getJobs() {
 		return Collections.unmodifiableList(jobs);
 	}
 
-	public void updateProgress() {
-		setProgress((float)Math.rint((getFrameNumber() / (float)getFrameCount()) / 10f) * 10f + (getCompletedJobsCount() / (float)jobs.size()));
-	}
-
-	public int getCompletedJobsCount() {
-		return jobs.stream().filter(job -> job.isCompleted()).mapToInt(job -> 1).sum();
-	}
-
 	public void dispose() {
 		jobs.clear();
-	}
-
-	protected void setFrameNumber(int frameNumber) {
-		this.frameNumber = frameNumber;
-	}
-
-	protected void setProgress(float progress) {
-		this.progress = progress;
-	}
-
-	protected void setCancelled(boolean cancelled) {
-		this.cancelled = cancelled;
-	}
-
-	protected void setState(ExportState state) {
-		this.state = state;
 	}
 
 	private List<ExportJob> createJobs(int frameNumber) {
@@ -239,21 +160,19 @@ public final class ExportSession {
 	}
 
 	private ExportProfile createProfile(int frameNumber, final int frameWidth, final int frameHeight, int tileOffsetX, int tileOffsetY) {
-		final ExportProfile profile = new ExportProfile();
-		profile.setPluginId(session.getPluginId());
-		profile.setQuality(quality);
-		profile.setFrameNumber(frameNumber);
-		profile.setFrameRate(frameRate);
-		profile.setFrameWidth(frameWidth);
-		profile.setFrameHeight(frameHeight);
-		profile.setTileWidth(tileSize);
-		profile.setTileHeight(tileSize);
-		profile.setTileOffsetX(tileOffsetX);
-		profile.setTileOffsetY(tileOffsetY);
-		profile.setBorderWidth(BORDER_SIZE);
-		profile.setBorderHeight(BORDER_SIZE);
-		profile.setSession(session);
-		return profile;
+		ExportProfileBuilder builder = new ExportProfileBuilder();
+		builder.withQuality(quality);
+		builder.withFrameNumber(frameNumber);
+		builder.withFrameRate(frameRate);
+		builder.withFrameWidth(frameWidth);
+		builder.withFrameHeight(frameHeight);
+		builder.withTileWidth(tileSize);
+		builder.withTileHeight(tileSize);
+		builder.withTileOffsetX(tileOffsetX);
+		builder.withTileOffsetY(tileOffsetY);
+		builder.withBorderWidth(BORDER_SIZE);
+		builder.withBorderHeight(BORDER_SIZE);
+		return builder.build();
 	}
 
 	private ExportJob createJob(ExportProfile profile) {
@@ -261,14 +180,14 @@ public final class ExportSession {
 	}
 
 	private int computeFrameCount(double startTime, double stopTime, float frameRate) {
-		return (int) Math.floor((stopTime - startTime) * frameRate);
+		return (int) Math.floor((stopTime - startTime) / frameRate);
 	}
 
-	public IntBuffer getPixels() {
-		return pixels;
+	public List<Frame> getFrames() {
+		return Collections.unmodifiableList(frames);
 	}
 
-	public void setPixels(IntBuffer pixels) {
-		this.pixels = pixels;
+	public Session getSession() {
+		return session;
 	}
 }

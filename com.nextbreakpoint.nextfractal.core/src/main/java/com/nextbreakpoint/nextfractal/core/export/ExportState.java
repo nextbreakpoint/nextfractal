@@ -25,5 +25,5 @@
 package com.nextbreakpoint.nextfractal.core.export;
 
 public enum ExportState {
-	STARTED, DISPATCHED, INTERRUPTED, SUSPENDED, COMPLETED, STOPPED, FAILED
+	READY, DISPATCHED, INTERRUPTED, SUSPENDED, COMPLETED, FINISHED, FAILED
 }

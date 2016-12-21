@@ -26,9 +26,9 @@ package com.nextbreakpoint.nextfractal.runtime.export;
 
 import com.nextbreakpoint.Try;
 import com.nextbreakpoint.nextfractal.core.ImageGenerator;
-import com.nextbreakpoint.nextfractal.core.Session;
-import com.nextbreakpoint.nextfractal.core.export.ExportJob;
+import com.nextbreakpoint.nextfractal.core.export.ExportJobHandle;
 import com.nextbreakpoint.nextfractal.core.export.ExportJobState;
+import com.nextbreakpoint.nextfractal.core.export.ExportProfile;
 import com.nextbreakpoint.nextfractal.core.export.ExportRenderer;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererFactory;
 
@@ -48,12 +48,12 @@ import static com.nextbreakpoint.nextfractal.core.Plugins.tryFindFactory;
 public class SimpleExportRenderer implements ExportRenderer {
 	private static final Logger logger = Logger.getLogger(SimpleExportRenderer.class.getName());
 
-	private static final int MAX_THREADS = 5;
+	private static final int MAX_THREADS = Math.max(Runtime.getRuntime().availableProcessors() * 2, 2);
 
 	private final ThreadFactory threadFactory;
 	private final RendererFactory renderFactory;
 
-	private final ExecutorCompletionService<ExportJob> service;
+	private final ExecutorCompletionService<ExportJobHandle> service;
 
 	public SimpleExportRenderer(ThreadFactory threadFactory, RendererFactory renderFactory) {
 		this.threadFactory = Objects.requireNonNull(threadFactory);
@@ -62,42 +62,42 @@ public class SimpleExportRenderer implements ExportRenderer {
 	}
 	
 	@Override
-	public Future<ExportJob> dispatch(ExportJob job) {
+	public Future<ExportJobHandle> dispatch(ExportJobHandle job) {
 		return service.submit(new ProcessExportJob(job));
 	}
 	
-	private ImageGenerator createImageGenerator(ExportJob job) {
-		return tryFindFactory(job.getPluginId()).map(plugin -> plugin.createImageGenerator(threadFactory, renderFactory, job.getTile(), false)).orElse(null);
+	private ImageGenerator createImageGenerator(ExportJobHandle job) {
+		return tryFindFactory(job.getProfile().getPluginId()).map(plugin -> plugin.createImageGenerator(threadFactory, renderFactory, job.getJob().getTile(), false)).orElse(null);
 	}
 
-	private class ProcessExportJob implements Callable<ExportJob> {
-		private final ExportJob job;
+	private class ProcessExportJob implements Callable<ExportJobHandle> {
+		private final ExportJobHandle job;
 		
-		public ProcessExportJob(ExportJob job) {
+		public ProcessExportJob(ExportJobHandle job) {
 			this.job = Objects.requireNonNull(job);
 			job.setState(ExportJobState.READY);
 		}
 
 		@Override
-		public ExportJob call() throws Exception {
-			return Try.of(() -> processJob(job)).onFailure(e -> processError(e)).get();
+		public ExportJobHandle call() throws Exception {
+			return Try.of(() -> processJob(job)).onFailure(e -> processError(e)).orElse(job);
 		}
 
 		private void processError(Throwable e) {
 			logger.log(Level.WARNING, "Failed to render tile", e);
 			job.setError(e);
-			job.setState(ExportJobState.INTERRUPTED);
+			job.setState(ExportJobState.FAILED);
 		}
 
-		private ExportJob processJob(ExportJob job) throws IOException {
+		private ExportJobHandle processJob(ExportJobHandle job) throws IOException {
 			logger.fine(job.toString());
-			Session session = job.getProfile().getSession();
+			ExportProfile profile = job.getProfile();
 			ImageGenerator generator = createImageGenerator(job);
-			IntBuffer pixels = generator.renderImage(session.getScript(), session.getMetadata());
+			IntBuffer pixels = generator.renderImage(profile.getScript(), profile.getMetadata());
 			if (generator.isInterrupted()) {
                 job.setState(ExportJobState.INTERRUPTED);
             } else {
-                job.writePixels(generator.getSize(), pixels);
+                job.getJob().writePixels(generator.getSize(), pixels);
                 job.setState(ExportJobState.COMPLETED);
             }
             return job;

@@ -96,7 +96,7 @@ public class EditorPane extends BorderPane {
         codeArea.setOnDragOver(e -> Optional.of(e).filter(q -> q.getGestureSource() != codeArea
             && q.getDragboard().hasFiles()).ifPresent(q -> q.acceptTransferModes(TransferMode.COPY_OR_MOVE)));
 
-        textExecutor = Executors.newSingleThreadExecutor(new DefaultThreadFactory("Editor", true, Thread.MIN_PRIORITY));
+        textExecutor = Executors.newSingleThreadExecutor(new DefaultThreadFactory("Mandelbrot Editor", true, Thread.MIN_PRIORITY));
 
         eventBus.subscribe("session-data-changed", event -> session = (MandelbrotSession) ((Object[]) event)[0]);
 

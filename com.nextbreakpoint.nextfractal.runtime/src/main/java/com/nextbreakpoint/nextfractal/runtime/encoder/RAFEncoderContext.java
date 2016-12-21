@@ -37,14 +37,21 @@ public class RAFEncoderContext implements EncoderContext {
 	private final int imageWidth;
 	private final int imageHeight;
 	private final int frameRate;
-	private final int frameCount;
 
-	public RAFEncoderContext(final RandomAccessFile raf, final int imageWidth, final int imageHeight, final int frameRate, final int frameCount) throws IOException {
+	public RAFEncoderContext(final RandomAccessFile raf, final int imageWidth, final int imageHeight, final int frameRate) throws IOException {
 		this.raf = raf;
 		this.imageWidth = imageWidth;
 		this.imageHeight = imageHeight;
 		this.frameRate = frameRate;
-		this.frameCount = frameCount;
+	}
+
+	@Override
+	protected void finalize() throws Throwable {
+		try {
+			raf.close();
+		} catch (Exception e) {
+		}
+		super.finalize();
 	}
 
 	/**
@@ -122,10 +129,5 @@ public class RAFEncoderContext implements EncoderContext {
 	@Override
 	public int getFrameRate() {
 		return frameRate;
-	}
-
-	@Override
-	public int getFrameCount() {
-		return frameCount;
 	}
 }

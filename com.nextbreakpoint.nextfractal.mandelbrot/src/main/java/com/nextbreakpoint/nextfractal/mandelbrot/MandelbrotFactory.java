@@ -121,7 +121,7 @@ public class MandelbrotFactory implements FractalFactory {
 		hints.put(RendererCoordinator.KEY_TYPE, RendererCoordinator.VALUE_REALTIME);
 		hints.put(RendererCoordinator.KEY_MULTITHREAD, RendererCoordinator.VALUE_SINGLE_THREAD);
 		RendererTile tile = createSingleTile(bitmap.getWidth(), bitmap.getHeight());
-		DefaultThreadFactory threadFactory = new DefaultThreadFactory("Browser Renderer", true, Thread.MIN_PRIORITY);
+		DefaultThreadFactory threadFactory = new DefaultThreadFactory("Mandelbrot Browser", true, Thread.MIN_PRIORITY);
 		RendererCoordinator coordinator = new RendererCoordinator(threadFactory, new JavaFXRendererFactory(), tile, hints);
 		CompilerBuilder<Orbit> orbitBuilder = (CompilerBuilder<Orbit>)bitmap.getProperty("orbit");
 		CompilerBuilder<Color> colorBuilder = (CompilerBuilder<Color>)bitmap.getProperty("color");

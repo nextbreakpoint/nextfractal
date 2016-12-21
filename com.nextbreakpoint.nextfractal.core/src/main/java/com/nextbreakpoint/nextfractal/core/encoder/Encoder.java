@@ -30,22 +30,35 @@ public interface Encoder {
 	/**
 	 * @return
 	 */
-	public String getId();
+	String getId();
 	
 	/**
 	 * @param delegate
 	 */
-	public void setDelegate(EncoderDelegate delegate);
+	void setDelegate(EncoderDelegate delegate);
 
 	/**
 	 * @param context
 	 * @param path
+	 * @return
+	 */
+	EncoderHandle open(EncoderContext context, File path) throws EncoderException;
+
+	/**
+	 * @param handle
+	 */
+	void close(EncoderHandle handle) throws EncoderException;
+
+	/**
+	 * @param handle
+	 * @param index
+	 * @param count
 	 * @throws EncoderException
 	 */
-	public void encode(EncoderContext context, File path) throws EncoderException;
+	void encode(EncoderHandle handle, int index, int count) throws EncoderException;
 
 	/**
 	 * @return
 	 */
-	public String getSuffix();
+	String getSuffix();
 }

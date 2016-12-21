@@ -113,7 +113,7 @@ public class ContextFreeFactory implements FractalFactory {
 	public GridItemRenderer createRenderer(Bitmap bitmap) throws Exception {
 		Map<String, Integer> hints = new HashMap<String, Integer>();
 		RendererTile tile = createSingleTile(bitmap.getWidth(), bitmap.getHeight());
-		DefaultThreadFactory threadFactory = new DefaultThreadFactory("Browser", true, Thread.MIN_PRIORITY);
+		DefaultThreadFactory threadFactory = new DefaultThreadFactory("ContextFree Browser", true, Thread.MIN_PRIORITY);
 		RendererCoordinator coordinator = new RendererCoordinator(threadFactory, new JavaFXRendererFactory(), tile, hints);
 		CFDG cfdg = (CFDG)bitmap.getProperty("cfdg");
 		coordinator.setCFDG(cfdg);

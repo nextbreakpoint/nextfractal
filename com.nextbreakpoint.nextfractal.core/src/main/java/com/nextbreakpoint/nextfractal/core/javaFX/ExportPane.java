@@ -94,7 +94,6 @@ public class ExportPane extends BorderPane {
 		formatCombobox.getStyleClass().add("text-small");
 		formatCombobox.setTooltip(new Tooltip("Select format to export"));
 		formatCombobox.getItems().add(new String[] { "PNG image", "PNG" });
-//		formatCombobox.getItems().add(new String[] { "MPEG4 video", "MPEG4" });
 		formatCombobox.getSelectionModel().select(0);
 //		formatCombobox.setDisable(true);
 
@@ -316,7 +315,7 @@ public class ExportPane extends BorderPane {
 //				formatCombobox.setDisable(false);
 				formatCombobox.getItems().clear();
 				formatCombobox.getItems().add(new String[] { "PNG image", "PNG" });
-				formatCombobox.getItems().add(new String[] { "MPEG4 video", "MPEG4" });
+				formatCombobox.getItems().add(new String[] { "MPEG video", "MPEG" });
 				formatCombobox.getSelectionModel().select(1);
 			} else {
 				previewButton.setDisable(true);

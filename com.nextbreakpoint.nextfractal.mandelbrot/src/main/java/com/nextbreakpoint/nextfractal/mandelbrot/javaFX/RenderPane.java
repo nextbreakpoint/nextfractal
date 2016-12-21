@@ -90,7 +90,7 @@ import static com.nextbreakpoint.nextfractal.core.javaFX.Icons.computeOptimalLar
 import static com.nextbreakpoint.nextfractal.core.javaFX.Icons.createIconImage;
 
 public class RenderPane extends BorderPane {
-	private static final int FRAME_LENGTH_IN_MILLIS = 20;
+	private static final int FRAME_LENGTH_IN_MILLIS = 1000 / 48;
 	private static final Logger logger = Logger.getLogger(RenderPane.class.getName());
 	private final ThreadFactory renderThreadFactory;
 	private final ThreadFactory juliaRenderThreadFactory;
@@ -144,7 +144,7 @@ public class RenderPane extends BorderPane {
 		hideErrorsProperty.setValue(true);
 		
 		renderThreadFactory = new DefaultThreadFactory("Mandelbrot Coordinator", true, Thread.MIN_PRIORITY + 2);
-		juliaRenderThreadFactory = new DefaultThreadFactory("Julia Coordinator", true, Thread.MIN_PRIORITY);
+		juliaRenderThreadFactory = new DefaultThreadFactory("Julia Coordinator", true, Thread.MIN_PRIORITY + 1);
 		
 		renderFactory = new JavaFXRendererFactory();
 

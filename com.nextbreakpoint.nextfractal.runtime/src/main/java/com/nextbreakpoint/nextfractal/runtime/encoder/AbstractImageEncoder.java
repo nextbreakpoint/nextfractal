@@ -33,8 +33,10 @@ import com.nextbreakpoint.nextfractal.core.encoder.Encoder;
 import com.nextbreakpoint.nextfractal.core.encoder.EncoderContext;
 import com.nextbreakpoint.nextfractal.core.encoder.EncoderDelegate;
 import com.nextbreakpoint.nextfractal.core.encoder.EncoderException;
+import com.nextbreakpoint.nextfractal.core.encoder.EncoderHandle;
 
 import java.io.File;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -43,6 +45,7 @@ import java.util.logging.Logger;
  */
 public abstract class AbstractImageEncoder implements Encoder {
 	private static final Logger logger = Logger.getLogger(AbstractImageEncoder.class.getName());
+
 	private EncoderDelegate delegate;
 
 	static {
@@ -53,71 +56,22 @@ public abstract class AbstractImageEncoder implements Encoder {
 	 * @see com.nextbreakpoint.nextfractal.core.encoder.Encoder#setDelegate(com.nextbreakpoint.nextfractal.core.encoder.EncoderDelegate)
 	 */
 	@Override
-	public void setDelegate(final EncoderDelegate delegate) {
+	public void setDelegate(EncoderDelegate delegate) {
 		this.delegate = delegate;
 	}
 
-	/**
-	 * @see com.nextbreakpoint.nextfractal.core.encoder.Encoder#encode(com.nextbreakpoint.nextfractal.core.encoder.EncoderContext, java.io.File)
-	 */
 	@Override
-	public void encode(final EncoderContext context, final File path) throws EncoderException {
-		if (delegate != null) {
-			delegate.didProgressChanged(0f);
-		}
-		RGBQUAD value = null;
-		FIBITMAP dib = null;
-		try {
-			if (AbstractImageEncoder.logger.isLoggable(Level.FINE)) {
-				AbstractImageEncoder.logger.fine("Start encoding...");
-			}
-			long time = System.currentTimeMillis();
-			int channels = isAlphaSupported() ? 4 : 3;
-			value = new RGBQUAD();
-			dib = FreeImage4Java.FreeImage_Allocate(context.getImageWidth(), context.getImageHeight(), channels * 8, 0x00FF0000, 0x0000FF00, 0x000000FF);
-			final byte[] data = context.getPixelsAsByteArray(0, 0, 0, context.getImageWidth(), context.getImageHeight(), channels);
-			for (int y = 0; y < context.getImageHeight(); y++) {
-				int j = y * context.getImageWidth();
-				for (int x = 0; x < context.getImageWidth(); x++) {
-					int i = (j + x) * channels;
-					value.setRgbRed(data[i + 0]);
-					value.setRgbGreen(data[i + 1]);
-					value.setRgbBlue(data[i + 2]);
-					if (isAlphaSupported()) {
-						value.setRgbReserved(data[i + 3]);
-					}
-					else {
-						value.setRgbReserved((short) 255);
-					}
-					FreeImage4Java.FreeImage_SetPixelColor(dib, x, y, value);
-					if (delegate != null && delegate.isInterrupted()) {
-						break;
-					}
-				}
-			}
-			if (delegate == null || !delegate.isInterrupted()) {
-				FreeImage4Java.FreeImage_Save(getFormat(getFormatName()), dib, path.getAbsolutePath(), 0);
-				time = System.currentTimeMillis() - time;
-				if (AbstractImageEncoder.logger.isLoggable(Level.INFO)) {
-					AbstractImageEncoder.logger.info("Image exported: elapsed time " + String.format("%3.2f", time / 1000.0d) + "s");
-				}
-				if (delegate != null) {
-					delegate.didProgressChanged(100f);
-				}
-			}
-		}
-		catch (final Exception e) {
-			throw new EncoderException(e);
-		}
-		finally {
-			if (dib != null) {
-				FreeImage4Java.FreeImage_Unload(dib);
-				dib.delete();
-			}
-			if (value != null) {
-				value.delete();
-			}
-		}
+	public EncoderHandle open(EncoderContext context, File path) {
+		return new ImageEncoderHandle(context, path);
+	}
+
+	@Override
+	public void close(EncoderHandle handle) {
+	}
+
+	@Override
+	public void encode(EncoderHandle handle, int frame, int count) throws EncoderException {
+		((ImageEncoderHandle) handle).encode();
 	}
 
 	/**
@@ -148,4 +102,74 @@ public abstract class AbstractImageEncoder implements Encoder {
 	 * @return
 	 */
 	protected abstract String getFormatName();
+
+	private class ImageEncoderHandle implements EncoderHandle {
+		private final EncoderContext context;
+		private final File path;
+
+		public ImageEncoderHandle(EncoderContext context, File path) {
+			this.context = Objects.requireNonNull(context);
+			this.path = Objects.requireNonNull(path);
+			if (delegate != null) {
+				delegate.didProgressChanged(0f);
+			}
+		}
+
+		public void encode() throws EncoderException {
+			RGBQUAD value = null;
+			FIBITMAP dib = null;
+			try {
+				if (AbstractImageEncoder.logger.isLoggable(Level.FINE)) {
+					AbstractImageEncoder.logger.fine("Start encoding...");
+				}
+				long time = System.currentTimeMillis();
+				int channels = isAlphaSupported() ? 4 : 3;
+				value = new RGBQUAD();
+				dib = FreeImage4Java.FreeImage_Allocate(context.getImageWidth(), context.getImageHeight(), channels * 8, 0x00FF0000, 0x0000FF00, 0x000000FF);
+				final byte[] data = context.getPixelsAsByteArray(0, 0, 0, context.getImageWidth(), context.getImageHeight(), channels);
+				for (int y = 0; y < context.getImageHeight(); y++) {
+					int j = y * context.getImageWidth();
+					for (int x = 0; x < context.getImageWidth(); x++) {
+						int i = (j + x) * channels;
+						value.setRgbRed(data[i + 0]);
+						value.setRgbGreen(data[i + 1]);
+						value.setRgbBlue(data[i + 2]);
+						if (isAlphaSupported()) {
+							value.setRgbReserved(data[i + 3]);
+						}
+						else {
+							value.setRgbReserved((short) 255);
+						}
+						FreeImage4Java.FreeImage_SetPixelColor(dib, x, y, value);
+						if (delegate != null && delegate.isInterrupted()) {
+							break;
+						}
+					}
+					Thread.yield();
+				}
+				if (delegate == null || !delegate.isInterrupted()) {
+					FreeImage4Java.FreeImage_Save(getFormat(getFormatName()), dib, path.getAbsolutePath(), 0);
+					time = System.currentTimeMillis() - time;
+					if (AbstractImageEncoder.logger.isLoggable(Level.INFO)) {
+						AbstractImageEncoder.logger.info("Image exported: elapsed time " + String.format("%3.2f", time / 1000.0d) + "s");
+					}
+					if (delegate != null) {
+						delegate.didProgressChanged(100f);
+					}
+				}
+			}
+			catch (final Exception e) {
+				throw new EncoderException(e);
+			}
+			finally {
+				if (dib != null) {
+					FreeImage4Java.FreeImage_Unload(dib);
+					dib.delete();
+				}
+				if (value != null) {
+					value.delete();
+				}
+			}
+		}
+	}
 }

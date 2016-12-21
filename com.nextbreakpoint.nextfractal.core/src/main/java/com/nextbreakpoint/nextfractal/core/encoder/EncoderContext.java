@@ -68,9 +68,4 @@ public interface EncoderContext {
 	 * @return
 	 */
 	public int getFrameRate();
-
-	/**
-	 * @return
-	 */
-	public int getFrameCount();
 }

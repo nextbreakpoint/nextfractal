@@ -22,24 +22,26 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.core.export;
+package com.nextbreakpoint.nextfractal.runtime.encoder;
 
-import java.util.logging.Logger;
-
-public class ExportSessionHolder {
-	private static final Logger logger = Logger.getLogger(ExportSessionHolder.class.getName());
-	private final ExportSession session;
-
-	protected ExportSessionHolder(ExportSession session) {
-		this.session = session;
+/**
+ * @author Andrea Medeghini
+ */
+public class MPEGVideoEncoder extends AbstractVideoEncoder {
+	protected String getFormatName() {
+		return "mpeg2video";
 	}
 
-	public ExportSession getSession() {
-		return session;
+	public String getSuffix() {
+		return ".mpg";
 	}
 
-	public void setState(ExportState state) {
-		session.setState(state);
-		logger.fine(session.getSessionId() + " -> state = " + state);
+	public boolean isAlphaSupported() {
+		return false;
+	}
+
+	@Override
+	public String getId() {
+		return "MPEG";
 	}
 }
