@@ -31,14 +31,15 @@ import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.IntBuffer;
+import java.util.Objects;
 
 public class ExportJob {
 	private final ExportSession session;
 	private final ExportProfile profile;
 
 	public ExportJob(ExportSession session, ExportProfile profile) {
-		this.session = session;
-		this.profile = profile;
+		this.session = Objects.requireNonNull(session);
+		this.profile = Objects.requireNonNull(profile);
 	}
 
 	public ExportProfile getProfile() {

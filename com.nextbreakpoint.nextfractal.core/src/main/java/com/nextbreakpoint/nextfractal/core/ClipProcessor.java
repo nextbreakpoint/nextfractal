@@ -23,23 +23,30 @@ public class ClipProcessor {
             ClipEvent event = clips.get(0).getEvents().get(0);
             long baseTime = event.getDate().getTime();
             while (frameIndex < frameCount) {
-                if (currentEvent < clips.get(currentClip).getEvents().size()) {
+                while (currentClip < clips.size() && currentEvent < clips.get(currentClip).getEvents().size()) {
                     currentEvent += 1;
-                } else if (currentClip < clips.size()) {
-                    currentClip += 1;
-                    currentEvent = 0;
-                }
-                if (currentEvent < clips.get(currentClip).getEvents().size()) {
-                    ClipEvent nextEvent = clips.get(currentClip).getEvents().get(currentEvent);
-                    float frameTime = frameIndex * frameRate;
-                    while (frameTime < (nextEvent.getDate().getTime() - baseTime) / 1000f) {
-                        frames.add(new Frame(event.getPluginId(), event.getScript(), event.getMetadata()));
-                        frameIndex += 1;
-                        frameTime = frameIndex * frameRate;
+                    while (currentClip < clips.size() && currentEvent >= clips.get(currentClip).getEvents().size()) {
+                        currentClip += 1;
+                        currentEvent = 0;
+                        if (currentClip < clips.size() && clips.get(currentClip).getEvents().size() > 0) {
+                            ClipEvent firstEvent = clips.get(currentClip).getEvents().get(0);
+                            baseTime = firstEvent.getDate().getTime();
+                        }
                     }
-                    event = nextEvent;
-                } else {
-                    frameIndex += 1;
+                    System.out.println("clip " + currentClip + ", event " + currentEvent);
+                    if (currentClip < clips.size() && currentEvent < clips.get(currentClip).getEvents().size()) {
+                        ClipEvent nextEvent = clips.get(currentClip).getEvents().get(currentEvent);
+                        float frameTime = frameIndex * frameRate;
+                        while (frameTime < (nextEvent.getDate().getTime() - baseTime) / 1000f) {
+                            frames.add(new Frame(event.getPluginId(), event.getScript(), event.getMetadata()));
+                            frameIndex += 1;
+                            frameTime = frameIndex * frameRate;
+                            System.out.println("frame time " + frameIndex + " " + frameTime);
+                        }
+                        event = nextEvent;
+                    } else {
+                        frameIndex += 1;
+                    }
                 }
             }
         }

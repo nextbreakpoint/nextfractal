@@ -120,34 +120,42 @@ public abstract class AbstractExportService implements ExportService {
 	}
 
 	private void lockAndUpdateSessions() {
-		LinkedList<ExportHandle> copyOfSessions = new LinkedList<>();
 		try {
-			lock.lock();
-			copyOfSessions.addAll(sessions.values());
-		} finally {
-			lock.unlock();
-		}
-		Collection<ExportHandle> finished = updateInBackground(sessions.values());
-		try {
-			lock.lock();
-			finishedSessions.addAll(finished);
-		} finally {
-			lock.unlock();
+			LinkedList<ExportHandle> copyOfSessions = new LinkedList<>();
+			try {
+				lock.lock();
+				copyOfSessions.addAll(sessions.values());
+			} finally {
+				lock.unlock();
+			}
+			Collection<ExportHandle> finished = updateInBackground(copyOfSessions);
+			try {
+				lock.lock();
+				finishedSessions.addAll(finished);
+			} finally {
+				lock.unlock();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
 	private void notifyUpdateSessions() {
 		Platform.runLater(() -> {
-			LinkedList<ExportHandle> copyOfSessions = new LinkedList<>();
 			try {
-				lock.lock();
-				copyOfSessions.addAll(sessions.values());
-				finishedSessions.forEach(session -> sessions.remove(session.getSessionId()));
-				finishedSessions.clear();
-			} finally {
-				lock.unlock();
+				LinkedList<ExportHandle> copyOfSessions = new LinkedList<>();
+				try {
+					lock.lock();
+					copyOfSessions.addAll(sessions.values());
+					finishedSessions.forEach(session -> sessions.remove(session.getSessionId()));
+					finishedSessions.clear();
+				} finally {
+					lock.unlock();
+				}
+				notifyUpdate(copyOfSessions);
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
-			notifyUpdate(copyOfSessions);
 		});
 	}
 

@@ -172,13 +172,6 @@ public final class ExportHandle {
 		return false;
 	}
 
-	public boolean isKeyFrame() {
-		if (frameNumber > 0) {
-			return !session.getFrames().get(frameNumber - 1).equals(session.getFrames().get(frameNumber));
-		}
-		return true;
-	}
-
 	public boolean isFrameCompleted() {
 		return getCompletedJobsCount() == getJobsCount();
 	}
