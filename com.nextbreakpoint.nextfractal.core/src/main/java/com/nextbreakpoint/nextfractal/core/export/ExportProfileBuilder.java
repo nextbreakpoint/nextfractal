@@ -27,7 +27,6 @@ package com.nextbreakpoint.nextfractal.core.export;
 public class ExportProfileBuilder {
 	private float quality;
 	private float frameRate;
-	private int frameNumber;
 	private int frameWidth;
 	private int frameHeight;
 	private int tileWidth;
@@ -46,7 +45,6 @@ public class ExportProfileBuilder {
 		ExportProfileBuilder builder = new ExportProfileBuilder();
 		builder.quality = profile.getQuality();
 		builder.frameRate = profile.getQuality();
-		builder.frameNumber = profile.getFrameNumber();
 		builder.frameWidth = profile.getFrameWidth();
 		builder.frameHeight = profile.getFrameHeight();
 		builder.tileWidth = profile.getTileWidth();
@@ -69,10 +67,6 @@ public class ExportProfileBuilder {
 
 	public void withFrameRate(float frameRate) {
 		this.frameRate = frameRate;
-	}
-
-	public void withFrameNumber(int frameNumber) {
-		this.frameNumber = frameNumber;
 	}
 
 	public void withFrameWidth(int frameWidth) {
@@ -128,7 +122,7 @@ public class ExportProfileBuilder {
 	}
 
 	public ExportProfile build() {
-		return new ExportProfile(quality, frameRate, frameNumber, frameWidth, frameHeight, tileWidth, tileHeight,
+		return new ExportProfile(quality, frameRate, frameWidth, frameHeight, tileWidth, tileHeight,
 			tileOffsetX, tileOffsetY, borderWidth, borderHeight, startTime, stopTime, pluginId, script, metadata);
 	}
 }

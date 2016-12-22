@@ -501,6 +501,7 @@ public class Renderer {
 					rendererData.setPoint(offset, p);
 					rendererData.setPixel(offset, opaque ? 0xFF000000 | c : c);
 					offset += 1;
+					Thread.yield();
 				}
 				if (isInterrupted()) {
 					aborted = true;

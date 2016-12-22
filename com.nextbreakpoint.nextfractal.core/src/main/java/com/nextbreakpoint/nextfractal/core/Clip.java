@@ -28,4 +28,8 @@ public class Clip {
     public boolean isEmpty() {
         return events.isEmpty();
     }
+
+    public long duration() {
+        return events.size() > 1 ? events.get(events.size() - 1).getDate().getTime() - events.get(0).getDate().getTime() : 0;
+    }
 }

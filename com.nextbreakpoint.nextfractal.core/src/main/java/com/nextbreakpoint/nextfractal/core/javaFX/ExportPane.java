@@ -315,7 +315,7 @@ public class ExportPane extends BorderPane {
 //				formatCombobox.setDisable(false);
 				formatCombobox.getItems().clear();
 				formatCombobox.getItems().add(new String[] { "PNG image", "PNG" });
-				formatCombobox.getItems().add(new String[] { "MPEG video", "MPEG" });
+				formatCombobox.getItems().add(new String[] { "Quicktime", "MOV" });
 				formatCombobox.getSelectionModel().select(1);
 			} else {
 				previewButton.setDisable(true);
@@ -364,7 +364,12 @@ public class ExportPane extends BorderPane {
 		presetsCombobox.getItems().clear();
 		presetsCombobox.getItems().add(new Integer[] { 0, 0 });
 		presetsCombobox.getItems().add(new Integer[] { 1920, 1080 });
-		presetsCombobox.getItems().add(new Integer[] { 720, 570 });
+		presetsCombobox.getItems().add(new Integer[] { 1440, 1080 });
+		presetsCombobox.getItems().add(new Integer[] { 1280, 720 });
+		presetsCombobox.getItems().add(new Integer[] { 720, 480 });
+		presetsCombobox.getItems().add(new Integer[] { 720, 576 });
+		presetsCombobox.getItems().add(new Integer[] { 352, 288 });
+		presetsCombobox.getItems().add(new Integer[] { 352, 240 });
 		presetsCombobox.getSelectionModel().select(1);
 	}
 

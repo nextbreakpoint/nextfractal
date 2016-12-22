@@ -1,2 +1,2 @@
 com.nextbreakpoint.nextfractal.runtime.encoder.PNGImageEncoder
-com.nextbreakpoint.nextfractal.runtime.encoder.MPEGVideoEncoder
+com.nextbreakpoint.nextfractal.runtime.encoder.QuicktimeVideoEncoder

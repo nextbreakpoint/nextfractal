@@ -70,7 +70,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class RenderPane extends BorderPane {
-	private static final int FRAME_LENGTH_IN_MILLIS = 20;
+	private static final int FRAME_LENGTH_IN_MILLIS = 1000 / 25;
 	private static final Logger logger = Logger.getLogger(RenderPane.class.getName());
 	private final ThreadFactory renderThreadFactory;
 	private final JavaFXRendererFactory renderFactory;

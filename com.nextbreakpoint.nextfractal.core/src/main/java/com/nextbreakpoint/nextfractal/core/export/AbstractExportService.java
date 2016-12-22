@@ -46,7 +46,7 @@ public abstract class AbstractExportService implements ExportService {
 	
 	public AbstractExportService(ThreadFactory threadFactory) {
 		executor = Executors.newSingleThreadScheduledExecutor(Objects.requireNonNull(threadFactory));
-		executor.scheduleAtFixedRate(() -> lockAndUpdateSessions(), 1000, 100, TimeUnit.MILLISECONDS);
+		executor.scheduleAtFixedRate(() -> lockAndUpdateSessions(), 1000, 250, TimeUnit.MILLISECONDS);
 		executor.scheduleWithFixedDelay(() -> notifyUpdateSessions(), 1000, 1000, TimeUnit.MILLISECONDS);
 	}
 

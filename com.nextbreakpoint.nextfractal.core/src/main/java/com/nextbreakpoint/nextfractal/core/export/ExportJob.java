@@ -59,29 +59,8 @@ public class ExportJob {
 	}
 
 	public void writePixels(RendererSize size, IntBuffer pixels) throws IOException {
-		RandomAccessFile raf = null;
-		try {
-			byte[] data = convertToBytes(size, pixels);
-			raf = new RandomAccessFile(this.getTmpFile(), "rw");
-			double startTime = this.getProfile().getStartTime();
-			double stopTime = this.getProfile().getStopTime();
-			float frameRate = this.getProfile().getFrameRate();
-			int firstFrame = this.getProfile().getFrameNumber();
-			final int frameCount = computeFrameCount(startTime, stopTime, frameRate);
-			if (frameCount == 0) {
-				writeFrame(raf, 0, size, data);
-			} else if (firstFrame > 0 && firstFrame < frameCount) {
-				for (int frameNumber = firstFrame; frameNumber < frameCount; frameNumber++) {
-					writeFrame(raf, frameNumber, size, data);
-				}
-			}
-		} finally {
-			if (raf != null) {
-				try {
-					raf.close();
-				} catch (final IOException e) {
-				}
-			}
+		try (RandomAccessFile raf = new RandomAccessFile(this.getTmpFile(), "rw")) {
+			writeFrame(raf, size, convertToBytes(size, pixels));
 		}
 	}
 	
@@ -90,11 +69,7 @@ public class ExportJob {
 		return "[sessionId = " + session.getSessionId() + ", profile=" + profile + "]";
 	}
 
-	private int computeFrameCount(double startTime, double stopTime, float frameRate) {
-		return (int) Math.floor((stopTime - startTime) * frameRate);
-	}
-
-	private void writeFrame(RandomAccessFile raf, int frameNumber, RendererSize size, byte[] data) throws IOException {
+	private void writeFrame(RandomAccessFile raf, RendererSize size, byte[] data) throws IOException {
 		final int sw = size.getWidth();
 		final int sh = size.getHeight();
 		final int tx = this.getProfile().getTileOffsetX();
@@ -105,7 +80,7 @@ public class ExportJob {
 		final int ih = this.getProfile().getFrameHeight();
 		final int ly = Math.min(th, ih - ty);
 		final int lx = Math.min(tw, iw - tx);
-		long pos = (frameNumber * iw * ih + ty * iw + tx) * 4;
+		long pos = (ty * iw + tx) * 4;
 		for (int j = ((sw * (sh - th) + (sw - tw)) / 2) * 4, k = 0; k < ly; k++) {
 			raf.seek(pos);
 			raf.write(data, j, lx * 4);

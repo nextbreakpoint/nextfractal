@@ -27,13 +27,13 @@ package com.nextbreakpoint.nextfractal.runtime.encoder;
 /**
  * @author Andrea Medeghini
  */
-public class MPEGVideoEncoder extends AbstractVideoEncoder {
+public class QuicktimeVideoEncoder extends AbstractVideoEncoder {
 	protected String getFormatName() {
-		return "mpeg2video";
+		return "mov";
 	}
 
 	public String getSuffix() {
-		return ".mpg";
+		return ".mov";
 	}
 
 	public boolean isAlphaSupported() {
@@ -42,6 +42,6 @@ public class MPEGVideoEncoder extends AbstractVideoEncoder {
 
 	@Override
 	public String getId() {
-		return "MPEG";
+		return "MOV";
 	}
 }

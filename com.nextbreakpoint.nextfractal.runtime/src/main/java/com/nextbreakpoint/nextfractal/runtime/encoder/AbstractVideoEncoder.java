@@ -41,6 +41,7 @@ import com.nextbreakpoint.ffmpeg4java.AVRational;
 import com.nextbreakpoint.ffmpeg4java.AVStream;
 import com.nextbreakpoint.ffmpeg4java.FFmpeg4Java;
 import com.nextbreakpoint.ffmpeg4java.SWIGTYPE_p_SwsContext;
+import com.nextbreakpoint.ffmpeg4java.SWIGTYPE_p_p_AVCodecParameters;
 import com.nextbreakpoint.ffmpeg4java.SWIGTYPE_p_p_AVIOContext;
 import com.nextbreakpoint.ffmpeg4java.SWIGTYPE_p_p_void;
 import com.nextbreakpoint.ffmpeg4java.SWIGTYPE_p_uint8_t;
@@ -96,11 +97,13 @@ public abstract class AbstractVideoEncoder implements Encoder {
 	protected abstract String getFormatName();
 
 	private class VideoEncoderHandle implements EncoderHandle {
+		private final int frame_width;
+		private final int frame_height;
 		private EncoderContext context;
 		private AVFormatContext format_context;
 		private AVOutputFormat output_format;
 		private AVCodecContext codec_context;
-		private AVRational time_base;
+		private AVCodecParameters codec_params;
 		private AVStream stream;
 		private AVCodec codec;
 		private AVFrame rgb_frame;
@@ -120,52 +123,71 @@ public abstract class AbstractVideoEncoder implements Encoder {
 				if (AbstractVideoEncoder.logger.isLoggable(Level.FINE)) {
 					AbstractVideoEncoder.logger.fine("Start encoding...");
 				}
+				int bytes_per_pixel = 3;
 				time = System.currentTimeMillis();
 				int fps = context.getFrameRate();
-				int frame_width = context.getImageWidth();
-				int frame_height = context.getImageHeight();
+				frame_width = context.getImageWidth();
+				frame_height = context.getImageHeight();
 				format_context = FFmpeg4Java.avformat_alloc_context();
-				output_format = FFmpeg4Java.av_guess_format(getFormatName(), null, null);
-				if (format_context == null || output_format == null || output_format.getVideo_codec().equals(AVCodecID.AV_CODEC_ID_NONE)) {
-					throw new EncoderException("Cannot find codec");
+				if (format_context == null) {
+					throw new EncoderException("Cannot allocate context");
 				}
-				AbstractVideoEncoder.logger.fine("Format is " + output_format.getLong_name());
+				output_format = FFmpeg4Java.av_guess_format(getFormatName(), null, null);
+				if (output_format == null) {
+					throw new EncoderException("Cannot find format " + getFormatName());
+				}
+				AbstractVideoEncoder.logger.info("Format is " + output_format.getLong_name());
 				format_context.setOformat(output_format);
-				time_base = new AVRational();
+				AVRational frame_rate = new AVRational();
+				frame_rate.setNum(fps);
+				frame_rate.setDen(1);
+				AVRational time_base = new AVRational();
 				time_base.setNum(1);
 				time_base.setDen(fps);
-				codec = FFmpeg4Java.avcodec_find_encoder(output_format.getVideo_codec());
+				AbstractVideoEncoder.logger.info("FPS is " + fps);
+				codec = FFmpeg4Java.avcodec_find_encoder(AVCodecID.AV_CODEC_ID_MPEG2VIDEO);
+				if (codec == null) {
+					throw new EncoderException("Cannot find codec " + AVCodecID.AV_CODEC_ID_MPEG2VIDEO.toString());
+				}
+				stream = FFmpeg4Java.avformat_new_stream(format_context, codec);
+				if (stream == null || format_context.getNb_streams() != 1) {
+					throw new EncoderException("Cannot allocate stream");
+				}
+				stream.setId((int)format_context.getNb_streams() - 1);
+				codec_params = FFmpeg4Java.avcodec_parameters_alloc();
+				if (codec_params == null) {
+					throw new EncoderException("Cannot allocate codec parameters");
+				}
+				codec_params.setCodec_id(codec.getId());
+				codec_params.setCodec_type(AVMediaType.AVMEDIA_TYPE_VIDEO);
+				codec_params.setFormat(AVPixelFormat.AV_PIX_FMT_YUV420P.swigValue());
+				codec_params.setWidth(frame_width);
+				codec_params.setHeight(frame_height);
+				codec_params.setBit_rate(frame_width * frame_height * bytes_per_pixel * FFmpeg4Java.av_q2intfloat(frame_rate) * 8);
+				stream.setCodecpar(codec_params);
+				stream.setAvg_frame_rate(frame_rate);
 				codec_context = FFmpeg4Java.avcodec_alloc_context3(codec);
-				if (codec == null || codec_context == null) {
+				if (codec_context == null) {
 					throw new EncoderException("Cannot allocate codec");
 				}
-				codec_context.setCodec_id(output_format.getVideo_codec());
+				codec_context.setCodec_id(codec.getId());
 				codec_context.setCodec_type(AVMediaType.AVMEDIA_TYPE_VIDEO);
 				codec_context.setPix_fmt(AVPixelFormat.AV_PIX_FMT_YUV420P);
 				codec_context.setWidth(frame_width);
 				codec_context.setHeight(frame_height);
 				codec_context.setTime_base(time_base);
-				codec_context.setBit_rate(100 * 1024);
-//				codec_context.setGop_size(12);
-//				codec_context.setMb_decision(2);
-//				codec_context.setMax_b_frames(4);
-				codec_context.setB_quant_factor(0.1f);
-				codec_context.setI_quant_factor(0.1f);
+				codec_context.setBit_rate(400000);
+				codec_context.setGop_size(15);
+				codec_context.setMb_decision(2);
+				codec_context.setMax_b_frames(2);
+//				codec_context.setB_quant_factor(0.1f);
+//				codec_context.setI_quant_factor(0.1f);
 				codec_context.setProfile(FFmpeg4Java.FF_PROFILE_MPEG2_HIGH);
-				stream = FFmpeg4Java.avformat_new_stream(format_context, codec);
-				if (stream == null || format_context.getNb_streams() != 1) {
-					throw new EncoderException("Cannot allocate stream");
-				}
-				AVCodecParameters params = new AVCodecParameters();
-				params.setCodec_id(output_format.getVideo_codec());
-				params.setCodec_type(AVMediaType.AVMEDIA_TYPE_VIDEO);
-				params.setWidth(frame_width);
-				params.setHeight(frame_height);
-				stream.setTime_base(time_base);
-				stream.setCodecpar(params);
+				codec_context.setStrict_std_compliance(codec_context.getStrict_std_compliance() | FFmpeg4Java.FF_COMPLIANCE_VERY_STRICT);
+				codec_context.setFlags(codec_context.getFlags() | FFmpeg4Java.AV_CODEC_FLAG_GLOBAL_HEADER);
 				SWIGTYPE_p_uint8_t side_data = FFmpeg4Java.av_stream_new_side_data(stream, AVPacketSideDataType.AV_PKT_DATA_CPB_PROPERTIES, new AVCPBProperties().size_of());
 				AVCPBProperties props = AVCPBProperties.asTypePointer(SWIGTYPE_p_uint8_t.asVoidPointer(side_data));
-				props.setBuffer_size(frame_width * frame_height * 3 * 2);
+				props.setBuffer_size(frame_width * frame_height * bytes_per_pixel * 2);
 				side_data = FFmpeg4Java.av_stream_get_side_data(stream, AVPacketSideDataType.AV_PKT_DATA_CPB_PROPERTIES, null);
 				props = AVCPBProperties.asTypePointer(SWIGTYPE_p_uint8_t.asVoidPointer(side_data));
 				AbstractVideoEncoder.logger.info("Buffer size " + props.getBuffer_size());
@@ -179,7 +201,7 @@ public abstract class AbstractVideoEncoder implements Encoder {
 					throw new EncoderException("Cannot create codec io");
 				}
 				format_context.setPb(AVIOContext.asTypePointer(FFmpeg4Java.swig_from_p_p_to_p(SWIGTYPE_p_p_void.asTypePointer(SWIGTYPE_p_p_AVIOContext.asVoidPointer(avio_context_p_p)))));
-				sws_context = FFmpeg4Java.sws_getCachedContext(null, codec_context.getWidth(), codec_context.getHeight(), AVPixelFormat.AV_PIX_FMT_RGB24, codec_context.getWidth(), codec_context.getHeight(), AVPixelFormat.AV_PIX_FMT_YUV420P, FFmpeg4Java.SWS_BILINEAR, null, null, null);
+				sws_context = FFmpeg4Java.sws_getCachedContext(null, frame_width, frame_height, AVPixelFormat.AV_PIX_FMT_RGB24, frame_width, frame_height, AVPixelFormat.AV_PIX_FMT_YUV420P, FFmpeg4Java.SWS_BILINEAR, null, null, null);
 				if (sws_context == null) {
 					throw new EncoderException("Cannot create rescale context");
 				}
@@ -188,23 +210,23 @@ public abstract class AbstractVideoEncoder implements Encoder {
 				if (rgb_frame == null || yuv_frame == null) {
 					throw new EncoderException("Cannot allocate frame buffers");
 				}
-				rgb_frame.setWidth(codec_context.getWidth());
-				rgb_frame.setHeight(codec_context.getHeight());
+				rgb_frame.setWidth(frame_width);
+				rgb_frame.setHeight(frame_height);
 				rgb_frame.setFormat(AVPixelFormat.AV_PIX_FMT_RGB24.swigValue());
-				yuv_frame.setWidth(codec_context.getWidth());
-				yuv_frame.setHeight(codec_context.getHeight());
+				yuv_frame.setWidth(frame_width);
+				yuv_frame.setHeight(frame_height);
 				yuv_frame.setFormat(AVPixelFormat.AV_PIX_FMT_YUV420P.swigValue());
-				FFmpeg4Java.av_image_alloc(rgb_frame.getData(), rgb_frame.getLinesize(), codec_context.getWidth(), codec_context.getHeight(), AVPixelFormat.AV_PIX_FMT_RGB24, 1);
-				FFmpeg4Java.av_image_alloc(yuv_frame.getData(), yuv_frame.getLinesize(), codec_context.getWidth(), codec_context.getHeight(), AVPixelFormat.AV_PIX_FMT_YUV420P, 1);
-				int rgb_bit_buffer_size = FFmpeg4Java.av_image_get_buffer_size(AVPixelFormat.AV_PIX_FMT_RGB24, codec_context.getWidth(), codec_context.getHeight(), 1);
-				int yuv_bit_buffer_size = FFmpeg4Java.av_image_get_buffer_size(AVPixelFormat.AV_PIX_FMT_YUV420P, codec_context.getWidth(), codec_context.getHeight(), 1);
+				FFmpeg4Java.av_image_alloc(rgb_frame.getData(), rgb_frame.getLinesize(), frame_width, frame_height, AVPixelFormat.AV_PIX_FMT_RGB24, 1);
+				FFmpeg4Java.av_image_alloc(yuv_frame.getData(), yuv_frame.getLinesize(), frame_width, frame_height, AVPixelFormat.AV_PIX_FMT_YUV420P, 1);
+				int rgb_bit_buffer_size = FFmpeg4Java.av_image_get_buffer_size(AVPixelFormat.AV_PIX_FMT_RGB24, frame_width, frame_height, 1);
+				int yuv_bit_buffer_size = FFmpeg4Java.av_image_get_buffer_size(AVPixelFormat.AV_PIX_FMT_YUV420P, frame_width, frame_height, 1);
 				rgb_bit_buffer = SWIGTYPE_p_uint8_t.asTypePointer(FFmpeg4Java.av_mallocz(rgb_bit_buffer_size));
 				yuv_bit_buffer = SWIGTYPE_p_uint8_t.asTypePointer(FFmpeg4Java.av_mallocz(yuv_bit_buffer_size));
 				if (rgb_bit_buffer == null || yuv_bit_buffer == null) {
 					throw new EncoderException("Cannot allocate bit buffers");
 				}
-				FFmpeg4Java.av_image_fill_arrays(rgb_frame.getData(), rgb_frame.getLinesize(), rgb_bit_buffer, AVPixelFormat.AV_PIX_FMT_RGB24, codec_context.getWidth(), codec_context.getHeight(), 1);
-				FFmpeg4Java.av_image_fill_arrays(yuv_frame.getData(), yuv_frame.getLinesize(), yuv_bit_buffer, AVPixelFormat.AV_PIX_FMT_YUV420P, codec_context.getWidth(), codec_context.getHeight(), 1);
+				FFmpeg4Java.av_image_fill_arrays(rgb_frame.getData(), rgb_frame.getLinesize(), rgb_bit_buffer, AVPixelFormat.AV_PIX_FMT_RGB24, frame_width, frame_height, 1);
+				FFmpeg4Java.av_image_fill_arrays(yuv_frame.getData(), yuv_frame.getLinesize(), yuv_bit_buffer, AVPixelFormat.AV_PIX_FMT_YUV420P, frame_width, frame_height, 1);
 				packet = FFmpeg4Java.av_packet_alloc();
 				if (packet == null) {
 					throw new EncoderException("Cannot allocate packet");
@@ -213,9 +235,11 @@ public abstract class AbstractVideoEncoder implements Encoder {
 				FFmpeg4Java.avformat_write_header(format_context, null);
 			} catch (EncoderException e) {
 				dispose();
+				logger.log(Level.WARNING, "Failed to open encoder", e);
 				throw e;
 			} catch (Exception e) {
 				dispose();
+				logger.log(Level.WARNING, "Failed to open encoder", e);
 				throw new EncoderException(e);
 			}
 		}
@@ -225,7 +249,7 @@ public abstract class AbstractVideoEncoder implements Encoder {
 				if (packet != null) {
 					byte[] data = context.getPixelsAsByteArray(0, 0, 0, context.getImageWidth(), context.getImageHeight(), 3);
 					FFmpeg4Java.swig_set_bytes(rgb_bit_buffer, data);
-					FFmpeg4Java.sws_scale(sws_context, rgb_frame.getData(), rgb_frame.getLinesize(), 0, codec_context.getHeight(), yuv_frame.getData(), yuv_frame.getLinesize());
+					FFmpeg4Java.sws_scale(sws_context, rgb_frame.getData(), rgb_frame.getLinesize(), 0, frame_height, yuv_frame.getData(), yuv_frame.getLinesize());
 					for (int loop_count = 0; loop_count < frame_count; loop_count++) {
 						int last_frame = frame_index + loop_count;
 						if (delegate != null) {
@@ -235,6 +259,7 @@ public abstract class AbstractVideoEncoder implements Encoder {
 							while (FFmpeg4Java.avcodec_receive_packet(codec_context, packet) == 0) {
 								FFmpeg4Java.av_packet_rescale_ts(packet, codec_context.getTime_base(), stream.getTime_base());
 								FFmpeg4Java.av_write_frame(format_context, packet);
+								logger.info("1) pts " + packet.getPts() + ", dts " + packet.getDts());
 								Thread.yield();
 							}
 						}
@@ -246,6 +271,7 @@ public abstract class AbstractVideoEncoder implements Encoder {
 				}
 			} catch (Exception e) {
 				dispose();
+				logger.log(Level.WARNING, "Failed to encode frame", e);
 				throw new EncoderException(e);
 			}
 		}
@@ -257,6 +283,7 @@ public abstract class AbstractVideoEncoder implements Encoder {
 						while (FFmpeg4Java.avcodec_receive_packet(codec_context, packet) == 0) {
 							FFmpeg4Java.av_packet_rescale_ts(packet, codec_context.getTime_base(), stream.getTime_base());
 							FFmpeg4Java.av_write_frame(format_context, packet);
+							logger.info("2) pts " + packet.getPts() + ", dts " + packet.getDts());
 							Thread.yield();
 						}
 					}
@@ -321,6 +348,10 @@ public abstract class AbstractVideoEncoder implements Encoder {
 			if (format_context != null) {
 				format_context.delete();
 				format_context = null;
+			}
+			if (codec_params != null) {
+//				FFmpeg4Java.avcodec_parameters_free(SWIGTYPE_p_p_AVCodecParameters.asTypePointer(AVCodecParameters.asVoidPointer(codec_params)));
+				codec_params = null;
 			}
 		}
 	}

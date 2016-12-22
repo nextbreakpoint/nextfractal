@@ -46,14 +46,11 @@ public final class ExportSession {
 	private final String sessionId;
 	private final Encoder encoder;
 	private final RendererSize size;
-	private final int frameCount;
 	private final File tmpFile;
 	private final File file;
 	private final int tileSize;
 	private final float quality;
 	private final float frameRate;
-	private final float startTime;
-	private final float stopTime;
 	private final Session session;
 
 	public ExportSession(String sessionId, Session session, List<Clip> clips, File file, File tmpFile, RendererSize size, int tileSize, Encoder encoder) {
@@ -65,23 +62,17 @@ public final class ExportSession {
 		this.encoder = encoder;
 		this.tileSize = tileSize;
 		this.quality = 1;
-		this.frameRate = 1.0f / 24.0f;
+		this.frameRate = 1.0f / 25.0f;
 		if (clips.size() > 0 && clips.get(0).getEvents().size() > 1) {
-			Clip firstClip = clips.get(0);
-			long baseTime = firstClip.getEvents().get(0).getDate().getTime();
-			Clip lastClip = clips.get(clips.size() - 1);
-			this.startTime = 0;
-			this.stopTime = (lastClip.getEvents().get(lastClip.getEvents().size() - 1).getDate().getTime() - baseTime) / 1000f;
-			this.frameCount = computeFrameCount(startTime, stopTime, frameRate);
-			ClipProcessor processor = new ClipProcessor(clips, frameCount, frameRate);
-			this.frames.addAll(processor.generateFrames());
+			this.frames.addAll(new ClipProcessor(clips, frameRate).generateFrames());
 		} else {
-			this.startTime = 0;
-			this.stopTime = 0;
-			this.frameCount = computeFrameCount(startTime, stopTime, frameRate);
 			frames.add(new Frame(session.getPluginId(), session.getScript(), session.getMetadata()));
 		}
-		jobs.addAll(createJobs(0));
+		jobs.addAll(createJobs());
+	}
+
+	public Session getSession() {
+		return session;
 	}
 
 	public String getSessionId() {
@@ -109,18 +100,22 @@ public final class ExportSession {
 	}
 
 	public int getFrameCount() {
-		return frameCount;
+		return frames.size();
 	}
 
 	public List<ExportJob> getJobs() {
 		return Collections.unmodifiableList(jobs);
 	}
 
+	public List<Frame> getFrames() {
+		return Collections.unmodifiableList(frames);
+	}
+
 	public void dispose() {
 		jobs.clear();
 	}
 
-	private List<ExportJob> createJobs(int frameNumber) {
+	private List<ExportJob> createJobs() {
 		final List<ExportJob> jobs = new ArrayList<ExportJob>();
 		final int frameWidth = size.getWidth();
 		final int frameHeight = size.getHeight();
@@ -133,7 +128,7 @@ public final class ExportSession {
 				for (int ty = 0; ty < ny; ty++) {
 					int tileOffsetX = tileSize * tx;
 					int tileOffsetY = tileSize * ty;
-					jobs.add(createJob(createProfile(frameNumber, frameWidth, frameHeight, tileOffsetX, tileOffsetY)));
+					jobs.add(createJob(createProfile(frameWidth, frameHeight, tileOffsetX, tileOffsetY)));
 				}
 			}
 		}
@@ -141,28 +136,27 @@ public final class ExportSession {
 			for (int ty = 0; ty < ny; ty++) {
 				int tileOffsetX = tileSize * nx;
 				int tileOffsetY = tileSize * ty;
-				jobs.add(createJob(createProfile(frameNumber, frameWidth, frameHeight, tileOffsetX, tileOffsetY)));
+				jobs.add(createJob(createProfile(frameWidth, frameHeight, tileOffsetX, tileOffsetY)));
 			}
 		}
 		if (ry > 0) {
 			for (int tx = 0; tx < nx; tx++) {
 				int tileOffsetX = tileSize * tx;
 				int tileOffsetY = tileSize * ny;
-				jobs.add(createJob(createProfile(frameNumber, frameWidth, frameHeight, tileOffsetX, tileOffsetY)));
+				jobs.add(createJob(createProfile(frameWidth, frameHeight, tileOffsetX, tileOffsetY)));
 			}
 		}
 		if (rx > 0 && ry > 0) {
 			int tileOffsetX = tileSize * nx;
 			int tileOffsetY = tileSize * ny;
-			jobs.add(createJob(createProfile(frameNumber, frameWidth, frameHeight, tileOffsetX, tileOffsetY)));
+			jobs.add(createJob(createProfile(frameWidth, frameHeight, tileOffsetX, tileOffsetY)));
 		}
 		return jobs;
 	}
 
-	private ExportProfile createProfile(int frameNumber, final int frameWidth, final int frameHeight, int tileOffsetX, int tileOffsetY) {
+	private ExportProfile createProfile(final int frameWidth, final int frameHeight, int tileOffsetX, int tileOffsetY) {
 		ExportProfileBuilder builder = new ExportProfileBuilder();
 		builder.withQuality(quality);
-		builder.withFrameNumber(frameNumber);
 		builder.withFrameRate(frameRate);
 		builder.withFrameWidth(frameWidth);
 		builder.withFrameHeight(frameHeight);
@@ -177,17 +171,5 @@ public final class ExportSession {
 
 	private ExportJob createJob(ExportProfile profile) {
 		return new ExportJob(this, profile);
-	}
-
-	private int computeFrameCount(double startTime, double stopTime, float frameRate) {
-		return (int) Math.floor((stopTime - startTime) / frameRate);
-	}
-
-	public List<Frame> getFrames() {
-		return Collections.unmodifiableList(frames);
-	}
-
-	public Session getSession() {
-		return session;
 	}
 }

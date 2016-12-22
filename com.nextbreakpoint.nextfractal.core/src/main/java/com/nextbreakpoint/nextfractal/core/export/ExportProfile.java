@@ -31,7 +31,6 @@ import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
 public class ExportProfile {
 	private float quality;
 	private float frameRate;
-	private int frameNumber;
 	private int frameWidth;
 	private int frameHeight;
 	private int tileWidth;
@@ -46,10 +45,9 @@ public class ExportProfile {
 	private String script;
 	private Object metadata;
 
-	ExportProfile(float quality, float frameRate, int frameNumber, int frameWidth, int frameHeight, int tileWidth, int tileHeight, int tileOffsetX, int tileOffsetY, int borderWidth, int borderHeight, float startTime, float stopTime, String pluginId, String script, Object metadata) {
+	ExportProfile(float quality, float frameRate, int frameWidth, int frameHeight, int tileWidth, int tileHeight, int tileOffsetX, int tileOffsetY, int borderWidth, int borderHeight, float startTime, float stopTime, String pluginId, String script, Object metadata) {
 		this.quality = quality;
 		this.frameRate = frameRate;
-		this.frameNumber = frameNumber;
 		this.frameWidth = frameWidth;
 		this.frameHeight = frameHeight;
 		this.tileWidth = tileWidth;
@@ -71,10 +69,6 @@ public class ExportProfile {
 
 	public float getFrameRate() {
 		return frameRate;
-	}
-
-	public int getFrameNumber() {
-		return frameNumber;
 	}
 
 	public int getFrameWidth() {
@@ -139,7 +133,7 @@ public class ExportProfile {
 
 	@Override
 	public String toString() {
-		return "[pluginId=" + pluginId + ", frameRate=" + frameRate + ", frameNumber=" + frameNumber + ", frameWidth=" + frameWidth + ", frameHeight=" + frameHeight + ", tileWidth=" + tileWidth + ", tileHeight=" + tileHeight
+		return "[pluginId=" + pluginId + ", frameRate=" + frameRate + ", frameWidth=" + frameWidth + ", frameHeight=" + frameHeight + ", tileWidth=" + tileWidth + ", tileHeight=" + tileHeight
 				+ ", tileOffsetX=" + tileOffsetX + ", tileOffsetY=" + tileOffsetY + ", borderWidth=" + borderWidth + ", borderHeight=" + borderHeight + ", quality=" + quality + ", startTime=" + startTime + ", stopTime=" + stopTime + "]";
 	}
 }
