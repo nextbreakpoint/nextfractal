@@ -252,7 +252,7 @@ public abstract class AbstractVideoEncoder implements Encoder {
 		public void encode(int frame_index, int frame_count) throws EncoderException {
 			try {
 				if (packet != null) {
-					byte[] data = context.getPixelsAsByteArray(0, 0, 0, context.getImageWidth(), context.getImageHeight(), 3);
+					byte[] data = context.getPixelsAsByteArray(0, 0, 0, context.getImageWidth(), context.getImageHeight(), 3, true);
 					FFmpeg4Java.swig_set_bytes(rgb_bit_buffer, data);
 					FFmpeg4Java.sws_scale(sws_context, rgb_frame.getData(), rgb_frame.getLinesize(), 0, frame_height, yuv_frame.getData(), yuv_frame.getLinesize());
 					for (int loop_count = 0; loop_count < frame_count; loop_count++) {

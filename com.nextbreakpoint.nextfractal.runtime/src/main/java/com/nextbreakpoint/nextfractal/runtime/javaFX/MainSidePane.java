@@ -606,9 +606,9 @@ public class MainSidePane extends BorderPane {
     private FileChooser prepareExportFileChooser(String suffix) {
         ensureExportFileChooser(suffix);
         exportFileChooser.setTitle("Export");
+        exportFileChooser.setInitialFileName(createFileName() + suffix);
         if (exportCurrentFile != null) {
             exportFileChooser.setInitialDirectory(exportCurrentFile.getParentFile());
-            exportFileChooser.setInitialFileName(exportCurrentFile.getName());
         }
         return exportFileChooser;
     }
@@ -628,7 +628,6 @@ public class MainSidePane extends BorderPane {
     private void ensureExportFileChooser(String suffix) {
         if (exportFileChooser == null) {
             exportFileChooser = new FileChooser();
-            exportFileChooser.setInitialFileName(createFileName() + suffix);
             exportFileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
         }
     }

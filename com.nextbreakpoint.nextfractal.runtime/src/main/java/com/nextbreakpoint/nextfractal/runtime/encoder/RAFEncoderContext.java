@@ -85,33 +85,53 @@ public class RAFEncoderContext implements EncoderContext {
 		return data;
 	}
 
-	/**
-	 * @see com.nextbreakpoint.nextfractal.core.encoder.EncoderContext#getPixelsAsByteArray(int, int, int, int, int, int)
-	 */
 	@Override
-	public int[] getPixelsAsIntArray(final int n, final int x, final int y, final int w, final int h, final int s) throws IOException {
-		final int[] data = new int[w * h * s];
+	public byte[] getPixelsAsByteArray(final int n, final int x, final int y, final int w, final int h, final int s, final boolean flip) throws IOException {
+		final byte[] data = new byte[w * h * s];
 		final byte[] row = new byte[w * 4];
 		long pos = (n * getImageWidth() * getImageHeight() + y * getImageWidth() + x) * 4;
-		int t = 0;
-		for (int k = 0; k < h; k++) {
-			raf.seek(pos);
-			raf.readFully(row);
-			for (int j = 0, i = 0; i < row.length; j += s, i += 4) {
-				if (s == 3) {
-					data[t + j + 0] = row[i + 0];
-					data[t + j + 1] = row[i + 1];
-					data[t + j + 2] = row[i + 2];
+		if (flip) {
+			int t = (h - 1) * w * s;
+			for (int k = 0; k < h; k++) {
+				raf.seek(pos);
+				raf.readFully(row);
+				for (int j = 0, i = 0; i < row.length; j += s, i += 4) {
+					if (s == 3) {
+						data[t + j + 0] = row[i + 0];
+						data[t + j + 1] = row[i + 1];
+						data[t + j + 2] = row[i + 2];
+					}
+					else if (s == 4) {
+						data[t + j + 0] = row[i + 0];
+						data[t + j + 1] = row[i + 1];
+						data[t + j + 2] = row[i + 2];
+						data[t + j + 3] = row[i + 3];
+					}
 				}
-				else if (s == 4) {
-					data[t + j + 0] = row[i + 0];
-					data[t + j + 1] = row[i + 1];
-					data[t + j + 2] = row[i + 2];
-					data[t + j + 3] = row[i + 3];
-				}
+				t -= w * s;
+				pos += getImageWidth() * 4;
 			}
-			t += w * s;
-			pos += getImageWidth() * 4;
+		} else {
+			int t = 0;
+			for (int k = 0; k < h; k++) {
+				raf.seek(pos);
+				raf.readFully(row);
+				for (int j = 0, i = 0; i < row.length; j += s, i += 4) {
+					if (s == 3) {
+						data[t + j + 0] = row[i + 0];
+						data[t + j + 1] = row[i + 1];
+						data[t + j + 2] = row[i + 2];
+					}
+					else if (s == 4) {
+						data[t + j + 0] = row[i + 0];
+						data[t + j + 1] = row[i + 1];
+						data[t + j + 2] = row[i + 2];
+						data[t + j + 3] = row[i + 3];
+					}
+				}
+				t += w * s;
+				pos += getImageWidth() * 4;
+			}
 		}
 		return data;
 	}

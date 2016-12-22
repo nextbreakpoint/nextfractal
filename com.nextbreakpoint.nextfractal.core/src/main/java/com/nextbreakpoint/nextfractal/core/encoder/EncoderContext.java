@@ -49,10 +49,11 @@ public interface EncoderContext {
 	 * @param w
 	 * @param h
 	 * @param s
+	 * @param flip
 	 * @return
 	 * @throws IOException
 	 */
-	public int[] getPixelsAsIntArray(int n, int x, int y, int w, int h, int s) throws IOException;
+	public byte[] getPixelsAsByteArray(final int n, final int x, final int y, final int w, final int h, final int s, final boolean flip) throws IOException;
 
 	/**
 	 * @return

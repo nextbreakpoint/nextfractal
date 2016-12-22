@@ -126,7 +126,7 @@ public abstract class AbstractImageEncoder implements Encoder {
 				int channels = isAlphaSupported() ? 4 : 3;
 				value = new RGBQUAD();
 				dib = FreeImage4Java.FreeImage_Allocate(context.getImageWidth(), context.getImageHeight(), channels * 8, 0x00FF0000, 0x0000FF00, 0x000000FF);
-				final byte[] data = context.getPixelsAsByteArray(0, 0, 0, context.getImageWidth(), context.getImageHeight(), channels);
+				final byte[] data = context.getPixelsAsByteArray(0, 0, 0, context.getImageWidth(), context.getImageHeight(), channels, false);
 				for (int y = 0; y < context.getImageHeight(); y++) {
 					int j = y * context.getImageWidth();
 					for (int x = 0; x < context.getImageWidth(); x++) {

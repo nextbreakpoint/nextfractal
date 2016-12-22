@@ -90,7 +90,7 @@ import static com.nextbreakpoint.nextfractal.core.javaFX.Icons.computeOptimalLar
 import static com.nextbreakpoint.nextfractal.core.javaFX.Icons.createIconImage;
 
 public class RenderPane extends BorderPane {
-	private static final int FRAME_LENGTH_IN_MILLIS = 1000 / 25;
+	private static final int FRAME_LENGTH_IN_MILLIS = 1000 / 50;
 	private static final Logger logger = Logger.getLogger(RenderPane.class.getName());
 	private final ThreadFactory renderThreadFactory;
 	private final ThreadFactory juliaRenderThreadFactory;
@@ -260,7 +260,7 @@ public class RenderPane extends BorderPane {
 			}
 
 			public double getZoomSpeed() {
-				return 1.05;
+				return 1.025;
 			}
 
 			public RendererFactory getRendererFactory() {
