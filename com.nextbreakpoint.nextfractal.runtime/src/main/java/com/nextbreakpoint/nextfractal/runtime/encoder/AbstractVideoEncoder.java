@@ -40,6 +40,7 @@ import com.nextbreakpoint.ffmpeg4java.AVPixelFormat;
 import com.nextbreakpoint.ffmpeg4java.AVRational;
 import com.nextbreakpoint.ffmpeg4java.AVStream;
 import com.nextbreakpoint.ffmpeg4java.FFmpeg4Java;
+import com.nextbreakpoint.ffmpeg4java.FFmpeg4JavaConstants;
 import com.nextbreakpoint.ffmpeg4java.SWIGTYPE_p_SwsContext;
 import com.nextbreakpoint.ffmpeg4java.SWIGTYPE_p_p_AVCodecParameters;
 import com.nextbreakpoint.ffmpeg4java.SWIGTYPE_p_p_AVIOContext;
@@ -145,9 +146,10 @@ public abstract class AbstractVideoEncoder implements Encoder {
 				time_base.setNum(1);
 				time_base.setDen(fps);
 				AbstractVideoEncoder.logger.info("FPS is " + fps);
-				codec = FFmpeg4Java.avcodec_find_encoder(AVCodecID.AV_CODEC_ID_MPEG2VIDEO);
+				AVCodecID codecID = AVCodecID.AV_CODEC_ID_MPEG2VIDEO;
+				codec = FFmpeg4Java.avcodec_find_encoder(codecID);
 				if (codec == null) {
-					throw new EncoderException("Cannot find codec " + AVCodecID.AV_CODEC_ID_MPEG2VIDEO.toString());
+					throw new EncoderException("Cannot find codec " + codecID.toString());
 				}
 				stream = FFmpeg4Java.avformat_new_stream(format_context, codec);
 				if (stream == null || format_context.getNb_streams() != 1) {
@@ -179,12 +181,15 @@ public abstract class AbstractVideoEncoder implements Encoder {
 				codec_context.setBit_rate(400000);
 				codec_context.setGop_size(15);
 				codec_context.setMb_decision(2);
-				codec_context.setMax_b_frames(2);
+				if (codecID.swigValue() == AVCodecID.AV_CODEC_ID_MPEG1VIDEO.swigValue()) {
+					codec_context.setMax_b_frames(2);
+				}
+//				codec_context.setCodec_tag();
 //				codec_context.setB_quant_factor(0.1f);
 //				codec_context.setI_quant_factor(0.1f);
-				codec_context.setProfile(FFmpeg4Java.FF_PROFILE_MPEG2_HIGH);
-				codec_context.setStrict_std_compliance(codec_context.getStrict_std_compliance() | FFmpeg4Java.FF_COMPLIANCE_VERY_STRICT);
-				codec_context.setFlags(codec_context.getFlags() | FFmpeg4Java.AV_CODEC_FLAG_GLOBAL_HEADER);
+//				codec_context.setProfile(FFmpeg4Java.FF_PROFILE_MPEG2_HIGH);
+//				codec_context.setStrict_std_compliance(codec_context.getStrict_std_compliance() | FFmpeg4Java.FF_COMPLIANCE_VERY_STRICT);
+//				codec_context.setFlags(codec_context.getFlags() | FFmpeg4Java.AV_CODEC_FLAG_GLOBAL_HEADER);
 				SWIGTYPE_p_uint8_t side_data = FFmpeg4Java.av_stream_new_side_data(stream, AVPacketSideDataType.AV_PKT_DATA_CPB_PROPERTIES, new AVCPBProperties().size_of());
 				AVCPBProperties props = AVCPBProperties.asTypePointer(SWIGTYPE_p_uint8_t.asVoidPointer(side_data));
 				props.setBuffer_size(frame_width * frame_height * bytes_per_pixel * 2);

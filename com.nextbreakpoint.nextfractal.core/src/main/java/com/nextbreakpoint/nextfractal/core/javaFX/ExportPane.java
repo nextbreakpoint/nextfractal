@@ -315,7 +315,8 @@ public class ExportPane extends BorderPane {
 //				formatCombobox.setDisable(false);
 				formatCombobox.getItems().clear();
 				formatCombobox.getItems().add(new String[] { "PNG image", "PNG" });
-				formatCombobox.getItems().add(new String[] { "Quicktime", "MOV" });
+				formatCombobox.getItems().add(new String[] { "AVI video", "AVI" });
+				formatCombobox.getItems().add(new String[] { "Quicktime video", "MOV" });
 				formatCombobox.getSelectionModel().select(1);
 			} else {
 				previewButton.setDisable(true);
