@@ -28,6 +28,8 @@ public class ClipProcessor {
             int currentClip = 0;
             int currentEvent = 0;
             int frameIndex = 0;
+            float time = 0;
+            float prevTime = 0;
             ClipEvent event = clips.get(0).getEvents().get(0);
             long baseTime = event.getDate().getTime();
             logger.info("0) clip " + currentClip + ", event " + currentEvent);
@@ -38,13 +40,15 @@ public class ClipProcessor {
                     currentEvent = 0;
                     if (currentClip < clips.size() && clips.get(currentClip).getEvents().size() > 0) {
                         baseTime = clips.get(currentClip).getEvents().get(0).getDate().getTime();
+                        prevTime = time;
                     }
                 }
                 logger.info("1) clip " + currentClip + ", event " + currentEvent);
                 if (currentClip < clips.size() && currentEvent < clips.get(currentClip).getEvents().size()) {
                     ClipEvent nextEvent = clips.get(currentClip).getEvents().get(currentEvent);
                     float frameTime = frameIndex * frameRate;
-                    while (frameTime < (nextEvent.getDate().getTime() - baseTime) / 1000f) {
+                    time = prevTime + (nextEvent.getDate().getTime() - baseTime) / 1000f;
+                    while (frameTime < time) {
                         logger.info("1) frame " + frameIndex + ", time " + frameTime);
                         frames.add(new Frame(event.getPluginId(), event.getScript(), event.getMetadata()));
                         frameIndex += 1;
