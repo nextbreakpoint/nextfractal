@@ -9,6 +9,13 @@ import java.util.stream.Stream;
 public class Clip {
     private List<ClipEvent> events = new LinkedList<>();
 
+    public Clip() {
+    }
+
+    public Clip(List<ClipEvent> events) {
+        this.events.addAll(events);
+    }
+
     public void append(Date date, String pluginId, String script, Object metadata) {
         events.add(new ClipEvent(date, pluginId, script, metadata));
     }

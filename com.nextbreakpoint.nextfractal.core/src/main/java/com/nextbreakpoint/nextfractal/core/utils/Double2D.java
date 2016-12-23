@@ -56,6 +56,11 @@ public class Double2D implements Serializable, Cloneable {
 		this.y = v[1];
 	}
 
+	public Double2D(Double[] v) {
+		this.x = v[0];
+		this.y = v[1];
+	}
+
 	/**
 	 * @return the x
 	 */

@@ -24,29 +24,29 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nextbreakpoint.Try;
+import com.nextbreakpoint.nextfractal.core.Bundle;
+import com.nextbreakpoint.nextfractal.core.Clip;
 import com.nextbreakpoint.nextfractal.core.FileManager;
 import com.nextbreakpoint.nextfractal.core.FileManagerEntry;
 import com.nextbreakpoint.nextfractal.core.FileManifest;
-import com.nextbreakpoint.nextfractal.core.Session;
 
 import java.util.LinkedList;
 import java.util.List;
 
 public class ContextFreeFileManager extends FileManager {
     @Override
-    protected Try<List<FileManagerEntry>, Exception> saveEntries(Session session) {
-        return Try.of(() -> createEntries((ContextFreeSession) session));
+    protected Try<List<FileManagerEntry>, Exception> saveEntries(Bundle bundle) {
+        return Try.of(() -> createEntries(bundle));
     }
 
     @Override
-    protected Try<Session, Exception> loadEntries(List<FileManagerEntry> entries) {
-        return createSession(entries);
+    protected Try<Bundle, Exception> loadEntries(List<FileManagerEntry> entries) {
+        return Try.of(() -> createBundle(entries));
     }
 
-    private Try<Session, Exception> createSession(List<FileManagerEntry> entries) {
+    private Bundle createBundle(List<FileManagerEntry> entries) throws Exception {
         ObjectMapper mapper = new ObjectMapper();
 
         Try<String, Exception> script = entries.stream().filter(entry -> entry.getName().equals("script"))
@@ -57,20 +57,37 @@ public class ContextFreeFileManager extends FileManager {
                 .findFirst().map(metadataEntry -> Try.of(() -> mapper.readValue(metadataEntry.getData(), ContextFreeMetadata.class)))
                 .orElse(Try.failure(new Exception("Metadata entry is required")));
 
-        return Try.of(() -> new ContextFreeSession(metadata.orThrow(), script.orThrow()));
+        Try<List<Clip>, Exception> clips = entries.stream().filter(entry -> entry.getName().equals("clips"))
+                .findFirst().map(clipsEntry -> decodeClips(clipsEntry.getData()))
+                .orElse(Try.success(new LinkedList<>()));
+
+        return new Bundle(new ContextFreeSession(metadata.orThrow(), script.orThrow()), clips.orThrow());
     }
 
-    private List<FileManagerEntry> createEntries(ContextFreeSession session) throws JsonProcessingException {
+    private List<FileManagerEntry> createEntries(Bundle bundle) throws Exception {
         ObjectMapper mapper = new ObjectMapper();
 
         List<FileManagerEntry> entries = new LinkedList<>();
 
         FileManifest manifest = new FileManifest(ContextFreeFactory.PLUGIN_ID);
 
+        ContextFreeSession session = (ContextFreeSession) bundle.getSession();
+
         entries.add(new FileManagerEntry("manifest", mapper.writeValueAsBytes(manifest)));
         entries.add(new FileManagerEntry("metadata", mapper.writeValueAsBytes(session.getMetadata())));
         entries.add(new FileManagerEntry("script", session.getScript().getBytes()));
+        entries.add(new FileManagerEntry("clips", encodeClips(bundle.getClips()).orThrow()));
 
         return entries;
+    }
+
+    @Override
+    protected Object decodeMetadata(String metadata) throws Exception {
+        return new ObjectMapper().readValue(metadata, ContextFreeMetadata.class);
+    }
+
+    @Override
+    protected String encodeMetadata(Object metadata) throws Exception {
+        return new ObjectMapper().writeValueAsString((ContextFreeMetadata) metadata);
     }
 }

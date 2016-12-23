@@ -94,8 +94,8 @@ public class MainCentralPane extends BorderPane {
 
 			@Override
 			public BrowseBitmap createBitmap(File file, RendererSize size) throws Exception {
-				return FileManager.loadFile(file).flatMap(session -> tryFindFactory(session.getPluginId())
-					.flatMap(factory -> Try.of(() -> factory.createBitmap(session, size)))).orThrow();
+				return FileManager.loadFile(file).flatMap(bundle -> tryFindFactory(bundle.getSession().getPluginId())
+					.flatMap(factory -> Try.of(() -> factory.createBitmap(bundle.getSession(), size)))).orThrow();
 			}
 
 			@Override

@@ -102,6 +102,8 @@ public class MainSidePane extends BorderPane {
 
         eventBus.subscribe("session-export", event -> handleExportSession(eventBus, (RendererSize) ((Object[])event)[0], (String) ((Object[])event)[1], session, clips, file -> exportCurrentFile = file));
 
+        eventBus.subscribe("capture-clip-loaded", event -> handleClipAdded((Clip)event));
+
         eventBus.subscribe("capture-clip-added", event -> handleClipAdded((Clip)event));
 
         eventBus.subscribe("capture-clip-removed", event -> handleClipRemoved((Clip)event));
@@ -404,6 +406,8 @@ public class MainSidePane extends BorderPane {
         eventBus.subscribe("export-session-created", event -> jobsPane.appendSession((ExportSession)event));
 
         eventBus.subscribe("capture-session-stopped", event -> handleAppendClip(exportPane, (Clip) event));
+
+        eventBus.subscribe("capture-clip-loaded", event -> handleAppendClip(exportPane, (Clip) event));
 
         eventBus.subscribe("session-data-changed", event -> {
             errorProperty.setValue(null);

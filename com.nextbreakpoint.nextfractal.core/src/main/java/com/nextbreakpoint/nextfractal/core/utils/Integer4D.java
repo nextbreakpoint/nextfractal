@@ -57,6 +57,20 @@ public class Integer4D implements Serializable, Cloneable {
 		this.w = w;
 	}
 
+	public Integer4D(int[] v) {
+		this.x = v[0];
+		this.y = v[1];
+		this.z = v[2];
+		this.w = v[3];
+	}
+
+	public Integer4D(Integer[] v) {
+		this.x = v[0];
+		this.y = v[1];
+		this.z = v[2];
+		this.w = v[3];
+	}
+
 	/**
 	 * @return the w
 	 */

@@ -50,6 +50,14 @@ public class MandelbrotMetadata {
 		this.julia = julia;
 	}
 
+	public MandelbrotMetadata(Double[] translation, Double[] rotation, Double[] scale, Double[] point, boolean julia) {
+		this.translation = new Double4D(translation);
+		this.rotation = new Double4D(rotation);
+		this.scale = new Double4D(scale);
+		this.point = new Double2D(point);
+		this.julia = julia;
+	}
+
 	public MandelbrotMetadata(MandelbrotMetadata otherView) {
 		this(otherView.getTranslation(), otherView.getRotation(), otherView.getScale(), otherView.getPoint(), otherView.isJulia());
 	}

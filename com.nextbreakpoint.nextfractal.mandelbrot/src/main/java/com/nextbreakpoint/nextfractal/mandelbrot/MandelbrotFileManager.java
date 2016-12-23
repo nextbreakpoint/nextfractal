@@ -24,13 +24,13 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nextbreakpoint.Try;
+import com.nextbreakpoint.nextfractal.core.Bundle;
+import com.nextbreakpoint.nextfractal.core.Clip;
 import com.nextbreakpoint.nextfractal.core.FileManager;
 import com.nextbreakpoint.nextfractal.core.FileManagerEntry;
 import com.nextbreakpoint.nextfractal.core.FileManifest;
-import com.nextbreakpoint.nextfractal.core.Session;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -41,17 +41,24 @@ import static javax.xml.bind.JAXB.unmarshal;
 
 public class MandelbrotFileManager extends FileManager {
     @Override
-    protected Try<List<FileManagerEntry>, Exception> saveEntries(Session session) {
-        return Try.of(() -> createEntries((MandelbrotSession) session));
+    protected Try<List<FileManagerEntry>, Exception> saveEntries(Bundle bundle) {
+        return Try.of(() -> createEntries(bundle));
     }
 
     @Override
-    protected Try<Session, Exception> loadEntries(List<FileManagerEntry> entries) {
-        return entries.stream().filter(entry -> entry.getName().equals("m-script")).findFirst()
-            .map(entry -> Try.of(() -> loadMscript(new FileInputStream(new String(entry.getData()))))).orElseGet(() -> createSession(entries));
+    protected Try<Bundle, Exception> loadEntries(List<FileManagerEntry> entries) {
+        return entries.stream().filter(this::isMScript).findFirst().map(this::loadBundle).orElse(Try.of(() -> createBundle(entries)));
     }
 
-    private Try<Session, Exception> createSession(List<FileManagerEntry> entries) {
+    private boolean isMScript(FileManagerEntry entry) {
+        return entry.getName().equals("m-script");
+    }
+
+    private Try<Bundle, Exception> loadBundle(FileManagerEntry entry) {
+        return Try.of(() -> new FileInputStream(new String(entry.getData()))).flatMap(this::loadBundle);
+    }
+
+    private Bundle createBundle(List<FileManagerEntry> entries) throws Exception {
         ObjectMapper mapper = new ObjectMapper();
 
         Try<String, Exception> script = entries.stream().filter(entry -> entry.getName().equals("script"))
@@ -62,32 +69,46 @@ public class MandelbrotFileManager extends FileManager {
                 .findFirst().map(metadataEntry -> Try.of(() -> mapper.readValue(metadataEntry.getData(), MandelbrotMetadata.class)))
                 .orElse(Try.failure(new Exception("Metadata entry is required")));
 
-        return Try.of(() -> new MandelbrotSession(metadata.orThrow(), script.orThrow()));
+        Try<List<Clip>, Exception> clips = entries.stream().filter(entry -> entry.getName().equals("clips"))
+                .findFirst().map(clipsEntry -> decodeClips(clipsEntry.getData()))
+                .orElse(Try.success(new LinkedList<>()));
+
+        return new Bundle(new MandelbrotSession(metadata.orThrow(), script.orThrow()), clips.orThrow());
     }
 
-    private List<FileManagerEntry> createEntries(MandelbrotSession session) throws JsonProcessingException {
+    private List<FileManagerEntry> createEntries(Bundle bundle) throws Exception {
         ObjectMapper mapper = new ObjectMapper();
 
         List<FileManagerEntry> entries = new LinkedList<>();
 
         FileManifest manifest = new FileManifest(MandelbrotFactory.PLUGIN_ID);
 
+        MandelbrotSession session = (MandelbrotSession) bundle.getSession();
+
         entries.add(new FileManagerEntry("manifest", mapper.writeValueAsBytes(manifest)));
         entries.add(new FileManagerEntry("metadata", mapper.writeValueAsBytes(session.getMetadata())));
         entries.add(new FileManagerEntry("script", session.getScript().getBytes()));
+        entries.add(new FileManagerEntry("clips", encodeClips(bundle.getClips()).orThrow()));
 
         return entries;
     }
 
-    private Session loadMscript(InputStream is) throws Exception {
-        MandelbrotDataV11 data = loadFromStream(is);
-        return new MandelbrotSession(data.getView(), data.getSource());
+    private Try<Bundle, Exception> loadBundle(InputStream is) {
+        return loadFromStream(is).map(result -> new Bundle(new MandelbrotSession(result.getView(), result.getSource()), new LinkedList<>()));
     }
 
-    public MandelbrotDataV11 loadFromStream(InputStream stream) throws Exception {
-        return Try.of(() -> unmarshal(stream, MandelbrotDataV11.class))
-            .or(() -> unmarshal(stream, MandelbrotDataV10.class).toMandelbrotDataV11())
-            .mapper(e -> new Exception("Cannot load data from stream")).orThrow();
+    public Try<MandelbrotDataV11, Exception> loadFromStream(InputStream stream) {
+        return Try.of(() -> unmarshal(stream, MandelbrotDataV11.class)).or(() -> unmarshal(stream, MandelbrotDataV10.class).toV11()).mapper(e -> new Exception("Cannot load data from stream"));
+    }
+
+    @Override
+    protected Object decodeMetadata(String metadata) throws Exception {
+        return new ObjectMapper().readValue(metadata, MandelbrotMetadata.class);
+    }
+
+    @Override
+    protected String encodeMetadata(Object metadata) throws Exception {
+        return new ObjectMapper().writeValueAsString((MandelbrotMetadata) metadata);
     }
 
 //    protected void updateEncodedData(TextArea textArea, MandelbrotSession session) {

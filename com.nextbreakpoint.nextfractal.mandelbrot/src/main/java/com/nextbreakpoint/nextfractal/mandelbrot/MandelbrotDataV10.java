@@ -110,7 +110,7 @@ public class MandelbrotDataV10 {
 		return timestamp;
 	}
 
-	public MandelbrotDataV11 toMandelbrotDataV11() {
+	public MandelbrotDataV11 toV11() {
 		MandelbrotDataV11 data = new MandelbrotDataV11();
 		data.setSource(source);
 		data.setTranslation(translation);

@@ -25,6 +25,7 @@
 package com.nextbreakpoint.nextfractal.runtime.javaFX;
 
 import com.nextbreakpoint.Try;
+import com.nextbreakpoint.nextfractal.core.Bundle;
 import com.nextbreakpoint.nextfractal.core.Clip;
 import com.nextbreakpoint.nextfractal.core.EventBus;
 import com.nextbreakpoint.nextfractal.core.FileManager;
@@ -58,7 +59,9 @@ import javax.tools.ToolProvider;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -72,6 +75,7 @@ public class NextFractalApp extends Application {
 
 	private static final String DEFAULT_PLUGIN_ID = "Mandelbrot";
 
+	private List<Clip> clips = new ArrayList<>();
 	private Session session;
 	private boolean capture;
 	private Clip clip;
@@ -136,6 +140,16 @@ public class NextFractalApp extends Application {
 
 		eventBus.subscribe("capture-session", event -> handleCaptureSession(eventBus, (String)event));
 
+		eventBus.subscribe("capture-clip-loaded", event -> handleClipAdded((Clip)event));
+
+		eventBus.subscribe("capture-clip-added", event -> handleClipAdded((Clip)event));
+
+		eventBus.subscribe("capture-clip-removed", event -> handleClipRemoved((Clip)event));
+
+		eventBus.subscribe("capture-clip-moved", event -> handleClipMoved((int)((Object[])event)[0], (int)((Object[])event)[1]));
+
+		eventBus.subscribe("session-bundle-loaded", event -> handleBundleLoaded(eventBus, (Bundle)((Object[])event)[0], (boolean)((Object[])event)[1], (boolean)((Object[])event)[2]));
+
 		rootPane.getChildren().add(createMainPane(eventBus, editorWidth, renderWidth, sceneHeight));
 
         Scene scene = new Scene(rootPane, sceneWidth, sceneHeight);
@@ -163,6 +177,26 @@ public class NextFractalApp extends Application {
 			String defaultPluginId = System.getProperty("initialPluginId", DEFAULT_PLUGIN_ID);
 			tryFindFactory(defaultPluginId).ifPresent(factory -> createSession(eventBus, factory));
 		});
+	}
+
+	private void handleBundleLoaded(EventBus eventBus, Bundle bundle, boolean continuous, boolean appendHistory) {
+		eventBus.postEvent("session-data-loaded", new Object[] { bundle.getSession(), continuous, appendHistory });
+
+		bundle.getClips().forEach(clip -> eventBus.postEvent("capture-clip-loaded", clip));
+	}
+
+	private void handleClipAdded(Clip clip) {
+		clips.add(clip);
+	}
+
+	private void handleClipRemoved(Clip clip) {
+		clips.remove(clip);
+	}
+
+	private void handleClipMoved(int fromIndex, int toIndex) {
+		Clip clip = clips.get(fromIndex);
+		clips.remove(fromIndex);
+		clips.add(toIndex, clip);
 	}
 
 	private void handleCaptureSession(EventBus eventBus, String action) {
@@ -200,11 +234,11 @@ public class NextFractalApp extends Application {
 		FileManager.loadFile(file)
 			.onSuccess(session -> eventBus.postEvent("current-file-changed", file))
 			.onFailure(e -> showLoadError(eventBus, file, e))
-			.ifPresent(session -> eventBus.postEvent("session-data-loaded", new Object[] { session, false, true }));
+			.ifPresent(bundle -> eventBus.postEvent("session-bundle-loaded", new Object[] { bundle, false, true }));
 	}
 
 	private void handleSaveFile(EventBus eventBus, File file) {
-		FileManager.saveFile(file, session)
+		FileManager.saveFile(file, new Bundle(session, clips))
 			.onSuccess(session -> eventBus.postEvent("current-file-changed", file))
 			.ifFailure(e -> showSaveError(eventBus, file, e));
 	}
