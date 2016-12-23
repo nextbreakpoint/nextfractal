@@ -61,7 +61,9 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -104,9 +106,7 @@ public class MainSidePane extends BorderPane {
 
         eventBus.subscribe("capture-clip-removed", event -> handleClipRemoved((Clip)event));
 
-        eventBus.subscribe("capture-clip-moved-up", event -> handleClipMovedUp((Clip)event));
-
-        eventBus.subscribe("capture-clip-moved-down", event -> handleClipMovedDown((Clip)event));
+        eventBus.subscribe("capture-clip-moved", event -> handleClipMoved((int)((Object[])event)[0], (int)((Object[])event)[1]));
     }
 
     private void handleClipAdded(Clip clip) {
@@ -117,20 +117,10 @@ public class MainSidePane extends BorderPane {
         clips.remove(clip);
     }
 
-    private void handleClipMovedUp(Clip clip) {
-        int index = clips.indexOf(clip);
-        if (index > 0) {
-            clips.remove(index);
-            clips.add(index - 1, clip);
-        }
-    }
-
-    private void handleClipMovedDown(Clip clip) {
-        int index = clips.indexOf(clip);
-        if (index < clips.size() - 1) {
-            clips.remove(index);
-            clips.add(index, clip);
-        }
+    private void handleClipMoved(int fromIndex, int toIndex) {
+        Clip clip = clips.get(fromIndex);
+        clips.remove(fromIndex);
+        clips.add(toIndex, clip);
     }
 
     private void notifyHistoryItemSelected(EventBus eventBus, Object event) {
@@ -263,13 +253,8 @@ public class MainSidePane extends BorderPane {
             }
 
             @Override
-            public void captureSessionMovedUp(Clip clip) {
-                eventBus.postEvent("capture-clip-moved-up", clip);
-            }
-
-            @Override
-            public void captureSessionMovedDown(Clip clip) {
-                eventBus.postEvent("capture-clip-moved-down", clip);
+            public void captureSessionMoved(int fromIndex, int toIndex) {
+                eventBus.postEvent("capture-clip-moved", new Object[] { fromIndex, toIndex });
             }
         });
 
@@ -616,7 +601,7 @@ public class MainSidePane extends BorderPane {
     private void startExportSession(EventBus eventBus, String uuid, RendererSize size, Encoder encoder, File file, Session session, List<Clip> clips) {
         try {
             File tmpFile = File.createTempFile("export-" + uuid, ".dat");
-            ExportSession exportSession = new ExportSession(uuid, session, clips, file, tmpFile, size, 400, encoder);
+            ExportSession exportSession = new ExportSession(uuid, session, encoder.isVideoSupported() ? clips : new LinkedList<>(), file, tmpFile, size, 400, encoder);
             logger.info("Export session created: " + exportSession.getSessionId());
             eventBus.postEvent("export-session-created", exportSession);
         } catch (Exception e) {

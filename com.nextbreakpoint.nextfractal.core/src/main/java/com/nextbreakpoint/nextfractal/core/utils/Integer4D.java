@@ -148,4 +148,13 @@ public class Integer4D implements Serializable, Cloneable {
 	public Integer4D clone() {
 		return new Integer4D(x, y, z, w);
 	}
+
+	@Override
+	public int hashCode() {
+		int result = x;
+		result = 31 * result + y;
+		result = 31 * result + z;
+		result = 31 * result + w;
+		return result;
+	}
 }

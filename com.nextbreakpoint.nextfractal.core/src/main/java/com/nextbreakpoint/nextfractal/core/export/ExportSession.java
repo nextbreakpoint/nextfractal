@@ -66,7 +66,7 @@ public final class ExportSession {
 		if (clips.size() > 0 && clips.get(0).getEvents().size() > 1) {
 			this.frames.addAll(new ClipProcessor(clips, frameRate).generateFrames());
 		} else {
-			frames.add(new Frame(session.getPluginId(), session.getScript(), session.getMetadata()));
+			frames.add(new Frame(session.getPluginId(), session.getScript(), session.getMetadata(), true));
 		}
 		jobs.addAll(createJobs());
 	}

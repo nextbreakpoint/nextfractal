@@ -53,6 +53,13 @@ public abstract class AbstractImageEncoder implements Encoder {
 	}
 
 	/**
+	 * @return
+	 */
+	public boolean isVideoSupported() {
+		return false;
+	}
+
+	/**
 	 * @see com.nextbreakpoint.nextfractal.core.encoder.Encoder#setDelegate(com.nextbreakpoint.nextfractal.core.encoder.EncoderDelegate)
 	 */
 	@Override

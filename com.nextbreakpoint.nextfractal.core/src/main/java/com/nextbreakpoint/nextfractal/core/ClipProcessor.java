@@ -33,6 +33,7 @@ public class ClipProcessor {
             ClipEvent event = clips.get(0).getEvents().get(0);
             long baseTime = event.getDate().getTime();
             logger.info("0) clip " + currentClip + ", event " + currentEvent);
+            Frame lastFrame = null;
             while (frameIndex < frameCount && currentClip < clips.size() && currentEvent < clips.get(currentClip).getEvents().size()) {
                 currentEvent += 1;
                 while (currentClip < clips.size() && currentEvent >= clips.get(currentClip).getEvents().size()) {
@@ -48,9 +49,15 @@ public class ClipProcessor {
                     ClipEvent nextEvent = clips.get(currentClip).getEvents().get(currentEvent);
                     float frameTime = frameIndex * frameRate;
                     time = prevTime + (nextEvent.getDate().getTime() - baseTime) / 1000f;
-                    while (frameTime < time) {
+                    while (frameTime - time < 0.02f) {
                         logger.info("1) frame " + frameIndex + ", time " + frameTime);
-                        frames.add(new Frame(event.getPluginId(), event.getScript(), event.getMetadata()));
+                        Frame frame = new Frame(event.getPluginId(), event.getScript(), event.getMetadata(), true);
+                        if (lastFrame != null && lastFrame.equals(frame)) {
+                            logger.info("1) not key frame");
+                            frame = new Frame(event.getPluginId(), event.getScript(), event.getMetadata(), false);
+                        }
+                        lastFrame = frame;
+                        frames.add(frame);
                         frameIndex += 1;
                         frameTime = frameIndex * frameRate;
                     }
@@ -58,7 +65,13 @@ public class ClipProcessor {
                 } else {
                     float frameTime = frameIndex * frameRate;
                     logger.info("2) frame " + frameIndex + ", time " + frameTime);
-                    frames.add(new Frame(event.getPluginId(), event.getScript(), event.getMetadata()));
+                    Frame frame = new Frame(event.getPluginId(), event.getScript(), event.getMetadata(), true);
+                    if (lastFrame != null && lastFrame.equals(frame)) {
+                        logger.info("2) not key frame");
+                        frame = new Frame(event.getPluginId(), event.getScript(), event.getMetadata(), false);
+                    }
+                    lastFrame = frame;
+                    frames.add(frame);
                     frameIndex += 1;
                 }
             }

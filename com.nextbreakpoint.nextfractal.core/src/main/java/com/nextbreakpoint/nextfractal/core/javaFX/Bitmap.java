@@ -26,6 +26,7 @@ package com.nextbreakpoint.nextfractal.core.javaFX;
 
 import java.nio.IntBuffer;
 import java.util.Date;
+import java.util.UUID;
 
 public interface Bitmap {
 	public IntBuffer getPixels();
@@ -43,4 +44,6 @@ public interface Bitmap {
 	public double getProgress();
 
 	public void setProgress(double progress);
+
+	public UUID getId();
 }

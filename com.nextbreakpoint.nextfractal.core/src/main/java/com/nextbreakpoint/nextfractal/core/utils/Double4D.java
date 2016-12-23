@@ -162,4 +162,19 @@ public class Double4D implements Serializable, Cloneable {
 	public double[] toArray() {
 		return new double[] { x, y, z, w }; 
 	}
+
+	@Override
+	public int hashCode() {
+		int result;
+		long temp;
+		temp = Double.doubleToLongBits(x);
+		result = (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(y);
+		result = 31 * result + (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(z);
+		result = 31 * result + (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(w);
+		result = 31 * result + (int) (temp ^ (temp >>> 32));
+		return result;
+	}
 }

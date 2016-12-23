@@ -39,6 +39,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
@@ -58,7 +59,7 @@ import java.util.stream.Collectors;
 
 import static com.nextbreakpoint.nextfractal.core.Plugins.tryFindFactory;
 
-public class ExportPane extends BorderPane {
+public class ExportPane extends BorderPane implements ClipListCellDelegate {
 	private static Logger logger = Logger.getLogger(ExportPane.class.getName());
 	private static final int PADDING = 8;
 
@@ -66,6 +67,7 @@ public class ExportPane extends BorderPane {
 	private final ExecutorService executor;
 	private final ListView<Bitmap> listView;
 	private final BooleanObservableValue videoProperty;
+
 	private ExportDelegate delegate;
 
 	public ExportPane(RendererTile tile) {
@@ -95,7 +97,6 @@ public class ExportPane extends BorderPane {
 		formatCombobox.setTooltip(new Tooltip("Select format to export"));
 		formatCombobox.getItems().add(new String[] { "PNG image", "PNG" });
 		formatCombobox.getSelectionModel().select(0);
-//		formatCombobox.setDisable(true);
 
 		VBox formatBox = new VBox(5);
 		formatBox.setAlignment(Pos.CENTER);
@@ -126,7 +127,7 @@ public class ExportPane extends BorderPane {
 
 		VBox exportControls = new VBox(8);
 		exportControls.setAlignment(Pos.CENTER_LEFT);
-		exportControls.getChildren().add(new Label("Export format"));
+		exportControls.getChildren().add(new Label("Exported format"));
 		exportControls.getChildren().add(formatBox);
 		exportControls.getChildren().add(new Label("Size in pixels"));
 		exportControls.getChildren().add(dimensionBox);
@@ -143,8 +144,9 @@ public class ExportPane extends BorderPane {
 		listView = new ListView<>();
 		listView.setFixedCellSize(tile.getTileSize().getHeight() + PADDING);
 		listView.getStyleClass().add("clips");
-		listView.setCellFactory(view -> new ClipListCell(tile));
+		listView.setCellFactory(view -> new ClipListCell(tile, this));
 		listView.setTooltip(new Tooltip("List of captured clips"));
+		listView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 		clipControls.getChildren().add(new Label("Captured clips"));
 		clipControls.getChildren().add(listView);
 
@@ -161,7 +163,17 @@ public class ExportPane extends BorderPane {
 		previewButton.setDisable(true);
 
 		getStyleClass().add("export");
-		
+
+		Runnable updateUI = () -> {
+			removeButton.setDisable(listView.getItems().size() == 0 || captureButton.isSelected());
+			previewButton.setDisable(listView.getItems().size() == 0 || captureButton.isSelected());
+			exportButton.setDisable(captureButton.isSelected());
+			formatCombobox.setDisable(captureButton.isSelected());
+			presetsCombobox.setDisable(captureButton.isSelected());
+			widthField.setDisable(captureButton.isSelected());
+			heightField.setDisable(captureButton.isSelected());
+		};
+
 		presetsCombobox.setConverter(new StringConverter<Integer[]>() {
 			@Override
 			public String toString(Integer[] item) {
@@ -293,13 +305,24 @@ public class ExportPane extends BorderPane {
 					delegate.stopCaptureSession();
 				}
 			}
+			updateUI.run();
 		});
 
 		removeButton.setOnMouseClicked(e -> {
-			while (listView.getItems().size() > 0) {
-				removeItem(listView, 0);
+			List<Integer> selectedIndices = listView.getSelectionModel().getSelectedIndices().stream().collect(Collectors.toList());
+			if (selectedIndices.size() > 0) {
+				for (int i = selectedIndices.size() - 1; i >= 0; i--) {
+					removeItem(listView, selectedIndices.get(i));
+				}
+				if (listView.getItems().size() == 0) {
+					videoProperty.setValue(false);
+				}
 			}
-			videoProperty.setValue(false);
+//			} else {
+//				for (int i = listView.getItems().size() - 1; i >= 0; i--) {
+//					removeItem(listView, i);
+//				}
+//			}
 		});
 
 		previewButton.setOnMouseClicked(e -> {
@@ -311,20 +334,17 @@ public class ExportPane extends BorderPane {
 
 		videoProperty.addListener((observable, oldValue, newValue) -> {
 			if (newValue) {
-				previewButton.setDisable(false);
-//				formatCombobox.setDisable(false);
 				formatCombobox.getItems().clear();
 				formatCombobox.getItems().add(new String[] { "PNG image", "PNG" });
 				formatCombobox.getItems().add(new String[] { "AVI video", "AVI" });
 				formatCombobox.getItems().add(new String[] { "Quicktime video", "MOV" });
 				formatCombobox.getSelectionModel().select(1);
 			} else {
-				previewButton.setDisable(true);
-//				formatCombobox.setDisable(true);
 				formatCombobox.getItems().clear();
 				formatCombobox.getItems().add(new String[] { "PNG image", "PNG" });
 				formatCombobox.getSelectionModel().select(0);
 			}
+			updateUI.run();
 		});
 
 		widthProperty().addListener((observable, oldValue, newValue) -> {
@@ -338,6 +358,8 @@ public class ExportPane extends BorderPane {
 			removeButton.setPrefWidth(width);
 			previewButton.setPrefWidth(width);
 		});
+
+		updateUI.run();
 
 		executor = Executors.newSingleThreadExecutor(createThreadFactory("Export Generator"));
 	}
@@ -389,7 +411,7 @@ public class ExportPane extends BorderPane {
 	private void addItem(ListView<Bitmap> listView, Clip clip, IntBuffer pixels, RendererSize size) {
 		BrowseBitmap bitmap = new BrowseBitmap(size.getWidth(), size.getHeight(), pixels);
 		bitmap.setProperty("clip", clip);
-		listView.getItems().add(0, bitmap);
+		listView.getItems().add(bitmap);
 		if (listView.getItems().size() == 1) {
 			videoProperty.setValue(true);
 		}
@@ -403,7 +425,7 @@ public class ExportPane extends BorderPane {
 		if (bitmap == null) {
 			return;
 		}
-		listView.getItems().remove(index);
+		listView.getItems().remove(bitmap);
 		if (listView.getItems().size() == 0) {
 			videoProperty.setValue(false);
 		}
@@ -440,5 +462,12 @@ public class ExportPane extends BorderPane {
 
 	private void await(ExecutorService executor) {
 		Try.of(() -> executor.awaitTermination(5000, TimeUnit.MILLISECONDS)).onFailure(e -> logger.warning("Await termination timeout")).execute();
+	}
+
+	@Override
+	public void captureSessionMoved(int fromIndex, int toIndex) {
+		if (delegate != null) {
+			delegate.captureSessionMoved(fromIndex, toIndex);
+		}
 	}
 }

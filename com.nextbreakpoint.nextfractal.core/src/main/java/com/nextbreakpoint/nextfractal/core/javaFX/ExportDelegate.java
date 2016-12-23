@@ -42,7 +42,5 @@ public interface ExportDelegate {
 
     void captureSessionRemoved(Clip clip);
 
-    void captureSessionMovedUp(Clip clip);
-
-    void captureSessionMovedDown(Clip clip);
+    void captureSessionMoved(int fromIndex, int toIndex);
 }

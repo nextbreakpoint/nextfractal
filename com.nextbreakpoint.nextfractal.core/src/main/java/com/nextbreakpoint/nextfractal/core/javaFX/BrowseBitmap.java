@@ -28,13 +28,15 @@ import java.nio.IntBuffer;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public class BrowseBitmap implements Bitmap {
-	private IntBuffer pixels;
-	private int width;
-	private int height;
-	private Map<String, Object> properties = new HashMap<>();
-	private Date timestamp;
+	private final UUID uuid;
+	private final int width;
+	private final int height;
+	private final Map<String, Object> properties = new HashMap<>();
+	private final Date timestamp;
+	private final IntBuffer pixels;
 	private double progress;
 
 	public BrowseBitmap(int width, int height, IntBuffer pixels) {
@@ -42,6 +44,7 @@ public class BrowseBitmap implements Bitmap {
 		this.width = width;
 		this.height = height;
 		timestamp = new Date();
+		uuid = UUID.randomUUID();
 	}
 
 	public IntBuffer getPixels() {
@@ -74,5 +77,10 @@ public class BrowseBitmap implements Bitmap {
 
 	public void setProgress(double progress) {
 		this.progress = progress;
+	}
+
+	@Override
+	public UUID getId() {
+		return uuid;
 	}
 }

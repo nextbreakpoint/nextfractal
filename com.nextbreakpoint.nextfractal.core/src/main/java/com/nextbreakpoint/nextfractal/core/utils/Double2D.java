@@ -128,4 +128,15 @@ public class Double2D implements Serializable, Cloneable {
 	public double[] toArray() {
 		return new double[] { x, y };
 	}
+
+	@Override
+	public int hashCode() {
+		int result;
+		long temp;
+		temp = Double.doubleToLongBits(x);
+		result = (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(y);
+		result = 31 * result + (int) (temp ^ (temp >>> 32));
+		return result;
+	}
 }

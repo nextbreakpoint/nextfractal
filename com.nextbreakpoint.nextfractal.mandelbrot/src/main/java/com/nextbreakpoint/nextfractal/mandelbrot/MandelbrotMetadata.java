@@ -90,4 +90,28 @@ public class MandelbrotMetadata {
 	public MandelbrotMetadata butWithJulia(boolean julia) {
 		return new MandelbrotMetadata(translation, rotation, scale, point, julia);
 	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		MandelbrotMetadata that = (MandelbrotMetadata) o;
+
+		if (julia != that.julia) return false;
+		if (!translation.equals(that.translation)) return false;
+		if (!rotation.equals(that.rotation)) return false;
+		if (!scale.equals(that.scale)) return false;
+		return point.equals(that.point);
+	}
+
+	@Override
+	public int hashCode() {
+		int result = translation.hashCode();
+		result = 31 * result + rotation.hashCode();
+		result = 31 * result + scale.hashCode();
+		result = 31 * result + point.hashCode();
+		result = 31 * result + (julia ? 1 : 0);
+		return result;
+	}
 }

@@ -31,7 +31,12 @@ public interface Encoder {
 	 * @return
 	 */
 	String getId();
-	
+
+	/**
+	 * @return
+	 */
+	boolean isVideoSupported();
+
 	/**
 	 * @param delegate
 	 */

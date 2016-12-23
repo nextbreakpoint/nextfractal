@@ -4,11 +4,17 @@ public class Frame {
     private String pluginId;
     private String script;
     private Object metadata;
+    private boolean keyFrame;
 
-    public Frame(String currentPluginId, String currentScript, Object currentMetadata) {
-        this.pluginId = currentPluginId;
-        this.script = currentScript;
-        this.metadata = currentMetadata;
+    public Frame(String pluginId, String script, Object metadata) {
+        this(pluginId, script, metadata, false);
+    }
+
+    public Frame(String pluginId, String script, Object metadata, boolean keyFrame) {
+        this.pluginId = pluginId;
+        this.script = script;
+        this.metadata = metadata;
+        this.keyFrame = keyFrame;
     }
 
     public String getPluginId() {
@@ -41,5 +47,9 @@ public class Frame {
         result = 31 * result + (script != null ? script.hashCode() : 0);
         result = 31 * result + (metadata != null ? metadata.hashCode() : 0);
         return result;
+    }
+
+    public boolean isKeyFrame() {
+        return keyFrame;
     }
 }

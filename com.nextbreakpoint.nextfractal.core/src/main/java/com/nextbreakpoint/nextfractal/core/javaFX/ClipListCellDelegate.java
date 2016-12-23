@@ -22,42 +22,8 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.contextfree;
+package com.nextbreakpoint.nextfractal.core.javaFX;
 
-import java.util.Objects;
-
-public class ContextFreeMetadata {
-	private final String seed;
-
-	public ContextFreeMetadata() {
-		this.seed = "ABCD";
-	}
-
-	public ContextFreeMetadata(String seed) {
-		Objects.requireNonNull(seed);
-		this.seed = seed;
-	}
-
-	public ContextFreeMetadata(ContextFreeMetadata data) {
-		seed = data.seed;
-	}
-
-	public String getSeed() {
-		return seed;
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-
-		ContextFreeMetadata that = (ContextFreeMetadata) o;
-
-		return seed.equals(that.seed);
-	}
-
-	@Override
-	public int hashCode() {
-		return seed.hashCode();
-	}
+public interface ClipListCellDelegate {
+    void captureSessionMoved(int fromIndex, int toIndex);
 }
