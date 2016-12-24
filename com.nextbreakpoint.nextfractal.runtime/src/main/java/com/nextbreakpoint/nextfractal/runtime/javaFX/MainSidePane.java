@@ -63,7 +63,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -71,7 +70,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static com.nextbreakpoint.nextfractal.core.Plugins.tryFindEncoder;
-import static com.nextbreakpoint.nextfractal.core.Plugins.tryFindFactory;
 import static com.nextbreakpoint.nextfractal.core.javaFX.Icons.createIconImage;
 
 public class MainSidePane extends BorderPane {
@@ -102,11 +100,9 @@ public class MainSidePane extends BorderPane {
 
         eventBus.subscribe("session-export", event -> handleExportSession(eventBus, (RendererSize) ((Object[])event)[0], (String) ((Object[])event)[1], session, clips, file -> exportCurrentFile = file));
 
-        eventBus.subscribe("capture-clip-loaded", event -> handleClipAdded((Clip)event));
+        eventBus.subscribe("capture-clip-removed", event -> handleClipRemoved((Clip)event));
 
         eventBus.subscribe("capture-clip-added", event -> handleClipAdded((Clip)event));
-
-        eventBus.subscribe("capture-clip-removed", event -> handleClipRemoved((Clip)event));
 
         eventBus.subscribe("capture-clip-moved", event -> handleClipMoved((int)((Object[])event)[0], (int)((Object[])event)[1]));
     }
@@ -407,7 +403,9 @@ public class MainSidePane extends BorderPane {
 
         eventBus.subscribe("capture-session-stopped", event -> handleAppendClip(exportPane, (Clip) event));
 
-        eventBus.subscribe("capture-clip-loaded", event -> handleAppendClip(exportPane, (Clip) event));
+        eventBus.subscribe("capture-clips-loaded", event -> exportPane.loadClips((List<Clip>) event));
+
+        eventBus.subscribe("capture-clips-merged", event -> exportPane.mergeClips((List<Clip>) event));
 
         eventBus.subscribe("session-data-changed", event -> {
             errorProperty.setValue(null);

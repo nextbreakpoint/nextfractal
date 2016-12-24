@@ -404,7 +404,7 @@ public class ExportPane extends BorderPane implements ClipListCellDelegate {
 	}
 
 	private void submitItem(Clip clip, ImageGenerator generator) {
-		executor.submit(() -> Try.of(() -> generator.renderImage(clip.getLastEvent().getScript(), clip.getLastEvent().getMetadata()))
+		executor.submit(() -> Try.of(() -> generator.renderImage(clip.getFirstEvent().getScript(), clip.getFirstEvent().getMetadata()))
 			.ifPresent(pixels -> Platform.runLater(() -> addItem(listView, clip, pixels, generator.getSize()))));
 	}
 
@@ -436,7 +436,7 @@ public class ExportPane extends BorderPane implements ClipListCellDelegate {
 	}
 
 	public void appendClip(Clip clip) {
-		tryFindFactory(clip.getLastEvent().getPluginId()).map(factory -> factory.createImageGenerator(createThreadFactory("Export Renderer"),
+		tryFindFactory(clip.getFirstEvent().getPluginId()).map(factory -> factory.createImageGenerator(createThreadFactory("Export Renderer"),
 			new JavaFXRendererFactory(), tile, true)).ifPresent(generator -> submitItem(clip, generator));
 	}
 
@@ -469,5 +469,17 @@ public class ExportPane extends BorderPane implements ClipListCellDelegate {
 		if (delegate != null) {
 			delegate.captureSessionMoved(fromIndex, toIndex);
 		}
+	}
+
+	public void loadClips(List<Clip> clips) {
+		if (delegate != null) {
+			listView.getItems().stream().map(bitmap -> (Clip)bitmap.getProperty("clip")).forEach(clip -> delegate.captureSessionRemoved(clip));
+		}
+		listView.getItems().clear();
+		clips.forEach(clip -> appendClip(clip));
+	}
+
+	public void mergeClips(List<Clip> clips) {
+		clips.forEach(clip -> appendClip(clip));
 	}
 }

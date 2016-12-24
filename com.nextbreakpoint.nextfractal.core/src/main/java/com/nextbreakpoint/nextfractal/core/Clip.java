@@ -20,6 +20,10 @@ public class Clip {
         events.add(new ClipEvent(date, pluginId, script, metadata));
     }
 
+    public ClipEvent getFirstEvent() {
+        return events.get(0);
+    }
+
     public ClipEvent getLastEvent() {
         return events.get(events.size() - 1);
     }

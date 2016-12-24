@@ -45,6 +45,7 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
@@ -63,6 +64,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -140,15 +142,13 @@ public class NextFractalApp extends Application {
 
 		eventBus.subscribe("capture-session", event -> handleCaptureSession(eventBus, (String)event));
 
-		eventBus.subscribe("capture-clip-loaded", event -> handleClipAdded((Clip)event));
+		eventBus.subscribe("capture-clip-removed", event -> handleClipRemoved((Clip)event));
 
 		eventBus.subscribe("capture-clip-added", event -> handleClipAdded((Clip)event));
 
-		eventBus.subscribe("capture-clip-removed", event -> handleClipRemoved((Clip)event));
-
 		eventBus.subscribe("capture-clip-moved", event -> handleClipMoved((int)((Object[])event)[0], (int)((Object[])event)[1]));
 
-		eventBus.subscribe("session-bundle-loaded", event -> handleBundleLoaded(eventBus, (Bundle)((Object[])event)[0], (boolean)((Object[])event)[1], (boolean)((Object[])event)[2]));
+		eventBus.subscribe("session-bundle-loaded", event -> handleBundleLoaded(primaryStage, eventBus, (Bundle)((Object[])event)[0], (boolean)((Object[])event)[1], (boolean)((Object[])event)[2]));
 
 		rootPane.getChildren().add(createMainPane(eventBus, editorWidth, renderWidth, sceneHeight));
 
@@ -179,10 +179,27 @@ public class NextFractalApp extends Application {
 		});
 	}
 
-	private void handleBundleLoaded(EventBus eventBus, Bundle bundle, boolean continuous, boolean appendHistory) {
-		eventBus.postEvent("session-data-loaded", new Object[] { bundle.getSession(), continuous, appendHistory });
+	private void handleBundleLoaded(Stage primaryStage, EventBus eventBus, Bundle bundle, boolean continuous, boolean appendHistory) {
+		if (clips.size() > 0 && bundle.getClips().size() > 0) {
+			Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+			alert.setTitle("Action required");
+			alert.setHeaderText("Current session contains " + clips.size() + " clip" + (clips.size() != 1 ? "s" : "") + ". Loaded bundle " + (bundle.getClips().size() == 0 ? "doesn't contain clips" : "contains " + bundle.getClips().size() + " clip" + (bundle.getClips().size() != 1 ? "s" : "") + ".\n\n What do you want to do with existing session's clips ?"));
 
-		bundle.getClips().forEach(clip -> eventBus.postEvent("capture-clip-loaded", clip));
+			ButtonType buttonTypeOne = new ButtonType("Keep");
+			ButtonType buttonTypeTwo = new ButtonType("Merge");
+			ButtonType buttonTypeThree = new ButtonType("Replace");
+
+			alert.getButtonTypes().setAll(buttonTypeOne, buttonTypeTwo, buttonTypeThree);
+
+			Optional<ButtonType> result = alert.showAndWait();
+
+			result.filter(v -> v == buttonTypeTwo).ifPresent(v -> eventBus.postEvent("capture-clips-merged", bundle.getClips()));
+			result.filter(v -> v == buttonTypeThree).ifPresent(v -> eventBus.postEvent("capture-clips-loaded", bundle.getClips()));
+		} else {
+			eventBus.postEvent("capture-clips-merged", bundle.getClips());
+		}
+
+		eventBus.postEvent("session-data-loaded", new Object[] { bundle.getSession(), continuous, appendHistory });
 	}
 
 	private void handleClipAdded(Clip clip) {
