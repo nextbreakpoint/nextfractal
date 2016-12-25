@@ -80,6 +80,7 @@ public class NextFractalApp extends Application {
 	private List<Clip> clips = new ArrayList<>();
 	private Session session;
 	private boolean capture;
+	private boolean edited;
 	private Clip clip;
 
 	public static void main(String[] args) {
@@ -142,17 +143,19 @@ public class NextFractalApp extends Application {
 
 		eventBus.subscribe("capture-session", event -> handleCaptureSession(eventBus, (String)event));
 
+		eventBus.subscribe("capture-clip-restored", event -> handleClipRestored((Clip)event));
+
 		eventBus.subscribe("capture-clip-removed", event -> handleClipRemoved((Clip)event));
 
 		eventBus.subscribe("capture-clip-added", event -> handleClipAdded((Clip)event));
 
 		eventBus.subscribe("capture-clip-moved", event -> handleClipMoved((int)((Object[])event)[0], (int)((Object[])event)[1]));
 
-		eventBus.subscribe("session-bundle-loaded", event -> handleBundleLoaded(primaryStage, eventBus, (Bundle)((Object[])event)[0], (boolean)((Object[])event)[1], (boolean)((Object[])event)[2]));
+		eventBus.subscribe("session-bundle-loaded", event -> handleBundleLoaded(eventBus, (Bundle)((Object[])event)[0], (boolean)((Object[])event)[1], (boolean)((Object[])event)[2]));
 
 		rootPane.getChildren().add(createMainPane(eventBus, editorWidth, renderWidth, sceneHeight));
 
-        Scene scene = new Scene(rootPane, sceneWidth, sceneHeight);
+		Scene scene = new Scene(rootPane, sceneWidth, sceneHeight);
 
 		loadStyleSheets(scene);
 
@@ -179,8 +182,8 @@ public class NextFractalApp extends Application {
 		});
 	}
 
-	private void handleBundleLoaded(Stage primaryStage, EventBus eventBus, Bundle bundle, boolean continuous, boolean appendHistory) {
-		if (clips.size() > 0 && bundle.getClips().size() > 0) {
+	private void handleBundleLoaded(EventBus eventBus, Bundle bundle, boolean continuous, boolean appendHistory) {
+		if (edited && clips.size() > 0 && bundle.getClips().size() > 0) {
 			Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
 			alert.setTitle("Action required");
 			alert.setHeaderText("Current session contains " + clips.size() + " clip" + (clips.size() != 1 ? "s" : "") + ". Loaded bundle " + (bundle.getClips().size() == 0 ? "doesn't contain clips" : "contains " + bundle.getClips().size() + " clip" + (bundle.getClips().size() != 1 ? "s" : "") + ".\n\n What do you want to do with existing session's clips ?"));
@@ -193,10 +196,19 @@ public class NextFractalApp extends Application {
 
 			Optional<ButtonType> result = alert.showAndWait();
 
-			result.filter(v -> v == buttonTypeTwo).ifPresent(v -> eventBus.postEvent("capture-clips-merged", bundle.getClips()));
-			result.filter(v -> v == buttonTypeThree).ifPresent(v -> eventBus.postEvent("capture-clips-loaded", bundle.getClips()));
+			result.filter(v -> v == buttonTypeTwo).ifPresent(v -> {
+				eventBus.postEvent("capture-clips-merged", bundle.getClips());
+			});
+
+			result.filter(v -> v == buttonTypeThree).ifPresent(v -> {
+				eventBus.postEvent("capture-clips-loaded", bundle.getClips());
+			});
 		} else {
-			eventBus.postEvent("capture-clips-merged", bundle.getClips());
+			if (edited && clips.size() > 0) {
+				eventBus.postEvent("capture-clips-merged", bundle.getClips());
+			} else {
+				eventBus.postEvent("capture-clips-loaded", bundle.getClips());
+			}
 		}
 
 		eventBus.postEvent("session-data-loaded", new Object[] { bundle.getSession(), continuous, appendHistory });
@@ -204,16 +216,24 @@ public class NextFractalApp extends Application {
 
 	private void handleClipAdded(Clip clip) {
 		clips.add(clip);
+		edited = true;
 	}
 
 	private void handleClipRemoved(Clip clip) {
 		clips.remove(clip);
+		edited = true;
+	}
+
+	private void handleClipRestored(Clip clip) {
+		clips.add(clip);
+		edited = false;
 	}
 
 	private void handleClipMoved(int fromIndex, int toIndex) {
 		Clip clip = clips.get(fromIndex);
 		clips.remove(fromIndex);
 		clips.add(toIndex, clip);
+		edited = true;
 	}
 
 	private void handleCaptureSession(EventBus eventBus, String action) {

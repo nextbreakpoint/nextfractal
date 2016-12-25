@@ -155,19 +155,25 @@ public abstract class FileManager {
     private Try<List<Map<String, Object>>, Exception> encodeClip(Clip decodedClip) {
         Map<String, Object> lastMap = new HashMap<>();
 
-        List<Try<Map<String, Object>, Exception>> encodedEvents = decodedClip.events()
-            .map(decodedEvent -> Try.of(() -> encodeEvent(lastMap, decodedEvent)).execute()).collect(Collectors.toList());
+        boolean[] stop = new boolean[] { false };
+
+        List<Try<Map<String, Object>, Exception>> encodedEvents = decodedClip.events().filter(x -> !stop[0])
+            .map(decodedEvent -> Try.of(() -> encodeEvent(lastMap, decodedEvent)).onFailure(x -> stop[0] = true).execute()).collect(Collectors.toList());
 
         return encodedEvents.stream().filter(Try::isFailure).findFirst().map(this::encodeClipFailure)
             .orElseGet(() -> Try.success(encodedEvents.stream().map(Try::get).collect(Collectors.toList())));
     }
 
     protected Try<List<List<Map<String, Object>>>, Exception> encodeClipsFailure(Try<List<Map<String, Object>>, Exception> result) {
-        return Try.failure(new Exception("Cannot encode clips"));
+        Exception[] error = new Exception[1];
+        result.ifFailure(e -> error[0] = e);
+        return Try.failure(new Exception("Cannot encode clips", error[0]));
     }
 
     protected Try<List<Map<String, Object>>, Exception> encodeClipFailure(Try<Map<String, Object>, Exception> result) {
-        return Try.failure(new Exception("Cannot encode clip"));
+        Exception[] error = new Exception[1];
+        result.ifFailure(e -> error[0] = e);
+        return Try.failure(new Exception("Cannot encode clip", error[0]));
     }
 
     private Map<String, Object> encodeEvent(Map<String, Object> lastMap, ClipEvent event) throws Exception {
@@ -213,19 +219,25 @@ public abstract class FileManager {
     protected Try<Clip, Exception> decodeClip(List<Map<String, Object>> encodedClip) {
         Map<String, Object> lastMap = new HashMap<>();
 
-        List<Try<ClipEvent, Exception>> decodedEvents = encodedClip.stream()
-            .map(encodedEvent -> Try.of(() -> decodeEvent(lastMap, encodedEvent)).execute()).collect(Collectors.toList());
+        boolean[] stop = new boolean[] { false };
+
+        List<Try<ClipEvent, Exception>> decodedEvents = encodedClip.stream().filter(x -> !stop[0])
+            .map(encodedEvent -> Try.of(() -> decodeEvent(lastMap, encodedEvent)).onFailure(x -> stop[0] = true).execute()).collect(Collectors.toList());
 
         return decodedEvents.stream().filter(Try::isFailure).findFirst().map(this::decodeClipFailure)
             .orElseGet(() -> Try.success(new Clip(decodedEvents.stream().map(Try::get).collect(Collectors.toList()))));
     }
 
     private Try<List<Clip>, Exception> decodeClipsFailure(Try<Clip, Exception> result) {
-        return Try.failure(new Exception("Cannot decode clips"));
+        Exception[] error = new Exception[1];
+        result.ifFailure(e -> error[0] = e);
+        return Try.failure(new Exception("Cannot decode clips", error[0]));
     }
 
     private Try<Clip, Exception> decodeClipFailure(Try<ClipEvent, Exception> result) {
-        return Try.failure(new Exception("Cannot decode clip"));
+        Exception[] error = new Exception[1];
+        result.ifFailure(e -> error[0] = e);
+        return Try.failure(new Exception("Cannot decode clip", error[0]));
     }
 
     private ClipEvent decodeEvent(Map<String, Object> lastMap, Map<String, Object> eventMap) throws Exception {

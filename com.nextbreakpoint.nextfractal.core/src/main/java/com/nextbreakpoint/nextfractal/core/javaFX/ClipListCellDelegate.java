@@ -25,5 +25,5 @@
 package com.nextbreakpoint.nextfractal.core.javaFX;
 
 public interface ClipListCellDelegate {
-    void captureSessionMoved(int fromIndex, int toIndex);
+    void clipMoved(int fromIndex, int toIndex);
 }

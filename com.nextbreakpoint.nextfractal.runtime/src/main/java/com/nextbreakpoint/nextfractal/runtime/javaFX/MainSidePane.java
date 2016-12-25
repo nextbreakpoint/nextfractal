@@ -32,7 +32,6 @@ import com.nextbreakpoint.nextfractal.core.export.ExportSession;
 import com.nextbreakpoint.nextfractal.core.export.ExportState;
 import com.nextbreakpoint.nextfractal.core.javaFX.ExportDelegate;
 import com.nextbreakpoint.nextfractal.core.javaFX.ExportPane;
-import com.nextbreakpoint.nextfractal.core.javaFX.HistoryDelegate;
 import com.nextbreakpoint.nextfractal.core.javaFX.HistoryPane;
 import com.nextbreakpoint.nextfractal.core.javaFX.JobsDelegate;
 import com.nextbreakpoint.nextfractal.core.javaFX.JobsPane;
@@ -100,11 +99,17 @@ public class MainSidePane extends BorderPane {
 
         eventBus.subscribe("session-export", event -> handleExportSession(eventBus, (RendererSize) ((Object[])event)[0], (String) ((Object[])event)[1], session, clips, file -> exportCurrentFile = file));
 
+        eventBus.subscribe("capture-clip-restored", event -> handleClipRestored((Clip)event));
+
         eventBus.subscribe("capture-clip-removed", event -> handleClipRemoved((Clip)event));
 
         eventBus.subscribe("capture-clip-added", event -> handleClipAdded((Clip)event));
 
         eventBus.subscribe("capture-clip-moved", event -> handleClipMoved((int)((Object[])event)[0], (int)((Object[])event)[1]));
+    }
+
+    private void handleClipRestored(Clip clip) {
+        clips.add(clip);
     }
 
     private void handleClipAdded(Clip clip) {
@@ -251,6 +256,11 @@ public class MainSidePane extends BorderPane {
             }
 
             @Override
+            public void captureSessionRestored(Clip clip) {
+                eventBus.postEvent("capture-clip-restored", clip);
+            }
+
+            @Override
             public void captureSessionMoved(int fromIndex, int toIndex) {
                 eventBus.postEvent("capture-clip-moved", new Object[] { fromIndex, toIndex });
             }
@@ -384,12 +394,7 @@ public class MainSidePane extends BorderPane {
             sidePane.prefHeightProperty().setValue(rootPane.getHeight() - statusPane.getHeight() - sourceButtons.getHeight() + newValue.doubleValue());
         });
 
-        historyPane.setDelegate(new HistoryDelegate() {
-            @Override
-            public void sessionChanged(Session session) {
-                eventBus.postEvent("history-session-selected", session);
-            }
-        });
+        historyPane.setDelegate(session -> eventBus.postEvent("history-session-selected", session));
 
         eventBus.subscribe("session-status-changed", event -> statusPane.setMessage((String) event));
 
@@ -401,7 +406,9 @@ public class MainSidePane extends BorderPane {
 
         eventBus.subscribe("export-session-created", event -> jobsPane.appendSession((ExportSession)event));
 
-        eventBus.subscribe("capture-session-stopped", event -> handleAppendClip(exportPane, (Clip) event));
+        eventBus.subscribe("capture-session-started", event -> handleSessionStarted(exportPane, (Clip) event));
+
+        eventBus.subscribe("capture-session-stopped", event -> handleSessionStopped(exportPane, (Clip) event));
 
         eventBus.subscribe("capture-clips-loaded", event -> exportPane.loadClips((List<Clip>) event));
 
@@ -409,14 +416,9 @@ public class MainSidePane extends BorderPane {
 
         eventBus.subscribe("session-data-changed", event -> {
             errorProperty.setValue(null);
-            boolean continuous = (Boolean) ((Object[])event)[1];
-            if (!continuous) {
+            if (!(boolean) (Boolean) ((Object[])event)[1]) {
                 eventBus.postEvent("editor-params-changed", (Session) ((Object[])event)[0]);
             }
-        });
-
-        eventBus.subscribe("export-exportEntries-updated", event -> {
-            jobsPane.updateSessions();
         });
 
         eventBus.subscribe("session-terminated", event -> jobsPane.dispose());
@@ -425,13 +427,9 @@ public class MainSidePane extends BorderPane {
 
         eventBus.subscribe("export-session-state-changed", event -> handleExportSessionStateChanged(jobsPane, (ExportSession)((Object[])event)[0], (ExportState) ((Object[])event)[1], (Float)((Object[])event)[2]));
 
-        eventBus.subscribe("export-sessions-updated", event -> handleExportSessionsUpdated(jobsPane));
+//        eventBus.subscribe("export-sessions-updated", event -> jobsPane.updateSessions());
 
         return rootPane;
-    }
-
-    private void handleExportSessionsUpdated(JobsPane jobsPane) {
-        jobsPane.updateSessions();
     }
 
     private void handleExportSessionStateChanged(JobsPane jobsPane, ExportSession exportSession, ExportState state, Float progress) {
@@ -443,7 +441,10 @@ public class MainSidePane extends BorderPane {
         }
     }
 
-    private void handleAppendClip(ExportPane exportPane, Clip clip) {
+    private void handleSessionStarted(ExportPane exportPane, Clip clip) {
+    }
+
+    private void handleSessionStopped(ExportPane exportPane, Clip clip) {
         if (!clip.isEmpty()) exportPane.appendClip(clip);
     }
 
@@ -513,12 +514,6 @@ public class MainSidePane extends BorderPane {
             transition.play();
         }
     }
-
-//    private static Try<ImageGenerator, Exception> createGenerator(Session session, RendererTile tile) {
-//        DefaultThreadFactory threadFactory = new DefaultThreadFactory("Export", true, Thread.MIN_PRIORITY);
-//        return tryFindFactory(session.getPluginId()).map(plugin -> Objects.requireNonNull(plugin.createImageGenerator(threadFactory, new JavaFXRendererFactory(), tile, true)))
-//            .onFailure(e -> logger.log(Level.WARNING, "Cannot create image generator with pluginId " + session.getPluginId(), e));
-//    }
 
     private static int computePercentage(double percentage) {
         return (int) Math.rint(Screen.getPrimary().getVisualBounds().getWidth() * percentage);

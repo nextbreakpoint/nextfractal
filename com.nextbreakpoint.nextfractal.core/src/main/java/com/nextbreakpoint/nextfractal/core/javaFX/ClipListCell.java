@@ -130,7 +130,7 @@ public class ClipListCell extends ListCell<Bitmap> {
 				getListView().getItems().setAll(newItems);
 				success = true;
 				if (delegate != null) {
-					delegate.captureSessionMoved(draggedIdx, thisIdx);
+					delegate.clipMoved(draggedIdx, thisIdx);
 				}
 			}
 

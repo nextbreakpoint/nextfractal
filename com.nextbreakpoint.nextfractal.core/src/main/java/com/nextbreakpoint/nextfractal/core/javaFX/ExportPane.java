@@ -26,6 +26,7 @@ package com.nextbreakpoint.nextfractal.core.javaFX;
 
 import com.nextbreakpoint.Try;
 import com.nextbreakpoint.nextfractal.core.Clip;
+import com.nextbreakpoint.nextfractal.core.FractalFactory;
 import com.nextbreakpoint.nextfractal.core.ImageGenerator;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
@@ -59,7 +60,7 @@ import java.util.stream.Collectors;
 
 import static com.nextbreakpoint.nextfractal.core.Plugins.tryFindFactory;
 
-public class ExportPane extends BorderPane implements ClipListCellDelegate {
+public class ExportPane extends BorderPane {
 	private static Logger logger = Logger.getLogger(ExportPane.class.getName());
 	private static final int PADDING = 8;
 
@@ -144,7 +145,11 @@ public class ExportPane extends BorderPane implements ClipListCellDelegate {
 		listView = new ListView<>();
 		listView.setFixedCellSize(tile.getTileSize().getHeight() + PADDING);
 		listView.getStyleClass().add("clips");
-		listView.setCellFactory(view -> new ClipListCell(tile, this));
+		listView.setCellFactory(view -> new ClipListCell(tile, (fromIndex, toIndex) -> {
+            if (delegate != null) {
+                delegate.captureSessionMoved(fromIndex, toIndex);
+            }
+        }));
 		listView.setTooltip(new Tooltip("List of captured clips"));
 		listView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 		clipControls.getChildren().add(new Label("Captured clips"));
@@ -403,12 +408,7 @@ public class ExportPane extends BorderPane implements ClipListCellDelegate {
 		return new DefaultThreadFactory(name, true, Thread.MIN_PRIORITY);
 	}
 
-	private void submitItem(Clip clip, ImageGenerator generator) {
-		executor.submit(() -> Try.of(() -> generator.renderImage(clip.getFirstEvent().getScript(), clip.getFirstEvent().getMetadata()))
-			.ifPresent(pixels -> Platform.runLater(() -> addItem(listView, clip, pixels, generator.getSize()))));
-	}
-
-	private void addItem(ListView<Bitmap> listView, Clip clip, IntBuffer pixels, RendererSize size) {
+	private void addItem(ListView<Bitmap> listView, Clip clip, IntBuffer pixels, RendererSize size, boolean notifyAddClip) {
 		BrowseBitmap bitmap = new BrowseBitmap(size.getWidth(), size.getHeight(), pixels);
 		bitmap.setProperty("clip", clip);
 		listView.getItems().add(bitmap);
@@ -416,7 +416,11 @@ public class ExportPane extends BorderPane implements ClipListCellDelegate {
 			videoProperty.setValue(true);
 		}
 		if (delegate != null) {
-			delegate.captureSessionAdded(clip);
+			if (notifyAddClip) {
+				delegate.captureSessionAdded(clip);
+			} else {
+				delegate.captureSessionRestored(clip);
+			}
 		}
 	}
 
@@ -433,11 +437,6 @@ public class ExportPane extends BorderPane implements ClipListCellDelegate {
 			Clip clip = (Clip) bitmap.getProperty("clip");
 			delegate.captureSessionRemoved(clip);
 		}
-	}
-
-	public void appendClip(Clip clip) {
-		tryFindFactory(clip.getFirstEvent().getPluginId()).map(factory -> factory.createImageGenerator(createThreadFactory("Export Renderer"),
-			new JavaFXRendererFactory(), tile, true)).ifPresent(generator -> submitItem(clip, generator));
 	}
 
 	protected String getRestriction() {
@@ -464,22 +463,39 @@ public class ExportPane extends BorderPane implements ClipListCellDelegate {
 		Try.of(() -> executor.awaitTermination(5000, TimeUnit.MILLISECONDS)).onFailure(e -> logger.warning("Await termination timeout")).execute();
 	}
 
-	@Override
-	public void captureSessionMoved(int fromIndex, int toIndex) {
-		if (delegate != null) {
-			delegate.captureSessionMoved(fromIndex, toIndex);
-		}
+	public void appendClip(Clip clip) {
+		addClip(clip, true);
+	}
+
+	private void addClip(Clip clip, boolean notifyAddClip) {
+		tryFindFactory(clip.getFirstEvent().getPluginId()).map(this::createImageGenerator).ifPresent(generator -> submitItem(clip, generator, notifyAddClip));
+	}
+
+	private void submitItem(Clip clip, ImageGenerator generator, boolean notifyAddClip) {
+		executor.submit(() -> Try.of(() -> renderImage(clip, generator)).ifPresent(pixels -> Platform.runLater(() -> addItem(listView, clip, pixels, generator.getSize(), notifyAddClip))));
+	}
+
+	private IntBuffer renderImage(Clip clip, ImageGenerator generator) {
+		return generator.renderImage(clip.getFirstEvent().getScript(), clip.getFirstEvent().getMetadata());
+	}
+
+	private ImageGenerator createImageGenerator(FractalFactory factory) {
+		return factory.createImageGenerator(createThreadFactory("Export Renderer"), new JavaFXRendererFactory(), tile, true);
 	}
 
 	public void loadClips(List<Clip> clips) {
+		removeAllItems();
+		clips.forEach(clip -> addClip(clip, false));
+	}
+
+	private void removeAllItems() {
 		if (delegate != null) {
 			listView.getItems().stream().map(bitmap -> (Clip)bitmap.getProperty("clip")).forEach(clip -> delegate.captureSessionRemoved(clip));
 		}
 		listView.getItems().clear();
-		clips.forEach(clip -> appendClip(clip));
 	}
 
 	public void mergeClips(List<Clip> clips) {
-		clips.forEach(clip -> appendClip(clip));
+		clips.forEach(clip -> addClip(clip, true));
 	}
 }
