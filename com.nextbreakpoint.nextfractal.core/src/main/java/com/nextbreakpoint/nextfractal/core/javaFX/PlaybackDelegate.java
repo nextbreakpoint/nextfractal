@@ -1,4 +1,4 @@
-package com.nextbreakpoint.nextfractal.runtime.javaFX;
+package com.nextbreakpoint.nextfractal.core.javaFX;
 
 import com.nextbreakpoint.nextfractal.core.Session;
 

@@ -1,4 +1,4 @@
-package com.nextbreakpoint.nextfractal.runtime.javaFX;
+package com.nextbreakpoint.nextfractal.core.javaFX;
 
 import com.nextbreakpoint.nextfractal.core.Clip;
 import com.nextbreakpoint.nextfractal.core.ClipProcessor;
@@ -78,8 +78,10 @@ public class PlaybackPane extends Pane {
     }
 
     public void setClips(List<Clip> clips) {
-        frames.clear();
-        frames.addAll(new ClipProcessor(clips, 1f / FRAMES_PER_SECOND).generateFrames());
+        if (future == null) {
+            frames.clear();
+            frames.addAll(new ClipProcessor(clips, 1f / FRAMES_PER_SECOND).generateFrames());
+        }
     }
 
     public void start() {

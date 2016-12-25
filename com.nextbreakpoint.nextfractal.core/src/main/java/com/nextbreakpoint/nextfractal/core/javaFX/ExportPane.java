@@ -425,11 +425,10 @@ public class ExportPane extends BorderPane {
 	}
 
 	private void removeItem(ListView<Bitmap> listView, int index) {
-		Bitmap bitmap = listView.getItems().get(index);
+		Bitmap bitmap = listView.getItems().remove(index);
 		if (bitmap == null) {
 			return;
 		}
-		listView.getItems().remove(bitmap);
 		if (listView.getItems().size() == 0) {
 			videoProperty.setValue(false);
 		}

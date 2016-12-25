@@ -35,6 +35,8 @@ import com.nextbreakpoint.nextfractal.core.javaFX.BrowseBitmap;
 import com.nextbreakpoint.nextfractal.core.javaFX.BrowseDelegate;
 import com.nextbreakpoint.nextfractal.core.javaFX.BrowsePane;
 import com.nextbreakpoint.nextfractal.core.javaFX.GridItemRenderer;
+import com.nextbreakpoint.nextfractal.core.javaFX.PlaybackDelegate;
+import com.nextbreakpoint.nextfractal.core.javaFX.PlaybackPane;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 import java.util.List;
 import javafx.animation.FadeTransition;
