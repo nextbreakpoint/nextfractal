@@ -94,25 +94,25 @@ public class MainSidePane extends BorderPane {
 
         setCenter(createRootPane(subEventBus, loadEventHandler, saveEventHandler));
 
-        eventBus.subscribe("session-data-changed", event -> session = (Session) ((Object[])event)[0]);
+        eventBus.subscribe("session-data-changed", event -> session = (Session) event[0]);
 
-        eventBus.subscribe("playback-data-load", event -> session = (Session) ((Object[])event)[0]);
+        eventBus.subscribe("playback-data-load", event -> session = (Session) event[0]);
 
-        eventBus.subscribe("playback-data-change", event -> session = (Session) ((Object[])event)[0]);
+        eventBus.subscribe("playback-data-change", event -> session = (Session) event[0]);
 
-        eventBus.subscribe("current-file-changed", event -> setCurrentFile((File)event));
+        eventBus.subscribe("current-file-changed", event -> setCurrentFile((File)event[0]));
 
-        eventBus.subscribe("history-session-selected", event -> notifyHistoryItemSelected(eventBus, event));
+        eventBus.subscribe("history-session-selected", event -> notifyHistoryItemSelected(eventBus, (Session)event[0]));
 
-        eventBus.subscribe("session-export", event -> handleExportSession(eventBus, (RendererSize) ((Object[])event)[0], (String) ((Object[])event)[1], session, clips, file -> exportCurrentFile = file));
+        eventBus.subscribe("session-export", event -> handleExportSession(eventBus, (RendererSize) event[0], (String) event[1], session, clips, file -> exportCurrentFile = file));
 
-        eventBus.subscribe("capture-clip-restored", event -> handleClipRestored((Clip)event));
+        eventBus.subscribe("capture-clip-restored", event -> handleClipRestored((Clip)event[0]));
 
-        eventBus.subscribe("capture-clip-removed", event -> handleClipRemoved((Clip)event));
+        eventBus.subscribe("capture-clip-removed", event -> handleClipRemoved((Clip)event[0]));
 
-        eventBus.subscribe("capture-clip-added", event -> handleClipAdded((Clip)event));
+        eventBus.subscribe("capture-clip-added", event -> handleClipAdded((Clip)event[0]));
 
-        eventBus.subscribe("capture-clip-moved", event -> handleClipMoved((int)((Object[])event)[0], (int)((Object[])event)[1]));
+        eventBus.subscribe("capture-clip-moved", event -> handleClipMoved((int) event[0], (int) event[1]));
 
         eventBus.subscribe("playback-clips-start", event -> handlePlaybackClipsStart(subEventBus, this));
 
@@ -127,7 +127,7 @@ public class MainSidePane extends BorderPane {
     private void handlePlaybackClipsStop(EventBus subEventBus, Pane rootPane) {
         subEventBus.enable();
         rootPane.setDisable(false);
-        Platform.runLater(() -> subEventBus.postEvent("session-data-loaded", new Object[] { session, false, false }));
+        Platform.runLater(() -> subEventBus.postEvent("session-data-loaded", session, false, false));
     }
 
     private void handleClipRestored(Clip clip) {
@@ -148,8 +148,8 @@ public class MainSidePane extends BorderPane {
         clips.add(toIndex, clip);
     }
 
-    private void notifyHistoryItemSelected(EventBus eventBus, Object event) {
-        eventBus.postEvent("session-data-loaded", new Object[] { event, false, false });
+    private void notifyHistoryItemSelected(EventBus eventBus, Session session) {
+        eventBus.postEvent("session-data-loaded", session, false, false);
     }
 
     private Pane createRootPane(EventBus eventBus, EventHandler<ActionEvent> loadEventHandler, EventHandler<ActionEvent> saveEventHandler) {
@@ -242,7 +242,7 @@ public class MainSidePane extends BorderPane {
             @Override
             public void createSession(RendererSize size, String format) {
                 if (errorProperty.getValue() == null) {
-                    eventBus.postEvent("session-export", new Object[] { size, format });
+                    eventBus.postEvent("session-export", size, format);
                 }
             }
 
@@ -284,7 +284,7 @@ public class MainSidePane extends BorderPane {
 
             @Override
             public void captureSessionMoved(int fromIndex, int toIndex) {
-                eventBus.postEvent("capture-clip-moved", new Object[] { fromIndex, toIndex });
+                eventBus.postEvent("capture-clip-moved", fromIndex, toIndex);
             }
         });
 
@@ -418,28 +418,28 @@ public class MainSidePane extends BorderPane {
 
         historyPane.setDelegate(session -> eventBus.postEvent("history-session-selected", session));
 
-        eventBus.subscribe("session-status-changed", event -> statusPane.setMessage((String) event));
+        eventBus.subscribe("session-status-changed", event -> statusPane.setMessage((String) event[0]));
 
-        eventBus.subscribe("session-error-changed", event -> errorProperty.setValue((String) event));
+        eventBus.subscribe("session-error-changed", event -> errorProperty.setValue((String) event[0]));
 
-        eventBus.subscribe("history-add-session", event -> historyPane.appendSession((Session) event));
+        eventBus.subscribe("history-add-session", event -> historyPane.appendSession((Session) event[0]));
 
         eventBus.subscribe("export-session-created", event -> jobsButton.setSelected(true));
 
-        eventBus.subscribe("export-session-created", event -> jobsPane.appendSession((ExportSession)event));
+        eventBus.subscribe("export-session-created", event -> jobsPane.appendSession((ExportSession)event[0]));
 
-        eventBus.subscribe("capture-session-started", event -> handleSessionStarted(exportPane, (Clip) event));
+        eventBus.subscribe("capture-session-started", event -> handleSessionStarted(exportPane, (Clip) event[0]));
 
-        eventBus.subscribe("capture-session-stopped", event -> handleSessionStopped(exportPane, (Clip) event));
+        eventBus.subscribe("capture-session-stopped", event -> handleSessionStopped(exportPane, (Clip) event[0]));
 
-        eventBus.subscribe("capture-clips-loaded", event -> exportPane.loadClips((List<Clip>) event));
+        eventBus.subscribe("capture-clips-loaded", event -> exportPane.loadClips((List<Clip>) event[0]));
 
-        eventBus.subscribe("capture-clips-merged", event -> exportPane.mergeClips((List<Clip>) event));
+        eventBus.subscribe("capture-clips-merged", event -> exportPane.mergeClips((List<Clip>) event[0]));
 
         eventBus.subscribe("session-data-changed", event -> {
             errorProperty.setValue(null);
-            if (!(boolean) (Boolean) ((Object[])event)[1]) {
-                eventBus.postEvent("editor-params-changed", (Session) ((Object[])event)[0]);
+            if (!(boolean) (Boolean) event[1]) {
+                eventBus.postEvent("editor-params-changed", (Session) event[0]);
             }
         });
 
@@ -447,7 +447,7 @@ public class MainSidePane extends BorderPane {
 
         eventBus.subscribe("session-terminated", event -> historyPane.dispose());
 
-        eventBus.subscribe("export-session-state-changed", event -> handleExportSessionStateChanged(jobsPane, (ExportSession)((Object[])event)[0], (ExportState) ((Object[])event)[1], (Float)((Object[])event)[2]));
+        eventBus.subscribe("export-session-state-changed", event -> handleExportSessionStateChanged(jobsPane, (ExportSession) event[0], (ExportState) event[1], (Float) event[2]));
 
         return rootPane;
     }

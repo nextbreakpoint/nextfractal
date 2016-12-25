@@ -97,16 +97,16 @@ public class EditorPane extends BorderPane {
 
         textExecutor = Executors.newSingleThreadExecutor(new DefaultThreadFactory("ContextFree Editor", true, Thread.MIN_PRIORITY));
 
-        eventBus.subscribe("session-data-changed", event -> session = (ContextFreeSession) ((Object[]) event)[0]);
+        eventBus.subscribe("session-data-changed", event -> session = (ContextFreeSession) event[0]);
 
         eventBus.subscribe("session-data-loaded", event -> {
-            ContextFreeSession session = (ContextFreeSession) ((Object[]) event)[0];
+            ContextFreeSession session = (ContextFreeSession) event[0];
             updateSource(session.getScript()).ifPresent(result -> {
                 eventBus.postEvent("session-report-changed", result.report);
                 eventBus.postEvent("session-data-changed", event);
-                ContextFreeSession newSession = (ContextFreeSession) ((Object[]) event)[0];
-                Boolean continuous = (Boolean) ((Object[]) event)[1];
-                Boolean appendHistory = (Boolean) ((Object[]) event)[2];
+                ContextFreeSession newSession = (ContextFreeSession) event[0];
+                Boolean continuous = (Boolean) event[1];
+                Boolean appendHistory = (Boolean) event[2];
                 if (!continuous && appendHistory) {
                     eventBus.postEvent("history-add-session", newSession);
                 }
@@ -115,16 +115,16 @@ public class EditorPane extends BorderPane {
 
         eventBus.subscribe("editor-report-changed", event -> {
             eventBus.postEvent("session-report-changed", event);
-            notifySourceIfRequired(eventBus, (CompilerReport)event);
+            notifySourceIfRequired(eventBus, (CompilerReport)event[0]);
         });
 
         eventBus.subscribe("editor-source-changed", event -> {
-            ContextFreeSession newSession = new ContextFreeSession((String) event, (ContextFreeMetadata) session.getMetadata());
-            eventBus.postEvent("session-data-changed", new Object[] { newSession, false, true });
+            ContextFreeSession newSession = new ContextFreeSession((String) event[0], (ContextFreeMetadata) session.getMetadata());
+            eventBus.postEvent("session-data-changed", newSession, false, true);
         });
 
         eventBus.subscribe("editor-action", event -> {
-            if (session != null && event.equals("reload")) eventBus.postEvent("session-data-loaded", new Object[] { session, false, false });
+            if (session != null && event[0].equals("reload")) eventBus.postEvent("session-data-loaded", session, false, false);
         });
 
         eventBus.subscribe("session-terminated", event -> dispose());

@@ -34,7 +34,6 @@ public class EventBus {
     private Map<String, List<EventListener>> listeners = new HashMap<>();
     private List<EventBus> children = new LinkedList<>();
     private EventBus parent;
-    private boolean detached;
     private boolean disabled;
 
     public EventBus() {
@@ -67,23 +66,21 @@ public class EventBus {
         }
     }
 
-    public void postEvent(String eventClass, Object event) {
-        portParent(eventClass, event);
+    public void postEvent(String eventClass, Object... event) {
+        postParent(eventClass, event);
     }
 
-    private void portParent(String eventClass, Object event) {
+    private void postParent(String eventClass, Object... event) {
         if (disabled) return;
-        if (detached) return;
         if (parent != null) {
-            parent.portParent(eventClass, event);
+            parent.postParent(eventClass, event);
         } else {
             postChildren(eventClass, event);
         }
     }
 
-    private void postChildren(String eventClass, Object event) {
+    private void postChildren(String eventClass, Object... event) {
         if (disabled) return;
-        if (detached) return;
         List<EventListener> l = listeners.get(eventClass);
         if (l != null) {
             List<EventListener> copy = new ArrayList<>(l.size());
@@ -91,15 +88,6 @@ public class EventBus {
             copy.forEach(listener -> listener.eventPosted(event));
         }
         children.forEach(child -> child.postChildren(eventClass, event));
-    }
-
-    public void detach() {
-        if (parent != null) {
-            parent.children.remove(this);
-            parent = null;
-        }
-        children.clear();
-        detached = true;
     }
 
     public void disable() {

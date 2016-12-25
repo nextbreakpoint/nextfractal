@@ -119,39 +119,39 @@ public class NextFractalApp extends Application {
 		ExportRenderer exportRenderer = new SimpleExportRenderer(createThreadFactory("Export Renderer"), new JavaFXRendererFactory());
 		ExportService exportService = new SimpleExportService(eventBus, createThreadFactory("Export Service"), exportRenderer);
 
-		eventBus.subscribe("editor-grammar-changed", event -> tryFindFactoryByGrammar((String) event).ifPresent(factory -> createSession(eventBus, factory)));
+		eventBus.subscribe("editor-grammar-changed", event -> tryFindFactoryByGrammar((String) event[0]).ifPresent(factory -> createSession(eventBus, factory)));
 
-		eventBus.subscribe("session-data-changed", event -> session = (Session) ((Object[])event)[0]);
+		eventBus.subscribe("session-data-changed", event -> session = (Session) event[0]);
 
-		eventBus.subscribe("session-data-changed", event -> handleSessionChanged((Session) ((Object[])event)[0]));
+		eventBus.subscribe("session-data-changed", event -> handleSessionChanged((Session) event[0]));
 
 		eventBus.subscribe("session-terminated", event -> handleSessionTerminate(exportService));
 
-		eventBus.subscribe("export-session-created", event -> handleExportSessionCreated(exportService, (ExportSession) event));
+		eventBus.subscribe("export-session-created", event -> handleExportSessionCreated(exportService, (ExportSession) event[0]));
 
-		eventBus.subscribe("export-session-stopped", event -> handleExportSessionStopped(exportService, (ExportSession) event));
+		eventBus.subscribe("export-session-stopped", event -> handleExportSessionStopped(exportService, (ExportSession) event[0]));
 
-		eventBus.subscribe("export-session-resumed", event -> handleExportSessionResumed(exportService, (ExportSession) event));
+		eventBus.subscribe("export-session-resumed", event -> handleExportSessionResumed(exportService, (ExportSession) event[0]));
 
-		eventBus.subscribe("export-session-suspended", event -> handleExportSessionSuspended(exportService, (ExportSession) event));
+		eventBus.subscribe("export-session-suspended", event -> handleExportSessionSuspended(exportService, (ExportSession) event[0]));
 
-		eventBus.subscribe("editor-load-file", event -> handleLoadFile(eventBus, (File)event));
+		eventBus.subscribe("editor-load-file", event -> handleLoadFile(eventBus, (File)event[0]));
 
-		eventBus.subscribe("editor-save-file", event -> handleSaveFile(eventBus, (File)event));
+		eventBus.subscribe("editor-save-file", event -> handleSaveFile(eventBus, (File)event[0]));
 
-		eventBus.subscribe("session-error-changed", event -> handleErrorChanged((String)event));
+		eventBus.subscribe("session-error-changed", event -> handleErrorChanged((String)event[0]));
 
-		eventBus.subscribe("capture-session", event -> handleCaptureSession(eventBus, (String)event));
+		eventBus.subscribe("capture-session", event -> handleCaptureSession(eventBus, (String)event[0]));
 
-		eventBus.subscribe("capture-clip-restored", event -> handleClipRestored((Clip)event));
+		eventBus.subscribe("capture-clip-restored", event -> handleClipRestored((Clip)event[0]));
 
-		eventBus.subscribe("capture-clip-removed", event -> handleClipRemoved((Clip)event));
+		eventBus.subscribe("capture-clip-removed", event -> handleClipRemoved((Clip)event[0]));
 
-		eventBus.subscribe("capture-clip-added", event -> handleClipAdded((Clip)event));
+		eventBus.subscribe("capture-clip-added", event -> handleClipAdded((Clip)event[0]));
 
-		eventBus.subscribe("capture-clip-moved", event -> handleClipMoved((int)((Object[])event)[0], (int)((Object[])event)[1]));
+		eventBus.subscribe("capture-clip-moved", event -> handleClipMoved((int) event[0], (int) event[1]));
 
-		eventBus.subscribe("session-bundle-loaded", event -> handleBundleLoaded(eventBus, (Bundle)((Object[])event)[0], (boolean)((Object[])event)[1], (boolean)((Object[])event)[2]));
+		eventBus.subscribe("session-bundle-loaded", event -> handleBundleLoaded(eventBus, (Bundle) event[0], (boolean) event[1], (boolean) event[2]));
 
 		rootPane.getChildren().add(createMainPane(eventBus, editorWidth, renderWidth, sceneHeight));
 
@@ -211,7 +211,7 @@ public class NextFractalApp extends Application {
 			}
 		}
 
-		eventBus.postEvent("session-data-loaded", new Object[] { bundle.getSession(), continuous, appendHistory });
+		eventBus.postEvent("session-data-loaded", bundle.getSession(), continuous, appendHistory);
 	}
 
 	private void handleClipAdded(Clip clip) {
@@ -271,7 +271,7 @@ public class NextFractalApp extends Application {
 		FileManager.loadFile(file)
 			.onSuccess(session -> eventBus.postEvent("current-file-changed", file))
 			.onFailure(e -> showLoadError(eventBus, file, e))
-			.ifPresent(bundle -> eventBus.postEvent("session-bundle-loaded", new Object[] { bundle, false, true }));
+			.ifPresent(bundle -> eventBus.postEvent("session-bundle-loaded", bundle, false, true));
 	}
 
 	private void handleSaveFile(EventBus eventBus, File file) {
@@ -312,7 +312,7 @@ public class NextFractalApp extends Application {
 	}
 
 	private void createSession(EventBus eventBus, FractalFactory factory) {
-		tryCreateSession(factory).ifPresent(session -> eventBus.postEvent("session-data-loaded", new Object[] { session, false, true }));
+		tryCreateSession(factory).ifPresent(session -> eventBus.postEvent("session-data-loaded", session, false, true));
 	}
 
 	private DefaultThreadFactory createThreadFactory(String name) {

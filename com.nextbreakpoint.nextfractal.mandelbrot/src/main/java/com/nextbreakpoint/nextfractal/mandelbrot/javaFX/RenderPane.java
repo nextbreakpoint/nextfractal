@@ -285,12 +285,12 @@ public class RenderPane extends BorderPane {
 
 			@Override
 			public void setView(MandelbrotMetadata metadata, boolean continuous) {
-				eventBus.postEvent("render-view-changed", new Object[] { new MandelbrotSession(mandelbrotSession.getScript(), metadata), continuous, true });
+				eventBus.postEvent("render-view-changed", new MandelbrotSession(mandelbrotSession.getScript(), metadata), continuous, true);
 			}
 
 			@Override
 			public void setPoint(MandelbrotMetadata metadata, boolean continuous) {
-				eventBus.postEvent("render-point-changed", new Object[] { new MandelbrotSession(mandelbrotSession.getScript(), metadata), continuous, true });
+				eventBus.postEvent("render-point-changed", new MandelbrotSession(mandelbrotSession.getScript(), metadata), continuous, true);
 			}
 		};
 
@@ -464,72 +464,72 @@ public class RenderPane extends BorderPane {
 
 		runTimer(fractalCanvas, orbitCanvas, juliaCanvas, pointCanvas, trapCanvas, toolCanvas);
 
-		eventBus.subscribe("session-report-changed", event -> updateReport((CompilerReport) event));
+		eventBus.subscribe("session-report-changed", event -> updateReport((CompilerReport) event[0]));
 
-		eventBus.subscribe("session-data-changed", event -> updateData((Object[]) event));
+		eventBus.subscribe("session-data-changed", event -> updateData(event));
 
-		eventBus.subscribe("playback-data-load", event -> loadData((Object[]) event));
+		eventBus.subscribe("playback-data-load", event -> loadData(event));
 
-		eventBus.subscribe("playback-data-change", event -> updateData((Object[]) event));
+		eventBus.subscribe("playback-data-change", event -> updateData(event));
 
 		eventBus.subscribe("editor-source-changed", event -> {
-			MandelbrotSession newSession = new MandelbrotSession((String) event, (MandelbrotMetadata) mandelbrotSession.getMetadata());
+			MandelbrotSession newSession = new MandelbrotSession((String) event[0], (MandelbrotMetadata) mandelbrotSession.getMetadata());
             notifySessionChanged(eventBus, newSession, false, true);
         });
 
 		eventBus.subscribe("editor-data-changed", event -> {
-			MandelbrotSession newSession = (MandelbrotSession) ((Object[]) event)[0];
-			Boolean continuous = (Boolean) ((Object[]) event)[1];
-			Boolean appendHistory = (Boolean) ((Object[]) event)[2];
+			MandelbrotSession newSession = (MandelbrotSession) event[0];
+			Boolean continuous = (Boolean) event[1];
+			Boolean appendHistory = (Boolean) event[2];
 			notifySessionChanged(eventBus, newSession, continuous, appendHistory && !continuous);
         });
 
 		eventBus.subscribe("editor-view-changed", event -> {
-			MandelbrotSession newSession = (MandelbrotSession) ((Object[]) event)[0];
-			Boolean continuous = (Boolean) ((Object[]) event)[1];
-			Boolean appendHistory = (Boolean) ((Object[]) event)[2];
+			MandelbrotSession newSession = (MandelbrotSession) event[0];
+			Boolean continuous = (Boolean) event[1];
+			Boolean appendHistory = (Boolean) event[2];
 			notifySessionChanged(eventBus, newSession, continuous, appendHistory && !continuous);
 		});
 
 		eventBus.subscribe("editor-point-changed", event -> {
-			MandelbrotSession newSession = (MandelbrotSession) ((Object[]) event)[0];
-			Boolean continuous = (Boolean) ((Object[]) event)[1];
-			Boolean appendHistory = (Boolean) ((Object[]) event)[2];
+			MandelbrotSession newSession = (MandelbrotSession) event[0];
+			Boolean continuous = (Boolean) event[1];
+			Boolean appendHistory = (Boolean) event[2];
 			notifySessionChanged(eventBus, newSession, continuous, appendHistory && !continuous && ((MandelbrotMetadata) newSession.getMetadata()).isJulia());
 		});
 
 		eventBus.subscribe("editor-mode-changed", event -> {
-			MandelbrotSession newSession = (MandelbrotSession) ((Object[]) event)[0];
-			Boolean continuous = (Boolean) ((Object[]) event)[1];
-			Boolean appendHistory = (Boolean) ((Object[]) event)[2];
+			MandelbrotSession newSession = (MandelbrotSession) event[0];
+			Boolean continuous = (Boolean) event[1];
+			Boolean appendHistory = (Boolean) event[2];
 			notifySessionChanged(eventBus, newSession, continuous, appendHistory && !continuous);
 		});
 
 		eventBus.subscribe("render-data-changed", event -> {
-			MandelbrotSession newSession = (MandelbrotSession) ((Object[]) event)[0];
-			Boolean continuous = (Boolean) ((Object[]) event)[1];
-			Boolean appendHistory = (Boolean) ((Object[]) event)[2];
+			MandelbrotSession newSession = (MandelbrotSession) event[0];
+			Boolean continuous = (Boolean) event[1];
+			Boolean appendHistory = (Boolean) event[2];
 			notifySessionChanged(eventBus, newSession, continuous, appendHistory && !continuous);
 		});
 
 		eventBus.subscribe("render-view-changed", event -> {
-			MandelbrotSession newSession = (MandelbrotSession) ((Object[]) event)[0];
-			Boolean continuous = (Boolean) ((Object[]) event)[1];
-			Boolean appendHistory = (Boolean) ((Object[]) event)[2];
+			MandelbrotSession newSession = (MandelbrotSession) event[0];
+			Boolean continuous = (Boolean) event[1];
+			Boolean appendHistory = (Boolean) event[2];
 			notifySessionChanged(eventBus, newSession, continuous, appendHistory && !continuous);
 		});
 
 		eventBus.subscribe("render-point-changed", event -> {
-			MandelbrotSession newSession = (MandelbrotSession) ((Object[]) event)[0];
-			Boolean continuous = (Boolean) ((Object[]) event)[1];
-			Boolean appendHistory = (Boolean) ((Object[]) event)[2];
+			MandelbrotSession newSession = (MandelbrotSession) event[0];
+			Boolean continuous = (Boolean) event[1];
+			Boolean appendHistory = (Boolean) event[2];
 			notifySessionChanged(eventBus, newSession, continuous, appendHistory && !continuous && ((MandelbrotMetadata) newSession.getMetadata()).isJulia());
 		});
 
 		eventBus.subscribe("render-mode-changed", event -> {
-			MandelbrotSession newSession = (MandelbrotSession) ((Object[]) event)[0];
-			Boolean continuous = (Boolean) ((Object[]) event)[1];
-			Boolean appendHistory = (Boolean) ((Object[]) event)[2];
+			MandelbrotSession newSession = (MandelbrotSession) event[0];
+			Boolean continuous = (Boolean) event[1];
+			Boolean appendHistory = (Boolean) event[2];
 			notifySessionChanged(eventBus, newSession, continuous, appendHistory && !continuous);
 		});
 
@@ -545,7 +545,7 @@ public class RenderPane extends BorderPane {
 	}
 
     private void notifySessionChanged(EventBus eventBus, MandelbrotSession newSession, boolean continuous, boolean historyAppend) {
-        eventBus.postEvent("session-data-changed", new Object[] { newSession, continuous, false });
+        eventBus.postEvent("session-data-changed", newSession, continuous, false);
 		if (historyAppend) {
 			eventBus.postEvent("history-add-session", newSession);
 		}
@@ -611,7 +611,7 @@ public class RenderPane extends BorderPane {
 		double[] rotation = {0, 0, 0, 0};
 		double[] scale = {1, 1, 1, 1};
 		MandelbrotMetadata newMetadata = new MandelbrotMetadata(translation, rotation, scale, metadata.getPoint().toArray(), metadata.isJulia());
-		eventBus.postEvent("render-view-changed", new Object[] { new MandelbrotSession(mandelbrotSession.getScript(), newMetadata), false, true });
+		eventBus.postEvent("render-view-changed", new MandelbrotSession(mandelbrotSession.getScript(), newMetadata), false, true);
 	}
 
 	private void createCoordinators(int rows, int columns, Map<String, Integer> hints) {
@@ -718,12 +718,12 @@ public class RenderPane extends BorderPane {
 			MandelbrotMetadata oldMetadata = popView();
 			pushView();
 			MandelbrotMetadata newMetadata = new MandelbrotMetadata(oldMetadata != null ? oldMetadata.getTranslation() : new Double4D(0, 0, 1, 0), oldMetadata != null ? oldMetadata.getRotation() : new Double4D(0, 0, 0, 0), oldMetadata != null ? oldMetadata.getScale() : new Double4D(1, 1, 1, 1), metadata.getPoint(), false);
-			eventBus.postEvent("render-view-changed", new Object[] { new MandelbrotSession(mandelbrotSession.getScript(), newMetadata), false, true });
+			eventBus.postEvent("render-view-changed", new MandelbrotSession(mandelbrotSession.getScript(), newMetadata), false, true);
 		} else if (julia && !metadata.isJulia()) {
 			MandelbrotMetadata oldMetadata = popView();
 			pushView();
 			MandelbrotMetadata newMetadata = new MandelbrotMetadata(oldMetadata != null ? oldMetadata.getTranslation() : new Double4D(0, 0, 1, 0), oldMetadata != null ? oldMetadata.getRotation() : new Double4D(0, 0, 0, 0), oldMetadata != null ? oldMetadata.getScale() : new Double4D(1, 1, 1, 1), metadata.getPoint(), true);
-			eventBus.postEvent("render-view-changed", new Object[] { new MandelbrotSession(mandelbrotSession.getScript(), newMetadata), false, true });
+			eventBus.postEvent("render-view-changed", new MandelbrotSession(mandelbrotSession.getScript(), newMetadata), false, true);
 		}
 	}
 

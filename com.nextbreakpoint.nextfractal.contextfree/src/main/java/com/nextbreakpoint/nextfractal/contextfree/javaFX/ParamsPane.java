@@ -97,16 +97,16 @@ public class ParamsPane extends Pane {
 			String seed = seedField.getText();
 			ContextFreeMetadata newMetadata = new ContextFreeMetadata(seed);
 			ContextFreeSession newSession = new ContextFreeSession(contextFreeSession.getScript(), newMetadata);
-			Platform.runLater(() -> eventBus.postEvent("editor-data-changed", new Object[] { newSession, false, true }));
+			Platform.runLater(() -> eventBus.postEvent("editor-data-changed", newSession, false, true));
 			return null;
 		};
 
 		eventBus.subscribe("editor-params-action", event -> {
-			if (contextFreeSession != null && event.equals("cancel")) updateAll.apply((ContextFreeMetadata) contextFreeSession.getMetadata());
-			if (contextFreeSession != null && event.equals("apply")) notifyAll.apply((ContextFreeMetadata) contextFreeSession.getMetadata());
+			if (contextFreeSession != null && event[0].equals("cancel")) updateAll.apply((ContextFreeMetadata) contextFreeSession.getMetadata());
+			if (contextFreeSession != null && event[0].equals("apply")) notifyAll.apply((ContextFreeMetadata) contextFreeSession.getMetadata());
 		});
 
-		eventBus.subscribe("session-data-changed", event -> updateData(updateAll, (Object[]) event));
+		eventBus.subscribe("session-data-changed", event -> updateData(updateAll, event));
 
 		seedField.setOnAction(e -> notifyAll.apply((ContextFreeMetadata) contextFreeSession.getMetadata()));
 	}

@@ -216,26 +216,26 @@ public class RenderPane extends BorderPane {
 
 		runTimer(fractalCanvas, toolCanvas);
 
-		eventBus.subscribe("session-report-changed", event -> updateReport((CompilerReport) event));
+		eventBus.subscribe("session-report-changed", event -> updateReport((CompilerReport) event[0]));
 
-		eventBus.subscribe("session-data-changed", event -> updateData((Object[]) event));
+		eventBus.subscribe("session-data-changed", event -> updateData(event));
 
 		eventBus.subscribe("editor-source-changed", event -> {
-			ContextFreeSession newSession = new ContextFreeSession((String) event, (ContextFreeMetadata) contextFreeSession.getMetadata());
+			ContextFreeSession newSession = new ContextFreeSession((String) event[0], (ContextFreeMetadata) contextFreeSession.getMetadata());
             notifySessionChanged(eventBus, newSession, false, true);
         });
 
 		eventBus.subscribe("editor-data-changed", event -> {
-			ContextFreeSession newSession = (ContextFreeSession) ((Object[]) event)[0];
-			Boolean continuous = (Boolean) ((Object[]) event)[1];
-			Boolean appendHistory = (Boolean) ((Object[]) event)[2];
+			ContextFreeSession newSession = (ContextFreeSession) event[0];
+			Boolean continuous = (Boolean) event[1];
+			Boolean appendHistory = (Boolean) event[2];
 			notifySessionChanged(eventBus, newSession, continuous, appendHistory && !continuous);
 		});
 
 		eventBus.subscribe("render-data-changed", event -> {
-			ContextFreeSession newSession = (ContextFreeSession) ((Object[]) event)[0];
-			Boolean continuous = (Boolean) ((Object[]) event)[1];
-			Boolean appendHistory = (Boolean) ((Object[]) event)[2];
+			ContextFreeSession newSession = (ContextFreeSession) event[0];
+			Boolean continuous = (Boolean) event[1];
+			Boolean appendHistory = (Boolean) event[2];
 			notifySessionChanged(eventBus, newSession, continuous, appendHistory && !continuous);
 		});
 
@@ -255,7 +255,7 @@ public class RenderPane extends BorderPane {
 	}
 
 	private void notifySessionChanged(EventBus eventBus, ContextFreeSession newSession, boolean continuous, boolean historyAppend) {
-		eventBus.postEvent("session-data-changed", new Object[] { newSession, continuous, false });
+		eventBus.postEvent("session-data-changed", newSession, continuous, false);
 		if (historyAppend) {
 			eventBus.postEvent("history-add-session", newSession);
 		}

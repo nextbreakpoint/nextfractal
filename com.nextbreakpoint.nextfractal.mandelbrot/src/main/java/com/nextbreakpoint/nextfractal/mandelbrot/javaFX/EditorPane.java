@@ -98,16 +98,16 @@ public class EditorPane extends BorderPane {
 
         textExecutor = Executors.newSingleThreadExecutor(new DefaultThreadFactory("Mandelbrot Editor", true, Thread.MIN_PRIORITY));
 
-        eventBus.subscribe("session-data-changed", event -> session = (MandelbrotSession) ((Object[]) event)[0]);
+        eventBus.subscribe("session-data-changed", event -> session = (MandelbrotSession) event[0]);
 
         eventBus.subscribe("session-data-loaded", event -> {
-            MandelbrotSession session = (MandelbrotSession) ((Object[]) event)[0];
+            MandelbrotSession session = (MandelbrotSession) event[0];
             updateSource(session.getScript()).ifPresent(result -> {
                 eventBus.postEvent("session-report-changed", result.report);
                 eventBus.postEvent("session-data-changed", event);
-                MandelbrotSession newSession = (MandelbrotSession) ((Object[]) event)[0];
-                Boolean continuous = (Boolean) ((Object[]) event)[1];
-                Boolean appendHistory = (Boolean) ((Object[]) event)[2];
+                MandelbrotSession newSession = (MandelbrotSession) event[0];
+                Boolean continuous = (Boolean) event[1];
+                Boolean appendHistory = (Boolean) event[2];
                 if (!continuous && appendHistory) {
                     eventBus.postEvent("history-add-session", newSession);
                 }
@@ -116,16 +116,16 @@ public class EditorPane extends BorderPane {
 
         eventBus.subscribe("editor-report-changed", event -> {
             eventBus.postEvent("session-report-changed", event);
-            notifySourceIfRequired(eventBus, (CompilerReport)event);
+            notifySourceIfRequired(eventBus, (CompilerReport)event[0]);
         });
 
         eventBus.subscribe("editor-source-changed", event -> {
-            MandelbrotSession newSession = new MandelbrotSession((String) event, (MandelbrotMetadata) session.getMetadata());
-            eventBus.postEvent("session-data-changed", new Object[] { newSession, false, true });
+            MandelbrotSession newSession = new MandelbrotSession((String) event[0], (MandelbrotMetadata) session.getMetadata());
+            eventBus.postEvent("session-data-changed", newSession, false, true);
         });
 
         eventBus.subscribe("editor-action", event -> {
-            if (session != null && event.equals("reload")) eventBus.postEvent("session-data-loaded", new Object[] { session, false, false });
+            if (session != null && event[0].equals("reload")) eventBus.postEvent("session-data-loaded", session, false, false);
         });
 
         eventBus.subscribe("session-terminated", event -> dispose());

@@ -70,17 +70,17 @@ public class MainCentralPane extends BorderPane {
         playbackPane.setDelegate(new PlaybackDelegate() {
             @Override
             public void playbackStopped() {
-                eventBus.postEvent("playback-clips-stop", null);
+                eventBus.postEvent("playback-clips-stop", "");
             }
 
             @Override
             public void loadSessionData(Session session, boolean continuous) {
-                eventBus.postEvent("playback-data-load", new Object[] { session, continuous, false });
+                eventBus.postEvent("playback-data-load", session, continuous, false);
             }
 
             @Override
             public void updateSessionData(Session session, boolean continuous) {
-                eventBus.postEvent("playback-data-change", new Object[] { session, continuous, false });
+                eventBus.postEvent("playback-data-change", session, continuous, false);
             }
         });
 
@@ -157,7 +157,7 @@ public class MainCentralPane extends BorderPane {
             renderPane.setDisable(true);
             toggleProperty.setValue(false);
             playbackPane.setVisible(true);
-            playbackPane.setClips((List<Clip>)event);
+            playbackPane.setClips((List<Clip>)event[0]);
             playbackPane.start();
         });
 

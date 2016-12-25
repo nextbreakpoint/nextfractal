@@ -114,7 +114,7 @@ public class MainParamsPane extends Pane {
 		applyButton.setOnAction((e) -> eventBus.postEvent("editor-params-action", "apply"));
 
 		EventListener updateUI = event -> {
-			Session session = (Session) ((Object[])event)[0];
+			Session session = (Session) event[0];
 			if (this.session == null || !this.session.getPluginId().equals(session.getPluginId())) {
 				if (this.session != null) {
 					Optional.ofNullable(buses.get(this.session.getPluginId())).ifPresent(bus -> bus.disable());
