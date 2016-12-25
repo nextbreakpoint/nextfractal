@@ -57,7 +57,7 @@ public class PlaybackPane extends Pane {
                         if (lastFrame == null || !lastFrame.getPluginId().equals(frame.getPluginId()) || !lastFrame.getScript().equals(frame.getScript())) {
                             tryFindFactory(frame.getPluginId()).map(factory -> factory.createSession(frame.getScript(), frame.getMetadata()))
                                 .ifPresent(session -> Platform.runLater(() -> delegate.loadSessionData(session, frame.isKeyFrame())));
-                        } else {
+                        } else if (!lastFrame.getMetadata().equals(frame.getMetadata())) {
                             tryFindFactory(frame.getPluginId()).map(factory -> factory.createSession(frame.getScript(), frame.getMetadata()))
                                 .ifPresent(session -> Platform.runLater(() -> delegate.updateSessionData(session, frame.isKeyFrame())));
                         }
@@ -86,6 +86,7 @@ public class PlaybackPane extends Pane {
 
     public void start() {
         stop();
+        frameIndex = 0;
         future = executor.scheduleAtFixedRate(() -> playNextFrame(), 0, 1000 / FRAMES_PER_SECOND, TimeUnit.MILLISECONDS);
     }
 

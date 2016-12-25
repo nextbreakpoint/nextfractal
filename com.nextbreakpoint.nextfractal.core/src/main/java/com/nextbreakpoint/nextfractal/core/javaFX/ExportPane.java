@@ -332,8 +332,13 @@ public class ExportPane extends BorderPane {
 
 		previewButton.setOnMouseClicked(e -> {
 			if (listView.getItems().size() > 0 && delegate != null) {
-				delegate.playbackStart(listView.getItems().stream()
-					.map(bitmap -> (Clip) bitmap.getProperty("clip")).collect(Collectors.toList()));
+				if (listView.getSelectionModel().getSelectedItems().size() > 0) {
+					delegate.playbackStart(listView.getSelectionModel().getSelectedItems().stream()
+						.map(bitmap -> (Clip) bitmap.getProperty("clip")).collect(Collectors.toList()));
+				} else {
+					delegate.playbackStart(listView.getItems().stream()
+						.map(bitmap -> (Clip) bitmap.getProperty("clip")).collect(Collectors.toList()));
+				}
 			}
 		});
 
