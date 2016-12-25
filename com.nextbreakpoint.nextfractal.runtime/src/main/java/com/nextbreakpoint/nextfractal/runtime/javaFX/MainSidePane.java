@@ -27,7 +27,6 @@ package com.nextbreakpoint.nextfractal.runtime.javaFX;
 import com.nextbreakpoint.nextfractal.core.Clip;
 import com.nextbreakpoint.nextfractal.core.EventBus;
 import com.nextbreakpoint.nextfractal.core.Session;
-import com.nextbreakpoint.nextfractal.core.encoder.Encoder;
 import com.nextbreakpoint.nextfractal.core.export.ExportSession;
 import com.nextbreakpoint.nextfractal.core.export.ExportState;
 import com.nextbreakpoint.nextfractal.core.javaFX.ExportDelegate;
@@ -54,65 +53,30 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
-import javafx.stage.FileChooser;
 import javafx.stage.Screen;
 
-import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.function.Consumer;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static com.nextbreakpoint.nextfractal.core.Plugins.tryFindEncoder;
 import static com.nextbreakpoint.nextfractal.core.javaFX.Icons.createIconImage;
 
 public class MainSidePane extends BorderPane {
-    public static final String FILE_EXTENSION = ".nf.zip";
     private static Logger logger = Logger.getLogger(MainSidePane.class.getName());
 
-    private List<Clip> clips = new ArrayList<>();
-    private FileChooser fileChooser;
-    private File currentFile;
-    private FileChooser exportFileChooser;
-    private File exportCurrentFile;
     private Session session;
 
     public MainSidePane(EventBus eventBus) {
-        EventHandler<ActionEvent> loadEventHandler = e -> Optional.ofNullable(showLoadFileChooser())
-                .map(fileChooser -> fileChooser.showOpenDialog(MainSidePane.this.getScene().getWindow())).ifPresent(file -> eventBus.postEvent("editor-load-file", file));
-
-        EventHandler<ActionEvent> saveEventHandler = e -> Optional.ofNullable(showSaveFileChooser())
-                .map(fileChooser -> fileChooser.showSaveDialog(MainSidePane.this.getScene().getWindow())).ifPresent(file -> eventBus.postEvent("editor-save-file", file));
-
         EventBus subEventBus = new EventBus(eventBus);
 
-        setCenter(createRootPane(subEventBus, loadEventHandler, saveEventHandler));
+        setCenter(createRootPane(subEventBus));
 
         eventBus.subscribe("session-data-changed", event -> session = (Session) event[0]);
+
+        eventBus.subscribe("history-session-selected", event -> notifyHistoryItemSelected(eventBus, (Session)event[0]));
 
         eventBus.subscribe("playback-data-load", event -> session = (Session) event[0]);
 
         eventBus.subscribe("playback-data-change", event -> session = (Session) event[0]);
-
-        eventBus.subscribe("current-file-changed", event -> setCurrentFile((File)event[0]));
-
-        eventBus.subscribe("history-session-selected", event -> notifyHistoryItemSelected(eventBus, (Session)event[0]));
-
-        eventBus.subscribe("session-export", event -> handleExportSession(eventBus, (RendererSize) event[0], (String) event[1], session, clips, file -> exportCurrentFile = file));
-
-        eventBus.subscribe("capture-clip-restored", event -> handleClipRestored((Clip)event[0]));
-
-        eventBus.subscribe("capture-clip-removed", event -> handleClipRemoved((Clip)event[0]));
-
-        eventBus.subscribe("capture-clip-added", event -> handleClipAdded((Clip)event[0]));
-
-        eventBus.subscribe("capture-clip-moved", event -> handleClipMoved((int) event[0], (int) event[1]));
 
         eventBus.subscribe("playback-clips-start", event -> handlePlaybackClipsStart(subEventBus, this));
 
@@ -130,29 +94,11 @@ public class MainSidePane extends BorderPane {
         Platform.runLater(() -> subEventBus.postEvent("session-data-loaded", session, false, false));
     }
 
-    private void handleClipRestored(Clip clip) {
-        clips.add(clip);
-    }
-
-    private void handleClipAdded(Clip clip) {
-        clips.add(clip);
-    }
-
-    private void handleClipRemoved(Clip clip) {
-        clips.remove(clip);
-    }
-
-    private void handleClipMoved(int fromIndex, int toIndex) {
-        Clip clip = clips.get(fromIndex);
-        clips.remove(fromIndex);
-        clips.add(toIndex, clip);
-    }
-
     private void notifyHistoryItemSelected(EventBus eventBus, Session session) {
         eventBus.postEvent("session-data-loaded", session, false, false);
     }
 
-    private Pane createRootPane(EventBus eventBus, EventHandler<ActionEvent> loadEventHandler, EventHandler<ActionEvent> saveEventHandler) {
+    private Pane createRootPane(EventBus eventBus) {
         int tileSize = computePercentage(0.02);
 
         RendererTile tile = createSingleTile(tileSize, tileSize);
@@ -221,8 +167,8 @@ public class MainSidePane extends BorderPane {
         sourcePane.getChildren().add(sidePane);
         browseButton.setOnAction(e -> eventBus.postEvent("toggle-browser", ""));
         renderButton.setOnAction(e -> eventBus.postEvent("editor-action", "reload"));
-        loadButton.setOnAction(loadEventHandler);
-        saveButton.setOnAction(saveEventHandler);
+        loadButton.setOnAction(e -> eventBus.postEvent("editor-action", "load"));
+        saveButton.setOnAction(e -> eventBus.postEvent("editor-action", "save"));
 
         TranslateTransition sidebarTransition = createTranslateTransition(sidePane);
         TranslateTransition statusTransition = createTranslateTransition(statusPane);
@@ -436,12 +382,7 @@ public class MainSidePane extends BorderPane {
 
         eventBus.subscribe("capture-clips-merged", event -> exportPane.mergeClips((List<Clip>) event[0]));
 
-        eventBus.subscribe("session-data-changed", event -> {
-            errorProperty.setValue(null);
-            if (!(boolean) (Boolean) event[1]) {
-                eventBus.postEvent("editor-params-changed", (Session) event[0]);
-            }
-        });
+        eventBus.subscribe("session-data-changed", event -> handleDataChanged(eventBus, errorProperty, event));
 
         eventBus.subscribe("session-terminated", event -> jobsPane.dispose());
 
@@ -450,6 +391,13 @@ public class MainSidePane extends BorderPane {
         eventBus.subscribe("export-session-state-changed", event -> handleExportSessionStateChanged(jobsPane, (ExportSession) event[0], (ExportState) event[1], (Float) event[2]));
 
         return rootPane;
+    }
+
+    private void handleDataChanged(EventBus eventBus, StringObservableValue errorProperty, Object[] event) {
+        errorProperty.setValue(null);
+        if (!(boolean) (Boolean) event[1]) {
+            eventBus.postEvent("editor-params-changed", (Session) event[0]);
+        }
     }
 
     private void handleExportSessionStateChanged(JobsPane jobsPane, ExportSession exportSession, ExportState state, Float progress) {
@@ -545,92 +493,5 @@ public class MainSidePane extends BorderPane {
         RendererSize tileBorder = new RendererSize(0, 0);
         RendererPoint tileOffset = new RendererPoint(0, 0);
         return new RendererTile(imageSize, tileSize, tileOffset, tileBorder);
-    }
-
-    private String createFileName() {
-        SimpleDateFormat df = new SimpleDateFormat("YYYYMMdd-HHmmss");
-        return df.format(new Date());
-    }
-
-    private void ensureFileChooser(String suffix) {
-        if (fileChooser == null) {
-            fileChooser = new FileChooser();
-            fileChooser.setInitialFileName(createFileName() + suffix);
-            fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
-        }
-    }
-
-    private FileChooser showSaveFileChooser() {
-        ensureFileChooser(FILE_EXTENSION);
-        fileChooser.setTitle("Save");
-        if (getCurrentFile() != null) {
-            fileChooser.setInitialDirectory(getCurrentFile().getParentFile());
-            fileChooser.setInitialFileName(getCurrentFile().getName());
-        }
-        return fileChooser;
-    }
-
-    private FileChooser showLoadFileChooser() {
-        ensureFileChooser(FILE_EXTENSION);
-        fileChooser.setTitle("Load");
-        if (getCurrentFile() != null) {
-            fileChooser.setInitialDirectory(getCurrentFile().getParentFile());
-            fileChooser.setInitialFileName(getCurrentFile().getName());
-        }
-        return fileChooser;
-    }
-
-    private File getCurrentFile() {
-        return currentFile;
-    }
-
-    private void setCurrentFile(File currentFile) {
-        this.currentFile = currentFile;
-    }
-
-    private void handleExportSession(EventBus eventBus, RendererSize size, String format, Session session, List<Clip> clips, Consumer<File> consumer) {
-        createEncoder(format).ifPresent(encoder -> selectFileAndExport(eventBus, size, encoder, session, clips, consumer));
-    }
-
-    private Optional<? extends Encoder> createEncoder(String format) {
-        return tryFindEncoder(format).onFailure(e -> logger.warning("Cannot find encoder for format " + format)).value();
-    }
-
-    private void selectFileAndExport(EventBus eventBus, RendererSize size, Encoder encoder, Session session, List<Clip> clips, Consumer<File> consumer) {
-        Consumer<File> fileConsumer = file -> createExportSession(eventBus, size, encoder, file, session, clips);
-        Optional.ofNullable(prepareExportFileChooser(encoder.getSuffix()).showSaveDialog(MainSidePane.this.getScene().getWindow())).ifPresent(fileConsumer.andThen(consumer));
-    }
-
-    private void createExportSession(EventBus eventBus, RendererSize size, Encoder encoder, File file, Session session, List<Clip> clips) {
-        startExportSession(eventBus, UUID.randomUUID().toString(), size, encoder, file, session, clips);
-    }
-
-    private FileChooser prepareExportFileChooser(String suffix) {
-        ensureExportFileChooser(suffix);
-        exportFileChooser.setTitle("Export");
-        exportFileChooser.setInitialFileName(createFileName() + suffix);
-        if (exportCurrentFile != null) {
-            exportFileChooser.setInitialDirectory(exportCurrentFile.getParentFile());
-        }
-        return exportFileChooser;
-    }
-
-    private void startExportSession(EventBus eventBus, String uuid, RendererSize size, Encoder encoder, File file, Session session, List<Clip> clips) {
-        try {
-            File tmpFile = File.createTempFile("export-" + uuid, ".dat");
-            ExportSession exportSession = new ExportSession(uuid, session, encoder.isVideoSupported() ? clips : new LinkedList<>(), file, tmpFile, size, 400, encoder);
-            logger.info("Export session created: " + exportSession.getSessionId());
-            eventBus.postEvent("export-session-created", exportSession);
-        } catch (Exception e) {
-            logger.log(Level.WARNING, "Cannot export data to file " + file.getAbsolutePath(), e);
-            //TODO display error
-        }
-    }
-
-    private void ensureExportFileChooser(String suffix) {
-        if (exportFileChooser == null) {
-            exportFileChooser = new FileChooser();
-            exportFileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
-        }
     }
 }

@@ -31,9 +31,11 @@ import com.nextbreakpoint.nextfractal.core.EventBus;
 import com.nextbreakpoint.nextfractal.core.FileManager;
 import com.nextbreakpoint.nextfractal.core.FractalFactory;
 import com.nextbreakpoint.nextfractal.core.Session;
+import com.nextbreakpoint.nextfractal.core.encoder.Encoder;
 import com.nextbreakpoint.nextfractal.core.export.ExportRenderer;
 import com.nextbreakpoint.nextfractal.core.export.ExportService;
 import com.nextbreakpoint.nextfractal.core.export.ExportSession;
+import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 import com.nextbreakpoint.nextfractal.core.renderer.javaFX.JavaFXRendererFactory;
 import com.nextbreakpoint.nextfractal.core.utils.DefaultThreadFactory;
 import com.nextbreakpoint.nextfractal.runtime.export.SimpleExportRenderer;
@@ -53,22 +55,29 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.stage.FileChooser;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 
 import javax.tools.ToolProvider;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static com.nextbreakpoint.nextfractal.core.Plugins.factories;
+import static com.nextbreakpoint.nextfractal.core.Plugins.tryFindEncoder;
 import static com.nextbreakpoint.nextfractal.core.Plugins.tryFindFactory;
 import static com.nextbreakpoint.nextfractal.core.Plugins.tryFindFactoryByGrammar;
 
@@ -76,12 +85,18 @@ public class NextFractalApp extends Application {
 	private static Logger logger = Logger.getLogger(NextFractalApp.class.getName());
 
 	private static final String DEFAULT_PLUGIN_ID = "Mandelbrot";
+	private static final String FILE_EXTENSION = ".nf.zip";
 
 	private List<Clip> clips = new ArrayList<>();
 	private Session session;
 	private boolean capture;
 	private boolean edited;
 	private Clip clip;
+
+	private FileChooser exportFileChooser;
+	private File exportCurrentFile;
+	private FileChooser bundleFileChooser;
+	private File bundleCurrentFile;
 
 	public static void main(String[] args) {
 		launch(args); 
@@ -153,6 +168,12 @@ public class NextFractalApp extends Application {
 
 		eventBus.subscribe("session-bundle-loaded", event -> handleBundleLoaded(eventBus, (Bundle) event[0], (boolean) event[1], (boolean) event[2]));
 
+		eventBus.subscribe("session-export", event -> handleExportSession(eventBus, primaryStage, (String) event[1], session, clips, file -> exportCurrentFile = file, (RendererSize) event[0]));
+
+		eventBus.subscribe("current-file-changed", event -> bundleCurrentFile = (File)event[0]);
+
+		eventBus.subscribe("editor-action", event -> handleEditorAction(eventBus, primaryStage, (String)event[0]));
+
 		rootPane.getChildren().add(createMainPane(eventBus, editorWidth, renderWidth, sceneHeight));
 
 		Scene scene = new Scene(rootPane, sceneWidth, sceneHeight);
@@ -180,6 +201,11 @@ public class NextFractalApp extends Application {
 			String defaultPluginId = System.getProperty("initialPluginId", DEFAULT_PLUGIN_ID);
 			tryFindFactory(defaultPluginId).ifPresent(factory -> createSession(eventBus, factory));
 		});
+	}
+
+	private void handleEditorAction(EventBus eventBus, Window window, String action) {
+		if (action.equals("load")) Optional.ofNullable(showLoadBundleFileChooser()).map(fileChooser -> fileChooser.showOpenDialog(window)).ifPresent(file -> eventBus.postEvent("editor-load-file", file));
+		if (action.equals("save")) Optional.ofNullable(showSaveBundleFileChooser()).map(fileChooser -> fileChooser.showSaveDialog(window)).ifPresent(file -> eventBus.postEvent("editor-save-file", file));
 	}
 
 	private void handleBundleLoaded(EventBus eventBus, Bundle bundle, boolean continuous, boolean appendHistory) {
@@ -479,6 +505,89 @@ public class NextFractalApp extends Application {
 
 	private void printPlugins() {
 		factories().forEach(plugin -> logger.fine("Found plugin " + plugin.getId()));
+	}
+
+	private void handleExportSession(EventBus eventBus, Window window, String format, Session session, List<Clip> clips, Consumer<File> consumer, RendererSize size) {
+		createEncoder(format).ifPresent(encoder -> selectFileAndExport(eventBus, window, encoder, session, clips, consumer, size));
+	}
+
+	private Optional<? extends Encoder> createEncoder(String format) {
+		return tryFindEncoder(format).onFailure(e -> logger.warning("Cannot find encoder for format " + format)).value();
+	}
+
+	private void selectFileAndExport(EventBus eventBus, Window window, Encoder encoder, Session session, List<Clip> clips, Consumer<File> consumer, RendererSize size) {
+		Consumer<File> fileConsumer = file -> createExportSession(eventBus, size, encoder, file, session, clips);
+		Optional.ofNullable(prepareExportFileChooser(encoder.getSuffix()).showSaveDialog(window)).ifPresent(fileConsumer.andThen(consumer));
+	}
+
+	private void createExportSession(EventBus eventBus, RendererSize size, Encoder encoder, File file, Session session, List<Clip> clips) {
+		startExportSession(eventBus, UUID.randomUUID().toString(), size, encoder, file, session, clips);
+	}
+
+	private String createFileName() {
+		SimpleDateFormat df = new SimpleDateFormat("YYYYMMdd-HHmmss");
+		return df.format(new Date());
+	}
+
+	private FileChooser prepareExportFileChooser(String suffix) {
+		ensureExportFileChooser(suffix);
+		exportFileChooser.setTitle("Export");
+		exportFileChooser.setInitialFileName(createFileName() + suffix);
+		if (exportCurrentFile != null) {
+			exportFileChooser.setInitialDirectory(exportCurrentFile.getParentFile());
+		}
+		return exportFileChooser;
+	}
+
+	private void startExportSession(EventBus eventBus, String uuid, RendererSize size, Encoder encoder, File file, Session session, List<Clip> clips) {
+		try {
+			File tmpFile = File.createTempFile("export-" + uuid, ".dat");
+			ExportSession exportSession = new ExportSession(uuid, session, encoder.isVideoSupported() ? clips : new LinkedList<>(), file, tmpFile, size, 400, encoder);
+			logger.info("Export session created: " + exportSession.getSessionId());
+			eventBus.postEvent("export-session-created", exportSession);
+		} catch (Exception e) {
+			logger.log(Level.WARNING, "Cannot export data to file " + file.getAbsolutePath(), e);
+			//TODO display error
+		}
+	}
+
+	private void ensureExportFileChooser(String suffix) {
+		if (exportFileChooser == null) {
+			exportFileChooser = new FileChooser();
+			exportFileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+		}
+	}
+
+	private void ensureBundleFileChooser(String suffix) {
+		if (bundleFileChooser == null) {
+			bundleFileChooser = new FileChooser();
+			bundleFileChooser.setInitialFileName(createFileName() + suffix);
+			bundleFileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+		}
+	}
+
+	private FileChooser showSaveBundleFileChooser() {
+		ensureBundleFileChooser(FILE_EXTENSION);
+		bundleFileChooser.setTitle("Save");
+		if (getBundleCurrentFile() != null) {
+			bundleFileChooser.setInitialDirectory(getBundleCurrentFile().getParentFile());
+			bundleFileChooser.setInitialFileName(getBundleCurrentFile().getName());
+		}
+		return bundleFileChooser;
+	}
+
+	private FileChooser showLoadBundleFileChooser() {
+		ensureBundleFileChooser(FILE_EXTENSION);
+		bundleFileChooser.setTitle("Load");
+		if (getBundleCurrentFile() != null) {
+			bundleFileChooser.setInitialDirectory(getBundleCurrentFile().getParentFile());
+			bundleFileChooser.setInitialFileName(getBundleCurrentFile().getName());
+		}
+		return bundleFileChooser;
+	}
+
+	private File getBundleCurrentFile() {
+		return bundleCurrentFile;
 	}
 
 //	private void setup() {
