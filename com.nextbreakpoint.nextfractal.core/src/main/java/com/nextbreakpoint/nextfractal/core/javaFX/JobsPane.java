@@ -25,6 +25,7 @@
 package com.nextbreakpoint.nextfractal.core.javaFX;
 
 import com.nextbreakpoint.Try;
+import com.nextbreakpoint.nextfractal.core.FractalFactory;
 import com.nextbreakpoint.nextfractal.core.ImageGenerator;
 import com.nextbreakpoint.nextfractal.core.export.ExportSession;
 import com.nextbreakpoint.nextfractal.core.export.ExportState;
@@ -175,8 +176,11 @@ public class JobsPane extends BorderPane {
     }
 
     private void submitItem(ExportSession session, ImageGenerator generator) {
-        executor.submit(() -> Try.of(() -> generator.renderImage(session.getSession().getScript(), session.getSession().getMetadata()))
-            .ifPresent(pixels -> Platform.runLater(() -> addItem(listView, session, pixels, generator.getSize()))));
+        executor.submit(() -> Try.of(() -> renderImage(session, generator)).ifPresent(pixels -> Platform.runLater(() -> addItem(listView, session, pixels, generator.getSize()))));
+    }
+
+    private IntBuffer renderImage(ExportSession session, ImageGenerator generator) {
+        return generator.renderImage(session.getFrames().get(0).getScript(), session.getFrames().get(0).getMetadata());
     }
 
     private void addItem(ListView<Bitmap> listView, ExportSession session, IntBuffer pixels, RendererSize size) {
@@ -212,8 +216,11 @@ public class JobsPane extends BorderPane {
     }
 
     public void appendSession(ExportSession session) {
-        tryFindFactory(session.getSession().getPluginId()).map(factory -> factory.createImageGenerator(createThreadFactory("Jobs Renderer"),
-            new JavaFXRendererFactory(), tile, true)).ifPresent(generator -> submitItem(session, generator));
+        tryFindFactory(session.getFrames().get(0).getPluginId()).map(factory -> createImageGenerator(factory)).ifPresent(generator -> submitItem(session, generator));
+    }
+
+    private ImageGenerator createImageGenerator(FractalFactory factory) {
+        return factory.createImageGenerator(createThreadFactory("Jobs Renderer"), new JavaFXRendererFactory(), tile, true);
     }
 
     public void updateSession(ExportSession exportSession, ExportState state, Float progress) {

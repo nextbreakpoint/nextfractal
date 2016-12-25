@@ -71,10 +71,6 @@ public final class ExportSession {
 		jobs.addAll(createJobs());
 	}
 
-	public Session getSession() {
-		return session;
-	}
-
 	public String getSessionId() {
 		return sessionId;
 	}
