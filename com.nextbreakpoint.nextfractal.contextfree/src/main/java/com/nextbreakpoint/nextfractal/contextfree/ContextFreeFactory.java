@@ -74,7 +74,12 @@ public class ContextFreeFactory implements FractalFactory {
 	public Session createSession() {
 		return new ContextFreeSession();
 	}
-	
+
+	@Override
+	public Session createSession(String script, Object metadata) {
+		return new ContextFreeSession(script, (ContextFreeMetadata) metadata);
+	}
+
 	/**
 	 * @see FractalFactory#createEditorPane(EventBus, Session)
 	 */

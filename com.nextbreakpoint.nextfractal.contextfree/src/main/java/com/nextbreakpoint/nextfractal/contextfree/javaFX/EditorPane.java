@@ -119,7 +119,7 @@ public class EditorPane extends BorderPane {
         });
 
         eventBus.subscribe("editor-source-changed", event -> {
-            ContextFreeSession newSession = new ContextFreeSession((ContextFreeMetadata) session.getMetadata(), (String) event);
+            ContextFreeSession newSession = new ContextFreeSession((String) event, (ContextFreeMetadata) session.getMetadata());
             eventBus.postEvent("session-data-changed", new Object[] { newSession, false, true });
         });
 

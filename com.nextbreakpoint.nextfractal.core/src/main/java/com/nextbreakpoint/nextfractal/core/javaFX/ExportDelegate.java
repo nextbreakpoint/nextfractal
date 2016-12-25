@@ -36,7 +36,7 @@ public interface ExportDelegate {
 
     void stopCaptureSession();
 
-    void showVideoPreview(List<Clip> clips);
+    void playbackStart(List<Clip> clips);
 
     void captureSessionAdded(Clip clip);
 

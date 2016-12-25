@@ -25,6 +25,7 @@
 package com.nextbreakpoint.nextfractal.runtime.javaFX;
 
 import com.nextbreakpoint.Try;
+import com.nextbreakpoint.nextfractal.core.Clip;
 import com.nextbreakpoint.nextfractal.core.EventBus;
 import com.nextbreakpoint.nextfractal.core.FileManager;
 import com.nextbreakpoint.nextfractal.core.Session;
@@ -35,6 +36,7 @@ import com.nextbreakpoint.nextfractal.core.javaFX.BrowseDelegate;
 import com.nextbreakpoint.nextfractal.core.javaFX.BrowsePane;
 import com.nextbreakpoint.nextfractal.core.javaFX.GridItemRenderer;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
+import java.util.List;
 import javafx.animation.FadeTransition;
 import javafx.animation.TranslateTransition;
 import javafx.event.ActionEvent;
@@ -46,33 +48,39 @@ import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
 import java.io.File;
-import java.util.logging.Logger;
 
 import static com.nextbreakpoint.nextfractal.core.Plugins.tryFindFactory;
 
 public class MainCentralPane extends BorderPane {
-    private static Logger logger = Logger.getLogger(MainCentralPane.class.getName());
-
     public MainCentralPane(EventBus eventBus, int width, int height) {
         MainRenderPane renderPane = new MainRenderPane(eventBus, width, height);
 
         BooleanObservableValue toggleProperty = new BooleanObservableValue();
         toggleProperty.setValue(false);
 
-//        TabPane tab = new TabPane(createIconImage("/icon-grid.png"));
-
         BrowsePane browsePane = new BrowsePane(width, height);
         browsePane.setClip(new Rectangle(0, 0, width, height));
 
-//        FadeTransition tabTransition = createFadeTransition(tab);
-
-//        this.setOnMouseEntered(e -> fadeIn(tabTransition, x -> {}));
-
-//        this.setOnMouseExited(e -> fadeOut(tabTransition, x -> {}));
+        PlaybackPane playbackPane = new PlaybackPane();
 
         TranslateTransition browserTransition = createTranslateTransition(browsePane);
 
-//        tab.setOnAction(e -> eventBus.postEvent("toggle-browser", ""));
+        playbackPane.setDelegate(new PlaybackDelegate() {
+            @Override
+            public void playbackStopped() {
+                eventBus.postEvent("playback-clips-stop", null);
+            }
+
+            @Override
+            public void loadSessionData(Session session, boolean continuous) {
+                eventBus.postEvent("playback-data-load", new Object[] { session, continuous, false });
+            }
+
+            @Override
+            public void updateSessionData(Session session, boolean continuous) {
+                eventBus.postEvent("playback-data-change", new Object[] { session, continuous, false });
+            }
+        });
 
 		browsePane.setDelegate(new BrowseDelegate() {
 			@Override
@@ -106,27 +114,26 @@ public class MainCentralPane extends BorderPane {
 
         Pane stackPane = new Pane();
         stackPane.getChildren().add(renderPane);
-//        stackPane.getChildren().add(tab);
+        stackPane.getChildren().add(playbackPane);
         stackPane.getChildren().add(browsePane);
+
+        playbackPane.setVisible(false);
 
         setCenter(stackPane);
 
         browsePane.setTranslateY(-height);
 
         widthProperty().addListener((observable, oldValue, newValue) -> {
-//            tab.setPrefWidth(newValue.doubleValue() * 0.1);
             renderPane.setPrefWidth(newValue.doubleValue());
             browsePane.setPrefWidth(newValue.doubleValue());
-//            tab.setTranslateX((newValue.doubleValue() - newValue.doubleValue() * 0.1) / 2);
+            playbackPane.setPrefWidth(newValue.doubleValue());
         });
 
         heightProperty().addListener((observable, oldValue, newValue) -> {
-//            tab.setPrefHeight(newValue.doubleValue() * 0.05);
             renderPane.setPrefHeight(newValue.doubleValue());
             browsePane.setPrefHeight(newValue.doubleValue());
+            playbackPane.setPrefHeight(newValue.doubleValue());
         });
-
-//        eventBus.subscribe("hide-controls", event -> handleHideControls(tabTransition, (Boolean)event));
 
         eventBus.subscribe("session-terminated", event -> browsePane.dispose());
 
@@ -141,6 +148,22 @@ public class MainCentralPane extends BorderPane {
 
         eventBus.subscribe("toggle-browser", event -> {
             toggleProperty.setValue(!toggleProperty.getValue());
+        });
+
+        eventBus.subscribe("playback-clips-start", event -> {
+            browsePane.setDisable(true);
+            renderPane.setDisable(true);
+            toggleProperty.setValue(false);
+            playbackPane.setVisible(true);
+            playbackPane.setClips((List<Clip>)event);
+            playbackPane.start();
+        });
+
+        eventBus.subscribe("playback-clips-stop", event -> {
+            playbackPane.stop();
+            browsePane.setDisable(false);
+            renderPane.setDisable(false);
+            playbackPane.setVisible(false);
         });
     }
 

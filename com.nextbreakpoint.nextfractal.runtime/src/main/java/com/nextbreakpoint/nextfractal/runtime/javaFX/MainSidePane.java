@@ -41,6 +41,7 @@ import com.nextbreakpoint.nextfractal.core.renderer.RendererPoint;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
 import javafx.animation.TranslateTransition;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -89,9 +90,15 @@ public class MainSidePane extends BorderPane {
         EventHandler<ActionEvent> saveEventHandler = e -> Optional.ofNullable(showSaveFileChooser())
                 .map(fileChooser -> fileChooser.showSaveDialog(MainSidePane.this.getScene().getWindow())).ifPresent(file -> eventBus.postEvent("editor-save-file", file));
 
-        setCenter(createRootPane(eventBus, loadEventHandler, saveEventHandler));
+        EventBus subEventBus = new EventBus(eventBus);
+
+        setCenter(createRootPane(subEventBus, loadEventHandler, saveEventHandler));
 
         eventBus.subscribe("session-data-changed", event -> session = (Session) ((Object[])event)[0]);
+
+        eventBus.subscribe("playback-data-load", event -> session = (Session) ((Object[])event)[0]);
+
+        eventBus.subscribe("playback-data-change", event -> session = (Session) ((Object[])event)[0]);
 
         eventBus.subscribe("current-file-changed", event -> setCurrentFile((File)event));
 
@@ -106,6 +113,21 @@ public class MainSidePane extends BorderPane {
         eventBus.subscribe("capture-clip-added", event -> handleClipAdded((Clip)event));
 
         eventBus.subscribe("capture-clip-moved", event -> handleClipMoved((int)((Object[])event)[0], (int)((Object[])event)[1]));
+
+        eventBus.subscribe("playback-clips-start", event -> handlePlaybackClipsStart(subEventBus, this));
+
+        eventBus.subscribe("playback-clips-stop", event -> handlePlaybackClipsStop(subEventBus, this));
+    }
+
+    private void handlePlaybackClipsStart(EventBus subEventBus, Pane rootPane) {
+        subEventBus.disable();
+        rootPane.setDisable(true);
+    }
+
+    private void handlePlaybackClipsStop(EventBus subEventBus, Pane rootPane) {
+        subEventBus.enable();
+        rootPane.setDisable(false);
+        Platform.runLater(() -> subEventBus.postEvent("session-data-loaded", new Object[] { session, false, false }));
     }
 
     private void handleClipRestored(Clip clip) {
@@ -239,9 +261,9 @@ public class MainSidePane extends BorderPane {
             }
 
             @Override
-            public void showVideoPreview(List<Clip> clips) {
+            public void playbackStart(List<Clip> clips) {
                 if (errorProperty.getValue() == null) {
-                    eventBus.postEvent("preview-video", clips);
+                    eventBus.postEvent("playback-clips-start", clips);
                 }
             }
 
@@ -426,8 +448,6 @@ public class MainSidePane extends BorderPane {
         eventBus.subscribe("session-terminated", event -> historyPane.dispose());
 
         eventBus.subscribe("export-session-state-changed", event -> handleExportSessionStateChanged(jobsPane, (ExportSession)((Object[])event)[0], (ExportState) ((Object[])event)[1], (Float)((Object[])event)[2]));
-
-//        eventBus.subscribe("export-sessions-updated", event -> jobsPane.updateSessions());
 
         return rootPane;
     }

@@ -185,7 +185,7 @@ public class ParamsPane extends Pane {
 			Double2D point = new Double2D(px, py);
 			boolean julia = !algorithmCombobox.getSelectionModel().getSelectedItem().equals("Mandelbrot");
 			MandelbrotMetadata newMetadata = new MandelbrotMetadata(translation, rotation, scale, point, julia);
-			MandelbrotSession newSession = new MandelbrotSession(newMetadata, mandelbrotSession.getScript());
+			MandelbrotSession newSession = new MandelbrotSession(mandelbrotSession.getScript(), newMetadata);
 			Platform.runLater(() -> {
 				eventBus.postEvent("editor-view-changed", new Object[] { newSession, false, true });
 			});
@@ -206,7 +206,7 @@ public class ParamsPane extends Pane {
 				double[] translation = metadata.getTranslation().toArray();
 				translation[0] = value;
 				MandelbrotMetadata newMetadata = new MandelbrotMetadata(new Double4D(translation), metadata.getRotation(), metadata.getScale(), metadata.getPoint(), metadata.isJulia());
-				eventBus.postEvent("editor-view-changed", new Object[] { new MandelbrotSession(newMetadata, mandelbrotSession.getScript()), false, true });
+				eventBus.postEvent("editor-view-changed", new Object[] { new MandelbrotSession(mandelbrotSession.getScript(), newMetadata), false, true });
 			});
 		});
 		
@@ -217,7 +217,7 @@ public class ParamsPane extends Pane {
 				double[] translation = metadata.getTranslation().toArray();
 				translation[1] = value;
 				MandelbrotMetadata newMetadata = new MandelbrotMetadata(new Double4D(translation), metadata.getRotation(), metadata.getScale(), metadata.getPoint(), metadata.isJulia());
-				eventBus.postEvent("editor-view-changed", new Object[] { new MandelbrotSession(newMetadata, mandelbrotSession.getScript()), false, true });
+				eventBus.postEvent("editor-view-changed", new Object[] { new MandelbrotSession(mandelbrotSession.getScript(), newMetadata), false, true });
 			});
 		});
 		
@@ -228,7 +228,7 @@ public class ParamsPane extends Pane {
 				double[] translation = metadata.getTranslation().toArray();
 				translation[2] = value;
 				MandelbrotMetadata newMetadata = new MandelbrotMetadata(new Double4D(translation), metadata.getRotation(), metadata.getScale(), metadata.getPoint(), metadata.isJulia());
-				eventBus.postEvent("editor-view-changed", new Object[] { new MandelbrotSession(newMetadata, mandelbrotSession.getScript()), false, true });
+				eventBus.postEvent("editor-view-changed", new Object[] { new MandelbrotSession(mandelbrotSession.getScript(), newMetadata), false, true });
 			});
 		});
 		
@@ -239,7 +239,7 @@ public class ParamsPane extends Pane {
 				double[] rotation = metadata.getRotation().toArray();
 				rotation[2] = value;
 				MandelbrotMetadata newMetadata = new MandelbrotMetadata(metadata.getTranslation(), new Double4D(rotation), metadata.getScale(), metadata.getPoint(), metadata.isJulia());
-				eventBus.postEvent("editor-view-changed", new Object[] { new MandelbrotSession(newMetadata, mandelbrotSession.getScript()), false, true });
+				eventBus.postEvent("editor-view-changed", new Object[] { new MandelbrotSession(mandelbrotSession.getScript(), newMetadata), false, true });
 			});
 		});
 		
@@ -250,7 +250,7 @@ public class ParamsPane extends Pane {
 				double[] point = metadata.getPoint().toArray();
 				point[0] = value;
 				MandelbrotMetadata newMetadata = new MandelbrotMetadata(metadata.getTranslation(), metadata.getRotation(), metadata.getScale(), new Double2D(point), metadata.isJulia());
-				eventBus.postEvent("editor-point-changed", new Object[] { new MandelbrotSession(newMetadata, mandelbrotSession.getScript()), false, true });
+				eventBus.postEvent("editor-point-changed", new Object[] { new MandelbrotSession(mandelbrotSession.getScript(), newMetadata), false, true });
 			});
 		});
 		
@@ -261,7 +261,7 @@ public class ParamsPane extends Pane {
 				double[] point = metadata.getPoint().toArray();
 				point[1] = value;
 				MandelbrotMetadata newMetadata = new MandelbrotMetadata(metadata.getTranslation(), metadata.getRotation(), metadata.getScale(), new Double2D(point), metadata.isJulia());
-				eventBus.postEvent("editor-point-changed", new Object[] { new MandelbrotSession(newMetadata, mandelbrotSession.getScript()), false, true });
+				eventBus.postEvent("editor-point-changed", new Object[] { new MandelbrotSession(mandelbrotSession.getScript(), newMetadata), false, true });
 			});
 		});
 		
@@ -272,12 +272,12 @@ public class ParamsPane extends Pane {
 			if (isMandelbrotAlgorithm && isJuliaView) {
 				Platform.runLater(() -> {
 					MandelbrotMetadata newMetadata = new MandelbrotMetadata(metadata.getTranslation(), metadata.getRotation(), metadata.getScale(), metadata.getPoint(), false);
-					eventBus.postEvent("editor-view-changed", new Object[] { new MandelbrotSession(newMetadata, mandelbrotSession.getScript()), false, true });
+					eventBus.postEvent("editor-view-changed", new Object[] { new MandelbrotSession(mandelbrotSession.getScript(), newMetadata), false, true });
 				});
 			} else if (!isMandelbrotAlgorithm && !isJuliaView) {
 				Platform.runLater(() -> {
 					MandelbrotMetadata newMetadata = new MandelbrotMetadata(metadata.getTranslation(), metadata.getRotation(), metadata.getScale(), metadata.getPoint(), true);
-					eventBus.postEvent("editor-view-changed", new Object[] { new MandelbrotSession(newMetadata, mandelbrotSession.getScript()), false, true });
+					eventBus.postEvent("editor-view-changed", new Object[] { new MandelbrotSession(mandelbrotSession.getScript(), newMetadata), false, true });
 				});
 			}
 		});

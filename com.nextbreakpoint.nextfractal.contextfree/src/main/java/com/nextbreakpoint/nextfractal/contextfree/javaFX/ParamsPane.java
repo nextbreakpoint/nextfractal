@@ -96,7 +96,7 @@ public class ParamsPane extends Pane {
 		Function<ContextFreeMetadata, Object> notifyAll = (metadata) -> {
 			String seed = seedField.getText();
 			ContextFreeMetadata newMetadata = new ContextFreeMetadata(seed);
-			ContextFreeSession newSession = new ContextFreeSession(newMetadata, contextFreeSession.getScript());
+			ContextFreeSession newSession = new ContextFreeSession(contextFreeSession.getScript(), newMetadata);
 			Platform.runLater(() -> eventBus.postEvent("editor-data-changed", new Object[] { newSession, false, true }));
 			return null;
 		};

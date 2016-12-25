@@ -61,7 +61,7 @@ public class ContextFreeFileManager extends FileManager {
                 .findFirst().map(clipsEntry -> decodeClips(clipsEntry.getData()))
                 .orElse(Try.success(new LinkedList<>()));
 
-        return new Bundle(new ContextFreeSession(metadata.orThrow(), script.orThrow()), clips.orThrow());
+        return new Bundle(new ContextFreeSession(script.orThrow(), metadata.orThrow()), clips.orThrow());
     }
 
     private List<FileManagerEntry> createEntries(Bundle bundle) throws Exception {

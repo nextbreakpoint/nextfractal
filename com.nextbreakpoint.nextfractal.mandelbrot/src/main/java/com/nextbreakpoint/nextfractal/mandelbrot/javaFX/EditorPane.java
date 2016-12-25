@@ -120,7 +120,7 @@ public class EditorPane extends BorderPane {
         });
 
         eventBus.subscribe("editor-source-changed", event -> {
-            MandelbrotSession newSession = new MandelbrotSession((MandelbrotMetadata) session.getMetadata(), (String) event);
+            MandelbrotSession newSession = new MandelbrotSession((String) event, (MandelbrotMetadata) session.getMetadata());
             eventBus.postEvent("session-data-changed", new Object[] { newSession, false, true });
         });
 

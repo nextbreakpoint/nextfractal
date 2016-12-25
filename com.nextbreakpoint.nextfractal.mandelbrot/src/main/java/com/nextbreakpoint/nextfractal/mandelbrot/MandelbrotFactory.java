@@ -79,7 +79,12 @@ public class MandelbrotFactory implements FractalFactory {
 	public Session createSession() {
 		return new MandelbrotSession();
 	}
-	
+
+	@Override
+	public Session createSession(String script, Object metadata) {
+		return new MandelbrotSession(script, (MandelbrotMetadata)metadata);
+	}
+
 	/**
 	 * @see FractalFactory#createEditorPane(EventBus, Session)
 	 */

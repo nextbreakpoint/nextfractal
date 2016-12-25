@@ -49,7 +49,12 @@ public interface FractalFactory {
 	 * @return
 	 */
 	public Session createSession();
-	
+
+	/**
+	 * @return
+	 */
+	public Session createSession(String script, Object metadata);
+
 	/**
 	 * @param eventBus
      * @param session

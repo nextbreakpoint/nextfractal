@@ -36,10 +36,10 @@ public class MandelbrotSession extends Session {
 	private final String script;
 
 	public MandelbrotSession() {
-		this(new MandelbrotMetadata(new Double4D(0, 0, 1,0), new Double4D(0, 0, 0,0), new Double4D(1, 1, 1,1), new Double2D(0, 0), false), getInitialScript());
+		this(getInitialScript(), new MandelbrotMetadata(new Double4D(0, 0, 1,0), new Double4D(0, 0, 0,0), new Double4D(1, 1, 1,1), new Double2D(0, 0), false));
 	}
 
-	public MandelbrotSession(MandelbrotMetadata metadata, String script) {
+	public MandelbrotSession(String script, MandelbrotMetadata metadata) {
 		Objects.requireNonNull(metadata);
 		Objects.requireNonNull(script);
 		this.metadata = metadata;

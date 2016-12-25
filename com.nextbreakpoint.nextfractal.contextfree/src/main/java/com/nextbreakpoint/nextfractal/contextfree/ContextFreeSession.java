@@ -34,10 +34,10 @@ public class ContextFreeSession extends Session {
 	private final String script;
 
 	public ContextFreeSession() {
-		this(new ContextFreeMetadata(), getInitialSource());
+		this(getInitialSource(), new ContextFreeMetadata());
 	}
 
-	public ContextFreeSession(ContextFreeMetadata metadata, String script) {
+	public ContextFreeSession(String script, ContextFreeMetadata metadata) {
 		Objects.requireNonNull(metadata);
 		Objects.requireNonNull(script);
 		this.metadata = metadata;

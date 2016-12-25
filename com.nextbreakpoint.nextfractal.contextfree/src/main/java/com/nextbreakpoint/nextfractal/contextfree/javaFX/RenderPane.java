@@ -221,7 +221,7 @@ public class RenderPane extends BorderPane {
 		eventBus.subscribe("session-data-changed", event -> updateData((Object[]) event));
 
 		eventBus.subscribe("editor-source-changed", event -> {
-			ContextFreeSession newSession = new ContextFreeSession((ContextFreeMetadata) contextFreeSession.getMetadata(), (String) event);
+			ContextFreeSession newSession = new ContextFreeSession((String) event, (ContextFreeMetadata) contextFreeSession.getMetadata());
             notifySessionChanged(eventBus, newSession, false, true);
         });
 

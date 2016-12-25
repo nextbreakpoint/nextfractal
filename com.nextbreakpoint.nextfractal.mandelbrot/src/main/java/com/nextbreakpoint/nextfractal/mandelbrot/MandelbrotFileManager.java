@@ -73,7 +73,7 @@ public class MandelbrotFileManager extends FileManager {
                 .findFirst().map(clipsEntry -> decodeClips(clipsEntry.getData()))
                 .orElse(Try.success(new LinkedList<>()));
 
-        return new Bundle(new MandelbrotSession(metadata.orThrow(), script.orThrow()), clips.orThrow());
+        return new Bundle(new MandelbrotSession(script.orThrow(), metadata.orThrow()), clips.orThrow());
     }
 
     private List<FileManagerEntry> createEntries(Bundle bundle) throws Exception {
@@ -94,7 +94,7 @@ public class MandelbrotFileManager extends FileManager {
     }
 
     private Try<Bundle, Exception> loadBundle(InputStream is) {
-        return loadFromStream(is).map(result -> new Bundle(new MandelbrotSession(result.getView(), result.getSource()), new LinkedList<>()));
+        return loadFromStream(is).map(result -> new Bundle(new MandelbrotSession(result.getSource(), result.getView()), new LinkedList<>()));
     }
 
     public Try<MandelbrotDataV11, Exception> loadFromStream(InputStream stream) {
