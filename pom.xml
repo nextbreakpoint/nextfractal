@@ -42,6 +42,7 @@
 		<jackson.version>2.6.3</jackson.version>
 		<junit4.version>4.11</junit4.version>
 		<mockito.version>1.9.5</mockito.version>
+		<controlsfx.version>8.40.12</controlsfx.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 	<build>
@@ -142,6 +143,11 @@
 				<groupId>com.fasterxml.jackson.core</groupId>
 				<artifactId>jackson-databind</artifactId>
 				<version>${jackson.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.controlsfx</groupId>
+				<artifactId>controlsfx</artifactId>
+				<version>${controlsfx.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.mockito</groupId>

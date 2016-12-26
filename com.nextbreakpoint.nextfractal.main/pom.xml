@@ -47,7 +47,7 @@
 							<goal>copy-dependencies</goal>
 						</goals>
 						<configuration>
-							<includeGroupIds>com.nextbreakpoint,org.antlr,org.fxmisc,org.reactfx,org.apache.commons,com.fasterxml.jackson</includeGroupIds>
+							<includeGroupIds>com.nextbreakpoint,org.antlr,org.fxmisc,org.reactfx,org.apache.commons,com.fasterxml.jackson,org.controlsfx</includeGroupIds>
 							<outputDirectory>${project.build.directory}/jars/</outputDirectory>
 						</configuration>
 					</execution>

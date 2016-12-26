@@ -59,6 +59,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import org.controlsfx.dialog.CommandLinksDialog;
 
 import javax.tools.ToolProvider;
 import java.awt.image.BufferedImage;
@@ -210,25 +211,15 @@ public class NextFractalApp extends Application {
 
 	private void handleBundleLoaded(EventBus eventBus, Bundle bundle, boolean continuous, boolean appendHistory) {
 		if (edited && clips.size() > 0 && bundle.getClips().size() > 0) {
-			Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-			alert.setTitle("Action required");
-			alert.setHeaderText("Current session contains " + clips.size() + " clip" + (clips.size() != 1 ? "s" : "") + ". Loaded bundle " + (bundle.getClips().size() == 0 ? "doesn't contain clips" : "contains " + bundle.getClips().size() + " clip" + (bundle.getClips().size() != 1 ? "s" : "") + ".\n\n What do you want to do with existing session's clips ?"));
-
-			ButtonType buttonTypeOne = new ButtonType("Keep");
-			ButtonType buttonTypeTwo = new ButtonType("Merge");
-			ButtonType buttonTypeThree = new ButtonType("Replace");
-
-			alert.getButtonTypes().setAll(buttonTypeOne, buttonTypeTwo, buttonTypeThree);
-
-			Optional<ButtonType> result = alert.showAndWait();
-
-			result.filter(v -> v == buttonTypeTwo).ifPresent(v -> {
-				eventBus.postEvent("capture-clips-merged", bundle.getClips());
-			});
-
-			result.filter(v -> v == buttonTypeThree).ifPresent(v -> {
-				eventBus.postEvent("capture-clips-loaded", bundle.getClips());
-			});
+			CommandLinksDialog.CommandLinksButtonType keepLink = new CommandLinksDialog.CommandLinksButtonType("Keep", "Keep " + clips.size() + " session's " + wordClips(clips.size()) + " and ignore " + bundle.getClips().size() + " bundle's " + wordClips(bundle.getClips().size()), true);
+			CommandLinksDialog.CommandLinksButtonType mergeLink = new CommandLinksDialog.CommandLinksButtonType("Merge", "Merge " + clips.size() + " session's " + wordClips(clips.size()) + " with " + bundle.getClips().size() + " bundle's " + wordClips(bundle.getClips().size()), false);
+			CommandLinksDialog.CommandLinksButtonType replaceLink = new CommandLinksDialog.CommandLinksButtonType("Replace", "Replace " + clips.size() + " session's " + wordClips(clips.size()) + " with " + bundle.getClips().size() + " bundle's " + wordClips(bundle.getClips().size()), false);
+			CommandLinksDialog dialog = new CommandLinksDialog(keepLink, mergeLink, replaceLink);
+			dialog.setTitle("Clips detected in bundle");
+			dialog.setContentText("Current session contains modified clips");
+			Optional<ButtonType> result = dialog.showAndWait();
+			result.filter(v -> v == mergeLink.getButtonType()).ifPresent(v -> eventBus.postEvent("capture-clips-merged", bundle.getClips()));
+			result.filter(v -> v == replaceLink.getButtonType()).ifPresent(v -> eventBus.postEvent("capture-clips-loaded", bundle.getClips()));
 		} else {
 			if (edited && clips.size() > 0) {
 				eventBus.postEvent("capture-clips-merged", bundle.getClips());
@@ -236,8 +227,11 @@ public class NextFractalApp extends Application {
 				eventBus.postEvent("capture-clips-loaded", bundle.getClips());
 			}
 		}
-
 		eventBus.postEvent("session-data-loaded", bundle.getSession(), continuous, appendHistory);
+	}
+
+	private String wordClips(int size) {
+		return "clip" + (size != 1 ? "s" : "");
 	}
 
 	private void handleClipAdded(Clip clip) {
