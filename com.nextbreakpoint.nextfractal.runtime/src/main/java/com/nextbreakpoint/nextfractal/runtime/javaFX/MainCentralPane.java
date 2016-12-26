@@ -37,6 +37,7 @@ import com.nextbreakpoint.nextfractal.core.javaFX.BrowsePane;
 import com.nextbreakpoint.nextfractal.core.javaFX.GridItemRenderer;
 import com.nextbreakpoint.nextfractal.core.javaFX.PlaybackDelegate;
 import com.nextbreakpoint.nextfractal.core.javaFX.PlaybackPane;
+import com.nextbreakpoint.nextfractal.core.javaFX.RecordingPane;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 import java.util.List;
 import javafx.animation.FadeTransition;
@@ -64,6 +65,7 @@ public class MainCentralPane extends BorderPane {
         browsePane.setClip(new Rectangle(0, 0, width, height));
 
         PlaybackPane playbackPane = new PlaybackPane();
+        RecordingPane recordingPane = new RecordingPane();
 
         TranslateTransition browserTransition = createTranslateTransition(browsePane);
 
@@ -117,9 +119,13 @@ public class MainCentralPane extends BorderPane {
         Pane stackPane = new Pane();
         stackPane.getChildren().add(renderPane);
         stackPane.getChildren().add(playbackPane);
+        stackPane.getChildren().add(recordingPane);
         stackPane.getChildren().add(browsePane);
 
         playbackPane.setVisible(false);
+
+        recordingPane.setDisable(true);
+        recordingPane.setVisible(false);
 
         setCenter(stackPane);
 
@@ -129,12 +135,14 @@ public class MainCentralPane extends BorderPane {
             renderPane.setPrefWidth(newValue.doubleValue());
             browsePane.setPrefWidth(newValue.doubleValue());
             playbackPane.setPrefWidth(newValue.doubleValue());
+            recordingPane.setPrefWidth(newValue.doubleValue());
         });
 
         heightProperty().addListener((observable, oldValue, newValue) -> {
             renderPane.setPrefHeight(newValue.doubleValue());
             browsePane.setPrefHeight(newValue.doubleValue());
             playbackPane.setPrefHeight(newValue.doubleValue());
+            recordingPane.setPrefHeight(newValue.doubleValue());
         });
 
         eventBus.subscribe("session-terminated", event -> browsePane.dispose());
@@ -166,6 +174,16 @@ public class MainCentralPane extends BorderPane {
             browsePane.setDisable(false);
             renderPane.setDisable(false);
             playbackPane.setVisible(false);
+        });
+
+        eventBus.subscribe("capture-session-started", event -> {
+            recordingPane.setVisible(true);
+            recordingPane.start();
+        });
+
+        eventBus.subscribe("capture-session-stopped", event -> {
+            recordingPane.setVisible(false);
+            recordingPane.stop();
         });
     }
 
