@@ -379,9 +379,9 @@ public class MainSidePane extends BorderPane {
 
         eventBus.subscribe("export-session-created", event -> jobsPane.appendSession((ExportSession)event[0]));
 
-        eventBus.subscribe("capture-session-started", event -> handleSessionStarted(exportPane, (Clip) event[0]));
+        eventBus.subscribe("capture-session-started", event -> handleSessionStarted(exportPane, exportButton, (Clip) event[0]));
 
-        eventBus.subscribe("capture-session-stopped", event -> handleSessionStopped(exportPane, (Clip) event[0]));
+        eventBus.subscribe("capture-session-stopped", event -> handleSessionStopped(exportPane, exportButton, (Clip) event[0]));
 
         eventBus.subscribe("capture-clips-loaded", event -> exportPane.loadClips((List<Clip>) event[0]));
 
@@ -418,11 +418,12 @@ public class MainSidePane extends BorderPane {
         }
     }
 
-    private void handleSessionStarted(ExportPane exportPane, Clip clip) {
+    private void handleSessionStarted(ExportPane exportPane, ToggleButton exportButton, Clip clip) {
     }
 
-    private void handleSessionStopped(ExportPane exportPane, Clip clip) {
+    private void handleSessionStopped(ExportPane exportPane, ToggleButton exportButton, Clip clip) {
         if (!clip.isEmpty()) exportPane.appendClip(clip);
+        exportButton.setSelected(true);
     }
 
     private static TranslateTransition createTranslateTransition(Node node) {
