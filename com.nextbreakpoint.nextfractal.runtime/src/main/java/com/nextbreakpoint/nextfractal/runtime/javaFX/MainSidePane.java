@@ -49,6 +49,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
+import javafx.scene.effect.BoxBlur;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -86,9 +87,13 @@ public class MainSidePane extends BorderPane {
     private void handlePlaybackClipsStart(EventBus subEventBus, Pane rootPane) {
         subEventBus.disable();
         rootPane.setDisable(true);
+        BoxBlur effect = new BoxBlur();
+        effect.setIterations(1);
+        rootPane.setEffect(effect);
     }
 
     private void handlePlaybackClipsStop(EventBus subEventBus, Pane rootPane) {
+        rootPane.setEffect(null);
         subEventBus.enable();
         rootPane.setDisable(false);
         Platform.runLater(() -> subEventBus.postEvent("session-data-loaded", session, false, false));

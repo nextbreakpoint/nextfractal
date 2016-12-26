@@ -62,7 +62,8 @@
 }
 
 .application .toolbar .button:armed {
-	-fx-opacity: 0.5;
+	-fx-opacity: 0.8;
+	-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 4, 0, 0, 0);
 }
 
 .application .toolbar .toggle-button {
@@ -70,15 +71,17 @@
 	-fx-focus-color: transparent;
 	-fx-faint-focus-color: transparent;
 	-fx-border-width: 0;
-	-fx-opacity: 0.5;
+	-fx-opacity: 0.8;
 }
 
 .application .toolbar .toggle-button:armed {
 	-fx-opacity: 1.0;
+	-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 4, 0, 0, 0);
 }
 
 .application .toolbar .toggle-button:selected {
 	-fx-opacity: 1.0;
+	-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 4, 0, 0, 0);
 }
 
 .application .menubar {
