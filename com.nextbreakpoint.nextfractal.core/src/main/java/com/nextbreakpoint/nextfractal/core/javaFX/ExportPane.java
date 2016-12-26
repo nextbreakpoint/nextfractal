@@ -67,12 +67,17 @@ public class ExportPane extends BorderPane {
 	private final RendererTile tile;
 	private final ExecutorService executor;
 	private final ListView<Bitmap> listView;
+	private final BooleanObservableValue captureProperty;
 	private final BooleanObservableValue videoProperty;
+	private final ToggleButton captureButton;
 
 	private ExportDelegate delegate;
 
 	public ExportPane(RendererTile tile) {
 		this.tile = tile;
+
+		captureProperty = new BooleanObservableValue();
+		captureProperty.setValue(false);
 
 		videoProperty = new BooleanObservableValue();
 		videoProperty.setValue(false);
@@ -103,7 +108,7 @@ public class ExportPane extends BorderPane {
 		formatBox.setAlignment(Pos.CENTER);
 		formatBox.getChildren().add(formatCombobox);
 
-		ToggleButton captureButton = new ToggleButton("Capture");
+		captureButton = new ToggleButton("Capture");
 		Button exportButton = new Button("Export");
 		Button removeButton = new Button("Remove");
 		Button previewButton = new Button("Preview");
@@ -169,14 +174,15 @@ public class ExportPane extends BorderPane {
 
 		getStyleClass().add("export");
 
-		Runnable updateUI = () -> {
-			removeButton.setDisable(listView.getItems().size() == 0 || captureButton.isSelected());
-			previewButton.setDisable(listView.getItems().size() == 0 || captureButton.isSelected());
-			exportButton.setDisable(captureButton.isSelected());
-			formatCombobox.setDisable(captureButton.isSelected());
-			presetsCombobox.setDisable(captureButton.isSelected());
-			widthField.setDisable(captureButton.isSelected());
-			heightField.setDisable(captureButton.isSelected());
+		Runnable updateButtonsAndPanels = () -> {
+			boolean selected = captureProperty.getValue();
+			removeButton.setDisable(listView.getItems().size() == 0 || selected);
+			previewButton.setDisable(listView.getItems().size() == 0 || selected);
+			exportButton.setDisable(selected);
+			formatCombobox.setDisable(selected);
+			presetsCombobox.setDisable(selected);
+			widthField.setDisable(selected);
+			heightField.setDisable(selected);
 		};
 
 		presetsCombobox.setConverter(new StringConverter<Integer[]>() {
@@ -302,15 +308,22 @@ public class ExportPane extends BorderPane {
 			}
 		});
 
-		captureButton.setOnMouseClicked(e -> {
+		captureButton.setOnAction(e -> {
+			captureProperty.setValue(captureButton.isSelected());
 			if (delegate != null) {
-				if (captureButton.isSelected()) {
+				if (captureProperty.getValue()) {
 					delegate.startCaptureSession();
 				} else {
 					delegate.stopCaptureSession();
 				}
 			}
-			updateUI.run();
+		});
+
+		captureProperty.addListener((observable, oldValue, newValue) -> {
+			Platform.runLater(() -> {
+				captureButton.setSelected(newValue);
+				updateButtonsAndPanels.run();
+			});
 		});
 
 		removeButton.setOnMouseClicked(e -> {
@@ -354,7 +367,7 @@ public class ExportPane extends BorderPane {
 				formatCombobox.getItems().add(new String[] { "PNG image", "PNG" });
 				formatCombobox.getSelectionModel().select(0);
 			}
-			updateUI.run();
+			updateButtonsAndPanels.run();
 		});
 
 		widthProperty().addListener((observable, oldValue, newValue) -> {
@@ -369,7 +382,7 @@ public class ExportPane extends BorderPane {
 			previewButton.setPrefWidth(width);
 		});
 
-		updateUI.run();
+		updateButtonsAndPanels.run();
 
 		executor = Executors.newSingleThreadExecutor(createThreadFactory("Export Generator"));
 	}
@@ -502,4 +515,8 @@ public class ExportPane extends BorderPane {
 	public void mergeClips(List<Clip> clips) {
 		clips.forEach(clip -> addClip(clip, true));
 	}
+
+    public void setCaptureSelected(boolean selected) {
+		captureProperty.setValue(selected);
+    }
 }

@@ -390,6 +390,10 @@ public class MainSidePane extends BorderPane {
 
         eventBus.subscribe("export-session-state-changed", event -> handleExportSessionStateChanged(jobsPane, (ExportSession) event[0], (ExportState) event[1], (Float) event[2]));
 
+        eventBus.subscribe("capture-session-started", event -> exportPane.setCaptureSelected(true));
+
+        eventBus.subscribe("capture-session-stopped", event -> exportPane.setCaptureSelected(false));
+
         return rootPane;
     }
 

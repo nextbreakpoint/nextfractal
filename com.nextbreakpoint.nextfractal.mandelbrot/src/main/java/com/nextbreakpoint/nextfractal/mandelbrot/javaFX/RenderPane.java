@@ -102,6 +102,7 @@ public class RenderPane extends BorderPane {
 	private final BooleanObservableValue hideOrbitProperty;
 	private final BooleanObservableValue hideErrorsProperty;
 	private final BooleanObservableValue juliaProperty;
+	private final BooleanObservableValue captureProperty;
 	private final RendererCoordinator[] coordinators;
 	private RendererCoordinator juliaCoordinator;
 	private AnimationTimer timer;
@@ -137,6 +138,9 @@ public class RenderPane extends BorderPane {
 
 		juliaProperty = new BooleanObservableValue();
 		juliaProperty.setValue(false);
+
+		captureProperty = new BooleanObservableValue();
+		captureProperty.setValue(false);
 
 		hideOrbitProperty = new BooleanObservableValue();
 		hideOrbitProperty.setValue(true);
@@ -188,6 +192,7 @@ public class RenderPane extends BorderPane {
 		ToggleButton pickButton = new ToggleButton("", createIconImage(getClass(), "/icon-pick.png", computeOptimalLargeIconPercentage()));
 		ToggleButton juliaButton = new ToggleButton("", createIconImage(getClass(), "/icon-julia.png", computeOptimalLargeIconPercentage()));
 		ToggleButton orbitButton = new ToggleButton("", createIconImage(getClass(), "/icon-orbit.png", computeOptimalLargeIconPercentage()));
+		ToggleButton captureButton = new ToggleButton("", createIconImage(getClass(), "/icon-capture.png", computeOptimalLargeIconPercentage()));
 		ToggleGroup toolsGroup = new ToggleGroup();
 		toolsGroup.getToggles().add(zoominButton);
 		toolsGroup.getToggles().add(zoomoutButton);
@@ -203,6 +208,7 @@ public class RenderPane extends BorderPane {
 		homeButton.setTooltip(new Tooltip("Reset region to initial value"));
 		orbitButton.setTooltip(new Tooltip("Show/hide orbit and traps"));
 		juliaButton.setTooltip(new Tooltip("Enable/disable Julia mode"));
+		captureButton.setTooltip(new Tooltip("Enable/disable capture mode"));
 		toolButtons.getChildren().add(homeButton);
 		toolButtons.getChildren().add(zoominButton);
 		toolButtons.getChildren().add(zoomoutButton);
@@ -211,6 +217,7 @@ public class RenderPane extends BorderPane {
 		toolButtons.getChildren().add(pickButton);
 		toolButtons.getChildren().add(juliaButton);
 		toolButtons.getChildren().add(orbitButton);
+		toolButtons.getChildren().add(captureButton);
 		toolButtons.getStyleClass().add("toolbar");
 
 		controls.setBottom(toolButtons);
@@ -406,8 +413,25 @@ public class RenderPane extends BorderPane {
 //			}
 			toggleShowOrbit();
 		});
-		
-		juliaButton.setOnAction(e -> juliaProperty.setValue(!juliaProperty.getValue()));
+
+		juliaButton.setOnAction(e -> juliaProperty.setValue(juliaButton.isSelected()));
+
+		captureButton.setOnAction(e -> {
+			captureProperty.setValue(captureButton.isSelected());
+			if (captureProperty.getValue()) {
+				eventBus.postEvent("capture-session", "start");
+			} else {
+				eventBus.postEvent("capture-session", "stop");
+			}
+		});
+
+		captureProperty.addListener((observable, oldValue, newValue) -> {
+			Platform.runLater(() -> captureButton.setSelected(newValue));
+		});
+
+		eventBus.subscribe("capture-session-started", event -> captureProperty.setValue(true));
+
+		eventBus.subscribe("capture-session-stopped", event -> captureProperty.setValue(false));
 
 		hideOrbitProperty.addListener((observable, oldValue, newValue) -> {
 			orbitCanvas.setVisible(!newValue);
