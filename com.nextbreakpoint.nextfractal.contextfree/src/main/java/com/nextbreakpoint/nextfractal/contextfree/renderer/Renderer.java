@@ -235,6 +235,19 @@ public class Renderer {
 		lock.unlock();
 	}
 
+	/**
+	 * @param gc
+	 */
+	public void copyImage(final RendererGraphicsContext gc) {
+		lock.lock();
+		if (buffer != null) {
+			gc.save();
+			gc.drawImage(buffer.getBuffer().getImage(), 0, 0);
+			gc.restore();
+		}
+		lock.unlock();
+	}
+
 //	/**
 //	 * @param gc
 //	 * @param x

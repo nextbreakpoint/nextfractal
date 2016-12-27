@@ -52,15 +52,13 @@ public class PlaybackPane extends Pane {
             frameIndex += 1;
             if (frameIndex < frames.size()) {
                 Frame frame = frames.get(frameIndex);
-                if (lastFrame == null || !lastFrame.equals(frame)) {
-                    if (delegate != null) {
-                        if (lastFrame == null || !lastFrame.getPluginId().equals(frame.getPluginId()) || !lastFrame.getScript().equals(frame.getScript())) {
-                            tryFindFactory(frame.getPluginId()).map(factory -> factory.createSession(frame.getScript(), frame.getMetadata()))
-                                .ifPresent(session -> Platform.runLater(() -> delegate.loadSessionData(session, frame.isKeyFrame())));
-                        } else if (!lastFrame.getMetadata().equals(frame.getMetadata())) {
-                            tryFindFactory(frame.getPluginId()).map(factory -> factory.createSession(frame.getScript(), frame.getMetadata()))
-                                .ifPresent(session -> Platform.runLater(() -> delegate.updateSessionData(session, frame.isKeyFrame())));
-                        }
+                if (delegate != null) {
+                    if (lastFrame == null || !lastFrame.getPluginId().equals(frame.getPluginId()) || !lastFrame.getScript().equals(frame.getScript())) {
+                        tryFindFactory(frame.getPluginId()).map(factory -> factory.createSession(frame.getScript(), frame.getMetadata()))
+                            .ifPresent(session -> Platform.runLater(() -> delegate.loadSessionData(session, frame.isKeyFrame())));
+                    } else if (!lastFrame.getMetadata().equals(frame.getMetadata())) {
+                        tryFindFactory(frame.getPluginId()).map(factory -> factory.createSession(frame.getScript(), frame.getMetadata()))
+                            .ifPresent(session -> Platform.runLater(() -> delegate.updateSessionData(session, frame.isKeyFrame())));
                     }
                 }
                 lastFrame = frame;
@@ -87,6 +85,7 @@ public class PlaybackPane extends Pane {
     public void start() {
         stop();
         frameIndex = 0;
+        lastFrame = null;
         future = executor.scheduleAtFixedRate(() -> playNextFrame(), 0, 1000 / FRAMES_PER_SECOND, TimeUnit.MILLISECONDS);
     }
 

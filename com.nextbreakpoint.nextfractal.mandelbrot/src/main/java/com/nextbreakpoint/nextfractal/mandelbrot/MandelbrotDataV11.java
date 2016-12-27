@@ -121,7 +121,7 @@ public class MandelbrotDataV11 implements Cloneable {
 	}
 
 	public MandelbrotMetadata getView() {
-		return new MandelbrotMetadata(translation, rotation, scale, point, julia);
+		return new MandelbrotMetadata(translation, rotation, scale, point, julia, new MandelbrotOptions());
 	}
 
 	public void setView(MandelbrotMetadata view) {

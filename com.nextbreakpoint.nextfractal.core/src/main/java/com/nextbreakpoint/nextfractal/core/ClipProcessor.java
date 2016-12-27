@@ -43,6 +43,7 @@ public class ClipProcessor {
                         baseTime = clips.get(currentClip).getEvents().get(0).getDate().getTime();
                         prevTime = time;
                     }
+                    lastFrame = null;
                 }
                 logger.info("1) clip " + currentClip + ", event " + currentEvent);
                 if (currentClip < clips.size() && currentEvent < clips.get(currentClip).getEvents().size()) {

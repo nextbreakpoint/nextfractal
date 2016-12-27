@@ -25,6 +25,7 @@
 package com.nextbreakpoint.nextfractal.runtime.export;
 
 import com.nextbreakpoint.Try;
+import com.nextbreakpoint.nextfractal.core.ImageComposer;
 import com.nextbreakpoint.nextfractal.core.ImageGenerator;
 import com.nextbreakpoint.nextfractal.core.export.ExportJobHandle;
 import com.nextbreakpoint.nextfractal.core.export.ExportJobState;
@@ -51,13 +52,11 @@ public class SimpleExportRenderer implements ExportRenderer {
 	private static final int MAX_THREADS = Math.max(Runtime.getRuntime().availableProcessors() * 2, 2);
 
 	private final ThreadFactory threadFactory;
-	private final RendererFactory renderFactory;
 
 	private final ExecutorCompletionService<ExportJobHandle> service;
 
-	public SimpleExportRenderer(ThreadFactory threadFactory, RendererFactory renderFactory) {
+	public SimpleExportRenderer(ThreadFactory threadFactory) {
 		this.threadFactory = Objects.requireNonNull(threadFactory);
-		this.renderFactory = Objects.requireNonNull(renderFactory);
 		service = new ExecutorCompletionService<>(Executors.newFixedThreadPool(MAX_THREADS, threadFactory));
 	}
 	
@@ -66,8 +65,8 @@ public class SimpleExportRenderer implements ExportRenderer {
 		return service.submit(new ProcessExportJob(job));
 	}
 	
-	private ImageGenerator createImageGenerator(ExportJobHandle job) {
-		return tryFindFactory(job.getProfile().getPluginId()).map(plugin -> plugin.createImageGenerator(threadFactory, renderFactory, job.getJob().getTile(), false)).orElse(null);
+	private ImageComposer createImageComposer(ExportJobHandle job) {
+		return tryFindFactory(job.getProfile().getPluginId()).map(plugin -> plugin.createImageComposer(threadFactory, job.getJob().getTile(), false)).orElse(null);
 	}
 
 	private class ProcessExportJob implements Callable<ExportJobHandle> {
@@ -92,12 +91,12 @@ public class SimpleExportRenderer implements ExportRenderer {
 		private ExportJobHandle processJob(ExportJobHandle job) throws IOException {
 			logger.fine(job.toString());
 			ExportProfile profile = job.getProfile();
-			ImageGenerator generator = createImageGenerator(job);
-			IntBuffer pixels = generator.renderImage(profile.getScript(), profile.getMetadata());
-			if (generator.isInterrupted()) {
+			ImageComposer composer = createImageComposer(job);
+			IntBuffer pixels = composer.renderImage(profile.getScript(), profile.getMetadata());
+			if (composer.isInterrupted()) {
                 job.setState(ExportJobState.INTERRUPTED);
             } else {
-                job.getJob().writePixels(generator.getSize(), pixels);
+                job.getJob().writePixels(composer.getSize(), pixels);
                 job.setState(ExportJobState.COMPLETED);
             }
             return job;

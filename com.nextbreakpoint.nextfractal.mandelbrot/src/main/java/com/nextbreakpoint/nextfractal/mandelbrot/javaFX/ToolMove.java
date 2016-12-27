@@ -96,7 +96,7 @@ public class ToolMove implements Tool {
 			y -= z * size.i() * (Math.cos(a) * dy - Math.sin(a) * dx);
 			x0 = x1;
 			y0 = y1;
-			MandelbrotMetadata newMetadata = new MandelbrotMetadata(new double[] { x, y, z, t[3] }, new double[] { 0, 0, r[2], r[3] }, s, p, j);
+			MandelbrotMetadata newMetadata = new MandelbrotMetadata(new double[] { x, y, z, t[3] }, new double[] { 0, 0, r[2], r[3] }, s, p, j, oldMetadata.getOptions());
 			context.setView(newMetadata, pressed);
 			changed = false;
 		}

@@ -88,6 +88,14 @@ public interface FractalFactory {
 	public ImageGenerator createImageGenerator(ThreadFactory threadFactory, RendererFactory renderFactory, RendererTile tile, boolean opaque);
 
 	/**
+	 * @param threadFactory
+	 * @param tile
+	 * @param opaque
+	 * @return
+	 */
+	public ImageComposer createImageComposer(ThreadFactory threadFactory, RendererTile tile, boolean opaque);
+
+	/**
 	 * @return
 	 */
 	public FileManager createFileManager();

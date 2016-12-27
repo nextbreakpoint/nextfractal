@@ -132,12 +132,12 @@ public class NextFractalApp extends Application {
 
 		printPlugins();
 
-		ExportRenderer exportRenderer = new SimpleExportRenderer(createThreadFactory("Export Renderer"), new JavaFXRendererFactory());
+		ExportRenderer exportRenderer = new SimpleExportRenderer(createThreadFactory("Export Renderer"));
 		ExportService exportService = new SimpleExportService(eventBus, createThreadFactory("Export Service"), exportRenderer);
 
 		eventBus.subscribe("editor-grammar-changed", event -> tryFindFactoryByGrammar((String) event[0]).ifPresent(factory -> createSession(eventBus, factory)));
 
-		eventBus.subscribe("session-data-changed", event -> session = (Session) event[0]);
+		eventBus.subscribe("session-data-changed", event -> handleSessionChanged(event));
 
 		eventBus.subscribe("session-data-changed", event -> handleSessionChanged((Session) event[0]));
 
@@ -202,6 +202,11 @@ public class NextFractalApp extends Application {
 			String defaultPluginId = System.getProperty("initialPluginId", DEFAULT_PLUGIN_ID);
 			tryFindFactory(defaultPluginId).ifPresent(factory -> createSession(eventBus, factory));
 		});
+	}
+
+	private void handleSessionChanged(Object[] event) {
+		session = (Session) event[0];
+//		logger.info("Session data changed " + session.getMetadata());
 	}
 
 	private void handleEditorAction(EventBus eventBus, Window window, String action) {

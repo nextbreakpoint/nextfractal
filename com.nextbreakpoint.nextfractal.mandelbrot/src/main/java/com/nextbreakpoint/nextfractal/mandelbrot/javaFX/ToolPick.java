@@ -92,7 +92,7 @@ public class ToolPick implements Tool {
 				Number center = context.getInitialCenter();
 				x += center.r() + z * size.r() * (Math.cos(a) * x1 + Math.sin(a) * y1);
 				y += center.i() + z * size.i() * (Math.cos(a) * y1 - Math.sin(a) * x1);
-				MandelbrotMetadata newMetadata = new MandelbrotMetadata(t, r, s, new double[] { x, y }, j);
+				MandelbrotMetadata newMetadata = new MandelbrotMetadata(t, r, s, new double[] { x, y }, j, oldMetadata.getOptions());
 				context.setPoint(newMetadata, pressed);
 			}
 			changed = false;

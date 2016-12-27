@@ -27,6 +27,7 @@ package com.nextbreakpoint.nextfractal.mandelbrot;
 import com.nextbreakpoint.nextfractal.core.EventBus;
 import com.nextbreakpoint.nextfractal.core.FileManager;
 import com.nextbreakpoint.nextfractal.core.FractalFactory;
+import com.nextbreakpoint.nextfractal.core.ImageComposer;
 import com.nextbreakpoint.nextfractal.core.ImageGenerator;
 import com.nextbreakpoint.nextfractal.core.Session;
 import com.nextbreakpoint.nextfractal.core.javaFX.Bitmap;
@@ -107,6 +108,11 @@ public class MandelbrotFactory implements FractalFactory {
 	@Override
 	public ImageGenerator createImageGenerator(ThreadFactory threadFactory,	RendererFactory renderFactory, RendererTile tile, boolean opaque) {
 		return new MandelbrotImageGenerator(threadFactory, renderFactory, tile, opaque);
+	}
+
+	@Override
+	public ImageComposer createImageComposer(ThreadFactory threadFactory, RendererTile tile, boolean opaque) {
+		return new MandelbrotImageComposer(threadFactory, tile, opaque);
 	}
 
 	@Override

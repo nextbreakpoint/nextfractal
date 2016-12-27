@@ -71,4 +71,9 @@ public class ContextFreeSession extends Session {
 		}
 		return "";
 	}
+
+	@Override
+	public String toString() {
+		return "{pluginId=" + getPluginId() + ", metadata=" + metadata + ", script='" + script + "'}";
+	}
 }

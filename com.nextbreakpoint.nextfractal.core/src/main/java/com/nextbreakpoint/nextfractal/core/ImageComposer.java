@@ -22,42 +22,27 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.contextfree;
+package com.nextbreakpoint.nextfractal.core;
 
-import java.util.Objects;
+import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 
-public class ContextFreeMetadata {
-	private final String seed;
+import java.nio.IntBuffer;
 
-	public ContextFreeMetadata() {
-		this.seed = "ABCD";
-	}
+public interface ImageComposer {
+	/**
+	 * @param script
+	 * @param metadata
+	 * @return
+	 */
+	public IntBuffer renderImage(String script, Object metadata);
 
-	public ContextFreeMetadata(String seed) {
-		Objects.requireNonNull(seed);
-		this.seed = seed;
-	}
+	/**
+	 * @return
+	 */
+	public RendererSize getSize();
 
-	public ContextFreeMetadata(ContextFreeMetadata other) {
-		seed = other.seed;
-	}
-
-	public String getSeed() {
-		return seed;
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-
-		ContextFreeMetadata that = (ContextFreeMetadata) o;
-
-		return seed.equals(that.seed);
-	}
-
-	@Override
-	public int hashCode() {
-		return seed.hashCode();
-	}
+	/**
+	 * @return
+	 */
+	public boolean isInterrupted();
 }

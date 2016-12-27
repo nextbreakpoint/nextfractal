@@ -36,7 +36,7 @@ public class MandelbrotSession extends Session {
 	private final String script;
 
 	public MandelbrotSession() {
-		this(getInitialScript(), new MandelbrotMetadata(new Double4D(0, 0, 1,0), new Double4D(0, 0, 0,0), new Double4D(1, 1, 1,1), new Double2D(0, 0), false));
+		this(getInitialScript(), new MandelbrotMetadata(new Double4D(0, 0, 1,0), new Double4D(0, 0, 0,0), new Double4D(1, 1, 1,1), new Double2D(0, 0), false, new MandelbrotOptions()));
 	}
 
 	public MandelbrotSession(String script, MandelbrotMetadata metadata) {
@@ -72,5 +72,10 @@ public class MandelbrotSession extends Session {
 		} catch (IOException e) {
 		}
 		return "";
+	}
+
+	@Override
+	public String toString() {
+		return "{pluginId=" + getPluginId() + ", metadata=" + metadata + ", script='" + script + "'}";
 	}
 }

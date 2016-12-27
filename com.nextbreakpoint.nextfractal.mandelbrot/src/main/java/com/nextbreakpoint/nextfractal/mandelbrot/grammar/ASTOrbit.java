@@ -89,7 +89,7 @@ public class ASTOrbit extends ASTObject {
 		StringBuilder builder = new StringBuilder();
 		String suffix = "";
 		if (region != null) {
-			builder.append("region = ");
+			builder.append("contentRegion = ");
 			builder.append(region);
 			suffix = ",";
 		}

@@ -41,6 +41,7 @@ import com.nextbreakpoint.nextfractal.core.javaFX.RecordingPane;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 import java.util.List;
 import javafx.animation.FadeTransition;
+import javafx.animation.Interpolator;
 import javafx.animation.TranslateTransition;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -246,6 +247,23 @@ public class MainCentralPane extends BorderPane {
         TranslateTransition transition = new TranslateTransition();
         transition.setNode(node);
         transition.setDuration(Duration.seconds(0.5));
+        transition.setInterpolator(new BounceInterpolator());
         return transition;
+    }
+
+    private class BounceInterpolator extends Interpolator {
+        @Override
+        protected double curve(double t) {
+            double freq = 2;
+            double decay = 3;
+            double dur = 0.4;
+            if(t < dur){
+                return t;
+            }else{
+                double amp = 1/dur;
+                double w = freq*Math.PI*2;
+                return 1 + amp*(Math.sin(t*w)/Math.exp(decay*t)/w);
+            }
+        }
     }
 }

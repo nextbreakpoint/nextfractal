@@ -48,6 +48,10 @@
 	-fx-background-color: #FFFFFF;
 }
 
+.application .filler-pane {
+	-fx-background-color: #FFFFFF;
+}
+
 .application .toolbar {
 	-fx-alignment: center;
 	-fx-background-color: white;

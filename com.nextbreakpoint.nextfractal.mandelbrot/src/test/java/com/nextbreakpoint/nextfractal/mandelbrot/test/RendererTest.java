@@ -61,7 +61,7 @@ public class RendererTest {
 			renderer.setOrbit(orbit);
 			renderer.setColor(color);
 			renderer.init();
-			renderer.setRegion(renderer.getInitialRegion());
+			renderer.setContentRegion(renderer.getInitialRegion());
 			List<Float> output = new ArrayList<>(); 
 			renderer.setRendererDelegate(progress -> {
 				System.out.println(progress);
