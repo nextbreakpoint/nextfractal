@@ -192,6 +192,11 @@ public class Renderer {
 		cfdgChanged = true;
 	}
 
+	public void setSeed(String seed) {
+		this.seed = seed;
+		cfdgChanged = true;
+	}
+
 	/**
 	 * @param pixels
 	 */
@@ -316,7 +321,7 @@ public class Renderer {
 				CFDGLogger logger = new CFDGLogger();
 				cfdg.getDriver().setLogger(logger);
 				cfdg.rulesLoaded();
-				renderer = cfdg.renderer(tile.getImageSize().getWidth(), tile.getImageSize().getHeight(), 1, 0, 0.1);
+				renderer = cfdg.renderer(tile.getImageSize().getWidth(), tile.getImageSize().getHeight(), 1, seed.hashCode(), 0.1);
 				if (renderer != null) {
 //					RendererFactory factory = new Java2DRendererFactory();
 //					renderer.run(new RendererCanvas(factory, g2d, width, height), false);
@@ -404,15 +409,6 @@ public class Renderer {
 			executor.awaitTermination(5000, TimeUnit.MILLISECONDS);
 		} catch (InterruptedException e) {
 		}
-	}
-
-	public void setSeed(String seed) {
-		//TODO use seed
-		this.seed = seed;
-	}
-
-	public String getSeed() {
-		return seed;
 	}
 
 	private class RenderRunnable implements Runnable {

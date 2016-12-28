@@ -40,9 +40,7 @@ import com.nextbreakpoint.ffmpeg4java.AVPixelFormat;
 import com.nextbreakpoint.ffmpeg4java.AVRational;
 import com.nextbreakpoint.ffmpeg4java.AVStream;
 import com.nextbreakpoint.ffmpeg4java.FFmpeg4Java;
-import com.nextbreakpoint.ffmpeg4java.FFmpeg4JavaConstants;
 import com.nextbreakpoint.ffmpeg4java.SWIGTYPE_p_SwsContext;
-import com.nextbreakpoint.ffmpeg4java.SWIGTYPE_p_p_AVCodecParameters;
 import com.nextbreakpoint.ffmpeg4java.SWIGTYPE_p_p_AVIOContext;
 import com.nextbreakpoint.ffmpeg4java.SWIGTYPE_p_p_void;
 import com.nextbreakpoint.ffmpeg4java.SWIGTYPE_p_uint8_t;
@@ -270,7 +268,7 @@ public abstract class AbstractVideoEncoder implements Encoder {
 							while (FFmpeg4Java.avcodec_receive_packet(codec_context, packet) == 0) {
 								FFmpeg4Java.av_packet_rescale_ts(packet, codec_context.getTime_base(), stream.getTime_base());
 								FFmpeg4Java.av_write_frame(format_context, packet);
-								logger.info("1) pts " + packet.getPts() + ", dts " + packet.getDts());
+								logger.fine("1) pts " + packet.getPts() + ", dts " + packet.getDts());
 								Thread.yield();
 							}
 						}
@@ -294,7 +292,7 @@ public abstract class AbstractVideoEncoder implements Encoder {
 						while (FFmpeg4Java.avcodec_receive_packet(codec_context, packet) == 0) {
 							FFmpeg4Java.av_packet_rescale_ts(packet, codec_context.getTime_base(), stream.getTime_base());
 							FFmpeg4Java.av_write_frame(format_context, packet);
-							logger.info("2) pts " + packet.getPts() + ", dts " + packet.getDts());
+							logger.fine("2) pts " + packet.getPts() + ", dts " + packet.getDts());
 							Thread.yield();
 						}
 					}

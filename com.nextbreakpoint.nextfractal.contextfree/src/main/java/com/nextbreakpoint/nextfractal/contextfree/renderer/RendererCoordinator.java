@@ -137,6 +137,13 @@ public class RendererCoordinator implements RendererDelegate {
 	}
 
 	/**
+	 * @param seed
+	 */
+	public void setSeed(String seed) {
+		renderer.setSeed(seed);
+	}
+
+	/**
 	 * 
 	 */
 	public void init() {

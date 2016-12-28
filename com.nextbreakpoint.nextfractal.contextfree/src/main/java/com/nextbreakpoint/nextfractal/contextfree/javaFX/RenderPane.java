@@ -24,8 +24,10 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.javaFX;
 
+import com.nextbreakpoint.Try;
 import com.nextbreakpoint.nextfractal.contextfree.ContextFreeMetadata;
 import com.nextbreakpoint.nextfractal.contextfree.ContextFreeSession;
+import com.nextbreakpoint.nextfractal.contextfree.compiler.Compiler;
 import com.nextbreakpoint.nextfractal.contextfree.compiler.CompilerClassException;
 import com.nextbreakpoint.nextfractal.contextfree.compiler.CompilerError;
 import com.nextbreakpoint.nextfractal.contextfree.compiler.CompilerReport;
@@ -218,7 +220,13 @@ public class RenderPane extends BorderPane {
 
 		eventBus.subscribe("session-report-changed", event -> updateReport((CompilerReport) event[0]));
 
+		eventBus.subscribe("session-data-loaded", event -> loadData(event));
+
 		eventBus.subscribe("session-data-changed", event -> updateData(event));
+
+		eventBus.subscribe("playback-data-load", event -> loadData(event));
+
+		eventBus.subscribe("playback-data-change", event -> updateData(event));
 
 		eventBus.subscribe("editor-source-changed", event -> {
 			ContextFreeSession newSession = new ContextFreeSession((String) event[0], (ContextFreeMetadata) contextFreeSession.getMetadata());
@@ -248,6 +256,11 @@ public class RenderPane extends BorderPane {
 		});
 
 		eventBus.subscribe("session-terminated", event -> dispose());
+	}
+
+	private void loadData(Object[] event) {
+		contextFreeSession = (ContextFreeSession) event[0];
+		Try.of(() -> generateReport(contextFreeSession.getScript())).filter(report -> ((CompilerReport)report).getErrors().size() == 0).ifPresent(this::updateReport);
 	}
 
 	private void updateData(Object[] event) {
@@ -421,6 +434,10 @@ public class RenderPane extends BorderPane {
 		});
 	}
 
+	private CompilerReport generateReport(String text) throws Exception {
+		return new Compiler().compileReport(text);
+	}
+
 	private void updateReport(CompilerReport report) {
 		try {
 			boolean[] changed = createCFDG(report);
@@ -434,6 +451,7 @@ public class RenderPane extends BorderPane {
 				coordinator.waitFor();
 				if (cfdgChanged) {
 					coordinator.setCFDG(cfdg);
+					coordinator.setSeed(((ContextFreeMetadata)contextFreeSession.getMetadata()).getSeed());
 				}
 				coordinator.init();
 				coordinator.run();

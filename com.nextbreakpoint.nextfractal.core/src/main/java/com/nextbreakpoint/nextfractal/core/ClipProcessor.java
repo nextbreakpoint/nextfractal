@@ -32,7 +32,7 @@ public class ClipProcessor {
             float prevTime = 0;
             ClipEvent event = clips.get(0).getEvents().get(0);
             long baseTime = event.getDate().getTime();
-            logger.info("0) clip " + currentClip + ", event " + currentEvent);
+            logger.fine("0) clip " + currentClip + ", event " + currentEvent);
             Frame lastFrame = null;
             while (frameIndex < frameCount && currentClip < clips.size() && currentEvent < clips.get(currentClip).getEvents().size()) {
                 currentEvent += 1;
@@ -45,16 +45,16 @@ public class ClipProcessor {
                     }
                     lastFrame = null;
                 }
-                logger.info("1) clip " + currentClip + ", event " + currentEvent);
+                logger.fine("1) clip " + currentClip + ", event " + currentEvent);
                 if (currentClip < clips.size() && currentEvent < clips.get(currentClip).getEvents().size()) {
                     ClipEvent nextEvent = clips.get(currentClip).getEvents().get(currentEvent);
                     float frameTime = frameIndex * frameRate;
                     time = prevTime + (nextEvent.getDate().getTime() - baseTime) / 1000f;
                     while (frameTime - time < 0.02f) {
-                        logger.info("1) frame " + frameIndex + ", time " + frameTime);
+                        logger.fine("1) frame " + frameIndex + ", time " + frameTime);
                         Frame frame = new Frame(event.getPluginId(), event.getScript(), event.getMetadata(), true);
                         if (lastFrame != null && lastFrame.equals(frame)) {
-                            logger.info("1) not key frame");
+                            logger.fine("1) not key frame");
                             frame = new Frame(event.getPluginId(), event.getScript(), event.getMetadata(), false);
                         }
                         lastFrame = frame;
@@ -65,10 +65,10 @@ public class ClipProcessor {
                     event = nextEvent;
                 } else {
                     float frameTime = frameIndex * frameRate;
-                    logger.info("2) frame " + frameIndex + ", time " + frameTime);
+                    logger.fine("2) frame " + frameIndex + ", time " + frameTime);
                     Frame frame = new Frame(event.getPluginId(), event.getScript(), event.getMetadata(), true);
                     if (lastFrame != null && lastFrame.equals(frame)) {
-                        logger.info("2) not key frame");
+                        logger.fine("2) not key frame");
                         frame = new Frame(event.getPluginId(), event.getScript(), event.getMetadata(), false);
                     }
                     lastFrame = frame;
@@ -77,7 +77,8 @@ public class ClipProcessor {
                 }
             }
         }
-        logger.info("3) frame count " + frames.size() + ", frame rate " + frameRate);
+        logger.fine("3) frame count " + frames.size() + ", frame rate " + frameRate);
+        logger.info("Generated " + frames.size() + " frames");
         return frames;
     }
 }

@@ -116,6 +116,7 @@ public class V3RenderTest extends AbstractBaseTest {
 
 		renderer.setOpaque(true);
 		renderer.setCFDG(cfdg);
+		renderer.setSeed("ABCD");
 		renderer.init();
 		renderer.runTask();
 		renderer.waitForTasks();

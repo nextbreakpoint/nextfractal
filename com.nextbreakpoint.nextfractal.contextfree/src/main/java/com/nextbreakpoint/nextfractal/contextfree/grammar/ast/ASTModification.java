@@ -98,7 +98,7 @@ public class ASTModification extends ASTExpression {
 		super(driver, true, false, ExpType.ModType, location);
 		this.driver = driver;
 		if (mod != null) {
-			modData.getRand64Seed().setSeed(0);
+			modData.setRand64Seed(new Rand64(0));
 			grab(mod);
 		} else {
 			this.modClass = ModClass.NotAClass;

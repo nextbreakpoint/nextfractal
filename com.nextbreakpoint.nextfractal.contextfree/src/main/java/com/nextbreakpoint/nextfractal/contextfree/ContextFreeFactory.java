@@ -127,7 +127,9 @@ public class ContextFreeFactory implements FractalFactory {
 		DefaultThreadFactory threadFactory = new DefaultThreadFactory("ContextFree Browser", true, Thread.MIN_PRIORITY);
 		RendererCoordinator coordinator = new RendererCoordinator(threadFactory, new JavaFXRendererFactory(), tile, hints);
 		CFDG cfdg = (CFDG)bitmap.getProperty("cfdg");
+		Session session = (Session)bitmap.getProperty("session");
 		coordinator.setCFDG(cfdg);
+		coordinator.setSeed(((ContextFreeMetadata)session.getMetadata()).getSeed());
 		coordinator.init();
 		coordinator.run();
 		return new GridItemRendererAdapter(coordinator);

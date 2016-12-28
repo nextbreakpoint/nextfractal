@@ -108,10 +108,6 @@ public class Modification implements Cloneable {
 		return Double.isFinite(transform.getScaleX()) && Double.isFinite(transform.getScaleY()) && Double.isFinite(transform.getShearX()) && Double.isFinite(transform.getShearY()) && Double.isFinite(transform.getTranslateX()) && Double.isFinite(transform.getTranslateY());
 	}
 
-	public void setSeed(int seed) {
-		rand64Seed.setSeed(seed);
-	}
-
 	public Modification concat(Modification modification) {
 		transform.concatenate(modification.getTransform());
 		transformZ.concatenate(modification.getTransformZ());

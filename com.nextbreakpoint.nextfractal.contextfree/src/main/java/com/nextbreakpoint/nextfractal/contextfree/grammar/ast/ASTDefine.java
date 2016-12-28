@@ -59,7 +59,6 @@ public class ASTDefine extends ASTReplacement {
 		this.name = name;
 		this.configDepth = -1;
 		int[] i = new int[1];
-		getChildChange().getModData().getRand64Seed().init();
 		getChildChange().getModData().getRand64Seed().xorString(name, i);
 	}
 
@@ -171,7 +170,6 @@ public class ASTDefine extends ASTReplacement {
 					return;
 				}
 
-				getChildChange().getModData().getRand64Seed().init();
 				getChildChange().setEntropyIndex(0);
 				getChildChange().addEntropy(name);
 

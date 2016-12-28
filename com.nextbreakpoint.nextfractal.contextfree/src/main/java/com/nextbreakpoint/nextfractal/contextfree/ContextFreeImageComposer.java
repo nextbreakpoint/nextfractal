@@ -78,6 +78,7 @@ public class ContextFreeImageComposer implements ImageComposer {
 			renderer.setSeed(metadata.getSeed());
 			renderer.setOpaque(opaque);
 			renderer.setCFDG(cfdg);
+			renderer.setSeed(metadata.getSeed());
 			renderer.init();
 			renderer.runTask();
 			renderer.waitForTasks();

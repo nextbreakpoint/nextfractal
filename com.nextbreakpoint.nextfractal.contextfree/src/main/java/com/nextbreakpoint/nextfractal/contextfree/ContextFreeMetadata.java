@@ -34,8 +34,7 @@ public class ContextFreeMetadata {
 	}
 
 	public ContextFreeMetadata(String seed) {
-		Objects.requireNonNull(seed);
-		this.seed = seed;
+		this.seed = Objects.requireNonNull(seed);
 	}
 
 	public ContextFreeMetadata(ContextFreeMetadata other) {

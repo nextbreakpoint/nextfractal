@@ -33,8 +33,7 @@ public class Rand64 implements Cloneable {
 	private static long RAND64_SEED  = 0x3DF41234;
 	private static long RAND64_MULT = 2685821657736338717L;
 
-    private Random random = new Random();
-
+    private Random random;
     private long seed;
 
 	public Rand64() {
@@ -43,23 +42,10 @@ public class Rand64 implements Cloneable {
 
 	public Rand64(long seed) {
 		this.seed = seed;
+		random = new Random();
 		random.setSeed(seed);
 	}
 
-	public Rand64(long seed, Random random) {
-		this.seed = seed;
-		this.random = random;
-	}
-
-	public void setSeed(long seed) {
-		this.seed = seed;
-		random.setSeed(this.seed);
-	}
-	
-	public void init() {
-		setSeed(RAND64_SEED);
-	}
-    
 	public void xorString(String t, int[] i) {
 	    for (int j = 0; j < t.length(); j++) {
 	        xorChar(t.charAt(j), j);
@@ -82,8 +68,9 @@ public class Rand64 implements Cloneable {
 		}
 	}
 
-	public void add(Rand64 oldEntropy) {
-		// TODO completare
+	public Rand64 add(Rand64 rand) {
+		seed ^= rand.seed;
+		return this;
 	}
 
 	public double getDouble() {
@@ -105,43 +92,44 @@ public class Rand64 implements Cloneable {
 		}
 
 		int[] i = new int[] { 0 };
+
 		return new DiscreteRand(count,0,1, x -> w[i[0]++]).generate();
 	}
 
 	public long getPoisson(double mean) {
-		return new PoissonRand(mean).generate();
+		return new PoissonRand(pos(mean)).generate();
 	}
 
 	public long getGeometric(double p) {
-		return new GeometricRand(p).generate();
+		return new GeometricRand(prob(p)).generate();
 	}
 
 	public long getBinomial(long trials, double p) {
-		return new BinomialRand(trials, p).generate();
+		return new BinomialRand(nat(trials), prob(p)).generate();
 	}
 
 	public long getNegativeBinomial(long trials, double p) {
-		return new NegativeBinomialRand(trials, p).generate();
+		return new NegativeBinomialRand(nat(trials), prob(p)).generate();
 	}
 
 	public boolean getBernoulli(double p) {
-		return new BernoulliRand(p).generate();
+		return new BernoulliRand(prob(p)).generate();
 	}
 
 	public double getExponential(double lambda) {
-		return new ExponentialRand(lambda).generate();
+		return new ExponentialRand(pos(lambda)).generate();
 	}
 
 	public double getGamma(double alpha, double beta) {
-		return new GammaRand(alpha, beta).generate();
+		return new GammaRand(pos(alpha), pos(beta)).generate();
 	}
 
 	public double getWeibull(double a, double b) {
-		return new WeibullRand(a, b).generate();
+		return new WeibullRand(pos(a), pos(b)).generate();
 	}
 
 	public double getExtremeValue(double location, double scale) {
-		return new ExtremeValueRand(location, scale).generate();
+		return new ExtremeValueRand(location, pos(scale)).generate();
 	}
 
 	public double getNormal(double mean, double stddev) {
@@ -153,19 +141,19 @@ public class Rand64 implements Cloneable {
 	}
 
 	public double getChiSquared(double freedom) {
-		return new ChiSquaredRand(freedom).generate();
+		return new ChiSquaredRand(degree(freedom)).generate();
 	}
 
 	public double getCauchy(double location, double scale) {
-		return new CauchyRand(location, scale).generate();
+		return new CauchyRand(location, pos(scale)).generate();
 	}
 
 	public double getFisherF(double mfree, double nfree) {
-		return new FisherRand(mfree, nfree).generate();
+		return new FisherRand(degree(mfree), degree(nfree)).generate();
 	}
 
 	public double getStudentT(double freedom) {
-		return new StudentTRand(freedom).generate();
+		return new StudentTRand(degree(freedom)).generate();
 	}
 
 	public abstract class Rand<T> {
@@ -911,7 +899,23 @@ public class Rand64 implements Cloneable {
 		}
 	}
 
+	private double prob(double p) {
+		return p < 0.0 ? 0.0 : p > 1.0 ? 1.0 : p;
+	}
+
+	private double pos(double p) {
+		return p > 0.0 ? p : 2^-52;
+	}
+
+	private double degree(double n) {
+		return n >= 1.0 ? Math.floor(n) : 1.0;
+	}
+
+	private long nat(long i) {
+		return i < 1 ? 1 : i;
+	}
+
 	public Object clone() {
-		return new Rand64(seed, random);
+		return new Rand64(seed);
 	}
 }

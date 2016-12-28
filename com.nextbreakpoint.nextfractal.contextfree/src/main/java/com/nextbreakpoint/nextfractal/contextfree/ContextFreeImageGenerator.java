@@ -68,6 +68,7 @@ public class ContextFreeImageGenerator implements ImageGenerator {
 			renderer.setSeed(metadata.getSeed());
 			renderer.setOpaque(opaque);
 			renderer.setCFDG(cfdg);
+			renderer.setSeed(metadata.getSeed());
 			renderer.init();
 			renderer.runTask();
 			renderer.waitForTasks();
