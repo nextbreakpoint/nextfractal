@@ -369,7 +369,7 @@ public class ASTFunction extends ASTExpression {
 			case RandChiSquared:
 				if (renderer == null) throw new DeferUntilRuntimeException(location);
 				renderer.setRandUsed(true);
-				result[0] = renderer.getCurrentSeed().getChiSquared(a[0], a[1]);
+				result[0] = renderer.getCurrentSeed().getChiSquared(a[0]);
 				break;
 			case RandCauchy:
 				if (renderer == null) throw new DeferUntilRuntimeException(location);
@@ -384,7 +384,7 @@ public class ASTFunction extends ASTExpression {
 			case RandStudentT:
 				if (renderer == null) throw new DeferUntilRuntimeException(location);
 				renderer.setRandUsed(true);
-				result[0] = renderer.getCurrentSeed().getStudentT(a[0], a[1]);
+				result[0] = renderer.getCurrentSeed().getStudentT(a[0]);
 				break;
 			case RandInt:
 				if (renderer == null) throw new DeferUntilRuntimeException(location);
@@ -394,17 +394,17 @@ public class ASTFunction extends ASTExpression {
 			case RandIntBernoulli:
 				if (renderer == null) throw new DeferUntilRuntimeException(location);
 				renderer.setRandUsed(true);
-				result[0] = renderer.getCurrentSeed().getBernoulli(a[0]) != 0.0 ? 1.0 : 0.0;
+				result[0] = renderer.getCurrentSeed().getBernoulli(a[0]) ? 1.0 : 0.0;
 				break;
 			case RandIntBinomial:
 				if (renderer == null) throw new DeferUntilRuntimeException(location);
 				renderer.setRandUsed(true);
-				result[0] = Math.floor(renderer.getCurrentSeed().getBinomial(a[0], a[1]));
+				result[0] = Math.floor(renderer.getCurrentSeed().getBinomial((long)a[0], a[1]));
 				break;
 			case RandIntNegBinomial:
 				if (renderer == null) throw new DeferUntilRuntimeException(location);
 				renderer.setRandUsed(true);
-				result[0] = Math.floor(renderer.getCurrentSeed().getNegativeBinomial(a[0], a[1]));
+				result[0] = Math.floor(renderer.getCurrentSeed().getNegativeBinomial((long)a[0], a[1]));
 				break;
 			case RandIntPoisson:
 				if (renderer == null) throw new DeferUntilRuntimeException(location);

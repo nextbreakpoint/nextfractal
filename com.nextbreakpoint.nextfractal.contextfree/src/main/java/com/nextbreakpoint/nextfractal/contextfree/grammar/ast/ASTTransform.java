@@ -119,7 +119,6 @@ public class ASTTransform extends ASTReplacement {
 			} else {
 				child.getWorldState().getTransform().concatenate(transforms.get(i - modsLength));
 			}
-			renderer.getCurrentSeed().bump();
 			int size = renderer.getStackSize();
 			for (ASTReplacement rep : body.getBody()) {
 				if (clone) {

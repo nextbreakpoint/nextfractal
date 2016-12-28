@@ -455,7 +455,7 @@ public class NextFractalApp extends Application {
 	}
 
 	private String getApplicationName() {
-		return "NextFractal 2.0.0 - Created by Andrea Medeghini";
+		return "NextFractal - The Beauty of Chaos";
 	}
 
 	private String getNoticeMessage() {

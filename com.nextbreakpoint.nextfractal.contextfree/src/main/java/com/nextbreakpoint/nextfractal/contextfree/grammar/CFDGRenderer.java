@@ -362,7 +362,6 @@ public class CFDGRenderer {
 		initTraverse();
 
 		currentSeed.setSeed(variation);
-		currentSeed.bump();
 
 		cfStack = new CFStack(new CFStackItem[8192]);
 

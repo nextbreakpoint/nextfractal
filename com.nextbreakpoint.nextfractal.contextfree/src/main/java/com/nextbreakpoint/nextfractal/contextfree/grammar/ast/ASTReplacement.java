@@ -125,7 +125,6 @@ public class ASTReplacement {
 			}
 		}
 		renderer.getCurrentSeed().add(childChange.getModData().getRand64Seed());
-		renderer.getCurrentSeed().bump();
 		childChange.evaluate(s.getWorldState(), true, renderer);
 		s.setAreaCache(s.getWorldState().area());
 	}
@@ -136,7 +135,6 @@ public class ASTReplacement {
 			case replacement:
 				replace(child, renderer);
 				child.getWorldState().setRand64Seed(renderer.getCurrentSeed());
-				child.getWorldState().getRand64Seed().bump();
 				renderer.processShape(child);
 				break;
 			case op:
