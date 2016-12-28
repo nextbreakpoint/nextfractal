@@ -60,6 +60,13 @@ public class ContextFreeImageComposer implements ImageComposer {
 		IntBuffer buffer = IntBuffer.wrap(((DataBufferInt)image.getRaster().getDataBuffer()).getData());
 		Graphics2D g2d = null;
 		try {
+			g2d = image.createGraphics();
+			g2d.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
+			g2d.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY);
+			g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+			g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			g2d.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
 			Compiler compiler = new Compiler();
 			CompilerReport report = compiler.compileReport(script);
 			if (report.getErrors().size() > 0) {
