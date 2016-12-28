@@ -191,11 +191,10 @@ public abstract class AbstractVideoEncoder implements Encoder {
 				if (codecID.swigValue() == AVCodecID.AV_CODEC_ID_MPEG1VIDEO.swigValue()) {
 					codec_context.setMax_b_frames(2);
 				}
-//				codec_context.setCodec_tag();
-//				codec_context.setB_quant_factor(0.1f);
-//				codec_context.setI_quant_factor(0.1f);
-//				codec_context.setProfile(FFmpeg4Java.FF_PROFILE_MPEG2_HIGH);
-//				codec_context.setStrict_std_compliance(codec_context.getStrict_std_compliance() | FFmpeg4Java.FF_COMPLIANCE_VERY_STRICT);
+				codec_context.setB_quant_factor(0.1f);
+				codec_context.setI_quant_factor(0.1f);
+				codec_context.setProfile(FFmpeg4Java.FF_PROFILE_MPEG2_HIGH);
+				codec_context.setStrict_std_compliance(codec_context.getStrict_std_compliance() | FFmpeg4Java.FF_COMPLIANCE_VERY_STRICT);
 //				codec_context.setFlags(codec_context.getFlags() | FFmpeg4Java.AV_CODEC_FLAG_GLOBAL_HEADER);
 				SWIGTYPE_p_uint8_t side_data = FFmpeg4Java.av_stream_new_side_data(stream, AVPacketSideDataType.AV_PKT_DATA_CPB_PROPERTIES, new AVCPBProperties().size_of());
 				AVCPBProperties props = AVCPBProperties.asTypePointer(SWIGTYPE_p_uint8_t.asVoidPointer(side_data));

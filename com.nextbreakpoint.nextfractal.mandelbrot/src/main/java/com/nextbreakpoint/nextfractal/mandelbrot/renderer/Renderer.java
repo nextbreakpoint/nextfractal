@@ -689,8 +689,8 @@ public class Renderer {
 		final Number size = region.getSize();
 		final Number center = region.getCenter();
 
-		final double dx = size.r() * 0.5;
-		final double dy = size.i() * 0.5 * baseImageSize.getHeight() / baseImageSize.getWidth();
+		final double dx = size.r() * 0.25;
+		final double dy = size.i() * 0.25 * baseImageSize.getHeight() / baseImageSize.getWidth();
 
 		final double cx = center.r();
 		final double cy = center.i();

@@ -396,11 +396,9 @@ public class RenderPane extends BorderPane {
 		});
 		
 		pickButton.setOnAction(e -> {
-			if (!((MandelbrotMetadata) mandelbrotSession.getMetadata()).isJulia()) {
-				currentTool = new ToolPick(context);
-				showPreviewProperty.setValue(true);
-				eventBus.postEvent("render-view-changed", new MandelbrotSession(mandelbrotSession.getScript(), createMetadataWithOptions()), false, false);
-			}
+			currentTool = new ToolPick(context);
+			showPreviewProperty.setValue(true);
+			eventBus.postEvent("render-view-changed", new MandelbrotSession(mandelbrotSession.getScript(), createMetadataWithOptions()), false, false);
 		});
 
 		orbitButton.setOnAction(e -> {
@@ -446,7 +444,6 @@ public class RenderPane extends BorderPane {
 			pointCanvas.setVisible(newValue);
 			orbitButton.setSelected(!newValue);
 			pointCanvas.setVisible(newValue || showPreviewProperty.getValue());
-//			juliaCanvas.setVisible(showPreviewProperty.getValue());
 		});
 
 		showPreviewProperty.addListener((observable, oldValue, newValue) -> {
@@ -463,17 +460,16 @@ public class RenderPane extends BorderPane {
 				setFractalJulia(eventBus, false);
 			}
 			if (newValue) {
-				showPreviewProperty.setValue(false);
-				eventBus.postEvent("render-view-changed", new MandelbrotSession(mandelbrotSession.getScript(), createMetadataWithOptions()), false, false);
-			} else if (pickButton.isSelected()) {
-				currentTool = new ToolZoom(context, true);
-				zoominButton.requestFocus();
-				zoominButton.setSelected(true);
+				if (currentTool instanceof ToolPick) {
+					currentTool = new ToolZoom(context, true);
+					zoominButton.requestFocus();
+					zoominButton.setSelected(true);
+				}
 				showPreviewProperty.setValue(false);
 				eventBus.postEvent("render-view-changed", new MandelbrotSession(mandelbrotSession.getScript(), createMetadataWithOptions()), false, false);
 			}
-			juliaButton.setSelected(juliaButton.isSelected());
-			pickButton.setDisable(juliaButton.isSelected());
+			juliaButton.setSelected(newValue);
+			pickButton.setDisable(newValue);
 		});
 		
 		errorProperty.addListener((observable, oldValue, newValue) -> {
@@ -509,11 +505,13 @@ public class RenderPane extends BorderPane {
 
 		eventBus.subscribe("session-report-changed", event -> updateReport((CompilerReport) event[0]));
 
-		eventBus.subscribe("session-data-loaded", event -> loadData(event, context, true, pickButton, zoominButton));
+		eventBus.subscribe("session-data-loaded", event -> loadData(event));
+
+		eventBus.subscribe("session-data-loaded", event -> restoreTool(eventBus, context, pickButton, zoominButton));
 
 		eventBus.subscribe("session-data-changed", event -> updateData(event));
 
-		eventBus.subscribe("playback-data-load", event -> loadData(event, context, false, pickButton, zoominButton));
+		eventBus.subscribe("playback-data-load", event -> loadData(event));
 
 		eventBus.subscribe("playback-data-change", event -> updateData(event));
 
@@ -609,21 +607,29 @@ public class RenderPane extends BorderPane {
 		return new Compiler().compileReport(text);
 	}
 
-	private void loadData(Object[] event, ToolContext context, boolean restoreTool, ToggleButton pickButton, ToggleButton zoominButton) {
+	private void loadData(Object[] event) {
 		mandelbrotSession = (MandelbrotSession) event[0];
 		Try.of(() -> generateReport(mandelbrotSession.getScript())).filter(report -> ((CompilerReport)report).getErrors().size() == 0).ifPresent(this::updateReport);
 		updateView(mandelbrotSession, (Boolean) event[1]);
 		MandelbrotMetadata metadata = (MandelbrotMetadata) mandelbrotSession.getMetadata();
-		showOrbitProperty.setValue(metadata.getOptions().isShowOrbit());
 		showPreviewProperty.setValue(metadata.getOptions().isShowPreview());
+		showOrbitProperty.setValue(metadata.getOptions().isShowOrbit());
 		juliaProperty.setValue(metadata.isJulia());
-		if (restoreTool) {
-			if (showPreviewProperty.getValue()) {
-				currentTool = new ToolPick(context);
-				pickButton.setSelected(true);
-			} else {
+	}
+
+	private void restoreTool(EventBus eventBus, ToolContext context, ToggleButton pickButton, ToggleButton zoominButton) {
+		if (showPreviewProperty.getValue()) {
+			if (juliaProperty.getValue()) {
 				currentTool = new ToolZoom(context, true);
 				zoominButton.setSelected(true);
+			} else {
+				currentTool = new ToolPick(context);
+				pickButton.setSelected(true);
+			}
+		} else {
+			if (!juliaProperty.getValue() && currentTool instanceof ToolPick) {
+				showPreviewProperty.setValue(true);
+				eventBus.postEvent("render-view-changed", new MandelbrotSession(mandelbrotSession.getScript(), createMetadataWithOptions()), false, false);
 			}
 		}
 	}
