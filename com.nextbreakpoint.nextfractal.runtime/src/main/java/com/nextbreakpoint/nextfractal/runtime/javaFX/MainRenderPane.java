@@ -49,6 +49,8 @@ public class MainRenderPane extends BorderPane {
     public MainRenderPane(EventBus eventBus, int width, int height) {
         eventBus.subscribe("session-data-loaded", event -> handleSessionChanged(eventBus, width, height, (Session) event[0]));
 
+        eventBus.subscribe("playback-data-load", event -> handleSessionChanged(eventBus, width, height, (Session) event[0]));
+
         eventBus.subscribe("session-terminated", event -> buses.clear());
         eventBus.subscribe("session-terminated", event -> panels.clear());
     }

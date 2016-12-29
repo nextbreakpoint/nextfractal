@@ -271,8 +271,12 @@ public class RenderPane extends BorderPane {
 	}
 
 	private void loadData(Object[] event) {
-		contextFreeSession = (ContextFreeSession) event[0];
-		Try.of(() -> generateReport(contextFreeSession.getScript())).filter(report -> ((CompilerReport)report).getErrors().size() == 0).ifPresent(this::updateReport);
+		Try.of(() -> generateReport(((ContextFreeSession) event[0]).getScript())).filter(report -> ((CompilerReport)report).getErrors().size() == 0).ifPresent(report -> {
+			List<Error> errors = updateReport(report);
+			if (errors.size() == 0) {
+				contextFreeSession = (ContextFreeSession) event[0];
+			}
+		});
 	}
 
 	private void updateData(Object[] event) {
