@@ -34,9 +34,9 @@ choose
             driver.pushRepContainer(driver.getCFDGContent());
 		}
 		(
-		CFDG2? cfdg2
+		cfdg2
 		|
-		CFDG3? cfdg3
+		cfdg3
 		) {
             driver.popRepContainer(null);
 		}
@@ -1353,16 +1353,6 @@ user_rational returns [ASTValue result]
         $result = new ASTValue($t.getText());
     }
     ;
-
-CFDG2
-	: 
-	'CFDG2' 
-	;
-	
-CFDG3
-	: 
-	'CFDG3' 
-	;
 
 STARTSHAPE
 	: 
