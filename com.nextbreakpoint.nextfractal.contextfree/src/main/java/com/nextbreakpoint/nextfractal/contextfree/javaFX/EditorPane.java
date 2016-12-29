@@ -226,7 +226,7 @@ public class EditorPane extends BorderPane {
     }
 
     private void notifyTaskResult(EventBus eventBus, Try<TaskResult, Exception> result) {
-        result.map(task -> task.report).ifPresent(report -> eventBus.postEvent("editor-report-changed", report, new ContextFreeSession(report.getSource(), (ContextFreeMetadata) session.getMetadata()), false, true));
+        result.map(task -> task.report).ifPresent(report -> eventBus.postEvent("editor-report-changed", report, new ContextFreeSession(report.getSource(), (ContextFreeMetadata) session.getMetadata()), false, !report.getSource().equals(session.getScript())));
     }
 
     private Try<TaskResult, Exception> compileReport(TaskResult task) {
