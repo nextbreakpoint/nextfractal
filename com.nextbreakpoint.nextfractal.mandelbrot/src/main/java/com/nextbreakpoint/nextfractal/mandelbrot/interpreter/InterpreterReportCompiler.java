@@ -24,6 +24,7 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.interpreter;
 
+import com.nextbreakpoint.nextfractal.core.Error;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerError;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerErrorStrategy;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerReport;
@@ -48,12 +49,12 @@ public class InterpreterReportCompiler {
 	private static final Logger logger = Logger.getLogger(InterpreterReportCompiler.class.getName());
 	
 	public CompilerReport generateReport(String source) throws IOException {
-		List<CompilerError> errors = new ArrayList<>();
+		List<Error> errors = new ArrayList<>();
 		ASTFractal ast = parse(source, errors);
 		return new CompilerReport(ast, Type.INTERPRETER, source, "", "", errors);
 	}
 	
-	private ASTFractal parse(String source, List<CompilerError> errors) throws IOException {
+	private ASTFractal parse(String source, List<Error> errors) throws IOException {
 		try {
 			ANTLRInputStream is = new ANTLRInputStream(new StringReader(source));
 			MandelbrotLexer lexer = new MandelbrotLexer(is);
@@ -67,11 +68,11 @@ public class InterpreterReportCompiler {
             	return fractal;
             }
 		} catch (ASTException e) {
-			CompilerError error = new CompilerError(CompilerError.ErrorType.M_COMPILER, e.getLocation().getLine(), e.getLocation().getCharPositionInLine(), e.getLocation().getStartIndex(), e.getLocation().getStopIndex() - e.getLocation().getStartIndex(), e.getMessage());
+			CompilerError error = new CompilerError(Error.ErrorType.SCRIPT_COMPILER, e.getLocation().getLine(), e.getLocation().getCharPositionInLine(), e.getLocation().getStartIndex(), e.getLocation().getStopIndex() - e.getLocation().getStartIndex(), e.getMessage());
 			logger.log(Level.FINE, error.toString(), e);
 			errors.add(error);
 		} catch (Exception e) {
-			CompilerError error = new CompilerError(CompilerError.ErrorType.M_COMPILER, 0L, 0L, 0L, 0L, e.getMessage());
+			CompilerError error = new CompilerError(Error.ErrorType.SCRIPT_COMPILER, 0L, 0L, 0L, 0L, e.getMessage());
 			logger.log(Level.FINE, error.toString(), e);
 			errors.add(error);
 		}

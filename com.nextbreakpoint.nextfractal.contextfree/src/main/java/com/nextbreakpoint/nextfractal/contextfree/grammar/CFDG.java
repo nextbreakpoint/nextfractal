@@ -41,6 +41,7 @@ import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ExpType;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.FriezeType;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ModType;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.Param;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.RepElemType;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ShapeType;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.WeightType;
 
@@ -602,7 +603,7 @@ public class CFDG {
 
 			if (startExp instanceof ASTStartSpecifier) {
 				ASTStartSpecifier specStart = (ASTStartSpecifier)startExp;
-				initShape = new ASTReplacement(driver, specStart, specStart.getModification(), startExp.getLocation());
+				initShape = new ASTReplacement(driver, specStart, specStart.getModification(), RepElemType.empty, startExp.getLocation());
 				initShape.getChildChange().addEntropy(initShape.getShapeSpecifier().getEntropy());
 			} else {
 				driver.fail("Type error in startshape", startExp.getLocation());

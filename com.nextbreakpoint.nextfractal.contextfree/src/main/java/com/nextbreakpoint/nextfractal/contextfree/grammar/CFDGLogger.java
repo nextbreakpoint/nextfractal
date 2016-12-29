@@ -25,13 +25,14 @@
 package com.nextbreakpoint.nextfractal.contextfree.grammar;
 
 import com.nextbreakpoint.nextfractal.contextfree.renderer.RendererError;
+import com.nextbreakpoint.nextfractal.core.Error;
 import org.antlr.v4.runtime.Token;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class CFDGLogger extends Logger {
-    private List<RendererError> errors = new ArrayList<>();
+    private List<Error> errors = new ArrayList<>();
 
     @Override
     public void error(String message, Token location) {
@@ -53,7 +54,7 @@ public class CFDGLogger extends Logger {
         }
     }
 
-    public List<RendererError> getErrors() {
+    public List<Error> getErrors() {
         return errors;
     }
 }

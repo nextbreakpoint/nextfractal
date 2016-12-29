@@ -24,10 +24,12 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.compiler;
 
+import com.nextbreakpoint.nextfractal.core.Error;
+
 import java.util.List;
 
 public interface CompilerBuilder<T> {
 	public T build() throws InstantiationException, IllegalAccessException, CompilerSourceException;
 
-	public List<CompilerError> getErrors();
+	public List<Error> getErrors();
 }

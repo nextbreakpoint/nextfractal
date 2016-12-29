@@ -25,6 +25,7 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
 
 import com.nextbreakpoint.Try;
+import com.nextbreakpoint.nextfractal.core.Error;
 import com.nextbreakpoint.nextfractal.core.EventBus;
 import com.nextbreakpoint.nextfractal.core.Session;
 import com.nextbreakpoint.nextfractal.core.javaFX.BooleanObservableValue;
@@ -942,7 +943,7 @@ public class RenderPane extends BorderPane {
 		return changed;
 	}
 
-	private void updateCompilerErrors(String message, List<CompilerError> errors, String source) {
+	private void updateCompilerErrors(String message, List<Error> errors, String source) {
 		disableTool = message != null;
 		Platform.runLater(() -> {
 			statusProperty.setValue(null);
@@ -952,7 +953,7 @@ public class RenderPane extends BorderPane {
 				builder.append(message);
 				if (errors != null) {
 					builder.append("\n\n");
-					for (CompilerError error : errors) {
+					for (Error error : errors) {
 						builder.append("Line ");
 						builder.append(error.getLine());
 						builder.append(": ");

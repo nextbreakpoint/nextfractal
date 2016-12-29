@@ -24,43 +24,10 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.renderer;
 
-public class RendererError {
-	private long line;
-	private long charPositionInLine;
-	private long index;
-	private long length;
-	private String message;
+import com.nextbreakpoint.nextfractal.core.Error;
 
+public class RendererError extends Error {
 	public RendererError(long line, long charPositionInLine, long index, long length, String message) {
-		this.line = line;
-		this.charPositionInLine = charPositionInLine;
-		this.index = index;
-		this.length = length;
-		this.message = message;
-	}
-
-	public long getLine() {
-		return line;
-	}
-
-	public long getCharPositionInLine() {
-		return charPositionInLine;
-	}
-
-	public String getMessage() {
-		return message;
-	}
-	
-	public long getLength() {
-		return length;
-	}
-	
-	public long getIndex() {
-		return index;
-	}
-
-	@Override
-	public String toString() {
-		return "[" + line + ":" + charPositionInLine + ":" + index + ":" + length + "] " + message;
+		super(ErrorType.RUNTIME, line, charPositionInLine, index, length, message);
 	}
 }

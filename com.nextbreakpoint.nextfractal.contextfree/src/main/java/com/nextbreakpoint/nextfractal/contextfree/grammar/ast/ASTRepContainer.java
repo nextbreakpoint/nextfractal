@@ -38,8 +38,8 @@ import java.util.List;
 public class ASTRepContainer {
 	private PathOp pathOp;
 	private int repType;
-	private List<ASTReplacement> body = new ArrayList<ASTReplacement>();
-	private List<ASTParameter> parameters = new ArrayList<ASTParameter>();
+	private List<ASTReplacement> body = new ArrayList<>();
+	private List<ASTParameter> parameters = new ArrayList<>();
 	private boolean isGlobal;
 	private int stackCount;
 	private CFDGDriver driver;

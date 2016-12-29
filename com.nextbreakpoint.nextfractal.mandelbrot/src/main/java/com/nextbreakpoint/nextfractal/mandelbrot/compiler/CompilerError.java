@@ -24,53 +24,10 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.compiler;
 
-public class CompilerError {
-	private ErrorType type;
-	private long line;
-	private long charPositionInLine;
-	private long index;
-	private long length;
-	private String message;
+import com.nextbreakpoint.nextfractal.core.Error;
 
+public class CompilerError extends Error {
 	public CompilerError(ErrorType type, long line, long charPositionInLine, long index, long length, String message) {
-		this.type = type;
-		this.line = line;
-		this.charPositionInLine = charPositionInLine;
-		this.index = index;
-		this.length = length;
-		this.message = message;
-	}
-
-	public ErrorType getType() {
-		return type;
-	}
-
-	public long getLine() {
-		return line;
-	}
-
-	public long getCharPositionInLine() {
-		return charPositionInLine;
-	}
-
-	public String getMessage() {
-		return message;
-	}
-	
-	public long getLength() {
-		return length;
-	}
-	
-	public long getIndex() {
-		return index;
-	}
-
-	@Override
-	public String toString() {
-		return "[" + line + ":" + charPositionInLine + ":" + index + ":" + length + "] " + message;
-	}
-
-	public static enum ErrorType {
-		M_COMPILER, JAVA_COMPILER;
+		super(ErrorType.RUNTIME, line, charPositionInLine, index, length, message);
 	}
 }

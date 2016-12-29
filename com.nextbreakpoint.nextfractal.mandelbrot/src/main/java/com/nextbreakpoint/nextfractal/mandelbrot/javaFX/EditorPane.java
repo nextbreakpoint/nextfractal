@@ -25,6 +25,7 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
 
 import com.nextbreakpoint.Try;
+import com.nextbreakpoint.nextfractal.core.Error;
 import com.nextbreakpoint.nextfractal.core.EventBus;
 import com.nextbreakpoint.nextfractal.core.javaFX.BooleanObservableValue;
 import com.nextbreakpoint.nextfractal.core.utils.Block;
@@ -257,12 +258,12 @@ public class EditorPane extends BorderPane {
 
     private TaskResult updateTextStyles(TaskResult task) {
         codeArea.setStyleSpans(0, task.highlighting);
-        List<CompilerError> errors = task.report.getErrors();
+        List<Error> errors = task.report.getErrors();
         if (errors.size() > 0) {
             Collections.sort(errors, (o1, o2) -> o2.getIndex() < o1.getIndex() ? -1 : 1);
-            for (CompilerError error : errors) {
+            for (Error error : errors) {
                 logger.info(error.toString());
-                if (error.getType() == CompilerError.ErrorType.M_COMPILER) {
+                if (error.getType() == Error.ErrorType.SCRIPT_COMPILER) {
                     int lineEnd = (int)error.getIndex() + 1;
                     int lineBegin = (int)error.getIndex();
                     StyleSpansBuilder<Collection<String>> builder = new StyleSpansBuilder<>();

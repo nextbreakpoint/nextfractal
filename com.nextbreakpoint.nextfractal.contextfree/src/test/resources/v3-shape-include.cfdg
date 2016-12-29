@@ -1,5 +1,3 @@
-CFDG3
-
 import@lib v3-include-box.cfdg
 
 startshape Foo

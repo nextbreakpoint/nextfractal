@@ -24,6 +24,7 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.compiler.java;
 
+import com.nextbreakpoint.nextfractal.core.Error;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerBuilder;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerError;
 
@@ -31,9 +32,9 @@ import java.util.List;
 
 public class JavaClassBuilder<T> implements CompilerBuilder<T> {
 	private Class<T> clazz;
-	private List<CompilerError> errors;
+	private List<Error> errors;
 	
-	public JavaClassBuilder(Class<T> clazz, List<CompilerError> errors) {
+	public JavaClassBuilder(Class<T> clazz, List<Error> errors) {
 		this.clazz = clazz;
 		this.errors = errors;
 	}
@@ -45,7 +46,7 @@ public class JavaClassBuilder<T> implements CompilerBuilder<T> {
 		return clazz.newInstance();
 	}
 
-	public List<CompilerError> getErrors() {
+	public List<Error> getErrors() {
 		return errors;
 	}
 }

@@ -55,17 +55,13 @@ public class ASTReplacement {
 		}
 	}
 
-	public ASTReplacement(CFDGDriver driver, ASTRuleSpecifier shapeSpec, ASTModification childChange, Token location) {
-		this(driver, shapeSpec, childChange, RepElemType.empty, location);
-	}
-
 	public ASTReplacement(CFDGDriver driver, ASTModification childChange, RepElemType repType, Token location) {
 		this(driver, new ASTRuleSpecifier(driver, location), childChange, repType, location);
 	}
 
-	public ASTReplacement(CFDGDriver driver, ASTModification childChange, Token location) {
-		this(driver, new ASTRuleSpecifier(driver, location), childChange, RepElemType.replacement, location);
-	}
+//	public ASTReplacement(CFDGDriver driver, ASTModification childChange, Token location) {
+//		this(driver, new ASTRuleSpecifier(driver, location), childChange, RepElemType.replacement, location);
+//	}
 
 	public ASTReplacement(CFDGDriver driver, String name, Token location) {
 		this(driver, new ASTRuleSpecifier(driver, location), new ASTModification(driver, location), RepElemType.op, location);

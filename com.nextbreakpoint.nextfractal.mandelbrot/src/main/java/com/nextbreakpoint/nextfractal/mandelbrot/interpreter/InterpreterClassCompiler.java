@@ -24,6 +24,7 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.interpreter;
 
+import com.nextbreakpoint.nextfractal.core.Error;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerBuilder;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerError;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerReport;
@@ -36,12 +37,12 @@ import java.util.List;
 
 public class InterpreterClassCompiler {
 	public CompilerBuilder<Orbit> compileOrbit(CompilerReport report) throws ClassNotFoundException, IOException {
-		List<CompilerError> errors = new ArrayList<>();
+		List<Error> errors = new ArrayList<>();
 		return new InterpreterOrbitBuilder(report.getAST(), report.getOrbitSource(), errors);
 	}
 
 	public CompilerBuilder<Color> compileColor(CompilerReport report) throws ClassNotFoundException, IOException {
-		List<CompilerError> errors = new ArrayList<>();
+		List<Error> errors = new ArrayList<>();
 		return new InterpreterColorBuilder(report.getAST(), report.getColorSource(), errors);
 	}
 }	

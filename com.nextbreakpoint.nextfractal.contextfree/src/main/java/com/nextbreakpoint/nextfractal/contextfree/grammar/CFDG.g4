@@ -34,9 +34,9 @@ choose
             driver.pushRepContainer(driver.getCFDGContent());
 		}
 		(
-		CFDG2 cfdg2
+		CFDG2? cfdg2
 		|
-		CFDG3 cfdg3
+		CFDG3? cfdg3
 		) {
             driver.popRepContainer(null);
 		}
@@ -80,14 +80,14 @@ statement_v2 returns [ASTReplacement result]
         | path_v2 {
             $result = $path_v2.result;
         }
-        | v3clues .*? {
+/*        | v3clues .*? {
         	if (driver.getMaybeVersion().equals("CFDG2")) {
         		driver.error("Illegal mixture of old and new elements", $v3clues.start);
         	} else {
         		driver.setMaybeVersion("CFDG3");
         	}
         	$result = null;
-        }
+        }*/
         ;
         
 statement_v3 returns [ASTReplacement result]
@@ -237,6 +237,7 @@ initialization_v2 returns [ASTDefine result]
         : 
         STARTSHAPE s=USER_STRING {
         	String name = $s.getText();
+            driver.setMaybeVersion("CFDG2");
         	driver.setShape(null, $STARTSHAPE);
         	ASTDefine cfg = driver.makeDefinition(CFG.StartShape.getName(), false, $STARTSHAPE);
         	if (cfg != null) {
@@ -312,6 +313,7 @@ rule_header_v2 returns [ASTRule result]
         : 
         RULE s=USER_STRING {
         	String name = $s.getText();
+            driver.setMaybeVersion("CFDG2");
         	driver.setShape(null, $RULE);
         	$result = new ASTRule(driver, driver.stringToShape(name, false, $RULE), $RULE);
         	driver.addRule($result);
@@ -320,6 +322,7 @@ rule_header_v2 returns [ASTRule result]
         |
         RULE s=USER_STRING w=user_rational {
         	String name = $s.getText();
+            driver.setMaybeVersion("CFDG2");
         	Float weight = $w.result.getValue();
         	Boolean percentage = $w.result.isPercentage();
         	driver.setShape(null, $RULE);
@@ -393,6 +396,7 @@ path_header_v2 returns [ASTRule result]
         : 
         PATH s=USER_STRING {
         	String name = $s.getText();
+            driver.setMaybeVersion("CFDG2");
         	driver.setShape(null, $PATH);
         	$result = new ASTRule(driver, driver.stringToShape(name, false, $PATH), $PATH);
         	$result.setPath(true);
@@ -671,14 +675,14 @@ pathOp_v2 returns [ASTReplacement result]
 				$result = null;			
 			}
         }
-        | pathOp_v3clues .*? {
+/*        | pathOp_v3clues .*? {
             if (driver.getMaybeVersion().equals("CFDG2")) {
                 driver.error("Illegal mixture of old and new elements", $pathOp_v3clues.start);
             } else {
                 driver.setMaybeVersion("CFDG3");
             }
             $result = null;
-        }
+        }*/
         ;
 
 pathOp_v3clues
@@ -725,8 +729,9 @@ replacement_simple_v2 returns [ASTReplacement result]
         s=shapeName m=modification_v2 {
         	String name = $s.result;
         	ASTModification mod = $m.result;
+            driver.setMaybeVersion("CFDG2");
         	ASTRuleSpecifier r = driver.makeRuleSpec(name, null, $s.start);
-        	$result = new ASTReplacement(driver, r, mod, $s.start);
+        	$result = new ASTReplacement(driver, r, mod, RepElemType.replacement, $s.start);
         }
         ;
 
@@ -870,10 +875,12 @@ caseHeader returns [Integer result]
 modification_v2 returns [ASTModification result]
         : 
         t='{' m=buncha_adjustments '}' {
+            driver.setMaybeVersion("CFDG2");
         	$result = driver.makeModification($m.result, true, $t);
         }
         |
         t='[' m=buncha_adjustments ']' {
+            driver.setMaybeVersion("CFDG2");
         	$result = driver.makeModification($m.result, false, $t);
         }
         ;
@@ -1315,7 +1322,6 @@ definition returns [ASTDefine result]
         	if (var != null) {
         		if (exp instanceof ASTModification) {
         			ASTModification mod = (ASTModification)exp;
-        			mod.getModData().getRand64Seed().init();
         			var.getChildChange().grab(mod);
         		} else {
         			var.setExp(exp);

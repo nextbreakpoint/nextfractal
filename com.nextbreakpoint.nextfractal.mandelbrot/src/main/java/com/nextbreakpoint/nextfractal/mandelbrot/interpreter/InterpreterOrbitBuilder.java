@@ -24,9 +24,9 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.interpreter;
 
+import com.nextbreakpoint.nextfractal.core.Error;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerBuilder;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerError;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerError.ErrorType;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerSourceException;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.ExpressionContext;
@@ -50,9 +50,9 @@ import java.util.Map;
 public class InterpreterOrbitBuilder implements CompilerBuilder<Orbit> {
 	private ASTFractal astFractal;
 	private String source;
-	private List<CompilerError> errors;
+	private List<Error> errors;
 	
-	public InterpreterOrbitBuilder(ASTFractal astFractal, String source, List<CompilerError> errors) {
+	public InterpreterOrbitBuilder(ASTFractal astFractal, String source, List<Error> errors) {
 		this.astFractal = astFractal;
 		this.source = source;
 		this.errors = errors;
@@ -120,15 +120,15 @@ public class InterpreterOrbitBuilder implements CompilerBuilder<Orbit> {
 			orbit.setTraps(traps);
 			return new InterpreterOrbit(orbit, context);
 		} catch (ASTException e) {
-			errors.add(new CompilerError(ErrorType.M_COMPILER, e.getLocation().getLine(), e.getLocation().getCharPositionInLine(), e.getLocation().getStartIndex(), e.getLocation().getStopIndex() - e.getLocation().getStartIndex(), e.getMessage()));
+			errors.add(new CompilerError(Error.ErrorType.SCRIPT_COMPILER, e.getLocation().getLine(), e.getLocation().getCharPositionInLine(), e.getLocation().getStartIndex(), e.getLocation().getStopIndex() - e.getLocation().getStartIndex(), e.getMessage()));
 			throw new CompilerSourceException("Cannot build orbit", errors);
 		} catch (Exception e) {
-			errors.add(new CompilerError(ErrorType.M_COMPILER, 0, 0, 0, 0, e.getMessage()));
+			errors.add(new CompilerError(Error.ErrorType.SCRIPT_COMPILER, 0, 0, 0, 0, e.getMessage()));
 			throw new CompilerSourceException("Cannot build orbit", errors);
 		}
 	}
 
-	public List<CompilerError> getErrors() {
+	public List<Error> getErrors() {
 		return errors;
 	}
 }

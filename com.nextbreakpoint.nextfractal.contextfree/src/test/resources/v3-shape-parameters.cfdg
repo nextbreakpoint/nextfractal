@@ -1,5 +1,3 @@
-CFDG3
-
 startshape grass
 
 shape curve(number shrink, number turn)

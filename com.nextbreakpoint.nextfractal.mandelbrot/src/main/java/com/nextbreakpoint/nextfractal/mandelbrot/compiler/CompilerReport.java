@@ -24,6 +24,7 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.compiler;
 
+import com.nextbreakpoint.nextfractal.core.Error;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTFractal;
 
 import java.util.List;
@@ -33,10 +34,10 @@ public class CompilerReport {
 	private Type type;
 	private String orbitSource;
 	private String colorSource;
-	private List<CompilerError> errors;
+	private List<Error> errors;
 	private String source;
 
-	public CompilerReport(ASTFractal ast, Type type, String source, String orbitSource, String colorSource, List<CompilerError> errors) {
+	public CompilerReport(ASTFractal ast, Type type, String source, String orbitSource, String colorSource, List<Error> errors) {
 		this.ast = ast;
 		this.type = type;
 		this.source = source;
@@ -57,7 +58,7 @@ public class CompilerReport {
 		return colorSource;
 	}
 
-	public List<CompilerError> getErrors() {
+	public List<Error> getErrors() {
 		return errors;
 	}
 

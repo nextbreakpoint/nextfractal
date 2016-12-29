@@ -1,5 +1,3 @@
-CFDG3
-
 startshape blah
 
 CF::Background = [hue 120 sat 1 b -0.5]

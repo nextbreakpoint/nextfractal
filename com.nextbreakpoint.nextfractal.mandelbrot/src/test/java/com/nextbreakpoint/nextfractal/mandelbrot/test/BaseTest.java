@@ -24,6 +24,7 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.test;
 
+import com.nextbreakpoint.nextfractal.core.Error;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerError;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTBuilder;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTFractal;
@@ -59,8 +60,8 @@ public abstract class BaseTest {
         return null;
 	}
 	
-	protected void printErrors(List<CompilerError> errors) {
-		for (CompilerError error : errors) {
+	protected void printErrors(List<Error> errors) {
+		for (Error error : errors) {
 			System.out.println(error.toString());
 		}
 	}

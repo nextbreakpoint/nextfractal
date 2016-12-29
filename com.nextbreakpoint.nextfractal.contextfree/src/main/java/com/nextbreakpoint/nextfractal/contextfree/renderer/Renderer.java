@@ -28,6 +28,7 @@ import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDG;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGLogger;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGRenderer;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.SimpleCanvas;
+import com.nextbreakpoint.nextfractal.core.Error;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererAffine;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererFactory;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererGraphicsContext;
@@ -59,7 +60,7 @@ public class Renderer {
 	protected final RendererFactory renderFactory;
 	protected volatile RendererDelegate rendererDelegate;
 	protected volatile RendererSurface buffer;
-	protected volatile List<RendererError> errors = new ArrayList<>();
+	protected volatile List<Error> errors = new ArrayList<>();
 	protected volatile boolean aborted;
 	protected volatile boolean interrupted;
 	protected volatile boolean cfdgChanged;
@@ -420,8 +421,8 @@ public class Renderer {
 		}
 	}
 
-	public List<RendererError> getErrors() {
-		List<RendererError> result = new ArrayList<>(errors);
+	public List<Error> getErrors() {
+		List<Error> result = new ArrayList<>(errors);
 		errors.clear();
 		return result;
 	}

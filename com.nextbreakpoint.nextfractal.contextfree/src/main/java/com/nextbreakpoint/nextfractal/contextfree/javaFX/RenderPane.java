@@ -35,6 +35,7 @@ import com.nextbreakpoint.nextfractal.contextfree.compiler.CompilerSourceExcepti
 import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDG;
 import com.nextbreakpoint.nextfractal.contextfree.renderer.RendererCoordinator;
 import com.nextbreakpoint.nextfractal.contextfree.renderer.RendererError;
+import com.nextbreakpoint.nextfractal.core.Error;
 import com.nextbreakpoint.nextfractal.core.EventBus;
 import com.nextbreakpoint.nextfractal.core.Session;
 import com.nextbreakpoint.nextfractal.core.javaFX.BooleanObservableValue;
@@ -372,7 +373,7 @@ public class RenderPane extends BorderPane {
 		return tile;
 	}
 
-	private void updateCompilerErrors(String message, List<CompilerError> errors, String source) {
+	private void updateCompilerErrors(String message, List<Error> errors, String source) {
 		disableTool = message != null;
 		Platform.runLater(() -> {
 			statusProperty.setValue(null);
@@ -382,7 +383,7 @@ public class RenderPane extends BorderPane {
 				builder.append(message);
 				if (errors != null) {
 					builder.append("\n\n");
-					for (CompilerError error : errors) {
+					for (Error error : errors) {
 						builder.append("Line ");
 						builder.append(error.getLine());
 						builder.append(": ");
@@ -403,7 +404,7 @@ public class RenderPane extends BorderPane {
 		});
 	}
 
-	private void updateRendererErrors(String message, List<RendererError> errors, String source) {
+	private void updateRendererErrors(String message, List<Error> errors, String source) {
 		disableTool = message != null;
 		Platform.runLater(() -> {
 			statusProperty.setValue(null);
@@ -413,7 +414,7 @@ public class RenderPane extends BorderPane {
 				builder.append(message);
 				if (errors != null) {
 					builder.append("\n\n");
-					for (RendererError error : errors) {
+					for (Error error : errors) {
 						builder.append("Line ");
 						builder.append(error.getLine());
 						builder.append(": ");
@@ -480,7 +481,7 @@ public class RenderPane extends BorderPane {
 
 	private void processRenderErrors() {
 		if (coordinator != null) {
-			List<RendererError> errors = coordinator.getErrors();
+			List<Error> errors = coordinator.getErrors();
 			if (errors.isEmpty()) {
 				updateRendererErrors(null, null, null);
 			} else {

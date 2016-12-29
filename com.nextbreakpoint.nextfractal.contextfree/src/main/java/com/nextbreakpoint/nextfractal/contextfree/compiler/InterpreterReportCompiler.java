@@ -28,8 +28,10 @@ import com.nextbreakpoint.nextfractal.contextfree.compiler.CompilerReport.Type;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDG;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGDriver;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGLexer;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGLogger;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGParser;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.exceptions.CFDGException;
+import com.nextbreakpoint.nextfractal.core.Error;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 
@@ -46,29 +48,32 @@ public class InterpreterReportCompiler {
 	private static final String INCLUDE_LOCATION = "include.location";
 
 	public CompilerReport generateReport(String source) throws IOException {
-		List<CompilerError> errors = new ArrayList<>();
+		List<Error> errors = new ArrayList<>();
 		CFDG cfdg = parse(source, errors);
 		return new CompilerReport(cfdg, Type.INTERPRETER, source, errors);
 	}
 	
-	private CFDG parse(String source, List<CompilerError> errors) throws IOException {
+	private CFDG parse(String source, List<Error> errors) throws IOException {
 		try {
 			ANTLRInputStream is = new ANTLRInputStream(new StringReader(source));
 			CFDGLexer lexer = new CFDGLexer(is);
 			CommonTokenStream tokens = new CommonTokenStream(lexer);
 			CFDGParser parser = new CFDGParser(tokens);
 			parser.setDriver(new CFDGDriver());
+			CFDGLogger logger = new CFDGLogger();
+			parser.getDriver().setLogger(logger);
 			parser.setErrorHandler(new CompilerErrorStrategy(errors));
 			parser.getDriver().setCurrentPath(getIncludeDir());
 			if (parser.choose() != null) {
+				errors.addAll(logger.getErrors());
 				return parser.getDriver().getCFDG();
 			}
 		} catch (CFDGException e) {
-			CompilerError error = new CompilerError(CompilerError.ErrorType.CFDG_COMPILER, e.getLocation().getLine(), e.getLocation().getCharPositionInLine(), e.getLocation().getStartIndex(), e.getLocation().getStopIndex() - e.getLocation().getStartIndex(), e.getMessage());
+			CompilerError error = new CompilerError(Error.ErrorType.SCRIPT_COMPILER, e.getLocation().getLine(), e.getLocation().getCharPositionInLine(), e.getLocation().getStartIndex(), e.getLocation().getStopIndex() - e.getLocation().getStartIndex(), e.getMessage());
 			logger.log(Level.FINE, error.toString(), e);
 			errors.add(error);
 		} catch (Exception e) {
-			CompilerError error = new CompilerError(CompilerError.ErrorType.CFDG_RUNTIME, 0L, 0L, 0L, 0L, e.getMessage());
+			CompilerError error = new CompilerError(Error.ErrorType.SCRIPT_COMPILER, 0L, 0L, 0L, 0L, e.getMessage());
 			logger.log(Level.FINE, error.toString(), e);
 			errors.add(error);
 		}

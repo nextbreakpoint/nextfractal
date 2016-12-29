@@ -25,6 +25,7 @@
 package com.nextbreakpoint.nextfractal.contextfree.compiler;
 
 import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDG;
+import com.nextbreakpoint.nextfractal.core.Error;
 
 import java.util.List;
 
@@ -32,9 +33,9 @@ public class CompilerReport {
 	private CFDG cfdg;
 	private Type type;
 	private String source;
-	private List<CompilerError> errors;
+	private List<Error> errors;
 
-	public CompilerReport(CFDG cfdg, Type type, String source, List<CompilerError> errors) {
+	public CompilerReport(CFDG cfdg, Type type, String source, List<Error> errors) {
 		this.cfdg = cfdg;
 		this.type = type;
 		this.source = source;
@@ -49,7 +50,7 @@ public class CompilerReport {
 		return source;
 	}
 
-	public List<CompilerError> getErrors() {
+	public List<Error> getErrors() {
 		return errors;
 	}
 
