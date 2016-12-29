@@ -55,6 +55,7 @@ import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererView;
 import javafx.scene.layout.Pane;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ThreadFactory;
 

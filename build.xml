@@ -195,6 +195,11 @@
 		    	<include name="**/*.sh"/>
 			</fileset>
 		</replaceregexp>
+		<replaceregexp match="&lt;string&gt;[0-9]\.[0-9]\.[0-9]&lt;/string&gt;" replace="&lt;string&gt;${nextfractal.version}&lt;/string&gt;" flags="g" byline="true">
+			<fileset dir="${basedir}/..">
+				<include name="**/*.plist"/>
+			</fileset>
+		</replaceregexp>
 		<maven basedir="${basedir}" goal="versions:set" resultproperty="maven.build.result" options="-DnewVersion=${nextfractal.version}"/>
 		<maven basedir="${basedir}" goal="versions:commit" resultproperty="maven.build.result"/>
 	</target>

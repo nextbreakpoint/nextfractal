@@ -51,8 +51,8 @@ public class GridViewCell extends BorderPane {
 	}
 
 	public void update() {
-		if (data != null) {
-			GridItem item = (GridItem)data;
+		GridItem item = (GridItem)data;
+		if (item != null) {
 			GridItemRenderer renderer = item.getRenderer();
 			if (renderer != null) {
 				if (redraw || renderer.isPixelsChanged()) {
@@ -60,16 +60,19 @@ public class GridViewCell extends BorderPane {
 					renderer.drawImage(gc, 0, 0);
 					redraw = false;
 				}
-			} else {
-				if (redraw) {
-					GraphicsContext g2d = canvas.getGraphicsContext2D();
-					g2d.setFill(Color.WHITE);
-					g2d.fillRect(0, 0, getWidth(), getHeight());
-					g2d.setFill(Color.DARKGRAY);
-					g2d.setTextAlign(TextAlignment.CENTER);
+			} else if (redraw) {
+				GraphicsContext g2d = canvas.getGraphicsContext2D();
+				g2d.setFill(Color.WHITE);
+				g2d.fillRect(0, 0, getWidth(), getHeight());
+				g2d.setFill(Color.DARKGRAY);
+				g2d.setTextAlign(TextAlignment.CENTER);
+				BrowseBitmap bitmap = item.getBitmap();
+				if ((bitmap == null || renderer == null) && item.getErrors().size() > 0) {
+					g2d.fillText("Error", getWidth() / 2, getHeight() / 2);
+				} else if (bitmap == null) {
 					g2d.fillText("Rendering...", getWidth() / 2, getHeight() / 2);
-					redraw = false;
 				}
+				redraw = false;
 			}
 		} else {
 			if (redraw) {

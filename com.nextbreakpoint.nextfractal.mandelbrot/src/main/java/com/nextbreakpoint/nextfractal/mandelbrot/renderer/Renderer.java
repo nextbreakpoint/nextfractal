@@ -24,6 +24,7 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.renderer;
 
+import com.nextbreakpoint.nextfractal.core.Error;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererAffine;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererFactory;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererGraphicsContext;
@@ -31,7 +32,6 @@ import com.nextbreakpoint.nextfractal.core.renderer.RendererPoint;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSurface;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
-import com.nextbreakpoint.nextfractal.core.renderer.java2D.Java2DRendererGraphicsContext;
 import com.nextbreakpoint.nextfractal.core.utils.Colors;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Color;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.MutableNumber;
@@ -76,7 +76,7 @@ public class Renderer {
 	protected volatile boolean regionChanged;
 	protected volatile boolean juliaChanged;
 	protected volatile boolean pointChanged;
-	protected volatile List<RendererError> errors = new ArrayList<>();
+	protected volatile List<Error> errors = new ArrayList<>();
 	protected volatile float progress;
 	protected volatile double rotation;
 	protected volatile RendererTile previewTile;
@@ -790,8 +790,8 @@ public class Renderer {
 		return contentRendererFractal.getOrbit().getTraps();
 	}
 
-	public List<RendererError> getErrors() {
-		List<RendererError> result = new ArrayList<>(errors);
+	public List<Error> getErrors() {
+		List<Error> result = new ArrayList<>(errors);
 		errors.clear();
 		return result;
 	}

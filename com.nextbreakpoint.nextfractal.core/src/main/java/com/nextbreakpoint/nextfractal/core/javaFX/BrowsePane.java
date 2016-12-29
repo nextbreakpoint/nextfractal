@@ -25,7 +25,9 @@
 package com.nextbreakpoint.nextfractal.core.javaFX;
 
 import com.nextbreakpoint.Try;
+import com.nextbreakpoint.nextfractal.core.Error;
 import com.nextbreakpoint.nextfractal.core.FileManager;
+import com.nextbreakpoint.nextfractal.core.Plugins;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererPoint;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
@@ -51,6 +53,7 @@ import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Callable;
@@ -75,6 +78,7 @@ public class BrowsePane extends BorderPane {
 	private final StringObservableValue importPathProperty;
 	private final int numRows = 3;
 	private final int numCols = 3;
+	private final LinkedList<String> filter = new LinkedList<>();
 	private List<GridItem> items = new ArrayList<>();
 	private BrowseDelegate delegate;
 	private DirectoryChooser sourceDirectoryChooser;
@@ -93,6 +97,10 @@ public class BrowsePane extends BorderPane {
 		setMinHeight(height);
 		setMaxHeight(height);
 		setPrefHeight(height);
+
+		filter.add(".nf.zip");
+
+		Plugins.factories().forEach(f -> filter.addAll(f.createFileManager().getSupportedFiles()));
 
 		Preferences prefs = Preferences.userNodeForPackage(BrowsePane.class);
 		
@@ -399,7 +407,7 @@ public class BrowsePane extends BorderPane {
 		Preferences prefs = Preferences.userNodeForPackage(BrowsePane.class);
 		prefs.put(BROWSER_DEFAULT_LOCATION, folder.getAbsolutePath());
 		if (delegate != null) {
-			return folder.listFiles((dir, name) -> name.endsWith(".m") || name.endsWith(".nf.zip"));
+			return folder.listFiles((dir, name) -> filter.stream().filter(e -> name.endsWith(e)).findFirst().isPresent());
 		} else {
 			return new File[0];
 		}
@@ -455,6 +463,7 @@ public class BrowsePane extends BorderPane {
 				item.setBitmap(delegate.createBitmap(item.getFile(), tile.getTileSize()));
 			}
 		} catch (Exception e) {
+			item.setErrors(Arrays.asList(new Error(Error.ErrorType.RUNTIME, 0, 0, 0, 0, e.getMessage())));
 			logger.log(Level.WARNING, "Can't create bitmap", e);
 		}
 	}
@@ -570,6 +579,7 @@ public class BrowsePane extends BorderPane {
 				item.setRenderer(delegate.createRenderer(bitmap));
 			}
 		} catch (Exception e) {
+			item.setErrors(Arrays.asList(new Error(Error.ErrorType.RUNTIME, 0, 0, 0, 0, e.getMessage())));
 			logger.log(Level.WARNING, "Can't initialize renderer", e);
 		}
 	}

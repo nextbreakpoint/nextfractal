@@ -35,6 +35,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -54,30 +55,28 @@ public abstract class FileManager {
     protected abstract Try<Bundle, Exception> loadEntries(List<FileManagerEntry> entries);
 
     public static Try<Bundle, Exception> loadFile(File file) {
-        if (file.getName().endsWith(".m")) {
-            return loadMandelbrotBundle(file);
-        } else {
-            try (ZipInputStream is = new ZipInputStream(new FileInputStream(file))) {
-                return loadBundle(is).execute();
-            } catch (Exception e) {
-                return Try.failure(e);
-            }
-        }
+        return Plugins.factories().filter(f -> f.createFileManager().canImportFile(file)).findFirst()
+            .map(f -> f.createFileManager().importBundle(file)).orElseGet(() -> loadBundle(file));
     }
 
-    public static Try<Bundle, Exception> saveFile(File file, Bundle bundle) {
-        try (ZipOutputStream os = new ZipOutputStream(new FileOutputStream(file))) {
-            return writeBundle(os, bundle).execute();
+    private static Try<Bundle, Exception> loadBundle(File file) {
+        try (ZipInputStream is = new ZipInputStream(new FileInputStream(file))) {
+            return loadBundle(is).execute();
         } catch (Exception e) {
             return Try.failure(e);
         }
     }
 
-    private static Try<Bundle, Exception> loadMandelbrotBundle(File file) {
-        List<FileManagerEntry> entries = new LinkedList<>();
-        entries.add(new FileManagerEntry("m-script", file.getAbsolutePath().getBytes()));
-        return tryFindFactory("Mandelbrot").map(FractalFactory::createFileManager)
-            .flatMap(manager -> manager.loadEntries(entries));
+    public static Try<Bundle, Exception> saveFile(File file, Bundle bundle) {
+        return saveBundle(file, bundle);
+    }
+
+    private static Try<Bundle, Exception> saveBundle(File file, Bundle bundle) {
+        try (ZipOutputStream os = new ZipOutputStream(new FileOutputStream(file))) {
+            return writeBundle(os, bundle).execute();
+        } catch (Exception e) {
+            return Try.failure(e);
+        }
     }
 
     private static Try<Bundle, Exception> loadBundle(ZipInputStream is) {
@@ -257,4 +256,10 @@ public abstract class FileManager {
     protected abstract Object decodeMetadata(String metadata) throws Exception;
 
     protected abstract String encodeMetadata(Object metadata) throws Exception;
+
+    public abstract Try<Bundle, Exception> importBundle(File file);
+
+    public abstract boolean canImportFile(File file);
+
+    public abstract List<String> getSupportedFiles();
 }

@@ -32,6 +32,12 @@ import com.nextbreakpoint.nextfractal.core.FileManager;
 import com.nextbreakpoint.nextfractal.core.FileManagerEntry;
 import com.nextbreakpoint.nextfractal.core.FileManifest;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -43,7 +49,39 @@ public class ContextFreeFileManager extends FileManager {
 
     @Override
     protected Try<Bundle, Exception> loadEntries(List<FileManagerEntry> entries) {
-        return Try.of(() -> createBundle(entries));
+        return entries.stream().filter(this::isCFDGScript).findFirst()
+            .map(this::loadBundle).orElse(Try.of(() -> createBundle(entries)));
+    }
+
+    public List<String> getSupportedFiles() {
+        return Arrays.asList(".cfdg");
+    }
+
+    public boolean canImportFile(File file) {
+        return file.getName().endsWith(".cfdg");
+    }
+
+    public Try<Bundle, Exception> importBundle(File file) {
+        return Try.of(() -> file).filter(f -> ((File)f).getName().endsWith(".cfdg"))
+            .map(this::loadContextFreeBundle).orElseGet(() -> createImportFailure());
+    }
+
+    private Try<Bundle, Exception> createImportFailure() {
+        return Try.failure(new Exception("File format not recognized"));
+    }
+
+    private Try<Bundle, Exception> loadContextFreeBundle(File file) {
+        List<FileManagerEntry> entries = new LinkedList<>();
+        entries.add(new FileManagerEntry("cfdg-script", file.getAbsolutePath().getBytes()));
+        return loadEntries(entries);
+    }
+
+    private boolean isCFDGScript(FileManagerEntry entry) {
+        return entry.getName().equals("cfdg-script");
+    }
+
+    private Try<Bundle, Exception> loadBundle(FileManagerEntry entry) {
+        return Try.of(() -> new FileInputStream(new String(entry.getData()))).flatMap(this::loadBundle);
     }
 
     private Bundle createBundle(List<FileManagerEntry> entries) throws Exception {
@@ -79,6 +117,24 @@ public class ContextFreeFileManager extends FileManager {
         entries.add(new FileManagerEntry("clips", encodeClips(bundle.getClips()).orThrow()));
 
         return entries;
+    }
+
+    private Try<Bundle, Exception> loadBundle(InputStream is) {
+        return loadFromStream(is).map(result -> new Bundle(new ContextFreeSession(result, new ContextFreeMetadata("ABCD")), new LinkedList<>()));
+    }
+
+    public Try<String, Exception> loadFromStream(InputStream stream) {
+        return Try.of(() -> readAll(stream)).mapper(e -> new Exception("Cannot load data from stream"));
+    }
+
+    private String readAll(InputStream stream) throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        byte[] buffer = new byte[4096];
+        int len = 0;
+        while ((len = stream.read(buffer)) > 0) {
+            baos.write(buffer, 0, len);
+        }
+        return baos.toString("UTF-8");
     }
 
     @Override

@@ -992,7 +992,7 @@ public class RenderPane extends BorderPane {
 		});
 	}
 
-	private void updateRendererErrors(String message, List<RendererError> errors, String source) {
+	private void updateRendererErrors(String message, List<Error> errors, String source) {
 		disableTool = message != null;
 		Platform.runLater(() -> {
 			statusProperty.setValue(null);
@@ -1002,7 +1002,7 @@ public class RenderPane extends BorderPane {
 				builder.append(message);
 				if (errors != null) {
 					builder.append("\n\n");
-					for (RendererError error : errors) {
+					for (Error error : errors) {
 						builder.append("Line ");
 						builder.append(error.getLine());
 						builder.append(": ");
@@ -1183,7 +1183,7 @@ public class RenderPane extends BorderPane {
 		if (coordinators != null && coordinators.length > 0) {
 			RendererCoordinator coordinator = coordinators[0];
 			if (coordinator != null) {
-				List<RendererError> errors = coordinator.getErrors();
+				List<Error> errors = coordinator.getErrors();
 				if (errors.isEmpty()) {
 					updateRendererErrors(null, null, null);
 				} else {
