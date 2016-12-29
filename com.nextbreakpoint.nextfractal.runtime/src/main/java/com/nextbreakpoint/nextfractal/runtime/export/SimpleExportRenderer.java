@@ -26,12 +26,10 @@ package com.nextbreakpoint.nextfractal.runtime.export;
 
 import com.nextbreakpoint.Try;
 import com.nextbreakpoint.nextfractal.core.ImageComposer;
-import com.nextbreakpoint.nextfractal.core.ImageGenerator;
 import com.nextbreakpoint.nextfractal.core.export.ExportJobHandle;
 import com.nextbreakpoint.nextfractal.core.export.ExportJobState;
 import com.nextbreakpoint.nextfractal.core.export.ExportProfile;
 import com.nextbreakpoint.nextfractal.core.export.ExportRenderer;
-import com.nextbreakpoint.nextfractal.core.renderer.RendererFactory;
 
 import java.io.IOException;
 import java.nio.IntBuffer;

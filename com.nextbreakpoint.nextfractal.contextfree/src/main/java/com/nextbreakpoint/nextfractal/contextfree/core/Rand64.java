@@ -27,7 +27,7 @@ package com.nextbreakpoint.nextfractal.contextfree.core;
 import java.util.Random;
 import java.util.function.UnaryOperator;
 
-import static org.apache.commons.math3.special.Gamma.*;
+import static org.apache.commons.math3.special.Gamma.logGamma;
 
 public class Rand64 implements Cloneable {
 	private static long RAND64_SEED  = 0x3DF41234;

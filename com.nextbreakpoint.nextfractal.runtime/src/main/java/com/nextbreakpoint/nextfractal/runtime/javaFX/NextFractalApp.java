@@ -568,7 +568,11 @@ public class NextFractalApp extends Application {
 		bundleFileChooser.setTitle("Save");
 		if (getBundleCurrentFile() != null) {
 			bundleFileChooser.setInitialDirectory(getBundleCurrentFile().getParentFile());
-			bundleFileChooser.setInitialFileName(getBundleCurrentFile().getName());
+			if (getBundleCurrentFile().getName().endsWith(FILE_EXTENSION)) {
+				bundleFileChooser.setInitialFileName(getBundleCurrentFile().getName());
+			} else {
+				bundleFileChooser.setInitialFileName(createFileName() + FILE_EXTENSION);
+			}
 		}
 		return bundleFileChooser;
 	}

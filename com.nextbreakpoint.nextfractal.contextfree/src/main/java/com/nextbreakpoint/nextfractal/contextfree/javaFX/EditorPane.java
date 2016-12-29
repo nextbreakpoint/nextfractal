@@ -28,7 +28,6 @@ import com.nextbreakpoint.Try;
 import com.nextbreakpoint.nextfractal.contextfree.ContextFreeMetadata;
 import com.nextbreakpoint.nextfractal.contextfree.ContextFreeSession;
 import com.nextbreakpoint.nextfractal.contextfree.compiler.Compiler;
-import com.nextbreakpoint.nextfractal.contextfree.compiler.CompilerError;
 import com.nextbreakpoint.nextfractal.contextfree.compiler.CompilerReport;
 import com.nextbreakpoint.nextfractal.contextfree.compiler.CompilerSourceException;
 import com.nextbreakpoint.nextfractal.core.Error;

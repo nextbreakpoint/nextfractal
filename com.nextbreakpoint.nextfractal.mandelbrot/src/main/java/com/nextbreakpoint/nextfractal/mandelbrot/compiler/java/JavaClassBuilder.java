@@ -26,7 +26,6 @@ package com.nextbreakpoint.nextfractal.mandelbrot.compiler.java;
 
 import com.nextbreakpoint.nextfractal.core.Error;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerBuilder;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerError;
 
 import java.util.List;
 

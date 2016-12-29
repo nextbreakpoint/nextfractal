@@ -25,7 +25,6 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.test;
 
 import com.nextbreakpoint.nextfractal.core.Error;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerError;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTBuilder;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTFractal;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.MandelbrotLexer;

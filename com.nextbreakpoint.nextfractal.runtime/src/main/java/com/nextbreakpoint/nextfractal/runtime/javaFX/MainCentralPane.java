@@ -39,7 +39,6 @@ import com.nextbreakpoint.nextfractal.core.javaFX.PlaybackDelegate;
 import com.nextbreakpoint.nextfractal.core.javaFX.PlaybackPane;
 import com.nextbreakpoint.nextfractal.core.javaFX.RecordingPane;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
-import java.util.List;
 import javafx.animation.FadeTransition;
 import javafx.animation.Interpolator;
 import javafx.animation.TranslateTransition;
@@ -52,6 +51,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
 import java.io.File;
+import java.util.List;
 
 import static com.nextbreakpoint.nextfractal.core.Plugins.tryFindFactory;
 

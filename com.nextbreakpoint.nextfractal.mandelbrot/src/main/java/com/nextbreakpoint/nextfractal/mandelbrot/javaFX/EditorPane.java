@@ -33,7 +33,6 @@ import com.nextbreakpoint.nextfractal.core.utils.DefaultThreadFactory;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotMetadata;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotSession;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.Compiler;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerError;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerReport;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerSourceException;
 import javafx.concurrent.Task;

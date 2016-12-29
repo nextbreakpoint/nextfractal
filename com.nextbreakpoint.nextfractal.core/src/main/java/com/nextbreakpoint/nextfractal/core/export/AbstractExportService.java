@@ -26,11 +26,11 @@ package com.nextbreakpoint.nextfractal.core.export;
 
 import javafx.application.Platform;
 
-import java.util.List;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
