@@ -26,12 +26,11 @@ package com.nextbreakpoint.nextfractal.core.javaFX;
 
 import com.nextbreakpoint.Try;
 import com.nextbreakpoint.nextfractal.core.FractalFactory;
-import com.nextbreakpoint.nextfractal.core.ImageGenerator;
+import com.nextbreakpoint.nextfractal.core.ImageComposer;
 import com.nextbreakpoint.nextfractal.core.export.ExportSession;
 import com.nextbreakpoint.nextfractal.core.export.ExportState;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
-import com.nextbreakpoint.nextfractal.core.renderer.javaFX.JavaFXRendererFactory;
 import com.nextbreakpoint.nextfractal.core.utils.DefaultThreadFactory;
 import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
@@ -110,7 +109,7 @@ public class JobsPane extends BorderPane {
         removeButton.setOnAction(e -> selectedItems(listView)
             .forEach(bitmap -> Optional.ofNullable(delegate).ifPresent(delegate -> delegate.sessionStopped((ExportSession) bitmap.getProperty("exportSession")))));
 
-        executor = Executors.newSingleThreadExecutor(createThreadFactory("Jobs List"));
+        executor = Executors.newSingleThreadExecutor(createThreadFactory("Jobs"));
     }
 
     private boolean isExportSessionSuspended(Bitmap bitmap) {
@@ -175,12 +174,12 @@ public class JobsPane extends BorderPane {
         }
     }
 
-    private void submitItem(ExportSession session, ImageGenerator generator) {
-        executor.submit(() -> Try.of(() -> renderImage(session, generator)).ifPresent(pixels -> Platform.runLater(() -> addItem(listView, session, pixels, generator.getSize()))));
+    private void submitItem(ExportSession session, ImageComposer composer) {
+        executor.submit(() -> Try.of(() -> renderImage(session, composer)).ifPresent(pixels -> Platform.runLater(() -> addItem(listView, session, pixels, composer.getSize()))));
     }
 
-    private IntBuffer renderImage(ExportSession session, ImageGenerator generator) {
-        return generator.renderImage(session.getFrames().get(0).getScript(), session.getFrames().get(0).getMetadata());
+    private IntBuffer renderImage(ExportSession session, ImageComposer composer) {
+        return composer.renderImage(session.getFrames().get(0).getScript(), session.getFrames().get(0).getMetadata());
     }
 
     private void addItem(ListView<Bitmap> listView, ExportSession session, IntBuffer pixels, RendererSize size) {
@@ -216,11 +215,11 @@ public class JobsPane extends BorderPane {
     }
 
     public void appendSession(ExportSession session) {
-        tryFindFactory(session.getFrames().get(0).getPluginId()).map(factory -> createImageGenerator(factory)).ifPresent(generator -> submitItem(session, generator));
+        tryFindFactory(session.getFrames().get(0).getPluginId()).map(this::createImageComposer).ifPresent(composer -> submitItem(session, composer));
     }
 
-    private ImageGenerator createImageGenerator(FractalFactory factory) {
-        return factory.createImageGenerator(createThreadFactory("Jobs Renderer"), new JavaFXRendererFactory(), tile, true);
+    private ImageComposer createImageComposer(FractalFactory factory) {
+        return factory.createImageComposer(createThreadFactory("Jobs Composer"), tile, true);
     }
 
     public void updateSession(ExportSession exportSession, ExportState state, Float progress) {

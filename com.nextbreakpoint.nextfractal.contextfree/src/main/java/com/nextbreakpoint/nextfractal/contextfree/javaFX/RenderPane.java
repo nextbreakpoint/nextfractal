@@ -220,7 +220,7 @@ public class RenderPane extends BorderPane {
 
 		eventBus.subscribe("session-report-changed", event -> updateReport((CompilerReport) event[0]));
 
-		eventBus.subscribe("session-data-loaded", event -> loadData(event));
+//		eventBus.subscribe("session-data-loaded", event -> loadData(event));
 
 		eventBus.subscribe("session-data-changed", event -> updateData(event));
 

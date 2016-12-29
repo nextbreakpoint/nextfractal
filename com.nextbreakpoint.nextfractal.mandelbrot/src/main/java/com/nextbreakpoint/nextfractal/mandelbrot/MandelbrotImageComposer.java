@@ -98,7 +98,7 @@ public class MandelbrotImageComposer implements ImageComposer {
 			}
 			Java2DRendererFactory renderFactory = new Java2DRendererFactory();
 			Renderer renderer = new Renderer(threadFactory, renderFactory, tile);
-			if (metadata.getOptions().isShowPreview()) {
+			if (metadata.getOptions().isShowPreview() && !metadata.isJulia()) {
 				int previewWidth = (int) Math.rint(tile.getImageSize().getWidth() * metadata.getOptions().getPreviewSize().getX());
 				int previewHeight = (int) Math.rint(tile.getImageSize().getHeight() * metadata.getOptions().getPreviewSize().getY());
 				RendererSize tileSize = new RendererSize(previewWidth, previewHeight);
@@ -132,7 +132,7 @@ public class MandelbrotImageComposer implements ImageComposer {
 			renderer.copyImage(renderContext);
 			RendererRegion region = new RendererRegion(orbit.getInitialRegion());
 			renderContext.setAffine(createTransform(renderFactory, tile));
-			renderContext.setStrokeLine(2f, RendererGraphicsContext.CAP_BUTT, RendererGraphicsContext.JOIN_MITER, 1f);
+			renderContext.setStrokeLine(tile.getImageSize().getWidth() * 0.002f, RendererGraphicsContext.CAP_BUTT, RendererGraphicsContext.JOIN_MITER, 1f);
 			if (metadata.getOptions().isShowTraps()) {
 				drawTraps(renderFactory, renderContext, tile.getImageSize(), region, metadata, orbit.getTraps());
 			}

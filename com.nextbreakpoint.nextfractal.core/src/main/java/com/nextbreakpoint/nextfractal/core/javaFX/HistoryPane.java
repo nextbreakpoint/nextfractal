@@ -25,11 +25,11 @@
 package com.nextbreakpoint.nextfractal.core.javaFX;
 
 import com.nextbreakpoint.Try;
-import com.nextbreakpoint.nextfractal.core.ImageGenerator;
+import com.nextbreakpoint.nextfractal.core.FractalFactory;
+import com.nextbreakpoint.nextfractal.core.ImageComposer;
 import com.nextbreakpoint.nextfractal.core.Session;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
-import com.nextbreakpoint.nextfractal.core.renderer.javaFX.JavaFXRendererFactory;
 import com.nextbreakpoint.nextfractal.core.utils.DefaultThreadFactory;
 import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
@@ -68,7 +68,7 @@ public class HistoryPane extends BorderPane {
 
         listView.getSelectionModel().getSelectedItems().addListener((ListChangeListener.Change<? extends Bitmap> c) -> itemSelected(listView));
 
-        executor = Executors.newSingleThreadExecutor(new DefaultThreadFactory("History Generator", true, Thread.MIN_PRIORITY));
+        executor = Executors.newSingleThreadExecutor(new DefaultThreadFactory("History", true, Thread.MIN_PRIORITY));
     }
 
     private DefaultThreadFactory createThreadFactory(String name) {
@@ -88,9 +88,9 @@ public class HistoryPane extends BorderPane {
         }
     }
 
-    private void submitItem(Session session, ImageGenerator generator) {
-        executor.submit(() -> Try.of(() -> generator.renderImage(session.getScript(), session.getMetadata()))
-            .ifPresent(pixels -> Platform.runLater(() -> addItem(listView, session, pixels, generator.getSize()))));
+    private void submitItem(Session session, ImageComposer composer) {
+        executor.submit(() -> Try.of(() -> composer.renderImage(session.getScript(), session.getMetadata()))
+            .ifPresent(pixels -> Platform.runLater(() -> addItem(listView, session, pixels, composer.getSize()))));
     }
 
     private void addItem(ListView<Bitmap> listView, Session session, IntBuffer pixels, RendererSize size) {
@@ -100,8 +100,11 @@ public class HistoryPane extends BorderPane {
     }
 
     public void appendSession(Session session) {
-        tryFindFactory(session.getPluginId()).map(factory -> factory.createImageGenerator(createThreadFactory("History Renderer"),
-            new JavaFXRendererFactory(), tile, true)).ifPresent(generator -> submitItem(session, generator));
+        tryFindFactory(session.getPluginId()).map(this::createImageComposer).ifPresent(composer -> submitItem(session, composer));
+    }
+
+    private ImageComposer createImageComposer(FractalFactory factory) {
+        return factory.createImageComposer(createThreadFactory("History Composer"), tile, true);
     }
 
     public void setDelegate(HistoryDelegate delegate) {

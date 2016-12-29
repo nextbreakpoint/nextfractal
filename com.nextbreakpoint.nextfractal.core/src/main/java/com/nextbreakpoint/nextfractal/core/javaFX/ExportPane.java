@@ -27,10 +27,9 @@ package com.nextbreakpoint.nextfractal.core.javaFX;
 import com.nextbreakpoint.Try;
 import com.nextbreakpoint.nextfractal.core.Clip;
 import com.nextbreakpoint.nextfractal.core.FractalFactory;
-import com.nextbreakpoint.nextfractal.core.ImageGenerator;
+import com.nextbreakpoint.nextfractal.core.ImageComposer;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
-import com.nextbreakpoint.nextfractal.core.renderer.javaFX.JavaFXRendererFactory;
 import com.nextbreakpoint.nextfractal.core.utils.DefaultThreadFactory;
 import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
@@ -384,7 +383,7 @@ public class ExportPane extends BorderPane {
 
 		updateButtonsAndPanels.run();
 
-		executor = Executors.newSingleThreadExecutor(createThreadFactory("Export Generator"));
+		executor = Executors.newSingleThreadExecutor(createThreadFactory("Export"));
 	}
 
 	private void loadImagePresets(ComboBox<Integer[]> presetsCombobox) {
@@ -485,19 +484,19 @@ public class ExportPane extends BorderPane {
 	}
 
 	private void addClip(Clip clip, boolean notifyAddClip) {
-		tryFindFactory(clip.getFirstEvent().getPluginId()).map(this::createImageGenerator).ifPresent(generator -> submitItem(clip, generator, notifyAddClip));
+		tryFindFactory(clip.getFirstEvent().getPluginId()).map(this::createImageComposer).ifPresent(composer -> submitItem(clip, composer, notifyAddClip));
 	}
 
-	private void submitItem(Clip clip, ImageGenerator generator, boolean notifyAddClip) {
-		executor.submit(() -> Try.of(() -> renderImage(clip, generator)).ifPresent(pixels -> Platform.runLater(() -> addItem(listView, clip, pixels, generator.getSize(), notifyAddClip))));
+	private void submitItem(Clip clip, ImageComposer composer, boolean notifyAddClip) {
+		executor.submit(() -> Try.of(() -> renderImage(clip, composer)).ifPresent(pixels -> Platform.runLater(() -> addItem(listView, clip, pixels, composer.getSize(), notifyAddClip))));
 	}
 
-	private IntBuffer renderImage(Clip clip, ImageGenerator generator) {
-		return generator.renderImage(clip.getFirstEvent().getScript(), clip.getFirstEvent().getMetadata());
+	private IntBuffer renderImage(Clip clip, ImageComposer composer) {
+		return composer.renderImage(clip.getFirstEvent().getScript(), clip.getFirstEvent().getMetadata());
 	}
 
-	private ImageGenerator createImageGenerator(FractalFactory factory) {
-		return factory.createImageGenerator(createThreadFactory("Export Renderer"), new JavaFXRendererFactory(), tile, true);
+	private ImageComposer createImageComposer(FractalFactory factory) {
+		return factory.createImageComposer(createThreadFactory("Export Composer"), tile, true);
 	}
 
 	public void loadClips(List<Clip> clips) {
