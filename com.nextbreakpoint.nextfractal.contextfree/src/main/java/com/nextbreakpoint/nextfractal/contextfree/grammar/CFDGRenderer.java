@@ -401,8 +401,7 @@ public class CFDGRenderer {
 			shapeBorder = 1.0;
 		}
 
-		if (cfdg.hasParameter(CFG.MaxNatural, value, this) && (value[0] < 1.0 || value[0] > 9007199254740992.0))
-		{
+		if (cfdg.hasParameter(CFG.MaxNatural, value, this) && (value[0] < 1.0 || value[0] > 9007199254740992.0)) {
         	maxNatural = value[0];
 			//TODO rivedere
 			throw new RuntimeException((value[0] < 1.0) ? "CF::MaxNatural must be >= 1" : "CF::MaxNatural must be < 9007199254740992");

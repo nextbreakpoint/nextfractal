@@ -104,14 +104,14 @@ public class EditorPane extends BorderPane {
         eventBus.subscribe("session-data-loaded", event -> {
             MandelbrotSession session = (MandelbrotSession) event[0];
             updateSource(session.getScript()).ifPresent(result -> {
-                eventBus.postEvent("session-report-changed", result.report);
-                eventBus.postEvent("session-data-changed", event);
-                MandelbrotSession newSession = (MandelbrotSession) event[0];
-                Boolean continuous = (Boolean) event[1];
-                Boolean appendHistory = (Boolean) event[2];
-                if (!continuous && appendHistory) {
-                    eventBus.postEvent("history-add-session", newSession);
-                }
+                eventBus.postEvent("session-report-changed", result.report, event[0], event[1], event[2]);
+//                eventBus.postEvent("session-data-changed", event);
+//                MandelbrotSession newSession = (MandelbrotSession) event[0];
+//                Boolean continuous = (Boolean) event[1];
+//                Boolean appendHistory = (Boolean) event[2];
+//                if (!continuous && appendHistory) {
+//                    eventBus.postEvent("history-add-session", newSession);
+//                }
             });
         });
 
@@ -120,10 +120,10 @@ public class EditorPane extends BorderPane {
             notifySourceIfRequired(eventBus, (CompilerReport)event[0]);
         });
 
-        eventBus.subscribe("editor-source-changed", event -> {
-            MandelbrotSession newSession = new MandelbrotSession((String) event[0], (MandelbrotMetadata) session.getMetadata());
-            eventBus.postEvent("session-data-changed", newSession, false, true);
-        });
+//        eventBus.subscribe("editor-source-changed", event -> {
+//            MandelbrotSession newSession = new MandelbrotSession((String) event[0], (MandelbrotMetadata) session.getMetadata());
+//            eventBus.postEvent("session-data-changed", newSession, false, true);
+//        });
 
         eventBus.subscribe("editor-action", event -> {
             if (session != null && event[0].equals("reload")) eventBus.postEvent("session-data-loaded", session, false, false);
@@ -137,7 +137,7 @@ public class EditorPane extends BorderPane {
         codeArea.replaceText("");
         codeArea.replaceText(source);
         Try<TaskResult, Exception> result = Try.of(() -> generateReport(source))
-            .map(report -> new TaskResult(source, report, computeHighlighting(source))).map(task -> updateTextStyles(task));
+            .map(report -> new TaskResult(source, report, computeHighlighting(source))).map(this::updateTextStyles);
         internalSource.setValue(false);
         return result;
     }
@@ -228,7 +228,7 @@ public class EditorPane extends BorderPane {
     }
 
     private void notifyTaskResult(EventBus eventBus, Try<TaskResult, Exception> result) {
-        result.map(task -> task.report).ifPresent(report -> eventBus.postEvent("editor-report-changed", report));
+        result.map(task -> task.report).ifPresent(report -> eventBus.postEvent("editor-report-changed", report, new MandelbrotSession(report.getSource(), (MandelbrotMetadata) session.getMetadata()), false, true));
     }
 
     private Try<TaskResult, Exception> compileOrbitAndColor(TaskResult task) {

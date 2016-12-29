@@ -305,6 +305,7 @@ public class Renderer {
 	 * 
 	 */
 	protected void doRender() {
+		Graphics2D g2d = null;
 		try {
 			cfdgChanged = false;
 			progress = 0;
@@ -312,7 +313,7 @@ public class Renderer {
 			int height = getSize().getHeight();
 			BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 			int[] pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
-			Graphics2D g2d = image.createGraphics();
+			g2d = image.createGraphics();
 			g2d.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
 			g2d.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY);
 			g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
@@ -326,7 +327,7 @@ public class Renderer {
 				if (renderer != null) {
 //					RendererFactory factory = new Java2DRendererFactory();
 //					renderer.run(new RendererCanvas(factory, g2d, width, height), false);
-					renderer.run(new SimpleCanvas(g2d, buffer.getTile()), true);
+					renderer.run(new SimpleCanvas(g2d, buffer.getTile()),true);
 				}
 				errors.addAll(logger.getErrors());
 			}
@@ -334,10 +335,13 @@ public class Renderer {
 				progress = 1f;
 				didChanged(progress, pixels);
 			}
-			g2d.dispose();
 		} catch (Throwable e) {
 			logger.log(Level.WARNING, "Cannot render fractal", e);
 			errors.add(new RendererError(0, 0, 0, 0, e.getMessage()));
+		} finally {
+			if (g2d != null) {
+				g2d.dispose();
+			}
 		}
 	}
 

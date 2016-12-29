@@ -77,6 +77,8 @@ import javafx.util.Duration;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -514,7 +516,15 @@ public class RenderPane extends BorderPane {
 
 		runTimer(fractalCanvas, orbitCanvas, juliaCanvas, pointCanvas, trapCanvas, toolCanvas);
 
-		eventBus.subscribe("session-report-changed", event -> updateReport((CompilerReport) event[0]));
+		eventBus.subscribe("session-report-changed", event -> {
+			CompilerReport report = (CompilerReport) event[0];
+			List<Error> lastErrors = updateReport(report);
+			if (lastErrors.size() == 0) {
+				MandelbrotSession newSession = (MandelbrotSession)event[1];
+				updateData(new Object[] { newSession, event[3] });
+    	        notifySessionChanged(eventBus, newSession, (Boolean)event[2], (Boolean)event[3]);
+			}
+		});
 
 //		eventBus.subscribe("session-data-loaded", event -> loadData(event));
 
@@ -527,8 +537,8 @@ public class RenderPane extends BorderPane {
 		eventBus.subscribe("playback-data-change", event -> updateData(event));
 
 		eventBus.subscribe("editor-source-changed", event -> {
-			MandelbrotSession newSession = new MandelbrotSession((String) event[0], (MandelbrotMetadata) mandelbrotSession.getMetadata());
-            notifySessionChanged(eventBus, newSession, false, true);
+//			MandelbrotSession newSession = new MandelbrotSession((String) event[0], (MandelbrotMetadata) mandelbrotSession.getMetadata());
+//            notifySessionChanged(eventBus, newSession, false, true);
         });
 
 		eventBus.subscribe("editor-data-changed", event -> {
@@ -623,13 +633,17 @@ public class RenderPane extends BorderPane {
 	}
 
 	private void loadData(Object[] event) {
-		mandelbrotSession = (MandelbrotSession) event[0];
-		Try.of(() -> generateReport(mandelbrotSession.getScript())).filter(report -> ((CompilerReport)report).getErrors().size() == 0).ifPresent(this::updateReport);
-		updateView(mandelbrotSession, (Boolean) event[1]);
-		MandelbrotMetadata metadata = (MandelbrotMetadata) mandelbrotSession.getMetadata();
-		showPreviewProperty.setValue(!metadata.isJulia() && metadata.getOptions().isShowPreview());
-		showOrbitProperty.setValue(metadata.getOptions().isShowOrbit());
-		juliaProperty.setValue(metadata.isJulia());
+		Try.of(() -> generateReport(((MandelbrotSession) event[0]).getScript())).filter(report -> ((CompilerReport)report).getErrors().size() == 0).ifPresent(report -> {
+			List<Error> errors = updateReport(report);
+			if (errors.size() == 0) {
+				mandelbrotSession = (MandelbrotSession) event[0];
+				updateView(mandelbrotSession, (Boolean) event[1]);
+				MandelbrotMetadata metadata = (MandelbrotMetadata) mandelbrotSession.getMetadata();
+				showPreviewProperty.setValue(!metadata.isJulia() && metadata.getOptions().isShowPreview());
+				showOrbitProperty.setValue(metadata.getOptions().isShowOrbit());
+				juliaProperty.setValue(metadata.isJulia());
+			}
+		});
 	}
 
 	private void restoreTool(ToolContext context, ToggleButton pickButton, ToggleButton zoominButton) {
@@ -810,10 +824,10 @@ public class RenderPane extends BorderPane {
 		}
 	}
 
-	private void updateReport(CompilerReport report) {
+	private List<Error> updateReport(CompilerReport report) {
 		try {
-			boolean[] changed = createOrbitAndColor(report);
 			updateCompilerErrors(null, null, null);
+			boolean[] changed = createOrbitAndColor(report);
 			boolean orbitChanged = changed[0];
 			boolean colorChanged = changed[1];
 			if (orbitChanged) {
@@ -897,13 +911,17 @@ public class RenderPane extends BorderPane {
 		} catch (CompilerSourceException e) {
 			logger.log(Level.INFO, "Cannot render fractal: " + e.getMessage());
 			updateCompilerErrors(e.getMessage(), e.getErrors(), null);
+			return e.getErrors();
 		} catch (CompilerClassException e) {
 			logger.log(Level.INFO, "Cannot render fractal: " + e.getMessage());
 			updateCompilerErrors(e.getMessage(), e.getErrors(), e.getSource());
+			return e.getErrors();
 		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | IOException e) {
 			logger.log(Level.INFO, "Cannot render fractal: " + e.getMessage());
 			updateCompilerErrors(e.getMessage(), null, null);
+			return Arrays.asList(new Error(Error.ErrorType.RUNTIME, 0, 0, 0, 0, "Cannot render image"));
 		}
+		return Collections.emptyList();
 	}
 
 	private boolean[] createOrbitAndColor(CompilerReport report) throws CompilerSourceException, CompilerClassException, ClassNotFoundException, IOException {

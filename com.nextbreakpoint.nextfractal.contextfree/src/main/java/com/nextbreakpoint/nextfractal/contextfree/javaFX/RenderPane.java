@@ -64,7 +64,10 @@ import javafx.stage.Screen;
 import javafx.util.Duration;
 
 import java.io.InputStream;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -219,7 +222,15 @@ public class RenderPane extends BorderPane {
 
 		runTimer(fractalCanvas, toolCanvas);
 
-		eventBus.subscribe("session-report-changed", event -> updateReport((CompilerReport) event[0]));
+		eventBus.subscribe("session-report-changed", event -> {
+			CompilerReport report = (CompilerReport) event[0];
+			List<Error> lastErrors = updateReport(report);
+			if (lastErrors.size() == 0) {
+				ContextFreeSession newSession = (ContextFreeSession)event[1];
+				updateData(new Object[] { newSession, event[3] });
+				notifySessionChanged(eventBus, newSession, (Boolean)event[2], (Boolean)event[3]);
+			}
+		});
 
 //		eventBus.subscribe("session-data-loaded", event -> loadData(event));
 
@@ -230,8 +241,8 @@ public class RenderPane extends BorderPane {
 		eventBus.subscribe("playback-data-change", event -> updateData(event));
 
 		eventBus.subscribe("editor-source-changed", event -> {
-			ContextFreeSession newSession = new ContextFreeSession((String) event[0], (ContextFreeMetadata) contextFreeSession.getMetadata());
-            notifySessionChanged(eventBus, newSession, false, true);
+//			ContextFreeSession newSession = new ContextFreeSession((String) event[0], (ContextFreeMetadata) contextFreeSession.getMetadata());
+//			notifySessionChanged(eventBus, newSession, false, true);
         });
 
 		eventBus.subscribe("editor-data-changed", event -> {
@@ -439,10 +450,10 @@ public class RenderPane extends BorderPane {
 		return new Compiler().compileReport(text);
 	}
 
-	private void updateReport(CompilerReport report) {
+	private List<Error> updateReport(CompilerReport report) {
 		try {
-			boolean[] changed = createCFDG(report);
 			updateCompilerErrors(null, null, null);
+			boolean[] changed = createCFDG(report);
 			boolean cfdgChanged = changed[0];
 			if (cfdgChanged) {
 				RenderPane.logger.info("CFDG is changed");
@@ -456,14 +467,27 @@ public class RenderPane extends BorderPane {
 				}
 				coordinator.init();
 				coordinator.run();
+				Thread.sleep(500);
+				List<Error> errors = coordinator.getErrors();
+				if (errors.size() > 0) {
+					updateCompilerErrors("Some runtime errors occurred", errors, null);
+				}
+				return errors;
 			}
 		} catch (CompilerSourceException e) {
 			logger.log(Level.INFO, "Cannot render image: " + e.getMessage());
 			updateCompilerErrors(e.getMessage(), e.getErrors(), null);
+			return e.getErrors();
 		} catch (CompilerClassException e) {
 			logger.log(Level.INFO, "Cannot render image: " + e.getMessage());
 			updateCompilerErrors(e.getMessage(), e.getErrors(), e.getSource());
+			return e.getErrors();
+		} catch (InterruptedException e) {
+			logger.log(Level.INFO, "Cannot render image: " + e.getMessage());
+			updateCompilerErrors(e.getMessage(), null, null);
+			return Arrays.asList(new Error(Error.ErrorType.RUNTIME, 0, 0, 0, 0, "Interrupted"));
 		}
+		return Collections.emptyList();
 	}
 
 	private boolean[] createCFDG(CompilerReport report) throws CompilerSourceException, CompilerClassException {
