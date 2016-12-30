@@ -410,7 +410,7 @@ public class MainSidePane extends BorderPane {
     }
 
     private void handleExportSessionStateChanged(JobsPane jobsPane, ExportSession exportSession, ExportState state, Float progress) {
-        logger.info("Session state changed " + exportSession.getSessionId() + " -> " + state.name());
+        logger.info("Session " + exportSession.getSessionId() + " state " + state.name());
         if (state == ExportState.FINISHED) {
             jobsPane.removeSession(exportSession);
         } else {

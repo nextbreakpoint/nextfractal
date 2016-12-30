@@ -829,10 +829,10 @@ public class RenderPane extends BorderPane {
 			boolean orbitChanged = changed[0];
 			boolean colorChanged = changed[1];
 			if (orbitChanged) {
-				logger.info("Orbit algorithm is changed");
+				logger.fine("Orbit algorithm is changed");
 			}
 			if (colorChanged) {
-				logger.info("Color algorithm is changed");
+				logger.fine("Color algorithm is changed");
 			}
 //			if (!orbitChanged && !colorChanged) {
 //				logger.info("Orbit or color algorithms are not changed");
@@ -904,7 +904,7 @@ public class RenderPane extends BorderPane {
 			redrawOrbit = true;
 			redrawPoint = true;
 			if (!julia) {
-				logger.info("Orbit: point = " + point + ", length = " + states.size());
+				logger.fine("Orbit: point = " + point + ", length = " + states.size());
 			}
 		} catch (CompilerSourceException e) {
 			logger.log(Level.INFO, "Cannot render fractal: " + e.getMessage());
@@ -1110,7 +1110,7 @@ public class RenderPane extends BorderPane {
 		redrawTrap = true;
 		if (!julia && !continuous) {
 //			states = renderOrbit(point);
-			logger.info("Orbit: point = " + point + ", length = " + states.size());
+			logger.fine("Orbit: point = " + point + ", length = " + states.size());
 		}
 	}
 
@@ -1155,7 +1155,7 @@ public class RenderPane extends BorderPane {
 //		redrawTrap = true;
 //		if (!julia && !continuous) {
 //			states = renderOrbit(point);
-//			logger.info("Orbit: point = " + point + ", length = " + states.size());
+//			logger.fine("Orbit: point = " + point + ", length = " + states.size());
 //		}
 //	}
 
