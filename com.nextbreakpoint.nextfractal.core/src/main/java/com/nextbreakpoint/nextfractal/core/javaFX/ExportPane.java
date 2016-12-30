@@ -112,8 +112,8 @@ public class ExportPane extends BorderPane {
 		Button removeButton = new Button("Remove");
 		Button previewButton = new Button("Preview");
 		exportButton.setTooltip(new Tooltip("Export image or video"));
-		removeButton.setTooltip(new Tooltip("Remove all clips"));
-		previewButton.setTooltip(new Tooltip("Show video preview"));
+		removeButton.setTooltip(new Tooltip("Remove selected clips"));
+		previewButton.setTooltip(new Tooltip("Preview selected clips"));
 		captureButton.setTooltip(new Tooltip("Enable/disable capture"));
 
 		VBox exportButtons = new VBox(4);

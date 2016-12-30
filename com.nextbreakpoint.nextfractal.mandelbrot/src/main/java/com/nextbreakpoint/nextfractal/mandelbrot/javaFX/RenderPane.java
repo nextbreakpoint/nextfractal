@@ -210,7 +210,7 @@ public class RenderPane extends BorderPane {
 		moveButton.setTooltip(new Tooltip("Select move tool"));
 		rotateButton.setTooltip(new Tooltip("Select rotate tool"));
 		pickButton.setTooltip(new Tooltip("Select pick tool"));
-		homeButton.setTooltip(new Tooltip("Reset contentRegion to initial value"));
+		homeButton.setTooltip(new Tooltip("Reset region to initial value"));
 		orbitButton.setTooltip(new Tooltip("Show/hide orbit and traps"));
 		juliaButton.setTooltip(new Tooltip("Enable/disable Julia mode"));
 		captureButton.setTooltip(new Tooltip("Enable/disable capture mode"));

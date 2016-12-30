@@ -133,10 +133,10 @@ public class BrowsePane extends BorderPane {
 		Button reloadButton = new Button("", createIconImage(getClass(), "/icon-reload.png"));
 		Button chooseButton = new Button("", createIconImage(getClass(), "/icon-folder.png"));
 		Button importButton = new Button("", createIconImage(getClass(), "/icon-import.png"));
-		closeButton.setTooltip(new Tooltip("Close fractals browser"));
-		reloadButton.setTooltip(new Tooltip("Reload all fractals"));
-		chooseButton.setTooltip(new Tooltip("Select source folder location"));
-		importButton.setTooltip(new Tooltip("Select a folder from where to import fractals"));
+		closeButton.setTooltip(new Tooltip("Close projects browser"));
+		reloadButton.setTooltip(new Tooltip("Reload all projects"));
+		chooseButton.setTooltip(new Tooltip("Select projects location"));
+		importButton.setTooltip(new Tooltip("Import projects from another location"));
 
 		Label statusLabel = new Label("Initializing");
 
@@ -342,10 +342,10 @@ public class BrowsePane extends BorderPane {
 		grid.setData(new GridItem[0]);
 		File[] files = listFiles(folder);
 		if (files != null && files.length > 0) {
-			statusLabel.setText(files.length + " item" + (files.length > 1 ? "s" : "") + " found");
+			statusLabel.setText(files.length + " project file" + (files.length > 1 ? "s" : "") + " found");
 			loadItems(grid, files);
 		} else {
-			statusLabel.setText("No items found");
+			statusLabel.setText("No project files found");
 		}
 	}
 

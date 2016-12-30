@@ -64,7 +64,7 @@ public class MainParamsPane extends Pane {
 		ComboBox<String> grammarCombobox = new ComboBox<>();
 		grammarCombobox.getItems().addAll(listGrammars());
 		grammarCombobox.getStyleClass().add("text-small");
-		grammarCombobox.setTooltip(new Tooltip("Select active grammar"));
+		grammarCombobox.setTooltip(new Tooltip("Select project grammar"));
 		grammarPane.getChildren().add(grammarCombobox);
 
 		if (grammarCombobox.getItems().size() > 1) {
