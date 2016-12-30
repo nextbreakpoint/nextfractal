@@ -40,6 +40,7 @@ import com.nextbreakpoint.nextfractal.core.utils.DefaultThreadFactory;
 import com.nextbreakpoint.nextfractal.core.utils.Double2D;
 import com.nextbreakpoint.nextfractal.core.utils.Double4D;
 import com.nextbreakpoint.nextfractal.core.utils.Integer4D;
+import com.nextbreakpoint.nextfractal.core.utils.Time;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotMetadata;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotOptions;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotSession;
@@ -67,9 +68,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.ScrollEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -84,8 +83,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Stack;
-import java.util.concurrent.ThreadFactory;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.logging.Level;
@@ -97,15 +94,13 @@ import static com.nextbreakpoint.nextfractal.core.javaFX.Icons.createIconImage;
 public class RenderPane extends BorderPane {
 	private static final int FRAME_LENGTH_IN_MILLIS = 1000 / 50;
 	private static final Logger logger = Logger.getLogger(RenderPane.class.getName());
-	private final ThreadFactory renderThreadFactory;
-	private final ThreadFactory juliaRenderThreadFactory;
 	private final JavaFXRendererFactory renderFactory;
-	private final Stack<MandelbrotMetadata> views = new Stack<>();
 	private final StringObservableValue errorProperty;
 	private final StringObservableValue statusProperty;
 	private final BooleanObservableValue showOrbitProperty;
 	private final BooleanObservableValue showPreviewProperty;
 	private final BooleanObservableValue hideErrorsProperty;
+	private final BooleanObservableValue timeProperty;
 	private final BooleanObservableValue juliaProperty;
 	private final BooleanObservableValue captureProperty;
 	private final RendererCoordinator[] coordinators;
@@ -120,6 +115,7 @@ public class RenderPane extends BorderPane {
 	private volatile boolean redrawOrbit;
 	private volatile boolean redrawPoint;
 	private volatile boolean disableTool;
+	private volatile boolean timeAnimation;
 	private String astOrbit;
 	private String astColor;
 	private Tool currentTool;
@@ -142,6 +138,9 @@ public class RenderPane extends BorderPane {
 		statusProperty = new StringObservableValue();
 		statusProperty.setValue(null);
 
+		timeProperty = new BooleanObservableValue();
+		timeProperty.setValue(false);
+
 		juliaProperty = new BooleanObservableValue();
 		juliaProperty.setValue(false);
 
@@ -157,9 +156,6 @@ public class RenderPane extends BorderPane {
 		hideErrorsProperty = new BooleanObservableValue();
 		hideErrorsProperty.setValue(true);
 		
-		renderThreadFactory = new DefaultThreadFactory("Mandelbrot Coordinator", true, Thread.MIN_PRIORITY + 2);
-		juliaRenderThreadFactory = new DefaultThreadFactory("Julia Coordinator", true, Thread.MIN_PRIORITY + 1);
-		
 		renderFactory = new JavaFXRendererFactory();
 
 		coordinators = new RendererCoordinator[rows * columns];
@@ -170,7 +166,6 @@ public class RenderPane extends BorderPane {
 		
 		Map<String, Integer> juliaHints = new HashMap<>();
 		juliaHints.put(RendererCoordinator.KEY_TYPE, RendererCoordinator.VALUE_REALTIME);
-//		juliaHints.put(RendererCoordinator.KEY_PROGRESS, RendererCoordinator.VALUE_SINGLE_PASS);
 		juliaCoordinator = createJuliaCoordinator(juliaHints);
 		
 		getStyleClass().add("mandelbrot");
@@ -202,6 +197,7 @@ public class RenderPane extends BorderPane {
 		ToggleButton juliaButton = new ToggleButton("", createIconImage(getClass(), "/icon-julia.png", computeOptimalLargeIconPercentage()));
 		ToggleButton orbitButton = new ToggleButton("", createIconImage(getClass(), "/icon-orbit.png", computeOptimalLargeIconPercentage()));
 		ToggleButton captureButton = new ToggleButton("", createIconImage(getClass(), "/icon-capture.png", computeOptimalLargeIconPercentage()));
+		ToggleButton timeButton = new ToggleButton("", createIconImage(getClass(), "/icon-cron.png", computeOptimalLargeIconPercentage()));
 		ToggleGroup toolsGroup = new ToggleGroup();
 		toolsGroup.getToggles().add(zoominButton);
 		toolsGroup.getToggles().add(zoomoutButton);
@@ -218,6 +214,7 @@ public class RenderPane extends BorderPane {
 		orbitButton.setTooltip(new Tooltip("Show/hide orbit and traps"));
 		juliaButton.setTooltip(new Tooltip("Enable/disable Julia mode"));
 		captureButton.setTooltip(new Tooltip("Enable/disable capture mode"));
+		timeButton.setTooltip(new Tooltip("Enable/disable time animation"));
 		toolButtons.getChildren().add(homeButton);
 		toolButtons.getChildren().add(zoominButton);
 		toolButtons.getChildren().add(zoomoutButton);
@@ -227,6 +224,7 @@ public class RenderPane extends BorderPane {
 		toolButtons.getChildren().add(juliaButton);
 		toolButtons.getChildren().add(orbitButton);
 		toolButtons.getChildren().add(captureButton);
+		toolButtons.getChildren().add(timeButton);
 		toolButtons.getStyleClass().add("toolbar");
 
 		controls.setBottom(toolButtons);
@@ -441,7 +439,7 @@ public class RenderPane extends BorderPane {
 			currentTool = new ToolPick(context);
 			showPreviewProperty.setValue(true);
 			MandelbrotMetadata metadata = (MandelbrotMetadata) mandelbrotSession.getMetadata();
-			MandelbrotMetadata newMetadata = new MandelbrotMetadata(metadata.getTranslation(), metadata.getRotation(), metadata.getScale(), metadata.getPoint(),false, createMandelbrotOptions(metadata));
+			MandelbrotMetadata newMetadata = new MandelbrotMetadata(metadata.getTranslation(), metadata.getRotation(), metadata.getScale(), metadata.getPoint(), metadata.getTime(), false, createMandelbrotOptions(metadata));
 			eventBus.postEvent("render-view-changed", new MandelbrotSession(mandelbrotSession.getScript(), newMetadata), false, appendToHistory);
 			juliaProperty.setValue(false);
 		});
@@ -472,6 +470,15 @@ public class RenderPane extends BorderPane {
 				eventBus.postEvent("capture-session", "start");
 			} else {
 				eventBus.postEvent("capture-session", "stop");
+			}
+		});
+
+		timeButton.setOnAction(e -> {
+			timeProperty.setValue(timeButton.isSelected());
+			if (timeProperty.getValue()) {
+				eventBus.postEvent("time-animation", "start");
+			} else {
+				eventBus.postEvent("time-animation", "stop");
 			}
 		});
 
@@ -548,7 +555,7 @@ public class RenderPane extends BorderPane {
 		stackPane.setOnDragOver(x -> Optional.of(x).filter(e -> e.getGestureSource() != stackPane)
 			.filter(e -> e.getDragboard().hasFiles()).ifPresent(e -> e.acceptTransferModes(TransferMode.COPY_OR_MOVE)));
 
-		runTimer(fractalCanvas, orbitCanvas, juliaCanvas, pointCanvas, trapCanvas, toolCanvas);
+		runTimer(eventBus, fractalCanvas, orbitCanvas, juliaCanvas, pointCanvas, trapCanvas, toolCanvas);
 
 		eventBus.subscribe("session-report-changed", event -> {
 			CompilerReport report = (CompilerReport) event[0];
@@ -596,6 +603,13 @@ public class RenderPane extends BorderPane {
 			notifySessionChanged(eventBus, newSession, continuous, appendHistory && !continuous && ((MandelbrotMetadata) newSession.getMetadata()).isJulia());
 		});
 
+		eventBus.subscribe("editor-time-changed", event -> {
+			MandelbrotSession newSession = (MandelbrotSession) event[0];
+			Boolean continuous = (Boolean) event[1];
+			Boolean appendHistory = (Boolean) event[2];
+			notifySessionChanged(eventBus, newSession, continuous, appendHistory && !continuous);
+		});
+
 		eventBus.subscribe("editor-mode-changed", event -> {
 			MandelbrotSession newSession = (MandelbrotSession) event[0];
 			Boolean continuous = (Boolean) event[1];
@@ -631,6 +645,13 @@ public class RenderPane extends BorderPane {
 			notifySessionChanged(eventBus, newSession, continuous, appendHistory && !continuous);
 		});
 
+		eventBus.subscribe("render-time-changed", event -> {
+			MandelbrotSession newSession = (MandelbrotSession) event[0];
+			Boolean continuous = (Boolean) event[1];
+			Boolean appendHistory = (Boolean) event[2];
+			notifySessionChanged(eventBus, newSession, continuous, appendHistory && !continuous);
+		});
+
 		eventBus.subscribe("render-status-changed", event -> {
 			eventBus.postEvent("session-status-changed", event);
 		});
@@ -641,7 +662,33 @@ public class RenderPane extends BorderPane {
 
 		eventBus.subscribe("session-terminated", event -> dispose());
 
+		eventBus.subscribe("time-animation", event -> handleTimeAnimationAction(eventBus, (String)event[0]));
+
 		Platform.runLater(() -> controls.requestFocus());
+	}
+
+	private void handleTimeAnimationAction(EventBus eventBus, String action) {
+		if ("start".equals(action)) startTimeAnimation(eventBus);
+		if ("stop".equals(action)) stopTimeAnimation(eventBus);
+	}
+
+	private void startTimeAnimation(EventBus eventBus) {
+		timeAnimation = true;
+		notifySessionChanged(eventBus, mandelbrotSession, true, true);
+	}
+
+	private void stopTimeAnimation(EventBus eventBus) {
+		timeAnimation = false;
+		notifySessionChanged(eventBus, mandelbrotSession, false, true);
+	}
+
+	private void updateTime(EventBus eventBus, double seconds) {
+		Platform.runLater(() -> {
+			MandelbrotMetadata metadata = (MandelbrotMetadata) mandelbrotSession.getMetadata();
+			Time newTime = new Time(metadata.getTime().getValue() + seconds, metadata.getTime().getScale());
+			MandelbrotMetadata newMetadata = new MandelbrotMetadata(metadata.getTranslation(), metadata.getRotation(), metadata.getScale(), metadata.getPoint(), newTime, metadata.isJulia(), metadata.getOptions());
+			eventBus.postEvent("render-time-changed", new MandelbrotSession(mandelbrotSession.getScript(), newMetadata), true, false);
+		});
 	}
 
 	private MandelbrotMetadata createMetadataWithOptions() {
@@ -750,20 +797,26 @@ public class RenderPane extends BorderPane {
 		double[] translation = {0, 0, 1, 0};
 		double[] rotation = {0, 0, 0, 0};
 		double[] scale = {1, 1, 1, 1};
-		MandelbrotMetadata newMetadata = new MandelbrotMetadata(translation, rotation, scale, metadata.getPoint().toArray(), metadata.isJulia(), metadata.getOptions());
+		MandelbrotMetadata newMetadata = new MandelbrotMetadata(translation, rotation, scale, metadata.getPoint().toArray(), metadata.getTime(), metadata.isJulia(), metadata.getOptions());
 		eventBus.postEvent("render-view-changed", new MandelbrotSession(mandelbrotSession.getScript(), newMetadata), false, true);
 	}
 
 	private void createCoordinators(int rows, int columns, Map<String, Integer> hints) {
+		DefaultThreadFactory threadFactory = createThreadFactory("Mandelbrot Coordinator", Thread.MIN_PRIORITY + 2);
 		for (int row = 0; row < rows; row++) {
 			for (int column = 0; column < columns; column++) {
-				coordinators[row * columns + column] = new RendererCoordinator(renderThreadFactory, renderFactory, createTile(row, column), hints);
+				coordinators[row * columns + column] = new RendererCoordinator(threadFactory, renderFactory, createTile(row, column), hints);
 			}
 		}
 	}
 
 	private RendererCoordinator createJuliaCoordinator(Map<String, Integer> hints) {
-		return new RendererCoordinator(juliaRenderThreadFactory, renderFactory, createSingleTile(200, 200), hints);
+		DefaultThreadFactory threadFactory = createThreadFactory("Julia Coordinator", Thread.MIN_PRIORITY + 1);
+		return new RendererCoordinator(threadFactory, renderFactory, createSingleTile(200, 200), hints);
+	}
+
+	private DefaultThreadFactory createThreadFactory(String name, int priority) {
+		return new DefaultThreadFactory(name, true, priority);
 	}
 
 	private void disposeCoordinators() {
@@ -789,14 +842,21 @@ public class RenderPane extends BorderPane {
 		}
 	}
 
-	private void runTimer(Canvas fractalCanvas, Canvas orbitCanvas, Canvas juliaCanvas, Canvas pointCanvas, Canvas trapCanvas, Canvas toolCanvas) {
+	private void runTimer(EventBus eventBus, Canvas fractalCanvas, Canvas orbitCanvas, Canvas juliaCanvas, Canvas pointCanvas, Canvas trapCanvas, Canvas toolCanvas) {
 		timer = new AnimationTimer() {
 			private long last;
+			private long lastAnimation;
 
 			@Override
 			public void handle(long now) {
 				long time = now / 1000000;
 				if (time - last > FRAME_LENGTH_IN_MILLIS) {
+					if (timeAnimation && time - lastAnimation > FRAME_LENGTH_IN_MILLIS * 1) {
+						updateTime(eventBus, (time - lastAnimation) / 1000.0);
+						lastAnimation = time;
+					} else if (!timeAnimation) {
+						lastAnimation = time;
+					}
 					if (!disableTool && coordinators[0] != null && coordinators[0].isInitialized()) {
 						processRenderErrors();
 						redrawIfPixelsChanged(fractalCanvas);
@@ -816,17 +876,6 @@ public class RenderPane extends BorderPane {
 		timer.start();
 	}
 	
-	private void pushView() {
-		views.push((MandelbrotMetadata) mandelbrotSession.getMetadata());
-	}
-
-	private MandelbrotMetadata popView() {
-		if (views.size() > 0) {
-			return views.pop();
-		}
-		return null;
-	}
-
 	private RendererTile createTile(int row, int column) {
 		int tileWidth = width / columns;
 		int tileHeight = height / rows;
@@ -852,10 +901,10 @@ public class RenderPane extends BorderPane {
 	private void setFractalJulia(EventBus eventBus, boolean julia) {
 		MandelbrotMetadata metadata = (MandelbrotMetadata) mandelbrotSession.getMetadata();
 		if (!julia && metadata.isJulia()) {
-			MandelbrotMetadata newMetadata = new MandelbrotMetadata(metadata.getTranslation(), metadata.getRotation(), metadata.getScale(), metadata.getPoint(),false, metadata.getOptions());
+			MandelbrotMetadata newMetadata = new MandelbrotMetadata(metadata.getTranslation(), metadata.getRotation(), metadata.getScale(), metadata.getPoint(), metadata.getTime(), false, metadata.getOptions());
 			eventBus.postEvent("render-view-changed", new MandelbrotSession(mandelbrotSession.getScript(), newMetadata), false, true);
 		} else if (julia && !metadata.isJulia()) {
-			MandelbrotMetadata newMetadata = new MandelbrotMetadata(metadata.getTranslation(), metadata.getRotation(), metadata.getScale(), metadata.getPoint(),true, metadata.getOptions());
+			MandelbrotMetadata newMetadata = new MandelbrotMetadata(metadata.getTranslation(), metadata.getRotation(), metadata.getScale(), metadata.getPoint(), metadata.getTime(), true, metadata.getOptions());
 			eventBus.postEvent("render-view-changed", new MandelbrotSession(mandelbrotSession.getScript(), newMetadata), false, true);
 		}
 	}
@@ -881,6 +930,7 @@ public class RenderPane extends BorderPane {
 			Double4D rotation = oldMetadata.getRotation();
 			Double4D scale = oldMetadata.getScale();
 			Double2D point = oldMetadata.getPoint();
+			Time time = oldMetadata.getTime();
 			boolean julia = oldMetadata.isJulia();
 			abortCoordinators();
 			if (juliaCoordinator != null) {
@@ -911,6 +961,7 @@ public class RenderPane extends BorderPane {
 					view.setJulia(julia);
 					view.setPoint(new Number(point.getX(), point.getY()));
 					coordinator.setView(view);
+					coordinator.setTime(time);
 				}
 			}
 			if (juliaCoordinator != null) {
@@ -932,12 +983,13 @@ public class RenderPane extends BorderPane {
 				view.setJulia(true);
 				view.setPoint(new Number(point.getX(), point.getY()));
 				juliaCoordinator.setView(view);
+				juliaCoordinator.setTime(time);
 			}
 			startCoordinators();
 			if (juliaCoordinator != null) {
 				juliaCoordinator.run();
 			}
-			states = renderOrbit(point);
+			states = renderOrbit(time, point);
 			redrawTrap = true;
 			redrawOrbit = true;
 			redrawPoint = true;
@@ -1112,6 +1164,7 @@ public class RenderPane extends BorderPane {
 		Double4D rotation = metadata.getRotation();
 		Double4D scale = metadata.getScale();
 		Double2D point = metadata.getPoint();
+		Time time = metadata.getTime();
 		boolean julia = metadata.isJulia();
 		abortCoordinators();
 		joinCoordinators();
@@ -1126,6 +1179,7 @@ public class RenderPane extends BorderPane {
 				view.setJulia(julia);
 				view.setPoint(new Number(point.getX(), point.getY()));
 				coordinator.setView(view);
+				coordinator.setTime(time);
 			}
 		}
 		startCoordinators();
@@ -1140,9 +1194,10 @@ public class RenderPane extends BorderPane {
 			view.setJulia(true);
 			view.setPoint(new Number(point.getX(), point.getY()));
 			juliaCoordinator.setView(view);
+			juliaCoordinator.setTime(time);
 			juliaCoordinator.run();
 		}
-		states = renderOrbit(point);
+		states = renderOrbit(time, point);
 		redrawOrbit = true;
 		redrawPoint = true;
 		redrawTrap = true;
@@ -1197,7 +1252,7 @@ public class RenderPane extends BorderPane {
 //		}
 //	}
 
-	private List<Number[]> renderOrbit(Double2D point) {
+	private List<Number[]> renderOrbit(Time time, Double2D point) {
 		List<Number[]> states = new ArrayList<>(); 
 		try {
 			if (orbitBuilder != null) {

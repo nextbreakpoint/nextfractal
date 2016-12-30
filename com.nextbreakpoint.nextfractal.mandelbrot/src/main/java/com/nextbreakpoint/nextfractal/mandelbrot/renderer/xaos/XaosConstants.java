@@ -39,7 +39,7 @@ class XaosConstants {
 	public static final boolean PRINT_MULTABLE = false;
 	public static final boolean PRINT_REGION = false;
 	public static final boolean PRINT_ONLYNEW = true;
-	public static final boolean USE_XAOS = true; 
+	public static final boolean USE_XAOS = true;
 	public static final boolean USE_SYMETRY = true;
 	public static final boolean USE_SOLIDGUESS = true;
 	public static final boolean USE_MULTITHREAD = true;

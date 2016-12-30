@@ -86,11 +86,13 @@ public class JavaASTCompiler implements ASTExpressionCompiler {
 	private final Map<String, CompilerVariable> variables;
 	private final ExpressionContext context;
 	private final StringBuilder builder;
-	
-	public JavaASTCompiler(ExpressionContext context, Map<String, CompilerVariable> variables, StringBuilder builder) {
+	private final ClassType classType;
+
+	public JavaASTCompiler(ExpressionContext context, Map<String, CompilerVariable> variables, StringBuilder builder, ClassType classType) {
 		this.variables = variables;
 		this.context = context;
 		this.builder = builder;
+		this.classType = classType;
 	}
 
 	@Override
@@ -111,101 +113,114 @@ public class JavaASTCompiler implements ASTExpressionCompiler {
 
 	@Override
 	public CompiledExpression compile(ASTFunction function) {
-		builder.append("func");
-		builder.append(function.getName().toUpperCase().substring(0, 1));
-		builder.append(function.getName().substring(1));
-		builder.append("(");
-		switch (function.getName()) {
-			case "mod":
-			case "mod2":
-			case "pha":
-			case "re":
-			case "im":
-				if (function.getArguments().length != 1) {
-					throw new ASTException("Invalid number of arguments: " + function.getLocation().getText(), function.getLocation());
-				}				
-				break;
-				
-			case "sin":
-			case "cos":
-			case "tan":
-			case "asin":
-			case "acos":
-			case "atan":
-				if (function.getArguments().length != 1) {
-					throw new ASTException("Invalid number of arguments: " + function.getLocation().getText(), function.getLocation());
-				}	
-				if (!function.getArguments()[0].isReal()) {
-					builder.append("getNumber(");
-					builder.append(context.newNumberIndex());
-					builder.append("),");
-				}
-				break;
-
-			case "abs":
-			case "ceil":
-			case "floor":
-			case "log":
-				if (function.getArguments().length != 1) {
-					throw new ASTException("Invalid number of arguments: " + function.getLocation().getText(), function.getLocation());
-				}				
-				if (!function.getArguments()[0].isReal()) {
-					throw new ASTException("Invalid type of arguments: " + function.getLocation().getText(), function.getLocation());
-				}				
-				break;
-				
-			case "min":
-			case "max":
-			case "atan2":
-			case "hypot":
-				if (function.getArguments().length != 2) {
-					throw new ASTException("Invalid number of arguments: " + function.getLocation().getText(), function.getLocation());
-				}				
-				if (!function.getArguments()[0].isReal()) {
-					throw new ASTException("Invalid type of arguments: " + function.getLocation().getText(), function.getLocation());
-				}				
-				if (!function.getArguments()[1].isReal()) {
-					throw new ASTException("Invalid type of arguments: " + function.getLocation().getText(), function.getLocation());
-				}				
-				break;
-				
-			case "pow":
-				if (function.getArguments().length != 2) {
-					throw new ASTException("Invalid number of arguments: " + function.getLocation().getText(), function.getLocation());
-				}				
-				if (!function.getArguments()[1].isReal()) {
-					throw new ASTException("Invalid type of arguments: " + function.getLocation().getText(), function.getLocation());
-				}				
-				if (!function.getArguments()[0].isReal()) {
-					builder.append("getNumber(");
-					builder.append(context.newNumberIndex());
-					builder.append("),");
-				}
-				break;
-
-			case "sqrt":
-			case "exp":
-				if (function.getArguments().length != 1) {
-					throw new ASTException("Invalid number of arguments: " + function.getLocation().getText(), function.getLocation());
-				}				
-				if (!function.getArguments()[0].isReal()) {
-					builder.append("getNumber(");
-					builder.append(context.newNumberIndex());
-					builder.append("),");
-				}
-				break;
-				
-			default:
-				throw new ASTException("Unsupported function: " + function.getLocation().getText(), function.getLocation());
-		}
-		ASTExpression[] arguments = function.getArguments();
-		for (int i = 0; i < arguments.length; i++) {
-			arguments[i].compile(this);
-			if (i < arguments.length - 1) {
-				builder.append(",");
+		if (function.getName().equals("time")) {
+			if (classType.equals(ClassType.ORBIT)) {
+				context.setOrbitUseTime(true);
 			}
+			if (classType.equals(ClassType.COLOR)) {
+				context.setColorUseTime(true);
+			}
+			if (function.getArguments().length != 0) {
+				throw new ASTException("Invalid number of arguments: " + function.getLocation().getText(), function.getLocation());
+			}
+			builder.append("time()");
+		} else {
+			builder.append("func");
+			builder.append(function.getName().toUpperCase().substring(0, 1));
+			builder.append(function.getName().substring(1));
+			builder.append("(");
+			switch (function.getName()) {
+				case "mod":
+				case "mod2":
+				case "pha":
+				case "re":
+				case "im":
+					if (function.getArguments().length != 1) {
+						throw new ASTException("Invalid number of arguments: " + function.getLocation().getText(), function.getLocation());
+					}
+					break;
+
+				case "sin":
+				case "cos":
+				case "tan":
+				case "asin":
+				case "acos":
+				case "atan":
+					if (function.getArguments().length != 1) {
+						throw new ASTException("Invalid number of arguments: " + function.getLocation().getText(), function.getLocation());
+					}
+					if (!function.getArguments()[0].isReal()) {
+						builder.append("getNumber(");
+						builder.append(context.newNumberIndex());
+						builder.append("),");
+					}
+					break;
+
+				case "abs":
+				case "ceil":
+				case "floor":
+				case "log":
+					if (function.getArguments().length != 1) {
+						throw new ASTException("Invalid number of arguments: " + function.getLocation().getText(), function.getLocation());
+					}
+					if (!function.getArguments()[0].isReal()) {
+						throw new ASTException("Invalid type of arguments: " + function.getLocation().getText(), function.getLocation());
+					}
+					break;
+
+				case "min":
+				case "max":
+				case "atan2":
+				case "hypot":
+					if (function.getArguments().length != 2) {
+						throw new ASTException("Invalid number of arguments: " + function.getLocation().getText(), function.getLocation());
+					}
+					if (!function.getArguments()[0].isReal()) {
+						throw new ASTException("Invalid type of arguments: " + function.getLocation().getText(), function.getLocation());
+					}
+					if (!function.getArguments()[1].isReal()) {
+						throw new ASTException("Invalid type of arguments: " + function.getLocation().getText(), function.getLocation());
+					}
+					break;
+
+				case "pow":
+					if (function.getArguments().length != 2) {
+						throw new ASTException("Invalid number of arguments: " + function.getLocation().getText(), function.getLocation());
+					}
+					if (!function.getArguments()[1].isReal()) {
+						throw new ASTException("Invalid type of arguments: " + function.getLocation().getText(), function.getLocation());
+					}
+					if (!function.getArguments()[0].isReal()) {
+						builder.append("getNumber(");
+						builder.append(context.newNumberIndex());
+						builder.append("),");
+					}
+					break;
+
+				case "sqrt":
+				case "exp":
+					if (function.getArguments().length != 1) {
+						throw new ASTException("Invalid number of arguments: " + function.getLocation().getText(), function.getLocation());
+					}
+					if (!function.getArguments()[0].isReal()) {
+						builder.append("getNumber(");
+						builder.append(context.newNumberIndex());
+						builder.append("),");
+					}
+					break;
+
+				default:
+					throw new ASTException("Unsupported function: " + function.getLocation().getText(), function.getLocation());
+			}
+			ASTExpression[] arguments = function.getArguments();
+			for (int i = 0; i < arguments.length; i++) {
+				arguments[i].compile(this);
+				if (i < arguments.length - 1) {
+					builder.append(",");
+				}
+			}
+			builder.append(")");
 		}
-		builder.append(")");
 		return null;
 	}
 
@@ -566,12 +581,12 @@ public class JavaASTCompiler implements ASTExpressionCompiler {
 		builder.append(") {\n");
 		Map<String, CompilerVariable> vars = new HashMap<String, CompilerVariable>(variables);
 		for (ASTStatement innerStatement : statement.getThenStatementList().getStatements()) {
-			innerStatement.compile(new JavaASTCompiler(context, vars, builder));
+			innerStatement.compile(new JavaASTCompiler(context, vars, builder, classType));
 		}
 		if (statement.getElseStatementList() != null) {
 			builder.append("} else {\n");
 			for (ASTStatement innerStatement : statement.getElseStatementList().getStatements()) {
-				innerStatement.compile(new JavaASTCompiler(context, vars, builder));
+				innerStatement.compile(new JavaASTCompiler(context, vars, builder, classType));
 			}
 		}
 		builder.append("}\n");

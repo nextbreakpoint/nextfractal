@@ -25,6 +25,9 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.compiler;
 
 public class ExpressionContext {
+	private boolean orbitUseTime;
+	private boolean colorUseTime;
+
 	private int numberCount;
 	
 	public int newNumberIndex() {
@@ -33,5 +36,21 @@ public class ExpressionContext {
 
 	public int getNumberCount() {
 		return numberCount;
+	}
+
+	public boolean orbitUseTime() {
+		return orbitUseTime;
+	}
+
+	public void setOrbitUseTime(boolean orbitUseTime) {
+		this.orbitUseTime = orbitUseTime;
+	}
+
+	public boolean colorUseTime() {
+		return colorUseTime;
+	}
+
+	public void setColorUseTime(boolean colorUseTime) {
+		this.colorUseTime = colorUseTime;
 	}
 }

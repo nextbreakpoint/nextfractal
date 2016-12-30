@@ -24,11 +24,14 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.core;
 
+import com.nextbreakpoint.nextfractal.core.utils.Time;
+
 public abstract class Color {
 	protected final float[] color = new float[] { 1f, 0f, 0f, 0f };
 	protected MutableNumber[] numbers;
 	protected Scope scope;
 	protected boolean julia;
+	protected Time time = new Time(0, 1);;
 
 	public Color() {
 		initializeStack();
@@ -123,4 +126,14 @@ public abstract class Color {
 	public abstract void render();
 
 	protected abstract MutableNumber[] createNumbers();
+
+    public abstract boolean useTime();
+
+	public Time getTime() {
+		return time;
+	}
+
+	public void setTime(Time time) {
+		this.time = time;
+	}
 }

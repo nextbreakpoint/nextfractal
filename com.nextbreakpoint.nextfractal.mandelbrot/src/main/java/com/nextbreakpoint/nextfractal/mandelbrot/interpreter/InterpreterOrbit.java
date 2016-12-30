@@ -171,6 +171,11 @@ public class InterpreterOrbit extends Orbit implements InterpreterContext {
 	}
 
 	@Override
+	public boolean useTime() {
+		return context.orbitUseTime();
+	}
+
+	@Override
 	public Palette getPalette(String name) {
 		return palettes.get(name);
 	}

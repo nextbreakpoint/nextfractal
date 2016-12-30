@@ -26,42 +26,45 @@ package com.nextbreakpoint.nextfractal.mandelbrot;
 
 import com.nextbreakpoint.nextfractal.core.utils.Double2D;
 import com.nextbreakpoint.nextfractal.core.utils.Double4D;
+import com.nextbreakpoint.nextfractal.core.utils.Time;
 
 public class MandelbrotMetadata {
 	private final Double4D translation;
 	private final Double4D rotation;
 	private final Double4D scale;
 	private final Double2D point;
+	private final Time time;
 	private final boolean julia;
 	private final MandelbrotOptions options;
 
 	public MandelbrotMetadata() {
-		this(new Double4D(0,0,1,0), new Double4D(0,0,0,0), new Double4D(1,1,1,1), new Double2D(0, 0), false, new MandelbrotOptions());
+		this(new Double4D(0,0,1,0), new Double4D(0,0,0,0), new Double4D(1,1,1,1), new Double2D(0, 0), new Time(0, 1), false, new MandelbrotOptions());
 	}
 
-	public MandelbrotMetadata(Double4D translation, Double4D rotation, Double4D scale, Double2D point, boolean julia, MandelbrotOptions options) {
-		this.translation = translation.clone();
-		this.rotation = rotation.clone();
-		this.scale = scale.clone();
-		this.point = point.clone();
+	public MandelbrotMetadata(Double4D translation, Double4D rotation, Double4D scale, Double2D point, Time time, boolean julia, MandelbrotOptions options) {
+		this.translation = translation;
+		this.rotation = rotation;
+		this.scale = scale;
+		this.point = point;
+		this.time = time;
 		this.julia = julia;
 		this.options = options;
 	}
 
-	public MandelbrotMetadata(double[] translation, double[] rotation, double[] scale, double[] point, boolean julia, MandelbrotOptions options) {
-		this(new Double4D(translation), new Double4D(rotation), new Double4D(scale), new Double2D(point), julia, options);
+	public MandelbrotMetadata(double[] translation, double[] rotation, double[] scale, double[] point, Time time, boolean julia, MandelbrotOptions options) {
+		this(new Double4D(translation), new Double4D(rotation), new Double4D(scale), new Double2D(point), time, julia, options);
 	}
 
-	public MandelbrotMetadata(Double[] translation, Double[] rotation, Double[] scale, Double[] point, boolean julia, MandelbrotOptions options) {
-		this(new Double4D(translation), new Double4D(rotation), new Double4D(scale), new Double2D(point), julia, options);
+	public MandelbrotMetadata(Double[] translation, Double[] rotation, Double[] scale, Double[] point, Time time, boolean julia, MandelbrotOptions options) {
+		this(new Double4D(translation), new Double4D(rotation), new Double4D(scale), new Double2D(point), time, julia, options);
 	}
 
 	public MandelbrotMetadata(MandelbrotMetadata other) {
-		this(other.getTranslation(), other.getRotation(), other.getScale(), other.getPoint(), other.isJulia(), other.getOptions());
+		this(other.getTranslation(), other.getRotation(), other.getScale(), other.getPoint(), other.getTime(), other.isJulia(), other.getOptions());
 	}
 
 	public MandelbrotMetadata(MandelbrotMetadata other, MandelbrotOptions options) {
-		this(other.getTranslation(), other.getRotation(), other.getScale(), other.getPoint(), other.isJulia(), options);
+		this(other.getTranslation(), other.getRotation(), other.getScale(), other.getPoint(), other.getTime(), other.isJulia(), options);
 	}
 
 	public Double4D getTranslation() {
@@ -74,6 +77,10 @@ public class MandelbrotMetadata {
 
 	public Double4D getScale() {
 		return scale;
+	}
+
+	public Time getTime() {
+		return time;
 	}
 
 	public Double2D getPoint() {
@@ -90,7 +97,7 @@ public class MandelbrotMetadata {
 
 	@Override
 	public String toString() {
-		return "[translation=" + translation + ", rotation=" + rotation + ", scale=" + scale + ", point=" + point + ", julia=" + julia + ", options=" + options + "]";
+		return "[translation=" + translation + ", rotation=" + rotation + ", scale=" + scale + ", point=" + point + ", time=" + time + ", julia=" + julia + ", options=" + options + "]";
 	}
 
 	@Override
@@ -105,6 +112,7 @@ public class MandelbrotMetadata {
 		if (rotation != null ? !rotation.equals(that.rotation) : that.rotation != null) return false;
 		if (scale != null ? !scale.equals(that.scale) : that.scale != null) return false;
 		if (point != null ? !point.equals(that.point) : that.point != null) return false;
+		if (time != null ? !time.equals(that.time) : that.time != null) return false;
 		return options != null ? options.equals(that.options) : that.options == null;
 	}
 
@@ -114,6 +122,7 @@ public class MandelbrotMetadata {
 		result = 31 * result + (rotation != null ? rotation.hashCode() : 0);
 		result = 31 * result + (scale != null ? scale.hashCode() : 0);
 		result = 31 * result + (point != null ? point.hashCode() : 0);
+		result = 31 * result + (time != null ? time.hashCode() : 0);
 		result = 31 * result + (julia ? 1 : 0);
 		result = 31 * result + (options != null ? options.hashCode() : 0);
 		return result;

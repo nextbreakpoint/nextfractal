@@ -24,11 +24,14 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.compiler;
 
+import com.nextbreakpoint.nextfractal.core.utils.Time;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.MutableNumber;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Palette;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Trap;
 
 public interface InterpreterContext {
+	public Time getTime();
+
 	public MutableNumber getNumber(int index);
 
 	public boolean isJulia();

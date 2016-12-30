@@ -31,7 +31,7 @@ import java.util.Collection;
 import java.util.List;
 
 public class CompiledColor {
-	private Collection<CompilerVariable> colorVariables; 
+	private Collection<CompilerVariable> colorVariables;
 	private Collection<CompilerVariable> stateVariables;
 	private float[] backgroundColor;
 	private boolean julia;

@@ -29,6 +29,7 @@ import com.nextbreakpoint.nextfractal.core.renderer.RendererFactory;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererGraphicsContext;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
+import com.nextbreakpoint.nextfractal.core.utils.Time;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Color;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Orbit;
@@ -56,7 +57,7 @@ public class RendererCoordinator implements RendererDelegate {
 	private volatile boolean pixelsChanged;
 	private volatile float progress;
 	private Renderer renderer;
-	
+
 	/**
 	 * @param threadFactory
 	 * @param renderFactory
@@ -152,6 +153,10 @@ public class RendererCoordinator implements RendererDelegate {
 	 */
 	public void setPoint(Number point) {
 		renderer.setPoint(point);
+	}
+
+	public void setTime(Time time) {
+		renderer.setTime(time);
 	}
 
 	/**

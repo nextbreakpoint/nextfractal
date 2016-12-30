@@ -311,6 +311,10 @@ public class JavaReportCompiler {
 		builder.append(context.getNumberCount());
 		builder.append("];\n");
 		builder.append("}\n");
+		builder.append("public double time() {\nreturn getTime().getValue() * getTime().getScale();\n}\n");
+		builder.append("public boolean useTime() {\nreturn ");
+		builder.append(context.orbitUseTime());
+		builder.append(";\n}\n");
 	}
 
 	private void compile(ExpressionContext context, StringBuilder builder, Map<String, CompilerVariable> scope, Collection<CompilerVariable> stateVariables, ASTColor color) {
@@ -371,7 +375,7 @@ public class JavaReportCompiler {
 			builder.append("));\n");
 			if (color.getInit() != null) {
 				for (ASTStatement statement : color.getInit().getStatements()) {
-					compile(context, builder, scope, statement);
+					compile(context, builder, scope, statement, ClassType.COLOR);
 				}
 			}
 			for (ASTRule rule : color.getRules()) {
@@ -384,16 +388,20 @@ public class JavaReportCompiler {
 		builder.append(context.getNumberCount());
 		builder.append("];\n");
 		builder.append("}\n");
+		builder.append("public double time() {\nreturn getTime().getValue() * getTime().getScale();\n}\n");
+		builder.append("public boolean useTime() {\nreturn ");
+		builder.append(context.colorUseTime());
+		builder.append(";\n}\n");
 	}
 
-	private void compile(ExpressionContext context, StringBuilder builder,	Map<String, CompilerVariable> variables, ASTRule rule) {
+	private void compile(ExpressionContext context, StringBuilder builder, Map<String, CompilerVariable> variables, ASTRule rule) {
 		builder.append("if (");
-		rule.getRuleExp().compile(new JavaASTCompiler(context, variables, builder));
+		rule.getRuleExp().compile(new JavaASTCompiler(context, variables, builder, ClassType.COLOR));
 		builder.append(") {\n");
 		builder.append("addColor(");
 		builder.append(rule.getOpacity());
 		builder.append(",");
-		rule.getColorExp().compile(new JavaASTCompiler(context, variables, builder));
+		rule.getColorExp().compile(new JavaASTCompiler(context, variables, builder, ClassType.COLOR));
 		builder.append(");\n}\n");
 	}
 
@@ -420,7 +428,7 @@ public class JavaReportCompiler {
 		builder.append(",(start, end, step) -> { return ");
 		if (element.getExp() != null) {
 			if (element.getExp().isReal()) {
-				element.getExp().compile(new JavaASTCompiler(context, variables, builder));
+				element.getExp().compile(new JavaASTCompiler(context, variables, builder, ClassType.COLOR));
 			} else {
 				throw new ASTException("Expression type not valid: " + element.getLocation().getText(), element.getLocation());
 			}
@@ -491,30 +499,30 @@ public class JavaReportCompiler {
 			if (operator.getC1() != null) {
 				if (operator.getC1().isReal()) {
 					builder.append("number(");
-					operator.getC1().compile(new JavaASTCompiler(context, variables, builder));
+					operator.getC1().compile(new JavaASTCompiler(context, variables, builder, ClassType.ORBIT));
 					builder.append(")");
 				} else {
-					operator.getC1().compile(new JavaASTCompiler(context, variables, builder));
+					operator.getC1().compile(new JavaASTCompiler(context, variables, builder, ClassType.ORBIT));
 				}
 			}
 			if (operator.getC2() != null) {
 				builder.append(",");
 				if (operator.getC2().isReal()) {
 					builder.append("number(");
-					operator.getC2().compile(new JavaASTCompiler(context, variables, builder));
+					operator.getC2().compile(new JavaASTCompiler(context, variables, builder, ClassType.ORBIT));
 					builder.append(")");
 				} else {
-					operator.getC2().compile(new JavaASTCompiler(context, variables, builder));
+					operator.getC2().compile(new JavaASTCompiler(context, variables, builder, ClassType.ORBIT));
 				}
 			}
 			if (operator.getC3() != null) {
 				builder.append(",");
 				if (operator.getC3().isReal()) {
 					builder.append("number(");
-					operator.getC3().compile(new JavaASTCompiler(context, variables, builder));
+					operator.getC3().compile(new JavaASTCompiler(context, variables, builder, ClassType.ORBIT));
 					builder.append(")");
 				} else {
-					operator.getC3().compile(new JavaASTCompiler(context, variables, builder));
+					operator.getC3().compile(new JavaASTCompiler(context, variables, builder, ClassType.ORBIT));
 				}
 			}
 			builder.append(")");
@@ -525,7 +533,7 @@ public class JavaReportCompiler {
 	private void compile(ExpressionContext context, StringBuilder builder, Map<String, CompilerVariable> variables, ASTOrbitBegin begin, Collection<CompilerVariable> stateVariables) {
 		if (begin != null) {
 			for (ASTStatement statement : begin.getStatements()) {
-				compile(context, builder, variables, statement);
+				compile(context, builder, variables, statement, ClassType.ORBIT);
 			}
 		}
 	}
@@ -533,7 +541,7 @@ public class JavaReportCompiler {
 	private void compile(ExpressionContext context, StringBuilder builder, Map<String, CompilerVariable> variables, ASTOrbitEnd end, Collection<CompilerVariable> stateVariables) {
 		if (end != null) {
 			for (ASTStatement statement : end.getStatements()) {
-				compile(context, builder, variables, statement);
+				compile(context, builder, variables, statement, ClassType.ORBIT);
 			}
 		}
 	}
@@ -563,10 +571,10 @@ public class JavaReportCompiler {
 			builder.append(loop.getEnd());
 			builder.append("; i++) {\n");
 			for (ASTStatement statement : loop.getStatements()) {
-				compile(context, builder, variables, statement);
+				compile(context, builder, variables, statement, ClassType.ORBIT);
 			}
 			builder.append("if (");
-			loop.getExpression().compile(new JavaASTCompiler(context, variables, builder));
+			loop.getExpression().compile(new JavaASTCompiler(context, variables, builder, ClassType.ORBIT));
 			builder.append(") { n = i; break; }\n");
 			builder.append("if (states != null) {\n");
 			builder.append("states.add(new Number[] { ");
@@ -600,9 +608,9 @@ public class JavaReportCompiler {
 		}
 	}
 
-	private void compile(ExpressionContext context, StringBuilder builder, Map<String, CompilerVariable> variables, ASTStatement statement) {
+	private void compile(ExpressionContext context, StringBuilder builder, Map<String, CompilerVariable> variables, ASTStatement statement, ClassType classType) {
 		if (statement != null) {
-			statement.compile(new JavaASTCompiler(context, variables, builder));
+			statement.compile(new JavaASTCompiler(context, variables, builder, classType));
 		}		
 	}
 	

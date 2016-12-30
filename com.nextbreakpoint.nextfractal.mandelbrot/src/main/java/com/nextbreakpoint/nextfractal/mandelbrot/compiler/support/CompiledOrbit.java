@@ -33,7 +33,7 @@ import java.util.List;
 
 public class CompiledOrbit {
 	private Number[] region;
-	private Collection<CompilerVariable> orbitVariables; 
+	private Collection<CompilerVariable> orbitVariables;
 	private Collection<CompilerVariable> stateVariables;
 	private List<CompiledStatement> beginStatements;
 	private List<CompiledStatement> loopStatements;

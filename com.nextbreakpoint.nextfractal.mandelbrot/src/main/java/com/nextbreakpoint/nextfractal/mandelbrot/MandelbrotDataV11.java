@@ -25,6 +25,7 @@
 package com.nextbreakpoint.nextfractal.mandelbrot;
 
 import com.nextbreakpoint.nextfractal.core.utils.DateAdapter;
+import com.nextbreakpoint.nextfractal.core.utils.Time;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
@@ -121,7 +122,7 @@ public class MandelbrotDataV11 implements Cloneable {
 	}
 
 	public MandelbrotMetadata getView() {
-		return new MandelbrotMetadata(translation, rotation, scale, point, julia, new MandelbrotOptions());
+		return new MandelbrotMetadata(translation, rotation, scale, point, new Time(0, 1), julia, new MandelbrotOptions());
 	}
 
 	public void setView(MandelbrotMetadata view) {

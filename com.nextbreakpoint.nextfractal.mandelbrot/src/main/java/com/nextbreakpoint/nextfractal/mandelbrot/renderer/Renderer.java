@@ -33,6 +33,7 @@ import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSurface;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
 import com.nextbreakpoint.nextfractal.core.utils.Colors;
+import com.nextbreakpoint.nextfractal.core.utils.Time;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Color;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.MutableNumber;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
@@ -76,9 +77,11 @@ public class Renderer {
 	protected volatile boolean regionChanged;
 	protected volatile boolean juliaChanged;
 	protected volatile boolean pointChanged;
+	protected volatile boolean timeChanged;
 	protected volatile List<Error> errors = new ArrayList<>();
 	protected volatile float progress;
 	protected volatile double rotation;
+	protected volatile Time time;
 	protected volatile RendererTile previewTile;
 	protected boolean julia;
 	protected boolean opaque;
@@ -111,6 +114,7 @@ public class Renderer {
 		this.previewRendererFractal = new RendererFractal();
 		this.tile = tile;
 		this.opaque = true;
+		this.time = new Time(0, 1);
 		transform = new RendererTransform();
 		view = new RendererView();
 		buffer = new RendererSurface(); 
@@ -279,6 +283,16 @@ public class Renderer {
 		if (this.point == null || !this.point.equals(point)) {
 			this.point = point;
 			pointChanged = true;
+		}
+	}
+
+	/**
+	 * @param time
+	 */
+	public void setTime(Time time) {
+		if (this.time == null || !this.time.equals(time)) {
+			this.time = time;
+			timeChanged = true;
 		}
 	}
 
@@ -499,13 +513,21 @@ public class Renderer {
 				didChanged(progress, contentRendererData.getPixels());
 				return;
 			}
-			final boolean redraw = orbitChanged || regionChanged || juliaChanged || (julia && pointChanged);
+			boolean orbitTime = contentRendererFractal.getOrbit().useTime();
+			boolean colorTime = contentRendererFractal.getColor().useTime();
+			final boolean redraw = regionChanged || orbitChanged || juliaChanged || (julia && pointChanged) || ((orbitTime || colorTime) && timeChanged);
+			timeChanged = false;
 			pointChanged = false;
 			orbitChanged = false;
 			colorChanged = false;
+			juliaChanged = false;
 			regionChanged = false;
 			aborted = false;
 			progress = 0;
+			contentRendererFractal.getOrbit().setTime(time);
+			contentRendererFractal.getColor().setTime(time);
+			previewRendererFractal.getOrbit().setTime(time);
+			previewRendererFractal.getColor().setTime(time);
 			contentRendererFractal.clearScope();
 			contentRendererFractal.setPoint(point);
 			previewRendererFractal.clearScope();

@@ -63,6 +63,7 @@ import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledFuncSq
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledFuncSqrtZ;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledFuncTan;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledFuncTanZ;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledFuncTime;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledInvertedCondition;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledJuliaCondition;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledLogicOperatorAnd;
@@ -162,6 +163,11 @@ public class InterpreterASTCompiler implements ASTExpressionCompiler {
 	@Override
 	public CompiledExpression compile(ASTFunction function) {
 		switch (function.getName()) {
+			case "time":
+				if (function.getArguments().length != 0) {
+					throw new ASTException("Invalid number of arguments: " + function.getLocation().getText(), function.getLocation());
+				}
+				break;
 			case "mod":
 			case "mod2":
 			case "pha":
@@ -230,6 +236,8 @@ public class InterpreterASTCompiler implements ASTExpressionCompiler {
 				throw new ASTException("Unsupported function: " + function.getLocation().getText(), function.getLocation());
 		}
 		switch (function.getName()) {
+			case "time":
+				return new CompiledFuncTime(context, function.getLocation());
 			case "mod":
 				if (function.getArguments()[0].isReal()) {
 					return new CompiledFuncMod(context, compileArguments(function.getArguments()), function.getLocation());

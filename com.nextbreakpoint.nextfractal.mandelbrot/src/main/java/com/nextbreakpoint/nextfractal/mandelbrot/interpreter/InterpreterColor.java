@@ -118,6 +118,11 @@ public class InterpreterColor extends Color implements InterpreterContext {
 	}
 
 	@Override
+	public boolean useTime() {
+		return context.colorUseTime();
+	}
+
+	@Override
 	public Trap getTrap(String name) {
 		return traps.get(name);
 	}

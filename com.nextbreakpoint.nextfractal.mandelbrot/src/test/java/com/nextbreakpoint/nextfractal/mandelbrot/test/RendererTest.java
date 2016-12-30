@@ -94,6 +94,11 @@ public class RendererTest {
 		protected MutableNumber[] createNumbers() {
 			return new MutableNumber[1];
 		}
+
+		@Override
+		public boolean useTime() {
+			return false;
+		}
 	}
 	
 	private class TestColor extends Color {
@@ -108,6 +113,11 @@ public class RendererTest {
 		@Override
 		protected MutableNumber[] createNumbers() {
 			return new MutableNumber[1];
+		}
+
+		@Override
+		public boolean useTime() {
+			return false;
 		}
 	}
 }

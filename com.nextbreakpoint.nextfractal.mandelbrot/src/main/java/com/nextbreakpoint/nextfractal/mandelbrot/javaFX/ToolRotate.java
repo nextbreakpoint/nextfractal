@@ -122,7 +122,7 @@ public class ToolRotate implements Tool {
 			double x = r0 + dx;
 			double y = i0 + dy;
 			double a = (a0 + a2) * 180 / Math.PI;
-			MandelbrotMetadata newMetadata = new MandelbrotMetadata(new double[] { x, y, z, t[3] }, new double[] { 0, 0, a, r[3] }, s, p, j, oldMetadata.getOptions());
+			MandelbrotMetadata newMetadata = new MandelbrotMetadata(new double[] { x, y, z, t[3] }, new double[] { 0, 0, a, r[3] }, s, p, oldMetadata.getTime(), j, oldMetadata.getOptions());
 			context.setView(newMetadata, pressed);
 			changed = false;
 		}

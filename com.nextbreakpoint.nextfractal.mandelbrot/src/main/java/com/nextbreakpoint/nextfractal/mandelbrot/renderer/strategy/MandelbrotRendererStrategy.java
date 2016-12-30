@@ -37,9 +37,6 @@ public class MandelbrotRendererStrategy implements RendererStrategy {
 			this.rendererFractal = rendererFractal;
 		}
 
-		/**
-		 * @see com.nextbreakpoint.nextfractal.core.mandelbrot.renderer.RendererStrategy.renderer.AbstractMandelbrotRenderer.RenderingStrategy#prepare()
-		 */
 		@Override
 		public void prepare() {
 			rendererFractal.setPoint(rendererFractal.getOrbit().getInitialPoint());
@@ -47,9 +44,6 @@ public class MandelbrotRendererStrategy implements RendererStrategy {
 			rendererFractal.getColor().setJulia(false);
 		}
 
-		/**
-		 * @see com.nextbreakpoint.nextfractal.core.mandelbrot.renderer.RendererStrategy.renderer.AbstractMandelbrotRenderer.RenderingStrategy#renderPoint(com.nextbreakpoint.nextfractal.core.mandelbrot.renderer.RendererState.renderer.RenderedPoint)
-		 */
 		@Override
 		public int renderPoint(RendererState p, Number x, Number w) {
 			rendererFractal.renderOrbit(p.vars(), x, w);

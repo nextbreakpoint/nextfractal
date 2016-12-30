@@ -27,6 +27,7 @@ package com.nextbreakpoint.nextfractal.mandelbrot;
 import com.nextbreakpoint.nextfractal.core.Session;
 import com.nextbreakpoint.nextfractal.core.utils.Double2D;
 import com.nextbreakpoint.nextfractal.core.utils.Double4D;
+import com.nextbreakpoint.nextfractal.core.utils.Time;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -36,7 +37,7 @@ public class MandelbrotSession extends Session {
 	private final String script;
 
 	public MandelbrotSession() {
-		this(getInitialScript(), new MandelbrotMetadata(new Double4D(0, 0, 1,0), new Double4D(0, 0, 0,0), new Double4D(1, 1, 1,1), new Double2D(0, 0), false, new MandelbrotOptions()));
+		this(getInitialScript(), new MandelbrotMetadata(new Double4D(0, 0, 1,0), new Double4D(0, 0, 0,0), new Double4D(1, 1, 1,1), new Double2D(0, 0), new Time(0, 1), false, new MandelbrotOptions()));
 	}
 
 	public MandelbrotSession(String script, MandelbrotMetadata metadata) {

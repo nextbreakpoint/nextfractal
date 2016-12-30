@@ -396,6 +396,10 @@ expression4 returns [ASTExpression result]
 
 function returns [ASTFunction result]
 	:
+	f='time' '(' ')' {
+		$result = new ASTFunction($f, $f.text, new ASTExpression[0]);
+	}
+	|
 	f=('mod' | 'mod2' | 'pha' | 're' | 'im') '(' e=expression ')' {
 		$result = new ASTFunction($f, $f.text, $e.result);		
 	}

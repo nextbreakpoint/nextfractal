@@ -144,14 +144,20 @@ public final class XaosRenderer extends Renderer {
 				didChanged(progress, contentRendererData.getPixels());
 				return;
 			}
-			final boolean redraw = (!continuous && regionChanged) || orbitChanged || juliaChanged || (julia && pointChanged);
+			boolean orbitTime = contentRendererFractal.getOrbit().useTime();
+			boolean colorTime = contentRendererFractal.getColor().useTime();
+			final boolean redraw = (!continuous && regionChanged) || orbitChanged || juliaChanged || (julia && pointChanged) || (timeChanged && orbitTime);
+			final boolean refresh = !redraw && (colorChanged || (timeChanged && colorTime));
+			cacheActive = refresh || !continuous;
+			timeChanged = false;
 			pointChanged = false;
 			orbitChanged = false;
-			juliaChanged = false;
-			final boolean refresh = !redraw && colorChanged;
 			colorChanged = false;
+			juliaChanged = false;
 			aborted = false;
 			progress = 0;
+			contentRendererFractal.getOrbit().setTime(time);
+			contentRendererFractal.getColor().setTime(time);
 			contentRendererFractal.clearScope();
 			contentRendererFractal.setPoint(point);
 			if (julia) {
@@ -171,7 +177,6 @@ public final class XaosRenderer extends Renderer {
 			if (XaosConstants.PRINT_REGION) {
 				logger.fine("Region: (" + xaosRendererData.left() + "," + xaosRendererData.bottom() + ") -> (" + xaosRendererData.right() + "," + xaosRendererData.top() + ")");
 			}
-			cacheActive = refresh || !continuous;
 			isSolidguessSupported = XaosConstants.USE_SOLIDGUESS && contentRendererStrategy.isSolidGuessSupported();
 			isVerticalSymetrySupported = XaosConstants.USE_SYMETRY && contentRendererStrategy.isVerticalSymetrySupported();
 			isHorizontalSymetrySupported = XaosConstants.USE_SYMETRY && contentRendererStrategy.isHorizontalSymetrySupported();
@@ -210,7 +215,7 @@ public final class XaosRenderer extends Renderer {
 				}
 			}
 			contentRendererData.swap();
-			processReallocTable(continuous, refresh);
+			processReallocTable(continuous && !redraw, refresh);
 			updatePositions();
 		} catch (Throwable e) {
 			logger.log(Level.WARNING, "Rendering error", e);
@@ -1175,8 +1180,7 @@ public final class XaosRenderer extends Renderer {
 		if (XaosConstants.DUMP) {
 			logger.fine("Process queue...");
 		}
-		int i = 0;
-		for (i = 0; i < size; i++) {
+		for (int i = 0; i < size; i++) {
 			if (xaosRendererData.queue()[i].line) {
 				renderLine(xaosRendererData.queue()[i], xaosRendererData.reallocX(), xaosRendererData.reallocY());
 			}
