@@ -67,6 +67,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -112,6 +115,7 @@ public class RenderPane extends BorderPane {
 	private int height;
 	private int rows;
 	private int columns;
+	private double zoomSpeed = 1.025;
 	private volatile boolean redrawTrap;
 	private volatile boolean redrawOrbit;
 	private volatile boolean redrawPoint;
@@ -273,7 +277,7 @@ public class RenderPane extends BorderPane {
 			}
 
 			public double getZoomSpeed() {
-				return 1.025;
+				return zoomSpeed;
 			}
 
 			public RendererFactory getRendererFactory() {
@@ -345,11 +349,43 @@ public class RenderPane extends BorderPane {
 				currentTool.moved(e);
 			}
 		});
+
+		this.setOnMouseEntered(e -> {
+			fadeIn(toolsTransition, x -> {});
+			controls.requestFocus();
+		});
 		
-		this.setOnMouseEntered(e -> fadeIn(toolsTransition, x -> {}));
-		
-		this.setOnMouseExited(e -> fadeOut(toolsTransition, x -> {}));
-		
+		this.setOnMouseExited(e -> {
+			fadeOut(toolsTransition, x -> {});
+		});
+
+		EventHandler<KeyEvent> eventHandler = keyEvent -> {
+			switch (keyEvent.getCode()) {
+				case DIGIT1: {
+					zoomSpeed = 1.005;
+					break;
+				}
+				case DIGIT2: {
+					zoomSpeed = 1.01;
+					break;
+				}
+				case DIGIT3: {
+					zoomSpeed = 1.025;
+					break;
+				}
+				case DIGIT4: {
+					zoomSpeed = 1.05;
+					break;
+				}
+				case DIGIT5: {
+					zoomSpeed = 1.10;
+					break;
+				}
+			}
+		};
+
+		controls.addEventHandler(KeyEvent.KEY_RELEASED, eventHandler);
+
 		Pane stackPane = new Pane();
 		stackPane.getChildren().add(fractalCanvas);
 		stackPane.getChildren().add(trapCanvas);
@@ -604,6 +640,8 @@ public class RenderPane extends BorderPane {
 		});
 
 		eventBus.subscribe("session-terminated", event -> dispose());
+
+		Platform.runLater(() -> controls.requestFocus());
 	}
 
 	private MandelbrotMetadata createMetadataWithOptions() {
