@@ -55,7 +55,7 @@ public class ASTPathCommand extends ASTReplacement {
 		this.strokeWidth = 0.1;
 		this.parameters = null;
 		this.commandInfo = new CommandInfo();
-		this.flags = FlagType.CF_MITER_JOIN.getMask() + FlagType.CF_BUTT_CAP.getMask() + CF_FILL.getMask();
+		this.flags = FlagType.CF_ROUND_JOIN.getMask() + FlagType.CF_BUTT_CAP.getMask() + CF_FILL.getMask();
 	}
 
 	public ASTPathCommand(CFDGDriver driver, String s, ASTModification mods, ASTExpression params, Token location) {
@@ -64,7 +64,7 @@ public class ASTPathCommand extends ASTReplacement {
 		this.strokeWidth = 0.1;
 		this.parameters = params;
 		this.commandInfo = new CommandInfo();
-		this.flags = FlagType.CF_MITER_JOIN.getMask() + FlagType.CF_BUTT_CAP.getMask();
+		this.flags = FlagType.CF_ROUND_JOIN.getMask() + FlagType.CF_BUTT_CAP.getMask();
 		if (s.equals("FILL")) {
 			this.flags |= CF_FILL.getMask();
 		} else if (!s.equals("STROKE")) {
