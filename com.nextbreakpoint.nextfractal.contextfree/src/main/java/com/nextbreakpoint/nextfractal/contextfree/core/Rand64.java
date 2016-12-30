@@ -835,7 +835,7 @@ public class Rand64 implements Cloneable {
 
 		@Override
 		public Long generate() {
-			return (long)(upper_bound(p,0, p.length,getDouble() - p[0]));
+			return (long)(p[upper_bound(p,0, p.length,getDouble() - p[0])]);
 		}
 
 		private void init() {
@@ -846,11 +846,10 @@ public class Rand64 implements Cloneable {
 						p[i] /= s;
 					};
 					double[] t = new double[p.length - 1];
-					partial_sum(p, 0, p.length - 1, t[0]);
+					partial_sum(p, 0, p.length - 1, t);
 					swap(p, t);
 				} else {
-					clear(p);
-					p = shrink_to_fit(p);
+					p = new double[0];
 				}
 			}
 		}
@@ -858,7 +857,7 @@ public class Rand64 implements Cloneable {
 		private double[] probabilities() {
 			int n = p.length;
 			double[] p = new double[n+1];
-			adjacent_difference(p, 0, p.length, p[0]);
+			adjacent_difference(p, 0, p.length, p);
 			if (n > 0) {
 				p[n] = 1 - p[n - 1];
 			} else {
@@ -867,35 +866,55 @@ public class Rand64 implements Cloneable {
 			return p;
 		}
 
-		private double upper_bound(double[] p, int i, int length, double v) {
-			// TODO completare random
+		private int upper_bound(double[] in, int first, int last, double value) {
+			for (int i = first; i < last; i++) {
+				if (in[i] > value) {
+					return i;
+				}
+			}
 			return 0;
 		}
 
-		private void adjacent_difference(double[] p, int i, int length, double v) {
-			// TODO completare random
+		private double[] adjacent_difference(double[] in, int first, int last, double[] out) {
+			if (out.length < last - first) {
+				return out;
+			}
+			double prev = 0;
+			for (int i = first, j = 0; i < last; i++, j++) {
+				out[j] = in[i] - prev;
+				prev = in[i];
+			}
+			return out;
 		}
 
-		private double[] shrink_to_fit(double[] a) {
-			// TODO completare random
-			return a;
+		private void swap(double[] a, double[] b) {
+			if (a.length != b.length) {
+				return;
+			}
+			for (int i = 0; i < a.length; i++) {
+				double t = a[i];
+				a[i] = b[i];
+				b[i] = t;
+			}
 		}
 
-		private void clear(double[] a) {
-			// TODO completare random
+		private double[] partial_sum(double[] in, int first, int last, double[] out) {
+			if (out.length < last - first) {
+				return out;
+			}
+			double acc = 0;
+			for (int i = first, j = 0; i < last; i++, j++) {
+				acc += in[i];
+				out[j] = acc;
+			}
+			return out;
 		}
 
-		private void swap(double[] a, double[] t) {
-			// TODO completare random
-		}
-
-		private void partial_sum(double[] a, int i, int i1, double v) {
-			// TODO completare random
-		}
-
-		private double accumulate(double[] a, int i, int length, double v) {
-			// TODO completare random
-			return 0;
+		private double accumulate(double[] in, int first, int last, double acc) {
+			for (int i = first; i < last; i++) {
+				acc += in[i];
+			}
+			return acc;
 		}
 	}
 
