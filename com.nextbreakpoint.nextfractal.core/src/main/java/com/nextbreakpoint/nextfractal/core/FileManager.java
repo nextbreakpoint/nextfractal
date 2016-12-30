@@ -49,9 +49,9 @@ import java.util.zip.ZipOutputStream;
 import static com.nextbreakpoint.nextfractal.core.Plugins.tryFindFactory;
 
 public abstract class FileManager {
-    protected abstract Try<List<FileManagerEntry>, Exception> saveEntries(Bundle bundle);
+    public abstract Try<List<FileManagerEntry>, Exception> saveEntries(Bundle bundle);
 
-    protected abstract Try<Bundle, Exception> loadEntries(List<FileManagerEntry> entries);
+    public abstract Try<Bundle, Exception> loadEntries(List<FileManagerEntry> entries);
 
     public static Try<Bundle, Exception> loadFile(File file) {
         return Plugins.factories().filter(f -> f.createFileManager().canImportFile(file)).findFirst()

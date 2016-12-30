@@ -24,12 +24,13 @@
  */
 package com.nextbreakpoint.nextfractal.server;
 
+import com.nextbreakpoint.nextfractal.core.Session;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererPoint;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
 
-public class RemoteJob<T> {
-	private T data;
+public class RemoteJob {
+	private Session session;
 	private float quality;
 	private int imageWidth;
 	private int imageHeight;
@@ -119,12 +120,12 @@ public class RemoteJob<T> {
 		this.quality = quality;
 	}
 
-	public T getData() {
-		return data;
+	public Session getSession() {
+		return session;
 	}
 
-	public void setData(T data) {
-		this.data = data;
+	public void setSession(Session session) {
+		this.session = session;
 	}
 	
 	public RendererTile createTile() {

@@ -43,12 +43,12 @@ import static javax.xml.bind.JAXB.unmarshal;
 
 public class MandelbrotFileManager extends FileManager {
     @Override
-    protected Try<List<FileManagerEntry>, Exception> saveEntries(Bundle bundle) {
+    public Try<List<FileManagerEntry>, Exception> saveEntries(Bundle bundle) {
         return Try.of(() -> createEntries(bundle));
     }
 
     @Override
-    protected Try<Bundle, Exception> loadEntries(List<FileManagerEntry> entries) {
+    public Try<Bundle, Exception> loadEntries(List<FileManagerEntry> entries) {
         return entries.stream().filter(this::isMScript).findFirst()
             .map(this::loadBundle).orElse(Try.of(() -> createBundle(entries)));
     }

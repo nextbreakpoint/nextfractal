@@ -24,22 +24,22 @@
  */
 package com.nextbreakpoint.nextfractal.server;
 
-import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotSession;
+import com.nextbreakpoint.nextfractal.core.Session;
 
-public class MandelbrotRequest {
-	private MandelbrotSession session;
-	private int tileSize;
+public class TileRequest {
+	private Session session;
+	private int size;
 	private int cols;
 	private int rows;
 	private int col;
 	private int row;
 
-	public int getTileSize() {
-		return tileSize;
+	public int getSize() {
+		return size;
 	}
 
-	public void setTileSize(int tileSize) {
-		this.tileSize = tileSize;
+	public void setSize(int size) {
+		this.size = size;
 	}
 
 	public int getCols() {
@@ -74,11 +74,11 @@ public class MandelbrotRequest {
 		this.row = row;
 	}
 
-	public MandelbrotSession getSession() {
+	public Session getSession() {
 		return session;
 	}
 
-	public void setSession(MandelbrotSession session) {
+	public void setSession(Session session) {
 		this.session = session;
 	}
 }
