@@ -851,7 +851,7 @@ public class RenderPane extends BorderPane {
 			public void handle(long now) {
 				long time = now / 1000000;
 				if (time - last > FRAME_LENGTH_IN_MILLIS) {
-					if (timeAnimation && time - lastAnimation > FRAME_LENGTH_IN_MILLIS * 1) {
+					if (timeAnimation && time - lastAnimation > FRAME_LENGTH_IN_MILLIS * 2) {
 						updateTime(eventBus, (time - lastAnimation) / 1000.0);
 						lastAnimation = time;
 					} else if (!timeAnimation) {

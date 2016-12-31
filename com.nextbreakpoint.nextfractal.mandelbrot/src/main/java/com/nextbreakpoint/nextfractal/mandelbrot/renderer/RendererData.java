@@ -74,7 +74,7 @@ public class RendererData {
 	/**
 	 * @param width
 	 * @param height
-	 * @param size
+	 * @param depth
 	 */
 	public void setSize(final int width, final int height, final int depth) {
 		if (this.width != width || this.height != height) {

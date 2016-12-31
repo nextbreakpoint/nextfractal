@@ -51,6 +51,6 @@ class XaosRealloc {
 	 */
 	@Override
 	public String toString() {
-		return "<pos = " + pos + ", symref = " + symRef + ", symto = " + symTo + ", plus = " + plus + ", dirty = " + dirty + ", recalculate = " + recalculate + ", line = " + line + ", priority = " + priority + ", position = " + position + ", iscached = " + isCached + ">";
+		return "<pos = " + pos + ", symref = " + symRef + ", symto = " + symTo + ", plus = " + plus + ", dirty = " + dirty + ", recalculate = " + recalculate + ", refreshed = " + refreshed + ", line = " + line + ", priority = " + priority + ", position = " + position + ", iscached = " + isCached + ">";
 	}
 }

@@ -154,7 +154,7 @@ public class EditorPane extends BorderPane {
     }
 
     private Task<Optional<TaskResult>> computeTaskAsync() {
-        logger.info("Compute task..." + internalSource.getValue());
+//        logger.info("Compute task..." + internalSource.getValue());
         String text = codeArea.getText();
         Task<Optional<TaskResult>> task = new Task<Optional<TaskResult>>() {
             @Override
