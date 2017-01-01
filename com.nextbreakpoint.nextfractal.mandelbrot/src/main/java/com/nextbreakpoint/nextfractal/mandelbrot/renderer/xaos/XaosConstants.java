@@ -27,6 +27,7 @@ package com.nextbreakpoint.nextfractal.mandelbrot.renderer.xaos;
 class XaosConstants {
 	public static final boolean DUMP = false;
 	public static final boolean DUMP_XAOS = false;
+	public static final boolean SHOW_FILL = false;
 	public static final boolean SHOW_REFRESH = false;
 	public static final boolean SHOW_SYMETRY = false;
 	public static final boolean SHOW_CALCULATE = false;
@@ -46,7 +47,7 @@ class XaosConstants {
 	public static final int GUESS_RANGE = 4;
 	public static final int RANGES = 2;
 	public static final int RANGE = 4;
-	public static final int STEPS = 8;
+	public static final int STEPS = 32;
 	public static final int MASK = 0x7;
 	public static final int DSIZE = (RANGES + 1);
 	public static final int FPMUL = 64;

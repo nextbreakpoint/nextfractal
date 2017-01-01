@@ -844,18 +844,15 @@ public class RenderPane extends BorderPane {
 
 	private void runTimer(EventBus eventBus, Canvas fractalCanvas, Canvas orbitCanvas, Canvas juliaCanvas, Canvas pointCanvas, Canvas trapCanvas, Canvas toolCanvas) {
 		timer = new AnimationTimer() {
-			private long last;
-			private long lastAnimation;
+			private long lastInMillis;
 
 			@Override
-			public void handle(long now) {
-				long time = now / 1000000;
-				if (time - last > FRAME_LENGTH_IN_MILLIS) {
-					if (timeAnimation && time - lastAnimation > FRAME_LENGTH_IN_MILLIS * 2) {
-						updateTime(eventBus, (time - lastAnimation) / 1000.0);
-						lastAnimation = time;
-					} else if (!timeAnimation) {
-						lastAnimation = time;
+			public void handle(long nanos) {
+				long nowInMillis = nanos / 1000000;
+				long intervalInMillis = nowInMillis - lastInMillis;
+				if (intervalInMillis > FRAME_LENGTH_IN_MILLIS) {
+					if (timeAnimation) {
+						updateTime(eventBus, intervalInMillis / 1000.0);
 					}
 					if (!disableTool && coordinators[0] != null && coordinators[0].isInitialized()) {
 						processRenderErrors();
@@ -866,10 +863,10 @@ public class RenderPane extends BorderPane {
 						redrawIfTrapChanged(trapCanvas);
 						redrawIfToolChanged(toolCanvas);
 						if (currentTool != null) {
-							currentTool.update(time);
+							currentTool.update(nowInMillis);
 						}
 					}
-					last = time;
+					lastInMillis = nowInMillis;
 				}
 			}
 		};

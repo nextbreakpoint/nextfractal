@@ -28,16 +28,17 @@ class XaosRealloc {
 	boolean isCached;
 	boolean refreshed;
 	boolean recalculate;
-	boolean changeDirty;
 	boolean dirty;
 	boolean line;
 	int pos;
 	int plus;
 	int symTo;
 	int symRef;
-	double changePosition;
 	double position;
 	double priority;
+	boolean changeIsCached;
+	boolean changeDirty;
+	double changePosition;
 
 	/**
 	 * @param line
