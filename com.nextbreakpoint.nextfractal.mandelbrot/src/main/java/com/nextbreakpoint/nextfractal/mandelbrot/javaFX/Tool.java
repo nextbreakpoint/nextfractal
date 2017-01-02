@@ -38,7 +38,7 @@ public interface Tool {
 
 	public void pressed(MouseEvent e);
 
-	public void update(long time);
+	public void update(long time, boolean timeAnimation);
 
 	public boolean isChanged();
 

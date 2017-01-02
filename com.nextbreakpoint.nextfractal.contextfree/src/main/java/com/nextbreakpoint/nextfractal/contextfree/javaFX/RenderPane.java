@@ -224,7 +224,6 @@ public class RenderPane extends BorderPane {
 			List<Error> lastErrors = updateReport(report);
 			if (lastErrors.size() == 0) {
 				ContextFreeSession newSession = (ContextFreeSession)event[1];
-				updateData(new Object[] { newSession, event[3] });
 				notifySessionChanged(eventBus, newSession, (Boolean)event[2], (Boolean)event[3]);
 			}
 		});

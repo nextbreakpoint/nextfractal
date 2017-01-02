@@ -28,6 +28,7 @@ class XaosConstants {
 	public static final boolean DUMP = false;
 	public static final boolean DUMP_XAOS = false;
 	public static final boolean SHOW_FILL = false;
+	public static final boolean SHOW_UNCACHED = false;
 	public static final boolean SHOW_REFRESH = false;
 	public static final boolean SHOW_SYMETRY = false;
 	public static final boolean SHOW_CALCULATE = false;

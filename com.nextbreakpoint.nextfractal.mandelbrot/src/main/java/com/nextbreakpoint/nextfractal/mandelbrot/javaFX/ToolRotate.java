@@ -25,6 +25,7 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
 
 import com.nextbreakpoint.nextfractal.core.renderer.RendererGraphicsContext;
+import com.nextbreakpoint.nextfractal.core.utils.Time;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotMetadata;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 import javafx.scene.input.MouseEvent;
@@ -35,6 +36,7 @@ public class ToolRotate implements Tool {
 	private volatile boolean changed;
 	private volatile boolean redraw;
 	private volatile boolean active;
+	private Long lastTimeInMillis;
 	private double x0;
 	private double y0;
 	private double x1;
@@ -98,9 +100,19 @@ public class ToolRotate implements Tool {
 	}
 
 	@Override
-	public void update(long time) {
+	public void update(long timeInMillis, boolean timeAnimation) {
+		MandelbrotMetadata oldMetadata = context.getMetadata();
+		Time time = oldMetadata.getTime();
+		if (timeAnimation || lastTimeInMillis == null) {
+			if (lastTimeInMillis == null) {
+				lastTimeInMillis = timeInMillis;
+			}
+			time = new Time(time.getValue() + (timeInMillis - lastTimeInMillis) / 1000.0, time.getScale());
+			lastTimeInMillis = timeInMillis;
+		} else {
+			lastTimeInMillis = null;
+		}
 		if (changed) {
-			MandelbrotMetadata oldMetadata = context.getMetadata();
 			double[] t = oldMetadata.getTranslation().toArray();
 			double[] r = oldMetadata.getRotation().toArray();
 			double[] s = oldMetadata.getScale().toArray();
@@ -125,6 +137,9 @@ public class ToolRotate implements Tool {
 			MandelbrotMetadata newMetadata = new MandelbrotMetadata(new double[] { x, y, z, t[3] }, new double[] { 0, 0, a, r[3] }, s, p, oldMetadata.getTime(), j, oldMetadata.getOptions());
 			context.setView(newMetadata, pressed);
 			changed = false;
+		} else if (timeAnimation) {
+			MandelbrotMetadata newMetadata = new MandelbrotMetadata(oldMetadata.getTranslation(), oldMetadata.getRotation(), oldMetadata.getScale(), oldMetadata.getPoint(), time, oldMetadata.isJulia(), oldMetadata.getOptions());
+			context.setView(newMetadata, true);
 		}
 	}
 

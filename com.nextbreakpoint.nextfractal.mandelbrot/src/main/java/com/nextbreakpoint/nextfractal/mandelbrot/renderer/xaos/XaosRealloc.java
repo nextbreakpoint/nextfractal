@@ -27,7 +27,8 @@ package com.nextbreakpoint.nextfractal.mandelbrot.renderer.xaos;
 class XaosRealloc {
 	boolean isCached;
 	boolean refreshed;
-	boolean recalculate;
+	boolean calculate;
+	boolean isFilled;
 	boolean dirty;
 	boolean line;
 	int pos;
@@ -36,8 +37,9 @@ class XaosRealloc {
 	int symRef;
 	double position;
 	double priority;
-	boolean changeIsCached;
 	boolean changeDirty;
+	boolean changeIsCached;
+	boolean changeIsFilled;
 	double changePosition;
 
 	/**
@@ -52,6 +54,6 @@ class XaosRealloc {
 	 */
 	@Override
 	public String toString() {
-		return "<pos = " + pos + ", symref = " + symRef + ", symto = " + symTo + ", plus = " + plus + ", dirty = " + dirty + ", recalculate = " + recalculate + ", refreshed = " + refreshed + ", line = " + line + ", priority = " + priority + ", position = " + position + ", iscached = " + isCached + ">";
+		return "pos = " + pos + ", symref = " + symRef + ", symto = " + symTo + ", plus = " + plus + ", dirty = " + dirty + ", calculate = " + calculate + ", refreshed = " + refreshed + ", line = " + line + ", priority = " + priority + ", position = " + position + ", cached = " + isCached  + ", filled = " + isFilled;
 	}
 }

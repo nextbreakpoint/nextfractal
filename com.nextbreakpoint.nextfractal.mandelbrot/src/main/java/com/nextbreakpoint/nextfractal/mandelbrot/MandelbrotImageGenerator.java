@@ -31,6 +31,7 @@ import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
 import com.nextbreakpoint.nextfractal.core.utils.Double2D;
 import com.nextbreakpoint.nextfractal.core.utils.Double4D;
 import com.nextbreakpoint.nextfractal.core.utils.Integer4D;
+import com.nextbreakpoint.nextfractal.core.utils.Time;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.Compiler;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerBuilder;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerReport;
@@ -83,6 +84,7 @@ public class MandelbrotImageGenerator implements ImageGenerator {
 			Double4D rotation = metadata.getRotation();
 			Double4D scale = metadata.getScale();
 			Double2D constant = metadata.getPoint();
+			Time time = metadata.getTime();
 			boolean julia = metadata.isJulia();
 			renderer.setOrbit(orbitBuilder.build());
 			renderer.setColor(colorBuilder.build());
@@ -95,6 +97,7 @@ public class MandelbrotImageGenerator implements ImageGenerator {
 			view.setJulia(julia);
 			view.setPoint(new Number(constant.getX(), constant.getY()));
 			renderer.setView(view);
+			renderer.setTime(time);
 			renderer.runTask();
 			renderer.waitForTasks();
 			renderer.getPixels(pixels);

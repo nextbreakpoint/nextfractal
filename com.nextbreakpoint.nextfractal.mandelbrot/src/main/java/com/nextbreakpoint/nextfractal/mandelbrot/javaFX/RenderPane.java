@@ -116,13 +116,14 @@ public class RenderPane extends BorderPane {
 	private volatile boolean redrawPoint;
 	private volatile boolean disableTool;
 	private volatile boolean timeAnimation;
+	private volatile MandelbrotSession mandelbrotSession;
+	private volatile Time mandelbrotTime;
 	private String astOrbit;
 	private String astColor;
 	private Tool currentTool;
 	private CompilerBuilder<Orbit> orbitBuilder;
 	private CompilerBuilder<Color> colorBuilder;
 	private List<Number[]> states = new ArrayList<>();
-	private MandelbrotSession mandelbrotSession;
 
 	public RenderPane(Session session, EventBus eventBus, int width, int height, int rows, int columns) {
 		this.width = width;
@@ -483,7 +484,12 @@ public class RenderPane extends BorderPane {
 		});
 
 		captureProperty.addListener((observable, oldValue, newValue) -> {
-			Platform.runLater(() -> captureButton.setSelected(newValue));
+			captureButton.setSelected(newValue);
+		});
+
+		timeProperty.addListener((observable, oldValue, newValue) -> {
+			timeAnimation = newValue;
+			timeButton.setSelected(newValue);
 		});
 
 		eventBus.subscribe("capture-session-started", event -> captureProperty.setValue(true));
@@ -555,14 +561,14 @@ public class RenderPane extends BorderPane {
 		stackPane.setOnDragOver(x -> Optional.of(x).filter(e -> e.getGestureSource() != stackPane)
 			.filter(e -> e.getDragboard().hasFiles()).ifPresent(e -> e.acceptTransferModes(TransferMode.COPY_OR_MOVE)));
 
-		runTimer(eventBus, fractalCanvas, orbitCanvas, juliaCanvas, pointCanvas, trapCanvas, toolCanvas);
+		runTimer(fractalCanvas, orbitCanvas, juliaCanvas, pointCanvas, trapCanvas, toolCanvas);
 
 		eventBus.subscribe("session-report-changed", event -> {
 			CompilerReport report = (CompilerReport) event[0];
 			List<Error> lastErrors = updateReport(report);
+			timeProperty.setValue(false);
 			if (lastErrors.size() == 0) {
 				MandelbrotSession newSession = (MandelbrotSession)event[1];
-				updateData(new Object[] { newSession, event[3] });
     	        notifySessionChanged(eventBus, newSession, (Boolean)event[2], (Boolean)event[3]);
 			}
 		});
@@ -573,9 +579,15 @@ public class RenderPane extends BorderPane {
 
 		eventBus.subscribe("session-data-changed", event -> updateData(event));
 
+		eventBus.subscribe("session-data-changed", event -> restoreView());
+
 		eventBus.subscribe("playback-data-load", event -> loadData(event));
 
+		eventBus.subscribe("playback-data-load", event -> restoreView());
+
 		eventBus.subscribe("playback-data-change", event -> updateData(event));
+
+		eventBus.subscribe("playback-data-change", event -> restoreView());
 
 		eventBus.subscribe("editor-source-changed", event -> {
 //			MandelbrotSession newSession = new MandelbrotSession((String) event[0], (MandelbrotMetadata) mandelbrotSession.getMetadata());
@@ -673,23 +685,21 @@ public class RenderPane extends BorderPane {
 	}
 
 	private void startTimeAnimation(EventBus eventBus) {
-		timeAnimation = true;
-		notifySessionChanged(eventBus, mandelbrotSession, true, true);
+		eventBus.postEvent("history-add-session", mandelbrotSession);
 	}
 
 	private void stopTimeAnimation(EventBus eventBus) {
-		timeAnimation = false;
-		notifySessionChanged(eventBus, mandelbrotSession, false, true);
+		eventBus.postEvent("history-add-session", mandelbrotSession);
 	}
 
-	private void updateTime(EventBus eventBus, double seconds) {
-		Platform.runLater(() -> {
-			MandelbrotMetadata metadata = (MandelbrotMetadata) mandelbrotSession.getMetadata();
-			Time newTime = new Time(metadata.getTime().getValue() + seconds, metadata.getTime().getScale());
-			MandelbrotMetadata newMetadata = new MandelbrotMetadata(metadata.getTranslation(), metadata.getRotation(), metadata.getScale(), metadata.getPoint(), newTime, metadata.isJulia(), metadata.getOptions());
-			eventBus.postEvent("render-time-changed", new MandelbrotSession(mandelbrotSession.getScript(), newMetadata), true, false);
-		});
-	}
+//	private void updateTime(EventBus eventBus, double seconds) {
+//		Platform.runLater(() -> {
+//			MandelbrotMetadata metadata = (MandelbrotMetadata) mandelbrotSession.getMetadata();
+//			Time newTime = new Time(metadata.getTime().getValue() + seconds, metadata.getTime().getScale());
+//			MandelbrotMetadata newMetadata = new MandelbrotMetadata(metadata.getTranslation(), metadata.getRotation(), metadata.getScale(), metadata.getPoint(), newTime, metadata.isJulia(), metadata.getOptions());
+//			eventBus.postEvent("render-time-changed", new MandelbrotSession(mandelbrotSession.getScript(), newMetadata), true, false);
+//		});
+//	}
 
 	private MandelbrotMetadata createMetadataWithOptions() {
 		MandelbrotMetadata oldMetatada = (MandelbrotMetadata) mandelbrotSession.getMetadata();
@@ -716,15 +726,12 @@ public class RenderPane extends BorderPane {
 	}
 
 	private void loadData(Object[] event) {
+		timeProperty.setValue(false);
 		Try.of(() -> generateReport(((MandelbrotSession) event[0]).getScript())).filter(report -> ((CompilerReport)report).getErrors().size() == 0).ifPresent(report -> {
 			List<Error> errors = updateReport(report);
 			if (errors.size() == 0) {
 				mandelbrotSession = (MandelbrotSession) event[0];
 				updateView(mandelbrotSession, (Boolean) event[1]);
-				MandelbrotMetadata metadata = (MandelbrotMetadata) mandelbrotSession.getMetadata();
-				showPreviewProperty.setValue(!metadata.isJulia() && metadata.getOptions().isShowPreview());
-				showOrbitProperty.setValue(metadata.getOptions().isShowOrbit());
-				juliaProperty.setValue(metadata.isJulia());
 			}
 		});
 	}
@@ -749,6 +756,9 @@ public class RenderPane extends BorderPane {
 	private void updateData(Object[] event) {
 		mandelbrotSession = (MandelbrotSession) event[0];
         updateView(mandelbrotSession, (Boolean) event[1]);
+	}
+
+	private void restoreView() {
 		MandelbrotMetadata metadata = (MandelbrotMetadata) mandelbrotSession.getMetadata();
 		showPreviewProperty.setValue(!metadata.isJulia() && metadata.getOptions().isShowPreview());
 		showOrbitProperty.setValue(metadata.getOptions().isShowOrbit());
@@ -842,18 +852,14 @@ public class RenderPane extends BorderPane {
 		}
 	}
 
-	private void runTimer(EventBus eventBus, Canvas fractalCanvas, Canvas orbitCanvas, Canvas juliaCanvas, Canvas pointCanvas, Canvas trapCanvas, Canvas toolCanvas) {
+	private void runTimer(Canvas fractalCanvas, Canvas orbitCanvas, Canvas juliaCanvas, Canvas pointCanvas, Canvas trapCanvas, Canvas toolCanvas) {
 		timer = new AnimationTimer() {
 			private long lastInMillis;
 
 			@Override
 			public void handle(long nanos) {
 				long nowInMillis = nanos / 1000000;
-				long intervalInMillis = nowInMillis - lastInMillis;
-				if (intervalInMillis > FRAME_LENGTH_IN_MILLIS) {
-					if (timeAnimation) {
-						updateTime(eventBus, intervalInMillis / 1000.0);
-					}
+				if (nowInMillis - lastInMillis > FRAME_LENGTH_IN_MILLIS) {
 					if (!disableTool && coordinators[0] != null && coordinators[0].isInitialized()) {
 						processRenderErrors();
 						redrawIfPixelsChanged(fractalCanvas);
@@ -863,7 +869,7 @@ public class RenderPane extends BorderPane {
 						redrawIfTrapChanged(trapCanvas);
 						redrawIfToolChanged(toolCanvas);
 						if (currentTool != null) {
-							currentTool.update(nowInMillis);
+							currentTool.update(nowInMillis, timeAnimation);
 						}
 					}
 					lastInMillis = nowInMillis;
