@@ -34,6 +34,6 @@ class XaosPrice {
 	 */
 	@Override
 	public String toString() {
-		return "<price = " + price + ", pos = " + pos + ">";
+		return "price = " + price + ", pos = " + pos;
 	}
 }

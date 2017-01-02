@@ -34,6 +34,6 @@ class XaosChunk {
 	 */
 	@Override
 	public String toString() {
-		return "<from = " + from + ", to = " + to + ", length = " + length + ">";
+		return "from = " + from + ", to = " + to + ", length = " + length;
 	}
 }
