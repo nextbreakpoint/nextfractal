@@ -31,6 +31,7 @@ import com.nextbreakpoint.nextfractal.core.Clip;
 import com.nextbreakpoint.nextfractal.core.FileManager;
 import com.nextbreakpoint.nextfractal.core.FileManagerEntry;
 import com.nextbreakpoint.nextfractal.core.FileManifest;
+import com.nextbreakpoint.nextfractal.core.Metadata;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -130,7 +131,7 @@ public class MandelbrotFileManager extends FileManager {
     }
 
     @Override
-    protected Object decodeMetadata(String metadata) throws Exception {
+    protected Metadata decodeMetadata(String metadata) throws Exception {
         return new ObjectMapper().readValue(metadata, MandelbrotMetadata.class);
     }
 

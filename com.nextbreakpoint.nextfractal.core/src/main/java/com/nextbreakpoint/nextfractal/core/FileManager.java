@@ -252,7 +252,7 @@ public abstract class FileManager {
         return new ClipEvent(new Date(date), pluginId, script, decodeMetadata(metadata));
     }
 
-    protected abstract Object decodeMetadata(String metadata) throws Exception;
+    protected abstract Metadata decodeMetadata(String metadata) throws Exception;
 
     protected abstract String encodeMetadata(Object metadata) throws Exception;
 

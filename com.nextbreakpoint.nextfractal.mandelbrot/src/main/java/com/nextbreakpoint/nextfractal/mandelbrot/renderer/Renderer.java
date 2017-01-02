@@ -89,6 +89,7 @@ public class Renderer {
 	protected boolean multiThread;
 	protected boolean singlePass;
 	protected boolean continuous;
+	protected boolean timeAnimation;
 	protected RendererRegion previewRegion;
 	protected RendererRegion contentRegion;
 	protected RendererRegion initialRegion = new RendererRegion();
@@ -240,6 +241,13 @@ public class Renderer {
 		this.continuous = continuous;
 	}
 
+	/**
+	 * @param timeAnimation
+	 */
+	public void setTimeAnimation(boolean timeAnimation) {
+		this.timeAnimation = timeAnimation;
+	}
+
 	public RendererTile getPreviewTile() {
 		return previewTile;
 	}
@@ -329,7 +337,8 @@ public class Renderer {
 		setContentRegion(computeContentRegion());
 		setJulia(view.isJulia());
 		setPoint(view.getPoint());
-		setContinuous(view.getState().getX() >= 1 || view.getState().getY() >= 1 || view.getState().getZ() >= 1 || view.getState().getW() >= 1);
+		setContinuous(view.getState().getZ() == 1);
+		setTimeAnimation(view.getState().getW() == 1);
 		lock.unlock();
 	}
 
@@ -513,8 +522,8 @@ public class Renderer {
 				didChanged(progress, contentRendererData.getPixels());
 				return;
 			}
-			boolean orbitTime = contentRendererFractal.getOrbit().useTime();
-			boolean colorTime = contentRendererFractal.getColor().useTime();
+			boolean orbitTime = contentRendererFractal.getOrbit().useTime() && timeAnimation;
+			boolean colorTime = contentRendererFractal.getColor().useTime() && timeAnimation;
 			final boolean redraw = regionChanged || orbitChanged || juliaChanged || (julia && pointChanged) || ((orbitTime || colorTime) && timeChanged);
 			timeChanged = false;
 			pointChanged = false;

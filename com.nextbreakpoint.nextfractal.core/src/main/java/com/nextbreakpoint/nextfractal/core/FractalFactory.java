@@ -53,7 +53,7 @@ public interface FractalFactory {
 	/**
 	 * @return
 	 */
-	public Session createSession(String script, Object metadata);
+	public Session createSession(String script, Metadata metadata);
 
 	/**
 	 * @param eventBus

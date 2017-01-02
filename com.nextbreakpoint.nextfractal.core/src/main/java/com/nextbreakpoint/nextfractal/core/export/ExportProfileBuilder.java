@@ -24,6 +24,8 @@
  */
 package com.nextbreakpoint.nextfractal.core.export;
 
+import com.nextbreakpoint.nextfractal.core.Metadata;
+
 public class ExportProfileBuilder {
 	private float quality;
 	private float frameRate;
@@ -39,7 +41,7 @@ public class ExportProfileBuilder {
 	private float stopTime;
 	private String pluginId;
 	private String script;
-	private Object metadata;
+	private Metadata metadata;
 
 	public static ExportProfileBuilder fromProfile(ExportProfile profile) {
 		ExportProfileBuilder builder = new ExportProfileBuilder();
@@ -117,7 +119,7 @@ public class ExportProfileBuilder {
 		this.script = script;
 	}
 
-	public void withMetadata(Object metadata) {
+	public void withMetadata(Metadata metadata) {
 		this.metadata = metadata;
 	}
 

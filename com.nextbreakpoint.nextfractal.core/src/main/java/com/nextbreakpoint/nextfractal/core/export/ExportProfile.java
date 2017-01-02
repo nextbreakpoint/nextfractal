@@ -24,6 +24,7 @@
  */
 package com.nextbreakpoint.nextfractal.core.export;
 
+import com.nextbreakpoint.nextfractal.core.Metadata;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererPoint;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
@@ -43,9 +44,9 @@ public class ExportProfile {
 	private float stopTime;
 	private String pluginId;
 	private String script;
-	private Object metadata;
+	private Metadata metadata;
 
-	ExportProfile(float quality, float frameRate, int frameWidth, int frameHeight, int tileWidth, int tileHeight, int tileOffsetX, int tileOffsetY, int borderWidth, int borderHeight, float startTime, float stopTime, String pluginId, String script, Object metadata) {
+	ExportProfile(float quality, float frameRate, int frameWidth, int frameHeight, int tileWidth, int tileHeight, int tileOffsetX, int tileOffsetY, int borderWidth, int borderHeight, float startTime, float stopTime, String pluginId, String script, Metadata metadata) {
 		this.quality = quality;
 		this.frameRate = frameRate;
 		this.frameWidth = frameWidth;
@@ -119,7 +120,7 @@ public class ExportProfile {
 		return script;
 	}
 
-	public Object getMetadata() {
+	public Metadata getMetadata() {
 		return metadata;
 	}
 

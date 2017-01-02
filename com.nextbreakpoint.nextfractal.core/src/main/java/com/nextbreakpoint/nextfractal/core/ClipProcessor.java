@@ -1,5 +1,7 @@
 package com.nextbreakpoint.nextfractal.core;
 
+import com.nextbreakpoint.nextfractal.core.utils.Time;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -34,6 +36,7 @@ public class ClipProcessor {
             long baseTime = event.getDate().getTime();
             logger.fine("0) clip " + currentClip + ", event " + currentEvent);
             Frame lastFrame = null;
+            Time lastTime = null;
             while (frameIndex < frameCount && currentClip < clips.size() && currentEvent < clips.get(currentClip).getEvents().size()) {
                 currentEvent += 1;
                 while (currentClip < clips.size() && currentEvent >= clips.get(currentClip).getEvents().size()) {
@@ -44,6 +47,7 @@ public class ClipProcessor {
                         prevTime = time;
                     }
                     lastFrame = null;
+                    lastTime = null;
                 }
                 logger.fine("1) clip " + currentClip + ", event " + currentEvent);
                 if (currentClip < clips.size() && currentEvent < clips.get(currentClip).getEvents().size()) {
@@ -52,11 +56,14 @@ public class ClipProcessor {
                     time = prevTime + (nextEvent.getDate().getTime() - baseTime) / 1000f;
                     while (frameTime - time < 0.02f) {
                         logger.fine("1) frame " + frameIndex + ", time " + frameTime);
-                        Frame frame = new Frame(event.getPluginId(), event.getScript(), event.getMetadata(), true);
+                        Frame frame = new Frame(event.getPluginId(), event.getScript(), event.getMetadata(), true, false);
                         if (lastFrame != null && lastFrame.equals(frame)) {
                             logger.fine("1) not key frame");
-                            frame = new Frame(event.getPluginId(), event.getScript(), event.getMetadata(), false);
+                            boolean timeAnimation = lastTime == null || !lastTime.equals(event.getMetadata().getTime());
+                            logger.fine("1) time " + event.getMetadata().getTime());
+                            frame = new Frame(event.getPluginId(), event.getScript(), event.getMetadata(), false, true);
                         }
+                        lastTime = event.getMetadata().getTime();
                         lastFrame = frame;
                         frames.add(frame);
                         frameIndex += 1;
@@ -66,11 +73,14 @@ public class ClipProcessor {
                 } else {
                     float frameTime = frameIndex * frameRate;
                     logger.fine("2) frame " + frameIndex + ", time " + frameTime);
-                    Frame frame = new Frame(event.getPluginId(), event.getScript(), event.getMetadata(), true);
+                    Frame frame = new Frame(event.getPluginId(), event.getScript(), event.getMetadata(), true, false);
                     if (lastFrame != null && lastFrame.equals(frame)) {
                         logger.fine("2) not key frame");
-                        frame = new Frame(event.getPluginId(), event.getScript(), event.getMetadata(), false);
+                        boolean timeAnimation = lastTime == null || !lastTime.equals(event.getMetadata().getTime());
+                        logger.fine("2) time " + event.getMetadata().getTime());
+                        frame = new Frame(event.getPluginId(), event.getScript(), event.getMetadata(), false, true);
                     }
+                    lastTime = event.getMetadata().getTime();
                     lastFrame = frame;
                     frames.add(frame);
                     frameIndex += 1;

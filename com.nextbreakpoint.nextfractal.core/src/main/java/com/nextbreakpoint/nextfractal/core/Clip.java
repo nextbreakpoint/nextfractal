@@ -16,7 +16,7 @@ public class Clip {
         this.events.addAll(events);
     }
 
-    public void append(Date date, String pluginId, String script, Object metadata) {
+    public void append(Date date, String pluginId, String script, Metadata metadata) {
         events.add(new ClipEvent(date, pluginId, script, metadata));
     }
 

@@ -29,6 +29,7 @@ import com.nextbreakpoint.nextfractal.contextfree.compiler.CompilerReport;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDG;
 import com.nextbreakpoint.nextfractal.contextfree.renderer.Renderer;
 import com.nextbreakpoint.nextfractal.core.ImageComposer;
+import com.nextbreakpoint.nextfractal.core.Metadata;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
 import com.nextbreakpoint.nextfractal.core.renderer.java2D.Java2DRendererFactory;
@@ -53,7 +54,7 @@ public class ContextFreeImageComposer implements ImageComposer {
 	}
 
 	@Override
-	public IntBuffer renderImage(String script, Object data) {
+	public IntBuffer renderImage(String script, Metadata data) {
 		ContextFreeMetadata metadata = (ContextFreeMetadata)data;
 		RendererSize suggestedSize = tile.getTileSize();
 		BufferedImage image = new BufferedImage(suggestedSize.getWidth(), suggestedSize.getHeight(), BufferedImage.TYPE_INT_ARGB);

@@ -55,10 +55,13 @@ public class PlaybackPane extends Pane {
                 if (delegate != null) {
                     if (lastFrame == null || !lastFrame.getPluginId().equals(frame.getPluginId()) || !lastFrame.getScript().equals(frame.getScript())) {
                         tryFindFactory(frame.getPluginId()).map(factory -> factory.createSession(frame.getScript(), frame.getMetadata()))
-                            .ifPresent(session -> Platform.runLater(() -> delegate.loadSessionData(session, frame.isKeyFrame())));
+                            .ifPresent(session -> Platform.runLater(() -> delegate.loadSessionData(session, frame.isKeyFrame(), !frame.isKeyFrame() && frame.isTimeAnimation())));
                     } else if (!lastFrame.getMetadata().equals(frame.getMetadata())) {
                         tryFindFactory(frame.getPluginId()).map(factory -> factory.createSession(frame.getScript(), frame.getMetadata()))
-                            .ifPresent(session -> Platform.runLater(() -> delegate.updateSessionData(session, frame.isKeyFrame())));
+                            .ifPresent(session -> Platform.runLater(() -> delegate.updateSessionData(session, frame.isKeyFrame(), !frame.isKeyFrame() && frame.isTimeAnimation())));
+                    } else if (!lastFrame.getMetadata().getTime().equals(frame.getMetadata().getTime())) {
+                        tryFindFactory(frame.getPluginId()).map(factory -> factory.createSession(frame.getScript(), frame.getMetadata()))
+                            .ifPresent(session -> Platform.runLater(() -> delegate.updateSessionData(session, true, true)));
                     }
                 }
                 lastFrame = frame;

@@ -24,6 +24,7 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree;
 
+import com.nextbreakpoint.nextfractal.core.Metadata;
 import com.nextbreakpoint.nextfractal.core.Session;
 
 import java.io.IOException;
@@ -60,7 +61,7 @@ public class ContextFreeSession extends Session {
 	}
 
 	@Override
-	public Object getMetadata() {
+	public Metadata getMetadata() {
 		return metadata;
 	}
 

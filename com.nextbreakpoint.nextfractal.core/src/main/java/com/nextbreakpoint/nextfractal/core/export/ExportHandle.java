@@ -24,6 +24,7 @@
  */
 package com.nextbreakpoint.nextfractal.core.export;
 
+import com.nextbreakpoint.nextfractal.core.Metadata;
 import com.nextbreakpoint.nextfractal.core.encoder.Encoder;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 
@@ -160,7 +161,7 @@ public final class ExportHandle {
 		return session.getFrames().get(frameNumber).getScript();
 	}
 
-	public Object getCurrentMetadata() {
+	public Metadata getCurrentMetadata() {
 		return session.getFrames().get(frameNumber).getMetadata();
 	}
 

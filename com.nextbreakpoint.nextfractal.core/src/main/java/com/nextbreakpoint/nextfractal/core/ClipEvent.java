@@ -7,9 +7,9 @@ public class ClipEvent {
     private Date date;
     private String pluginId;
     private String script;
-    private Object metadata;
+    private Metadata metadata;
 
-    public ClipEvent(Date date, String pluginId, String script, Object metadata) {
+    public ClipEvent(Date date, String pluginId, String script, Metadata metadata) {
         this.date = Objects.requireNonNull(date);
         this.pluginId = Objects.requireNonNull(pluginId);
         this.script = Objects.requireNonNull(script);
@@ -28,7 +28,7 @@ public class ClipEvent {
         return script;
     }
 
-    public Object getMetadata() {
+    public Metadata getMetadata() {
         return metadata;
     }
 }

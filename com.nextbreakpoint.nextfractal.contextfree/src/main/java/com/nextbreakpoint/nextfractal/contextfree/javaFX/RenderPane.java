@@ -224,17 +224,17 @@ public class RenderPane extends BorderPane {
 			List<Error> lastErrors = updateReport(report);
 			if (lastErrors.size() == 0) {
 				ContextFreeSession newSession = (ContextFreeSession)event[1];
-				notifySessionChanged(eventBus, newSession, (Boolean)event[2], (Boolean)event[3]);
+				notifySessionChanged(eventBus, newSession, (Boolean)event[2], false, (Boolean)event[3]);
 			}
 		});
 
 //		eventBus.subscribe("session-data-loaded", event -> loadData(event));
 
-		eventBus.subscribe("session-data-changed", event -> updateData(event));
+		eventBus.subscribe("session-data-changed", event -> updateData((ContextFreeSession) event[0]));
 
-		eventBus.subscribe("playback-data-load", event -> loadData(event));
+		eventBus.subscribe("playback-data-load", event -> loadData((ContextFreeSession) event[0]));
 
-		eventBus.subscribe("playback-data-change", event -> updateData(event));
+		eventBus.subscribe("playback-data-change", event -> updateData((ContextFreeSession) event[0]));
 
 		eventBus.subscribe("editor-source-changed", event -> {
 //			ContextFreeSession newSession = new ContextFreeSession((String) event[0], (ContextFreeMetadata) contextFreeSession.getMetadata());
@@ -245,14 +245,14 @@ public class RenderPane extends BorderPane {
 			ContextFreeSession newSession = (ContextFreeSession) event[0];
 			Boolean continuous = (Boolean) event[1];
 			Boolean appendHistory = (Boolean) event[2];
-			notifySessionChanged(eventBus, newSession, continuous, appendHistory && !continuous);
+			notifySessionChanged(eventBus, newSession, continuous, false, appendHistory && !continuous);
 		});
 
 		eventBus.subscribe("render-data-changed", event -> {
 			ContextFreeSession newSession = (ContextFreeSession) event[0];
 			Boolean continuous = (Boolean) event[1];
 			Boolean appendHistory = (Boolean) event[2];
-			notifySessionChanged(eventBus, newSession, continuous, appendHistory && !continuous);
+			notifySessionChanged(eventBus, newSession, continuous, false, appendHistory && !continuous);
 		});
 
 		eventBus.subscribe("render-status-changed", event -> {
@@ -266,21 +266,21 @@ public class RenderPane extends BorderPane {
 		eventBus.subscribe("session-terminated", event -> dispose());
 	}
 
-	private void loadData(Object[] event) {
-		Try.of(() -> generateReport(((ContextFreeSession) event[0]).getScript())).filter(report -> ((CompilerReport)report).getErrors().size() == 0).ifPresent(report -> {
+	private void loadData(ContextFreeSession session) {
+		Try.of(() -> generateReport(session.getScript())).filter(report -> ((CompilerReport)report).getErrors().size() == 0).ifPresent(report -> {
 			List<Error> errors = updateReport(report);
 			if (errors.size() == 0) {
-				contextFreeSession = (ContextFreeSession) event[0];
+				updateData(session);
 			}
 		});
 	}
 
-	private void updateData(Object[] event) {
-		contextFreeSession = (ContextFreeSession) event[0];
+	private void updateData(ContextFreeSession session) {
+		contextFreeSession = session;
 	}
 
-	private void notifySessionChanged(EventBus eventBus, ContextFreeSession newSession, boolean continuous, boolean historyAppend) {
-		eventBus.postEvent("session-data-changed", newSession, continuous, false);
+	private void notifySessionChanged(EventBus eventBus, ContextFreeSession newSession, boolean continuous, boolean timeAnimation, boolean historyAppend) {
+		eventBus.postEvent("session-data-changed", newSession, continuous, timeAnimation, false);
 		if (historyAppend) {
 			eventBus.postEvent("history-add-session", newSession);
 		}

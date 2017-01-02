@@ -144,18 +144,16 @@ public final class XaosRenderer extends Renderer {
 				didChanged(progress, contentRendererData.getPixels());
 				return;
 			}
-			boolean orbitTime = contentRendererFractal.getOrbit().useTime();
-			boolean colorTime = contentRendererFractal.getColor().useTime();
 			boolean copyOfTimeChanged = timeChanged;
-			boolean orbitTimeChanged = copyOfTimeChanged && orbitTime;
-			boolean colorTimeChanged = copyOfTimeChanged && colorTime;
+			boolean orbitTimeChanged = copyOfTimeChanged && contentRendererFractal.getOrbit().useTime();
+			boolean colorTimeChanged = copyOfTimeChanged && contentRendererFractal.getColor().useTime();
 			boolean copyOfRegionChanged = regionChanged;
 			final boolean calculate = (!continuous && copyOfRegionChanged) || orbitChanged || juliaChanged || (julia && pointChanged) || orbitTimeChanged;
 			final boolean refresh = !calculate && (colorChanged || colorTimeChanged);
 			final boolean oldActiveCache = cacheActive;
 			cacheActive = refresh || !continuous || copyOfTimeChanged;
 			final boolean redraw = (cacheActive && !oldActiveCache) || calculate;
-//			logger.info("cache " + cacheActive + ", redraw " + redraw + ", refresh " + refresh + ", continuous " + continuous);
+//			logger.info("cache " + cacheActive + ", redraw " + redraw + ", refresh " + refresh + ", continuous " + continuous + ", timeChanged " + copyOfTimeChanged);
 			timeChanged = false;
 			pointChanged = false;
 			orbitChanged = false;

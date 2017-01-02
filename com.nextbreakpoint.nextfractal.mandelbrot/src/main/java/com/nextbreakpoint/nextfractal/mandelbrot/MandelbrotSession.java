@@ -24,6 +24,7 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot;
 
+import com.nextbreakpoint.nextfractal.core.Metadata;
 import com.nextbreakpoint.nextfractal.core.Session;
 import com.nextbreakpoint.nextfractal.core.utils.Double2D;
 import com.nextbreakpoint.nextfractal.core.utils.Double4D;
@@ -63,7 +64,7 @@ public class MandelbrotSession extends Session {
 	}
 
 	@Override
-	public Object getMetadata() {
+	public Metadata getMetadata() {
 		return metadata;
 	}
 

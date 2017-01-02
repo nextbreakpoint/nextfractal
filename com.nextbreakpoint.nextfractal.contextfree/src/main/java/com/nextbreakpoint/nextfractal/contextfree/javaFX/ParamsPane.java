@@ -106,14 +106,16 @@ public class ParamsPane extends Pane {
 			if (contextFreeSession != null && event[0].equals("apply")) notifyAll.apply((ContextFreeMetadata) contextFreeSession.getMetadata());
 		});
 
-		eventBus.subscribe("session-data-changed", event -> updateData(updateAll, event));
+		eventBus.subscribe("session-data-changed", event -> updateData(updateAll, (ContextFreeSession) event[0], false));
 
 		seedField.setOnAction(e -> notifyAll.apply((ContextFreeMetadata) contextFreeSession.getMetadata()));
 	}
 
-	private void updateData(Function<ContextFreeMetadata, Object> updateAll, Object[] event) {
-		contextFreeSession = (ContextFreeSession) event[0];
-		updateAll.apply((ContextFreeMetadata) contextFreeSession.getMetadata());
+	private void updateData(Function<ContextFreeMetadata, Object> updateAll, ContextFreeSession session, boolean continuous) {
+		contextFreeSession = session;
+		if (continuous == Boolean.FALSE) {
+			updateAll.apply((ContextFreeMetadata) contextFreeSession.getMetadata());
+		}
 	}
 
 	protected String getRestriction() {

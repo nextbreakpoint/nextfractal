@@ -24,11 +24,12 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot;
 
+import com.nextbreakpoint.nextfractal.core.Metadata;
 import com.nextbreakpoint.nextfractal.core.utils.Double2D;
 import com.nextbreakpoint.nextfractal.core.utils.Double4D;
 import com.nextbreakpoint.nextfractal.core.utils.Time;
 
-public class MandelbrotMetadata {
+public class MandelbrotMetadata implements Metadata {
 	private final Double4D translation;
 	private final Double4D rotation;
 	private final Double4D scale;
@@ -112,7 +113,7 @@ public class MandelbrotMetadata {
 		if (rotation != null ? !rotation.equals(that.rotation) : that.rotation != null) return false;
 		if (scale != null ? !scale.equals(that.scale) : that.scale != null) return false;
 		if (point != null ? !point.equals(that.point) : that.point != null) return false;
-		if (time != null ? !time.equals(that.time) : that.time != null) return false;
+//		if (time != null ? !time.equals(that.time) : that.time != null) return false;
 		return options != null ? options.equals(that.options) : that.options == null;
 	}
 
@@ -122,7 +123,7 @@ public class MandelbrotMetadata {
 		result = 31 * result + (rotation != null ? rotation.hashCode() : 0);
 		result = 31 * result + (scale != null ? scale.hashCode() : 0);
 		result = 31 * result + (point != null ? point.hashCode() : 0);
-		result = 31 * result + (time != null ? time.hashCode() : 0);
+//		result = 31 * result + (time != null ? time.hashCode() : 0);
 		result = 31 * result + (julia ? 1 : 0);
 		result = 31 * result + (options != null ? options.hashCode() : 0);
 		return result;

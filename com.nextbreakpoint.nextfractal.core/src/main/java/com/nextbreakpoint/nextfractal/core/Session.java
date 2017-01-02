@@ -35,7 +35,7 @@ public abstract class Session {
 
 	public abstract String getScript();
 
-	public abstract Object getMetadata();
+	public abstract Metadata getMetadata();
 
 	protected static String readResource(String name) throws IOException {
 		InputStream is = Session.class.getResourceAsStream(name);

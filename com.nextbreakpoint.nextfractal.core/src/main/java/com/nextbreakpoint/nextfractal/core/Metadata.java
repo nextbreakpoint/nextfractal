@@ -22,30 +22,10 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
+package com.nextbreakpoint.nextfractal.core;
 
-import com.nextbreakpoint.nextfractal.core.renderer.RendererFactory;
-import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotMetadata;
-import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
+import com.nextbreakpoint.nextfractal.core.utils.Time;
 
-public interface ToolContext {
-	public double getWidth();
-
-	public double getHeight();
-
-	public Number getInitialSize();
-
-	public Number getInitialCenter();
-
-	public double getZoomSpeed();
-
-	public RendererFactory getRendererFactory();
-
-	public MandelbrotMetadata getMetadata();
-
-	public void setView(MandelbrotMetadata view, boolean continuous);
-
-	public void setTime(MandelbrotMetadata metadata, boolean continuous);
-
-	public void setPoint(MandelbrotMetadata view, boolean continuous);
+public interface Metadata {
+	public Time getTime();
 }

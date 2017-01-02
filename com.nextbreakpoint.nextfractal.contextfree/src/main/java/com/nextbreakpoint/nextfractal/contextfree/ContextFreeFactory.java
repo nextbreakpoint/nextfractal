@@ -36,6 +36,7 @@ import com.nextbreakpoint.nextfractal.core.FileManager;
 import com.nextbreakpoint.nextfractal.core.FractalFactory;
 import com.nextbreakpoint.nextfractal.core.ImageComposer;
 import com.nextbreakpoint.nextfractal.core.ImageGenerator;
+import com.nextbreakpoint.nextfractal.core.Metadata;
 import com.nextbreakpoint.nextfractal.core.Session;
 import com.nextbreakpoint.nextfractal.core.javaFX.Bitmap;
 import com.nextbreakpoint.nextfractal.core.javaFX.BrowseBitmap;
@@ -77,7 +78,7 @@ public class ContextFreeFactory implements FractalFactory {
 	}
 
 	@Override
-	public Session createSession(String script, Object metadata) {
+	public Session createSession(String script, Metadata metadata) {
 		return new ContextFreeSession(script, (ContextFreeMetadata) metadata);
 	}
 

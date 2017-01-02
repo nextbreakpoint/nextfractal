@@ -25,6 +25,7 @@
 package com.nextbreakpoint.nextfractal.mandelbrot;
 
 import com.nextbreakpoint.nextfractal.core.ImageComposer;
+import com.nextbreakpoint.nextfractal.core.Metadata;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererAffine;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererFactory;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererGraphicsContext;
@@ -70,7 +71,7 @@ public class MandelbrotImageComposer implements ImageComposer {
 	}
 
 	@Override
-	public IntBuffer renderImage(String script, Object data) {
+	public IntBuffer renderImage(String script, Metadata data) {
 		MandelbrotMetadata metadata = (MandelbrotMetadata) data;
 		RendererSize suggestedSize = tile.getTileSize();
 		BufferedImage image = new BufferedImage(suggestedSize.getWidth(), suggestedSize.getHeight(), BufferedImage.TYPE_INT_ARGB);

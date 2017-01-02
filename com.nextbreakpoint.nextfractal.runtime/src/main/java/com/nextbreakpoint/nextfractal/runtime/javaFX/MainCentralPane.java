@@ -77,13 +77,13 @@ public class MainCentralPane extends BorderPane {
             }
 
             @Override
-            public void loadSessionData(Session session, boolean continuous) {
-                eventBus.postEvent("playback-data-load", session, continuous, false);
+            public void loadSessionData(Session session, boolean continuous, boolean timeAnimation) {
+                eventBus.postEvent("playback-data-load", session, continuous, timeAnimation);
             }
 
             @Override
-            public void updateSessionData(Session session, boolean continuous) {
-                eventBus.postEvent("playback-data-change", session, continuous, false);
+            public void updateSessionData(Session session, boolean continuous, boolean timeAnimation) {
+                eventBus.postEvent("playback-data-change", session, continuous, timeAnimation);
             }
         });
 

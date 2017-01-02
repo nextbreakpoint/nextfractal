@@ -34,7 +34,7 @@ public interface ImageGenerator {
 	 * @param metadata
 	 * @return
 	 */
-	public IntBuffer renderImage(String script, Object metadata);
+	public IntBuffer renderImage(String script, Metadata metadata);
 
 	/**
 	 * @return

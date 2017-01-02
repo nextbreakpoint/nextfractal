@@ -24,10 +24,14 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree;
 
+import com.nextbreakpoint.nextfractal.core.Metadata;
+import com.nextbreakpoint.nextfractal.core.utils.Time;
+
 import java.util.Objects;
 
-public class ContextFreeMetadata {
+public class ContextFreeMetadata implements Metadata {
 	private final String seed;
+	private final Time time = new Time(0, 1);
 
 	public ContextFreeMetadata() {
 		this.seed = "ABCD";
@@ -58,5 +62,10 @@ public class ContextFreeMetadata {
 	@Override
 	public int hashCode() {
 		return seed.hashCode();
+	}
+
+	@Override
+	public Time getTime() {
+		return time;
 	}
 }

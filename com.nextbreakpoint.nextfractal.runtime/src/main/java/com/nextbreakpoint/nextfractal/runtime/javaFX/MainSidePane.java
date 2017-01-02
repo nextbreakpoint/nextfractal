@@ -387,7 +387,7 @@ public class MainSidePane extends BorderPane {
 
         eventBus.subscribe("capture-clips-merged", event -> exportPane.mergeClips((List<Clip>) event[0]));
 
-        eventBus.subscribe("session-data-changed", event -> handleDataChanged(eventBus, errorProperty, event));
+        eventBus.subscribe("session-data-changed", event -> handleDataChanged(eventBus, errorProperty, (Session) event[0], (Boolean) event[1]));
 
         eventBus.subscribe("session-terminated", event -> jobsPane.dispose());
 
@@ -402,10 +402,10 @@ public class MainSidePane extends BorderPane {
         return rootPane;
     }
 
-    private void handleDataChanged(EventBus eventBus, StringObservableValue errorProperty, Object[] event) {
+    private void handleDataChanged(EventBus eventBus, StringObservableValue errorProperty, Session session, boolean continuous) {
         errorProperty.setValue(null);
-        if (!(boolean) (Boolean) event[1]) {
-            eventBus.postEvent("editor-params-changed", (Session) event[0]);
+        if (!continuous) {
+            eventBus.postEvent("editor-params-changed", session);
         }
     }
 

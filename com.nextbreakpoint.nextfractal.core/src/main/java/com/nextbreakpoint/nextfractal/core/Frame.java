@@ -3,18 +3,16 @@ package com.nextbreakpoint.nextfractal.core;
 public class Frame {
     private String pluginId;
     private String script;
-    private Object metadata;
+    private Metadata metadata;
     private boolean keyFrame;
+    private boolean timeAnimation;
 
-    public Frame(String pluginId, String script, Object metadata) {
-        this(pluginId, script, metadata, false);
-    }
-
-    public Frame(String pluginId, String script, Object metadata, boolean keyFrame) {
+    public Frame(String pluginId, String script, Metadata metadata, boolean keyFrame, boolean timeAnimation) {
         this.pluginId = pluginId;
         this.script = script;
         this.metadata = metadata;
         this.keyFrame = keyFrame;
+        this.timeAnimation = timeAnimation;
     }
 
     public String getPluginId() {
@@ -25,7 +23,7 @@ public class Frame {
         return script;
     }
 
-    public Object getMetadata() {
+    public Metadata getMetadata() {
         return metadata;
     }
 
@@ -51,5 +49,9 @@ public class Frame {
 
     public boolean isKeyFrame() {
         return keyFrame;
+    }
+
+    public boolean isTimeAnimation() {
+        return timeAnimation;
     }
 }
