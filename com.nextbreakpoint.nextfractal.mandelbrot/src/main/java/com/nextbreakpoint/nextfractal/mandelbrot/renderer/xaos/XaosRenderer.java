@@ -85,7 +85,7 @@ public final class XaosRenderer extends Renderer {
 		super(threadFactory, renderFactory, tile);
 		this.xaosRendererData = (XaosRendererData) contentRendererData;
 		if (multiThread && Runtime.getRuntime().availableProcessors() > 4) {
-			executor = Executors.newFixedThreadPool(2, threadFactory);
+			executor = Executors.newSingleThreadExecutor(threadFactory);
 		}
 		if (Boolean.getBoolean("mandelbrot.renderer.xaos.overlapping")) {
 			overlapping = true;
@@ -195,22 +195,23 @@ public final class XaosRenderer extends Renderer {
 			if (executor != null && XaosConstants.USE_MULTITHREAD && !XaosConstants.DUMP_XAOS) {
 				if (redraw) {
 					futureLines = executor.submit(redrawLinesRunnable);
-					futureColumns = executor.submit(redrawColumnsRunnable);
+//					futureColumns = executor.submit(redrawColumnsRunnable);
 				} else {
 					futureLines = executor.submit(refreshLinesRunnable);
-					futureColumns = executor.submit(refreshColumnsRunnable);
+//					futureColumns = executor.submit(refreshColumnsRunnable);
 				}
 			} else {
 				prepareColumns(redraw);
-				prepareLines(redraw);
+//				prepareLines(redraw);
 			}
+			prepareLines(redraw);
 			if (XaosConstants.USE_MULTITHREAD && !XaosConstants.DUMP_XAOS) {
 				if (futureLines != null) {
 					futureLines.get();
 				}
-				if (futureColumns != null) {
-					futureColumns.get();
-				}
+//				if (futureColumns != null) {
+//					futureColumns.get();
+//				}
 			}
 			if (XaosConstants.PRINT_REALLOCTABLE) {
 				logger.fine("ReallocTable X:");
@@ -234,6 +235,7 @@ public final class XaosRenderer extends Renderer {
 			errors.add(new RendererError(0, 0, 0, 0, e.getMessage()));
 		}
 	}
+
 
 	private void prepareLines(boolean redraw) {
 		final double beginy = xaosRendererData.bottom();
@@ -1062,7 +1064,7 @@ public final class XaosRenderer extends Renderer {
 		long oldTime = System.currentTimeMillis();
 		for (s = 0; !aborted && s < XaosConstants.STEPS; s++) {
 			tmpRealloc = xaosRendererData.reallocY();
-			for (i = offset[s]; i < tmpRealloc.length; i += XaosConstants.STEPS) {
+			for (i = offset[s]; !aborted && i < tmpRealloc.length; i += XaosConstants.STEPS) {
 				if (tmpRealloc[i].calculate || !tmpRealloc[i].isCached || tmpRealloc[i].isFilled) {
 					renderLine(tmpRealloc[i], xaosRendererData.reallocX(), xaosRendererData.reallocY());
 					tocalcy -= 1;
@@ -1073,7 +1075,7 @@ public final class XaosRenderer extends Renderer {
 				}
 			}
 			tmpRealloc = xaosRendererData.reallocX();
-			for (i = offset[s]; i < tmpRealloc.length; i += XaosConstants.STEPS) {
+			for (i = offset[s]; !aborted && i < tmpRealloc.length; i += XaosConstants.STEPS) {
 				if (tmpRealloc[i].calculate || !tmpRealloc[i].isCached || tmpRealloc[i].isFilled) {
 					renderColumn(tmpRealloc[i], xaosRendererData.reallocX(), xaosRendererData.reallocY());
 					tocalcx -= 1;
