@@ -987,13 +987,9 @@ public final class XaosRenderer extends Renderer {
 
 	private void processReallocTable(final boolean continuous, final boolean refresh) {
 		move();
+		int[] offset = prepareOffset();
 		if (refresh) {
-			for (XaosRealloc element : xaosRendererData.reallocY()) {
-				refreshLine(element, xaosRendererData.reallocX(), xaosRendererData.reallocY());
-			}
-			for (XaosRealloc element : xaosRendererData.reallocX()) {
-				refreshColumn(element, xaosRendererData.reallocX(), xaosRendererData.reallocY());
-			}
+			refreshAll(offset);
 		}
 		if (continuous && XaosConstants.USE_XAOS) {
 			int total = 0;
@@ -1009,20 +1005,43 @@ public final class XaosRenderer extends Renderer {
 				processQueue(total);
 			}
 		}
-		processReallocTable();
+		processReallocTable(offset);
 	}
 
-	private void processReallocTable() {
+	private void refreshAll(int[] offset) {
+		if (XaosConstants.DUMP) {
+			logger.fine("Refresh all...");
+		}
+//		XaosRealloc[] tmpRealloc;
+//		int s;
+//		int i;
+//		for (s = 0; s < XaosConstants.STEPS; s++) {
+//            tmpRealloc = xaosRendererData.reallocY();
+//            for (i = offset[s]; i < tmpRealloc.length; i += XaosConstants.STEPS) {
+//                refreshLine(tmpRealloc[i], xaosRendererData.reallocX(), xaosRendererData.reallocY());
+//            }
+//            tmpRealloc = xaosRendererData.reallocX();
+//            for (i = offset[s]; i < tmpRealloc.length; i += XaosConstants.STEPS) {
+//                refreshColumn(tmpRealloc[i], xaosRendererData.reallocX(), xaosRendererData.reallocY());
+//            }
+//			if (isInterrupted()) {
+//				break;
+//			}
+//        }
+		for (XaosRealloc element : xaosRendererData.reallocY()) {
+			refreshLine(element, xaosRendererData.reallocX(), xaosRendererData.reallocY());
+		}
+		for (XaosRealloc element : xaosRendererData.reallocX()) {
+			refreshColumn(element, xaosRendererData.reallocX(), xaosRendererData.reallocY());
+		}
+	}
+
+	private void processReallocTable(int[] offset) {
 		if (XaosConstants.DUMP) {
 			logger.fine("Process realloc...");
 		}
-		final int[] position = xaosRendererData.position();
-		final int[] offset = xaosRendererData.offset();
-		position[0] = 1;
-		offset[0] = 0;
-		int s = 1;
-		int i = 0;
-		int j = 0;
+		int i;
+		int s;
 		XaosRealloc[] tmpRealloc;
 		@SuppressWarnings("unused")
 		int tocalcx = 0;
@@ -1038,22 +1057,6 @@ public final class XaosRenderer extends Renderer {
 		for (i = 0; i < tmpRealloc.length; i++) {
 			if (tmpRealloc[i].calculate) {
 				tocalcy++;
-			}
-		}
-		for (i = 1; i < XaosConstants.STEPS; i++) {
-			position[i] = 0;
-		}
-		while (s < XaosConstants.STEPS) {
-			for (i = 0; i < XaosConstants.STEPS; i++) {
-				if (position[i] == 0) {
-					for (j = i; j < XaosConstants.STEPS; j++) {
-						if (position[j] != 0) {
-							break;
-						}
-					}
-					position[offset[s] = (j + i) >> 1] = 1;
-					s += 1;
-				}
 			}
 		}
 		long oldTime = System.currentTimeMillis();
@@ -1123,6 +1126,33 @@ public final class XaosRenderer extends Renderer {
 		fill();
 		didChanged(progress, contentRendererData.getPixels());
 		Thread.yield();
+	}
+
+	private int[] prepareOffset() {
+		final int[] position = xaosRendererData.position();
+		final int[] offset = xaosRendererData.offset();
+		position[0] = 1;
+		offset[0] = 0;
+		int s = 1;
+		int i = 0;
+		int j = 0;
+		for (i = 1; i < XaosConstants.STEPS; i++) {
+			position[i] = 0;
+		}
+		while (s < XaosConstants.STEPS) {
+			for (i = 0; i < XaosConstants.STEPS; i++) {
+				if (position[i] == 0) {
+					for (j = i; j < XaosConstants.STEPS; j++) {
+						if (position[j] != 0) {
+							break;
+						}
+					}
+					position[offset[s] = (j + i) >> 1] = 1;
+					s += 1;
+				}
+			}
+		}
+		return offset;
 	}
 
 	private void move() {
