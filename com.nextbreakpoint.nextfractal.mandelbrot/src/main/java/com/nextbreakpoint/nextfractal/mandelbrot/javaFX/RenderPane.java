@@ -97,6 +97,7 @@ public class RenderPane extends BorderPane {
 	private final JavaFXRendererFactory renderFactory;
 	private final StringObservableValue errorProperty;
 	private final StringObservableValue statusProperty;
+	private final BooleanObservableValue showTrapsProperty;
 	private final BooleanObservableValue showOrbitProperty;
 	private final BooleanObservableValue showPreviewProperty;
 	private final BooleanObservableValue hideErrorsProperty;
@@ -111,10 +112,11 @@ public class RenderPane extends BorderPane {
 	private int rows;
 	private int columns;
 	private double zoomSpeed = 1.025;
-	private volatile boolean redrawTrap;
+	private volatile boolean redrawTraps;
 	private volatile boolean redrawOrbit;
 	private volatile boolean redrawPoint;
-	private volatile boolean disableTool;
+	private volatile boolean hasError;
+	private volatile boolean playback;
 	private volatile boolean timeAnimation;
 	private volatile MandelbrotSession mandelbrotSession;
 	private String astOrbit;
@@ -146,6 +148,9 @@ public class RenderPane extends BorderPane {
 
 		captureProperty = new BooleanObservableValue();
 		captureProperty.setValue(false);
+
+		showTrapsProperty = new BooleanObservableValue();
+		showTrapsProperty.setValue(false);
 
 		showOrbitProperty = new BooleanObservableValue();
 		showOrbitProperty.setValue(false);
@@ -384,6 +389,21 @@ public class RenderPane extends BorderPane {
 					zoomSpeed = 1.10;
 					break;
 				}
+				case T: {
+					showTrapsProperty.setValue(!showTrapsProperty.getValue());
+					eventBus.postEvent("render-data-changed", new MandelbrotSession(mandelbrotSession.getScript(), createMetadataWithOptions()), false, true);
+					break;
+				}
+				case O: {
+					showOrbitProperty.setValue(!showOrbitProperty.getValue());
+					eventBus.postEvent("render-data-changed", new MandelbrotSession(mandelbrotSession.getScript(), createMetadataWithOptions()), false, true);
+					break;
+				}
+				case P: {
+					showPreviewProperty.setValue(!showPreviewProperty.getValue());
+					eventBus.postEvent("render-data-changed", new MandelbrotSession(mandelbrotSession.getScript(), createMetadataWithOptions()), false, true);
+					break;
+				}
 			}
 		};
 
@@ -461,10 +481,10 @@ public class RenderPane extends BorderPane {
 //				pointCanvas.setVisible(false);
 //				zoominButton.requestFocus();
 //			}
-			if (!disableTool) {
+//			if (!hasError) {
                 showOrbitProperty.setValue(!showOrbitProperty.getValue());
 				eventBus.postEvent("render-data-changed", new MandelbrotSession(mandelbrotSession.getScript(), createMetadataWithOptions()), false, true);
-            }
+//            }
 		});
 
 		juliaButton.setOnAction(e -> juliaProperty.setValue(juliaButton.isSelected()));
@@ -500,9 +520,12 @@ public class RenderPane extends BorderPane {
 
 		eventBus.subscribe("capture-session-stopped", event -> captureProperty.setValue(false));
 
+		showTrapsProperty.addListener((observable, oldValue, newValue) -> {
+			trapCanvas.setVisible(newValue);
+		});
+
 		showOrbitProperty.addListener((observable, oldValue, newValue) -> {
 			orbitCanvas.setVisible(newValue);
-			trapCanvas.setVisible(newValue);
 			pointCanvas.setVisible(newValue);
 			orbitButton.setSelected(newValue);
 			pointCanvas.setVisible(newValue || showPreviewProperty.getValue());
@@ -514,7 +537,7 @@ public class RenderPane extends BorderPane {
 		});
 
 		juliaProperty.addListener((observable, oldValue, newValue) -> {
-			if (!disableTool) {
+//			if (!hasError) {
 				if (newValue) {
 //				juliaButton.setGraphic(createIconImage("/icon-mandelbrot.png"));
 					setFractalJulia(eventBus, true);
@@ -522,7 +545,7 @@ public class RenderPane extends BorderPane {
 //				juliaButton.setGraphic(createIconImage("/icon-julia.png"));
 					setFractalJulia(eventBus, false);
 				}
-			}
+//			}
 			if (newValue) {
 				if (currentTool instanceof ToolPick) {
 					currentTool = new ToolZoom(context, true);
@@ -568,7 +591,7 @@ public class RenderPane extends BorderPane {
 		runTimer(fractalCanvas, orbitCanvas, juliaCanvas, pointCanvas, trapCanvas, toolCanvas);
 
 		eventBus.subscribe("session-report-changed", event -> {
-			timeProperty.setValue(false);
+//			timeProperty.setValue(false);
 			List<Error> lastErrors = updateReport((CompilerReport) event[0]);
 			if (lastErrors.size() == 0) {
 				notifySessionChanged(eventBus, (MandelbrotSession)event[1], (Boolean)event[2], true, (Boolean)event[3]);
@@ -583,9 +606,11 @@ public class RenderPane extends BorderPane {
 
 		eventBus.subscribe("session-data-changed", event -> restoreView());
 
-		eventBus.subscribe("capture-clips-start", event -> disableTool = true);
+		eventBus.subscribe("capture-clips-start", event -> playback = true);
 
-		eventBus.subscribe("capture-clips-stop", event -> disableTool = false);
+		eventBus.subscribe("capture-clips-stop", event -> playback = false);
+
+		eventBus.subscribe("playback-data-load", event -> timeProperty.setValue(false));
 
 		eventBus.subscribe("playback-data-load", event -> loadData((MandelbrotSession) event[0], (Boolean) event[1], (Boolean) event[2]));
 
@@ -682,7 +707,8 @@ public class RenderPane extends BorderPane {
 		Double2D previewSize = metadata.getOptions().getPreviewSize();
 		Boolean showPreview = showPreviewProperty.getValue();
 		Boolean showOrbit = showOrbitProperty.getValue();
-		return new MandelbrotOptions(showPreview, showOrbit, showOrbit, showOrbit || showPreview, previewOrigin, previewSize);
+		Boolean showTrap = showTrapsProperty.getValue();
+		return new MandelbrotOptions(showPreview, showTrap, showOrbit, showOrbit || showPreview, previewOrigin, previewSize);
 	}
 
 	private void notifySessionChanged(EventBus eventBus, MandelbrotSession newSession, boolean continuous, boolean timeAnimation, boolean historyAppend) {
@@ -697,7 +723,6 @@ public class RenderPane extends BorderPane {
 	}
 
 	private void loadData(MandelbrotSession session, Boolean continuous, boolean timeAnimation) {
-		timeProperty.setValue(false);
 		Try.of(() -> generateReport(session.getScript())).filter(report -> ((CompilerReport)report).getErrors().size() == 0).ifPresent(report -> {
 			List<Error> errors = updateReport(report);
 			if (errors.size() == 0) {
@@ -707,6 +732,7 @@ public class RenderPane extends BorderPane {
 	}
 
 	private void restoreTool(ToolContext context, ToggleButton pickButton, ToggleButton zoominButton) {
+		timeProperty.setValue(false);
 		if (showPreviewProperty.getValue()) {
 			if (juliaProperty.getValue()) {
 				currentTool = new ToolZoom(context, true);
@@ -732,6 +758,7 @@ public class RenderPane extends BorderPane {
 		MandelbrotMetadata metadata = (MandelbrotMetadata) mandelbrotSession.getMetadata();
 		showPreviewProperty.setValue(!metadata.isJulia() && metadata.getOptions().isShowPreview());
 		showOrbitProperty.setValue(metadata.getOptions().isShowOrbit());
+		showTrapsProperty.setValue(metadata.getOptions().isShowTraps());
 		juliaProperty.setValue(metadata.isJulia());
 	}
 
@@ -830,7 +857,7 @@ public class RenderPane extends BorderPane {
 			public void handle(long nanos) {
 				long nowInMillis = nanos / 1000000;
 				if (nowInMillis - lastInMillis > FRAME_LENGTH_IN_MILLIS) {
-					if (!disableTool && coordinators[0] != null && coordinators[0].isInitialized()) {
+					if (!playback && !hasError && coordinators[0] != null && coordinators[0].isInitialized()) {
 						processRenderErrors();
 						redrawIfPixelsChanged(fractalCanvas);
 						redrawIfJuliaPixelsChanged(juliaCanvas);
@@ -963,7 +990,7 @@ public class RenderPane extends BorderPane {
 				juliaCoordinator.run();
 			}
 			states = renderOrbit(time, point);
-			redrawTrap = true;
+			redrawTraps = true;
 			redrawOrbit = true;
 			redrawPoint = true;
 			if (!julia) {
@@ -1023,7 +1050,7 @@ public class RenderPane extends BorderPane {
 	}
 
 	private void updateCompilerErrors(String message, List<Error> errors, String source) {
-		disableTool = message != null;
+		hasError = message != null;
 		Platform.runLater(() -> {
 			statusProperty.setValue(null);
 			errorProperty.setValue(null);
@@ -1054,7 +1081,7 @@ public class RenderPane extends BorderPane {
 	}
 
 	private void updateRendererErrors(String message, List<Error> errors, String source) {
-		disableTool = message != null;
+		hasError = message != null;
 		Platform.runLater(() -> {
 			statusProperty.setValue(null);
 			errorProperty.setValue(null);
@@ -1177,7 +1204,7 @@ public class RenderPane extends BorderPane {
 		states = renderOrbit(time, point);
 		redrawOrbit = true;
 		redrawPoint = true;
-		redrawTrap = true;
+		redrawTraps = true;
 		if (!julia && !continuous) {
 //			states = renderOrbit(point);
 			logger.fine("Orbit: point = " + point + ", length = " + states.size());
@@ -1222,7 +1249,7 @@ public class RenderPane extends BorderPane {
 //		}
 //		redrawOrbit = true;
 //		redrawPoint = true;
-//		redrawTrap = true;
+//		redrawTraps = true;
 //		if (!julia && !continuous) {
 //			states = renderOrbit(point);
 //			logger.fine("Orbit: point = " + point + ", length = " + states.size());
@@ -1391,8 +1418,8 @@ public class RenderPane extends BorderPane {
 	}
 
 	private void redrawIfTrapChanged(Canvas canvas) {
-		if (redrawTrap) {
-			redrawTrap = false;
+		if (redrawTraps) {
+			redrawTraps = false;
 			Number size = coordinators[0].getInitialSize();
 			Number center = coordinators[0].getInitialCenter();
 			RendererGraphicsContext gc = renderFactory.createGraphicsContext(canvas.getGraphicsContext2D());
