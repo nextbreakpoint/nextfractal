@@ -246,8 +246,9 @@ public class MainCentralPane extends BorderPane {
     private TranslateTransition createTranslateTransition(Node node) {
         TranslateTransition transition = new TranslateTransition();
         transition.setNode(node);
-        transition.setDuration(Duration.seconds(0.5));
-        transition.setInterpolator(new BounceInterpolator());
+        transition.setDuration(Duration.seconds(1.0));
+        transition.setInterpolator(Interpolator.EASE_BOTH);
+//        transition.setInterpolator(new BounceInterpolator());
         return transition;
     }
 
