@@ -166,4 +166,8 @@ public abstract class AbstractExportService implements ExportService {
 	protected abstract void resumeTasks(ExportHandle exportHandle);
 
 	protected abstract void cancelTasks(ExportHandle exportHandle);
+
+	public int getSessionCount() {
+		return sessions.size();
+	}
 }

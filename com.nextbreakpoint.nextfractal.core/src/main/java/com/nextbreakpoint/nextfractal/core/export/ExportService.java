@@ -34,4 +34,6 @@ public interface ExportService {
 	public void suspendSession(ExportSession session);
 
 	public void resumeSession(ExportSession session);
+
+    int getSessionCount();
 }

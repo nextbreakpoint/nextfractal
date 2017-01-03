@@ -181,7 +181,13 @@ public class NextFractalApp extends Application {
 
 		createMenuBar();
 
-		primaryStage.setOnCloseRequest(e -> eventBus.postEvent("session-terminated", ""));
+		primaryStage.setOnCloseRequest(e -> {
+			if (terminateNow(exportService)) {
+				eventBus.postEvent("session-terminated", "");
+			} else {
+				e.consume();
+			}
+		});
 
 		DoubleProperty fontSize = new SimpleDoubleProperty(computeOptimalFontSize()); // font size in pt
 		rootPane.styleProperty().bind(Bindings.format("-fx-font-size: %.2fpt;", fontSize));
@@ -200,6 +206,28 @@ public class NextFractalApp extends Application {
 			String defaultPluginId = System.getProperty("initialPluginId", DEFAULT_PLUGIN_ID);
 			tryFindFactory(defaultPluginId).ifPresent(factory -> createSession(eventBus, factory));
 		});
+	}
+
+	private boolean terminateNow(ExportService exportService) {
+		if (exportService.getSessionCount() > 0) {
+			CommandLinksDialog.CommandLinksButtonType exitLink = new CommandLinksDialog.CommandLinksButtonType("Terminate now", "Terminate " + exportService.getSessionCount()  + " background jobs and exit", false);
+			CommandLinksDialog.CommandLinksButtonType waitLink = new CommandLinksDialog.CommandLinksButtonType("Don't terminate", "Keep background jobs and cancel exit", true);
+			CommandLinksDialog dialog = new CommandLinksDialog(waitLink, exitLink);
+			dialog.setTitle("Background jobs detected");
+			dialog.setContentText("Some background jobs are still running");
+			Optional<ButtonType> result = dialog.showAndWait();
+			return result.filter(v -> v == exitLink.getButtonType()).isPresent();
+		} else if (edited && clips.size() > 0) {
+			CommandLinksDialog.CommandLinksButtonType exitLink = new CommandLinksDialog.CommandLinksButtonType("Terminate now", "Discard session's clips and exit", false);
+			CommandLinksDialog.CommandLinksButtonType waitLink = new CommandLinksDialog.CommandLinksButtonType("Don't terminate", "Keep session's clips and cancel exit", true);
+			CommandLinksDialog dialog = new CommandLinksDialog(waitLink, exitLink);
+			dialog.setTitle("Clips detected in editor");
+			dialog.setContentText("Current session contains modified clips");
+			Optional<ButtonType> result = dialog.showAndWait();
+			return result.filter(v -> v == exitLink.getButtonType()).isPresent();
+		} else {
+			return true;
+		}
 	}
 
 	private void handleEditorAction(EventBus eventBus, Window window, String action) {
