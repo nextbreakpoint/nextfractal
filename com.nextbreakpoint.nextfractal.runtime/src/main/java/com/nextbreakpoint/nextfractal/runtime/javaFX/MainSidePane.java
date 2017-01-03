@@ -271,13 +271,13 @@ public class MainSidePane extends BorderPane {
         rootPane.heightProperty().addListener((observable, oldValue, newValue) -> {
             double height = newValue.doubleValue();
             sourceButtons.setPrefHeight(height * 0.07);
-            editorPane.setPrefHeight(height * 0.7);
-            sidePane.setPrefHeight(height * 0.7);
-            statusPane.setPrefHeight(height * 0.23);
+            editorPane.setPrefHeight(height * 0.78);
+            sidePane.setPrefHeight(height * 0.78);
+            statusPane.setPrefHeight(height * 0.15);
             sourceButtons.setLayoutY(0);
             editorPane.setLayoutY(height * 0.07);
             sidePane.setLayoutY(height * 0.07);
-            statusPane.setLayoutY(height * 0.77);
+            statusPane.setLayoutY(height * 0.85);
         });
 
         sidePane.widthProperty().addListener((observable, oldValue, newValue) -> {
