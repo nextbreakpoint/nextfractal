@@ -261,6 +261,7 @@ public class JavaReportCompiler {
 				builder.append(var.getName());
 				builder.append(");\n");
 			}
+			builder.append("resetTraps();\n");
 			for (ASTOrbitTrap trap : orbit.getTraps()) {
 				builder.append("addTrap(trap");
 				builder.append(trap.getName().toUpperCase().substring(0, 1));

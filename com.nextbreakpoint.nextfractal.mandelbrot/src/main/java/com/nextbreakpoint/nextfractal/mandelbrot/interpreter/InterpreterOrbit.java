@@ -73,8 +73,11 @@ public class InterpreterOrbit extends Orbit implements InterpreterContext {
 				addVariable(var.getValue());
 			}
 		}
+		resetTraps();
+		traps.clear();
 		for (CompiledTrap cTrap : orbit.getTraps()) {
 			Trap trap = new Trap(cTrap.getCenter());
+			addTrap(trap);
 			for (CompiledTrapOp cTrapOp : cTrap.getOperators()) {
 				cTrapOp.evaluate(trap);
 			}

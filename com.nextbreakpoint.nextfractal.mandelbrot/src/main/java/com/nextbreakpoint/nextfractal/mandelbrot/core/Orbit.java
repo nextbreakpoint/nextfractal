@@ -144,6 +144,10 @@ public abstract class Orbit {
 	public void reset() {
 	}
 
+	public void resetTraps() {
+		traps.clear();
+	}
+
 	public void addTrap(Trap trap) {
 		traps.add(trap);
 	}
