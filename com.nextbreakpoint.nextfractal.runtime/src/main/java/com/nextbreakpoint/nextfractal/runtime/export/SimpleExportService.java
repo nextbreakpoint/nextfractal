@@ -174,7 +174,7 @@ public class SimpleExportService extends AbstractExportService {
 				logger.info("Frame " + (exportHandle.getFrameNumber() + 1) + " of " + exportHandle.getFrameCount());
 				exportHandle.nextFrame();
 				count += 1;
-			} while (count < 100 && !isLastFrame(exportHandle) && !isKeyFrame(exportHandle));
+			} while (count < 100 && !isLastFrame(exportHandle) && !isKeyFrame(exportHandle) && !isTimeAnimation(exportHandle));
 			tryEncodeFrame(exportHandle, index, count)
 					.onSuccess(s -> exportHandle.setState(ExportState.READY))
 					.onFailure(e -> exportHandle.setState(ExportState.FAILED))
@@ -190,6 +190,10 @@ public class SimpleExportService extends AbstractExportService {
 
 	private boolean isKeyFrame(ExportHandle exportHandle) {
 		return exportHandle.getSession().getFrames().get(exportHandle.getFrameNumber()).isKeyFrame();
+	}
+
+	private boolean isTimeAnimation(ExportHandle exportHandle) {
+		return exportHandle.getSession().getFrames().get(exportHandle.getFrameNumber()).isTimeAnimation();
 	}
 
 	private void resetJobs(ExportHandle exportHandle) {
