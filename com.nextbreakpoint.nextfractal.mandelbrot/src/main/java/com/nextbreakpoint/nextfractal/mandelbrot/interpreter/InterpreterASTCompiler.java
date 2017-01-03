@@ -56,11 +56,15 @@ import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledFuncMo
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledFuncPhaZ;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledFuncPow;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledFuncPowZ;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledFuncPulse;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledFuncRamp;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledFuncReZ;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledFuncSaw;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledFuncSin;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledFuncSinZ;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledFuncSqrt;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledFuncSqrtZ;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledFuncSquare;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledFuncTan;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledFuncTanZ;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledFuncTime;
@@ -99,16 +103,16 @@ import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapCo
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapInvertedCondition;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOp;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpArcTo;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpArcToRel;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpArcRel;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpClose;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpCurveTo;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpCurveToRel;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpCurveRel;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpLineTo;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpLineToRel;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpLineRel;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpMoveTo;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpMoveToRel;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpMoveRel;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpQuadTo;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpQuadToRel;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpQuadRel;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledVariable;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTAssignStatement;
@@ -193,6 +197,9 @@ public class InterpreterASTCompiler implements ASTExpressionCompiler {
 			case "ceil":
 			case "floor":
 			case "log":
+			case "square":
+			case "saw":
+			case "ramp":
 				if (function.getArguments().length != 1) {
 					throw new ASTException("Invalid number of arguments: " + function.getLocation().getText(), function.getLocation());
 				}				
@@ -205,6 +212,7 @@ public class InterpreterASTCompiler implements ASTExpressionCompiler {
 			case "max":
 			case "atan2":
 			case "hypot":
+			case "pulse":
 				if (function.getArguments().length != 2) {
 					throw new ASTException("Invalid number of arguments: " + function.getLocation().getText(), function.getLocation());
 				}				
@@ -290,7 +298,13 @@ public class InterpreterASTCompiler implements ASTExpressionCompiler {
 				return new CompiledFuncFloor(context, compileArguments(function.getArguments()), function.getLocation());
 			case "log":
 				return new CompiledFuncLog(context, compileArguments(function.getArguments()), function.getLocation());
-				
+			case "square":
+				return new CompiledFuncSquare(context, compileArguments(function.getArguments()), function.getLocation());
+			case "saw":
+				return new CompiledFuncSaw(context, compileArguments(function.getArguments()), function.getLocation());
+			case "ramp":
+				return new CompiledFuncRamp(context, compileArguments(function.getArguments()), function.getLocation());
+
 			case "min":
 				return new CompiledFuncMin(context, compileArguments(function.getArguments()), function.getLocation());
 			case "max":
@@ -299,7 +313,9 @@ public class InterpreterASTCompiler implements ASTExpressionCompiler {
 				return new CompiledFuncAtan2(context, compileArguments(function.getArguments()), function.getLocation());
 			case "hypot":
 				return new CompiledFuncHypot(context, compileArguments(function.getArguments()), function.getLocation());
-				
+			case "pulse":
+				return new CompiledFuncPulse(context, compileArguments(function.getArguments()), function.getLocation());
+
 			case "pow":
 				if (function.getArguments()[0].isReal()) {
 					return new CompiledFuncPow(context, compileArguments(function.getArguments()), function.getLocation());
@@ -648,33 +664,38 @@ public class InterpreterASTCompiler implements ASTExpressionCompiler {
 		switch (orbitTrapOp.getOp()) {
 			case "MOVETO":
 				return new CompiledTrapOpMoveTo(c1, orbitTrapOp.getLocation());
-	
+
+			case "MOVEREL":
 			case "MOVETOREL":
-				return new CompiledTrapOpMoveToRel(c1, orbitTrapOp.getLocation());
+				return new CompiledTrapOpMoveRel(c1, orbitTrapOp.getLocation());
 	
 			case "LINETO":
 				return new CompiledTrapOpLineTo(c1, orbitTrapOp.getLocation());
-	
+
+			case "LINEREL":
 			case "LINETOREL":
-				return new CompiledTrapOpLineToRel(c1, orbitTrapOp.getLocation());
+				return new CompiledTrapOpLineRel(c1, orbitTrapOp.getLocation());
 	
 			case "ARCTO":
 				return new CompiledTrapOpArcTo(c1, c2, orbitTrapOp.getLocation());
-	
+
+			case "ARCREL":
 			case "ARCTOREL":
-				return new CompiledTrapOpArcToRel(c1, c2, orbitTrapOp.getLocation());
+				return new CompiledTrapOpArcRel(c1, c2, orbitTrapOp.getLocation());
 	
 			case "QUADTO":
 				return new CompiledTrapOpQuadTo(c1, c2, orbitTrapOp.getLocation());
-	
+
+			case "QUADREL":
 			case "QUADTOREL":
-				return new CompiledTrapOpQuadToRel(c1, c2, orbitTrapOp.getLocation());
+				return new CompiledTrapOpQuadRel(c1, c2, orbitTrapOp.getLocation());
 	
 			case "CURVETO":
 				return new CompiledTrapOpCurveTo(c1, c2, c3, orbitTrapOp.getLocation());
-	
+
+			case "CURVEREL":
 			case "CURVETOREL":
-				return new CompiledTrapOpCurveToRel(c1, c2, c3, orbitTrapOp.getLocation());
+				return new CompiledTrapOpCurveRel(c1, c2, c3, orbitTrapOp.getLocation());
 	
 			case "CLOSE":
 				return new CompiledTrapOpClose(orbitTrapOp.getLocation());

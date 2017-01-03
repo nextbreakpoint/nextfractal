@@ -452,40 +452,45 @@ public class JavaReportCompiler {
 					builder.append("moveTo");
 					break;
 
+				case "MOVEREL":
 				case "MOVETOREL":
-					builder.append("moveToRel");
+					builder.append("moveRel");
 					break;
 
 				case "LINETO":
 					builder.append("lineTo");
 					break;
 
+				case "LINEREL":
 				case "LINETOREL":
-					builder.append("lineToRel");
+					builder.append("lineRel");
 					break;
 
 				case "ARCTO":
 					builder.append("arcTo");
 					break;
 
+				case "ARCREL":
 				case "ARCTOREL":
-					builder.append("arcToRel");
+					builder.append("arcRel");
 					break;
 
 				case "QUADTO":
 					builder.append("quadTo");
 					break;
 
+				case "QUADREL":
 				case "QUADTOREL":
-					builder.append("quadToRel");
+					builder.append("quadRel");
 					break;
 
 				case "CURVETO":
 					builder.append("curveTo");
 					break;
 
+				case "CURVEREL":
 				case "CURVETOREL":
-					builder.append("curveToRel");
+					builder.append("curveRel");
 					break;
 
 				case "CLOSE":

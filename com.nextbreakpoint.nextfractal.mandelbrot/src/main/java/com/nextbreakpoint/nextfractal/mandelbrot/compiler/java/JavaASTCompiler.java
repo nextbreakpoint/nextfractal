@@ -36,16 +36,16 @@ import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledStatem
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrap;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOp;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpArcTo;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpArcToRel;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpArcRel;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpClose;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpCurveTo;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpCurveToRel;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpCurveRel;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpLineTo;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpLineToRel;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpLineRel;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpMoveTo;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpMoveToRel;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpMoveRel;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpQuadTo;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpQuadToRel;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpQuadRel;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTAssignStatement;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTColorComponent;
@@ -160,6 +160,9 @@ public class JavaASTCompiler implements ASTExpressionCompiler {
 				case "ceil":
 				case "floor":
 				case "log":
+				case "square":
+				case "saw":
+				case "ramp":
 					if (function.getArguments().length != 1) {
 						throw new ASTException("Invalid number of arguments: " + function.getLocation().getText(), function.getLocation());
 					}
@@ -172,6 +175,7 @@ public class JavaASTCompiler implements ASTExpressionCompiler {
 				case "max":
 				case "atan2":
 				case "hypot":
+				case "pulse":
 					if (function.getArguments().length != 2) {
 						throw new ASTException("Invalid number of arguments: " + function.getLocation().getText(), function.getLocation());
 					}
@@ -694,33 +698,38 @@ public class JavaASTCompiler implements ASTExpressionCompiler {
 		switch (orbitTrapOp.getOp()) {
 			case "MOVETO":
 				return new CompiledTrapOpMoveTo(c1, orbitTrapOp.getLocation());
-	
+
+			case "MOVEREL":
 			case "MOVETOREL":
-				return new CompiledTrapOpMoveToRel(c1, orbitTrapOp.getLocation());
+				return new CompiledTrapOpMoveRel(c1, orbitTrapOp.getLocation());
 	
 			case "LINETO":
 				return new CompiledTrapOpLineTo(c1, orbitTrapOp.getLocation());
-	
+
+			case "LINEREL":
 			case "LINETOREL":
-				return new CompiledTrapOpLineToRel(c1, orbitTrapOp.getLocation());
+				return new CompiledTrapOpLineRel(c1, orbitTrapOp.getLocation());
 	
 			case "ARCTO":
 				return new CompiledTrapOpArcTo(c1, c2, orbitTrapOp.getLocation());
-	
+
+			case "ARCREL":
 			case "ARCTOREL":
-				return new CompiledTrapOpArcToRel(c1, c2, orbitTrapOp.getLocation());
+				return new CompiledTrapOpArcRel(c1, c2, orbitTrapOp.getLocation());
 	
 			case "QUADTO":
 				return new CompiledTrapOpQuadTo(c1, c2, orbitTrapOp.getLocation());
-	
+
+			case "QUADREL":
 			case "QUADTOREL":
-				return new CompiledTrapOpQuadToRel(c1, c2, orbitTrapOp.getLocation());
+				return new CompiledTrapOpQuadRel(c1, c2, orbitTrapOp.getLocation());
 	
 			case "CURVETO":
 				return new CompiledTrapOpCurveTo(c1, c2, c3, orbitTrapOp.getLocation());
-	
+
+			case "CURVEREL":
 			case "CURVETOREL":
-				return new CompiledTrapOpCurveToRel(c1, c2, c3, orbitTrapOp.getLocation());
+				return new CompiledTrapOpCurveRel(c1, c2, c3, orbitTrapOp.getLocation());
 	
 			case "CLOSE":
 				return new CompiledTrapOpClose(orbitTrapOp.getLocation());

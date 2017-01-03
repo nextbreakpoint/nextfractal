@@ -33,11 +33,11 @@ public class Expression {
 	public static MutableNumber variable(Number x) {
 		return new MutableNumber(x);
 	}
-	
+
 	public static MutableNumber variable(double x) {
 		return new MutableNumber(x, 0);
 	}
-	
+
 	public static MutableNumber variable(double r, double i) {
 		return new MutableNumber(r, i);
 	}
@@ -106,17 +106,17 @@ public class Expression {
 	public static Number opMul(MutableNumber out, double a, Number b) {
 		return out.set(a * b.r(), a * b.i());
 	}
-	
+
 	public static Number opPow(MutableNumber out, Number a, double b) {
 		double m = Math.pow(FastMath.hypot(a.r(), a.i()), b);
 		double f = Math.atan2(a.i(), a.r()) * b;
 		return out.set(m * Math.cos(f), m * Math.sin(f));
 	}
-	
+
 	public static Number opNeg(MutableNumber out, Number a) {
 		return out.set(-a.r(), -a.i());
 	}
-	
+
 	public static Number opPos(MutableNumber out, Number a) {
 		return out.set(+a.r(), +a.i());
 	}
@@ -277,5 +277,26 @@ public class Expression {
 		double d = Math.sqrt(FastMath.hypot(x.r(), x.i()));
 		double f = Math.atan2(x.i(), x.r()) * 0.5;
 		return out.set(d * Math.cos(f), d * Math.sin(f));
+	}
+
+	public static double funcPulse(double x, double y) {
+		double z = x - Math.floor(x);
+		double w = y - Math.floor(y);
+		return z < w ? 1 : 0;
+	}
+
+	public static double funcSquare(double x) {
+		double y = x - Math.floor(x);
+		return y < 0.5 ? 1 : 0;
+	}
+
+	public static double funcSaw(double x) {
+		double y = x - Math.floor(x);
+		return y < 0.5 ? 2 * y : 2 - 2 * y;
+	}
+
+	public static double funcRamp(double x) {
+		double y = x - Math.floor(x);
+		return y;
 	}
 }

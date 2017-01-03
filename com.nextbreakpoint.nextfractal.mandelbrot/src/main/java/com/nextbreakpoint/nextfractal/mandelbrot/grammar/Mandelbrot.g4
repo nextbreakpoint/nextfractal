@@ -408,11 +408,11 @@ function returns [ASTFunction result]
 		$result = new ASTFunction($f, $f.text, new ASTExpression[] { $e.result });		
 	}
 	|
-	f=('log' | 'exp' | 'sqrt' | 'abs' | 'ceil' | 'floor') '(' e=expression ')' {
+	f=('log' | 'exp' | 'sqrt' | 'abs' | 'ceil' | 'floor' | 'square' | 'saw' | 'ramp') '(' e=expression ')' {
 		$result = new ASTFunction($f, $f.text, new ASTExpression[] { $e.result });		
 	}
 	|
-	f=('pow' | 'atan2' | 'hypot' | 'max' | 'min') '(' e1=expression ',' e2=expression ')' {
+	f=('pow' | 'atan2' | 'hypot' | 'max' | 'min' | 'pulse') '(' e1=expression ',' e2=expression ')' {
 		$result = new ASTFunction($f, $f.text, new ASTExpression[] { $e1.result, $e2.result });		
 	}
 	;
@@ -690,10 +690,14 @@ PATHOP_1POINTS
 	: 
 	'MOVETO'
 	| 
+	'MOVEREL'
+	|
 	'MOVETOREL'
 	| 
 	'LINETO'
 	| 
+	'LINEREL'
+	|
 	'LINETOREL'
 	;
 
@@ -701,10 +705,14 @@ PATHOP_2POINTS
 	: 
 	'ARCTO'
 	| 
+	'ARCREL'
+	|
 	'ARCTOREL'
 	|
 	'QUADTO'
 	| 
+	'QUADREL'
+	|
 	'QUADTOREL'
 	;
 
@@ -712,6 +720,8 @@ PATHOP_3POINTS
 	: 
 	'CURVETO'
 	| 
+	'CURVEREL'
+	|
 	'CURVETOREL'
 	;
 

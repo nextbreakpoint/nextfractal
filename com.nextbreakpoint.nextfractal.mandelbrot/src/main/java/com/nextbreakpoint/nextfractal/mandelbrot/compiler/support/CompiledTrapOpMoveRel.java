@@ -28,16 +28,16 @@ import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Trap;
 import org.antlr.v4.runtime.Token;
 
-public class CompiledTrapOpLineToRel extends CompiledTrapOp {
+public class CompiledTrapOpMoveRel extends CompiledTrapOp {
 	private Number c1;
 	
-	public CompiledTrapOpLineToRel(Number c1, Token location) {
+	public CompiledTrapOpMoveRel(Number c1, Token location) {
 		super(location);
 		this.c1 = c1;
 	}
 
 	@Override
 	public void evaluate(Trap trap) {
-		trap.lineToRel(c1);
+		trap.moveRel(c1);
 	}
 }

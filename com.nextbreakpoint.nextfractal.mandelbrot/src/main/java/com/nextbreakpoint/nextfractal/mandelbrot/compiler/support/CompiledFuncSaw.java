@@ -24,20 +24,36 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.compiler.support;
 
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.ExpressionContext;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.InterpreterContext;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
-import com.nextbreakpoint.nextfractal.mandelbrot.core.Trap;
 import org.antlr.v4.runtime.Token;
 
-public class CompiledTrapOpMoveToRel extends CompiledTrapOp {
-	private Number c1;
-	
-	public CompiledTrapOpMoveToRel(Number c1, Token location) {
-		super(location);
-		this.c1 = c1;
+import java.util.Map;
+
+import static com.nextbreakpoint.nextfractal.mandelbrot.core.Expression.funcSaw;
+
+public class CompiledFuncSaw extends CompiledExpression {
+	private CompiledExpression[] arguments;
+
+	public CompiledFuncSaw(ExpressionContext context, CompiledExpression[] arguments, Token location) {
+		super(context.newNumberIndex(), location);
+		this.arguments = arguments;
 	}
 
 	@Override
-	public void evaluate(Trap trap) {
-		trap.moveToRel(c1);
+	public double evaluateReal(InterpreterContext context, Map<String, CompilerVariable> scope) {
+		return funcSaw(arguments[0].evaluateReal(context, scope));
+	}
+
+	@Override
+	public Number evaluate(InterpreterContext context, Map<String, CompilerVariable> scope) {
+		return context.getNumber(index).set(funcSaw(arguments[0].evaluateReal(context, scope)));
+	}
+
+	@Override
+	public boolean isReal() {
+		return true;
 	}
 }
