@@ -225,7 +225,7 @@ public class BrowsePane extends BorderPane {
 	}
 
 	public void reload() {
-		sourcePathProperty.setValue(null);
+//		sourcePathProperty.setValue(null);
 		sourcePathProperty.setValue(currentDir.getAbsolutePath());
 	}
 	
