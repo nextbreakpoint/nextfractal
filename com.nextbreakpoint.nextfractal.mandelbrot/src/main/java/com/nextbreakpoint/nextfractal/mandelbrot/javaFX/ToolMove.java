@@ -109,11 +109,11 @@ public class ToolMove implements Tool {
 			x0 = x1;
 			y0 = y1;
 			MandelbrotMetadata newMetadata = new MandelbrotMetadata(new double[] { x, y, z, t[3] }, new double[] { 0, 0, r[2], r[3] }, s, p, time, j, oldMetadata.getOptions());
-			context.setView(newMetadata, pressed);
+			context.setView(newMetadata, pressed, !pressed);
 			changed = false;
 		} else if (timeAnimation) {
 			MandelbrotMetadata newMetadata = new MandelbrotMetadata(oldMetadata.getTranslation(), oldMetadata.getRotation(), oldMetadata.getScale(), oldMetadata.getPoint(), time, oldMetadata.isJulia(), oldMetadata.getOptions());
-			context.setTime(newMetadata, true);
+			context.setTime(newMetadata, true, false);
 		}
 	}
 

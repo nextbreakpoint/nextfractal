@@ -135,11 +135,11 @@ public class ToolRotate implements Tool {
 			double y = i0 + dy;
 			double a = (a0 + a2) * 180 / Math.PI;
 			MandelbrotMetadata newMetadata = new MandelbrotMetadata(new double[] { x, y, z, t[3] }, new double[] { 0, 0, a, r[3] }, s, p, time, j, oldMetadata.getOptions());
-			context.setView(newMetadata, pressed);
+			context.setView(newMetadata, pressed, !pressed);
 			changed = false;
 		} else if (timeAnimation) {
 			MandelbrotMetadata newMetadata = new MandelbrotMetadata(oldMetadata.getTranslation(), oldMetadata.getRotation(), oldMetadata.getScale(), oldMetadata.getPoint(), time, oldMetadata.isJulia(), oldMetadata.getOptions());
-			context.setTime(newMetadata, true);
+			context.setTime(newMetadata, true, false);
 		}
 	}
 

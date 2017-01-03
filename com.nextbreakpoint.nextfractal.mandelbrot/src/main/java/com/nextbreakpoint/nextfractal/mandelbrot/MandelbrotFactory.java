@@ -100,7 +100,18 @@ public class MandelbrotFactory implements FractalFactory {
 	 */
 	@Override
 	public Pane createRenderPane(EventBus eventBus, Session session, int width, int height) {
-		return new RenderPane(session, eventBus, width, height, Integer.getInteger("mandelbrot.renderer.rows", 1), Integer.getInteger("mandelbrot.renderer.cols", 1));
+		final int[] cells = optimalRowsAndCols(Runtime.getRuntime().availableProcessors());
+		return new RenderPane(session, eventBus, width, height, Integer.getInteger("mandelbrot.renderer.rows", cells[0]), Integer.getInteger("mandelbrot.renderer.cols", cells[1]));
+	}
+
+	private int[] optimalRowsAndCols(int processors) {
+		if (processors > 8) {
+			return new int[] { 3, 3 };
+		} else if (processors >= 4) {
+			return new int[] { 2, 2 };
+		} else {
+			return new int[] { 1, 1 };
+		}
 	}
 
 	/**

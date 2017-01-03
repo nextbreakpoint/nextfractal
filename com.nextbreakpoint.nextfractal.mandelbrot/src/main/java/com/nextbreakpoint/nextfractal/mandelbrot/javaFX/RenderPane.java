@@ -117,7 +117,6 @@ public class RenderPane extends BorderPane {
 	private volatile boolean disableTool;
 	private volatile boolean timeAnimation;
 	private volatile MandelbrotSession mandelbrotSession;
-	private volatile Time mandelbrotTime;
 	private String astOrbit;
 	private String astColor;
 	private Tool currentTool;
@@ -299,18 +298,18 @@ public class RenderPane extends BorderPane {
 			}
 
 			@Override
-			public void setPoint(MandelbrotMetadata metadata, boolean continuous) {
-				eventBus.postEvent("render-point-changed", new MandelbrotSession(mandelbrotSession.getScript(), metadata), continuous, true);
+			public void setPoint(MandelbrotMetadata metadata, boolean continuous, boolean appendHistory) {
+				eventBus.postEvent("render-point-changed", new MandelbrotSession(mandelbrotSession.getScript(), metadata), continuous, appendHistory);
 			}
 
 			@Override
-			public void setView(MandelbrotMetadata metadata, boolean continuous) {
-				eventBus.postEvent("render-data-changed", new MandelbrotSession(mandelbrotSession.getScript(), metadata), continuous, true);
+			public void setView(MandelbrotMetadata metadata, boolean continuous, boolean appendHistory) {
+				eventBus.postEvent("render-data-changed", new MandelbrotSession(mandelbrotSession.getScript(), metadata), continuous, appendHistory);
 			}
 
 			@Override
-			public void setTime(MandelbrotMetadata metadata, boolean continuous) {
-				eventBus.postEvent("render-time-changed", new MandelbrotSession(mandelbrotSession.getScript(), metadata), continuous, false);
+			public void setTime(MandelbrotMetadata metadata, boolean continuous, boolean appendHistory) {
+				eventBus.postEvent("render-time-changed", new MandelbrotSession(mandelbrotSession.getScript(), metadata), continuous, appendHistory);
 			}
 		};
 

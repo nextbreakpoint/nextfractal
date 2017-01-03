@@ -43,9 +43,9 @@ public interface ToolContext {
 
 	public MandelbrotMetadata getMetadata();
 
-	public void setView(MandelbrotMetadata view, boolean continuous);
+	public void setView(MandelbrotMetadata view, boolean continuous, boolean appendHistory);
 
-	public void setTime(MandelbrotMetadata metadata, boolean continuous);
+	public void setTime(MandelbrotMetadata metadata, boolean continuous, boolean appendHistory);
 
-	public void setPoint(MandelbrotMetadata view, boolean continuous);
+	public void setPoint(MandelbrotMetadata view, boolean continuous, boolean appendHistory);
 }

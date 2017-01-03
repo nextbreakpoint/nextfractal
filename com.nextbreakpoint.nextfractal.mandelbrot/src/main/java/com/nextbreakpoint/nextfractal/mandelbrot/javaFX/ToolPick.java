@@ -105,12 +105,12 @@ public class ToolPick implements Tool {
 				x += center.r() + z * size.r() * (Math.cos(a) * x1 + Math.sin(a) * y1);
 				y += center.i() + z * size.i() * (Math.cos(a) * y1 - Math.sin(a) * x1);
 				MandelbrotMetadata newMetadata = new MandelbrotMetadata(t, r, s, new double[] { x, y }, time, j, oldMetadata.getOptions());
-				context.setPoint(newMetadata, pressed);
+				context.setPoint(newMetadata, false, !pressed);
 			}
 			changed = false;
 		} else if (timeAnimation) {
 			MandelbrotMetadata newMetadata = new MandelbrotMetadata(oldMetadata.getTranslation(), oldMetadata.getRotation(), oldMetadata.getScale(), oldMetadata.getPoint(), time, oldMetadata.isJulia(), oldMetadata.getOptions());
-			context.setTime(newMetadata, true);
+			context.setTime(newMetadata, true, false);
 		}
 	}
 
