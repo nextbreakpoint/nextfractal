@@ -210,7 +210,7 @@ int main(int argc, char **argv) {
         std::string libPathArg = "-Djava.library.path=" + basePath + "/resources";
         std::string locPathArg = "-Dbrowser.location=" + basePath + "/examples";
         const char *vm_arglist[] = {
-            "-Xmx1g",
+            "-Xmx2g",
             "-Djava.util.logging.config.class=com.nextbreakpoint.nextfractal.runtime.LogConfig",
             classpathArg.c_str(),
             libPathArg.c_str(),
