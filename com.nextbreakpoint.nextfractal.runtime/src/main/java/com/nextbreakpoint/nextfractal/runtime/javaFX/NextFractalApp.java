@@ -323,7 +323,8 @@ public class NextFractalApp extends Application {
 	private void handleSaveFile(EventBus eventBus, File file) {
 		FileManager.saveFile(file, new Bundle(session, clips))
 			.onSuccess(session -> eventBus.postEvent("current-file-changed", file))
-			.ifFailure(e -> showSaveError(eventBus, file, e));
+			.onFailure(e -> showSaveError(eventBus, file, e))
+			.ifSuccess(v -> edited = false);
 	}
 
 	private void showLoadError(EventBus eventBus, File file, Exception e) {

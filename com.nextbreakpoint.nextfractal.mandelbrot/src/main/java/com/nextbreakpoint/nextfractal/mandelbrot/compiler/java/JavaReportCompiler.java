@@ -319,20 +319,58 @@ public class JavaReportCompiler {
 	}
 
 	private void compile(ExpressionContext context, StringBuilder builder, Map<String, CompilerVariable> scope, Collection<CompilerVariable> stateVariables, ASTColor color) {
-		builder.append("public void init() {\n");
 		if (color != null) {
+			for (ASTPalette palette : color.getPalettes()) {
+				builder.append("private Palette palette");
+				builder.append(palette.getName().toUpperCase().substring(0, 1));
+				builder.append(palette.getName().substring(1));
+				builder.append(";\n");
+			}
 		}
-		builder.append("}\n");
+		builder.append("public void init() {\n");
+		int i = 0;
 		for (CompilerVariable var : stateVariables) {
-			scope.put(var.getName(), var);
+			if (var.isReal()) {
+				builder.append("double ");
+				builder.append(var.getName());
+				builder.append(" = getRealVariable(");
+				builder.append(i++);
+				builder.append(");\n");
+			} else {
+				builder.append("final MutableNumber ");
+				builder.append(var.getName());
+				builder.append(" = getVariable(");
+				builder.append(i++);
+				builder.append(");\n");
+			}
+		}
+		i = 0;
+		for (CompilerVariable var : scope.values()) {
+			if (!stateVariables.contains(var)) {
+				if (var.isReal()) {
+					builder.append("double ");
+					builder.append(var.getName());
+					builder.append(" = 0;\n");
+				} else {
+					builder.append("final MutableNumber ");
+					builder.append(var.getName());
+					builder.append(" = getNumber(");
+					builder.append(i++);
+					builder.append(");\n");
+				}
+			}
 		}
 		if (color != null) {
 			for (ASTPalette palette : color.getPalettes()) {
 				compile(context, builder, scope, palette);
 			}
 		}
+		builder.append("}\n");
+		for (CompilerVariable var : stateVariables) {
+			scope.put(var.getName(), var);
+		}
 		builder.append("public void render() {\n");
-		int i = 0;
+		i = 0;
 		for (CompilerVariable var : stateVariables) {
 			if (var.isReal()) {
 				builder.append("double ");
@@ -407,7 +445,7 @@ public class JavaReportCompiler {
 	}
 
 	private void compile(ExpressionContext context, StringBuilder builder, Map<String, CompilerVariable> variables, ASTPalette palette) {
-		builder.append("private Palette palette");
+		builder.append("palette");
 		builder.append(palette.getName().toUpperCase().substring(0, 1));
 		builder.append(palette.getName().substring(1));
 		builder.append(" = palette()");
@@ -426,7 +464,7 @@ public class JavaReportCompiler {
 		builder.append(createArray(element.getEndColor().getComponents()));
 		builder.append(",");
 		builder.append(element.getSteps());
-		builder.append(",(start, end, step) -> { return ");
+		builder.append(",s -> { return ");
 		if (element.getExp() != null) {
 			if (element.getExp().isReal()) {
 				element.getExp().compile(new JavaASTCompiler(context, variables, builder, ClassType.COLOR));
@@ -434,7 +472,7 @@ public class JavaReportCompiler {
 				throw new ASTException("Expression type not valid: " + element.getLocation().getText(), element.getLocation());
 			}
 		} else {
-			builder.append("step / (end - start)");
+			builder.append("s");
 		}
 		builder.append(";})");
 	}

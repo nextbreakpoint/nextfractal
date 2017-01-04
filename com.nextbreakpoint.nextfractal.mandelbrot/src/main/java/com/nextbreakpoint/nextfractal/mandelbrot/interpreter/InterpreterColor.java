@@ -70,16 +70,12 @@ public class InterpreterColor extends Color implements InterpreterContext {
 			for (CompiledPaletteElement cElement : cPalette.getElements()) {
 				PaletteExpression expression = null;
 				if (cElement.getExp() != null) {
-					expression = (start, end, step) -> {
-						vars.put("start", new CompilerVariable("start", true, false, start));
-						vars.put("end", new CompilerVariable("end", true, false, end));
+					expression = step -> {
 						vars.put("step", new CompilerVariable("step", true, false, step));
 						return cElement.getExp().evaluateReal(InterpreterColor.this, vars);
 					};
 				} else {
-					expression = (start, end, step) -> {
-						return step / (end - start); 
-					};
+					expression = step -> step;
 				}
 				PaletteElement element = new PaletteElement(cElement.getBeginColor(), cElement.getEndColor(), cElement.getSteps(), expression);
 				palette.add(element);

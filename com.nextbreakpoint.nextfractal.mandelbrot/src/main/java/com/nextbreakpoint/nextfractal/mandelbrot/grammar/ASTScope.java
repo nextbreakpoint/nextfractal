@@ -61,4 +61,8 @@ public class ASTScope {
 	public void copy(ASTScope scope) {
 		vars.putAll(scope.getVariables());
 	}
+
+	public void deleteVariable(String varName) {
+		vars.remove(varName);
+	}
 }

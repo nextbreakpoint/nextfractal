@@ -506,13 +506,19 @@ palette
 		
 paletteelement 
 	:
-	t='[' bc=colorargb '>' ec=colorargb ',' s=INTEGER ',' e=expression ']' ';' {
+	t='[' {
+        builder.registerVariable("s", true, $t);
+    }  bc=colorargb'>' ec=colorargb ',' s=INTEGER ',' e=expression ']' ';' {
 		builder.addPaletteElement(new ASTPaletteElement($t, $bc.result, $ec.result, builder.parseInt($s.text), $e.result));
+	    builder.unregisterVariable("s");
 	}
 	|
-	t='[' bc=colorargb '>' ec=colorargb ',' s=INTEGER ']' ';' {
+	t='[' {
+        builder.registerVariable("s", true, $t);
+	} bc=colorargb '>' ec=colorargb ',' s=INTEGER ']' ';' {
 		builder.addPaletteElement(new ASTPaletteElement($t, $bc.result, $ec.result, builder.parseInt($s.text), null));
-	}  
+	    builder.unregisterVariable("s");
+	}
 	;
 				
 colorinit 
@@ -526,6 +532,7 @@ colorinit
 colorstatement
 	:
 	{
+		builder.setColorContext(true);
 		builder.pushStatementList();
 	}
 	statement* {

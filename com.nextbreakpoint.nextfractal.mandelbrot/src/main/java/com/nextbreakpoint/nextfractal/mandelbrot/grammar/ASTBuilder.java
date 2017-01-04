@@ -140,6 +140,18 @@ public class ASTBuilder {
 		fractal.registerStateVariable(name, real, location);
 	}
 
+	public void unregisterStateVariable(String name) {
+		fractal.unregisterStateVariable(name);
+	}
+
+	public void unregisterVariable(String name) {
+		if (isColorContext) {
+			fractal.unregisterColorVariable(name);
+		} else {
+			fractal.unregisterOrbitVariable(name);
+		}
+	}
+
 	public void registerVariable(String name, boolean real, Token location) {
 		if (isColorContext) {
 			fractal.registerColorVariable(name, real, true, location);
