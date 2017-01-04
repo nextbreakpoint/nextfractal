@@ -240,7 +240,7 @@ public class EditorPane extends BorderPane {
         if (e instanceof CompilerSourceException) {
             report.getErrors().addAll(((CompilerSourceException)e).getErrors());
         } else {
-            logger.log(Level.WARNING, "Cannot compile fractal", e);
+            logger.log(Level.WARNING, "Cannot compile image", e);
         }
     }
 
@@ -250,7 +250,9 @@ public class EditorPane extends BorderPane {
         if (errors.size() > 0) {
             Collections.sort(errors, (o1, o2) -> o2.getIndex() < o1.getIndex() ? -1 : 1);
             for (Error error : errors) {
-                logger.info(error.toString());
+                if (logger.isLoggable(Level.FINE)) {
+                    logger.fine(error.toString());
+                }
                 if (error.getType() == Error.ErrorType.SCRIPT_COMPILER) {
                     int lineEnd = (int)error.getIndex() + 1;
                     int lineBegin = (int)error.getIndex();
@@ -260,11 +262,15 @@ public class EditorPane extends BorderPane {
                         if (lineBegin < codeArea.getLength()) {
                             codeArea.setStyleSpans(lineBegin, builder.create());
                         } else {
-                            logger.info("begin " + lineBegin + ", length " + (lineEnd - lineBegin));
+                            if (logger.isLoggable(Level.WARNING)) {
+                                logger.log(Level.WARNING, "begin " + lineBegin + ", length " + (lineEnd - lineBegin));
+                            }
                         }
                     } catch (Exception e) {
-                        logger.info("begin " + lineBegin + ", length " + (lineEnd - lineBegin));
-                        logger.log(Level.WARNING, "Something is wrong", e);
+                        if (logger.isLoggable(Level.WARNING)) {
+                            logger.log(Level.WARNING, "begin " + lineBegin + ", length " + (lineEnd - lineBegin));
+                            logger.log(Level.WARNING, "Something is wrong", e);
+                        }
                     }
                 }
             }

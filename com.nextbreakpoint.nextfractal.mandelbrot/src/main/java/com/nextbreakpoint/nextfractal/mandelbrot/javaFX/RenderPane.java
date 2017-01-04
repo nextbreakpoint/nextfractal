@@ -916,10 +916,14 @@ public class RenderPane extends BorderPane {
 			boolean orbitChanged = changed[0];
 			boolean colorChanged = changed[1];
 			if (orbitChanged) {
-				logger.fine("Orbit algorithm is changed");
+				if (logger.isLoggable(Level.FINE)) {
+					logger.fine("Orbit algorithm is changed");
+				}
 			}
 			if (colorChanged) {
-				logger.fine("Color algorithm is changed");
+				if (logger.isLoggable(Level.FINE)) {
+					logger.fine("Color algorithm is changed");
+				}
 			}
 //			if (!orbitChanged && !colorChanged) {
 //				logger.info("Orbit or color algorithms are not changed");
@@ -994,18 +998,26 @@ public class RenderPane extends BorderPane {
 			redrawOrbit = true;
 			redrawPoint = true;
 			if (!julia) {
-				logger.fine("Orbit: point = " + point + ", length = " + states.size());
+				if (logger.isLoggable(Level.FINE)) {
+					logger.fine("Orbit: point = " + point + ", length = " + states.size());
+				}
 			}
 		} catch (CompilerSourceException e) {
-			logger.log(Level.INFO, "Cannot render fractal: " + e.getMessage());
+			if (logger.isLoggable(Level.FINE)) {
+				logger.log(Level.FINE, "Cannot render fractal: " + e.getMessage());
+			}
 			updateCompilerErrors(e.getMessage(), e.getErrors(), null);
 			return e.getErrors();
 		} catch (CompilerClassException e) {
-			logger.log(Level.INFO, "Cannot render fractal: " + e.getMessage());
+			if (logger.isLoggable(Level.FINE)) {
+				logger.log(Level.FINE, "Cannot render fractal: " + e.getMessage());
+			}
 			updateCompilerErrors(e.getMessage(), e.getErrors(), e.getSource());
 			return e.getErrors();
 		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | IOException e) {
-			logger.log(Level.INFO, "Cannot render fractal: " + e.getMessage());
+			if (logger.isLoggable(Level.FINE)) {
+				logger.log(Level.FINE, "Cannot render fractal: " + e.getMessage());
+			}
 			updateCompilerErrors(e.getMessage(), null, null);
 			return Arrays.asList(new Error(Error.ErrorType.RUNTIME, 0, 0, 0, 0, "Cannot render image"));
 		}
@@ -1207,7 +1219,9 @@ public class RenderPane extends BorderPane {
 		redrawTraps = true;
 		if (!julia && !continuous) {
 //			states = renderOrbit(point);
-			logger.fine("Orbit: point = " + point + ", length = " + states.size());
+			if (logger.isLoggable(Level.FINE)) {
+				logger.fine("Orbit: point = " + point + ", length = " + states.size());
+			}
 		}
 	}
 

@@ -456,7 +456,9 @@ public class RenderPane extends BorderPane {
 			boolean[] changed = createCFDG(report);
 			boolean cfdgChanged = changed[0];
 			if (cfdgChanged) {
-				RenderPane.logger.info("CFDG is changed");
+				if (logger.isLoggable(Level.FINE)) {
+					RenderPane.logger.fine("CFDG is changed");
+				}
 			}
 			if (coordinator != null) {
 				coordinator.abort();
@@ -475,15 +477,21 @@ public class RenderPane extends BorderPane {
 				return errors;
 			}
 		} catch (CompilerSourceException e) {
-			logger.log(Level.INFO, "Cannot render image: " + e.getMessage());
+			if (logger.isLoggable(Level.FINE)) {
+				logger.log(Level.FINE, "Cannot render image: " + e.getMessage());
+			}
 			updateCompilerErrors(e.getMessage(), e.getErrors(), null);
 			return e.getErrors();
 		} catch (CompilerClassException e) {
-			logger.log(Level.INFO, "Cannot render image: " + e.getMessage());
+			if (logger.isLoggable(Level.FINE)) {
+				logger.log(Level.FINE, "Cannot render image: " + e.getMessage());
+			}
 			updateCompilerErrors(e.getMessage(), e.getErrors(), e.getSource());
 			return e.getErrors();
 		} catch (InterruptedException e) {
-			logger.log(Level.INFO, "Cannot render image: " + e.getMessage());
+			if (logger.isLoggable(Level.FINE)) {
+				logger.log(Level.FINE, "Cannot render image: " + e.getMessage());
+			}
 			updateCompilerErrors(e.getMessage(), null, null);
 			return Arrays.asList(new Error(Error.ErrorType.RUNTIME, 0, 0, 0, 0, "Interrupted"));
 		}
