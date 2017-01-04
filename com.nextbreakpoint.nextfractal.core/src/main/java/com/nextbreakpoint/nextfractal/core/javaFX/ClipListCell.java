@@ -24,6 +24,7 @@
  */
 package com.nextbreakpoint.nextfractal.core.javaFX;
 
+import com.nextbreakpoint.nextfractal.core.Clip;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
 import javafx.geometry.Pos;
 import javafx.scene.canvas.Canvas;
@@ -41,7 +42,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.transform.Affine;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -51,27 +51,23 @@ public class ClipListCell extends ListCell<Bitmap> {
 	private BorderPane pane;
 	private Canvas canvas;
 	private ClipListCellDelegate delegate;
-	private Label label1;
-	private Label label2;
+	private Label label;
 	private RendererTile tile;
 
 	public ClipListCell(RendererTile tile, ClipListCellDelegate delegate) {
 		this.tile = tile;
 		this.delegate = delegate;
 		canvas = new Canvas(tile.getTileSize().getWidth(), tile.getTileSize().getHeight());
-		label1 = new Label();
-		label1.getStyleClass().add("text-small");
-		label2 = new Label();
-		label2.getStyleClass().add("text-small");
+		label = new Label();
+		label.getStyleClass().add("text-small");
 		pane = new BorderPane();
 		VBox image = new VBox(4);
 		image.setAlignment(Pos.CENTER);
 		image.getChildren().add(canvas);
 		pane.setLeft(image);
 		VBox labels = new VBox(4);
-		labels.setAlignment(Pos.CENTER);
-		labels.getChildren().add(label1);
-		labels.getChildren().add(label2);
+		labels.setAlignment(Pos.CENTER_RIGHT);
+		labels.getChildren().add(label);
 		pane.setCenter(labels);
 
 		ClipListCell thisCell = this;
@@ -160,10 +156,14 @@ public class ClipListCell extends ListCell<Bitmap> {
 				g2d.setTransform(affine);
 				g2d.drawImage(image, x, y);
 			}
-			SimpleDateFormat df1 = new SimpleDateFormat("yyyy-MM-dd");
-			SimpleDateFormat df2 = new SimpleDateFormat("HH:mm:ss");
-			label1.setText(df1.format(bitmap.getTimestamp()));
-			label2.setText(df2.format(bitmap.getTimestamp()));
+			Clip clip = (Clip)bitmap.getProperty("clip");
+			long durationInSeconds = clip.duration() / 1000;
+			long minutes = (long)Math.rint(durationInSeconds / 60.0);
+			if (minutes <= 2) {
+				label.setText(durationInSeconds == 0 ? clip.duration() + " millis" : durationInSeconds == 1 ? "1 second" : durationInSeconds + " seconds");
+			} else {
+				label.setText(minutes == 1 ? "1 minute" : minutes + " minutes");
+			}
 			this.setGraphic(pane);
 		}
 	}

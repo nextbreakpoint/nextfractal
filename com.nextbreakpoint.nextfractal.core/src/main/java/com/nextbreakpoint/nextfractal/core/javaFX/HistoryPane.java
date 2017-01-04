@@ -33,8 +33,12 @@ import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
 import com.nextbreakpoint.nextfractal.core.utils.DefaultThreadFactory;
 import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
+import javafx.geometry.Pos;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
 
 import java.nio.IntBuffer;
 import java.util.Arrays;
@@ -61,10 +65,15 @@ public class HistoryPane extends BorderPane {
 
         listView = new ListView<>();
         listView.setFixedCellSize(tile.getTileSize().getHeight() + PADDING);
-        listView.getStyleClass().add("history");
         listView.setCellFactory(view -> new HistoryListCell(tile));
+        listView.setTooltip(new Tooltip("Previous images"));
 
-        setCenter(listView);
+        BorderPane historyPane = new BorderPane();
+        historyPane.setCenter(listView);
+
+        getStyleClass().add("history");
+
+        setCenter(historyPane);
 
         listView.getSelectionModel().getSelectedItems().addListener((ListChangeListener.Change<? extends Bitmap> c) -> itemSelected(listView));
 

@@ -104,7 +104,7 @@ public class MainSidePane extends BorderPane {
     }
 
     private Pane createRootPane(EventBus eventBus) {
-        int tileSize = computePercentage(0.02);
+        int tileSize = computePercentage(0.03);
 
         RendererTile tile = createSingleTile(tileSize, tileSize);
 
@@ -119,16 +119,12 @@ public class MainSidePane extends BorderPane {
 
         ExportPane exportPane = new ExportPane(tile);
 
-        paramsPane.getStyleClass().add("sidebar");
-        exportPane.getStyleClass().add("sidebar");
-
         HistoryPane historyPane = new HistoryPane(tile);
-        historyPane.getStyleClass().add("sidebar");
 
         JobsPane jobsPane = new JobsPane(tile);
-        jobsPane.getStyleClass().add("sidebar");
 
         StackPane sidePane = new StackPane();
+        sidePane.getStyleClass().add("sidebar");
         sidePane.getChildren().add(jobsPane);
         sidePane.getChildren().add(historyPane);
         sidePane.getChildren().add(exportPane);

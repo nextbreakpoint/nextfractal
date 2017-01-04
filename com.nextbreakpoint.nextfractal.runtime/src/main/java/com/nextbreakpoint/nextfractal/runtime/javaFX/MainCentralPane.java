@@ -110,11 +110,6 @@ public class MainCentralPane extends BorderPane {
 				return FileManager.loadFile(file).flatMap(bundle -> tryFindFactory(bundle.getSession().getPluginId())
 					.flatMap(factory -> Try.of(() -> factory.createBitmap(bundle.getSession(), size)))).orThrow();
 			}
-
-			@Override
-			public String getFileExtension() {
-				return ".nf.zip";
-			}
 		});
 
         Pane stackPane = new Pane();

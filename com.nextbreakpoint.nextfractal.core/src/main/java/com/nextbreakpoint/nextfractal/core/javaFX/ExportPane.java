@@ -145,10 +145,8 @@ public class ExportPane extends BorderPane {
 		clipButtons.getStyleClass().add("buttons");
 		clipButtons.getStyleClass().add("text-small");
 
-		VBox clipControls = new VBox(8);
 		listView = new ListView<>();
 		listView.setFixedCellSize(tile.getTileSize().getHeight() + PADDING);
-		listView.getStyleClass().add("clips");
 		listView.setCellFactory(view -> new ClipListCell(tile, (fromIndex, toIndex) -> {
             if (delegate != null) {
                 delegate.captureSessionMoved(fromIndex, toIndex);
@@ -156,18 +154,18 @@ public class ExportPane extends BorderPane {
         }));
 		listView.setTooltip(new Tooltip("List of captured clips"));
 		listView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-		clipControls.getChildren().add(new Label("Captured clips"));
-		clipControls.getChildren().add(listView);
 
 		listView.getSelectionModel().getSelectedItems().addListener((ListChangeListener.Change<? extends Bitmap> c) -> itemSelected(listView));
 
-		VBox box = new VBox(8);
-		box.setAlignment(Pos.TOP_CENTER);
-		box.getChildren().add(clipControls);
-		box.getChildren().add(clipButtons);
-		box.getChildren().add(exportControls);
-		box.getChildren().add(exportButtons);
-		setCenter(box);
+		VBox exportPane = new VBox(8);
+		exportPane.setAlignment(Pos.TOP_CENTER);
+		exportPane.getChildren().add(clipButtons);
+		exportPane.getChildren().add(exportControls);
+		exportPane.getChildren().add(exportButtons);
+		exportPane.getStyleClass().add("controls");
+
+		setCenter(listView);
+		setBottom(exportPane);
 
 		previewButton.setDisable(true);
 
@@ -373,8 +371,8 @@ public class ExportPane extends BorderPane {
 			double width = newValue.doubleValue() - getInsets().getLeft() - getInsets().getRight();
 			formatCombobox.setPrefWidth(width);
 			presetsCombobox.setPrefWidth(width);
-			box.setPrefWidth(width);
-			box.setMaxWidth(width);
+			exportPane.setPrefWidth(width);
+			exportPane.setMaxWidth(width);
 			exportButton.setPrefWidth(width);
 			captureButton.setPrefWidth(width);
 			removeButton.setPrefWidth(width);

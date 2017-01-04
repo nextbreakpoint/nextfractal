@@ -159,6 +159,7 @@ public class BrowsePane extends BorderPane {
 		grid.setDelegate(new GridViewDelegate() {
 			@Override
 			public void didRangeChange(GridView source, int firstRow, int lastRow) {
+//				source.updateCells();
 			}
 			
 			@Override

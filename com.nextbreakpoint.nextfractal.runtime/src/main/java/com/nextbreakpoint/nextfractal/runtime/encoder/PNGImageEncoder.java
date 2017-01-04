@@ -44,4 +44,9 @@ public class PNGImageEncoder extends AbstractImageEncoder {
 	public String getId() {
 		return "PNG";
 	}
+
+	@Override
+	public String getName() {
+		return "PNG";
+	}
 }

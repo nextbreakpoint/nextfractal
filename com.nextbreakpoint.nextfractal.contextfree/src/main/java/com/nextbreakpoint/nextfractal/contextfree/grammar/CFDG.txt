@@ -1,0 +1,985 @@
+choose
+		: 
+		(
+		cfdg2
+		|
+		cfdg3
+		) 
+		eof
+		;
+
+cfdg2
+        :
+        cfdg2 r=statement_v2 
+        |
+        ;
+        
+cfdg3
+        :
+        cfdg3 r=statement_v3 
+        |
+        ;
+        
+statement_v2 returns [ASTReplacement result]
+        : 
+        initialization_v2 
+        | directive_v2 
+        | inclusion_v2 
+        | rule_v2 
+        | path_v2 
+        ;
+        
+statement_v3 returns [ASTReplacement result]
+        : 
+        initialization_v3 
+        | import_v3 
+        | rule_v3 
+        | path 
+        | shape 
+        | shape_singleton 
+        | global_definition 
+        | v2stuff .*? 
+        ;
+        
+v3clues
+		:
+        USER_STRING BECOMES
+        | modtype BECOMES
+        | PARAM BECOMES
+        | USER_STRING '('
+        | USER_STRING USER_STRING '('
+        | IMPORT
+        | SHAPE
+        | PATH USER_STRING '('
+        | STARTSHAPE USER_STRING '('
+        | STARTSHAPE USER_STRING '['
+        | STARTSHAPE USER_ARRAYNAME '['
+        ;
+        
+v2stuff
+		:
+        BACKGROUND modification_v2
+        | TILE modification_v2
+        | modtype modification_v2
+        | INCLUDE fileString
+        | rule_header_v2
+        ;
+
+inclusion_v2 
+        : 
+        INCLUDE f=USER_QSTRING 
+        |
+        INCLUDE f=USER_FILENAME 
+        ;
+
+import_v3
+        : 
+        IMPORT n=fileNameSpace f=fileString 
+        ;
+
+eof 
+		:
+		t=EOF 
+		;
+		
+fileString returns [String result]
+		:
+        f=USER_FILENAME  
+        | 
+        f=USER_QSTRING  
+       	;
+		
+fileNameSpace returns [String result]
+		:
+        '@' r=USER_STRING 
+        | 
+        ;
+
+initialization_v3 returns [ASTDefine result]
+        : 
+        STARTSHAPE s=USER_STRING p=parameter_spec m=modification 
+        |
+        STARTSHAPE s=USER_ARRAYNAME m=modification 
+        |
+        STARTSHAPE s=USER_STRING p=parameter_spec 
+        ;
+
+initialization_v2 returns [ASTDefine result]
+        : 
+        STARTSHAPE s=USER_STRING 
+        ;
+
+directive_v2 returns [ASTDefine result]
+		:
+        s=directive_string m=modification_v2 
+        ;
+
+directive_string returns [String result]
+		:
+        BACKGROUND 
+        |
+        TILE 
+        |
+        t=modtype 
+        ;
+        
+shape
+        : 
+        SHAPE s=USER_STRING parameter_list 
+        ;
+
+shape_singleton_header returns [ASTRule result]
+        : 
+        s=shape t='{' 
+        ; 
+
+shape_singleton returns [ASTRule result]
+        :
+        s=shape_singleton_header buncha_elements '}' 
+        ; 
+
+rule_header_v2 returns [ASTRule result]
+        : 
+        RULE s=USER_STRING 
+        |
+        RULE s=USER_STRING w=user_rational 
+        ;
+
+rule_v2 returns [ASTRule result]
+        : 
+        h=rule_header_v2 '{' buncha_replacements_v2 '}' 
+        ;
+
+rule_header returns [ASTRule result]
+        : 
+        RULE 
+        |
+        RULE w=user_rational 
+        ;
+
+path_header returns [ASTRule result]
+        : 
+        PATH s=USER_STRING parameter_list 
+        ;
+
+rule_v3 returns [ASTRule result]
+        : 
+        h=rule_header '{' buncha_elements '}' 
+        ;
+
+path returns [ASTRule result]
+        : 
+        h=path_header '{' buncha_elements '}' 
+        ;
+        
+path_header_v2 returns [ASTRule result]
+        : 
+        PATH s=USER_STRING 
+        ;
+
+path_v2 returns [ASTRule result]
+		:
+        r=path_header_v2 '{' buncha_pathOps_v2 '}' 
+        ;
+
+parameter
+       : 
+       t=USER_STRING v=USER_STRING 
+        |
+        SHAPE v=USER_STRING 
+        |
+        v=USER_STRING modtype 
+        |
+        SHAPE modtype 
+        |
+        v=USER_STRING 
+        |
+        modtype 
+        ;
+
+buncha_parameters 
+        : 
+        buncha_parameters ',' parameter 
+        | 
+        parameter
+        ;
+
+parameter_list
+        : 
+        '(' buncha_parameters ')' 
+        |
+        ;
+
+function_parameter_list
+		:
+        '(' buncha_parameters ')'
+        | 
+        '(' ')'
+        ;
+
+parameter_spec returns [ASTExpression result]
+        : 
+        '(' a=arglist ')' 
+        |
+        t='(' BECOMES ')' 
+        | '(' ')' 
+        | 
+        ;
+
+buncha_elements 
+        : 
+        buncha_elements r=element 
+        | 
+        ;
+
+buncha_pathOps_v2 
+        : 
+        buncha_pathOps_v2 r=pathOp_v2 
+        | 
+        ;
+
+pathOp_simple_v2 returns [ASTReplacement result]
+        : 
+        o=USER_PATHOP '{' a=buncha_adjustments '}' 
+        |
+        s=shapeName m=modification_v2 
+        ;
+
+element_simple returns [ASTReplacement result]
+        : 
+        o=USER_PATHOP '(' e=exp2 ')' 
+        |
+        o=USER_PATHOP '(' ')' 
+        |
+        s=shapeName p=parameter_spec m=modification 
+        |
+        IF '(' e=exp2 ')' m=modification 
+        |
+        h=letHeader b=letBody m=modification 
+        |
+        PATH n=USER_STRING p=parameter_spec m=modification 
+        ;
+
+one_or_more_elements
+        : 
+        '{' buncha_elements '}' 
+        |
+        r=element_simple 
+        ;
+
+one_or_more_pathOp_v2
+        : 
+        '{' buncha_pathOps_v2 '}' 
+        |
+        r=pathOp_simple_v2 
+        ;
+
+caseBody
+        : 
+        caseBody_element caseBody 
+        |
+        ;
+
+caseBody_element
+        : 
+        h=caseHeader one_or_more_elements 
+        ;
+
+element returns [ASTReplacement result]
+        : 
+        r=element_simple 
+        |
+        definition 
+        |
+        rl=element_loop 
+        |
+        rl=element_loop FINALLY  one_or_more_elements 
+        |
+        ri=ifHeader one_or_more_elements 
+        |
+        rei=ifElseHeader one_or_more_elements 
+        |
+        rt=transHeader one_or_more_elements 
+        |
+        rs=switchHeader '{' caseBody '}' 
+        |
+	    element_v2clue .*? 
+        ;
+
+element_v2clue
+		:
+        user_rational '*'
+        | USER_STRING '{'
+        | USER_PATHOP '{'
+        ;
+        
+pathOp_v2 returns [ASTReplacement result]
+        : 
+        rp=pathOp_simple_v2 
+        |
+        rl=loopHeader_v2 one_or_more_pathOp_v2 
+        ;
+
+pathOp_v3clues
+		:
+        USER_PATHOP '('
+        | USER_STRING '('
+        | PATH
+        | LOOP
+        | USER_STRING BECOMES
+        | modtype BECOMES
+        | IF
+        | modtype
+        | SWITCH
+        ;
+
+element_loop returns [ASTLoop result]
+        : 
+        h=loopHeader m=modification one_or_more_elements 
+        ;
+
+buncha_replacements_v2 
+        : 
+        r=replacement_v2 buncha_replacements_v2 
+        |
+        ;
+
+one_or_more_replacements_v2
+        : 
+        '{' buncha_replacements_v2 '}' 
+        |
+        r=replacement_simple_v2 
+        ;
+
+replacement_simple_v2 returns [ASTReplacement result]
+        : 
+        s=shapeName m=modification_v2 
+        ;
+
+replacement_v2 returns [ASTReplacement result]
+        : 
+        r=replacement_simple_v2 
+        |
+        rl=loopHeader_v2 one_or_more_replacements_v2 
+        ;
+
+loopHeader_v2 returns [ASTLoop result]
+        : 
+        r=user_rational '*'  m=modification_v2 
+        ;
+
+loopHeader returns [ASTLoop result]
+        : 
+        LOOP v=USER_STRING BECOMES i=exp2 
+        |
+        LOOP modtype BECOMES c=exp2 
+        |
+        LOOP c=exp2 
+        ;
+
+ifHeader returns [ASTIf result]
+        : 
+        IF '(' e=exp2 ')' 
+        ;
+
+ifElseHeader returns [ASTIf result]
+        : 
+        h=ifHeader one_or_more_elements ELSE 
+        ;
+
+transHeader returns [ASTTransform result]
+        : 
+        t=modtype e=exp2 
+        |
+        c=clone e=exp2 
+        ;
+
+switchHeader returns [ASTSwitch result]
+        : 
+        SWITCH '(' e=exp2 ')' 
+        ;
+
+caseHeader returns [Integer result]
+        :  
+        CASE e=exp2 ':' 
+        |
+        ELSE ':' 
+        ;
+
+modification_v2 returns [ASTModification result]
+        : 
+        t='{' m=buncha_adjustments '}' 
+        |
+        t='[' m=buncha_adjustments ']' 
+        ;
+
+modification returns [ASTModification result]
+        : 
+        t='[' m=buncha_adjustments ']' 
+        |
+        t='[' '[' m=buncha_adjustments ']' ']' 
+        ;
+
+buncha_adjustments returns [ASTModification result]
+        : 
+        a2=buncha_adjustments a1=adjustment 
+        | 
+        ;
+
+adjustment returns [ASTModTerm result]
+        : 
+        t=modtype el=explist 
+        |
+        t=modtype e=exp '|' 
+        |
+        PARAM p=USER_STRING 
+        |
+        PARAM p=USER_QSTRING 
+        ;
+        
+letHeader returns [ASTRepContainer result]
+		:
+        LET 
+        ;
+        
+letBody returns [ASTExpression result]
+		:
+        '(' letVariables ';' e=exp2 ')' 
+        ;
+        
+letVariables
+		:
+        letVariables ';' letVariable
+        |
+        letVariable
+        ;
+        
+letVariable returns [ASTDefine result]
+		:
+        r=definition 
+        ;
+        
+explist returns [ASTExpression result]
+        :
+        el=explist e=exp 
+        |
+        e=exp 
+        ;
+
+arglist returns [ASTExpression result]
+        :
+        el=arglist ',' e=exp3 
+        |
+        e=exp3 
+        ;
+
+exp returns [ASTExpression result]
+        :
+        (
+        n=user_rational 
+        |
+        CF_INFINITY 
+        |
+        s=USER_STRING '(' a=arglist ')' 
+        |
+        f=expfunc 
+        |
+        t='(' x=exp2 ')' 
+        |
+        t='-' e=exp 
+        |
+        t='+' e=exp 
+        )
+        (
+        RANGE r=exp 
+        |
+        PLUSMINUS r=exp 
+        )?
+        ;
+
+exp2 returns [ASTExpression result]	
+        :
+        l=exp2 ',' r=exp3 
+        |
+        e=exp3 
+        ;
+
+exp3 returns [ASTExpression result]	
+        :
+        (
+        n=user_rational 
+        |
+        CF_INFINITY 
+        |
+        s=USER_STRING '(' a=arglist ')' 
+        |
+        f=expfunc 
+        |
+        t='(' x=exp2 ')' 
+        |
+        t='-' e=exp3 
+        |
+        t='+' e=exp3 
+        |
+        t=NOT e=exp3 
+        |
+        m=modification 
+        )
+        (
+        '+' r=exp3 
+        |
+        '-' r=exp3 
+        |
+        '_' r=exp3 
+        |
+        '*' r=exp3 
+        |
+        '/' r=exp3 
+        |
+        '^' r=exp3 
+        |
+        LT r=exp3 
+        |
+        GT r=exp3 
+        |
+        LE r=exp3 
+        |
+        GE r=exp3 
+        |
+        EQ r=exp3 
+        |
+        NEQ r=exp3 
+        |
+        AND r=exp3 
+        |
+        OR r=exp3 
+        |
+        XOR r=exp3 
+        |
+        RANGE r=exp3 
+        |
+        PLUSMINUS r=exp3 
+        )?
+        ;
+
+expfunc returns [ASTExpression result]
+        : 
+        f=USER_STRING '(' ')' 
+        |
+        f=USER_ARRAYNAME '(' e=exp2 ')' 
+        |
+        IF '(' e=exp2 ')' 
+        |
+        f=USER_STRING '(' BECOMES ')' 
+        |
+        h=letHeader b=letBody 
+        |
+        v=USER_STRING 
+        ;
+        
+shapeName returns [String result]
+		:
+        r=USER_STRING 
+        |
+        r=USER_ARRAYNAME 
+        ;
+        
+global_definition returns [ASTDefine result]
+		:
+        r=global_definition_header e=exp2 
+        ;
+
+function_definition_header returns [ASTDefine result]
+		:
+        SHAPE f=USER_STRING p=function_parameter_list BECOMES 
+        |
+        f=USER_STRING p=function_parameter_list BECOMES 
+        |
+        t=USER_STRING f=USER_STRING p=function_parameter_list BECOMES 
+        |
+        SHAPE modtype p=function_parameter_list BECOMES 
+        |
+        modtype p=function_parameter_list BECOMES 
+        |
+        t=USER_STRING modtype p=function_parameter_list BECOMES 
+        ;
+
+global_definition_header returns [ASTDefine result]
+		:
+        fd=function_definition_header 
+        |
+       	d=definition_header 
+        ;
+
+definition_header returns [ASTDefine result]
+		:
+        n=USER_STRING BECOMES 
+        | modtype BECOMES 
+        ;
+
+definition returns [ASTDefine result]
+        :
+        d=definition_header e=exp2 
+        ;
+
+modtype returns [String result]
+	:
+	t=(TIME | TIMESCALE | X | Y | Z | ROTATE | SIZE | SKEW | FLIP | HUE | SATURATION | BRIGHTNESS | ALPHA | TARGETHUE | TARGETSATURATION | TARGETBRIGHTNESS | TARGETALPHA | X1 | X2 | Y1 | Y2 | RX | RY | WIDTH | TRANSFORM) 
+	;
+
+clone returns [String result]
+	:
+	t=CLONE 
+	;
+
+user_rational returns [ASTValue result]
+    :
+    t=(INTEGER | RATIONAL | FLOAT) 
+    ;
+
+STARTSHAPE
+	: 
+	'startshape' 
+	;
+
+BACKGROUND
+	: 
+	'background' 
+	;
+
+INCLUDE
+	: 
+	'include' 
+	;
+
+IMPORT
+	: 
+	'import' 
+	;
+
+TILE
+	: 
+	'tile' 
+	;
+
+RULE
+	: 
+	'rule' 
+	;
+
+PATH
+	: 
+	'path' 
+	;
+
+SHAPE
+	: 
+	'shape' 
+	;
+
+LOOP
+	: 
+	'loop' 
+	;
+
+FINALLY
+	: 
+	'finally' 
+	;
+
+IF
+	: 
+	'if' 
+	;
+
+ELSE
+	: 
+	'else' 
+	;
+
+SWITCH
+	: 
+	'switch' 
+	;
+
+CASE
+	: 
+	'case' 
+	;
+
+RANGE
+	:
+	'..' | '\u2026'
+	;
+
+PLUSMINUS
+	: 
+	'+/-' | '\u00b1'
+	;
+
+TIME
+	: 
+	'time' 
+	;
+
+TIMESCALE
+	: 
+	'timescale' 
+	;
+
+X
+	: 
+	'x' 
+	;
+
+Y
+	: 
+	'y' 
+	;
+
+Z
+	: 
+	'z' 
+	;
+	
+ROTATE
+	: 
+	'rotate' | 'r' 
+	;
+
+SIZE
+	: 
+	'size' | 's' 
+	;
+	
+SKEW
+	: 
+	'skew' 
+	;
+
+FLIP
+	: 
+	'flip' | 'f' 
+	;
+
+HUE
+	: 
+	'hue' | 'h' 
+	;
+
+SATURATION
+	: 
+	'saturation' | 'sat'
+	;
+
+BRIGHTNESS
+	: 
+	'brightness' | 'b' 
+	;
+
+ALPHA
+	: 
+	'alpha' | 'a' 
+	;
+
+TARGETHUE
+	: 
+	'|hue' | '|h' 
+	;
+
+TARGETSATURATION
+	: 
+	'|saturation' | '|sat' 
+	;
+
+TARGETBRIGHTNESS
+	: 
+	'|brightness' | '|b' 
+	;
+
+TARGETALPHA
+	: 
+	'|alpha' | '|a' 
+	;
+
+X1
+	: 
+	'x1' 
+	;
+
+X2
+	: 
+	'x2' 
+	;
+
+Y1
+	: 
+	'y1' 
+	;
+
+Y2
+	: 
+	'y2' 
+	;
+
+RX
+	: 
+	'rx' 
+	;
+
+RY
+	: 
+	'ry' 
+	;
+
+WIDTH
+	: 
+	'width' 
+	;
+
+TRANSFORM
+	: 
+	'transform' | 'trans' 
+	;
+
+PARAM
+	: 
+	'param' | 'p' 
+	;
+	
+BECOMES
+	: 
+	'=' 
+	;
+
+LT
+	: 
+	'<' 
+	;
+
+GT
+	: 
+	'>' 
+	;
+
+LE
+	: 
+	'<=' | '\u2264'
+	;
+
+GE
+	: 
+	'>=' | '\u2265' 
+	;
+
+EQ
+	: 
+	'==' 
+	;
+
+NEQ
+	: 
+	'<>' | '\u2276'
+	;
+
+NOT
+	: 
+	'!' 
+	;
+
+AND
+	: 
+	'&&' 
+	;
+
+OR
+	: 
+	'||' 
+	;
+
+XOR
+	: 
+	'^^' 
+	;
+
+CF_INFINITY
+	: 
+	'CF_INFINITY' | '\u221E'
+	;
+	
+USER_PATHOP
+	: 
+	'MOVETO'
+	| 
+	'LINETO'
+	| 
+	'ARCTO'
+	| 
+	'CURVETO'
+	| 
+	'MOVEREL'
+	| 
+	'LINEREL'
+	| 
+	'ARCREL'
+	| 
+	'CURVEREL'
+	| 
+	'CLOSEPOLY' 
+	;
+
+CLONE 
+	:
+	'clone'
+	;
+
+LET 
+	:
+	'LET'
+	;
+	
+INTEGER
+	:
+	('0'..'9')+ '%'?
+	;
+
+RATIONAL
+	:
+	('0'..'9')+ '.' ('0'..'9')+ '%'? | '.' ('0'..'9')+ '%'?
+	;
+
+FLOAT
+	:
+	('0'..'9')+ '.' ('0'..'9')+ ('e'|'E') ('+|-')? ('0'..'9')+ '%'? | '.' ('0'..'9')+ ('e'|'E') ('+|-')? ('0'..'9')+ '%'? | ('0'..'9')+ ('e'|'E') ('+|-')? ('0'..'9')+ '%'?
+	;
+
+USER_STRING
+	: 
+	('a'..'z'|'A'..'Z'|'_'|'\u0200'..'\u0301'|'\u0303'..'\u0377') (('a'..'z'|'A'..'Z'|'0'..'9'|'_'|'::'|'\u0200'..'\u0301'|'\u0303'..'\u0377') | ('\u0302'('\u0200'..'\u0260'|'\u0262'..'\u0377')))*
+	;
+
+USER_QSTRING	
+	:	
+	'"' USER_STRING '"' 
+	;
+	
+USER_FILENAME 
+	: 
+	('a'..'z'|'A'..'Z'|'\u0200'..'\u0377') ('a'..'z'|'A'..'Z'|'0'..'9'|'_'|'-'|'\u0200'..'\u0377'|'.')* '.cfdg' 
+	;
+
+USER_ARRAYNAME 
+	: 
+	('a'..'z'|'A'..'Z'|'_'|'\u0200'..'\u0301'|'\u0303'..'\u0377') (('a'..'z'|'A'..'Z'|'0'..'9'|'_'|'\u0200'..'\u0301'|'\u0303'..'\u0377') | ('\u0302'('\u0200'..'\u0260'|'\u0262'..'\u0377')))*
+	;
+
+COMMENT
+	: 
+	('//' ~('\n'|'\r')* '\r'? '\n'  | '/*' (.)*? '*/' ) -> skip 
+	;
+
+WHITESPACE  
+	: 
+	( ' ' | '\t' | '\r' | '\n' ) -> skip
+	;
+	

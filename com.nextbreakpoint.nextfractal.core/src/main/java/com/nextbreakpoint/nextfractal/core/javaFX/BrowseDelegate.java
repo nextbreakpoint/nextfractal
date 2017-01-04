@@ -36,6 +36,4 @@ public interface BrowseDelegate {
 	GridItemRenderer createRenderer(Bitmap bitmap) throws Exception;
 
 	BrowseBitmap createBitmap(File file, RendererSize size) throws Exception;
-
-	String getFileExtension();
 }

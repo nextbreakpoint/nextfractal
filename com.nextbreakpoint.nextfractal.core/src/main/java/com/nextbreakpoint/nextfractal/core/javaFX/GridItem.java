@@ -35,7 +35,7 @@ public class GridItem {
 	private volatile long lastChanged;
 	private volatile File file;
 	private volatile BrowseBitmap bitmap;
-	private volatile GridItemRenderer coordinator;
+	private volatile GridItemRenderer renderer;
 	private volatile Future<GridItem> future;
 	private volatile List<Error> errors = new LinkedList<>();
 
@@ -58,12 +58,12 @@ public class GridItem {
 	}
 
 	public GridItemRenderer getRenderer() {
-		return coordinator;
+		return renderer;
 	}
 
-	public void setRenderer(GridItemRenderer coordinator) {
+	public void setRenderer(GridItemRenderer renderer) {
 		lastChanged = System.currentTimeMillis();
-		this.coordinator = coordinator;
+		this.renderer = renderer;
 	}
 
 	public Future<GridItem> getFuture() {

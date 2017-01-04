@@ -95,9 +95,9 @@
 }
 
 .application .sidebar {
-	-fx-border-width: 0 0 0 1;
-	-fx-border-color: #f0f0f0;
 	-fx-background-color: white;
+	-fx-border-width: 0 0 1 1;
+	-fx-border-color: #f0f0f0;
 }
 
 .application .browse {
@@ -133,6 +133,7 @@
 }
 
 .application .params {
+	-fx-background-color: white;
 	-fx-padding: 8px;
     -fx-font-size: 0.9em;
 }
@@ -163,7 +164,38 @@
 
 .application .export {
 	-fx-background-color: white;
+}
+
+.application .export .list-view .label {
+	-fx-padding: 0 8px 0 0;
+}
+
+.application .export .controls {
+	-fx-border-width: 1 0 0 0;
+	-fx-border-color: #f0f0f0;
 	-fx-padding: 8px;
+}
+
+.application .jobs {
+	-fx-background-color: white;
+}
+
+.application .jobs .list-view .label {
+	-fx-padding: 0 8px 0 0;
+}
+
+.application .jobs .details {
+	-fx-border-width: 1 0 1 0;
+	-fx-border-color: #f0f0f0;
+	-fx-padding: 16px;
+}
+
+.application .jobs .toolbar {
+	-fx-padding: 8px;
+}
+
+.application .history .list-view .label {
+	-fx-padding: 0 8px 0 0;
 }
 
 .application .source {
@@ -193,8 +225,3 @@
     -fx-font-size: 0.9em;
 }
 
-.application .clips {
-	-fx-border-width: 1 1 1 1;
-	-fx-border-color: #f0f0f0;
-	-fx-border-radius: 3;
-}

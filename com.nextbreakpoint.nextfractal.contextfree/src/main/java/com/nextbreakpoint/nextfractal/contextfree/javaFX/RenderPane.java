@@ -88,7 +88,7 @@ public class RenderPane extends BorderPane {
 	private int columns;
 	private CFDG cfdg;
 	private String cfdgSource = "";
-	private volatile boolean disableTool;
+	private volatile boolean hasError;
 	private ContextFreeSession contextFreeSession;
 
 	public RenderPane(Session session, EventBus eventBus, int width, int height, int rows, int columns) {
@@ -348,7 +348,7 @@ public class RenderPane extends BorderPane {
 			public void handle(long now) {
 				long time = now / 1000000;
 				if (time - last > FRAME_LENGTH_IN_MILLIS) {
-					if (!disableTool && coordinator != null && coordinator.isInitialized()) {
+					if (!hasError && coordinator != null && coordinator.isInitialized()) {
 						processRenderErrors();
 						redrawIfPixelsChanged(fractalCanvas);
 //						if (currentTool != null) {
@@ -385,7 +385,7 @@ public class RenderPane extends BorderPane {
 	}
 
 	private void updateCompilerErrors(String message, List<Error> errors, String source) {
-		disableTool = message != null;
+		hasError = message != null;
 		Platform.runLater(() -> {
 			statusProperty.setValue(null);
 			errorProperty.setValue(null);
@@ -416,7 +416,7 @@ public class RenderPane extends BorderPane {
 	}
 
 	private void updateRendererErrors(String message, List<Error> errors, String source) {
-		disableTool = message != null;
+		hasError = message != null;
 		Platform.runLater(() -> {
 			statusProperty.setValue(null);
 			errorProperty.setValue(null);

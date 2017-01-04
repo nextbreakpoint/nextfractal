@@ -37,12 +37,14 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Screen;
 
 import java.io.InputStream;
@@ -75,11 +77,10 @@ public class JobsPane extends BorderPane {
 
         listView = new ListView<>();
         listView.setFixedCellSize(tile.getTileSize().getHeight() + PADDING);
-        listView.getStyleClass().add("jobs");
         listView.setCellFactory(view -> new JobsListCell(tile));
 
-        HBox buttons = new HBox(0);
-        buttons.setAlignment(Pos.CENTER);
+        HBox exportControls = new HBox(0);
+        exportControls.setAlignment(Pos.CENTER);
         Button suspendButton = new Button("", createIconImage("/icon-suspend.png", 0.015));
         Button resumeButton = new Button("", createIconImage("/icon-resume.png", 0.015));
         Button removeButton = new Button("", createIconImage("/icon-remove.png", 0.015));
@@ -89,13 +90,30 @@ public class JobsPane extends BorderPane {
         suspendButton.setDisable(true);
         resumeButton.setDisable(true);
         removeButton.setDisable(true);
-        buttons.getChildren().add(suspendButton);
-        buttons.getChildren().add(resumeButton);
-        buttons.getChildren().add(removeButton);
-        buttons.getStyleClass().add("toolbar");
+        exportControls.getChildren().add(suspendButton);
+        exportControls.getChildren().add(resumeButton);
+        exportControls.getChildren().add(removeButton);
+        exportControls.getStyleClass().add("toolbar");
 
-        setCenter(listView);
-        setBottom(buttons);
+        Label sizeLabel = new Label();
+        Label formatLabel = new Label();
+        Label durationLabel = new Label();
+
+        VBox detailsPane = new VBox(10);
+        detailsPane.setAlignment(Pos.TOP_LEFT);
+        detailsPane.getChildren().add(formatLabel);
+        detailsPane.getChildren().add(sizeLabel);
+        detailsPane.getChildren().add(durationLabel);
+        detailsPane.getStyleClass().add("details");
+
+        BorderPane jobsPane = new BorderPane();
+        jobsPane.setCenter(listView);
+        jobsPane.setBottom(detailsPane);
+
+        setCenter(jobsPane);
+        setBottom(exportControls);
+
+        getStyleClass().add("jobs");
 
         List<Button> buttonsList = Arrays.asList(suspendButton, resumeButton, removeButton);
         listView.getSelectionModel().getSelectedItems().addListener((ListChangeListener.Change<? extends Bitmap> c) -> updateButtons(buttonsList, c.getList().size() == 0));
@@ -108,6 +126,8 @@ public class JobsPane extends BorderPane {
 
         removeButton.setOnAction(e -> selectedItems(listView)
             .forEach(bitmap -> Optional.ofNullable(delegate).ifPresent(delegate -> delegate.sessionStopped((ExportSession) bitmap.getProperty("exportSession")))));
+
+        listView.getSelectionModel().getSelectedItems().addListener((ListChangeListener.Change<? extends Bitmap> c) -> itemSelected(listView, sizeLabel, formatLabel, durationLabel));
 
         executor = Executors.newSingleThreadExecutor(createThreadFactory("Jobs"));
     }
@@ -168,9 +188,28 @@ public class JobsPane extends BorderPane {
         listView.fireEvent(new ListView.EditEvent<>(listView, ListView.editCommitEvent(), newValue, index));
     }
 
-    private void itemSelected(ListView<Bitmap> listView) {
-        int index = listView.getSelectionModel().getSelectedIndex();
-        if (index >= 0) {
+    private void itemSelected(ListView<Bitmap> listView, Label sizeLabel, Label formatLabel, Label durationLabel) {
+        Bitmap bitmap = listView.getSelectionModel().getSelectedItem();
+        if (bitmap != null) {
+            ExportSession session = (ExportSession) bitmap.getProperty("exportSession");
+            if (session.getFrameCount() <= 1) {
+                sizeLabel.setText(session.getSize().getWidth() + "\u00D7" + session.getSize().getHeight() + " pixels");
+                formatLabel.setText(session.getEncoder().getName() + " Image");
+            } else {
+                sizeLabel.setText(session.getSize().getWidth() + "\u00D7" + session.getSize().getHeight() + " pixels");
+                formatLabel.setText(session.getEncoder().getName() + " Video");
+                long durationInSeconds = (long)Math.rint(session.getFrameCount() * session.getFrameRate());
+                long minutes = (long)Math.rint(durationInSeconds / 60.0);
+                if (minutes <= 2) {
+                    durationLabel.setText("Duration " + durationInSeconds + " seconds");
+                } else {
+                    durationLabel.setText("Duration " + minutes + " minutes");
+                }
+            }
+        } else {
+            sizeLabel.setText("");
+            formatLabel.setText("");
+            durationLabel.setText("");
         }
     }
 

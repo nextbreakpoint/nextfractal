@@ -44,4 +44,9 @@ public class AVIVideoEncoder extends AbstractVideoEncoder {
 	public String getId() {
 		return "AVI";
 	}
+
+	@Override
+	public String getName() {
+		return "AVI";
+	}
 }

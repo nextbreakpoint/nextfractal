@@ -35,6 +35,11 @@ public interface Encoder {
 	/**
 	 * @return
 	 */
+	String getName();
+
+	/**
+	 * @return
+	 */
 	boolean isVideoSupported();
 
 	/**

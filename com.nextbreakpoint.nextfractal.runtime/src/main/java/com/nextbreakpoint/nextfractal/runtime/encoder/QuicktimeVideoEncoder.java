@@ -44,4 +44,9 @@ public class QuicktimeVideoEncoder extends AbstractVideoEncoder {
 	public String getId() {
 		return "MOV";
 	}
+
+	@Override
+	public String getName() {
+		return "Quicktime";
+	}
 }
