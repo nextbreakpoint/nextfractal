@@ -58,7 +58,7 @@ public class MainParamsPane extends Pane {
 
 		VBox grammarPane = new VBox(SPACING);
 
-		Label grammarLabel = new Label("Grammar");
+		Label grammarLabel = new Label("Project grammar");
 		grammarPane.getChildren().add(grammarLabel);
 
 		ComboBox<String> grammarCombobox = new ComboBox<>();

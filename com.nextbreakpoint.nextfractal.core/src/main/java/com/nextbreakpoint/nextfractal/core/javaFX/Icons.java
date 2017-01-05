@@ -48,32 +48,32 @@ public class Icons {
     }
 
     public static double computeOptimalIconPercentage() {
-        double size = 0.015;
+        double size = 0.019;
 
         Screen screen = Screen.getPrimary();
 
         if (screen.getDpi() > 100 || screen.getVisualBounds().getWidth() > 1200) {
-            size = 0.016;
+            size = 0.020;
         }
 
         if (screen.getDpi() > 200 || screen.getVisualBounds().getWidth() > 2400) {
-            size = 0.018;
+            size = 0.022;
         }
 
         return size;
     }
 
     public static double computeOptimalLargeIconPercentage() {
-        double size = 0.017;
+        double size = 0.021;
 
         Screen screen = Screen.getPrimary();
 
         if (screen.getDpi() > 100 || screen.getVisualBounds().getWidth() > 1200) {
-            size = 0.018;
+            size = 0.022;
         }
 
         if (screen.getDpi() > 200 || screen.getVisualBounds().getWidth() > 2400) {
-            size = 0.020;
+            size = 0.024;
         }
 
         return size;
