@@ -85,8 +85,7 @@ pathop
 	;
 	
 beginstatement 
-	: 
-	{
+	: {
 		builder.pushStatementList();
 	}
 	statement* {
@@ -96,8 +95,7 @@ beginstatement
 	;
 		
 loopstatement
-	:
-	{
+	: {
 		builder.pushScope();
 		builder.pushStatementList();
 	}
@@ -109,8 +107,7 @@ loopstatement
 	;
 		
 endstatement 
-	:
-	{
+	: {
 		builder.pushScope();
 		builder.pushStatementList();
 	}
@@ -530,8 +527,7 @@ colorinit
 	;
 		
 colorstatement
-	:
-	{
+	: {
 		builder.setColorContext(true);
 		builder.pushStatementList();
 	}

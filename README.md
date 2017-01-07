@@ -20,9 +20,9 @@ NextFractal contains code derivated from original code of open source projects X
 
 NextFractal is an application for creating fractal images and other algorithmically generated images. Images are generated processing a script and some user provided parameters depending on the selected grammar. The grammar defines the domain specific language used to compose the script. 
 
-NextFractal is currently able to interpret the M language which is designed for creating Mandelbrot and Julia sets, and the CFDG language which is designed for iteratively composing geometric shapes (see http://www.contextfreeart.org).
+NextFractal is currently able to interpret the M language which is designed for creating Mandelbrot and Julia sets, and the CFDG language which is designed for creating geometric shapes iteratively (see http://www.contextfreeart.org).
 
-NextFractal provides also tools for exploring Mandelbrot and Julia sets, creating time based and events based animations, recording animations and rendering images and videos. NextFractal exports with formats PNG, AVI and Quicktime.
+NextFractal provides also tools for exploring Mandelbrot and Julia sets, browsing images, creating time based and events based animations, and rendering images and videos. NextFractal exports to formats PNG, AVI and Quicktime.
 
 
 ## SYSTEM REQUIREMENTS
@@ -38,15 +38,15 @@ See download page http://www.oracle.com/technetwork/java/javase/downloads
 
 Please read grammars documentation and tutorials on http://nextbreakpoint.com/nextfractal.
 
-NextFractal accepts a few of keyboard commands when focus is on main image:
+NextFractal accepts few keyboard commands when focus is on rendering area:
 
-    Use keys 1,2,3,4,5 to change zoom speed
+    Press keys 1, 2, 3, 4, 5 to change zoom speed
 
-    Use key T to show/hide traps
+    Press key T to show/hide traps
 
-    Use key O to show/hide orbit
+    Press key O to show/hide orbit
 
-    Use key P to show/hide previews
+    Press key P to show/hide preview
 
 
 ## BUILD INSTRUCTIONS

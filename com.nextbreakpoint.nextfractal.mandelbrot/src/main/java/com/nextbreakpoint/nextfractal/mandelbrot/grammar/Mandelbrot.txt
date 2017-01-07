@@ -1,322 +1,318 @@
 fractal
 	:
-	f=FRACTAL  '{' orbit color '}' eof 
+	FRACTAL  '{' orbit color '}' eof
 	;
-		
+
 orbit
 	:
-	o=ORBIT '[' ra=complex ',' rb=complex ']'  '[' statevariablelist ']' '{' trap* begin? loop end? '}'
+	ORBIT '[' complex ',' complex ']'  '[' statevariablelist ']' '{' trap* begin? loop end? '}'
 	;
-		
+
 color
 	:
-	c=COLOR '[' argb=colorargb ']'  '{' palette* colorinit? colorrule* '}'
+	COLOR '[' colorargb ']'  '{' palette* colorinit? colorrule* '}'
 	;
-		
+
 begin
 	:
-	b=BEGIN  '{' beginstatement '}'
+	BEGIN  '{' beginstatement '}'
 	;
-		
+
 loop
 	:
-	l=LOOP '[' lb=INTEGER ',' le=INTEGER ']' '(' e=conditionexp ')' '{' loopstatement '}'
+	LOOP '[' INTEGER ',' INTEGER ']' '(' conditionexp ')' '{' loopstatement '}'
 	;
-		
+
 end
 	:
-	e=END  '{' endstatement '}'
+	END  '{' endstatement '}'
 	;
-		
+
 trap
 	:
-	t=TRAP n=VARIABLE '[' c=complex ']'  '{' pathop* '}'
+	TRAP VARIABLE '[' complex ']'  '{' pathop* '}'
 	;
-		
+
 pathop
 	:
-	o=PATHOP_0POINTS ';' 
+	PATHOP_0POINTS ';'
 	|
-	o=PATHOP_1POINTS '(' c=complex ')' ';' 
+	PATHOP_1POINTS '(' complex ')' ';'
 	|
-	o=PATHOP_2POINTS '(' c1=complex ',' c2=complex ')' ';' 
+	PATHOP_2POINTS '(' complex ',' complex ')' ';'
 	|
-	o=PATHOP_3POINTS '(' c1=complex ',' c2=complex ',' c3=complex ')' ';' 
+	PATHOP_3POINTS '(' complex ',' complex ',' complex ')' ';'
 	;
-	
-beginstatement 
-	: 
-	
-	statement* 
+
+beginstatement
+	:
+	statement*
 	;
-		
+
 loopstatement
 	:
-	
-	statement* 
+	statement*
 	;
-		
-endstatement 
+
+endstatement
 	:
-	
-	statement* 
+	statement*
 	;
-		
+
 statement
 	:
-	v=VARIABLE '=' e=expression ';'? 
+	VARIABLE '' expression ';'?
 	|
-	f=IF '(' c=conditionexp ')' '{'  statement* '}'  ELSE '{'  statement* '}'  
+	IF '(' conditionexp ')' '{'  statement* '}'  ELSE '{'  statement* '}'
 	|
-	f=IF '(' c=conditionexp ')' '{'  statement* '}'  
+	IF '(' conditionexp ')' '{'  statement* '}'
 	|
-	f=IF '(' c=conditionexp ')'  statement  
+	IF '(' conditionexp ')'  statement
 	|
-	t=STOP ';'? 
+	STOP ';'?
 	;
-		
+
 statevariable
 	:
-	'real' v=VARIABLE  
-	| 
-	'complex' v=VARIABLE  
-	| 
-	v=VARIABLE  
+	'real' VARIABLE
+	|
+	'complex' VARIABLE
+	|
+	VARIABLE
 	;
-	
-statevariablelist 
+
+statevariablelist
 	:
-	statevariable 
-	| 
+	statevariable
+	|
 	statevariablelist ',' statevariable
 	;
-		 
-simpleconditionexp returns [ASTConditionExpression result]
+
+simpleconditionexp
 	:
-	e1=expression o=('=' | '<' | '>' | '<=' | '>=' | '<>') e2=expression 
+	expression ('' | '<' | '>' | '<' | '>' | '<>') expression
 	|
-	v=VARIABLE '?' e=expression 
+	VARIABLE '?' expression
 	|
-	v=VARIABLE '~?' e=expression 
-	| 
-	t=JULIA 	
-	| 
-	s='(' c=conditionexp ')' 	
-	;
-		
-conditionexp returns [ASTConditionExpression result]
-	:
-	c=simpleconditionexp 	
-	| 
-	c2=conditionexp2 	
-	| 
-	c1=conditionexp l='|' c2=conditionexp2 	
-	;
-	
-conditionexp2 returns [ASTConditionExpression result]
-	:
-	c=simpleconditionexp 	
-	| 
-	c2=conditionexp3 	
-	| 
-	c1=conditionexp2 l='^' c2=conditionexp3 	
+	VARIABLE '~?' expression
+	|
+	JULIA
+	|
+	'(' conditionexp ')'
 	;
 
-conditionexp3 returns [ASTConditionExpression result]
+conditionexp
 	:
-	c=simpleconditionexp 	
-	| 
-	c2=conditionexp4 	
-	| 
-	c1=conditionexp3 l='&' c2=conditionexp4 	
+	simpleconditionexp
+	|
+	conditionexp2
+	|
+	conditionexp '|' conditionexp2
 	;
 
-conditionexp4 returns [ASTConditionExpression result]
+conditionexp2
 	:
-	c1=simpleconditionexp 	
-	| 
-	n='~' c2=conditionexp4 	
-	;
-	
-simpleexpression returns [ASTExpression result]
-	:
-	p=constant 
+	simpleconditionexp
 	|
-	v=variable 
+	conditionexp3
 	|
-	r=real 
-	|
-	f=function 
-	|
-	t='(' e=expression ')' 
-	|
-	m='|' e=expression '|' 
-	|
-	a='<' e=expression '>' 
-	|
-	a='<' er=expression ',' ei=expression '>' 
-	;
-	
-expression returns [ASTExpression result]
-	:
-	e=simpleexpression 
-	|
-	c=complex 
-	|
-	e2=expression2 
-	|
-	e1=expression s='+' e2=expression2 
-	|
-	e2=expression2 s='+' e1=expression 
-	|
-	e1=expression s='-' e2=expression2 
-	;
-	
-expression2 returns [ASTExpression result]
-	:
-	e=simpleexpression 
-	|
-	e3=expression3 
-	|
-	e1=expression2 s='*' e2=expression2 
-	|
-	s='-' e2=expression2 
-	|
-	s='+' e2=expression2 
-	|
-	i='i' '*'? e2=expression2 
-	|
-	e2=expression2 '*'? i='i' 
+	conditionexp2 '^' conditionexp3
 	;
 
-expression3 returns [ASTExpression result]
+conditionexp3
 	:
-	e=simpleexpression 
+	simpleconditionexp
 	|
-	e3=expression4 
+	conditionexp4
 	|
-	e1=expression3 s='/' e2=expression3 
+	conditionexp3 '&' conditionexp4
 	;
 
-expression4 returns [ASTExpression result]
+conditionexp4
 	:
-	e=simpleexpression 
+	simpleconditionexp
 	|
-	e1=expression4 s='^' e2=expression4 
+	'~' conditionexp4
 	;
 
-function returns [ASTFunction result]
+simpleexpression
 	:
-	f='time' '(' ')' 
+	constant
 	|
-	f=('mod' | 'mod2' | 'pha' | 're' | 'im') '(' e=expression ')' 
+	variable
 	|
-	f=('cos' | 'sin' | 'tan' | 'acos' | 'asin' | 'atan') '(' e=expression ')' 
+	real
 	|
-	f=('log' | 'exp' | 'sqrt' | 'abs' | 'ceil' | 'floor' | 'square' | 'saw' | 'ramp') '(' e=expression ')' 
+	function
 	|
-	f=('pow' | 'atan2' | 'hypot' | 'max' | 'min' | 'pulse') '(' e1=expression ',' e2=expression ')' 
+	'(' expression ')'
+	|
+	'|' expression '|'
+	|
+	'<' expression '>'
+	|
+	'<' expression ',' expression '>'
 	;
-			
-constant returns [ASTNumber result]
-	:
-	p='e' 
-	|
-	p='pi' 
-	|
-	p='2pi' 
-	;
-	
-variable returns [ASTVariable result]
-	:
-	v=VARIABLE 
-	;
-	
-real returns [ASTNumber result] 
-	:
-	'+'? r=(RATIONAL | INTEGER) 
-	|
-	'-' r=(RATIONAL | INTEGER) 
-	; 
-	
-complex returns [ASTNumber result]
-	:
-	'<' '+'? r=(RATIONAL | INTEGER) ',' '+'? i=(RATIONAL | INTEGER) '>' 
-	|
-	'<' '+'? r=(RATIONAL | INTEGER) ',' '-' i=(RATIONAL | INTEGER) '>' 
-	|
-	'<' '-' r=(RATIONAL | INTEGER) ',' '+'? i=(RATIONAL | INTEGER) '>' 
-	|
-	'<' '-' r=(RATIONAL | INTEGER) ',' '-' i=(RATIONAL | INTEGER) '>' 
-	|
-	'+'? r=(RATIONAL | INTEGER) '+' i=(RATIONAL | INTEGER) 'i' 
-	|
-	'+'? r=(RATIONAL | INTEGER) '-' i=(RATIONAL | INTEGER) 'i' 
-	|
-	'+'? i=(RATIONAL | INTEGER) 'i' 
-	|
-	'-' r=(RATIONAL | INTEGER) '+' i=(RATIONAL | INTEGER) 'i' 
-	|
-	'-' r=(RATIONAL | INTEGER) '-' i=(RATIONAL | INTEGER) 'i' 
-	|
-	'-' i=(RATIONAL | INTEGER) 'i' 
-	|
-	rn=real 
-	; 
 
-palette 
+expression
 	:
-	p=PALETTE v=VARIABLE  '{' paletteelement+ '}'
-	;
-		
-paletteelement 
-	:
-	t='['   bc=colorargb'>' ec=colorargb ',' s=INTEGER ',' e=expression ']' ';' 
+	simpleexpression
 	|
-	t='['  bc=colorargb '>' ec=colorargb ',' s=INTEGER ']' ';' 
+	complex
+	|
+	expression2
+	|
+	expression '+' expression2
+	|
+	expression2 '+' expression
+	|
+	expression '-' expression2
 	;
-				
-colorinit 
+
+expression2
 	:
-	i=INIT  '{' colorstatement '}' 
+	simpleexpression
+	|
+	expression3
+	|
+	expression2 '*' expression2
+	|
+	'-' expression2
+	|
+	'+' expression2
+	|
+	'i' '*'? expression2
+	|
+	expression2 '*'? 'i'
 	;
-		
+
+expression3
+	:
+	simpleexpression
+	|
+	expression4
+	|
+	expression3 '/' expression3
+	;
+
+expression4
+	:
+	simpleexpression
+	|
+	expression4 '^' expression4
+	;
+
+function
+	:
+	'time' '(' ')'
+	|
+	('mod' | 'mod2' | 'pha' | 're' | 'im') '(' expression ')'
+	|
+	('cos' | 'sin' | 'tan' | 'acos' | 'asin' | 'atan') '(' expression ')'
+	|
+	('log' | 'exp' | 'sqrt' | 'abs' | 'ceil' | 'floor' | 'square' | 'saw' | 'ramp') '(' expression ')'
+	|
+	('pow' | 'atan2' | 'hypot' | 'max' | 'min' | 'pulse') '(' expression ',' expression ')'
+	;
+
+constant
+	:
+	'e'
+	|
+	'pi'
+	|
+	'2pi'
+	;
+
+variable
+	:
+	VARIABLE
+	;
+
+real
+	:
+	'+'? (RATIONAL | INTEGER)
+	|
+	'-' (RATIONAL | INTEGER)
+	;
+
+complex
+	:
+	'<' '+'? (RATIONAL | INTEGER) ',' '+'? (RATIONAL | INTEGER) '>'
+	|
+	'<' '+'? (RATIONAL | INTEGER) ',' '-' (RATIONAL | INTEGER) '>'
+	|
+	'<' '-' (RATIONAL | INTEGER) ',' '+'? (RATIONAL | INTEGER) '>'
+	|
+	'<' '-' (RATIONAL | INTEGER) ',' '-' (RATIONAL | INTEGER) '>'
+	|
+	'+'? (RATIONAL | INTEGER) '+' (RATIONAL | INTEGER) 'i'
+	|
+	'+'? (RATIONAL | INTEGER) '-' (RATIONAL | INTEGER) 'i'
+	|
+	'+'? (RATIONAL | INTEGER) 'i'
+	|
+	'-' (RATIONAL | INTEGER) '+' (RATIONAL | INTEGER) 'i'
+	|
+	'-' (RATIONAL | INTEGER) '-' (RATIONAL | INTEGER) 'i'
+	|
+	'-' (RATIONAL | INTEGER) 'i'
+	|
+	real
+	;
+
+palette
+	:
+	PALETTE VARIABLE  '{' paletteelement+ '}'
+	;
+
+paletteelement
+	:
+	'['   colorargb'>' colorargb ',' INTEGER ',' expression ']' ';'
+	|
+	'['  colorargb '>' colorargb ',' INTEGER ']' ';'
+	;
+
+colorinit
+	:
+	INIT  '{' colorstatement '}'
+	;
+
 colorstatement
 	:
-	
-	statement* 
+	statement*
 	;
-		
-colorrule 
+
+colorrule
 	:
-	t=RULE '(' r=ruleexp ')' '[' o=(RATIONAL | INTEGER) ']' '{' c=colorexp '}'  
+	RULE '(' ruleexp ')' '[' (RATIONAL | INTEGER) ']' '{' colorexp '}'
 	;
-		
-ruleexp returns [ASTRuleExpression result]
+
+ruleexp
 	:
-	e1=expression o=('=' | '>' | '<' | '>=' | '<=' | '<>') e2=expression 
+	expression ('' | '>' | '<' | '>' | '<' | '<>') expression
 	|
-	r1=ruleexp o=('&' | '|' | '^') r2=ruleexp 
+	ruleexp ('&' | '|' | '^') ruleexp
 	;
-		
-colorexp returns [ASTColorExpression result]
+
+colorexp
 	:
-	e1=expression 
+	expression
 	|
-	e1=expression ',' e2=expression ',' e3=expression 
+	expression ',' expression ',' expression
 	|
-	e1=expression ',' e2=expression ',' e3=expression ',' e4=expression 
+	expression ',' expression ',' expression ',' expression
 	|
-	v=VARIABLE '[' e=expression ']' 
+	VARIABLE '[' expression ']'
 	;
-		
-colorargb returns [ASTColorARGB result]
+
+colorargb
 	:
-	'(' a=(RATIONAL | INTEGER) ',' r=(RATIONAL | INTEGER) ',' g=(RATIONAL | INTEGER) ',' b=(RATIONAL | INTEGER) ')' 
+	'(' (RATIONAL | INTEGER) ',' (RATIONAL | INTEGER) ',' (RATIONAL | INTEGER) ',' (RATIONAL | INTEGER) ')'
 	|
-	argb32=ARGB32 
+	ARGB32
 	|
-	argb24=ARGB24 
+	ARGB24
 	;
 		
 eof 
