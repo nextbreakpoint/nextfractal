@@ -11,18 +11,18 @@ You should have received a copy of the GNU General Public License along with Nex
 
 ## NOTICE
 
-NextFractal depends on thirdparty libraries incuding FreeImage, FFmpeg, ANTLR, Apache Software Foundation, RichTextFX, ControlsFX.
+NextFractal depends on several thirdparty libraries including FreeImage, FFmpeg, ANTLR, RichTextFX, ControlsFX and software from Apache Software Foundation.
 
 NextFractal contains code derivated from original code of open source projects Xaos and ContextFree.
 
 
 ## DESCRIPTION
 
-NextFractal is an application for creating fractal images and other algorithmically generated images. Images are generated processing a script and some user provided parameters depending on the selected grammar. The grammar defines the domain specific language used to compose the script. 
+NextFractal is an application for creating fractals and other algorithmically generated images. Images are generated processing a script and some user provided parameters depending on the selected grammar. The grammar defines the domain specific language to use to compose the script. 
 
-NextFractal is currently able to interpret the M language which is designed for creating Mandelbrot and Julia sets, and the CFDG language which is designed for creating geometric shapes iteratively (see http://www.contextfreeart.org).
+NextFractal is currently able to interpret M scripts and CFDG scripts. The M scripts are based on a domain specific language designed for creating Mandelbrot and Julia sets. The CFDG scripts are based on a context-free grammar designed for creating geometric shapes iteratively. 
 
-NextFractal provides also tools for exploring Mandelbrot and Julia sets, browsing images, creating time based and events based animations, and rendering images and videos. NextFractal exports to formats PNG, AVI and Quicktime.
+NextFractal provides also tools for exploring Mandelbrot and Julia sets, browsing images, creating time based and events based animations, and rendering image and video files. NextFractal exports to formats PNG, AVI and Quicktime.
 
 
 ## SYSTEM REQUIREMENTS
@@ -31,12 +31,11 @@ NextFractal requires Java SDK 8 or later. You can download the latest SDK from O
 
 See download page http://www.oracle.com/technetwork/java/javase/downloads
 
-    Java SDK contains the Java compiler which is required to optimise images rendering process. 
-    NextFractal detects the compiler and use it to compile code in memory and reduce the rendering time.     
+    Java SDK contains the Java compiler which is required to compile code in memory and reduce the rendering time.
 
 ## USER GUIDE
 
-Please read grammars documentation and tutorials on http://nextbreakpoint.com/nextfractal.
+Please see documentation and tutorials on http://nextbreakpoint.com/nextfractal.
 
 NextFractal accepts few keyboard commands when focus is on rendering area:
 
@@ -51,7 +50,7 @@ NextFractal accepts few keyboard commands when focus is on rendering area:
 
 ## BUILD INSTRUCTIONS
 
-You can build NextFractal from the source code. Checkout or download the source code from GitHub and run the build script. The build script requires Apache Ant and Apache Maven. By default the script will create a distribution for all platforms. Run script with target to build the distribution for a specific platform only. Apple command-line development tools are required to build MacOS distribution. 
+You can build NextFractal from the source code. Checkout or download the source code from GitHub and run the build script. The build script requires Apache Ant and Apache Maven. By default the script will create a distribution for all platforms. Use a different target to build the distribution for a specific platform only. Apple command-line development tools are also required to build the distribution for MacOS. 
 
 Get the code from https://github.com/nextbreakpoint/nextfractal:
 
