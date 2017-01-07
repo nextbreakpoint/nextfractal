@@ -469,7 +469,7 @@ public class RenderPane extends BorderPane {
 				}
 				coordinator.init();
 				coordinator.run();
-				Thread.sleep(500);
+				Thread.sleep(100);
 				List<Error> errors = coordinator.getErrors();
 				if (errors.size() > 0) {
 					updateCompilerErrors("Some runtime errors occurred", errors, null);
