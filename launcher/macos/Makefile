@@ -6,7 +6,7 @@ SYSTEM:=darwin
 CC = gcc
 LD = ld
 
-CPPFLAGS += -DJAVA_VERSION=$(JAVA_VERSION)
+CPPFLAGS += -DJAVA_VERSION=$(JAVA_VERSION) -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.10.sdk -arch x86_64
 CXXFLAGS += -g
 VM_DIR=$(JHOME)/jre/lib
 LDFLAGS += 
