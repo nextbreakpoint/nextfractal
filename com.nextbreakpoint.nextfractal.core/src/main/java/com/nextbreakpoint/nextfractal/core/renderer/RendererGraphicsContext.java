@@ -1,8 +1,8 @@
 /*
- * NextFractal 1.3.0
+ * NextFractal 2.0.0
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2016 Andrea Medeghini
+ * Copyright 2015-2017 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -25,12 +25,23 @@
 package com.nextbreakpoint.nextfractal.core.renderer;
 
 public interface RendererGraphicsContext {
+	public static final int JOIN_MITER = 1;
+	public static final int JOIN_ROUND = 2;
+	public static final int JOIN_BEVEL = 3;
+	public static final int CAP_BUTT = 1;
+	public static final int CAP_ROUND = 2;
+	public static final int CAP_SQUARE = 3;
+	public static final int EVEN_ODD = 0;
+	public static final int NON_ZERO = 1;
+
 	public void setStroke(RendererColor c);
 
 	public void setFill(RendererColor c);
 	
 	public void setFont(RendererFont font);
-	
+
+	public void setWindingRule(int windingRule);
+
 	public void rect(int x, int y, int width, int height);
 	
 	public void stroke();
@@ -43,10 +54,16 @@ public interface RendererGraphicsContext {
 
 	public void closePath();
 
-	public void moveTo(int x, int y);
+	public void moveTo(float x, float y);
 	
-	public void lineTo(int x, int y);
-	
+	public void lineTo(float x, float y);
+
+	public void quadTo(float x1, float y1, float x2, float y2);
+
+	public void cubicTo(float x1, float y1, float x2, float y2, float x3, float y3);
+
+//	public void arcTo(float rx, float ry, float angle, float largeArcFlag, float seepwFlag, float x, float y);
+
 	public void strokeRect(int x, int y, int width, int height);
 	
 	public void fillRect(int x, int y, int width, int height);
@@ -70,4 +87,6 @@ public interface RendererGraphicsContext {
 	public void setClip(int x, int y, int width, int height);
 
 	public void setAlpha(double alpha);
+
+	public void setStrokeLine(float width, int cap, int join, float miterLimit);
 }

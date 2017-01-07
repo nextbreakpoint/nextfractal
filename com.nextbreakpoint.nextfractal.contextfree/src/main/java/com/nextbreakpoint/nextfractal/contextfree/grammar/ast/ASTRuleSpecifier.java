@@ -1,8 +1,8 @@
 /*
- * NextFractal 1.3.0
+ * NextFractal 2.0.0
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2016 Andrea Medeghini
+ * Copyright 2015-2017 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -24,15 +24,18 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.grammar.ast;
 
-import java.util.Iterator;
-import java.util.List;
-
-import com.nextbreakpoint.nextfractal.contextfree.grammar.*;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGDriver;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGRenderer;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFStack;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFStackRule;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ArgSource;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.CompilePhase;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ExpType;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.Locality;
 import org.antlr.v4.runtime.Token;
+
+import java.util.Iterator;
+import java.util.List;
 
 public class ASTRuleSpecifier extends ASTExpression {
 	private int shapeType;
@@ -47,7 +50,7 @@ public class ASTRuleSpecifier extends ASTExpression {
 	private CFDGDriver driver;
 
 	public ASTRuleSpecifier(CFDGDriver driver, Token location) {
-		super(false, false, ExpType.RuleType, location);
+		super(driver, false, false, ExpType.RuleType, location);
 		this.driver = driver;
 		this.shapeType = -1;
 		this.argSize = 0;
@@ -61,7 +64,7 @@ public class ASTRuleSpecifier extends ASTExpression {
 	}
 
 	public ASTRuleSpecifier(CFDGDriver driver, int nameIndex, String name, ASTExpression arguments, List<ASTParameter> parent, Token location) {
-		super(arguments == null || arguments.isConstant(), false, ExpType.RuleType, location);
+		super(driver, arguments == null || arguments.isConstant(), false, ExpType.RuleType, location);
 		this.driver = driver;
 		this.shapeType = nameIndex;
 		this.entropy = name;
@@ -77,7 +80,7 @@ public class ASTRuleSpecifier extends ASTExpression {
 	}
 
 	public ASTRuleSpecifier(CFDGDriver driver, int nameIndex, String name, Token location) {
-		super(false, false, ExpType.RuleType, location);
+		super(driver, false, false, ExpType.RuleType, location);
 		this.driver = driver;
 		this.shapeType = nameIndex;
 		this.argSize = 0;
@@ -91,7 +94,7 @@ public class ASTRuleSpecifier extends ASTExpression {
 	}
 
 	public ASTRuleSpecifier(CFDGDriver driver, ASTExpression args, Token location) {
-		super(false, false, ExpType.RuleType, location);
+		super(driver, false, false, ExpType.RuleType, location);
 		this.driver = driver;
 		this.shapeType = -1;
 		this.argSize = 0;
@@ -105,7 +108,7 @@ public class ASTRuleSpecifier extends ASTExpression {
 	}
 
 	public ASTRuleSpecifier(CFDGDriver driver, ASTRuleSpecifier spec) {
-		super(spec.isConstant, false, spec.type, spec.location);
+		super(driver, spec.isConstant, false, spec.type, spec.location);
 		this.driver = driver;
 		this.argSize = spec.argSize;
 		this.entropy = spec.entropy;
@@ -225,7 +228,7 @@ public class ASTRuleSpecifier extends ASTExpression {
 
 	@Override
 	public int evaluate(double[] result, int length, CFDGRenderer renderer) {
-		Logger.error("Improper evaluation of a rule specifier", location);
+		driver.error("Improper evaluation of a rule specifier", location);
 		return -1;
 	}
 
@@ -267,7 +270,7 @@ public class ASTRuleSpecifier extends ASTExpression {
 					isConstant = true;
 					locality = Locality.PureLocal;
 				} else {
-					Logger.error("Error processing shape variable.", location);
+					driver.error("Error processing shape variable.", location);
 				}
 			}
 		}
@@ -282,7 +285,7 @@ public class ASTRuleSpecifier extends ASTExpression {
 				switch (argSource) {
 					case ShapeArgs: {
 						if (arguments.getType() == ExpType.RuleType) {
-							Logger.error("Expression does not return a shape", location);
+							driver.error("Expression does not return a shape", location);
 						}
 						isConstant = true;
 						locality = arguments.getLocality();
@@ -302,12 +305,12 @@ public class ASTRuleSpecifier extends ASTExpression {
 						boolean isGlobal = false;
 						ASTParameter bound = driver.findExpression(shapeType, isGlobal);
 						if (bound.getType() != ExpType.RuleType) {
-							Logger.error("Shape name does not bind to a rule variable", location);
-							Logger.error("this is what it binds to", bound.getLocation());
+							driver.error("Shape name does not bind to a rule variable", location);
+							driver.error("this is what it binds to", bound.getLocation());
 						}
 						if (bound.getStackIndex() == -1) {
 							if (bound.getDefinition() == null || bound.getDefinition().getExp() == null) {
-								Logger.error("Error processing shape variable", location);
+								driver.error("Error processing shape variable", location);
 								return null;
 							}
 							if (bound.getDefinition().getExp() instanceof ASTRuleSpecifier) {
@@ -315,7 +318,7 @@ public class ASTRuleSpecifier extends ASTExpression {
 								grab(r);
 								locality = Locality.PureLocal;
 							} else {
-								Logger.error("Error processing shape variable", location);
+								driver.error("Error processing shape variable", location);
 							}
 						} else {
 							stackIndex = bound.getStackIndex() - (isGlobal ? 0 : driver.getLocalStackDepth());
@@ -323,7 +326,7 @@ public class ASTRuleSpecifier extends ASTExpression {
 							locality = bound.getLocality();
 						}
 						if (arguments != null && arguments.getType() != ExpType.NoType) {
-							Logger.error("Cannot bind parameters twice", arguments.getLocation());
+							driver.error("Cannot bind parameters twice", arguments.getLocation());
 						}
 						return null;
 					}
@@ -355,7 +358,7 @@ public class ASTRuleSpecifier extends ASTExpression {
 								isConstant = false;
 								locality = arguments.getLocality();
 							} else {
-								Logger.error("Function does not return a shape", arguments.getLocation());
+								driver.error("Function does not return a shape", arguments.getLocation());
 							}
 							if (arguments != null) {
 								StringBuilder ent = new StringBuilder();
@@ -385,26 +388,26 @@ public class ASTRuleSpecifier extends ASTExpression {
 									param = paramIt.next();
 									parent = parentIt.next();
 									if (param != parent) {
-										Logger.error("Parameter reuse only allowed when type signature is identical", location);
-										Logger.error("target shape parameter type", param.getLocation());
-										Logger.error("does not equal source shape parameter type", parent.getLocation());
+										driver.error("Parameter reuse only allowed when type signature is identical", location);
+										driver.error("target shape parameter type", param.getLocation());
+										driver.error("does not equal source shape parameter type", parent.getLocation());
 										break;
 									}
 								}
 								if (!paramIt.hasNext() && parentIt.hasNext()) {
-									Logger.error("Source shape has more parameters than target shape.", location);
-									Logger.error("extra source parameters start here", parent.getLocation());
+									driver.error("Source shape has more parameters than target shape.", location);
+									driver.error("extra source parameters start here", parent.getLocation());
 								}
 								if (paramIt.hasNext() && !parentIt.hasNext()) {
-									Logger.error("Target shape has more parameters than source shape.", location);
-									Logger.error("extra target parameters start here", param.getLocation());
+									driver.error("Target shape has more parameters than source shape.", location);
+									driver.error("extra target parameters start here", param.getLocation());
 								}
 							}
 							isConstant = true;
 							locality = Locality.PureLocal;
 							return null;
 						}
-						argSize = ASTParameter.checkType(typeSignature, arguments, true);
+						argSize = ASTParameter.checkType(driver, typeSignature, arguments, true);
 						if (argSize < 0) {
 							argSource = ArgSource.NoArgs;
 							return null;

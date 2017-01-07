@@ -1,5 +1,3 @@
-CFDG3
-
 startshape Foo [r 15]
 
 shape Foo {

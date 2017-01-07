@@ -1,8 +1,8 @@
 /*
- * NextFractal 1.3.0
+ * NextFractal 2.0.0
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2016 Andrea Medeghini
+ * Copyright 2015-2017 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -24,12 +24,11 @@
  */
 package com.nextbreakpoint.nextfractal.core.renderer.javaFX;
 
+import com.nextbreakpoint.nextfractal.core.renderer.RendererBuffer;
+import com.nextbreakpoint.nextfractal.core.renderer.RendererImage;
 import javafx.scene.image.PixelFormat;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
-
-import com.nextbreakpoint.nextfractal.core.renderer.RendererBuffer;
-import com.nextbreakpoint.nextfractal.core.renderer.RendererImage;
 
 public class JavaFXRendererBuffer implements RendererBuffer {
 	private WritableImage image;
@@ -40,16 +39,10 @@ public class JavaFXRendererBuffer implements RendererBuffer {
 		writer = image.getPixelWriter();
 	}
 
-	/**
-	 * @see com.nextbreakpoint.nextfractal.RendererBuffer.renderer.RenderBuffer#dispose()
-	 */
 	@Override
 	public void dispose() {
 	}
 
-	/**
-	 * @see com.nextbreakpoint.nextfractal.RendererBuffer.renderer.RenderBuffer#clear()
-	 */
 	@Override
 	public void clear() {
 //		int[] pixels = new int[getWidth() * getHeight()];
@@ -64,9 +57,6 @@ public class JavaFXRendererBuffer implements RendererBuffer {
 		}
 	}
 
-	/**
-	 * @see com.nextbreakpoint.nextfractal.RendererBuffer.renderer.RenderBuffer#update(int[])
-	 */
 	@Override
 	public void update(int[] pixels) {
 		if (pixels.length <= getWidth() * getHeight()) {
@@ -74,25 +64,16 @@ public class JavaFXRendererBuffer implements RendererBuffer {
 		}
 	}
 
-	/**
-	 * @see com.nextbreakpoint.nextfractal.RendererBuffer.renderer.RenderBuffer#getWidth()
-	 */
 	@Override
 	public int getWidth() {
 		return (int)image.getWidth();
 	}
 	
-	/**
-	 * @see com.nextbreakpoint.nextfractal.RendererBuffer.renderer.RenderBuffer#getHeight()
-	 */
 	@Override
 	public int getHeight() {
 		return (int)image.getHeight();
 	}
 
-	/**
-	 * @see com.nextbreakpoint.nextfractal.RendererBuffer.renderer.RenderBuffer#getImage()
-	 */
 	@Override
 	public RendererImage getImage() {
 		return new JavaFXRendererImage(image);

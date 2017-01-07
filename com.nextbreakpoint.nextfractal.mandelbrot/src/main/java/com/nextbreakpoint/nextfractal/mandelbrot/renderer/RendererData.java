@@ -1,8 +1,8 @@
 /*
- * NextFractal 1.3.0
+ * NextFractal 2.0.0
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2016 Andrea Medeghini
+ * Copyright 2015-2017 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -24,11 +24,11 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.renderer;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.nextbreakpoint.nextfractal.mandelbrot.core.MutableNumber;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class RendererData {
 	protected double[] positionX;
@@ -74,7 +74,7 @@ public class RendererData {
 	/**
 	 * @param width
 	 * @param height
-	 * @param size
+	 * @param depth
 	 */
 	public void setSize(final int width, final int height, final int depth) {
 		if (this.width != width || this.height != height) {

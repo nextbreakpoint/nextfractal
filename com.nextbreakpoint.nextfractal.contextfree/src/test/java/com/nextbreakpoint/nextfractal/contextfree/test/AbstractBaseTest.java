@@ -1,5 +1,5 @@
 /*
- * NextFractal 1.3.0
+ * NextFractal 2.0.0
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015-2016 Andrea Medeghini
@@ -25,6 +25,7 @@
 package com.nextbreakpoint.nextfractal.contextfree.test;
 
 import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDG;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGDriver;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGLexer;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGParser;
 import org.antlr.v4.runtime.ANTLRInputStream;
@@ -42,6 +43,8 @@ public abstract class AbstractBaseTest {
 	protected CFDG parseSource(String resourceName) throws IOException {
 		ANTLRInputStream is = new ANTLRInputStream(getResourceAsStream(resourceName));
 		CFDGParser parser = new CFDGParser(new CommonTokenStream(new CFDGLexer(is)));
+		parser.setDriver(new CFDGDriver());
+		parser.getDriver().setCurrentPath("src/test/resources");
 		ParseTreeWalker walker = new ParseTreeWalker();
 		walker.walk(new DefaultParseTreeListener() {
 			@Override
@@ -49,7 +52,7 @@ public abstract class AbstractBaseTest {
 				System.out.println(node.getText() + " " + node.getSymbol());
 			}
 		}, parser.choose());
-		return parser.getCFDG();
+		return parser.getDriver().getCFDG();
 	}
 
 	protected InputStream getResourceAsStream(String resourceName) {
@@ -74,7 +77,7 @@ public abstract class AbstractBaseTest {
         }
 	}
 
-	public void renderImage() throws Exception {
+//	public void renderImage() throws Exception {
 //		ContextFreeRuntime runtime = new ContextFreeRuntime(config);
 //		ContextFreeRenderer renderer = new DefaultContextFreeRenderer(Thread.MIN_PRIORITY);
 //		IntegerVector2D imageSize = new IntegerVector2D(IMAGE_WIDTH, IMAGE_HEIGHT);
@@ -103,5 +106,5 @@ public abstract class AbstractBaseTest {
 //		runtime.dispose();
 //		config.dispose();
 //		surface.dispose();
-	}
+//	}
 }

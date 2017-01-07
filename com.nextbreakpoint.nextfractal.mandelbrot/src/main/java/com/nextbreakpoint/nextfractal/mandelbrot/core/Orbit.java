@@ -1,8 +1,8 @@
 /*
- * NextFractal 1.3.0
+ * NextFractal 2.0.0
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2016 Andrea Medeghini
+ * Copyright 2015-2017 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -24,6 +24,8 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.core;
 
+import com.nextbreakpoint.nextfractal.core.utils.Time;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,6 +39,7 @@ public abstract class Orbit {
 	protected List<Trap> traps = new ArrayList<>();
 	protected Scope scope;
 	protected boolean julia;
+	protected Time time = new Time(0, 1);
 
 	public Orbit() {
 		region[0] = new MutableNumber();
@@ -141,6 +144,10 @@ public abstract class Orbit {
 	public void reset() {
 	}
 
+	public void resetTraps() {
+		traps.clear();
+	}
+
 	public void addTrap(Trap trap) {
 		traps.add(trap);
 	}
@@ -154,4 +161,14 @@ public abstract class Orbit {
 	public abstract void render(List<Number[]> states);
 	
 	protected abstract MutableNumber[] createNumbers();
+
+    public abstract boolean useTime();
+
+	public Time getTime() {
+		return time;
+	}
+
+	public void setTime(Time time) {
+		this.time = time;
+	}
 }

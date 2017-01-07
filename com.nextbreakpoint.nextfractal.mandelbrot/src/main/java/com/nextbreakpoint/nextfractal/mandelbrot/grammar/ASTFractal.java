@@ -1,8 +1,8 @@
 /*
- * NextFractal 1.3.0
+ * NextFractal 2.0.0
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2016 Andrea Medeghini
+ * Copyright 2015-2017 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -24,12 +24,11 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.grammar;
 
-import java.util.Collection;
-import java.util.Stack;
-
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
 import org.antlr.v4.runtime.Token;
 
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
+import java.util.Collection;
+import java.util.Stack;
 
 public class ASTFractal extends ASTObject {
 	private ASTScope stateVars = new ASTScope();
@@ -68,12 +67,16 @@ public class ASTFractal extends ASTObject {
 		if (variable == null) {
 			registerOrbitVariable(varName, real, true, location);
 		} else if (variable.isReal() != real) {
-			throw new ASTException("Variable already defined: " + location.getText(), location);
+			throw new ASTException("Variable already defined with different type: " + location.getText(), location);
 		}
 		if (stateVars.getVariable(varName) == null) {
 			variable = orbitVars.peek().getVariable(varName);
 			stateVars.putVariable(varName, variable);
 		}
+	}
+
+	public void unregisterStateVariable(String varName) {
+		stateVars.deleteVariable(varName);
 	}
 
 	public void registerOrbitVariable(String name, boolean real, boolean create, Token location) {
@@ -82,6 +85,14 @@ public class ASTFractal extends ASTObject {
 
 	public void registerColorVariable(String name, boolean real, boolean create, Token location) {
 		colorVars.peek().registerVariable(name, real, create, location);
+	}
+
+	public void unregisterOrbitVariable(String name) {
+		orbitVars.peek().deleteVariable(name);
+	}
+
+	public void unregisterColorVariable(String name) {
+		colorVars.peek().deleteVariable(name);
 	}
 
 	public CompilerVariable getOrbitVariable(String name, Token location) {

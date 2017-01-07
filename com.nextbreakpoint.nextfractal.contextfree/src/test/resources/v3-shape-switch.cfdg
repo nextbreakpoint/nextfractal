@@ -1,5 +1,3 @@
-CFDG3
-
 startshape Foo
 
 shape myshape(number n) {

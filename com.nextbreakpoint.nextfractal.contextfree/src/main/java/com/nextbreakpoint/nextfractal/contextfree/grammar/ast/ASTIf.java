@@ -1,8 +1,8 @@
 /*
- * NextFractal 1.3.0
+ * NextFractal 2.0.0
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2016 Andrea Medeghini
+ * Copyright 2015-2017 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -25,7 +25,6 @@
 package com.nextbreakpoint.nextfractal.contextfree.grammar.ast;
 
 import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGDriver;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.Logger;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGRenderer;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.Shape;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.CompilePhase;
@@ -63,7 +62,7 @@ public class ASTIf extends ASTReplacement {
 		switch (ph) {
 			case TypeCheck:
 				if (condition.getType() != ExpType.NumericType || condition.evaluate(null, 0) != 1) {
-					Logger.error("If condition must be a numeric scalar", condition.getLocation());
+					driver.error("If condition must be a numeric scalar", condition.getLocation());
 				}
 				break;
 	
@@ -80,7 +79,7 @@ public class ASTIf extends ASTReplacement {
 	public void traverse(Shape parent, boolean tr, CFDGRenderer renderer) {
 		double[] cond = new double[1];
 		if (condition.evaluate(cond, 1, renderer) != 1) {
-			Logger.error("Error evaluating if condition", location);
+			driver.error("Error evaluating if condition", location);
 			return;
 		}
 		if (cond[0] != 0) {

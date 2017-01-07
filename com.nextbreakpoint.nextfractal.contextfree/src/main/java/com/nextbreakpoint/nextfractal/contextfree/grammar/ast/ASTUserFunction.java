@@ -1,8 +1,8 @@
 /*
- * NextFractal 1.3.0
+ * NextFractal 2.0.0
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2016 Andrea Medeghini
+ * Copyright 2015-2017 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -24,9 +24,11 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.grammar.ast;
 
-import java.util.List;
-
-import com.nextbreakpoint.nextfractal.contextfree.grammar.*;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGDriver;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGRenderer;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFStackNumber;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFStackRule;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.Modification;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.CompilePhase;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ExpType;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.Locality;
@@ -34,18 +36,18 @@ import com.nextbreakpoint.nextfractal.contextfree.grammar.exceptions.CFDGExcepti
 import com.nextbreakpoint.nextfractal.contextfree.grammar.exceptions.DeferUntilRuntimeException;
 import org.antlr.v4.runtime.Token;
 
+import java.util.List;
+
 public class ASTUserFunction extends ASTExpression {
 	private ASTExpression arguments;
 	private ASTDefine definition;
 	private int nameIndex;
 	protected boolean isLet;
-	private CFDGDriver driver;
 	private int oldTop;
 	private int oldSize;
 
 	public ASTUserFunction(CFDGDriver driver, int nameIndex, ASTExpression arguments, ASTDefine definition, Token location) {
-		super(false, false, ExpType.NoType, location);
-		this.driver = driver;
+		super(driver, false, false, ExpType.NoType, location);
 		this.nameIndex = nameIndex;
 		this.definition = definition;
 		this.arguments = arguments;
@@ -75,7 +77,7 @@ public class ASTUserFunction extends ASTExpression {
 	@Override
 	public int evaluate(double[] result, int length, CFDGRenderer renderer) {
 		if (type != ExpType.NumericType) {
-			Logger.error("Function does not evaluate to a number", location);
+			driver.error("Function does not evaluate to a number", location);
 			return -1;
 		}
 		if (result != null && length < definition.getTupleSize()) {
@@ -84,13 +86,13 @@ public class ASTUserFunction extends ASTExpression {
 		if (result == null) {
 			return definition.getTupleSize();
 		}
-		if (renderer == null) throw new DeferUntilRuntimeException();
+		if (renderer == null) throw new DeferUntilRuntimeException(location);
 		if (renderer.isRequestStop() || CFDGRenderer.abortEverything()) {
-			throw new CFDGException("Stopping");
+			throw new CFDGException("Stopping", location);
 		}
 		setupStack(renderer);
 		if (definition.getExp().evaluate(result, length, renderer) != definition.getTupleSize()) {
-			Logger.error("Error evaluating function", location);
+			driver.error("Error evaluating function", location);
 		};
 		cleanupStack(renderer);
 		return definition.getTupleSize();
@@ -99,12 +101,12 @@ public class ASTUserFunction extends ASTExpression {
 	@Override
 	public void evaluate(Modification result, boolean shapeDest, CFDGRenderer renderer) {
 		if (type != ExpType.ModType) {
-			Logger.error("Function does not evaluate to an adjustment", location);
+			driver.error("Function does not evaluate to an adjustment", location);
 			return;
 		}
-		if (renderer == null) throw new DeferUntilRuntimeException();
+		if (renderer == null) throw new DeferUntilRuntimeException(location);
 		if (renderer.isRequestStop() || CFDGRenderer.abortEverything()) {
-			throw new CFDGException("Stopping");
+			throw new CFDGException("Stopping", location);
 		}
 		setupStack(renderer);
 		definition.getExp().evaluate(result, shapeDest, renderer);
@@ -146,17 +148,17 @@ public class ASTUserFunction extends ASTExpression {
 				List<ASTParameter>[] p = new List[1];
 				String name = driver.getTypeInfo(nameIndex, def, p);
 				if (def[0] != null && p[0] != null) {
-					Logger.error("Name matches both a function and a shape", location);
+					driver.error("Name matches both a function and a shape", location);
 					return null;
 				}
 				if (def[0] == null && p[0] == null) {
-					Logger.error("Name does not match shape name or function name", location);
+					driver.error("Name does not match shape name or function name", location);
 					return null;
 				}
 				if (def[0] != null) {
 					arguments = compile(arguments, ph);
 					definition = def[0];
-					ASTParameter.checkType(def[0].getParameters(), arguments, false);
+					ASTParameter.checkType(driver, def[0].getParameters(), arguments, false);
 					isConstant = false;
 					isNatural = definition.isNatural();
 					type = definition.getExpType();
@@ -183,12 +185,12 @@ public class ASTUserFunction extends ASTExpression {
 	@Override
 	public CFStackRule evalArgs(CFDGRenderer renderer, CFStackRule parent) {
 		if (type != ExpType.RuleType) {
-			Logger.error("Function does not evaluate to a shape", location);
+			driver.error("Function does not evaluate to a shape", location);
 			return null;
 		}
-		if (renderer == null) throw new DeferUntilRuntimeException();
+		if (renderer == null) throw new DeferUntilRuntimeException(location);
 		if (renderer.isRequestStop() || CFDGRenderer.abortEverything()) {
-			throw new CFDGException("Stopping");
+			throw new CFDGException("Stopping", location);
 		}
 		//TODO controllare
 		setupStack(renderer);
@@ -202,7 +204,7 @@ public class ASTUserFunction extends ASTExpression {
 		oldSize = renderer.getStackSize();
 		if (definition.getStackCount() > 0) {
 			if (oldSize + definition.getStackCount() > renderer.getMaxStackSize()) {
-				Logger.error("Maximum stack getMaxStackSize exceeded", location);
+				driver.error("Maximum stack getMaxStackSize exceeded", location);
 			}
 			renderer.setStackSize(oldSize + definition.getStackCount());
 			renderer.setStackItem(oldSize, new CFStackNumber(renderer.getStack(), 0));

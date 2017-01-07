@@ -1,8 +1,8 @@
 /*
- * NextFractal 1.3.0
+ * NextFractal 2.0.0
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2016 Andrea Medeghini
+ * Copyright 2015-2017 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -59,7 +59,7 @@ public class Palette {
 				for (int step = 0; step < steps; step++) {
 					float[] bc = element.getBeginColor();
 					float[] ec = element.getEndColor();
-					double vc = element.getExpression().evaluate(0, steps, step);
+					double vc = clamp(element.getExpression().evaluate(step / (double)(steps - 1)));
 					float a = (float)((ec[0] - bc[0]) * vc + bc[0]);
 					float r = (float)((ec[1] - bc[1]) * vc + bc[1]);
 					float g = (float)((ec[2] - bc[2]) * vc + bc[2]);
@@ -69,6 +69,10 @@ public class Palette {
 			}
 		}
 		return this;
+	}
+
+	private double clamp(double value) {
+		return value < 0 ? 0 : value > 1 ? 1 : value;
 	}
 
 	public Palette add(PaletteElement element) {

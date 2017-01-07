@@ -1,8 +1,8 @@
 /*
- * NextFractal 1.3.0
+ * NextFractal 2.0.0
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2016 Andrea Medeghini
+ * Copyright 2015-2017 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -26,7 +26,6 @@ package com.nextbreakpoint.nextfractal.mandelbrot.renderer;
 
 import com.nextbreakpoint.nextfractal.core.utils.Double4D;
 import com.nextbreakpoint.nextfractal.core.utils.Integer4D;
-import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotView;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 
 public class RendererView {
@@ -45,14 +44,6 @@ public class RendererView {
 		point = new Number(0, 0);
 	}
 
-	public RendererView(MandelbrotView view) {
-		translation = new Double4D(view.getTraslation());
-		rotation = new Double4D(view.getRotation());
-		scale = new Double4D(view.getScale());
-		state = new Integer4D(0, 0, 0, 0);
-		point = new Number(0, 0);
-	}
-	
 	public Double4D getTraslation() {
 		return translation;
 	}

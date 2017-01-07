@@ -1,8 +1,8 @@
 /*
- * NextFractal 1.3.0
+ * NextFractal 2.0.0
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2016 Andrea Medeghini
+ * Copyright 2015-2017 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -55,6 +55,20 @@ public class Integer4D implements Serializable, Cloneable {
 		this.y = y;
 		this.z = z;
 		this.w = w;
+	}
+
+	public Integer4D(int[] v) {
+		this.x = v[0];
+		this.y = v[1];
+		this.z = v[2];
+		this.w = v[3];
+	}
+
+	public Integer4D(Integer[] v) {
+		this.x = v[0];
+		this.y = v[1];
+		this.z = v[2];
+		this.w = v[3];
 	}
 
 	/**
@@ -147,5 +161,14 @@ public class Integer4D implements Serializable, Cloneable {
 	@Override
 	public Integer4D clone() {
 		return new Integer4D(x, y, z, w);
+	}
+
+	@Override
+	public int hashCode() {
+		int result = x;
+		result = 31 * result + y;
+		result = 31 * result + z;
+		result = 31 * result + w;
+		return result;
 	}
 }

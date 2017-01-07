@@ -1,8 +1,8 @@
 /*
- * NextFractal 1.3.0
+ * NextFractal 2.0.0
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2016 Andrea Medeghini
+ * Copyright 2015-2017 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -24,20 +24,18 @@
  */
 package com.nextbreakpoint.nextfractal.core.renderer.java2D;
 
-import java.awt.AlphaComposite;
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.Shape;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.GeneralPath;
-import java.awt.geom.Rectangle2D;
-import java.util.Stack;
-
 import com.nextbreakpoint.nextfractal.core.renderer.RendererAffine;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererColor;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererFont;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererGraphicsContext;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererImage;
+
+import java.awt.*;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.GeneralPath;
+import java.awt.geom.Path2D;
+import java.awt.geom.Rectangle2D;
+import java.util.Stack;
 
 public class Java2DRendererGraphicsContext implements RendererGraphicsContext {
 	private Graphics2D g2d;
@@ -62,6 +60,14 @@ public class Java2DRendererGraphicsContext implements RendererGraphicsContext {
 		font.setFont(this);
 	}
 
+	public void setWindingRule(int windingRule) {
+		if (windingRule == 0) {
+			shape.setWindingRule(Path2D.WIND_EVEN_ODD);
+		} else {
+			shape.setWindingRule(Path2D.WIND_NON_ZERO);
+		}
+	}
+
 	public void rect(int x, int y, int width, int height) {
 		if (shape == null) {
 			beginPath();
@@ -71,12 +77,14 @@ public class Java2DRendererGraphicsContext implements RendererGraphicsContext {
 	
 	public void stroke() {
 		if (shape != null) {
+			strokeColor.setStroke(this);
 			g2d.draw(shape);
 		}
 	}
 
 	public void fill() {
 		if (shape != null) {
+			fillColor.setFill(this);
 			g2d.fill(shape);
 		}
 	}
@@ -174,18 +182,56 @@ public class Java2DRendererGraphicsContext implements RendererGraphicsContext {
 		Shape clip;
 	}
 
-	@Override
-	public void moveTo(int x, int y) {
+	public void moveTo(float x, float y) {
 		shape.moveTo(x, y);
 	}
 
-	@Override
-	public void lineTo(int x, int y) {
+	public void lineTo(float x, float y) {
 		shape.lineTo(x, y);
 	}
 
-	@Override
+	public void quadTo(float x1, float y1, float x2, float y2) {
+		shape.quadTo(x1, y1, x2, y2);
+	}
+
+	public void cubicTo(float x1, float y1, float x2, float y2, float x3, float y3) {
+		shape.curveTo(x1, y1, x2, y2, x3, y3);
+	}
+
+//	public void arcTo(float rx, float ry, float angle, float largeArcFlag, float seepwFlag, float x, float y) {
+//	}
+
 	public void setAlpha(double alpha) {
 		g2d.setComposite(AlphaComposite.SrcOver.derive((float)alpha));
+	}
+
+	public void setStrokeLine(float width, int cap, int join, float miterLimit) {
+		g2d.setStroke(new BasicStroke(width, mapToCap(cap), mapToJoin(join), miterLimit));
+	}
+
+	private int mapToJoin(int join) {
+		switch (join) {
+			case JOIN_MITER:
+				return BasicStroke.JOIN_MITER;
+			case JOIN_ROUND:
+				return BasicStroke.JOIN_ROUND;
+			case JOIN_BEVEL:
+				return BasicStroke.JOIN_BEVEL;
+			default:
+				throw new RuntimeException("Invalid line join " + join);
+		}
+	}
+
+	private int mapToCap(int cap) {
+		switch (cap) {
+			case CAP_BUTT:
+				return BasicStroke.CAP_BUTT;
+			case CAP_ROUND:
+				return BasicStroke.CAP_ROUND;
+			case CAP_SQUARE:
+				return BasicStroke.CAP_SQUARE;
+			default:
+				throw new RuntimeException("Invalid line cap " + cap);
+		}
 	}
 }

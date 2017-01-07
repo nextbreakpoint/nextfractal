@@ -1,8 +1,8 @@
 /*
- * NextFractal 1.3.0
+ * NextFractal 2.0.0
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2016 Andrea Medeghini
+ * Copyright 2015-2017 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -24,20 +24,7 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.compiler.java;
 
-import java.io.IOException;
-import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import org.antlr.v4.runtime.ANTLRInputStream;
-import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.tree.ParseTree;
-
+import com.nextbreakpoint.nextfractal.core.Error;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerError;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerErrorStrategy;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerReport;
@@ -69,6 +56,19 @@ import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTRule;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTStatement;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.MandelbrotLexer;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.MandelbrotParser;
+import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.tree.ParseTree;
+
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class JavaReportCompiler {
 	private static final Logger logger = Logger.getLogger(JavaReportCompiler.class.getName());
@@ -81,7 +81,7 @@ public class JavaReportCompiler {
 	}
 	
 	public CompilerReport generateReport(String source) throws IOException {
-		List<CompilerError> errors = new ArrayList<>();
+		List<Error> errors = new ArrayList<>();
 		ASTFractal ast = parse(source, errors);
 		if (errors.size() == 0) {
 			ExpressionContext orbitContext = new ExpressionContext();
@@ -92,12 +92,12 @@ public class JavaReportCompiler {
 				logger.fine(orbitSource);
 				logger.fine(colorSource);
 			}
-			return new CompilerReport(ast, Type.JAVA, orbitSource, colorSource, errors);
+			return new CompilerReport(ast, Type.JAVA, source, orbitSource, colorSource, errors);
 		}
-		return new CompilerReport(ast, Type.JAVA, "", "", errors);
+		return new CompilerReport(ast, Type.JAVA, source, "", "", errors);
 	}
 	
-	private ASTFractal parse(String source, List<CompilerError> errors) throws IOException {
+	private ASTFractal parse(String source, List<Error> errors) throws IOException {
 		try {
 			ANTLRInputStream is = new ANTLRInputStream(new StringReader(source));
 			MandelbrotLexer lexer = new MandelbrotLexer(is);
@@ -111,39 +111,39 @@ public class JavaReportCompiler {
             	return fractal;
             }
 		} catch (ASTException e) {
-			CompilerError error = new CompilerError(CompilerError.ErrorType.M_COMPILER, e.getLocation().getLine(), e.getLocation().getCharPositionInLine(), e.getLocation().getStartIndex(), e.getLocation().getStopIndex() - e.getLocation().getStartIndex(), e.getMessage());
+			CompilerError error = new CompilerError(Error.ErrorType.SCRIPT_COMPILER, e.getLocation().getLine(), e.getLocation().getCharPositionInLine(), e.getLocation().getStartIndex(), e.getLocation().getStopIndex() - e.getLocation().getStartIndex(), e.getMessage());
 			logger.log(Level.FINE, error.toString(), e);
 			errors.add(error);
 		} catch (Exception e) {
-			CompilerError error = new CompilerError(CompilerError.ErrorType.M_COMPILER, 0L, 0L, 0L, 0L, e.getMessage());
+			CompilerError error = new CompilerError(Error.ErrorType.SCRIPT_COMPILER, 0L, 0L, 0L, 0L, e.getMessage());
 			logger.log(Level.FINE, error.toString(), e);
 			errors.add(error);
 		}
 		return null;
 	}
 
-	private String buildOrbit(ExpressionContext context, ASTFractal fractal, List<CompilerError> errors) {
+	private String buildOrbit(ExpressionContext context, ASTFractal fractal, List<Error> errors) {
 		try {
 			StringBuilder builder = new StringBuilder();
 			Map<String, CompilerVariable> variables = new HashMap<>();
 			compileOrbit(context, builder, variables, fractal);
 			return builder.toString();
 		} catch (ASTException e) {
-			CompilerError error = new CompilerError(CompilerError.ErrorType.M_COMPILER, e.getLocation().getLine(), e.getLocation().getCharPositionInLine(), e.getLocation().getStartIndex(), e.getLocation().getStopIndex() - e.getLocation().getStartIndex(), e.getMessage());
+			CompilerError error = new CompilerError(Error.ErrorType.SCRIPT_COMPILER, e.getLocation().getLine(), e.getLocation().getCharPositionInLine(), e.getLocation().getStartIndex(), e.getLocation().getStopIndex() - e.getLocation().getStartIndex(), e.getMessage());
 			logger.log(Level.FINE, error.toString(), e);
 			errors.add(error);
 		}
 		return "";
 	}
 	
-	private String buildColor(ExpressionContext context, ASTFractal fractal, List<CompilerError> errors) {
+	private String buildColor(ExpressionContext context, ASTFractal fractal, List<Error> errors) {
 		try {
 			StringBuilder builder = new StringBuilder();
 			Map<String, CompilerVariable> variables = new HashMap<>();
 			compileColor(context, builder, variables, fractal);
 			return builder.toString();
 		} catch (ASTException e) {
-			CompilerError error = new CompilerError(CompilerError.ErrorType.M_COMPILER, e.getLocation().getLine(), e.getLocation().getCharPositionInLine(), e.getLocation().getStartIndex(), e.getLocation().getStopIndex() - e.getLocation().getStartIndex(), e.getMessage());
+			CompilerError error = new CompilerError(Error.ErrorType.SCRIPT_COMPILER, e.getLocation().getLine(), e.getLocation().getCharPositionInLine(), e.getLocation().getStartIndex(), e.getLocation().getStopIndex() - e.getLocation().getStartIndex(), e.getMessage());
 			logger.log(Level.FINE, error.toString(), e);
 			errors.add(error);
 		}
@@ -261,6 +261,7 @@ public class JavaReportCompiler {
 				builder.append(var.getName());
 				builder.append(");\n");
 			}
+			builder.append("resetTraps();\n");
 			for (ASTOrbitTrap trap : orbit.getTraps()) {
 				builder.append("addTrap(trap");
 				builder.append(trap.getName().toUpperCase().substring(0, 1));
@@ -311,23 +312,65 @@ public class JavaReportCompiler {
 		builder.append(context.getNumberCount());
 		builder.append("];\n");
 		builder.append("}\n");
+		builder.append("public double time() {\nreturn getTime().getValue() * getTime().getScale();\n}\n");
+		builder.append("public boolean useTime() {\nreturn ");
+		builder.append(context.orbitUseTime());
+		builder.append(";\n}\n");
 	}
 
 	private void compile(ExpressionContext context, StringBuilder builder, Map<String, CompilerVariable> scope, Collection<CompilerVariable> stateVariables, ASTColor color) {
-		builder.append("public void init() {\n");
 		if (color != null) {
+			for (ASTPalette palette : color.getPalettes()) {
+				builder.append("private Palette palette");
+				builder.append(palette.getName().toUpperCase().substring(0, 1));
+				builder.append(palette.getName().substring(1));
+				builder.append(";\n");
+			}
 		}
-		builder.append("}\n");
+		builder.append("public void init() {\n");
+		int i = 0;
 		for (CompilerVariable var : stateVariables) {
-			scope.put(var.getName(), var);
+			if (var.isReal()) {
+				builder.append("double ");
+				builder.append(var.getName());
+				builder.append(" = getRealVariable(");
+				builder.append(i++);
+				builder.append(");\n");
+			} else {
+				builder.append("final MutableNumber ");
+				builder.append(var.getName());
+				builder.append(" = getVariable(");
+				builder.append(i++);
+				builder.append(");\n");
+			}
+		}
+		i = 0;
+		for (CompilerVariable var : scope.values()) {
+			if (!stateVariables.contains(var)) {
+				if (var.isReal()) {
+					builder.append("double ");
+					builder.append(var.getName());
+					builder.append(" = 0;\n");
+				} else {
+					builder.append("final MutableNumber ");
+					builder.append(var.getName());
+					builder.append(" = getNumber(");
+					builder.append(i++);
+					builder.append(");\n");
+				}
+			}
 		}
 		if (color != null) {
 			for (ASTPalette palette : color.getPalettes()) {
 				compile(context, builder, scope, palette);
 			}
 		}
+		builder.append("}\n");
+		for (CompilerVariable var : stateVariables) {
+			scope.put(var.getName(), var);
+		}
 		builder.append("public void render() {\n");
-		int i = 0;
+		i = 0;
 		for (CompilerVariable var : stateVariables) {
 			if (var.isReal()) {
 				builder.append("double ");
@@ -371,7 +414,7 @@ public class JavaReportCompiler {
 			builder.append("));\n");
 			if (color.getInit() != null) {
 				for (ASTStatement statement : color.getInit().getStatements()) {
-					compile(context, builder, scope, statement);
+					compile(context, builder, scope, statement, ClassType.COLOR);
 				}
 			}
 			for (ASTRule rule : color.getRules()) {
@@ -384,21 +427,25 @@ public class JavaReportCompiler {
 		builder.append(context.getNumberCount());
 		builder.append("];\n");
 		builder.append("}\n");
+		builder.append("public double time() {\nreturn getTime().getValue() * getTime().getScale();\n}\n");
+		builder.append("public boolean useTime() {\nreturn ");
+		builder.append(context.colorUseTime());
+		builder.append(";\n}\n");
 	}
 
-	private void compile(ExpressionContext context, StringBuilder builder,	Map<String, CompilerVariable> variables, ASTRule rule) {
+	private void compile(ExpressionContext context, StringBuilder builder, Map<String, CompilerVariable> variables, ASTRule rule) {
 		builder.append("if (");
-		rule.getRuleExp().compile(new JavaASTCompiler(context, variables, builder));
+		rule.getRuleExp().compile(new JavaASTCompiler(context, variables, builder, ClassType.COLOR));
 		builder.append(") {\n");
 		builder.append("addColor(");
 		builder.append(rule.getOpacity());
 		builder.append(",");
-		rule.getColorExp().compile(new JavaASTCompiler(context, variables, builder));
+		rule.getColorExp().compile(new JavaASTCompiler(context, variables, builder, ClassType.COLOR));
 		builder.append(");\n}\n");
 	}
 
 	private void compile(ExpressionContext context, StringBuilder builder, Map<String, CompilerVariable> variables, ASTPalette palette) {
-		builder.append("private Palette palette");
+		builder.append("palette");
 		builder.append(palette.getName().toUpperCase().substring(0, 1));
 		builder.append(palette.getName().substring(1));
 		builder.append(" = palette()");
@@ -417,15 +464,15 @@ public class JavaReportCompiler {
 		builder.append(createArray(element.getEndColor().getComponents()));
 		builder.append(",");
 		builder.append(element.getSteps());
-		builder.append(",(start, end, step) -> { return ");
+		builder.append(",s -> { return ");
 		if (element.getExp() != null) {
 			if (element.getExp().isReal()) {
-				element.getExp().compile(new JavaASTCompiler(context, variables, builder));
+				element.getExp().compile(new JavaASTCompiler(context, variables, builder, ClassType.COLOR));
 			} else {
 				throw new ASTException("Expression type not valid: " + element.getLocation().getText(), element.getLocation());
 			}
 		} else {
-			builder.append("step / (end - start)");
+			builder.append("s");
 		}
 		builder.append(";})");
 	}
@@ -444,40 +491,45 @@ public class JavaReportCompiler {
 					builder.append("moveTo");
 					break;
 
+				case "MOVEREL":
 				case "MOVETOREL":
-					builder.append("moveToRel");
+					builder.append("moveRel");
 					break;
 
 				case "LINETO":
 					builder.append("lineTo");
 					break;
 
+				case "LINEREL":
 				case "LINETOREL":
-					builder.append("lineToRel");
+					builder.append("lineRel");
 					break;
 
 				case "ARCTO":
 					builder.append("arcTo");
 					break;
 
+				case "ARCREL":
 				case "ARCTOREL":
-					builder.append("arcToRel");
+					builder.append("arcRel");
 					break;
 
 				case "QUADTO":
 					builder.append("quadTo");
 					break;
 
+				case "QUADREL":
 				case "QUADTOREL":
-					builder.append("quadToRel");
+					builder.append("quadRel");
 					break;
 
 				case "CURVETO":
 					builder.append("curveTo");
 					break;
 
+				case "CURVEREL":
 				case "CURVETOREL":
-					builder.append("curveToRel");
+					builder.append("curveRel");
 					break;
 
 				case "CLOSE":
@@ -491,30 +543,30 @@ public class JavaReportCompiler {
 			if (operator.getC1() != null) {
 				if (operator.getC1().isReal()) {
 					builder.append("number(");
-					operator.getC1().compile(new JavaASTCompiler(context, variables, builder));
+					operator.getC1().compile(new JavaASTCompiler(context, variables, builder, ClassType.ORBIT));
 					builder.append(")");
 				} else {
-					operator.getC1().compile(new JavaASTCompiler(context, variables, builder));
+					operator.getC1().compile(new JavaASTCompiler(context, variables, builder, ClassType.ORBIT));
 				}
 			}
 			if (operator.getC2() != null) {
 				builder.append(",");
 				if (operator.getC2().isReal()) {
 					builder.append("number(");
-					operator.getC2().compile(new JavaASTCompiler(context, variables, builder));
+					operator.getC2().compile(new JavaASTCompiler(context, variables, builder, ClassType.ORBIT));
 					builder.append(")");
 				} else {
-					operator.getC2().compile(new JavaASTCompiler(context, variables, builder));
+					operator.getC2().compile(new JavaASTCompiler(context, variables, builder, ClassType.ORBIT));
 				}
 			}
 			if (operator.getC3() != null) {
 				builder.append(",");
 				if (operator.getC3().isReal()) {
 					builder.append("number(");
-					operator.getC3().compile(new JavaASTCompiler(context, variables, builder));
+					operator.getC3().compile(new JavaASTCompiler(context, variables, builder, ClassType.ORBIT));
 					builder.append(")");
 				} else {
-					operator.getC3().compile(new JavaASTCompiler(context, variables, builder));
+					operator.getC3().compile(new JavaASTCompiler(context, variables, builder, ClassType.ORBIT));
 				}
 			}
 			builder.append(")");
@@ -525,7 +577,7 @@ public class JavaReportCompiler {
 	private void compile(ExpressionContext context, StringBuilder builder, Map<String, CompilerVariable> variables, ASTOrbitBegin begin, Collection<CompilerVariable> stateVariables) {
 		if (begin != null) {
 			for (ASTStatement statement : begin.getStatements()) {
-				compile(context, builder, variables, statement);
+				compile(context, builder, variables, statement, ClassType.ORBIT);
 			}
 		}
 	}
@@ -533,7 +585,7 @@ public class JavaReportCompiler {
 	private void compile(ExpressionContext context, StringBuilder builder, Map<String, CompilerVariable> variables, ASTOrbitEnd end, Collection<CompilerVariable> stateVariables) {
 		if (end != null) {
 			for (ASTStatement statement : end.getStatements()) {
-				compile(context, builder, variables, statement);
+				compile(context, builder, variables, statement, ClassType.ORBIT);
 			}
 		}
 	}
@@ -563,10 +615,10 @@ public class JavaReportCompiler {
 			builder.append(loop.getEnd());
 			builder.append("; i++) {\n");
 			for (ASTStatement statement : loop.getStatements()) {
-				compile(context, builder, variables, statement);
+				compile(context, builder, variables, statement, ClassType.ORBIT);
 			}
 			builder.append("if (");
-			loop.getExpression().compile(new JavaASTCompiler(context, variables, builder));
+			loop.getExpression().compile(new JavaASTCompiler(context, variables, builder, ClassType.ORBIT));
 			builder.append(") { n = i; break; }\n");
 			builder.append("if (states != null) {\n");
 			builder.append("states.add(new Number[] { ");
@@ -600,9 +652,9 @@ public class JavaReportCompiler {
 		}
 	}
 
-	private void compile(ExpressionContext context, StringBuilder builder, Map<String, CompilerVariable> variables, ASTStatement statement) {
+	private void compile(ExpressionContext context, StringBuilder builder, Map<String, CompilerVariable> variables, ASTStatement statement, ClassType classType) {
 		if (statement != null) {
-			statement.compile(new JavaASTCompiler(context, variables, builder));
+			statement.compile(new JavaASTCompiler(context, variables, builder, classType));
 		}		
 	}
 	

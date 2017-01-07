@@ -1,8 +1,8 @@
 /*
- * NextFractal 1.3.0
+ * NextFractal 2.0.0
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2016 Andrea Medeghini
+ * Copyright 2015-2017 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -24,15 +24,17 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.grammar.ast;
 
-import java.awt.geom.AffineTransform;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.nextbreakpoint.nextfractal.contextfree.core.Rand64;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.*;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGDriver;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGRenderer;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.Shape;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.CompilePhase;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.RepElemType;
 import org.antlr.v4.runtime.Token;
+
+import java.awt.geom.AffineTransform;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ASTTransform extends ASTReplacement {
 	private ASTRepContainer body;
@@ -74,14 +76,14 @@ public class ASTTransform extends ASTReplacement {
 			ret = expHolder.compile(ph);
 		}
 		if (ret != null) {
-			Logger.error("Error analyzing transform list", location);
+			driver.error("Error analyzing transform list", location);
 		}
 		body.compile(ph, null, null);
 		
 		switch (ph) {
 			case TypeCheck: 
 				if (clone && !ASTParameter.Impure) {
-					Logger.error("Shape cloning only permitted in impure mode", location);
+					driver.error("Shape cloning only permitted in impure mode", location);
 				}
 				break;
 	
@@ -101,7 +103,7 @@ public class ASTTransform extends ASTReplacement {
 		AffineTransform dummy = new AffineTransform();
 		@SuppressWarnings("unchecked")
 		List<AffineTransform> transforms = new ArrayList<>();
-		List<ASTModification> mods = AST.getTransforms(expHolder, transforms, renderer, false, dummy);
+		List<ASTModification> mods = AST.getTransforms(driver, expHolder, transforms, renderer, false, dummy);
 		Rand64 cloneSeed = renderer.getCurrentSeed();
 		Shape transChild = (Shape)parent.clone();
 		boolean opsOnly = body.getRepType() == RepElemType.op.getType();
@@ -117,7 +119,6 @@ public class ASTTransform extends ASTReplacement {
 			} else {
 				child.getWorldState().getTransform().concatenate(transforms.get(i - modsLength));
 			}
-			renderer.getCurrentSeed().bump();
 			int size = renderer.getStackSize();
 			for (ASTReplacement rep : body.getBody()) {
 				if (clone) {

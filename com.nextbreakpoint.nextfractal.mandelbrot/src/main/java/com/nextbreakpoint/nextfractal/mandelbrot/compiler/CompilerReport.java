@@ -1,8 +1,8 @@
 /*
- * NextFractal 1.3.0
+ * NextFractal 2.0.0
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2016 Andrea Medeghini
+ * Copyright 2015-2017 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -24,20 +24,23 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.compiler;
 
-import java.util.List;
-
+import com.nextbreakpoint.nextfractal.core.Error;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTFractal;
+
+import java.util.List;
 
 public class CompilerReport {
 	private ASTFractal ast;
 	private Type type;
 	private String orbitSource;
 	private String colorSource;
-	private List<CompilerError> errors;
+	private List<Error> errors;
+	private String source;
 
-	public CompilerReport(ASTFractal ast, Type type, String orbitSource, String colorSource, List<CompilerError> errors) {
+	public CompilerReport(ASTFractal ast, Type type, String source, String orbitSource, String colorSource, List<Error> errors) {
 		this.ast = ast;
 		this.type = type;
+		this.source = source;
 		this.orbitSource = orbitSource;
 		this.colorSource = colorSource;
 		this.errors = errors;
@@ -55,12 +58,16 @@ public class CompilerReport {
 		return colorSource;
 	}
 
-	public List<CompilerError> getErrors() {
+	public List<Error> getErrors() {
 		return errors;
 	}
 
 	public Type getType() {
 		return type;
+	}
+
+	public String getSource() {
+		return source;
 	}
 
 	public enum Type {

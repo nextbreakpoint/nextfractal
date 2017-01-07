@@ -1,0 +1,7 @@
+CF::Symmetry = CF::Cyclic, 4
+
+startshape flake
+
+shape flake {
+    TRIANGLE []
+}

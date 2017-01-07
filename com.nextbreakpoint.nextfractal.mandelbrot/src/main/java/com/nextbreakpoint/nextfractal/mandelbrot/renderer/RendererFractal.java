@@ -1,8 +1,8 @@
 /*
- * NextFractal 1.3.0
+ * NextFractal 2.0.0
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2016 Andrea Medeghini
+ * Copyright 2015-2017 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -118,7 +118,6 @@ public class RendererFractal {
 	 * @return
 	 */
 	public boolean isSolidGuessSupported() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -126,7 +125,6 @@ public class RendererFractal {
 	 * @return
 	 */
 	public boolean isVerticalSymetrySupported() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -134,7 +132,6 @@ public class RendererFractal {
 	 * @return
 	 */
 	public boolean isHorizontalSymetrySupported() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -142,7 +139,6 @@ public class RendererFractal {
 	 * @return
 	 */
 	public double getVerticalSymetryPoint() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
@@ -150,7 +146,6 @@ public class RendererFractal {
 	 * @return
 	 */
 	public double getHorizontalSymetryPoint() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 

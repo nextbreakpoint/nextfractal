@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.nextbreakpoint.nextfractal</groupId>
 	<artifactId>com.nextbreakpoint.nextfractal.parent</artifactId>
-	<version>1.3.0</version>
+	<version>2.0.0</version>
 	<packaging>pom</packaging>
 	<url>https://github.com/nextbreakpoint/nextfractal</url>
 	<licenses>
@@ -21,7 +21,7 @@
 	<scm>
 		<connection>scm:git:git@github.com:nextbreakpoint/nextfractal.git</connection>
 		<developerConnection>scm:git:git@github.com:nextbreakpoint/nextfractal.git</developerConnection>
-		<url>https://github.com/nextbreakpoint/nextfractal</url>
+		<url>scm:git:git@github.com:nextbreakpoint/nextfractal.git</url>
 	</scm>
 	<modules>
 		<module>com.nextbreakpoint.nextfractal.core</module>
@@ -39,8 +39,10 @@
 		<freeimage4java.version>3.18.0-1.1</freeimage4java.version>
 		<try.version>2.0.3</try.version>
 		<springboot.version>1.2.3.RELEASE</springboot.version>
+		<jackson.version>2.6.3</jackson.version>
 		<junit4.version>4.11</junit4.version>
 		<mockito.version>1.9.5</mockito.version>
+		<controlsfx.version>8.40.12</controlsfx.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 	<build>
@@ -138,6 +140,16 @@
 				<version>${try.version}</version>
 			</dependency>
 			<dependency>
+				<groupId>com.fasterxml.jackson.core</groupId>
+				<artifactId>jackson-databind</artifactId>
+				<version>${jackson.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.controlsfx</groupId>
+				<artifactId>controlsfx</artifactId>
+				<version>${controlsfx.version}</version>
+			</dependency>
+			<dependency>
 				<groupId>org.mockito</groupId>
 				<artifactId>mockito-all</artifactId>
 				<version>${mockito.version}</version>
@@ -180,63 +192,6 @@
 				<arch.type>x86_64</arch.type>
 				<os.type>macos</os.type>
 			</properties>
-		</profile>
-		<profile>
-			<id>github</id>
-			<activation>
-				<property>
-					<name>channel</name>
-					<value>github</value>
-				</property>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>de.jutzig</groupId>
-						<artifactId>github-release-plugin</artifactId>
-						<version>1.1.1</version>
-						<configuration>
-							<releaseName>NextFractal ${project.version}</releaseName>
-							<tag>v${project.version}</tag>
-							<fileSets>
-								<fileSet>
-									<directory>dist/</directory>
-									<includes>
-										<include>nextfractal_*.zip</include>
-										<include>nextfractal_*.dmg</include>
-									</includes>
-								</fileSet>
-							</fileSets>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<profile>
-			<id>twitter</id>
-			<activation>
-				<property>
-					<name>channel</name>
-					<value>twitter</value>
-				</property>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>com.nextbreakpoint</groupId>
-						<artifactId>twitter-maven-plugin</artifactId>
-						<version>1.0.1</version>
-						<configuration>
-							<debug>false</debug>
-							<oauthConsumerKey>${consumerKey}</oauthConsumerKey>
-							<oauthConsumerSecret>${consumerSecret}</oauthConsumerSecret>
-							<oauthAccessToken>${accessToken}</oauthAccessToken>
-							<oauthAccessTokenSecret>${accessTokenSecret}</oauthAccessTokenSecret>
-							<status>Version ${project.version} of NextFractal has been released! ${project.url}</status>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
 		</profile>
 	</profiles>
 </project>

@@ -1,8 +1,8 @@
 /*
- * NextFractal 1.3.0
+ * NextFractal 2.0.0
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2016 Andrea Medeghini
+ * Copyright 2015-2017 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -27,6 +27,8 @@ package com.nextbreakpoint.nextfractal.mandelbrot.renderer.xaos;
 class XaosConstants {
 	public static final boolean DUMP = false;
 	public static final boolean DUMP_XAOS = false;
+	public static final boolean SHOW_FILL = false;
+	public static final boolean SHOW_UNCACHED = false;
 	public static final boolean SHOW_REFRESH = false;
 	public static final boolean SHOW_SYMETRY = false;
 	public static final boolean SHOW_CALCULATE = false;
@@ -39,14 +41,14 @@ class XaosConstants {
 	public static final boolean PRINT_MULTABLE = false;
 	public static final boolean PRINT_REGION = false;
 	public static final boolean PRINT_ONLYNEW = true;
-	public static final boolean USE_XAOS = true; 
+	public static final boolean USE_XAOS = true;
 	public static final boolean USE_SYMETRY = true;
 	public static final boolean USE_SOLIDGUESS = true;
 	public static final boolean USE_MULTITHREAD = true;
 	public static final int GUESS_RANGE = 4;
 	public static final int RANGES = 2;
 	public static final int RANGE = 4;
-	public static final int STEPS = 8;
+	public static final int STEPS = 32;
 	public static final int MASK = 0x7;
 	public static final int DSIZE = (RANGES + 1);
 	public static final int FPMUL = 64;

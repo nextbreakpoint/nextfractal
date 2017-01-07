@@ -1,8 +1,8 @@
 /*
- * NextFractal 1.3.0
+ * NextFractal 2.0.0
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2016 Andrea Medeghini
+ * Copyright 2015-2017 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -24,12 +24,15 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.grammar.ast;
 
-import java.util.List;
-
-import com.nextbreakpoint.nextfractal.contextfree.grammar.*;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGDriver;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGRenderer;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFStackRule;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.Modification;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.CompilePhase;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ExpType;
 import org.antlr.v4.runtime.Token;
+
+import java.util.List;
 
 public class ASTSelect extends ASTExpression {
 	private static final int NOT_CACHED = -1;
@@ -40,15 +43,15 @@ public class ASTSelect extends ASTExpression {
 	private String entropy;
 	private boolean isSelect;
 
-	public ASTSelect(ASTExpression arguments, boolean asIf, Token location) {
-		super(location);
+	public ASTSelect(CFDGDriver driver, ASTExpression arguments, boolean asIf, Token location) {
+		super(driver, location);
 		tupleSize = -1;
 		indexCache = NOT_CACHED;
 		selector = arguments;
 		isConstant = false;
 		isSelect = asIf;
 		if (selector == null || selector.size() < 3) {
-			Logger.error("select()/if() function requires arguments", location);
+			driver.error("select()/if() function requires arguments", location);
 		}
 	}
 
@@ -59,7 +62,7 @@ public class ASTSelect extends ASTExpression {
 	@Override
 	public CFStackRule evalArgs(CFDGRenderer renderer, CFStackRule parent) {
 		if (type != ExpType.RuleType) {
-			Logger.error("Evaluation of a non-shape select() in a shape context", location);
+			driver.error("Evaluation of a non-shape select() in a shape context", location);
 		}
 		return arguments.get(getIndex(renderer)).evalArgs(renderer, parent);
 	}
@@ -67,7 +70,7 @@ public class ASTSelect extends ASTExpression {
 	@Override
 	public int evaluate(double[] result, int length, CFDGRenderer renderer) {
 		if (type != ExpType.NumericType) {
-			Logger.error("Evaluation of a non-shape select() in a numeric context", location);
+			driver.error("Evaluation of a non-shape select() in a numeric context", location);
 			return -1;
 		}
 
@@ -80,7 +83,7 @@ public class ASTSelect extends ASTExpression {
 	@Override
 	public void evaluate(Modification modification, boolean shapeDest, CFDGRenderer renderer) {
 		if (type != ExpType.ModType) {
-			Logger.error("Evaluation of a non-adjustment select() in an adjustment context", location);
+			driver.error("Evaluation of a non-adjustment select() in an adjustment context", location);
 			return;
 		}
 
@@ -128,12 +131,12 @@ public class ASTSelect extends ASTExpression {
 				arguments.remove(0);
 
 				if (selector.getType() != ExpType.NumericType || selector.evaluate(null, 0) != 1) {
-					Logger.error("if()/select() selector must be a numeric scalar", selector.getLocation());
+					driver.error("if()/select() selector must be a numeric scalar", selector.getLocation());
 					return null;
 				}
 
 				if (arguments.size() < 2) {
-					Logger.error("if()/select() selector must have at least two arguments", selector.getLocation());
+					driver.error("if()/select() selector must have at least two arguments", selector.getLocation());
 					return null;
 				}
 
@@ -143,9 +146,9 @@ public class ASTSelect extends ASTExpression {
 				for (int i = 1; i < arguments.size(); i++) {
 					ASTExpression argument = arguments.get(i);
 					if (type != argument.getType()) {
-						Logger.error("select()/if() choices must be of same type", argument.getLocation());
+						driver.error("select()/if() choices must be of same type", argument.getLocation());
 					} else if (type == ExpType.NumericType && tupleSize != -1 && argument.evaluate(null, 0) != tupleSize) {
-						Logger.error("select()/if() choices must be of same length", argument.getLocation());
+						driver.error("select()/if() choices must be of same length", argument.getLocation());
 						tupleSize = -1;
 					}
 					isNatural = isNatural && argument.isNatural();

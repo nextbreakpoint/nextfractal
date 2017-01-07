@@ -1,8 +1,8 @@
 /*
- * NextFractal 1.3.0
+ * NextFractal 2.0.0
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2016 Andrea Medeghini
+ * Copyright 2015-2017 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -24,14 +24,21 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.grammar.ast;
 
-import java.awt.geom.*;
-
 import com.nextbreakpoint.nextfractal.contextfree.core.ExtendedGeneralPath;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.*;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGDriver;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGRenderer;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFStackRule;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.Dequeue;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.PathStorage;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.Shape;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.FlagType;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.PathOp;
 import org.antlr.v4.runtime.Token;
+
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Arc2D;
+import java.awt.geom.NoninvertibleTransformException;
+import java.awt.geom.Point2D;
 
 public class ASTCompiledPath {
 	private static Long globalPathUID = new Long(100);
@@ -42,8 +49,10 @@ public class ASTCompiledPath {
 	private boolean useTerminal;
 	private CFStackRule parameters;
 	private Long pathUID;
-	
+	private CFDGDriver driver;
+
 	public ASTCompiledPath(CFDGDriver driver, Token location) {
+		this.driver = driver;
 		commandInfo = new Dequeue();
 		terminalCommand = new ASTPathCommand(driver, location);
 		parameters = null;
@@ -175,7 +184,7 @@ public class ASTCompiledPath {
 				}
 
 				if (cmd != 1) {
-					Logger.error("CLOSEPOLY: Unable to find a MOVETO/MOVEREL for start of path", pathOp.getLocation());
+					driver.error("CLOSEPOLY: Unable to find a MOVETO/MOVEREL for start of path", pathOp.getLocation());
 				}
 
 				// If this is an aligning CLOSEPOLY then change the last vertex to
@@ -184,7 +193,7 @@ public class ASTCompiledPath {
 					pathStorage.modifyVertex(last, renderer.getLastPoint());
 				}
 			} else if ((pathOp.getFlags() & FlagType.CF_ALIGN.getMask()) != 0)  {
-				Logger.error("Nothing to align to", pathOp.getLocation());
+				driver.error("Nothing to align to", pathOp.getLocation());
 			}
 
 			pathStorage.closePath();
@@ -194,13 +203,10 @@ public class ASTCompiledPath {
 		}
 
 		// Insert an implicit MOVETO unless the pathOp is a MOVETO/MOVEREL
-		//TODO completare replace ordinal()
 		if (renderer.isWantMoveTo() && pathOp.getPathOp().ordinal() > PathOp.MOVEREL.ordinal()) {
 			renderer.setWantMoveTo(false);
 			pathStorage.moveTo(renderer.getLastPoint());
 		}
-
-		//TODO rivedere
 
 		switch (pathOp.getPathOp()) {
 			case MOVEREL:
@@ -233,7 +239,7 @@ public class ASTCompiledPath {
 
 						Arc2D arc = ExtendedGeneralPath.computeArc(p1.x, p1.y, radiusX, radiusY, angle, largeArc, sweep, p0.x, p0.y);
 						if (arc == null) {
-							Logger.fail("Cannot create arc", pathOp.getLocation());
+							driver.fail("Cannot create arc", pathOp.getLocation());
 						}
 						AffineTransform t = AffineTransform.getRotateInstance(Math.toRadians(angle), arc.getCenterX(), arc.getCenterY());
 						t.concatenate(transform);
@@ -242,10 +248,12 @@ public class ASTCompiledPath {
 						transform.transform(p0, p0);
 						pathStorage.append(s, p0);
 					} catch (NoninvertibleTransformException e) {
-						Logger.fail("Cannot invert transform", pathOp.getLocation());
+						driver.fail("Cannot invert transform", pathOp.getLocation());
 					}
 				} else {
-					pathStorage.arcTo(radiusX, radiusY, angle, largeArc, sweep, p0);
+					Arc2D arc = ExtendedGeneralPath.computeArc(p1.x, p1.y, radiusX, radiusY, angle, largeArc, sweep, p0.x, p0.y);
+					pathStorage.append(arc, p0);
+//					pathStorage.arcTo(radiusX, radiusY, angle, largeArc, sweep, p0);
 				}
 				break;
 			case CURVEREL:
@@ -254,7 +262,7 @@ public class ASTCompiledPath {
 				pathStorage.relToAbs(p2);
 			case CURVETO:
 				if ((pathOp.getFlags() & FlagType.CF_CONTINUOUS.getMask()) != 0 && pathStorage.isCurve(pathStorage.lastVertex(p2)) ) {
-					Logger.error("Smooth curve operations must be preceded by another curve operation", pathOp.getLocation());
+					driver.error("Smooth curve operations must be preceded by another curve operation", pathOp.getLocation());
 					break;
 				}
 				switch (pathOp.getArgCount()) {

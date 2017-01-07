@@ -1,8 +1,8 @@
 /*
- * NextFractal 1.3.0
+ * NextFractal 2.0.0
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2016 Andrea Medeghini
+ * Copyright 2015-2017 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -24,11 +24,6 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.interpreter;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.ExpressionContext;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.InterpreterContext;
@@ -41,6 +36,11 @@ import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Orbit;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Palette;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Trap;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 public class InterpreterOrbit extends Orbit implements InterpreterContext {
 	private CompiledOrbit orbit;
@@ -73,8 +73,11 @@ public class InterpreterOrbit extends Orbit implements InterpreterContext {
 				addVariable(var.getValue());
 			}
 		}
+		resetTraps();
+		traps.clear();
 		for (CompiledTrap cTrap : orbit.getTraps()) {
 			Trap trap = new Trap(cTrap.getCenter());
+			addTrap(trap);
 			for (CompiledTrapOp cTrapOp : cTrap.getOperators()) {
 				cTrapOp.evaluate(trap);
 			}
@@ -168,6 +171,11 @@ public class InterpreterOrbit extends Orbit implements InterpreterContext {
 			return null;
 		}
 		return new MutableNumber[context.getNumberCount()];
+	}
+
+	@Override
+	public boolean useTime() {
+		return context.orbitUseTime();
 	}
 
 	@Override

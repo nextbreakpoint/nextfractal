@@ -1,8 +1,8 @@
 /*
- * NextFractal 1.3.0
+ * NextFractal 2.0.0
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2016 Andrea Medeghini
+ * Copyright 2015-2017 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -24,176 +24,60 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
+import com.nextbreakpoint.nextfractal.core.Metadata;
+import com.nextbreakpoint.nextfractal.core.Session;
+import com.nextbreakpoint.nextfractal.core.utils.Double2D;
+import com.nextbreakpoint.nextfractal.core.utils.Double4D;
+import com.nextbreakpoint.nextfractal.core.utils.Time;
 
-import com.nextbreakpoint.nextfractal.core.session.AbstractSession;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerReport;
+import java.io.IOException;
+import java.util.Objects;
 
-public class MandelbrotSession extends AbstractSession {
-	private final List<MandelbrotListener> listeners = new ArrayList<>();
-	private MandelbrotData data = new MandelbrotData();
-	private CompilerReport report;
-	private File currentFile;
-	private String status;
-	private String error;
+public class MandelbrotSession extends Session {
+	private final MandelbrotMetadata metadata;
+	private final String script;
 
+	public MandelbrotSession() {
+		this(getInitialScript(), new MandelbrotMetadata(new Double4D(0, 0, 1,0), new Double4D(0, 0, 0,0), new Double4D(1, 1, 1,1), new Double2D(0, 0), new Time(0, 1), false, new MandelbrotOptions()));
+	}
+
+	public MandelbrotSession(String script, MandelbrotMetadata metadata) {
+		Objects.requireNonNull(metadata);
+		Objects.requireNonNull(script);
+		this.metadata = metadata;
+		this.script = script;
+	}
+
+	@Override
+    public String getPluginId() {
+        return MandelbrotFactory.PLUGIN_ID;
+    }
+
+	@Override
 	public String getGrammar() {
-		return "Mandelbrot";
+		return MandelbrotFactory.GRAMMAR;
 	}
 
-	public void addMandelbrotListener(MandelbrotListener listener) {
-		listeners.add(listener);
+	@Override
+	public String getScript() {
+		return script;
 	}
 
-	public void removeMandelbrotListener(MandelbrotListener listener) {
-		listeners.remove(listener);
+	@Override
+	public Metadata getMetadata() {
+		return metadata;
 	}
 
-	public String getVersion() {
-		return data.getVersion();
-	}
-
-	public File getCurrentFile() {
-		return currentFile;
-	}
-
-	public void setCurrentFile(File currentFile) {
-		this.currentFile = currentFile;
-	}
-
-	public String getSource() {
-		return data.getSource();
-	}
-	
-	public void setSource(String source) {
-		if (!data.getSource().equals(source)) {
-			data.setSource(source);
-			fireSourceChanged();
+	private static String getInitialScript() {
+		try {
+			return readResource("/mandelbrot.txt");
+		} catch (IOException e) {
 		}
-	}
-	
-	public CompilerReport getReport() {
-		return report;
+		return "";
 	}
 
-	public void setReport(CompilerReport report) {
-		this.report = report;
-		fireReportChanged();
-	}
-
-	public double getTime() {
-		return data.getTime();
-	}
-
-	public void setTime(double time) {
-		data.setTime(time);
-		fireDataChanged();
-	}
-
-	public double[] getPoint() {
-		return data.getPoint();
-	}
-	
-	public void setPoint(double[] point, boolean continuous) {
-		data.setPoint(point);
-		firePointChanged(continuous);
-	}
-
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
-		fireStatusChanged();
-	}
-
-	public String getError() {
-		return error;
-	}
-
-	public void setError(String error) {
-		this.error = error;
-		fireErrorChanged();
-	}
-
-	public MandelbrotView getViewAsCopy() {
-		return new MandelbrotView(data.getTranslation(), data.getRotation(), data.getScale(), data.getPoint(), data.isJulia());
-	}
-	
-	public void setView(MandelbrotView view, boolean continuous) {
-		this.data.setTranslation(view.getTraslation());
-		this.data.setRotation(view.getRotation());
-		this.data.setScale(view.getScale());
-		this.data.setPoint(view.getPoint());
-		this.data.setJulia(view.isJulia());
-		fireViewChanged(continuous);
-	}
-	
-	public MandelbrotData getDataAsCopy() {
-		MandelbrotData data = new MandelbrotData();
-		data.setSource(this.data.getSource());
-		data.setTranslation(this.data.getTranslation());
-		data.setRotation(this.data.getRotation());
-		data.setScale(this.data.getScale());
-		data.setTime(this.data.getTime());
-		data.setPoint(this.data.getPoint());
-		data.setJulia(this.data.isJulia());
-		return data;
-	}
-
-	public void setData(MandelbrotData data) {
-		this.data.setSource(data.getSource());
-		this.data.setTranslation(data.getTranslation());
-		this.data.setRotation(data.getRotation());
-		this.data.setScale(data.getScale());
-		this.data.setTime(data.getTime());
-		this.data.setPoint(data.getPoint());
-		this.data.setJulia(data.isJulia());
-		fireDataChanged();
-	}
-
-	protected void fireDataChanged() {
-		for (MandelbrotListener listener : listeners) {
-			listener.dataChanged(this);
-		}
-	}
-
-	protected void fireSourceChanged() {
-		for (MandelbrotListener listener : listeners) {
-			listener.sourceChanged(this);
-		}
-	}
-
-	protected void fireReportChanged() {
-		for (MandelbrotListener listener : listeners) {
-			listener.reportChanged(this);
-		}
-	}
-
-	protected void firePointChanged(boolean continuous) {
-		for (MandelbrotListener listener : listeners) {
-			listener.pointChanged(this, continuous);
-		}
-	}
-
-	protected void fireViewChanged(boolean continuous) {
-		for (MandelbrotListener listener : listeners) {
-			listener.viewChanged(this, continuous);
-		}
-	}
-
-	protected void fireStatusChanged() {
-		for (MandelbrotListener listener : listeners) {
-			listener.statusChanged(this);
-		}
-	}
-
-	protected void fireErrorChanged() {
-		for (MandelbrotListener listener : listeners) {
-			listener.errorChanged(this);
-		}
+	@Override
+	public String toString() {
+		return "{pluginId=" + getPluginId() + ", metadata=" + metadata + ", script='" + script + "'}";
 	}
 }

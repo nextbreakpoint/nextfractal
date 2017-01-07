@@ -1,10 +1,37 @@
+/*
+ * NextFractal 2.0.0
+ * https://github.com/nextbreakpoint/nextfractal
+ *
+ * Copyright 2015-2017 Andrea Medeghini
+ *
+ * This file is part of NextFractal.
+ *
+ * NextFractal is an application for creating fractals and other graphics artifacts.
+ *
+ * NextFractal is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * NextFractal is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 package com.nextbreakpoint.nextfractal.contextfree.core;
 
 import com.nextbreakpoint.nextfractal.contextfree.grammar.CommandInfo;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.FlagType;
 
 import java.awt.*;
-import java.awt.geom.*;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.PathIterator;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 
 import static java.awt.geom.PathIterator.SEG_CLOSE;
 import static java.awt.geom.PathIterator.SEG_LINETO;
@@ -21,6 +48,20 @@ public class Bounds {
         minY = Double.POSITIVE_INFINITY;
     }
 
+    public Bounds(Bounds bounds) {
+        minX = bounds.minX;
+        minY = bounds.minY;
+        maxX = bounds.maxX;
+        maxY = bounds.maxY;
+    }
+
+    public Bounds(double minX, double minY, double maxX, double maxY) {
+        this.minX = minX;
+        this.minY = minY;
+        this.maxX = maxX;
+        this.maxY = maxY;
+    }
+
     public Bounds(AffineTransform transform, Shape path, double scale, CommandInfo info) {
         if (!boundingRect(transform, path, scale, info)) {
             invalidate();
@@ -31,8 +72,6 @@ public class Bounds {
         double accuracy = scale * 0.1;
 
         Rectangle2D bounds = getRectangle2D(transform, path, accuracy);
-
-        //TODO completare boundingRect
 
         if ((info.getFlags() & FlagType.CF_FILL.getMask()) != 0) {
             minX = bounds.getMinX();
@@ -283,5 +322,9 @@ public class Bounds {
 
     public void merge(Point2D point) {
         merge(point.getX(), point.getY());
+    }
+
+    public boolean overlaps(Bounds bounds) {
+        return !(bounds.minX > maxX || bounds.maxX < minX || bounds.minY > maxY || bounds.maxY < minY);
     }
 }

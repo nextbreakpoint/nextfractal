@@ -1,8 +1,8 @@
 /*
- * NextFractal 1.3.0
+ * NextFractal 2.0.0
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2016 Andrea Medeghini
+ * Copyright 2015-2017 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -25,15 +25,13 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
 
 import com.nextbreakpoint.nextfractal.core.renderer.RendererFactory;
-import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotSession;
+import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotMetadata;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 
 public interface ToolContext {
 	public double getWidth();
 
 	public double getHeight();
-
-	public MandelbrotSession getMandelbrotSession();
 
 	public Number getInitialSize();
 
@@ -42,4 +40,12 @@ public interface ToolContext {
 	public double getZoomSpeed();
 
 	public RendererFactory getRendererFactory();
+
+	public MandelbrotMetadata getMetadata();
+
+	public void setView(MandelbrotMetadata view, boolean continuous, boolean appendHistory);
+
+	public void setTime(MandelbrotMetadata metadata, boolean continuous, boolean appendHistory);
+
+	public void setPoint(MandelbrotMetadata view, boolean continuous, boolean appendHistory);
 }

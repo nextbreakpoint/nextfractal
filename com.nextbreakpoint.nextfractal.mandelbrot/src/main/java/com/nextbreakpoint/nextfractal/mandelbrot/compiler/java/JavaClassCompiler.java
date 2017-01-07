@@ -1,8 +1,8 @@
 /*
- * NextFractal 1.3.0
+ * NextFractal 2.0.0
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2016 Andrea Medeghini
+ * Copyright 2015-2017 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -24,14 +24,12 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.compiler.java;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.nextbreakpoint.nextfractal.core.Error;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerBuilder;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerError;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerReport;
+import com.nextbreakpoint.nextfractal.mandelbrot.core.Color;
+import com.nextbreakpoint.nextfractal.mandelbrot.core.Orbit;
 
 import javax.tools.Diagnostic;
 import javax.tools.DiagnosticCollector;
@@ -42,13 +40,14 @@ import javax.tools.JavaFileObject.Kind;
 import javax.tools.SimpleJavaFileObject;
 import javax.tools.StandardLocation;
 import javax.tools.ToolProvider;
-
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerBuilder;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerError;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerError.ErrorType;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerReport;
-import com.nextbreakpoint.nextfractal.mandelbrot.core.Color;
-import com.nextbreakpoint.nextfractal.mandelbrot.core.Orbit;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class JavaClassCompiler {
 	private static final Logger logger = Logger.getLogger(JavaClassCompiler.class.getName());
@@ -61,29 +60,29 @@ public class JavaClassCompiler {
 	}
 	
 	public CompilerBuilder<Orbit> compileOrbit(CompilerReport report) throws ClassNotFoundException, IOException {
-		List<CompilerError> errors = new ArrayList<>();
+		List<Error> errors = new ArrayList<>();
 		try {
 			Class<Orbit> clazz = compileToClass(report.getOrbitSource(), className + "Orbit", Orbit.class, errors);
 			return new JavaClassBuilder<Orbit>(clazz, errors);
 		} catch (Throwable e) {
-			errors.add(new CompilerError(ErrorType.JAVA_COMPILER, 0, 0, 0, 0, e.getMessage()));
+			errors.add(new CompilerError(Error.ErrorType.JAVA_COMPILER, 0, 0, 0, 0, e.getMessage()));
 			return new JavaClassBuilder<Orbit>(null, errors);
 		}
 	}
 
 	public CompilerBuilder<Color> compileColor(CompilerReport report) throws ClassNotFoundException, IOException {
-		List<CompilerError> errors = new ArrayList<>();
+		List<Error> errors = new ArrayList<>();
 		try {
 			Class<Color> clazz = compileToClass(report.getColorSource(), className + "Color", Color.class, errors);
 			return new JavaClassBuilder<Color>(clazz, errors);
 		} catch (Throwable e) {
-			errors.add(new CompilerError(ErrorType.JAVA_COMPILER, 0, 0, 0, 0, e.getMessage()));
+			errors.add(new CompilerError(Error.ErrorType.JAVA_COMPILER, 0, 0, 0, 0, e.getMessage()));
 			return new JavaClassBuilder<Color>(null, errors);
 		}
 	}
 	
 	@SuppressWarnings("unchecked")
-	private <T> Class<T> compileToClass(String source, String className, Class<T> clazz, List<CompilerError> errors) throws IOException, ClassNotFoundException {
+	private <T> Class<T> compileToClass(String source, String className, Class<T> clazz, List<Error> errors) throws IOException, ClassNotFoundException {
 		logger.log(Level.FINE, "Compile Java source:\n" + source);
 		List<SimpleJavaFileObject> compilationUnits = new ArrayList<>();
 		compilationUnits.add(new JavaSourceFileObject(className, source));

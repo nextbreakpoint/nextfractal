@@ -1,6 +1,6 @@
-# NextFractal 1.3.0
+# NextFractal 2.0.0
 
-Copyright 2015-2016 Andrea Medeghini
+Copyright 2015-2017 Andrea Medeghini
 
 NextFractal is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 
@@ -9,27 +9,65 @@ NextFractal is distributed in the hope that it will be useful, but WITHOUT ANY W
 You should have received a copy of the GNU General Public License along with NextFractal. If not, see http://www.gnu.org/licenses/.
 
 
+## NOTICE
+
+NextFractal depends on several thirdparty libraries including FreeImage, FFmpeg, ANTLR, RichTextFX, ControlsFX and software from Apache Software Foundation.
+
+NextFractal contains code derivated from original code of open source projects Xaos and ContextFree.
+
+
 ## DESCRIPTION
 
-NextFractal is an application for creating fractals. Fractals are generated processing a script written in M language which is a DSL designed to define Mandelbrot or Julia sets. NextFractal supports continuous zooming of Mandelbrot and Julia sets and it supports background rendering of PNG images.
+NextFractal is an application for creating fractals and other algorithmically generated images. Images are generated processing a script and some user provided parameters depending on the selected grammar. The grammar defines the domain specific language to use to compose the script. 
+
+NextFractal is currently able to interpret M scripts and CFDG scripts. The M scripts are based on a domain specific language designed for creating Mandelbrot and Julia sets. The CFDG scripts are based on a context-free grammar designed for creating geometric shapes iteratively. 
+
+NextFractal provides also tools for exploring Mandelbrot and Julia sets, browsing images, creating time based and events based animations, and rendering image and video files. NextFractal exports to formats PNG, AVI and Quicktime.
 
 
-## HOW TO INSTALL
+## SYSTEM REQUIREMENTS
 
-Unzip the archive in your preferred location. NextFractal requires Java SDK 8 or later. You can download the latest SDK from http://www.oracle.com/technetwork/java/javase/downloads.
+NextFractal requires Java SDK 8 or later. You can download the latest SDK from Oracle.
+
+See download page http://www.oracle.com/technetwork/java/javase/downloads
+
+    Java SDK contains the Java compiler which is required to compile code in memory and reduce the rendering time.
+
+## USER GUIDE
+
+Please see documentation and tutorials on http://nextbreakpoint.com/nextfractal.
+
+NextFractal accepts few keyboard commands when focus is on rendering area:
+
+    Press keys 1, 2, 3, 4, 5 to change zoom speed
+
+    Press key T to show/hide traps
+
+    Press key O to show/hide orbit
+
+    Press key P to show/hide preview
 
 
-## HOW TO RUN
+## BUILD INSTRUCTIONS
 
-For Mac OS X click on NextFractal app. For Windows click on NextFractal.bat. For Linux run script NextFractal.sh.
+You can build NextFractal from the source code. Checkout or download the source code from GitHub and run the build script. The build script requires Apache Ant and Apache Maven. By default the script will create a distribution for all platforms. Use a different target to build the distribution for a specific platform only. Apple command-line development tools are also required to build the distribution for MacOS. 
 
+Get the code from https://github.com/nextbreakpoint/nextfractal:
 
-## HOW TO USE
+    git checkout https://github.com/nextbreakpoint/nextfractal.git
 
-Please visit the web site http://nextbreakpoint.com/nextfractal.
+Use default target to build the distribution for all platforms:
+  
+    ant
+    
+Use target build-linux to build Linux distribution:
 
+    ant build-linux
 
-## HOW TO BUILD
+Use target build-macos to build MacOS distribution:
+  
+    ant build-macos
+    
+Use target build-win32 to build Windows distribution:
 
-Download and install Apache Maven and Apache Ant. Add mvn and ant to your command path and set environment variable M2_HOME to Maven path. 
-Checkout or download the source code from https://github.com/nextbreakpoint/nextfractal. Execute ant command in a terminal from project's root folder.
+    ant build-win32

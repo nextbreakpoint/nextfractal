@@ -1,8 +1,8 @@
 /*
- * NextFractal 1.3.0
+ * NextFractal 2.0.0
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2016 Andrea Medeghini
+ * Copyright 2015-2017 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -24,13 +24,15 @@
  */
 package com.nextbreakpoint.nextfractal.core;
 
-import java.util.concurrent.ThreadFactory;
-
+import com.nextbreakpoint.nextfractal.core.javaFX.Bitmap;
+import com.nextbreakpoint.nextfractal.core.javaFX.BrowseBitmap;
+import com.nextbreakpoint.nextfractal.core.javaFX.GridItemRenderer;
+import com.nextbreakpoint.nextfractal.core.renderer.RendererFactory;
+import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
+import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
 import javafx.scene.layout.Pane;
 
-import com.nextbreakpoint.nextfractal.core.renderer.RendererFactory;
-import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
-import com.nextbreakpoint.nextfractal.core.session.Session;
+import java.util.concurrent.ThreadFactory;
 
 public interface FractalFactory {
 	/**
@@ -41,21 +43,40 @@ public interface FractalFactory {
 	/**
 	 * @return
 	 */
-	public Session createSession();
-	
-	/**
-	 * @param session
-	 * @return
-	 */
-	public Pane createEditorPane(Session session);
+	public String getGrammar();
 
 	/**
+	 * @return
+	 */
+	public Session createSession();
+
+	/**
+	 * @return
+	 */
+	public Session createSession(String script, Metadata metadata);
+
+	/**
+	 * @param eventBus
+     * @param session
+     * @return
+	 */
+	public Pane createEditorPane(EventBus eventBus, Session session);
+
+	/**
+	 * @param eventBus
 	 * @param session
 	 * @param width
 	 * @param height
 	 * @return
 	 */
-	public Pane createRenderPane(Session session, int width, int height);
+	public Pane createRenderPane(EventBus eventBus, Session session, int width, int height);
+
+	/**
+	 * @param eventBus
+	 * @param session
+	 * @return
+	 */
+	public Pane createParamsPane(EventBus eventBus, Session session);
 
 	/**
 	 * @param threadFactory
@@ -65,4 +86,21 @@ public interface FractalFactory {
 	 * @return
 	 */
 	public ImageGenerator createImageGenerator(ThreadFactory threadFactory, RendererFactory renderFactory, RendererTile tile, boolean opaque);
+
+	/**
+	 * @param threadFactory
+	 * @param tile
+	 * @param opaque
+	 * @return
+	 */
+	public ImageComposer createImageComposer(ThreadFactory threadFactory, RendererTile tile, boolean opaque);
+
+	/**
+	 * @return
+	 */
+	public FileManager createFileManager();
+
+	public GridItemRenderer createRenderer(Bitmap bitmap) throws Exception;
+
+	public BrowseBitmap createBitmap(Session session, RendererSize size) throws Exception;
 }

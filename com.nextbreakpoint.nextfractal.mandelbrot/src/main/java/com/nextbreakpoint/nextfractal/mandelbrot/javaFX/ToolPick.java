@@ -1,8 +1,8 @@
 /*
- * NextFractal 1.3.0
+ * NextFractal 2.0.0
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2016 Andrea Medeghini
+ * Copyright 2015-2017 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -25,7 +25,8 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
 
 import com.nextbreakpoint.nextfractal.core.renderer.RendererGraphicsContext;
-import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotView;
+import com.nextbreakpoint.nextfractal.core.utils.Time;
+import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotMetadata;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 import javafx.scene.input.MouseEvent;
 
@@ -34,6 +35,7 @@ public class ToolPick implements Tool {
 	private volatile boolean pressed;
 	private volatile boolean changed;
 	private volatile boolean redraw;
+	private Long lastTimeInMillis;
 	private double x1;
 	private double y1;
 
@@ -76,12 +78,24 @@ public class ToolPick implements Tool {
 	}
 
 	@Override
-	public void update(long time) {
+	public void update(long timeInMillis, boolean timeAnimation) {
+		MandelbrotMetadata oldMetadata = context.getMetadata();
+		Time time = oldMetadata.getTime();
+		if (timeAnimation || lastTimeInMillis == null) {
+			if (lastTimeInMillis == null) {
+				lastTimeInMillis = timeInMillis;
+			}
+			time = new Time(time.getValue() + (timeInMillis - lastTimeInMillis) / 1000.0, time.getScale());
+			lastTimeInMillis = timeInMillis;
+		} else {
+			lastTimeInMillis = null;
+		}
 		if (changed) {
-			MandelbrotView view = context.getMandelbrotSession().getViewAsCopy();
-			if (!view.isJulia()) {
-				double[] t = view.getTraslation();
-				double[] r = view.getRotation();
+			if (!oldMetadata.isJulia()) {
+				double[] t = oldMetadata.getTranslation().toArray();
+				double[] r = oldMetadata.getRotation().toArray();
+				double[] s = oldMetadata.getScale().toArray();
+				boolean j = oldMetadata.isJulia();
 				double x = t[0];
 				double y = t[1];
 				double z = t[2];
@@ -90,9 +104,13 @@ public class ToolPick implements Tool {
 				Number center = context.getInitialCenter();
 				x += center.r() + z * size.r() * (Math.cos(a) * x1 + Math.sin(a) * y1);
 				y += center.i() + z * size.i() * (Math.cos(a) * y1 - Math.sin(a) * x1);
-				context.getMandelbrotSession().setPoint(new double[] { x, y }, pressed);
+				MandelbrotMetadata newMetadata = new MandelbrotMetadata(t, r, s, new double[] { x, y }, time, j, oldMetadata.getOptions());
+				context.setPoint(newMetadata, false, !pressed);
 			}
 			changed = false;
+		} else if (timeAnimation) {
+			MandelbrotMetadata newMetadata = new MandelbrotMetadata(oldMetadata.getTranslation(), oldMetadata.getRotation(), oldMetadata.getScale(), oldMetadata.getPoint(), time, oldMetadata.isJulia(), oldMetadata.getOptions());
+			context.setTime(newMetadata, true, false);
 		}
 	}
 

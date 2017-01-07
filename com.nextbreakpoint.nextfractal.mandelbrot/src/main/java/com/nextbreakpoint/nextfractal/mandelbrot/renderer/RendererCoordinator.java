@@ -1,8 +1,8 @@
 /*
- * NextFractal 1.3.0
+ * NextFractal 2.0.0
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2016 Andrea Medeghini
+ * Copyright 2015-2017 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -24,20 +24,22 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.renderer;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ThreadFactory;
-
+import com.nextbreakpoint.nextfractal.core.Error;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererFactory;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererGraphicsContext;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
+import com.nextbreakpoint.nextfractal.core.utils.Time;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Color;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Orbit;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Trap;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.xaos.XaosRenderer;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ThreadFactory;
 
 /**
  * @author Andrea Medeghini
@@ -55,7 +57,7 @@ public class RendererCoordinator implements RendererDelegate {
 	private volatile boolean pixelsChanged;
 	private volatile float progress;
 	private Renderer renderer;
-	
+
 	/**
 	 * @param threadFactory
 	 * @param renderFactory
@@ -149,8 +151,12 @@ public class RendererCoordinator implements RendererDelegate {
 	/**
 	 * @param point
 	 */
-	public void setConstant(Number constant) {
-		renderer.setPoint(constant);
+	public void setPoint(Number point) {
+		renderer.setPoint(point);
+	}
+
+	public void setTime(Time time) {
+		renderer.setTime(time);
 	}
 
 	/**
@@ -271,7 +277,11 @@ public class RendererCoordinator implements RendererDelegate {
 	/**
 	 * @return
 	 */
-	public RendererError getError() {
-		return renderer.getError();
+	public List<Error> getErrors() {
+		return renderer.getErrors();
+	}
+
+	public boolean isInitialized() {
+		return renderer.isInitialized();
 	}
 }

@@ -1,8 +1,8 @@
 /*
- * NextFractal 1.3.0
+ * NextFractal 2.0.0
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2016 Andrea Medeghini
+ * Copyright 2015-2017 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -24,9 +24,6 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.grammar.ast;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGDriver;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGRenderer;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.Shape;
@@ -35,11 +32,14 @@ import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.PathOp;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.RepElemType;
 import org.antlr.v4.runtime.Token;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ASTRepContainer {
 	private PathOp pathOp;
 	private int repType;
-	private List<ASTReplacement> body = new ArrayList<ASTReplacement>();
-	private List<ASTParameter> parameters = new ArrayList<ASTParameter>();
+	private List<ASTReplacement> body = new ArrayList<>();
+	private List<ASTParameter> parameters = new ArrayList<>();
 	private boolean isGlobal;
 	private int stackCount;
 	private CFDGDriver driver;
@@ -101,21 +101,21 @@ public class ASTRepContainer {
 	}
 
 	public void addParameter(String type, int nameIndex, Token nameLocation) {
-		parameters.add(new ASTParameter(type, nameIndex, nameLocation));
+		parameters.add(new ASTParameter(driver, type, nameIndex, nameLocation));
 		ASTParameter param = parameters.get(parameters.size() - 1);
 		param.setIsParameter(true);
 		param.checkParam();
 	}
 
 	public ASTParameter addDefParameter(int nameIndex, ASTDefine def, Token nameLocation) {
-		parameters.add(new ASTParameter(nameIndex, def, nameLocation));
+		parameters.add(new ASTParameter(driver, nameIndex, def, nameLocation));
 		ASTParameter param = parameters.get(parameters.size() - 1);
 		param.checkParam();
 		return param;
 	}
 
 	public void addLoopParameter(int nameIndex, boolean natural, boolean local, Token nameLocation) {
-		parameters.add(new ASTParameter(nameIndex, natural, local, nameLocation));
+		parameters.add(new ASTParameter(driver, nameIndex, natural, local, nameLocation));
 		ASTParameter param = parameters.get(parameters.size() - 1);
 		param.checkParam();
 		stackCount += param.getTupleSize();

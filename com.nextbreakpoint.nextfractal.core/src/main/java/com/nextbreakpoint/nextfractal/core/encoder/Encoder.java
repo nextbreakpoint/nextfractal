@@ -1,8 +1,8 @@
 /*
- * NextFractal 1.3.0
+ * NextFractal 2.0.0
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2016 Andrea Medeghini
+ * Copyright 2015-2017 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -30,22 +30,45 @@ public interface Encoder {
 	/**
 	 * @return
 	 */
-	public String getId();
-	
-	/**
-	 * @param delegate
-	 */
-	public void setDelegate(EncoderDelegate delegate);
-
-	/**
-	 * @param context
-	 * @param path
-	 * @throws EncoderException
-	 */
-	public void encode(EncoderContext context, File path) throws EncoderException;
+	String getId();
 
 	/**
 	 * @return
 	 */
-	public String getSuffix();
+	String getName();
+
+	/**
+	 * @return
+	 */
+	boolean isVideoSupported();
+
+	/**
+	 * @param delegate
+	 */
+	void setDelegate(EncoderDelegate delegate);
+
+	/**
+	 * @param context
+	 * @param path
+	 * @return
+	 */
+	EncoderHandle open(EncoderContext context, File path) throws EncoderException;
+
+	/**
+	 * @param handle
+	 */
+	void close(EncoderHandle handle) throws EncoderException;
+
+	/**
+	 * @param handle
+	 * @param index
+	 * @param count
+	 * @throws EncoderException
+	 */
+	void encode(EncoderHandle handle, int index, int count) throws EncoderException;
+
+	/**
+	 * @return
+	 */
+	String getSuffix();
 }

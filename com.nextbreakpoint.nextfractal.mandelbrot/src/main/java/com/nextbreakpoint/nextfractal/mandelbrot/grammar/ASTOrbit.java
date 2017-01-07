@@ -1,8 +1,8 @@
 /*
- * NextFractal 1.3.0
+ * NextFractal 2.0.0
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2016 Andrea Medeghini
+ * Copyright 2015-2017 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -24,10 +24,10 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.grammar;
 
+import org.antlr.v4.runtime.Token;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import org.antlr.v4.runtime.Token;
 
 public class ASTOrbit extends ASTObject {
 	private List<ASTOrbitTrap> traps = new ArrayList<>(); 
@@ -89,7 +89,7 @@ public class ASTOrbit extends ASTObject {
 		StringBuilder builder = new StringBuilder();
 		String suffix = "";
 		if (region != null) {
-			builder.append("region = ");
+			builder.append("contentRegion = ");
 			builder.append(region);
 			suffix = ",";
 		}

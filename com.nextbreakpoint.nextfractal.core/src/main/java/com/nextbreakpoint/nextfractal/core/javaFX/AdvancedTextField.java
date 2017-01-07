@@ -1,8 +1,8 @@
 /*
- * NextFractal 1.3.0
+ * NextFractal 2.0.0
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2016 Andrea Medeghini
+ * Copyright 2015-2017 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -24,8 +24,6 @@
  */
 package com.nextbreakpoint.nextfractal.core.javaFX;
 
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
@@ -33,17 +31,11 @@ import javafx.beans.value.ObservableValue;
 import javafx.geometry.Pos;
 import javafx.scene.control.TextField;
 
+import java.util.function.Function;
+
 public class AdvancedTextField extends TextField {
 	private StringProperty restrict = new SimpleStringProperty();
-	private IntegerProperty maxLength = new SimpleIntegerProperty(-1);
-
-	public int getMaxLength() {
-		return maxLength.get();
-	}
-
-	public void setMaxLength(int maxLength) {
-		this.maxLength.set(maxLength);
-	}
+	private Function<String, String> transform = t -> t;
 
 	public void setRestrict(String restrict) {
 		this.restrict.set(restrict);
@@ -53,12 +45,16 @@ public class AdvancedTextField extends TextField {
 		return restrict.get();
 	}
 
-	public StringProperty restrictProperty() {
-		return restrict;
+	public Function<String, String> getTransform() {
+		return transform;
 	}
 
-	public IntegerProperty maxLengthProperty() {
-		return maxLength;
+	public void setTransform(Function<String, String> transform) {
+		this.transform = transform;
+	}
+
+	public StringProperty restrictProperty() {
+		return restrict;
 	}
 
 	public AdvancedTextField() {
@@ -70,16 +66,20 @@ public class AdvancedTextField extends TextField {
 			public void changed(ObservableValue<? extends String> observableValue, String text, String newText) {
 				if (ignore)
 					return;
-				if (maxLength.get() > -1 && newText.length() > maxLength.get()) {
-					ignore = true;
-					setText(newText.substring(0, maxLength.get()));
-					ignore = false;
+				String transText = transform != null ? transform.apply(newText) : newText;
+				if (restrict.get() != null && !restrict.get().equals("") && !transText.matches(restrict.get())) {
+					updateText(text);
+				} else {
+					if (!transText.equals(newText)) {
+						updateText(transText);
+					}
 				}
-				if (restrict.get() != null && !restrict.get().equals("") && !newText.matches(restrict.get())) {
-					ignore = true;
-					setText(text);
-					ignore = false;
-				}
+			}
+
+			private void updateText(String text) {
+				ignore = true;
+				setText(text);
+				ignore = false;
 			}
 		});
 	}

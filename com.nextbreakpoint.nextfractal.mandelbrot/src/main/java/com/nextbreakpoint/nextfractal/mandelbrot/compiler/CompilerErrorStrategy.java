@@ -1,8 +1,8 @@
 /*
- * NextFractal 1.3.0
+ * NextFractal 2.0.0
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2016 Andrea Medeghini
+ * Copyright 2015-2017 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -24,11 +24,7 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.compiler;
 
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
+import com.nextbreakpoint.nextfractal.core.Error;
 import org.antlr.v4.runtime.DefaultErrorStrategy;
 import org.antlr.v4.runtime.FailedPredicateException;
 import org.antlr.v4.runtime.InputMismatchException;
@@ -36,18 +32,23 @@ import org.antlr.v4.runtime.Parser;
 import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.misc.IntervalSet;
 
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class CompilerErrorStrategy extends DefaultErrorStrategy {
 	private static final Logger logger = Logger.getLogger(CompilerErrorStrategy.class.getName());
-	private List<CompilerError> errors;
+	private List<Error> errors;
 	
-	public CompilerErrorStrategy(List<CompilerError> errors) {
+	public CompilerErrorStrategy(List<Error> errors) {
 		this.errors = errors;
 	}
 
 	@Override
 	public void reportError(Parser recognizer, RecognitionException e) {
 		String message = generateErrorMessage("Parse failed", recognizer);
-		CompilerError error = new CompilerError(CompilerError.ErrorType.M_COMPILER, e.getOffendingToken().getLine(), e.getOffendingToken().getCharPositionInLine(), e.getOffendingToken().getStartIndex(), recognizer.getCurrentToken().getStopIndex() - recognizer.getCurrentToken().getStartIndex(), message);
+		CompilerError error = new CompilerError(Error.ErrorType.SCRIPT_COMPILER, e.getOffendingToken().getLine(), e.getOffendingToken().getCharPositionInLine(), e.getOffendingToken().getStartIndex(), recognizer.getCurrentToken().getStopIndex() - recognizer.getCurrentToken().getStartIndex(), message);
 		logger.log(Level.FINE, error.toString(), e);
 		errors.add(error);
 	}
@@ -55,7 +56,7 @@ public class CompilerErrorStrategy extends DefaultErrorStrategy {
 	@Override
 	protected void reportInputMismatch(Parser recognizer, InputMismatchException e) {
 		String message = generateErrorMessage("Input mismatch", recognizer);
-		CompilerError error = new CompilerError(CompilerError.ErrorType.M_COMPILER, e.getOffendingToken().getLine(), e.getOffendingToken().getCharPositionInLine(), e.getOffendingToken().getStartIndex(), recognizer.getCurrentToken().getStopIndex() - recognizer.getCurrentToken().getStartIndex(), message);
+		CompilerError error = new CompilerError(Error.ErrorType.SCRIPT_COMPILER, e.getOffendingToken().getLine(), e.getOffendingToken().getCharPositionInLine(), e.getOffendingToken().getStartIndex(), recognizer.getCurrentToken().getStopIndex() - recognizer.getCurrentToken().getStartIndex(), message);
 		logger.log(Level.FINE, error.toString(), e);
 		errors.add(error);
 	}
@@ -63,7 +64,7 @@ public class CompilerErrorStrategy extends DefaultErrorStrategy {
 	@Override
 	protected void reportFailedPredicate(Parser recognizer, FailedPredicateException e) {
 		String message = generateErrorMessage("Failed predicate", recognizer);
-		CompilerError error = new CompilerError(CompilerError.ErrorType.M_COMPILER, e.getOffendingToken().getLine(), e.getOffendingToken().getCharPositionInLine(), e.getOffendingToken().getStartIndex(), recognizer.getCurrentToken().getStopIndex() - recognizer.getCurrentToken().getStartIndex(), message);
+		CompilerError error = new CompilerError(Error.ErrorType.SCRIPT_COMPILER, e.getOffendingToken().getLine(), e.getOffendingToken().getCharPositionInLine(), e.getOffendingToken().getStartIndex(), recognizer.getCurrentToken().getStopIndex() - recognizer.getCurrentToken().getStartIndex(), message);
 		logger.log(Level.FINE, error.toString(), e);
 		errors.add(error);
 	}
@@ -71,7 +72,7 @@ public class CompilerErrorStrategy extends DefaultErrorStrategy {
 	@Override
 	protected void reportUnwantedToken(Parser recognizer) {
 		String message = generateErrorMessage("Unwanted token", recognizer);
-		CompilerError error = new CompilerError(CompilerError.ErrorType.M_COMPILER, recognizer.getCurrentToken().getLine(), recognizer.getCurrentToken().getCharPositionInLine(), recognizer.getCurrentToken().getStartIndex(), recognizer.getCurrentToken().getStopIndex() - recognizer.getCurrentToken().getStartIndex(), message);
+		CompilerError error = new CompilerError(Error.ErrorType.SCRIPT_COMPILER, recognizer.getCurrentToken().getLine(), recognizer.getCurrentToken().getCharPositionInLine(), recognizer.getCurrentToken().getStartIndex(), recognizer.getCurrentToken().getStopIndex() - recognizer.getCurrentToken().getStartIndex(), message);
 		logger.log(Level.FINE, error.toString());
 		errors.add(error);
 	}
@@ -79,7 +80,7 @@ public class CompilerErrorStrategy extends DefaultErrorStrategy {
 	@Override
 	protected void reportMissingToken(Parser recognizer) {
 		String message = generateErrorMessage("Missing token", recognizer);
-		CompilerError error = new CompilerError(CompilerError.ErrorType.M_COMPILER, recognizer.getCurrentToken().getLine(), recognizer.getCurrentToken().getCharPositionInLine(), recognizer.getCurrentToken().getStartIndex(), recognizer.getCurrentToken().getStopIndex() - recognizer.getCurrentToken().getStartIndex(), message);
+		CompilerError error = new CompilerError(Error.ErrorType.SCRIPT_COMPILER, recognizer.getCurrentToken().getLine(), recognizer.getCurrentToken().getCharPositionInLine(), recognizer.getCurrentToken().getStartIndex(), recognizer.getCurrentToken().getStopIndex() - recognizer.getCurrentToken().getStartIndex(), message);
 		logger.log(Level.FINE, error.toString());
 		errors.add(error);
 	}

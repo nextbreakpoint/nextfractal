@@ -1,8 +1,8 @@
 /*
- * NextFractal 1.3.0
+ * NextFractal 2.0.0
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2016 Andrea Medeghini
+ * Copyright 2015-2017 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -49,10 +49,11 @@ public interface EncoderContext {
 	 * @param w
 	 * @param h
 	 * @param s
+	 * @param flip
 	 * @return
 	 * @throws IOException
 	 */
-	public int[] getPixelsAsIntArray(int n, int x, int y, int w, int h, int s) throws IOException;
+	public byte[] getPixelsAsByteArray(final int n, final int x, final int y, final int w, final int h, final int s, final boolean flip) throws IOException;
 
 	/**
 	 * @return
@@ -68,9 +69,4 @@ public interface EncoderContext {
 	 * @return
 	 */
 	public int getFrameRate();
-
-	/**
-	 * @return
-	 */
-	public int getFrameCount();
 }

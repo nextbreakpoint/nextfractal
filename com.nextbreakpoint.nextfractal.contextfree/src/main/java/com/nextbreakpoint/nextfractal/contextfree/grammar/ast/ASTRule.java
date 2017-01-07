@@ -1,8 +1,8 @@
 /*
- * NextFractal 1.3.0
+ * NextFractal 2.0.0
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2016 Andrea Medeghini
+ * Copyright 2015-2017 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -24,12 +24,19 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.grammar.ast;
 
-import java.awt.geom.PathIterator;
-
-import com.nextbreakpoint.nextfractal.contextfree.grammar.*;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.*;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGDriver;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGRenderer;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.PathStorage;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.PrimShape;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.Shape;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.CompilePhase;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.PathOp;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.PrimShapeType;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.RepElemType;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.WeightType;
 import org.antlr.v4.runtime.Token;
+
+import java.awt.geom.PathIterator;
 
 public class ASTRule extends ASTReplacement implements Comparable<ASTRule> {
 	private ASTRepContainer ruleBody;
@@ -48,7 +55,7 @@ public class ASTRule extends ASTReplacement implements Comparable<ASTRule> {
 		this.weightType = percent ? WeightType.PercentWeight : WeightType.ExplicitWeight;
 		this.cachedPath = null;
 		if (weight <= 0.0) {
-			Logger.warning("Rule weight coerced to 1.0", location);
+			driver.warning("Rule weight coerced to 1.0", location);
 		}
 	}
 
@@ -68,19 +75,19 @@ public class ASTRule extends ASTReplacement implements Comparable<ASTRule> {
 				int cmd;
 				for (PathIterator iterator = shape.getPathIterator(); !iterator.isDone(); iterator.next()) {
 					if (isVertex(cmd = iterator.currentSegment(coords))) {
-						ASTExpression a = new ASTCons(location, new ASTReal(coords[0], location), new ASTReal(coords[1], location));
+						ASTExpression a = new ASTCons(driver, location, new ASTReal(driver, coords[0], location), new ASTReal(driver, coords[1], location));
 						ASTPathOp op = new ASTPathOp(driver, isMoveTo(cmd) ? PathOp.MOVETO.name() : PathOp.LINETO.name(), a, location);
 						getRuleBody().getBody().add(op);
 					}
 				}
 			} else {
-				ASTExpression a = new ASTCons(location, new ASTReal(0.5, location), new ASTReal(0.0, location));
+				ASTExpression a = new ASTCons(driver, location, new ASTReal(driver, 0.5, location), new ASTReal(driver, 0.0, location));
 				ASTPathOp op = new ASTPathOp(driver, PathOp.MOVETO.name(), a, location);
 				getRuleBody().getBody().add(op);
-				a = new ASTCons(location, new ASTReal(-0.5, location), new ASTReal(0.0, location), new ASTReal(0.5, location));
+				a = new ASTCons(driver, location, new ASTReal(driver, -0.5, location), new ASTReal(driver, 0.0, location), new ASTReal(driver, 0.5, location));
 				op = new ASTPathOp(driver, PathOp.ARCTO.name(), a, location);
 				getRuleBody().getBody().add(op);
-				a = new ASTCons(location, new ASTReal(0.5, location), new ASTReal(0.0, location), new ASTReal(0.5, location));
+				a = new ASTCons(driver, location, new ASTReal(driver, 0.5, location), new ASTReal(driver, 0.0, location), new ASTReal(driver, 0.5, location));
 				op = new ASTPathOp(driver, PathOp.ARCTO.name(), a, location);
 				getRuleBody().getBody().add(op);
 			}

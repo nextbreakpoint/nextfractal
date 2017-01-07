@@ -1,0 +1,10 @@
+CFDG3
+
+path box {
+    MOVETO( 0.5,  0.5)
+    LINETO(-0.5,  0.5)
+    LINETO(-0.5, -0.5)
+    LINETO( 0.5, -0.5)
+    CLOSEPOLY()
+    STROKE()[]
+}

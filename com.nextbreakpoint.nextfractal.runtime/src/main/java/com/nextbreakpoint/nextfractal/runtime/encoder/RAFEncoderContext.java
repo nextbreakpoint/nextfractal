@@ -1,8 +1,8 @@
 /*
- * NextFractal 1.3.0
+ * NextFractal 2.0.0
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2016 Andrea Medeghini
+ * Copyright 2015-2017 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -24,10 +24,10 @@
  */
 package com.nextbreakpoint.nextfractal.runtime.encoder;
 
+import com.nextbreakpoint.nextfractal.core.encoder.EncoderContext;
+
 import java.io.IOException;
 import java.io.RandomAccessFile;
-
-import com.nextbreakpoint.nextfractal.core.encoder.EncoderContext;
 
 /**
  * @author Andrea Medeghini
@@ -37,14 +37,21 @@ public class RAFEncoderContext implements EncoderContext {
 	private final int imageWidth;
 	private final int imageHeight;
 	private final int frameRate;
-	private final int frameCount;
 
-	public RAFEncoderContext(final RandomAccessFile raf, final int imageWidth, final int imageHeight, final int frameRate, final int frameCount) throws IOException {
+	public RAFEncoderContext(final RandomAccessFile raf, final int imageWidth, final int imageHeight, final int frameRate) throws IOException {
 		this.raf = raf;
 		this.imageWidth = imageWidth;
 		this.imageHeight = imageHeight;
 		this.frameRate = frameRate;
-		this.frameCount = frameCount;
+	}
+
+	@Override
+	protected void finalize() throws Throwable {
+		try {
+			raf.close();
+		} catch (Exception e) {
+		}
+		super.finalize();
 	}
 
 	/**
@@ -78,33 +85,53 @@ public class RAFEncoderContext implements EncoderContext {
 		return data;
 	}
 
-	/**
-	 * @see com.nextbreakpoint.nextfractal.core.encoder.EncoderContext#getPixelsAsByteArray(int, int, int, int, int, int)
-	 */
 	@Override
-	public int[] getPixelsAsIntArray(final int n, final int x, final int y, final int w, final int h, final int s) throws IOException {
-		final int[] data = new int[w * h * s];
+	public byte[] getPixelsAsByteArray(final int n, final int x, final int y, final int w, final int h, final int s, final boolean flip) throws IOException {
+		final byte[] data = new byte[w * h * s];
 		final byte[] row = new byte[w * 4];
 		long pos = (n * getImageWidth() * getImageHeight() + y * getImageWidth() + x) * 4;
-		int t = 0;
-		for (int k = 0; k < h; k++) {
-			raf.seek(pos);
-			raf.readFully(row);
-			for (int j = 0, i = 0; i < row.length; j += s, i += 4) {
-				if (s == 3) {
-					data[t + j + 0] = row[i + 0];
-					data[t + j + 1] = row[i + 1];
-					data[t + j + 2] = row[i + 2];
+		if (flip) {
+			int t = (h - 1) * w * s;
+			for (int k = 0; k < h; k++) {
+				raf.seek(pos);
+				raf.readFully(row);
+				for (int j = 0, i = 0; i < row.length; j += s, i += 4) {
+					if (s == 3) {
+						data[t + j + 0] = row[i + 0];
+						data[t + j + 1] = row[i + 1];
+						data[t + j + 2] = row[i + 2];
+					}
+					else if (s == 4) {
+						data[t + j + 0] = row[i + 0];
+						data[t + j + 1] = row[i + 1];
+						data[t + j + 2] = row[i + 2];
+						data[t + j + 3] = row[i + 3];
+					}
 				}
-				else if (s == 4) {
-					data[t + j + 0] = row[i + 0];
-					data[t + j + 1] = row[i + 1];
-					data[t + j + 2] = row[i + 2];
-					data[t + j + 3] = row[i + 3];
-				}
+				t -= w * s;
+				pos += getImageWidth() * 4;
 			}
-			t += w * s;
-			pos += getImageWidth() * 4;
+		} else {
+			int t = 0;
+			for (int k = 0; k < h; k++) {
+				raf.seek(pos);
+				raf.readFully(row);
+				for (int j = 0, i = 0; i < row.length; j += s, i += 4) {
+					if (s == 3) {
+						data[t + j + 0] = row[i + 0];
+						data[t + j + 1] = row[i + 1];
+						data[t + j + 2] = row[i + 2];
+					}
+					else if (s == 4) {
+						data[t + j + 0] = row[i + 0];
+						data[t + j + 1] = row[i + 1];
+						data[t + j + 2] = row[i + 2];
+						data[t + j + 3] = row[i + 3];
+					}
+				}
+				t += w * s;
+				pos += getImageWidth() * 4;
+			}
 		}
 		return data;
 	}
@@ -122,10 +149,5 @@ public class RAFEncoderContext implements EncoderContext {
 	@Override
 	public int getFrameRate() {
 		return frameRate;
-	}
-
-	@Override
-	public int getFrameCount() {
-		return frameCount;
 	}
 }

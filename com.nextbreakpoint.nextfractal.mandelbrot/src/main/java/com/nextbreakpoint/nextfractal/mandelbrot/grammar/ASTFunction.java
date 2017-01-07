@@ -1,8 +1,8 @@
 /*
- * NextFractal 1.3.0
+ * NextFractal 2.0.0
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2016 Andrea Medeghini
+ * Copyright 2015-2017 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -24,13 +24,17 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.grammar;
 
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledExpression;
 import org.antlr.v4.runtime.Token;
 
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledExpression;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 public class ASTFunction extends ASTExpression {
 	private String name;
 	private ASTExpression[] arguments;
+	private Set<String> realFunctions = new HashSet<>(Arrays.asList("time", "mod", "mod2", "pha", "log", "exp", "atan2", "hypot", "sqrt", "re", "im", "ceil", "floor", "abs", "square", "saw", "ramp", "pulse"));
 
 	public ASTFunction(Token location, String name, ASTExpression[] arguments) {
 		super(location);
@@ -72,7 +76,7 @@ public class ASTFunction extends ASTExpression {
 
 	@Override
 	public boolean isReal() {
-		if (name.equals("mod") || name.equals("mod2") || name.equals("pha") || name.equals("log") || name.equals("exp") || name.equals("atan2") || name.equals("hypot") || name.equals("sqrt") || name.equals("re") || name.equals("im") || name.equals("ceil") || name.equals("floor") || name.equals("abs")) {
+		if (realFunctions.contains(name)) {
 			return true;
 		}
 		for (ASTExpression argument : arguments) {

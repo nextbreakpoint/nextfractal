@@ -1,8 +1,8 @@
 /*
- * NextFractal 1.3.0
+ * NextFractal 2.0.0
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2016 Andrea Medeghini
+ * Copyright 2015-2017 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -24,62 +24,55 @@
  */
 package com.nextbreakpoint.nextfractal.core.export;
 
+import com.nextbreakpoint.nextfractal.core.Clip;
+import com.nextbreakpoint.nextfractal.core.ClipProcessor;
+import com.nextbreakpoint.nextfractal.core.Frame;
+import com.nextbreakpoint.nextfractal.core.Session;
+import com.nextbreakpoint.nextfractal.core.encoder.Encoder;
+import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
-
-import com.nextbreakpoint.nextfractal.core.encoder.Encoder;
-import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
-import com.nextbreakpoint.nextfractal.core.session.SessionState;
+import java.util.logging.Logger;
 
 public final class ExportSession {
+	private static final Logger logger = Logger.getLogger(ExportSession.class.getName());
 	private static final int BORDER_SIZE = 0;
+
 	private final List<ExportJob> jobs = new ArrayList<>();
-	private final String sessioinId;
+	private final List<Frame> frames = new ArrayList<>();
+	private final String sessionId;
 	private final Encoder encoder;
 	private final RendererSize size;
-	private final String pluginId;
-	private final Object data;
 	private final File tmpFile;
 	private final File file;
 	private final int tileSize;
 	private final float quality;
 	private final float frameRate;
-	private final float startTime;
-	private final float stopTime;
-	private volatile int frameNumber;
-	private volatile float progress;
-	private volatile boolean cancelled;
-	private volatile SessionState state = SessionState.SUSPENDED;
+	private final Session session;
 
-	public ExportSession(String pluginId, Object data, File file, File tmpFile, RendererSize size, int tileSize, Encoder encoder) {
-		this.pluginId = pluginId;
+	public ExportSession(String sessionId, Session session, List<Clip> clips, File file, File tmpFile, RendererSize size, int tileSize, Encoder encoder) {
+		this.sessionId = sessionId;
+		this.session = session;
 		this.tmpFile = tmpFile;
 		this.file = file;
-		this.data = data;
 		this.size = size;
 		this.encoder = encoder;
 		this.tileSize = tileSize;
 		this.quality = 1;
-		this.frameRate = 1.0f / 24.0f;
-		this.startTime = 0;
-		this.stopTime = 0;
-		sessioinId = UUID.randomUUID().toString();
-		jobs.addAll(createJobs(0));
+		this.frameRate = 1.0f / 25.0f;
+		if (clips.size() > 0 && clips.get(0).getEvents().size() > 1) {
+			this.frames.addAll(new ClipProcessor(clips, frameRate).generateFrames());
+		} else {
+			frames.add(new Frame(session.getPluginId(), session.getScript(), session.getMetadata(), true, true));
+		}
+		jobs.addAll(createJobs());
 	}
-	
+
 	public String getSessionId() {
-		return sessioinId;
-	}
-
-	public String getPluginId() {
-		return pluginId;
-	}
-
-	public Object getData() {
-		return data;
+		return sessionId;
 	}
 
 	public RendererSize getSize() {
@@ -102,101 +95,23 @@ public final class ExportSession {
 		return frameRate;
 	}
 
-	public float getStartTime() {
-		return startTime;
-	}
-
-	public float getStopTime() {
-		return stopTime;
-	}
-
-	public int getFrameNumber() {
-		return frameNumber;
-	}
-
-	public float getProgress() {
-		return progress;
-	}
-
-	public boolean isCancelled() {
-		return cancelled;
-	}
-
-	public boolean isStopped() {
-		return state == SessionState.STOPPED;
-	}
-
-	public boolean isDispatched() {
-		return state == SessionState.DISPATCHED;
-	}
-
-	public boolean isStarted() {
-		return state == SessionState.STARTED;
-	}
-
-	public boolean isSuspended() {
-		return state == SessionState.SUSPENDED;
-	}
-
-	public boolean isInterrupted() {
-		return state == SessionState.INTERRUPTED;
-	}
-
-	public boolean isCompleted() {
-		return state == SessionState.COMPLETED;
-	}
-
-	public boolean isFailed() {
-		return state == SessionState.FAILED;
-	}
-
-	public SessionState getState() {
-		return state;
-	}
-
-	public int getJobsCount() {
-		return jobs.size();
+	public int getFrameCount() {
+		return frames.size();
 	}
 
 	public List<ExportJob> getJobs() {
 		return Collections.unmodifiableList(jobs);
 	}
 
-	public void updateProgress() {
-		setProgress((float)getCompletedJobsCount() / (float)jobs.size());
-	}
-
-	public int getCompletedJobsCount() {
-		int count = 0;
-		for (ExportJob job : jobs) {
-			if (job.isCompleted()) {
-				count += 1;
-			}
-		}
-		return count;
+	public List<Frame> getFrames() {
+		return Collections.unmodifiableList(frames);
 	}
 
 	public void dispose() {
 		jobs.clear();
 	}
 
-	protected void setFrameNumber(int frameNumber) {
-		this.frameNumber = frameNumber;
-	}
-
-	protected void setProgress(float progress) {
-		this.progress = progress;
-	}
-
-	protected void setCancelled(boolean cancelled) {
-		this.cancelled = cancelled;
-	}
-
-	protected void setState(SessionState state) {
-		this.state = state;
-	}
-
-	private List<ExportJob> createJobs(int frameNumber) {
+	private List<ExportJob> createJobs() {
 		final List<ExportJob> jobs = new ArrayList<ExportJob>();
 		final int frameWidth = size.getWidth();
 		final int frameHeight = size.getHeight();
@@ -209,7 +124,7 @@ public final class ExportSession {
 				for (int ty = 0; ty < ny; ty++) {
 					int tileOffsetX = tileSize * tx;
 					int tileOffsetY = tileSize * ty;
-					jobs.add(createJob(createProfile(frameNumber, frameWidth, frameHeight, tileOffsetX, tileOffsetY)));
+					jobs.add(createJob(createProfile(frameWidth, frameHeight, tileOffsetX, tileOffsetY)));
 				}
 			}
 		}
@@ -217,40 +132,37 @@ public final class ExportSession {
 			for (int ty = 0; ty < ny; ty++) {
 				int tileOffsetX = tileSize * nx;
 				int tileOffsetY = tileSize * ty;
-				jobs.add(createJob(createProfile(frameNumber, frameWidth, frameHeight, tileOffsetX, tileOffsetY)));
+				jobs.add(createJob(createProfile(frameWidth, frameHeight, tileOffsetX, tileOffsetY)));
 			}
 		}
 		if (ry > 0) {
 			for (int tx = 0; tx < nx; tx++) {
 				int tileOffsetX = tileSize * tx;
 				int tileOffsetY = tileSize * ny;
-				jobs.add(createJob(createProfile(frameNumber, frameWidth, frameHeight, tileOffsetX, tileOffsetY)));
+				jobs.add(createJob(createProfile(frameWidth, frameHeight, tileOffsetX, tileOffsetY)));
 			}
 		}
 		if (rx > 0 && ry > 0) {
 			int tileOffsetX = tileSize * nx;
 			int tileOffsetY = tileSize * ny;
-			jobs.add(createJob(createProfile(frameNumber, frameWidth, frameHeight, tileOffsetX, tileOffsetY)));
+			jobs.add(createJob(createProfile(frameWidth, frameHeight, tileOffsetX, tileOffsetY)));
 		}
 		return jobs;
 	}
 
-	private ExportProfile createProfile(int frameNumber, final int frameWidth, final int frameHeight, int tileOffsetX, int tileOffsetY) {
-		final ExportProfile profile = new ExportProfile();
-		profile.setPluginId(pluginId);
-		profile.setQuality(quality);
-		profile.setFrameNumber(frameNumber);
-		profile.setFrameRate(frameRate);
-		profile.setFrameWidth(frameWidth);
-		profile.setFrameHeight(frameHeight);
-		profile.setTileWidth(tileSize);
-		profile.setTileHeight(tileSize);
-		profile.setTileOffsetX(tileOffsetX);
-		profile.setTileOffsetY(tileOffsetY);
-		profile.setBorderWidth(BORDER_SIZE);
-		profile.setBorderHeight(BORDER_SIZE);
-		profile.setData(data);
-		return profile;
+	private ExportProfile createProfile(final int frameWidth, final int frameHeight, int tileOffsetX, int tileOffsetY) {
+		ExportProfileBuilder builder = new ExportProfileBuilder();
+		builder.withQuality(quality);
+		builder.withFrameRate(frameRate);
+		builder.withFrameWidth(frameWidth);
+		builder.withFrameHeight(frameHeight);
+		builder.withTileWidth(tileSize);
+		builder.withTileHeight(tileSize);
+		builder.withTileOffsetX(tileOffsetX);
+		builder.withTileOffsetY(tileOffsetY);
+		builder.withBorderWidth(BORDER_SIZE);
+		builder.withBorderHeight(BORDER_SIZE);
+		return builder.build();
 	}
 
 	private ExportJob createJob(ExportProfile profile) {

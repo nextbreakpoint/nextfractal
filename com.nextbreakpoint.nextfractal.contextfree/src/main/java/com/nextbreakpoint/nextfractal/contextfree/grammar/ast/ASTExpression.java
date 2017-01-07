@@ -1,8 +1,8 @@
 /*
- * NextFractal 1.3.0
+ * NextFractal 2.0.0
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2016 Andrea Medeghini
+ * Copyright 2015-2017 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -24,36 +24,41 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.grammar.ast;
 
-import com.nextbreakpoint.nextfractal.contextfree.grammar.*;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGDriver;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGRenderer;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFStackRule;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.Modification;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.CompilePhase;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ExpType;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.Locality;
 import org.antlr.v4.runtime.Token;
 
 public class ASTExpression {
+	protected CFDGDriver driver;
 	protected boolean isConstant;
 	protected boolean isNatural;
 	protected Locality locality;
 	protected ExpType type;
 	protected Token location;
 
-	public ASTExpression(Token location) {
-		this(false, false, Locality.UnknownLocal, ExpType.NoType, location);
+	public ASTExpression(CFDGDriver driver, Token location) {
+		this(driver, false, false, Locality.UnknownLocal, ExpType.NoType, location);
 	}
 
-	public ASTExpression(boolean isConstant, boolean isNatural, Token location) {
-		this(isConstant, isNatural, Locality.UnknownLocal, ExpType.NoType, location);
+	public ASTExpression(CFDGDriver driver, boolean isConstant, boolean isNatural, Token location) {
+		this(driver, isConstant, isNatural, Locality.UnknownLocal, ExpType.NoType, location);
 	}
 	
-	public ASTExpression(boolean isConstant, boolean isNatural, ExpType type, Token location) {
-		this(isConstant, isNatural, Locality.UnknownLocal, type, location);
+	public ASTExpression(CFDGDriver driver, boolean isConstant, boolean isNatural, ExpType type, Token location) {
+		this(driver, isConstant, isNatural, Locality.UnknownLocal, type, location);
 	}
 
-	public ASTExpression(boolean isConstant, boolean isNatural, Locality locality, Token location) {
-		this(isConstant, isNatural, locality, ExpType.NoType, location);
+	public ASTExpression(CFDGDriver driver, boolean isConstant, boolean isNatural, Locality locality, Token location) {
+		this(driver, isConstant, isNatural, locality, ExpType.NoType, location);
 	}
 
-	public ASTExpression(boolean isConstant, boolean isNatural, Locality locality, ExpType type, Token location) {
+	public ASTExpression(CFDGDriver driver, boolean isConstant, boolean isNatural, Locality locality, ExpType type, Token location) {
+		this.driver = driver;
 		this.isConstant = isConstant;
 		this.isNatural = isNatural;
 		this.locality = locality;
@@ -134,7 +139,7 @@ public class ASTExpression {
 	
 	public ASTExpression getChild(int i) {
 		if (i > 0) {
-			Logger.error("Expression list bounds exceeded", location);
+			driver.error("Expression list bounds exceeded", location);
 		}
 		return this;
 	}
@@ -160,11 +165,10 @@ public class ASTExpression {
 	}
 
 	public ASTExpression append(ASTExpression sib) {
-		return sib != null ? new ASTCons(location, this, sib) : this;
+		return sib != null ? new ASTCons(driver, location, this, sib) : this;
 	}
 
 	public int getTupleSize() {
-		//TODO completare
 		return 1;
 	}
 

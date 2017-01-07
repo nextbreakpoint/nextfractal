@@ -1,8 +1,8 @@
 /*
- * NextFractal 1.3.0
+ * NextFractal 2.0.0
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2016 Andrea Medeghini
+ * Copyright 2015-2017 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -25,7 +25,7 @@
 package com.nextbreakpoint.nextfractal.core.renderer;
 
 public interface RendererFactory {
-	public RendererBuffer createBuffer(int widh, int height);
+	public RendererBuffer createBuffer(int width, int height);
 	
 	public RendererGraphicsContext createGraphicsContext(Object context);
 
@@ -38,4 +38,6 @@ public interface RendererFactory {
 	public RendererColor createColor(double red, double green, double blue, double opacity);
 
 	public RendererAffine createAffine();
+
+	public RendererAffine createAffine(double[] matrix);
 }

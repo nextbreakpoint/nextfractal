@@ -1,8 +1,8 @@
 /*
- * NextFractal 1.3.0
+ * NextFractal 2.0.0
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2016 Andrea Medeghini
+ * Copyright 2015-2017 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -58,6 +58,13 @@ public class Double4D implements Serializable, Cloneable {
 	}
 
 	public Double4D(double[] v) {
+		this.x = v[0];
+		this.y = v[1];
+		this.z = v[2];
+		this.w = v[3];
+	}
+
+	public Double4D(Double[] v) {
 		this.x = v[0];
 		this.y = v[1];
 		this.z = v[2];
@@ -161,5 +168,20 @@ public class Double4D implements Serializable, Cloneable {
 	 */
 	public double[] toArray() {
 		return new double[] { x, y, z, w }; 
+	}
+
+	@Override
+	public int hashCode() {
+		int result;
+		long temp;
+		temp = Double.doubleToLongBits(x);
+		result = (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(y);
+		result = 31 * result + (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(z);
+		result = 31 * result + (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(w);
+		result = 31 * result + (int) (temp ^ (temp >>> 32));
+		return result;
 	}
 }

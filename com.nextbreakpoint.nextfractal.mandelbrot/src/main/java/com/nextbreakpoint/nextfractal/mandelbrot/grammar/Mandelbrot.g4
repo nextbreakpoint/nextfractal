@@ -85,8 +85,7 @@ pathop
 	;
 	
 beginstatement 
-	: 
-	{
+	: {
 		builder.pushStatementList();
 	}
 	statement* {
@@ -96,8 +95,7 @@ beginstatement
 	;
 		
 loopstatement
-	:
-	{
+	: {
 		builder.pushScope();
 		builder.pushStatementList();
 	}
@@ -109,8 +107,7 @@ loopstatement
 	;
 		
 endstatement 
-	:
-	{
+	: {
 		builder.pushScope();
 		builder.pushStatementList();
 	}
@@ -396,6 +393,10 @@ expression4 returns [ASTExpression result]
 
 function returns [ASTFunction result]
 	:
+	f='time' '(' ')' {
+		$result = new ASTFunction($f, $f.text, new ASTExpression[0]);
+	}
+	|
 	f=('mod' | 'mod2' | 'pha' | 're' | 'im') '(' e=expression ')' {
 		$result = new ASTFunction($f, $f.text, $e.result);		
 	}
@@ -404,11 +405,11 @@ function returns [ASTFunction result]
 		$result = new ASTFunction($f, $f.text, new ASTExpression[] { $e.result });		
 	}
 	|
-	f=('log' | 'exp' | 'sqrt' | 'abs' | 'ceil' | 'floor') '(' e=expression ')' {
+	f=('log' | 'exp' | 'sqrt' | 'abs' | 'ceil' | 'floor' | 'square' | 'saw' | 'ramp') '(' e=expression ')' {
 		$result = new ASTFunction($f, $f.text, new ASTExpression[] { $e.result });		
 	}
 	|
-	f=('pow' | 'atan2' | 'hypot' | 'max' | 'min') '(' e1=expression ',' e2=expression ')' {
+	f=('pow' | 'atan2' | 'hypot' | 'max' | 'min' | 'pulse') '(' e1=expression ',' e2=expression ')' {
 		$result = new ASTFunction($f, $f.text, new ASTExpression[] { $e1.result, $e2.result });		
 	}
 	;
@@ -502,13 +503,19 @@ palette
 		
 paletteelement 
 	:
-	t='[' bc=colorargb '>' ec=colorargb ',' s=INTEGER ',' e=expression ']' ';' {
+	t='[' {
+        builder.registerVariable("s", true, $t);
+    }  bc=colorargb'>' ec=colorargb ',' s=INTEGER ',' e=expression ']' ';' {
 		builder.addPaletteElement(new ASTPaletteElement($t, $bc.result, $ec.result, builder.parseInt($s.text), $e.result));
+	    builder.unregisterVariable("s");
 	}
 	|
-	t='[' bc=colorargb '>' ec=colorargb ',' s=INTEGER ']' ';' {
+	t='[' {
+        builder.registerVariable("s", true, $t);
+	} bc=colorargb '>' ec=colorargb ',' s=INTEGER ']' ';' {
 		builder.addPaletteElement(new ASTPaletteElement($t, $bc.result, $ec.result, builder.parseInt($s.text), null));
-	}  
+	    builder.unregisterVariable("s");
+	}
 	;
 				
 colorinit 
@@ -520,8 +527,8 @@ colorinit
 	;
 		
 colorstatement
-	:
-	{
+	: {
+		builder.setColorContext(true);
 		builder.pushStatementList();
 	}
 	statement* {
@@ -686,10 +693,14 @@ PATHOP_1POINTS
 	: 
 	'MOVETO'
 	| 
+	'MOVEREL'
+	|
 	'MOVETOREL'
 	| 
 	'LINETO'
 	| 
+	'LINEREL'
+	|
 	'LINETOREL'
 	;
 
@@ -697,10 +708,14 @@ PATHOP_2POINTS
 	: 
 	'ARCTO'
 	| 
+	'ARCREL'
+	|
 	'ARCTOREL'
 	|
 	'QUADTO'
 	| 
+	'QUADREL'
+	|
 	'QUADTOREL'
 	;
 
@@ -708,6 +723,8 @@ PATHOP_3POINTS
 	: 
 	'CURVETO'
 	| 
+	'CURVEREL'
+	|
 	'CURVETOREL'
 	;
 

@@ -1,8 +1,8 @@
 /*
- * NextFractal 1.3.0
+ * NextFractal 2.0.0
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2016 Andrea Medeghini
+ * Copyright 2015-2017 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -24,17 +24,16 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.compiler.support;
 
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
+import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
+import org.antlr.v4.runtime.Token;
+
 import java.util.Collection;
 import java.util.List;
 
-import org.antlr.v4.runtime.Token;
-
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
-import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
-
 public class CompiledOrbit {
 	private Number[] region;
-	private Collection<CompilerVariable> orbitVariables; 
+	private Collection<CompilerVariable> orbitVariables;
 	private Collection<CompilerVariable> stateVariables;
 	private List<CompiledStatement> beginStatements;
 	private List<CompiledStatement> loopStatements;

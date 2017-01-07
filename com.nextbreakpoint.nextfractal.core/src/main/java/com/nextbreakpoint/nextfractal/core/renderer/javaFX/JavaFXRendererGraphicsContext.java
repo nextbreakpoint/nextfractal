@@ -1,8 +1,8 @@
 /*
- * NextFractal 1.3.0
+ * NextFractal 2.0.0
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2016 Andrea Medeghini
+ * Copyright 2015-2017 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -24,13 +24,15 @@
  */
 package com.nextbreakpoint.nextfractal.core.renderer.javaFX;
 
-import javafx.scene.canvas.GraphicsContext;
-
 import com.nextbreakpoint.nextfractal.core.renderer.RendererAffine;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererColor;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererFont;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererGraphicsContext;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererImage;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.shape.FillRule;
+import javafx.scene.shape.StrokeLineCap;
+import javafx.scene.shape.StrokeLineJoin;
 
 public class JavaFXRendererGraphicsContext implements RendererGraphicsContext {
 	private GraphicsContext gc;
@@ -49,6 +51,14 @@ public class JavaFXRendererGraphicsContext implements RendererGraphicsContext {
 
 	public void setFont(RendererFont font) {
 		font.setFont(this);
+	}
+
+	public void setWindingRule(int windingRule) {
+		if (windingRule == 0) {
+			gc.setFillRule(FillRule.EVEN_ODD);
+		} else {
+			gc.setFillRule(FillRule.NON_ZERO);
+		}
 	}
 
 	public void rect(int x, int y, int width, int height) {
@@ -125,16 +135,59 @@ public class JavaFXRendererGraphicsContext implements RendererGraphicsContext {
 		gc.clip();
 	}
 
-	public void moveTo(int x, int y) {
+	public void moveTo(float x, float y) {
 		gc.moveTo(x, y);
 	}
 
-	public void lineTo(int x, int y) {
+	public void lineTo(float x, float y) {
 		gc.lineTo(x, y);
 	}
 
-	@Override
+	public void quadTo(float x1, float y1, float x2, float y2) {
+		gc.quadraticCurveTo(x1, y1, x2, y2);
+	}
+
+	public void cubicTo(float x1, float y1, float x2, float y2, float x3, float y3) {
+		gc.bezierCurveTo(x1, y1, x2, y2, x3, y3);
+	}
+
+//	public void arcTo(float rx, float ry, float angle, float largeArcFlag, float seepwFlag, float x, float y) {
+//	}
+
 	public void setAlpha(double alpha) {
 		gc.setGlobalAlpha(alpha);
+	}
+
+	public void setStrokeLine(float width, int cap, int join, float miterLimit) {
+		gc.setLineCap(mapToCap(cap));
+		gc.setLineJoin(mapToJoin(join));
+		gc.setLineWidth(width);
+		gc.setMiterLimit(miterLimit);
+	}
+
+	private StrokeLineJoin mapToJoin(int join) {
+		switch (join) {
+			case JOIN_MITER:
+				return StrokeLineJoin.MITER;
+			case JOIN_ROUND:
+				return StrokeLineJoin.ROUND;
+			case JOIN_BEVEL:
+				return StrokeLineJoin.BEVEL;
+			default:
+				throw new RuntimeException("Invalid line join " + join);
+		}
+	}
+
+	private StrokeLineCap mapToCap(int cap) {
+		switch (cap) {
+			case CAP_BUTT:
+				return StrokeLineCap.BUTT;
+			case CAP_ROUND:
+				return StrokeLineCap.ROUND;
+			case CAP_SQUARE:
+				return StrokeLineCap.SQUARE;
+			default:
+				throw new RuntimeException("Invalid line cap " + cap);
+		}
 	}
 }

@@ -1,8 +1,8 @@
 /*
- * NextFractal 1.3.0
+ * NextFractal 2.0.0
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2016 Andrea Medeghini
+ * Copyright 2015-2017 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -24,13 +24,18 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.compiler;
 
-import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDG;
 import com.nextbreakpoint.nextfractal.contextfree.compiler.CompilerReport.Type;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.*;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDG;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGDriver;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGLexer;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGLogger;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGParser;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.exceptions.CFDGException;
+import com.nextbreakpoint.nextfractal.core.Error;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.tree.ParseTree;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -40,35 +45,50 @@ import java.util.logging.Logger;
 
 public class InterpreterReportCompiler {
 	private static final Logger logger = Logger.getLogger(InterpreterReportCompiler.class.getName());
-	
+	private static final String INCLUDE_LOCATION = "include.location";
+
 	public CompilerReport generateReport(String source) throws IOException {
-		List<CompilerError> errors = new ArrayList<>();
-		CFDG ast = parse(source, errors);
-		return new CompilerReport(ast, Type.INTERPRETER, "", "", errors);
+		List<Error> errors = new ArrayList<>();
+		CFDG cfdg = parse(source, errors);
+		return new CompilerReport(cfdg, Type.INTERPRETER, source, errors);
 	}
 	
-	private CFDG parse(String source, List<CompilerError> errors) throws IOException {
-//		try {
-//			ANTLRInputStream is = new ANTLRInputStream(new StringReader(source));
-//			MandelbrotLexer lexer = new MandelbrotLexer(is);
-//			CommonTokenStream tokens = new CommonTokenStream(lexer);
-//			MandelbrotParser parser = new MandelbrotParser(tokens);
-//			parser.setErrorHandler(new CompilerErrorStrategy(errors));
-//			ParseTree fractalTree = parser.fractal();
-//            if (fractalTree != null) {
-//            	ASTBuilder builder = parser.getBuilder();
-//            	ASTFractal fractal = builder.getFractal();
-//            	return fractal;
-//            }
-//		} catch (ASTException e) {
-//			CompilerError error = new CompilerError(CompilerError.ErrorType.M_COMPILER, e.getLocation().getLine(), e.getLocation().getCharPositionInLine(), e.getLocation().getStartIndex(), e.getLocation().getStopIndex() - e.getLocation().getStartIndex(), e.getMessage());
-//			logger.log(Level.FINE, error.toString(), e);
-//			errors.add(error);
-//		} catch (Exception e) {
-//			CompilerError error = new CompilerError(CompilerError.ErrorType.M_COMPILER, 0L, 0L, 0L, 0L, e.getMessage());
-//			logger.log(Level.FINE, error.toString(), e);
-//			errors.add(error);
-//		}
+	private CFDG parse(String source, List<Error> errors) throws IOException {
+		try {
+			ANTLRInputStream is = new ANTLRInputStream(new StringReader(source));
+			CFDGLexer lexer = new CFDGLexer(is);
+			CommonTokenStream tokens = new CommonTokenStream(lexer);
+			CFDGParser parser = new CFDGParser(tokens);
+			parser.setDriver(new CFDGDriver());
+			CFDGLogger logger = new CFDGLogger();
+			parser.getDriver().setLogger(logger);
+			parser.setErrorHandler(new CompilerErrorStrategy(errors));
+			parser.getDriver().setCurrentPath(getIncludeDir());
+			if (parser.choose() != null) {
+				errors.addAll(logger.getErrors());
+				return parser.getDriver().getCFDG();
+			}
+		} catch (CFDGException e) {
+			CompilerError error = new CompilerError(Error.ErrorType.SCRIPT_COMPILER, e.getLocation().getLine(), e.getLocation().getCharPositionInLine(), e.getLocation().getStartIndex(), e.getLocation().getStopIndex() - e.getLocation().getStartIndex(), e.getMessage());
+			logger.log(Level.FINE, error.toString(), e);
+			errors.add(error);
+		} catch (Exception e) {
+			CompilerError error = new CompilerError(Error.ErrorType.SCRIPT_COMPILER, 0L, 0L, 0L, 0L, e.getMessage());
+			logger.log(Level.FINE, error.toString(), e);
+			errors.add(error);
+		}
 		return null;
 	}
-}	
+
+	private String getIncludeDir() {
+		String defaultBrowserDir = System.getProperty(INCLUDE_LOCATION, "[user.home]");
+		String userHome = System.getProperty("user.home");
+		String userDir = System.getProperty("user.dir");
+		String currentDir = new File(".").getAbsoluteFile().getParent();
+		defaultBrowserDir = defaultBrowserDir.replace("[current.path]", currentDir);
+		defaultBrowserDir = defaultBrowserDir.replace("[user.home]", userHome);
+		defaultBrowserDir = defaultBrowserDir.replace("[user.dir]", userDir);
+		logger.info("includeDir = " + defaultBrowserDir);
+		return defaultBrowserDir;
+	}
+}

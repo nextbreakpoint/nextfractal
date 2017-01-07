@@ -1,8 +1,8 @@
 /*
- * NextFractal 1.3.0
+ * NextFractal 2.0.0
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2016 Andrea Medeghini
+ * Copyright 2015-2017 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -24,30 +24,38 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.grammar.ast;
 
+import com.nextbreakpoint.nextfractal.contextfree.core.AffineTransform1D;
+import com.nextbreakpoint.nextfractal.contextfree.core.AffineTransformTime;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGDriver;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGRenderer;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.HSBColor;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.Modification;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.AssignmentType;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.CompilePhase;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ExpType;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.FlagType;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ModClass;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ModType;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.exceptions.DeferUntilRuntimeException;
+import org.antlr.v4.runtime.Token;
+
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.util.HashMap;
 import java.util.Map;
-
-import com.nextbreakpoint.nextfractal.contextfree.core.AffineTransform1D;
-import com.nextbreakpoint.nextfractal.contextfree.core.AffineTransformTime;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.*;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.*;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.exceptions.DeferUntilRuntimeException;
-import org.antlr.v4.runtime.Token;
 
 public class ASTModTerm extends ASTExpression {
 	private int argCount;
 	private ModType modType;
 	private ASTExpression args;
 
-	public ASTModTerm(ModType modType, String paramStrings, Token location) {
-		super(true, false, ExpType.ModType, location);
+	public ASTModTerm(CFDGDriver driver, ModType modType, String paramStrings, Token location) {
+		super(driver, true, false, ExpType.ModType, location);
 		this.modType = modType;
 		this.args = null;
 		this.argCount = 0;
 
-		Map<String, Integer> paramMap = new HashMap<>();
+		Map<String, Long> paramMap = new HashMap<>();
 		paramMap.put("evenodd", FlagType.CF_EVEN_ODD.getMask());
 		paramMap.put("iso", FlagType.CF_ISO_WIDTH.getMask());
 		paramMap.put("miterjoin", FlagType.CF_MITER_JOIN.getMask());
@@ -63,22 +71,22 @@ public class ASTModTerm extends ASTExpression {
 		//TODO controllare
 
 		for (String paramString : paramStrings.split(" ")) {
-			Integer count = paramMap.get(paramString);
+			Long count = paramMap.get(paramString);
 			if (count != null) {
 				argCount |= count;
 			}
 		}
 	}
 
-	public ASTModTerm(ModType modType, ASTExpression args, Token location) {
-		super(args.isConstant(), false, ExpType.ModType, location);
+	public ASTModTerm(CFDGDriver driver, ModType modType, ASTExpression args, Token location) {
+		super(driver, args.isConstant(), false, ExpType.ModType, location);
 		this.modType = modType;
 		this.args = args;
 		this.argCount = 0;
 	}
 
-	public ASTModTerm(ModType modType, Token location) {
-		super(true, false, ExpType.ModType, location);
+	public ASTModTerm(CFDGDriver driver, ModType modType, Token location) {
+		super(driver, true, false, ExpType.ModType, location);
 		this.modType = modType;
 		this.args = null;
 		this.argCount = 0;
@@ -110,7 +118,7 @@ public class ASTModTerm extends ASTExpression {
 
 	@Override
 	public int evaluate(double[] result, int length, CFDGRenderer renderer) {
-        Logger.error("Improper evaluation of an adjustment expression", location);
+        driver.error("Improper evaluation of an adjustment expression", location);
         return -1;
 	}
 
@@ -123,13 +131,13 @@ public class ASTModTerm extends ASTExpression {
 			if (modType != ModType.modification && args.type == ExpType.NumericType) {
 				argcount = args.evaluate(modArgs, 6, renderer);
 			} else if (modType == ModType.modification && args.type != ExpType.ModType) {
-                Logger.error("Adjustments require numeric arguments", location);
+                driver.error("Adjustments require numeric arguments", location);
                 return;
 			}
 		}
 
 		if (argcount != argCount) {
-            Logger.error("Error evaluating arguments", location);
+            driver.error("Error evaluating arguments", location);
             return;
 		}
 		
@@ -212,7 +220,7 @@ public class ASTModTerm extends ASTExpression {
 							par.concatenate(t2d);
 							result.getTransform().concatenate(par);
 						} catch (NoninvertibleTransformException e) {
-							Logger.error(e.getMessage(), null);
+							driver.error(e.getMessage(), null);
 						}
 						break;
 					}
@@ -271,7 +279,7 @@ public class ASTModTerm extends ASTExpression {
 				 if (argcount != 2) {
 				 	 for (int i = 0; i < argcount; i++) {
 						 if ((result.colorAssignment() & mask) != 0 || (!hue && color[colorComp] != 0.0)) {
-							 if (renderer == null) throw new DeferUntilRuntimeException();
+							 if (renderer == null) throw new DeferUntilRuntimeException(location);
 							 if (!shapeDest) {
 								 renderer.colorConflict(getLocation());
 							 }
@@ -287,7 +295,7 @@ public class ASTModTerm extends ASTExpression {
 					 }
 				 } else {
 					 if ((result.colorAssignment() & mask) != 0 || (color[colorComp] != 0.0) || (!hue && target[targetComp] != 0.0)) {
-						 if (renderer == null) throw new DeferUntilRuntimeException();
+						 if (renderer == null) throw new DeferUntilRuntimeException(location);
 						 if (!shapeDest) {
 							 renderer.colorConflict(getLocation());
 						 }
@@ -312,7 +320,7 @@ public class ASTModTerm extends ASTExpression {
 			}
 			case hueTarg: {
 				 if ((result.colorAssignment() & mask) != 0 || (color[colorComp] != 0.0)) {
-					 if (renderer == null) throw new DeferUntilRuntimeException();
+					 if (renderer == null) throw new DeferUntilRuntimeException(location);
 					 if (!shapeDest) {
 						 renderer.colorConflict(getLocation());
 					 }
@@ -330,7 +338,7 @@ public class ASTModTerm extends ASTExpression {
 			case targSat: {
 				targetComp += modType.getType() - ModType.hueTarg.getType();
 				if (target[targetComp] != 0.0) {
-					 if (renderer == null) throw new DeferUntilRuntimeException();
+					 if (renderer == null) throw new DeferUntilRuntimeException(location);
 					 if (!shapeDest) {
 						 renderer.colorConflict(getLocation());
 					 }
@@ -346,7 +354,7 @@ public class ASTModTerm extends ASTExpression {
 				 target[0] += modArgs[0];
 				break;
 			case stroke: {
-				Logger.error("Cannot provide a stroke width in this context", location);
+				driver.error("Cannot provide a stroke width in this context", location);
 				break;
 			}
 			case x1:
@@ -355,15 +363,15 @@ public class ASTModTerm extends ASTExpression {
 			case y2:
 			case xrad:
 			case yrad: {
-				Logger.error("Cannot provide a path operation term in this context", location);
+				driver.error("Cannot provide a path operation term in this context", location);
 				break;
 			}
 			case param: {
-				Logger.error("Cannot provide a parameter in this context", location);
+				driver.error("Cannot provide a parameter in this context", location);
 				break;
 			}
 			case unknown: {
-				Logger.error("Unrecognized adjustment type", location);
+				driver.error("Unrecognized adjustment type", location);
 				break;
 			}
 			case modification: {
@@ -371,7 +379,7 @@ public class ASTModTerm extends ASTExpression {
 					if (args != null && getArguments() instanceof ASTModification) {
 						ASTModification mod = (ASTModification)getArguments();
 						if (mod == null || (mod.getModClass().getType() & (ModClass.HueClass.getType() | ModClass.HueTargetClass.getType() | ModClass.BrightClass.getType() | ModClass.BrightTargetClass.getType() | ModClass.SatClass.getType() | ModClass.SatTargetClass.getType() | ModClass.AlphaClass.getType() | ModClass.AlphaTargetClass.getType())) != 0) {
-							throw new DeferUntilRuntimeException();
+							throw new DeferUntilRuntimeException(location);
 						}
 					}
 				}
@@ -405,7 +413,7 @@ public class ASTModTerm extends ASTExpression {
 
 		if (args == null) {
 			if (modType == ModType.param) {
-                Logger.error("Illegal expression in shape adjustment", location);
+                driver.error("Illegal expression in shape adjustment", location);
                 return null;
 			}
 		}
@@ -465,7 +473,7 @@ public class ASTModTerm extends ASTExpression {
 							case transform:
 								maxCount = 6;
 								if (argCount != 1 && argCount != 2 && argCount != 4 && argCount != 6) {
-									Logger.error("transform adjustment takes 1, 2, 4, or 6 parameters", location);
+									driver.error("transform adjustment takes 1, 2, 4, or 6 parameters", location);
 								}
 								break;
 							case param:
@@ -478,17 +486,17 @@ public class ASTModTerm extends ASTExpression {
 						}
 
 						if (argCount < minCount) {
-							Logger.error("Not enough adjustment parameters", location);
+							driver.error("Not enough adjustment parameters", location);
 						}
 						if (argCount > maxCount) {
-							Logger.error("Too many adjustment parameters", location);
+							driver.error("Too many adjustment parameters", location);
 						}
 						break;
 					}
 
 					case ModType: {
 						if (modType != ModType.transform) {
-							Logger.error("Cannot accept a transform expression here", location);
+							driver.error("Cannot accept a transform expression here", location);
 						} else {
 							modType = ModType.modification;
 						}
@@ -496,7 +504,7 @@ public class ASTModTerm extends ASTExpression {
 					}
 
 					default:
-						Logger.error("Illegal expression in shape adjustment", location);
+						driver.error("Illegal expression in shape adjustment", location);
 						break;
 				}
 				break;

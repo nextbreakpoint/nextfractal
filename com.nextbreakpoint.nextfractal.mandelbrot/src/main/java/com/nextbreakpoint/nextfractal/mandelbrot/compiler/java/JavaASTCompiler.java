@@ -1,8 +1,8 @@
 /*
- * NextFractal 1.3.0
+ * NextFractal 2.0.0
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2016 Andrea Medeghini
+ * Copyright 2015-2017 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -24,15 +24,11 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.compiler.java;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.ExpressionContext;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledColorExpression;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledCondition;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledConditionalExpression;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledExpression;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledPalette;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledPaletteElement;
@@ -40,16 +36,16 @@ import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledStatem
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrap;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOp;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpArcTo;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpArcToRel;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpArcRel;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpClose;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpCurveTo;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpCurveToRel;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpCurveRel;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpLineTo;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpLineToRel;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpLineRel;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpMoveTo;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpMoveToRel;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpMoveRel;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpQuadTo;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpQuadToRel;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpQuadRel;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTAssignStatement;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTColorComponent;
@@ -81,15 +77,22 @@ import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTStatement;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTStopStatement;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTVariable;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class JavaASTCompiler implements ASTExpressionCompiler {
 	private final Map<String, CompilerVariable> variables;
 	private final ExpressionContext context;
 	private final StringBuilder builder;
-	
-	public JavaASTCompiler(ExpressionContext context, Map<String, CompilerVariable> variables, StringBuilder builder) {
+	private final ClassType classType;
+
+	public JavaASTCompiler(ExpressionContext context, Map<String, CompilerVariable> variables, StringBuilder builder, ClassType classType) {
 		this.variables = variables;
 		this.context = context;
 		this.builder = builder;
+		this.classType = classType;
 	}
 
 	@Override
@@ -110,101 +113,118 @@ public class JavaASTCompiler implements ASTExpressionCompiler {
 
 	@Override
 	public CompiledExpression compile(ASTFunction function) {
-		builder.append("func");
-		builder.append(function.getName().toUpperCase().substring(0, 1));
-		builder.append(function.getName().substring(1));
-		builder.append("(");
-		switch (function.getName()) {
-			case "mod":
-			case "mod2":
-			case "pha":
-			case "re":
-			case "im":
-				if (function.getArguments().length != 1) {
-					throw new ASTException("Invalid number of arguments: " + function.getLocation().getText(), function.getLocation());
-				}				
-				break;
-				
-			case "sin":
-			case "cos":
-			case "tan":
-			case "asin":
-			case "acos":
-			case "atan":
-				if (function.getArguments().length != 1) {
-					throw new ASTException("Invalid number of arguments: " + function.getLocation().getText(), function.getLocation());
-				}	
-				if (!function.getArguments()[0].isReal()) {
-					builder.append("getNumber(");
-					builder.append(context.newNumberIndex());
-					builder.append("),");
-				}
-				break;
-
-			case "abs":
-			case "ceil":
-			case "floor":
-			case "log":
-				if (function.getArguments().length != 1) {
-					throw new ASTException("Invalid number of arguments: " + function.getLocation().getText(), function.getLocation());
-				}				
-				if (!function.getArguments()[0].isReal()) {
-					throw new ASTException("Invalid type of arguments: " + function.getLocation().getText(), function.getLocation());
-				}				
-				break;
-				
-			case "min":
-			case "max":
-			case "atan2":
-			case "hypot":
-				if (function.getArguments().length != 2) {
-					throw new ASTException("Invalid number of arguments: " + function.getLocation().getText(), function.getLocation());
-				}				
-				if (!function.getArguments()[0].isReal()) {
-					throw new ASTException("Invalid type of arguments: " + function.getLocation().getText(), function.getLocation());
-				}				
-				if (!function.getArguments()[1].isReal()) {
-					throw new ASTException("Invalid type of arguments: " + function.getLocation().getText(), function.getLocation());
-				}				
-				break;
-				
-			case "pow":
-				if (function.getArguments().length != 2) {
-					throw new ASTException("Invalid number of arguments: " + function.getLocation().getText(), function.getLocation());
-				}				
-				if (!function.getArguments()[1].isReal()) {
-					throw new ASTException("Invalid type of arguments: " + function.getLocation().getText(), function.getLocation());
-				}				
-				if (!function.getArguments()[0].isReal()) {
-					builder.append("getNumber(");
-					builder.append(context.newNumberIndex());
-					builder.append("),");
-				}
-				break;
-
-			case "sqrt":
-			case "exp":
-				if (function.getArguments().length != 1) {
-					throw new ASTException("Invalid number of arguments: " + function.getLocation().getText(), function.getLocation());
-				}				
-				if (!function.getArguments()[0].isReal()) {
-					builder.append("getNumber(");
-					builder.append(context.newNumberIndex());
-					builder.append("),");
-				}
-				break;
-				
-			default:
-				throw new ASTException("Unsupported function: " + function.getLocation().getText(), function.getLocation());
-		}
-		ASTExpression[] arguments = function.getArguments();
-		for (int i = 0; i < arguments.length; i++) {
-			arguments[i].compile(this);
-			if (i < arguments.length - 1) {
-				builder.append(",");
+		if (function.getName().equals("time")) {
+			if (classType.equals(ClassType.ORBIT)) {
+				context.setOrbitUseTime(true);
 			}
+			if (classType.equals(ClassType.COLOR)) {
+				context.setColorUseTime(true);
+			}
+			if (function.getArguments().length != 0) {
+				throw new ASTException("Invalid number of arguments: " + function.getLocation().getText(), function.getLocation());
+			}
+			builder.append("time()");
+		} else {
+			builder.append("func");
+			builder.append(function.getName().toUpperCase().substring(0, 1));
+			builder.append(function.getName().substring(1));
+			builder.append("(");
+			switch (function.getName()) {
+				case "mod":
+				case "mod2":
+				case "pha":
+				case "re":
+				case "im":
+					if (function.getArguments().length != 1) {
+						throw new ASTException("Invalid number of arguments: " + function.getLocation().getText(), function.getLocation());
+					}
+					break;
+
+				case "sin":
+				case "cos":
+				case "tan":
+				case "asin":
+				case "acos":
+				case "atan":
+					if (function.getArguments().length != 1) {
+						throw new ASTException("Invalid number of arguments: " + function.getLocation().getText(), function.getLocation());
+					}
+					if (!function.getArguments()[0].isReal()) {
+						builder.append("getNumber(");
+						builder.append(context.newNumberIndex());
+						builder.append("),");
+					}
+					break;
+
+				case "abs":
+				case "ceil":
+				case "floor":
+				case "log":
+				case "square":
+				case "saw":
+				case "ramp":
+					if (function.getArguments().length != 1) {
+						throw new ASTException("Invalid number of arguments: " + function.getLocation().getText(), function.getLocation());
+					}
+					if (!function.getArguments()[0].isReal()) {
+						throw new ASTException("Invalid type of arguments: " + function.getLocation().getText(), function.getLocation());
+					}
+					break;
+
+				case "min":
+				case "max":
+				case "atan2":
+				case "hypot":
+				case "pulse":
+					if (function.getArguments().length != 2) {
+						throw new ASTException("Invalid number of arguments: " + function.getLocation().getText(), function.getLocation());
+					}
+					if (!function.getArguments()[0].isReal()) {
+						throw new ASTException("Invalid type of arguments: " + function.getLocation().getText(), function.getLocation());
+					}
+					if (!function.getArguments()[1].isReal()) {
+						throw new ASTException("Invalid type of arguments: " + function.getLocation().getText(), function.getLocation());
+					}
+					break;
+
+				case "pow":
+					if (function.getArguments().length != 2) {
+						throw new ASTException("Invalid number of arguments: " + function.getLocation().getText(), function.getLocation());
+					}
+					if (!function.getArguments()[1].isReal()) {
+						throw new ASTException("Invalid type of arguments: " + function.getLocation().getText(), function.getLocation());
+					}
+					if (!function.getArguments()[0].isReal()) {
+						builder.append("getNumber(");
+						builder.append(context.newNumberIndex());
+						builder.append("),");
+					}
+					break;
+
+				case "sqrt":
+				case "exp":
+					if (function.getArguments().length != 1) {
+						throw new ASTException("Invalid number of arguments: " + function.getLocation().getText(), function.getLocation());
+					}
+					if (!function.getArguments()[0].isReal()) {
+						builder.append("getNumber(");
+						builder.append(context.newNumberIndex());
+						builder.append("),");
+					}
+					break;
+
+				default:
+					throw new ASTException("Unsupported function: " + function.getLocation().getText(), function.getLocation());
+			}
+			ASTExpression[] arguments = function.getArguments();
+			for (int i = 0; i < arguments.length; i++) {
+				arguments[i].compile(this);
+				if (i < arguments.length - 1) {
+					builder.append(",");
+				}
+			}
+			builder.append(")");
 		}
-		builder.append(")");
 		return null;
 	}
 
@@ -565,12 +585,12 @@ public class JavaASTCompiler implements ASTExpressionCompiler {
 		builder.append(") {\n");
 		Map<String, CompilerVariable> vars = new HashMap<String, CompilerVariable>(variables);
 		for (ASTStatement innerStatement : statement.getThenStatementList().getStatements()) {
-			innerStatement.compile(new JavaASTCompiler(context, vars, builder));
+			innerStatement.compile(new JavaASTCompiler(context, vars, builder, classType));
 		}
 		if (statement.getElseStatementList() != null) {
 			builder.append("} else {\n");
 			for (ASTStatement innerStatement : statement.getElseStatementList().getStatements()) {
-				innerStatement.compile(new JavaASTCompiler(context, vars, builder));
+				innerStatement.compile(new JavaASTCompiler(context, vars, builder, classType));
 			}
 		}
 		builder.append("}\n");
@@ -678,33 +698,38 @@ public class JavaASTCompiler implements ASTExpressionCompiler {
 		switch (orbitTrapOp.getOp()) {
 			case "MOVETO":
 				return new CompiledTrapOpMoveTo(c1, orbitTrapOp.getLocation());
-	
+
+			case "MOVEREL":
 			case "MOVETOREL":
-				return new CompiledTrapOpMoveToRel(c1, orbitTrapOp.getLocation());
+				return new CompiledTrapOpMoveRel(c1, orbitTrapOp.getLocation());
 	
 			case "LINETO":
 				return new CompiledTrapOpLineTo(c1, orbitTrapOp.getLocation());
-	
+
+			case "LINEREL":
 			case "LINETOREL":
-				return new CompiledTrapOpLineToRel(c1, orbitTrapOp.getLocation());
+				return new CompiledTrapOpLineRel(c1, orbitTrapOp.getLocation());
 	
 			case "ARCTO":
 				return new CompiledTrapOpArcTo(c1, c2, orbitTrapOp.getLocation());
-	
+
+			case "ARCREL":
 			case "ARCTOREL":
-				return new CompiledTrapOpArcToRel(c1, c2, orbitTrapOp.getLocation());
+				return new CompiledTrapOpArcRel(c1, c2, orbitTrapOp.getLocation());
 	
 			case "QUADTO":
 				return new CompiledTrapOpQuadTo(c1, c2, orbitTrapOp.getLocation());
-	
+
+			case "QUADREL":
 			case "QUADTOREL":
-				return new CompiledTrapOpQuadToRel(c1, c2, orbitTrapOp.getLocation());
+				return new CompiledTrapOpQuadRel(c1, c2, orbitTrapOp.getLocation());
 	
 			case "CURVETO":
 				return new CompiledTrapOpCurveTo(c1, c2, c3, orbitTrapOp.getLocation());
-	
+
+			case "CURVEREL":
 			case "CURVETOREL":
-				return new CompiledTrapOpCurveToRel(c1, c2, c3, orbitTrapOp.getLocation());
+				return new CompiledTrapOpCurveRel(c1, c2, c3, orbitTrapOp.getLocation());
 	
 			case "CLOSE":
 				return new CompiledTrapOpClose(orbitTrapOp.getLocation());
@@ -733,7 +758,6 @@ public class JavaASTCompiler implements ASTExpressionCompiler {
 
 	@Override
 	public CompiledExpression compile(ASTConditionalExpression astConditionalExpression) {
-		// TODO Auto-generated method stub
-		return null;
+		return new CompiledConditionalExpression(context, astConditionalExpression.getConditionExp().compile(this), astConditionalExpression.getThenExp().compile(this), astConditionalExpression.getElseExp().compile(this), astConditionalExpression.getLocation());
 	}
 }

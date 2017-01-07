@@ -1,8 +1,8 @@
 /*
- * NextFractal 1.3.0
+ * NextFractal 2.0.0
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2016 Andrea Medeghini
+ * Copyright 2015-2017 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -24,7 +24,12 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree;
 
+import com.nextbreakpoint.nextfractal.contextfree.compiler.Compiler;
+import com.nextbreakpoint.nextfractal.contextfree.compiler.CompilerReport;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDG;
+import com.nextbreakpoint.nextfractal.contextfree.renderer.Renderer;
 import com.nextbreakpoint.nextfractal.core.ImageGenerator;
+import com.nextbreakpoint.nextfractal.core.Metadata;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererFactory;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
@@ -47,48 +52,29 @@ public class ContextFreeImageGenerator implements ImageGenerator {
 	}
 
 	@Override
-	public IntBuffer renderImage(Object data) {
-		ContextFreeData generatorData = (ContextFreeData)data;
+	public IntBuffer renderImage(String script, Metadata data) {
+		ContextFreeMetadata metadata = (ContextFreeMetadata)data;
 		RendererSize suggestedSize = tile.getTileSize();
 		int[] pixels = new int[suggestedSize.getWidth() * suggestedSize.getHeight()];
 		for (int i = 0; i < pixels.length; i++) pixels[i] = 0xFF000000;
 		IntBuffer buffer = IntBuffer.wrap(pixels);
 		try {
-//			Compiler compiler = new Compiler();
-//			CompilerReport report = compiler.compileReport(generatorData.getSource());
-//			if (report.getErrors().size() > 0) {
-//				throw new RuntimeException("Failed to compile source");
-//			}
-//			CompilerBuilder<Orbit> orbitBuilder = compiler.compileOrbit(report);
-//			if (orbitBuilder.getErrors().size() > 0) {
-//				throw new RuntimeException("Failed to compile Orbit class");
-//			}
-//			CompilerBuilder<Color> colorBuilder = compiler.compileColor(report);
-//			if (colorBuilder.getErrors().size() > 0) {
-//				throw new RuntimeException("Failed to compile Color class");
-//			}
-//			Renderer renderer = new Renderer(threadFactory, renderFactory, tile);
-//			renderer.setOpaque(opaque);
-//			double[] translation = generatorData.getTranslation();
-//			double[] rotation = generatorData.getRotation();
-//			double[] scale = generatorData.getScale();
-//			double[] constant = generatorData.getPoint();
-//			boolean julia = generatorData.isJulia();
-//			renderer.setOrbit(orbitBuilder.build());
-//			renderer.setColor(colorBuilder.build());
-//			renderer.init();
-//			RendererView view = new RendererView();
-//			view .setTraslation(new Double4D(translation));
-//			view.setRotation(new Double4D(rotation));
-//			view.setScale(new Double4D(scale));
-//			view.setState(new Integer4D(0, 0, 0, 0));
-//			view.setJulia(julia);
-//			view.setPoint(new Number(constant));
-//			renderer.setView(view);
-//			renderer.runTask();
-//			renderer.waitForTasks();
-//			renderer.getPixels(pixels);
-//			aborted = renderer.isInterrupted();
+			Compiler compiler = new Compiler();
+			CompilerReport report = compiler.compileReport(script);
+			if (report.getErrors().size() > 0) {
+				throw new RuntimeException("Failed to compile source");
+			}
+			CFDG cfdg = report.getCFDG();
+			Renderer renderer = new Renderer(threadFactory, renderFactory, tile);
+			renderer.setSeed(metadata.getSeed());
+			renderer.setOpaque(opaque);
+			renderer.setCFDG(cfdg);
+			renderer.setSeed(metadata.getSeed());
+			renderer.init();
+			renderer.runTask();
+			renderer.waitForTasks();
+			renderer.getPixels(pixels);
+			aborted = renderer.isInterrupted();
 		} catch (Exception e) {
 			//TODO display errors
 		}

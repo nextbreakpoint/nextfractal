@@ -1,8 +1,8 @@
 /*
- * NextFractal 1.3.0
+ * NextFractal 2.0.0
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2016 Andrea Medeghini
+ * Copyright 2015-2017 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -24,15 +24,20 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.grammar.ast;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.nextbreakpoint.nextfractal.contextfree.grammar.*;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGDriver;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGRenderer;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFStackModification;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFStackNumber;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.Modification;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.Shape;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.CompilePhase;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.DefineType;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ExpType;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.RepElemType;
 import org.antlr.v4.runtime.Token;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ASTDefine extends ASTReplacement {
 	private DefineType defineType;
@@ -54,7 +59,6 @@ public class ASTDefine extends ASTReplacement {
 		this.name = name;
 		this.configDepth = -1;
 		int[] i = new int[1];
-		getChildChange().getModData().getRand64Seed().init();
 		getChildChange().getModData().getRand64Seed().xorString(name, i);
 	}
 
@@ -166,7 +170,6 @@ public class ASTDefine extends ASTReplacement {
 					return;
 				}
 
-				getChildChange().getModData().getRand64Seed().init();
 				getChildChange().setEntropyIndex(0);
 				getChildChange().addEntropy(name);
 
@@ -180,13 +183,13 @@ public class ASTDefine extends ASTReplacement {
 				}
 				if (defineType == DefineType.FunctionDefine) {
 					if (t != getExpType()) {
-						Logger.error("Mismatch between declared and defined type of user function", location);
+						driver.error("Mismatch between declared and defined type of user function", location);
 					}
 					if (getExpType() == ExpType.NumericType && t == ExpType.NumericType && sz != tupleSize) {
-						Logger.error("Mismatch between declared and defined vector length of user function", location);
+						driver.error("Mismatch between declared and defined vector length of user function", location);
 					}
 					if (isNatural() && (exp == null || exp.isNatural())) {
-						Logger.error("Mismatch between declared natural and defined not-natural type of user function", location);
+						driver.error("Mismatch between declared natural and defined not-natural type of user function", location);
 					}
 				} else {
 					if (getShapeSpecifier().getShapeType() >= 0) {
@@ -195,11 +198,11 @@ public class ASTDefine extends ASTReplacement {
 						List<ASTParameter>[] shapeParams = new List[1];
 						driver.getTypeInfo(getShapeSpecifier().getShapeType(), func, shapeParams);
 						if (func[0] != null) {
-							Logger.error("Variable name is also the name of a function", location);
-							Logger.error("function definition is here", func[0].getLocation());
+							driver.error("Variable name is also the name of a function", location);
+							driver.error("function definition is here", func[0].getLocation());
 						}
 						if (shapeParams[0] != null) {
-							Logger.error("Variable name is also the name of a shape", location);
+							driver.error("Variable name is also the name of a shape", location);
 						}
 					}
 
@@ -207,7 +210,7 @@ public class ASTDefine extends ASTReplacement {
 					expType = t;
 					//TODO controllare
 					if (t.getType() != (t.getType() & (-t.getType())) || t.getType() == 0) {
-						Logger.error("Expression can only have one type", location);
+						driver.error("Expression can only have one type", location);
 					}
 					if (defineType == DefineType.StackDefine && (exp != null ? exp.isConstant() : getChildChange().getModExp().isEmpty())) {
 						defineType = DefineType.ConstDefine;
@@ -237,7 +240,7 @@ public class ASTDefine extends ASTReplacement {
 			return;
 		}
 		if (renderer.getStackSize() + tupleSize > renderer.getMaxStackSize()) {
-			Logger.error("Maximum stack depth exceeded", location);
+			driver.error("Maximum stack depth exceeded", location);
 		}
 
 		renderer.setStackSize(renderer.getStackSize() + tupleSize);
@@ -247,7 +250,7 @@ public class ASTDefine extends ASTReplacement {
 			case NumericType:
 				double[] result = new double[1];
 				if (exp.evaluate(result, tupleSize, renderer) != tupleSize) {
-					Logger.error("Error evaluating parameters (too many or not enough)", null);
+					driver.error("Error evaluating parameters (too many or not enough)", null);
 				}
 				renderer.setStackItem(renderer.getStackSize() - 1, new CFStackNumber(renderer.getStack(), result[0]));
 				break;
@@ -263,7 +266,7 @@ public class ASTDefine extends ASTReplacement {
 				break;
 	
 			default:
-				Logger.error("Unimplemented parameter type", null);
+				driver.error("Unimplemented parameter type", null);
 				break;
 		}
 

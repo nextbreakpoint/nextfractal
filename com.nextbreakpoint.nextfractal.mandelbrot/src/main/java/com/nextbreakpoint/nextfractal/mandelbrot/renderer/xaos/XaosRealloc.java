@@ -1,8 +1,8 @@
 /*
- * NextFractal 1.3.0
+ * NextFractal 2.0.0
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2016 Andrea Medeghini
+ * Copyright 2015-2017 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -27,17 +27,20 @@ package com.nextbreakpoint.nextfractal.mandelbrot.renderer.xaos;
 class XaosRealloc {
 	boolean isCached;
 	boolean refreshed;
-	boolean recalculate;
-	boolean changeDirty;
+	boolean calculate;
+	boolean isFilled;
 	boolean dirty;
 	boolean line;
 	int pos;
 	int plus;
 	int symTo;
 	int symRef;
-	double changePosition;
 	double position;
 	double priority;
+	boolean changeDirty;
+	boolean changeIsCached;
+	boolean changeIsFilled;
+	double changePosition;
 
 	/**
 	 * @param line
@@ -51,6 +54,6 @@ class XaosRealloc {
 	 */
 	@Override
 	public String toString() {
-		return "<pos = " + pos + ", symref = " + symRef + ", symto = " + symTo + ", plus = " + plus + ", dirty = " + dirty + ", recalculate = " + recalculate + ", line = " + line + ", priority = " + priority + ", position = " + position + ", iscached = " + isCached + ">";
+		return "pos = " + pos + ", symref = " + symRef + ", symto = " + symTo + ", plus = " + plus + ", dirty = " + dirty + ", calculate = " + calculate + ", refreshed = " + refreshed + ", line = " + line + ", priority = " + priority + ", position = " + position + ", cached = " + isCached  + ", filled = " + isFilled;
 	}
 }

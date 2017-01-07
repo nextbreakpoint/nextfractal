@@ -1,8 +1,8 @@
 /*
- * NextFractal 1.3.0
+ * NextFractal 2.0.0
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2016 Andrea Medeghini
+ * Copyright 2015-2017 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -25,7 +25,8 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
 
 import com.nextbreakpoint.nextfractal.core.renderer.RendererGraphicsContext;
-import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotView;
+import com.nextbreakpoint.nextfractal.core.utils.Time;
+import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotMetadata;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 import javafx.scene.input.MouseEvent;
 
@@ -35,6 +36,7 @@ public class ToolRotate implements Tool {
 	private volatile boolean changed;
 	private volatile boolean redraw;
 	private volatile boolean active;
+	private Long lastTimeInMillis;
 	private double x0;
 	private double y0;
 	private double x1;
@@ -83,9 +85,9 @@ public class ToolRotate implements Tool {
 		if (active) {
 			x1 = (e.getX() - context.getWidth() / 2) / context.getWidth();
 			y1 = (context.getHeight() / 2 - e.getY()) / context.getHeight();
-			MandelbrotView oldView = context.getMandelbrotSession().getViewAsCopy();
-			double[] t = oldView.getTraslation();
-			double[] r = oldView.getRotation();
+			MandelbrotMetadata oldView = context.getMetadata();
+			double[] t = oldView.getTranslation().toArray();
+			double[] r = oldView.getRotation().toArray();
 			a0 = r[2] * Math.PI / 180;
 			a1 = Math.atan2(y1 - y0, x1 - x0);
 			r0 = t[0];
@@ -98,14 +100,24 @@ public class ToolRotate implements Tool {
 	}
 
 	@Override
-	public void update(long time) {
+	public void update(long timeInMillis, boolean timeAnimation) {
+		MandelbrotMetadata oldMetadata = context.getMetadata();
+		Time time = oldMetadata.getTime();
+		if (timeAnimation || lastTimeInMillis == null) {
+			if (lastTimeInMillis == null) {
+				lastTimeInMillis = timeInMillis;
+			}
+			time = new Time(time.getValue() + (timeInMillis - lastTimeInMillis) / 1000.0, time.getScale());
+			lastTimeInMillis = timeInMillis;
+		} else {
+			lastTimeInMillis = null;
+		}
 		if (changed) {
-			MandelbrotView oldView = context.getMandelbrotSession().getViewAsCopy();
-			double[] t = oldView.getTraslation();
-			double[] r = oldView.getRotation();
-			double[] s = oldView.getScale();
-			double[] p = oldView.getPoint();
-			boolean j = oldView.isJulia();
+			double[] t = oldMetadata.getTranslation().toArray();
+			double[] r = oldMetadata.getRotation().toArray();
+			double[] s = oldMetadata.getScale().toArray();
+			double[] p = oldMetadata.getPoint().toArray();
+			boolean j = oldMetadata.isJulia();
 			double z = t[2];
 			Number size = context.getInitialSize();
 			double a2 = Math.atan2(y1 - y0, x1 - x0) - a1;
@@ -122,9 +134,12 @@ public class ToolRotate implements Tool {
 			double x = r0 + dx;
 			double y = i0 + dy;
 			double a = (a0 + a2) * 180 / Math.PI;
-			MandelbrotView view = new MandelbrotView(new double[] { x, y, z, t[3] }, new double[] { 0, 0, a, r[3] }, s, p, j);
-			context.getMandelbrotSession().setView(view, pressed);
+			MandelbrotMetadata newMetadata = new MandelbrotMetadata(new double[] { x, y, z, t[3] }, new double[] { 0, 0, a, r[3] }, s, p, time, j, oldMetadata.getOptions());
+			context.setView(newMetadata, pressed, !pressed);
 			changed = false;
+		} else if (timeAnimation) {
+			MandelbrotMetadata newMetadata = new MandelbrotMetadata(oldMetadata.getTranslation(), oldMetadata.getRotation(), oldMetadata.getScale(), oldMetadata.getPoint(), time, oldMetadata.isJulia(), oldMetadata.getOptions());
+			context.setTime(newMetadata, true, false);
 		}
 	}
 

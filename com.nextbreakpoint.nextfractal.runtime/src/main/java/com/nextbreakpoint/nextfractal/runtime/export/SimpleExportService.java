@@ -1,8 +1,8 @@
 /*
- * NextFractal 1.3.0
+ * NextFractal 2.0.0
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2016 Andrea Medeghini
+ * Copyright 2015-2017 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -25,128 +25,215 @@
 package com.nextbreakpoint.nextfractal.runtime.export;
 
 import com.nextbreakpoint.Try;
+import com.nextbreakpoint.nextfractal.core.EventBus;
 import com.nextbreakpoint.nextfractal.core.encoder.EncoderException;
-import com.nextbreakpoint.nextfractal.core.export.*;
-import com.nextbreakpoint.nextfractal.core.session.SessionState;
+import com.nextbreakpoint.nextfractal.core.encoder.EncoderHandle;
+import com.nextbreakpoint.nextfractal.core.export.AbstractExportService;
+import com.nextbreakpoint.nextfractal.core.export.ExportHandle;
+import com.nextbreakpoint.nextfractal.core.export.ExportJobHandle;
+import com.nextbreakpoint.nextfractal.core.export.ExportJobState;
+import com.nextbreakpoint.nextfractal.core.export.ExportProfileBuilder;
+import com.nextbreakpoint.nextfractal.core.export.ExportRenderer;
+import com.nextbreakpoint.nextfractal.core.export.ExportState;
 import com.nextbreakpoint.nextfractal.runtime.encoder.RAFEncoderContext;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadFactory;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public class SimpleExportService extends AbstractExportService {
-	private final Map<String, List<Future<ExportJob>>> futures = new HashMap<>();
+	private static final Logger logger = Logger.getLogger(SimpleExportService.class.getName());
 
+	private final Map<String, List<Future<ExportJobHandle>>> futures = new HashMap<>();
+	private final Map<String, EncoderHandle> handles = new HashMap<>();
+
+	private EventBus eventBus;
 	private final ExportRenderer exportRenderer;
 
-	public SimpleExportService(ThreadFactory threadFactory, ExportRenderer exportRenderer) {
+	public SimpleExportService(EventBus eventBus, ThreadFactory threadFactory, ExportRenderer exportRenderer) {
 		super(threadFactory);
+		this.eventBus = Objects.requireNonNull(eventBus);
 		this.exportRenderer = Objects.requireNonNull(exportRenderer);
 	}
 
 	@Override
-	protected void updateSessionsInBackground(List<ExportSessionHolder> holders) {
-		List<ExportSessionHolder> completedHolders = holders.stream()
-				.peek(holder -> updateSession(holder))
-				.filter(holder -> holder.getSession().isStopped())
-				.peek(holder -> removeTasks(holder.getSession()))
-				.collect(Collectors.toList());
-		holders.removeAll(completedHolders);
+	protected Collection<ExportHandle> updateInBackground(Collection<ExportHandle> exportHandles) {
+		return exportHandles.stream().peek(this::updateSession).filter(ExportHandle::isFinished).collect(Collectors.toList());
 	}
 
 	@Override
-	protected void cancelJobs(ExportSession session) {
-		getTasks(session).ifPresent(tasks -> tasks.forEach(task -> task.cancel(true)));
+	protected void notifyUpdate(Collection<ExportHandle> exportHandles) {
+		exportHandles.forEach(exportHandle -> eventBus.postEvent("export-session-state-changed",
+			new Object[] { exportHandle.getSession(), exportHandle.getState(), exportHandle.getProgress() }));
 	}
 
-	private void updateSession(ExportSessionHolder holder) {
-		ExportSession session = holder.getSession();
-		if (session.isStarted()) {
-			dispatchJobs(session);
-			holder.setState(SessionState.DISPATCHED);
-		} else if (session.isInterrupted()) {
-			holder.setState(SessionState.STOPPED);
-		} else if (session.isCompleted()) {
-			holder.setState(SessionState.STOPPED);
-		} else if (session.isFailed()) {
-			if (session.isCancelled()) {
-				holder.setState(SessionState.STOPPED);
-			}
-		} else {
-			getTasks(session).map(tasks -> removeTerminatedTasks(tasks))
-					.filter(tasks -> tasks.isEmpty()).ifPresent(tasks -> updateTerminatedSession(holder, session));
+	@Override
+	protected void resumeTasks(ExportHandle exportHandle) {
+		dispatchJobs(exportHandle);
+	}
+
+	@Override
+	protected void cancelTasks(ExportHandle exportHandle) {
+		tasks(exportHandle.getSessionId()).ifPresent(tasks -> tasks.forEach(task -> task.cancel(true)));
+	}
+
+	private void updateSession(ExportHandle exportHandle) {
+		if (exportHandle.isReady()) {
+			openSession(exportHandle);
+			resetJobs(exportHandle);
+			dispatchJobs(exportHandle);
+			exportHandle.setState(ExportState.DISPATCHED);
+		} else if (exportHandle.isInterrupted() && isTimeout(exportHandle)) {
+			exportHandle.setState(ExportState.FINISHED);
+		} else if (exportHandle.isCompleted() && isTimeout(exportHandle)) {
+			exportHandle.setState(ExportState.FINISHED);
+		} else if (exportHandle.isFailed() && exportHandle.isCancelled() && isTimeout(exportHandle)) {
+			exportHandle.setState(ExportState.FINISHED);
+		} else if (exportHandle.isDispatched() || exportHandle.isSuspended()) {
+			updateDispatchedSession(exportHandle);
 		}
-		session.updateProgress();
+		exportHandle.updateProgress();
+		if (exportHandle.isFailed() || exportHandle.isFinished()) {
+			removeTasks(exportHandle);
+			closeSession(exportHandle);
+		}
 	}
 
-	private void updateTerminatedSession(ExportSessionHolder holder, ExportSession session) {
-		if (session.isCancelled()) {
-            holder.setState(SessionState.INTERRUPTED);
-        } else if (isSessionCompleted(session)) {
-			updateCompletedSession(holder, session);
+	private boolean isTimeout(ExportHandle exportHandle) {
+		return System.currentTimeMillis() - exportHandle.getTimestamp() > 1500;
+	}
+
+	private void openSession(ExportHandle exportHandle) {
+		try {
+			if (!handles.containsKey(exportHandle.getSessionId())) {
+				EncoderHandle handle = openEncoder(exportHandle);
+				handles.put(exportHandle.getSessionId(), handle);
+			}
+		} catch (Exception e) {
+			exportHandle.setState(ExportState.FAILED);
+		}
+	}
+
+	private EncoderHandle openEncoder(ExportHandle exportHandle) throws IOException, EncoderException {
+		final RandomAccessFile raf = new RandomAccessFile(exportHandle.getTmpFile(), "r");
+		final int frameRate = (int) Math.rint(1 / exportHandle.getFrameRate());
+		final int imageWidth = exportHandle.getSize().getWidth();
+		final int imageHeight = exportHandle.getSize().getHeight();
+		final RAFEncoderContext context = new RAFEncoderContext(raf, imageWidth, imageHeight, frameRate);
+		return exportHandle.getEncoder().open(context, exportHandle.getFile());
+	}
+
+	private void closeSession(ExportHandle exportHandle) {
+		try {
+			EncoderHandle handle = handles.remove(exportHandle.getSessionId());
+			if (handle != null) {
+				closeEncoder(exportHandle, handle);
+			}
+		} catch (Exception e) {
+			exportHandle.setState(ExportState.FAILED);
+		}
+	}
+
+	private void closeEncoder(ExportHandle exportHandle, EncoderHandle encoderHandle) throws IOException, EncoderException {
+		try {
+			exportHandle.getEncoder().close(encoderHandle);
+		} finally {
+			exportHandle.getTmpFile().delete();
+		}
+	}
+
+	private void updateDispatchedSession(ExportHandle exportHandle) {
+		tasks(exportHandle.getSessionId()).map(this::removeTerminatedTasks)
+			.filter(List::isEmpty).ifPresent(tasks -> updateSessionState(exportHandle));
+	}
+
+	private void updateSessionState(ExportHandle exportHandle) {
+		if (exportHandle.isCancelled()) {
+			exportHandle.setState(ExportState.INTERRUPTED);
+		} else if (exportHandle.isSessionCompleted()) {
+			logger.info("Frame " + (exportHandle.getFrameNumber() + 1) + " of " + exportHandle.getFrameCount());
+			int index = exportHandle.getFrameNumber();
+			tryEncodeFrame(exportHandle, index, 1)
+				.onSuccess(s -> exportHandle.setState(ExportState.COMPLETED))
+				.onFailure(e -> exportHandle.setState(ExportState.FAILED))
+				.execute();
+        } else if (exportHandle.isFrameCompleted()) {
+			int index = exportHandle.getFrameNumber();
+			int count = 0;
+			do {
+				logger.info("Frame " + (exportHandle.getFrameNumber() + 1) + " of " + exportHandle.getFrameCount());
+				exportHandle.nextFrame();
+				count += 1;
+			} while (count < 100 && !isLastFrame(exportHandle) && !isKeyFrame(exportHandle) && !isTimeAnimation(exportHandle));
+			tryEncodeFrame(exportHandle, index, count)
+					.onSuccess(s -> exportHandle.setState(ExportState.READY))
+					.onFailure(e -> exportHandle.setState(ExportState.FAILED))
+					.execute();
 		} else {
-            holder.setState(SessionState.SUSPENDED);
+			exportHandle.setState(ExportState.SUSPENDED);
         }
 	}
 
-	private void updateCompletedSession(ExportSessionHolder holder, ExportSession session) {
-		Try.of(() -> encodeData(session))
-                .onSuccess(s -> holder.setState(SessionState.COMPLETED))
-                .onFailure(e -> holder.setState(SessionState.FAILED))
-                .execute();
+	private boolean isLastFrame(ExportHandle exportHandle) {
+		return exportHandle.getFrameNumber() == exportHandle.getFrameCount() - 1;
 	}
 
-	private List<Future<ExportJob>> removeTerminatedTasks(List<Future<ExportJob>> tasks) {
-		tasks.removeAll(getCompletedTasks(tasks));
+	private boolean isKeyFrame(ExportHandle exportHandle) {
+		return exportHandle.getSession().getFrames().get(exportHandle.getFrameNumber()).isKeyFrame();
+	}
+
+	private boolean isTimeAnimation(ExportHandle exportHandle) {
+		return exportHandle.getSession().getFrames().get(exportHandle.getFrameNumber()).isTimeAnimation();
+	}
+
+	private void resetJobs(ExportHandle exportHandle) {
+		exportHandle.getJobs().stream().forEach(job -> job.setState(ExportJobState.READY));
+	}
+
+	private Try<ExportHandle, Exception> tryEncodeFrame(ExportHandle exportHandle, int index, int count) {
+		return Try.of(() -> encodeData(exportHandle, index, count));
+	}
+
+	private List<Future<ExportJobHandle>> removeTerminatedTasks(List<Future<ExportJobHandle>> tasks) {
+		tasks.removeAll(tasks.stream().filter(Future::isDone).collect(Collectors.toList()));
 		return tasks;
 	}
 
-	private List<Future<ExportJob>> getCompletedTasks(List<Future<ExportJob>> tasks) {
-		return tasks.stream().filter(task -> task.isDone()).collect(Collectors.toList());
+	private void dispatchJobs(ExportHandle exportHandle) {
+		exportHandle.getJobs().stream().filter(job -> !job.isCompleted()).forEach(job -> dispatchTasks(exportHandle, job));
 	}
 
-	private boolean isSessionCompleted(ExportSession session) {
-		return session.getCompletedJobsCount() == session.getJobsCount();
+	private void dispatchTasks(ExportHandle exportHandle, ExportJobHandle exportJob) {
+		List<Future<ExportJobHandle>> tasks = tasks(exportHandle.getSessionId()).orElse(new ArrayList<>());
+		ExportProfileBuilder builder = ExportProfileBuilder.fromProfile(exportJob.getJob().getProfile());
+		builder.withPluginId(exportHandle.getCurrentPluginId());
+		builder.withMetadata(exportHandle.getCurrentMetadata());
+		builder.withScript(exportHandle.getCurrentScript());
+		exportJob.setProfile(builder.build());
+		tasks.add(exportRenderer.dispatch(exportJob));
+		futures.put(exportHandle.getSessionId(), tasks);
 	}
 
-	private void dispatchJobs(ExportSession session) {
-		session.getJobs().stream().filter(job -> !job.isCompleted()).forEach(job -> dispatchJob(session, job));
+	private void removeTasks(ExportHandle exportHandle) {
+		futures.remove(exportHandle.getSessionId());
 	}
 
-	private void dispatchJob(ExportSession session, ExportJob job) {
-		List<Future<ExportJob>> tasks = getTasks(session).orElse(new ArrayList<>());
-		updateTasks(session, tasks);
-		tasks.add(exportRenderer.dispatch(job));
+	private Optional<List<Future<ExportJobHandle>>> tasks(String sessionId) {
+		return Optional.ofNullable(futures.get(sessionId));
 	}
 
-	private void updateTasks(ExportSession session, List<Future<ExportJob>> tasks) {
-		futures.put(session.getSessionId(), tasks);
-	}
-
-	private void removeTasks(ExportSession session) {
-		futures.remove(session.getSessionId());
-	}
-
-	private Optional<List<Future<ExportJob>>> getTasks(ExportSession session) {
-		return Optional.ofNullable(futures.get(session.getSessionId()));
-	}
-
-	private ExportSession encodeData(ExportSession session) throws IOException, EncoderException {
-		try (RandomAccessFile raf = new RandomAccessFile(session.getTmpFile(), "r")) {
-			final int frameRate = (int)Math.rint(1 / session.getFrameRate());
-			final int imageWidth = session.getSize().getWidth();
-			final int imageHeight = session.getSize().getHeight();
-			final double stopTime = session.getStopTime();
-			final double startTime = session.getStartTime();
-			final int frameCount = (int) Math.floor((stopTime - startTime) * frameRate);
-			RAFEncoderContext context = new RAFEncoderContext(raf, imageWidth, imageHeight, frameRate, frameCount);
-			session.getEncoder().encode(context, session.getFile());
-		} finally {
-			session.getTmpFile().delete();
-		}
-		return session;
+	private ExportHandle encodeData(ExportHandle exportHandle, int index, int count) throws IOException, EncoderException {
+		exportHandle.getEncoder().encode(handles.get(exportHandle.getSessionId()), index, count);
+		return exportHandle;
 	}
 }

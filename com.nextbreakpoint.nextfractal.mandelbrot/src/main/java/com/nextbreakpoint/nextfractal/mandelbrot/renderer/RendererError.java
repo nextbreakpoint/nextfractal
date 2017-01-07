@@ -1,8 +1,8 @@
 /*
- * NextFractal 1.3.0
+ * NextFractal 2.0.0
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2016 Andrea Medeghini
+ * Copyright 2015-2017 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -24,42 +24,10 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.renderer;
 
-public class RendererError {
-	private long line;
-	private long charPositionInLine;
-	private long index;
-	private long length;
-	private String message;
+import com.nextbreakpoint.nextfractal.core.Error;
 
+public class RendererError extends Error {
 	public RendererError(long line, long charPositionInLine, long index, long length, String message) {
-		this.line = line;
-		this.index = index;
-		this.charPositionInLine = charPositionInLine;
-		this.message = message;
-	}
-
-	public long getLine() {
-		return line;
-	}
-
-	public long getCharPositionInLine() {
-		return charPositionInLine;
-	}
-
-	public String getMessage() {
-		return message;
-	}
-	
-	public long getLength() {
-		return length;
-	}
-	
-	public long getIndex() {
-		return index;
-	}
-
-	@Override
-	public String toString() {
-		return "[" + line + ":" + charPositionInLine + ":" + index + ":" + length + "] " + message;
+		super(ErrorType.RUNTIME, line, charPositionInLine, index, length, message);
 	}
 }

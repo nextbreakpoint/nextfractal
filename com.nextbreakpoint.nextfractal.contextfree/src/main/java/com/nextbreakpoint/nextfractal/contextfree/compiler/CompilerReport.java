@@ -1,8 +1,8 @@
 /*
- * NextFractal 1.3.0
+ * NextFractal 2.0.0
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2016 Andrea Medeghini
+ * Copyright 2015-2017 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -25,37 +25,32 @@
 package com.nextbreakpoint.nextfractal.contextfree.compiler;
 
 import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDG;
+import com.nextbreakpoint.nextfractal.core.Error;
 
 import java.util.List;
 
 public class CompilerReport {
-	private CFDG ast;
+	private CFDG cfdg;
 	private Type type;
-	private String orbitSource;
-	private String colorSource;
-	private List<CompilerError> errors;
+	private String source;
+	private List<Error> errors;
 
-	public CompilerReport(CFDG ast, Type type, String orbitSource, String colorSource, List<CompilerError> errors) {
-		this.ast = ast;
+	public CompilerReport(CFDG cfdg, Type type, String source, List<Error> errors) {
+		this.cfdg = cfdg;
 		this.type = type;
-		this.orbitSource = orbitSource;
-		this.colorSource = colorSource;
+		this.source = source;
 		this.errors = errors;
 	}
 
-	public CFDG getAST() {
-		return ast;
+	public CFDG getCFDG() {
+		return cfdg;
 	}
 
-	public String getOrbitSource() {
-		return orbitSource;
+	public String getSource() {
+		return source;
 	}
 
-	public String getColorSource() {
-		return colorSource;
-	}
-
-	public List<CompilerError> getErrors() {
+	public List<Error> getErrors() {
 		return errors;
 	}
 

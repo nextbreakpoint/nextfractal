@@ -1,8 +1,8 @@
 /*
- * NextFractal 1.3.0
+ * NextFractal 2.0.0
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2016 Andrea Medeghini
+ * Copyright 2015-2017 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -24,15 +24,15 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot;
 
-import java.nio.IntBuffer;
-import java.util.concurrent.ThreadFactory;
-
 import com.nextbreakpoint.nextfractal.core.ImageGenerator;
+import com.nextbreakpoint.nextfractal.core.Metadata;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererFactory;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
+import com.nextbreakpoint.nextfractal.core.utils.Double2D;
 import com.nextbreakpoint.nextfractal.core.utils.Double4D;
 import com.nextbreakpoint.nextfractal.core.utils.Integer4D;
+import com.nextbreakpoint.nextfractal.core.utils.Time;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.Compiler;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerBuilder;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerReport;
@@ -41,6 +41,9 @@ import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Orbit;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.Renderer;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererView;
+
+import java.nio.IntBuffer;
+import java.util.concurrent.ThreadFactory;
 
 public class MandelbrotImageGenerator implements ImageGenerator {
 	private boolean aborted;
@@ -57,14 +60,14 @@ public class MandelbrotImageGenerator implements ImageGenerator {
 	}
 
 	@Override
-	public IntBuffer renderImage(Object data) {
-		MandelbrotData generatorData = (MandelbrotData)data;
+	public IntBuffer renderImage(String script, Metadata data) {
+		MandelbrotMetadata metadata = (MandelbrotMetadata) data;
 		RendererSize suggestedSize = tile.getTileSize();
 		int[] pixels = new int[suggestedSize.getWidth() * suggestedSize.getHeight()];
 		IntBuffer buffer = IntBuffer.wrap(pixels);
 		try {
 			Compiler compiler = new Compiler();
-			CompilerReport report = compiler.compileReport(generatorData.getSource());
+			CompilerReport report = compiler.compileReport(script);
 			if (report.getErrors().size() > 0) {
 				throw new RuntimeException("Failed to compile source");
 			}
@@ -78,22 +81,24 @@ public class MandelbrotImageGenerator implements ImageGenerator {
 			}
 			Renderer renderer = new Renderer(threadFactory, renderFactory, tile);
 			renderer.setOpaque(opaque);
-			double[] translation = generatorData.getTranslation();
-			double[] rotation = generatorData.getRotation();
-			double[] scale = generatorData.getScale();
-			double[] constant = generatorData.getPoint();
-			boolean julia = generatorData.isJulia();
+			Double4D translation = metadata.getTranslation();
+			Double4D rotation = metadata.getRotation();
+			Double4D scale = metadata.getScale();
+			Double2D constant = metadata.getPoint();
+			Time time = metadata.getTime();
+			boolean julia = metadata.isJulia();
 			renderer.setOrbit(orbitBuilder.build());
 			renderer.setColor(colorBuilder.build());
 			renderer.init();
 			RendererView view = new RendererView();
-			view .setTraslation(new Double4D(translation));
-			view.setRotation(new Double4D(rotation));
-			view.setScale(new Double4D(scale));
+			view .setTraslation(translation);
+			view.setRotation(rotation);
+			view.setScale(scale);
 			view.setState(new Integer4D(0, 0, 0, 0));
 			view.setJulia(julia);
-			view.setPoint(new Number(constant));
+			view.setPoint(new Number(constant.getX(), constant.getY()));
 			renderer.setView(view);
+			renderer.setTime(time);
 			renderer.runTask();
 			renderer.waitForTasks();
 			renderer.getPixels(pixels);

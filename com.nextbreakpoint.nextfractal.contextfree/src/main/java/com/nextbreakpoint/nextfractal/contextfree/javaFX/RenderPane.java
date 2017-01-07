@@ -1,8 +1,8 @@
 /*
- * NextFractal 1.3.0
+ * NextFractal 2.0.0
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2016 Andrea Medeghini
+ * Copyright 2015-2017 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -24,76 +24,80 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.javaFX;
 
-import com.nextbreakpoint.nextfractal.contextfree.ContextFreeData;
-import com.nextbreakpoint.nextfractal.contextfree.ContextFreeDataStore;
-import com.nextbreakpoint.nextfractal.contextfree.ContextFreeListener;
+import com.nextbreakpoint.Try;
+import com.nextbreakpoint.nextfractal.contextfree.ContextFreeMetadata;
 import com.nextbreakpoint.nextfractal.contextfree.ContextFreeSession;
-import com.nextbreakpoint.nextfractal.contextfree.compiler.CompilerError;
-import com.nextbreakpoint.nextfractal.contextfree.core.RendererError;
-import com.nextbreakpoint.nextfractal.core.export.ExportSession;
+import com.nextbreakpoint.nextfractal.contextfree.compiler.Compiler;
+import com.nextbreakpoint.nextfractal.contextfree.compiler.CompilerClassException;
+import com.nextbreakpoint.nextfractal.contextfree.compiler.CompilerReport;
+import com.nextbreakpoint.nextfractal.contextfree.compiler.CompilerSourceException;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDG;
+import com.nextbreakpoint.nextfractal.contextfree.renderer.RendererCoordinator;
+import com.nextbreakpoint.nextfractal.core.Error;
+import com.nextbreakpoint.nextfractal.core.EventBus;
+import com.nextbreakpoint.nextfractal.core.Session;
 import com.nextbreakpoint.nextfractal.core.javaFX.BooleanObservableValue;
 import com.nextbreakpoint.nextfractal.core.javaFX.StringObservableValue;
-import com.nextbreakpoint.nextfractal.core.renderer.*;
+import com.nextbreakpoint.nextfractal.core.renderer.RendererGraphicsContext;
+import com.nextbreakpoint.nextfractal.core.renderer.RendererPoint;
+import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
+import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
 import com.nextbreakpoint.nextfractal.core.renderer.javaFX.JavaFXRendererFactory;
-import com.nextbreakpoint.nextfractal.core.session.Session;
-import com.nextbreakpoint.nextfractal.core.session.SessionListener;
 import com.nextbreakpoint.nextfractal.core.utils.Block;
 import com.nextbreakpoint.nextfractal.core.utils.DefaultThreadFactory;
 import javafx.animation.AnimationTimer;
 import javafx.animation.FadeTransition;
-import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Button;
-import javafx.scene.control.ToggleButton;
-import javafx.scene.control.ToggleGroup;
-import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.stage.Screen;
 import javafx.util.Duration;
 
-import java.io.File;
 import java.io.InputStream;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ThreadFactory;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class RenderPane extends BorderPane {
-	private static final int FRAME_LENGTH_IN_MILLIS = 20;
+	private static final int FRAME_LENGTH_IN_MILLIS = 1000 / 50;
 	private static final Logger logger = Logger.getLogger(RenderPane.class.getName());
-	private final Session session;
 	private final ThreadFactory renderThreadFactory;
 	private final JavaFXRendererFactory renderFactory;
-	private final StringObservableValue fileProperty;
 	private final StringObservableValue errorProperty;
 	private final StringObservableValue statusProperty;
 	private final BooleanObservableValue hideErrorsProperty;
+	private RendererCoordinator coordinator;
 	private AnimationTimer timer;
 	private int width;
 	private int height;
 	private int rows;
 	private int columns;
-	private volatile boolean disableTool;
-	private String cfdg;
+	private CFDG cfdg;
+	private String cfdgSource = "";
+	private volatile boolean hasError;
+	private ContextFreeSession contextFreeSession;
 
-	public RenderPane(Session session, int width, int height, int rows, int columns) {
-		this.session = session;
+	public RenderPane(Session session, EventBus eventBus, int width, int height, int rows, int columns) {
 		this.width = width;
 		this.height = height;
 		this.rows = rows;
 		this.columns = columns;
 
-		fileProperty = new StringObservableValue();
-		fileProperty.setValue(null);
+		contextFreeSession = (ContextFreeSession) session;
 
 		errorProperty = new StringObservableValue();
 		errorProperty.setValue(null);
@@ -104,19 +108,22 @@ public class RenderPane extends BorderPane {
 		hideErrorsProperty = new BooleanObservableValue();
 		hideErrorsProperty.setValue(true);
 		
-		renderThreadFactory = new DefaultThreadFactory("ContextFreeRendererCoordinator", true, Thread.MIN_PRIORITY + 2);
+		renderThreadFactory = new DefaultThreadFactory("ContextFree Coordinator", true, Thread.MIN_PRIORITY + 2);
 
 		renderFactory = new JavaFXRendererFactory();
 
+		Map<String, Integer> hints = new HashMap<>();
+		coordinator = createCoordinator(hints, width, height);
+
 		getStyleClass().add("contextfree");
 
-		BorderPane controls = new BorderPane();
-		controls.setMinWidth(width);
-		controls.setMaxWidth(width);
-		controls.setPrefWidth(width);
-		controls.setMinHeight(height);
-		controls.setMaxHeight(height);
-		controls.setPrefHeight(height);
+//		BorderPane controls = new BorderPane();
+//		controls.setMinWidth(width);
+//		controls.setMaxWidth(width);
+//		controls.setPrefWidth(width);
+//		controls.setMinHeight(height);
+//		controls.setMaxHeight(height);
+//		controls.setPrefHeight(height);
 
 		BorderPane errors = new BorderPane();
 		errors.setMinWidth(width);
@@ -128,67 +135,30 @@ public class RenderPane extends BorderPane {
 		errors.getStyleClass().add("errors");
 		errors.setVisible(false);
 
-		HBox toolButtons = new HBox(0);
-		Button browseButton = new Button("", createIconImage("/icon-grid.png"));
+//		HBox toolButtons = new HBox(0);
 //		ToggleButton zoominButton = new ToggleButton("", createIconImage("/icon-zoomin.png"));
 //		ToggleButton zoomoutButton = new ToggleButton("", createIconImage("/icon-zoomout.png"));
 //		ToggleButton moveButton = new ToggleButton("", createIconImage("/icon-move.png"));
 //		ToggleButton rotateButton = new ToggleButton("", createIconImage("/icon-rotate.png"));
-//		ToggleButton pickButton = new ToggleButton("", createIconImage("/icon-pick.png"));
-//		ToggleButton juliaButton = new ToggleButton("", createIconImage("/icon-julia.png"));
-//		ToggleButton orbitButton = new ToggleButton("", createIconImage("/icon-orbit.png"));
-		ToggleGroup toolsGroup = new ToggleGroup();
+//		ToggleGroup toolsGroup = new ToggleGroup();
 //		toolsGroup.getToggles().add(zoominButton);
 //		toolsGroup.getToggles().add(zoomoutButton);
 //		toolsGroup.getToggles().add(moveButton);
 //		toolsGroup.getToggles().add(rotateButton);
-//		toolsGroup.getToggles().add(pickButton);
 //		Button homeButton = new Button("", createIconImage("/icon-home.png"));
-		browseButton.setTooltip(new Tooltip("Show fractals browser"));
 //		zoominButton.setTooltip(new Tooltip("Select zoom in tool"));
 //		zoomoutButton.setTooltip(new Tooltip("Select zoom out tool"));
 //		moveButton.setTooltip(new Tooltip("Select move tool"));
 //		rotateButton.setTooltip(new Tooltip("Select rotate tool"));
-//		pickButton.setTooltip(new Tooltip("Select pick tool"));
-//		homeButton.setTooltip(new Tooltip("Reset region to initial value"));
-//		orbitButton.setTooltip(new Tooltip("Toggle orbit and traps"));
-//		juliaButton.setTooltip(new Tooltip("Toggle Julia mode"));
-		toolButtons.getChildren().add(browseButton);
 //		toolButtons.getChildren().add(homeButton);
 //		toolButtons.getChildren().add(zoominButton);
 //		toolButtons.getChildren().add(zoomoutButton);
 //		toolButtons.getChildren().add(moveButton);
 //		toolButtons.getChildren().add(rotateButton);
-//		toolButtons.getChildren().add(pickButton);
-//		toolButtons.getChildren().add(juliaButton);
-//		toolButtons.getChildren().add(orbitButton);
-		toolButtons.getStyleClass().add("toolbar");
+//		toolButtons.getStyleClass().add("toolbar");
 
-//		BrowsePane browsePane = new BrowsePane(width, height);
-//		browsePane.setTranslateX(-width);
-
-//		TranslateTransition browserTransition = createTranslateTransition(browsePane);
-
-		browseButton.setOnAction(e -> {
-//			showBrowser(browserTransition, a -> {});
-//			browsePane.reload();
-		});
-
-//		browsePane.setDelegate(new BrowseDelegate() {
-//			@Override
-//			public void didSelectFile(BrowsePane source, File file) {
-//				updateFile(browsePane, file);
-//				hideBrowser(browserTransition, a -> {});
-//			}
-//
-//			@Override
-//			public void didClose(BrowsePane source) {
-//				hideBrowser(browserTransition, a -> {});
-//			}
-//		});
-
-		controls.setBottom(toolButtons);
-		toolButtons.setOpacity(0.9);
+//		controls.setBottom(toolButtons);
+//		toolButtons.setOpacity(0.9);
 
         Canvas fractalCanvas = new Canvas(width, height);
         GraphicsContext gcFractalCanvas = fractalCanvas.getGraphicsContext2D();
@@ -204,113 +174,126 @@ public class RenderPane extends BorderPane {
 //		zoominButton.setSelected(true);
 //		zoominButton.setDisable(true);
 
-		FadeTransition toolsTransition = createFadeTransition(controls);
+//		FadeTransition toolsTransition = createFadeTransition(controls);
 
-		this.setOnMouseEntered(e -> fadeIn(toolsTransition, x -> {}));
+//		this.setOnMouseEntered(e -> fadeIn(toolsTransition, x -> {}));
 		
-		this.setOnMouseExited(e -> fadeOut(toolsTransition, x -> {}));
-		
-		getContextFreeSession().addContextFreeListener(new ContextFreeListener() {
-			@Override
-			public void dataChanged(ContextFreeSession session) {
-			}
-			
-			@Override
-			public void sourceChanged(ContextFreeSession session) {
-			}
-			
-			@Override
-			public void statusChanged(ContextFreeSession session) {
-			}
-
-			@Override
-			public void errorChanged(ContextFreeSession session) {
-			}
-
-			@Override
-			public void reportChanged(ContextFreeSession session) {
-			}
-		});
-
-		session.addSessionListener(new SessionListener() {
-			@Override
-			public void terminate(Session session) {
-				dispose();
-			}
-
-			@Override
-			public void sessionAdded(Session session, ExportSession exportSession) {
-			}
-
-			@Override
-			public void sessionRemoved(Session session, ExportSession exportSession) {
-			}
-
-			@Override
-			public void selectGrammar(Session session, String grammar) {
-			}
-		});
+//		this.setOnMouseExited(e -> fadeOut(toolsTransition, x -> {}));
 		
 		Pane stackPane = new Pane();
 		stackPane.getChildren().add(fractalCanvas);
 		stackPane.getChildren().add(toolCanvas);
-		stackPane.getChildren().add(controls);
+//		stackPane.getChildren().add(controls);
 		stackPane.getChildren().add(errors);
-//		stackPane.getChildren().add(browsePane);
 		setCenter(stackPane);
 
-		toolsGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
-			if (oldValue != null) {
-				((ToggleButton)oldValue).setDisable(false);
-			}
-			if (newValue != null) {
-				((ToggleButton)newValue).setDisable(true);
-			}
-		});
+//		toolsGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
+//			if (oldValue != null) {
+//				((ToggleButton)oldValue).setDisable(false);
+//			}
+//			if (newValue != null) {
+//				((ToggleButton)newValue).setDisable(true);
+//			}
+//		});
 		
-		errorProperty.addListener((observable, oldValue, newValue) -> updateErrors(errors, newValue));
-
-		statusProperty.addListener((observable, oldValue, newValue) -> getContextFreeSession().setStatus(newValue));
-
-		Block<ContextFreeData, Exception> updateUI = data -> {
-		};
-
-		fileProperty.addListener((observable, oldValue, newValue) -> loadFractalFromFile(updateUI, newValue));
-
-		heightProperty().addListener((observable, oldValue, newValue) -> {
-			toolButtons.setPrefHeight(newValue.doubleValue() * 0.07);
+		errorProperty.addListener((observable, oldValue, newValue) -> {
+			errors.setVisible(newValue != null);
+			eventBus.postEvent("render-error-changed", newValue);
 		});
 
-		stackPane.setOnDragDropped(e -> e.getDragboard().getFiles().stream().findFirst().ifPresent(file -> updateFile(file)));
+		statusProperty.addListener((observable, oldValue, newValue) -> {
+			eventBus.postEvent("render-status-changed", newValue);
+		});
+
+		Block<ContextFreeMetadata, Exception> updateUI = data -> {};
+
+//		heightProperty().addListener((observable, oldValue, newValue) -> {
+//			toolButtons.setPrefHeight(newValue.doubleValue() * 0.07);
+//		});
+
+		stackPane.setOnDragDropped(e -> e.getDragboard().getFiles().stream().findFirst()
+			.ifPresent(file -> eventBus.postEvent("editor-load-file", file)));
 
 		stackPane.setOnDragOver(x -> Optional.of(x).filter(e -> e.getGestureSource() != stackPane)
-				.filter(e -> e.getDragboard().hasFiles()).ifPresent(e -> e.acceptTransferModes(TransferMode.COPY_OR_MOVE)));
+			.filter(e -> e.getDragboard().hasFiles()).ifPresent(e -> e.acceptTransferModes(TransferMode.COPY_OR_MOVE)));
 
 		runTimer(fractalCanvas, toolCanvas);
+
+		eventBus.subscribe("session-report-changed", event -> {
+			CompilerReport report = (CompilerReport) event[0];
+			List<Error> lastErrors = updateReport(report);
+			if (lastErrors.size() == 0) {
+				ContextFreeSession newSession = (ContextFreeSession)event[1];
+				notifySessionChanged(eventBus, newSession, (Boolean)event[2], false, (Boolean)event[3]);
+			}
+		});
+
+//		eventBus.subscribe("session-data-loaded", event -> loadData(event));
+
+		eventBus.subscribe("session-data-changed", event -> updateData((ContextFreeSession) event[0]));
+
+		eventBus.subscribe("playback-data-load", event -> loadData((ContextFreeSession) event[0]));
+
+		eventBus.subscribe("playback-data-change", event -> updateData((ContextFreeSession) event[0]));
+
+		eventBus.subscribe("editor-source-changed", event -> {
+//			ContextFreeSession newSession = new ContextFreeSession((String) event[0], (ContextFreeMetadata) contextFreeSession.getMetadata());
+//			notifySessionChanged(eventBus, newSession, false, true);
+        });
+
+		eventBus.subscribe("editor-data-changed", event -> {
+			ContextFreeSession newSession = (ContextFreeSession) event[0];
+			Boolean continuous = (Boolean) event[1];
+			Boolean appendHistory = (Boolean) event[2];
+			notifySessionChanged(eventBus, newSession, continuous, false, appendHistory && !continuous);
+		});
+
+		eventBus.subscribe("render-data-changed", event -> {
+			ContextFreeSession newSession = (ContextFreeSession) event[0];
+			Boolean continuous = (Boolean) event[1];
+			Boolean appendHistory = (Boolean) event[2];
+			notifySessionChanged(eventBus, newSession, continuous, false, appendHistory && !continuous);
+		});
+
+		eventBus.subscribe("render-status-changed", event -> {
+			eventBus.postEvent("session-status-changed", event);
+		});
+
+		eventBus.subscribe("render-error-changed", event -> {
+			eventBus.postEvent("session-error-changed", event);
+		});
+
+		eventBus.subscribe("session-terminated", event -> dispose());
 	}
 
-	private void updateFile(File file) {
-		fileProperty.setValue(null);
-		fileProperty.setValue(file.getAbsolutePath());
+	private void loadData(ContextFreeSession session) {
+		Try.of(() -> generateReport(session.getScript())).filter(report -> ((CompilerReport)report).getErrors().size() == 0).ifPresent(report -> {
+			List<Error> errors = updateReport(report);
+			if (errors.size() == 0) {
+				updateData(session);
+			}
+		});
 	}
 
-	public ContextFreeSession getContextFreeSession() {
-		return (ContextFreeSession) session;
+	private void updateData(ContextFreeSession session) {
+		contextFreeSession = session;
 	}
 
-	public RendererFactory getRendererFactory() {
-		return renderFactory;
+	private void notifySessionChanged(EventBus eventBus, ContextFreeSession newSession, boolean continuous, boolean timeAnimation, boolean historyAppend) {
+		eventBus.postEvent("session-data-changed", newSession, continuous, timeAnimation, false);
+		if (historyAppend) {
+			eventBus.postEvent("history-add-session", newSession);
+		}
+	}
+
+	private RendererCoordinator createCoordinator(Map<String, Integer> hints, int width, int height) {
+		return new RendererCoordinator(renderThreadFactory, renderFactory, createSingleTile(width, height), hints);
 	}
 
 	@Override
 	protected void finalize() throws Throwable {
 		dispose();
 		super.finalize();
-	}
-
-	private void updateErrors(Pane panel, String error) {
-		panel.setVisible(error != null);
-		getContextFreeSession().setError(error);
 	}
 
 	private void dispose() {
@@ -337,33 +320,6 @@ public class RenderPane extends BorderPane {
 		return transition;
 	}
 
-	private TranslateTransition createTranslateTransition(Node node) {
-		TranslateTransition transition = new TranslateTransition();
-		transition.setNode(node);
-		transition.setDuration(Duration.seconds(0.5));
-		return transition;
-	}
-
-	private void showBrowser(TranslateTransition transition, EventHandler<ActionEvent> handler) {
-		transition.stop();
-		if (transition.getNode().getTranslateX() != 0) {
-			transition.setFromX(transition.getNode().getTranslateX());
-			transition.setToX(0);
-			transition.setOnFinished(handler);
-			transition.play();
-		}
-	}
-
-	private void hideBrowser(TranslateTransition transition, EventHandler<ActionEvent> handler) {
-		transition.stop();
-		if (transition.getNode().getTranslateX() != -((Pane)transition.getNode()).getWidth()) {
-			transition.setFromX(transition.getNode().getTranslateX());
-			transition.setToX(-((Pane)transition.getNode()).getWidth());
-			transition.setOnFinished(handler);
-			transition.play();
-		}
-	}
-
 	private void fadeOut(FadeTransition transition, EventHandler<ActionEvent> handler) {
 		transition.stop();
 		if (transition.getNode().getOpacity() != 0) {
@@ -384,24 +340,6 @@ public class RenderPane extends BorderPane {
 		}
 	}
 
-	private void loadFractalFromFile(Block<ContextFreeData, Exception> updateJulia, String filename) {
-		if (filename == null) {
-			return;
-		}
-		File file = new File(filename);
-		try {
-			ContextFreeDataStore service = new ContextFreeDataStore();
-			ContextFreeData data = service.loadFromFile(file);
-			getContextFreeSession().setCurrentFile(file);
-			updateJulia.execute(data);
-			getContextFreeSession().setData(data);
-			logger.info(data.toString());
-		} catch (Exception x) {
-			logger.warning("Cannot read file " + file.getAbsolutePath());
-			//TODO display error
-		}
-	}
-
 	private void runTimer(Canvas fractalCanvas, Canvas toolCanvas) {
 		timer = new AnimationTimer() {
 			private long last;
@@ -410,9 +348,9 @@ public class RenderPane extends BorderPane {
 			public void handle(long now) {
 				long time = now / 1000000;
 				if (time - last > FRAME_LENGTH_IN_MILLIS) {
-					if (!disableTool) {
+					if (!hasError && coordinator != null && coordinator.isInitialized()) {
 						processRenderErrors();
-//						redrawIfPixelsChanged(fractalCanvas);
+						redrawIfPixelsChanged(fractalCanvas);
 //						if (currentTool != null) {
 //							currentTool.update(time);
 //						}
@@ -446,8 +384,8 @@ public class RenderPane extends BorderPane {
 		return tile;
 	}
 
-	private void updateCompilerErrors(String message, List<CompilerError> errors, String source) {
-		disableTool = message != null;
+	private void updateCompilerErrors(String message, List<Error> errors, String source) {
+		hasError = message != null;
 		Platform.runLater(() -> {
 			statusProperty.setValue(null);
 			errorProperty.setValue(null);
@@ -456,7 +394,7 @@ public class RenderPane extends BorderPane {
 				builder.append(message);
 				if (errors != null) {
 					builder.append("\n\n");
-					for (CompilerError error : errors) {
+					for (Error error : errors) {
 						builder.append("Line ");
 						builder.append(error.getLine());
 						builder.append(": ");
@@ -472,13 +410,13 @@ public class RenderPane extends BorderPane {
 				errorProperty.setValue(builder.toString());
 				statusProperty.setValue(builder.toString());
 			} else {
-				statusProperty.setValue("Source compiled");
+//				statusProperty.setValue("Source compiled");
 			}
 		});
 	}
 
-	private void updateRendererErrors(String message, List<RendererError> errors, String source) {
-		disableTool = message != null;
+	private void updateRendererErrors(String message, List<Error> errors, String source) {
+		hasError = message != null;
 		Platform.runLater(() -> {
 			statusProperty.setValue(null);
 			errorProperty.setValue(null);
@@ -487,7 +425,7 @@ public class RenderPane extends BorderPane {
 				builder.append(message);
 				if (errors != null) {
 					builder.append("\n\n");
-					for (RendererError error : errors) {
+					for (Error error : errors) {
 						builder.append("Line ");
 						builder.append(error.getLine());
 						builder.append(": ");
@@ -503,27 +441,91 @@ public class RenderPane extends BorderPane {
 				errorProperty.setValue(builder.toString());
 				statusProperty.setValue(builder.toString());
 			} else {
-				statusProperty.setValue("Rendering completed");
+//				statusProperty.setValue("Rendering completed");
 			}
 		});
+	}
+
+	private CompilerReport generateReport(String text) throws Exception {
+		return new Compiler().compileReport(text);
+	}
+
+	private List<Error> updateReport(CompilerReport report) {
+		try {
+			updateCompilerErrors(null, null, null);
+			boolean[] changed = createCFDG(report);
+			boolean cfdgChanged = changed[0];
+			if (cfdgChanged) {
+				if (logger.isLoggable(Level.FINE)) {
+					RenderPane.logger.fine("CFDG is changed");
+				}
+			}
+			if (coordinator != null) {
+				coordinator.abort();
+				coordinator.waitFor();
+				if (cfdgChanged) {
+					coordinator.setCFDG(cfdg);
+					coordinator.setSeed(((ContextFreeMetadata)contextFreeSession.getMetadata()).getSeed());
+				}
+				coordinator.init();
+				coordinator.run();
+				Thread.sleep(100);
+				List<Error> errors = coordinator.getErrors();
+				if (errors.size() > 0) {
+					updateCompilerErrors("Some runtime errors occurred", errors, null);
+				}
+				return errors;
+			}
+		} catch (CompilerSourceException e) {
+			if (logger.isLoggable(Level.FINE)) {
+				logger.log(Level.FINE, "Cannot render image: " + e.getMessage());
+			}
+			updateCompilerErrors(e.getMessage(), e.getErrors(), null);
+			return e.getErrors();
+		} catch (CompilerClassException e) {
+			if (logger.isLoggable(Level.FINE)) {
+				logger.log(Level.FINE, "Cannot render image: " + e.getMessage());
+			}
+			updateCompilerErrors(e.getMessage(), e.getErrors(), e.getSource());
+			return e.getErrors();
+		} catch (InterruptedException e) {
+			if (logger.isLoggable(Level.FINE)) {
+				logger.log(Level.FINE, "Cannot render image: " + e.getMessage());
+			}
+			updateCompilerErrors(e.getMessage(), null, null);
+			return Arrays.asList(new Error(Error.ErrorType.RUNTIME, 0, 0, 0, 0, "Interrupted"));
+		}
+		return Collections.emptyList();
+	}
+
+	private boolean[] createCFDG(CompilerReport report) throws CompilerSourceException, CompilerClassException {
+		if (report.getErrors().size() > 0) {
+			cfdgSource = null;
+			throw new CompilerSourceException("Failed to compile source", report.getErrors());
+		}
+		boolean[] changed = new boolean[] { false, false };
+		String newCFDG = report.getSource();
+		changed[0] = !newCFDG.equals(cfdgSource);
+		cfdgSource = newCFDG;
+		cfdg = report.getCFDG();
+		return changed;
 	}
 
 	private void processRenderErrors() {
-//		if (coordinators != null && coordinators.length > 0) {
-//			RendererCoordinator coordinator = coordinators[0];
-//			if (coordinator != null) {
-//				RendererError error = coordinator.getError();
-//				if (error != null) {
-//					updateRendererErrors("Error", Collections.singletonList(error), null);
-//				} else {
-//					updateRendererErrors(null, null, null);
-//				}
-//			}
-//		}
+		if (coordinator != null) {
+			List<Error> errors = coordinator.getErrors();
+			if (errors.isEmpty()) {
+				updateRendererErrors(null, null, null);
+			} else {
+				updateRendererErrors("Error", errors, null);
+			}
+		}
 	}
 
 	private void redrawIfPixelsChanged(Canvas canvas) {
-		RendererGraphicsContext gc = renderFactory.createGraphicsContext(canvas.getGraphicsContext2D());
-//		visitCoordinators(coordinator -> coordinator.isPixelsChanged(), coordinator -> coordinator.drawImage(gc, 0, 0));
+		if (coordinator.isPixelsChanged()) {
+			RendererGraphicsContext gc = renderFactory.createGraphicsContext(canvas.getGraphicsContext2D());
+			coordinator.drawImage(gc, 0, 0);
+		}
 	}
 }

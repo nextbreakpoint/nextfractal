@@ -1,8 +1,8 @@
 /*
- * NextFractal 1.3.0
+ * NextFractal 2.0.0
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2016 Andrea Medeghini
+ * Copyright 2015-2017 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -24,7 +24,12 @@
  */
 package com.nextbreakpoint.nextfractal.core.export;
 
-import java.util.ArrayList;
+import javafx.application.Platform;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.Executors;
@@ -33,29 +38,17 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
-import com.nextbreakpoint.nextfractal.core.session.SessionState;
-
 public abstract class AbstractExportService implements ExportService {
-	private final List<ExportSessionHolder> holders = new ArrayList<>();
+	private final HashMap<String, ExportHandle> sessions = new LinkedHashMap<>();
+	private final List<ExportHandle> finishedSessions = new LinkedList<>();
 	private final ReentrantLock lock = new ReentrantLock();
 	private final ScheduledExecutorService executor;
 	
 	public AbstractExportService(ThreadFactory threadFactory) {
 		executor = Executors.newSingleThreadScheduledExecutor(Objects.requireNonNull(threadFactory));
-		executor.scheduleWithFixedDelay(() -> lockAndUpdateSessions(), 1000, 1000, TimeUnit.MILLISECONDS);
+		executor.scheduleAtFixedRate(() -> lockAndUpdateSessions(), 1000, 250, TimeUnit.MILLISECONDS);
+		executor.scheduleWithFixedDelay(() -> notifyUpdateSessions(), 1000, 1000, TimeUnit.MILLISECONDS);
 	}
-
-//	public void shutdown() {
-//		executor.shutdown(); 
-//		try {
-//			if (!executor.awaitTermination(5, TimeUnit.SECONDS)) {
-//				executor.shutdownNow(); 
-//			}
-//		} catch (InterruptedException x) {
-//			executor.shutdownNow();
-//			Thread.currentThread().interrupt();
-//		}
-//	}
 
 	public final void shutdown() {
 		executor.shutdownNow();
@@ -68,12 +61,16 @@ public abstract class AbstractExportService implements ExportService {
 	public final void startSession(ExportSession session) {
 		try {
 			lock.lock();
-			if (session.getState() != SessionState.SUSPENDED) {
+			ExportHandle exportHandle = sessions.get(session.getSessionId());
+			if (exportHandle == null) {
+				exportHandle = new ExportHandle(session);
+			}
+			if (exportHandle.getState() != ExportState.SUSPENDED) {
 				throw new IllegalStateException("Session is not suspended");
 			}
-			session.setState(SessionState.STARTED);
-			session.setCancelled(false);
-			holders.add(new ExportSessionHolder(session));
+			exportHandle.setState(ExportState.READY);
+			exportHandle.setCancelled(false);
+			sessions.put(session.getSessionId(), exportHandle);
 		} finally {
 			lock.unlock();
 		}
@@ -82,8 +79,11 @@ public abstract class AbstractExportService implements ExportService {
 	public final void stopSession(ExportSession session) {
 		try {
 			lock.lock();
-			session.setCancelled(true);
-			cancelJobs(session);
+			ExportHandle exportHandle = sessions.get(session.getSessionId());
+			if (exportHandle != null) {
+				exportHandle.setCancelled(true);
+				cancelTasks(exportHandle);
+			}
 		} finally {
 			lock.unlock();
 		}
@@ -92,8 +92,11 @@ public abstract class AbstractExportService implements ExportService {
 	public final void suspendSession(ExportSession session) {
 		try {
 			lock.lock();
-			session.setCancelled(false);
-			cancelJobs(session);
+			ExportHandle exportHandle = sessions.get(session.getSessionId());
+			if (exportHandle != null) {
+				exportHandle.setCancelled(false);
+				cancelTasks(exportHandle);
+			}
 		} finally {
 			lock.unlock();
 		}
@@ -102,11 +105,15 @@ public abstract class AbstractExportService implements ExportService {
 	public final void resumeSession(ExportSession session) {
 		try {
 			lock.lock();
-			if (session.getState() != SessionState.SUSPENDED) {
-				throw new IllegalStateException("Session is not suspended");
+			ExportHandle exportHandle = sessions.get(session.getSessionId());
+			if (exportHandle != null) {
+				if (exportHandle.getState() != ExportState.SUSPENDED) {
+					throw new IllegalStateException("Session is not suspended");
+				}
+				exportHandle.setState(ExportState.DISPATCHED);
+				exportHandle.setCancelled(false);
+				resumeTasks(exportHandle);
 			}
-			session.setState(SessionState.STARTED);
-			session.setCancelled(false);
 		} finally {
 			lock.unlock();
 		}
@@ -114,14 +121,53 @@ public abstract class AbstractExportService implements ExportService {
 
 	private void lockAndUpdateSessions() {
 		try {
-			lock.lock();
-			updateSessionsInBackground(holders);
-		} finally {
-			lock.unlock();
+			LinkedList<ExportHandle> copyOfSessions = new LinkedList<>();
+			try {
+				lock.lock();
+				copyOfSessions.addAll(sessions.values());
+			} finally {
+				lock.unlock();
+			}
+			Collection<ExportHandle> finished = updateInBackground(copyOfSessions);
+			try {
+				lock.lock();
+				finishedSessions.addAll(finished);
+			} finally {
+				lock.unlock();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
-	protected abstract void updateSessionsInBackground(List<ExportSessionHolder> holders);
+	private void notifyUpdateSessions() {
+		Platform.runLater(() -> {
+			try {
+				LinkedList<ExportHandle> copyOfSessions = new LinkedList<>();
+				try {
+					lock.lock();
+					copyOfSessions.addAll(sessions.values());
+					finishedSessions.forEach(session -> sessions.remove(session.getSessionId()));
+					finishedSessions.clear();
+				} finally {
+					lock.unlock();
+				}
+				notifyUpdate(copyOfSessions);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		});
+	}
 
-	protected abstract void cancelJobs(ExportSession session);
+	protected abstract Collection<ExportHandle> updateInBackground(Collection<ExportHandle> holders);
+
+	protected abstract void notifyUpdate(Collection<ExportHandle> holders);
+
+	protected abstract void resumeTasks(ExportHandle exportHandle);
+
+	protected abstract void cancelTasks(ExportHandle exportHandle);
+
+	public int getSessionCount() {
+		return sessions.size();
+	}
 }

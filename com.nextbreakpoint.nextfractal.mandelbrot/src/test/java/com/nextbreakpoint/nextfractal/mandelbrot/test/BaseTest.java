@@ -1,8 +1,8 @@
 /*
- * NextFractal 1.3.0
+ * NextFractal 2.0.0
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2016 Andrea Medeghini
+ * Copyright 2015-2017 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -24,12 +24,11 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.test;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringReader;
-import java.util.List;
-
+import com.nextbreakpoint.nextfractal.core.Error;
+import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTBuilder;
+import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTFractal;
+import com.nextbreakpoint.nextfractal.mandelbrot.grammar.MandelbrotLexer;
+import com.nextbreakpoint.nextfractal.mandelbrot.grammar.MandelbrotParser;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.DiagnosticErrorListener;
@@ -37,11 +36,11 @@ import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.Recognizer;
 import org.antlr.v4.runtime.tree.ParseTree;
 
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerError;
-import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTBuilder;
-import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTFractal;
-import com.nextbreakpoint.nextfractal.mandelbrot.grammar.MandelbrotLexer;
-import com.nextbreakpoint.nextfractal.mandelbrot.grammar.MandelbrotParser;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringReader;
+import java.util.List;
 
 public abstract class BaseTest {
 	protected ASTFractal parse(String source) throws Exception {
@@ -60,8 +59,8 @@ public abstract class BaseTest {
         return null;
 	}
 	
-	protected void printErrors(List<CompilerError> errors) {
-		for (CompilerError error : errors) {
+	protected void printErrors(List<Error> errors) {
+		for (Error error : errors) {
 			System.out.println(error.toString());
 		}
 	}

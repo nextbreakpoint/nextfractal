@@ -1,8 +1,8 @@
 /*
- * NextFractal 1.3.0
+ * NextFractal 2.0.0
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2016 Andrea Medeghini
+ * Copyright 2015-2017 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -24,30 +24,31 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.javaFX;
 
+import com.nextbreakpoint.nextfractal.core.EventBus;
 import com.nextbreakpoint.nextfractal.core.javaFX.AdvancedTextField;
-import com.nextbreakpoint.nextfractal.mandelbrot.*;
+import com.nextbreakpoint.nextfractal.core.utils.Double2D;
+import com.nextbreakpoint.nextfractal.core.utils.Double4D;
+import com.nextbreakpoint.nextfractal.core.utils.Time;
+import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotMetadata;
+import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotSession;
 import javafx.application.Platform;
-import javafx.scene.control.*;
-import javafx.scene.input.Clipboard;
-import javafx.scene.input.ClipboardContent;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
-import java.io.StringWriter;
-import java.net.URLEncoder;
-import java.util.Base64;
 import java.util.function.Function;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class ParamsPane extends Pane {
-	private static final Logger logger = Logger.getLogger(ParamsPane.class.getName());
 	private static final int SPACING = 5;
 
-	public ParamsPane(MandelbrotSession session) {
+	private MandelbrotSession mandelbrotSession;
+
+	public ParamsPane(MandelbrotSession session, EventBus eventBus) {
 		VBox box = new VBox(SPACING * 2);
-		box.getStyleClass().add("params");
+
 		Label translationLabel = new Label("Region translation");
 		AdvancedTextField xTraslationField = new AdvancedTextField();
 		AdvancedTextField yTraslationField = new AdvancedTextField();
@@ -55,22 +56,28 @@ public class ParamsPane extends Pane {
 		xTraslationField.setRestrict(getRestriction());
 		yTraslationField.setRestrict(getRestriction());
 		zTraslationField.setRestrict(getRestriction());
+		xTraslationField.setTooltip(new Tooltip("Horizontal translation"));
+		yTraslationField.setTooltip(new Tooltip("Vertical translation"));
+		zTraslationField.setTooltip(new Tooltip("Distance from the plane"));
 		VBox translationPane = new VBox(SPACING);
 		translationPane.getChildren().add(translationLabel);
 		translationPane.getChildren().add(xTraslationField);
 		translationPane.getChildren().add(yTraslationField);
 		translationPane.getChildren().add(zTraslationField);
+
 		Label rotationLabel = new Label("Region rotation");
 		AdvancedTextField zRotationField = new AdvancedTextField();
+		zRotationField.setTooltip(new Tooltip("Rotation in degrees"));
 		zRotationField.setRestrict(getRestriction());
 		VBox rotationPane = new VBox(SPACING); 
 		rotationPane.getChildren().add(rotationLabel);
 		rotationPane.getChildren().add(zRotationField);
-		Label algorithmLabel = new Label("Algorithm variant");
-		Label grammarLabel = new Label("Grammar");
+
 		Label wLabel = new Label("Initial value of w");
 		AdvancedTextField wReField = new AdvancedTextField();
 		AdvancedTextField wImField = new AdvancedTextField();
+		wReField.setTooltip(new Tooltip("Value of real part"));
+		wImField.setTooltip(new Tooltip("Value of imaginary part"));
 		wReField.setRestrict(getRestriction());
 		wImField.setRestrict(getRestriction());
 		VBox wPane = new VBox(SPACING);
@@ -79,9 +86,12 @@ public class ParamsPane extends Pane {
 		whPane.getChildren().add(wReField);
 		whPane.getChildren().add(wImField);
 		wPane.getChildren().add(whPane);
+
 		Label xLabel = new Label("Initial value of x");
 		AdvancedTextField xReField = new AdvancedTextField();
 		AdvancedTextField xImField = new AdvancedTextField();
+		xReField.setTooltip(new Tooltip("Value of real part"));
+		xImField.setTooltip(new Tooltip("Value of imaginary part"));
 		xReField.setRestrict(getRestriction());
 		xImField.setRestrict(getRestriction());
 		xReField.setEditable(false);
@@ -92,283 +102,243 @@ public class ParamsPane extends Pane {
 		xhPane.getChildren().add(xReField);
 		xhPane.getChildren().add(xImField);
 		xPane.getChildren().add(xhPane);
-		VBox grammarPane = new VBox(SPACING);
-		grammarPane.getChildren().add(grammarLabel);
-		ComboBox<String> grammarCombobox = new ComboBox<>();
-		session.listGrammars().forEach(grammar -> grammarCombobox.getItems().add(grammar));
-		grammarCombobox.getStyleClass().add("text-small");
-		grammarPane.getChildren().add(grammarCombobox);
+
+		Label timeLabel = new Label("Time variable");
+		AdvancedTextField timeValueField = new AdvancedTextField();
+		AdvancedTextField timeScaleField = new AdvancedTextField();
+		timeValueField.setTooltip(new Tooltip("Time value"));
+		timeScaleField.setTooltip(new Tooltip("Time scale"));
+		timeValueField.setRestrict(getRestriction());
+		timeScaleField.setRestrict(getRestriction());
+		timeScaleField.setEditable(false);
+		VBox timePane = new VBox(SPACING);
+		timePane.getChildren().add(timeLabel);
+		HBox timehPane = new HBox(SPACING);
+		timehPane.getChildren().add(timeValueField);
+		timehPane.getChildren().add(timeScaleField);
+		timePane.getChildren().add(timehPane);
+
+		Label algorithmLabel = new Label("Algorithm variant");
 		VBox algorithmPane = new VBox(SPACING);
 		algorithmPane.getChildren().add(algorithmLabel);
 		ComboBox<String> algorithmCombobox = new ComboBox<>();
 		algorithmCombobox.getItems().add("Mandelbrot");
 		algorithmCombobox.getItems().add("Julia/Fatou");
 		algorithmCombobox.getStyleClass().add("text-small");
+		algorithmCombobox.setTooltip(new Tooltip("Select algorithm mode"));
 		algorithmPane.getChildren().add(algorithmCombobox);
-		if (grammarCombobox.getItems().size() > 1) {
-			box.getChildren().add(grammarPane);
-		}
+
 		box.getChildren().add(algorithmPane);
 		box.getChildren().add(translationPane);
 		box.getChildren().add(rotationPane);
 		box.getChildren().add(wPane);
 		box.getChildren().add(xPane);
-		VBox buttons = new VBox(4);
-		Button applyButton = new Button("Apply");
-		Button cancelButton = new Button("Cancel"); 
-		buttons.getChildren().add(applyButton);
-		buttons.getChildren().add(cancelButton);
-		box.getChildren().add(buttons);
-		Button encodeCopyButton = new Button("Copy");
-		TextArea encodeTextArea;
-		if (Boolean.getBoolean("mandelbrot.encode.data")) {
-			encodeTextArea = new TextArea();
-			encodeTextArea.getStyleClass().add("encoded");
-			encodeTextArea.setWrapText(true);
-			encodeTextArea.setEditable(false);
-			box.getChildren().add(encodeTextArea);
-			box.getChildren().add(encodeCopyButton);
-			encodeCopyButton.setOnAction((e) -> {
-				String text = encodeTextArea.getText();
-				Clipboard clipboard = Clipboard.getSystemClipboard();
-				ClipboardContent content = new ClipboardContent();
-				content.putString(text);
-				clipboard.setContent(content);
-			});
-		} else {
-			encodeTextArea = null;
-		}
+		box.getChildren().add(timePane);
 
-		grammarCombobox.getSelectionModel().select(session.getGrammar());
+//		Button encodeCopyButton = new Button("Copy");
+//		TextArea encodeTextArea;
+//		if (Boolean.getBoolean("mandelbrot.encode.mandelbrotData")) {
+//			encodeTextArea = new TextArea();
+//			encodeTextArea.getStyleClass().add("encoded");
+//			encodeTextArea.setWrapText(true);
+//			encodeTextArea.setEditable(false);
+//			box.getChildren().add(encodeTextArea);
+//			box.getChildren().add(encodeCopyButton);
+//			encodeCopyButton.setOnAction((e) -> {
+//				String text = encodeTextArea.getText();
+//				Clipboard clipboard = Clipboard.getSystemClipboard();
+//				ClipboardContent content = new ClipboardContent();
+//				content.putString(text);
+//				clipboard.setContent(content);
+//			});
+//		} else {
+//			encodeTextArea = null;
+//		}
 
-		ScrollPane scrollPane = new ScrollPane(box);
-		scrollPane.setFitToWidth(true);
-		scrollPane.setFitToHeight(true);
-		getChildren().add(scrollPane);
+		getChildren().add(box);
+
+		mandelbrotSession = session;
 
 		widthProperty().addListener((observable, oldValue, newValue) -> {
 			double width = newValue.doubleValue() - getInsets().getLeft() - getInsets().getRight();
 			box.setPrefWidth(width);
-			grammarCombobox.setPrefWidth(width);
             algorithmCombobox.setPrefWidth(width);
-			scrollPane.setPrefWidth(newValue.doubleValue());
-			applyButton.setPrefWidth(newValue.doubleValue());
-			cancelButton.setPrefWidth(newValue.doubleValue());
-			encodeCopyButton.setPrefWidth(newValue.doubleValue());
         });
 		
 		heightProperty().addListener((observable, oldValue, newValue) -> {
 			box.setPrefHeight(newValue.doubleValue() - getInsets().getTop() - getInsets().getBottom());
-			scrollPane.setPrefHeight(newValue.doubleValue());
 		});
 
-		Function<MandelbrotSession, Object> updateAll = (t) -> {
-			MandelbrotData data = t.getDataAsCopy();
-			double[] translation = data.getTranslation();
-			double[] rotation = data.getRotation();
-			double[] point = data.getPoint();
-			xTraslationField.setText(String.valueOf(translation[0]));
-			yTraslationField.setText(String.valueOf(translation[1]));
-			zTraslationField.setText(String.valueOf(translation[2]));
-			zRotationField.setText(String.valueOf(rotation[2]));
-			wReField.setText(String.valueOf(point[0]));
-			wImField.setText(String.valueOf(point[1]));
+		Function<MandelbrotMetadata, Object> updateAll = (metadata) -> {
+			Double4D translation = metadata.getTranslation();
+			Double4D rotation = metadata.getRotation();
+			Double2D point = metadata.getPoint();
+			Time time = metadata.getTime();
+			xTraslationField.setText(String.valueOf(translation.getX()));
+			yTraslationField.setText(String.valueOf(translation.getY()));
+			zTraslationField.setText(String.valueOf(translation.getZ()));
+			zRotationField.setText(String.valueOf(rotation.getZ()));
+			wReField.setText(String.valueOf(point.getX()));
+			wImField.setText(String.valueOf(point.getY()));
 			xReField.setText(String.valueOf(0));
 			xImField.setText(String.valueOf(0));
-			if (data.isJulia()) {
+			timeValueField.setText(String.valueOf(time.getValue()));
+			timeScaleField.setText(String.valueOf(time.getScale()));
+			if (metadata.isJulia()) {
 				algorithmCombobox.getSelectionModel().select("Julia/Fatou");
 			} else {
 				algorithmCombobox.getSelectionModel().select("Mandelbrot");
 			}
-			if (encodeTextArea != null) {
-				updateEncodedData(encodeTextArea, t);
-			}
+//			if (encodeTextArea != null) {
+//				updateEncodedData(encodeTextArea, t);
+//			}
 			return null;
 		};
-		
-		cancelButton.setOnAction(e -> updateAll.apply(session));
-		
-		applyButton.setOnAction((e) -> {
-			double[] translation = new double[3];
-			translation[0] = Double.parseDouble(xTraslationField.getText());
-			translation[1] = Double.parseDouble(yTraslationField.getText());
-			translation[2] = Double.parseDouble(zTraslationField.getText());
-			double rotation = Double.parseDouble(zRotationField.getText());
-			double[] point = new double[3];
-			point[0] = Double.parseDouble(wReField.getText());
-			point[1] = Double.parseDouble(wImField.getText());
+
+		Function<MandelbrotMetadata, Object> notifyAll = (metadata) -> {
+			double tx = Double.parseDouble(xTraslationField.getText());
+			double ty = Double.parseDouble(yTraslationField.getText());
+			double tz = Double.parseDouble(zTraslationField.getText());
+			double tw = metadata.getTranslation().getW();
+			Double4D translation = new Double4D(tx, ty, tz, tw);
+			double rx = metadata.getRotation().getX();
+			double ry = metadata.getRotation().getY();
+			double rz = Double.parseDouble(zRotationField.getText());
+			double rw = metadata.getRotation().getW();
+			Double4D rotation = new Double4D(rx, ry, rz, rw);
+			Double4D scale = metadata.getScale();
+			double px = Double.parseDouble(wReField.getText());
+			double py = Double.parseDouble(wImField.getText());
+			Double2D point = new Double2D(px, py);
+			double tv = Double.parseDouble(timeValueField.getText());
+			double ts = Double.parseDouble(timeScaleField.getText());
+			Time time = new Time(tv, ts);
+			boolean julia = !algorithmCombobox.getSelectionModel().getSelectedItem().equals("Mandelbrot");
+			MandelbrotMetadata newMetadata = new MandelbrotMetadata(translation, rotation, scale, point, time, julia, metadata.getOptions());
+			MandelbrotSession newSession = new MandelbrotSession(mandelbrotSession.getScript(), newMetadata);
 			Platform.runLater(() -> {
-				MandelbrotView view = session.getViewAsCopy();
-				view.getTraslation()[0] = translation[0];
-				view.getTraslation()[1] = translation[1];
-				view.getTraslation()[2] = translation[2];
-				view.getRotation()[2] = rotation;
-				view.getPoint()[0] = point[0];
-				view.getPoint()[1] = point[1];
-				boolean isMandelbrotAlgorithm = algorithmCombobox.getSelectionModel().getSelectedItem().equals("Mandelbrot");
-				session.setView(new MandelbrotView(view.getTraslation(), view.getRotation(), view.getScale(), view.getPoint(), isMandelbrotAlgorithm ? false : true), false);
+				eventBus.postEvent("editor-data-changed", newSession, false, true);
 			});
+			return null;
+		};
+
+		eventBus.subscribe("editor-params-action", event -> {
+			if (mandelbrotSession != null && event[0].equals("cancel")) updateAll.apply((MandelbrotMetadata) mandelbrotSession.getMetadata());
+			if (mandelbrotSession != null && event[0].equals("apply")) notifyAll.apply((MandelbrotMetadata) mandelbrotSession.getMetadata());
 		});
-		
-		updateAll.apply(session);
-		
-		session.addMandelbrotListener(new MandelbrotListener() {
-			@Override
-			public void dataChanged(MandelbrotSession session) {
-				updateAll.apply(session);
-			}
-			
-			@Override
-			public void pointChanged(MandelbrotSession session, boolean continuous) {
-				MandelbrotData data = session.getDataAsCopy();
-				double[] point = data.getPoint();
-				wReField.setText(String.valueOf(point[0]));
-				wImField.setText(String.valueOf(point[1]));
-				xReField.setText(String.valueOf(0));
-				xImField.setText(String.valueOf(0));
-				if (!continuous) {
-					if (encodeTextArea != null) {
-						updateEncodedData(encodeTextArea, session);
-					}
-				}
-			}
 
-			@Override
-			public void viewChanged(MandelbrotSession session, boolean continuous) {
-				if (!continuous) {
-					MandelbrotData data = session.getDataAsCopy();
-					double[] translation = data.getTranslation();
-					double[] rotation = data.getRotation();
-					xTraslationField.setText(String.valueOf(translation[0]));
-					yTraslationField.setText(String.valueOf(translation[1]));
-					zTraslationField.setText(String.valueOf(translation[2]));
-					zRotationField.setText(String.valueOf(rotation[2]));
-					if (data.isJulia()) {
-						algorithmCombobox.getSelectionModel().select("Julia/Fatou");
-					} else {
-						algorithmCombobox.getSelectionModel().select("Mandelbrot");
-					}
-					if (encodeTextArea != null) {
-						updateEncodedData(encodeTextArea, session);
-					}
-				}
-			}
+		eventBus.subscribe("session-data-changed", event -> updateData(updateAll, (MandelbrotSession) event[0], (Boolean) event[1]));
 
-			@Override
-			public void statusChanged(MandelbrotSession session) {
-			}
-
-			@Override
-			public void errorChanged(MandelbrotSession session) {
-			}
-
-			@Override
-			public void sourceChanged(MandelbrotSession session) {
-			}
-
-			@Override
-			public void reportChanged(MandelbrotSession session) {
-				if (encodeTextArea != null) {
-					updateEncodedData(encodeTextArea, session);
-				}
-			}
-		});
-		
 		xTraslationField.setOnAction(e -> {
 			double value = Double.parseDouble(xTraslationField.getText());
 			Platform.runLater(() -> {
-				MandelbrotView view = session.getViewAsCopy();
-				view.getTraslation()[0] = value;
-				session.setView(view, false);
+				MandelbrotMetadata metadata = (MandelbrotMetadata) mandelbrotSession.getMetadata();
+				double[] translation = metadata.getTranslation().toArray();
+				translation[0] = value;
+				MandelbrotMetadata newMetadata = new MandelbrotMetadata(new Double4D(translation), metadata.getRotation(), metadata.getScale(), metadata.getPoint(), metadata.getTime(), metadata.isJulia(), metadata.getOptions());
+				eventBus.postEvent("editor-data-changed", new MandelbrotSession(mandelbrotSession.getScript(), newMetadata), false, true);
 			});
 		});
 		
 		yTraslationField.setOnAction(e -> {
 			double value = Double.parseDouble(yTraslationField.getText());
 			Platform.runLater(() -> {
-				MandelbrotView view = session.getViewAsCopy();
-				view.getTraslation()[1] = value;
-				session.setView(view, false);
+				MandelbrotMetadata metadata = (MandelbrotMetadata) mandelbrotSession.getMetadata();
+				double[] translation = metadata.getTranslation().toArray();
+				translation[1] = value;
+				MandelbrotMetadata newMetadata = new MandelbrotMetadata(new Double4D(translation), metadata.getRotation(), metadata.getScale(), metadata.getPoint(), metadata.getTime(), metadata.isJulia(), metadata.getOptions());
+				eventBus.postEvent("editor-data-changed", new MandelbrotSession(mandelbrotSession.getScript(), newMetadata), false, true);
 			});
 		});
 		
 		zTraslationField.setOnAction(e -> {
 			double value = Double.parseDouble(zTraslationField.getText());
 			Platform.runLater(() -> {
-				MandelbrotView view = session.getViewAsCopy();
-				view.getTraslation()[2] = value;
-				session.setView(view, false);
+				MandelbrotMetadata metadata = (MandelbrotMetadata) mandelbrotSession.getMetadata();
+				double[] translation = metadata.getTranslation().toArray();
+				translation[2] = value;
+				MandelbrotMetadata newMetadata = new MandelbrotMetadata(new Double4D(translation), metadata.getRotation(), metadata.getScale(), metadata.getPoint(), metadata.getTime(), metadata.isJulia(), metadata.getOptions());
+				eventBus.postEvent("editor-data-changed", new MandelbrotSession(mandelbrotSession.getScript(), newMetadata), false, true);
 			});
 		});
 		
 		zRotationField.setOnAction(e -> {
 			double value = Double.parseDouble(zRotationField.getText());
 			Platform.runLater(() -> {
-				MandelbrotView view = session.getViewAsCopy();
-				view.getRotation()[2] = value;
-				session.setView(view, false);
+				MandelbrotMetadata metadata = (MandelbrotMetadata) mandelbrotSession.getMetadata();
+				double[] rotation = metadata.getRotation().toArray();
+				rotation[2] = value;
+				MandelbrotMetadata newMetadata = new MandelbrotMetadata(metadata.getTranslation(), new Double4D(rotation), metadata.getScale(), metadata.getPoint(), metadata.getTime(), metadata.isJulia(), metadata.getOptions());
+				eventBus.postEvent("editor-data-changed", new MandelbrotSession(mandelbrotSession.getScript(), newMetadata), false, true);
 			});
 		});
 		
 		wReField.setOnAction(e -> {
 			double value = Double.parseDouble(wReField.getText());
 			Platform.runLater(() -> {
-				double[] wPoint = session.getPoint();
-				wPoint[0] = value;
-				session.setPoint(wPoint, false);
+				MandelbrotMetadata metadata = (MandelbrotMetadata) mandelbrotSession.getMetadata();
+				double[] point = metadata.getPoint().toArray();
+				point[0] = value;
+				MandelbrotMetadata newMetadata = new MandelbrotMetadata(metadata.getTranslation(), metadata.getRotation(), metadata.getScale(), new Double2D(point), metadata.getTime(), metadata.isJulia(), metadata.getOptions());
+				eventBus.postEvent("editor-data-changed", new MandelbrotSession(mandelbrotSession.getScript(), newMetadata), false, true);
 			});
 		});
 		
 		wImField.setOnAction(e -> {
 			double value = Double.parseDouble(wImField.getText());
 			Platform.runLater(() -> {
-				double[] wPoint = session.getPoint();
-				wPoint[1] = value;
-				session.setPoint(wPoint, false);
+				MandelbrotMetadata metadata = (MandelbrotMetadata) mandelbrotSession.getMetadata();
+				double[] point = metadata.getPoint().toArray();
+				point[1] = value;
+				MandelbrotMetadata newMetadata = new MandelbrotMetadata(metadata.getTranslation(), metadata.getRotation(), metadata.getScale(), new Double2D(point), metadata.getTime(), metadata.isJulia(), metadata.getOptions());
+				eventBus.postEvent("editor-data-changed", new MandelbrotSession(mandelbrotSession.getScript(), newMetadata), false, true);
 			});
 		});
-		
+
+		timeValueField.setOnAction(e -> {
+			double value = Double.parseDouble(timeValueField.getText());
+			Platform.runLater(() -> {
+				MandelbrotMetadata metadata = (MandelbrotMetadata) mandelbrotSession.getMetadata();
+				double scale = metadata.getTime().getScale();
+				MandelbrotMetadata newMetadata = new MandelbrotMetadata(metadata.getTranslation(), metadata.getRotation(), metadata.getScale(), metadata.getPoint(), new Time(value, scale), metadata.isJulia(), metadata.getOptions());
+				eventBus.postEvent("editor-data-changed", new MandelbrotSession(mandelbrotSession.getScript(), newMetadata), false, true);
+			});
+		});
+
+		timeScaleField.setOnAction(e -> {
+			double scale = Double.parseDouble(timeScaleField.getText());
+			Platform.runLater(() -> {
+				MandelbrotMetadata metadata = (MandelbrotMetadata) mandelbrotSession.getMetadata();
+				double value = metadata.getTime().getValue();
+				MandelbrotMetadata newMetadata = new MandelbrotMetadata(metadata.getTranslation(), metadata.getRotation(), metadata.getScale(), metadata.getPoint(), new Time(value, scale), metadata.isJulia(), metadata.getOptions());
+				eventBus.postEvent("editor-data-changed", new MandelbrotSession(mandelbrotSession.getScript(), newMetadata), false, true);
+			});
+		});
+
 		algorithmCombobox.setOnAction(e -> {
-			boolean isJuliaView = session.getViewAsCopy().isJulia();
+			MandelbrotMetadata metadata = (MandelbrotMetadata) mandelbrotSession.getMetadata();
+			boolean isJuliaView = metadata.isJulia();
 			boolean isMandelbrotAlgorithm = algorithmCombobox.getSelectionModel().getSelectedItem().equals("Mandelbrot");
 			if (isMandelbrotAlgorithm && isJuliaView) {
 				Platform.runLater(() -> {
-					MandelbrotView view = session.getViewAsCopy();
-					session.setView(new MandelbrotView(view.getTraslation(), view.getRotation(), view.getScale(), view.getPoint(), false), false);
+					MandelbrotMetadata newMetadata = new MandelbrotMetadata(metadata.getTranslation(), metadata.getRotation(), metadata.getScale(), metadata.getPoint(), metadata.getTime(), false, metadata.getOptions());
+					eventBus.postEvent("editor-data-changed", new MandelbrotSession(mandelbrotSession.getScript(), newMetadata), false, true);
 				});
 			} else if (!isMandelbrotAlgorithm && !isJuliaView) {
 				Platform.runLater(() -> {
-					MandelbrotView view = session.getViewAsCopy();
-					session.setView(new MandelbrotView(view.getTraslation(), view.getRotation(), view.getScale(), view.getPoint(), true), false);
+					MandelbrotMetadata newMetadata = new MandelbrotMetadata(metadata.getTranslation(), metadata.getRotation(), metadata.getScale(), metadata.getPoint(), metadata.getTime(), true, metadata.getOptions());
+					eventBus.postEvent("editor-data-changed", new MandelbrotSession(mandelbrotSession.getScript(), newMetadata), false, true);
 				});
 			}
 		});
-
-		grammarCombobox.setOnAction(e -> {
-			if (!grammarCombobox.getSelectionModel().isEmpty() && !grammarCombobox.getSelectionModel().getSelectedItem().equals(session.getGrammar())) {
-				session.selectGrammar(grammarCombobox.getSelectionModel().getSelectedItem());
-			}
-		});
 	}
 
-	protected void updateEncodedData(TextArea textArea, MandelbrotSession session) {
-		if (Boolean.getBoolean("mandelbrot.encode.data")) {
-			try {
-				MandelbrotDataStore service = new MandelbrotDataStore();
-				MandelbrotData data = session.getDataAsCopy();
-				StringWriter writer = new StringWriter();
-				service.saveToWriter(writer, data);
-				String plainData = writer.toString();
-				String encodedData = Base64.getEncoder().encodeToString(plainData.getBytes());
-				encodedData = URLEncoder.encode(encodedData, "UTF-8");
-				logger.info("Update encoded data");
-				textArea.setText(encodedData);
-			} catch (Exception e) {
-				logger.log(Level.FINE, "Cannot encode data", e);
-			}
-		}		
+	private void updateData(Function<MandelbrotMetadata, Object> updateAll, MandelbrotSession session, boolean continuous) {
+		mandelbrotSession = session;
+		if (continuous == Boolean.FALSE) {
+			updateAll.apply((MandelbrotMetadata) mandelbrotSession.getMetadata());
+        }
 	}
-
 
 	protected String getRestriction() {
 		return "-?\\d*\\.?\\d*";

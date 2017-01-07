@@ -1,8 +1,8 @@
 /*
- * NextFractal 1.3.0
+ * NextFractal 2.0.0
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2016 Andrea Medeghini
+ * Copyright 2015-2017 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -24,11 +24,10 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.test;
 
-import org.junit.Assert;
-import org.junit.Test;
-
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.Compiler;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerReport;
+import org.junit.Assert;
+import org.junit.Test;
 
 public class CompilerTest2 extends BaseTest {
 	@Test

@@ -1,8 +1,8 @@
 /*
- * NextFractal 1.3.0
+ * NextFractal 2.0.0
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2016 Andrea Medeghini
+ * Copyright 2015-2017 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -24,7 +24,10 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.grammar.ast;
 
-import com.nextbreakpoint.nextfractal.contextfree.grammar.*;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGDriver;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGRenderer;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFStackRule;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.Modification;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.CompilePhase;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ExpType;
 import org.antlr.v4.runtime.Token;
@@ -32,15 +35,15 @@ import org.antlr.v4.runtime.Token;
 public class ASTParen extends ASTExpression {
 	private ASTExpression expression;
 	
-	public ASTParen(ASTExpression expression, Token location) {
-		super(expression.isConstant(), expression.isNatural(), expression.getType(), location);
+	public ASTParen(CFDGDriver driver, ASTExpression expression, Token location) {
+		super(driver, expression.isConstant(), expression.isNatural(), expression.getType(), location);
 		this.expression = expression;
 	}
 
 	@Override
 	public int evaluate(double[] result, int length, CFDGRenderer renderer) {
         if (type != ExpType.NumericType) {
-			Logger.error("Non-numeric/flag expression in a numeric/flag context", location);
+			driver.error("Non-numeric/flag expression in a numeric/flag context", location);
 			return -1;
         }
         return expression.evaluate(result, length, renderer);
@@ -49,7 +52,7 @@ public class ASTParen extends ASTExpression {
 	@Override
 	public void evaluate(Modification result, boolean shapeDest, CFDGRenderer renderer) {
         if (type != ExpType.ModType) {
-			Logger.error("Expression does not evaluate to an adjustment", location);
+			driver.error("Expression does not evaluate to an adjustment", location);
 			return;
         }
 		super.evaluate(result, shapeDest, renderer);
@@ -95,7 +98,7 @@ public class ASTParen extends ASTExpression {
 	@Override
 	public CFStackRule evalArgs(CFDGRenderer renderer, CFStackRule parent) {
 		if (type != ExpType.RuleType) {
-			Logger.error("Evaluation of a non-shape expression in a shape context", location);
+			driver.error("Evaluation of a non-shape expression in a shape context", location);
 			return null;
 		}
 		return expression.evalArgs(renderer, parent);

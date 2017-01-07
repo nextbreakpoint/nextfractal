@@ -1,8 +1,8 @@
 /*
- * NextFractal 1.3.0
+ * NextFractal 2.0.0
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2016 Andrea Medeghini
+ * Copyright 2015-2017 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -24,28 +24,25 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.grammar;
 
-import com.nextbreakpoint.nextfractal.contextfree.core.ExtendedGeneralPath;
-
 import java.awt.Shape;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
+import java.awt.geom.PathIterator;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 
-import java.awt.geom.AffineTransform;
-import java.awt.geom.PathIterator;
-import java.awt.geom.Point2D;
-
 public class PathStorage implements Cloneable {
-	private ExtendedGeneralPath currentPath = new ExtendedGeneralPath();
+	private GeneralPath currentPath = new GeneralPath();
 	private List<Vertex> vertices = new ArrayList<>();
 
 	public void startNewPath() {
-		currentPath = new ExtendedGeneralPath();
+		currentPath = new GeneralPath();
 		vertices.clear();
 	}
 
 	public void closePath() {
-		currentPath.closePath();
+		endPath();
 	}
 
 	public void endPath() {
@@ -54,22 +51,26 @@ public class PathStorage implements Cloneable {
 
 	public void moveTo(Point2D.Double point) {
 		vertices.add(new Vertex(point, 1));
-		currentPath.moveTo((float)point.getX(), (float)point.getY());
+		currentPath.moveTo((float)point.x, (float)point.y);
 	}
 
 	public void lineTo(Point2D.Double point) {
 		vertices.add(new Vertex(point, 2));
-		currentPath.lineTo((float)point.getX(), (float)point.getY());
+		currentPath.lineTo((float)point.x, (float)point.y);
 	}
 
-	public void arcTo(double radiusX, double radiusY, double angle, boolean largeArc, boolean sweep, Point2D.Double point) {
-		vertices.add(new Vertex(point, 3));
-		currentPath.arcTo((float)radiusX, (float)radiusY, (float)angle, largeArc, sweep, (float)point.getX(), (float)point.getY());
-	}
+//	public void arcTo(double radiusX, double radiusY, double angle, boolean largeArc, boolean sweep, Point2D.Double point) {
+//		vertices.add(new Vertex(point, 3));
+//		currentPath.arcTo((float)radiusX, (float)radiusY, (float)angle, largeArc, sweep, (float)point.x, (float)point.y);
+//	}
 
 	public void relToAbs(Point2D.Double point) {
-		//TODO controllare
-//		point.setLocation(point.getX() + center.getX(), point.getY() + center.getY());
+		if (vertices.size() > 0) {
+			Point2D.Double p = new Point2D.Double();
+			if (isVertex(lastVertex(p))) {
+				point.setLocation(point.x + p.x, point.y + p.y);
+			}
+		}
 	}
 
 	public int command(int index) {
@@ -82,19 +83,31 @@ public class PathStorage implements Cloneable {
 
 	public int vertex(int index, Point2D.Double point) {
 		Vertex vertex = vertices.get(index);
-		point.setLocation(vertex.point.getX(), vertex.point.getY());
+		point.setLocation(vertex.point.x, vertex.point.y);
 		return vertex.command;
 	}
 
 	public int lastVertex(Point2D.Double point) {
+		if (vertices.size() < 1) {
+			return 0;
+		}
 		Vertex vertex = vertices.get(vertices.size() - 1);
-		point.setLocation(vertex.point.getX(), vertex.point.getY());
+		point.setLocation(vertex.point.x, vertex.point.y);
+		return vertex.command;
+	}
+
+	public int prevVertex(Point2D.Double point) {
+		if (vertices.size() < 2) {
+			return 0;
+		}
+		Vertex vertex = vertices.get(vertices.size() - 2);
+		point.setLocation(vertex.point.x, vertex.point.y);
 		return vertex.command;
 	}
 
 	public void modifyVertex(int index, Point2D.Double point) {
 		Vertex vertex = vertices.get(index);
-		vertex.point.setLocation(point.getX(), point.getY());
+		vertex.point.setLocation(point.x, point.y);
 	}
 
 	public boolean isDrawing(int command) {
@@ -110,34 +123,49 @@ public class PathStorage implements Cloneable {
 	}
 
 	public void curve3(Point2D.Double point) {
-		//TODO completare
+		Point2D.Double p0 = new Point2D.Double();
+		if (isVertex(lastVertex(p0))) {
+			Point2D.Double p1 = new Point2D.Double();
+			if (isCurve(prevVertex(p1))) {
+				p1.setLocation(p0.x + p0.x - p1.x, p0.y + p0.y - p1.y);
+			} else {
+				p1.setLocation(p0);
+			}
+			curve3(p1, point);
+		}
 	}
 
-	public void curve4(Point2D.Double point) {
-		//TODO completare
+	public void curve3(Point2D.Double ctrlPoint1, Point2D.Double point) {
+		vertices.add(new Vertex(ctrlPoint1, 3));
+		vertices.add(new Vertex(point, 3));
+		currentPath.curveTo(ctrlPoint1.x, ctrlPoint1.y, ctrlPoint1.x, ctrlPoint1.y, point.x, point.y);
 	}
 
-	public void curve3(Point2D.Double a, Point2D.Double point) {
-		//TODO completare
+	public void curve4(Point2D.Double ctrlPoint2, Point2D.Double point) {
+		Point2D.Double p0 = new Point2D.Double();
+		if (isVertex(lastVertex(p0))) {
+			Point2D.Double p1 = new Point2D.Double();
+			if (isCurve(prevVertex(p1))) {
+				p1.setLocation(p0.x + p0.x - p1.x, p0.y + p0.y - p1.y);
+			} else {
+				p1.setLocation(p0);
+			}
+			curve4(p1, ctrlPoint2, point);
+		}
 	}
 
-	public void curve3(Point2D.Double a, Point2D.Double b, Point2D.Double point) {
-		//TODO completare
-	}
-
-	public void curve4(Point2D.Double a, Point2D.Double point) {
-		//TODO completare
-	}
-
-	public void curve4(Point2D.Double a, Point2D.Double b, Point2D.Double point) {
-		//TODO completare
+	public void curve4(Point2D.Double ctrlPoint1, Point2D.Double ctrlPoint2, Point2D.Double point) {
+		vertices.add(new Vertex(ctrlPoint1, 3));
+		vertices.add(new Vertex(ctrlPoint2, 3));
+		vertices.add(new Vertex(point, 3));
+		currentPath.curveTo(ctrlPoint1.x, ctrlPoint1.y, ctrlPoint2.x, ctrlPoint2.y, point.x, point.y);
 	}
 
 	public PathIterator getPathIterator() {
 		return getGeneralPath().getPathIterator(new AffineTransform());
 	}
 
-	public ExtendedGeneralPath getGeneralPath() {
+	public GeneralPath getGeneralPath() {
 		return currentPath;
 	}
 
@@ -155,12 +183,12 @@ public class PathStorage implements Cloneable {
 
 	public Object clone() {
 		PathStorage storage = new PathStorage();
-		storage.currentPath = (ExtendedGeneralPath) currentPath.clone();
+		storage.currentPath = (GeneralPath) currentPath.clone();
 		return storage;
 	}
 
 	private class Vertex {
-		Point2D point;
+		Point2D.Double point;
 		int command;
 
 		public Vertex(Point2D.Double point, int command) {

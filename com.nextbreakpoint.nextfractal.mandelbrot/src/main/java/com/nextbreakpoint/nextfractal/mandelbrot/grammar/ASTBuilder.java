@@ -1,8 +1,8 @@
 /*
- * NextFractal 1.3.0
+ * NextFractal 2.0.0
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2016 Andrea Medeghini
+ * Copyright 2015-2017 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -24,11 +24,10 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.grammar;
 
-import java.util.Stack;
-
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
 import org.antlr.v4.runtime.Token;
 
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
+import java.util.Stack;
 
 public class ASTBuilder {
 	private ASTFractal fractal;
@@ -139,6 +138,18 @@ public class ASTBuilder {
 
 	public void registerStateVariable(String name, boolean real, Token location) {
 		fractal.registerStateVariable(name, real, location);
+	}
+
+	public void unregisterStateVariable(String name) {
+		fractal.unregisterStateVariable(name);
+	}
+
+	public void unregisterVariable(String name) {
+		if (isColorContext) {
+			fractal.unregisterColorVariable(name);
+		} else {
+			fractal.unregisterOrbitVariable(name);
+		}
 	}
 
 	public void registerVariable(String name, boolean real, Token location) {

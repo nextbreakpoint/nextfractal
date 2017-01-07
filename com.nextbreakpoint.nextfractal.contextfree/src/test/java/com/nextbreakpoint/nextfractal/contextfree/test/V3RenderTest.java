@@ -1,5 +1,5 @@
 /*
- * NextFractal 1.3.0
+ * NextFractal 2.0.0
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015-2016 Andrea Medeghini
@@ -24,25 +24,26 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.test;
 
-import com.nextbreakpoint.nextfractal.contextfree.core.ExtendedGeneralPath;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.*;
-
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.util.*;
-
-import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.FlagType;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDG;
+import com.nextbreakpoint.nextfractal.contextfree.renderer.Renderer;
+import com.nextbreakpoint.nextfractal.core.renderer.RendererPoint;
+import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
+import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
+import com.nextbreakpoint.nextfractal.core.renderer.java2D.Java2DRendererFactory;
+import com.nextbreakpoint.nextfractal.core.utils.DefaultThreadFactory;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 import javax.imageio.ImageIO;
-import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 @RunWith(Parameterized.class)
@@ -67,7 +68,29 @@ public class V3RenderTest extends AbstractBaseTest {
 		params.add(new Object[] { "/v3-shape-path2.cfdg", "/v3-shape-path2.png" });
 		params.add(new Object[] { "/v3-shape-switch.cfdg", "/v3-shape-switch.png" });
 		params.add(new Object[] { "/v3-shape-trans.cfdg", "/v3-shape-trans.png" });
-//		params.add(new Object[] { "/v3-shape-clone.cfdg", "/v3-shape-clone.png" });
+		params.add(new Object[] { "/v3-shape-parameters.cfdg", "/v3-shape-parameters.png" });
+		params.add(new Object[] { "/v3-shape-include.cfdg", "/v3-shape-include.png" });
+		params.add(new Object[] { "/v3-shape-tile.cfdg", "/v3-shape-tile.png" });
+		params.add(new Object[] { "/v3-shape-size.cfdg", "/v3-shape-size.png" });
+		params.add(new Object[] { "/v3-shape-clone.cfdg", "/v3-shape-clone.png" });
+		params.add(new Object[] { "/v3-shape-symmetry-dihedral.cfdg", "/v3-shape-symmetry-dihedral.png" });
+		params.add(new Object[] { "/v3-shape-symmetry-cyclic.cfdg", "/v3-shape-symmetry-cyclic.png" });
+		params.add(new Object[] { "/v3-shape-symmetry-p11g.cfdg", "/v3-shape-symmetry-p11g.png" });
+		params.add(new Object[] { "/v3-shape-symmetry-p11m.cfdg", "/v3-shape-symmetry-p11m.png" });
+		params.add(new Object[] { "/v3-shape-symmetry-p1m1.cfdg", "/v3-shape-symmetry-p1m1.png" });
+		params.add(new Object[] { "/v3-shape-symmetry-p2.cfdg", "/v3-shape-symmetry-p2.png" });
+		params.add(new Object[] { "/v3-shape-symmetry-p2mg.cfdg", "/v3-shape-symmetry-p2mg.png" });
+		params.add(new Object[] { "/v3-shape-symmetry-pm.cfdg", "/v3-shape-symmetry-pm.png" });
+		params.add(new Object[] { "/v3-shape-symmetry-pg.cfdg", "/v3-shape-symmetry-pg.png" });
+		params.add(new Object[] { "/v3-shape-symmetry-cm.cfdg", "/v3-shape-symmetry-cm.png" });
+////		params.add(new Object[] { "/v3-shape-symmetry-pmm.cfdg", "/v3-shape-symmetry-pmm.png" });
+////		params.add(new Object[] { "/v3-shape-symmetry-pmg.cfdg", "/v3-shape-symmetry-pmg.png" });
+////		params.add(new Object[] { "/v3-shape-symmetry-pgg.cfdg", "/v3-shape-symmetry-pgg.png" });
+////		params.add(new Object[] { "/v3-shape-symmetry-cmm.cfdg", "/v3-shape-symmetry-cmm.png" });
+////		params.add(new Object[] { "/v3-shape-symmetry-p4m.cfdg", "/v3-shape-symmetry-p4.png" });
+////		params.add(new Object[] { "/v3-shape-symmetry-p4m.cfdg", "/v3-shape-symmetry-p4m.png" });
+////		params.add(new Object[] { "/v3-shape-symmetry-p4g.cfdg", "/v3-shape-symmetry-p4g.png" });
+////		params.add(new Object[] { "/v3-shape-symmetry-p3.cfdg", "/v3-shape-symmetry-p3.png" });
 		return params;
 	}
 
@@ -80,13 +103,28 @@ public class V3RenderTest extends AbstractBaseTest {
 	@Test
 	public void shouldRenderImage() throws IOException {
 		System.out.println(sourceName);
-		TestCanvas canvas = new TestCanvas(200, 200);
+
+		BufferedImage actualImage = new BufferedImage(200, 200, BufferedImage.TYPE_INT_ARGB);
+
+		DefaultThreadFactory threadFactory = new DefaultThreadFactory("Generator", true, Thread.MIN_PRIORITY);
+		Java2DRendererFactory rendererFactory = new Java2DRendererFactory();
+
+		RendererTile tile = new RendererTile(new RendererSize(200, 200), new RendererSize(200, 200), new RendererPoint(0, 0), new RendererSize(0, 0));
+		Renderer renderer = new Renderer(threadFactory, rendererFactory, tile);
+
 		CFDG cfdg = parseSource(sourceName);
-		cfdg.rulesLoaded();
-		CFDGRenderer renderer = cfdg.renderer(200, 200, 1, 0, 0.1);
-		renderer.run(canvas, false);
-		BufferedImage actualImage = canvas.getImage();
+
+		renderer.setOpaque(true);
+		renderer.setCFDG(cfdg);
+		renderer.setSeed("ABCD");
+		renderer.init();
+		renderer.runTask();
+		renderer.waitForTasks();
+
+		renderer.drawImage(rendererFactory.createGraphicsContext(actualImage.createGraphics()), 0, 0);
+
 		saveImage("tmp" + imageName, actualImage);
+
 		BufferedImage expectedImage = loadImage(imageName);
 		assertThat(compareImages(expectedImage, actualImage), is(equalTo(0.0)));
 	}
@@ -130,11 +168,5 @@ public class V3RenderTest extends AbstractBaseTest {
 
 	private BufferedImage loadImage(String imageName) throws IOException {
 		return ImageIO.read(getResourceAsStream(imageName));
-	}
-
-	private class TestCanvas extends SimpleCanvas {
-		private TestCanvas(int width, int height) {
-			super(width, height);
-		}
 	}
 }

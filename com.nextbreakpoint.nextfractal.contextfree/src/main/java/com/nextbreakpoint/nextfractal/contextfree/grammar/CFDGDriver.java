@@ -1,8 +1,8 @@
 /*
- * NextFractal 1.3.0
+ * NextFractal 2.0.0
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2016 Andrea Medeghini
+ * Copyright 2015-2017 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -24,27 +24,64 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.grammar;
 
-import java.util.*;
-
 import com.nextbreakpoint.nextfractal.contextfree.core.Rand64;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.*;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.*;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTArray;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTCons;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTDefine;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTExpression;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTFunction;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTLet;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTModTerm;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTModification;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTParameter;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTPathCommand;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTReal;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTRepContainer;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTReplacement;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTRule;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTRuleSpecifier;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTSelect;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTStartSpecifier;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTSwitch;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTUserFunction;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTVariable;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ArgSource;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.CFG;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.DefineType;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ExpType;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.FlagType;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.FuncType;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.Locality;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ModType;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.Param;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.PathOp;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.RepElemType;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ShapeType;
 import org.antlr.v4.runtime.ANTLRFileStream;
 import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Token;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
+import java.util.Stack;
 
 public class CFDGDriver {
 	private CFDG cfdg = new CFDG(this);
 	private Stack<ASTRepContainer> containerStack = new Stack<>();
 	private ASTRepContainer paramDecls = new ASTRepContainer(this);
-	private Map<String, Integer> flagNames = new HashMap<String, Integer>();
+	private Map<String, Long> flagNames = new HashMap<>();
 	private List<CFStackRule> longLivedParams = new ArrayList<>();
 	private Stack<String> fileNames = new Stack<>();
 	private Stack<String> filesToLoad = new Stack<>();
 	private Stack<CharStream> streamsToLoad = new Stack<>();
 	private Stack<Boolean> includeNamespace = new Stack<>();
 	private Stack<ASTSwitch> switchStack = new Stack<>();
+	private Logger logger = new Logger();
 	private String currentNameSpace = "";
 	private String currentPath;
 	private String maybeVersion;
@@ -100,15 +137,39 @@ public class CFDGDriver {
 		flagNames.put("CF::p6",          FlagType.CF_P6.getMask());
 		flagNames.put("CF::p6m",         FlagType.CF_P6M.getMask());
 	}
-	
-	protected void warning(String message, Token location) {
-		Logger.warning(message, location);
+
+	public String getCurrentPath() {
+		return currentPath;
 	}
-	
-	protected void error(String message, Token location) {
-		Logger.error(message, location);
+
+	public void setCurrentPath(String currentPath) {
+		this.currentPath = currentPath;
 	}
-	
+
+	public Logger getLogger() {
+		return logger;
+	}
+
+	public void setLogger(Logger logger) {
+		this.logger = logger;
+	}
+
+	public void warning(String message, Token location) {
+		logger.warning(message, location);
+	}
+
+	public void error(String message, Token location) {
+		logger.error(message, location);
+	}
+
+	public void fail(String message, Token location) {
+		logger.fail(message, location);
+	}
+
+	public void info(String message, Token location) {
+		logger.info(message, location);
+	}
+
 	protected boolean isPrimeShape(int nameIndex) {
 		return nameIndex < 4;
 	}
@@ -120,7 +181,7 @@ public class CFDGDriver {
 		}
 		int index = Collections.binarySearch(PrimShape.getShapeNames(), name);
 		String n = currentNameSpace + name;
-		if (index != -1 && cfdg.tryEncodeShapeName(n) == -1) {
+		if (index >= 0 && cfdg.tryEncodeShapeName(n) == -1) {
 			return cfdg.encodeShapeName(name);
 		} else {
 			return cfdg.encodeShapeName(n);
@@ -144,9 +205,9 @@ public class CFDGDriver {
 			includeDepth++;
 			currentShape = -1;
 			setShape(null, false, location);
-			warning("Reading rules file " + path, location);
+			info("Reading rules file " + path, location);
 		} catch (Exception e) {
-			error(e.getMessage(), location);
+			fail(e.getMessage(), location);
 		}
 	}
 	
@@ -183,7 +244,7 @@ public class CFDGDriver {
 		currentShape = stringToShape(name, false, location);
 		ASTDefine def = cfdg.findFunction(currentShape);
 		if (def != null) {
-			error("There is a function with the same name as this shape: " + def.getLocation(), location);
+			error("There is a function with the same name as this shape: " + def.getName(), location);
 			return;
 		}
 		String err = cfdg.setShapeParams(currentShape, paramDecls, paramDecls.getStackCount(), isPath);
@@ -274,7 +335,7 @@ public class CFDGDriver {
 	public void makeConfig(ASTDefine cfg) {
 		if (cfg.getName().equals(CFG.Impure.getName())) {
 			double[] v = new double[] { 0.0 };
-			if (cfg.getExp() != null || cfg.getExp().isConstant() || cfg.getExp().evaluate(v, 1, null) != 1) {
+			if (cfg.getExp() == null || !cfg.getExp().isConstant() || cfg.getExp().evaluate(v, 1, null) != 1) {
 				error("CF::Impure requires a constant numeric expression", cfg.getLocation());
 			} else {
 				ASTParameter.Impure = v[0] != 0.0;
@@ -349,19 +410,19 @@ public class CFDGDriver {
 	}
 
 	public ASTExpression makeVariable(String name, Token location) {
-		Integer flagItem = flagNames.get(name);
+		Long flagItem = flagNames.get(name);
 		if (flagItem != null) {
-			ASTReal flag = new ASTReal(flagItem, location);
+			ASTReal flag = new ASTReal(this, flagItem, location);
 			flag.setType(ExpType.FlagType);
 			return flag;
 		}
 		if (name.startsWith("CF::")) {
 			error("Configuration parameter names are reserved", location);
-			return new ASTExpression(location);
+			return new ASTExpression(this, location);
 		}
 		if (FuncType.byName(name) != FuncType.NotAFunction) {
 			error("Internal function names are reserved", location);
-			return new ASTExpression(location);
+			return new ASTExpression(this, location);
 		}
 		int varNum = stringToShape(name, true, location);
 		boolean isGlobal = false;
@@ -402,7 +463,7 @@ public class CFDGDriver {
 	public ASTRuleSpecifier makeRuleSpec(String name, ASTExpression args, ASTModification mod, boolean makeStart, Token location) {
 		if (name.equals("if") || name.equals("let") || name.equals("select")) {
 			if (name.equals("select")) {
-				args = new ASTSelect(args, false, location);
+				args = new ASTSelect(this, args, false, location);
 			}
 			if (makeStart) {
 				return new ASTStartSpecifier(this, args, mod, location);
@@ -430,7 +491,7 @@ public class CFDGDriver {
 			if (makeStart) {
 				error("Startshape cannot reuse parameters", location);
 			} else if (nameIndex == currentShape)  {
-				ret.setArgSouce(ArgSource.SimpleArgs);
+				ret.setArgSouce(ArgSource.SimpleParentArgs);
 				ret.setTypeSignature(ret.getTypeSignature());
 			}
 		}
@@ -503,14 +564,14 @@ public class CFDGDriver {
 			return makeVariable(name, location).append(args); 
 		}
 		if (name.equals("select") || name.equals("if")) {
-			return new ASTSelect(args, name.equals("if"), location);
+			return new ASTSelect(this, args, name.equals("if"), location);
 		}
 		FuncType t = FuncType.byName(name);
 		if (t == FuncType.Ftime || t == FuncType.Frame) {
 			cfdg.addParameter(Param.FrameTime);
 		}
 		if (t != FuncType.NotAFunction) {
-			return new ASTFunction(name, args, seed, location);
+			return new ASTFunction(this, name, args, seed, location);
 		}
 		if (args != null && args.getType() == ExpType.ReuseType) {
 			return makeRuleSpec(name, args, null, false, location);
@@ -645,11 +706,7 @@ public class CFDGDriver {
 	}
 
 	protected String relativeFilePath(String base, String rel) {
-		int i = base.lastIndexOf("/");
-		if (i == -1) {
-			return rel;
-		}
-		return base.substring(0, i) + rel;
+		return base + "/" + rel;
 	}
 	
 	protected void popNameSpace() {
@@ -675,6 +732,10 @@ public class CFDGDriver {
 		includeNamespace.pop();
 		includeNamespace.push(Boolean.TRUE);
 		currentNameSpace = currentNameSpace + n + "::";
+
+		CFDGParser parser = new CFDGParser(new CommonTokenStream(new CFDGLexer(streamsToLoad.peek())));
+		parser.setDriver(this);
+		parser.choose();
 	}
 	
 	public void inColor() {

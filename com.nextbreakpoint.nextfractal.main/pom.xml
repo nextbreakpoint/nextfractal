@@ -4,7 +4,7 @@
  	<parent>
         <groupId>com.nextbreakpoint.nextfractal</groupId>
         <artifactId>com.nextbreakpoint.nextfractal.parent</artifactId>
-        <version>1.3.0</version>
+        <version>2.0.0</version>
     </parent>
 	<artifactId>com.nextbreakpoint.nextfractal.main</artifactId>
 	<packaging>pom</packaging>
@@ -47,7 +47,7 @@
 							<goal>copy-dependencies</goal>
 						</goals>
 						<configuration>
-							<includeGroupIds>com.nextbreakpoint,org.antlr,org.fxmisc,org.reactfx,org.apache.commons</includeGroupIds>
+							<includeGroupIds>com.nextbreakpoint,org.antlr,org.fxmisc,org.reactfx,org.apache.commons,com.fasterxml.jackson,org.controlsfx</includeGroupIds>
 							<outputDirectory>${project.build.directory}/jars/</outputDirectory>
 						</configuration>
 					</execution>
@@ -122,11 +122,11 @@
 			<artifactId>com.nextbreakpoint.nextfractal.mandelbrot</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		<!--<dependency>-->
-			<!--<groupId>com.nextbreakpoint.nextfractal</groupId>-->
-			<!--<artifactId>com.nextbreakpoint.nextfractal.contextfree</artifactId>-->
-			<!--<version>${project.version}</version>-->
-		<!--</dependency>-->
+		<dependency>
+			<groupId>com.nextbreakpoint.nextfractal</groupId>
+			<artifactId>com.nextbreakpoint.nextfractal.contextfree</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>com.nextbreakpoint</groupId>
 			<artifactId>com.nextbreakpoint.ffmpeg4java</artifactId>

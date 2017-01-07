@@ -1,8 +1,8 @@
 /*
- * NextFractal 1.3.0
+ * NextFractal 2.0.0
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2016 Andrea Medeghini
+ * Copyright 2015-2017 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -24,37 +24,32 @@
  */
 package com.nextbreakpoint.nextfractal.core.export;
 
+import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
+import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.IntBuffer;
-
-import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
-import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
+import java.util.Objects;
 
 public class ExportJob {
 	private final ExportSession session;
 	private final ExportProfile profile;
-	private volatile Throwable error;
-	private volatile ExportJobState state = ExportJobState.READY;
 
 	public ExportJob(ExportSession session, ExportProfile profile) {
-		this.session = session;
-		this.profile = profile;
+		this.session = Objects.requireNonNull(session);
+		this.profile = Objects.requireNonNull(profile);
 	}
 
 	public ExportProfile getProfile() {
 		return profile;
 	}
-	
+
 	public RendererTile getTile() {
 		return profile.createTile();
 	}
 
-	public String getPluginId() {
-		return profile.getPluginId();
-	}
-	
 	public File getFile() {
 		return session.getFile();
 	}
@@ -63,58 +58,9 @@ public class ExportJob {
 		return session.getTmpFile();
 	}
 
-	public boolean isInterrupted() {
-		return state == ExportJobState.INTERRUPTED;
-	}
-
-	public boolean isCompleted() {
-		return state == ExportJobState.COMPLETED;
-	}
-
-	public boolean isReady() {
-		return state == ExportJobState.READY;
-	}
-
-	public Throwable getError() {
-		return error;
-	}
-
-	public void setError(Throwable error) {
-		this.error = error;
-	}
-
-	public ExportJobState getState() {
-		return state;
-	}
-
-	public void setState(ExportJobState state) {
-		this.state = state;
-	}
-
 	public void writePixels(RendererSize size, IntBuffer pixels) throws IOException {
-		RandomAccessFile raf = null;
-		try {
-			byte[] data = convertToBytes(size, pixels);
-			raf = new RandomAccessFile(this.getTmpFile(), "rw");
-			double startTime = this.getProfile().getStartTime();
-			double stopTime = this.getProfile().getStopTime();
-			float frameRate = this.getProfile().getFrameRate();
-			int firstFrame = this.getProfile().getFrameNumber();
-			final int frameCount = computeFrameCount(startTime, stopTime, frameRate);
-			if (frameCount == 0) {
-				writeFrame(raf, 0, size, data);
-			} else if (firstFrame > 0 && firstFrame < frameCount) {
-				for (int frameNumber = firstFrame; frameNumber < frameCount; frameNumber++) {
-					writeFrame(raf, frameNumber, size, data);
-				}
-			}
-		} finally {
-			if (raf != null) {
-				try {
-					raf.close();
-				} catch (final IOException e) {
-				}
-			}
+		try (RandomAccessFile raf = new RandomAccessFile(this.getTmpFile(), "rw")) {
+			writeFrame(raf, size, convertToBytes(size, pixels));
 		}
 	}
 	
@@ -123,11 +69,7 @@ public class ExportJob {
 		return "[sessionId = " + session.getSessionId() + ", profile=" + profile + "]";
 	}
 
-	private int computeFrameCount(double startTime, double stopTime, float frameRate) {
-		return (int) Math.floor((stopTime - startTime) * frameRate);
-	}
-
-	private void writeFrame(RandomAccessFile raf, int frameNumber, RendererSize size, byte[] data) throws IOException {
+	private void writeFrame(RandomAccessFile raf, RendererSize size, byte[] data) throws IOException {
 		final int sw = size.getWidth();
 		final int sh = size.getHeight();
 		final int tx = this.getProfile().getTileOffsetX();
@@ -138,7 +80,7 @@ public class ExportJob {
 		final int ih = this.getProfile().getFrameHeight();
 		final int ly = Math.min(th, ih - ty);
 		final int lx = Math.min(tw, iw - tx);
-		long pos = (frameNumber * iw * ih + ty * iw + tx) * 4;
+		long pos = (ty * iw + tx) * 4;
 		for (int j = ((sw * (sh - th) + (sw - tw)) / 2) * 4, k = 0; k < ly; k++) {
 			raf.seek(pos);
 			raf.write(data, j, lx * 4);

@@ -1,8 +1,8 @@
 /*
- * NextFractal 1.3.0
+ * NextFractal 2.0.0
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2016 Andrea Medeghini
+ * Copyright 2015-2017 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -24,13 +24,14 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.grammar.ast;
 
-import com.nextbreakpoint.nextfractal.contextfree.grammar.*;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGDriver;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGRenderer;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.CFStackNumber;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.Shape;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.CompilePhase;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.Locality;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.RepElemType;
 import org.antlr.v4.runtime.Token;
-
-import java.awt.geom.AffineTransform;
 
 public class ASTLoop extends ASTReplacement {
 	private ASTExpression loopArgs;
@@ -104,7 +105,7 @@ public class ASTLoop extends ASTReplacement {
 		switch (ph) {
 			case TypeCheck: {
 				if (loopArgs == null) {
-					Logger.error("A loop must have one to three index parameters", location);
+					driver.error("A loop must have one to three index parameters", location);
 					return;
 				}
 				StringBuilder ent = new StringBuilder();
@@ -126,7 +127,7 @@ public class ASTLoop extends ASTReplacement {
 				} else {
 					int c = loopArgs.evaluate(null, 0);
 					if (c < 1 || c > 3) {
-						Logger.error("A loop must have one to three index parameters", location);
+						driver.error("A loop must have one to three index parameters", location);
 					}
 
 					for (int i = 0, count = 0; i < loopArgs.size(); i++) {
@@ -235,7 +236,7 @@ public class ASTLoop extends ASTReplacement {
 			case 3:
 				break;
 			default:
-				Logger.error("A loop must have one to three index parameters", location);
+				driver.error("A loop must have one to three index parameters", location);
 				break;
 		}
 	}

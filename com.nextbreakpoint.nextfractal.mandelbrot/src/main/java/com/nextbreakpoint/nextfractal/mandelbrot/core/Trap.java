@@ -1,8 +1,8 @@
 /*
- * NextFractal 1.3.0
+ * NextFractal 2.0.0
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2016 Andrea Medeghini
+ * Copyright 2015-2017 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -67,27 +67,27 @@ public class Trap {
 		return this;
 	}
 
-	public Trap moveToRel(Number x) {
+	public Trap moveRel(Number x) {
 		path2d.moveTo(path2d.getCurrentPoint().getX() + x.r(), path2d.getCurrentPoint().getY() - x.i());
 		return this;
 	}
 
-	public Trap lineToRel(Number x) {
+	public Trap lineRel(Number x) {
 		path2d.lineTo(path2d.getCurrentPoint().getX() + x.r(), path2d.getCurrentPoint().getY() - x.i());
 		return this;
 	}
 
-	public Trap arcToRel(Number p, Number x) {
+	public Trap arcRel(Number p, Number x) {
 		path2d.curveTo(path2d.getCurrentPoint().getX() + p.r(), path2d.getCurrentPoint().getY() - p.i(), path2d.getCurrentPoint().getX() + x.r(), path2d.getCurrentPoint().getY() - x.i(), path2d.getCurrentPoint().getX() + x.r(), path2d.getCurrentPoint().getY() - x.i());
 		return this;
 	}
 
-	public Trap quadToRel(Number p, Number x) {
+	public Trap quadRel(Number p, Number x) {
 		path2d.quadTo(path2d.getCurrentPoint().getX() + p.r(), path2d.getCurrentPoint().getY() - p.i(), path2d.getCurrentPoint().getX() + x.r(), path2d.getCurrentPoint().getY() - x.i());
 		return this;
 	}
 
-	public Trap curveToRel(Number p, Number q, Number x) {
+	public Trap curveRel(Number p, Number q, Number x) {
 		path2d.curveTo(path2d.getCurrentPoint().getX() + p.r(), path2d.getCurrentPoint().getY() - p.i(), path2d.getCurrentPoint().getX() + q.r(), path2d.getCurrentPoint().getY() - q.i(), path2d.getCurrentPoint().getX() + x.r(), path2d.getCurrentPoint().getY() - x.i());
 		return this;
 	}

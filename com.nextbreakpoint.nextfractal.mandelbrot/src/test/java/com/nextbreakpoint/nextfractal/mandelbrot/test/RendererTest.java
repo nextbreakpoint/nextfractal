@@ -1,8 +1,8 @@
 /*
- * NextFractal 1.3.0
+ * NextFractal 2.0.0
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2016 Andrea Medeghini
+ * Copyright 2015-2017 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -24,12 +24,6 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.test;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.junit.Assert;
-import org.junit.Test;
-
 import com.nextbreakpoint.nextfractal.core.renderer.RendererFactory;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererPoint;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
@@ -42,6 +36,11 @@ import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Orbit;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Scope;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.Renderer;
+import org.junit.Assert;
+import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class RendererTest {
 	@Test
@@ -62,7 +61,7 @@ public class RendererTest {
 			renderer.setOrbit(orbit);
 			renderer.setColor(color);
 			renderer.init();
-			renderer.setRegion(renderer.getInitialRegion());
+			renderer.setContentRegion(renderer.getInitialRegion());
 			List<Float> output = new ArrayList<>(); 
 			renderer.setRendererDelegate(progress -> {
 				System.out.println(progress);
@@ -95,6 +94,11 @@ public class RendererTest {
 		protected MutableNumber[] createNumbers() {
 			return new MutableNumber[1];
 		}
+
+		@Override
+		public boolean useTime() {
+			return false;
+		}
 	}
 	
 	private class TestColor extends Color {
@@ -109,6 +113,11 @@ public class RendererTest {
 		@Override
 		protected MutableNumber[] createNumbers() {
 			return new MutableNumber[1];
+		}
+
+		@Override
+		public boolean useTime() {
+			return false;
 		}
 	}
 }

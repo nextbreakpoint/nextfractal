@@ -1,8 +1,8 @@
 /*
- * NextFractal 1.3.0
+ * NextFractal 2.0.0
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2016 Andrea Medeghini
+ * Copyright 2015-2017 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -24,18 +24,17 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.grammar.ast;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGDriver;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGRenderer;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.Logger;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.Shape;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.CompilePhase;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ExpType;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.PathOp;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.RepElemType;
 import org.antlr.v4.runtime.Token;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class ASTSwitch extends ASTReplacement {
 	private Map<Integer, ASTRepContainer> caseStatements = new HashMap<>();
@@ -72,7 +71,7 @@ public class ASTSwitch extends ASTReplacement {
 		switch (ph) {
 			case TypeCheck:
 				if (switchExp.getType() != ExpType.NumericType || switchExp.evaluate(null, 0) != 1) {
-					Logger.error("Switch selector must be a numeric scalar", location);
+					driver.error("Switch selector must be a numeric scalar", location);
 				}
 				break;
 	
@@ -91,7 +90,7 @@ public class ASTSwitch extends ASTReplacement {
 	public void traverse(Shape parent, boolean tr, CFDGRenderer renderer) {
 		double[] caveValue = new double[1];
 		if (switchExp.evaluate(caveValue, 1, renderer) != 1) {
-			Logger.error("Error evaluating switch selector", location);
+			driver.error("Error evaluating switch selector", location);
 			return;
 		}
 		

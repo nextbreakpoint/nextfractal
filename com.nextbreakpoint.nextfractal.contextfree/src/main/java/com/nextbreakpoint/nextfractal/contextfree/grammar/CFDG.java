@@ -1,8 +1,8 @@
 /*
- * NextFractal 1.3.0
+ * NextFractal 2.0.0
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2016 Andrea Medeghini
+ * Copyright 2015-2017 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -25,14 +25,38 @@
 package com.nextbreakpoint.nextfractal.contextfree.grammar;
 
 import com.nextbreakpoint.nextfractal.contextfree.core.AffineTransformTime;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.*;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.*;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.AST;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTDefine;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTExpression;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTModTerm;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTModification;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTParameter;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTRepContainer;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTReplacement;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTRule;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.ast.ASTStartSpecifier;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.CFG;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.CompilePhase;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ExpType;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.FriezeType;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ModType;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.Param;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.RepElemType;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ShapeType;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.WeightType;
 
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Stack;
+import java.util.logging.Level;
 
 public class CFDG {
+	private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(CFDG.class.getName());
 	private double[] backgroundColor = new double[] { 1, 1, 1, 1 };
 	private Shape initialShape;
 	private ASTRule needle;
@@ -54,17 +78,17 @@ public class CFDG {
 	private boolean usesTime;
 	private boolean usesFrameTime;
 	private boolean uses16bitColor;
-	private CFDGDriver cfdgDriver;
+	private CFDGDriver driver;
 
 	public CFDG(CFDGDriver cfdgDriver) {
-		this.cfdgDriver = cfdgDriver;
+		this.driver = cfdgDriver;
 		cfdgContents = new ASTRepContainer(cfdgDriver);
 		needle = new ASTRule(cfdgDriver, -1, null);
 		PrimShape.getShapeNames().forEach(s -> encodeShapeName(s));
 	}
 
 	public CFDGDriver getDriver() {
-		return cfdgDriver;
+		return driver;
 	}
 
 	public Shape getInitialShape(CFDGRenderer renderer) {
@@ -127,7 +151,7 @@ public class CFDG {
 		needle.setWeight(weight);
 		int first = lowerBound(rules, 0, rules.size() - 1, needle);
 		if (first == rules.size() || rules.get(first).getNameIndex() != nameIndex) {
-			Logger.fail("Cannot find a rule for a shape (very helpful I know)", null);
+			driver.fail("Cannot find a rule for a shape (very helpful I know)", null);
 		}
 		return rules.get(first);
 	}
@@ -180,7 +204,6 @@ public class CFDG {
 	}
 
 	public boolean isTiled(AffineTransform transform, double[] point) {
-		//TODO completare con location
 		if (!hasParameter(CFG.Tile, ExpType.ModType)) {
 			return false;
 		}
@@ -201,31 +224,30 @@ public class CFDG {
 			double v_x = 0.0;
 			double v_y = 1.0;
 
-			Point2D o = new Point2D.Double(o_x, o_y);
-			Point2D u = new Point2D.Double(u_x, u_y);
-			Point2D v = new Point2D.Double(v_x, v_y);
+			Point2D.Double o = new Point2D.Double(o_x, o_y);
+			Point2D.Double u = new Point2D.Double(u_x, u_y);
+			Point2D.Double v = new Point2D.Double(v_x, v_y);
 
 			tileMod.getTransform().transform(o, o);
 			tileMod.getTransform().transform(u, u);
 			tileMod.getTransform().transform(v, v);
 
-			if (Math.abs(u_y - o_y) >= 0.0001 && Math.abs(v_x - o_x) >= 0.0001) {
-				Logger.fail("Tile must be aligned with the X or Y axis", null);
+			if (Math.abs(u.y - o.y) >= 0.0001 && Math.abs(v.x - o.x) >= 0.0001) {
+				driver.fail("Tile must be aligned with the X or Y axis", null);
 			}
 
-			if (Math.abs(u_x - o_x) < 0.0 || Math.abs(v_y - o_y) < 0.0) {
-				Logger.fail("Tile must be in the positive X/Y quadrant", null);
+			if (Math.abs(u.x - o.x) < 0.0 || Math.abs(v.y - o.y) < 0.0) {
+				driver.fail("Tile must be in the positive X/Y quadrant", null);
 			}
 
-			point[0] = u_x - o_x;
-			point[1] = u_y - o_y;
+			point[0] = u.x - o.x;
+			point[1] = v.y - o.y;
 		}
 
 		return true;
 	}
 
 	public FriezeType isFrieze(AffineTransform transform, double[] point) {
-		//TODO completare con location
 		if (!hasParameter(CFG.Tile, ExpType.ModType)) {
 			return FriezeType.NoFrieze;
 		}
@@ -259,11 +281,11 @@ public class CFDG {
 			tileMod.getTransform().transform(v, v);
 
 			if (Math.abs(u_y - o_y) >= 0.0001 || Math.abs(v_x - o_x) >= 0.0001) {
-				Logger.fail("Frieze must be aligned with the X and Y axis", null);
+				driver.fail("Frieze must be aligned with the X and Y axis", null);
 			}
 
 			if (Math.abs(u_x - o_x) < 0.0 || Math.abs(v_y - o_y) < 0.0) {
-				Logger.fail("Frieze must be in the positive X/Y quadrant", null);
+				driver.fail("Frieze must be in the positive X/Y quadrant", null);
 			}
 
 			point[0] = u_x - o_x;
@@ -274,31 +296,27 @@ public class CFDG {
 	}
 
 	public boolean isSized(double[] point) {
-		//TODO completare con location
 		if (!hasParameter(CFG.Size, ExpType.ModType)) {
 			return false;
 		}
 
-		//TODO rivedere
 		if (point != null) {
 			point[0] = sizeMod.getTransform().getScaleX();
 			point[1] = sizeMod.getTransform().getScaleY();
 		}
 
 		if (sizeMod.getTransform().getShearX() != 0.0 || sizeMod.getTransform().getShearY() != 0.0) {
-			Logger.fail("Size specification must not be rotated or skewed", null);
+			driver.fail("Size specification must not be rotated or skewed", null);
 		}
 
-		return false;
+		return true;
 	}
 
 	public boolean isTimed(AffineTransformTime transform) {
-		//TODO completare con location
 		if (!hasParameter(CFG.Time, ExpType.ModType)) {
 			return false;
 		}
 
-		//TODO rivedere
 		if (transform != null) {
 			transform.setBegin(timeMod.getTransformTime().getBegin());
 			transform.setEnd(timeMod.getTransformTime().getEnd());
@@ -306,19 +324,18 @@ public class CFDG {
 		}
 
 		if (sizeMod.getTransformTime().getBegin() >= sizeMod.getTransformTime().getEnd()) {
-			Logger.fail("Time specification must have positive duration", null);
+			driver.fail("Time specification must have positive duration", null);
 		}
 
-		return false;
+		return true;
 	}
 
 	public void getSummetry(List<AffineTransform> syms, CFDGRenderer renderer) {
-		//TODO controllare
 		syms.clear();
 		ASTExpression exp = hasParameter(CFG.Symmetry);
-		List<ASTModification> left = AST.getTransforms(exp, syms, renderer, isTiled(null, null), tileMod.getTransform());
+		List<ASTModification> left = AST.getTransforms(driver, exp, syms, renderer, isTiled(null, null), tileMod.getTransform());
 		if (!left.isEmpty()) {
-			Logger.fail("At least one term was invalid", exp.getLocation());
+			driver.fail("At least one term was invalid", exp.getLocation());
 		}
 	}
 
@@ -328,7 +345,7 @@ public class CFDG {
 			return false;
 		}
 		if (!exp.isConstant() && renderer != null) {
-			Logger.fail("This expression must be constant", exp.getLocation());
+			driver.fail("This expression must be constant", exp.getLocation());
 			return false;
 		} else {
 			exp.evaluate(value, 1, renderer);
@@ -342,10 +359,10 @@ public class CFDG {
 			return false;
 		}
 		if (!exp.isConstant() && renderer != null) {
-			Logger.fail("This expression must be constant", exp.getLocation());
+			driver.fail("This expression must be constant", exp.getLocation());
 			return false;
 		} else {
-			exp.evaluate(value, true, renderer);//TODO controllare
+			exp.evaluate(value, true, renderer);
 		}
 		return true;
 	}
@@ -376,8 +393,6 @@ public class CFDG {
 	}
 
 	public void rulesLoaded() {
-		//TODO rivedere
-
 		double[] weightsums = new double[shapeTypes.size()];
 		double[] percentweightsums = new double[shapeTypes.size()];
 		double[] unitweightsums = new double[shapeTypes.size()];
@@ -388,7 +403,7 @@ public class CFDG {
 			if (rule.getWeightType() == WeightType.PercentWeight) {
 				percentweightsums[rule.getNameIndex()] += rule.getWeight();
 				if (percentweightsums[rule.getNameIndex()] > 1.0001) {
-					Logger.fail("Percentages exceed 100%", rule.getLocation());
+					driver.fail("Percentages exceed 100%", rule.getLocation());
 				}
 			} else {
 				weightsums[rule.getNameIndex()] += rule.getWeight();
@@ -405,12 +420,12 @@ public class CFDG {
 				} else {
 					weight *= 1.0 - percentweightsums[rule.getNameIndex()];
 					if (percentweightsums[rule.getNameIndex()] > 0.9999) {
-						Logger.warning("Percentages sum to 100%, this rule has no weight", rule.getLocation());
+						driver.warning("Percentages sum to 100%, this rule has no weight", rule.getLocation());
 					}
 				}
 			}
 			if (weightTypes[rule.getNameIndex()] == WeightType.PercentWeight.getType() && Math.abs(percentweightsums[rule.getNameIndex()] - 1.0) > 0.0001) {
-				Logger.warning("Percentages do not sum to 100%", rule.getLocation());
+				driver.warning("Percentages do not sum to 100%", rule.getLocation());
 			}
 			if (!Double.isFinite(weight)) {
 				weight = 0;
@@ -425,11 +440,11 @@ public class CFDG {
 
 		Collections.sort(rules);
 
-		cfdgDriver.setLocalStackDepth(0);
+		driver.setLocalStackDepth(0);
 
 		cfdgContents.compile(CompilePhase.TypeCheck, null, null);
 
-		if (!cfdgDriver.errorOccured()) {
+		if (!driver.errorOccured()) {
 			cfdgContents.compile(CompilePhase.Simplify, null, null);
 		}
 
@@ -582,26 +597,24 @@ public class CFDG {
 			ASTExpression startExp = paramExp.get(CFG.StartShape);
 
 			if (startExp == null) {
-				Logger.fail("No startshape found", null);
+				driver.fail("No startshape found", null);
 				return null;
 			}
 
 			if (startExp instanceof ASTStartSpecifier) {
 				ASTStartSpecifier specStart = (ASTStartSpecifier)startExp;
-				initShape = new ASTReplacement(cfdgDriver, specStart, specStart.getModification(), startExp.getLocation());
+				initShape = new ASTReplacement(driver, specStart, specStart.getModification(), RepElemType.empty, startExp.getLocation());
 				initShape.getChildChange().addEntropy(initShape.getShapeSpecifier().getEntropy());
 			} else {
-				Logger.fail("Type error in startshape", startExp.getLocation());
+				driver.fail("Type error in startshape", startExp.getLocation());
 				return null;
 			}
 
 			CFDGRenderer renderer = new CFDGRenderer(this, width, height, minSize, variation, border);
 
-			Modification tiled = null;
-			Modification sized = null;
-			Modification timed = null;
-
-			//TODO rivedere
+			Modification tiled = new Modification();
+			Modification sized = new Modification();
+			Modification timed = new Modification();
 
 			double[] maxShape = new double[0];
 
@@ -635,7 +648,7 @@ public class CFDG {
 
 			return renderer;
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.log(Level.WARNING, "Can't create CFDG renderer", e);
 		}
 
 		return null;

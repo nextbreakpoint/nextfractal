@@ -1,8 +1,8 @@
 /*
- * NextFractal 1.3.0
+ * NextFractal 2.0.0
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2016 Andrea Medeghini
+ * Copyright 2015-2017 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -24,10 +24,6 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.interpreter;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.ExpressionContext;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.InterpreterContext;
@@ -42,6 +38,10 @@ import com.nextbreakpoint.nextfractal.mandelbrot.core.Palette;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.PaletteElement;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.PaletteExpression;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Trap;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 public class InterpreterColor extends Color implements InterpreterContext {
 	private CompiledColor color;
@@ -70,16 +70,12 @@ public class InterpreterColor extends Color implements InterpreterContext {
 			for (CompiledPaletteElement cElement : cPalette.getElements()) {
 				PaletteExpression expression = null;
 				if (cElement.getExp() != null) {
-					expression = (start, end, step) -> {
-						vars.put("start", new CompilerVariable("start", true, false, start));
-						vars.put("end", new CompilerVariable("end", true, false, end));
+					expression = step -> {
 						vars.put("step", new CompilerVariable("step", true, false, step));
 						return cElement.getExp().evaluateReal(InterpreterColor.this, vars);
 					};
 				} else {
-					expression = (start, end, step) -> {
-						return step / (end - start); 
-					};
+					expression = step -> step;
 				}
 				PaletteElement element = new PaletteElement(cElement.getBeginColor(), cElement.getEndColor(), cElement.getSteps(), expression);
 				palette.add(element);
@@ -115,6 +111,11 @@ public class InterpreterColor extends Color implements InterpreterContext {
 			return null;
 		}
 		return new MutableNumber[context.getNumberCount()];
+	}
+
+	@Override
+	public boolean useTime() {
+		return context.colorUseTime();
 	}
 
 	@Override

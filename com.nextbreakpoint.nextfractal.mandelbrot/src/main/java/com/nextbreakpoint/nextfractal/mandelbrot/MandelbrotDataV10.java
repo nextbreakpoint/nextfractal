@@ -1,8 +1,8 @@
 /*
- * NextFractal 1.3.0
+ * NextFractal 2.0.0
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2016 Andrea Medeghini
+ * Copyright 2015-2017 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -30,7 +30,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.nio.IntBuffer;
-import java.util.Arrays;
 import java.util.Date;
 
 @XmlRootElement(name="mandelbrot")
@@ -44,9 +43,7 @@ public class MandelbrotDataV10 {
 	private Date timestamp = new Date();
 	private String source = "";
 	private boolean julia;
-	private double time;
 	private IntBuffer pixels;
-	private float[] color;
 
 	public boolean isJulia() {
 		return julia;
@@ -62,14 +59,6 @@ public class MandelbrotDataV10 {
 
 	public void setSource(String source) {
 		this.source = source;
-	}
-
-	public double getTime() {
-		return time;
-	}
-
-	public void setTime(double time) {
-		this.time = time;
 	}
 
 	public String getVersion() {
@@ -121,29 +110,14 @@ public class MandelbrotDataV10 {
 		return timestamp;
 	}
 
-	@Override
-	public String toString() {
-		return "[translation=" + Arrays.toString(translation)	+ ", rotation=" + Arrays.toString(rotation) + ", scale=" + Arrays.toString(scale) + ", julia=" + julia + ", point=" + Arrays.toString(point) + ", time=" + time + "]";
-	}
-
-	public float[] getColor() {
-		return color;
-	}
-
-	public void setColor(float[] color) {
-		this.color = color;
-	}
-
-	public MandelbrotData toMandelbrotData() {
-		MandelbrotData data = new MandelbrotData();
+	public MandelbrotDataV11 toV11() {
+		MandelbrotDataV11 data = new MandelbrotDataV11();
 		data.setSource(source);
 		data.setTranslation(translation);
 		data.setRotation(rotation);
 		data.setScale(scale);
 		data.setPoint(point);
 		data.setJulia(julia);
-		data.setColor(color);
-		data.setTime(time);
 		data.setPixels(pixels);
 		return data;
 	}

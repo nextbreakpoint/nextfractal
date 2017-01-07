@@ -1,8 +1,8 @@
 /*
- * NextFractal 1.3.0
+ * NextFractal 2.0.0
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2016 Andrea Medeghini
+ * Copyright 2015-2017 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -27,5 +27,5 @@ package com.nextbreakpoint.nextfractal.core.export;
 import java.util.concurrent.Future;
 
 public interface ExportRenderer {
-	Future<ExportJob> dispatch(ExportJob job);
+	Future<ExportJobHandle> dispatch(ExportJobHandle job);
 }

@@ -1,8 +1,8 @@
 /*
- * NextFractal 1.3.0
+ * NextFractal 2.0.0
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2016 Andrea Medeghini
+ * Copyright 2015-2017 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -24,133 +24,57 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree;
 
-import com.nextbreakpoint.nextfractal.contextfree.compiler.CompilerReport;
-import com.nextbreakpoint.nextfractal.core.session.AbstractSession;
-import java.util.List;
+import com.nextbreakpoint.nextfractal.core.Metadata;
+import com.nextbreakpoint.nextfractal.core.Session;
 
-import java.io.File;
-import java.util.ArrayList;
+import java.io.IOException;
+import java.util.Objects;
 
-public class ContextFreeSession extends AbstractSession {
-	private final List<ContextFreeListener> listeners = new ArrayList<>();
-	private ContextFreeData data = new ContextFreeData();
-	private CompilerReport report;
-	private File currentFile;
-	private String status;
-	private String error;
+public class ContextFreeSession extends Session {
+	private final ContextFreeMetadata metadata;
+	private final String script;
+
+	public ContextFreeSession() {
+		this(getInitialSource(), new ContextFreeMetadata());
+	}
+
+	public ContextFreeSession(String script, ContextFreeMetadata metadata) {
+		Objects.requireNonNull(metadata);
+		Objects.requireNonNull(script);
+		this.metadata = metadata;
+		this.script = script;
+	}
+
+	@Override
+    public String getPluginId() {
+        return ContextFreeFactory.PLUGIN_ID;
+    }
 
 	@Override
 	public String getGrammar() {
-		return "ContextFree";
+		return ContextFreeFactory.GRAMMAR;
 	}
 
-	public void addContextFreeListener(ContextFreeListener listener) {
-		listeners.add(listener);
+	@Override
+	public String getScript() {
+		return script;
 	}
 
-	public void removeContextFreeListener(ContextFreeListener listener) {
-		listeners.remove(listener);
+	@Override
+	public Metadata getMetadata() {
+		return metadata;
 	}
 
-	public String getVersion() {
-		return data.getVersion();
-	}
-
-	public File getCurrentFile() {
-		return currentFile;
-	}
-
-	public void setCurrentFile(File currentFile) {
-		this.currentFile = currentFile;
-	}
-
-	public String getSource() {
-		return data.getSource();
-	}
-
-	public void setSource(String source) {
-		if (!data.getSource().equals(source)) {
-			data.setSource(source);
-			fireSourceChanged();
+	private static String getInitialSource() {
+		try {
+			return readResource("/contextfree.txt");
+		} catch (IOException e) {
 		}
+		return "";
 	}
 
-	public CompilerReport getReport() {
-		return report;
-	}
-
-	public void setReport(CompilerReport report) {
-		this.report = report;
-		fireReportChanged();
-	}
-
-	public double getTime() {
-		return data.getTime();
-	}
-
-	public void setTime(double time) {
-		data.setTime(time);
-		fireDataChanged();
-	}
-
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
-		fireStatusChanged();
-	}
-
-	public String getError() {
-		return error;
-	}
-
-	public void setError(String error) {
-		this.error = error;
-		fireErrorChanged();
-	}
-
-	public ContextFreeData getDataAsCopy() {
-		ContextFreeData data = new ContextFreeData();
-		data.setSource(this.data.getSource());
-		data.setTime(this.data.getTime());
-		return data;
-	}
-
-	public void setData(ContextFreeData data) {
-		this.data.setSource(data.getSource());
-		this.data.setTime(data.getTime());
-		fireDataChanged();
-	}
-
-	protected void fireDataChanged() {
-		for (ContextFreeListener listener : listeners) {
-			listener.dataChanged(this);
-		}
-	}
-
-	protected void fireSourceChanged() {
-		for (ContextFreeListener listener : listeners) {
-			listener.sourceChanged(this);
-		}
-	}
-
-	protected void fireReportChanged() {
-		for (ContextFreeListener listener : listeners) {
-			listener.reportChanged(this);
-		}
-	}
-
-	protected void fireStatusChanged() {
-		for (ContextFreeListener listener : listeners) {
-			listener.statusChanged(this);
-		}
-	}
-
-	protected void fireErrorChanged() {
-		for (ContextFreeListener listener : listeners) {
-			listener.errorChanged(this);
-		}
+	@Override
+	public String toString() {
+		return "{pluginId=" + getPluginId() + ", metadata=" + metadata + ", script='" + script + "'}";
 	}
 }
