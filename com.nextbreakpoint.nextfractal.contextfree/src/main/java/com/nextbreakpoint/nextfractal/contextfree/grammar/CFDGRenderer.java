@@ -763,6 +763,7 @@ public class CFDGRenderer {
 			}
 
 			if (requestUpdate || shapeCount > reportAt) {
+				cfdg.getDriver().info("Shapes " + finishedShapes.size(), null);
 				if (partialDraw) {
 					outputPartial();
 				}
@@ -772,6 +773,8 @@ public class CFDGRenderer {
 
 			Thread.yield();
 		}
+
+		cfdg.getDriver().info("Shapes " + finishedShapes.size(), null);
 
 		if (cfdg.usesTime() || !timed) {
 			timeBounds = AffineTransformTime.getTranslateInstance(0.0, totalArea);
@@ -993,7 +996,10 @@ public class CFDGRenderer {
 		drawingMode = true;
 
 		try {
+			long time = System.currentTimeMillis();
 			forEachShape(true, this::drawShape);
+			long totalTime = System.currentTimeMillis() - time;
+			cfdg.getDriver().info("Total time " + totalTime / 1000.0, null);
 		} catch (StopException e) {
 		} catch (Exception e) {
 			cfdg.getDriver().error(e.getMessage(), null);
@@ -1006,10 +1012,12 @@ public class CFDGRenderer {
 		if (!finalStep) {
 			finishedShapes.forEach(shapeFunction::apply);
 			outputSoFar = finishedShapes.size();
+			Thread.yield();
 		} else {
 			OutputMerge merger = new OutputMerge();
 			merger.addShapes(finishedShapes);
 			merger.merge(shapeFunction);
+			Thread.yield();
 		}
 		return null;
 	}
