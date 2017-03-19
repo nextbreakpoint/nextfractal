@@ -26,6 +26,8 @@ package com.nextbreakpoint.nextfractal.server;
 
 import com.nextbreakpoint.nextfractal.core.Session;
 
+import java.util.UUID;
+
 public class TileRequest {
 	private Session session;
 	private int size;
@@ -33,6 +35,9 @@ public class TileRequest {
 	private int rows;
 	private int col;
 	private int row;
+	private UUID taskId;
+
+	private TileRequest() {}
 
 	public int getSize() {
 		return size;
@@ -80,5 +85,74 @@ public class TileRequest {
 
 	public void setSession(Session session) {
 		this.session = session;
+	}
+
+	public void setTaskId(UUID taskId) {
+		this.taskId = taskId;
+	}
+
+	public UUID getTaskId() {
+		return taskId;
+	}
+
+	public static TileRequestBuilder builder() {
+		return new TileRequestBuilder();
+	}
+
+	public static class TileRequestBuilder {
+		private UUID taskId;
+		private Session session;
+		private int size;
+		private int cols;
+		private int rows;
+		private int col;
+		private int row;
+
+		public TileRequestBuilder withSession(Session session) {
+			this.session = session;
+			return this;
+		}
+
+		public TileRequestBuilder withTaskId(UUID taskId) {
+			this.taskId = taskId;
+			return this;
+		}
+
+		public TileRequestBuilder withSize(int size) {
+			this.size = size;
+			return this;
+		}
+
+		public TileRequestBuilder withCols(int cols) {
+			this.cols = cols;
+			return this;
+		}
+
+		public TileRequestBuilder withRows(int rows) {
+			this.rows = rows;
+			return this;
+		}
+
+		public TileRequestBuilder withCol(int col) {
+			this.col = col;
+			return this;
+		}
+
+		public TileRequestBuilder withRow(int row) {
+			this.row = row;
+			return this;
+		}
+
+		public TileRequest build() {
+			TileRequest tileRequest = new TileRequest();
+			tileRequest.taskId = taskId;
+			tileRequest.session = session;
+			tileRequest.size = size;
+			tileRequest.cols = cols;
+			tileRequest.rows = rows;
+			tileRequest.col = col;
+			tileRequest.row = row;
+			return tileRequest;
+		}
 	}
 }

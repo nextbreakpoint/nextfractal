@@ -43,6 +43,8 @@
 		<junit4.version>4.11</junit4.version>
 		<mockito.version>1.9.5</mockito.version>
 		<controlsfx.version>8.40.12</controlsfx.version>
+		<vertx.version>3.3.0</vertx.version>
+		<netty.version>4.1.1.Final</netty.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 	<build>
@@ -109,22 +111,6 @@
 				<version>${commonmath3.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-starter-web</artifactId>
-				<version>${springboot.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-starter-actuator</artifactId>
-				<version>${springboot.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-starter-test</artifactId>
-				<version>${springboot.version}</version>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
 				<groupId>com.nextbreakpoint</groupId>
 				<artifactId>com.nextbreakpoint.ffmpeg4java</artifactId>
 				<version>${ffmpeg4java.version}</version>
@@ -148,6 +134,31 @@
 				<groupId>org.controlsfx</groupId>
 				<artifactId>controlsfx</artifactId>
 				<version>${controlsfx.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.netty</groupId>
+				<artifactId>netty-buffer</artifactId>
+				<version>${netty.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.vertx</groupId>
+				<artifactId>vertx-core</artifactId>
+				<version>${vertx.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.vertx</groupId>
+				<artifactId>vertx-web</artifactId>
+				<version>${vertx.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.vertx</groupId>
+				<artifactId>vertx-auth-oauth2</artifactId>
+				<version>${vertx.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.vertx</groupId>
+				<artifactId>vertx-rx-java</artifactId>
+				<version>${vertx.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.mockito</groupId>

@@ -29,7 +29,10 @@ import com.nextbreakpoint.nextfractal.core.renderer.RendererPoint;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
 
+import java.util.UUID;
+
 public class RemoteJob {
+	private UUID taskId;
 	private Session session;
 	private float quality;
 	private int imageWidth;
@@ -40,9 +43,12 @@ public class RemoteJob {
 	private int tileOffsetY;
 	private int borderWidth;
 	private int borderHeight;
+	private int row;
+	private int col;
+	private int rows;
+	private int cols;
 
-	public RemoteJob() {
-	}
+	private RemoteJob() {}
 	
 	public RendererTile getTile() {
 		return createTile();
@@ -52,82 +58,70 @@ public class RemoteJob {
 		return imageWidth;
 	}
 
-	public void setImageWidth(int imageWidth) {
-		this.imageWidth = imageWidth;
-	}
-
 	public int getImageHeight() {
 		return imageHeight;
-	}
-
-	public void setImageHeight(int imageHeight) {
-		this.imageHeight = imageHeight;
 	}
 
 	public int getTileWidth() {
 		return tileWidth;
 	}
 
-	public void setTileWidth(int tileWidth) {
-		this.tileWidth = tileWidth;
-	}
-
 	public int getTileHeight() {
 		return tileHeight;
-	}
-
-	public void setTileHeight(int tileHeight) {
-		this.tileHeight = tileHeight;
 	}
 
 	public int getTileOffsetX() {
 		return tileOffsetX;
 	}
 
-	public void setTileOffsetX(int tileOffsetX) {
-		this.tileOffsetX = tileOffsetX;
-	}
-
 	public int getTileOffsetY() {
 		return tileOffsetY;
-	}
-
-	public void setTileOffsetY(int tileOffsetY) {
-		this.tileOffsetY = tileOffsetY;
 	}
 
 	public int getBorderWidth() {
 		return borderWidth;
 	}
 
-	public void setBorderWidth(int borderWidth) {
-		this.borderWidth = borderWidth;
-	}
-
 	public int getBorderHeight() {
 		return borderHeight;
-	}
-
-	public void setBorderHeight(int borderHeight) {
-		this.borderHeight = borderHeight;
 	}
 
 	public float getQuality() {
 		return quality;
 	}
 
-	public void setQuality(float quality) {
-		this.quality = quality;
-	}
-
 	public Session getSession() {
 		return session;
 	}
 
-	public void setSession(Session session) {
-		this.session = session;
+	public UUID getTaskId() {
+		return taskId;
 	}
-	
+
+	public int getRow() {
+		return row;
+	}
+
+	public int getCol() {
+		return col;
+	}
+
+	public int getRows() {
+		return rows;
+	}
+
+	public int getCols() {
+		return cols;
+	}
+
+	public void setCols(int cols) {
+		this.cols = cols;
+	}
+
+	public static RemoteJobBuilder builder() {
+		return new RemoteJobBuilder();
+	}
+
 	public RendererTile createTile() {
 		RendererSize imageSize = new RendererSize(imageWidth, imageHeight);
 		RendererSize tileSize = new RendererSize(tileWidth, tileHeight);
@@ -135,5 +129,118 @@ public class RemoteJob {
 		RendererPoint tileOffset = new RendererPoint(tileOffsetX, tileOffsetY);
 		RendererTile tile = new RendererTile(imageSize, tileSize, tileOffset, tileBorder);
 		return tile;
+	}
+
+	public static class RemoteJobBuilder {
+		private UUID taskId;
+		private Session session;
+		private float quality;
+		private int imageWidth;
+		private int imageHeight;
+		private int tileWidth;
+		private int tileHeight;
+		private int tileOffsetX;
+		private int tileOffsetY;
+		private int borderWidth;
+		private int borderHeight;
+		private int row;
+		private int col;
+		private int rows;
+		private int cols;
+
+		public RemoteJobBuilder withTaskId(UUID taskId) {
+			this.taskId = taskId;
+			return this;
+		}
+
+		public RemoteJobBuilder withSession(Session session) {
+			this.session = session;
+			return this;
+		}
+
+		public RemoteJobBuilder withQuality(float quality) {
+			this.quality = quality;
+			return this;
+		}
+
+		public RemoteJobBuilder withImageWidth(int imageWidth) {
+			this.imageWidth = imageWidth;
+			return this;
+		}
+
+		public RemoteJobBuilder withImageHeight(int imageHeight) {
+			this.imageHeight = imageHeight;
+			return this;
+		}
+
+		public RemoteJobBuilder withTileWidth(int tileWidth) {
+			this.tileWidth = tileWidth;
+			return this;
+		}
+
+		public RemoteJobBuilder withTileHeight(int tileHeight) {
+			this.tileHeight = tileHeight;
+			return this;
+		}
+
+		public RemoteJobBuilder withTileOffsetX(int tileOffsetX) {
+			this.tileOffsetX = tileOffsetX;
+			return this;
+		}
+
+		public RemoteJobBuilder withTileOffsetY(int tileOffsetY) {
+			this.tileOffsetY = tileOffsetY;
+			return this;
+		}
+
+		public RemoteJobBuilder withBorderWidth(int borderWidth) {
+			this.borderWidth = borderWidth;
+			return this;
+		}
+
+		public RemoteJobBuilder withBorderHeight(int borderHeight) {
+			this.borderHeight = borderHeight;
+			return this;
+		}
+
+		public RemoteJobBuilder withRow(int row) {
+			this.row = row;
+			return this;
+		}
+
+		public RemoteJobBuilder withCol(int col) {
+			this.col = col;
+			return this;
+		}
+
+		public RemoteJobBuilder withRows(int rows) {
+			this.rows = rows;
+			return this;
+		}
+
+		public RemoteJobBuilder withCols(int cols) {
+			this.cols = cols;
+			return this;
+		}
+
+		public RemoteJob build() {
+			RemoteJob remoteJob = new RemoteJob();
+			remoteJob.taskId = taskId;
+			remoteJob.session = session;
+			remoteJob.quality = quality;
+			remoteJob.imageWidth = imageWidth;
+			remoteJob.imageHeight = imageHeight;
+			remoteJob.tileWidth = tileWidth;
+			remoteJob.tileHeight = tileHeight;
+			remoteJob.tileOffsetX = tileOffsetX;
+			remoteJob.tileOffsetY = tileOffsetY;
+			remoteJob.borderWidth = borderWidth;
+			remoteJob.borderHeight = borderHeight;
+			remoteJob.row = row;
+			remoteJob.col = col;
+			remoteJob.rows = rows;
+			remoteJob.cols = cols;
+			return remoteJob;
+		}
 	}
 }
