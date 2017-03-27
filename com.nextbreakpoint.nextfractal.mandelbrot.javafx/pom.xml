@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>com.nextbreakpoint.nextfractal.parent</artifactId>
+        <groupId>com.nextbreakpoint.nextfractal</groupId>
+        <version>2.0.0</version>
+    </parent>
+    <artifactId>com.nextbreakpoint.nextfractal.mandelbrot.javafx</artifactId>
+    <dependencies>
+        <dependency>
+            <groupId>com.nextbreakpoint.nextfractal</groupId>
+            <artifactId>com.nextbreakpoint.nextfractal.mandelbrot</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.nextbreakpoint.nextfractal</groupId>
+            <artifactId>com.nextbreakpoint.nextfractal.core.javafx</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.fxmisc.richtext</groupId>
+            <artifactId>richtextfx</artifactId>
+        </dependency>
+    </dependencies>
+</project>

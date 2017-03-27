@@ -32,8 +32,8 @@ import com.nextbreakpoint.nextfractal.core.ImageComposer;
 import com.nextbreakpoint.nextfractal.core.Metadata;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
-import com.nextbreakpoint.nextfractal.core.renderer.java2D.Java2DRendererFactory;
-import com.nextbreakpoint.nextfractal.core.renderer.java2D.Java2DRendererGraphicsContext;
+import com.nextbreakpoint.nextfractal.core.renderer.Java2DRendererFactory;
+import com.nextbreakpoint.nextfractal.core.renderer.Java2DRendererGraphicsContext;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;

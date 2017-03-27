@@ -28,9 +28,14 @@
 		<module>com.nextbreakpoint.nextfractal.mandelbrot</module>
 		<module>com.nextbreakpoint.nextfractal.contextfree</module>
 		<module>com.nextbreakpoint.nextfractal.runtime</module>
-		<module>com.nextbreakpoint.nextfractal.server</module>
+        <module>com.nextbreakpoint.nextfractal.core.javafx</module>
+        <module>com.nextbreakpoint.nextfractal.mandelbrot.javafx</module>
+        <module>com.nextbreakpoint.nextfractal.contextfree.javafx</module>
+        <module>com.nextbreakpoint.nextfractal.runtime.javafx</module>
+		<module>com.nextbreakpoint.nextfractal.verticle</module>
+		<module>com.nextbreakpoint.nextfractal.lambda</module>
 		<module>com.nextbreakpoint.nextfractal.main</module>
-	</modules>
+    </modules>
 	<properties>
 		<antlr4.version>4.5.3</antlr4.version>
 		<richtext.version>0.6.10</richtext.version>
@@ -46,6 +51,8 @@
 		<vertx.version>3.3.0</vertx.version>
 		<netty.version>4.1.1.Final</netty.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<awslambda.version>1.1.0</awslambda.version>
+		<jsonsimple.version>1.1</jsonsimple.version>
 	</properties>
 	<build>
 		<plugins>
@@ -159,6 +166,16 @@
 				<groupId>io.vertx</groupId>
 				<artifactId>vertx-rx-java</artifactId>
 				<version>${vertx.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.amazonaws</groupId>
+				<artifactId>aws-lambda-java-core</artifactId>
+				<version>${awslambda.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.googlecode.json-simple</groupId>
+				<artifactId>json-simple</artifactId>
+				<version>${jsonsimple.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.mockito</groupId>

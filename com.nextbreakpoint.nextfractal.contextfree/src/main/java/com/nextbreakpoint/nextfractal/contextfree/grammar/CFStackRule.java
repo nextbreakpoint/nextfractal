@@ -31,7 +31,7 @@ import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ExpType;
 
 import java.util.List;
 
-public class CFStackRule extends CFStackItem {
+public class CFStackRule extends CFStackItem implements Cloneable {
     private int ruleName;
     private int paramCount;
 
@@ -45,6 +45,10 @@ public class CFStackRule extends CFStackItem {
         super(rule.getStack());
         this.ruleName = rule.ruleName;
         this.paramCount = rule.paramCount;
+    }
+
+    public Object clone() {
+        return new CFStackRule(stack, ruleName, paramCount);
     }
 
     @Override

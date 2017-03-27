@@ -37,27 +37,27 @@ import java.util.stream.StreamSupport;
 public class Plugins {
     private Plugins() {}
 
-    private static ServiceLoader<FractalFactory> factoryLoader() {
-        return ServiceLoader.load(FractalFactory.class);
+    private static ServiceLoader<CoreFactory> factoryLoader() {
+        return ServiceLoader.load(CoreFactory.class);
     }
 
-    private static Stream<? extends FractalFactory> factoryStream() {
+    private static Stream<? extends CoreFactory> factoryStream() {
         return StreamSupport.stream(factoryLoader().spliterator(), false);
     }
 
-    public static Optional<? extends FractalFactory> findFactory(String pluginId) {
+    public static Optional<? extends CoreFactory> findFactory(String pluginId) {
         return factoryStream().filter(plugin -> pluginId.equals(plugin.getId())).findFirst();
     }
 
-    public static Try<? extends FractalFactory, Exception> tryFindFactory(String pluginId) {
+    public static Try<? extends CoreFactory, Exception> tryFindFactory(String pluginId) {
         return findFactory(pluginId).map(plugin -> Try.of(() -> plugin)).orElse(Try.failure(new Exception("Factory not found " + pluginId)));
     }
 
-    public static Optional<? extends FractalFactory> findFactoryByGrammar(String grammar) {
+    public static Optional<? extends CoreFactory> findFactoryByGrammar(String grammar) {
         return factoryStream().filter(factory -> factory.getGrammar().equals(grammar)).findFirst();
     }
 
-    public static Try<? extends FractalFactory, Exception> tryFindFactoryByGrammar(String grammar) {
+    public static Try<? extends CoreFactory, Exception> tryFindFactoryByGrammar(String grammar) {
         return findFactoryByGrammar(grammar).map(plugin -> Try.of(() -> plugin)).orElse(Try.failure(new Exception("Factory not found " + grammar)));
     }
 
@@ -81,7 +81,7 @@ public class Plugins {
         return factoryStream().map(factory -> factory.getGrammar()).sorted().collect(Collectors.toList());
     }
 
-    public static Stream<? extends FractalFactory> factories() {
+    public static Stream<? extends CoreFactory> factories() {
         return factoryStream();
     }
 }

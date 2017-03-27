@@ -40,7 +40,7 @@ public class Shape implements Cloneable {
 		shapeType = shape.shapeType;
 		areaCache = shape.areaCache;
 		worldState = (Modification) shape.worldState.clone();
-		params = shape.params;
+		params = shape.params != null ? (CFStackRule) shape.params.clone() : null;
 	}
 
 	public CFStackRule getParameters() {

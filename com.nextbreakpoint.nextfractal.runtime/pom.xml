@@ -7,24 +7,6 @@
         <version>2.0.0</version>
     </parent>
 	<artifactId>com.nextbreakpoint.nextfractal.runtime</artifactId>
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<version>2.4</version>
-				<configuration>
-					<archive>
-						<manifest>
-							<mainClass>com.nextbreakpoint.nextfractal.runtime.javaFX.NextFractalApp</mainClass>
-							<addClasspath>true</addClasspath>
-							<classpathPrefix></classpathPrefix>
-						</manifest>
-					</archive>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
 	<dependencies>
 		<dependency>
 			<groupId>com.nextbreakpoint.nextfractal</groupId>
@@ -52,10 +34,6 @@
 		<dependency>
 			<groupId>com.nextbreakpoint</groupId>
 			<artifactId>com.nextbreakpoint.try</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.controlsfx</groupId>
-			<artifactId>controlsfx</artifactId>
 		</dependency>
 	</dependencies>
 </project>
