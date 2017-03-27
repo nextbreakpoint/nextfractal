@@ -218,7 +218,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdL
             locPathArg.c_str(),
             0
         };
-        struct start_args args(vm_arglist, "com/nextbreakpoint/nextfractal/runtime/javaFX/NextFractalApp");
+        struct start_args args(vm_arglist, "com/nextbreakpoint/nextfractal/runtime/javafx/NextFractalApp");
         start_java((void *)&args);
     } catch (const std::runtime_error& e) {
         ShowAlert("Did you install Java JDK 8 or later?", e);

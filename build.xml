@@ -29,7 +29,7 @@
 			</java>
 		</sequential>
 	</macrodef>
-	<macrodef name="build-server">
+	<macrodef name="build-verticle">
 		<attribute name="version" />
 		<attribute name="basedir" />
 		<attribute name="resultproperty" default="build.result" />
@@ -247,19 +247,29 @@
 	</target>
 	<target name="change-copyright">
 		<changecopyright basedir="${basedir}" path="com.nextbreakpoint.nextfractal.core/src/main/java" file="copyright.txt"/>
+		<changecopyright basedir="${basedir}" path="com.nextbreakpoint.nextfractal.core.javafx/src/main/java" file="copyright.txt"/>
 		<changecopyright basedir="${basedir}" path="com.nextbreakpoint.nextfractal.mandelbrot/src/main/java" file="copyright.txt"/>
+		<changecopyright basedir="${basedir}" path="com.nextbreakpoint.nextfractal.mandelbrot.javafx/src/main/java" file="copyright.txt"/>
 		<changecopyright basedir="${basedir}" path="com.nextbreakpoint.nextfractal.contextfree/src/main/java" file="copyright.txt"/>
+		<changecopyright basedir="${basedir}" path="com.nextbreakpoint.nextfractal.contextfree.javafx/src/main/java" file="copyright.txt"/>
 		<changecopyright basedir="${basedir}" path="com.nextbreakpoint.nextfractal.runtime/src/main/java" file="copyright.txt"/>
-		<changecopyright basedir="${basedir}" path="com.nextbreakpoint.nextfractal.server/src/main/java" file="copyright.txt"/>
+		<changecopyright basedir="${basedir}" path="com.nextbreakpoint.nextfractal.runtime.javafx/src/main/java" file="copyright.txt"/>
+		<changecopyright basedir="${basedir}" path="com.nextbreakpoint.nextfractal.verticle/src/main/java" file="copyright.txt"/>
+		<changecopyright basedir="${basedir}" path="com.nextbreakpoint.nextfractal.lambda/src/main/java" file="copyright.txt"/>
 		<changecopyright basedir="${basedir}" path="com.nextbreakpoint.nextfractal.mandelbrot/src/test/java" file="copyright.txt"/>
 		<changecopyright basedir="${basedir}" path="com.nextbreakpoint.nextfractal.mandelbrot/src/main/java/com/nextbreakpoint/nextfractal/mandelbrot/renderer/xaos/XaosRenderer.java" file="copyright-xaos.txt"/>
 	</target>
 	<target name="add-copyright">
 		<addcopyright basedir="${basedir}" path="com.nextbreakpoint.nextfractal.core/src/main/java" file="copyright.txt"/>
+		<addcopyright basedir="${basedir}" path="com.nextbreakpoint.nextfractal.core.javafx/src/main/java" file="copyright.txt"/>
 		<addcopyright basedir="${basedir}" path="com.nextbreakpoint.nextfractal.mandelbrot/src/main/java" file="copyright.txt"/>
+		<addcopyright basedir="${basedir}" path="com.nextbreakpoint.nextfractal.mandelbrot.javafx/src/main/java" file="copyright.txt"/>
 		<addcopyright basedir="${basedir}" path="com.nextbreakpoint.nextfractal.contextfree/src/main/java" file="copyright.txt"/>
+		<addcopyright basedir="${basedir}" path="com.nextbreakpoint.nextfractal.contextfree.javafx/src/main/java" file="copyright.txt"/>
 		<addcopyright basedir="${basedir}" path="com.nextbreakpoint.nextfractal.runtime/src/main/java" file="copyright.txt"/>
-		<addcopyright basedir="${basedir}" path="com.nextbreakpoint.nextfractal.server/src/main/java" file="copyright.txt"/>
+		<addcopyright basedir="${basedir}" path="com.nextbreakpoint.nextfractal.runtime.javafx/src/main/java" file="copyright.txt"/>
+		<addcopyright basedir="${basedir}" path="com.nextbreakpoint.nextfractal.verticle/src/main/java" file="copyright.txt"/>
+		<addcopyright basedir="${basedir}" path="com.nextbreakpoint.nextfractal.lambda/src/main/java" file="copyright.txt"/>
 		<addcopyright basedir="${basedir}" path="com.nextbreakpoint.nextfractal.mandelbrot/src/test/java" file="copyright.txt"/>
 		<addcopyright basedir="${basedir}" path="com.nextbreakpoint.nextfractal.mandelbrot/src/main/java/com/nextbreakpoint/nextfractal/mandelbrot/renderer/xaos/XaosRenderer.java" file="copyright-xaos.txt"/>
 	</target>
@@ -292,15 +302,14 @@
 		<build basedir="${basedir}" os="linux" arch="x86_64" version="${nextfractal.version}" executable="NextFractal" resourcesdir="resources" resultproperty="ant.build.result" />
 		<makezip basedir="${basedir}" os="linux" arch="x86_64" version="${nextfractal.version}" resultproperty="ant.makezip.result" />
 	</target>
-	<target name="build-linux-server">
-		<build-server basedir="${basedir}" version="${nextfractal.version}" resultproperty="ant.build.result" />
+	<target name="build-verticle">
+		<build-verticle basedir="${basedir}" version="${nextfractal.version}" resultproperty="ant.build.result" />
 	</target>
 	<target name="build-macos-signed" depends="build-macos-64bit-signed" if="is_macosx" />
 	<target name="build-macos" depends="build-macos-64bit" if="is_macosx" />
 	<target name="build-win32" depends="build-win32-64bit" />
 	<target name="build-linux" depends="build-linux-64bit" />
-	<target name="build-server" depends="build-linux-server" />
 	<target name="build-signed" depends="build-macos-signed, build-win32, build-linux" />
 	<target name="build" depends="build-macos, build-win32, build-linux" />
-	<target name="all" depends="clean, update-version, build, build-server" />
+	<target name="all" depends="clean, update-version, build" />
 </project>
