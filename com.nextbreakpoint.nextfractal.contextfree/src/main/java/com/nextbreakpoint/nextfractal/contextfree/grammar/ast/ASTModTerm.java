@@ -49,13 +49,9 @@ public class ASTModTerm extends ASTExpression {
 	private ModType modType;
 	private ASTExpression args;
 
-	public ASTModTerm(CFDGDriver driver, ModType modType, String paramStrings, Token location) {
-		super(driver, true, false, ExpType.ModType, location);
-		this.modType = modType;
-		this.args = null;
-		this.argCount = 0;
+	private static Map<String, Long> paramMap = new HashMap<>();
 
-		Map<String, Long> paramMap = new HashMap<>();
+	static {
 		paramMap.put("evenodd", FlagType.CF_EVEN_ODD.getMask());
 		paramMap.put("iso", FlagType.CF_ISO_WIDTH.getMask());
 		paramMap.put("miterjoin", FlagType.CF_MITER_JOIN.getMask());
@@ -67,6 +63,13 @@ public class ASTModTerm extends ASTExpression {
 		paramMap.put("large", FlagType.CF_ARC_LARGE.getMask());
 		paramMap.put("cw", FlagType.CF_ARC_CW.getMask());
 		paramMap.put("align", FlagType.CF_ALIGN.getMask());
+	}
+
+	public ASTModTerm(CFDGDriver driver, ModType modType, String paramStrings, Token location) {
+		super(driver, true, false, ExpType.ModType, location);
+		this.modType = modType;
+		this.args = null;
+		this.argCount = 0;
 
 		//TODO controllare
 
@@ -174,7 +177,7 @@ public class ASTModTerm extends ASTExpression {
 			}
 			case xyz: {
 				AffineTransform t2d = AffineTransform.getTranslateInstance(modArgs[0], modArgs[1]);
-				AffineTransform1D t1d = AffineTransform1D.getTranslateInstance(modArgs[0]);
+				AffineTransform1D t1d = AffineTransform1D.getTranslateInstance(modArgs[2]);
 				result.getTransform().concatenate(t2d);
 				result.getTransformZ().concatenate(t1d);
 				break;
@@ -239,7 +242,7 @@ public class ASTModTerm extends ASTExpression {
 			}
 			case sizexyz: {
 				AffineTransform t2d = AffineTransform.getScaleInstance(modArgs[0], modArgs[1]);
-				AffineTransform1D t1d = AffineTransform1D.getScaleInstance(modArgs[0]);
+				AffineTransform1D t1d = AffineTransform1D.getScaleInstance(modArgs[2]);
 				result.getTransform().concatenate(t2d);
 				result.getTransformZ().concatenate(t1d);
 				break;
@@ -336,7 +339,7 @@ public class ASTModTerm extends ASTExpression {
 			case targAlpha:
 			case targBright:
 			case targSat: {
-				targetComp += modType.getType() - ModType.hueTarg.getType();
+				targetComp += modType.getType() - ModType.targHue.getType();
 				if (target[targetComp] != 0.0) {
 					 if (renderer == null) throw new DeferUntilRuntimeException(location);
 					 if (!shapeDest) {
@@ -412,10 +415,10 @@ public class ASTModTerm extends ASTExpression {
 		args = compile(args, ph);
 
 		if (args == null) {
-			if (modType == ModType.param) {
+			if (modType != ModType.param) {
                 driver.error("Illegal expression in shape adjustment", location);
-                return null;
 			}
+			return null;
 		}
 		
 		switch (ph) {

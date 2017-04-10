@@ -54,7 +54,7 @@ public enum ModType {
 	targAlpha(23, "\u00E7\u00CD\u005E\u00E3\u0088\u00F4", "|alpha", "|a"),
 	time(24, "\u0020\u00C6\u00E8\u0002\u00ED\u0027", "time"),
 	timescale(25, "\u0078\u008E\u00C8\u002C\u001C\u0096", "timescale"),
-	stroke(26, "", "stroke"),
+	stroke(26, "", "width"),
 	param(27, "", "param", "p"),
 	x1(28, "", "x1"),
 	y1(29, "", "y1"),
@@ -62,7 +62,7 @@ public enum ModType {
 	y2(31, "", "y2"),
 	xrad(32, "", "rx"),
 	yrad(33, "", "ry"),
-	modification(34, "\u0088\u0090\u0054\u00C5\u00D3\u0020", "width");
+	modification(34, "\u0088\u0090\u0054\u00C5\u00D3\u0020", "");
 
 	private int type;
 	private String entropy;

@@ -98,7 +98,7 @@ public class ASTModification extends ASTExpression {
 		super(driver, true, false, ExpType.ModType, location);
 		this.driver = driver;
 		if (mod != null) {
-			modData.setRand64Seed(new Rand64(0));
+			modData.setRand64Seed(new Rand64());
 			grab(mod);
 		} else {
 			this.modClass = ModClass.NotAClass;
@@ -275,7 +275,6 @@ public class ASTModification extends ASTExpression {
 					if (term.getArguments() == null || term.getArguments().getType() != ExpType.NumericType) {
 						modExp.add(term);
 					}
-					int argcount = term.getArguments().evaluate(null, 0);
 					switch (term.getModType()) {
 						case x:
 						case y: {
@@ -283,6 +282,7 @@ public class ASTModification extends ASTExpression {
 								break;
 							}
 							ASTModTerm next = temp.get(i + 1);
+							int argcount = term.getArguments().evaluate(null, 0);
 							if (term.getModType() == ModType.x && next.getModType() == ModType.y && argcount == 1) {
 								term.setArguments(term.getArguments().append(next.getArguments()));
 								term.setArgumentsCount(2);
@@ -299,7 +299,7 @@ public class ASTModification extends ASTExpression {
 						case xyz:
 						case sizexyz: {
 							double[] d = new double[3];
-							if (term.getArguments().isConstant() && term.getArguments().evaluate(d, 3) != 3) {
+							if (term.getArguments().isConstant() && term.getArguments().evaluate(d, 3) == 3) {
 								term.setArguments(new ASTCons(driver, location, new ASTReal(driver, d[0], location), new ASTReal(driver, d[1], location)));
 								term.setModType(term.getModType() == ModType.xyz ? ModType.x : ModType.size);
 								term.setArgumentsCount(2);

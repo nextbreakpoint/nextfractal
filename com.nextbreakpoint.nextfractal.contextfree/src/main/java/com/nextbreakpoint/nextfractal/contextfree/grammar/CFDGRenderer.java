@@ -361,7 +361,9 @@ public class CFDGRenderer {
 	public void init() {
 		initTraverse();
 
-		currentSeed = new Rand64(variation);
+		Rand64.initRandomSeed(variation);
+
+		currentSeed = new Rand64();
 
 		cfStack = new CFStack(new CFStackItem[8192]);
 
@@ -487,14 +489,11 @@ public class CFDGRenderer {
 		}
 
 		if (cfdg.getShapeType(shape.getShapeType()) == ShapeType.RuleType && cfdg.shapeHasRules(shape.getShapeType())) {
-			if (shapeCount > 150000) {
-				logger.info("area " + area);
-				logger.info("minArea " + minArea);
-				logger.info("scaleArea " + scaleArea);
-				logger.info("bounds " + bounds.valid());
-				logger.info("todoCount " + todoCount);
-				logger.info("unfinishedShapes " + unfinishedShapes.size());
-			}
+//			if (shapeCount > 7990) {
+//				logger.info("area " + area);
+//				logger.info("scaleArea " + scaleArea);
+//				logger.info("todoCount " + todoCount);
+//			}
 			if (!bounds.valid() || area * scaleArea >= minArea) {
 				todoCount += 1;
 				unfinishedShapes.add(shape);
@@ -757,6 +756,8 @@ public class CFDGRenderer {
 				ASTRule rule = cfdg.findRule(shape.getShapeType(), shape.getWorldState().getRand64Seed().getDouble());
 				drawingMode = false;
 				rule.traverse(shape, false, this);
+			} catch (StopException e) {
+				break;
 			} catch (CFDGException e) {
 				logger.log(Level.WARNING, "Can't render CFDG image", e);
 				requestStop = true;

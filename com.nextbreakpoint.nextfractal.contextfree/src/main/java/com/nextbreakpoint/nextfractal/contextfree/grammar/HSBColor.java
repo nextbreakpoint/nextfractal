@@ -101,14 +101,14 @@ public class HSBColor implements Cloneable {
 		return values[0];
 	}
 	
-	public double bright() {
+	public double sat() {
 		return values[1];
 	}
-	
-	public double sat() {
+
+	public double bright() {
 		return values[2];
 	}
-	
+
 	public double alpha() {
 		return values[3];
 	}
@@ -117,11 +117,11 @@ public class HSBColor implements Cloneable {
 		values[0] = value;
 	}
 
-	public void setBright(double value) {
+	public void setSat(double value) {
 		values[1] = value;
 	}
 
-	public void setSat(double value) {
+	public void setBright(double value) {
 		values[2] = value;
 	}
 
@@ -133,11 +133,11 @@ public class HSBColor implements Cloneable {
 		values[0] += value;
 	}
 
-	public void addBright(double value) {
+	public void addSat(double value) {
 		values[1] += value;
 	}
 
-	public void addSat(double value) {
+	public void addBright(double value) {
 		values[2] += value;
 	}
 

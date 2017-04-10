@@ -259,7 +259,7 @@ public class ASTPathOp extends ASTReplacement {
 		}
 
 		ASTExpression xy = null;
-		if (getPathOp() == PathOp.CLOSEPOLY) {
+		if (getPathOp() != PathOp.CLOSEPOLY) {
 			xy = parseXY(ax, ay, 0.0, location);
 			ax = null;
 			ay = null;

@@ -156,6 +156,7 @@ public class ASTPathCommand extends ASTReplacement {
 						driver.error("Stroke adjustment is ill-formed", w.getLocation());
 					}
 					parameters = w;
+					w = null;
 				}
 
 				if (parameters == null) {
@@ -173,11 +174,24 @@ public class ASTPathCommand extends ASTReplacement {
 						break;
 					}
 					case 1: {
-						flags = pcmdParams.get(0);
+						switch (pcmdParams.get(0).getType()) {
+							case NumericType:
+								stroke = pcmdParams.get(0);
+								break;
+							case FlagType:
+								flags = pcmdParams.get(0);
+								break;
+							default:
+								driver.error("Bad expression type in path command parameters", location);
+								break;
+						}
 						break;
 					}
+					case 0: {
+						return;
+					}
 					default: {
-						driver.error("Bad expression type in path command parameters", location);
+						driver.error("Path commands can have zero, one, or two parameters", location);
 						return;
 					}
 				}

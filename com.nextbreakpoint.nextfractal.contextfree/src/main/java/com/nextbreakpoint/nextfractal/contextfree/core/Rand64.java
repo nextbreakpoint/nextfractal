@@ -33,7 +33,8 @@ public class Rand64 implements Cloneable {
 	private static long RAND64_SEED  = 0x3DF41234;
 	private static long RAND64_MULT = 2685821657736338717L;
 
-    private Random random;
+    private static Random random = new Random();
+
     private long seed;
 
 	public Rand64() {
@@ -42,7 +43,9 @@ public class Rand64 implements Cloneable {
 
 	public Rand64(long seed) {
 		this.seed = seed;
-		random = new Random();
+	}
+
+	public static void initRandomSeed(long seed) {
 		random.setSeed(seed);
 	}
 

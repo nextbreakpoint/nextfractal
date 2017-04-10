@@ -31,19 +31,17 @@ import com.nextbreakpoint.nextfractal.contextfree.grammar.Shape;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.CompilePhase;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.Locality;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.RepElemType;
+import com.nextbreakpoint.nextfractal.contextfree.grammar.exceptions.StopException;
 import org.antlr.v4.runtime.Token;
 
 public class ASTLoop extends ASTReplacement {
 	private ASTExpression loopArgs;
 	private ASTModification loopModHolder;
-	private double[] loopData = new double[3];
+	private double[] loopData;
 	private ASTRepContainer loopBody;
 	private ASTRepContainer finallyBody;
 	private int loopIndexName;
 	private String loopName;
-	private double start;
-	private double end;
-	private double step;
 
 	public ASTLoop(CFDGDriver driver, int nameIndex, String name, ASTExpression args, ASTModification mods, Token location) {
 		super(driver, mods, RepElemType.empty, location);
@@ -101,6 +99,7 @@ public class ASTLoop extends ASTReplacement {
 	@Override
 	public void compile(CompilePhase ph) {
 		loopArgs = compile(loopArgs, ph);
+		loopData = new double[3];
 
 		switch (ph) {
 			case TypeCheck: {
@@ -123,7 +122,7 @@ public class ASTLoop extends ASTReplacement {
 					setupLoop(loopData, loopArgs, null);
 					bodyNatural = loopData[0] == Math.floor(loopData[0]) && loopData[1] == Math.floor(loopData[1]) && loopData[2] == Math.floor(loopData[2]) &&	loopData[0] >= 0 && loopData[1] >= 0 && loopData[0] < 9007199254740992.0 && loopData[1] < 9007199254740992.0;
 					finallyNatural = bodyNatural && loopData[1] + loopData[2] >= -1.0 && loopData[1] + loopData[2] < 9007199254740992.0;
-					loopArgs = null;
+//					loopArgs = null;
 				} else {
 					int c = loopArgs.evaluate(null, 0);
 					if (c < 1 || c > 3) {
@@ -193,7 +192,7 @@ public class ASTLoop extends ASTReplacement {
 		}
 		double[] data = new double[3];
 		renderer.getCurrentSeed().add(getChildChange().getModData().getRand64Seed());
-		if (loopArgs != null) {
+		if (!loopArgs.isConstant()) {
 			setupLoop(data, loopArgs, renderer);
 		} else {
 			data[0] = loopData[0];
@@ -205,7 +204,7 @@ public class ASTLoop extends ASTReplacement {
 		int index = (int)((CFStackNumber)renderer.getStackItem(-1)).getNumber();
 		for (;;) {
 			if (renderer.isRequestStop() || CFDGRenderer.abortEverything()) {
-				throw new RuntimeException("Stopping");
+				throw new StopException();
 			}
 			if (data[2] > 0.0) {
 				if (index >= data[1]) {

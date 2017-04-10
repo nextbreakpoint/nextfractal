@@ -59,7 +59,11 @@ public class SimpleCanvas implements CFCanvas {
     }
 
     public void primitive(int shapeType, double[] color, AffineTransform transform) {
-        g2d.setColor(new Color((float)color[0], (float)color[1], (float)color[2], (float)color[3]));
+        try {
+            g2d.setColor(new Color((float) color[0], (float) color[1], (float) color[2], (float) color[3]));
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        }
 
         AffineTransform oldTransform = g2d.getTransform();
 
@@ -81,7 +85,11 @@ public class SimpleCanvas implements CFCanvas {
     }
 
     public void path(double[] color, AffineTransform transform, CommandInfo info) {
-        g2d.setColor(new Color((float)color[0], (float)color[1], (float)color[2], (float)color[3]));
+        try {
+            g2d.setColor(new Color((float) color[0], (float) color[1], (float) color[2], (float) color[3]));
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        }
 
         AffineTransform oldTransform = g2d.getTransform();
 

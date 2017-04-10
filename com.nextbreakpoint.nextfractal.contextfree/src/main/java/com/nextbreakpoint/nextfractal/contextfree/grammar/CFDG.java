@@ -149,7 +149,7 @@ public class CFDG {
 	public ASTRule findRule(int nameIndex, double weight) {
 		needle.setNameIndex(nameIndex);
 		needle.setWeight(weight);
-		int first = lowerBound(rules, 0, rules.size() - 1, needle);
+		int first = lowerBound(rules, 0, rules.size(), needle);
 		if (first == rules.size() || rules.get(first).getNameIndex() != nameIndex) {
 			driver.fail("Cannot find a rule for a shape (very helpful I know)", null);
 		}
