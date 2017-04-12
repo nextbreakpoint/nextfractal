@@ -40,6 +40,7 @@ import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.RepElemType;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.ShapeType;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.exceptions.CFDGException;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.exceptions.StopException;
+import com.nextbreakpoint.nextfractal.contextfree.renderer.RenderListener;
 import org.antlr.v4.runtime.Token;
 
 import java.awt.geom.AffineTransform;
@@ -128,6 +129,7 @@ public class CFDGRenderer {
 
 	private CFStack cfStack;
 	private AffineTransform tileTransform;
+	private RenderListener renderListener;
 
 	public CFDGRenderer(CFDG cfdg, int width, int height, double minSize, int variation, double border) {
 		this.cfdg = cfdg;
@@ -413,7 +415,7 @@ public class CFDGRenderer {
 
 		cfdg.getSummetry(symmetryOps, this);
 
-		cfdg.setBackgroundColor(this);
+		cfdg.initBackgroundColor(this);
 	}
 
 	public void initTraverse() {
@@ -704,6 +706,10 @@ public class CFDGRenderer {
 	}
 
 	public double run(CFCanvas canvas, boolean partialDraw) {
+		canvas.clear(cfdg.getBackgroundColor());
+
+		notifyRenderListener();
+
 		if (!animating) {
 			outputPrep(canvas);
 		}
@@ -772,7 +778,6 @@ public class CFDGRenderer {
 			}
 
 			if (requestUpdate || shapeCount > reportAt) {
-				cfdg.getDriver().info("Shapes " + finishedShapes.size(), null);
 				if (partialDraw) {
 					outputPartial();
 				}
@@ -782,8 +787,6 @@ public class CFDGRenderer {
 
 			Thread.yield();
 		}
-
-		cfdg.getDriver().info("Shapes " + finishedShapes.size(), null);
 
 		if (cfdg.usesTime() || !timed) {
 			timeBounds = AffineTransformTime.getTranslateInstance(0.0, totalArea);
@@ -833,7 +836,7 @@ public class CFDGRenderer {
 		int[] currHeight = new int[] { height };
 		rescaleOutput(currWidth, currHeight, true);
 
-		canvas.start(true, cfdg.getBackgroundColor(null), currWidth[0], currHeight[0]);
+		canvas.start(true, cfdg.getBackgroundColor(), currWidth[0], currHeight[0]);
 
 		canvas.end();
 
@@ -993,14 +996,12 @@ public class CFDGRenderer {
 		int[] currHeight = new int[] { height };
 		rescaleOutput(currWidth, currHeight, true);
 
-		if (finishedShapes.size() > 10000) {
-			cfdg.getDriver().info("Sorting shapes...", null);
-		}
+		cfdg.getDriver().info("Sorting shapes...", null);
 		Collections.sort(finishedShapes);
 
 		//TODO rivedere
 
-		canvas.start(outputSoFar == 0, cfdg.getBackgroundColor(null), currWidth[0], currHeight[0]);
+		canvas.start(outputSoFar == 0, cfdg.getBackgroundColor(), currWidth[0], currHeight[0]);
 
 		drawingMode = true;
 
@@ -1015,19 +1016,39 @@ public class CFDGRenderer {
 		}
 
 		canvas.end();
+
+		notifyRenderListener();
+	}
+
+	private void notifyRenderListener() {
+		RenderListener renderListener = getRenderListener();
+		if (renderListener != null) {
+			renderListener.partialDraw();
+		}
 	}
 
 	private Object forEachShape(boolean finalStep, Function<FinishedShape, Object> shapeFunction) {
-		if (!finalStep) {
-			finishedShapes.forEach(shapeFunction::apply);
-			outputSoFar = finishedShapes.size();
+//		if (!finalStep) {
+			int shapeIdx = 0;
+			int drawAt = 1000;
+			for (FinishedShape shape : finishedShapes) {
+				shapeFunction.apply(shape);
+				shapeIdx += 1;
+				if (shapeIdx == drawAt) {
+					notifyRenderListener();
+					drawAt *= 2;
+				}
+			}
+//			finishedShapes.forEach(shapeFunction::apply);
+			outputSoFar += finishedShapes.size();
+			finishedShapes.clear();
 			Thread.yield();
-		} else {
-			OutputMerge merger = new OutputMerge();
-			merger.addShapes(finishedShapes);
-			merger.merge(shapeFunction);
-			Thread.yield();
-		}
+//		} else {
+//			OutputMerge merger = new OutputMerge();
+//			merger.addShapes(finishedShapes);
+//			merger.merge(shapeFunction);
+//			Thread.yield();
+//		}
 		return null;
 	}
 
@@ -1101,4 +1122,12 @@ public class CFDGRenderer {
     public CFDGDriver getDriver() {
         return cfdg.getDriver();
     }
+
+	public void setRenderListener(RenderListener renderListener) {
+		this.renderListener = renderListener;
+	}
+
+	public RenderListener getRenderListener() {
+		return renderListener;
+	}
 }

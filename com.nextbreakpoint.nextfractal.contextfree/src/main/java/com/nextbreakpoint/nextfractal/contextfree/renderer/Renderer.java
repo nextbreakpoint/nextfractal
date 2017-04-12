@@ -325,6 +325,7 @@ public class Renderer {
 				cfdg.rulesLoaded();
 				renderer = cfdg.renderer(tile.getImageSize().getWidth(), tile.getImageSize().getHeight(), 1, seed.hashCode(), 0.1);
 				if (renderer != null) {
+					renderer.setRenderListener(() -> didChanged(progress, pixels));
 //					RendererFactory factory = new Java2DRendererFactory();
 //					renderer.run(new RendererCanvas(factory, g2d, width, height), false);
 					renderer.run(new SimpleCanvas(g2d, buffer.getTile()),true);

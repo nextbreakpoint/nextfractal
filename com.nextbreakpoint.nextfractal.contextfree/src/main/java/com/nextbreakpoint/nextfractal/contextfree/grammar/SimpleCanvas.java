@@ -153,8 +153,6 @@ public class SimpleCanvas implements CFCanvas {
     }
 
     public void start(boolean first, double[] backgroundColor, int currWidth, int currHeight) {
-        g2d.setColor(new Color((float)backgroundColor[0], (float)backgroundColor[1], (float)backgroundColor[2], (float)backgroundColor[3]));
-        g2d.fillRect(0, 0, getWidth(), getHeight());
         final RendererSize imageSize = tile.getImageSize();
         final RendererSize borderSize = tile.getBorderSize();
         final RendererPoint tileOffset = tile.getTileOffset();
@@ -166,6 +164,11 @@ public class SimpleCanvas implements CFCanvas {
 //        normTransform.translate(0, imageSize.getHeight() / 2);
 //        normTransform.scale(1, -1);
 //        normTransform.translate(0, -imageSize.getHeight() / 2);
+    }
+
+    public void clear(double[] backgroundColor) {
+        g2d.setColor(new Color((float)backgroundColor[0], (float)backgroundColor[1], (float)backgroundColor[2], (float)backgroundColor[3]));
+        g2d.fillRect(0, 0, getWidth(), getHeight());
     }
 
     public void end() {

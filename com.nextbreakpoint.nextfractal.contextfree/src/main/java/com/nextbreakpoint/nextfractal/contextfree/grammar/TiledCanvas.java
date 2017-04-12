@@ -184,6 +184,11 @@ public class TiledCanvas implements CFCanvas {
         }
     }
 
+    @Override
+    public void clear(double[] backgroundColor) {
+        canvas.clear(backgroundColor);
+    }
+
     public List<Point2D.Double> getTesselation(int w, int h, int x1, int y1, boolean flipY) {
         List<Point2D.Double> tessPoints = new ArrayList<>();
 

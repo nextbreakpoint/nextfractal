@@ -106,15 +106,15 @@ public class CFDG {
 		return cfdgContents;
 	}
 
-	public double[] getBackgroundColor(CFDGRenderer renderer) {
+	public double[] getBackgroundColor() {
 		return backgroundColor;
 	}
 
-	public void setBackgroundColor(CFDGRenderer renderer) {
+	public void initBackgroundColor(CFDGRenderer renderer) {
 		Modification white = new Modification();
 		white.setColor(new HSBColor(0.0, 0.0, 1.0, 1.0));
 		if (hasParameter(CFG.Background, white, renderer)) {
-			white.color().getRGBA(backgroundColor);
+			backgroundColor = white.color().getRGBA();
 			if (!usesAlpha) {
 				backgroundColor[3] = 1.0;
 			}
@@ -194,13 +194,13 @@ public class CFDG {
 	}
 
 	public double[] getColor(HSBColor hsb) {
-		double[] c = new double[4];
-		hsb.getRGBA(c);
-		if (uses16bitColor) {
-			return c; //TODO completare uses16bitColor
-		} else {
-			return c;
-		}
+		return hsb.getRGBA();
+		//TODO completare uses16bitColor
+//		if (uses16bitColor) {
+//			return c;
+//		} else {
+//			return c;
+//		}
 	}
 
 	public boolean isTiled(AffineTransform transform, double[] point) {

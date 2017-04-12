@@ -42,4 +42,6 @@ public interface CFCanvas {
     public void end();
 
     public void tileTransform(Bounds bounds);
+
+    public void clear(double[] backgroundColor);
 }
