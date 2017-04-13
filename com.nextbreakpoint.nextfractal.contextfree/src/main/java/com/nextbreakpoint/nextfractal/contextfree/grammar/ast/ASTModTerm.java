@@ -283,7 +283,7 @@ public class ASTModTerm extends ASTExpression {
 							 }
 						 }
 						 if (shapeDest) {
-							 color[colorComp] = hue ? HSBColor.adjustHue(color[colorComp], modArgs[i]) : HSBColor.adjust(color[colorComp], modArgs[i]);
+							 color[colorComp] = hue ? HSBColor.adjustHue(color[colorComp], modArgs[i]) : HSBColor.adjust(color[colorComp], limitValue(modArgs[i]));
 						 } else {
 							 color[colorComp] = hue ? color[colorComp] + modArgs[0] : limitValue(modArgs[0]);
 						 }
@@ -324,7 +324,7 @@ public class ASTModTerm extends ASTExpression {
 					 }
 				 }
 				 if (shapeDest) {
-					 color[colorComp] = HSBColor.adjustHue(color[colorComp], limitValue(modArgs[0]), 1, target[targetComp]);
+					 color[colorComp] = hue ? HSBColor.adjustHue(color[colorComp], limitValue(modArgs[0]), 1, target[targetComp]) : HSBColor.adjust(color[colorComp], limitValue(modArgs[0]), 1, target[targetComp]);
 				 } else {
 					 color[colorComp] = limitValue(modArgs[0]);
 					 result.setColorAssignment(result.colorAssignment() | AssignmentType.HSBATarget.getType() & mask);

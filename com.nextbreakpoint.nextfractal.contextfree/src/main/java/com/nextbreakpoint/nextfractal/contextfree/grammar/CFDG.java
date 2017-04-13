@@ -193,15 +193,15 @@ public class CFDG {
 		usesFrameTime = (parameters & Param.FrameTime.getType()) != 0;
 	}
 
-	public double[] getColor(HSBColor hsb) {
-		return hsb.getRGBA();
-		//TODO completare uses16bitColor
-//		if (uses16bitColor) {
-//			return c;
-//		} else {
-//			return c;
-//		}
-	}
+//	public double[] getColor(HSBColor hsb) {
+//		return hsb.getRGBA();
+//		//TODO completare uses16bitColor
+////		if (uses16bitColor) {
+////			return c;
+////		} else {
+////			return c;
+////		}
+//	}
 
 	public boolean isTiled(AffineTransform transform, double[] point) {
 		if (!hasParameter(CFG.Tile, ExpType.ModType)) {
