@@ -1,5 +1,5 @@
 /*
- * NextFractal 2.0.0
+ * NextFractal 2.0.1
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015-2017 Andrea Medeghini
@@ -102,17 +102,17 @@ import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrap;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapCondition;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapInvertedCondition;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOp;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpArcTo;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpArcRel;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpArcTo;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpClose;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpCurveTo;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpCurveRel;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpLineTo;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpCurveTo;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpLineRel;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpMoveTo;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpLineTo;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpMoveRel;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpQuadTo;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpMoveTo;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpQuadRel;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledTrapOpQuadTo;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.support.CompiledVariable;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTAssignStatement;

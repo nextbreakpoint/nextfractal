@@ -1,5 +1,5 @@
 /*
- * NextFractal 2.0.0
+ * NextFractal 2.0.1
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015-2017 Andrea Medeghini
@@ -28,7 +28,7 @@ import com.nextbreakpoint.nextfractal.core.renderer.RendererFactory;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererPoint;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
-import com.nextbreakpoint.nextfractal.core.renderer.javaFX.JavaFXRendererFactory;
+import com.nextbreakpoint.nextfractal.core.renderer.Java2DRendererFactory;
 import com.nextbreakpoint.nextfractal.core.utils.DefaultThreadFactory;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Color;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.MutableNumber;
@@ -46,7 +46,7 @@ public class RendererTest {
 	@Test
 	public void testProgress() {
 		DefaultThreadFactory threadFactory = new DefaultThreadFactory("Test", false, Thread.MIN_PRIORITY);
-		RendererFactory renderFactory = new JavaFXRendererFactory();
+		RendererFactory renderFactory = new Java2DRendererFactory();
 		RendererPoint tileOffest = new RendererPoint(0, 0);
 		RendererSize borderSize = new RendererSize(0, 0);
 		RendererSize tileSize = new RendererSize(100, 100);

@@ -1,5 +1,5 @@
 /*
- * NextFractal 2.0.0
+ * NextFractal 2.0.1
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015-2017 Andrea Medeghini
@@ -38,7 +38,7 @@ public class FinishedShape extends Shape implements Comparable<FinishedShape> {
 	@Override
 	public int compareTo(FinishedShape o) {
 		if (worldState.getTransformZ().tz() == o.worldState.getTransformZ().tz()) {
-			return worldState.colorAssignment() - o.worldState.colorAssignment();
+			return worldState.colorAssignment() - o.worldState.colorAssignment() < 0 ? -1 : 1;
 		} else {
 			return worldState.getTransformZ().tz() - o.worldState.getTransformZ().tz() < 0 ? -1 : 1;
 		}

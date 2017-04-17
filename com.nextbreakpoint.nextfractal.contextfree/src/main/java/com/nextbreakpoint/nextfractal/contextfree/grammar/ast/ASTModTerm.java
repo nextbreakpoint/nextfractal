@@ -1,5 +1,5 @@
 /*
- * NextFractal 2.0.0
+ * NextFractal 2.0.1
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015-2017 Andrea Medeghini
@@ -49,13 +49,9 @@ public class ASTModTerm extends ASTExpression {
 	private ModType modType;
 	private ASTExpression args;
 
-	public ASTModTerm(CFDGDriver driver, ModType modType, String paramStrings, Token location) {
-		super(driver, true, false, ExpType.ModType, location);
-		this.modType = modType;
-		this.args = null;
-		this.argCount = 0;
+	private static Map<String, Long> paramMap = new HashMap<>();
 
-		Map<String, Long> paramMap = new HashMap<>();
+	static {
 		paramMap.put("evenodd", FlagType.CF_EVEN_ODD.getMask());
 		paramMap.put("iso", FlagType.CF_ISO_WIDTH.getMask());
 		paramMap.put("miterjoin", FlagType.CF_MITER_JOIN.getMask());
@@ -67,6 +63,13 @@ public class ASTModTerm extends ASTExpression {
 		paramMap.put("large", FlagType.CF_ARC_LARGE.getMask());
 		paramMap.put("cw", FlagType.CF_ARC_CW.getMask());
 		paramMap.put("align", FlagType.CF_ALIGN.getMask());
+	}
+
+	public ASTModTerm(CFDGDriver driver, ModType modType, String paramStrings, Token location) {
+		super(driver, true, false, ExpType.ModType, location);
+		this.modType = modType;
+		this.args = null;
+		this.argCount = 0;
 
 		//TODO controllare
 
@@ -141,11 +144,6 @@ public class ASTModTerm extends ASTExpression {
             return;
 		}
 		
-		double[] args = new double[6];
-		for (int i = 0; i < argcount; ++i) {
-			args[i] = Math.max(-1.0, Math.min(1.0, modArgs[i]));
-		}
-		
 		double[] color = result.color().values();
 		double[] target = result.colorTarget().values();
 		int colorComp = 0;
@@ -174,7 +172,7 @@ public class ASTModTerm extends ASTExpression {
 			}
 			case xyz: {
 				AffineTransform t2d = AffineTransform.getTranslateInstance(modArgs[0], modArgs[1]);
-				AffineTransform1D t1d = AffineTransform1D.getTranslateInstance(modArgs[0]);
+				AffineTransform1D t1d = AffineTransform1D.getTranslateInstance(modArgs[2]);
 				result.getTransform().concatenate(t2d);
 				result.getTransformZ().concatenate(t1d);
 				break;
@@ -239,7 +237,7 @@ public class ASTModTerm extends ASTExpression {
 			}
 			case sizexyz: {
 				AffineTransform t2d = AffineTransform.getScaleInstance(modArgs[0], modArgs[1]);
-				AffineTransform1D t1d = AffineTransform1D.getScaleInstance(modArgs[0]);
+				AffineTransform1D t1d = AffineTransform1D.getScaleInstance(modArgs[2]);
 				result.getTransform().concatenate(t2d);
 				result.getTransformZ().concatenate(t1d);
 				break;
@@ -285,9 +283,9 @@ public class ASTModTerm extends ASTExpression {
 							 }
 						 }
 						 if (shapeDest) {
-							 color[colorComp] = hue ? HSBColor.adjustHue(color[colorComp], modArgs[i]) : HSBColor.adjust(color[colorComp], modArgs[i]);
+							 color[colorComp] = hue ? HSBColor.adjustHue(color[colorComp], modArgs[i]) : HSBColor.adjust(color[colorComp], limitValue(modArgs[i]));
 						 } else {
-							 color[colorComp] = hue ? color[colorComp] + modArgs[0] : args[0];
+							 color[colorComp] = hue ? color[colorComp] + modArgs[0] : limitValue(modArgs[0]);
 						 }
 						 mask <<= 2;
 						 hue = false;
@@ -301,10 +299,10 @@ public class ASTModTerm extends ASTExpression {
 						 }
 					 }
 					 if (shapeDest) {
-						 color[colorComp] = hue ? HSBColor.adjustHue(color[colorComp], args[0], 1, modArgs[1]) : HSBColor.adjust(color[colorComp], args[0], 1, args[1]);
+						 color[colorComp] = hue ? HSBColor.adjustHue(color[colorComp], limitValue(modArgs[0]), 1, modArgs[1]) : HSBColor.adjust(color[colorComp], limitValue(modArgs[0]), 1, limitValue(modArgs[1]));
 					 } else {
-						 color[colorComp] = args[0];
-						 target[targetComp] = hue ? modArgs[1] : args[1];
+						 color[colorComp] = limitValue(modArgs[0]);
+						 target[targetComp] = hue ? modArgs[1] : limitValue(modArgs[1]);
 						 result.setColorAssignment(result.colorAssignment() | AssignmentType.HSBA2Value.getType() & mask);
 					 }
 				 }
@@ -326,9 +324,9 @@ public class ASTModTerm extends ASTExpression {
 					 }
 				 }
 				 if (shapeDest) {
-					 color[colorComp] = hue ? HSBColor.adjustHue(color[colorComp], args[0], 1, target[targetComp]) : HSBColor.adjust(color[colorComp], args[0], 1, target[targetComp]);
+					 color[colorComp] = hue ? HSBColor.adjustHue(color[colorComp], limitValue(modArgs[0]), 1, target[targetComp]) : HSBColor.adjust(color[colorComp], limitValue(modArgs[0]), 1, target[targetComp]);
 				 } else {
-					 color[colorComp] = args[0];
+					 color[colorComp] = limitValue(modArgs[0]);
 					 result.setColorAssignment(result.colorAssignment() | AssignmentType.HSBATarget.getType() & mask);
 				 }
 				break;
@@ -336,7 +334,7 @@ public class ASTModTerm extends ASTExpression {
 			case targAlpha:
 			case targBright:
 			case targSat: {
-				targetComp += modType.getType() - ModType.hueTarg.getType();
+				targetComp += modType.getType() - ModType.targHue.getType();
 				if (target[targetComp] != 0.0) {
 					 if (renderer == null) throw new DeferUntilRuntimeException(location);
 					 if (!shapeDest) {
@@ -344,9 +342,9 @@ public class ASTModTerm extends ASTExpression {
 					 }
 				}
 				 if (shapeDest) {
-					 target[targetComp] = HSBColor.adjust(target[targetComp], args[0]);
+					 target[targetComp] = HSBColor.adjust(target[targetComp], limitValue(modArgs[0]));
 				 } else {
-					 target[targetComp] = args[0];
+					 target[targetComp] = limitValue(modArgs[0]);
 				 }
 				break;
 			}
@@ -389,8 +387,12 @@ public class ASTModTerm extends ASTExpression {
 			default:
 				break;
 		}
-		result.setColor(new HSBColor(color[0], color[1], color[2], color[3]));
-		result.setColorTarget(new HSBColor(target[0], target[1], target[2], target[3]));
+		result.color().setValues(color);
+		result.colorTarget().setValues(target);
+	}
+
+	private double limitValue(double value) {
+		return Math.max(-1.0, Math.min(1.0, value));
 	}
 
 	@Override
@@ -412,10 +414,10 @@ public class ASTModTerm extends ASTExpression {
 		args = compile(args, ph);
 
 		if (args == null) {
-			if (modType == ModType.param) {
+			if (modType != ModType.param) {
                 driver.error("Illegal expression in shape adjustment", location);
-                return null;
 			}
+			return null;
 		}
 		
 		switch (ph) {

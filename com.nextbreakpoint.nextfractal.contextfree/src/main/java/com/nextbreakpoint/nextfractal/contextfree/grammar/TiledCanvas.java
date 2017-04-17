@@ -1,5 +1,5 @@
 /*
- * NextFractal 2.0.0
+ * NextFractal 2.0.1
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015-2017 Andrea Medeghini
@@ -182,6 +182,11 @@ public class TiledCanvas implements CFCanvas {
             }
             if (!hit) return;
         }
+    }
+
+    @Override
+    public void clear(double[] backgroundColor) {
+        canvas.clear(backgroundColor);
     }
 
     public List<Point2D.Double> getTesselation(int w, int h, int x1, int y1, boolean flipY) {

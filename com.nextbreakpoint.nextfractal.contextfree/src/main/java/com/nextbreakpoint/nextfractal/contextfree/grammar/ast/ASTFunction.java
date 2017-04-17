@@ -1,5 +1,5 @@
 /*
- * NextFractal 2.0.0
+ * NextFractal 2.0.1
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015-2017 Andrea Medeghini
@@ -154,9 +154,8 @@ public class ASTFunction extends ASTExpression {
 				double[] c = new double[3];
 				int l = arguments.evaluate(c, 3, renderer);
 				if (l == 3) {
-					double[] rgb = new double[4];
 					HSBColor color = new HSBColor(c[0], c[1], c[2], 1.0);
-					color.getRGBA(rgb);
+					double[] rgb = color.getRGBA();
 					result[0] = rgb[0];
 					result[1] = rgb[2];
 					result[2] = rgb[3];

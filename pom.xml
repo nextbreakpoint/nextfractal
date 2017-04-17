@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.nextbreakpoint.nextfractal</groupId>
 	<artifactId>com.nextbreakpoint.nextfractal.parent</artifactId>
-	<version>2.0.0</version>
+	<version>2.0.1</version>
 	<packaging>pom</packaging>
 	<url>https://github.com/nextbreakpoint/nextfractal</url>
 	<licenses>
@@ -28,9 +28,14 @@
 		<module>com.nextbreakpoint.nextfractal.mandelbrot</module>
 		<module>com.nextbreakpoint.nextfractal.contextfree</module>
 		<module>com.nextbreakpoint.nextfractal.runtime</module>
-		<module>com.nextbreakpoint.nextfractal.server</module>
+        <module>com.nextbreakpoint.nextfractal.core.javafx</module>
+        <module>com.nextbreakpoint.nextfractal.mandelbrot.javafx</module>
+        <module>com.nextbreakpoint.nextfractal.contextfree.javafx</module>
+        <module>com.nextbreakpoint.nextfractal.runtime.javafx</module>
+		<module>com.nextbreakpoint.nextfractal.verticle</module>
+		<module>com.nextbreakpoint.nextfractal.lambda</module>
 		<module>com.nextbreakpoint.nextfractal.main</module>
-	</modules>
+    </modules>
 	<properties>
 		<antlr4.version>4.5.3</antlr4.version>
 		<richtext.version>0.6.10</richtext.version>
@@ -43,7 +48,11 @@
 		<junit4.version>4.11</junit4.version>
 		<mockito.version>1.9.5</mockito.version>
 		<controlsfx.version>8.40.12</controlsfx.version>
+		<vertx.version>3.3.0</vertx.version>
+		<netty.version>4.1.1.Final</netty.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<awslambda.version>1.1.0</awslambda.version>
+		<jsonsimple.version>1.1</jsonsimple.version>
 	</properties>
 	<build>
 		<plugins>
@@ -109,22 +118,6 @@
 				<version>${commonmath3.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-starter-web</artifactId>
-				<version>${springboot.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-starter-actuator</artifactId>
-				<version>${springboot.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-starter-test</artifactId>
-				<version>${springboot.version}</version>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
 				<groupId>com.nextbreakpoint</groupId>
 				<artifactId>com.nextbreakpoint.ffmpeg4java</artifactId>
 				<version>${ffmpeg4java.version}</version>
@@ -148,6 +141,41 @@
 				<groupId>org.controlsfx</groupId>
 				<artifactId>controlsfx</artifactId>
 				<version>${controlsfx.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.netty</groupId>
+				<artifactId>netty-buffer</artifactId>
+				<version>${netty.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.vertx</groupId>
+				<artifactId>vertx-core</artifactId>
+				<version>${vertx.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.vertx</groupId>
+				<artifactId>vertx-web</artifactId>
+				<version>${vertx.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.vertx</groupId>
+				<artifactId>vertx-auth-oauth2</artifactId>
+				<version>${vertx.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.vertx</groupId>
+				<artifactId>vertx-rx-java</artifactId>
+				<version>${vertx.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.amazonaws</groupId>
+				<artifactId>aws-lambda-java-core</artifactId>
+				<version>${awslambda.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.googlecode.json-simple</groupId>
+				<artifactId>json-simple</artifactId>
+				<version>${jsonsimple.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.mockito</groupId>

@@ -1,5 +1,5 @@
 /*
- * NextFractal 2.0.0
+ * NextFractal 2.0.1
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015-2017 Andrea Medeghini
@@ -32,7 +32,8 @@ public class HSBColor implements Cloneable {
 	private static final double EQUALITY_THRESHOLD = 0.00001;
 
 	private double[] values = new double[4];
-	
+	private double[] rgba;
+
 	public HSBColor(double h, double s, double b, double a) {
 		this.values[0] = h;
 		this.values[1] = s;
@@ -101,52 +102,65 @@ public class HSBColor implements Cloneable {
 		return values[0];
 	}
 	
-	public double bright() {
+	public double sat() {
 		return values[1];
 	}
-	
-	public double sat() {
+
+	public double bright() {
 		return values[2];
 	}
-	
+
 	public double alpha() {
 		return values[3];
 	}
 
 	public void setHue(double value) {
+		rgba = null;
 		values[0] = value;
 	}
 
-	public void setBright(double value) {
+	public void setSat(double value) {
+		rgba = null;
 		values[1] = value;
 	}
 
-	public void setSat(double value) {
+	public void setBright(double value) {
+		rgba = null;
 		values[2] = value;
 	}
 
 	public void setAlpha(double value) {
+		rgba = null;
 		values[3] = value;
 	}
 
 	public void addHue(double value) {
+		rgba = null;
 		values[0] += value;
 	}
 
-	public void addBright(double value) {
+	public void addSat(double value) {
+		rgba = null;
 		values[1] += value;
 	}
 
-	public void addSat(double value) {
+	public void addBright(double value) {
+		rgba = null;
 		values[2] += value;
 	}
 
 	public void addAlpha(double value) {
+		rgba = null;
 		values[3] += value;
 	}
 
 	public double[] values() {
 		return values;
+	}
+
+	public void setValues(double[] values) {
+		rgba = null;
+		this.values = values;
 	}
 
 	public static double adjustHue(double base, double adjustment) {
@@ -239,7 +253,13 @@ public class HSBColor implements Cloneable {
 		if (!twoValue) destTarget.setAlpha(adjust(destTarget.alpha(), adjustmentTarget.alpha()));
 	}
 
-	public void getRGBA(double[] c) {
+	public double[] getRGBA() {
+		if (rgba != null) {
+			return rgba;
+		}
+
+		double[] c = new double[4];
+
 		// Determine which facet of the HSB hexcone we are in and how far we are into this hextant.
 		double hue = values[0] / 60.0;
 		double remainder = 0;
@@ -272,26 +292,26 @@ public class HSBColor implements Cloneable {
 		switch (hextant) {
 			case 0:
 				c[0] = b; c[1] = t; c[2] = p;
-				return;
+				return c;
 			case 1:
 				c[0] = q; c[1] = b; c[2] = p;
-				return;
+				return c;
 			case 2:
 				c[0] = p; c[1] = b; c[2] = t;
-				return;
+				return c;
 			case 3:
 				c[0] = p; c[1] = q; c[2] = b;
-				return;
+				return c;
 			case 4:
 				c[0] = t; c[1] = p; c[2] = b;
-				return;
+				return c;
 			case 5:
 				c[0] = b; c[1] = p; c[2] = q;
-				return;
+				return c;
 			default:
 				// this should never happen
 				c[0] = 0; c[1] = 0; c[2] = 0; c[3] = 1;
-				return;
+				return c;
 		}
 	}
 

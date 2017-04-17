@@ -1,5 +1,5 @@
 /*
- * NextFractal 2.0.0
+ * NextFractal 2.0.1
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015-2017 Andrea Medeghini
@@ -201,6 +201,6 @@ public class ASTRule extends ASTReplacement implements Comparable<ASTRule> {
 
 	@Override
 	public int compareTo(ASTRule o) {
-		return nameIndex == o.nameIndex ? (weight < o.weight ? -1 : weight == o.weight ? 0 : 1) : nameIndex - o.nameIndex;
+		return nameIndex == o.nameIndex ? ((weight < o.weight) ? -1 : 1) : ((nameIndex < o.nameIndex) ? -1 : 1);
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * NextFractal 2.0.0
+ * NextFractal 2.0.1
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015-2017 Andrea Medeghini
@@ -259,7 +259,7 @@ public class ASTPathOp extends ASTReplacement {
 		}
 
 		ASTExpression xy = null;
-		if (getPathOp() == PathOp.CLOSEPOLY) {
+		if (getPathOp() != PathOp.CLOSEPOLY) {
 			xy = parseXY(ax, ay, 0.0, location);
 			ax = null;
 			ay = null;

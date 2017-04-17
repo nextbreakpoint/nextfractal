@@ -1,5 +1,5 @@
 /*
- * NextFractal 2.0.0
+ * NextFractal 2.0.1
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015-2017 Andrea Medeghini
@@ -156,6 +156,7 @@ public class ASTPathCommand extends ASTReplacement {
 						driver.error("Stroke adjustment is ill-formed", w.getLocation());
 					}
 					parameters = w;
+					w = null;
 				}
 
 				if (parameters == null) {
@@ -173,11 +174,24 @@ public class ASTPathCommand extends ASTReplacement {
 						break;
 					}
 					case 1: {
-						flags = pcmdParams.get(0);
+						switch (pcmdParams.get(0).getType()) {
+							case NumericType:
+								stroke = pcmdParams.get(0);
+								break;
+							case FlagType:
+								flags = pcmdParams.get(0);
+								break;
+							default:
+								driver.error("Bad expression type in path command parameters", location);
+								break;
+						}
 						break;
 					}
+					case 0: {
+						return;
+					}
 					default: {
-						driver.error("Bad expression type in path command parameters", location);
+						driver.error("Path commands can have zero, one, or two parameters", location);
 						return;
 					}
 				}

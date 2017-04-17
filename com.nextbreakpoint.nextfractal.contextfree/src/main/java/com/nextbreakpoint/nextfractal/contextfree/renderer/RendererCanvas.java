@@ -1,5 +1,5 @@
 /*
- * NextFractal 2.0.0
+ * NextFractal 2.0.1
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015-2017 Andrea Medeghini
@@ -214,10 +214,14 @@ public class RendererCanvas implements CFCanvas {
         }
     }
 
-    public void start(boolean first, double[] backgroundColor, int currWidth, int currHeight) {
+    @Override
+    public void clear(double[] backgroundColor) {
         RendererColor c = factory.createColor((float) backgroundColor[0], (float) backgroundColor[1], (float) backgroundColor[2], (float) backgroundColor[3]);
         context.setFill(c);
         context.fillRect(0, 0, getWidth(), getHeight());
+    }
+
+    public void start(boolean first, double[] backgroundColor, int currWidth, int currHeight) {
         normTransform = factory.createTranslateAffine(0, getHeight());
         normTransform.append(factory.createScaleAffine(1, -1));
         normTransform.append(factory.createTranslateAffine(-(currWidth - getWidth()) / 2, -(currHeight - getHeight()) / 2));

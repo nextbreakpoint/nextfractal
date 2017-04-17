@@ -218,7 +218,7 @@ int main(int argc, char **argv) {
             locPathArg.c_str(),
             0
         };
-        struct start_args args(vm_arglist, "com/nextbreakpoint/nextfractal/runtime/javaFX/NextFractalApp");
+        struct start_args args(vm_arglist, "com/nextbreakpoint/nextfractal/runtime/javafx/NextFractalApp");
         pthread_t thr;
         pthread_create(&thr, NULL, start_java, &args);
         CFRunLoopRun();

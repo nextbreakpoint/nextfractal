@@ -1,5 +1,5 @@
 /*
- * NextFractal 2.0.0
+ * NextFractal 2.0.1
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015-2017 Andrea Medeghini
@@ -32,8 +32,8 @@ import com.nextbreakpoint.nextfractal.core.ImageComposer;
 import com.nextbreakpoint.nextfractal.core.Metadata;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
-import com.nextbreakpoint.nextfractal.core.renderer.java2D.Java2DRendererFactory;
-import com.nextbreakpoint.nextfractal.core.renderer.java2D.Java2DRendererGraphicsContext;
+import com.nextbreakpoint.nextfractal.core.renderer.Java2DRendererFactory;
+import com.nextbreakpoint.nextfractal.core.renderer.Java2DRendererGraphicsContext;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;

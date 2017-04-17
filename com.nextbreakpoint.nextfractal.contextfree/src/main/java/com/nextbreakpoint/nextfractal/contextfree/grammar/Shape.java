@@ -1,5 +1,5 @@
 /*
- * NextFractal 2.0.0
+ * NextFractal 2.0.1
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015-2017 Andrea Medeghini
@@ -40,7 +40,7 @@ public class Shape implements Cloneable {
 		shapeType = shape.shapeType;
 		areaCache = shape.areaCache;
 		worldState = (Modification) shape.worldState.clone();
-		params = shape.params;
+		params = shape.params != null ? (CFStackRule) shape.params.clone() : null;
 	}
 
 	public CFStackRule getParameters() {

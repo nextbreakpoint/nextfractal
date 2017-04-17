@@ -1,5 +1,5 @@
 /*
- * NextFractal 2.0.0
+ * NextFractal 2.0.1
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015-2017 Andrea Medeghini
@@ -59,7 +59,11 @@ public class SimpleCanvas implements CFCanvas {
     }
 
     public void primitive(int shapeType, double[] color, AffineTransform transform) {
-        g2d.setColor(new Color((float)color[0], (float)color[1], (float)color[2], (float)color[3]));
+        try {
+            g2d.setColor(new Color((float) color[0], (float) color[1], (float) color[2], (float) color[3]));
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        }
 
         AffineTransform oldTransform = g2d.getTransform();
 
@@ -81,7 +85,11 @@ public class SimpleCanvas implements CFCanvas {
     }
 
     public void path(double[] color, AffineTransform transform, CommandInfo info) {
-        g2d.setColor(new Color((float)color[0], (float)color[1], (float)color[2], (float)color[3]));
+        try {
+            g2d.setColor(new Color((float) color[0], (float) color[1], (float) color[2], (float) color[3]));
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        }
 
         AffineTransform oldTransform = g2d.getTransform();
 
@@ -145,8 +153,6 @@ public class SimpleCanvas implements CFCanvas {
     }
 
     public void start(boolean first, double[] backgroundColor, int currWidth, int currHeight) {
-        g2d.setColor(new Color((float)backgroundColor[0], (float)backgroundColor[1], (float)backgroundColor[2], (float)backgroundColor[3]));
-        g2d.fillRect(0, 0, getWidth(), getHeight());
         final RendererSize imageSize = tile.getImageSize();
         final RendererSize borderSize = tile.getBorderSize();
         final RendererPoint tileOffset = tile.getTileOffset();
@@ -158,6 +164,11 @@ public class SimpleCanvas implements CFCanvas {
 //        normTransform.translate(0, imageSize.getHeight() / 2);
 //        normTransform.scale(1, -1);
 //        normTransform.translate(0, -imageSize.getHeight() / 2);
+    }
+
+    public void clear(double[] backgroundColor) {
+        g2d.setColor(new Color((float)backgroundColor[0], (float)backgroundColor[1], (float)backgroundColor[2], (float)backgroundColor[3]));
+        g2d.fillRect(0, 0, getWidth(), getHeight());
     }
 
     public void end() {

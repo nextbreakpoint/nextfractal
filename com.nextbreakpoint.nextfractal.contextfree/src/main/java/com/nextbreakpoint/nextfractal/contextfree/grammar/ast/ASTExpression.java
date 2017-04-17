@@ -1,5 +1,5 @@
 /*
- * NextFractal 2.0.0
+ * NextFractal 2.0.1
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015-2017 Andrea Medeghini
@@ -148,20 +148,8 @@ public class ASTExpression {
 		return 1;
 	}
 
-	// Always returns nullptr except during type checkParam in the following cases:
-	// * An ASTvariable bound to a constant returns a copy of the constant
-	// * An ASTvariable bound to a rule spec returns an ASTruleSpec that
-	//   acts as a stack variable
-	// * A shape spec that was parsed as an ASTuserFunc because of grammar
-	//   ambiguity will return the correct ASTruleSpec
-	//
-	// It is safe to ignore the return value if you can guarantee that none
-	// of these conditions is possible. Otherwise you must replace the object
-	// with the returned object. Using the original object after type checkParam
-	// will fail.
 	public static ASTExpression append(ASTExpression le, ASTExpression re) {
-		if (le != null && re != null) le.append(re);
-		return le != null ? le : re;
+		return (le != null && re != null) ? le.append(re) : (le != null) ? le : re;
 	}
 
 	public ASTExpression append(ASTExpression sib) {

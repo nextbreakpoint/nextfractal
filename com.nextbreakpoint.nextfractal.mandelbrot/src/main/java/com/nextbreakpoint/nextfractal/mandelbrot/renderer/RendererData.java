@@ -1,5 +1,5 @@
 /*
- * NextFractal 2.0.0
+ * NextFractal 2.0.1
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015-2017 Andrea Medeghini
@@ -27,9 +27,6 @@ package com.nextbreakpoint.nextfractal.mandelbrot.renderer;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.MutableNumber;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class RendererData {
 	protected double[] positionX;
 	protected double[] positionY;
@@ -37,8 +34,8 @@ public class RendererData {
 	protected MutableNumber point;
 	protected int[] newPixels;
 	protected int[] oldPixels;
-	protected List<double[]> newCache;
-	protected List<double[]> oldCache;
+	protected double[] newCache;
+	protected double[] oldCache;
 	protected int width; 
 	protected int height;
 	protected int depth;
@@ -81,21 +78,13 @@ public class RendererData {
 			realloc(width, height);
 			this.width = width;
 			this.height = height;
-			newCache = new ArrayList<double[]>(depth);
-			oldCache = new ArrayList<double[]>(depth);
-			for (int i = 0; i < depth; i++) {
-				newCache.add(new double[width * height * 2]);
-				oldCache.add(new double[width * height * 2]);
-			}
+			newCache = new double[width * height * 2 * depth];
+			oldCache = new double[width * height * 2 * depth];
 			this.depth = depth;
 		} else {
 			if (this.depth != depth) {
-				newCache = new ArrayList<double[]>(depth);
-				oldCache = new ArrayList<double[]>(depth);
-				for (int i = 0; i < depth; i++) {
-					newCache.add(new double[width * height * 2]);
-					oldCache.add(new double[width * height * 2]);
-				}
+				newCache = new double[width * height * 2 * depth];
+				oldCache = new double[width * height * 2 * depth];
 				this.depth = depth;
 			}
 		}
@@ -116,7 +105,7 @@ public class RendererData {
 	 * 
 	 */
 	public void swap() {
-		final List<double[]> tmpCache = oldCache;
+		final double[] tmpCache = oldCache;
 		oldCache = newCache;
 		newCache = tmpCache;
 		final int[] tmpPixels = oldPixels;
@@ -274,11 +263,13 @@ public class RendererData {
 	 * @param p
 	 */
 	public void getPoint(int offset, RendererState p) {
-		for (int j = 0; j < depth; j++) {
-			double[] cache = oldCache.get(j);
-			double r = cache[offset * 2 + 0];
-			double i = cache[offset * 2 + 1];
-			p.vars()[j].set(r, i);
+		int d2 = depth * 2;
+		int o1 = offset * d2 + 0;
+		int o2 = offset * d2 + 1;
+		for (int k = 0, j = 0; j < d2; j += 2, k += 1) {
+			double r = oldCache[o1 + j];
+			double i = oldCache[o2 + j];
+			p.vars()[k].set(r, i);
 		}
 	}
 
@@ -287,11 +278,13 @@ public class RendererData {
 	 * @param p
 	 */
 	public void setPoint(int offset, RendererState p) {
-		for (int j = 0; j < depth; j++) {
-			MutableNumber var = p.vars()[j];
-			double[] cache = newCache.get(j);
-			cache[offset * 2 + 0] = var.r();
-			cache[offset * 2 + 1] = var.i();
+		int d2 = depth * 2;
+		int o1 = offset * d2 + 0;
+		int o2 = offset * d2 + 1;
+		for (int k = 0, j = 0; j < d2; j += 2, k += 1) {
+			MutableNumber var = p.vars()[k];
+			newCache[o1 + j] = var.r();
+			newCache[o2 + j] = var.i();
 		}
 	}
 
@@ -310,9 +303,8 @@ public class RendererData {
 	 * @param length
 	 */
 	public void moveCache(int from, int to, int length) {
-		for (int i = 0; i < depth; i++) {
-			System.arraycopy(newCache.get(i), from * 2, newCache.get(i), to * 2, length * 2);
-		}
+		int d2 = 2 * depth;
+		System.arraycopy(newCache, from * d2, newCache, to * d2, length * d2);
 	}
 
 	/**
@@ -330,17 +322,19 @@ public class RendererData {
 	 * @param length
 	 */
 	public void copyCache(int from, int to, int length) {
-		for (int i = 0; i < depth; i++) {
-			System.arraycopy(oldCache.get(i), from * 2, newCache.get(i), to * 2, length * 2);
-		}
+		int d2 = 2 * depth;
+		System.arraycopy(oldCache, from * d2, newCache, to * d2, length * d2);
 	}
 
 	/**
 	 * 
 	 */
 	public void clearPixels() {
-		for (int i = 0; i < newPixels.length; i++) {
+		for (int i = 0; i < width; i++) {
 			newPixels[i] = 0xFF000000;
+		}
+		for (int y = 1; y < height; y++) {
+			System.arraycopy(newPixels, 0, newPixels, y * width, width);
 		}
 	}
 }

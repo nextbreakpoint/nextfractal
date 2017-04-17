@@ -1,5 +1,5 @@
 /*
- * NextFractal 2.0.0
+ * NextFractal 2.0.1
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015-2017 Andrea Medeghini
@@ -80,7 +80,7 @@ public abstract class FileManager {
 
     private static Try<Bundle, Exception> loadBundle(ZipInputStream is) {
         return Try.of(() -> readEntries(is)).flatMap(entries -> readManifest(entries))
-            .flatMap(result -> tryFindFactory((String)result[1]).map(FractalFactory::createFileManager)
+            .flatMap(result -> tryFindFactory((String)result[1]).map(CoreFactory::createFileManager)
             .flatMap(manager -> manager.loadEntries((List<FileManagerEntry>)result[0])));
     }
 
@@ -122,7 +122,7 @@ public abstract class FileManager {
     }
 
     private static Try<Bundle, Exception> writeBundle(ZipOutputStream os, Bundle bundle) {
-        return tryFindFactory(bundle.getSession().getPluginId()).map(FractalFactory::createFileManager)
+        return tryFindFactory(bundle.getSession().getPluginId()).map(CoreFactory::createFileManager)
             .flatMap(manager -> manager.saveEntries(bundle).flatMap(entries -> putEntries(os, bundle, entries)));
     }
 

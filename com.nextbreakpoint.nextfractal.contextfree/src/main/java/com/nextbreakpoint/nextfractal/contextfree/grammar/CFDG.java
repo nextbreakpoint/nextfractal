@@ -1,5 +1,5 @@
 /*
- * NextFractal 2.0.0
+ * NextFractal 2.0.1
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015-2017 Andrea Medeghini
@@ -106,15 +106,15 @@ public class CFDG {
 		return cfdgContents;
 	}
 
-	public double[] getBackgroundColor(CFDGRenderer renderer) {
+	public double[] getBackgroundColor() {
 		return backgroundColor;
 	}
 
-	public void setBackgroundColor(CFDGRenderer renderer) {
+	public void initBackgroundColor(CFDGRenderer renderer) {
 		Modification white = new Modification();
 		white.setColor(new HSBColor(0.0, 0.0, 1.0, 1.0));
 		if (hasParameter(CFG.Background, white, renderer)) {
-			white.color().getRGBA(backgroundColor);
+			backgroundColor = white.color().getRGBA();
 			if (!usesAlpha) {
 				backgroundColor[3] = 1.0;
 			}
@@ -149,7 +149,7 @@ public class CFDG {
 	public ASTRule findRule(int nameIndex, double weight) {
 		needle.setNameIndex(nameIndex);
 		needle.setWeight(weight);
-		int first = lowerBound(rules, 0, rules.size() - 1, needle);
+		int first = lowerBound(rules, 0, rules.size(), needle);
 		if (first == rules.size() || rules.get(first).getNameIndex() != nameIndex) {
 			driver.fail("Cannot find a rule for a shape (very helpful I know)", null);
 		}
@@ -193,15 +193,15 @@ public class CFDG {
 		usesFrameTime = (parameters & Param.FrameTime.getType()) != 0;
 	}
 
-	public double[] getColor(HSBColor hsb) {
-		double[] c = new double[4];
-		hsb.getRGBA(c);
-		if (uses16bitColor) {
-			return c; //TODO completare uses16bitColor
-		} else {
-			return c;
-		}
-	}
+//	public double[] getColor(HSBColor hsb) {
+//		return hsb.getRGBA();
+//		//TODO completare uses16bitColor
+////		if (uses16bitColor) {
+////			return c;
+////		} else {
+////			return c;
+////		}
+//	}
 
 	public boolean isTiled(AffineTransform transform, double[] point) {
 		if (!hasParameter(CFG.Tile, ExpType.ModType)) {

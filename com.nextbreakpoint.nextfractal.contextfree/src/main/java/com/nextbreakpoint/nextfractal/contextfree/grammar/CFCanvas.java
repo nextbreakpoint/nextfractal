@@ -1,5 +1,5 @@
 /*
- * NextFractal 2.0.0
+ * NextFractal 2.0.1
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015-2017 Andrea Medeghini
@@ -42,4 +42,6 @@ public interface CFCanvas {
     public void end();
 
     public void tileTransform(Bounds bounds);
+
+    public void clear(double[] backgroundColor);
 }

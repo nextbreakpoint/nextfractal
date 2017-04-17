@@ -1,5 +1,5 @@
 /*
- * NextFractal 2.0.0
+ * NextFractal 2.0.1
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015-2017 Andrea Medeghini
@@ -84,6 +84,7 @@ public class CFDGDriver {
 	private Logger logger = new Logger();
 	private String currentNameSpace = "";
 	private String currentPath;
+	private String filePath;
 	private String maybeVersion;
 	private int currentShape;
 	private int includeDepth;
@@ -195,10 +196,13 @@ public class CFDGDriver {
 	public void includeFile(String fileName, Token location) {
 		try {
 			String path = relativeFilePath(currentPath, fileName);
+//			if (path.endsWith(".nf.zip")) {
+//				throw new UnsupportedOperationException();
+//			}
 			ANTLRFileStream is = new ANTLRFileStream(path);
 			fileNames.push(path);
-			currentPath = path;
-			filesToLoad.push(currentPath);
+			filePath = path;
+			filesToLoad.push(filePath);
 			streamsToLoad.push(is);
 			includeNamespace.push(Boolean.FALSE);
 			pathCount++;
@@ -225,7 +229,7 @@ public class CFDGDriver {
 			streamsToLoad.pop();
 			filesToLoad.pop();
 			includeNamespace.pop();
-			currentPath = filesToLoad.isEmpty() ? null : filesToLoad.peek();
+			filePath = filesToLoad.isEmpty() ? null : filesToLoad.peek();
 		} catch (Exception e) {
 			error(e.getMessage(), location);
 		}
@@ -732,12 +736,14 @@ public class CFDGDriver {
 		includeNamespace.pop();
 		includeNamespace.push(Boolean.TRUE);
 		currentNameSpace = currentNameSpace + n + "::";
+	}
 
+	protected void parseStream() {
 		CFDGParser parser = new CFDGParser(new CommonTokenStream(new CFDGLexer(streamsToLoad.peek())));
 		parser.setDriver(this);
 		parser.choose();
 	}
-	
+
 	public void inColor() {
 		cfdg.addParameter(Param.Color);
 	}
