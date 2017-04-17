@@ -139,31 +139,28 @@ v2stuff
         BACKGROUND modification_v2
         | TILE modification_v2
         | modtype modification_v2
-        | INCLUDE fileString
+        | INCLUDE fileName
         | rule_header_v2
         ;
 
 inclusion_v2 
         : 
-        INCLUDE f=USER_QSTRING {
+        INCLUDE f=fileName {
         	driver.setShape(null, $INCLUDE);
-        	driver.includeFile($f.getText(), $INCLUDE);
-        }
-        |
-        INCLUDE f=USER_FILENAME {
-        	driver.setShape(null, $INCLUDE);
-        	driver.includeFile($f.getText(), $INCLUDE);
+        	driver.includeFile($f.result, $INCLUDE);
+        	driver.parseStream();
         }
         ;
 
 import_v3
         : 
-        IMPORT n=fileNameSpace f=fileString {
+        IMPORT n=fileNameSpace f=fileName {
             driver.setShape(null, $IMPORT);
             driver.includeFile($f.result, $IMPORT);
             if ($n.result != null) {
                 driver.pushNameSpace($n.result, $IMPORT);
             }
+        	driver.parseStream();
         }
         ;
 
@@ -175,14 +172,14 @@ eof
 		}
 		;
 		
-fileString returns [String result]
+fileName returns [String result]
 		:
         f=USER_FILENAME {
         	$result = $f.getText();
         } 
         | 
-        f=USER_QSTRING {
-        	$result = $f.getText();
+        f=USER_QFILENAME {
+        	$result = $f.getText().substring(1, $f.getText().length() - 1);
         } 
        	;
 		
@@ -928,7 +925,7 @@ adjustment returns [ASTModTerm result]
         }
         |
         PARAM p=USER_QSTRING {
-        	$result = new ASTModTerm(driver, ModType.param, $p.getText(), $PARAM);
+        	$result = new ASTModTerm(driver, ModType.param, $p.getText().substring(1, $p.getText().length() - 1), $PARAM);
         }
         ;
         
@@ -1675,19 +1672,24 @@ USER_STRING
 	('a'..'z'|'A'..'Z'|'_'|'\u0200'..'\u0301'|'\u0303'..'\u0377') (('a'..'z'|'A'..'Z'|'0'..'9'|'_'|'::'|'\u0200'..'\u0301'|'\u0303'..'\u0377') | ('\u0302'('\u0200'..'\u0260'|'\u0262'..'\u0377')))*
 	;
 
-USER_QSTRING	
-	:	
-	'"' USER_STRING '"' 
-	;
-	
-USER_FILENAME 
-	: 
-	('a'..'z'|'A'..'Z'|'\u0200'..'\u0377') ('a'..'z'|'A'..'Z'|'0'..'9'|'_'|'-'|'\u0200'..'\u0377'|'.')* '.cfdg' 
+USER_QSTRING
+	:
+	'"' USER_STRING '"'
 	;
 
-USER_ARRAYNAME 
-	: 
+USER_ARRAYNAME
+	:
 	('a'..'z'|'A'..'Z'|'_'|'\u0200'..'\u0301'|'\u0303'..'\u0377') (('a'..'z'|'A'..'Z'|'0'..'9'|'_'|'\u0200'..'\u0301'|'\u0303'..'\u0377') | ('\u0302'('\u0200'..'\u0260'|'\u0262'..'\u0377')))*
+	;
+
+USER_FILENAME
+	:
+	('a'..'z'|'A'..'Z'|'\u0200'..'\u0377') ('a'..'z'|'A'..'Z'|'0'..'9'|'_'|'-'|'\u0200'..'\u0377'|'.')* ('.cfdg')
+	;
+
+USER_QFILENAME
+	:
+	'"' USER_FILENAME '"'
 	;
 
 COMMENT
