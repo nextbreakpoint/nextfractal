@@ -2,7 +2,7 @@
 <project name="NextFractal" default="build">
 	<property environment="env" />
 	<property name="maven.home" value="${env.M2_HOME}" />
-	<property name="nextfractal.version" value="2.0.0" />
+	<property name="nextfractal.version" value="2.0.1" />
 	<property name="nextfractal.folder" value="NextFractal" />
 	<property name="mainmodule" value="com.nextbreakpoint.nextfractal.main" />
 	<macrodef name="maven">
