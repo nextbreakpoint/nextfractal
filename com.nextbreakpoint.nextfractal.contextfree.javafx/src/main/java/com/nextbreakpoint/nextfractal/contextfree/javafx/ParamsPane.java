@@ -26,7 +26,7 @@ package com.nextbreakpoint.nextfractal.contextfree.javafx;
 
 import com.nextbreakpoint.nextfractal.contextfree.ContextFreeMetadata;
 import com.nextbreakpoint.nextfractal.contextfree.ContextFreeSession;
-import com.nextbreakpoint.nextfractal.core.EventBus;
+import com.nextbreakpoint.nextfractal.core.javafx.EventBus;
 import com.nextbreakpoint.nextfractal.core.javafx.AdvancedTextField;
 import javafx.application.Platform;
 import javafx.scene.control.Label;
@@ -97,7 +97,7 @@ public class ParamsPane extends Pane {
 			String seed = seedField.getText();
 			ContextFreeMetadata newMetadata = new ContextFreeMetadata(seed);
 			ContextFreeSession newSession = new ContextFreeSession(contextFreeSession.getScript(), newMetadata);
-			Platform.runLater(() -> eventBus.postEvent("editor-data-changed", newSession, false, true));
+			eventBus.postEvent("editor-data-changed", newSession, false, true);
 			return null;
 		};
 

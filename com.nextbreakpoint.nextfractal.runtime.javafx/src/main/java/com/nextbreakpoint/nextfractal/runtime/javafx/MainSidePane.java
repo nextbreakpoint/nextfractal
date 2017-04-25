@@ -25,7 +25,7 @@
 package com.nextbreakpoint.nextfractal.runtime.javafx;
 
 import com.nextbreakpoint.nextfractal.core.Clip;
-import com.nextbreakpoint.nextfractal.core.EventBus;
+import com.nextbreakpoint.nextfractal.core.javafx.EventBus;
 import com.nextbreakpoint.nextfractal.core.Session;
 import com.nextbreakpoint.nextfractal.core.export.ExportSession;
 import com.nextbreakpoint.nextfractal.core.export.ExportState;
@@ -96,7 +96,7 @@ public class MainSidePane extends BorderPane {
         rootPane.setEffect(null);
         subEventBus.enable();
         rootPane.setDisable(false);
-        Platform.runLater(() -> subEventBus.postEvent("session-data-loaded", session, false, false));
+        subEventBus.postEvent("session-data-loaded", session, false, false);
     }
 
     private void notifyHistoryItemSelected(EventBus eventBus, Session session) {

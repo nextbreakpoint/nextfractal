@@ -24,7 +24,7 @@
  */
 package com.nextbreakpoint.nextfractal.runtime.javafx;
 
-import com.nextbreakpoint.nextfractal.core.EventBus;
+import com.nextbreakpoint.nextfractal.core.javafx.EventBus;
 import com.nextbreakpoint.nextfractal.core.EventListener;
 import com.nextbreakpoint.nextfractal.core.Session;
 import javafx.scene.control.Button;

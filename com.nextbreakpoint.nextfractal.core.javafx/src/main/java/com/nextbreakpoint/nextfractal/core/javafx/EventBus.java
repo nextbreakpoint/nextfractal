@@ -22,7 +22,10 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.core;
+package com.nextbreakpoint.nextfractal.core.javafx;
+
+import com.nextbreakpoint.nextfractal.core.EventListener;
+import javafx.application.Platform;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -67,19 +70,23 @@ public class EventBus {
     }
 
     public void postEvent(String eventClass, Object... event) {
-        postParent(eventClass, event);
+        Platform.runLater(() -> propagateRoot(eventClass, event));
     }
 
-    private void postParent(String eventClass, Object... event) {
+    public void propagateEvent(String eventClass, Object... event) {
+        propagateRoot(eventClass, event);
+    }
+
+    private void propagateRoot(String eventClass, Object[] event) {
         if (disabled) return;
         if (parent != null) {
-            parent.postParent(eventClass, event);
+            parent.propagateEvent(eventClass, event);
         } else {
-            postChildren(eventClass, event);
+            propagateChildren(eventClass, event);
         }
     }
 
-    private void postChildren(String eventClass, Object... event) {
+    private void propagateChildren(String eventClass, Object... event) {
         if (disabled) return;
         List<EventListener> l = listeners.get(eventClass);
         if (l != null) {
@@ -87,7 +94,7 @@ public class EventBus {
             copy.addAll(l);
             copy.forEach(listener -> listener.eventPosted(event));
         }
-        children.forEach(child -> child.postChildren(eventClass, event));
+        children.forEach(child -> child.propagateChildren(eventClass, event));
     }
 
     public void disable() {

@@ -28,7 +28,7 @@ import com.nextbreakpoint.Try;
 import com.nextbreakpoint.nextfractal.core.Bundle;
 import com.nextbreakpoint.nextfractal.core.Clip;
 import com.nextbreakpoint.nextfractal.core.CoreFactory;
-import com.nextbreakpoint.nextfractal.core.EventBus;
+import com.nextbreakpoint.nextfractal.core.javafx.EventBus;
 import com.nextbreakpoint.nextfractal.core.FileManager;
 import com.nextbreakpoint.nextfractal.core.Session;
 import com.nextbreakpoint.nextfractal.core.encoder.Encoder;
@@ -37,6 +37,7 @@ import com.nextbreakpoint.nextfractal.core.export.ExportService;
 import com.nextbreakpoint.nextfractal.core.export.ExportSession;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 import com.nextbreakpoint.nextfractal.core.utils.DefaultThreadFactory;
+import com.nextbreakpoint.nextfractal.runtime.export.ExportServiceDelegate;
 import com.nextbreakpoint.nextfractal.runtime.export.SimpleExportRenderer;
 import com.nextbreakpoint.nextfractal.runtime.export.SimpleExportService;
 import javafx.application.Application;
@@ -131,7 +132,10 @@ public class NextFractalApp extends Application {
 		printPlugins();
 
 		ExportRenderer exportRenderer = new SimpleExportRenderer(createThreadFactory("Export Renderer"));
-		ExportService exportService = new SimpleExportService(eventBus, createThreadFactory("Export Service"), exportRenderer);
+
+		ExportServiceDelegate delegate = (session, state, progress) -> eventBus.postEvent("export-session-state-changed", new Object[] { session, state, progress });
+
+		ExportService exportService = new SimpleExportService(delegate, createThreadFactory("Export Service"), exportRenderer);
 
 		eventBus.subscribe("editor-grammar-changed", event -> tryFindFactoryByGrammar((String) event[0]).ifPresent(factory -> createSession(eventBus, factory)));
 
@@ -590,10 +594,10 @@ public class NextFractalApp extends Application {
 	private FileChooser showSaveBundleFileChooser() {
 		ensureBundleFileChooser(FILE_EXTENSION);
 		bundleFileChooser.setTitle("Save");
-		if (getBundleCurrentFile() != null) {
-			bundleFileChooser.setInitialDirectory(getBundleCurrentFile().getParentFile());
-			if (getBundleCurrentFile().getName().endsWith(FILE_EXTENSION)) {
-				bundleFileChooser.setInitialFileName(getBundleCurrentFile().getName());
+		if (bundleCurrentFile != null) {
+			bundleFileChooser.setInitialDirectory(bundleCurrentFile.getParentFile());
+			if (bundleCurrentFile.getName().endsWith(FILE_EXTENSION)) {
+				bundleFileChooser.setInitialFileName(bundleCurrentFile.getName());
 			} else {
 				bundleFileChooser.setInitialFileName(createFileName() + FILE_EXTENSION);
 			}
@@ -604,18 +608,14 @@ public class NextFractalApp extends Application {
 	private FileChooser showLoadBundleFileChooser() {
 		ensureBundleFileChooser(FILE_EXTENSION);
 		bundleFileChooser.setTitle("Load");
-		if (getBundleCurrentFile() != null) {
-			bundleFileChooser.setInitialDirectory(getBundleCurrentFile().getParentFile());
-			bundleFileChooser.setInitialFileName(getBundleCurrentFile().getName());
+		if (bundleCurrentFile != null) {
+			bundleFileChooser.setInitialDirectory(bundleCurrentFile.getParentFile());
+			bundleFileChooser.setInitialFileName(bundleCurrentFile.getName());
 		}
 		return bundleFileChooser;
 	}
 
-	private File getBundleCurrentFile() {
-		return bundleCurrentFile;
-	}
-
-//	private void setup() {
+	//	private void setup() {
 //		try {
 //			addLibraryPath("lib");
 //		} catch (Exception x) {

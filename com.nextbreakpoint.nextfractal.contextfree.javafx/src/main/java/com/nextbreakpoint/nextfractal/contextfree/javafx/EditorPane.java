@@ -31,7 +31,7 @@ import com.nextbreakpoint.nextfractal.contextfree.compiler.Compiler;
 import com.nextbreakpoint.nextfractal.contextfree.compiler.CompilerReport;
 import com.nextbreakpoint.nextfractal.contextfree.compiler.CompilerSourceException;
 import com.nextbreakpoint.nextfractal.core.Error;
-import com.nextbreakpoint.nextfractal.core.EventBus;
+import com.nextbreakpoint.nextfractal.core.javafx.EventBus;
 import com.nextbreakpoint.nextfractal.core.javafx.BooleanObservableValue;
 import com.nextbreakpoint.nextfractal.core.utils.Block;
 import com.nextbreakpoint.nextfractal.core.utils.DefaultThreadFactory;

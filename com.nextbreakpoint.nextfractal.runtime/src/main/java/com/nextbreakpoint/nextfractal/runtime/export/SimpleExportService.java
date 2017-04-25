@@ -25,7 +25,6 @@
 package com.nextbreakpoint.nextfractal.runtime.export;
 
 import com.nextbreakpoint.Try;
-import com.nextbreakpoint.nextfractal.core.EventBus;
 import com.nextbreakpoint.nextfractal.core.encoder.EncoderException;
 import com.nextbreakpoint.nextfractal.core.encoder.EncoderHandle;
 import com.nextbreakpoint.nextfractal.core.export.AbstractExportService;
@@ -57,12 +56,12 @@ public class SimpleExportService extends AbstractExportService {
 	private final Map<String, List<Future<ExportJobHandle>>> futures = new HashMap<>();
 	private final Map<String, EncoderHandle> handles = new HashMap<>();
 
-	private EventBus eventBus;
+	private ExportServiceDelegate delegate;
 	private final ExportRenderer exportRenderer;
 
-	public SimpleExportService(EventBus eventBus, ThreadFactory threadFactory, ExportRenderer exportRenderer) {
+	public SimpleExportService(ExportServiceDelegate delegate, ThreadFactory threadFactory, ExportRenderer exportRenderer) {
 		super(threadFactory);
-		this.eventBus = Objects.requireNonNull(eventBus);
+		this.delegate = Objects.requireNonNull(delegate);
 		this.exportRenderer = Objects.requireNonNull(exportRenderer);
 	}
 
@@ -73,8 +72,7 @@ public class SimpleExportService extends AbstractExportService {
 
 	@Override
 	protected void notifyUpdate(Collection<ExportHandle> exportHandles) {
-		exportHandles.forEach(exportHandle -> eventBus.postEvent("export-session-state-changed",
-			new Object[] { exportHandle.getSession(), exportHandle.getState(), exportHandle.getProgress() }));
+		exportHandles.forEach(exportHandle -> delegate.notifyUpdate(exportHandle.getSession(), exportHandle.getState(), exportHandle.getProgress()));
 	}
 
 	@Override

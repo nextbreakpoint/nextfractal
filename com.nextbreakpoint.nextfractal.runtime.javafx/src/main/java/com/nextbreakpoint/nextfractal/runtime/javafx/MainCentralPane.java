@@ -26,7 +26,7 @@ package com.nextbreakpoint.nextfractal.runtime.javafx;
 
 import com.nextbreakpoint.Try;
 import com.nextbreakpoint.nextfractal.core.Clip;
-import com.nextbreakpoint.nextfractal.core.EventBus;
+import com.nextbreakpoint.nextfractal.core.javafx.EventBus;
 import com.nextbreakpoint.nextfractal.core.FileManager;
 import com.nextbreakpoint.nextfractal.core.Session;
 import com.nextbreakpoint.nextfractal.core.javafx.Bitmap;

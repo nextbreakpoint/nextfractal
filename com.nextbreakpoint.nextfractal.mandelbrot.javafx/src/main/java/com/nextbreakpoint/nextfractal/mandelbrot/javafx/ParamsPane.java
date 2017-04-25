@@ -24,7 +24,7 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.javafx;
 
-import com.nextbreakpoint.nextfractal.core.EventBus;
+import com.nextbreakpoint.nextfractal.core.javafx.EventBus;
 import com.nextbreakpoint.nextfractal.core.javafx.AdvancedTextField;
 import com.nextbreakpoint.nextfractal.core.utils.Double2D;
 import com.nextbreakpoint.nextfractal.core.utils.Double4D;
@@ -216,9 +216,7 @@ public class ParamsPane extends Pane {
 			boolean julia = !algorithmCombobox.getSelectionModel().getSelectedItem().equals("Mandelbrot");
 			MandelbrotMetadata newMetadata = new MandelbrotMetadata(translation, rotation, scale, point, time, julia, metadata.getOptions());
 			MandelbrotSession newSession = new MandelbrotSession(mandelbrotSession.getScript(), newMetadata);
-			Platform.runLater(() -> {
-				eventBus.postEvent("editor-data-changed", newSession, false, true);
-			});
+			eventBus.postEvent("editor-data-changed", newSession, false, true);
 			return null;
 		};
 
@@ -231,88 +229,72 @@ public class ParamsPane extends Pane {
 
 		xTraslationField.setOnAction(e -> {
 			double value = Double.parseDouble(xTraslationField.getText());
-			Platform.runLater(() -> {
-				MandelbrotMetadata metadata = (MandelbrotMetadata) mandelbrotSession.getMetadata();
-				double[] translation = metadata.getTranslation().toArray();
-				translation[0] = value;
-				MandelbrotMetadata newMetadata = new MandelbrotMetadata(new Double4D(translation), metadata.getRotation(), metadata.getScale(), metadata.getPoint(), metadata.getTime(), metadata.isJulia(), metadata.getOptions());
-				eventBus.postEvent("editor-data-changed", new MandelbrotSession(mandelbrotSession.getScript(), newMetadata), false, true);
-			});
+			MandelbrotMetadata metadata = (MandelbrotMetadata) mandelbrotSession.getMetadata();
+			double[] translation = metadata.getTranslation().toArray();
+			translation[0] = value;
+			MandelbrotMetadata newMetadata = new MandelbrotMetadata(new Double4D(translation), metadata.getRotation(), metadata.getScale(), metadata.getPoint(), metadata.getTime(), metadata.isJulia(), metadata.getOptions());
+			eventBus.postEvent("editor-data-changed", new MandelbrotSession(mandelbrotSession.getScript(), newMetadata), false, true);
 		});
 		
 		yTraslationField.setOnAction(e -> {
 			double value = Double.parseDouble(yTraslationField.getText());
-			Platform.runLater(() -> {
-				MandelbrotMetadata metadata = (MandelbrotMetadata) mandelbrotSession.getMetadata();
-				double[] translation = metadata.getTranslation().toArray();
-				translation[1] = value;
-				MandelbrotMetadata newMetadata = new MandelbrotMetadata(new Double4D(translation), metadata.getRotation(), metadata.getScale(), metadata.getPoint(), metadata.getTime(), metadata.isJulia(), metadata.getOptions());
-				eventBus.postEvent("editor-data-changed", new MandelbrotSession(mandelbrotSession.getScript(), newMetadata), false, true);
-			});
+			MandelbrotMetadata metadata = (MandelbrotMetadata) mandelbrotSession.getMetadata();
+			double[] translation = metadata.getTranslation().toArray();
+			translation[1] = value;
+			MandelbrotMetadata newMetadata = new MandelbrotMetadata(new Double4D(translation), metadata.getRotation(), metadata.getScale(), metadata.getPoint(), metadata.getTime(), metadata.isJulia(), metadata.getOptions());
+			eventBus.postEvent("editor-data-changed", new MandelbrotSession(mandelbrotSession.getScript(), newMetadata), false, true);
 		});
 		
 		zTraslationField.setOnAction(e -> {
 			double value = Double.parseDouble(zTraslationField.getText());
-			Platform.runLater(() -> {
-				MandelbrotMetadata metadata = (MandelbrotMetadata) mandelbrotSession.getMetadata();
-				double[] translation = metadata.getTranslation().toArray();
-				translation[2] = value;
-				MandelbrotMetadata newMetadata = new MandelbrotMetadata(new Double4D(translation), metadata.getRotation(), metadata.getScale(), metadata.getPoint(), metadata.getTime(), metadata.isJulia(), metadata.getOptions());
-				eventBus.postEvent("editor-data-changed", new MandelbrotSession(mandelbrotSession.getScript(), newMetadata), false, true);
-			});
+			MandelbrotMetadata metadata = (MandelbrotMetadata) mandelbrotSession.getMetadata();
+			double[] translation = metadata.getTranslation().toArray();
+			translation[2] = value;
+			MandelbrotMetadata newMetadata = new MandelbrotMetadata(new Double4D(translation), metadata.getRotation(), metadata.getScale(), metadata.getPoint(), metadata.getTime(), metadata.isJulia(), metadata.getOptions());
+			eventBus.postEvent("editor-data-changed", new MandelbrotSession(mandelbrotSession.getScript(), newMetadata), false, true);
 		});
 		
 		zRotationField.setOnAction(e -> {
 			double value = Double.parseDouble(zRotationField.getText());
-			Platform.runLater(() -> {
-				MandelbrotMetadata metadata = (MandelbrotMetadata) mandelbrotSession.getMetadata();
-				double[] rotation = metadata.getRotation().toArray();
-				rotation[2] = value;
-				MandelbrotMetadata newMetadata = new MandelbrotMetadata(metadata.getTranslation(), new Double4D(rotation), metadata.getScale(), metadata.getPoint(), metadata.getTime(), metadata.isJulia(), metadata.getOptions());
-				eventBus.postEvent("editor-data-changed", new MandelbrotSession(mandelbrotSession.getScript(), newMetadata), false, true);
-			});
+			MandelbrotMetadata metadata = (MandelbrotMetadata) mandelbrotSession.getMetadata();
+			double[] rotation = metadata.getRotation().toArray();
+			rotation[2] = value;
+			MandelbrotMetadata newMetadata = new MandelbrotMetadata(metadata.getTranslation(), new Double4D(rotation), metadata.getScale(), metadata.getPoint(), metadata.getTime(), metadata.isJulia(), metadata.getOptions());
+			eventBus.postEvent("editor-data-changed", new MandelbrotSession(mandelbrotSession.getScript(), newMetadata), false, true);
 		});
 		
 		wReField.setOnAction(e -> {
 			double value = Double.parseDouble(wReField.getText());
-			Platform.runLater(() -> {
-				MandelbrotMetadata metadata = (MandelbrotMetadata) mandelbrotSession.getMetadata();
-				double[] point = metadata.getPoint().toArray();
-				point[0] = value;
-				MandelbrotMetadata newMetadata = new MandelbrotMetadata(metadata.getTranslation(), metadata.getRotation(), metadata.getScale(), new Double2D(point), metadata.getTime(), metadata.isJulia(), metadata.getOptions());
-				eventBus.postEvent("editor-data-changed", new MandelbrotSession(mandelbrotSession.getScript(), newMetadata), false, true);
-			});
+			MandelbrotMetadata metadata = (MandelbrotMetadata) mandelbrotSession.getMetadata();
+			double[] point = metadata.getPoint().toArray();
+			point[0] = value;
+			MandelbrotMetadata newMetadata = new MandelbrotMetadata(metadata.getTranslation(), metadata.getRotation(), metadata.getScale(), new Double2D(point), metadata.getTime(), metadata.isJulia(), metadata.getOptions());
+			eventBus.postEvent("editor-data-changed", new MandelbrotSession(mandelbrotSession.getScript(), newMetadata), false, true);
 		});
 		
 		wImField.setOnAction(e -> {
 			double value = Double.parseDouble(wImField.getText());
-			Platform.runLater(() -> {
-				MandelbrotMetadata metadata = (MandelbrotMetadata) mandelbrotSession.getMetadata();
-				double[] point = metadata.getPoint().toArray();
-				point[1] = value;
-				MandelbrotMetadata newMetadata = new MandelbrotMetadata(metadata.getTranslation(), metadata.getRotation(), metadata.getScale(), new Double2D(point), metadata.getTime(), metadata.isJulia(), metadata.getOptions());
-				eventBus.postEvent("editor-data-changed", new MandelbrotSession(mandelbrotSession.getScript(), newMetadata), false, true);
-			});
+			MandelbrotMetadata metadata = (MandelbrotMetadata) mandelbrotSession.getMetadata();
+			double[] point = metadata.getPoint().toArray();
+			point[1] = value;
+			MandelbrotMetadata newMetadata = new MandelbrotMetadata(metadata.getTranslation(), metadata.getRotation(), metadata.getScale(), new Double2D(point), metadata.getTime(), metadata.isJulia(), metadata.getOptions());
+			eventBus.postEvent("editor-data-changed", new MandelbrotSession(mandelbrotSession.getScript(), newMetadata), false, true);
 		});
 
 		timeValueField.setOnAction(e -> {
 			double value = Double.parseDouble(timeValueField.getText());
-			Platform.runLater(() -> {
-				MandelbrotMetadata metadata = (MandelbrotMetadata) mandelbrotSession.getMetadata();
-				double scale = metadata.getTime().getScale();
-				MandelbrotMetadata newMetadata = new MandelbrotMetadata(metadata.getTranslation(), metadata.getRotation(), metadata.getScale(), metadata.getPoint(), new Time(value, scale), metadata.isJulia(), metadata.getOptions());
-				eventBus.postEvent("editor-data-changed", new MandelbrotSession(mandelbrotSession.getScript(), newMetadata), false, true);
-			});
+			MandelbrotMetadata metadata = (MandelbrotMetadata) mandelbrotSession.getMetadata();
+			double scale = metadata.getTime().getScale();
+			MandelbrotMetadata newMetadata = new MandelbrotMetadata(metadata.getTranslation(), metadata.getRotation(), metadata.getScale(), metadata.getPoint(), new Time(value, scale), metadata.isJulia(), metadata.getOptions());
+			eventBus.postEvent("editor-data-changed", new MandelbrotSession(mandelbrotSession.getScript(), newMetadata), false, true);
 		});
 
 		timeScaleField.setOnAction(e -> {
 			double scale = Double.parseDouble(timeScaleField.getText());
-			Platform.runLater(() -> {
-				MandelbrotMetadata metadata = (MandelbrotMetadata) mandelbrotSession.getMetadata();
-				double value = metadata.getTime().getValue();
-				MandelbrotMetadata newMetadata = new MandelbrotMetadata(metadata.getTranslation(), metadata.getRotation(), metadata.getScale(), metadata.getPoint(), new Time(value, scale), metadata.isJulia(), metadata.getOptions());
-				eventBus.postEvent("editor-data-changed", new MandelbrotSession(mandelbrotSession.getScript(), newMetadata), false, true);
-			});
+			MandelbrotMetadata metadata = (MandelbrotMetadata) mandelbrotSession.getMetadata();
+			double value = metadata.getTime().getValue();
+			MandelbrotMetadata newMetadata = new MandelbrotMetadata(metadata.getTranslation(), metadata.getRotation(), metadata.getScale(), metadata.getPoint(), new Time(value, scale), metadata.isJulia(), metadata.getOptions());
+			eventBus.postEvent("editor-data-changed", new MandelbrotSession(mandelbrotSession.getScript(), newMetadata), false, true);
 		});
 
 		algorithmCombobox.setOnAction(e -> {
@@ -320,15 +302,11 @@ public class ParamsPane extends Pane {
 			boolean isJuliaView = metadata.isJulia();
 			boolean isMandelbrotAlgorithm = algorithmCombobox.getSelectionModel().getSelectedItem().equals("Mandelbrot");
 			if (isMandelbrotAlgorithm && isJuliaView) {
-				Platform.runLater(() -> {
-					MandelbrotMetadata newMetadata = new MandelbrotMetadata(metadata.getTranslation(), metadata.getRotation(), metadata.getScale(), metadata.getPoint(), metadata.getTime(), false, metadata.getOptions());
-					eventBus.postEvent("editor-data-changed", new MandelbrotSession(mandelbrotSession.getScript(), newMetadata), false, true);
-				});
+				MandelbrotMetadata newMetadata = new MandelbrotMetadata(metadata.getTranslation(), metadata.getRotation(), metadata.getScale(), metadata.getPoint(), metadata.getTime(), false, metadata.getOptions());
+				eventBus.postEvent("editor-data-changed", new MandelbrotSession(mandelbrotSession.getScript(), newMetadata), false, true);
 			} else if (!isMandelbrotAlgorithm && !isJuliaView) {
-				Platform.runLater(() -> {
-					MandelbrotMetadata newMetadata = new MandelbrotMetadata(metadata.getTranslation(), metadata.getRotation(), metadata.getScale(), metadata.getPoint(), metadata.getTime(), true, metadata.getOptions());
-					eventBus.postEvent("editor-data-changed", new MandelbrotSession(mandelbrotSession.getScript(), newMetadata), false, true);
-				});
+				MandelbrotMetadata newMetadata = new MandelbrotMetadata(metadata.getTranslation(), metadata.getRotation(), metadata.getScale(), metadata.getPoint(), metadata.getTime(), true, metadata.getOptions());
+				eventBus.postEvent("editor-data-changed", new MandelbrotSession(mandelbrotSession.getScript(), newMetadata), false, true);
 			}
 		});
 	}

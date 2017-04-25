@@ -26,7 +26,7 @@ package com.nextbreakpoint.nextfractal.mandelbrot.javafx;
 
 import com.nextbreakpoint.Try;
 import com.nextbreakpoint.nextfractal.core.Error;
-import com.nextbreakpoint.nextfractal.core.EventBus;
+import com.nextbreakpoint.nextfractal.core.javafx.EventBus;
 import com.nextbreakpoint.nextfractal.core.Session;
 import com.nextbreakpoint.nextfractal.core.javafx.BooleanObservableValue;
 import com.nextbreakpoint.nextfractal.core.javafx.StringObservableValue;
@@ -304,17 +304,17 @@ public class RenderPane extends BorderPane {
 
 			@Override
 			public void setPoint(MandelbrotMetadata metadata, boolean continuous, boolean appendHistory) {
-				eventBus.postEvent("render-point-changed", new MandelbrotSession(mandelbrotSession.getScript(), metadata), continuous, appendHistory);
+				eventBus.propagateEvent("render-point-changed", new MandelbrotSession(mandelbrotSession.getScript(), metadata), continuous, appendHistory);
 			}
 
 			@Override
 			public void setView(MandelbrotMetadata metadata, boolean continuous, boolean appendHistory) {
-				eventBus.postEvent("render-data-changed", new MandelbrotSession(mandelbrotSession.getScript(), metadata), continuous, appendHistory);
+				eventBus.propagateEvent("render-data-changed", new MandelbrotSession(mandelbrotSession.getScript(), metadata), continuous, appendHistory);
 			}
 
 			@Override
 			public void setTime(MandelbrotMetadata metadata, boolean continuous, boolean appendHistory) {
-				eventBus.postEvent("render-time-changed", new MandelbrotSession(mandelbrotSession.getScript(), metadata), continuous, appendHistory);
+				eventBus.propagateEvent("render-time-changed", new MandelbrotSession(mandelbrotSession.getScript(), metadata), continuous, appendHistory);
 			}
 		};
 
@@ -691,12 +691,10 @@ public class RenderPane extends BorderPane {
 	}
 
 //	private void updateTime(EventBus eventBus, double seconds) {
-//		Platform.runLater(() -> {
 //			MandelbrotMetadata metadata = (MandelbrotMetadata) mandelbrotSession.getMetadata();
 //			Time newTime = new Time(metadata.getTime().getValue() + seconds, metadata.getTime().getScale());
 //			MandelbrotMetadata newMetadata = new MandelbrotMetadata(metadata.getTranslation(), metadata.getRotation(), metadata.getScale(), metadata.getPoint(), newTime, metadata.isJulia(), metadata.getOptions());
 //			eventBus.postEvent("render-time-changed", new MandelbrotSession(mandelbrotSession.getScript(), newMetadata), true, false);
-//		});
 //	}
 
 	private MandelbrotMetadata createMetadataWithOptions() {
@@ -714,7 +712,7 @@ public class RenderPane extends BorderPane {
 	}
 
 	private void notifySessionChanged(EventBus eventBus, MandelbrotSession newSession, boolean continuous, boolean timeAnimation, boolean historyAppend) {
-        eventBus.postEvent("session-data-changed", newSession, continuous, timeAnimation, false);
+        eventBus.propagateEvent("session-data-changed", newSession, continuous, timeAnimation, false);
 		if (historyAppend) {
 			eventBus.postEvent("history-add-session", newSession);
 		}
