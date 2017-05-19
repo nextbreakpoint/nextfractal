@@ -8,7 +8,7 @@
     </parent>
 	<artifactId>com.nextbreakpoint.nextfractal.verticle</artifactId>
 	<properties>
-		<exec.mainClass>com.nextbreakpoint.nextfractal.verticle.TileVerticle</exec.mainClass>
+		<exec.mainClass>com.nextbreakpoint.nextfractal.verticle.FractalsVerticle</exec.mainClass>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -166,7 +166,7 @@
 								<argument>target/${project.artifactId}-${project.version}-fat.jar</argument>
 								<argument>io.vertx.core.Launcher</argument>
 								<argument>run</argument>
-								<argument>com.nextbreakpoint.nextfractal.verticle.TileVerticle</argument>
+								<argument>com.nextbreakpoint.nextfractal.verticle.FractalsVerticle</argument>
 								<argument>-conf</argument>
 								<argument>default.json</argument>
 							</arguments>

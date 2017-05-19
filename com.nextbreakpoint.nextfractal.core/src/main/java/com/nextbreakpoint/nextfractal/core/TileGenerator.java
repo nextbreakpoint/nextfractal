@@ -24,7 +24,6 @@
  */
 package com.nextbreakpoint.nextfractal.core;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
 import com.nextbreakpoint.nextfractal.core.utils.DefaultThreadFactory;
 
@@ -34,9 +33,6 @@ import java.awt.image.DataBufferInt;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.IntBuffer;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ThreadFactory;
 
@@ -45,10 +41,8 @@ public class TileGenerator {
 
     private TileGenerator() {}
 
-    public static TileRequest createTileRequest(int size, int rows, int cols, int row, int col, String manifest, String metadata, String script) throws Exception {
+    public static TileRequest createTileRequest(int size, int rows, int cols, int row, int col, Bundle bundle) throws Exception {
         validateParameters(size, cols, rows, row, col);
-
-        final Bundle bundle = decodeData(manifest, script, metadata);
 
         return TileRequest.builder()
                 .withRows(rows)
@@ -62,23 +56,14 @@ public class TileGenerator {
     }
 
     private static void validateParameters(int size, int rows, int cols, int row, int col) {
-        if (rows < 0 || rows > 16) {
-            throw new RuntimeException("Invalid rows number");
-        }
-        if (cols < 0 || cols > 16) {
-            throw new RuntimeException("Invalid cols number");
-        }
-        if (rows == 1 && cols == 1 && (size < 64 || size > 512)) {
-            throw new RuntimeException("Invalid image size");
-        }
-        if ((rows > 1 || cols > 1) && (size < 64 || size > 512)) {
+        if (size < 64 || size > 512) {
             throw new RuntimeException("Invalid image size");
         }
         if (row < 0 || row > rows - 1) {
-            throw new RuntimeException("Invalid row index");
+            throw new RuntimeException("Invalid row index " + row);
         }
         if (col < 0 || col > cols - 1) {
-            throw new RuntimeException("Invalid col index");
+            throw new RuntimeException("Invalid col index " + col);
         }
     }
 
@@ -106,21 +91,6 @@ public class TileGenerator {
                 .withTaskId(request.getTaskId())
                 .build();
         return context;
-    }
-
-    private static Bundle decodeData(String encodedManifest, String encodedScript, String encodedMetadata) throws Exception {
-        final FileManagerEntry manifest = new FileManagerEntry("manifest", Base64.getDecoder().decode(encodedManifest));
-        final FileManagerEntry metadata = new FileManagerEntry("metadata", Base64.getDecoder().decode(encodedMetadata));
-        final FileManagerEntry script = new FileManagerEntry("script", Base64.getDecoder().decode(encodedScript));
-
-        final List<FileManagerEntry> entries = Arrays.asList(manifest, script, metadata);
-
-        final ObjectMapper mapper = new ObjectMapper();
-
-        final FileManifest decodedManifest = mapper.readValue(manifest.getData(), FileManifest.class);
-
-        return Plugins.tryFindFactory(decodedManifest.getPluginId())
-                .flatMap(factory -> factory.createFileManager().loadEntries(entries)).orThrow();
     }
 
     private static void writePNGImage(ByteArrayOutputStream baos, IntBuffer pixels, RendererSize tileSize) throws IOException {

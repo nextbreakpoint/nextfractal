@@ -3,18 +3,25 @@
 	<head>
 		<meta charset="UTF-8">
 		<title>NextFractal</title>
-		<link href="style.css" rel="stylesheet"/>
+		<link rel="stylesheet" href="leaflet.css" />
+		<link rel="stylesheet" href="style.css"/>
 		<script src="jquery-3.1.1.min.js"></script>
+		<script src="leaflet.js"></script>
 		<script src="nextfractal.js"></script>
 	</head>
 	<body>
 		<div id="canvas"></div>
 		<div id="editor">
-			<form id="form">
+			<form id="formCreate">
 				<textarea rows="20" cols="80" id="script" name="script"></textarea>
 				<textarea rows="20" cols="80" id="metadata" name="metadata"></textarea>
+				<input id="create" type="submit" value="create"></input>
 				<br/>
-				<input id="render" type="submit"></input>
+			</form>
+			<form id="formRender">
+				<input type="text" id="uuid" name="uuid"></input>
+				<br/>
+				<input id="render" type="submit" value="render"></input>
 			</form>
 		</div>
 	</body>
