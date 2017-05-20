@@ -76,13 +76,9 @@ public class FractalsHandler implements RequestStreamHandler {
 
                 if (matcher.matches()) {
                     uuid = UUID.fromString(matcher.group(1));
-                    logger.log("uuid = " + uuid);
                     zoom = Integer.parseInt(matcher.group(2));
-                    logger.log("zoom = " + zoom);
                     x = Integer.parseInt(matcher.group(3));
-                    logger.log("x = " + x);
                     y = Integer.parseInt(matcher.group(4));
-                    logger.log("y = " + y);
                 }
             }
 
@@ -101,9 +97,7 @@ public class FractalsHandler implements RequestStreamHandler {
 
                 final byte[] image = Try.of(() -> TileGenerator.generateImage(request)).onFailure(e -> logger.log(e.getMessage())).orThrow();
 
-                final OutputStreamWriter writer = new OutputStreamWriter(outputStream, "UTF-8");
-                writer.write(Base64.getEncoder().encodeToString(image));
-                writer.close();
+                outputStream.write(image);
             }
         } catch (Exception e) {
             final JSONObject responseJson = new JSONObject();
