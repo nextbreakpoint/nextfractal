@@ -47,7 +47,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class FractalsHandler implements RequestStreamHandler {
-    private static final int TILE_SIZE = 128;
+    private static final int TILE_SIZE = 256;
 
     // TODO retrieve data from S3 or DynamoDB or other source
     private static final String manifest = "{\"pluginId\":\"Mandelbrot\"}";

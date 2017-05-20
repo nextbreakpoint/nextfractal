@@ -54,7 +54,7 @@ public class FractalsVerticle extends AbstractVerticle {
     private static final String CONTENT_TYPE = "Content-Type";
     private static final String TYPE_IMAGE_PNG = "image/png";
     private static final String TYPE_APPLICATION_JSON = "application/json";
-    private static final int TILE_SIZE = 128;
+    private static final int TILE_SIZE = 256;
 
     private Map<UUID, Bundle> bundles = new ConcurrentHashMap<>();
 
