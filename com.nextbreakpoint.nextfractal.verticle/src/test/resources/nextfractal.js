@@ -14,8 +14,7 @@ $(function() {
     var layer = L.tileLayer(url + '/00000000-0000-0000-0000-000000000000/{z}/{x}/{y}.png', {
         attribution: '&copy; Andrea Medeghini',
         maxZoom: 22,
-        tileSize: 256,
-        noWrap: true
+        tileSize: 256
     });
 
     layer.addTo(map);

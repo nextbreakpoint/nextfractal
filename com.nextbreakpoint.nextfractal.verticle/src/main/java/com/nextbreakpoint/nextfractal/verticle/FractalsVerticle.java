@@ -60,6 +60,10 @@ public class FractalsVerticle extends AbstractVerticle {
 
     private WorkerExecutor executor;
 
+    public static void main(String[] args) {
+        new FractalsVerticle().start();
+    }
+
     @Override
     public void start() {
         final JsonObject config = Vertx.currentContext().config();
@@ -76,6 +80,7 @@ public class FractalsVerticle extends AbstractVerticle {
         final Router router = Router.router(vertx);
         router.route().handler(BodyHandler.create());
         router.get("/fractals/:uuid/:zoom/:x/:y.png").handler(this::handleGetFractalTile);
+        router.get("/fractals").handler(this::handleListBundles);
         router.post("/fractals").handler(this::handleCreateFractalBundle);
         router.delete("/fractals").handler(this::handleRemoveFractalBundles);
 
@@ -116,6 +121,16 @@ public class FractalsVerticle extends AbstractVerticle {
             }
         } catch (Exception e) {
             logger.log(Level.WARNING, "Failed to create tile", e);
+
+            emitErrorResponse(routingContext, e.getMessage());
+        }
+    }
+
+    private void handleListBundles(RoutingContext routingContext) {
+        try {
+            emitListBundlesResponse(routingContext);
+        } catch (Exception e) {
+            logger.log(Level.WARNING, "Failed to list bundles", e);
 
             emitErrorResponse(routingContext, e.getMessage());
         }
@@ -167,6 +182,13 @@ public class FractalsVerticle extends AbstractVerticle {
         } else {
             emitErrorResponse(routingContext, "Failed to generate image");
         }
+    }
+
+    private void emitListBundlesResponse(RoutingContext routingContext) {
+        routingContext.response()
+                .putHeader(CONTENT_TYPE, TYPE_APPLICATION_JSON)
+                .setStatusCode(200)
+                .end();
     }
 
     private void emitCreateBundleResponse(RoutingContext routingContext, UUID uuid) {
