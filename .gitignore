@@ -10,3 +10,4 @@ dist
 
 launcher/build
 dependency-reduced-pom.xml
+default.json
