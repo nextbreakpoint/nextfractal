@@ -122,9 +122,8 @@ public class FractalsVerticle extends AbstractVerticle {
 
         final TemplateHandler templateHandler = TemplateHandler.create(engine);
 
-        router.get("/fractals/admin").handler(templateHandler);
         router.get("/fractals/:uuid").handler(this::handleViewPage);
-        router.get("/fractals/*").handler(templateHandler);
+        router.get("/page/*").handler(templateHandler);
 
         final OAuth2ClientOptions auth2ClientOptions = new OAuth2ClientOptions()
                 .setClientID(clientId)
@@ -136,7 +135,9 @@ public class FractalsVerticle extends AbstractVerticle {
         final OAuth2Auth authProvider = OAuth2Auth.create(vertx, OAuth2FlowType.AUTH_CODE, auth2ClientOptions);
         final OAuth2AuthHandler oauth2 = OAuth2AuthHandler.create(authProvider, "http://localhost:8080");
         oauth2.setupCallback(router.get("/callback"));
-        router.route("/admin/*").handler(oauth2);
+//        router.route("/admin/*").handler(oauth2);
+
+        router.route("/admin/*").handler(templateHandler);
 
         final int poolSize = Runtime.getRuntime().availableProcessors() * 4;
         final long maxExecuteTime = config.getInteger("max_execution_time_in_millis");
@@ -155,7 +156,7 @@ public class FractalsVerticle extends AbstractVerticle {
     private UUID forwardHandleViewPage(RoutingContext routingContext) {
         final UUID uuid = UUID.fromString(routingContext.request().getParam("uuid"));
         routingContext.put("uuid", uuid.toString());
-        routingContext.next();
+        routingContext.reroute("/page/fractal");
         return uuid;
     }
 
