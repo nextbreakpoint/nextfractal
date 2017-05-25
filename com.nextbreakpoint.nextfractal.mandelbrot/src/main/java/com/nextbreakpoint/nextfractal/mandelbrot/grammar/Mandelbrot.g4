@@ -4,11 +4,17 @@ options
 {
 } 
 
-@lexer::header { 
+@lexer::header {
+package com.nextbreakpoint.nextfractal.mandelbrot.grammar;
+
+import com.nextbreakpoint.nextfractal.mandelbrot.grammar.*;
 }
 
 @parser::header {
-} 
+package com.nextbreakpoint.nextfractal.mandelbrot.grammar;
+
+import com.nextbreakpoint.nextfractal.mandelbrot.grammar.*;
+}
 
 @members {
 	private ASTBuilder builder = new ASTBuilder();

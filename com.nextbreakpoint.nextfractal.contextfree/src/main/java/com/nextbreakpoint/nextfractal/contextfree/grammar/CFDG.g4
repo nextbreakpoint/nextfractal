@@ -5,9 +5,12 @@ options
 } 
 
 @lexer::header { 
+package com.nextbreakpoint.nextfractal.contextfree.grammar;
 }
 
 @parser::header {
+package com.nextbreakpoint.nextfractal.contextfree.grammar;
+
 import java.util.Map;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.exceptions.*;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.*;
