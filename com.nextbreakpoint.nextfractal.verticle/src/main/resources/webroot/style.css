@@ -1,0 +1,61 @@
+* {
+    padding: 0;
+}
+
+#admin {
+    margin-left: 5px;
+    position:relative;
+    display: inline-block;
+    width: 800px;
+    vertical-align: top;
+}
+
+#editor {
+    margin-left: 5px;
+    position:relative;
+    display: inline-block;
+    width: 256px;
+    vertical-align: top;
+}
+
+#script {
+    position:relative;
+    display: inline-block;
+    width: 100%;
+}
+
+#metadata {
+    margin-top: 5px;
+    position:relative;
+    display: inline-block;
+    width: 100%;
+}
+
+#render {
+    margin-top: 5px;
+    position:relative;
+    display: inline-block;
+    width: 100%;
+}
+
+#uuid {
+    width: 100%;
+}
+
+#url {
+    width: 100%;
+}
+
+#canvas {
+    position:relative;
+    display: inline-block;
+    width: 1024px;
+    height: 1024px;
+    vertical-align: top;
+    border: 1px solid #444444;
+}
+
+#canvas img {
+    width: 512px;
+    height: 512px;
+}

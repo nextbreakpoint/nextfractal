@@ -24,6 +24,15 @@
  */
 package com.nextbreakpoint.nextfractal.verticle;
 
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.DeleteObjectRequest;
+import com.amazonaws.services.s3.model.GetObjectRequest;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.S3Object;
 import com.nextbreakpoint.Try;
 import com.nextbreakpoint.nextfractal.core.Bundle;
 import com.nextbreakpoint.nextfractal.core.TileGenerator;
@@ -38,13 +47,24 @@ import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.json.JsonObject;
+import io.vertx.ext.auth.oauth2.OAuth2Auth;
+import io.vertx.ext.auth.oauth2.OAuth2ClientOptions;
+import io.vertx.ext.auth.oauth2.OAuth2FlowType;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
+import io.vertx.ext.web.handler.OAuth2AuthHandler;
+import io.vertx.ext.web.handler.StaticHandler;
+import io.vertx.ext.web.handler.TemplateHandler;
+import io.vertx.ext.web.templ.TemplateEngine;
+import io.vertx.ext.web.templ.ThymeleafTemplateEngine;
 
-import java.util.Map;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -56,9 +76,10 @@ public class FractalsVerticle extends AbstractVerticle {
     private static final String TYPE_APPLICATION_JSON = "application/json";
     private static final int TILE_SIZE = 256;
 
-    private Map<UUID, Bundle> bundles = new ConcurrentHashMap<>();
-
     private WorkerExecutor executor;
+
+    private Bundle defaultBundle;
+    private UUID defaultUuid;
 
     public static void main(String[] args) {
         new FractalsVerticle().start();
@@ -71,18 +92,51 @@ public class FractalsVerticle extends AbstractVerticle {
         final String defaultManifest = config.getString("default_manifest");
         final String defaultMetadata = config.getString("default_metadata");
         final String defaultScript = config.getString("default_script");
+        final String accessKey = config.getString("s3_access_key");
+        final String secretKey = config.getString("s3_secret_key");
+        final String bucketName = config.getString("s3_bucket_name");
+        final String clientId = config.getString("github_client_id");
+        final String clientSecret = config.getString("github_client_secret");
 
-        final UUID uuid = new UUID(0L, 0L);
+        defaultUuid = new UUID(0L, 0L);
 
-        Try.of(() -> bundles.put(uuid, TileUtils.parseData(defaultManifest, defaultMetadata, defaultScript)))
-                .ifFailure(e -> logger.warning("Can't create default bundle: " + e.getMessage()));
+        defaultBundle = Try.of(() -> TileUtils.parseData(defaultManifest, defaultMetadata, defaultScript))
+                .onFailure(e -> logger.warning("Can't create default bundle: " + e.getMessage()))
+                .orElse(null);
 
         final Router router = Router.router(vertx);
         router.route().handler(BodyHandler.create());
-        router.get("/fractals/:uuid/:zoom/:x/:y.png").handler(this::handleGetFractalTile);
-        router.get("/fractals").handler(this::handleListBundles);
-        router.post("/fractals").handler(this::handleCreateFractalBundle);
-        router.delete("/fractals").handler(this::handleRemoveFractalBundles);
+
+        final BasicAWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
+
+        router.get("/api/fractals").handler(routingContext -> handleListBundles(routingContext));
+        router.post("/api/fractals").handler(routingContext -> handleCreateBundle(routingContext, bucketName, credentials));
+        router.delete("/api/fractals/:uuid").handler(routingContext -> handleRemoveBundle(routingContext, bucketName, credentials));
+        router.get("/api/fractals/:uuid/:zoom/:x/:y").handler(routingContext -> handleGetTile(routingContext, bucketName, credentials));
+
+        router.route("/static/*").handler(StaticHandler.create());
+
+        final TemplateEngine engine = ThymeleafTemplateEngine.create();
+
+        final TemplateHandler templateHandler = TemplateHandler.create(engine);
+
+        router.get("/fractals/:uuid").handler(this::handleViewPage);
+
+        router.get("/pages/*").handler(templateHandler);
+
+        router.get("/admin/*").handler(templateHandler);
+
+        final OAuth2ClientOptions auth2ClientOptions = new OAuth2ClientOptions()
+                .setClientID(clientId)
+                .setClientSecret(clientSecret)
+                .setSite("https://github.com/login")
+                .setTokenPath("/oauth/access_token")
+                .setAuthorizationPath("/oauth/authorize");
+
+        final OAuth2Auth authProvider = OAuth2Auth.create(vertx, OAuth2FlowType.AUTH_CODE, auth2ClientOptions);
+        final OAuth2AuthHandler oauth2 = OAuth2AuthHandler.create(authProvider, "http://localhost:8080");
+        oauth2.setupCallback(router.get("/callback"));
+        router.route("/admin/*").handler(oauth2);
 
         final int poolSize = Runtime.getRuntime().availableProcessors() * 4;
         final long maxExecuteTime = config.getInteger("max_execution_time_in_millis");
@@ -92,6 +146,19 @@ public class FractalsVerticle extends AbstractVerticle {
         httpServer.requestHandler(router::accept).listen(8080);
     }
 
+    private Try<UUID, Exception> handleViewPage(RoutingContext routingContext) {
+        return Try.of(() -> forwardHandleViewPage(routingContext))
+                .onFailure(e -> emitErrorResponse(routingContext, "Can't generate page"))
+                .execute();
+    }
+
+    private UUID forwardHandleViewPage(RoutingContext routingContext) {
+        final UUID uuid = UUID.fromString(routingContext.request().getParam("uuid"));
+        routingContext.put("uuid", uuid.toString());
+        routingContext.reroute("/pages/fractal");
+        return uuid;
+    }
+
     @Override
     public void stop() throws Exception {
         if (executor != null) {
@@ -99,7 +166,7 @@ public class FractalsVerticle extends AbstractVerticle {
         }
     }
 
-    private void handleGetFractalTile(RoutingContext routingContext) {
+    private void handleGetTile(RoutingContext routingContext, String bucketName, BasicAWSCredentials credentials) {
         try {
             final HttpServerRequest serverRequest = routingContext.request();
 
@@ -110,14 +177,26 @@ public class FractalsVerticle extends AbstractVerticle {
 
             final int side = 1 << zoom;
 
-            final Bundle bundle = bundles.get(uuid);
-
-            if (bundle != null) {
-                final TileRequest request = TileGenerator.createTileRequest(TILE_SIZE, side, side,y % side,x % side, bundle);
+            if (uuid.equals(defaultUuid)) {
+                final TileRequest request = TileGenerator.createTileRequest(TILE_SIZE, side, side,y % side,x % side, defaultBundle);
 
                 executor.<byte[]>executeBlocking(future -> handleGetTile(request, future),false, result -> handleGetTileResult(routingContext, result));
             } else {
-                emitNotFoundResponse(routingContext);
+                final JsonObject json = new JsonObject(fetchBundle(bucketName, credentials, uuid.toString()));
+
+                final String manifest = json.getString("manifest");
+                final String metadata = json.getString("metadata");
+                final String script = json.getString("script");
+
+                final Bundle bundle = TileUtils.parseData(manifest, metadata, script);
+
+                if (bundle != null) {
+                    final TileRequest request = TileGenerator.createTileRequest(TILE_SIZE, side, side,y % side,x % side, bundle);
+
+                    executor.<byte[]>executeBlocking(future -> handleGetTile(request, future),false, result -> handleGetTileResult(routingContext, result));
+                } else {
+                    emitNotFoundResponse(routingContext);
+                }
             }
         } catch (Exception e) {
             logger.log(Level.WARNING, "Failed to create tile", e);
@@ -136,7 +215,7 @@ public class FractalsVerticle extends AbstractVerticle {
         }
     }
 
-    private void handleCreateFractalBundle(RoutingContext routingContext) {
+    private void handleCreateBundle(RoutingContext routingContext, String bucketName, BasicAWSCredentials credentials) {
         try {
             final JsonObject body = routingContext.getBodyAsJson();
 
@@ -146,13 +225,11 @@ public class FractalsVerticle extends AbstractVerticle {
 
             final UUID uuid = UUID.randomUUID();
 
-            if (bundles.size() < 10) {
-                bundles.put(uuid, TileUtils.parseData(manifest, metadata, script));
+            TileUtils.parseData(manifest, metadata, script);
 
-                emitCreateBundleResponse(routingContext, uuid);
-            } else {
-                emitLimitExeededResponse(routingContext);
-            }
+            storeBundle(routingContext, bucketName, credentials, uuid);
+
+            emitCreateBundleResponse(routingContext, uuid);
         } catch (Exception e) {
             logger.log(Level.WARNING, "Failed to create bundle", e);
 
@@ -160,16 +237,51 @@ public class FractalsVerticle extends AbstractVerticle {
         }
     }
 
-    private void handleRemoveFractalBundles(RoutingContext routingContext) {
+    private void handleRemoveBundle(RoutingContext routingContext, String bucketName, BasicAWSCredentials credentials) {
         try {
-            bundles.clear();
+            final HttpServerRequest serverRequest = routingContext.request();
 
-            emitRemoveBundlesResponse(routingContext);
+            final UUID uuid = UUID.fromString(serverRequest.getParam("uuid"));
+
+            deleteBundle(bucketName, credentials, uuid);
+
+            emitRemoveBundleResponse(routingContext);
         } catch (Exception e) {
             logger.log(Level.WARNING, "Failed to create bundle", e);
 
             emitErrorResponse(routingContext, e.getMessage());
         }
+    }
+
+    private String fetchBundle(String bucketName, BasicAWSCredentials credentials, String uuid) {
+        final AWSStaticCredentialsProvider credentialsProvider = new AWSStaticCredentialsProvider(credentials);
+        final AmazonS3 s3client = AmazonS3Client.builder().withCredentials(credentialsProvider).build();
+
+        final S3Object object = s3client.getObject(new GetObjectRequest(bucketName, uuid));
+
+        return new String(getBytes(object.getObjectContent()));
+    }
+
+    private void storeBundle(RoutingContext routingContext, String bucketName, BasicAWSCredentials credentials, UUID uuid) {
+        final AWSStaticCredentialsProvider credentialsProvider = new AWSStaticCredentialsProvider(credentials);
+        final AmazonS3 s3client = AmazonS3Client.builder().withCredentials(credentialsProvider).build();
+
+        final byte[] bytes = routingContext.getBody().getBytes();
+
+        final ObjectMetadata metadata = new ObjectMetadata();
+        metadata.setContentType("application/json");
+        metadata.setContentLength(bytes.length);
+
+        final ByteArrayInputStream input = new ByteArrayInputStream(bytes);
+
+        s3client.putObject(new PutObjectRequest(bucketName, uuid.toString(), input, metadata));
+    }
+
+    private void deleteBundle(String bucketName, BasicAWSCredentials credentials, UUID uuid) {
+        final AWSStaticCredentialsProvider credentialsProvider = new AWSStaticCredentialsProvider(credentials);
+        final AmazonS3 s3client = AmazonS3Client.builder().withCredentials(credentialsProvider).build();
+
+        s3client.deleteObject(new DeleteObjectRequest(bucketName, uuid.toString()));
     }
 
     private void handleGetTile(TileRequest request, Future<byte[]> future) {
@@ -198,7 +310,7 @@ public class FractalsVerticle extends AbstractVerticle {
                 .end(createBundleResponseObject(uuid).encode());
     }
 
-    private void emitRemoveBundlesResponse(RoutingContext routingContext) {
+    private void emitRemoveBundleResponse(RoutingContext routingContext) {
         routingContext.response()
                 .setStatusCode(200)
                 .end();
@@ -224,10 +336,18 @@ public class FractalsVerticle extends AbstractVerticle {
                 .end();
     }
 
-    private void emitLimitExeededResponse(RoutingContext routingContext) {
-        routingContext.response()
-                .setStatusCode(500)//TODO replace code
-                .end();
+    private byte[] getBytes(InputStream stream) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try (BufferedInputStream is = new BufferedInputStream(stream)) {
+            byte[] buffer = new byte[4096];
+            int length = 0;
+            while ((length = is.read(buffer)) > 0) {
+                baos.write(buffer, 0, length);
+            }
+        } catch (IOException e) {
+            logger.warning("Can't read page: " + e.getMessage());
+        }
+        return baos.toByteArray();
     }
 
     private JsonObject createBundleResponseObject(UUID uuid) {

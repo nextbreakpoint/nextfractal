@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>NextFractal</title>
+    <link rel="stylesheet" href="/static/leaflet.css" />
+    <link rel="stylesheet" href="/static/style.css"/>
+    <script src="/static/jquery-3.1.1.min.js"></script>
+    <script src="/static/leaflet.js"></script>
+    <script src="/static/fractal.js"></script>
+</head>
+<body>
+<div id="canvas"></div>
+<div id="editor">
+    <input type="text" id="url" name="url"></input>
+    <form id="formRender">
+        <input type="text" id="uuid" name="uuid" th:value="${context.get('uuid')}"></input>
+        <br/>
+        <input id="render" type="submit" value="render"></input>
+    </form>
+</div>
+</body>
+</html>
