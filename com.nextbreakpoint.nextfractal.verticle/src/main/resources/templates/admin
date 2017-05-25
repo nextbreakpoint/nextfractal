@@ -19,6 +19,7 @@
         <input id="uuid" name="uuid"></input>
         <input id="delete" type="submit" value="delete"></input>
     </form>
+    <a id="show" href="#" target="_blank">Open</a>
 </div>
 </body>
 </html>

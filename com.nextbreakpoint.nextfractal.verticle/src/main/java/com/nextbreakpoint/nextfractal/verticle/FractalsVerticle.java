@@ -108,11 +108,13 @@ public class FractalsVerticle extends AbstractVerticle {
         router.route().handler(BodyHandler.create());
 
         final BasicAWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
+        final AWSStaticCredentialsProvider credentialsProvider = new AWSStaticCredentialsProvider(credentials);
+        final AmazonS3 s3client = AmazonS3Client.builder().withCredentials(credentialsProvider).withRegion("eu-west-1").build();
 
-        router.get("/api/fractals").handler(routingContext -> handleListBundles(routingContext));
-        router.post("/api/fractals").handler(routingContext -> handleCreateBundle(routingContext, bucketName, credentials));
-        router.delete("/api/fractals/:uuid").handler(routingContext -> handleRemoveBundle(routingContext, bucketName, credentials));
-        router.get("/api/fractals/:uuid/:zoom/:x/:y").handler(routingContext -> handleGetTile(routingContext, bucketName, credentials));
+        router.get("/api/fractals").handler(routingContext -> handleListBundles(routingContext, bucketName, s3client));
+        router.post("/api/fractals").handler(routingContext -> handleCreateBundle(routingContext, bucketName, s3client));
+        router.delete("/api/fractals/:uuid").handler(routingContext -> handleRemoveBundle(routingContext, bucketName, s3client));
+        router.get("/api/fractals/:uuid/:zoom/:x/:y").handler(routingContext -> handleGetTile(routingContext, bucketName, s3client));
 
         router.route("/static/*").handler(StaticHandler.create());
 
@@ -120,11 +122,9 @@ public class FractalsVerticle extends AbstractVerticle {
 
         final TemplateHandler templateHandler = TemplateHandler.create(engine);
 
+        router.get("/fractals/admin").handler(templateHandler);
         router.get("/fractals/:uuid").handler(this::handleViewPage);
-
-        router.get("/pages/*").handler(templateHandler);
-
-        router.get("/admin/*").handler(templateHandler);
+        router.get("/fractals/*").handler(templateHandler);
 
         final OAuth2ClientOptions auth2ClientOptions = new OAuth2ClientOptions()
                 .setClientID(clientId)
@@ -155,7 +155,7 @@ public class FractalsVerticle extends AbstractVerticle {
     private UUID forwardHandleViewPage(RoutingContext routingContext) {
         final UUID uuid = UUID.fromString(routingContext.request().getParam("uuid"));
         routingContext.put("uuid", uuid.toString());
-        routingContext.reroute("/pages/fractal");
+        routingContext.next();
         return uuid;
     }
 
@@ -166,7 +166,7 @@ public class FractalsVerticle extends AbstractVerticle {
         }
     }
 
-    private void handleGetTile(RoutingContext routingContext, String bucketName, BasicAWSCredentials credentials) {
+    private void handleGetTile(RoutingContext routingContext, String bucketName, AmazonS3 s3client) {
         try {
             final HttpServerRequest serverRequest = routingContext.request();
 
@@ -182,7 +182,7 @@ public class FractalsVerticle extends AbstractVerticle {
 
                 executor.<byte[]>executeBlocking(future -> handleGetTile(request, future),false, result -> handleGetTileResult(routingContext, result));
             } else {
-                final JsonObject json = new JsonObject(fetchBundle(bucketName, credentials, uuid.toString()));
+                final JsonObject json = new JsonObject(fetchBundle(bucketName, uuid.toString(), s3client));
 
                 final String manifest = json.getString("manifest");
                 final String metadata = json.getString("metadata");
@@ -205,7 +205,7 @@ public class FractalsVerticle extends AbstractVerticle {
         }
     }
 
-    private void handleListBundles(RoutingContext routingContext) {
+    private void handleListBundles(RoutingContext routingContext, String bucketName, AmazonS3 s3client) {
         try {
             emitListBundlesResponse(routingContext);
         } catch (Exception e) {
@@ -215,7 +215,7 @@ public class FractalsVerticle extends AbstractVerticle {
         }
     }
 
-    private void handleCreateBundle(RoutingContext routingContext, String bucketName, BasicAWSCredentials credentials) {
+    private void handleCreateBundle(RoutingContext routingContext, String bucketName, AmazonS3 s3client) {
         try {
             final JsonObject body = routingContext.getBodyAsJson();
 
@@ -227,7 +227,7 @@ public class FractalsVerticle extends AbstractVerticle {
 
             TileUtils.parseData(manifest, metadata, script);
 
-            storeBundle(routingContext, bucketName, credentials, uuid);
+            storeBundle(routingContext, bucketName, uuid, s3client);
 
             emitCreateBundleResponse(routingContext, uuid);
         } catch (Exception e) {
@@ -237,13 +237,13 @@ public class FractalsVerticle extends AbstractVerticle {
         }
     }
 
-    private void handleRemoveBundle(RoutingContext routingContext, String bucketName, BasicAWSCredentials credentials) {
+    private void handleRemoveBundle(RoutingContext routingContext, String bucketName, AmazonS3 s3client) {
         try {
             final HttpServerRequest serverRequest = routingContext.request();
 
             final UUID uuid = UUID.fromString(serverRequest.getParam("uuid"));
 
-            deleteBundle(bucketName, credentials, uuid);
+            deleteBundle(bucketName, uuid, s3client);
 
             emitRemoveBundleResponse(routingContext);
         } catch (Exception e) {
@@ -253,19 +253,13 @@ public class FractalsVerticle extends AbstractVerticle {
         }
     }
 
-    private String fetchBundle(String bucketName, BasicAWSCredentials credentials, String uuid) {
-        final AWSStaticCredentialsProvider credentialsProvider = new AWSStaticCredentialsProvider(credentials);
-        final AmazonS3 s3client = AmazonS3Client.builder().withCredentials(credentialsProvider).build();
-
+    private String fetchBundle(String bucketName, String uuid, AmazonS3 s3client) {
         final S3Object object = s3client.getObject(new GetObjectRequest(bucketName, uuid));
 
         return new String(getBytes(object.getObjectContent()));
     }
 
-    private void storeBundle(RoutingContext routingContext, String bucketName, BasicAWSCredentials credentials, UUID uuid) {
-        final AWSStaticCredentialsProvider credentialsProvider = new AWSStaticCredentialsProvider(credentials);
-        final AmazonS3 s3client = AmazonS3Client.builder().withCredentials(credentialsProvider).build();
-
+    private void storeBundle(RoutingContext routingContext, String bucketName, UUID uuid, AmazonS3 s3client) {
         final byte[] bytes = routingContext.getBody().getBytes();
 
         final ObjectMetadata metadata = new ObjectMetadata();
@@ -277,10 +271,7 @@ public class FractalsVerticle extends AbstractVerticle {
         s3client.putObject(new PutObjectRequest(bucketName, uuid.toString(), input, metadata));
     }
 
-    private void deleteBundle(String bucketName, BasicAWSCredentials credentials, UUID uuid) {
-        final AWSStaticCredentialsProvider credentialsProvider = new AWSStaticCredentialsProvider(credentials);
-        final AmazonS3 s3client = AmazonS3Client.builder().withCredentials(credentialsProvider).build();
-
+    private void deleteBundle(String bucketName, UUID uuid, AmazonS3 s3client) {
         s3client.deleteObject(new DeleteObjectRequest(bucketName, uuid.toString()));
     }
 

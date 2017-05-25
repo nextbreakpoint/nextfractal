@@ -5,8 +5,9 @@ $(function() {
     var map = L.map('canvas').setView([0, 0], 2);
 
     var url = $("#url").val();
+    var uuid = $("#uuid").val();
 
-    var layer = L.tileLayer(url + '/00000000-0000-0000-0000-000000000000/{z}/{x}/{y}', {
+    var layer = L.tileLayer(url + '/' + uuid + '/{z}/{x}/{y}', {
         attribution: '&copy; Andrea Medeghini',
         maxZoom: 22,
         tileSize: 256

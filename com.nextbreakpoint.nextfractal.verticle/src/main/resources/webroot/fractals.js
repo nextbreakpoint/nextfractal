@@ -29,6 +29,7 @@ $(function() {
             contentType: "application/json",
             success: function(data) {
                 $("#uuid").val(data.uuid);
+                $("#show").attr("href", "http://localhost:8080/fractals/" + data.uuid);
             }
         });
 
@@ -47,6 +48,7 @@ $(function() {
         });
 
         $("#uuid").val("");
+        $("#show").attr("#");
 
 		return false;
 	});
