@@ -47,12 +47,19 @@ import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.json.JsonObject;
+import io.vertx.ext.auth.jwt.JWTAuth;
+import io.vertx.ext.auth.jwt.JWTOptions;
+import io.vertx.ext.auth.jwt.impl.JWTUser;
 import io.vertx.ext.auth.oauth2.OAuth2Auth;
 import io.vertx.ext.auth.oauth2.OAuth2ClientOptions;
 import io.vertx.ext.auth.oauth2.OAuth2FlowType;
+import io.vertx.ext.web.Cookie;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
+import io.vertx.ext.web.client.HttpResponse;
+import io.vertx.ext.web.client.WebClient;
 import io.vertx.ext.web.handler.BodyHandler;
+import io.vertx.ext.web.handler.CookieHandler;
 import io.vertx.ext.web.handler.OAuth2AuthHandler;
 import io.vertx.ext.web.handler.StaticHandler;
 import io.vertx.ext.web.handler.TemplateHandler;
@@ -65,6 +72,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.UUID;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -105,39 +113,64 @@ public class FractalsVerticle extends AbstractVerticle {
                 .orElse(null);
 
         final Router router = Router.router(vertx);
+        router.route().handler(CookieHandler.create());
         router.route().handler(BodyHandler.create());
 
         final BasicAWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
         final AWSStaticCredentialsProvider credentialsProvider = new AWSStaticCredentialsProvider(credentials);
         final AmazonS3 s3client = AmazonS3Client.builder().withCredentials(credentialsProvider).withRegion("eu-west-1").build();
 
-        router.get("/api/fractals").handler(routingContext -> handleListBundles(routingContext, bucketName, s3client));
-        router.post("/api/fractals").handler(routingContext -> handleCreateBundle(routingContext, bucketName, s3client));
-        router.delete("/api/fractals/:uuid").handler(routingContext -> handleRemoveBundle(routingContext, bucketName, s3client));
-        router.get("/api/fractals/:uuid/:zoom/:x/:y").handler(routingContext -> handleGetTile(routingContext, bucketName, s3client));
-
-        router.route("/static/*").handler(StaticHandler.create());
-
-        final TemplateEngine engine = ThymeleafTemplateEngine.create();
-
-        final TemplateHandler templateHandler = TemplateHandler.create(engine);
-
-        router.get("/fractals/:uuid").handler(this::handleViewPage);
-        router.get("/page/*").handler(templateHandler);
-
-        final OAuth2ClientOptions auth2ClientOptions = new OAuth2ClientOptions()
+        final OAuth2ClientOptions oauth2Options = new OAuth2ClientOptions()
                 .setClientID(clientId)
                 .setClientSecret(clientSecret)
                 .setSite("https://github.com/login")
                 .setTokenPath("/oauth/access_token")
+//                .setJwtToken(true)
                 .setAuthorizationPath("/oauth/authorize");
 
-        final OAuth2Auth authProvider = OAuth2Auth.create(vertx, OAuth2FlowType.AUTH_CODE, auth2ClientOptions);
-        final OAuth2AuthHandler oauth2 = OAuth2AuthHandler.create(authProvider, "http://localhost:8080");
-        oauth2.setupCallback(router.get("/callback"));
-//        router.route("/admin/*").handler(oauth2);
+        final OAuth2Auth oauth2Provider = OAuth2Auth.create(vertx, OAuth2FlowType.AUTH_CODE, oauth2Options);
+        final OAuth2AuthHandler oauth2 = OAuth2AuthHandler.create(oauth2Provider, "http://localhost:8080");
+        oauth2.addAuthority("user:email");
+
+        final JWTAuth jwtProvider = JWTAuth.create(vertx, config);
+
+        final TemplateEngine engine = ThymeleafTemplateEngine.create();
+        final TemplateHandler templateHandler = TemplateHandler.create(engine);
+
+        router.route("/static/*").handler(StaticHandler.create());
+
+        router.route("/page/*").handler(templateHandler);
+
+        router.route("/login/*").handler(oauth2);
+
+        router.route("/admin/*").handler(routingContext -> handleCookie(jwtProvider, routingContext, rc -> rc.reroute("/login" + routingContext.request().path())));
 
         router.route("/admin/*").handler(templateHandler);
+
+        router.get("/callback").handler(routingContext -> {
+            final String state = routingContext.request().getParam("state");
+            final String code = routingContext.request().getParam("code");
+            if (state.equals("/login/admin/fractals")) {
+                handleCode(routingContext, jwtProvider, clientId, clientSecret, code, "admin/fractals");
+            } else {
+                routingContext.fail(404);
+            }
+        });
+
+        oauth2.setupCallback(router.get("/callback"));
+
+        router.get("/fractals/:uuid").handler(this::handleViewPage);
+
+        router.get("/api/fractals/:uuid/:zoom/:x/:y").handler(routingContext -> handleGetTile(routingContext, bucketName, s3client));
+
+        router.get("/api/fractals").handler(routingContext -> handleCookie(jwtProvider, routingContext, rc -> rc.fail(403)));
+        router.get("/api/fractals").handler(routingContext -> handleListBundles(routingContext, bucketName, s3client));
+
+        router.post("/api/fractals").handler(routingContext -> handleCookie(jwtProvider, routingContext, rc -> rc.fail(403)));
+        router.post("/api/fractals").handler(routingContext -> handleCreateBundle(routingContext, bucketName, s3client));
+
+        router.delete("/api/fractals/:uuid").handler(routingContext -> handleCookie(jwtProvider, routingContext, rc -> rc.fail(403)));
+        router.delete("/api/fractals/:uuid").handler(routingContext -> handleRemoveBundle(routingContext, bucketName, s3client));
 
         final int poolSize = Runtime.getRuntime().availableProcessors() * 4;
         final long maxExecuteTime = config.getInteger("max_execution_time_in_millis");
@@ -145,6 +178,101 @@ public class FractalsVerticle extends AbstractVerticle {
 
         final HttpServer httpServer = vertx.createHttpServer();
         httpServer.requestHandler(router::accept).listen(8080);
+    }
+
+    private void handleCookie(JWTAuth jwtProvider, RoutingContext routingContext, Consumer<RoutingContext> onAccessDenied) {
+        final Cookie cookie = routingContext.getCookie("token");
+        if (cookie != null) {
+            final JsonObject json = new JsonObject();
+            json.put("jwt", cookie.getValue());
+            jwtProvider.authenticate(json, userAsyncResult -> {
+                if (userAsyncResult.succeeded()) {
+                    ((JWTUser)userAsyncResult.result()).doIsPermitted("admin", result -> {
+                        if (result.succeeded()) {
+                            routingContext.next();
+                        } else {
+                            onAccessDenied.accept(routingContext);
+                        }
+                    });
+                } else {
+                    onAccessDenied.accept(routingContext);
+                }
+            });
+        } else {
+            onAccessDenied.accept(routingContext);
+        }
+    }
+
+    private void handleCode(RoutingContext routingContext, JWTAuth jwtProvider, String clientId, String clientSecret, String code, String path) {
+        final WebClient client = WebClient.create(vertx);
+        final JsonObject jsonObject = new JsonObject();
+        jsonObject.put("client_id", clientId);
+        jsonObject.put("client_secret", clientSecret);
+        jsonObject.put("code", code);
+        client.postAbs("https://github.com/login/oauth/access_token")
+            .putHeader("accept", TYPE_APPLICATION_JSON)
+            .sendJson(jsonObject, result -> {
+                if (result.succeeded()) {
+                    HttpResponse<Buffer> response = result.result();
+                    if (response.statusCode() == 200) {
+                        final JsonObject object = response.bodyAsJsonObject();
+                        final String accessToken = object.getString("access_token");
+                        handleAccessToken(routingContext, jwtProvider, accessToken, path);
+                    } else {
+                        routingContext.fail(404);
+                    }
+                } else {
+                    routingContext.fail(500);
+                }
+            });
+    }
+
+    private void handleAccessToken(RoutingContext routingContext, JWTAuth jwtProvider, String accessToken, String path) {
+        final WebClient client = WebClient.create(vertx);
+        client.getAbs("https://api.github.com/user")
+            .putHeader("Authorization", "Bearer " + accessToken)
+            .send(result -> {
+                if (result.succeeded()) {
+                    HttpResponse<Buffer> response = result.result();
+                    if (response.statusCode() == 200) {
+                        final JsonObject jsonObject = response.bodyAsJsonObject();
+                        final String login = jsonObject.getString("login");
+                        handleLogin(routingContext, jwtProvider, login, path);
+                    } else {
+                        routingContext.fail(404);
+                    }
+                } else {
+                    routingContext.fail(500);
+                }
+            });
+    }
+
+    private void handleLogin(RoutingContext routingContext, JWTAuth jwtProvider, String login, String path) {
+        if (login.equals("medeghini")) {
+            final JsonObject jsonObject = new JsonObject();
+            jsonObject.put("user", login);
+            final JWTOptions jwtOptions = new JWTOptions();
+            jwtOptions.setExpiresInMinutes(2L);
+            jwtOptions.setSubject("fractals");
+            jwtOptions.addPermission("admin");
+            final String token = jwtProvider.generateToken(jsonObject, jwtOptions);
+            final Cookie cookie = createCookie(token);
+            routingContext.response()
+                    .putHeader("Set-Cookie", cookie.encode())
+                    .putHeader("location", "http://localhost:8080/" + path)
+                    .setStatusCode(303)
+                    .end();
+        } else {
+            routingContext.fail(403);
+        }
+    }
+
+    private Cookie createCookie(String token) {
+        Cookie cookie = Cookie.cookie("token", token);
+        cookie.setDomain("localhost");
+        cookie.setPath("/");
+        cookie.setMaxAge(3600);
+        return cookie;
     }
 
     private Try<UUID, Exception> handleViewPage(RoutingContext routingContext) {
@@ -264,7 +392,7 @@ public class FractalsVerticle extends AbstractVerticle {
         final byte[] bytes = routingContext.getBody().getBytes();
 
         final ObjectMetadata metadata = new ObjectMetadata();
-        metadata.setContentType("application/json");
+        metadata.setContentType(TYPE_APPLICATION_JSON);
         metadata.setContentLength(bytes.length);
 
         final ByteArrayInputStream input = new ByteArrayInputStream(bytes);
