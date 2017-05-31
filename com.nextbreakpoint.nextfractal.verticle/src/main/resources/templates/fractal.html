@@ -14,7 +14,7 @@
 <div id="editor">
     <input type="text" id="url" name="url"></input>
     <form id="formRender">
-        <input type="text" id="uuid" name="uuid" th:value="${context.get('uuid')}"></input>
+        <input type="text" id="uuid" name="uuid" th:value="${context.pathParam('uuid')}"></input>
         <br/>
         <input id="render" type="submit" value="render"></input>
     </form>

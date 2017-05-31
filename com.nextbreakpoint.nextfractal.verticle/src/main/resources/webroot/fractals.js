@@ -6,6 +6,40 @@ $(function() {
 	$("#metadata").val(metadata);
 	$("#url").val("http://localhost:8080/api/fractals");
 
+    function reloadUuds() {
+        var url = $("#url").val();
+
+        $.ajax({
+            type: "GET",
+            url: url,
+            dataType: "json",
+            success: function(data) {
+                $("#uuids").empty();
+
+                for (var i = 0; i < data.length; i++) {
+                    $("#uuids").append($('<option></option>').val(data[i]).html(data[i]));
+                }
+
+                if (data.length > 0) {
+                    $("#uuid").val(data[0]);
+                    $("#show").attr("href", "http://localhost:8080/fractals/" + data[0]);
+                } else {
+                    $("#uuid").val("");
+                    $("#show").attr("#");
+                }
+            }
+        });
+    }
+
+    $("#uuids").change(function(event) {
+        event.preventDefault();
+
+        var uuid = $("#uuids").val();
+
+        $("#uuid").val(uuid);
+        $("#show").attr("href", "http://localhost:8080/fractals/" + uuid);
+    });
+
     $("#formCreate").submit(function(event) {
         event.preventDefault();
 
@@ -29,6 +63,7 @@ $(function() {
             contentType: "application/json",
             success: function(data) {
                 $("#uuid").val(data.uuid);
+                $("#uuids").append($('<option></option>').val(data.uuid).html(data.uuid));
                 $("#show").attr("href", "http://localhost:8080/fractals/" + data.uuid);
             }
         });
@@ -44,12 +79,14 @@ $(function() {
 
         $.ajax({
             type: "DELETE",
-            url: url + "/" + uuid
+            url: url + "/" + uuid,
+            success: function(data) {
+                reloadUuds();
+            }
         });
-
-        $("#uuid").val("");
-        $("#show").attr("#");
 
 		return false;
 	});
+
+    reloadUuds();
 });
