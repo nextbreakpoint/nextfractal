@@ -279,7 +279,7 @@ public class FractalsVerticle extends AbstractVerticle {
             final JsonObject jsonObject = new JsonObject();
             jsonObject.put("user", login);
             final JWTOptions jwtOptions = new JWTOptions();
-            jwtOptions.setExpiresInMinutes(2L);
+            jwtOptions.setExpiresInMinutes(30L);
             jwtOptions.setSubject("fractals");
             jwtOptions.addPermission("admin");
             final String token = jwtProvider.generateToken(jsonObject, jwtOptions);
