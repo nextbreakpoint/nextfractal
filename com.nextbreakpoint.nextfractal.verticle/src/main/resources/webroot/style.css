@@ -3,11 +3,27 @@
 }
 
 #admin {
-    margin-left: 5px;
+    left: 50%;
+    margin-left: -400px;
     position:relative;
     display: inline-block;
     width: 800px;
     vertical-align: top;
+    color: white;
+}
+
+a, a:hover, a:visited, a:active {
+    color: white;
+}
+
+section.create {
+    background-color: #4a4848;
+    padding: 4px;
+}
+
+section.list {
+    background-color: #404848;
+    padding: 4px;
 }
 
 #editor {
@@ -39,6 +55,10 @@
 }
 
 #uuid {
+    width: 100%;
+}
+
+#uuids {
     width: 100%;
 }
 

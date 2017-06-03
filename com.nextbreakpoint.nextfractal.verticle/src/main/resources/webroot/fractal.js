@@ -1,11 +1,17 @@
 $(function() {
-//	$("#uuid").val("00000000-0000-0000-0000-000000000000");
-	$("#url").val("http://localhost:8080/api/fractals");
+    var url = "http://localhost:8080/api/fractals";
 
     var map = L.map('canvas').setView([0, 0], 2);
 
-    var url = $("#url").val();
-    var uuid = $("#uuid").val();
+    var regexp = /http:\/\/.*:.*\/fractals\/(.*)/g;
+
+    var match = regexp.exec(window.location.href);
+
+    var uuid = "00000000-0000-0000-0000-000000000000";
+
+    if (match != null && match.length == 2) {
+        uuid = match[1];
+    }
 
     var layer = L.tileLayer(url + '/' + uuid + '/{z}/{x}/{y}', {
         attribution: '&copy; Andrea Medeghini',
@@ -15,18 +21,17 @@ $(function() {
 
     layer.addTo(map);
 
-/*    L.marker([0, 0]).addTo(map)
-        .bindPopup('A pretty fractal')
-        .openPopup();*/
-
-	$("#formRender").submit(function(event) {
+/*	$("#formRender").submit(function(event) {
         event.preventDefault();
 
-        var url = $("#url").val();
-        var uuid = $("#uuid").val();
+        var regexp = /http:\/\/.*:.*\/fractals\/(.*)/g;
 
-        layer.setUrl(url + '/' + uuid + '/{z}/{x}/{y}');
+        var match = regexp.exec(window.location.href);
+
+        if (match != null && match.length == 2) {
+            layer.setUrl(url + '/' + match[1] + '/{z}/{x}/{y}');
+        }
 
 		return false;
-	});
+	});*/
 });

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>NextFractal</title>
+    <link rel="stylesheet" href="/static/style.css"/>
+    <script src="/static/jquery-3.1.1.min.js"></script>
+    <script src="/static/fractals.js"></script>
+</head>
+<body>
+<div id="admin">
+    <section class="list">
+        <p>List of fractals</p>
+        <form id="formDelete">
+            <table id="list"></table>
+            <input id="delete" type="submit" value="delete"/>
+        </form>
+    </section>
+    <section class="create">
+        <p>Create new fractal</p>
+        <form id="formCreate">
+            <label>Script</label>
+            <textarea rows="20" cols="80" id="script" name="script"></textarea>
+            <label>Metadata</label>
+            <textarea rows="20" cols="80" id="metadata" name="metadata"></textarea>
+            <input id="create" type="submit" value="create"/>
+        </form>
+    </section>
+</div>
+</body>
+</html>

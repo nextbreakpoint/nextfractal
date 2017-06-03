@@ -60,18 +60,25 @@ import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.client.HttpResponse;
 import io.vertx.ext.web.client.WebClient;
 import io.vertx.ext.web.handler.BodyHandler;
+import io.vertx.ext.web.handler.CSRFHandler;
 import io.vertx.ext.web.handler.CookieHandler;
+import io.vertx.ext.web.handler.ErrorHandler;
 import io.vertx.ext.web.handler.LoggerHandler;
 import io.vertx.ext.web.handler.OAuth2AuthHandler;
 import io.vertx.ext.web.handler.StaticHandler;
 import io.vertx.ext.web.handler.TemplateHandler;
+import io.vertx.ext.web.handler.TimeoutHandler;
 import io.vertx.ext.web.impl.Utils;
+import io.vertx.ext.web.templ.PebbleTemplateEngine;
 import io.vertx.ext.web.templ.TemplateEngine;
-import io.vertx.ext.web.templ.ThymeleafTemplateEngine;
 
 import java.io.ByteArrayInputStream;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.TimeZone;
 import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.logging.Level;
@@ -138,6 +145,7 @@ public class FractalsVerticle extends AbstractVerticle {
         router.route().handler(LoggerHandler.create());
         router.route().handler(CookieHandler.create());
         router.route().handler(BodyHandler.create());
+        router.route().handler(TimeoutHandler.create(30000));
 
         final String accessKey = config.getString("s3_access_key");
         final String secretKey = config.getString("s3_secret_key");
@@ -161,9 +169,13 @@ public class FractalsVerticle extends AbstractVerticle {
 
         final JWTAuth jwtProvider = JWTAuth.create(vertx, config);
 
-        final TemplateEngine engine = ThymeleafTemplateEngine.create();
+        final PebbleTemplateEngine engine = PebbleTemplateEngine.create(vertx);
+        engine.setExtension(".html");
+
+        final CSRFHandler csrfHandler = CSRFHandler.create("mandelbrot");
 
         router.route("/static/*").handler(StaticHandler.create());
+        router.route("/static/*").failureHandler(this::emitNotFoundResponse);
 
         router.get("/callback").handler(routingContext -> handleOAuthCallback(clientId, clientSecret, jwtProvider, routingContext));
 
@@ -171,25 +183,29 @@ public class FractalsVerticle extends AbstractVerticle {
         oauth2.setupCallback(router.get("/callback"));
         router.route("/login/*").handler(oauth2);
 
+        router.route("/admin/*").handler(csrfHandler);
         router.route("/admin/*").handler(routingContext -> handleCookie(jwtProvider, routingContext, rc -> rc.reroute("/login" + routingContext.request().path())));
-        router.route("/admin/*").handler(new PageTemplateHandler(engine, "templates", "text/html"));
+        router.route("/admin/*").handler(TemplateHandler.create(engine, "webroot", "text/html")).failureHandler(this::emitNotFoundResponse);
 
-        router.get("/fractals/:uuid").handler(new FractalTemplateHandler(engine, "templates", "text/html"));
+        router.get("/fractals/:uuid").handler(new FractalTemplateHandler(engine, "webroot", "text/html")).failureHandler(this::emitNotFoundResponse);
 
         router.get("/api/fractals/:uuid/:zoom/:x/:y").handler(routingContext -> handleGetTileAsync(routingContext, bucketName, s3client));
-//        router.get("/api/fractals/:uuid/:zoom/:x/:y").failureHandler(failureRoutingContext -> emitFailureResponse(failureRoutingContext, "Some error occurred"));
 
+        router.get("/api/fractals").handler(csrfHandler);
         router.get("/api/fractals").handler(routingContext -> handleCookie(jwtProvider, routingContext, rc -> rc.fail(403)));
         router.get("/api/fractals").handler(routingContext -> handleListBundlesAsync(routingContext, bucketName, s3client));
-//        router.get("/api/fractals").failureHandler(failureRoutingContext -> emitFailureResponse(failureRoutingContext, "Some error occurred"));
 
-        router.post("/api/fractals").handler(routingContext -> handleCookie(jwtProvider, routingContext, rc -> rc.fail(403)));
-        router.post("/api/fractals").handler(routingContext -> handleCreateBundleAsync(routingContext, bucketName, s3client));
-//        router.post("/api/fractals").failureHandler(failureRoutingContext -> emitFailureResponse(failureRoutingContext, "Some error occurred"));
+        router.post("/api/fractals").consumes(TYPE_APPLICATION_JSON).handler(csrfHandler);
+        router.post("/api/fractals").consumes(TYPE_APPLICATION_JSON).handler(routingContext -> handleCookie(jwtProvider, routingContext, rc -> rc.fail(403)));
+        router.post("/api/fractals").consumes(TYPE_APPLICATION_JSON).handler(routingContext -> handleCreateBundleAsync(routingContext, bucketName, s3client));
 
+        router.delete("/api/fractals").handler(csrfHandler);
         router.delete("/api/fractals/:uuid").handler(routingContext -> handleCookie(jwtProvider, routingContext, rc -> rc.fail(403)));
         router.delete("/api/fractals/:uuid").handler(routingContext -> handleRemoveBundleAsync(routingContext, bucketName, s3client));
-//        router.delete("/api/fractals/:uuid").failureHandler(failureRoutingContext -> emitFailureResponse(failureRoutingContext, "Some error occurred"));
+
+        router.route("/api/*").failureHandler(routingContext -> emitFailureResponse(routingContext, "Error"));
+
+        router.route().failureHandler(ErrorHandler.create(false));
 
         final HttpServer httpServer = vertx.createHttpServer();
         httpServer.requestHandler(router::accept).listen(8080);
@@ -469,6 +485,7 @@ public class FractalsVerticle extends AbstractVerticle {
     private void emitListBundlesResponse(RoutingContext routingContext, List<String> uuids) {
         routingContext.response()
                 .putHeader(CONTENT_TYPE, TYPE_APPLICATION_JSON)
+                .putHeader("Cache-Control", "no-cache, no-store")
                 .setStatusCode(200)
                 .end(new JsonArray(uuids).encode());
     }
@@ -476,19 +493,28 @@ public class FractalsVerticle extends AbstractVerticle {
     private void emitCreateBundleResponse(RoutingContext routingContext, UUID uuid) {
         routingContext.response()
                 .putHeader(CONTENT_TYPE, TYPE_APPLICATION_JSON)
+                .putHeader("Cache-Control", "no-cache, no-store")
                 .setStatusCode(201)
                 .end(createBundleResponseObject(uuid).encode());
     }
 
     private void emitRemoveBundleResponse(RoutingContext routingContext, UUID result) {
         routingContext.response()
+                .putHeader("Cache-Control", "no-cache, no-store")
                 .setStatusCode(200)
                 .end();
     }
 
     private void emitGetTileResponse(RoutingContext routingContext, byte[] pngImage) {
+        final SimpleDateFormat df = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss");
+        df.setTimeZone(TimeZone.getTimeZone("GMT"));
+        final Date today = Calendar.getInstance().getTime();
+        final Date tomorrow = new Date(today.getTime() + 86400000);
         routingContext.response()
                 .putHeader(CONTENT_TYPE, TYPE_IMAGE_PNG)
+                .putHeader("Cache-Control", "public, max-age:86400")
+                .putHeader("Last-Modified", df.format(today) + " GMT")
+                .putHeader("Expires", df.format(tomorrow) + " GMT")
                 .setStatusCode(200)
                 .end(Buffer.buffer(pngImage));
     }
@@ -529,7 +555,7 @@ public class FractalsVerticle extends AbstractVerticle {
         private final TemplateEngine engine;
         private final String templateDirectory;
         private final String contentType;
-        private final String fileName = "fractal.html";
+        private final String fileName = "fractal";
 
         public FractalTemplateHandler(TemplateEngine engine, String templateDirectory, String contentType) {
             this.engine = engine;
@@ -541,30 +567,6 @@ public class FractalsVerticle extends AbstractVerticle {
             final String file = this.templateDirectory + "/" + fileName;
             this.engine.render(context, file, (res) -> {
                 if (res.succeeded()) {
-                    context.response().putHeader(HttpHeaders.CONTENT_TYPE, this.contentType).end(res.result());
-                } else {
-                    context.fail(res.cause());
-                }
-            });
-        }
-    }
-
-    private class PageTemplateHandler implements TemplateHandler {
-        private final TemplateEngine engine;
-        private final String templateDirectory;
-        private final String contentType;
-        private final String suffix = ".html";
-
-        public PageTemplateHandler(TemplateEngine engine, String templateDirectory, String contentType) {
-            this.engine = engine;
-            this.templateDirectory = templateDirectory;
-            this.contentType = contentType;
-        }
-
-        public void handle(RoutingContext context) {
-            String file = this.templateDirectory + Utils.pathOffset(context.normalisedPath(), context) + suffix;
-            this.engine.render(context, file, (res) -> {
-                if(res.succeeded()) {
                     context.response().putHeader(HttpHeaders.CONTENT_TYPE, this.contentType).end(res.result());
                 } else {
                     context.fail(res.cause());
