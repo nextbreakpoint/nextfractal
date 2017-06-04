@@ -1,6 +1,6 @@
 $(function() {
-    var url = "http://localhost:8080/api/fractals";
-    var urlTarget = "http://localhost:8080/fractals";
+    var url = "/api/fractals";
+    var urlTarget = "/fractals";
 
 	var script = "fractal {\norbit [-2.0 - 2.0i,+2.0 + 2.0i] [x,n] {\nloop [0, 200] (mod2(x) > 40) {\nx = x * x + w;\n}\n}\ncolor [#FF000000] {\npalette gradient {\n[#FFFFFFFF > #FF000000, 100];\n[#FF000000 > #FFFFFFFF, 100];\n}\ninit {\nm = 100 * (1 + sin(mod(x) * 0.2 / pi));\n}\nrule (n > 0) [1] {\ngradient[m - 1]\n}\n}\n}\n";
 	var metadata = "{\"translation\":{\"x\":0.0,\"y\":0.0,\"z\":1.0,\"w\":0.0},\"rotation\":{\"x\":0.0,\"y\":0.0,\"z\":0.0,\"w\":0.0},\"scale\":{\"x\":1.0,\"y\":1.0,\"z\":1.0,\"w\":1.0},\"point\":{\"x\":0.0,\"y\":0.0},\"julia\":false,\"options\":{\"showPreview\":false,\"showTraps\":false,\"showOrbit\":false,\"showPoint\":false,\"previewOrigin\":{\"x\":0.0,\"y\":0.0},\"previewSize\":{\"x\":0.25,\"y\":0.25}}}";
@@ -8,8 +8,19 @@ $(function() {
 	$("#script").val(script);
 	$("#metadata").val(metadata);
 
+    function updateRow(source) {
+        var uuid = $(source).attr("data");
+        if ($('input[data="' + uuid + '"]').attr("checked")) {
+            $('input[data="' + uuid + '"]').removeAttr("checked");
+        } else {
+            $('input[data="' + uuid + '"]').attr("checked", "on");
+        }
+    }
+
+    window.updateRow = updateRow;
+
     function updateList(list) {
-        $("#list").empty();
+        $("td.data").remove();
 
         for (var i = 0; i < list.length; i++) {
             appendLine(list[i]);
@@ -17,7 +28,7 @@ $(function() {
     }
 
     function appendLine(uuid) {
-        $("#list").append($('<tr data="' + uuid + '"><td><input name="uuid" type="checkbox" data="' + uuid + '"/></td><td><a target="_blank" href="' + urlTarget + '/' + uuid + '">' + uuid + '</a></td></tr>'));
+        $("#list").append($('<tr class="data" data="' + uuid + '"><td><input class="filled-in" name="uuid" type="checkbox" data="' + uuid + '"/><label data="' + uuid + '" for="uuid" onClick="updateRow(this)"/></td><td><img class="z-depth-3" width="128" height="128" src="' + url + '/' + uuid + '/0/0/0"/></td><td><a target="_blank" href="' + urlTarget + '/' + uuid + '">' + uuid + '</a></td></tr>'));
     }
 
     function removeLine(uuid) {

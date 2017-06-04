@@ -1,31 +1,48 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <meta charset="UTF-8">
-    <title>NextFractal</title>
-    <link rel="stylesheet" href="/static/style.css"/>
-    <script src="/static/jquery-3.1.1.min.js"></script>
-    <script src="/static/fractals.js"></script>
-</head>
-<body>
-<div id="admin">
-    <section class="list">
-        <p>List of fractals</p>
-        <form id="formDelete">
-            <table id="list"></table>
-            <input id="delete" type="submit" value="delete"/>
-        </form>
-    </section>
-    <section class="create">
-        <p>Create new fractal</p>
-        <form id="formCreate">
-            <label>Script</label>
-            <textarea rows="20" cols="80" id="script" name="script"></textarea>
-            <label>Metadata</label>
-            <textarea rows="20" cols="80" id="metadata" name="metadata"></textarea>
-            <input id="create" type="submit" value="create"/>
-        </form>
-    </section>
-</div>
-</body>
+    <head>
+        <title>Configure fractals</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <link rel="stylesheet" href="http://fonts.googleapis.com/icon?family=Material+Icons">
+        <link rel="stylesheet" href="/static/css/materialize.min.css" media="screen,projection"/>
+        <link rel="stylesheet" href="/static/style.css"/>
+        <script type="text/javascript" src="/static/jquery-3.1.1.min.js"></script>
+        <script type="text/javascript" src="/static/js/materialize.min.js"></script>
+        <script type="text/javascript" src="/static/fractals.js"></script>
+    </head>
+    <body>
+        <div class="container s12 m10 l8">
+            <h1>Configure fractals</h1>
+            <section class="card row hoverable">
+                <div class="card-content col s12 m10 l8">
+                    <p class="card-title">List of fractals</p>
+                    <form id="formDelete">
+                        <table id="list">
+                            <tr><th></th><th>Preview</th><th>UUID</th></tr>
+                        </table>
+                        <input class="waves-effect waves-light btn" id="delete" type="submit" value="delete"/>
+                    </form>
+                </div>
+            </section>
+            <section class="card row hoverable">
+                <div class="card-content col s12 m10 l8">
+                    <p class="card-title">Create new fractal</p>
+                    <form id="formCreate">
+                        <div class="input-field">
+                            <i class="material-icons prefix">mode_edit</i>
+                            <label for="script">Script</label>
+                            <textarea class="materialize-textarea" rows="20" cols="80" id="script" name="script"></textarea>
+                        </div>
+                        <div class="input-field">
+                            <i class="material-icons prefix">mode_edit</i>
+                            <label for="metadata">Metadata</label>
+                            <textarea class="materialize-textarea" rows="20" cols="80" id="metadata" name="metadata"></textarea>
+                        </div>
+                        <input class="waves-effect waves-light btn" id="create" type="submit" value="create"/>
+                    </form>
+                </div>
+            </section>
+        </div>
+    </body>
 </html>

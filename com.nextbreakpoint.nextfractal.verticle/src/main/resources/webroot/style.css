@@ -1,81 +1,14 @@
-* {
-    padding: 0;
-}
-
-#admin {
+#fractal {
     left: 50%;
-    margin-left: -400px;
-    position:relative;
-    display: inline-block;
-    width: 800px;
-    vertical-align: top;
-    color: white;
-}
-
-a, a:hover, a:visited, a:active {
-    color: white;
-}
-
-section.create {
-    background-color: #4a4848;
-    padding: 4px;
-}
-
-section.list {
-    background-color: #404848;
-    padding: 4px;
-}
-
-#editor {
-    margin-left: 5px;
-    position:relative;
-    display: inline-block;
-    width: 256px;
-    vertical-align: top;
-}
-
-#script {
-    position:relative;
-    display: inline-block;
-    width: 100%;
-}
-
-#metadata {
-    margin-top: 5px;
-    position:relative;
-    display: inline-block;
-    width: 100%;
-}
-
-#render {
-    margin-top: 5px;
-    position:relative;
-    display: inline-block;
-    width: 100%;
-}
-
-#uuid {
-    width: 100%;
-}
-
-#uuids {
-    width: 100%;
-}
-
-#url {
-    width: 100%;
-}
-
-#canvas {
+    margin-left: -512px;
     position:relative;
     display: inline-block;
     width: 1024px;
     height: 1024px;
     vertical-align: top;
-    border: 1px solid #444444;
 }
 
-#canvas img {
+#fractal img {
     width: 512px;
     height: 512px;
 }

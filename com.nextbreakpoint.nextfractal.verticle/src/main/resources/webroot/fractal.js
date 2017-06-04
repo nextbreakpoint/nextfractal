@@ -1,7 +1,7 @@
 $(function() {
-    var url = "http://localhost:8080/api/fractals";
+    var url = "/api/fractals";
 
-    var map = L.map('canvas').setView([0, 0], 2);
+    var map = L.map('fractal').setView([0, 0], 2);
 
     var regexp = /http:\/\/.*:.*\/fractals\/(.*)/g;
 
