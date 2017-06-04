@@ -210,14 +210,14 @@
 				<version>${awslambda.version}</version>
 			</dependency>
 			<dependency>
+				<groupId>com.amazonaws</groupId>
+				<artifactId>aws-java-sdk-s3</artifactId>
+				<version>${aws.version}</version>
+			</dependency>
+			<dependency>
 				<groupId>com.googlecode.json-simple</groupId>
 				<artifactId>json-simple</artifactId>
 				<version>${jsonsimple.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.amazonaws</groupId>
-				<artifactId>aws-java-sdk</artifactId>
-				<version>${aws.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.mockito</groupId>

@@ -27,6 +27,8 @@ package com.nextbreakpoint.nextfractal.lambda;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.RequestStreamHandler;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
 import com.nextbreakpoint.Try;
 import com.nextbreakpoint.nextfractal.core.Bundle;
 import com.nextbreakpoint.nextfractal.core.TileGenerator;
@@ -41,15 +43,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.util.Base64;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class FractalsHandler implements RequestStreamHandler {
     private static final int TILE_SIZE = 256;
-
-    // TODO retrieve data from S3 or DynamoDB or other source
+    private static final UUID defaultUuid = new UUID(0L, 0L);
     private static final String manifest = "{\"pluginId\":\"Mandelbrot\"}";
     private static final String metadata = "{\"translation\":{\"x\":0.0,\"y\":0.0,\"z\":1.0,\"w\":0.0},\"rotation\":{\"x\":0.0,\"y\":0.0,\"z\":0.0,\"w\":0.0},\"scale\":{\"x\":1.0,\"y\":1.0,\"z\":1.0,\"w\":1.0},\"point\":{\"x\":0.0,\"y\":0.0},\"julia\":false,\"options\":{\"showPreview\":false,\"showTraps\":false,\"showOrbit\":false,\"showPoint\":false,\"previewOrigin\":{\"x\":0.0,\"y\":0.0},\"previewSize\":{\"x\":0.25,\"y\":0.25}}}";
     private static final String script = "fractal {\norbit [-2.0 - 2.0i,+2.0 + 2.0i] [x,n] {\nloop [0, 200] (mod2(x) > 40) {\nx = x * x + w;\n}\n}\ncolor [#FF000000] {\npalette gradient {\n[#FFFFFFFF > #FF000000, 100];\n[#FF000000 > #FFFFFFFF, 100];\n}\ninit {\nm = 100 * (1 + sin(mod(x) * 0.2 / pi));\n}\nrule (n > 0) [1] {\ngradient[m - 1]\n}\n}\n}\n";
@@ -63,6 +63,8 @@ public class FractalsHandler implements RequestStreamHandler {
 
             final JSONObject event = (JSONObject)parser.parse(reader);
 
+            final AmazonS3 s3client = AmazonS3Client.builder().withRegion("eu-west-1").build();
+
             UUID uuid = null;
             int zoom = 0;
             int x = 0;
@@ -71,7 +73,7 @@ public class FractalsHandler implements RequestStreamHandler {
             String resource = (String)event.get("resource");
             if (resource != null) {
                 Matcher matcher = Pattern
-                        .compile("([0-9a-f\\-]+)/([0-9]+)/([0-9]+)/([0-9]+)[.]png")
+                        .compile("([0-9a-f\\-]+)/([0-9]+)/([0-9]+)/([0-9]+)")
                         .matcher(resource);
 
                 if (matcher.matches()) {
@@ -85,27 +87,47 @@ public class FractalsHandler implements RequestStreamHandler {
             if (uuid == null) {
                 final JSONObject responseJson = new JSONObject();
                 responseJson.put("statusCode", "400");
-                final OutputStreamWriter writer = new OutputStreamWriter(outputStream, "UTF-8");
-                writer.write(responseJson.toJSONString());
-                writer.close();
+
+                writeJson(outputStream, responseJson);
             } else {
-                final Bundle bundle = TileUtils.parseData(manifest, metadata, script);
+                if (uuid.equals(defaultUuid)) {
+                    final Bundle bundle = TileUtils.parseData(manifest, metadata, script);
 
-                final int side = 1 << zoom;
+                    generateTile(outputStream, logger, x, y,1 << zoom, bundle);
+                } else {
+                    final String objectAsString = s3client.getObjectAsString("fractals-archive", uuid.toString());
 
-                final TileRequest request = TileGenerator.createTileRequest(TILE_SIZE, side, side,y % side,x % side, bundle);
+                    final JSONObject json = (JSONObject)parser.parse(objectAsString);
 
-                final byte[] image = Try.of(() -> TileGenerator.generateImage(request)).onFailure(e -> logger.log(e.getMessage())).orThrow();
+                    final String manifest = (String)json.get("manifest");
+                    final String metadata = (String)json.get("metadata");
+                    final String script = (String)json.get("script");
 
-                outputStream.write(image);
+                    final Bundle bundle = TileUtils.parseData(manifest, metadata, script);
+
+                    generateTile(outputStream, logger, x, y,1 << zoom, bundle);
+                }
             }
         } catch (Exception e) {
             final JSONObject responseJson = new JSONObject();
             responseJson.put("statusCode", "400");
             responseJson.put("exception", e);
-            final OutputStreamWriter writer = new OutputStreamWriter(outputStream, "UTF-8");
-            writer.write(responseJson.toJSONString());
-            writer.close();
+
+            writeJson(outputStream, responseJson);
         }
+    }
+
+    private void generateTile(OutputStream outputStream, LambdaLogger logger, int x, int y, int side, Bundle bundle) throws Exception {
+        final TileRequest request = TileGenerator.createTileRequest(TILE_SIZE, side, side,y % side,x % side, bundle);
+
+        final byte[] image = Try.of(() -> TileGenerator.generateImage(request)).onFailure(e -> logger.log(e.getMessage())).orThrow();
+
+        outputStream.write(image);
+    }
+
+    private void writeJson(OutputStream outputStream, JSONObject json) throws IOException {
+        final OutputStreamWriter writer = new OutputStreamWriter(outputStream, "UTF-8");
+        writer.write(json.toJSONString());
+        writer.close();
     }
 }
