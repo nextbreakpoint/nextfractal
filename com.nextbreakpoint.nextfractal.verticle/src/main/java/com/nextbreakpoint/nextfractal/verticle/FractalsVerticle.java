@@ -45,9 +45,11 @@ import io.vertx.core.WorkerExecutor;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpHeaders;
 import io.vertx.core.http.HttpServer;
+import io.vertx.core.http.HttpServerOptions;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import io.vertx.core.net.JksOptions;
 import io.vertx.ext.auth.jwt.JWTAuth;
 import io.vertx.ext.auth.jwt.JWTOptions;
 import io.vertx.ext.auth.jwt.impl.JWTUser;
@@ -68,7 +70,6 @@ import io.vertx.ext.web.handler.OAuth2AuthHandler;
 import io.vertx.ext.web.handler.StaticHandler;
 import io.vertx.ext.web.handler.TemplateHandler;
 import io.vertx.ext.web.handler.TimeoutHandler;
-import io.vertx.ext.web.impl.Utils;
 import io.vertx.ext.web.templ.PebbleTemplateEngine;
 import io.vertx.ext.web.templ.TemplateEngine;
 
@@ -152,6 +153,10 @@ public class FractalsVerticle extends AbstractVerticle {
         final String bucketName = config.getString("s3_bucket_name");
         final String clientId = config.getString("github_client_id");
         final String clientSecret = config.getString("github_client_secret");
+        final String callbackUrl = config.getString("github_callback_url");
+        final String csrfSecret = config.getString("csrf_secret");
+        final String jksStorePath = config.getString("jks_store_path");
+        final String jksStoreSecret = config.getString("jks_store_secret");
 
         final BasicAWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
         final AWSStaticCredentialsProvider credentialsProvider = new AWSStaticCredentialsProvider(credentials);
@@ -165,14 +170,14 @@ public class FractalsVerticle extends AbstractVerticle {
                 .setAuthorizationPath("/oauth/authorize");
 
         final OAuth2Auth oauth2Provider = OAuth2Auth.create(vertx, OAuth2FlowType.AUTH_CODE, oauth2Options);
-        final OAuth2AuthHandler oauth2 = OAuth2AuthHandler.create(oauth2Provider, "http://localhost:8080");
+        final OAuth2AuthHandler oauth2 = OAuth2AuthHandler.create(oauth2Provider, callbackUrl);
 
         final JWTAuth jwtProvider = JWTAuth.create(vertx, config);
 
         final PebbleTemplateEngine engine = PebbleTemplateEngine.create(vertx);
         engine.setExtension(".html");
 
-        final CSRFHandler csrfHandler = CSRFHandler.create("mandelbrot");
+        final CSRFHandler csrfHandler = CSRFHandler.create(csrfSecret);
 
         router.route("/static/*").handler(StaticHandler.create());
         router.route("/static/*").failureHandler(this::emitNotFoundResponse);
@@ -207,8 +212,12 @@ public class FractalsVerticle extends AbstractVerticle {
 
         router.route().failureHandler(ErrorHandler.create(false));
 
-        final HttpServer httpServer = vertx.createHttpServer();
-        httpServer.requestHandler(router::accept).listen(8080);
+        final HttpServerOptions options = new HttpServerOptions()
+                .setSsl(true)
+                .setKeyStoreOptions(new JksOptions().setPath(jksStorePath).setPassword(jksStoreSecret));
+
+        final HttpServer httpServer = vertx.createHttpServer(options);
+        httpServer.requestHandler(router::accept).listen(4443);
 
         return httpServer;
     }
@@ -302,7 +311,7 @@ public class FractalsVerticle extends AbstractVerticle {
             final Cookie cookie = createCookie(token);
             routingContext.response()
                     .putHeader("Set-Cookie", cookie.encode())
-                    .putHeader("location", "http://localhost:8080/" + path)
+                    .putHeader("location", "/" + path)
                     .setStatusCode(303)
                     .end();
         } else {

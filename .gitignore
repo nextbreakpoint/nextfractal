@@ -13,3 +13,4 @@ dependency-reduced-pom.xml
 default.json
 com.nextbreakpoint.nextfractal.verticle/.vertx
 keystore.jceks
+keystore.jks

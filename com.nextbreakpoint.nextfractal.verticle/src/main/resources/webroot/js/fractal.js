@@ -3,7 +3,7 @@ $(function() {
 
     var map = L.map('fractal').setView([0, 0], 2);
 
-    var regexp = /http:\/\/.*:.*\/fractals\/(.*)/g;
+    var regexp = /https?:\/\/.*:.*\/fractals\/(.*)/g;
 
     var match = regexp.exec(window.location.href);
 
@@ -24,7 +24,7 @@ $(function() {
 /*	$("#formRender").submit(function(event) {
         event.preventDefault();
 
-        var regexp = /http:\/\/.*:.*\/fractals\/(.*)/g;
+        var regexp = /https?:\/\/.*:.*\/fractals\/(.*)/g;
 
         var match = regexp.exec(window.location.href);
 
