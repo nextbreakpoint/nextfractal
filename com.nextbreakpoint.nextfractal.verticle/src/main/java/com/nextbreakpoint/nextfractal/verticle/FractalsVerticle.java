@@ -194,7 +194,7 @@ public class FractalsVerticle extends AbstractVerticle {
 
         router.get("/fractals/:uuid").handler(new FractalTemplateHandler(engine, "webroot", "text/html")).failureHandler(this::emitNotFoundResponse);
 
-        router.get("/api/fractals/:uuid/:zoom/:x/:y").handler(routingContext -> handleGetTileAsync(routingContext, bucketName, s3client));
+        router.get("/api/fractals/:uuid/:zoom/:x/:y/256.png").handler(routingContext -> handleGetTileAsync(routingContext, bucketName, s3client));
 
         router.get("/api/fractals").handler(csrfHandler);
         router.get("/api/fractals").handler(routingContext -> handleCookie(jwtProvider, routingContext, rc -> rc.fail(403)));

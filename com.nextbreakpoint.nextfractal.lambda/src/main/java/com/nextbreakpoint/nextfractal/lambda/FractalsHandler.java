@@ -53,6 +53,7 @@ public class FractalsHandler implements RequestStreamHandler {
     private static final String manifest = "{\"pluginId\":\"Mandelbrot\"}";
     private static final String metadata = "{\"translation\":{\"x\":0.0,\"y\":0.0,\"z\":1.0,\"w\":0.0},\"rotation\":{\"x\":0.0,\"y\":0.0,\"z\":0.0,\"w\":0.0},\"scale\":{\"x\":1.0,\"y\":1.0,\"z\":1.0,\"w\":1.0},\"point\":{\"x\":0.0,\"y\":0.0},\"julia\":false,\"options\":{\"showPreview\":false,\"showTraps\":false,\"showOrbit\":false,\"showPoint\":false,\"previewOrigin\":{\"x\":0.0,\"y\":0.0},\"previewSize\":{\"x\":0.25,\"y\":0.25}}}";
     private static final String script = "fractal {\norbit [-2.0 - 2.0i,+2.0 + 2.0i] [x,n] {\nloop [0, 200] (mod2(x) > 40) {\nx = x * x + w;\n}\n}\ncolor [#FF000000] {\npalette gradient {\n[#FFFFFFFF > #FF000000, 100];\n[#FF000000 > #FFFFFFFF, 100];\n}\ninit {\nm = 100 * (1 + sin(mod(x) * 0.2 / pi));\n}\nrule (n > 0) [1] {\ngradient[m - 1]\n}\n}\n}\n";
+    private static final AmazonS3 s3client = AmazonS3Client.builder().withRegion("eu-west-1").build();
 
     @Override
     public void handleRequest(InputStream inputStream, OutputStream outputStream, Context context) throws IOException {
@@ -63,8 +64,6 @@ public class FractalsHandler implements RequestStreamHandler {
 
             final JSONObject event = (JSONObject)parser.parse(reader);
 
-            final AmazonS3 s3client = AmazonS3Client.builder().withRegion("eu-west-1").build();
-
             UUID uuid = null;
             int zoom = 0;
             int x = 0;
@@ -73,7 +72,7 @@ public class FractalsHandler implements RequestStreamHandler {
             String resource = (String)event.get("resource");
             if (resource != null) {
                 Matcher matcher = Pattern
-                        .compile("([0-9a-f\\-]+)/([0-9]+)/([0-9]+)/([0-9]+)")
+                        .compile("([0-9a-f\\-]+)/([0-9]+)/([0-9]+)/([0-9]+)/256.png")
                         .matcher(resource);
 
                 if (matcher.matches()) {

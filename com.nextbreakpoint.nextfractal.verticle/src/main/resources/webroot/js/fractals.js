@@ -28,7 +28,7 @@ $(function() {
     }
 
     function appendLine(uuid) {
-        $("#list").append($('<tr class="data" data="' + uuid + '"><td><input class="filled-in" name="uuid" type="checkbox" data="' + uuid + '"/><label data="' + uuid + '" for="uuid" onClick="updateRow(this)"/></td><td><img class="z-depth-3" width="128" height="128" src="' + url + '/' + uuid + '/0/0/0"/></td><td><a target="_blank" href="' + urlTarget + '/' + uuid + '">' + uuid + '</a></td></tr>'));
+        $("#list").append($('<tr class="data" data="' + uuid + '"><td><input class="filled-in" name="uuid" type="checkbox" data="' + uuid + '"/><label data="' + uuid + '" for="uuid" onClick="updateRow(this)"/></td><td><img class="z-depth-3" width="128" height="128" src="' + url + '/' + uuid + '/0/0/0/256.png"/></td><td><a target="_blank" href="' + urlTarget + '/' + uuid + '">' + uuid + '</a></td></tr>'));
     }
 
     function removeLine(uuid) {
