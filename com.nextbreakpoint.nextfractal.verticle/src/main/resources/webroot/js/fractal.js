@@ -4,7 +4,6 @@ $(function() {
     var map = L.map('fractal').setView([0, 0], 2);
 
     var regexp = /https?:\/\/.*:.*\/fractals\/(.*)/g;
-
     var match = regexp.exec(window.location.href);
 
     var uuid = "00000000-0000-0000-0000-000000000000";

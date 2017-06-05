@@ -40,6 +40,7 @@ import com.nextbreakpoint.nextfractal.core.TileUtils;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
+import io.vertx.core.Launcher;
 import io.vertx.core.Vertx;
 import io.vertx.core.WorkerExecutor;
 import io.vertx.core.buffer.Buffer;
@@ -101,11 +102,7 @@ public class FractalsVerticle extends AbstractVerticle {
     private UUID defaultUuid;
 
     public static void main(String[] args) {
-        try {
-            new FractalsVerticle().start();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        Launcher.main(new String[] { "run", FractalsVerticle.class.getCanonicalName(), "-conf", args.length > 0 ? args[0] : "default.json" });
     }
 
     @Override
