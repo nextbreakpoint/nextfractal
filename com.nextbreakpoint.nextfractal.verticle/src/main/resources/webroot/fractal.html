@@ -6,15 +6,20 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
         <link rel="stylesheet" href="/static/css/materialize.min.css" media="screen,projection"/>
         <link rel="stylesheet" href="/static/css/leaflet.css" />
-        <link rel="stylesheet" href="/static/css/style.css"/>
         <script type="text/javascript" src="/static/js/jquery-3.1.1.min.js"></script>
         <script type="text/javascript" src="/static/js/materialize.min.js"></script>
-        <script type="text/javascript" src="/static/js/leaflet.js"></script>
-        <script type="text/javascript" src="/static/js/fractal.js"></script>
+        <style>
+            .leaflet-container {
+                width: 800px;
+                height: 800px;
+                position: relative;
+                display: inline-block;
+                margin: 40px;
+            }
+        </style>
     </head>
     <body>
-        <div class="container s6 center-align">
-            <div id="fractal" class="z-depth-3"/>
-        </div>
+        <div id="app-fractal"/>
+        <script type="text/javascript" src="/static/js/app-fractal.js"></script>
     </body>
 </html>
