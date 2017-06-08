@@ -6,6 +6,7 @@ docs
 *.iml
 dist
 **/tmp
+com.nextbreakpoint.nextfractal.verticle/web/node_modules
 
 
 launcher/build
@@ -14,3 +15,5 @@ default.json
 com.nextbreakpoint.nextfractal.verticle/.vertx
 keystore.jceks
 keystore.jks
+app-fractal.js
+app-fractals.js
