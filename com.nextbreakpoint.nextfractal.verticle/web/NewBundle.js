@@ -53,5 +53,4 @@ let NewBundle = class NewBundle extends React.Component {
     }
 }
 
-//export default NewBundle
 module.exports = NewBundle

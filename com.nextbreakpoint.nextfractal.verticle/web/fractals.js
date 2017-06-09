@@ -61,8 +61,6 @@ class App extends React.Component {
 
         axios.all(promises)
             .then(function (responses) {
-//                console.log(responses);
-
                 let deletedUuids = responses
                     .filter((res) => {
                         return res.status == 200
@@ -70,8 +68,6 @@ class App extends React.Component {
                     .map((res) => {
                         return res.config.url.substring(res.config.url.lastIndexOf("/") + 1)
                     })
-
-//                console.log(deletedUuids)
 
                 let bundles = component.state.bundles
                     .filter((bundle) => {
@@ -108,8 +104,6 @@ class App extends React.Component {
 
         axios.get('/api/fractals', config)
             .then(function (response) {
-//                console.log(response);
-
                 let bundles = response.data.map((uuid) => { return { uuid: uuid, selected: false }})
 
                 component.setState({bundles: bundles})
