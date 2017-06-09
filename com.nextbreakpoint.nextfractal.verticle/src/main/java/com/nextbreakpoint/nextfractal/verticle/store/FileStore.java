@@ -21,6 +21,7 @@ public class FileStore implements BundleStore {
 
     public FileStore(File path) {
         this.path = path;
+        path.mkdirs();
     }
 
     @Override
