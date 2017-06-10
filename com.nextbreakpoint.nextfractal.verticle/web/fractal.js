@@ -23,13 +23,7 @@ class App extends React.Component {
         return <Row>
             <Col s={12} className="center-align">
                 <Map center={position} zoom={2} className="z-depth-3">
-                    <TileLayer
-                      url={url}
-                      attribution='&copy; Andrea Medeghini'
-                      maxZoom={22}
-                      minZoom={2}
-                      tileSize={256}
-                    />
+                    <TileLayer url={url} attribution='&copy; Andrea Medeghini' minZoom={2} maxZoom={22} tileSize={256}/>
                 </Map>
             </Col>
         </Row>

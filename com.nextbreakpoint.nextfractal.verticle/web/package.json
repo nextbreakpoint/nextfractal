@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
+    "antlr4": "^4.7.0",
     "axios": "^0.16.2",
     "leaflet": "^1.0.3",
     "materialize-css": "^0.98.2",
