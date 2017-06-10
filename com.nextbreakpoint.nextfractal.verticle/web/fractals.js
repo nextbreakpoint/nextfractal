@@ -32,8 +32,6 @@ class App extends React.Component {
 
         axios.post('/api/fractals', data, config)
             .then(function (response) {
-//                console.log(response);
-
                 var bundles = component.state.bundles.slice()
 
                 bundles.push({uuid:response.data.uuid, selected: false})

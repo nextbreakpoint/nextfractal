@@ -8,7 +8,7 @@ module.exports = {
 
     output: {
         path: __dirname + "/../src/main/resources/webroot/js",
-        filename: "app-[name].js"
+        filename: "[name].js"
     },
 
     resolve: {
