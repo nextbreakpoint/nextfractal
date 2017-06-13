@@ -15,6 +15,10 @@ module.exports = {
         extensions: ['.js', '.jsx', '.json']
     },
 
+    node: {
+        fs: "empty"
+    },
+
     module: {
         rules: [
             {
