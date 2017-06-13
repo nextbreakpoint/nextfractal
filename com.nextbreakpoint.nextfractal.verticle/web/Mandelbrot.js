@@ -20,5 +20,5 @@ Mandelbrot.prototype.parse = function(script) {
     return fractal
 };
 
-module.exports = Mandelbrot;
+exports.Mandelbrot = Mandelbrot;
 

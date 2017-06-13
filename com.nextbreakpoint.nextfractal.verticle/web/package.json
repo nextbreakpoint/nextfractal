@@ -32,9 +32,9 @@
   },
   "scripts": {
     "dev": "./node_modules/webpack-dev-server/bin/webpack-dev-server.js --hot --inline --history-api-fallback",
-    "build": "./node_modules/webpack/bin/webpack.js -d",
+    "build": "./node_modules/webpack/bin/webpack.js -p",
     "watch": "./node_modules/webpack/bin/webpack.js -d --watch"
   },
-  "author": "",
-  "license": "ISC"
+  "author": "Andrea Medeghini",
+  "license": "BSD3"
 }

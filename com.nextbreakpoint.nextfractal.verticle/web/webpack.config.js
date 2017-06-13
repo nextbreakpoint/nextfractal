@@ -15,12 +15,8 @@ module.exports = {
         extensions: ['.js', '.jsx', '.json']
     },
 
-    node: {
-        fs: 'empty'
-    },
-
     module: {
-        loaders: [
+        rules: [
             {
                 test: /\.jsx?$/, exclude: /node_modules/, loaders: ["react-hot-loader", "babel-loader"]
             }
