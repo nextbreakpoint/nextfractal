@@ -43,6 +43,7 @@
 		<try.version>2.0.3</try.version>
 		<slf4j.version>1.7.25</slf4j.version>
 		<junit4.version>4.11</junit4.version>
+		<jackson.version>2.6.3</jackson.version>
 		<mockito.version>1.9.5</mockito.version>
 		<controlsfx.version>8.40.12</controlsfx.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
