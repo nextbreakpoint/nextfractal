@@ -32,8 +32,6 @@
         <module>com.nextbreakpoint.nextfractal.mandelbrot.javafx</module>
         <module>com.nextbreakpoint.nextfractal.contextfree.javafx</module>
         <module>com.nextbreakpoint.nextfractal.runtime.javafx</module>
-		<module>com.nextbreakpoint.nextfractal.verticle</module>
-		<module>com.nextbreakpoint.nextfractal.lambda</module>
 		<module>com.nextbreakpoint.nextfractal.main</module>
     </modules>
 	<properties>
@@ -43,18 +41,11 @@
 		<ffmpeg4java.version>3.1.1-1.0</ffmpeg4java.version>
 		<freeimage4java.version>3.18.0-1.1</freeimage4java.version>
 		<try.version>2.0.3</try.version>
-		<springboot.version>1.2.3.RELEASE</springboot.version>
-		<jackson.version>2.6.3</jackson.version>
+		<slf4j.version>1.7.25</slf4j.version>
 		<junit4.version>4.11</junit4.version>
 		<mockito.version>1.9.5</mockito.version>
 		<controlsfx.version>8.40.12</controlsfx.version>
-		<vertx.version>3.4.1</vertx.version>
-		<netty.version>4.1.8.Final</netty.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<awslambda.version>1.1.0</awslambda.version>
-		<jsonsimple.version>1.1</jsonsimple.version>
-		<slf4j.version>1.7.25</slf4j.version>
-		<aws.version>1.11.133</aws.version>
 	</properties>
 	<build>
 		<plugins>
@@ -158,66 +149,6 @@
 				<groupId>org.controlsfx</groupId>
 				<artifactId>controlsfx</artifactId>
 				<version>${controlsfx.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>io.netty</groupId>
-				<artifactId>netty-common</artifactId>
-				<version>${netty.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>io.netty</groupId>
-				<artifactId>netty-buffer</artifactId>
-				<version>${netty.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>io.vertx</groupId>
-				<artifactId>vertx-core</artifactId>
-				<version>${vertx.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>io.vertx</groupId>
-				<artifactId>vertx-web</artifactId>
-				<version>${vertx.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>io.vertx</groupId>
-				<artifactId>vertx-web-client</artifactId>
-				<version>${vertx.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>io.vertx</groupId>
-				<artifactId>vertx-web-templ-pebble</artifactId>
-				<version>${vertx.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>io.vertx</groupId>
-				<artifactId>vertx-auth-oauth2</artifactId>
-				<version>${vertx.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>io.vertx</groupId>
-				<artifactId>vertx-auth-jwt</artifactId>
-				<version>${vertx.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>io.vertx</groupId>
-				<artifactId>vertx-rx-java</artifactId>
-				<version>${vertx.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.amazonaws</groupId>
-				<artifactId>aws-lambda-java-core</artifactId>
-				<version>${awslambda.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.amazonaws</groupId>
-				<artifactId>aws-java-sdk-s3</artifactId>
-				<version>${aws.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.googlecode.json-simple</groupId>
-				<artifactId>json-simple</artifactId>
-				<version>${jsonsimple.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.mockito</groupId>
