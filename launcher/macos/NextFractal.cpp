@@ -169,20 +169,24 @@ void * start_java(void *start_args) {
 
 std::string GetClasspath(std::string path) {
    std::string s = std::string();
+   std::cout << "Creating classpath..." << std::endl;
    DIR* dirFile = opendir(path.c_str());
    if (dirFile) {
       struct dirent* hFile;
+      std::cout << "Scanning jars at " << path << "..." << std::endl;
       while ((hFile = readdir(dirFile)) != NULL) {
          if (!strcmp(hFile->d_name, "." )) continue;
          if (!strcmp(hFile->d_name, "..")) continue;
          if (hFile->d_name[0] == '.') continue;
+         std::cout << "Found file " << hFile->d_name << std::endl;
          if (strstr(hFile->d_name, ".jar")) {
+            std::cout << "Found jar " << hFile->d_name << std::endl;
             s.append(path);
             s.append("/");
             s.append(hFile->d_name);
             s.append(":");
          }
-      } 
+      }
       s.append(".");
       closedir(dirFile);
    }
@@ -190,8 +194,8 @@ std::string GetClasspath(std::string path) {
 }
 
 std::string GetExePath() {
-    char result[PATH_MAX + 1];
-    uint32_t size = PATH_MAX + 1;
+    char* result = (char *)malloc(PATH_MAX + 1);
+    uint32_t size = PATH_MAX;
     if (_NSGetExecutablePath(result, &size) < 0) {
         throw std::runtime_error("Unable to get executable path");
     }
@@ -204,6 +208,16 @@ std::string GetBasePath(std::string exePath) {
 
 int main(int argc, char **argv) {
     try {
+        std::string mxstring = std::string();
+        char * mxvar = getenv("NEXTFRACTAL_MX");
+        uint32_t mxlength = mxvar != NULL ? strlen(mxvar) : 0;
+        if (mxlength > 0) {
+            mxstring.append("-Xmx");
+            mxstring.append(mxvar);
+            mxstring.append("g");
+        } else {
+            mxstring.append("-Xmx4g");
+        }
         std::string basePath = GetBasePath(GetExePath());
         std::cout << "Base path " << basePath << std::endl;
         std::string jarsPath = basePath + "/../Resources";
@@ -211,11 +225,11 @@ int main(int argc, char **argv) {
         std::string libPathArg = "-Djava.library.path=" + basePath + "/../Resources";
         std::string locPathArg = "-Dbrowser.location=" + basePath + "/../../../examples";
         const char *vm_arglist[] = {
-            "-Xmx2g",
             "-Djava.util.logging.config.class=com.nextbreakpoint.nextfractal.runtime.LogConfig",
             classpathArg.c_str(),
             libPathArg.c_str(),
             locPathArg.c_str(),
+            mxstring.c_str(),
             0
         };
         struct start_args args(vm_arglist, "com/nextbreakpoint/nextfractal/runtime/javafx/NextFractalApp");
