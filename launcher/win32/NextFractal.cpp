@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <dirent.h>
 #include <string.h>
+#include <stdexcept>
 #include <iostream>
 
 struct start_args {
@@ -204,6 +205,16 @@ std::string GetBasePath(std::string exePath) {
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCmdShow) {
     try {
         FreeConsole();
+        std::string memMaxArg = std::string();
+        char * varMemMax = getenv("NEXTFRACTAL_MAX_MEMORY");
+        int varMemMaxLen = varMemMax != NULL ? strlen(varMemMax) : 0;
+        if (varMemMaxLen > 0) {
+            memMaxArg.append("-Xmx");
+            memMaxArg.append(std::to_string(std::stoi(varMemMax)));
+            memMaxArg.append("g");
+        } else {
+            memMaxArg.append("-Xmx3g");
+        }
         std::string basePath = GetBasePath(GetExePath());
         std::cout << "Base path " << basePath << std::endl;
         std::string jarsPath = basePath + "/resources";
@@ -211,11 +222,11 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdL
         std::string libPathArg = "-Djava.library.path=" + basePath + "/resources";
         std::string locPathArg = "-Dbrowser.location=" + basePath + "/examples";
         const char *vm_arglist[] = {
-            "-Xmx2g",
             "-Djava.util.logging.config.class=com.nextbreakpoint.nextfractal.runtime.LogConfig",
             classpathArg.c_str(),
             libPathArg.c_str(),
             locPathArg.c_str(),
+            memMaxArg.c_str(),
             0
         };
         struct start_args args(vm_arglist, "com/nextbreakpoint/nextfractal/runtime/javafx/NextFractalApp");

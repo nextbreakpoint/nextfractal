@@ -7,8 +7,8 @@ CC = /usr/bin/x86_64-w64-mingw32-gcc
 LD = /usr/bin/x86_64-w64-mingw32-ld
 RC = /usr/bin/x86_64-w64-mingw32-windres
 
-CPPFLAGS += -DJAVA_VERSION=$(JAVA_VERSION)
-CXXFLAGS += -g 
+CPPFLAGS += -DJAVA_VERSION=$(JAVA_VERSION) -std=c++11
+CXXFLAGS += -g
 VM_DIR=$(JHOME)/jre/lib
 LDFLAGS += -L/usr/x86_64-w64-mingw32/lib -Wl,-static
 CXXFLAGS += -I/usr/x86_64-w64-mingw32/include -I$(JHOME)/include -I$(JHOME)/include/$(SYSTEM)

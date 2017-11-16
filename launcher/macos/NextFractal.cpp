@@ -208,15 +208,15 @@ std::string GetBasePath(std::string exePath) {
 
 int main(int argc, char **argv) {
     try {
-        std::string mxstring = std::string();
-        char * mxvar = getenv("NEXTFRACTAL_MX");
-        uint32_t mxlength = mxvar != NULL ? strlen(mxvar) : 0;
-        if (mxlength > 0) {
-            mxstring.append("-Xmx");
-            mxstring.append(mxvar);
-            mxstring.append("g");
+        std::string memMaxArg = std::string();
+        char * varMemMax = getenv("NEXTFRACTAL_MAX_MEMORY");
+        int varMemMaxLen = varMemMax != NULL ? strlen(varMemMax) : 0;
+        if (varMemMaxLen > 0) {
+            memMaxArg.append("-Xmx");
+            memMaxArg.append(std::to_string(std::stoi(varMemMax)));
+            memMaxArg.append("g");
         } else {
-            mxstring.append("-Xmx4g");
+            memMaxArg.append("-Xmx3g");
         }
         std::string basePath = GetBasePath(GetExePath());
         std::cout << "Base path " << basePath << std::endl;
@@ -229,7 +229,7 @@ int main(int argc, char **argv) {
             classpathArg.c_str(),
             libPathArg.c_str(),
             locPathArg.c_str(),
-            mxstring.c_str(),
+            memMaxArg.c_str(),
             0
         };
         struct start_args args(vm_arglist, "com/nextbreakpoint/nextfractal/runtime/javafx/NextFractalApp");

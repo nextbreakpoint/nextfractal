@@ -2,7 +2,7 @@
 <project name="NextFractal" default="build">
 	<property environment="env" />
 	<property name="maven.home" value="${env.M2_HOME}" />
-	<property name="nextfractal.version" value="2.0.1" />
+	<property name="nextfractal.version" value="2.0.2" />
 	<property name="nextfractal.folder" value="NextFractal" />
 	<property name="mainmodule" value="com.nextbreakpoint.nextfractal.main" />
 	<macrodef name="maven">
@@ -27,15 +27,6 @@
 				<sysproperty key="maven.multiModuleProjectDirectory" value="true" />
 				<arg line="--batch-mode @{options} @{goal}" />
 			</java>
-		</sequential>
-	</macrodef>
-	<macrodef name="build-verticle">
-		<attribute name="version" />
-		<attribute name="basedir" />
-		<attribute name="resultproperty" default="build.result" />
-		<element name="args" implicit="true" optional="true" />
-		<sequential>
-			<maven basedir="@{basedir}" goal="install" resultproperty="maven.build.result" />
 		</sequential>
 	</macrodef>
 	<macrodef name="build">
@@ -183,7 +174,7 @@
 	         	</classpath>
 	       	</java>
 		</sequential>
-	</macrodef>	
+	</macrodef>
 	<macrodef name="addcopyright">
 		<attribute name="path" />
 		<attribute name="file" />
@@ -199,7 +190,7 @@
 	         	</classpath>
 	       	</java>
 		</sequential>
-	</macrodef>	
+	</macrodef>
 	<macrodef name="linecount">
 		<attribute name="path" />
 		<attribute name="basedir" />
@@ -213,7 +204,7 @@
 	         	</classpath>
 	       	</java>
 		</sequential>
-	</macrodef>	
+	</macrodef>
 	<condition property="is_macosx">
 		<os family="mac" />
 	</condition>
@@ -254,8 +245,6 @@
 		<changecopyright basedir="${basedir}" path="com.nextbreakpoint.nextfractal.contextfree.javafx/src/main/java" file="copyright.txt"/>
 		<changecopyright basedir="${basedir}" path="com.nextbreakpoint.nextfractal.runtime/src/main/java" file="copyright.txt"/>
 		<changecopyright basedir="${basedir}" path="com.nextbreakpoint.nextfractal.runtime.javafx/src/main/java" file="copyright.txt"/>
-		<changecopyright basedir="${basedir}" path="com.nextbreakpoint.nextfractal.verticle/src/main/java" file="copyright.txt"/>
-		<changecopyright basedir="${basedir}" path="com.nextbreakpoint.nextfractal.lambda/src/main/java" file="copyright.txt"/>
 		<changecopyright basedir="${basedir}" path="com.nextbreakpoint.nextfractal.mandelbrot/src/test/java" file="copyright.txt"/>
 		<changecopyright basedir="${basedir}" path="com.nextbreakpoint.nextfractal.mandelbrot/src/main/java/com/nextbreakpoint/nextfractal/mandelbrot/renderer/xaos/XaosRenderer.java" file="copyright-xaos.txt"/>
 	</target>
@@ -268,8 +257,6 @@
 		<addcopyright basedir="${basedir}" path="com.nextbreakpoint.nextfractal.contextfree.javafx/src/main/java" file="copyright.txt"/>
 		<addcopyright basedir="${basedir}" path="com.nextbreakpoint.nextfractal.runtime/src/main/java" file="copyright.txt"/>
 		<addcopyright basedir="${basedir}" path="com.nextbreakpoint.nextfractal.runtime.javafx/src/main/java" file="copyright.txt"/>
-		<addcopyright basedir="${basedir}" path="com.nextbreakpoint.nextfractal.verticle/src/main/java" file="copyright.txt"/>
-		<addcopyright basedir="${basedir}" path="com.nextbreakpoint.nextfractal.lambda/src/main/java" file="copyright.txt"/>
 		<addcopyright basedir="${basedir}" path="com.nextbreakpoint.nextfractal.mandelbrot/src/test/java" file="copyright.txt"/>
 		<addcopyright basedir="${basedir}" path="com.nextbreakpoint.nextfractal.mandelbrot/src/main/java/com/nextbreakpoint/nextfractal/mandelbrot/renderer/xaos/XaosRenderer.java" file="copyright-xaos.txt"/>
 	</target>
@@ -301,9 +288,6 @@
 	<target name="build-linux-64bit">
 		<build basedir="${basedir}" os="linux" arch="x86_64" version="${nextfractal.version}" executable="NextFractal" resourcesdir="resources" resultproperty="ant.build.result" />
 		<makezip basedir="${basedir}" os="linux" arch="x86_64" version="${nextfractal.version}" resultproperty="ant.makezip.result" />
-	</target>
-	<target name="build-verticle">
-		<build-verticle basedir="${basedir}" version="${nextfractal.version}" resultproperty="ant.build.result" />
 	</target>
 	<target name="build-macos-signed" depends="build-macos-64bit-signed" if="is_macosx" />
 	<target name="build-macos" depends="build-macos-64bit" if="is_macosx" />
