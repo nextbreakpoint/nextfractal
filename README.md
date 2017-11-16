@@ -13,16 +13,16 @@ You should have received a copy of the GNU General Public License along with Nex
 
 NextFractal depends on several thirdparty libraries including FreeImage, FFmpeg, ANTLR, RichTextFX, ControlsFX and software from Apache Software Foundation.
 
-NextFractal contains code derivated from original code of open source projects Xaos and ContextFree.
+NextFractal contains code code ported from original C/C++ code of open source projects Xaos and ContextFree.
 
 
 ## DESCRIPTION
 
-NextFractal is an application for creating fractals and other algorithmically generated images. Images are generated processing a script and some user provided parameters depending on the selected grammar. The grammar defines the domain specific language to use to compose the script. 
+NextFractal is an application for creating Fractals and other algorithmically generated images. Images are generated processing a script and some user provided parameters depending on the selected grammar. 
 
-NextFractal is currently able to interpret M scripts and CFDG scripts. The M scripts are based on a domain specific language designed for creating Mandelbrot and Julia sets. The CFDG scripts are based on a context-free grammar designed for creating geometric shapes iteratively. 
+NextFractal is currently able to interpret M scripts and CFDG scripts. The M scripts are based on a domain specific language for creating Mandelbrot, Julia and Fatou Sets. The CFDG scripts are based on a context-free grammar for creating geometric shapes using an iterative process. 
 
-NextFractal provides also tools for exploring Mandelbrot and Julia sets, browsing images, creating time based and events based animations, and rendering image and video files. NextFractal exports to formats PNG, AVI and Quicktime.
+NextFractal provides also tools for exploring Mandelbrot, Julia and Fatou Sets, browsing images, creating time based and events based animations, and rendering image and video files. NextFractal exports image as PNG files, and videos as AVI or Quicktime files.
 
 
 ## SYSTEM REQUIREMENTS
@@ -33,20 +33,9 @@ See download page http://www.oracle.com/technetwork/java/javase/downloads
 
     Java SDK contains the Java compiler which is required to compile code in memory and reduce the rendering time.
 
-## USER GUIDE
+## DOCUMENTATION
 
-Please see documentation and tutorials on http://nextbreakpoint.com/nextfractal.
-
-NextFractal accepts few keyboard commands when focus is on rendering area:
-
-    Press keys 1, 2, 3, 4, 5 to change zoom speed
-
-    Press key T to show/hide traps
-
-    Press key O to show/hide orbit
-
-    Press key P to show/hide preview
-
+Please see documentation of grammars and tutorials on http://nextbreakpoint.com/nextfractal.
 
 ## BUILD INSTRUCTIONS
 

@@ -2,8 +2,8 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
  	<parent>
-        <groupId>com.nextbreakpoint.nextfractal</groupId>
-        <artifactId>com.nextbreakpoint.nextfractal.parent</artifactId>
+        <groupId>com.nextbreakpoint</groupId>
+        <artifactId>com.nextbreakpoint.nextfractal</artifactId>
         <version>2.0.2</version>
     </parent>
 	<artifactId>com.nextbreakpoint.nextfractal.main</artifactId>
@@ -108,42 +108,42 @@
 	</build>
 	<dependencies>
 		<dependency>
-			<groupId>com.nextbreakpoint.nextfractal</groupId>
+			<groupId>com.nextbreakpoint</groupId>
 			<artifactId>com.nextbreakpoint.nextfractal.core</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.nextbreakpoint.nextfractal</groupId>
+			<groupId>com.nextbreakpoint</groupId>
 			<artifactId>com.nextbreakpoint.nextfractal.runtime</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.nextbreakpoint.nextfractal</groupId>
+			<groupId>com.nextbreakpoint</groupId>
 			<artifactId>com.nextbreakpoint.nextfractal.mandelbrot</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.nextbreakpoint.nextfractal</groupId>
+			<groupId>com.nextbreakpoint</groupId>
 			<artifactId>com.nextbreakpoint.nextfractal.contextfree</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.nextbreakpoint.nextfractal</groupId>
+			<groupId>com.nextbreakpoint</groupId>
 			<artifactId>com.nextbreakpoint.nextfractal.core.javafx</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.nextbreakpoint.nextfractal</groupId>
+			<groupId>com.nextbreakpoint</groupId>
 			<artifactId>com.nextbreakpoint.nextfractal.runtime.javafx</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.nextbreakpoint.nextfractal</groupId>
+			<groupId>com.nextbreakpoint</groupId>
 			<artifactId>com.nextbreakpoint.nextfractal.mandelbrot.javafx</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.nextbreakpoint.nextfractal</groupId>
+			<groupId>com.nextbreakpoint</groupId>
 			<artifactId>com.nextbreakpoint.nextfractal.contextfree.javafx</artifactId>
 			<version>${project.version}</version>
 		</dependency>
