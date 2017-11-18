@@ -13,14 +13,14 @@ You should have received a copy of the GNU General Public License along with Nex
 
 NextFractal depends on several thirdparty libraries including FreeImage, FFmpeg, ANTLR, RichTextFX, ControlsFX and software from Apache Software Foundation.
 
-NextFractal contains code code ported from original C/C++ code of open source projects Xaos and ContextFree.
+NextFractal contains code ported to Java from C/C++ code of open source projects Xaos and ContextFree.
 
 
 ## DESCRIPTION
 
-NextFractal is an application for creating Fractals and other algorithmically generated images. Images are generated processing a script and some user provided parameters depending on the selected grammar. 
+NextFractal is an application for creating Fractals and other algorithmically generated images. Images are generated processing a script and some user provided parameters depending on the selected grammar.
 
-NextFractal is currently able to interpret M scripts and CFDG scripts. The M scripts are based on a domain specific language for creating Mandelbrot, Julia and Fatou Sets. The CFDG scripts are based on a context-free grammar for creating geometric shapes using an iterative process. 
+NextFractal is currently able to interpret M scripts and CFDG scripts. The M scripts are based on a domain specific language for creating Mandelbrot, Julia and Fatou Sets. The CFDG scripts are based on a context-free grammar for creating geometric shapes using an iterative process.
 
 NextFractal provides also tools for exploring Mandelbrot, Julia and Fatou Sets, browsing images, creating time based and events based animations, and rendering image and video files. NextFractal exports image as PNG files, and videos as AVI or Quicktime files.
 
@@ -39,24 +39,24 @@ Please see documentation of grammars and tutorials on http://nextbreakpoint.com/
 
 ## BUILD INSTRUCTIONS
 
-You can build NextFractal from the source code. Checkout or download the source code from GitHub and run the build script. The build script requires Apache Ant and Apache Maven. By default the script will create a distribution for all platforms. Use a different target to build the distribution for a specific platform only. Apple command-line development tools are also required to build the distribution for MacOS. 
+You can build NextFractal from the source code. Checkout or download the source code from GitHub and run the build script. The build script requires Apache Ant and Apache Maven. By default the script will create a distribution for all platforms. Use a different target to build the distribution for a specific platform only. Apple command-line development tools are also required to build the distribution for MacOS.
 
 Get the code from https://github.com/nextbreakpoint/nextfractal:
 
     git checkout https://github.com/nextbreakpoint/nextfractal.git
 
 Use default target to build the distribution for all platforms:
-  
+
     ant
-    
+
 Use target build-linux to build Linux distribution:
 
     ant build-linux
 
 Use target build-macos to build MacOS distribution:
-  
+
     ant build-macos
-    
+
 Use target build-win32 to build Windows distribution:
 
     ant build-win32

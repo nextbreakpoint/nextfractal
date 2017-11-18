@@ -171,14 +171,17 @@ void * start_java(void *start_args) {
 
 std::string GetClasspath(std::string path) {
    std::string s = std::string();
+   std::cout << "Creating classpath..." << std::endl;
    DIR* dirFile = opendir(path.c_str());
    if (dirFile) {
       struct dirent* hFile;
+      std::cout << "Scanning folder " << path << "..." << std::endl;
       while ((hFile = readdir(dirFile)) != NULL) {
          if (!strcmp(hFile->d_name, "." )) continue;
          if (!strcmp(hFile->d_name, "..")) continue;
          if (hFile->d_name[0] == '.') continue;
          if (strstr(hFile->d_name, ".jar")) {
+           std::cout << "Found jar " << hFile->d_name << std::endl;
             s.append(path);
             s.append("/");
             s.append(hFile->d_name);
@@ -209,7 +212,7 @@ int main(int argc, char **argv) {
         if (varMemMaxLen > 0) {
             memMaxArg.append("-Xmx");
             memMaxArg.append(std::to_string(std::stoi(varMemMax)));
-            memMaxArg.append("g");
+            memMaxArg.append("m");
         } else {
             memMaxArg.append("-Xmx3g");
         }
