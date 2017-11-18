@@ -53,6 +53,7 @@ import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -65,6 +66,8 @@ import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class BrowsePane extends BorderPane {
 	public static final String BROWSER_DEFAULT_LOCATION = "browser.location";
@@ -339,9 +342,9 @@ public class BrowsePane extends BorderPane {
 		startWatching();
 		removeItems();
 		grid.setData(new GridItem[0]);
-		File[] files = listFiles(folder);
-		if (files != null && files.length > 0) {
-			statusLabel.setText(files.length + " project file" + (files.length > 1 ? "s" : "") + " found");
+		List<File> files = listFiles(folder);
+		if (!files.isEmpty()) {
+			statusLabel.setText(files.size() + " project file" + (files.size() > 1 ? "s" : "") + " found");
 			loadItems(grid, files);
 		} else {
 			statusLabel.setText("No project files found");
@@ -350,20 +353,20 @@ public class BrowsePane extends BorderPane {
 
 	private void importFiles(Label statusLabel, GridView grid, File folder) {
 		importCurrentFolder = folder;
-		File[] files = listAllFiles(folder);
-		if (files != null && files.length > 0) {
+		List<File> files = listAllFiles(folder);
+		if (!files.isEmpty()) {
 			browserExecutor.submit(() -> copyFiles(statusLabel, grid, files, sourceCurrentFolder));
 		}
 	}
 
-	private void copyFiles(Label statusLabel, GridView grid, File[] files, File location) {
+	private void copyFiles(Label statusLabel, GridView grid, List<File> files, File location) {
 		Platform.runLater(() -> {
 			grid.setDisable(true);
 		});
 
 		for (File file : files) {
 			Platform.runLater(() -> {
-				statusLabel.setText("Importing " + files.length + " files...");
+				statusLabel.setText("Importing " + files.size() + " files...");
 			});
 
 			copyFile(statusLabel, grid, file, location);
@@ -392,33 +395,33 @@ public class BrowsePane extends BorderPane {
 		return tmpFile;
 	}
 
-	private void loadItems(GridView grid, File[] files) {
-		GridItem[] items = new GridItem[files.length];
-		for (int i = 0; i < files.length; i++) {
+	private void loadItems(GridView grid, List<File> files) {
+		GridItem[] items = new GridItem[files.size()];
+		for (int i = 0; i < files.size(); i++) {
 			items[i] = new GridItem();
-			items[i].setFile(files[i]);
+			items[i].setFile(files.get(i));
 			this.items.add(items[i]);
 		}
 		grid.setData(items);
 	}
 
-	private File[] listAllFiles(File folder) {
+	private List<File> listAllFiles(File folder) {
 		Preferences prefs = Preferences.userNodeForPackage(BrowsePane.class);
 		prefs.put(BROWSER_DEFAULT_LOCATION, folder.getAbsolutePath());
 		if (delegate != null) {
-			return folder.listFiles((dir, name) -> filter.stream().filter(e -> name.endsWith(e)).findFirst().isPresent());
+			return Stream.of(folder.listFiles((dir, name) -> filter.stream().filter(e -> name.endsWith(e)).findFirst().isPresent())).sorted().collect(Collectors.toList());
 		} else {
-			return new File[0];
+			return Collections.emptyList();
 		}
 	}
 
-	private File[] listFiles(File folder) {
+	private List<File> listFiles(File folder) {
 		Preferences prefs = Preferences.userNodeForPackage(BrowsePane.class);
 		prefs.put(BROWSER_DEFAULT_LOCATION, folder.getAbsolutePath());
 		if (delegate != null) {
-			return folder.listFiles((dir, name) -> name.endsWith(".nf.zip"));
+			return Stream.of(folder.listFiles((dir, name) -> name.endsWith(".nf.zip"))).sorted().collect(Collectors.toList());
 		} else {
-			return new File[0];
+			return Collections.emptyList();
 		}
 	}
 
