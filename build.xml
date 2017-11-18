@@ -155,7 +155,13 @@
 				<fileset dir="@{basedir}/dist/@{os}_@{arch}">
 					<include name="**/*" />
 					<exclude name="**/.DS_store" />
+					<exclude name="NextFractal/NextFractal" />
+					<exclude name="NextFractal/NextFractal.sh" />
 				</fileset>
+				<zipfileset filemode="755" dir="@{basedir}/dist/@{os}_@{arch}">
+					<include name="NextFractal/NextFractal" />
+					<include name="NextFractal/NextFractal.sh" />
+				</zipfileset>
 			</zip>
 		</sequential>
 	</macrodef>
