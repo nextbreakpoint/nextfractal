@@ -3,8 +3,8 @@ JAVA_VERSION?=8
 JHOME:=/usr/lib/jvm/java-8-oracle
 SYSTEM:=linux
 
-CC = gcc-4.9
-LD = ld-4.9
+CC = gcc-4.8
+LD = ld-4.8
 
 CPPFLAGS += -DJAVA_VERSION=$(JAVA_VERSION) -std=c++11
 CXXFLAGS += -g
