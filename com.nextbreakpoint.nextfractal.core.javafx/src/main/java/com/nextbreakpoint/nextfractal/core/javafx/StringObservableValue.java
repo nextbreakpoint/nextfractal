@@ -30,8 +30,10 @@ public class StringObservableValue extends ObservableValueBase<String> {
 	private String value;
 
 	public void setValue(String value) {
-		this.value = value;
-		fireValueChangedEvent();
+		if ((value != null && !value.equals(this.value)) || (value == null && this.value != null)) {
+			this.value = value;
+			fireValueChangedEvent();
+		}
 	}
 
 	@Override

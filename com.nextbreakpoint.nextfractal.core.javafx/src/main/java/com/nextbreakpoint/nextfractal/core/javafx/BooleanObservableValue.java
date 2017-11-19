@@ -30,8 +30,10 @@ public class BooleanObservableValue extends ObservableValueBase<Boolean> {
 	private Boolean value = Boolean.FALSE;
 	
 	public void setValue(Boolean value) {
-		this.value = value;
-		fireValueChangedEvent();
+		if ((value != null && !value.equals(this.value)) || (value == null && this.value != null)) {
+			this.value = value;
+			fireValueChangedEvent();
+		}
 	}
 
 	@Override
