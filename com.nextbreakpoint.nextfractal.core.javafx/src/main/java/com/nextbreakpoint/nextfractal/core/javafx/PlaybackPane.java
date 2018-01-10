@@ -105,7 +105,7 @@ public class PlaybackPane extends Pane {
     public void setClips(List<Clip> clips) {
         if (future == null) {
             frames.clear();
-            frames.addAll(new ClipProcessor(clips, 1f / FRAMES_PER_SECOND).generateFrames());
+            frames.addAll(new ClipProcessor(clips, FRAMES_PER_SECOND).generateFrames());
         }
     }
 

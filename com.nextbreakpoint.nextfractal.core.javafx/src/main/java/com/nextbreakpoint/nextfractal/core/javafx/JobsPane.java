@@ -198,7 +198,7 @@ public class JobsPane extends BorderPane {
             } else {
                 sizeLabel.setText(session.getSize().getWidth() + "\u00D7" + session.getSize().getHeight() + " pixels");
                 formatLabel.setText(session.getEncoder().getName() + " Video");
-                long durationInSeconds = (long)Math.rint(session.getFrameCount() * session.getFrameRate());
+                long durationInSeconds = (long)Math.rint(session.getFrameCount() / session.getFrameRate());
                 long minutes = (long)Math.rint(durationInSeconds / 60.0);
                 if (minutes <= 2) {
                     durationLabel.setText("Duration " + durationInSeconds + " seconds");

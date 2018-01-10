@@ -124,7 +124,7 @@ public class SimpleExportService extends AbstractExportService {
 
 	private EncoderHandle openEncoder(ExportHandle exportHandle) throws IOException, EncoderException {
 		final RandomAccessFile raf = new RandomAccessFile(exportHandle.getTmpFile(), "r");
-		final int frameRate = (int) Math.rint(1 / exportHandle.getFrameRate());
+		final int frameRate = exportHandle.getFrameRate();
 		final int imageWidth = exportHandle.getSize().getWidth();
 		final int imageHeight = exportHandle.getSize().getHeight();
 		final RAFEncoderContext context = new RAFEncoderContext(raf, imageWidth, imageHeight, frameRate);

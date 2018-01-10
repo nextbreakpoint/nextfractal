@@ -33,7 +33,7 @@ public class CompilerTest2 extends BaseTest {
 	@Test
 	public void Compiler1() {
 		try {
-			Compiler compiler = new Compiler();
+			Compiler compiler = new Compiler("test", "Compile");
 			CompilerReport report = compiler.compileReport(getSource("/source2.m"));
 			printErrors(report.getErrors());
 			Assert.assertEquals(1, report.getErrors().size());

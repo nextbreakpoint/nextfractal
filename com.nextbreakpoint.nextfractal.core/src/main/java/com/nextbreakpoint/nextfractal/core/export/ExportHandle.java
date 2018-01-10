@@ -108,7 +108,7 @@ public final class ExportHandle {
 		return session.getFrameCount();
 	}
 
-	public float getFrameRate() {
+	public int getFrameRate() {
 		return session.getFrameRate();
 	}
 

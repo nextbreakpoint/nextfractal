@@ -39,10 +39,6 @@ public class Compiler {
 	private final String packageName;
 	private final String className;
 	
-	public Compiler() {
-		this(Compiler.class.getPackage().getName(), Compiler.class.getSimpleName());
-	}
-	
 	public Compiler(String packageName, String className) {
 		this.packageName = packageName;
 		this.className = className;
@@ -65,7 +61,7 @@ public class Compiler {
 			InterpreterClassCompiler compiler = new InterpreterClassCompiler();
 			return compiler.compileOrbit(report);
 		} else {
-			JavaClassCompiler compiler = new JavaClassCompiler(packageName, className);
+			JavaClassCompiler compiler = new JavaClassCompiler();
 			return compiler.compileOrbit(report);
 		}
 	}
@@ -76,7 +72,7 @@ public class Compiler {
 			InterpreterClassCompiler compiler = new InterpreterClassCompiler();
 			return compiler.compileColor(report);
 		} else {
-			JavaClassCompiler compiler = new JavaClassCompiler(packageName, className);
+			JavaClassCompiler compiler = new JavaClassCompiler();
 			return compiler.compileColor(report);
 		}
 	}

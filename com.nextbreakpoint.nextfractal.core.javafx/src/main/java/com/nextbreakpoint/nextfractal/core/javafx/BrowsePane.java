@@ -466,7 +466,7 @@ public class BrowsePane extends BorderPane {
 			}
 		} catch (Exception e) {
 			item.setErrors(Arrays.asList(new Error(Error.ErrorType.RUNTIME, 0, 0, 0, 0, e.getMessage())));
-			logger.log(Level.WARNING, "Can't create bitmap", e);
+			logger.log(Level.WARNING, "Can't create bitmap: " + e.getMessage());
 		}
 	}
 
@@ -567,7 +567,7 @@ public class BrowsePane extends BorderPane {
 					}
 				});
 				item.setFuture(task);
-			}  
+			}
 			if (bitmap != null && time - item.getLastChanged() > SCROLL_BOUNCE_DELAY && item.getRenderer() == null) {
 				initItem(item, bitmap);
 			}

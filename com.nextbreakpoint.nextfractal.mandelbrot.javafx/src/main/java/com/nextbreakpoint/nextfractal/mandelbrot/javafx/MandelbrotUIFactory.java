@@ -114,7 +114,7 @@ public class MandelbrotUIFactory implements UIFactory {
 	@Override
 	public BrowseBitmap createBitmap(Session session, RendererSize size) throws Exception {
 		String source = session.getScript();
-		Compiler compiler = new Compiler();
+		Compiler compiler = new Compiler(Compiler.class.getPackageName(), "Compile" + System.nanoTime());
 		CompilerReport report = compiler.compileReport(source);
 		if (report.getErrors().size() > 0) {
 			throw new RuntimeException("Failed to compile source");

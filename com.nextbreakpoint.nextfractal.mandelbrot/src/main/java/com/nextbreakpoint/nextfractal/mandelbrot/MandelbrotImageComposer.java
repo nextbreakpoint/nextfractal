@@ -85,7 +85,7 @@ public class MandelbrotImageComposer implements ImageComposer {
 			g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
 			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 			g2d.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-			Compiler compiler = new Compiler();
+			Compiler compiler = new Compiler(Compiler.class.getPackageName(), "Compile" + System.nanoTime());
 			CompilerReport report = compiler.compileReport(script);
 			if (report.getErrors().size() > 0) {
 				throw new RuntimeException("Failed to compile source");

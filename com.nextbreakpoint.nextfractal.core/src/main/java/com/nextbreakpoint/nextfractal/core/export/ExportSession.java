@@ -50,7 +50,7 @@ public final class ExportSession {
 	private final File file;
 	private final int tileSize;
 	private final float quality;
-	private final float frameRate;
+	private final int frameRate;
 	private final Session session;
 
 	public ExportSession(String sessionId, Session session, List<Clip> clips, File file, File tmpFile, RendererSize size, int tileSize, Encoder encoder) {
@@ -62,7 +62,7 @@ public final class ExportSession {
 		this.encoder = encoder;
 		this.tileSize = tileSize;
 		this.quality = 1;
-		this.frameRate = 1.0f / 25.0f;
+		this.frameRate = 25;
 		if (clips.size() > 0 && clips.get(0).getEvents().size() > 1) {
 			this.frames.addAll(new ClipProcessor(clips, frameRate).generateFrames());
 		} else {
@@ -91,7 +91,7 @@ public final class ExportSession {
 		return tmpFile;
 	}
 
-	public float getFrameRate() {
+	public int getFrameRate() {
 		return frameRate;
 	}
 

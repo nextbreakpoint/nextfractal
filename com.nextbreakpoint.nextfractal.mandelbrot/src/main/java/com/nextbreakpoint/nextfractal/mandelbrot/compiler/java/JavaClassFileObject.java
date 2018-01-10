@@ -33,7 +33,7 @@ import java.io.OutputStream;
 import java.net.URI;
 
 public class JavaClassFileObject extends SimpleJavaFileObject {
-	private ByteArrayOutputStream baos = new ByteArrayOutputStream();
+	private final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
     public JavaClassFileObject(String name) {
         super(URI.create("string:///" + name.replace('.','/') + Kind.SOURCE.extension), Kind.CLASS);
