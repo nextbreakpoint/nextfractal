@@ -43,7 +43,7 @@ You can build NextFractal from the source code. Checkout or download the source 
 
 Get the code from https://github.com/nextbreakpoint/nextfractal:
 
-    git checkout https://github.com/nextbreakpoint/nextfractal.git
+    git clone https://github.com/nextbreakpoint/nextfractal.git
 
 Use default target to build the distribution for all platforms:
 
