@@ -29,7 +29,7 @@
 	<key>LSMinimumSystemVersionByArchitecture</key>
 	<dict>
 		<key>x86_64</key>
-		<string>10.10</string>
+		<string>10.13</string>
 	</dict>
 	<key>NSHumanReadableCopyright</key>
 	<string>Copyright © 2015-2017 Andrea Medeghini</string>

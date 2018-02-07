@@ -1,8 +1,6 @@
 FROM nextfractal-base:latest
 
-RUN apt-get update && apt-get -y install make mingw-w64
-
-COPY win32 win32
+RUN apt-get update -y && apt-get install -y make mingw-w64
 
 COPY build-mingw64.sh build-mingw64.sh
 

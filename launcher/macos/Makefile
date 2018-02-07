@@ -1,12 +1,12 @@
-JAVA_VERSION?=8
+JAVA_VERSION?=1.8
 
-JHOME:=$(shell /usr/libexec/java_home -v 1.$(JAVA_VERSION))
+JHOME:=$(shell /usr/libexec/java_home -v $(JAVA_VERSION))
 SYSTEM:=darwin
 
 CC = gcc
 LD = ld
 
-CPPFLAGS += -DJAVA_VERSION=$(JAVA_VERSION) -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk -arch x86_64
+CPPFLAGS += -DJAVA_VERSION=$(JAVA_VERSION) -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk -arch x86_64
 CXXFLAGS += -g
 VM_DIR=$(JHOME)/jre/lib
 LDFLAGS +=

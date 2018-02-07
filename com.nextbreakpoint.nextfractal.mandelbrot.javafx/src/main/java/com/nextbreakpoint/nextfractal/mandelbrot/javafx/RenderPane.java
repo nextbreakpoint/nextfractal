@@ -719,7 +719,7 @@ public class RenderPane extends BorderPane {
     }
 
 	private CompilerReport generateReport(String text) throws Exception {
-		return new Compiler(Compiler.class.getPackageName(), "Compile" + System.nanoTime()).compileReport(text);
+		return new Compiler(Compiler.class.getPackage().getName(), "Compile" + System.nanoTime()).compileReport(text);
 	}
 
 	private void loadData(MandelbrotSession session, Boolean continuous, boolean timeAnimation) {
@@ -1036,7 +1036,7 @@ public class RenderPane extends BorderPane {
 			colorBuilder = null;
 			throw new CompilerSourceException("Failed to compile source", report.getErrors());
 		}
-		Compiler compiler = new Compiler(Compiler.class.getPackageName(), "Compile" + System.nanoTime());
+		Compiler compiler = new Compiler(Compiler.class.getPackage().getName(), "Compile" + System.nanoTime());
 		boolean[] changed = new boolean[] { false, false };
 		CompilerBuilder<Orbit> newOrbitBuilder = compiler.compileOrbit(report);
 		if (newOrbitBuilder.getErrors().size() > 0) {

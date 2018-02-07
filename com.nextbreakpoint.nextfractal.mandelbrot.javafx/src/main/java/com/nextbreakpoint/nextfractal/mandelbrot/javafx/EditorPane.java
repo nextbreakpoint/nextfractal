@@ -168,7 +168,7 @@ public class EditorPane extends BorderPane {
     }
 
     private CompilerReport generateReport(String text) throws Exception {
-        return new Compiler(Compiler.class.getPackageName(), "Compile" + System.nanoTime()).compileReport(text);
+        return new Compiler(Compiler.class.getPackage().getName(), "Compile" + System.nanoTime()).compileReport(text);
     }
 
     private StyleSpans<Collection<String>> computeHighlighting(String text) {
@@ -236,11 +236,11 @@ public class EditorPane extends BorderPane {
     }
 
     private void compileOrbit(CompilerReport report) throws ClassNotFoundException, IOException, InstantiationException, IllegalAccessException, CompilerSourceException {
-        Optional.of(new Compiler(EditorPane.class.getPackageName(), "Compile" + System.nanoTime()).compileOrbit(report)).filter(builder -> builder.getErrors().size() == 0).ifPresent(builder -> Try.of(() -> builder.build()).execute());
+        Optional.of(new Compiler(EditorPane.class.getPackage().getName(), "Compile" + System.nanoTime()).compileOrbit(report)).filter(builder -> builder.getErrors().size() == 0).ifPresent(builder -> Try.of(() -> builder.build()).execute());
     }
 
     private void compileColor(CompilerReport report) throws ClassNotFoundException, IOException, InstantiationException, IllegalAccessException, CompilerSourceException {
-        Optional.of(new Compiler(EditorPane.class.getPackageName(), "Compile" + System.nanoTime()).compileColor(report)).filter(builder -> builder.getErrors().size() == 0).ifPresent(builder -> Try.of(() -> builder.build()).execute());
+        Optional.of(new Compiler(EditorPane.class.getPackage().getName(), "Compile" + System.nanoTime()).compileColor(report)).filter(builder -> builder.getErrors().size() == 0).ifPresent(builder -> Try.of(() -> builder.build()).execute());
     }
 
     private void notifySourceIfRequired(EventBus eventBus, CompilerReport result) {

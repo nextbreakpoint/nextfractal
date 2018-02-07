@@ -228,7 +228,7 @@
     			<include name="**/*.java"/>
 			</fileset>
 		</replaceregexp>
-		<replaceregexp match="com.nextbreakpoint.nextfractal.runtime-[0-9]\.[0-9]\.[0-9]" replace="com.nextbreakpoint.nextfractal.runtime-${nextfractal.version}" flags="g" byline="true">
+		<replaceregexp match="com.nextbreakpoint.nextfractal.runtime.javafx-[0-9]\.[0-9]\.[0-9]" replace="com.nextbreakpoint.nextfractal.runtime.javafx-${nextfractal.version}" flags="g" byline="true">
 		    <fileset dir="${basedir}/..">
 		    	<include name="**/*.bat"/>
 		    	<include name="**/*.sh"/>
