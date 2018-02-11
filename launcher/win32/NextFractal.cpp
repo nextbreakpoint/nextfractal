@@ -76,19 +76,23 @@ struct start_args {
 };
 
 struct launch_args {
-  struct start_args args_jdk8;
-  struct start_args args_jdk9;
+  struct start_args *args_jdk8;
+  struct start_args *args_jdk9;
   char *launch_class;
   char *java_home;
 
   launch_args() {
-    launch_class = 0;
-    java_home = 0;
+    launch_class = NULL;
+    java_home = NULL;
+    args_jdk8 = NULL;
+    args_jdk9 = NULL;
   }
 
-  launch_args(const char *javahome, const char *classname) {
+  launch_args(const char *javahome, const char *classname, const char ** vm_arglist_jdk8, const char ** vm_arglist_jdk9) {
       launch_class = strdup(classname);
       java_home = javahome != NULL ? strdup(javahome) : NULL;
+      args_jdk8 = new start_args(vm_arglist_jdk8);
+      args_jdk9 = new start_args(vm_arglist_jdk9);
   }
 
   ~launch_args() {
@@ -96,19 +100,10 @@ struct launch_args {
           free(launch_class);
       if (java_home)
           free(java_home);
-  }
-
-  launch_args(const launch_args &rhs) {
-      launch_class = strdup(rhs.launch_class);
-      java_home = rhs.java_home != NULL ? strdup(rhs.java_home) : NULL;
-  }
-
-  launch_args &operator=(const launch_args &rhs) {
-      if (launch_class) free(launch_class);
-      launch_class = strdup(rhs.launch_class);
-      if (java_home) free(java_home);
-      java_home = rhs.java_home != NULL ? strdup(rhs.java_home) : NULL;
-      return *this;
+      if (args_jdk8)
+          free(args_jdk8);
+      if (args_jdk9)
+          free(args_jdk9);
   }
 };
 
@@ -163,6 +158,7 @@ void run_java(struct launch_args *run_args) {
 
     if (run_args->java_home != NULL) {
       path.append(run_args->java_home);
+      path.erase(remove(path.begin(), path.end(), '\"'), path.end());
       std::cout << "Java Home \"" << path << "\"" << std::endl;
     } else {
       DWORD retval;
@@ -196,23 +192,23 @@ void run_java(struct launch_args *run_args) {
     struct start_args *args = NULL;
     std::string libPath = "";
 
-    std::regex path_regex("(jdk1.[0-9]+\\.[0-9]+_[0-9]+)|(jdk-[0-9]+\\.[0-9]+\\.[0-9]+)|(jdk-[0-9])"", std::regex_constants::ECMAScript | std::regex_constants::icase);
+    std::regex path_regex("(jdk1.[0-9]+\\.[0-9]+_[0-9]+)|(jdk-[0-9]+(\\.[0-9]+\\.[0-9]+)?)", std::regex_constants::ECMAScript | std::regex_constants::icase);
     if (std::regex_search(path, path_regex)) {
         std::sregex_iterator version_begin = std::sregex_iterator(path.begin(), path.end(), path_regex);
         std::sregex_iterator version_end = std::sregex_iterator();
         for (std::sregex_iterator i = version_begin; i != version_end; ++i) {
             std::smatch match = *i;
             std::string match_str = match.str();
-            if (match_str.find("jdk1.8") == 0) {
-              std::cout << "Found Java SDK 1.8\n";
-              args = &(run_args->args_jdk8);
-              libPath = path + "/jre/lib/server/libjvm.dylib";
+            if (match_str.find("jdk-") == 0) {
+              std::cout << "Found Java SDK 9 or later\n";
+              args = run_args->args_jdk9;
+              libPath = path + "\\bin\\server\\jvm.dll";
               break;
             }
-            if (match_str.find("jdk-9") == 0) {
-              std::cout << "Found Java SDK 9\n";
-              args = &(run_args->args_jdk9);
-              libPath = path + "/lib/server/libjvm.dylib";
+            if (match_str.find("jdk1.8") == 0) {
+              std::cout << "Found Java SDK 1.8\n";
+              args = run_args->args_jdk8;
+              libPath = path + "\\jre\\bin\\server\\jvm.dll";
               break;
             }
         }
@@ -226,7 +222,8 @@ void run_java(struct launch_args *run_args) {
 
     HMODULE jniModule = LoadLibrary(libPath.c_str());
     if (NULL == jniModule) {
-        throw std::runtime_error("Cannot open library jvm.dll");
+        std::string message = std::string("Cannot open library ").append(libPath);
+        throw std::runtime_error(message);
     }
 
     JNICreateJavaVM createJavaVM = (JNICreateJavaVM)GetProcAddress(jniModule, "JNI_CreateJavaVM");
@@ -255,7 +252,7 @@ void * start_java(void *start_args) {
     try {
         run_java(args);
     } catch (const std::runtime_error& e) {
-      ShowAlert("Some error occurred while starting Java VM. Please install Java JDK version 8 or 9. If the problem persist, try setting an environment variable NEXTFRACTAL_JAVA_HOME to path of Java SDK.", e);
+      ShowAlert("Some error occurred while launching Java VM. Please install Java JDK version 8 or later. If the problem persists, try setting the environment variable NEXTFRACTAL_JAVA_HOME with path of Java SDK.", e);
 
       exit(-1);
     }
@@ -341,11 +338,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdL
             memMaxArg.c_str(),
             0
         };
-        struct launch_args args(varJavaHome, "com/nextbreakpoint/nextfractal/runtime/javafx/NextFractalApp");
-        struct start_args args_jdk8(vm_arglist_jdk8);
-        struct start_args args_jdk9(vm_arglist_jdk9);
-        args.args_jdk8 = args_jdk8;
-        args.args_jdk9 = args_jdk9;
+        struct launch_args args(varJavaHome, "com/nextbreakpoint/nextfractal/runtime/javafx/NextFractalApp", vm_arglist_jdk8, vm_arglist_jdk9);
         start_java((void *)&args);
     } catch (const std::runtime_error& e) {
         ShowAlert("Some error occurred while launching the application", e);

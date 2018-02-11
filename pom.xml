@@ -53,6 +53,9 @@
 		<maven.target.release>1.8</maven.target.release>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
+		<nexus.host>https://oss.sonatype.or</nexus.host>
+		<nexus.url>https://oss.sonatype.or/content/repositories/snapshots</nexus.url>
+		<bintray.url>https://api.bintray.co/maven/${bintrayAccount}/maven/${project.artifactId}/;publish=0</bintray.url>
 	</properties>
 	<build>
 		<plugins>
