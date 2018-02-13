@@ -35,7 +35,7 @@ See download page http://www.oracle.com/technetwork/java/javase/downloads
 
 ## DOCUMENTATION
 
-Please see documentation of grammars and tutorials on http://nextbreakpoint.com/nextfractal.
+Please see documentation of grammars and tutorials on https://nextbreakpoint.com/nextfractal.html.
 
 ## BUILD INSTRUCTIONS
 
