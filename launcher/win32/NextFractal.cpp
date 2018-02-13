@@ -326,11 +326,16 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdL
             0
         };
         const char *vm_arglist_jdk9[] = {
-            "-Djdk.launcher.addmodules.0:java.xml.bind",
-            "-Djdk.launcher.addopens.0:javafx.graphics/javafx.scene.text=ALL-UNNAMED",
-            "-Djdk.launcher.addopens.1:javafx.graphics/com.sun.javafx.text=ALL-UNNAMED",
-            "-Djdk.launcher.addopens.2:javafx.graphics/com.sun.javafx.geom=ALL-UNNAMED",
-            "-Djdk.launcher.addopens.3:javafx.graphics/com.sun.javafx.scene.text=ALL-UNNAMED",
+//            "--add-modules",
+//            "java.xml.bind",
+//            "--add-addopens",
+//            "javafx.graphics/javafx.scene.text=ALL-UNNAMED",
+//            "--add-addopens",
+//            "javafx.graphics/com.sun.javafx.text=ALL-UNNAMED",
+//            "--add-addopens",
+//            "javafx.graphics/com.sun.javafx.geom=ALL-UNNAMED",
+//            "--add-addopens",
+//            "javafx.graphics/com.sun.javafx.scene.text=ALL-UNNAMED",
             "-Djava.util.logging.config.class=com.nextbreakpoint.nextfractal.runtime.LogConfig",
             classpathArg.c_str(),
             libPathArg.c_str(),
