@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.0.2
+ * NextFractal 2.0.3
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2017 Andrea Medeghini
+ * Copyright 2015-2018 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -28,8 +28,8 @@ import com.nextbreakpoint.Try;
 import com.nextbreakpoint.nextfractal.core.Error;
 import com.nextbreakpoint.nextfractal.core.javafx.EventBus;
 import com.nextbreakpoint.nextfractal.core.javafx.BooleanObservableValue;
-import com.nextbreakpoint.nextfractal.core.utils.Block;
-import com.nextbreakpoint.nextfractal.core.utils.DefaultThreadFactory;
+import com.nextbreakpoint.nextfractal.core.Block;
+import com.nextbreakpoint.nextfractal.core.DefaultThreadFactory;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotMetadata;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotSession;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.Compiler;
@@ -168,7 +168,7 @@ public class EditorPane extends BorderPane {
     }
 
     private CompilerReport generateReport(String text) throws Exception {
-        return new Compiler().compileReport(text);
+        return new Compiler(Compiler.class.getPackage().getName(), "Compile" + System.nanoTime()).compileReport(text);
     }
 
     private StyleSpans<Collection<String>> computeHighlighting(String text) {
@@ -236,11 +236,11 @@ public class EditorPane extends BorderPane {
     }
 
     private void compileOrbit(CompilerReport report) throws ClassNotFoundException, IOException, InstantiationException, IllegalAccessException, CompilerSourceException {
-        Optional.of(new Compiler().compileOrbit(report)).filter(builder -> builder.getErrors().size() == 0).ifPresent(builder -> Try.of(() -> builder.build()).execute());
+        Optional.of(new Compiler(EditorPane.class.getPackage().getName(), "Compile" + System.nanoTime()).compileOrbit(report)).filter(builder -> builder.getErrors().size() == 0).ifPresent(builder -> Try.of(() -> builder.build()).execute());
     }
 
     private void compileColor(CompilerReport report) throws ClassNotFoundException, IOException, InstantiationException, IllegalAccessException, CompilerSourceException {
-        Optional.of(new Compiler().compileColor(report)).filter(builder -> builder.getErrors().size() == 0).ifPresent(builder -> Try.of(() -> builder.build()).execute());
+        Optional.of(new Compiler(EditorPane.class.getPackage().getName(), "Compile" + System.nanoTime()).compileColor(report)).filter(builder -> builder.getErrors().size() == 0).ifPresent(builder -> Try.of(() -> builder.build()).execute());
     }
 
     private void notifySourceIfRequired(EventBus eventBus, CompilerReport result) {
@@ -264,7 +264,7 @@ public class EditorPane extends BorderPane {
                 if (logger.isLoggable(Level.FINE)) {
                     logger.fine(error.toString());
                 }
-                if (error.getType() == Error.ErrorType.SCRIPT_COMPILER) {
+                if (error.getType() != Error.ErrorType.RUNTIME) {
                     int lineEnd = (int)error.getIndex() + 1;
                     int lineBegin = (int)error.getIndex();
                     StyleSpansBuilder<Collection<String>> builder = new StyleSpansBuilder<>();

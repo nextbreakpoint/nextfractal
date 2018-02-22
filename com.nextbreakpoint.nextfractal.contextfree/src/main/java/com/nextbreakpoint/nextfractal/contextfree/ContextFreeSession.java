@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.0.2
+ * NextFractal 2.0.3
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2017 Andrea Medeghini
+ * Copyright 2015-2018 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -26,6 +26,7 @@ package com.nextbreakpoint.nextfractal.contextfree;
 
 import com.nextbreakpoint.nextfractal.core.Metadata;
 import com.nextbreakpoint.nextfractal.core.Session;
+import com.nextbreakpoint.nextfractal.core.SessionUtils;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -67,7 +68,7 @@ public class ContextFreeSession extends Session {
 
 	private static String getInitialSource() {
 		try {
-			return readResource("/contextfree.txt");
+			return SessionUtils.readResource("/contextfree.txt");
 		} catch (IOException e) {
 		}
 		return "";

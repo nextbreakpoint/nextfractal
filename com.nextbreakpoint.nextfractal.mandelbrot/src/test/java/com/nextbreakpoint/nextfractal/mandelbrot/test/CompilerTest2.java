@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.0.2
+ * NextFractal 2.0.3
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2017 Andrea Medeghini
+ * Copyright 2015-2018 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -33,7 +33,7 @@ public class CompilerTest2 extends BaseTest {
 	@Test
 	public void Compiler1() {
 		try {
-			Compiler compiler = new Compiler();
+			Compiler compiler = new Compiler("test", "Compile");
 			CompilerReport report = compiler.compileReport(getSource("/source2.m"));
 			printErrors(report.getErrors());
 			Assert.assertEquals(1, report.getErrors().size());

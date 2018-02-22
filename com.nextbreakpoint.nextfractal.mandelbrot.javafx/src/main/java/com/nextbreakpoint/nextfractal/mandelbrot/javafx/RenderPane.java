@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.0.2
+ * NextFractal 2.0.3
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2017 Andrea Medeghini
+ * Copyright 2015-2018 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -30,17 +30,17 @@ import com.nextbreakpoint.nextfractal.core.javafx.EventBus;
 import com.nextbreakpoint.nextfractal.core.Session;
 import com.nextbreakpoint.nextfractal.core.javafx.BooleanObservableValue;
 import com.nextbreakpoint.nextfractal.core.javafx.StringObservableValue;
-import com.nextbreakpoint.nextfractal.core.renderer.RendererFactory;
-import com.nextbreakpoint.nextfractal.core.renderer.RendererGraphicsContext;
-import com.nextbreakpoint.nextfractal.core.renderer.RendererPoint;
-import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
-import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
+import com.nextbreakpoint.nextfractal.core.render.RendererFactory;
+import com.nextbreakpoint.nextfractal.core.render.RendererGraphicsContext;
+import com.nextbreakpoint.nextfractal.core.render.RendererPoint;
+import com.nextbreakpoint.nextfractal.core.render.RendererSize;
+import com.nextbreakpoint.nextfractal.core.render.RendererTile;
 import com.nextbreakpoint.nextfractal.core.javafx.render.JavaFXRendererFactory;
-import com.nextbreakpoint.nextfractal.core.utils.DefaultThreadFactory;
-import com.nextbreakpoint.nextfractal.core.utils.Double2D;
-import com.nextbreakpoint.nextfractal.core.utils.Double4D;
-import com.nextbreakpoint.nextfractal.core.utils.Integer4D;
-import com.nextbreakpoint.nextfractal.core.utils.Time;
+import com.nextbreakpoint.nextfractal.core.DefaultThreadFactory;
+import com.nextbreakpoint.nextfractal.core.Double2D;
+import com.nextbreakpoint.nextfractal.core.Double4D;
+import com.nextbreakpoint.nextfractal.core.Integer4D;
+import com.nextbreakpoint.nextfractal.core.Time;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotMetadata;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotOptions;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotSession;
@@ -92,7 +92,7 @@ import static com.nextbreakpoint.nextfractal.core.javafx.Icons.computeOptimalLar
 import static com.nextbreakpoint.nextfractal.core.javafx.Icons.createIconImage;
 
 public class RenderPane extends BorderPane {
-	private static final int FRAME_LENGTH_IN_MILLIS = 1000 / 50;
+	private static final int FRAME_LENGTH_IN_MILLIS = 1000 / 25;
 	private static final Logger logger = Logger.getLogger(RenderPane.class.getName());
 	private final JavaFXRendererFactory renderFactory;
 	private final StringObservableValue errorProperty;
@@ -719,7 +719,7 @@ public class RenderPane extends BorderPane {
     }
 
 	private CompilerReport generateReport(String text) throws Exception {
-		return new Compiler().compileReport(text);
+		return new Compiler(Compiler.class.getPackage().getName(), "Compile" + System.nanoTime()).compileReport(text);
 	}
 
 	private void loadData(MandelbrotSession session, Boolean continuous, boolean timeAnimation) {
@@ -1036,7 +1036,7 @@ public class RenderPane extends BorderPane {
 			colorBuilder = null;
 			throw new CompilerSourceException("Failed to compile source", report.getErrors());
 		}
-		Compiler compiler = new Compiler();
+		Compiler compiler = new Compiler(Compiler.class.getPackage().getName(), "Compile" + System.nanoTime());
 		boolean[] changed = new boolean[] { false, false };
 		CompilerBuilder<Orbit> newOrbitBuilder = compiler.compileOrbit(report);
 		if (newOrbitBuilder.getErrors().size() > 0) {

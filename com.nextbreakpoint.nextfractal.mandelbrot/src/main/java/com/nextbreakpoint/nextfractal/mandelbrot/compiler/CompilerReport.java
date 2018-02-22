@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.0.2
+ * NextFractal 2.0.3
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2017 Andrea Medeghini
+ * Copyright 2015-2018 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -36,14 +36,18 @@ public class CompilerReport {
 	private String colorSource;
 	private List<Error> errors;
 	private String source;
+	private String packageName;
+	private String className;
 
-	public CompilerReport(ASTFractal ast, Type type, String source, String orbitSource, String colorSource, List<Error> errors) {
+	public CompilerReport(ASTFractal ast, Type type, String source, String orbitSource, String colorSource, List<Error> errors, String packageName, String className) {
 		this.ast = ast;
 		this.type = type;
 		this.source = source;
 		this.orbitSource = orbitSource;
 		this.colorSource = colorSource;
 		this.errors = errors;
+		this.packageName = packageName;
+		this.className = className;
 	}
 
 	public ASTFractal getAST() {
@@ -68,6 +72,14 @@ public class CompilerReport {
 
 	public String getSource() {
 		return source;
+	}
+
+	public String getPackageName() {
+		return packageName;
+	}
+
+	public String getClassName() {
+		return className;
 	}
 
 	public enum Type {

@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.0.2
+ * NextFractal 2.0.3
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2017 Andrea Medeghini
+ * Copyright 2015-2018 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -24,17 +24,19 @@
  */
 package com.nextbreakpoint.nextfractal.core;
 
-public class Frame {
-    private String pluginId;
-    private String script;
-    private Metadata metadata;
-    private boolean keyFrame;
-    private boolean timeAnimation;
+import java.util.Objects;
 
-    public Frame(String pluginId, String script, Metadata metadata, boolean keyFrame, boolean timeAnimation) {
-        this.pluginId = pluginId;
-        this.script = script;
-        this.metadata = metadata;
+public class Frame {
+    private final String pluginId;
+    private final String script;
+    private final Metadata metadata;
+    private final boolean keyFrame;
+    private final boolean timeAnimation;
+
+    public Frame(String pluginId, Metadata metadata, String script, boolean keyFrame, boolean timeAnimation) {
+        this.pluginId = Objects.requireNonNull(pluginId);
+        this.metadata = Objects.requireNonNull(metadata);
+        this.script = Objects.requireNonNull(script);
         this.keyFrame = keyFrame;
         this.timeAnimation = timeAnimation;
     }

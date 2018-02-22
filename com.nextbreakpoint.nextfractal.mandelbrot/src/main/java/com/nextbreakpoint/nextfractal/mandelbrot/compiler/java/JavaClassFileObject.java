@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.0.2
+ * NextFractal 2.0.3
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2017 Andrea Medeghini
+ * Copyright 2015-2018 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -33,7 +33,7 @@ import java.io.OutputStream;
 import java.net.URI;
 
 public class JavaClassFileObject extends SimpleJavaFileObject {
-	private ByteArrayOutputStream baos = new ByteArrayOutputStream();
+	private final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
     public JavaClassFileObject(String name) {
         super(URI.create("string:///" + name.replace('.','/') + Kind.SOURCE.extension), Kind.CLASS);

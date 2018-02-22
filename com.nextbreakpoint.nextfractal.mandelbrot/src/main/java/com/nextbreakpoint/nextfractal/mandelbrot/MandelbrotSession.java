@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.0.2
+ * NextFractal 2.0.3
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2017 Andrea Medeghini
+ * Copyright 2015-2018 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -26,9 +26,10 @@ package com.nextbreakpoint.nextfractal.mandelbrot;
 
 import com.nextbreakpoint.nextfractal.core.Metadata;
 import com.nextbreakpoint.nextfractal.core.Session;
-import com.nextbreakpoint.nextfractal.core.utils.Double2D;
-import com.nextbreakpoint.nextfractal.core.utils.Double4D;
-import com.nextbreakpoint.nextfractal.core.utils.Time;
+import com.nextbreakpoint.nextfractal.core.SessionUtils;
+import com.nextbreakpoint.nextfractal.core.Double2D;
+import com.nextbreakpoint.nextfractal.core.Double4D;
+import com.nextbreakpoint.nextfractal.core.Time;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -70,8 +71,8 @@ public class MandelbrotSession extends Session {
 
 	private static String getInitialScript() {
 		try {
-			return readResource("/mandelbrot.txt");
-		} catch (IOException e) {
+            return SessionUtils.readResource("/mandelbrot.txt");
+        } catch (IOException e) {
 		}
 		return "";
 	}

@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.0.2
+ * NextFractal 2.0.3
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2017 Andrea Medeghini
+ * Copyright 2015-2018 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -25,8 +25,8 @@
 package com.nextbreakpoint.nextfractal.core.export;
 
 import com.nextbreakpoint.nextfractal.core.Metadata;
-import com.nextbreakpoint.nextfractal.core.encoder.Encoder;
-import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
+import com.nextbreakpoint.nextfractal.core.encode.Encoder;
+import com.nextbreakpoint.nextfractal.core.render.RendererSize;
 
 import java.io.File;
 import java.util.Collection;
@@ -108,7 +108,7 @@ public final class ExportHandle {
 		return session.getFrameCount();
 	}
 
-	public float getFrameRate() {
+	public int getFrameRate() {
 		return session.getFrameRate();
 	}
 

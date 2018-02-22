@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.0.2
+ * NextFractal 2.0.3
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2017 Andrea Medeghini
+ * Copyright 2015-2018 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -38,7 +38,7 @@ import com.nextbreakpoint.nextfractal.core.javafx.GridItemRenderer;
 import com.nextbreakpoint.nextfractal.core.javafx.PlaybackDelegate;
 import com.nextbreakpoint.nextfractal.core.javafx.PlaybackPane;
 import com.nextbreakpoint.nextfractal.core.javafx.RecordingPane;
-import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
+import com.nextbreakpoint.nextfractal.core.render.RendererSize;
 import javafx.animation.FadeTransition;
 import javafx.animation.Interpolator;
 import javafx.animation.TranslateTransition;
@@ -253,9 +253,9 @@ public class MainCentralPane extends BorderPane {
             double freq = 2;
             double decay = 3;
             double dur = 0.4;
-            if(t < dur){
+            if (t < dur) {
                 return t;
-            }else{
+            } else {
                 double amp = 1/dur;
                 double w = freq*Math.PI*2;
                 return 1 + amp*(Math.sin(t*w)/Math.exp(decay*t)/w);

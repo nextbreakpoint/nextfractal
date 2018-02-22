@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.0.2
+ * NextFractal 2.0.3
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2017 Andrea Medeghini
+ * Copyright 2015-2018 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -30,8 +30,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Stream;
 
+//TODO make this class immutable
 public class Clip {
-    private List<ClipEvent> events = new LinkedList<>();
+    private final List<ClipEvent> events = new LinkedList<>();
 
     public Clip() {
     }

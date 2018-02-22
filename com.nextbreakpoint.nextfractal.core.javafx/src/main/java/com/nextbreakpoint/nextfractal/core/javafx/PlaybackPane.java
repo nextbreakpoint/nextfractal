@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.0.2
+ * NextFractal 2.0.3
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2017 Andrea Medeghini
+ * Copyright 2015-2018 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -27,7 +27,7 @@ package com.nextbreakpoint.nextfractal.core.javafx;
 import com.nextbreakpoint.nextfractal.core.Clip;
 import com.nextbreakpoint.nextfractal.core.ClipProcessor;
 import com.nextbreakpoint.nextfractal.core.Frame;
-import com.nextbreakpoint.nextfractal.core.utils.DefaultThreadFactory;
+import com.nextbreakpoint.nextfractal.core.DefaultThreadFactory;
 import javafx.application.Platform;
 import javafx.scene.layout.Pane;
 
@@ -105,7 +105,7 @@ public class PlaybackPane extends Pane {
     public void setClips(List<Clip> clips) {
         if (future == null) {
             frames.clear();
-            frames.addAll(new ClipProcessor(clips, 1f / FRAMES_PER_SECOND).generateFrames());
+            frames.addAll(new ClipProcessor(clips, FRAMES_PER_SECOND).generateFrames());
         }
     }
 

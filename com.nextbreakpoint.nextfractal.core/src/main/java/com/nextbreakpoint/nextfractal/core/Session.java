@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.0.2
+ * NextFractal 2.0.3
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2017 Andrea Medeghini
+ * Copyright 2015-2018 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -24,10 +24,6 @@
  */
 package com.nextbreakpoint.nextfractal.core;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-
 public abstract class Session {
 	public abstract String getPluginId();
 
@@ -36,18 +32,4 @@ public abstract class Session {
 	public abstract String getScript();
 
 	public abstract Metadata getMetadata();
-
-	protected static String readResource(String name) throws IOException {
-		InputStream is = Session.class.getResourceAsStream(name);
-		if (is != null) {
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			byte[] buffer = new byte[4096];
-			int length = 0;
-			while ((length = is.read(buffer)) > 0) {
-				baos.write(buffer, 0, length);
-			}
-			return baos.toString();
-		}
-		return "";
-	}
 }

@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.0.2
+ * NextFractal 2.0.3
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2017 Andrea Medeghini
+ * Copyright 2015-2018 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -28,11 +28,11 @@ import com.nextbreakpoint.Try;
 import com.nextbreakpoint.nextfractal.core.Error;
 import com.nextbreakpoint.nextfractal.core.FileManager;
 import com.nextbreakpoint.nextfractal.core.Plugins;
-import com.nextbreakpoint.nextfractal.core.renderer.RendererPoint;
-import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
-import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
-import com.nextbreakpoint.nextfractal.core.utils.Block;
-import com.nextbreakpoint.nextfractal.core.utils.DefaultThreadFactory;
+import com.nextbreakpoint.nextfractal.core.render.RendererPoint;
+import com.nextbreakpoint.nextfractal.core.render.RendererSize;
+import com.nextbreakpoint.nextfractal.core.render.RendererTile;
+import com.nextbreakpoint.nextfractal.core.Block;
+import com.nextbreakpoint.nextfractal.core.DefaultThreadFactory;
 import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
@@ -466,7 +466,7 @@ public class BrowsePane extends BorderPane {
 			}
 		} catch (Exception e) {
 			item.setErrors(Arrays.asList(new Error(Error.ErrorType.RUNTIME, 0, 0, 0, 0, e.getMessage())));
-			logger.log(Level.WARNING, "Can't create bitmap", e);
+			logger.log(Level.WARNING, "Can't create bitmap: " + e.getMessage());
 		}
 	}
 
@@ -567,7 +567,7 @@ public class BrowsePane extends BorderPane {
 					}
 				});
 				item.setFuture(task);
-			}  
+			}
 			if (bitmap != null && time - item.getLastChanged() > SCROLL_BOUNCE_DELAY && item.getRenderer() == null) {
 				initItem(item, bitmap);
 			}

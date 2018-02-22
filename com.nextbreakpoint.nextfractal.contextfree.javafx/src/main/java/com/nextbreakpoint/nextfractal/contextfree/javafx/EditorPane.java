@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.0.2
+ * NextFractal 2.0.3
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2017 Andrea Medeghini
+ * Copyright 2015-2018 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -33,8 +33,8 @@ import com.nextbreakpoint.nextfractal.contextfree.compiler.CompilerSourceExcepti
 import com.nextbreakpoint.nextfractal.core.Error;
 import com.nextbreakpoint.nextfractal.core.javafx.EventBus;
 import com.nextbreakpoint.nextfractal.core.javafx.BooleanObservableValue;
-import com.nextbreakpoint.nextfractal.core.utils.Block;
-import com.nextbreakpoint.nextfractal.core.utils.DefaultThreadFactory;
+import com.nextbreakpoint.nextfractal.core.Block;
+import com.nextbreakpoint.nextfractal.core.DefaultThreadFactory;
 import javafx.concurrent.Task;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.TransferMode;
@@ -253,7 +253,7 @@ public class EditorPane extends BorderPane {
                 if (logger.isLoggable(Level.FINE)) {
                     logger.fine(error.toString());
                 }
-                if (error.getType() == Error.ErrorType.SCRIPT_COMPILER) {
+                if (error.getType() != Error.ErrorType.RUNTIME) {
                     int lineEnd = (int)error.getIndex() + 1;
                     int lineBegin = (int)error.getIndex();
                     StyleSpansBuilder<Collection<String>> builder = new StyleSpansBuilder<>();

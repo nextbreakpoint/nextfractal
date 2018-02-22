@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.0.2
+ * NextFractal 2.0.3
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2017 Andrea Medeghini
+ * Copyright 2015-2018 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -24,15 +24,15 @@
  */
 package com.nextbreakpoint.nextfractal.core.javafx.render;
 
-import com.nextbreakpoint.nextfractal.core.renderer.RendererGraphicsContext;
-import com.nextbreakpoint.nextfractal.core.renderer.RendererImage;
+import com.nextbreakpoint.nextfractal.core.render.RendererGraphicsContext;
+import com.nextbreakpoint.nextfractal.core.render.RendererImage;
 import javafx.scene.image.WritableImage;
 import javafx.scene.image.WritablePixelFormat;
 
 import java.nio.IntBuffer;
 
 public class JavaFXRendererImage implements RendererImage {
-	private WritableImage image;
+	private final WritableImage image;
 	
 	public JavaFXRendererImage(WritableImage image) {
 		this.image = image;

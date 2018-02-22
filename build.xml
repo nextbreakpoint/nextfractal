@@ -2,7 +2,7 @@
 <project name="NextFractal" default="build">
 	<property environment="env" />
 	<property name="maven.home" value="${env.M2_HOME}" />
-	<property name="nextfractal.version" value="2.0.2" />
+	<property name="nextfractal.version" value="2.0.3" />
 	<property name="nextfractal.folder" value="NextFractal" />
 	<property name="mainmodule" value="com.nextbreakpoint.nextfractal.main" />
 	<macrodef name="maven">
@@ -39,8 +39,9 @@
 		<attribute name="resultproperty" default="build.result" />
 		<element name="args" implicit="true" optional="true" />
 		<sequential>
-			<maven basedir="@{basedir}" options="-P @{os}_@{arch}" goal="install" resultproperty="maven.build.result" />
-			<delete dir="@{basedir}/dist/@{os}_@{arch}" />
+			<maven basedir="@{basedir}" options="-P @{os}_@{arch}" goal="install" resultproperty="@{resultproperty}" />
+			<!-- <fail if="@{resultproperty}" message="Cannot build"/> -->
+			<delete dir="@{basedir}/dist/@{os}_@{arch}" failonerror="false"/>
 			<mkdir dir="@{basedir}/dist/@{os}_@{arch}/${nextfractal.folder}/@{resourcesdir}"/>
 			<copy failonerror="true" todir="@{basedir}/dist/@{os}_@{arch}/${nextfractal.folder}" overwrite="true">
 				<fileset dir="@{basedir}/resources/exe/@{os}">
@@ -83,21 +84,21 @@
 		<attribute name="resultproperty" default="makedmg.result" />
 		<element name="args" implicit="true" optional="true" />
 		<sequential>
-			<exec executable="find">
+			<exec executable="find" resultproperty="@{resultproperty}">
 				<arg value="@{basedir}/dist/@{os}_@{arch}" />
 				<arg value="-name" />
 				<arg value=".DS_Store" />
 				<arg value='-delete' />
 			</exec>
-			<exec executable="codesign">
+			<exec executable="codesign" resultproperty="@{resultproperty}">
 				<arg value="--deep" />
 				<arg value="-vv" />
 				<arg value="-s" />
 				<arg value="@{identity}" />
 				<arg value="@{basedir}/dist/@{os}_@{arch}/${nextfractal.folder}/NextFractal.app" />
 			</exec>
-			<delete file="@{basedir}/dist/nextfractal_@{os}_@{arch}_@{version}.dmg" />
-			<exec executable="hdiutil">
+			<delete file="@{basedir}/dist/nextfractal_@{os}_@{arch}_@{version}.dmg" failonerror="false"/>
+			<exec executable="hdiutil" resultproperty="@{resultproperty}">
 				<arg value="create" />
 				<arg value="@{basedir}/dist/nextfractal_@{os}_@{arch}_@{version}.dmg" />
 				<arg value="-volname" />
@@ -107,7 +108,7 @@
 				<arg value="-srcfolder" />
 				<arg value="@{basedir}/dist/@{os}_@{arch}" />
 			</exec>
-			<exec executable="codesign">
+			<exec executable="codesign" resultproperty="@{resultproperty}">
 				<arg value="--deep" />
 				<arg value="-vv" />
 				<arg value="-s" />
@@ -124,14 +125,14 @@
 		<attribute name="resultproperty" default="makedmg.result" />
 		<element name="args" implicit="true" optional="true" />
 		<sequential>
-			<exec executable="find">
+			<exec executable="find" resultproperty="@{resultproperty}">
 				<arg value="@{basedir}/dist/@{os}_@{arch}" />
 				<arg value="-name" />
 				<arg value=".DS_Store" />
 				<arg value='-delete' />
 			</exec>
-			<delete file="@{basedir}/dist/nextfractal_@{os}_@{arch}_@{version}.dmg" />
-			<exec executable="hdiutil">
+			<delete file="@{basedir}/dist/nextfractal_@{os}_@{arch}_@{version}.dmg" failonerror="false"/>
+			<exec executable="hdiutil" resultproperty="@{resultproperty}">
 				<arg value="create" />
 				<arg value="@{basedir}/dist/nextfractal_@{os}_@{arch}_@{version}.dmg" />
 				<arg value="-volname" />
@@ -172,7 +173,7 @@
 		<attribute name="resultproperty" default="changecopyright.result" />
 		<element name="args" implicit="true" optional="true" />
 		<sequential>
-			<java classname="net.sf.jame.fileutility.ChangeCopyright">
+			<java classname="net.sf.jame.fileutility.ChangeCopyright" resultproperty="@{resultproperty}">
 	         	<arg value="utils/@{file}"/>
 	         	<arg value="@{basedir}/@{path}"/>
 	         	<classpath>
@@ -185,10 +186,10 @@
 		<attribute name="path" />
 		<attribute name="file" />
 		<attribute name="basedir" />
-		<attribute name="resultproperty" default="addcopyright.result" />
+		<attribute name="resultproperty" default="addcopyright.result"/>
 		<element name="args" implicit="true" optional="true" />
 		<sequential>
-			<java classname="net.sf.jame.fileutility.AddCopyright">
+			<java classname="net.sf.jame.fileutility.AddCopyright" resultproperty="@{resultproperty}">
 	         	<arg value="utils/@{file}"/>
 	         	<arg value="@{basedir}/@{path}"/>
 	         	<classpath>
@@ -203,12 +204,24 @@
 		<attribute name="resultproperty" default="linecount.result" />
 		<element name="args" implicit="true" optional="true" />
 		<sequential>
-			<java classname="net.sf.jame.fileutility.LineCount">
+			<java classname="net.sf.jame.fileutility.LineCount" resultproperty="@{resultproperty}">
 	         	<arg value="@{basedir}/@{path}"/>
 	         	<classpath>
 	           		<pathelement location="utils/FileUtility.jar"/>
 	         	</classpath>
 	       	</java>
+		</sequential>
+	</macrodef>
+	<macrodef name="publish">
+		<attribute name="channel" />
+		<attribute name="basedir" />
+		<attribute name="resultproperty" default="publish.result" />
+		<element name="args" implicit="true" optional="true" />
+		<sequential>
+			<maven basedir="@{basedir}" goal="deploy" options="-DskipTests=true -Dchannel=@{channel} -pl com.nextbreakpoint.nextfractal.core" resultproperty="@{resultproperty}"/>
+			<maven basedir="@{basedir}" goal="deploy" options="-DskipTests=true -Dchannel=@{channel} -pl com.nextbreakpoint.nextfractal.contextfree" resultproperty="@{resultproperty}"/>
+			<maven basedir="@{basedir}" goal="deploy" options="-DskipTests=true -Dchannel=@{channel} -pl com.nextbreakpoint.nextfractal.mandelbrot" resultproperty="@{resultproperty}"/>
+			<maven basedir="@{basedir}" goal="deploy" options="-DskipTests=true -Dchannel=@{channel} -pl com.nextbreakpoint.nextfractal.runtime" resultproperty="@{resultproperty}"/>
 		</sequential>
 	</macrodef>
 	<condition property="is_macosx">
@@ -228,7 +241,7 @@
     			<include name="**/*.java"/>
 			</fileset>
 		</replaceregexp>
-		<replaceregexp match="com.nextbreakpoint.nextfractal.runtime-[0-9]\.[0-9]\.[0-9]" replace="com.nextbreakpoint.nextfractal.runtime-${nextfractal.version}" flags="g" byline="true">
+		<replaceregexp match="com.nextbreakpoint.nextfractal.runtime.javafx-[0-9]\.[0-9]\.[0-9]" replace="com.nextbreakpoint.nextfractal.runtime.javafx-${nextfractal.version}" flags="g" byline="true">
 		    <fileset dir="${basedir}/..">
 		    	<include name="**/*.bat"/>
 		    	<include name="**/*.sh"/>
@@ -295,11 +308,16 @@
 		<build basedir="${basedir}" os="linux" arch="x86_64" version="${nextfractal.version}" executable="NextFractal" resourcesdir="resources" resultproperty="ant.build.result" />
 		<makezip basedir="${basedir}" os="linux" arch="x86_64" version="${nextfractal.version}" resultproperty="ant.makezip.result" />
 	</target>
+	<target name="publish-libs">
+		<publish basedir="${basedir}" channel="bintray" resultproperty="ant.publish.result"/>
+		<publish basedir="${basedir}" channel="ossrh" resultproperty="ant.publish.result"/>
+	</target>
 	<target name="build-macos-signed" depends="build-macos-64bit-signed" if="is_macosx" />
 	<target name="build-macos" depends="build-macos-64bit" if="is_macosx" />
 	<target name="build-win32" depends="build-win32-64bit" />
 	<target name="build-linux" depends="build-linux-64bit" />
 	<target name="build-signed" depends="build-macos-signed, build-win32, build-linux" />
 	<target name="build" depends="build-macos, build-win32, build-linux" />
+	<target name="publish" depends="publish-libs" />
 	<target name="all" depends="clean, update-version, build" />
 </project>

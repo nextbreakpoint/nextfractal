@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.0.2
+ * NextFractal 2.0.3
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2017 Andrea Medeghini
+ * Copyright 2015-2018 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -70,7 +70,7 @@ public class Error {
 		return "[" + line + ":" + charPositionInLine + ":" + index + ":" + length + "] " + message;
 	}
 
-	public static enum ErrorType {
+	public enum ErrorType {
 		SCRIPT_COMPILER, JAVA_COMPILER, RUNTIME;
 	}
 }

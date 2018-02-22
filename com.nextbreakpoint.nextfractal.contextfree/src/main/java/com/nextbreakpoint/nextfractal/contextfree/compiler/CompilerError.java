@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.0.2
+ * NextFractal 2.0.3
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2017 Andrea Medeghini
+ * Copyright 2015-2018 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -28,6 +28,6 @@ import com.nextbreakpoint.nextfractal.core.Error;
 
 public class CompilerError extends Error {
 	public CompilerError(ErrorType type, long line, long charPositionInLine, long index, long length, String message) {
-		super(ErrorType.RUNTIME, line, charPositionInLine, index, length, message);
+		super(type, line, charPositionInLine, index, length, message);
 	}
 }

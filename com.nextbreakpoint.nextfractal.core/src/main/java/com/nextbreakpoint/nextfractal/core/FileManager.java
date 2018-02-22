@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.0.2
+ * NextFractal 2.0.3
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2017 Andrea Medeghini
+ * Copyright 2015-2018 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -139,7 +139,7 @@ public abstract class FileManager {
         return bundle;
     }
 
-    protected Try<byte[], Exception> encodeClips(List<Clip> clips) throws IOException {
+    protected Try<byte[], Exception> encodeClips(List<Clip> clips) {
         List<Try<List<Map<String, Object>>, Exception>> result = clips.stream().map(this::encodeClip).collect(Collectors.toList());
 
         return result.stream().filter(Try::isFailure).findFirst().map(this::encodeClipsFailure)

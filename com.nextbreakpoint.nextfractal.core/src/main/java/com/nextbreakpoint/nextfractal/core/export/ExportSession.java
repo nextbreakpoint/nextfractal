@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.0.2
+ * NextFractal 2.0.3
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2017 Andrea Medeghini
+ * Copyright 2015-2018 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -28,8 +28,8 @@ import com.nextbreakpoint.nextfractal.core.Clip;
 import com.nextbreakpoint.nextfractal.core.ClipProcessor;
 import com.nextbreakpoint.nextfractal.core.Frame;
 import com.nextbreakpoint.nextfractal.core.Session;
-import com.nextbreakpoint.nextfractal.core.encoder.Encoder;
-import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
+import com.nextbreakpoint.nextfractal.core.encode.Encoder;
+import com.nextbreakpoint.nextfractal.core.render.RendererSize;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -50,7 +50,7 @@ public final class ExportSession {
 	private final File file;
 	private final int tileSize;
 	private final float quality;
-	private final float frameRate;
+	private final int frameRate;
 	private final Session session;
 
 	public ExportSession(String sessionId, Session session, List<Clip> clips, File file, File tmpFile, RendererSize size, int tileSize, Encoder encoder) {
@@ -62,11 +62,11 @@ public final class ExportSession {
 		this.encoder = encoder;
 		this.tileSize = tileSize;
 		this.quality = 1;
-		this.frameRate = 1.0f / 25.0f;
+		this.frameRate = 25;
 		if (clips.size() > 0 && clips.get(0).getEvents().size() > 1) {
 			this.frames.addAll(new ClipProcessor(clips, frameRate).generateFrames());
 		} else {
-			frames.add(new Frame(session.getPluginId(), session.getScript(), session.getMetadata(), true, true));
+			frames.add(new Frame(session.getPluginId(), session.getMetadata(), session.getScript(), true, true));
 		}
 		jobs.addAll(createJobs());
 	}
@@ -91,7 +91,7 @@ public final class ExportSession {
 		return tmpFile;
 	}
 
-	public float getFrameRate() {
+	public int getFrameRate() {
 		return frameRate;
 	}
 

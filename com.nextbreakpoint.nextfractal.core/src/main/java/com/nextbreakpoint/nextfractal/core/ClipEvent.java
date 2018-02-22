@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.0.2
+ * NextFractal 2.0.3
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2017 Andrea Medeghini
+ * Copyright 2015-2018 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -28,10 +28,10 @@ import java.util.Date;
 import java.util.Objects;
 
 public class ClipEvent {
-    private Date date;
-    private String pluginId;
-    private String script;
-    private Metadata metadata;
+    private final Date date;
+    private final String pluginId;
+    private final String script;
+    private final Metadata metadata;
 
     public ClipEvent(Date date, String pluginId, String script, Metadata metadata) {
         this.date = Objects.requireNonNull(date);

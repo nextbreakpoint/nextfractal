@@ -5,16 +5,17 @@
 #include <string.h>
 #include <stdexcept>
 #include <iostream>
+#include <regex>
 
 struct start_args {
     JavaVMInitArgs vm_args;
-    char *launch_class;
 
-    start_args(const char **args, const char *classname)
-    {
+    start_args() {
+    }
+
+    start_args(const char **args) {
         vm_args.options = 0;
         vm_args.nOptions = 0;
-        launch_class = 0;
 
         int arg_count = 0;
         const char **atarg = args;
@@ -32,14 +33,11 @@ struct start_args {
             options++;
             args++;
         }
-        vm_args.version = JNI_VERSION_1_6;
-        vm_args.ignoreUnrecognized = JNI_TRUE;
-        launch_class = strdup(classname);
+        vm_args.version = JNI_VERSION_1_8;
+        vm_args.ignoreUnrecognized = JNI_FALSE;
     }
 
     ~start_args() {
-        if (launch_class)
-            free(launch_class);
         for (int i = 0; i < vm_args.nOptions; i++)
             if (vm_args.options[i].optionString)
                 free(vm_args.options[i].optionString);
@@ -49,7 +47,6 @@ struct start_args {
 
     start_args(const start_args &rhs) {
         vm_args.options = 0;
-        launch_class = 0;
 
         vm_args.options = new JavaVMOption[rhs.vm_args.nOptions];
         vm_args.nOptions = rhs.vm_args.nOptions;
@@ -58,7 +55,6 @@ struct start_args {
         }
         vm_args.version = rhs.vm_args.version;
         vm_args.ignoreUnrecognized = rhs.vm_args.ignoreUnrecognized;
-        launch_class = strdup(rhs.launch_class);
     }
 
     start_args &operator=(const start_args &rhs) {
@@ -75,99 +71,195 @@ struct start_args {
             vm_args.options[i].optionString = strdup(rhs.vm_args.options[i].optionString);
         vm_args.version = rhs.vm_args.version;
         vm_args.ignoreUnrecognized = rhs.vm_args.ignoreUnrecognized;
-        if (launch_class) free(launch_class);
-        launch_class = strdup(rhs.launch_class);
         return *this;
     }
 };
+
+struct launch_args {
+  struct start_args *args_jdk8;
+  struct start_args *args_jdk9;
+  char *launch_class;
+  char *java_home;
+
+  launch_args() {
+    launch_class = NULL;
+    java_home = NULL;
+    args_jdk8 = NULL;
+    args_jdk9 = NULL;
+  }
+
+  launch_args(const char *javahome, const char *classname, const char ** vm_arglist_jdk8, const char ** vm_arglist_jdk9) {
+      launch_class = strdup(classname);
+      java_home = javahome != NULL ? strdup(javahome) : NULL;
+      args_jdk8 = new start_args(vm_arglist_jdk8);
+      args_jdk9 = new start_args(vm_arglist_jdk9);
+  }
+
+  ~launch_args() {
+      if (launch_class)
+          free(launch_class);
+      if (java_home)
+          free(java_home);
+      if (args_jdk8)
+          free(args_jdk8);
+      if (args_jdk9)
+          free(args_jdk9);
+  }
+};
+
+typedef int (JNICALL * JNICreateJavaVM)(JavaVM** jvm, JNIEnv** env, JavaVMInitArgs* initargs);
+
+void launch_java(JNICreateJavaVM createJavaVM, const char *launch_class, struct start_args *args) {
+    JavaVM *jvm;
+    JNIEnv *env;
+
+    for (int i = 0; i < args->vm_args.nOptions; i++) {
+        std::cout << args->vm_args.options[i].optionString << std::endl;
+    }
+
+    int res = createJavaVM(&jvm, &env, &args->vm_args);
+    if (res < 0) {
+        throw std::runtime_error("Cannot create JVM");
+    }
+
+    jclass main_class = env->FindClass(launch_class);
+    if (main_class == NULL) {
+        jvm->DestroyJavaVM();
+
+        throw std::runtime_error("Main class not found");
+    }
+
+    jmethodID main_method_id = env->GetStaticMethodID(main_class, "main", "([Ljava/lang/String;)V");
+    if (main_method_id == NULL) {
+        jvm->DestroyJavaVM();
+
+        throw std::runtime_error("Method main not found");
+    }
+
+    jobject empty_args = env->NewObjectArray(0, env->FindClass("java/lang/String"), NULL);
+    if (empty_args == NULL) {
+      jvm->DestroyJavaVM();
+
+      throw std::runtime_error("Cannot allocate arguments");
+    }
+
+    env->CallStaticVoidMethod(main_class, main_method_id, empty_args);
+
+    jvm->DestroyJavaVM();
+}
 
 void ShowAlert(const std::string message, const std::runtime_error& error) {
     std::string alertMessage = std::string(message).append("\n\nCause: ").append(error.what());
     MessageBox(NULL, (LPCSTR)alertMessage.c_str(), (LPCSTR)"Oops something is wrong...", MB_ICONERROR | MB_OK | MB_DEFBUTTON2);
 }
 
-typedef int (JNICALL * JNICreateJavaVM)(JavaVM** jvm, JNIEnv** env, JavaVMInitArgs* initargs);
+void run_java(struct launch_args *run_args) {
+    std::string path;
 
-void * start_java(void *start_args) {
-    struct start_args *args = (struct start_args *)start_args;
+    if (run_args->java_home != NULL) {
+      path.append(run_args->java_home);
+      path.erase(remove(path.begin(), path.end(), '\"'), path.end());
+      std::cout << "Java Home \"" << path << "\"" << std::endl;
+    } else {
+      DWORD retval;
 
-    DWORD retval;
-    HKEY jKey;
-    if (retval = RegOpenKeyEx(HKEY_LOCAL_MACHINE, TEXT("SOFTWARE\\JavaSoft\\Java Development Kit"), 0, KEY_READ, &jKey)) {
-        RegCloseKey(jKey);
-        throw std::runtime_error("Registry key not found");
+      HKEY jKey;
+      if (retval = RegOpenKeyEx(HKEY_LOCAL_MACHINE, TEXT("SOFTWARE\\JavaSoft\\Java Development Kit"), 0, KEY_READ, &jKey)) {
+          RegCloseKey(jKey);
+          throw std::runtime_error("Registry key not found");
+      }
+
+      TCHAR versionString[16]; // version numbers shouldn't be longer than 16 chars
+      DWORD bufsize = 16 * sizeof(TCHAR);
+      if (retval = RegGetValue(jKey, NULL, TEXT("CurrentVersion"), RRF_RT_REG_SZ, NULL, versionString, &bufsize)) {
+          RegCloseKey(jKey);
+          throw std::runtime_error("Key value not found: CurrentVersion");
+      }
+
+      TCHAR pathString[512];
+      bufsize = 512 * sizeof(TCHAR);
+      if (retval = RegGetValue(jKey, versionString, TEXT("JavaHome"), RRF_RT_REG_SZ, NULL, pathString, &bufsize)) {
+          RegCloseKey(jKey);
+          throw std::runtime_error("Key value not found: JavaHome");
+      }
+
+      path = std::string(pathString);
+      std::cout << "Found java \"" << path << "\"" << std::endl;
+
+      RegCloseKey(jKey);
     }
 
-    TCHAR versionString[16]; // version numbers shouldn't be longer than 16 chars
-    DWORD bufsize = 16 * sizeof(TCHAR);
-    if (retval = RegGetValue(jKey, NULL, TEXT("CurrentVersion"), RRF_RT_REG_SZ, NULL, versionString, &bufsize)) {
-        RegCloseKey(jKey);
-        throw std::runtime_error("Key value not found: CurrentVersion");
+    struct start_args *args = NULL;
+    std::string libPath = "";
+
+    std::regex path_regex("(jdk1.[0-9]+\\.[0-9]+_[0-9]+)|(jdk-[0-9]+(\\.[0-9]+\\.[0-9]+)?)", std::regex_constants::ECMAScript | std::regex_constants::icase);
+    if (std::regex_search(path, path_regex)) {
+        std::sregex_iterator version_begin = std::sregex_iterator(path.begin(), path.end(), path_regex);
+        std::sregex_iterator version_end = std::sregex_iterator();
+        for (std::sregex_iterator i = version_begin; i != version_end; ++i) {
+            std::smatch match = *i;
+            std::string match_str = match.str();
+            if (match_str.find("jdk-") == 0) {
+              std::cout << "Found Java SDK 9 or later\n";
+              args = run_args->args_jdk9;
+              libPath = path + "\\bin\\server\\jvm.dll";
+              break;
+            }
+            if (match_str.find("jdk1.8") == 0) {
+              std::cout << "Found Java SDK 1.8\n";
+              args = run_args->args_jdk8;
+              libPath = path + "\\jre\\bin\\server\\jvm.dll";
+              break;
+            }
+        }
     }
 
-    TCHAR pathString[512];
-    bufsize = 512 * sizeof(TCHAR);
-    if (retval = RegGetValue(jKey, versionString, TEXT("JavaHome"), RRF_RT_REG_SZ, NULL, pathString, &bufsize)) {
-        RegCloseKey(jKey);
-        throw std::runtime_error("Key value not found: JavaHome");
+    if (args == NULL) {
+        throw std::runtime_error("Cannot detect Java SDK");
     }
 
-    std::string path = std::string(pathString);
-    std::cout << "Found java \"" << path << "\"" << std::endl;
-
-    RegCloseKey(jKey);
-
-    std::string libPath = path + "/jre/bin/server/jvm.dll";
     std::cout << "Use library \"" << libPath << "\"" << std::endl;
 
     HMODULE jniModule = LoadLibrary(libPath.c_str());
     if (NULL == jniModule) {
-        throw std::runtime_error("Failed to open library");
+        std::string message = std::string("Cannot open library ").append(libPath);
+        throw std::runtime_error(message);
     }
 
     JNICreateJavaVM createJavaVM = (JNICreateJavaVM)GetProcAddress(jniModule, "JNI_CreateJavaVM");
     if (NULL == createJavaVM) {
         FreeLibrary(jniModule);
+
         throw std::runtime_error("Function JNI_CreateJavaVM not found");
     }
 
-    int res;
-    JavaVM *jvm;
-    JNIEnv *env;
+    try {
+        launch_java(createJavaVM, run_args->launch_class, args);
 
-    res = createJavaVM(&jvm, &env, &args->vm_args);
-    if (res != JNI_OK) {
         FreeLibrary(jniModule);
-        throw std::runtime_error("Failed to create jvm");
-    }
-    /* load the launch class */
-    jclass main_class;
-    jmethodID main_method_id;
-    main_class = env->FindClass(args->launch_class);
-    if (main_class == NULL) {
-        printf("Cannot find class\n");
-        jvm->DestroyJavaVM();
+    } catch (const std::runtime_error& e) {
         FreeLibrary(jniModule);
-        throw std::runtime_error("Main class not found");
-    }
-    /* get main method */
-    main_method_id = env->GetStaticMethodID(main_class, "main", "([Ljava/lang/String;)V");
-    if (main_method_id == NULL) {
-        printf("Cannot find method\n");
-        jvm->DestroyJavaVM();
-        FreeLibrary(jniModule);
-        throw std::runtime_error("Method main not found");
-    }
-    /* make the initial argument */
-    jobject empty_args = env->NewObjectArray(0, env->FindClass("java/lang/String"), NULL);
-    /* call the method */
-    env->CallStaticVoidMethod(main_class, main_method_id, empty_args);
-    /* Don't forget to destroy the JVM at the end */
-    jvm->DestroyJavaVM();
 
-    FreeLibrary(jniModule);
+        throw e;
+    }
+}
 
-    return (0);
+void * start_java(void *start_args) {
+    std::cout << "Launching application..." << std::endl;
+
+    struct launch_args *args = (struct launch_args *)start_args;
+
+    try {
+        run_java(args);
+    } catch (const std::runtime_error& e) {
+      ShowAlert("Some error occurred while launching Java VM. Please install Java JDK version 8 or later. If the problem persists, try setting the environment variable NEXTFRACTAL_JAVA_HOME with path of Java SDK.", e);
+
+      exit(-1);
+    }
+
+    std::cout << "Terminating application..." << std::endl;
+
+    return NULL;
 }
 
 std::string GetClasspath(std::string path) {
@@ -209,6 +301,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdL
     try {
         FreeConsole();
         std::string memMaxArg = std::string();
+        char * varJavaHome = getenv("NEXTFRACTAL_JAVA_HOME");
         char * varMemMax = getenv("NEXTFRACTAL_MAX_MEMORY");
         int varMemMaxLen = varMemMax != NULL ? strlen(varMemMax) : 0;
         if (varMemMaxLen > 0) {
@@ -224,7 +317,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdL
         std::string classpathArg = "-Djava.class.path=" + GetClasspath(jarsPath);
         std::string libPathArg = "-Djava.library.path=" + basePath + "/resources";
         std::string locPathArg = "-Dbrowser.location=" + basePath + "/examples";
-        const char *vm_arglist[] = {
+        const char *vm_arglist_jdk8[] = {
             "-Djava.util.logging.config.class=com.nextbreakpoint.nextfractal.runtime.LogConfig",
             classpathArg.c_str(),
             libPathArg.c_str(),
@@ -232,10 +325,28 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdL
             memMaxArg.c_str(),
             0
         };
-        struct start_args args(vm_arglist, "com/nextbreakpoint/nextfractal/runtime/javafx/NextFractalApp");
+        const char *vm_arglist_jdk9[] = {
+//            "--add-modules",
+//            "java.xml.bind",
+//            "--add-addopens",
+//            "javafx.graphics/javafx.scene.text=ALL-UNNAMED",
+//            "--add-addopens",
+//            "javafx.graphics/com.sun.javafx.text=ALL-UNNAMED",
+//            "--add-addopens",
+//            "javafx.graphics/com.sun.javafx.geom=ALL-UNNAMED",
+//            "--add-addopens",
+//            "javafx.graphics/com.sun.javafx.scene.text=ALL-UNNAMED",
+            "-Djava.util.logging.config.class=com.nextbreakpoint.nextfractal.runtime.LogConfig",
+            classpathArg.c_str(),
+            libPathArg.c_str(),
+            locPathArg.c_str(),
+            memMaxArg.c_str(),
+            0
+        };
+        struct launch_args args(varJavaHome, "com/nextbreakpoint/nextfractal/runtime/javafx/NextFractalApp", vm_arglist_jdk8, vm_arglist_jdk9);
         start_java((void *)&args);
     } catch (const std::runtime_error& e) {
-        ShowAlert("Did you install Java JDK 8 or later?", e);
+        ShowAlert("Some error occurred while launching the application", e);
         exit(-1);
     }
     return 0;

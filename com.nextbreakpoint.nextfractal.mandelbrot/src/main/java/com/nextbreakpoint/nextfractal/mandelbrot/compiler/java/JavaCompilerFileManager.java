@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.0.2
+ * NextFractal 2.0.3
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2017 Andrea Medeghini
+ * Copyright 2015-2018 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -25,136 +25,33 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.compiler.java;
 
 import javax.tools.FileObject;
+import javax.tools.ForwardingJavaFileManager;
 import javax.tools.JavaFileManager;
 import javax.tools.JavaFileObject;
 import javax.tools.JavaFileObject.Kind;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
-public class JavaCompilerFileManager implements JavaFileManager {
-	private Map<String, JavaFileObject> files = new HashMap<>();
-	private JavaFileManager fileManager;
-	private final String className;
-	
+public class JavaCompilerFileManager extends ForwardingJavaFileManager {
+	private Map<String, JavaFileObject> files = new ConcurrentHashMap<>();
+
 	public JavaCompilerFileManager(JavaFileManager fileManager, String className) {
-		this.className = className;
-		this.fileManager = fileManager;
+		super(fileManager);
 	}
 
-	/**
-	 * @see javax.tools.OptionChecker#isSupportedOption(java.lang.String)
-	 */
-	@Override
-	public int isSupportedOption(String option) {
-		return fileManager.isSupportedOption(option);
-	}
-
-	/**
-	 * @see javax.tools.JavaFileManager#getClassLoader(javax.tools.JavaFileManager.Location)
-	 */
-	@Override
-	public ClassLoader getClassLoader(Location location) {
-		return fileManager.getClassLoader(location);
-	}
-
-	/**
-	 * @see javax.tools.JavaFileManager#list(javax.tools.JavaFileManager.Location, java.lang.String, java.util.Set, boolean)
-	 */
-	@Override
-	public Iterable<JavaFileObject> list(Location location, String packageName, Set<Kind> kinds, boolean recurse) throws IOException {
-		return fileManager.list(location, packageName, kinds, recurse);
-	}
-
-	/**
-	 * @see javax.tools.JavaFileManager#inferBinaryName(javax.tools.JavaFileManager.Location, javax.tools.JavaFileObject)
-	 */
-	@Override
-	public String inferBinaryName(Location location, JavaFileObject file) {
-		return fileManager.inferBinaryName(location, file);
-	}
-
-	/**
-	 * @see javax.tools.JavaFileManager#isSameFile(javax.tools.FileObject, javax.tools.FileObject)
-	 */
-	@Override
-	public boolean isSameFile(FileObject a, FileObject b) {
-		return fileManager.isSameFile(a, b);
-	}
-
-	/**
-	 * @see javax.tools.JavaFileManager#handleOption(java.lang.String, java.util.Iterator)
-	 */
-	@Override
-	public boolean handleOption(String current, Iterator<String> remaining) {
-		return fileManager.handleOption(current, remaining);
-	}
-
-	/**
-	 * @see javax.tools.JavaFileManager#hasLocation(javax.tools.JavaFileManager.Location)
-	 */
-	@Override
-	public boolean hasLocation(Location location) {
-		return fileManager.hasLocation(location);
-	}
-
-	/**
-	 * @see javax.tools.JavaFileManager#getJavaFileForInput(javax.tools.JavaFileManager.Location, java.lang.String, javax.tools.JavaFileObject.Kind)
-	 */
-	@Override
-	public JavaFileObject getJavaFileForInput(Location location, String className, Kind kind) throws IOException {
-		return fileManager.getJavaFileForInput(location, className, kind);
-	}
-
-	/**
-	 * @see javax.tools.JavaFileManager#getJavaFileForOutput(javax.tools.JavaFileManager.Location, java.lang.String, javax.tools.JavaFileObject.Kind, javax.tools.FileObject)
-	 */
 	@Override
 	public JavaFileObject getJavaFileForOutput(Location location, String className, Kind kind, FileObject sibling) throws IOException {
 		if (className.equals(className)) {
-			JavaFileObject file = files.get(className);
-			if (file == null) {
-				file = new JavaClassFileObject(className);
-				files.put(className, file);
-			}
-			return file;
+			return files.computeIfAbsent(className, name -> new JavaClassFileObject(name));
 		} else {
-			return fileManager.getJavaFileForOutput(location, className, kind, sibling);
+			return super.getJavaFileForOutput(location, className, kind, sibling);
 		}
 	}
 
-	/**
-	 * @see javax.tools.JavaFileManager#getFileForInput(javax.tools.JavaFileManager.Location, java.lang.String, java.lang.String)
-	 */
-	@Override
-	public FileObject getFileForInput(Location location, String packageName, String relativeName) throws IOException {
-		return fileManager.getFileForInput(location, packageName, relativeName);
-	}
-
-	/**
-	 * @see javax.tools.JavaFileManager#getFileForOutput(javax.tools.JavaFileManager.Location, java.lang.String, java.lang.String, javax.tools.FileObject)
-	 */
-	@Override
-	public FileObject getFileForOutput(Location location, String packageName, String relativeName, FileObject sibling) throws IOException {
-		return fileManager.getFileForOutput(location, packageName, relativeName, sibling);
-	}
-
-	/**
-	 * @see javax.tools.JavaFileManager#flush()
-	 */
-	@Override
-	public void flush() throws IOException {
-		fileManager.flush();
-	}
-
-	/**
-	 * @see javax.tools.JavaFileManager#close()
-	 */
 	@Override
 	public void close() throws IOException {
-		fileManager.close();
 		files.clear();
+		super.close();
 	}
 }

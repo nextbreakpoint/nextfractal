@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.0.2
+ * NextFractal 2.0.3
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2017 Andrea Medeghini
+ * Copyright 2015-2018 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -29,9 +29,9 @@ import com.nextbreakpoint.nextfractal.core.CoreFactory;
 import com.nextbreakpoint.nextfractal.core.ImageComposer;
 import com.nextbreakpoint.nextfractal.core.export.ExportSession;
 import com.nextbreakpoint.nextfractal.core.export.ExportState;
-import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
-import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
-import com.nextbreakpoint.nextfractal.core.utils.DefaultThreadFactory;
+import com.nextbreakpoint.nextfractal.core.render.RendererSize;
+import com.nextbreakpoint.nextfractal.core.render.RendererTile;
+import com.nextbreakpoint.nextfractal.core.DefaultThreadFactory;
 import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -198,7 +198,7 @@ public class JobsPane extends BorderPane {
             } else {
                 sizeLabel.setText(session.getSize().getWidth() + "\u00D7" + session.getSize().getHeight() + " pixels");
                 formatLabel.setText(session.getEncoder().getName() + " Video");
-                long durationInSeconds = (long)Math.rint(session.getFrameCount() * session.getFrameRate());
+                long durationInSeconds = (long)Math.rint(session.getFrameCount() / session.getFrameRate());
                 long minutes = (long)Math.rint(durationInSeconds / 60.0);
                 if (minutes <= 2) {
                     durationLabel.setText("Duration " + durationInSeconds + " seconds");

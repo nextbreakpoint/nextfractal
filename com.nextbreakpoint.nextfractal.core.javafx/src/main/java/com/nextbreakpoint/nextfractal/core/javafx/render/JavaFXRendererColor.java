@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.0.2
+ * NextFractal 2.0.3
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2017 Andrea Medeghini
+ * Copyright 2015-2018 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -24,12 +24,12 @@
  */
 package com.nextbreakpoint.nextfractal.core.javafx.render;
 
-import com.nextbreakpoint.nextfractal.core.renderer.RendererColor;
-import com.nextbreakpoint.nextfractal.core.renderer.RendererGraphicsContext;
+import com.nextbreakpoint.nextfractal.core.render.RendererColor;
+import com.nextbreakpoint.nextfractal.core.render.RendererGraphicsContext;
 import javafx.scene.paint.Color;
 
 public class JavaFXRendererColor implements RendererColor {
-	private Color color;
+	private final Color color;
 	
 	public JavaFXRendererColor(double red, double green, double blue, double opacity) {
 		color = new Color(red, green, blue, opacity);
