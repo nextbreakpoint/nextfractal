@@ -26,10 +26,10 @@ package com.nextbreakpoint.nextfractal.contextfree.renderer;
 
 import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDG;
 import com.nextbreakpoint.nextfractal.core.Error;
-import com.nextbreakpoint.nextfractal.core.renderer.RendererFactory;
-import com.nextbreakpoint.nextfractal.core.renderer.RendererGraphicsContext;
-import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
-import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
+import com.nextbreakpoint.nextfractal.core.render.RendererFactory;
+import com.nextbreakpoint.nextfractal.core.render.RendererGraphicsContext;
+import com.nextbreakpoint.nextfractal.core.render.RendererSize;
+import com.nextbreakpoint.nextfractal.core.render.RendererTile;
 
 import java.util.HashMap;
 import java.util.List;

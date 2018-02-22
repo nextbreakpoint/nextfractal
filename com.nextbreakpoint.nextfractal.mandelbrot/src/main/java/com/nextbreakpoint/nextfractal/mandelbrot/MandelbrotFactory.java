@@ -30,8 +30,8 @@ import com.nextbreakpoint.nextfractal.core.ImageComposer;
 import com.nextbreakpoint.nextfractal.core.ImageGenerator;
 import com.nextbreakpoint.nextfractal.core.Metadata;
 import com.nextbreakpoint.nextfractal.core.Session;
-import com.nextbreakpoint.nextfractal.core.renderer.RendererFactory;
-import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
+import com.nextbreakpoint.nextfractal.core.render.RendererFactory;
+import com.nextbreakpoint.nextfractal.core.render.RendererTile;
 
 import java.util.concurrent.ThreadFactory;
 
@@ -64,7 +64,7 @@ public class MandelbrotFactory implements CoreFactory {
 	}
 
 	/**
-	 * @see CoreFactory#createImageGenerator(java.util.concurrent.ThreadFactory, com.nextbreakpoint.nextfractal.core.renderer.RendererFactory, com.nextbreakpoint.nextfractal.core.renderer.RendererTile, boolean)
+	 * @see CoreFactory#createImageGenerator(java.util.concurrent.ThreadFactory, com.nextbreakpoint.nextfractal.core.render.RendererFactory, com.nextbreakpoint.nextfractal.core.render.RendererTile, boolean)
 	 */
 	@Override
 	public ImageGenerator createImageGenerator(ThreadFactory threadFactory,	RendererFactory renderFactory, RendererTile tile, boolean opaque) {

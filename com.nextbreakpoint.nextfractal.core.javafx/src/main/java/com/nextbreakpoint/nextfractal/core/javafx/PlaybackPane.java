@@ -27,7 +27,7 @@ package com.nextbreakpoint.nextfractal.core.javafx;
 import com.nextbreakpoint.nextfractal.core.Clip;
 import com.nextbreakpoint.nextfractal.core.ClipProcessor;
 import com.nextbreakpoint.nextfractal.core.Frame;
-import com.nextbreakpoint.nextfractal.core.utils.DefaultThreadFactory;
+import com.nextbreakpoint.nextfractal.core.DefaultThreadFactory;
 import javafx.application.Platform;
 import javafx.scene.layout.Pane;
 

@@ -24,7 +24,7 @@
  */
 package com.nextbreakpoint.nextfractal.core;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -42,6 +42,6 @@ public class Bundle {
     }
 
     public List<Clip> getClips() {
-        return Collections.unmodifiableList(clips);
+        return new ArrayList<>(clips);
     }
 }

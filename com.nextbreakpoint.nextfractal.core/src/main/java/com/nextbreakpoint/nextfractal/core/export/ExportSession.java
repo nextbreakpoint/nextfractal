@@ -28,8 +28,8 @@ import com.nextbreakpoint.nextfractal.core.Clip;
 import com.nextbreakpoint.nextfractal.core.ClipProcessor;
 import com.nextbreakpoint.nextfractal.core.Frame;
 import com.nextbreakpoint.nextfractal.core.Session;
-import com.nextbreakpoint.nextfractal.core.encoder.Encoder;
-import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
+import com.nextbreakpoint.nextfractal.core.encode.Encoder;
+import com.nextbreakpoint.nextfractal.core.render.RendererSize;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -66,7 +66,7 @@ public final class ExportSession {
 		if (clips.size() > 0 && clips.get(0).getEvents().size() > 1) {
 			this.frames.addAll(new ClipProcessor(clips, frameRate).generateFrames());
 		} else {
-			frames.add(new Frame(session.getPluginId(), session.getScript(), session.getMetadata(), true, true));
+			frames.add(new Frame(session.getPluginId(), session.getMetadata(), session.getScript(), true, true));
 		}
 		jobs.addAll(createJobs());
 	}

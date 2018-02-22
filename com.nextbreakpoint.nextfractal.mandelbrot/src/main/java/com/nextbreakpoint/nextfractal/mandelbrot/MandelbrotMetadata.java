@@ -25,9 +25,9 @@
 package com.nextbreakpoint.nextfractal.mandelbrot;
 
 import com.nextbreakpoint.nextfractal.core.Metadata;
-import com.nextbreakpoint.nextfractal.core.utils.Double2D;
-import com.nextbreakpoint.nextfractal.core.utils.Double4D;
-import com.nextbreakpoint.nextfractal.core.utils.Time;
+import com.nextbreakpoint.nextfractal.core.Double2D;
+import com.nextbreakpoint.nextfractal.core.Double4D;
+import com.nextbreakpoint.nextfractal.core.Time;
 
 public class MandelbrotMetadata implements Metadata {
 	private final Double4D translation;

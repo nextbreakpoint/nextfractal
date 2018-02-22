@@ -24,8 +24,7 @@
  */
 package com.nextbreakpoint.nextfractal.core;
 
-import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
-import com.nextbreakpoint.nextfractal.core.utils.DefaultThreadFactory;
+import com.nextbreakpoint.nextfractal.core.render.RendererSize;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;

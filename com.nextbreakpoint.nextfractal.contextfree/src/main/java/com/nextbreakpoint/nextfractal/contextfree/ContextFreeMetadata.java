@@ -25,7 +25,7 @@
 package com.nextbreakpoint.nextfractal.contextfree;
 
 import com.nextbreakpoint.nextfractal.core.Metadata;
-import com.nextbreakpoint.nextfractal.core.utils.Time;
+import com.nextbreakpoint.nextfractal.core.Time;
 
 import java.util.Objects;
 

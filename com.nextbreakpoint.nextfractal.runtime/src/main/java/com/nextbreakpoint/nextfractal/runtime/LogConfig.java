@@ -24,7 +24,7 @@
  */
 package com.nextbreakpoint.nextfractal.runtime;
 
-import com.nextbreakpoint.nextfractal.core.utils.Block;
+import com.nextbreakpoint.nextfractal.core.Block;
 
 import java.io.IOException;
 import java.io.InputStream;

@@ -139,7 +139,7 @@ public abstract class FileManager {
         return bundle;
     }
 
-    protected Try<byte[], Exception> encodeClips(List<Clip> clips) throws IOException {
+    protected Try<byte[], Exception> encodeClips(List<Clip> clips) {
         List<Try<List<Map<String, Object>>, Exception>> result = clips.stream().map(this::encodeClip).collect(Collectors.toList());
 
         return result.stream().filter(Try::isFailure).findFirst().map(this::encodeClipsFailure)

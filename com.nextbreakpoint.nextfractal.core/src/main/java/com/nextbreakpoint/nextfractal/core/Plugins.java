@@ -25,7 +25,7 @@
 package com.nextbreakpoint.nextfractal.core;
 
 import com.nextbreakpoint.Try;
-import com.nextbreakpoint.nextfractal.core.encoder.Encoder;
+import com.nextbreakpoint.nextfractal.core.encode.Encoder;
 
 import java.util.List;
 import java.util.Optional;

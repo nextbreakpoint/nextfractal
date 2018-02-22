@@ -33,8 +33,8 @@ import com.nextbreakpoint.nextfractal.contextfree.compiler.CompilerSourceExcepti
 import com.nextbreakpoint.nextfractal.core.Error;
 import com.nextbreakpoint.nextfractal.core.javafx.EventBus;
 import com.nextbreakpoint.nextfractal.core.javafx.BooleanObservableValue;
-import com.nextbreakpoint.nextfractal.core.utils.Block;
-import com.nextbreakpoint.nextfractal.core.utils.DefaultThreadFactory;
+import com.nextbreakpoint.nextfractal.core.Block;
+import com.nextbreakpoint.nextfractal.core.DefaultThreadFactory;
 import javafx.concurrent.Task;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.TransferMode;

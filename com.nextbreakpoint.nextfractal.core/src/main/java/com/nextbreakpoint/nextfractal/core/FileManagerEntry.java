@@ -24,19 +24,22 @@
  */
 package com.nextbreakpoint.nextfractal.core;
 
+import java.util.Objects;
+
 public class FileManagerEntry {
     private final String name;
     private final byte[] data;
 
     public FileManagerEntry(String name, byte[] data) {
-        this.name = name;
-        this.data = data;
+        this.name = Objects.requireNonNull(name);
+        this.data = Objects.requireNonNull(data);
     }
 
     public String getName() {
         return name;
     }
 
+    //TODO shall we return an immutable object?
     public byte[] getData() {
         return data;
     }

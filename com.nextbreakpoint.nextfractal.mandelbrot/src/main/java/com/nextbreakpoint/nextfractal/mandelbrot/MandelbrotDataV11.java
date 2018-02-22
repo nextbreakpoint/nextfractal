@@ -24,8 +24,8 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot;
 
-import com.nextbreakpoint.nextfractal.core.utils.DateAdapter;
-import com.nextbreakpoint.nextfractal.core.utils.Time;
+import com.nextbreakpoint.nextfractal.core.DateAdapter;
+import com.nextbreakpoint.nextfractal.core.Time;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;

@@ -30,8 +30,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Stream;
 
+//TODO make this class immutable
 public class Clip {
-    private List<ClipEvent> events = new LinkedList<>();
+    private final List<ClipEvent> events = new LinkedList<>();
 
     public Clip() {
     }

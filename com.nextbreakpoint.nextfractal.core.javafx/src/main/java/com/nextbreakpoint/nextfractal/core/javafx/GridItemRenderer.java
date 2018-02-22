@@ -24,7 +24,7 @@
  */
 package com.nextbreakpoint.nextfractal.core.javafx;
 
-import com.nextbreakpoint.nextfractal.core.renderer.RendererGraphicsContext;
+import com.nextbreakpoint.nextfractal.core.render.RendererGraphicsContext;
 
 public interface GridItemRenderer {
     void abort();

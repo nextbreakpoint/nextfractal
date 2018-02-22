@@ -26,9 +26,9 @@ package com.nextbreakpoint.nextfractal.contextfree.grammar;
 
 import com.nextbreakpoint.nextfractal.contextfree.core.Bounds;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.FlagType;
-import com.nextbreakpoint.nextfractal.core.renderer.RendererPoint;
-import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
-import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
+import com.nextbreakpoint.nextfractal.core.render.RendererPoint;
+import com.nextbreakpoint.nextfractal.core.render.RendererSize;
+import com.nextbreakpoint.nextfractal.core.render.RendererTile;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;

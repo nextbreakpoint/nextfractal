@@ -25,26 +25,26 @@
 package com.nextbreakpoint.nextfractal.core.export;
 
 import com.nextbreakpoint.nextfractal.core.Metadata;
-import com.nextbreakpoint.nextfractal.core.renderer.RendererPoint;
-import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
-import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
+import com.nextbreakpoint.nextfractal.core.render.RendererPoint;
+import com.nextbreakpoint.nextfractal.core.render.RendererSize;
+import com.nextbreakpoint.nextfractal.core.render.RendererTile;
 
 public class ExportProfile {
-	private float quality;
-	private float frameRate;
-	private int frameWidth;
-	private int frameHeight;
-	private int tileWidth;
-	private int tileHeight;
-	private int tileOffsetX;
-	private int tileOffsetY;
-	private int borderWidth;
-	private int borderHeight;
-	private float startTime;
-	private float stopTime;
-	private String pluginId;
-	private String script;
-	private Metadata metadata;
+	private final float quality;
+	private final float frameRate;
+	private final int frameWidth;
+	private final int frameHeight;
+	private final int tileWidth;
+	private final int tileHeight;
+	private final int tileOffsetX;
+	private final int tileOffsetY;
+	private final int borderWidth;
+	private final int borderHeight;
+	private final float startTime;
+	private final float stopTime;
+	private final String pluginId;
+	private final String script;
+	private final Metadata metadata;
 
 	ExportProfile(float quality, float frameRate, int frameWidth, int frameHeight, int tileWidth, int tileHeight, int tileOffsetX, int tileOffsetY, int borderWidth, int borderHeight, float startTime, float stopTime, String pluginId, String script, Metadata metadata) {
 		this.quality = quality;

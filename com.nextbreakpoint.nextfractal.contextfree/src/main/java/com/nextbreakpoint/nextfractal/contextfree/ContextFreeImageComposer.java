@@ -30,10 +30,10 @@ import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDG;
 import com.nextbreakpoint.nextfractal.contextfree.renderer.Renderer;
 import com.nextbreakpoint.nextfractal.core.ImageComposer;
 import com.nextbreakpoint.nextfractal.core.Metadata;
-import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
-import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
-import com.nextbreakpoint.nextfractal.core.renderer.Java2DRendererFactory;
-import com.nextbreakpoint.nextfractal.core.renderer.Java2DRendererGraphicsContext;
+import com.nextbreakpoint.nextfractal.core.render.RendererSize;
+import com.nextbreakpoint.nextfractal.core.render.RendererTile;
+import com.nextbreakpoint.nextfractal.core.render.Java2DRendererFactory;
+import com.nextbreakpoint.nextfractal.core.render.Java2DRendererGraphicsContext;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;

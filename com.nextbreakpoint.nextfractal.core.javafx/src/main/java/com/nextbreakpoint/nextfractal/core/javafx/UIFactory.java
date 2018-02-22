@@ -25,7 +25,7 @@
 package com.nextbreakpoint.nextfractal.core.javafx;
 
 import com.nextbreakpoint.nextfractal.core.Session;
-import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
+import com.nextbreakpoint.nextfractal.core.render.RendererSize;
 import javafx.scene.layout.Pane;
 
 public interface UIFactory {

@@ -24,7 +24,7 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.renderer.strategy;
 
-import com.nextbreakpoint.nextfractal.core.utils.Colors;
+import com.nextbreakpoint.nextfractal.core.Colors;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererFractal;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererState;

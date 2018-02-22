@@ -24,11 +24,11 @@
  */
 package com.nextbreakpoint.nextfractal.core.javafx.render;
 
-import com.nextbreakpoint.nextfractal.core.renderer.RendererAffine;
-import com.nextbreakpoint.nextfractal.core.renderer.RendererBuffer;
-import com.nextbreakpoint.nextfractal.core.renderer.RendererColor;
-import com.nextbreakpoint.nextfractal.core.renderer.RendererFactory;
-import com.nextbreakpoint.nextfractal.core.renderer.RendererGraphicsContext;
+import com.nextbreakpoint.nextfractal.core.render.RendererAffine;
+import com.nextbreakpoint.nextfractal.core.render.RendererBuffer;
+import com.nextbreakpoint.nextfractal.core.render.RendererColor;
+import com.nextbreakpoint.nextfractal.core.render.RendererFactory;
+import com.nextbreakpoint.nextfractal.core.render.RendererGraphicsContext;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.MatrixType;

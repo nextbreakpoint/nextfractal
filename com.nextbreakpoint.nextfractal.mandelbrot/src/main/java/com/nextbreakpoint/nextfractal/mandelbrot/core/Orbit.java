@@ -24,7 +24,7 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.core;
 
-import com.nextbreakpoint.nextfractal.core.utils.Time;
+import com.nextbreakpoint.nextfractal.core.Time;
 
 import java.util.ArrayList;
 import java.util.List;

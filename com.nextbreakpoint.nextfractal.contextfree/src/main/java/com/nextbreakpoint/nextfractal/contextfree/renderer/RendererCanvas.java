@@ -29,10 +29,10 @@ import com.nextbreakpoint.nextfractal.contextfree.grammar.CFCanvas;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.CommandInfo;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.PrimShape;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.FlagType;
-import com.nextbreakpoint.nextfractal.core.renderer.RendererAffine;
-import com.nextbreakpoint.nextfractal.core.renderer.RendererColor;
-import com.nextbreakpoint.nextfractal.core.renderer.RendererFactory;
-import com.nextbreakpoint.nextfractal.core.renderer.RendererGraphicsContext;
+import com.nextbreakpoint.nextfractal.core.render.RendererAffine;
+import com.nextbreakpoint.nextfractal.core.render.RendererColor;
+import com.nextbreakpoint.nextfractal.core.render.RendererFactory;
+import com.nextbreakpoint.nextfractal.core.render.RendererGraphicsContext;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;

@@ -70,7 +70,7 @@ public class Error {
 		return "[" + line + ":" + charPositionInLine + ":" + index + ":" + length + "] " + message;
 	}
 
-	public static enum ErrorType {
+	public enum ErrorType {
 		SCRIPT_COMPILER, JAVA_COMPILER, RUNTIME;
 	}
 }

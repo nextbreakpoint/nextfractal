@@ -25,15 +25,15 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.renderer;
 
 import com.nextbreakpoint.nextfractal.core.Error;
-import com.nextbreakpoint.nextfractal.core.renderer.RendererAffine;
-import com.nextbreakpoint.nextfractal.core.renderer.RendererFactory;
-import com.nextbreakpoint.nextfractal.core.renderer.RendererGraphicsContext;
-import com.nextbreakpoint.nextfractal.core.renderer.RendererPoint;
-import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
-import com.nextbreakpoint.nextfractal.core.renderer.RendererSurface;
-import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
-import com.nextbreakpoint.nextfractal.core.utils.Colors;
-import com.nextbreakpoint.nextfractal.core.utils.Time;
+import com.nextbreakpoint.nextfractal.core.render.RendererAffine;
+import com.nextbreakpoint.nextfractal.core.render.RendererFactory;
+import com.nextbreakpoint.nextfractal.core.render.RendererGraphicsContext;
+import com.nextbreakpoint.nextfractal.core.render.RendererPoint;
+import com.nextbreakpoint.nextfractal.core.render.RendererSize;
+import com.nextbreakpoint.nextfractal.core.render.RendererSurface;
+import com.nextbreakpoint.nextfractal.core.render.RendererTile;
+import com.nextbreakpoint.nextfractal.core.Colors;
+import com.nextbreakpoint.nextfractal.core.Time;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Color;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.MutableNumber;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;

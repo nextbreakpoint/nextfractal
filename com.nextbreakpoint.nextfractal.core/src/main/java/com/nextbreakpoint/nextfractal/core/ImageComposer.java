@@ -24,7 +24,7 @@
  */
 package com.nextbreakpoint.nextfractal.core;
 
-import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
+import com.nextbreakpoint.nextfractal.core.render.RendererSize;
 
 import java.nio.IntBuffer;
 

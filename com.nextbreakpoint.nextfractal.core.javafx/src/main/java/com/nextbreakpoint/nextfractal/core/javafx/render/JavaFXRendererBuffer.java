@@ -24,15 +24,15 @@
  */
 package com.nextbreakpoint.nextfractal.core.javafx.render;
 
-import com.nextbreakpoint.nextfractal.core.renderer.RendererBuffer;
-import com.nextbreakpoint.nextfractal.core.renderer.RendererImage;
+import com.nextbreakpoint.nextfractal.core.render.RendererBuffer;
+import com.nextbreakpoint.nextfractal.core.render.RendererImage;
 import javafx.scene.image.PixelFormat;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 
 public class JavaFXRendererBuffer implements RendererBuffer {
-	private WritableImage image;
-	private PixelWriter writer;
+	private final WritableImage image;
+	private final PixelWriter writer;
 	
 	public JavaFXRendererBuffer(int witdh, int height) {
 		image = new WritableImage(witdh, height);

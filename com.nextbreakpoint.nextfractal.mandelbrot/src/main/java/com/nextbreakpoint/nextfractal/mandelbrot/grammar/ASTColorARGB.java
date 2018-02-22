@@ -24,7 +24,7 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.grammar;
 
-import com.nextbreakpoint.nextfractal.core.utils.Colors;
+import com.nextbreakpoint.nextfractal.core.Colors;
 
 import java.text.DecimalFormat;
 

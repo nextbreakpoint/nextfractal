@@ -24,8 +24,8 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.javafx;
 
-import com.nextbreakpoint.nextfractal.core.renderer.RendererGraphicsContext;
-import com.nextbreakpoint.nextfractal.core.utils.Time;
+import com.nextbreakpoint.nextfractal.core.render.RendererGraphicsContext;
+import com.nextbreakpoint.nextfractal.core.Time;
 import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotMetadata;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 import javafx.scene.input.MouseEvent;

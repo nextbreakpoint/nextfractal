@@ -25,5 +25,6 @@
 package com.nextbreakpoint.nextfractal.core;
 
 public interface EventListener {
+    //TODO shall we replce Object[] with Event class?
     void eventPosted(Object... event);
 }

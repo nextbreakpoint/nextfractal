@@ -24,7 +24,7 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.core;
 
-import com.nextbreakpoint.nextfractal.core.utils.Time;
+import com.nextbreakpoint.nextfractal.core.Time;
 
 public abstract class Color {
 	protected final float[] color = new float[] { 1f, 0f, 0f, 0f };

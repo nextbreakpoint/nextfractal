@@ -24,8 +24,6 @@
  */
 package com.nextbreakpoint.nextfractal.core;
 
-import com.nextbreakpoint.nextfractal.core.utils.Time;
-
 public interface Metadata {
 	public Time getTime();
 }

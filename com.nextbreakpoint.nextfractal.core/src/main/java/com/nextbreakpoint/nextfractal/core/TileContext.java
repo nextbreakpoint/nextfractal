@@ -24,9 +24,9 @@
  */
 package com.nextbreakpoint.nextfractal.core;
 
-import com.nextbreakpoint.nextfractal.core.renderer.RendererPoint;
-import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
-import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
+import com.nextbreakpoint.nextfractal.core.render.RendererPoint;
+import com.nextbreakpoint.nextfractal.core.render.RendererSize;
+import com.nextbreakpoint.nextfractal.core.render.RendererTile;
 
 import java.util.UUID;
 

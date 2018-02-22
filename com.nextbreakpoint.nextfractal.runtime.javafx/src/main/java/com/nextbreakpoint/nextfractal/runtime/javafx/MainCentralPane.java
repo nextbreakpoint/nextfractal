@@ -38,7 +38,7 @@ import com.nextbreakpoint.nextfractal.core.javafx.GridItemRenderer;
 import com.nextbreakpoint.nextfractal.core.javafx.PlaybackDelegate;
 import com.nextbreakpoint.nextfractal.core.javafx.PlaybackPane;
 import com.nextbreakpoint.nextfractal.core.javafx.RecordingPane;
-import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
+import com.nextbreakpoint.nextfractal.core.render.RendererSize;
 import javafx.animation.FadeTransition;
 import javafx.animation.Interpolator;
 import javafx.animation.TranslateTransition;

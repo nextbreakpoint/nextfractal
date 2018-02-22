@@ -76,10 +76,10 @@ public class ClipProcessor {
                     time = prevTime + (nextEvent.getDate().getTime() - baseTime) / 1000f;
                     while (frameTime - time < 0.01f) {
                         logger.fine("1) frame " + frameIndex + ", time " + frameTime);
-                        Frame frame = new Frame(event.getPluginId(), event.getScript(), event.getMetadata(), true, false);
+                        Frame frame = new Frame(event.getPluginId(), event.getMetadata(), event.getScript(), true, false);
                         if (lastFrame != null && lastFrame.equals(frame)) {
                             logger.fine("1) not key frame");
-                            frame = new Frame(event.getPluginId(), event.getScript(), event.getMetadata(), false, true);
+                            frame = new Frame(event.getPluginId(), event.getMetadata(), event.getScript(), false, true);
                         }
                         lastFrame = frame;
                         frames.add(frame);
@@ -90,10 +90,10 @@ public class ClipProcessor {
                 } else {
                     float frameTime = frameIndex / frameRate;
                     logger.fine("2) frame " + frameIndex + ", time " + frameTime);
-                    Frame frame = new Frame(event.getPluginId(), event.getScript(), event.getMetadata(), true, false);
+                    Frame frame = new Frame(event.getPluginId(), event.getMetadata(), event.getScript(), true, false);
                     if (lastFrame != null && lastFrame.equals(frame)) {
                         logger.fine("2) not key frame");
-                        frame = new Frame(event.getPluginId(), event.getScript(), event.getMetadata(), false, true);
+                        frame = new Frame(event.getPluginId(), event.getMetadata(), event.getScript(), false, true);
                     }
                     lastFrame = frame;
                     frames.add(frame);

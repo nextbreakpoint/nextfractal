@@ -24,7 +24,7 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.javafx;
 
-import com.nextbreakpoint.nextfractal.core.renderer.RendererGraphicsContext;
+import com.nextbreakpoint.nextfractal.core.render.RendererGraphicsContext;
 import javafx.scene.input.MouseEvent;
 
 public interface Tool {

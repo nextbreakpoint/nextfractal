@@ -25,8 +25,8 @@
 package com.nextbreakpoint.nextfractal.core.export;
 
 import com.nextbreakpoint.nextfractal.core.Metadata;
-import com.nextbreakpoint.nextfractal.core.encoder.Encoder;
-import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
+import com.nextbreakpoint.nextfractal.core.encode.Encoder;
+import com.nextbreakpoint.nextfractal.core.render.RendererSize;
 
 import java.io.File;
 import java.util.Collection;

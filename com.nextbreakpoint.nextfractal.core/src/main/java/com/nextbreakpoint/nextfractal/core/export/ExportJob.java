@@ -24,8 +24,8 @@
  */
 package com.nextbreakpoint.nextfractal.core.export;
 
-import com.nextbreakpoint.nextfractal.core.renderer.RendererSize;
-import com.nextbreakpoint.nextfractal.core.renderer.RendererTile;
+import com.nextbreakpoint.nextfractal.core.render.RendererSize;
+import com.nextbreakpoint.nextfractal.core.render.RendererTile;
 
 import java.io.File;
 import java.io.IOException;
