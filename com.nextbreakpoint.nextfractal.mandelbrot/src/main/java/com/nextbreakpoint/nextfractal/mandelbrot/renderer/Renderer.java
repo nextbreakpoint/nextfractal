@@ -53,9 +53,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- * @author Andrea Medeghini
- */
 public class Renderer {
 	private static final Logger logger = Logger.getLogger(Renderer.class.getName());
 	protected final RendererFractal contentRendererFractal;

@@ -26,7 +26,6 @@ package com.nextbreakpoint.nextfractal.mandelbrot.renderer;
 
 import com.nextbreakpoint.nextfractal.mandelbrot.core.MutableNumber;
 
-
 public class RendererTransform {
 	private final double[] matrix = new double[9];
 	

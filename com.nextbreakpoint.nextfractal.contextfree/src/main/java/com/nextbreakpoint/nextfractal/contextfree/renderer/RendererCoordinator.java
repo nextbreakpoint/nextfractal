@@ -36,9 +36,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ThreadFactory;
 
-/**
- * @author Andrea Medeghini
- */
 public class RendererCoordinator implements RendererDelegate {
 	private final HashMap<String, Integer> hints = new HashMap<>();
 	private final ThreadFactory threadFactory;

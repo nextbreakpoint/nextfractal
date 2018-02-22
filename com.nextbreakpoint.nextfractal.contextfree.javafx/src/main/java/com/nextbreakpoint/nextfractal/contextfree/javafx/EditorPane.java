@@ -253,7 +253,7 @@ public class EditorPane extends BorderPane {
                 if (logger.isLoggable(Level.FINE)) {
                     logger.fine(error.toString());
                 }
-                if (error.getType() == Error.ErrorType.SCRIPT_COMPILER) {
+                if (error.getType() != Error.ErrorType.RUNTIME) {
                     int lineEnd = (int)error.getIndex() + 1;
                     int lineBegin = (int)error.getIndex();
                     StyleSpansBuilder<Collection<String>> builder = new StyleSpansBuilder<>();

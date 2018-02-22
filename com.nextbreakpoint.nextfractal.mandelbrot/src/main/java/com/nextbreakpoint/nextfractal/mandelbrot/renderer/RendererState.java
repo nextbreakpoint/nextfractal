@@ -26,9 +26,6 @@ package com.nextbreakpoint.nextfractal.mandelbrot.renderer;
 
 import com.nextbreakpoint.nextfractal.mandelbrot.core.MutableNumber;
 
-/**
- * @author Andrea Medeghini
- */
 public class RendererState {
 	private final MutableNumber[] vars;
 	

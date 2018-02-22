@@ -253,9 +253,9 @@ public class MainCentralPane extends BorderPane {
             double freq = 2;
             double decay = 3;
             double dur = 0.4;
-            if(t < dur){
+            if (t < dur) {
                 return t;
-            }else{
+            } else {
                 double amp = 1/dur;
                 double w = freq*Math.PI*2;
                 return 1 + amp*(Math.sin(t*w)/Math.exp(decay*t)/w);

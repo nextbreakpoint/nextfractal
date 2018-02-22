@@ -24,13 +24,7 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.renderer;
 
-/**
- * @author Andrea Medeghini
- */
 @FunctionalInterface
 public interface RendererDelegate {
-	/**
-	 * @param progress
-	 */
 	public void updateImageInBackground(float progress);
 }

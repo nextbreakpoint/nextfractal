@@ -41,9 +41,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ThreadFactory;
 
-/**
- * @author Andrea Medeghini
- */
 public class RendererCoordinator implements RendererDelegate {
 	public static final String KEY_TYPE = "TYPE";
 	public static final Integer VALUE_REALTIME = 1;
