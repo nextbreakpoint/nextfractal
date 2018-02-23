@@ -331,4 +331,5 @@
 	<target name="build" depends="build-macos, build-win32, build-linux" />
 	<target name="publish" depends="publish-libs" />
 	<target name="all" depends="clean, update-version, update-copyright, build" />
+	<target name="release" depends="clean, update-version, update-copyright, build-signed" />
 </project>
