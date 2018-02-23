@@ -18,7 +18,8 @@ NextFractal contains code ported to Java from C/C++ code of open source projects
 
 ## DESCRIPTION
 
-NextFractal is an application for creating Fractals and other algorithmically generated images. Images are generated processing a script and some user provided parameters depending on the selected grammar.
+NextFractal is an application for creating Fractals and other algorithmically generated images.
+Images are generated processing a script and some user provided parameters depending on the selected grammar.
 
 NextFractal is currently able to interpret M scripts and CFDG scripts. The M scripts are based on a domain specific language for creating Mandelbrot, Julia and Fatou Sets. The CFDG scripts are based on a context-free grammar for creating geometric shapes using an iterative process.
 
@@ -33,9 +34,15 @@ See download page http://www.oracle.com/technetwork/java/javase/downloads
 
     Java SDK contains the Java compiler which is required to compile code in memory and reduce the rendering time.
 
+NextFractal have been tested on OS X 10.13, Windows 7, and Ubuntu/Linux 14.04.
+
+Windows users must install Visual C++ Redistributable Packages. Linux users must install GNU GCC 4.9 libraries.
+
+
 ## DOCUMENTATION
 
 Please see documentation of grammars and tutorials on https://nextbreakpoint.com/nextfractal.html.
+
 
 ## BUILD INSTRUCTIONS
 

@@ -2,7 +2,7 @@
  * NextFractal 2.0.3
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2016 Andrea Medeghini
+ * Copyright 2015-2018 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *

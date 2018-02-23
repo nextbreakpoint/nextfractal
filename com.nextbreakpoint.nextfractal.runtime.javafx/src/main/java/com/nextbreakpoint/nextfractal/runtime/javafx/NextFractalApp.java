@@ -98,7 +98,7 @@ public class NextFractalApp extends Application {
 	private File bundleCurrentFile;
 
 	public static void main(String[] args) {
-		launch(args); 
+		launch(args);
     }
 
     @Override
@@ -125,7 +125,7 @@ public class NextFractalApp extends Application {
 		int sceneHeight = renderWidth;
 
 		logger.info("Scene Size = (" + sceneWidth + "," + sceneHeight + ")");
-		
+
         StackPane rootPane = new StackPane();
 
 		printPlugins();
@@ -486,7 +486,7 @@ public class NextFractalApp extends Application {
 	private String getNoticeMessage() {
 		return "\n\nNextFractal 2.0.3\n\n" +
 				"https://github.com/nextbreakpoint/nextfractal\n\n" +
-				"Copyright 2015-2017 Andrea Medeghini\n\n" +
+				"Copyright 2015-2018 Andrea Medeghini\n\n" +
 				"NextFractal is an application for creating fractals and other graphics artifacts.\n\n" +
 				"NextFractal is free software: you can redistribute it and/or modify\n" +
 				"it under the terms of the GNU General Public License as published by\n" +
@@ -628,7 +628,7 @@ public class NextFractalApp extends Application {
 ////    	} catch (Exception e) {
 ////    	}
 //	}
-	
+
 //	private static void addLibraryPath(String pathToAdd) throws Exception {
 //		Field usrPathsField = ClassLoader.class.getDeclaredField("usr_paths");
 //		usrPathsField.setAccessible(true);
