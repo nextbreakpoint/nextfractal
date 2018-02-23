@@ -28,12 +28,12 @@
 		<module>com.nextbreakpoint.nextfractal.mandelbrot</module>
 		<module>com.nextbreakpoint.nextfractal.contextfree</module>
 		<module>com.nextbreakpoint.nextfractal.runtime</module>
-        <module>com.nextbreakpoint.nextfractal.core.javafx</module>
-        <module>com.nextbreakpoint.nextfractal.mandelbrot.javafx</module>
-        <module>com.nextbreakpoint.nextfractal.contextfree.javafx</module>
-        <module>com.nextbreakpoint.nextfractal.runtime.javafx</module>
+		<module>com.nextbreakpoint.nextfractal.core.javafx</module>
+		<module>com.nextbreakpoint.nextfractal.mandelbrot.javafx</module>
+		<module>com.nextbreakpoint.nextfractal.contextfree.javafx</module>
+		<module>com.nextbreakpoint.nextfractal.runtime.javafx</module>
 		<module>com.nextbreakpoint.nextfractal.main</module>
-    </modules>
+  </modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -53,9 +53,10 @@
 		<maven.target.release>1.8</maven.target.release>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
-		<nexus.host>https://oss.sonatype.or</nexus.host>
-		<nexus.url>https://oss.sonatype.or/content/repositories/snapshots</nexus.url>
-		<bintray.url>https://api.bintray.co/maven/${bintrayAccount}/maven/${project.artifactId}/;publish=0</bintray.url>
+		<nexus.host>https://oss.sonatype.org</nexus.host>
+		<nexus.url>https://oss.sonatype.org/content/repositories/snapshots</nexus.url>
+		<nexus.autoreleaseafterclose>true</nexus.autoreleaseafterclose>
+		<bintray.url>https://api.bintray.com/maven/${bintrayAccount}/maven/${project.artifactId}/;publish=1</bintray.url>
 	</properties>
 	<build>
 		<plugins>
@@ -91,7 +92,6 @@
 					</execution>
 				</executions>
 			</plugin>
-			<!--
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
@@ -102,10 +102,12 @@
 						<goals>
 							<goal>jar</goal>
 						</goals>
+						<configuration>
+							<failOnError>false</failOnError>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>
-			-->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>

@@ -69,7 +69,7 @@
 						<configuration>
 							<serverId>ossrh</serverId>
 							<nexusUrl>${nexus.host}</nexusUrl>
-							<autoReleaseAfterClose>false</autoReleaseAfterClose>
+							<autoReleaseAfterClose>${nexus.autoreleaseafterclose}</autoReleaseAfterClose>
 						</configuration>
 					</plugin>
 				</plugins>
