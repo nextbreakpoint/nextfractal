@@ -3,6 +3,7 @@
 	<property environment="env" />
 	<property name="maven.home" value="${env.M2_HOME}" />
 	<property name="nextfractal.version" value="2.0.3" />
+	<property name="nextfractal.year" value="2018" />
 	<property name="nextfractal.folder" value="NextFractal" />
 	<property name="mainmodule" value="com.nextbreakpoint.nextfractal.main" />
 	<macrodef name="maven">
@@ -279,6 +280,16 @@
 		<addcopyright basedir="${basedir}" path="com.nextbreakpoint.nextfractal.mandelbrot/src/test/java" file="copyright.txt"/>
 		<addcopyright basedir="${basedir}" path="com.nextbreakpoint.nextfractal.mandelbrot/src/main/java/com/nextbreakpoint/nextfractal/mandelbrot/renderer/xaos/XaosRenderer.java" file="copyright-xaos.txt"/>
 	</target>
+	<target name="update-copyright">
+		<replaceregexp match="Copyright 2015-[0-9]{4}" replace="Copyright 2015-${nextfractal.year}" flags="g" byline="true">
+		    <fileset dir="${basedir}/..">
+		    	<include name="**/*.md"/>
+		    	<include name="**/*.txt"/>
+		    	<include name="**/*.html"/>
+    			<include name="**/*.java"/>
+			</fileset>
+		</replaceregexp>
+	</target>
 	<target name="line-count">
 		<linecount basedir="${basedir}" path="."/>
 	</target>
@@ -319,5 +330,5 @@
 	<target name="build-signed" depends="build-macos-signed, build-win32, build-linux" />
 	<target name="build" depends="build-macos, build-win32, build-linux" />
 	<target name="publish" depends="publish-libs" />
-	<target name="all" depends="clean, update-version, build" />
+	<target name="all" depends="clean, update-version, update-copyright, build" />
 </project>
