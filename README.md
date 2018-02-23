@@ -34,9 +34,9 @@ See download page http://www.oracle.com/technetwork/java/javase/downloads
 
     Java SDK contains the Java compiler which is required to compile code in memory and reduce the rendering time.
 
-NextFractal have been tested on OS X 10.13, Windows 7, and Ubuntu/Linux 14.04.
+NextFractal has been tested on OS X 10.13, Windows 7, and Ubuntu/Linux 14.04.
 
-Windows users must install Visual C++ Redistributable Packages. Linux users must install GNU GCC 4.9 libraries.
+    Windows users must install Visual C++ Redistributable Packages. Linux users must install GNU GCC 4.9 libraries.
 
 
 ## DOCUMENTATION
