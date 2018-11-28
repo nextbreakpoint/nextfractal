@@ -24,7 +24,7 @@
  */
 package com.nextbreakpoint.nextfractal.core.export;
 
-import com.nextbreakpoint.nextfractal.core.Metadata;
+import com.nextbreakpoint.nextfractal.core.common.Metadata;
 
 public class ExportProfileBuilder {
 	private float quality;

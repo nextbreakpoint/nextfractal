@@ -24,8 +24,8 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.renderer;
 
-import com.nextbreakpoint.nextfractal.core.Double4D;
-import com.nextbreakpoint.nextfractal.core.Integer4D;
+import com.nextbreakpoint.nextfractal.core.common.Double4D;
+import com.nextbreakpoint.nextfractal.core.common.Integer4D;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 
 public class RendererView {

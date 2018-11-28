@@ -24,10 +24,10 @@
  */
 package com.nextbreakpoint.nextfractal.core.javafx;
 
-import com.nextbreakpoint.nextfractal.core.Clip;
-import com.nextbreakpoint.nextfractal.core.ClipProcessor;
-import com.nextbreakpoint.nextfractal.core.Frame;
-import com.nextbreakpoint.nextfractal.core.DefaultThreadFactory;
+import com.nextbreakpoint.nextfractal.core.common.Clip;
+import com.nextbreakpoint.nextfractal.core.common.ClipProcessor;
+import com.nextbreakpoint.nextfractal.core.common.Frame;
+import com.nextbreakpoint.nextfractal.core.common.DefaultThreadFactory;
 import javafx.application.Platform;
 import javafx.scene.layout.Pane;
 
@@ -39,7 +39,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import static com.nextbreakpoint.nextfractal.core.Plugins.tryFindFactory;
+import static com.nextbreakpoint.nextfractal.core.common.Plugins.tryFindFactory;
 
 public class PlaybackPane extends Pane {
     private static final int FRAMES_PER_SECOND = 50;

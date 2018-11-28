@@ -24,9 +24,9 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.interpreter;
 
-import com.nextbreakpoint.nextfractal.core.Error;
+import com.nextbreakpoint.nextfractal.core.common.SourceError;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerBuilder;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerError;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerSourceError;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerSourceException;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerVariable;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.ExpressionContext;
@@ -51,14 +51,14 @@ import java.util.Map;
 public class InterpreterColorBuilder implements CompilerBuilder<Color> {
 	private ASTFractal astFractal;
 	private String source;
-	private List<Error> errors;
+	private List<SourceError> errors;
 
-	public InterpreterColorBuilder(ASTFractal astFractal, String source, List<Error> errors) {
+	public InterpreterColorBuilder(ASTFractal astFractal, String source, List<SourceError> errors) {
 		this.astFractal = astFractal;
 		this.source = source;
 		this.errors = errors;
 	}
-	
+
 	public Color build() throws InstantiationException, IllegalAccessException, CompilerSourceException {
 		try {
 			ExpressionContext context = new ExpressionContext();
@@ -72,7 +72,7 @@ public class InterpreterColorBuilder implements CompilerBuilder<Color> {
 				stateVars.add(var.copy());
 			}
 			Map<String, CompilerVariable> vars = new HashMap<>();
-	
+
 			for (Iterator<CompilerVariable> s = astFractal.getStateVariables().iterator(); s.hasNext();) {
 				CompilerVariable var = s.next();
 				vars.put(var.getName(), var);
@@ -81,9 +81,9 @@ public class InterpreterColorBuilder implements CompilerBuilder<Color> {
 				CompilerVariable var = s.next();
 				vars.put(var.getName(), var);
 			}
-	
+
 			Map<String, CompilerVariable> newScope = new HashMap<>(vars);
-			InterpreterASTCompiler compiler = new InterpreterASTCompiler(context, newScope);  
+			InterpreterASTCompiler compiler = new InterpreterASTCompiler(context, newScope);
 			CompiledColor color = new CompiledColor(colorVars, stateVars, astColor.getLocation());
 			color.setBackgroundColor(astColor.getArgb().getComponents());
 			List<CompiledRule> rules = new ArrayList<>();
@@ -111,15 +111,15 @@ public class InterpreterColorBuilder implements CompilerBuilder<Color> {
 			color.setRules(rules);
 			return new InterpreterColor(color, context);
 		} catch (ASTException e) {
-			errors.add(new CompilerError(Error.ErrorType.SCRIPT_COMPILER, e.getLocation().getLine(), e.getLocation().getCharPositionInLine(), e.getLocation().getStartIndex(), e.getLocation().getStopIndex() - e.getLocation().getStartIndex(), e.getMessage()));
+			errors.add(new CompilerSourceError(SourceError.ErrorType.SCRIPT_COMPILER, e.getLocation().getLine(), e.getLocation().getCharPositionInLine(), e.getLocation().getStartIndex(), e.getLocation().getStopIndex() - e.getLocation().getStartIndex(), e.getMessage()));
 			throw new CompilerSourceException("Cannot build color", errors);
 		} catch (Exception e) {
-			errors.add(new CompilerError(Error.ErrorType.SCRIPT_COMPILER, 0, 0, 0, 0, e.getMessage()));
+			errors.add(new CompilerSourceError(SourceError.ErrorType.SCRIPT_COMPILER, 0, 0, 0, 0, e.getMessage()));
 			throw new CompilerSourceException("Cannot build color", errors);
 		}
 	}
 
-	public List<Error> getErrors() {
+	public List<SourceError> getErrors() {
 		return errors;
 	}
 }

@@ -24,8 +24,8 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.compiler.java;
 
-import com.nextbreakpoint.nextfractal.core.Error;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerError;
+import com.nextbreakpoint.nextfractal.core.common.SourceError;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerSourceError;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerErrorStrategy;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerReport;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerReport.Type;
@@ -81,7 +81,7 @@ public class JavaReportCompiler {
 	}
 	
 	public CompilerReport generateReport(String source) throws IOException {
-		List<Error> errors = new ArrayList<>();
+		List<SourceError> errors = new ArrayList<>();
 		ASTFractal ast = parse(source, errors);
 		if (errors.size() == 0) {
 			ExpressionContext orbitContext = new ExpressionContext();
@@ -97,7 +97,7 @@ public class JavaReportCompiler {
 		return new CompilerReport(ast, Type.JAVA, source, "", "", errors, packageName, className);
 	}
 	
-	private ASTFractal parse(String source, List<Error> errors) throws IOException {
+	private ASTFractal parse(String source, List<SourceError> errors) throws IOException {
 		try {
 			ANTLRInputStream is = new ANTLRInputStream(new StringReader(source));
 			MandelbrotLexer lexer = new MandelbrotLexer(is);
@@ -111,39 +111,39 @@ public class JavaReportCompiler {
             	return fractal;
             }
 		} catch (ASTException e) {
-			CompilerError error = new CompilerError(Error.ErrorType.SCRIPT_COMPILER, e.getLocation().getLine(), e.getLocation().getCharPositionInLine(), e.getLocation().getStartIndex(), e.getLocation().getStopIndex() - e.getLocation().getStartIndex(), e.getMessage());
+			CompilerSourceError error = new CompilerSourceError(SourceError.ErrorType.SCRIPT_COMPILER, e.getLocation().getLine(), e.getLocation().getCharPositionInLine(), e.getLocation().getStartIndex(), e.getLocation().getStopIndex() - e.getLocation().getStartIndex(), e.getMessage());
 			logger.log(Level.FINE, error.toString(), e);
 			errors.add(error);
 		} catch (Exception e) {
-			CompilerError error = new CompilerError(Error.ErrorType.SCRIPT_COMPILER, 0L, 0L, 0L, 0L, e.getMessage());
+			CompilerSourceError error = new CompilerSourceError(SourceError.ErrorType.SCRIPT_COMPILER, 0L, 0L, 0L, 0L, e.getMessage());
 			logger.log(Level.FINE, error.toString(), e);
 			errors.add(error);
 		}
 		return null;
 	}
 
-	private String buildOrbit(ExpressionContext context, ASTFractal fractal, List<Error> errors) {
+	private String buildOrbit(ExpressionContext context, ASTFractal fractal, List<SourceError> errors) {
 		try {
 			StringBuilder builder = new StringBuilder();
 			Map<String, CompilerVariable> variables = new HashMap<>();
 			compileOrbit(context, builder, variables, fractal);
 			return builder.toString();
 		} catch (ASTException e) {
-			CompilerError error = new CompilerError(Error.ErrorType.SCRIPT_COMPILER, e.getLocation().getLine(), e.getLocation().getCharPositionInLine(), e.getLocation().getStartIndex(), e.getLocation().getStopIndex() - e.getLocation().getStartIndex(), e.getMessage());
+			CompilerSourceError error = new CompilerSourceError(SourceError.ErrorType.SCRIPT_COMPILER, e.getLocation().getLine(), e.getLocation().getCharPositionInLine(), e.getLocation().getStartIndex(), e.getLocation().getStopIndex() - e.getLocation().getStartIndex(), e.getMessage());
 			logger.log(Level.FINE, error.toString(), e);
 			errors.add(error);
 		}
 		return "";
 	}
 	
-	private String buildColor(ExpressionContext context, ASTFractal fractal, List<Error> errors) {
+	private String buildColor(ExpressionContext context, ASTFractal fractal, List<SourceError> errors) {
 		try {
 			StringBuilder builder = new StringBuilder();
 			Map<String, CompilerVariable> variables = new HashMap<>();
 			compileColor(context, builder, variables, fractal);
 			return builder.toString();
 		} catch (ASTException e) {
-			CompilerError error = new CompilerError(Error.ErrorType.SCRIPT_COMPILER, e.getLocation().getLine(), e.getLocation().getCharPositionInLine(), e.getLocation().getStartIndex(), e.getLocation().getStopIndex() - e.getLocation().getStartIndex(), e.getMessage());
+			CompilerSourceError error = new CompilerSourceError(SourceError.ErrorType.SCRIPT_COMPILER, e.getLocation().getLine(), e.getLocation().getCharPositionInLine(), e.getLocation().getStartIndex(), e.getLocation().getStopIndex() - e.getLocation().getStartIndex(), e.getMessage());
 			logger.log(Level.FINE, error.toString(), e);
 			errors.add(error);
 		}

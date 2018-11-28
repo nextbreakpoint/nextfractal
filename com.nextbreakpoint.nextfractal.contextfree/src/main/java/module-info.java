@@ -1,0 +1,19 @@
+import com.nextbreakpoint.nextfractal.contextfree.module.ContextFreeFactory;
+import com.nextbreakpoint.nextfractal.core.common.CoreFactory;
+
+module com.nextbreakpoint.nextfractal.contextfree {
+    requires java.logging;
+    requires java.desktop;
+    requires commons.math3;
+    requires antlr4.runtime;
+    requires com.fasterxml.jackson.databind;
+    requires jackson.annotations;
+    requires com.nextbreakpoint.nextfractal.core;
+    exports com.nextbreakpoint.nextfractal.contextfree.module;
+    exports com.nextbreakpoint.nextfractal.contextfree.core;
+    exports com.nextbreakpoint.nextfractal.contextfree.grammar;
+    exports com.nextbreakpoint.nextfractal.contextfree.renderer;
+    exports com.nextbreakpoint.nextfractal.contextfree.compiler;
+    provides CoreFactory with ContextFreeFactory;
+    opens com.nextbreakpoint.nextfractal.contextfree.module to com.fasterxml.jackson.databind;
+}

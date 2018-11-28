@@ -25,9 +25,9 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.javafx;
 
 import com.nextbreakpoint.Try;
-import com.nextbreakpoint.nextfractal.core.Error;
+import com.nextbreakpoint.nextfractal.core.common.SourceError;
 import com.nextbreakpoint.nextfractal.core.javafx.EventBus;
-import com.nextbreakpoint.nextfractal.core.Session;
+import com.nextbreakpoint.nextfractal.core.common.Session;
 import com.nextbreakpoint.nextfractal.core.javafx.BooleanObservableValue;
 import com.nextbreakpoint.nextfractal.core.javafx.StringObservableValue;
 import com.nextbreakpoint.nextfractal.core.render.RendererFactory;
@@ -36,14 +36,14 @@ import com.nextbreakpoint.nextfractal.core.render.RendererPoint;
 import com.nextbreakpoint.nextfractal.core.render.RendererSize;
 import com.nextbreakpoint.nextfractal.core.render.RendererTile;
 import com.nextbreakpoint.nextfractal.core.javafx.render.JavaFXRendererFactory;
-import com.nextbreakpoint.nextfractal.core.DefaultThreadFactory;
-import com.nextbreakpoint.nextfractal.core.Double2D;
-import com.nextbreakpoint.nextfractal.core.Double4D;
-import com.nextbreakpoint.nextfractal.core.Integer4D;
-import com.nextbreakpoint.nextfractal.core.Time;
-import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotMetadata;
-import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotOptions;
-import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotSession;
+import com.nextbreakpoint.nextfractal.core.common.DefaultThreadFactory;
+import com.nextbreakpoint.nextfractal.core.common.Double2D;
+import com.nextbreakpoint.nextfractal.core.common.Double4D;
+import com.nextbreakpoint.nextfractal.core.common.Integer4D;
+import com.nextbreakpoint.nextfractal.core.common.Time;
+import com.nextbreakpoint.nextfractal.mandelbrot.module.MandelbrotMetadata;
+import com.nextbreakpoint.nextfractal.mandelbrot.module.MandelbrotOptions;
+import com.nextbreakpoint.nextfractal.mandelbrot.module.MandelbrotSession;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.Compiler;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerBuilder;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerClassException;
@@ -592,7 +592,7 @@ public class RenderPane extends BorderPane {
 
 		eventBus.subscribe("session-report-changed", event -> {
 //			timeProperty.setValue(false);
-			List<Error> lastErrors = updateReport((CompilerReport) event[0]);
+			List<SourceError> lastErrors = updateReport((CompilerReport) event[0]);
 			if (lastErrors.size() == 0) {
 				notifySessionChanged(eventBus, (MandelbrotSession)event[1], (Boolean)event[2], true, (Boolean)event[3]);
 			}
@@ -719,12 +719,12 @@ public class RenderPane extends BorderPane {
     }
 
 	private CompilerReport generateReport(String text) throws Exception {
-		return new Compiler(Compiler.class.getPackage().getName(), "Compile" + System.nanoTime()).compileReport(text);
+		return new Compiler(Compiler.class.getPackage().getName() + ".generated", "Compile" + System.nanoTime()).compileReport(text);
 	}
 
 	private void loadData(MandelbrotSession session, Boolean continuous, boolean timeAnimation) {
 		Try.of(() -> generateReport(session.getScript())).filter(report -> ((CompilerReport)report).getErrors().size() == 0).ifPresent(report -> {
-			List<Error> errors = updateReport(report);
+			List<SourceError> errors = updateReport(report);
 			if (errors.size() == 0) {
 				updateData(session, continuous, timeAnimation);
 			}
@@ -913,7 +913,7 @@ public class RenderPane extends BorderPane {
 		}
 	}
 
-	private List<Error> updateReport(CompilerReport report) {
+	private List<SourceError> updateReport(CompilerReport report) {
 		try {
 			updateCompilerErrors(null, null, null);
 			boolean[] changed = createOrbitAndColor(report);
@@ -1023,7 +1023,7 @@ public class RenderPane extends BorderPane {
 				logger.log(Level.FINE, "Cannot render fractal: " + e.getMessage());
 			}
 			updateCompilerErrors(e.getMessage(), null, null);
-			return Arrays.asList(new Error(Error.ErrorType.RUNTIME, 0, 0, 0, 0, "Cannot render image"));
+			return Arrays.asList(new SourceError(SourceError.ErrorType.RUNTIME, 0, 0, 0, 0, "Cannot render image"));
 		}
 		return Collections.emptyList();
 	}
@@ -1036,7 +1036,7 @@ public class RenderPane extends BorderPane {
 			colorBuilder = null;
 			throw new CompilerSourceException("Failed to compile source", report.getErrors());
 		}
-		Compiler compiler = new Compiler(Compiler.class.getPackage().getName(), "Compile" + System.nanoTime());
+		Compiler compiler = new Compiler(Compiler.class.getPackage().getName() + ".generated", "Compile" + System.nanoTime());
 		boolean[] changed = new boolean[] { false, false };
 		CompilerBuilder<Orbit> newOrbitBuilder = compiler.compileOrbit(report);
 		if (newOrbitBuilder.getErrors().size() > 0) {
@@ -1065,7 +1065,7 @@ public class RenderPane extends BorderPane {
 		return changed;
 	}
 
-	private void updateCompilerErrors(String message, List<Error> errors, String source) {
+	private void updateCompilerErrors(String message, List<SourceError> errors, String source) {
 		hasError = message != null;
 		Platform.runLater(() -> {
 			statusProperty.setValue(null);
@@ -1075,7 +1075,7 @@ public class RenderPane extends BorderPane {
 				builder.append(message);
 				if (errors != null) {
 					builder.append("\n\n");
-					for (Error error : errors) {
+					for (SourceError error : errors) {
 						builder.append("Line ");
 						builder.append(error.getLine());
 						builder.append(": ");
@@ -1096,7 +1096,7 @@ public class RenderPane extends BorderPane {
 		});
 	}
 
-	private void updateRendererErrors(String message, List<Error> errors, String source) {
+	private void updateRendererErrors(String message, List<SourceError> errors, String source) {
 		hasError = message != null;
 		Platform.runLater(() -> {
 			statusProperty.setValue(null);
@@ -1106,7 +1106,7 @@ public class RenderPane extends BorderPane {
 				builder.append(message);
 				if (errors != null) {
 					builder.append("\n\n");
-					for (Error error : errors) {
+					for (SourceError error : errors) {
 						builder.append("Line ");
 						builder.append(error.getLine());
 						builder.append(": ");
@@ -1296,11 +1296,11 @@ public class RenderPane extends BorderPane {
 		if (coordinators != null && coordinators.length > 0) {
 			RendererCoordinator coordinator = coordinators[0];
 			if (coordinator != null) {
-				List<Error> errors = coordinator.getErrors();
+				List<SourceError> errors = coordinator.getErrors();
 				if (errors.isEmpty()) {
 					updateRendererErrors(null, null, null);
 				} else {
-					updateRendererErrors("Error", errors, null);
+					updateRendererErrors("SourceError", errors, null);
 				}
 			}
 		}

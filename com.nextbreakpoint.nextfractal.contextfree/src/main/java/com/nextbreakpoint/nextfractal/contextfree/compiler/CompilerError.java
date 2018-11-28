@@ -24,10 +24,10 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.compiler;
 
-import com.nextbreakpoint.nextfractal.core.Error;
+import com.nextbreakpoint.nextfractal.core.common.SourceError;
 
-public class CompilerError extends Error {
-	public CompilerError(ErrorType type, long line, long charPositionInLine, long index, long length, String message) {
+public class CompilerError extends SourceError {
+	public CompilerError(SourceError.ErrorType type, long line, long charPositionInLine, long index, long length, String message) {
 		super(type, line, charPositionInLine, index, length, message);
 	}
 }

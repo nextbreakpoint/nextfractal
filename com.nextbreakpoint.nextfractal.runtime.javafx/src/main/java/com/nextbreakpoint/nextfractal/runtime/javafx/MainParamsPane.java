@@ -25,8 +25,8 @@
 package com.nextbreakpoint.nextfractal.runtime.javafx;
 
 import com.nextbreakpoint.nextfractal.core.javafx.EventBus;
-import com.nextbreakpoint.nextfractal.core.EventListener;
-import com.nextbreakpoint.nextfractal.core.Session;
+import com.nextbreakpoint.nextfractal.core.common.EventListener;
+import com.nextbreakpoint.nextfractal.core.common.Session;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -41,7 +41,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import static com.nextbreakpoint.nextfractal.core.Plugins.listGrammars;
+import static com.nextbreakpoint.nextfractal.core.common.Plugins.listGrammars;
 import static com.nextbreakpoint.nextfractal.core.javafx.UIPlugins.tryFindFactory;
 
 public class MainParamsPane extends Pane {

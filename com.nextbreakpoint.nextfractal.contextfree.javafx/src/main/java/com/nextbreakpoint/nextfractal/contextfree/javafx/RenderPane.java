@@ -25,17 +25,17 @@
 package com.nextbreakpoint.nextfractal.contextfree.javafx;
 
 import com.nextbreakpoint.Try;
-import com.nextbreakpoint.nextfractal.contextfree.ContextFreeMetadata;
-import com.nextbreakpoint.nextfractal.contextfree.ContextFreeSession;
+import com.nextbreakpoint.nextfractal.contextfree.module.ContextFreeMetadata;
+import com.nextbreakpoint.nextfractal.contextfree.module.ContextFreeSession;
 import com.nextbreakpoint.nextfractal.contextfree.compiler.Compiler;
 import com.nextbreakpoint.nextfractal.contextfree.compiler.CompilerClassException;
 import com.nextbreakpoint.nextfractal.contextfree.compiler.CompilerReport;
 import com.nextbreakpoint.nextfractal.contextfree.compiler.CompilerSourceException;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDG;
 import com.nextbreakpoint.nextfractal.contextfree.renderer.RendererCoordinator;
-import com.nextbreakpoint.nextfractal.core.Error;
+import com.nextbreakpoint.nextfractal.core.common.SourceError;
 import com.nextbreakpoint.nextfractal.core.javafx.EventBus;
-import com.nextbreakpoint.nextfractal.core.Session;
+import com.nextbreakpoint.nextfractal.core.common.Session;
 import com.nextbreakpoint.nextfractal.core.javafx.BooleanObservableValue;
 import com.nextbreakpoint.nextfractal.core.javafx.StringObservableValue;
 import com.nextbreakpoint.nextfractal.core.render.RendererGraphicsContext;
@@ -43,8 +43,8 @@ import com.nextbreakpoint.nextfractal.core.render.RendererPoint;
 import com.nextbreakpoint.nextfractal.core.render.RendererSize;
 import com.nextbreakpoint.nextfractal.core.render.RendererTile;
 import com.nextbreakpoint.nextfractal.core.javafx.render.JavaFXRendererFactory;
-import com.nextbreakpoint.nextfractal.core.Block;
-import com.nextbreakpoint.nextfractal.core.DefaultThreadFactory;
+import com.nextbreakpoint.nextfractal.core.common.Block;
+import com.nextbreakpoint.nextfractal.core.common.DefaultThreadFactory;
 import javafx.animation.AnimationTimer;
 import javafx.animation.FadeTransition;
 import javafx.application.Platform;
@@ -221,7 +221,7 @@ public class RenderPane extends BorderPane {
 
 		eventBus.subscribe("session-report-changed", event -> {
 			CompilerReport report = (CompilerReport) event[0];
-			List<Error> lastErrors = updateReport(report);
+			List<SourceError> lastErrors = updateReport(report);
 			if (lastErrors.size() == 0) {
 				ContextFreeSession newSession = (ContextFreeSession)event[1];
 				notifySessionChanged(eventBus, newSession, (Boolean)event[2], false, (Boolean)event[3]);
@@ -268,7 +268,7 @@ public class RenderPane extends BorderPane {
 
 	private void loadData(ContextFreeSession session) {
 		Try.of(() -> generateReport(session.getScript())).filter(report -> ((CompilerReport)report).getErrors().size() == 0).ifPresent(report -> {
-			List<Error> errors = updateReport(report);
+			List<SourceError> errors = updateReport(report);
 			if (errors.size() == 0) {
 				updateData(session);
 			}
@@ -384,7 +384,7 @@ public class RenderPane extends BorderPane {
 		return tile;
 	}
 
-	private void updateCompilerErrors(String message, List<Error> errors, String source) {
+	private void updateCompilerErrors(String message, List<SourceError> errors, String source) {
 		hasError = message != null;
 		Platform.runLater(() -> {
 			statusProperty.setValue(null);
@@ -394,7 +394,7 @@ public class RenderPane extends BorderPane {
 				builder.append(message);
 				if (errors != null) {
 					builder.append("\n\n");
-					for (Error error : errors) {
+					for (SourceError error : errors) {
 						builder.append("Line ");
 						builder.append(error.getLine());
 						builder.append(": ");
@@ -415,7 +415,7 @@ public class RenderPane extends BorderPane {
 		});
 	}
 
-	private void updateRendererErrors(String message, List<Error> errors, String source) {
+	private void updateRendererErrors(String message, List<SourceError> errors, String source) {
 		hasError = message != null;
 		Platform.runLater(() -> {
 			statusProperty.setValue(null);
@@ -425,7 +425,7 @@ public class RenderPane extends BorderPane {
 				builder.append(message);
 				if (errors != null) {
 					builder.append("\n\n");
-					for (Error error : errors) {
+					for (SourceError error : errors) {
 						builder.append("Line ");
 						builder.append(error.getLine());
 						builder.append(": ");
@@ -450,7 +450,7 @@ public class RenderPane extends BorderPane {
 		return new Compiler().compileReport(text);
 	}
 
-	private List<Error> updateReport(CompilerReport report) {
+	private List<SourceError> updateReport(CompilerReport report) {
 		try {
 			updateCompilerErrors(null, null, null);
 			boolean[] changed = createCFDG(report);
@@ -470,7 +470,7 @@ public class RenderPane extends BorderPane {
 				coordinator.init();
 				coordinator.run();
 				Thread.sleep(100);
-				List<Error> errors = coordinator.getErrors();
+				List<SourceError> errors = coordinator.getErrors();
 				if (errors.size() > 0) {
 					updateCompilerErrors("Some runtime errors occurred", errors, null);
 				}
@@ -493,7 +493,7 @@ public class RenderPane extends BorderPane {
 				logger.log(Level.FINE, "Cannot render image: " + e.getMessage());
 			}
 			updateCompilerErrors(e.getMessage(), null, null);
-			return Arrays.asList(new Error(Error.ErrorType.RUNTIME, 0, 0, 0, 0, "Interrupted"));
+			return Arrays.asList(new SourceError(SourceError.ErrorType.RUNTIME, 0, 0, 0, 0, "Interrupted"));
 		}
 		return Collections.emptyList();
 	}
@@ -513,11 +513,11 @@ public class RenderPane extends BorderPane {
 
 	private void processRenderErrors() {
 		if (coordinator != null) {
-			List<Error> errors = coordinator.getErrors();
+			List<SourceError> errors = coordinator.getErrors();
 			if (errors.isEmpty()) {
 				updateRendererErrors(null, null, null);
 			} else {
-				updateRendererErrors("Error", errors, null);
+				updateRendererErrors("SourceError", errors, null);
 			}
 		}
 	}

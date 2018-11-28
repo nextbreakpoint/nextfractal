@@ -25,13 +25,13 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.javafx;
 
 import com.nextbreakpoint.Try;
-import com.nextbreakpoint.nextfractal.core.Error;
+import com.nextbreakpoint.nextfractal.core.common.SourceError;
 import com.nextbreakpoint.nextfractal.core.javafx.EventBus;
 import com.nextbreakpoint.nextfractal.core.javafx.BooleanObservableValue;
-import com.nextbreakpoint.nextfractal.core.Block;
-import com.nextbreakpoint.nextfractal.core.DefaultThreadFactory;
-import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotMetadata;
-import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotSession;
+import com.nextbreakpoint.nextfractal.core.common.Block;
+import com.nextbreakpoint.nextfractal.core.common.DefaultThreadFactory;
+import com.nextbreakpoint.nextfractal.mandelbrot.module.MandelbrotMetadata;
+import com.nextbreakpoint.nextfractal.mandelbrot.module.MandelbrotSession;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.Compiler;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerReport;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerSourceException;
@@ -168,7 +168,7 @@ public class EditorPane extends BorderPane {
     }
 
     private CompilerReport generateReport(String text) throws Exception {
-        return new Compiler(Compiler.class.getPackage().getName(), "Compile" + System.nanoTime()).compileReport(text);
+        return new Compiler(Compiler.class.getPackage().getName() + ".generated", "Compile" + System.nanoTime()).compileReport(text);
     }
 
     private StyleSpans<Collection<String>> computeHighlighting(String text) {
@@ -257,14 +257,14 @@ public class EditorPane extends BorderPane {
 
     private TaskResult updateTextStyles(TaskResult task) {
         codeArea.setStyleSpans(0, task.highlighting);
-        List<Error> errors = task.report.getErrors();
+        List<SourceError> errors = task.report.getErrors();
         if (errors.size() > 0) {
             Collections.sort(errors, (o1, o2) -> o2.getIndex() < o1.getIndex() ? -1 : 1);
-            for (Error error : errors) {
+            for (SourceError error : errors) {
                 if (logger.isLoggable(Level.FINE)) {
                     logger.fine(error.toString());
                 }
-                if (error.getType() != Error.ErrorType.RUNTIME) {
+                if (error.getType() != SourceError.ErrorType.RUNTIME) {
                     int lineEnd = (int)error.getIndex() + 1;
                     int lineBegin = (int)error.getIndex();
                     StyleSpansBuilder<Collection<String>> builder = new StyleSpansBuilder<>();

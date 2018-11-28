@@ -24,20 +24,20 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.compiler;
 
-import com.nextbreakpoint.nextfractal.core.Error;
+import com.nextbreakpoint.nextfractal.core.common.SourceError;
 
 import java.util.List;
 
 public class CompilerSourceException extends Exception {
 	private static final long serialVersionUID = 1L;
-	private List<Error> errors;
+	private List<SourceError> errors;
 
-	public CompilerSourceException(String message, List<Error> errors) {
+	public CompilerSourceException(String message, List<SourceError> errors) {
 		super(message);
 		this.errors = errors;
 	}
 	
-	public List<Error> getErrors() {
+	public List<SourceError> getErrors() {
 		return errors;
 	}
 }

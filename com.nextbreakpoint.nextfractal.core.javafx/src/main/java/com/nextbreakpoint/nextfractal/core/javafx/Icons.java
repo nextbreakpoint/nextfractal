@@ -36,11 +36,19 @@ public class Icons {
     public static ImageView createIconImage(Class clazz, String name, double percentage) {
         int size = (int)Math.rint(Screen.getPrimary().getVisualBounds().getWidth() * percentage);
         InputStream stream = clazz.getResourceAsStream(name);
-        ImageView image = new ImageView(new Image(stream));
-        image.setSmooth(true);
-        image.setFitWidth(size);
-        image.setFitHeight(size);
-        return image;
+        if (stream != null) {
+            ImageView image = new ImageView(new Image(stream));
+            image.setSmooth(true);
+            image.setFitWidth(size);
+            image.setFitHeight(size);
+            return image;
+        } else {
+            ImageView image = new ImageView();
+            image.setSmooth(true);
+            image.setFitWidth(size);
+            image.setFitHeight(size);
+            return image;
+        }
     }
 
     public static ImageView createIconImage(Class clazz, String name) {

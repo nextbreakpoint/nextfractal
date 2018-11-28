@@ -1,6 +1,6 @@
-JAVA_VERSION?=8
+JAVA_VERSION?=11
 
-JHOME:=/usr/lib/jvm/java-8-oracle
+JHOME:=/usr/lib/jvm/java-11-oracle
 SYSTEM:=linux
 
 CC = gcc-4.9
@@ -11,7 +11,7 @@ CXXFLAGS += -g
 VM_DIR=$(JHOME)/jre/lib
 LDFLAGS +=
 CXXFLAGS += -I$(JHOME)/include -I$(JHOME)/include/$(SYSTEM)
-LDLIBS += -lstdc++ -ldl 
+LDLIBS += -lstdc++ -ldl
 
 all: NextFractal
 

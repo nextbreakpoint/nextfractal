@@ -31,7 +31,7 @@ import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGLexer;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGLogger;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGParser;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.exceptions.CFDGException;
-import com.nextbreakpoint.nextfractal.core.Error;
+import com.nextbreakpoint.nextfractal.core.common.SourceError;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 
@@ -48,12 +48,12 @@ public class InterpreterReportCompiler {
 	private static final String INCLUDE_LOCATION = "include.location";
 
 	public CompilerReport generateReport(String source) throws IOException {
-		List<Error> errors = new ArrayList<>();
+		List<SourceError> errors = new ArrayList<>();
 		CFDG cfdg = parse(source, errors);
 		return new CompilerReport(cfdg, Type.INTERPRETER, source, errors);
 	}
 	
-	private CFDG parse(String source, List<Error> errors) throws IOException {
+	private CFDG parse(String source, List<SourceError> errors) throws IOException {
 		try {
 			ANTLRInputStream is = new ANTLRInputStream(new StringReader(source));
 			CFDGLexer lexer = new CFDGLexer(is);
@@ -69,11 +69,11 @@ public class InterpreterReportCompiler {
 				return parser.getDriver().getCFDG();
 			}
 		} catch (CFDGException e) {
-			CompilerError error = new CompilerError(Error.ErrorType.SCRIPT_COMPILER, e.getLocation().getLine(), e.getLocation().getCharPositionInLine(), e.getLocation().getStartIndex(), e.getLocation().getStopIndex() - e.getLocation().getStartIndex(), e.getMessage());
+			CompilerError error = new CompilerError(SourceError.ErrorType.SCRIPT_COMPILER, e.getLocation().getLine(), e.getLocation().getCharPositionInLine(), e.getLocation().getStartIndex(), e.getLocation().getStopIndex() - e.getLocation().getStartIndex(), e.getMessage());
 			logger.log(Level.FINE, error.toString(), e);
 			errors.add(error);
 		} catch (Exception e) {
-			CompilerError error = new CompilerError(Error.ErrorType.SCRIPT_COMPILER, 0L, 0L, 0L, 0L, e.getMessage());
+			CompilerError error = new CompilerError(SourceError.ErrorType.SCRIPT_COMPILER, 0L, 0L, 0L, 0L, e.getMessage());
 			logger.log(Level.FINE, error.toString(), e);
 			errors.add(error);
 		}

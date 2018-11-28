@@ -33,7 +33,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.nextbreakpoint</groupId>
-			<artifactId>com.nextbreakpoint.try</artifactId>
+			<artifactId>com.nextbreakpoint.try4java</artifactId>
 		</dependency>
 	</dependencies>
 	<profiles>

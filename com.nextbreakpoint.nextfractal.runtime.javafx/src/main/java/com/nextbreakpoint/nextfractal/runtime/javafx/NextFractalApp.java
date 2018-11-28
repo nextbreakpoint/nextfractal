@@ -25,18 +25,18 @@
 package com.nextbreakpoint.nextfractal.runtime.javafx;
 
 import com.nextbreakpoint.Try;
-import com.nextbreakpoint.nextfractal.core.Bundle;
-import com.nextbreakpoint.nextfractal.core.Clip;
-import com.nextbreakpoint.nextfractal.core.CoreFactory;
+import com.nextbreakpoint.nextfractal.core.common.Bundle;
+import com.nextbreakpoint.nextfractal.core.common.Clip;
+import com.nextbreakpoint.nextfractal.core.common.CoreFactory;
 import com.nextbreakpoint.nextfractal.core.javafx.EventBus;
-import com.nextbreakpoint.nextfractal.core.FileManager;
-import com.nextbreakpoint.nextfractal.core.Session;
+import com.nextbreakpoint.nextfractal.core.common.FileManager;
+import com.nextbreakpoint.nextfractal.core.common.Session;
 import com.nextbreakpoint.nextfractal.core.encode.Encoder;
 import com.nextbreakpoint.nextfractal.core.export.ExportRenderer;
 import com.nextbreakpoint.nextfractal.core.export.ExportService;
 import com.nextbreakpoint.nextfractal.core.export.ExportSession;
 import com.nextbreakpoint.nextfractal.core.render.RendererSize;
-import com.nextbreakpoint.nextfractal.core.DefaultThreadFactory;
+import com.nextbreakpoint.nextfractal.core.common.DefaultThreadFactory;
 import com.nextbreakpoint.nextfractal.runtime.export.ExportServiceDelegate;
 import com.nextbreakpoint.nextfractal.runtime.export.SimpleExportRenderer;
 import javafx.application.Application;
@@ -75,10 +75,10 @@ import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static com.nextbreakpoint.nextfractal.core.Plugins.factories;
-import static com.nextbreakpoint.nextfractal.core.Plugins.tryFindEncoder;
-import static com.nextbreakpoint.nextfractal.core.Plugins.tryFindFactory;
-import static com.nextbreakpoint.nextfractal.core.Plugins.tryFindFactoryByGrammar;
+import static com.nextbreakpoint.nextfractal.core.common.Plugins.factories;
+import static com.nextbreakpoint.nextfractal.core.common.Plugins.tryFindEncoder;
+import static com.nextbreakpoint.nextfractal.core.common.Plugins.tryFindFactory;
+import static com.nextbreakpoint.nextfractal.core.common.Plugins.tryFindFactoryByGrammar;
 
 public class NextFractalApp extends Application {
 	private static Logger logger = Logger.getLogger(NextFractalApp.class.getName());
@@ -398,7 +398,7 @@ public class NextFractalApp extends Application {
 //			Dialog<String> dialog = new Dialog<>();
 //			dialog.getDialogPane().getButtonTypes().add(exitButtonType);
 //			dialog.setGraphic(createIconImage("/icon-errors.png"));
-//			dialog.setTitle("Error");
+//			dialog.setTitle("SourceError");
 //			dialog.setHeaderText("NextFractal requires Java JDK 8 or later");
 //			dialog.setContentText("Please install Java JDK 8 or later and add the command your_jdk_path/bin/java to your system's path variable.");
 //			dialog.showAndWait();

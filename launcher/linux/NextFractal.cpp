@@ -35,7 +35,7 @@ struct start_args {
             options++;
             args++;
         }
-        vm_args.version = JNI_VERSION_1_8;
+        vm_args.version = JNI_VERSION_10;
         vm_args.ignoreUnrecognized = JNI_FALSE;
     }
 
@@ -78,23 +78,20 @@ struct start_args {
 };
 
 struct launch_args {
-  struct start_args *args_jdk8;
-  struct start_args *args_jdk9;
+  struct start_args *java_args;
   char *launch_class;
   char *java_home;
 
   launch_args() {
     launch_class = NULL;
     java_home = NULL;
-    args_jdk8 = NULL;
-    args_jdk9 = NULL;
+    java_args = NULL;
   }
 
-  launch_args(const char *javahome, const char *classname, const char ** vm_arglist_jdk8, const char ** vm_arglist_jdk9) {
+  launch_args(const char *javahome, const char *classname, const char ** vm_arglist) {
       launch_class = strdup(classname);
       java_home = javahome != NULL ? strdup(javahome) : NULL;
-      args_jdk8 = new start_args(vm_arglist_jdk8);
-      args_jdk9 = new start_args(vm_arglist_jdk9);
+      java_args = new start_args(vm_arglist);
   }
 
   ~launch_args() {
@@ -102,10 +99,8 @@ struct launch_args {
           free(launch_class);
       if (java_home)
           free(java_home);
-      if (args_jdk8)
-          free(args_jdk8);
-      if (args_jdk9)
-          free(args_jdk9);
+      if (java_args)
+          free(java_args);
   }
 };
 
@@ -203,26 +198,14 @@ void run_java(struct launch_args *run_args) {
             std::string match_str = match.str();
             if (match_str.find("jdk-") == 0) {
               std::cout << "Found Java SDK 9 or later\n";
-              args = run_args->args_jdk9;
+              args = run_args->java_args;
               libPath = path + "/lib/server/libjvm.so";
-              break;
-            }
-            if (match_str.find("java-8") == 0) {
-              std::cout << "Found Java SDK 1.8\n";
-              args = run_args->args_jdk8;
-              libPath = path + "/jre/lib/amd64/server/libjvm.so";
               break;
             }
             if (match_str.find("java-") == 0) {
               std::cout << "Found Java SDK 9 or later\n";
-              args = run_args->args_jdk9;
+              args = run_args->java_args;
               libPath = path + "/lib/server/libjvm.so";
-              break;
-            }
-            if (match_str.find("jdk1.8") == 0) {
-              std::cout << "Found Java SDK 1.8\n";
-              args = run_args->args_jdk8;
-              libPath = path + "/jre/lib/amd64/server/libjvm.so";
               break;
             }
         }
@@ -266,7 +249,7 @@ void * start_java(void *start_args) {
     try {
         run_java(args);
     } catch (const std::runtime_error& e) {
-      ShowAlert("Some error occurred while launching Java VM. Please install Java JDK version 8 or later. If the problem persists, try setting the environment variable NEXTFRACTAL_JAVA_HOME with path of Java SDK.", e);
+      ShowAlert("Some error occurred while launching Java VM. Please install Java JDK version 11 or later. See instruction on https://nextbreakpoint.com/nextfractal.html if you need help.", e);
 
       exit(-1);
     }
@@ -322,7 +305,7 @@ int main(int argc, char **argv) {
             memMaxArg.append(std::to_string(std::stoi(varMemMax)));
             memMaxArg.append("m");
         } else {
-            memMaxArg.append("-Xmx3g");
+            memMaxArg.append("-Xmx4g");
         }
         std::string basePath = GetBasePath(GetExePath());
         std::cout << "Base path " << basePath << std::endl;
@@ -330,7 +313,17 @@ int main(int argc, char **argv) {
         std::string classpathArg = "-Djava.class.path=" + GetClasspath(jarsPath);
         std::string libPathArg = "-Djava.library.path=" + basePath + "/resources";
         std::string locPathArg = "-Dbrowser.location=" + basePath + "/examples";
-        const char *vm_arglist_jdk8[] = {
+        const char *vm_arglist[] = {
+            "--add-modules",
+            "javafx.controls",
+            "--add-addopens",
+            "javafx.graphics/javafx.scene.text=ALL-UNNAMED",
+            "--add-addopens",
+            "javafx.graphics/com.sun.javafx.text=ALL-UNNAMED",
+            "--add-addopens",
+            "javafx.graphics/com.sun.javafx.geom=ALL-UNNAMED",
+            "--add-addopens",
+            "javafx.graphics/com.sun.javafx.scene.text=ALL-UNNAMED",
             "-Djava.util.logging.config.class=com.nextbreakpoint.nextfractal.runtime.LogConfig",
             classpathArg.c_str(),
             libPathArg.c_str(),
@@ -338,25 +331,7 @@ int main(int argc, char **argv) {
             memMaxArg.c_str(),
             0
         };
-        const char *vm_arglist_jdk9[] = {
-//            "--add-modules",
-//            "java.xml.bind",
-//            "--add-addopens",
-//            "javafx.graphics/javafx.scene.text=ALL-UNNAMED",
-//            "--add-addopens",
-//            "javafx.graphics/com.sun.javafx.text=ALL-UNNAMED",
-//            "--add-addopens",
-//            "javafx.graphics/com.sun.javafx.geom=ALL-UNNAMED",
-//            "--add-addopens",
-//            "javafx.graphics/com.sun.javafx.scene.text=ALL-UNNAMED",
-            "-Djava.util.logging.config.class=com.nextbreakpoint.nextfractal.runtime.LogConfig",
-            classpathArg.c_str(),
-            libPathArg.c_str(),
-            locPathArg.c_str(),
-            memMaxArg.c_str(),
-            0
-        };
-        struct launch_args args(varJavaHome, "com/nextbreakpoint/nextfractal/runtime/javafx/NextFractalApp", vm_arglist_jdk8, vm_arglist_jdk9);
+        struct launch_args args(varJavaHome, "com/nextbreakpoint/nextfractal/runtime/javafx/NextFractalApp", vm_arglist);
         start_java((void*)&args);
     } catch (const std::runtime_error& e) {
         ShowAlert("Some error occurred while launching the application", e);

@@ -24,9 +24,9 @@
  */
 package com.nextbreakpoint.nextfractal.runtime.javafx;
 
-import com.nextbreakpoint.nextfractal.core.Clip;
+import com.nextbreakpoint.nextfractal.core.common.Clip;
 import com.nextbreakpoint.nextfractal.core.javafx.EventBus;
-import com.nextbreakpoint.nextfractal.core.Session;
+import com.nextbreakpoint.nextfractal.core.common.Session;
 import com.nextbreakpoint.nextfractal.core.export.ExportSession;
 import com.nextbreakpoint.nextfractal.core.export.ExportState;
 import com.nextbreakpoint.nextfractal.core.javafx.ExportDelegate;
@@ -132,8 +132,8 @@ public class MainSidePane extends BorderPane {
         Pane sourcePane = new Pane();
         HBox sourceButtons = new HBox(0);
         sourceButtons.setAlignment(Pos.CENTER);
-        Button browseButton = new Button("", createIconImage(getClass(),"/icon-grid.png"));
-        Button renderButton = new Button("", createIconImage(getClass(),"/icon-run.png"));
+        Button browseButton = new Button("", createIconImage(getClass(), "/icon-grid.png"));
+        Button renderButton = new Button("", createIconImage(getClass(), "/icon-run.png"));
         Button loadButton = new Button("", createIconImage(getClass(), "/icon-load.png"));
         Button saveButton = new Button("", createIconImage(getClass(), "/icon-save.png"));
         ToggleButton jobsButton = new ToggleButton("", createIconImage(getClass(), "/icon-tool.png"));

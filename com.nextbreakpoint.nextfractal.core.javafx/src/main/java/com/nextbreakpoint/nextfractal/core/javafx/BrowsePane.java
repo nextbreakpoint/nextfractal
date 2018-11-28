@@ -25,14 +25,14 @@
 package com.nextbreakpoint.nextfractal.core.javafx;
 
 import com.nextbreakpoint.Try;
-import com.nextbreakpoint.nextfractal.core.Error;
-import com.nextbreakpoint.nextfractal.core.FileManager;
-import com.nextbreakpoint.nextfractal.core.Plugins;
+import com.nextbreakpoint.nextfractal.core.common.FileManager;
+import com.nextbreakpoint.nextfractal.core.common.Plugins;
+import com.nextbreakpoint.nextfractal.core.common.SourceError;
 import com.nextbreakpoint.nextfractal.core.render.RendererPoint;
 import com.nextbreakpoint.nextfractal.core.render.RendererSize;
 import com.nextbreakpoint.nextfractal.core.render.RendererTile;
-import com.nextbreakpoint.nextfractal.core.Block;
-import com.nextbreakpoint.nextfractal.core.DefaultThreadFactory;
+import com.nextbreakpoint.nextfractal.core.common.Block;
+import com.nextbreakpoint.nextfractal.core.common.DefaultThreadFactory;
 import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
@@ -465,8 +465,8 @@ public class BrowsePane extends BorderPane {
 				item.setBitmap(delegate.createBitmap(item.getFile(), tile.getTileSize()));
 			}
 		} catch (Exception e) {
-			item.setErrors(Arrays.asList(new Error(Error.ErrorType.RUNTIME, 0, 0, 0, 0, e.getMessage())));
-			logger.log(Level.WARNING, "Can't create bitmap: " + e.getMessage());
+			item.setErrors(Arrays.asList(new SourceError(SourceError.ErrorType.RUNTIME, 0, 0, 0, 0, e.getMessage())));
+			logger.log(Level.WARNING, "Can't create bitmap: " + e.getMessage(), e);
 		}
 	}
 
@@ -581,7 +581,7 @@ public class BrowsePane extends BorderPane {
 				item.setRenderer(delegate.createRenderer(bitmap));
 			}
 		} catch (Exception e) {
-			item.setErrors(Arrays.asList(new Error(Error.ErrorType.RUNTIME, 0, 0, 0, 0, e.getMessage())));
+			item.setErrors(Arrays.asList(new SourceError(SourceError.ErrorType.RUNTIME, 0, 0, 0, 0, e.getMessage())));
 			logger.log(Level.WARNING, "Can't initialize renderer", e);
 		}
 	}

@@ -24,7 +24,7 @@
  */
 package com.nextbreakpoint.nextfractal.core.javafx;
 
-import com.nextbreakpoint.nextfractal.core.EventListener;
+import com.nextbreakpoint.nextfractal.core.common.EventListener;
 import javafx.application.Platform;
 
 import java.util.ArrayList;

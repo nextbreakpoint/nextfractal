@@ -25,16 +25,16 @@
 package com.nextbreakpoint.nextfractal.contextfree.javafx;
 
 import com.nextbreakpoint.Try;
-import com.nextbreakpoint.nextfractal.contextfree.ContextFreeMetadata;
-import com.nextbreakpoint.nextfractal.contextfree.ContextFreeSession;
+import com.nextbreakpoint.nextfractal.contextfree.module.ContextFreeMetadata;
+import com.nextbreakpoint.nextfractal.contextfree.module.ContextFreeSession;
 import com.nextbreakpoint.nextfractal.contextfree.compiler.Compiler;
 import com.nextbreakpoint.nextfractal.contextfree.compiler.CompilerReport;
 import com.nextbreakpoint.nextfractal.contextfree.compiler.CompilerSourceException;
-import com.nextbreakpoint.nextfractal.core.Error;
+import com.nextbreakpoint.nextfractal.core.common.SourceError;
 import com.nextbreakpoint.nextfractal.core.javafx.EventBus;
 import com.nextbreakpoint.nextfractal.core.javafx.BooleanObservableValue;
-import com.nextbreakpoint.nextfractal.core.Block;
-import com.nextbreakpoint.nextfractal.core.DefaultThreadFactory;
+import com.nextbreakpoint.nextfractal.core.common.Block;
+import com.nextbreakpoint.nextfractal.core.common.DefaultThreadFactory;
 import javafx.concurrent.Task;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.TransferMode;
@@ -246,14 +246,14 @@ public class EditorPane extends BorderPane {
 
     private TaskResult updateTextStyles(TaskResult task) {
         codeArea.setStyleSpans(0, task.highlighting);
-        List<Error> errors = task.report.getErrors();
+        List<SourceError> errors = task.report.getErrors();
         if (errors.size() > 0) {
             Collections.sort(errors, (o1, o2) -> o2.getIndex() < o1.getIndex() ? -1 : 1);
-            for (Error error : errors) {
+            for (SourceError error : errors) {
                 if (logger.isLoggable(Level.FINE)) {
                     logger.fine(error.toString());
                 }
-                if (error.getType() != Error.ErrorType.RUNTIME) {
+                if (error.getType() != SourceError.ErrorType.RUNTIME) {
                     int lineEnd = (int)error.getIndex() + 1;
                     int lineBegin = (int)error.getIndex();
                     StyleSpansBuilder<Collection<String>> builder = new StyleSpansBuilder<>();

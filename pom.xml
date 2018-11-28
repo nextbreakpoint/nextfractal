@@ -42,28 +42,34 @@
 		<commonmath3.version>3.6.1</commonmath3.version>
 		<ffmpeg4java.version>3.1.1-1.0</ffmpeg4java.version>
 		<freeimage4java.version>3.18.0-1.1</freeimage4java.version>
-		<try.version>2.0.4</try.version>
+		<try.version>2.0.5</try.version>
 		<slf4j.version>1.7.25</slf4j.version>
 		<junit4.version>4.12</junit4.version>
 		<jackson.version>2.9.2</jackson.version>
-		<mockito.version>2.12.0</mockito.version>
+		<mockito.version>2.23.4</mockito.version>
+		<openjfx.version>11.0.1</openjfx.version>
 		<controlsfx.version>8.40.14</controlsfx.version>
-		<java.version>1.8</java.version>
-		<maven.source.release>1.8</maven.source.release>
-		<maven.target.release>1.8</maven.target.release>
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<maven.compiler.target>1.8</maven.compiler.target>
+		<jaxb-api.version>2.3.1</jaxb-api.version>
+		<java.version>11</java.version>
+		<maven.source.release>11</maven.source.release>
+		<maven.target.release>11</maven.target.release>
+		<maven.compiler.source>11</maven.compiler.source>
+		<maven.compiler.target>11</maven.compiler.target>
 		<nexus.host>https://oss.sonatype.org</nexus.host>
 		<nexus.url>https://oss.sonatype.org/content/repositories/snapshots</nexus.url>
 		<nexus.autoreleaseafterclose>true</nexus.autoreleaseafterclose>
 		<bintray.url>https://api.bintray.com/maven/${bintrayAccount}/maven/${project.artifactId}/;publish=1</bintray.url>
+		<maven-source-plugin.version>3.0.1</maven-source-plugin.version>
+		<maven-toolchains-plugin.version>1.1</maven-toolchains-plugin.version>
+		<maven-compiler-plugin.version>3.8.0</maven-compiler-plugin.version>
+		<maven-surefire-plugin.version>2.22.1</maven-surefire-plugin.version>
 	</properties>
 	<build>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-toolchains-plugin</artifactId>
-				<version>1.1</version>
+				<version>${maven-toolchains-plugin.version}</version>
 				<executions>
 					<execution>
 						<goals>
@@ -74,7 +80,7 @@
 				<configuration>
 					<toolchains>
 						<jdk>
-							<version>1.8</version>
+							<version>[11,)</version>
 						</jdk>
 					</toolchains>
 				</configuration>
@@ -82,7 +88,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
-				<version>3.0.1</version>
+				<version>${maven-source-plugin.version}</version>
 				<executions>
 					<execution>
 						<id>attach-sources</id>
@@ -92,39 +98,33 @@
 					</execution>
 				</executions>
 			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.10.4</version>
-				<executions>
-					<execution>
-						<id>attach-javadocs</id>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-						<configuration>
-							<failOnError>false</failOnError>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
+			<!--<plugin>-->
+				<!--<groupId>org.apache.maven.plugins</groupId>-->
+				<!--<artifactId>maven-javadoc-plugin</artifactId>-->
+				<!--<version>2.10.4</version>-->
+				<!--<executions>-->
+					<!--<execution>-->
+						<!--<id>attach-javadocs</id>-->
+						<!--<goals>-->
+							<!--<goal>jar</goal>-->
+						<!--</goals>-->
+						<!--<configuration>-->
+							<!--<failOnError>false</failOnError>-->
+						<!--</configuration>-->
+					<!--</execution>-->
+				<!--</executions>-->
+			<!--</plugin>-->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.7.0</version>
-				<configuration>
-					<compilerArgs>
-						<!--<arg>&#45;&#45;add-modules</arg>-->
-						<!--<arg>java.xml.bind</arg>-->
-					</compilerArgs>
-				</configuration>
+				<version>${maven-compiler-plugin.version}</version>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.20.1</version>
+				<version>${maven-surefire-plugin.version}</version>
 				<configuration>
-					<!--<argLine>&#45;&#45;add-modules java.xml.bind</argLine>-->
+					<parallel>none</parallel>
 				</configuration>
 			</plugin>
 		</plugins>
@@ -173,7 +173,7 @@
 			</dependency>
 			<dependency>
 				<groupId>com.nextbreakpoint</groupId>
-				<artifactId>com.nextbreakpoint.try</artifactId>
+				<artifactId>com.nextbreakpoint.try4java</artifactId>
 				<version>${try.version}</version>
 			</dependency>
 			<dependency>
@@ -185,6 +185,21 @@
 				<groupId>org.controlsfx</groupId>
 				<artifactId>controlsfx</artifactId>
 				<version>${controlsfx.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>javax.xml.bind</groupId>
+				<artifactId>jaxb-api</artifactId>
+				<version>${jaxb-api.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.openjfx</groupId>
+				<artifactId>javafx-controls</artifactId>
+				<version>${openjfx.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.openjfx</groupId>
+				<artifactId>javafx-fxml</artifactId>
+				<version>${openjfx.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.mockito</groupId>
