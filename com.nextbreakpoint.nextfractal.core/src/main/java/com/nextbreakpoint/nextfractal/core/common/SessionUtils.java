@@ -31,17 +31,13 @@ import java.io.InputStream;
 public class SessionUtils {
 	private SessionUtils() {}
 
-	public static String readResource(String name) throws IOException {
-		InputStream is = SessionUtils.class.getResourceAsStream(name);
-		if (is != null) {
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			byte[] buffer = new byte[4096];
-			int length = 0;
-			while ((length = is.read(buffer)) > 0) {
-				baos.write(buffer, 0, length);
-			}
-			return baos.toString();
+	public static String readAll(InputStream is) throws IOException {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		byte[] buffer = new byte[4096];
+		int length = 0;
+		while ((length = is.read(buffer)) > 0) {
+			baos.write(buffer, 0, length);
 		}
-		return "";
+		return baos.toString();
 	}
 }

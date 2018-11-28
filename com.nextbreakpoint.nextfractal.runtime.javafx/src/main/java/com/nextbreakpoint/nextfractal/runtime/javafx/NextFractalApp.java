@@ -28,6 +28,7 @@ import com.nextbreakpoint.Try;
 import com.nextbreakpoint.nextfractal.core.common.Bundle;
 import com.nextbreakpoint.nextfractal.core.common.Clip;
 import com.nextbreakpoint.nextfractal.core.common.CoreFactory;
+import com.nextbreakpoint.nextfractal.core.common.Plugins;
 import com.nextbreakpoint.nextfractal.core.javafx.EventBus;
 import com.nextbreakpoint.nextfractal.core.common.FileManager;
 import com.nextbreakpoint.nextfractal.core.common.Session;
@@ -35,6 +36,7 @@ import com.nextbreakpoint.nextfractal.core.encode.Encoder;
 import com.nextbreakpoint.nextfractal.core.export.ExportRenderer;
 import com.nextbreakpoint.nextfractal.core.export.ExportService;
 import com.nextbreakpoint.nextfractal.core.export.ExportSession;
+import com.nextbreakpoint.nextfractal.core.javafx.UIPlugins;
 import com.nextbreakpoint.nextfractal.core.render.RendererSize;
 import com.nextbreakpoint.nextfractal.core.common.DefaultThreadFactory;
 import com.nextbreakpoint.nextfractal.runtime.export.ExportServiceDelegate;
@@ -75,7 +77,6 @@ import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static com.nextbreakpoint.nextfractal.core.common.Plugins.factories;
 import static com.nextbreakpoint.nextfractal.core.common.Plugins.tryFindEncoder;
 import static com.nextbreakpoint.nextfractal.core.common.Plugins.tryFindFactory;
 import static com.nextbreakpoint.nextfractal.core.common.Plugins.tryFindFactoryByGrammar;
@@ -513,14 +514,15 @@ public class NextFractalApp extends Application {
 	}
 
 	private void loadStyleSheets(Scene scene) {
-		tryLoadStyleSheet("/theme.css").ifPresent(resourceURL -> scene.getStylesheets().add((resourceURL)));
+		tryLoadResource("/theme.css").ifPresent(resourceURL -> scene.getStylesheets().add((resourceURL)));
 
-		factories().map(CoreFactory::getId).map(name -> "/" + name.toLowerCase() + ".css")
-			.map(resourceName -> tryLoadStyleSheet(resourceName)).forEach(maybeURL -> maybeURL.ifPresent(resourceURL -> scene.getStylesheets().add((resourceURL))));
+		UIPlugins.factories().map(factory -> factory.loadResource("/" + factory.getId().toLowerCase() + ".css")
+			.onFailure(e -> logger.log(Level.WARNING, "Cannot load style sheet " + factory.getId().toLowerCase() + ".css", e)))
+			.forEach(maybeURL -> maybeURL.ifPresent(resourceURL -> scene.getStylesheets().add((resourceURL))));
 	}
 
-	private Try<String, Exception> tryLoadStyleSheet(String resourceName) {
-		return Try.of(() -> getClass().getResource(resourceName).toExternalForm()).onFailure(e -> logger.log(Level.WARNING, "Cannot load style sheet " + resourceName, e));
+	private Try<String, Exception> tryLoadResource(String resourceName) {
+		return Try.of(() -> getClass().getResource(resourceName).toExternalForm());
 	}
 
 	private Try<Session, Exception> tryCreateSession(CoreFactory factory) {
@@ -528,7 +530,7 @@ public class NextFractalApp extends Application {
 	}
 
 	private void printPlugins() {
-		factories().forEach(plugin -> logger.fine("Found plugin " + plugin.getId()));
+		Plugins.factories().forEach(plugin -> logger.fine("Found plugin " + plugin.getId()));
 	}
 
 	private void handleExportSession(EventBus eventBus, Window window, String format, Session session, List<Clip> clips, Consumer<File> consumer, RendererSize size) {

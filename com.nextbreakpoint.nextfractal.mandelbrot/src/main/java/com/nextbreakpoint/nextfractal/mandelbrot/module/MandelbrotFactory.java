@@ -24,6 +24,7 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.module;
 
+import com.nextbreakpoint.Try;
 import com.nextbreakpoint.nextfractal.core.common.CoreFactory;
 import com.nextbreakpoint.nextfractal.core.common.FileManager;
 import com.nextbreakpoint.nextfractal.core.common.ImageComposer;
@@ -79,5 +80,10 @@ public class MandelbrotFactory implements CoreFactory {
 	@Override
 	public FileManager createFileManager() {
 		return new MandelbrotFileManager();
+	}
+
+	@Override
+	public Try<String, Exception> loadResource(String resourceName) {
+		return Try.of(() -> getClass().getResource(resourceName).toExternalForm());
 	}
 }

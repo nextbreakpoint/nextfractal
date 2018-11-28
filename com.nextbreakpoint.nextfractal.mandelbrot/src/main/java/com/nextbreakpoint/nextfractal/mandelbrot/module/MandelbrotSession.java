@@ -24,17 +24,21 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.module;
 
+import com.nextbreakpoint.Try;
 import com.nextbreakpoint.nextfractal.core.common.Metadata;
 import com.nextbreakpoint.nextfractal.core.common.Session;
-import com.nextbreakpoint.nextfractal.core.common.SessionUtils;
 import com.nextbreakpoint.nextfractal.core.common.Double2D;
 import com.nextbreakpoint.nextfractal.core.common.Double4D;
+import com.nextbreakpoint.nextfractal.core.common.SessionUtils;
 import com.nextbreakpoint.nextfractal.core.common.Time;
 
-import java.io.IOException;
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class MandelbrotSession extends Session {
+	private static final Logger logger = Logger.getLogger(MandelbrotSession.class.getName());
+
 	private final MandelbrotMetadata metadata;
 	private final String script;
 
@@ -70,11 +74,9 @@ public class MandelbrotSession extends Session {
 	}
 
 	private static String getInitialScript() {
-		try {
-            return SessionUtils.readResource("/mandelbrot.txt");
-        } catch (IOException e) {
-		}
-		return "";
+		return Try.of(() -> SessionUtils.readAll(MandelbrotSession.class.getResourceAsStream("/mandelbrot.txt")))
+				.onFailure(e -> logger.log(Level.WARNING, "Cannot load resource /mandelbrot.txt"))
+				.orElse("");
 	}
 
 	@Override

@@ -24,6 +24,7 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.javafx;
 
+import com.nextbreakpoint.Try;
 import com.nextbreakpoint.nextfractal.contextfree.module.ContextFreeMetadata;
 import com.nextbreakpoint.nextfractal.contextfree.module.ContextFreeSession;
 import com.nextbreakpoint.nextfractal.contextfree.compiler.Compiler;
@@ -95,6 +96,11 @@ public class ContextFreeUIFactory implements UIFactory {
 		bitmap.setProperty("cfdg", report.getCFDG());
 		bitmap.setProperty("session", session);
 		return bitmap;
+	}
+
+	@Override
+	public Try<String, Exception> loadResource(String resourceName) {
+		return Try.of(() -> getClass().getResource(resourceName).toExternalForm());
 	}
 
 	private RendererTile createSingleTile(int width, int height) {

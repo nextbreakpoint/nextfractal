@@ -24,6 +24,7 @@
  */
 package com.nextbreakpoint.nextfractal.core.javafx;
 
+import com.nextbreakpoint.Try;
 import com.nextbreakpoint.nextfractal.core.common.Session;
 import com.nextbreakpoint.nextfractal.core.render.RendererSize;
 import javafx.scene.layout.Pane;
@@ -60,4 +61,10 @@ public interface UIFactory {
 	public GridItemRenderer createRenderer(Bitmap bitmap) throws Exception;
 
 	public BrowseBitmap createBitmap(Session session, RendererSize size) throws Exception;
+
+	/**
+	 * @param resourceName
+	 * @return
+	 */
+	public Try<String, Exception> loadResource(String resourceName);
 }

@@ -24,6 +24,7 @@
  */
 package com.nextbreakpoint.nextfractal.core.common;
 
+import com.nextbreakpoint.Try;
 import com.nextbreakpoint.nextfractal.core.render.RendererFactory;
 import com.nextbreakpoint.nextfractal.core.render.RendererTile;
 
@@ -71,4 +72,10 @@ public interface CoreFactory {
 	 * @return
 	 */
 	public FileManager createFileManager();
+
+	/**
+	 * @param resourceName
+	 * @return
+	 */
+	public Try<String, Exception> loadResource(String resourceName);
 }

@@ -130,10 +130,10 @@ public class BrowsePane extends BorderPane {
 		HBox toolbar3 = new HBox(2);
 		toolbar3.setAlignment(Pos.CENTER_RIGHT);
 
-		Button closeButton = new Button("", Icons.createIconImage(getClass(), "/icon-close.png"));
-		Button reloadButton = new Button("", Icons.createIconImage(getClass(), "/icon-reload.png"));
-		Button chooseButton = new Button("", Icons.createIconImage(getClass(), "/icon-folder.png"));
-		Button importButton = new Button("", Icons.createIconImage(getClass(), "/icon-import.png"));
+		Button closeButton = new Button("", Icons.createIconImage("/icon-close.png"));
+		Button reloadButton = new Button("", Icons.createIconImage("/icon-reload.png"));
+		Button chooseButton = new Button("", Icons.createIconImage("/icon-folder.png"));
+		Button importButton = new Button("", Icons.createIconImage("/icon-import.png"));
 		closeButton.setTooltip(new Tooltip("Close projects browser"));
 		reloadButton.setTooltip(new Tooltip("Reload all projects"));
 		chooseButton.setTooltip(new Tooltip("Select projects location"));
@@ -466,7 +466,7 @@ public class BrowsePane extends BorderPane {
 			}
 		} catch (Exception e) {
 			item.setErrors(Arrays.asList(new SourceError(SourceError.ErrorType.RUNTIME, 0, 0, 0, 0, e.getMessage())));
-			logger.log(Level.WARNING, "Can't create bitmap: " + e.getMessage(), e);
+			logger.log(Level.WARNING, "Can't create bitmap: " + e.getMessage());
 		}
 	}
 

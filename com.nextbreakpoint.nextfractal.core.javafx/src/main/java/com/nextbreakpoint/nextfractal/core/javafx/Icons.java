@@ -33,26 +33,26 @@ import java.io.InputStream;
 public class Icons {
     private Icons() {}
 
-    public static ImageView createIconImage(Class clazz, String name, double percentage) {
-        int size = (int)Math.rint(Screen.getPrimary().getVisualBounds().getWidth() * percentage);
-        InputStream stream = clazz.getResourceAsStream(name);
-        if (stream != null) {
-            ImageView image = new ImageView(new Image(stream));
-            image.setSmooth(true);
-            image.setFitWidth(size);
-            image.setFitHeight(size);
-            return image;
-        } else {
-            ImageView image = new ImageView();
-            image.setSmooth(true);
-            image.setFitWidth(size);
-            image.setFitHeight(size);
-            return image;
-        }
+    public static ImageView createIconImage(String name, double percentage) {
+        InputStream stream = Icons.class.getResourceAsStream(name);
+        return createIconImage(stream, percentage);
     }
 
-    public static ImageView createIconImage(Class clazz, String name) {
-        return createIconImage(clazz, name, computeOptimalIconPercentage());
+    public static ImageView createIconImage(String name) {
+        return createIconImage(name, computeOptimalIconPercentage());
+    }
+
+    public static ImageView createIconImage(InputStream stream, double percentage) {
+        int size = (int)Math.rint(Screen.getPrimary().getVisualBounds().getWidth() * percentage);
+        ImageView image = new ImageView(new Image(stream));
+        image.setSmooth(true);
+        image.setFitWidth(size);
+        image.setFitHeight(size);
+        return image;
+    }
+
+    public static ImageView createIconImage(InputStream stream) {
+        return createIconImage(stream, computeOptimalIconPercentage());
     }
 
     public static double computeOptimalIconPercentage() {

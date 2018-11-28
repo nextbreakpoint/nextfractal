@@ -24,14 +24,18 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.module;
 
+import com.nextbreakpoint.Try;
 import com.nextbreakpoint.nextfractal.core.common.Metadata;
 import com.nextbreakpoint.nextfractal.core.common.Session;
 import com.nextbreakpoint.nextfractal.core.common.SessionUtils;
 
-import java.io.IOException;
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ContextFreeSession extends Session {
+	private static final Logger logger = Logger.getLogger(ContextFreeSession.class.getName());
+
 	private final ContextFreeMetadata metadata;
 	private final String script;
 
@@ -67,11 +71,9 @@ public class ContextFreeSession extends Session {
 	}
 
 	private static String getInitialSource() {
-		try {
-			return SessionUtils.readResource("/contextfree.txt");
-		} catch (IOException e) {
-		}
-		return "";
+		return Try.of(() -> SessionUtils.readAll(ContextFreeSession.class.getResourceAsStream("/contextfree.txt")))
+				.onFailure(e -> logger.log(Level.WARNING, "Cannot load resource /contextfree.txt"))
+				.orElse("");
 	}
 
 	@Override

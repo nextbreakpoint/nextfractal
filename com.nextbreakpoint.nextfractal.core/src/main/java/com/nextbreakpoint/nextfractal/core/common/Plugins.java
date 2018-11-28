@@ -78,7 +78,7 @@ public class Plugins {
     }
 
     public static List<String> listGrammars() {
-        return factoryStream().map(factory -> factory.getGrammar()).sorted().collect(Collectors.toList());
+        return factoryStream().map(CoreFactory::getGrammar).sorted().collect(Collectors.toList());
     }
 
     public static Stream<? extends CoreFactory> factories() {

@@ -24,6 +24,7 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.javafx;
 
+import com.nextbreakpoint.Try;
 import com.nextbreakpoint.nextfractal.core.javafx.EventBus;
 import com.nextbreakpoint.nextfractal.core.common.Session;
 import com.nextbreakpoint.nextfractal.core.javafx.Bitmap;
@@ -132,6 +133,11 @@ public class MandelbrotUIFactory implements UIFactory {
 		bitmap.setProperty("color", colorBuilder);
 		bitmap.setProperty("session", session);
 		return bitmap;
+	}
+
+	@Override
+	public Try<String, Exception> loadResource(String resourceName) {
+		return Try.of(() -> getClass().getResource(resourceName).toExternalForm());
 	}
 
 	private RendererTile createSingleTile(int width, int height) {

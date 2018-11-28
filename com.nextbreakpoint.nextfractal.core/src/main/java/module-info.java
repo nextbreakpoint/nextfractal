@@ -12,5 +12,6 @@ module com.nextbreakpoint.nextfractal.core {
     exports com.nextbreakpoint.nextfractal.core.network;
     exports com.nextbreakpoint.nextfractal.core.render;
     uses com.nextbreakpoint.nextfractal.core.common.CoreFactory;
+    uses com.nextbreakpoint.nextfractal.core.encode.Encoder;
     opens com.nextbreakpoint.nextfractal.core.common to com.fasterxml.jackson.databind;
 }

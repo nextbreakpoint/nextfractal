@@ -9,6 +9,7 @@ module com.nextbreakpoint.nextfractal.contextfree {
     requires com.fasterxml.jackson.databind;
     requires jackson.annotations;
     requires com.nextbreakpoint.nextfractal.core;
+    requires com.nextbreakpoint.try4java;
     exports com.nextbreakpoint.nextfractal.contextfree.module;
     exports com.nextbreakpoint.nextfractal.contextfree.core;
     exports com.nextbreakpoint.nextfractal.contextfree.grammar;
