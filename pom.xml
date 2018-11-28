@@ -33,7 +33,7 @@
 		<module>com.nextbreakpoint.nextfractal.contextfree.javafx</module>
 		<module>com.nextbreakpoint.nextfractal.runtime.javafx</module>
 		<module>com.nextbreakpoint.nextfractal.main</module>
-  </modules>
+  	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -225,11 +225,11 @@
 	</dependencies>
 	<profiles>
 		<profile>
-			<id>win32_x86_64</id>
+			<id>windows_x86_64</id>
 			<properties>
 				<build.type>win32_x86_64</build.type>
 				<arch.type>x86_64</arch.type>
-				<os.type>win32</os.type>
+				<os.type>windows</os.type>
 			</properties>
 		</profile>
 		<profile>
@@ -241,14 +241,14 @@
 			</properties>
 		</profile>
 		<profile>
-			<id>macos_x86_64</id>
+			<id>mac_x86_64</id>
 			<activation>
 				<activeByDefault>true</activeByDefault>
 			</activation>
 			<properties>
 				<build.type>macos_x86_64</build.type>
 				<arch.type>x86_64</arch.type>
-				<os.type>macos</os.type>
+				<os.type>mac</os.type>
 			</properties>
 		</profile>
 	</profiles>

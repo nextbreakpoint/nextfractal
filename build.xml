@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="NextFractal" default="build">
 	<property environment="env" />
+	<property name="java.home" value="${env.JAVA_HOME}" />
 	<property name="maven.home" value="${env.M2_HOME}" />
 	<property name="nextfractal.version" value="2.0.3" />
 	<property name="nextfractal.year" value="2018" />
@@ -30,9 +31,35 @@
 			</java>
 		</sequential>
 	</macrodef>
+	<macrodef name="jlink">
+		<attribute name="os" />
+		<attribute name="arch" />
+		<attribute name="basedir" />
+		<attribute name="failonerror" />
+		<attribute name="resultproperty" default="jlink.result" />
+		<element name="args" implicit="true" optional="true" />
+		<sequential>
+			<exec executable="${java.home}/bin/jlink" resultproperty="@{resultproperty}" failonerror="@{failonerror}">
+				<arg value="--module-path" />
+				<arg value="@{basedir}/build/javafx-jmods-11.0.1:@{basedir}/${mainmodule}/target/jars" />
+				<arg value="--add-modules" />
+				<arg value="com.nextbreakpoint.nextfractal.mandelbrot.javafx,com.nextbreakpoint.nextfractal.contextfree.javafx,com.nextbreakpoint.nextfractal.runtime.javafx" />
+				<arg value="--launcher" />
+				<arg value="NextFractal=com.nextbreakpoint.nextfractal.runtime.javafx/com.nextbreakpoint.nextfractal.runtime.javafx.NextFractalApp" />
+				<arg value="--output" />
+				<arg value="@{basedir}/dist/@{os}_@{arch}" />
+				<arg value="--strip-debug" />
+				<arg value="--compress" />
+				<arg value="2" />
+				<arg value="--no-header-files" />
+				<arg value="--no-man-pages" />
+			</exec>
+		</sequential>
+	</macrodef>
 	<macrodef name="build">
 		<attribute name="os" />
 		<attribute name="arch" />
+		<attribute name="name" />
 		<attribute name="version" />
 		<attribute name="basedir" />
 		<attribute name="executable" />
@@ -40,9 +67,13 @@
 		<attribute name="resultproperty" default="build.result" />
 		<element name="args" implicit="true" optional="true" />
 		<sequential>
-			<maven basedir="@{basedir}" options="-P @{os}_@{arch} -DskipTests=true" goal="install" resultproperty="@{resultproperty}" />
-			<!-- <fail if="@{resultproperty}" message="Cannot build"/> -->
+			<mkdir dir="@{basedir}/build"/>
+			<!--<get src="https://gluonhq.com/download/javafx-11-0-1-jmods-@{os}/" dest="@{basedir}/build/javafx-jmods-11.0.1.zip" verbose="true" usetimestamp="true"/>-->
+			<!--<unzip src="@{basedir}/build/javafx-jmods-11.0.1.zip" dest="@{basedir}/build"/>-->
+			<maven basedir="@{basedir}" options="-P @{os}_@{arch} -DskipTests=true" goal="package" resultproperty="@{resultproperty}" />
 			<delete dir="@{basedir}/dist/@{os}_@{arch}" failonerror="false"/>
+			<!--<jlink failonerror="true" os="@{os}" arch="@{arch}" basedir="@{basedir}"/>-->
+			<!-- <fail if="@{resultproperty}" message="Cannot build"/> -->
 			<mkdir dir="@{basedir}/dist/@{os}_@{arch}/${nextfractal.folder}/@{resourcesdir}"/>
 			<copy failonerror="true" todir="@{basedir}/dist/@{os}_@{arch}/${nextfractal.folder}" overwrite="true">
 				<fileset dir="@{basedir}/resources/exe/@{os}">
@@ -50,7 +81,7 @@
 				</fileset>
 			</copy>
 			<copy failonerror="true" todir="@{basedir}/dist/@{os}_@{arch}/${nextfractal.folder}/@{resourcesdir}" overwrite="true">
-				<fileset dir="@{basedir}/${mainmodule}/target/lib/@{os}/@{arch}/@{os}">
+				<fileset dir="@{basedir}/${mainmodule}/target/lib/@{os}/@{arch}/@{name}">
 					<include name="*" />
 				</fileset>
 			</copy>
@@ -303,32 +334,32 @@
 		    </fileset>
 	  	</javadoc>
 	</target>
-	<target name="build-macos-64bit-signed" if="is_macosx">
-		<build basedir="${basedir}" os="macos" arch="x86_64" version="${nextfractal.version}" executable="NextFractal.app/Contents/MacOS/NextFractal" resourcesdir="NextFractal.app/Contents/Resources" resultproperty="ant.build.result" />
-		<makesigneddmg basedir="${basedir}" os="macos" arch="x86_64" version="${nextfractal.version}" identity="Developer ID Application: Andrea Medeghini (P646GF5PRT)" resultproperty="ant.makedmg.result" />
+	<target name="build-mac-64bit-signed" if="is_macosx">
+		<build basedir="${basedir}" os="mac" arch="x86_64" name="macos" version="${nextfractal.version}" executable="NextFractal.app/Contents/MacOS/NextFractal" resourcesdir="NextFractal.app/Contents/Resources" resultproperty="ant.build.result" />
+		<makesigneddmg basedir="${basedir}" os="mac" arch="x86_64" version="${nextfractal.version}" identity="Developer ID Application: Andrea Medeghini (P646GF5PRT)" resultproperty="ant.makedmg.result" />
 	</target>
-	<target name="build-macos-64bit" if="is_macosx">
-		<build basedir="${basedir}" os="macos" arch="x86_64" version="${nextfractal.version}" executable="NextFractal.app/Contents/MacOS/NextFractal" resourcesdir="NextFractal.app/Contents/Resources" resultproperty="ant.build.result" />
-		<makedmg basedir="${basedir}" os="macos" arch="x86_64" version="${nextfractal.version}" resultproperty="ant.makedmg.result" />
+	<target name="build-mac-64bit" if="is_macosx">
+		<build basedir="${basedir}" os="mac" arch="x86_64" name="macos" version="${nextfractal.version}" executable="NextFractal.app/Contents/MacOS/NextFractal" resourcesdir="NextFractal.app/Contents/Resources" resultproperty="ant.build.result" />
+		<makedmg basedir="${basedir}" os="mac" arch="x86_64" version="${nextfractal.version}" resultproperty="ant.makedmg.result" />
 	</target>
-	<target name="build-win32-64bit">
-		<build basedir="${basedir}" os="win32" arch="x86_64" version="${nextfractal.version}" executable="NextFractal.exe" resourcesdir="resources" resultproperty="ant.build.result" />
-		<makezip basedir="${basedir}" os="win32" arch="x86_64" version="${nextfractal.version}" resultproperty="ant.makezip.result" />
+	<target name="build-windows-64bit">
+		<build basedir="${basedir}" os="windows" arch="x86_64" name="win32" version="${nextfractal.version}" executable="NextFractal.exe" resourcesdir="resources" resultproperty="ant.build.result" />
+		<makezip basedir="${basedir}" os="windows" arch="x86_64" version="${nextfractal.version}" resultproperty="ant.makezip.result" />
 	</target>
 	<target name="build-linux-64bit">
-		<build basedir="${basedir}" os="linux" arch="x86_64" version="${nextfractal.version}" executable="NextFractal" resourcesdir="resources" resultproperty="ant.build.result" />
+		<build basedir="${basedir}" os="linux" arch="x86_64" name="linux" version="${nextfractal.version}" executable="NextFractal" resourcesdir="resources" resultproperty="ant.build.result" />
 		<makezip basedir="${basedir}" os="linux" arch="x86_64" version="${nextfractal.version}" resultproperty="ant.makezip.result" />
 	</target>
 	<target name="publish-libs">
 		<publish basedir="${basedir}" channel="bintray" resultproperty="ant.publish.result"/>
 		<publish basedir="${basedir}" channel="ossrh" resultproperty="ant.publish.result"/>
 	</target>
-	<target name="build-macos-signed" depends="build-macos-64bit-signed" if="is_macosx" />
-	<target name="build-macos" depends="build-macos-64bit" if="is_macosx" />
-	<target name="build-win32" depends="build-win32-64bit" />
+	<target name="build-mac-signed" depends="build-mac-64bit-signed" if="is_macosx" />
+	<target name="build-mac" depends="build-mac-64bit" if="is_macosx" />
+	<target name="build-windows" depends="build-windows-64bit" />
 	<target name="build-linux" depends="build-linux-64bit" />
-	<target name="build-signed" depends="build-macos-signed, build-win32, build-linux" />
-	<target name="build" depends="build-macos, build-win32, build-linux" />
+	<target name="build-signed" depends="build-mac-signed, build-windows, build-linux" />
+	<target name="build" depends="build-mac, build-windows, build-linux" />
 	<target name="publish" depends="publish-libs" />
 	<target name="all" depends="clean, update-version, update-copyright, build" />
 	<target name="release" depends="clean, update-version, update-copyright, build-signed" />

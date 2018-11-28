@@ -1,11 +1,10 @@
 #/bin/sh
 export BUILD_DIR=`pwd`/build
 
-mkdir -p $BUILD_DIR/macos
+mkdir -p $BUILD_DIR/mac
 
-cp macos/* $BUILD_DIR/macos
+cp mac/* $BUILD_DIR/mac
 
-cd $BUILD_DIR/macos
+cd $BUILD_DIR/mac
 
 make
-
