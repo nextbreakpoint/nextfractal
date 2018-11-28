@@ -40,7 +40,7 @@
 		<attribute name="resultproperty" default="build.result" />
 		<element name="args" implicit="true" optional="true" />
 		<sequential>
-			<maven basedir="@{basedir}" options="-P @{os}_@{arch}" goal="install" resultproperty="@{resultproperty}" />
+			<maven basedir="@{basedir}" options="-P @{os}_@{arch} -DskipTests=true" goal="install" resultproperty="@{resultproperty}" />
 			<!-- <fail if="@{resultproperty}" message="Cannot build"/> -->
 			<delete dir="@{basedir}/dist/@{os}_@{arch}" failonerror="false"/>
 			<mkdir dir="@{basedir}/dist/@{os}_@{arch}/${nextfractal.folder}/@{resourcesdir}"/>

@@ -1,6 +1,6 @@
 JAVA_VERSION?=11
 
-JHOME:=/usr/lib/jvm/java-11-oracle
+JHOME:=/usr/lib/jvm/jdk-11
 SYSTEM:=linux
 
 CC = /usr/bin/x86_64-w64-mingw32-gcc

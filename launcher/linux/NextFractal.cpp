@@ -189,7 +189,7 @@ void run_java(struct launch_args *run_args) {
     struct start_args *args = NULL;
     std::string libPath = "";
 
-    std::regex path_regex("(jdk1.[0-9]+\\.[0-9]+_[0-9]+\\.jdk)|(jdk-[0-9]+(\\.[0-9]+\\.[0-9]+)?\\.jdk)|(java-[8-9]-.+)|(java-[1-9][0-9]-.+)", std::regex_constants::ECMAScript | std::regex_constants::icase);
+    std::regex path_regex("(jdk-[0-9]+(\\.[0-9]+\\.[0-9]+)?\\.jdk)|(java-[0-9]+-.*)", std::regex_constants::ECMAScript | std::regex_constants::icase);
     if (std::regex_search(path, path_regex)) {
         std::sregex_iterator version_begin = std::sregex_iterator(path.begin(), path.end(), path_regex);
         std::sregex_iterator version_end = std::sregex_iterator();
@@ -197,13 +197,13 @@ void run_java(struct launch_args *run_args) {
             std::smatch match = *i;
             std::string match_str = match.str();
             if (match_str.find("jdk-") == 0) {
-              std::cout << "Found Java SDK 9 or later\n";
+              std::cout << "Found Java SDK " << match_str << "\n";
               args = run_args->java_args;
               libPath = path + "/lib/server/libjvm.so";
               break;
             }
             if (match_str.find("java-") == 0) {
-              std::cout << "Found Java SDK 9 or later\n";
+              std::cout << "Found Java SDK " << match_str << "\n";
               args = run_args->java_args;
               libPath = path + "/lib/server/libjvm.so";
               break;
@@ -310,22 +310,17 @@ int main(int argc, char **argv) {
         std::string basePath = GetBasePath(GetExePath());
         std::cout << "Base path " << basePath << std::endl;
         std::string jarsPath = basePath + "/resources";
-        std::string classpathArg = "-Djava.class.path=" + GetClasspath(jarsPath);
+        std::string modulePathArg = "--module-path=" + basePath + "/resources";
         std::string libPathArg = "-Djava.library.path=" + basePath + "/resources";
         std::string locPathArg = "-Dbrowser.location=" + basePath + "/examples";
         const char *vm_arglist[] = {
-            "--add-modules",
-            "javafx.controls",
-            "--add-addopens",
-            "javafx.graphics/javafx.scene.text=ALL-UNNAMED",
-            "--add-addopens",
-            "javafx.graphics/com.sun.javafx.text=ALL-UNNAMED",
-            "--add-addopens",
-            "javafx.graphics/com.sun.javafx.geom=ALL-UNNAMED",
-            "--add-addopens",
-            "javafx.graphics/com.sun.javafx.scene.text=ALL-UNNAMED",
-            "-Djava.util.logging.config.class=com.nextbreakpoint.nextfractal.runtime.LogConfig",
-            classpathArg.c_str(),
+            modulePathArg.c_str(),
+            "--add-modules=ALL-MODULE-PATH",
+            "--add-opens=javafx.graphics/javafx.scene.text=richtextfx",
+            "--add-opens=javafx.graphics/com.sun.javafx.text=richtextfx",
+            "--add-opens=javafx.graphics/com.sun.javafx.geom=richtextfx",
+            "--add-opens=javafx.graphics/com.sun.javafx.scene.text=richtextfx",
+            "-Djava.util.logging.config.class=com.nextbreakpoint.nextfractal.runtime.logging.LogConfig",
             libPathArg.c_str(),
             locPathArg.c_str(),
             memMaxArg.c_str(),
