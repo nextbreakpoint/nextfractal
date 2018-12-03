@@ -40,14 +40,10 @@
 		<element name="args" implicit="true" optional="true" />
 		<sequential>
 			<exec executable="${java.home}/bin/jlink" resultproperty="@{resultproperty}" failonerror="@{failonerror}">
-				<arg value="--module-path" />
-				<arg value="@{basedir}/build/javafx-jmods-11.0.1:@{basedir}/${mainmodule}/target/jars" />
 				<arg value="--add-modules" />
-				<arg value="com.nextbreakpoint.nextfractal.mandelbrot.javafx,com.nextbreakpoint.nextfractal.contextfree.javafx,com.nextbreakpoint.nextfractal.runtime.javafx" />
-				<arg value="--launcher" />
-				<arg value="NextFractal=com.nextbreakpoint.nextfractal.runtime.javafx/com.nextbreakpoint.nextfractal.runtime.javafx.NextFractalApp" />
+				<arg value="java.base,java.desktop,java.compiler,java.logging,jdk.compiler,jdk.zipfs,jdk.unsupported" />
 				<arg value="--output" />
-				<arg value="@{basedir}/dist/@{os}_@{arch}" />
+				<arg value="@{basedir}/@{os}_@{arch}/NextFractal/jdk" />
 				<arg value="--strip-debug" />
 				<arg value="--compress" />
 				<arg value="2" />
@@ -68,11 +64,11 @@
 		<element name="args" implicit="true" optional="true" />
 		<sequential>
 			<mkdir dir="@{basedir}/build"/>
-			<get src="https://gluonhq.com/download/javafx-11-0-1-jmods-@{os}/" dest="@{basedir}/build/javafx-jmods-11.0.1.zip" verbose="true" usetimestamp="true"/>
-			<unzip src="@{basedir}/build/javafx-jmods-11.0.1.zip" dest="@{basedir}/build"/>
+			<!--<get src="https://gluonhq.com/download/javafx-11-0-1-jmods-@{os}/" dest="@{basedir}/build/javafx-jmods-11.0.1.zip" verbose="true" usetimestamp="true"/>-->
+			<!--<unzip src="@{basedir}/build/javafx-jmods-11.0.1.zip" dest="@{basedir}/build"/>-->
 			<maven basedir="@{basedir}" options="-P @{os}_@{arch} -DskipTests=true" goal="package" resultproperty="@{resultproperty}" />
-			<delete dir="@{basedir}/dist/@{os}_@{arch}" failonerror="false"/>
-			<!--<jlink failonerror="true" os="@{os}" arch="@{arch}" basedir="@{basedir}"/>-->
+			<delete dir="@{basedir}/dist/@{os}_@{arch}/NextFractal/jdk" failonerror="false"/>
+			<jlink failonerror="true" os="@{os}" arch="@{arch}" basedir="@{basedir}/dist"/>
 			<!-- <fail if="@{resultproperty}" message="Cannot build"/> -->
 			<mkdir dir="@{basedir}/dist/@{os}_@{arch}/${nextfractal.folder}/@{resourcesdir}"/>
 			<copy failonerror="true" todir="@{basedir}/dist/@{os}_@{arch}/${nextfractal.folder}" overwrite="true">

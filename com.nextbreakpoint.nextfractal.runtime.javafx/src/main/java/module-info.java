@@ -1,7 +1,7 @@
 module com.nextbreakpoint.nextfractal.runtime.javafx {
     requires java.logging;
-    requires jdk.compiler;
     requires java.desktop;
+    requires java.compiler;
     requires javafx.controls;
     requires com.nextbreakpoint.try4java;
     requires com.nextbreakpoint.nextfractal.core;

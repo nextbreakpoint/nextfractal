@@ -4,7 +4,7 @@ import com.nextbreakpoint.nextfractal.mandelbrot.module.MandelbrotFactory;
 module com.nextbreakpoint.nextfractal.mandelbrot {
     requires java.logging;
     requires java.desktop;
-    requires jdk.compiler;
+    requires java.compiler;
     requires commons.math3;
     requires antlr4.runtime;
     requires com.fasterxml.jackson.databind;
