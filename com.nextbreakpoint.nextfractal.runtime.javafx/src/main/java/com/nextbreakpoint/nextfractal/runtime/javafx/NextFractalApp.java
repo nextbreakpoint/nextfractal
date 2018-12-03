@@ -59,7 +59,6 @@ import javafx.stage.FileChooser;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.Window;
-import org.controlsfx.dialog.CommandLinksDialog;
 
 import javax.tools.ToolProvider;
 import java.awt.image.BufferedImage;
@@ -214,24 +213,27 @@ public class NextFractalApp extends Application {
 
 	private boolean terminateNow(ExportService exportService) {
 		if (exportService.getSessionCount() > 0) {
-			CommandLinksDialog.CommandLinksButtonType exitLink = new CommandLinksDialog.CommandLinksButtonType("Terminate now", "Terminate " + exportService.getSessionCount()  + " background jobs and exit", false);
-			CommandLinksDialog.CommandLinksButtonType waitLink = new CommandLinksDialog.CommandLinksButtonType("Don't terminate", "Keep background jobs and cancel exit", true);
-			CommandLinksDialog dialog = new CommandLinksDialog(waitLink, exitLink);
-			dialog.setTitle("Background jobs detected");
-			dialog.setContentText("Some background jobs are still running");
-			Optional<ButtonType> result = dialog.showAndWait();
-			return result.filter(v -> v == exitLink.getButtonType()).isPresent();
+			final Dialog dialog = new Dialog();
+			dialog.setContentText("There are background jobs running in the current session. Do you want to terminate them and exit?");
+			dialog.setTitle("Action required");
+			dialog.getDialogPane().getButtonTypes().add(ButtonType.NO);
+			dialog.getDialogPane().getButtonTypes().add(ButtonType.YES);
+			final Optional response = dialog.showAndWait();
+			if (response.isPresent() && response.get().equals(ButtonType.NO)) {
+				return false;
+			}
 		} else if (edited && clips.size() > 0) {
-			CommandLinksDialog.CommandLinksButtonType exitLink = new CommandLinksDialog.CommandLinksButtonType("Terminate now", "Discard session's clips and exit", false);
-			CommandLinksDialog.CommandLinksButtonType waitLink = new CommandLinksDialog.CommandLinksButtonType("Don't terminate", "Keep session's clips and cancel exit", true);
-			CommandLinksDialog dialog = new CommandLinksDialog(waitLink, exitLink);
-			dialog.setTitle("Clips detected in editor");
-			dialog.setContentText("Current session contains modified clips");
-			Optional<ButtonType> result = dialog.showAndWait();
-			return result.filter(v -> v == exitLink.getButtonType()).isPresent();
-		} else {
-			return true;
+			final Dialog dialog = new Dialog();
+			dialog.setContentText("There are new or modified clips in the current session. Do you want to discard them and exit?");
+			dialog.setTitle("Action required");
+			dialog.getDialogPane().getButtonTypes().add(ButtonType.NO);
+			dialog.getDialogPane().getButtonTypes().add(ButtonType.YES);
+			final Optional response = dialog.showAndWait();
+			if (response.isPresent() && response.get().equals(ButtonType.NO)) {
+				return false;
+			}
 		}
+		return true;
 	}
 
 	private void handleEditorAction(EventBus eventBus, Window window, String action) {
@@ -241,15 +243,17 @@ public class NextFractalApp extends Application {
 
 	private void handleBundleLoaded(EventBus eventBus, Bundle bundle, boolean continuous, boolean appendHistory) {
 		if (edited && clips.size() > 0 && bundle.getClips().size() > 0) {
-			CommandLinksDialog.CommandLinksButtonType keepLink = new CommandLinksDialog.CommandLinksButtonType("Keep", "Keep " + clips.size() + " session's " + wordClips(clips.size()) + " and ignore " + bundle.getClips().size() + " bundle's " + wordClips(bundle.getClips().size()), true);
-			CommandLinksDialog.CommandLinksButtonType mergeLink = new CommandLinksDialog.CommandLinksButtonType("Merge", "Merge " + clips.size() + " session's " + wordClips(clips.size()) + " with " + bundle.getClips().size() + " bundle's " + wordClips(bundle.getClips().size()), false);
-			CommandLinksDialog.CommandLinksButtonType replaceLink = new CommandLinksDialog.CommandLinksButtonType("Replace", "Replace " + clips.size() + " session's " + wordClips(clips.size()) + " with " + bundle.getClips().size() + " bundle's " + wordClips(bundle.getClips().size()), false);
-			CommandLinksDialog dialog = new CommandLinksDialog(keepLink, mergeLink, replaceLink);
-			dialog.setTitle("Clips detected in bundle");
-			dialog.setContentText("Current session contains modified clips");
-			Optional<ButtonType> result = dialog.showAndWait();
-			result.filter(v -> v == mergeLink.getButtonType()).ifPresent(v -> eventBus.postEvent("capture-clips-merged", bundle.getClips()));
-			result.filter(v -> v == replaceLink.getButtonType()).ifPresent(v -> eventBus.postEvent("capture-clips-loaded", bundle.getClips()));
+			final Dialog dialog = new Dialog();
+			dialog.setContentText("There are new or modified clips in the current session. Do you want to discard them?");
+			dialog.setTitle("Action required");
+			dialog.getDialogPane().getButtonTypes().add(ButtonType.NO);
+			dialog.getDialogPane().getButtonTypes().add(ButtonType.YES);
+			final Optional response = dialog.showAndWait();
+			if (response.isPresent() && response.get().equals(ButtonType.NO)) {
+				eventBus.postEvent("capture-clips-merged", bundle.getClips());
+			} else {
+				eventBus.postEvent("capture-clips-loaded", bundle.getClips());
+			}
 		} else {
 			if (edited && clips.size() > 0) {
 				eventBus.postEvent("capture-clips-merged", bundle.getClips());
@@ -258,10 +262,6 @@ public class NextFractalApp extends Application {
 			}
 		}
 		eventBus.postEvent("session-data-loaded", bundle.getSession(), continuous, appendHistory);
-	}
-
-	private String wordClips(int size) {
-		return "clip" + (size != 1 ? "s" : "");
 	}
 
 	private void handleClipAdded(Clip clip) {

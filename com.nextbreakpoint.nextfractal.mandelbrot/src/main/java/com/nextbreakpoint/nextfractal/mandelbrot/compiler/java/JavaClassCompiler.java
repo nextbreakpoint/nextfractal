@@ -26,8 +26,8 @@ package com.nextbreakpoint.nextfractal.mandelbrot.compiler.java;
 
 import com.nextbreakpoint.nextfractal.core.common.SourceError;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerBuilder;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerSourceError;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerReport;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerSourceError;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Color;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Orbit;
 

@@ -24,20 +24,20 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.module;
 
+import com.nextbreakpoint.nextfractal.core.common.Double2D;
+import com.nextbreakpoint.nextfractal.core.common.Double4D;
 import com.nextbreakpoint.nextfractal.core.common.ImageComposer;
+import com.nextbreakpoint.nextfractal.core.common.Integer4D;
 import com.nextbreakpoint.nextfractal.core.common.Metadata;
+import com.nextbreakpoint.nextfractal.core.common.Time;
+import com.nextbreakpoint.nextfractal.core.render.Java2DRendererFactory;
+import com.nextbreakpoint.nextfractal.core.render.Java2DRendererGraphicsContext;
 import com.nextbreakpoint.nextfractal.core.render.RendererAffine;
 import com.nextbreakpoint.nextfractal.core.render.RendererFactory;
 import com.nextbreakpoint.nextfractal.core.render.RendererGraphicsContext;
 import com.nextbreakpoint.nextfractal.core.render.RendererPoint;
 import com.nextbreakpoint.nextfractal.core.render.RendererSize;
 import com.nextbreakpoint.nextfractal.core.render.RendererTile;
-import com.nextbreakpoint.nextfractal.core.render.Java2DRendererFactory;
-import com.nextbreakpoint.nextfractal.core.render.Java2DRendererGraphicsContext;
-import com.nextbreakpoint.nextfractal.core.common.Double2D;
-import com.nextbreakpoint.nextfractal.core.common.Double4D;
-import com.nextbreakpoint.nextfractal.core.common.Integer4D;
-import com.nextbreakpoint.nextfractal.core.common.Time;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.Compiler;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerBuilder;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerReport;

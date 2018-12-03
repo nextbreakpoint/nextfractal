@@ -7,9 +7,8 @@ module com.nextbreakpoint.nextfractal.mandelbrot {
     requires jdk.compiler;
     requires commons.math3;
     requires antlr4.runtime;
-    requires java.xml.bind;
     requires com.fasterxml.jackson.databind;
-    requires jackson.annotations;
+    requires com.fasterxml.jackson.annotation;
     requires com.nextbreakpoint.try4java;
     requires com.nextbreakpoint.nextfractal.core;
     exports com.nextbreakpoint.nextfractal.mandelbrot.module;

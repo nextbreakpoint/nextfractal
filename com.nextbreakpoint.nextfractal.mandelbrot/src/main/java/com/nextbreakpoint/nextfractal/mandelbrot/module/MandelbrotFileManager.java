@@ -34,13 +34,9 @@ import com.nextbreakpoint.nextfractal.core.common.FileManifest;
 import com.nextbreakpoint.nextfractal.core.common.Metadata;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-
-import static javax.xml.bind.JAXB.unmarshal;
 
 public class MandelbrotFileManager extends FileManager {
     @Override
@@ -50,8 +46,7 @@ public class MandelbrotFileManager extends FileManager {
 
     @Override
     public Try<Bundle, Exception> loadEntries(List<FileManagerEntry> entries) {
-        return entries.stream().filter(this::isMScript).findFirst()
-            .map(this::loadBundle).orElse(Try.of(() -> createBundle(entries)));
+        return Try.of(() -> createBundle(entries));
     }
 
     public List<String> getSupportedFiles() {
@@ -75,14 +70,6 @@ public class MandelbrotFileManager extends FileManager {
         List<FileManagerEntry> entries = new LinkedList<>();
         entries.add(new FileManagerEntry("m-script", file.getAbsolutePath().getBytes()));
         return loadEntries(entries);
-    }
-
-    private boolean isMScript(FileManagerEntry entry) {
-        return entry.getName().equals("m-script");
-    }
-
-    private Try<Bundle, Exception> loadBundle(FileManagerEntry entry) {
-        return Try.of(() -> new FileInputStream(new String(entry.getData()))).flatMap(this::loadBundle);
     }
 
     private Bundle createBundle(List<FileManagerEntry> entries) throws Exception {
@@ -118,16 +105,6 @@ public class MandelbrotFileManager extends FileManager {
         entries.add(new FileManagerEntry("clips", encodeClips(bundle.getClips()).orThrow()));
 
         return entries;
-    }
-
-    private Try<Bundle, Exception> loadBundle(InputStream is) {
-        return loadFromStream(is).map(result -> new Bundle(new MandelbrotSession(result.getSource(), result.getView()), new LinkedList<>()));
-    }
-
-    public Try<MandelbrotDataV11, Exception> loadFromStream(InputStream stream) {
-        return Try.of(() -> unmarshal(stream, MandelbrotDataV11.class))
-            .or(() -> unmarshal(stream, MandelbrotDataV10.class).toV11())
-            .mapper(e -> new Exception("Cannot load data from stream"));
     }
 
     @Override

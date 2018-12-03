@@ -25,10 +25,10 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.interpreter;
 
 import com.nextbreakpoint.nextfractal.core.common.SourceError;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerSourceError;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerErrorStrategy;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerReport;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerReport.Type;
+import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerSourceError;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTBuilder;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTException;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTFractal;

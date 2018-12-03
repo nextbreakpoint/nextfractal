@@ -1489,6 +1489,6 @@ public class RenderPane extends BorderPane {
 	}
 
 	private void redrawIfToolChanged(Canvas canvas) {
-		Optional.ofNullable(currentTool).filter(tool -> tool.isChanged()).ifPresent(tool -> tool.draw(renderFactory.createGraphicsContext(canvas.getGraphicsContext2D())));
+		Optional.ofNullable(currentTool).filter(Tool::isChanged).ifPresent(tool -> tool.draw(renderFactory.createGraphicsContext(canvas.getGraphicsContext2D())));
 	}
 }

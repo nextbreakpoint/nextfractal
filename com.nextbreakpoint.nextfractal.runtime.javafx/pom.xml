@@ -20,7 +20,7 @@
                         <manifest>
                             <mainClass>com.nextbreakpoint.nextfractal.runtime.javafx.NextFractalApp</mainClass>
                             <addClasspath>true</addClasspath>
-                            <classpathPrefix></classpathPrefix>
+                            <classpathPrefix/>
                         </manifest>
                     </archive>
                 </configuration>
@@ -51,10 +51,6 @@
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.controlsfx</groupId>
-            <artifactId>controlsfx</artifactId>
         </dependency>
     </dependencies>
 </project>

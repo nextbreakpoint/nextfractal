@@ -25,10 +25,10 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.module;
 
 import com.nextbreakpoint.Try;
-import com.nextbreakpoint.nextfractal.core.common.Metadata;
-import com.nextbreakpoint.nextfractal.core.common.Session;
 import com.nextbreakpoint.nextfractal.core.common.Double2D;
 import com.nextbreakpoint.nextfractal.core.common.Double4D;
+import com.nextbreakpoint.nextfractal.core.common.Metadata;
+import com.nextbreakpoint.nextfractal.core.common.Session;
 import com.nextbreakpoint.nextfractal.core.common.SessionUtils;
 import com.nextbreakpoint.nextfractal.core.common.Time;
 

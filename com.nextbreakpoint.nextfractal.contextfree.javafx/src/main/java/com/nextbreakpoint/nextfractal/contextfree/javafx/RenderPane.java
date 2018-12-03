@@ -493,7 +493,7 @@ public class RenderPane extends BorderPane {
 				logger.log(Level.FINE, "Cannot render image: " + e.getMessage());
 			}
 			updateCompilerErrors(e.getMessage(), null, null);
-			return Arrays.asList(new SourceError(SourceError.ErrorType.RUNTIME, 0, 0, 0, 0, "Interrupted"));
+			return Collections.singletonList(new SourceError(SourceError.ErrorType.RUNTIME, 0, 0, 0, 0, "Interrupted"));
 		}
 		return Collections.emptyList();
 	}

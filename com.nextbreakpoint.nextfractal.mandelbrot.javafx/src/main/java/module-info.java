@@ -4,8 +4,8 @@ module com.nextbreakpoint.nextfractal.mandelbrot.javafx {
     requires java.prefs;
     requires java.logging;
     requires javafx.controls;
-    requires richtextfx;
-    requires reactfx;
+    requires rxjavafx;
+    requires io.reactivex.rxjava2;
     requires com.nextbreakpoint.try4java;
     requires com.nextbreakpoint.nextfractal.core;
     requires com.nextbreakpoint.nextfractal.mandelbrot;

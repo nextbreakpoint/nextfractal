@@ -68,8 +68,8 @@
 		<element name="args" implicit="true" optional="true" />
 		<sequential>
 			<mkdir dir="@{basedir}/build"/>
-			<!--<get src="https://gluonhq.com/download/javafx-11-0-1-jmods-@{os}/" dest="@{basedir}/build/javafx-jmods-11.0.1.zip" verbose="true" usetimestamp="true"/>-->
-			<!--<unzip src="@{basedir}/build/javafx-jmods-11.0.1.zip" dest="@{basedir}/build"/>-->
+			<get src="https://gluonhq.com/download/javafx-11-0-1-jmods-@{os}/" dest="@{basedir}/build/javafx-jmods-11.0.1.zip" verbose="true" usetimestamp="true"/>
+			<unzip src="@{basedir}/build/javafx-jmods-11.0.1.zip" dest="@{basedir}/build"/>
 			<maven basedir="@{basedir}" options="-P @{os}_@{arch} -DskipTests=true" goal="package" resultproperty="@{resultproperty}" />
 			<delete dir="@{basedir}/dist/@{os}_@{arch}" failonerror="false"/>
 			<!--<jlink failonerror="true" os="@{os}" arch="@{arch}" basedir="@{basedir}"/>-->
