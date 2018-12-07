@@ -175,40 +175,35 @@ std::string exec(const char* cmd) {
 void run_java(struct launch_args *run_args) {
     std::string path;
 
+    struct start_args *args = NULL;
+    std::string libPath = "";
+
     if (run_args->java_home != NULL) {
       path.append(run_args->java_home);
       path.erase(remove(path.begin(), path.end(), '\"'), path.end());
       std::cout << "Java Home \"" << path << "\"" << std::endl;
+      args = run_args->java_args;
+      libPath = path + "/lib/server/libjvm.so";
     } else {
       path = exec("readlink -f /etc/alternatives/javac | xargs dirname | xargs dirname");
       path.erase(path.find("\n"), 1);
   //    path.erase(std::remove(path.begin(), path.end(), '\n'), path.end());
       std::cout << "Found java \"" << path << "\"" << std::endl;
-    }
-
-    struct start_args *args = NULL;
-    std::string libPath = "";
-
-    std::regex path_regex("(jdk-[0-9]+(\\.[0-9]+\\.[0-9]+)?\\.jdk)|(java-[0-9]+-.*)", std::regex_constants::ECMAScript | std::regex_constants::icase);
-    if (std::regex_search(path, path_regex)) {
-        std::sregex_iterator version_begin = std::sregex_iterator(path.begin(), path.end(), path_regex);
-        std::sregex_iterator version_end = std::sregex_iterator();
-        for (std::sregex_iterator i = version_begin; i != version_end; ++i) {
-            std::smatch match = *i;
-            std::string match_str = match.str();
-            if (match_str.find("jdk-") == 0) {
-              std::cout << "Found Java SDK " << match_str << "\n";
-              args = run_args->java_args;
-              libPath = path + "/lib/server/libjvm.so";
-              break;
-            }
-            if (match_str.find("java-") == 0) {
-              std::cout << "Found Java SDK " << match_str << "\n";
-              args = run_args->java_args;
-              libPath = path + "/lib/server/libjvm.so";
-              break;
-            }
-        }
+      std::regex path_regex("(jdk-[0-9]+(\\.[0-9]+\\.[0-9]+)?\\.jdk)|(java-[0-9]+-.*)", std::regex_constants::ECMAScript | std::regex_constants::icase);
+      if (std::regex_search(path, path_regex)) {
+          std::sregex_iterator version_begin = std::sregex_iterator(path.begin(), path.end(), path_regex);
+          std::sregex_iterator version_end = std::sregex_iterator();
+          for (std::sregex_iterator i = version_begin; i != version_end; ++i) {
+              std::smatch match = *i;
+              std::string match_str = match.str();
+              if (match_str.find("jdk-") == 0 || match_str.find("java-") == 0) {
+                std::cout << "Found Java SDK " << match_str << "\n";
+                args = run_args->java_args;
+                libPath = path + "/lib/server/libjvm.so";
+                break;
+              }
+          }
+      }
     }
 
     if (args == NULL) {
@@ -297,7 +292,6 @@ std::string GetBasePath(std::string exePath) {
 int main(int argc, char **argv) {
     try {
         std::string memMaxArg = std::string();
-        char * varJavaHome = getenv("NEXTFRACTAL_JAVA_HOME");
         char * varMemMax = getenv("NEXTFRACTAL_MAX_MEMORY");
         int varMemMaxLen = varMemMax != NULL ? strlen(varMemMax) : 0;
         if (varMemMaxLen > 0) {
@@ -309,24 +303,20 @@ int main(int argc, char **argv) {
         }
         std::string basePath = GetBasePath(GetExePath());
         std::cout << "Base path " << basePath << std::endl;
-        std::string jarsPath = basePath + "/resources";
-        std::string modulePathArg = "--module-path=" + basePath + "/resources";
-        std::string libPathArg = "-Djava.library.path=" + basePath + "/resources";
+        std::string modulePathArg = "--module-path=" + basePath + "/resources/jars";
+        std::string libPathArg = "-Djava.library.path=" + basePath + "/resources/libs";
         std::string locPathArg = "-Dbrowser.location=" + basePath + "/examples";
+        std::string jdkPath = basePath + "/resources/jdk";
         const char *vm_arglist[] = {
             modulePathArg.c_str(),
             "--add-modules=ALL-MODULE-PATH",
-            "--add-opens=javafx.graphics/javafx.scene.text=richtextfx",
-            "--add-opens=javafx.graphics/com.sun.javafx.text=richtextfx",
-            "--add-opens=javafx.graphics/com.sun.javafx.geom=richtextfx",
-            "--add-opens=javafx.graphics/com.sun.javafx.scene.text=richtextfx",
             "-Djava.util.logging.config.class=com.nextbreakpoint.nextfractal.runtime.logging.LogConfig",
             libPathArg.c_str(),
             locPathArg.c_str(),
             memMaxArg.c_str(),
             0
         };
-        struct launch_args args(varJavaHome, "com/nextbreakpoint/nextfractal/runtime/javafx/NextFractalApp", vm_arglist);
+        struct launch_args args(jdkPath.c_str(), "com/nextbreakpoint/nextfractal/runtime/javafx/NextFractalApp", vm_arglist);
         start_java((void*)&args);
     } catch (const std::runtime_error& e) {
         ShowAlert("Some error occurred while launching the application", e);

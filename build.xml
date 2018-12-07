@@ -43,7 +43,7 @@
 				<arg value="--add-modules" />
 				<arg value="java.base,java.desktop,java.compiler,java.logging,jdk.compiler,jdk.zipfs,jdk.unsupported" />
 				<arg value="--output" />
-				<arg value="@{basedir}/@{os}_@{arch}/NextFractal/jdk" />
+				<arg value="@{basedir}" />
 				<arg value="--strip-debug" />
 				<arg value="--compress" />
 				<arg value="2" />
@@ -66,9 +66,10 @@
 			<mkdir dir="@{basedir}/build"/>
 			<!--<get src="https://gluonhq.com/download/javafx-11-0-1-jmods-@{os}/" dest="@{basedir}/build/javafx-jmods-11.0.1.zip" verbose="true" usetimestamp="true"/>-->
 			<!--<unzip src="@{basedir}/build/javafx-jmods-11.0.1.zip" dest="@{basedir}/build"/>-->
+			<mkdir dir="@{basedir}/dist/@{os}_@{arch}/${nextfractal.folder}"/>
+			<delete dir="@{basedir}/dist/@{os}_@{arch}/${nextfractal.folder}/@{resourcesdir}/jdk" failonerror="false"/>
+			<jlink failonerror="true" os="@{os}" arch="@{arch}" basedir="@{basedir}/dist/@{os}_@{arch}/${nextfractal.folder}/@{resourcesdir}/jdk"/>
 			<maven basedir="@{basedir}" options="-P @{os}_@{arch} -DskipTests=true" goal="package" resultproperty="@{resultproperty}" />
-			<delete dir="@{basedir}/dist/@{os}_@{arch}/NextFractal/jdk" failonerror="false"/>
-			<jlink failonerror="true" os="@{os}" arch="@{arch}" basedir="@{basedir}/dist"/>
 			<!-- <fail if="@{resultproperty}" message="Cannot build"/> -->
 			<mkdir dir="@{basedir}/dist/@{os}_@{arch}/${nextfractal.folder}/@{resourcesdir}"/>
 			<copy failonerror="true" todir="@{basedir}/dist/@{os}_@{arch}/${nextfractal.folder}" overwrite="true">
@@ -76,12 +77,12 @@
 					<include name="**/*" />
 				</fileset>
 			</copy>
-			<copy failonerror="true" todir="@{basedir}/dist/@{os}_@{arch}/${nextfractal.folder}/@{resourcesdir}" overwrite="true">
+			<copy failonerror="true" todir="@{basedir}/dist/@{os}_@{arch}/${nextfractal.folder}/@{resourcesdir}/libs" overwrite="true">
 				<fileset dir="@{basedir}/${mainmodule}/target/lib/@{os}/@{arch}/@{name}">
 					<include name="*" />
 				</fileset>
 			</copy>
-			<copy failonerror="true" todir="@{basedir}/dist/@{os}_@{arch}/${nextfractal.folder}/@{resourcesdir}" overwrite="true">
+			<copy failonerror="true" todir="@{basedir}/dist/@{os}_@{arch}/${nextfractal.folder}/@{resourcesdir}/jars" overwrite="true">
 				<fileset dir="@{basedir}/${mainmodule}/target/jars">
 					<include name="*" />
 				</fileset>

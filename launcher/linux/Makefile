@@ -8,7 +8,6 @@ LD = ld-4.9
 
 CPPFLAGS += -DJAVA_VERSION=$(JAVA_VERSION) -std=c++11
 CXXFLAGS += -g
-VM_DIR=$(JHOME)/jre/lib
 LDFLAGS +=
 CXXFLAGS += -I$(JHOME)/include -I$(JHOME)/include/$(SYSTEM)
 LDLIBS += -lstdc++ -ldl
