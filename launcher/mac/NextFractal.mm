@@ -6,6 +6,21 @@
 #include <stdexcept>
 #include <iostream>
 
+extern "C" {
+JNIEXPORT int JNICALL
+JLI_Launch(int argc, char ** argv,              /* main argc, argc */
+        int jargc, const char** jargv,          /* java args */
+        int appclassc, const char** appclassv,  /* app classpath */
+        const char* fullversion,                /* full version defined */
+        const char* dotversion,                 /* dot version defined */
+        const char* pname,                      /* program name */
+        const char* lname,                      /* launcher name */
+        jboolean javaargs,                      /* JAVA_ARGS */
+        jboolean cpwildcard,                    /* classpath wildcard */
+        jboolean javaw,                         /* windows-only javaw */
+        jint     ergo_class                     /* ergnomics policy */
+);
+
 typedef int (JNICALL * JLILaunch)(
         int argc, char ** argv,              /* main argc, argc */
         int jargc, const char** jargv,          /* java args */
@@ -19,6 +34,7 @@ typedef int (JNICALL * JLILaunch)(
         jboolean javaw,                         /* windows-only javaw */
         jint     ergo_class                     /* ergnomics policy */
 );
+}
 
 static void ShowAlert(const std::string message, const std::runtime_error& error) {
     std::string alertMessage = std::string(message).append("\n\nCause: ").append(error.what());
@@ -48,20 +64,20 @@ int main(int argc, char **argv) {
         std::string modulePathArg = basePath + "/../../jars";
         std::string mainClassArg = "com.nextbreakpoint.nextfractal.runtime.javafx.NextFractalApp";
 
-        std::string libPath = basePath + "/../lib/jli/libjli.dylib";
-        std::cout << "Lib path " << libPath << std::endl;
+        //std::string libPath = basePath + "/../lib/jli/libjli.dylib";
+        //std::cout << "Lib path " << libPath << std::endl;
 
-        void* lib_handle = dlopen(libPath.c_str(), RTLD_LOCAL | RTLD_LAZY);
-        if (!lib_handle) {
-            std::string message = std::string("Cannot open library ").append(libPath);
-            throw std::runtime_error(message);
-        }
+        //void* lib_handle = dlopen(libPath.c_str(), RTLD_LOCAL | RTLD_LAZY);
+        //if (!lib_handle) {
+        //    std::string message = std::string("Cannot open library ").append(libPath);
+        //    throw std::runtime_error(message);
+        //}
 
-        JLILaunch launch = (JLILaunch)dlsym(lib_handle, "JLI_Launch");
-        if (!launch) {
-            dlclose(lib_handle);
-            throw std::runtime_error("Function JLI_Launch not found");
-        }
+        //JLILaunch launch = (JLILaunch)dlsym(lib_handle, "JLI_Launch");
+        //if (!launch) {
+        //    dlclose(lib_handle);
+        //    throw std::runtime_error("Function JLI_Launch not found");
+        //}
 
         std::string memMaxArg = std::string();
         char * varMemMax = getenv("NEXTFRACTAL_MAX_MEMORY");
@@ -91,7 +107,7 @@ int main(int argc, char **argv) {
             std::cout << jargv[i] << std::endl;
         }
 
-        launch(argc, argv, jargc, jargv, 0, NULL, "2.0.3", "0.0", argv[0], argv[0], jargc > 0, JNI_FALSE, JNI_FALSE, 0);
+        JLI_Launch(argc, argv, jargc, jargv, 0, NULL, "2.0.3", "0.0", argv[0], argv[0], jargc > 0, JNI_FALSE, JNI_FALSE, 0);
     } catch (const std::runtime_error& e) {
         ShowAlert("Some error occurred while launching the application", e);
         exit(-1);
