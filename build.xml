@@ -113,6 +113,7 @@
 		<attribute name="resultproperty" default="makedmg.result" />
 		<element name="args" implicit="true" optional="true" />
 		<sequential>
+			<symlink link="@{basedir}/dist/@{os}_@{arch}/${nextfractal.folder}/NextFractal.app/Contents/MacOS/NextFractal" resource="../Resources/jdk/bin/NextFractal"/>
 			<exec executable="find" resultproperty="@{resultproperty}">
 				<arg value="@{basedir}/dist/@{os}_@{arch}" />
 				<arg value="-name" />
@@ -154,6 +155,7 @@
 		<attribute name="resultproperty" default="makedmg.result" />
 		<element name="args" implicit="true" optional="true" />
 		<sequential>
+			<symlink link="@{basedir}/dist/@{os}_@{arch}/${nextfractal.folder}/NextFractal.app/Contents/MacOS/NextFractal" resource="../Resources/jdk/bin/NextFractal"/>
 			<exec executable="find" resultproperty="@{resultproperty}">
 				<arg value="@{basedir}/dist/@{os}_@{arch}" />
 				<arg value="-name" />
@@ -332,11 +334,11 @@
 	  	</javadoc>
 	</target>
 	<target name="build-mac-64bit-signed" if="is_macosx">
-		<build basedir="${basedir}" os="mac" arch="x86_64" name="macos" version="${nextfractal.version}" executable="NextFractal.app/Contents/MacOS/NextFractal" resourcesdir="NextFractal.app/Contents/Resources" resultproperty="ant.build.result" />
+		<build basedir="${basedir}" os="mac" arch="x86_64" name="macos" version="${nextfractal.version}" executable="NextFractal.app/Contents/Resources/jdk/bin/NextFractal" resourcesdir="NextFractal.app/Contents/Resources" resultproperty="ant.build.result" />
 		<makesigneddmg basedir="${basedir}" os="mac" arch="x86_64" version="${nextfractal.version}" identity="Developer ID Application: Andrea Medeghini (P646GF5PRT)" resultproperty="ant.makedmg.result" />
 	</target>
 	<target name="build-mac-64bit" if="is_macosx">
-		<build basedir="${basedir}" os="mac" arch="x86_64" name="macos" version="${nextfractal.version}" executable="NextFractal.app/Contents/MacOS/NextFractal" resourcesdir="NextFractal.app/Contents/Resources" resultproperty="ant.build.result" />
+		<build basedir="${basedir}" os="mac" arch="x86_64" name="macos" version="${nextfractal.version}" executable="NextFractal.app/Contents/Resources/jdk/bin/NextFractal" resourcesdir="NextFractal.app/Contents/Resources" resultproperty="ant.build.result" />
 		<makedmg basedir="${basedir}" os="mac" arch="x86_64" version="${nextfractal.version}" resultproperty="ant.makedmg.result" />
 	</target>
 	<target name="build-windows-64bit">
