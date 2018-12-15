@@ -23,7 +23,7 @@
 						</goals>
 						<configuration>
 							<includeGroupIds>com.nextbreakpoint,org.antlr,org.apache.commons,com.fasterxml.jackson,org.openjfx,io.reactivex,org.reactivestreams</includeGroupIds>
-							<outputDirectory>${project.build.directory}/jars/</outputDirectory>
+							<outputDirectory>${project.build.directory}/jars/${os.type}/${arch.type}</outputDirectory>
 						</configuration>
 					</execution>
 					<execution>

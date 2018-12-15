@@ -1,9 +1,0 @@
-FROM nextfractal-base:latest
-
-RUN apt-get install -y make mingw-w64
-
-COPY build-mingw64.sh build-mingw64.sh
-
-RUN chmod 700 build-mingw64.sh
-
-CMD ["sh", "-c", "/build-mingw64.sh"]
