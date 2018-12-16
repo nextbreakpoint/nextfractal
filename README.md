@@ -28,15 +28,11 @@ NextFractal provides also tools for exploring Mandelbrot, Julia and Fatou Sets, 
 
 ## SYSTEM REQUIREMENTS
 
-NextFractal requires Java SDK 8 or later. You can download the latest SDK from Oracle.
+NextFractal has been tested on OS X 10.14, Windows 7, and Linux/Debian 9 and Linux/Fedora 28.
 
-See download page http://www.oracle.com/technetwork/java/javase/downloads
+Windows users must install [Microsoft Visual C++ Redistributable for Visual Studio 2017](https://support.microsoft.com/en-gb/help/2977003/the-latest-supported-visual-c-downloads).
 
-    Java SDK contains the Java compiler which is required to compile code in memory and reduce the rendering time.
-
-NextFractal has been tested on OS X 10.13, Windows 7, and Ubuntu/Linux 14.04.
-
-    Windows users must install Visual C++ Redistributable Packages. Linux users must install GNU GCC 4.9 libraries.
+Linux users may have problems if their system doesn't have all the required libraries. Run the embedded java command (jdk/bin/java) to find out which libraries are missing.
 
 
 ## DOCUMENTATION
@@ -46,24 +42,24 @@ Please see documentation of grammars and tutorials on https://nextbreakpoint.com
 
 ## BUILD INSTRUCTIONS
 
-You can build NextFractal from the source code. Checkout or download the source code from GitHub and run the build script. The build script requires Apache Ant and Apache Maven. By default the script will create a distribution for all platforms. Use a different target to build the distribution for a specific platform only. Apple command-line development tools are also required to build the distribution for MacOS.
+Checkout or download the source code from GitHub and run the build script. The build script requires Apache Ant and Apache Maven. Use the correct target for your system to build the distribution package. Apple command-line development tools are required to build the distribution for MacOS.
 
 Get the code from https://github.com/nextbreakpoint/nextfractal:
 
     git clone https://github.com/nextbreakpoint/nextfractal.git
 
-Use default target to build the distribution for all platforms:
+Use target build-macos to build the distribution for OS X:
 
-    ant
+    ant build-mac
 
-Use target build-linux to build Linux distribution:
+Use target build-windows to build the distribution for Windows (any Windows 64bit):
 
-    ant build-linux
+    ant build-windows
 
-Use target build-macos to build MacOS distribution:
+Use target build-debian to build the distribution for Debian (or any other Debian-like Linux):
 
-    ant build-macos
+    ant build-debian
 
-Use target build-win32 to build Windows distribution:
+Use target build-fedora to build the distribution for Fedora (or any other Fedora-like Linux):
 
-    ant build-win32
+    ant build-fedora
