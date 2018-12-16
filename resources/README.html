@@ -48,15 +48,11 @@
 
         <h2>SYSTEM REQUIREMENTS</h2>
 
-        <p>NextFractal requires Java SDK 8 or later. You can download the latest SDK from Oracle.</p>
+        <p>NextFractal has been tested on OS X 10.14, Windows 7, and Linux/Debian 9 and Linux/Fedora 28.</p>
 
-        <p>See download page <a href="http://www.oracle.com/technetwork/java/javase/downloads" target="_blank">http://www.oracle.com/technetwork/java/javase/downloads</a></p>
+        <p>Windows users must install <a href="https://support.microsoft.com/en-gb/help/2977003/the-latest-supported-visual-c-downloads" target="_blank">Microsoft Visual C++ Redistributable for Visual Studio 2017</a></p>
 
-        <div>Java SDK contains the Java compiler which is required to compile code in memory and reduce the rendering time.</div>
-
-        <p>NextFractal has been tested on OS X 10.13, Windows 7, and Ubuntu/Linux 14.04.</p>
-
-        <div>Windows users must install Visual C++ Redistributable Packages. Linux users must install GNU GCC 4.9 libraries.</div>
+        <p>Linux users may have problems if their system doesn't have all the required libraries. Run the embedded java command (jdk/bin/java) to find out which libraries are missing.</p>
 
         <h2>DOCUMENTATION</h2>
 
@@ -64,26 +60,26 @@
 
         <h2>BUILD INSTRUCTIONS</h2>
 
-        <p>You can build NextFractal from the source code. Checkout or download the source code from GitHub and run the build script. The build script requires Apache Ant and Apache Maven. By default the script will create a distribution for all platforms. Use a different target to build the distribution for a specific platform only. Apple command-line development tools are also required to build the distribution for MacOS.</p>
+        <p>Checkout or download the source code from GitHub and run the build script. The build script requires Apache Ant and Apache Maven. Use the correct target for your system to build the distribution package. Apple command-line development tools are required to build the distribution for MacOS.</p>
 
         <p>Get the code from <a href="https://github.com/nextbreakpoint/nextfractal" target="_blank">https://github.com/nextbreakpoint/nextfractal</a>:</p>
 
         <pre>git clone https://github.com/nextbreakpoint/nextfractal.git</pre>
 
-        <p>Use default target to build the distribution for all platforms:</p>
+        <p>Use target build-macos to build the distribution for OS X:</p>
 
-        <pre>ant</pre>
+        <pre>ant build-mac</pre>
 
-        <p>Use target build-linux to build Linux distribution:</p>
+        <p>Use target build-windows to build the distribution for Windows (any Windows 64bit):</p>
 
-        <pre>ant build-linux</pre>
+        <pre>ant build-windows</pre>
 
-        <p>Use target build-macos to build MacOS distribution:</p>
+        <p>Use target build-debian to build the distribution for Debian (or any other Debian-like Linux):</p>
 
-        <pre>ant build-macos</pre>
+        <pre>ant build-debian</pre>
 
-        <p>Use target build-win32 to build Windows distribution:</p>
+        <p>Use target build-fedora to build the distribution for Fedora (or any other Fedora-like Linux):</p>
 
-        <pre>ant build-win32</pre>
+        <pre>ant build-fedora</pre>
     </body>
 </html>
