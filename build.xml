@@ -2,7 +2,7 @@
 <project name="NextFractal">
 	<property environment="env" />
 	<property name="maven.home" value="${env.M2_HOME}" />
-	<property name="nextfractal.version" value="2.0.3" />
+	<property name="nextfractal.version" value="2.1.0" />
 	<property name="nextfractal.year" value="2018" />
 	<property name="nextfractal.folder" value="NextFractal" />
 	<property name="mainmodule" value="com.nextbreakpoint.nextfractal.main" />
@@ -261,13 +261,14 @@
 		<os family="unix" />
 	</condition>
 	<target name="clean">
+		<delete dir="${basedir}/build" />
 		<delete dir="${basedir}/dist" />
 		<mkdir dir="${basedir}/dist" />
 		<maven basedir="${basedir}" goal="clean" resultproperty="maven.build.result" />
 	</target>
 	<target name="update-version">
 		<replaceregexp match="NextFractal [0-9]\.[0-9]\.[0-9]" replace="NextFractal ${nextfractal.version}" flags="g" byline="true">
-		    <fileset dir="${basedir}/..">
+		    <fileset dir="${basedir}">
 		    	<include name="**/*.md"/>
 		    	<include name="**/*.txt"/>
 		    	<include name="**/*.html"/>
@@ -275,13 +276,13 @@
 			</fileset>
 		</replaceregexp>
 		<replaceregexp match="com.nextbreakpoint.nextfractal.runtime.javafx-[0-9]\.[0-9]\.[0-9]" replace="com.nextbreakpoint.nextfractal.runtime.javafx-${nextfractal.version}" flags="g" byline="true">
-		    <fileset dir="${basedir}/..">
+		    <fileset dir="${basedir}">
 		    	<include name="**/*.bat"/>
 		    	<include name="**/*.sh"/>
 			</fileset>
 		</replaceregexp>
 		<replaceregexp match="&lt;string&gt;[0-9]\.[0-9]\.[0-9]&lt;/string&gt;" replace="&lt;string&gt;${nextfractal.version}&lt;/string&gt;" flags="g" byline="true">
-			<fileset dir="${basedir}/..">
+			<fileset dir="${basedir}">
 				<include name="**/*.plist"/>
 			</fileset>
 		</replaceregexp>
@@ -314,7 +315,7 @@
 	</target>
 	<target name="update-copyright">
 		<replaceregexp match="Copyright 2015-[0-9]{4}" replace="Copyright 2015-${nextfractal.year}" flags="g" byline="true">
-		    <fileset dir="${basedir}/..">
+		    <fileset dir="${basedir}">
 		    	<include name="**/*.md"/>
 		    	<include name="**/*.txt"/>
 		    	<include name="**/*.html"/>
@@ -326,7 +327,7 @@
 		<linecount basedir="${basedir}" path="."/>
 	</target>
 	<target name="javadocs">
-		<javadoc packagenames="com.nextbreakpoint.*" destdir="${basedir}/../docs" author="true" version="true" use="true" windowtitle="NextFractal" failonwarning="false" failonerror="false">
+		<javadoc packagenames="com.nextbreakpoint.*" destdir="${basedir}/docs" author="true" version="true" use="true" windowtitle="NextFractal" failonwarning="false" failonerror="false">
 			<fileset dir="${basedir}/com.nextbreakpoint.nextfractal.core/src/main/java" defaultexcludes="yes">
 		    </fileset>
 			<fileset dir="${basedir}/com.nextbreakpoint.nextfractal.runtime/src/main/java" defaultexcludes="yes">
