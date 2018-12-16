@@ -41,8 +41,8 @@
 		<maven.compiler.target>11</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<ffmpeg4java.version>3.1.1-1.0</ffmpeg4java.version>
-		<freeimage4java.version>3.18.0-1.1</freeimage4java.version>
+		<ffmpeg4java.version>3.1.1-1.1</ffmpeg4java.version>
+		<freeimage4java.version>3.18.0-1.2</freeimage4java.version>
 		<try.version>2.0.4</try.version>
 		<antlr4.version>4.7.1</antlr4.version>
 		<commonmath3.version>3.6.1</commonmath3.version>
