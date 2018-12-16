@@ -53,11 +53,12 @@
 				</fileset>
 			</chmod>
 			<mkdir dir="@{basedir}/dist/@{os}_@{arch}/${nextfractal.folder}"/>
+			<maven basedir="@{basedir}" options="-t toolchains-@{os}.xml -P @{os}_@{arch}" goal="clean" resultproperty="@{resultproperty}" />
 			<maven basedir="@{basedir}" options="-t toolchains-@{os}.xml -P @{os}_@{arch} -DskipTests=true" goal="package" resultproperty="@{resultproperty}" />
 			<!-- <fail if="@{resultproperty}" message="Cannot build"/> -->
 			<mkdir dir="@{basedir}/dist/@{os}_@{arch}/${nextfractal.folder}/@{resourcesdir}"/>
 			<copy failonerror="true" todir="@{basedir}/dist/@{os}_@{arch}/${nextfractal.folder}" overwrite="true">
-				<fileset dir="@{basedir}/resources/@{os}">
+				<fileset dir="@{basedir}/resources/system/@{os}">
 					<include name="**/*" />
 				</fileset>
 			</copy>
