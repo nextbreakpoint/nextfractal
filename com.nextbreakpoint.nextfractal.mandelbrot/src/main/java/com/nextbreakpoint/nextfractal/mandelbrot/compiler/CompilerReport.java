@@ -1,5 +1,5 @@
 /*
- * NextFractal 2.0.3
+ * NextFractal 2.1.0
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015-2018 Andrea Medeghini
@@ -24,7 +24,7 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.compiler;
 
-import com.nextbreakpoint.nextfractal.core.Error;
+import com.nextbreakpoint.nextfractal.core.common.SourceError;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTFractal;
 
 import java.util.List;
@@ -34,12 +34,12 @@ public class CompilerReport {
 	private Type type;
 	private String orbitSource;
 	private String colorSource;
-	private List<Error> errors;
+	private List<SourceError> errors;
 	private String source;
 	private String packageName;
 	private String className;
 
-	public CompilerReport(ASTFractal ast, Type type, String source, String orbitSource, String colorSource, List<Error> errors, String packageName, String className) {
+	public CompilerReport(ASTFractal ast, Type type, String source, String orbitSource, String colorSource, List<SourceError> errors, String packageName, String className) {
 		this.ast = ast;
 		this.type = type;
 		this.source = source;
@@ -62,7 +62,7 @@ public class CompilerReport {
 		return colorSource;
 	}
 
-	public List<Error> getErrors() {
+	public List<SourceError> getErrors() {
 		return errors;
 	}
 

@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.nextbreakpoint</groupId>
         <artifactId>com.nextbreakpoint.nextfractal</artifactId>
-        <version>2.0.3</version>
+        <version>2.1.0</version>
     </parent>
     <artifactId>com.nextbreakpoint.nextfractal.mandelbrot.javafx</artifactId>
     <dependencies>
@@ -21,8 +21,16 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.fxmisc.richtext</groupId>
-            <artifactId>richtextfx</artifactId>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-controls</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.reactivex.rxjava2</groupId>
+            <artifactId>rxjavafx</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.reactivex.rxjava2</groupId>
+            <artifactId>rxjava</artifactId>
         </dependency>
     </dependencies>
 </project>

@@ -1,5 +1,5 @@
 /*
- * NextFractal 2.0.3
+ * NextFractal 2.1.0
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015-2018 Andrea Medeghini
@@ -26,11 +26,11 @@ package com.nextbreakpoint.nextfractal.contextfree.test;
 
 import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDG;
 import com.nextbreakpoint.nextfractal.contextfree.renderer.Renderer;
+import com.nextbreakpoint.nextfractal.core.common.DefaultThreadFactory;
+import com.nextbreakpoint.nextfractal.core.render.Java2DRendererFactory;
 import com.nextbreakpoint.nextfractal.core.render.RendererPoint;
 import com.nextbreakpoint.nextfractal.core.render.RendererSize;
 import com.nextbreakpoint.nextfractal.core.render.RendererTile;
-import com.nextbreakpoint.nextfractal.core.render.Java2DRendererFactory;
-import com.nextbreakpoint.nextfractal.core.DefaultThreadFactory;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;

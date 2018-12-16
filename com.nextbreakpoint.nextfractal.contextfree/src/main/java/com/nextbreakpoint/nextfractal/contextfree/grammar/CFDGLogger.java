@@ -1,5 +1,5 @@
 /*
- * NextFractal 2.0.3
+ * NextFractal 2.1.0
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015-2018 Andrea Medeghini
@@ -25,14 +25,14 @@
 package com.nextbreakpoint.nextfractal.contextfree.grammar;
 
 import com.nextbreakpoint.nextfractal.contextfree.renderer.RendererError;
-import com.nextbreakpoint.nextfractal.core.Error;
+import com.nextbreakpoint.nextfractal.core.common.SourceError;
 import org.antlr.v4.runtime.Token;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class CFDGLogger extends Logger {
-    private List<Error> errors = new ArrayList<>();
+    private List<SourceError> errors = new ArrayList<>();
 
     @Override
     public void error(String message, Token location) {
@@ -54,7 +54,7 @@ public class CFDGLogger extends Logger {
         }
     }
 
-    public List<Error> getErrors() {
+    public List<SourceError> getErrors() {
         return errors;
     }
 }

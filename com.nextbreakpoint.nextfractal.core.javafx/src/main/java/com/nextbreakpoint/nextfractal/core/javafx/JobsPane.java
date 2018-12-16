@@ -1,5 +1,5 @@
 /*
- * NextFractal 2.0.3
+ * NextFractal 2.1.0
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015-2018 Andrea Medeghini
@@ -25,13 +25,13 @@
 package com.nextbreakpoint.nextfractal.core.javafx;
 
 import com.nextbreakpoint.Try;
-import com.nextbreakpoint.nextfractal.core.CoreFactory;
-import com.nextbreakpoint.nextfractal.core.ImageComposer;
+import com.nextbreakpoint.nextfractal.core.common.CoreFactory;
+import com.nextbreakpoint.nextfractal.core.common.ImageComposer;
 import com.nextbreakpoint.nextfractal.core.export.ExportSession;
 import com.nextbreakpoint.nextfractal.core.export.ExportState;
 import com.nextbreakpoint.nextfractal.core.render.RendererSize;
 import com.nextbreakpoint.nextfractal.core.render.RendererTile;
-import com.nextbreakpoint.nextfractal.core.DefaultThreadFactory;
+import com.nextbreakpoint.nextfractal.core.common.DefaultThreadFactory;
 import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -60,7 +60,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 
-import static com.nextbreakpoint.nextfractal.core.Plugins.tryFindFactory;
+import static com.nextbreakpoint.nextfractal.core.common.Plugins.tryFindFactory;
 
 public class JobsPane extends BorderPane {
     private static Logger logger = Logger.getLogger(JobsPane.class.getName());
@@ -157,11 +157,19 @@ public class JobsPane extends BorderPane {
     private ImageView createIconImage(String name, double percentage) {
         int size = computePercentage(percentage);
         InputStream stream = getClass().getResourceAsStream(name);
-        ImageView image = new ImageView(new Image(stream));
-        image.setSmooth(true);
-        image.setFitWidth(size);
-        image.setFitHeight(size);
-        return image;
+        if (stream != null) {
+            ImageView image = new ImageView(new Image(stream));
+            image.setSmooth(true);
+            image.setFitWidth(size);
+            image.setFitHeight(size);
+            return image;
+        } else {
+            ImageView image = new ImageView();
+            image.setSmooth(true);
+            image.setFitWidth(size);
+            image.setFitHeight(size);
+            return image;
+        }
     }
 
     private void updateJobList(ListView<Bitmap> jobsList) {

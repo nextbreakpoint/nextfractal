@@ -1,5 +1,5 @@
 /*
- * NextFractal 2.0.3
+ * NextFractal 2.1.0
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015-2018 Andrea Medeghini
@@ -33,9 +33,17 @@ import java.io.InputStream;
 public class Icons {
     private Icons() {}
 
-    public static ImageView createIconImage(Class clazz, String name, double percentage) {
+    public static ImageView createIconImage(String name, double percentage) {
+        InputStream stream = Icons.class.getResourceAsStream(name);
+        return createIconImage(stream, percentage);
+    }
+
+    public static ImageView createIconImage(String name) {
+        return createIconImage(name, computeOptimalIconPercentage());
+    }
+
+    public static ImageView createIconImage(InputStream stream, double percentage) {
         int size = (int)Math.rint(Screen.getPrimary().getVisualBounds().getWidth() * percentage);
-        InputStream stream = clazz.getResourceAsStream(name);
         ImageView image = new ImageView(new Image(stream));
         image.setSmooth(true);
         image.setFitWidth(size);
@@ -43,8 +51,8 @@ public class Icons {
         return image;
     }
 
-    public static ImageView createIconImage(Class clazz, String name) {
-        return createIconImage(clazz, name, computeOptimalIconPercentage());
+    public static ImageView createIconImage(InputStream stream) {
+        return createIconImage(stream, computeOptimalIconPercentage());
     }
 
     public static double computeOptimalIconPercentage() {

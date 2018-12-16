@@ -1,5 +1,5 @@
 /*
- * NextFractal 2.0.3
+ * NextFractal 2.1.0
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015-2018 Andrea Medeghini
@@ -26,7 +26,7 @@ package com.nextbreakpoint.nextfractal.runtime.javafx;
 
 import com.nextbreakpoint.Try;
 import com.nextbreakpoint.nextfractal.core.javafx.EventBus;
-import com.nextbreakpoint.nextfractal.core.Session;
+import com.nextbreakpoint.nextfractal.core.common.Session;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 

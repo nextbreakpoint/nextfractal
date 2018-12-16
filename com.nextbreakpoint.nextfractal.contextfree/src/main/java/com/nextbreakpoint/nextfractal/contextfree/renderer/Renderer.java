@@ -1,5 +1,5 @@
 /*
- * NextFractal 2.0.3
+ * NextFractal 2.1.0
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015-2018 Andrea Medeghini
@@ -28,7 +28,7 @@ import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDG;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGLogger;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGRenderer;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.SimpleCanvas;
-import com.nextbreakpoint.nextfractal.core.Error;
+import com.nextbreakpoint.nextfractal.core.common.SourceError;
 import com.nextbreakpoint.nextfractal.core.render.RendererAffine;
 import com.nextbreakpoint.nextfractal.core.render.RendererFactory;
 import com.nextbreakpoint.nextfractal.core.render.RendererGraphicsContext;
@@ -60,7 +60,7 @@ public class Renderer {
 	protected final RendererFactory renderFactory;
 	protected volatile RendererDelegate rendererDelegate;
 	protected volatile RendererSurface buffer;
-	protected volatile List<Error> errors = new ArrayList<>();
+	protected volatile List<SourceError> errors = new ArrayList<>();
 	protected volatile boolean aborted;
 	protected volatile boolean interrupted;
 	protected volatile boolean cfdgChanged;
@@ -426,8 +426,8 @@ public class Renderer {
 		}
 	}
 
-	public List<Error> getErrors() {
-		List<Error> result = new ArrayList<>(errors);
+	public List<SourceError> getErrors() {
+		List<SourceError> result = new ArrayList<>(errors);
 		errors.clear();
 		return result;
 	}

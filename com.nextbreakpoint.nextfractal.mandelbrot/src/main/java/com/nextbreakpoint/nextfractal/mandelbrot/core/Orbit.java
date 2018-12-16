@@ -1,5 +1,5 @@
 /*
- * NextFractal 2.0.3
+ * NextFractal 2.1.0
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015-2018 Andrea Medeghini
@@ -24,7 +24,7 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.core;
 
-import com.nextbreakpoint.nextfractal.core.Time;
+import com.nextbreakpoint.nextfractal.core.common.Time;
 
 import java.util.ArrayList;
 import java.util.List;

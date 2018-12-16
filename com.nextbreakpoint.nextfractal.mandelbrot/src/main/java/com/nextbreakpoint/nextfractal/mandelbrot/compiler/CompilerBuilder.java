@@ -1,5 +1,5 @@
 /*
- * NextFractal 2.0.3
+ * NextFractal 2.1.0
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015-2018 Andrea Medeghini
@@ -24,12 +24,12 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.compiler;
 
-import com.nextbreakpoint.nextfractal.core.Error;
+import com.nextbreakpoint.nextfractal.core.common.SourceError;
 
 import java.util.List;
 
 public interface CompilerBuilder<T> {
 	public T build() throws InstantiationException, IllegalAccessException, CompilerSourceException;
 
-	public List<Error> getErrors();
+	public List<SourceError> getErrors();
 }

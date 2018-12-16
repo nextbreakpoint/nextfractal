@@ -1,5 +1,5 @@
 /*
- * NextFractal 2.0.3
+ * NextFractal 2.1.0
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015-2018 Andrea Medeghini
@@ -26,11 +26,11 @@ package com.nextbreakpoint.nextfractal.mandelbrot.javafx;
 
 import com.nextbreakpoint.nextfractal.core.javafx.EventBus;
 import com.nextbreakpoint.nextfractal.core.javafx.AdvancedTextField;
-import com.nextbreakpoint.nextfractal.core.Double2D;
-import com.nextbreakpoint.nextfractal.core.Double4D;
-import com.nextbreakpoint.nextfractal.core.Time;
-import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotMetadata;
-import com.nextbreakpoint.nextfractal.mandelbrot.MandelbrotSession;
+import com.nextbreakpoint.nextfractal.core.common.Double2D;
+import com.nextbreakpoint.nextfractal.core.common.Double4D;
+import com.nextbreakpoint.nextfractal.core.common.Time;
+import com.nextbreakpoint.nextfractal.mandelbrot.module.MandelbrotMetadata;
+import com.nextbreakpoint.nextfractal.mandelbrot.module.MandelbrotSession;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;

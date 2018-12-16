@@ -1,5 +1,5 @@
 /*
- * NextFractal 2.0.3
+ * NextFractal 2.1.0
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015-2018 Andrea Medeghini
@@ -25,14 +25,14 @@
 package com.nextbreakpoint.nextfractal.core.javafx;
 
 import com.nextbreakpoint.Try;
-import com.nextbreakpoint.nextfractal.core.Error;
-import com.nextbreakpoint.nextfractal.core.FileManager;
-import com.nextbreakpoint.nextfractal.core.Plugins;
+import com.nextbreakpoint.nextfractal.core.common.FileManager;
+import com.nextbreakpoint.nextfractal.core.common.Plugins;
+import com.nextbreakpoint.nextfractal.core.common.SourceError;
 import com.nextbreakpoint.nextfractal.core.render.RendererPoint;
 import com.nextbreakpoint.nextfractal.core.render.RendererSize;
 import com.nextbreakpoint.nextfractal.core.render.RendererTile;
-import com.nextbreakpoint.nextfractal.core.Block;
-import com.nextbreakpoint.nextfractal.core.DefaultThreadFactory;
+import com.nextbreakpoint.nextfractal.core.common.Block;
+import com.nextbreakpoint.nextfractal.core.common.DefaultThreadFactory;
 import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
@@ -130,10 +130,10 @@ public class BrowsePane extends BorderPane {
 		HBox toolbar3 = new HBox(2);
 		toolbar3.setAlignment(Pos.CENTER_RIGHT);
 
-		Button closeButton = new Button("", Icons.createIconImage(getClass(), "/icon-close.png"));
-		Button reloadButton = new Button("", Icons.createIconImage(getClass(), "/icon-reload.png"));
-		Button chooseButton = new Button("", Icons.createIconImage(getClass(), "/icon-folder.png"));
-		Button importButton = new Button("", Icons.createIconImage(getClass(), "/icon-import.png"));
+		Button closeButton = new Button("", Icons.createIconImage("/icon-close.png"));
+		Button reloadButton = new Button("", Icons.createIconImage("/icon-reload.png"));
+		Button chooseButton = new Button("", Icons.createIconImage("/icon-folder.png"));
+		Button importButton = new Button("", Icons.createIconImage("/icon-import.png"));
 		closeButton.setTooltip(new Tooltip("Close projects browser"));
 		reloadButton.setTooltip(new Tooltip("Reload all projects"));
 		chooseButton.setTooltip(new Tooltip("Select projects location"));
@@ -465,7 +465,7 @@ public class BrowsePane extends BorderPane {
 				item.setBitmap(delegate.createBitmap(item.getFile(), tile.getTileSize()));
 			}
 		} catch (Exception e) {
-			item.setErrors(Arrays.asList(new Error(Error.ErrorType.RUNTIME, 0, 0, 0, 0, e.getMessage())));
+			item.setErrors(Arrays.asList(new SourceError(SourceError.ErrorType.RUNTIME, 0, 0, 0, 0, e.getMessage())));
 			logger.log(Level.WARNING, "Can't create bitmap: " + e.getMessage());
 		}
 	}
@@ -581,7 +581,7 @@ public class BrowsePane extends BorderPane {
 				item.setRenderer(delegate.createRenderer(bitmap));
 			}
 		} catch (Exception e) {
-			item.setErrors(Arrays.asList(new Error(Error.ErrorType.RUNTIME, 0, 0, 0, 0, e.getMessage())));
+			item.setErrors(Arrays.asList(new SourceError(SourceError.ErrorType.RUNTIME, 0, 0, 0, 0, e.getMessage())));
 			logger.log(Level.WARNING, "Can't initialize renderer", e);
 		}
 	}

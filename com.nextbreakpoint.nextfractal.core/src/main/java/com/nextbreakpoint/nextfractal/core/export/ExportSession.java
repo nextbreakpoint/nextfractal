@@ -1,5 +1,5 @@
 /*
- * NextFractal 2.0.3
+ * NextFractal 2.1.0
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015-2018 Andrea Medeghini
@@ -24,10 +24,10 @@
  */
 package com.nextbreakpoint.nextfractal.core.export;
 
-import com.nextbreakpoint.nextfractal.core.Clip;
-import com.nextbreakpoint.nextfractal.core.ClipProcessor;
-import com.nextbreakpoint.nextfractal.core.Frame;
-import com.nextbreakpoint.nextfractal.core.Session;
+import com.nextbreakpoint.nextfractal.core.common.Clip;
+import com.nextbreakpoint.nextfractal.core.common.ClipProcessor;
+import com.nextbreakpoint.nextfractal.core.common.Frame;
+import com.nextbreakpoint.nextfractal.core.common.Session;
 import com.nextbreakpoint.nextfractal.core.encode.Encoder;
 import com.nextbreakpoint.nextfractal.core.render.RendererSize;
 

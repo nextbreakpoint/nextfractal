@@ -1,5 +1,5 @@
 /*
- * NextFractal 2.0.3
+ * NextFractal 2.1.0
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015-2018 Andrea Medeghini
@@ -24,10 +24,10 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.renderer;
 
-import com.nextbreakpoint.nextfractal.core.Error;
+import com.nextbreakpoint.nextfractal.core.common.SourceError;
 
-public class RendererError extends Error {
+public class RendererError extends SourceError {
 	public RendererError(long line, long charPositionInLine, long index, long length, String message) {
-		super(ErrorType.RUNTIME, line, charPositionInLine, index, length, message);
+		super(SourceError.ErrorType.RUNTIME, line, charPositionInLine, index, length, message);
 	}
 }

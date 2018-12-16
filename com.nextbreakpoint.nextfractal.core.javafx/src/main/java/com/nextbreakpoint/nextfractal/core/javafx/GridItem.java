@@ -1,5 +1,5 @@
 /*
- * NextFractal 2.0.3
+ * NextFractal 2.1.0
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015-2018 Andrea Medeghini
@@ -24,7 +24,7 @@
  */
 package com.nextbreakpoint.nextfractal.core.javafx;
 
-import com.nextbreakpoint.nextfractal.core.Error;
+import com.nextbreakpoint.nextfractal.core.common.SourceError;
 
 import java.io.File;
 import java.util.LinkedList;
@@ -37,7 +37,7 @@ public class GridItem {
 	private volatile BrowseBitmap bitmap;
 	private volatile GridItemRenderer renderer;
 	private volatile Future<GridItem> future;
-	private volatile List<Error> errors = new LinkedList<>();
+	private volatile List<SourceError> errors = new LinkedList<>();
 
 	public File getFile() {
 		return file;
@@ -79,11 +79,11 @@ public class GridItem {
 		return lastChanged;
 	}
 
-	public List<Error> getErrors() {
+	public List<SourceError> getErrors() {
 		return errors;
 	}
 
-	public void setErrors(List<Error> errors) {
+	public void setErrors(List<SourceError> errors) {
 		this.errors.clear();
 		this.errors.addAll(errors);
 	}

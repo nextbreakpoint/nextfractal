@@ -1,5 +1,5 @@
 /*
- * NextFractal 2.0.3
+ * NextFractal 2.1.0
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015-2018 Andrea Medeghini
@@ -24,14 +24,15 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.javafx;
 
-import com.nextbreakpoint.nextfractal.contextfree.ContextFreeMetadata;
-import com.nextbreakpoint.nextfractal.contextfree.ContextFreeSession;
+import com.nextbreakpoint.Try;
+import com.nextbreakpoint.nextfractal.contextfree.module.ContextFreeMetadata;
+import com.nextbreakpoint.nextfractal.contextfree.module.ContextFreeSession;
 import com.nextbreakpoint.nextfractal.contextfree.compiler.Compiler;
 import com.nextbreakpoint.nextfractal.contextfree.compiler.CompilerReport;
 import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDG;
 import com.nextbreakpoint.nextfractal.contextfree.renderer.RendererCoordinator;
 import com.nextbreakpoint.nextfractal.core.javafx.EventBus;
-import com.nextbreakpoint.nextfractal.core.Session;
+import com.nextbreakpoint.nextfractal.core.common.Session;
 import com.nextbreakpoint.nextfractal.core.javafx.Bitmap;
 import com.nextbreakpoint.nextfractal.core.javafx.BrowseBitmap;
 import com.nextbreakpoint.nextfractal.core.javafx.GridItemRenderer;
@@ -41,7 +42,7 @@ import com.nextbreakpoint.nextfractal.core.render.RendererPoint;
 import com.nextbreakpoint.nextfractal.core.render.RendererSize;
 import com.nextbreakpoint.nextfractal.core.render.RendererTile;
 import com.nextbreakpoint.nextfractal.core.javafx.render.JavaFXRendererFactory;
-import com.nextbreakpoint.nextfractal.core.DefaultThreadFactory;
+import com.nextbreakpoint.nextfractal.core.common.DefaultThreadFactory;
 import javafx.scene.layout.Pane;
 
 import java.util.HashMap;
@@ -95,6 +96,11 @@ public class ContextFreeUIFactory implements UIFactory {
 		bitmap.setProperty("cfdg", report.getCFDG());
 		bitmap.setProperty("session", session);
 		return bitmap;
+	}
+
+	@Override
+	public Try<String, Exception> loadResource(String resourceName) {
+		return Try.of(() -> getClass().getResource(resourceName).toExternalForm());
 	}
 
 	private RendererTile createSingleTile(int width, int height) {

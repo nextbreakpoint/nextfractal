@@ -1,5 +1,5 @@
 /*
- * NextFractal 2.0.3
+ * NextFractal 2.1.0
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015-2018 Andrea Medeghini
@@ -24,22 +24,22 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.compiler;
 
-import com.nextbreakpoint.nextfractal.core.Error;
+import com.nextbreakpoint.nextfractal.core.common.SourceError;
 
 import java.util.List;
 
 public class CompilerClassException extends Exception {
 	private static final long serialVersionUID = 1L;
-	private List<Error> errors;
+	private List<SourceError> errors;
 	private String source;
 
-	public CompilerClassException(String message, String source, List<Error> errors) {
+	public CompilerClassException(String message, String source, List<SourceError> errors) {
 		super(message);
 		this.source = source;
 		this.errors = errors;
 	}
 	
-	public List<Error> getErrors() {
+	public List<SourceError> getErrors() {
 		return errors;
 	}
 

@@ -1,44 +1,19 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
- 	<parent>
+	<parent>
         <groupId>com.nextbreakpoint</groupId>
         <artifactId>com.nextbreakpoint.nextfractal</artifactId>
-        <version>2.0.3</version>
+        <version>2.1.0</version>
     </parent>
 	<artifactId>com.nextbreakpoint.nextfractal.main</artifactId>
 	<packaging>pom</packaging>
 	<build>
 		<plugins>
-			<!-- 
-			<plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<version>2.5.3</version>
-				<configuration>
-					<descriptors>
-						<descriptor>assembly.xml</descriptor>
-					</descriptors>
-					<archive>
-						<manifest>
-							<mainClass>com.nextbreakpoint.nextfractal.runtime.javafx.NextFractalApp</mainClass>
-						</manifest>
-					</archive>
-				</configuration>
-				<executions>
-					<execution>
-						<id>make-assembly</id>
-						<phase>package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			 -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
-				<version>2.8</version>
+				<version>${maven-dependency-plugin.version}</version>
 				<executions>
 					<execution>
 						<id>copy-jars</id>
@@ -47,8 +22,8 @@
 							<goal>copy-dependencies</goal>
 						</goals>
 						<configuration>
-							<includeGroupIds>com.nextbreakpoint,org.antlr,org.fxmisc,org.reactfx,org.apache.commons,com.fasterxml.jackson,org.controlsfx</includeGroupIds>
-							<outputDirectory>${project.build.directory}/jars/</outputDirectory>
+							<includeGroupIds>com.nextbreakpoint,org.antlr,org.apache.commons,com.fasterxml.jackson,org.openjfx,io.reactivex,org.reactivestreams</includeGroupIds>
+							<outputDirectory>${project.build.directory}/jars/${os.type}/${arch.type}</outputDirectory>
 						</configuration>
 					</execution>
 					<execution>
@@ -80,30 +55,6 @@
 					</execution>
 				</executions>
 			</plugin>
-			<!-- 
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<version>1.7</version>
-				<executions>
-					<execution>
-						<phase>package</phase>
-						<configuration>
-							<target>
-								<ant dir="${project.build.directory}/../build">
-									<property name="build.type" value="${build.type}"/>
-									<property name="arch.type" value="${arch.type}"/>
-									<property name="os.type" value="${os.type}"/>
-								</ant>
-							</target>
-						</configuration>
-						<goals>
-							<goal>run</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			 -->
 		</plugins>
 	</build>
 	<dependencies>

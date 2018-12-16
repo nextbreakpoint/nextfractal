@@ -1,5 +1,5 @@
 /*
- * NextFractal 2.0.3
+ * NextFractal 2.1.0
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015-2018 Andrea Medeghini
@@ -25,7 +25,7 @@
 package com.nextbreakpoint.nextfractal.runtime.export;
 
 import com.nextbreakpoint.Try;
-import com.nextbreakpoint.nextfractal.core.ImageComposer;
+import com.nextbreakpoint.nextfractal.core.common.ImageComposer;
 import com.nextbreakpoint.nextfractal.core.export.ExportJobHandle;
 import com.nextbreakpoint.nextfractal.core.export.ExportJobState;
 import com.nextbreakpoint.nextfractal.core.export.ExportProfile;
@@ -42,7 +42,7 @@ import java.util.concurrent.ThreadFactory;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static com.nextbreakpoint.nextfractal.core.Plugins.tryFindFactory;
+import static com.nextbreakpoint.nextfractal.core.common.Plugins.tryFindFactory;
 
 public class SimpleExportRenderer implements ExportRenderer {
 	private static final Logger logger = Logger.getLogger(SimpleExportRenderer.class.getName());

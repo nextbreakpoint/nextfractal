@@ -1,5 +1,5 @@
 /*
- * NextFractal 2.0.3
+ * NextFractal 2.1.0
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015-2018 Andrea Medeghini
@@ -24,16 +24,16 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.compiler.java;
 
-import com.nextbreakpoint.nextfractal.core.Error;
+import com.nextbreakpoint.nextfractal.core.common.SourceError;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerBuilder;
 
 import java.util.List;
 
 public class JavaClassBuilder<T> implements CompilerBuilder<T> {
 	private Class<T> clazz;
-	private List<Error> errors;
+	private List<SourceError> errors;
 	
-	public JavaClassBuilder(Class<T> clazz, List<Error> errors) {
+	public JavaClassBuilder(Class<T> clazz, List<SourceError> errors) {
 		this.clazz = clazz;
 		this.errors = errors;
 	}
@@ -45,7 +45,7 @@ public class JavaClassBuilder<T> implements CompilerBuilder<T> {
 		return clazz.newInstance();
 	}
 
-	public List<Error> getErrors() {
+	public List<SourceError> getErrors() {
 		return errors;
 	}
 }

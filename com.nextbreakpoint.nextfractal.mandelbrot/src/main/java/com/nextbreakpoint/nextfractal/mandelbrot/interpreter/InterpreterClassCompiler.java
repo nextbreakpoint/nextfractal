@@ -1,5 +1,5 @@
 /*
- * NextFractal 2.0.3
+ * NextFractal 2.1.0
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015-2018 Andrea Medeghini
@@ -24,7 +24,7 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.interpreter;
 
-import com.nextbreakpoint.nextfractal.core.Error;
+import com.nextbreakpoint.nextfractal.core.common.SourceError;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerBuilder;
 import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerReport;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Color;
@@ -36,12 +36,12 @@ import java.util.List;
 
 public class InterpreterClassCompiler {
 	public CompilerBuilder<Orbit> compileOrbit(CompilerReport report) throws ClassNotFoundException, IOException {
-		List<Error> errors = new ArrayList<>();
+		List<SourceError> errors = new ArrayList<>();
 		return new InterpreterOrbitBuilder(report.getAST(), report.getOrbitSource(), errors);
 	}
 
 	public CompilerBuilder<Color> compileColor(CompilerReport report) throws ClassNotFoundException, IOException {
-		List<Error> errors = new ArrayList<>();
+		List<SourceError> errors = new ArrayList<>();
 		return new InterpreterColorBuilder(report.getAST(), report.getColorSource(), errors);
 	}
 }	

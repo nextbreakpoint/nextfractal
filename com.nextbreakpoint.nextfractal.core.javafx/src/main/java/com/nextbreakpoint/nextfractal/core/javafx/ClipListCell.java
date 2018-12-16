@@ -1,5 +1,5 @@
 /*
- * NextFractal 2.0.3
+ * NextFractal 2.1.0
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015-2018 Andrea Medeghini
@@ -24,7 +24,7 @@
  */
 package com.nextbreakpoint.nextfractal.core.javafx;
 
-import com.nextbreakpoint.nextfractal.core.Clip;
+import com.nextbreakpoint.nextfractal.core.common.Clip;
 import com.nextbreakpoint.nextfractal.core.render.RendererTile;
 import javafx.geometry.Pos;
 import javafx.scene.canvas.Canvas;

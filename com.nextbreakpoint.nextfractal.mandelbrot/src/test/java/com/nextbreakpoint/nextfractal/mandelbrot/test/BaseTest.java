@@ -1,5 +1,5 @@
 /*
- * NextFractal 2.0.3
+ * NextFractal 2.1.0
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015-2018 Andrea Medeghini
@@ -24,7 +24,7 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.test;
 
-import com.nextbreakpoint.nextfractal.core.Error;
+import com.nextbreakpoint.nextfractal.core.common.SourceError;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTBuilder;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTFractal;
 import com.nextbreakpoint.nextfractal.mandelbrot.grammar.MandelbrotLexer;
@@ -59,8 +59,8 @@ public abstract class BaseTest {
         return null;
 	}
 	
-	protected void printErrors(List<Error> errors) {
-		for (Error error : errors) {
+	protected void printErrors(List<SourceError> errors) {
+		for (SourceError error : errors) {
 			System.out.println(error.toString());
 		}
 	}

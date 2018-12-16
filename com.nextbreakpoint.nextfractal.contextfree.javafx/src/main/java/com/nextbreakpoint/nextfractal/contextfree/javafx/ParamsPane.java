@@ -1,5 +1,5 @@
 /*
- * NextFractal 2.0.3
+ * NextFractal 2.1.0
  * https://github.com/nextbreakpoint/nextfractal
  *
  * Copyright 2015-2018 Andrea Medeghini
@@ -24,11 +24,10 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.javafx;
 
-import com.nextbreakpoint.nextfractal.contextfree.ContextFreeMetadata;
-import com.nextbreakpoint.nextfractal.contextfree.ContextFreeSession;
+import com.nextbreakpoint.nextfractal.contextfree.module.ContextFreeMetadata;
+import com.nextbreakpoint.nextfractal.contextfree.module.ContextFreeSession;
 import com.nextbreakpoint.nextfractal.core.javafx.EventBus;
 import com.nextbreakpoint.nextfractal.core.javafx.AdvancedTextField;
-import javafx.application.Platform;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Pane;
@@ -47,7 +46,7 @@ public class ParamsPane extends Pane {
 		AdvancedTextField seedField = new AdvancedTextField();
 		seedField.setTooltip(new Tooltip("Seed for generating random numbers"));
 		seedField.setRestrict(getRestriction());
-		seedField.setTransform(t -> t.toUpperCase());
+		seedField.setTransform(String::toUpperCase);
 		VBox seedPane = new VBox(SPACING);
 		seedPane.getChildren().add(seedLabel);
 		seedPane.getChildren().add(seedField);
