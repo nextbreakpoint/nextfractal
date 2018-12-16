@@ -98,6 +98,11 @@
 				</fileset>
 			</copy>
 			<chmod failonerror="true" perm="aug+x" file="@{basedir}/dist/@{os}_@{arch}/${nextfractal.folder}/@{executable}" />
+			<chmod failonerror="true" perm="a+x">
+				<fileset dir="@{basedir}/dist/@{os}_@{arch}/${nextfractal.folder}/@{resourcesdir}/jdk/bin">
+					<include name="**/*" />
+				</fileset>
+			</chmod>
 		</sequential>
 	</macrodef>
 	<macrodef name="makesigneddmg">
