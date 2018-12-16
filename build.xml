@@ -38,6 +38,7 @@
 		<attribute name="version" />
 		<attribute name="basedir" />
 		<attribute name="executable" />
+		<attribute name="executabledir" />
 		<attribute name="resourcesdir" />
 		<attribute name="resultproperty" default="build.result" />
 		<element name="args" implicit="true" optional="true" />
@@ -63,7 +64,7 @@
 					<include name="**/*" />
 				</fileset>
 			</copy>
-			<copy failonerror="true" todir="@{basedir}/dist/@{os}_@{arch}/${nextfractal.folder}/@{resourcesdir}" overwrite="true">
+			<copy failonerror="true" todir="@{basedir}/dist/@{os}_@{arch}/${nextfractal.folder}/@{executabledir}" overwrite="true">
 				<fileset dir="@{basedir}/build/@{os}/launcher">
 					<include name="*" />
 				</fileset>
@@ -97,7 +98,11 @@
 					<include name="*.txt" />
 				</fileset>
 			</copy>
-			<chmod failonerror="true" perm="aug+x" file="@{basedir}/dist/@{os}_@{arch}/${nextfractal.folder}/@{executable}" />
+			<chmod failonerror="true" perm="aug+x">
+				<fileset dir="@{basedir}/dist/@{os}_@{arch}/${nextfractal.folder}/@{executabledir}">
+					<include name="**/*" />
+				</fileset>
+			</chmod>
 			<chmod failonerror="true" perm="a+x">
 				<fileset dir="@{basedir}/dist/@{os}_@{arch}/${nextfractal.folder}/@{resourcesdir}/jdk/bin">
 					<include name="**/*" />
@@ -342,23 +347,23 @@
 	  	</javadoc>
 	</target>
 	<target name="build-mac-64bit-signed" if="is_macosx">
-		<build basedir="${basedir}" os="osx" arch="x86_64" libpath="mac/x86_64/macos" jarspath="mac/x86_64" version="${nextfractal.version}" executable="NextFractal.app/Contents/MacOS/NextFractal" resourcesdir="NextFractal.app/Contents/MacOS" resultproperty="ant.build.result" />
+		<build basedir="${basedir}" os="osx" arch="x86_64" libpath="mac/x86_64/macos" jarspath="mac/x86_64" version="${nextfractal.version}" executabledir="NextFractal.app/Contents/MacOS" executable="NextFractal" resourcesdir="NextFractal.app/Contents/Resources" resultproperty="ant.build.result" />
 		<makesigneddmg basedir="${basedir}" os="osx" arch="x86_64" version="${nextfractal.version}" identity="Developer ID Application: Andrea Medeghini (P646GF5PRT)" resultproperty="ant.makedmg.result" />
 	</target>
 	<target name="build-mac-64bit" if="is_macosx">
-		<build basedir="${basedir}" os="osx" arch="x86_64" libpath="mac/x86_64/macos" jarspath="mac/x86_64" version="${nextfractal.version}" executable="NextFractal.app/Contents/MacOS/NextFractal" resourcesdir="NextFractal.app/Contents/MacOS" resultproperty="ant.build.result" />
+		<build basedir="${basedir}" os="osx" arch="x86_64" libpath="mac/x86_64/macos" jarspath="mac/x86_64" version="${nextfractal.version}" executabledir="NextFractal.app/Contents/MacOS" executable="NextFractal" resourcesdir="NextFractal.app/Contents/Resources" resultproperty="ant.build.result" />
 		<makedmg basedir="${basedir}" os="osx" arch="x86_64" version="${nextfractal.version}" resultproperty="ant.makedmg.result" />
 	</target>
 	<target name="build-windows-64bit">
-		<build basedir="${basedir}" os="windows" arch="x86_64" libpath="windows/x86_64/win32" jarspath="windows/x86_64" version="${nextfractal.version}" executable="NextFractal.exe" resourcesdir="." resultproperty="ant.build.result" />
+		<build basedir="${basedir}" os="windows" arch="x86_64" libpath="windows/x86_64/win32" jarspath="windows/x86_64" version="${nextfractal.version}" executabledir="." executable="NextFractal.exe" resourcesdir="." resultproperty="ant.build.result" />
 		<makezip basedir="${basedir}" os="windows" arch="x86_64" version="${nextfractal.version}" resultproperty="ant.makezip.result" />
 	</target>
 	<target name="build-debian-64bit">
-		<build basedir="${basedir}" os="debian" arch="x86_64" libpath="linux/x86_64/linux" jarspath="linux/x86_64" version="${nextfractal.version}" executable="NextFractal" resourcesdir="." resultproperty="ant.build.result" />
+		<build basedir="${basedir}" os="debian" arch="x86_64" libpath="linux/x86_64/linux" jarspath="linux/x86_64" version="${nextfractal.version}" executabledir="." executable="NextFractal" resourcesdir="." resultproperty="ant.build.result" />
 		<makezip basedir="${basedir}" os="debian" arch="x86_64" version="${nextfractal.version}" resultproperty="ant.makezip.result" />
 	</target>
 	<target name="build-fedora-64bit">
-		<build basedir="${basedir}" os="fedora" arch="x86_64" libpath="linux/x86_64/linux" jarspath="linux/x86_64" version="${nextfractal.version}" executable="NextFractal" resourcesdir="." resultproperty="ant.build.result" />
+		<build basedir="${basedir}" os="fedora" arch="x86_64" libpath="linux/x86_64/linux" jarspath="linux/x86_64" version="${nextfractal.version}" executabledir="." executable="NextFractal" resourcesdir="." resultproperty="ant.build.result" />
 		<makezip basedir="${basedir}" os="fedora" arch="x86_64" version="${nextfractal.version}" resultproperty="ant.makezip.result" />
 	</target>
 	<target name="publish-libs">
