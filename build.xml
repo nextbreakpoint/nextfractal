@@ -42,6 +42,7 @@
 		<attribute name="resultproperty" default="build.result" />
 		<element name="args" implicit="true" optional="true" />
 		<sequential>
+			<delete dir="${basedir}/dist/@{os}_@{arch}" />
 			<mkdir dir="@{basedir}/build/@{os}"/>
 			<get src="https://github.com/nextbreakpoint/nextfractal-openjdk-launchers/releases/download/v1.0/@{os}-nextfractal-launcher-1.0.zip" dest="@{basedir}/build/@{os}/nextfractal-launcher-1.0.zip" verbose="true" usetimestamp="true"/>
 			<get src="https://github.com/nextbreakpoint/nextfractal-openjdk-binaries/releases/download/v11.0.1-0/@{os}-jdk-11.0.1-0.zip" dest="@{basedir}/build/@{os}/jdk-11.0.1-0.zip" verbose="true" usetimestamp="true"/>
