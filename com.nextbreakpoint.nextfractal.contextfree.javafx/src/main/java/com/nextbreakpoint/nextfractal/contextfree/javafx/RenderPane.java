@@ -91,13 +91,13 @@ public class RenderPane extends BorderPane {
 	private volatile boolean hasError;
 	private ContextFreeSession contextFreeSession;
 
-	public RenderPane(Session session, EventBus eventBus, int width, int height, int rows, int columns) {
+	public RenderPane(ContextFreeSession session, EventBus eventBus, int width, int height, int rows, int columns) {
 		this.width = width;
 		this.height = height;
 		this.rows = rows;
 		this.columns = columns;
 
-		contextFreeSession = (ContextFreeSession) session;
+		contextFreeSession = session;
 
 		errorProperty = new StringObservableValue();
 		errorProperty.setValue(null);

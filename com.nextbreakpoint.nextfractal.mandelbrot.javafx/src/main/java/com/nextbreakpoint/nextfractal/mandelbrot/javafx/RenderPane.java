@@ -126,13 +126,13 @@ public class RenderPane extends BorderPane {
 	private CompilerBuilder<Color> colorBuilder;
 	private List<Number[]> states = new ArrayList<>();
 
-	public RenderPane(Session session, EventBus eventBus, int width, int height, int rows, int columns) {
+	public RenderPane(MandelbrotSession session, EventBus eventBus, int width, int height, int rows, int columns) {
 		this.width = width;
 		this.height = height;
 		this.rows = rows;
 		this.columns = columns;
 
-		mandelbrotSession = (MandelbrotSession)session;
+		mandelbrotSession = session;
 
 		errorProperty = new StringObservableValue();
 		errorProperty.setValue(null);

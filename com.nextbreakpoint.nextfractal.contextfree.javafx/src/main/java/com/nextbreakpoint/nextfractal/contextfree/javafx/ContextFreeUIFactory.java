@@ -62,7 +62,7 @@ public class ContextFreeUIFactory implements UIFactory {
 
 	@Override
 	public Pane createRenderPane(EventBus eventBus, Session session, int width, int height) {
-		return new RenderPane(session, eventBus, width, height, 1, 1);
+		return new RenderPane((ContextFreeSession) session, eventBus, width, height, 1, 1);
 	}
 
 	@Override
