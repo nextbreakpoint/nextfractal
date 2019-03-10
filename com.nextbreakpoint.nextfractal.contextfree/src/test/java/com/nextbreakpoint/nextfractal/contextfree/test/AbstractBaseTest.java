@@ -44,7 +44,7 @@ public abstract class AbstractBaseTest {
 		ANTLRInputStream is = new ANTLRInputStream(getResourceAsStream(resourceName));
 		CFDGParser parser = new CFDGParser(new CommonTokenStream(new CFDGLexer(is)));
 		parser.setDriver(new CFDGDriver());
-		parser.getDriver().setCurrentPath("src/test/resources");
+		parser.getDriver().setCurrentPath(System.getProperty("cfdg.root", "src/test/resources"));
 		ParseTreeWalker walker = new ParseTreeWalker();
 		walker.walk(new DefaultParseTreeListener() {
 			@Override

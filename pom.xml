@@ -128,6 +128,16 @@
 				<configuration>
 					<parallel>none</parallel>
 					<forkCount>0</forkCount>
+					<systemProperties>
+						<property>
+							<name>cfdg.root</name>
+							<value>${project.basedir}/src/test/resources</value>
+						</property>
+					</systemProperties>
+					<!--<systemPropertyVariables>-->
+						<!--<propertyName>cfdg.root</propertyName>-->
+						<!--<buildDirectory>${project.basedir}/src/test/resources</buildDirectory>-->
+					<!--</systemPropertyVariables>-->
 				</configuration>
 			</plugin>
 		</plugins>

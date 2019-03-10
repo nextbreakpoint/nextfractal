@@ -196,6 +196,7 @@ public class CFDGDriver {
 	public void includeFile(String fileName, Token location) {
 		try {
 			String path = relativeFilePath(currentPath, fileName);
+			info("Include file " + path, location);
 //			if (path.endsWith(".nf.zip")) {
 //				throw new UnsupportedOperationException();
 //			}
