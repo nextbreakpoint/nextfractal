@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.1.0
+ * NextFractal 2.1.1
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2018 Andrea Medeghini
+ * Copyright 2015-2019 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -35,10 +35,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.logging.Logger;
+
+import static com.nextbreakpoint.nextfractal.core.common.ClipProcessor.FRAMES_PER_SECOND;
 
 public final class ExportSession {
-	private static final Logger logger = Logger.getLogger(ExportSession.class.getName());
 	private static final int BORDER_SIZE = 0;
 
 	private final List<ExportJob> jobs = new ArrayList<>();
@@ -62,7 +62,7 @@ public final class ExportSession {
 		this.encoder = encoder;
 		this.tileSize = tileSize;
 		this.quality = 1;
-		this.frameRate = 25;
+		this.frameRate = FRAMES_PER_SECOND;
 		if (clips.size() > 0 && clips.get(0).getEvents().size() > 1) {
 			this.frames.addAll(new ClipProcessor(clips, frameRate).generateFrames());
 		} else {

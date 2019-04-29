@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.1.0
+ * NextFractal 2.1.1
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2018 Andrea Medeghini
+ * Copyright 2015-2019 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -196,6 +196,7 @@ public class CFDGDriver {
 	public void includeFile(String fileName, Token location) {
 		try {
 			String path = relativeFilePath(currentPath, fileName);
+			info("Include file " + path, location);
 //			if (path.endsWith(".nf.zip")) {
 //				throw new UnsupportedOperationException();
 //			}

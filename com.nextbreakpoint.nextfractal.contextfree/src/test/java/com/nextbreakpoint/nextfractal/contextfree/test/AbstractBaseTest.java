@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.1.0
+ * NextFractal 2.1.1
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2018 Andrea Medeghini
+ * Copyright 2015-2019 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -44,7 +44,7 @@ public abstract class AbstractBaseTest {
 		ANTLRInputStream is = new ANTLRInputStream(getResourceAsStream(resourceName));
 		CFDGParser parser = new CFDGParser(new CommonTokenStream(new CFDGLexer(is)));
 		parser.setDriver(new CFDGDriver());
-		parser.getDriver().setCurrentPath("src/test/resources");
+		parser.getDriver().setCurrentPath(System.getProperty("cfdg.root", "src/test/resources"));
 		ParseTreeWalker walker = new ParseTreeWalker();
 		walker.walk(new DefaultParseTreeListener() {
 			@Override

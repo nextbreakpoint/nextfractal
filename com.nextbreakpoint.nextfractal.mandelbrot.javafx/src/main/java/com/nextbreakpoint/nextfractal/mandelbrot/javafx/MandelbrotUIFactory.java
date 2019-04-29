@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.1.0
+ * NextFractal 2.1.1
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2018 Andrea Medeghini
+ * Copyright 2015-2019 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -68,7 +68,7 @@ public class MandelbrotUIFactory implements UIFactory {
 	@Override
 	public Pane createRenderPane(EventBus eventBus, Session session, int width, int height) {
 		final int[] cells = optimalRowsAndCols(Runtime.getRuntime().availableProcessors());
-		return new RenderPane(session, eventBus, width, height, Integer.getInteger("mandelbrot.renderer.rows", cells[0]), Integer.getInteger("mandelbrot.renderer.cols", cells[1]));
+		return new RenderPane((MandelbrotSession) session, eventBus, width, height, Integer.getInteger("mandelbrot.renderer.rows", cells[0]), Integer.getInteger("mandelbrot.renderer.cols", cells[1]));
 	}
 
 	@Override

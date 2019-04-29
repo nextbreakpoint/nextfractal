@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.1.0
+ * NextFractal 2.1.1
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2018 Andrea Medeghini
+ * Copyright 2015-2019 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -39,11 +39,10 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import static com.nextbreakpoint.nextfractal.core.common.ClipProcessor.FRAMES_PER_SECOND;
 import static com.nextbreakpoint.nextfractal.core.common.Plugins.tryFindFactory;
 
 public class PlaybackPane extends Pane {
-    private static final int FRAMES_PER_SECOND = 50;
-
     private final List<Frame> frames = new LinkedList<>();
     private final ScheduledExecutorService executor;
     private ScheduledFuture<?> future;

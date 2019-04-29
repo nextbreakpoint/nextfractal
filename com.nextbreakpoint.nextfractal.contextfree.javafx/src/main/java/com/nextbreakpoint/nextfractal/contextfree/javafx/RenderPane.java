@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.1.0
+ * NextFractal 2.1.1
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2018 Andrea Medeghini
+ * Copyright 2015-2019 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -91,13 +91,13 @@ public class RenderPane extends BorderPane {
 	private volatile boolean hasError;
 	private ContextFreeSession contextFreeSession;
 
-	public RenderPane(Session session, EventBus eventBus, int width, int height, int rows, int columns) {
+	public RenderPane(ContextFreeSession session, EventBus eventBus, int width, int height, int rows, int columns) {
 		this.width = width;
 		this.height = height;
 		this.rows = rows;
 		this.columns = columns;
 
-		contextFreeSession = (ContextFreeSession) session;
+		contextFreeSession = session;
 
 		errorProperty = new StringObservableValue();
 		errorProperty.setValue(null);

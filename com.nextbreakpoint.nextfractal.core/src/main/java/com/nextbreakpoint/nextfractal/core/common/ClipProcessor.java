@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.1.0
+ * NextFractal 2.1.1
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2018 Andrea Medeghini
+ * Copyright 2015-2019 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -30,6 +30,8 @@ import java.util.logging.Logger;
 
 public class ClipProcessor {
     private static final Logger logger = Logger.getLogger(ClipProcessor.class.getName());
+
+    public static final int FRAMES_PER_SECOND = 25;
 
     private List<Clip> clips;
     private int frameCount;

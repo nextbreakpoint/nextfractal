@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.1.0
+ * NextFractal 2.1.1
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2018 Andrea Medeghini
+ * Copyright 2015-2019 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -62,7 +62,7 @@ public class ContextFreeUIFactory implements UIFactory {
 
 	@Override
 	public Pane createRenderPane(EventBus eventBus, Session session, int width, int height) {
-		return new RenderPane(session, eventBus, width, height, 1, 1);
+		return new RenderPane((ContextFreeSession) session, eventBus, width, height, 1, 1);
 	}
 
 	@Override
