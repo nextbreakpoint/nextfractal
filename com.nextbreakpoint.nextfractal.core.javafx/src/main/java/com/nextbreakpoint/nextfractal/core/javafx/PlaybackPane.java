@@ -39,11 +39,10 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import static com.nextbreakpoint.nextfractal.core.common.ClipProcessor.FRAMES_PER_SECOND;
 import static com.nextbreakpoint.nextfractal.core.common.Plugins.tryFindFactory;
 
 public class PlaybackPane extends Pane {
-    private static final int FRAMES_PER_SECOND = 50;
-
     private final List<Frame> frames = new LinkedList<>();
     private final ScheduledExecutorService executor;
     private ScheduledFuture<?> future;

@@ -31,6 +31,8 @@ import java.util.logging.Logger;
 public class ClipProcessor {
     private static final Logger logger = Logger.getLogger(ClipProcessor.class.getName());
 
+    public static final int FRAMES_PER_SECOND = 25;
+
     private List<Clip> clips;
     private int frameCount;
     private int frameRate;
