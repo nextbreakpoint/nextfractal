@@ -48,7 +48,7 @@
 		<commonmath3.version>3.6.1</commonmath3.version>
 		<rxjava.version>2.2.2</rxjava.version>
 		<openjfx.version>11.0.1</openjfx.version>
-		<jackson.version>2.9.7</jackson.version>
+		<jackson.version>2.9.8</jackson.version>
 		<junit4.version>4.12</junit4.version>
 		<mockito.version>2.23.4</mockito.version>
 		<maven-jar-plugin.version>3.1.0</maven-jar-plugin.version>
