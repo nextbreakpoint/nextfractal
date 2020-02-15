@@ -2,7 +2,6 @@ import com.nextbreakpoint.nextfractal.core.common.CoreFactory;
 import com.nextbreakpoint.nextfractal.mandelbrot.module.MandelbrotFactory;
 
 module com.nextbreakpoint.nextfractal.mandelbrot {
-    requires java.sql;
     requires java.logging;
     requires java.desktop;
     requires java.compiler;

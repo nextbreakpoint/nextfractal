@@ -2,7 +2,6 @@ import com.nextbreakpoint.nextfractal.contextfree.module.ContextFreeFactory;
 import com.nextbreakpoint.nextfractal.core.common.CoreFactory;
 
 module com.nextbreakpoint.nextfractal.contextfree {
-    requires java.sql;
     requires java.logging;
     requires java.desktop;
     requires commons.math3;
