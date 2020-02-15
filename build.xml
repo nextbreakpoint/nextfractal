@@ -397,11 +397,11 @@
 	<target name="setup">
 		<setup basedir="${basedir}" resultproperty="ant.setup.result"/>
 	</target>
-	<target name="build-mac-signed" depends="build-mac-64bit-signed" if="is_macosx" />
-	<target name="build-mac" depends="build-mac-64bit" if="is_macosx" />
-	<target name="build-windows" depends="build-windows-64bit" if="is_windows" />
-	<target name="build-debian" depends="build-debian-64bit" if="is_unix" />
-	<target name="build-fedora" depends="build-fedora-64bit" if="is_unix" />
+	<target name="build-mac-signed" depends="setup, build-mac-64bit-signed" if="is_macosx" />
+	<target name="build-mac" depends="setup, build-mac-64bit" if="is_macosx" />
+	<target name="build-windows" depends="setup, build-windows-64bit" if="is_windows" />
+	<target name="build-debian" depends="setup, build-debian-64bit" if="is_unix" />
+	<target name="build-fedora" depends="setup, build-fedora-64bit" if="is_unix" />
 	<target name="publish" depends="publish-libs" />
-	<target name="update" depends="update-version, update-copyright" />
+	<target name="update" depends="clean, update-version, update-copyright" />
 </project>
