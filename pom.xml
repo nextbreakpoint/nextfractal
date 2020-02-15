@@ -44,9 +44,10 @@
 		<ffmpeg4java.version>3.1.1-1.1</ffmpeg4java.version>
 		<freeimage4java.version>3.18.0-1.2</freeimage4java.version>
 		<try.version>2.0.4</try.version>
-		<antlr4.version>4.8-1</antlr4.version>
+		<antlr4.version>4.7.2</antlr4.version>
 		<commonmath3.version>3.6.1</commonmath3.version>
 		<rxjava.version>2.2.17</rxjava.version>
+		<rxjavafx.version>2.2.2</rxjavafx.version>
 		<openjfx.version>11.0.1</openjfx.version>
 		<jackson.version>2.10.2</jackson.version>
 		<junit4.version>4.12</junit4.version>
@@ -194,7 +195,7 @@
 			<dependency>
 				<groupId>io.reactivex.rxjava2</groupId>
 				<artifactId>rxjavafx</artifactId>
-				<version>${rxjava.version}</version>
+				<version>${rxjavafx.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>io.reactivex.rxjava2</groupId>
