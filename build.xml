@@ -1,11 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="NextFractal">
 	<property environment="env" />
-	<property name="maven.home" value="${env.M2_HOME}" />
 	<property name="nextfractal.version" value="2.1.1" />
-	<property name="nextfractal.year" value="2019" />
+	<property name="nextfractal.year" value="2020" />
 	<property name="nextfractal.folder" value="NextFractal" />
 	<property name="mainmodule" value="com.nextbreakpoint.nextfractal.main" />
+	<macrodef name="setup">
+		<attribute name="basedir" />
+		<attribute name="resultproperty" default="setup.result" />
+		<sequential>
+			<mkdir dir="@{basedir}/build/maven"/>
+			<get src="http://mirror.vorboss.net/apache/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz" dest="@{basedir}/build/maven/apache-maven-3.6.3-bin.tar.gz" verbose="true" usetimestamp="true"/>
+			<get src="https://www.apache.org/dist/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz.asc" dest="@{basedir}/build/maven/apache-maven-3.6.3-bin.tar.gz.asc" verbose="true" usetimestamp="true"/>
+			<get src="https://www.apache.org/dist/maven/KEYS" dest="@{basedir}/build/maven/KEYS" verbose="true" usetimestamp="true"/>
+			<exec executable="gpg" resultproperty="@{resultproperty}" failonerror="true">
+				<arg value="--import" />
+				<arg value="@{basedir}/build/maven/KEYS" />
+			</exec>
+			<exec executable="bash" resultproperty="@{resultproperty}" failonerror="true">
+				<arg value="-c" />
+				<arg value="gpg --fingerprint AE5A7FB608A0221C | grep 'B021 37D8 75D8 33D9 B233  92EC AE5A 7FB6 08A0 221C'" />
+			</exec>
+			<exec executable="gpg" resultproperty="@{resultproperty}" failonerror="true">
+				<arg value="--verify" />
+				<arg value="@{basedir}/build/maven/apache-maven-3.6.3-bin.tar.gz.asc" />
+				<arg value="@{basedir}/build/maven/apache-maven-3.6.3-bin.tar.gz" />
+			</exec>
+			<untar src="@{basedir}/build/maven/apache-maven-3.6.3-bin.tar.gz" dest="@{basedir}/build/maven" compression="gzip"/>
+		</sequential>
+	</macrodef>
 	<macrodef name="maven">
 		<attribute name="options" default="" />
 		<attribute name="goal" />
@@ -16,15 +39,15 @@
 			<java classname="org.codehaus.classworlds.Launcher" fork="true" dir="@{basedir}" resultproperty="@{resultproperty}">
 				<jvmarg value="-Xmx1024m" />
 				<classpath>
-					<fileset dir="${maven.home}/boot">
+					<fileset dir="@{basedir}/build/maven/apache-maven-3.6.3/boot">
 						<include name="*.jar" />
 					</fileset>
-					<fileset dir="${maven.home}/lib">
+					<fileset dir="@{basedir}/build/maven/apache-maven-3.6.3/lib">
 						<include name="*.jar" />
 					</fileset>
 				</classpath>
-				<sysproperty key="classworlds.conf" value="${maven.home}/bin/m2.conf" />
-				<sysproperty key="maven.home" value="${maven.home}" />
+				<sysproperty key="classworlds.conf" value="@{basedir}/build/maven/apache-maven-3.6.3/bin/m2.conf" />
+				<sysproperty key="maven.home" value="@{basedir}/build/maven/apache-maven-3.6.3" />
 				<sysproperty key="maven.multiModuleProjectDirectory" value="true" />
 				<arg line="--batch-mode @{options} @{goal}" />
 			</java>
@@ -274,7 +297,8 @@
 		<delete dir="${basedir}/build" />
 		<delete dir="${basedir}/dist" />
 		<mkdir dir="${basedir}/dist" />
-		<maven basedir="${basedir}" goal="clean" resultproperty="maven.build.result" />
+		<setup basedir="${basedir}" resultproperty="ant.setup.result"/>
+		<maven basedir="${basedir}" goal="clean" resultproperty="maven.build.result" options="-U"/>
 	</target>
 	<target name="update-version">
 		<replaceregexp match="NextFractal [0-9]\.[0-9]\.[0-9]" replace="NextFractal ${nextfractal.version}" flags="g" byline="true">
@@ -296,7 +320,7 @@
 				<include name="**/*.plist"/>
 			</fileset>
 		</replaceregexp>
-		<maven basedir="${basedir}" goal="versions:set" resultproperty="maven.build.result" options="-DnewVersion=${nextfractal.version}"/>
+		<maven basedir="${basedir}" goal="versions:set" resultproperty="maven.build.result" options="-U -DnewVersion=${nextfractal.version}"/>
 		<maven basedir="${basedir}" goal="versions:commit" resultproperty="maven.build.result"/>
 	</target>
 	<target name="change-copyright">
@@ -370,11 +394,14 @@
 		<publish basedir="${basedir}" channel="bintray" resultproperty="ant.publish.result"/>
 		<publish basedir="${basedir}" channel="ossrh" resultproperty="ant.publish.result"/>
 	</target>
+	<target name="setup">
+		<setup basedir="${basedir}" resultproperty="ant.setup.result"/>
+	</target>
 	<target name="build-mac-signed" depends="build-mac-64bit-signed" if="is_macosx" />
 	<target name="build-mac" depends="build-mac-64bit" if="is_macosx" />
 	<target name="build-windows" depends="build-windows-64bit" if="is_windows" />
 	<target name="build-debian" depends="build-debian-64bit" if="is_unix" />
 	<target name="build-fedora" depends="build-fedora-64bit" if="is_unix" />
 	<target name="publish" depends="publish-libs" />
-	<target name="update" depends="clean, update-version, update-copyright" />
+	<target name="update" depends="update-version, update-copyright" />
 </project>
