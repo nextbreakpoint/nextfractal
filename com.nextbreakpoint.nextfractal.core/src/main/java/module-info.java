@@ -1,4 +1,5 @@
 module com.nextbreakpoint.nextfractal.core {
+    requires java.sql;
     requires java.desktop;
     requires java.logging;
     requires com.fasterxml.jackson.core;
