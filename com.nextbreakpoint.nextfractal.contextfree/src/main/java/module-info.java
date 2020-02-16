@@ -5,7 +5,7 @@ module com.nextbreakpoint.nextfractal.contextfree {
     requires java.logging;
     requires java.desktop;
     requires commons.math3;
-    requires antlr4.runtime;
+    requires org.antlr.antlr4.runtime;
     requires com.fasterxml.jackson.databind;
     requires com.fasterxml.jackson.annotation;
     requires com.nextbreakpoint.nextfractal.core;

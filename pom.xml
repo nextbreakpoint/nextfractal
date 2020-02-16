@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.nextbreakpoint</groupId>
 	<artifactId>com.nextbreakpoint.nextfractal</artifactId>
-	<version>2.1.1</version>
+	<version>2.1.2</version>
 	<packaging>pom</packaging>
 	<url>https://github.com/nextbreakpoint/nextfractal</url>
 	<licenses>
@@ -44,22 +44,24 @@
 		<ffmpeg4java.version>3.1.1-1.1</ffmpeg4java.version>
 		<freeimage4java.version>3.18.0-1.2</freeimage4java.version>
 		<try.version>2.0.4</try.version>
-		<antlr4.version>4.7.1</antlr4.version>
+		<antlr4.version>4.7.2</antlr4.version>
 		<commonmath3.version>3.6.1</commonmath3.version>
-		<rxjava.version>2.2.2</rxjava.version>
+		<rxjava.version>2.2.17</rxjava.version>
+		<rxjavafx.version>2.2.2</rxjavafx.version>
 		<openjfx.version>11.0.1</openjfx.version>
-		<jackson.version>2.9.8</jackson.version>
+		<jackson.version>2.10.2</jackson.version>
 		<junit4.version>4.12</junit4.version>
 		<mockito.version>2.23.4</mockito.version>
-		<maven-jar-plugin.version>3.1.0</maven-jar-plugin.version>
-		<maven-source-plugin.version>3.0.1</maven-source-plugin.version>
-		<maven-compiler-plugin.version>3.8.0</maven-compiler-plugin.version>
-		<maven-surefire-plugin.version>2.22.1</maven-surefire-plugin.version>
-		<maven-toolchains-plugin.version>1.1</maven-toolchains-plugin.version>
+		<maven-jar-plugin.version>3.2.0</maven-jar-plugin.version>
+		<maven-source-plugin.version>3.2.1</maven-source-plugin.version>
+		<maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
+		<maven-javadoc-plugin.version>3.1.1</maven-javadoc-plugin.version>
+		<maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
+		<maven-toolchains-plugin.version>3.0.0</maven-toolchains-plugin.version>
 		<maven-dependency-plugin.version>3.1.1</maven-dependency-plugin.version>
 		<maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
 		<build-helper-maven-plugin.version>3.0.0</build-helper-maven-plugin.version>
-		<nexus-staging-maven-plugin.version>1.6.7</nexus-staging-maven-plugin.version>
+		<nexus-staging-maven-plugin.version>1.6.8</nexus-staging-maven-plugin.version>
 		<nexus.host>https://oss.sonatype.org</nexus.host>
 		<nexus.url>https://oss.sonatype.org/content/repositories/snapshots</nexus.url>
 		<nexus.autoreleaseafterclose>true</nexus.autoreleaseafterclose>
@@ -103,7 +105,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.10.4</version>
+				<version>${maven-javadoc-plugin.version}</version>
 				<executions>
 					<execution>
 						<id>attach-javadocs</id>
@@ -193,7 +195,7 @@
 			<dependency>
 				<groupId>io.reactivex.rxjava2</groupId>
 				<artifactId>rxjavafx</artifactId>
-				<version>${rxjava.version}</version>
+				<version>${rxjavafx.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>io.reactivex.rxjava2</groupId>

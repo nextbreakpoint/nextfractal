@@ -6,7 +6,7 @@
       <vendor>openjdk</vendor>
     </provides>
     <configuration>
-      <jdkHome>build/osx/jdk-11.0.1</jdkHome>
+      <jdkHome>build/osx/nextfractal-jdk-11.0.2-0</jdkHome>
     </configuration>
   </toolchain>
 </toolchains>

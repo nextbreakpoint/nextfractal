@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.1.1
+ * NextFractal 2.1.2
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2019 Andrea Medeghini
+ * Copyright 2015-2020 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -881,12 +881,12 @@ public class RenderPane extends BorderPane {
 	}
 	
 	private RendererTile createTile(int row, int column) {
-		int tileWidth = width / columns;
-		int tileHeight = height / rows;
+		int tileWidth =  Math.round((float)width / (float)columns);
+		int tileHeight = Math.round((float)height / (float)rows);
 		RendererSize imageSize = new RendererSize(width, height);
 		RendererSize tileSize = new RendererSize(tileWidth, tileHeight);
 		RendererSize tileBorder = new RendererSize(0, 0);
-		RendererPoint tileOffset = new RendererPoint(column * width / columns, row * height / rows);
+		RendererPoint tileOffset = new RendererPoint(Math.round(((float)column * (float)width) / (float)columns), Math.round(((float)row * (float)height) / (float)rows));
 		RendererTile tile = new RendererTile(imageSize, tileSize, tileOffset, tileBorder);
 		return tile;
 	}
