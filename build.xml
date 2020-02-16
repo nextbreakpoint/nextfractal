@@ -68,12 +68,12 @@
 		<sequential>
 			<delete dir="${basedir}/dist/@{os}_@{arch}" />
 			<mkdir dir="@{basedir}/build/@{os}"/>
-			<get src="https://github.com/nextbreakpoint/nextfractal-openjdk-launchers/releases/download/v1.0/@{os}-nextfractal-launcher-1.0.zip" dest="@{basedir}/build/@{os}/nextfractal-launcher-1.0.zip" verbose="true" usetimestamp="true"/>
-			<get src="https://github.com/nextbreakpoint/nextfractal-openjdk-binaries/releases/download/v11.0.1-0/@{os}-jdk-11.0.1-0.zip" dest="@{basedir}/build/@{os}/jdk-11.0.1-0.zip" verbose="true" usetimestamp="true"/>
-			<unzip src="@{basedir}/build/@{os}/jdk-11.0.1-0.zip" dest="@{basedir}/build/@{os}"/>
-			<unzip src="@{basedir}/build/@{os}/nextfractal-launcher-1.0.zip" dest="@{basedir}/build/@{os}/launcher"/>
+			<get src="https://github.com/nextbreakpoint/nextfractal-openjdk-launchers/releases/download/v1.0/@{os}-nextfractal-launcher-1.1.zip" dest="@{basedir}/build/@{os}-nextfractal-launcher-1.1.zip" verbose="true" usetimestamp="true"/>
+			<get src="https://github.com/nextbreakpoint/nextfractal-openjdk-binaries/releases/download/v11.0.2-0/@{os}-nextfractal-jdk-11.0.2-0.zip" dest="@{basedir}/build/@{os}-nextfractal-jdk-11.0.2-0.zip" verbose="true" usetimestamp="true"/>
+			<unzip src="@{basedir}/build/@{os}-nextfractal-jdk-11.0.2-0.zip" dest="@{basedir}/build/@{os}"/>
+			<unzip src="@{basedir}/build/@{os}-nextfractal-launcher-1.1.zip" dest="@{basedir}/build/@{os}/launcher"/>
 			<chmod failonerror="true" perm="a+x">
-				<fileset dir="@{basedir}/build/@{os}/jdk-11.0.1/bin">
+				<fileset dir="@{basedir}/build/@{os}/nextfractal-jdk-11.0.2-0/bin">
 					<include name="**/*" />
 				</fileset>
 			</chmod>
@@ -93,7 +93,7 @@
 				</fileset>
 			</copy>
 			<copy failonerror="true" todir="@{basedir}/dist/@{os}_@{arch}/${nextfractal.folder}/@{resourcesdir}/jdk" overwrite="true">
-				<fileset dir="@{basedir}/build/@{os}/jdk-11.0.1">
+				<fileset dir="@{basedir}/build/@{os}/nextfractal-jdk-11.0.2-0">
 					<include name="**/*" />
 				</fileset>
 			</copy>
