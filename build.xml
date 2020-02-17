@@ -9,13 +9,13 @@
 		<attribute name="basedir" />
 		<attribute name="resultproperty" default="setup.result" />
 		<sequential>
-			<mkdir dir="@{basedir}/build/maven"/>
-			<get src="http://mirror.vorboss.net/apache/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz" dest="@{basedir}/build/maven/apache-maven-3.6.3-bin.tar.gz" verbose="true" usetimestamp="true"/>
-			<get src="https://www.apache.org/dist/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz.asc" dest="@{basedir}/build/maven/apache-maven-3.6.3-bin.tar.gz.asc" verbose="true" usetimestamp="true"/>
-			<get src="https://www.apache.org/dist/maven/KEYS" dest="@{basedir}/build/maven/KEYS" verbose="true" usetimestamp="true"/>
+			<mkdir dir="@{basedir}/tools/maven"/>
+			<get src="http://mirror.vorboss.net/apache/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.zip" dest="@{basedir}/tools/maven/apache-maven-3.6.3-bin.zip" verbose="true" usetimestamp="true"/>
+			<get src="https://www.apache.org/dist/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.zip.asc" dest="@{basedir}/tools/maven/apache-maven-3.6.3-bin.zip.asc" verbose="true" usetimestamp="true"/>
+			<get src="https://www.apache.org/dist/maven/KEYS" dest="@{basedir}/tools/maven/KEYS" verbose="true" usetimestamp="true"/>
 			<exec executable="gpg" resultproperty="@{resultproperty}" failonerror="true">
 				<arg value="--import" />
-				<arg value="@{basedir}/build/maven/KEYS" />
+				<arg value="@{basedir}/tools/maven/KEYS" />
 			</exec>
 			<exec executable="bash" resultproperty="@{resultproperty}" failonerror="true">
 				<arg value="-c" />
@@ -23,10 +23,10 @@
 			</exec>
 			<exec executable="gpg" resultproperty="@{resultproperty}" failonerror="true">
 				<arg value="--verify" />
-				<arg value="@{basedir}/build/maven/apache-maven-3.6.3-bin.tar.gz.asc" />
-				<arg value="@{basedir}/build/maven/apache-maven-3.6.3-bin.tar.gz" />
+				<arg value="@{basedir}/tools/maven/apache-maven-3.6.3-bin.zip.asc" />
+				<arg value="@{basedir}/tools/maven/apache-maven-3.6.3-bin.zip" />
 			</exec>
-			<untar src="@{basedir}/build/maven/apache-maven-3.6.3-bin.tar.gz" dest="@{basedir}/build/maven" compression="gzip"/>
+			<unzip src="@{basedir}/tools/maven/apache-maven-3.6.3-bin.zip" dest="@{basedir}/tools/maven"/>
 		</sequential>
 	</macrodef>
 	<macrodef name="maven">
@@ -39,15 +39,15 @@
 			<java classname="org.codehaus.classworlds.Launcher" fork="true" dir="@{basedir}" resultproperty="@{resultproperty}">
 				<jvmarg value="-Xmx1024m" />
 				<classpath>
-					<fileset dir="@{basedir}/build/maven/apache-maven-3.6.3/boot">
+					<fileset dir="@{basedir}/tools/maven/apache-maven-3.6.3/boot">
 						<include name="*.jar" />
 					</fileset>
-					<fileset dir="@{basedir}/build/maven/apache-maven-3.6.3/lib">
+					<fileset dir="@{basedir}/tools/maven/apache-maven-3.6.3/lib">
 						<include name="*.jar" />
 					</fileset>
 				</classpath>
-				<sysproperty key="classworlds.conf" value="@{basedir}/build/maven/apache-maven-3.6.3/bin/m2.conf" />
-				<sysproperty key="maven.home" value="@{basedir}/build/maven/apache-maven-3.6.3" />
+				<sysproperty key="classworlds.conf" value="@{basedir}/tools/maven/apache-maven-3.6.3/bin/m2.conf" />
+				<sysproperty key="maven.home" value="@{basedir}/tools/maven/apache-maven-3.6.3" />
 				<sysproperty key="maven.multiModuleProjectDirectory" value="true" />
 				<arg line="--batch-mode @{options} @{goal}" />
 			</java>
@@ -133,6 +133,28 @@
 			</chmod>
 		</sequential>
 	</macrodef>
+	<macrodef name="extractfiles">
+		<attribute name="zip"/>
+		<attribute name="todir"/>
+		<element name="selectors" implicit="true" optional="true"/>
+		<sequential>
+			<mkdir dir="__tmp__"/>
+			<unzip dest="__tmp__" src="@{zip}"/>
+			<delete file="@{zip}"/>
+			<copy todir="@{todir}">
+				<fileset dir="__tmp__">
+					<selectors/>
+				</fileset>
+			</copy>
+			<delete>
+				<fileset dir="__tmp__">
+					<selectors/>
+				</fileset>
+			</delete>
+			<zip destfile="@{zip}" basedir="__tmp__"/>
+			<delete dir="__tmp__"/>
+		</sequential>
+	</macrodef>
 	<macrodef name="makesigneddmg">
 		<attribute name="os" />
 		<attribute name="arch" />
@@ -149,12 +171,14 @@
 				<arg value=".DS_Store" />
 				<arg value='-delete' />
 			</exec>
+			<extractfiles zip="@{basedir}/dist/@{os}_@{arch}/${nextfractal.folder}/NextFractal.app/Contents/Resources/jars/javafx-graphics-15-ea+1-mac.jar" todir="@{basedir}/dist/@{os}_@{arch}/${nextfractal.folder}/NextFractal.app/Contents/Resources/libs">
+				<include name="*.dylib"/>
+			</extractfiles>
 			<exec executable="codesign" resultproperty="@{resultproperty}">
 				<arg value="-vvv" />
 				<arg value="--sign" />
 				<arg value="@{identity}" />
-				<arg value="--options" />
-				<arg value="runtime" />
+				<arg value="--options=runtime" />
 				<arg value="--entitlements" />
 				<arg value="@{basedir}/dist/@{os}_@{arch}/${nextfractal.folder}/NextFractal.app/Contents/Resources/NextFractal.entitlements" />
 				<arg value="--deep" />
@@ -202,6 +226,9 @@
 				<arg value=".DS_Store" />
 				<arg value='-delete' />
 			</exec>
+			<extractfiles zip="@{basedir}/dist/@{os}_@{arch}/${nextfractal.folder}/NextFractal.app/Contents/Resources/jars/javafx-graphics-15-ea+1-mac.jar" todir="@{basedir}/dist/@{os}_@{arch}/${nextfractal.folder}/NextFractal.app/Contents/Resources/libs">
+				<include name="*.dylib"/>
+			</extractfiles>
 			<delete file="@{basedir}/dist/nextfractal_@{os}_@{arch}_@{version}.dmg" failonerror="false"/>
 			<exec executable="hdiutil" resultproperty="@{resultproperty}">
 				<arg value="create" />
@@ -308,7 +335,6 @@
 		<delete dir="${basedir}/build" />
 		<delete dir="${basedir}/dist" />
 		<mkdir dir="${basedir}/dist" />
-		<setup basedir="${basedir}" resultproperty="ant.setup.result"/>
 		<maven basedir="${basedir}" goal="clean" resultproperty="maven.build.result" options="-U"/>
 	</target>
 	<target name="update-version">
@@ -409,11 +435,11 @@
 	<target name="setup">
 		<setup basedir="${basedir}" resultproperty="ant.setup.result"/>
 	</target>
-	<target name="build-mac-signed" depends="setup, build-mac-64bit-signed" if="is_macosx" />
-	<target name="build-mac" depends="setup, build-mac-64bit" if="is_macosx" />
-	<target name="build-windows" depends="setup, build-windows-64bit" if="is_windows" />
-	<target name="build-debian" depends="setup, build-debian-64bit" if="is_unix" />
-	<target name="build-fedora" depends="setup, build-fedora-64bit" if="is_unix" />
+	<target name="build-mac-signed" depends="build-mac-64bit-signed" if="is_macosx" />
+	<target name="build-mac" depends="build-mac-64bit" if="is_macosx" />
+	<target name="build-windows" depends="build-windows-64bit" if="is_windows" />
+	<target name="build-debian" depends="build-debian-64bit" if="is_unix" />
+	<target name="build-fedora" depends="build-fedora-64bit" if="is_unix" />
 	<target name="publish" depends="publish-libs" />
 	<target name="update" depends="clean, update-version, update-copyright" />
 </project>

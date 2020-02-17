@@ -48,7 +48,7 @@
 		<commonmath3.version>3.6.1</commonmath3.version>
 		<rxjava.version>2.2.17</rxjava.version>
 		<rxjavafx.version>2.2.2</rxjavafx.version>
-		<openjfx.version>13.0.2</openjfx.version>
+		<openjfx.version>15-ea+1</openjfx.version>
 		<jackson.version>2.10.2</jackson.version>
 		<junit4.version>4.12</junit4.version>
 		<mockito.version>2.23.4</mockito.version>
@@ -167,6 +167,11 @@
 				<version>${openjfx.version}</version>
 			</dependency>
 			<dependency>
+				<groupId>org.openjfx</groupId>
+				<artifactId>javafx-fxml</artifactId>
+				<version>${openjfx.version}</version>
+			</dependency>
+			<dependency>
 				<groupId>org.antlr</groupId>
 				<artifactId>antlr4-runtime</artifactId>
 				<version>${antlr4.version}</version>
@@ -201,11 +206,6 @@
 				<groupId>io.reactivex.rxjava2</groupId>
 				<artifactId>rxjava</artifactId>
 				<version>${rxjava.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.openjfx</groupId>
-				<artifactId>javafx-fxml</artifactId>
-				<version>${openjfx.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.mockito</groupId>

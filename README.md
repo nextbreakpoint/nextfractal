@@ -48,6 +48,10 @@ Get the code from https://github.com/nextbreakpoint/nextfractal:
 
     git clone https://github.com/nextbreakpoint/nextfractal.git
 
+Use target setup to configure the required tools:
+
+    ant setup
+
 Use target build-macos to build the distribution for OS X:
 
     ant build-mac
