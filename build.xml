@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="NextFractal">
 	<property environment="env" />
-	<property name="nextfractal.version" value="2.1.2" />
+	<property name="nextfractal.version" value="2.1.2-rc1" />
 	<property name="nextfractal.year" value="2020" />
 	<property name="nextfractal.folder" value="NextFractal" />
 	<property name="mainmodule" value="com.nextbreakpoint.nextfractal.main" />
