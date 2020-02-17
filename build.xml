@@ -356,7 +356,7 @@
 		<maven basedir="${basedir}" goal="clean" resultproperty="maven.build.result" options="-U"/>
 	</target>
 	<target name="update-version">
-		<replaceregexp match="NextFractal [0-9]\.[0-9]\.[0-9]" replace="NextFractal ${nextfractal.version}" flags="g" byline="true">
+		<replaceregexp match="NextFractal [0-9]\.[0-9]\.[0-9](-[a-z0-9]*)?" replace="NextFractal ${nextfractal.version}" flags="g" byline="true">
 		    <fileset dir="${basedir}">
 		    	<include name="**/*.md"/>
 		    	<include name="**/*.txt"/>
@@ -364,13 +364,13 @@
     			<include name="**/*.java"/>
 			</fileset>
 		</replaceregexp>
-		<replaceregexp match="com.nextbreakpoint.nextfractal.runtime.javafx-[0-9]\.[0-9]\.[0-9]" replace="com.nextbreakpoint.nextfractal.runtime.javafx-${nextfractal.version}" flags="g" byline="true">
+		<replaceregexp match="com.nextbreakpoint.nextfractal.runtime.javafx-[0-9]\.[0-9]\.[0-9](-[a-z0-9]*)?" replace="com.nextbreakpoint.nextfractal.runtime.javafx-${nextfractal.version}" flags="g" byline="true">
 		    <fileset dir="${basedir}">
 		    	<include name="**/*.bat"/>
 		    	<include name="**/*.sh"/>
 			</fileset>
 		</replaceregexp>
-		<replaceregexp match="&lt;string&gt;[0-9]\.[0-9]\.[0-9]&lt;/string&gt;" replace="&lt;string&gt;${nextfractal.version}&lt;/string&gt;" flags="g" byline="true">
+		<replaceregexp match="&lt;string&gt;[0-9]\.[0-9]\.[0-9](-[a-z0-9]*)?&lt;/string&gt;" replace="&lt;string&gt;${nextfractal.version}&lt;/string&gt;" flags="g" byline="true">
 			<fileset dir="${basedir}">
 				<include name="**/*.plist"/>
 			</fileset>
