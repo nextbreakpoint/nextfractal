@@ -1007,7 +1007,7 @@ public final class XaosRenderer extends Renderer {
 				processQueue(total);
 			}
 		}
-		processReallocTable(offset);
+		renderReallocTable(continuous, offset);
 	}
 
 	private void refreshAll(int[] offset) {
@@ -1038,7 +1038,7 @@ public final class XaosRenderer extends Renderer {
 		}
 	}
 
-	private void processReallocTable(int[] offset) {
+	private void renderReallocTable(boolean continuous, int[] offset) {
 		if (XaosConstants.DUMP) {
 			logger.fine("Process realloc...");
 		}
@@ -1086,7 +1086,7 @@ public final class XaosRenderer extends Renderer {
 				}
 			}
 			long newTime = System.currentTimeMillis();
-			if (!aborted && (newTime - oldTime) > 100 && s < XaosConstants.STEPS) {
+			if (!aborted && (continuous || newTime - oldTime > 500)) {
 				tmpRealloc = xaosRendererData.reallocY();
 				for (i = 0; i < tmpRealloc.length; i++) {
 					tmpRealloc[i].changeDirty = tmpRealloc[i].dirty;
