@@ -163,6 +163,7 @@ public class V3RenderTest extends AbstractBaseTest {
 
 	private void saveImage(String imageName, BufferedImage image) throws IOException {
 		File file = new File(imageName);
+		file.mkdirs();
 		System.out.println(file.getAbsoluteFile());
 		ImageIO.write(image, "png", file);
 	}

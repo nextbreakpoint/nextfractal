@@ -8,7 +8,6 @@ module com.nextbreakpoint.nextfractal.core {
     exports com.nextbreakpoint.nextfractal.core.common;
     exports com.nextbreakpoint.nextfractal.core.encode;
     exports com.nextbreakpoint.nextfractal.core.export;
-    exports com.nextbreakpoint.nextfractal.core.network;
     exports com.nextbreakpoint.nextfractal.core.render;
     uses com.nextbreakpoint.nextfractal.core.common.CoreFactory;
     uses com.nextbreakpoint.nextfractal.core.encode.Encoder;
