@@ -22,24 +22,18 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.contextfree.renderer;
+package com.nextbreakpoint.nextfractal.core.render;
 
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class ReentrantRendererLock extends RendererLock {
-	private Lock lock = createLock();
+public class RendererLock {
+	private final Lock lock = new ReentrantLock();
 
-	protected Lock createLock() {
-		return new ReentrantLock();
-	}
-
-	@Override
 	public void lock() {
 		lock.lock();
 	}
 
-	@Override
 	public void unlock() {
 		lock.unlock();
 	}

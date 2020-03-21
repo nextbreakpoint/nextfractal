@@ -29,13 +29,7 @@ import com.nextbreakpoint.nextfractal.contextfree.dsl.grammar.CFDGLogger;
 import com.nextbreakpoint.nextfractal.contextfree.dsl.grammar.CFDGRenderer;
 import com.nextbreakpoint.nextfractal.contextfree.dsl.grammar.SimpleCanvas;
 import com.nextbreakpoint.nextfractal.core.common.SourceError;
-import com.nextbreakpoint.nextfractal.core.render.RendererAffine;
-import com.nextbreakpoint.nextfractal.core.render.RendererFactory;
-import com.nextbreakpoint.nextfractal.core.render.RendererGraphicsContext;
-import com.nextbreakpoint.nextfractal.core.render.RendererPoint;
-import com.nextbreakpoint.nextfractal.core.render.RendererSize;
-import com.nextbreakpoint.nextfractal.core.render.RendererSurface;
-import com.nextbreakpoint.nextfractal.core.render.RendererTile;
+import com.nextbreakpoint.nextfractal.core.render.*;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -68,7 +62,7 @@ public class Renderer {
 	protected boolean opaque;
 	protected RendererSize size;
 	protected RendererTile tile;
-	private final RendererLock lock = new ReentrantRendererLock();
+	private final RendererLock lock = new RendererLock();
 	private final RenderRunnable renderTask = new RenderRunnable();
 	private ExecutorService executor;
 	private volatile Future<?> future;
