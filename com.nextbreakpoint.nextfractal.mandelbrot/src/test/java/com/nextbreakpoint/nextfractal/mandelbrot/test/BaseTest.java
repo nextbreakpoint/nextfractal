@@ -25,10 +25,10 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.test;
 
 import com.nextbreakpoint.nextfractal.core.common.SourceError;
-import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTBuilder;
-import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTFractal;
-import com.nextbreakpoint.nextfractal.mandelbrot.grammar.MandelbrotLexer;
-import com.nextbreakpoint.nextfractal.mandelbrot.grammar.MandelbrotParser;
+import com.nextbreakpoint.nextfractal.mandelbrot.dsl.grammar.ASTBuilder;
+import com.nextbreakpoint.nextfractal.mandelbrot.dsl.grammar.ASTFractal;
+import com.nextbreakpoint.nextfractal.mandelbrot.dsl.grammar.MandelbrotLexer;
+import com.nextbreakpoint.nextfractal.mandelbrot.dsl.grammar.MandelbrotParser;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.DiagnosticErrorListener;

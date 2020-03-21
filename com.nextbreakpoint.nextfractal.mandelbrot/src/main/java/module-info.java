@@ -12,10 +12,9 @@ module com.nextbreakpoint.nextfractal.mandelbrot {
     requires com.nextbreakpoint.try4java;
     requires com.nextbreakpoint.nextfractal.core;
     exports com.nextbreakpoint.nextfractal.mandelbrot.module;
-    exports com.nextbreakpoint.nextfractal.mandelbrot.grammar;
-    exports com.nextbreakpoint.nextfractal.mandelbrot.compiler;
+    exports com.nextbreakpoint.nextfractal.mandelbrot.dsl;
+    exports com.nextbreakpoint.nextfractal.mandelbrot.dsl.grammar;
     exports com.nextbreakpoint.nextfractal.mandelbrot.renderer;
-    exports com.nextbreakpoint.nextfractal.mandelbrot.interpreter;
     exports com.nextbreakpoint.nextfractal.mandelbrot.core;
     provides CoreFactory with MandelbrotFactory;
     opens com.nextbreakpoint.nextfractal.mandelbrot.module to com.fasterxml.jackson.databind;

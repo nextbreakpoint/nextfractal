@@ -27,7 +27,6 @@ package com.nextbreakpoint.nextfractal.mandelbrot.javafx;
 import com.nextbreakpoint.Try;
 import com.nextbreakpoint.nextfractal.core.common.SourceError;
 import com.nextbreakpoint.nextfractal.core.javafx.EventBus;
-import com.nextbreakpoint.nextfractal.core.common.Session;
 import com.nextbreakpoint.nextfractal.core.javafx.BooleanObservableValue;
 import com.nextbreakpoint.nextfractal.core.javafx.StringObservableValue;
 import com.nextbreakpoint.nextfractal.core.render.RendererFactory;
@@ -41,19 +40,15 @@ import com.nextbreakpoint.nextfractal.core.common.Double2D;
 import com.nextbreakpoint.nextfractal.core.common.Double4D;
 import com.nextbreakpoint.nextfractal.core.common.Integer4D;
 import com.nextbreakpoint.nextfractal.core.common.Time;
+import com.nextbreakpoint.nextfractal.mandelbrot.core.*;
+import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
+import com.nextbreakpoint.nextfractal.mandelbrot.dsl.ClassFactory;
+import com.nextbreakpoint.nextfractal.mandelbrot.dsl.DSLParser;
 import com.nextbreakpoint.nextfractal.mandelbrot.module.MandelbrotMetadata;
 import com.nextbreakpoint.nextfractal.mandelbrot.module.MandelbrotOptions;
 import com.nextbreakpoint.nextfractal.mandelbrot.module.MandelbrotSession;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.Compiler;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerBuilder;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerClassException;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerReport;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerSourceException;
-import com.nextbreakpoint.nextfractal.mandelbrot.core.Color;
-import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
-import com.nextbreakpoint.nextfractal.mandelbrot.core.Orbit;
-import com.nextbreakpoint.nextfractal.mandelbrot.core.Scope;
-import com.nextbreakpoint.nextfractal.mandelbrot.core.Trap;
+import com.nextbreakpoint.nextfractal.mandelbrot.dsl.DSLCompiler;
+import com.nextbreakpoint.nextfractal.mandelbrot.dsl.ParserResult;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererCoordinator;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererView;
 import javafx.animation.AnimationTimer;
@@ -119,11 +114,12 @@ public class RenderPane extends BorderPane {
 	private volatile boolean playback;
 	private volatile boolean timeAnimation;
 	private volatile MandelbrotSession mandelbrotSession;
+	private ParserResult parserResult;
+	private ClassFactory<Orbit> orbitFactory;
+	private ClassFactory<Color> colorFactory;
 	private String astOrbit;
 	private String astColor;
 	private Tool currentTool;
-	private CompilerBuilder<Orbit> orbitBuilder;
-	private CompilerBuilder<Color> colorBuilder;
 	private List<Number[]> states = new ArrayList<>();
 
 	public RenderPane(MandelbrotSession session, EventBus eventBus, int width, int height, int rows, int columns) {
@@ -592,7 +588,7 @@ public class RenderPane extends BorderPane {
 
 		eventBus.subscribe("session-report-changed", event -> {
 //			timeProperty.setValue(false);
-			List<SourceError> lastErrors = updateReport((CompilerReport) event[0]);
+			List<SourceError> lastErrors = updateReport((ParserResult) event[0]);
 			if (lastErrors.size() == 0) {
 				notifySessionChanged(eventBus, (MandelbrotSession)event[1], (Boolean)event[2], true, (Boolean)event[3]);
 			}
@@ -718,12 +714,12 @@ public class RenderPane extends BorderPane {
 		}
     }
 
-	private CompilerReport generateReport(String text) throws Exception {
-		return new Compiler(Compiler.class.getPackage().getName() + ".generated", "Compile" + System.nanoTime()).compileReport(text);
+	private ParserResult generateReport(String text) throws Exception {
+		return new DSLParser(DSLParser.class.getPackage().getName() + ".generated", "Compile" + System.nanoTime()).parse(text);
 	}
 
 	private void loadData(MandelbrotSession session, Boolean continuous, boolean timeAnimation) {
-		Try.of(() -> generateReport(session.getScript())).filter(report -> ((CompilerReport)report).getErrors().size() == 0).ifPresent(report -> {
+		Try.of(() -> generateReport(session.getScript())).filter(report -> ((ParserResult)report).getErrors().size() == 0).ifPresent(report -> {
 			List<SourceError> errors = updateReport(report);
 			if (errors.size() == 0) {
 				updateData(session, continuous, timeAnimation);
@@ -913,7 +909,7 @@ public class RenderPane extends BorderPane {
 		}
 	}
 
-	private List<SourceError> updateReport(CompilerReport report) {
+	private List<SourceError> updateReport(ParserResult report) {
 		try {
 			updateCompilerErrors(null, null, null);
 			boolean[] changed = createOrbitAndColor(report);
@@ -952,12 +948,17 @@ public class RenderPane extends BorderPane {
 				RendererCoordinator coordinator = coordinators[i];
 				if (coordinator != null) {
 					if (Boolean.getBoolean("disableSmartRender")) {
-						coordinator.setOrbitAndColor(orbitBuilder.build(), colorBuilder.build());
+						Orbit orbit = orbitFactory.create();
+						Color color = colorFactory.create();
+						coordinator.setOrbitAndColor(orbit, color);
 					} else {
 						if (orbitChanged) {
-							coordinator.setOrbitAndColor(orbitBuilder.build(), colorBuilder.build());
+							Orbit orbit = orbitFactory.create();
+							Color color = colorFactory.create();
+							coordinator.setOrbitAndColor(orbit, color);
 						} else if (colorChanged) {
-							coordinator.setColor(colorBuilder.build());
+							Color color = colorFactory.create();
+							coordinator.setColor(color);
 						}
 					}
 					coordinator.init();
@@ -973,13 +974,19 @@ public class RenderPane extends BorderPane {
 				}
 			}
 			if (juliaCoordinator != null) {
+				DSLCompiler compiler = new DSLCompiler();
 				if (Boolean.getBoolean("disableSmartRender")) {
-					juliaCoordinator.setOrbitAndColor(orbitBuilder.build(), colorBuilder.build());
+					Orbit orbit = orbitFactory.create();
+					Color color = colorFactory.create();
+					juliaCoordinator.setOrbitAndColor(orbit, color);
 				} else {
 					if (orbitChanged) {
-						juliaCoordinator.setOrbitAndColor(orbitBuilder.build(), colorBuilder.build());
+						Orbit orbit = orbitFactory.create();
+						Color color = colorFactory.create();
+						juliaCoordinator.setOrbitAndColor(orbit, color);
 					} else if (colorChanged) {
-						juliaCoordinator.setColor(colorBuilder.build());
+						Color color = colorFactory.create();
+						juliaCoordinator.setColor(color);
 					}
 				}
 				juliaCoordinator.init();
@@ -1006,19 +1013,19 @@ public class RenderPane extends BorderPane {
 					logger.fine("Orbit: point = " + point + ", length = " + states.size());
 				}
 			}
-		} catch (CompilerSourceException e) {
-			if (logger.isLoggable(Level.FINE)) {
-				logger.log(Level.FINE, "Cannot render fractal: " + e.getMessage());
-			}
-			updateCompilerErrors(e.getMessage(), e.getErrors(), null);
-			return e.getErrors();
-		} catch (CompilerClassException e) {
+		} catch (CompilerException e) {
 			if (logger.isLoggable(Level.FINE)) {
 				logger.log(Level.FINE, "Cannot render fractal: " + e.getMessage());
 			}
 			updateCompilerErrors(e.getMessage(), e.getErrors(), e.getSource());
 			return e.getErrors();
-		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | IOException e) {
+		} catch (ParserException e) {
+			if (logger.isLoggable(Level.FINE)) {
+				logger.log(Level.FINE, "Cannot render fractal: " + e.getMessage());
+			}
+			updateCompilerErrors(e.getMessage(), e.getErrors(), null);
+			return e.getErrors();
+		} catch (Exception e) {
 			if (logger.isLoggable(Level.FINE)) {
 				logger.log(Level.FINE, "Cannot render fractal: " + e.getMessage());
 			}
@@ -1028,41 +1035,37 @@ public class RenderPane extends BorderPane {
 		return Collections.emptyList();
 	}
 
-	private boolean[] createOrbitAndColor(CompilerReport report) throws CompilerSourceException, CompilerClassException, ClassNotFoundException, IOException {
-		if (report.getErrors().size() > 0) {
-			astOrbit = null;
-			astColor = null;
-			orbitBuilder = null;
-			colorBuilder = null;
-			throw new CompilerSourceException("Failed to compile source", report.getErrors());
+	private boolean[] createOrbitAndColor(ParserResult result) throws ParserException, CompilerException, ClassNotFoundException, IOException {
+		if (result.getErrors().size() > 0) {
+			this.astOrbit = null;
+			this.astColor = null;
+			this.orbitFactory = null;
+			this.colorFactory = null;
+			this.parserResult = null;
+			throw new ParserException("Failed to compile source", result.getErrors());
 		}
-		Compiler compiler = new Compiler(Compiler.class.getPackage().getName() + ".generated", "Compile" + System.nanoTime());
-		boolean[] changed = new boolean[] { false, false };
-		CompilerBuilder<Orbit> newOrbitBuilder = compiler.compileOrbit(report);
-		if (newOrbitBuilder.getErrors().size() > 0) {
-			astOrbit = null;
-			astColor = null;
-			orbitBuilder = null;
-			colorBuilder = null;
-			throw new CompilerClassException("Failed to compile Orbit subclass", report.getOrbitSource(), newOrbitBuilder.getErrors());
+		try {
+			boolean[] changed = new boolean[]{false, false};
+			String newASTOrbit = result.getAST().getOrbit().toString();
+			changed[0] = !newASTOrbit.equals(astOrbit);
+			astOrbit = newASTOrbit;
+			String newASTColor = result.getAST().getColor().toString();
+			changed[1] = !newASTColor.equals(astColor);
+			astColor = newASTColor;
+			this.parserResult = result;
+			DSLCompiler compiler = new DSLCompiler();
+			this.orbitFactory = compiler.compileOrbit(result);
+			this.colorFactory = compiler.compileColor(result);
+			return changed;
 		}
-		CompilerBuilder<Color> newColorBuilder = compiler.compileColor(report);
-		if (newColorBuilder.getErrors().size() > 0) {
-			astOrbit = null;
-			astColor = null;
-			orbitBuilder = null;
-			colorBuilder = null;
-			throw new CompilerClassException("Failed to compile Color subclass", report.getColorSource(), newColorBuilder.getErrors());
+		catch (Exception e) {
+			this.astOrbit = null;
+			this.astColor = null;
+			this.parserResult = null;
+			this.orbitFactory = null;
+			this.colorFactory = null;
+			throw e;
 		}
-		orbitBuilder = newOrbitBuilder;
-		String newASTOrbit = report.getAST().getOrbit().toString();
-		changed[0] = !newASTOrbit.equals(astOrbit);
-		astOrbit = newASTOrbit;
-		colorBuilder = newColorBuilder;
-		String newASTColor = report.getAST().getColor().toString();
-		changed[1] = !newASTColor.equals(astColor);
-		astColor = newASTColor;
-		return changed;
 	}
 
 	private void updateCompilerErrors(String message, List<SourceError> errors, String source) {
@@ -1277,8 +1280,8 @@ public class RenderPane extends BorderPane {
 	private List<Number[]> renderOrbit(Time time, Double2D point) {
 		List<Number[]> states = new ArrayList<>(); 
 		try {
-			if (orbitBuilder != null) {
-				Orbit orbit = orbitBuilder.build();
+			if (parserResult != null) {
+				Orbit orbit = orbitFactory.create();
 				Scope scope = new Scope();
 				orbit.setScope(scope);
 				orbit.init();

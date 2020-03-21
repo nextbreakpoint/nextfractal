@@ -24,7 +24,7 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.test;
 
-import com.nextbreakpoint.nextfractal.mandelbrot.grammar.ASTFractal;
+import com.nextbreakpoint.nextfractal.mandelbrot.dsl.grammar.ASTFractal;
 import org.junit.Assert;
 import org.junit.Test;
 

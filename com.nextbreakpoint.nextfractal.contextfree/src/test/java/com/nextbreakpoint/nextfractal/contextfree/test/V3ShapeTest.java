@@ -24,9 +24,9 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.test;
 
-import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDG;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGRenderer;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.SimpleCanvas;
+import com.nextbreakpoint.nextfractal.contextfree.dsl.grammar.CFDG;
+import com.nextbreakpoint.nextfractal.contextfree.dsl.grammar.CFDGRenderer;
+import com.nextbreakpoint.nextfractal.contextfree.dsl.grammar.SimpleCanvas;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;

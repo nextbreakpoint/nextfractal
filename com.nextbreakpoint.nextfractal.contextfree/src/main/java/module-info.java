@@ -12,9 +12,9 @@ module com.nextbreakpoint.nextfractal.contextfree {
     requires com.nextbreakpoint.try4java;
     exports com.nextbreakpoint.nextfractal.contextfree.module;
     exports com.nextbreakpoint.nextfractal.contextfree.core;
-    exports com.nextbreakpoint.nextfractal.contextfree.grammar;
+    exports com.nextbreakpoint.nextfractal.contextfree.dsl;
+    exports com.nextbreakpoint.nextfractal.contextfree.dsl.grammar;
     exports com.nextbreakpoint.nextfractal.contextfree.renderer;
-    exports com.nextbreakpoint.nextfractal.contextfree.compiler;
     provides CoreFactory with ContextFreeFactory;
     opens com.nextbreakpoint.nextfractal.contextfree.module to com.fasterxml.jackson.databind;
 }

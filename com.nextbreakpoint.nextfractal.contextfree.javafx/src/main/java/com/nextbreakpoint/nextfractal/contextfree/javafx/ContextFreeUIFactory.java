@@ -25,11 +25,12 @@
 package com.nextbreakpoint.nextfractal.contextfree.javafx;
 
 import com.nextbreakpoint.Try;
+import com.nextbreakpoint.nextfractal.contextfree.dsl.CFDGInterpreter;
 import com.nextbreakpoint.nextfractal.contextfree.module.ContextFreeMetadata;
 import com.nextbreakpoint.nextfractal.contextfree.module.ContextFreeSession;
-import com.nextbreakpoint.nextfractal.contextfree.compiler.Compiler;
-import com.nextbreakpoint.nextfractal.contextfree.compiler.CompilerReport;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDG;
+import com.nextbreakpoint.nextfractal.contextfree.dsl.DSLParser;
+import com.nextbreakpoint.nextfractal.contextfree.dsl.ParserResult;
+import com.nextbreakpoint.nextfractal.contextfree.dsl.grammar.CFDG;
 import com.nextbreakpoint.nextfractal.contextfree.renderer.RendererCoordinator;
 import com.nextbreakpoint.nextfractal.core.javafx.EventBus;
 import com.nextbreakpoint.nextfractal.core.common.Session;
@@ -78,7 +79,7 @@ public class ContextFreeUIFactory implements UIFactory {
 		RendererCoordinator coordinator = new RendererCoordinator(threadFactory, new JavaFXRendererFactory(), tile, hints);
 		CFDG cfdg = (CFDG)bitmap.getProperty("cfdg");
 		Session session = (Session)bitmap.getProperty("session");
-		coordinator.setCFDG(cfdg);
+		coordinator.setInterpreter(new CFDGInterpreter(cfdg));
 		coordinator.setSeed(((ContextFreeMetadata)session.getMetadata()).getSeed());
 		coordinator.init();
 		coordinator.run();
@@ -87,8 +88,8 @@ public class ContextFreeUIFactory implements UIFactory {
 
 	@Override
 	public BrowseBitmap createBitmap(Session session, RendererSize size) throws Exception {
-		Compiler compiler = new Compiler();
-		CompilerReport report = compiler.compileReport(session.getScript());
+		DSLParser compiler = new DSLParser();
+		ParserResult report = compiler.parse(session.getScript());
 		if (report.getErrors().size() > 0) {
 			throw new RuntimeException("Failed to compile source");
 		}

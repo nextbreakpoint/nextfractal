@@ -30,11 +30,13 @@ import com.nextbreakpoint.nextfractal.core.common.SourceError;
 import com.nextbreakpoint.nextfractal.core.javafx.EventBus;
 import com.nextbreakpoint.nextfractal.core.javafx.BooleanObservableValue;
 import com.nextbreakpoint.nextfractal.core.common.Block;
+import com.nextbreakpoint.nextfractal.mandelbrot.core.CompilerException;
+import com.nextbreakpoint.nextfractal.mandelbrot.dsl.DSLParser;
 import com.nextbreakpoint.nextfractal.mandelbrot.module.MandelbrotMetadata;
 import com.nextbreakpoint.nextfractal.mandelbrot.module.MandelbrotSession;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.Compiler;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerReport;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerSourceException;
+import com.nextbreakpoint.nextfractal.mandelbrot.dsl.DSLCompiler;
+import com.nextbreakpoint.nextfractal.mandelbrot.dsl.ParserResult;
+import com.nextbreakpoint.nextfractal.mandelbrot.core.ParserException;
 import io.reactivex.rxjavafx.observables.JavaFxObservable;
 import io.reactivex.rxjavafx.schedulers.JavaFxScheduler;
 import io.reactivex.schedulers.Schedulers;
@@ -125,7 +127,7 @@ public class EditorPane extends BorderPane {
 
         eventBus.subscribe("editor-report-changed", event -> {
             eventBus.postEvent("session-report-changed", event);
-            notifySourceIfRequired(eventBus, (CompilerReport)event[0]);
+            notifySourceIfRequired(eventBus, (ParserResult)event[0]);
         });
 
 //        eventBus.subscribe("editor-source-changed", event -> {
@@ -152,10 +154,10 @@ public class EditorPane extends BorderPane {
 
     private class TaskResult {
         private String source;
-        private CompilerReport report;
+        private ParserResult report;
 //        private StyleSpans<Collection<String>> highlighting;
 
-        public TaskResult(String source, CompilerReport report) {
+        public TaskResult(String source, ParserResult report) {
             this.source = source;
             this.report = report;
 //            this.highlighting = highlighting;
@@ -167,8 +169,8 @@ public class EditorPane extends BorderPane {
                 .onFailure(e -> logger.log(Level.WARNING, "Cannot parse source", e));
     }
 
-    private CompilerReport generateReport(String text) throws Exception {
-        return new Compiler(Compiler.class.getPackage().getName() + ".generated", "Compile" + System.nanoTime()).compileReport(text);
+    private ParserResult generateReport(String text) throws Exception {
+        return new DSLParser(DSLParser.class.getPackage().getName() + ".generated", "Compile" + System.nanoTime()).parse(text);
     }
 
 //    private StyleSpans<Collection<String>> computeHighlighting(String text) {
@@ -235,21 +237,23 @@ public class EditorPane extends BorderPane {
                 .execute());
     }
 
-    private void compileOrbit(TaskResult task) throws ClassNotFoundException, IOException, InstantiationException, IllegalAccessException, CompilerSourceException {
-        Optional.of(new Compiler(EditorPane.class.getPackage().getName(), "Compile" + System.nanoTime()).compileOrbit(task.report)).filter(builder -> builder.getErrors().size() == 0).ifPresent(builder -> Try.of(builder::build).execute());
+    private void compileOrbit(TaskResult task) throws ClassNotFoundException, IOException, InstantiationException, IllegalAccessException, ParserException {
+        Try.of(() -> new DSLCompiler().compileOrbit(task.report).create()).execute();
     }
 
-    private void compileColor(TaskResult task) throws ClassNotFoundException, IOException, InstantiationException, IllegalAccessException, CompilerSourceException {
-        Optional.of(new Compiler(EditorPane.class.getPackage().getName(), "Compile" + System.nanoTime()).compileColor(task.report)).filter(builder -> builder.getErrors().size() == 0).ifPresent(builder -> Try.of(builder::build).execute());
+    private void compileColor(TaskResult task) throws ClassNotFoundException, IOException, InstantiationException, IllegalAccessException, ParserException {
+        Try.of(() -> new DSLCompiler().compileColor(task.report).create()).execute();
     }
 
-    private void notifySourceIfRequired(EventBus eventBus, CompilerReport result) {
+    private void notifySourceIfRequired(EventBus eventBus, ParserResult result) {
         Optional.of(result).filter(report -> report.getErrors().size() == 0).ifPresent(report -> eventBus.postEvent("editor-source-changed", result.getSource()));
     }
 
-    private void processCompilerErrors(CompilerReport report, Exception e) {
-        if (e instanceof CompilerSourceException) {
-            report.getErrors().addAll(((CompilerSourceException)e).getErrors());
+    private void processCompilerErrors(ParserResult report, Exception e) {
+        if (e instanceof CompilerException) {
+            report.getErrors().addAll(((CompilerException)e).getErrors());
+        } else if (e instanceof ParserException) {
+            report.getErrors().addAll(((ParserException)e).getErrors());
         } else {
             logger.log(Level.WARNING, "Cannot compile fractal", e);
         }

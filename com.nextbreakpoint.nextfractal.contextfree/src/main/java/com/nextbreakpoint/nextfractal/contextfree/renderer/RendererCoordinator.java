@@ -24,7 +24,7 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.renderer;
 
-import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDG;
+import com.nextbreakpoint.nextfractal.contextfree.dsl.CFDGInterpreter;
 import com.nextbreakpoint.nextfractal.core.common.SourceError;
 import com.nextbreakpoint.nextfractal.core.render.RendererFactory;
 import com.nextbreakpoint.nextfractal.core.render.RendererGraphicsContext;
@@ -128,17 +128,17 @@ public class RendererCoordinator implements RendererDelegate {
 	}
 
 	/**
-	 * @param cfdg
+	 * @param cfdgInterpreter
 	 */
-	public void setCFDG(CFDG cfdg) {
-		renderer.setCFDG(cfdg);
+	public void setInterpreter(CFDGInterpreter cfdgInterpreter) {
+		renderer.setInterpreter(cfdgInterpreter);
 	}
 
 	/**
-	 * @param seed
+	 * @param cfdgSeed
 	 */
-	public void setSeed(String seed) {
-		renderer.setSeed(seed);
+	public void setSeed(String cfdgSeed) {
+		renderer.setSeed(cfdgSeed);
 	}
 
 	/**
