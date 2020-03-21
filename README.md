@@ -1,4 +1,4 @@
-# NextFractal 2.1.2-rc2
+# NextFractal 2.1.2
 
 Copyright 2015-2020 Andrea Medeghini
 
@@ -28,7 +28,7 @@ NextFractal provides also tools for exploring Mandelbrot, Julia and Fatou Sets, 
 
 ## SYSTEM REQUIREMENTS
 
-NextFractal has been tested on OS X 10.14, Windows 7, and Linux/Debian 9 and Linux/Fedora 28.
+NextFractal has been tested on OS X 10.14, Windows 7, and Linux/Debian 9 and Linux/Fedora 30.
 
 Windows users must install [Microsoft Visual C++ Redistributable for Visual Studio 2017](https://support.microsoft.com/en-gb/help/2977003/the-latest-supported-visual-c-downloads).
 
