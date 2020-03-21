@@ -1,8 +1,5 @@
-package com.nextbreakpoint.nextfractal.contextfree.dsl;
+package com.nextbreakpoint.nextfractal.contextfree.dsl.grammar;
 
-import com.nextbreakpoint.nextfractal.contextfree.dsl.grammar.CFDG;
-import com.nextbreakpoint.nextfractal.contextfree.dsl.grammar.CFDGLogger;
-import com.nextbreakpoint.nextfractal.contextfree.dsl.grammar.CFDGRenderer;
 import com.nextbreakpoint.nextfractal.core.render.RendererSize;
 
 public class CFDGInterpreter {

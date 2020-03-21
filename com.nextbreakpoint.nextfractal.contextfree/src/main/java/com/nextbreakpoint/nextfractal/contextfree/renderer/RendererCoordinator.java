@@ -24,7 +24,7 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.renderer;
 
-import com.nextbreakpoint.nextfractal.contextfree.dsl.CFDGInterpreter;
+import com.nextbreakpoint.nextfractal.contextfree.dsl.grammar.CFDGInterpreter;
 import com.nextbreakpoint.nextfractal.core.common.SourceError;
 import com.nextbreakpoint.nextfractal.core.render.RendererFactory;
 import com.nextbreakpoint.nextfractal.core.render.RendererGraphicsContext;

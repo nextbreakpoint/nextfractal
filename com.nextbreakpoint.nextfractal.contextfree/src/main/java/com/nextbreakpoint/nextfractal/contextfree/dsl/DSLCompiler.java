@@ -24,6 +24,8 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.dsl;
 
+import com.nextbreakpoint.nextfractal.contextfree.dsl.grammar.CFDGInterpreter;
+
 public class DSLCompiler {
 	public DSLCompiler() {
 	}
