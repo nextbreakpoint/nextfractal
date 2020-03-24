@@ -31,10 +31,10 @@ import com.nextbreakpoint.nextfractal.contextfree.dsl.DSLParser;
 import com.nextbreakpoint.nextfractal.contextfree.dsl.ParserResult;
 import com.nextbreakpoint.nextfractal.contextfree.core.ParserException;
 import com.nextbreakpoint.nextfractal.core.common.SourceError;
-import com.nextbreakpoint.nextfractal.core.javafx.EventBus;
 import com.nextbreakpoint.nextfractal.core.javafx.BooleanObservableValue;
 import com.nextbreakpoint.nextfractal.core.common.Block;
 import com.nextbreakpoint.nextfractal.core.common.DefaultThreadFactory;
+import com.nextbreakpoint.nextfractal.core.javafx.PlatformEventBus;
 import io.reactivex.rxjavafx.observables.JavaFxObservable;
 import io.reactivex.rxjavafx.schedulers.JavaFxScheduler;
 import io.reactivex.schedulers.Schedulers;
@@ -64,7 +64,7 @@ public class EditorPane extends BorderPane {
 
     private ContextFreeSession session;
 
-    public EditorPane(EventBus eventBus) {
+    public EditorPane(PlatformEventBus eventBus) {
         codeArea = new TextArea();
         codeArea.getStyleClass().add("contextfree");
 
@@ -225,11 +225,11 @@ public class EditorPane extends BorderPane {
                 .execute());
     }
 
-    private void notifyTaskResult(EventBus eventBus, Try<TaskResult, Exception> result) {
+    private void notifyTaskResult(PlatformEventBus eventBus, Try<TaskResult, Exception> result) {
         result.map(task -> task.report).ifPresent(report -> eventBus.postEvent("editor-report-changed", report, new ContextFreeSession(report.getSource(), (ContextFreeMetadata) session.getMetadata()), false, !report.getSource().equals(session.getScript())));
     }
 
-    private void notifySourceIfRequired(EventBus eventBus, ParserResult result) {
+    private void notifySourceIfRequired(PlatformEventBus eventBus, ParserResult result) {
         Optional.of(result).filter(report -> report.getErrors().size() == 0).ifPresent(report -> eventBus.postEvent("editor-source-changed", result.getSource()));
     }
 

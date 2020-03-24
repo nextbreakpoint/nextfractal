@@ -27,9 +27,10 @@ package com.nextbreakpoint.nextfractal.mandelbrot.javafx;
 import com.nextbreakpoint.Try;
 import com.nextbreakpoint.nextfractal.core.common.DefaultThreadFactory;
 import com.nextbreakpoint.nextfractal.core.common.SourceError;
-import com.nextbreakpoint.nextfractal.core.javafx.EventBus;
+import com.nextbreakpoint.nextfractal.core.common.EventBus;
 import com.nextbreakpoint.nextfractal.core.javafx.BooleanObservableValue;
 import com.nextbreakpoint.nextfractal.core.common.Block;
+import com.nextbreakpoint.nextfractal.core.javafx.PlatformEventBus;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.CompilerException;
 import com.nextbreakpoint.nextfractal.mandelbrot.dsl.DSLParser;
 import com.nextbreakpoint.nextfractal.mandelbrot.module.MandelbrotMetadata;
@@ -68,7 +69,7 @@ public class EditorPane extends BorderPane {
 
     private MandelbrotSession session;
 
-    public EditorPane(EventBus eventBus) {
+    public EditorPane(PlatformEventBus eventBus) {
         codeArea = new TextArea();
         codeArea.getStyleClass().add("mandelbrot");
 

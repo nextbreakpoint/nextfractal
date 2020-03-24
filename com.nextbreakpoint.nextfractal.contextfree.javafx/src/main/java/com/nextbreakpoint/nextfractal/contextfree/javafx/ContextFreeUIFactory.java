@@ -32,12 +32,9 @@ import com.nextbreakpoint.nextfractal.contextfree.dsl.DSLParser;
 import com.nextbreakpoint.nextfractal.contextfree.dsl.ParserResult;
 import com.nextbreakpoint.nextfractal.contextfree.dsl.grammar.CFDG;
 import com.nextbreakpoint.nextfractal.contextfree.renderer.RendererCoordinator;
-import com.nextbreakpoint.nextfractal.core.javafx.EventBus;
+import com.nextbreakpoint.nextfractal.core.common.EventBus;
 import com.nextbreakpoint.nextfractal.core.common.Session;
-import com.nextbreakpoint.nextfractal.core.javafx.Bitmap;
-import com.nextbreakpoint.nextfractal.core.javafx.BrowseBitmap;
-import com.nextbreakpoint.nextfractal.core.javafx.GridItemRenderer;
-import com.nextbreakpoint.nextfractal.core.javafx.UIFactory;
+import com.nextbreakpoint.nextfractal.core.javafx.*;
 import com.nextbreakpoint.nextfractal.core.render.RendererGraphicsContext;
 import com.nextbreakpoint.nextfractal.core.render.RendererPoint;
 import com.nextbreakpoint.nextfractal.core.render.RendererSize;
@@ -57,17 +54,17 @@ public class ContextFreeUIFactory implements UIFactory {
 	}
 
 	@Override
-	public Pane createEditorPane(EventBus eventBus, Session session) {
+	public Pane createEditorPane(PlatformEventBus eventBus, Session session) {
 		return new EditorPane(eventBus);
 	}
 
 	@Override
-	public Pane createRenderPane(EventBus eventBus, Session session, int width, int height) {
+	public Pane createRenderPane(PlatformEventBus eventBus, Session session, int width, int height) {
 		return new RenderPane((ContextFreeSession) session, eventBus, width, height, 1, 1);
 	}
 
 	@Override
-	public Pane createParamsPane(EventBus eventBus, Session session) {
+	public Pane createParamsPane(PlatformEventBus eventBus, Session session) {
 		return new ParamsPane((ContextFreeSession) session, eventBus);
 	}
 

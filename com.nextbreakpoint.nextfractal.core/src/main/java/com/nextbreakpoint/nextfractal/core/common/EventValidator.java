@@ -24,6 +24,6 @@
  */
 package com.nextbreakpoint.nextfractal.core.common;
 
-public interface EventListener {
-    void eventPosted(Object... event);
+public interface EventValidator {
+    boolean validate(Object... event);
 }

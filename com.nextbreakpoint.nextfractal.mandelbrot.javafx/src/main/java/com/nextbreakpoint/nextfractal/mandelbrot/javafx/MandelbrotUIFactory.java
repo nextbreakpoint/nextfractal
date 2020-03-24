@@ -25,12 +25,8 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.javafx;
 
 import com.nextbreakpoint.Try;
-import com.nextbreakpoint.nextfractal.core.javafx.EventBus;
 import com.nextbreakpoint.nextfractal.core.common.Session;
-import com.nextbreakpoint.nextfractal.core.javafx.Bitmap;
-import com.nextbreakpoint.nextfractal.core.javafx.BrowseBitmap;
-import com.nextbreakpoint.nextfractal.core.javafx.GridItemRenderer;
-import com.nextbreakpoint.nextfractal.core.javafx.UIFactory;
+import com.nextbreakpoint.nextfractal.core.javafx.*;
 import com.nextbreakpoint.nextfractal.core.render.RendererGraphicsContext;
 import com.nextbreakpoint.nextfractal.core.render.RendererPoint;
 import com.nextbreakpoint.nextfractal.core.render.RendererSize;
@@ -42,7 +38,6 @@ import com.nextbreakpoint.nextfractal.mandelbrot.dsl.DSLParser;
 import com.nextbreakpoint.nextfractal.mandelbrot.module.MandelbrotMetadata;
 import com.nextbreakpoint.nextfractal.mandelbrot.module.MandelbrotSession;
 import com.nextbreakpoint.nextfractal.mandelbrot.dsl.DSLCompiler;
-import com.nextbreakpoint.nextfractal.mandelbrot.dsl.ClassFactory;
 import com.nextbreakpoint.nextfractal.mandelbrot.dsl.ParserResult;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Color;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
@@ -62,18 +57,18 @@ public class MandelbrotUIFactory implements UIFactory {
 	}
 
 	@Override
-	public Pane createEditorPane(EventBus eventBus, Session session) {
+	public Pane createEditorPane(PlatformEventBus eventBus, Session session) {
 		return new EditorPane(eventBus);
 	}
 
 	@Override
-	public Pane createRenderPane(EventBus eventBus, Session session, int width, int height) {
+	public Pane createRenderPane(PlatformEventBus eventBus, Session session, int width, int height) {
 		final int[] cells = optimalRowsAndCols(Runtime.getRuntime().availableProcessors());
 		return new RenderPane((MandelbrotSession) session, eventBus, width, height, Integer.getInteger("mandelbrot.renderer.rows", cells[0]), Integer.getInteger("mandelbrot.renderer.cols", cells[1]));
 	}
 
 	@Override
-	public Pane createParamsPane(EventBus eventBus, Session session) {
+	public Pane createParamsPane(PlatformEventBus eventBus, Session session) {
 		return new ParamsPane((MandelbrotSession) session, eventBus);
 	}
 

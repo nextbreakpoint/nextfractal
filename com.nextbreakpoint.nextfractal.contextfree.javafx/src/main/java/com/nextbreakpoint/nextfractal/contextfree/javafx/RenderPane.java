@@ -34,7 +34,7 @@ import com.nextbreakpoint.nextfractal.contextfree.core.ParserException;
 import com.nextbreakpoint.nextfractal.contextfree.dsl.grammar.CFDG;
 import com.nextbreakpoint.nextfractal.contextfree.renderer.RendererCoordinator;
 import com.nextbreakpoint.nextfractal.core.common.SourceError;
-import com.nextbreakpoint.nextfractal.core.javafx.EventBus;
+import com.nextbreakpoint.nextfractal.core.common.EventBus;
 import com.nextbreakpoint.nextfractal.core.javafx.BooleanObservableValue;
 import com.nextbreakpoint.nextfractal.core.javafx.StringObservableValue;
 import com.nextbreakpoint.nextfractal.core.render.RendererGraphicsContext;

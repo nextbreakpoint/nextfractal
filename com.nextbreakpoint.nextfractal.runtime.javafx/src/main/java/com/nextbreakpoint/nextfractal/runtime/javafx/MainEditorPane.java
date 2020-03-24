@@ -25,8 +25,9 @@
 package com.nextbreakpoint.nextfractal.runtime.javafx;
 
 import com.nextbreakpoint.Try;
-import com.nextbreakpoint.nextfractal.core.javafx.EventBus;
+import com.nextbreakpoint.nextfractal.core.common.EventBus;
 import com.nextbreakpoint.nextfractal.core.common.Session;
+import com.nextbreakpoint.nextfractal.core.javafx.PlatformEventBus;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 
@@ -34,6 +35,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -42,40 +45,41 @@ import static com.nextbreakpoint.nextfractal.core.javafx.UIPlugins.tryFindFactor
 public class MainEditorPane extends BorderPane {
     private static Logger logger = Logger.getLogger(MainEditorPane.class.getName());
 
-    private Map<String, EventBus> buses = new HashMap<>();
+    private Map<String, PlatformEventBus> buses = new HashMap<>();
     private Map<String, Pane> panels = new HashMap<>();
+
     private Session session;
 
-    public MainEditorPane(EventBus eventBus) {
-        eventBus.subscribe("session-data-loaded", event -> handleSessionChanged(eventBus, (Session) event[0]));
+    public MainEditorPane(PlatformEventBus eventBus) {
+        eventBus.subscribe("session-data-loaded", event -> handleSessionChanged(eventBus, (Session) event[0], this::createRootPane, this::setCenter));
 
         eventBus.subscribe("session-terminated", event -> buses.clear());
         eventBus.subscribe("session-terminated", event -> panels.clear());
     }
 
-    private void handleSessionChanged(EventBus eventBus, Session session) {
+    private void handleSessionChanged(PlatformEventBus eventBus, Session session, BiFunction<PlatformEventBus, Session, Pane> factory, Consumer<Pane> consumer) {
         if (this.session == null || !this.session.getPluginId().equals(session.getPluginId())) {
             if (this.session != null) {
-                Optional.ofNullable(buses.get(this.session.getPluginId())).ifPresent(bus -> bus.disable());
+                Optional.ofNullable(buses.get(this.session.getPluginId())).ifPresent(EventBus::disable);
             }
             Pane rootPane = panels.get(session.getPluginId());
             if (rootPane == null) {
-                EventBus innerBus = new EventBus(eventBus);
-                rootPane = createRootPane(innerBus, session);
+                PlatformEventBus innerBus = new PlatformEventBus(eventBus);
+                rootPane = factory.apply(innerBus, session);
                 panels.put(session.getPluginId(), rootPane);
                 buses.put(session.getPluginId(), innerBus);
             }
-            setCenter(rootPane);
-            Optional.ofNullable(buses.get(session.getPluginId())).ifPresent(bus -> bus.enable());
+            consumer.accept(rootPane);
+            Optional.ofNullable(buses.get(session.getPluginId())).ifPresent(EventBus::enable);
         }
         this.session = session;
     }
 
-    private Pane createRootPane(EventBus eventBus, Session session) {
+    private Pane createRootPane(PlatformEventBus eventBus, Session session) {
         return createRenderPane(session, eventBus).orElse(null);
     }
 
-    private static Try<Pane, Exception> createRenderPane(Session session, EventBus eventBus) {
+    private static Try<Pane, Exception> createRenderPane(Session session, PlatformEventBus eventBus) {
         return tryFindFactory(session.getPluginId()).map(plugin -> Objects.requireNonNull(plugin.createEditorPane(eventBus, session)))
             .onFailure(e -> logger.log(Level.WARNING, "Cannot create editor panel with pluginId " + session.getPluginId(), e));
     }

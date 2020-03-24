@@ -24,11 +24,11 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.javafx;
 
-import com.nextbreakpoint.nextfractal.core.javafx.EventBus;
 import com.nextbreakpoint.nextfractal.core.javafx.AdvancedTextField;
 import com.nextbreakpoint.nextfractal.core.common.Double2D;
 import com.nextbreakpoint.nextfractal.core.common.Double4D;
 import com.nextbreakpoint.nextfractal.core.common.Time;
+import com.nextbreakpoint.nextfractal.core.javafx.PlatformEventBus;
 import com.nextbreakpoint.nextfractal.mandelbrot.module.MandelbrotMetadata;
 import com.nextbreakpoint.nextfractal.mandelbrot.module.MandelbrotSession;
 import javafx.scene.control.ComboBox;
@@ -45,7 +45,7 @@ public class ParamsPane extends Pane {
 
 	private MandelbrotSession mandelbrotSession;
 
-	public ParamsPane(MandelbrotSession session, EventBus eventBus) {
+	public ParamsPane(MandelbrotSession session, PlatformEventBus eventBus) {
 		VBox box = new VBox(SPACING * 2);
 
 		Label translationLabel = new Label("Region translation");

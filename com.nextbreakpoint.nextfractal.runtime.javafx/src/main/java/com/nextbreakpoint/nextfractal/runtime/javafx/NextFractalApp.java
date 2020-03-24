@@ -29,13 +29,13 @@ import com.nextbreakpoint.nextfractal.core.common.Bundle;
 import com.nextbreakpoint.nextfractal.core.common.Clip;
 import com.nextbreakpoint.nextfractal.core.common.CoreFactory;
 import com.nextbreakpoint.nextfractal.core.common.Plugins;
-import com.nextbreakpoint.nextfractal.core.javafx.EventBus;
 import com.nextbreakpoint.nextfractal.core.common.FileManager;
 import com.nextbreakpoint.nextfractal.core.common.Session;
 import com.nextbreakpoint.nextfractal.core.encode.Encoder;
 import com.nextbreakpoint.nextfractal.core.export.ExportRenderer;
 import com.nextbreakpoint.nextfractal.core.export.ExportService;
 import com.nextbreakpoint.nextfractal.core.export.ExportSession;
+import com.nextbreakpoint.nextfractal.core.javafx.PlatformEventBus;
 import com.nextbreakpoint.nextfractal.core.javafx.UIPlugins;
 import com.nextbreakpoint.nextfractal.core.render.RendererSize;
 import com.nextbreakpoint.nextfractal.core.common.DefaultThreadFactory;
@@ -48,8 +48,8 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
+import javafx.scene.control.*;
 import javafx.scene.control.ButtonBar.ButtonData;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -61,7 +61,6 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 
 import javax.tools.ToolProvider;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
@@ -88,13 +87,14 @@ public class NextFractalApp extends Application {
 
 	private List<Clip> clips = new ArrayList<>();
 	private Session session;
-	private boolean capture;
-	private boolean edited;
 	private Clip clip;
 
+	private boolean capture;
+	private boolean edited;
+
 	private FileChooser exportFileChooser;
-	private File exportCurrentFile;
 	private FileChooser bundleFileChooser;
+	private File exportCurrentFile;
 	private File bundleCurrentFile;
 
 	public static void main(String[] args) {
@@ -103,38 +103,38 @@ public class NextFractalApp extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-		checkJavaVersion();
-
-		EventBus eventBus = new EventBus();
+		PlatformEventBus eventBus = new PlatformEventBus();
 
 		Try.of(() -> Objects.requireNonNull(ToolProvider.getSystemJavaCompiler())).ifFailure(e -> showCompilerAlert());
 
 		logger.info(getNoticeMessage());
 
-		logger.info("DPI = " + Screen.getPrimary().getDpi());
-
-		Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
-
-		logger.info("Screen Size = (" + primaryScreenBounds.getWidth() + "," + primaryScreenBounds.getHeight() + ")");
-
-		double baseWidth = primaryScreenBounds.getWidth() * 0.5;
-		double imageWidth = Math.max(baseWidth, 580);
-		int renderWidth = (int)Math.rint(imageWidth);
-		int editorWidth = (int)Math.rint(imageWidth * 0.7);
-		int sceneWidth = renderWidth + editorWidth;
-		int sceneHeight = renderWidth;
-
-		logger.info("Scene Size = (" + sceneWidth + "," + sceneHeight + ")");
-
-        StackPane rootPane = new StackPane();
-
 		printPlugins();
 
-		ExportRenderer exportRenderer = new SimpleExportRenderer(createThreadFactory("Export Renderer"));
+		final Screen primaryScreen = Screen.getPrimary();
 
-		ExportServiceDelegate delegate = (session, state, progress) -> eventBus.postEvent("export-session-state-changed", new Object[] { session, state, progress });
+		final Rectangle2D visualBounds = primaryScreen.getVisualBounds();
+		logger.info("Screen size = (" + visualBounds.getWidth() + ", " + visualBounds.getHeight() + "), dpi = " + primaryScreen.getDpi());
 
-		ExportService exportService = new SimpleExportService(delegate, createThreadFactory("Export Service"), exportRenderer);
+		int optimalImageSize = computeOptimalImageSize(primaryScreen);
+		logger.info("Optimal image size = " + optimalImageSize + "px");
+
+		int renderWidth = (int)Math.rint(optimalImageSize);
+		int editorWidth = (int)Math.rint(optimalImageSize * 0.7);
+
+		final StackPane rootPane = new StackPane();
+
+		final int optimalFontSize = computeOptimalFontSize(primaryScreen);
+		logger.info("Optimal font size = " + optimalFontSize + "pt");
+
+		final DoubleProperty fontSize = new SimpleDoubleProperty(optimalFontSize);
+		rootPane.styleProperty().bind(Bindings.format("-fx-font-size: %.2fpt;", fontSize));
+
+		final ExportServiceDelegate delegate = (session, state, progress) -> eventBus.postEvent("export-session-state-changed", new Object[] { session, state, progress });
+		final ExportRenderer exportRenderer = new SimpleExportRenderer(createThreadFactory("Export Renderer"));
+		final ExportService exportService = new SimpleExportService(delegate, createThreadFactory("Export Service"), exportRenderer);
+
+//		eventBus.register("editor-grammar-changed", new EditorGrammarChangedValidator());
 
 		eventBus.subscribe("editor-grammar-changed", event -> tryFindFactoryByGrammar((String) event[0]).ifPresent(factory -> createSession(eventBus, factory)));
 
@@ -176,79 +176,80 @@ public class NextFractalApp extends Application {
 
 		eventBus.subscribe("editor-action", event -> handleEditorAction(eventBus, primaryStage, (String)event[0]));
 
-		rootPane.getChildren().add(createMainPane(eventBus, editorWidth, renderWidth, sceneHeight));
+		final Pane mainPane = createMainPane(eventBus, editorWidth, renderWidth, renderWidth);
 
-		Scene scene = new Scene(rootPane, sceneWidth, sceneHeight);
+		rootPane.getChildren().add(mainPane);
+
+		final Scene scene = new Scene(rootPane,renderWidth + editorWidth, renderWidth);
+		logger.info("Scene size = (" + scene.getWidth() + ", " + scene.getHeight() + ")");
 
 		loadStyleSheets(scene);
 
-		createMenuBar();
-
 		primaryStage.setOnCloseRequest(e -> {
-			if (terminateNow(exportService)) {
-				eventBus.postEvent("session-terminated", "");
-			} else {
+			if (!isTerminating(eventBus, exportService)) {
 				e.consume();
 			}
 		});
 
-		DoubleProperty fontSize = new SimpleDoubleProperty(computeOptimalFontSize()); // font size in pt
-		rootPane.styleProperty().bind(Bindings.format("-fx-font-size: %.2fpt;", fontSize));
-
 		primaryStage.setScene(scene);
-		primaryStage.setResizable(false);
 		primaryStage.sizeToScene();
+		primaryStage.setResizable(false);
 		primaryStage.setTitle(getApplicationName());
-
 		primaryStage.show();
 
-		BufferedImage image = new BufferedImage(10, 10, BufferedImage.TYPE_INT_ARGB);
-		Objects.requireNonNull(image.createGraphics());
-
 		Platform.runLater(() -> {
-			String defaultPluginId = System.getProperty("initialPluginId", DEFAULT_PLUGIN_ID);
+			final String defaultPluginId = System.getProperty("initialPluginId", DEFAULT_PLUGIN_ID);
 			tryFindFactory(defaultPluginId).ifPresent(factory -> createSession(eventBus, factory));
 		});
 	}
 
-	private boolean terminateNow(ExportService exportService) {
-		if (exportService.getSessionCount() > 0) {
-			final Dialog dialog = new Dialog();
-			dialog.setContentText("There are background jobs running in the current session. Do you want to terminate them and exit?");
+	private boolean isTerminating(PlatformEventBus eventBus, ExportService exportService) {
+		if (terminateNow(exportService.getSessionCount())) {
+			eventBus.postEvent("session-terminated", "");
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	private boolean terminateNow(int sessionCount) {
+		if (sessionCount > 0) {
+			final Dialog<ButtonType> dialog = new Dialog<>();
+			dialog.setContentText("There are jobs still running. Do you want to terminate them and exit?");
 			dialog.setTitle("Action required");
 			dialog.getDialogPane().getButtonTypes().add(ButtonType.NO);
 			dialog.getDialogPane().getButtonTypes().add(ButtonType.YES);
-			final Optional response = dialog.showAndWait();
-			if (response.isPresent() && response.get().equals(ButtonType.NO)) {
-				return false;
-			}
+			final Optional<ButtonType> response = dialog.showAndWait();
+			return response.isEmpty() || !response.get().equals(ButtonType.NO);
 		} else if (edited && clips.size() > 0) {
-			final Dialog dialog = new Dialog();
-			dialog.setContentText("There are new or modified clips in the current session. Do you want to discard them and exit?");
+			final Dialog<ButtonType> dialog = new Dialog<>();
+			dialog.setContentText("There are new or modified clips. Do you want to discard them and exit?");
 			dialog.setTitle("Action required");
 			dialog.getDialogPane().getButtonTypes().add(ButtonType.NO);
 			dialog.getDialogPane().getButtonTypes().add(ButtonType.YES);
-			final Optional response = dialog.showAndWait();
-			if (response.isPresent() && response.get().equals(ButtonType.NO)) {
-				return false;
-			}
+			final Optional<ButtonType> response = dialog.showAndWait();
+			return response.isEmpty() || !response.get().equals(ButtonType.NO);
 		}
 		return true;
 	}
 
-	private void handleEditorAction(EventBus eventBus, Window window, String action) {
-		if (action.equals("load")) Optional.ofNullable(showLoadBundleFileChooser()).map(fileChooser -> fileChooser.showOpenDialog(window)).ifPresent(file -> eventBus.postEvent("editor-load-file", file));
-		if (action.equals("save")) Optional.ofNullable(showSaveBundleFileChooser()).map(fileChooser -> fileChooser.showSaveDialog(window)).ifPresent(file -> eventBus.postEvent("editor-save-file", file));
+	private void handleEditorAction(PlatformEventBus eventBus, Window window, String action) {
+		if (action.equals("load")) Optional.ofNullable(showLoadBundleFileChooser())
+				.map(fileChooser -> fileChooser.showOpenDialog(window))
+				.ifPresent(file -> eventBus.postEvent("editor-load-file", file));
+		if (action.equals("save")) Optional.ofNullable(showSaveBundleFileChooser())
+				.map(fileChooser -> fileChooser.showSaveDialog(window))
+				.ifPresent(file -> eventBus.postEvent("editor-save-file", file));
 	}
 
-	private void handleBundleLoaded(EventBus eventBus, Bundle bundle, boolean continuous, boolean appendHistory) {
+	private void handleBundleLoaded(PlatformEventBus eventBus, Bundle bundle, boolean continuous, boolean appendHistory) {
 		if (edited && clips.size() > 0 && bundle.getClips().size() > 0) {
-			final Dialog dialog = new Dialog();
-			dialog.setContentText("There are new or modified clips in the current session. Do you want to discard them?");
+			final Dialog<ButtonType> dialog = new Dialog<>();
+			dialog.setContentText("There are new or modified clips. Do you want to discard them?");
 			dialog.setTitle("Action required");
 			dialog.getDialogPane().getButtonTypes().add(ButtonType.NO);
 			dialog.getDialogPane().getButtonTypes().add(ButtonType.YES);
-			final Optional response = dialog.showAndWait();
+			final Optional<ButtonType> response = dialog.showAndWait();
 			if (response.isPresent() && response.get().equals(ButtonType.NO)) {
 				eventBus.postEvent("capture-clips-merged", bundle.getClips());
 			} else {
@@ -286,12 +287,12 @@ public class NextFractalApp extends Application {
 		edited = true;
 	}
 
-	private void handleCaptureSession(EventBus eventBus, String action) {
+	private void handleCaptureSession(PlatformEventBus eventBus, String action) {
 		if (action.equals("start")) startCapture(eventBus);
 		if (action.equals("stop")) stopCapture(eventBus);
 	}
 
-	private void startCapture(EventBus eventBus) {
+	private void startCapture(PlatformEventBus eventBus) {
 		capture = true;
 		clip = new Clip();
 		if (session != null) {
@@ -300,7 +301,7 @@ public class NextFractalApp extends Application {
 		eventBus.postEvent("capture-session-started", clip);
 	}
 
-	private void stopCapture(EventBus eventBus) {
+	private void stopCapture(PlatformEventBus eventBus) {
 		capture = false;
 		if (session != null) {
 			clip.append(new Date(), session.getPluginId(), session.getScript(), session.getMetadata());
@@ -317,26 +318,26 @@ public class NextFractalApp extends Application {
 	private void handleErrorChanged(String error) {
 	}
 
-	private void handleLoadFile(EventBus eventBus, File file) {
+	private void handleLoadFile(PlatformEventBus eventBus, File file) {
 		FileManager.loadFile(file)
 			.onSuccess(session -> eventBus.postEvent("current-file-changed", file))
 			.onFailure(e -> showLoadError(eventBus, file, e))
 			.ifPresent(bundle -> eventBus.postEvent("session-bundle-loaded", bundle, false, true));
 	}
 
-	private void handleSaveFile(EventBus eventBus, File file) {
+	private void handleSaveFile(PlatformEventBus eventBus, File file) {
 		FileManager.saveFile(file, new Bundle(session, clips))
 			.onSuccess(session -> eventBus.postEvent("current-file-changed", file))
 			.onFailure(e -> showSaveError(eventBus, file, e))
 			.ifSuccess(v -> edited = false);
 	}
 
-	private void showLoadError(EventBus eventBus, File file, Exception e) {
+	private void showLoadError(PlatformEventBus eventBus, File file, Exception e) {
 		logger.log(Level.WARNING, "Cannot load file " + file.getAbsolutePath(), e);
 		eventBus.postEvent("session-status-changed", "Cannot load file " + file.getName());
 	}
 
-	private void showSaveError(EventBus eventBus, File file, Exception e) {
+	private void showSaveError(PlatformEventBus eventBus, File file, Exception e) {
 		logger.log(Level.WARNING, "Cannot save file " + file.getAbsolutePath(), e);
 		eventBus.postEvent("session-status-changed", "Cannot save file " + file.getName());
 	}
@@ -362,97 +363,26 @@ public class NextFractalApp extends Application {
 		exportService.suspendSession(exportSession);
 	}
 
-	private void createSession(EventBus eventBus, CoreFactory factory) {
-		tryCreateSession(factory).ifPresent(session -> eventBus.postEvent("session-data-loaded", session, false, true));
-	}
-
-	private DefaultThreadFactory createThreadFactory(String name) {
-		return new DefaultThreadFactory(name, true, Thread.MIN_PRIORITY);
-	}
-
-	private int computeOptimalFontSize() {
-		int size = 8;
-
-		Screen screen = Screen.getPrimary();
-
-		if (screen.getDpi() > 100 || screen.getVisualBounds().getWidth() > 1200) {
-			size = 12;
-		}
-
-		if (screen.getDpi() > 200 || screen.getVisualBounds().getWidth() > 2400) {
-			size = 16;
-		}
-
-		return size;
-	}
-
-//	private static double getVersion() {
-//		String version = System.getProperty("java.version");
-//		int pos = version.indexOf('.');
-//		pos = version.indexOf('.', pos + 1);
-//		return Double.parseDouble(version.substring(0, pos));
-//	}
-
-	private void checkJavaVersion() {
-		//		if (getVersion() < 1.8) {
-//			ButtonType exitButtonType = new ButtonType("Exit", ButtonData.FINISH);
-//			Dialog<String> dialog = new Dialog<>();
-//			dialog.getDialogPane().getButtonTypes().add(exitButtonType);
-//			dialog.setGraphic(createIconImage("/icon-errors.png"));
-//			dialog.setTitle("SourceError");
-//			dialog.setHeaderText("NextFractal requires Java JDK 8 or later");
-//			dialog.setContentText("Please install Java JDK 8 or later and add the command your_jdk_path/bin/java to your system's path variable.");
-//			dialog.showAndWait();
-//			System.exit(1);
-//			return;
-//		}
-	}
-
-	private void createMenuBar() {
-		//        MenuBar menuBar = new MenuBar();
-////        final Menu fileMenu = new Menu("File");
-////        MenuItem quitItem = new MenuItem("Quit");
-////		fileMenu.getItems().add(quitItem);
-////		menuBar.getMenus().add(fileMenu);
-//        final Menu helpMenu = new Menu("Help");
-//		if (Desktop.isDesktopSupported()) {
-//			MenuItem siteItem = new MenuItem("User Guide");
-//			helpMenu.getItems().add(siteItem);
-//			siteItem.setOnAction(e -> {
-//				 try {
-//					if (Desktop.isDesktopSupported()) {
-//						Desktop.getDesktop().browse(new URI("http://nextfractal.nextbreakpoint.com"));
-//					}
-//				} catch (Exception e1) {
-//				}
-//			});
-//		}
-//		menuBar.getMenus().add(helpMenu);
-//        menuBar.setUseSystemMenuBar(true);
-//        root.getChildren().add(menuBar);
-//		quitItem.setOnAction(e -> primaryStage.close());
-	}
-
-	private Pane createMainPane(EventBus eventBus, int editorWidth, int renderWidth, int height) {
-		int width = renderWidth + editorWidth;
-		Pane mainPane = new Pane();
+	private Pane createMainPane(PlatformEventBus eventBus, int editorWidth, int renderWidth, int height) {
+		final int width = renderWidth + editorWidth;
+		final Pane mainPane = new Pane();
 		mainPane.setPrefWidth(width);
 		mainPane.setPrefHeight(height);
 		mainPane.setMinWidth(width);
 		mainPane.setMinHeight(height);
 		mainPane.setMaxWidth(width);
 		mainPane.setMaxHeight(height);
-		Pane editorRootPane = createSidePane(eventBus, editorWidth, height);
-		Pane renderRootPane = createRenderPane(eventBus, renderWidth, height);
-		mainPane.getChildren().add(renderRootPane);
-		mainPane.getChildren().add(editorRootPane);
+		final Pane centralRootPane = createCentralPane(eventBus, renderWidth, height);
+		final Pane sideRootPane = createSidePane(eventBus, editorWidth, height);
+		mainPane.getChildren().add(centralRootPane);
+		mainPane.getChildren().add(sideRootPane);
 		mainPane.getStyleClass().add("application");
-		editorRootPane.setLayoutX(renderWidth);
+		sideRootPane.setLayoutX(renderWidth);
 		return mainPane;
 	}
 
-	private Pane createRenderPane(EventBus eventBus, int width, int height) {
-		MainCentralPane renderRootPane = new MainCentralPane(eventBus, width, height);
+	private Pane createCentralPane(PlatformEventBus eventBus, int width, int height) {
+		final MainCentralPane renderRootPane = new MainCentralPane(eventBus, width, height);
 		renderRootPane.setPrefWidth(width);
 		renderRootPane.setPrefHeight(height);
 		renderRootPane.setMinWidth(width);
@@ -463,8 +393,8 @@ public class NextFractalApp extends Application {
 		return renderRootPane;
 	}
 
-	private MainSidePane createSidePane(EventBus eventBus, int width, int height) {
-		MainSidePane sideRootPane = new MainSidePane(eventBus);
+	private MainSidePane createSidePane(PlatformEventBus eventBus, int width, int height) {
+		final MainSidePane sideRootPane = new MainSidePane(eventBus);
 		sideRootPane.setPrefWidth(width);
 		sideRootPane.setPrefHeight(height);
 		sideRootPane.getStyleClass().add("side-pane");
@@ -472,8 +402,8 @@ public class NextFractalApp extends Application {
 	}
 
 	private ImageView createIconImage(String name) {
-		InputStream stream = getClass().getResourceAsStream(name);
-		ImageView image = new ImageView(new Image(stream));
+		final InputStream stream = getClass().getResourceAsStream(name);
+		final ImageView image = new ImageView(new Image(stream));
 		image.setSmooth(true);
 		image.setFitWidth(32);
 		image.setFitHeight(32);
@@ -481,7 +411,7 @@ public class NextFractalApp extends Application {
 	}
 
 	private String getApplicationName() {
-		return "NextFractal - The Beauty of Chaos";
+		return "NextFractal 2.1.2";
 	}
 
 	private String getNoticeMessage() {
@@ -501,16 +431,15 @@ public class NextFractalApp extends Application {
 				"along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.\n\n";
 	}
 
-	private Object showCompilerAlert() {
-		ButtonType exitButtonType = new ButtonType("Continue", ButtonData.OK_DONE);
-		Dialog<String> dialog = new Dialog<>();
+	private void showCompilerAlert() {
+		final ButtonType exitButtonType = new ButtonType("Continue", ButtonData.OK_DONE);
+		final Dialog<String> dialog = new Dialog<>();
 		dialog.getDialogPane().getButtonTypes().add(exitButtonType);
 		dialog.setGraphic(createIconImage("/icon-errors.png"));
 		dialog.setTitle("Warning");
 		dialog.setHeaderText("Cannot find Java compiler in your classpath");
-		dialog.setContentText("Java compiler is required to reduce computation time. Please install Java JDK 8 (>= 1.8.0_40) or later and add directory your_jdk_path/bin to your system's path.");
+		dialog.setContentText("Java compiler is required to reduce computation time");
 		dialog.showAndWait();
-		return null;
 	}
 
 	private void loadStyleSheets(Scene scene) {
@@ -521,8 +450,34 @@ public class NextFractalApp extends Application {
 			.forEach(maybeURL -> maybeURL.ifPresent(resourceURL -> scene.getStylesheets().add((resourceURL))));
 	}
 
+	private int computeOptimalImageSize(Screen screen) {
+		return (int)Math.rint(Math.max(screen.getVisualBounds().getWidth() * 0.5, 800));
+	}
+
+	private int computeOptimalFontSize(Screen screen) {
+		int size = 8;
+
+		if (screen.getDpi() > 100 || screen.getVisualBounds().getWidth() > 1200) {
+			size = 12;
+		}
+
+		if (screen.getDpi() > 200 || screen.getVisualBounds().getWidth() > 2400) {
+			size = 16;
+		}
+
+		return size;
+	}
+
+	private DefaultThreadFactory createThreadFactory(String name) {
+		return new DefaultThreadFactory(name, true, Thread.MIN_PRIORITY);
+	}
+
 	private Try<String, Exception> tryLoadResource(String resourceName) {
 		return Try.of(() -> getClass().getResource(resourceName).toExternalForm());
+	}
+
+	private void createSession(PlatformEventBus eventBus, CoreFactory factory) {
+		tryCreateSession(factory).ifPresent(session -> eventBus.postEvent("session-data-loaded", session, false, true));
 	}
 
 	private Try<Session, Exception> tryCreateSession(CoreFactory factory) {
@@ -533,7 +488,7 @@ public class NextFractalApp extends Application {
 		Plugins.factories().forEach(plugin -> logger.fine("Found plugin " + plugin.getId()));
 	}
 
-	private void handleExportSession(EventBus eventBus, Window window, String format, Session session, List<Clip> clips, Consumer<File> consumer, RendererSize size) {
+	private void handleExportSession(PlatformEventBus eventBus, Window window, String format, Session session, List<Clip> clips, Consumer<File> consumer, RendererSize size) {
 		createEncoder(format).ifPresent(encoder -> selectFileAndExport(eventBus, window, encoder, session, clips, consumer, size));
 	}
 
@@ -541,34 +496,23 @@ public class NextFractalApp extends Application {
 		return tryFindEncoder(format).onFailure(e -> logger.warning("Cannot find encoder for format " + format)).value();
 	}
 
-	private void selectFileAndExport(EventBus eventBus, Window window, Encoder encoder, Session session, List<Clip> clips, Consumer<File> consumer, RendererSize size) {
-		Consumer<File> fileConsumer = file -> createExportSession(eventBus, size, encoder, file, session, clips);
+	private void selectFileAndExport(PlatformEventBus eventBus, Window window, Encoder encoder, Session session, List<Clip> clips, Consumer<File> consumer, RendererSize size) {
+		final Consumer<File> fileConsumer = file -> createExportSession(eventBus, size, encoder, file, session, clips);
 		Optional.ofNullable(prepareExportFileChooser(encoder.getSuffix()).showSaveDialog(window)).ifPresent(fileConsumer.andThen(consumer));
 	}
 
-	private void createExportSession(EventBus eventBus, RendererSize size, Encoder encoder, File file, Session session, List<Clip> clips) {
+	private void createExportSession(PlatformEventBus eventBus, RendererSize size, Encoder encoder, File file, Session session, List<Clip> clips) {
 		startExportSession(eventBus, UUID.randomUUID().toString(), size, encoder, file, session, clips);
 	}
 
 	private String createFileName() {
-		SimpleDateFormat df = new SimpleDateFormat("YYYYMMdd-HHmmss");
-		return df.format(new Date());
+		return new SimpleDateFormat("YYYYMMdd-HHmmss").format(new Date());
 	}
 
-	private FileChooser prepareExportFileChooser(String suffix) {
-		ensureExportFileChooser(suffix);
-		exportFileChooser.setTitle("Export");
-		exportFileChooser.setInitialFileName(createFileName() + suffix);
-		if (exportCurrentFile != null) {
-			exportFileChooser.setInitialDirectory(exportCurrentFile.getParentFile());
-		}
-		return exportFileChooser;
-	}
-
-	private void startExportSession(EventBus eventBus, String uuid, RendererSize size, Encoder encoder, File file, Session session, List<Clip> clips) {
+	private void startExportSession(PlatformEventBus eventBus, String uuid, RendererSize size, Encoder encoder, File file, Session session, List<Clip> clips) {
 		try {
-			File tmpFile = File.createTempFile("export-" + uuid, ".dat");
-			ExportSession exportSession = new ExportSession(uuid, session, encoder.isVideoSupported() ? clips : new LinkedList<>(), file, tmpFile, size, 400, encoder);
+			final File tmpFile = File.createTempFile("export-" + uuid, ".dat");
+			final ExportSession exportSession = new ExportSession(uuid, session, encoder.isVideoSupported() ? clips : new LinkedList<>(), file, tmpFile, size, 400, encoder);
 			logger.info("Export session created: " + exportSession.getSessionId());
 			eventBus.postEvent("export-session-created", exportSession);
 		} catch (Exception e) {
@@ -580,8 +524,19 @@ public class NextFractalApp extends Application {
 	private void ensureExportFileChooser(String suffix) {
 		if (exportFileChooser == null) {
 			exportFileChooser = new FileChooser();
+			exportFileChooser.setInitialFileName(createFileName() + suffix);
 			exportFileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
 		}
+	}
+
+	private FileChooser prepareExportFileChooser(String suffix) {
+		ensureExportFileChooser(suffix);
+		exportFileChooser.setTitle("Export");
+		exportFileChooser.setInitialFileName(createFileName() + suffix);
+		if (exportCurrentFile != null) {
+			exportFileChooser.setInitialDirectory(exportCurrentFile.getParentFile());
+		}
+		return exportFileChooser;
 	}
 
 	private void ensureBundleFileChooser(String suffix) {
@@ -616,30 +571,7 @@ public class NextFractalApp extends Application {
 		return bundleFileChooser;
 	}
 
-	//	private void setup() {
-//		try {
-//			addLibraryPath("lib");
-//		} catch (Exception x) {
-//			x.printStackTrace();
-//		}
-////    	System.setProperty("java.library.path", "lib");
-////    	try {
-////			Field fieldSysPath = ClassLoader.class.getDeclaredField("sys_paths");
-////			fieldSysPath.setAccessible(true);
-////			fieldSysPath.set(null, null);
-////    	} catch (Exception e) {
-////    	}
-//	}
-
-//	private static void addLibraryPath(String pathToAdd) throws Exception {
-//		Field usrPathsField = ClassLoader.class.getDeclaredField("usr_paths");
-//		usrPathsField.setAccessible(true);
-//		String[] paths = (String[]) usrPathsField.get(null);
-//		for (String path : paths)
-//			if (path.equals(pathToAdd))
-//				return;
-//		String[] newPaths = Arrays.copyOf(paths, paths.length + 1);
-//		newPaths[newPaths.length - 1] = pathToAdd;
-//		usrPathsField.set(null, newPaths);
+//	if (Desktop.isDesktopSupported()) {
+//		Desktop.getDesktop().browse(new URI("http://nextfractal.nextbreakpoint.com"));
 //	}
 }

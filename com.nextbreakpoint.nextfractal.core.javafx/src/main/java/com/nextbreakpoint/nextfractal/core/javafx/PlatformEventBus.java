@@ -22,8 +22,22 @@
  * along with NextFractal.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.nextbreakpoint.nextfractal.core.common;
+package com.nextbreakpoint.nextfractal.core.javafx;
 
-public interface EventListener {
-    void eventPosted(Object... event);
+import com.nextbreakpoint.nextfractal.core.common.EventBus;
+import javafx.application.Platform;
+
+public class PlatformEventBus extends EventBus {
+    public PlatformEventBus() {
+        this(null);
+    }
+
+    public PlatformEventBus(PlatformEventBus parent) {
+        super(parent);
+    }
+
+    public void postEvent(String channel, Object... event) {
+        final Exception error = new Exception();
+        Platform.runLater(() -> propagateRoot(channel, error, event));
+    }
 }

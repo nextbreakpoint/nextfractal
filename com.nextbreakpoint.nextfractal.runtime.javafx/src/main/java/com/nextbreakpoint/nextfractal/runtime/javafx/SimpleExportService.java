@@ -58,7 +58,7 @@ public class SimpleExportService extends AbstractExportService {
 	private final Map<String, List<Future<ExportJobHandle>>> futures = new HashMap<>();
 	private final Map<String, EncoderHandle> handles = new HashMap<>();
 
-	private ExportServiceDelegate delegate;
+	private final ExportServiceDelegate delegate;
 	private final ExportRenderer exportRenderer;
 
 	public SimpleExportService(ExportServiceDelegate delegate, ThreadFactory threadFactory, ExportRenderer exportRenderer) {
@@ -74,11 +74,7 @@ public class SimpleExportService extends AbstractExportService {
 
 	@Override
 	protected void notifyUpdate(Collection<ExportHandle> exportHandles) {
-		exportHandles.forEach(exportHandle -> notifyUpdate(exportHandle));
-	}
-
-	private void notifyUpdate(ExportHandle exportHandle) {
-		Platform.runLater(() -> delegate.notifyUpdate(exportHandle.getSession(), exportHandle.getState(), exportHandle.getProgress()));
+		exportHandles.forEach(this::notifyUpdate);
 	}
 
 	@Override
@@ -89,6 +85,10 @@ public class SimpleExportService extends AbstractExportService {
 	@Override
 	protected void cancelTasks(ExportHandle exportHandle) {
 		tasks(exportHandle.getSessionId()).ifPresent(tasks -> tasks.forEach(task -> task.cancel(true)));
+	}
+
+	private void notifyUpdate(ExportHandle exportHandle) {
+		Platform.runLater(() -> delegate.notifyUpdate(exportHandle.getSession(), exportHandle.getState(), exportHandle.getProgress()));
 	}
 
 	private void updateSession(ExportHandle exportHandle) {
@@ -139,7 +139,7 @@ public class SimpleExportService extends AbstractExportService {
 
 	private void closeSession(ExportHandle exportHandle) {
 		try {
-			EncoderHandle handle = handles.remove(exportHandle.getSessionId());
+			final EncoderHandle handle = handles.remove(exportHandle.getSessionId());
 			if (handle != null) {
 				closeEncoder(exportHandle, handle);
 			}
@@ -166,13 +166,13 @@ public class SimpleExportService extends AbstractExportService {
 			exportHandle.setState(ExportState.INTERRUPTED);
 		} else if (exportHandle.isSessionCompleted()) {
 			logger.info("Frame " + (exportHandle.getFrameNumber() + 1) + " of " + exportHandle.getFrameCount());
-			int index = exportHandle.getFrameNumber();
+			final int index = exportHandle.getFrameNumber();
 			tryEncodeFrame(exportHandle, index, 1)
 				.onSuccess(s -> exportHandle.setState(ExportState.COMPLETED))
 				.onFailure(e -> exportHandle.setState(ExportState.FAILED))
 				.execute();
         } else if (exportHandle.isFrameCompleted()) {
-			int index = exportHandle.getFrameNumber();
+			final int index = exportHandle.getFrameNumber();
 			int count = 0;
 			do {
 				logger.info("Frame " + (exportHandle.getFrameNumber() + 1) + " of " + exportHandle.getFrameCount());
@@ -201,7 +201,7 @@ public class SimpleExportService extends AbstractExportService {
 	}
 
 	private void resetJobs(ExportHandle exportHandle) {
-		exportHandle.getJobs().stream().forEach(job -> job.setState(ExportJobState.READY));
+		exportHandle.getJobs().forEach(job -> job.setState(ExportJobState.READY));
 	}
 
 	private Try<ExportHandle, Exception> tryEncodeFrame(ExportHandle exportHandle, int index, int count) {
@@ -218,8 +218,8 @@ public class SimpleExportService extends AbstractExportService {
 	}
 
 	private void dispatchTasks(ExportHandle exportHandle, ExportJobHandle exportJob) {
-		List<Future<ExportJobHandle>> tasks = tasks(exportHandle.getSessionId()).orElse(new ArrayList<>());
-		ExportProfileBuilder builder = ExportProfileBuilder.fromProfile(exportJob.getJob().getProfile());
+		final List<Future<ExportJobHandle>> tasks = tasks(exportHandle.getSessionId()).orElse(new ArrayList<>());
+		final ExportProfileBuilder builder = ExportProfileBuilder.fromProfile(exportJob.getJob().getProfile());
 		builder.withPluginId(exportHandle.getCurrentPluginId());
 		builder.withMetadata(exportHandle.getCurrentMetadata());
 		builder.withScript(exportHandle.getCurrentScript());
