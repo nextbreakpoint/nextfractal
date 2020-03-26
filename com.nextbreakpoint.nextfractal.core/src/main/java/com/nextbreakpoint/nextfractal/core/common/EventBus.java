@@ -88,13 +88,6 @@ public abstract class EventBus {
 
     protected final void propagateRoot(String channel, Exception error, Object[] event) {
         try {
-//            EventValidator validator = validators.get(channel);
-//            if (validator == null) {
-//                throw new RuntimeException("Channel not found " + channel);
-//            }
-//            if (!validator.validate(event)) {
-//                throw new RuntimeException("Event values not valid");
-//            }
             if (parent != null) {
                 parent.propagateRoot(channel, error, event);
             } else {
@@ -108,11 +101,22 @@ public abstract class EventBus {
 
     private void propagateChildren(String channel, Exception error, Object... event) {
         if (disabled) return;
-        List<EventListener> listeners = this.listeners.get(channel);
-        if (listeners != null) {
-            List<EventListener> copy = new ArrayList<>(listeners.size());
-            copy.addAll(listeners);
-            copy.forEach(listener -> listener.eventPosted(event));
+        final EventValidator validator = validators.get(channel);
+        if (validator != null) {
+            if (validator.validate(event)) {
+                List<EventListener> listeners = this.listeners.get(channel);
+                if (listeners != null) {
+                    listeners.stream().forEach(listener -> listener.eventPosted(event));
+                }
+            } else {
+                logger.log(Level.WARNING, "Event parameters not valid");
+            }
+        } else {
+            // TODO remove this when validators have been implemented
+            List<EventListener> listeners = this.listeners.get(channel);
+            if (listeners != null) {
+                listeners.stream().forEach(listener -> listener.eventPosted(event));
+            }
         }
         children.forEach(child -> child.propagateChildren(channel, error, event));
     }

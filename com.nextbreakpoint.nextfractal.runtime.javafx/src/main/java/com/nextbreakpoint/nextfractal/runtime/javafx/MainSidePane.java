@@ -60,9 +60,7 @@ public class MainSidePane extends BorderPane {
     private Session session;
 
     public MainSidePane(PlatformEventBus eventBus) {
-        final PlatformEventBus subEventBus = new PlatformEventBus(eventBus);
-
-        setCenter(createRootPane(subEventBus));
+        setCenter(createRootPane(eventBus));
 
         eventBus.subscribe("session-data-changed", event -> session = (Session) event[0]);
 
@@ -72,9 +70,9 @@ public class MainSidePane extends BorderPane {
 
         eventBus.subscribe("playback-data-change", event -> session = (Session) event[0]);
 
-        eventBus.subscribe("playback-clips-start", event -> handlePlaybackClipsStart(subEventBus, this));
+        eventBus.subscribe("playback-clips-start", event -> handlePlaybackClipsStart(eventBus, this));
 
-        eventBus.subscribe("playback-clips-stop", event -> handlePlaybackClipsStop(subEventBus, this));
+        eventBus.subscribe("playback-clips-stop", event -> handlePlaybackClipsStop(eventBus, this));
     }
 
     private void handlePlaybackClipsStart(PlatformEventBus subEventBus, Pane rootPane) {
