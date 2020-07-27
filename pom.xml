@@ -46,7 +46,7 @@
 		<try.version>2.0.4</try.version>
 		<antlr4.version>4.7.2</antlr4.version>
 		<commonmath3.version>3.6.1</commonmath3.version>
-		<rxjava.version>2.2.17</rxjava.version>
+		<rxjava.version>2.2.19</rxjava.version>
 		<rxjavafx.version>2.2.2</rxjavafx.version>
 		<openjfx.version>14</openjfx.version>
 		<jackson.version>2.10.2</jackson.version>
