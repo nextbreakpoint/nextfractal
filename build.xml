@@ -402,7 +402,7 @@
 		<attribute name="resultproperty" default="publish.result" />
 		<element name="args" implicit="true" optional="true" />
 		<sequential>
-			<maven basedir="@{basedir}" goal="deploy" options="-DskipTests=true -Dchannel=@{channel} -pl ." resultproperty="@{resultproperty}"/>
+			<maven basedir="@{basedir}" goal="deploy" options="-N -DskipTests=true -Dchannel=@{channel} -pl ." resultproperty="@{resultproperty}"/>
 			<maven basedir="@{basedir}" goal="deploy" options="-DskipTests=true -Dchannel=@{channel} -pl com.nextbreakpoint.nextfractal.core" resultproperty="@{resultproperty}"/>
 			<maven basedir="@{basedir}" goal="deploy" options="-DskipTests=true -Dchannel=@{channel} -pl com.nextbreakpoint.nextfractal.contextfree" resultproperty="@{resultproperty}"/>
 			<maven basedir="@{basedir}" goal="deploy" options="-DskipTests=true -Dchannel=@{channel} -pl com.nextbreakpoint.nextfractal.mandelbrot" resultproperty="@{resultproperty}"/>
@@ -532,7 +532,6 @@
 		<makezip basedir="${basedir}" os="fedora" arch="x86_64" version="${nextfractal.version}" resultproperty="ant.makezip.result" />
 	</target>
 	<target name="publish-libs">
-		<publish basedir="${basedir}" channel="bintray" resultproperty="ant.publish.result"/>
 		<publish basedir="${basedir}" channel="ossrh" resultproperty="ant.publish.result"/>
 	</target>
 	<target name="setup">
