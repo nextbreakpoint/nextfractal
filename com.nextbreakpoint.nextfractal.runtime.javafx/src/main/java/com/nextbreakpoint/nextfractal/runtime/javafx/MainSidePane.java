@@ -95,6 +95,8 @@ public class MainSidePane extends BorderPane {
     }
 
     private Pane createRootPane(PlatformEventBus eventBus) {
+        final RendererTile exportTile = createExportTile();
+
         final RendererTile tile = createRendererTile();
 
         final StringObservableValue errorProperty = new StringObservableValue();
@@ -106,7 +108,7 @@ public class MainSidePane extends BorderPane {
 
         final StatusPane statusPane = new StatusPane();
 
-        final ExportPane exportPane = new ExportPane(tile);
+        final ExportPane exportPane = new ExportPane(exportTile);
 
         final HistoryPane historyPane = new HistoryPane(tile);
 
@@ -412,8 +414,12 @@ public class MainSidePane extends BorderPane {
     }
 
     private RendererTile createRendererTile() {
-        final int tileSize = computePercentage(0.03);
+        final int tileSize = computePercentage(0.05);
         return createSingleTile(tileSize, tileSize);
+    }
+
+    private RendererTile createExportTile() {
+        return createSingleTile(512, 512);
     }
 
     private static TranslateTransition createTranslateTransition(Node node) {
