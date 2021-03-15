@@ -59,6 +59,7 @@ public class CFDGRenderer {
 	private static final double FIXED_BORDER = 8.0;
 	private static final double SHAPE_BORDER = 1.0;
 	public static final int DRAW_AT = 1000;
+	public static final int MIN_AREA = 1;
 
 	private int width;
 	private int height;
@@ -88,7 +89,7 @@ public class CFDGRenderer {
 	private CFCanvas canvas;
 	private TiledCanvas tiledCanvas;
 	private boolean colorConflict;
-	private int maxShapes = 5000000;
+	private int maxShapes = 2000000;
 	private boolean tiled;
 	private boolean sized;
 	private boolean timed;
@@ -382,14 +383,14 @@ public class CFDGRenderer {
 		fixedBorderY = 0;
 		shapeBorder = 1;
 		totalArea = 0;
-		minArea = 0.3;
+		minArea = MIN_AREA;
 		outputSoFar = 0;
 		double[] value = new double[] { minArea };
 		cfdg.hasParameter(CFG.MinimumSize, value, this);
-		value[0] = (value[0] <= 0.0) ? 0.3 : value[0];
+		value[0] = Math.max(value[0], Math.sqrt(MIN_AREA));
 		minArea = value[0] * value[0];
-		fixedBorderX = FIXED_BORDER * ((border <= 1.0) ? border : 1.0);
-		shapeBorder = SHAPE_BORDER * ((border <= 1.0) ? 1.0 : border);
+		fixedBorderX = FIXED_BORDER * Math.min(border, 1.0);
+		shapeBorder = SHAPE_BORDER * Math.max(border, 1.0);
 
 		value[0] = fixedBorderX;
 		cfdg.hasParameter(CFG.BorderFixed, value, this);
@@ -1066,7 +1067,7 @@ public class CFDGRenderer {
 				notifyRenderListener();
 				drawAt *= 2;
 			}
-			if (shapeIdx % 1000 == 0) {
+			if (shapeIdx % 100 == 0) {
 				Thread.yield();
 			}
 		}
