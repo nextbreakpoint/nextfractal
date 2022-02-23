@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.1.2
+ * NextFractal 2.2.0
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2020 Andrea Medeghini
+ * Copyright 2015-2022 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -411,13 +411,13 @@ public class NextFractalApp extends Application {
 	}
 
 	private String getApplicationName() {
-		return "NextFractal 2.1.2";
+		return "NextFractal 2.2.0";
 	}
 
 	private String getNoticeMessage() {
-		return "\n\nNextFractal 2.1.2\n\n" +
+		return "\n\nNextFractal 2.2.0\n\n" +
 				"https://github.com/nextbreakpoint/nextfractal\n\n" +
-				"Copyright 2015-2020 Andrea Medeghini\n\n" +
+				"Copyright 2015-2022 Andrea Medeghini\n\n" +
 				"NextFractal is an application for creating fractals and other graphics artifacts.\n\n" +
 				"NextFractal is free software: you can redistribute it and/or modify\n" +
 				"it under the terms of the GNU General Public License as published by\n" +

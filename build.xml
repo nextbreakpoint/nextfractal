@@ -2,8 +2,8 @@
 <project name="NextFractal">
 	<property environment="env" />
 	<property name="openjfx.version" value="14" />
-	<property name="nextfractal.version" value="2.1.2" />
-	<property name="nextfractal.year" value="2020" />
+	<property name="nextfractal.version" value="2.2.0" />
+	<property name="nextfractal.year" value="2022" />
 	<property name="nextfractal.folder" value="NextFractal" />
 	<property name="mainmodule" value="com.nextbreakpoint.nextfractal.main" />
 	<macrodef name="setup">
