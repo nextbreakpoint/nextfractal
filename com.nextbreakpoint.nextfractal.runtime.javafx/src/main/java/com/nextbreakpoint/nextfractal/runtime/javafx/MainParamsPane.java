@@ -147,7 +147,6 @@ public class MainParamsPane extends Pane {
 			Optional.ofNullable(buses.get(session.getPluginId())).ifPresent(EventBus::enable);
 		}
 		this.session = session;
-		eventBus.postEvent("params-session-ready", session, continuous, timeAnimation);
 	}
 
 	private Pane createParamsPane(PlatformEventBus eventBus, Session session) {
