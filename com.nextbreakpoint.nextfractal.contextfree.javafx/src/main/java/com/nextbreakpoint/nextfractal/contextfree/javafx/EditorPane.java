@@ -38,6 +38,7 @@ import com.nextbreakpoint.nextfractal.core.javafx.PlatformEventBus;
 import io.reactivex.rxjavafx.observables.JavaFxObservable;
 import io.reactivex.rxjavafx.schedulers.JavaFxScheduler;
 import io.reactivex.schedulers.Schedulers;
+import javafx.application.Platform;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.TransferMode;
@@ -97,7 +98,7 @@ public class EditorPane extends BorderPane {
                 .observeOn(Schedulers.from(textExecutor))
                 .map(event -> computeTask(event.getNewVal()))
                 .map(this::processResult)
-                .subscribe(result -> notifyTaskResult(eventBus, result), x -> logger.log(Level.WARNING, "Cannot compile source", x));
+                .subscribe(result -> Platform.runLater(() -> notifyTaskResult(eventBus, result)), x -> logger.log(Level.WARNING, "Cannot compile source", x));
 
         codeArea.setOnDragDropped(e -> e.getDragboard().getFiles().stream().findFirst()
             .ifPresent(file -> eventBus.postEvent("editor-load-file", file)));
