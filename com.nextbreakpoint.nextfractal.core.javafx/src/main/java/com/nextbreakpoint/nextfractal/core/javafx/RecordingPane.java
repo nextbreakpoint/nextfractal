@@ -79,7 +79,7 @@ public class RecordingPane extends Pane {
     public void start() {
         stop();
         frame = 0;
-        future = executor.scheduleAtFixedRate(() -> Platform.runLater(() -> updateUI()), 0, 1000 / FRAMES_PER_SECOND, TimeUnit.MILLISECONDS);
+        future = executor.scheduleAtFixedRate(() -> Platform.runLater(this::updateUI), 0, 1000 / FRAMES_PER_SECOND, TimeUnit.MILLISECONDS);
     }
 
     public void stop() {

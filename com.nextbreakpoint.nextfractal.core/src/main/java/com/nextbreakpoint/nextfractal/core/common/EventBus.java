@@ -88,13 +88,13 @@ public abstract class EventBus {
 
     public abstract void postEvent(String channel, Object... event);
 
-    protected final void propagateRoot(String channel, Exception error, Object[] event) {
-        logger.log(Level.INFO, "bus: " + name + " propagate root: " + channel);
+    protected final void processEvent(String channel, Exception error, Object... event) {
+        logger.log(Level.FINE, "Dispatch event to bus: " + name + ", channel: " + channel);
         try {
             if (parent != null) {
-                parent.propagateRoot(channel, error, event);
+                parent.processEvent(channel, error, event);
             } else {
-                propagateChildren(channel, error, event);
+                dispatchEvent(channel, error, event);
             }
         } catch (Exception e) {
             logger.log(Level.WARNING, "Error while propagating event", e);
@@ -102,15 +102,15 @@ public abstract class EventBus {
         }
     }
 
-    private void propagateChildren(String channel, Exception error, Object... event) {
+    private void dispatchEvent(String channel, Exception error, Object... event) {
         if (disabled) return;
-        logger.log(Level.INFO, "bus: " + name + " propagate children: " + channel);
+        logger.log(Level.FINE, "Dispatch event to bus: " + name + ", channel: " + channel);
         final EventValidator validator = validators.get(channel);
         if (validator != null) {
             if (validator.validate(event)) {
                 List<EventListener> listeners = this.listeners.get(channel);
                 if (listeners != null) {
-                    listeners.stream().forEach(listener -> listener.eventPosted(event));
+                    listeners.forEach(listener -> listener.eventPosted(event));
                 }
             } else {
                 logger.log(Level.WARNING, "Event parameters not valid");
@@ -119,10 +119,10 @@ public abstract class EventBus {
             // TODO remove this when validators have been implemented
             List<EventListener> listeners = this.listeners.get(channel);
             if (listeners != null) {
-                listeners.stream().forEach(listener -> listener.eventPosted(event));
+                listeners.forEach(listener -> listener.eventPosted(event));
             }
         }
-        children.forEach(child -> child.propagateChildren(channel, error, event));
+        children.forEach(child -> child.dispatchEvent(channel, error, event));
     }
 
     public final void disable() {

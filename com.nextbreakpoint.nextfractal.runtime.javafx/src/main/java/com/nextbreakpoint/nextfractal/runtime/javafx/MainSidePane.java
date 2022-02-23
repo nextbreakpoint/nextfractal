@@ -76,7 +76,7 @@ public class MainSidePane extends BorderPane {
     }
 
     private void handlePlaybackClipsStart(PlatformEventBus subEventBus, Pane rootPane) {
-        subEventBus.disable();
+//        subEventBus.disable();
         rootPane.setDisable(true);
         BoxBlur effect = new BoxBlur();
         effect.setIterations(1);
@@ -85,7 +85,7 @@ public class MainSidePane extends BorderPane {
 
     private void handlePlaybackClipsStop(PlatformEventBus subEventBus, Pane rootPane) {
         rootPane.setEffect(null);
-        subEventBus.enable();
+//        subEventBus.enable();
         rootPane.setDisable(false);
         subEventBus.postEvent("session-data-loaded", session, false, false);
     }
@@ -108,7 +108,7 @@ public class MainSidePane extends BorderPane {
 
         final StatusPane statusPane = new StatusPane();
 
-        final ExportPane exportPane = new ExportPane(exportTile);
+        final ExportPane exportPane = new ExportPane(tile);
 
         final HistoryPane historyPane = new HistoryPane(tile);
 

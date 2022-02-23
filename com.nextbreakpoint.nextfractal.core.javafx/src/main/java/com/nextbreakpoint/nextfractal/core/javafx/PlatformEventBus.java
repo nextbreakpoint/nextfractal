@@ -39,7 +39,7 @@ public class PlatformEventBus extends EventBus {
     public void postEvent(String channel, Object... event) {
         final Exception error = new Exception();
         if (Platform.isFxApplicationThread()) {
-            propagateRoot(channel, error, event);
+            processEvent(channel, error, event);
         } else {
             throw new IllegalStateException("post event must be invoked from JavaFX main thread");
         }
