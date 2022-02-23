@@ -33,10 +33,12 @@ import java.util.concurrent.Future;
 
 public class GridItem {
 	private volatile long lastChanged;
+	private volatile boolean aborted;
 	private volatile File file;
 	private volatile BrowseBitmap bitmap;
 	private volatile GridItemRenderer renderer;
-	private volatile Future<GridItem> future;
+	private volatile Future<GridItem> loadItemFuture;
+	private volatile Future<GridItem> initItemFuture;
 	private volatile List<SourceError> errors = new LinkedList<>();
 
 	public File getFile() {
@@ -66,13 +68,22 @@ public class GridItem {
 		this.renderer = renderer;
 	}
 
-	public Future<GridItem> getFuture() {
-		return future;
+	public Future<GridItem> getLoadItemFuture() {
+		return loadItemFuture;
 	}
 
-	public void setFuture(Future<GridItem> future) {
+	public void setLoadItemFuture(Future<GridItem> loadItemFuture) {
 		lastChanged = System.currentTimeMillis();
-		this.future = future;
+		this.loadItemFuture = loadItemFuture;
+	}
+
+	public Future<GridItem> getInitItemFuture() {
+		return initItemFuture;
+	}
+
+	public void setInitItemFuture(Future<GridItem> initItemFuture) {
+		lastChanged = System.currentTimeMillis();
+		this.initItemFuture = initItemFuture;
 	}
 
 	public long getLastChanged() {
@@ -86,5 +97,13 @@ public class GridItem {
 	public void setErrors(List<SourceError> errors) {
 		this.errors.clear();
 		this.errors.addAll(errors);
+	}
+
+	public void setAborted(boolean aborted) {
+		this.aborted = aborted;
+	}
+
+	public boolean isAborted() {
+		return aborted;
 	}
 }

@@ -53,22 +53,22 @@ public class MainRenderPane extends BorderPane {
     public MainRenderPane(PlatformEventBus eventBus, int width, int height) {
         final BiFunction<PlatformEventBus, Session, Pane> factory = (innerBus, session) -> createRootPane(innerBus, session, width, height);
 
-        eventBus.subscribe("session-data-loaded", event -> handleSessionChanged(eventBus, (Session) event[0], factory, this::setCenter));
+        eventBus.subscribe("session-data-loaded", event -> handleSessionChanged(eventBus, (Session) event[0], (Boolean) event[1], (Boolean) event[2], factory, this::setCenter));
 
-        eventBus.subscribe("playback-data-load", event -> handleSessionChanged(eventBus, (Session) event[0], factory, this::setCenter));
+        eventBus.subscribe("playback-data-load", event -> handleSessionChanged(eventBus, (Session) event[0], (Boolean) event[1], (Boolean) event[2], factory, this::setCenter));
 
         eventBus.subscribe("session-terminated", event -> buses.clear());
         eventBus.subscribe("session-terminated", event -> panels.clear());
     }
 
-    private void handleSessionChanged(PlatformEventBus eventBus, Session session, BiFunction<PlatformEventBus, Session, Pane> factory, Consumer<Pane> consumer) {
+    private void handleSessionChanged(PlatformEventBus eventBus, Session session, boolean continuous, boolean timeAnimation, BiFunction<PlatformEventBus, Session, Pane> factory, Consumer<Pane> consumer) {
         if (this.session == null || !this.session.getPluginId().equals(session.getPluginId())) {
             if (this.session != null) {
                 Optional.ofNullable(buses.get(this.session.getPluginId())).ifPresent(EventBus::disable);
             }
             Pane rootPane = panels.get(session.getPluginId());
             if (rootPane == null) {
-                PlatformEventBus innerBus = new PlatformEventBus(eventBus);
+                PlatformEventBus innerBus = new PlatformEventBus(session.getPluginId(), eventBus);
                 rootPane = factory.apply(innerBus, session);
                 panels.put(session.getPluginId(), rootPane);
                 buses.put(session.getPluginId(), innerBus);

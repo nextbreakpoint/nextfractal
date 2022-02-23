@@ -59,7 +59,7 @@ public class JavaFXRendererBuffer implements RendererBuffer {
 
 	@Override
 	public void update(int[] pixels) {
-		if (pixels.length <= getWidth() * getHeight()) {
+		if (pixels != null && pixels.length <= getWidth() * getHeight()) {
 			writer.setPixels(0, 0, getWidth(), getHeight(), PixelFormat.getIntArgbInstance(), pixels, 0, getWidth());
 		}
 	}

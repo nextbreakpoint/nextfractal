@@ -201,7 +201,11 @@ public class Renderer {
 		initialized = true;
 		contentRendererFractal.initialize();
 		previewRendererFractal.initialize();
-		initialRegion = new RendererRegion(contentRendererFractal.getOrbit().getInitialRegion());
+		if (contentRendererFractal.getOrbit() != null) {
+			initialRegion = new RendererRegion(contentRendererFractal.getOrbit().getInitialRegion());
+		} else {
+			initialRegion = new RendererRegion();
+		}
 	}
 
 	/**

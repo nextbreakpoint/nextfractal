@@ -103,7 +103,7 @@ public class NextFractalApp extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-		PlatformEventBus eventBus = new PlatformEventBus();
+		PlatformEventBus eventBus = new PlatformEventBus("root");
 
 		Try.of(() -> Objects.requireNonNull(ToolProvider.getSystemJavaCompiler())).ifFailure(e -> showCompilerAlert());
 

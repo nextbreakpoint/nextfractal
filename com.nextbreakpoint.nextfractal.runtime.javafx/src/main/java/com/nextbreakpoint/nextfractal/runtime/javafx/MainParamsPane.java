@@ -117,13 +117,9 @@ public class MainParamsPane extends Pane {
 		
 		applyButton.setOnAction((e) -> eventBus.postEvent("editor-params-action", "apply"));
 
-		final EventListener dataLoadedHandler = event -> {
-			Session session = (Session) event[0];
-			handleSessionChanged(eventBus, session, this::createParamsPane, paramsPane::setCenter);
-			grammarCombobox.getSelectionModel().select(session.getGrammar());
-		};
+		eventBus.subscribe("session-data-loaded", event -> handleSessionChanged(eventBus, (Session) event[0], (boolean) event[1], (boolean) event[2], this::createParamsPane, paramsPane::setCenter));
 
-		eventBus.subscribe("session-data-loaded", dataLoadedHandler);
+		eventBus.subscribe("session-data-loaded", event -> grammarCombobox.getSelectionModel().select(((Session)event[0]).getGrammar()));
 
 		eventBus.subscribe("session-terminated", event -> buses.clear());
 		eventBus.subscribe("session-terminated", event -> panels.clear());
@@ -135,14 +131,14 @@ public class MainParamsPane extends Pane {
 		});
 	}
 
-	private void handleSessionChanged(PlatformEventBus eventBus, Session session, BiFunction<PlatformEventBus, Session, Pane> factory, Consumer<Pane> consumer) {
+	private void handleSessionChanged(PlatformEventBus eventBus, Session session, boolean continuous, boolean timeAnimation, BiFunction<PlatformEventBus, Session, Pane> factory, Consumer<Pane> consumer) {
 		if (this.session == null || !this.session.getPluginId().equals(session.getPluginId())) {
 			if (this.session != null) {
 				Optional.ofNullable(buses.get(this.session.getPluginId())).ifPresent(EventBus::disable);
 			}
 			Pane rootPane = panels.get(session.getPluginId());
 			if (rootPane == null) {
-				PlatformEventBus innerBus = new PlatformEventBus(eventBus);
+				PlatformEventBus innerBus = new PlatformEventBus(session.getPluginId(), eventBus);
 				rootPane = factory.apply(innerBus, session);
 				panels.put(session.getPluginId(), rootPane);
 				buses.put(session.getPluginId(), innerBus);
@@ -151,6 +147,7 @@ public class MainParamsPane extends Pane {
 			Optional.ofNullable(buses.get(session.getPluginId())).ifPresent(EventBus::enable);
 		}
 		this.session = session;
+		eventBus.postEvent("params-session-ready", session, continuous, timeAnimation);
 	}
 
 	private Pane createParamsPane(PlatformEventBus eventBus, Session session) {

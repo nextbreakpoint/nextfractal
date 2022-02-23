@@ -38,13 +38,15 @@ public abstract class EventBus {
     private Map<String, List<EventListener>> listeners = new HashMap<>();
     private List<EventBus> children = new LinkedList<>();
     private EventBus parent;
-    private boolean disabled;
+    private String name;
+    private volatile boolean disabled;
 
-    public EventBus() {
-        this(null);
+    public EventBus(String name) {
+        this(name, null);
     }
 
-    public EventBus(EventBus parent) {
+    public EventBus(String name, EventBus parent) {
+        this.name = name;
         this.parent = parent;
         if (parent != null) {
             parent.children.add(this);
@@ -87,6 +89,7 @@ public abstract class EventBus {
     public abstract void postEvent(String channel, Object... event);
 
     protected final void propagateRoot(String channel, Exception error, Object[] event) {
+        logger.log(Level.INFO, "bus: " + name + " propagate root: " + channel);
         try {
             if (parent != null) {
                 parent.propagateRoot(channel, error, event);
@@ -101,6 +104,7 @@ public abstract class EventBus {
 
     private void propagateChildren(String channel, Exception error, Object... event) {
         if (disabled) return;
+        logger.log(Level.INFO, "bus: " + name + " propagate children: " + channel);
         final EventValidator validator = validators.get(channel);
         if (validator != null) {
             if (validator.validate(event)) {

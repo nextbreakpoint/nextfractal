@@ -1282,12 +1282,14 @@ public class RenderPane extends BorderPane {
 		try {
 			if (parserResult != null) {
 				Orbit orbit = orbitFactory.create();
-				Scope scope = new Scope();
-				orbit.setScope(scope);
-				orbit.init();
-				orbit.setW(new Number(point.getX(), point.getY()));
-				orbit.setX(orbit.getInitialPoint());
-				orbit.render(states);
+				if (orbit != null) {
+					Scope scope = new Scope();
+					orbit.setScope(scope);
+					orbit.init();
+					orbit.setW(new Number(point.getX(), point.getY()));
+					orbit.setX(orbit.getInitialPoint());
+					orbit.render(states);
+				}
 			}
 		} catch (Throwable e) {
 			logger.log(Level.WARNING, "Failed to render orbit", e);

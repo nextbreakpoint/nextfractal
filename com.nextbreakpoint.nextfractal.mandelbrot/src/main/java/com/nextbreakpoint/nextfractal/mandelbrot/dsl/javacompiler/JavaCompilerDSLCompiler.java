@@ -86,7 +86,7 @@ public class JavaCompilerDSLCompiler {
 		System.getProperties();
 		List<String> options = new ArrayList<>();
 //		options.addAll(Arrays.asList("-source", "1.8", "-target", "1.8", "-proc:none", "-Xdiags:verbose"));
-		options.addAll(Arrays.asList("-source", "11", "-target", "11", "-proc:none", "-Xdiags:verbose", "--module-path", System.getProperty("jdk.module.path"), "--add-modules", "ALL-MODULE-PATH"));
+		options.addAll(Arrays.asList("-source", "11", "-target", "11", "-proc:none", "-Xdiags:verbose", "--module-path", System.getProperty("jdk.module.path"), "--add-modules", "com.nextbreakpoint.nextfractal.mandelbrot"));
 //		options.addAll(Arrays.asList("-source", "11", "-target", "11", "-proc:none", "-Xdiags:verbose"));
 //		options.addAll(Arrays.asList("-proc:none", "-Xdiags:verbose", "-classpath", System.getProperty("java.class.path")));
 //		options.addAll(Arrays.asList("-classpath", System.getProperty("java.class.path")));

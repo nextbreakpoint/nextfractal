@@ -226,7 +226,7 @@ public class EditorPane extends BorderPane {
     }
 
     private void notifyTaskResult(EventBus eventBus, Try<TaskResult, Exception> result) {
-        result.ifPresent(task -> eventBus.postEvent("editor-report-changed", task.report, new MandelbrotSession(task.report.getSource(), (MandelbrotMetadata) session.getMetadata()), false, !task.report.getSource().equals(session.getScript())));
+        result.map(task -> task.report).ifPresent(report -> eventBus.postEvent("editor-report-changed", report, new MandelbrotSession(report.getSource(), (MandelbrotMetadata) session.getMetadata()), false, !report.getSource().equals(session.getScript())));
     }
 
     private Try<TaskResult, Exception> processResult(Try<TaskResult, Exception> result) {

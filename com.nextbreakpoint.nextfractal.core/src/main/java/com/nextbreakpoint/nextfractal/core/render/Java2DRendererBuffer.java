@@ -59,7 +59,7 @@ public class Java2DRendererBuffer implements RendererBuffer {
 
 	@Override
 	public void update(int[] pixels) {
-		if (pixels.length <= getWidth() * getHeight()) {
+		if (pixels != null && pixels.length <= getWidth() * getHeight()) {
 			System.arraycopy(pixels, 0, ((DataBufferInt)image.getRaster().getDataBuffer()).getData(), 0, pixels.length);
 		}
 	}

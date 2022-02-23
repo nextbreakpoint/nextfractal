@@ -28,12 +28,12 @@ import com.nextbreakpoint.nextfractal.core.common.EventBus;
 import javafx.application.Platform;
 
 public class PlatformEventBus extends EventBus {
-    public PlatformEventBus() {
-        this(null);
+    public PlatformEventBus(String name) {
+        this(name, null);
     }
 
-    public PlatformEventBus(PlatformEventBus parent) {
-        super(parent);
+    public PlatformEventBus(String name, PlatformEventBus parent) {
+        super(name, parent);
     }
 
     public void postEvent(String channel, Object... event) {
