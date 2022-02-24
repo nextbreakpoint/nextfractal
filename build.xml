@@ -31,7 +31,7 @@
 		</sequential>
 	</macrodef>
 	<macrodef name="maven">
-		<attribute name="options" default="" />
+		<attribute name="options" default=""/>
 		<attribute name="goal" />
 		<attribute name="basedir" />
 		<attribute name="resultproperty" default="maven.result" />
@@ -39,6 +39,10 @@
 		<sequential>
 			<java classname="org.codehaus.classworlds.Launcher" fork="true" dir="@{basedir}" resultproperty="@{resultproperty}">
 				<jvmarg value="-Xmx1024m" />
+				<jvmarg value="--add-opens=java.base/java.util=ALL-UNNAMED" />
+				<jvmarg value="--add-opens=java.base/java.lang.reflect=ALL-UNNAMED" />
+				<jvmarg value="--add-opens=java.base/java.text=ALL-UNNAMED" />
+				<jvmarg value="--add-opens=java.desktop/java.awt.font=ALL-UNNAMED" />
 				<classpath>
 					<fileset dir="@{basedir}/tools/maven/apache-maven-3.6.3/boot">
 						<include name="*.jar" />
