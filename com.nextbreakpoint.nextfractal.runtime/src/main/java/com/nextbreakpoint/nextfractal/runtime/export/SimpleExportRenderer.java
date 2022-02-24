@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.1.2
+ * NextFractal 2.1.3
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2020 Andrea Medeghini
+ * Copyright 2015-2022 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -47,7 +47,7 @@ import static com.nextbreakpoint.nextfractal.core.common.Plugins.tryFindFactory;
 public class SimpleExportRenderer implements ExportRenderer {
 	private static final Logger logger = Logger.getLogger(SimpleExportRenderer.class.getName());
 
-	private static final int MAX_THREADS = Math.max(Runtime.getRuntime().availableProcessors() * 2, 2);
+	private static final int MAX_THREADS = Runtime.getRuntime().availableProcessors();
 
 	private final ThreadFactory threadFactory;
 
@@ -76,7 +76,7 @@ public class SimpleExportRenderer implements ExportRenderer {
 		}
 
 		@Override
-		public ExportJobHandle call() throws Exception {
+		public ExportJobHandle call() {
 			return Try.of(() -> processJob(job)).onFailure(e -> processError(e)).orElse(job);
 		}
 

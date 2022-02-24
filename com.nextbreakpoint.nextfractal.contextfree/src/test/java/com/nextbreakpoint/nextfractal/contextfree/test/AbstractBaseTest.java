@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.1.2
+ * NextFractal 2.1.3
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2020 Andrea Medeghini
+ * Copyright 2015-2022 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -24,10 +24,10 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.test;
 
-import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDG;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGDriver;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGLexer;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGParser;
+import com.nextbreakpoint.nextfractal.contextfree.dsl.grammar.CFDG;
+import com.nextbreakpoint.nextfractal.contextfree.dsl.grammar.CFDGDriver;
+import com.nextbreakpoint.nextfractal.contextfree.dsl.grammar.CFDGLexer;
+import com.nextbreakpoint.nextfractal.contextfree.dsl.grammar.CFDGParser;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;

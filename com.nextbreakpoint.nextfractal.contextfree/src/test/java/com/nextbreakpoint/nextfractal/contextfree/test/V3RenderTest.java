@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.1.2
+ * NextFractal 2.1.3
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2020 Andrea Medeghini
+ * Copyright 2015-2022 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -24,7 +24,8 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.test;
 
-import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDG;
+import com.nextbreakpoint.nextfractal.contextfree.dsl.grammar.CFDGInterpreter;
+import com.nextbreakpoint.nextfractal.contextfree.dsl.grammar.CFDG;
 import com.nextbreakpoint.nextfractal.contextfree.renderer.Renderer;
 import com.nextbreakpoint.nextfractal.core.common.DefaultThreadFactory;
 import com.nextbreakpoint.nextfractal.core.render.Java2DRendererFactory;
@@ -115,7 +116,7 @@ public class V3RenderTest extends AbstractBaseTest {
 		CFDG cfdg = parseSource(sourceName);
 
 		renderer.setOpaque(true);
-		renderer.setCFDG(cfdg);
+		renderer.setInterpreter(new CFDGInterpreter(cfdg));
 		renderer.setSeed("ABCD");
 		renderer.init();
 		renderer.runTask();
@@ -162,6 +163,7 @@ public class V3RenderTest extends AbstractBaseTest {
 
 	private void saveImage(String imageName, BufferedImage image) throws IOException {
 		File file = new File(imageName);
+		file.mkdirs();
 		System.out.println(file.getAbsoluteFile());
 		ImageIO.write(image, "png", file);
 	}

@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.1.2
+ * NextFractal 2.1.3
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2020 Andrea Medeghini
+ * Copyright 2015-2022 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -24,9 +24,10 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.module;
 
-import com.nextbreakpoint.nextfractal.contextfree.compiler.Compiler;
-import com.nextbreakpoint.nextfractal.contextfree.compiler.CompilerReport;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDG;
+import com.nextbreakpoint.nextfractal.contextfree.dsl.grammar.CFDGInterpreter;
+import com.nextbreakpoint.nextfractal.contextfree.dsl.DSLCompiler;
+import com.nextbreakpoint.nextfractal.contextfree.dsl.DSLParser;
+import com.nextbreakpoint.nextfractal.contextfree.dsl.ParserResult;
 import com.nextbreakpoint.nextfractal.contextfree.renderer.Renderer;
 import com.nextbreakpoint.nextfractal.core.common.ImageGenerator;
 import com.nextbreakpoint.nextfractal.core.common.Metadata;
@@ -59,17 +60,14 @@ public class ContextFreeImageGenerator implements ImageGenerator {
 		for (int i = 0; i < pixels.length; i++) pixels[i] = 0xFF000000;
 		IntBuffer buffer = IntBuffer.wrap(pixels);
 		try {
-			Compiler compiler = new Compiler();
-			CompilerReport report = compiler.compileReport(script);
-			if (report.getErrors().size() > 0) {
-				throw new RuntimeException("Failed to compile source");
-			}
-			CFDG cfdg = report.getCFDG();
+			DSLParser parser = new DSLParser();
+			ParserResult report = parser.parse(script);
+			DSLCompiler compiler = new DSLCompiler();
+			CFDGInterpreter interpreter = compiler.compile(report);
 			Renderer renderer = new Renderer(threadFactory, renderFactory, tile);
+			renderer.setInterpreter(interpreter);
 			renderer.setSeed(metadata.getSeed());
 			renderer.setOpaque(opaque);
-			renderer.setCFDG(cfdg);
-			renderer.setSeed(metadata.getSeed());
 			renderer.init();
 			renderer.runTask();
 			renderer.waitForTasks();

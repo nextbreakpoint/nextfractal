@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.1.2
+ * NextFractal 2.1.3
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2020 Andrea Medeghini
+ * Copyright 2015-2022 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -25,17 +25,11 @@
 package com.nextbreakpoint.nextfractal.runtime.javafx;
 
 import com.nextbreakpoint.nextfractal.core.common.Clip;
-import com.nextbreakpoint.nextfractal.core.javafx.EventBus;
+import com.nextbreakpoint.nextfractal.core.common.EventBus;
 import com.nextbreakpoint.nextfractal.core.common.Session;
 import com.nextbreakpoint.nextfractal.core.export.ExportSession;
 import com.nextbreakpoint.nextfractal.core.export.ExportState;
-import com.nextbreakpoint.nextfractal.core.javafx.ExportDelegate;
-import com.nextbreakpoint.nextfractal.core.javafx.ExportPane;
-import com.nextbreakpoint.nextfractal.core.javafx.HistoryPane;
-import com.nextbreakpoint.nextfractal.core.javafx.JobsDelegate;
-import com.nextbreakpoint.nextfractal.core.javafx.JobsPane;
-import com.nextbreakpoint.nextfractal.core.javafx.StatusPane;
-import com.nextbreakpoint.nextfractal.core.javafx.StringObservableValue;
+import com.nextbreakpoint.nextfractal.core.javafx.*;
 import com.nextbreakpoint.nextfractal.core.render.RendererPoint;
 import com.nextbreakpoint.nextfractal.core.render.RendererSize;
 import com.nextbreakpoint.nextfractal.core.render.RendererTile;
@@ -65,10 +59,8 @@ public class MainSidePane extends BorderPane {
 
     private Session session;
 
-    public MainSidePane(EventBus eventBus) {
-        EventBus subEventBus = new EventBus(eventBus);
-
-        setCenter(createRootPane(subEventBus));
+    public MainSidePane(PlatformEventBus eventBus) {
+        setCenter(createRootPane(eventBus));
 
         eventBus.subscribe("session-data-changed", event -> session = (Session) event[0]);
 
@@ -78,22 +70,22 @@ public class MainSidePane extends BorderPane {
 
         eventBus.subscribe("playback-data-change", event -> session = (Session) event[0]);
 
-        eventBus.subscribe("playback-clips-start", event -> handlePlaybackClipsStart(subEventBus, this));
+        eventBus.subscribe("playback-clips-start", event -> handlePlaybackClipsStart(eventBus, this));
 
-        eventBus.subscribe("playback-clips-stop", event -> handlePlaybackClipsStop(subEventBus, this));
+        eventBus.subscribe("playback-clips-stop", event -> handlePlaybackClipsStop(eventBus, this));
     }
 
-    private void handlePlaybackClipsStart(EventBus subEventBus, Pane rootPane) {
-        subEventBus.disable();
+    private void handlePlaybackClipsStart(PlatformEventBus subEventBus, Pane rootPane) {
+//        subEventBus.disable();
         rootPane.setDisable(true);
         BoxBlur effect = new BoxBlur();
         effect.setIterations(1);
         rootPane.setEffect(effect);
     }
 
-    private void handlePlaybackClipsStop(EventBus subEventBus, Pane rootPane) {
+    private void handlePlaybackClipsStop(PlatformEventBus subEventBus, Pane rootPane) {
         rootPane.setEffect(null);
-        subEventBus.enable();
+//        subEventBus.enable();
         rootPane.setDisable(false);
         subEventBus.postEvent("session-data-loaded", session, false, false);
     }
@@ -102,45 +94,45 @@ public class MainSidePane extends BorderPane {
         eventBus.postEvent("session-data-loaded", session, false, false);
     }
 
-    private Pane createRootPane(EventBus eventBus) {
-        int tileSize = computePercentage(0.03);
+    private Pane createRootPane(PlatformEventBus eventBus) {
+        final RendererTile exportTile = createExportTile();
 
-        RendererTile tile = createSingleTile(tileSize, tileSize);
+        final RendererTile tile = createRendererTile();
 
-        StringObservableValue errorProperty = new StringObservableValue();
+        final StringObservableValue errorProperty = new StringObservableValue();
         errorProperty.setValue(null);
 
-        MainEditorPane editorPane = new MainEditorPane(eventBus);
+        final MainEditorPane editorPane = new MainEditorPane(eventBus);
 
-        MainParamsPane paramsPane = new MainParamsPane(eventBus);
+        final MainParamsPane paramsPane = new MainParamsPane(eventBus);
 
-        StatusPane statusPane = new StatusPane();
+        final StatusPane statusPane = new StatusPane();
 
-        ExportPane exportPane = new ExportPane(tile);
+        final ExportPane exportPane = new ExportPane(tile);
 
-        HistoryPane historyPane = new HistoryPane(tile);
+        final HistoryPane historyPane = new HistoryPane(tile);
 
-        JobsPane jobsPane = new JobsPane(tile);
+        final JobsPane jobsPane = new JobsPane(tile);
 
-        StackPane sidePane = new StackPane();
-        sidePane.getStyleClass().add("sidebar");
-        sidePane.getChildren().add(jobsPane);
-        sidePane.getChildren().add(historyPane);
-        sidePane.getChildren().add(exportPane);
-        sidePane.getChildren().add(paramsPane);
+        final StackPane sidebarPane = new StackPane();
+        sidebarPane.getStyleClass().add("sidebar");
+        sidebarPane.getChildren().add(jobsPane);
+        sidebarPane.getChildren().add(historyPane);
+        sidebarPane.getChildren().add(exportPane);
+        sidebarPane.getChildren().add(paramsPane);
 
-        Pane sourcePane = new Pane();
-        HBox sourceButtons = new HBox(0);
+        final Pane sourcePane = new Pane();
+        final HBox sourceButtons = new HBox(0);
         sourceButtons.setAlignment(Pos.CENTER);
-        Button browseButton = new Button("", createIconImage("/icon-grid.png"));
-        Button renderButton = new Button("", createIconImage("/icon-run.png"));
-        Button loadButton = new Button("", createIconImage("/icon-load.png"));
-        Button saveButton = new Button("", createIconImage("/icon-save.png"));
-        ToggleButton jobsButton = new ToggleButton("", createIconImage("/icon-tool.png"));
-        ToggleButton paramsButton = new ToggleButton("", createIconImage("/icon-edit.png"));
-        ToggleButton exportButton = new ToggleButton("", createIconImage("/icon-export.png"));
-        ToggleButton historyButton = new ToggleButton("", createIconImage("/icon-time.png"));
-        ToggleButton statusButton = new ToggleButton("", createIconImage("/icon-warn.png"));
+        final Button browseButton = new Button("", createIconImage("/icon-grid.png"));
+        final Button renderButton = new Button("", createIconImage("/icon-run.png"));
+        final Button loadButton = new Button("", createIconImage("/icon-load.png"));
+        final Button saveButton = new Button("", createIconImage("/icon-save.png"));
+        final ToggleButton jobsButton = new ToggleButton("", createIconImage("/icon-tool.png"));
+        final ToggleButton paramsButton = new ToggleButton("", createIconImage("/icon-edit.png"));
+        final ToggleButton exportButton = new ToggleButton("", createIconImage("/icon-export.png"));
+        final ToggleButton historyButton = new ToggleButton("", createIconImage("/icon-time.png"));
+        final ToggleButton statusButton = new ToggleButton("", createIconImage("/icon-warn.png"));
         browseButton.setTooltip(new Tooltip("Show/hide projects browser"));
         renderButton.setTooltip(new Tooltip("Render image"));
         loadButton.setTooltip(new Tooltip("Load project from file"));
@@ -164,24 +156,24 @@ public class MainSidePane extends BorderPane {
         sourcePane.getChildren().add(editorPane);
         sourcePane.getChildren().add(sourceButtons);
         sourcePane.getChildren().add(statusPane);
-        sourcePane.getChildren().add(sidePane);
+        sourcePane.getChildren().add(sidebarPane);
         browseButton.setOnAction(e -> eventBus.postEvent("toggle-browser", ""));
         renderButton.setOnAction(e -> eventBus.postEvent("editor-action", "reload"));
         loadButton.setOnAction(e -> eventBus.postEvent("editor-action", "load"));
         saveButton.setOnAction(e -> eventBus.postEvent("editor-action", "save"));
 
-        TranslateTransition sidebarTransition = createTranslateTransition(sidePane);
-        TranslateTransition statusTransition = createTranslateTransition(statusPane);
+        final TranslateTransition sidebarTransition = createTranslateTransition(sidebarPane);
+        final TranslateTransition statusTransition = createTranslateTransition(statusPane);
 
         statusButton.setSelected(true);
 
-        ToggleGroup viewGroup = new ToggleGroup();
+        final ToggleGroup viewGroup = new ToggleGroup();
         viewGroup.getToggles().add(jobsButton);
         viewGroup.getToggles().add(historyButton);
         viewGroup.getToggles().add(paramsButton);
         viewGroup.getToggles().add(exportButton);
 
-        StackPane rootPane = new StackPane();
+        final StackPane rootPane = new StackPane();
         rootPane.getChildren().add(sourcePane);
 
         exportPane.setExportDelegate(new ExportDelegate() {
@@ -255,11 +247,11 @@ public class MainSidePane extends BorderPane {
             double width = newValue.doubleValue();
             sourceButtons.setPrefWidth(width);
             editorPane.setPrefWidth(width);
-            sidePane.setPrefWidth(width * 0.4);
+            sidebarPane.setPrefWidth(width * 0.4);
             statusPane.setPrefWidth(width);
             sourceButtons.setLayoutX(0);
             editorPane.setLayoutX(0);
-            sidePane.setLayoutX(width);
+            sidebarPane.setLayoutX(width);
             statusPane.setLayoutX(0);
         });
 
@@ -267,15 +259,15 @@ public class MainSidePane extends BorderPane {
             double height = newValue.doubleValue();
             sourceButtons.setPrefHeight(height * 0.07);
             editorPane.setPrefHeight(height * 0.78);
-            sidePane.setPrefHeight(height * 0.78);
+            sidebarPane.setPrefHeight(height * 0.78);
             statusPane.setPrefHeight(height * 0.15);
             sourceButtons.setLayoutY(0);
             editorPane.setLayoutY(height * 0.07);
-            sidePane.setLayoutY(height * 0.07);
+            sidebarPane.setLayoutY(height * 0.07);
             statusPane.setLayoutY(height * 0.85);
         });
 
-        sidePane.widthProperty().addListener((observable, oldValue, newValue) -> {
+        sidebarPane.widthProperty().addListener((observable, oldValue, newValue) -> {
             double width = newValue.doubleValue();
             historyPane.setPrefWidth(width);
             paramsPane.setPrefWidth(width);
@@ -287,7 +279,7 @@ public class MainSidePane extends BorderPane {
             jobsPane.setMaxWidth(width);
         });
 
-        sidePane.heightProperty().addListener((observable, oldValue, newValue) -> {
+        sidebarPane.heightProperty().addListener((observable, oldValue, newValue) -> {
             double height = newValue.doubleValue();
             historyPane.setPrefHeight(height);
             paramsPane.setPrefHeight(height);
@@ -307,29 +299,29 @@ public class MainSidePane extends BorderPane {
 
         historyButton.selectedProperty().addListener((source, oldValue, newValue) -> {
             if (newValue) {
-                sidePane.getChildren().remove(historyPane);
-                sidePane.getChildren().add(historyPane);
+                sidebarPane.getChildren().remove(historyPane);
+                sidebarPane.getChildren().add(historyPane);
             }
         });
 
         paramsButton.selectedProperty().addListener((source, oldValue, newValue) -> {
             if (newValue) {
-                sidePane.getChildren().remove(paramsPane);
-                sidePane.getChildren().add(paramsPane);
+                sidebarPane.getChildren().remove(paramsPane);
+                sidebarPane.getChildren().add(paramsPane);
             }
         });
 
         jobsButton.selectedProperty().addListener((source, oldValue, newValue) -> {
             if (newValue) {
-                sidePane.getChildren().remove(jobsPane);
-                sidePane.getChildren().add(jobsPane);
+                sidebarPane.getChildren().remove(jobsPane);
+                sidebarPane.getChildren().add(jobsPane);
             }
         });
 
         exportButton.selectedProperty().addListener((source, oldValue, newValue) -> {
             if (newValue) {
-                sidePane.getChildren().remove(exportPane);
-                sidePane.getChildren().add(exportPane);
+                sidebarPane.getChildren().remove(exportPane);
+                sidebarPane.getChildren().add(exportPane);
             }
         });
 
@@ -353,13 +345,13 @@ public class MainSidePane extends BorderPane {
             }
         });
 
-        sidePane.translateXProperty().addListener((source, oldValue, newValue) -> {
+        sidebarPane.translateXProperty().addListener((source, oldValue, newValue) -> {
             editorPane.prefWidthProperty().setValue(rootPane.getWidth() + newValue.doubleValue());
         });
 
         statusPane.translateYProperty().addListener((source, oldValue, newValue) -> {
             editorPane.prefHeightProperty().setValue(rootPane.getHeight() - statusPane.getHeight() - sourceButtons.getHeight() + newValue.doubleValue());
-            sidePane.prefHeightProperty().setValue(rootPane.getHeight() - statusPane.getHeight() - sourceButtons.getHeight() + newValue.doubleValue());
+            sidebarPane.prefHeightProperty().setValue(rootPane.getHeight() - statusPane.getHeight() - sourceButtons.getHeight() + newValue.doubleValue());
         });
 
         historyPane.setDelegate(session -> eventBus.postEvent("history-session-selected", session));
@@ -419,6 +411,15 @@ public class MainSidePane extends BorderPane {
     private void handleSessionStopped(ExportPane exportPane, ToggleButton exportButton, Clip clip) {
         if (!clip.isEmpty()) exportPane.appendClip(clip);
         exportButton.setSelected(true);
+    }
+
+    private RendererTile createRendererTile() {
+        final int tileSize = computePercentage(0.05);
+        return createSingleTile(tileSize, tileSize);
+    }
+
+    private RendererTile createExportTile() {
+        return createSingleTile(512, 512);
     }
 
     private static TranslateTransition createTranslateTransition(Node node) {

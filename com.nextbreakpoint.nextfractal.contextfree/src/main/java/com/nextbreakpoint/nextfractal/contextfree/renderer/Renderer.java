@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.1.2
+ * NextFractal 2.1.3
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2020 Andrea Medeghini
+ * Copyright 2015-2022 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -24,18 +24,12 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.renderer;
 
-import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDG;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGLogger;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDGRenderer;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.SimpleCanvas;
+import com.nextbreakpoint.nextfractal.contextfree.dsl.grammar.CFDGInterpreter;
+import com.nextbreakpoint.nextfractal.contextfree.dsl.grammar.CFDGLogger;
+import com.nextbreakpoint.nextfractal.contextfree.dsl.grammar.CFDGRenderer;
+import com.nextbreakpoint.nextfractal.contextfree.dsl.grammar.SimpleCanvas;
 import com.nextbreakpoint.nextfractal.core.common.SourceError;
-import com.nextbreakpoint.nextfractal.core.render.RendererAffine;
-import com.nextbreakpoint.nextfractal.core.render.RendererFactory;
-import com.nextbreakpoint.nextfractal.core.render.RendererGraphicsContext;
-import com.nextbreakpoint.nextfractal.core.render.RendererPoint;
-import com.nextbreakpoint.nextfractal.core.render.RendererSize;
-import com.nextbreakpoint.nextfractal.core.render.RendererSurface;
-import com.nextbreakpoint.nextfractal.core.render.RendererTile;
+import com.nextbreakpoint.nextfractal.core.render.*;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -68,14 +62,14 @@ public class Renderer {
 	protected boolean opaque;
 	protected RendererSize size;
 	protected RendererTile tile;
-	protected CFDG cfdg;
-	private final RendererLock lock = new ReentrantRendererLock();
+	private final RendererLock lock = new RendererLock();
 	private final RenderRunnable renderTask = new RenderRunnable();
 	private ExecutorService executor;
 	private volatile Future<?> future;
-	private CFDGRenderer renderer;
+	private CFDGInterpreter cfdgInterpreter;
+	private CFDGRenderer cfdgRenderer;
+	private String cfdgSeed;
 	private boolean initialized;
-	private String seed;
 
 	/**
 	 * @param threadFactory
@@ -120,8 +114,8 @@ public class Renderer {
 	 */
 	public void abortTasks() {
 		interrupted = true;
-		if (renderer != null) {
-			renderer.setRequestStop(interrupted);
+		if (cfdgRenderer != null) {
+			cfdgRenderer.setRequestStop(interrupted);
 		}
 //		if (future != null) {
 //			future.cancel(true);
@@ -139,8 +133,8 @@ public class Renderer {
 			}
 		} catch (Exception e) {
 			interrupted = true;
-			if (renderer != null) {
-				renderer.setRequestStop(interrupted);
+			if (cfdgRenderer != null) {
+				cfdgRenderer.setRequestStop(interrupted);
 			}
 //			e.printStackTrace();
 		}
@@ -186,15 +180,18 @@ public class Renderer {
 	}
 
 	/**
-	 * @param cfdg
+	 * @param cfdgInterpreter
 	 */
-	public void setCFDG(CFDG cfdg) {
-		this.cfdg = cfdg;
+	public void setInterpreter(CFDGInterpreter cfdgInterpreter) {
+		this.cfdgInterpreter = cfdgInterpreter;
 		cfdgChanged = true;
 	}
 
-	public void setSeed(String seed) {
-		this.seed = seed;
+	/**
+	 * @param cfdgSeed
+	 */
+	public void setSeed(String cfdgSeed) {
+		this.cfdgSeed = cfdgSeed;
 		cfdgChanged = true;
 	}
 
@@ -307,7 +304,10 @@ public class Renderer {
 	protected void doRender() {
 		Graphics2D g2d = null;
 		try {
-			cfdgChanged = false;
+			if (cfdgChanged) {
+				cfdgRenderer = null;
+				cfdgChanged = false;
+			}
 			progress = 0;
 			int width = getSize().getWidth();
 			int height = getSize().getHeight();
@@ -319,17 +319,15 @@ public class Renderer {
 			g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
 			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 			g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-			if (cfdg != null) {
+			if (cfdgInterpreter != null) {
 				CFDGLogger logger = new CFDGLogger();
-				cfdg.getDriver().setLogger(logger);
-				cfdg.rulesLoaded();
-				renderer = cfdg.renderer(tile.getImageSize().getWidth(), tile.getImageSize().getHeight(), 1, seed.hashCode(), 0.1);
-				if (renderer != null) {
-					renderer.setRenderListener(() -> didChanged(progress, pixels));
+				if (cfdgRenderer == null) {
+					cfdgRenderer = cfdgInterpreter.create(tile.getImageSize(), cfdgSeed, logger);
+				}
+				cfdgRenderer.setRenderListener(() -> didChanged(progress, pixels));
 //					RendererFactory factory = new Java2DRendererFactory();
 //					renderer.run(new RendererCanvas(factory, g2d, width, height), false);
-					renderer.run(new SimpleCanvas(g2d, buffer.getTile()),true);
-				}
+				cfdgRenderer.run(new SimpleCanvas(g2d, buffer.getTile()),true);
 				errors.addAll(logger.getErrors());
 			}
 			if (!isInterrupted()) {

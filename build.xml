@@ -2,8 +2,8 @@
 <project name="NextFractal">
 	<property environment="env" />
 	<property name="openjfx.version" value="14" />
-	<property name="nextfractal.version" value="2.1.2" />
-	<property name="nextfractal.year" value="2020" />
+	<property name="nextfractal.version" value="2.1.3" />
+	<property name="nextfractal.year" value="2022" />
 	<property name="nextfractal.folder" value="NextFractal" />
 	<property name="mainmodule" value="com.nextbreakpoint.nextfractal.main" />
 	<macrodef name="setup">
@@ -31,7 +31,7 @@
 		</sequential>
 	</macrodef>
 	<macrodef name="maven">
-		<attribute name="options" default="" />
+		<attribute name="options" default=""/>
 		<attribute name="goal" />
 		<attribute name="basedir" />
 		<attribute name="resultproperty" default="maven.result" />
@@ -39,6 +39,10 @@
 		<sequential>
 			<java classname="org.codehaus.classworlds.Launcher" fork="true" dir="@{basedir}" resultproperty="@{resultproperty}">
 				<jvmarg value="-Xmx1024m" />
+				<jvmarg value="--add-opens=java.base/java.util=ALL-UNNAMED" />
+				<jvmarg value="--add-opens=java.base/java.lang.reflect=ALL-UNNAMED" />
+				<jvmarg value="--add-opens=java.base/java.text=ALL-UNNAMED" />
+				<jvmarg value="--add-opens=java.desktop/java.awt.font=ALL-UNNAMED" />
 				<classpath>
 					<fileset dir="@{basedir}/tools/maven/apache-maven-3.6.3/boot">
 						<include name="*.jar" />
@@ -402,6 +406,7 @@
 		<attribute name="resultproperty" default="publish.result" />
 		<element name="args" implicit="true" optional="true" />
 		<sequential>
+			<maven basedir="@{basedir}" goal="deploy" options="-N -DskipTests=true -Dchannel=@{channel} -pl ." resultproperty="@{resultproperty}"/>
 			<maven basedir="@{basedir}" goal="deploy" options="-DskipTests=true -Dchannel=@{channel} -pl com.nextbreakpoint.nextfractal.core" resultproperty="@{resultproperty}"/>
 			<maven basedir="@{basedir}" goal="deploy" options="-DskipTests=true -Dchannel=@{channel} -pl com.nextbreakpoint.nextfractal.contextfree" resultproperty="@{resultproperty}"/>
 			<maven basedir="@{basedir}" goal="deploy" options="-DskipTests=true -Dchannel=@{channel} -pl com.nextbreakpoint.nextfractal.mandelbrot" resultproperty="@{resultproperty}"/>
@@ -531,7 +536,6 @@
 		<makezip basedir="${basedir}" os="fedora" arch="x86_64" version="${nextfractal.version}" resultproperty="ant.makezip.result" />
 	</target>
 	<target name="publish-libs">
-		<publish basedir="${basedir}" channel="bintray" resultproperty="ant.publish.result"/>
 		<publish basedir="${basedir}" channel="ossrh" resultproperty="ant.publish.result"/>
 	</target>
 	<target name="setup">

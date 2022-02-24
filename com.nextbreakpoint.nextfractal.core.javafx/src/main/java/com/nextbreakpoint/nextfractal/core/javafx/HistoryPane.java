@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.1.2
+ * NextFractal 2.1.3
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2020 Andrea Medeghini
+ * Copyright 2015-2022 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -55,7 +55,6 @@ public class HistoryPane extends BorderPane {
     private ListView<Bitmap> listView;
     private HistoryDelegate delegate;
     private RendererTile tile;
-    private volatile boolean noHistory;
 
     public HistoryPane(RendererTile tile) {
         this.tile = tile;
@@ -84,13 +83,11 @@ public class HistoryPane extends BorderPane {
     private void itemSelected(ListView<Bitmap> listView) {
         int index = listView.getSelectionModel().getSelectedIndex();
         if (index >= 0) {
-            noHistory = true;
             if (delegate != null) {
                 Bitmap bitmap = listView.getItems().get(index);
                 Session session = (Session) bitmap.getProperty("session");
-                delegate.sessionChanged(session);
+                Platform.runLater(() -> delegate.sessionChanged(session));
             }
-            noHistory = false;
         }
     }
 

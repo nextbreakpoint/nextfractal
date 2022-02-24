@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.1.2
+ * NextFractal 2.1.3
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2020 Andrea Medeghini
+ * Copyright 2015-2022 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -59,7 +59,7 @@ public class JavaFXRendererBuffer implements RendererBuffer {
 
 	@Override
 	public void update(int[] pixels) {
-		if (pixels.length <= getWidth() * getHeight()) {
+		if (pixels != null && pixels.length <= getWidth() * getHeight()) {
 			writer.setPixels(0, 0, getWidth(), getHeight(), PixelFormat.getIntArgbInstance(), pixels, 0, getWidth());
 		}
 	}

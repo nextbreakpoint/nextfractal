@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.1.2
+ * NextFractal 2.1.3
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2020 Andrea Medeghini
+ * Copyright 2015-2022 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -24,9 +24,10 @@
  */
 package com.nextbreakpoint.nextfractal.runtime.javafx;
 
-import com.nextbreakpoint.nextfractal.core.javafx.EventBus;
+import com.nextbreakpoint.nextfractal.core.common.EventBus;
 import com.nextbreakpoint.nextfractal.core.common.EventListener;
 import com.nextbreakpoint.nextfractal.core.common.Session;
+import com.nextbreakpoint.nextfractal.core.javafx.PlatformEventBus;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -40,6 +41,8 @@ import javafx.scene.layout.VBox;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
 
 import static com.nextbreakpoint.nextfractal.core.common.Plugins.listGrammars;
 import static com.nextbreakpoint.nextfractal.core.javafx.UIPlugins.tryFindFactory;
@@ -47,21 +50,22 @@ import static com.nextbreakpoint.nextfractal.core.javafx.UIPlugins.tryFindFactor
 public class MainParamsPane extends Pane {
 	private static final int SPACING = 5;
 
-	private Map<String, EventBus> buses = new HashMap<>();
+	private Map<String, PlatformEventBus> buses = new HashMap<>();
 	private Map<String, Pane> panels = new HashMap<>();
 	private VBox paramsBox;
+
 	private Session session;
 
-	public MainParamsPane(EventBus eventBus) {
-		VBox box = new VBox(SPACING * 2);
+	public MainParamsPane(PlatformEventBus eventBus) {
+		final VBox box = new VBox(SPACING * 2);
 		box.getStyleClass().add("params");
 
-		VBox grammarPane = new VBox(SPACING);
+		final VBox grammarPane = new VBox(SPACING);
 
-		Label grammarLabel = new Label("Project grammar");
+		final Label grammarLabel = new Label("Project grammar");
 		grammarPane.getChildren().add(grammarLabel);
 
-		ComboBox<String> grammarCombobox = new ComboBox<>();
+		final ComboBox<String> grammarCombobox = new ComboBox<>();
 		grammarCombobox.getItems().addAll(listGrammars());
 		grammarCombobox.getStyleClass().add("text-small");
 		grammarCombobox.setTooltip(new Tooltip("Select project grammar"));
@@ -73,12 +77,12 @@ public class MainParamsPane extends Pane {
 
 		paramsBox = new VBox(4);
 
-		BorderPane paramsPane = new BorderPane();
+		final BorderPane paramsPane = new BorderPane();
 		paramsBox.getChildren().add(paramsPane);
 
-		HBox buttons = new HBox(4);
-		Button applyButton = new Button("Apply");
-		Button cancelButton = new Button("Cancel");
+		final HBox buttons = new HBox(4);
+		final Button applyButton = new Button("Apply");
+		final Button cancelButton = new Button("Cancel");
 		applyButton.setTooltip(new Tooltip("Apply parameters"));
 		cancelButton.setTooltip(new Tooltip("Revert parameters"));
 		buttons.getChildren().add(applyButton);
@@ -90,7 +94,7 @@ public class MainParamsPane extends Pane {
 
 		box.getChildren().add(paramsBox);
 
-		ScrollPane scrollPane = new ScrollPane(box);
+		final ScrollPane scrollPane = new ScrollPane(box);
 		scrollPane.setFitToWidth(true);
 		scrollPane.setFitToHeight(true);
 		getChildren().add(scrollPane);
@@ -113,27 +117,9 @@ public class MainParamsPane extends Pane {
 		
 		applyButton.setOnAction((e) -> eventBus.postEvent("editor-params-action", "apply"));
 
-		EventListener updateUI = event -> {
-			Session session = (Session) event[0];
-			if (this.session == null || !this.session.getPluginId().equals(session.getPluginId())) {
-				if (this.session != null) {
-					Optional.ofNullable(buses.get(this.session.getPluginId())).ifPresent(bus -> bus.disable());
-				}
-				Pane rootPane = panels.get(session.getPluginId());
-				if (rootPane == null) {
-					EventBus innerBus = new EventBus(eventBus);
-					rootPane = createParamsPane(innerBus, session);
-					panels.put(session.getPluginId(), rootPane);
-					buses.put(session.getPluginId(), innerBus);
-				}
-				paramsPane.setCenter(rootPane);
-				Optional.ofNullable(buses.get(session.getPluginId())).ifPresent(bus -> bus.enable());
-			}
-			this.session = session;
-			grammarCombobox.getSelectionModel().select(session.getGrammar());
-		};
+		eventBus.subscribe("session-data-loaded", event -> handleSessionChanged(eventBus, (Session) event[0], (boolean) event[1], (boolean) event[2], this::createParamsPane, paramsPane::setCenter));
 
-		eventBus.subscribe("session-data-loaded", updateUI);
+		eventBus.subscribe("session-data-loaded", event -> grammarCombobox.getSelectionModel().select(((Session)event[0]).getGrammar()));
 
 		eventBus.subscribe("session-terminated", event -> buses.clear());
 		eventBus.subscribe("session-terminated", event -> panels.clear());
@@ -145,7 +131,25 @@ public class MainParamsPane extends Pane {
 		});
 	}
 
-	private Pane createParamsPane(EventBus eventBus, Session session) {
+	private void handleSessionChanged(PlatformEventBus eventBus, Session session, boolean continuous, boolean timeAnimation, BiFunction<PlatformEventBus, Session, Pane> factory, Consumer<Pane> consumer) {
+		if (this.session == null || !this.session.getPluginId().equals(session.getPluginId())) {
+			if (this.session != null) {
+				Optional.ofNullable(buses.get(this.session.getPluginId())).ifPresent(EventBus::disable);
+			}
+			Pane rootPane = panels.get(session.getPluginId());
+			if (rootPane == null) {
+				PlatformEventBus innerBus = new PlatformEventBus(session.getPluginId(), eventBus);
+				rootPane = factory.apply(innerBus, session);
+				panels.put(session.getPluginId(), rootPane);
+				buses.put(session.getPluginId(), innerBus);
+			}
+			consumer.accept(rootPane);
+			Optional.ofNullable(buses.get(session.getPluginId())).ifPresent(EventBus::enable);
+		}
+		this.session = session;
+	}
+
+	private Pane createParamsPane(PlatformEventBus eventBus, Session session) {
 		return tryFindFactory(session.getPluginId()).map(factory -> factory.createParamsPane(eventBus, session)).orElse(null);
 	}
 

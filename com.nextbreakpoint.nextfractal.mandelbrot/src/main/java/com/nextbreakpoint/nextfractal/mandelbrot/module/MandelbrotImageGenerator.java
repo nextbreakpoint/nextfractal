@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.1.2
+ * NextFractal 2.1.3
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2020 Andrea Medeghini
+ * Copyright 2015-2022 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -33,9 +33,9 @@ import com.nextbreakpoint.nextfractal.core.common.Time;
 import com.nextbreakpoint.nextfractal.core.render.RendererFactory;
 import com.nextbreakpoint.nextfractal.core.render.RendererSize;
 import com.nextbreakpoint.nextfractal.core.render.RendererTile;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.Compiler;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerBuilder;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerReport;
+import com.nextbreakpoint.nextfractal.mandelbrot.dsl.DSLCompiler;
+import com.nextbreakpoint.nextfractal.mandelbrot.dsl.DSLParser;
+import com.nextbreakpoint.nextfractal.mandelbrot.dsl.ParserResult;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Color;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Orbit;
@@ -66,19 +66,11 @@ public class MandelbrotImageGenerator implements ImageGenerator {
 		int[] pixels = new int[suggestedSize.getWidth() * suggestedSize.getHeight()];
 		IntBuffer buffer = IntBuffer.wrap(pixels);
 		try {
-			Compiler compiler = new Compiler(Compiler.class.getPackage().getName() + ".generated", "Compile" + System.nanoTime());
-			CompilerReport report = compiler.compileReport(script);
-			if (report.getErrors().size() > 0) {
-				throw new RuntimeException("Failed to compile source");
-			}
-			CompilerBuilder<Orbit> orbitBuilder = compiler.compileOrbit(report);
-			if (orbitBuilder.getErrors().size() > 0) {
-				throw new RuntimeException("Failed to compile Orbit class");
-			}
-			CompilerBuilder<Color> colorBuilder = compiler.compileColor(report);
-			if (colorBuilder.getErrors().size() > 0) {
-				throw new RuntimeException("Failed to compile Color class");
-			}
+			DSLParser parser = new DSLParser(DSLParser.class.getPackage().getName() + ".generated", "Compile" + System.nanoTime());
+			ParserResult result = parser.parse(script);
+			DSLCompiler compiler = new DSLCompiler();
+			Orbit orbit = compiler.compileOrbit(result).create();
+			Color color = compiler.compileColor(result).create();
 			Renderer renderer = new Renderer(threadFactory, renderFactory, tile);
 			renderer.setOpaque(opaque);
 			Double4D translation = metadata.getTranslation();
@@ -87,8 +79,8 @@ public class MandelbrotImageGenerator implements ImageGenerator {
 			Double2D constant = metadata.getPoint();
 			Time time = metadata.getTime();
 			boolean julia = metadata.isJulia();
-			renderer.setOrbit(orbitBuilder.build());
-			renderer.setColor(colorBuilder.build());
+			renderer.setOrbit(orbit);
+			renderer.setColor(color);
 			renderer.init();
 			RendererView view = new RendererView();
 			view .setTraslation(translation);

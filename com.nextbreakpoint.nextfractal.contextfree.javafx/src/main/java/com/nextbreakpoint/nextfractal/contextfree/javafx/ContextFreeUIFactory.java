@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.1.2
+ * NextFractal 2.1.3
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2020 Andrea Medeghini
+ * Copyright 2015-2022 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -25,18 +25,16 @@
 package com.nextbreakpoint.nextfractal.contextfree.javafx;
 
 import com.nextbreakpoint.Try;
+import com.nextbreakpoint.nextfractal.contextfree.dsl.grammar.CFDGInterpreter;
 import com.nextbreakpoint.nextfractal.contextfree.module.ContextFreeMetadata;
 import com.nextbreakpoint.nextfractal.contextfree.module.ContextFreeSession;
-import com.nextbreakpoint.nextfractal.contextfree.compiler.Compiler;
-import com.nextbreakpoint.nextfractal.contextfree.compiler.CompilerReport;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDG;
+import com.nextbreakpoint.nextfractal.contextfree.dsl.DSLParser;
+import com.nextbreakpoint.nextfractal.contextfree.dsl.ParserResult;
+import com.nextbreakpoint.nextfractal.contextfree.dsl.grammar.CFDG;
 import com.nextbreakpoint.nextfractal.contextfree.renderer.RendererCoordinator;
-import com.nextbreakpoint.nextfractal.core.javafx.EventBus;
+import com.nextbreakpoint.nextfractal.core.common.EventBus;
 import com.nextbreakpoint.nextfractal.core.common.Session;
-import com.nextbreakpoint.nextfractal.core.javafx.Bitmap;
-import com.nextbreakpoint.nextfractal.core.javafx.BrowseBitmap;
-import com.nextbreakpoint.nextfractal.core.javafx.GridItemRenderer;
-import com.nextbreakpoint.nextfractal.core.javafx.UIFactory;
+import com.nextbreakpoint.nextfractal.core.javafx.*;
 import com.nextbreakpoint.nextfractal.core.render.RendererGraphicsContext;
 import com.nextbreakpoint.nextfractal.core.render.RendererPoint;
 import com.nextbreakpoint.nextfractal.core.render.RendererSize;
@@ -56,17 +54,17 @@ public class ContextFreeUIFactory implements UIFactory {
 	}
 
 	@Override
-	public Pane createEditorPane(EventBus eventBus, Session session) {
+	public Pane createEditorPane(PlatformEventBus eventBus, Session session) {
 		return new EditorPane(eventBus);
 	}
 
 	@Override
-	public Pane createRenderPane(EventBus eventBus, Session session, int width, int height) {
+	public Pane createRenderPane(PlatformEventBus eventBus, Session session, int width, int height) {
 		return new RenderPane((ContextFreeSession) session, eventBus, width, height, 1, 1);
 	}
 
 	@Override
-	public Pane createParamsPane(EventBus eventBus, Session session) {
+	public Pane createParamsPane(PlatformEventBus eventBus, Session session) {
 		return new ParamsPane((ContextFreeSession) session, eventBus);
 	}
 
@@ -78,7 +76,7 @@ public class ContextFreeUIFactory implements UIFactory {
 		RendererCoordinator coordinator = new RendererCoordinator(threadFactory, new JavaFXRendererFactory(), tile, hints);
 		CFDG cfdg = (CFDG)bitmap.getProperty("cfdg");
 		Session session = (Session)bitmap.getProperty("session");
-		coordinator.setCFDG(cfdg);
+		coordinator.setInterpreter(new CFDGInterpreter(cfdg));
 		coordinator.setSeed(((ContextFreeMetadata)session.getMetadata()).getSeed());
 		coordinator.init();
 		coordinator.run();
@@ -87,8 +85,8 @@ public class ContextFreeUIFactory implements UIFactory {
 
 	@Override
 	public BrowseBitmap createBitmap(Session session, RendererSize size) throws Exception {
-		Compiler compiler = new Compiler();
-		CompilerReport report = compiler.compileReport(session.getScript());
+		DSLParser compiler = new DSLParser();
+		ParserResult report = compiler.parse(session.getScript());
 		if (report.getErrors().size() > 0) {
 			throw new RuntimeException("Failed to compile source");
 		}

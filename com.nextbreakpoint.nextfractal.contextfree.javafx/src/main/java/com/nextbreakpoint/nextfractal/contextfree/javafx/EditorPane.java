@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.1.2
+ * NextFractal 2.1.3
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2020 Andrea Medeghini
+ * Copyright 2015-2022 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -27,17 +27,18 @@ package com.nextbreakpoint.nextfractal.contextfree.javafx;
 import com.nextbreakpoint.Try;
 import com.nextbreakpoint.nextfractal.contextfree.module.ContextFreeMetadata;
 import com.nextbreakpoint.nextfractal.contextfree.module.ContextFreeSession;
-import com.nextbreakpoint.nextfractal.contextfree.compiler.Compiler;
-import com.nextbreakpoint.nextfractal.contextfree.compiler.CompilerReport;
-import com.nextbreakpoint.nextfractal.contextfree.compiler.CompilerSourceException;
+import com.nextbreakpoint.nextfractal.contextfree.dsl.DSLParser;
+import com.nextbreakpoint.nextfractal.contextfree.dsl.ParserResult;
+import com.nextbreakpoint.nextfractal.contextfree.core.ParserException;
 import com.nextbreakpoint.nextfractal.core.common.SourceError;
-import com.nextbreakpoint.nextfractal.core.javafx.EventBus;
 import com.nextbreakpoint.nextfractal.core.javafx.BooleanObservableValue;
 import com.nextbreakpoint.nextfractal.core.common.Block;
 import com.nextbreakpoint.nextfractal.core.common.DefaultThreadFactory;
+import com.nextbreakpoint.nextfractal.core.javafx.PlatformEventBus;
 import io.reactivex.rxjavafx.observables.JavaFxObservable;
 import io.reactivex.rxjavafx.schedulers.JavaFxScheduler;
 import io.reactivex.schedulers.Schedulers;
+import javafx.application.Platform;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.TransferMode;
@@ -64,7 +65,7 @@ public class EditorPane extends BorderPane {
 
     private ContextFreeSession session;
 
-    public EditorPane(EventBus eventBus) {
+    public EditorPane(PlatformEventBus eventBus) {
         codeArea = new TextArea();
         codeArea.getStyleClass().add("contextfree");
 
@@ -97,7 +98,7 @@ public class EditorPane extends BorderPane {
                 .observeOn(Schedulers.from(textExecutor))
                 .map(event -> computeTask(event.getNewVal()))
                 .map(this::processResult)
-                .subscribe(result -> notifyTaskResult(eventBus, result), x -> logger.log(Level.WARNING, "Cannot compile source", x));
+                .subscribe(result -> Platform.runLater(() -> notifyTaskResult(eventBus, result)), x -> logger.log(Level.WARNING, "Cannot compile source", x));
 
         codeArea.setOnDragDropped(e -> e.getDragboard().getFiles().stream().findFirst()
             .ifPresent(file -> eventBus.postEvent("editor-load-file", file)));
@@ -123,7 +124,7 @@ public class EditorPane extends BorderPane {
 
         eventBus.subscribe("editor-report-changed", event -> {
             eventBus.postEvent("session-report-changed", event);
-            notifySourceIfRequired(eventBus, (CompilerReport)event[0]);
+            notifySourceIfRequired(eventBus, (ParserResult)event[0]);
         });
 
 //        eventBus.subscribe("editor-source-changed", event -> {
@@ -150,9 +151,9 @@ public class EditorPane extends BorderPane {
 
     private class TaskResult {
         private String source;
-        private CompilerReport report;
+        private ParserResult report;
 
-        public TaskResult(String source, CompilerReport report) {
+        public TaskResult(String source, ParserResult report) {
             this.source = source;
             this.report = report;
         }
@@ -163,8 +164,8 @@ public class EditorPane extends BorderPane {
                 .onFailure(e -> logger.log(Level.WARNING, "Cannot parse source", e));
     }
 
-    private CompilerReport generateReport(String text) throws Exception {
-        return new Compiler().compileReport(text);
+    private ParserResult generateReport(String text) throws Exception {
+        return new DSLParser().parse(text);
     }
 
 //    private StyleSpans<Collection<String>> computeHighlighting(String text) {
@@ -225,17 +226,17 @@ public class EditorPane extends BorderPane {
                 .execute());
     }
 
-    private void notifyTaskResult(EventBus eventBus, Try<TaskResult, Exception> result) {
+    private void notifyTaskResult(PlatformEventBus eventBus, Try<TaskResult, Exception> result) {
         result.map(task -> task.report).ifPresent(report -> eventBus.postEvent("editor-report-changed", report, new ContextFreeSession(report.getSource(), (ContextFreeMetadata) session.getMetadata()), false, !report.getSource().equals(session.getScript())));
     }
 
-    private void notifySourceIfRequired(EventBus eventBus, CompilerReport result) {
+    private void notifySourceIfRequired(PlatformEventBus eventBus, ParserResult result) {
         Optional.of(result).filter(report -> report.getErrors().size() == 0).ifPresent(report -> eventBus.postEvent("editor-source-changed", result.getSource()));
     }
 
-    private void processCompilerErrors(CompilerReport report, Exception e) {
-        if (e instanceof CompilerSourceException) {
-            report.getErrors().addAll(((CompilerSourceException)e).getErrors());
+    private void processCompilerErrors(ParserResult report, Exception e) {
+        if (e instanceof ParserException) {
+            report.getErrors().addAll(((ParserException)e).getErrors());
         } else {
             logger.log(Level.WARNING, "Cannot compile image", e);
         }

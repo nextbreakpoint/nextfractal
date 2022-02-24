@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.1.2
+ * NextFractal 2.1.3
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2020 Andrea Medeghini
+ * Copyright 2015-2022 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -25,6 +25,5 @@
 package com.nextbreakpoint.nextfractal.core.common;
 
 public interface EventListener {
-    //TODO shall we replce Object[] with Event class?
     void eventPosted(Object... event);
 }

@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.1.2
+ * NextFractal 2.1.3
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2020 Andrea Medeghini
+ * Copyright 2015-2022 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -24,11 +24,11 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.renderer;
 
-import com.nextbreakpoint.nextfractal.contextfree.core.Bounds;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.CFCanvas;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.CommandInfo;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.PrimShape;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.enums.FlagType;
+import com.nextbreakpoint.nextfractal.contextfree.dsl.grammar.Bounds;
+import com.nextbreakpoint.nextfractal.contextfree.dsl.grammar.CFCanvas;
+import com.nextbreakpoint.nextfractal.contextfree.dsl.grammar.CommandInfo;
+import com.nextbreakpoint.nextfractal.contextfree.dsl.grammar.PrimShape;
+import com.nextbreakpoint.nextfractal.contextfree.dsl.grammar.enums.FlagType;
 import com.nextbreakpoint.nextfractal.core.render.RendererAffine;
 import com.nextbreakpoint.nextfractal.core.render.RendererColor;
 import com.nextbreakpoint.nextfractal.core.render.RendererFactory;

@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.1.2
+ * NextFractal 2.1.3
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2020 Andrea Medeghini
+ * Copyright 2015-2022 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -25,17 +25,16 @@
 package com.nextbreakpoint.nextfractal.contextfree.javafx;
 
 import com.nextbreakpoint.Try;
+import com.nextbreakpoint.nextfractal.contextfree.dsl.grammar.CFDGInterpreter;
 import com.nextbreakpoint.nextfractal.contextfree.module.ContextFreeMetadata;
 import com.nextbreakpoint.nextfractal.contextfree.module.ContextFreeSession;
-import com.nextbreakpoint.nextfractal.contextfree.compiler.Compiler;
-import com.nextbreakpoint.nextfractal.contextfree.compiler.CompilerClassException;
-import com.nextbreakpoint.nextfractal.contextfree.compiler.CompilerReport;
-import com.nextbreakpoint.nextfractal.contextfree.compiler.CompilerSourceException;
-import com.nextbreakpoint.nextfractal.contextfree.grammar.CFDG;
+import com.nextbreakpoint.nextfractal.contextfree.dsl.DSLParser;
+import com.nextbreakpoint.nextfractal.contextfree.dsl.ParserResult;
+import com.nextbreakpoint.nextfractal.contextfree.core.ParserException;
+import com.nextbreakpoint.nextfractal.contextfree.dsl.grammar.CFDG;
 import com.nextbreakpoint.nextfractal.contextfree.renderer.RendererCoordinator;
 import com.nextbreakpoint.nextfractal.core.common.SourceError;
-import com.nextbreakpoint.nextfractal.core.javafx.EventBus;
-import com.nextbreakpoint.nextfractal.core.common.Session;
+import com.nextbreakpoint.nextfractal.core.common.EventBus;
 import com.nextbreakpoint.nextfractal.core.javafx.BooleanObservableValue;
 import com.nextbreakpoint.nextfractal.core.javafx.StringObservableValue;
 import com.nextbreakpoint.nextfractal.core.render.RendererGraphicsContext;
@@ -62,7 +61,6 @@ import javafx.stage.Screen;
 import javafx.util.Duration;
 
 import java.io.InputStream;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -220,7 +218,7 @@ public class RenderPane extends BorderPane {
 		runTimer(fractalCanvas, toolCanvas);
 
 		eventBus.subscribe("session-report-changed", event -> {
-			CompilerReport report = (CompilerReport) event[0];
+			ParserResult report = (ParserResult) event[0];
 			List<SourceError> lastErrors = updateReport(report);
 			if (lastErrors.size() == 0) {
 				ContextFreeSession newSession = (ContextFreeSession)event[1];
@@ -267,7 +265,7 @@ public class RenderPane extends BorderPane {
 	}
 
 	private void loadData(ContextFreeSession session) {
-		Try.of(() -> generateReport(session.getScript())).filter(report -> ((CompilerReport)report).getErrors().size() == 0).ifPresent(report -> {
+		Try.of(() -> generateReport(session.getScript())).filter(report -> ((ParserResult)report).getErrors().size() == 0).ifPresent(report -> {
 			List<SourceError> errors = updateReport(report);
 			if (errors.size() == 0) {
 				updateData(session);
@@ -446,11 +444,11 @@ public class RenderPane extends BorderPane {
 		});
 	}
 
-	private CompilerReport generateReport(String text) throws Exception {
-		return new Compiler().compileReport(text);
+	private ParserResult generateReport(String text) throws Exception {
+		return new DSLParser().parse(text);
 	}
 
-	private List<SourceError> updateReport(CompilerReport report) {
+	private List<SourceError> updateReport(ParserResult report) {
 		try {
 			updateCompilerErrors(null, null, null);
 			boolean[] changed = createCFDG(report);
@@ -464,7 +462,7 @@ public class RenderPane extends BorderPane {
 				coordinator.abort();
 				coordinator.waitFor();
 				if (cfdgChanged) {
-					coordinator.setCFDG(cfdg);
+					coordinator.setInterpreter(new CFDGInterpreter(cfdg));
 					coordinator.setSeed(((ContextFreeMetadata)contextFreeSession.getMetadata()).getSeed());
 				}
 				coordinator.init();
@@ -476,17 +474,11 @@ public class RenderPane extends BorderPane {
 				}
 				return errors;
 			}
-		} catch (CompilerSourceException e) {
+		} catch (ParserException e) {
 			if (logger.isLoggable(Level.FINE)) {
 				logger.log(Level.FINE, "Cannot render image: " + e.getMessage());
 			}
 			updateCompilerErrors(e.getMessage(), e.getErrors(), null);
-			return e.getErrors();
-		} catch (CompilerClassException e) {
-			if (logger.isLoggable(Level.FINE)) {
-				logger.log(Level.FINE, "Cannot render image: " + e.getMessage());
-			}
-			updateCompilerErrors(e.getMessage(), e.getErrors(), e.getSource());
 			return e.getErrors();
 		} catch (InterruptedException e) {
 			if (logger.isLoggable(Level.FINE)) {
@@ -498,10 +490,10 @@ public class RenderPane extends BorderPane {
 		return Collections.emptyList();
 	}
 
-	private boolean[] createCFDG(CompilerReport report) throws CompilerSourceException, CompilerClassException {
+	private boolean[] createCFDG(ParserResult report) throws ParserException {
 		if (report.getErrors().size() > 0) {
 			cfdgSource = null;
-			throw new CompilerSourceException("Failed to compile source", report.getErrors());
+			throw new ParserException("Failed to compile source", report.getErrors());
 		}
 		boolean[] changed = new boolean[] { false, false };
 		String newCFDG = report.getSource();

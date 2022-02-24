@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.1.2
+ * NextFractal 2.1.3
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2020 Andrea Medeghini
+ * Copyright 2015-2022 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -40,7 +40,7 @@ public interface UIFactory {
      * @param session
      * @return
 	 */
-	public Pane createEditorPane(EventBus eventBus, Session session);
+	public Pane createEditorPane(PlatformEventBus eventBus, Session session);
 
 	/**
 	 * @param eventBus
@@ -49,14 +49,14 @@ public interface UIFactory {
 	 * @param height
 	 * @return
 	 */
-	public Pane createRenderPane(EventBus eventBus, Session session, int width, int height);
+	public Pane createRenderPane(PlatformEventBus eventBus, Session session, int width, int height);
 
 	/**
 	 * @param eventBus
 	 * @param session
 	 * @return
 	 */
-	public Pane createParamsPane(EventBus eventBus, Session session);
+	public Pane createParamsPane(PlatformEventBus eventBus, Session session);
 
 	public GridItemRenderer createRenderer(Bitmap bitmap) throws Exception;
 

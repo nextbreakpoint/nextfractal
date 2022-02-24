@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.1.2
+ * NextFractal 2.1.3
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2020 Andrea Medeghini
+ * Copyright 2015-2022 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -27,13 +27,7 @@ package com.nextbreakpoint.nextfractal.mandelbrot.renderer;
 import com.nextbreakpoint.nextfractal.core.common.Colors;
 import com.nextbreakpoint.nextfractal.core.common.SourceError;
 import com.nextbreakpoint.nextfractal.core.common.Time;
-import com.nextbreakpoint.nextfractal.core.render.RendererAffine;
-import com.nextbreakpoint.nextfractal.core.render.RendererFactory;
-import com.nextbreakpoint.nextfractal.core.render.RendererGraphicsContext;
-import com.nextbreakpoint.nextfractal.core.render.RendererPoint;
-import com.nextbreakpoint.nextfractal.core.render.RendererSize;
-import com.nextbreakpoint.nextfractal.core.render.RendererSurface;
-import com.nextbreakpoint.nextfractal.core.render.RendererTile;
+import com.nextbreakpoint.nextfractal.core.render.*;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Color;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.MutableNumber;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
@@ -93,7 +87,7 @@ public class Renderer {
 	protected RendererSize size;
 	protected RendererView view;
 	protected RendererTile tile;
-	private final RendererLock lock = new ReentrantRendererLock();
+	private final RendererLock lock = new RendererLock();
 	private final RenderRunnable renderTask = new RenderRunnable();
 	private ExecutorService executor;
 	private volatile Future<?> future;
@@ -207,7 +201,11 @@ public class Renderer {
 		initialized = true;
 		contentRendererFractal.initialize();
 		previewRendererFractal.initialize();
-		initialRegion = new RendererRegion(contentRendererFractal.getOrbit().getInitialRegion());
+		if (contentRendererFractal.getOrbit() != null) {
+			initialRegion = new RendererRegion(contentRendererFractal.getOrbit().getInitialRegion());
+		} else {
+			initialRegion = new RendererRegion();
+		}
 	}
 
 	/**

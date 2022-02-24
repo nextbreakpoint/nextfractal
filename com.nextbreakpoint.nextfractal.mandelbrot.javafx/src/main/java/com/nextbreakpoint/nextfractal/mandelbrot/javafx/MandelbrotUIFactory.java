@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.1.2
+ * NextFractal 2.1.3
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2020 Andrea Medeghini
+ * Copyright 2015-2022 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -25,12 +25,8 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.javafx;
 
 import com.nextbreakpoint.Try;
-import com.nextbreakpoint.nextfractal.core.javafx.EventBus;
 import com.nextbreakpoint.nextfractal.core.common.Session;
-import com.nextbreakpoint.nextfractal.core.javafx.Bitmap;
-import com.nextbreakpoint.nextfractal.core.javafx.BrowseBitmap;
-import com.nextbreakpoint.nextfractal.core.javafx.GridItemRenderer;
-import com.nextbreakpoint.nextfractal.core.javafx.UIFactory;
+import com.nextbreakpoint.nextfractal.core.javafx.*;
 import com.nextbreakpoint.nextfractal.core.render.RendererGraphicsContext;
 import com.nextbreakpoint.nextfractal.core.render.RendererPoint;
 import com.nextbreakpoint.nextfractal.core.render.RendererSize;
@@ -38,11 +34,11 @@ import com.nextbreakpoint.nextfractal.core.render.RendererTile;
 import com.nextbreakpoint.nextfractal.core.javafx.render.JavaFXRendererFactory;
 import com.nextbreakpoint.nextfractal.core.common.DefaultThreadFactory;
 import com.nextbreakpoint.nextfractal.core.common.Integer4D;
+import com.nextbreakpoint.nextfractal.mandelbrot.dsl.DSLParser;
 import com.nextbreakpoint.nextfractal.mandelbrot.module.MandelbrotMetadata;
 import com.nextbreakpoint.nextfractal.mandelbrot.module.MandelbrotSession;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.Compiler;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerBuilder;
-import com.nextbreakpoint.nextfractal.mandelbrot.compiler.CompilerReport;
+import com.nextbreakpoint.nextfractal.mandelbrot.dsl.DSLCompiler;
+import com.nextbreakpoint.nextfractal.mandelbrot.dsl.ParserResult;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Color;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Orbit;
@@ -61,18 +57,18 @@ public class MandelbrotUIFactory implements UIFactory {
 	}
 
 	@Override
-	public Pane createEditorPane(EventBus eventBus, Session session) {
+	public Pane createEditorPane(PlatformEventBus eventBus, Session session) {
 		return new EditorPane(eventBus);
 	}
 
 	@Override
-	public Pane createRenderPane(EventBus eventBus, Session session, int width, int height) {
+	public Pane createRenderPane(PlatformEventBus eventBus, Session session, int width, int height) {
 		final int[] cells = optimalRowsAndCols(Runtime.getRuntime().availableProcessors());
 		return new RenderPane((MandelbrotSession) session, eventBus, width, height, Integer.getInteger("mandelbrot.renderer.rows", cells[0]), Integer.getInteger("mandelbrot.renderer.cols", cells[1]));
 	}
 
 	@Override
-	public Pane createParamsPane(EventBus eventBus, Session session) {
+	public Pane createParamsPane(PlatformEventBus eventBus, Session session) {
 		return new ParamsPane((MandelbrotSession) session, eventBus);
 	}
 
@@ -95,9 +91,9 @@ public class MandelbrotUIFactory implements UIFactory {
 		RendererTile tile = createSingleTile(bitmap.getWidth(), bitmap.getHeight());
 		DefaultThreadFactory threadFactory = new DefaultThreadFactory("Mandelbrot Browser", true, Thread.MIN_PRIORITY);
 		RendererCoordinator coordinator = new RendererCoordinator(threadFactory, new JavaFXRendererFactory(), tile, hints);
-		CompilerBuilder<Orbit> orbitBuilder = (CompilerBuilder<Orbit>)bitmap.getProperty("orbit");
-		CompilerBuilder<Color> colorBuilder = (CompilerBuilder<Color>)bitmap.getProperty("color");
-		coordinator.setOrbitAndColor(orbitBuilder.build(), colorBuilder.build());
+		Orbit orbit = (Orbit)bitmap.getProperty("orbit");
+		Color color = (Color)bitmap.getProperty("color");
+		coordinator.setOrbitAndColor(orbit, color);
 		coordinator.init();
 		MandelbrotMetadata data = (MandelbrotMetadata) session.getMetadata();
 		RendererView view = new RendererView();
@@ -115,22 +111,14 @@ public class MandelbrotUIFactory implements UIFactory {
 	@Override
 	public BrowseBitmap createBitmap(Session session, RendererSize size) throws Exception {
 		String source = session.getScript();
-		Compiler compiler = new Compiler(Compiler.class.getPackage().getName() + ".generated", "Compile" + System.nanoTime());
-		CompilerReport report = compiler.compileReport(source);
-		if (report.getErrors().size() > 0) {
-			throw new RuntimeException("Failed to compile source");
-		}
-		CompilerBuilder<Orbit> orbitBuilder = compiler.compileOrbit(report);
-		if (orbitBuilder.getErrors().size() > 0) {
-			throw new RuntimeException("Failed to compile Orbit class");
-		}
-		CompilerBuilder<Color> colorBuilder = compiler.compileColor(report);
-		if (colorBuilder.getErrors().size() > 0) {
-			throw new RuntimeException("Failed to compile Color class");
-		}
+		DSLParser parser = new DSLParser(DSLCompiler.class.getPackage().getName() + ".generated", "Compile" + System.nanoTime());
+		ParserResult result = parser.parse(source);
+		DSLCompiler compiler = new DSLCompiler();
+		Orbit orbit = compiler.compileOrbit(result).create();
+		Color color = compiler.compileColor(result).create();
 		BrowseBitmap bitmap = new BrowseBitmap(size.getWidth(), size.getHeight(), null);
-		bitmap.setProperty("orbit", orbitBuilder);
-		bitmap.setProperty("color", colorBuilder);
+		bitmap.setProperty("orbit", orbit);
+		bitmap.setProperty("color", color);
 		bitmap.setProperty("session", session);
 		return bitmap;
 	}

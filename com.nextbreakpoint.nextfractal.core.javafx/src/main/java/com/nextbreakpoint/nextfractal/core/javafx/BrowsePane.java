@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.1.2
+ * NextFractal 2.1.3
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2020 Andrea Medeghini
+ * Copyright 2015-2022 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -57,11 +57,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -355,35 +351,30 @@ public class BrowsePane extends BorderPane {
 		importCurrentFolder = folder;
 		List<File> files = listAllFiles(folder);
 		if (!files.isEmpty()) {
-			browserExecutor.submit(() -> copyFiles(statusLabel, grid, files, sourceCurrentFolder));
+			copyFilesAsync(statusLabel, grid, files);
 		}
+	}
+
+	private Future<?> copyFilesAsync(Label statusLabel, GridView grid, List<File> files) {
+		return browserExecutor.submit(() -> copyFiles(statusLabel, grid, files, sourceCurrentFolder));
 	}
 
 	private void copyFiles(Label statusLabel, GridView grid, List<File> files, File location) {
-		Platform.runLater(() -> {
-			grid.setDisable(true);
-		});
+		Platform.runLater(() -> grid.setDisable(true));
 
 		for (File file : files) {
-			Platform.runLater(() -> {
-				statusLabel.setText("Importing " + files.size() + " files...");
-			});
+			Platform.runLater(() -> statusLabel.setText("Importing " + files.size() + " files..."));
 
-			copyFile(statusLabel, grid, file, location);
+			copyFile(file, location);
 		}
 
-		Platform.runLater(() -> {
-			grid.setDisable(false);
-		});
+		Platform.runLater(() -> grid.setDisable(false));
 
-		Platform.runLater(() -> {
-			loadFiles(statusLabel, grid, sourceCurrentFolder);
-		});
+		Platform.runLater(() -> loadFiles(statusLabel, grid, sourceCurrentFolder));
 	}
 
-	private void copyFile(Label statusLabel, GridView grid, File file, File location) {
-		File outFile = createFileName(file, location);
-		FileManager.loadFile(file).ifPresent(session -> FileManager.saveFile(outFile, session));
+	private void copyFile(File file, File location) {
+		FileManager.loadFile(file).ifPresent(session -> FileManager.saveFile(createFileName(file, location), session));
 	}
 
 	private File createFileName(File file, File location) {
@@ -409,7 +400,7 @@ public class BrowsePane extends BorderPane {
 		Preferences prefs = Preferences.userNodeForPackage(BrowsePane.class);
 		prefs.put(BROWSER_DEFAULT_LOCATION, folder.getAbsolutePath());
 		if (delegate != null) {
-			return Stream.of(folder.listFiles((dir, name) -> filter.stream().filter(e -> name.endsWith(e)).findFirst().isPresent())).sorted().collect(Collectors.toList());
+			return Stream.of(folder.listFiles((dir, name) -> hasSuffix(name))).sorted().collect(Collectors.toList());
 		} else {
 			return Collections.emptyList();
 		}
@@ -419,17 +410,21 @@ public class BrowsePane extends BorderPane {
 		Preferences prefs = Preferences.userNodeForPackage(BrowsePane.class);
 		prefs.put(BROWSER_DEFAULT_LOCATION, folder.getAbsolutePath());
 		if (delegate != null) {
-			return Stream.of(folder.listFiles((dir, name) -> name.endsWith(".nf.zip"))).sorted().collect(Collectors.toList());
+			return Stream.of(folder.listFiles((dir, name) -> hasSuffix(".nf.zip"))).sorted().collect(Collectors.toList());
 		} else {
 			return Collections.emptyList();
 		}
 	}
 
+	private boolean hasSuffix(String name) {
+		return filter.stream().anyMatch(name::endsWith);
+	}
+
 	private void removeItems() {
 		for (int index = 0; index < items.size(); index++) {
 			GridItem item = items.get(index);
-			if (item.getFuture() != null && !item.getFuture().isDone()) {
-				item.getFuture().cancel(true);
+			if (item.getLoadItemFuture() != null && !item.getLoadItemFuture().isDone()) {
+				item.getLoadItemFuture().cancel(true);
 			}
 		}
 
@@ -459,17 +454,6 @@ public class BrowsePane extends BorderPane {
 		items.clear();
 	}
 
-	private void loadItem(GridItem item) {
-		try {
-			if (delegate != null) {
-				item.setBitmap(delegate.createBitmap(item.getFile(), tile.getTileSize()));
-			}
-		} catch (Exception e) {
-			item.setErrors(Arrays.asList(new SourceError(SourceError.ErrorType.RUNTIME, 0, 0, 0, 0, e.getMessage())));
-			logger.log(Level.WARNING, "Can't create bitmap: " + e.getMessage());
-		}
-	}
-
 	private void runTimer(GridView grid) {
 		timer = new AnimationTimer() {
 			private long last;
@@ -478,7 +462,10 @@ public class BrowsePane extends BorderPane {
 			public void handle(long now) {
 				long time = now / 1000000;
 				if (time - last > FRAME_LENGTH_IN_MILLIS) {
-					updateCells(grid);
+					try {
+						updateCells(grid);
+					} catch (ExecutionException | InterruptedException e) {
+					}
 					last = time;
 				}
 			}
@@ -486,7 +473,7 @@ public class BrowsePane extends BorderPane {
 		timer.start();
 	}
 
-	private void updateCells(GridView grid) {
+	private void updateCells(GridView grid) throws ExecutionException, InterruptedException {
 		if (grid.getData() == null) {
 			return;
 		}
@@ -502,17 +489,41 @@ public class BrowsePane extends BorderPane {
 		int lastIndex = lastRow * numCols + numCols;
 		for (int index = 0; index < firstIndex; index++) {
 			GridItem item = items.get(index);
-			if (item.getFuture() != null && !item.getFuture().isDone()) {
-				item.getFuture().cancel(true);
-				item.setFuture(null);
+			item.setAborted(true);
+		}
+		for (int index = lastIndex; index < items.size(); index++) {
+			GridItem item = items.get(index);
+			item.setAborted(true);
+		}
+		for (int index = 0; index < firstIndex; index++) {
+			GridItem item = items.get(index);
+			if (item.getLoadItemFuture() != null) {
+				item.getLoadItemFuture().get();
+				item.setLoadItemFuture(null);
+			}
+			if (item.getInitItemFuture() != null) {
+				item.getInitItemFuture().get();
+				item.setInitItemFuture(null);
 			}
 		}
 		for (int index = lastIndex; index < items.size(); index++) {
 			GridItem item = items.get(index);
-			if (item.getFuture() != null && !item.getFuture().isDone()) {
-				item.getFuture().cancel(true);
-				item.setFuture(null);
+			if (item.getLoadItemFuture() != null) {
+				item.getLoadItemFuture().get();
+				item.setLoadItemFuture(null);
 			}
+			if (item.getInitItemFuture() != null) {
+				item.getInitItemFuture().get();
+				item.setInitItemFuture(null);
+			}
+		}
+		for (int index = 0; index < firstIndex; index++) {
+			GridItem item = items.get(index);
+			item.setAborted(false);
+		}
+		for (int index = lastIndex; index < items.size(); index++) {
+			GridItem item = items.get(index);
+			item.setAborted(false);
 		}
 		for (int index = 0; index < firstIndex; index++) {
 			GridItem item = items.get(index);
@@ -543,6 +554,7 @@ public class BrowsePane extends BorderPane {
 			if (item.getRenderer() != null) {
 				GridItemRenderer renderer = item.getRenderer();
 				item.setRenderer(null);
+				item.setBitmap(null);
 				renderer.dispose();
 			}
 		}
@@ -551,37 +563,63 @@ public class BrowsePane extends BorderPane {
 			if (item.getRenderer() != null) {
 				GridItemRenderer renderer = item.getRenderer();
 				item.setRenderer(null);
+				item.setBitmap(null);
 				renderer.dispose();
 			}
 		}
 		for (int index = firstIndex; index < Math.min(lastIndex, items.size()); index++) {
 			GridItem item = items.get(index);
 			BrowseBitmap bitmap = item.getBitmap();
+			GridItemRenderer renderer = item.getRenderer();
 			long time = System.currentTimeMillis();
-			if (bitmap == null && time - item.getLastChanged() > SCROLL_BOUNCE_DELAY && item.getFuture() == null) {
-				Future<GridItem> task = browserExecutor.submit(new Callable<GridItem>() {
-					@Override
-					public GridItem call() throws Exception {
-						loadItem(item);
-						return null;
-					}
-				});
-				item.setFuture(task);
+			if (bitmap == null && time - item.getLastChanged() > SCROLL_BOUNCE_DELAY && item.getLoadItemFuture() == null) {
+				loadItemAsync(item);
 			}
-			if (bitmap != null && time - item.getLastChanged() > SCROLL_BOUNCE_DELAY && item.getRenderer() == null) {
-				initItem(item, bitmap);
+			if (bitmap != null && renderer == null && time - item.getLastChanged() > SCROLL_BOUNCE_DELAY && item.getInitItemFuture() == null) {
+				initItemAsync(item);
 			}
 		}
 		grid.updateCells();
 	}
 
-	private void initItem(GridItem item, BrowseBitmap bitmap) {
+	private void loadItemAsync(GridItem item) {
+		final File file = item.getFile();
+		item.setLoadItemFuture(browserExecutor.submit(() -> {
+			loadItem(item, file);
+			return null;
+		}));
+	}
+
+	private void loadItem(GridItem item, File file) {
 		try {
-			if (delegate != null) {
-				item.setRenderer(delegate.createRenderer(bitmap));
+			if (!item.isAborted() && delegate != null) {
+				final BrowseBitmap bitmap = delegate.createBitmap(file, tile.getTileSize());
+
+				Platform.runLater(() -> item.setBitmap(bitmap));
 			}
 		} catch (Exception e) {
 			item.setErrors(Arrays.asList(new SourceError(SourceError.ErrorType.RUNTIME, 0, 0, 0, 0, e.getMessage())));
+			logger.log(Level.WARNING, "Can't create bitmap: " + e.getMessage());
+		}
+	}
+
+	private void initItemAsync(GridItem item) {
+		final BrowseBitmap bitmap = item.getBitmap();
+		item.setInitItemFuture(browserExecutor.submit(() -> {
+			initItem(item, bitmap);
+			return null;
+		}));
+	}
+
+	private void initItem(GridItem item, BrowseBitmap bitmap) {
+		try {
+			if (!item.isAborted() && delegate != null) {
+				GridItemRenderer renderer = delegate.createRenderer(bitmap);
+
+				Platform.runLater(() -> item.setRenderer(renderer));
+			}
+		} catch (Exception e) {
+			item.setErrors(List.of(new SourceError(SourceError.ErrorType.RUNTIME, 0, 0, 0, 0, e.getMessage())));
 			logger.log(Level.WARNING, "Can't initialize renderer", e);
 		}
 	}

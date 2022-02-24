@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.1.2
+ * NextFractal 2.1.3
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2020 Andrea Medeghini
+ * Copyright 2015-2022 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -26,8 +26,8 @@ package com.nextbreakpoint.nextfractal.contextfree.javafx;
 
 import com.nextbreakpoint.nextfractal.contextfree.module.ContextFreeMetadata;
 import com.nextbreakpoint.nextfractal.contextfree.module.ContextFreeSession;
-import com.nextbreakpoint.nextfractal.core.javafx.EventBus;
 import com.nextbreakpoint.nextfractal.core.javafx.AdvancedTextField;
+import com.nextbreakpoint.nextfractal.core.javafx.PlatformEventBus;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Pane;
@@ -40,7 +40,7 @@ public class ParamsPane extends Pane {
 
 	private ContextFreeSession contextFreeSession;
 
-	public ParamsPane(ContextFreeSession session, EventBus eventBus) {
+	public ParamsPane(ContextFreeSession session, PlatformEventBus eventBus) {
 		VBox box = new VBox(SPACING * 2);
 		Label seedLabel = new Label("Random seed");
 		AdvancedTextField seedField = new AdvancedTextField();

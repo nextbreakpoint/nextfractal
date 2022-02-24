@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.1.2
+ * NextFractal 2.1.3
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2020 Andrea Medeghini
+ * Copyright 2015-2022 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -26,18 +26,9 @@ package com.nextbreakpoint.nextfractal.runtime.javafx;
 
 import com.nextbreakpoint.Try;
 import com.nextbreakpoint.nextfractal.core.common.Clip;
-import com.nextbreakpoint.nextfractal.core.javafx.EventBus;
 import com.nextbreakpoint.nextfractal.core.common.FileManager;
 import com.nextbreakpoint.nextfractal.core.common.Session;
-import com.nextbreakpoint.nextfractal.core.javafx.Bitmap;
-import com.nextbreakpoint.nextfractal.core.javafx.BooleanObservableValue;
-import com.nextbreakpoint.nextfractal.core.javafx.BrowseBitmap;
-import com.nextbreakpoint.nextfractal.core.javafx.BrowseDelegate;
-import com.nextbreakpoint.nextfractal.core.javafx.BrowsePane;
-import com.nextbreakpoint.nextfractal.core.javafx.GridItemRenderer;
-import com.nextbreakpoint.nextfractal.core.javafx.PlaybackDelegate;
-import com.nextbreakpoint.nextfractal.core.javafx.PlaybackPane;
-import com.nextbreakpoint.nextfractal.core.javafx.RecordingPane;
+import com.nextbreakpoint.nextfractal.core.javafx.*;
 import com.nextbreakpoint.nextfractal.core.render.RendererSize;
 import javafx.animation.FadeTransition;
 import javafx.animation.Interpolator;
@@ -56,19 +47,19 @@ import java.util.List;
 import static com.nextbreakpoint.nextfractal.core.javafx.UIPlugins.tryFindFactory;
 
 public class MainCentralPane extends BorderPane {
-    public MainCentralPane(EventBus eventBus, int width, int height) {
-        MainRenderPane renderPane = new MainRenderPane(eventBus, width, height);
+    public MainCentralPane(PlatformEventBus eventBus, int width, int height) {
+        final MainRenderPane renderPane = new MainRenderPane(eventBus, width, height);
 
-        BooleanObservableValue toggleProperty = new BooleanObservableValue();
+        final BooleanObservableValue toggleProperty = new BooleanObservableValue();
         toggleProperty.setValue(false);
 
-        BrowsePane browsePane = new BrowsePane(width, height);
+        final BrowsePane browsePane = new BrowsePane(width, height);
         browsePane.setClip(new Rectangle(0, 0, width, height));
 
-        PlaybackPane playbackPane = new PlaybackPane();
-        RecordingPane recordingPane = new RecordingPane();
+        final PlaybackPane playbackPane = new PlaybackPane();
+        final RecordingPane recordingPane = new RecordingPane();
 
-        TranslateTransition browserTransition = createTranslateTransition(browsePane);
+        final TranslateTransition browserTransition = createTranslateTransition(browsePane);
 
         playbackPane.setDelegate(new PlaybackDelegate() {
             @Override
@@ -112,7 +103,7 @@ public class MainCentralPane extends BorderPane {
 			}
 		});
 
-        Pane stackPane = new Pane();
+        final Pane stackPane = new Pane();
         stackPane.getChildren().add(renderPane);
         stackPane.getChildren().add(playbackPane);
         stackPane.getChildren().add(recordingPane);
