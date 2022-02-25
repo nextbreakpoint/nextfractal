@@ -2,7 +2,7 @@
 <project name="NextFractal">
 	<property environment="env" />
 	<property name="openjfx.version" value="14" />
-	<property name="nextfractal.version" value="2.1.3" />
+	<property name="nextfractal.version" value="2.1.4" />
 	<property name="nextfractal.year" value="2022" />
 	<property name="nextfractal.folder" value="NextFractal" />
 	<property name="mainmodule" value="com.nextbreakpoint.nextfractal.main" />
@@ -168,7 +168,7 @@
 		<attribute name="os" />
 		<attribute name="arch" />
 		<attribute name="basedir" />
-		<attribute name="resultproperty" default="makedmg.result" />
+		<attribute name="resultproperty" default="makeapp.result" />
 		<element name="args" implicit="true" optional="true" />
 		<sequential>
 			<!-- <symlink link="@{basedir}/dist/@{os}_@{arch}/${nextfractal.folder}/NextFractal.app/Contents/MacOS/NextFractal" resource="../Resources/jdk/bin/NextFractal"/> -->
@@ -193,7 +193,7 @@
 		<attribute name="arch" />
 		<attribute name="basedir" />
 		<attribute name="identity" />
-		<attribute name="resultproperty" default="makedmg.result" />
+		<attribute name="resultproperty" default="signapp.result" />
 		<element name="args" implicit="true" optional="true" />
 		<sequential>
 			<exec executable="xattr" resultproperty="@{resultproperty}">
@@ -247,7 +247,7 @@
 		<attribute name="version" />
 		<attribute name="basedir" />
 		<attribute name="identity" />
-		<attribute name="resultproperty" default="makedmg.result" />
+		<attribute name="resultproperty" default="signdmg.result" />
 		<element name="args" implicit="true" optional="true" />
 		<sequential>
 			<exec executable="codesign" resultproperty="@{resultproperty}">
@@ -263,7 +263,7 @@
 		<attribute name="arch" />
 		<attribute name="version" />
 		<attribute name="basedir" />
-		<attribute name="resultproperty" default="makezip.result" />
+		<attribute name="resultproperty" default="zipapp.result" />
 		<element name="args" implicit="true" optional="true" />
 		<sequential>
 			<exec executable="ditto" resultproperty="@{resultproperty}">
@@ -302,7 +302,7 @@
 		<attribute name="arch" />
 		<attribute name="version" />
 		<attribute name="basedir" />
-		<attribute name="resultproperty" default="makezip.result" />
+		<attribute name="resultproperty" default="notarizeapp.result" />
 		<element name="args" implicit="true" optional="true" />
 		<sequential>
 			<exec executable="xcrun" resultproperty="@{resultproperty}">
@@ -326,7 +326,7 @@
 		<attribute name="os" />
 		<attribute name="arch" />
 		<attribute name="basedir" />
-		<attribute name="resultproperty" default="makezip.result" />
+		<attribute name="resultproperty" default="checkapp.result" />
 		<element name="args" implicit="true" optional="true" />
 		<sequential>
 			<exec executable="xcrun" resultproperty="@{resultproperty}">
@@ -344,7 +344,7 @@
 		<attribute name="os" />
 		<attribute name="arch" />
 		<attribute name="basedir" />
-		<attribute name="resultproperty" default="makezip.result" />
+		<attribute name="resultproperty" default="stapleapp.result" />
 		<element name="args" implicit="true" optional="true" />
 		<sequential>
 			<exec executable="xcrun" resultproperty="@{resultproperty}">
