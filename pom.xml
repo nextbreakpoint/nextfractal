@@ -51,7 +51,7 @@
         <rxjava.version>2.2.17</rxjava.version>
         <rxjavafx.version>2.2.2</rxjavafx.version>
         <openjfx.version>14</openjfx.version>
-        <jackson.version>2.10.2</jackson.version>
+        <jackson.version>2.12.6.1</jackson.version>
         <junit4.version>4.12</junit4.version>
         <mockito.version>2.23.4</mockito.version>
         <maven-jar-plugin.version>3.2.0</maven-jar-plugin.version>
