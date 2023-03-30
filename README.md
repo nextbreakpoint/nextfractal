@@ -28,6 +28,9 @@ NextFractal is currently able to interpret two scripting languages: Mandelbrot a
 NextFractal has been tested on OS X 10.14, Windows 7, and Linux/Debian 9 and Linux/Fedora 30. We recommend a machine with at least 4-cores CPU and 4Gb RAM.
 Windows users must install [Microsoft Visual C++ Redistributable for Visual Studio 2017](https://support.microsoft.com/en-gb/help/2977003/the-latest-supported-visual-c-downloads).
 
+        NextFractal hasn't been recompiled yet for Apple Silicon processors, therefore the application runs with 
+        degraded performance on the new Apple computers. The issue will be addressed in the next release.
+
 
 ## DOCUMENTATION
 
