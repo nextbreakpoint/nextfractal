@@ -31,7 +31,7 @@ Windows users must install [Microsoft Visual C++ Redistributable for Visual Stud
 
 ## DOCUMENTATION
 
-Please see the [Wiki](https://github.com/nextbreakpoint/nextfractal/wiki) for documentation. There is documentation for the scripting language, and there are examples of scripts for generating variant of the Mandelbrot Set using various techniques for colouring the image.
+Please see the [Wiki](https://github.com/nextbreakpoint/nextfractal/wiki) for documentation. The wiki contains a tutorial for the scripting language, and examples of scripts.
 
 
 ## BUILD INSTRUCTIONS
