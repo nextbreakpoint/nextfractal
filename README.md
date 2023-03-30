@@ -1,15 +1,14 @@
 # NextFractal 2.1.4
 
-Copyright 2015-2022 Andrea Medeghini
+Copyright 2015-2023 Andrea Medeghini
+
+## NOTICE
 
 NextFractal is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 
 NextFractal is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along with NextFractal. If not, see http://www.gnu.org/licenses/.
-
-
-## NOTICE
 
 NextFractal depends on several thirdparty libraries including FreeImage, FFmpeg, ANTLR, and other software from Apache Software Foundation.
 
@@ -18,12 +17,9 @@ NextFractal contains code ported to Java from C/C++ code of open source projects
 
 ## DESCRIPTION
 
-NextFractal is an application for creating Fractals and other algorithmically generated images.
-Images are generated processing a script and some user provided parameters depending on the selected grammar.
+NextFractal is an application for creating fractals and other algorithmically generated images. Images are generated from a script and some parameters. NextFractal provides tools for rendering fractals, creating time-based and event-based animations, organising images, and exporting images and animations.
 
-NextFractal is currently able to interpret M scripts and CFDG scripts. The M scripts are based on a domain specific language for creating Mandelbrot, Julia and Fatou Sets. The CFDG scripts are based on a context-free grammar for creating geometric shapes using an iterative process.
-
-NextFractal provides also tools for exploring Mandelbrot, Julia and Fatou Sets, browsing images, creating time based and events based animations, and rendering image and video files. NextFractal exports image as PNG files, and videos as AVI or Quicktime files.
+NextFractal is currently able to interpret two scripting languages: Mandelbrot and CFDG. Mandelbrot is a domain specific language for creating images of the Mandelbrot’s set (and its variants, such as Julia and Fatou sets). CFDG is a context-free grammar for creating images by an iterative process.
 
 
 ## SYSTEM REQUIREMENTS
@@ -37,7 +33,7 @@ Linux users may have problems if their system doesn't have all the required libr
 
 ## DOCUMENTATION
 
-Please see documentation of grammars and tutorials on https://nextbreakpoint.com/nextfractal.html.
+Please see [Wiki](https://github.com/nextbreakpoint/nextfractal/wiki) for documentation.
 
 
 ## BUILD INSTRUCTIONS
