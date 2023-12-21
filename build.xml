@@ -11,8 +11,8 @@
 		<attribute name="resultproperty" default="setup.result" />
 		<sequential>
 			<mkdir dir="@{basedir}/tools/maven"/>
-			<get src="http://mirror.vorboss.net/apache/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.zip" dest="@{basedir}/tools/maven/apache-maven-3.6.3-bin.zip" verbose="true" usetimestamp="true"/>
-			<get src="https://www.apache.org/dist/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.zip.asc" dest="@{basedir}/tools/maven/apache-maven-3.6.3-bin.zip.asc" verbose="true" usetimestamp="true"/>
+			<get src="https://www.apache.org/dist/maven/maven-3/3.9.6/binaries/apache-maven-3.9.6-bin.zip" dest="@{basedir}/tools/maven/apache-maven-3.9.6-bin.zip" verbose="true" usetimestamp="true"/>
+			<get src="https://www.apache.org/dist/maven/maven-3/3.9.6/binaries/apache-maven-3.9.6-bin.zip.asc" dest="@{basedir}/tools/maven/apache-maven-3.9.6-bin.zip.asc" verbose="true" usetimestamp="true"/>
 			<get src="https://www.apache.org/dist/maven/KEYS" dest="@{basedir}/tools/maven/KEYS" verbose="true" usetimestamp="true"/>
 			<exec executable="gpg" resultproperty="@{resultproperty}" failonerror="true">
 				<arg value="--import" />
@@ -24,10 +24,10 @@
 			</exec>
 			<exec executable="gpg" resultproperty="@{resultproperty}" failonerror="true">
 				<arg value="--verify" />
-				<arg value="@{basedir}/tools/maven/apache-maven-3.6.3-bin.zip.asc" />
-				<arg value="@{basedir}/tools/maven/apache-maven-3.6.3-bin.zip" />
+				<arg value="@{basedir}/tools/maven/apache-maven-3.9.6-bin.zip.asc" />
+				<arg value="@{basedir}/tools/maven/apache-maven-3.9.6-bin.zip" />
 			</exec>
-			<unzip src="@{basedir}/tools/maven/apache-maven-3.6.3-bin.zip" dest="@{basedir}/tools/maven"/>
+			<unzip src="@{basedir}/tools/maven/apache-maven-3.9.6-bin.zip" dest="@{basedir}/tools/maven"/>
 		</sequential>
 	</macrodef>
 	<macrodef name="maven">
@@ -44,15 +44,15 @@
 				<jvmarg value="--add-opens=java.base/java.text=ALL-UNNAMED" />
 				<jvmarg value="--add-opens=java.desktop/java.awt.font=ALL-UNNAMED" />
 				<classpath>
-					<fileset dir="@{basedir}/tools/maven/apache-maven-3.6.3/boot">
+					<fileset dir="@{basedir}/tools/maven/apache-maven-3.9.6/boot">
 						<include name="*.jar" />
 					</fileset>
-					<fileset dir="@{basedir}/tools/maven/apache-maven-3.6.3/lib">
+					<fileset dir="@{basedir}/tools/maven/apache-maven-3.9.6/lib">
 						<include name="*.jar" />
 					</fileset>
 				</classpath>
-				<sysproperty key="classworlds.conf" value="@{basedir}/tools/maven/apache-maven-3.6.3/bin/m2.conf" />
-				<sysproperty key="maven.home" value="@{basedir}/tools/maven/apache-maven-3.6.3" />
+				<sysproperty key="classworlds.conf" value="@{basedir}/tools/maven/apache-maven-3.9.6/bin/m2.conf" />
+				<sysproperty key="maven.home" value="@{basedir}/tools/maven/apache-maven-3.9.6" />
 				<sysproperty key="maven.multiModuleProjectDirectory" value="true" />
 				<arg line="--batch-mode @{options} @{goal}" />
 			</java>
