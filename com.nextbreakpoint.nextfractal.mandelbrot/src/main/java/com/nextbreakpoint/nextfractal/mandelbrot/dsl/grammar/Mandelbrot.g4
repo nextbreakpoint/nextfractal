@@ -4,16 +4,8 @@ options
 {
 } 
 
-@lexer::header {
+@header {
 package com.nextbreakpoint.nextfractal.mandelbrot.dsl.grammar;
-
-import com.nextbreakpoint.nextfractal.mandelbrot.dsl.grammar.*;
-}
-
-@parser::header {
-package com.nextbreakpoint.nextfractal.mandelbrot.dsl.grammar;
-
-import com.nextbreakpoint.nextfractal.mandelbrot.dsl.grammar.*;
 }
 
 @members {

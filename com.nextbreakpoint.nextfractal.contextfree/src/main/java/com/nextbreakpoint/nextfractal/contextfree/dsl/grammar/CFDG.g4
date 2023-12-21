@@ -4,18 +4,13 @@ options
 {
 } 
 
-@lexer::header { 
-package com.nextbreakpoint.nextfractal.contextfree.dsl.grammar;
-}
-
-@parser::header {
+@header {
 package com.nextbreakpoint.nextfractal.contextfree.dsl.grammar;
 
 import java.util.Map;
 import com.nextbreakpoint.nextfractal.contextfree.dsl.grammar.exceptions.*;
 import com.nextbreakpoint.nextfractal.contextfree.dsl.grammar.enums.*;
 import com.nextbreakpoint.nextfractal.contextfree.dsl.grammar.ast.*;
-import com.nextbreakpoint.nextfractal.contextfree.dsl.grammar.*;
 }
 
 @members {
