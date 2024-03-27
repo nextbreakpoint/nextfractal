@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="NextFractal">
 	<property environment="env" />
-	<property name="openjfx.version" value="14" />
+	<property name="openjfx.version" value="21.0.1" />
+	<property name="maven.version" value="3.9.6" />
 	<property name="nextfractal.version" value="2.1.5" />
 	<property name="nextfractal.year" value="2024" />
 	<property name="nextfractal.folder" value="NextFractal" />
@@ -11,8 +12,8 @@
 		<attribute name="resultproperty" default="setup.result" />
 		<sequential>
 			<mkdir dir="@{basedir}/tools/maven"/>
-			<get src="https://www.apache.org/dist/maven/maven-3/3.9.6/binaries/apache-maven-3.9.6-bin.zip" dest="@{basedir}/tools/maven/apache-maven-3.9.6-bin.zip" verbose="true" usetimestamp="true"/>
-			<get src="https://www.apache.org/dist/maven/maven-3/3.9.6/binaries/apache-maven-3.9.6-bin.zip.asc" dest="@{basedir}/tools/maven/apache-maven-3.9.6-bin.zip.asc" verbose="true" usetimestamp="true"/>
+			<get src="https://www.apache.org/dist/maven/maven-3/${maven.version}/binaries/apache-maven-${maven.version}-bin.zip" dest="@{basedir}/tools/maven/apache-maven-${maven.version}-bin.zip" verbose="true" usetimestamp="true"/>
+			<get src="https://www.apache.org/dist/maven/maven-3/${maven.version}/binaries/apache-maven-${maven.version}-bin.zip.asc" dest="@{basedir}/tools/maven/apache-maven-${maven.version}-bin.zip.asc" verbose="true" usetimestamp="true"/>
 			<get src="https://www.apache.org/dist/maven/KEYS" dest="@{basedir}/tools/maven/KEYS" verbose="true" usetimestamp="true"/>
 			<exec executable="gpg" resultproperty="@{resultproperty}" failonerror="true">
 				<arg value="--import" />
@@ -24,10 +25,10 @@
 			</exec>
 			<exec executable="gpg" resultproperty="@{resultproperty}" failonerror="true">
 				<arg value="--verify" />
-				<arg value="@{basedir}/tools/maven/apache-maven-3.9.6-bin.zip.asc" />
-				<arg value="@{basedir}/tools/maven/apache-maven-3.9.6-bin.zip" />
+				<arg value="@{basedir}/tools/maven/apache-maven-${maven.version}-bin.zip.asc" />
+				<arg value="@{basedir}/tools/maven/apache-maven-${maven.version}-bin.zip" />
 			</exec>
-			<unzip src="@{basedir}/tools/maven/apache-maven-3.9.6-bin.zip" dest="@{basedir}/tools/maven"/>
+			<unzip src="@{basedir}/tools/maven/apache-maven-${maven.version}-bin.zip" dest="@{basedir}/tools/maven"/>
 		</sequential>
 	</macrodef>
 	<macrodef name="maven">
@@ -44,15 +45,15 @@
 				<jvmarg value="--add-opens=java.base/java.text=ALL-UNNAMED" />
 				<jvmarg value="--add-opens=java.desktop/java.awt.font=ALL-UNNAMED" />
 				<classpath>
-					<fileset dir="@{basedir}/tools/maven/apache-maven-3.9.6/boot">
+					<fileset dir="@{basedir}/tools/maven/apache-maven-${maven.version}/boot">
 						<include name="*.jar" />
 					</fileset>
-					<fileset dir="@{basedir}/tools/maven/apache-maven-3.9.6/lib">
+					<fileset dir="@{basedir}/tools/maven/apache-maven-${maven.version}/lib">
 						<include name="*.jar" />
 					</fileset>
 				</classpath>
-				<sysproperty key="classworlds.conf" value="@{basedir}/tools/maven/apache-maven-3.9.6/bin/m2.conf" />
-				<sysproperty key="maven.home" value="@{basedir}/tools/maven/apache-maven-3.9.6" />
+				<sysproperty key="classworlds.conf" value="@{basedir}/tools/maven/apache-maven-${maven.version}/bin/m2.conf" />
+				<sysproperty key="maven.home" value="@{basedir}/tools/maven/apache-maven-${maven.version}" />
 				<sysproperty key="maven.multiModuleProjectDirectory" value="true" />
 				<arg line="--batch-mode @{options} @{goal}" />
 			</java>
