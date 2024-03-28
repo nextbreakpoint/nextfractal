@@ -24,10 +24,9 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.dsl.javacompiler;
 
-import com.nextbreakpoint.nextfractal.core.common.SourceError;
 import com.nextbreakpoint.nextfractal.mandelbrot.dsl.ClassFactory;
 
-import java.util.List;
+import java.lang.reflect.InvocationTargetException;
 
 public class JavaClassFactory<T> implements ClassFactory<T> {
 	private Class<T> clazz;
@@ -36,10 +35,10 @@ public class JavaClassFactory<T> implements ClassFactory<T> {
 		this.clazz = clazz;
 	}
 	
-	public T create() throws InstantiationException, IllegalAccessException {
+	public T create() throws InstantiationException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
 		if (clazz == null) {
 			return null;
 		}
-		return clazz.newInstance();
+		return clazz.getDeclaredConstructor().newInstance();
 	}
 }

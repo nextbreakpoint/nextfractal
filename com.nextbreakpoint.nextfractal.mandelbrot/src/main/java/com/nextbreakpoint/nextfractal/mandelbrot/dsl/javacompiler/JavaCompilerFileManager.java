@@ -33,17 +33,19 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class JavaCompilerFileManager extends ForwardingJavaFileManager {
-	private Map<String, JavaFileObject> files = new ConcurrentHashMap<>();
+public class JavaCompilerFileManager extends ForwardingJavaFileManager<JavaFileManager> {
+	private final Map<String, JavaFileObject> files = new ConcurrentHashMap<>();
+	private final String className;
 
 	public JavaCompilerFileManager(JavaFileManager fileManager, String className) {
 		super(fileManager);
+		this.className = className;
 	}
 
 	@Override
 	public JavaFileObject getJavaFileForOutput(Location location, String className, Kind kind, FileObject sibling) throws IOException {
-		if (className.equals(className)) {
-			return files.computeIfAbsent(className, name -> new JavaClassFileObject(name));
+		if (this.className.equals(className)) {
+			return files.computeIfAbsent(className, JavaClassFileObject::new);
 		} else {
 			return super.getJavaFileForOutput(location, className, kind, sibling);
 		}

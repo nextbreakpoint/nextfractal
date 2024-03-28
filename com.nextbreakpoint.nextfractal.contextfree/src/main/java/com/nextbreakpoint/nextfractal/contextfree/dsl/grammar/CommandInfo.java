@@ -43,7 +43,7 @@ public class CommandInfo {
     private PathStorage pathStorage;
 
 //    public static final CommandInfo DEFAULT_COMMAND_INFO = new CommandInfo(0, null);
-    public static final Long DEFAULT_PATH_UID = new Long(Long.MAX_VALUE);
+    public static final Long DEFAULT_PATH_UID = Long.MAX_VALUE;
 
     public CommandInfo() {
         index = 0;

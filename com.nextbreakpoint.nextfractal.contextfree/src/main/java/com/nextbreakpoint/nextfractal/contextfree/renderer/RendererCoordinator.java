@@ -59,15 +59,6 @@ public class RendererCoordinator implements RendererDelegate {
 	}
 
 	/**
-	 * @see Object#finalize()
-	 */
-	@Override
-	public void finalize() throws Throwable {
-		dispose();
-		super.finalize();
-	}
-
-	/**
 	 * 
 	 */
 	public final void dispose() {

@@ -245,12 +245,6 @@ public class JobsPane extends BorderPane {
         updateJobList(listView);
     }
 
-    @Override
-    protected void finalize() throws Throwable {
-        dispose();
-        super.finalize();
-    }
-
     public void dispose() {
         List<ExecutorService> executors = Arrays.asList(executor);
         executors.forEach(executor -> executor.shutdownNow());

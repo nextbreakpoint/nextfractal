@@ -37,14 +37,6 @@ public class Java2DRendererBuffer implements RendererBuffer {
 		g2d = image.createGraphics();
 	}
 
-	/**
-	 * @throws Throwable
-	 */
-	protected void finalize() throws Throwable {
-		dispose();
-		super.finalize();
-	}
-	
 	@Override
 	public void dispose() {
 		if (g2d != null) {

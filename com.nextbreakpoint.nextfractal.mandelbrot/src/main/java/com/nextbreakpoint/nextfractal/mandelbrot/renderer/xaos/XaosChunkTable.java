@@ -37,12 +37,7 @@ class XaosChunkTable {
 		}
 	}
 
-	/**
-	 * @see java.lang.Object#finalize()
-	 */
-	@Override
-	public void finalize() throws Throwable {
+	public void dispose() {
 		data = null;
-		super.finalize();
 	}
 }

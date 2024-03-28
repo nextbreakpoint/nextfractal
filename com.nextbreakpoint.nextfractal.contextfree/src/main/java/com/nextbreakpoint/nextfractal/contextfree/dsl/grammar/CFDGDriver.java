@@ -59,9 +59,12 @@ import com.nextbreakpoint.nextfractal.contextfree.dsl.grammar.enums.RepElemType;
 import com.nextbreakpoint.nextfractal.contextfree.dsl.grammar.enums.ShapeType;
 import org.antlr.v4.runtime.ANTLRFileStream;
 import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.CodePointCharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Token;
 
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -200,7 +203,7 @@ public class CFDGDriver {
 //			if (path.endsWith(".nf.zip")) {
 //				throw new UnsupportedOperationException();
 //			}
-			ANTLRFileStream is = new ANTLRFileStream(path);
+			CharStream is = CharStreams.fromFileName(path);
 			fileNames.push(path);
 			filePath = path;
 			filesToLoad.push(filePath);

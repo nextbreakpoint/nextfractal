@@ -29,6 +29,8 @@ import com.nextbreakpoint.nextfractal.contextfree.dsl.grammar.*;
 import com.nextbreakpoint.nextfractal.contextfree.dsl.grammar.exceptions.CFDGException;
 import com.nextbreakpoint.nextfractal.core.common.SourceError;
 import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 
 import java.io.File;
@@ -53,7 +55,7 @@ public class DSLParser {
 
 	private CFDG parse(String source, List<SourceError> errors) throws ParserException {
 		try {
-			ANTLRInputStream is = new ANTLRInputStream(new StringReader(source));
+			CharStream is = CharStreams.fromReader(new StringReader(source));
 			CFDGLexer lexer = new CFDGLexer(is);
 			CommonTokenStream tokens = new CommonTokenStream(lexer);
 			CFDGParser parser = new CFDGParser(tokens);

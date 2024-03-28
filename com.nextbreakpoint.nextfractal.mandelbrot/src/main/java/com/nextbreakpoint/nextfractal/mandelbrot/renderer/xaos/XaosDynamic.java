@@ -48,16 +48,11 @@ class XaosDynamic {
 		}
 	}
 
-	/**
-	 * @see java.lang.Object#finalize()
-	 */
-	@Override
-	public void finalize() throws Throwable {
+	public void dispose() {
 		oldBest = null;
 		newBest = null;
 		calData = null;
 		conData = null;
-		super.finalize();
 	}
 
 	/**

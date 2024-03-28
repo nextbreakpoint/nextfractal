@@ -78,8 +78,9 @@ public abstract class FileManager {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private static Try<Bundle, Exception> loadBundle(ZipInputStream is) {
-        return Try.of(() -> readEntries(is)).flatMap(entries -> readManifest(entries))
+        return Try.of(() -> readEntries(is)).flatMap(FileManager::readManifest)
             .flatMap(result -> tryFindFactory((String)result[1]).map(CoreFactory::createFileManager)
             .flatMap(manager -> manager.loadEntries((List<FileManagerEntry>)result[0])));
     }
@@ -93,8 +94,8 @@ public abstract class FileManager {
     private static Try<Object[], Exception> parseManifest(List<FileManagerEntry> entries, byte[] data) {
         try {
             ObjectMapper mapper = new ObjectMapper();
-            Map properties = mapper.readValue(data, HashMap.class);
-            String pluginId = (String) properties.get("pluginId");
+            Map<String, String> properties = mapper.readValue(data, HashMap.class);
+            String pluginId = properties.get("pluginId");
             return Try.success(new Object[] { entries , Objects.requireNonNull(pluginId) });
         } catch (Exception e) {
             return Try.failure(new Exception("Plugin id not defined"));
@@ -128,7 +129,7 @@ public abstract class FileManager {
 
     private static Try<Bundle, Exception> putEntries(ZipOutputStream os, Bundle bundle, List<FileManagerEntry> entries) {
         return entries.stream().map(entry -> Try.of(() -> putEntry(os, bundle, entry)))
-            .filter(result -> result.isFailure()).findFirst().orElse(Try.success(bundle));
+            .filter(Try::isFailure).findFirst().orElse(Try.success(bundle));
     }
 
     private static Bundle putEntry(ZipOutputStream os, Bundle bundle, FileManagerEntry entry) throws IOException {
@@ -140,10 +141,10 @@ public abstract class FileManager {
     }
 
     protected Try<byte[], Exception> encodeClips(List<Clip> clips) {
-        List<Try<List<Map<String, Object>>, Exception>> result = clips.stream().map(this::encodeClip).collect(Collectors.toList());
+        List<Try<List<Map<String, Object>>, Exception>> result = clips.stream().map(this::encodeClip).toList();
 
         return result.stream().filter(Try::isFailure).findFirst().map(this::encodeClipsFailure)
-            .orElseGet(() -> Try.success(result.stream().map(Try::get).collect(Collectors.toList()))).flatMap(list -> writeEncodedClips(list));
+            .orElseGet(() -> Try.success(result.stream().map(Try::get).collect(Collectors.toList()))).flatMap(this::writeEncodedClips);
     }
 
     private Try<byte[], Exception> writeEncodedClips(List<List<Map<String, Object>>> list) {
@@ -156,7 +157,7 @@ public abstract class FileManager {
         boolean[] stop = new boolean[] { false };
 
         List<Try<Map<String, Object>, Exception>> encodedEvents = decodedClip.events().filter(x -> !stop[0])
-            .map(decodedEvent -> Try.of(() -> encodeEvent(lastMap, decodedEvent)).onFailure(x -> stop[0] = true).execute()).collect(Collectors.toList());
+            .map(decodedEvent -> Try.of(() -> encodeEvent(lastMap, decodedEvent)).onFailure(x -> stop[0] = true).execute()).toList();
 
         return encodedEvents.stream().filter(Try::isFailure).findFirst().map(this::encodeClipFailure)
             .orElseGet(() -> Try.success(encodedEvents.stream().map(Try::get).collect(Collectors.toList())));
@@ -207,7 +208,7 @@ public abstract class FileManager {
             .map(encodedClips -> encodedClips.stream().map(this::decodeClip).collect(Collectors.toList()));
 
         return result.flatMap(decodedClips -> decodedClips.stream().filter(Try::isFailure).findFirst().map(this::decodeClipsFailure)
-            .orElseGet(() -> Try.success(new LinkedList(decodedClips.stream().map(Try::get).collect(Collectors.toList())))));
+            .orElseGet(() -> Try.success(new LinkedList<>(decodedClips.stream().map(Try::get).collect(Collectors.toList())))));
     }
 
     private Try<List<List<Map<String, Object>>>, Exception> readEncodedClips(byte[] data) {
@@ -220,7 +221,7 @@ public abstract class FileManager {
         boolean[] stop = new boolean[] { false };
 
         List<Try<ClipEvent, Exception>> decodedEvents = encodedClip.stream().filter(x -> !stop[0])
-            .map(encodedEvent -> Try.of(() -> decodeEvent(lastMap, encodedEvent)).onFailure(x -> stop[0] = true).execute()).collect(Collectors.toList());
+            .map(encodedEvent -> Try.of(() -> decodeEvent(lastMap, encodedEvent)).onFailure(x -> stop[0] = true).execute()).toList();
 
         return decodedEvents.stream().filter(Try::isFailure).findFirst().map(this::decodeClipFailure)
             .orElseGet(() -> Try.success(new Clip(decodedEvents.stream().map(Try::get).collect(Collectors.toList()))));

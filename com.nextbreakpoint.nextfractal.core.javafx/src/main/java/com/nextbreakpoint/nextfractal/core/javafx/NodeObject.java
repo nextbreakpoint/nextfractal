@@ -43,15 +43,6 @@ public abstract class NodeObject {
 	private boolean changed;
 
 	/**
-	 * @see java.lang.Object#finalize()
-	 */
-	@Override
-	protected void finalize() throws Throwable {
-		dispose();
-		super.finalize();
-	}
-
-	/**
 	 * 
 	 */
 	public void dispose() {

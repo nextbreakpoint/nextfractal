@@ -762,12 +762,6 @@ public class RenderPane extends BorderPane {
 		showTrapsProperty.setValue(metadata.getOptions().isShowTraps());
 	}
 
-	@Override
-	protected void finalize() throws Throwable {
-		dispose();
-		super.finalize();
-	}
-
 	private void dispose() {
 		disposeCoordinators();
 	}

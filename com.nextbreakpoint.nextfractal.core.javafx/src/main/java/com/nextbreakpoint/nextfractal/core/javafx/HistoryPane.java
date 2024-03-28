@@ -114,12 +114,6 @@ public class HistoryPane extends BorderPane {
         this.delegate = delegate;
     }
 
-    @Override
-    protected void finalize() throws Throwable {
-        dispose();
-        super.finalize();
-    }
-
     public void dispose() {
         List<ExecutorService> executors = Arrays.asList(executor);
         executors.forEach(executor -> executor.shutdownNow());

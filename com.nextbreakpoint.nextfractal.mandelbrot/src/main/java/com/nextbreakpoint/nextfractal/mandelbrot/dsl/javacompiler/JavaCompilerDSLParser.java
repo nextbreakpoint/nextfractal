@@ -49,6 +49,9 @@ import com.nextbreakpoint.nextfractal.mandelbrot.dsl.grammar.ASTStatement;
 import com.nextbreakpoint.nextfractal.mandelbrot.dsl.grammar.MandelbrotLexer;
 import com.nextbreakpoint.nextfractal.mandelbrot.dsl.grammar.MandelbrotParser;
 import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.CodePointCharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 
@@ -87,7 +90,7 @@ public class JavaCompilerDSLParser {
 	
 	private ASTFractal parse(String source, List<SourceError> errors) throws ParserException {
 		try {
-			ANTLRInputStream is = new ANTLRInputStream(new StringReader(source));
+			CharStream is = CharStreams.fromReader(new StringReader(source));
 			MandelbrotLexer lexer = new MandelbrotLexer(is);
 			CommonTokenStream tokens = new CommonTokenStream(lexer);
 			MandelbrotParser parser = new MandelbrotParser(tokens);

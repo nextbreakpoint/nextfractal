@@ -288,12 +288,6 @@ public class RenderPane extends BorderPane {
 		return new RendererCoordinator(renderThreadFactory, renderFactory, createSingleTile(width, height), hints);
 	}
 
-	@Override
-	protected void finalize() throws Throwable {
-		dispose();
-		super.finalize();
-	}
-
 	private void dispose() {
 	}
 

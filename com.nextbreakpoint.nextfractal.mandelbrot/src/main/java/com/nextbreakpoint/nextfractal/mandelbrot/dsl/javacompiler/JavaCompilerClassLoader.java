@@ -39,10 +39,4 @@ public class JavaCompilerClassLoader extends ClassLoader {
 		Class<?> clazz = defineClass(name, data, 0, data.length);
 		super.resolveClass(clazz);
 	}
-
-	@Override
-	protected void finalize() throws Throwable {
-		logger.fine("Finalize classloader (" + count.addAndGet(-1) + ")");
-		super.finalize();
-	}
 }

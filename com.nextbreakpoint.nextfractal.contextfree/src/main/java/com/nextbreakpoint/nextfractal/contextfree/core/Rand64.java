@@ -833,7 +833,7 @@ public class Rand64 implements Cloneable {
 
 		@Override
 		public Long max() {
-			return new Long(p.length);
+			return (long)p.length;
 		}
 
 		@Override

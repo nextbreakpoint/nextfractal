@@ -26,6 +26,8 @@ package com.nextbreakpoint.nextfractal.mandelbrot.dsl;
 
 import com.nextbreakpoint.nextfractal.mandelbrot.core.ParserException;
 
+import java.lang.reflect.InvocationTargetException;
+
 public interface ClassFactory<T> {
-	public T create() throws InstantiationException, IllegalAccessException, ParserException;
+	public T create() throws InstantiationException, IllegalAccessException, ParserException, NoSuchMethodException, InvocationTargetException;
 }

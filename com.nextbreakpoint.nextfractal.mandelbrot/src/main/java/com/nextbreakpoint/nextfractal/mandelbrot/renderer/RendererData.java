@@ -46,15 +46,6 @@ public class RendererData {
 	}
 
 	/**
-	 * @see java.lang.Object#finalize()
-	 */
-	@Override
-	public void finalize() throws Throwable {
-		free();
-		super.finalize();
-	}
-
-	/**
 	 * 
 	 */
 	public void free() {

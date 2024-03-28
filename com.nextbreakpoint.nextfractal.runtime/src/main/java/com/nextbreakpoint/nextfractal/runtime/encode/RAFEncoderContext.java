@@ -45,15 +45,6 @@ public class RAFEncoderContext implements EncoderContext {
 		this.frameRate = frameRate;
 	}
 
-	@Override
-	protected void finalize() throws Throwable {
-		try {
-			raf.close();
-		} catch (Exception e) {
-		}
-		super.finalize();
-	}
-
 	/**
 	 * @see com.nextbreakpoint.nextfractal.core.encode.EncoderContext#getPixelsAsByteArray(int, int, int, int, int, int)
 	 */
