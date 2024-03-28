@@ -6,4 +6,3 @@ build
 tools
 *.interp
 tmp
-.gradle
