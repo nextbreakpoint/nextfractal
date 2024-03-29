@@ -29,11 +29,10 @@ module com.nextbreakpoint.nextfractal.mandelbrot {
     requires java.logging;
     requires java.desktop;
     requires java.compiler;
-    requires commons.math3;
-    requires org.antlr.antlr4.runtime;
+    requires jdk.compiler;
     requires com.fasterxml.jackson.databind;
     requires com.fasterxml.jackson.annotation;
-    requires com.nextbreakpoint.try4java;
+    requires com.nextbreakpoint.nextfractal.libraries;
     requires com.nextbreakpoint.nextfractal.core;
     exports com.nextbreakpoint.nextfractal.mandelbrot.module;
     exports com.nextbreakpoint.nextfractal.mandelbrot.dsl;

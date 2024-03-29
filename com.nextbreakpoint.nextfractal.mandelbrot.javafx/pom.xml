@@ -12,6 +12,11 @@
     <dependencies>
         <dependency>
             <groupId>com.nextbreakpoint</groupId>
+            <artifactId>com.nextbreakpoint.nextfractal.libraries</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.nextbreakpoint</groupId>
             <artifactId>com.nextbreakpoint.nextfractal.mandelbrot</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -23,14 +28,6 @@
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.reactivex.rxjava2</groupId>
-            <artifactId>rxjavafx</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.reactivex.rxjava2</groupId>
-            <artifactId>rxjava</artifactId>
         </dependency>
     </dependencies>
 </project>

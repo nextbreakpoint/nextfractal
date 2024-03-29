@@ -49,12 +49,13 @@
     <dependencies>
         <dependency>
             <groupId>com.nextbreakpoint</groupId>
-            <artifactId>com.nextbreakpoint.nextfractal.core</artifactId>
+            <artifactId>com.nextbreakpoint.nextfractal.libraries</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.nextbreakpoint</groupId>
-            <artifactId>com.nextbreakpoint.try4java</artifactId>
+            <artifactId>com.nextbreakpoint.nextfractal.core</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -63,14 +64,6 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.antlr</groupId>
-            <artifactId>antlr4-runtime</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-math3</artifactId>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>

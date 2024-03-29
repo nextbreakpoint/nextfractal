@@ -64,6 +64,7 @@
  <maven-dependency-plugin.version>3.6.1</maven-dependency-plugin.version>
  <maven-gpg-plugin.version>3.1.0</maven-gpg-plugin.version>
  <build-helper-maven-plugin.version>3.5.0</build-helper-maven-plugin.version>
+<moditect-maven-plugin.version>1.0.0.Final</moditect-maven-plugin.version>
  <nexus-staging-maven-plugin.version>1.6.13</nexus-staging-maven-plugin.version>
  <nexus.host>https://oss.sonatype.org</nexus.host>
  <nexus.url>https://oss.sonatype.org/content/repositories/snapshots</nexus.url>
@@ -105,26 +106,31 @@
 						 </execution>
 				 </executions>
 		 </plugin>
-		 <plugin>
-				 <groupId>org.apache.maven.plugins</groupId>
-				 <artifactId>maven-javadoc-plugin</artifactId>
-				 <version>${maven-javadoc-plugin.version}</version>
-				 <executions>
-						 <execution>
-								 <id>attach-javadocs</id>
-								 <goals>
-										 <goal>jar</goal>
-								 </goals>
-								 <configuration>
-										 <failOnError>false</failOnError>
-								 </configuration>
-						 </execution>
-				 </executions>
-		 </plugin>
+<!--		 <plugin>-->
+<!--				 <groupId>org.apache.maven.plugins</groupId>-->
+<!--				 <artifactId>maven-javadoc-plugin</artifactId>-->
+<!--				 <version>${maven-javadoc-plugin.version}</version>-->
+<!--				 <executions>-->
+<!--						 <execution>-->
+<!--								 <id>attach-javadocs</id>-->
+<!--								 <goals>-->
+<!--										 <goal>jar</goal>-->
+<!--								 </goals>-->
+<!--								 <configuration>-->
+<!--										 <failOnError>false</failOnError>-->
+<!--								 </configuration>-->
+<!--						 </execution>-->
+<!--				 </executions>-->
+<!--		 </plugin>-->
 		 <plugin>
 				 <groupId>org.apache.maven.plugins</groupId>
 				 <artifactId>maven-compiler-plugin</artifactId>
 				 <version>${maven-compiler-plugin.version}</version>
+		 </plugin>
+		 <plugin>
+			 <groupId>org.apache.maven.plugins</groupId>
+			 <artifactId>maven-jar-plugin</artifactId>
+			 <version>${maven-jar-plugin.version}</version>
 		 </plugin>
 		 <plugin>
 				 <groupId>org.apache.maven.plugins</groupId>
@@ -145,6 +151,11 @@
 						 <!--</systemPropertyVariables>-->
 				 </configuration>
 		 </plugin>
+	 <plugin>
+		 <groupId>org.moditect</groupId>
+		 <artifactId>moditect-maven-plugin</artifactId>
+		 <version>${moditect-maven-plugin.version}</version>
+	 </plugin>
  </plugins>
 </build>
 <dependencyManagement>
@@ -256,39 +267,34 @@
 	</dependency>
 </dependencies>
 <profiles>
+	<profile>
+		<id>osx_x86_64</id>
+		<activation>
+			<activeByDefault>true</activeByDefault>
+		</activation>
+		<properties>
+			<build.type>macos_x86_64</build.type>
+			<arch.type>x86_64</arch.type>
+			<os.type>mac</os.type>
+			<os.name>macos</os.name>
+		</properties>
+	</profile>
  <profile>
-		 <id>windows_x86_64</id>
+		 <id>win_x86_64</id>
 		 <properties>
 				 <build.type>win32_x86_64</build.type>
 				 <arch.type>x86_64</arch.type>
-				 <os.type>windows</os.type>
+				 <os.type>win</os.type>
+				 <os.name>windows</os.name>
 		 </properties>
  </profile>
  <profile>
-		 <id>debian_x86_64</id>
+		 <id>linux_x86_64</id>
 		 <properties>
 				 <build.type>linux_x86_64</build.type>
 				 <arch.type>x86_64</arch.type>
 				 <os.type>linux</os.type>
-		 </properties>
- </profile>
- <profile>
-		 <id>fedora_x86_64</id>
-		 <properties>
-				 <build.type>linux_x86_64</build.type>
-				 <arch.type>x86_64</arch.type>
-				 <os.type>linux</os.type>
-		 </properties>
- </profile>
- <profile>
-		 <id>osx_x86_64</id>
-		 <activation>
-				 <activeByDefault>true</activeByDefault>
-		 </activation>
-		 <properties>
-				 <build.type>macos_x86_64</build.type>
-				 <arch.type>x86_64</arch.type>
-				 <os.type>mac</os.type>
+				 <os.name>linux</os.name>
 		 </properties>
  </profile>
  <profile>

@@ -10,6 +10,11 @@
     <dependencies>
         <dependency>
             <groupId>com.nextbreakpoint</groupId>
+            <artifactId>com.nextbreakpoint.nextfractal.libraries</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.nextbreakpoint</groupId>
             <artifactId>com.nextbreakpoint.nextfractal.core</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -22,18 +27,6 @@
             <groupId>com.nextbreakpoint</groupId>
             <artifactId>com.nextbreakpoint.nextfractal.contextfree</artifactId>
             <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.nextbreakpoint</groupId>
-            <artifactId>com.nextbreakpoint.ffmpeg4java</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.nextbreakpoint</groupId>
-            <artifactId>com.nextbreakpoint.freeimage4java</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.nextbreakpoint</groupId>
-            <artifactId>com.nextbreakpoint.try4java</artifactId>
         </dependency>
     </dependencies>
     <profiles>

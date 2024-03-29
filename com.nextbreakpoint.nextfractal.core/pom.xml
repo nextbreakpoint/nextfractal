@@ -10,7 +10,8 @@
     <dependencies>
         <dependency>
             <groupId>com.nextbreakpoint</groupId>
-            <artifactId>com.nextbreakpoint.try4java</artifactId>
+            <artifactId>com.nextbreakpoint.nextfractal.libraries</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>

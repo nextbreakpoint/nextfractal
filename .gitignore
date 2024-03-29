@@ -6,3 +6,5 @@ build
 tools
 *.interp
 tmp
+.maven
+NextFractal.app
