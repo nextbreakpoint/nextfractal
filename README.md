@@ -39,7 +39,7 @@ Get the code from https://github.com/nextbreakpoint/nextfractal:
 
     git clone https://github.com/nextbreakpoint/nextfractal.git
 
-Install Eclipse Temurin 21 JDK and configure environment variable JAVA_HOME if needed. Install Apache Ant 1.10 and Apache Maven 3.9. Install Xcode and command line tools for Mac. 
+Install Eclipse Temurin 21 JDK and configure environment variable JAVA_HOME if needed. Install Apache Ant 1.10 and Apache Maven 3.9. Install Xcode and the development command line tools (only for Mac). 
 
 Use target build-mac to build the distribution for Mac:
 
