@@ -161,6 +161,14 @@
 			<delete dir="@{basedir}/dist/@{os}_@{arch}/${application}" />
 			<mkdir dir="@{basedir}/dist/@{os}_@{arch}/${application}" />
 			<makeimagesigned basedir="@{basedir}" os="@{os}" arch="@{arch}" icon="@{basedir}/icons/NextFractal.icns" destdir="@{basedir}/dist/@{os}_@{arch}/${application}" resultproperty="@{resultproperty}"/>
+			<copy failonerror="true" todir="@{basedir}/dist/@{os}_@{arch}/${application}/NextFractal.app/Contents" overwrite="true">
+				<fileset dir="@{basedir}/resources">
+					<include name="legal/**/*" />
+				</fileset>
+				<fileset dir="@{basedir}/resources">
+					<include name="examples/**/*" />
+				</fileset>
+			</copy>
 		</sequential>
 	</macrodef>
 	<macrodef name="makeapp">
@@ -173,6 +181,14 @@
 			<delete dir="@{basedir}/dist/@{os}_@{arch}/${application}" />
 			<mkdir dir="@{basedir}/dist/@{os}_@{arch}/${application}" />
 			<makeimage basedir="@{basedir}" os="@{os}" arch="@{arch}" icon="@{basedir}/icons/NextFractal.icns" destdir="@{basedir}/dist/@{os}_@{arch}/${application}" resultproperty="@{resultproperty}"/>
+			<copy failonerror="true" todir="@{basedir}/dist/@{os}_@{arch}/${application}/NextFractal.app/Contents" overwrite="true">
+				<fileset dir="@{basedir}/resources">
+					<include name="legal/**/*" />
+				</fileset>
+				<fileset dir="@{basedir}/resources">
+					<include name="examples/**/*" />
+				</fileset>
+			</copy>
 		</sequential>
 	</macrodef>
 	<macrodef name="makebin">
