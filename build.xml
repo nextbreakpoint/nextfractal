@@ -26,7 +26,7 @@
 		<attribute name="resultproperty" default="clean.result" />
 		<element name="args" implicit="true" optional="true" />
 		<sequential>
-			<maven basedir="@{basedir}" options="-U -t toolchains-@{os}.xml -P @{os}_@{arch}" goal="clean" resultproperty="@{resultproperty}"/>
+			<maven basedir="@{basedir}" options="-U -P @{os}_@{arch}" goal="clean" resultproperty="@{resultproperty}"/>
 		</sequential>
 	</macrodef>
 	<macrodef name="build">
@@ -41,10 +41,10 @@
 		<sequential>
 			<delete dir="@{basedir}/build/@{os}_@{arch}"/>
 			<mkdir dir="@{basedir}/build/@{os}_@{arch}"/>
-			<maven basedir="@{basedir}/com.nextbreakpoint.nextfractal.libraries" options="-t ../toolchains-@{os}.xml" goal="clean" resultproperty="@{resultproperty}" />
-			<maven basedir="@{basedir}/com.nextbreakpoint.nextfractal.libraries" options="-t ../toolchains-@{os}.xml -U -DskipTests=true" goal="install" resultproperty="@{resultproperty}" />
-			<maven basedir="@{basedir}" options="-t toolchains-@{os}.xml -P @{os}_@{arch}" goal="clean" resultproperty="@{resultproperty}" />
-			<maven basedir="@{basedir}" options="-t toolchains-@{os}.xml -P @{os}_@{arch} -U -DskipTests=true" goal="package" resultproperty="@{resultproperty}" />
+			<maven basedir="@{basedir}/com.nextbreakpoint.nextfractal.libraries" goal="clean" options="" resultproperty="@{resultproperty}" />
+			<maven basedir="@{basedir}/com.nextbreakpoint.nextfractal.libraries" goal="install" options="" resultproperty="@{resultproperty}" />
+			<maven basedir="@{basedir}" goal="clean" options="-P @{os}_@{arch}" resultproperty="@{resultproperty}" />
+			<maven basedir="@{basedir}" goal="package" options="-P @{os}_@{arch}" resultproperty="@{resultproperty}" />
 			<copy failonerror="true" todir="@{basedir}/build/@{os}_@{arch}/app/libs" overwrite="true">
 				<fileset dir="@{basedir}/com.nextbreakpoint.nextfractal.main/target/libs/@{libs}">
 					<include name="*" />
@@ -147,7 +147,7 @@
 				<arg value="productivity" />
 				<arg value="--mac-app-store" />
 				<arg value="--mac-entitlements" />
-				<arg value="@{basedir}/dev/NextFractal.entitlements" />
+				<arg value="@{basedir}/sandbox/NextFractal.entitlements" />
 			</exec>
 		</sequential>
 	</macrodef>
@@ -219,7 +219,7 @@
 				<arg value="--options" />
 				<arg value="runtime" />
 				<arg value="--entitlements" />
-				<arg value="@{basedir}/dev/NextFractal.entitlements" />
+				<arg value="@{basedir}/sandbox/NextFractal.entitlements" />
 				<arg value="@{basedir}/dist/@{os}_@{arch}/${application}/NextFractal.app" />
 			</exec>
 			<exec executable="codesign" resultproperty="@{resultproperty}">
@@ -453,7 +453,7 @@
 		<attribute name="resultproperty" default="publish.result" />
 		<element name="args" implicit="true" optional="true" />
 		<sequential>
-			<maven basedir="@{basedir}" goal="deploy" options="-N -DskipTests=true -Dchannel=@{channel} -pl ." resultproperty="@{resultproperty}"/>
+			<maven basedir="@{basedir}" goal="deploy" options="-DskipTests=true -Dchannel=@{channel} -pl . -N" resultproperty="@{resultproperty}"/>
 			<maven basedir="@{basedir}" goal="deploy" options="-DskipTests=true -Dchannel=@{channel} -pl com.nextbreakpoint.nextfractal.core" resultproperty="@{resultproperty}"/>
 			<maven basedir="@{basedir}" goal="deploy" options="-DskipTests=true -Dchannel=@{channel} -pl com.nextbreakpoint.nextfractal.contextfree" resultproperty="@{resultproperty}"/>
 			<maven basedir="@{basedir}" goal="deploy" options="-DskipTests=true -Dchannel=@{channel} -pl com.nextbreakpoint.nextfractal.mandelbrot" resultproperty="@{resultproperty}"/>
@@ -489,7 +489,7 @@
 				<include name="**/*.plist"/>
 			</fileset>
 		</replaceregexp>
-		<maven basedir="${basedir}" goal="versions:set" resultproperty="maven.build.result" options="-U -DnewVersion=${nextfractal.version}"/>
+		<maven basedir="${basedir}" goal="versions:set" options="-DnewVersion=${nextfractal.version}" resultproperty="maven.build.result"/>
 		<maven basedir="${basedir}" goal="versions:commit" resultproperty="maven.build.result"/>
 	</target>
 	<target name="change-copyright">
