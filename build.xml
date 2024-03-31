@@ -5,6 +5,9 @@
 	<property name="nextfractal.version" value="2.1.5" />
 	<property name="nextfractal.year" value="2024" />
 	<property name="application" value="NextFractal" />
+	<property name="description" value="NextFractal is an application for creating fractals and other algorithmically generated images" />
+	<property name="copyright" value="(c) 2015-${nextfractal.year} Andrea Medeghini" />
+	<property name="vendor" value="Andrea Medeghini" />
 	<property name="signing.identify" value="Developer ID Application: Andrea Medeghini (P646GF5PRT)" />
 	<property name="signing.teamid" value="P646GF5PRT" />
 	<macrodef name="maven">
@@ -72,11 +75,11 @@
 				<arg value="--name" />
 				<arg value="${application}" />
 				<arg value="--vendor" />
-				<arg value="Andrea Medeghini" />
+				<arg value="${vendor}" />
 				<arg value="--icon" />
 				<arg value="@{icon}" />
 				<arg value="--description" />
-				<arg value="Application for Fractals" />
+				<arg value="${description}" />
 				<arg value="--type" />
 				<arg value="app-image" />
 				<arg value="--app-version" />
@@ -84,7 +87,7 @@
 				<arg value="--dest" />
 				<arg value="@{destdir}" />
 				<arg value="--copyright" />
-				<arg value="(c) 2015-${nextfractal.year} Andrea Medeghini" />
+				<arg value="${copyright}" />
 				<arg value="--verbose" />
 				<arg value="--app-content" />
 				<arg value="@{basedir}/build/@{os}_@{arch}/app" />
@@ -112,11 +115,11 @@
 				<arg value="--name" />
 				<arg value="${application}" />
 				<arg value="--vendor" />
-				<arg value="Andrea Medeghini" />
+				<arg value="${vendor}" />
 				<arg value="--icon" />
 				<arg value="@{icon}" />
 				<arg value="--description" />
-				<arg value="Application for Fractals" />
+				<arg value="${description}" />
 				<arg value="--type" />
 				<arg value="app-image" />
 				<arg value="--app-version" />
@@ -124,7 +127,7 @@
 				<arg value="--dest" />
 				<arg value="@{destdir}" />
 				<arg value="--copyright" />
-				<arg value="(c) 2015-${nextfractal.year} Andrea Medeghini" />
+				<arg value="${copyright}" />
 				<arg value="--verbose" />
 				<arg value="--app-content" />
 				<arg value="@{basedir}/build/@{os}_@{arch}/app" />
