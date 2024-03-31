@@ -8,7 +8,7 @@
 	<property name="description" value="NextFractal is an application for creating fractals" />
 	<property name="copyright" value="(c) 2015-${nextfractal.year} Andrea Medeghini" />
 	<property name="vendor" value="Andrea Medeghini" />
-	<property name="signing.identify" value="Developer ID Application: Andrea Medeghini (P646GF5PRT)" />
+	<property name="signing.identity" value="Developer ID Application: Andrea Medeghini (P646GF5PRT)" />
 	<property name="signing.teamid" value="P646GF5PRT" />
 	<macrodef name="maven">
 		<attribute name="options" default=""/>
@@ -92,6 +92,8 @@
 				<arg value="--verbose" />
 				<arg value="--app-content" />
 				<arg value="@{basedir}/build/@{os}_@{arch}/app" />
+				<arg value="--app-content" />
+				<arg value="@{basedir}/resources" />
 				<arg value="--module-path" />
 				<arg value="@{basedir}/build/@{os}_@{arch}/mods" />
 				<arg value="--module" />
@@ -132,6 +134,8 @@
 				<arg value="--verbose" />
 				<arg value="--app-content" />
 				<arg value="@{basedir}/build/@{os}_@{arch}/app" />
+				<arg value="--app-content" />
+				<arg value="@{basedir}/resources" />
 				<arg value="--module-path" />
 				<arg value="@{basedir}/build/@{os}_@{arch}/mods" />
 				<arg value="--module" />
@@ -146,7 +150,7 @@
 				<arg value="--mac-package-signing-prefix" />
 				<arg value="com.nextbreakpoint.nextfractal." />
 				<arg value="--mac-signing-key-user-name" />
-				<arg value="${signing.identify}" />
+				<arg value="${signing.identity}" />
 				<arg value="--mac-app-category" />
 				<arg value="productivity" />
 				<arg value="--mac-app-store" />
@@ -165,14 +169,6 @@
 			<delete failonerror="true" dir="@{basedir}/dist/@{os}_@{arch}/${application}" />
 			<mkdir dir="@{basedir}/dist/@{os}_@{arch}/${application}" />
 			<makeimagesigned basedir="@{basedir}" os="@{os}" arch="@{arch}" icon="@{basedir}/icons/NextFractal.icns" destdir="@{basedir}/dist/@{os}_@{arch}/${application}" resultproperty="@{resultproperty}"/>
-			<copy failonerror="true" todir="@{basedir}/dist/@{os}_@{arch}/${application}/NextFractal.app/Contents" overwrite="true">
-				<fileset dir="@{basedir}/resources">
-					<include name="legal/**/*" />
-				</fileset>
-				<fileset dir="@{basedir}/resources">
-					<include name="examples/**/*" />
-				</fileset>
-			</copy>
 		</sequential>
 	</macrodef>
 	<macrodef name="makeapp">
@@ -185,14 +181,6 @@
 			<delete failonerror="true" dir="@{basedir}/dist/@{os}_@{arch}/${application}" />
 			<mkdir dir="@{basedir}/dist/@{os}_@{arch}/${application}" />
 			<makeimage basedir="@{basedir}" os="@{os}" arch="@{arch}" icon="@{basedir}/icons/NextFractal.icns" destdir="@{basedir}/dist/@{os}_@{arch}/${application}" resultproperty="@{resultproperty}"/>
-			<copy failonerror="true" todir="@{basedir}/dist/@{os}_@{arch}/${application}/NextFractal.app/Contents" overwrite="true">
-				<fileset dir="@{basedir}/resources">
-					<include name="legal/**/*" />
-				</fileset>
-				<fileset dir="@{basedir}/resources">
-					<include name="examples/**/*" />
-				</fileset>
-			</copy>
 		</sequential>
 	</macrodef>
 	<macrodef name="makebin">
@@ -221,30 +209,20 @@
 		<attribute name="os" />
 		<attribute name="arch" />
 		<attribute name="basedir" />
-		<attribute name="identity" />
 		<attribute name="resultproperty" default="signapp.result" />
 		<element name="args" implicit="true" optional="true" />
 		<sequential>
-			<exec executable="xattr" failonerror="true" resultproperty="@{resultproperty}">
-				<arg value="-rc" />
-				<arg value="@{basedir}/dist/@{os}_@{arch}/${application}/NextFractal.app" />
-			</exec>
 			<exec executable="codesign" failonerror="true" resultproperty="@{resultproperty}">
-				<arg value="-vvv" />
+				<arg value="--sign" />
+				<arg value="${signing.identity}" />
+				<arg value="--verbose=2" />
 				<arg value="--deep" />
 				<arg value="--force" />
 				<arg value="--timestamp" />
-				<arg value="--sign" />
-				<arg value="@{identity}" />
 				<arg value="--options" />
 				<arg value="runtime" />
 				<arg value="--entitlements" />
 				<arg value="@{basedir}/sandbox/NextFractal.entitlements" />
-				<arg value="@{basedir}/dist/@{os}_@{arch}/${application}/NextFractal.app" />
-			</exec>
-			<exec executable="codesign" failonerror="true" resultproperty="@{resultproperty}">
-				<arg value="-vvv" />
-				<arg value="-dv" />
 				<arg value="@{basedir}/dist/@{os}_@{arch}/${application}/NextFractal.app" />
 			</exec>
 		</sequential>
@@ -279,9 +257,9 @@
 		<element name="args" implicit="true" optional="true" />
 		<sequential>
 			<exec executable="codesign" failonerror="true" resultproperty="@{resultproperty}">
-				<arg value="-vvv" />
 				<arg value="--sign" />
-				<arg value="${signing.identify}" />
+				<arg value="${signing.identity}" />
+				<arg value="--verbose=2" />
 				<arg value="@{basedir}/dist/nextfractal_@{os}_@{arch}_@{version}.dmg" />
 			</exec>
 		</sequential>
@@ -367,14 +345,43 @@
 		<element name="args" implicit="true" optional="true" />
 		<sequential>
 			<exec executable="codesign" failonerror="true" resultproperty="@{resultproperty}">
-				<arg value="-verify" />
-				<arg value="-verbose" />
+				<arg value="--display" />
+				<arg value="--verbose=2" />
 				<arg value="@{basedir}/dist/@{os}_@{arch}/${application}/NextFractal.app" />
 			</exec>
-			<exec executable="spctl" failonerror="true" resultproperty="@{resultproperty}">
-				<arg value="--assess" />
-				<arg value="--verbose" />
+			<exec executable="codesign" failonerror="true" resultproperty="@{resultproperty}">
+				<arg value="--verify" />
+				<arg value="--deep" />
+				<arg value="--strict" />
+				<arg value="--verbose=2" />
 				<arg value="@{basedir}/dist/@{os}_@{arch}/${application}/NextFractal.app" />
+			</exec>
+		</sequential>
+	</macrodef>
+	<macrodef name="checkapp">
+		<attribute name="os" />
+		<attribute name="arch" />
+		<attribute name="basedir" />
+		<attribute name="resultproperty" default="stapleapp.result" />
+		<element name="args" implicit="true" optional="true" />
+		<sequential>
+			<exec executable="spctl" failonerror="true" resultproperty="@{resultproperty}">
+				<arg value="-vvv" />
+				<arg value="--assess" />
+				<arg value="--type" />
+				<arg value="exec" />
+				<arg value="@{basedir}/dist/@{os}_@{arch}/${application}/NextFractal.app" />
+			</exec>
+		</sequential>
+	</macrodef>
+	<macrodef name="checkentitlements">
+		<attribute name="basedir" />
+		<attribute name="resultproperty" default="stapleapp.result" />
+		<element name="args" implicit="true" optional="true" />
+		<sequential>
+			<exec executable="plutil" failonerror="true" resultproperty="@{resultproperty}">
+				<arg value="-lint" />
+				<arg value="@{basedir}/sandbox/NextFractal.entitlements" />
 			</exec>
 		</sequential>
 	</macrodef>
@@ -564,12 +571,14 @@
 	<target name="build-mac-64bit-signed" if="is_macosx">
 		<clean basedir="${basedir}" os="osx" arch="x86_64" resultproperty="ant.clean.result"/>
 		<build basedir="${basedir}" os="osx" arch="x86_64" libs="mac/x86_64" mods="mac/x86_64" version="${nextfractal.version}" resultproperty="ant.build.result" />
+		<checkentitlements basedir="${basedir}" resultproperty="ant.checkentitlements.result" />
 		<makeappsigned basedir="${basedir}" os="osx" arch="x86_64" resultproperty="ant.makeapp.result" />
-		<copyresources basedir="${basedir}" os="osx" arch="x86_64" />
+		<verifyapp basedir="${basedir}" os="osx" arch="x86_64" resultproperty="ant.verifyapp.result" />
 		<zipapp basedir="${basedir}" os="osx" arch="x86_64" version="${nextfractal.version}" resultproperty="ant.zipapp.result" />
 		<notarizeapp basedir="${basedir}" os="osx" arch="x86_64" version="${nextfractal.version}" resultproperty="ant.notarizeapp.result" />
 		<stapleapp basedir="${basedir}" os="osx" arch="x86_64" resultproperty="ant.stapleapp.result" />
-		<verifyapp basedir="${basedir}" os="osx" arch="x86_64" resultproperty="ant.stapleapp.result" />
+		<checkapp basedir="${basedir}" os="osx" arch="x86_64" resultproperty="ant.checkapp.result" />
+		<copyresources basedir="${basedir}" os="osx" arch="x86_64" />
 		<makedmg basedir="${basedir}" os="osx" arch="x86_64" version="${nextfractal.version}" resultproperty="ant.makedmg.result" />
 		<signdmg basedir="${basedir}" os="osx" arch="x86_64" version="${nextfractal.version}" resultproperty="ant.signdmg.result" />
 	</target>
@@ -577,8 +586,8 @@
 		<clean basedir="${basedir}" os="osx" arch="x86_64" resultproperty="ant.clean.result"/>
 		<build basedir="${basedir}" os="osx" arch="x86_64" libs="mac/x86_64" mods="mac/x86_64" version="${nextfractal.version}" resultproperty="ant.build.result" />
 		<makeapp basedir="${basedir}" os="osx" arch="x86_64" resultproperty="ant.makeapp.result" />
-		<copyresources basedir="${basedir}" os="osx" arch="x86_64" />
 		<zipapp basedir="${basedir}" os="osx" arch="x86_64" version="${nextfractal.version}" resultproperty="ant.zipapp.result" />
+		<copyresources basedir="${basedir}" os="osx" arch="x86_64" />
 		<makedmg basedir="${basedir}" os="osx" arch="x86_64" version="${nextfractal.version}" resultproperty="ant.makedmg.result" />
 	</target>
 	<target name="build-linux-64bit">
