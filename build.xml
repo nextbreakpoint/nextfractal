@@ -59,6 +59,11 @@
 					<include name="*" />
 				</fileset>
 			</copy>
+			<extractfiles zip="@{basedir}/build/@{os}_@{arch}/mods/javafx-graphics-${openjfx.version}-mac.jar">
+				<include name="*.dylib"/>
+				<include name="*.lib"/>
+				<include name="*.dll"/>
+			</extractfiles>
 			<move failonerror="true" file="@{basedir}/build/@{os}_@{arch}/app/libs/libffmpeg4java.jnilib" tofile="@{basedir}/build/@{os}_@{arch}/app/libs/libffmpeg4java.dylib"/>
 			<move failonerror="true" file="@{basedir}/build/@{os}_@{arch}/app/libs/libfreeimage4java.jnilib" tofile="@{basedir}/build/@{os}_@{arch}/app/libs/libfreeimage4java.dylib"/>
 		</sequential>
@@ -391,17 +396,17 @@
 	</macrodef>
 	<macrodef name="extractfiles">
 		<attribute name="zip"/>
-		<attribute name="todir"/>
+<!--		<attribute name="todir"/>-->
 		<element name="selectors" implicit="true" optional="true"/>
 		<sequential>
 			<mkdir dir="__tmp__"/>
 			<unzip dest="__tmp__" src="@{zip}"/>
 			<delete failonerror="true" file="@{zip}"/>
-			<copy failonerror="true" todir="@{todir}">
-				<fileset dir="__tmp__">
-					<selectors/>
-				</fileset>
-			</copy>
+<!--			<copy failonerror="true" todir="@{todir}">-->
+<!--				<fileset dir="__tmp__">-->
+<!--					<selectors/>-->
+<!--				</fileset>-->
+<!--			</copy>-->
 			<delete failonerror="true">
 				<fileset dir="__tmp__">
 					<selectors/>
