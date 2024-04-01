@@ -81,7 +81,6 @@ public class BrowsePane extends BorderPane {
 	private List<GridItem> items = new ArrayList<>();
 	private BrowseDelegate delegate;
 	private File sourceCurrentFolder;
-	private File importCurrentFolder;
 	private RendererTile tile;
 	private AnimationTimer timer;
 	private Thread thread;
@@ -130,9 +129,9 @@ public class BrowsePane extends BorderPane {
 		chooseButton.setTooltip(new Tooltip("Select projects location"));
 		importButton.setTooltip(new Tooltip("Import projects from another location"));
 
-		Label statusLabel = new Label("Initializing");
+		Label statusLabel = new Label("");
 
-		toolbar1.getChildren().add(chooseButton);
+//		toolbar1.getChildren().add(chooseButton);
 		toolbar1.getChildren().add(statusLabel);
 		toolbar3.getChildren().add(importButton);
 		toolbar3.getChildren().add(reloadButton);
@@ -188,7 +187,7 @@ public class BrowsePane extends BorderPane {
 		importButton.setOnMouseClicked(e -> doChooseImportFolder());
 
 		reloadButton.setOnMouseClicked(e -> {
-			final File path = getCurrentWorkspaceFolder();
+			final File path = getCurrentSourceFolder();
 			loadFiles(statusLabel, grid, path);
 		});
 
@@ -196,14 +195,13 @@ public class BrowsePane extends BorderPane {
 			if (newValue != null) {
 				File path = new File(newValue);
 				sourceCurrentFolder = path;
-				loadFiles(statusLabel, grid, path);
+				reloadFiles(statusLabel, grid, path);
 			}
 		});
 
 		importPathProperty.addListener((observable, oldValue, newValue) -> {
 			if (newValue != null) {
 				File path = new File(newValue);
-				importCurrentFolder = path;
 				importFiles(statusLabel, grid, path);
 			}
 		});
@@ -217,22 +215,17 @@ public class BrowsePane extends BorderPane {
 		browserExecutor = Executors.newFixedThreadPool(maxThreads, createThreadFactory("Browser"));
 
 		runTimer(grid);
-
-		if (listFiles(getWorkspace()).isEmpty()) {
-			logger.log(Level.INFO, "Workspace is empty");
-			Platform.runLater(this::doChooseImportFolder);
-		}
 	}
 
-	private File getCurrentWorkspaceFolder() {
+	private File getCurrentSourceFolder() {
 		return sourceCurrentFolder == null ? getWorkspace() : sourceCurrentFolder;
 	}
 
-	private File getSourceCurrentFolder() {
+	private File getDefaultSourceFolder() {
 		return new File(System.getProperty("user.home"));
 	}
 
-	private File getImportCurrentFolder() {
+	private File getDefaultImportFolder() {
 		return getExamples();
 	}
 
@@ -241,8 +234,18 @@ public class BrowsePane extends BorderPane {
 	}
 
 	public void reload() {
-//		sourcePathProperty.setValue(null);
-		sourcePathProperty.setValue(getCurrentWorkspaceFolder().getAbsolutePath());
+		if (listFiles(getWorkspace()).isEmpty()) {
+			logger.log(Level.INFO, "Workspace is empty");
+			importPathProperty.setValue(null);
+			Platform.runLater(this::doChooseImportFolder);
+		} else {
+			Platform.runLater(() -> sourcePathProperty.setValue(getCurrentSourceFolder().getAbsolutePath()));
+		}
+	}
+
+	public void reload(Label statusLabel, GridView grid) {
+		final File path = getCurrentSourceFolder();
+		loadFiles(statusLabel, grid, path);
 	}
 
 	public void setDelegate(BrowseDelegate delegate) {
@@ -280,7 +283,7 @@ public class BrowsePane extends BorderPane {
 
 	private DirectoryChooser prepareSourceDirectoryChooser() {
 		DirectoryChooser sourceDirectoryChooser = new DirectoryChooser();
-		sourceDirectoryChooser.setInitialDirectory(getSourceCurrentFolder());
+		sourceDirectoryChooser.setInitialDirectory(getDefaultSourceFolder());
 		sourceDirectoryChooser.setTitle("Choose source folder");
 		return sourceDirectoryChooser;
 	}
@@ -292,7 +295,7 @@ public class BrowsePane extends BorderPane {
 
 	private DirectoryChooser prepareImportDirectoryChooser() {
 		DirectoryChooser importDirectoryChooser = new DirectoryChooser();
-		importDirectoryChooser.setInitialDirectory(getImportCurrentFolder());
+		importDirectoryChooser.setInitialDirectory(getDefaultImportFolder());
 		importDirectoryChooser.setTitle("Choose import folder");
 		return importDirectoryChooser;
 	}
@@ -306,8 +309,6 @@ public class BrowsePane extends BorderPane {
 	}
 
 	private void loadFiles(Label statusLabel, GridView grid, File folder) {
-		stopWatching();
-		startWatching();
 		removeItems();
 		grid.setData(new GridItem[0]);
 		List<File> files = listFiles(folder);
@@ -322,7 +323,7 @@ public class BrowsePane extends BorderPane {
 	private void importFiles(Label statusLabel, GridView grid, File folder) {
 		List<File> files = listFiles(folder);
 		if (!files.isEmpty()) {
-			copyFilesAsync(statusLabel, grid, files, getCurrentWorkspaceFolder());
+			copyFilesAsync(statusLabel, grid, files, getCurrentSourceFolder());
 		}
 	}
 
@@ -341,7 +342,13 @@ public class BrowsePane extends BorderPane {
 
 		Platform.runLater(() -> grid.setDisable(false));
 
-		Platform.runLater(() -> loadFiles(statusLabel, grid, dest));
+		Platform.runLater(() -> reloadFiles(statusLabel, grid, dest));
+	}
+
+	private void reloadFiles(Label statusLabel, GridView grid, File path) {
+		stopWatching();
+		startWatching(statusLabel, grid);
+		loadFiles(statusLabel, grid, path);
 	}
 
 	private void copyFile(File file, File location) {
@@ -368,8 +375,13 @@ public class BrowsePane extends BorderPane {
 	}
 
 	private List<File> listFiles(File folder) {
-		return Stream.of(Objects.requireNonNull(folder.listFiles((dir, name) -> hasSuffix(name))))
-				.sorted().collect(Collectors.toList());
+		final File[] files = folder.listFiles((dir, name) -> hasSuffix(name));
+		if (files == null) {
+			return List.of();
+		} else {
+			return Stream.of(Objects.requireNonNull(files))
+					.sorted().collect(Collectors.toList());
+		}
 	}
 
 	private boolean hasSuffix(String name) {
@@ -627,66 +639,59 @@ public class BrowsePane extends BorderPane {
 		}
 	}
 
-	private void startWatching() {
+	private void startWatching(Label statusLabel, GridView grid) {
 		if (thread == null) {
-			thread = createThreadFactory("Watcher").newThread(() -> {
-				try {
-					watchLoop(new File(sourcePathProperty.getValue()).toPath(), path -> Platform.runLater(() -> this.reload()));
-				} catch (IOException e) {
-					logger.log(Level.WARNING, "Can't watch folder " + sourcePathProperty.getValue(), e);
-				}
-			});
+			thread = createThreadFactory("Watcher").newThread(() -> watchLoop(getCurrentSourceFolder().toPath(), a -> Platform.runLater(() -> this.reload(statusLabel, grid))));
 			thread.start();
 		}
 	}
 
-	private void watchLoop(Path dir, Consumer<Path> consumer) throws IOException {
-		WatchService watcher = FileSystems.getDefault().newWatchService();
-
-		WatchKey watchKey = null;
-
+	private void watchLoop(Path dir, Consumer<Void> consumer) {
 		try {
-			watchKey = dir.register(watcher, new WatchEvent.Kind[]{ StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_DELETE, StandardWatchEventKinds.ENTRY_MODIFY });
+			for (;;) {
+				WatchService watcher = FileSystems.getDefault().newWatchService();
 
-			try {
-				for (;;) {
-					WatchKey key = watcher.take();
+				WatchKey watchKey = null;
 
-					for (WatchEvent<?> event: key.pollEvents()) {
-						WatchEvent.Kind<?> kind = event.kind();
+				logger.log(Level.INFO, "Watch loop starting...");
 
-						if (kind == StandardWatchEventKinds.OVERFLOW) {
-							continue;
+				try {
+					watchKey = dir.register(watcher, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_DELETE, StandardWatchEventKinds.ENTRY_MODIFY);
+
+					logger.log(Level.INFO, "Watch loop started");
+
+					for (; ; ) {
+						WatchKey key = watcher.take();
+
+						for (WatchEvent<?> event : key.pollEvents()) {
+							logger.log(Level.INFO, "Watch loop events " + event.count());
+
+							consumer.accept(null);
 						}
 
-						WatchEvent<Path> ev = (WatchEvent<Path>)event;
+						boolean valid = key.reset();
 
-						Path filename = ev.context();
-
-						Path child = dir.resolve(filename);
-
-						if (!child.getFileName().toString().endsWith(".nf.zip")) {
-							continue;
+						if (!valid) {
+							break;
 						}
-
-						consumer.accept(filename);
 					}
 
-					boolean valid = key.reset();
-					if (!valid) {
-						break;
+					logger.log(Level.INFO, "Watch loop exited");
+				} finally {
+					if (watchKey != null) {
+						watchKey.cancel();
 					}
+
+					watcher.close();
 				}
-			} catch (InterruptedException x) {
-			}
-		} catch (IOException x) {
-			logger.log(Level.WARNING, "Can't subscribe watcher on directory " + dir.getFileName());
-		} finally {
-			if (watchKey != null) {
-				watchKey.cancel();
-			}
 
-			watcher.close();
+				consumer.accept(null);
+			}
+		} catch (InterruptedException x) {
+			logger.log(Level.INFO, "Watch loop interrupted");
+			Thread.currentThread().interrupt();
+		} catch (IOException e) {
+			logger.log(Level.WARNING, "Can't watch directory " + getCurrentSourceFolder().getAbsolutePath(), e);
 		}
 	}
 }
