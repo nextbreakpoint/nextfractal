@@ -53,21 +53,23 @@ import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.*;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.prefs.Preferences;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class BrowsePane extends BorderPane {
-	public static final String BROWSER_DEFAULT_LOCATION = "browser.location";
 	private static final Logger logger = Logger.getLogger(BrowsePane.class.getName());
+	private static final String PROPERTY_DIRECTORY_WORKSPACE = "com.nextbreakpoint.nextfractal.directory.workspace";
+	private static final String PROPERTY_DIRECTORY_EXAMPLES = "com.nextbreakpoint.nextfractal.directory.examples";
+	private static final String PROPERTY_DIRECTORY_WORKSPACE_DEFAULT_VALUE = "[user.dir]/.nextfractal";
+	private static final String PROPERTY_DIRECTORY_EXAMPLES_DEFAULT_VALUE = "[user.home]";
 	private static final int FRAME_LENGTH_IN_MILLIS = 50;
 	private static final int SCROLL_BOUNCE_DELAY = 500;
 	private final ExecutorService browserExecutor;
@@ -78,11 +80,8 @@ public class BrowsePane extends BorderPane {
 	private final LinkedList<String> filter = new LinkedList<>();
 	private List<GridItem> items = new ArrayList<>();
 	private BrowseDelegate delegate;
-	private DirectoryChooser sourceDirectoryChooser;
 	private File sourceCurrentFolder;
-	private DirectoryChooser importDirectoryChooser;
 	private File importCurrentFolder;
-	private File currentDir;
 	private RendererTile tile;
 	private AnimationTimer timer;
 	private Thread thread;
@@ -99,10 +98,6 @@ public class BrowsePane extends BorderPane {
 
 		Plugins.factories().forEach(f -> filter.addAll(f.createFileManager().getSupportedFiles()));
 
-		Preferences prefs = Preferences.userNodeForPackage(BrowsePane.class);
-		
-		currentDir = getCurrentDir(prefs);
-
 		sourcePathProperty = new StringObservableValue();
 
 		sourcePathProperty.setValue(null);
@@ -112,9 +107,9 @@ public class BrowsePane extends BorderPane {
 		importPathProperty.setValue(null);
 
 		int size = width / numCols;
-		
+
 		int maxThreads = numCols;
-		
+
 		tile = createSingleTile(size, size);
 
 		HBox toolbar1 = new HBox(2);
@@ -152,13 +147,13 @@ public class BrowsePane extends BorderPane {
 		toolbar.setRight(toolbar3);
 
 		GridView grid = new GridView(numRows, numCols, size);
-		
+
 		grid.setDelegate(new GridViewDelegate() {
 			@Override
 			public void didRangeChange(GridView source, int firstRow, int lastRow) {
 //				source.updateCells();
 			}
-			
+
 			@Override
 			public void didCellChange(GridView source, int row, int col) {
 				source.updateCell(row * numCols + col);
@@ -183,28 +178,34 @@ public class BrowsePane extends BorderPane {
 		box.setCenter(grid);
 		box.setBottom(toolbar);
 		box.getStyleClass().add("browse");
-		
+
 		setCenter(box);
 
-		closeButton.setOnMouseClicked(e -> doClose(grid));
+		closeButton.setOnMouseClicked(e -> doClose());
 
-		chooseButton.setOnMouseClicked(e -> doChooseSourceFolder(grid));
+		chooseButton.setOnMouseClicked(e -> doChooseSourceFolder());
 
-		importButton.setOnMouseClicked(e -> doChooseImportFolder(grid));
+		importButton.setOnMouseClicked(e -> doChooseImportFolder());
 
-		reloadButton.setOnMouseClicked(e -> loadFiles(statusLabel, grid, sourceCurrentFolder));
+		reloadButton.setOnMouseClicked(e -> {
+			final File path = getCurrentWorkspaceFolder();
+			loadFiles(statusLabel, grid, path);
+		});
 
 		sourcePathProperty.addListener((observable, oldValue, newValue) -> {
 			if (newValue != null) {
 				File path = new File(newValue);
-				currentDir = path;
+				sourceCurrentFolder = path;
 				loadFiles(statusLabel, grid, path);
 			}
 		});
 
 		importPathProperty.addListener((observable, oldValue, newValue) -> {
-			File path = new File(newValue);
-			importFiles(statusLabel, grid, path);
+			if (newValue != null) {
+				File path = new File(newValue);
+				importCurrentFolder = path;
+				importFiles(statusLabel, grid, path);
+			}
 		});
 
 		widthProperty().addListener((observable, oldValue, newValue) -> {
@@ -216,6 +217,23 @@ public class BrowsePane extends BorderPane {
 		browserExecutor = Executors.newFixedThreadPool(maxThreads, createThreadFactory("Browser"));
 
 		runTimer(grid);
+
+		if (listFiles(getWorkspace()).isEmpty()) {
+			logger.log(Level.INFO, "Workspace is empty");
+			Platform.runLater(this::doChooseImportFolder);
+		}
+	}
+
+	private File getCurrentWorkspaceFolder() {
+		return sourceCurrentFolder == null ? getWorkspace() : sourceCurrentFolder;
+	}
+
+	private File getSourceCurrentFolder() {
+		return new File(System.getProperty("user.home"));
+	}
+
+	private File getImportCurrentFolder() {
+		return getExamples();
 	}
 
 	private DefaultThreadFactory createThreadFactory(String name) {
@@ -224,9 +242,9 @@ public class BrowsePane extends BorderPane {
 
 	public void reload() {
 //		sourcePathProperty.setValue(null);
-		sourcePathProperty.setValue(currentDir.getAbsolutePath());
+		sourcePathProperty.setValue(getCurrentWorkspaceFolder().getAbsolutePath());
 	}
-	
+
 	public void setDelegate(BrowseDelegate delegate) {
 		this.delegate = delegate;
 	}
@@ -243,91 +261,51 @@ public class BrowsePane extends BorderPane {
 		Try.of(() -> executor.awaitTermination(5000, TimeUnit.MILLISECONDS)).onFailure(e -> logger.warning("Await termination timeout")).execute();
 	}
 
-	private void ensureSourceDirectoryChooser() {
-//		Alert alert = new Alert(AlertType.INFORMATION);
-//		alert.setTitle("Dialog");
-//		alert.setHeaderText("Path");
-//		alert.setContentText(defaultDir.getAbsolutePath());
-//		alert.showAndWait();
-		if (sourceDirectoryChooser == null) {
-			sourceDirectoryChooser = new DirectoryChooser();
-			if (!currentDir.exists()) {
-				currentDir = new File(System.getProperty("user.home"));
-			}
-			sourceDirectoryChooser.setInitialDirectory(currentDir);
-		}
-	}
-
-	private void ensureImportDirectoryChooser() {
-//		Alert alert = new Alert(AlertType.INFORMATION);
-//		alert.setTitle("Dialog");
-//		alert.setHeaderText("Path");
-//		alert.setContentText(defaultDir.getAbsolutePath());
-//		alert.showAndWait();
-		if (importDirectoryChooser == null) {
-			importDirectoryChooser = new DirectoryChooser();
-			if (!currentDir.exists()) {
-				currentDir = new File(System.getProperty("user.home"));
-			}
-			importDirectoryChooser.setInitialDirectory(currentDir);
-		}
-	}
-
-	private void doClose(GridView grid) {
+	private void doClose() {
 		delegate.didClose(this);
 	}
 
-	private void doChooseSourceFolder(GridView grid) {
-		Block.create(a -> prepareSourceDirectoryChooser()).andThen(a -> doSelectSourceFolder()).tryExecute().execute();
+	private void doChooseSourceFolder() {
+		Block.create(a -> doSelectSourceFolder(prepareSourceDirectoryChooser())).tryExecute().execute();
 	}
 
-	private void doChooseImportFolder(GridView grid) {
-		Block.create(a -> prepareImportDirectoryChooser()).andThen(a -> doSelectImportFolder()).tryExecute().execute();
+	private void doChooseImportFolder() {
+		Block.create(a -> doSelectImportFolder(prepareImportDirectoryChooser())).tryExecute().execute();
 	}
 
-	private void doSelectSourceFolder() {
-		Optional.ofNullable(sourceDirectoryChooser.showDialog(BrowsePane.this.getScene().getWindow())).ifPresent(folder -> sourcePathProperty.setValue(folder.getAbsolutePath()));
+	private void doSelectSourceFolder(DirectoryChooser sourceDirectoryChooser) {
+		Optional.ofNullable(sourceDirectoryChooser.showDialog(BrowsePane.this.getScene().getWindow()))
+				.ifPresent(folder -> sourcePathProperty.setValue(folder.getAbsolutePath()));
 	}
 
-	private void prepareSourceDirectoryChooser() {
-		ensureSourceDirectoryChooser();
-		sourceDirectoryChooser.setTitle("Choose source folrder");
-		if (sourceCurrentFolder != null) {
-			sourceCurrentFolder = ensureValidFolder(sourceCurrentFolder);
-			sourceDirectoryChooser.setInitialDirectory(sourceCurrentFolder);
-		}
+	private DirectoryChooser prepareSourceDirectoryChooser() {
+		DirectoryChooser sourceDirectoryChooser = new DirectoryChooser();
+		sourceDirectoryChooser.setInitialDirectory(getSourceCurrentFolder());
+		sourceDirectoryChooser.setTitle("Choose source folder");
+		return sourceDirectoryChooser;
 	}
 
-	private void doSelectImportFolder() {
-		Optional.ofNullable(importDirectoryChooser.showDialog(BrowsePane.this.getScene().getWindow())).ifPresent(folder -> importPathProperty.setValue(folder.getAbsolutePath()));
+	private void doSelectImportFolder(DirectoryChooser importDirectoryChooser) {
+		Optional.ofNullable(importDirectoryChooser.showDialog(BrowsePane.this.getScene().getWindow()))
+				.ifPresent(folder -> importPathProperty.setValue(folder.getAbsolutePath()));
 	}
 
-	private void prepareImportDirectoryChooser() {
-		ensureImportDirectoryChooser();
+	private DirectoryChooser prepareImportDirectoryChooser() {
+		DirectoryChooser importDirectoryChooser = new DirectoryChooser();
+		importDirectoryChooser.setInitialDirectory(getImportCurrentFolder());
 		importDirectoryChooser.setTitle("Choose import folder");
-		if (importCurrentFolder != null) {
-			importCurrentFolder = ensureValidFolder(importCurrentFolder);
-			importDirectoryChooser.setInitialDirectory(importCurrentFolder);
-		}
-	}
-
-	private File ensureValidFolder(File folder) {
-		return Optional.ofNullable(folder).filter(d -> d.exists()).orElseGet(() -> new File(System.getProperty("user.home")));
+		return importDirectoryChooser;
 	}
 
 	private RendererTile createSingleTile(int width, int height) {
-		int tileWidth = width;
-		int tileHeight = height;
-		RendererSize imageSize = new RendererSize(width, height);
-		RendererSize tileSize = new RendererSize(tileWidth, tileHeight);
+        RendererSize imageSize = new RendererSize(width, height);
+		RendererSize tileSize = new RendererSize(width, height);
 		RendererSize tileBorder = new RendererSize(0, 0);
 		RendererPoint tileOffset = new RendererPoint(0, 0);
-		RendererTile tile = new RendererTile(imageSize, tileSize, tileOffset, tileBorder);
-		return tile;
+        return new RendererTile(imageSize, tileSize, tileOffset, tileBorder);
 	}
 
 	private void loadFiles(Label statusLabel, GridView grid, File folder) {
-		sourceCurrentFolder = folder;
 		stopWatching();
 		startWatching();
 		removeItems();
@@ -342,29 +320,28 @@ public class BrowsePane extends BorderPane {
 	}
 
 	private void importFiles(Label statusLabel, GridView grid, File folder) {
-		importCurrentFolder = folder;
-		List<File> files = listAllFiles(folder);
+		List<File> files = listFiles(folder);
 		if (!files.isEmpty()) {
-			copyFilesAsync(statusLabel, grid, files);
+			copyFilesAsync(statusLabel, grid, files, getCurrentWorkspaceFolder());
 		}
 	}
 
-	private Future<?> copyFilesAsync(Label statusLabel, GridView grid, List<File> files) {
-		return browserExecutor.submit(() -> copyFiles(statusLabel, grid, files, sourceCurrentFolder));
+	private Future<?> copyFilesAsync(Label statusLabel, GridView grid, List<File> files, File dest) {
+		return browserExecutor.submit(() -> copyFiles(statusLabel, grid, files, dest));
 	}
 
-	private void copyFiles(Label statusLabel, GridView grid, List<File> files, File location) {
+	private void copyFiles(Label statusLabel, GridView grid, List<File> files, File dest) {
 		Platform.runLater(() -> grid.setDisable(true));
 
 		for (File file : files) {
 			Platform.runLater(() -> statusLabel.setText("Importing " + files.size() + " files..."));
 
-			copyFile(file, location);
+			copyFile(file, dest);
 		}
 
 		Platform.runLater(() -> grid.setDisable(false));
 
-		Platform.runLater(() -> loadFiles(statusLabel, grid, sourceCurrentFolder));
+		Platform.runLater(() -> loadFiles(statusLabel, grid, dest));
 	}
 
 	private void copyFile(File file, File location) {
@@ -390,24 +367,9 @@ public class BrowsePane extends BorderPane {
 		grid.setData(items);
 	}
 
-	private List<File> listAllFiles(File folder) {
-		Preferences prefs = Preferences.userNodeForPackage(BrowsePane.class);
-		prefs.put(BROWSER_DEFAULT_LOCATION, folder.getAbsolutePath());
-		if (delegate != null) {
-			return Stream.of(folder.listFiles((dir, name) -> hasSuffix(name))).sorted().collect(Collectors.toList());
-		} else {
-			return Collections.emptyList();
-		}
-	}
-
 	private List<File> listFiles(File folder) {
-		Preferences prefs = Preferences.userNodeForPackage(BrowsePane.class);
-		prefs.put(BROWSER_DEFAULT_LOCATION, folder.getAbsolutePath());
-		if (delegate != null) {
-			return Stream.of(folder.listFiles((dir, name) -> hasSuffix(".nf.zip"))).sorted().collect(Collectors.toList());
-		} else {
-			return Collections.emptyList();
-		}
+		return Stream.of(Objects.requireNonNull(folder.listFiles((dir, name) -> hasSuffix(name))))
+				.sorted().collect(Collectors.toList());
 	}
 
 	private boolean hasSuffix(String name) {
@@ -428,7 +390,7 @@ public class BrowsePane extends BorderPane {
 				item.getRenderer().abort();
 			}
 		}
-		
+
 //		for (int index = 0; index < items.size(); index++) {
 //			GridItem item = items.get(index);
 //			if (item.getRenderer() != null) {
@@ -471,7 +433,7 @@ public class BrowsePane extends BorderPane {
 		if (grid.getData() == null) {
 			return;
 		}
-		int firstRow = grid.getFirstRow(); 
+		int firstRow = grid.getFirstRow();
 		int lastRow = grid.getLastRow();
 		if (firstRow > 0) {
 			firstRow -= 1;
@@ -618,28 +580,40 @@ public class BrowsePane extends BorderPane {
 		}
 	}
 
-	private File getCurrentDir(Preferences prefs) {
-		File currentDir = new File(prefs.get(BROWSER_DEFAULT_LOCATION, getDefaultBrowserDir()));
-		if (!currentDir.exists() || !currentDir.canWrite() || Boolean.getBoolean("ignore.location")) {
-			currentDir = new File(getDefaultBrowserDir());
+	private File getWorkspace() {
+		File path = new File(getDefaultDirectoryWorkspace());
+		logger.info("workspace = " + path.getAbsolutePath());
+		if (path.getParentFile().canWrite() && !path.exists()) {
+			path.mkdirs();
 		}
-		if (!currentDir.exists() || !currentDir.canWrite()) {
-			currentDir = new File(System.getProperty("user.home"));
+		if (!path.canWrite()) {
+			logger.severe("Can't write into workspace: " + path.getAbsolutePath());
 		}
-		logger.info("currentBrowserDir = " + currentDir.getAbsolutePath());
-		return currentDir;
+		if (!path.canRead()) {
+			logger.severe("Can't read from workspace: " + path.getAbsolutePath());
+		}
+		return path;
 	}
 
-	private String getDefaultBrowserDir() {
-		String defaultBrowserDir = System.getProperty(BROWSER_DEFAULT_LOCATION, "[user.home]");
-		String userHome = System.getProperty("user.home");
-		String userDir = System.getProperty("user.dir");
-		String currentDir = new File(".").getAbsoluteFile().getParent();
-		defaultBrowserDir = defaultBrowserDir.replace("[current.path]", currentDir);
-		defaultBrowserDir = defaultBrowserDir.replace("[user.home]", userHome);
-		defaultBrowserDir = defaultBrowserDir.replace("[user.dir]", userDir);
-		logger.info("defaultBrowserDir = " + defaultBrowserDir);
-		return defaultBrowserDir;
+	private String getDefaultDirectoryWorkspace() {
+        return System.getProperty(PROPERTY_DIRECTORY_WORKSPACE, PROPERTY_DIRECTORY_WORKSPACE_DEFAULT_VALUE)
+            .replace("[user.home]", System.getProperty("user.home"))
+            .replace("[user.dir]", System.getProperty("user.dir"));
+	}
+
+	private File getExamples() {
+		File path = new File(getDefaultDirectoryExamples());
+		logger.log(Level.FINE, "examples " + path.getAbsolutePath());
+		if (!path.canRead()) {
+			logger.severe("Can't read from examples: " + path.getAbsolutePath());
+		}
+		return path;
+	}
+
+	private String getDefaultDirectoryExamples() {
+		return System.getProperty(PROPERTY_DIRECTORY_EXAMPLES, PROPERTY_DIRECTORY_EXAMPLES_DEFAULT_VALUE)
+				.replace("[user.home]", System.getProperty("user.home"))
+				.replace("[user.dir]", System.getProperty("user.dir"));
 	}
 
 	private void stopWatching() {
@@ -706,7 +680,7 @@ public class BrowsePane extends BorderPane {
 			} catch (InterruptedException x) {
 			}
 		} catch (IOException x) {
-			logger.log(Level.WARNING, "Can't subscribe watcher on directory {}", dir.getFileName());
+			logger.log(Level.WARNING, "Can't subscribe watcher on directory " + dir.getFileName());
 		} finally {
 			if (watchKey != null) {
 				watchKey.cancel();
