@@ -14,10 +14,11 @@
 		<attribute name="options" default=""/>
 		<attribute name="goal" />
 		<attribute name="basedir" />
+		<attribute name="command" />
 		<attribute name="resultproperty" default="maven.result" />
 		<element name="args" implicit="true" optional="true" />
 		<sequential>
-			<exec executable="mvn" failonerror="true" resultproperty="@{resultproperty}" dir="@{basedir}">
+			<exec executable="@{command}" failonerror="true" resultproperty="@{resultproperty}" dir="@{basedir}">
 				<arg line="--batch-mode @{options} @{goal}" />
 			</exec>
 		</sequential>
@@ -26,15 +27,18 @@
 		<attribute name="os" />
 		<attribute name="arch" />
 		<attribute name="basedir" />
+		<attribute name="command" />
 		<attribute name="resultproperty" default="clean.result" />
 		<element name="args" implicit="true" optional="true" />
 		<sequential>
-			<maven basedir="@{basedir}" options="-U -P @{os}_@{arch}" goal="clean" resultproperty="@{resultproperty}"/>
+			<maven basedir="@{basedir}" command="@{command}" goal="clean" options="-U -P @{os}_@{arch} -t toolchains-@{os}.xml" resultproperty="@{resultproperty}"/>
 		</sequential>
 	</macrodef>
 	<macrodef name="build">
 		<attribute name="os" />
 		<attribute name="arch" />
+		<attribute name="platform" />
+		<attribute name="command" />
 		<attribute name="libs" />
 		<attribute name="mods" />
 		<attribute name="version" />
@@ -45,10 +49,10 @@
 			<delete failonerror="true" dir="@{basedir}/dist/@{os}_@{arch}"/>
 			<delete failonerror="true" dir="@{basedir}/build/@{os}_@{arch}"/>
 			<mkdir dir="@{basedir}/build/@{os}_@{arch}"/>
-			<maven basedir="@{basedir}/com.nextbreakpoint.nextfractal.libraries" goal="clean" options="" resultproperty="@{resultproperty}" />
-			<maven basedir="@{basedir}/com.nextbreakpoint.nextfractal.libraries" goal="install" options="" resultproperty="@{resultproperty}" />
-			<maven basedir="@{basedir}" goal="clean" options="-P @{os}_@{arch}" resultproperty="@{resultproperty}" />
-			<maven basedir="@{basedir}" goal="package" options="-P @{os}_@{arch}" resultproperty="@{resultproperty}" />
+			<maven basedir="@{basedir}/com.nextbreakpoint.nextfractal.libraries" command="@{command}" goal="clean" options="-t ../toolchains-@{os}.xml" resultproperty="@{resultproperty}" />
+			<maven basedir="@{basedir}/com.nextbreakpoint.nextfractal.libraries" command="@{command}" goal="install" options="-t ../toolchains-@{os}.xml" resultproperty="@{resultproperty}" />
+			<maven basedir="@{basedir}" command="@{command}" goal="clean" options="-t toolchains-@{os}.xml -P @{os}_@{arch}" resultproperty="@{resultproperty}" />
+			<maven basedir="@{basedir}" command="@{command}" goal="package" options="-t toolchains-@{os}.xml -P @{os}_@{arch}" resultproperty="@{resultproperty}" />
 			<copy failonerror="true" todir="@{basedir}/build/@{os}_@{arch}/app/libs" overwrite="true">
 				<fileset dir="@{basedir}/com.nextbreakpoint.nextfractal.main/target/libs/@{libs}">
 					<include name="*" />
@@ -59,13 +63,13 @@
 					<include name="*" />
 				</fileset>
 			</copy>
-			<extractfiles zip="@{basedir}/build/@{os}_@{arch}/mods/javafx-graphics-${openjfx.version}-mac.jar">
+			<extractfiles zip="@{basedir}/build/@{os}_@{arch}/mods/javafx-graphics-${openjfx.version}-@{platform}.jar">
 				<include name="*.dylib"/>
 				<include name="*.lib"/>
 				<include name="*.dll"/>
 			</extractfiles>
-			<move failonerror="true" file="@{basedir}/build/@{os}_@{arch}/app/libs/libffmpeg4java.jnilib" tofile="@{basedir}/build/@{os}_@{arch}/app/libs/libffmpeg4java.dylib"/>
-			<move failonerror="true" file="@{basedir}/build/@{os}_@{arch}/app/libs/libfreeimage4java.jnilib" tofile="@{basedir}/build/@{os}_@{arch}/app/libs/libfreeimage4java.dylib"/>
+			<move failonerror="false" file="@{basedir}/build/@{os}_@{arch}/app/libs/libffmpeg4java.jnilib" tofile="@{basedir}/build/@{os}_@{arch}/app/libs/libffmpeg4java.dylib"/>
+			<move failonerror="false" file="@{basedir}/build/@{os}_@{arch}/app/libs/libfreeimage4java.jnilib" tofile="@{basedir}/build/@{os}_@{arch}/app/libs/libfreeimage4java.dylib"/>
 		</sequential>
 	</macrodef>
 	<macrodef name="makeimage">
@@ -487,14 +491,15 @@
 	<macrodef name="publish">
 		<attribute name="channel" />
 		<attribute name="basedir" />
+		<attribute name="command" />
 		<attribute name="resultproperty" default="publish.result" />
 		<element name="args" implicit="true" optional="true" />
 		<sequential>
-			<maven basedir="@{basedir}" goal="deploy" options="-DskipTests=true -Dchannel=@{channel} -pl . -N" resultproperty="@{resultproperty}"/>
-			<maven basedir="@{basedir}" goal="deploy" options="-DskipTests=true -Dchannel=@{channel} -pl com.nextbreakpoint.nextfractal.core" resultproperty="@{resultproperty}"/>
-			<maven basedir="@{basedir}" goal="deploy" options="-DskipTests=true -Dchannel=@{channel} -pl com.nextbreakpoint.nextfractal.contextfree" resultproperty="@{resultproperty}"/>
-			<maven basedir="@{basedir}" goal="deploy" options="-DskipTests=true -Dchannel=@{channel} -pl com.nextbreakpoint.nextfractal.mandelbrot" resultproperty="@{resultproperty}"/>
-			<maven basedir="@{basedir}" goal="deploy" options="-DskipTests=true -Dchannel=@{channel} -pl com.nextbreakpoint.nextfractal.runtime" resultproperty="@{resultproperty}"/>
+			<maven basedir="@{basedir}" command="@{command}" goal="deploy" options="-DskipTests=true -Dchannel=@{channel} -pl . -N" resultproperty="@{resultproperty}"/>
+			<maven basedir="@{basedir}" command="@{command}" goal="deploy" options="-DskipTests=true -Dchannel=@{channel} -pl com.nextbreakpoint.nextfractal.core" resultproperty="@{resultproperty}"/>
+			<maven basedir="@{basedir}" command="@{command}" goal="deploy" options="-DskipTests=true -Dchannel=@{channel} -pl com.nextbreakpoint.nextfractal.contextfree" resultproperty="@{resultproperty}"/>
+			<maven basedir="@{basedir}" command="@{command}" goal="deploy" options="-DskipTests=true -Dchannel=@{channel} -pl com.nextbreakpoint.nextfractal.mandelbrot" resultproperty="@{resultproperty}"/>
+			<maven basedir="@{basedir}" command="@{command}" goal="deploy" options="-DskipTests=true -Dchannel=@{channel} -pl com.nextbreakpoint.nextfractal.runtime" resultproperty="@{resultproperty}"/>
 		</sequential>
 	</macrodef>
 	<condition property="is_macosx">
@@ -526,8 +531,8 @@
 				<include name="**/*.plist"/>
 			</fileset>
 		</replaceregexp>
-		<maven basedir="${basedir}" goal="versions:set" options="-DnewVersion=${nextfractal.version}" resultproperty="maven.build.result"/>
-		<maven basedir="${basedir}" goal="versions:commit" resultproperty="maven.build.result"/>
+		<maven basedir="${basedir}" command="mvn" goal="versions:set" options="-DnewVersion=${nextfractal.version}" resultproperty="maven.build.result"/>
+		<maven basedir="${basedir}" command="mvn" goal="versions:commit" options="" resultproperty="maven.build.result"/>
 	</target>
 	<target name="change-copyright">
 		<changecopyright basedir="${basedir}" path="com.nextbreakpoint.nextfractal.core/src/main/java" file="copyright.txt"/>
@@ -578,8 +583,8 @@
 	  	</javadoc>
 	</target>
 	<target name="build-mac-64bit-signed" if="is_macosx">
-		<clean basedir="${basedir}" os="osx" arch="x86_64" resultproperty="ant.clean.result"/>
-		<build basedir="${basedir}" os="osx" arch="x86_64" libs="mac/x86_64" mods="mac/x86_64" version="${nextfractal.version}" resultproperty="ant.build.result" />
+		<clean basedir="${basedir}" os="osx" arch="x86_64" command="mvn" resultproperty="ant.clean.result"/>
+		<build basedir="${basedir}" os="osx" arch="x86_64" command="mvn" platform="mac" libs="mac/x86_64" mods="mac/x86_64" version="${nextfractal.version}" resultproperty="ant.build.result" />
 		<checkentitlements basedir="${basedir}" resultproperty="ant.checkentitlements.result" />
 		<makeappsigned basedir="${basedir}" os="osx" arch="x86_64" resultproperty="ant.makeapp.result" />
 		<verifyapp basedir="${basedir}" os="osx" arch="x86_64" resultproperty="ant.verifyapp.result" />
@@ -592,24 +597,24 @@
 		<signdmg basedir="${basedir}" os="osx" arch="x86_64" version="${nextfractal.version}" resultproperty="ant.signdmg.result" />
 	</target>
 	<target name="build-mac-64bit" if="is_macosx">
-		<clean basedir="${basedir}" os="osx" arch="x86_64" resultproperty="ant.clean.result"/>
-		<build basedir="${basedir}" os="osx" arch="x86_64" libs="mac/x86_64" mods="mac/x86_64" version="${nextfractal.version}" resultproperty="ant.build.result" />
+		<clean basedir="${basedir}" os="osx" arch="x86_64" command="mvn" resultproperty="ant.clean.result"/>
+		<build basedir="${basedir}" os="osx" arch="x86_64" command="mvn" platform="mac" libs="mac/x86_64" mods="mac/x86_64" version="${nextfractal.version}" resultproperty="ant.build.result" />
 		<makeapp basedir="${basedir}" os="osx" arch="x86_64" resultproperty="ant.makeapp.result" />
 		<zipapp basedir="${basedir}" os="osx" arch="x86_64" version="${nextfractal.version}" resultproperty="ant.zipapp.result" />
 		<copyresources basedir="${basedir}" os="osx" arch="x86_64" />
 		<makedmg basedir="${basedir}" os="osx" arch="x86_64" version="${nextfractal.version}" resultproperty="ant.makedmg.result" />
 	</target>
 	<target name="build-linux-64bit">
-		<clean basedir="${basedir}" os="linux" arch="x86_64" resultproperty="ant.clean.result"/>
-		<build basedir="${basedir}" os="linux" arch="x86_64" libs="linux/x86_64" mods="linux/x86_64" version="${nextfractal.version}" resultproperty="ant.build.result" />
-		<makebin basedir="${basedir}" os="linux" arch="x86_64" resultproperty="ant.makeapp.result" />
+		<clean basedir="${basedir}" os="linux" arch="x86_64" command="mvn" resultproperty="ant.clean.result"/>
+		<build basedir="${basedir}" os="linux" arch="x86_64" command="mvn" platform="linux" libs="linux/x86_64" mods="linux/x86_64" version="${nextfractal.version}" resultproperty="ant.build.result" />
+		<makebin basedir="${basedir}" os="linux" arch="x86_64" resultproperty="ant.makebin.result" />
 		<copyresources basedir="${basedir}" os="linux" arch="x86_64" />
 		<makezip basedir="${basedir}" os="linux" arch="x86_64" version="${nextfractal.version}" resultproperty="ant.makezip.result" />
 	</target>
 	<target name="build-windows-64bit">
-		<clean basedir="${basedir}" os="win" arch="x86_64" resultproperty="ant.clean.result"/>
-		<build basedir="${basedir}" os="win" arch="x86_64" libs="win/x86_64" mods="win/x86_64" version="${nextfractal.version}" resultproperty="ant.build.result" />
-		<makeexe basedir="${basedir}" os="win" arch="x86_64" resultproperty="ant.makeapp.result" />
+		<clean basedir="${basedir}" os="win" arch="x86_64" command="mvn.cmd" resultproperty="ant.clean.result"/>
+		<build basedir="${basedir}" os="win" arch="x86_64" command="mvn.cmd" platform="win" libs="win/x86_64" mods="win/x86_64" version="${nextfractal.version}" resultproperty="ant.build.result" />
+		<makeexe basedir="${basedir}" os="win" arch="x86_64" resultproperty="ant.makeexe.result" />
 		<copyresources basedir="${basedir}" os="win" arch="x86_64" />
 		<makezip basedir="${basedir}" os="win" arch="x86_64" version="${nextfractal.version}" resultproperty="ant.makezip.result" />
 	</target>
