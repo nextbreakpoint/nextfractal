@@ -77,7 +77,7 @@ public class GridView extends Pane {
                     selectedCol = (int)Math.abs((mouseEvent.getX() - offsetX) / cellSize);
                     selectedRow = (int)Math.abs((mouseEvent.getY() - offsetY) / cellSize);
                     if (delegate != null) {
-                        delegate.didSelectionChange(GridView.this, selectedRow, selectedCol);
+                        delegate.didSelectionChange(GridView.this, selectedRow, selectedCol, mouseEvent.getClickCount());
                     }
                 });
 

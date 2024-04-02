@@ -229,3 +229,6 @@
     -fx-font-size: 0.9em;
 }
 
+.button :disabled {
+    -fx-opacity: 0.5;
+}

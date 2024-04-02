@@ -29,5 +29,5 @@ public interface GridViewDelegate {
 
 	public void didRangeChange(GridView source, int firstRow, int lastRow);
 
-	public void didSelectionChange(GridView source, int selectedRow, int selectedCol);
+	public void didSelectionChange(GridView source, int selectedRow, int selectedCol, int clicks);
 }

@@ -34,6 +34,8 @@ import java.util.concurrent.Future;
 public class GridItem {
 	private volatile long lastChanged;
 	private volatile boolean aborted;
+	private volatile boolean selected;
+	private volatile boolean dirty;
 	private volatile File file;
 	private volatile BrowseBitmap bitmap;
 	private volatile GridItemRenderer renderer;
@@ -48,6 +50,7 @@ public class GridItem {
 	public void setFile(File file) {
 		lastChanged = System.currentTimeMillis();
 		this.file = file;
+		dirty = true;
 	}
 
 	public BrowseBitmap getBitmap() {
@@ -57,6 +60,7 @@ public class GridItem {
 	public void setBitmap(BrowseBitmap bitmap) {
 		lastChanged = System.currentTimeMillis();
 		this.bitmap = bitmap;
+		dirty = true;
 	}
 
 	public GridItemRenderer getRenderer() {
@@ -66,6 +70,7 @@ public class GridItem {
 	public void setRenderer(GridItemRenderer renderer) {
 		lastChanged = System.currentTimeMillis();
 		this.renderer = renderer;
+		dirty = true;
 	}
 
 	public Future<GridItem> getLoadItemFuture() {
@@ -97,6 +102,7 @@ public class GridItem {
 	public void setErrors(List<SourceError> errors) {
 		this.errors.clear();
 		this.errors.addAll(errors);
+		dirty = true;
 	}
 
 	public void setAborted(boolean aborted) {
@@ -105,5 +111,22 @@ public class GridItem {
 
 	public boolean isAborted() {
 		return aborted;
+	}
+
+	public boolean isSelected() {
+		return selected;
+	}
+
+	public void setSelected(boolean selected) {
+		this.selected = selected;
+		dirty = true;
+	}
+
+	public boolean isDirty() {
+		return dirty;
+	}
+
+	public void setDirty(boolean dirty) {
+		this.dirty = dirty;
 	}
 }

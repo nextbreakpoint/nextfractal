@@ -62,7 +62,9 @@ import javafx.stage.Window;
 
 import javax.tools.ToolProvider;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -96,6 +98,8 @@ public class NextFractalApp extends Application {
 	private FileChooser bundleFileChooser;
 	private File exportCurrentFile;
 	private File bundleCurrentFile;
+
+	private File workspace;
 
 	public static void main(String[] args) {
 		launch(args);
@@ -156,6 +160,10 @@ public class NextFractalApp extends Application {
 
 		eventBus.subscribe("editor-save-file", event -> handleSaveFile(eventBus, (File)event[0]));
 
+		eventBus.subscribe("editor-store-file", event -> handleStoreFile(eventBus, (File)event[0]));
+
+		eventBus.subscribe("editor-delete-files", event -> handleDeleteFiles((List<File>) event[0]));
+
 		eventBus.subscribe("session-error-changed", event -> handleErrorChanged((String)event[0]));
 
 		eventBus.subscribe("capture-session", event -> handleCaptureSession(eventBus, (String)event[0]));
@@ -175,6 +183,8 @@ public class NextFractalApp extends Application {
 		eventBus.subscribe("current-file-changed", event -> bundleCurrentFile = (File)event[0]);
 
 		eventBus.subscribe("editor-action", event -> handleEditorAction(eventBus, primaryStage, (String)event[0]));
+
+		eventBus.subscribe("workspace-changed", event -> workspace = (File) event[0]);
 
 		final Pane mainPane = createMainPane(eventBus, editorWidth, renderWidth, renderWidth);
 
@@ -201,6 +211,25 @@ public class NextFractalApp extends Application {
 			final String defaultPluginId = System.getProperty("initialPluginId", DEFAULT_PLUGIN_ID);
 			tryFindFactory(defaultPluginId).ifPresent(factory -> createSession(eventBus, factory));
 		});
+	}
+
+	private void handleDeleteFiles(List<File> files) {
+		final Dialog<ButtonType> dialog = new Dialog<>();
+		dialog.setContentText("Do you want to delete the selected %s?".formatted(files.size() > 1 ? files.size() + " projects" : "project"));
+		dialog.setTitle("Action required");
+		dialog.getDialogPane().getButtonTypes().add(ButtonType.NO);
+		dialog.getDialogPane().getButtonTypes().add(ButtonType.YES);
+		final Optional<ButtonType> response = dialog.showAndWait();
+		if (response.isPresent() && response.get().equals(ButtonType.YES)) {
+			files.forEach(file -> {
+				try {
+					logger.info("Deleting file " + file);
+					Files.deleteIfExists(file.toPath());
+				} catch (IOException e) {
+					logger.warning("Can't delete file " + file);
+				}
+			});
+		}
 	}
 
 	private boolean isTerminating(PlatformEventBus eventBus, ExportService exportService) {
@@ -240,6 +269,8 @@ public class NextFractalApp extends Application {
 		if (action.equals("save")) Optional.ofNullable(showSaveBundleFileChooser())
 				.map(fileChooser -> fileChooser.showSaveDialog(window))
 				.ifPresent(file -> eventBus.postEvent("editor-save-file", file));
+		if (action.equals("store")) Optional.ofNullable(createNewFile())
+				.ifPresent(file -> eventBus.postEvent("editor-store-file", file));
 	}
 
 	private void handleBundleLoaded(PlatformEventBus eventBus, Bundle bundle, boolean continuous, boolean appendHistory) {
@@ -330,6 +361,12 @@ public class NextFractalApp extends Application {
 			.onSuccess(session -> eventBus.postEvent("current-file-changed", file))
 			.onFailure(e -> showSaveError(eventBus, file, e))
 			.ifSuccess(v -> edited = false);
+	}
+
+	private void handleStoreFile(PlatformEventBus eventBus, File file) {
+		FileManager.saveFile(file, new Bundle(session, clips))
+				.onFailure(e -> showSaveError(eventBus, file, e))
+				.ifSuccess(v -> edited = false);
 	}
 
 	private void showLoadError(PlatformEventBus eventBus, File file, Exception e) {
@@ -569,6 +606,17 @@ public class NextFractalApp extends Application {
 			bundleFileChooser.setInitialFileName(bundleCurrentFile.getName());
 		}
 		return bundleFileChooser;
+	}
+
+	private File createNewFile() {
+		if (!workspace.exists() || !workspace.canWrite()) {
+			throw new IllegalStateException("Can't create file");
+		}
+		File file = new File(workspace, System.currentTimeMillis() + ".nf.zip");
+		while (file.exists()) {
+			file = new File(workspace, System.currentTimeMillis() + ".nf.zip");
+		}
+		return file;
 	}
 
 //	if (Desktop.isDesktopSupported()) {

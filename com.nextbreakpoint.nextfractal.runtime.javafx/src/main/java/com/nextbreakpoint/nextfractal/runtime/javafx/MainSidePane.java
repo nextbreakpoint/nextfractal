@@ -125,6 +125,7 @@ public class MainSidePane extends BorderPane {
         final HBox sourceButtons = new HBox(0);
         sourceButtons.setAlignment(Pos.CENTER);
         final Button browseButton = new Button("", createIconImage("/icon-grid.png"));
+        final Button storeButton = new Button("", createIconImage("/icon-store.png"));
         final Button renderButton = new Button("", createIconImage("/icon-run.png"));
         final Button loadButton = new Button("", createIconImage("/icon-load.png"));
         final Button saveButton = new Button("", createIconImage("/icon-save.png"));
@@ -133,7 +134,8 @@ public class MainSidePane extends BorderPane {
         final ToggleButton exportButton = new ToggleButton("", createIconImage("/icon-export.png"));
         final ToggleButton historyButton = new ToggleButton("", createIconImage("/icon-time.png"));
         final ToggleButton statusButton = new ToggleButton("", createIconImage("/icon-warn.png"));
-        browseButton.setTooltip(new Tooltip("Show/hide projects browser"));
+        browseButton.setTooltip(new Tooltip("Show/hide projects"));
+        storeButton.setTooltip(new Tooltip("Save project"));
         renderButton.setTooltip(new Tooltip("Render image"));
         loadButton.setTooltip(new Tooltip("Load project from file"));
         saveButton.setTooltip(new Tooltip("Save project to file"));
@@ -143,9 +145,10 @@ public class MainSidePane extends BorderPane {
         historyButton.setTooltip(new Tooltip("Show/hide changes history"));
         statusButton.setTooltip(new Tooltip("Show/hide errors console"));
         sourceButtons.getChildren().add(browseButton);
-        sourceButtons.getChildren().add(renderButton);
+        sourceButtons.getChildren().add(storeButton);
         sourceButtons.getChildren().add(loadButton);
         sourceButtons.getChildren().add(saveButton);
+        sourceButtons.getChildren().add(renderButton);
         sourceButtons.getChildren().add(paramsButton);
         sourceButtons.getChildren().add(historyButton);
         sourceButtons.getChildren().add(exportButton);
@@ -158,6 +161,7 @@ public class MainSidePane extends BorderPane {
         sourcePane.getChildren().add(statusPane);
         sourcePane.getChildren().add(sidebarPane);
         browseButton.setOnAction(e -> eventBus.postEvent("toggle-browser", ""));
+        storeButton.setOnAction(e -> eventBus.postEvent("editor-action", "store"));
         renderButton.setOnAction(e -> eventBus.postEvent("editor-action", "reload"));
         loadButton.setOnAction(e -> eventBus.postEvent("editor-action", "load"));
         saveButton.setOnAction(e -> eventBus.postEvent("editor-action", "save"));

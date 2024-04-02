@@ -85,7 +85,12 @@ public class MainCentralPane extends BorderPane {
                 eventBus.postEvent("toggle-browser", "");
 			}
 
-			@Override
+            @Override
+            public void didDeleteFiles(List<File> files) {
+                eventBus.postEvent("editor-delete-files", files);
+            }
+
+            @Override
 			public void didClose(BrowsePane source) {
                 eventBus.postEvent("toggle-browser", "");
 			}
@@ -172,6 +177,8 @@ public class MainCentralPane extends BorderPane {
             recordingPane.setVisible(false);
             recordingPane.stop();
         });
+
+        eventBus.postEvent("workspace-changed", browsePane.getCurrentSourceFolder());
     }
 
     private void handleHideControls(FadeTransition transition, Boolean hide) {

@@ -27,13 +27,17 @@ package com.nextbreakpoint.nextfractal.core.javafx;
 import com.nextbreakpoint.nextfractal.core.render.RendererSize;
 
 import java.io.File;
+import java.util.List;
 
 public interface BrowseDelegate {
 	void didSelectFile(BrowsePane source, File file);
+
+    void didDeleteFiles(List<File> files);
 
 	void didClose(BrowsePane source);
 
 	GridItemRenderer createRenderer(Bitmap bitmap) throws Exception;
 
 	BrowseBitmap createBitmap(File file, RendererSize size) throws Exception;
+
 }
