@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.1.4
+ * NextFractal 2.1.5
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2022 Andrea Medeghini
+ * Copyright 2015-2024 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -29,6 +29,8 @@ import com.nextbreakpoint.nextfractal.contextfree.dsl.grammar.*;
 import com.nextbreakpoint.nextfractal.contextfree.dsl.grammar.exceptions.CFDGException;
 import com.nextbreakpoint.nextfractal.core.common.SourceError;
 import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 
 import java.io.File;
@@ -53,7 +55,7 @@ public class DSLParser {
 
 	private CFDG parse(String source, List<SourceError> errors) throws ParserException {
 		try {
-			ANTLRInputStream is = new ANTLRInputStream(new StringReader(source));
+			CharStream is = CharStreams.fromReader(new StringReader(source));
 			CFDGLexer lexer = new CFDGLexer(is);
 			CommonTokenStream tokens = new CommonTokenStream(lexer);
 			CFDGParser parser = new CFDGParser(tokens);

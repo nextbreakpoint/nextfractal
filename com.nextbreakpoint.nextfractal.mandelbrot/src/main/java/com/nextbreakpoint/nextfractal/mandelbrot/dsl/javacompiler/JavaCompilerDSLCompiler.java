@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.1.4
+ * NextFractal 2.1.5
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2022 Andrea Medeghini
+ * Copyright 2015-2024 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -83,19 +83,7 @@ public class JavaCompilerDSLCompiler {
 		logger.log(Level.FINE, "Compile Java source:\n" + source);
 		List<SimpleJavaFileObject> compilationUnits = new ArrayList<>();
 		compilationUnits.add(new JavaSourceFileObject(className, source));
-		final String modulePath = System.getProperty("nextfractal.module.path", System.getProperty("jdk.module.path"));
-		List<String> options = Arrays.asList(
-				"-source",
-				"11",
-				"-target",
-				"11",
-				"-proc:none",
-				"-Xdiags:verbose",
-				"--module-path",
-				modulePath,
-				"--add-modules",
-				"com.nextbreakpoint.nextfractal.mandelbrot"
-		);
+		final List<String> options = getCompilerOptions();
 		DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 		String fullClassName = packageName + "." + className;
@@ -140,7 +128,7 @@ public class JavaCompilerDSLCompiler {
 			SourceError.ErrorType type = SourceError.ErrorType.JAVA_COMPILER;
 			String message = e.getMessage();
 			SourceError error = new SourceError(type, 0, 0, 0, 0, message);
-			logger.log(Level.SEVERE, e.getMessage());
+			logger.log(Level.SEVERE, "Can't compile class", e);
 			errors.add(error);
 			throw new CompilerException("Can't compile class", source, errors);
 		} finally {
@@ -150,6 +138,15 @@ public class JavaCompilerDSLCompiler {
 			}
 		}
 		return null;
+	}
+
+	private static List<String> getCompilerOptions() {
+		final String modulePath = System.getProperty("nextfractal.module.path", System.getProperty("jdk.module.path"));
+		if (modulePath != null) {
+			return Arrays.asList("-source", "11", "-target", "11", "-proc:none", "-Xdiags:verbose", "--module-path", modulePath, "--add-modules", "com.nextbreakpoint.nextfractal.mandelbrot");
+		} else {
+			return Arrays.asList("-source", "21", "-target", "21", "-proc:none", "-Xdiags:verbose");
+		}
 	}
 
 	private void defineClasses(JavaFileManager fileManager, JavaCompilerClassLoader loader, String packageName, String className) throws IOException {

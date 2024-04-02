@@ -1,6 +1,6 @@
-# NextFractal 2.1.4
+# NextFractal 2.1.5
 
-Copyright 2015-2023 Andrea Medeghini
+Copyright 2015-2024 Andrea Medeghini
 
 
 ## NOTICE
@@ -25,11 +25,7 @@ NextFractal is currently able to interpret two scripting languages: Mandelbrot a
 
 ## SYSTEM REQUIREMENTS
 
-NextFractal has been tested on OS X 10.14, Windows 7, and Linux/Debian 9 and Linux/Fedora 30. We recommend a machine with at least 4-cores CPU and 4Gb RAM.
-Windows users must install [Microsoft Visual C++ Redistributable for Visual Studio 2017](https://support.microsoft.com/en-gb/help/2977003/the-latest-supported-visual-c-downloads).
-
-    Sorry but NextFractal hasn't been recompiled yet for Apple Silicon processors, therefore the application runs with      
-    degraded performance on the new Apple computers. The issue will be addressed in the next release as soon as possible.
+NextFractal has been tested on OS X 14 (Intel), Windows 11, and Linux/Debian 12 and Linux/Fedora 38. NextFractal requires a machine with at least 4-cores CPU and 8Gb RAM.
 
 
 ## DOCUMENTATION
@@ -39,28 +35,22 @@ Please see the [Wiki](https://github.com/nextbreakpoint/nextfractal/wiki) for do
 
 ## BUILD INSTRUCTIONS
 
-Download the source code from GitHub and run the build script. The build script requires Apache Ant and Apache Maven. Use the correct target for your system to build the distribution package. Please note that Apple command-line development tools are required to build the distribution for MacOS.
-
 Get the code from https://github.com/nextbreakpoint/nextfractal:
 
     git clone https://github.com/nextbreakpoint/nextfractal.git
 
-Use target setup to configure the required tools:
+Install Eclipse Temurin 21 JDK and configure environment variable JAVA_HOME if needed. Install Apache Ant 1.10 and Apache Maven 3.9. Install Xcode and the development command line tools (only for Mac).
 
-    ant setup
+Make sure that the toolchains file contains the correct path of the JDK for you operating system. Make sure that both ant and mvn commands are present in the command path.   
 
-Use target build-macos to build the distribution for OS X:
+Run ant with target build-mac to build the distribution for Mac:
 
     ant build-mac
 
-Use target build-windows to build the distribution for Windows (any Windows 64bit):
+Run ant with target build-linux to build the distribution for Linux:
+
+    ant build-linux
+
+Run ant with target build-windows to build the distribution for Windows:
 
     ant build-windows
-
-Use target build-debian to build the distribution for Debian (or any other Debian-like Linux):
-
-    ant build-debian
-
-Use target build-fedora to build the distribution for Fedora (or any other Fedora-like Linux):
-
-    ant build-fedora

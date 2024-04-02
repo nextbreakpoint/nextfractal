@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.1.4
+ * NextFractal 2.1.5
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2022 Andrea Medeghini
+ * Copyright 2015-2024 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -25,8 +25,10 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.test;
 
 import com.nextbreakpoint.nextfractal.mandelbrot.dsl.grammar.ASTFractal;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 public class GrammarTest2 extends BaseTest {
 	@Test
@@ -34,9 +36,9 @@ public class GrammarTest2 extends BaseTest {
 		try {
 			ASTFractal fractal = parse(getSource("/source1.m"));
 			System.out.println(fractal);
-			Assert.assertNotNull(fractal);
+			assertThat(fractal).isNotNull();
 		} catch (Exception e) {
-			Assert.fail(e.getMessage());
+			fail(e.getMessage());
 		}
 	}
 }

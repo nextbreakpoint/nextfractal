@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.1.4
+ * NextFractal 2.1.5
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2022 Andrea Medeghini
+ * Copyright 2015-2024 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -24,34 +24,39 @@
  */
 package com.nextbreakpoint.nextfractal.mandelbrot.test;
 
-import com.nextbreakpoint.nextfractal.mandelbrot.core.*;
+import com.nextbreakpoint.nextfractal.mandelbrot.core.Color;
+import com.nextbreakpoint.nextfractal.mandelbrot.core.CompilerException;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
+import com.nextbreakpoint.nextfractal.mandelbrot.core.Orbit;
+import com.nextbreakpoint.nextfractal.mandelbrot.core.ParserException;
+import com.nextbreakpoint.nextfractal.mandelbrot.core.Scope;
 import com.nextbreakpoint.nextfractal.mandelbrot.dsl.DSLCompiler;
-import com.nextbreakpoint.nextfractal.mandelbrot.dsl.ClassFactory;
 import com.nextbreakpoint.nextfractal.mandelbrot.dsl.DSLParser;
 import com.nextbreakpoint.nextfractal.mandelbrot.dsl.ParserResult;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 public class DSLCompilerTest1 extends BaseTest {
 	@Test
 	public void Compiler1() {
 		try {
-//			Assert.assertTrue(Pattern.matches("([A-Z][a-z]*)-(\\d).(.jpg|.png)", "Andrea-10.png"));
+//			assertThat(Pattern.matches("([A-Z][a-z]*)-(\\d).(.jpg|.png)", "Andrea-10.png")).isTrue();
 			DSLParser parser = new DSLParser("test", "Compile");
 			ParserResult result = parser.parse(getSource("/source1.m"));
-			Assert.assertEquals(0, result.getErrors().size());
-			Assert.assertNotNull(result.getAST());
+			assertThat(result.getErrors()).isEmpty();
+			assertThat(result.getAST()).isNotNull();
 			System.out.println(result.getAST());
-			Assert.assertNotNull(result.getOrbitSource());
+			assertThat(result.getOrbitSource()).isNotNull();
 			System.out.println(result.getOrbitSource());
-			Assert.assertNotNull(result.getColorSource());
+			assertThat(result.getColorSource()).isNotNull();
 			System.out.println(result.getColorSource());
 			DSLCompiler compiler = new DSLCompiler();
 			Orbit orbit = compiler.compileOrbit(result).create();
 			Color color = compiler.compileColor(result).create();
-			Assert.assertNotNull(orbit);
-			Assert.assertNotNull(color);
+			assertThat(orbit).isNotNull();
+			assertThat(color).isNotNull();
 			Scope scope = new Scope();
 			orbit.setScope(scope);
 			color.setScope(scope);
@@ -60,22 +65,22 @@ public class DSLCompilerTest1 extends BaseTest {
 			orbit.setW(new Number(0, 0));
 			orbit.render(null);
 			float[] c = color.getColor();
-			Assert.assertNotNull(c);
+			assertThat(c).isNotNull();
 			System.out.println(String.format("%f,%f,%f,%f", c[0], c[1], c[2], c[3]));
 			Number z = orbit.getVariable(0);
-			Assert.assertNotNull(z);
+			assertThat(z).isNotNull();
 			System.out.println(String.format("%f,%f", z.r(), z.i()));
 		} catch (CompilerException e) {
 			printErrors(e.getErrors());
 			e.printStackTrace();
-			Assert.fail(e.getMessage());
+			fail(e.getMessage());
 		} catch (ParserException e) {
 			printErrors(e.getErrors());
 			e.printStackTrace();
-			Assert.fail(e.getMessage());
+			fail(e.getMessage());
 		} catch (Exception e) {
 			e.printStackTrace();
-			Assert.fail(e.getMessage());
+			fail(e.getMessage());
 		}
 	}
 }

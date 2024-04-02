@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.1.4
+ * NextFractal 2.1.5
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2022 Andrea Medeghini
+ * Copyright 2015-2024 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -27,13 +27,17 @@ package com.nextbreakpoint.nextfractal.core.javafx;
 import com.nextbreakpoint.nextfractal.core.render.RendererSize;
 
 import java.io.File;
+import java.util.List;
 
 public interface BrowseDelegate {
 	void didSelectFile(BrowsePane source, File file);
+
+    void didDeleteFiles(List<File> files);
 
 	void didClose(BrowsePane source);
 
 	GridItemRenderer createRenderer(Bitmap bitmap) throws Exception;
 
 	BrowseBitmap createBitmap(File file, RendererSize size) throws Exception;
+
 }

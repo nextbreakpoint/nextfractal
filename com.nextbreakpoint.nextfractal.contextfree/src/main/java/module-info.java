@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.1.4
+ * NextFractal 2.1.5
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2022 Andrea Medeghini
+ * Copyright 2015-2024 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -28,12 +28,10 @@ import com.nextbreakpoint.nextfractal.core.common.CoreFactory;
 module com.nextbreakpoint.nextfractal.contextfree {
     requires java.logging;
     requires java.desktop;
-    requires commons.math3;
-    requires org.antlr.antlr4.runtime;
     requires com.fasterxml.jackson.databind;
     requires com.fasterxml.jackson.annotation;
+    requires com.nextbreakpoint.nextfractal.libraries;
     requires com.nextbreakpoint.nextfractal.core;
-    requires com.nextbreakpoint.try4java;
     exports com.nextbreakpoint.nextfractal.contextfree.module;
     exports com.nextbreakpoint.nextfractal.contextfree.core;
     exports com.nextbreakpoint.nextfractal.contextfree.dsl;

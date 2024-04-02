@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.1.4
+ * NextFractal 2.1.5
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2022 Andrea Medeghini
+ * Copyright 2015-2024 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -24,85 +24,75 @@
  */
 package com.nextbreakpoint.nextfractal.contextfree.test;
 
-import com.nextbreakpoint.nextfractal.contextfree.dsl.grammar.CFDGInterpreter;
 import com.nextbreakpoint.nextfractal.contextfree.dsl.grammar.CFDG;
+import com.nextbreakpoint.nextfractal.contextfree.dsl.grammar.CFDGInterpreter;
 import com.nextbreakpoint.nextfractal.contextfree.renderer.Renderer;
 import com.nextbreakpoint.nextfractal.core.common.DefaultThreadFactory;
 import com.nextbreakpoint.nextfractal.core.render.Java2DRendererFactory;
 import com.nextbreakpoint.nextfractal.core.render.RendererPoint;
 import com.nextbreakpoint.nextfractal.core.render.RendererSize;
 import com.nextbreakpoint.nextfractal.core.render.RendererTile;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.stream.Stream;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
-@RunWith(Parameterized.class)
 public class V3RenderTest extends AbstractBaseTest {
-	@Parameterized.Parameters
-	public static Iterable<Object[]> parameters() {
-		List<Object[]> params = new ArrayList<>();
-		params.add(new Object[] { "/v3-shape-square.cfdg", "/v3-shape-square.png" });
-		params.add(new Object[] { "/v3-shape-triangle.cfdg", "/v3-shape-triangle.png" });
-		params.add(new Object[] { "/v3-shape-circle.cfdg", "/v3-shape-circle.png" });
-		params.add(new Object[] { "/v3-shape-transform.cfdg", "/v3-shape-transform.png" });
-		params.add(new Object[] { "/v3-shape-multiple-primitives.cfdg", "/v3-shape-multiple-primitives.png" });
-		params.add(new Object[] { "/v3-shape-initial-adjustment.cfdg", "/v3-shape-initial-adjustment.png" });
-		params.add(new Object[] { "/v3-shape-options.cfdg", "/v3-shape-options.png" });
-		params.add(new Object[] { "/v3-shapes-blah.cfdg", "/v3-shapes-blah.png" });
-		params.add(new Object[] { "/v3-shapes-blah-random.cfdg", "/v3-shapes-blah-random.png" });
-		params.add(new Object[] { "/v3-shape-variable.cfdg", "/v3-shape-variable.png" });
-		params.add(new Object[] { "/v3-shape-function.cfdg", "/v3-shape-function.png" });
-		params.add(new Object[] { "/v3-shape-path.cfdg", "/v3-shape-path.png" });
-		params.add(new Object[] { "/v3-shape-loop.cfdg", "/v3-shape-loop.png" });
-		params.add(new Object[] { "/v3-shape-if.cfdg", "/v3-shape-if.png" });
-		params.add(new Object[] { "/v3-shape-path2.cfdg", "/v3-shape-path2.png" });
-		params.add(new Object[] { "/v3-shape-switch.cfdg", "/v3-shape-switch.png" });
-		params.add(new Object[] { "/v3-shape-trans.cfdg", "/v3-shape-trans.png" });
-		params.add(new Object[] { "/v3-shape-parameters.cfdg", "/v3-shape-parameters.png" });
-		params.add(new Object[] { "/v3-shape-include.cfdg", "/v3-shape-include.png" });
-		params.add(new Object[] { "/v3-shape-tile.cfdg", "/v3-shape-tile.png" });
-		params.add(new Object[] { "/v3-shape-size.cfdg", "/v3-shape-size.png" });
-		params.add(new Object[] { "/v3-shape-clone.cfdg", "/v3-shape-clone.png" });
-		params.add(new Object[] { "/v3-shape-symmetry-dihedral.cfdg", "/v3-shape-symmetry-dihedral.png" });
-		params.add(new Object[] { "/v3-shape-symmetry-cyclic.cfdg", "/v3-shape-symmetry-cyclic.png" });
-		params.add(new Object[] { "/v3-shape-symmetry-p11g.cfdg", "/v3-shape-symmetry-p11g.png" });
-		params.add(new Object[] { "/v3-shape-symmetry-p11m.cfdg", "/v3-shape-symmetry-p11m.png" });
-		params.add(new Object[] { "/v3-shape-symmetry-p1m1.cfdg", "/v3-shape-symmetry-p1m1.png" });
-		params.add(new Object[] { "/v3-shape-symmetry-p2.cfdg", "/v3-shape-symmetry-p2.png" });
-		params.add(new Object[] { "/v3-shape-symmetry-p2mg.cfdg", "/v3-shape-symmetry-p2mg.png" });
-		params.add(new Object[] { "/v3-shape-symmetry-pm.cfdg", "/v3-shape-symmetry-pm.png" });
-		params.add(new Object[] { "/v3-shape-symmetry-pg.cfdg", "/v3-shape-symmetry-pg.png" });
-		params.add(new Object[] { "/v3-shape-symmetry-cm.cfdg", "/v3-shape-symmetry-cm.png" });
-////		params.add(new Object[] { "/v3-shape-symmetry-pmm.cfdg", "/v3-shape-symmetry-pmm.png" });
-////		params.add(new Object[] { "/v3-shape-symmetry-pmg.cfdg", "/v3-shape-symmetry-pmg.png" });
-////		params.add(new Object[] { "/v3-shape-symmetry-pgg.cfdg", "/v3-shape-symmetry-pgg.png" });
-////		params.add(new Object[] { "/v3-shape-symmetry-cmm.cfdg", "/v3-shape-symmetry-cmm.png" });
-////		params.add(new Object[] { "/v3-shape-symmetry-p4m.cfdg", "/v3-shape-symmetry-p4.png" });
-////		params.add(new Object[] { "/v3-shape-symmetry-p4m.cfdg", "/v3-shape-symmetry-p4m.png" });
-////		params.add(new Object[] { "/v3-shape-symmetry-p4g.cfdg", "/v3-shape-symmetry-p4g.png" });
-////		params.add(new Object[] { "/v3-shape-symmetry-p3.cfdg", "/v3-shape-symmetry-p3.png" });
-		return params;
+	public static Stream<Arguments> parameters() {
+		return Stream.of(
+			Arguments.of("/v3-shape-square.cfdg", "/v3-shape-square.png"),
+			Arguments.of("/v3-shape-triangle.cfdg", "/v3-shape-triangle.png"),
+			Arguments.of("/v3-shape-circle.cfdg", "/v3-shape-circle.png"),
+			Arguments.of("/v3-shape-transform.cfdg", "/v3-shape-transform.png"),
+			Arguments.of("/v3-shape-multiple-primitives.cfdg", "/v3-shape-multiple-primitives.png"),
+			Arguments.of("/v3-shape-initial-adjustment.cfdg", "/v3-shape-initial-adjustment.png"),
+			Arguments.of("/v3-shape-options.cfdg", "/v3-shape-options.png"),
+			Arguments.of("/v3-shapes-blah.cfdg", "/v3-shapes-blah.png"),
+			Arguments.of("/v3-shapes-blah-random.cfdg", "/v3-shapes-blah-random.png"),
+			Arguments.of("/v3-shape-variable.cfdg", "/v3-shape-variable.png"),
+			Arguments.of("/v3-shape-function.cfdg", "/v3-shape-function.png"),
+			Arguments.of("/v3-shape-path.cfdg", "/v3-shape-path.png"),
+			Arguments.of("/v3-shape-loop.cfdg", "/v3-shape-loop.png"),
+			Arguments.of("/v3-shape-if.cfdg", "/v3-shape-if.png"),
+			Arguments.of("/v3-shape-path2.cfdg", "/v3-shape-path2.png"),
+			Arguments.of("/v3-shape-switch.cfdg", "/v3-shape-switch.png"),
+			Arguments.of("/v3-shape-trans.cfdg", "/v3-shape-trans.png"),
+			Arguments.of("/v3-shape-parameters.cfdg", "/v3-shape-parameters.png"),
+			Arguments.of("/v3-shape-include.cfdg", "/v3-shape-include.png"),
+			Arguments.of("/v3-shape-tile.cfdg", "/v3-shape-tile.png"),
+			Arguments.of("/v3-shape-size.cfdg", "/v3-shape-size.png"),
+			Arguments.of("/v3-shape-clone.cfdg", "/v3-shape-clone.png"),
+			Arguments.of("/v3-shape-symmetry-dihedral.cfdg", "/v3-shape-symmetry-dihedral.png"),
+			Arguments.of("/v3-shape-symmetry-cyclic.cfdg", "/v3-shape-symmetry-cyclic.png"),
+			Arguments.of("/v3-shape-symmetry-p11g.cfdg", "/v3-shape-symmetry-p11g.png"),
+			Arguments.of("/v3-shape-symmetry-p11m.cfdg", "/v3-shape-symmetry-p11m.png"),
+			Arguments.of("/v3-shape-symmetry-p1m1.cfdg", "/v3-shape-symmetry-p1m1.png"),
+			Arguments.of("/v3-shape-symmetry-p2.cfdg", "/v3-shape-symmetry-p2.png"),
+			Arguments.of("/v3-shape-symmetry-p2mg.cfdg", "/v3-shape-symmetry-p2mg.png"),
+			Arguments.of("/v3-shape-symmetry-pm.cfdg", "/v3-shape-symmetry-pm.png"),
+			Arguments.of("/v3-shape-symmetry-pg.cfdg", "/v3-shape-symmetry-pg.png"),
+			Arguments.of("/v3-shape-symmetry-cm.cfdg", "/v3-shape-symmetry-cm.png")
+////		Arguments.of("/v3-shape-symmetry-pmm.cfdg", "/v3-shape-symmetry-pmm.png"),
+////		Arguments.of("/v3-shape-symmetry-pmg.cfdg", "/v3-shape-symmetry-pmg.png"),
+////		Arguments.of("/v3-shape-symmetry-pgg.cfdg", "/v3-shape-symmetry-pgg.png"),
+////		Arguments.of("/v3-shape-symmetry-cmm.cfdg", "/v3-shape-symmetry-cmm.png"),
+////		Arguments.of("/v3-shape-symmetry-p4m.cfdg", "/v3-shape-symmetry-p4.png"),
+////		Arguments.of("/v3-shape-symmetry-p4m.cfdg", "/v3-shape-symmetry-p4m.png"),
+////		Arguments.of("/v3-shape-symmetry-p4g.cfdg", "/v3-shape-symmetry-p4g.png"),
+////		Arguments.of("/v3-shape-symmetry-p3.cfdg", "/v3-shape-symmetry-p3.png")
+		);
 	}
 
-	@Parameterized.Parameter(0)
-	public String sourceName;
-
-	@Parameterized.Parameter(1)
-	public String imageName;
-
-	@Test
-	public void shouldRenderImage() throws IOException {
+	@ParameterizedTest
+	@MethodSource("parameters")
+	public void shouldRenderImage(String sourceName, String imageName) throws IOException {
 		System.out.println(sourceName);
 
 		BufferedImage actualImage = new BufferedImage(200, 200, BufferedImage.TYPE_INT_ARGB);
@@ -127,7 +117,7 @@ public class V3RenderTest extends AbstractBaseTest {
 		saveImage("tmp" + imageName, actualImage);
 
 		BufferedImage expectedImage = loadImage(imageName);
-		assertThat(compareImages(expectedImage, actualImage), is(equalTo(0.0)));
+		assertThat(compareImages(expectedImage, actualImage)).isEqualTo(0.0);
 	}
 
 	private double compareImages(BufferedImage expectedImage, BufferedImage actualImage) {

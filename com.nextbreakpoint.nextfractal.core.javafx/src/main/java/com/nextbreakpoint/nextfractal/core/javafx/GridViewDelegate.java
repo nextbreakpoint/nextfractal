@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.1.4
+ * NextFractal 2.1.5
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2022 Andrea Medeghini
+ * Copyright 2015-2024 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -29,5 +29,5 @@ public interface GridViewDelegate {
 
 	public void didRangeChange(GridView source, int firstRow, int lastRow);
 
-	public void didSelectionChange(GridView source, int selectedRow, int selectedCol);
+	public void didSelectionChange(GridView source, int selectedRow, int selectedCol, int clicks);
 }

@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.1.4
+ * NextFractal 2.1.5
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2022 Andrea Medeghini
+ * Copyright 2015-2024 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -27,9 +27,7 @@ import com.nextbreakpoint.nextfractal.contextfree.javafx.ContextFreeUIFactory;
 module com.nextbreakpoint.nextfractal.contextfree.javafx {
     requires java.logging;
     requires javafx.controls;
-    requires rxjavafx;
-    requires io.reactivex.rxjava2;
-    requires com.nextbreakpoint.try4java;
+    requires com.nextbreakpoint.nextfractal.libraries;
     requires com.nextbreakpoint.nextfractal.core;
     requires com.nextbreakpoint.nextfractal.contextfree;
     requires com.nextbreakpoint.nextfractal.core.javafx;

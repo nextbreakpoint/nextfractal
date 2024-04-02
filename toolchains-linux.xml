@@ -1,0 +1,12 @@
+<toolchains>
+    <toolchain>
+        <type>jdk</type>
+        <provides>
+            <version>21</version>
+            <vendor>temurin</vendor>
+        </provides>
+        <configuration>
+            <jdkHome>/usr/lib/jvm/temurin-21-jdk</jdkHome>
+        </configuration>
+    </toolchain>
+</toolchains>

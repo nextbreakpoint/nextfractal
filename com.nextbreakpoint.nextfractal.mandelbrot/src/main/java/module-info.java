@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.1.4
+ * NextFractal 2.1.5
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2022 Andrea Medeghini
+ * Copyright 2015-2024 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -29,11 +29,10 @@ module com.nextbreakpoint.nextfractal.mandelbrot {
     requires java.logging;
     requires java.desktop;
     requires java.compiler;
-    requires commons.math3;
-    requires org.antlr.antlr4.runtime;
+    requires jdk.compiler;
     requires com.fasterxml.jackson.databind;
     requires com.fasterxml.jackson.annotation;
-    requires com.nextbreakpoint.try4java;
+    requires com.nextbreakpoint.nextfractal.libraries;
     requires com.nextbreakpoint.nextfractal.core;
     exports com.nextbreakpoint.nextfractal.mandelbrot.module;
     exports com.nextbreakpoint.nextfractal.mandelbrot.dsl;

@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.1.4
+ * NextFractal 2.1.5
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2022 Andrea Medeghini
+ * Copyright 2015-2024 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -56,15 +56,6 @@ public class RendererCoordinator implements RendererDelegate {
 		this.hints.putAll(hints);
 		renderer = createRenderer(tile);
 		renderer.setRendererDelegate(this);
-	}
-
-	/**
-	 * @see Object#finalize()
-	 */
-	@Override
-	public void finalize() throws Throwable {
-		dispose();
-		super.finalize();
 	}
 
 	/**

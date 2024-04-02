@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.1.4
+ * NextFractal 2.1.5
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2022 Andrea Medeghini
+ * Copyright 2015-2024 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -53,388 +53,374 @@ import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.*;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.prefs.Preferences;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class BrowsePane extends BorderPane {
-	public static final String BROWSER_DEFAULT_LOCATION = "browser.location";
-	private static final Logger logger = Logger.getLogger(BrowsePane.class.getName());
-	private static final int FRAME_LENGTH_IN_MILLIS = 50;
-	private static final int SCROLL_BOUNCE_DELAY = 500;
-	private final ExecutorService browserExecutor;
-	private final StringObservableValue sourcePathProperty;
-	private final StringObservableValue importPathProperty;
-	private final int numRows = 3;
-	private final int numCols = 3;
-	private final LinkedList<String> filter = new LinkedList<>();
-	private List<GridItem> items = new ArrayList<>();
-	private BrowseDelegate delegate;
-	private DirectoryChooser sourceDirectoryChooser;
-	private File sourceCurrentFolder;
-	private DirectoryChooser importDirectoryChooser;
-	private File importCurrentFolder;
-	private File currentDir;
-	private RendererTile tile;
-	private AnimationTimer timer;
-	private Thread thread;
+    private static final Logger logger = Logger.getLogger(BrowsePane.class.getName());
+    private static final String PROPERTY_DIRECTORY_WORKSPACE = "com.nextbreakpoint.nextfractal.directory.workspace";
+    private static final String PROPERTY_DIRECTORY_EXAMPLES = "com.nextbreakpoint.nextfractal.directory.examples";
+    private static final String PROPERTY_DIRECTORY_WORKSPACE_DEFAULT_VALUE = "[user.dir]/.nextfractal";
+    private static final String PROPERTY_DIRECTORY_EXAMPLES_DEFAULT_VALUE = "[user.home]";
+    private static final int FRAME_LENGTH_IN_MILLIS = 50;
+    private static final int SCROLL_BOUNCE_DELAY = 500;
+    private final ExecutorService browserExecutor;
+    private final StringObservableValue sourcePathProperty;
+    private final StringObservableValue importPathProperty;
+    private final int numRows = 3;
+    private final int numCols = 3;
+    private final LinkedList<String> filter = new LinkedList<>();
+    private List<GridItem> items = new ArrayList<>();
+    private BrowseDelegate delegate;
+    private RendererTile tile;
+    private AnimationTimer timer;
+    private Thread thread;
 
-	public BrowsePane(int width, int height) {
-		setMinWidth(width);
-		setMaxWidth(width);
-		setPrefWidth(width);
-		setMinHeight(height);
-		setMaxHeight(height);
-		setPrefHeight(height);
+    public BrowsePane(int width, int height) {
+        setMinWidth(width);
+        setMaxWidth(width);
+        setPrefWidth(width);
+        setMinHeight(height);
+        setMaxHeight(height);
+        setPrefHeight(height);
 
-		filter.add(".nf.zip");
+        filter.add(".nf.zip");
 
-		Plugins.factories().forEach(f -> filter.addAll(f.createFileManager().getSupportedFiles()));
+        Plugins.factories().forEach(f -> filter.addAll(f.createFileManager().getSupportedFiles()));
 
-		Preferences prefs = Preferences.userNodeForPackage(BrowsePane.class);
-		
-		currentDir = getCurrentDir(prefs);
+        sourcePathProperty = new StringObservableValue();
 
-		sourcePathProperty = new StringObservableValue();
+        sourcePathProperty.setValue(null);
 
-		sourcePathProperty.setValue(null);
+        importPathProperty = new StringObservableValue();
 
-		importPathProperty = new StringObservableValue();
+        importPathProperty.setValue(null);
 
-		importPathProperty.setValue(null);
+        int size = width / numCols;
 
-		int size = width / numCols;
-		
-		int maxThreads = numCols;
-		
-		tile = createSingleTile(size, size);
+        int maxThreads = numCols;
 
-		HBox toolbar1 = new HBox(2);
-		toolbar1.setAlignment(Pos.CENTER_LEFT);
+        tile = createSingleTile(size, size);
 
-		HBox toolbar2 = new HBox(2);
-		toolbar2.setAlignment(Pos.CENTER);
+        HBox toolbar1 = new HBox(2);
+        toolbar1.setAlignment(Pos.CENTER_LEFT);
 
-		HBox toolbar3 = new HBox(2);
-		toolbar3.setAlignment(Pos.CENTER_RIGHT);
+        HBox toolbar2 = new HBox(2);
+        toolbar2.setAlignment(Pos.CENTER);
 
-		Button closeButton = new Button("", Icons.createIconImage("/icon-close.png"));
-		Button reloadButton = new Button("", Icons.createIconImage("/icon-reload.png"));
-		Button chooseButton = new Button("", Icons.createIconImage("/icon-folder.png"));
-		Button importButton = new Button("", Icons.createIconImage("/icon-import.png"));
-		closeButton.setTooltip(new Tooltip("Close projects browser"));
-		reloadButton.setTooltip(new Tooltip("Reload all projects"));
-		chooseButton.setTooltip(new Tooltip("Select projects location"));
-		importButton.setTooltip(new Tooltip("Import projects from another location"));
+        HBox toolbar3 = new HBox(2);
+        toolbar3.setAlignment(Pos.CENTER_RIGHT);
 
-		Label statusLabel = new Label("Initializing");
+        Button closeButton = new Button("", Icons.createIconImage("/icon-close.png"));
+        Button deleteButton = new Button("", Icons.createIconImage("/icon-delete.png"));
+        Button reloadButton = new Button("", Icons.createIconImage("/icon-reload.png"));
+        Button importButton = new Button("", Icons.createIconImage("/icon-import.png"));
+        closeButton.setTooltip(new Tooltip("Hide projects"));
+        deleteButton.setTooltip(new Tooltip("Delete projects"));
+        reloadButton.setTooltip(new Tooltip("Reload projects"));
+        importButton.setTooltip(new Tooltip("Import projects from directory"));
 
-		toolbar1.getChildren().add(chooseButton);
-		toolbar1.getChildren().add(statusLabel);
-		toolbar3.getChildren().add(importButton);
-		toolbar3.getChildren().add(reloadButton);
-		toolbar3.getChildren().add(closeButton);
+        Label statusLabel = new Label("");
 
-		BorderPane toolbar = new BorderPane();
-		toolbar.getStyleClass().add("toolbar");
-		toolbar.getStyleClass().add("translucent");
-		toolbar.setPrefHeight(height * 0.07);
-		toolbar.setLeft(toolbar1);
-		toolbar.setCenter(toolbar2);
-		toolbar.setRight(toolbar3);
+        toolbar1.getChildren().add(statusLabel);
+        toolbar3.getChildren().add(importButton);
+        toolbar3.getChildren().add(deleteButton);
+        toolbar3.getChildren().add(reloadButton);
+        toolbar3.getChildren().add(closeButton);
 
-		GridView grid = new GridView(numRows, numCols, size);
-		
-		grid.setDelegate(new GridViewDelegate() {
-			@Override
-			public void didRangeChange(GridView source, int firstRow, int lastRow) {
+        BorderPane toolbar = new BorderPane();
+        toolbar.getStyleClass().add("toolbar");
+        toolbar.getStyleClass().add("translucent");
+        toolbar.setPrefHeight(height * 0.07);
+        toolbar.setLeft(toolbar1);
+        toolbar.setCenter(toolbar2);
+        toolbar.setRight(toolbar3);
+
+        deleteButton.setDisable(true);
+
+        GridView grid = new GridView(numRows, numCols, size);
+
+        grid.setDelegate(new GridViewDelegate() {
+            @Override
+            public void didRangeChange(GridView source, int firstRow, int lastRow) {
 //				source.updateCells();
-			}
-			
-			@Override
-			public void didCellChange(GridView source, int row, int col) {
-				source.updateCell(row * numCols + col);
-			}
+            }
 
-			@Override
-			public void didSelectionChange(GridView source, int selectedRow, int selectedCol) {
-				int index = selectedRow * numCols + selectedCol;
-				if (index >= 0 && index < items.size()) {
-					GridItem item = items.get(index);
-					File file = item.getFile();
-					if (file != null) {
-						if (delegate != null) {
-							delegate.didSelectFile(BrowsePane.this, file);
-						}
-					}
-				}
-			}
-		});
+            @Override
+            public void didCellChange(GridView source, int row, int col) {
+                source.updateCell(row * numCols + col);
+            }
 
-		BorderPane box = new BorderPane();
-		box.setCenter(grid);
-		box.setBottom(toolbar);
-		box.getStyleClass().add("browse");
-		
-		setCenter(box);
+            @Override
+            public void didSelectionChange(GridView source, int selectedRow, int selectedCol, int clicks) {
+                int index = selectedRow * numCols + selectedCol;
+                if (index >= 0 && index < items.size()) {
+                    GridItem item = items.get(index);
+                    File file = item.getFile();
+                    if (file != null) {
+                        if (clicks == 1) {
+                            item.setSelected(!item.isSelected());
+                            if (items.stream().anyMatch(GridItem::isSelected)) {
+                                deleteButton.setDisable(false);
+                            } else {
+                                deleteButton.setDisable(true);
+                            }
+                        } else {
+                            item.setSelected(false);
+                            if (delegate != null) {
+                                delegate.didSelectFile(BrowsePane.this, file);
+                            }
+                        }
+                    }
+                }
+            }
+        });
 
-		closeButton.setOnMouseClicked(e -> doClose(grid));
+        BorderPane box = new BorderPane();
+        box.setCenter(grid);
+        box.setBottom(toolbar);
+        box.getStyleClass().add("browse");
 
-		chooseButton.setOnMouseClicked(e -> doChooseSourceFolder(grid));
+        setCenter(box);
 
-		importButton.setOnMouseClicked(e -> doChooseImportFolder(grid));
+        closeButton.setOnMouseClicked(e -> doClose());
 
-		reloadButton.setOnMouseClicked(e -> loadFiles(statusLabel, grid, sourceCurrentFolder));
+        importButton.setOnMouseClicked(e -> doChooseImportFolder());
 
-		sourcePathProperty.addListener((observable, oldValue, newValue) -> {
-			if (newValue != null) {
-				File path = new File(newValue);
-				currentDir = path;
-				loadFiles(statusLabel, grid, path);
-			}
-		});
+        reloadButton.setOnMouseClicked(e -> {
+            final File path = getCurrentSourceFolder();
+            deleteButton.setDisable(true);
+            loadFiles(statusLabel, grid, path);
+        });
 
-		importPathProperty.addListener((observable, oldValue, newValue) -> {
-			File path = new File(newValue);
-			importFiles(statusLabel, grid, path);
-		});
+        deleteButton.setOnMouseClicked(e -> deleteSelected(items));
 
-		widthProperty().addListener((observable, oldValue, newValue) -> {
-			toolbar1.setPrefWidth(newValue.doubleValue() / 3);
-			toolbar2.setPrefWidth(newValue.doubleValue() / 3);
-			toolbar3.setPrefWidth(newValue.doubleValue() / 3);
-		});
+        sourcePathProperty.addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                File path = new File(newValue);
+                reloadFiles(deleteButton, statusLabel, grid, path);
+            }
+        });
 
-		browserExecutor = Executors.newFixedThreadPool(maxThreads, createThreadFactory("Browser"));
+        importPathProperty.addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                File path = new File(newValue);
+                importFiles(deleteButton, statusLabel, grid, path);
+            }
+        });
 
-		runTimer(grid);
-	}
+        widthProperty().addListener((observable, oldValue, newValue) -> {
+            toolbar1.setPrefWidth(newValue.doubleValue() / 3);
+            toolbar2.setPrefWidth(newValue.doubleValue() / 3);
+            toolbar3.setPrefWidth(newValue.doubleValue() / 3);
+        });
 
-	private DefaultThreadFactory createThreadFactory(String name) {
-		return new DefaultThreadFactory(name, true, Thread.MIN_PRIORITY);
-	}
+        browserExecutor = Executors.newFixedThreadPool(maxThreads, createThreadFactory("Browser"));
 
-	public void reload() {
-//		sourcePathProperty.setValue(null);
-		sourcePathProperty.setValue(currentDir.getAbsolutePath());
-	}
-	
-	public void setDelegate(BrowseDelegate delegate) {
-		this.delegate = delegate;
-	}
+        runTimer(grid);
+    }
 
-	@Override
-	protected void finalize() throws Throwable {
-		dispose();
-		super.finalize();
-	}
+    public File getCurrentSourceFolder() {
+        return getWorkspace();
+    }
 
-	public void dispose() {
-		List<ExecutorService> executors = Arrays.asList(browserExecutor);
-		executors.forEach(executor -> executor.shutdownNow());
-		executors.forEach(executor -> await(executor));
-		stopWatching();
-		removeItems();
-	}
+    private File getDefaultSourceFolder() {
+        return new File(System.getProperty("user.home"));
+    }
 
-	private void await(ExecutorService executor) {
-		Try.of(() -> executor.awaitTermination(5000, TimeUnit.MILLISECONDS)).onFailure(e -> logger.warning("Await termination timeout")).execute();
-	}
+    private File getDefaultImportFolder() {
+        return getExamples();
+    }
 
-	private void ensureSourceDirectoryChooser() {
-//		Alert alert = new Alert(AlertType.INFORMATION);
-//		alert.setTitle("Dialog");
-//		alert.setHeaderText("Path");
-//		alert.setContentText(defaultDir.getAbsolutePath());
-//		alert.showAndWait();
-		if (sourceDirectoryChooser == null) {
-			sourceDirectoryChooser = new DirectoryChooser();
-			if (!currentDir.exists()) {
-				currentDir = new File(System.getProperty("user.home"));
-			}
-			sourceDirectoryChooser.setInitialDirectory(currentDir);
-		}
-	}
+    private DefaultThreadFactory createThreadFactory(String name) {
+        return new DefaultThreadFactory(name, true, Thread.MIN_PRIORITY);
+    }
 
-	private void ensureImportDirectoryChooser() {
-//		Alert alert = new Alert(AlertType.INFORMATION);
-//		alert.setTitle("Dialog");
-//		alert.setHeaderText("Path");
-//		alert.setContentText(defaultDir.getAbsolutePath());
-//		alert.showAndWait();
-		if (importDirectoryChooser == null) {
-			importDirectoryChooser = new DirectoryChooser();
-			if (!currentDir.exists()) {
-				currentDir = new File(System.getProperty("user.home"));
-			}
-			importDirectoryChooser.setInitialDirectory(currentDir);
-		}
-	}
+    public void reload() {
+        if (listFiles(getWorkspace()).isEmpty()) {
+            logger.log(Level.INFO, "Workspace is empty");
+            importPathProperty.setValue(null);
+            Platform.runLater(this::doChooseImportFolder);
+        } else {
+            Platform.runLater(() -> sourcePathProperty.setValue(getCurrentSourceFolder().getAbsolutePath()));
+        }
+    }
 
-	private void doClose(GridView grid) {
-		delegate.didClose(this);
-	}
+    public void reload(Button deleteButton, Label statusLabel, GridView grid) {
+        final File path = getCurrentSourceFolder();
+        deleteButton.setDisable(true);
+        loadFiles(statusLabel, grid, path);
+    }
 
-	private void doChooseSourceFolder(GridView grid) {
-		Block.create(a -> prepareSourceDirectoryChooser()).andThen(a -> doSelectSourceFolder()).tryExecute().execute();
-	}
+    private void deleteSelected(List<GridItem> items) {
+        List<File> files = items.stream().filter(GridItem::isSelected).map(GridItem::getFile).toList();
+        delegate.didDeleteFiles(files);
+    }
 
-	private void doChooseImportFolder(GridView grid) {
-		Block.create(a -> prepareImportDirectoryChooser()).andThen(a -> doSelectImportFolder()).tryExecute().execute();
-	}
+    public void setDelegate(BrowseDelegate delegate) {
+        this.delegate = delegate;
+    }
 
-	private void doSelectSourceFolder() {
-		Optional.ofNullable(sourceDirectoryChooser.showDialog(BrowsePane.this.getScene().getWindow())).ifPresent(folder -> sourcePathProperty.setValue(folder.getAbsolutePath()));
-	}
+    public void dispose() {
+        List<ExecutorService> executors = Arrays.asList(browserExecutor);
+        executors.forEach(executor -> executor.shutdownNow());
+        executors.forEach(executor -> await(executor));
+        stopWatching();
+        removeItems();
+    }
 
-	private void prepareSourceDirectoryChooser() {
-		ensureSourceDirectoryChooser();
-		sourceDirectoryChooser.setTitle("Choose source folrder");
-		if (sourceCurrentFolder != null) {
-			sourceCurrentFolder = ensureValidFolder(sourceCurrentFolder);
-			sourceDirectoryChooser.setInitialDirectory(sourceCurrentFolder);
-		}
-	}
+    private void await(ExecutorService executor) {
+        Try.of(() -> executor.awaitTermination(5000, TimeUnit.MILLISECONDS)).onFailure(e -> logger.warning("Await termination timeout")).execute();
+    }
 
-	private void doSelectImportFolder() {
-		Optional.ofNullable(importDirectoryChooser.showDialog(BrowsePane.this.getScene().getWindow())).ifPresent(folder -> importPathProperty.setValue(folder.getAbsolutePath()));
-	}
+    private void doClose() {
+        delegate.didClose(this);
+    }
 
-	private void prepareImportDirectoryChooser() {
-		ensureImportDirectoryChooser();
-		importDirectoryChooser.setTitle("Choose import folder");
-		if (importCurrentFolder != null) {
-			importCurrentFolder = ensureValidFolder(importCurrentFolder);
-			importDirectoryChooser.setInitialDirectory(importCurrentFolder);
-		}
-	}
+    private void doChooseSourceFolder() {
+        Block.create(a -> doSelectSourceFolder(prepareSourceDirectoryChooser())).tryExecute().execute();
+    }
 
-	private File ensureValidFolder(File folder) {
-		return Optional.ofNullable(folder).filter(d -> d.exists()).orElseGet(() -> new File(System.getProperty("user.home")));
-	}
+    private void doChooseImportFolder() {
+        Block.create(a -> doSelectImportFolder(prepareImportDirectoryChooser())).tryExecute().execute();
+    }
 
-	private RendererTile createSingleTile(int width, int height) {
-		int tileWidth = width;
-		int tileHeight = height;
-		RendererSize imageSize = new RendererSize(width, height);
-		RendererSize tileSize = new RendererSize(tileWidth, tileHeight);
-		RendererSize tileBorder = new RendererSize(0, 0);
-		RendererPoint tileOffset = new RendererPoint(0, 0);
-		RendererTile tile = new RendererTile(imageSize, tileSize, tileOffset, tileBorder);
-		return tile;
-	}
+    private void doSelectSourceFolder(DirectoryChooser sourceDirectoryChooser) {
+        Optional.ofNullable(sourceDirectoryChooser.showDialog(BrowsePane.this.getScene().getWindow()))
+                .ifPresent(folder -> sourcePathProperty.setValue(folder.getAbsolutePath()));
+    }
 
-	private void loadFiles(Label statusLabel, GridView grid, File folder) {
-		sourceCurrentFolder = folder;
-		stopWatching();
-		startWatching();
-		removeItems();
-		grid.setData(new GridItem[0]);
-		List<File> files = listFiles(folder);
-		if (!files.isEmpty()) {
-			statusLabel.setText(files.size() + " project file" + (files.size() > 1 ? "s" : "") + " found");
-			loadItems(grid, files);
-		} else {
-			statusLabel.setText("No project files found");
-		}
-	}
+    private DirectoryChooser prepareSourceDirectoryChooser() {
+        DirectoryChooser sourceDirectoryChooser = new DirectoryChooser();
+        sourceDirectoryChooser.setInitialDirectory(getDefaultSourceFolder());
+        sourceDirectoryChooser.setTitle("Choose source folder");
+        return sourceDirectoryChooser;
+    }
 
-	private void importFiles(Label statusLabel, GridView grid, File folder) {
-		importCurrentFolder = folder;
-		List<File> files = listAllFiles(folder);
-		if (!files.isEmpty()) {
-			copyFilesAsync(statusLabel, grid, files);
-		}
-	}
+    private void doSelectImportFolder(DirectoryChooser importDirectoryChooser) {
+        Optional.ofNullable(importDirectoryChooser.showDialog(BrowsePane.this.getScene().getWindow()))
+                .ifPresent(folder -> importPathProperty.setValue(folder.getAbsolutePath()));
+    }
 
-	private Future<?> copyFilesAsync(Label statusLabel, GridView grid, List<File> files) {
-		return browserExecutor.submit(() -> copyFiles(statusLabel, grid, files, sourceCurrentFolder));
-	}
+    private DirectoryChooser prepareImportDirectoryChooser() {
+        DirectoryChooser importDirectoryChooser = new DirectoryChooser();
+        importDirectoryChooser.setInitialDirectory(getDefaultImportFolder());
+        importDirectoryChooser.setTitle("Choose import folder");
+        return importDirectoryChooser;
+    }
 
-	private void copyFiles(Label statusLabel, GridView grid, List<File> files, File location) {
-		Platform.runLater(() -> grid.setDisable(true));
+    private RendererTile createSingleTile(int width, int height) {
+        RendererSize imageSize = new RendererSize(width, height);
+        RendererSize tileSize = new RendererSize(width, height);
+        RendererSize tileBorder = new RendererSize(0, 0);
+        RendererPoint tileOffset = new RendererPoint(0, 0);
+        return new RendererTile(imageSize, tileSize, tileOffset, tileBorder);
+    }
 
-		for (File file : files) {
-			Platform.runLater(() -> statusLabel.setText("Importing " + files.size() + " files..."));
+    private void loadFiles(Label statusLabel, GridView grid, File folder) {
+        removeItems();
+        grid.setData(new GridItem[0]);
+        List<File> files = listFiles(folder);
+        if (!files.isEmpty()) {
+            statusLabel.setText(files.size() + " project file" + (files.size() > 1 ? "s" : "") + " found");
+            loadItems(grid, files);
+        } else {
+            statusLabel.setText("No project files found");
+        }
+    }
 
-			copyFile(file, location);
-		}
+    private void importFiles(Button deleteButton, Label statusLabel, GridView grid, File folder) {
+        List<File> files = listFiles(folder);
+        if (!files.isEmpty()) {
+            copyFilesAsync(deleteButton, statusLabel, grid, files, getCurrentSourceFolder());
+        }
+    }
 
-		Platform.runLater(() -> grid.setDisable(false));
+    private Future<?> copyFilesAsync(Button deleteButton, Label statusLabel, GridView grid, List<File> files, File dest) {
+        return browserExecutor.submit(() -> copyFiles(deleteButton, statusLabel, grid, files, dest));
+    }
 
-		Platform.runLater(() -> loadFiles(statusLabel, grid, sourceCurrentFolder));
-	}
+    private void copyFiles(Button deleteButton, Label statusLabel, GridView grid, List<File> files, File dest) {
+        Platform.runLater(() -> grid.setDisable(true));
 
-	private void copyFile(File file, File location) {
-		FileManager.loadFile(file).ifPresent(session -> FileManager.saveFile(createFileName(file, location), session));
-	}
+        for (File file : files) {
+            Platform.runLater(() -> statusLabel.setText("Importing " + files.size() + " files..."));
 
-	private File createFileName(File file, File location) {
-		File tmpFile = new File(location, file.getName().substring(0, file.getName().indexOf(".")) + ".nf.zip");
-		int i = 0;
-		while (tmpFile.exists()) {
-			tmpFile = new File(location, file.getName().substring(0, file.getName().indexOf(".")) + "-" + (i++) + ".nf.zip");
-		}
-		return tmpFile;
-	}
+            copyFile(file, dest);
+        }
 
-	private void loadItems(GridView grid, List<File> files) {
-		GridItem[] items = new GridItem[files.size()];
-		for (int i = 0; i < files.size(); i++) {
-			items[i] = new GridItem();
-			items[i].setFile(files.get(i));
-			this.items.add(items[i]);
-		}
-		grid.setData(items);
-	}
+        Platform.runLater(() -> grid.setDisable(false));
 
-	private List<File> listAllFiles(File folder) {
-		Preferences prefs = Preferences.userNodeForPackage(BrowsePane.class);
-		prefs.put(BROWSER_DEFAULT_LOCATION, folder.getAbsolutePath());
-		if (delegate != null) {
-			return Stream.of(folder.listFiles((dir, name) -> hasSuffix(name))).sorted().collect(Collectors.toList());
-		} else {
-			return Collections.emptyList();
-		}
-	}
+        Platform.runLater(() -> reloadFiles(deleteButton, statusLabel, grid, dest));
+    }
 
-	private List<File> listFiles(File folder) {
-		Preferences prefs = Preferences.userNodeForPackage(BrowsePane.class);
-		prefs.put(BROWSER_DEFAULT_LOCATION, folder.getAbsolutePath());
-		if (delegate != null) {
-			return Stream.of(folder.listFiles((dir, name) -> hasSuffix(".nf.zip"))).sorted().collect(Collectors.toList());
-		} else {
-			return Collections.emptyList();
-		}
-	}
+    private void reloadFiles(Button deleteButton, Label statusLabel, GridView grid, File path) {
+        deleteButton.setDisable(true);
+        stopWatching();
+        startWatching(deleteButton, statusLabel, grid);
+        loadFiles(statusLabel, grid, path);
+    }
 
-	private boolean hasSuffix(String name) {
-		return filter.stream().anyMatch(name::endsWith);
-	}
+    private void copyFile(File file, File location) {
+        FileManager.loadFile(file).ifPresent(session -> FileManager.saveFile(createFileName(file, location), session));
+    }
 
-	private void removeItems() {
-		for (int index = 0; index < items.size(); index++) {
-			GridItem item = items.get(index);
-			if (item.getLoadItemFuture() != null && !item.getLoadItemFuture().isDone()) {
-				item.getLoadItemFuture().cancel(true);
-			}
-		}
+    private File createFileName(File file, File location) {
+        File tmpFile = new File(location, file.getName().substring(0, file.getName().indexOf(".")) + ".nf.zip");
+        int i = 0;
+        while (tmpFile.exists()) {
+            tmpFile = new File(location, file.getName().substring(0, file.getName().indexOf(".")) + "-" + (i++) + ".nf.zip");
+        }
+        return tmpFile;
+    }
 
-		for (int index = 0; index < items.size(); index++) {
-			GridItem item = items.get(index);
-			if (item.getRenderer() != null) {
-				item.getRenderer().abort();
-			}
-		}
-		
+    private void loadItems(GridView grid, List<File> files) {
+        GridItem[] items = new GridItem[files.size()];
+        for (int i = 0; i < files.size(); i++) {
+            items[i] = new GridItem();
+            items[i].setFile(files.get(i));
+            this.items.add(items[i]);
+        }
+        grid.setData(items);
+    }
+
+    private List<File> listFiles(File folder) {
+        final File[] files = folder.listFiles((dir, name) -> hasSuffix(name));
+        if (files == null) {
+            return List.of();
+        } else {
+            return Stream.of(Objects.requireNonNull(files))
+                    .sorted().collect(Collectors.toList());
+        }
+    }
+
+    private boolean hasSuffix(String name) {
+        return filter.stream().anyMatch(name::endsWith);
+    }
+
+    private void removeItems() {
+        for (int index = 0; index < items.size(); index++) {
+            GridItem item = items.get(index);
+            if (item.getLoadItemFuture() != null && !item.getLoadItemFuture().isDone()) {
+                item.getLoadItemFuture().cancel(true);
+            }
+        }
+
+        for (int index = 0; index < items.size(); index++) {
+            GridItem item = items.get(index);
+            if (item.getRenderer() != null) {
+                item.getRenderer().abort();
+            }
+        }
+
 //		for (int index = 0; index < items.size(); index++) {
 //			GridItem item = items.get(index);
 //			if (item.getRenderer() != null) {
@@ -442,283 +428,288 @@ public class BrowsePane extends BorderPane {
 //			}
 //		}
 
-		for (int index = 0; index < items.size(); index++) {
-			GridItem item = items.get(index);
-			if (item.getRenderer() != null) {
+        for (int index = 0; index < items.size(); index++) {
+            GridItem item = items.get(index);
+            if (item.getRenderer() != null) {
 //				GridItemRenderer renderer = item.getRenderer();
-				item.setRenderer(null);
+                item.setRenderer(null);
 //				renderer.dispose();
-			}
-		}
+            }
+        }
 
-		items.clear();
-	}
+        items.clear();
+    }
 
-	private void runTimer(GridView grid) {
-		timer = new AnimationTimer() {
-			private long last;
+    private void runTimer(GridView grid) {
+        timer = new AnimationTimer() {
+            private long last;
 
-			@Override
-			public void handle(long now) {
-				long time = now / 1000000;
-				if (time - last > FRAME_LENGTH_IN_MILLIS) {
-					try {
-						updateCells(grid);
-					} catch (ExecutionException | InterruptedException e) {
-					}
-					last = time;
-				}
-			}
-		};
-		timer.start();
-	}
+            @Override
+            public void handle(long now) {
+                long time = now / 1000000;
+                if (time - last > FRAME_LENGTH_IN_MILLIS) {
+                    try {
+                        updateCells(grid);
+                    } catch (ExecutionException | InterruptedException e) {
+                    }
+                    last = time;
+                }
+            }
+        };
+        timer.start();
+    }
 
-	private void updateCells(GridView grid) throws ExecutionException, InterruptedException {
-		if (grid.getData() == null) {
-			return;
-		}
-		int firstRow = grid.getFirstRow(); 
-		int lastRow = grid.getLastRow();
-		if (firstRow > 0) {
-			firstRow -= 1;
-		}
-		if (lastRow < grid.getData().length / numCols - 1) {
-			lastRow += 1;
-		}
-		int firstIndex = Math.min(firstRow * numCols, items.size());
-		int lastIndex = lastRow * numCols + numCols;
-		for (int index = 0; index < firstIndex; index++) {
-			GridItem item = items.get(index);
-			item.setAborted(true);
-		}
-		for (int index = lastIndex; index < items.size(); index++) {
-			GridItem item = items.get(index);
-			item.setAborted(true);
-		}
-		for (int index = 0; index < firstIndex; index++) {
-			GridItem item = items.get(index);
-			if (item.getLoadItemFuture() != null) {
-				item.getLoadItemFuture().get();
-				item.setLoadItemFuture(null);
-			}
-			if (item.getInitItemFuture() != null) {
-				item.getInitItemFuture().get();
-				item.setInitItemFuture(null);
-			}
-		}
-		for (int index = lastIndex; index < items.size(); index++) {
-			GridItem item = items.get(index);
-			if (item.getLoadItemFuture() != null) {
-				item.getLoadItemFuture().get();
-				item.setLoadItemFuture(null);
-			}
-			if (item.getInitItemFuture() != null) {
-				item.getInitItemFuture().get();
-				item.setInitItemFuture(null);
-			}
-		}
-		for (int index = 0; index < firstIndex; index++) {
-			GridItem item = items.get(index);
-			item.setAborted(false);
-		}
-		for (int index = lastIndex; index < items.size(); index++) {
-			GridItem item = items.get(index);
-			item.setAborted(false);
-		}
-		for (int index = 0; index < firstIndex; index++) {
-			GridItem item = items.get(index);
-			if (item.getRenderer() != null) {
-				item.getRenderer().abort();
-			}
-		}
-		for (int index = lastIndex; index < items.size(); index++) {
-			GridItem item = items.get(index);
-			if (item.getRenderer() != null) {
-				item.getRenderer().abort();
-			}
-		}
-		for (int index = 0; index < firstIndex; index++) {
-			GridItem item = items.get(index);
-			if (item.getRenderer() != null) {
-				item.getRenderer().waitFor();
-			}
-		}
-		for (int index = lastIndex; index < items.size(); index++) {
-			GridItem item = items.get(index);
-			if (item.getRenderer() != null) {
-				item.getRenderer().waitFor();
-			}
-		}
-		for (int index = 0; index < firstIndex; index++) {
-			GridItem item = items.get(index);
-			if (item.getRenderer() != null) {
-				GridItemRenderer renderer = item.getRenderer();
-				item.setRenderer(null);
-				item.setBitmap(null);
-				renderer.dispose();
-			}
-		}
-		for (int index = lastIndex; index < items.size(); index++) {
-			GridItem item = items.get(index);
-			if (item.getRenderer() != null) {
-				GridItemRenderer renderer = item.getRenderer();
-				item.setRenderer(null);
-				item.setBitmap(null);
-				renderer.dispose();
-			}
-		}
-		for (int index = firstIndex; index < Math.min(lastIndex, items.size()); index++) {
-			GridItem item = items.get(index);
-			BrowseBitmap bitmap = item.getBitmap();
-			GridItemRenderer renderer = item.getRenderer();
-			long time = System.currentTimeMillis();
-			if (bitmap == null && time - item.getLastChanged() > SCROLL_BOUNCE_DELAY && item.getLoadItemFuture() == null) {
-				loadItemAsync(item);
-			}
-			if (bitmap != null && renderer == null && time - item.getLastChanged() > SCROLL_BOUNCE_DELAY && item.getInitItemFuture() == null) {
-				initItemAsync(item);
-			}
-		}
-		grid.updateCells();
-	}
+    private void updateCells(GridView grid) throws ExecutionException, InterruptedException {
+        if (grid.getData() == null) {
+            return;
+        }
+        int firstRow = grid.getFirstRow();
+        int lastRow = grid.getLastRow();
+        if (firstRow > 0) {
+            firstRow -= 1;
+        }
+        if (lastRow < grid.getData().length / numCols - 1) {
+            lastRow += 1;
+        }
+        int firstIndex = Math.min(firstRow * numCols, items.size());
+        int lastIndex = lastRow * numCols + numCols;
+        for (int index = 0; index < firstIndex; index++) {
+            GridItem item = items.get(index);
+            item.setAborted(true);
+        }
+        for (int index = lastIndex; index < items.size(); index++) {
+            GridItem item = items.get(index);
+            item.setAborted(true);
+        }
+        for (int index = 0; index < firstIndex; index++) {
+            GridItem item = items.get(index);
+            if (item.getLoadItemFuture() != null) {
+                item.getLoadItemFuture().get();
+                item.setLoadItemFuture(null);
+            }
+            if (item.getInitItemFuture() != null) {
+                item.getInitItemFuture().get();
+                item.setInitItemFuture(null);
+            }
+        }
+        for (int index = lastIndex; index < items.size(); index++) {
+            GridItem item = items.get(index);
+            if (item.getLoadItemFuture() != null) {
+                item.getLoadItemFuture().get();
+                item.setLoadItemFuture(null);
+            }
+            if (item.getInitItemFuture() != null) {
+                item.getInitItemFuture().get();
+                item.setInitItemFuture(null);
+            }
+        }
+        for (int index = 0; index < firstIndex; index++) {
+            GridItem item = items.get(index);
+            item.setAborted(false);
+        }
+        for (int index = lastIndex; index < items.size(); index++) {
+            GridItem item = items.get(index);
+            item.setAborted(false);
+        }
+        for (int index = 0; index < firstIndex; index++) {
+            GridItem item = items.get(index);
+            if (item.getRenderer() != null) {
+                item.getRenderer().abort();
+            }
+        }
+        for (int index = lastIndex; index < items.size(); index++) {
+            GridItem item = items.get(index);
+            if (item.getRenderer() != null) {
+                item.getRenderer().abort();
+            }
+        }
+        for (int index = 0; index < firstIndex; index++) {
+            GridItem item = items.get(index);
+            if (item.getRenderer() != null) {
+                item.getRenderer().waitFor();
+            }
+        }
+        for (int index = lastIndex; index < items.size(); index++) {
+            GridItem item = items.get(index);
+            if (item.getRenderer() != null) {
+                item.getRenderer().waitFor();
+            }
+        }
+        for (int index = 0; index < firstIndex; index++) {
+            GridItem item = items.get(index);
+            if (item.getRenderer() != null) {
+                GridItemRenderer renderer = item.getRenderer();
+                item.setRenderer(null);
+                item.setBitmap(null);
+                renderer.dispose();
+            }
+        }
+        for (int index = lastIndex; index < items.size(); index++) {
+            GridItem item = items.get(index);
+            if (item.getRenderer() != null) {
+                GridItemRenderer renderer = item.getRenderer();
+                item.setRenderer(null);
+                item.setBitmap(null);
+                renderer.dispose();
+            }
+        }
+        for (int index = firstIndex; index < Math.min(lastIndex, items.size()); index++) {
+            GridItem item = items.get(index);
+            BrowseBitmap bitmap = item.getBitmap();
+            GridItemRenderer renderer = item.getRenderer();
+            long time = System.currentTimeMillis();
+            if (bitmap == null && time - item.getLastChanged() > SCROLL_BOUNCE_DELAY && item.getLoadItemFuture() == null) {
+                loadItemAsync(item);
+            }
+            if (bitmap != null && renderer == null && time - item.getLastChanged() > SCROLL_BOUNCE_DELAY && item.getInitItemFuture() == null) {
+                initItemAsync(item);
+            }
+        }
+        grid.updateCells();
+    }
 
-	private void loadItemAsync(GridItem item) {
-		final File file = item.getFile();
-		item.setLoadItemFuture(browserExecutor.submit(() -> {
-			loadItem(item, file);
-			return null;
-		}));
-	}
+    private void loadItemAsync(GridItem item) {
+        final File file = item.getFile();
+        item.setLoadItemFuture(browserExecutor.submit(() -> {
+            loadItem(item, file);
+            return null;
+        }));
+    }
 
-	private void loadItem(GridItem item, File file) {
-		try {
-			if (!item.isAborted() && delegate != null) {
-				final BrowseBitmap bitmap = delegate.createBitmap(file, tile.getTileSize());
+    private void loadItem(GridItem item, File file) {
+        try {
+            if (!item.isAborted() && delegate != null) {
+                final BrowseBitmap bitmap = delegate.createBitmap(file, tile.getTileSize());
 
-				Platform.runLater(() -> item.setBitmap(bitmap));
-			}
-		} catch (Exception e) {
-			item.setErrors(Arrays.asList(new SourceError(SourceError.ErrorType.RUNTIME, 0, 0, 0, 0, e.getMessage())));
-			logger.log(Level.WARNING, "Can't create bitmap: " + e.getMessage());
-		}
-	}
+                Platform.runLater(() -> item.setBitmap(bitmap));
+            }
+        } catch (Exception e) {
+            item.setErrors(Arrays.asList(new SourceError(SourceError.ErrorType.RUNTIME, 0, 0, 0, 0, e.getMessage())));
+            logger.log(Level.WARNING, "Can't create bitmap: " + e.getMessage());
+        }
+    }
 
-	private void initItemAsync(GridItem item) {
-		final BrowseBitmap bitmap = item.getBitmap();
-		item.setInitItemFuture(browserExecutor.submit(() -> {
-			initItem(item, bitmap);
-			return null;
-		}));
-	}
+    private void initItemAsync(GridItem item) {
+        final BrowseBitmap bitmap = item.getBitmap();
+        item.setInitItemFuture(browserExecutor.submit(() -> {
+            initItem(item, bitmap);
+            return null;
+        }));
+    }
 
-	private void initItem(GridItem item, BrowseBitmap bitmap) {
-		try {
-			if (!item.isAborted() && delegate != null) {
-				GridItemRenderer renderer = delegate.createRenderer(bitmap);
+    private void initItem(GridItem item, BrowseBitmap bitmap) {
+        try {
+            if (!item.isAborted() && delegate != null) {
+                GridItemRenderer renderer = delegate.createRenderer(bitmap);
 
-				Platform.runLater(() -> item.setRenderer(renderer));
-			}
-		} catch (Exception e) {
-			item.setErrors(List.of(new SourceError(SourceError.ErrorType.RUNTIME, 0, 0, 0, 0, e.getMessage())));
-			logger.log(Level.WARNING, "Can't initialize renderer", e);
-		}
-	}
+                Platform.runLater(() -> item.setRenderer(renderer));
+            }
+        } catch (Exception e) {
+            item.setErrors(List.of(new SourceError(SourceError.ErrorType.RUNTIME, 0, 0, 0, 0, e.getMessage())));
+            logger.log(Level.WARNING, "Can't initialize renderer", e);
+        }
+    }
 
-	private File getCurrentDir(Preferences prefs) {
-		File currentDir = new File(prefs.get(BROWSER_DEFAULT_LOCATION, getDefaultBrowserDir()));
-		if (!currentDir.exists() || !currentDir.canWrite() || Boolean.getBoolean("ignore.location")) {
-			currentDir = new File(getDefaultBrowserDir());
-		}
-		if (!currentDir.exists() || !currentDir.canWrite()) {
-			currentDir = new File(System.getProperty("user.home"));
-		}
-		logger.info("currentBrowserDir = " + currentDir.getAbsolutePath());
-		return currentDir;
-	}
+    private File getWorkspace() {
+        File path = new File(getDefaultDirectoryWorkspace());
+        logger.info("workspace = " + path.getAbsolutePath());
+        if (path.getParentFile().canWrite() && !path.exists()) {
+            path.mkdirs();
+        }
+        if (!path.canWrite()) {
+            logger.severe("Can't write into workspace: " + path.getAbsolutePath());
+        }
+        if (!path.canRead()) {
+            logger.severe("Can't read from workspace: " + path.getAbsolutePath());
+        }
+        return path;
+    }
 
-	private String getDefaultBrowserDir() {
-		String defaultBrowserDir = System.getProperty(BROWSER_DEFAULT_LOCATION, "[user.home]");
-		String userHome = System.getProperty("user.home");
-		String userDir = System.getProperty("user.dir");
-		String currentDir = new File(".").getAbsoluteFile().getParent();
-		defaultBrowserDir = defaultBrowserDir.replace("[current.path]", currentDir);
-		defaultBrowserDir = defaultBrowserDir.replace("[user.home]", userHome);
-		defaultBrowserDir = defaultBrowserDir.replace("[user.dir]", userDir);
-		logger.info("defaultBrowserDir = " + defaultBrowserDir);
-		return defaultBrowserDir;
-	}
+    private String getDefaultDirectoryWorkspace() {
+        return System.getProperty(PROPERTY_DIRECTORY_WORKSPACE, PROPERTY_DIRECTORY_WORKSPACE_DEFAULT_VALUE)
+                .replace("[user.home]", System.getProperty("user.home"))
+                .replace("[user.dir]", System.getProperty("user.dir"));
+    }
 
-	private void stopWatching() {
-		if (thread != null) {
-			thread.interrupt();
-			try {
-				thread.join();
-			} catch (InterruptedException e) {
-			}
-			thread = null;
-		}
-	}
+    private File getExamples() {
+        File path = new File(getDefaultDirectoryExamples());
+        logger.log(Level.FINE, "examples " + path.getAbsolutePath());
+        if (!path.canRead()) {
+            logger.severe("Can't read from examples: " + path.getAbsolutePath());
+        }
+        return path;
+    }
 
-	private void startWatching() {
-		if (thread == null) {
-			thread = createThreadFactory("Watcher").newThread(() -> {
-				try {
-					watchLoop(new File(sourcePathProperty.getValue()).toPath(), path -> Platform.runLater(() -> this.reload()));
-				} catch (IOException e) {
-					logger.log(Level.WARNING, "Can't watch folder " + sourcePathProperty.getValue(), e);
-				}
-			});
-			thread.start();
-		}
-	}
+    private String getDefaultDirectoryExamples() {
+        return System.getProperty(PROPERTY_DIRECTORY_EXAMPLES, PROPERTY_DIRECTORY_EXAMPLES_DEFAULT_VALUE)
+                .replace("[user.home]", System.getProperty("user.home"))
+                .replace("[user.dir]", System.getProperty("user.dir"));
+    }
 
-	private void watchLoop(Path dir, Consumer<Path> consumer) throws IOException {
-		WatchService watcher = FileSystems.getDefault().newWatchService();
+    private void stopWatching() {
+        if (thread != null) {
+            thread.interrupt();
+            try {
+                thread.join();
+            } catch (InterruptedException e) {
+            }
+            thread = null;
+        }
+    }
 
-		WatchKey watchKey = null;
+    private void startWatching(Button deleteButton, Label statusLabel, GridView grid) {
+        if (thread == null) {
+            thread = createThreadFactory("Watcher").newThread(() -> watchLoop(getCurrentSourceFolder().toPath(), a -> Platform.runLater(() -> this.reload(deleteButton, statusLabel, grid))));
+            thread.start();
+        }
+    }
 
-		try {
-			watchKey = dir.register(watcher, new WatchEvent.Kind[]{ StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_DELETE, StandardWatchEventKinds.ENTRY_MODIFY });
+    private void watchLoop(Path dir, Consumer<Void> consumer) {
+        try {
+            for (; ; ) {
+                WatchService watcher = FileSystems.getDefault().newWatchService();
 
-			try {
-				for (;;) {
-					WatchKey key = watcher.take();
+                WatchKey watchKey = null;
 
-					for (WatchEvent<?> event: key.pollEvents()) {
-						WatchEvent.Kind<?> kind = event.kind();
+                logger.log(Level.INFO, "Watch loop starting...");
 
-						if (kind == StandardWatchEventKinds.OVERFLOW) {
-							continue;
-						}
+                try {
+                    watchKey = dir.register(watcher, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_DELETE, StandardWatchEventKinds.ENTRY_MODIFY);
 
-						WatchEvent<Path> ev = (WatchEvent<Path>)event;
+                    logger.log(Level.INFO, "Watch loop started");
 
-						Path filename = ev.context();
+                    for (; ; ) {
+                        WatchKey key = watcher.take();
 
-						Path child = dir.resolve(filename);
+                        for (WatchEvent<?> event : key.pollEvents()) {
+                            logger.log(Level.INFO, "Watch loop events " + event.count());
 
-						if (!child.getFileName().toString().endsWith(".nf.zip")) {
-							continue;
-						}
+                            consumer.accept(null);
+                        }
 
-						consumer.accept(filename);
-					}
+                        boolean valid = key.reset();
 
-					boolean valid = key.reset();
-					if (!valid) {
-						break;
-					}
-				}
-			} catch (InterruptedException x) {
-			}
-		} catch (IOException x) {
-			logger.log(Level.WARNING, "Can't subscribe watcher on directory {}", dir.getFileName());
-		} finally {
-			if (watchKey != null) {
-				watchKey.cancel();
-			}
+                        if (!valid) {
+                            break;
+                        }
+                    }
 
-			watcher.close();
-		}
-	}
+                    logger.log(Level.INFO, "Watch loop exited");
+                } finally {
+                    if (watchKey != null) {
+                        watchKey.cancel();
+                    }
+
+                    watcher.close();
+                }
+
+                consumer.accept(null);
+            }
+        } catch (InterruptedException x) {
+            logger.log(Level.INFO, "Watch loop interrupted");
+            Thread.currentThread().interrupt();
+        } catch (IOException e) {
+            logger.log(Level.WARNING, "Can't watch directory " + getCurrentSourceFolder().getAbsolutePath(), e);
+        }
+    }
 }

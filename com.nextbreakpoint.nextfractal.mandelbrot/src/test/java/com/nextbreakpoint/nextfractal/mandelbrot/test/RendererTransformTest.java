@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.1.4
+ * NextFractal 2.1.5
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2022 Andrea Medeghini
+ * Copyright 2015-2024 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -25,9 +25,10 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.test;
 
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.RendererTransform;
-import org.junit.Test;
+import org.assertj.core.data.Offset;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class RendererTransformTest {
 	@Test
@@ -35,8 +36,8 @@ public class RendererTransformTest {
 		RendererTransform t = new RendererTransform();
 		double[] p = makePoint(1, 1);
 		t.transform(p);
-		assertEquals(1, p[0], 0.00001);
-		assertEquals(1, p[1], 0.00001);
+		assertThat(p[0]).isEqualTo(1, Offset.offset(0.00001));
+		assertThat(p[1]).isEqualTo(1, Offset.offset(0.00001));
 	}
 
 	@Test
@@ -45,8 +46,8 @@ public class RendererTransformTest {
 		t.traslate(10, 20);
 		double[] p = makePoint(0, 0);
 		t.transform(p);
-		assertEquals(10, p[0], 0.00001);
-		assertEquals(20, p[1], 0.00001);
+		assertThat(p[0]).isEqualTo(10, Offset.offset(0.00001));
+		assertThat(p[1]).isEqualTo(20, Offset.offset(0.00001));
 	}
 
 	@Test
@@ -55,8 +56,8 @@ public class RendererTransformTest {
 		t.scale(10, 20);
 		double[] p = makePoint(1, 1);
 		t.transform(p);
-		assertEquals(10, p[0], 0.00001);
-		assertEquals(20, p[1], 0.00001);
+		assertThat(p[0]).isEqualTo(10, Offset.offset(0.00001));
+		assertThat(p[1]).isEqualTo(20, Offset.offset(0.00001));
 	}
 
 	@Test
@@ -65,8 +66,8 @@ public class RendererTransformTest {
 		t.rotate(Math.PI / 2);
 		double[] p = makePoint(1, 1);
 		t.transform(p);
-		assertEquals(-1, p[0], 0.00001);
-		assertEquals(1, p[1], 0.00001);
+		assertThat(p[0]).isEqualTo(-1, Offset.offset(0.00001));
+		assertThat(p[1]).isEqualTo(1, Offset.offset(0.00001));
 	}
 
 	@Test
@@ -75,8 +76,8 @@ public class RendererTransformTest {
 		t.rotate(Math.PI);
 		double[] p = makePoint(1, 1);
 		t.transform(p);
-		assertEquals(-1, p[0], 0.00001);
-		assertEquals(-1, p[1], 0.00001);
+		assertThat(p[0]).isEqualTo(-1, Offset.offset(0.00001));
+		assertThat(p[1]).isEqualTo(-1, Offset.offset(0.00001));
 	}
 
 	@Test
@@ -86,8 +87,8 @@ public class RendererTransformTest {
 		t.rotate(a);
 		double[] p = makePoint(1, 1);
 		t.transform(p);
-		assertEquals(Math.cos(a)-Math.sin(a), p[0], 0.00001);
-		assertEquals(Math.sin(a)+Math.cos(a), p[1], 0.00001);
+		assertThat(p[0]).isEqualTo(Math.cos(a)-Math.sin(a), Offset.offset(0.00001));
+		assertThat(p[1]).isEqualTo(Math.sin(a)+Math.cos(a), Offset.offset(0.00001));
 	}
 
 	@Test
@@ -98,8 +99,8 @@ public class RendererTransformTest {
 		t.scale(2,2);
 		double[] p = makePoint(1, 1);
 		t.transform(p);
-		assertEquals(2*(Math.cos(a)-Math.sin(a)), p[0], 0.00001);
-		assertEquals(2*(Math.sin(a)+Math.cos(a)), p[1], 0.00001);
+		assertThat(p[0]).isEqualTo(2*(Math.cos(a)-Math.sin(a)), Offset.offset(0.00001));
+		assertThat(p[1]).isEqualTo(2*(Math.sin(a)+Math.cos(a)), Offset.offset(0.00001));
 	}
 
 	@Test
@@ -111,8 +112,8 @@ public class RendererTransformTest {
 		t.traslate(1,1);
 		double[] p = makePoint(1, 1);
 		t.transform(p);
-		assertEquals(-4, p[0], 0.00001);
-		assertEquals(4, p[1], 0.00001);
+		assertThat(p[0]).isEqualTo(-4, Offset.offset(0.00001));
+		assertThat(p[1]).isEqualTo(4, Offset.offset(0.00001));
 	}
 
 	@Test
@@ -124,8 +125,8 @@ public class RendererTransformTest {
 		t.scale(2,2);
 		double[] p = makePoint(1, 1);
 		t.transform(p);
-		assertEquals(-1, p[0], 0.00001);
-		assertEquals(3, p[1], 0.00001);
+		assertThat(p[0]).isEqualTo(-1, Offset.offset(0.00001));
+		assertThat(p[1]).isEqualTo(3, Offset.offset(0.00001));
 	}
 
 	@Test
@@ -140,8 +141,8 @@ public class RendererTransformTest {
 		t.concat(st);
 		double[] p = makePoint(1, 1);
 		t.transform(p);
-		assertEquals(-1, p[0], 0.00001);
-		assertEquals(3, p[1], 0.00001);
+		assertThat(p[0]).isEqualTo(-1, Offset.offset(0.00001));
+		assertThat(p[1]).isEqualTo(3, Offset.offset(0.00001));
 	}
 
 	private double[] makePoint(int x, int y) {

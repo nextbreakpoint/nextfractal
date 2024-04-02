@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.1.4
+ * NextFractal 2.1.5
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2022 Andrea Medeghini
+ * Copyright 2015-2024 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -27,17 +27,12 @@ package com.nextbreakpoint.nextfractal.contextfree.test;
 import com.nextbreakpoint.nextfractal.contextfree.dsl.grammar.CFDG;
 import com.nextbreakpoint.nextfractal.contextfree.dsl.grammar.CFDGRenderer;
 import com.nextbreakpoint.nextfractal.contextfree.dsl.grammar.SimpleCanvas;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
 
 import java.awt.geom.AffineTransform;
 import java.io.IOException;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -46,32 +41,29 @@ import static org.mockito.Mockito.when;
 public class V3ShapeTest extends AbstractBaseTest {
 	public static final String RESOURCE_NAME = "/v3-shape-single-rule.cfdg";
 
-	@Rule
-	public ExpectedException exception = ExpectedException.none();
-
 	@Test
 	public void shouldParseSource() throws IOException {
 		CFDG cfdg = parseSource(RESOURCE_NAME);
-		assertThat(cfdg, is(notNullValue()));
+		assertThat(cfdg).isNotNull();
 	}
 
 	@Test
 	public void shouldHaveTwoShapes() throws IOException {
 		CFDG cfdg = parseSource(RESOURCE_NAME);
-		assertThat(cfdg.tryEncodeShapeName("Foo"), is(equalTo(4)));
-		assertThat(cfdg.tryEncodeShapeName("CIRCLE"), is(equalTo(0)));
-		assertThat(cfdg.tryEncodeShapeName("SQUARE"), is(equalTo(1)));
-		assertThat(cfdg.tryEncodeShapeName("TRIANGLE"), is(equalTo(2)));
+		assertThat(cfdg.tryEncodeShapeName("Foo")).isEqualTo(4);
+		assertThat(cfdg.tryEncodeShapeName("CIRCLE")).isEqualTo(0);
+		assertThat(cfdg.tryEncodeShapeName("SQUARE")).isEqualTo(1);
+		assertThat(cfdg.tryEncodeShapeName("TRIANGLE")).isEqualTo(2);
 	}
 
 	@Test
 	public void shouldReloadRules() throws IOException {
 		CFDG cfdg = parseSource(RESOURCE_NAME);
-		assertThat(cfdg.getContents().getBody().size(), is(equalTo(2)));
-		assertThat(cfdg.getRulesCount(), is(equalTo(1)));
-		assertThat(cfdg.getRule(0).getWeight(), is(equalTo(1.0)));
+		assertThat(cfdg.getContents().getBody()).hasSize(2);
+		assertThat(cfdg.getRulesCount()).isEqualTo(1);
+		assertThat(cfdg.getRule(0).getWeight()).isEqualTo(1.0);
 		cfdg.rulesLoaded();
-		assertThat(cfdg.getRule(0).getWeight(), is(equalTo(1.1)));
+		assertThat(cfdg.getRule(0).getWeight()).isEqualTo(1.1);
 	}
 
 	@Test
@@ -82,9 +74,9 @@ public class V3ShapeTest extends AbstractBaseTest {
 		CFDG cfdg = parseSource(RESOURCE_NAME);
 		cfdg.rulesLoaded();
 		CFDGRenderer renderer = cfdg.renderer(200, 200, 1, 0, 0.1);
-		assertThat(renderer, is(notNullValue()));
+		assertThat(renderer).isNotNull();
 		double scale = renderer.run(canvas, false);
-		assertThat(scale, is(equalTo(198.4)));
+		assertThat(scale).isEqualTo(198.4);
 	}
 
 	@Test
@@ -95,7 +87,7 @@ public class V3ShapeTest extends AbstractBaseTest {
 		CFDG cfdg = parseSource(RESOURCE_NAME);
 		cfdg.rulesLoaded();
 		CFDGRenderer renderer = cfdg.renderer(200, 200, 1, 0, 0.1);
-		assertThat(renderer, is(notNullValue()));
+		assertThat(renderer).isNotNull();
 		renderer.run(canvas, false);
 		AffineTransform transform = new AffineTransform();
 		transform.translate(100.0, 100.0);

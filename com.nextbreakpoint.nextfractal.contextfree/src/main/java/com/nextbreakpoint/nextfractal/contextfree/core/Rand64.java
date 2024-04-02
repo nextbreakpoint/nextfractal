@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.1.4
+ * NextFractal 2.1.5
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2022 Andrea Medeghini
+ * Copyright 2015-2024 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -833,7 +833,7 @@ public class Rand64 implements Cloneable {
 
 		@Override
 		public Long max() {
-			return new Long(p.length);
+			return (long)p.length;
 		}
 
 		@Override

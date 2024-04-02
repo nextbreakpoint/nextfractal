@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.1.4
+ * NextFractal 2.1.5
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2022 Andrea Medeghini
+ * Copyright 2015-2024 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -25,11 +25,12 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.test;
 
 import com.nextbreakpoint.nextfractal.mandelbrot.core.ParserException;
-import com.nextbreakpoint.nextfractal.mandelbrot.dsl.DSLCompiler;
 import com.nextbreakpoint.nextfractal.mandelbrot.dsl.DSLParser;
 import com.nextbreakpoint.nextfractal.mandelbrot.dsl.ParserResult;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 public class DSLCompilerTest2 extends BaseTest {
 	@Test
@@ -39,9 +40,9 @@ public class DSLCompilerTest2 extends BaseTest {
 			ParserResult result = parser.parse(getSource("/source2.m"));
 		} catch (ParserException e) {
 			printErrors(e.getErrors());
-			Assert.assertEquals(1, e.getErrors().size());
+			assertThat(e.getErrors()).hasSize(1);
 		} catch (Exception e) {
-			Assert.fail(e.getMessage());
+			fail(e.getMessage());
 		}
 	}
 }

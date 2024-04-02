@@ -4,10 +4,14 @@
     <parent>
         <groupId>com.nextbreakpoint</groupId>
         <artifactId>com.nextbreakpoint.nextfractal</artifactId>
-        <version>2.1.4</version>
+        <version>2.1.5</version>
     </parent>
     <artifactId>com.nextbreakpoint.nextfractal.main</artifactId>
     <packaging>pom</packaging>
+    <properties>
+        <modules.path>${project.build.directory}/mods/${os.type}/${arch.type}</modules.path>
+        <libraries.path>${project.build.directory}/libs/${os.type}/${arch.type}</libraries.path>
+    </properties>
     <build>
         <plugins>
             <plugin>
@@ -22,13 +26,14 @@
                             <goal>copy-dependencies</goal>
                         </goals>
                         <configuration>
-                            <includeGroupIds>com.nextbreakpoint,org.antlr,org.apache.commons,com.fasterxml.jackson,org.openjfx,io.reactivex,org.reactivestreams</includeGroupIds>
-                            <outputDirectory>${project.build.directory}/jars/${os.type}/${arch.type}</outputDirectory>
+                            <includeGroupIds>com.nextbreakpoint,com.fasterxml.jackson,org.openjfx</includeGroupIds>
+                            <excludeArtifactIds>com.nextbreakpoint.try4java,com.nextbreakpoint.ffmpeg4java,com.nextbreakpoint.freeimage4java</excludeArtifactIds>
+                            <outputDirectory>${modules.path}</outputDirectory>
                         </configuration>
                     </execution>
                     <execution>
                         <id>copy-lib</id>
-                        <phase>package</phase>
+                        <phase>clean</phase>
                         <goals>
                             <goal>unpack</goal>
                         </goals>
@@ -39,16 +44,38 @@
                                     <artifactId>com.nextbreakpoint.ffmpeg4java</artifactId>
                                     <classifier>${build.type}</classifier>
                                     <type>jar</type>
+                                    <includes>**/*.jnilib,**/*.dll,**/*.so</includes>
+<!--                                    <includes>${os.name}/*.jnilib</includes>-->
                                     <overWrite>true</overWrite>
-                                    <outputDirectory>${project.build.directory}/lib/${os.type}/${arch.type}</outputDirectory>
+                                    <outputDirectory>${libraries.path}</outputDirectory>
+                                    <fileMappers>
+                                        <fileMapper implementation="org.codehaus.plexus.components.io.filemappers.FlattenFileMapper"/>
+                                    </fileMappers>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>com.nextbreakpoint</groupId>
                                     <artifactId>com.nextbreakpoint.freeimage4java</artifactId>
                                     <classifier>${build.type}</classifier>
                                     <type>jar</type>
+                                    <includes>**/*.jnilib,**/*.dll,**/*.so</includes>
+<!--                                    <includes>${os.name}/*.jnilib</includes>-->
                                     <overWrite>true</overWrite>
-                                    <outputDirectory>${project.build.directory}/lib/${os.type}/${arch.type}</outputDirectory>
+                                    <outputDirectory>${libraries.path}</outputDirectory>
+                                    <fileMappers>
+                                        <fileMapper implementation="org.codehaus.plexus.components.io.filemappers.FlattenFileMapper"/>
+                                    </fileMappers>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.openjfx</groupId>
+                                    <artifactId>javafx-graphics</artifactId>
+                                    <classifier>${os.type}</classifier>
+                                    <version>${openjfx.version}</version>
+                                    <type>jar</type>
+                                    <includes>**/*.dylib,**/*.dll,**/*.so</includes>
+                                    <excludes>**/api-*</excludes>
+                                    <overWrite>true</overWrite>
+<!--                                    <outputDirectory>${libraries.path}/${os.name}</outputDirectory>-->
+                                    <outputDirectory>${libraries.path}</outputDirectory>
                                 </artifactItem>
                             </artifactItems>
                         </configuration>
@@ -58,6 +85,11 @@
         </plugins>
     </build>
     <dependencies>
+        <dependency>
+            <groupId>com.nextbreakpoint</groupId>
+            <artifactId>com.nextbreakpoint.nextfractal.libraries</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <dependency>
             <groupId>com.nextbreakpoint</groupId>
             <artifactId>com.nextbreakpoint.nextfractal.core</artifactId>
@@ -97,14 +129,6 @@
             <groupId>com.nextbreakpoint</groupId>
             <artifactId>com.nextbreakpoint.nextfractal.contextfree.javafx</artifactId>
             <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.nextbreakpoint</groupId>
-            <artifactId>com.nextbreakpoint.ffmpeg4java</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.nextbreakpoint</groupId>
-            <artifactId>com.nextbreakpoint.freeimage4java</artifactId>
         </dependency>
     </dependencies>
 </project>

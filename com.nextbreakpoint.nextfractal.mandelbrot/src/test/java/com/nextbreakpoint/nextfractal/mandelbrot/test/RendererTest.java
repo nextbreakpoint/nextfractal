@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.1.4
+ * NextFractal 2.1.5
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2022 Andrea Medeghini
+ * Copyright 2015-2024 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -36,11 +36,14 @@ import com.nextbreakpoint.nextfractal.mandelbrot.core.Number;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Orbit;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Scope;
 import com.nextbreakpoint.nextfractal.mandelbrot.renderer.Renderer;
-import org.junit.Assert;
-import org.junit.Test;
+import org.assertj.core.data.Offset;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Fail.fail;
 
 public class RendererTest {
 	@Test
@@ -69,13 +72,16 @@ public class RendererTest {
 			});
 			renderer.runTask();
 			renderer.waitForTasks();
-			float[] v = new float[output.size()];
-			for (int i = 0; i < v.length; i++) {
-				v[i] = output.get(i);
+			float[] actual = new float[output.size()];
+			for (int i = 0; i < actual.length; i++) {
+				actual[i] = output.get(i);
 			}
-			Assert.assertArrayEquals(new float[] { 0.0f, 0.2f, 0.4f, 0.6f, 0.8f, 1.0f }, v, 0.01f);
+			final float[] expected = {0.0f, 0.2f, 0.4f, 0.6f, 0.8f, 1.0f};
+			for (int i = 0; i < actual.length; i++) {
+				assertThat(actual[i]).isEqualTo(expected[i], Offset.offset(0.01f));
+			}
 		} catch (Exception e) {
-			Assert.fail(e.getMessage());
+			fail(e.getMessage());
 		} finally {
 			renderer.dispose();
 		}

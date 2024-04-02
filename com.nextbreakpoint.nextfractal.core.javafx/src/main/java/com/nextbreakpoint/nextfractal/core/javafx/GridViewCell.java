@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.1.4
+ * NextFractal 2.1.5
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2022 Andrea Medeghini
+ * Copyright 2015-2024 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -53,6 +53,10 @@ public class GridViewCell extends BorderPane {
 	public void update() {
 		GridItem item = (GridItem)data;
 		if (item != null) {
+			if (item.isDirty()) {
+				item.setDirty(false);
+				redraw = true;
+			}
 			GridItemRenderer renderer = item.getRenderer();
 			if (renderer != null) {
 				if (redraw || renderer.isPixelsChanged()) {
@@ -73,6 +77,12 @@ public class GridViewCell extends BorderPane {
 					g2d.fillText("Rendering...", getWidth() / 2, getHeight() / 2);
 				}
 				redraw = false;
+			}
+			if (item.isSelected()) {
+				GraphicsContext g2d = canvas.getGraphicsContext2D();
+				g2d.setStroke(Color.YELLOW);
+				g2d.setLineWidth(5);
+				g2d.strokeRect(0, 0, getWidth(), getHeight());
 			}
 		} else {
 			if (redraw) {

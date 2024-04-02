@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.1.4
+ * NextFractal 2.1.5
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2022 Andrea Medeghini
+ * Copyright 2015-2024 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -28,7 +28,7 @@ module com.nextbreakpoint.nextfractal.core {
     requires com.fasterxml.jackson.core;
     requires com.fasterxml.jackson.databind;
     requires com.fasterxml.jackson.annotation;
-    requires com.nextbreakpoint.try4java;
+    requires com.nextbreakpoint.nextfractal.libraries;
     exports com.nextbreakpoint.nextfractal.core.common;
     exports com.nextbreakpoint.nextfractal.core.encode;
     exports com.nextbreakpoint.nextfractal.core.export;

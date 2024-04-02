@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.1.4
+ * NextFractal 2.1.5
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2022 Andrea Medeghini
+ * Copyright 2015-2024 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -286,12 +286,6 @@ public class RenderPane extends BorderPane {
 
 	private RendererCoordinator createCoordinator(Map<String, Integer> hints, int width, int height) {
 		return new RendererCoordinator(renderThreadFactory, renderFactory, createSingleTile(width, height), hints);
-	}
-
-	@Override
-	protected void finalize() throws Throwable {
-		dispose();
-		super.finalize();
 	}
 
 	private void dispose() {

@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.1.4
+ * NextFractal 2.1.5
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2022 Andrea Medeghini
+ * Copyright 2015-2024 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -38,11 +38,5 @@ public class JavaCompilerClassLoader extends ClassLoader {
 	public void defineClassFromData(String name, byte[] data) {
 		Class<?> clazz = defineClass(name, data, 0, data.length);
 		super.resolveClass(clazz);
-	}
-
-	@Override
-	protected void finalize() throws Throwable {
-		logger.fine("Finalize classloader (" + count.addAndGet(-1) + ")");
-		super.finalize();
 	}
 }

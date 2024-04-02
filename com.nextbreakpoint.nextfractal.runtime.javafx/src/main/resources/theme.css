@@ -112,6 +112,10 @@
 	-fx-padding: 15px;
 }
 
+.application .browse .toolbar {
+	-fx-padding: 0px 0px 0px 10px;
+}
+
 .application .browse .controls {
 	-fx-padding: 10px;
 }
@@ -225,3 +229,6 @@
     -fx-font-size: 0.9em;
 }
 
+.button :disabled {
+    -fx-opacity: 0.5;
+}

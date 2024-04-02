@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.1.4
+ * NextFractal 2.1.5
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2022 Andrea Medeghini
+ * Copyright 2015-2024 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -43,7 +43,7 @@ public class CommandInfo {
     private PathStorage pathStorage;
 
 //    public static final CommandInfo DEFAULT_COMMAND_INFO = new CommandInfo(0, null);
-    public static final Long DEFAULT_PATH_UID = new Long(Long.MAX_VALUE);
+    public static final Long DEFAULT_PATH_UID = Long.MAX_VALUE;
 
     public CommandInfo() {
         index = 0;

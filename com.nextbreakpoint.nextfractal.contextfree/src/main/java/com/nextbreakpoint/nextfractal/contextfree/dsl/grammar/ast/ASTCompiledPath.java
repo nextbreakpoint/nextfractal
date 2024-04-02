@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.1.4
+ * NextFractal 2.1.5
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2022 Andrea Medeghini
+ * Copyright 2015-2024 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -41,7 +41,7 @@ import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 
 public class ASTCompiledPath {
-	private static Long globalPathUID = new Long(100);
+	private static Long globalPathUID = 100L;
 	private PathStorage pathStorage = new PathStorage();
 	private Dequeue commandInfo;
 	private ASTPathCommand terminalCommand;
@@ -102,7 +102,7 @@ public class ASTCompiledPath {
 	}
 
 	public static Long nextPathUID() {
-		return globalPathUID = new Long(globalPathUID.longValue() + 1);
+		return globalPathUID = globalPathUID + 1;
 	}
 
 	public void finish(boolean setAttr, CFDGRenderer renderer) {

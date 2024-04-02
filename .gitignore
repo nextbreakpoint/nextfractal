@@ -5,3 +5,7 @@ dist
 build
 tools
 *.interp
+tmp
+.maven
+NextFractal.app
+/.nextfractal/

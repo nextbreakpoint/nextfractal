@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.1.4
+ * NextFractal 2.1.5
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2022 Andrea Medeghini
+ * Copyright 2015-2024 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -43,15 +43,6 @@ public class RAFEncoderContext implements EncoderContext {
 		this.imageWidth = imageWidth;
 		this.imageHeight = imageHeight;
 		this.frameRate = frameRate;
-	}
-
-	@Override
-	protected void finalize() throws Throwable {
-		try {
-			raf.close();
-		} catch (Exception e) {
-		}
-		super.finalize();
 	}
 
 	/**

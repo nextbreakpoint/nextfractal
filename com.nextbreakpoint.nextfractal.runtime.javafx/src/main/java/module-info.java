@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.1.4
+ * NextFractal 2.1.5
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2022 Andrea Medeghini
+ * Copyright 2015-2024 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -26,8 +26,9 @@ module com.nextbreakpoint.nextfractal.runtime.javafx {
     requires java.logging;
     requires java.desktop;
     requires java.compiler;
+    requires jdk.compiler;
     requires javafx.controls;
-    requires com.nextbreakpoint.try4java;
+    requires com.nextbreakpoint.nextfractal.libraries;
     requires com.nextbreakpoint.nextfractal.core;
     requires com.nextbreakpoint.nextfractal.runtime;
     requires com.nextbreakpoint.nextfractal.core.javafx;

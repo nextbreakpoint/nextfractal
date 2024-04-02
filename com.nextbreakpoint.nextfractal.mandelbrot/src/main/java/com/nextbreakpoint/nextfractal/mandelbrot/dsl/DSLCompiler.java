@@ -1,8 +1,8 @@
 /*
- * NextFractal 2.1.4
+ * NextFractal 2.1.5
  * https://github.com/nextbreakpoint/nextfractal
  *
- * Copyright 2015-2022 Andrea Medeghini
+ * Copyright 2015-2024 Andrea Medeghini
  *
  * This file is part of NextFractal.
  *
@@ -25,7 +25,6 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.dsl;
 
 import com.nextbreakpoint.nextfractal.mandelbrot.core.CompilerException;
-import com.nextbreakpoint.nextfractal.mandelbrot.core.ParserException;
 import com.nextbreakpoint.nextfractal.mandelbrot.dsl.javacompiler.JavaCompilerDSLCompiler;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Color;
 import com.nextbreakpoint.nextfractal.mandelbrot.core.Orbit;
@@ -33,9 +32,10 @@ import com.nextbreakpoint.nextfractal.mandelbrot.dsl.interpreter.InterpreterDSLC
 
 import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
-import java.io.IOException;
 
 public class DSLCompiler {
+	private static final String PROPERTY_MANDELBROT_COMPILER_DISABLED = "com.nextbreakpoint.nextfractal.mandelbrot.compiler.disabled";
+
 	public DSLCompiler() {
 	}
 	
@@ -58,6 +58,6 @@ public class DSLCompiler {
 	}
 
 	public JavaCompiler getJavaCompiler() {
-		return !Boolean.getBoolean("mandelbrot.compiler.disabled") ? ToolProvider.getSystemJavaCompiler() : null;
+		return !Boolean.getBoolean(PROPERTY_MANDELBROT_COMPILER_DISABLED) ? ToolProvider.getSystemJavaCompiler() : null;
 	}
 }	
