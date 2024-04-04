@@ -189,6 +189,7 @@ public class RenderPane extends BorderPane {
 		errors.getStyleClass().add("errors");
 		errors.setVisible(false);
 
+		//TODO abstract code and create tools from model
 		HBox toolButtons = new HBox(0);
 		ToggleButton zoominButton = new ToggleButton("", createIconImage("/icon-zoomin.png", computeOptimalLargeIconPercentage()));
 		ToggleButton zoomoutButton = new ToggleButton("", createIconImage("/icon-zoomout.png", computeOptimalLargeIconPercentage()));
@@ -363,6 +364,7 @@ public class RenderPane extends BorderPane {
 			fadeOut(toolsTransition, x -> {});
 		});
 
+		//TODO move code to strategy class
 		EventHandler<KeyEvent> eventHandler = keyEvent -> {
 			switch (keyEvent.getCode()) {
 				case DIGIT1: {
@@ -802,6 +804,7 @@ public class RenderPane extends BorderPane {
 		eventBus.postEvent("render-data-changed", new MandelbrotSession(mandelbrotSession.getScript(), newMetadata), false, true);
 	}
 
+	//TODO move to strategy class
 	private void createCoordinators(int rows, int columns, Map<String, Integer> hints) {
 		DefaultThreadFactory threadFactory = createThreadFactory("Mandelbrot Coordinator", Thread.MIN_PRIORITY + 2);
 		for (int row = 0; row < rows; row++) {
@@ -811,6 +814,7 @@ public class RenderPane extends BorderPane {
 		}
 	}
 
+	//TODO move to strategy class
 	private RendererCoordinator createJuliaCoordinator(Map<String, Integer> hints) {
 		DefaultThreadFactory threadFactory = createThreadFactory("Julia Coordinator", Thread.MIN_PRIORITY + 1);
 		return new RendererCoordinator(threadFactory, renderFactory, createSingleTile(200, 200), hints);
@@ -820,6 +824,7 @@ public class RenderPane extends BorderPane {
 		return new DefaultThreadFactory(name, true, priority);
 	}
 
+	//TODO move to strategy class
 	private void disposeCoordinators() {
 		for (int i = 0; i < coordinators.length; i++) {
 			if (coordinators[i] != null) {
@@ -843,6 +848,7 @@ public class RenderPane extends BorderPane {
 		}
 	}
 
+	//TODO move to strategy class
 	private void runTimer(Canvas fractalCanvas, Canvas orbitCanvas, Canvas juliaCanvas, Canvas pointCanvas, Canvas trapCanvas, Canvas toolCanvas) {
 		timer = new AnimationTimer() {
 			private long lastInMillis;
@@ -869,7 +875,8 @@ public class RenderPane extends BorderPane {
 		};
 		timer.start();
 	}
-	
+
+	//TODO move to utility class
 	private RendererTile createTile(int row, int column) {
 		int tileWidth =  Math.round((float)width / (float)columns);
 		int tileHeight = Math.round((float)height / (float)rows);
@@ -881,6 +888,7 @@ public class RenderPane extends BorderPane {
 		return tile;
 	}
 
+	//TODO move to utility class
 	private RendererTile createSingleTile(int width, int height) {
 		int tileWidth = width;
 		int tileHeight = height;
@@ -903,6 +911,7 @@ public class RenderPane extends BorderPane {
 		}
 	}
 
+	//TODO move to strategy class
 	private List<SourceError> updateReport(ParserResult report) {
 		try {
 			updateCompilerErrors(null, null, null);
@@ -1029,6 +1038,7 @@ public class RenderPane extends BorderPane {
 		return Collections.emptyList();
 	}
 
+	//TODO move to strategy class
 	private boolean[] createOrbitAndColor(ParserResult result) throws ParserException, CompilerException, ClassNotFoundException, IOException {
 		if (result.getErrors().size() > 0) {
 			this.astOrbit = null;
@@ -1062,6 +1072,7 @@ public class RenderPane extends BorderPane {
 		}
 	}
 
+	//TODO move to strategy class
 	private void updateCompilerErrors(String message, List<SourceError> errors, String source) {
 		hasError = message != null;
 		Platform.runLater(() -> {
@@ -1093,6 +1104,7 @@ public class RenderPane extends BorderPane {
 		});
 	}
 
+	//TODO move to strategy class
 	private void updateRendererErrors(String message, List<SourceError> errors, String source) {
 		hasError = message != null;
 		Platform.runLater(() -> {
@@ -1171,6 +1183,7 @@ public class RenderPane extends BorderPane {
 //		}
 //	}
 
+	//TODO move to strategy class
 	private void updateSession(MandelbrotSession session, boolean continuous, boolean timeAnimation) {
 		MandelbrotMetadata metadata = (MandelbrotMetadata) session.getMetadata();
 		Double4D translation = metadata.getTranslation();
@@ -1271,6 +1284,7 @@ public class RenderPane extends BorderPane {
 //		}
 //	}
 
+	//TODO move to strategy class
 	private List<Number[]> renderOrbit(Time time, Double2D point) {
 		List<Number[]> states = new ArrayList<>(); 
 		try {
@@ -1291,6 +1305,7 @@ public class RenderPane extends BorderPane {
 		return states;
 	}
 
+	//TODO move to strategy class
 	private void processRenderErrors() {
 		if (coordinators != null && coordinators.length > 0) {
 			RendererCoordinator coordinator = coordinators[0];
@@ -1305,18 +1320,22 @@ public class RenderPane extends BorderPane {
 		}
 	}
 
+	//TODO move to strategy class
 	private void abortCoordinators() {
 		visitCoordinators(coordinator -> true, coordinator -> coordinator.abort());
 	}
 
+	//TODO move to strategy class
 	private void joinCoordinators() {
 		visitCoordinators(coordinator -> true, coordinator -> coordinator.waitFor());
 	}
 
+	//TODO move to strategy class
 	private void startCoordinators() {
 		visitCoordinators(coordinator -> true, coordinator -> coordinator.run());
 	}
 
+	//TODO move to strategy class
 	private void redrawIfPixelsChanged(Canvas canvas) {
 		RendererGraphicsContext gc = renderFactory.createGraphicsContext(canvas.getGraphicsContext2D());
 		visitCoordinators(coordinator -> coordinator.isPixelsChanged(), coordinator -> coordinator.drawImage(gc, 0, 0));
@@ -1330,6 +1349,7 @@ public class RenderPane extends BorderPane {
 		}
 	}
 
+	//TODO move to strategy class
 	private void redrawIfJuliaPixelsChanged(Canvas canvas) {
 		MandelbrotMetadata metadata = (MandelbrotMetadata) mandelbrotSession.getMetadata();
 		if (!metadata.isJulia() && juliaCoordinator != null && juliaCoordinator.isPixelsChanged()) {
@@ -1344,6 +1364,7 @@ public class RenderPane extends BorderPane {
 		}
 	}
 
+	//TODO move to strategy class
 	private void redrawIfPointChanged(Canvas canvas) {
 		if (redrawPoint) {
 			redrawPoint = false;
@@ -1385,6 +1406,7 @@ public class RenderPane extends BorderPane {
 		}
 	}
 
+	//TODO move to strategy class
 	private void redrawIfOrbitChanged(Canvas canvas) {
 		if (redrawOrbit) {
 			redrawOrbit = false;
@@ -1434,6 +1456,7 @@ public class RenderPane extends BorderPane {
 		}
 	}
 
+	//TODO move to strategy class
 	private void redrawIfTrapChanged(Canvas canvas) {
 		if (redrawTraps) {
 			redrawTraps = false;
@@ -1487,6 +1510,7 @@ public class RenderPane extends BorderPane {
 		}
 	}
 
+	//TODO move to strategy class
 	private void redrawIfToolChanged(Canvas canvas) {
 		Optional.ofNullable(currentTool).filter(Tool::isChanged).ifPresent(tool -> tool.draw(renderFactory.createGraphicsContext(canvas.getGraphicsContext2D())));
 	}

@@ -57,17 +57,22 @@ import static com.nextbreakpoint.nextfractal.core.javafx.Icons.createIconImage;
 public class MainSidePane extends BorderPane {
     private static Logger logger = Logger.getLogger(MainSidePane.class.getName());
 
+    // TODO is it required?
     private Session session;
 
     public MainSidePane(PlatformEventBus eventBus) {
         setCenter(createRootPane(eventBus));
 
+        //TODO move to coordinator class
         eventBus.subscribe("session-data-changed", event -> session = (Session) event[0]);
 
+        //TODO move to coordinator class
         eventBus.subscribe("history-session-selected", event -> notifyHistoryItemSelected(eventBus, (Session)event[0]));
 
+        //TODO move to coordinator class
         eventBus.subscribe("playback-data-load", event -> session = (Session) event[0]);
 
+        //TODO move to coordinator class
         eventBus.subscribe("playback-data-change", event -> session = (Session) event[0]);
 
         eventBus.subscribe("playback-clips-start", event -> handlePlaybackClipsStart(eventBus, this));
@@ -75,31 +80,11 @@ public class MainSidePane extends BorderPane {
         eventBus.subscribe("playback-clips-stop", event -> handlePlaybackClipsStop(eventBus, this));
     }
 
-    private void handlePlaybackClipsStart(PlatformEventBus subEventBus, Pane rootPane) {
-//        subEventBus.disable();
-        rootPane.setDisable(true);
-        BoxBlur effect = new BoxBlur();
-        effect.setIterations(1);
-        rootPane.setEffect(effect);
-    }
-
-    private void handlePlaybackClipsStop(PlatformEventBus subEventBus, Pane rootPane) {
-        rootPane.setEffect(null);
-//        subEventBus.enable();
-        rootPane.setDisable(false);
-        subEventBus.postEvent("session-data-loaded", session, false, false);
-    }
-
-    private void notifyHistoryItemSelected(EventBus eventBus, Session session) {
-        eventBus.postEvent("session-data-loaded", session, false, false);
-    }
-
     private Pane createRootPane(PlatformEventBus eventBus) {
-        final RendererTile exportTile = createExportTile();
-
         final RendererTile tile = createRendererTile();
 
         final StringObservableValue errorProperty = new StringObservableValue();
+        // TODO is it required?
         errorProperty.setValue(null);
 
         final MainEditorPane editorPane = new MainEditorPane(eventBus);
@@ -179,73 +164,6 @@ public class MainSidePane extends BorderPane {
 
         final StackPane rootPane = new StackPane();
         rootPane.getChildren().add(sourcePane);
-
-        exportPane.setExportDelegate(new ExportDelegate() {
-            @Override
-            public void createSession(RendererSize size, String format) {
-                if (errorProperty.getValue() == null) {
-                    eventBus.postEvent("session-export", size, format);
-                }
-            }
-
-            @Override
-            public void startCaptureSession() {
-                if (errorProperty.getValue() == null) {
-                    eventBus.postEvent("capture-session", "start");
-                }
-            }
-
-            @Override
-            public void stopCaptureSession() {
-                if (errorProperty.getValue() == null) {
-                    eventBus.postEvent("capture-session", "stop");
-                }
-            }
-
-            @Override
-            public void playbackStart(List<Clip> clips) {
-                if (errorProperty.getValue() == null) {
-                    eventBus.postEvent("playback-clips-start", clips);
-                }
-            }
-
-            @Override
-            public void captureSessionAdded(Clip clip) {
-                eventBus.postEvent("capture-clip-added", clip);
-            }
-
-            @Override
-            public void captureSessionRemoved(Clip clip) {
-                eventBus.postEvent("capture-clip-removed", clip);
-            }
-
-            @Override
-            public void captureSessionRestored(Clip clip) {
-                eventBus.postEvent("capture-clip-restored", clip);
-            }
-
-            @Override
-            public void captureSessionMoved(int fromIndex, int toIndex) {
-                eventBus.postEvent("capture-clip-moved", fromIndex, toIndex);
-            }
-        });
-
-        jobsPane.setDelegate(new JobsDelegate() {
-            @Override
-            public void sessionSuspended(ExportSession session) {
-                eventBus.postEvent("export-session-suspended", session);
-            }
-
-            @Override
-            public void sessionResumed(ExportSession session) {
-                eventBus.postEvent("export-session-resumed", session);
-            }
-
-            @Override
-            public void sessionStopped(ExportSession session) {
-                eventBus.postEvent("export-session-stopped", session);
-            }
-        });
 
         rootPane.widthProperty().addListener((observable, oldValue, newValue) -> {
             double width = newValue.doubleValue();
@@ -358,6 +276,73 @@ public class MainSidePane extends BorderPane {
             sidebarPane.prefHeightProperty().setValue(rootPane.getHeight() - statusPane.getHeight() - sourceButtons.getHeight() + newValue.doubleValue());
         });
 
+        exportPane.setExportDelegate(new ExportDelegate() {
+            @Override
+            public void createSession(RendererSize size, String format) {
+                if (errorProperty.getValue() == null) {
+                    eventBus.postEvent("session-export", size, format);
+                }
+            }
+
+            @Override
+            public void startCaptureSession() {
+                if (errorProperty.getValue() == null) {
+                    eventBus.postEvent("capture-session", "start");
+                }
+            }
+
+            @Override
+            public void stopCaptureSession() {
+                if (errorProperty.getValue() == null) {
+                    eventBus.postEvent("capture-session", "stop");
+                }
+            }
+
+            @Override
+            public void playbackStart(List<Clip> clips) {
+                if (errorProperty.getValue() == null) {
+                    eventBus.postEvent("playback-clips-start", clips);
+                }
+            }
+
+            @Override
+            public void captureSessionAdded(Clip clip) {
+                eventBus.postEvent("capture-clip-added", clip);
+            }
+
+            @Override
+            public void captureSessionRemoved(Clip clip) {
+                eventBus.postEvent("capture-clip-removed", clip);
+            }
+
+            @Override
+            public void captureSessionRestored(Clip clip) {
+                eventBus.postEvent("capture-clip-restored", clip);
+            }
+
+            @Override
+            public void captureSessionMoved(int fromIndex, int toIndex) {
+                eventBus.postEvent("capture-clip-moved", fromIndex, toIndex);
+            }
+        });
+
+        jobsPane.setDelegate(new JobsDelegate() {
+            @Override
+            public void sessionSuspended(ExportSession session) {
+                eventBus.postEvent("export-session-suspended", session);
+            }
+
+            @Override
+            public void sessionResumed(ExportSession session) {
+                eventBus.postEvent("export-session-resumed", session);
+            }
+
+            @Override
+            public void sessionStopped(ExportSession session) {
+                eventBus.postEvent("export-session-stopped", session);
+            }
+        });
+
         historyPane.setDelegate(session -> eventBus.postEvent("history-session-selected", session));
 
         eventBus.subscribe("session-status-changed", event -> statusPane.setMessage((String) event[0]));
@@ -393,8 +378,30 @@ public class MainSidePane extends BorderPane {
         return rootPane;
     }
 
+    private void handlePlaybackClipsStart(PlatformEventBus subEventBus, Pane rootPane) {
+//        subEventBus.disable();
+        rootPane.setDisable(true);
+        BoxBlur effect = new BoxBlur();
+        effect.setIterations(1);
+        rootPane.setEffect(effect);
+    }
+
+    private void handlePlaybackClipsStop(PlatformEventBus subEventBus, Pane rootPane) {
+        rootPane.setEffect(null);
+//        subEventBus.enable();
+        rootPane.setDisable(false);
+        //TODO move to coordinator class
+        subEventBus.postEvent("session-data-loaded", session, false, false);
+    }
+
+    private void notifyHistoryItemSelected(EventBus eventBus, Session session) {
+        //TODO move to coordinator class
+        eventBus.postEvent("session-data-loaded", session, false, false);
+    }
+
     private void handleDataChanged(EventBus eventBus, StringObservableValue errorProperty, Session session, boolean continuous) {
         errorProperty.setValue(null);
+        //TODO move to coordinator class
         if (!continuous) {
             eventBus.postEvent("editor-params-changed", session);
         }
@@ -415,15 +422,6 @@ public class MainSidePane extends BorderPane {
     private void handleSessionStopped(ExportPane exportPane, ToggleButton exportButton, Clip clip) {
         if (!clip.isEmpty()) exportPane.appendClip(clip);
         exportButton.setSelected(true);
-    }
-
-    private RendererTile createRendererTile() {
-        final int tileSize = computePercentage(0.05);
-        return createSingleTile(tileSize, tileSize);
-    }
-
-    private RendererTile createExportTile() {
-        return createSingleTile(512, 512);
     }
 
     private static TranslateTransition createTranslateTransition(Node node) {
@@ -493,15 +491,27 @@ public class MainSidePane extends BorderPane {
         }
     }
 
-    private static int computePercentage(double percentage) {
+    //TODO move to utility class
+    private static int computeSize(double percentage) {
         return (int) Math.rint(Screen.getPrimary().getVisualBounds().getWidth() * percentage);
     }
 
-    private static RendererTile createSingleTile(int width, int height) {
+    //TODO move to utility class
+    private static RendererTile createRendererTile(int width, int height) {
         RendererSize imageSize = new RendererSize(width, height);
         RendererSize tileSize = new RendererSize(width, height);
         RendererSize tileBorder = new RendererSize(0, 0);
         RendererPoint tileOffset = new RendererPoint(0, 0);
         return new RendererTile(imageSize, tileSize, tileOffset, tileBorder);
+    }
+
+    //TODO move to utility class
+    private static RendererTile createRendererTile(int size) {
+        return createRendererTile(size, size);
+    }
+
+    //TODO move to utility class
+    private static RendererTile createRendererTile() {
+        return createRendererTile(computeSize(0.05));
     }
 }

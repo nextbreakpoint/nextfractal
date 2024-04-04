@@ -42,6 +42,7 @@ public class ParamsPane extends Pane {
 
 	public ParamsPane(ContextFreeSession session, PlatformEventBus eventBus) {
 		VBox box = new VBox(SPACING * 2);
+		//TODO abstract code and create fields from model
 		Label seedLabel = new Label("Random seed");
 		AdvancedTextField seedField = new AdvancedTextField();
 		seedField.setTooltip(new Tooltip("Seed for generating random numbers"));

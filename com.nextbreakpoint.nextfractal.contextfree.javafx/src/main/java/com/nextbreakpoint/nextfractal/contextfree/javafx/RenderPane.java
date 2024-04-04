@@ -376,6 +376,7 @@ public class RenderPane extends BorderPane {
 		return tile;
 	}
 
+	//TODO move to strategy class
 	private void updateCompilerErrors(String message, List<SourceError> errors, String source) {
 		hasError = message != null;
 		Platform.runLater(() -> {
@@ -407,6 +408,7 @@ public class RenderPane extends BorderPane {
 		});
 	}
 
+	//TODO move to strategy class
 	private void updateRendererErrors(String message, List<SourceError> errors, String source) {
 		hasError = message != null;
 		Platform.runLater(() -> {
@@ -442,6 +444,7 @@ public class RenderPane extends BorderPane {
 		return new DSLParser().parse(text);
 	}
 
+	//TODO move to strategy class
 	private List<SourceError> updateReport(ParserResult report) {
 		try {
 			updateCompilerErrors(null, null, null);
@@ -484,6 +487,7 @@ public class RenderPane extends BorderPane {
 		return Collections.emptyList();
 	}
 
+	//TODO move to strategy class
 	private boolean[] createCFDG(ParserResult report) throws ParserException {
 		if (report.getErrors().size() > 0) {
 			cfdgSource = null;

@@ -69,7 +69,7 @@ public class SimpleExportService extends AbstractExportService {
 
 	@Override
 	protected Collection<ExportHandle> updateInBackground(Collection<ExportHandle> exportHandles) {
-		return exportHandles.stream().peek(this::updateSession).filter(ExportHandle::isFinished).collect(Collectors.toList());
+		return exportHandles.stream().map(this::updateSession).filter(ExportHandle::isFinished).collect(Collectors.toList());
 	}
 
 	@Override
@@ -91,7 +91,7 @@ public class SimpleExportService extends AbstractExportService {
 		Platform.runLater(() -> delegate.notifyUpdate(exportHandle.getSession(), exportHandle.getState(), exportHandle.getProgress()));
 	}
 
-	private void updateSession(ExportHandle exportHandle) {
+	private ExportHandle updateSession(ExportHandle exportHandle) {
 		if (exportHandle.isReady()) {
 			openSession(exportHandle);
 			resetJobs(exportHandle);
@@ -111,6 +111,7 @@ public class SimpleExportService extends AbstractExportService {
 			removeTasks(exportHandle);
 			closeSession(exportHandle);
 		}
+		return exportHandle;
 	}
 
 	private boolean isTimeout(ExportHandle exportHandle) {
@@ -236,7 +237,7 @@ public class SimpleExportService extends AbstractExportService {
 		return Optional.ofNullable(futures.get(sessionId));
 	}
 
-	private ExportHandle encodeData(ExportHandle exportHandle, int index, int count) throws IOException, EncoderException {
+	private ExportHandle encodeData(ExportHandle exportHandle, int index, int count) throws EncoderException {
 		exportHandle.getEncoder().encode(handles.get(exportHandle.getSessionId()), index, count);
 		return exportHandle;
 	}

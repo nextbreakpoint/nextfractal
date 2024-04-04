@@ -90,6 +90,7 @@ public class EditorPane extends BorderPane {
 //        codeArea.plainTextChanges().suppressible().suppressWhen(internalSource).successionEnds(Duration.ofMillis(500)).supplyTask(this::computeTaskAsync)
 //            .awaitLatest().map(org.reactfx.util.Try::get).map(this::applyTaskResult).subscribe(result -> notifyTaskResult(eventBus, result));
 
+        //TODO abstract code and use strategy
         JavaFxObservable.changesOf(codeArea.textProperty())
                 .subscribeOn(JavaFxScheduler.platform())
                 .filter(x -> !internalSource.getValue())
@@ -164,6 +165,7 @@ public class EditorPane extends BorderPane {
                 .onFailure(e -> logger.log(Level.WARNING, "Cannot parse source", e));
     }
 
+    //TODO move to strategy class
     private ParserResult generateReport(String text) throws Exception {
         return new DSLParser().parse(text);
     }
@@ -189,6 +191,7 @@ public class EditorPane extends BorderPane {
 //        return spansBuilder.create();
 //    }
 
+    //TODO move to strategy class
     private Pattern createHighlightingPattern() {
         String[] KEYWORDS = new String[] {
             "startshape", "background", "include", "import", "tile", "rule", "path", "shape", "loop", "finally", "if", "switch", "case", "CF_INFINITY", "\u221E", "LET"
@@ -242,6 +245,7 @@ public class EditorPane extends BorderPane {
         }
     }
 
+    //TODO move to strategy class
     private TaskResult updateTextStyles(TaskResult task) {
 //        codeArea.setStyleSpans(0, task.highlighting);
         List<SourceError> errors = task.report.getErrors();

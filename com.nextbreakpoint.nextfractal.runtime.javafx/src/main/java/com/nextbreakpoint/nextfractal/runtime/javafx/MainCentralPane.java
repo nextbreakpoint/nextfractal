@@ -97,12 +97,14 @@ public class MainCentralPane extends BorderPane {
 
 			@Override
 			public GridItemRenderer createRenderer(Bitmap bitmap) throws Exception {
+                // TODO move to utility class
 				return tryFindFactory(((Session) bitmap.getProperty("session")).getPluginId())
 					.flatMap(factory -> Try.of(() -> factory.createRenderer(bitmap))).orThrow();
 			}
 
 			@Override
 			public BrowseBitmap createBitmap(File file, RendererSize size) throws Exception {
+                // TODO move to utility class
 				return FileManager.loadFile(file).flatMap(bundle -> tryFindFactory(bundle.getSession().getPluginId())
 					.flatMap(factory -> Try.of(() -> factory.createBitmap(bundle.getSession(), size)))).orThrow();
 			}

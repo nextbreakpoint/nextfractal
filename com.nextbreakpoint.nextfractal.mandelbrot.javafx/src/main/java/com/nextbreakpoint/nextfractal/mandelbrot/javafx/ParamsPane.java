@@ -48,6 +48,7 @@ public class ParamsPane extends Pane {
 	public ParamsPane(MandelbrotSession session, PlatformEventBus eventBus) {
 		VBox box = new VBox(SPACING * 2);
 
+		//TODO abstract code and create fields from model
 		Label translationLabel = new Label("Region translation");
 		AdvancedTextField xTraslationField = new AdvancedTextField();
 		AdvancedTextField yTraslationField = new AdvancedTextField();

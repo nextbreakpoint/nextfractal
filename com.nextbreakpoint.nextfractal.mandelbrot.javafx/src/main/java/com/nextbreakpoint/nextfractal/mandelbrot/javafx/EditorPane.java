@@ -95,6 +95,7 @@ public class EditorPane extends BorderPane {
 //        codeArea.plainTextChanges().suppressible().suppressWhen(internalSource).successionEnds(Duration.ofMillis(500)).supplyTask(this::computeTask)
 //            .awaitLatest().map(org.reactfx.util.Try::get).map(this::applyTaskResult).subscribe(result -> notifyTaskResult(eventBus, result));
 
+        //TODO abstract code and use strategy
         JavaFxObservable.changesOf(codeArea.textProperty())
                 .subscribeOn(JavaFxScheduler.platform())
                 .filter(x -> !internalSource.getValue())
@@ -171,6 +172,7 @@ public class EditorPane extends BorderPane {
                 .onFailure(e -> logger.log(Level.WARNING, "Cannot parse source", e));
     }
 
+    //TODO move to strategy class
     private ParserResult generateReport(String text) throws Exception {
         return new DSLParser(DSLParser.class.getPackage().getName() + ".generated", "Compile" + System.nanoTime()).parse(text);
     }
@@ -196,6 +198,7 @@ public class EditorPane extends BorderPane {
 //        return spansBuilder.create();
 //    }
 
+    //TODO move to strategy class
     private Pattern createHighlightingPattern() {
         String[] KEYWORDS = new String[] {
             "fractal", "orbit", "color", "begin", "loop", "end", "rule", "trap", "palette", "if", "else", "stop", "init"
@@ -230,6 +233,7 @@ public class EditorPane extends BorderPane {
         result.map(task -> task.report).ifPresent(report -> eventBus.postEvent("editor-report-changed", report, new MandelbrotSession(report.getSource(), (MandelbrotMetadata) session.getMetadata()), false, !report.getSource().equals(session.getScript())));
     }
 
+    //TODO move to strategy class
     private Try<TaskResult, Exception> processResult(Try<TaskResult, Exception> result) {
         return result.flatMap(task -> Block.create(TaskResult.class)
                 .andThen(this::compileOrbit)
@@ -239,10 +243,12 @@ public class EditorPane extends BorderPane {
                 .execute());
     }
 
+    //TODO move to strategy class
     private void compileOrbit(TaskResult task) throws ClassNotFoundException, IOException, InstantiationException, IllegalAccessException, ParserException {
         Try.of(() -> new DSLCompiler().compileOrbit(task.report).create()).execute();
     }
 
+    //TODO move to strategy class
     private void compileColor(TaskResult task) throws ClassNotFoundException, IOException, InstantiationException, IllegalAccessException, ParserException {
         Try.of(() -> new DSLCompiler().compileColor(task.report).create()).execute();
     }
@@ -261,6 +267,7 @@ public class EditorPane extends BorderPane {
         }
     }
 
+    //TODO move to strategy class
     private TaskResult updateTextStyles(TaskResult task) {
 //        codeArea.setStyleSpans(0, task.highlighting);
         List<SourceError> errors = task.report.getErrors();

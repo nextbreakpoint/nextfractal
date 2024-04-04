@@ -84,21 +84,26 @@ import static com.nextbreakpoint.nextfractal.core.common.Plugins.tryFindFactoryB
 public class NextFractalApp extends Application {
 	private static Logger logger = Logger.getLogger(NextFractalApp.class.getName());
 
+	// TODO move to constants class
 	private static final String DEFAULT_PLUGIN_ID = "Mandelbrot";
 	private static final String FILE_EXTENSION = ".nf.zip";
 
+	// TODO move to coordinator class
 	private List<Clip> clips = new ArrayList<>();
 	private Session session;
 	private Clip clip;
 
+	// TODO move to coordinator class
 	private boolean capture;
 	private boolean edited;
 
+	// TODO are they required?
 	private FileChooser exportFileChooser;
 	private FileChooser bundleFileChooser;
 	private File exportCurrentFile;
 	private File bundleCurrentFile;
 
+	// TODO move to coordinator class
 	private File workspace;
 
 	public static void main(String[] args) {
@@ -109,10 +114,12 @@ public class NextFractalApp extends Application {
     public void start(Stage primaryStage) {
 		PlatformEventBus eventBus = new PlatformEventBus("Main");
 
+		// TODO move to utility class
 		Try.of(() -> Objects.requireNonNull(ToolProvider.getSystemJavaCompiler())).ifFailure(e -> showCompilerAlert());
 
 		logger.info(getNoticeMessage());
 
+		// TODO move to utility class
 		printPlugins();
 
 		final Screen primaryScreen = Screen.getPrimary();
@@ -207,12 +214,14 @@ public class NextFractalApp extends Application {
 		primaryStage.setTitle(getApplicationName());
 		primaryStage.show();
 
+		// TODO refactor
 		Platform.runLater(() -> {
 			final String defaultPluginId = System.getProperty("initialPluginId", DEFAULT_PLUGIN_ID);
 			tryFindFactory(defaultPluginId).ifPresent(factory -> createSession(eventBus, factory));
 		});
 	}
 
+	// TODO move to handler class
 	private void handleDeleteFiles(List<File> files) {
 		final Dialog<ButtonType> dialog = new Dialog<>();
 		dialog.setContentText("Do you want to delete the selected %s?".formatted(files.size() > 1 ? files.size() + " projects" : "project"));
@@ -232,6 +241,7 @@ public class NextFractalApp extends Application {
 		}
 	}
 
+	// TODO move to handler class
 	private boolean isTerminating(PlatformEventBus eventBus, ExportService exportService) {
 		if (terminateNow(exportService.getSessionCount())) {
 			eventBus.postEvent("session-terminated", "");
@@ -241,6 +251,7 @@ public class NextFractalApp extends Application {
 		}
 	}
 
+	// TODO move to handler class
 	private boolean terminateNow(int sessionCount) {
 		if (sessionCount > 0) {
 			final Dialog<ButtonType> dialog = new Dialog<>();
@@ -262,6 +273,7 @@ public class NextFractalApp extends Application {
 		return true;
 	}
 
+	// TODO move to handler class
 	private void handleEditorAction(PlatformEventBus eventBus, Window window, String action) {
 		if (action.equals("load")) Optional.ofNullable(showLoadBundleFileChooser())
 				.map(fileChooser -> fileChooser.showOpenDialog(window))
@@ -273,6 +285,7 @@ public class NextFractalApp extends Application {
 				.ifPresent(file -> eventBus.postEvent("editor-store-file", file));
 	}
 
+	// TODO move to handler class
 	private void handleBundleLoaded(PlatformEventBus eventBus, Bundle bundle, boolean continuous, boolean appendHistory) {
 		if (edited && clips.size() > 0 && bundle.getClips().size() > 0) {
 			final Dialog<ButtonType> dialog = new Dialog<>();
@@ -296,21 +309,25 @@ public class NextFractalApp extends Application {
 		eventBus.postEvent("session-data-loaded", bundle.getSession(), continuous, appendHistory);
 	}
 
+	// TODO move to coordinator class
 	private void handleClipAdded(Clip clip) {
 		clips.add(clip);
 		edited = true;
 	}
 
+	// TODO move to coordinator class
 	private void handleClipRemoved(Clip clip) {
 		clips.remove(clip);
 		edited = true;
 	}
 
+	// TODO move to coordinator class
 	private void handleClipRestored(Clip clip) {
 		clips.add(clip);
 		edited = false;
 	}
 
+	// TODO move to coordinator class
 	private void handleClipMoved(int fromIndex, int toIndex) {
 		Clip clip = clips.get(fromIndex);
 		clips.remove(fromIndex);
@@ -323,6 +340,7 @@ public class NextFractalApp extends Application {
 		if (action.equals("stop")) stopCapture(eventBus);
 	}
 
+	// TODO move to coordinator class
 	private void startCapture(PlatformEventBus eventBus) {
 		capture = true;
 		clip = new Clip();
@@ -332,6 +350,7 @@ public class NextFractalApp extends Application {
 		eventBus.postEvent("capture-session-started", clip);
 	}
 
+	// TODO move to coordinator class
 	private void stopCapture(PlatformEventBus eventBus) {
 		capture = false;
 		if (session != null) {
@@ -340,15 +359,18 @@ public class NextFractalApp extends Application {
 		eventBus.postEvent("capture-session-stopped", clip);
 	}
 
+	// TODO move to coordinator class
 	private void handleSessionChanged(Session session) {
 		if (capture) {
 			clip.append(new Date(), session.getPluginId(), session.getScript(), session.getMetadata());
 		}
 	}
 
+	// TODO move to coordinator class
 	private void handleErrorChanged(String error) {
 	}
 
+	// TODO move to coordinator class
 	private void handleLoadFile(PlatformEventBus eventBus, File file) {
 		FileManager.loadFile(file)
 			.onSuccess(session -> eventBus.postEvent("current-file-changed", file))
@@ -356,6 +378,7 @@ public class NextFractalApp extends Application {
 			.ifPresent(bundle -> eventBus.postEvent("session-bundle-loaded", bundle, false, true));
 	}
 
+	// TODO move to coordinator class
 	private void handleSaveFile(PlatformEventBus eventBus, File file) {
 		FileManager.saveFile(file, new Bundle(session, clips))
 			.onSuccess(session -> eventBus.postEvent("current-file-changed", file))
@@ -363,6 +386,7 @@ public class NextFractalApp extends Application {
 			.ifSuccess(v -> edited = false);
 	}
 
+	// TODO move to coordinator class
 	private void handleStoreFile(PlatformEventBus eventBus, File file) {
 		FileManager.saveFile(file, new Bundle(session, clips))
 				.onFailure(e -> showSaveError(eventBus, file, e))
@@ -505,6 +529,7 @@ public class NextFractalApp extends Application {
 		return size;
 	}
 
+	// TODO move to utility class
 	private DefaultThreadFactory createThreadFactory(String name) {
 		return new DefaultThreadFactory(name, true, Thread.MIN_PRIORITY);
 	}
@@ -513,6 +538,7 @@ public class NextFractalApp extends Application {
 		return Try.of(() -> getClass().getResource(resourceName).toExternalForm());
 	}
 
+	// TODO move to coordinator class
 	private void createSession(PlatformEventBus eventBus, CoreFactory factory) {
 		tryCreateSession(factory).ifPresent(session -> eventBus.postEvent("session-data-loaded", session, false, true));
 	}
@@ -525,6 +551,7 @@ public class NextFractalApp extends Application {
 		Plugins.factories().forEach(plugin -> logger.fine("Found plugin " + plugin.getId()));
 	}
 
+	// TODO move to handler class
 	private void handleExportSession(PlatformEventBus eventBus, Window window, String format, Session session, List<Clip> clips, Consumer<File> consumer, RendererSize size) {
 		createEncoder(format).ifPresent(encoder -> selectFileAndExport(eventBus, window, encoder, session, clips, consumer, size));
 	}
