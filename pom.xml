@@ -52,6 +52,7 @@
         <rxjavafx.version>2.2.2</rxjavafx.version>
         <openjfx.version>21.0.1</openjfx.version>
         <jackson.version>2.16.0</jackson.version>
+        <lombok.version>1.18.30</lombok.version>
         <junit.version>5.10.1</junit.version>
         <assertj.version>3.24.2</assertj.version>
         <mockito.version>5.8.0</mockito.version>
@@ -63,6 +64,7 @@
         <maven-toolchains-plugin.version>3.1.0</maven-toolchains-plugin.version>
         <maven-dependency-plugin.version>3.6.1</maven-dependency-plugin.version>
         <maven-gpg-plugin.version>3.1.0</maven-gpg-plugin.version>
+        <lombok-maven-plugin.version>1.18.20.0</lombok-maven-plugin.version>
         <build-helper-maven-plugin.version>3.5.0</build-helper-maven-plugin.version>
         <moditect-maven-plugin.version>1.0.0.Final</moditect-maven-plugin.version>
         <nexus-staging-maven-plugin.version>1.6.13</nexus-staging-maven-plugin.version>
@@ -153,6 +155,11 @@
                 <artifactId>moditect-maven-plugin</artifactId>
                 <version>${moditect-maven-plugin.version}</version>
             </plugin>
+            <plugin>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok-maven-plugin</artifactId>
+                <version>${lombok-maven-plugin.version}</version>
+            </plugin>
         </plugins>
     </build>
     <dependencyManagement>
@@ -218,6 +225,11 @@
                 <version>${rxjava.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.junit</groupId>
                 <artifactId>junit-bom</artifactId>
                 <version>${junit.version}</version>
@@ -237,6 +249,11 @@
         </dependencies>
     </dependencyManagement>
     <dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>

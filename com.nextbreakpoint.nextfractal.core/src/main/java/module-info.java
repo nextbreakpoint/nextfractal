@@ -23,6 +23,7 @@
  *
  */
 module com.nextbreakpoint.nextfractal.core {
+    requires static lombok;
     requires java.desktop;
     requires java.logging;
     requires com.fasterxml.jackson.core;
@@ -33,6 +34,7 @@ module com.nextbreakpoint.nextfractal.core {
     exports com.nextbreakpoint.nextfractal.core.encode;
     exports com.nextbreakpoint.nextfractal.core.export;
     exports com.nextbreakpoint.nextfractal.core.render;
+    exports com.nextbreakpoint.nextfractal.core.event;
     uses com.nextbreakpoint.nextfractal.core.common.CoreFactory;
     uses com.nextbreakpoint.nextfractal.core.encode.Encoder;
     opens com.nextbreakpoint.nextfractal.core.common to com.fasterxml.jackson.databind;
