@@ -26,8 +26,14 @@ package com.nextbreakpoint.nextfractal.mandelbrot.javafx;
 
 import com.nextbreakpoint.Try;
 import com.nextbreakpoint.nextfractal.core.common.DefaultThreadFactory;
+import com.nextbreakpoint.nextfractal.core.common.Session;
 import com.nextbreakpoint.nextfractal.core.common.SourceError;
 import com.nextbreakpoint.nextfractal.core.common.EventBus;
+import com.nextbreakpoint.nextfractal.core.event.EditorLoadFileRequested;
+import com.nextbreakpoint.nextfractal.core.event.EditorReportChanged;
+import com.nextbreakpoint.nextfractal.core.event.EditorSourceChanged;
+import com.nextbreakpoint.nextfractal.core.event.SessionDataLoaded;
+import com.nextbreakpoint.nextfractal.core.event.SessionReportChanged;
 import com.nextbreakpoint.nextfractal.core.javafx.BooleanObservableValue;
 import com.nextbreakpoint.nextfractal.core.common.Block;
 import com.nextbreakpoint.nextfractal.core.javafx.PlatformEventBus;
@@ -107,7 +113,7 @@ public class EditorPane extends BorderPane {
                 .subscribe(result -> Platform.runLater(() -> notifyTaskResult(eventBus, result)), x -> logger.log(Level.WARNING, "Cannot compile source", x));
 
         codeArea.setOnDragDropped(e -> e.getDragboard().getFiles().stream().findFirst()
-            .ifPresent(file -> eventBus.postEvent("editor-load-file", file)));
+            .ifPresent(file -> eventBus.postEvent(EditorLoadFileRequested.class.getSimpleName(), EditorLoadFileRequested.builder().file(file).build())));
 
         codeArea.setOnDragOver(e -> Optional.of(e).filter(q -> q.getGestureSource() != codeArea
             && q.getDragboard().hasFiles()).ifPresent(q -> q.acceptTransferModes(TransferMode.COPY_OR_MOVE)));
@@ -117,7 +123,7 @@ public class EditorPane extends BorderPane {
         eventBus.subscribe("session-data-loaded", event -> {
             MandelbrotSession session = (MandelbrotSession) event[0];
             updateSource(session.getScript()).ifPresent(result -> {
-                eventBus.postEvent("session-report-changed", result.report, event[0], event[1], event[2]);
+                eventBus.postEvent(SessionReportChanged.class.getSimpleName(), SessionReportChanged.builder().session((Session) event[0]).continuous((boolean) event[1]).timeAnimation((boolean) event[2]).report(result.report).build());
 //                eventBus.postEvent("session-data-changed", event);
 //                MandelbrotSession newSession = (MandelbrotSession) event[0];
 //                Boolean continuous = (Boolean) event[1];
@@ -129,7 +135,7 @@ public class EditorPane extends BorderPane {
         });
 
         eventBus.subscribe("editor-report-changed", event -> {
-            eventBus.postEvent("session-report-changed", event);
+            eventBus.postEvent(SessionReportChanged.class.getSimpleName(), SessionReportChanged.builder().session((Session) event[1]).continuous((boolean) event[2]).timeAnimation((boolean) event[3]).report(event[0]).build());
             notifySourceIfRequired(eventBus, (ParserResult)event[0]);
         });
 
@@ -139,7 +145,7 @@ public class EditorPane extends BorderPane {
 //        });
 
         eventBus.subscribe("editor-action", event -> {
-            if (session != null && event[0].equals("reload")) eventBus.postEvent("session-data-loaded", session, false, false);
+            if (session != null && event[0].equals("reload")) eventBus.postEvent(SessionDataLoaded.class.getSimpleName(), SessionDataLoaded.builder().session(session).continuous(false).timeAnimation(false).build());
         });
 
         eventBus.subscribe("session-terminated", event -> dispose());
@@ -230,7 +236,7 @@ public class EditorPane extends BorderPane {
     }
 
     private void notifyTaskResult(EventBus eventBus, Try<TaskResult, Exception> result) {
-        result.map(task -> task.report).ifPresent(report -> eventBus.postEvent("editor-report-changed", report, new MandelbrotSession(report.getSource(), (MandelbrotMetadata) session.getMetadata()), false, !report.getSource().equals(session.getScript())));
+        result.map(task -> task.report).ifPresent(report -> eventBus.postEvent(EditorReportChanged.class.getSimpleName(), EditorReportChanged.builder().report(report).session(new MandelbrotSession(report.getSource(), (MandelbrotMetadata) session.getMetadata())).continuous(false).timeAnimation(!report.getSource().equals(session.getScript())).build()));
     }
 
     //TODO move to strategy class
@@ -254,7 +260,7 @@ public class EditorPane extends BorderPane {
     }
 
     private void notifySourceIfRequired(EventBus eventBus, ParserResult result) {
-        Optional.of(result).filter(report -> report.getErrors().size() == 0).ifPresent(report -> eventBus.postEvent("editor-source-changed", result.getSource()));
+        Optional.of(result).filter(report -> report.getErrors().isEmpty()).ifPresent(report -> eventBus.postEvent(EditorSourceChanged.class.getSimpleName(), EditorSourceChanged.builder().source(result.getSource()).build()));
     }
 
     private void processCompilerErrors(ParserResult report, Exception e) {

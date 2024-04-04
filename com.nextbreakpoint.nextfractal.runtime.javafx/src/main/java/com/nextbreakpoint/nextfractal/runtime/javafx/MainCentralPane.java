@@ -28,11 +28,19 @@ import com.nextbreakpoint.Try;
 import com.nextbreakpoint.nextfractal.core.common.Clip;
 import com.nextbreakpoint.nextfractal.core.common.FileManager;
 import com.nextbreakpoint.nextfractal.core.common.Session;
+import com.nextbreakpoint.nextfractal.core.event.EditorDeleteFilesRequested;
+import com.nextbreakpoint.nextfractal.core.event.EditorLoadFileRequested;
+import com.nextbreakpoint.nextfractal.core.event.PlaybackDataChanged;
+import com.nextbreakpoint.nextfractal.core.event.PlaybackDataLoaded;
+import com.nextbreakpoint.nextfractal.core.event.PlaybackStopped;
+import com.nextbreakpoint.nextfractal.core.event.ToggleBrowserRequested;
+import com.nextbreakpoint.nextfractal.core.event.WorkspaceChanged;
 import com.nextbreakpoint.nextfractal.core.javafx.*;
 import com.nextbreakpoint.nextfractal.core.render.RendererSize;
 import javafx.animation.FadeTransition;
 import javafx.animation.Interpolator;
 import javafx.animation.TranslateTransition;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -64,35 +72,46 @@ public class MainCentralPane extends BorderPane {
         playbackPane.setDelegate(new PlaybackDelegate() {
             @Override
             public void playbackStopped() {
-                eventBus.postEvent("playback-clips-stop", "");
+                final var event = PlaybackStopped.builder().build();
+                eventBus.postEvent(PlaybackStopped.class.getSimpleName(), event);
             }
 
             @Override
             public void loadSessionData(Session session, boolean continuous, boolean timeAnimation) {
-                eventBus.postEvent("playback-data-load", session, continuous, timeAnimation);
+                final var event = PlaybackDataLoaded.builder()
+                        .session(session)
+                        .continuous(continuous)
+                        .timeAnimation(timeAnimation)
+                        .build();
+                eventBus.postEvent(PlaybackDataLoaded.class.getSimpleName(), event);
             }
 
             @Override
             public void updateSessionData(Session session, boolean continuous, boolean timeAnimation) {
-                eventBus.postEvent("playback-data-change", session, continuous, timeAnimation);
+                final var event = PlaybackDataChanged.builder()
+                        .session(session)
+                        .continuous(continuous)
+                        .timeAnimation(timeAnimation)
+                        .build();
+                eventBus.postEvent(PlaybackDataChanged.class.getSimpleName(), event);
             }
         });
 
 		browsePane.setDelegate(new BrowseDelegate() {
 			@Override
 			public void didSelectFile(BrowsePane source, File file) {
-				eventBus.postEvent("editor-load-file", file);
-                eventBus.postEvent("toggle-browser", "");
+				eventBus.postEvent(EditorLoadFileRequested.class.getSimpleName(), EditorLoadFileRequested.builder().file(file).build());
+                eventBus.postEvent(ToggleBrowserRequested.class.getSimpleName(), ToggleBrowserRequested.builder().build());
 			}
 
             @Override
             public void didDeleteFiles(List<File> files) {
-                eventBus.postEvent("editor-delete-files", files);
+                eventBus.postEvent(EditorDeleteFilesRequested.class.getSimpleName(), EditorDeleteFilesRequested.builder().files(files).build());
             }
 
             @Override
 			public void didClose(BrowsePane source) {
-                eventBus.postEvent("toggle-browser", "");
+                eventBus.postEvent(ToggleBrowserRequested.class.getSimpleName(), ToggleBrowserRequested.builder().build());
 			}
 
 			@Override
@@ -180,7 +199,7 @@ public class MainCentralPane extends BorderPane {
             recordingPane.stop();
         });
 
-        eventBus.postEvent("workspace-changed", browsePane.getCurrentSourceFolder());
+        Platform.runLater(() -> eventBus.postEvent(WorkspaceChanged.class.getSimpleName(), WorkspaceChanged.builder().file(browsePane.getCurrentSourceFolder()).build()));
     }
 
     private void handleHideControls(FadeTransition transition, Boolean hide) {

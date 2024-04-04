@@ -25,8 +25,9 @@
 package com.nextbreakpoint.nextfractal.runtime.javafx;
 
 import com.nextbreakpoint.nextfractal.core.common.EventBus;
-import com.nextbreakpoint.nextfractal.core.common.EventListener;
 import com.nextbreakpoint.nextfractal.core.common.Session;
+import com.nextbreakpoint.nextfractal.core.event.EditorParamsActionFired;
+import com.nextbreakpoint.nextfractal.core.event.EditorGrammarSelected;
 import com.nextbreakpoint.nextfractal.core.javafx.PlatformEventBus;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -113,9 +114,9 @@ public class MainParamsPane extends Pane {
 			scrollPane.setPrefHeight(newValue.doubleValue());
 		});
 
-		cancelButton.setOnAction(e -> eventBus.postEvent("editor-params-action", "cancel"));
+		cancelButton.setOnAction(e -> eventBus.postEvent(EditorParamsActionFired.class.getSimpleName(), EditorParamsActionFired.builder().action("cancel").build()));
 		
-		applyButton.setOnAction((e) -> eventBus.postEvent("editor-params-action", "apply"));
+		applyButton.setOnAction((e) -> eventBus.postEvent(EditorParamsActionFired.class.getSimpleName(), EditorParamsActionFired.builder().action("apply").build()));
 
 		eventBus.subscribe("session-data-loaded", event -> handleSessionChanged(eventBus, (Session) event[0], (boolean) event[1], (boolean) event[2], this::createParamsPane, paramsPane::setCenter));
 
@@ -126,7 +127,7 @@ public class MainParamsPane extends Pane {
 
 		grammarCombobox.setOnAction(e -> {
 			if (session != null && !grammarCombobox.getSelectionModel().isEmpty() && !grammarCombobox.getSelectionModel().getSelectedItem().equals(session.getGrammar())) {
-				eventBus.postEvent("editor-grammar-changed", grammarCombobox.getSelectionModel().getSelectedItem());
+				eventBus.postEvent(EditorGrammarSelected.class.getSimpleName(), EditorGrammarSelected.builder().grammar(grammarCombobox.getSelectionModel().getSelectedItem()).build());
 			}
 		});
 	}

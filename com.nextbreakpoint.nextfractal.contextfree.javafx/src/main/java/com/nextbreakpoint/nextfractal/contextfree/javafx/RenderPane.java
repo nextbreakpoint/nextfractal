@@ -35,6 +35,13 @@ import com.nextbreakpoint.nextfractal.contextfree.dsl.grammar.CFDG;
 import com.nextbreakpoint.nextfractal.contextfree.renderer.RendererCoordinator;
 import com.nextbreakpoint.nextfractal.core.common.SourceError;
 import com.nextbreakpoint.nextfractal.core.common.EventBus;
+import com.nextbreakpoint.nextfractal.core.event.EditorLoadFileRequested;
+import com.nextbreakpoint.nextfractal.core.event.HistorySessionAdded;
+import com.nextbreakpoint.nextfractal.core.event.RenderErrorChanged;
+import com.nextbreakpoint.nextfractal.core.event.RenderStatusChanged;
+import com.nextbreakpoint.nextfractal.core.event.SessionDataChanged;
+import com.nextbreakpoint.nextfractal.core.event.SessionErrorChanged;
+import com.nextbreakpoint.nextfractal.core.event.SessionStatusChanged;
 import com.nextbreakpoint.nextfractal.core.javafx.BooleanObservableValue;
 import com.nextbreakpoint.nextfractal.core.javafx.StringObservableValue;
 import com.nextbreakpoint.nextfractal.core.render.RendererGraphicsContext;
@@ -196,11 +203,11 @@ public class RenderPane extends BorderPane {
 		
 		errorProperty.addListener((observable, oldValue, newValue) -> {
 			errors.setVisible(newValue != null);
-			eventBus.postEvent("render-error-changed", newValue);
+			eventBus.postEvent(RenderErrorChanged.class.getSimpleName(), RenderErrorChanged.builder().error(newValue).build());
 		});
 
 		statusProperty.addListener((observable, oldValue, newValue) -> {
-			eventBus.postEvent("render-status-changed", newValue);
+			eventBus.postEvent(RenderStatusChanged.class.getSimpleName(), RenderStatusChanged.builder().status(newValue).build());
 		});
 
 		Block<ContextFreeMetadata, Exception> updateUI = data -> {};
@@ -210,7 +217,7 @@ public class RenderPane extends BorderPane {
 //		});
 
 		stackPane.setOnDragDropped(e -> e.getDragboard().getFiles().stream().findFirst()
-			.ifPresent(file -> eventBus.postEvent("editor-load-file", file)));
+			.ifPresent(file -> eventBus.postEvent(EditorLoadFileRequested.class.getSimpleName(), EditorLoadFileRequested.builder().file(file).build())));
 
 		stackPane.setOnDragOver(x -> Optional.of(x).filter(e -> e.getGestureSource() != stackPane)
 			.filter(e -> e.getDragboard().hasFiles()).ifPresent(e -> e.acceptTransferModes(TransferMode.COPY_OR_MOVE)));
@@ -254,11 +261,11 @@ public class RenderPane extends BorderPane {
 		});
 
 		eventBus.subscribe("render-status-changed", event -> {
-			eventBus.postEvent("session-status-changed", event);
+			eventBus.postEvent(SessionStatusChanged.class.getSimpleName(), SessionStatusChanged.builder().status((String) event[0]).build());
 		});
 
 		eventBus.subscribe("render-error-changed", event -> {
-			eventBus.postEvent("session-error-changed", event);
+			eventBus.postEvent(SessionErrorChanged.class.getSimpleName(), SessionErrorChanged.builder().error((String) event[0]).build());
 		});
 
 		eventBus.subscribe("session-terminated", event -> dispose());
@@ -278,9 +285,9 @@ public class RenderPane extends BorderPane {
 	}
 
 	private void notifySessionChanged(EventBus eventBus, ContextFreeSession newSession, boolean continuous, boolean timeAnimation, boolean historyAppend) {
-		eventBus.postEvent("session-data-changed", newSession, continuous, timeAnimation, false);
+		eventBus.postEvent(SessionDataChanged.class.getSimpleName(), SessionDataChanged.builder().session(newSession).continuous(continuous).timeAnimation(timeAnimation).build());
 		if (historyAppend) {
-			eventBus.postEvent("history-add-session", newSession);
+			eventBus.postEvent(HistorySessionAdded.class.getSimpleName(), HistorySessionAdded.builder().session(newSession).build());
 		}
 	}
 
