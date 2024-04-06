@@ -203,11 +203,11 @@ public class RenderPane extends BorderPane {
 		
 		errorProperty.addListener((observable, oldValue, newValue) -> {
 			errors.setVisible(newValue != null);
-			eventBus.postEvent(RenderErrorChanged.class.getSimpleName(), RenderErrorChanged.builder().error(newValue).build());
+			eventBus.postEvent(RenderErrorChanged.builder().error(newValue).build());
 		});
 
 		statusProperty.addListener((observable, oldValue, newValue) -> {
-			eventBus.postEvent(RenderStatusChanged.class.getSimpleName(), RenderStatusChanged.builder().status(newValue).build());
+			eventBus.postEvent(RenderStatusChanged.builder().status(newValue).build());
 		});
 
 		Block<ContextFreeMetadata, Exception> updateUI = data -> {};
@@ -217,7 +217,7 @@ public class RenderPane extends BorderPane {
 //		});
 
 		stackPane.setOnDragDropped(e -> e.getDragboard().getFiles().stream().findFirst()
-			.ifPresent(file -> eventBus.postEvent(EditorLoadFileRequested.class.getSimpleName(), EditorLoadFileRequested.builder().file(file).build())));
+			.ifPresent(file -> eventBus.postEvent(EditorLoadFileRequested.builder().file(file).build())));
 
 		stackPane.setOnDragOver(x -> Optional.of(x).filter(e -> e.getGestureSource() != stackPane)
 			.filter(e -> e.getDragboard().hasFiles()).ifPresent(e -> e.acceptTransferModes(TransferMode.COPY_OR_MOVE)));
@@ -261,11 +261,11 @@ public class RenderPane extends BorderPane {
 		});
 
 		eventBus.subscribe("render-status-changed", event -> {
-			eventBus.postEvent(SessionStatusChanged.class.getSimpleName(), SessionStatusChanged.builder().status((String) event[0]).build());
+			eventBus.postEvent(SessionStatusChanged.builder().status((String) event[0]).build());
 		});
 
 		eventBus.subscribe("render-error-changed", event -> {
-			eventBus.postEvent(SessionErrorChanged.class.getSimpleName(), SessionErrorChanged.builder().error((String) event[0]).build());
+			eventBus.postEvent(SessionErrorChanged.builder().error((String) event[0]).build());
 		});
 
 		eventBus.subscribe("session-terminated", event -> dispose());
@@ -285,9 +285,9 @@ public class RenderPane extends BorderPane {
 	}
 
 	private void notifySessionChanged(EventBus eventBus, ContextFreeSession newSession, boolean continuous, boolean timeAnimation, boolean historyAppend) {
-		eventBus.postEvent(SessionDataChanged.class.getSimpleName(), SessionDataChanged.builder().session(newSession).continuous(continuous).timeAnimation(timeAnimation).build());
+		eventBus.postEvent(SessionDataChanged.builder().session(newSession).continuous(continuous).timeAnimation(timeAnimation).build());
 		if (historyAppend) {
-			eventBus.postEvent(HistorySessionAdded.class.getSimpleName(), HistorySessionAdded.builder().session(newSession).build());
+			eventBus.postEvent(HistorySessionAdded.builder().session(newSession).build());
 		}
 	}
 

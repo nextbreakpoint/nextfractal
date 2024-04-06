@@ -315,19 +315,19 @@ public class RenderPane extends BorderPane {
 			@Override
 			public void setPoint(MandelbrotMetadata metadata, boolean continuous, boolean appendHistory) {
 				final MandelbrotSession newSession = new MandelbrotSession(mandelbrotSession.getScript(), metadata);
-				eventBus.postEvent(RenderPointChanged.class.getSimpleName(), RenderPointChanged.builder().session(newSession).continuous(continuous).timeAnimation(appendHistory).build());
+				eventBus.postEvent(RenderPointChanged.builder().session(newSession).continuous(continuous).timeAnimation(appendHistory).build());
 			}
 
 			@Override
 			public void setView(MandelbrotMetadata metadata, boolean continuous, boolean appendHistory) {
 				final MandelbrotSession newSession = new MandelbrotSession(mandelbrotSession.getScript(), metadata);
-				eventBus.postEvent(RenderDataChanged.class.getSimpleName(), RenderDataChanged.builder().session(newSession).continuous(continuous).timeAnimation(appendHistory).build());
+				eventBus.postEvent(RenderDataChanged.builder().session(newSession).continuous(continuous).timeAnimation(appendHistory).build());
 			}
 
 			@Override
 			public void setTime(MandelbrotMetadata metadata, boolean continuous, boolean appendHistory) {
 				final MandelbrotSession newSession = new MandelbrotSession(mandelbrotSession.getScript(), metadata);
-				eventBus.postEvent(RenderTimeChanged.class.getSimpleName(), RenderTimeChanged.builder().session(newSession).continuous(continuous).timeAnimation(appendHistory).build());
+				eventBus.postEvent(RenderTimeChanged.builder().session(newSession).continuous(continuous).timeAnimation(appendHistory).build());
 			}
 		};
 
@@ -345,7 +345,7 @@ public class RenderPane extends BorderPane {
 		
 		controls.setOnMousePressed(e -> {
 			fadeOut(toolsTransition, x -> {});
-			eventBus.postEvent(HideControlsFired.class.getSimpleName(), HideControlsFired.builder().hide(true).build());
+			eventBus.postEvent(HideControlsFired.builder().hide(true).build());
 			if (currentTool != null) {
 				currentTool.pressed(e);
 			}
@@ -353,7 +353,7 @@ public class RenderPane extends BorderPane {
 		
 		controls.setOnMouseReleased(e -> {
 			fadeIn(toolsTransition, x -> {});
-			eventBus.postEvent(HideControlsFired.class.getSimpleName(), HideControlsFired.builder().hide(false).build());
+			eventBus.postEvent(HideControlsFired.builder().hide(false).build());
 			if (currentTool != null) {
 				currentTool.released(e);
 			}
@@ -406,19 +406,19 @@ public class RenderPane extends BorderPane {
 				case T: {
 					showTrapsProperty.setValue(!showTrapsProperty.getValue());
 					final MandelbrotSession newSession = new MandelbrotSession(mandelbrotSession.getScript(), createMetadataWithOptions());
-					eventBus.postEvent(RenderDataChanged.class.getSimpleName(), RenderDataChanged.builder().session(newSession).continuous(false).timeAnimation(true).build());
+					eventBus.postEvent(RenderDataChanged.builder().session(newSession).continuous(false).timeAnimation(true).build());
 					break;
 				}
 				case O: {
 					showOrbitProperty.setValue(!showOrbitProperty.getValue());
 					final MandelbrotSession newSession = new MandelbrotSession(mandelbrotSession.getScript(), createMetadataWithOptions());
-					eventBus.postEvent(RenderDataChanged.class.getSimpleName(), RenderDataChanged.builder().session(newSession).continuous(false).timeAnimation(true).build());
+					eventBus.postEvent(RenderDataChanged.builder().session(newSession).continuous(false).timeAnimation(true).build());
 					break;
 				}
 				case P: {
 					showPreviewProperty.setValue(!showPreviewProperty.getValue());
 					final MandelbrotSession newSession = new MandelbrotSession(mandelbrotSession.getScript(), createMetadataWithOptions());
-					eventBus.postEvent(RenderDataChanged.class.getSimpleName(), RenderDataChanged.builder().session(newSession).continuous(false).timeAnimation(true).build());
+					eventBus.postEvent(RenderDataChanged.builder().session(newSession).continuous(false).timeAnimation(true).build());
 					break;
 				}
 			}
@@ -453,7 +453,7 @@ public class RenderPane extends BorderPane {
 			currentTool = new ToolZoom(context, true);
 			showPreviewProperty.setValue(false);
 			final MandelbrotSession newSession = new MandelbrotSession(mandelbrotSession.getScript(), createMetadataWithOptions());
-			eventBus.postEvent(RenderDataChanged.class.getSimpleName(), RenderDataChanged.builder().session(newSession).continuous(false).timeAnimation(appendToHistory).build());
+			eventBus.postEvent(RenderDataChanged.builder().session(newSession).continuous(false).timeAnimation(appendToHistory).build());
 		});
 		
 		zoomoutButton.setOnAction(e -> {
@@ -461,7 +461,7 @@ public class RenderPane extends BorderPane {
 			currentTool = new ToolZoom(context, false);
 			showPreviewProperty.setValue(false);
 			final MandelbrotSession newSession = new MandelbrotSession(mandelbrotSession.getScript(), createMetadataWithOptions());
-			eventBus.postEvent(RenderDataChanged.class.getSimpleName(), RenderDataChanged.builder().session(newSession).continuous(false).timeAnimation(appendToHistory).build());
+			eventBus.postEvent(RenderDataChanged.builder().session(newSession).continuous(false).timeAnimation(appendToHistory).build());
 		});
 		
 		moveButton.setOnAction(e -> {
@@ -469,7 +469,7 @@ public class RenderPane extends BorderPane {
 			currentTool = new ToolMove(context);
 			showPreviewProperty.setValue(false);
 			final MandelbrotSession newSession = new MandelbrotSession(mandelbrotSession.getScript(), createMetadataWithOptions());
-			eventBus.postEvent(RenderDataChanged.class.getSimpleName(), RenderDataChanged.builder().session(newSession).continuous(false).timeAnimation(appendToHistory).build());
+			eventBus.postEvent(RenderDataChanged.builder().session(newSession).continuous(false).timeAnimation(appendToHistory).build());
 		});
 		
 		rotateButton.setOnAction(e -> {
@@ -477,7 +477,7 @@ public class RenderPane extends BorderPane {
 			currentTool = new ToolRotate(context);
 			showPreviewProperty.setValue(false);
 			final MandelbrotSession newSession = new MandelbrotSession(mandelbrotSession.getScript(), createMetadataWithOptions());
-			eventBus.postEvent(RenderDataChanged.class.getSimpleName(), RenderDataChanged.builder().session(newSession).continuous(false).timeAnimation(appendToHistory).build());
+			eventBus.postEvent(RenderDataChanged.builder().session(newSession).continuous(false).timeAnimation(appendToHistory).build());
 		});
 		
 		pickButton.setOnAction(e -> {
@@ -487,7 +487,7 @@ public class RenderPane extends BorderPane {
 			MandelbrotMetadata metadata = (MandelbrotMetadata) mandelbrotSession.getMetadata();
 			MandelbrotMetadata newMetadata = new MandelbrotMetadata(metadata.getTranslation(), metadata.getRotation(), metadata.getScale(), metadata.getPoint(), metadata.getTime(), false, createMandelbrotOptions(metadata));
 			final MandelbrotSession newSession = new MandelbrotSession(mandelbrotSession.getScript(), newMetadata);
-			eventBus.postEvent(RenderDataChanged.class.getSimpleName(), RenderDataChanged.builder().session(newSession).continuous(false).timeAnimation(appendToHistory).build());
+			eventBus.postEvent(RenderDataChanged.builder().session(newSession).continuous(false).timeAnimation(appendToHistory).build());
 			juliaProperty.setValue(false);
 		});
 
@@ -506,7 +506,7 @@ public class RenderPane extends BorderPane {
 //			if (!hasError) {
                 showOrbitProperty.setValue(!showOrbitProperty.getValue());
 				final MandelbrotSession newSession = new MandelbrotSession(mandelbrotSession.getScript(), createMetadataWithOptions());
-				eventBus.postEvent(RenderDataChanged.class.getSimpleName(), RenderDataChanged.builder().session(newSession).continuous(false).timeAnimation(true).build());
+				eventBus.postEvent(RenderDataChanged.builder().session(newSession).continuous(false).timeAnimation(true).build());
 //            }
 		});
 
@@ -515,18 +515,18 @@ public class RenderPane extends BorderPane {
 		captureButton.setOnAction(e -> {
 			captureProperty.setValue(captureButton.isSelected());
 			if (captureProperty.getValue()) {
-				eventBus.postEvent(CaptureSessionActionFired.class.getSimpleName(), CaptureSessionActionFired.builder().action("start").build());
+				eventBus.postEvent(CaptureSessionActionFired.builder().action("start").build());
 			} else {
-				eventBus.postEvent(CaptureSessionActionFired.class.getSimpleName(), CaptureSessionActionFired.builder().action("stop").build());
+				eventBus.postEvent(CaptureSessionActionFired.builder().action("stop").build());
 			}
 		});
 
 		timeButton.setOnAction(e -> {
 			timeProperty.setValue(timeButton.isSelected());
 			if (timeProperty.getValue()) {
-				eventBus.postEvent(TimeAnimationActionFired.class.getSimpleName(), TimeAnimationActionFired.builder().action("start").build());
+				eventBus.postEvent(TimeAnimationActionFired.builder().action("start").build());
 			} else {
-				eventBus.postEvent(TimeAnimationActionFired.class.getSimpleName(), TimeAnimationActionFired.builder().action("stop").build());
+				eventBus.postEvent(TimeAnimationActionFired.builder().action("stop").build());
 			}
 		});
 
@@ -584,11 +584,11 @@ public class RenderPane extends BorderPane {
 		
 		errorProperty.addListener((observable, oldValue, newValue) -> {
 			errors.setVisible(newValue != null);
-			eventBus.postEvent(RenderErrorChanged.class.getSimpleName(), RenderErrorChanged.builder().error(newValue).build());
+			eventBus.postEvent(RenderErrorChanged.builder().error(newValue).build());
 		});
 
 		statusProperty.addListener((observable, oldValue, newValue) -> {
-			eventBus.postEvent(RenderStatusChanged.class.getSimpleName(), RenderStatusChanged.builder().status(newValue).build());
+			eventBus.postEvent(RenderStatusChanged.builder().status(newValue).build());
 		});
 
 //		Block<MandelbrotMetadata, Exception> updateJulia = metadata -> {
@@ -606,7 +606,7 @@ public class RenderPane extends BorderPane {
 		});
 
 		stackPane.setOnDragDropped(e -> e.getDragboard().getFiles().stream().findFirst()
-			.ifPresent(file -> eventBus.postEvent(EditorLoadFileRequested.class.getSimpleName(), EditorLoadFileRequested.builder().file(file).build())));
+			.ifPresent(file -> eventBus.postEvent(EditorLoadFileRequested.builder().file(file).build())));
 
 		stackPane.setOnDragOver(x -> Optional.of(x).filter(e -> e.getGestureSource() != stackPane)
 			.filter(e -> e.getDragboard().hasFiles()).ifPresent(e -> e.acceptTransferModes(TransferMode.COPY_OR_MOVE)));
@@ -686,11 +686,11 @@ public class RenderPane extends BorderPane {
 		});
 
 		eventBus.subscribe("render-status-changed", event -> {
-			eventBus.postEvent(SessionStatusChanged.class.getSimpleName(), SessionStatusChanged.builder().status((String) event[0]).build());
+			eventBus.postEvent(SessionStatusChanged.builder().status((String) event[0]).build());
 		});
 
 		eventBus.subscribe("render-error-changed", event -> {
-			eventBus.postEvent(SessionErrorChanged.class.getSimpleName(), SessionErrorChanged.builder().error((String) event[0]).build());
+			eventBus.postEvent(SessionErrorChanged.builder().error((String) event[0]).build());
 		});
 
 		eventBus.subscribe("session-terminated", event -> dispose());
@@ -706,11 +706,11 @@ public class RenderPane extends BorderPane {
 	}
 
 	private void startTimeAnimation(PlatformEventBus eventBus) {
-		eventBus.postEvent(HistorySessionAdded.class.getSimpleName(), HistorySessionAdded.builder().session(mandelbrotSession).build());
+		eventBus.postEvent(HistorySessionAdded.builder().session(mandelbrotSession).build());
 	}
 
 	private void stopTimeAnimation(PlatformEventBus eventBus) {
-		eventBus.postEvent(HistorySessionAdded.class.getSimpleName(), HistorySessionAdded.builder().session(mandelbrotSession).build());
+		eventBus.postEvent(HistorySessionAdded.builder().session(mandelbrotSession).build());
 	}
 
 //	private void updateTime(EventBus eventBus, double seconds) {
@@ -735,9 +735,9 @@ public class RenderPane extends BorderPane {
 	}
 
 	private void notifySessionChanged(PlatformEventBus eventBus, MandelbrotSession newSession, boolean continuous, boolean timeAnimation, boolean historyAppend) {
-        eventBus.postEvent(SessionDataChanged.class.getSimpleName(), SessionDataChanged.builder().session(newSession).continuous(continuous).timeAnimation(timeAnimation).build());
+        eventBus.postEvent(SessionDataChanged.builder().session(newSession).continuous(continuous).timeAnimation(timeAnimation).build());
 		if (historyAppend) {
-			eventBus.postEvent(HistorySessionAdded.class.getSimpleName(), HistorySessionAdded.builder().session(newSession).build());
+			eventBus.postEvent(HistorySessionAdded.builder().session(newSession).build());
 		}
     }
 
@@ -827,7 +827,7 @@ public class RenderPane extends BorderPane {
 		double[] scale = {1, 1, 1, 1};
 		MandelbrotMetadata newMetadata = new MandelbrotMetadata(translation, rotation, scale, metadata.getPoint().toArray(), metadata.getTime(), metadata.isJulia(), metadata.getOptions());
 		final MandelbrotSession newSession = new MandelbrotSession(mandelbrotSession.getScript(), newMetadata);
-		eventBus.postEvent(RenderDataChanged.class.getSimpleName(), RenderDataChanged.builder().session(newSession).continuous(false).timeAnimation(true).build());
+		eventBus.postEvent(RenderDataChanged.builder().session(newSession).continuous(false).timeAnimation(true).build());
 	}
 
 	//TODO move to strategy class
@@ -931,11 +931,11 @@ public class RenderPane extends BorderPane {
 		if (!julia && metadata.isJulia()) {
 			MandelbrotMetadata newMetadata = new MandelbrotMetadata(metadata.getTranslation(), metadata.getRotation(), metadata.getScale(), metadata.getPoint(), metadata.getTime(), false, metadata.getOptions());
 			final MandelbrotSession newSession = new MandelbrotSession(mandelbrotSession.getScript(), newMetadata);
-			eventBus.postEvent(RenderDataChanged.class.getSimpleName(), RenderDataChanged.builder().session(newSession).continuous(false).timeAnimation(true).build());
+			eventBus.postEvent(RenderDataChanged.builder().session(newSession).continuous(false).timeAnimation(true).build());
 		} else if (julia && !metadata.isJulia()) {
 			MandelbrotMetadata newMetadata = new MandelbrotMetadata(metadata.getTranslation(), metadata.getRotation(), metadata.getScale(), metadata.getPoint(), metadata.getTime(), true, metadata.getOptions());
 			final MandelbrotSession newSession = new MandelbrotSession(mandelbrotSession.getScript(), newMetadata);
-			eventBus.postEvent(RenderDataChanged.class.getSimpleName(), RenderDataChanged.builder().session(newSession).continuous(false).timeAnimation(true).build());
+			eventBus.postEvent(RenderDataChanged.builder().session(newSession).continuous(false).timeAnimation(true).build());
 		}
 	}
 

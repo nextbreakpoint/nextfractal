@@ -98,7 +98,7 @@ public class ParamsPane extends Pane {
 			String seed = seedField.getText();
 			ContextFreeMetadata newMetadata = new ContextFreeMetadata(seed);
 			ContextFreeSession newSession = new ContextFreeSession(contextFreeSession.getScript(), newMetadata);
-			eventBus.postEvent(EditorDataChanged.class.getSimpleName(), EditorDataChanged.builder().session(newSession).continuous(false).timeAnimation(true).build());
+			eventBus.postEvent(EditorDataChanged.builder().session(newSession).continuous(false).timeAnimation(true).build());
 			return null;
 		};
 

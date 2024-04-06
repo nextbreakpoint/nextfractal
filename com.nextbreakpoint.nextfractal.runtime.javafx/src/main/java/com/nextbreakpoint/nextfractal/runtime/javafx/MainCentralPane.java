@@ -73,7 +73,7 @@ public class MainCentralPane extends BorderPane {
             @Override
             public void playbackStopped() {
                 final var event = PlaybackStopped.builder().build();
-                eventBus.postEvent(PlaybackStopped.class.getSimpleName(), event);
+                eventBus.postEvent(event);
             }
 
             @Override
@@ -83,7 +83,7 @@ public class MainCentralPane extends BorderPane {
                         .continuous(continuous)
                         .timeAnimation(timeAnimation)
                         .build();
-                eventBus.postEvent(PlaybackDataLoaded.class.getSimpleName(), event);
+                eventBus.postEvent(event);
             }
 
             @Override
@@ -93,25 +93,25 @@ public class MainCentralPane extends BorderPane {
                         .continuous(continuous)
                         .timeAnimation(timeAnimation)
                         .build();
-                eventBus.postEvent(PlaybackDataChanged.class.getSimpleName(), event);
+                eventBus.postEvent(event);
             }
         });
 
 		browsePane.setDelegate(new BrowseDelegate() {
 			@Override
 			public void didSelectFile(BrowsePane source, File file) {
-				eventBus.postEvent(EditorLoadFileRequested.class.getSimpleName(), EditorLoadFileRequested.builder().file(file).build());
-                eventBus.postEvent(ToggleBrowserRequested.class.getSimpleName(), ToggleBrowserRequested.builder().build());
+				eventBus.postEvent(EditorLoadFileRequested.builder().file(file).build());
+                eventBus.postEvent(ToggleBrowserRequested.builder().build());
 			}
 
             @Override
             public void didDeleteFiles(List<File> files) {
-                eventBus.postEvent(EditorDeleteFilesRequested.class.getSimpleName(), EditorDeleteFilesRequested.builder().files(files).build());
+                eventBus.postEvent(EditorDeleteFilesRequested.builder().files(files).build());
             }
 
             @Override
 			public void didClose(BrowsePane source) {
-                eventBus.postEvent(ToggleBrowserRequested.class.getSimpleName(), ToggleBrowserRequested.builder().build());
+                eventBus.postEvent(ToggleBrowserRequested.builder().build());
 			}
 
 			@Override
@@ -199,7 +199,7 @@ public class MainCentralPane extends BorderPane {
             recordingPane.stop();
         });
 
-        Platform.runLater(() -> eventBus.postEvent(WorkspaceChanged.class.getSimpleName(), WorkspaceChanged.builder().file(browsePane.getCurrentSourceFolder()).build()));
+        Platform.runLater(() -> eventBus.postEvent(WorkspaceChanged.builder().file(browsePane.getCurrentSourceFolder()).build()));
     }
 
     private void handleHideControls(FadeTransition transition, Boolean hide) {

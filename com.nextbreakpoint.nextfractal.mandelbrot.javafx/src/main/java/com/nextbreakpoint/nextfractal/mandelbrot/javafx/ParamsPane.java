@@ -217,7 +217,7 @@ public class ParamsPane extends Pane {
 			boolean julia = !algorithmCombobox.getSelectionModel().getSelectedItem().equals("Mandelbrot");
 			MandelbrotMetadata newMetadata = new MandelbrotMetadata(translation, rotation, scale, point, time, julia, metadata.getOptions());
 			MandelbrotSession newSession = new MandelbrotSession(mandelbrotSession.getScript(), newMetadata);
-			eventBus.postEvent(EditorDataChanged.class.getSimpleName(), EditorDataChanged.builder().session(newSession).continuous(false).timeAnimation(true).build());
+			eventBus.postEvent(EditorDataChanged.builder().session(newSession).continuous(false).timeAnimation(true).build());
 			return null;
 		};
 
@@ -235,7 +235,7 @@ public class ParamsPane extends Pane {
 			translation[0] = value;
 			MandelbrotMetadata newMetadata = new MandelbrotMetadata(new Double4D(translation), metadata.getRotation(), metadata.getScale(), metadata.getPoint(), metadata.getTime(), metadata.isJulia(), metadata.getOptions());
 			final MandelbrotSession newSession = new MandelbrotSession(mandelbrotSession.getScript(), newMetadata);
-			eventBus.postEvent(EditorDataChanged.class.getSimpleName(), EditorDataChanged.builder().session(newSession).continuous(false).timeAnimation(true).build());
+			eventBus.postEvent(EditorDataChanged.builder().session(newSession).continuous(false).timeAnimation(true).build());
 		});
 		
 		yTraslationField.setOnAction(e -> {
@@ -245,7 +245,7 @@ public class ParamsPane extends Pane {
 			translation[1] = value;
 			MandelbrotMetadata newMetadata = new MandelbrotMetadata(new Double4D(translation), metadata.getRotation(), metadata.getScale(), metadata.getPoint(), metadata.getTime(), metadata.isJulia(), metadata.getOptions());
 			final MandelbrotSession newSession = new MandelbrotSession(mandelbrotSession.getScript(), newMetadata);
-			eventBus.postEvent(EditorDataChanged.class.getSimpleName(), EditorDataChanged.builder().session(newSession).continuous(false).timeAnimation(true).build());
+			eventBus.postEvent(EditorDataChanged.builder().session(newSession).continuous(false).timeAnimation(true).build());
 		});
 		
 		zTraslationField.setOnAction(e -> {
@@ -255,7 +255,7 @@ public class ParamsPane extends Pane {
 			translation[2] = value;
 			MandelbrotMetadata newMetadata = new MandelbrotMetadata(new Double4D(translation), metadata.getRotation(), metadata.getScale(), metadata.getPoint(), metadata.getTime(), metadata.isJulia(), metadata.getOptions());
 			final MandelbrotSession newSession = new MandelbrotSession(mandelbrotSession.getScript(), newMetadata);
-			eventBus.postEvent(EditorDataChanged.class.getSimpleName(), EditorDataChanged.builder().session(newSession).continuous(false).timeAnimation(true).build());
+			eventBus.postEvent(EditorDataChanged.builder().session(newSession).continuous(false).timeAnimation(true).build());
 		});
 		
 		zRotationField.setOnAction(e -> {
@@ -265,7 +265,7 @@ public class ParamsPane extends Pane {
 			rotation[2] = value;
 			MandelbrotMetadata newMetadata = new MandelbrotMetadata(metadata.getTranslation(), new Double4D(rotation), metadata.getScale(), metadata.getPoint(), metadata.getTime(), metadata.isJulia(), metadata.getOptions());
 			final MandelbrotSession newSession = new MandelbrotSession(mandelbrotSession.getScript(), newMetadata);
-			eventBus.postEvent(EditorDataChanged.class.getSimpleName(), EditorDataChanged.builder().session(newSession).continuous(false).timeAnimation(true).build());
+			eventBus.postEvent(EditorDataChanged.builder().session(newSession).continuous(false).timeAnimation(true).build());
 		});
 		
 		wReField.setOnAction(e -> {
@@ -275,7 +275,7 @@ public class ParamsPane extends Pane {
 			point[0] = value;
 			MandelbrotMetadata newMetadata = new MandelbrotMetadata(metadata.getTranslation(), metadata.getRotation(), metadata.getScale(), new Double2D(point), metadata.getTime(), metadata.isJulia(), metadata.getOptions());
 			final MandelbrotSession newSession = new MandelbrotSession(mandelbrotSession.getScript(), newMetadata);
-			eventBus.postEvent(EditorDataChanged.class.getSimpleName(), EditorDataChanged.builder().session(newSession).continuous(false).timeAnimation(true).build());
+			eventBus.postEvent(EditorDataChanged.builder().session(newSession).continuous(false).timeAnimation(true).build());
 		});
 		
 		wImField.setOnAction(e -> {
@@ -285,7 +285,7 @@ public class ParamsPane extends Pane {
 			point[1] = value;
 			MandelbrotMetadata newMetadata = new MandelbrotMetadata(metadata.getTranslation(), metadata.getRotation(), metadata.getScale(), new Double2D(point), metadata.getTime(), metadata.isJulia(), metadata.getOptions());
 			final MandelbrotSession newSession = new MandelbrotSession(mandelbrotSession.getScript(), newMetadata);
-			eventBus.postEvent(EditorDataChanged.class.getSimpleName(), EditorDataChanged.builder().session(newSession).continuous(false).timeAnimation(true).build());
+			eventBus.postEvent(EditorDataChanged.builder().session(newSession).continuous(false).timeAnimation(true).build());
 		});
 
 		timeValueField.setOnAction(e -> {
@@ -294,7 +294,7 @@ public class ParamsPane extends Pane {
 			double scale = metadata.getTime().getScale();
 			MandelbrotMetadata newMetadata = new MandelbrotMetadata(metadata.getTranslation(), metadata.getRotation(), metadata.getScale(), metadata.getPoint(), new Time(value, scale), metadata.isJulia(), metadata.getOptions());
 			final MandelbrotSession newSession = new MandelbrotSession(mandelbrotSession.getScript(), newMetadata);
-			eventBus.postEvent(EditorDataChanged.class.getSimpleName(), EditorDataChanged.builder().session(newSession).continuous(false).timeAnimation(true).build());
+			eventBus.postEvent(EditorDataChanged.builder().session(newSession).continuous(false).timeAnimation(true).build());
 		});
 
 		timeScaleField.setOnAction(e -> {
@@ -303,7 +303,7 @@ public class ParamsPane extends Pane {
 			double value = metadata.getTime().getValue();
 			MandelbrotMetadata newMetadata = new MandelbrotMetadata(metadata.getTranslation(), metadata.getRotation(), metadata.getScale(), metadata.getPoint(), new Time(value, scale), metadata.isJulia(), metadata.getOptions());
 			final MandelbrotSession newSession = new MandelbrotSession(mandelbrotSession.getScript(), newMetadata);
-			eventBus.postEvent(EditorDataChanged.class.getSimpleName(), EditorDataChanged.builder().session(newSession).continuous(false).timeAnimation(true).build());
+			eventBus.postEvent(EditorDataChanged.builder().session(newSession).continuous(false).timeAnimation(true).build());
 		});
 
 		algorithmCombobox.setOnAction(e -> {
@@ -313,11 +313,11 @@ public class ParamsPane extends Pane {
 			if (isMandelbrotAlgorithm && isJuliaView) {
 				MandelbrotMetadata newMetadata = new MandelbrotMetadata(metadata.getTranslation(), metadata.getRotation(), metadata.getScale(), metadata.getPoint(), metadata.getTime(), false, metadata.getOptions());
 				final MandelbrotSession newSession = new MandelbrotSession(mandelbrotSession.getScript(), newMetadata);
-				eventBus.postEvent(EditorDataChanged.class.getSimpleName(), EditorDataChanged.builder().session(newSession).continuous(false).timeAnimation(true).build());
+				eventBus.postEvent(EditorDataChanged.builder().session(newSession).continuous(false).timeAnimation(true).build());
 			} else if (!isMandelbrotAlgorithm && !isJuliaView) {
 				MandelbrotMetadata newMetadata = new MandelbrotMetadata(metadata.getTranslation(), metadata.getRotation(), metadata.getScale(), metadata.getPoint(), metadata.getTime(), true, metadata.getOptions());
 				final MandelbrotSession newSession = new MandelbrotSession(mandelbrotSession.getScript(), newMetadata);
-				eventBus.postEvent(EditorDataChanged.class.getSimpleName(), EditorDataChanged.builder().session(newSession).continuous(false).timeAnimation(true).build());
+				eventBus.postEvent(EditorDataChanged.builder().session(newSession).continuous(false).timeAnimation(true).build());
 			}
 		});
 	}

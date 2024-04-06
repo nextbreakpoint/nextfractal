@@ -114,9 +114,9 @@ public class MainParamsPane extends Pane {
 			scrollPane.setPrefHeight(newValue.doubleValue());
 		});
 
-		cancelButton.setOnAction(e -> eventBus.postEvent(EditorParamsActionFired.class.getSimpleName(), EditorParamsActionFired.builder().action("cancel").build()));
+		cancelButton.setOnAction(e -> eventBus.postEvent(EditorParamsActionFired.builder().action("cancel").build()));
 		
-		applyButton.setOnAction((e) -> eventBus.postEvent(EditorParamsActionFired.class.getSimpleName(), EditorParamsActionFired.builder().action("apply").build()));
+		applyButton.setOnAction((e) -> eventBus.postEvent(EditorParamsActionFired.builder().action("apply").build()));
 
 		eventBus.subscribe("session-data-loaded", event -> handleSessionChanged(eventBus, (Session) event[0], (boolean) event[1], (boolean) event[2], this::createParamsPane, paramsPane::setCenter));
 
@@ -127,7 +127,7 @@ public class MainParamsPane extends Pane {
 
 		grammarCombobox.setOnAction(e -> {
 			if (session != null && !grammarCombobox.getSelectionModel().isEmpty() && !grammarCombobox.getSelectionModel().getSelectedItem().equals(session.getGrammar())) {
-				eventBus.postEvent(EditorGrammarSelected.class.getSimpleName(), EditorGrammarSelected.builder().grammar(grammarCombobox.getSelectionModel().getSelectedItem()).build());
+				eventBus.postEvent(EditorGrammarSelected.builder().grammar(grammarCombobox.getSelectionModel().getSelectedItem()).build());
 			}
 		});
 	}

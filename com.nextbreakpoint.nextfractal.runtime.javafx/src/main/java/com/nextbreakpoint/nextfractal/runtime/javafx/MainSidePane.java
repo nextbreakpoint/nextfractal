@@ -33,7 +33,6 @@ import com.nextbreakpoint.nextfractal.core.event.CaptureClipRemoved;
 import com.nextbreakpoint.nextfractal.core.event.CaptureClipRestored;
 import com.nextbreakpoint.nextfractal.core.event.CaptureSessionActionFired;
 import com.nextbreakpoint.nextfractal.core.event.EditorActionFired;
-import com.nextbreakpoint.nextfractal.core.event.EditorParamsActionFired;
 import com.nextbreakpoint.nextfractal.core.event.EditorParamsChanged;
 import com.nextbreakpoint.nextfractal.core.event.ExportSessionResumed;
 import com.nextbreakpoint.nextfractal.core.event.ExportSessionStopped;
@@ -161,11 +160,11 @@ public class MainSidePane extends BorderPane {
         sourcePane.getChildren().add(sourceButtons);
         sourcePane.getChildren().add(statusPane);
         sourcePane.getChildren().add(sidebarPane);
-        browseButton.setOnAction(e -> eventBus.postEvent(ToggleBrowserRequested.class.getSimpleName(), ToggleBrowserRequested.builder().build()));
-        storeButton.setOnAction(e -> eventBus.postEvent(EditorActionFired.class.getSimpleName(), EditorActionFired.builder().action("store").build()));
-        renderButton.setOnAction(e -> eventBus.postEvent(EditorActionFired.class.getSimpleName(), EditorActionFired.builder().action("reload").build()));
-        loadButton.setOnAction(e -> eventBus.postEvent(EditorActionFired.class.getSimpleName(), EditorActionFired.builder().action("load").build()));
-        saveButton.setOnAction(e -> eventBus.postEvent(EditorActionFired.class.getSimpleName(), EditorActionFired.builder().action("save").build()));
+        browseButton.setOnAction(e -> eventBus.postEvent(ToggleBrowserRequested.builder().build()));
+        storeButton.setOnAction(e -> eventBus.postEvent(EditorActionFired.builder().action("store").build()));
+        renderButton.setOnAction(e -> eventBus.postEvent(EditorActionFired.builder().action("reload").build()));
+        loadButton.setOnAction(e -> eventBus.postEvent(EditorActionFired.builder().action("load").build()));
+        saveButton.setOnAction(e -> eventBus.postEvent(EditorActionFired.builder().action("save").build()));
 
         final TranslateTransition sidebarTransition = createTranslateTransition(sidebarPane);
         final TranslateTransition statusTransition = createTranslateTransition(statusPane);
@@ -296,70 +295,70 @@ public class MainSidePane extends BorderPane {
             @Override
             public void createSession(RendererSize size, String format) {
                 if (errorProperty.getValue() == null) {
-                    eventBus.postEvent(SessionExportRequested.class.getSimpleName(), SessionExportRequested.builder().size(size).format(format).build());
+                    eventBus.postEvent(SessionExportRequested.builder().size(size).format(format).build());
                 }
             }
 
             @Override
             public void startCaptureSession() {
                 if (errorProperty.getValue() == null) {
-                    eventBus.postEvent(CaptureSessionActionFired.class.getSimpleName(), CaptureSessionActionFired.builder().action("start").build());
+                    eventBus.postEvent(CaptureSessionActionFired.builder().action("start").build());
                 }
             }
 
             @Override
             public void stopCaptureSession() {
                 if (errorProperty.getValue() == null) {
-                    eventBus.postEvent(CaptureSessionActionFired.class.getSimpleName(), CaptureSessionActionFired.builder().action("stop").build());
+                    eventBus.postEvent(CaptureSessionActionFired.builder().action("stop").build());
                 }
             }
 
             @Override
             public void playbackStart(List<Clip> clips) {
                 if (errorProperty.getValue() == null) {
-                    eventBus.postEvent(PlaybackStarted.class.getSimpleName(), PlaybackStarted.builder().clips(clips).build());
+                    eventBus.postEvent(PlaybackStarted.builder().clips(clips).build());
                 }
             }
 
             @Override
             public void captureSessionAdded(Clip clip) {
-                eventBus.postEvent(CaptureClipAdded.class.getSimpleName(), CaptureClipAdded.builder().clip(clip).build());
+                eventBus.postEvent(CaptureClipAdded.builder().clip(clip).build());
             }
 
             @Override
             public void captureSessionRemoved(Clip clip) {
-                eventBus.postEvent(CaptureClipRemoved.class.getSimpleName(), CaptureClipRemoved.builder().clip(clip).build());
+                eventBus.postEvent(CaptureClipRemoved.builder().clip(clip).build());
             }
 
             @Override
             public void captureSessionRestored(Clip clip) {
-                eventBus.postEvent(CaptureClipRestored.class.getSimpleName(), CaptureClipRestored.builder().clip(clip).build());
+                eventBus.postEvent(CaptureClipRestored.builder().clip(clip).build());
             }
 
             @Override
             public void captureSessionMoved(int fromIndex, int toIndex) {
-                eventBus.postEvent(CaptureClipMoved.class.getSimpleName(), CaptureClipMoved.builder().fromIndex(fromIndex).toIndex(toIndex).build());
+                eventBus.postEvent(CaptureClipMoved.builder().fromIndex(fromIndex).toIndex(toIndex).build());
             }
         });
 
         jobsPane.setDelegate(new JobsDelegate() {
             @Override
             public void sessionSuspended(ExportSession session) {
-                eventBus.postEvent(ExportSessionSuspended.class.getSimpleName(), ExportSessionSuspended.builder().session(session).build());
+                eventBus.postEvent(ExportSessionSuspended.builder().session(session).build());
             }
 
             @Override
             public void sessionResumed(ExportSession session) {
-                eventBus.postEvent(ExportSessionResumed.class.getSimpleName(), ExportSessionResumed.builder().session(session).build());
+                eventBus.postEvent(ExportSessionResumed.builder().session(session).build());
             }
 
             @Override
             public void sessionStopped(ExportSession session) {
-                eventBus.postEvent(ExportSessionStopped.class.getSimpleName(), ExportSessionStopped.builder().session(session).build());
+                eventBus.postEvent(ExportSessionStopped.builder().session(session).build());
             }
         });
 
-        historyPane.setDelegate(session -> eventBus.postEvent(HistorySessionSelected.class.getSimpleName(), HistorySessionSelected.builder().session(session).build()));
+        historyPane.setDelegate(session -> eventBus.postEvent(HistorySessionSelected.builder().session(session).build()));
 
         eventBus.subscribe("session-status-changed", event -> statusPane.setMessage((String) event[0]));
 
@@ -407,19 +406,19 @@ public class MainSidePane extends BorderPane {
 //        eventBus.enable();
         rootPane.setDisable(false);
         //TODO move to coordinator class
-        eventBus.postEvent(SessionDataLoaded.class.getSimpleName(), SessionDataLoaded.builder().session(session).continuous(false).timeAnimation(false).build());
+        eventBus.postEvent(SessionDataLoaded.builder().session(session).continuous(false).timeAnimation(false).build());
     }
 
     private void notifyHistoryItemSelected(EventBus eventBus, Session session) {
         //TODO move to coordinator class
-        eventBus.postEvent(SessionDataLoaded.class.getSimpleName(), SessionDataLoaded.builder().session(session).continuous(false).timeAnimation(false).build());
+        eventBus.postEvent(SessionDataLoaded.builder().session(session).continuous(false).timeAnimation(false).build());
     }
 
     private void handleDataChanged(EventBus eventBus, StringObservableValue errorProperty, Session session, boolean continuous) {
         errorProperty.setValue(null);
         //TODO move to coordinator class
         if (!continuous) {
-            eventBus.postEvent(EditorParamsChanged.class.getSimpleName(), EditorParamsChanged.builder().session(session).build());
+            eventBus.postEvent(EditorParamsChanged.builder().session(session).build());
         }
     }
 

@@ -86,7 +86,9 @@ public abstract class EventBus {
         }
     }
 
-    public abstract void postEvent(String channel, Object... event);
+    public abstract void oldPostEvent(String channel, Object... event);
+
+    public abstract void postEvent(Object event);
 
     protected final void processEvent(String channel, Exception error, Object... event) {
         logger.log(Level.FINE, "Dispatch event to bus: " + name + ", channel: " + channel);
