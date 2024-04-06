@@ -27,6 +27,9 @@ package com.nextbreakpoint.nextfractal.runtime.javafx;
 import com.nextbreakpoint.Try;
 import com.nextbreakpoint.nextfractal.core.common.EventBus;
 import com.nextbreakpoint.nextfractal.core.common.Session;
+import com.nextbreakpoint.nextfractal.core.event.PlaybackDataLoaded;
+import com.nextbreakpoint.nextfractal.core.event.SessionDataLoaded;
+import com.nextbreakpoint.nextfractal.core.event.SessionTerminated;
 import com.nextbreakpoint.nextfractal.core.javafx.PlatformEventBus;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
@@ -53,12 +56,12 @@ public class MainRenderPane extends BorderPane {
     public MainRenderPane(PlatformEventBus eventBus, int width, int height) {
         final BiFunction<PlatformEventBus, Session, Pane> factory = (innerBus, session) -> createRootPane(innerBus, session, width, height);
 
-        eventBus.subscribe("session-data-loaded", event -> handleSessionChanged(eventBus, (Session) event[0], (Boolean) event[1], (Boolean) event[2], factory, this::setCenter));
+        eventBus.subscribe(SessionDataLoaded.class.getSimpleName(), event -> handleSessionChanged(eventBus, ((SessionDataLoaded) event[0]).session(), ((SessionDataLoaded) event[0]).continuous(), ((SessionDataLoaded) event[0]).timeAnimation(), factory, this::setCenter));
 
-        eventBus.subscribe("playback-data-load", event -> handleSessionChanged(eventBus, (Session) event[0], (Boolean) event[1], (Boolean) event[2], factory, this::setCenter));
+        eventBus.subscribe(PlaybackDataLoaded.class.getSimpleName(), event -> handleSessionChanged(eventBus, ((PlaybackDataLoaded) event[0]).session(), ((PlaybackDataLoaded) event[0]).continuous(), ((PlaybackDataLoaded) event[0]).timeAnimation(), factory, this::setCenter));
 
-        eventBus.subscribe("session-terminated", event -> buses.clear());
-        eventBus.subscribe("session-terminated", event -> panels.clear());
+        eventBus.subscribe(SessionTerminated.class.getSimpleName(), event -> buses.clear());
+        eventBus.subscribe(SessionTerminated.class.getSimpleName(), event -> panels.clear());
     }
 
     private void handleSessionChanged(PlatformEventBus eventBus, Session session, boolean continuous, boolean timeAnimation, BiFunction<PlatformEventBus, Session, Pane> factory, Consumer<Pane> consumer) {

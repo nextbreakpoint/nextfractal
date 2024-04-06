@@ -28,6 +28,8 @@ import com.nextbreakpoint.nextfractal.core.common.EventBus;
 import com.nextbreakpoint.nextfractal.core.common.Session;
 import com.nextbreakpoint.nextfractal.core.event.EditorParamsActionFired;
 import com.nextbreakpoint.nextfractal.core.event.EditorGrammarSelected;
+import com.nextbreakpoint.nextfractal.core.event.SessionDataLoaded;
+import com.nextbreakpoint.nextfractal.core.event.SessionTerminated;
 import com.nextbreakpoint.nextfractal.core.javafx.PlatformEventBus;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -118,12 +120,12 @@ public class MainParamsPane extends Pane {
 		
 		applyButton.setOnAction((e) -> eventBus.postEvent(EditorParamsActionFired.builder().action("apply").build()));
 
-		eventBus.subscribe("session-data-loaded", event -> handleSessionChanged(eventBus, (Session) event[0], (boolean) event[1], (boolean) event[2], this::createParamsPane, paramsPane::setCenter));
+		eventBus.subscribe(SessionDataLoaded.class.getSimpleName(), event -> handleSessionChanged(eventBus, ((SessionDataLoaded) event[0]).session(), ((SessionDataLoaded) event[0]).continuous(), ((SessionDataLoaded) event[0]).timeAnimation(), this::createParamsPane, paramsPane::setCenter));
 
-		eventBus.subscribe("session-data-loaded", event -> grammarCombobox.getSelectionModel().select(((Session)event[0]).getGrammar()));
+		eventBus.subscribe(SessionDataLoaded.class.getSimpleName(), event -> grammarCombobox.getSelectionModel().select(((SessionDataLoaded) event[0]).session().getGrammar()));
 
-		eventBus.subscribe("session-terminated", event -> buses.clear());
-		eventBus.subscribe("session-terminated", event -> panels.clear());
+		eventBus.subscribe(SessionTerminated.class.getSimpleName(), event -> buses.clear());
+		eventBus.subscribe(SessionTerminated.class.getSimpleName(), event -> panels.clear());
 
 		grammarCombobox.setOnAction(e -> {
 			if (session != null && !grammarCombobox.getSelectionModel().isEmpty() && !grammarCombobox.getSelectionModel().getSelectedItem().equals(session.getGrammar())) {

@@ -28,43 +28,34 @@ import com.nextbreakpoint.Try;
 import com.nextbreakpoint.nextfractal.core.common.Bundle;
 import com.nextbreakpoint.nextfractal.core.common.Clip;
 import com.nextbreakpoint.nextfractal.core.common.CoreFactory;
-import com.nextbreakpoint.nextfractal.core.common.Plugins;
+import com.nextbreakpoint.nextfractal.core.common.DefaultThreadFactory;
 import com.nextbreakpoint.nextfractal.core.common.FileManager;
+import com.nextbreakpoint.nextfractal.core.common.Plugins;
 import com.nextbreakpoint.nextfractal.core.common.Session;
 import com.nextbreakpoint.nextfractal.core.encode.Encoder;
 import com.nextbreakpoint.nextfractal.core.event.CaptureClipAdded;
 import com.nextbreakpoint.nextfractal.core.event.CaptureClipMoved;
 import com.nextbreakpoint.nextfractal.core.event.CaptureClipRemoved;
 import com.nextbreakpoint.nextfractal.core.event.CaptureClipRestored;
-import com.nextbreakpoint.nextfractal.core.event.CaptureSessionStarted;
-import com.nextbreakpoint.nextfractal.core.event.CaptureSessionStopped;
 import com.nextbreakpoint.nextfractal.core.event.CaptureClipsLoaded;
 import com.nextbreakpoint.nextfractal.core.event.CaptureClipsMerged;
 import com.nextbreakpoint.nextfractal.core.event.CaptureSessionActionFired;
+import com.nextbreakpoint.nextfractal.core.event.CaptureSessionStarted;
+import com.nextbreakpoint.nextfractal.core.event.CaptureSessionStopped;
 import com.nextbreakpoint.nextfractal.core.event.CurrentFileChanged;
 import com.nextbreakpoint.nextfractal.core.event.EditorActionFired;
-import com.nextbreakpoint.nextfractal.core.event.EditorDataChanged;
-import com.nextbreakpoint.nextfractal.core.event.EditorParamsActionFired;
 import com.nextbreakpoint.nextfractal.core.event.EditorDeleteFilesRequested;
 import com.nextbreakpoint.nextfractal.core.event.EditorGrammarSelected;
 import com.nextbreakpoint.nextfractal.core.event.EditorLoadFileRequested;
-import com.nextbreakpoint.nextfractal.core.event.EditorParamsChanged;
-import com.nextbreakpoint.nextfractal.core.event.EditorReportChanged;
 import com.nextbreakpoint.nextfractal.core.event.EditorSaveFileRequested;
-import com.nextbreakpoint.nextfractal.core.event.EditorSourceChanged;
 import com.nextbreakpoint.nextfractal.core.event.EditorStoreFileRequested;
 import com.nextbreakpoint.nextfractal.core.event.ExportSessionCreated;
 import com.nextbreakpoint.nextfractal.core.event.ExportSessionResumed;
 import com.nextbreakpoint.nextfractal.core.event.ExportSessionStateChanged;
 import com.nextbreakpoint.nextfractal.core.event.ExportSessionStopped;
 import com.nextbreakpoint.nextfractal.core.event.ExportSessionSuspended;
-import com.nextbreakpoint.nextfractal.core.event.HideControlsFired;
 import com.nextbreakpoint.nextfractal.core.event.HistorySessionAdded;
 import com.nextbreakpoint.nextfractal.core.event.HistorySessionSelected;
-import com.nextbreakpoint.nextfractal.core.event.PlaybackDataChanged;
-import com.nextbreakpoint.nextfractal.core.event.PlaybackDataLoaded;
-import com.nextbreakpoint.nextfractal.core.event.PlaybackStarted;
-import com.nextbreakpoint.nextfractal.core.event.PlaybackStopped;
 import com.nextbreakpoint.nextfractal.core.event.RenderDataChanged;
 import com.nextbreakpoint.nextfractal.core.event.RenderErrorChanged;
 import com.nextbreakpoint.nextfractal.core.event.RenderPointChanged;
@@ -75,11 +66,8 @@ import com.nextbreakpoint.nextfractal.core.event.SessionDataChanged;
 import com.nextbreakpoint.nextfractal.core.event.SessionDataLoaded;
 import com.nextbreakpoint.nextfractal.core.event.SessionErrorChanged;
 import com.nextbreakpoint.nextfractal.core.event.SessionExportRequested;
-import com.nextbreakpoint.nextfractal.core.event.SessionReportChanged;
 import com.nextbreakpoint.nextfractal.core.event.SessionStatusChanged;
 import com.nextbreakpoint.nextfractal.core.event.SessionTerminated;
-import com.nextbreakpoint.nextfractal.core.event.TimeAnimationActionFired;
-import com.nextbreakpoint.nextfractal.core.event.ToggleBrowserRequested;
 import com.nextbreakpoint.nextfractal.core.event.WorkspaceChanged;
 import com.nextbreakpoint.nextfractal.core.export.ExportRenderer;
 import com.nextbreakpoint.nextfractal.core.export.ExportService;
@@ -87,7 +75,6 @@ import com.nextbreakpoint.nextfractal.core.export.ExportSession;
 import com.nextbreakpoint.nextfractal.core.javafx.PlatformEventBus;
 import com.nextbreakpoint.nextfractal.core.javafx.UIPlugins;
 import com.nextbreakpoint.nextfractal.core.render.RendererSize;
-import com.nextbreakpoint.nextfractal.core.common.DefaultThreadFactory;
 import com.nextbreakpoint.nextfractal.runtime.export.ExportServiceDelegate;
 import com.nextbreakpoint.nextfractal.runtime.export.SimpleExportRenderer;
 import javafx.application.Application;
@@ -97,8 +84,8 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
 import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -194,53 +181,50 @@ public class NextFractalApp extends Application {
         final ExportRenderer exportRenderer = new SimpleExportRenderer(createThreadFactory("Export Renderer"));
         final ExportService exportService = new SimpleExportService(delegate, createThreadFactory("Export Service"), exportRenderer);
 
-//		eventBus.register("editor-grammar-changed", new EditorGrammarChangedValidator());
+        eventBus.subscribe(EditorGrammarSelected.class.getSimpleName(), event -> tryFindFactoryByGrammar(((EditorGrammarSelected) event[0]).grammar()).ifPresent(factory -> createSession(eventBus, factory)));
 
-        eventBus.subscribe("editor-grammar-changed", event -> tryFindFactoryByGrammar((String) event[0]).ifPresent(factory -> createSession(eventBus, factory)));
+        eventBus.subscribe(SessionDataChanged.class.getSimpleName(), event -> session = ((SessionDataChanged) event[0]).session());
+        eventBus.subscribe(SessionDataChanged.class.getSimpleName(), event -> handleSessionChanged(((SessionDataChanged) event[0]).session()));
 
-        eventBus.subscribe("session-data-changed", event -> session = (Session) event[0]);
+        eventBus.subscribe(SessionTerminated.class.getSimpleName(), event -> handleSessionTerminate(exportService));
 
-        eventBus.subscribe("session-data-changed", event -> handleSessionChanged((Session) event[0]));
+        eventBus.subscribe(ExportSessionCreated.class.getSimpleName(), event -> handleExportSessionCreated(exportService, ((ExportSessionCreated) event[0]).session()));
 
-        eventBus.subscribe("session-terminated", event -> handleSessionTerminate(exportService));
+        eventBus.subscribe(ExportSessionStopped.class.getSimpleName(), event -> handleExportSessionStopped(exportService, ((ExportSessionCreated) event[0]).session()));
 
-        eventBus.subscribe("export-session-created", event -> handleExportSessionCreated(exportService, (ExportSession) event[0]));
+        eventBus.subscribe(ExportSessionResumed.class.getSimpleName(), event -> handleExportSessionResumed(exportService, ((ExportSessionCreated) event[0]).session()));
 
-        eventBus.subscribe("export-session-stopped", event -> handleExportSessionStopped(exportService, (ExportSession) event[0]));
+        eventBus.subscribe(ExportSessionSuspended.class.getSimpleName(), event -> handleExportSessionSuspended(exportService, ((ExportSessionCreated) event[0]).session()));
 
-        eventBus.subscribe("export-session-resumed", event -> handleExportSessionResumed(exportService, (ExportSession) event[0]));
+        eventBus.subscribe(EditorLoadFileRequested.class.getSimpleName(), event -> handleLoadFile(eventBus, ((EditorLoadFileRequested) event[0]).file()));
 
-        eventBus.subscribe("export-session-suspended", event -> handleExportSessionSuspended(exportService, (ExportSession) event[0]));
+        eventBus.subscribe(EditorSaveFileRequested.class.getSimpleName(), event -> handleSaveFile(eventBus, ((EditorSaveFileRequested) event[0]).file()));
 
-        eventBus.subscribe("editor-load-file", event -> handleLoadFile(eventBus, (File) event[0]));
+        eventBus.subscribe(EditorStoreFileRequested.class.getSimpleName(), event -> handleStoreFile(eventBus, ((EditorStoreFileRequested) event[0]).file()));
 
-        eventBus.subscribe("editor-save-file", event -> handleSaveFile(eventBus, (File) event[0]));
+        eventBus.subscribe(EditorDeleteFilesRequested.class.getSimpleName(), event -> handleDeleteFiles(((EditorDeleteFilesRequested) event[0]).files()));
 
-        eventBus.subscribe("editor-store-file", event -> handleStoreFile(eventBus, (File) event[0]));
+        eventBus.subscribe(SessionErrorChanged.class.getSimpleName(), event -> handleErrorChanged(((SessionErrorChanged) event[0]).error()));
 
-        eventBus.subscribe("editor-delete-files", event -> handleDeleteFiles((List<File>) event[0]));
+        eventBus.subscribe(CaptureSessionActionFired.class.getSimpleName(), event -> handleCaptureSession(eventBus, ((CaptureSessionActionFired) event[0]).action()));
 
-        eventBus.subscribe("session-error-changed", event -> handleErrorChanged((String) event[0]));
+        eventBus.subscribe(CaptureClipRestored.class.getSimpleName(), event -> handleClipRestored(((CaptureClipRestored) event[0]).clip()));
 
-        eventBus.subscribe("capture-session", event -> handleCaptureSession(eventBus, (String) event[0]));
+        eventBus.subscribe(CaptureClipRemoved.class.getSimpleName(), event -> handleClipRemoved(((CaptureClipRemoved) event[0]).clip()));
 
-        eventBus.subscribe("capture-clip-restored", event -> handleClipRestored((Clip) event[0]));
+        eventBus.subscribe(CaptureClipAdded.class.getSimpleName(), event -> handleClipAdded(((CaptureClipAdded) event[0]).clip()));
 
-        eventBus.subscribe("capture-clip-removed", event -> handleClipRemoved((Clip) event[0]));
+        eventBus.subscribe(CaptureClipMoved.class.getSimpleName(), event -> handleClipMoved(((CaptureClipMoved) event[0]).fromIndex(), ((CaptureClipMoved) event[0]).toIndex()));
 
-        eventBus.subscribe("capture-clip-added", event -> handleClipAdded((Clip) event[0]));
+        eventBus.subscribe(SessionBundleLoaded.class.getSimpleName(), event -> handleBundleLoaded(eventBus, ((SessionBundleLoaded) event[0]).bundle(), ((SessionBundleLoaded) event[0]).continuous(), ((SessionBundleLoaded) event[0]).timeAnimation()));
 
-        eventBus.subscribe("capture-clip-moved", event -> handleClipMoved((int) event[0], (int) event[1]));
+        eventBus.subscribe(SessionExportRequested.class.getSimpleName(), event -> handleExportSession(eventBus, primaryStage, ((SessionExportRequested) event[0]).format(), session, clips, file -> exportCurrentFile = file, ((SessionExportRequested) event[0]).size()));
 
-        eventBus.subscribe("session-bundle-loaded", event -> handleBundleLoaded(eventBus, (Bundle) event[0], (boolean) event[1], (boolean) event[2]));
+        eventBus.subscribe(CurrentFileChanged.class.getSimpleName(), event -> bundleCurrentFile = ((CurrentFileChanged) event[0]).file());
 
-        eventBus.subscribe("session-export", event -> handleExportSession(eventBus, primaryStage, (String) event[1], session, clips, file -> exportCurrentFile = file, (RendererSize) event[0]));
+        eventBus.subscribe(EditorActionFired.class.getSimpleName(), event -> handleEditorAction(eventBus, primaryStage, ((EditorActionFired) event[0]).action()));
 
-        eventBus.subscribe("current-file-changed", event -> bundleCurrentFile = (File) event[0]);
-
-        eventBus.subscribe("editor-action", event -> handleEditorAction(eventBus, primaryStage, (String) event[0]));
-
-        eventBus.subscribe("workspace-changed", event -> workspace = (File) event[0]);
+        eventBus.subscribe(WorkspaceChanged.class.getSimpleName(), event -> workspace = ((WorkspaceChanged) event[0]).file());
 
         final Pane mainPane = createMainPane(eventBus, editorWidth, renderWidth, renderWidth);
 
@@ -268,57 +252,6 @@ public class NextFractalApp extends Application {
             final String defaultPluginId = System.getProperty("initialPluginId", DEFAULT_PLUGIN_ID);
             tryFindFactory(defaultPluginId).ifPresent(factory -> createSession(eventBus, factory));
         });
-
-        //TODO remove after replacing subscribers
-        eventBus.subscribe(SessionTerminated.class.getSimpleName(), event -> eventBus.oldPostEvent("session-terminated", ""));
-        eventBus.subscribe(HideControlsFired.class.getSimpleName(), event -> eventBus.oldPostEvent("hide-controls", ((HideControlsFired) event[0]).hide()));
-        eventBus.subscribe(TimeAnimationActionFired.class.getSimpleName(), event -> eventBus.oldPostEvent("time-animation", ((TimeAnimationActionFired) event[0]).action()));
-        eventBus.subscribe(CurrentFileChanged.class.getSimpleName(), event -> eventBus.oldPostEvent("current-file-changed", ((CurrentFileChanged) event[0]).file()));
-        eventBus.subscribe(PlaybackStarted.class.getSimpleName(), event -> eventBus.oldPostEvent("playback-clips-start", ((PlaybackStarted) event[0]).clips()));
-        eventBus.subscribe(PlaybackStopped.class.getSimpleName(), event -> eventBus.oldPostEvent("playback-clips-stop", ""));
-        eventBus.subscribe(PlaybackDataLoaded.class.getSimpleName(), event -> eventBus.oldPostEvent("playback-data-load", ((PlaybackDataLoaded) event[0]).session(), ((PlaybackDataLoaded) event[0]).continuous(), ((PlaybackDataLoaded) event[0]).timeAnimation()));
-        eventBus.subscribe(PlaybackDataChanged.class.getSimpleName(), event -> eventBus.oldPostEvent("playback-data-change", ((PlaybackDataChanged) event[0]).session(), ((PlaybackDataChanged) event[0]).continuous(), ((PlaybackDataChanged) event[0]).timeAnimation()));
-        eventBus.subscribe(ToggleBrowserRequested.class.getSimpleName(), event -> eventBus.oldPostEvent("toggle-browser", ""));
-        eventBus.subscribe(WorkspaceChanged.class.getSimpleName(), event -> eventBus.oldPostEvent("workspace-changed", ((WorkspaceChanged) event[0]).file()));
-        eventBus.subscribe(EditorActionFired.class.getSimpleName(), event -> eventBus.oldPostEvent("editor-action", ((EditorActionFired) event[0]).action()));
-        eventBus.subscribe(EditorDataChanged.class.getSimpleName(), event -> eventBus.oldPostEvent("editor-data-changed", ((EditorDataChanged) event[0]).session(), ((EditorDataChanged) event[0]).continuous(), ((EditorDataChanged) event[0]).timeAnimation()));
-        eventBus.subscribe(EditorSourceChanged.class.getSimpleName(), event -> eventBus.oldPostEvent("editor-source-changed", ((EditorSourceChanged) event[0]).source()));
-        eventBus.subscribe(EditorReportChanged.class.getSimpleName(), event -> eventBus.oldPostEvent("editor-report-changed", ((EditorReportChanged) event[0]).report(), ((EditorReportChanged) event[0]).session(), ((EditorReportChanged) event[0]).continuous(), ((EditorReportChanged) event[0]).timeAnimation()));
-        eventBus.subscribe(EditorParamsChanged.class.getSimpleName(), event -> eventBus.oldPostEvent("editor-params-changed", ((EditorParamsChanged) event[0]).session()));
-        eventBus.subscribe(EditorGrammarSelected.class.getSimpleName(), event -> eventBus.oldPostEvent("editor-grammar-changed", ((EditorGrammarSelected) event[0]).grammar()));
-        eventBus.subscribe(EditorParamsActionFired.class.getSimpleName(), event -> eventBus.oldPostEvent("editor-params-action", ((EditorParamsActionFired) event[0]).action()));
-        eventBus.subscribe(SessionExportRequested.class.getSimpleName(), event -> eventBus.oldPostEvent("session-export", ((SessionExportRequested) event[0]).size(), ((SessionExportRequested) event[0]).format()));
-        eventBus.subscribe(SessionDataLoaded.class.getSimpleName(), event -> eventBus.oldPostEvent("session-data-loaded", ((SessionDataLoaded) event[0]).session(), ((SessionDataLoaded) event[0]).continuous(), ((SessionDataLoaded) event[0]).timeAnimation()));
-        eventBus.subscribe(SessionDataChanged.class.getSimpleName(), event -> eventBus.oldPostEvent("session-data-changed", ((SessionDataChanged) event[0]).session(), ((SessionDataChanged) event[0]).continuous(), ((SessionDataChanged) event[0]).timeAnimation()));
-        eventBus.subscribe(SessionBundleLoaded.class.getSimpleName(), event -> eventBus.oldPostEvent("session-bundle-loaded", ((SessionBundleLoaded) event[0]).bundle(), ((SessionBundleLoaded) event[0]).continuous(), ((SessionBundleLoaded) event[0]).timeAnimation()));
-        eventBus.subscribe(SessionErrorChanged.class.getSimpleName(), event -> eventBus.oldPostEvent("session-error-changed", ((SessionErrorChanged) event[0]).error()));
-        eventBus.subscribe(SessionStatusChanged.class.getSimpleName(), event -> eventBus.oldPostEvent("session-status-changed", ((SessionStatusChanged) event[0]).status()));
-        eventBus.subscribe(SessionReportChanged.class.getSimpleName(), event -> eventBus.oldPostEvent("session-report-changed", ((SessionReportChanged) event[0]).report(), ((SessionReportChanged) event[0]).session(), ((SessionReportChanged) event[0]).continuous(), ((SessionReportChanged) event[0]).timeAnimation()));
-        eventBus.subscribe(CaptureSessionActionFired.class.getSimpleName(), event -> eventBus.oldPostEvent("capture-session", ((CaptureSessionActionFired) event[0]).action()));
-        eventBus.subscribe(CaptureSessionStarted.class.getSimpleName(), event -> eventBus.oldPostEvent("capture-session-started", ((CaptureSessionStarted) event[0]).clip()));
-        eventBus.subscribe(CaptureSessionStopped.class.getSimpleName(), event -> eventBus.oldPostEvent("capture-session-stopped", ((CaptureSessionStopped) event[0]).clip()));
-        eventBus.subscribe(CaptureClipMoved.class.getSimpleName(), event -> eventBus.oldPostEvent("capture-clip-moved", ((CaptureClipMoved) event[0]).fromIndex(), ((CaptureClipMoved) event[0]).toIndex()));
-        eventBus.subscribe(CaptureClipAdded.class.getSimpleName(), event -> eventBus.oldPostEvent("capture-clip-added", ((CaptureClipAdded) event[0]).clip()));
-        eventBus.subscribe(CaptureClipRemoved.class.getSimpleName(), event -> eventBus.oldPostEvent("capture-clip-removed", ((CaptureClipRemoved) event[0]).clip()));
-        eventBus.subscribe(CaptureClipRestored.class.getSimpleName(), event -> eventBus.oldPostEvent("capture-clip-restored", ((CaptureClipRestored) event[0]).clip()));
-        eventBus.subscribe(CaptureClipsLoaded.class.getSimpleName(), event -> eventBus.oldPostEvent("capture-clips-loaded", ((CaptureClipsLoaded) event[0]).clips()));
-        eventBus.subscribe(CaptureClipsMerged.class.getSimpleName(), event -> eventBus.oldPostEvent("capture-clips-merged", ((CaptureClipsMerged) event[0]).clips()));
-        eventBus.subscribe(ExportSessionCreated.class.getSimpleName(), event -> eventBus.oldPostEvent("export-session-created", ((ExportSessionCreated) event[0]).session()));
-        eventBus.subscribe(ExportSessionStopped.class.getSimpleName(), event -> eventBus.oldPostEvent("export-session-stopped", ((ExportSessionStopped) event[0]).session()));
-        eventBus.subscribe(ExportSessionSuspended.class.getSimpleName(), event -> eventBus.oldPostEvent("export-session-suspended", ((ExportSessionSuspended) event[0]).session()));
-        eventBus.subscribe(ExportSessionResumed.class.getSimpleName(), event -> eventBus.oldPostEvent("export-session-resumed", ((ExportSessionResumed) event[0]).session()));
-        eventBus.subscribe(HistorySessionAdded.class.getSimpleName(), event -> eventBus.oldPostEvent("history-add-session", ((HistorySessionAdded) event[0]).session()));
-        eventBus.subscribe(HistorySessionSelected.class.getSimpleName(), event -> eventBus.oldPostEvent("history-session-selected", ((HistorySessionSelected) event[0]).session()));
-        eventBus.subscribe(ExportSessionStateChanged.class.getSimpleName(), event -> eventBus.oldPostEvent("export-session-state-changed", new Object[]{ ((ExportSessionStateChanged) event[0]).session(), ((ExportSessionStateChanged) event[0]).state(), ((ExportSessionStateChanged) event[0]).progress() }));
-        eventBus.subscribe(EditorLoadFileRequested.class.getSimpleName(), event -> eventBus.oldPostEvent("editor-load-file", ((EditorLoadFileRequested) event[0]).file()));
-        eventBus.subscribe(EditorSaveFileRequested.class.getSimpleName(), event -> eventBus.oldPostEvent("editor-save-file", ((EditorSaveFileRequested) event[0]).file()));
-        eventBus.subscribe(EditorStoreFileRequested.class.getSimpleName(), event -> eventBus.oldPostEvent("editor-store-file", ((EditorStoreFileRequested) event[0]).file()));
-        eventBus.subscribe(EditorDeleteFilesRequested.class.getSimpleName(), event -> eventBus.oldPostEvent("editor-delete-files", ((EditorDeleteFilesRequested) event[0]).files()));
-        eventBus.subscribe(RenderDataChanged.class.getSimpleName(), event -> eventBus.oldPostEvent("render-data-changed", ((RenderDataChanged) event[0]).session(), ((RenderDataChanged) event[0]).continuous(), ((RenderDataChanged) event[0]).timeAnimation()));
-        eventBus.subscribe(RenderTimeChanged.class.getSimpleName(), event -> eventBus.oldPostEvent("render-time-changed", ((RenderTimeChanged) event[0]).session(), ((RenderTimeChanged) event[0]).continuous(), ((RenderTimeChanged) event[0]).timeAnimation()));
-        eventBus.subscribe(RenderPointChanged.class.getSimpleName(), event -> eventBus.oldPostEvent("render-point-changed", ((RenderPointChanged) event[0]).session(), ((RenderPointChanged) event[0]).continuous(), ((RenderPointChanged) event[0]).timeAnimation()));
-        eventBus.subscribe(RenderErrorChanged.class.getSimpleName(), event -> eventBus.oldPostEvent("render-error-changed", ((RenderErrorChanged) event[0]).error()));
-        eventBus.subscribe(RenderStatusChanged.class.getSimpleName(), event -> eventBus.oldPostEvent("render-status-changed", ((RenderStatusChanged) event[0]).status()));
     }
 
     // TODO move to handler class

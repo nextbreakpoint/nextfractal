@@ -31,16 +31,30 @@ import com.nextbreakpoint.nextfractal.core.event.CaptureClipAdded;
 import com.nextbreakpoint.nextfractal.core.event.CaptureClipMoved;
 import com.nextbreakpoint.nextfractal.core.event.CaptureClipRemoved;
 import com.nextbreakpoint.nextfractal.core.event.CaptureClipRestored;
+import com.nextbreakpoint.nextfractal.core.event.CaptureClipsLoaded;
+import com.nextbreakpoint.nextfractal.core.event.CaptureClipsMerged;
 import com.nextbreakpoint.nextfractal.core.event.CaptureSessionActionFired;
+import com.nextbreakpoint.nextfractal.core.event.CaptureSessionStarted;
+import com.nextbreakpoint.nextfractal.core.event.CaptureSessionStopped;
 import com.nextbreakpoint.nextfractal.core.event.EditorActionFired;
 import com.nextbreakpoint.nextfractal.core.event.EditorParamsChanged;
+import com.nextbreakpoint.nextfractal.core.event.ExportSessionCreated;
 import com.nextbreakpoint.nextfractal.core.event.ExportSessionResumed;
+import com.nextbreakpoint.nextfractal.core.event.ExportSessionStateChanged;
 import com.nextbreakpoint.nextfractal.core.event.ExportSessionStopped;
 import com.nextbreakpoint.nextfractal.core.event.ExportSessionSuspended;
+import com.nextbreakpoint.nextfractal.core.event.HistorySessionAdded;
 import com.nextbreakpoint.nextfractal.core.event.HistorySessionSelected;
+import com.nextbreakpoint.nextfractal.core.event.PlaybackDataChanged;
+import com.nextbreakpoint.nextfractal.core.event.PlaybackDataLoaded;
 import com.nextbreakpoint.nextfractal.core.event.PlaybackStarted;
+import com.nextbreakpoint.nextfractal.core.event.PlaybackStopped;
+import com.nextbreakpoint.nextfractal.core.event.SessionDataChanged;
 import com.nextbreakpoint.nextfractal.core.event.SessionDataLoaded;
+import com.nextbreakpoint.nextfractal.core.event.SessionErrorChanged;
 import com.nextbreakpoint.nextfractal.core.event.SessionExportRequested;
+import com.nextbreakpoint.nextfractal.core.event.SessionStatusChanged;
+import com.nextbreakpoint.nextfractal.core.event.SessionTerminated;
 import com.nextbreakpoint.nextfractal.core.event.ToggleBrowserRequested;
 import com.nextbreakpoint.nextfractal.core.export.ExportSession;
 import com.nextbreakpoint.nextfractal.core.export.ExportState;
@@ -79,20 +93,20 @@ public class MainSidePane extends BorderPane {
         setCenter(createRootPane(eventBus));
 
         //TODO move to coordinator class
-        eventBus.subscribe("session-data-changed", event -> session = (Session) event[0]);
+        eventBus.subscribe(SessionDataChanged.class.getSimpleName(), event -> session = ((SessionDataChanged) event[0]).session());
 
         //TODO move to coordinator class
-        eventBus.subscribe("history-session-selected", event -> notifyHistoryItemSelected(eventBus, (Session)event[0]));
+        eventBus.subscribe(HistorySessionSelected.class.getSimpleName(), event -> notifyHistoryItemSelected(eventBus, ((HistorySessionSelected) event[0]).session()));
 
         //TODO move to coordinator class
-        eventBus.subscribe("playback-data-load", event -> session = (Session) event[0]);
+        eventBus.subscribe(PlaybackDataLoaded.class.getSimpleName(), event -> session = ((PlaybackDataLoaded) event[0]).session());
 
         //TODO move to coordinator class
-        eventBus.subscribe("playback-data-change", event -> session = (Session) event[0]);
+        eventBus.subscribe(PlaybackDataChanged.class.getSimpleName(), event -> session = ((PlaybackDataChanged) event[0]).session());
 
-        eventBus.subscribe("playback-clips-start", event -> handlePlaybackClipsStart(eventBus, this));
+        eventBus.subscribe(PlaybackStarted.class.getSimpleName(), event -> handlePlaybackClipsStart(eventBus, this));
 
-        eventBus.subscribe("playback-clips-stop", event -> handlePlaybackClipsStop(eventBus, this));
+        eventBus.subscribe(PlaybackStopped.class.getSimpleName(), event -> handlePlaybackClipsStop(eventBus, this));
     }
 
     private Pane createRootPane(PlatformEventBus eventBus) {
@@ -360,35 +374,34 @@ public class MainSidePane extends BorderPane {
 
         historyPane.setDelegate(session -> eventBus.postEvent(HistorySessionSelected.builder().session(session).build()));
 
-        eventBus.subscribe("session-status-changed", event -> statusPane.setMessage((String) event[0]));
+        eventBus.subscribe(SessionStatusChanged.class.getSimpleName(), event -> statusPane.setMessage(((SessionStatusChanged) event[0]).status()));
 
-        eventBus.subscribe("session-error-changed", event -> errorProperty.setValue((String) event[0]));
+        eventBus.subscribe(SessionErrorChanged.class.getSimpleName(), event -> errorProperty.setValue(((SessionErrorChanged) event[0]).error()));
 
-        eventBus.subscribe("history-add-session", event -> historyPane.appendSession((Session) event[0]));
+        eventBus.subscribe(HistorySessionAdded.class.getSimpleName(), event -> historyPane.appendSession(((HistorySessionAdded) event[0]).session()));
 
-        eventBus.subscribe("export-session-created", event -> jobsButton.setSelected(true));
+        eventBus.subscribe(ExportSessionCreated.class.getSimpleName(), event -> jobsButton.setSelected(true));
+        eventBus.subscribe(ExportSessionCreated.class.getSimpleName(), event -> jobsPane.appendSession(((ExportSessionCreated) event[0]).session()));
 
-        eventBus.subscribe("export-session-created", event -> jobsPane.appendSession((ExportSession)event[0]));
+        eventBus.subscribe(CaptureSessionStarted.class.getSimpleName(), event -> handleSessionStarted(exportPane, exportButton, ((CaptureSessionStarted) event[0]).clip()));
 
-        eventBus.subscribe("capture-session-started", event -> handleSessionStarted(exportPane, exportButton, (Clip) event[0]));
+        eventBus.subscribe(CaptureSessionStopped.class.getSimpleName(), event -> handleSessionStopped(exportPane, exportButton, ((CaptureSessionStopped) event[0]).clip()));
 
-        eventBus.subscribe("capture-session-stopped", event -> handleSessionStopped(exportPane, exportButton, (Clip) event[0]));
+        eventBus.subscribe(CaptureClipsLoaded.class.getSimpleName(), event -> exportPane.loadClips(((CaptureClipsLoaded) event[0]).clips()));
 
-        eventBus.subscribe("capture-clips-loaded", event -> exportPane.loadClips((List<Clip>) event[0]));
+        eventBus.subscribe(CaptureClipsMerged.class.getSimpleName(), event -> exportPane.mergeClips(((CaptureClipsMerged) event[0]).clips()));
 
-        eventBus.subscribe("capture-clips-merged", event -> exportPane.mergeClips((List<Clip>) event[0]));
+        eventBus.subscribe(SessionDataChanged.class.getSimpleName(), event -> handleDataChanged(eventBus, errorProperty, ((SessionDataChanged) event[0]).session(), ((SessionDataChanged) event[0]).continuous()));
 
-        eventBus.subscribe("session-data-changed", event -> handleDataChanged(eventBus, errorProperty, (Session) event[0], (Boolean) event[1]));
+        eventBus.subscribe(SessionTerminated.class.getSimpleName(), event -> jobsPane.dispose());
 
-        eventBus.subscribe("session-terminated", event -> jobsPane.dispose());
+        eventBus.subscribe(SessionTerminated.class.getSimpleName(), event -> historyPane.dispose());
 
-        eventBus.subscribe("session-terminated", event -> historyPane.dispose());
+        eventBus.subscribe(ExportSessionStateChanged.class.getSimpleName(), event -> handleExportSessionStateChanged(jobsPane, ((ExportSessionStateChanged) event[0]).session(), ((ExportSessionStateChanged) event[0]).state(), ((ExportSessionStateChanged) event[0]).progress()));
 
-        eventBus.subscribe("export-session-state-changed", event -> handleExportSessionStateChanged(jobsPane, (ExportSession) event[0], (ExportState) event[1], (Float) event[2]));
+        eventBus.subscribe(CaptureSessionStarted.class.getSimpleName(), event -> exportPane.setCaptureSelected(true));
 
-        eventBus.subscribe("capture-session-started", event -> exportPane.setCaptureSelected(true));
-
-        eventBus.subscribe("capture-session-stopped", event -> exportPane.setCaptureSelected(false));
+        eventBus.subscribe(CaptureSessionStopped.class.getSimpleName(), event -> exportPane.setCaptureSelected(false));
 
         return rootPane;
     }

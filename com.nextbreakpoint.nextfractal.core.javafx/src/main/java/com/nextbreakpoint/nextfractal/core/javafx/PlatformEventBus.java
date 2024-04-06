@@ -36,6 +36,7 @@ public class PlatformEventBus extends EventBus {
         super(name, parent);
     }
 
+    //TODO remove once subscribers have been updated
     @Override
     public void oldPostEvent(String channel, Object... event) {
         final Exception error = new Exception();

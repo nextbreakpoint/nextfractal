@@ -35,13 +35,20 @@ import com.nextbreakpoint.nextfractal.contextfree.dsl.grammar.CFDG;
 import com.nextbreakpoint.nextfractal.contextfree.renderer.RendererCoordinator;
 import com.nextbreakpoint.nextfractal.core.common.SourceError;
 import com.nextbreakpoint.nextfractal.core.common.EventBus;
+import com.nextbreakpoint.nextfractal.core.event.EditorDataChanged;
 import com.nextbreakpoint.nextfractal.core.event.EditorLoadFileRequested;
+import com.nextbreakpoint.nextfractal.core.event.EditorSourceChanged;
 import com.nextbreakpoint.nextfractal.core.event.HistorySessionAdded;
+import com.nextbreakpoint.nextfractal.core.event.PlaybackDataChanged;
+import com.nextbreakpoint.nextfractal.core.event.PlaybackDataLoaded;
+import com.nextbreakpoint.nextfractal.core.event.RenderDataChanged;
 import com.nextbreakpoint.nextfractal.core.event.RenderErrorChanged;
 import com.nextbreakpoint.nextfractal.core.event.RenderStatusChanged;
 import com.nextbreakpoint.nextfractal.core.event.SessionDataChanged;
 import com.nextbreakpoint.nextfractal.core.event.SessionErrorChanged;
+import com.nextbreakpoint.nextfractal.core.event.SessionReportChanged;
 import com.nextbreakpoint.nextfractal.core.event.SessionStatusChanged;
+import com.nextbreakpoint.nextfractal.core.event.SessionTerminated;
 import com.nextbreakpoint.nextfractal.core.javafx.BooleanObservableValue;
 import com.nextbreakpoint.nextfractal.core.javafx.StringObservableValue;
 import com.nextbreakpoint.nextfractal.core.render.RendererGraphicsContext;
@@ -224,57 +231,57 @@ public class RenderPane extends BorderPane {
 
 		runTimer(fractalCanvas, toolCanvas);
 
-		eventBus.subscribe("session-report-changed", event -> {
-			ParserResult report = (ParserResult) event[0];
+		eventBus.subscribe(SessionReportChanged.class.getSimpleName(), event -> {
+			ParserResult report = (ParserResult) ((SessionReportChanged) event[0]).report();
 			List<SourceError> lastErrors = updateReport(report);
-			if (lastErrors.size() == 0) {
-				ContextFreeSession newSession = (ContextFreeSession)event[1];
-				notifySessionChanged(eventBus, newSession, (Boolean)event[2], false, (Boolean)event[3]);
+			if (lastErrors.isEmpty()) {
+				ContextFreeSession newSession = (ContextFreeSession) ((SessionReportChanged) event[0]).session();
+				notifySessionChanged(eventBus, newSession, ((SessionReportChanged) event[0]).continuous(), false, ((SessionReportChanged) event[0]).timeAnimation());
 			}
 		});
 
-//		eventBus.subscribe("session-data-loaded", event -> loadData(event));
+//		eventBus.subscribe(SessionDataLoaded.class.getSimpleName(), event -> loadData((ContextFreeSession) ((SessionDataLoaded) event[0]).session()));
 
-		eventBus.subscribe("session-data-changed", event -> updateData((ContextFreeSession) event[0]));
+		eventBus.subscribe(SessionDataChanged.class.getSimpleName(), event -> updateData((ContextFreeSession) ((SessionDataChanged) event[0]).session()));
 
-		eventBus.subscribe("playback-data-load", event -> loadData((ContextFreeSession) event[0]));
+		eventBus.subscribe(PlaybackDataLoaded.class.getSimpleName(), event -> loadData((ContextFreeSession) ((PlaybackDataLoaded) event[0]).session()));
 
-		eventBus.subscribe("playback-data-change", event -> updateData((ContextFreeSession) event[0]));
+		eventBus.subscribe(PlaybackDataChanged.class.getSimpleName(), event -> updateData((ContextFreeSession) ((PlaybackDataChanged) event[0]).session()));
 
-		eventBus.subscribe("editor-source-changed", event -> {
-//			ContextFreeSession newSession = new ContextFreeSession((String) event[0], (ContextFreeMetadata) contextFreeSession.getMetadata());
+		eventBus.subscribe(EditorSourceChanged.class.getSimpleName(), event -> {
+//			ContextFreeSession newSession = new ContextFreeSession(((EditorSourceChanged) event[0]).source(), (ContextFreeMetadata) contextFreeSession.getMetadata());
 //			notifySessionChanged(eventBus, newSession, false, true);
         });
 
-		eventBus.subscribe("editor-data-changed", event -> {
-			ContextFreeSession newSession = (ContextFreeSession) event[0];
-			Boolean continuous = (Boolean) event[1];
-			Boolean appendHistory = (Boolean) event[2];
+		eventBus.subscribe(EditorDataChanged.class.getSimpleName(), event -> {
+			ContextFreeSession newSession = (ContextFreeSession) ((EditorDataChanged)event[0]).session();
+			boolean continuous = ((EditorDataChanged)event[0]).continuous();
+			boolean appendHistory = ((EditorDataChanged)event[0]).timeAnimation();
 			notifySessionChanged(eventBus, newSession, continuous, false, appendHistory && !continuous);
 		});
 
-		eventBus.subscribe("render-data-changed", event -> {
-			ContextFreeSession newSession = (ContextFreeSession) event[0];
-			Boolean continuous = (Boolean) event[1];
-			Boolean appendHistory = (Boolean) event[2];
+		eventBus.subscribe(RenderDataChanged.class.getSimpleName(), event -> {
+			ContextFreeSession newSession = (ContextFreeSession) ((RenderDataChanged) event[0]).session();
+			boolean continuous = ((RenderDataChanged) event[0]).continuous();
+			boolean appendHistory = ((RenderDataChanged) event[0]).timeAnimation();
 			notifySessionChanged(eventBus, newSession, continuous, false, appendHistory && !continuous);
 		});
 
-		eventBus.subscribe("render-status-changed", event -> {
-			eventBus.postEvent(SessionStatusChanged.builder().status((String) event[0]).build());
+		eventBus.subscribe(RenderStatusChanged.class.getSimpleName(), event -> {
+			eventBus.postEvent(SessionStatusChanged.builder().status(((RenderStatusChanged) event[0]).status()).build());
 		});
 
-		eventBus.subscribe("render-error-changed", event -> {
-			eventBus.postEvent(SessionErrorChanged.builder().error((String) event[0]).build());
+		eventBus.subscribe(RenderErrorChanged.class.getSimpleName(), event -> {
+			eventBus.postEvent(SessionErrorChanged.builder().error(((RenderErrorChanged) event[0]).error()).build());
 		});
 
-		eventBus.subscribe("session-terminated", event -> dispose());
+		eventBus.subscribe(SessionTerminated.class.getSimpleName(), event -> dispose());
 	}
 
 	private void loadData(ContextFreeSession session) {
-		Try.of(() -> generateReport(session.getScript())).filter(report -> ((ParserResult)report).getErrors().size() == 0).ifPresent(report -> {
+        Try.of(() -> generateReport(session.getScript())).filter(report -> ((ParserResult) report).getErrors().isEmpty()).ifPresent(report -> {
 			List<SourceError> errors = updateReport(report);
-			if (errors.size() == 0) {
+			if (errors.isEmpty()) {
 				updateData(session);
 			}
 		});

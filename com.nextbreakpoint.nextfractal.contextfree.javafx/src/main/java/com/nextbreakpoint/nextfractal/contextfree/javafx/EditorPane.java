@@ -30,13 +30,15 @@ import com.nextbreakpoint.nextfractal.contextfree.module.ContextFreeSession;
 import com.nextbreakpoint.nextfractal.contextfree.dsl.DSLParser;
 import com.nextbreakpoint.nextfractal.contextfree.dsl.ParserResult;
 import com.nextbreakpoint.nextfractal.contextfree.core.ParserException;
-import com.nextbreakpoint.nextfractal.core.common.Session;
 import com.nextbreakpoint.nextfractal.core.common.SourceError;
+import com.nextbreakpoint.nextfractal.core.event.EditorActionFired;
 import com.nextbreakpoint.nextfractal.core.event.EditorLoadFileRequested;
 import com.nextbreakpoint.nextfractal.core.event.EditorReportChanged;
 import com.nextbreakpoint.nextfractal.core.event.EditorSourceChanged;
+import com.nextbreakpoint.nextfractal.core.event.SessionDataChanged;
 import com.nextbreakpoint.nextfractal.core.event.SessionDataLoaded;
 import com.nextbreakpoint.nextfractal.core.event.SessionReportChanged;
+import com.nextbreakpoint.nextfractal.core.event.SessionTerminated;
 import com.nextbreakpoint.nextfractal.core.javafx.BooleanObservableValue;
 import com.nextbreakpoint.nextfractal.core.common.Block;
 import com.nextbreakpoint.nextfractal.core.common.DefaultThreadFactory;
@@ -113,12 +115,12 @@ public class EditorPane extends BorderPane {
         codeArea.setOnDragOver(e -> Optional.of(e).filter(q -> q.getGestureSource() != codeArea
             && q.getDragboard().hasFiles()).ifPresent(q -> q.acceptTransferModes(TransferMode.COPY_OR_MOVE)));
 
-        eventBus.subscribe("session-data-changed", event -> session = (ContextFreeSession) event[0]);
+        eventBus.subscribe(SessionDataChanged.class.getSimpleName(), event -> session = (ContextFreeSession) ((SessionDataChanged) event[0]).session());
 
-        eventBus.subscribe("session-data-loaded", event -> {
-            ContextFreeSession session = (ContextFreeSession) event[0];
+        eventBus.subscribe(SessionDataLoaded.class.getSimpleName(), event -> {
+            ContextFreeSession session = (ContextFreeSession) ((SessionDataLoaded) event[0]).session();
             updateSource(session.getScript()).ifPresent(result -> {
-                eventBus.postEvent(SessionReportChanged.builder().session((Session) event[0]).continuous((boolean) event[1]).timeAnimation((boolean) event[2]).report(result.report).build());
+                eventBus.postEvent(SessionReportChanged.builder().session(((SessionDataLoaded) event[0]).session()).continuous(((SessionDataLoaded) event[0]).continuous()).timeAnimation(((SessionDataLoaded) event[0]).timeAnimation()).report(result.report).build());
 //                eventBus.postEvent("session-data-changed", event);
 //                ContextFreeSession newSession = (ContextFreeSession) event[0];
 //                Boolean continuous = (Boolean) event[1];
@@ -129,21 +131,21 @@ public class EditorPane extends BorderPane {
             });
         });
 
-        eventBus.subscribe("editor-report-changed", event -> {
-            eventBus.postEvent(SessionReportChanged.builder().session((Session) event[1]).continuous((boolean) event[2]).timeAnimation((boolean) event[3]).report(event[0]).build());
-            notifySourceIfRequired(eventBus, (ParserResult)event[0]);
+        eventBus.subscribe(EditorReportChanged.class.getSimpleName(), event -> {
+            eventBus.postEvent(SessionReportChanged.builder().session(((EditorReportChanged) event[0]).session()).continuous(((EditorReportChanged) event[0]).continuous()).timeAnimation(((EditorReportChanged) event[0]).timeAnimation()).report(((EditorReportChanged) event[0]).report()).build());
+            notifySourceIfRequired(eventBus, (ParserResult) ((EditorReportChanged) event[0]).report());
         });
 
-//        eventBus.subscribe("editor-source-changed", event -> {
-//            ContextFreeSession newSession = new ContextFreeSession((String) event[0], (ContextFreeMetadata) session.getMetadata());
+//        eventBus.subscribe(EditorSourceChanged.class.getSimpleName(), event -> {
+//            ContextFreeSession newSession = new ContextFreeSession(((EditorSourceChanged) event[0]).source(), (ContextFreeMetadata) session.getMetadata());
 //            eventBus.postEvent("session-data-changed", newSession, false, true);
 //        });
 
-        eventBus.subscribe("editor-action", event -> {
-            if (session != null && event[0].equals("reload")) eventBus.postEvent(SessionDataLoaded.builder().session(session).continuous(false).timeAnimation(false).build());
+        eventBus.subscribe(EditorActionFired.class.getSimpleName(), event -> {
+            if (session != null && ((EditorActionFired) event[0]).action().equals("reload")) eventBus.postEvent(SessionDataLoaded.builder().session(session).continuous(false).timeAnimation(false).build());
         });
 
-        eventBus.subscribe("session-terminated", event -> dispose());
+        eventBus.subscribe(SessionTerminated.class.getSimpleName(), event -> dispose());
     }
 
     private Try<TaskResult, Exception> updateSource(String source) {

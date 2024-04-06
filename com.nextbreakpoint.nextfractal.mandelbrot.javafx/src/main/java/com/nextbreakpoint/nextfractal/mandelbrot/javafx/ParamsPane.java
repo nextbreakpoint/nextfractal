@@ -25,6 +25,8 @@
 package com.nextbreakpoint.nextfractal.mandelbrot.javafx;
 
 import com.nextbreakpoint.nextfractal.core.event.EditorDataChanged;
+import com.nextbreakpoint.nextfractal.core.event.EditorParamsActionFired;
+import com.nextbreakpoint.nextfractal.core.event.SessionDataChanged;
 import com.nextbreakpoint.nextfractal.core.javafx.AdvancedTextField;
 import com.nextbreakpoint.nextfractal.core.common.Double2D;
 import com.nextbreakpoint.nextfractal.core.common.Double4D;
@@ -221,12 +223,13 @@ public class ParamsPane extends Pane {
 			return null;
 		};
 
-		eventBus.subscribe("editor-params-action", event -> {
-			if (mandelbrotSession != null && event[0].equals("cancel")) updateAll.apply((MandelbrotMetadata) mandelbrotSession.getMetadata());
-			if (mandelbrotSession != null && event[0].equals("apply")) notifyAll.apply((MandelbrotMetadata) mandelbrotSession.getMetadata());
+		eventBus.subscribe(EditorParamsActionFired.class.getSimpleName(), event -> {
+			final String action = ((EditorParamsActionFired) event[0]).action();
+			if (mandelbrotSession != null && action.equals("cancel")) updateAll.apply((MandelbrotMetadata) mandelbrotSession.getMetadata());
+			if (mandelbrotSession != null && action.equals("apply")) notifyAll.apply((MandelbrotMetadata) mandelbrotSession.getMetadata());
 		});
 
-		eventBus.subscribe("session-data-changed", event -> updateData(updateAll, (MandelbrotSession) event[0], (Boolean) event[1]));
+		eventBus.subscribe(SessionDataChanged.class.getSimpleName(), event -> updateData(updateAll, (MandelbrotSession) ((SessionDataChanged) event[0]).session(), ((SessionDataChanged) event[0]).continuous()));
 
 		xTraslationField.setOnAction(e -> {
 			double value = Double.parseDouble(xTraslationField.getText());

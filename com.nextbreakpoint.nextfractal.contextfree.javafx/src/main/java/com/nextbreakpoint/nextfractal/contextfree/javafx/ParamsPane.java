@@ -27,6 +27,8 @@ package com.nextbreakpoint.nextfractal.contextfree.javafx;
 import com.nextbreakpoint.nextfractal.contextfree.module.ContextFreeMetadata;
 import com.nextbreakpoint.nextfractal.contextfree.module.ContextFreeSession;
 import com.nextbreakpoint.nextfractal.core.event.EditorDataChanged;
+import com.nextbreakpoint.nextfractal.core.event.EditorParamsActionFired;
+import com.nextbreakpoint.nextfractal.core.event.SessionDataChanged;
 import com.nextbreakpoint.nextfractal.core.javafx.AdvancedTextField;
 import com.nextbreakpoint.nextfractal.core.javafx.PlatformEventBus;
 import javafx.scene.control.Label;
@@ -102,12 +104,13 @@ public class ParamsPane extends Pane {
 			return null;
 		};
 
-		eventBus.subscribe("editor-params-action", event -> {
-			if (contextFreeSession != null && event[0].equals("cancel")) updateAll.apply((ContextFreeMetadata) contextFreeSession.getMetadata());
-			if (contextFreeSession != null && event[0].equals("apply")) notifyAll.apply((ContextFreeMetadata) contextFreeSession.getMetadata());
+		eventBus.subscribe(EditorParamsActionFired.class.getSimpleName(), event -> {
+			final String action = ((EditorParamsActionFired) event[0]).action();
+			if (contextFreeSession != null && action.equals("cancel")) updateAll.apply((ContextFreeMetadata) contextFreeSession.getMetadata());
+			if (contextFreeSession != null && action.equals("apply")) notifyAll.apply((ContextFreeMetadata) contextFreeSession.getMetadata());
 		});
 
-		eventBus.subscribe("session-data-changed", event -> updateData(updateAll, (ContextFreeSession) event[0], false));
+		eventBus.subscribe(SessionDataChanged.class.getSimpleName(), event -> updateData(updateAll, (ContextFreeSession) ((SessionDataChanged) event[0]).session(), false));
 
 		seedField.setOnAction(e -> notifyAll.apply((ContextFreeMetadata) contextFreeSession.getMetadata()));
 	}

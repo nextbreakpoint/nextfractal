@@ -25,14 +25,17 @@
 package com.nextbreakpoint.nextfractal.runtime.javafx;
 
 import com.nextbreakpoint.Try;
-import com.nextbreakpoint.nextfractal.core.common.Clip;
 import com.nextbreakpoint.nextfractal.core.common.FileManager;
 import com.nextbreakpoint.nextfractal.core.common.Session;
+import com.nextbreakpoint.nextfractal.core.event.CaptureSessionStarted;
+import com.nextbreakpoint.nextfractal.core.event.CaptureSessionStopped;
 import com.nextbreakpoint.nextfractal.core.event.EditorDeleteFilesRequested;
 import com.nextbreakpoint.nextfractal.core.event.EditorLoadFileRequested;
 import com.nextbreakpoint.nextfractal.core.event.PlaybackDataChanged;
 import com.nextbreakpoint.nextfractal.core.event.PlaybackDataLoaded;
+import com.nextbreakpoint.nextfractal.core.event.PlaybackStarted;
 import com.nextbreakpoint.nextfractal.core.event.PlaybackStopped;
+import com.nextbreakpoint.nextfractal.core.event.SessionTerminated;
 import com.nextbreakpoint.nextfractal.core.event.ToggleBrowserRequested;
 import com.nextbreakpoint.nextfractal.core.event.WorkspaceChanged;
 import com.nextbreakpoint.nextfractal.core.javafx.*;
@@ -158,7 +161,7 @@ public class MainCentralPane extends BorderPane {
             recordingPane.setPrefHeight(newValue.doubleValue());
         });
 
-        eventBus.subscribe("session-terminated", event -> browsePane.dispose());
+        eventBus.subscribe(SessionTerminated.class.getSimpleName(), event -> browsePane.dispose());
 
         toggleProperty.addListener((source, oldValue, newValue) -> {
             if (newValue) {
@@ -169,32 +172,32 @@ public class MainCentralPane extends BorderPane {
             }
         });
 
-        eventBus.subscribe("toggle-browser", event -> {
+        eventBus.subscribe(ToggleBrowserRequested.class.getSimpleName(), event -> {
             toggleProperty.setValue(!toggleProperty.getValue());
         });
 
-        eventBus.subscribe("playback-clips-start", event -> {
+        eventBus.subscribe(PlaybackStarted.class.getSimpleName(), event -> {
             browsePane.setDisable(true);
             renderPane.setDisable(true);
             toggleProperty.setValue(false);
             playbackPane.setVisible(true);
-            playbackPane.setClips((List<Clip>)event[0]);
+            playbackPane.setClips(((PlaybackStarted)event[0]).clips());
             playbackPane.start();
         });
 
-        eventBus.subscribe("playback-clips-stop", event -> {
+        eventBus.subscribe(PlaybackStopped.class.getSimpleName(), event -> {
             playbackPane.stop();
             browsePane.setDisable(false);
             renderPane.setDisable(false);
             playbackPane.setVisible(false);
         });
 
-        eventBus.subscribe("capture-session-started", event -> {
+        eventBus.subscribe(CaptureSessionStarted.class.getSimpleName(), event -> {
             recordingPane.setVisible(true);
             recordingPane.start();
         });
 
-        eventBus.subscribe("capture-session-stopped", event -> {
+        eventBus.subscribe(CaptureSessionStopped.class.getSimpleName(), event -> {
             recordingPane.setVisible(false);
             recordingPane.stop();
         });
